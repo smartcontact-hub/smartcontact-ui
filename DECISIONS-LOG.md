@@ -282,3 +282,41 @@ Dos subagentes de documentación murieron por límite de uso a mitad de tarea;
 migration-safety.md y 6 de las 9 skills se completaron directamente,
 verificando después todo el árbol de docs con greps de tono (personas,
 librerías de origen, "Codex") y de enlaces rotos: limpio.
+
+---
+
+## G. Cierre — completeness critic y estado final
+
+### G1 — Pre-flight §4, punto por punto
+1. **Esqueleto** (3 paquetes ng-packagr + sc-demo, configs, export:* en Node) — ✅ (A).
+2. **Escala** (capas 14-base portadas; rem central adoptado; barrido 8-point;
+   generador único DTCG) — ✅ (B; barrido resuelto estructuralmente, B6, y
+   vigilado por el guard, E4).
+3. **Preset** (modular, slots → var(--sc-*), base.ts sin hex, overrides
+   portados) — ✅ (C).
+4. **Setup** (`provideSmartContactUi` con `.sc-dark`) — ✅ (D).
+5. **Tooling como gate de CI** — ✅ (E; workflow + `npm run verify`).
+6. **Documentación adaptada** (la nuestra + la del molde, drift sc-palette.ts
+   corregido) — ✅ (F).
+7. **"El prompt maestro y el pre-flight quedan dentro como guion de
+   continuación"** — cumplido EN SU FORMA ADAPTADA, según la Parte 3.G del
+   propio prompt (que manda adaptar/retirar el framing comparativo y no copiar
+   artefactos de proceso): el rationale vive en docs/foundations-rationale.md
+   y el guion de continuación de Mitad B en docs/component-port-plan.md.
+
+### G2 — Definición de "hecho" (verificación final, esta máquina)
+1. `npm run build` (3 paquetes) — ✅ verde.
+2. Guardarraíles — ✅ todos: generador reproduce el export (ley v/14, rem) ·
+   parity sin gaps (escala/radios completos · 53/53 sizing · 41/41 color marca
+   light+dark) · auditor de escala (85 ficheros de preset, cero px) · base.ts
+   sin hex (grep limpio) · `tsc --noEmit` × 3 proyectos · ESLint · e2e smoke
+   4/4 (botón renderiza 10.5/7/radio 6/font 14 medidos con getComputedStyle;
+   `.sc-dark` flipa).
+3. `sc-demo` levanta y renderiza — ✅ (e2e arranca el dev server real).
+4. Documentación completa y adaptada — ✅ (F1/F2).
+5. Este DECISIONS-LOG — ✅.
+
+### G3 — Límite conocido
+El gate de CI (.github/workflows/ci.yml) queda definido y el pipeline completo
+verificado en local; su primera ejecución real ocurre en GitHub Actions con el
+push de cierre (repo privado — minutos de Actions del plan).
