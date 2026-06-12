@@ -3,7 +3,7 @@ import type { FloatLabelDesignTokens } from '@primeuix/themes/types/floatlabel';
  export default {
     in: {
         input: {
-            paddingTop: "1.5rem",
+            paddingTop: "var(--sc-scale-1-5)",
             paddingBottom: "{form.field.padding.y}"
         },
         active: {
@@ -12,20 +12,20 @@ import type { FloatLabelDesignTokens } from '@primeuix/themes/types/floatlabel';
     },
     on: {
         active: {
-            padding: "0 0.125rem",
+            padding: "0 var(--sc-scale-0-125)",
             background: "{form.field.background}"
         },
         borderRadius: "{border.radius.xs}"
     },
     over: {
         active: {
-            top: "-1.25rem"
+            top: "var(--sc-scale-neg-1-25)"
         }
     },
     root: {
         color: "{form.field.float.label.color}",
         active: {
-            fontSize: "0.75rem",
+            fontSize: "var(--sc-scale-0-75)",
             fontWeight: "400"
         },
         positionX: "{form.field.padding.x}",

@@ -6,15 +6,15 @@ import type { ToggleButtonDesignTokens } from '@primeuix/themes/types/togglebutt
     },
     root: {
         lg: {
-            padding: "0.25rem",
+            padding: "var(--sc-scale-0-25)",
             fontSize: "{form.field.lg.font.size}"
         },
         sm: {
-            padding: "0.25rem",
+            padding: "var(--sc-scale-0-25)",
             fontSize: "{form.field.sm.font.size}"
         },
-        gap: "0.5rem",
-        padding: "0.25rem",
+        gap: "var(--sc-scale-0-5)",
+        padding: "var(--sc-scale-0-25)",
         focusRing: {
             color: "{focus.ring.color}",
             style: "{focus.ring.style}",
@@ -32,12 +32,12 @@ import type { ToggleButtonDesignTokens } from '@primeuix/themes/types/togglebutt
     },
     content: {
         lg: {
-            padding: "0.25rem 0.75rem"
+            padding: "var(--sc-scale-0-25) var(--sc-scale-0-75)"
         },
         sm: {
-            padding: "0.25rem 0.75rem"
+            padding: "var(--sc-scale-0-25) var(--sc-scale-0-75)"
         },
-        padding: "0.25rem 0.75rem",
+        padding: "var(--sc-scale-0-25) var(--sc-scale-0-75)",
         borderRadius: "{content.border.radius}",
         checkedShadow: "0 0.071429rem 0.142857rem 0 #0000000a, 0 0.071429rem 0.142857rem 0 #00000005"
     },

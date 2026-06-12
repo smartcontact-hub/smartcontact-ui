@@ -9,15 +9,15 @@ import type { DialogDesignTokens } from '@primeuix/themes/types/dialog';
         borderRadius: "{overlay.modal.border.radius}"
     },
     title: {
-        fontSize: "1.25rem",
+        fontSize: "var(--sc-scale-1-25)",
         fontWeight: "600"
     },
     footer: {
-        gap: "0.5rem",
+        gap: "var(--sc-scale-0-5)",
         padding: "0 {overlay.modal.padding} {overlay.modal.padding}"
     },
     header: {
-        gap: "0.5rem",
+        gap: "var(--sc-scale-0-5)",
         padding: "{overlay.modal.padding}"
     },
     content: {

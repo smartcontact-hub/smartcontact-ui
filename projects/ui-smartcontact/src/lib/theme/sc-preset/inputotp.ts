@@ -2,15 +2,15 @@ import type { InputOtpDesignTokens } from '@primeuix/themes/types/inputotp';
 
  export default {
     root: {
-        gap: "0.5rem"
+        gap: "var(--sc-scale-0-5)"
     },
     input: {
         lg: {
-            width: "3rem"
+            width: "var(--sc-scale-3)"
         },
         sm: {
-            width: "2rem"
+            width: "var(--sc-scale-2)"
         },
-        width: "2.5rem"
+        width: "var(--sc-scale-2-5)"
     }
 } satisfies InputOtpDesignTokens;

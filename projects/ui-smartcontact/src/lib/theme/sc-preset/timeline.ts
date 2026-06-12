@@ -2,22 +2,22 @@ import type { TimelineDesignTokens } from '@primeuix/themes/types/timeline';
 
  export default {
     event: {
-        minHeight: "5rem"
+        minHeight: "var(--sc-scale-5)"
     },
     vertical: {
         eventContent: {
-            padding: "0 1rem"
+            padding: "0 var(--sc-scale-1)"
         }
     },
     horizontal: {
         eventContent: {
-            padding: "1rem 0"
+            padding: "var(--sc-scale-1) 0"
         }
     },
     eventMarker: {
-        size: "1.125rem",
+        size: "var(--sc-scale-1-125)",
         content: {
-            size: "0.375rem",
+            size: "var(--sc-scale-0-375)",
             background: "{primary.color}",
             insetShadow: "0 0.071429rem 0.071429rem 0 #0000001f, 0 0.071429rem 0 0 #0000000f",
             borderRadius: "0.1875rem"

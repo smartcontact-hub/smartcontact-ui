@@ -5,12 +5,12 @@ import type { StepperDesignTokens } from '@primeuix/themes/types/stepper';
         transitionDuration: "{transition.duration}"
     },
     step: {
-        gap: "1rem",
-        padding: "0.5rem"
+        gap: "var(--sc-scale-1)",
+        padding: "var(--sc-scale-0-5)"
     },
     separator: {
         size: "0.142857rem",
-        margin: "0 0 0 1.625rem",
+        margin: "0 0 0 var(--sc-scale-1-625)",
         background: "{content.border.color}",
         activeBackground: "{primary.color}"
     },
@@ -21,12 +21,12 @@ import type { StepperDesignTokens } from '@primeuix/themes/types/stepper';
     },
     steppanel: {
         color: "{content.color}",
-        indent: "1rem",
+        indent: "var(--sc-scale-1)",
         padding: "0",
         background: "{content.background}"
     },
     stepHeader: {
-        gap: "0.5rem",
+        gap: "var(--sc-scale-0-5)",
         padding: "0",
         focusRing: {
             color: "{focus.ring.color}",
@@ -38,19 +38,19 @@ import type { StepperDesignTokens } from '@primeuix/themes/types/stepper';
         borderRadius: "{content.border.radius}"
     },
     stepNumber: {
-        size: "2rem",
+        size: "var(--sc-scale-2)",
         color: "{text.muted.color}",
         shadow: "0 0.071429rem 0.071429rem 0 #0000001f, 0 0.071429rem 0 0 #0000000f",
-        fontSize: "1.143rem",
+        fontSize: "var(--sc-scale-1-143)",
         background: "{content.background}",
         fontWeight: "500",
         activeColor: "{primary.color}",
         borderColor: "{content.border.color}",
-        borderRadius: "1rem",
+        borderRadius: "var(--sc-scale-1)",
         activeBackground: "{content.background}",
         activeBorderColor: "{content.border.color}"
     },
     steppanels: {
-        padding: "0.875rem 0.5rem 1.125rem"
+        padding: "var(--sc-scale-0-875) var(--sc-scale-0-5) var(--sc-scale-1-125)"
     }
 } satisfies StepperDesignTokens;

@@ -11,20 +11,20 @@ import type { PanelDesignTokens } from '@primeuix/themes/types/panel';
         fontWeight: "600"
     },
     footer: {
-        padding: "0 1.125rem 1.125rem"
+        padding: "0 var(--sc-scale-1-125) var(--sc-scale-1-125)"
     },
     header: {
         color: "{text.color}",
-        padding: "1.125rem",
+        padding: "var(--sc-scale-1-125)",
         background: "#00000000",
         borderColor: "{content.border.color}",
         borderWidth: "0",
         borderRadius: "0"
     },
     content: {
-        padding: "0 1.125rem 1.125rem"
+        padding: "0 var(--sc-scale-1-125) var(--sc-scale-1-125)"
     },
     toggleableHeader: {
-        padding: "0.375rem 1.125rem"
+        padding: "var(--sc-scale-0-375) var(--sc-scale-1-125)"
     }
 } satisfies PanelDesignTokens;

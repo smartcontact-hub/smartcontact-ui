@@ -23,7 +23,7 @@ import type { DataTableDesignTokens } from '@primeuix/themes/types/datatable';
         rule: {
             borderColor: "{content.border.color}"
         },
-        inlineGap: "0.5rem",
+        inlineGap: "var(--sc-scale-0-5)",
         constraint: {
             color: "{list.option.color}",
             padding: "{list.option.padding}",
@@ -50,7 +50,7 @@ import type { DataTableDesignTokens } from '@primeuix/themes/types/datatable';
             padding: "{list.padding}"
         },
         overlayPopover: {
-            gap: "0.5rem",
+            gap: "var(--sc-scale-0-5)",
             color: "{overlay.popover.color}",
             shadow: "0 0.142857rem 0.285714rem -0.142857rem #0000001a, 0 0.285714rem 0.428571rem -0.071429rem #0000001a",
             padding: "{overlay.popover.padding}",
@@ -61,42 +61,42 @@ import type { DataTableDesignTokens } from '@primeuix/themes/types/datatable';
     },
     footer: {
         lg: {
-            padding: "1rem 1.25rem"
+            padding: "var(--sc-scale-1) var(--sc-scale-1-25)"
         },
         sm: {
-            padding: "0.375rem 0.5rem"
+            padding: "var(--sc-scale-0-375) var(--sc-scale-0-5)"
         },
         color: "{content.color}",
-        padding: "0.75rem 1rem",
+        padding: "var(--sc-scale-0-75) var(--sc-scale-1)",
         background: "{content.background}",
         borderColor: "{datatable.border.color}",
         borderWidth: "0.071429rem"
     },
     header: {
         lg: {
-            padding: "1rem 1.25rem"
+            padding: "var(--sc-scale-1) var(--sc-scale-1-25)"
         },
         sm: {
-            padding: "0.375rem 0.5rem"
+            padding: "var(--sc-scale-0-375) var(--sc-scale-0-5)"
         },
         color: "{content.color}",
-        padding: "0.75rem 1rem",
+        padding: "var(--sc-scale-0-75) var(--sc-scale-1)",
         background: "{content.background}",
         borderColor: "{datatable.border.color}",
         borderWidth: "0.071429rem"
     },
     bodyCell: {
         lg: {
-            padding: "1rem 1.25rem"
+            padding: "var(--sc-scale-1) var(--sc-scale-1-25)"
         },
         sm: {
-            padding: "0.375rem 0.5rem"
+            padding: "var(--sc-scale-0-375) var(--sc-scale-0-5)"
         },
-        padding: "0.75rem 1rem",
+        padding: "var(--sc-scale-0-75) var(--sc-scale-1)",
         borderColor: "{datatable.border.color}"
     },
     sortIcon: {
-        size: "0.875rem",
+        size: "var(--sc-scale-0-875)",
         color: "{text.muted.color}",
         hoverColor: "{text.hover.muted.color}"
     },
@@ -105,26 +105,26 @@ import type { DataTableDesignTokens } from '@primeuix/themes/types/datatable';
     },
     footerCell: {
         lg: {
-            padding: "1rem 1.25rem"
+            padding: "var(--sc-scale-1) var(--sc-scale-1-25)"
         },
         sm: {
-            padding: "0.375rem 0.5rem"
+            padding: "var(--sc-scale-0-375) var(--sc-scale-0-5)"
         },
         color: "{content.color}",
-        padding: "0.75rem 1rem",
+        padding: "var(--sc-scale-0-75) var(--sc-scale-1)",
         background: "{content.background}",
         borderColor: "{datatable.border.color}"
     },
     headerCell: {
         lg: {
-            padding: "1rem 1.25rem"
+            padding: "var(--sc-scale-1) var(--sc-scale-1-25)"
         },
         sm: {
-            padding: "0.375rem 0.5rem"
+            padding: "var(--sc-scale-0-375) var(--sc-scale-0-5)"
         },
-        gap: "0.5rem",
+        gap: "var(--sc-scale-0-5)",
         color: "{content.color}",
-        padding: "0.75rem 1rem",
+        padding: "var(--sc-scale-0-75) var(--sc-scale-1)",
         focusRing: {
             color: "{focus.ring.color}",
             style: "{focus.ring.style}",
@@ -167,7 +167,7 @@ import type { DataTableDesignTokens } from '@primeuix/themes/types/datatable';
         fontWeight: "600"
     },
     loadingIcon: {
-        size: "2rem"
+        size: "var(--sc-scale-2)"
     },
     columnFooter: {
         fontWeight: "600"
@@ -177,7 +177,7 @@ import type { DataTableDesignTokens } from '@primeuix/themes/types/datatable';
         borderWidth: "0.071429rem"
     },
     columnResizer: {
-        width: "0.5rem"
+        width: "var(--sc-scale-0-5)"
     },
     paginatorBottom: {
         borderColor: "{datatable.border.color}",
@@ -188,7 +188,7 @@ import type { DataTableDesignTokens } from '@primeuix/themes/types/datatable';
         width: "0.071429rem"
     },
     rowToggleButton: {
-        size: "1.75rem",
+        size: "var(--sc-scale-1-75)",
         color: "{text.muted.color}",
         focusRing: {
             color: "{focus.ring.color}",
@@ -198,7 +198,7 @@ import type { DataTableDesignTokens } from '@primeuix/themes/types/datatable';
             shadow: "none"
         },
         hoverColor: "{text.color}",
-        borderRadius: "0.875rem",
+        borderRadius: "var(--sc-scale-0-875)",
         hoverBackground: "{content.hover.background}",
         selectedHoverColor: "{primary.color}",
         selectedHoverBackground: "{content.background}"

@@ -3,16 +3,16 @@ import type { FieldsetDesignTokens } from '@primeuix/themes/types/fieldset';
  export default {
     root: {
         color: "{content.color}",
-        padding: "1.125rem",
+        padding: "var(--sc-scale-1-125)",
         background: "{content.background}",
         borderColor: "{content.border.color}",
         borderRadius: "{content.border.radius}",
         transitionDuration: "{transition.duration}"
     },
     legend: {
-        gap: "0.5rem",
+        gap: "var(--sc-scale-0-5)",
         color: "{content.color}",
-        padding: "0.5rem 0.75rem",
+        padding: "var(--sc-scale-0-5) var(--sc-scale-0-75)",
         focusRing: {
             color: "{focus.ring.color}",
             style: "{focus.ring.style}",

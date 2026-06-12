@@ -3,12 +3,12 @@ import type { CheckboxDesignTokens } from '@primeuix/themes/types/checkbox';
  export default {
     icon: {
         lg: {
-            size: "1rem"
+            size: "var(--sc-scale-1)"
         },
         sm: {
-            size: "0.75rem"
+            size: "var(--sc-scale-0-75)"
         },
-        size: "0.875rem",
+        size: "var(--sc-scale-0-875)",
         color: "{form.field.color}",
         checkedColor: "{primary.contrast.color}",
         disabledColor: "{form.field.disabled.color}",
@@ -16,15 +16,15 @@ import type { CheckboxDesignTokens } from '@primeuix/themes/types/checkbox';
     },
     root: {
         lg: {
-            width: "1.5rem",
-            height: "1.5rem"
+            width: "var(--sc-scale-1-5)",
+            height: "var(--sc-scale-1-5)"
         },
         sm: {
-            width: "1rem",
-            height: "1rem"
+            width: "var(--sc-scale-1)",
+            height: "var(--sc-scale-1)"
         },
-        width: "1.25rem",
-        height: "1.25rem",
+        width: "var(--sc-scale-1-25)",
+        height: "var(--sc-scale-1-25)",
         shadow: "0 0.071429rem 0.142857rem 0 #1212170d",
         focusRing: {
             color: "{focus.ring.color}",

@@ -42,7 +42,7 @@ import type { TreeSelectDesignTokens } from '@primeuix/themes/types/treeselect';
         invalidPlaceholderColor: "{form.field.invalid.placeholder.color}"
     },
     tree: {
-        padding: "0.25rem"
+        padding: "var(--sc-scale-0-25)"
     },
     overlay: {
         color: "{overlay.select.color}",
@@ -53,7 +53,7 @@ import type { TreeSelectDesignTokens } from '@primeuix/themes/types/treeselect';
     },
     dropdown: {
         color: "{form.field.icon.color}",
-        width: "2.5rem"
+        width: "var(--sc-scale-2-5)"
     },
     clearIcon: {
         color: "{form.field.icon.color}"

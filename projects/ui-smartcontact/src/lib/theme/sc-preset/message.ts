@@ -3,12 +3,12 @@ import type { MessageDesignTokens } from '@primeuix/themes/types/message';
  export default {
     icon: {
         lg: {
-            size: "1.25rem"
+            size: "var(--sc-scale-1-25)"
         },
         sm: {
-            size: "1rem"
+            size: "var(--sc-scale-1)"
         },
-        size: "1.125rem"
+        size: "var(--sc-scale-1-125)"
     },
     info: {
         shadow: "0 0.285714rem 0.571429rem 0 #02050a0a",
@@ -25,12 +25,12 @@ import type { MessageDesignTokens } from '@primeuix/themes/types/message';
     },
     text: {
         lg: {
-            fontSize: "1.125rem"
+            fontSize: "var(--sc-scale-1-125)"
         },
         sm: {
-            fontSize: "0.875rem"
+            fontSize: "var(--sc-scale-0-875)"
         },
-        fontSize: "1rem",
+        fontSize: "var(--sc-scale-1)",
         fontWeight: "500"
     },
     warn: {
@@ -56,13 +56,13 @@ import type { MessageDesignTokens } from '@primeuix/themes/types/message';
     },
     content: {
         lg: {
-            padding: "0.625rem 0.875rem"
+            padding: "var(--sc-scale-0-625) var(--sc-scale-0-875)"
         },
         sm: {
-            padding: "0.375rem 0.625rem"
+            padding: "var(--sc-scale-0-375) var(--sc-scale-0-625)"
         },
-        gap: "0.5rem",
-        padding: "0.5rem 0.75rem"
+        gap: "var(--sc-scale-0-5)",
+        padding: "var(--sc-scale-0-5) var(--sc-scale-0-75)"
     },
     success: {
         shadow: "0 0.285714rem 0.571429rem 0 #0108040a",
@@ -87,12 +87,12 @@ import type { MessageDesignTokens } from '@primeuix/themes/types/message';
     },
     closeIcon: {
         lg: {
-            size: "1.125rem"
+            size: "var(--sc-scale-1-125)"
         },
         sm: {
-            size: "0.875rem"
+            size: "var(--sc-scale-0-875)"
         },
-        size: "1rem"
+        size: "var(--sc-scale-1)"
     },
     secondary: {
         shadow: "0 0.285714rem 0.571429rem 0 #0405060a",
@@ -103,14 +103,14 @@ import type { MessageDesignTokens } from '@primeuix/themes/types/message';
         }
     },
     closeButton: {
-        width: "1.75rem",
-        height: "1.75rem",
+        width: "var(--sc-scale-1-75)",
+        height: "var(--sc-scale-1-75)",
         focusRing: {
             style: "{focus.ring.style}",
             width: "{focus.ring.width}",
             offset: "{focus.ring.offset}"
         },
-        borderRadius: "0.875rem"
+        borderRadius: "var(--sc-scale-0-875)"
     },
     colorScheme: {
         dark: {

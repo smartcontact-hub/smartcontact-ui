@@ -2,8 +2,8 @@ import type { DockDesignTokens } from '@primeuix/themes/types/dock';
 
  export default {
     item: {
-        size: "3rem",
-        padding: "0.5rem",
+        size: "var(--sc-scale-3)",
+        padding: "var(--sc-scale-0-5)",
         focusRing: {
             color: "{focus.ring.color}",
             style: "{focus.ring.style}",
@@ -14,7 +14,7 @@ import type { DockDesignTokens } from '@primeuix/themes/types/dock';
         borderRadius: "{content.border.radius}"
     },
     root: {
-        padding: "0.5rem",
+        padding: "var(--sc-scale-0-5)",
         background: "#ffffff1a",
         borderColor: "#ffffff33",
         borderRadius: "{border.radius.xl}"

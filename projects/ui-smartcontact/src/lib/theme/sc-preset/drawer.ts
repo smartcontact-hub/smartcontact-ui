@@ -8,7 +8,7 @@ import type { DrawerDesignTokens } from '@primeuix/themes/types/drawer';
         borderColor: "{overlay.modal.border.color}"
     },
     title: {
-        fontSize: "1.5rem",
+        fontSize: "var(--sc-scale-1-5)",
         fontWeight: "600"
     },
     footer: {

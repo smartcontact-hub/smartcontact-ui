@@ -21,38 +21,38 @@ import type { TreeTableDesignTokens } from '@primeuix/themes/types/treetable';
     },
     footer: {
         color: "{content.color}",
-        padding: "0.75rem 1rem",
+        padding: "var(--sc-scale-0-75) var(--sc-scale-1)",
         background: "{content.background}",
         borderColor: "{treetable.border.color}",
         borderWidth: "0.071429rem"
     },
     header: {
         color: "{content.color}",
-        padding: "0.75rem 1rem",
+        padding: "var(--sc-scale-0-75) var(--sc-scale-1)",
         background: "{content.background}",
         borderColor: "{treetable.border.color}",
         borderWidth: "0.071429rem"
     },
     bodyCell: {
-        gap: "0.5rem",
-        padding: "0.75rem 1rem",
+        gap: "var(--sc-scale-0-5)",
+        padding: "var(--sc-scale-0-75) var(--sc-scale-1)",
         borderColor: "{treetable.border.color}"
     },
     sortIcon: {
-        size: "0.875rem",
+        size: "var(--sc-scale-0-875)",
         color: "{text.muted.color}",
         hoverColor: "{text.hover.muted.color}"
     },
     footerCell: {
         color: "{content.color}",
-        padding: "0.75rem 1rem",
+        padding: "var(--sc-scale-0-75) var(--sc-scale-1)",
         background: "{content.background}",
         borderColor: "{treetable.border.color}"
     },
     headerCell: {
-        gap: "0.5rem",
+        gap: "var(--sc-scale-0-5)",
         color: "{content.color}",
-        padding: "0.75rem 1rem",
+        padding: "var(--sc-scale-0-75) var(--sc-scale-1)",
         focusRing: {
             color: "{focus.ring.color}",
             style: "{focus.ring.style}",
@@ -89,7 +89,7 @@ import type { TreeTableDesignTokens } from '@primeuix/themes/types/treetable';
         fontWeight: "600"
     },
     loadingIcon: {
-        size: "2rem"
+        size: "var(--sc-scale-2)"
     },
     columnFooter: {
         fontWeight: "600"
@@ -99,7 +99,7 @@ import type { TreeTableDesignTokens } from '@primeuix/themes/types/treetable';
         borderWidth: "0.071429rem"
     },
     columnResizer: {
-        width: "0.5rem"
+        width: "var(--sc-scale-0-5)"
     },
     paginatorBottom: {
         borderColor: "{content.border.color}",
@@ -110,7 +110,7 @@ import type { TreeTableDesignTokens } from '@primeuix/themes/types/treetable';
         width: "0.071429rem"
     },
     nodeToggleButton: {
-        size: "1.75rem",
+        size: "var(--sc-scale-1-75)",
         color: "{text.muted.color}",
         focusRing: {
             color: "{focus.ring.color}",
@@ -120,7 +120,7 @@ import type { TreeTableDesignTokens } from '@primeuix/themes/types/treetable';
             shadow: "none"
         },
         hoverColor: "{text.color}",
-        borderRadius: "0.875rem",
+        borderRadius: "var(--sc-scale-0-875)",
         hoverBackground: "{content.hover.background}",
         selectedHoverColor: "{primary.color}",
         selectedHoverBackground: "{content.background}"

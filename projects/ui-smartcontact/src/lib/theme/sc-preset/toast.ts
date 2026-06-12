@@ -2,7 +2,7 @@ import type { ToastDesignTokens } from '@primeuix/themes/types/toast';
 
  export default {
     icon: {
-        size: "1.125rem"
+        size: "var(--sc-scale-1-125)"
     },
     info: {
         shadow: "0 0.285714rem 0.571429rem 0 #02050a0a",
@@ -13,13 +13,13 @@ import type { ToastDesignTokens } from '@primeuix/themes/types/toast';
         }
     },
     root: {
-        width: "25rem",
+        width: "var(--sc-scale-25)",
         borderWidth: "0.071429rem",
         borderRadius: "{content.border.radius}",
         transitionDuration: "{transition.duration}"
     },
     text: {
-        gap: "0.5rem"
+        gap: "var(--sc-scale-0-5)"
     },
     warn: {
         shadow: "0 0.285714rem 0.571429rem 0 #0907000a",
@@ -38,11 +38,11 @@ import type { ToastDesignTokens } from '@primeuix/themes/types/toast';
         }
     },
     detail: {
-        fontSize: "0.875rem",
+        fontSize: "var(--sc-scale-0-875)",
         fontWeight: "500"
     },
     content: {
-        gap: "0.5rem",
+        gap: "var(--sc-scale-0-5)",
         padding: "{overlay.popover.padding}"
     },
     success: {
@@ -54,7 +54,7 @@ import type { ToastDesignTokens } from '@primeuix/themes/types/toast';
         }
     },
     summary: {
-        fontSize: "1rem",
+        fontSize: "var(--sc-scale-1)",
         fontWeight: "500"
     },
     contrast: {
@@ -66,7 +66,7 @@ import type { ToastDesignTokens } from '@primeuix/themes/types/toast';
         }
     },
     closeIcon: {
-        size: "1rem"
+        size: "var(--sc-scale-1)"
     },
     secondary: {
         shadow: "0 0.285714rem 0.571429rem 0 #0405060a",
@@ -77,14 +77,14 @@ import type { ToastDesignTokens } from '@primeuix/themes/types/toast';
         }
     },
     closeButton: {
-        width: "1.75rem",
-        height: "1.75rem",
+        width: "var(--sc-scale-1-75)",
+        height: "var(--sc-scale-1-75)",
         focusRing: {
             style: "{focus.ring.style}",
             width: "{focus.ring.width}",
             offset: "{focus.ring.offset}"
         },
-        borderRadius: "0.875rem"
+        borderRadius: "var(--sc-scale-0-875)"
     },
     colorScheme: {
         dark: {

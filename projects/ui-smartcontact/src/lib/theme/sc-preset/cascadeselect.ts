@@ -4,7 +4,7 @@ import type { CascadeSelectDesignTokens } from '@primeuix/themes/types/cascadese
     list: {
         gap: "{list.gap}",
         padding: "{list.padding}",
-        mobileIndent: "1rem"
+        mobileIndent: "var(--sc-scale-1)"
     },
     root: {
         lg: {
@@ -45,7 +45,7 @@ import type { CascadeSelectDesignTokens } from '@primeuix/themes/types/cascadese
     },
     option: {
         icon: {
-            size: "0.875rem",
+            size: "var(--sc-scale-0-875)",
             color: "{list.option.icon.color}",
             focusColor: "{list.option.icon.focus.color}"
         },
@@ -68,7 +68,7 @@ import type { CascadeSelectDesignTokens } from '@primeuix/themes/types/cascadese
     },
     dropdown: {
         color: "{form.field.icon.color}",
-        width: "2.5rem"
+        width: "var(--sc-scale-2-5)"
     },
     clearIcon: {
         color: "{form.field.icon.color}"

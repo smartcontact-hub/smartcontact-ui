@@ -2,21 +2,21 @@ import type { ChipDesignTokens } from '@primeuix/themes/types/chip';
 
  export default {
     icon: {
-        size: "1rem"
+        size: "var(--sc-scale-1)"
     },
     root: {
-        gap: "0.5rem",
-        paddingX: "0.75rem",
-        paddingY: "0.5rem",
-        borderRadius: "1.142857rem",
+        gap: "var(--sc-scale-0-5)",
+        paddingX: "var(--sc-scale-0-75)",
+        paddingY: "var(--sc-scale-0-5)",
+        borderRadius: "var(--sc-scale-1-143)",
         transitionDuration: "{transition.duration}"
     },
     image: {
-        width: "2rem",
-        height: "2rem"
+        width: "var(--sc-scale-2)",
+        height: "var(--sc-scale-2)"
     },
     removeIcon: {
-        size: "1rem",
+        size: "var(--sc-scale-1)",
         focusRing: {
             color: "{focus.ring.color}",
             style: "{focus.ring.style}",

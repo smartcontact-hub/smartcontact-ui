@@ -3,39 +3,39 @@ import type { AvatarDesignTokens } from '@primeuix/themes/types/avatar';
  export default {
     lg: {
         icon: {
-            size: "1.5rem"
+            size: "var(--sc-scale-1-5)"
         },
         group: {
-            offset: "-1rem"
+            offset: "var(--sc-scale-neg-1)"
         },
-        width: "3rem",
-        height: "3rem",
-        fontSize: "1.5rem"
+        width: "var(--sc-scale-3)",
+        height: "var(--sc-scale-3)",
+        fontSize: "var(--sc-scale-1-5)"
     },
     xl: {
         icon: {
-            size: "2rem"
+            size: "var(--sc-scale-2)"
         },
         group: {
-            offset: "-1.5rem"
+            offset: "var(--sc-scale-neg-1-5)"
         },
-        width: "4rem",
-        height: "4rem",
-        fontSize: "2rem"
+        width: "var(--sc-scale-4)",
+        height: "var(--sc-scale-4)",
+        fontSize: "var(--sc-scale-2)"
     },
     icon: {
-        size: "1rem"
+        size: "var(--sc-scale-1)"
     },
     root: {
         color: "{content.color}",
-        width: "2rem",
-        height: "2rem",
-        fontSize: "1rem",
+        width: "var(--sc-scale-2)",
+        height: "var(--sc-scale-2)",
+        fontSize: "var(--sc-scale-1)",
         background: "{content.border.color}",
         borderRadius: "{content.border.radius}"
     },
     group: {
-        offset: "-0.75rem",
+        offset: "var(--sc-scale-neg-0-75)",
         borderColor: "{content.background}"
     }
 } satisfies AvatarDesignTokens;

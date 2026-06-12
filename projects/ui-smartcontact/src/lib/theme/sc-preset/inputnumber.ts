@@ -5,7 +5,7 @@ import type { InputNumberDesignTokens } from '@primeuix/themes/types/inputnumber
         transitionDuration: "{transition.duration}"
     },
     button: {
-        width: "2.5rem",
+        width: "var(--sc-scale-2-5)",
         borderRadius: "{form.field.border.radius}",
         verticalPadding: "{form.field.padding.y}"
     },

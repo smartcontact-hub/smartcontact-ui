@@ -2,7 +2,7 @@ import type { PanelMenuDesignTokens } from '@primeuix/themes/types/panelmenu';
 
  export default {
     item: {
-        gap: "0.5rem",
+        gap: "var(--sc-scale-0-5)",
         icon: {
             color: "{navigation.item.icon.color}",
             focusColor: "{navigation.item.icon.focus.color}"
@@ -14,7 +14,7 @@ import type { PanelMenuDesignTokens } from '@primeuix/themes/types/panelmenu';
         focusBackground: "{navigation.item.focus.background}"
     },
     root: {
-        gap: "0.5rem",
+        gap: "var(--sc-scale-0-5)",
         transitionDuration: "{transition.duration}"
     },
     panel: {
@@ -27,14 +27,14 @@ import type { PanelMenuDesignTokens } from '@primeuix/themes/types/panelmenu';
             borderWidth: "0.071429rem",
             topBorderRadius: "{content.border.radius}"
         },
-        padding: "0.25rem",
+        padding: "var(--sc-scale-0-25)",
         background: "{content.background}",
         borderColor: "{content.border.color}",
         borderWidth: "0.071429rem",
         borderRadius: "{content.border.radius}"
     },
     submenu: {
-        indent: "1rem"
+        indent: "var(--sc-scale-1)"
     },
     submenuIcon: {
         color: "{navigation.submenu.icon.color}",

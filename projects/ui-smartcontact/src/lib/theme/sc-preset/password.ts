@@ -5,12 +5,12 @@ import type { PasswordDesignTokens } from '@primeuix/themes/types/password';
         color: "{form.field.icon.color}"
     },
     meter: {
-        height: "0.75rem",
+        height: "var(--sc-scale-0-75)",
         background: "{content.border.color}",
         borderRadius: "{content.border.radius}"
     },
     content: {
-        gap: "0.5rem"
+        gap: "var(--sc-scale-0-5)"
     },
     overlay: {
         color: "{overlay.popover.color}",

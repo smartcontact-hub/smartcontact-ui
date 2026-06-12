@@ -2,13 +2,13 @@ import type { ProgressBarDesignTokens } from '@primeuix/themes/types/progressbar
 
  export default {
     root: {
-        height: "1.25rem",
+        height: "var(--sc-scale-1-25)",
         background: "{content.border.color}",
         borderRadius: "{content.border.radius}"
     },
     label: {
         color: "{primary.contrast.color}",
-        fontSize: "0.75rem",
+        fontSize: "var(--sc-scale-0-75)",
         fontWeight: "600"
     },
     value: {

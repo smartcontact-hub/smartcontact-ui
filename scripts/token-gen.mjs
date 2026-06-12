@@ -10,7 +10,7 @@
  *   @sc-gen:scale    — escala 14-base (`--sc-scale-*`)
  *   @sc-gen:radius   — radios (`--sc-radius-*`)
  *   @sc-gen:palette  — familias primitivas de color que el preset referencia
- *                      y que la capa curada no cubre (hoy: yellow, zinc)
+ *                      y que la capa curada no cubre (hoy: zinc)
  *
  * ── ESCALA ──  Ley: nombre(v) = (v<0?"neg-":"") + |v|/14   con  "." → "-"
  *   (14 = base del Kit. 5.25 → 0.375 → `--sc-scale-0-375`.) El nombre deriva
@@ -122,7 +122,7 @@ function renderRadius() {
 // PALETA COMPLEMENTARIA — familias que el preset referencia ({yellow.*},
 // {zinc.*} = surface dark del Kit) y la capa curada no define. 1:1 del export.
 // ─────────────────────────────────────────────────────────────────────────────
-const PALETTE_FAMILIES = ['yellow', 'zinc'];
+const PALETTE_FAMILIES = ['zinc'];
 const STEPS = ['50', '100', '200', '300', '400', '500', '600', '700', '800', '900', '950'];
 const dropAlpha = (hex) => (hex.length === 9 && hex.endsWith('ff') ? hex.slice(0, 7) : hex);
 

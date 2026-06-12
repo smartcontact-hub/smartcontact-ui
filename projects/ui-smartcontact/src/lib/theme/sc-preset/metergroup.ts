@@ -2,24 +2,24 @@ import type { MeterGroupDesignTokens } from '@primeuix/themes/types/metergroup';
 
  export default {
     root: {
-        gap: "1rem",
+        gap: "var(--sc-scale-1)",
         borderRadius: "{content.border.radius}"
     },
     label: {
-        gap: "0.5rem"
+        gap: "var(--sc-scale-0-5)"
     },
     meters: {
-        size: "0.5rem",
+        size: "var(--sc-scale-0-5)",
         background: "{content.border.color}"
     },
     labelIcon: {
-        size: "1rem"
+        size: "var(--sc-scale-1)"
     },
     labelList: {
-        verticalGap: "0.5rem",
-        horizontalGap: "1rem"
+        verticalGap: "var(--sc-scale-0-5)",
+        horizontalGap: "var(--sc-scale-1)"
     },
     labelMarker: {
-        size: "0.5rem"
+        size: "var(--sc-scale-0-5)"
     }
 } satisfies MeterGroupDesignTokens;

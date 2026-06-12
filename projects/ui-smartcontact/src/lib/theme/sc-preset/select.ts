@@ -65,12 +65,12 @@ import type { SelectDesignTokens } from '@primeuix/themes/types/select';
     },
     dropdown: {
         color: "{form.field.icon.color}",
-        width: "2.5rem"
+        width: "var(--sc-scale-2-5)"
     },
     checkmark: {
         color: "{list.option.color}",
-        gutterEnd: "0.375rem",
-        gutterStart: "-0.375rem"
+        gutterEnd: "var(--sc-scale-0-375)",
+        gutterStart: "var(--sc-scale-neg-0-375)"
     },
     clearIcon: {
         color: "{form.field.icon.color}"

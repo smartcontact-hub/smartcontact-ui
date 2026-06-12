@@ -2,10 +2,10 @@ import type { TabsDesignTokens } from '@primeuix/themes/types/tabs';
 
  export default {
     tab: {
-        gap: "0.5rem",
+        gap: "var(--sc-scale-0-5)",
         color: "{text.muted.color}",
         margin: "0 0 -0.071429rem 0",
-        padding: "1rem 1.125rem",
+        padding: "var(--sc-scale-1) var(--sc-scale-1-125)",
         focusRing: {
             color: "{focus.ring.color}",
             style: "{focus.ring.style}",
@@ -34,7 +34,7 @@ import type { TabsDesignTokens } from '@primeuix/themes/types/tabs';
     },
     tabpanel: {
         color: "{content.color}",
-        padding: "0.875rem 1.125rem 1.125rem",
+        padding: "var(--sc-scale-0-875) var(--sc-scale-1-125) var(--sc-scale-1-125)",
         focusRing: {
             color: "{focus.ring.color}",
             style: "{focus.ring.style}",
@@ -51,7 +51,7 @@ import type { TabsDesignTokens } from '@primeuix/themes/types/tabs';
     },
     navButton: {
         color: "{text.muted.color}",
-        width: "2.5rem",
+        width: "var(--sc-scale-2-5)",
         shadow: "0 0 0.714286rem 3.571429rem #ffffff99",
         focusRing: {
             color: "{focus.ring.color}",

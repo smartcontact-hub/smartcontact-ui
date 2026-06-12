@@ -2,8 +2,8 @@ import type { CardDesignTokens } from '@primeuix/themes/types/card';
 
  export default {
     body: {
-        gap: "0.5rem",
-        padding: "1.25rem"
+        gap: "var(--sc-scale-0-5)",
+        padding: "var(--sc-scale-1-25)"
     },
     root: {
         color: "{content.color}",
@@ -12,11 +12,11 @@ import type { CardDesignTokens } from '@primeuix/themes/types/card';
         borderRadius: "{border.radius.xl}"
     },
     title: {
-        fontSize: "1.25rem",
+        fontSize: "var(--sc-scale-1-25)",
         fontWeight: "500"
     },
     caption: {
-        gap: "0.5rem"
+        gap: "var(--sc-scale-0-5)"
     },
     subtitle: {
         color: "{text.muted.color}"

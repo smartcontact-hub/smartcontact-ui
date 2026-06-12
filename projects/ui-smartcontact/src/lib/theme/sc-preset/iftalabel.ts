@@ -4,7 +4,7 @@ import type { IftaLabelDesignTokens } from '@primeuix/themes/types/iftalabel';
     root: {
         top: "{form.field.padding.y}",
         color: "{form.field.float.label.color}",
-        fontSize: "0.75rem",
+        fontSize: "var(--sc-scale-0-75)",
         positionX: "{form.field.padding.x}",
         focusColor: "{form.field.float.label.focus.color}",
         fontWeight: "400",
@@ -12,7 +12,7 @@ import type { IftaLabelDesignTokens } from '@primeuix/themes/types/iftalabel';
         transitionDuration: "{form.field.transition.duration}"
     },
     input: {
-        paddingTop: "1.5rem",
+        paddingTop: "var(--sc-scale-1-5)",
         paddingBottom: "{form.field.padding.y}"
     }
 } satisfies IftaLabelDesignTokens;

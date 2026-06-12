@@ -2,9 +2,9 @@ import type { ToolbarDesignTokens } from '@primeuix/themes/types/toolbar';
 
  export default {
     root: {
-        gap: "0.5rem",
+        gap: "var(--sc-scale-0-5)",
         color: "{content.color}",
-        padding: "0.75rem",
+        padding: "var(--sc-scale-0-75)",
         background: "{content.background}",
         borderColor: "{content.border.color}",
         borderRadius: "{content.border.radius}"

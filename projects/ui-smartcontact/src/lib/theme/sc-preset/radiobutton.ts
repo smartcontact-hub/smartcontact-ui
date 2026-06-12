@@ -3,27 +3,27 @@ import type { RadioButtonDesignTokens } from '@primeuix/themes/types/radiobutton
  export default {
     icon: {
         lg: {
-            size: "1rem"
+            size: "var(--sc-scale-1)"
         },
         sm: {
-            size: "0.5rem"
+            size: "var(--sc-scale-0-5)"
         },
-        size: "0.75rem",
+        size: "var(--sc-scale-0-75)",
         checkedColor: "{primary.contrast.color}",
         disabledColor: "{form.field.disabled.color}",
         checkedHoverColor: "{primary.contrast.color}"
     },
     root: {
         lg: {
-            width: "1.5rem",
-            height: "1.5rem"
+            width: "var(--sc-scale-1-5)",
+            height: "var(--sc-scale-1-5)"
         },
         sm: {
-            width: "1rem",
-            height: "1rem"
+            width: "var(--sc-scale-1)",
+            height: "var(--sc-scale-1)"
         },
-        width: "1.25rem",
-        height: "1.25rem",
+        width: "var(--sc-scale-1-25)",
+        height: "var(--sc-scale-1-25)",
         shadow: "0 0.071429rem 0.142857rem 0 #1212170d",
         focusRing: {
             color: "{focus.ring.color}",

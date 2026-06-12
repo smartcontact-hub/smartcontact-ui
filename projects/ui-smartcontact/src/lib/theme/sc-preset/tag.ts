@@ -2,12 +2,12 @@ import type { TagDesignTokens } from '@primeuix/themes/types/tag';
 
  export default {
     icon: {
-        size: "0.75rem"
+        size: "var(--sc-scale-0-75)"
     },
     root: {
-        gap: "0.25rem",
-        padding: "0.25rem 0.5rem",
-        fontSize: "0.875rem",
+        gap: "var(--sc-scale-0-25)",
+        padding: "var(--sc-scale-0-25) var(--sc-scale-0-5)",
+        fontSize: "var(--sc-scale-0-875)",
         fontWeight: "700",
         borderRadius: "{content.border.radius}",
         roundedBorderRadius: "{border.radius.xl}"

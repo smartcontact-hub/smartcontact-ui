@@ -5,9 +5,9 @@ import type { ImageDesignTokens } from '@primeuix/themes/types/image';
         transitionDuration: "{transition.duration}"
     },
     action: {
-        size: "3rem",
+        size: "var(--sc-scale-3)",
         color: "{surface.50}",
-        iconSize: "1.5rem",
+        iconSize: "var(--sc-scale-1-5)",
         focusRing: {
             color: "{focus.ring.color}",
             style: "{focus.ring.style}",
@@ -16,12 +16,12 @@ import type { ImageDesignTokens } from '@primeuix/themes/types/image';
             shadow: "none"
         },
         hoverColor: "{surface.0}",
-        borderRadius: "1.5rem",
+        borderRadius: "var(--sc-scale-1-5)",
         hoverBackground: "#ffffff1a"
     },
     preview: {
         icon: {
-            size: "1.5rem"
+            size: "var(--sc-scale-1-5)"
         },
         mask: {
             color: "{mask.color}",
@@ -29,13 +29,13 @@ import type { ImageDesignTokens } from '@primeuix/themes/types/image';
         }
     },
     toolbar: {
-        gap: "0.5rem",
+        gap: "var(--sc-scale-0-5)",
         blur: "0.571429rem",
-        padding: "0.5rem",
+        padding: "var(--sc-scale-0-5)",
         position: {
-            top: "1rem",
+            top: "var(--sc-scale-1)",
             left: "auto",
-            right: "1rem",
+            right: "var(--sc-scale-1)",
             bottom: "auto"
         },
         background: "#ffffff1a",

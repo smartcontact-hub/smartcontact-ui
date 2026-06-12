@@ -2,17 +2,17 @@ import type { PaginatorDesignTokens } from '@primeuix/themes/types/paginator';
 
  export default {
     root: {
-        gap: "0.25rem",
+        gap: "var(--sc-scale-0-25)",
         color: "{content.color}",
-        padding: "0.5rem 1rem",
+        padding: "var(--sc-scale-0-5) var(--sc-scale-1)",
         background: "{content.background}",
         borderRadius: "{content.border.radius}",
         transitionDuration: "{transition.duration}"
     },
     navButton: {
         color: "{text.muted.color}",
-        width: "2.5rem",
-        height: "2.5rem",
+        width: "var(--sc-scale-2-5)",
+        height: "var(--sc-scale-2-5)",
         focusRing: {
             color: "{focus.ring.color}",
             style: "{focus.ring.style}",
@@ -22,13 +22,13 @@ import type { PaginatorDesignTokens } from '@primeuix/themes/types/paginator';
         },
         background: "#00000000",
         hoverColor: "{text.hover.muted.color}",
-        borderRadius: "1.25rem",
+        borderRadius: "var(--sc-scale-1-25)",
         selectedColor: "{highlight.color}",
         hoverBackground: "{content.hover.background}",
         selectedBackground: "{highlight.background}"
     },
     jumpToPageInput: {
-        maxWidth: "2.5rem"
+        maxWidth: "var(--sc-scale-2-5)"
     },
     currentPageReport: {
         color: "{text.muted.color}"

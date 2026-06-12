@@ -55,12 +55,12 @@ import type { AutoCompleteDesignTokens } from '@primeuix/themes/types/autocomple
     },
     dropdown: {
         lg: {
-            width: "3rem"
+            width: "var(--sc-scale-3)"
         },
         sm: {
-            width: "2rem"
+            width: "var(--sc-scale-2)"
         },
-        width: "2.5rem",
+        width: "var(--sc-scale-2-5)",
         focusRing: {
             color: "{focus.ring.color}",
             style: "{focus.ring.style}",

@@ -6,15 +6,15 @@ import type { ButtonDesignTokens } from '@primeuix/themes/types/button';
             fontSize: "{form.field.lg.font.size}",
             paddingX: "{form.field.lg.padding.x}",
             paddingY: "{form.field.lg.padding.y}",
-            iconOnlyWidth: "{app.control.lg.height}"
+            iconOnlyWidth: "var(--sc-scale-3)"
         },
         sm: {
             fontSize: "{form.field.sm.font.size}",
             paddingX: "{form.field.sm.padding.x}",
             paddingY: "{form.field.sm.padding.y}",
-            iconOnlyWidth: "{app.control.sm.height}"
+            iconOnlyWidth: "var(--sc-scale-2)"
         },
-        gap: "0.5rem",
+        gap: "var(--sc-scale-0-5)",
         help: {
             focusRing: {
                 shadow: "none"
@@ -55,7 +55,7 @@ import type { ButtonDesignTokens } from '@primeuix/themes/types/button';
         },
         paddingX: "{form.field.padding.x}",
         paddingY: "{form.field.padding.y}",
-        badgeSize: "1rem",
+        badgeSize: "var(--sc-scale-1)",
         focusRing: {
             style: "{focus.ring.style}",
             width: "{focus.ring.width}",
@@ -68,9 +68,9 @@ import type { ButtonDesignTokens } from '@primeuix/themes/types/button';
         },
         borderRadius: "{form.field.border.radius}",
         raisedShadow: "0 0.071429rem 0.357143rem 0 #0000001f, 0 0.142857rem 0.142857rem 0 #00000024, 0 0.214286rem 0.071429rem -0.142857rem #00000033",
-        iconOnlyWidth: "{app.control.md.height}",
+        iconOnlyWidth: "var(--sc-scale-2-5)",
         transitionDuration: "{form.field.transition.duration}",
-        roundedBorderRadius: "2rem"
+        roundedBorderRadius: "var(--sc-scale-2)"
     },
     colorScheme: {
         dark: {

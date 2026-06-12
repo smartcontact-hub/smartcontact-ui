@@ -49,7 +49,7 @@ import type { MultiSelectDesignTokens } from '@primeuix/themes/types/multiselect
         invalidPlaceholderColor: "{form.field.invalid.placeholder.color}"
     },
     option: {
-        gap: "0.5rem",
+        gap: "var(--sc-scale-0-5)",
         color: "{list.option.color}",
         padding: "{list.option.padding}",
         focusColor: "{list.option.focus.color}",
@@ -69,7 +69,7 @@ import type { MultiSelectDesignTokens } from '@primeuix/themes/types/multiselect
     },
     dropdown: {
         color: "{form.field.icon.color}",
-        width: "2.5rem"
+        width: "var(--sc-scale-2-5)"
     },
     clearIcon: {
         color: "{form.field.icon.color}"

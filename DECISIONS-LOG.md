@@ -144,4 +144,57 @@ es un hairline de outline, no una métrica tipográfica.
 
 ## C. Preset
 
-*(entradas C en construcción — se completan en el bloque C)*
+### C1 — Los módulos por-componente del molde YA estaban convergidos al Kit
+Sorpresa verificada: los valores design-rem de los módulos (divider 14/7,
+tooltip 7/10.5/175, tabs 14/15.75 y 12.25/15.75, toggleswitch 35/21/3.5/14/7)
+son exactamente los del export S76 multiplicados ×14. Nuestros overrides del
+preset monolítico coinciden con lo que ya había — el port consistió en
+**tokenizar**, no en corregir valores.
+**Base verificada:** codemod ×14 contra la tabla de escala del export +
+cotejo de `toggleswitch.*` y `button.*` en `aura/component/common`.
+
+### C2 — Codemod design-rem → `var(--sc-scale-*)` sobre los 82 módulos
+Todo literal rem de los módulos cuyo px de diseño (rem×14) cae exacto en la
+escala del Kit pasa a token: 392 reemplazos en 65 ficheros, render idéntico.
+Lo que queda en rem son valores fuera de escala (hairlines 1/2px, restos
+8-point 4/8/20px de su autoría, blur/sombras) que `normalizeDesignRem`
+(mecanismo adoptado, `rem-scale.ts`) sigue convirtiendo design-rem→browser-rem.
+
+### C3 — `base.ts` reescrito: familias recortadas a las referenciadas
+El base del molde declara 22 familias primitivas en hex; los módulos solo
+referencian 10 (`red, sky, blue, slate, zinc, amber, green, purple, orange,
+yellow` — grep exhaustivo). Como la doctrina prohíbe consumir `--p-*` fuera
+del preset (regla del guard), la superficie `--p-<familia>-*` no es contrato:
+se declaran solo las 10 con `var(--sc-color-*)`. Remapeos de marca (los del
+preset monolítico): orange→amber y yellow→amber (warn de marca), sky→
+electric-blue y slate→gray (que en el Kit ya SON esos valores, verificado por
+hex). `zinc` se añade a la capa 01 como bloque generado del export.
+
+### C4 — colorScheme dark = mismos tokens semánticos que light
+Doctrina nuestra: el dark vive en la capa 7 (`.sc-dark` redeclara `--sc-*`).
+El `colorScheme.dark` del preset referencia los MISMOS `var(--sc-*)` que
+light (como hacía el preset monolítico) en lugar del zinc-dark del Kit
+(divergencia de marca consciente ya documentada: dark navy-tinted).
+`highlight` no tiene token semántico: se porta la receta Aura/Kit
+(`#34d39929`) como `color-mix` sobre `--sc-color-emerald-400` (hex verificado
+= emerald-400; alphas 0x29/0x3d/0xde ≈ 16 %/24 %/87 %, redondeo <0,5 % de
+alpha). Sin hex en base.
+**Pendiente Mitad B:** validar el dark de listas/highlight en pantalla cuando
+haya componentes que lo rendericen.
+
+### C5 — `extend.ts`: `app.control` retirado; line-height de control md = 21
+`app.control.*` traía las métricas 8-point de su Figma antiguo (paddings 12/5,
+alturas 33) que CHOCAN con el Kit (10.5/7, iconOnly 35). Sus consumidores
+(formField en base, `button.iconOnlyWidth`) apuntan ahora a los tokens del Kit
+(`scale-0-75/0-5`, `scale-2-5/2/3` — claves `form.field.*` y
+`button.icon.only.width` del export). `app.typography` queda (alimenta el CSS
+central de css.ts) con fuentes redondas DD-13 (12/14/16 vía
+`--sc-font-size-*`) y line-heights 18/21/24: la de control md es **21**
+(`--sc-scale-1-5`, control = 14×1,5), no la 20 del cuerpo — es lo que cuadra
+la altura md con `iconOnlyWidth = scale.2-5` del Kit. sm/lg usan
+`--sc-line-height-100/300` (18/24, emparejamiento del Kit).
+
+### C6 — Comentarios del preset sin unidades literales
+El auditor de escala cuenta cualquier `px`/hex del fichero, comentarios
+incluidos. Los comentarios de base/extend se redactan sin `Npx` ni `#hex`
+para que "cero px en preset" sea un grep limpio sin allowlist.

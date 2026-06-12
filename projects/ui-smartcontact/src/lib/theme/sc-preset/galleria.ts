@@ -9,22 +9,22 @@ import type { GalleriaDesignTokens } from '@primeuix/themes/types/galleria';
     },
     caption: {
         color: "{surface.100}",
-        padding: "1rem",
+        padding: "var(--sc-scale-1)",
         background: "#00000080"
     },
     navIcon: {
-        size: "1.5rem"
+        size: "var(--sc-scale-1-5)"
     },
     navButton: {
         next: {
-            borderRadius: "1.5rem"
+            borderRadius: "var(--sc-scale-1-5)"
         },
         prev: {
-            borderRadius: "1.5rem"
+            borderRadius: "var(--sc-scale-1-5)"
         },
-        size: "3rem",
+        size: "var(--sc-scale-3)",
         color: "{surface.100}",
-        gutter: "0.5rem",
+        gutter: "var(--sc-scale-0-5)",
         focusRing: {
             color: "{focus.ring.color}",
             style: "{focus.ring.style}",
@@ -37,9 +37,9 @@ import type { GalleriaDesignTokens } from '@primeuix/themes/types/galleria';
         hoverBackground: "#ffffff33"
     },
     closeButton: {
-        size: "3rem",
+        size: "var(--sc-scale-3)",
         color: "{surface.50}",
-        gutter: "0.5rem",
+        gutter: "var(--sc-scale-0-5)",
         focusRing: {
             color: "{focus.ring.color}",
             style: "{focus.ring.style}",
@@ -49,7 +49,7 @@ import type { GalleriaDesignTokens } from '@primeuix/themes/types/galleria';
         },
         background: "#ffffff1a",
         hoverColor: "{surface.0}",
-        borderRadius: "1.5rem",
+        borderRadius: "var(--sc-scale-1-5)",
         hoverBackground: "#ffffff33"
     },
     colorScheme: {
@@ -77,15 +77,15 @@ import type { GalleriaDesignTokens } from '@primeuix/themes/types/galleria';
         }
     },
     indicatorList: {
-        gap: "0.5rem",
-        padding: "1rem"
+        gap: "var(--sc-scale-0-5)",
+        padding: "var(--sc-scale-1)"
     },
     closeButtonIcon: {
-        size: "1.5rem"
+        size: "var(--sc-scale-1-5)"
     },
     indicatorButton: {
-        width: "1rem",
-        height: "1rem",
+        width: "var(--sc-scale-1)",
+        height: "var(--sc-scale-1)",
         focusRing: {
             color: "{focus.ring.color}",
             style: "{focus.ring.style}",
@@ -93,19 +93,19 @@ import type { GalleriaDesignTokens } from '@primeuix/themes/types/galleria';
             offset: "{focus.ring.offset}",
             shadow: "none"
         },
-        borderRadius: "0.5rem",
+        borderRadius: "var(--sc-scale-0-5)",
         activeBackground: "{primary.color}"
     },
     thumbnailsContent: {
-        padding: "1rem 0.25rem",
+        padding: "var(--sc-scale-1) var(--sc-scale-0-25)",
         background: "{content.background}"
     },
     insetIndicatorList: {
         background: "#00000080"
     },
     thumbnailNavButton: {
-        size: "2rem",
-        gutter: "0.5rem",
+        size: "var(--sc-scale-2)",
+        gutter: "var(--sc-scale-0-5)",
         focusRing: {
             color: "{focus.ring.color}",
             style: "{focus.ring.style}",
@@ -121,6 +121,6 @@ import type { GalleriaDesignTokens } from '@primeuix/themes/types/galleria';
         activeBackground: "#ffffffe5"
     },
     thumbnailNavButtonIcon: {
-        size: "1rem"
+        size: "var(--sc-scale-1)"
     }
 } satisfies GalleriaDesignTokens;

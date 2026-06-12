@@ -3,9 +3,9 @@ import type { DatePickerDesignTokens } from '@primeuix/themes/types/datepicker';
  export default {
     date: {
         color: "{content.color}",
-        width: "2rem",
-        height: "2rem",
-        padding: "0.25rem",
+        width: "var(--sc-scale-2)",
+        height: "var(--sc-scale-2)",
+        padding: "var(--sc-scale-0-25)",
         focusRing: {
             color: "{focus.ring.color}",
             style: "{focus.ring.style}",
@@ -14,7 +14,7 @@ import type { DatePickerDesignTokens } from '@primeuix/themes/types/datepicker';
             shadow: "none"
         },
         hoverColor: "{content.hover.color}",
-        borderRadius: "1rem",
+        borderRadius: "var(--sc-scale-1)",
         selectedColor: "{primary.contrast.color}",
         hoverBackground: "{content.hover.background}",
         rangeSelectedColor: "{highlight.color}",
@@ -25,7 +25,7 @@ import type { DatePickerDesignTokens } from '@primeuix/themes/types/datepicker';
         transitionDuration: "{form.field.transition.duration}"
     },
     year: {
-        padding: "0.375rem",
+        padding: "var(--sc-scale-0-375)",
         borderRadius: "{content.border.radius}"
     },
     group: {
@@ -33,7 +33,7 @@ import type { DatePickerDesignTokens } from '@primeuix/themes/types/datepicker';
         borderColor: "{content.border.color}"
     },
     month: {
-        padding: "0.375rem",
+        padding: "var(--sc-scale-0-375)",
         borderRadius: "{content.border.radius}"
     },
     panel: {
@@ -45,31 +45,31 @@ import type { DatePickerDesignTokens } from '@primeuix/themes/types/datepicker';
         borderRadius: "{content.border.radius}"
     },
     title: {
-        gap: "0.5rem",
+        gap: "var(--sc-scale-0-5)",
         fontWeight: "500"
     },
     header: {
         color: "{content.color}",
-        padding: "0 0 0.5rem",
+        padding: "0 0 var(--sc-scale-0-5)",
         background: "{content.background}",
         borderColor: "{content.border.color}"
     },
     dayView: {
-        margin: "0.5rem 0 0"
+        margin: "var(--sc-scale-0-5) 0 0"
     },
     weekDay: {
         color: "{content.color}",
-        padding: "0.25rem",
+        padding: "var(--sc-scale-0-25)",
         fontWeight: "500"
     },
     dropdown: {
         lg: {
-            width: "3rem"
+            width: "var(--sc-scale-3)"
         },
         sm: {
-            width: "2rem"
+            width: "var(--sc-scale-2)"
         },
-        width: "2.5rem",
+        width: "var(--sc-scale-2-5)",
         focusRing: {
             color: "{focus.ring.color}",
             style: "{focus.ring.style}",
@@ -83,29 +83,29 @@ import type { DatePickerDesignTokens } from '@primeuix/themes/types/datepicker';
         activeBorderColor: "{form.field.border.color}"
     },
     yearView: {
-        margin: "0.5rem 0 0"
+        margin: "var(--sc-scale-0-5) 0 0"
     },
     buttonbar: {
-        padding: "0.5rem 0 0",
+        padding: "var(--sc-scale-0-5) 0 0",
         borderColor: "{content.border.color}"
     },
     inputIcon: {
         color: "{form.field.icon.color}"
     },
     monthView: {
-        margin: "0.5rem 0 0"
+        margin: "var(--sc-scale-0-5) 0 0"
     },
     selectYear: {
         color: "{content.color}",
-        padding: "0.25rem 0.5rem",
+        padding: "var(--sc-scale-0-25) var(--sc-scale-0-5)",
         hoverColor: "{content.hover.color}",
         borderRadius: "{content.border.radius}",
         hoverBackground: "{content.hover.background}"
     },
     timePicker: {
-        gap: "0.5rem",
-        padding: "0.5rem 0 0",
-        buttonGap: "0.25rem",
+        gap: "var(--sc-scale-0-5)",
+        padding: "var(--sc-scale-0-5) 0 0",
+        buttonGap: "var(--sc-scale-0-25)",
         borderColor: "{content.border.color}"
     },
     colorScheme: {
@@ -140,7 +140,7 @@ import type { DatePickerDesignTokens } from '@primeuix/themes/types/datepicker';
     },
     selectMonth: {
         color: "{content.color}",
-        padding: "0.25rem 0.5rem",
+        padding: "var(--sc-scale-0-25) var(--sc-scale-0-5)",
         hoverColor: "{content.hover.color}",
         borderRadius: "{content.border.radius}",
         hoverBackground: "{content.hover.background}"
