@@ -194,6 +194,64 @@ central de css.ts) con fuentes redondas DD-13 (12/14/16 vía
 la altura md con `iconOnlyWidth = scale.2-5` del Kit. sm/lg usan
 `--sc-line-height-100/300` (18/24, emparejamiento del Kit).
 
+---
+
+## D. Setup
+
+### D1 — `provideSmartContactUi` con `darkModeSelector: '.sc-dark'`
+Decisión cerrada aplicada tal cual (el molde traía `'none'`). Un solo
+interruptor: la clase que flipa los `--sc-*` (capa 7) es la misma bajo la que
+PrimeNG emite su scheme dark.
+
+---
+
+## E. Guardarraíles
+
+### E1 — `tokens:parity` evalúa el preset REAL, no lo parsea con regex
+El parity de origen parseaba el preset monolítico con regex de llaves. Con el
+preset modular eso se rompe (valores repartidos en 85 ficheros con `{refs}`
+cruzadas). El nuevo parity **transpila los módulos TS (compilador del repo) y
+ejecuta `sc-preset/index.ts`** — incluido `normalizeDesignRem` — y resuelve
+cada slot contra capas CSS (`var(--sc-*)` → px/hex) y árbol del preset
+(`{a.b.c}`). Cruza 53 valores de sizing valor↔valor contra el export: 53/53
+en verde, y cubre más que el original (añade toggleswitch, gutter del
+tooltip, rounded del botón, paddings de overlay).
+
+### E2 — La allow-list de drift tipográfico DD-13 desaparece
+El export S76 ya trae la tipografía redonda (12/14/16): los 4 font-size que en
+origen estaban en `KNOWN_TYPO_DRIFT` (preset redondo vs export decimal) ahora
+cruzan limpios. Verificado: `form.field.sm.font.size` → 12 = token.
+
+### E3 — `dark.primary.contrast.color` pasa a divergencia consciente
+Kit dark: contraste sobre primario = zinc-900; nuestro dark es gray-900
+navy-tinted — la MISMA divergencia documentada del surface dark. Se mueve de
+enforce a la lista de divergencias (donde ya estaba surface.*).
+
+### E4 — Guard adaptado: regla nueva anti-8-point
+A las reglas duras de origen (solo el preset toca `--p-*` · componentes usan
+el alias `--sc-spacing-*`, no la primitiva · campos PrimeNG solo vía wrapper ·
+font-size solo por token) se añade la regla que cierra la convergencia de
+escala por construcción: `--sc-space-*` y `--sc-spacing-50/100/200…` (8-point)
+prohibidos en todo el repo. Excepción documentada de la regla de wrappers: la
+página `sc-demo/pages/theme` usa primitivos PrimeNG crudos a propósito (es el
+smoke del preset).
+Se añadieron además los aliases `--sc-spacing-12-5/18/25` que faltaban (pasos
+grandes del Kit sin alias semántico — completan el 1:1 escala↔alias).
+
+### E5 — e2e smoke verifica la métrica RENDERIZADA
+Playwright contra la demo: botón md computa 10.5/7/radio 6/font 14 y el form
+field 10.5/7/6 (getComputedStyle — el puente entero tokens rem → preset →
+--p-* probado en navegador), la escala resuelve (barra de `--sc-scale-1` mide
+14px) y `.sc-dark` flipa el fondo. Es la prueba de que el rem centralizado
+renderiza idéntico al px de diseño.
+
+### E6 — Gate de CI en GitHub Actions
+`.github/workflows/ci.yml`: tokens:gen + parity + guard + type-parity (stream
+Figma) · audit:theme-scale (stream preset) · lint (ESLint flat config nuevo,
+el molde no traía linter) + typecheck (tsc por proyecto) · build de los 3
+paquetes + demo · e2e smoke. `npm run verify` agrupa los checks estáticos en
+local.
+
 ### C6 — Comentarios del preset sin unidades literales
 El auditor de escala cuenta cualquier `px`/hex del fichero, comentarios
 incluidos. Los comentarios de base/extend se redactan sin `Npx` ni `#hex`

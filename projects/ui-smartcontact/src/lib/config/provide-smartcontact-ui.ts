@@ -19,7 +19,10 @@ export type ScSmartContactUiConfig = {
 
 export function provideSmartContactUi(config: ScSmartContactUiConfig = {}): EnvironmentProviders {
     const themeOptions: ScSmartContactThemeOptions = {
-        darkModeSelector: config.theme?.darkModeSelector ?? 'none',
+        // `.sc-dark` es la clase de modo oscuro del DS (capa 7 de tokens):
+        // PrimeNG emite su scheme dark bajo el mismo selector que flipa los
+        // `--sc-*`. Un solo interruptor para tokens y preset.
+        darkModeSelector: config.theme?.darkModeSelector ?? '.sc-dark',
         prefix: config.theme?.prefix ?? 'p'
     };
 

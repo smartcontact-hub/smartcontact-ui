@@ -365,6 +365,9 @@
   --sc-spacing-3: var(--sc-scale-3);
   --sc-spacing-4: var(--sc-scale-4);
   --sc-spacing-5: var(--sc-scale-5);
+  --sc-spacing-12-5: var(--sc-scale-12-5);
+  --sc-spacing-18: var(--sc-scale-18);
+  --sc-spacing-25: var(--sc-scale-25);
 
   /* ---------- Border radius (Kit Pro `aura/primitive.border.radius`) ----------
    * Kit Pro tiene escala dedicada border-radius (none/xs/sm/md/lg/xl)

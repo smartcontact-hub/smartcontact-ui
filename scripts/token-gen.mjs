@@ -19,7 +19,7 @@
  * ── REM CENTRALIZADO ──  Decisión cerrada (pre-flight §1): diseño en 14-base
  *   → conversión a rem en UN punto. Ese punto es ESTE generador: cada paso se
  *   emite como `px/16` rem (root 16) con el px de diseño en comentario:
- *       --sc-scale-1: 0.875rem; /* 14px *​/
+ *       --sc-scale-1: 0.875rem (14px de diseño)
  *   El zoom de fuente del usuario escala todo; el render por defecto es
  *   idéntico al px. Los cuantos de 0.25px de la escala 14-base dividen exacto
  *   entre 16 → sin pérdida. `--sc-radius-full` (clamp de pill) queda en px.

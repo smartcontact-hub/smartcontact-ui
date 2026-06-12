@@ -1,0 +1,40 @@
+# Gate de CI — los guardarraíles del DS en verde o el cambio no entra.
+# Dos streams (pre-flight §7): tokens/Figma (gen+parity+guard+type-parity) y
+# preset/PrimeNG (auditor de escala), más lint/typecheck/build/e2e smoke.
+name: ci
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  verify:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - name: Guardarraíles de tokens (stream Figma)
+        run: |
+          npm run tokens:gen
+          npm run tokens:parity
+          npm run tokens:guard
+          npm run tokens:type-parity
+      - name: Auditor de escala (stream preset)
+        run: npm run audit:theme-scale
+      - name: Lint + typecheck
+        run: |
+          npm run lint
+          npm run typecheck
+      - name: Build de los 3 paquetes
+        run: npm run build
+      - name: Build demo
+        run: npm run build:demo
+      - name: e2e smoke
+        run: |
+          npx playwright install --with-deps chromium
+          npm run e2e
