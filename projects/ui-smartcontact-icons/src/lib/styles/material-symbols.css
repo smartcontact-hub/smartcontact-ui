@@ -1,0 +1,43 @@
+@import '@fontsource-variable/material-symbols-rounded/full.css';
+
+.sc-icon,
+.sc-icon-font::before {
+  display: inline-block;
+  font-family: 'Material Symbols Rounded Variable';
+  font-size: 1em;
+  font-style: normal;
+  font-weight: normal;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  font-feature-settings: 'liga';
+  -webkit-font-feature-settings: 'liga';
+  -webkit-font-smoothing: antialiased;
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+.sc-icon-font {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  line-height: 1;
+}
+
+.sc-icon-font--sm {
+  font-size: var(--sc-font-size-200);
+}
+
+.sc-icon-font--md {
+  font-size: var(--sc-font-size-300);
+}
+
+.sc-icon-font--lg {
+  font-size: var(--sc-font-size-400);
+}
+
+.sc-icon-font--filled::before {
+  font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}

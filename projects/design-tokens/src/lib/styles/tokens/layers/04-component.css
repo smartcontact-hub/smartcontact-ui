@@ -1,0 +1,172 @@
+/*
+ * Layer 4 — COMPONENT
+ * ====================
+ *
+ * Per-component design specifications. Mirrors PrimeNG's `components`
+ * layer (button.root.primary.background, dialog.shadow, …) — each
+ * token belongs to a single component shape.
+ *
+ * AED pre-bakes these tokens here because the component lives outside
+ * PrimeNG's catalog (custom shells: button variants beyond PrimeNG's,
+ * the canonical modal, the bespoke toast).
+ *
+ * Components SHOULD reference these tokens directly. Dark mode (layer
+ * 6) may override individual tokens here when the dark variant has a
+ * different shape (e.g. translucent danger backgrounds).
+ */
+
+:root {
+  /* Button tokens (`--sc-btn-*`) removed S34 — `.btn` global utility was
+   * deprecated and 39 usages migrated to `<p-button>`. PrimeNG button
+   * tokens (`--p-button-*`) consume severity tokens directly via
+   * `sc-preset.ts` (primary navy, info electric-blue, warn amber). The
+   * button override in sc-preset.ts sets paddingX/paddingY/borderRadius/gap
+   * 1:1 with Figma SC PrimeUI Kit Pro (`button/padding/*`). */
+
+  /* =========================================================== */
+  /* Modal / Dialog (Smart Contact)                              */
+  /* =========================================================== */
+  /*
+   * Master shell con tres slots: header (icon + title + subtitle +
+   * close), body (free content, scrollable, stackeable), footer
+   * (action row). Sits on a tinted mask via PrimeNG's DialogModule
+   * que provee focus trap, ESC, y animación.
+   *
+   * Auditado 1:1 contra Figma `Smart Contact Prime → ❖ ConfirmDialog`
+   * (canvas 6738:50207, tokens `dialog/*` extraídos en Session 30).
+   * Note: el canvas ConfirmDialog usa los MISMOS tokens `dialog/*`
+   * que cualquier Dialog general — son el spec del shell modal,
+   * compartido entre Dialog plain y ConfirmDialog.
+   *
+   * Padding scheme (                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             ):
+   *   header   17.5 todo lado
+   *   content  17.5 lados/abajo, top 0 (header da el espacio)
+   *   footer   17.5 lados/abajo, top 0 (content da el espacio)
+   * Esto evita doble padding en las costuras header/body/footer.
+   */
+  --sc-dialog-bg: var(--sc-color-gray-0); /* Figma `dialog/background: #ffffff` */
+  --sc-dialog-border: var(
+    --sc-color-gray-200
+  ); /* Figma `dialog/border/color: #e2e8f0` (era blue-100, fix Session 30) */
+  --sc-dialog-divider: var(--sc-color-gray-200);
+  --sc-dialog-radius: var(--sc-radius-400); /* 12px — Figma `dialog/border/radius: 12` */
+  /* Double drop-shadow per Figma `dialog/shadow`:
+   *   #0000001A offset(0,8) r10 spread:-6
+   * + #0000001A offset(0,20) r25 spread:-5 */
+  --sc-dialog-shadow: 0 8px 10px -6px rgba(0, 0, 0, 0.1), 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  --sc-dialog-padding: 17.5px; /* Figma `dialog/header/padding`, `dialog/content/padding/*`, `dialog/footer/padding/*` — raw decimal */
+  --sc-dialog-header-gap: 7px; /* Figma `dialog/header/gap: 7` (icon ↔ text ↔ close) */
+  --sc-dialog-footer-gap: var(
+    --sc-spacing-0-75
+  ); /* 10.5px. Divergencia consciente del Figma (`dialog/footer/gap: 7`): con botones
+        small content-width el 7px leía apelotonado (feedback de diseño). Token limpio
+        de la escala (0.75 = 10.5). Propagar a Figma en el próximo sync del Kit. */
+  --sc-dialog-head-icon-fg: var(--sc-color-gray-500);
+  --sc-dialog-head-icon-size: 28px; /* Figma `confirmdialog/icon/size: 28` */
+  --sc-dialog-title: var(
+    --sc-color-gray-800
+  ); /* Figma `dialog/color: #334155` (slate-700) — but darker for AED */
+  --sc-dialog-title-font-size: 17.5px; /* Figma `dialog/title/font/size: 17.5` raw */
+  --sc-dialog-title-font-weight: 600; /* Figma `dialog/title/font/weight: 600` (semibold) */
+  --sc-dialog-subtitle: var(--sc-color-gray-600);
+  --sc-dialog-close-fg: var(--sc-color-gray-700);
+  --sc-dialog-close-bg-hover: var(--sc-color-gray-100);
+
+  /* Back-compat aliases (los componentes existentes referencian estos) */
+  --sc-dialog-padding-x: var(--sc-dialog-padding);
+  --sc-dialog-padding-y: var(--sc-dialog-padding);
+
+  /* =========================================================== */
+  /* Toast (Smart Contact design — Figma 1050:354)               */
+  /* =========================================================== */
+  /*
+   * Per-severity background / border / icon-square colors for the
+   * notification toast. The "icon" token paints the small rounded
+   * square that holds the severity glyph; the glyph itself is white.
+   *
+   * Title / message / close-icon colors are shared across severities.
+   */
+
+  /* ─── Toast — Figma 1:1 audit Session 30 ────────────────────────
+   * Canvas `❖ Toast` (6738:53165). Tokens extraídos por severity:
+   *   Success node 393:42318, Info 393:42354, Warn 393:42378,
+   *   Error 393:42405, Secondary 6649:34650, Contrast 6649:34661.
+   * Geometría compartida (idéntica entre severities). El border de
+   * cada severity usa el step -200 (tinted suave), NO el -500/-600
+   * (saturated) — clave para el look "frosted notification" del
+   * Figma. */
+
+  /* Shared text */
+  --sc-toast-title: var(--sc-color-gray-800);
+  --sc-toast-message: var(
+    --sc-color-gray-700
+  ); /* Figma `toast/<sev>/detail/color: #334155` (slate-700) */
+  --sc-toast-close: var(--sc-color-gray-800);
+  --sc-toast-icon-fg: var(--sc-color-gray-0); /* white glyph inside icon square */
+  --sc-toast-summary-font-size: 14px; /* Figma `toast/summary/font/size: 14` */
+  --sc-toast-summary-font-weight: 500; /* Figma `toast/summary/font/weight: 500` */
+  --sc-toast-detail-font-size: 12.25px; /* Figma `toast/detail/font/size: 12.25` (raw) */
+  --sc-toast-detail-font-weight: 500; /* Figma `toast/detail/font/weight: 500` */
+
+  /* Shared geometry — Figma values */
+  --sc-toast-width: 350px; /* Figma `toast/width: 350` (was 400) */
+  --sc-toast-radius: var(--sc-radius-200); /* 6px — Figma `toast/border/radius: 6` (was 12) */
+  --sc-toast-padding-x: 10.5px; /* Figma `toast/content/padding: 10.5` raw */
+  --sc-toast-padding-y: 10.5px;
+  --sc-toast-gap-content: 7px; /* Figma `toast/content/gap: 7` (icon ↔ body) */
+  --sc-toast-gap-text: 7px; /* Figma `toast/text/gap: 7` (summary ↔ detail) */
+  --sc-toast-gap-actions: var(
+    --sc-spacing-100
+  ); /* SC extension — gap entre body y action buttons */
+  --sc-toast-icon-size: 15.75px; /* Figma `toast/icon/size: 15.75` (was 24) */
+  --sc-toast-icon-radius: var(--sc-radius-200);
+  --sc-toast-close-button-width: 24.5px; /* Figma `toast/close/button/width: 24.5` */
+  --sc-toast-close-button-height: 24.5px;
+  --sc-toast-close-button-radius: 12.25px; /* Figma `toast/close/button/border/radius: 12.25` (= width/2 → circular) */
+  --sc-toast-close-icon-size: 14px; /* Figma `toast/close/icon/size: 14` */
+  --sc-toast-backdrop-blur: 1.5px; /* Figma `toast/blur: 1.5` — backdrop-filter frosted glass */
+  --sc-toast-shadow: 0 4px 8px 0 rgba(1, 4, 8, 0.04); /* Figma `toast/<sev>/shadow: #0X0X0X0A offset(0,4) r8` */
+
+  /* ─── Per-severity (background alpha F2 = 95% para efecto cristal) ─── */
+
+  /* Success — Figma `#f0fdf4f2` bg, `#bbf7d0` border (green-200), `#16a34a` icon (green-600) */
+  --sc-toast-success-bg: color-mix(in srgb, var(--sc-color-green-50) 95%, transparent);
+  --sc-toast-success-border: var(--sc-color-green-200);
+  --sc-toast-success-icon: var(--sc-color-green-600);
+  --sc-toast-success-icon-bg: var(--sc-color-green-500);
+
+  /* Info — Figma `#eff6fff2` bg (blue-50 95%), `#bfdbfe` border (blue-200 ≈ azure), `#2563eb` icon */
+  --sc-toast-info-bg: color-mix(in srgb, var(--sc-color-azure-50) 95%, transparent);
+  --sc-toast-info-border: var(--sc-color-azure-200);
+  --sc-toast-info-icon: var(--sc-color-azure-600);
+  --sc-toast-info-icon-bg: var(
+    --sc-color-electric-blue-500
+  ); /* SC override: icon-square uses electric-blue per brand */
+
+  /* Warn — Figma `#fefce8f2` bg (yellow-50 95%), `#fef08a` border (yellow-200), `#ca8a04` icon */
+  --sc-toast-warn-bg: color-mix(in srgb, var(--sc-color-amber-50) 95%, transparent);
+  --sc-toast-warn-border: var(--sc-color-amber-200);
+  --sc-toast-warn-icon: var(--sc-color-amber-600);
+  --sc-toast-warn-icon-bg: var(--sc-color-amber-500);
+
+  /* Error — Figma `#fef2f2f2` bg (red-50 95%), `#fecaca` border (red-200), `#dc2626` icon */
+  --sc-toast-error-bg: color-mix(in srgb, var(--sc-color-red-50) 95%, transparent);
+  --sc-toast-error-border: var(--sc-color-red-200);
+  --sc-toast-error-icon: var(--sc-color-red-600);
+  --sc-toast-error-icon-bg: var(--sc-color-red-500);
+
+  /* Secondary — Figma slate (no alpha — opaco). Mapped to PrimeNG severity="secondary". */
+  --sc-toast-secondary-bg: var(--sc-color-gray-100); /* slate-100 */
+  --sc-toast-secondary-border: var(--sc-color-gray-200); /* slate-200 */
+  --sc-toast-secondary-icon: var(--sc-color-gray-600); /* slate-600 */
+  --sc-toast-secondary-icon-bg: var(--sc-color-gray-500);
+
+  /* Violet — SC EXTENSION (NO existe en Figma). Reservado para
+   * "neutral notice" tipo "Borrador creado / renombrado" — más suave
+   * que success, más presente que info. Mapped manually via custom
+   * data-severity="violet" en el template del p-toast. */
+  --sc-toast-violet-bg: color-mix(in srgb, var(--sc-color-violet-50) 95%, transparent);
+  --sc-toast-violet-border: var(--sc-color-violet-200);
+  --sc-toast-violet-icon: var(--sc-color-violet-600);
+  --sc-toast-violet-icon-bg: var(--sc-color-violet-500);
+}

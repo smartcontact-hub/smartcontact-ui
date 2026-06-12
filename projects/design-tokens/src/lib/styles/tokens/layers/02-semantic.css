@@ -1,0 +1,245 @@
+/*
+ * Layer 2 — SEMANTIC
+ * ===================
+ *
+ * Purpose-bound aliases of layer-1 primitives. Mirrors PrimeNG's
+ * `semantic` layer (text, surface, primary, formField, etc.) — every
+ * token here resolves a "where do I use it?" question, not "what
+ * value is it?".
+ *
+ * Components SHOULD reference these tokens. Dark mode (layer 6)
+ * overrides only this layer + layer 3 (components); primitives stay
+ * constant.
+ */
+
+:root {
+  /* ---------- Text ----------
+   * Rampa alineada al Kit (S62-ext-3, parity §6): texto cuerpo = gray-700
+   * (export textColor #4f5663), secundario/muted = gray-500 (export
+   * textMutedColor #8f97a3). `subtle` (gray-400) y `disabled` (gray-300) son
+   * un nivel MÁS FINO que el Kit (que colapsa todo lo no-primario a gray-500):
+   * divergencia consciente — placeholder/disabled se ven más tenues a propósito
+   * (mejor jerarquía). Vigilado por parity §6 (enforce primary/secondary) + §7. */
+  --sc-text-primary: var(--sc-color-gray-700);
+  --sc-text-secondary: var(--sc-color-gray-500);
+  --sc-text-subtle: var(--sc-color-gray-400);
+  --sc-text-disabled: var(--sc-color-gray-300);
+  --sc-text-inverse: var(--sc-color-gray-0);
+  --sc-text-accent: var(--sc-color-soft-blue-600);
+  --sc-text-link: var(--sc-color-soft-blue-600);
+  --sc-text-success: var(--sc-color-green-600);
+  --sc-text-warning: var(--sc-color-amber-600);
+  --sc-text-danger: var(--sc-color-red-600);
+  --sc-text-info: var(--sc-text-accent);
+  --sc-text-violet: var(--sc-color-violet-700);
+  --sc-text-on-primary: var(--sc-color-gray-0);
+  --sc-text-on-secondary: var(--sc-color-gray-800);
+  --sc-text-on-accent: var(--sc-color-gray-800);
+  --sc-text-on-error: var(--sc-color-gray-0);
+  --sc-text-on-success: var(--sc-color-gray-0);
+  --sc-text-on-warning: var(--sc-color-gray-0);
+  --sc-text-on-info: var(--sc-color-gray-0);
+  --sc-text-on-violet: var(--sc-color-gray-0);
+
+  /* ---------- Background ---------- */
+  --sc-bg-default: var(--sc-color-gray-50);
+  --sc-bg-surface: var(--sc-color-gray-0);
+  /* Elevated surface (popovers, dropdowns) — currently same as surface
+   * because the light theme stays flat; the alias exists so consumers
+   * that *semantically* want "elevated" don't reach for raw `#fff`. */
+  --sc-bg-elevated: var(--sc-bg-surface);
+  --sc-bg-subtle: var(--sc-color-blue-50);
+  --sc-bg-subtle-hover: var(--sc-color-blue-100);
+  --sc-bg-subtle-active: var(--sc-color-blue-200);
+  --sc-bg-disabled: var(--sc-color-gray-200);
+  --sc-bg-overlay-transparent: #ffffff00;
+
+  /* Generic hover / selected aliases — consumed by row-style components
+   * (tables, lists, menu items) where the per-context semantic is
+   * unimportant. Aliased to the secondary/primary-subtle layer. */
+  --sc-bg-hover: var(--sc-bg-secondary-hover);
+  --sc-bg-selected: var(--sc-bg-primary-subtle);
+  --sc-row-hover-bg: var(--sc-bg-secondary-hover);
+
+  /* Primary (brand) — rampa 1:1 con el Kit (export.semanticColorScheme.light:
+   * primaryColor #1b273d=blue-700, primaryHoverColor #243452=blue-600,
+   * primaryActiveColor #131b2b=blue-800). El hover ACLARA el navy (no lo
+   * oscurece) — intención de marca del Kit. Vigilado por tokens:parity §6. */
+  --sc-bg-primary: var(--sc-color-blue-700);
+  --sc-bg-primary-hover: var(--sc-color-blue-600);
+  --sc-bg-primary-active: var(--sc-color-blue-800);
+  --sc-bg-primary-subtle: var(--sc-color-blue-50);
+  --sc-bg-primary-subtle-hover: var(--sc-color-blue-100);
+  --sc-bg-primary-subtle-active: var(--sc-color-blue-200);
+
+  /* Secondary (gray) */
+  --sc-bg-secondary: var(--sc-color-gray-600);
+  --sc-bg-secondary-hover: var(--sc-color-gray-100);
+  --sc-bg-secondary-active: var(--sc-color-gray-200);
+  --sc-bg-secondary-subtle: var(--sc-color-gray-50);
+
+  /* Accent (cyan) */
+  --sc-bg-accent: var(--sc-color-soft-blue-500);
+  --sc-bg-accent-hover: var(--sc-color-soft-blue-600);
+  --sc-bg-accent-active: var(--sc-color-soft-blue-700);
+
+  /* Status */
+  --sc-bg-success: var(--sc-color-green-600);
+  --sc-bg-success-subtle: var(--sc-color-green-50);
+  --sc-bg-warning: var(--sc-color-amber-500);
+  --sc-bg-warning-subtle: var(--sc-color-amber-50);
+  --sc-bg-danger: var(--sc-color-red-600);
+  --sc-bg-danger-hover: var(--sc-color-red-700);
+  --sc-bg-danger-active: var(--sc-color-red-800);
+  --sc-bg-danger-subtle: var(--sc-color-red-50);
+  --sc-bg-danger-subtle-hover: var(--sc-color-red-100);
+  --sc-bg-danger-subtle-active: var(--sc-color-red-200);
+
+  /* Info (electric blue) */
+  --sc-bg-info: var(--sc-color-electric-blue-500);
+  --sc-bg-info-hover: var(--sc-color-electric-blue-600);
+  --sc-bg-info-active: var(--sc-color-electric-blue-700);
+  --sc-bg-info-subtle: var(--sc-color-electric-blue-50);
+
+  /* Violet */
+  --sc-bg-violet: var(--sc-color-violet-500);
+  --sc-bg-violet-hover: var(--sc-color-violet-600);
+  --sc-bg-violet-active: var(--sc-color-violet-700);
+  --sc-bg-violet-subtle: var(--sc-color-violet-50);
+  --sc-bg-violet-subtle-hover: var(--sc-color-violet-100);
+  --sc-bg-violet-subtle-active: var(--sc-color-violet-200);
+
+  /* ---------- Border ----------
+   * gray-200 = export contentBorderColor / overlay*BorderColor (#dadfe6) → 1:1.
+   * (El Kit usa gray-300 SOLO para el borde de form-field; nuestro form-field
+   * usa este mismo gray-200, un punto más claro = chrome más aireado, divergencia
+   * consciente. Alinear el borde de input a gray-300 pediría un token dedicado
+   * `--sc-border-input` — follow-up, no romper el borde de content/overlay.) */
+  --sc-border-default: var(--sc-color-gray-200);
+  --sc-border-strong: var(--sc-color-gray-400);
+  --sc-border-subtle: var(--sc-color-gray-100);
+  --sc-border-disabled: var(--sc-color-gray-100);
+
+  /* El borde primary acompaña a la rampa de fondo (mismo paso) para que el
+   * contorno del botón/outline siga al fill. Tracking de --sc-bg-primary-*. */
+  --sc-border-primary: var(--sc-color-blue-700);
+  --sc-border-primary-hover: var(--sc-color-blue-600);
+  --sc-border-primary-active: var(--sc-color-blue-800);
+
+  --sc-border-secondary: var(--sc-color-blue-200);
+  --sc-border-secondary-hover: var(--sc-color-blue-300);
+  --sc-border-secondary-active: var(--sc-color-blue-400);
+
+  --sc-border-accent: var(--sc-color-soft-blue-500);
+  --sc-border-accent-hover: var(--sc-color-soft-blue-600);
+  --sc-border-accent-active: var(--sc-color-soft-blue-700);
+
+  --sc-border-success: var(--sc-color-green-600);
+  --sc-border-success-subtle: var(--sc-color-green-200);
+  --sc-border-warning: var(--sc-color-amber-500);
+  --sc-border-warning-subtle: var(--sc-color-amber-200);
+  --sc-border-error: var(--sc-color-red-400);
+  /* Focus-ring border — electric-blue-500 (vibrante saturado). Decisión
+   * consciente DIVERGENTE del JSON PrimeOne (que propone navy primary
+   * #1b273d): el navy oscuro reduce contraste con el border primary del
+   * input enfocado, degradando a11y. Documentado en
+   * `docs/customs-catalog.md §1.1`. Antes apuntaba a `soft-blue-500`
+   * (drift interno con `sc-preset.ts.focusRing.color = electric-blue-500`);
+   * unificado S54 a electric-blue para single source of truth. */
+  --sc-border-focus: var(--sc-color-electric-blue-500);
+  --sc-border-danger: var(--sc-color-red-600);
+  --sc-border-danger-hover: var(--sc-color-red-700);
+  --sc-border-danger-active: var(--sc-color-red-800);
+
+  --sc-border-info: var(--sc-color-electric-blue-500);
+  --sc-border-info-subtle: var(--sc-color-electric-blue-200);
+  --sc-border-violet: var(--sc-color-violet-500);
+  --sc-border-violet-subtle: var(--sc-color-violet-200);
+
+  /* ---------- Icon ---------- */
+  --sc-icon-primary: var(--sc-color-gray-800);
+  --sc-icon-secondary: var(--sc-color-gray-600);
+  --sc-icon-subtle: var(--sc-color-gray-400);
+  --sc-icon-inverse: var(--sc-color-gray-0);
+  --sc-icon-disabled: var(--sc-color-gray-300);
+  --sc-icon-link: var(--sc-color-soft-blue-600);
+
+  --sc-icon-accent: var(--sc-color-soft-blue-600);
+  --sc-icon-success: var(--sc-color-green-600);
+  --sc-icon-warning: var(--sc-color-amber-600);
+  --sc-icon-error: var(--sc-color-red-600);
+  --sc-icon-info: var(--sc-icon-accent);
+  --sc-icon-violet: var(--sc-color-violet-500);
+
+  --sc-icon-on-primary: var(--sc-color-gray-0);
+  --sc-icon-on-secondary: var(--sc-color-gray-800);
+  --sc-icon-on-accent: var(--sc-color-soft-blue-800);
+  --sc-icon-on-danger: var(--sc-color-gray-0);
+  --sc-icon-on-success: var(--sc-color-gray-0);
+  --sc-icon-on-warning: var(--sc-color-gray-800);
+  --sc-icon-on-info: var(--sc-icon-on-accent);
+  --sc-icon-on-violet: var(--sc-color-violet-50);
+
+  /* ---------- Typography roles ---------- */
+  /*
+   * Each role bundles three tokens (size, line-height, weight). Roles
+   * `display-1` through `body-3` use the primary family (Inter);
+   * `caption` and `caption-bold` use the secondary family (Open Sans).
+   * Values track the Smart Contact Figma spec (DD#36).
+   */
+
+  /* Sizes */
+  --sc-font-size-display-1: var(--sc-font-size-700);
+  --sc-font-size-h1: var(--sc-font-size-650);
+  --sc-font-size-h2: var(--sc-font-size-500);
+  --sc-font-size-h3: var(--sc-font-size-450);
+  --sc-font-size-h4: var(--sc-font-size-400);
+  --sc-font-size-subtitle-1: var(--sc-font-size-300);
+  --sc-font-size-subtitle-2: var(--sc-font-size-200);
+  --sc-font-size-body-1: var(--sc-font-size-300);
+  --sc-font-size-body-2: var(--sc-font-size-200);
+  --sc-font-size-body-3: var(--sc-font-size-200);
+  --sc-font-size-caption: var(--sc-font-size-100);
+  --sc-font-size-caption-bold: var(--sc-font-size-100);
+
+  /* Line heights */
+  --sc-line-height-display-1: var(--sc-line-height-700);
+  --sc-line-height-h1: var(--sc-line-height-650);
+  --sc-line-height-h2: var(--sc-line-height-500);
+  --sc-line-height-h3: var(--sc-line-height-450);
+  --sc-line-height-h4: var(--sc-line-height-400);
+  --sc-line-height-subtitle-1: var(--sc-line-height-300);
+  --sc-line-height-subtitle-2: var(--sc-line-height-220);
+  --sc-line-height-body-1: var(--sc-line-height-300);
+  --sc-line-height-body-2: var(--sc-line-height-220);
+  --sc-line-height-body-3: var(--sc-line-height-220);
+  --sc-line-height-caption: var(--sc-line-height-100);
+
+  /* Weights */
+  --sc-font-weight-display-1: var(--sc-font-weight-regular);
+  --sc-font-weight-h1: var(--sc-font-weight-semibold);
+  --sc-font-weight-h2: var(--sc-font-weight-semibold);
+  --sc-font-weight-h3: var(--sc-font-weight-semibold);
+  --sc-font-weight-h4: var(--sc-font-weight-semibold);
+  --sc-font-weight-subtitle-1: var(--sc-font-weight-semibold);
+  --sc-font-weight-subtitle-2: var(--sc-font-weight-semibold);
+  --sc-font-weight-body-1: var(--sc-font-weight-regular);
+  --sc-font-weight-body-2: var(--sc-font-weight-regular);
+  --sc-font-weight-body-3: var(--sc-font-weight-semibold);
+  --sc-font-weight-caption: var(--sc-font-weight-regular);
+  --sc-font-weight-caption-bold: var(--sc-font-weight-semibold);
+
+  /* Family selector — primary for everything except captions. */
+  --sc-font-family-display-1: var(--sc-font-family-primary);
+  --sc-font-family-h1: var(--sc-font-family-primary);
+  --sc-font-family-h2: var(--sc-font-family-primary);
+  --sc-font-family-h3: var(--sc-font-family-primary);
+  --sc-font-family-h4: var(--sc-font-family-primary);
+  --sc-font-family-subtitle-1: var(--sc-font-family-primary);
+  --sc-font-family-subtitle-2: var(--sc-font-family-primary);
+  --sc-font-family-body-1: var(--sc-font-family-primary);
+  --sc-font-family-body-2: var(--sc-font-family-primary);
+  --sc-font-family-body-3: var(--sc-font-family-primary);
+  --sc-font-family-caption: var(--sc-font-family-secondary);
+  --sc-font-family-caption-bold: var(--sc-font-family-secondary);
+}

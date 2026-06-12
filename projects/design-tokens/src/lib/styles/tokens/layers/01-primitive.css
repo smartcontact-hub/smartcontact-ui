@@ -1,0 +1,403 @@
+/*
+ * Layer 1 — PRIMITIVE
+ * ====================
+ *
+ * Raw values. No semantic meaning. Mirrors PrimeNG's `primitive` layer
+ * (color scales, font, spacing, radius) and the keys map 1:1 to the
+ * design-tokens.json primitives.
+ *
+ * Components MUST NOT reference these directly — go through a semantic
+ * alias in layer 2. The only exception is rare cases where a primitive
+ * IS the right semantic (e.g. `--sc-color-gray-0` == white background
+ * for an inverted surface).
+ */
+
+:root {
+  /* ---------- Color · Blue (primary brand) ---------- */
+  --sc-color-blue-50: #edf0f5;
+  --sc-color-blue-100: #d2d9e3;
+  --sc-color-blue-200: #a6b4c7;
+  --sc-color-blue-300: #798eab;
+  --sc-color-blue-400: #4d6990;
+  --sc-color-blue-500: #344a70;
+  --sc-color-blue-600: #243452;
+  --sc-color-blue-700: #1b273d;
+  --sc-color-blue-800: #131b2b;
+  --sc-color-blue-900: #0b1019;
+  --sc-color-blue-950: #05080d;
+
+  /* ---------- Color · Soft Blue (accent) ---------- */
+  --sc-color-soft-blue-50: #effbfc;
+  --sc-color-soft-blue-100: #d2f4f8;
+  --sc-color-soft-blue-200: #a6e9f2;
+  --sc-color-soft-blue-300: #7edfeb;
+  --sc-color-soft-blue-400: #6bd9e9;
+  --sc-color-soft-blue-500: #5ad3e6;
+  --sc-color-soft-blue-600: #48b8c9;
+  --sc-color-soft-blue-700: #328a99;
+  --sc-color-soft-blue-800: #246b78;
+  --sc-color-soft-blue-900: #1a4d57;
+  --sc-color-soft-blue-950: #0d262b;
+
+  /* ---------- Color · Gray (neutrals) ----------
+   * Mirrors PrimeOne 4.0 `slate` 1:1 (Smart Contact Prime UI Kit Pro,
+   * tokensprime.json `primitive.slate*` S54). Tono más cálido/azulado
+   * que Tailwind slate (que era la ramp anterior). Aligned para cerrar
+   * drift con Figma Variables oficiales.
+   * `gray-0` stays at pure white (used as inverted surface). */
+  --sc-color-gray-0: #ffffff;
+  --sc-color-gray-50: #f7f8fa;
+  --sc-color-gray-100: #eceff3;
+  --sc-color-gray-200: #dadfe6;
+  --sc-color-gray-300: #c6ccd6;
+  --sc-color-gray-400: #aeb6c2;
+  --sc-color-gray-500: #8f97a3;
+  --sc-color-gray-600: #6f7784;
+  --sc-color-gray-700: #4f5663;
+  --sc-color-gray-800: #2f3642;
+  --sc-color-gray-900: #181d26;
+  --sc-color-gray-950: #0b0f14;
+
+  /* ---------- Color · Green (success) ---------- */
+  --sc-color-green-50: #f0fdf4;
+  --sc-color-green-100: #dcfce7;
+  --sc-color-green-200: #bbf7d0;
+  --sc-color-green-300: #86efac;
+  --sc-color-green-400: #4ade80;
+  --sc-color-green-500: #22c55e;
+  --sc-color-green-600: #16a34a;
+  --sc-color-green-700: #15803d;
+  --sc-color-green-800: #166534;
+  --sc-color-green-900: #14532d;
+  --sc-color-green-950: #0a2916;
+
+  /* ---------- Color · Amber (warning) ---------- */
+  /* Values mirror Aura's `amber` scale exactly. Previously named
+   * `yellow` in AED until Bucket C aligned naming with Aura/Figma. */
+  --sc-color-amber-50: #fffbeb;
+  --sc-color-amber-100: #fef3c7;
+  --sc-color-amber-200: #fde68a;
+  --sc-color-amber-300: #fcd34d;
+  --sc-color-amber-400: #fbbf24;
+  --sc-color-amber-500: #f59e0b;
+  --sc-color-amber-600: #d97706;
+  --sc-color-amber-700: #b45309;
+  --sc-color-amber-800: #92400e;
+  --sc-color-amber-900: #78350f;
+  --sc-color-amber-950: #451a03;
+
+  /* ---------- Color · Red (danger) ---------- */
+  --sc-color-red-50: #fef2f2;
+  --sc-color-red-100: #fee2e2;
+  --sc-color-red-200: #fecaca;
+  --sc-color-red-300: #fca5a5;
+  --sc-color-red-400: #f87171;
+  --sc-color-red-500: #ef4444;
+  --sc-color-red-600: #dc2626;
+  --sc-color-red-700: #b91c1c;
+  --sc-color-red-800: #991b1b;
+  --sc-color-red-900: #7f1d1d;
+  --sc-color-red-950: #450a0a;
+
+  /* ---------- Color · Electric Blue (info) ---------- */
+  --sc-color-electric-blue-50: #eef4ff;
+  --sc-color-electric-blue-100: #d5e6ff;
+  --sc-color-electric-blue-200: #abceff;
+  --sc-color-electric-blue-300: #7db3ff;
+  --sc-color-electric-blue-400: #4a8fff;
+  --sc-color-electric-blue-500: #1464fe;
+  --sc-color-electric-blue-600: #0d4fd4;
+  --sc-color-electric-blue-700: #0a3ba0;
+  --sc-color-electric-blue-800: #07296e;
+  --sc-color-electric-blue-900: #041840;
+  --sc-color-electric-blue-950: #020c21;
+
+  /* ---------- Color · Violet ----------
+   * Mirrors PrimeOne 4.0 `violet` 1:1 (= Tailwind violet). Antes era
+   * una ramp custom saturada SC (#8a1fe6 base). Aligned S54 con Smart
+   * Contact Prime UI Kit Pro tokens. */
+  --sc-color-violet-50: #f5f3ff;
+  --sc-color-violet-100: #ede9fe;
+  --sc-color-violet-200: #ddd6fe;
+  --sc-color-violet-300: #c4b5fd;
+  --sc-color-violet-400: #a78bfa;
+  --sc-color-violet-500: #8b5cf6;
+  --sc-color-violet-600: #7c3aed;
+  --sc-color-violet-700: #6d28d9;
+  --sc-color-violet-800: #5b21b6;
+  --sc-color-violet-900: #4c1d95;
+  --sc-color-violet-950: #2e1065;
+
+  /* ---------- Color · Orange (label palette) ---------- */
+  /* Values mirror Aura's `orange` scale exactly. Used by the label
+   * palette in layer 3 (`--sc-label-orange-*`). */
+  --sc-color-orange-50: #fff7ed;
+  --sc-color-orange-100: #ffedd5;
+  --sc-color-orange-200: #fed7aa;
+  --sc-color-orange-300: #fdba74;
+  --sc-color-orange-400: #fb923c;
+  --sc-color-orange-500: #f97316;
+  --sc-color-orange-600: #ea580c;
+  --sc-color-orange-700: #c2410c;
+  --sc-color-orange-800: #9a3412;
+  --sc-color-orange-900: #7c2d12;
+  --sc-color-orange-950: #431407;
+
+  /* ---------- Color · Teal (label palette) ---------- */
+  /* Mirrors Aura's `teal` scale. Used by `--sc-label-teal-*`. */
+  --sc-color-teal-50: #f0fdfa;
+  --sc-color-teal-100: #ccfbf1;
+  --sc-color-teal-200: #99f6e4;
+  --sc-color-teal-300: #5eead4;
+  --sc-color-teal-400: #2dd4bf;
+  --sc-color-teal-500: #14b8a6;
+  --sc-color-teal-600: #0d9488;
+  --sc-color-teal-700: #0f766e;
+  --sc-color-teal-800: #115e59;
+  --sc-color-teal-900: #134e4a;
+  --sc-color-teal-950: #042f2e;
+
+  /* ---------- Color · Purple (label palette) ---------- */
+  /* Mirrors Aura's `purple` scale. Used by `--sc-label-purple-*`.
+   * Distinct from `--sc-color-violet-*` (AED's custom violet ramp). */
+  --sc-color-purple-50: #faf5ff;
+  --sc-color-purple-100: #f3e8ff;
+  --sc-color-purple-200: #e9d5ff;
+  --sc-color-purple-300: #d8b4fe;
+  --sc-color-purple-400: #c084fc;
+  --sc-color-purple-500: #a855f7;
+  --sc-color-purple-600: #9333ea;
+  --sc-color-purple-700: #7e22ce;
+  --sc-color-purple-800: #6b21a8;
+  --sc-color-purple-900: #581c87;
+  --sc-color-purple-950: #3b0764;
+
+  /* ---------- Color · Emerald (label palette) ---------- */
+  /* Mirrors Aura's `emerald` scale. Used by `--sc-label-green-*`,
+   * which needs a brighter "fresh green" distinct from AED's
+   * brand-semantic green (`--sc-color-green-*` = Aura `green`). */
+  --sc-color-emerald-50: #ecfdf5;
+  --sc-color-emerald-100: #d1fae5;
+  --sc-color-emerald-200: #a7f3d0;
+  --sc-color-emerald-300: #6ee7b7;
+  --sc-color-emerald-400: #34d399;
+  --sc-color-emerald-500: #10b981;
+  --sc-color-emerald-600: #059669;
+  --sc-color-emerald-700: #047857;
+  --sc-color-emerald-800: #065f46;
+  --sc-color-emerald-900: #064e3b;
+  --sc-color-emerald-950: #022c22;
+
+  /* ---------- Color · Azure (label palette) ---------- */
+  /* Mirrors Aura's `blue` scale (Tailwind blue, saturated sky-blue).
+   * Named `azure` to avoid collision with AED's `--sc-color-blue-*`
+   * which is the custom brand navy. Used by `--sc-label-blue-*`,
+   * which needs a bright sky-blue distinct from brand identity. */
+  --sc-color-azure-50: #eff6ff;
+  --sc-color-azure-100: #dbeafe;
+  --sc-color-azure-200: #bfdbfe;
+  --sc-color-azure-300: #93c5fd;
+  --sc-color-azure-400: #60a5fa;
+  --sc-color-azure-500: #3b82f6;
+  --sc-color-azure-600: #2563eb;
+  --sc-color-azure-700: #1d4ed8;
+  --sc-color-azure-800: #1e40af;
+  --sc-color-azure-900: #1e3a8a;
+  --sc-color-azure-950: #172554;
+
+  /* ---------- Typography ---------- */
+  --sc-font-family-primary: 'Inter', system-ui, -apple-system, sans-serif;
+  --sc-font-family-secondary: 'Open Sans', sans-serif;
+  /* Monospace stack — usado por time labels del player (multi-rec + single
+   * audio bar) y por el gate input "CONFIRMAR" del retranscription modal.
+   * Cocinado S46 al detectar que múltiples consumers ya lo usaban como
+   * fallback hardcoded. No mapea a fuente custom — system mono stack. */
+  --sc-font-family-mono: ui-monospace, 'SF Mono', 'Menlo', 'Consolas', 'Liberation Mono', monospace;
+
+  /* Font-size — DD-13: rampa redonda en rem (root 16), DESACOPLADA de
+   * `--sc-scale`. Espejo de los primitivos `typography/font/size` del Kit
+   * (8 tamaños canónicos: 12·14·16·18·20·24·32·48). Naming step SCDS
+   * preservado (public API). Steps fuera del set canónico → snapeados al
+   * más cercano; colapsar los redundantes = limpieza posterior (fuera fase). */
+  --sc-font-size-50: calc(12 / 16 * 1rem); /* 12 (era 10.5 → sube a 12) */
+  --sc-font-size-75: calc(12 / 16 * 1rem); /* 12 (snap → -100) */
+  --sc-font-size-100: calc(12 / 16 * 1rem); /* 12 */
+  --sc-font-size-200: calc(14 / 16 * 1rem); /* 14 */
+  --sc-font-size-300: calc(16 / 16 * 1rem); /* 16 */
+  --sc-font-size-400: calc(18 / 16 * 1rem); /* 18 */
+  --sc-font-size-450: calc(20 / 16 * 1rem); /* 20 (era 21) */
+  --sc-font-size-500: calc(24 / 16 * 1rem); /* 24 */
+  --sc-font-size-600: calc(24 / 16 * 1rem); /* 24 (snap 28) */
+  --sc-font-size-650: calc(32 / 16 * 1rem); /* 32 */
+  --sc-font-size-700: calc(32 / 16 * 1rem); /* 32 (snap 36) */
+  --sc-font-size-800: calc(48 / 16 * 1rem); /* 48 (era 56) */
+  --sc-font-size-900: calc(48 / 16 * 1rem); /* 48 (snap 64; era 70) */
+
+  /* Line-height — DD-13: redondo en rem, DESACOPLADO de `--sc-scale`.
+   * Espejo de `typography/line/height` del Kit (18·20·24·28·36·40·58) +
+   * emparejamiento font↔LH de los text styles. Naming step preservado. */
+  --sc-line-height-50: calc(18 / 16 * 1rem); /* 18 */
+  --sc-line-height-100: calc(18 / 16 * 1rem); /* 18 (caption 12) */
+  --sc-line-height-200: calc(20 / 16 * 1rem); /* 20 (body 14) */
+  --sc-line-height-220: calc(20 / 16 * 1rem); /* 20 (body-2/3) */
+  --sc-line-height-300: calc(24 / 16 * 1rem); /* 24 (body-1 16) */
+  --sc-line-height-400: calc(24 / 16 * 1rem); /* 24 (h4 18) */
+  --sc-line-height-450: calc(28 / 16 * 1rem); /* 28 (h3 20) */
+  --sc-line-height-500: calc(36 / 16 * 1rem); /* 36 (h2 24) */
+  --sc-line-height-600: calc(36 / 16 * 1rem); /* 36 */
+  --sc-line-height-650: calc(40 / 16 * 1rem); /* 40 (h1 32) */
+  --sc-line-height-700: calc(40 / 16 * 1rem); /* 40 */
+  --sc-line-height-800: calc(58 / 16 * 1rem); /* 58 (display-1 48) */
+  --sc-line-height-900: calc(58 / 16 * 1rem); /* 58 */
+
+  /* Font weights */
+  --sc-font-weight-regular: 400;
+  --sc-font-weight-medium: 500;
+  --sc-font-weight-semibold: 600;
+  --sc-font-weight-bold: 700;
+
+  /* ---------- Scale (Kit Pro `aura/primitive.scale`) ----------
+   * Escala PRIMITIVE ÚNICA base 14 (PrimeOne 4.0). Naming 1:1 con Figma
+   * SC Prime UI Kit Pro Variables — sufijo = multiplicador exacto. Esta
+   * escala es la fuente de verdad para spacing/padding/gap/font-size/
+   * line-height/icon-size: en Kit Pro TODO valor numérico referencia
+   * `scale.*` (verificado en design-tokens.json — `font.size`, `padding.x`,
+   * `icon.size`, etc. apuntan a `{scale.X}`).
+   *
+   * Las categorías semánticas (`--sc-spacing-*`, `--sc-font-size-*`,
+   * `--sc-line-height-*`, `--sc-icon-size-*`) viven en 02-semantic.css
+   * como ALIASES de estos primitives. Cero divergencia naming SCDS ↔
+   * Kit Pro JSON.
+   *
+   * Migración S57 (final): `--sc-spacing-*` → primitive `--sc-scale-*`
+   * + aliases derivados. Refactor estructural Kit Pro 1:1 estructural
+   * + naming.
+   *
+   * Mapping completo verificado contra captura Figma SC Prime UI Kit
+   * Pro Variables (34 entries: 24 positivos + 10 negativos):
+   */
+  /* @sc-gen:scale — bloque GENERADO desde tokensprime.json por `npm run tokens:import`.
+   * NO editar a mano (el generador lo pisa). Tras editar, la cascada (--sc-spacing/font-size/
+   * line-height + componentes + preset PrimeNG) propaga sola. Ver tokens/README §"The scale". */
+  --sc-scale-0: 0;
+
+  /* Positivos */
+  --sc-scale-0-125: 1.75px;
+  --sc-scale-0-25: 3.5px;
+  --sc-scale-0-375: 5.25px;
+  --sc-scale-0-5: 7px;
+  --sc-scale-0-625: 8.75px;
+  --sc-scale-0-75: 10.5px;
+  --sc-scale-0-875: 12.25px;
+  --sc-scale-1: 14px;
+  --sc-scale-1-125: 15.75px;
+  --sc-scale-1-143: 16px;
+  --sc-scale-1-25: 17.5px;
+  --sc-scale-1-5: 21px;
+  --sc-scale-1-625: 22.75px;
+  --sc-scale-1-75: 24.5px;
+  --sc-scale-2: 28px;
+  --sc-scale-2-25: 31.5px;
+  --sc-scale-2-5: 35px;
+  --sc-scale-2-75: 38.5px;
+  --sc-scale-3: 42px;
+  --sc-scale-4: 56px;
+  --sc-scale-5: 70px;
+  --sc-scale-12-5: 175px;
+  --sc-scale-18: 252px;
+  --sc-scale-25: 350px;
+
+  /* Negativos (margins negativos, transform offsets) */
+  --sc-scale-neg-0-25: -3.5px;
+  --sc-scale-neg-0-375: -5.25px;
+  --sc-scale-neg-0-5: -7px;
+  --sc-scale-neg-0-625: -8.75px;
+  --sc-scale-neg-0-75: -10.5px;
+  --sc-scale-neg-0-875: -12.25px;
+  --sc-scale-neg-1: -14px;
+  --sc-scale-neg-1-125: -15.75px;
+  --sc-scale-neg-1-25: -17.5px;
+  --sc-scale-neg-1-5: -21px;
+  /* @sc-gen:scale:end */
+
+  /* ---------- Spacing (semantic alias de scale) ----------
+   * API public preservada. `--sc-spacing-X` = `var(--sc-scale-X)`.
+   * Cero sweep cross-app necesario tras refactor S57 estructural — los
+   * 1127 hits existentes siguen resolviendo al mismo valor px. */
+  --sc-spacing-0: var(--sc-scale-0);
+  --sc-spacing-0-125: var(--sc-scale-0-125);
+  --sc-spacing-0-25: var(--sc-scale-0-25);
+  --sc-spacing-0-375: var(--sc-scale-0-375);
+  --sc-spacing-0-5: var(--sc-scale-0-5);
+  --sc-spacing-0-625: var(--sc-scale-0-625);
+  --sc-spacing-0-75: var(--sc-scale-0-75);
+  --sc-spacing-0-875: var(--sc-scale-0-875);
+  --sc-spacing-1: var(--sc-scale-1);
+  --sc-spacing-1-125: var(--sc-scale-1-125);
+  --sc-spacing-1-143: var(--sc-scale-1-143);
+  --sc-spacing-1-25: var(--sc-scale-1-25);
+  --sc-spacing-1-5: var(--sc-scale-1-5);
+  --sc-spacing-1-625: var(--sc-scale-1-625);
+  --sc-spacing-1-75: var(--sc-scale-1-75);
+  --sc-spacing-2: var(--sc-scale-2);
+  --sc-spacing-2-25: var(--sc-scale-2-25);
+  --sc-spacing-2-5: var(--sc-scale-2-5);
+  --sc-spacing-2-75: var(--sc-scale-2-75);
+  --sc-spacing-3: var(--sc-scale-3);
+  --sc-spacing-4: var(--sc-scale-4);
+  --sc-spacing-5: var(--sc-scale-5);
+
+  /* ---------- Border radius (Kit Pro `aura/primitive.border.radius`) ----------
+   * Kit Pro tiene escala dedicada border-radius (none/xs/sm/md/lg/xl)
+   * INDEPENDIENTE de `scale.*`. Valores: 0/2/4/6/8/12. SCDS naming Kit
+   * Pro 1:1 + aliases legacy preservar API. `--sc-radius-2xl` (16px) y
+   * `--sc-radius-full` (9999px) son custom SC sin equivalente Kit Pro. */
+  /* @sc-gen:radius — bloque GENERADO desde tokensprime.json (primitive.borderRadius*)
+   * por `npm run tokens:import`. NO editar a mano (el generador lo pisa).
+   * none/xs/sm/md/lg/xl = export 1:1; 2xl/full = customs SC documentados. */
+  --sc-radius-none: 0;
+  --sc-radius-xs: 2px;
+  --sc-radius-sm: 4px;
+  --sc-radius-md: 6px;
+  --sc-radius-lg: 8px;
+  --sc-radius-xl: 12px;
+
+  /* Custom SC (no en Kit Pro Variables) */
+  --sc-radius-2xl: 16px;
+  --sc-radius-full: 9999px;
+  /* @sc-gen:radius:end */
+
+  /* Aliases legacy numéricos (preservar API public — cero sweep) */
+  --sc-radius-0: var(--sc-radius-none);
+  --sc-radius-50: var(--sc-radius-xs);
+  --sc-radius-100: var(--sc-radius-sm);
+  --sc-radius-200: var(--sc-radius-md);
+  --sc-radius-300: var(--sc-radius-lg);
+  --sc-radius-400: var(--sc-radius-xl);
+  --sc-radius-500: var(--sc-radius-2xl);
+
+  /* ---------- Icon size — DD-13: redondo en rem, en el stream de tipo ----------
+   * Decoplado de `--sc-scale` para no descolgarse de la font redonda (un
+   * icono junto a texto 16 = 16, no 15.75). Sin contrapartida en Figma
+   * (divergencia SC — ver customs-catalog). Naming preservado.
+   *
+   * Para Lucide-angular sigue funcionando `[size]="14"` literal (Lucide
+   * acepta number, no CSS var) — estos tokens son para SCSS donde algo
+   * escala via `width:`. */
+  --sc-icon-size-xs: calc(8 / 16 * 1rem); /* 8 (era 7) */
+  --sc-icon-size-sm: calc(10 / 16 * 1rem); /* 10 (era 10.5) */
+  --sc-icon-size-md: calc(12 / 16 * 1rem); /* 12 */
+  --sc-icon-size: calc(14 / 16 * 1rem); /* 14 */
+  --sc-icon-size-default: calc(14 / 16 * 1rem); /* 14 */
+  --sc-icon-size-lg: calc(16 / 16 * 1rem); /* 16 (era 15.75) */
+  --sc-icon-size-xl: calc(18 / 16 * 1rem); /* 18 (era 17.5) */
+  --sc-icon-size-2xl: calc(20 / 16 * 1rem); /* 20 (era 21) */
+  --sc-icon-size-3xl: calc(28 / 16 * 1rem); /* 28 */
+
+  /* ---------- Focus ring ----------
+   * PrimeOne 4.0 semanticCommon `focusRingWidth: 1`, `focusRingOffset: 2`.
+   * El color sigue siendo `--sc-border-focus` (semantic layer 2 →
+   * soft-blue-500 SC brand). */
+  --sc-focus-ring-width: 1px;
+  --sc-focus-ring-offset: 2px;
+}

@@ -1,0 +1,14 @@
+<header class="demo-header">
+  <span class="demo-header__brand">Smart Contact UI</span>
+  <nav class="demo-header__nav">
+    <a routerLink="/foundations" routerLinkActive="is-active">Fundaciones</a>
+    <a routerLink="/theme" routerLinkActive="is-active">Tema PrimeNG</a>
+  </nav>
+  <button type="button" class="demo-header__dark-toggle" (click)="toggleDark()">
+    Claro / oscuro
+  </button>
+</header>
+
+<main class="demo-main">
+  <router-outlet />
+</main>

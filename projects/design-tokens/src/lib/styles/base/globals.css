@@ -1,0 +1,5 @@
+:root {
+    font-family: var(--sc-font-family-primary);
+    color: var(--sc-text-primary);
+    background-color: var(--sc-bg-default);
+}

@@ -1,0 +1,22 @@
+@import '../../design-tokens/src/lib/styles/index.css';
+@import '../../ui-smartcontact-icons/src/lib/styles/index.css';
+
+html,
+body {
+  margin: 0;
+  padding: 0;
+  min-height: 100%;
+}
+
+html {
+  font-size: 100%;
+}
+
+body {
+  background: var(--sc-bg-default);
+  color: var(--sc-text-primary);
+  font-family: var(--sc-font-family-primary);
+  font-size: var(--sc-font-size-200);
+  line-height: var(--sc-line-height-200);
+  font-weight: var(--sc-font-weight-regular);
+}

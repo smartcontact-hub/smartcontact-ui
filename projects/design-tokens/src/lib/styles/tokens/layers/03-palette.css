@@ -1,0 +1,93 @@
+/*
+ * Layer 3 — DOMAIN PALETTES
+ * ==========================
+ *
+ * Categorical color tokens that aren't part of PrimeNG's preset
+ * concept. They sit between semantic and component layers because
+ * each palette is purpose-specific (label hues, agent presence,
+ * group priority) but reused by multiple components.
+ *
+ * Components SHOULD reference these tokens. Dark mode (layer 6) may
+ * override individual tokens here when the dark variant has a
+ * different visual.
+ */
+
+:root {
+  /* ---------- Label / tag palette ---------- */
+  /*
+   * Data colors used by the Labels feature (and re-used wherever a
+   * categorical tag is shown). Intentionally separate from brand
+   * semantic tokens: a "red" tag does not imply danger, and a
+   * "green" tag does not imply success.
+   *
+   * Source of values:
+   * - gray, red, orange, amber, teal, purple → AED `--sc-color-*`
+   *   primitives that mirror the same-named Aura primitives.
+   * - green → AED `--sc-color-emerald-*` primitive (Aura's `emerald`,
+   *   chosen for a brighter "fresh green" distinct from AED's
+   *   brand-semantic green which is Aura's `green`).
+   * - blue → AED `--sc-color-azure-*` primitive (Aura's `blue`,
+   *   renamed to `azure` so it doesn't collide with AED's
+   *   `--sc-color-blue-*` which is the custom brand navy).
+   *
+   * All label hues now reference primitives; no hex literals.
+   */
+  --sc-label-gray-bg: var(--sc-color-gray-100);
+  --sc-label-gray-text: var(--sc-color-gray-700);
+  --sc-label-gray-border: var(--sc-color-gray-300);
+  --sc-label-gray-dot: var(--sc-color-gray-500);
+
+  --sc-label-red-bg: var(--sc-color-red-50);
+  --sc-label-red-text: var(--sc-color-red-700);
+  --sc-label-red-border: var(--sc-color-red-200);
+  --sc-label-red-dot: var(--sc-color-red-500);
+
+  --sc-label-orange-bg: var(--sc-color-orange-50);
+  --sc-label-orange-text: var(--sc-color-orange-700);
+  --sc-label-orange-border: var(--sc-color-orange-200);
+  --sc-label-orange-dot: var(--sc-color-orange-500);
+
+  --sc-label-amber-bg: var(--sc-color-amber-50);
+  --sc-label-amber-text: var(--sc-color-amber-700);
+  --sc-label-amber-border: var(--sc-color-amber-200);
+  --sc-label-amber-dot: var(--sc-color-amber-500);
+
+  --sc-label-green-bg: var(--sc-color-emerald-50);
+  --sc-label-green-text: var(--sc-color-emerald-700);
+  --sc-label-green-border: var(--sc-color-emerald-200);
+  --sc-label-green-dot: var(--sc-color-emerald-500);
+
+  --sc-label-teal-bg: var(--sc-color-teal-50);
+  --sc-label-teal-text: var(--sc-color-teal-700);
+  --sc-label-teal-border: var(--sc-color-teal-200);
+  --sc-label-teal-dot: var(--sc-color-teal-500);
+
+  --sc-label-blue-bg: var(--sc-color-azure-50);
+  --sc-label-blue-text: var(--sc-color-azure-700);
+  --sc-label-blue-border: var(--sc-color-azure-200);
+  --sc-label-blue-dot: var(--sc-color-azure-500);
+
+  --sc-label-purple-bg: var(--sc-color-purple-50);
+  --sc-label-purple-text: var(--sc-color-purple-700);
+  --sc-label-purple-border: var(--sc-color-purple-200);
+  --sc-label-purple-dot: var(--sc-color-purple-500);
+
+  /* ---------- Agent presence states ---------- */
+  /*
+   * Pill colors for the agent's "estado" / presence state. Each token
+   * is a deliberate hue chosen to read as a status (not a hue from
+   * the label palette, which the user can pick freely). Used by the
+   * rich sticky form header and the agents list dot. Calibrated for
+   * AA contrast on `--sc-bg-surface`.
+   */
+  --sc-presence-available: #1a8a4a; /* disponible */
+  --sc-presence-available-deep: #1a6a3a; /* darker variant for foreground */
+  --sc-presence-paused: #b07e1a; /* baño / comida */
+  --sc-presence-training: #b91c4b; /* formación */
+  --sc-presence-offline: var(--sc-text-subtle); /* no_disponible / desconectado */
+
+  /* ---------- Group priority ---------- */
+  --sc-priority-high: var(--sc-text-danger);
+  --sc-priority-medium: #c47a00;
+  --sc-priority-medium-deep: #8a5500;
+}

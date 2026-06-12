@@ -1,0 +1,19 @@
+{
+  "name": "@smartcontact/icons",
+  "version": "0.0.1",
+  "peerDependencies": {
+    "@angular/common": "^21.0.0",
+    "@angular/core": "^21.0.0"
+  },
+  "dependencies": {
+    "@fontsource-variable/material-symbols-rounded": "^5.2.45",
+    "tslib": "^2.3.0"
+  },
+  "scripts": {
+    "icons:build": "node ./scripts/generate-material-symbols.js"
+  },
+  "sideEffects": [
+    "*.css",
+    "**/*.css"
+  ]
+}

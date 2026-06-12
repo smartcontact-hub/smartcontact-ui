@@ -1,0 +1,36 @@
+<h1>Fundaciones</h1>
+<p>
+  Tokens <code>--sc-*</code> del paquete <code>&#64;smartcontact/styles</code>. Cada valor es
+  trazable al export del Kit y se verifica en CI (<code>tokens:gen</code> ·
+  <code>tokens:parity</code>).
+</p>
+
+<h2>Escala 14-base</h2>
+<table class="scale-table">
+  <thead>
+    <tr><th>Token</th><th>Diseño (px)</th><th></th></tr>
+  </thead>
+  <tbody>
+    @for (step of scaleSteps; track step.token) {
+      <tr>
+        <td><code>{{ step.token }}</code></td>
+        <td>{{ step.px }}</td>
+        <td><span class="scale-bar" [style.width]="'var(' + step.token + ')'"></span></td>
+      </tr>
+    }
+  </tbody>
+</table>
+
+<h2>Color primitivo</h2>
+@for (family of colorFamilies; track family.token) {
+  <div class="swatch-row">
+    <span class="swatch-row__name">{{ family.name }}</span>
+    @for (step of family.steps; track step) {
+      <span
+        class="swatch"
+        [style.background]="'var(--sc-color-' + family.token + '-' + step + ')'"
+        [title]="'--sc-color-' + family.token + '-' + step"
+      ></span>
+    }
+  </div>
+}

@@ -1,0 +1,90 @@
+:host {
+    display: inline-flex;
+    line-height: 1;
+}
+
+.sc-icon {
+    color: currentColor;
+    overflow: hidden;
+    user-select: none;
+}
+
+.sc-icon--sm {
+    font-size: var(--sc-font-size-200);
+}
+
+.sc-icon--md {
+    font-size: var(--sc-font-size-300);
+}
+
+.sc-icon--lg {
+    font-size: var(--sc-font-size-400);
+}
+
+.sc-icon--weight-100 {
+    --sc-icon-weight: 100;
+}
+
+.sc-icon--weight-200 {
+    --sc-icon-weight: 200;
+}
+
+.sc-icon--weight-300 {
+    --sc-icon-weight: 300;
+}
+
+.sc-icon--weight-400 {
+    --sc-icon-weight: 400;
+}
+
+.sc-icon--weight-500 {
+    --sc-icon-weight: 500;
+}
+
+.sc-icon--weight-600 {
+    --sc-icon-weight: 600;
+}
+
+.sc-icon--weight-700 {
+    --sc-icon-weight: 700;
+}
+
+.sc-icon--grade-negative-25 {
+    --sc-icon-grade: -25;
+}
+
+.sc-icon--grade-0 {
+    --sc-icon-grade: 0;
+}
+
+.sc-icon--grade-200 {
+    --sc-icon-grade: 200;
+}
+
+.sc-icon--optical-20 {
+    --sc-icon-optical-size: 20;
+}
+
+.sc-icon--optical-24 {
+    --sc-icon-optical-size: 24;
+}
+
+.sc-icon--optical-40 {
+    --sc-icon-optical-size: 40;
+}
+
+.sc-icon--optical-48 {
+    --sc-icon-optical-size: 48;
+}
+
+.sc-icon {
+    font-variation-settings:
+        'FILL' var(--sc-icon-fill, 0),
+        'wght' var(--sc-icon-weight, 400),
+        'GRAD' var(--sc-icon-grade, 0),
+        'opsz' var(--sc-icon-optical-size, 24);
+}
+
+.sc-icon--filled {
+    --sc-icon-fill: 1;
+}

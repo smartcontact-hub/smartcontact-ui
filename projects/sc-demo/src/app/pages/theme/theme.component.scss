@@ -1,0 +1,18 @@
+h1 {
+  font-size: var(--sc-font-size-h1);
+  line-height: var(--sc-line-height-h1);
+  font-weight: var(--sc-font-weight-h1);
+}
+
+h2 {
+  font-size: var(--sc-font-size-h3);
+  line-height: var(--sc-line-height-h3);
+  font-weight: var(--sc-font-weight-h3);
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: var(--sc-scale-0-75);
+}

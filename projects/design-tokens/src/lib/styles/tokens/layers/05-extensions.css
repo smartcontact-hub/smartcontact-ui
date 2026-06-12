@@ -1,0 +1,89 @@
+/*
+ * Layer 5 — EXTENSIONS
+ * =====================
+ *
+ * Tokens that fall outside PrimeNG's primitive / semantic / component
+ * model: layout dimensions, shadow scale, z-index stack, motion tokens.
+ *
+ * These are AED-specific and have no equivalent in PrimeNG's preset
+ * because PrimeNG leaves them to per-component CSS. Components SHOULD
+ * reference these tokens.
+ */
+
+:root {
+  /* ---------- Layout ---------- */
+  /*
+   * Sidebar has two widths: collapsed (default + page gutter) and
+   * expanded (when the user hovers it). `--sc-sidebar-width` aliases
+   * the collapsed value so every page-layout token (fixed bars, modals
+   * offset to the right of the sidebar) keeps anchoring to the gutter
+   * — the expanded sidebar overlays the page content rather than
+   * pushing it.
+   */
+  --sc-sidebar-width-collapsed: 64px;
+  --sc-sidebar-width-expanded: 240px;
+  --sc-sidebar-width: var(--sc-sidebar-width-collapsed);
+  --sc-sidebar-bg: var(--sc-color-blue-700);
+  --sc-topbar-height: 56px;
+  --sc-bulk-action-bar-height: 56px;
+
+  /* ---------- Shadows ---------- */
+  /*
+   * Single deep-slate base color (15 23 42 in sRGB) drives every
+   * shadow alpha — exposing it as a token lets a future tweak
+   * (e.g. shifting to a warmer or cooler base) ripple here for free.
+   * Kept as space-separated channels so it composes cleanly inside
+   * `rgb(var(--sc-shadow-color-rgb) / 0.04)`.
+   */
+  --sc-shadow-color-rgb: 15 23 42;
+  --sc-shadow-focus-ring-rgb: 90 211 230; /* soft-blue-500 channels */
+
+  --sc-shadow-xs: 0 1px 2px 0 rgb(var(--sc-shadow-color-rgb) / 0.04);
+  /* Numeric alias kept for /config consumers that follow the 100/200…
+   * scale naming. Same value as --sc-shadow-xs. */
+  --sc-shadow-100: var(--sc-shadow-xs);
+  --sc-shadow-sm:
+    0 1px 2px 0 rgb(var(--sc-shadow-color-rgb) / 0.05),
+    0 1px 3px 0 rgb(var(--sc-shadow-color-rgb) / 0.06);
+  --sc-shadow-card:
+    0 1px 2px 0 rgb(var(--sc-shadow-color-rgb) / 0.04),
+    0 1px 3px 0 rgb(var(--sc-shadow-color-rgb) / 0.06);
+  --sc-shadow-dropdown:
+    0 4px 6px -1px rgb(var(--sc-shadow-color-rgb) / 0.08),
+    0 2px 4px -2px rgb(var(--sc-shadow-color-rgb) / 0.06);
+  --sc-shadow-popover:
+    0 10px 15px -3px rgb(var(--sc-shadow-color-rgb) / 0.1),
+    0 4px 6px -4px rgb(var(--sc-shadow-color-rgb) / 0.08);
+  --sc-shadow-dialog:
+    0 20px 25px -5px rgb(var(--sc-shadow-color-rgb) / 0.12),
+    0 8px 10px -6px rgb(var(--sc-shadow-color-rgb) / 0.1);
+  --sc-shadow-focus-ring: 0 0 0 3px rgb(var(--sc-shadow-focus-ring-rgb) / 0.35);
+
+  /* ---------- Z-index scale ---------- */
+  /*
+   * Numeric stacking order, top-to-bottom. The sidebar is an OVERLAY
+   * when expanded — it has to sit above every piece of in-page chrome
+   * (the sticky form header on edit pages, the bulk action bar, fixed
+   * elements) but below modals so a confirmation dialog still tints
+   * and blocks the whole viewport, including the sidebar.
+   */
+  --sc-z-base: 0;
+  --sc-z-dropdown: 1000;
+  --sc-z-sticky: 1020;
+  --sc-z-sticky-form-header: 1030;
+  --sc-z-fixed: 1040;
+  --sc-z-bulk-action-bar: 1050;
+  --sc-z-sidebar: 1055;
+  --sc-z-modal-backdrop: 1060;
+  --sc-z-modal: 1070;
+  --sc-z-popover: 1080;
+  --sc-z-tooltip: 1090;
+  --sc-z-toast: 1100;
+
+  /* ---------- Motion ---------- */
+  --sc-transition-fast: 120ms;
+  --sc-transition-base: 200ms;
+  --sc-transition-slow: 300ms;
+  --sc-easing-default: cubic-bezier(0.4, 0, 0.2, 1);
+  --sc-easing-emphasized: cubic-bezier(0.2, 0, 0, 1);
+}

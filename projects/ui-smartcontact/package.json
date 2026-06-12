@@ -1,0 +1,19 @@
+{
+  "name": "@smartcontact/components",
+  "version": "0.0.1",
+  "peerDependencies": {
+    "@angular/common": "^21.0.0",
+    "@angular/core": "^21.0.0",
+    "@angular/forms": "^21.0.0",
+    "@ngx-translate/core": "^17.0.0",
+    "@primeuix/themes": "^2.0.0",
+    "@smartcontact/icons": "0.0.1",
+    "@smartcontact/styles": "0.0.1",
+    "primeng": "^21.0.0",
+    "rxjs": "^7.8.1"
+  },
+  "dependencies": {
+    "tslib": "^2.3.0"
+  },
+  "sideEffects": false
+}

@@ -1,0 +1,40 @@
+<h1>Tema PrimeNG</h1>
+<p>Primitivos PrimeNG estilados por el preset (cada slot resuelve a <code>var(--sc-*)</code>).</p>
+
+<section>
+  <h2>Button</h2>
+  <div class="row">
+    <p-button label="Primario" data-testid="btn-md" />
+    <p-button label="Small" size="small" />
+    <p-button label="Large" size="large" />
+    <p-button label="Secundario" severity="secondary" />
+    <p-button label="Peligro" severity="danger" />
+    <p-button label="Info" severity="info" />
+    <p-button label="Texto" variant="text" />
+    <p-button label="Outlined" variant="outlined" />
+  </div>
+</section>
+
+<p-divider />
+
+<section>
+  <h2>Form field</h2>
+  <div class="row">
+    <input pInputText placeholder="Escribe algo…" [(ngModel)]="text" data-testid="input-md" />
+    <p-checkbox [(ngModel)]="checked" [binary]="true" inputId="chk" />
+    <label for="chk">Checkbox</label>
+  </div>
+</section>
+
+<p-divider />
+
+<section>
+  <h2>Feedback</h2>
+  <div class="row">
+    <p-tag value="Etiqueta" />
+    <p-tag value="Success" severity="success" />
+    <p-tag value="Warn" severity="warn" />
+    <p-message severity="info" text="Mensaje informativo del tema." />
+    <span pTooltip="Tooltip del preset" tooltipPosition="top">Hover para tooltip</span>
+  </div>
+</section>

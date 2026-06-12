@@ -1,0 +1,113 @@
+/*
+ * Layer 7 — DARK MODE
+ * ====================
+ *
+ * Activated by adding `.sc-dark` to `<html>` (driven by ThemeService).
+ * Same selector PrimeNG uses (`darkModeSelector` in app.config.ts) so
+ * flipping the class also inverts every PrimeNG component.
+ *
+ * Only SEMANTIC (layer 2), DOMAIN PALETTE (layer 3) and COMPONENT
+ * (layer 4) tokens are overridden here. Primitives (layer 1) and
+ * extensions (layer 5) stay constant — the brand palette doesn't
+ * change; only the tokens that map roles to colours do. PrimeNG
+ * `--p-*` (layer 6) inherit through their `--sc-*` references and
+ * don't need separate dark declarations.
+ */
+
+.sc-dark {
+  /* ---------- Semantic · Text ---------- */
+  --sc-text-primary: var(--sc-color-gray-50);
+  --sc-text-secondary: var(--sc-color-gray-300);
+  --sc-text-subtle: var(--sc-color-gray-500);
+  --sc-text-disabled: var(--sc-color-gray-700);
+  --sc-text-inverse: var(--sc-color-gray-900);
+  /* En dark el botón primary es navy CLARO (blue-400) → el texto encima va
+   * OSCURO, no blanco (export.dark primaryContrastColor #181d26=gray-900).
+   * Mejora el AA: blanco sobre blue-400 ~3.9:1 (falla) vs gray-900 ~5.9:1. */
+  --sc-text-on-primary: var(--sc-color-gray-900);
+  --sc-text-on-secondary: var(--sc-color-gray-50);
+  --sc-text-on-accent: var(--sc-color-gray-950);
+
+  /* ---------- Semantic · Background ---------- */
+  --sc-bg-default: var(--sc-color-gray-950);
+  --sc-bg-surface: var(--sc-color-gray-900);
+  --sc-bg-subtle: var(--sc-color-blue-900);
+  --sc-bg-subtle-hover: var(--sc-color-blue-800);
+  --sc-bg-subtle-active: var(--sc-color-blue-700);
+  --sc-bg-disabled: var(--sc-color-gray-800);
+
+  /* Primary (brand) — rampa dark 1:1 con el Kit (export.dark: primaryColor
+   * #4d6990=blue-400, hover #798eab=blue-300, active #a6b4c7=blue-200). El Kit
+   * aclara más que nuestro valor anterior (blue-500) → más contraste en dark.
+   * Vigilado por tokens:parity §6. */
+  --sc-bg-primary: var(--sc-color-blue-400);
+  --sc-bg-primary-hover: var(--sc-color-blue-300);
+  --sc-bg-primary-active: var(--sc-color-blue-200);
+  --sc-bg-primary-subtle: var(--sc-color-blue-900);
+  --sc-bg-primary-subtle-hover: var(--sc-color-blue-800);
+  --sc-bg-primary-subtle-active: var(--sc-color-blue-700);
+
+  /* Secondary (gray) */
+  --sc-bg-secondary: var(--sc-color-gray-300);
+  --sc-bg-secondary-hover: var(--sc-color-gray-800);
+  --sc-bg-secondary-active: var(--sc-color-gray-700);
+  --sc-bg-secondary-subtle: var(--sc-color-gray-900);
+
+  /* Status — bgs darken, text lifts. Translucency expressed as a
+   * `color-mix` over a deep status-color token (the 800-step from
+   * the primitive scale). Mathematically equivalent to the previous
+   * `rgb(R G B / A)` literals (`color-mix(in srgb, X N%, transparent)`
+   * resolves to the same byte-exact value as `rgba(X, N/100)`); the
+   * token form lets a future color-scale tweak propagate here for
+   * free. */
+  --sc-bg-success-subtle: color-mix(in srgb, var(--sc-color-green-800) 18%, transparent);
+  --sc-bg-warning-subtle: color-mix(in srgb, var(--sc-color-amber-800) 18%, transparent);
+  --sc-bg-danger-subtle: color-mix(in srgb, var(--sc-color-red-900) 22%, transparent);
+  --sc-bg-danger-subtle-hover: color-mix(in srgb, var(--sc-color-red-900) 32%, transparent);
+  --sc-bg-danger-subtle-active: color-mix(in srgb, var(--sc-color-red-900) 42%, transparent);
+  --sc-bg-info-subtle: color-mix(in srgb, var(--sc-color-electric-blue-800) 22%, transparent);
+  --sc-bg-violet-subtle: color-mix(in srgb, var(--sc-color-violet-800) 22%, transparent);
+
+  /* ---------- Semantic · Border ---------- */
+  --sc-border-default: var(--sc-color-gray-800);
+  --sc-border-strong: var(--sc-color-gray-600);
+  --sc-border-subtle: var(--sc-color-gray-900);
+  --sc-border-disabled: var(--sc-color-gray-800);
+
+  --sc-border-secondary: var(--sc-color-blue-700);
+  --sc-border-secondary-hover: var(--sc-color-blue-600);
+  --sc-border-secondary-active: var(--sc-color-blue-500);
+
+  /* ---------- Semantic · Icons ---------- */
+  --sc-icon-primary: var(--sc-color-gray-200);
+  --sc-icon-secondary: var(--sc-color-gray-400);
+  --sc-icon-subtle: var(--sc-color-gray-500);
+  --sc-icon-disabled: var(--sc-color-gray-700);
+
+  /* `--sc-btn-*` removed S34 (light + dark) — see comment in 04-component.css */
+
+  /* ---------- Component · Modal ---------- */
+  --sc-dialog-bg: var(--sc-color-gray-900);
+  --sc-dialog-border: var(--sc-color-gray-800);
+  --sc-dialog-divider: var(--sc-color-gray-800);
+  --sc-dialog-title: var(--sc-color-gray-50);
+  --sc-dialog-subtitle: var(--sc-color-gray-300);
+  --sc-dialog-close-fg: var(--sc-color-gray-300);
+  --sc-dialog-close-bg-hover: var(--sc-color-gray-800);
+  --sc-dialog-shadow: 0 24px 48px rgb(0 0 0 / 0.5);
+
+  /* ---------- Component · Toast ---------- */
+  --sc-toast-title: var(--sc-color-gray-50);
+  --sc-toast-message: var(--sc-color-gray-300);
+  --sc-toast-close: var(--sc-color-gray-200);
+  --sc-toast-success-bg: color-mix(in srgb, var(--sc-color-green-900) 40%, transparent);
+  --sc-toast-info-bg: color-mix(in srgb, var(--sc-color-electric-blue-800) 40%, transparent);
+  --sc-toast-warn-bg: color-mix(in srgb, var(--sc-color-amber-800) 40%, transparent);
+  --sc-toast-error-bg: color-mix(in srgb, var(--sc-color-red-900) 40%, transparent);
+  --sc-toast-violet-bg: color-mix(in srgb, var(--sc-color-violet-800) 40%, transparent);
+
+  /* ---------- Extensions · Sidebar ---------- */
+  /* One step darker than the page so it still reads as "the chrome"
+   * against the surface, not a peer panel. */
+  --sc-sidebar-bg: var(--sc-color-blue-900);
+}
