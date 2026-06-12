@@ -54,15 +54,15 @@
    *   #0000001A offset(0,8) r10 spread:-6
    * + #0000001A offset(0,20) r25 spread:-5 */
   --sc-dialog-shadow: 0 8px 10px -6px rgba(0, 0, 0, 0.1), 0 20px 25px -5px rgba(0, 0, 0, 0.1);
-  --sc-dialog-padding: 17.5px; /* Figma `dialog/header/padding`, `dialog/content/padding/*`, `dialog/footer/padding/*` — raw decimal */
-  --sc-dialog-header-gap: 7px; /* Figma `dialog/header/gap: 7` (icon ↔ text ↔ close) */
+  --sc-dialog-padding: var(--sc-scale-1-25); /* 17.5px */ /* Figma `dialog/header/padding`, `dialog/content/padding/*`, `dialog/footer/padding/*` — raw decimal */
+  --sc-dialog-header-gap: var(--sc-scale-0-5); /* 7px */ /* Figma `dialog/header/gap: 7` (icon ↔ text ↔ close) */
   --sc-dialog-footer-gap: var(
     --sc-spacing-0-75
   ); /* 10.5px. Divergencia consciente del Figma (`dialog/footer/gap: 7`): con botones
         small content-width el 7px leía apelotonado (feedback de diseño). Token limpio
         de la escala (0.75 = 10.5). Propagar a Figma en el próximo sync del Kit. */
   --sc-dialog-head-icon-fg: var(--sc-color-gray-500);
-  --sc-dialog-head-icon-size: 28px; /* Figma `confirmdialog/icon/size: 28` */
+  --sc-dialog-head-icon-size: var(--sc-scale-2); /* 28px */ /* Figma `confirmdialog/icon/size: 28` */
   --sc-dialog-title: var(
     --sc-color-gray-800
   ); /* Figma `dialog/color: #334155` (slate-700) — but darker for AED */
@@ -109,21 +109,19 @@
   --sc-toast-detail-font-weight: 500; /* Figma `toast/detail/font/weight: 500` */
 
   /* Shared geometry — Figma values */
-  --sc-toast-width: 350px; /* Figma `toast/width: 350` (was 400) */
+  --sc-toast-width: var(--sc-scale-25); /* 350px */ /* Figma `toast/width: 350` (was 400) */
   --sc-toast-radius: var(--sc-radius-200); /* 6px — Figma `toast/border/radius: 6` (was 12) */
-  --sc-toast-padding-x: 10.5px; /* Figma `toast/content/padding: 10.5` raw */
-  --sc-toast-padding-y: 10.5px;
-  --sc-toast-gap-content: 7px; /* Figma `toast/content/gap: 7` (icon ↔ body) */
-  --sc-toast-gap-text: 7px; /* Figma `toast/text/gap: 7` (summary ↔ detail) */
-  --sc-toast-gap-actions: var(
-    --sc-spacing-100
-  ); /* SC extension — gap entre body y action buttons */
-  --sc-toast-icon-size: 15.75px; /* Figma `toast/icon/size: 15.75` (was 24) */
+  --sc-toast-padding-x: var(--sc-scale-0-75); /* 10.5px */ /* Figma `toast/content/padding: 10.5` raw */
+  --sc-toast-padding-y: var(--sc-scale-0-75);
+  --sc-toast-gap-content: var(--sc-scale-0-5); /* 7px */ /* Figma `toast/content/gap: 7` (icon ↔ body) */
+  --sc-toast-gap-text: var(--sc-scale-0-5); /* 7px */ /* Figma `toast/text/gap: 7` (summary ↔ detail) */
+  --sc-toast-gap-actions: var(--sc-scale-0-5); /* SC extension — gap entre body y action buttons */
+  --sc-toast-icon-size: var(--sc-scale-1-125); /* 15.75px */ /* Figma `toast/icon/size: 15.75` (was 24) */
   --sc-toast-icon-radius: var(--sc-radius-200);
-  --sc-toast-close-button-width: 24.5px; /* Figma `toast/close/button/width: 24.5` */
-  --sc-toast-close-button-height: 24.5px;
-  --sc-toast-close-button-radius: 12.25px; /* Figma `toast/close/button/border/radius: 12.25` (= width/2 → circular) */
-  --sc-toast-close-icon-size: 14px; /* Figma `toast/close/icon/size: 14` */
+  --sc-toast-close-button-width: var(--sc-scale-1-75); /* 24.5px */ /* Figma `toast/close/button/width: 24.5` */
+  --sc-toast-close-button-height: var(--sc-scale-1-75);
+  --sc-toast-close-button-radius: var(--sc-scale-0-875); /* 12.25px (= mitad del ancho a circular) */ /* Figma `toast/close/button/border/radius: 12.25` (= width/2 → circular) */
+  --sc-toast-close-icon-size: var(--sc-scale-1); /* 14px */ /* Figma `toast/close/icon/size: 14` */
   --sc-toast-backdrop-blur: 1.5px; /* Figma `toast/blur: 1.5` — backdrop-filter frosted glass */
   --sc-toast-shadow: 0 4px 8px 0 rgba(1, 4, 8, 0.04); /* Figma `toast/<sev>/shadow: #0X0X0X0A offset(0,4) r8` */
 

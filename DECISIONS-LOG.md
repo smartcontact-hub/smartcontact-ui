@@ -115,6 +115,31 @@ que cruza lo curado contra el export. Mismo resultado (cero drift verificable
 por máquina) sin pisar la capa curada. Las ~20 ramas muertas (bloques
 `font-size` repetidos) no se portan.
 
+### B8 — Drift heredado corregido: `--sc-toast-gap-actions` apuntaba a un token inexistente
+La capa 04 traía `var(--sc-spacing-100)` (naming 8-point que nunca existió en
+las capas v/14): la propiedad no resolvía. Se repunta a `var(--sc-scale-0-5)`
+(7px, coherente con los demás gaps del toast). Afecta al render del toast
+cuando se porte en Mitad B (antes el gap caía a valor inválido).
+**Base verificada:** grep de `--sc-spacing-1xx` en las 7 capas (cero
+declaraciones).
+
+### B9 — Barrido de px de la capa 04 a tokens de escala
+Todos los px metricos de 04-component que caen exactos en la escala
+(17.5/7/28/350/10.5/15.75/24.5/12.25/14) pasan a `var(--sc-scale-*)` —
+trazabilidad sin cambio visual. Quedan en px: 3 font-size raw del Figma
+(dialog-title 17.5, toast summary 14 / detail 12.25 — el stream tipográfico
+DD-13 los reconciliará al portar esos componentes) y el blur 1.5px (efecto, no
+métrica).
+
+### B10 — Focus ring unificado en 2px
+`01-primitive.css` declaraba `--sc-focus-ring-width: 1px` pero el preset
+renderizaba `2px` (divergencia consciente a11y, customs §1.1) y el token no
+tenía ningún consumidor. Se unifica el token en 2px y el preset pasa a
+referenciarlo (`var(--sc-focus-ring-width)`) — una sola fuente. Sigue en px:
+es un hairline de outline, no una métrica tipográfica.
+**Base verificada:** grep de consumidores en packages/ y apps/ del repo origen
+(solo la declaración).
+
 ---
 
 ## C. Preset
