@@ -194,6 +194,11 @@ central de css.ts) con fuentes redondas DD-13 (12/14/16 vía
 la altura md con `iconOnlyWidth = scale.2-5` del Kit. sm/lg usan
 `--sc-line-height-100/300` (18/24, emparejamiento del Kit).
 
+### C6 — Comentarios del preset sin unidades literales
+El auditor de escala cuenta cualquier `px`/hex del fichero, comentarios
+incluidos. Los comentarios de base/extend se redactan sin `Npx` ni `#hex`
+para que "cero px en preset" sea un grep limpio sin allowlist.
+
 ---
 
 ## D. Setup
@@ -252,7 +257,28 @@ el molde no traía linter) + typecheck (tsc por proyecto) · build de los 3
 paquetes + demo · e2e smoke. `npm run verify` agrupa los checks estáticos en
 local.
 
-### C6 — Comentarios del preset sin unidades literales
-El auditor de escala cuenta cualquier `px`/hex del fichero, comentarios
-incluidos. Los comentarios de base/extend se redactan sin `Npx` ni `#hex`
-para que "cero px en preset" sea un grep limpio sin allowlist.
+---
+
+## F. Documentación
+
+### F1 — Adaptación con las convenciones unificadas
+Portados y adaptados al repo: DECISIONS.md (DD-* íntegros), customs-catalog.md,
+migration-safety.md, guía de tokens (README técnico del paquete en inglés +
+docs/guia-tokens.md en español), manifiesto de convergencia (framing
+comparativo retirado: §11 reescrito como "qué aporta cada origen"),
+foundations-rationale.md (destilado del pre-flight, sin mandatos operativos de
+sesión) y component-port-plan.md (Mitad B accionable). AGENTS.md + PROMPTS.md +
+las 9 skills del pipeline portados con: naming pegado DD-12 en reglas y
+componentes de referencia, regla `/16` eliminada (tokens ya en rem; consumo por
+alias `--sc-spacing-*`), drift `sc-palette.ts` corregido (la alineación vive en
+`theme/sc-preset/base.ts`), tooling de parity como paso obligatorio, flujo
+sync-theme reescrito sobre el export DTCG + `tokens:import`, y bloques
+PowerShell→bash. Sin nombres de personas ni de librerías de plantillas de
+origen; sin artefactos internos del repo origen (MEMORY/SESSION-LOG/CLAUDE.md
+— el repo genera los suyos).
+
+### F2 — Dos lotes de adaptación se rehicieron a mano
+Dos subagentes de documentación murieron por límite de uso a mitad de tarea;
+migration-safety.md y 6 de las 9 skills se completaron directamente,
+verificando después todo el árbol de docs con greps de tono (personas,
+librerías de origen, "Codex") y de enlaces rotos: limpio.
