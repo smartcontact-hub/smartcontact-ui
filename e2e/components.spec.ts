@@ -842,3 +842,14 @@ test.describe('sc-chip variante label', () => {
     await expect(page.getByTestId('sc-chip').locator('.p-chip')).toBeVisible();
   });
 });
+
+test.describe('sc-avatar fallback de ilustración', () => {
+  test('§4.2: sin foto + illustrationName pinta el SVG hasheado (pool abstract)', async ({ page }) => {
+    await gotoPage(page, 'avatar');
+
+    const img = page.getByTestId('sc-avatar-illus').locator('img');
+    await expect(img).toBeVisible();
+    // src = {base}/abstract/abstract-0N.svg (hash DJB2 estable del nombre)
+    await expect(img).toHaveAttribute('src', /assets\/avatars\/abstract\/abstract-0[0-2]\.svg$/);
+  });
+});

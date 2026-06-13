@@ -26,3 +26,20 @@
   <sc-avatar label="B" />
   <sc-avatar label="+3" />
 </sc-avatargroup>
+
+<h2>Fallback de ilustración (§4.2, sin foto → SVG por hash del nombre)</h2>
+<p>
+  El paquete no empaqueta los SVG; el consumidor los sirve bajo
+  <code>illustrationBase</code> (aquí <code>assets/avatars</code>, pool
+  <code>abstract</code>).
+</p>
+<div class="row">
+  <sc-avatar
+    illustrationName="Inés García"
+    illustrationPool="abstract"
+    size="xlarge"
+    data-testid="sc-avatar-illus"
+  />
+  <sc-avatar illustrationName="Carlos Ruiz" illustrationPool="abstract" size="xlarge" />
+  <sc-avatar illustrationName="Soporte Ventas" illustrationPool="abstract" size="xlarge" />
+</div>

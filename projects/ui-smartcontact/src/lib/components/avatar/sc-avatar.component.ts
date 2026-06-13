@@ -5,6 +5,7 @@ import { OverlayBadgeModule } from 'primeng/overlaybadge';
 
 import { resolveScComponentIconClass } from '../../core/icons/sc-component-icon-resolver';
 import { ScAvatarShape, ScAvatarSize, ScSeverity } from '../../core/types/theme-component.types';
+import { AvatarIllustrationPool, buildIllustrationSrc } from '../../core/avatar-illustration';
 
 type PrimeBadgeSeverity = 'secondary' | 'info' | 'success' | 'warn' | 'danger' | 'contrast' | undefined;
 
@@ -12,6 +13,11 @@ type PrimeBadgeSeverity = 'secondary' | 'info' | 'success' | 'warn' | 'danger' |
  * Avatar 1:1 con la spec del Kit (Type Label/Icon/Image · Size 28/42/56 ·
  * Circle). El Badge de la spec se compone sobre `p-overlaybadge` cuando se
  * informa `badge`; el agrupado vive en `sc-avatargroup`.
+ *
+ * Fallback de ilustración (§4.2): si no hay `image` pero sí `illustrationName`,
+ * el avatar pinta una ilustración SVG estable por hash del nombre (cara Image).
+ * El paquete NO empaqueta los SVG — el consumidor los sirve bajo
+ * `illustrationBase` (default `assets/avatars`). Ver `core/avatar-illustration`.
  */
 @Component({
     selector: 'sc-avatar',
@@ -38,10 +44,32 @@ export class ScAvatarComponent {
 
     @Input() badgeVariant: ScSeverity = 'danger';
 
+    /**
+     * Nombre para el fallback de ilustración (§4.2). Cuando `image` es null y
+     * esto está informado, el avatar pinta el SVG hasheado del pool elegido.
+     */
+    @Input() illustrationName: string | null = null;
+
+    @Input() illustrationPool: AvatarIllustrationPool = 'illustrated';
+
+    /** Base de los assets de ilustración (el consumidor los sirve). */
+    @Input() illustrationBase = 'assets/avatars';
+
     @Output() imageError = new EventEmitter<unknown>();
 
     protected get avatarIcon(): string | undefined {
         return resolveScComponentIconClass(this.icon);
+    }
+
+    /** Image src efectiva: la foto si existe, si no el fallback de ilustración. */
+    protected get resolvedImage(): string | null {
+        if (this.image) {
+            return this.image;
+        }
+        if (this.illustrationName) {
+            return buildIllustrationSrc(this.illustrationName, this.illustrationPool, this.illustrationBase);
+        }
+        return null;
     }
 
     protected get badgeValue(): string {

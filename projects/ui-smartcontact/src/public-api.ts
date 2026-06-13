@@ -52,6 +52,7 @@ export * from './lib/components/sticky-form-header/sc-sticky-form-header.compone
 export * from './lib/components/impact-preview-dialog/sc-impact-preview-dialog.component';
 export * from './lib/components/delete-entity-dialog/sc-delete-entity-dialog.component';
 export * from './lib/components/color-dot-picker/sc-color-dot-picker.component';
+export * from './lib/core/avatar-illustration';
 export * from './lib/core/services/sc-clipboard.service';
 export * from './lib/config/provide-smartcontact-ui';
 export { default as scPreset } from './lib/theme/sc-preset';
