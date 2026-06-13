@@ -1,0 +1,212 @@
+:host {
+  display: inline-block;
+}
+
+/*
+ * Icon-only trigger. Square geometry (36×36) keeps the PrimeNG popover
+ * arrow centered on the button — the previous icon+label layout had the
+ * arrow drifting off the visible center of the trigger because the
+ * popover anchors to the bounding box, not to the icon. The button
+ * shares its height with the search input next to it so the action bar
+ * reads as one row of equally-tall controls.
+ */
+.trigger {
+  width: 36px;
+  height: 36px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--sc-bg-surface);
+  color: var(--sc-text-secondary);
+  border: 1px solid var(--sc-border-default);
+  border-radius: var(--sc-radius-200);
+  cursor: pointer;
+  transition:
+    background var(--sc-transition-fast) var(--sc-easing-default),
+    border-color var(--sc-transition-fast) var(--sc-easing-default),
+    color var(--sc-transition-fast) var(--sc-easing-default);
+
+  &:hover {
+    background: var(--sc-bg-secondary-hover);
+    border-color: var(--sc-border-strong);
+    color: var(--sc-text-primary);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--sc-border-focus);
+    outline-offset: 2px;
+  }
+
+  &:active {
+    background: var(--sc-bg-secondary-active);
+  }
+}
+
+.panel {
+  min-width: 220px;
+  max-width: 280px;
+
+  &__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--sc-spacing-0-875) var(--sc-spacing-1-125);
+    border-bottom: 1px solid var(--sc-border-subtle);
+    font-size: var(--sc-font-size-100);
+    font-weight: var(--sc-font-weight-semibold);
+    color: var(--sc-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+  }
+
+  &__reset {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sc-spacing-0-25);
+    padding: 2px var(--sc-spacing-0-5);
+    background: transparent;
+    border: 0;
+    border-radius: var(--sc-radius-100);
+    color: var(--sc-text-link);
+    font-size: var(--sc-font-size-100);
+    text-transform: none;
+    letter-spacing: 0;
+    cursor: pointer;
+    transition: background var(--sc-transition-fast) var(--sc-easing-default);
+
+    &:hover {
+      background: var(--sc-bg-primary-subtle);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--sc-border-focus);
+      outline-offset: 1px;
+    }
+  }
+
+  &__list {
+    list-style: none;
+    margin: 0;
+    padding: var(--sc-spacing-0-5) 0;
+    max-height: 320px;
+    overflow-y: auto;
+  }
+}
+
+.row {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-5);
+  padding: var(--sc-spacing-0-25) var(--sc-spacing-0-875);
+  font-size: var(--sc-font-size-200);
+  color: var(--sc-text-primary);
+  background: var(--sc-bg-surface);
+  cursor: grab;
+  transition: background var(--sc-transition-fast) var(--sc-easing-default);
+
+  &:hover:not(&--locked) {
+    background: var(--sc-bg-secondary-hover);
+  }
+
+  /* Locked rows: dimmed, can't be dragged or hidden, no grab cursor. */
+  &--locked {
+    color: var(--sc-text-secondary);
+    opacity: 0.65;
+    cursor: default;
+  }
+
+  /* Drag preview while CDK is dragging. */
+  &.cdk-drag-preview {
+    cursor: grabbing;
+  }
+
+  /* Visible-on-row-hover grip. We keep the dedicated grip handle so the
+   * draggable affordance is explicit, but we also paint `cursor: grab`
+   * across the whole row — every CDK release confirms the row is
+   * draggable from anywhere on the body, the handle is the visual hint. */
+  &__grip {
+    width: 18px;
+    height: 18px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--sc-text-subtle);
+    flex-shrink: 0;
+
+    &--hidden {
+      visibility: hidden; /* Locked rows reserve the slot but hide the grip. */
+    }
+  }
+
+  /* Whole row gets a darker grip on hover so the affordance reads
+   * even though the cursor: grab on the row is the primary cue. */
+  &:hover:not(&--locked) &__grip {
+    color: var(--sc-text-primary);
+  }
+
+  &__lock {
+    color: var(--sc-text-disabled);
+    flex-shrink: 0;
+  }
+
+  &__label-block {
+    display: flex;
+    align-items: center;
+    gap: var(--sc-spacing-0-75);
+    flex: 1 1 auto;
+    min-width: 0;
+    cursor: pointer;
+    padding: var(--sc-spacing-0-25) 0;
+  }
+
+  input[type='checkbox'] {
+    accent-color: var(--sc-bg-primary);
+    cursor: inherit;
+    flex-shrink: 0;
+  }
+
+  &__label {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__hint {
+    font-size: var(--sc-font-size-50);
+    color: var(--sc-text-subtle);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+  }
+}
+
+/* CDK Drag-Drop visual states. The "preview" follows the cursor; the
+ * "placeholder" sits in the original slot showing where the row will
+ * land if released. */
+.cdk-drag-preview {
+  box-shadow: var(--sc-shadow-popover);
+  border-radius: var(--sc-radius-100);
+  background: var(--sc-bg-surface);
+  pointer-events: none;
+}
+
+.cdk-drag-placeholder {
+  opacity: 0.3;
+  background: var(--sc-bg-default);
+}
+
+.cdk-drag-animating {
+  transition: transform 200ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+.cdk-drop-list-dragging .row:not(.cdk-drag-placeholder) {
+  transition: transform 200ms cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cdk-drag-animating,
+  .cdk-drop-list-dragging .row {
+    transition: none;
+  }
+}

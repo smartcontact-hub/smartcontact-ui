@@ -1,0 +1,52 @@
+<button
+  type="button"
+  class="trigger"
+  [attr.aria-label]="buttonLabel()"
+  [title]="buttonLabel()"
+  (click)="popover.toggle($event)"
+>
+  <sc-icon [name]="columnsIcon" [size]="iconSizeLg" />
+</button>
+
+<p-popover #popover [appendTo]="'body'" styleClass="sc-column-popover">
+  <div class="panel" role="menu">
+    <div class="panel__head">
+      <span>{{ buttonLabel() }}</span>
+      <button
+        type="button"
+        class="panel__reset"
+        (click)="reset(); popover.hide()"
+        aria-label="Restablecer"
+      >
+        <sc-icon [name]="resetIcon" [size]="iconSizeMd" />
+        <span>Restablecer</span>
+      </button>
+    </div>
+    <ul class="panel__list" cdkDropList (cdkDropListDropped)="onDrop($event)">
+      @for (col of menuItems(); track col.key) {
+        <li class="row" [class.row--locked]="col.locked" cdkDrag [cdkDragDisabled]="!!col.locked">
+          <span class="row__grip" [class.row__grip--hidden]="col.locked" aria-hidden="true">
+            <sc-icon [name]="gripIcon" [size]="iconSizeMd" />
+          </span>
+          <label class="row__label-block">
+            <input
+              type="checkbox"
+              [checked]="isVisible(col.key)"
+              [disabled]="!!col.locked"
+              (change)="toggle(col)"
+            />
+            <span class="row__label">{{ col.label }}</span>
+            @if (col.locked) {
+              <sc-icon
+                class="row__lock"
+                [name]="lockIcon"
+                [size]="iconSizeSm"
+                [attr.aria-label]="'Columna fijada'"
+              />
+            }
+          </label>
+        </li>
+      }
+    </ul>
+  </div>
+</p-popover>

@@ -119,4 +119,9 @@ export const SC_DEMO_COMPONENT_PAGES = [
     label: 'GroupPopover',
     load: () => import('./grouppopover/grouppopover-demo.component').then((m) => m.GroupPopoverDemoComponent),
   },
+  {
+    path: 'columnselector',
+    label: 'ColumnSelector',
+    load: () => import('./columnselector/columnselector-demo.component').then((m) => m.ColumnSelectorDemoComponent),
+  },
 ] satisfies ScDemoComponentPage[];

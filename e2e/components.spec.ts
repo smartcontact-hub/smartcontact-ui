@@ -392,3 +392,16 @@ test.describe('sc-grouppopover', () => {
     await screenshotBaseline(page, 'grouppopover');
   });
 });
+
+test.describe('sc-column-selector', () => {
+  test('abre el popover, lista columnas y conmuta visibilidad', async ({ page }) => {
+    await gotoPage(page, 'columnselector');
+    await page.getByTestId('sc-column-selector').locator('button').first().click();
+    const overlay = page.locator('.p-popover');
+    await expect(overlay).toBeVisible();
+    await expect(overlay.getByText('Nombre')).toBeVisible();
+    await expect(overlay.getByText('Grupo')).toBeVisible();
+    expect((await styleOf(overlay, ['border-radius']))['border-radius']).toBe('6px');
+    await screenshotBaseline(page, 'columnselector');
+  });
+});
