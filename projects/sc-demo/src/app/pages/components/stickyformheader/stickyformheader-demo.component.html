@@ -1,0 +1,27 @@
+<h1>sc-sticky-form-header</h1>
+
+<p>
+  ⚠️ <strong>Deprecated / retenido</strong> (rollback DD#65): ya no lo usa ningún
+  form (los 3 shells migraron a «todo arriba»). Se conserva como red de
+  seguridad. Header sticky de Create/Edit: eyebrow + nombre editable inline +
+  Guardar.
+</p>
+
+<h2>Edit (nombre editable con lápiz)</h2>
+<sc-sticky-form-header
+  mode="edit"
+  entityKey="AGENTE"
+  [name]="name()"
+  (nameChange)="onNameChange($event)"
+  (save)="onSave()"
+  data-testid="sc-sticky-edit"
+/>
+
+<h2>Create (input de nombre)</h2>
+<sc-sticky-form-header
+  mode="create"
+  entityKey="Nuevo agente"
+  [name]="''"
+  namePlaceholderKey="Nombre del agente"
+  data-testid="sc-sticky-create"
+/>

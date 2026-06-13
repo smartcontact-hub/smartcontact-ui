@@ -194,4 +194,12 @@ export const SC_DEMO_COMPONENT_PAGES = [
         (m) => m.FormDangerZoneDemoComponent,
       ),
   },
+  {
+    path: 'stickyformheader',
+    label: 'StickyFormHeader',
+    load: () =>
+      import('./stickyformheader/stickyformheader-demo.component').then(
+        (m) => m.StickyFormHeaderDemoComponent,
+      ),
+  },
 ] satisfies ScDemoComponentPage[];

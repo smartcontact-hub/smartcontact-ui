@@ -704,3 +704,21 @@ test.describe('sc-form-danger-zone', () => {
     await screenshotBaseline(page, 'formdangerzone');
   });
 });
+
+test.describe('sc-sticky-form-header', () => {
+  test('deprecated/retenido: el lápiz abre el rename inline + Save presente', async ({ page }) => {
+    await gotoPage(page, 'stickyformheader');
+
+    const edit = page.getByTestId('sc-sticky-edit');
+    await expect(edit.locator('.sticky-header__name')).toHaveText('Soporte Ventas');
+
+    // click en el lápiz → input de rename inline + check/close
+    await edit.locator('.sticky-header__icon-btn').first().click();
+    await expect(edit.locator('.sticky-header__name-input')).toBeVisible();
+
+    // botón Save en el cluster de acciones
+    await expect(edit.locator('.sticky-header__actions p-button button')).toBeVisible();
+
+    await screenshotBaseline(page, 'stickyformheader');
+  });
+});

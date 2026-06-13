@@ -1,0 +1,160 @@
+:host {
+  display: block;
+  position: sticky;
+  top: 0;
+  z-index: var(--sc-z-sticky-form-header);
+}
+
+.sticky-header {
+  background: var(--sc-bg-surface);
+  border-bottom: 1px solid var(--sc-border-default);
+  /* S53.5 /impeccable rework: padding vertical 12→20px para layout más
+   * respirable. Antes el header se sentía cramped en edit-mode con
+   * avatar + eyebrow + nombre + pill + metadata stack vertical. */
+  padding: var(--sc-spacing-1-5) var(--sc-spacing-2-25);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sc-spacing-1-5);
+  box-shadow: var(--sc-shadow-xs);
+
+  &__leading {
+    flex: 0 0 auto;
+    display: flex;
+    align-items: center;
+    /* Empty when no content is projected — collapses cleanly */
+    &:empty {
+      display: none;
+    }
+  }
+
+  &__title-block {
+    display: flex;
+    flex-direction: column;
+    /* S53.5: gap 2→4px entre eyebrow / name-line / meta — el bloque
+     * de 3 líneas queda con respiración intencional sin perder cohesión. */
+    gap: var(--sc-spacing-0-25);
+    min-width: 0;
+    flex: 1;
+  }
+
+  &__entity {
+    font-size: var(--sc-font-size-50);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    color: var(--sc-text-subtle);
+    font-weight: var(--sc-font-weight-semibold);
+  }
+
+  &__name-line {
+    display: inline-flex;
+    align-items: center;
+    flex-wrap: wrap;
+    /* S53.5: 10→12px entre name + lápiz + pill presence. */
+    gap: var(--sc-spacing-0-875);
+    min-width: 0;
+  }
+
+  &__pills {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sc-spacing-0-5);
+    /* Wraps to the next line via flex-wrap on `&__name-line` when the
+     * name + pills exceed the available width. Empty in create mode —
+     * collapses cleanly. */
+    &:empty {
+      display: none;
+    }
+  }
+
+  &__meta {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    /* S53.5: 12→20px entre chunks (Sin email · Extensión · WebRTC).
+     * Antes los chunks parecían pegados — sin separador visual ni
+     * respiración suficiente para distinguir bloques. 20px da
+     * affordance editorial sin desconectar visualmente. */
+    gap: var(--sc-spacing-1-5);
+    /* S53.5: 2px → 6px de separación con name-line — pequeño
+     * suspiro vertical antes de la metadata secundaria. */
+    margin-top: var(--sc-spacing-0-25);
+    font-size: var(--sc-font-size-100);
+    color: var(--sc-text-subtle);
+    line-height: 1.3;
+    /* Empty in create mode — collapses cleanly. */
+    &:empty {
+      display: none;
+    }
+  }
+
+  &__name {
+    font-family: var(--sc-font-family-subtitle-1);
+    font-size: var(--sc-font-size-subtitle-1);
+    line-height: var(--sc-line-height-subtitle-1);
+    font-weight: var(--sc-font-weight-subtitle-1);
+    color: var(--sc-text-primary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    max-width: 480px;
+  }
+
+  &__name-input {
+    padding: var(--sc-spacing-0-25) var(--sc-spacing-0-875);
+    font-family: inherit;
+    font-size: var(--sc-font-size-300);
+    font-weight: var(--sc-font-weight-semibold);
+    color: var(--sc-text-primary);
+    background: var(--sc-bg-surface);
+    border: 1px solid var(--sc-border-default);
+    border-radius: var(--sc-radius-100);
+    /* Was a fixed 320px which overflowed below ~480px viewport.
+     * Cap at 320 but scale down with the viewport so the form header
+     * stays usable on mobile. */
+    min-width: min(80vw, 320px);
+    outline: none;
+
+    &:focus {
+      border-color: var(--sc-color-blue-500);
+    }
+  }
+
+  /* Edit-name affordance — by default it sits as a soft pill so users
+   * spot the pencil without hunting; the pill darkens on hover for the
+   * usual "this is clickable" cue. Was a flat transparent icon before —
+   * too easy to miss. */
+  &__icon-btn {
+    background: var(--sc-bg-secondary-subtle);
+    border: 0;
+    padding: var(--sc-spacing-0-5);
+    color: var(--sc-text-secondary);
+    cursor: pointer;
+    border-radius: var(--sc-radius-100);
+    display: inline-flex;
+    align-items: center;
+    transition:
+      background var(--sc-transition-fast) var(--sc-easing-default),
+      color var(--sc-transition-fast) var(--sc-easing-default);
+
+    &:hover {
+      background: var(--sc-bg-secondary-hover);
+      color: var(--sc-text-primary);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--sc-color-soft-blue-500);
+      outline-offset: 2px;
+    }
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: var(--sc-spacing-0-5);
+    flex-shrink: 0;
+  }
+}
+
+/* El spinner del botón Save lo aporta ahora `<sc-icon [spin]>` (keyframe +
+ * reduced-motion encapsulados en el propio componente). */

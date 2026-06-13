@@ -1,0 +1,90 @@
+<header class="sticky-header">
+  <div class="sticky-header__leading">
+    <ng-content select="[header-leading]" />
+  </div>
+  <div class="sticky-header__title-block">
+    <h1 class="visually-hidden">
+      @if (mode() === 'create') {
+        {{ entityKey() | translate }}
+      } @else {
+        {{ name() }}
+      }
+    </h1>
+    <span class="sticky-header__entity" aria-hidden="true">
+      {{ entityKey() | translate }}
+    </span>
+    <span class="sticky-header__name-line">
+      @if (mode() === 'create') {
+        <input
+          type="text"
+          class="sticky-header__name-input"
+          [value]="name()"
+          (input)="nameChange.emit($any($event.target).value)"
+          [placeholder]="namePlaceholderKey() | translate"
+          [attr.aria-label]="'sc.stickyFormHeader.edit' | translate"
+        />
+      } @else {
+        @if (editing()) {
+          <input
+            #nameInput
+            type="text"
+            class="sticky-header__name-input"
+            [value]="draftName()"
+            (input)="onDraftInput($any($event.target).value)"
+            (keydown)="onRenameKey($event)"
+            [attr.aria-label]="'sc.stickyFormHeader.edit' | translate"
+          />
+          <button
+            type="button"
+            class="sticky-header__icon-btn"
+            (click)="confirmRename()"
+            [attr.aria-label]="'sc.stickyFormHeader.save' | translate"
+          >
+            <sc-icon [name]="checkIcon" [size]="iconSizeDefault" />
+          </button>
+          <button
+            type="button"
+            class="sticky-header__icon-btn"
+            (click)="cancelRename()"
+            [attr.aria-label]="'sc.stickyFormHeader.cancel' | translate"
+          >
+            <sc-icon [name]="closeIcon" [size]="iconSizeDefault" />
+          </button>
+        } @else {
+          <span class="sticky-header__name">{{ name() }}</span>
+          <button
+            type="button"
+            class="sticky-header__icon-btn"
+            (click)="onPencilClick()"
+            [attr.aria-label]="'sc.stickyFormHeader.edit' | translate"
+          >
+            <sc-icon [name]="pencilIcon" [size]="iconSizeMd" />
+          </button>
+        }
+      }
+      <span class="sticky-header__pills">
+        <ng-content select="[header-pills]" />
+      </span>
+    </span>
+    <span class="sticky-header__meta">
+      <ng-content select="[header-meta]" />
+    </span>
+  </div>
+
+  <div class="sticky-header__actions">
+    @if (showBack()) {
+      <p-button type="button" severity="secondary" (onClick)="cancelled.emit()">
+        <sc-icon [name]="backIcon" [size]="iconSizeDefault" />
+        <span>{{ 'sc.stickyFormHeader.back' | translate }}</span>
+      </p-button>
+    }
+    <p-button type="button" [disabled]="!canSave() || saving()" (onClick)="save.emit()">
+      @if (saving()) {
+        <sc-icon name="progress_activity" [size]="iconSizeMd" [spin]="true" />
+        <span>{{ 'sc.stickyFormHeader.loading' | translate }}</span>
+      } @else {
+        <span>{{ 'sc.stickyFormHeader.save' | translate }}</span>
+      }
+    </p-button>
+  </div>
+</header>
