@@ -6,3 +6,21 @@
   <sc-chip label="Quitable" [removable]="true" data-testid="sc-chip-removable" />
   <sc-chip label="Deshabilitado" [disabled]="true" />
 </div>
+
+<h2>Variante label (8 colores categóricos, quitable, §4.1)</h2>
+<div class="row">
+  <sc-chip variant="label" labelColor="green" label="Verde" />
+  <sc-chip
+    variant="label"
+    labelColor="blue"
+    label="Azul quitable"
+    [removable]="true"
+    removeAriaLabel="Quitar"
+    (removed)="onLabelRemove()"
+    data-testid="sc-chip-label"
+  />
+</div>
+
+@if (labelRemoved()) {
+  <p data-testid="sc-chip-label-removed">label removido</p>
+}

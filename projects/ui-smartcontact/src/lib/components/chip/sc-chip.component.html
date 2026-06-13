@@ -1,11 +1,28 @@
-<p-chip
-    [label]="label || undefined"
-    [icon]="chipIcon"
-    [image]="image || undefined"
-    [alt]="alt || undefined"
-    [removable]="removable"
-    [disabled]="disabled"
-    (onRemove)="removed.emit($event)"
-    (onImageError)="imageError.emit($event)">
-    <ng-content></ng-content>
-</p-chip>
+@if (variant === 'label') {
+    <span class="sc-chip__label" [style]="labelVars">
+        <span class="sc-chip__dot" aria-hidden="true"></span>
+        <span class="sc-chip__text">{{ label }}</span>
+        @if (removable) {
+            <button
+                type="button"
+                class="sc-chip__label-remove"
+                (click)="onLabelRemove($event)"
+                [attr.aria-label]="removeAriaLabel"
+            >
+                <sc-icon [name]="closeIcon" [size]="iconSizeSm" />
+            </button>
+        }
+    </span>
+} @else {
+    <p-chip
+        [label]="label || undefined"
+        [icon]="chipIcon"
+        [image]="image || undefined"
+        [alt]="alt || undefined"
+        [removable]="removable"
+        [disabled]="disabled"
+        (onRemove)="removed.emit($event)"
+        (onImageError)="imageError.emit($event)">
+        <ng-content></ng-content>
+    </p-chip>
+}

@@ -822,3 +822,23 @@ test.describe('sc-tag variante label', () => {
     await expect(page.getByTestId('sc-tag').locator('.p-tag')).toBeVisible();
   });
 });
+
+test.describe('sc-chip variante label', () => {
+  test('§4.1: label removible con dot+color; × emite removed; default intacto', async ({ page }) => {
+    await gotoPage(page, 'chip');
+
+    const label = page.getByTestId('sc-chip-label').locator('.sc-chip__label');
+    await expect(label.locator('.sc-chip__dot')).toBeVisible();
+    // azul = --sc-label-blue-bg (azure-50 #eff6ff)
+    expect((await styleOf(label, ['background-color']))['background-color']).toBe(
+      'rgb(239, 246, 255)',
+    );
+
+    // botón × emite removed
+    await label.locator('.sc-chip__label-remove').click();
+    await expect(page.getByTestId('sc-chip-label-removed')).toBeVisible();
+
+    // default (lote 1) intacto: el primer chip sigue siendo <p-chip>
+    await expect(page.getByTestId('sc-chip').locator('.p-chip')).toBeVisible();
+  });
+});

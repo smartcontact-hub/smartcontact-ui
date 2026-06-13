@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 
 import { ScChipComponent } from '../../../../../../ui-smartcontact/src/public-api';
 
@@ -9,4 +9,10 @@ import { ScChipComponent } from '../../../../../../ui-smartcontact/src/public-ap
   styleUrl: '../component-page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ChipDemoComponent {}
+export class ChipDemoComponent {
+  readonly labelRemoved = signal(false);
+
+  onLabelRemove(): void {
+    this.labelRemoved.set(true);
+  }
+}
