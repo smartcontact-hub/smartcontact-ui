@@ -1,0 +1,12 @@
+<div class="sc-slot__head">
+  @if (icon(); as ic) {
+    <sc-icon [name]="ic" [size]="iconSizeLg" class="sc-slot__icon" />
+  }
+  <h4 class="sc-slot__title">{{ titleKey() | translate }}</h4>
+  @if (hintKey()) {
+    <span class="sc-slot__hint">{{ hintKey()! | translate }}</span>
+  }
+</div>
+<div class="sc-slot__body">
+  <ng-content />
+</div>

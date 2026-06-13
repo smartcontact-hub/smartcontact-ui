@@ -1,0 +1,39 @@
+<div class="sc-subsection">
+  @if (collapsible()) {
+    <button
+      type="button"
+      class="sc-subsection__head sc-subsection__head--toggle"
+      [class.sc-subsection__head--collapsed]="!open()"
+      [attr.aria-expanded]="open()"
+      (click)="toggle()"
+    >
+      @if (icon(); as ic) {
+        <sc-icon [name]="ic" [size]="iconSizeLg" class="sc-subsection__icon" />
+      }
+      <h3 class="sc-subsection__title">{{ titleKey() | translate }}</h3>
+      @if (hintKey()) {
+        <span class="sc-subsection__hint">{{ hintKey()! | translate }}</span>
+      }
+      <sc-icon
+        [name]="open() ? chevronDownIcon : chevronRightIcon"
+        [size]="iconSizeLg"
+        class="sc-subsection__chevron"
+      />
+    </button>
+  } @else {
+    <header class="sc-subsection__head">
+      @if (icon(); as ic) {
+        <sc-icon [name]="ic" [size]="iconSizeLg" class="sc-subsection__icon" />
+      }
+      <h3 class="sc-subsection__title">{{ titleKey() | translate }}</h3>
+      @if (hintKey()) {
+        <span class="sc-subsection__hint">{{ hintKey()! | translate }}</span>
+      }
+    </header>
+  }
+  @if (!collapsible() || open()) {
+    <div class="sc-subsection__body">
+      <ng-content />
+    </div>
+  }
+</div>

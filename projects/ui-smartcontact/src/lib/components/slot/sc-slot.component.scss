@@ -1,0 +1,42 @@
+:host {
+  display: block;
+}
+
+/* Divisor entre slots: Figma `divider/border/color` #dadfe6 → --sc-border-default,
+   con margen vertical 14 (`divider/horizontal/margin/y` = scale-1). El primer slot
+   no lleva línea arriba. */
+:host(:not(:first-of-type)) {
+  margin-top: var(--sc-spacing-1);
+  padding-top: var(--sc-spacing-1);
+  border-top: 1px solid var(--sc-border-default);
+}
+
+.sc-slot__head {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sc-spacing-0-625);
+  margin-bottom: var(--sc-spacing-0-625);
+}
+
+.sc-slot__icon {
+  flex: 0 0 auto;
+  color: var(--sc-icon-subtle);
+  align-self: center;
+}
+
+.sc-slot__title {
+  margin: 0;
+  font-family: var(--sc-font-family-body-2);
+  font-size: var(--sc-font-size-body-2);
+  line-height: var(--sc-line-height-body-2);
+  font-weight: var(--sc-font-weight-semibold);
+  color: var(--sc-text-primary);
+}
+
+.sc-slot__hint {
+  font-family: var(--sc-font-family-caption);
+  font-size: var(--sc-font-size-caption);
+  line-height: var(--sc-line-height-caption);
+  font-weight: var(--sc-font-weight-caption);
+  color: var(--sc-text-subtle);
+}

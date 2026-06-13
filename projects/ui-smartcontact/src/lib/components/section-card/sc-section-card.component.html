@@ -1,0 +1,39 @@
+<section class="section-card" [attr.id]="anchorId()" [attr.data-section-anchor]="anchorId()">
+  @if (collapsible()) {
+    <button
+      type="button"
+      class="section-card__head section-card__head--toggle"
+      [class.section-card__head--collapsed]="!open()"
+      [attr.aria-expanded]="open()"
+      (click)="toggle()"
+    >
+      @if (icon(); as ic) {
+        <sc-icon [name]="ic" [size]="iconSizeLg" class="section-card__icon" />
+      }
+      <h2 class="section-card__title">{{ titleKey() | translate }}</h2>
+      @if (hintKey()) {
+        <span class="section-card__hint">{{ hintKey()! | translate }}</span>
+      }
+      <sc-icon
+        [name]="open() ? chevronDownIcon : chevronRightIcon"
+        [size]="iconSizeLg"
+        class="section-card__chevron"
+      />
+    </button>
+  } @else {
+    <header class="section-card__head">
+      @if (icon(); as ic) {
+        <sc-icon [name]="ic" [size]="iconSizeLg" class="section-card__icon" />
+      }
+      <h2 class="section-card__title">{{ titleKey() | translate }}</h2>
+      @if (hintKey()) {
+        <span class="section-card__hint">{{ hintKey()! | translate }}</span>
+      }
+    </header>
+  }
+  @if (!collapsible() || open()) {
+    <div class="section-card__body">
+      <ng-content />
+    </div>
+  }
+</section>
