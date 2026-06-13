@@ -1,0 +1,18 @@
+<textarea
+    pTextarea
+    [pSize]="$any(textareaSize)"
+    [value]="value"
+    [placeholder]="placeholder"
+    [rows]="rows"
+    [cols]="cols || null"
+    [id]="inputId || ''"
+    [name]="name || ''"
+    [disabled]="disabled"
+    [readOnly]="readonly"
+    [invalid]="invalid"
+    [fluid]="fluid"
+    [autoResize]="autoResize"
+    [variant]="variant"
+    (input)="onInput($event)"
+    (onResize)="resized.emit($event)">
+</textarea>
