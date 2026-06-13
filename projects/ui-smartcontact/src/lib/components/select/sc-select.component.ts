@@ -9,6 +9,7 @@ import {
   Injector,
   input,
   model,
+  output,
   untracked,
   ViewEncapsulation,
 } from '@angular/core';
@@ -68,6 +69,8 @@ export class ScSelectComponent implements ControlValueAccessor {
   readonly error = input<string>();
   readonly placeholder = input<string>('');
   readonly disabled = model<boolean>(false);
+  /** Solo lectura (paridad con sc-inputtext / catálogo de desarrollo). */
+  readonly readonly = input<boolean>(false);
   readonly inputId = input<string>();
   readonly name = input<string>();
 
@@ -104,9 +107,17 @@ export class ScSelectComponent implements ControlValueAccessor {
    * monta el panel en `<body>` y evita el clip. Default null = inline.
    */
   readonly appendTo = input<'body' | null>(null);
+  /** Key del flag de opción deshabilitada (passthrough de p-select). */
+  readonly optionDisabled = input<string>();
+  /** Spinner de carga (passthrough de p-select). */
+  readonly loading = input<boolean>(false);
 
   // ─── Two-way value binding ─────────────────────────────────────────
   readonly value = model<unknown>(undefined);
+
+  // ─── Outputs (paridad con sc-inputtext) ────────────────────────────
+  readonly focused = output<FocusEvent>();
+  readonly blurred = output<FocusEvent>();
 
   // ─── Content-projected pTemplate slots ─────────────────────────────
   /**
@@ -209,7 +220,13 @@ export class ScSelectComponent implements ControlValueAccessor {
     this._onChange(v);
   }
 
-  protected onBlur(): void {
+  protected onFocus(event: Event): void {
+    // p-select reenvía el FocusEvent nativo del DOM tipado como Event.
+    this.focused.emit(event as FocusEvent);
+  }
+
+  protected onBlur(event: Event): void {
     this._onTouched();
+    this.blurred.emit(event as FocusEvent);
   }
 }

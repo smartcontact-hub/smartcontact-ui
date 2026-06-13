@@ -71,6 +71,9 @@ export class ScInputTextComponent implements ControlValueAccessor {
   readonly invalid = input<boolean>(false);
   /** Ancho completo (del catálogo de desarrollo): el campo ocupa el 100 %. */
   readonly fluid = input<boolean>(false);
+  /** Nombre accesible cuando no hay `<label>` visible ni `iftaLabel`
+   * (del catálogo de desarrollo). */
+  readonly ariaLabel = input<string>();
 
   readonly type = input<ScInputType>('text');
   readonly placeholder = input<string>();

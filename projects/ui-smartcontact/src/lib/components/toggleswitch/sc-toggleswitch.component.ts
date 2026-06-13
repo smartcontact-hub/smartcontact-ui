@@ -50,6 +50,9 @@ export class ScToggleSwitchComponent {
   readonly inputId = input<string | null>(null);
 
   readonly checkedChange = output<boolean>();
+  /** Evento nativo de PrimeNG (`onChange`) expuesto para casos avanzados
+   * (paridad con el catálogo de desarrollo). */
+  readonly changed = output<unknown>();
 
   private readonly internalInputId = `sc-toggle-${++toggleIdCounter}`;
   protected readonly effectiveInputId = (): string => this.inputId() ?? this.internalInputId;

@@ -1,6 +1,7 @@
 <p-toggleswitch
   [ngModel]="checked()"
   (ngModelChange)="onChange($event)"
+  (onChange)="changed.emit($event)"
   [disabled]="disabled()"
   [size]="pSize()"
   [inputId]="effectiveInputId()"

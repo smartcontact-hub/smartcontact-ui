@@ -28,6 +28,12 @@ let modalIdCounter = 0;
  * `ScDynamicDialogService` (`provideScDynamicDialog`), infra paralela — no un
  * segundo componente.
  *
+ * Del wrapper fino del molde se OMITEN deliberadamente: `header` (lo sustituye
+ * `title`/`subtitle`/`icon` de la card), `showHeader` (la card siempre fuerza
+ * `showHeader=false` en el `<p-dialog>` interno y pinta su propia cabecera) y
+ * `closeOnEscape` (se deriva de `closable`: ESC cierra si el diálogo es
+ * descartable).
+ *
  * Usage:
  *
  * ```html
