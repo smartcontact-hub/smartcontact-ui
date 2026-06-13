@@ -1,0 +1,29 @@
+/* Variante categórica `label` (§4.1) — 1:1 con el read-only del retirado
+ * `sc-label-chip`: punto + texto, 8 colores vía las custom props `--label-*`
+ * que el componente fija desde `labelColor` (tokens `--sc-label-<color>-*`). */
+.sc-tag__label {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sc-spacing-0-25);
+    padding: 2px var(--sc-spacing-0-5);
+    font-size: var(--sc-font-size-100);
+    font-weight: var(--sc-font-weight-medium);
+    background: var(--label-bg);
+    color: var(--label-text);
+    border: 1px solid var(--label-border);
+    border-radius: var(--sc-radius-100);
+    white-space: nowrap;
+}
+
+.sc-tag__dot {
+    width: 6px;
+    height: 6px;
+    background: var(--label-dot);
+    border-radius: var(--sc-radius-full);
+    flex-shrink: 0;
+}
+
+.sc-tag__text {
+    overflow: hidden;
+    text-overflow: ellipsis;
+}

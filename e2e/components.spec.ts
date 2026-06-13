@@ -801,3 +801,24 @@ test.describe('sc-color-dot-picker', () => {
     await screenshotBaseline(page, 'colordotpicker');
   });
 });
+
+test.describe('sc-tag variante label', () => {
+  test('§4.1: label pinta bg/text/dot del color categórico; default intacto', async ({ page }) => {
+    await gotoPage(page, 'tag');
+
+    const red = page.getByTestId('sc-tag-label-red').locator('.sc-tag__label');
+    await expect(red.locator('.sc-tag__dot')).toBeVisible();
+    // bg = --sc-label-red-bg (red-50) · text = --sc-label-red-text (red-700)
+    expect(await styleOf(red, ['background-color', 'color'])).toEqual({
+      'background-color': 'rgb(254, 242, 242)',
+      color: 'rgb(185, 28, 28)',
+    });
+    // dot = --sc-label-red-dot (red-500)
+    expect(
+      (await styleOf(red.locator('.sc-tag__dot'), ['background-color']))['background-color'],
+    ).toBe('rgb(239, 68, 68)');
+
+    // default (lote 1) intacto: el primer tag sigue siendo <p-tag>
+    await expect(page.getByTestId('sc-tag').locator('.p-tag')).toBeVisible();
+  });
+});
