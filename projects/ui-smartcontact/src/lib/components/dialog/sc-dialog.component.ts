@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, effect, input, model, output } from '@angular/core';
 import { DialogModule } from 'primeng/dialog';
 
-import { ScIconComponent, SC_ICON_SIZE_LG } from '@smartcontact/icons';
+import { ScIconComponent, SC_ICON_SIZE_LG } from '@smartcontact-hub/icons';
 
 import { ScDialogPosition } from '../../core/types/theme-component.types';
 

@@ -1,6 +1,10 @@
 {
-  "name": "@smartcontact/icons",
+  "name": "@smartcontact-hub/icons",
   "version": "0.1.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/smartcontact-hub/smartcontact-ui.git"
+  },
   "peerDependencies": {
     "@angular/common": "^21.0.0",
     "@angular/core": "^21.0.0"
@@ -10,7 +14,8 @@
     "tslib": "^2.3.0"
   },
   "publishConfig": {
-    "access": "restricted"
+    "access": "restricted",
+    "registry": "https://npm.pkg.github.com"
   },
   "scripts": {
     "icons:build": "node ./scripts/generate-material-symbols.js"

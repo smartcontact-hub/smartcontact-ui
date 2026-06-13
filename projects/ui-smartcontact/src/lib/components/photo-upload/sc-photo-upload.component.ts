@@ -11,7 +11,7 @@ import {
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
 
-import { SC_ICON_SIZE_3XL, SC_ICON_SIZE_LG, ScIconComponent } from '@smartcontact/icons';
+import { SC_ICON_SIZE_3XL, SC_ICON_SIZE_LG, ScIconComponent } from '@smartcontact-hub/icons';
 
 import { AvatarIllustrationPool, buildIllustrationSrc } from '../../core/avatar-illustration';
 import { SC_PHOTO_UPLOAD_TRANSLATIONS } from './i18n/sc-photo-upload.translations';
@@ -28,7 +28,7 @@ const ALLOWED_TYPES = ['image/jpeg', 'image/png', 'image/gif'];
  *
  * `MessageService` (PrimeNG) se inyecta **opcional**: los toasts de validación
  * degradan si no hay infra de toast. i18n colocado en `sc.photoUpload.*`. Iconos
- * vía `@smartcontact/icons` (§4.6).
+ * vía `@smartcontact-hub/icons` (§4.6).
  */
 @Component({
   selector: 'sc-photo-upload',

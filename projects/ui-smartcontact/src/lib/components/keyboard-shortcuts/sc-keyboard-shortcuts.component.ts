@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, HostListener, inject, input } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { SC_ICON_SIZE_DEFAULT, ScIconComponent } from '@smartcontact/icons';
+import { SC_ICON_SIZE_DEFAULT, ScIconComponent } from '@smartcontact-hub/icons';
 
 import { isTypingTarget } from '../../core/utils/is-typing-target';
 import { ScCommandPaletteService } from '../command-palette/sc-command-palette.service';

@@ -11,7 +11,7 @@ import {
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ButtonModule } from 'primeng/button';
 
-import { SC_ICON_SIZE_MD, SC_ICON_SIZE_SM, ScIconComponent } from '@smartcontact/icons';
+import { SC_ICON_SIZE_MD, SC_ICON_SIZE_SM, ScIconComponent } from '@smartcontact-hub/icons';
 
 import { ScDialogComponent } from '../dialog/sc-dialog.component';
 import { SC_IMPACT_PREVIEW_DIALOG_TRANSLATIONS } from './i18n/sc-impact-preview-dialog.translations';
@@ -41,7 +41,7 @@ export interface ImpactBadge {
  * i18n: `title`, nombres de items y etiquetas del badge los suministra el
  * consumidor; las etiquetas por defecto de botón, el aria de quitar y el
  * mensaje de vacío viven en el diccionario colocado `sc.impactPreviewDialog.*`.
- * Iconos vía `@smartcontact/icons` (§4.6).
+ * Iconos vía `@smartcontact-hub/icons` (§4.6).
  */
 @Component({
   selector: 'sc-impact-preview-dialog',

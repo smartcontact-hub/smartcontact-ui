@@ -1,9 +1,9 @@
 /*
- * @smartcontact/styles — entrada única de CSS.
+ * @smartcontact-hub/styles — entrada única de CSS.
  *
  * Las 7 capas de tokens van en ORDEN DE CASCADA (primitive → semantic →
  * palette → component → extensions → dark). La capa 6 (puente PrimeNG)
- * no es CSS: vive como preset en @smartcontact/components
+ * no es CSS: vive como preset en @smartcontact-hub/components
  * (theme/sc-preset), que redirige cada `--p-*` a estos `--sc-*`.
  */
 @import './tokens/layers/01-primitive.css';

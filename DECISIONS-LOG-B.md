@@ -13,7 +13,7 @@ con los tipos públicos de `lib/core/types`.
 
 **Racional (base verificada):**
 - Es autocontenido (109 líneas, cero dependencias más allá de un tipo) y
-  resuelve a clases CSS `sc-icon-font--*` que el paquete `@smartcontact/icons`
+  resuelve a clases CSS `sc-icon-font--*` que el paquete `@smartcontact-hub/icons`
   YA genera (4.250 clases en `material-symbols-icons.generated.css` — grep).
 - Los 15 wrappers del catálogo de desarrollo lo consumen vía template con
   clases CSS, no vía el componente `<sc-icon>`: sustituirlo por el mapeo del
@@ -168,7 +168,7 @@ de export de imágenes tenía el token caducado → capturas vía
 
 ## Decisiones transversales del lote
 
-### §4.6 cerrada — sc-icon reconciliado en @smartcontact/icons
+### §4.6 cerrada — sc-icon reconciliado en @smartcontact-hub/icons
 Los wrappers de diseño (search, column-selector, group-popover) usan
 `<sc-icon>` con tamaños numéricos: la reconciliación no podía esperar.
 `ScIconComponent` del paquete de iconos se extendió de forma
@@ -326,7 +326,7 @@ output nativo `changed` (reincorporado tras la revisión). `checked` relajado a
 opcional. e2e: 35×21 del Kit, toggle emite, readonly no muta.
 
 ### sc-dialog + ScDynamicDialogService
-Ver §4.3. Iconos via @smartcontact/icons (reconciliación §4.6); aria-label de
+Ver §4.3. Iconos via @smartcontact-hub/icons (reconciliación §4.6); aria-label de
 cierre por input `closeAriaLabel` (sin acoplar i18n de la app).
 
 ### sc-checkbox
@@ -377,7 +377,7 @@ con Figma concuerdan en las 5 piezas.
 
 Primer bloque del roadmap de la gran sesión (Lotes 4→9). Se portan los 8 custom
 de bajo acoplamiento del catálogo de diseño + los 2 que componen la `sc-dialog`
-canónica. `sc-icon` NO entra: ya está reconciliado en `@smartcontact/icons`
+canónica. `sc-icon` NO entra: ya está reconciliado en `@smartcontact-hub/icons`
 (§4.6), así que la Fase 3 es de 15 custom, no 16. inline-rename-cell se difiere
 al Lote 8 (es el cell-renderer del datatable, su único consumidor).
 
@@ -393,7 +393,7 @@ Adopción 1:1 del catálogo de diseño con el método innegociable por pieza:
    diccionario colocado `sc.<x>.*` (patrón `sc-group-popover`), sin tirar de
    claves `common.*` de la app de origen. 7 de las 9 piezas necesitaron dict
    colocado (empty-state y page-header son i18n-driven puros → sin dict).
-3. **Iconos** vía `@smartcontact/icons` (§4.6); nunca `pi pi-*`.
+3. **Iconos** vía `@smartcontact-hub/icons` (§4.6); nunca `pi pi-*`.
 4. Demo en `sc-demo` + e2e (métricas `getComputedStyle` vs Kit + comportamiento).
 5. Commit por pieza.
 
@@ -780,7 +780,7 @@ togglear análisis, procesa, emite result, cierra). Commit + CI de GitHub Action
 Hecho hasta el punto seguro (sin publicar — el publish es outward-facing + depende
 de infra del operador):
 - **Versión `0.0.1` → `0.1.0`** en los 3 paquetes + el root, y los **peerDeps
-  internos pinneados** (`@smartcontact/components` → `icons`/`styles` `0.1.0`).
+  internos pinneados** (`@smartcontact-hub/components` → `icons`/`styles` `0.1.0`).
   Pre-1.0 a propósito: el API del DS aún puede cambiar.
 - **`publishConfig.access: "restricted"`** en los 3 paquetes — red de seguridad:
   sin registry configurado, `npm publish` falla cerrado (no se publica en el npm
@@ -851,3 +851,40 @@ valores exactos. La restricción "las únicas 4 medidas de spacing bindeadas son
 `npm run verify` limpio (incl. `tokens:guard` confirmando que NO se cuela 8-point) +
 `CI=1 npm run e2e` verde (1 spec nuevo: radio 12/8, divisor del 2º slot, colapso,
 flush). Commit por pieza + CI de GitHub Actions verde tras el push.
+
+---
+
+# Lote 9-2b — Scope `@smartcontact-hub` + GitHub Packages (2026-06-14)
+
+## Contexto
+El DS dejó de ser "solo design system": va a alojar también el prototipo de la
+plataforma sobre sus propios componentes. Eso descartó nombres tipo `ds`/`design`
+(encajonan) a favor de un apellido de **producto**. `@smartcontact` (y `smart-contact`,
+`smart.contact`, `smartcontact-app`) están pillados como org de GitHub, y GitHub
+Packages exige que el scope npm coincida **exactamente** con el nombre de la org. Se
+eligió **`smartcontact-hub`** (org libre verificada) → scope `@smartcontact-hub`.
+
+## Decisión
+- **Registro = GitHub Packages** (no tarballs): un DS evolutivo con muchas versiones
+  pide `npm install/update`, no re-copia manual de `.tgz` por release.
+- **Scope = `@smartcontact-hub`** (permanente; las apps se enganchan a él). Rename
+  mecánico `@smartcontact` → `@smartcontact-hub` en los 42 ficheros que lo usaban
+  (3 `package.json` name + peerDeps internos, `tsconfig.json` paths, ~25 imports
+  `from '@smartcontact-hub/icons'`, `DESIGN_TOKENS_PACKAGE`, READMEs/docs/comentarios).
+  Verificado: 0 `@smartcontact` sueltos, 0 dobles `-hub-hub`.
+- **Config publish** en los 3 `package.json`: `publishConfig.registry =
+  https://npm.pkg.github.com` + `publishConfig.access = restricted` (red de seguridad
+  anti-publish-público) + `repository` → `github.com/smartcontact-hub/smartcontact-ui`.
+  `.npmrc.example` reescrito para GitHub Packages.
+
+## Verificación
+`npm run verify` limpio + `CI=1 npm run e2e` 58/58 verde tras el rename. Dry-run
+(`npm run publish:packages`) confirma los 3 tarballs con nombre nuevo apuntando a
+`npm.pkg.github.com` con acceso restricted.
+
+## Operator-gated (lo hace Rafael, no automatizable aquí)
+1. Crear org gratis `smartcontact-hub` en GitHub.
+2. Transferir `arebury/smartcontact-ui` → `smartcontact-hub/smartcontact-ui`
+   (Settings → Danger Zone → Transfer). `git remote` se auto-redirige.
+3. Publicar con token inline (nunca en el repo/chat):
+   `GITHUB_TOKEN=ghp_xxx npm run publish:packages -- --publish` (scopes: write:packages).

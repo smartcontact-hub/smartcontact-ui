@@ -61,7 +61,7 @@ modales, dropdowns, toasts, etc. Trae sus propias variables
 Para que PrimeNG hable Smart Contact en vez de Aura, tenemos un
 **preset puente** que redirige cada `--p-*` al `--sc-*`
 correspondiente. Vive en el paquete de componentes
-(`@smartcontact/components`), en la carpeta `theme/sc-preset/`,
+(`@smartcontact-hub/components`), en la carpeta `theme/sc-preset/`,
 y es **modular**: un archivo por componente (botón, diálogo,
 tabla...), cada uno apuntando sus slots a `var(--sc-*)`. Así:
 
@@ -896,7 +896,7 @@ momento.
 | **`--p-*`** | El prefijo de los tokens de PrimeNG. No los tocamos a mano. |
 | **Cascada** | El orden en que las plantas se cargan: primitivos primero, semántica encima, etc. Cada planta puede usar la de abajo. |
 | **Alias** | Cuando un token apunta a otro: `--sc-bg-primary` ES `--sc-color-blue-700`. Si cambias el azul, cambian todos los que lo aliasean. |
-| **Preset** | El puente entre PrimeNG y `--sc-*`. Vive en `theme/sc-preset/` (un archivo por componente) dentro de `@smartcontact/components`. |
+| **Preset** | El puente entre PrimeNG y `--sc-*`. Vive en `theme/sc-preset/` (un archivo por componente) dentro de `@smartcontact-hub/components`. |
 | **Export DTCG** | El archivo `kit-export-dtcg.json`: la foto exacta de las variables del Kit de Figma, en formato estándar. Fuente de verdad de las métricas. |
 | **`tokens:import`** | El comando que reescribe los bloques generados de `01-primitive.css` desde el export. El puente Figma→código automatizado. |
 | **rem** | La unidad en que se emiten escala y radios (px de diseño ÷ 16). Mismo render por defecto que el px, pero respeta el zoom de fuente del usuario. |

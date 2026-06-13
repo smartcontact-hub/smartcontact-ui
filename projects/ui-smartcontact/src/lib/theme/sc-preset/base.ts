@@ -1,7 +1,7 @@
 /**
  * Base del preset — primitivos + semántica.
  *
- * Cada valor apunta a los tokens `--sc-*` de @smartcontact/styles (la única
+ * Cada valor apunta a los tokens `--sc-*` de @smartcontact-hub/styles (la única
  * fuente de verdad). Aquí no se escribe ningún color en hex ni ninguna métrica
  * en px: el preset REDIRIGE (`--p-*` → `var(--sc-*)`), no declara.
  *

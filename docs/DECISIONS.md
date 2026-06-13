@@ -502,7 +502,7 @@ Angular Material (componentes), NO a la font de iconos Material Symbols —
 aclarado y confirmado.
 
 **Decisión**: wrapper **`<sc-icon name [size] [fill] [weight]>`** (paquete
-`@smartcontact/icons`, fuente en `projects/ui-smartcontact-icons/`) que renderiza
+`@smartcontact-hub/icons`, fuente en `projects/ui-smartcontact-icons/`) que renderiza
 un glifo Material Symbols Outlined por ligadura. Es la **única API de icono** del
 DS. La variable font se carga en el `index.html` de cada app consumidora (Google
 Fonts CSS link). Los campos de icono pasan de ref Lucide a **string** (nombre
@@ -622,7 +622,7 @@ reveló que el bundler estaba importando módulos enteros del DS por imports
 transitivos.
 
 **Decisión**: `"sideEffects": false` en el `package.json` de los paquetes del DS
-(`@smartcontact/components`, `@smartcontact/icons`; `@smartcontact/styles` es
+(`@smartcontact-hub/components`, `@smartcontact-hub/icons`; `@smartcontact-hub/styles` es
 CSS y se declara explícitamente).
 
 **Razón**: tree-shaking efectivo. Resultado inmediato en su momento: bundle

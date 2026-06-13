@@ -13,7 +13,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 
-import { SC_ICON_SIZE_MD, SC_ICON_SIZE_SM, ScIconComponent } from '@smartcontact/icons';
+import { SC_ICON_SIZE_MD, SC_ICON_SIZE_SM, ScIconComponent } from '@smartcontact-hub/icons';
 
 import { ScClipboardService } from '../../core/services/sc-clipboard.service';
 import { ScDialogComponent } from '../dialog/sc-dialog.component';
@@ -42,7 +42,7 @@ export interface DeletableEntity {
  *
  * i18n: los nombres de entidad/items los suministra el consumidor; todo el
  * chrome vive en el diccionario colocado `sc.deleteEntityDialog.*` (sin claves
- * `common.*`). Iconos vía `@smartcontact/icons` (§4.6).
+ * `common.*`). Iconos vía `@smartcontact-hub/icons` (§4.6).
  */
 @Component({
   selector: 'sc-delete-entity-dialog',

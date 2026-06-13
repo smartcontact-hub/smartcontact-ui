@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
-import { SC_ICON_SIZE_DEFAULT, ScIconComponent } from '@smartcontact/icons';
+import { SC_ICON_SIZE_DEFAULT, ScIconComponent } from '@smartcontact-hub/icons';
 
 import { registerScBulkActionBarTranslations } from './i18n/sc-bulk-action-bar.translations';
 
@@ -23,7 +23,7 @@ export interface BulkActionEntityLabels {
  * i18n: las etiquetas de entidad las suministra el consumidor (típicamente vía
  * `useBulkEntityI18n`); los rótulos accesibles y los sufijos por defecto del
  * resumen viven en el diccionario colocado `sc.bulkActionBar.*` (sin claves
- * `common.*`). Iconos vía `@smartcontact/icons` (§4.6).
+ * `common.*`). Iconos vía `@smartcontact-hub/icons` (§4.6).
  */
 @Component({
   selector: 'sc-bulk-action-bar',

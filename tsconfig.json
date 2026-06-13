@@ -4,13 +4,13 @@
   "compileOnSave": false,
   "compilerOptions": {
     "paths": {
-      "@smartcontact/styles": [
+      "@smartcontact-hub/styles": [
         "./dist/design-tokens"
       ],
-      "@smartcontact/icons": [
+      "@smartcontact-hub/icons": [
         "./dist/ui-smartcontact-icons"
       ],
-      "@smartcontact/components": [
+      "@smartcontact-hub/components": [
         "./dist/ui-smartcontact"
       ]
     },

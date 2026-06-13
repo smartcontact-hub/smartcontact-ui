@@ -84,7 +84,7 @@ Del manifiesto §8. Ninguna bloquea el arranque; cada una se decide con racional
 3. **API de `sc-dialog`**: la card canónica (header icon+title+subtitle+close, footer projection, `[visible]` declarativo) como capa sobre el wrapper fino (`header`/`position`/`draggable`), o unificación de inputs.
 4. **Rename de `sc-confirm-host`**: a `sc-confirmdialog` (envuelve `p-confirmdialog`, regla pegado) o mantener el nombre de host por su acoplamiento a `ConfirmHostService`. Borde de la regla DD-12.
 5. **API anidada de `sc-section-card`**: diseño del sistema Section → Subsection → Slot (ver §3).
-6. **Reconciliación de `sc-icon` con `@smartcontact/icons`**: migrar al paquete de iconos **conservando los ejes FILL/wght/opsz** (font-variation-settings) y el proveedor por ligadura.
+6. **Reconciliación de `sc-icon` con `@smartcontact-hub/icons`**: migrar al paquete de iconos **conservando los ejes FILL/wght/opsz** (font-variation-settings) y el proveedor por ligadura.
 
 Además: **aliases de naming vivos** durante la transición de los 5 renames a pegado (no romper imports a media migración).
 
@@ -96,7 +96,7 @@ Varios custom del catálogo de diseño acoplan servicios que vivían fuera del p
 
 `CommandPaletteService` · `ConfirmHostService` · `KeyboardShortcutsService` · `ClipboardService` · `MessageService` · `NAV_ICONS` · `@shared/utils/icon-size`
 
-No son 100% portables sin mover o abstraer esos paths. **Inventariar y resolver el acoplamiento de cada pieza al meterla en `@smartcontact/components`** — un custom no se declara portado mientras dependa de un path de app consumidora.
+No son 100% portables sin mover o abstraer esos paths. **Inventariar y resolver el acoplamiento de cada pieza al meterla en `@smartcontact-hub/components`** — un custom no se declara portado mientras dependa de un path de app consumidora.
 
 ---
 

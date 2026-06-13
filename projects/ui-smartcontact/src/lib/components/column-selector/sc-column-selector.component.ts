@@ -11,7 +11,7 @@ import {
 import { PopoverModule } from 'primeng/popover';
 
 
-import { SC_ICON_SIZE_LG, SC_ICON_SIZE_MD, SC_ICON_SIZE_SM, ScIconComponent } from '@smartcontact/icons';
+import { SC_ICON_SIZE_LG, SC_ICON_SIZE_MD, SC_ICON_SIZE_SM, ScIconComponent } from '@smartcontact-hub/icons';
 
 export interface ColumnDef {
   /** Stable key persisted in localStorage. */

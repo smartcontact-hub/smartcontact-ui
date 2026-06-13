@@ -10,7 +10,7 @@ import {
   viewChild,
 } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { SC_ICON_SIZE_DEFAULT, SC_ICON_SIZE_LG, ScIconComponent } from '@smartcontact/icons';
+import { SC_ICON_SIZE_DEFAULT, SC_ICON_SIZE_LG, ScIconComponent } from '@smartcontact-hub/icons';
 
 import { isTypingTarget } from '../../core/utils/is-typing-target';
 import { SC_COMMAND_PALETTE_TRANSLATIONS } from './i18n/sc-command-palette.translations';

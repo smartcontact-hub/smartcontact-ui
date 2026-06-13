@@ -22,14 +22,14 @@ contenido esperado (4 projects, preset modular, skills).
 **Base verificada:** `ls` de ambas rutas; estructura cotejada con pre-flight §2.
 
 ### A2 — Paquete de iconos copiado verbatim del molde
-`@smartcontact/icons` se adopta tal cual (decisión cerrada: el suyo es más
+`@smartcontact-hub/icons` se adopta tal cual (decisión cerrada: el suyo es más
 maduro). La reconciliación con nuestro `sc-icon` (ejes FILL/wght/opsz) toca la
 API de un componente del catálogo → **diferida a Mitad B** con el resto de
 componentes, anotada en el plan de port.
 **Base verificada:** árbol de `projects/ui-smartcontact-icons/` (generador de
 codepoints + sc-icon propio del paquete).
 
-### A3 — `public-api` de `@smartcontact/components` recortado a fundaciones
+### A3 — `public-api` de `@smartcontact-hub/components` recortado a fundaciones
 El public-api del molde exporta 25+ wrappers que en Mitad A no existen. Se
 recorta a `provideSmartContactUi` + `scPreset`. Los tipos públicos
 (`lib/core/types`) y el `sc-component-icon-resolver` son superficie de los

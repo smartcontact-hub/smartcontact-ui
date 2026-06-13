@@ -13,7 +13,7 @@ import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ButtonModule } from 'primeng/button';
 
-import { SC_ICON_SIZE_DEFAULT, SC_ICON_SIZE_MD, ScIconComponent } from '@smartcontact/icons';
+import { SC_ICON_SIZE_DEFAULT, SC_ICON_SIZE_MD, ScIconComponent } from '@smartcontact-hub/icons';
 
 import { SC_STICKY_FORM_HEADER_TRANSLATIONS } from './i18n/sc-sticky-form-header.translations';
 
@@ -32,7 +32,7 @@ import { SC_STICKY_FORM_HEADER_TRANSLATIONS } from './i18n/sc-sticky-form-header
  *
  * i18n: las palabras de acción y el placeholder por defecto viven en el
  * diccionario colocado `sc.stickyFormHeader.*` (sin claves `common.*`). Iconos
- * vía `@smartcontact/icons` (§4.6; `[spin]` para el spinner de Save).
+ * vía `@smartcontact-hub/icons` (§4.6; `[spin]` para el spinner de Save).
  */
 @Component({
   selector: 'sc-sticky-form-header',

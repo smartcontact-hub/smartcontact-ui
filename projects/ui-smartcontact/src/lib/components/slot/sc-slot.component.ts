@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
-import { SC_ICON_SIZE_LG, ScIconComponent } from '@smartcontact/icons';
+import { SC_ICON_SIZE_LG, ScIconComponent } from '@smartcontact-hub/icons';
 
 /**
  * Slot (hoja) del árbol Section → Subsection → Slot (§4.5, nodo Figma

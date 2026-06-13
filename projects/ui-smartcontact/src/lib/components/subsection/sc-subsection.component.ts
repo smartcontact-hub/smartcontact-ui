@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, input, signal } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
-import { SC_ICON_SIZE_LG, ScIconComponent } from '@smartcontact/icons';
+import { SC_ICON_SIZE_LG, ScIconComponent } from '@smartcontact-hub/icons';
 
 /**
  * Subsección (nivel medio) del árbol Section → Subsection → Slot (§4.5, nodo

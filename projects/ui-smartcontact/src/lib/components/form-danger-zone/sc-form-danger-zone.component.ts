@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, inject, input, output } from '@angu
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ButtonModule } from 'primeng/button';
 
-import { SC_ICON_SIZE_DEFAULT, ScIconComponent } from '@smartcontact/icons';
+import { SC_ICON_SIZE_DEFAULT, ScIconComponent } from '@smartcontact-hub/icons';
 
 import { SC_FORM_DANGER_ZONE_TRANSLATIONS } from './i18n/sc-form-danger-zone.translations';
 
@@ -16,7 +16,7 @@ import { SC_FORM_DANGER_ZONE_TRANSLATIONS } from './i18n/sc-form-danger-zone.tra
  *
  * i18n: la descripción la suministra el consumidor (`descriptionKey`); el
  * título y la etiqueta de acción por defecto viven en el diccionario colocado
- * `sc.formDangerZone.*` (sin claves `common.*`). Iconos vía `@smartcontact/icons`.
+ * `sc.formDangerZone.*` (sin claves `common.*`). Iconos vía `@smartcontact-hub/icons`.
  */
 @Component({
   selector: 'sc-form-danger-zone',

@@ -1,4 +1,4 @@
-# @smartcontact/styles — design tokens
+# @smartcontact-hub/styles — design tokens
 
 > Looking for the friendly, design-side walkthrough in Spanish?
 > See [`../../docs/guia-tokens.md`](../../docs/guia-tokens.md) — written for
@@ -10,7 +10,7 @@
 The seven layers of the token system are the **single source of truth** for
 every visual decision in Smart Contact products. All `--sc-*` custom
 properties live in this package, and PrimeNG `--p-*` variables are bridged
-to them in layer 6 (the preset, in `@smartcontact/components`).
+to them in layer 6 (the preset, in `@smartcontact-hub/components`).
 
 The structure mirrors PrimeNG's official design-token model
 (primitive → semantic → component → preset overrides) and adds two layers
@@ -36,7 +36,7 @@ projects/design-tokens/
 ```
 
 > **Layer 6 is not a CSS file.** The PrimeNG bridge lives as a **modular
-> preset** in `@smartcontact/components`:
+> preset** in `@smartcontact-hub/components`:
 > `projects/ui-smartcontact/src/lib/theme/sc-preset/` — one file per
 > component (`button.ts`, `dialog.ts`, `datatable.ts`, …) plus the shared
 > base. The preset `definePreset(Aura, …)`s our overrides and is registered

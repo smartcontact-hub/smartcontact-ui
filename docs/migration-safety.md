@@ -34,12 +34,12 @@ recorrido (tokens en 7 capas, preset modular, catálogo de customs).
 ```
 ┌─────────────────────────────────────────────────────────────┐
 │  Apps consumidoras (supervisor, doc-site, …)                 │
-│  consume → <sc-*> de @smartcontact/components                │
+│  consume → <sc-*> de @smartcontact-hub/components                │
 └─────────────────────────────────────────────────────────────┘
                             │
                             ▼
 ┌─────────────────────────────────────────────────────────────┐
-│  @smartcontact/components                                    │
+│  @smartcontact-hub/components                                    │
 │  - Wrappers sobre <p-*> + componentes custom                 │
 │  - Consume tokens --sc-* (alias --sc-spacing-*, semánticos)  │
 │  - theme/sc-preset → puente --p-* ← var(--sc-*)              │
@@ -47,7 +47,7 @@ recorrido (tokens en 7 capas, preset modular, catálogo de customs).
                             │
                             ▼
 ┌─────────────────────────────────────────────────────────────┐
-│  @smartcontact/styles                                        │
+│  @smartcontact-hub/styles                                        │
 │  - layers/01-primitive … 07-dark.css → define --sc-*         │
 │  - bloques @sc-gen generados del export DTCG del Kit         │
 └─────────────────────────────────────────────────────────────┘

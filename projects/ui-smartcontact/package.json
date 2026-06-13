@@ -1,14 +1,18 @@
 {
-  "name": "@smartcontact/components",
+  "name": "@smartcontact-hub/components",
   "version": "0.1.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/smartcontact-hub/smartcontact-ui.git"
+  },
   "peerDependencies": {
     "@angular/common": "^21.0.0",
     "@angular/core": "^21.0.0",
     "@angular/forms": "^21.0.0",
     "@ngx-translate/core": "^17.0.0",
     "@primeuix/themes": "^2.0.0",
-    "@smartcontact/icons": "0.1.0",
-    "@smartcontact/styles": "0.1.0",
+    "@smartcontact-hub/icons": "0.1.0",
+    "@smartcontact-hub/styles": "0.1.0",
     "primeng": "^21.0.0",
     "rxjs": "^7.8.1"
   },
@@ -16,7 +20,8 @@
     "tslib": "^2.3.0"
   },
   "publishConfig": {
-    "access": "restricted"
+    "access": "restricted",
+    "registry": "https://npm.pkg.github.com"
   },
   "sideEffects": false
 }

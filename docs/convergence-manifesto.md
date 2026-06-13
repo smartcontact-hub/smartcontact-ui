@@ -2,7 +2,7 @@
 
 # Manifiesto de convergencia — Smart Contact Design System
 
-> Documento base del port. Define cómo se construye el Design System unificado a partir de sus dos orígenes: **el catálogo de diseño** (SCDS, paquete `@sc/design-system`) y **el catálogo de desarrollo** (la librería `smartcontact-ui`: `@smartcontact/styles` + `@smartcontact/icons` + `@smartcontact/components`). El estado de ejecución por componente vive en §8 y en `component-port-plan.md`.
+> Documento base del port. Define cómo se construye el Design System unificado a partir de sus dos orígenes: **el catálogo de diseño** (SCDS, paquete `@sc/design-system`) y **el catálogo de desarrollo** (la librería `smartcontact-ui`: `@smartcontact-hub/styles` + `@smartcontact-hub/icons` + `@smartcontact-hub/components`). El estado de ejecución por componente vive en §8 y en `component-port-plan.md`.
 
 ---
 
@@ -60,7 +60,7 @@ Decisiones ya cerradas. No se re-litigan; se reflejan tal cual.
 
 ### 2.4 Estructura / empaquetado objetivo
 
-**Estructura de empaquetado del catálogo de desarrollo + tokens/preset/tooling del catálogo de diseño.** Split de 3 paquetes ng-packagr publicables (`@smartcontact/styles`, `@smartcontact/icons`, `@smartcontact/components`) + `sc-demo` privado de referencia. API de setup pública `provideSmartContactUi()`. Detalle concreto en §6.
+**Estructura de empaquetado del catálogo de desarrollo + tokens/preset/tooling del catálogo de diseño.** Split de 3 paquetes ng-packagr publicables (`@smartcontact-hub/styles`, `@smartcontact-hub/icons`, `@smartcontact-hub/components`) + `sc-demo` privado de referencia. API de setup pública `provideSmartContactUi()`. Detalle concreto en §6.
 
 ---
 
@@ -105,7 +105,7 @@ Convención de columnas: `¿Diseño?` / `¿Desarrollo?` = aparece en ese catálo
 | `sc-empty-state` | none | custom | Sí | No | Portar. Card de empty-state con reserva de min-height (no CLS). |
 | `sc-form-danger-zone` | `p-button` (botón interno) | custom | Sí | No | Portar. Sección de acciones irreversibles. |
 | `sc-form-section-nav` | none | custom | Sí | No | Portar. Nav de secciones in-form (tabs) con variante flush + dots de error. |
-| `sc-icon` | none | custom | Sí | No | **Reconciliar con `@smartcontact/icons`.** Ambos orígenes tienen `<sc-icon>`; el paquete de iconos del catálogo de desarrollo es más maduro (Material Symbols generados). Migrar el del catálogo de diseño (Material Symbols por ligadura, ejes FILL/wght/opsz) a ese paquete. **Ojo dependencia transitiva:** los wrappers del catálogo de desarrollo no usan `<sc-icon>` directo sino que pasan por `sc-component-icon-resolver` (capa de compat de nombres pi→Material) — ver §5.a / §8.8. |
+| `sc-icon` | none | custom | Sí | No | **Reconciliar con `@smartcontact-hub/icons`.** Ambos orígenes tienen `<sc-icon>`; el paquete de iconos del catálogo de desarrollo es más maduro (Material Symbols generados). Migrar el del catálogo de diseño (Material Symbols por ligadura, ejes FILL/wght/opsz) a ese paquete. **Ojo dependencia transitiva:** los wrappers del catálogo de desarrollo no usan `<sc-icon>` directo sino que pasan por `sc-component-icon-resolver` (capa de compat de nombres pi→Material) — ver §5.a / §8.8. |
 | `sc-inline-rename-cell` | none | custom | Sí | No | Portar. Celda de nombre editable in-place (`<input>` nativo). |
 | `sc-keyboard-shortcuts` | none | custom | Sí | No | Portar. Cheat sheet de atajos (tecla `?`). Acoplado a `KeyboardShortcutsService` (`@core`). |
 | `sc-page-header` | none | custom | Sí | No | Portar. Header de página estático (rutas no-entidad). |
@@ -191,7 +191,7 @@ Wrappers PrimeNG genéricos que el catálogo de diseño no tenía:
 
 Todo lo de §3.2 + §3.3: los wrappers PrimeNG exclusivos (`sc-datepicker`, `sc-multiselect`, `sc-inputnumber`, `sc-search`, `sc-inputgroup`, `sc-divider`, `sc-column-selector`, `sc-group-popover`, `sc-confirmdialog`/`sc-confirm-host`) y **todos los custom** (`sc-bulk-action-bar`, `sc-bulk-edit-menu`, `sc-color-dot-picker`, `sc-command-palette`, `sc-empty-state`, `sc-form-danger-zone`, `sc-form-section-nav`, `sc-icon`, `sc-inline-rename-cell`, `sc-keyboard-shortcuts`, `sc-page-header`, `sc-photo-upload`, `sc-section-card`, `sc-sticky-form-header`, `sc-delete-entity-dialog`, `sc-impact-preview-dialog`).
 
-> **Deuda de aislamiento a saldar al portar:** varios custom acoplan servicios que vivían **fuera** del package, en el `@core`/`@shared` de la app de origen: `CommandPaletteService`, `ConfirmHostService`, `KeyboardShortcutsService`, `ClipboardService`, `MessageService`, `NAV_ICONS`, `@shared/utils/icon-size`. No son 100% portables sin mover/abstraer esos paths. Resolver al meterlos en `@smartcontact/components`.
+> **Deuda de aislamiento a saldar al portar:** varios custom acoplan servicios que vivían **fuera** del package, en el `@core`/`@shared` de la app de origen: `CommandPaletteService`, `ConfirmHostService`, `KeyboardShortcutsService`, `ClipboardService`, `MessageService`, `NAV_ICONS`, `@shared/utils/icon-size`. No son 100% portables sin mover/abstraer esos paths. Resolver al meterlos en `@smartcontact-hub/components`.
 
 ### 5.c Faltan en ambos (huecos reales del DS)
 
@@ -210,9 +210,9 @@ Componentes que **ningún origen** tiene como wrapper Angular, pero el **preset 
 
 | Paquete | npm name | Project | Contenido | peerDeps clave |
 |---|---|---|---|---|
-| tokens | `@smartcontact/styles` | `projects/design-tokens/` | **tokens 14-base** (7 capas `01-primitive…07-dark.css` en `src/lib/styles/tokens/layers/`, escala `--sc-scale-*`, alias font-size/line-height) + reset/globals | — (solo tslib) |
-| iconos | `@smartcontact/icons` | `projects/ui-smartcontact-icons/` | `<sc-icon>` + Material Symbols generados (el `sc-icon` del catálogo de diseño migra aquí) | `@angular/core` + `@angular/common` |
-| componentes | `@smartcontact/components` | `projects/ui-smartcontact/` | wrappers `sc-*` (ambos orígenes) + **preset modular** (`src/lib/theme/sc-preset/`) + `provideSmartContactUi` | primeng, @primeuix/themes, `@smartcontact/icons`, `@smartcontact/styles`, ngx-translate |
+| tokens | `@smartcontact-hub/styles` | `projects/design-tokens/` | **tokens 14-base** (7 capas `01-primitive…07-dark.css` en `src/lib/styles/tokens/layers/`, escala `--sc-scale-*`, alias font-size/line-height) + reset/globals | — (solo tslib) |
+| iconos | `@smartcontact-hub/icons` | `projects/ui-smartcontact-icons/` | `<sc-icon>` + Material Symbols generados (el `sc-icon` del catálogo de diseño migra aquí) | `@angular/core` + `@angular/common` |
+| componentes | `@smartcontact-hub/components` | `projects/ui-smartcontact/` | wrappers `sc-*` (ambos orígenes) + **preset modular** (`src/lib/theme/sc-preset/`) + `provideSmartContactUi` | primeng, @primeuix/themes, `@smartcontact-hub/icons`, `@smartcontact-hub/styles`, ngx-translate |
 | demo | (privado) | `projects/sc-demo/` | app consumidora de referencia / doc-site | — |
 
 Cada lib compila con **ng-packagr** (`ng-package.json` → `dist/<lib>`); peerDeps por versión exacta. Esto da **publicabilidad real** (paquetes versionados, no consumo por path).
@@ -220,12 +220,12 @@ Cada lib compila con **ng-packagr** (`ng-package.json` → `dist/<lib>`); peerDe
 ### 6.2 Tokens y preset dentro del molde
 
 - **Tokens:** las capas 14-base viven en `projects/design-tokens/src/lib/styles/tokens/layers/`, **sustituyendo** el `spacing.css`/`radius.css` 8-point de origen. Se conserva el patrón de **auto-generación desde el export de Figma** pero **alimentado por la ley de escala 14-base** — **ambos generadores fundidos en uno** DTCG-aware.
-- **Preset:** dentro de `@smartcontact/components`, estructura **modular por-componente** (**~82 módulos + `base.ts` + `index.ts` con `} satisfies Preset` + `extend.ts` = 85 ficheros** en `projects/ui-smartcontact/src/lib/theme/sc-preset/`), con **cada slot apuntando a `var(--sc-*)`**. **`base.ts` reescrito** (sin hex hardcodeados). `prefix:'p'` (variables runtime `--p-*` → redirigidas a `--sc-*`).
+- **Preset:** dentro de `@smartcontact-hub/components`, estructura **modular por-componente** (**~82 módulos + `base.ts` + `index.ts` con `} satisfies Preset` + `extend.ts` = 85 ficheros** en `projects/ui-smartcontact/src/lib/theme/sc-preset/`), con **cada slot apuntando a `var(--sc-*)`**. **`base.ts` reescrito** (sin hex hardcodeados). `prefix:'p'` (variables runtime `--p-*` → redirigidas a `--sc-*`).
 - **Tooling de parity/gen** conectado al pipeline: el import DTCG + `tokens:parity` como guardarraíl (cruza el export del Kit contra `--sc-*` + preset, bloquea drift).
 
 ### 6.3 API de setup pública
 
-- **`provideSmartContactUi(config?)`** (en `@smartcontact/components`) como **única frontera de setup**: envuelve `providePrimeNG` + aplica el preset. Elimina el cableado a mano por app (`providePrimeNG({ theme: { preset: ScPreset … }})`).
+- **`provideSmartContactUi(config?)`** (en `@smartcontact-hub/components`) como **única frontera de setup**: envuelve `providePrimeNG` + aplica el preset. Elimina el cableado a mano por app (`providePrimeNG({ theme: { preset: ScPreset … }})`).
 - `prefix` defaultea a `'p'` — coincide con lo necesario, se mantiene.
 - El default `darkModeSelector` del provider de origen era `'none'` (dark mode desactivado por defecto); en el repo unificado el default es **`.sc-dark`**, alineado con la clase de dark mode del DS.
 
@@ -238,9 +238,9 @@ Cada lib compila con **ng-packagr** (`ng-package.json` → `dist/<lib>`); peerDe
 
 Tres piezas con frontera limpia:
 
-1. CSS global: `@import @smartcontact/styles/index.css` + `@import @smartcontact/icons/…`.
+1. CSS global: `@import @smartcontact-hub/styles/index.css` + `@import @smartcontact-hub/icons/…`.
 2. Provider: `provideSmartContactUi()` en `app.config.ts`.
-3. Wrappers `sc-*` standalone desde `@smartcontact/components`.
+3. Wrappers `sc-*` standalone desde `@smartcontact-hub/components`.
 
 Las apps consumidoras (supervisor, doc-site) migran de imports por path de monorepo a los **paquetes versionados**.
 
@@ -252,17 +252,17 @@ Las apps consumidoras (supervisor, doc-site) migran de imports por path de monor
 
 ### Fase 0 — Resolver el choque de escala (bloqueante) ✓
 
-- Tabla única = **14-base**, regenerada en `@smartcontact/styles`.
+- Tabla única = **14-base**, regenerada en `@smartcontact-hub/styles`.
 - Barrido de los wrappers `sc-*` de origen que consumen `--sc-spacing-*`/`--sc-space-*` → repuntar a `--sc-scale-*` (se completa pieza a pieza al portar cada wrapper).
 - Generadores de tokens fundidos en uno DTCG-aware.
 
 ### Fase 1 — Fundaciones (tokens / escala / preset / setup) ✓
 
 - Split de 3 paquetes ng-packagr + `sc-demo`.
-- Capas 14-base + alias semánticos en `@smartcontact/styles`.
+- Capas 14-base + alias semánticos en `@smartcontact-hub/styles`.
 - Preset modular apuntando a `var(--sc-*)` (sin hex en `base.ts`); overrides portados a la estructura por-componente.
 - `tokens:parity`/generador/auditor de escala conectados al pipeline; `export:*` portados a Node.
-- `provideSmartContactUi()` como frontera de setup, con `darkModeSelector` por defecto **`.sc-dark`**; reconciliación de `@smartcontact/icons` con `sc-icon` y destino de `sc-component-icon-resolver` → decisión por-componente diferida a la Mitad B (§8.8).
+- `provideSmartContactUi()` como frontera de setup, con `darkModeSelector` por defecto **`.sc-dark`**; reconciliación de `@smartcontact-hub/icons` con `sc-icon` y destino de `sc-component-icon-resolver` → decisión por-componente diferida a la Mitad B (§8.8).
 
 ### Fase 2 — Primitivos PrimeNG que faltan
 
@@ -273,7 +273,7 @@ Las apps consumidoras (supervisor, doc-site) migran de imports por path de monor
 
 ### Fase 3 — Custom del catálogo de diseño
 
-- Portar todos los custom de §3.3 a `@smartcontact/components`.
+- Portar todos los custom de §3.3 a `@smartcontact-hub/components`.
 - **Saldar la deuda de aislamiento** (5.b): abstraer/mover `CommandPaletteService`, `ConfirmHostService`, `KeyboardShortcutsService`, `ClipboardService`, `MessageService`, `NAV_ICONS`, `icon-size` para que los custom sean portables.
 - `sc-sticky-form-header` se porta **retenido** (rollback DD#65).
 
@@ -303,7 +303,7 @@ Las apps consumidoras (supervisor, doc-site) migran de imports por path de monor
 5. **`sc-checkbox` — base única (§3.1):** decidir entre el `<input>` nativo tri-estado (a11y de browser) y el wrapper `p-checkbox` con `indeterminate`, **conservando el tri-estado** none/some/all. Validar al ejecutar.
 6. **`sc-dialog` — reconciliar APIs (§3.1):** el `sc-dialog` del catálogo de diseño pinta toda la card canónica (`[visible]` declarativo, header icon+title+subtitle+close, footer projection); el del catálogo de desarrollo es wrapper fino (`header`/`position`/`draggable`). Decidir si la card canónica se mantiene como capa sobre el wrapper fino o se unifican inputs.
 7. **`sc-confirm-host` → ¿`sc-confirmdialog`? (§3.2):** decidir si bajo DD-12 se renombra a `sc-confirmdialog` (envuelve `p-confirmdialog`) o se mantiene el nombre de host por su acoplamiento a `ConfirmHostService`. Borde de la regla pegado-vs-kebab.
-8. **`sc-icon` vs `@smartcontact/icons` + `sc-component-icon-resolver` (§3.3 / §5.a):** confirmar que la migración al paquete de iconos conserva los ejes FILL/wght/opsz (font-variation-settings) y el proveedor por ligadura; **decidir si `sc-component-icon-resolver` (compat pi→Material) se porta tal cual o se sustituye por el mapeo del catálogo de diseño**, sabiendo que casi todos los wrappers de origen dependen de él.
+8. **`sc-icon` vs `@smartcontact-hub/icons` + `sc-component-icon-resolver` (§3.3 / §5.a):** confirmar que la migración al paquete de iconos conserva los ejes FILL/wght/opsz (font-variation-settings) y el proveedor por ligadura; **decidir si `sc-component-icon-resolver` (compat pi→Material) se porta tal cual o se sustituye por el mapeo del catálogo de diseño**, sabiendo que casi todos los wrappers de origen dependen de él.
 9. **Deuda de aislamiento (§5.b):** inventariar y resolver los acoplamientos a `@core`/`@shared` antes de declarar portables los custom.
 10. **Naming aliases vivos durante la transición:** mientras los 5 wrappers con guión se realinean a pegado, mantener nota de alias para no romper imports a media migración.
 
@@ -347,7 +347,7 @@ Lente (= la regla wrapper-vs-custom de §9.1): para cada custom "puro" (`Base Pr
 | `sc-empty-state` | — | **bespoke** | Patrón de layout simple. |
 | `sc-form-section-nav` | — (`p-tabs` no hace scroll-spy + dots de error) | **bespoke** | Comportamiento custom. |
 | `sc-page-header` | — | **bespoke** | Patrón de layout. |
-| `sc-icon` | `@smartcontact/icons` | reconciliar | Ver §3.3 (migrar al paquete de iconos; PrimeNG usa PrimeIcons, no aplica). |
+| `sc-icon` | `@smartcontact-hub/icons` | reconciliar | Ver §3.3 (migrar al paquete de iconos; PrimeNG usa PrimeIcons, no aplica). |
 | `sc-sticky-form-header` | — | bespoke (retenido) | Rollback DD#65, no en uso activo. |
 
 **Resultado:** de las 12 piezas "puras", **2 son reutilización fuerte** (`p-inplace`, `p-fileupload`), **3 se componen sobre primitivos** (`p-dialog`/`p-panel`), y solo **~5 son bespoke legítimos** (sin primitivo que encaje). Recorta el código propio a mantener y cumple *"no acumular, reutilizar de PrimeNG"*. **A confirmar pieza a pieza al portar** — no forzar un primitivo que no encaje (eso es peor que el bespoke).
@@ -365,7 +365,7 @@ El repo unificado no elige un origen sobre otro: combina lo más sólido de cada
 - API moderna de Angular (signals `input()/output()`) y la disciplina de diseño 1:1 con Figma (DECISIONS, customs-catalog, naming DD-12, escala formalizada).
 
 **Del catálogo de desarrollo:**
-- El empaquetado para producción: 3 paquetes publicables (`@smartcontact/styles · icons · components`) + `provideSmartContactUi()` + ng-packagr + tarballs.
+- El empaquetado para producción: 3 paquetes publicables (`@smartcontact-hub/styles · icons · components`) + `provideSmartContactUi()` + ng-packagr + tarballs.
 - El preset modular por-componente (85 ficheros) frente al monolito.
 - El paquete de iconos más maduro (Material Symbols generados) y el mecanismo de rem centralizado (mejor accesibilidad de zoom).
 - Un conjunto de primitivos PrimeNG genéricos (avatar, badge, button, card, drawer, message, panel, skeleton, toast…) y la infra de servicios (toast, dynamic dialog).

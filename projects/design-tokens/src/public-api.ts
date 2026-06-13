@@ -1,4 +1,4 @@
 /*
- * Public API Surface of @smartcontact/styles
+ * Public API Surface of @smartcontact-hub/styles
  */
 export * from './lib/design-tokens';

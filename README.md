@@ -8,9 +8,9 @@ Figma (Smart Contact Prime UI Kit) se refleja directamente en el código y
 
 | Paquete | Proyecto | Contenido |
 |---|---|---|
-| `@smartcontact/styles` | `projects/design-tokens` | Tokens `--sc-*` (7 capas, escala 14-base en rem) + reset/globals |
-| `@smartcontact/icons` | `projects/ui-smartcontact-icons` | `<sc-icon>` + Material Symbols generados |
-| `@smartcontact/components` | `projects/ui-smartcontact` | Preset modular (`theme/sc-preset`, cada slot → `var(--sc-*)`) + `provideSmartContactUi()`. Los wrappers `sc-*` llegan en el port incremental — [docs/component-port-plan.md](docs/component-port-plan.md) |
+| `@smartcontact-hub/styles` | `projects/design-tokens` | Tokens `--sc-*` (7 capas, escala 14-base en rem) + reset/globals |
+| `@smartcontact-hub/icons` | `projects/ui-smartcontact-icons` | `<sc-icon>` + Material Symbols generados |
+| `@smartcontact-hub/components` | `projects/ui-smartcontact` | Preset modular (`theme/sc-preset`, cada slot → `var(--sc-*)`) + `provideSmartContactUi()`. Los wrappers `sc-*` llegan en el port incremental — [docs/component-port-plan.md](docs/component-port-plan.md) |
 | `sc-demo` (privada) | `projects/sc-demo` | App de referencia: fundaciones + smoke del tema |
 
 ## Construir

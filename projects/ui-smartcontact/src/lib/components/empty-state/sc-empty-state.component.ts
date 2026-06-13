@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 
-import { SC_ICON_SIZE_DEFAULT, SC_ICON_SIZE_DISPLAY_SM, ScIconComponent } from '@smartcontact/icons';
+import { SC_ICON_SIZE_DEFAULT, SC_ICON_SIZE_DISPLAY_SM, ScIconComponent } from '@smartcontact-hub/icons';
 
 /**
  * Centered empty-state card shown by list pages when there are zero rows
@@ -14,7 +14,7 @@ import { SC_ICON_SIZE_DEFAULT, SC_ICON_SIZE_DISPLAY_SM, ScIconComponent } from '
  * i18n: `titleKey`/`bodyKey`/`ctaKey` son claves que resuelve el consumidor
  * (componente i18n-driven), no copy propio — por eso NO registra diccionario
  * colocado (a diferencia de los custom con texto fijo). Iconos vía
- * `@smartcontact/icons` (§4.6).
+ * `@smartcontact-hub/icons` (§4.6).
  */
 @Component({
   selector: 'sc-empty-state',

@@ -1,11 +1,16 @@
 {
-  "name": "@smartcontact/styles",
+  "name": "@smartcontact-hub/styles",
   "version": "0.1.0",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/smartcontact-hub/smartcontact-ui.git"
+  },
   "dependencies": {
     "tslib": "^2.3.0"
   },
   "publishConfig": {
-    "access": "restricted"
+    "access": "restricted",
+    "registry": "https://npm.pkg.github.com"
   },
   "scripts": {
     "tokens:build": "node ./scripts/convert-tokens.js"

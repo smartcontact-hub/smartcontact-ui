@@ -1,4 +1,4 @@
-# @smartcontact/icons
+# @smartcontact-hub/icons
 
 Librería de iconografía SmartContact basada en Material Symbols Rounded.
 
@@ -7,20 +7,20 @@ Librería de iconografía SmartContact basada en Material Symbols Rounded.
 - `ScIconComponent` con selector `sc-icon`.
 - `SC_ICON_CATALOG` con todos los iconos disponibles en `MaterialSymbolsRounded[FILL,GRAD,opsz,wght].codepoints`.
 - Helpers `resolveScIconName`, `resolveScIconGlyph` y `resolveScIconClass` para wrappers.
-- CSS global en `@smartcontact/icons/styles/index.css`.
+- CSS global en `@smartcontact-hub/icons/styles/index.css`.
 
 ## Uso en aplicaciones
 
-Instala el paquete junto a `@smartcontact/styles` y `@smartcontact/components` cuando uses componentes con iconos.
+Instala el paquete junto a `@smartcontact-hub/styles` y `@smartcontact-hub/components` cuando uses componentes con iconos.
 
 ```scss
-@import '@smartcontact/styles/styles/index.css';
-@import '@smartcontact/icons/styles/index.css';
+@import '@smartcontact-hub/styles/styles/index.css';
+@import '@smartcontact-hub/icons/styles/index.css';
 ```
 
 ```ts
 import { Component } from '@angular/core';
-import { ScIconComponent } from '@smartcontact/icons';
+import { ScIconComponent } from '@smartcontact-hub/icons';
 
 @Component({
   selector: 'app-icon-example',
@@ -31,7 +31,7 @@ import { ScIconComponent } from '@smartcontact/icons';
 export class IconExampleComponent {}
 ```
 
-Los wrappers de `@smartcontact/components` aceptan nombres oficiales de Material Symbols:
+Los wrappers de `@smartcontact-hub/components` aceptan nombres oficiales de Material Symbols:
 
 ```html
 <sc-button label="Eliminar" icon="delete"></sc-button>

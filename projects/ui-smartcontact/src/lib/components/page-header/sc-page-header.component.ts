@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 
-import { SC_ICON_SIZE_2XL, ScIconComponent } from '@smartcontact/icons';
+import { SC_ICON_SIZE_2XL, ScIconComponent } from '@smartcontact-hub/icons';
 
 /**
  * Static page header used by non-entity routes (`/config/*` and list
@@ -15,7 +15,7 @@ import { SC_ICON_SIZE_2XL, ScIconComponent } from '@smartcontact/icons';
  *
  * i18n: `entityKey`/`titleKey`/`subtitleKey` son claves que resuelve el
  * consumidor (componente i18n-driven) → sin diccionario colocado. Iconos vía
- * `@smartcontact/icons` (§4.6).
+ * `@smartcontact-hub/icons` (§4.6).
  */
 @Component({
   selector: 'sc-page-header',

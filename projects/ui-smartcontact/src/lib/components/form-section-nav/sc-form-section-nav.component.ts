@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, input, output } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
-import { SC_ICON_SIZE_DEFAULT, ScIconComponent } from '@smartcontact/icons';
+import { SC_ICON_SIZE_DEFAULT, ScIconComponent } from '@smartcontact-hub/icons';
 
 import { SC_FORM_SECTION_NAV_TRANSLATIONS } from './i18n/sc-form-section-nav.translations';
 
@@ -23,7 +23,7 @@ export interface FormNavSection {
  * i18n: las etiquetas de cada `FormNavSection.labelKey` las resuelve el
  * consumidor. El nav registra SOLO su copy propio (`sc.formSectionNav.*`:
  * rótulo accesible del `<nav>` + aria-label del punto de error) — desacoplado
- * de las claves `common.*` de la app de origen. Iconos vía `@smartcontact/icons`
+ * de las claves `common.*` de la app de origen. Iconos vía `@smartcontact-hub/icons`
  * (§4.6).
  */
 @Component({

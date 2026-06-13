@@ -1,21 +1,19 @@
-# Configuración de registry para publicar los paquetes @smartcontact/*.
-# Copia este fichero a `.npmrc` (gitignored) y rellena tu registry + auth.
-# Sin esto, `npm run publish:packages -- --publish` fallará de forma SEGURA
-# (los paquetes son scoped + publishConfig.access=restricted → no se publican
-# en el npm público por accidente).
+# Registry para publicar/instalar los paquetes @smartcontact-hub/*.
+# Publicamos en GitHub Packages bajo la org `smartcontact-hub` (el scope npm
+# @smartcontact-hub coincide con el nombre de la org — requisito de GitHub).
 #
-# Elige según tu infra:
+# Copia este fichero a `.npmrc` (gitignored) — el token NUNCA se commitea:
 #
-# 1) Registry privado (Verdaccio / Artifactory / npm Enterprise) — recomendado:
-#    @smartcontact:registry=https://tu-registry-privado/
-#    //tu-registry-privado/:_authToken=${NPM_TOKEN}
+#   @smartcontact-hub:registry=https://npm.pkg.github.com
+#   //npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}
 #
-# 2) GitHub Packages — OJO: el scope npm debe coincidir con el owner del repo.
-#    Hoy el scope es @smartcontact y el repo es arebury/smartcontact-ui, así que
-#    habría que renombrar el scope a @<org-de-github> (en los package.json) o
-#    crear la org `smartcontact` en GitHub y mover el repo allí.
-#    @<org>:registry=https://npm.pkg.github.com
-#    //npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}
+# PUBLICAR (token inline en TU terminal, no en el repo):
+#   GITHUB_TOKEN=ghp_tuToken npm run publish:packages -- --publish
+#   El token necesita scopes: write:packages (+ repo si la org/repo es privada).
 #
-# 3) Solo tarballs (sin registry): usa `npm run export:all` → dist/archives/*.tgz
-#    y consúmelos por ruta/file: en las apps. No necesita .npmrc.
+# INSTALAR en una app consumidora: basta con read:packages en el token.
+#
+# Red de seguridad: los 3 package.json llevan
+#   publishConfig.registry = https://npm.pkg.github.com  (nunca el npm público)
+#   publishConfig.access   = restricted
+# así que `npm run publish:packages -- --publish` sin .npmrc falla de forma SEGURA.

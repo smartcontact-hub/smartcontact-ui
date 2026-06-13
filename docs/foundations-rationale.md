@@ -27,7 +27,7 @@ Decisiones tomadas antes de construir las fundaciones; no se re-litigan.
 |---|---|---|
 | **Escala** | `rem` centralizado: diseño en 14-base → conversión a rem en un punto único. | Coherente con DD-13 (tipografía ya en rem). Mejor para zoom/accesibilidad (`rem` respeta el ajuste de fuente del usuario; `px` no). El catálogo de desarrollo aportó la implementación de referencia (`rem-scale.ts`). |
 | **Tooling de tokens** | Un **único generador DTCG-aware** que funde el import DTCG del catálogo de desarrollo (`convert-tokens.js`) con la ley de escala del catálogo de diseño (`tokens:gen`). | El Theme Designer exporta DTCG; el generador lo lee nativo. Un solo punto de transformación Figma→CSS evita doble fuente y drift. |
-| **Repositorio** | Repo nuevo en GitHub, con la **estructura y el naming de paquetes** del catálogo de desarrollo (`@smartcontact/styles · icons · components`). | El repo es primordialmente de diseño. Hablar el mismo idioma de empaquetado lo hace consultable como referencia por todo el equipo. |
+| **Repositorio** | Repo nuevo en GitHub, con la **estructura y el naming de paquetes** del catálogo de desarrollo (`@smartcontact-hub/styles · icons · components`). | El repo es primordialmente de diseño. Hablar el mismo idioma de empaquetado lo hace consultable como referencia por todo el equipo. |
 | **Alcance del repo** | **Solo el DS** (3 paquetes + demo). | Las apps consumen los paquetes versionados; no se mudan. |
 | **Orden de construcción** | Fundaciones completas primero (Mitad A); port de componentes después, incremental (Mitad B). | El port exige verificación visual por pantalla → es incremental por naturaleza. La escala bloquea el preset, el preset bloquea el setup. |
 | **Documentación** | Documentación de ambos orígenes, adaptada a las convenciones unificadas. Registro **colaborativo y profesional**. | El repo es consultable por todo el equipo. La gobernanza vive en los guardarraíles, no en el lenguaje. |
@@ -41,9 +41,9 @@ Decisiones tomadas antes de construir las fundaciones; no se re-litigan.
 **Molde de empaquetado del catálogo de desarrollo + contenido y tooling del catálogo de diseño.**
 
 - **3 paquetes ng-packagr publicables + demo:**
-  - `@smartcontact/styles` (`projects/design-tokens/`) ← las 7 capas de tokens 14-base→rem (`src/lib/styles/tokens/layers/01-primitive…07-dark.css`) + reset/globals.
-  - `@smartcontact/icons` (`projects/ui-smartcontact-icons/`) ← paquete de iconos (Material Symbols) al que migra el `sc-icon` del catálogo de diseño.
-  - `@smartcontact/components` (`projects/ui-smartcontact/`) ← wrappers `sc-*` + **preset modular** (`src/lib/theme/sc-preset/`) + `provideSmartContactUi`.
+  - `@smartcontact-hub/styles` (`projects/design-tokens/`) ← las 7 capas de tokens 14-base→rem (`src/lib/styles/tokens/layers/01-primitive…07-dark.css`) + reset/globals.
+  - `@smartcontact-hub/icons` (`projects/ui-smartcontact-icons/`) ← paquete de iconos (Material Symbols) al que migra el `sc-icon` del catálogo de diseño.
+  - `@smartcontact-hub/components` (`projects/ui-smartcontact/`) ← wrappers `sc-*` + **preset modular** (`src/lib/theme/sc-preset/`) + `provideSmartContactUi`.
   - `sc-demo` (privado, `projects/sc-demo/`) ← doc-site / app consumidora de referencia.
 - **Preset modular** (un módulo por componente) con **cada slot apuntando a `var(--sc-*)`**; `base.ts` sin color hardcodeado. Conversión a rem por el mecanismo central adoptado.
 - **`provideSmartContactUi()`** como frontera única de setup, con `darkModeSelector` por defecto a `.sc-dark`.
