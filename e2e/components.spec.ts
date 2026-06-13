@@ -1060,3 +1060,37 @@ test.describe('sc-bulk-transcription-modal', () => {
     await screenshotBaseline(page, 'bulktranscriptionmodal');
   });
 });
+
+test.describe('sc-section-card', () => {
+  test('anidado Section/Subsection/Slot + métricas, divisor, colapsable, flush', async ({
+    page,
+  }) => {
+    await gotoPage(page, 'sectioncard');
+
+    // Section = contenedor gris, radio xl=12 (--sc-radius-400).
+    const section = page.getByTestId('sc-section').locator('.section-card');
+    expect((await styleOf(section, ['border-radius']))['border-radius']).toBe('12px');
+
+    // Subsection = card blanca, radio lg=8 (--sc-radius-300).
+    const sub = page.getByTestId('sc-subsection').locator('.sc-subsection');
+    expect((await styleOf(sub, ['border-radius']))['border-radius']).toBe('8px');
+
+    // Divisor entre slots: el 1er slot sin línea arriba, el 2º con border-top 1px.
+    const slot1 = page.getByTestId('sc-slot-1');
+    const slot2 = page.getByTestId('sc-slot-2');
+    expect((await styleOf(slot1, ['border-top-width']))['border-top-width']).toBe('0px');
+    expect((await styleOf(slot2, ['border-top-width']))['border-top-width']).toBe('1px');
+
+    // Colapsable: inicia plegada → body no renderizado; clic en la cabecera lo despliega.
+    const collapsible = page.getByTestId('sc-section-collapsible');
+    await expect(collapsible.locator('.section-card__body')).toHaveCount(0);
+    await collapsible.locator('.section-card__head--toggle').click();
+    await expect(collapsible.locator('.section-card__body')).toHaveCount(1);
+
+    // Flush: sin caja → radio 0.
+    const flush = page.getByTestId('sc-section-flush').locator('.section-card');
+    expect((await styleOf(flush, ['border-radius']))['border-radius']).toBe('0px');
+
+    await screenshotBaseline(page, 'sectioncard');
+  });
+});

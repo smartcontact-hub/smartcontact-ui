@@ -270,4 +270,10 @@ export const SC_DEMO_COMPONENT_PAGES = [
         (m) => m.BulkTranscriptionModalDemoComponent,
       ),
   },
+  {
+    path: 'sectioncard',
+    label: 'SectionCard',
+    load: () =>
+      import('./sectioncard/sectioncard-demo.component').then((m) => m.SectionCardDemoComponent),
+  },
 ] satisfies ScDemoComponentPage[];
