@@ -9,44 +9,47 @@
   contenido directo (sin subsecciones) sigue funcionando.
 </p>
 
-<h2>Anidado (Section → 2 Subsections → Slots)</h2>
-<sc-section-card titleKey="Configuración del agente" icon="settings" data-testid="sc-section">
-  <sc-subsection titleKey="Identidad" data-testid="sc-subsection">
-    <sc-slot titleKey="Nombre" data-testid="sc-slot-1">
-      <p class="demo-field">Campo de nombre del agente…</p>
-    </sc-slot>
-    <sc-slot titleKey="Extensión" data-testid="sc-slot-2">
-      <p class="demo-field">Campo de extensión…</p>
-    </sc-slot>
-  </sc-subsection>
-  <sc-subsection titleKey="Canales">
-    <sc-slot titleKey="Voz">
-      <p class="demo-field">Configuración de voz…</p>
-    </sc-slot>
-  </sc-subsection>
-</sc-section-card>
+<!-- Lienzo blanco = página de formulario: la sección gris se ve SOBRE blanco (como en Figma). -->
+<div class="demo-canvas">
+  <h2>Anidado (Section → 2 Subsections → Slots)</h2>
+  <sc-section-card titleKey="Configuración del agente" icon="settings" data-testid="sc-section">
+    <sc-subsection titleKey="Identidad" data-testid="sc-subsection">
+      <sc-slot titleKey="Nombre" data-testid="sc-slot-1">
+        <p class="demo-field">Campo de nombre del agente…</p>
+      </sc-slot>
+      <sc-slot titleKey="Extensión" data-testid="sc-slot-2">
+        <p class="demo-field">Campo de extensión…</p>
+      </sc-slot>
+    </sc-subsection>
+    <sc-subsection titleKey="Canales">
+      <sc-slot titleKey="Voz">
+        <p class="demo-field">Configuración de voz…</p>
+      </sc-slot>
+    </sc-subsection>
+  </sc-section-card>
 
-<h2>Plano (retrocompatible) + hint</h2>
-<sc-section-card
-  titleKey="Sección plana"
-  hintKey="contenido directo, sin subsecciones"
-  icon="description"
-  data-testid="sc-section-flat"
->
-  <p class="demo-field">Contenido proyectado directo — renderiza como el card plano.</p>
-</sc-section-card>
+  <h2>Plano (retrocompatible) + hint</h2>
+  <sc-section-card
+    titleKey="Sección plana"
+    hintKey="contenido directo, sin subsecciones"
+    icon="description"
+    data-testid="sc-section-flat"
+  >
+    <p class="demo-field">Contenido proyectado directo — renderiza como el card plano.</p>
+  </sc-section-card>
 
-<h2>Colapsable (inicia plegada) + flush</h2>
-<sc-section-card
-  titleKey="Ajustes avanzados"
-  icon="tune"
-  [collapsible]="true"
-  [initiallyCollapsed]="true"
-  data-testid="sc-section-collapsible"
->
-  <p class="demo-field">Contenido colapsable — clic en la cabecera para desplegar.</p>
-</sc-section-card>
+  <h2>Colapsable (inicia plegada) + flush</h2>
+  <sc-section-card
+    titleKey="Ajustes avanzados"
+    icon="tune"
+    [collapsible]="true"
+    [initiallyCollapsed]="true"
+    data-testid="sc-section-collapsible"
+  >
+    <p class="demo-field">Contenido colapsable — clic en la cabecera para desplegar.</p>
+  </sc-section-card>
 
-<sc-section-card titleKey="Sección flush (sin caja)" [flush]="true" data-testid="sc-section-flush">
-  <p class="demo-field">Sin fondo ni borde — el contenido va a sangre.</p>
-</sc-section-card>
+  <sc-section-card titleKey="Sección flush (sin caja)" [flush]="true" data-testid="sc-section-flush">
+    <p class="demo-field">Sin fondo ni borde — el contenido va a sangre.</p>
+  </sc-section-card>
+</div>

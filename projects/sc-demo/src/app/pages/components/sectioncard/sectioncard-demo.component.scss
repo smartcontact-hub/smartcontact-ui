@@ -1,0 +1,17 @@
+/* Lienzo blanco que simula la página de formulario: la sc-section-card es un
+   panel gris (gray-50) pensado para verse SOBRE blanco (como en Figma). Sin esto
+   el contenedor gris se funde con el fondo gris de la página del demo. */
+.demo-canvas {
+  background: var(--sc-bg-surface);
+  border-radius: var(--sc-radius-400);
+  padding: var(--sc-spacing-1-5);
+  margin-top: var(--sc-spacing-1);
+}
+
+.demo-canvas h2 {
+  margin-top: var(--sc-spacing-1-5);
+
+  &:first-child {
+    margin-top: 0;
+  }
+}

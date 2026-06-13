@@ -10,7 +10,7 @@ import {
   selector: 'app-sectioncard-demo',
   imports: [ScSectionCardComponent, ScSubsectionComponent, ScSlotComponent],
   templateUrl: './sectioncard-demo.component.html',
-  styleUrl: '../component-page.scss',
+  styleUrls: ['../component-page.scss', './sectioncard-demo.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SectionCardDemoComponent {}
