@@ -1,0 +1,22 @@
+<h1>sc-command-palette</h1>
+
+<p>
+  Paleta de comandos global (<kbd>⌘K</kbd> / <kbd>Ctrl K</kbd>) — versión
+  <strong>data-driven</strong>: <code>ScCommandPaletteService</code> no conoce
+  rutas ni navegación; el consumidor publica los comandos con
+  <code>setCommands()</code> y cablea cada <code>action</code>. El componente se
+  monta una vez en el shell y reacciona a <code>visible()</code>. Atajos: <kbd>↑</kbd
+  ><kbd>↓</kbd> navegar · <kbd>↵</kbd> ejecutar · <kbd>Esc</kbd> cerrar ·
+  <kbd>/</kbd> enfoca el buscador de la página.
+</p>
+
+<h2>Demo</h2>
+<button type="button" class="demo-trigger" (click)="palette.open()" data-testid="open-palette">
+  Abrir paleta (⌘K)
+</button>
+
+@if (lastRun(); as r) {
+  <p data-testid="palette-last-run">Ejecutado: {{ r }}</p>
+}
+
+<sc-command-palette />

@@ -53,6 +53,7 @@ export * from './lib/components/impact-preview-dialog/sc-impact-preview-dialog.c
 export * from './lib/components/delete-entity-dialog/sc-delete-entity-dialog.component';
 export * from './lib/components/color-dot-picker/sc-color-dot-picker.component';
 export * from './lib/components/photo-upload/sc-photo-upload.component';
+export * from './lib/components/command-palette/sc-command-palette.component';
 export * from './lib/components/command-palette/sc-command-palette.service';
 export * from './lib/core/avatar-illustration';
 export * from './lib/core/utils/is-typing-target';

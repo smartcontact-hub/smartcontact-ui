@@ -1,0 +1,66 @@
+@if (host.visible()) {
+  <div class="palette-backdrop" (click)="onBackdropClick()" aria-hidden="true"></div>
+  <div
+    class="palette"
+    role="dialog"
+    [attr.aria-label]="'sc.commandPalette.dialogAriaLabel' | translate"
+    aria-modal="true"
+  >
+    <div class="palette__head">
+      <sc-icon class="palette__head-icon" [name]="searchIcon" [size]="iconSizeLg" />
+      <input
+        #searchInput
+        type="text"
+        class="palette__input"
+        [placeholder]="'sc.commandPalette.searchPlaceholder' | translate"
+        [attr.aria-label]="'sc.commandPalette.searchAriaLabel' | translate"
+        [value]="query()"
+        (input)="query.set($any($event.target).value)"
+        autocomplete="off"
+        spellcheck="false"
+      />
+      <kbd class="palette__kbd" aria-hidden="true">Esc</kbd>
+    </div>
+
+    <div class="palette__body">
+      @if (filtered().length === 0) {
+        <div class="palette__empty">{{ 'sc.commandPalette.empty' | translate }}</div>
+      } @else {
+        @for (group of grouped(); track group.category) {
+          <div class="palette__group">
+            <div class="palette__group-title">{{ group.category }}</div>
+            @for (cmd of group.items; track cmd.id) {
+              <button
+                type="button"
+                class="palette__item"
+                [class.palette__item--active]="highlighted() === indexOf(cmd)"
+                (mouseenter)="onItemHover(cmd)"
+                (click)="run(cmd)"
+              >
+                @if (cmd.icon; as ic) {
+                  <sc-icon class="palette__item-icon" [name]="ic" [size]="iconSizeDefault" />
+                }
+                <span class="palette__item-label">{{ cmd.label }}</span>
+              </button>
+            }
+          </div>
+        }
+      }
+    </div>
+
+    <div class="palette__foot">
+      <span class="palette__hint">
+        <kbd>↑</kbd><kbd>↓</kbd>
+        <span>{{ 'sc.commandPalette.hintNavigate' | translate }}</span>
+      </span>
+      <span class="palette__hint">
+        <kbd>↵</kbd>
+        <span>{{ 'sc.commandPalette.hintSelect' | translate }}</span>
+      </span>
+      <span class="palette__hint">
+        <kbd>Esc</kbd>
+        <span>{{ 'sc.commandPalette.hintClose' | translate }}</span>
+      </span>
+    </div>
+  </div>
+}

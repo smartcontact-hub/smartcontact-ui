@@ -232,4 +232,12 @@ export const SC_DEMO_COMPONENT_PAGES = [
     load: () =>
       import('./photoupload/photoupload-demo.component').then((m) => m.PhotoUploadDemoComponent),
   },
+  {
+    path: 'commandpalette',
+    label: 'CommandPalette',
+    load: () =>
+      import('./commandpalette/commandpalette-demo.component').then(
+        (m) => m.CommandPaletteDemoComponent,
+      ),
+  },
 ] satisfies ScDemoComponentPage[];

@@ -874,3 +874,40 @@ test.describe('sc-photo-upload', () => {
     await screenshotBaseline(page, 'photoupload');
   });
 });
+
+test.describe('sc-command-palette', () => {
+  test('data-driven: abre, agrupa, ↓+Enter ejecuta, filtra por keyword, Esc cierra', async ({
+    page,
+  }) => {
+    await gotoPage(page, 'commandpalette');
+    const palette = page.locator('.palette[role="dialog"]');
+    await expect(palette).toBeHidden();
+
+    // abre vía open() del servicio (botón demo)
+    await page.getByTestId('open-palette').click();
+    await expect(palette).toBeVisible();
+
+    // data-driven: 6 comandos provistos por el consumidor, agrupados en 2
+    // categorías de display (Páginas / Acciones) — el DS no las conoce.
+    await expect(palette.locator('.palette__item')).toHaveCount(6);
+    await expect(palette.locator('.palette__group-title')).toHaveText(['Páginas', 'Acciones']);
+
+    // ↓ resalta el 2º comando (Grupos); Enter ejecuta su action y cierra.
+    await page.keyboard.press('ArrowDown');
+    await page.keyboard.press('Enter');
+    await expect(page.getByTestId('palette-last-run')).toHaveText('Ejecutado: Grupos');
+    await expect(palette).toBeHidden();
+
+    // filtro por keyword: "crear" deja solo las 2 acciones (match label/keywords).
+    await page.getByTestId('open-palette').click();
+    await expect(palette).toBeVisible();
+    await palette.locator('.palette__input').fill('crear');
+    await expect(palette.locator('.palette__item')).toHaveCount(2);
+
+    // Esc cierra.
+    await page.keyboard.press('Escape');
+    await expect(palette).toBeHidden();
+
+    await screenshotBaseline(page, 'commandpalette');
+  });
+});
