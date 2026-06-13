@@ -1,0 +1,10 @@
+<p-message
+    [text]="text || undefined"
+    [severity]="messageSeverity"
+    [closable]="closable"
+    [icon]="messageIcon"
+    [size]="messageSize"
+    [variant]="variant"
+    (onClose)="closed.emit($event)">
+    <ng-content></ng-content>
+</p-message>
