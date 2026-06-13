@@ -3,6 +3,7 @@
   (ngModelChange)="onChange($event)"
   (onChange)="changed.emit($event)"
   [disabled]="disabled()"
+  [readonly]="readonly()"
   [size]="pSize()"
   [inputId]="effectiveInputId()"
   [ariaLabel]="ariaLabel() ?? undefined"
