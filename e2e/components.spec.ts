@@ -243,3 +243,35 @@ test.describe('sc-radiobutton', () => {
     await screenshotBaseline(page, 'radiobutton');
   });
 });
+
+test.describe('sc-avatar', () => {
+  test('spec del Kit: 28/42/56, radio 6, badge y grupo con offset -10.5', async ({ page }) => {
+    await gotoPage(page, 'avatar');
+    const md = page.getByTestId('sc-avatar-md').locator('.p-avatar');
+    expect(await styleOf(md, ['width', 'height', 'font-size'])).toEqual({
+      width: '28px',
+      height: '28px',
+      'font-size': '14px',
+    });
+    const lg = page.getByTestId('sc-avatar-lg').locator('.p-avatar');
+    expect((await styleOf(lg, ['width']))['width']).toBe('42px');
+    const xl = page.getByTestId('sc-avatar-xl').locator('.p-avatar');
+    expect((await styleOf(xl, ['width']))['width']).toBe('56px');
+    await expect(page.getByTestId('sc-avatar-badge').locator('.p-badge')).toBeVisible();
+    const second = page.getByTestId('sc-avatargroup').locator('.p-avatar').nth(1);
+    expect((await styleOf(second, ['margin-left']))['margin-left']).toBe('-10.5px');
+    await screenshotBaseline(page, 'avatar');
+  });
+});
+
+test.describe('sc-toast', () => {
+  test('muestra el toast con tipografía del Kit (14/12)', async ({ page }) => {
+    await gotoPage(page, 'toast');
+    await page.getByTestId('toast-success').locator('button').click();
+    const summary = page.locator('.p-toast-summary');
+    await expect(summary).toBeVisible();
+    expect((await styleOf(summary, ['font-size']))['font-size']).toBe('14px');
+    const detail = page.locator('.p-toast-detail');
+    expect((await styleOf(detail, ['font-size']))['font-size']).toBe('12px');
+  });
+});

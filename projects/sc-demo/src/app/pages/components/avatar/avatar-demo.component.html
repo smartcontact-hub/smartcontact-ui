@@ -1,0 +1,28 @@
+<h1>sc-avatar</h1>
+
+<h2>Tipos (Label / Icon)</h2>
+<div class="row">
+  <sc-avatar label="SC" data-testid="sc-avatar-md" />
+  <sc-avatar icon="user" />
+  <sc-avatar label="SQ" shape="square" />
+</div>
+
+<h2>Tamaños (28 / 42 / 56)</h2>
+<div class="row">
+  <sc-avatar label="N" />
+  <sc-avatar label="L" size="large" data-testid="sc-avatar-lg" />
+  <sc-avatar label="XL" size="xlarge" data-testid="sc-avatar-xl" />
+</div>
+
+<h2>Badge</h2>
+<div class="row">
+  <sc-avatar label="B" [badge]="4" data-testid="sc-avatar-badge" />
+  <sc-avatar icon="user" [badge]="''" badgeVariant="success" />
+</div>
+
+<h2>Grupo</h2>
+<sc-avatargroup data-testid="sc-avatargroup">
+  <sc-avatar label="A" />
+  <sc-avatar label="B" />
+  <sc-avatar label="+3" />
+</sc-avatargroup>

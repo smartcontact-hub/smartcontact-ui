@@ -74,4 +74,14 @@ export const SC_DEMO_COMPONENT_PAGES = [
     label: 'RadioButton',
     load: () => import('./radiobutton/radiobutton-demo.component').then((m) => m.RadioButtonDemoComponent),
   },
+  {
+    path: 'avatar',
+    label: 'Avatar',
+    load: () => import('./avatar/avatar-demo.component').then((m) => m.AvatarDemoComponent),
+  },
+  {
+    path: 'toast',
+    label: 'Toast',
+    load: () => import('./toast/toast-demo.component').then((m) => m.ToastDemoComponent),
+  },
 ] satisfies ScDemoComponentPage[];
