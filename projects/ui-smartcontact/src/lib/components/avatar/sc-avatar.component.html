@@ -1,0 +1,20 @@
+@if (badge !== null) {
+    <p-overlaybadge [value]="badgeValue" [severity]="badgeSeverity">
+        <ng-container *ngTemplateOutlet="avatar" />
+    </p-overlaybadge>
+} @else {
+    <ng-container *ngTemplateOutlet="avatar" />
+}
+
+<ng-template #avatar>
+    <p-avatar
+        [label]="label || undefined"
+        [icon]="avatarIcon"
+        [image]="image || undefined"
+        [size]="size"
+        [shape]="shape"
+        [ariaLabel]="ariaLabel || undefined"
+        (onImageError)="imageError.emit($event)">
+        <ng-content></ng-content>
+    </p-avatar>
+</ng-template>

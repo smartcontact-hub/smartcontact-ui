@@ -369,6 +369,19 @@
   --sc-spacing-18: var(--sc-scale-18);
   --sc-spacing-25: var(--sc-scale-25);
 
+  /* Aliases negativos (offsets de grupo, margins negativos) — 1:1 con los
+   * pasos negativos de la escala, misma ley que los positivos. */
+  --sc-spacing-neg-0-25: var(--sc-scale-neg-0-25);
+  --sc-spacing-neg-0-375: var(--sc-scale-neg-0-375);
+  --sc-spacing-neg-0-5: var(--sc-scale-neg-0-5);
+  --sc-spacing-neg-0-625: var(--sc-scale-neg-0-625);
+  --sc-spacing-neg-0-75: var(--sc-scale-neg-0-75);
+  --sc-spacing-neg-0-875: var(--sc-scale-neg-0-875);
+  --sc-spacing-neg-1: var(--sc-scale-neg-1);
+  --sc-spacing-neg-1-125: var(--sc-scale-neg-1-125);
+  --sc-spacing-neg-1-25: var(--sc-scale-neg-1-25);
+  --sc-spacing-neg-1-5: var(--sc-scale-neg-1-5);
+
   /* ---------- Border radius (Kit Pro `aura/primitive.border.radius`) ----------
    * Kit Pro tiene escala dedicada border-radius (none/xs/sm/md/lg/xl)
    * INDEPENDIENTE de `scale.*`. Valores: 0/2/4/6/8/12. SCDS naming Kit
