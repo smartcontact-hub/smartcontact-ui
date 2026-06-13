@@ -1,0 +1,20 @@
+<h1>sc-select</h1>
+
+<div class="col">
+  <sc-select label="Grupo" [options]="groups" placeholder="Selecciona" [(value)]="value" data-testid="sc-select" />
+  <sc-select
+    label="Prioridad (objetos + pTemplate)"
+    [options]="objOptions"
+    optionLabel="name"
+    optionValue="id"
+    placeholder="Elige prioridad"
+    data-testid="sc-select-tmpl"
+  >
+    <ng-template pTemplate="item" let-opt>★ {{ opt.name }}</ng-template>
+  </sc-select>
+  <sc-select label="Con clear + filtro" [options]="groups" [showClear]="true" [filter]="true" placeholder="Buscar…" data-testid="sc-select-filter" />
+  <sc-select label="Con error" [options]="groups" error="Selecciona un grupo" data-testid="sc-select-error" />
+  <sc-select label="Small" [options]="groups" size="sm" placeholder="sm" data-testid="sc-select-sm" />
+  <sc-select label="Deshabilitado" [options]="groups" [disabled]="true" placeholder="off" />
+</div>
+<p>Valor: «{{ value() }}»</p>

@@ -134,4 +134,9 @@ export const SC_DEMO_COMPONENT_PAGES = [
     label: 'InputText',
     load: () => import('./inputtext/inputtext-demo.component').then((m) => m.InputTextDemoComponent),
   },
+  {
+    path: 'select',
+    label: 'Select',
+    load: () => import('./select/select-demo.component').then((m) => m.SelectDemoComponent),
+  },
 ] satisfies ScDemoComponentPage[];

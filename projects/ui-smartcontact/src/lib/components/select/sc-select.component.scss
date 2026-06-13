@@ -1,0 +1,217 @@
+/*
+ * sc-select — Smart Contact dropdown.
+ *
+ * Wraps <p-select>. Border / padding / focus / hover / disabled colors
+ * come from sc-preset → semantic.select.* (which PrimeNG's Select reads
+ * via --p-select-*). We DON'T redefine those here.
+ *
+ * Figma reference: Smart Contact Prime → ❖ Select (node 6738:22642)
+ *  - border slate-300 (--p-select-border-color)
+ *  - radius 6px
+ *  - padding 10.5px / 7px
+ *  - dropdown area 35px wide, chevron 14px slate-400
+ *  - drop shadow #1212170D, offset (0,1), radius 2
+ *  - label slate-700 14px / 21lh
+ *  - helper slate-700 12px / 21lh
+ *  - gap 7px between label / input / helper
+ */
+
+.sc-select {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-width: 0;
+}
+
+.sc-select__label {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 2px;
+  font-size: var(--sc-font-size-200);
+  font-weight: var(--sc-font-weight-medium);
+  color: var(--sc-text-secondary);
+  margin-bottom: 0;
+}
+
+.sc-select__required {
+  color: var(--sc-text-danger);
+  font-weight: var(--sc-font-weight-medium);
+}
+
+/* `.sc-select__control` ES el <p-select> (esa clase se aplica al root del
+ * componente PrimeNG). Mantener `display: inline-flex` (default PrimeNG)
+ * es crítico: el `.p-select-label` interno usa `flex: 1 1 auto; width: 1%`
+ * para estirarse al espacio disponible. Si lo cambiamos a `display: block`,
+ * flex deja de aplicar y el label colapsa a ~3-21px truncando el valor a
+ * la primera letra. Solo añadimos width: 100% para que ocupe el wrapper. */
+.sc-select__control {
+  width: 100%;
+  min-width: 0;
+}
+
+.sc-select__field {
+  position: relative;
+  display: block;
+  min-width: 0;
+}
+
+/* ────────────────────────────────────────────────────────────────────
+ * IftaLabel — label dentro del campo, top-aligned (Figma node 7462:106725).
+ * El valor baja (padding-top 21 / bottom 7) y el label se fija arriba-dentro
+ * en (x 10.5, top 7), 10.5px regular #8f97a3. Decimales raw = valores exactos
+ * del export (off-scale en `--sc-*`).
+ * ────────────────────────────────────────────────────────────────────
+ */
+.sc-select--ifta {
+  .sc-select__control .p-select-label {
+    padding-top: 21px;
+    padding-bottom: 7px;
+  }
+
+  .sc-select__ifta-label {
+    position: absolute;
+    top: 7px;
+    left: 10.5px;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 2px;
+    font-size: var(--sc-font-size-50);
+    line-height: 1;
+    font-weight: var(--sc-font-weight-regular);
+    color: var(--sc-text-subtle);
+    pointer-events: none;
+    z-index: 1;
+  }
+}
+
+/* Base (md) font-size. PrimeNG hardcodea `.p-select-label { font-size: 1rem }`
+ * (16px) y el Kit Pro no define base → md se fugaba a 16px. Rampa Kit
+ * 12.25/[14]/15.75 → md = 14px. (0,2,0) gana al `.p-select-label` (0,1,0). */
+.sc-select__control .p-select-label {
+  font-size: var(--sc-font-size-200);
+}
+
+/* ────────────────────────────────────────────────────────────────────
+ * Size variants — valores EXACTOS Figma Smart Contact Prime,
+ * verificados nodos 7154:136752 (Small) y 7154:137061 (Large).
+ *   Small:  font 12.25 / padding 8.75x / 5.25y
+ *   Normal: font 14    / padding 10.5x / 7y   (heredado del preset)
+ *   Large:  font 15.75 / padding 12.25x / 8.75y
+ * Padding decimales raw (off-scale en `--sc-spacing-*`); font-size sí
+ * tokenizado (`--sc-font-size-100` / `--sc-font-size-300` exact match).
+ * ────────────────────────────────────────────────────────────────────
+ */
+.sc-select--sm .sc-select__control .p-select-label {
+  padding: var(--sc-spacing-0-375) var(--sc-spacing-0-625);
+  font-size: var(--sc-font-size-100);
+}
+.sc-select--lg .sc-select__control .p-select-label {
+  padding: var(--sc-spacing-0-625) var(--sc-spacing-0-875);
+  font-size: var(--sc-font-size-300);
+}
+
+/* ────────────────────────────────────────────────────────────────────
+ * Filled variant — Figma `Filled=True` node 6195:7785.
+ *   `select/filled/background = #f8fafc` (slate-50).
+ * Border/shadow/dropdown sin cambio; solo bg.
+ *
+ * NB: `.sc-select__control` y `.p-select` viven en el MISMO elemento
+ * (PrimeNG añade `.p-select` al `<p-select>` que ya lleva nuestra clase).
+ * Por eso usamos el selector simple, NO descendant. El descendant
+ * (`.sc-select__control .p-select`) sería dead code silencioso.
+ * ────────────────────────────────────────────────────────────────────
+ */
+.sc-select--filled .sc-select__control {
+  background: var(--sc-color-gray-50);
+
+  &:hover {
+    background: var(--sc-color-gray-100);
+  }
+}
+
+/* ────────────────────────────────────────────────────────────────────
+ * Invalid state — sc-preset paints invalid border via aria-invalid on
+ * the inner control. Host class covers the manual `[error]` path.
+ * Figma: `select/invalid/border/color: #f87171` (red-400, =
+ * `--sc-border-error`), `select/invalid/placeholder/color: #dc2626`
+ * (red-600, = `--sc-text-danger`). Ya aligned.
+ * ────────────────────────────────────────────────────────────────────
+ */
+.sc-select--invalid .sc-select__control {
+  border-color: var(--sc-border-error);
+
+  &:hover,
+  &:focus,
+  &:focus-within {
+    border-color: var(--sc-border-error);
+  }
+}
+
+/* ────────────────────────────────────────────────────────────────────
+ * Footer message — reserve 1.25em so toggling validation never shifts
+ * layout (DD#16, "no layout shift" feedback).
+ * ────────────────────────────────────────────────────────────────────
+ */
+.sc-select__msg {
+  display: block;
+  min-height: 1.25em;
+  /* Figma spec: 12px helper. */
+  font-size: var(--sc-font-size-100);
+  line-height: 1.45;
+  color: var(--sc-text-subtle);
+}
+
+.sc-select__msg--error {
+  color: var(--sc-text-danger);
+}
+
+/* ────────────────────────────────────────────────────────────────────
+ * Disabled — dim the label so the whole field reads inert. PrimeNG
+ * handles the inner control's disabled chrome.
+ * ────────────────────────────────────────────────────────────────────
+ */
+.sc-select--disabled .sc-select__label {
+  color: var(--sc-text-disabled);
+}
+
+/* ─── Overlay panel sizes ─────────────────────────────────────────────
+ * El panel del `<p-select>` se renderiza en <body>, fuera del componente.
+ * Como este componente usa ViewEncapsulation.None, sus reglas son globales:
+ * la clase `sc-select-panel--sm/--lg` (propagada via [panelStyleClass])
+ * estila el overlay con la misma escala que el trigger sm/lg.
+ * Valores 1:1 con el Kit (S30 audit) — tokenizados a la escala v/14. */
+.sc-select-panel--sm {
+  .p-select-header,
+  .p-select-list,
+  .p-select-option,
+  .p-select-item {
+    font-size: var(--sc-font-size-100);
+  }
+  .p-select-option,
+  .p-select-item,
+  .p-select-header,
+  .p-select-filter {
+    padding: var(--sc-spacing-0-375) var(--sc-spacing-0-625);
+  }
+  .p-select-filter {
+    font-size: var(--sc-font-size-100);
+  }
+}
+
+.sc-select-panel--lg {
+  .p-select-header,
+  .p-select-list,
+  .p-select-option,
+  .p-select-item {
+    font-size: var(--sc-font-size-300);
+  }
+  .p-select-option,
+  .p-select-item,
+  .p-select-header,
+  .p-select-filter {
+    padding: var(--sc-spacing-0-625) var(--sc-spacing-0-875);
+  }
+  .p-select-filter {
+    font-size: var(--sc-font-size-300);
+  }
+}

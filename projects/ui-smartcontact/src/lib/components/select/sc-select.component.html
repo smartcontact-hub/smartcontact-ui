@@ -1,0 +1,69 @@
+@if (label() && !iftaLabel()) {
+  <label class="sc-select__label" [attr.for]="resolvedId()">
+    {{ label() }}
+    @if (required()) {
+      <span class="sc-select__required" aria-hidden="true">*</span>
+    }
+  </label>
+}
+
+<div class="sc-select__field">
+  <p-select
+    class="sc-select__control"
+    [inputId]="resolvedId()"
+    [options]="optionsMutable()"
+    [optionLabel]="resolvedOptionLabel()"
+    [optionValue]="resolvedOptionValue()"
+    [placeholder]="placeholder()"
+    [disabled]="disabled()"
+    [showClear]="showClear()"
+    [filter]="filter()"
+    [filterBy]="filterBy() ?? optionLabel()"
+    [emptyFilterMessage]="emptyFilterMessage()"
+    [emptyMessage]="emptyMessage()"
+    [size]="pSize()"
+    [panelStyleClass]="panelStyleClass()"
+    [appendTo]="appendTo() ?? undefined"
+    [ngModel]="value()"
+    (ngModelChange)="onModelChange($event)"
+    (onBlur)="onBlur()"
+    [attr.name]="name() ?? null"
+    [attr.aria-describedby]="footerText() ? resolvedId() + '-msg' : null"
+    [attr.aria-required]="required() ? true : null"
+    [attr.aria-invalid]="isInvalid() ? true : null"
+  >
+    <!--
+    Re-proyección de templates: el consumer escribe
+    `<ng-template pTemplate="item" let-option>` dentro de `<sc-select>`
+    (sintaxis idéntica a `<p-select>` nativo). El sc-select los captura
+    via `@ContentChildren(PrimeTemplate)` y los re-emite aquí con
+    `[pTemplate]` y `ngTemplateOutlet`, porque el ContentChildren del
+    p-select NO ve los templates a través de doble content projection
+    (limitación de Angular query origin).
+  -->
+    @for (entry of projectedTemplates(); track entry.name) {
+      <ng-template [pTemplate]="entry.name ?? ''" let-data>
+        <ng-container *ngTemplateOutlet="entry.template; context: { $implicit: data }" />
+      </ng-template>
+    }
+  </p-select>
+
+  @if (iftaLabel() && label()) {
+    <label class="sc-select__ifta-label" [attr.for]="resolvedId()">
+      {{ label() }}
+      @if (required()) {
+        <span class="sc-select__required" aria-hidden="true">*</span>
+      }
+    </label>
+  }
+</div>
+
+@if (footerText()) {
+  <span
+    class="sc-select__msg"
+    [class.sc-select__msg--error]="!!error()"
+    [id]="resolvedId() + '-msg'"
+  >
+    {{ footerText() }}
+  </span>
+}

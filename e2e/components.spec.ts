@@ -442,3 +442,28 @@ test.describe('sc-inputtext', () => {
     await screenshotBaseline(page, 'inputtext');
   });
 });
+
+test.describe('sc-select', () => {
+  test('chrome + métrica del Kit, overlay, pTemplate y CVA', async ({ page }) => {
+    await gotoPage(page, 'select');
+    const field = page.getByTestId('sc-select').locator('.p-select');
+    expect((await styleOf(field, ['border-radius']))['border-radius']).toBe('6px');
+    await field.click();
+    const overlay = page.locator('.p-select-overlay');
+    await expect(overlay).toBeVisible();
+    expect((await styleOf(overlay, ['border-radius']))['border-radius']).toBe('6px');
+    const option = page.locator('.p-select-option').first();
+    expect(await styleOf(option, ['padding-top', 'padding-left'])).toEqual({
+      'padding-top': '7px',
+      'padding-left': '10.5px',
+    });
+    await option.click();
+    await expect(page.getByText('Valor: «Soporte»')).toBeVisible();
+    // pTemplate re-proyectado: el item lleva el prefijo ★
+    await page.getByTestId('sc-select-tmpl').locator('.p-select').click();
+    await expect(page.locator('.p-select-option').filter({ hasText: '★ Alta' })).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(page.getByTestId('sc-select-error').getByText('Selecciona un grupo')).toBeVisible();
+    await screenshotBaseline(page, 'select');
+  });
+});
