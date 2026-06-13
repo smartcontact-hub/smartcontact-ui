@@ -1,0 +1,19 @@
+<h1>sc-form-danger-zone</h1>
+
+<p>
+  Sección al pie del formulario para acciones irreversibles (eliminar,
+  transferir, archivar). Frame visual + trigger; el diálogo de confirmación /
+  impact-preview lo pone la página.
+</p>
+
+<sc-form-danger-zone
+  titleKey="Zona de peligro"
+  descriptionKey="Eliminar este agente es permanente. Se borrarán sus conversaciones y configuración."
+  actionKey="Eliminar agente"
+  (action)="onAction()"
+  data-testid="sc-dangerzone"
+/>
+
+@if (fired()) {
+  <p data-testid="sc-dangerzone-fired">acción disparada</p>
+}

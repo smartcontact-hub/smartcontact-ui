@@ -1,0 +1,20 @@
+<section class="danger-zone" [attr.aria-labelledby]="'danger-zone-title'">
+  <div class="danger-zone__copy">
+    <h2 id="danger-zone-title" class="danger-zone__title">
+      {{ titleKey() | translate }}
+    </h2>
+    <p class="danger-zone__description">{{ descriptionKey() | translate }}</p>
+  </div>
+  <p-button
+    type="button"
+    severity="danger"
+    [outlined]="true"
+    size="large"
+    styleClass="danger-zone__action"
+    [disabled]="disabled()"
+    (onClick)="action.emit()"
+  >
+    <sc-icon [name]="trashIcon" [size]="iconSizeDefault" />
+    <span>{{ actionKey() | translate }}</span>
+  </p-button>
+</section>

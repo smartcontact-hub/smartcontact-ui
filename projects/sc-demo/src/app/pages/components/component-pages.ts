@@ -186,4 +186,12 @@ export const SC_DEMO_COMPONENT_PAGES = [
         (m) => m.BulkActionBarDemoComponent,
       ),
   },
+  {
+    path: 'formdangerzone',
+    label: 'FormDangerZone',
+    load: () =>
+      import('./formdangerzone/formdangerzone-demo.component').then(
+        (m) => m.FormDangerZoneDemoComponent,
+      ),
+  },
 ] satisfies ScDemoComponentPage[];

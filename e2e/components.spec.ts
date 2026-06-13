@@ -686,3 +686,21 @@ test.describe('sc-bulk-action-bar', () => {
     await screenshotBaseline(page, 'bulkactionbar');
   });
 });
+
+test.describe('sc-form-danger-zone', () => {
+  test('frame destructivo + botón danger dispara action', async ({ page }) => {
+    await gotoPage(page, 'formdangerzone');
+
+    const zone = page.getByTestId('sc-dangerzone');
+    await expect(zone.locator('.danger-zone__title')).toHaveText('Zona de peligro');
+    await expect(zone.locator('.danger-zone__description')).toContainText('permanente');
+
+    // botón danger (p-button severity danger outlined) dispara la acción
+    const btn = zone.locator('p-button button');
+    await expect(btn).toBeVisible();
+    await btn.click();
+    await expect(page.getByTestId('sc-dangerzone-fired')).toBeVisible();
+
+    await screenshotBaseline(page, 'formdangerzone');
+  });
+});
