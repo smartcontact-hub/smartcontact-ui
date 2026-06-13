@@ -1,0 +1,44 @@
+@if (label() && !inline()) {
+  <label class="sc-datepicker__label" [attr.for]="resolvedId()">
+    {{ label() }}
+    @if (required()) {
+      <span class="sc-datepicker__required" aria-hidden="true">*</span>
+    }
+  </label>
+}
+
+<p-datepicker
+  class="sc-datepicker__control"
+  [inputId]="resolvedId()"
+  [placeholder]="placeholder()"
+  [disabled]="disabled()"
+  [dateFormat]="dateFormat()"
+  [view]="view()"
+  [minDate]="minDate() ?? null"
+  [maxDate]="maxDate() ?? null"
+  [inline]="inline()"
+  [showClear]="showClear()"
+  [showIcon]="!inline() && showIcon()"
+  [iconDisplay]="'input'"
+  [showButtonBar]="showButtonBar()"
+  [size]="pSize()"
+  [panelStyleClass]="panelStyleClass()"
+  [appendTo]="'body'"
+  [ngModel]="value()"
+  (ngModelChange)="onModelChange($event)"
+  (onBlur)="onBlur()"
+  [attr.name]="name() ?? null"
+  [attr.aria-describedby]="footerText() ? resolvedId() + '-msg' : null"
+  [attr.aria-required]="required() ? true : null"
+  [attr.aria-invalid]="isInvalid() ? true : null"
+/>
+
+@if (footerText()) {
+  <span
+    class="sc-datepicker__msg"
+    [class.sc-datepicker__msg--error]="!!error()"
+    [id]="resolvedId() + '-msg'"
+  >
+    {{ footerText() }}
+  </span>
+}

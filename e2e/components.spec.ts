@@ -324,3 +324,22 @@ test.describe('sc-search', () => {
     await screenshotBaseline(page, 'search');
   });
 });
+
+test.describe('sc-datepicker', () => {
+  test('chrome de campo (label/error) + métrica de form field y panel', async ({ page }) => {
+    await gotoPage(page, 'datepicker');
+    const input = page.getByTestId('sc-datepicker').locator('input');
+    expect(await styleOf(input, ['padding-top', 'border-radius', 'font-size'])).toEqual({
+      'padding-top': '7px',
+      'border-radius': '6px',
+      'font-size': '14px',
+    });
+    await expect(page.getByTestId('sc-datepicker-error').getByText('La fecha no es válida')).toBeVisible();
+    await input.click();
+    await expect(page.locator('.p-datepicker-panel')).toBeVisible();
+    const panel = page.locator('.p-datepicker-panel');
+    expect((await styleOf(panel, ['border-radius']))['border-radius']).toBe('6px');
+    await page.keyboard.press('Escape');
+    await screenshotBaseline(page, 'datepicker');
+  });
+});

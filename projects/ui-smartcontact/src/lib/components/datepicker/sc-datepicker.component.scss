@@ -1,0 +1,105 @@
+/*
+ * sc-datepicker — Smart Contact date picker.
+ *
+ * Wraps <p-datepicker>. Input chrome (border, radius, padding, shadow)
+ * and panel chrome (bg, border, dates 28×28 circular, week-day headers)
+ * are controlled by sc-preset → semantic.datepicker.*, which PrimeNG's
+ * DatePicker reads via --p-datepicker-*.
+ *
+ * Figma reference: Smart Contact Prime → ❖ Datepicker (node 6738:20817)
+ *  - input chrome same as sc-inputtext/sc-select: slate-300 border, 6px
+ *    radius, drop shadow #1212170D offset(0,1) r2
+ *  - panel: white bg, slate-200 border, padding 10.5, double-layer
+ *    shadow #0000001A offset(0,2)r4 + offset(0,4)r6
+ *  - dates: 28×28, border-radius 14 (circular)
+ *  - week day labels: slate-700 500w
+ *  - anchor-gutter 2 (gap between input and panel)
+ */
+
+.sc-datepicker {
+  display: flex;
+  flex-direction: column;
+  gap: 7px;
+  min-width: 0;
+}
+
+.sc-datepicker__label {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 2px;
+  font-size: var(--sc-font-size-200);
+  font-weight: var(--sc-font-weight-medium);
+  color: var(--sc-text-secondary);
+  margin-bottom: 0;
+}
+
+.sc-datepicker__required {
+  color: var(--sc-text-danger);
+  font-weight: var(--sc-font-weight-medium);
+}
+
+/* `.sc-datepicker__control` ES el <p-datepicker> (la clase se aplica al
+ * root del componente PrimeNG, que añade `.p-datepicker` al mismo
+ * elemento). NO usar `display: block` — rompe el flex interno (bug
+ * análogo a sc-select / sc-multiselect pre-Session 31). */
+.sc-datepicker__control {
+  width: 100%;
+  min-width: 0;
+}
+
+/* `.p-datepicker-input` SÍ es descendiente real (el <input> nativo
+ * dentro del p-datepicker) — el selector descendant aquí es correcto. */
+.sc-datepicker__control .p-datepicker-input {
+  width: 100%;
+  /* Base (md) font-size. PrimeNG hardcodea `.p-inputtext { font-size: 1rem }`
+   * (16px); el Kit no define base → md se fugaba. Rampa Kit → md = 14px.
+   * (0,2,0) gana al `.p-inputtext`/`.p-datepicker-input` (0,1,0). */
+  font-size: var(--sc-font-size-200);
+}
+
+/* Inline mode: no input, the panel itself takes the space. Hide the
+ * label gap below since inline panels usually live inside a section
+ * with its own heading. */
+.sc-datepicker--inline {
+  gap: 0;
+}
+
+/* ────────────────────────────────────────────────────────────────────
+ * Invalid state — sc-preset paints invalid border via aria-invalid on
+ * the inner input. Host class covers the manual `[error]` path.
+ * ────────────────────────────────────────────────────────────────────
+ */
+.sc-datepicker--invalid .sc-datepicker__control .p-datepicker-input {
+  border-color: var(--sc-border-error);
+
+  &:hover,
+  &:focus,
+  &:focus-within {
+    border-color: var(--sc-border-error);
+  }
+}
+
+/* ────────────────────────────────────────────────────────────────────
+ * Footer message — reserve 1.25em so toggling validation never shifts
+ * layout (DD#16, "no layout shift" feedback).
+ * ────────────────────────────────────────────────────────────────────
+ */
+.sc-datepicker__msg {
+  display: block;
+  min-height: 1.25em;
+  font-size: var(--sc-font-size-100);
+  line-height: 1.45;
+  color: var(--sc-text-subtle);
+}
+
+.sc-datepicker__msg--error {
+  color: var(--sc-text-danger);
+}
+
+/* ────────────────────────────────────────────────────────────────────
+ * Disabled — dim the label so the whole field reads inert.
+ * ────────────────────────────────────────────────────────────────────
+ */
+.sc-datepicker--disabled .sc-datepicker__label {
+  color: var(--sc-text-disabled);
+}

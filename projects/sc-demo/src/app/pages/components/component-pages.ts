@@ -99,4 +99,9 @@ export const SC_DEMO_COMPONENT_PAGES = [
     label: 'Search',
     load: () => import('./search/search-demo.component').then((m) => m.SearchDemoComponent),
   },
+  {
+    path: 'datepicker',
+    label: 'Datepicker',
+    load: () => import('./datepicker/datepicker-demo.component').then((m) => m.DatepickerDemoComponent),
+  },
 ] satisfies ScDemoComponentPage[];
