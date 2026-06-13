@@ -89,4 +89,9 @@ export const SC_DEMO_COMPONENT_PAGES = [
     label: 'Divider',
     load: () => import('./divider/divider-demo.component').then((m) => m.DividerDemoComponent),
   },
+  {
+    path: 'inputgroup',
+    label: 'InputGroup',
+    load: () => import('./inputgroup/inputgroup-demo.component').then((m) => m.InputGroupDemoComponent),
+  },
 ] satisfies ScDemoComponentPage[];

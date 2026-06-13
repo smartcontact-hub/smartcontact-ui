@@ -1,0 +1,68 @@
+/*
+ * sc-inputgroup — wrapper Extended sobre <p-inputgroup>.
+ *
+ * PrimeNG se encarga del border-merge entre input y addons (los addons
+ * absorben el borde compartido). Lo único que añadimos aquí son:
+ *   - size variants que matchean sc-inputtext (sm/md/lg) ajustando padding
+ *     vertical del addon y la altura percibida.
+ *   - layout block del host para que el grupo se comporte como bloque
+ *     en formularios.
+ *
+ * Tokens consumidos (via formField.* en sc-preset → --p-inputgroup-*):
+ *   --p-inputgroup-addon-background    → form.field.background    → --sc-bg-surface
+ *   --p-inputgroup-addon-border-color  → form.field.border.color  → --sc-border-default
+ *   --p-inputgroup-addon-color         → form.field.icon.color    → --sc-text-subtle
+ *   --p-inputgroup-addon-border-radius → form.field.border.radius → --sc-radius-200
+ *   --p-inputgroup-addon-padding       → 0.5rem (heredado Aura)
+ *   --p-inputgroup-addon-min-width     → 2.5rem (heredado Aura)
+ */
+
+.sc-inputgroup {
+  display: block;
+  min-width: 0;
+}
+
+.sc-inputgroup__inner--fluid {
+  width: 100%;
+  display: flex;
+}
+
+/* Base (md) font-size. PrimeNG hardcodea `.p-inputtext { font-size: 1rem }`
+ * (16px) y el Kit no define base → md se fugaba. Rampa Kit → md = 14px.
+ * Aplica a input + addon del grupo (sm/lg ya lo fijan más abajo). */
+.sc-inputgroup .p-inputtext,
+.sc-inputgroup .p-inputgroup-addon {
+  font-size: var(--sc-font-size-200);
+}
+
+/* ───── Size variants — alinear con sc-inputtext padding decimal (10.5/7) ───── */
+
+.sc-inputgroup--sm .sc-inputgroup__inner {
+  /* sc-inputtext sm: padding 8.75/5.25, font-size 12.25 — replicamos en addon. */
+  .p-inputgroup-addon {
+    padding: var(--sc-spacing-0-375) var(--sc-spacing-0-625);
+    font-size: var(--sc-font-size-100);
+  }
+
+  .p-inputtext,
+  input[pInputText] {
+    padding-top: var(--sc-spacing-0-375);
+    padding-bottom: var(--sc-spacing-0-375);
+    font-size: var(--sc-font-size-100);
+  }
+}
+
+.sc-inputgroup--lg .sc-inputgroup__inner {
+  /* sc-inputtext lg: padding 12.25/8.75, font-size 15.75. */
+  .p-inputgroup-addon {
+    padding: var(--sc-spacing-0-625) var(--sc-spacing-0-875);
+    font-size: var(--sc-font-size-300);
+  }
+
+  .p-inputtext,
+  input[pInputText] {
+    padding-top: var(--sc-spacing-0-625);
+    padding-bottom: var(--sc-spacing-0-625);
+    font-size: var(--sc-font-size-300);
+  }
+}

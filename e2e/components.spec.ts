@@ -294,3 +294,17 @@ test.describe('sc-divider', () => {
     await screenshotBaseline(page, 'divider');
   });
 });
+
+test.describe('sc-inputgroup', () => {
+  test('compone input + addons con la métrica de form field', async ({ page }) => {
+    await gotoPage(page, 'inputgroup');
+    const input = page.getByTestId('ig-input');
+    expect(await styleOf(input, ['padding-left', 'padding-top', 'font-size'])).toEqual({
+      'padding-left': '10.5px',
+      'padding-top': '7px',
+      'font-size': '14px',
+    });
+    await expect(page.getByTestId('sc-inputgroup').locator('.p-inputgroup-addon').first()).toBeVisible();
+    await screenshotBaseline(page, 'inputgroup');
+  });
+});
