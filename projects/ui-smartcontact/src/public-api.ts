@@ -7,6 +7,7 @@
 export * from './lib/core/types/button.types';
 export * from './lib/core/types/badge.types';
 export * from './lib/core/types/theme-component.types';
+export * from './lib/core/types/label.types';
 export * from './lib/components/button/sc-button.component';
 export * from './lib/components/badge/sc-badge.component';
 export * from './lib/components/card/sc-card.component';
@@ -50,6 +51,7 @@ export * from './lib/components/form-danger-zone/sc-form-danger-zone.component';
 export * from './lib/components/sticky-form-header/sc-sticky-form-header.component';
 export * from './lib/components/impact-preview-dialog/sc-impact-preview-dialog.component';
 export * from './lib/components/delete-entity-dialog/sc-delete-entity-dialog.component';
+export * from './lib/components/color-dot-picker/sc-color-dot-picker.component';
 export * from './lib/core/services/sc-clipboard.service';
 export * from './lib/config/provide-smartcontact-ui';
 export { default as scPreset } from './lib/theme/sc-preset';

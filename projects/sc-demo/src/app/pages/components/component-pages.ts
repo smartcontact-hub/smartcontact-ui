@@ -218,4 +218,12 @@ export const SC_DEMO_COMPONENT_PAGES = [
         (m) => m.DeleteEntityDialogDemoComponent,
       ),
   },
+  {
+    path: 'colordotpicker',
+    label: 'ColorDotPicker',
+    load: () =>
+      import('./colordotpicker/colordotpicker-demo.component').then(
+        (m) => m.ColorDotPickerDemoComponent,
+      ),
+  },
 ] satisfies ScDemoComponentPage[];

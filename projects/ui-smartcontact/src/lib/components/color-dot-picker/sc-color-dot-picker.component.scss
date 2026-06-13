@@ -1,0 +1,41 @@
+:host {
+  display: inline-block;
+}
+
+.picker {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-25);
+
+  &__swatch {
+    width: 20px;
+    height: 20px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: 1px solid transparent;
+    border-radius: var(--sc-radius-100);
+    cursor: pointer;
+    transition: border-color var(--sc-transition-fast) var(--sc-easing-default);
+
+    &:hover {
+      border-color: var(--sc-border-default);
+    }
+
+    &--selected {
+      border-color: var(--sc-color-gray-600);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--sc-color-soft-blue-500);
+      outline-offset: 1px;
+    }
+  }
+
+  &__dot {
+    width: 12px;
+    height: 12px;
+    border-radius: var(--sc-radius-full);
+  }
+}

@@ -782,3 +782,22 @@ test.describe('sc-delete-entity-dialog', () => {
     await expect(page.getByTestId('delete-result')).toHaveText('borrado: bulk:2');
   });
 });
+
+test.describe('sc-color-dot-picker', () => {
+  test('8 swatches, aria-checked en el seleccionado, click cambia (two-way)', async ({ page }) => {
+    await gotoPage(page, 'colordotpicker');
+    const picker = page.getByTestId('sc-dotpicker');
+
+    // 8 colores categóricos
+    await expect(picker.locator('.picker__swatch')).toHaveCount(8);
+
+    // inicial 'blue' (índice 6) → aria-checked
+    await expect(picker.locator('[aria-checked="true"]')).toHaveAttribute('aria-label', 'blue');
+
+    // click en el primero (gray) → two-way actualiza
+    await picker.locator('.picker__swatch').first().click();
+    await expect(page.getByTestId('dotpicker-value')).toHaveText('seleccionado: gray');
+
+    await screenshotBaseline(page, 'colordotpicker');
+  });
+});
