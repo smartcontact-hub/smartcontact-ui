@@ -535,3 +535,43 @@ test.describe('sc-checkbox', () => {
     await screenshotBaseline(page, 'checkbox');
   });
 });
+
+test.describe('sc-empty-state', () => {
+  test('métrica del Kit + CTA condicional + gap v/14', async ({ page }) => {
+    await gotoPage(page, 'emptystate');
+
+    // variante sin CTA: título visible, sin botón de acción
+    const plain = page.getByTestId('sc-emptystate-plain');
+    await expect(plain.locator('.empty-state__title')).toHaveText('No hay agentes todavía');
+    await expect(plain.locator('.empty-state__cta')).toHaveCount(0);
+
+    // contenedor: min-height reservado (no-shift empty→poblado) + gap v/14
+    // (--sc-spacing-1-125 = 1.125 × 14 = 15.75)
+    const root = plain.locator('.empty-state');
+    expect(await styleOf(root, ['min-height', 'gap'])).toEqual({
+      'min-height': '320px',
+      gap: '15.75px',
+    });
+
+    // icono circular 64×64 (radius pill clamp)
+    const icon = plain.locator('.empty-state__icon');
+    expect(await styleOf(icon, ['width', 'height', 'border-radius'])).toEqual({
+      width: '64px',
+      height: '64px',
+      'border-radius': '9999px',
+    });
+
+    // título 16/600 (font-size-300 redondo, DD-13)
+    const title = plain.locator('.empty-state__title');
+    expect(await styleOf(title, ['font-size', 'font-weight'])).toEqual({
+      'font-size': '16px',
+      'font-weight': '600',
+    });
+
+    // variante con CTA: botón de acción visible
+    const cta = page.getByTestId('sc-emptystate-cta');
+    await expect(cta.locator('.empty-state__cta')).toBeVisible();
+
+    await screenshotBaseline(page, 'emptystate');
+  });
+});

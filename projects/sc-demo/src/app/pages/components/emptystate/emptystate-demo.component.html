@@ -1,0 +1,30 @@
+<h1>sc-empty-state</h1>
+
+<p>
+  Estado vacío centrado para list pages sin filas: icono circular grande,
+  título, cuerpo descriptivo y CTA primaria opcional. Reserva
+  <code>min-height</code> para que la cabecera no salte al pasar de
+  vacío→poblado. <code>titleKey</code>/<code>bodyKey</code>/<code>ctaKey</code>
+  son claves i18n que resuelve el consumidor.
+</p>
+
+<h2>Sin CTA</h2>
+<div class="row">
+  <sc-empty-state
+    icon="inbox"
+    titleKey="No hay agentes todavía"
+    bodyKey="Crea tu primer agente para empezar a recibir llamadas."
+    data-testid="sc-emptystate-plain"
+  />
+</div>
+
+<h2>Con CTA</h2>
+<div class="row">
+  <sc-empty-state
+    icon="group"
+    titleKey="Sin grupos"
+    bodyKey="Agrupa tus agentes para organizarlos por equipo o campaña."
+    ctaKey="Crear grupo"
+    data-testid="sc-emptystate-cta"
+  />
+</div>

@@ -154,4 +154,9 @@ export const SC_DEMO_COMPONENT_PAGES = [
     label: 'Checkbox',
     load: () => import('./checkbox/checkbox-demo.component').then((m) => m.CheckboxDemoComponent),
   },
+  {
+    path: 'emptystate',
+    label: 'EmptyState',
+    load: () => import('./emptystate/emptystate-demo.component').then((m) => m.EmptyStateDemoComponent),
+  },
 ] satisfies ScDemoComponentPage[];

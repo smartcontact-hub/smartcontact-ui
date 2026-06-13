@@ -1,0 +1,62 @@
+.empty-state {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sc-spacing-1-125);
+  /* Reserve tall area so header doesn't shift when list flips empty→populated */
+  min-height: 320px;
+  padding: var(--sc-spacing-2-25) var(--sc-spacing-1-5);
+  text-align: center;
+
+  &__icon {
+    width: 64px;
+    height: 64px;
+    border-radius: var(--sc-radius-full);
+    background: var(--sc-bg-subtle);
+    color: var(--sc-text-subtle);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin-bottom: var(--sc-spacing-0-875);
+  }
+
+  &__title {
+    margin: 0;
+    font-size: var(--sc-font-size-300);
+    font-weight: 600;
+    color: var(--sc-text-primary);
+  }
+
+  &__body {
+    margin: 0;
+    max-width: 420px;
+    font-size: var(--sc-font-size-100);
+    line-height: 1.5;
+    color: var(--sc-text-subtle);
+  }
+
+  &__cta {
+    margin-top: var(--sc-spacing-1-125);
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sc-spacing-0-75);
+    padding: var(--sc-spacing-0-875) var(--sc-spacing-1-5);
+    border: 1px solid transparent;
+    background: var(--sc-bg-primary);
+    color: var(--sc-text-on-primary);
+    font-size: var(--sc-font-size-100);
+    font-weight: 500;
+    cursor: pointer;
+    transition: background 150ms ease;
+
+    &:hover {
+      background: var(--sc-bg-primary-hover);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--sc-border-focus);
+      outline-offset: 2px;
+    }
+  }
+}

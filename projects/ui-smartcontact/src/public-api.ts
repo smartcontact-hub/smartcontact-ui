@@ -40,5 +40,6 @@ export * from './lib/components/toggleswitch/sc-toggleswitch.component';
 export * from './lib/components/dialog/sc-dialog.component';
 export * from './lib/components/dynamic-dialog/sc-dynamic-dialog.service';
 export * from './lib/components/checkbox/sc-checkbox.component';
+export * from './lib/components/empty-state/sc-empty-state.component';
 export * from './lib/config/provide-smartcontact-ui';
 export { default as scPreset } from './lib/theme/sc-preset';

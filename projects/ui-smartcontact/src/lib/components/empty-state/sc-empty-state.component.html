@@ -1,0 +1,13 @@
+<div class="empty-state" role="status" aria-live="polite">
+  <div class="empty-state__icon" aria-hidden="true">
+    <sc-icon [name]="icon()" [size]="iconSizeDisplay" />
+  </div>
+  <h2 class="empty-state__title">{{ titleKey() | translate }}</h2>
+  <p class="empty-state__body">{{ bodyKey() | translate }}</p>
+  @if (ctaKey(); as cta) {
+    <button type="button" class="empty-state__cta" (click)="onCtaClick()">
+      <sc-icon [name]="plusIcon" [size]="iconSizeDefault" />
+      <span>{{ cta | translate }}</span>
+    </button>
+  }
+</div>
