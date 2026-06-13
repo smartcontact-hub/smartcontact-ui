@@ -124,4 +124,9 @@ export const SC_DEMO_COMPONENT_PAGES = [
     label: 'ColumnSelector',
     load: () => import('./columnselector/columnselector-demo.component').then((m) => m.ColumnSelectorDemoComponent),
   },
+  {
+    path: 'confirmdialog',
+    label: 'ConfirmDialog',
+    load: () => import('./confirmdialog/confirmdialog-demo.component').then((m) => m.ConfirmDialogDemoComponent),
+  },
 ] satisfies ScDemoComponentPage[];

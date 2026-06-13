@@ -1,0 +1,10 @@
+<h1>sc-confirmdialog</h1>
+
+<sc-confirmdialog />
+
+<div class="row">
+  <sc-button label="Confirmación primaria" data-testid="confirm-primary" (clicked)="ask('primary', 'accept')" />
+  <sc-button label="Destructiva" variant="danger" data-testid="confirm-danger" (clicked)="ask('danger', 'accept')" />
+  <sc-button label="Descartar cambios (énfasis reject)" appearance="outlined" (clicked)="ask('danger', 'reject')" />
+</div>
+<p>Resultado: <span data-testid="confirm-result">{{ result() }}</span></p>

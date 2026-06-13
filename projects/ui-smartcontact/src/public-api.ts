@@ -32,5 +32,7 @@ export * from './lib/components/inputnumber/sc-inputnumber.component';
 export * from './lib/components/multiselect/sc-multiselect.component';
 export * from './lib/components/group-popover/sc-group-popover.component';
 export * from './lib/components/column-selector/sc-column-selector.component';
+export * from './lib/components/confirmdialog/sc-confirmdialog.component';
+export * from './lib/components/confirmdialog/sc-confirm.service';
 export * from './lib/config/provide-smartcontact-ui';
 export { default as scPreset } from './lib/theme/sc-preset';

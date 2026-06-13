@@ -405,3 +405,19 @@ test.describe('sc-column-selector', () => {
     await screenshotBaseline(page, 'columnselector');
   });
 });
+
+test.describe('sc-confirmdialog', () => {
+  test('abre con métrica del Kit, resuelve la Promise y respeta tonos', async ({ page }) => {
+    await gotoPage(page, 'confirmdialog');
+    await page.getByTestId('confirm-danger').locator('button').click();
+    const dialog = page.locator('.p-confirmdialog');
+    await expect(dialog).toBeVisible();
+    expect((await styleOf(dialog, ['border-radius']))['border-radius']).toBe('12px');
+    await expect(dialog.getByText('¿Eliminar el agente?')).toBeVisible();
+    await dialog.getByRole('button', { name: 'Eliminar' }).click();
+    await expect(page.getByTestId('confirm-result')).toHaveText('aceptado');
+    await page.getByTestId('confirm-primary').locator('button').click();
+    await page.locator('.p-confirmdialog').getByRole('button', { name: 'Cancelar' }).click();
+    await expect(page.getByTestId('confirm-result')).toHaveText('rechazado');
+  });
+});
