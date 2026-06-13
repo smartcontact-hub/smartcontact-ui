@@ -1,0 +1,50 @@
+<div class="photo-upload" [class.photo-upload--sm]="size() === 'sm'">
+  <button
+    type="button"
+    class="photo-upload__button"
+    (click)="openPicker()"
+    (mouseenter)="hovering.set(true)"
+    (mouseleave)="hovering.set(false)"
+    [attr.aria-label]="
+      photo()
+        ? (ariaLabel() ?? ('sc.photoUpload.changePhoto' | translate))
+        : ('sc.photoUpload.select' | translate)
+    "
+    [title]="
+      photo()
+        ? (ariaLabel() ?? ('sc.photoUpload.changePhoto' | translate))
+        : ('sc.photoUpload.select' | translate)
+    "
+  >
+    @if (photo(); as src) {
+      <img class="photo-upload__image" [src]="src" alt="" />
+    } @else {
+      @if (name(); as entityName) {
+        <img
+          class="photo-upload__illustrated"
+          [src]="illustrationSrc(entityName)"
+          alt=""
+          aria-hidden="true"
+        />
+      } @else {
+        <sc-icon [name]="placeholderIcon" [size]="iconSize3xl" class="photo-upload__placeholder" />
+      }
+    }
+    <span class="photo-upload__overlay" [class.photo-upload__overlay--visible]="hovering()">
+      <sc-icon [name]="cameraIcon" [size]="iconSizeLg" />
+    </span>
+  </button>
+  <input
+    #fileInput
+    type="file"
+    accept="image/jpeg,image/png,image/gif"
+    class="photo-upload__input"
+    (change)="onFileChange($event)"
+  />
+  <span class="photo-upload__hint">{{ 'sc.photoUpload.hint' | translate }}</span>
+  @if (photo()) {
+    <button type="button" class="photo-upload__remove" (click)="onRemove()">
+      {{ 'sc.photoUpload.remove' | translate }}
+    </button>
+  }
+</div>

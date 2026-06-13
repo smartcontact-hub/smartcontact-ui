@@ -1,0 +1,23 @@
+<h1>sc-photo-upload</h1>
+
+<p>
+  Selector de foto de entidad (bespoke: input file nativo + FileReader). Sin foto
+  cae al <strong>fallback de ilustración</strong> (§4.2) por hash del nombre
+  (aquí pool <code>abstract</code>). Hover muestra el overlay de cámara.
+</p>
+
+<h2>md (64) y sm (44)</h2>
+<div class="row">
+  <sc-photo-upload
+    name="Inés García"
+    illustrationPool="abstract"
+    [photo]="photo()"
+    (photoChange)="onPhotoChange($event)"
+    data-testid="sc-photoupload"
+  />
+  <sc-photo-upload name="Soporte" illustrationPool="abstract" size="sm" />
+</div>
+
+@if (photo()) {
+  <p data-testid="photo-set">foto cargada</p>
+}

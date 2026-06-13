@@ -1,0 +1,90 @@
+.photo-upload {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sc-spacing-0-25);
+
+  &__button {
+    position: relative;
+    width: 64px;
+    height: 64px;
+    border: 1px solid var(--sc-border-default);
+    border-radius: var(--sc-radius-full);
+    background: var(--sc-bg-subtle);
+    overflow: hidden;
+    cursor: pointer;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+
+    &:focus-visible {
+      outline: 2px solid var(--sc-border-focus);
+      outline-offset: 2px;
+    }
+  }
+
+  &__image,
+  &__illustrated {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+  }
+
+  &__placeholder {
+    color: var(--sc-text-disabled);
+  }
+
+  &__overlay {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: rgb(0 0 0 / 0.3);
+    color: var(--sc-color-gray-0);
+    opacity: 0;
+    transition: opacity 120ms ease;
+
+    &--visible {
+      opacity: 1;
+    }
+  }
+
+  &__input {
+    display: none;
+  }
+
+  &__hint {
+    font-size: var(--sc-font-size-75);
+    color: var(--sc-text-disabled);
+    min-height: 14px;
+  }
+
+  &__remove {
+    border: 0;
+    background: transparent;
+    padding: 0;
+    font-size: var(--sc-font-size-75);
+    color: var(--sc-text-subtle);
+    cursor: pointer;
+
+    &:hover {
+      color: var(--sc-text-primary);
+    }
+  }
+
+  &--sm {
+    gap: 0;
+
+    .photo-upload__button {
+      width: 44px;
+      height: 44px;
+    }
+
+    .photo-upload__hint,
+    .photo-upload__remove {
+      display: none;
+    }
+  }
+}

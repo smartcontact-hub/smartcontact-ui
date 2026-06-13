@@ -853,3 +853,20 @@ test.describe('sc-avatar fallback de ilustración', () => {
     await expect(img).toHaveAttribute('src', /assets\/avatars\/abstract\/abstract-0[0-2]\.svg$/);
   });
 });
+
+test.describe('sc-photo-upload', () => {
+  test('§10 bespoke: input file nativo + fallback de ilustración por name', async ({ page }) => {
+    await gotoPage(page, 'photoupload');
+    const upload = page.getByTestId('sc-photoupload');
+
+    // sin foto + name → ilustración hasheada (pool abstract)
+    const img = upload.locator('.photo-upload__illustrated');
+    await expect(img).toBeVisible();
+    await expect(img).toHaveAttribute('src', /assets\/avatars\/abstract\/abstract-0[0-2]\.svg$/);
+
+    // input file nativo (bespoke as-is, no p-fileupload)
+    await expect(upload.locator('input[type=file]')).toHaveCount(1);
+
+    await screenshotBaseline(page, 'photoupload');
+  });
+});

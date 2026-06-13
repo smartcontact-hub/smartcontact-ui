@@ -226,4 +226,10 @@ export const SC_DEMO_COMPONENT_PAGES = [
         (m) => m.ColorDotPickerDemoComponent,
       ),
   },
+  {
+    path: 'photoupload',
+    label: 'PhotoUpload',
+    load: () =>
+      import('./photoupload/photoupload-demo.component').then((m) => m.PhotoUploadDemoComponent),
+  },
 ] satisfies ScDemoComponentPage[];
