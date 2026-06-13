@@ -262,4 +262,12 @@ export const SC_DEMO_COMPONENT_PAGES = [
     load: () =>
       import('./datatable/datatable-demo.component').then((m) => m.DatatableDemoComponent),
   },
+  {
+    path: 'bulktranscriptionmodal',
+    label: 'BulkTranscriptionModal',
+    load: () =>
+      import('./bulktranscriptionmodal/bulktranscriptionmodal-demo.component').then(
+        (m) => m.BulkTranscriptionModalDemoComponent,
+      ),
+  },
 ] satisfies ScDemoComponentPage[];

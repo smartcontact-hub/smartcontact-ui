@@ -1031,3 +1031,32 @@ test.describe('sc-datatable', () => {
     await expect(lz.locator('tbody tr').first().locator('td').first()).toHaveText('Inés García');
   });
 });
+
+test.describe('sc-bulk-transcription-modal', () => {
+  test('presentacional: hero, toggle análisis recalcula, procesa y emite result', async ({
+    page,
+  }) => {
+    await gotoPage(page, 'bulktranscriptionmodal');
+    const modal = page.getByTestId('sc-bulk-modal');
+    await expect(modal).toBeVisible();
+
+    // hero inicial = 8 (solo transcripción; análisis off por defecto).
+    await expect(modal.locator('.sc-bulk-modal__hero strong')).toHaveText('8');
+    // subtítulo: 12 seleccionadas (i18n es, plural other).
+    await expect(modal.locator('.sc-bulk-modal__heading p')).toContainText('12');
+
+    // toggle análisis ON → hero recalcula a 12 (8 transcripción + 4 análisis).
+    await modal.locator('sc-toggleswitch .p-toggleswitch').click();
+    await expect(modal.locator('.sc-bulk-modal__hero strong')).toHaveText('12');
+
+    // procesar emite el result presentacional (hero=12, includeAnalysis, 12 ids).
+    await modal.locator('.sc-bulk-modal__footer button').last().click();
+    await expect(page.getByTestId('modal-result')).toContainText('hero=12');
+    await expect(page.getByTestId('modal-result')).toContainText('análisis=true');
+    await expect(page.getByTestId('modal-result')).toContainText('ids=12');
+    // procesar cerró el modal (el consumidor controla la visibilidad).
+    await expect(modal).toBeHidden();
+
+    await screenshotBaseline(page, 'bulktranscriptionmodal');
+  });
+});

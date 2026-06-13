@@ -1,0 +1,85 @@
+<section class="sc-bulk-modal" [ngClass]="modalClasses" role="dialog" aria-labelledby="bulk-transcription-title">
+  <header class="sc-bulk-modal__header">
+    <sc-button
+      class="sc-bulk-modal__menu"
+      icon="menu"
+      [ariaLabel]="'sc.bulkTranscriptionModal.processingOptionsAriaLabel' | translate"
+      variant="primary"
+      appearance="text"
+      [rounded]="true">
+    </sc-button>
+
+    <div class="sc-bulk-modal__heading">
+      <h2 id="bulk-transcription-title">{{ 'sc.bulkTranscriptionModal.title' | translate }}</h2>
+      <p>{{ subtitle }}</p>
+    </div>
+
+    <sc-button
+      class="sc-bulk-modal__close"
+      icon="close"
+      [ariaLabel]="'sc.bulkTranscriptionModal.closeAriaLabel' | translate"
+      variant="secondary"
+      appearance="text"
+      [rounded]="true"
+      (clicked)="close()">
+    </sc-button>
+  </header>
+
+  <div class="sc-bulk-modal__body">
+    <section class="sc-bulk-modal__summary" [attr.aria-label]="'sc.bulkTranscriptionModal.summaryAriaLabel' | translate">
+      <h3>{{ 'sc.bulkTranscriptionModal.summaryTitle' | translate }}</h3>
+
+      <div class="sc-bulk-modal__hero">
+        <strong [ngClass]="heroNumberClasses">
+          {{ heroCount }}
+        </strong>
+
+        <span class="sc-bulk-modal__delta-slot" aria-hidden="true">
+          @if (deltaFlash) {
+            <span
+              class="sc-bulk-modal__delta"
+              [class.sc-bulk-modal__delta--minus]="deltaFlash.delta < 0"
+              [attr.data-key]="deltaFlash.key">
+              {{ deltaFlash.delta > 0 ? '+' : '' }}{{ deltaFlash.delta }}
+            </span>
+          }
+        </span>
+
+        <span [ngClass]="costClasses">{{ heroCostLabel }}</span>
+      </div>
+
+      <p class="sc-bulk-modal__hint" [class.sc-bulk-modal__hint--empty]="!heroHint">
+        {{ heroHint || ' ' }}
+      </p>
+
+      @if (alreadyProcessedLabel) {
+        <p class="sc-bulk-modal__already">{{ alreadyProcessedLabel }}</p>
+      }
+    </section>
+
+    <section class="sc-bulk-modal__analysis" [ngClass]="analysisSectionClasses" [attr.aria-label]="'sc.bulkTranscriptionModal.analysisAriaLabel' | translate">
+      <h3>{{ 'sc.bulkTranscriptionModal.analysisTitle' | translate }}</h3>
+
+      <div class="sc-bulk-modal__toggle-row">
+        <div>
+          <strong>{{ 'sc.bulkTranscriptionModal.includeAnalysisLabel' | translate }}</strong>
+          <p [ngClass]="analysisCaptionClasses">{{ analysisCaption }}</p>
+        </div>
+
+        <div class="sc-bulk-modal__switch" (click)="onAnalysisAttempt()">
+          <sc-toggleswitch
+            [checked]="analysisChecked"
+            [disabled]="analysisDisabled"
+            [ariaLabel]="'sc.bulkTranscriptionModal.includeAnalysisAriaLabel' | translate"
+            (checkedChange)="onAnalysisChange($event)">
+          </sc-toggleswitch>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <footer class="sc-bulk-modal__footer">
+    <sc-button [label]="'sc.bulkTranscriptionModal.closeLabel' | translate" variant="secondary" appearance="text" (clicked)="close()"></sc-button>
+    <sc-button [label]="'sc.bulkTranscriptionModal.processLabel' | translate" [disabled]="!canSubmit" (clicked)="process()"></sc-button>
+  </footer>
+</section>
