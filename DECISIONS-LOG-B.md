@@ -151,3 +151,106 @@ el gap de acciones del toast custom del catálogo de diseño quedó en
 - Decisiones §4 aún abiertas: base de `sc-checkbox`, API de `sc-dialog`,
   rename de `sc-confirm-host`, API de `sc-section-card`, reconciliación de
   `sc-icon`. La §4.2 (icon-resolver) quedó cerrada en este lote.
+
+---
+
+# Lote 2 — los 9 wrappers del catálogo de diseño
+
+## Método del diff visual del lote
+Misma doble vara del lote 1 (métricas computadas contra el export + baselines
+locales) **más la referencia Figma en vivo**: el file canónico
+«Smart-Contact Prime» conectado por MCP (Desktop Bridge). Capturas de las
+páginas ❖ de los componentes con chrome (Search 11876:22312, MultiSelect
+6738:47040) comparadas contra el render de la demo; el resto de páginas ❖
+localizadas programáticamente (lectura, cero escrituras en el file). El REST
+de export de imágenes tenía el token caducado → capturas vía
+`exportAsync` del plugin (mismo resultado).
+
+## Decisiones transversales del lote
+
+### §4.6 cerrada — sc-icon reconciliado en @smartcontact/icons
+Los wrappers de diseño (search, column-selector, group-popover) usan
+`<sc-icon>` con tamaños numéricos: la reconciliación no podía esperar.
+`ScIconComponent` del paquete de iconos se extendió de forma
+retro-compatible: `size` acepta número (px de diseño → `font-size` inline +
+eje `opsz` vía `--sc-icon-optical-size`) además de sm/md/lg, y se añadió
+`spin` (con prefers-reduced-motion). Ejes FILL/wght/GRAD/opsz conservados por
+el mecanismo de custom properties existente. Las constantes `SC_ICON_SIZE_*`
+se portaron al paquete (salda la deuda `@shared/utils/icon-size`).
+**Desviación anotada:** el §4.6 pedía conservar «el proveedor por ligadura»;
+el paquete renderiza por glifo de codepoint del catálogo generado — mismo
+resultado visual, sin depender de font-feature `liga`, y valida nombres
+contra el catálogo. Se adopta el codepoint como proveedor del repo unificado.
+
+### Clases públicas renombradas a `Sc*`
+Las clases del catálogo de diseño venían sin prefijo (`SearchComponent`);
+la API pública del paquete usa `Sc*` (uniforme con el lote 1). Los selectores
+NO cambian salvo donde DD-12 lo exige.
+
+### DD-12 aplicado con su borde exacto
+`sc-group-popover` y `sc-column-selector` CONSERVAN el kebab: su nombre es
+descriptivo propio (gestor de columnas, popover de grupos), no el nombre de
+un componente PrimeNG — la tabla Rosetta ya los listaba en kebab. El pegado
+solo aplica a hosts 1:1 (p. ej. confirmdialog).
+
+### Specs unitarios del origen no portados
+La verificación del repo es e2e + diff + guardarraíles; no hay infra karma
+para libs. Si se monta, los specs del origen son recuperables tal cual.
+
+## Piezas
+
+### sc-divider
+Port directo (ya pegado). e2e: margin 14 H/V, content padding 7.
+
+### sc-inputgroup
+Port directo. Addons por proyección (el consumidor importa los módulos
+PrimeNG de los slots — superficie mínima preservada). e2e: input interno con
+métrica de form field; fix de spec: la clase del addon en PrimeNG 21 es
+`p-inputgroupaddon` (sin guiones).
+
+### sc-search
+Port con iconos reconciliados (§4.6). **Diff visual contra ❖ Search del
+file canónico:** lupa izquierda, placeholder, radio 6, hint de atajo —
+render 1:1. e2e: métrica de campo + CVA (ngModel) + clear.
+
+### sc-datepicker
+Port directo (chrome label/required/error + CVA). e2e: métrica de campo,
+panel del calendario radio 6, error visible, ESC cierra.
+
+### sc-inputnumber
+Port directo (input nativo numérico — decisión deliberada del origen vs
+p-inputNumber, documentada allí). e2e: métrica + chrome de error.
+
+### sc-multiselect
+Port directo (opciones primitivas string[] soportadas). **Diff visual contra
+❖ MultiSelect del Kit:** estructura overlay + checkboxes + estados 1:1.
+e2e: radio 6 campo y overlay, opción 7/10.5, selección reflejada.
+
+### sc-group-popover
+Port con la i18n DESACOPLADA de la app: las claves `common.*` del origen
+pasan a diccionario colocado `sc.groupPopover.*` auto-registrado por el
+componente (patrón establecido por el modal del molde); la demo monta
+`provideTranslateService`. e2e: hover abre, lista limitada a 5, cola
+«+N más». Fix de demo: `GroupRef` exige `id: number` + `active`.
+
+### sc-column-selector
+Port sin acoplamientos (CDK drag-drop ya es dependencia; persistencia por
+`storageKey` del consumidor). e2e: popover, columnas listadas, radio 6.
+
+### sc-confirmdialog (decisión §4.4 cerrada)
+**Rename `sc-confirm-host` → `sc-confirmdialog`**: es un host 1:1 de
+`p-confirmdialog` → regla pegado. El acoplamiento que justificaba el nombre
+"host" desaparece al portar el servicio AL paquete: `ScConfirmService`
+(+ `provideScConfirm()`, patrón del toast) conserva la API
+`await request(): Promise<boolean>` y la matriz de tonos/énfasis de botonera.
+Icono por el resolver (`exclamation-triangle` → warning Material): PrimeIcons
+no forma parte del DS y el string `pi pi-*` del origen no renderizaría aquí.
+e2e: abre con radio 12 (Kit dialog), accept/reject resuelven la Promise.
+
+## Diferido al lote 3
+- Los 5 comunes a convergir (inputtext, select, toggleswitch, dialog,
+  checkbox) con las decisiones §4.1 (base checkbox) y §4.3 (API dialog);
+  `ScDynamicDialogService` entra con dialog.
+- Los 16 custom (Fase 3), los 4 solapes (Fase 4), `sc-datatable` (§6), Memory.
+- El token REST de Figma caducado: renovarlo permite volver a exportar
+  imágenes por nodeId sin plugin.
