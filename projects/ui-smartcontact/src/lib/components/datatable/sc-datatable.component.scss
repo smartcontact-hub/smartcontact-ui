@@ -1,0 +1,10 @@
+:host {
+  display: block;
+}
+
+/* El theming de la tabla lo resuelve el preset `datatable.ts` (PrimeNG). Aquí
+   solo la columna de selección, que no es parte del preset. */
+.sc-datatable__check {
+  width: var(--sc-spacing-2-5);
+  text-align: center;
+}

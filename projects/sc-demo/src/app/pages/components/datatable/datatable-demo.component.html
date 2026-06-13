@@ -1,0 +1,39 @@
+<h1>sc-datatable</h1>
+
+<p>
+  Tabla de datos sobre PrimeNG <code>p-table</code> — el theming lo resuelve el
+  preset <code>datatable.ts</code> (ya tokenizado); el wrapper aporta la API
+  <strong>data-driven</strong> (column-defs + <code>cellTemplate</code> por
+  columna) y la proyección de slots <code>[scTableCaption]</code> /
+  <code>[scTableEmpty]</code>. MVP no-lazy: orden y paginación client-side.
+  <code>header</code> va ya traducido por el consumidor (el DS no traduce
+  contenido).
+</p>
+
+<h2>MVP: columnas, orden, selección múltiple, paginador</h2>
+<sc-datatable
+  [value]="agents()"
+  [columns]="columns()"
+  dataKey="id"
+  selectionMode="multiple"
+  [selection]="selection()"
+  (selectionChange)="onSelectionChange($event)"
+  [paginator]="true"
+  [rows]="5"
+  [rowsPerPageOptions]="[5, 10]"
+  [stripedRows]="true"
+  data-testid="sc-datatable"
+>
+  <div scTableCaption class="dt-caption">Agentes ({{ agents().length }})</div>
+  <div scTableEmpty class="dt-empty">No hay agentes</div>
+</sc-datatable>
+
+<p data-testid="dt-selected">Seleccionados: {{ selection().length }}</p>
+<button type="button" (click)="clear()" data-testid="dt-clear">Vaciar</button>
+
+<!-- cellTemplate de la columna 'status': el consumidor compone la celda. -->
+<ng-template #statusTpl let-agent>
+  <span class="dt-status" [attr.data-active]="agent.status === 'active'">
+    {{ agent.status === 'active' ? 'Activo' : 'Inactivo' }}
+  </span>
+</ng-template>

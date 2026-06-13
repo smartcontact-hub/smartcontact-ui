@@ -976,3 +976,39 @@ test.describe('sc-inline-rename-cell', () => {
     await screenshotBaseline(page, 'inlinerenamecell');
   });
 });
+
+test.describe('sc-datatable', () => {
+  test('MVP: column-defs + cellTemplate, orden, selección, paginador, slots proyectados', async ({
+    page,
+  }) => {
+    await gotoPage(page, 'datatable');
+    const dt = page.getByTestId('sc-datatable');
+
+    // slot [scTableCaption] proyectado dentro del pTemplate caption.
+    await expect(dt.locator('.dt-caption')).toHaveText('Agentes (7)');
+
+    // 1 columna de checkbox (multiple) + 3 de datos = 4 cabeceras.
+    await expect(dt.locator('thead th')).toHaveCount(4);
+
+    // paginador rows=5 → 5 filas en la página 1.
+    await expect(dt.locator('tbody tr')).toHaveCount(5);
+
+    // cellTemplate de 'status' renderiza el span custom del consumidor.
+    await expect(dt.locator('tbody tr').first().locator('.dt-status')).toHaveText(/Activo|Inactivo/);
+
+    // orden por 'Nombre' asc → primera fila = Diego Romero (alfabético, client-side).
+    await dt.locator('thead th', { hasText: 'Nombre' }).click();
+    await expect(dt.locator('tbody tr').first().locator('td').nth(1)).toHaveText('Diego Romero');
+
+    // selección múltiple por checkbox de fila → two-way (selectionChange).
+    await dt.locator('tbody tr').first().locator('p-tablecheckbox').click();
+    await expect(page.getByTestId('dt-selected')).toHaveText('Seleccionados: 1');
+
+    // slot [scTableEmpty]: al vaciar, p-table pinta la fila vacía proyectada.
+    await page.getByTestId('dt-clear').click();
+    await expect(dt.locator('.dt-empty')).toHaveText('No hay agentes');
+    await expect(dt.locator('.dt-caption')).toHaveText('Agentes (0)');
+
+    await screenshotBaseline(page, 'datatable');
+  });
+});

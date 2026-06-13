@@ -256,4 +256,10 @@ export const SC_DEMO_COMPONENT_PAGES = [
         (m) => m.InlineRenameCellDemoComponent,
       ),
   },
+  {
+    path: 'datatable',
+    label: 'DataTable',
+    load: () =>
+      import('./datatable/datatable-demo.component').then((m) => m.DatatableDemoComponent),
+  },
 ] satisfies ScDemoComponentPage[];

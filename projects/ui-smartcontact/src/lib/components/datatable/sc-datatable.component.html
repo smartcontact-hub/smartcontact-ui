@@ -1,0 +1,75 @@
+<p-table
+  [value]="$any(value())"
+  [dataKey]="dataKey()"
+  [paginator]="paginator()"
+  [rows]="rows()"
+  [rowsPerPageOptions]="$any(rowsPerPageOptions())"
+  [selectionMode]="selectionMode()"
+  [selection]="selection()"
+  (selectionChange)="selection.set($event)"
+  [sortField]="sortField()"
+  [sortOrder]="sortOrder()"
+  [size]="pSize()"
+  [scrollable]="scrollable()"
+  [scrollHeight]="scrollHeight()"
+  [stripedRows]="stripedRows()"
+  [showGridlines]="showGridlines()"
+  [loading]="loading()"
+  [rowHover]="true"
+  (onSort)="onSortEvent($event)"
+  (onPage)="page.emit($event)"
+>
+  <ng-template pTemplate="caption">
+    <ng-content select="[scTableCaption]" />
+  </ng-template>
+
+  <ng-template pTemplate="header">
+    <tr>
+      @if (selectionMode() === 'multiple') {
+        <th class="sc-datatable__check"><p-tableHeaderCheckbox /></th>
+      }
+      @for (col of columns(); track col.field) {
+        @if (col.sortable) {
+          <th
+            [pSortableColumn]="col.field"
+            [style.width]="col.width ?? null"
+            [style.text-align]="col.align ?? null"
+          >
+            {{ col.header }}<p-sortIcon [field]="col.field" />
+          </th>
+        } @else {
+          <th [style.width]="col.width ?? null" [style.text-align]="col.align ?? null">
+            {{ col.header }}
+          </th>
+        }
+      }
+    </tr>
+  </ng-template>
+
+  <ng-template pTemplate="body" let-row let-rowIndex="rowIndex">
+    <tr [pSelectableRow]="row" [pSelectableRowDisabled]="!selectionMode()">
+      @if (selectionMode() === 'multiple') {
+        <td class="sc-datatable__check"><p-tableCheckbox [value]="row" /></td>
+      }
+      @for (col of columns(); track col.field) {
+        <td [style.text-align]="col.align ?? null">
+          @if (col.cellTemplate) {
+            <ng-container
+              *ngTemplateOutlet="col.cellTemplate; context: { $implicit: row, rowIndex: rowIndex }"
+            />
+          } @else {
+            {{ cellValue(row, col.field) }}
+          }
+        </td>
+      }
+    </tr>
+  </ng-template>
+
+  <ng-template pTemplate="emptymessage">
+    <tr>
+      <td [attr.colspan]="colspan()">
+        <ng-content select="[scTableEmpty]" />
+      </td>
+    </tr>
+  </ng-template>
+</p-table>
