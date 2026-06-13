@@ -172,4 +172,10 @@ export const SC_DEMO_COMPONENT_PAGES = [
         (m) => m.FormSectionNavDemoComponent,
       ),
   },
+  {
+    path: 'bulkeditmenu',
+    label: 'BulkEditMenu',
+    load: () =>
+      import('./bulkeditmenu/bulkeditmenu-demo.component').then((m) => m.BulkEditMenuDemoComponent),
+  },
 ] satisfies ScDemoComponentPage[];

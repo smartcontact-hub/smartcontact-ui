@@ -43,5 +43,6 @@ export * from './lib/components/checkbox/sc-checkbox.component';
 export * from './lib/components/empty-state/sc-empty-state.component';
 export * from './lib/components/page-header/sc-page-header.component';
 export * from './lib/components/form-section-nav/sc-form-section-nav.component';
+export * from './lib/components/bulk-edit-menu/sc-bulk-edit-menu.component';
 export * from './lib/config/provide-smartcontact-ui';
 export { default as scPreset } from './lib/theme/sc-preset';

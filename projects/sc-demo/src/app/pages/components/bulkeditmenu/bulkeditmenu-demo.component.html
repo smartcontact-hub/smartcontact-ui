@@ -1,0 +1,15 @@
+<h1>sc-bulk-edit-menu</h1>
+
+<p>
+  Editor inline «Cambiar [campo] a [valor] [Aplicar]» que vive en la bulk action
+  bar. El consumidor suministra campos y valores; el componente orquesta los
+  selects y emite un único <code>commit</code> al pulsar Aplicar.
+</p>
+
+<div class="row">
+  <sc-bulk-edit-menu [fields]="fields" (commit)="onCommit($event)" data-testid="sc-bulkedit" />
+</div>
+
+@if (lastCommit(); as c) {
+  <p data-testid="sc-bulkedit-result">Commit: {{ c.fieldLabel }} → {{ c.valueLabel }}</p>
+}

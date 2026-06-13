@@ -1,0 +1,40 @@
+<div class="bulk-edit" role="group" [attr.aria-label]="'sc.bulkEditMenu.groupLabel' | translate">
+  <span class="bulk-edit__pair">
+    <span class="bulk-edit__lead">{{ 'sc.bulkEditMenu.change' | translate }}</span>
+    <sc-select
+      class="bulk-edit__select"
+      size="sm"
+      optionLabel="label"
+      optionValue="key"
+      [options]="fields()"
+      [value]="selectedFieldKey()"
+      (valueChange)="onFieldValueChange($event)"
+      name="bulk-field"
+    />
+  </span>
+
+  <span class="bulk-edit__pair">
+    <span class="bulk-edit__lead">{{ 'sc.bulkEditMenu.to' | translate }}</span>
+    <sc-select
+      class="bulk-edit__select"
+      size="sm"
+      optionLabel="label"
+      optionValue="value"
+      [options]="selectedField()?.values ?? []"
+      [value]="selectedValue()"
+      (valueChange)="onValueValueChange($event)"
+      name="bulk-value"
+    />
+  </span>
+
+  <p-button
+    type="button"
+    severity="secondary"
+    size="small"
+    styleClass="bulk-edit__apply"
+    [disabled]="!canApply()"
+    (onClick)="onApply()"
+  >
+    <span>{{ 'sc.bulkEditMenu.apply' | translate }}</span>
+  </p-button>
+</div>

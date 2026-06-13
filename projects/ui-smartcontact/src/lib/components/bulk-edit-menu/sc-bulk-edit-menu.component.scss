@@ -1,0 +1,34 @@
+:host {
+  display: contents;
+}
+
+.bulk-edit {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-1-125);
+  flex-wrap: wrap;
+
+  &__pair {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sc-spacing-0-5);
+  }
+
+  &__lead {
+    font-size: var(--sc-font-size-200);
+    line-height: var(--sc-line-height-220);
+    font-weight: var(--sc-font-weight-medium);
+    color: var(--sc-text-primary);
+    white-space: nowrap;
+  }
+
+  &__select {
+    width: 164px;
+  }
+
+  &__apply {
+    flex-shrink: 0;
+    height: 36px;
+    padding: 0 var(--sc-spacing-1-125);
+  }
+}

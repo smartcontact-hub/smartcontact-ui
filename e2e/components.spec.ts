@@ -643,3 +643,25 @@ test.describe('sc-form-section-nav', () => {
     await screenshotBaseline(page, 'formsectionnav');
   });
 });
+
+test.describe('sc-bulk-edit-menu', () => {
+  test('compone 2 sc-select + p-button; Aplicar emite commit', async ({ page }) => {
+    await gotoPage(page, 'bulkeditmenu');
+    const menu = page.getByTestId('sc-bulkedit');
+
+    // dos selects (campo + valor)
+    await expect(menu.locator('sc-select')).toHaveCount(2);
+
+    // botón Aplicar (el effect inicializa field=estado / value=activo → habilitado)
+    const apply = menu.locator('p-button button');
+    await expect(apply).toBeEnabled();
+
+    // click → emite commit con fieldLabel/valueLabel del consumidor
+    await apply.click();
+    const result = page.getByTestId('sc-bulkedit-result');
+    await expect(result).toContainText('Estado');
+    await expect(result).toContainText('Activo');
+
+    await screenshotBaseline(page, 'bulkeditmenu');
+  });
+});
