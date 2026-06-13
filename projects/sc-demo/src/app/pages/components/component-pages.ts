@@ -240,4 +240,12 @@ export const SC_DEMO_COMPONENT_PAGES = [
         (m) => m.CommandPaletteDemoComponent,
       ),
   },
+  {
+    path: 'keyboardshortcuts',
+    label: 'KeyboardShortcuts',
+    load: () =>
+      import('./keyboardshortcuts/keyboardshortcuts-demo.component').then(
+        (m) => m.KeyboardShortcutsDemoComponent,
+      ),
+  },
 ] satisfies ScDemoComponentPage[];

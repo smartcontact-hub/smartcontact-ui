@@ -1,0 +1,23 @@
+<h1>sc-keyboard-shortcuts</h1>
+
+<p>
+  Cheat-sheet de atajos (tecla <kbd>?</kbd>) — se monta una vez en el shell y la
+  visibilidad la posee <code>ScKeyboardShortcutsService</code>. Los grupos son
+  <strong>data-driven</strong> (<code>[groups]</code>) con un <strong>default
+  colocado</strong> que cubre los atajos intrínsecos del DS (⌘K · / · ? · ↑↓ · ↵
+  · Esc); el consumidor reemplaza o extiende con sus propios grupos (⌘S, ⌘Z…).
+  Suprimido mientras se tipea (no roba el <kbd>?</kbd>) y no se solapa con la
+  paleta abierta.
+</p>
+
+<h2>Demo</h2>
+<button
+  type="button"
+  class="demo-trigger"
+  (click)="shortcuts.open()"
+  data-testid="open-shortcuts"
+>
+  Mostrar atajos (?)
+</button>
+
+<sc-keyboard-shortcuts />

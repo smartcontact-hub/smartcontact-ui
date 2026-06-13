@@ -1,0 +1,39 @@
+@if (visible()) {
+  <div class="kbd-backdrop" (click)="onBackdropClick()" aria-hidden="true"></div>
+  <div
+    class="kbd-sheet"
+    role="dialog"
+    [attr.aria-label]="'sc.keyboardShortcuts.title' | translate"
+    aria-modal="true"
+  >
+    <div class="kbd-sheet__head">
+      <h2 class="kbd-sheet__title">{{ 'sc.keyboardShortcuts.title' | translate }}</h2>
+      <button
+        type="button"
+        class="kbd-sheet__close"
+        (click)="onClose()"
+        [attr.aria-label]="'sc.keyboardShortcuts.close' | translate"
+      >
+        <sc-icon [name]="closeIcon" [size]="iconSizeDefault" />
+      </button>
+    </div>
+
+    <div class="kbd-sheet__body">
+      @for (group of groups(); track group.title) {
+        <div class="kbd-sheet__group">
+          <div class="kbd-sheet__group-title">{{ group.title | translate }}</div>
+          @for (item of group.items; track item.label) {
+            <div class="kbd-sheet__row">
+              <span class="kbd-sheet__label">{{ item.label | translate }}</span>
+              <span class="kbd-sheet__keys">
+                @for (k of item.keys; track $index) {
+                  <kbd>{{ k }}</kbd>
+                }
+              </span>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  </div>
+}

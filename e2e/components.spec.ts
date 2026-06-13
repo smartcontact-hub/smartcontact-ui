@@ -911,3 +911,35 @@ test.describe('sc-command-palette', () => {
     await screenshotBaseline(page, 'commandpalette');
   });
 });
+
+test.describe('sc-keyboard-shortcuts', () => {
+  test('cheat-sheet: botón y ? abren (default colocado + i18n es), Esc cierra', async ({ page }) => {
+    await gotoPage(page, 'keyboardshortcuts');
+    const sheet = page.locator('.kbd-sheet[role="dialog"]');
+    await expect(sheet).toBeHidden();
+
+    // abre vía open() del servicio (botón demo) → contenido del default colocado.
+    await page.getByTestId('open-shortcuts').click();
+    await expect(sheet).toBeVisible();
+
+    // default colocado: 2 grupos intrínsecos, i18n resuelto (es), 4+3 = 7 filas.
+    await expect(sheet.locator('.kbd-sheet__group')).toHaveCount(2);
+    await expect(sheet.locator('.kbd-sheet__group-title')).toHaveText([
+      'Navegación',
+      'En la paleta',
+    ]);
+    await expect(sheet.locator('.kbd-sheet__row')).toHaveCount(7);
+
+    // Esc cierra.
+    await page.keyboard.press('Escape');
+    await expect(sheet).toBeHidden();
+
+    // la tecla `?` (atajo intrínseco del DS) también abre el cheat-sheet.
+    await page.keyboard.press('?');
+    await expect(sheet).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(sheet).toBeHidden();
+
+    await screenshotBaseline(page, 'keyboardshortcuts');
+  });
+});
