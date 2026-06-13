@@ -1,0 +1,22 @@
+<label
+  class="tri-checkbox"
+  [class.tri-checkbox--disabled]="disabled()"
+  [class.tri-checkbox--sm]="size() === 'sm'"
+  [class.tri-checkbox--lg]="size() === 'lg'"
+  [class.tri-checkbox--filled]="filled()"
+>
+  <input
+    #input
+    type="checkbox"
+    class="tri-checkbox__input"
+    [id]="effectiveInputId()"
+    [disabled]="disabled()"
+    [attr.aria-label]="ariaLabel()"
+    [attr.aria-checked]="state() === 'some' ? 'mixed' : state() === 'all'"
+    (click)="onChange($event)"
+  />
+  <span class="tri-checkbox__box" aria-hidden="true">
+    <span class="tri-checkbox__mark"></span>
+  </span>
+  <ng-content />
+</label>

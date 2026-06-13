@@ -149,4 +149,9 @@ export const SC_DEMO_COMPONENT_PAGES = [
     label: 'Dialog',
     load: () => import('./dialog/dialog-demo.component').then((m) => m.DialogDemoComponent),
   },
+  {
+    path: 'checkbox',
+    label: 'Checkbox',
+    load: () => import('./checkbox/checkbox-demo.component').then((m) => m.CheckboxDemoComponent),
+  },
 ] satisfies ScDemoComponentPage[];

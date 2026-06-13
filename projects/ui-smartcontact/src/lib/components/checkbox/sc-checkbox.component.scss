@@ -1,0 +1,187 @@
+/*
+ * sc-checkbox — Smart Contact checkbox.
+ *
+ * Auditado 1:1 con Figma `Smart Contact Prime → ❖ Checkbox` (canvas
+ * 6738:22640, 60 variants Session 30). El componente es una EXTENSIÓN
+ * del checkbox binario de Figma — añade el estado 'some' (indeterminate)
+ * que el Figma file NO modela como variant.
+ *
+ * Tokens Figma extraídos por size:
+ *   Normal (148:6319):  17.5×17.5, border slate-300, radius 4, icon 12.25
+ *   Small  (7154:140007): 14×14, font 12.25, line-height 17.5
+ *   Large  (7154:140599): 21×21, font 15.75, line-height 24.5
+ *   Filled (5801:52774): bg slate-50 cuando unchecked
+ *   Checked (148:6324):  bg/border #3b82f6 azure = Aura primary → SC
+ *                        usa `--sc-bg-primary` (navy) por consistencia
+ *                        de brand (mismo patrón que button/tabs/select
+ *                        active). Brand divergence documentada.
+ */
+
+.tri-checkbox {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-5);
+  cursor: pointer;
+  user-select: none;
+  font-size: var(--sc-font-size-200);
+  line-height: 1.5;
+  color: var(--sc-text-secondary);
+
+  &--disabled {
+    cursor: not-allowed;
+    opacity: 0.6; /* Figma `disabled/opacity: 60%` (token global) */
+  }
+
+  &__input {
+    position: absolute;
+    inset: 0;
+    width: var(--sc-spacing-1-25);
+    height: var(--sc-spacing-1-25);
+    margin: 0;
+    opacity: 0;
+    cursor: inherit;
+
+    &:focus-visible + .tri-checkbox__box {
+      outline: 2px solid var(--sc-color-electric-blue-500);
+      outline-offset: 2px;
+    }
+  }
+
+  &__box {
+    /* Figma `checkbox/width/height: 17.5` (raw decimal). */
+    width: var(--sc-spacing-1-25);
+    height: var(--sc-spacing-1-25);
+    flex: 0 0 auto;
+    /* Figma `checkbox/border/radius: 4`. */
+    border-radius: var(--sc-radius-100);
+    /* Figma `checkbox/border/color: #cbd5e1` (slate-300 = --sc-border-default). */
+    border: 1px solid var(--sc-border-default);
+    /* Figma `checkbox/background: #ffffff` = --sc-bg-surface. */
+    background: var(--sc-bg-surface);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition:
+      background-color 100ms ease,
+      border-color 100ms ease;
+    pointer-events: none;
+  }
+
+  &__mark {
+    /* Figma `checkbox/icon/size: 12.25` (the ✓ glyph). */
+    width: var(--sc-spacing-0-875);
+    height: var(--sc-spacing-0-875);
+    background: transparent;
+    border-radius: 1px;
+    pointer-events: none;
+    transition:
+      background-color 80ms ease,
+      transform 80ms ease;
+  }
+
+  /* ──────────────────────────────────────────────────────────────
+   * Sizes — valores EXACTOS Figma.
+   *   Small (7154:140007):  14×14, icon 9.8 (proporción 70%),  font 12.25
+   *   Normal (148:6319):    17.5×17.5, icon 12.25,             font 14
+   *   Large (7154:140599):  21×21, icon 14.7 (proporción 70%), font 15.75
+   * ──────────────────────────────────────────────────────────────
+   */
+  &--sm {
+    font-size: var(--sc-font-size-100);
+    line-height: var(--sc-line-height-100);
+    .tri-checkbox__input,
+    .tri-checkbox__box {
+      width: var(--sc-spacing-1);
+      height: var(--sc-spacing-1);
+    }
+    .tri-checkbox__mark {
+      width: 9.8px;
+      height: 9.8px;
+    }
+  }
+
+  &--lg {
+    font-size: var(--sc-font-size-300);
+    line-height: var(--sc-line-height-300);
+    .tri-checkbox__input,
+    .tri-checkbox__box {
+      width: var(--sc-spacing-1-5);
+      height: var(--sc-spacing-1-5);
+    }
+    .tri-checkbox__mark {
+      width: 14.7px;
+      height: 14.7px;
+    }
+  }
+
+  /* ──────────────────────────────────────────────────────────────
+   * Filled — Figma `Filled=True` (5801:52774):
+   *   `checkbox/filled/background: #f8fafc` (slate-50 = --sc-color-gray-50)
+   * Solo afecta el bg unchecked; checked sigue usando primary.
+   * ──────────────────────────────────────────────────────────────
+   */
+  &--filled .tri-checkbox__box {
+    background: var(--sc-color-gray-50);
+  }
+
+  /* ──────────────────────────────────────────────────────────────
+   * Checked — Figma `Selected=True` (148:6324):
+   *   `checkbox/checked/background: #3b82f6` (azure = Aura primary)
+   *   `checkbox/checked/border/color: #3b82f6`
+   *   `checkbox/icon/checked/color: #ffffff`
+   * SC override: navy `--sc-bg-primary` (=blue-500) por consistencia
+   * con el resto de "primary states" del DS (button/tabs/select active).
+   * Brand divergence documentada.
+   * ──────────────────────────────────────────────────────────────
+   */
+  &__input:checked + .tri-checkbox__box {
+    background: var(--sc-bg-primary);
+    border-color: var(--sc-bg-primary);
+  }
+  &__input:checked + .tri-checkbox__box .tri-checkbox__mark {
+    background: var(--sc-color-gray-0);
+    -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'><path d='M2 6.5l2.5 2.5L10 3.5' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/></svg>")
+      center / contain no-repeat;
+    mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'><path d='M2 6.5l2.5 2.5L10 3.5' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/></svg>")
+      center / contain no-repeat;
+  }
+
+  /* ──────────────────────────────────────────────────────────────
+   * Indeterminate — SC EXTENSION (no existe en Figma como variant).
+   * Mismo background que checked + bar horizontal en lugar de ✓.
+   * ──────────────────────────────────────────────────────────────
+   */
+  &__input:indeterminate + .tri-checkbox__box {
+    background: var(--sc-bg-primary);
+    border-color: var(--sc-bg-primary);
+  }
+  &__input:indeterminate + .tri-checkbox__box .tri-checkbox__mark {
+    background: var(--sc-color-gray-0);
+    height: 2px;
+    border-radius: 1px;
+    -webkit-mask: none;
+    mask: none;
+  }
+  /* Indeterminate bar width scales con el size */
+  &__input:indeterminate + .tri-checkbox__box .tri-checkbox__mark {
+    width: 10px; /* Normal */
+  }
+  &--sm .tri-checkbox__input:indeterminate + .tri-checkbox__box .tri-checkbox__mark {
+    width: 8px;
+  }
+  &--lg .tri-checkbox__input:indeterminate + .tri-checkbox__box .tri-checkbox__mark {
+    width: 12px;
+  }
+
+  &__input:disabled + .tri-checkbox__box {
+    opacity: 0.6;
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &__box,
+    &__mark {
+      transition: none;
+    }
+  }
+}

@@ -513,3 +513,25 @@ test.describe('sc-dialog', () => {
     await expect(page.getByTestId('dyn-result')).toHaveText('ok');
   });
 });
+
+test.describe('sc-checkbox', () => {
+  test('tri-estado nativo: none/some/all, ciclo y aria-checked=mixed', async ({ page }) => {
+    await gotoPage(page, 'checkbox');
+    // estado inicial: 1 de 3 → header 'some' → input.indeterminate
+    const header = page.getByTestId('sc-checkbox-header').locator('input');
+    expect(await header.evaluate((el: HTMLInputElement) => el.indeterminate)).toBe(true);
+    await expect(header).toHaveAttribute('aria-checked', 'mixed');
+    // click en header con 'some' → cycle emite false → todas off → header 'none'
+    await header.click();
+    await expect(page.getByText('Cabecera (none)')).toBeVisible();
+    expect(await header.evaluate((el: HTMLInputElement) => el.indeterminate)).toBe(false);
+    expect(await header.evaluate((el: HTMLInputElement) => el.checked)).toBe(false);
+    // click de nuevo con 'none' → true → todas on → header 'all' + checked
+    await header.click();
+    await expect(page.getByText('Cabecera (all)')).toBeVisible();
+    expect(await header.evaluate((el: HTMLInputElement) => el.checked)).toBe(true);
+    // base nativa: es un <input type=checkbox> real
+    await expect(header).toHaveJSProperty('type', 'checkbox');
+    await screenshotBaseline(page, 'checkbox');
+  });
+});
