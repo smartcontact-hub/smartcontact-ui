@@ -189,3 +189,57 @@ test.describe('sc-textarea', () => {
     await screenshotBaseline(page, 'textarea');
   });
 });
+
+test.describe('sc-drawer', () => {
+  test('abre, renderiza cabecera del Kit (17.5, título 20/600) y cierra', async ({ page }) => {
+    await gotoPage(page, 'drawer');
+    await page.getByTestId('open-drawer').locator('button').click();
+    const drawer = page.locator('.p-drawer');
+    await expect(drawer).toBeVisible();
+    const header = page.locator('.p-drawer-header');
+    expect((await styleOf(header, ['padding-left']))['padding-left']).toBe('17.5px');
+    const title = page.locator('.p-drawer-title');
+    expect(await styleOf(title, ['font-size', 'font-weight'])).toEqual({
+      'font-size': '20px',
+      'font-weight': '600',
+    });
+    await page.keyboard.press('Escape');
+    await expect(drawer).toBeHidden();
+  });
+});
+
+test.describe('sc-progressbar', () => {
+  test('métrica del Kit (alto 17.5, radio 6, label 12)', async ({ page }) => {
+    await gotoPage(page, 'progressbar');
+    const bar = page.getByTestId('sc-progressbar').locator('.p-progressbar');
+    expect(await styleOf(bar, ['height', 'border-radius'])).toEqual({
+      height: '17.5px',
+      'border-radius': '6px',
+    });
+    const label = page.getByTestId('sc-progressbar').locator('.p-progressbar-label');
+    expect((await styleOf(label, ['font-size']))['font-size']).toBe('12px');
+    await screenshotBaseline(page, 'progressbar');
+  });
+});
+
+test.describe('sc-progressspinner', () => {
+  test('renderiza el spinner', async ({ page }) => {
+    await gotoPage(page, 'progressspinner');
+    await expect(page.getByTestId('sc-progressspinner').locator('svg')).toBeVisible();
+  });
+});
+
+test.describe('sc-radiobutton', () => {
+  test('métrica del Kit (caja 17.5; sm 14, lg 21) y selección', async ({ page }) => {
+    await gotoPage(page, 'radiobutton');
+    const md = page.getByTestId('sc-radio-md').locator('.p-radiobutton');
+    expect(await styleOf(md, ['width', 'height'])).toEqual({ width: '17.5px', height: '17.5px' });
+    const sm = page.getByTestId('sc-radio-sm').locator('.p-radiobutton');
+    expect((await styleOf(sm, ['width']))['width']).toBe('14px');
+    const lg = page.getByTestId('sc-radio-lg').locator('.p-radiobutton');
+    expect((await styleOf(lg, ['width']))['width']).toBe('21px');
+    await page.locator('#opt-b').click();
+    await expect(page.getByTestId('sc-radio-md').locator('.p-radiobutton')).not.toHaveClass(/p-radiobutton-checked/);
+    await screenshotBaseline(page, 'radiobutton');
+  });
+});

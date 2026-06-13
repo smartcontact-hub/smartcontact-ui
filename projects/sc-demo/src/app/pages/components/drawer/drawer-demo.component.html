@@ -1,0 +1,14 @@
+<h1>sc-drawer</h1>
+
+<div class="row">
+  <sc-button label="Abrir drawer" data-testid="open-drawer" (clicked)="open.set(true)" />
+</div>
+
+<sc-drawer
+  header="Cabecera del drawer"
+  [visible]="open()"
+  (visibleChange)="open.set($event)"
+  data-testid="sc-drawer"
+>
+  Contenido del drawer.
+</sc-drawer>

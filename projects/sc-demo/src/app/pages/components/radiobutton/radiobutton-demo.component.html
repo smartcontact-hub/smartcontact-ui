@@ -1,0 +1,15 @@
+<h1>sc-radiobutton</h1>
+
+<div class="row">
+  <sc-radiobutton value="a" [modelValue]="selected()" (modelValueChange)="selected.set($any($event))" inputId="opt-a" name="demo" data-testid="sc-radio-md" />
+  <label for="opt-a">Opción A</label>
+  <sc-radiobutton value="b" [modelValue]="selected()" (modelValueChange)="selected.set($any($event))" inputId="opt-b" name="demo" />
+  <label for="opt-b">Opción B</label>
+</div>
+
+<h2>Tamaños</h2>
+<div class="row">
+  <sc-radiobutton value="s" size="sm" name="sizes" data-testid="sc-radio-sm" />
+  <sc-radiobutton value="m" name="sizes" />
+  <sc-radiobutton value="l" size="lg" name="sizes" data-testid="sc-radio-lg" />
+</div>

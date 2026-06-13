@@ -54,4 +54,24 @@ export const SC_DEMO_COMPONENT_PAGES = [
     label: 'Textarea',
     load: () => import('./textarea/textarea-demo.component').then((m) => m.TextareaDemoComponent),
   },
+  {
+    path: 'drawer',
+    label: 'Drawer',
+    load: () => import('./drawer/drawer-demo.component').then((m) => m.DrawerDemoComponent),
+  },
+  {
+    path: 'progressbar',
+    label: 'ProgressBar',
+    load: () => import('./progressbar/progressbar-demo.component').then((m) => m.ProgressBarDemoComponent),
+  },
+  {
+    path: 'progressspinner',
+    label: 'ProgressSpinner',
+    load: () => import('./progressspinner/progressspinner-demo.component').then((m) => m.ProgressSpinnerDemoComponent),
+  },
+  {
+    path: 'radiobutton',
+    label: 'RadioButton',
+    load: () => import('./radiobutton/radiobutton-demo.component').then((m) => m.RadioButtonDemoComponent),
+  },
 ] satisfies ScDemoComponentPage[];
