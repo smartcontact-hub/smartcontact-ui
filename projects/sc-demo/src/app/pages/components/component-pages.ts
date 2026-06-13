@@ -104,4 +104,14 @@ export const SC_DEMO_COMPONENT_PAGES = [
     label: 'Datepicker',
     load: () => import('./datepicker/datepicker-demo.component').then((m) => m.DatepickerDemoComponent),
   },
+  {
+    path: 'inputnumber',
+    label: 'InputNumber',
+    load: () => import('./inputnumber/inputnumber-demo.component').then((m) => m.InputNumberDemoComponent),
+  },
+  {
+    path: 'multiselect',
+    label: 'MultiSelect',
+    load: () => import('./multiselect/multiselect-demo.component').then((m) => m.MultiSelectDemoComponent),
+  },
 ] satisfies ScDemoComponentPage[];

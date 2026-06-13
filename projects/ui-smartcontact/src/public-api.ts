@@ -28,5 +28,7 @@ export * from './lib/components/divider/sc-divider.component';
 export * from './lib/components/inputgroup/sc-inputgroup.component';
 export * from './lib/components/search/sc-search.component';
 export * from './lib/components/datepicker/sc-datepicker.component';
+export * from './lib/components/inputnumber/sc-inputnumber.component';
+export * from './lib/components/multiselect/sc-multiselect.component';
 export * from './lib/config/provide-smartcontact-ui';
 export { default as scPreset } from './lib/theme/sc-preset';

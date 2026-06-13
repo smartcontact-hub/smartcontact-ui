@@ -357,3 +357,25 @@ test.describe('sc-inputnumber', () => {
     await screenshotBaseline(page, 'inputnumber');
   });
 });
+
+test.describe('sc-multiselect', () => {
+  test('métrica de form field, opciones primitivas y overlay del Kit', async ({ page }) => {
+    await gotoPage(page, 'multiselect');
+    const field = page.getByTestId('sc-multiselect').locator('.p-multiselect');
+    expect((await styleOf(field, ['border-radius']))['border-radius']).toBe('6px');
+    await field.click();
+    const overlay = page.locator('.p-multiselect-overlay');
+    await expect(overlay).toBeVisible();
+    expect((await styleOf(overlay, ['border-radius']))['border-radius']).toBe('6px');
+    const option = page.locator('.p-multiselect-option').first();
+    expect(await styleOf(option, ['padding-top', 'padding-left'])).toEqual({
+      'padding-top': '7px',
+      'padding-left': '10.5px',
+    });
+    await option.click();
+    await expect(page.getByTestId('sc-multiselect').getByText('Soporte')).toBeVisible();
+    await page.keyboard.press('Escape');
+    await expect(page.getByTestId('sc-multiselect-error').getByText('Selecciona al menos uno')).toBeVisible();
+    await screenshotBaseline(page, 'multiselect');
+  });
+});

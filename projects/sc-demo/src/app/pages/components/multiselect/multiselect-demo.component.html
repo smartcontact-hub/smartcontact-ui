@@ -1,0 +1,8 @@
+<h1>sc-multiselect</h1>
+
+<div class="col">
+  <sc-multiselect label="Grupos" [options]="groups" placeholder="Selecciona grupos" data-testid="sc-multiselect" />
+  <sc-multiselect label="Con chips" [options]="groups" display="chip" />
+  <sc-multiselect label="Con filtro" [options]="groups" [filter]="true" />
+  <sc-multiselect label="Con error" [options]="groups" error="Selecciona al menos uno" data-testid="sc-multiselect-error" />
+</div>
