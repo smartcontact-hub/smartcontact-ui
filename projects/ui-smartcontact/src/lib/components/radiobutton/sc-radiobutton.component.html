@@ -1,0 +1,11 @@
+<p-radio-button
+    [ngModel]="modelValue"
+    [value]="value"
+    [inputId]="inputId || undefined"
+    [name]="radioName"
+    [ariaLabel]="ariaLabel || undefined"
+    [size]="radioSize"
+    [variant]="variant"
+    (ngModelChange)="onModelValueChange($event)"
+    (onClick)="clicked.emit($event)">
+</p-radio-button>
