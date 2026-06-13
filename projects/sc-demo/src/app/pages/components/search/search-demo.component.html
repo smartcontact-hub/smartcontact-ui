@@ -1,0 +1,9 @@
+<h1>sc-search</h1>
+
+<div class="col">
+  <sc-search placeholder="Buscar agentes…" [(ngModel)]="term" data-testid="sc-search" />
+  <sc-search placeholder="Con atajo" shortcutHint="⌘K" />
+  <sc-search placeholder="Small" size="sm" />
+  <sc-search placeholder="Deshabilitado" [disabled]="true" />
+</div>
+<p>Término: «{{ term() }}»</p>

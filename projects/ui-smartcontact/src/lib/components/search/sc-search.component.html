@@ -1,0 +1,38 @@
+<p-iconfield iconPosition="left" class="sc-search__field">
+  <p-inputicon>
+    <sc-icon [name]="searchIcon" [size]="iconSizeDefault" />
+  </p-inputicon>
+
+  <!-- eslint-disable @angular-eslint/template/no-autofocus -->
+  <input
+    #input
+    pInputText
+    type="search"
+    class="sc-search__control"
+    [id]="resolvedId()"
+    [placeholder]="placeholder()"
+    [disabled]="disabled()"
+    [attr.name]="name() ?? null"
+    [attr.autofocus]="autoFocus() ? true : null"
+    [value]="value()"
+    (input)="onInput($event)"
+    (blur)="onBlur()"
+    (keydown)="onKeydown($event)"
+    autocomplete="off"
+    spellcheck="false"
+  />
+  <!-- eslint-enable @angular-eslint/template/no-autofocus -->
+
+  @if (showClear() && value()) {
+    <button
+      type="button"
+      class="sc-search__clear"
+      (click)="onClear()"
+      [attr.aria-label]="clearAriaLabel()"
+    >
+      <sc-icon [name]="clearIcon" [size]="iconSizeMd" />
+    </button>
+  } @else if (shortcutHint() && !value()) {
+    <kbd class="sc-search__kbd" aria-hidden="true">{{ shortcutHint() }}</kbd>
+  }
+</p-iconfield>

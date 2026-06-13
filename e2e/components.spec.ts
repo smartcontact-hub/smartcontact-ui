@@ -308,3 +308,19 @@ test.describe('sc-inputgroup', () => {
     await screenshotBaseline(page, 'inputgroup');
   });
 });
+
+test.describe('sc-search', () => {
+  test('chrome del Kit: campo 10.5/7/6/14, icono lupa, clear y CVA', async ({ page }) => {
+    await gotoPage(page, 'search');
+    const input = page.getByTestId('sc-search').locator('input');
+    expect(await styleOf(input, ['padding-top', 'border-radius', 'font-size'])).toEqual({
+      'padding-top': '7px',
+      'border-radius': '6px',
+      'font-size': '14px',
+    });
+    await expect(page.getByTestId('sc-search').locator('sc-icon').first()).toBeVisible();
+    await input.fill('hola');
+    await expect(page.getByText('Término: «hola»')).toBeVisible();
+    await screenshotBaseline(page, 'search');
+  });
+});

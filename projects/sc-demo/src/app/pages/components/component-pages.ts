@@ -94,4 +94,9 @@ export const SC_DEMO_COMPONENT_PAGES = [
     label: 'InputGroup',
     load: () => import('./inputgroup/inputgroup-demo.component').then((m) => m.InputGroupDemoComponent),
   },
+  {
+    path: 'search',
+    label: 'Search',
+    load: () => import('./search/search-demo.component').then((m) => m.SearchDemoComponent),
+  },
 ] satisfies ScDemoComponentPage[];

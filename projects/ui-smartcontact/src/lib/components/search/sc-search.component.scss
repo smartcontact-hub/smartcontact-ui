@@ -1,0 +1,139 @@
+/*
+ * sc-search — Smart Contact search input.
+ *
+ * Compone <p-iconfield> + <p-inputicon> + <input pInputText> + clear button
+ * + opcional ⌘K hint. La chrome del input (border, radius, padding, focus
+ * ring) hereda de sc-preset → semantic.formField.* (mismo bridge que
+ * sc-inputtext).
+ *
+ * Figma reference: el Kit SC NO tiene un componente "Search" dedicado.
+ * Search es una composición del Input principal (`❖ InputText`,
+ * node 6738:22646) con icon overlay vía InputIcon (patrón nativo
+ * PrimeNG). Tokens consumidos son los del Input.
+ *
+ * Casos de uso AED (7 consumers reales):
+ *   - list-pages: agents/groups/labels/templates/repos (icon + input + ⌘K)
+ *   - pickers agent-form: agendas + plantillas (icon + input + clear)
+ */
+
+.sc-search {
+  display: block;
+  min-width: 0;
+}
+
+.sc-search__field {
+  display: block;
+  width: 100%;
+}
+
+/* El input nativo hereda el chrome de sc-preset → formField.*.
+ * Solo ajustamos width 100% para que llene el iconfield wrapper, y
+ * pequeño tweak de padding-right si hay clear/kbd para evitar overlap. */
+.sc-search__control {
+  width: 100%;
+  font-family: inherit;
+  /* Reserve right padding cuando hay slot derecha (clear button o kbd).
+   * El propio iconfield ya reserva left para el icon. */
+  padding-right: calc(var(--sc-spacing-0-875) + 24px);
+}
+
+/* Base (md) font-size. PrimeNG hardcodea `.p-inputtext { font-size: 1rem }`
+ * (16px) y el Kit no define base → md se fugaba. Rampa Kit → md = 14px.
+ * Host-prefijado para ganar a `.p-inputtext` (misma cuenta de clases). */
+.sc-search .sc-search__control {
+  font-size: var(--sc-font-size-200);
+}
+
+/* Clear button — × posición absolute derecha, mismo tamaño que el icon
+ * search del iconfield para que el cluster lea balanceado. */
+.sc-search__clear {
+  position: absolute;
+  right: var(--sc-spacing-0-75);
+  top: 50%;
+  transform: translateY(-50%);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  padding: 0;
+  background: transparent;
+  border: 0;
+  border-radius: var(--sc-radius-100);
+  color: var(--sc-text-subtle);
+  cursor: pointer;
+  transition:
+    background var(--sc-transition-fast) var(--sc-easing-default),
+    color var(--sc-transition-fast) var(--sc-easing-default);
+
+  &:hover {
+    background: var(--sc-bg-secondary-hover);
+    color: var(--sc-text-primary);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--sc-color-electric-blue-500);
+    outline-offset: 1px;
+  }
+}
+
+/* Shortcut hint — `⌘K` o `/` visible cuando el campo está vacío y sin foco.
+ * Patrón típico GitHub / Linear / Slack. Desaparece al focus o cuando hay
+ * texto (para no robar atención del clear button). */
+.sc-search__kbd {
+  position: absolute;
+  right: var(--sc-spacing-0-875);
+  top: 50%;
+  transform: translateY(-50%);
+  font-family: var(--sc-font-family-mono);
+  font-size: var(--sc-font-size-50);
+  font-weight: 500;
+  line-height: 1;
+  color: var(--sc-text-subtle);
+  background: var(--sc-bg-elevated);
+  border: 1px solid var(--sc-border-default);
+  border-radius: var(--sc-radius-100);
+  padding: 3px var(--sc-spacing-0-5);
+  pointer-events: none;
+  transition: opacity 120ms ease;
+}
+
+.sc-search__field:focus-within .sc-search__kbd {
+  opacity: 0;
+}
+
+/* ────────────────────────────────────────────────────────────────────
+ * Size variants — replicar los del sc-inputtext (chrome consistency).
+ * ────────────────────────────────────────────────────────────────────
+ */
+.sc-search--sm .sc-search__control {
+  padding-top: var(--sc-spacing-0-375);
+  padding-bottom: var(--sc-spacing-0-375);
+  padding-left: calc(var(--sc-spacing-0-625) + 22px); /* icon slot */
+  padding-right: calc(var(--sc-spacing-0-625) + 22px); /* clear slot */
+  font-size: var(--sc-font-size-100);
+}
+
+.sc-search--lg .sc-search__control {
+  padding-top: var(--sc-spacing-0-625);
+  padding-bottom: var(--sc-spacing-0-625);
+  padding-left: calc(var(--sc-spacing-0-875) + 26px);
+  padding-right: calc(var(--sc-spacing-0-875) + 26px);
+  font-size: var(--sc-font-size-300);
+}
+
+/* Filled variant — slate-50 bg, alineado con sc-inputtext. */
+.sc-search--filled .sc-search__control {
+  background: var(--sc-color-gray-50);
+
+  &:hover {
+    background: var(--sc-color-gray-100);
+  }
+}
+
+/* Disabled — el input nativo ya hereda el chrome disabled de sc-preset;
+ * aquí solo nos aseguramos de que el clear button quede inerte. */
+.sc-search--disabled .sc-search__clear {
+  pointer-events: none;
+  opacity: 0.4;
+}
