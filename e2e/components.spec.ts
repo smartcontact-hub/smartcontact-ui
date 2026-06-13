@@ -343,3 +343,17 @@ test.describe('sc-datepicker', () => {
     await screenshotBaseline(page, 'datepicker');
   });
 });
+
+test.describe('sc-inputnumber', () => {
+  test('métrica de form field + chrome de error', async ({ page }) => {
+    await gotoPage(page, 'inputnumber');
+    const input = page.getByTestId('sc-inputnumber').locator('input');
+    expect(await styleOf(input, ['padding-top', 'border-radius', 'font-size'])).toEqual({
+      'padding-top': '7px',
+      'border-radius': '6px',
+      'font-size': '14px',
+    });
+    await expect(page.getByTestId('sc-inputnumber-error').getByText('Fuera de rango')).toBeVisible();
+    await screenshotBaseline(page, 'inputnumber');
+  });
+});

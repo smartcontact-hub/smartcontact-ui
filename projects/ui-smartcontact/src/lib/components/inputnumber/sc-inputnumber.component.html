@@ -1,0 +1,45 @@
+@if (label()) {
+  <label class="sc-inputnumber__label" [attr.for]="resolvedId()">
+    {{ label() }}
+    @if (required()) {
+      <span class="sc-inputnumber__required" aria-hidden="true">*</span>
+    }
+  </label>
+}
+
+<div class="sc-inputnumber__field" [class.sc-inputnumber__field--has-suffix]="hasSuffix()">
+  <input
+    pInputText
+    class="sc-inputnumber__control"
+    type="number"
+    inputmode="numeric"
+    [id]="resolvedId()"
+    [placeholder]="placeholder() ?? ''"
+    [disabled]="disabled()"
+    [readonly]="readonly()"
+    [attr.name]="name() ?? null"
+    [attr.min]="min() ?? null"
+    [attr.max]="max() ?? null"
+    [attr.step]="step()"
+    [attr.aria-invalid]="isInvalid() ? true : null"
+    [attr.aria-describedby]="footerText() ? resolvedId() + '-msg' : null"
+    [attr.aria-required]="required() ? true : null"
+    [value]="displayValue()"
+    (input)="onInput($event)"
+    (blur)="onBlur()"
+  />
+
+  @if (hasSuffix()) {
+    <span class="sc-inputnumber__suffix" aria-hidden="true">{{ suffix() }}</span>
+  }
+</div>
+
+@if (footerText()) {
+  <span
+    class="sc-inputnumber__msg"
+    [class.sc-inputnumber__msg--error]="!!error()"
+    [id]="resolvedId() + '-msg'"
+  >
+    {{ footerText() }}
+  </span>
+}
