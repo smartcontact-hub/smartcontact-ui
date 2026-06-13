@@ -1,6 +1,6 @@
 {
   "name": "smartcontact-ui",
-  "version": "0.0.1",
+  "version": "0.1.0",
   "private": true,
   "scripts": {
     "ng": "ng",
@@ -15,6 +15,7 @@
     "export:icons": "npm run build:icons && node scripts/export-package.mjs ui-smartcontact-icons",
     "export:components": "npm run build:components && node scripts/export-package.mjs ui-smartcontact",
     "export:all": "npm run build && node scripts/export-package.mjs design-tokens ui-smartcontact-icons ui-smartcontact",
+    "publish:packages": "npm run build && node scripts/publish-packages.mjs",
     "tokens:gen": "node scripts/token-gen.mjs",
     "tokens:import": "node scripts/token-gen.mjs --write",
     "tokens:parity": "node scripts/token-parity.mjs",

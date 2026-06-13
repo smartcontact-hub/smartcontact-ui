@@ -776,10 +776,26 @@ deshabilitado `translateX(±--sc-spacing-0-5)` 280ms. Orquestadas con timers
 `npm run verify` limpio + `CI=1 npm run e2e` verde (1 spec nuevo: hero 8→12 al
 togglear análisis, procesa, emite result, cierra). Commit + CI de GitHub Actions verde.
 
-## Diferido (cierre del roadmap)
-- **Lote 9-2** (publish): bump de versión (hoy 0.0.1) + registry. **Decisiones del
-  operador**: número (0.1.0 / 1.0.0), target (npm público / privado / GitHub Packages
-  / solo tarballs), automatización en CI.
+## Lote 9-2 — pipeline de publish versionado (scaffold seguro)
+Hecho hasta el punto seguro (sin publicar — el publish es outward-facing + depende
+de infra del operador):
+- **Versión `0.0.1` → `0.1.0`** en los 3 paquetes + el root, y los **peerDeps
+  internos pinneados** (`@smartcontact/components` → `icons`/`styles` `0.1.0`).
+  Pre-1.0 a propósito: el API del DS aún puede cambiar.
+- **`publishConfig.access: "restricted"`** en los 3 paquetes — red de seguridad:
+  sin registry configurado, `npm publish` falla cerrado (no se publica en el npm
+  público por accidente).
+- **`scripts/publish-packages.mjs`** + script `publish:packages`: publica los 3
+  dist en orden de dependencia (styles→icons→components), **dry-run por defecto**;
+  `-- --publish` para publicar de verdad.
+- **`.npmrc.example`** documenta las opciones de registry (privado / GitHub Packages
+  con la caveat de scope-owner / solo tarballs); `.npmrc` real → gitignored.
+- Verificado: `export:all` produce `smartcontact-{styles,icons,components}-0.1.0.tgz`
+  y el dry-run lista los 3 con `restricted access`.
+
+**Decisión abierta del operador** (para publicar de verdad): target del registry
+(privado / GitHub Packages / solo tarballs) + auth en `.npmrc`, y si se automatiza
+el publish en CI (hoy NO — para evitar publishes sorpresa).
 - **Lote 9-3**: `sc-demo` consume por nombre de paquete; migración de las apps
   (`smart-contact-platform`, `smartcontact-ui-main`) en SUS repos a los paquetes
   versionados — las list pages bespoke adoptan `sc-datatable` + `sc-inline-rename-cell`.

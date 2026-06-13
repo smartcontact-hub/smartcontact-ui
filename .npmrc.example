@@ -1,0 +1,21 @@
+# Configuración de registry para publicar los paquetes @smartcontact/*.
+# Copia este fichero a `.npmrc` (gitignored) y rellena tu registry + auth.
+# Sin esto, `npm run publish:packages -- --publish` fallará de forma SEGURA
+# (los paquetes son scoped + publishConfig.access=restricted → no se publican
+# en el npm público por accidente).
+#
+# Elige según tu infra:
+#
+# 1) Registry privado (Verdaccio / Artifactory / npm Enterprise) — recomendado:
+#    @smartcontact:registry=https://tu-registry-privado/
+#    //tu-registry-privado/:_authToken=${NPM_TOKEN}
+#
+# 2) GitHub Packages — OJO: el scope npm debe coincidir con el owner del repo.
+#    Hoy el scope es @smartcontact y el repo es arebury/smartcontact-ui, así que
+#    habría que renombrar el scope a @<org-de-github> (en los package.json) o
+#    crear la org `smartcontact` en GitHub y mover el repo allí.
+#    @<org>:registry=https://npm.pkg.github.com
+#    //npm.pkg.github.com/:_authToken=${GITHUB_TOKEN}
+#
+# 3) Solo tarballs (sin registry): usa `npm run export:all` → dist/archives/*.tgz
+#    y consúmelos por ruta/file: en las apps. No necesita .npmrc.
