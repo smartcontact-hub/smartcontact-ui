@@ -575,3 +575,40 @@ test.describe('sc-empty-state', () => {
     await screenshotBaseline(page, 'emptystate');
   });
 });
+
+test.describe('sc-page-header', () => {
+  test('chip 36² + tipografía subtitle-1 + slot de acción + variante mínima', async ({ page }) => {
+    await gotoPage(page, 'pageheader');
+
+    const full = page.getByTestId('sc-pageheader-full');
+
+    // icono chip 36×36 (compact S59)
+    const icon = full.locator('.page-header__icon');
+    expect(await styleOf(icon, ['width', 'height'])).toEqual({ width: '36px', height: '36px' });
+
+    // título subtitle-1 = font-size-300 (16) / semibold (600)
+    const title = full.locator('.page-header__title');
+    expect(await styleOf(title, ['font-size', 'font-weight'])).toEqual({
+      'font-size': '16px',
+      'font-weight': '600',
+    });
+
+    // eyebrow 12 mayúsculas
+    const eyebrow = full.locator('.page-header__entity');
+    expect(await styleOf(eyebrow, ['font-size', 'text-transform'])).toEqual({
+      'font-size': '12px',
+      'text-transform': 'uppercase',
+    });
+
+    // acción proyectada en [page-header-actions]
+    await expect(full.locator('[page-header-actions]')).toBeVisible();
+
+    // variante mínima: sin icono / eyebrow / subtítulo
+    const min = page.getByTestId('sc-pageheader-min');
+    await expect(min.locator('.page-header__icon')).toHaveCount(0);
+    await expect(min.locator('.page-header__entity')).toHaveCount(0);
+    await expect(min.locator('.page-header__subtitle')).toHaveCount(0);
+
+    await screenshotBaseline(page, 'pageheader');
+  });
+});

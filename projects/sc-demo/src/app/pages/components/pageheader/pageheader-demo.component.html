@@ -1,0 +1,21 @@
+<h1>sc-page-header</h1>
+
+<p>
+  Cabecera estática de página (rutas no-entity: list / config). Icono chip
+  36×36, eyebrow en mayúsculas, título grande (subtitle-1) y subtítulo sutil.
+  La acción primaria se proyecta en <code>[page-header-actions]</code>.
+</p>
+
+<h2>Completa (icono + eyebrow + título + subtítulo + acción)</h2>
+<sc-page-header
+  icon="groups"
+  entityKey="CONFIGURACIÓN"
+  titleKey="Agentes"
+  subtitleKey="Gestiona los agentes de voz de tu organización."
+  data-testid="sc-pageheader-full"
+>
+  <button type="button" page-header-actions>Nuevo agente</button>
+</sc-page-header>
+
+<h2>Mínima (solo título)</h2>
+<sc-page-header titleKey="Etiquetas" data-testid="sc-pageheader-min" />

@@ -159,4 +159,9 @@ export const SC_DEMO_COMPONENT_PAGES = [
     label: 'EmptyState',
     load: () => import('./emptystate/emptystate-demo.component').then((m) => m.EmptyStateDemoComponent),
   },
+  {
+    path: 'pageheader',
+    label: 'PageHeader',
+    load: () => import('./pageheader/pageheader-demo.component').then((m) => m.PageHeaderDemoComponent),
+  },
 ] satisfies ScDemoComponentPage[];

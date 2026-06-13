@@ -1,0 +1,19 @@
+<header class="page-header">
+  @if (icon(); as ic) {
+    <span class="page-header__icon" aria-hidden="true">
+      <sc-icon [name]="ic" [size]="iconSize2xl" />
+    </span>
+  }
+  <div class="page-header__title-block">
+    @if (entityKey(); as ek) {
+      <span class="page-header__entity">{{ ek | translate }}</span>
+    }
+    <h1 class="page-header__title">{{ titleKey() | translate }}</h1>
+    @if (subtitleKey(); as sk) {
+      <p class="page-header__subtitle">{{ sk | translate }}</p>
+    }
+  </div>
+  <div class="page-header__actions">
+    <ng-content select="[page-header-actions]" />
+  </div>
+</header>
