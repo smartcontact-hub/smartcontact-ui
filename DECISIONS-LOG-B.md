@@ -370,3 +370,136 @@ del plugin), confirmando el diff por métrica:
   verificada y el chrome coincide.
 Conclusión: el diff por métrica computada (la vara primaria) y el diff visual
 con Figma concuerdan en las 5 piezas.
+
+---
+
+# Lote 4 — los custom «quick wins» (Fase 3, primer bloque)
+
+Primer bloque del roadmap de la gran sesión (Lotes 4→9). Se portan los 8 custom
+de bajo acoplamiento del catálogo de diseño + los 2 que componen la `sc-dialog`
+canónica. `sc-icon` NO entra: ya está reconciliado en `@smartcontact/icons`
+(§4.6), así que la Fase 3 es de 15 custom, no 16. inline-rename-cell se difiere
+al Lote 8 (es el cell-renderer del datatable, su único consumidor).
+
+## Método del lote
+Adopción 1:1 del catálogo de diseño con el método innegociable por pieza:
+1. **Token-existence + scale-sweep**: por cada `--sc-*` del SCSS se verificó que
+   resuelve en el mirror (grep contra las capas de `design-tokens`). Resultado
+   del lote: **cero tokens faltantes, cero scale-sweep, cero tokens inventados**
+   — el catálogo de diseño ya emite en escala 14-base v/14, así que sus
+   `--sc-spacing-*` (incl. `1-125`, `1-143`, `2-25`, `2-75`) ya existen aliasados
+   a `--sc-scale-*` en el mirror.
+2. **Desacople i18n**: los custom con copy/aria propios registran SOLO su
+   diccionario colocado `sc.<x>.*` (patrón `sc-group-popover`), sin tirar de
+   claves `common.*` de la app de origen. 7 de las 9 piezas necesitaron dict
+   colocado (empty-state y page-header son i18n-driven puros → sin dict).
+3. **Iconos** vía `@smartcontact/icons` (§4.6); nunca `pi pi-*`.
+4. Demo en `sc-demo` + e2e (métricas `getComputedStyle` vs Kit + comportamiento).
+5. Commit por pieza.
+
+## Decisión §10 (auditoría de reutilización) — bespoke as-is
+Para los 2 candidatos de la §10 (inline-rename-cell → `p-inplace`, photo-upload
+→ `p-fileupload`) la decisión del operador fue **portar las impls bespoke tal
+cual**: criterio «lo más migration-free + 1:1 con Figma, independiente de la
+carga». Racional: las impls bespoke SON los componentes del catálogo de diseño
+hechos contra Figma; reconstruir sobre los primitivos importaría el chrome
+propio de PrimeNG (toggle de inplace, zona drag-drop, lista de ficheros) que NO
+casa 1:1, y añade reescritura + riesgo de regresión. La reconstrucción §10 queda
+**anotada como deuda opcional NO tomada**. (Aplica a los Lotes 5/8 donde caen
+esas piezas; se registra aquí porque la decisión es del roadmap.)
+
+## Piezas
+
+### sc-empty-state
+Adopción directa. i18n-driven puro (titleKey/bodyKey/ctaKey los resuelve el
+consumidor) → sin dict. e2e: min-height 320 reservado, gap v/14 15.75
+(`--sc-spacing-1-125`), icono circular 64², título 16/600, CTA condicional.
+
+### sc-page-header
+Adopción. i18n-driven puro. JSDoc alineado al chip 36×36 real del SCSS (el
+origen decía 44 — drift de doc del experiment compact S59). Tipografía
+subtitle-1 (16/600). e2e: chip 36², título 16/600, eyebrow uppercase, slot
+`[page-header-actions]`, variante mínima.
+
+### sc-form-section-nav
+Nav controlado (padre posee `activeId`). Dict colocado `sc.formSectionNav.*`:
+las 2 claves propias (aria del `<nav>` + del punto de error) se desacoplan; las
+labels de sección las da el consumidor. Chip 28² default / 32² flush (Figma
+índice). e2e: aria-current, punto de error, click controla, flush 32².
+
+### sc-bulk-edit-menu
+Compone `sc-select` (two-way value) + `p-button`. Dict colocado
+`sc.bulkEditMenu.*`: las palabras de conexión de la frase «Cambiar…a…» + el
+rótulo del grupo estaban hardcodeadas en español (la auditoría inicial las
+había clasificado como decoupled, pero el chrome SÍ estaba hardcodeado). e2e:
+2 selects, Aplicar habilitado por el effect inicial, commit con labels.
+
+### sc-bulk-action-bar (+ useBulkEntityI18n)
+Barra fija de selección. Desacople i18n completo: rótulo de región, del botón
+limpiar y SUFIJOS por defecto («seleccionado/s») → `sc.bulkActionBar.*`. El
+helper `useBulkEntityI18n` cambia sus defaults de `common.bulk.*` a
+`sc.bulkActionBar.*` y comparte un `registerScBulkActionBarTranslations`
+idempotente con el componente (resuelve los sufijos aunque el helper se use sin
+montar el componente). e2e: resumen plural, acciones proyectadas, clear desmonta.
+
+### sc-form-danger-zone
+Compone `p-button` (severity danger outlined). Dict colocado
+`sc.formDangerZone.*`: defaults de title/action pasan de `common.*`; la
+descripción la da el consumidor (required). e2e: título, descripción, botón
+dispara `action`.
+
+### sc-sticky-form-header
+**@deprecated / retenido** (rollback DD#65; ya no lo usa ningún form). Nombre
+editable inline + Save (spinner vía `sc-icon [spin]`). `@ViewChild` →
+`viewChild` signal. Dict colocado `sc.stickyFormHeader.*` (6 palabras de
+acción/placeholder). e2e: el lápiz abre el rename inline, Save presente.
+
+### sc-impact-preview-dialog
+Compone la `sc-dialog` canónica (§4.3): badge + lista con pruning individual +
+confirm de supervivientes. Dict colocado `sc.impactPreviewDialog.*` (aria de
+quitar con param `{{name}}`, mensaje de vacío, defaults de botón;
+confirmLabel/cancelLabel pasan a input opcional con fallback colocado).
+**Desviación anotada**: se OMITE el bloque `::ng-deep .sc-impact-dialog
+.p-dialog-*` del origen — era CSS muerto (nunca recibía `styleClass` y apuntaba
+a la estructura del wrapper fino previo a §4.3; nuestra card pinta `.sc-dialog`,
+no `.p-dialog-*`). El tamaño lo fija `width="520px"` sobre la sc-dialog. e2e:
+abre, pruning 3→2, confirm emite 2.
+
+### ScClipboardService + sc-delete-entity-dialog (§5 saldado)
+`ScClipboardService` portado al paquete (autocontenido, solo DOM API,
+`providedIn:'root'`) — **salda la deuda §5 del clipboard** sin acoplar paths de
+app. El diálogo compone la `sc-dialog` canónica en 2 modos (single = retype del
+nombre + copiar; bulk = chips quitables con reset). Dict colocado
+`sc.deleteEntityDialog.*` (~13 textos, con params). **Decisión de diseño**:
+`MessageService` (PrimeNG) se inyecta **opcional** (`{optional:true}`) — el toast
+de «copiado» degrada si no hay infra de toast, en vez de obligar al consumidor a
+proveerla. e2e: single (retype habilita Delete), bulk (pruning emite
+supervivientes).
+
+## Fix de robustez (test preexistente de lote 2)
+`sc-multiselect` e2e (línea 376) usaba `getByText('Soporte')` global, que bajo
+carga paralela (2 workers) casa la label del campo Y la opción del overlay aún
+abierto → strict-mode violation (flaky; pasaba en aislamiento). Se acotó la
+aserción a `.p-multiselect-label` (intención preservada, ahora determinista). No
+es relajar un guardarraíl: el selector ambiguo era el defecto.
+
+## Verificación del lote
+`npm run verify` limpio (tokens:gen/parity/guard/type-parity, audit:theme-scale,
+build de los 3 paquetes, typecheck, lint). `npm run e2e` **46/46 verde** (10
+nuevos + 36 previos). La compilación de las 9 páginas demo (strict templates) la
+valida el `ng serve` del e2e. Commit por pieza + CI de GitHub Actions verde tras
+el push (gate real).
+
+## Diferido a los siguientes lotes (roadmap Lotes 5→9)
+- **Lote 5**: solapes de color/avatar — color-dot-picker + variante 8-colores de
+  tag/chip (comparten `LABEL_COLORS`/`--sc-label-*`); photo-upload (bespoke
+  as-is) + fallback de ilustración del avatar.
+- **Lote 6**: superficie de comandos — command-palette + keyboard-shortcuts;
+  **invertir `CommandPaletteService`** a API data-driven (el fuente arrastra
+  `Router`/`NAV_SECTIONS`/rutas `/admin/*`/categorías ES — no se porta verbatim);
+  `KeyboardShortcutsService` directo.
+- **Lote 7**: section-card §4.5 (API anidada Section→Subsection→Slot, medición
+  Figma en vivo) — cierra la última decisión §4 abierta.
+- **Lote 8**: inline-rename-cell (bespoke as-is) + sc-datatable §6 (greenfield).
+- **Lote 9**: Fase 5 — Memory (sc-bulk-transcription-modal) + adopción de apps a
+  paquetes versionados.

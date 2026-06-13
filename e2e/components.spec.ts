@@ -373,7 +373,11 @@ test.describe('sc-multiselect', () => {
       'padding-left': '10.5px',
     });
     await option.click();
-    await expect(page.getByTestId('sc-multiselect').getByText('Soporte')).toBeVisible();
+    // Asserta sobre la label del campo (no un getByText global, que bajo carga
+    // paralela casa también la opción del overlay aún abierto → strict violation).
+    await expect(
+      page.getByTestId('sc-multiselect').locator('.p-multiselect-label'),
+    ).toContainText('Soporte');
     await page.keyboard.press('Escape');
     await expect(page.getByTestId('sc-multiselect-error').getByText('Selecciona al menos uno')).toBeVisible();
     await screenshotBaseline(page, 'multiselect');
