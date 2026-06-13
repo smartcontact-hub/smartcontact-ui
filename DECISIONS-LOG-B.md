@@ -717,3 +717,70 @@ verde tras el push. `§6` cerrado.
   migran a sc-datatable + sc-inline-rename-cell; modal de transcripción presentacional;
   pipeline de publish versionado). Wrappers secundarios del datatable
   (accordion/breadcrumb/menu/stepper/tabs) **solo si** un consumidor real los pide.
+
+# Lote 9 — sc-bulk-transcription-modal (Fase 5, parte presentacional)
+
+## Context
+Bloque final. **9-1** (modal de transcripción) es el último componente portable
+del DS y cierra el solape **§4.4** (el modal). **9-2** (pipeline de publish
+versionado) y **9-3** (consumo por nombre de paquete + migración de las apps) tienen
+**decisiones abiertas / son cross-repo** → diferidos a resolver con el operador.
+
+## Decisión §4.4 cerrada — modal presentacional (validada con criterio)
+El `sc-bulk-transcription-modal` SÍ es componente del DS, pero el reparto correcto
+es **presentación en el DS / dominio en la app**. El grounding confirmó que el
+molde (`smartcontact-ui-main`) ya lo tiene como componente presentacional en un DS
+paralelo: recibe los **contadores YA calculados** como `@Input` y emite
+`processed: ScBulkTranscriptionModalResult`. La lógica de DOMINIO (derivar los
+contadores de `Conversation[]`, filtrar borradas/en curso, separar calls/chats,
+contar multi-rec) **NO se porta** — vive en Memory.
+
+**Ajuste sobre el plan**: el plan hipotetizaba "componer la `sc-dialog` canónica
+como shell + componente declarativo `[visible]`". El molde es la verdad y **NO
+compone un shell** — renderiza su propia `<section role="dialog">` y se abre con
+`@Input` callbacks (`closeRequested`/`processRequested`) + outputs
+(`closed`/`processed`). Envolverlo en `sc-dialog` + `[visible]` **divergiría de la
+API que el platform consume** → se porta **verbatim** (migration-safe). El overlay
+lo provee el consumidor (render condicional o `ScDynamicDialogService` del lote 3).
+El *category smell* (un componente de nombre de dominio en un DS genérico) queda
+**anotado** pero el port es correcto: es genuinamente presentacional y consolida
+las 2 copias divergentes.
+
+## Token sweep molde → mirror (1:1 visual en base-14)
+El molde usa un vocabulario de tokens distinto. Traducción aplicada:
+- **`--sc-space-*` (8-point, que `tokens:guard` PROHÍBE) → `--sc-spacing-*` (base-14)**
+  por equivalencia visual (root 16px en ambos repos): 8→7 (`0-5`), 12→12.25
+  (`0-875`), 16→16 (`1-143`), 20→21 (`1-5`), 24→24.5 (`1-75`), 32→31.5 (`2-25`),
+  48→42 (`3`). Sigue la tabla de snapping documentada en el roadmap.
+- **`--sc-background-*` → `--sc-bg-*`** (surface, success-subtle).
+- Font-size/line-height numéricos (`-200..-900`), `--sc-radius-xl`, text/color/border
+  semánticos y los valores **estructurales** (rem/ch/px, mismo root 16) → **verbatim**.
+
+## Refinamientos (criterio)
+- **`registerTranslations` no secuestra el i18n de la app**: el molde llamaba
+  `addLangs`/`setFallbackLang('en')`/`use(...)` — efectos globales que cambian el
+  idioma/fallback del consumidor. Un componente del DS no debe hacerlo. Se reduce a
+  registrar el dict (`setTranslation` merge) + `onLangChange` markForCheck (patrón
+  del mirror).
+- **`Date.now()` → contador incremental** para la clave de re-disparo del delta
+  (determinista; la animación la re-dispara el `@if`, no el valor de la clave).
+- Selector del toggle: `<sc-toggle-switch>` (molde) → `<sc-toggleswitch>` (mirror).
+
+## Animaciones (1:1, requisito explícito del operador)
+hero count-up/bump `scale(1.03)` 260ms · delta flotante `+/-` 750ms (rise+fade,
+sube `--sc-spacing-3`) · pulse del caption `scale(1.04)` 360ms · nudge del toggle
+deshabilitado `translateX(±--sc-spacing-0-5)` 280ms. Orquestadas con timers
+(0/360/760ms) + `markForCheck`. Surfaces default/dark/green.
+
+## Verificación
+`npm run verify` limpio + `CI=1 npm run e2e` verde (1 spec nuevo: hero 8→12 al
+togglear análisis, procesa, emite result, cierra). Commit + CI de GitHub Actions verde.
+
+## Diferido (cierre del roadmap)
+- **Lote 9-2** (publish): bump de versión (hoy 0.0.1) + registry. **Decisiones del
+  operador**: número (0.1.0 / 1.0.0), target (npm público / privado / GitHub Packages
+  / solo tarballs), automatización en CI.
+- **Lote 9-3**: `sc-demo` consume por nombre de paquete; migración de las apps
+  (`smart-contact-platform`, `smartcontact-ui-main`) en SUS repos a los paquetes
+  versionados — las list pages bespoke adoptan `sc-datatable` + `sc-inline-rename-cell`.
+- **Lote 7** (section-card §4.5): bloqueado en el Figma Desktop Bridge.

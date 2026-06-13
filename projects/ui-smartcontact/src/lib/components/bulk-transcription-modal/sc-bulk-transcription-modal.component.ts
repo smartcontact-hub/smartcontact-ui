@@ -4,6 +4,7 @@ import {
   ChangeDetectorRef,
   Component,
   EventEmitter,
+  inject,
   Input,
   OnChanges,
   OnDestroy,
@@ -57,10 +58,11 @@ export type ScBulkTranscriptionModalSurface = 'default' | 'dark' | 'green';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ScBulkTranscriptionModalComponent implements OnChanges, OnDestroy {
-  constructor(
-    private readonly changeDetectorRef: ChangeDetectorRef,
-    private readonly translateService: TranslateService,
-  ) {
+  private readonly changeDetectorRef = inject(ChangeDetectorRef);
+
+  private readonly translateService = inject(TranslateService);
+
+  constructor() {
     this.registerTranslations();
     this.translationChangeSubscription = this.translateService.onLangChange.subscribe(() => {
       this.changeDetectorRef.markForCheck();
