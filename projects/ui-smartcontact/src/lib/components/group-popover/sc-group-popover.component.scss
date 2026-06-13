@@ -1,0 +1,65 @@
+/*
+ * Trigger button (inline cell in agents table). Underlined dotted to read
+ * as "more info available on hover" without competing with primary content.
+ */
+.group-popover__trigger {
+  border: 0;
+  background: transparent;
+  padding: 0;
+  color: inherit;
+  font: inherit;
+  cursor: pointer;
+  text-decoration-line: underline;
+  text-decoration-style: dotted;
+  text-decoration-color: var(--sc-text-disabled);
+  text-underline-offset: 3px;
+
+  &:hover {
+    text-decoration-color: var(--sc-text-subtle);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--sc-border-focus);
+    outline-offset: 2px;
+  }
+}
+
+/*
+ * Panel body. The outer chrome (bg, border, radius, shadow, padding) is
+ * provided by PrimeNG `<p-popover>` consuming `overlay.popover` tokens
+ * from sc-preset.ts (Figma `❖ Popover` 1:1). We only own the inner list
+ * + overflow line, since those are SC-specific (group-name truncation,
+ * "+N más" tail).
+ *
+ * These selectors live OUTSIDE `:host` because the popover panel is
+ * rendered into <body> via `appendTo="body"` and escapes Angular view
+ * encapsulation. The wrapper applies `styleClass="group-popover__panel"`
+ * to keep the inner DOM addressable.
+ */
+.group-popover__list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  font-size: var(--sc-font-size-50);
+  color: var(--sc-text-primary);
+  min-width: 200px;
+  max-width: 280px;
+}
+
+.group-popover__item {
+  line-height: 1.5;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.group-popover__more {
+  margin-top: var(--sc-spacing-0-75);
+  padding-top: var(--sc-spacing-0-75);
+  border-top: 1px solid var(--sc-border-default);
+  color: var(--sc-text-subtle);
+  font-size: var(--sc-font-size-50);
+}

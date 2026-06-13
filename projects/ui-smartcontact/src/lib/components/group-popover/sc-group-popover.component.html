@@ -1,0 +1,30 @@
+<button
+  #trigger
+  type="button"
+  class="group-popover__trigger"
+  [attr.aria-label]="'sc.groupPopover.count' | translate: { count: count() }"
+  (mouseenter)="onTriggerEnter($event)"
+  (mouseleave)="onPointerLeave()"
+  (focus)="onTriggerFocus($event)"
+  (blur)="onPointerLeave()"
+  (keydown)="onKeydown($event)"
+>
+  {{ 'sc.groupPopover.countShort' | translate: { count: count() } }}
+</button>
+
+<p-popover #pop styleClass="group-popover__panel" appendTo="body">
+  @if (count() > 0) {
+    <div class="group-popover__body" (mouseenter)="onPanelEnter()" (mouseleave)="onPointerLeave()">
+      <ul class="group-popover__list">
+        @for (group of visible(); track group.id) {
+          <li class="group-popover__item">{{ group.name }}</li>
+        }
+      </ul>
+      @if (overflowCount() > 0) {
+        <div class="group-popover__more">
+          {{ 'sc.groupPopover.more' | translate: { count: overflowCount() } }}
+        </div>
+      }
+    </div>
+  }
+</p-popover>

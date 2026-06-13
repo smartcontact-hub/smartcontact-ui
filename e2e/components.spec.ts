@@ -379,3 +379,16 @@ test.describe('sc-multiselect', () => {
     await screenshotBaseline(page, 'multiselect');
   });
 });
+
+test.describe('sc-grouppopover', () => {
+  test('conteo, popover en hover, límite 5 y cola «+N más»', async ({ page }) => {
+    await gotoPage(page, 'grouppopover');
+    const trigger = page.getByTestId('sc-grouppopover-many').locator('button, [role="button"], .sc-group-popover__trigger').first();
+    await trigger.hover();
+    const overlay = page.locator('.p-popover');
+    await expect(overlay).toBeVisible();
+    await expect(overlay.getByText('Soporte')).toBeVisible();
+    await expect(overlay.getByText('+2 más')).toBeVisible();
+    await screenshotBaseline(page, 'grouppopover');
+  });
+});
