@@ -1,0 +1,37 @@
+<h1>sc-button</h1>
+
+<h2>Variantes</h2>
+<div class="row">
+  <sc-button label="Primario" data-testid="sc-btn-md" />
+  <sc-button label="Secundario" variant="secondary" />
+  <sc-button label="Success" variant="success" />
+  <sc-button label="Info" variant="info" />
+  <sc-button label="Warn" variant="warn" />
+  <sc-button label="Danger" variant="danger" />
+  <sc-button label="Contrast" variant="contrast" />
+</div>
+
+<h2>Apariencias</h2>
+<div class="row">
+  <sc-button label="Filled" />
+  <sc-button label="Outlined" appearance="outlined" />
+  <sc-button label="Text" appearance="text" />
+  <sc-button label="Link" appearance="link" />
+</div>
+
+<h2>Tamaños</h2>
+<div class="row">
+  <sc-button label="Small" size="sm" data-testid="sc-btn-sm" />
+  <sc-button label="Medium" />
+  <sc-button label="Large" size="lg" data-testid="sc-btn-lg" />
+</div>
+
+<h2>Iconos y estados</h2>
+<div class="row">
+  <sc-button label="Con icono" icon="check" />
+  <sc-button icon="check" iconAriaLabel="Confirmar" data-testid="sc-btn-icononly" />
+  <sc-button label="Legacy pi" icon="pi pi-trash" variant="danger" data-testid="sc-btn-legacy-icon" />
+  <sc-button label="Cargando" [loading]="true" />
+  <sc-button label="Deshabilitado" [disabled]="true" />
+  <sc-button label="Full width" [fullWidth]="true" />
+</div>

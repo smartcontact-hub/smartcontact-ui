@@ -1,0 +1,28 @@
+<p-button
+    [label]="label"
+    [disabled]="isInteractionDisabled"
+    [type]="type"
+    [iconPos]="iconPosition"
+    [ariaLabel]="buttonAriaLabel"
+    [loading]="loading"
+    [severity]="buttonSeverity"
+    [size]="buttonSize"
+    [fluid]="fullWidth"
+    [outlined]="outlined"
+    [text]="text"
+    [link]="link"
+    [rounded]="rounded"
+    (onClick)="onClick($event)">
+    @if (buttonIcon; as resolvedButtonIcon) {
+        <ng-template pTemplate="icon" let-iconClass="class">
+            <span
+                [class]="buttonIconClass(iconClass, resolvedButtonIcon)"
+                [attr.aria-hidden]="iconAriaHidden"
+                [attr.aria-label]="iconAccessibleLabel"
+                [attr.role]="iconRole">
+            </span>
+        </ng-template>
+    }
+
+    <ng-content></ng-content>
+</p-button>
