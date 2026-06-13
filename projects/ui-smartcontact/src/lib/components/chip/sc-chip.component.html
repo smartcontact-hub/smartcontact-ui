@@ -1,0 +1,11 @@
+<p-chip
+    [label]="label || undefined"
+    [icon]="chipIcon"
+    [image]="image || undefined"
+    [alt]="alt || undefined"
+    [removable]="removable"
+    [disabled]="disabled"
+    (onRemove)="removed.emit($event)"
+    (onImageError)="imageError.emit($event)">
+    <ng-content></ng-content>
+</p-chip>
