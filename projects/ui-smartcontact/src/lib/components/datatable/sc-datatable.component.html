@@ -16,8 +16,14 @@
   [showGridlines]="showGridlines()"
   [loading]="loading()"
   [rowHover]="true"
+  [lazy]="lazy()"
+  [totalRecords]="pTotalRecords()"
+  [filters]="$any(pFilters())"
+  [globalFilterFields]="$any(globalFilterFields())"
   (onSort)="onSortEvent($event)"
   (onPage)="page.emit($event)"
+  (onLazyLoad)="lazyLoad.emit($event)"
+  (onFilter)="filterChange.emit($event)"
 >
   <ng-template pTemplate="caption">
     <ng-content select="[scTableCaption]" />

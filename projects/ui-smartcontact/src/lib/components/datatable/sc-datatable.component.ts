@@ -1,9 +1,27 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, input, model, output } from '@angular/core';
-import { TableModule, type TablePageEvent } from 'primeng/table';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  input,
+  model,
+  output,
+  viewChild,
+} from '@angular/core';
+import type { FilterMetadata } from 'primeng/api';
+import {
+  Table,
+  TableModule,
+  type TableFilterEvent,
+  type TableLazyLoadEvent,
+  type TablePageEvent,
+} from 'primeng/table';
 
 import { ScColumnDef } from '../../core/types/datatable.types';
 import { ScComponentSize } from '../../core/types/theme-component.types';
+
+/** Mapa de filtros de p-table (por campo + `global`). */
+export type ScDatatableFilters = Record<string, FilterMetadata | FilterMetadata[]>;
 
 /** Payload de `sortChange` (orden single client-side). */
 export interface ScDatatableSortEvent {
@@ -58,8 +76,23 @@ export class ScDatatableComponent<T = unknown> {
   readonly showGridlines = input<boolean>(false);
   readonly loading = input<boolean>(false);
 
+  /**
+   * Modo lazy (server-driven): p-table deja de ordenar/paginar/filtrar en cliente
+   * y emite `(lazyLoad)` con los metadatos (page/sort/filter). El consumidor
+   * busca los datos y actualiza `value` + `totalRecords`.
+   */
+  readonly lazy = input<boolean>(false);
+  /** Total de registros del lado servidor (paginador en modo lazy). */
+  readonly totalRecords = input<number | undefined>(undefined);
+  /** Mapa de filtros (controlado por el consumidor; en lazy viaja en el evento). */
+  readonly filters = input<ScDatatableFilters | undefined>(undefined);
+  /** Campos sobre los que aplica el filtro `global`. */
+  readonly globalFilterFields = input<readonly string[] | undefined>(undefined);
+
   readonly sortChange = output<ScDatatableSortEvent>();
   readonly page = output<TablePageEvent>();
+  readonly lazyLoad = output<TableLazyLoadEvent>();
+  readonly filterChange = output<TableFilterEvent>();
 
   /** Mapea sm/md/lg a la prop `size` de p-table (md = sin atributo → padding base del preset). */
   protected readonly pSize = computed<'small' | 'large' | undefined>(() => {
@@ -71,6 +104,24 @@ export class ScDatatableComponent<T = unknown> {
   protected readonly colspan = computed<number>(
     () => this.columns().length + (this.selectionMode() === 'multiple' ? 1 : 0),
   );
+
+  /** Filtros para p-table: referencia estable `{}` cuando el consumidor no informa. */
+  protected readonly pFilters = computed<ScDatatableFilters>(() => this.filters() ?? {});
+
+  /** totalRecords efectivo: el del servidor (lazy) o el largo del array (cliente). */
+  protected readonly pTotalRecords = computed<number>(() => this.totalRecords() ?? this.value().length);
+
+  private readonly table = viewChild.required(Table);
+
+  /**
+   * Filtra por el término global (imperativo — p-table no reacciona a cambios del
+   * input `[filters]`, que es solo estado inicial). En cliente re-filtra `value`
+   * por `globalFilterFields`; en lazy dispara `(lazyLoad)` con el filtro en el
+   * evento. El consumidor lo cablea desde su input de búsqueda.
+   */
+  filterGlobal(value: string, matchMode = 'contains'): void {
+    this.table().filterGlobal(value, matchMode);
+  }
 
   /** Lee `row[field]` sin indexar `unknown` directo en plantilla. */
   protected cellValue(row: T, field: string): unknown {

@@ -1,4 +1,6 @@
 import { ChangeDetectionStrategy, Component, TemplateRef, computed, signal, viewChild } from '@angular/core';
+import type { FilterMetadata } from 'primeng/api';
+import type { TableLazyLoadEvent } from 'primeng/table';
 
 import {
   ScColumnCellContext,
@@ -50,5 +52,42 @@ export class DatatableDemoComponent {
 
   protected clear(): void {
     this.agents.set([]);
+  }
+
+  // --- Lazy (server-driven): el consumidor sirve los datos desde (lazyLoad) ---
+  protected readonly lazyRows = signal<readonly Agent[]>([]);
+  protected readonly lazyTotal = signal(0);
+  protected readonly lazyColumns: readonly ScColumnDef<Agent>[] = [
+    { field: 'name', header: 'Nombre', sortable: true },
+    { field: 'extension', header: 'Extensión', width: '10rem', align: 'center' },
+  ];
+
+  protected onLazyLoad(event: TableLazyLoadEvent): void {
+    const first = event.first ?? 0;
+    const rows = event.rows ?? 5;
+    let data = [...AGENTS];
+
+    // Filtro global (lo trae el evento; el "servidor" lo aplica).
+    const globalMeta = event.filters?.['global'] as FilterMetadata | undefined;
+    const query = String(globalMeta?.value ?? '')
+      .toLowerCase()
+      .trim();
+    if (query) {
+      data = data.filter((a) => a.name.toLowerCase().includes(query));
+    }
+
+    // Orden (también server-side).
+    const sortField = event.sortField;
+    if (typeof sortField === 'string' && sortField) {
+      const dir = event.sortOrder ?? 1;
+      data = [...data].sort((a, b) => {
+        const av = String((a as unknown as Record<string, unknown>)[sortField]);
+        const bv = String((b as unknown as Record<string, unknown>)[sortField]);
+        return av.localeCompare(bv, 'es') * dir;
+      });
+    }
+
+    this.lazyTotal.set(data.length);
+    this.lazyRows.set(data.slice(first, first + rows));
   }
 }

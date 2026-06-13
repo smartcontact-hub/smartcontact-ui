@@ -1011,4 +1011,23 @@ test.describe('sc-datatable', () => {
 
     await screenshotBaseline(page, 'datatable');
   });
+
+  test('lazy server-driven: paginación + filtro global vía (lazyLoad)', async ({ page }) => {
+    await gotoPage(page, 'datatable');
+    const lz = page.getByTestId('sc-datatable-lazy');
+
+    // carga inicial (lazyLoadOnInit) → página 1 (5 de 7) + totalRecords del servidor.
+    await expect(lz.locator('tbody tr')).toHaveCount(5);
+    await expect(page.getByTestId('dt-lazy-total')).toHaveText('Total: 7');
+
+    // página 2 → las 2 filas restantes, servidas desde (lazyLoad).
+    await lz.locator('.p-paginator-next').click();
+    await expect(lz.locator('tbody tr')).toHaveCount(2);
+
+    // filtro global imperativo (filterGlobal) → resetea a página 1, 1 resultado.
+    await page.getByTestId('dt-lazy-search').fill('garcía');
+    await expect(page.getByTestId('dt-lazy-total')).toHaveText('Total: 1');
+    await expect(lz.locator('tbody tr')).toHaveCount(1);
+    await expect(lz.locator('tbody tr').first().locator('td').first()).toHaveText('Inés García');
+  });
 });

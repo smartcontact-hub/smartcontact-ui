@@ -31,6 +31,36 @@
 <p data-testid="dt-selected">Seleccionados: {{ selection().length }}</p>
 <button type="button" (click)="clear()" data-testid="dt-clear">Vaciar</button>
 
+<h2>Lazy (server-driven): paginación + orden + filtro global</h2>
+<p>
+  En modo <code>[lazy]</code> p-table no ordena/pagina/filtra en cliente: emite
+  <code>(lazyLoad)</code> con los metadatos y el consumidor sirve los datos +
+  <code>totalRecords</code>. El filtro es imperativo
+  (<code>datatable.filterGlobal()</code>) porque p-table no reacciona a cambios del
+  input <code>[filters]</code>.
+</p>
+<input
+  type="text"
+  class="dt-search"
+  placeholder="Buscar por nombre…"
+  (input)="lazyTable.filterGlobal($any($event.target).value, 'contains')"
+  data-testid="dt-lazy-search"
+/>
+<sc-datatable
+  #lazyTable
+  [value]="lazyRows()"
+  [columns]="lazyColumns"
+  dataKey="id"
+  [lazy]="true"
+  [totalRecords]="lazyTotal()"
+  [globalFilterFields]="['name']"
+  [paginator]="true"
+  [rows]="5"
+  (lazyLoad)="onLazyLoad($event)"
+  data-testid="sc-datatable-lazy"
+/>
+<p data-testid="dt-lazy-total">Total: {{ lazyTotal() }}</p>
+
 <!-- cellTemplate de la columna 'status': el consumidor compone la celda. -->
 <ng-template #statusTpl let-agent>
   <span class="dt-status" [attr.data-active]="agent.status === 'active'">
