@@ -665,3 +665,24 @@ test.describe('sc-bulk-edit-menu', () => {
     await screenshotBaseline(page, 'bulkeditmenu');
   });
 });
+
+test.describe('sc-bulk-action-bar', () => {
+  test('resumen pluralizado (sufijo colocado), acciones proyectadas, clear oculta', async ({ page }) => {
+    await gotoPage(page, 'bulkactionbar');
+
+    const bar = page.getByTestId('sc-bulkbar').locator('.bulk-bar');
+    await expect(bar).toBeVisible();
+
+    // resumen plural: "3 agentes seleccionados" (sufijo del dict colocado, es)
+    await expect(bar.locator('.bulk-bar__summary')).toContainText('3 agentes seleccionados');
+
+    // acciones proyectadas a la derecha
+    await expect(bar.locator('.bulk-bar__actions')).toContainText('Editar');
+
+    // clear → count 0 → barra desmontada (@if visible)
+    await bar.locator('.bulk-bar__clear').click();
+    await expect(page.getByTestId('sc-bulkbar').locator('.bulk-bar')).toHaveCount(0);
+
+    await screenshotBaseline(page, 'bulkactionbar');
+  });
+});

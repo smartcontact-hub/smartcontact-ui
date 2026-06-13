@@ -1,0 +1,23 @@
+<h1>sc-bulk-action-bar</h1>
+
+<p>
+  Barra fija inferior que aparece al seleccionar filas en list pages. Resumen
+  «{n} {entidad} {seleccionados}» + botón de limpiar a la izquierda; acciones
+  proyectadas a la derecha. <strong>Aparece fija al fondo de la página.</strong>
+</p>
+
+<div class="row">
+  <button type="button" (click)="count.set(3)">Seleccionar 3</button>
+  <button type="button" (click)="count.set(1)">Seleccionar 1</button>
+  <button type="button" (click)="count.set(0)">Deseleccionar</button>
+</div>
+
+<sc-bulk-action-bar
+  [count]="count()"
+  [entity]="entity"
+  (clear)="count.set(0)"
+  data-testid="sc-bulkbar"
+>
+  <button type="button">Editar</button>
+  <button type="button">Eliminar</button>
+</sc-bulk-action-bar>

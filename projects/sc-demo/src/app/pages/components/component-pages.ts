@@ -178,4 +178,12 @@ export const SC_DEMO_COMPONENT_PAGES = [
     load: () =>
       import('./bulkeditmenu/bulkeditmenu-demo.component').then((m) => m.BulkEditMenuDemoComponent),
   },
+  {
+    path: 'bulkactionbar',
+    label: 'BulkActionBar',
+    load: () =>
+      import('./bulkactionbar/bulkactionbar-demo.component').then(
+        (m) => m.BulkActionBarDemoComponent,
+      ),
+  },
 ] satisfies ScDemoComponentPage[];

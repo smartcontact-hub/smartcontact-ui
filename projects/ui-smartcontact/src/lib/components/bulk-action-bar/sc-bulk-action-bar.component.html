@@ -1,0 +1,18 @@
+@if (visible()) {
+  <div class="bulk-bar" role="region" [attr.aria-label]="'sc.bulkActionBar.region' | translate">
+    <div class="bulk-bar__summary">
+      <span>{{ summary() }}</span>
+      <button
+        type="button"
+        class="bulk-bar__clear"
+        (click)="clear.emit()"
+        [attr.aria-label]="'sc.bulkActionBar.clearSelection' | translate"
+      >
+        <sc-icon [name]="closeIcon" [size]="iconSizeDefault" />
+      </button>
+    </div>
+    <div class="bulk-bar__actions">
+      <ng-content />
+    </div>
+  </div>
+}
