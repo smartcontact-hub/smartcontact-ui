@@ -304,7 +304,7 @@ test.describe('sc-inputgroup', () => {
       'padding-top': '7px',
       'font-size': '14px',
     });
-    await expect(page.getByTestId('sc-inputgroup').locator('.p-inputgroup-addon').first()).toBeVisible();
+    await expect(page.getByTestId('sc-inputgroup').locator('.p-inputgroupaddon').first()).toBeVisible();
     await screenshotBaseline(page, 'inputgroup');
   });
 });
