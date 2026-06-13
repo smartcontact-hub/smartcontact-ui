@@ -800,3 +800,54 @@ el publish en CI (hoy NO — para evitar publishes sorpresa).
   (`smart-contact-platform`, `smartcontact-ui-main`) en SUS repos a los paquetes
   versionados — las list pages bespoke adoptan `sc-datatable` + `sc-inline-rename-cell`.
 - **Lote 7** (section-card §4.5): bloqueado en el Figma Desktop Bridge.
+
+# Lote 7 — section-card anidado (§4.5 CERRADA, último §4 abierto)
+
+## Context
+Con el bridge de Figma conectado, se midió en vivo el nodo **"Section"**
+(`12610:23080`, file Smart-Contact-Prime) y se construyó el sistema anidado.
+Cierra **§4.5** (la última decisión §4 abierta) y el solape §4(3) → el roadmap
+queda **component-complete** del todo.
+
+## Hallazgo (cambió el alcance)
+`sc-section-card` **NO estaba en el mirror** (nunca se portó; solo existía plano en
+`smart-contact-platform`). Así que Lote 7 = **3 componentes NUEVOS** desde cero, no
+"evolucionar" uno: `sc-section-card` (Section) + `sc-subsection` + `sc-slot`.
+
+## Estructura Figma medida → 3 componentes (componente-por-nivel + projection)
+- **Section** = contenedor GRIS (`gray/50` → `--sc-bg-secondary-subtle`, radio xl=12
+  → `--sc-radius-400`). Aloja 1–4 subsecciones O contenido plano.
+- **Subsection** = card BLANCA (`#fff` → `--sc-bg-surface`, radio lg=8 →
+  `--sc-radius-300`) con cabecera propia. Aloja 1–5 slots.
+- **Slot** = fila titulada; divisor entre slots #dadfe6 → `--sc-border-default` con
+  margen 14 (`--sc-spacing-1`), por CSS `:host(:not(:first-of-type))`.
+- **Tokens 14-base limpios** (mismo sistema que el mirror — variable_defs del nodo
+  bindean `scale/1`, `scale/1-143`, `scale/0-625`, radii md/lg/xl): **sin traducción
+  8-point** (a diferencia del modal del Lote 9). Solo faltaba `--sc-form-anchor-offset`
+  (7-0, añadido a 05-extensions.css, default 80px = paridad platform).
+
+## Decisiones
+- **Componente-por-nivel, no config-array**: mapea 1:1 el árbol Figma, templates
+  declarativos, cada nivel posee su cabecera/tokens.
+- **Retrocompatible (modo plano)**: una `sc-section-card` con contenido directo
+  renderiza como el card plano del platform. El gap entre subsecciones lo pone el
+  `:host` de `sc-subsection` (NO un `flex gap` del body) → el contenido plano no se
+  ve afectado. `collapsible`/`flush`/`anchorId` portados verbatim del platform.
+- **Colapso**: Section colapsable (verbatim). Subsection: `collapsible` cableado
+  pero **default-off** (el colapso vive en la sección). Slot: no colapsable.
+- **i18n consumer-owns keys** (titleKey/hintKey por `translate` pipe; los títulos
+  son contenido, no chrome del DS → sin dict colocado).
+- **Tipografía por nivel**: Section = subtitle-2 (verbatim platform); Subsection +
+  Slot = body-2 (SemiBold 14/20); hints = caption. Jerarquía por tamaño.
+
+## Medición (sin design_context)
+El `get_design_context` quedó bloqueado por el allowlist de directorios de Figma Dev
+Mode, pero NO hizo falta: `get_variable_defs` + `get_metadata` + screenshots dan los
+valores exactos. La restricción "las únicas 4 medidas de spacing bindeadas son
+8.75/14/16/22.75" + los deltas de altura de variantes (subsección 1-slot = 114.25,
++128.25/subsección = 114.25 + 14 de gap) resolvieron paddings/gaps con precisión.
+
+## Verificación
+`npm run verify` limpio (incl. `tokens:guard` confirmando que NO se cuela 8-point) +
+`CI=1 npm run e2e` verde (1 spec nuevo: radio 12/8, divisor del 2º slot, colapso,
+flush). Commit por pieza + CI de GitHub Actions verde tras el push.
