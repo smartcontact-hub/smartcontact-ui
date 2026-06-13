@@ -164,4 +164,12 @@ export const SC_DEMO_COMPONENT_PAGES = [
     label: 'PageHeader',
     load: () => import('./pageheader/pageheader-demo.component').then((m) => m.PageHeaderDemoComponent),
   },
+  {
+    path: 'formsectionnav',
+    label: 'FormSectionNav',
+    load: () =>
+      import('./formsectionnav/formsectionnav-demo.component').then(
+        (m) => m.FormSectionNavDemoComponent,
+      ),
+  },
 ] satisfies ScDemoComponentPage[];

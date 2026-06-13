@@ -1,0 +1,30 @@
+<nav class="form-nav" [class.form-nav--flush]="flush()" [attr.aria-label]="labelKey() | translate">
+  <ul class="form-nav__list">
+    @for (section of sections(); track section.id) {
+      <li>
+        <a
+          class="form-nav__item"
+          [class.form-nav__item--active]="activeId() === section.id"
+          [class.form-nav__item--has-error]="hasError(section.id)"
+          [attr.aria-current]="activeId() === section.id ? 'true' : null"
+          href="#"
+          role="tab"
+          (click)="onJump($event, section.id)"
+        >
+          @if (section.icon; as ic) {
+            <span class="form-nav__icon" aria-hidden="true">
+              <sc-icon [name]="ic" [size]="iconSizeDefault" />
+            </span>
+          }
+          <span class="form-nav__label">{{ section.labelKey | translate }}</span>
+          @if (hasError(section.id)) {
+            <span
+              class="form-nav__dot"
+              [attr.aria-label]="'sc.formSectionNav.sectionHasErrors' | translate"
+            ></span>
+          }
+        </a>
+      </li>
+    }
+  </ul>
+</nav>

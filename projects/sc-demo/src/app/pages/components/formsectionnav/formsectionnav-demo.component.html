@@ -1,0 +1,31 @@
+<h1>sc-form-section-nav</h1>
+
+<p>
+  Nav de secciones <strong>controlado</strong>: el padre posee
+  <code>activeId</code> y el nav emite <code>activeChange</code> al click. Punto
+  rojo en las secciones con required vacíos (<code>sectionsWithErrors</code>).
+  Variante <code>flush</code> (panel embebido del rail) opt-in.
+</p>
+
+<h2>Default</h2>
+<div class="row" style="max-width: 260px">
+  <sc-form-section-nav
+    [sections]="sections"
+    [activeId]="active()"
+    [sectionsWithErrors]="errors"
+    (activeChange)="onActive($event)"
+    data-testid="sc-formnav-default"
+  />
+</div>
+
+<h2>Flush (panel embebido)</h2>
+<div class="row" style="max-width: 260px">
+  <sc-form-section-nav
+    [sections]="sections"
+    [activeId]="active()"
+    [flush]="true"
+    [sectionsWithErrors]="errors"
+    (activeChange)="onActive($event)"
+    data-testid="sc-formnav-flush"
+  />
+</div>

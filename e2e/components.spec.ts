@@ -612,3 +612,34 @@ test.describe('sc-page-header', () => {
     await screenshotBaseline(page, 'pageheader');
   });
 });
+
+test.describe('sc-form-section-nav', () => {
+  test('chip 28² (32² flush), activo aria-current, punto de error, click controla', async ({ page }) => {
+    await gotoPage(page, 'formsectionnav');
+
+    const nav = page.getByTestId('sc-formnav-default');
+
+    // 4 items
+    await expect(nav.locator('.form-nav__item')).toHaveCount(4);
+
+    // chip default 28×28
+    const chip = nav.locator('.form-nav__icon').first();
+    expect(await styleOf(chip, ['width', 'height'])).toEqual({ width: '28px', height: '28px' });
+
+    // activo inicial = general → aria-current
+    await expect(nav.locator('.form-nav__item--active')).toHaveAttribute('aria-current', 'true');
+
+    // sección 'horario' con punto de error (required vacíos)
+    await expect(nav.locator('.form-nav__item--has-error .form-nav__dot')).toHaveCount(1);
+
+    // click en otra sección mueve el activo (controlado por el padre)
+    await nav.locator('.form-nav__item').nth(1).click();
+    await expect(nav.locator('.form-nav__item').nth(1)).toHaveClass(/form-nav__item--active/);
+
+    // flush: chip 32×32 (Figma índice)
+    const flushChip = page.getByTestId('sc-formnav-flush').locator('.form-nav__icon').first();
+    expect(await styleOf(flushChip, ['width', 'height'])).toEqual({ width: '32px', height: '32px' });
+
+    await screenshotBaseline(page, 'formsectionnav');
+  });
+});
