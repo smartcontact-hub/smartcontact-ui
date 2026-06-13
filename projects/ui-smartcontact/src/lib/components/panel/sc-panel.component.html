@@ -1,0 +1,10 @@
+<p-panel
+    [header]="header || undefined"
+    [toggleable]="toggleable"
+    [collapsed]="collapsed"
+    [showHeader]="showHeader"
+    (collapsedChange)="collapsedChange.emit($event)"
+    (onBeforeToggle)="beforeToggle.emit($event)"
+    (onAfterToggle)="afterToggle.emit($event)">
+    <ng-content></ng-content>
+</p-panel>
