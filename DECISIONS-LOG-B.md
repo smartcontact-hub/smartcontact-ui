@@ -254,3 +254,100 @@ e2e: abre con radio 12 (Kit dialog), accept/reject resuelven la Promise.
 - Los 16 custom (Fase 3), los 4 solapes (Fase 4), `sc-datatable` (§6), Memory.
 - El token REST de Figma caducado: renovarlo permite volver a exportar
   imágenes por nodeId sin plugin.
+
+---
+
+# Lote 3 — los 5 comunes a convergir (fusión de implementaciones)
+
+## Método del lote
+Fusión real (no adopción de un solo lado): por cada común se leyó la impl del
+catálogo de diseño (chrome rico/CVA/tri-estado/card canónica) y la del molde
+(wrapper fino con props PrimeNG extra), se eligió la base y se absorbió del
+otro lado lo que aportaba capacidad. Apoyo de dos workflows:
+1. **Comprensión** (5 lectores en paralelo) → specs de fusión por componente,
+   con la decisión §4.1/§4.3 razonada.
+2. **Revisión adversarial** (5 revisores) tras escribir → cazó pérdidas de API
+   silenciosas y asimetrías de familia (ver "Fixes" abajo).
+Diff visual por métrica computada contra el export del Kit (tokens:parity lo
+cruza 1:1) + baselines. El Desktop Bridge de Figma se desconectó a mitad del
+lote (reabrir el plugin es acción del operador); la referencia del Kit sigue
+siendo el export que parity verifica, no se degradó el rigor.
+
+## Decisiones por-componente cerradas
+
+### §4.1 — sc-checkbox: base NATIVA tri-estado (no p-checkbox)
+Base única = `<input type="checkbox">` nativo con el contrato tri-estado
+`[state]` (none/some/all) + `(cycle)` del catálogo de diseño. Se DESCARTA
+unificar sobre `p-checkbox`: su `indeterminate` es binario y no modela el
+ciclo (clic en 'some' no puede expresar "primer clic limpia"); además sobre el
+input nativo heredamos Space/Tab + semántica SR y reflejamos `indeterminate`
+imperativamente (el DOM no lo permite declarativo). Del molde se absorbe
+`inputId`. El slot `checkbox` del preset queda inerte (el componente no usa
+`p-checkbox`). **Base verificada:** lectura de ambas impls + p-checkbox de
+PrimeNG 21; e2e del ciclo some→none→all con `input.indeterminate`/`checked`
+reflejados y `aria-checked=mixed`.
+
+### §4.3 — sc-dialog: una sola card canónica + ScDynamicDialogService
+UNA `sc-dialog` = la card canónica del catálogo de diseño (icono+título+
+subtítulo+close, body, footer projection `[modal-actions]`, restauración de
+foco), con `<p-dialog showHeader=false>` como motor (focus-trap/ESC/mask). Las
+props útiles del wrapper fino del molde (`modal/position/draggable/resizable/
+dismissableMask`) se absorben como passthrough; `visible` pasa a two-way
+`model` conservando el `cancelled` semántico + outputs `shown`/`hidden`. El
+caso imperativo (abrir un componente arbitrario al vuelo) NO se pierde: lo
+cubre `ScDynamicDialogService` (+ `provideScDynamicDialog`), infra paralela
+adoptada del molde tal cual — no un segundo componente. Omisiones deliberadas
+del molde documentadas en el JSDoc (`header`/`showHeader` → la card; `closeOnEscape`
+→ derivado de `closable`). **Base verificada:** e2e card two-way+ESC, radio 12,
+header/footer; dynamic dialog abre componente y resuelve `onClose`.
+
+## Piezas
+
+### sc-inputtext
+Base: impl de diseño (label/required/helper/error + CVA + filled + iftaLabel).
+Suma del molde: `fluid`, `invalid` explícito (OR con error/touched), outputs
+`focused`/`blurred` y `ariaLabel` (reincorporado tras la revisión). El
+`variant:'filled'` del molde se pliega en el boolean `filled` (sin input
+redundante). e2e: métrica 10.5/7/6/14, CVA, ifta, sm 12.
+
+### sc-select
+La impl de diseño ya era superset (showClear/filter/pTemplate/iftaLabel/
+appendTo/opciones primitivas/CVA). Tras la revisión se añadió `readonly` +
+outputs `focused`/`blurred` (paridad con sc-inputtext en la familia de campos)
+y passthrough `optionDisabled`/`loading`. Panel sizes sm/lg co-localizados en
+el SCSS (ViewEncapsulation.None) tokenizados a v/14. Handlers de focus/blur
+tipados a `Event` (p-select reenvía el FocusEvent del DOM como `Event`).
+e2e: overlay radio 6, opción 7/10.5, pTemplate re-proyectado, CVA.
+
+### sc-toggleswitch
+API estable del diseño (`[checked]`/`(checkedChange)`/ariaLabelledBy) + `size`
+(sm/md/lg) y `readonly` (bloquea el emit sin el look disabled) del molde +
+output nativo `changed` (reincorporado tras la revisión). `checked` relajado a
+opcional. e2e: 35×21 del Kit, toggle emite, readonly no muta.
+
+### sc-dialog + ScDynamicDialogService
+Ver §4.3. Iconos via @smartcontact/icons (reconciliación §4.6); aria-label de
+cierre por input `closeAriaLabel` (sin acoplar i18n de la app).
+
+### sc-checkbox
+Ver §4.1.
+
+## Gap de tooling detectado (y cómo se cubre)
+`npm run typecheck` (tsc `--noEmit`) NO chequea las plantillas Angular: un
+error de tipos en un binding de template (p-select emite `Event`, no
+`FocusEvent`) pasó el typecheck pero lo cazó `ng build` / el dev server / e2e.
+El gate de CI corre `npm run build` (ng build de los 3 paquetes) ANTES del
+typecheck, así que la red está cubierta; queda anotado que la verificación de
+plantillas vive en el build, no en tsc.
+
+## Diferido al lote 4
+- Los 16 custom (Fase 3) con la deuda de aislamiento §5 restante.
+- Los 4 solapes (Fase 4): variante de 8 colores de tag/chip, fallback de
+  ilustración del avatar, section-card anidado (Section→Subsection→Slot),
+  integración de dynamic-dialog ya hecha (solo queda el modal de negocio).
+- `sc-datatable` (§6, hueco prioritario) y, según necesidad, accordion/
+  breadcrumb/menu/stepper/tabs.
+- Migración de Memory (resuelve `sc-bulk-transcription-modal`) y de las apps a
+  paquetes versionados.
+- Decisiones §4 restantes: §4.5 (API anidada de sc-section-card). Las §4.1,
+  §4.2, §4.3, §4.4, §4.6 quedan cerradas.
