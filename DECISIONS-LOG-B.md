@@ -582,3 +582,75 @@ Actions verde tras el push.
 - **Lote 8**: inline-rename-cell + sc-datatable §6.
 - **Lote 9**: Memory + adopción de apps. Solapes restantes: §4(3) section-card
   (Lote 7), §4(4) dynamic-dialog ya hecho salvo el modal de Memory (Lote 9).
+
+# Lote 6 — superficie de comandos (Fase 3 §5)
+
+## Context
+Tercer bloque del roadmap. Cierra la **deuda §5 de la superficie de comandos**
+(no es decisión §4): `sc-command-palette` (⌘K) + `sc-keyboard-shortcuts` (?). El
+trabajo real es **invertir** el servicio de la paleta a una API data-driven — el
+único rediseño de servicio del roadmap, por eso aislado en su bloque.
+
+El port se ancló en una fase de **grounding** (5 agentes read-only sobre el molde)
+que confirmó el plan: el servicio del molde inyecta `Router` + `TranslateService`
+y deriva los comandos de `NAV_SECTIONS` (rutas `/admin/*` + categorías
+`'Páginas'|'Acciones'` hardcodeadas); el de keyboard-shortcuts es signal-puro de
+27 líneas; `isTypingTarget` es DOM-puro de 13. **Scale-sweep nulo**: los SCSS de
+ambos overlays usan tokens que ya existían (mismos componentes, mismo sistema de
+tokens) — verificado pieza por pieza.
+
+## Inversión de ScCommandPaletteService (data-driven)
+El servicio deja de conocer la app: el consumidor entrega los comandos vía
+`setCommands()`. API = `visible()` + `commands()` (readonly via `asReadonly`) +
+`open/close/toggle/setCommands`. Interface `ScPaletteCommand {id, label, category,
+icon?, keywords?, action}`. **Se STRIPea**: Router, TranslateService, NAV_SECTIONS,
+el walk del árbol, las rutas `/admin/*` y las categorías ES. La navegación pasa a
+`action` (callback del consumidor); los iconos a nombre Material directo.
+
+### Refinamientos sobre el plan (3, todos hacia el split presentación/dominio)
+1. **`category` = string de display provisto por el consumidor** (paralelo a
+   `label`, ya traducido), NO una clave i18n del DS. Un dict de categorías fijo en
+   el DS constreñiría la taxonomía del consumidor (supervisor usa Páginas/Acciones;
+   otra app podría usar Archivos/Ajustes/Recientes). El DS solo i18n-iza su **propio
+   chrome** (placeholder/empty/aria/hints).
+2. **Sin indirección `NAV_ICONS`/`resolveIcon`**: `icon` es nombre Material que
+   `sc-icon` resuelve directo (`resolveScIconGlyph` cae al literal si no existe →
+   sin crash). El template usa `cmd.icon` tal cual.
+3. **`sc-keyboard-shortcuts` inyecta `ScCommandPaletteService` directo** (sin el
+   token de abstracción que sugería el grounding) — ambos son DS-owned,
+   `providedIn root`, mismo paquete; el token era over-engineering para nuestro caso.
+
+## Piezas
+- **6-1 isTypingTarget**: `lib/core/utils/is-typing-target.ts`, port verbatim.
+- **6-2 ScCommandPaletteService**: invertido (ver arriba). providedIn root.
+- **6-3 sc-command-palette**: overlay buscable; keyboard ⌘K/`/`(enfoca `<sc-search>`,
+  guardado por isTypingTarget)/Esc/↑↓(wrap)/Enter; i18n colocado `sc.commandPalette.*`;
+  `viewChild` signal. e2e: abre, agrupa, ↓+Enter ejecuta, filtra por keyword, Esc.
+- **6-4 ScKeyboardShortcutsService**: port directo (signal-puro).
+- **6-5 sc-keyboard-shortcuts**: cheat-sheet `?`; grupos **data-driven** (`[groups]`)
+  con default colocado exportado (`SC_KEYBOARD_SHORTCUTS_DEFAULT_GROUPS`) que cubre
+  los atajos intrínsecos del DS (⌘K/`/`/`?`/↑↓/↵/Esc); el consumidor extiende con
+  spread (sus ⌘S/⌘Z). `title`/`label` por `translate` (claves del default resuelven;
+  strings del consumidor pasan tal cual). Fix de drift del molde: el JSDoc del fuente
+  decía "no service is needed" pero sí inyecta el servicio — corregido en el port.
+
+## Fixes de robustez (en la misma sesión, previos al lote)
+- **sc-toggleswitch readonly** (lote 3): el wrapper exponía `readonly` y bloqueaba
+  el emit del modelo en TS pero **no reenviaba `[readonly]` a `<p-toggleswitch>`** —
+  PrimeNG toggleaba optimista la clase `.p-toggleswitch-checked` y el one-way
+  `[ngModel]` la restauraba async (ventana de race que volvía flaky el e2e bajo 2
+  workers). Fix: reenviar `[readonly]="readonly()"`. Mata el race de raíz, corrige el
+  readonly a medias (sin flip visual ni `changed.emit` espurio) y conserva a11y
+  (readonly solo guarda el onClick; el `<input>` sigue focusable/`role=switch`).
+  Verificado e2e 153/153 en stress (`--repeat-each=3 --workers=2`).
+- **CI Node 20→24**: bump `actions/checkout@v5` + `actions/setup-node@v5`
+  (deprecación de Node 20 en runners, forzado el 16-jun-2026). Inputs sin cambio.
+
+## Verificación del lote
+`npm run verify` limpio. `CI=1 npm run e2e` verde (2 specs nuevos + previos).
+Commit por pieza + CI de GitHub Actions verde tras el push.
+
+## Diferido (roadmap Lotes 7→9)
+- **Lote 7**: section-card §4.5 (API anidada, Figma). **Lote 8**: inline-rename-cell
+  + sc-datatable §6. **Lote 9**: Memory + adopción de apps (modal de transcripción
+  presentacional + pipeline de publish versionado).
