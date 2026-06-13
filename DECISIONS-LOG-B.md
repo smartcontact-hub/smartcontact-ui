@@ -351,3 +351,22 @@ plantillas vive en el build, no en tsc.
   paquetes versionados.
 - Decisiones §4 restantes: §4.5 (API anidada de sc-section-card). Las §4.1,
   §4.2, §4.3, §4.4, §4.6 quedan cerradas.
+
+## Diff visual con Figma — completado (bridge reconectado)
+Tras reconectar el Desktop Bridge se cerró el diff visual en vivo de las 5
+piezas contra el file canónico «Smart-Contact Prime» (capturas vía exportAsync
+del plugin), confirmando el diff por métrica:
+- **❖ Select** (6738:47281): trigger + chevron + overlay con buscador (lupa) y
+  opciones, radio 6 — 1:1 con la demo.
+- **❖ Checkbox** (6738:46504): checked = caja navy con check blanco; unchecked
+  outlined; tamaños; filled — 1:1 (el tri-estado 'some' usa el mismo box con
+  glifo de guión).
+- **❖ ToggleSwitch** (6738:47576): off track gris / on track navy, handle
+  blanco, tamaños — 1:1.
+- **❖ dialog** (6872:72091): header con close X + body + footer (Cancel
+  secundario + Save primario), radio 12 — 1:1 con la card canónica (que añade
+  el icono+subtítulo de la variante SC).
+- **InputText**: chrome de campo estándar; la métrica (10.5/7/6/14) ya estaba
+  verificada y el chrome coincide.
+Conclusión: el diff por métrica computada (la vara primaria) y el diff visual
+con Figma concuerdan en las 5 piezas.
