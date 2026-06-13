@@ -24,5 +24,6 @@ export * from './lib/components/avatar/sc-avatar.component';
 export * from './lib/components/avatar/sc-avatargroup.component';
 export * from './lib/components/toast/sc-toast.component';
 export * from './lib/components/toast/sc-toast.service';
+export * from './lib/components/divider/sc-divider.component';
 export * from './lib/config/provide-smartcontact-ui';
 export { default as scPreset } from './lib/theme/sc-preset';

@@ -84,4 +84,9 @@ export const SC_DEMO_COMPONENT_PAGES = [
     label: 'Toast',
     load: () => import('./toast/toast-demo.component').then((m) => m.ToastDemoComponent),
   },
+  {
+    path: 'divider',
+    label: 'Divider',
+    load: () => import('./divider/divider-demo.component').then((m) => m.DividerDemoComponent),
+  },
 ] satisfies ScDemoComponentPage[];

@@ -1,0 +1,7 @@
+:host {
+  /* Wrapper transparente: dejamos que `<p-divider>` sea el hijo directo del
+   * flujo/flex del padre, así horizontal (bloque full-width) y vertical
+   * (estira a la altura del row) se comportan 1:1 con PrimeNG sin que el host
+   * intermedie. Todo el sizing/color viene de los tokens divider.* del preset. */
+  display: contents;
+}

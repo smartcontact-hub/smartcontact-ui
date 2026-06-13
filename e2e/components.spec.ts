@@ -275,3 +275,22 @@ test.describe('sc-toast', () => {
     expect((await styleOf(detail, ['font-size']))['font-size']).toBe('12px');
   });
 });
+
+test.describe('sc-divider', () => {
+  test('métrica del Kit (margin 14, content padding 7) y variantes', async ({ page }) => {
+    await gotoPage(page, 'divider');
+    const h = page.getByTestId('sc-divider').locator('.p-divider');
+    expect(await styleOf(h, ['margin-top', 'margin-bottom'])).toEqual({
+      'margin-top': '14px',
+      'margin-bottom': '14px',
+    });
+    const content = page.getByTestId('sc-divider-block').locator('.p-divider-content').first();
+    expect((await styleOf(content, ['padding-left']))['padding-left']).toBe('7px');
+    const v = page.getByTestId('sc-divider-v').locator('.p-divider');
+    expect(await styleOf(v, ['margin-left', 'margin-right'])).toEqual({
+      'margin-left': '14px',
+      'margin-right': '14px',
+    });
+    await screenshotBaseline(page, 'divider');
+  });
+});
