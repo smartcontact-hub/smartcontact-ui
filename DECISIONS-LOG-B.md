@@ -503,3 +503,74 @@ el push (gate real).
 - **Lote 8**: inline-rename-cell (bespoke as-is) + sc-datatable §6 (greenfield).
 - **Lote 9**: Fase 5 — Memory (sc-bulk-transcription-modal) + adopción de apps a
   paquetes versionados.
+
+---
+
+# Lote 5 — solapes de color y avatar (Fase 4 §4.1 + §4.2)
+
+## Context
+Segundo bloque del roadmap. Cierra **2 de los 4 solapes**: §4.1 (tag/chip/
+label-chip) y §4.2 (avatar). Porta 2 custom (`sc-color-dot-picker`,
+`sc-photo-upload`) y extiende 3 componentes ya publicados (`sc-tag`, `sc-chip`,
+`sc-avatar`) de forma **aditiva** — la rama/comportamiento de lote 1 queda
+intacta (cero regresión por construcción).
+
+Hallazgo clave: los **32 tokens `--sc-label-{color}-{bg,text,border,dot}` YA
+EXISTÍAN** en `03-palette.css` (Mitad A). Cero trabajo de tokens. Mapeos del Kit:
+`green`→emerald, `blue`→azure.
+
+## §4.1 cerrada — variante `label` de tag/chip (retira sc-label-chip)
+El `sc-label-chip` se **retira**: su sistema de 8 colores categóricos + punto se
+mete como **variante** de los componentes canónicos. Nuevo tipo compartido
+`LabelColor` + `LABEL_COLORS` (8: gray/red/orange/amber/green/teal/blue/purple)
+en `core/types`, consumido por tag, chip y el dot-picker.
+- **sc-tag** (read-only canon): `variant='label'` + `labelColor` → rama
+  condicional que pinta punto + texto (outline), 8 colores vía custom props
+  `--label-*` fijadas desde `labelColor`. Rama default `<p-tag>` **idéntica**.
+- **sc-chip** (removable canon): misma variante + botón × (emite `removed`).
+  `removeAriaLabel` como input (el consumidor traduce — sin infra i18n en un
+  wrapper fino).
+- **Base verificada**: e2e — red→red-50 bg/red-700 text/red-500 dot; azul→
+  azure-50; × emite `removed`; los primeros tag/chip siguen siendo `<p-tag>`/
+  `<p-chip>` (default intacto).
+
+## §4.2 cerrada — fallback de ilustración en sc-avatar (retira illustrated-avatar)
+**Decisión (operador)**: teniendo el `p-avatar` de PrimeNG, NO se porta
+`sc-illustrated-avatar` como componente nuevo — su comportamiento se **funde** en
+`sc-avatar` (cara Image). Nuevo helper compartido `core/avatar-illustration.ts`
+(`hashName` DJB2 verbatim + `POOLS` illustrated(24)/abstract(3) +
+`buildIllustrationSrc`) = **fuente única** que consumen avatar y photo-upload.
+- `sc-avatar`: inputs `illustrationName`/`illustrationPool`/`illustrationBase` +
+  getter `resolvedImage = image ?? path-hasheado` → `[image]` del p-avatar.
+  Aditivo: sin image ni illustrationName → label/icon como en lote 1.
+- **Decisión de assets**: el fallback necesita 27 SVG (**6 MB**, cada uno con un
+  PNG base64). El paquete **NO los empaqueta** — expone solo la lógica con
+  `illustrationBase` configurable (default `assets/avatars`); el consumidor sirve
+  los SVG (la app AED ya los tiene). La demo copia solo el pool `abstract` (3
+  SVG, ~1 MB) y las demos fijan `pool='abstract'` para que el hash resuelva.
+- Hover-zoom del origen: **omitido** (flourish, no requisito §4.2) — anotado.
+- **Base verificada**: e2e — avatar con `illustrationName` pinta `<img>` con src
+  del path abstract hasheado; los avatares de label/badge de lote 1 intactos.
+
+## Piezas
+- **5-1 sc-color-dot-picker**: port (ya signal-based: `input.required` +
+  `model.required`); aria-label del radiogroup como input; no acopla la paleta
+  (colores por `ColorDotOption.color`). e2e: 8 swatches, aria-checked, click two-way.
+- **5-2 sc-tag** / **5-3 sc-chip**: ver §4.1.
+- **5-4 sc-avatar** + helper: ver §4.2.
+- **5-5 sc-photo-upload**: bespoke as-is (§10): input file nativo + FileReader.
+  El fallback compone `buildIllustrationSrc`. `MessageService` **opcional**
+  (toasts de validación degradan sin infra de toast). i18n colocado
+  `sc.photoUpload.*`.
+
+## Verificación del lote
+`npm run verify` limpio. `npm run e2e` verde (5 specs nuevos + previos; re-run de
+avatar/tag/chip de lote 1 → cero regresión). Commit por pieza + CI de GitHub
+Actions verde tras el push.
+
+## Diferido (roadmap Lotes 6→9)
+- **Lote 6**: command-palette + keyboard-shortcuts (invertir `CommandPaletteService`).
+- **Lote 7**: section-card §4.5 (API anidada, Figma).
+- **Lote 8**: inline-rename-cell + sc-datatable §6.
+- **Lote 9**: Memory + adopción de apps. Solapes restantes: §4(3) section-card
+  (Lote 7), §4(4) dynamic-dialog ya hecho salvo el modal de Memory (Lote 9).
