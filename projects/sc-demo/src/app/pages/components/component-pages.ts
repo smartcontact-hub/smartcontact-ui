@@ -210,4 +210,12 @@ export const SC_DEMO_COMPONENT_PAGES = [
         (m) => m.ImpactPreviewDialogDemoComponent,
       ),
   },
+  {
+    path: 'deleteentitydialog',
+    label: 'DeleteEntityDialog',
+    load: () =>
+      import('./deleteentitydialog/deleteentitydialog-demo.component').then(
+        (m) => m.DeleteEntityDialogDemoComponent,
+      ),
+  },
 ] satisfies ScDemoComponentPage[];

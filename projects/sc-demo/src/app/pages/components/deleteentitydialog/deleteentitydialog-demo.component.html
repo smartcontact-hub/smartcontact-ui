@@ -1,0 +1,41 @@
+<h1>sc-delete-entity-dialog</h1>
+
+<p>
+  Diálogo de confirmación de borrado sobre la <code>sc-dialog</code> canónica.
+  <strong>Single</strong>: retype del nombre (+ botón copiar via ScClipboardService).
+  <strong>Bulk</strong>: chips quitables (el último no auto-cierra; reset
+  restaura).
+</p>
+
+<div class="row">
+  <button type="button" (click)="openSingle.set(true)" data-testid="open-single">
+    Borrar (single)
+  </button>
+  <button type="button" (click)="openBulk.set(true)" data-testid="open-bulk">Borrar (bulk)</button>
+</div>
+
+<sc-delete-entity-dialog
+  [visible]="openSingle()"
+  mode="single"
+  [items]="singleItem"
+  entitySingular="agente"
+  entityPlural="agentes"
+  (cancelled)="openSingle.set(false)"
+  (confirm)="onConfirmSingle()"
+  data-testid="sc-delete-single"
+/>
+
+<sc-delete-entity-dialog
+  [visible]="openBulk()"
+  mode="bulk"
+  [items]="bulkItems"
+  entitySingular="agente"
+  entityPlural="agentes"
+  (cancelled)="openBulk.set(false)"
+  (confirm)="onConfirmBulk($event)"
+  data-testid="sc-delete-bulk"
+/>
+
+@if (deleted(); as d) {
+  <p data-testid="delete-result">borrado: {{ d }}</p>
+}

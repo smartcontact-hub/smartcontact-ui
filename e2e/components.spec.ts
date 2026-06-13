@@ -743,3 +743,38 @@ test.describe('sc-impact-preview-dialog', () => {
     await expect(page.getByTestId('impact-result')).toHaveText('confirmado: 2');
   });
 });
+
+test.describe('sc-delete-entity-dialog', () => {
+  test('single: retype del nombre habilita Delete; compone sc-dialog', async ({ page }) => {
+    await gotoPage(page, 'deleteentitydialog');
+    await page.getByTestId('open-single').click();
+
+    const dialog = page.getByTestId('sc-delete-single');
+    await expect(dialog.locator('.sc-dialog')).toBeVisible();
+
+    // Delete deshabilitado hasta teclear el nombre exacto
+    const del = dialog.getByTestId('delete-confirm-btn').locator('button');
+    await expect(del).toBeDisabled();
+    await dialog.locator('#delete-confirm-input').fill('Agente Soporte');
+    await expect(del).toBeEnabled();
+
+    await del.click();
+    await expect(page.getByTestId('delete-result')).toHaveText('borrado: single');
+  });
+
+  test('bulk: pruning de chips + confirm emite supervivientes', async ({ page }) => {
+    await gotoPage(page, 'deleteentitydialog');
+    await page.getByTestId('open-bulk').click();
+
+    const dialog = page.getByTestId('sc-delete-bulk');
+    await expect(dialog.locator('.delete-entity__chip')).toHaveCount(3);
+
+    // quitar 1 chip → quedan 2
+    await dialog.locator('.delete-entity__chip-remove').first().click();
+    await expect(dialog.locator('.delete-entity__chip')).toHaveCount(2);
+
+    // confirmar → emite los 2 supervivientes
+    await dialog.getByTestId('delete-confirm-btn').locator('button').click();
+    await expect(page.getByTestId('delete-result')).toHaveText('borrado: bulk:2');
+  });
+});

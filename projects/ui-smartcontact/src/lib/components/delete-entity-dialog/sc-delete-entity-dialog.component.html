@@ -1,0 +1,98 @@
+<sc-dialog
+  [visible]="visible()"
+  [icon]="alertIcon"
+  [title]="dialogTitle()"
+  [subtitle]="dialogSubtitle()"
+  width="440px"
+  (cancelled)="cancelled.emit()"
+>
+  @if (mode() === 'single') {
+    @if (singleDetailMessage(); as detail) {
+      <p class="delete-entity__detail">{{ detail }}</p>
+    }
+
+    <div class="delete-entity__confirm">
+      <label class="delete-entity__confirm-label" for="delete-confirm-input">
+        {{ 'sc.deleteEntityDialog.typeToConfirm' | translate }}
+      </label>
+      <button
+        type="button"
+        class="delete-entity__copy-name"
+        (click)="onCopy()"
+        [title]="'sc.deleteEntityDialog.clickToCopy' | translate"
+      >
+        <span>{{ singleTarget() }}</span>
+        @if (copied()) {
+          <sc-icon [name]="checkIcon" [size]="iconSizeMd" class="delete-entity__copy-check" />
+        } @else {
+          <sc-icon [name]="copyIcon" [size]="iconSizeMd" class="delete-entity__copy-icon" />
+        }
+      </button>
+      <input
+        id="delete-confirm-input"
+        type="text"
+        class="delete-entity__confirm-input"
+        [placeholder]="singleTarget()"
+        [ngModel]="confirmText()"
+        (ngModelChange)="confirmText.set($event)"
+        autocomplete="off"
+      />
+    </div>
+  } @else {
+    @if (visibleItems().length === 0) {
+      <div class="delete-entity__empty" role="status">
+        <p>{{ 'sc.deleteEntityDialog.emptyPruned' | translate }}</p>
+        <p-button
+          type="button"
+          severity="secondary"
+          size="small"
+          data-testid="delete-reset-btn"
+          (onClick)="resetChips()"
+        >
+          <span>{{ 'sc.deleteEntityDialog.reset' | translate }}</span>
+        </p-button>
+      </div>
+    } @else {
+      <div class="delete-entity__chips">
+        @for (item of visibleItems(); track item.id) {
+          <span class="delete-entity__chip">
+            <span>{{ item.name }}</span>
+            <button
+              type="button"
+              class="delete-entity__chip-remove"
+              [attr.aria-label]="'sc.deleteEntityDialog.removeFromList' | translate: { name: item.name }"
+              (click)="removeChip(item.id)"
+            >
+              <sc-icon [name]="closeIcon" [size]="iconSizeSm" />
+            </button>
+          </span>
+        }
+      </div>
+    }
+    @if (bulkFooterMessage(); as footer) {
+      <p class="delete-entity__detail">{{ footer }}</p>
+    }
+  }
+
+  <div modal-actions>
+    <p-button
+      type="button"
+      size="small"
+      severity="secondary"
+      data-testid="delete-cancel-btn"
+      (onClick)="cancelled.emit()"
+    >
+      <span>{{ 'sc.deleteEntityDialog.cancel' | translate }}</span>
+    </p-button>
+    <p-button
+      type="button"
+      size="small"
+      severity="danger"
+      [disabled]="!canConfirm()"
+      data-testid="delete-confirm-btn"
+      (onClick)="onConfirm()"
+    >
+      <span>{{ 'sc.deleteEntityDialog.delete' | translate }}</span>
+    </p-button>
+  </div>
+</sc-dialog>
