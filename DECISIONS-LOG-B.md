@@ -654,3 +654,66 @@ Commit por pieza + CI de GitHub Actions verde tras el push.
 - **Lote 7**: section-card §4.5 (API anidada, Figma). **Lote 8**: inline-rename-cell
   + sc-datatable §6. **Lote 9**: Memory + adopción de apps (modal de transcripción
   presentacional + pipeline de publish versionado).
+
+# Lote 8 — inline-rename-cell + sc-datatable (§6, greenfield)
+
+## Context
+Cuarto bloque ejecutado (**promovido sobre el Lote 7**, que está bloqueado en una
+precondición de operador: el Figma Desktop Bridge para medir el nodo Section en
+vivo). Cierra **§6** (el mayor entregable único). Método ya endurecido (7 lotes) +
+preset `datatable.ts` ya tokenizado → el riesgo greenfield queda mitigado. MVP
+no-lazy primero, luego lazy/filter (commit por capacidad).
+
+## Hallazgo del grounding (cambia la premisa, no la dirección)
+La fase de grounding (3 agentes read-only) reveló que **NADIE usa PrimeNG p-table**:
+las list pages reales (agents/users/groups) son **`<table>` semántica bespoke**
+(SortableHeaderDirective + SelectionState + render por `@switch/@case`),
+client-side, **sin lazy**; y el preset `datatable.ts` (18 slots) estaba **sin
+consumir**. El `ColumnDef` existente es de **visibilidad** de columna
+(key/locked/defaultVisible, para el column-selector), no de render.
+
+**Decisión (operador, "lo más pragmático, migration-safe y según principios"):
+wrapper sobre p-table**, no tabla bespoke. Racional: es la tesis del DS (envolver
+PrimeNG + tema por preset), el preset señala esa intención, p-table da
+orden/selección/paginador/lazy/filter robustos, y las páginas bespoke son
+justamente el **target de migración** del Lote 9 (no una contradicción). La tabla
+bespoke descartaría el preset y reinventaría p-table.
+
+## Piezas
+- **8-1 sc-inline-rename-cell**: port bespoke §10 (input nativo, autofocus+select,
+  Enter/✓ commit con trim+empty-disable, Esc/✗ cancel, sin reflow). sc-icon del
+  mirror; 3 aria ES → dict colocado `sc.inlineRenameCell.*`. **Renderer agnóstico
+  de la tabla** → va primero, independiente de la decisión de implementación.
+- **8-2 sc-datatable MVP (no-lazy)**: wrapper sobre `<p-table>`. `ScColumnDef
+  {field, header, sortable?, width?, align?, cellTemplate?}`. Inputs value/columns/
+  dataKey/paginator/rows/rowsPerPageOptions/selectionMode/size/scrollable/
+  stripedRows/showGridlines/loading + sortField/sortOrder; model two-way
+  `selection`; outputs sortChange/page. Slots `[scTableCaption]`/`[scTableEmpty]`.
+- **8-3 lazy + filtro**: inputs `lazy`/`totalRecords`/`filters`/`globalFilterFields`;
+  outputs `(lazyLoad)`/`(filterChange)`; método imperativo `filterGlobal()`.
+
+## Refinamientos de API (validados con evidencia; coherentes con el resto del DS)
+1. **`header` string YA traducido por el consumidor** (no `headerKey`). 1:1 con el
+   patrón real del molde (`translate.instant`) y con la decisión de la paleta de
+   comandos: **el DS no traduce contenido** → sc-datatable no lleva dict i18n.
+2. **Celda custom por `cellTemplate: TemplateRef`** (contexto `{$implicit,rowIndex}`),
+   **NO un enum de cell-types** (acoplaría tipos de celda al DS, mismo anti-patrón
+   que las categorías DS-owned). El consumidor compone avatar+nombre /
+   `sc-inline-rename-cell` / badges libremente.
+3. **`size` sm/md/lg → `size` de p-table** (md = padding base del preset).
+4. **Filtro imperativo (`filterGlobal`)**, no reactivo por `[filters]`: el
+   `ngOnChanges` de p-table NO observa el input `filters` (es solo estado inicial),
+   verificado en `primeng-table.mjs`. El wrapper expone `filterGlobal(value,
+   matchMode)` (viewChild del Table interno) — funciona en cliente y en lazy.
+
+## Verificación del lote
+`npm run verify` limpio. `CI=1 npm run e2e` verde (3 specs nuevos: inline-rename-cell,
+datatable MVP, datatable lazy + previos). Commit por pieza + CI de GitHub Actions
+verde tras el push. `§6` cerrado.
+
+## Diferido (roadmap Lotes 7 + 9)
+- **Lote 7**: section-card §4.5 (API anidada) — **bloqueado** en el Figma Desktop
+  Bridge (acción de operador). **Lote 9**: Memory + adopción (las list pages bespoke
+  migran a sc-datatable + sc-inline-rename-cell; modal de transcripción presentacional;
+  pipeline de publish versionado). Wrappers secundarios del datatable
+  (accordion/breadcrumb/menu/stepper/tabs) **solo si** un consumidor real los pide.
