@@ -26,6 +26,12 @@
   --sc-sidebar-bg: var(--sc-color-blue-700);
   --sc-topbar-height: 56px;
   --sc-bulk-action-bar-height: 56px;
+  /*
+   * Offset que `sc-section-card` aplica como `scroll-margin-top` para que el
+   * salto-a-ancla de `sc-form-section-nav` deje la sección por debajo del sticky
+   * form header al hacer scroll. Default 80px (paridad con el platform).
+   */
+  --sc-form-anchor-offset: 80px;
 
   /* ---------- Shadows ---------- */
   /*
