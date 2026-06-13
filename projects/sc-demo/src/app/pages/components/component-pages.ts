@@ -248,4 +248,12 @@ export const SC_DEMO_COMPONENT_PAGES = [
         (m) => m.KeyboardShortcutsDemoComponent,
       ),
   },
+  {
+    path: 'inlinerenamecell',
+    label: 'InlineRenameCell',
+    load: () =>
+      import('./inlinerenamecell/inlinerenamecell-demo.component').then(
+        (m) => m.InlineRenameCellDemoComponent,
+      ),
+  },
 ] satisfies ScDemoComponentPage[];

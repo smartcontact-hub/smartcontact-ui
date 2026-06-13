@@ -57,6 +57,7 @@ export * from './lib/components/command-palette/sc-command-palette.component';
 export * from './lib/components/command-palette/sc-command-palette.service';
 export * from './lib/components/keyboard-shortcuts/sc-keyboard-shortcuts.component';
 export * from './lib/components/keyboard-shortcuts/sc-keyboard-shortcuts.service';
+export * from './lib/components/inline-rename-cell/sc-inline-rename-cell.component';
 export * from './lib/core/avatar-illustration';
 export * from './lib/core/utils/is-typing-target';
 export * from './lib/core/services/sc-clipboard.service';

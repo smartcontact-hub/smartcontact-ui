@@ -1,0 +1,32 @@
+<!-- eslint-disable-next-line @angular-eslint/template/click-events-have-key-events, @angular-eslint/template/interactive-supports-focus -->
+<div class="rename" (click)="$event.stopPropagation()">
+  <input
+    #input
+    type="text"
+    class="rename__input"
+    [ngModel]="value()"
+    (ngModelChange)="value.set($event)"
+    (keydown)="onKey($event)"
+    [placeholder]="placeholder()"
+    [attr.aria-label]="ariaLabel() || ('sc.inlineRenameCell.defaultAriaLabel' | translate)"
+    spellcheck="false"
+    autocomplete="off"
+  />
+  <button
+    type="button"
+    class="rename__btn rename__btn--commit"
+    (click)="onCommit()"
+    [disabled]="!value().trim()"
+    [attr.aria-label]="'sc.inlineRenameCell.confirm' | translate"
+  >
+    <sc-icon [name]="checkIcon" [size]="iconSizeMd" />
+  </button>
+  <button
+    type="button"
+    class="rename__btn rename__btn--cancel"
+    (click)="onCancel()"
+    [attr.aria-label]="'sc.inlineRenameCell.cancel' | translate"
+  >
+    <sc-icon [name]="closeIcon" [size]="iconSizeMd" />
+  </button>
+</div>

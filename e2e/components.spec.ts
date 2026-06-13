@@ -943,3 +943,36 @@ test.describe('sc-keyboard-shortcuts', () => {
     await screenshotBaseline(page, 'keyboardshortcuts');
   });
 });
+
+test.describe('sc-inline-rename-cell', () => {
+  test('edita in-place: autofocus, vacío deshabilita, Enter confirma, Esc revierte', async ({
+    page,
+  }) => {
+    await gotoPage(page, 'inlinerenamecell');
+    await expect(page.getByTestId('rename-value')).toHaveText('Valor: Equipo de Soporte');
+
+    // entra a modo edición → autofocus en el input con el valor sembrado.
+    await page.getByTestId('start-edit').click();
+    const input = page.getByTestId('sc-inline-rename').locator('input');
+    await expect(input).toBeFocused();
+    await expect(input).toHaveValue('Equipo de Soporte');
+
+    // vacío / solo-espacios deshabilita el commit.
+    await input.fill('   ');
+    await expect(page.getByTestId('sc-inline-rename').locator('.rename__btn--commit')).toBeDisabled();
+
+    // teclear + Enter confirma (valor trimmeado).
+    await input.fill('Ventas');
+    await input.press('Enter');
+    await expect(page.getByTestId('rename-value')).toHaveText('Valor: Ventas');
+
+    // re-edita y Esc revierte (el valor no cambia).
+    await page.getByTestId('start-edit').click();
+    const input2 = page.getByTestId('sc-inline-rename').locator('input');
+    await input2.fill('Borrado');
+    await input2.press('Escape');
+    await expect(page.getByTestId('rename-value')).toHaveText('Valor: Ventas');
+
+    await screenshotBaseline(page, 'inlinerenamecell');
+  });
+});

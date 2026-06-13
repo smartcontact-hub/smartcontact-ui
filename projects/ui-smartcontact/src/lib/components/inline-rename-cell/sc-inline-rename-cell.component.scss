@@ -1,0 +1,112 @@
+:host {
+  display: block;
+  /* Match the resting cell's vertical rhythm so swapping in/out causes no shift. */
+  min-height: 1.6em;
+}
+
+.rename {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-25);
+  width: 100%;
+  /* Subtle "edit mode" affordance: bottom underline grows from accent token. */
+  background: var(--sc-bg-primary-subtle);
+  border-radius: var(--sc-radius-100);
+  padding: 0 var(--sc-spacing-0-25);
+  animation: rename-in var(--sc-transition-base) var(--sc-easing-emphasized);
+
+  &__input {
+    flex: 1 1 auto;
+    min-width: 0;
+    background: transparent;
+    border: 0;
+    padding: 2px 0;
+    margin: 0;
+    font: inherit;
+    color: var(--sc-text-primary);
+    line-height: inherit;
+    outline: none;
+
+    &::placeholder {
+      color: var(--sc-text-subtle);
+    }
+
+    /* Subtle caret/selection tinting to match accent. */
+    caret-color: var(--sc-bg-primary);
+    &::selection {
+      background: var(--sc-color-soft-blue-200);
+      color: var(--sc-text-primary);
+    }
+  }
+
+  &__btn {
+    flex: 0 0 auto;
+    width: 22px;
+    height: 22px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    border: 0;
+    border-radius: var(--sc-radius-full);
+    background: transparent;
+    color: var(--sc-icon-secondary);
+    cursor: pointer;
+    /* Two-token transition: faster color, slower transform for "press" feel. */
+    transition:
+      background var(--sc-transition-fast) var(--sc-easing-default),
+      color var(--sc-transition-fast) var(--sc-easing-default),
+      transform var(--sc-transition-base) var(--sc-easing-emphasized);
+
+    &:hover {
+      background: var(--sc-bg-secondary-hover);
+      color: var(--sc-text-primary);
+    }
+
+    &:active:not(:disabled) {
+      transform: scale(0.92);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--sc-border-focus);
+      outline-offset: 1px;
+    }
+
+    &:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    &--commit:hover:not(:disabled) {
+      background: var(--sc-bg-success-subtle);
+      color: var(--sc-text-success);
+    }
+
+    &--cancel:hover {
+      background: var(--sc-bg-danger-subtle);
+      color: var(--sc-text-danger);
+    }
+  }
+}
+
+@keyframes rename-in {
+  from {
+    background: transparent;
+    transform: translateY(-1px);
+    opacity: 0.5;
+  }
+  to {
+    background: var(--sc-bg-primary-subtle);
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .rename {
+    animation: none;
+
+    &__btn {
+      transition: none;
+    }
+  }
+}
