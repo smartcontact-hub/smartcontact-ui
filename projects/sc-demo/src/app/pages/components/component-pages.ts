@@ -202,4 +202,12 @@ export const SC_DEMO_COMPONENT_PAGES = [
         (m) => m.StickyFormHeaderDemoComponent,
       ),
   },
+  {
+    path: 'impactpreviewdialog',
+    label: 'ImpactPreviewDialog',
+    load: () =>
+      import('./impactpreviewdialog/impactpreviewdialog-demo.component').then(
+        (m) => m.ImpactPreviewDialogDemoComponent,
+      ),
+  },
 ] satisfies ScDemoComponentPage[];

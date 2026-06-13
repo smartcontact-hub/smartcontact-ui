@@ -722,3 +722,24 @@ test.describe('sc-sticky-form-header', () => {
     await screenshotBaseline(page, 'stickyformheader');
   });
 });
+
+test.describe('sc-impact-preview-dialog', () => {
+  test('compone sc-dialog; pruning de items + confirm emite supervivientes', async ({ page }) => {
+    await gotoPage(page, 'impactpreviewdialog');
+    await page.getByTestId('open-impact').click();
+
+    const dialog = page.getByTestId('sc-impact');
+    await expect(dialog.locator('.sc-dialog')).toBeVisible();
+
+    // 3 items proyectados en el body de la card
+    await expect(dialog.locator('.item')).toHaveCount(3);
+
+    // quitar el primero → 2 items (el último no se puede quitar)
+    await dialog.locator('.item').first().locator('.item__remove').click();
+    await expect(dialog.locator('.item')).toHaveCount(2);
+
+    // confirmar (botón primario del footer) → emite los 2 supervivientes
+    await dialog.locator('[modal-actions] p-button').last().locator('button').click();
+    await expect(page.getByTestId('impact-result')).toHaveText('confirmado: 2');
+  });
+});

@@ -48,5 +48,6 @@ export * from './lib/components/bulk-action-bar/sc-bulk-action-bar.component';
 export * from './lib/components/bulk-action-bar/use-bulk-entity-i18n';
 export * from './lib/components/form-danger-zone/sc-form-danger-zone.component';
 export * from './lib/components/sticky-form-header/sc-sticky-form-header.component';
+export * from './lib/components/impact-preview-dialog/sc-impact-preview-dialog.component';
 export * from './lib/config/provide-smartcontact-ui';
 export { default as scPreset } from './lib/theme/sc-preset';

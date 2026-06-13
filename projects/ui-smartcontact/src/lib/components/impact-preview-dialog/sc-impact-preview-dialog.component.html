@@ -1,0 +1,58 @@
+<sc-dialog
+  [visible]="visible()"
+  [icon]="mode() === 'duplicate' ? duplicateIcon : arrowIcon"
+  [title]="title()"
+  width="520px"
+  (cancelled)="cancelled.emit()"
+>
+  @if (badge(); as b) {
+    <div class="badge">
+      <span class="badge__field">{{ b.fieldLabel }}</span>
+      @if (b.currentValueLabel) {
+        <span class="badge__current">{{ b.currentValueLabel }}</span>
+        <span class="badge__arrow" aria-hidden="true">
+          <sc-icon [name]="arrowIcon" [size]="iconSizeMd" />
+        </span>
+      }
+      <span class="badge__new">{{ b.newValueLabel }}</span>
+    </div>
+  }
+
+  <ul class="items" [attr.data-empty]="survivingItems().length === 0">
+    @for (item of survivingItems(); track item.id) {
+      <li class="item">
+        <span class="item__name">{{ item.name }}</span>
+        @if (item.hint) {
+          <span class="item__hint">{{ item.hint }}</span>
+        }
+        <button
+          type="button"
+          class="item__remove"
+          (click)="remove(item.id)"
+          [attr.aria-label]="'sc.impactPreviewDialog.remove' | translate: { name: item.name }"
+          [disabled]="survivingItems().length <= 1"
+        >
+          <sc-icon [name]="closeIcon" [size]="iconSizeSm" />
+        </button>
+      </li>
+    }
+    @if (survivingItems().length === 0) {
+      <li class="items__empty">{{ 'sc.impactPreviewDialog.empty' | translate }}</li>
+    }
+  </ul>
+
+  <div modal-actions>
+    <p-button type="button" size="small" severity="secondary" (onClick)="cancelled.emit()">
+      <span>{{ cancelLabel() ?? ('sc.impactPreviewDialog.cancel' | translate) }}</span>
+    </p-button>
+    <p-button
+      type="button"
+      size="small"
+      severity="primary"
+      [disabled]="!canConfirm()"
+      (onClick)="onConfirm()"
+    >
+      <span>{{ confirmLabel() ?? ('sc.impactPreviewDialog.confirm' | translate) }}</span>
+    </p-button>
+  </div>
+</sc-dialog>

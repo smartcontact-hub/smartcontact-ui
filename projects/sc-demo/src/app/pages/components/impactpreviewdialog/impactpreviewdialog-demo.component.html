@@ -1,0 +1,26 @@
+<h1>sc-impact-preview-dialog</h1>
+
+<p>
+  Previsualización de una operación en bloque antes de aplicar. Los items se
+  pueden quitar uno a uno (el último no); el confirm emite los ids
+  supervivientes. Compone la <code>sc-dialog</code> canónica.
+</p>
+
+<button type="button" (click)="open.set(true)" data-testid="open-impact">
+  Previsualizar impacto
+</button>
+
+<sc-impact-preview-dialog
+  [visible]="open()"
+  mode="bulkEdit"
+  title="Aplicar cambios a 3 agentes"
+  [items]="items()"
+  [badge]="badge"
+  (cancelled)="open.set(false)"
+  (confirm)="onConfirm($event)"
+  data-testid="sc-impact"
+/>
+
+@if (result(); as r) {
+  <p data-testid="impact-result">confirmado: {{ r.length }}</p>
+}

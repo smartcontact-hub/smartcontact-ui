@@ -1,0 +1,139 @@
+/* El contenido (badge + lista + botonera) se proyecta en la `sc-dialog`
+ * canónica (§4.3), que ya pinta su propia card con padding. El bloque
+ * `::ng-deep .sc-impact-dialog .p-dialog-*` del origen se omite: apuntaba a la
+ * estructura del wrapper fino anterior y nunca recibía styleClass — el tamaño
+ * lo fija `width="520px"` sobre la sc-dialog. */
+:host {
+  display: contents;
+}
+
+.badge {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sc-spacing-0-5);
+  padding: var(--sc-spacing-0-5) var(--sc-spacing-0-875);
+  margin-bottom: var(--sc-spacing-1-125);
+  background: var(--sc-bg-secondary-subtle);
+  border: 1px solid var(--sc-border-subtle);
+  border-radius: var(--sc-radius-200);
+  font-size: var(--sc-font-size-200);
+
+  &__field {
+    color: var(--sc-text-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-size: var(--sc-font-size-100);
+    font-weight: var(--sc-font-weight-semibold);
+  }
+
+  &__current {
+    color: var(--sc-text-secondary);
+    text-decoration: line-through;
+    text-decoration-color: var(--sc-text-subtle);
+  }
+
+  &__arrow {
+    display: inline-flex;
+    align-items: center;
+    color: var(--sc-icon-subtle);
+  }
+
+  &__new {
+    color: var(--sc-text-primary);
+    font-weight: var(--sc-font-weight-semibold);
+  }
+}
+
+.items {
+  list-style: none;
+  margin: 0 0 var(--sc-spacing-0-875);
+  padding: 0;
+  max-height: 280px;
+  overflow-y: auto;
+  border: 1px solid var(--sc-border-subtle);
+  border-radius: var(--sc-radius-200);
+
+  &[data-empty='true'] {
+    border-style: dashed;
+    background: var(--sc-bg-secondary-subtle);
+  }
+
+  &__empty {
+    padding: var(--sc-spacing-1-125);
+    color: var(--sc-text-subtle);
+    font-size: var(--sc-font-size-200);
+    text-align: center;
+  }
+}
+
+.item {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-875);
+  padding: var(--sc-spacing-0-5) var(--sc-spacing-1-125);
+  font-size: var(--sc-font-size-200);
+  color: var(--sc-text-primary);
+  border-bottom: 1px solid var(--sc-border-subtle);
+  transition: background var(--sc-transition-fast) var(--sc-easing-default);
+
+  &:last-child {
+    border-bottom: 0;
+  }
+
+  &:hover {
+    background: var(--sc-bg-secondary-hover);
+
+    .item__remove {
+      opacity: 1;
+    }
+  }
+
+  &__name {
+    flex: 1 1 auto;
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__hint {
+    color: var(--sc-text-secondary);
+    font-size: var(--sc-font-size-100);
+  }
+
+  &__remove {
+    flex: 0 0 auto;
+    width: 22px;
+    height: 22px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: 0;
+    border-radius: var(--sc-radius-full);
+    color: var(--sc-icon-subtle);
+    opacity: 0;
+    cursor: pointer;
+    transition:
+      opacity var(--sc-transition-fast) var(--sc-easing-default),
+      background var(--sc-transition-fast) var(--sc-easing-default),
+      color var(--sc-transition-fast) var(--sc-easing-default);
+
+    &:hover:not(:disabled) {
+      background: var(--sc-bg-danger-subtle);
+      color: var(--sc-text-danger);
+    }
+
+    &:focus-visible {
+      opacity: 1;
+      outline: 2px solid var(--sc-border-focus);
+      outline-offset: 1px;
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0;
+    }
+  }
+}
