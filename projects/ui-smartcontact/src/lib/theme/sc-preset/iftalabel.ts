@@ -4,7 +4,7 @@ import type { IftaLabelDesignTokens } from '@primeuix/themes/types/iftalabel';
     root: {
         top: "{form.field.padding.y}",
         color: "{form.field.float.label.color}",
-        fontSize: "var(--sc-scale-0-75)",
+        fontSize: "var(--sc-font-size-100)",
         positionX: "{form.field.padding.x}",
         focusColor: "{form.field.float.label.focus.color}",
         fontWeight: "400",

@@ -7,7 +7,7 @@ import type { TagDesignTokens } from '@primeuix/themes/types/tag';
     root: {
         gap: "var(--sc-scale-0-25)",
         padding: "var(--sc-scale-0-25) var(--sc-scale-0-5)",
-        fontSize: "var(--sc-scale-0-875)",
+        fontSize: "var(--sc-font-size-100)",
         fontWeight: "700",
         borderRadius: "{content.border.radius}",
         roundedBorderRadius: "{border.radius.xl}"

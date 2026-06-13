@@ -38,7 +38,7 @@ import type { ToastDesignTokens } from '@primeuix/themes/types/toast';
         }
     },
     detail: {
-        fontSize: "var(--sc-scale-0-875)",
+        fontSize: "var(--sc-font-size-100)",
         fontWeight: "500"
     },
     content: {

@@ -25,10 +25,10 @@ import type { MessageDesignTokens } from '@primeuix/themes/types/message';
     },
     text: {
         lg: {
-            fontSize: "var(--sc-scale-1-125)"
+            fontSize: "var(--sc-font-size-300)"
         },
         sm: {
-            fontSize: "var(--sc-scale-0-875)"
+            fontSize: "var(--sc-font-size-100)"
         },
         fontSize: "var(--sc-scale-1)",
         fontWeight: "500"

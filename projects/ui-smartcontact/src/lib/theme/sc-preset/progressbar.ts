@@ -8,7 +8,7 @@ import type { ProgressBarDesignTokens } from '@primeuix/themes/types/progressbar
     },
     label: {
         color: "{primary.contrast.color}",
-        fontSize: "var(--sc-scale-0-75)",
+        fontSize: "var(--sc-font-size-100)",
         fontWeight: "600"
     },
     value: {

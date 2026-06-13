@@ -25,7 +25,7 @@ import type { FloatLabelDesignTokens } from '@primeuix/themes/types/floatlabel';
     root: {
         color: "{form.field.float.label.color}",
         active: {
-            fontSize: "var(--sc-scale-0-75)",
+            fontSize: "var(--sc-font-size-100)",
             fontWeight: "400"
         },
         positionX: "{form.field.padding.x}",
