@@ -144,4 +144,9 @@ export const SC_DEMO_COMPONENT_PAGES = [
     label: 'ToggleSwitch',
     load: () => import('./toggleswitch/toggleswitch-demo.component').then((m) => m.ToggleSwitchDemoComponent),
   },
+  {
+    path: 'dialog',
+    label: 'Dialog',
+    load: () => import('./dialog/dialog-demo.component').then((m) => m.DialogDemoComponent),
+  },
 ] satisfies ScDemoComponentPage[];

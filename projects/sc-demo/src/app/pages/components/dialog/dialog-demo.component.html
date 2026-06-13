@@ -1,0 +1,26 @@
+<h1>sc-dialog</h1>
+
+<h2>Card canónica (declarativa, two-way)</h2>
+<div class="row">
+  <sc-button label="Abrir diálogo" data-testid="open-dialog" (clicked)="open.set(true)" />
+</div>
+
+<sc-dialog
+  [(visible)]="open"
+  title="¿Eliminar el agente?"
+  subtitle="Esta acción no se puede deshacer."
+  icon="delete"
+  data-testid="sc-dialog"
+>
+  <p>El agente y sus datos asociados se eliminarán permanentemente.</p>
+  <div modal-actions>
+    <sc-button label="Cancelar" variant="secondary" appearance="outlined" data-testid="dialog-cancel" (clicked)="open.set(false)" />
+    <sc-button label="Eliminar" variant="danger" (clicked)="open.set(false)" />
+  </div>
+</sc-dialog>
+
+<h2>Dynamic dialog (servicio, componente al vuelo)</h2>
+<div class="row">
+  <sc-button label="Abrir dinámico" data-testid="open-dynamic" (clicked)="openDynamic()" />
+</div>
+<p>Resultado dinámico: <span data-testid="dyn-result">{{ dynResult() }}</span></p>

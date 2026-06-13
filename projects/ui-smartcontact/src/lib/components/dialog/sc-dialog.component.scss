@@ -1,0 +1,159 @@
+/*
+ * Modal card chrome. The PrimeNG `<p-dialog>` host is reset to
+ * transparent (see `:host ::ng-deep .sc-dialog-host` below) so the
+ * visible chrome is entirely this `.sc-dialog` block.
+ */
+.sc-dialog {
+  display: flex;
+  flex-direction: column;
+  background: var(--sc-dialog-bg);
+  border: 1px solid var(--sc-dialog-border);
+  border-radius: var(--sc-dialog-radius);
+  box-shadow: var(--sc-dialog-shadow);
+  /* Cap height so very long body content scrolls inside the modal */
+  max-height: min(85vh, 720px);
+
+  &__head {
+    /* Figma `dialog/header/padding: 17.5` all sides, `dialog/header/gap: 7`.
+     * NO border-bottom — el padding scheme + tipografía dan jerarquía
+     * sin necesidad de divider lines (Figma reference). */
+    display: flex;
+    align-items: flex-start;
+    gap: var(--sc-dialog-header-gap);
+    padding: var(--sc-dialog-padding);
+  }
+
+  &__head-icon {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--sc-dialog-head-icon-fg);
+    /* Reserve a fixed slot so adding/removing the icon never shifts the
+     * title baseline. */
+    width: 16px;
+    height: 28px; /* matches title line-height so they align on baseline */
+  }
+
+  &__head-text {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  &__title {
+    /* Figma `dialog/title/font/size: 17.5` (raw), `font/weight: 600`. */
+    margin: 0;
+    font-family: var(--sc-font-family-primary);
+    font-weight: var(--sc-dialog-title-font-weight);
+    font-size: var(--sc-dialog-title-font-size);
+    line-height: 1.4;
+    color: var(--sc-dialog-title);
+    /* Long titles wrap; never truncate (the user needs to read what
+     * they're confirming). */
+    word-break: break-word;
+  }
+
+  &__subtitle {
+    margin: 0;
+    font-family: var(--sc-font-family-body-2);
+    font-weight: var(--sc-font-weight-body-2);
+    font-size: var(--sc-font-size-body-2);
+    line-height: var(--sc-line-height-body-2);
+    color: var(--sc-dialog-subtitle);
+  }
+
+  &__close {
+    flex: 0 0 auto;
+    width: 28px;
+    height: 28px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: 0;
+    border-radius: var(--sc-radius-100);
+    background: transparent;
+    color: var(--sc-dialog-close-fg);
+    cursor: pointer;
+
+    &:hover {
+      background: var(--sc-dialog-close-bg-hover);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--sc-color-electric-blue-500);
+      outline-offset: 2px;
+    }
+  }
+
+  &__body {
+    /* Figma `dialog/content/padding`: 17.5 lados/abajo, top:0
+     * (el header ya pone 17.5 abajo — sin top el doble padding desaparece
+     * en la costura). Acepta cualquier contenido stackeado via <ng-content>:
+     * párrafos, formularios, sc-inputtext, sc-select, listas, lo que sea.
+     * El contenedor es scrollable (overflow-y: auto) si el cap de
+     * max-height del modal se supera. */
+    flex: 1 1 auto;
+    overflow-y: auto;
+    padding: 0 var(--sc-dialog-padding) var(--sc-dialog-padding);
+    color: var(--sc-dialog-title);
+    display: flex;
+    flex-direction: column;
+    gap: var(--sc-spacing-1-125); /* gap default entre elementos directos del body */
+  }
+
+  &__foot {
+    /* Figma `dialog/footer/padding`: 17.5 lados/abajo, top:0 (content
+     * ya pone 17.5 abajo). `dialog/footer/gap: 7` entre botones. */
+    flex: 0 0 auto;
+    display: flex;
+    justify-content: flex-end;
+    gap: var(--sc-dialog-footer-gap);
+    padding: 0 var(--sc-dialog-padding) var(--sc-dialog-padding);
+    border-top: 0;
+  }
+
+  /* Bodyless modals (confirm-host etc.) have no body slot. Sin border-bottom
+   * en header (que ya quitamos) ni border-top en footer (también quitado),
+   * no hace falta override — el modal lee como un solo bloque continuo.
+   * Mantenemos la clase para futuras necesidades de styling. */
+  &--bodyless &__head {
+    /* placeholder for future overrides */
+  }
+
+  &--bodyless &__foot {
+    /* placeholder for future overrides */
+  }
+}
+
+/*
+ * PrimeNG `<p-dialog>` wraps our content in a styled container that
+ * paints its own background, border and padding. Strip those so the
+ * `.sc-dialog` card we render is the only visible chrome.
+ */
+:host ::ng-deep .sc-dialog-host {
+  background: transparent !important;
+  border: 0 !important;
+  box-shadow: none !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+}
+
+:host ::ng-deep .sc-dialog-host .p-dialog-content {
+  background: transparent !important;
+  padding: 0 !important;
+  border-radius: 0 !important;
+  overflow: visible !important;
+}
+
+/*
+ * Footer buttons are projected as `<p-button>` (clase `.p-button`), no `.btn`.
+ * Una regla previa `.sc-dialog__foot .btn { min-width }` apuntaba a `.btn`
+ * (clase que no existe en ningún consumer real — solo en el ejemplo del JSDoc)
+ * → era dead code. Los botones del footer son content-width por diseño (patrón
+ * SnowUI: dos acciones compactas), con `size="small"` en los consumers y la
+ * separación dada por `--sc-dialog-footer-gap`. Sin min-width forzado.
+ */

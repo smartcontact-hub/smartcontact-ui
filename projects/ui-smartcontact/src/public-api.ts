@@ -37,5 +37,7 @@ export * from './lib/components/confirmdialog/sc-confirm.service';
 export * from './lib/components/inputtext/sc-inputtext.component';
 export * from './lib/components/select/sc-select.component';
 export * from './lib/components/toggleswitch/sc-toggleswitch.component';
+export * from './lib/components/dialog/sc-dialog.component';
+export * from './lib/components/dynamic-dialog/sc-dynamic-dialog.service';
 export * from './lib/config/provide-smartcontact-ui';
 export { default as scPreset } from './lib/theme/sc-preset';

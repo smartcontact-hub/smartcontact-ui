@@ -484,3 +484,32 @@ test.describe('sc-toggleswitch', () => {
     await screenshotBaseline(page, 'toggleswitch');
   });
 });
+
+test.describe('sc-dialog', () => {
+  test('card canónica: abre two-way, métrica del Kit (radio 12), header/footer y cierra', async ({ page }) => {
+    await gotoPage(page, 'dialog');
+    await page.getByTestId('open-dialog').locator('button').click();
+    const dialog = page.locator('.sc-dialog');
+    await expect(dialog).toBeVisible();
+    // título + subtítulo + icono renderizados desde inputs
+    await expect(dialog.getByText('¿Eliminar el agente?')).toBeVisible();
+    await expect(dialog.getByText('Esta acción no se puede deshacer.')).toBeVisible();
+    await expect(dialog.locator('sc-icon').first()).toBeVisible();
+    // footer projection
+    await expect(page.getByTestId('dialog-cancel')).toBeVisible();
+    // la card canónica pinta su propio radio (Kit dialog = 12); el .p-dialog
+    // host es transparente (showHeader=false).
+    expect((await styleOf(dialog, ['border-radius']))['border-radius']).toBe('12px');
+    // cierra con ESC → two-way baja a false
+    await page.keyboard.press('Escape');
+    await expect(dialog).toBeHidden();
+  });
+
+  test('dynamic dialog: abre componente al vuelo y resuelve onClose', async ({ page }) => {
+    await gotoPage(page, 'dialog');
+    await page.getByTestId('open-dynamic').locator('button').click();
+    await expect(page.getByTestId('dyn-content')).toBeVisible();
+    await page.getByTestId('dyn-close').locator('button').click();
+    await expect(page.getByTestId('dyn-result')).toHaveText('ok');
+  });
+});

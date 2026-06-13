@@ -1,0 +1,61 @@
+<p-dialog
+  [visible]="visible()"
+  [modal]="modal()"
+  [closable]="closable()"
+  [closeOnEscape]="closable()"
+  [draggable]="draggable()"
+  [resizable]="resizable()"
+  [position]="position()"
+  [showHeader]="false"
+  [dismissableMask]="dismissableMask()"
+  [style]="{ width: width() }"
+  styleClass="sc-dialog-host"
+  (visibleChange)="onVisibleChange($event)"
+  (onShow)="onShow()"
+  (onHide)="onClose()"
+>
+  <section
+    class="sc-dialog"
+    [class.sc-dialog--bodyless]="bodyless()"
+    role="dialog"
+    aria-modal="true"
+    [attr.aria-labelledby]="titleId()"
+    [attr.aria-describedby]="subtitle() ? subtitleId() : null"
+  >
+    <header class="sc-dialog__head">
+      @if (icon(); as ic) {
+        <div class="sc-dialog__head-icon" aria-hidden="true">
+          <sc-icon [name]="ic" [size]="iconSizeLg" />
+        </div>
+      }
+      <div class="sc-dialog__head-text">
+        <h2 class="sc-dialog__title" [id]="titleId()">{{ title() }}</h2>
+        @if (subtitle(); as sub) {
+          <p class="sc-dialog__subtitle" [id]="subtitleId()">{{ sub }}</p>
+        }
+      </div>
+      @if (closable()) {
+        <button
+          type="button"
+          class="sc-dialog__close"
+          [attr.aria-label]="closeAriaLabel()"
+          (click)="onClose()"
+        >
+          <sc-icon [name]="closeIcon" [size]="iconSizeLg" />
+        </button>
+      }
+    </header>
+
+    @if (!bodyless()) {
+      <div class="sc-dialog__body">
+        <ng-content />
+      </div>
+    }
+
+    @if (hasFooter()) {
+      <footer class="sc-dialog__foot">
+        <ng-content select="[modal-actions]" />
+      </footer>
+    }
+  </section>
+</p-dialog>
