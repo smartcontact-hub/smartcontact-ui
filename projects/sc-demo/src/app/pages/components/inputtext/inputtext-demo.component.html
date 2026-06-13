@@ -1,0 +1,14 @@
+<h1>sc-inputtext</h1>
+
+<div class="col">
+  <sc-inputtext label="Nombre" placeholder="Escribe…" [(value)]="name" data-testid="sc-inputtext" />
+  <sc-inputtext label="Obligatorio" [required]="true" helperText="Campo requerido" />
+  <sc-inputtext label="Con error" error="El nombre no es válido" data-testid="sc-inputtext-error" />
+  <sc-inputtext label="Filled" [filled]="true" />
+  <sc-inputtext label="IftaLabel" [iftaLabel]="true" placeholder=" " data-testid="sc-inputtext-ifta" />
+  <sc-inputtext label="Small" size="sm" data-testid="sc-inputtext-sm" />
+  <sc-inputtext label="Large" size="lg" />
+  <sc-inputtext label="Fluid" [fluid]="true" />
+  <sc-inputtext label="Deshabilitado" [disabled]="true" />
+</div>
+<p>Valor: «{{ name() }}»</p>

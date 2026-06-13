@@ -1,0 +1,51 @@
+@if (label() && !iftaLabel()) {
+  <label class="sc-inputtext__label" [attr.for]="resolvedId()">
+    {{ label() }}
+    @if (required()) {
+      <span class="sc-inputtext__required" aria-hidden="true">*</span>
+    }
+  </label>
+}
+
+<div class="sc-inputtext__field">
+  <input
+    pInputText
+    class="sc-inputtext__control"
+    [id]="resolvedId()"
+    [type]="type()"
+    [placeholder]="placeholder() ?? ''"
+    [disabled]="disabled()"
+    [readonly]="readonly()"
+    [fluid]="fluid()"
+    [attr.name]="name() ?? null"
+    [attr.autocomplete]="autocomplete() ?? null"
+    [attr.maxlength]="maxlength() ?? null"
+    [attr.inputmode]="inputmode() ?? null"
+    [attr.aria-invalid]="isInvalid() ? true : null"
+    [attr.aria-describedby]="footerText() ? resolvedId() + '-msg' : null"
+    [attr.aria-required]="required() ? true : null"
+    [value]="value()"
+    (input)="onInput($event)"
+    (focus)="onFocus($event)"
+    (blur)="onBlur($event)"
+  />
+
+  @if (iftaLabel() && label()) {
+    <label class="sc-inputtext__ifta-label" [attr.for]="resolvedId()">
+      {{ label() }}
+      @if (required()) {
+        <span class="sc-inputtext__required" aria-hidden="true">*</span>
+      }
+    </label>
+  }
+</div>
+
+@if (footerText()) {
+  <span
+    class="sc-inputtext__msg"
+    [class.sc-inputtext__msg--error]="!!error()"
+    [id]="resolvedId() + '-msg'"
+  >
+    {{ footerText() }}
+  </span>
+}

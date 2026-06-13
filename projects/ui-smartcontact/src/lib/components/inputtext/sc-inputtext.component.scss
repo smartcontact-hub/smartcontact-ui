@@ -1,0 +1,172 @@
+/*
+ * sc-inputtext — Smart Contact text input.
+ *
+ * La chrome real (border, radius, padding, focus, hover, disabled,
+ * invalid colors) vive en el `<input pInputText>` interno y hereda
+ * de `sc-preset.ts → semantic.colorScheme.{light,dark}.formField.*`
+ * + `semantic.formField.*`. Aquí NO redefinimos esos estilos.
+ *
+ * Este SCSS maneja:
+ *   - vertical field layout (label / input / helper-or-error)
+ *   - size variants (sm / md / lg) con decimales Figma exactos
+ *   - error state propagation al input subyacente
+ *   - filled variant (bg slate-50)
+ */
+
+.sc-inputtext {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-25);
+  min-width: 0;
+}
+
+.sc-inputtext__label {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 2px;
+  /* Figma spec: 14px / Inter Regular / line-height 21px. */
+  font-size: var(--sc-font-size-200);
+  font-weight: var(--sc-font-weight-medium);
+  color: var(--sc-text-secondary);
+  margin-bottom: 2px;
+}
+
+.sc-inputtext__required {
+  color: var(--sc-text-danger);
+  font-weight: var(--sc-font-weight-medium);
+}
+
+.sc-inputtext__field {
+  position: relative;
+  display: flex;
+  align-items: center;
+}
+
+.sc-inputtext__control {
+  width: 100%;
+  font-family: inherit;
+}
+
+/* ────────────────────────────────────────────────────────────────────
+ * IftaLabel — label dentro del campo, top-aligned (Figma node 7462:106725).
+ * El valor baja (padding-top 21 / bottom 7) y el label se fija arriba-dentro
+ * en (x 10.5, top 7), 10.5px regular #8f97a3. Decimales raw = export exacto.
+ * ────────────────────────────────────────────────────────────────────
+ */
+.sc-inputtext--ifta {
+  .sc-inputtext__control {
+    padding-top: 21px;
+    padding-bottom: 7px;
+  }
+
+  .sc-inputtext__ifta-label {
+    position: absolute;
+    top: 7px;
+    left: 10.5px;
+    display: inline-flex;
+    align-items: baseline;
+    gap: 2px;
+    font-size: var(--sc-font-size-50);
+    line-height: 1;
+    font-weight: var(--sc-font-weight-regular);
+    color: var(--sc-text-subtle);
+    pointer-events: none;
+    z-index: 1;
+  }
+}
+
+/* Base (md) font-size. PrimeNG hardcodes `.p-inputtext { font-size: 1rem }`
+ * (16px) y el export del Kit Pro NO define `form.field.font.size` base, así
+ * que el md se fugaba a 16px (Aura). La rampa del Kit es 12.25/[14]/15.75 →
+ * md = 14px. Host-prefijado para ganar a `.p-inputtext` (misma cuenta de
+ * clases). Sin esto, lo que el comentario de size-variants llamaba "Normal:
+ * font 14 (heredado del preset)" nunca era cierto. */
+.sc-inputtext .sc-inputtext__control {
+  font-size: var(--sc-font-size-200);
+}
+
+/* ────────────────────────────────────────────────────────────────────
+ * Size variants — valores EXACTOS Figma Smart Contact Prime,
+ * verificados en nodos 7039:21970 (Small) y 7039:74791 (Large).
+ *
+ *  Small:  font 12.25 / padding 8.75x / 5.25y
+ *  Normal: font 14    / padding 10.5x / 7y   (heredado del preset)
+ *  Large:  font 15.75 / padding 12.25x / 8.75y
+ *
+ * Decimales raw (no token) porque caen off-scale en `--sc-font-size-*`
+ * y `--sc-spacing-*`. Esta es la cota 1:1 que pide la audit con Figma.
+ * ────────────────────────────────────────────────────────────────────
+ */
+.sc-inputtext--sm .sc-inputtext__control {
+  padding-top: var(--sc-spacing-0-375);
+  padding-bottom: var(--sc-spacing-0-375);
+  padding-left: var(--sc-spacing-0-625);
+  padding-right: var(--sc-spacing-0-625);
+  font-size: var(--sc-font-size-100);
+}
+
+.sc-inputtext--lg .sc-inputtext__control {
+  padding-top: var(--sc-spacing-0-625);
+  padding-bottom: var(--sc-spacing-0-625);
+  padding-left: var(--sc-spacing-0-875);
+  padding-right: var(--sc-spacing-0-875);
+  font-size: var(--sc-font-size-300);
+}
+
+/* ────────────────────────────────────────────────────────────────────
+ * Filled variant — Figma `Filled=True` node 1729:42481.
+ *   `inputtext/filled/background = #f8fafc` (slate-50 soft fill).
+ * Border y demás tokens permanecen igual; solo cambia el background.
+ * ────────────────────────────────────────────────────────────────────
+ */
+.sc-inputtext--filled .sc-inputtext__control {
+  background: var(--sc-color-gray-50);
+}
+.sc-inputtext--filled .sc-inputtext__control:hover {
+  background: var(--sc-color-gray-100);
+}
+
+/* ────────────────────────────────────────────────────────────────────
+ * Invalid state — sc-preset already maps `--p-inputtext-border-color`
+ * to `--sc-border-error` when the `<input>` has aria-invalid OR when
+ * we manually paint via this host class. The class path handles cases
+ * where the consumer uses `[error]` without a FormControl behind it.
+ * ────────────────────────────────────────────────────────────────────
+ */
+.sc-inputtext--invalid .sc-inputtext__control {
+  border-color: var(--sc-border-error);
+
+  &:hover,
+  &:focus {
+    border-color: var(--sc-border-error);
+  }
+}
+
+/* ────────────────────────────────────────────────────────────────────
+ * Footer message (helper text OR error).
+ * Reserve 1.25em min-height even when empty so toggling validation
+ * doesn't shift layout (DD#16, "no layout shift" feedback).
+ * ────────────────────────────────────────────────────────────────────
+ */
+.sc-inputtext__msg {
+  display: block;
+  min-height: 1.25em;
+  margin-top: var(--sc-spacing-0-25);
+  /* Figma spec: 12px / Inter Regular / line-height 21px. */
+  font-size: var(--sc-font-size-100);
+  line-height: 1.45;
+  color: var(--sc-text-subtle);
+}
+
+.sc-inputtext__msg--error {
+  color: var(--sc-text-danger);
+}
+
+/* ────────────────────────────────────────────────────────────────────
+ * Disabled. PrimeNG handles input bg/color; we dim the label too so
+ * the whole field reads as inert.
+ * ────────────────────────────────────────────────────────────────────
+ */
+.sc-inputtext--disabled .sc-inputtext__label {
+  color: var(--sc-text-disabled);
+}

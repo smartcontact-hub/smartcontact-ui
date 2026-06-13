@@ -129,4 +129,9 @@ export const SC_DEMO_COMPONENT_PAGES = [
     label: 'ConfirmDialog',
     load: () => import('./confirmdialog/confirmdialog-demo.component').then((m) => m.ConfirmDialogDemoComponent),
   },
+  {
+    path: 'inputtext',
+    label: 'InputText',
+    load: () => import('./inputtext/inputtext-demo.component').then((m) => m.InputTextDemoComponent),
+  },
 ] satisfies ScDemoComponentPage[];

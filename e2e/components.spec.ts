@@ -421,3 +421,24 @@ test.describe('sc-confirmdialog', () => {
     await expect(page.getByTestId('confirm-result')).toHaveText('rechazado');
   });
 });
+
+test.describe('sc-inputtext', () => {
+  test('chrome de campo + métrica del Kit + CVA, ifta y fluid', async ({ page }) => {
+    await gotoPage(page, 'inputtext');
+    const input = page.getByTestId('sc-inputtext').locator('input');
+    expect(await styleOf(input, ['padding-left', 'padding-top', 'border-radius', 'font-size'])).toEqual({
+      'padding-left': '10.5px',
+      'padding-top': '7px',
+      'border-radius': '6px',
+      'font-size': '14px',
+    });
+    await input.fill('hola');
+    await expect(page.getByText('Valor: «hola»')).toBeVisible();
+    await expect(page.getByTestId('sc-inputtext-error').getByText('El nombre no es válido')).toBeVisible();
+    // ifta: label arriba-dentro del campo
+    await expect(page.getByTestId('sc-inputtext-ifta').locator('.sc-inputtext__ifta-label')).toBeVisible();
+    const sm = page.getByTestId('sc-inputtext-sm').locator('input');
+    expect((await styleOf(sm, ['font-size']))['font-size']).toBe('12px');
+    await screenshotBaseline(page, 'inputtext');
+  });
+});
