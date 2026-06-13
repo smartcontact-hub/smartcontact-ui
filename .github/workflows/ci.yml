@@ -26,12 +26,12 @@ jobs:
           npm run tokens:type-parity
       - name: Auditor de escala (stream preset)
         run: npm run audit:theme-scale
+      - name: Build de los 3 paquetes
+        run: npm run build
       - name: Lint + typecheck
         run: |
           npm run lint
           npm run typecheck
-      - name: Build de los 3 paquetes
-        run: npm run build
       - name: Build demo
         run: npm run build:demo
       - name: e2e smoke
