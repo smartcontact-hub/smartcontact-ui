@@ -467,3 +467,20 @@ test.describe('sc-select', () => {
     await screenshotBaseline(page, 'select');
   });
 });
+
+test.describe('sc-toggleswitch', () => {
+  test('métrica del Kit (35×21, handle 14), toggle y readonly', async ({ page }) => {
+    await gotoPage(page, 'toggleswitch');
+    const sw = page.getByTestId('sc-toggle').locator('.p-toggleswitch');
+    expect(await styleOf(sw, ['width', 'height'])).toEqual({ width: '35px', height: '21px' });
+    // toggle emite
+    await sw.click();
+    await expect(page.getByText('Estado: on')).toBeVisible();
+    // readonly NO cambia el estado proyectado
+    const ro = page.getByTestId('sc-toggle-ro').locator('.p-toggleswitch');
+    await expect(ro).toHaveClass(/p-toggleswitch-checked/);
+    await ro.click();
+    await expect(ro).toHaveClass(/p-toggleswitch-checked/);
+    await screenshotBaseline(page, 'toggleswitch');
+  });
+});

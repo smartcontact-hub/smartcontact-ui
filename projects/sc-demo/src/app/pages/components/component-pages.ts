@@ -139,4 +139,9 @@ export const SC_DEMO_COMPONENT_PAGES = [
     label: 'Select',
     load: () => import('./select/select-demo.component').then((m) => m.SelectDemoComponent),
   },
+  {
+    path: 'toggleswitch',
+    label: 'ToggleSwitch',
+    load: () => import('./toggleswitch/toggleswitch-demo.component').then((m) => m.ToggleSwitchDemoComponent),
+  },
 ] satisfies ScDemoComponentPage[];

@@ -1,0 +1,9 @@
+/* Wrapper Extended sobre <p-toggleswitch>. El chrome visual (track + thumb,
+ * focus ring, transitions) lo provee PrimeNG vía tokens --p-toggleswitch-*
+ * mapeados a --sc-* en sc-preset.ts. Mantener este SCSS mínimo — cualquier
+ * brand-divergence va al preset, no aquí. */
+
+:host {
+  display: inline-flex;
+  align-items: center;
+}
