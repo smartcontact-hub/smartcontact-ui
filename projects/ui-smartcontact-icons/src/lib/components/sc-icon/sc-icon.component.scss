@@ -88,3 +88,19 @@
 .sc-icon--filled {
     --sc-icon-fill: 1;
 }
+
+.sc-icon--spin {
+    animation: sc-icon-spin 1s linear infinite;
+}
+
+@keyframes sc-icon-spin {
+    to {
+        transform: rotate(360deg);
+    }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .sc-icon--spin {
+        animation: none;
+    }
+}
