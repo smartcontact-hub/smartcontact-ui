@@ -1,0 +1,14 @@
+<p-drawer
+    [visible]="visible"
+    [header]="header || undefined"
+    [position]="position"
+    [modal]="modal"
+    [dismissible]="dismissible"
+    [closeOnEscape]="closeOnEscape"
+    [showCloseIcon]="showCloseIcon"
+    [fullScreen]="fullScreen"
+    (visibleChange)="onVisibleChange($event)"
+    (onShow)="shown.emit($event)"
+    (onHide)="hidden.emit($event)">
+    <ng-content></ng-content>
+</p-drawer>
