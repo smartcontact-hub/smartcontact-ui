@@ -130,3 +130,62 @@ test.describe('sc-tag', () => {
     await screenshotBaseline(page, 'tag');
   });
 });
+
+test.describe('sc-message', () => {
+  test('métrica del Kit (10.5/7, radio 6, font 14)', async ({ page }) => {
+    await gotoPage(page, 'message');
+    // variant por defecto = simple → content.padding 0 (Kit:
+    // message.simple.content.padding = 0); el 10.5/7 aplica a outlined.
+    const content = page.getByTestId('sc-message').locator('.p-message-content');
+    expect((await styleOf(content, ['padding-left']))['padding-left']).toBe('0px');
+    const outlined = page.getByTestId('sc-message-outlined').locator('.p-message-content');
+    expect(await styleOf(outlined, ['padding-left', 'padding-top'])).toEqual({
+      'padding-left': '10.5px',
+      'padding-top': '7px',
+    });
+    const msg = page.getByTestId('sc-message').locator('.p-message');
+    expect((await styleOf(msg, ['border-radius']))['border-radius']).toBe('6px');
+    const text = page.getByTestId('sc-message').locator('.p-message-text').first();
+    expect(await styleOf(text, ['font-size', 'font-weight'])).toEqual({
+      'font-size': '14px',
+      'font-weight': '500',
+    });
+    await screenshotBaseline(page, 'message');
+  });
+});
+
+test.describe('sc-panel', () => {
+  test('métrica del Kit (header 15.75, radio 6)', async ({ page }) => {
+    await gotoPage(page, 'panel');
+    const panel = page.getByTestId('sc-panel').locator('.p-panel');
+    expect((await styleOf(panel, ['border-radius']))['border-radius']).toBe('6px');
+    const header = page.getByTestId('sc-panel').locator('.p-panel-header');
+    expect((await styleOf(header, ['padding-left']))['padding-left']).toBe('15.75px');
+    await screenshotBaseline(page, 'panel');
+  });
+});
+
+test.describe('sc-skeleton', () => {
+  test('radio del Kit (6) y animación', async ({ page }) => {
+    await gotoPage(page, 'skeleton');
+    const sk = page.getByTestId('sc-skeleton').locator('.p-skeleton');
+    expect((await styleOf(sk, ['border-radius']))['border-radius']).toBe('6px');
+    await screenshotBaseline(page, 'skeleton');
+  });
+});
+
+test.describe('sc-textarea', () => {
+  test('métrica de form field (10.5/7, radio 6, font 14; sm 12)', async ({ page }) => {
+    await gotoPage(page, 'textarea');
+    const ta = page.getByTestId('sc-textarea').locator('textarea');
+    expect(await styleOf(ta, ['padding-left', 'padding-top', 'border-radius', 'font-size'])).toEqual({
+      'padding-left': '10.5px',
+      'padding-top': '7px',
+      'border-radius': '6px',
+      'font-size': '14px',
+    });
+    const sm = page.getByTestId('sc-textarea-sm').locator('textarea');
+    expect((await styleOf(sm, ['font-size']))['font-size']).toBe('12px');
+    await screenshotBaseline(page, 'textarea');
+  });
+});

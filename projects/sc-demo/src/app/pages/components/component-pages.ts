@@ -34,4 +34,24 @@ export const SC_DEMO_COMPONENT_PAGES = [
     label: 'Tag',
     load: () => import('./tag/tag-demo.component').then((m) => m.TagDemoComponent),
   },
+  {
+    path: 'message',
+    label: 'Message',
+    load: () => import('./message/message-demo.component').then((m) => m.MessageDemoComponent),
+  },
+  {
+    path: 'panel',
+    label: 'Panel',
+    load: () => import('./panel/panel-demo.component').then((m) => m.PanelDemoComponent),
+  },
+  {
+    path: 'skeleton',
+    label: 'Skeleton',
+    load: () => import('./skeleton/skeleton-demo.component').then((m) => m.SkeletonDemoComponent),
+  },
+  {
+    path: 'textarea',
+    label: 'Textarea',
+    load: () => import('./textarea/textarea-demo.component').then((m) => m.TextareaDemoComponent),
+  },
 ] satisfies ScDemoComponentPage[];

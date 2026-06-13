@@ -1,0 +1,19 @@
+<h1>sc-message</h1>
+
+<h2>Severities</h2>
+<div class="col">
+  <sc-message text="Mensaje informativo." data-testid="sc-message" />
+  <sc-message text="Operación completada." severity="success" />
+  <sc-message text="Atención requerida." severity="warn" />
+  <sc-message text="Algo ha fallado." severity="danger" />
+  <sc-message text="Mensaje secundario." severity="secondary" />
+</div>
+
+<h2>Variantes y tamaños</h2>
+<div class="col">
+  <sc-message text="Outlined" variant="outlined" data-testid="sc-message-outlined" />
+  <sc-message text="Texto plano" variant="text" />
+  <sc-message text="Small" size="sm" />
+  <sc-message text="Large" size="lg" />
+  <sc-message text="Cerrable" [closable]="true" />
+</div>
