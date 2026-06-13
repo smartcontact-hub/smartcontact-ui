@@ -851,6 +851,10 @@ test.describe('sc-avatar fallback de ilustración', () => {
     await expect(img).toBeVisible();
     // src = {base}/abstract/abstract-0N.svg (hash DJB2 estable del nombre)
     await expect(img).toHaveAttribute('src', /assets\/avatars\/abstract\/abstract-0[0-2]\.svg$/);
+    // a11y: sin ariaLabel explícito, el nombre ES el accesible name (paridad con
+    // el role=img aria-label=name del retirado illustrated-avatar; el img de
+    // p-avatar no lleva alt). Sin esto la ilustración quedaría sin nombre.
+    await expect(img).toHaveAttribute('aria-label', 'Inés García');
   });
 });
 

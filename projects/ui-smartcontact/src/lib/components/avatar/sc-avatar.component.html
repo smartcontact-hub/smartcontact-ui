@@ -13,7 +13,7 @@
         [image]="resolvedImage || undefined"
         [size]="size"
         [shape]="shape"
-        [ariaLabel]="ariaLabel || undefined"
+        [ariaLabel]="resolvedAriaLabel || undefined"
         (onImageError)="imageError.emit($event)">
         <ng-content></ng-content>
     </p-avatar>

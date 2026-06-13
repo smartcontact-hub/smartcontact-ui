@@ -72,6 +72,23 @@ export class ScAvatarComponent {
         return null;
     }
 
+    /**
+     * Accessible name efectivo. Cuando se pinta la ILUSTRACIÓN (sin foto) y el
+     * consumidor no dio `ariaLabel`, el nombre ES el accesible name — paridad con
+     * el `role="img" aria-label="{name}"` del retirado `sc-illustrated-avatar`.
+     * Sin esto, el `<img>` del p-avatar (que no lleva `alt`, solo
+     * `[attr.aria-label]="ariaLabel"`) quedaría sin nombre accesible.
+     */
+    protected get resolvedAriaLabel(): string | null {
+        if (this.ariaLabel) {
+            return this.ariaLabel;
+        }
+        if (!this.image && this.illustrationName) {
+            return this.illustrationName;
+        }
+        return null;
+    }
+
     protected get badgeValue(): string {
         return this.badge == null ? '' : String(this.badge);
     }

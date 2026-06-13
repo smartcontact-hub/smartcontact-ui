@@ -549,8 +549,16 @@ en `core/types`, consumido por tag, chip y el dot-picker.
   los SVG (la app AED ya los tiene). La demo copia solo el pool `abstract` (3
   SVG, ~1 MB) y las demos fijan `pool='abstract'` para que el hash resuelva.
 - Hover-zoom del origen: **omitido** (flourish, no requisito §4.2) — anotado.
+- **A11y (validación post-fusión)**: el `<img>` del `p-avatar` NO lleva `alt`,
+  solo `[attr.aria-label]="ariaLabel"` (verificado en `primeng-avatar.mjs`). La
+  fusión, tal cual, dejaba la ilustración **sin nombre accesible** cuando el
+  consumidor no pasaba `ariaLabel` (el retirado `illustrated-avatar` usaba
+  `role="img" aria-label="{name}"`). Corregido: getter `resolvedAriaLabel` →
+  cuando se pinta la ilustración y no hay `ariaLabel`, el nombre ES el accesible
+  name. e2e lo guarda (`aria-label="Inés García"`).
 - **Base verificada**: e2e — avatar con `illustrationName` pinta `<img>` con src
-  del path abstract hasheado; los avatares de label/badge de lote 1 intactos.
+  del path abstract hasheado + nombre accesible; los avatares de label/badge de
+  lote 1 intactos.
 
 ## Piezas
 - **5-1 sc-color-dot-picker**: port (ya signal-based: `input.required` +
