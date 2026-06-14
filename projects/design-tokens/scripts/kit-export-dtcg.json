@@ -6533,11 +6533,11 @@
       "ring": {
         "width": {
           "$type": "number",
-          "$value": 1
+          "$value": 2
         },
         "color": {
           "$type": "color",
-          "$value": "{primary.color}"
+          "$value": "{sky.500}"
         },
         "offset": {
           "$type": "number",
