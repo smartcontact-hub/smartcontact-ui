@@ -517,6 +517,47 @@ Theme Designer **no es obligatorio**. El dev team puede editar el
 preset a pelo si sabe qué tokens necesita. Es un acelerador para
 iteración visual rápida.
 
+### 2.bis. Sync Theme Designer → repo (el loop diseñador, automatizado)
+
+Desde 2026-06-14 el plugin empuja **directo al repo del DS** y un workflow
+regenera + verifica solo. El export DTCG del plugin **ES** nuestro
+`kit-export-dtcg.json` (misma fuente de verdad de siempre); esto solo automatiza
+el handoff. El loop:
+
+1. **Diseño** edita el tema en el Kit de Figma y pulsa *push* en el plugin
+   (`primeui-figma-plugin-v4`, panel *GitHub Settings*).
+2. El plugin commitea el export DTCG a la rama **`design-tokens-sync`** de
+   `smartcontact-hub/smartcontact-ui`, en la ruta exacta que lee el generador.
+3. El workflow **`tokens-sync`** (`.github/workflows/tokens-sync.yml`) regenera
+   las zonas `@sc-gen` de `01-primitive.css` (`tokens:import`), verifica
+   (`verify` + e2e) y abre/actualiza un **PR a `main`**.
+4. **Verde** = el cambio cuadra con la escala → revisar el diff y mergear.
+   **Rojo** = `tokens:parity`/`guard` detectó drift → ver abajo.
+
+**Ajustes del plugin** (panel *GitHub Settings*):
+
+| Campo | Valor |
+|---|---|
+| Owner / Organization | `smartcontact-hub` |
+| Repository | `smartcontact-ui` |
+| Branch | `design-tokens-sync` |
+| Tokens File | `projects/design-tokens/scripts/kit-export-dtcg.json` |
+| Theme Directory | `.theme-designer/` (descarte — no usamos el preset PrimeNG del plugin) |
+
+El token del plugin necesita scope `repo` sobre la org `smartcontact-hub`.
+
+**Qué fluye solo vs qué no** (importante, sin magia de más). El generador
+(`scripts/token-gen.mjs`) solo regenera **3 zonas**: escala 14-base
+(`--sc-scale-*`), radios y la familia primitiva `zinc`. Por tanto:
+
+- Cambias **espaciado / escala / radios** en el plugin → **automático** (regenera
+  + verifica + PR verde).
+- Cambias **color / semántica de marca** → el export (fuente de verdad) se
+  actualiza, pero esas capas (`02-semantic` / `03-palette` / `04-component`) están
+  **curadas a mano**: `tokens:parity` detecta el drift, el PR va **rojo** con el
+  token exacto, y un dev lo aplica a la capa curada. (Por diseño — ver §"Fuente de
+  verdad de valores" en `foundations-rationale.md`.)
+
 ### 3. Los 5 niveles de customización (de menos a más invasivo)
 
 Cada vez que necesitamos que un componente de PrimeNG se vea

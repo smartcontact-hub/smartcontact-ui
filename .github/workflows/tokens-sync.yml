@@ -1,0 +1,88 @@
+# Loop diseñador → código (decisión A, ver guia-tokens.md §2.bis y DECISIONS-LOG-B).
+#
+# El plugin `primeui-figma-plugin-v4` (Theme Designer) empuja el export DTCG del Kit
+# a la rama `design-tokens-sync`. Este workflow:
+#   1. descarta el preset PrimeNG que el plugin escribe en .theme-designer/ (no lo usamos),
+#   2. regenera las zonas @sc-gen (escala/radios/zinc) de 01-primitive.css (tokens:import),
+#   3. verifica (parity + guard + escala + build + lint + typecheck) + e2e smoke,
+#   4. commitea los primitivos regenerados y abre/actualiza un PR a `main`.
+#
+# VERDE  = el cambio de tema cuadra con la escala → revisar el diff y mergear.
+# ROJO   = tokens:parity/guard detectó drift (típico: color/semántica de marca, que
+#          vive en las capas CURADAS 02–04) → un dev lo aplica a mano y re-empuja.
+name: tokens-sync
+
+on:
+  push:
+    branches: [design-tokens-sync]
+    paths:
+      - projects/design-tokens/scripts/kit-export-dtcg.json
+
+permissions:
+  contents: write
+  pull-requests: write
+
+concurrency:
+  group: tokens-sync
+  cancel-in-progress: true
+
+jobs:
+  sync:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: design-tokens-sync
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+
+      # El plugin escribe su preset PrimeNG en .theme-designer/ — NO lo usamos
+      # (generamos nuestro propio preset desde el DTCG). Se descarta.
+      - name: Descartar el theme/ del plugin
+        run: rm -rf .theme-designer
+
+      # Único punto Figma → CSS: regenera @sc-gen:scale/radius/palette desde el export.
+      - name: Regenerar primitivos desde el export
+        run: npm run tokens:import
+
+      # Mismos guardarraíles que ci.yml. Si el diseñador tocó color/semántica de
+      # marca, tokens:parity detecta el drift y esto va ROJO.
+      - name: Verify (parity + guard + escala + build + lint + typecheck)
+        run: npm run verify
+
+      - name: e2e smoke (regresión visual por cambio de token)
+        run: |
+          npx playwright install --with-deps chromium
+          npm run e2e
+
+      # Aunque verify/e2e fallen, dejamos los primitivos regenerados + el PR como
+      # banco de trabajo: el estado del workflow es la señal verde/rojo.
+      - name: Commit de primitivos regenerados
+        if: always()
+        run: |
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add -A
+          if git diff --cached --quiet; then
+            echo "Sin cambios en zonas generadas (cambio de color/semántica: lo recoge el PR del export)."
+          else
+            git commit -m "chore(tokens): regenera primitivos desde el export del Theme Designer [skip ci]"
+            git push origin HEAD:design-tokens-sync
+          fi
+
+      - name: Abrir / actualizar PR a main
+        if: always()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          if gh pr view design-tokens-sync --json state --jq .state 2>/dev/null | grep -q OPEN; then
+            echo "PR ya abierto — los commits nuevos lo actualizan."
+          else
+            body=$(printf 'Export DTCG nuevo del plugin primeui-figma-plugin-v4 (Theme Designer).\n\n- Primitivos @sc-gen (escala/radios/zinc) regenerados desde el export.\n- Estado del workflow tokens-sync: VERDE = listo para mergear; ROJO = drift en capas curadas (color/semantica) -> aplicar a 02-semantic / 03-palette / 04-component antes de mergear.\n')
+            gh pr create --base main --head design-tokens-sync \
+              --title "chore(tokens): sync del Theme Designer" \
+              --body "$body"
+          fi

@@ -11,6 +11,10 @@ on:
 jobs:
   verify:
     runs-on: ubuntu-latest
+    # El PR de `design-tokens-sync` lo verifica el workflow `tokens-sync` (regenera
+    # primitivos antes de verificar); aquí lo saltamos para no dar un rojo de drift
+    # espurio. En el merge a main, este `verify` corre igual (push → main).
+    if: github.event_name != 'pull_request' || github.head_ref != 'design-tokens-sync'
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5

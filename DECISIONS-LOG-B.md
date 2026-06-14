@@ -888,3 +888,36 @@ eligió **`smartcontact-hub`** (org libre verificada) → scope `@smartcontact-h
    (Settings → Danger Zone → Transfer). `git remote` se auto-redirige.
 3. Publicar con token inline (nunca en el repo/chat):
    `GITHUB_TOKEN=ghp_xxx npm run publish:packages -- --publish` (scopes: write:packages).
+
+---
+
+# Lote 9-2c — Loop Theme Designer → repo (tokens-sync, opción A) (2026-06-14)
+
+## Contexto
+El plugin `primeui-figma-plugin-v4` (Theme Designer) que ya genera nuestro
+`kit-export-dtcg.json` (la **fuente de verdad de valores**, byte-idéntica al export
+del piloto que validó diseño) se conecta directo al repo del DS. NO es fuente de
+tokens nueva — es automatizar el handoff Figma→código que ya estaba documentado
+(`guia-tokens.md` §2, `foundations-rationale.md:51`).
+
+## Decisión (A — auto-regenerar + verificar + PR)
+- El plugin empuja el DTCG a la rama **`design-tokens-sync`**, ruta
+  `projects/design-tokens/scripts/kit-export-dtcg.json` (la que lee `token-gen.mjs`).
+- Workflow **`.github/workflows/tokens-sync.yml`**: descarta el preset PrimeNG del
+  plugin (`.theme-designer/`, no lo usamos) → `tokens:import` (regenera `@sc-gen`
+  de `01-primitive.css`) → `verify` + e2e → commitea primitivos + abre/actualiza PR a `main`.
+- `ci.yml` salta el PR de `design-tokens-sync` (`if head_ref != ...`) para no dar un
+  rojo de drift espurio; en el merge a `main` corre igual.
+- **Verde** = cuadra con la escala. **Rojo** = `tokens:parity`/`guard` detectó drift
+  (color/semántica de marca, capas curadas 02–04) → pasada humana.
+
+## Alcance honesto
+El generador solo regenera 3 zonas (escala 14-base, radios, primitivo `zinc`). Por eso
+espaciado/escala/radios fluyen solos; color/semántica de marca siguen siendo
+aplicación humana a las capas curadas (el PR rojo señala el token exacto). Ampliar el
+generador a más zonas = mejora futura aparte.
+
+## Operator-gated
+Ajustes del panel *GitHub Settings* del plugin (Owner `smartcontact-hub`, Repo
+`smartcontact-ui`, Branch `design-tokens-sync`, Tokens File la ruta del kit-export,
+Theme Directory `.theme-designer/`). Token del plugin con scope `repo` sobre la org.

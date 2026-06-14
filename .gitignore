@@ -43,3 +43,7 @@ Thumbs.db
 
 # npm registry auth (publish) — never commit tokens
 .npmrc
+
+# Output del Theme Designer (plugin primeui-figma-plugin-v4): preset PrimeNG que NO
+# usamos (generamos el nuestro desde el DTCG). El workflow tokens-sync lo descarta.
+.theme-designer/
