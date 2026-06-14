@@ -1,0 +1,52 @@
+# Despliega el showcase (sc-demo) a GitHub Pages en cada push a main.
+# Tras mergear el PR de tokens (tokens-sync) → main se reconstruye y la página
+# viva se actualiza sola (~1-2 min). Equivale al ds-docs desplegado del consumidor.
+#
+# REQUISITOS (una sola vez, los hace el operador — son cambios de visibilidad/ajustes):
+#   1. El repo debe permitir Pages: en Free, eso implica repo PÚBLICO.
+#   2. Settings → Pages → Build and deployment → Source: "GitHub Actions".
+name: deploy-demo
+
+on:
+  push:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+# Un solo deploy a la vez; no cancelar uno en curso.
+concurrency:
+  group: pages
+  cancel-in-progress: false
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - run: npm ci
+      # El sc-icon necesita el font generado antes de compilar el demo.
+      - run: npm run build:icons
+      # base-href = /<repo>/ para project Pages (smartcontact-hub.github.io/smartcontact-ui/).
+      # Builder :browser → salida directa en dist/sc-demo (sin subcarpeta /browser).
+      - run: npx ng build sc-demo --configuration production --base-href /smartcontact-ui/ --output-path dist/sc-demo
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: dist/sc-demo
+
+  deploy:
+    needs: build
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - id: deployment
+        uses: actions/deploy-pages@v4
