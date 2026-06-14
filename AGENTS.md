@@ -340,6 +340,12 @@ Each entry: **what bites → the rule → why**. Append here when a new one is f
 - **Check the docs before calling something "new architecture".** *Rule:* grep `docs/` +
   [`docs/DOCS-INDEX.md`](docs/DOCS-INDEX.md) first — most flows (token pipeline, Theme Designer
   round-trip) are already designed. *Why:* over-architecting a documented flow twice.
+- **Verify live external state before an operator action — don't trust the hand-off doc.**
+  *Bites:* told the user to publish 0.2.0 when all 3 packages were already at 0.2.0, trusting
+  NEXT-SESSION/memory's "pending publish" instead of checking the registry. *Rule:* before
+  asking the user to run an operator action (publish, deploy, install), VERIFY the real state
+  (`gh api …/versions`, `npm view`, etc.). The hand-off can be stale. *Why:* the mechanism
+  (authed `gh`) was available and unused — cost the user a needless command.
 
 ---
 
