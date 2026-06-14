@@ -30,6 +30,64 @@
 
 ---
 
+## DD-15 · 2026-06-14 — Optimización del pipeline de tokens: rebanadas baratas ahora, lo caro diferido
+
+**Contexto** · Se planteó automatizar dos cosas grandes: generar la capa de color semántico
+desde el export, y validar/generar el preset para sobrevivir a subidas de versión de PrimeNG.
+Ambas son semanas de trabajo.
+
+**Decisión** · Hacer ahora solo las rebanadas baratas y seguras: unit tests de la ley v/14
+(`token-naming.mjs` + `node --test`, cableado en `verify`) y un hint copy-paste en `token-parity`
+cuando un color de marca diverge. Diferir el generador de color completo (opt-in). Disolver el
+validador propio de preset.
+
+**Razón** · Ya tenemos validadores potentes para el presente (`token-parity` evalúa el preset
+real vs export, `tokens:guard`, color §6). El generador de color ataca un dolor menor (los
+semánticos cambian poco) con coste/riesgo alto (parte la capa en generado+a-mano+guard y mete un
+config = 2ª fuente de verdad). El validador de preset lo cubre **upstream** el Migration Assistant
+del Theme Designer (escanea el tema y añade tokens que faltan) + el resolver de refs.
+
+**Descartadas** ·
+- Construir el generador de color ahora → over-engineering; el flujo "rojo-flag → humano" cumple y
+  el hint copy-paste lo suaviza.
+- Construir un validador/generador de preset propio → redundante con el Migration Assistant.
+- Meter el resolver de refs del preset en `token-parity` ya → diferido: riesgo de falsos positivos
+  que romperían el guard core; se hace aparte con cuidado.
+
+**Consecuencias** · `verify` corre `test:unit`. El validador de preset queda DISUELTO en favor del
+Migration Assistant (verificar su comportamiento la 1ª vez que subamos versión — lección
+integration-glue). Generador de color y resolver de refs = follow-ups con disparador escrito.
+
+---
+
+## DD-14 · 2026-06-14 — Sistema operativo de documentación y aprendizaje (repo que aprende de sí mismo)
+
+**Contexto** · El repo acumulaba docs sin jerarquía clara de "qué doc manda en cada tema", y las
+lecciones de cada sesión vivían solo en la memoria privada del agente (ni trazable ni compartida).
+Una sesión se perdió usando el MCP de Figma equivocado y por insistir en un camino bloqueado —
+errores evitables si estuvieran escritos en el repo.
+
+**Decisión** · Formalizar, todo en el repo: (1) `docs/DOCS-INDEX.md` = source-of-truth por tema +
+regla "una fuente por tema / solo se toca el doc que cambió". (2) En `AGENTS.md`: protocolo de
+cierre, sección "Known Traps" (semilla con las de hoy) y el bridge Figma MCP recorded. (3)
+`.impeccable.md` = alcance sagrado vs pulir. (4) Gobernanza de la fuente de verdad: "no se escribe
+en Figma sin registro" + Figma change-log en `guia-tokens.md`.
+
+**Razón** · El drift no nace de "no se actualiza" sino de "no hay jerarquía clara"; y repetir
+errores no nace de no-apuntarlos sino de que vivían fuera del repo. Escrito y formal sobrevive a
+sesiones, a fallos de memoria y a nuevos contributors.
+
+**Descartadas** ·
+- `LESSONS.md` como archivo nuevo → sería otro doc = el mismo problema de duplicación. Las trampas
+  van en `AGENTS.md`, que ya se lee antes de trabajar.
+- Dejar las lecciones solo en la memoria del agente → ni trazable, ni visible para el usuario/otros,
+  ni sobrevive a un fallo de memoria.
+
+**Consecuencias** · Convención de cierre activa (palabras-gatillo). Toda escritura en Figma queda
+registrada. `DOCS-INDEX` es el juez anti-duplicación de aquí en adelante.
+
+---
+
 ## DD-13 · 2026-06-09 — Tipografía: escala REDONDA desacoplada de `--sc-scale`, en rem root-16, naming de styles = tokens de código
 
 **Contexto**: la tipografía estaba atada a la escala de espaciado 14-base
