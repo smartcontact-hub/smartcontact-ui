@@ -30,6 +30,36 @@
 
 ---
 
+## DD-16 · 2026-06-14 — Showcase (`sc-demo`) desplegado a GitHub Pages; repo abierto a público
+
+**Contexto** · El consumidor (`smart-contact-platform`) tenía su `ds-docs` desplegado que aplicaba
+tokens al instante; este repo no tenía página viva — `sc-demo` solo corría en local y CI hacía
+`build:demo` sin publicar. El usuario quería una página viva del DS, equivalente a su `ds-docs`.
+
+**Decisión** · Workflow `deploy-demo.yml` que construye `sc-demo` y lo despliega a **GitHub Pages**
+on-push-to-main (`base-href /smartcontact-ui/`, opt-in a Node 24 vía `FORCE_JAVASCRIPT_ACTIONS_TO_NODE24`).
+Para habilitar Pages en plan Free se abrió el **repo a público** — el *source*, no los paquetes npm
+(siguen privados en GitHub Packages). URL: https://smartcontact-hub.github.io/smartcontact-ui/.
+
+**Razón** · Cierra el round-trip de tokens de forma **visible**: cambio de variable en el Theme
+Designer → PR `design-tokens-sync` → merge a main → redeploy → página viva (~1-2 min). Pages desde
+repo privado requiere plan de pago; el historial se escaneó limpio antes de abrir (`.npmrc` nunca
+commiteado + gitignored, cero patrones de token/clave) y el código del DS no es sensible.
+
+**Descartadas** ·
+- **Dominio propio (CNAME)** → el usuario no tiene dominio extra; `github.io/smartcontact-ui/` vale
+  para un showcase. (Si algún día se quiere: re-puntar `base-href` a `/` + CNAME.)
+- **Sitio raíz de la org** (`smartcontact-hub.github.io`) → "gasta" el sitio-raíz de la org en el
+  showcase; diferido.
+- **Mantener el repo privado + Pages** → requiere plan Pro/Team (y el sitio sería público igual).
+- **Dejar el showcase solo en local** → no daba la página viva que se pedía.
+
+**Consecuencias** · `sc-demo` se publica solo en cada push a main; el round-trip de tokens es ahora
+end-to-end visible. El repo es **público** (source/historial/docs world-readable; paquetes npm
+siguen privados). `.claude/launch.json` documenta el arranque local (sc-demo 4200, sc-prototype 4300).
+
+---
+
 ## DD-15 · 2026-06-14 — Optimización del pipeline de tokens: rebanadas baratas ahora, lo caro diferido
 
 **Contexto** · Se planteó automatizar dos cosas grandes: generar la capa de color semántico
