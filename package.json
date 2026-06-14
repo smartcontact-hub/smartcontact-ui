@@ -26,10 +26,11 @@
     "audit:theme-scale": "node scripts/check-theme-scale.mjs",
     "typecheck": "tsc --noEmit --sourceMap -p projects/ui-smartcontact/tsconfig.lib.json && tsc --noEmit --sourceMap -p projects/ui-smartcontact-icons/tsconfig.lib.json && tsc --noEmit -p projects/sc-demo/tsconfig.app.json && tsc --noEmit -p projects/sc-prototype/tsconfig.app.json",
     "lint": "eslint .",
-    "verify": "npm run tokens:gen && npm run tokens:parity && npm run tokens:guard && npm run tokens:type-parity && npm run audit:theme-scale && npm run build && npm run typecheck && npm run lint",
+    "verify": "npm run tokens:gen && npm run tokens:parity && npm run tokens:guard && npm run tokens:type-parity && npm run audit:theme-scale && npm run test:unit && npm run build && npm run typecheck && npm run lint",
     "e2e": "playwright test",
     "watch": "ng build --watch --configuration development",
-    "test": "ng test"
+    "test": "ng test",
+    "test:unit": "node --test scripts/__tests__/"
   },
   "dependencies": {
     "@angular/animations": "^21.2.14",

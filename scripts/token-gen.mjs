@@ -35,6 +35,7 @@
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { loadKitExport } from './dtcg-export.mjs';
+import { scaleSuffix, toRem, dropAlpha } from './token-naming.mjs';
 
 const root = resolve(import.meta.dirname, '..');
 const EXPORT_PATH = resolve(root, 'projects/design-tokens/scripts/kit-export-dtcg.json');
@@ -54,21 +55,11 @@ if (!existsSync(EXPORT_PATH)) {
 const kit = loadKitExport(EXPORT_PATH);
 const prim = kit.groups['aura/primitive'];
 
-// px de diseño → rem (root 16). Los pasos 14-base dividen exacto.
-const toRem = (px) => {
-  if (px === 0) return '0';
-  const rem = Number((px / 16).toFixed(6));
-  return `${rem}rem`;
-};
 const declare = (name, px) => `  --${name}: ${toRem(px)}; /* ${px}px */`;
 
 // ─────────────────────────────────────────────────────────────────────────────
 // ESCALA
 // ─────────────────────────────────────────────────────────────────────────────
-function scaleSuffix(v) {
-  const mult = parseFloat((Math.abs(v) / 14).toFixed(3)); // 16/14 → 1.143
-  return (v < 0 ? 'neg-' : '') + String(mult).replace('.', '-');
-}
 // Extras = pasos que el export no trae pero el código usa, con su razón.
 const EXTRA_SCALE = [{ value: 0, reason: 'reset — no es un paso métrico' }];
 const scaleCanon = new Map(); // name (sin "--") → px de diseño
@@ -124,7 +115,6 @@ function renderRadius() {
 // ─────────────────────────────────────────────────────────────────────────────
 const PALETTE_FAMILIES = ['zinc'];
 const STEPS = ['50', '100', '200', '300', '400', '500', '600', '700', '800', '900', '950'];
-const dropAlpha = (hex) => (hex.length === 9 && hex.endsWith('ff') ? hex.slice(0, 7) : hex);
 
 function renderPalette() {
   const out = [];

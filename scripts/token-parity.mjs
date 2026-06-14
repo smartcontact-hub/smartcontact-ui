@@ -363,14 +363,28 @@ const DIVERGE = [
   ['dark', 'overlay/content/form.field', 'resuelven vía capa 7 (.sc-dark, navy-tinted) — no se cruzan contra el zinc del Kit'],
 ];
 
+// Reverse hex → primitiva, para sugerir el token exacto a pegar cuando un color de marca
+// diverge. Solo alimenta el MENSAJE de fallo: nunca cambia el veredicto pass/fail.
+const hexToPrimitive = new Map();
+for (const name of primDecls.keys()) {
+  if (!name.startsWith('sc-color-')) continue;
+  const hx = tokenToHex(name, 'light');
+  if (hx && !hexToPrimitive.has(hx)) hexToPrimitive.set(hx, name);
+}
 let colorOk = 0;
 for (const [mode, path, token] of ENFORCE) {
   const expected = expHex(mode, path);
   const got = tokenToHex(token, mode);
   if (expected === undefined) log(`  ? [${mode}] ${path}: no está en el export (¿renombrada?)`);
   else if (got === undefined) fail(`[${mode}] ${path} → --${token}: no resuelve a hex`);
-  else if (got !== expected) fail(`[${mode}] ${path}: export=${expected} vs --${token}=${got}`);
-  else colorOk++;
+  else if (got !== expected) {
+    const prim = hexToPrimitive.get(expected);
+    const layer = mode === 'dark' ? '07-dark.css' : '02-semantic.css / 03-palette.css / 04-component.css';
+    const hint = prim
+      ? ` → pega en ${layer}:  --${token}: var(--${prim});`
+      : ` → ajusta --${token} en ${layer} para que resuelva a ${expected}`;
+    fail(`[${mode}] ${path}: export=${expected} vs --${token}=${got}${hint}`);
+  } else colorOk++;
 }
 log(`  ✓ ${colorOk}/${ENFORCE.length} colores de marca 1:1 con el export (light+dark)`);
 log('  divergencias de marca conscientes (no fallan):');
