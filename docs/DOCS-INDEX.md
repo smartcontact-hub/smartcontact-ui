@@ -28,7 +28,7 @@
 | **Plan de port** de componentes (Mitad B) | [`docs/component-port-plan.md`](./component-port-plan.md) | Claude (referencia) |
 | **Playbook** migrar `smart-contact-platform` (sesión aparte) | [`docs/playbook-migracion-platform.md`](./playbook-migracion-platform.md) | Claude (en sesión sobre ese repo) |
 | **Playbook** archivar `smartcontact-ui-main` (sesión aparte) | [`docs/playbook-archivar-ui-main.md`](./playbook-archivar-ui-main.md) | Claude (en sesión sobre ese repo) |
-| **Log de construcción** per-lote (journal histórico, no se re-litiga) | [`DECISIONS-LOG.md`](../DECISIONS-LOG.md) (Mitad A) · [`DECISIONS-LOG-B.md`](../DECISIONS-LOG-B.md) (Mitad B) | Claude (referencia histórica) |
+| **Log de construcción** per-lote (journal histórico CERRADO, no se re-litiga) | [`docs/history/DECISIONS-LOG.md`](./history/DECISIONS-LOG.md) (Mitad A) · [`docs/history/DECISIONS-LOG-B.md`](./history/DECISIONS-LOG-B.md) (Mitad B) | Claude (referencia histórica) |
 | **Versiones publicadas** (semver, qué cambió por release) | [`CHANGELOG.md`](../CHANGELOG.md) | todos |
 | **Backlog durable** — lo diferido-pero-rastreado (qué + disparador + cómo se valida) | [`docs/ROADMAP.md`](./ROADMAP.md) | Claude + Rafa |
 | **Handoff volátil** — estado actual + próximos pasos (se SOBREESCRIBE cada cierre) | [`NEXT-SESSION.md`](../NEXT-SESSION.md) | Claude (lee PRIMERO al arrancar) |

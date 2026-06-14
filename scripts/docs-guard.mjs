@@ -24,9 +24,17 @@ const fail = (s) => {
 // Front door / el propio índice → no son "docs de tema", no requieren entrada.
 const EXEMPT = new Set(['README.md', 'DOCS-INDEX.md']);
 
-// (1) Todo .md del repo (docs/ + raíz, incluido .impeccable.md) está mapeado por basename.
+// (1) Todo .md del repo (docs/ recursivo + raíz, incluido .impeccable.md) está mapeado por basename.
+function mdBasenames(dir) {
+  const out = [];
+  for (const e of readdirSync(dir, { withFileTypes: true })) {
+    if (e.isDirectory()) out.push(...mdBasenames(resolve(dir, e.name)));
+    else if (e.name.endsWith('.md')) out.push(e.name);
+  }
+  return out;
+}
 const all = [
-  ...readdirSync(resolve(root, 'docs')).filter((f) => f.endsWith('.md')),
+  ...mdBasenames(resolve(root, 'docs')), // incluye docs/history/
   ...readdirSync(root).filter((f) => f.endsWith('.md')),
 ];
 for (const base of new Set(all)) {

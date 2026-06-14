@@ -65,10 +65,10 @@
 - **Qué**: podar muertos y fusionar solapes — reduce-deuda aplicado a docs. NO es "un doc
   único" (eso es lo MENOS mantenible); es mantener "una fuente por tema" sano.
 - **Disparador**: revisión periódica, o cuando el nº de docs crezca notablemente.
-- **Candidatos identificados (2026-06-14)**:
-  - `DECISIONS-LOG.md` + `DECISIONS-LOG-B.md` = journals de construcción **cerrados** → archivar
-    (p.ej. `docs/history/`) en vez de tenerlos en raíz como si fueran vivos.
-  - `foundations-rationale.md` + `component-port-plan.md` = ambos racional de construcción →
-    evaluar fusión.
+- **Candidatos**:
+  - ✅ **HECHO (2026-06-14)**: los 2 `DECISIONS-LOG` (journals de construcción cerrados) archivados
+    a `docs/history/`; `docs:guard` ahora escanea `docs/` recursivo (vigila también el archivo).
+  - ⏳ `foundations-rationale.md` + `component-port-plan.md` = ambos racional de construcción →
+    evaluar fusión (pendiente).
 - **Validación**: `docs:guard` verde (todo mapeado, links resuelven) + DOCS-INDEX actualizado +
   fronteras siguen sin solapar.
