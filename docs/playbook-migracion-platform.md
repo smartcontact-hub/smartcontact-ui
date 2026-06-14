@@ -10,6 +10,82 @@
 > `@ngx-translate/core` **15**, `@primeng/themes` **21.0.4**, preset local en
 > `packages/design-system/tokens/sc-preset.ts`, alias en `tsconfig.json`.
 
+## Endurecimiento (verificado contra la fuente del DS, 2026-06-14)
+
+> Una sesión de migración real midió la divergencia y un sparring la verificó **contra el
+> código fuente de los paquetes publicados** (este repo). Resultado: el andamiaje es real, pero
+> el playbook original asumía "compila → funciona" en sitios donde el fallo es **solo-runtime**.
+> Estos checks son **obligatorios**; no son opcionales.
+
+### Sólido (confirmado en la fuente — fiarse)
+- `provideSmartContactUi()` envuelve `providePrimeNG` + el preset publicado; `darkModeSelector`
+  por defecto = `.sc-dark` (consistente con `07-dark.css`). El preset usa `@primeuix/themes`.
+- Tokens publicados = **numéricamente idénticos** al local a root 16px (rem×16 == px, zinc aditivo,
+  `token-parity` = 0). El swap de fundación no repinta por números.
+- Los gaps (`sc-avatar` sin px, `sc-tag` sin `xs`, `illustrated-avatar`/`label-chip` ausentes) son
+  reales y están en el ROADMAP del DS — aplazarlos es correcto.
+
+### Riesgos solo-runtime (el plan los trata como "compila → ok" — NO lo son)
+1. **`cssLayer order` es INERTE: el CSS publicado no usa `@layer`.** `provideSmartContactUi()` no
+   fija `cssLayer` por defecto y las "capas" del CSS publicado son orden de concatenación, no
+   `@layer` nativo. **Si la app local pasaba un `cssLayer`/`order` a `providePrimeNG`, hay que
+   capturarlo verbatim y re-pasarlo** por `provideSmartContactUi({ theme:{ cssLayer:… } })`. Caer
+   al default sin-capa cambia la especificidad → **compila igual, pinta distinto**. ⬅️ el delta
+   más peligroso de toda la migración.
+2. **El truco de iconos puede romper `[filled]` en silencio.** `sc-icon [filled]` usa
+   `font-variation-settings:'FILL' 1` (un **eje de variación**, no un glifo). Si la app carga su
+   'Material Symbols Outlined' como build **estático** de Google Fonts (FILL=0 horneado), todo
+   estado activo/seleccionado pierde el fill **sin error**. Exigir la Outlined **variable**
+   (`woff2-variations`, eje FILL).
+3. **Publicar los hosts arrastra el `sc-icon` publicado (Rounded).** 19+ templates publicados
+   instancian `<sc-icon>` de `@smartcontact-hub/icons`. Mantener el `sc-icon` local Outlined "de
+   momento" produce **split visual**: lo app-autorado Outlined, lo interno de hosts Rounded.
+   Decidir explícitamente (aceptar el delta o adelantar icon), no defer silencioso.
+4. **El guard de borrado `grep "@sc/" apps/` no ve partials/assets locales.** No detecta los
+   `@use` SCSS de los partials no publicados ni el `sc-avatar` leyendo `assets/avatars/*.svg` en
+   runtime. Ampliar el guard a `@use` de los **4** globales (`sc-overlay-sizes`, `sc-animations`,
+   `sc-list-table`, `sc-toast`) + smoke de 404 sobre `assets/avatars/**`.
+5. **ngx-translate v15↔v17 es divergencia solo-runtime.** 32 componentes auto-registran
+   diccionarios en su constructor (`setTranslation`, API v16+); el paquete pide `^17`, el consumer
+   está en **v15**. Si el provider no sube, la copia DS renderiza **keys crudas sin error de build**.
+
+### Imprecisiones del plan a corregir
+- **NO son "28/32 renames triviales, mismo selector".** Hay **49** componentes, todos con prefijo
+  `sc-`, y `sc-confirm-host` **cambió de selector** a `sc-confirmdialog`. `sc-checkbox`/`sc-dialog`
+  no son wrappers triviales. No rompe runtime, pero **no planificar el lote como mecánico**.
+- El swap de CSS **no es 1:1 en ALCANCE** (los VALORES sí son idénticos — esto NO es fidelidad
+  Figma→código, es empaquetado). La copia local importaba **solo tokens** y hacía su propio reset
+  (`_reset.scss`). El paquete tiene UNA entrada CSS pública, `styles/index.css`, que es un
+  **orquestador**: las 6 capas de tokens **+ además** `base/reset.css` + `base/globals.css`
+  (`index.css:15-16`). Swap naíf → la app recibe tokens **+ reset/globals que no tenía** → doble
+  reset / colisión. Dos caminos:
+  - **A (el más 1:1 con cómo ship-ea el DS):** usar el orquestador Y quitar el `_reset.scss` de la
+    app. Requiere check visual (si el reset del DS ≠ el de la app, hay saltos vs baselines).
+  - **B (cambio mínimo, recomendado para la migración):** mantener el reset de la app e importar
+    solo las 6 capas de tokens por **ruta directa** en el `styles[]` de `angular.json` (ignora el
+    `exports`). Cero cambio de reset = migration-safe; adoptar A después como paso deliberado.
+  - ⚠️ Gap del DS (registrado en `docs/ROADMAP.md`): el `exports` del paquete solo declara `.`
+    (→ el `.mjs`, ni el CSS) y `./package.json` — **el CSS no tiene entrada nombrada** ni hay una
+    "solo tokens". Se alcanza por ruta de fichero (vale en `angular.json styles[]`; un
+    `@import '@smartcontact-hub/styles/…'` como módulo lo puede bloquear el `exports` estricto).
+
+### Verificar en el consumer ANTES de Lote 0 (no verificable desde el DS)
+- **¿node_modules single-root o per-app?** Si supervisor y ds-docs comparten raíz, los bumps de
+  Lote-0 (`ngx-translate 15→17`, `@primeng→@primeuix`) **no son app-scoped** — tocan ds-docs aunque
+  esté "diferido".
+- **La firma real del loader `provideTranslateService`/`TranslateHttpLoader` v17** en supervisor.
+
+### Gate obligatorio de Lote 0 (anti "compila-pero-repinta")
+1. Capturar verbatim el `providePrimeNG({ theme:{ options } })` de la app local (cssLayer, prefix,
+   ripple) y re-pasarlo idéntico por `provideSmartContactUi(...)`. Diff explícito local-vs-default.
+2. Confirmar que el font Outlined que carga la app es **variable con eje FILL**, no el estático.
+   Test visual de un `[filled]` activo.
+3. Guard de borrado reforzado: `@use` de los 4 partials + smoke 404 de `assets/avatars/**`.
+4. **Smoke de runtime** (no solo build verde): una vista con copy i18n + `<sc-avatar illustrationName>`
+   — afirmar que NO salen keys crudas y que el SVG carga. (piezas-verdes ≠ loop-verde.)
+5. Decisión explícita del split `sc-icon` Rounded/Outlined del lote.
+6. Confirmar single-root vs per-app y la firma del loader v17 (los dos puntos consumer-side).
+
 ## Pre-flight
 1. Rama dedicada: `feat/adopt-published-ds`.
 2. Confirmar acceso a GitHub Packages: `.npmrc` con `@smartcontact-hub:registry=https://npm.pkg.github.com`
@@ -36,7 +112,9 @@
 
 4. **Swap del CSS**: donde la app importa el CSS de tokens/iconos de la copia local, importar el de
    los paquetes: `@smartcontact-hub/styles` + `@smartcontact-hub/icons` (en el `styles` de
-   `angular.json` o el `styles.scss` de la app). Contenido idéntico al local.
+   `angular.json` o el `styles.scss` de la app). ⚠️ **No es 1:1** — ver *Endurecimiento* arriba
+   (el `index.css` publicado arrastra reset+globals; faltan 4 partials globales; importar capas
+   individuales si solo quieres tokens).
 
 5. **Reconciliar divergencias de API** (el publicado fusionó/renombró piezas):
    - `sc-illustrated-avatar` → **`sc-avatar`** con sus inputs de ilustración. Ficheros con uso (baseline):
@@ -61,7 +139,9 @@
 ## Verificación migration-safe
 - `npm run build` + arranque de `apps/supervisor` sin errores.
 - Regresión visual: comparar contra las capturas baseline — foco en los ~217 `sc-icon`, forms, y
-  los ~2970 usos de `--sc-*` (no deben cambiar; el CSS publicado es el mismo).
+  los ~2970 usos de `--sc-*`. Los tokens no deben cambiar (CSS numéricamente idéntico), pero **sí
+  vigilar** el split `sc-icon` Rounded/Outlined, el `[filled]` y la especificidad por el `cssLayer`
+  inerte (ver *Endurecimiento*).
 - `npm run e2e` (la suite cross-app del repo origen).
 - PR con antes/después de cualquier diferencia visual; merge cuando dev + diseño validen.
 

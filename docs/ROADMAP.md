@@ -82,6 +82,16 @@ El ente evolutivo en acción: la migración de la app real saca a la luz huecos 
   paquete NO publica → el consumidor tiene que mantenerlos locales. *Fix*: exportar también los
   partials SCSS (o documentar que se quedan locales). *Disparador*: ahora (bloquea el "borrar copia
   local" total).
+- **Entrada del paquete `styles`: orquestador-only + `exports` no expone el CSS** — `styles/index.css`
+  es un **orquestador** que mete tokens **+ `base/reset.css` + `base/globals.css`** (no hay entrada
+  "solo tokens"). Y el `exports` del package.json solo declara `.` (→ el `.mjs`) y `./package.json`
+  — **el CSS no tiene entrada nombrada**, se alcanza por ruta de fichero. Esto NO es drift de valores
+  (los tokens son idénticos, sigue siendo 1:1 con Figma); es un hueco de **empaquetado**: un consumidor
+  que ya tiene su propio reset (p.ej. supervisor) no puede importar tokens-sin-reset de forma limpia.
+  *Fix*: shippear una entrada `tokens-only` (las 6 capas sin reset/globals) **y** cablear el `exports`
+  para exponer el CSS con nombre (`.` o `./tokens`). *Disparador*: lo pide la migración de la app;
+  hoy se resuelve con ruta directa en `angular.json styles[]`. *Validación*: el consumidor importa
+  tokens-only por nombre sin arrastrar el reset del DS; `verify` verde.
 - **Iconos: estilo + peso (Material Symbols) = decisión de diseño deliberada** — `@smartcontact-hub/icons`
   usa **Rounded**; la app usa **Outlined**. Y el **peso** del icono debe ir a la par con el peso de la
   tipografía (principio registrado en `.impeccable.md` → *Iconografía*). Hay que elegir los ejes de
