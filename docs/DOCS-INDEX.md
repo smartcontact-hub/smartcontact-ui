@@ -21,7 +21,7 @@
 | **Decisiones arquitectónicas grandes** — por qué, con alternativas descartadas (formato DD-N) | [`docs/DECISIONS.md`](./DECISIONS.md) | Claude + diseño/devs |
 | **Brand divergences** — dónde SC se aparta del Figma a propósito (incl. las 3 de color) | [`docs/customs-catalog.md`](./customs-catalog.md) | Claude (antes de añadir override/token) + diseño |
 | Reglas de **blindaje / migration-safe** (minimizar customización de PrimeNG) | [`docs/migration-safety.md`](./migration-safety.md) | Claude (antes de tocar HTML/lógica PrimeNG) |
-| **Tokens + puente Figma** (para diseño) · **plugin MCP** · **Figma change-log** · workflow Migration Assistant | [`docs/guia-tokens.md`](./guia-tokens.md) + técnico: [`projects/design-tokens/README.md`](../projects/design-tokens/README.md) | diseño + Claude |
+| **Tokens + puente Figma** (para diseño) · **Figma change-log** · workflow Migration Assistant | [`docs/guia-tokens.md`](./guia-tokens.md) + técnico: [`projects/design-tokens/README.md`](../projects/design-tokens/README.md) | diseño + Claude |
 | Cómo **consume una app externa** los paquetes publicados | [`docs/consumer-onboarding.md`](./consumer-onboarding.md) | apps consumidoras + Claude |
 | **Convergencia** DS ↔ catálogo dev (unión, naming DD-12, plan de port) | [`docs/convergence-manifesto.md`](./convergence-manifesto.md) | Claude (al portar) |
 | **Fundaciones** (Mitad A): por qué del esqueleto/arquitectura | [`docs/foundations-rationale.md`](./foundations-rationale.md) | Claude (referencia) |

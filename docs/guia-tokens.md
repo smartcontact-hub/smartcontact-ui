@@ -755,6 +755,22 @@ PrimeNG publica versiones siguiendo SemVer:
    visual significativa.
 8. **Merge** cuando dev + diseño hayan validado.
 
+**El Migration Assistant hace el paso 4 por ti (upstream).** El plugin Theme Designer trae un
+*Intelligent Migration Assistant* que **escanea el tema y añade los tokens que faltan para la
+versión nueva**, con preview de cambios. Es justo lo que caza la fila "PrimeNG renombra/añade un
+token" de la tabla de arriba — pero en la **fuente de verdad** (Figma), no a mano. Flujo
+migration-safe:
+
+1. En el plugin → **Migration Assistant** → revisar el preview → aplicar.
+2. **Re-exportar** el tema → reemplazar `kit-export-dtcg.json` → `npm run tokens:import`.
+3. `npm run verify` (`token-parity` + `tokens:guard`) caza lo que quede.
+4. Cablear a mano en `sc-preset/` solo lo **nuevo** (componentes/slots que el Assistant no mapea
+   a PrimeNG) — paso pequeño y nuestro.
+
+> ⚠️ La primera vez que lo usemos, **verificamos su comportamiento real** antes de fiarnos (no
+> asumir al actor externo). Por eso NO construimos un validador propio: el Assistant +
+> `token-parity` ya cubren la detección.
+
 ### 6. Gotchas — cosas a tener en cuenta siempre
 
 **Tokens silenciosamente renombrados.**
@@ -992,6 +1008,20 @@ momento.
   `.sc-dark`, que es el `darkModeSelector` por defecto del
   provider. Si Diseño quiere desactivarlo, decisión explícita en
   sesión.
+
+---
+
+## Figma change-log (registro de la fuente de verdad)
+
+**Regla:** el archivo Figma **"Smart-Contact Prime"** es la fuente de verdad — **no se escribe en
+él sin dejar constancia aquí**. (El bridge MCP que se usa para escribir está documentado en
+[`AGENTS.md`](../AGENTS.md) → *Figma MCP Bridge*.)
+
+Una fila por escritura. Formato: **fecha · nodo/página · qué cambió · por qué · quién**.
+
+| Fecha | Nodo / página | Qué cambió | Por qué | Quién |
+|---|---|---|---|---|
+| 2026-06-14 | `Backlog` (node `13097:13517`) | Nota "Divergencias de color · código → Figma": board con las 3 divergencias conscientes (focus ring, superficies dark, campos), swatches y specs `aura/custom`. **No se crearon tokens.** | Backlog visible para decidir si encodar las 3 en `aura/custom` (ver `customs-catalog.md`). | Claude (bridge) + Rafa (revisión) |
 
 ---
 
