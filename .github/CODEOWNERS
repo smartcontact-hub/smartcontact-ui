@@ -1,0 +1,8 @@
+# Propietarios por defecto del Design System. Las reviews se piden a estos owners.
+# (Cuando entren más mantenedores, añadir reglas por path: tokens/, preset/, etc.)
+* @arebury
+
+# Contratos sensibles — pedir review explícita si tocan tokens o el generador.
+/projects/design-tokens/                         @arebury
+/projects/ui-smartcontact/src/lib/theme/sc-preset/ @arebury
+/scripts/                                        @arebury

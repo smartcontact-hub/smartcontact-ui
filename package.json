@@ -17,6 +17,7 @@
     "export:components": "npm run build:components && node scripts/export-package.mjs ui-smartcontact",
     "export:all": "npm run build && node scripts/export-package.mjs design-tokens ui-smartcontact-icons ui-smartcontact",
     "publish:packages": "npm run build && node scripts/publish-packages.mjs",
+    "version:bump": "node scripts/version-bump.mjs",
     "tokens:gen": "node scripts/token-gen.mjs",
     "tokens:import": "node scripts/token-gen.mjs --write",
     "tokens:parity": "node scripts/token-parity.mjs",
