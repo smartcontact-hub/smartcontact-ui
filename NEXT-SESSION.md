@@ -7,9 +7,11 @@
 ## Dónde estamos (2026-06-14)
 - DS **publicado** en GitHub Packages — `@smartcontact-hub/{styles,icons,components}`,
   org `smartcontact-hub`. **0.1.0 vivo; 0.2.0 cortada en código, PENDIENTE de publicar.**
-- **Puente Theme Designer → repo** (workflow `tokens-sync`): vivo. Cada tramo probado
-  verde; falta confirmar "run verde **+ PR auto**" en UNA sola corrida (el último test fue
-  antes de activar el permiso de PRs).
+- **Puente Theme Designer → repo** (workflow `tokens-sync`): regenerar+verify+e2e SIEMPRE
+  verde. El commit-back tenía 2 bugs (carrera + staleness) → **workflow reescrito ROBUSTO**
+  (commit `f5ce783`: trabaja sobre main, resetea la rama a "main+cambio", PR limpio).
+  Desplegado en main + design-tokens-sync. **FALTA: 1 push de confirmación** (cambiar
+  variable en Figma → ver run verde + PR limpio auto). No cantar victoria hasta verlo.
 - **Prototipo** `projects/sc-prototype`: 2 pantallas dogfoodeando la lib por nombre.
 - Bloques 0, 1, 2, 4-1 hechos (CI verde). Branch protection **diferido**.
 
