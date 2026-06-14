@@ -106,3 +106,12 @@ El ente evolutivo en acción: la migración de la app real saca a la luz huecos 
   *Decisión DS (no de la migración)*: ¿son **necesidades legítimas** → el DS añade esos tamaños en una
   versión nueva; o son **drift de la app** → la app converge a los buckets (con visto bueno de diseño)?
   *Disparador*: decidir add-vs-converge. La migración los deja **locales** mientras tanto (cero regresión).
+- **`ScConfirmService` no expone el icono de cabecera** — `ScConfirmRequest`
+  (`confirmdialog/sc-confirm.service.ts:6-25`) no tiene campo `icon`; `request()` hardcodea
+  `resolveScComponentIconClass('exclamation-triangle')` (`:61`). Un consumidor con otro glifo de
+  cabecera (la app local usa `pi pi-exclamation-triangle`) **no puede conservarlo** sin forkear → al
+  adoptar el servicio se traga el cambio a Material Outlined. Es **parte de la decisión de iconos**
+  (diferida). *Fix*: permitir `icon?: string` opcional en `ScConfirmRequest` (default = el resolver
+  actual). *Disparador*: cuando se decida la cabecera de confirm (bundleado con la decisión de iconos).
+  La migración deja **confirm-host local** mientras tanto (cero regresión). *Validación*: un consumer
+  puede pasar `icon` y conservar su glifo; default sin cambios; `verify` verde.
