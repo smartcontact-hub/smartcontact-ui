@@ -6,8 +6,22 @@
 > en [`customs-catalog.md`](./customs-catalog.md). Reglas de blindaje en
 > [`migration-safety.md`](./migration-safety.md).
 >
-> Formato: 1 entry por decisión. Newest first. Cada entry tiene: contexto,
-> opciones consideradas, decisión, razón, consecuencias.
+> Formato DD-N, newest first. Cada entry usa esta plantilla (el campo **Descartadas** es
+> obligatorio — el valor de este log es saber *qué se probó y por qué se rechazó*, no solo
+> qué se eligió):
+>
+> ```
+> ## DD-N · YYYY-MM-DD — Título
+> **Contexto** · qué problema/situación lo motiva.
+> **Decisión** · qué se decide.
+> **Razón** · por qué — el dato que decide, verificado (fichero/export/comando).
+> **Descartadas** · cada alternativa considerada y por qué se rechazó.
+> **Consecuencias** · qué cambia, qué queda pendiente, qué desbloquea.
+> ```
+>
+> Las decisiones *load-bearing* de cada sesión aterrizan aquí (ver *Session-Close Protocol*
+> en [`AGENTS.md`](../AGENTS.md)). `DECISIONS-LOG(-B).md` es el journal histórico de
+> construcción — cerrado, no se re-litiga.
 >
 > Nota de adaptación: estas decisiones se tomaron durante la construcción y
 > convergencia del sistema (anotaciones "(histórico)" donde el contexto lo
