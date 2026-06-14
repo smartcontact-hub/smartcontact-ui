@@ -1022,6 +1022,7 @@ Una fila por escritura. Formato: **fecha · nodo/página · qué cambió · por 
 | Fecha | Nodo / página | Qué cambió | Por qué | Quién |
 |---|---|---|---|---|
 | 2026-06-14 | `Backlog` (node `13097:13517`) | Nota "Divergencias de color · código → Figma": board con las 3 divergencias conscientes (focus ring, superficies dark, campos), swatches y specs `aura/custom`. **No se crearon tokens.** | Backlog visible para decidir si encodar las 3 en `aura/custom` (ver `customs-catalog.md`). | Claude (bridge) + Rafa (revisión) |
+| 2026-06-14 | Variables `focus/ring/*` (colección *Semantic Common*) | `focus/ring/color`: alias `primary/color` (navy) → `sky/500` (#1464fe, electric-blue); `focus/ring/width`: 1 → 2 (offset ya era 2). | Eliminar la divergencia *solo-código* del focus ring: Figma = código (electric-blue 2px, a11y). **Validar**: re-exportar desde el plugin → `tokens:import` + `verify` → quitar fila `focus.ring` de DIVERGE. | Claude (MCP, autorizado por Rafa) |
 
 ---
 

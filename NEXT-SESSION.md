@@ -18,19 +18,17 @@
 ## Lo siguiente (en orden)
 1. **Publicar 0.2.0** (operador, tu terminal):
    `cd …/smartcontact-ui && GITHUB_TOKEN=… npm run publish:packages -- --publish`
-2. **L10 — Divergencias de color → ¿encodar en Figma `aura/custom`?** (PENDIENTE de tu
-   decisión). La nota Backlog está en Figma con el "cómo entra en `aura/custom`" por
-   divergencia. Decisión: **encodar** (Figma se completa; DIVERGE→ENFORCE) **vs mantener**
-   como divergencia consciente (status quo, ya guardada por `token-parity §6`). Si encodas:
-   se escribe en Figma **con registro** (Figma change-log) y round-trip verde.
+2. **Validar el round-trip del focus ring** (en curso): ya escrito en Figma (electric-blue 2px,
+   variables `focus/ring/*`, registrado en el Figma change-log). **Re-exporta el tema desde el
+   plugin** → corro `tokens:import` + `verify` y quito la fila `focus.ring` de DIVERGE. Las otras
+   2 divergencias (dark, grises sutiles) son **system-wide** → en `docs/ROADMAP.md` con review.
 3. **Bloque 3 — migrar `smart-contact-platform`** → [playbook](docs/playbook-migracion-platform.md)
    (SESIÓN APARTE; read-only aquí).
 4. **Bloque 5 — archivar `smartcontact-ui-main`** → [playbook](docs/playbook-archivar-ui-main.md)
    (sesión aparte).
-5. **Follow-ups con criterio (Bloque E, diferido)**: generador de color (opt-in, si los
-   diseñadores iteran color a menudo) · resolver de refs del preset (aparte, sin romper el
-   guard core) · Migration Assistant del Theme Designer = cómo subimos versión de PrimeNG
-   (verificar su comportamiento la 1ª vez).
+5. **Backlog durable** (lo diferido, con disparador + validación) →
+   [`docs/ROADMAP.md`](docs/ROADMAP.md): decisión dark, pase a11y de grises sutiles, generador de
+   color, resolver de refs del preset, Migration Assistant.
 
 ## Índice de documentos
 - **Mapa completo** → [`docs/DOCS-INDEX.md`](docs/DOCS-INDEX.md) (qué doc manda en cada tema).
