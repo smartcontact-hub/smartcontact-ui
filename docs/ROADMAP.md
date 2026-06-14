@@ -82,11 +82,12 @@ El ente evolutivo en acción: la migración de la app real saca a la luz huecos 
   paquete NO publica → el consumidor tiene que mantenerlos locales. *Fix*: exportar también los
   partials SCSS (o documentar que se quedan locales). *Disparador*: ahora (bloquea el "borrar copia
   local" total).
-- **Estilo de iconos: Rounded (DS) vs Outlined (app)** — `@smartcontact-hub/icons` usa Material
-  Symbols **Rounded**; la app Supervisor usa **Outlined**. Migrar = cambia el aspecto de ~217 iconos.
-  No es un bug, es una **decisión de marca sin tomar**: ¿el DS oficial es Rounded y la app se alinea,
-  o el DS ofrece Outlined? *Validación*: la suite visual-regression de la app (14 baselines) lo caza.
-  *Disparador*: decisión de diseño antes de migrar iconos.
+- **Iconos: estilo + peso (Material Symbols) = decisión de diseño deliberada** — `@smartcontact-hub/icons`
+  usa **Rounded**; la app usa **Outlined**. Y el **peso** del icono debe ir a la par con el peso de la
+  tipografía (principio registrado en `.impeccable.md` → *Iconografía*). Hay que elegir los ejes de
+  Material Symbols (style · weight · fill · optical size) por **lo que case con la UI de SC**, no al
+  azar. Migrar = cambia el aspecto de ~217 iconos. *Validación*: la suite visual-regression de la app
+  (14 baselines) lo caza. *Disparador*: decisión de diseño antes de migrar iconos.
 - (Menor) **Drift de tokens local↔publicado**: caracterizado por la migración como **convergencia
   intencional** (rampa zinc aditiva + px→rem que resuelve idéntico a root 16px + refactor de refs),
   no regresión. Confirmado visual/numéricamente idéntico → swap de fundación = bajo riesgo.
