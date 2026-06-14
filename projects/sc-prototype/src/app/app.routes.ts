@@ -8,4 +8,9 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./agents/agent-list.component').then((m) => m.AgentListComponent),
   },
+  {
+    path: 'agente',
+    loadComponent: () =>
+      import('./agents/agent-form.component').then((m) => m.AgentFormComponent),
+  },
 ];
