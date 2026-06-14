@@ -1,15 +1,17 @@
-# Loop diseñador → código (decisión A, ver guia-tokens.md §2.bis y DECISIONS-LOG-B).
+# Loop diseñador → código (rediseño ROBUSTO). El plugin primeui-figma-plugin-v4
+# (Theme Designer) empuja el export DTCG a la rama `design-tokens-sync`.
 #
-# El plugin `primeui-figma-plugin-v4` (Theme Designer) empuja el export DTCG del Kit
-# a la rama `design-tokens-sync`. Este workflow:
-#   1. descarta el preset PrimeNG que el plugin escribe en .theme-designer/ (no lo usamos),
-#   2. regenera las zonas @sc-gen (escala/radios/zinc) de 01-primitive.css (tokens:import),
-#   3. verifica (parity + guard + escala + build + lint + typecheck) + e2e smoke,
-#   4. commitea los primitivos regenerados y abre/actualiza un PR a `main`.
+# Clave del rediseño: el robot NO trabaja sobre esa rama (que el plugin también escribe
+# y que puede quedar vieja respecto a main). En su lugar:
+#   1. parte de MAIN,
+#   2. toma SOLO el `kit-export-dtcg.json` que empujó el plugin (ignora su .theme-designer/),
+#   3. regenera primitivos + verifica + e2e,
+#   4. resetea `design-tokens-sync` a "main + el cambio" (limpio) y abre/actualiza el PR.
 #
-# VERDE  = el cambio de tema cuadra con la escala → revisar el diff y mergear.
-# ROJO   = tokens:parity/guard detectó drift (típico: color/semántica de marca, que
-#          vive en las capas CURADAS 02–04) → un dev lo aplica a mano y re-empuja.
+# Así el PR es SIEMPRE `main + el cambio de tokens` (sin staleness, sin basura del plugin,
+# sin carrera de push), y la rama se auto-cura en cada corrida.
+#
+# VERDE = cuadra con la escala → mergear. ROJO = drift en capas curadas (color/semántica) → dev.
 name: tokens-sync
 
 on:
@@ -32,24 +34,24 @@ jobs:
     steps:
       - uses: actions/checkout@v5
         with:
-          ref: design-tokens-sync
+          ref: main
+          fetch-depth: 0
       - uses: actions/setup-node@v5
         with:
           node-version: 22
           cache: npm
       - run: npm ci
 
-      # El plugin escribe su preset PrimeNG en .theme-designer/ — NO lo usamos
-      # (generamos nuestro propio preset desde el DTCG). Se descarta.
-      - name: Descartar el theme/ del plugin
-        run: rm -rf .theme-designer
+      # Trae SOLO el export que empujó el plugin, aplicado encima de main (descarta su
+      # .theme-designer/ y cualquier divergencia de la rama del plugin).
+      - name: Tomar el export del plugin sobre main
+        run: |
+          git fetch origin design-tokens-sync
+          git checkout origin/design-tokens-sync -- projects/design-tokens/scripts/kit-export-dtcg.json
 
-      # Único punto Figma → CSS: regenera @sc-gen:scale/radius/palette desde el export.
       - name: Regenerar primitivos desde el export
         run: npm run tokens:import
 
-      # Mismos guardarraíles que ci.yml. Si el diseñador tocó color/semántica de
-      # marca, tokens:parity detecta el drift y esto va ROJO.
       - name: Verify (parity + guard + escala + build + lint + typecheck)
         run: npm run verify
 
@@ -58,37 +60,30 @@ jobs:
           npx playwright install --with-deps chromium
           npm run e2e
 
-      # Aunque verify/e2e fallen, dejamos los primitivos regenerados + el PR como
-      # banco de trabajo: el estado del workflow es la señal verde/rojo.
-      - name: Commit de primitivos regenerados
+      # Aunque verify/e2e fallen (drift en capas curadas), publicamos la rama limpia + PR
+      # como banco de trabajo; el estado del run es la señal verde/rojo.
+      - name: Resetear design-tokens-sync a main + el cambio, y abrir/actualizar PR
         if: always()
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git add -A
           if git diff --cached --quiet; then
-            echo "Sin cambios en zonas generadas (cambio de color/semántica: lo recoge el PR del export)."
+            echo "Sin cambios respecto a main."
           else
-            git commit -m "chore(tokens): regenera primitivos desde el export del Theme Designer [skip ci]"
-            git push origin HEAD:design-tokens-sync
+            git commit -m "chore(tokens): export del Theme Designer + primitivos regenerados [skip ci]"
+            # El workflow es el dueño del estado de design-tokens-sync → la reseteamos a un
+            # estado limpio basado en main. force-push seguro (commit con [skip ci], y los
+            # push de GITHUB_TOKEN no re-disparan workflows).
+            git push --force origin HEAD:design-tokens-sync
           fi
-
-      # Best-effort: si Actions no tiene permiso para crear PRs (ajuste de org), NO
-      # rompemos el run — la sync + verify ya pasaron. Avisamos y seguimos verde.
-      - name: Abrir / actualizar PR a main (best-effort)
-        if: always()
-        env:
-          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        run: |
+          body=$(printf 'Sync del Theme Designer: export DTCG nuevo aplicado SOBRE main + primitivos @sc-gen regenerados.\n\n- VERDE = cuadra con la escala, listo para mergear.\n- ROJO = drift en capas curadas (color/semantica) -> aplicar a 02-semantic / 03-palette / 04-component antes de mergear.')
           if gh pr view design-tokens-sync --json state --jq .state 2>/dev/null | grep -q OPEN; then
             echo "PR ya abierto — los commits nuevos lo actualizan."
-            exit 0
-          fi
-          body=$(printf 'Export DTCG nuevo del plugin primeui-figma-plugin-v4 (Theme Designer).\n\n- Primitivos @sc-gen (escala/radios/zinc) regenerados desde el export.\n- Estado del workflow tokens-sync: VERDE = listo para mergear; ROJO = drift en capas curadas (color/semantica) -> aplicar a 02-semantic / 03-palette / 04-component antes de mergear.\n')
-          if gh pr create --base main --head design-tokens-sync \
-            --title "chore(tokens): sync del Theme Designer" \
-            --body "$body"; then
+          elif gh pr create --base main --head design-tokens-sync --title "chore(tokens): sync del Theme Designer" --body "$body"; then
             echo "PR abierto."
           else
-            echo "::warning title=PR no abierto automaticamente::Habilita Settings -> Actions -> General -> 'Allow GitHub Actions to create and approve pull requests'. La rama design-tokens-sync ya esta regenerada y verificada; abre el PR a mano mientras tanto."
+            echo "::warning title=PR no abierto::Habilita Settings -> Actions -> General -> 'Allow GitHub Actions to create and approve pull requests'."
           fi
