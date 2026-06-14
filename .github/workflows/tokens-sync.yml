@@ -73,16 +73,22 @@ jobs:
             git push origin HEAD:design-tokens-sync
           fi
 
-      - name: Abrir / actualizar PR a main
+      # Best-effort: si Actions no tiene permiso para crear PRs (ajuste de org), NO
+      # rompemos el run — la sync + verify ya pasaron. Avisamos y seguimos verde.
+      - name: Abrir / actualizar PR a main (best-effort)
         if: always()
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           if gh pr view design-tokens-sync --json state --jq .state 2>/dev/null | grep -q OPEN; then
             echo "PR ya abierto — los commits nuevos lo actualizan."
+            exit 0
+          fi
+          body=$(printf 'Export DTCG nuevo del plugin primeui-figma-plugin-v4 (Theme Designer).\n\n- Primitivos @sc-gen (escala/radios/zinc) regenerados desde el export.\n- Estado del workflow tokens-sync: VERDE = listo para mergear; ROJO = drift en capas curadas (color/semantica) -> aplicar a 02-semantic / 03-palette / 04-component antes de mergear.\n')
+          if gh pr create --base main --head design-tokens-sync \
+            --title "chore(tokens): sync del Theme Designer" \
+            --body "$body"; then
+            echo "PR abierto."
           else
-            body=$(printf 'Export DTCG nuevo del plugin primeui-figma-plugin-v4 (Theme Designer).\n\n- Primitivos @sc-gen (escala/radios/zinc) regenerados desde el export.\n- Estado del workflow tokens-sync: VERDE = listo para mergear; ROJO = drift en capas curadas (color/semantica) -> aplicar a 02-semantic / 03-palette / 04-component antes de mergear.\n')
-            gh pr create --base main --head design-tokens-sync \
-              --title "chore(tokens): sync del Theme Designer" \
-              --body "$body"
+            echo "::warning title=PR no abierto automaticamente::Habilita Settings -> Actions -> General -> 'Allow GitHub Actions to create and approve pull requests'. La rama design-tokens-sync ya esta regenerada y verificada; abre el PR a mano mientras tanto."
           fi
