@@ -921,3 +921,14 @@ generador a más zonas = mejora futura aparte.
 Ajustes del panel *GitHub Settings* del plugin (Owner `smartcontact-hub`, Repo
 `smartcontact-ui`, Branch `design-tokens-sync`, Tokens File la ruta del kit-export,
 Theme Directory `.theme-designer/`). Token del plugin con scope `repo` sobre la org.
+
+## Test en vivo (2026-06-14) + fix del permiso de PR
+Probado end-to-end: el diseñador cambió un valor de variable en Figma → el plugin
+empujó a `design-tokens-sync` → el run `tokens-sync` corrió TODO en verde (descartó
+`.theme-designer/`, `tokens:import`, `verify`, e2e, commit + push). **Único fallo:**
+el paso "Abrir PR" murió con `GitHub Actions is not permitted to create or approve
+pull requests` — la org nueva lo bloquea por defecto. Fix: (a) **operador** habilita
+Settings → Actions → General → "Allow GitHub Actions to create and approve pull
+requests"; (b) el paso del PR se hizo **best-effort** (emite `::warning::` y sale 0 si
+no puede crear el PR — el verde/rojo del run refleja la salud de los tokens, no la
+fontanería del PR). El primer PR de prueba se abrió a mano (#1).
