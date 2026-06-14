@@ -946,3 +946,41 @@ de paquete). Alta en `angular.json` (app browser, sin test target), `build:proto
 `typecheck` (+tsconfig del prototipo) y paso "Build prototipo" en `ci.yml`. Verificado:
 `verify` verde (el typecheck del prototipo resuelve por nombre) + `ng build sc-prototype` OK
 (1.15MB initial, bajo budget). Pantallas reales en 1-1+.
+
+---
+
+# Bloques 1–2 — Prototipo (dogfood) + release/gobernanza (2026-06-14)
+
+## Bloque 1 — Prototipo `projects/sc-prototype` (CI verde)
+Proyecto nuevo que consume `@smartcontact-hub/*` **por nombre** (dist vía tsconfig) =
+piloto de la migración real. **2 pantallas reales** dogfoodeando ~14 piezas:
+- **1-1 lista de agentes**: page-header + search + datatable (celda nombre con
+  inline-rename, celda estado con tag label) + bulk-action-bar + empty-state + icon.
+- **1-2 form de agente**: section-card → subsection → slot con inputtext + toggleswitch;
+  sección colapsable; nav del shell (RouterLink).
+
+## Gaps del dogfood (= backlog del Bloque 4)
+1. **i18n-key-driven**: page-header/empty-state/section-card·subsection·slot toman
+   *claves* (titleKey/bodyKey), no texto → el consumidor registra dict o las claves se
+   renderizan tal cual. **Decisión: es diseño, no bug** (consumer-owns-keys). Documentado
+   en `consumer-onboarding.md`, no requiere fix.
+2. **Inputs booleanos sin `transform: booleanAttribute`**: el atributo escueto (`fluid`)
+   falla en build (string≠boolean) → hay que escribir `[fluid]="true"`. **Fricción de DX
+   real** (la app lo escribe natural). **Fix candidato (Block 4-1)**: añadir
+   `transform: booleanAttribute` a los `input<boolean>()` de los wrappers → cambio
+   aditivo (no rompe `[x]="true"`), pero es library-wide + consumible → versión nueva.
+
+## Bloque 2 — Endurecer para consumidores (CI verde)
+- `scripts/version-bump.mjs` (+ `npm run version:bump`): bump lockstep de los 3 paquetes
+  + root, quirúrgico, dry-run por defecto. Probado.
+- `CHANGELOG.md` (Keep a Changelog, 0.1.0 documentado).
+- `docs/consumer-onboarding.md`: install (.npmrc read:packages) + setup + uso + los 2 gaps.
+- `.github/CODEOWNERS` + `pull_request_template.md`.
+- **Decisión**: publish operator-run de inicio (sin secrets en CI); automatizar cuando duela.
+- **Branch protection: DIFERIDO** (over-engineering solo-operador; revisitar con contribuidores).
+
+## Pendiente (sesiones aparte / ongoing)
+- **Bloque 3** (migrar `smart-contact-platform`) y **Bloque 5** (archivar `smartcontact-ui-main`):
+  repos read-only → sesión nueva por repo. Playbook en el plan.
+- **Bloque 4** (depth, demand-driven): Gap #2 booleanAttribute (top); token-gen color/semántica
+  (solo si los diseñadores iteran color a menudo); tests unitarios (opcional).
