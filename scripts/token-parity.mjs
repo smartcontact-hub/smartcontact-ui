@@ -355,7 +355,6 @@ const ENFORCE = [
 const DIVERGE = [
   ['dark', 'surface.*', 'gray-* navy-tinted (el Kit usa zinc en dark) — paleta de marca SC'],
   ['dark', 'primary.contrast.color', 'texto sobre primario dark = gray-900 navy-tinted vs zinc-900 del Kit (misma divergencia que surface.*)'],
-  ['both', 'focus.ring', '--sc-border-focus electric-blue + width 2 (a11y) vs navy width 1 del Kit'],
   ['light', 'form.field.border.color', 'borde de input gray-200 (=content/overlay) vs Kit surface-300 — 1 paso, jerarquía propia'],
   ['light', 'form.field.placeholder.color', 'placeholder gray-400 vs Kit surface-500 — un punto más tenue'],
   ['light', 'form.field.disabled.color', 'disabled gray-300 vs Kit surface-500 — más tenue a propósito'],

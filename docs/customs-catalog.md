@@ -52,7 +52,7 @@ Sobre Figma SC: pedir el link del componente ANTES de tocar nada. Replicar 1:1 l
 
 **Razón**: brand identity SC = navy oscuro, distinto del Aura primary default. Marca corporate consistente en CTAs principales.
 
-**Trade-off**: el focus ring se queda en `--sc-color-electric-blue-500` (azure vibrante) para que el contraste de accesibilidad no sufra el navy oscuro. Además, **`--sc-focus-ring-width` = 2px** — unificado con lo que renderiza el preset; **divergencia consciente a11y** frente al Kit, que define width 1.
+**Trade-off**: el focus ring usa `--sc-color-electric-blue-500` (azure vibrante) para que el contraste de accesibilidad no sufra el navy oscuro, con **`--sc-focus-ring-width` = 2px**. **RECONCILIADO al Kit (2026-06-14)**: el Kit (Figma) ahora define el focus ring en electric-blue (`focus/ring/color` → `{sky.500}`) + width 2 → ya **no es divergencia**, es lo que dice la fuente de verdad (antes: navy + width 1). Round-trip: variable cambiada en Figma por MCP → re-export → código.
 
 ---
 
@@ -293,7 +293,7 @@ Para el caso futuro de backend real: el grace period del undo vive **server-side
 | `--sc-font-family-mono` | System mono stack (no exportado por Kit Pro) — §5.8 |
 | `--sc-toast-undo-*` | Extension pattern undo SC — §2.1 |
 | `--sc-radius-2xl` (16), `--sc-radius-full` (9999) | Steps custom SC fuera de la escala Kit Pro |
-| `--sc-focus-ring-width` (2px) | Divergencia consciente a11y (Kit: width 1) — §1.1 |
+| `--sc-focus-ring-width` (2px) | RECONCILIADO al Kit 2026-06-14: el Kit ahora define electric-blue + width 2 → ya no diverge — §1.1 |
 
 Diseño formaliza estos en la collection "Custom" al vincular el Kit Pro con Variables.
 
@@ -343,7 +343,7 @@ Diseño formaliza estos en la collection "Custom" al vincular el Kit Pro con Var
 
 **Métricas de componente = referencias, no px**: el preset modular no fija paddings/sizes con literales (`'10.5px'`) sino con `var(--sc-scale-*)` / `var(--sc-radius-*)` / `var(--sc-font-size-*)` — todas caen exactas en la escala generada del export; `base.ts` no contiene ningún hex. Así un re-export del Kit propaga a los componentes sin teclear nada. `tokens:parity` cruza valor↔valor (37 checks) y `npm run audit:theme-scale` vigila que el preset no se salga de la escala.
 
-**Color de marca vigilado**: `tokens:parity` resuelve los `--sc-*` a hex y cruza **43 colores** (light+dark) contra el export: rampa primary (color/hover/active/contrast) + surface↔gray + texto/content/formField/navigation/list/overlay. Las divergencias conscientes van allow-listadas: info=electric-blue, warn=amber, focus-ring=electric-blue (a11y §1.1), dark navy-tinted vs zinc del Kit, y unas de chrome/jerarquía fina (placeholder gray-400 / disabled gray-300 más tenues que el gray-500 plano del Kit; nav-activo gray-700; borde de input gray-200 vs Kit gray-300). Cerró el punto ciego que dejó pasar el drift de `primary-hover`.
+**Color de marca vigilado**: `tokens:parity` resuelve los `--sc-*` a hex y cruza **43 colores** (light+dark) contra el export: rampa primary (color/hover/active/contrast) + surface↔gray + texto/content/formField/navigation/list/overlay. Las divergencias conscientes van allow-listadas: info=electric-blue, warn=amber, dark navy-tinted vs zinc del Kit, y unas de chrome/jerarquía fina (placeholder gray-400 / disabled gray-300 más tenues que el gray-500 plano del Kit; nav-activo gray-700; borde de input gray-200 vs Kit gray-300). Cerró el punto ciego que dejó pasar el drift de `primary-hover`.
 
 **Rampa de texto alineada al Kit**: texto cuerpo `--sc-text-primary` gray-800→**gray-700** (export textColor), secundario `--sc-text-secondary` gray-600→**gray-500** (export textMutedColor). El Kit es más plano (2 niveles); se mantienen `subtle`/`disabled` más finos a propósito.
 
@@ -492,7 +492,7 @@ Un audit cruzó la capa `semantic.*` del código vs Kit Pro Variables (`aura/sem
 | Categoría Kit Pro | Cobertura en código | Naming 1:1 | Estructura 1:1 | Acción |
 |---|---|---|---|---|
 | `surface.{0-950}` (12 stops) | `--sc-color-gray-*` mapping vía `colorScheme.light.surface` | ✅ | ✅ | OK — sin cambios |
-| `focus.ring.*` | N/A en Kit Pro | N/A | Custom legítimo (electric-blue a11y; width 2px) | Ya documentado §1.1 |
+| `focus.ring.*` | electric-blue + width 2 (reconciliado 2026-06-14) | ✅ | En el Kit, ya no diverge | §1.1 |
 | `disabled.opacity` | N/A en Kit Pro | N/A | Custom legítimo (defensive 0.6) | Documentado en el preset |
 | `form.field.*` (11 paths) | Vive en el preset (`base.ts` colorScheme.light.formField, 10/11 paths) | ❌ camelCase TS vs JSON nested | ⚠️ Subset, no expone CSS `--sc-form-field-*` | **Documentar como preset-native** ↓ |
 | `overlay.{select,popover,modal}.{background,color,border}` | Geometría (radius/shadow) en CSS; colores en el preset colorScheme | ⚠️ parcial | ⚠️ Color tokens no expuestos como CSS | **Documentar como preset-native** ↓ |
