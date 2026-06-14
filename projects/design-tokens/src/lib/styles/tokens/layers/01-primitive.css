@@ -391,8 +391,8 @@
    * border.radius) por `npm run tokens:import`. NO editar a mano.
    * none/xs/sm/md/lg/xl = export 1:1 en rem; 2xl/full = customs SC documentados. */
   --sc-radius-none: 0;
-  --sc-radius-xs: 0.125rem; /* 2px */
   --sc-radius-sm: 0.25rem; /* 4px */
+  --sc-radius-xs: 0.3125rem; /* 5px */
   --sc-radius-md: 0.375rem; /* 6px */
   --sc-radius-lg: 0.5rem; /* 8px */
   --sc-radius-xl: 0.75rem; /* 12px */
