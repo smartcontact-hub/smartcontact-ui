@@ -59,3 +59,16 @@
 - **Publicar 0.2.0** → `GITHUB_TOKEN=… npm run publish:packages -- --publish` (operador).
 - **Migrar `smart-contact-platform`** → `docs/playbook-migracion-platform.md` (sesión aparte).
 - **Archivar `smartcontact-ui-main`** → `docs/playbook-archivar-ui-main.md` (sesión aparte).
+
+## Mantenimiento documental (pasada periódica — NO centralizar)
+
+- **Qué**: podar muertos y fusionar solapes — reduce-deuda aplicado a docs. NO es "un doc
+  único" (eso es lo MENOS mantenible); es mantener "una fuente por tema" sano.
+- **Disparador**: revisión periódica, o cuando el nº de docs crezca notablemente.
+- **Candidatos identificados (2026-06-14)**:
+  - `DECISIONS-LOG.md` + `DECISIONS-LOG-B.md` = journals de construcción **cerrados** → archivar
+    (p.ej. `docs/history/`) en vez de tenerlos en raíz como si fueran vivos.
+  - `foundations-rationale.md` + `component-port-plan.md` = ambos racional de construcción →
+    evaluar fusión.
+- **Validación**: `docs:guard` verde (todo mapeado, links resuelven) + DOCS-INDEX actualizado +
+  fronteras siguen sin solapar.
