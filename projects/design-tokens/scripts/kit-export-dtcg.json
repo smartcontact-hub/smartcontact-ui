@@ -4301,7 +4301,7 @@
         },
         "xs": {
           "$type": "number",
-          "$value": 2
+          "$value": 5
         },
         "sm": {
           "$type": "number",
@@ -6330,7 +6330,7 @@
         "font": {
           "size": {
             "$type": "number",
-            "$value": "{typography.font.size.200}"
+            "$value": "{typography.font.size.100}"
           }
         }
       }
