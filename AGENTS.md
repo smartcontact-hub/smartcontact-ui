@@ -292,6 +292,78 @@ Do NOT invent solutions.
 
 ---
 
+## Session-Close Protocol
+
+When the user signals the end of a session — **"cerramos"**, **"lo dejamos"**,
+**"paramos aquí"**, **"hasta mañana"**, **"nos vemos"**, or any equivalent cue — run
+this wrap-up routine **without asking permission first**:
+
+1. `git status` → if there are uncommitted changes, commit them per lote with a
+   Conventional-Commits message summarising what landed (exclude `.claude`:
+   `git add -A ':!.claude'`).
+2. `git push` to `origin main`, and confirm CI is green (the gate — see Mandatory Workflow).
+3. **Rewrite** `NEXT-SESSION.md` (it is the *volatile* hand-off — it gets overwritten,
+   not appended): current state + the ordered next steps + the doc index pointer.
+4. If the session locked in a **load-bearing decision** (changes architecture, discards
+   an alternative, sets a project-wide rule), add an entry to [`docs/DECISIONS.md`](docs/DECISIONS.md)
+   in DD-N format with **WHY** and **WHAT-WAS-DISCARDED-AND-WHY**. (`DECISIONS-LOG(-B).md`
+   is the historical construction journal — closed; new decisions go to `docs/DECISIONS.md`.)
+5. Reply with one or two sentences confirming what was pushed and where the trail lives.
+
+**Why this exists.** Every session must leave the repo with both the code *and* a written
+trail of how we got there, so the next session — and any future contributor — never has to
+re-derive context from `git log` alone. See [`docs/DOCS-INDEX.md`](docs/DOCS-INDEX.md) for
+which doc owns what.
+
+---
+
+## Known Traps — do not repeat
+
+A self-improving repo writes down each trap the moment it bites, so it is paid for once.
+Each entry: **what bites → the rule → why**. Append here when a new one is found.
+
+- **Wrong Figma bridge.** *Bites:* reaching for `mcp__ClaudeTalkToFigma__*` (channel-based,
+  not running) gives endless "Not connected". *Rule:* the live write-bridge is
+  **`mcp__figma__*`** (Figma Console MCP, WebSocket on `localhost:9223`) — see *Figma MCP
+  Bridge* below. *Why:* two sessions lost asking for a "channel" that does not exist in this setup.
+- **Rasters can't be imported into Figma by code.** *Bites:* the plugin sandbox blocks
+  `createImageAsync`/`fetch` to localhost, `set_image_fill` is unimplemented, and a
+  hand-transcribed base64 corrupts ("Invalid base64 string"). *Rule:* leave an auto-layout
+  **drop-zone** and let the user drag the PNG in. Native vectors/swatches *do* render fine
+  from code. *Why:* burned time brute-forcing every import path before accepting it.
+- **The Theme Designer plugin pushes 2 commits** (token export + `.theme-designer/`).
+  *Rule:* the `tokens-sync` workflow works **off `main`** and resets its own branch — it never
+  races the plugin's branch. *Why:* a non-fast-forward push race the first time.
+- **Two-strikes rule.** *Bites:* insisting on a blocked approach. *Rule:* if two distinct
+  attempts at the same sub-goal fail, **stop** — state the blocker, then pivot or ask. Do not
+  keep grinding. *Why:* stubbornness, not lack of skill, is what wastes a session.
+- **Check the docs before calling something "new architecture".** *Rule:* grep `docs/` +
+  [`docs/DOCS-INDEX.md`](docs/DOCS-INDEX.md) first — most flows (token pipeline, Theme Designer
+  round-trip) are already designed. *Why:* over-architecting a documented flow twice.
+
+---
+
+## Figma MCP Bridge (recorded)
+
+The Figma source-of-truth file is **"Smart-Contact Prime"** (file key
+`khNq9dJKNi13pNllrqm6dx`). To read/write it from an agent:
+
+- **Use `mcp__figma__*`** — the *Figma Console MCP* "Desktop Bridge" plugin (compact panel,
+  `</>` icon, green **"MCP ready"**). WebSocket on `localhost:9223`, no channel needed.
+  Key tools: `figma_get_status` (health, pass `probe:true`), `figma_execute` (runs JS with the
+  `figma` global), `figma_capture_screenshot`.
+- **Do NOT use `mcp__ClaudeTalkToFigma__*`** — a different, channel-based plugin that is not running.
+- **Reconnect:** if the MCP server restarts, the panel still shows "MCP ready" but the socket is
+  dead (`transport: none`, "No active file connected"). Re-run the plugin: Figma → *Plugins →
+  Development → Figma Desktop Bridge*. (Via computer-use, Figma Desktop's bundle id is
+  `com.figma.Desktop`; the name "Figma" does not resolve.)
+
+**Figma is the source of truth — never write to it without leaving a record.** Every change to
+the Figma file is logged in [`docs/guia-tokens.md`](docs/guia-tokens.md) → *Figma change-log*
+(fecha · nodo/página · qué cambió · por qué · quién).
+
+---
+
 ## Goal
 
 Convert prompts into:
