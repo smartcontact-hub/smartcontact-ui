@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
+import { booleanAttribute, ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ToggleSwitchModule } from 'primeng/toggleswitch';
 
@@ -34,10 +34,10 @@ let toggleIdCounter = 0;
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ScToggleSwitchComponent {
-  readonly checked = input<boolean>(false);
-  readonly disabled = input<boolean>(false);
+  readonly checked = input(false, { transform: booleanAttribute });
+  readonly disabled = input(false, { transform: booleanAttribute });
   /** Bloquea la interacción sin pintar el estado disabled (del catálogo de desarrollo). */
-  readonly readonly = input<boolean>(false);
+  readonly readonly = input(false, { transform: booleanAttribute });
   readonly size = input<ScComponentSize>('md');
   readonly ariaLabel = input<string | null>(null);
   readonly ariaLabelledBy = input<string | null>(null);

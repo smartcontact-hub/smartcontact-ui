@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, input, signal } from '@angular/core';
+import { booleanAttribute, ChangeDetectionStrategy, Component, computed, input, signal } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { SC_ICON_SIZE_LG, ScIconComponent } from '@smartcontact-hub/icons';
 
@@ -34,11 +34,11 @@ export class ScSectionCardComponent {
   /** Icono opcional de la cabecera. Cualquier nombre de Material Symbols. */
   readonly icon = input<string | null>(null);
   /** Cuando es true, la cabecera actúa de toggle y el body colapsa. */
-  readonly collapsible = input<boolean>(false);
+  readonly collapsible = input(false, { transform: booleanAttribute });
   /** Estado colapsado inicial cuando `collapsible` es true. Ignorado si no. */
-  readonly initiallyCollapsed = input<boolean>(false);
+  readonly initiallyCollapsed = input(false, { transform: booleanAttribute });
   /** Flush (sin caja): quita fondo/borde/radio + padding lateral; el contenido va a sangre. */
-  readonly flush = input<boolean>(false);
+  readonly flush = input(false, { transform: booleanAttribute });
 
   protected readonly chevronDownIcon = 'expand_more';
   protected readonly chevronRightIcon = 'chevron_right';

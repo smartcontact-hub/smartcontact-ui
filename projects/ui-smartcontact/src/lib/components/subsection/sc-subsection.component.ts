@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, input, signal } from '@angular/core';
+import { booleanAttribute, ChangeDetectionStrategy, Component, computed, input, signal } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { SC_ICON_SIZE_LG, ScIconComponent } from '@smartcontact-hub/icons';
 
@@ -23,8 +23,8 @@ export class ScSubsectionComponent {
   readonly titleKey = input.required<string>();
   readonly hintKey = input<string | null>(null);
   readonly icon = input<string | null>(null);
-  readonly collapsible = input<boolean>(false);
-  readonly initiallyCollapsed = input<boolean>(false);
+  readonly collapsible = input(false, { transform: booleanAttribute });
+  readonly initiallyCollapsed = input(false, { transform: booleanAttribute });
 
   protected readonly chevronDownIcon = 'expand_more';
   protected readonly chevronRightIcon = 'chevron_right';

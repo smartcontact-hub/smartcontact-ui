@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, effect, input, model, output } from '@angular/core';
+import { booleanAttribute, ChangeDetectionStrategy, Component, computed, effect, input, model, output } from '@angular/core';
 import { DialogModule } from 'primeng/dialog';
 
 import { ScIconComponent, SC_ICON_SIZE_LG } from '@smartcontact-hub/icons';
@@ -77,11 +77,11 @@ export class ScDialogComponent {
   readonly closeAriaLabel = input<string>('Cerrar');
 
   // ─── Passthrough del wrapper fino (catálogo de desarrollo) ─────────
-  readonly modal = input<boolean>(true);
+  readonly modal = input(true, { transform: booleanAttribute });
   readonly position = input<ScDialogPosition>('center');
-  readonly draggable = input<boolean>(false);
-  readonly resizable = input<boolean>(false);
-  readonly dismissableMask = input<boolean>(false);
+  readonly draggable = input(false, { transform: booleanAttribute });
+  readonly resizable = input(false, { transform: booleanAttribute });
+  readonly dismissableMask = input(false, { transform: booleanAttribute });
 
   /** Emitido en cualquier cierre (X, ESC, máscara). Alias semántico de `visible=false`. */
   readonly cancelled = output<void>();

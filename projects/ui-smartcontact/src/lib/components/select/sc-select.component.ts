@@ -1,5 +1,6 @@
 import { NgTemplateOutlet } from '@angular/common';
 import {
+  booleanAttribute,
   ChangeDetectionStrategy,
   Component,
   computed,
@@ -64,13 +65,13 @@ export class ScSelectComponent implements ControlValueAccessor {
   // ─── Chrome (mirrors sc-inputtext) ─────────────────────────────────────
   readonly size = input<ScSelectSize>('md');
   readonly label = input<string>();
-  readonly required = input<boolean>(false);
+  readonly required = input(false, { transform: booleanAttribute });
   readonly helperText = input<string>();
   readonly error = input<string>();
   readonly placeholder = input<string>('');
   readonly disabled = model<boolean>(false);
   /** Solo lectura (paridad con sc-inputtext / catálogo de desarrollo). */
-  readonly readonly = input<boolean>(false);
+  readonly readonly = input(false, { transform: booleanAttribute });
   readonly inputId = input<string>();
   readonly name = input<string>();
 
@@ -82,9 +83,9 @@ export class ScSelectComponent implements ControlValueAccessor {
   /** Key for the bound value when `options` are objects. If unset, the whole object is bound. */
   readonly optionValue = input<string>();
   /** Show an "×" to clear selection. */
-  readonly showClear = input<boolean>(false);
+  readonly showClear = input(false, { transform: booleanAttribute });
   /** Enable search/filter inside the dropdown. */
-  readonly filter = input<boolean>(false);
+  readonly filter = input(false, { transform: booleanAttribute });
   /** Field(s) used for filtering when `filter` is true. */
   readonly filterBy = input<string>();
   /** Empty-state copy when filter returns no rows. */
@@ -98,9 +99,9 @@ export class ScSelectComponent implements ControlValueAccessor {
    * `(x 10.5, top 7)`. Úsalo en vez del label-encima cuando el diseño lo pida
    * (p.ej. selects de config Grupos).
    */
-  readonly iftaLabel = input<boolean>(false);
+  readonly iftaLabel = input(false, { transform: booleanAttribute });
   /** Background "filled" variant (Figma node 6195:7785): bg slate-50. */
-  readonly filled = input<boolean>(false);
+  readonly filled = input(false, { transform: booleanAttribute });
   /**
    * Target del overlay panel del dropdown. Útil cuando el `<sc-select>` vive
    * dentro de un `<sc-dialog>` con `overflow: hidden` — `appendTo="body"`
@@ -110,7 +111,7 @@ export class ScSelectComponent implements ControlValueAccessor {
   /** Key del flag de opción deshabilitada (passthrough de p-select). */
   readonly optionDisabled = input<string>();
   /** Spinner de carga (passthrough de p-select). */
-  readonly loading = input<boolean>(false);
+  readonly loading = input(false, { transform: booleanAttribute });
 
   // ─── Two-way value binding ─────────────────────────────────────────
   readonly value = model<unknown>(undefined);

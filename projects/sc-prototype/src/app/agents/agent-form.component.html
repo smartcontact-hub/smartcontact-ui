@@ -9,13 +9,13 @@
   <sc-section-card titleKey="Configuración del agente" icon="settings">
     <sc-subsection titleKey="Identidad">
       <sc-slot titleKey="Nombre">
-        <sc-inputtext [(value)]="name" [fluid]="true" placeholder="Nombre del agente"></sc-inputtext>
+        <sc-inputtext [(value)]="name" fluid placeholder="Nombre del agente"></sc-inputtext>
       </sc-slot>
       <sc-slot titleKey="Extensión">
-        <sc-inputtext [(value)]="extension" [fluid]="true" inputmode="numeric" placeholder="101"></sc-inputtext>
+        <sc-inputtext [(value)]="extension" fluid inputmode="numeric" placeholder="101"></sc-inputtext>
       </sc-slot>
       <sc-slot titleKey="Email">
-        <sc-inputtext [(value)]="email" type="email" [fluid]="true"></sc-inputtext>
+        <sc-inputtext [(value)]="email" type="email" fluid></sc-inputtext>
       </sc-slot>
     </sc-subsection>
 

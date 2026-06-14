@@ -1,4 +1,5 @@
 import {
+  booleanAttribute,
   ChangeDetectionStrategy,
   Component,
   ElementRef,
@@ -49,12 +50,12 @@ let triStateIdCounter = 0;
 })
 export class ScCheckboxComponent {
   readonly state = input.required<TriState>();
-  readonly disabled = input<boolean>(false);
+  readonly disabled = input(false, { transform: booleanAttribute });
   readonly ariaLabel = input<string | null>(null);
   /** Size variant (Figma `Size=Small/Normal/Large`). Default 'md' (17.5px). */
   readonly size = input<ScCheckboxSize>('md');
   /** Filled background variant (Figma `Filled=True`): bg slate-50 cuando unchecked. */
-  readonly filled = input<boolean>(false);
+  readonly filled = input(false, { transform: booleanAttribute });
   /** Override del id del `<input>` real (del catálogo de desarrollo): permite
    * que un `<label for="X">` externo enlace el checkbox. Si se omite, se genera
    * uno único. */

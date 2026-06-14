@@ -63,7 +63,7 @@ import { ScIconComponent } from '@smartcontact-hub/icons';
 
 ```html
 <sc-icon name="group"></sc-icon>
-<sc-inputtext [(value)]="name" [fluid]="true"></sc-inputtext>
+<sc-inputtext [(value)]="name" fluid></sc-inputtext>
 ```
 
 ## 5. Gotchas (descubiertos dogfoodeando el prototipo)
@@ -73,9 +73,9 @@ import { ScIconComponent } from '@smartcontact-hub/icons';
   `bodyKey`), no texto: las resuelve `@ngx-translate`. Registra tu diccionario, o las
   claves se renderizan tal cual (fallback de ngx-translate). Los componentes con copy
   fijo propio (inline-rename, bulk-action-bar) ya traen su diccionario.
-- **Inputs booleanos = property binding.** Los `input<boolean>()` de signal **no** llevan
-  `transform: booleanAttribute` (de momento), así que el atributo escueto falla en el
-  build (`fluid` → string ≠ boolean). Usa **`[fluid]="true"`**, no `fluid`.
+- **Inputs booleanos: atributo escueto OK** (desde 0.2.0). Los `input<boolean>()` llevan
+  `transform: booleanAttribute`, así que `<sc-inputtext fluid>` funciona (como
+  `<input disabled>`). `[fluid]="true"` también vale.
 - **`--sc-*` es el contrato.** Tematiza con los tokens `--sc-*` (públicos). Nunca uses
   `--p-*` (viven solo dentro del preset).
 

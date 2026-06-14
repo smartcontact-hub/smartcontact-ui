@@ -1,4 +1,5 @@
 import {
+  booleanAttribute,
   ChangeDetectionStrategy,
   Component,
   computed,
@@ -63,7 +64,7 @@ export class ScDatepickerComponent implements ControlValueAccessor {
   // ─── Chrome ────────────────────────────────────────────────────────
   readonly size = input<ScDatepickerSize>('md');
   readonly label = input<string>();
-  readonly required = input<boolean>(false);
+  readonly required = input(false, { transform: booleanAttribute });
   readonly helperText = input<string>();
   readonly error = input<string>();
   readonly placeholder = input<string>('dd/mm/aaaa');
@@ -81,13 +82,13 @@ export class ScDatepickerComponent implements ControlValueAccessor {
   /** Latest selectable date. */
   readonly maxDate = input<Date>();
   /** Show the panel inline (always visible) instead of in a popup. */
-  readonly inline = input<boolean>(false);
+  readonly inline = input(false, { transform: booleanAttribute });
   /** Show a clear "×" inside the input. */
-  readonly showClear = input<boolean>(false);
+  readonly showClear = input(false, { transform: booleanAttribute });
   /** Show the calendar icon button to open the picker (right side, popup mode only). */
-  readonly showIcon = input<boolean>(true);
+  readonly showIcon = input(true, { transform: booleanAttribute });
   /** Show today / clear buttons in the panel footer. */
-  readonly showButtonBar = input<boolean>(false);
+  readonly showButtonBar = input(false, { transform: booleanAttribute });
   /** Locale identifier consumed by PrimeNG. Default Spanish. */
   readonly locale = input<unknown>();
 

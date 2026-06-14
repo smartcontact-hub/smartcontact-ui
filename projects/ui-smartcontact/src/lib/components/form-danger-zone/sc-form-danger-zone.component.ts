@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, input, output } from '@angular/core';
+import { booleanAttribute, ChangeDetectionStrategy, Component, inject, input, output } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ButtonModule } from 'primeng/button';
 
@@ -30,7 +30,7 @@ export class ScFormDangerZoneComponent {
   readonly titleKey = input<string>('sc.formDangerZone.title');
   readonly descriptionKey = input.required<string>();
   readonly actionKey = input<string>('sc.formDangerZone.action');
-  readonly disabled = input<boolean>(false);
+  readonly disabled = input(false, { transform: booleanAttribute });
 
   readonly action = output<void>();
 

@@ -1,4 +1,5 @@
 import {
+  booleanAttribute,
   ChangeDetectionStrategy,
   Component,
   computed,
@@ -62,12 +63,12 @@ export class ScInputNumberComponent implements ControlValueAccessor {
   // ─── Chrome inputs (mirror sc-inputtext) ───────────────────────────────
   readonly size = input<ScInputNumberSize>('md');
   readonly label = input<string>();
-  readonly required = input<boolean>(false);
+  readonly required = input(false, { transform: booleanAttribute });
   readonly helperText = input<string>();
   readonly error = input<string>();
   readonly placeholder = input<string>();
   readonly disabled = model<boolean>(false);
-  readonly readonly = input<boolean>(false);
+  readonly readonly = input(false, { transform: booleanAttribute });
   readonly inputId = input<string>();
   readonly name = input<string>();
 

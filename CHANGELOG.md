@@ -11,6 +11,15 @@ nota, commitea, y publica (`GITHUB_TOKEN=… npm run publish:packages -- --publi
 
 ## [Unreleased]
 
+## [0.2.0] — 2026-06-14
+
+### Changed
+- **`@smartcontact-hub/components`** — los `input<boolean>()` de los wrappers
+  (`fluid`, `required`, `invalid`, `readonly`, `collapsible`, `flush`, `stripedRows`…)
+  ahora llevan `transform: booleanAttribute`: el **atributo escueto** funciona
+  (`<sc-inputtext fluid>`, como `<input disabled>`). Cambio **aditivo** —
+  `[fluid]="true"` sigue válido. Gap surfaceado dogfoodeando `projects/sc-prototype`.
+
 ## [0.1.0] — 2026-06-13
 Primera publicación en GitHub Packages (privado, org `smartcontact-hub`).
 

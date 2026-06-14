@@ -1,4 +1,5 @@
 import {
+  booleanAttribute,
   ChangeDetectionStrategy,
   Component,
   computed,
@@ -69,13 +70,13 @@ export class ScSearchComponent implements ControlValueAccessor {
   readonly disabled = model<boolean>(false);
   readonly inputId = input<string>();
   readonly name = input<string>();
-  readonly autoFocus = input<boolean>(false);
+  readonly autoFocus = input(false, { transform: booleanAttribute });
   /** Background "filled" variant (bg slate-50, alineado con sc-inputtext). */
-  readonly filled = input<boolean>(false);
+  readonly filled = input(false, { transform: booleanAttribute });
 
   // ─── Search-specific ───────────────────────────────────────────────
   /** Muestra el botón "×" cuando hay texto. Default true. */
-  readonly showClear = input<boolean>(true);
+  readonly showClear = input(true, { transform: booleanAttribute });
   /**
    * Pista de atajo visible cuando el campo está vacío y sin foco
    * (ej. `⌘K`, `/`). Sigue el patrón de GitHub / Linear. Cuando undefined,

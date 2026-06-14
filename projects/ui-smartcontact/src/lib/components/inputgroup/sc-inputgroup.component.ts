@@ -1,4 +1,5 @@
 import {
+  booleanAttribute,
   ChangeDetectionStrategy,
   Component,
   input,
@@ -50,7 +51,7 @@ export type ScInputGroupSize = 'sm' | 'md' | 'lg';
 export class ScInputGroupComponent {
   readonly size = input<ScInputGroupSize>('md');
   /** Fluid mode — el grupo ocupa todo el ancho disponible (default true). */
-  readonly fluid = input<boolean>(true);
+  readonly fluid = input(true, { transform: booleanAttribute });
 
   protected readonly innerClass = computed(() =>
     this.fluid() ? 'sc-inputgroup__inner sc-inputgroup__inner--fluid' : 'sc-inputgroup__inner',

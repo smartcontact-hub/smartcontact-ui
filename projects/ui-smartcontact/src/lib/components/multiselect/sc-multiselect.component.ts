@@ -1,4 +1,5 @@
 import {
+  booleanAttribute,
   ChangeDetectionStrategy,
   Component,
   computed,
@@ -60,7 +61,7 @@ export class ScMultiSelectComponent implements ControlValueAccessor {
   // ─── Chrome (mirrors sc-select) ─────────────────────────────────────
   readonly size = input<ScMultiSelectSize>('md');
   readonly label = input<string>();
-  readonly required = input<boolean>(false);
+  readonly required = input(false, { transform: booleanAttribute });
   readonly helperText = input<string>();
   readonly error = input<string>();
   readonly placeholder = input<string>('');
@@ -75,10 +76,10 @@ export class ScMultiSelectComponent implements ControlValueAccessor {
   /** How to render selected items inside the input. */
   readonly display = input<ScMultiSelectDisplay>('comma');
   /** Show search/filter input inside the dropdown. */
-  readonly filter = input<boolean>(false);
+  readonly filter = input(false, { transform: booleanAttribute });
   readonly filterBy = input<string>();
   /** Show "Select all" toggle at the top of the dropdown. */
-  readonly showToggleAll = input<boolean>(true);
+  readonly showToggleAll = input(true, { transform: booleanAttribute });
   /** Hard limit on how many items can be selected. */
   readonly selectionLimit = input<number>();
   /** When `display='comma'`, fold to "N items selected" after this many. */
@@ -86,18 +87,18 @@ export class ScMultiSelectComponent implements ControlValueAccessor {
   /** Label template for fold state, e.g. "{0} elementos seleccionados". */
   readonly selectedItemsLabel = input<string>('{0} seleccionados');
   /** Show the "×" clear button. */
-  readonly showClear = input<boolean>(false);
+  readonly showClear = input(false, { transform: booleanAttribute });
   readonly emptyFilterMessage = input<string>('Sin resultados');
   readonly emptyMessage = input<string>('Sin opciones');
   /** Background "filled" variant (Figma node 6220:7054): bg slate-50. */
-  readonly filled = input<boolean>(false);
+  readonly filled = input(false, { transform: booleanAttribute });
   /**
    * Label dentro del campo (IftaLabel — *In-Field Top Aligned*, Figma node
    * `7462:106725`). El `label` se fija arriba-dentro del campo y el valor baja
    * (padding-top 21 / bottom 7, label 10.5px regular `#8f97a3` en x10.5/top7).
    * Opt-in; los multiselect con label-encima no cambian.
    */
-  readonly iftaLabel = input<boolean>(false);
+  readonly iftaLabel = input(false, { transform: booleanAttribute });
 
   // ─── Two-way value binding ─────────────────────────────────────────
   /** Array of selected values (id-only if `optionValue` set, else whole objects). */

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, input, output } from '@angular/core';
+import { booleanAttribute, ChangeDetectionStrategy, Component, inject, input, output } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 import { SC_ICON_SIZE_DEFAULT, ScIconComponent } from '@smartcontact-hub/icons';
@@ -44,7 +44,7 @@ export class ScFormSectionNavComponent {
    * (12277:4185), referencia común de agents/groups/users. Opt-in, default off.
    * Ver customs-catalog §2.7.
    */
-  readonly flush = input<boolean>(false);
+  readonly flush = input(false, { transform: booleanAttribute });
 
   /**
    * Set of section ids that currently have required fields empty (or invalid

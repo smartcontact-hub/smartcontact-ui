@@ -1,4 +1,5 @@
 import {
+  booleanAttribute,
   ChangeDetectionStrategy,
   Component,
   computed,
@@ -63,14 +64,14 @@ export class ScInputTextComponent implements ControlValueAccessor {
   // ─── Inputs ────────────────────────────────────────────────────────
   readonly size = input<ScInputSize>('md');
   readonly label = input<string>();
-  readonly required = input<boolean>(false);
+  readonly required = input(false, { transform: booleanAttribute });
   readonly helperText = input<string>();
   readonly error = input<string>();
   /** Estado inválido explícito (del catálogo de desarrollo). Se combina con
    * `error` y el estado touched+invalid del ControlValueAccessor. */
-  readonly invalid = input<boolean>(false);
+  readonly invalid = input(false, { transform: booleanAttribute });
   /** Ancho completo (del catálogo de desarrollo): el campo ocupa el 100 %. */
-  readonly fluid = input<boolean>(false);
+  readonly fluid = input(false, { transform: booleanAttribute });
   /** Nombre accesible cuando no hay `<label>` visible ni `iftaLabel`
    * (del catálogo de desarrollo). */
   readonly ariaLabel = input<string>();
@@ -78,7 +79,7 @@ export class ScInputTextComponent implements ControlValueAccessor {
   readonly type = input<ScInputType>('text');
   readonly placeholder = input<string>();
   readonly disabled = model<boolean>(false);
-  readonly readonly = input<boolean>(false);
+  readonly readonly = input(false, { transform: booleanAttribute });
   readonly inputId = input<string>();
   readonly name = input<string>();
   readonly autocomplete = input<string>();
@@ -87,14 +88,14 @@ export class ScInputTextComponent implements ControlValueAccessor {
    * No fuerza validación — solo cambia el layout del teclado en iOS/Android. */
   readonly inputmode = input<string>();
   /** Background "filled" variant (Figma node 1729:42481): bg slate-50. */
-  readonly filled = input<boolean>(false);
+  readonly filled = input(false, { transform: booleanAttribute });
   /**
    * Label dentro del campo (IftaLabel — *In-Field Top Aligned*, Figma node
    * `7462:106725`). El `label` se fija arriba-dentro del campo y el valor baja
    * (padding-top 21 / bottom 7, label 10.5px regular `#8f97a3` en x10.5/top7).
    * Opt-in; los inputs con label-encima no cambian.
    */
-  readonly iftaLabel = input<boolean>(false);
+  readonly iftaLabel = input(false, { transform: booleanAttribute });
 
   // ─── Two-way value binding (signal-friendly) ───────────────────────
   /** Current value. Use `[(value)]="signalName"` from consumers. */

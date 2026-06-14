@@ -1,5 +1,6 @@
 import { NgTemplateOutlet } from '@angular/common';
 import {
+  booleanAttribute,
   ChangeDetectionStrategy,
   Component,
   computed,
@@ -56,7 +57,7 @@ export class ScDatatableComponent<T = unknown> {
   readonly columns = input<readonly ScColumnDef<T>[]>([]);
   readonly dataKey = input<string | undefined>(undefined);
 
-  readonly paginator = input<boolean>(false);
+  readonly paginator = input(false, { transform: booleanAttribute });
   readonly rows = input<number | undefined>(undefined);
   readonly rowsPerPageOptions = input<number[] | undefined>(undefined);
 
@@ -70,18 +71,18 @@ export class ScDatatableComponent<T = unknown> {
   readonly sortOrder = input<number>(1);
 
   readonly size = input<ScComponentSize>('md');
-  readonly scrollable = input<boolean>(false);
+  readonly scrollable = input(false, { transform: booleanAttribute });
   readonly scrollHeight = input<string | undefined>(undefined);
-  readonly stripedRows = input<boolean>(false);
-  readonly showGridlines = input<boolean>(false);
-  readonly loading = input<boolean>(false);
+  readonly stripedRows = input(false, { transform: booleanAttribute });
+  readonly showGridlines = input(false, { transform: booleanAttribute });
+  readonly loading = input(false, { transform: booleanAttribute });
 
   /**
    * Modo lazy (server-driven): p-table deja de ordenar/paginar/filtrar en cliente
    * y emite `(lazyLoad)` con los metadatos (page/sort/filter). El consumidor
    * busca los datos y actualiza `value` + `totalRecords`.
    */
-  readonly lazy = input<boolean>(false);
+  readonly lazy = input(false, { transform: booleanAttribute });
   /** Total de registros del lado servidor (paginador en modo lazy). */
   readonly totalRecords = input<number | undefined>(undefined);
   /** Mapa de filtros (controlado por el consumidor; en lazy viaja en el evento). */
