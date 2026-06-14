@@ -91,3 +91,8 @@ El ente evolutivo en acción: la migración de la app real saca a la luz huecos 
 - (Menor) **Drift de tokens local↔publicado**: caracterizado por la migración como **convergencia
   intencional** (rampa zinc aditiva + px→rem que resuelve idéntico a root 16px + refactor de refs),
   no regresión. Confirmado visual/numéricamente idéntico → swap de fundación = bajo riesgo.
+- **Tamaños que faltan en el publicado: `sc-avatar` (px) y `sc-tag` (`xs`)** — la app usa avatares en
+  px concretos y un tag `xs` que el paquete publicado no expone (usa buckets de tamaño / no tiene xs).
+  *Decisión DS (no de la migración)*: ¿son **necesidades legítimas** → el DS añade esos tamaños en una
+  versión nueva; o son **drift de la app** → la app converge a los buckets (con visto bueno de diseño)?
+  *Disparador*: decidir add-vs-converge. La migración los deja **locales** mientras tanto (cero regresión).
