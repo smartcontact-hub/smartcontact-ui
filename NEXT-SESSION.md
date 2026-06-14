@@ -6,7 +6,7 @@
 
 ## Dónde estamos (2026-06-14, tras el maratón "sistema operativo")
 - DS **publicado** en GitHub Packages — `@smartcontact-hub/{styles,icons,components}`.
-  **0.1.0 vivo; 0.2.0 cortada en código (verify verde), PENDIENTE de publicar.**
+  **0.1.0 y 0.2.0 publicadas (los 3 paquetes, GitHub Packages).**
 - **Sistema operativo del repo montado** (maratón L1-L9, L11): `DOCS-INDEX` (juez
   anti-duplicación), `AGENTS.md` (protocolo de cierre + trampas + bridge Figma MCP),
   `.impeccable.md` (alcance sagrado), gobernanza de Figma (no escribir sin registro +
@@ -15,20 +15,16 @@
 - **Puente Theme Designer → repo**: CONFIRMADO. Bridge Figma MCP = `mcp__figma__*`
   (figma-console-mcp, 9223) — recorded en AGENTS.
 
+## Hecho (cierre de esta tanda)
+- **0.2.0 publicada** (los 3 paquetes) · **round-trip del focus ring cerrado** (Figma = código) ·
+  consolidación de docs (logs archivados a `docs/history/`, `docs:guard` recursivo).
+
 ## Lo siguiente (en orden)
-1. **Publicar 0.2.0** (operador, tu terminal):
-   `cd …/smartcontact-ui && GITHUB_TOKEN=… npm run publish:packages -- --publish`
-2. **Validar el round-trip del focus ring** (en curso): ya escrito en Figma (electric-blue 2px,
-   variables `focus/ring/*`, registrado en el Figma change-log). **Re-exporta el tema desde el
-   plugin** → corro `tokens:import` + `verify` y quito la fila `focus.ring` de DIVERGE. Las otras
-   2 divergencias (dark, grises sutiles) son **system-wide** → en `docs/ROADMAP.md` con review.
-3. **Bloque 3 — migrar `smart-contact-platform`** → [playbook](docs/playbook-migracion-platform.md)
-   (SESIÓN APARTE; read-only aquí).
-4. **Bloque 5 — archivar `smartcontact-ui-main`** → [playbook](docs/playbook-archivar-ui-main.md)
-   (sesión aparte).
-5. **Backlog durable** (lo diferido, con disparador + validación) →
-   [`docs/ROADMAP.md`](docs/ROADMAP.md): decisión dark, pase a11y de grises sutiles, generador de
-   color, resolver de refs del preset, Migration Assistant.
+1. **Migrar `smart-contact-platform`** → [playbook](docs/playbook-migracion-platform.md)
+   (SESIÓN APARTE en ese repo; rama `feat/adopt-published-ds`; consume `@smartcontact-hub/*@0.2.0`).
+2. **Archivar `smartcontact-ui-main`** → [playbook](docs/playbook-archivar-ui-main.md) (sesión aparte).
+3. **Backlog durable** → [`docs/ROADMAP.md`](docs/ROADMAP.md): decisión dark, pase a11y de grises
+   sutiles, generador de color, resolver de refs del preset, Migration Assistant.
 
 ## Índice de documentos
 - **Mapa completo** → [`docs/DOCS-INDEX.md`](docs/DOCS-INDEX.md) (qué doc manda en cada tema).
