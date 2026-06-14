@@ -4301,7 +4301,7 @@
         },
         "xs": {
           "$type": "number",
-          "$value": 5
+          "$value": 2
         },
         "sm": {
           "$type": "number",
