@@ -72,3 +72,21 @@
     evaluar fusión (pendiente).
 - **Validación**: `docs:guard` verde (todo mapeado, links resuelven) + DOCS-INDEX actualizado +
   fronteras siguen sin solapar.
+
+## Gaps del DS surfaceados por consumir-real (migración de smart-contact-platform, 2026-06-14)
+
+El ente evolutivo en acción: la migración de la app real saca a la luz huecos del paquete publicado.
+
+- **Publicar los partials SCSS** — `@smartcontact-hub/styles` solo ships **CSS compilado**; la app
+  consume 3 partials vía `@use` (`sc-overlay-sizes`, `sc-animations`, `sc-list-table`) que el
+  paquete NO publica → el consumidor tiene que mantenerlos locales. *Fix*: exportar también los
+  partials SCSS (o documentar que se quedan locales). *Disparador*: ahora (bloquea el "borrar copia
+  local" total).
+- **Estilo de iconos: Rounded (DS) vs Outlined (app)** — `@smartcontact-hub/icons` usa Material
+  Symbols **Rounded**; la app Supervisor usa **Outlined**. Migrar = cambia el aspecto de ~217 iconos.
+  No es un bug, es una **decisión de marca sin tomar**: ¿el DS oficial es Rounded y la app se alinea,
+  o el DS ofrece Outlined? *Validación*: la suite visual-regression de la app (14 baselines) lo caza.
+  *Disparador*: decisión de diseño antes de migrar iconos.
+- (Menor) **Drift de tokens local↔publicado**: caracterizado por la migración como **convergencia
+  intencional** (rampa zinc aditiva + px→rem que resuelve idéntico a root 16px + refactor de refs),
+  no regresión. Confirmado visual/numéricamente idéntico → swap de fundación = bajo riesgo.
