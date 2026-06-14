@@ -7,19 +7,18 @@
 ## Dónde estamos (2026-06-14)
 - DS **publicado** en GitHub Packages — `@smartcontact-hub/{styles,icons,components}`,
   org `smartcontact-hub`. **0.1.0 vivo; 0.2.0 cortada en código, PENDIENTE de publicar.**
-- **Puente Theme Designer → repo** (workflow `tokens-sync`): regenerar+verify+e2e SIEMPRE
-  verde. El commit-back tenía 2 bugs (carrera + staleness) → **workflow reescrito ROBUSTO**
-  (commit `f5ce783`: trabaja sobre main, resetea la rama a "main+cambio", PR limpio).
-  Desplegado en main + design-tokens-sync. **FALTA: 1 push de confirmación** (cambiar
-  variable en Figma → ver run verde + PR limpio auto). No cantar victoria hasta verlo.
+- **Puente Theme Designer → repo** (workflow `tokens-sync`): **CONFIRMADO end-to-end**
+  (run verde + PR limpio auto, una sola corrida — PR #3 de test cerrado). Workflow robusto
+  (`f5ce783`): trabaja sobre main, resetea la rama a "main+cambio", PR limpio, auto-cura.
+  Listo para producción: un diseñador cambia variable en Figma → push → PR limpio solo.
 - **Prototipo** `projects/sc-prototype`: 2 pantallas dogfoodeando la lib por nombre.
 - Bloques 0, 1, 2, 4-1 hechos (CI verde). Branch protection **diferido**.
 
 ## Lo siguiente (en orden)
 1. **Publicar 0.2.0** (operador, en tu terminal):
    `cd /Users/rafareses/dev/smartcontact-ui && GITHUB_TOKEN=… npm run publish:packages -- --publish`
-2. **Prueba final del puente**: cambiar una variable (spacing/radio → verde) en Figma →
-   push desde el plugin → ver el run `tokens-sync` verde **y que abra el PR solo**.
+2. **Puente: CONFIRMADO** ✅ (ya no hace falta probarlo; el próximo uso es real — un
+   diseñador cambia variable en Figma → push → PR limpio solo).
 3. **Bloque 3 — migrar `smart-contact-platform`** (SESIÓN APARTE; read-only aquí).
    Divergencias: `sc-illustrated-avatar`→`sc-avatar`, `sc-label-chip`→`sc-tag` variante
    label, `@ngx-translate/core` 15→17, `@primeng/themes` vs `@primeuix/themes`.
