@@ -22,6 +22,12 @@ concurrency:
   group: pages
   cancel-in-progress: false
 
+# Adelantamos las JS actions a Node 24 (GitHub lo fuerza el 16-jun-2026).
+# Las actions de Pages (configure-pages@v5, upload-pages-artifact@v3,
+# deploy-pages@v4) corrían en Node 20; esto las opta a Node 24 ya.
+env:
+  FORCE_JAVASCRIPT_ACTIONS_TO_NODE24: true
+
 jobs:
   build:
     runs-on: ubuntu-latest
