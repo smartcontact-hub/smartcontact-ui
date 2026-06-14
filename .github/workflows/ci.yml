@@ -38,6 +38,8 @@ jobs:
           npm run typecheck
       - name: Build demo
         run: npm run build:demo
+      - name: Build prototipo (consume @smartcontact-hub/* por nombre)
+        run: npx ng build sc-prototype
       - name: e2e smoke
         run: |
           npx playwright install --with-deps chromium

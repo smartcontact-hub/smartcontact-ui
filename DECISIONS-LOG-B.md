@@ -932,3 +932,17 @@ Settings → Actions → General → "Allow GitHub Actions to create and approve
 requests"; (b) el paso del PR se hizo **best-effort** (emite `::warning::` y sale 0 si
 no puede crear el PR — el verde/rojo del run refleja la salud de los tokens, no la
 fontanería del PR). El primer PR de prueba se abrió a mano (#1).
+
+---
+
+# Bloque 1-0 — Andamiaje del prototipo de plataforma (projects/sc-prototype) (2026-06-14)
+Proyecto Angular nuevo que **dogfooda la DS consumiendo `@smartcontact-hub/*` POR NOMBRE**
+(resuelto a `dist/` vía los paths del tsconfig raíz) — igual que una app externa, así que
+es el **piloto de la migración real (Bloque 3)**: valida la API pública del paquete en un
+sandbox seguro. `app.config` importa `provideSmartContactUi` de `@smartcontact-hub/components`;
+`app.component` importa `ScIconComponent` de `@smartcontact-hub/icons`. El CSS de
+tokens/iconos se importa desde source (idéntico al del paquete; SCSS no resuelve specifiers
+de paquete). Alta en `angular.json` (app browser, sin test target), `build:prototype`,
+`typecheck` (+tsconfig del prototipo) y paso "Build prototipo" en `ci.yml`. Verificado:
+`verify` verde (el typecheck del prototipo resuelve por nombre) + `ng build sc-prototype` OK
+(1.15MB initial, bajo budget). Pantallas reales en 1-1+.

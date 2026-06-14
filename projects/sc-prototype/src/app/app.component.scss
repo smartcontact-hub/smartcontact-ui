@@ -1,0 +1,23 @@
+:host {
+  display: block;
+  min-height: 100vh;
+}
+
+.proto-header {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-5);
+  padding: var(--sc-spacing-0-875) var(--sc-spacing-1-143);
+  background: var(--sc-bg-surface);
+  border-bottom: 1px solid var(--sc-border-default);
+}
+
+.proto-header__brand {
+  font-size: var(--sc-font-size-200);
+  font-weight: var(--sc-font-weight-regular);
+  color: var(--sc-text-primary);
+}
+
+.proto-main {
+  padding: var(--sc-spacing-1-5);
+}

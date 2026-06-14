@@ -191,6 +191,74 @@
           }
         }
       }
+    },
+    "sc-prototype": {
+      "projectType": "application",
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "scss"
+        }
+      },
+      "root": "projects/sc-prototype",
+      "sourceRoot": "projects/sc-prototype/src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:browser",
+          "options": {
+            "outputPath": "dist/sc-prototype",
+            "index": "projects/sc-prototype/src/index.html",
+            "main": "projects/sc-prototype/src/main.ts",
+            "polyfills": [
+              "zone.js"
+            ],
+            "tsConfig": "projects/sc-prototype/tsconfig.app.json",
+            "inlineStyleLanguage": "scss",
+            "styles": [
+              "projects/sc-prototype/src/styles.scss"
+            ],
+            "scripts": []
+          },
+          "configurations": {
+            "production": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "1.5MB",
+                  "maximumError": "3MB"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "8kB",
+                  "maximumError": "16kB"
+                }
+              ],
+              "outputHashing": "all"
+            },
+            "development": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "buildTarget": "sc-prototype:build:development"
+          },
+          "configurations": {
+            "production": {
+              "buildTarget": "sc-prototype:build:production"
+            },
+            "development": {
+              "buildTarget": "sc-prototype:build:development"
+            }
+          },
+          "defaultConfiguration": "development"
+        }
+      }
     }
   },
   "cli": {
