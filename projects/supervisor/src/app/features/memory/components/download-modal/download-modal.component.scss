@@ -1,0 +1,84 @@
+/* Memory · DownloadModal styles. */
+
+.download-modal {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-1-5);
+
+  &__options {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sc-spacing-0-875);
+  }
+
+  &__option {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--sc-spacing-0-875);
+    padding: var(--sc-spacing-0-875) var(--sc-spacing-1-125);
+    border: 1px solid var(--sc-border-default);
+    border-radius: var(--sc-radius-200);
+    background: var(--sc-bg-surface);
+    cursor: pointer;
+    transition:
+      border-color var(--sc-transition-fast) var(--sc-easing-default),
+      background var(--sc-transition-fast) var(--sc-easing-default);
+
+    &:hover:not(.is-disabled) {
+      border-color: var(--sc-border-strong);
+      background: var(--sc-bg-elevated);
+    }
+
+    &.is-disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      background: var(--sc-bg-default);
+    }
+  }
+
+  &__option-text {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sc-spacing-0-25);
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  &__option-label {
+    font-family: var(--sc-font-family-primary);
+    font-size: var(--sc-font-size-100);
+    font-weight: var(--sc-font-weight-medium);
+    color: var(--sc-text-primary);
+  }
+
+  &__option-hint {
+    font-family: var(--sc-font-family-primary);
+    font-size: var(--sc-font-size-50);
+    color: var(--sc-text-subtle);
+  }
+
+  /* GDPR notice — soft amber para señalar "léelo pero no es bloqueante". */
+  &__gdpr {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--sc-spacing-0-875);
+    padding: var(--sc-spacing-0-875) var(--sc-spacing-1-125);
+    border: 1px solid var(--sc-color-amber-300);
+    border-radius: var(--sc-radius-100);
+    background: var(--sc-color-amber-50);
+  }
+
+  &__gdpr-icon {
+    flex: 0 0 auto;
+    color: var(--sc-color-amber-700);
+    margin-top: 2px;
+  }
+
+  &__gdpr-text {
+    margin: 0;
+    font-family: var(--sc-font-family-primary);
+    font-size: var(--sc-font-size-50);
+    line-height: 1.5;
+    color: var(--sc-color-amber-800);
+  }
+}

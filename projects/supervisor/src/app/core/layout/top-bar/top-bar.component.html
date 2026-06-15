@@ -1,0 +1,114 @@
+<header class="top-bar">
+  <div class="top-bar__lead">
+    <button
+      type="button"
+      class="top-bar__home"
+      (click)="goToDashboard()"
+      [attr.aria-label]="'topbar.go_to_dashboard' | translate"
+      [attr.title]="'topbar.go_to_dashboard' | translate"
+    >
+      <sc-icon name="space_dashboard" [size]="15" />
+    </button>
+    @if (trail().length > 0) {
+      <span class="top-bar__lead-divider" aria-hidden="true"></span>
+    }
+    <ol class="top-bar__crumbs" aria-label="breadcrumb">
+      @for (crumb of trail(); track $index) {
+        <li class="top-bar__crumb">
+          @if ($index > 0) {
+            <span class="top-bar__crumb-sep" aria-hidden="true">›</span>
+          }
+          @if (crumb.path && $index !== lastIndex()) {
+            <button type="button" class="top-bar__crumb-link" (click)="onCrumbClick(crumb.path)">
+              {{ crumb.label }}
+            </button>
+          } @else if ($index === lastIndex()) {
+            <span class="top-bar__crumb-current" aria-current="page">{{ crumb.label }}</span>
+          } @else {
+            <span class="top-bar__crumb-muted">{{ crumb.label }}</span>
+          }
+        </li>
+      }
+    </ol>
+  </div>
+
+  <!-- Slot contextual: la página activa puede inyectar chrome propio aquí
+       (p.ej. el selector de datos demo de Memory). Vacío en la mayoría de
+       rutas. Se renderiza con NgComponentOutlet → cero acoplamiento al shell. -->
+  @if (slotComponent(); as slot) {
+    <div class="top-bar__slot">
+      <ng-container *ngComponentOutlet="slot" />
+    </div>
+  }
+
+  <!-- Acciones primarias de la página (CTA en listas, Guardar/Cancelar en
+       formularios) proyectadas vía template → modelo "todo arriba" (S59). -->
+  @if (slotActions(); as actions) {
+    <div class="top-bar__actions">
+      <ng-container [ngTemplateOutlet]="actions" />
+    </div>
+  }
+
+  <!--
+    Wrapper hosts the keydown listener so Esc can close the menu from
+    anywhere inside it (avatar trigger or menu items). The avatar
+    `<button>` below is the real focusable target — silencing the
+    a11y rule, same intentional pattern as the group-popover wrapper.
+  -->
+   
+  <div
+    class="top-bar__user"
+    (scClickOutside)="closeUserMenu()"
+    [scClickOutsideEnabled]="userMenuOpen()"
+    (keydown)="onMenuKeydown($event)"
+  >
+    <button
+      #avatarBtn
+      type="button"
+      class="top-bar__avatar"
+      [class.top-bar__avatar--open]="userMenuOpen()"
+      aria-haspopup="menu"
+      [attr.aria-expanded]="userMenuOpen()"
+      [attr.aria-label]="userName"
+      (click)="toggleUserMenu()"
+    >
+      <sc-illustrated-avatar [name]="userName" [size]="32" />
+      <span class="top-bar__avatar-presence" aria-hidden="true"></span>
+    </button>
+
+    @if (userMenuOpen()) {
+      <div class="top-bar__menu" role="menu">
+        <div class="top-bar__menu-identity">
+          <sc-illustrated-avatar [name]="userName" [size]="44" />
+          <div class="top-bar__menu-meta">
+            <span class="top-bar__menu-name">{{ userName }}</span>
+            <span class="top-bar__menu-role">
+              {{ 'topbar.user.role_admin' | translate }}
+              <span class="top-bar__menu-sep" aria-hidden="true">·</span>
+              {{ userPhone }}
+            </span>
+          </div>
+          <button
+            type="button"
+            class="top-bar__menu-shortcut"
+            (click)="openShortcuts()"
+            [attr.aria-label]="'topbar.keyboard_shortcuts' | translate"
+            [attr.title]="'topbar.keyboard_shortcuts' | translate"
+          >
+            <sc-icon name="keyboard" [size]="14" />
+          </button>
+        </div>
+        <div class="top-bar__menu-actions">
+          <button type="button" class="top-bar__menu-item" role="menuitem">
+            <sc-icon name="help" [size]="14" />
+            <span>{{ 'topbar.user.help' | translate }}</span>
+          </button>
+          <button type="button" class="top-bar__menu-item" role="menuitem">
+            <sc-icon name="logout" [size]="14" />
+            <span>{{ 'topbar.user.logout' | translate }}</span>
+          </button>
+        </div>
+      </div>
+    }
+  </div>
+</header>

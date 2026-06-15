@@ -1,0 +1,163 @@
+/* ════════════════════════════════════════════════════════════════════
+ * MockSampleSwitcher · prototype-only switcher (S39).
+ *
+ * Treatment de "afford-but-warning": chip dashed amber (no urgente, no
+ * error) que comunica "este control no es de producción". Réplica del
+ * tratamiento React tras audit 15.21 — soft amber-on-amber, no
+ * saturated. Tokens canonical SCDS (--sc-color-amber-*).
+ * ════════════════════════════════════════════════════════════════════ */
+
+:host {
+  display: inline-block;
+}
+
+.mock-sample-switcher__trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-5);
+  height: 36px;
+  padding: 0 12px;
+  border: 1px dashed color-mix(in srgb, var(--sc-color-amber-500) 40%, transparent);
+  border-radius: var(--sc-radius-full);
+  background: color-mix(in srgb, var(--sc-color-amber-100) 70%, white);
+  font-family: var(--sc-font-family-primary);
+  font-size: var(--sc-font-size-100);
+  font-weight: 500;
+  color: var(--sc-color-amber-800);
+  cursor: pointer;
+  transition:
+    border-color 160ms ease,
+    background 160ms ease,
+    transform 100ms ease;
+
+  &:hover {
+    border-color: color-mix(in srgb, var(--sc-color-amber-600) 60%, transparent);
+    background: color-mix(in srgb, var(--sc-color-amber-200) 80%, white);
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--sc-color-amber-500);
+    outline-offset: 2px;
+  }
+}
+
+.mock-sample-switcher__chip {
+  display: inline-block;
+  padding: 1px var(--sc-spacing-0-5);
+  border-radius: var(--sc-radius-100);
+  background: color-mix(in srgb, var(--sc-color-amber-200) 90%, white);
+  color: var(--sc-color-amber-900);
+  font-size: var(--sc-font-size-50);
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+.mock-sample-switcher__icon {
+  display: inline-flex;
+  color: var(--sc-color-amber-800);
+  transition: transform 150ms ease;
+
+  .mock-sample-switcher__trigger:hover & {
+    transform: scale(1.1);
+  }
+}
+
+.mock-sample-switcher__label-prefix {
+  display: none;
+  color: var(--sc-color-amber-800);
+
+  @media (min-width: 640px) {
+    display: inline;
+  }
+}
+
+.mock-sample-switcher__current {
+  color: var(--sc-color-amber-900);
+  font-weight: 600;
+}
+
+/* ─── Popover content (overlay rendered en <body>) ──────────────── */
+
+/* Reglas globales del overlay (z-index + padding=0) viven en
+ * `apps/supervisor/src/styles/main.scss` bajo `.mock-sample-switcher__popover`.
+ * El overlay PrimeNG monta en `<body>`, fuera del scope encapsulado, por
+ * lo que las reglas tienen que ser unscoped. */
+
+.mock-sample-switcher__list {
+  display: flex;
+  flex-direction: column;
+  min-width: 280px;
+  max-width: 320px;
+  max-height: 70vh;
+  overflow-y: auto;
+  overscroll-behavior: contain;
+  padding: var(--sc-spacing-0-5);
+}
+
+.mock-sample-switcher__list-label {
+  padding: var(--sc-spacing-0-5) var(--sc-spacing-0-75) var(--sc-spacing-0-5);
+  font-family: var(--sc-font-family-primary);
+  font-size: var(--sc-font-size-50);
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--sc-text-subtle);
+  border-bottom: 1px solid var(--sc-border-default);
+  margin-bottom: var(--sc-spacing-0-25);
+}
+
+.mock-sample-switcher__item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--sc-spacing-0-75) var(--sc-spacing-0-75);
+  border: 0;
+  border-radius: var(--sc-radius-100);
+  background: transparent;
+  text-align: left;
+  cursor: pointer;
+  transition: background 150ms ease;
+
+  &:hover {
+    background: var(--sc-bg-secondary-hover);
+  }
+
+  &.is-active {
+    background: color-mix(in srgb, var(--sc-color-blue-100) 60%, transparent);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--sc-color-blue-500);
+    outline-offset: -2px;
+  }
+}
+
+.mock-sample-switcher__item-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sc-spacing-0-5);
+}
+
+.mock-sample-switcher__item-title {
+  font-size: var(--sc-font-size-200);
+  font-weight: 600;
+  color: var(--sc-text-primary);
+}
+
+.mock-sample-switcher__item-check {
+  color: var(--sc-color-blue-600);
+  flex-shrink: 0;
+}
+
+.mock-sample-switcher__item-desc {
+  margin: 0;
+  font-size: var(--sc-font-size-100);
+  color: var(--sc-text-subtle);
+  line-height: 1.4;
+}

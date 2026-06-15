@@ -1,0 +1,167 @@
+<sc-dialog
+  [visible]="visible()"
+  [icon]="databaseIcon"
+  [title]="
+    (isEditMode() ? 'memory.entities.form.title_edit' : 'memory.entities.form.title_new')
+      | translate
+  "
+  [subtitle]="'memory.entities.form.subtitle' | translate"
+  width="600px"
+  (cancelled)="onCancel()"
+>
+  <div class="entity-form">
+    <div class="entity-form__row">
+      <sc-inputtext
+        [label]="'memory.entities.form.name_label' | translate"
+        [placeholder]="'memory.entities.form.name_placeholder' | translate"
+        [required]="true"
+        [value]="name()"
+        (valueChange)="setName($event)"
+        [error]="nameError() ? (nameError() ?? '' | translate) : ''"
+      />
+    </div>
+
+    <div class="entity-form__row">
+      <label for="entity-description" class="entity-form__label">
+        {{ 'memory.entities.form.description_label' | translate }}
+        <span class="entity-form__optional"> ({{ 'common.optional' | translate }}) </span>
+      </label>
+      <textarea
+        id="entity-description"
+        class="entity-form__textarea"
+        rows="2"
+        [placeholder]="'memory.entities.form.description_placeholder' | translate"
+        [value]="description()"
+        (input)="setDescription($any($event.target).value)"
+      ></textarea>
+    </div>
+
+    <div class="entity-form__row entity-form__row--double">
+      <div>
+        <label for="entity-type" class="entity-form__label">
+          {{ 'memory.entities.form.type_label' | translate }}
+        </label>
+        <sc-select
+          [inputId]="'entity-type'"
+          [options]="typeOptions"
+          [(value)]="type"
+          optionLabel="labelKey"
+          optionValue="value"
+          [disabled]="isEditMode()"
+        >
+          <ng-template let-opt pTemplate="selectedItem">
+            {{ opt.labelKey | translate }}
+          </ng-template>
+          <ng-template let-opt pTemplate="item">
+            {{ opt.labelKey | translate }}
+          </ng-template>
+        </sc-select>
+        @if (isEditMode()) {
+          <p class="entity-form__hint">
+            {{ 'memory.entities.form.type_locked_hint' | translate }}
+          </p>
+        }
+      </div>
+
+      <div>
+        <sc-inputtext
+          [label]="'memory.entities.form.format_label' | translate"
+          [placeholder]="'memory.entities.form.format_placeholder' | translate"
+          [value]="format()"
+          (valueChange)="setFormat($event)"
+        />
+        <p class="entity-form__hint">
+          {{ 'memory.entities.form.format_hint' | translate }}
+        </p>
+      </div>
+    </div>
+
+    @if (type() === 'list') {
+      <div class="entity-form__row entity-form__list-row">
+        <h3 class="entity-form__label entity-form__label--heading">
+          {{ 'memory.entities.form.list_values_label' | translate }}
+          <span class="entity-form__optional"> ({{ listValues().length }}) </span>
+        </h3>
+        <p class="entity-form__hint">
+          {{ 'memory.entities.form.list_values_hint' | translate }}
+        </p>
+        <div class="entity-form__list-values">
+          @for (draft of listValues(); track $index) {
+            <div class="entity-form__list-value-card">
+              <div class="entity-form__list-value-row">
+                <input
+                  type="text"
+                  class="entity-form__list-input"
+                  [placeholder]="'memory.entities.form.list_value_placeholder' | translate"
+                  [value]="draft.value"
+                  (input)="updateListValueText($index, $any($event.target).value)"
+                />
+                <button
+                  type="button"
+                  class="entity-form__list-remove"
+                  [attr.aria-label]="'memory.entities.form.list_remove' | translate"
+                  (click)="removeListValue($index)"
+                >
+                  <sc-icon [name]="trashIcon" [size]="13" />
+                </button>
+              </div>
+
+              @if (draft.expanded) {
+                <div class="entity-form__synonyms-block">
+                  <label class="entity-form__synonyms-label" [attr.for]="'syn-input-' + $index">
+                    {{ 'memory.entities.form.synonyms_label' | translate }}
+                  </label>
+                  <input
+                    type="text"
+                    [id]="'syn-input-' + $index"
+                    class="entity-form__synonyms-input"
+                    [placeholder]="'memory.entities.form.synonyms_placeholder' | translate"
+                    [value]="draft.synonymsCsv"
+                    (input)="updateListValueSynonyms($index, $any($event.target).value)"
+                  />
+                </div>
+              } @else {
+                <button
+                  type="button"
+                  class="entity-form__synonyms-trigger"
+                  (click)="toggleListValueSynonyms($index)"
+                >
+                  {{ 'memory.entities.form.add_synonyms' | translate }}
+                </button>
+              }
+            </div>
+          } @empty {
+            <p class="entity-form__list-empty">
+              {{ 'memory.entities.form.list_values_empty' | translate }}
+            </p>
+          }
+        </div>
+        <button type="button" class="entity-form__list-add" (click)="addListValue()">
+          <sc-icon [name]="plusIcon" [size]="13" />
+          {{ 'memory.entities.form.add_list_value' | translate }}
+        </button>
+      </div>
+    }
+  </div>
+
+  <div modal-actions>
+    <p-button type="button" size="small" severity="secondary" (onClick)="onCancel()">
+      <span>{{ 'common.cancel' | translate }}</span>
+    </p-button>
+    <p-button
+      type="button"
+      size="small"
+      severity="primary"
+      [disabled]="!canSave()"
+      (onClick)="onSave()"
+    >
+      <span>
+        @if (isEditMode()) {
+          {{ 'memory.entities.form.save_changes' | translate }}
+        } @else {
+          {{ 'memory.entities.form.create_entity' | translate }}
+        }
+      </span>
+    </p-button>
+  </div>
+</sc-dialog>

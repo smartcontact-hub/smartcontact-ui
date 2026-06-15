@@ -1,0 +1,37 @@
+<button
+  type="button"
+  class="nav-item"
+  [class.nav-item--active]="isActive()"
+  [class.nav-item--child-active]="!isActive() && isChildActive()"
+  [class.nav-item--parent]="hasChildren()"
+  [class.nav-item--expanded]="effectivelyExpanded()"
+  [attr.data-depth]="depth()"
+  (click)="onClick($event)"
+>
+  <sc-icon
+    class="nav-item__icon"
+    [name]="resolveIcon(item().icon)"
+    [size]="item().iconSize ?? 14"
+  />
+  <span class="nav-item__label">{{ item().labelKey | translate }}</span>
+  @if (hasChildren()) {
+    <sc-icon
+      class="nav-item__chevron"
+      [name]="effectivelyExpanded() ? resolveIcon('chevron-down') : resolveIcon('chevron-right')"
+      [size]="14"
+    />
+  }
+</button>
+
+@if (hasChildren() && effectivelyExpanded()) {
+  <div class="nav-item__children">
+    @for (child of item().children; track child.labelKey) {
+      <sc-sidebar-nav-item
+        [item]="child"
+        [depth]="depth() + 1"
+        [currentPath]="currentPath()"
+        (navigate)="navigate.emit($event)"
+      />
+    }
+  </div>
+}

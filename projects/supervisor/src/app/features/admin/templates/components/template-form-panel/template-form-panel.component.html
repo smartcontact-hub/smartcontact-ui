@@ -1,0 +1,84 @@
+<div
+  class="panel"
+  role="dialog"
+  [attr.aria-label]="
+    (initial() ? 'templates.form.edit_title' : 'templates.form.create_title') | translate
+  "
+>
+  <h3 class="panel__title">
+    {{ (initial() ? 'templates.form.edit_title' : 'templates.form.create_title') | translate }}
+  </h3>
+
+  <div class="panel__field">
+    <sc-inputtext
+      #titleInput
+      inputId="template-title"
+      type="text"
+      [label]="'templates.form.title' | translate"
+      [value]="title()"
+      [placeholder]="'templates.form.title_placeholder' | translate"
+      (valueChange)="onTitleInput($event)"
+      (keydown)="onKey($event)"
+    />
+  </div>
+
+  <div class="panel__field">
+    <span class="panel__label">{{ 'templates.form.channel' | translate }}</span>
+    <div class="panel__type-group" role="radiogroup">
+      @for (option of typeOptions; track option) {
+        <button
+          type="button"
+          role="radio"
+          [attr.aria-checked]="type() === option"
+          class="panel__type"
+          [class.panel__type--active]="type() === option"
+          (click)="setType(option)"
+        >
+          @if (option === 'chat') {
+            <sc-icon [name]="chatIcon" [size]="12" />
+            <span>{{ 'templates.type.chat' | translate }}</span>
+          } @else {
+            <sc-icon [name]="emailIcon" [size]="12" />
+            <span>{{ 'templates.type.email' | translate }}</span>
+          }
+        </button>
+      }
+    </div>
+  </div>
+
+  <div class="panel__field">
+    <label class="panel__label" for="template-body">
+      {{ 'templates.form.body' | translate }}
+    </label>
+    <textarea
+      id="template-body"
+      class="panel__textarea"
+      rows="3"
+      [value]="body()"
+      [placeholder]="'templates.form.body_placeholder' | translate"
+      (input)="onBodyInput($any($event.target).value)"
+      (keydown)="onKey($event)"
+    ></textarea>
+    <p class="panel__hint">
+      {{ 'templates.form.variables_hint' | translate }}
+    </p>
+  </div>
+
+  <div class="panel__error-slot">
+    @if (error()) {
+      <div class="panel__error">
+        <sc-icon [name]="alertIcon" [size]="10" />
+        <span>{{ error() | translate }}</span>
+      </div>
+    }
+  </div>
+
+  <div class="panel__actions">
+    <button type="button" class="panel__btn panel__btn--ghost" (click)="cancelled.emit()">
+      {{ 'common.cancel' | translate }}
+    </button>
+    <button type="button" class="panel__btn panel__btn--primary" (click)="onSave()">
+      {{ (initial() ? 'common.save' : 'common.create') | translate }}
+    </button>
+  </div>
+</div>

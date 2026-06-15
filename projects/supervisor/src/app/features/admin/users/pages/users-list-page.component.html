@@ -1,0 +1,258 @@
+<!-- Modelo "todo arriba" (experiment S59): sin banda de page-header. La
+     identidad la da el breadcrumb de la TopBar; el CTA se proyecta a la barra
+     vía TopBarSlotService (ver topbarActions en el .ts). -->
+<ng-template #topbarActions>
+  <p-button type="button" severity="primary" (onClick)="onCreateClick()">
+    <sc-icon [name]="plusIcon" [size]="14" />
+    <span>{{ 'users.create_button' | translate }}</span>
+  </p-button>
+</ng-template>
+
+<div class="page">
+  <div class="page__inner">
+    <div class="page__action-bar">
+      <sc-column-selector
+        [columns]="columnDefs()"
+        [storageKey]="columnPrefKey"
+        (visibilityChange)="onColumnsChange($event)"
+      />
+      <sc-search
+        class="page__search"
+        [placeholder]="'users.search_placeholder' | translate"
+        shortcutHint="⌘K"
+        [clearAriaLabel]="'labels.clear_search' | translate"
+        [value]="searchQuery()"
+        (valueChange)="searchQuery.set($event)"
+        (keydown)="onSearchKey($event)"
+      />
+      <span class="sc-action-divider" aria-hidden="true"></span>
+      <button
+        type="button"
+        class="sc-icon-btn"
+        (click)="onExport()"
+        [attr.aria-label]="'labels.export_button' | translate"
+        [attr.title]="'labels.export_button' | translate"
+      >
+        <sc-icon [name]="downloadIcon" [size]="14" />
+      </button>
+    </div>
+
+    @if (users().length === 0) {
+      <sc-empty-state
+        [icon]="emptyIcon"
+        titleKey="users.empty.title"
+        bodyKey="users.empty.body"
+        ctaKey="users.create_button"
+        (cta)="onCreateClick()"
+      />
+    } @else {
+      <div class="table-card">
+        <table class="table sc-table-zebra">
+          <thead>
+            <tr>
+              <th class="table__th-check" (click)="toggleSelectAll()">
+                <input
+                  type="checkbox"
+                  [checked]="allSelected()"
+                  (change)="toggleSelectAll()"
+                  (click)="$event.stopPropagation()"
+                  [attr.aria-label]="'labels.select_all' | translate"
+                />
+              </th>
+              <th
+                class="table__th-sort"
+                [scSortable]="getSortDir('name')"
+                (activate)="toggleSort('name')"
+              >
+                {{ 'users.table.name' | translate }}
+              </th>
+              @if (isColVisible('email')) {
+                <th
+                  class="table__th-sort"
+                  [scSortable]="getSortDir('email')"
+                  (activate)="toggleSort('email')"
+                >
+                  {{ 'users.table.email' | translate }}
+                </th>
+              }
+              @if (isColVisible('identifier')) {
+                <th
+                  class="table__th-sort"
+                  [scSortable]="getSortDir('identifier')"
+                  (activate)="toggleSort('identifier')"
+                >
+                  {{ 'users.table.identifier' | translate }}
+                </th>
+              }
+              @if (isColVisible('type')) {
+                <th
+                  class="table__th-sort"
+                  [scSortable]="getSortDir('type')"
+                  (activate)="toggleSort('type')"
+                >
+                  {{ 'users.table.type' | translate }}
+                </th>
+              }
+              @if (isColVisible('status')) {
+                <th
+                  class="table__th-sort"
+                  [scSortable]="getSortDir('status')"
+                  (activate)="toggleSort('status')"
+                >
+                  {{ 'users.table.status' | translate }}
+                </th>
+              }
+              <th class="table__th-actions" aria-hidden="true"></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (user of sorted(); track user.id) {
+              <tr
+                class="table__row"
+                [class.table__row--selected]="selectedIds().has(user.id)"
+                [class.table__row--clickable]="renamingId() !== user.id"
+                (click)="onRowClick(user)"
+                (contextmenu)="onContextMenu($event, user.id)"
+              >
+                <td
+                  class="table__td-check"
+                  (click)="toggleSelect(user.id); $event.stopPropagation()"
+                >
+                  <input
+                    type="checkbox"
+                    [checked]="selectedIds().has(user.id)"
+                    (change)="toggleSelect(user.id)"
+                    (click)="$event.stopPropagation()"
+                    [attr.aria-label]="user.name"
+                  />
+                </td>
+                <td class="table__td-name">
+                  @if (renamingId() === user.id) {
+                    <sc-inline-rename-cell
+                      [initialValue]="user.name"
+                      placeholder="Nombre del usuario"
+                      [ariaLabel]="'Renombrar ' + user.name"
+                      (commit)="onRenameCommit(user.id, $event)"
+                      (cancelled)="onRenameCancel(user.id)"
+                    />
+                  } @else {
+                    <span>{{ user.name }}</span>
+                  }
+                </td>
+                @if (isColVisible('email')) {
+                  <td class="table__td">{{ user.email }}</td>
+                }
+                @if (isColVisible('identifier')) {
+                  <td class="table__td table__td--mono">{{ user.identifier || '—' }}</td>
+                }
+                @if (isColVisible('type')) {
+                  <td class="table__td">
+                    <span class="sc-type-tag">{{ typeLabel(user.type) }}</span>
+                  </td>
+                }
+                @if (isColVisible('status')) {
+                  <td class="table__td">
+                    <span
+                      class="sc-label"
+                      [attr.data-tone]="user.status === 'active' ? 'success' : 'muted'"
+                    >
+                      {{ 'users.status.' + user.status | translate }}
+                    </span>
+                  </td>
+                }
+                <td class="table__td-actions" (click)="$event.stopPropagation()">
+                  <div
+                    class="row-menu"
+                    (scClickOutside)="closeRowMenu()"
+                    [scClickOutsideEnabled]="openMenuId() === user.id"
+                  >
+                    <button
+                      type="button"
+                      class="row-menu__btn"
+                      (click)="toggleRowMenu(user.id)"
+                      [attr.aria-expanded]="openMenuId() === user.id"
+                      [attr.aria-label]="'labels.row_menu' | translate"
+                    >
+                      <sc-icon [name]="moreIcon" [size]="15" />
+                    </button>
+                    @if (openMenuId() === user.id) {
+                      <div class="row-menu__panel" role="menu">
+                        <button type="button" role="menuitem" (click)="onRowEdit(user)">
+                          <sc-icon [name]="editIcon" [size]="13" />
+                          <span>{{ 'common.edit' | translate }}</span>
+                        </button>
+                        <button type="button" role="menuitem" (click)="onRowDuplicate(user)">
+                          <sc-icon [name]="copyIcon" [size]="13" />
+                          <span>{{ 'common.duplicate' | translate }}</span>
+                        </button>
+                        <div class="row-menu__separator" role="separator" aria-hidden="true"></div>
+                        <button
+                          type="button"
+                          class="is-danger"
+                          role="menuitem"
+                          (click)="onRowDelete(user)"
+                        >
+                          <sc-icon [name]="trashIcon" [size]="13" />
+                          <span>{{ 'common.delete' | translate }}</span>
+                        </button>
+                      </div>
+                    }
+                  </div>
+                </td>
+              </tr>
+            }
+
+            @if (sorted().length === 0) {
+              <tr>
+                <td colspan="7" class="table__no-results">
+                  {{ 'users.no_results' | translate }}
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    }
+  </div>
+</div>
+
+@if (contextMenu(); as ctx) {
+  <div
+    class="context-menu"
+    [style.left.px]="ctx.x"
+    [style.top.px]="ctx.y"
+    (scClickOutside)="closeContextMenu()"
+    [scClickOutsideEnabled]="!!contextMenu()"
+    role="menu"
+  >
+    <button type="button" role="menuitem" (click)="onContextEdit()">
+      <sc-icon [name]="editIcon" [size]="13" />
+      <span>{{ 'common.edit' | translate }}</span>
+    </button>
+    <button type="button" role="menuitem" (click)="onContextDuplicate()">
+      <sc-icon [name]="copyIcon" [size]="13" />
+      <span>{{ 'common.duplicate' | translate }}</span>
+    </button>
+    <div class="context-menu__separator" role="separator" aria-hidden="true"></div>
+    <button type="button" class="is-danger" role="menuitem" (click)="onContextDelete()">
+      <sc-icon [name]="trashIcon" [size]="13" />
+      <span>{{ 'common.delete' | translate }}</span>
+    </button>
+  </div>
+}
+
+<sc-delete-entity-dialog
+  [visible]="!!deleteTarget()"
+  [mode]="(deleteTarget()?.length ?? 0) === 1 ? 'single' : 'bulk'"
+  [items]="deleteItems()"
+  [entitySingular]="'users.entity_singular' | translate"
+  [entityPlural]="'users.entity_plural' | translate"
+  (cancelled)="cancelDelete()"
+  (confirm)="confirmDelete($event)"
+/>
+
+<sc-bulk-action-bar [count]="selectedIds().size" [entity]="bulkEntity()" (clear)="clearSelection()">
+  <p-button type="button" severity="danger" (onClick)="requestDeleteSelection()">
+    <span>{{ 'common.delete' | translate }}</span>
+  </p-button>
+</sc-bulk-action-bar>

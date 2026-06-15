@@ -1,0 +1,277 @@
+<!-- Modelo "todo arriba" (experiment S59): fuera la banda sticky-form-header.
+     Identidad → breadcrumb + campos del cuerpo (avatar/nombre en Identidad);
+     Guardar/Cancelar → barra de arriba vía TopBarSlotService (ver el .ts). -->
+<ng-template #topbarActions>
+  <p-button type="button" size="small" severity="secondary" (onClick)="cancel()">
+    <span>{{ 'common.cancel' | translate }}</span>
+  </p-button>
+  <p-button
+    type="button"
+    size="small"
+    severity="primary"
+    [disabled]="!canSave()"
+    [loading]="saving()"
+    (onClick)="save()"
+  >
+    <span>{{ 'common.save' | translate }}</span>
+  </p-button>
+</ng-template>
+
+<div class="page">
+  <div class="page__inner page__inner--with-panel">
+    <aside class="ipanel" aria-label="Índice del formulario">
+      <!-- La ficha: resumen de identidad (solo lectura) arriba del índice.
+           Modelo "todo arriba" S59 — qué grupo editas + su estrategia, de un
+           vistazo. Avatar abstracto generado del nombre. Solo en editar. -->
+      @if (mode() === 'edit') {
+        <div class="ficha">
+          <sc-illustrated-avatar
+            class="ficha__avatar"
+            [name]="(initial()?.name ?? form().name) || 'Grupo'"
+            pool="abstract"
+            [size]="40"
+          />
+          <div class="ficha__body">
+            <span class="ficha__name">{{ form().name }}</span>
+            @if (form().strategy) {
+              <span class="pill">{{ form().strategy }}</span>
+            }
+            @if (form().phone) {
+              <span class="ficha__ext">{{ form().phone }}</span>
+            }
+          </div>
+        </div>
+      }
+
+      <sc-form-section-nav
+        [sections]="navSections()"
+        [activeId]="activeSection()"
+        [sectionsWithErrors]="sectionsWithErrors()"
+        [flush]="true"
+        (activeChange)="activeSection.set($event)"
+      />
+
+      <!-- Zona de peligro: Eliminar al fondo del panel, enlace discreto y
+           apartado del índice → fuera del scan primario (S59). -->
+      @if (mode() === 'edit') {
+        <button type="button" class="ipanel__delete" (click)="requestDelete()">
+          <sc-icon [name]="trashIcon" [size]="14" />
+          <span>{{ 'common.delete' | translate }}</span>
+        </button>
+      }
+    </aside>
+    <div class="page__form">
+      @switch (activeSection()) {
+        @case ('group-section-identity') {
+          <sc-section-card
+            anchorId="group-section-identity"
+            [icon]="activeIcon()"
+            titleKey="groups.form.section.identity"
+          >
+            <!-- Avatar + nombre re-homed al cuerpo (experiment S59 "todo arriba"):
+                 al quitar la banda sticky-form-header, la identidad vuelve a
+                 ser campo del form (+ el breadcrumb arriba la repite). El avatar
+                 es generado (no editable), se actualiza con el nombre. -->
+            <div class="form-identity">
+              <sc-illustrated-avatar
+                [name]="(initial()?.name ?? form().name) || 'Grupo'"
+                pool="abstract"
+                [size]="44"
+              />
+              <div class="field form-identity__name">
+                <sc-inputtext
+                  inputId="group-name"
+                  [label]="'groups.form.fields.name' | translate"
+                  [value]="form().name"
+                  [error]="errors()['name'] ? (errors()['name']! | translate) : undefined"
+                  (valueChange)="onNameRename($event)"
+                />
+              </div>
+            </div>
+
+            <div class="grid grid--2">
+              <div class="field">
+                <label class="field__label" for="group-phone">
+                  {{ 'groups.form.fields.phone' | translate }}
+                </label>
+                <sc-inputtext
+                  inputId="group-phone"
+                  type="tel"
+                  autocomplete="tel"
+                  [value]="form().phone"
+                  (valueChange)="onPhoneValueChange($event)"
+                />
+              </div>
+
+              <div class="field">
+                <label class="field__label" for="group-priority">
+                  {{ 'groups.form.fields.priority' | translate }}
+                </label>
+                <sc-select
+                  inputId="group-priority"
+                  [options]="priorities"
+                  [value]="form().priority"
+                  (valueChange)="onPriorityValueChange($event)"
+                >
+                  <ng-template pTemplate="item" let-p>
+                    {{ priorityKeys[p] | translate }}
+                  </ng-template>
+                  <ng-template pTemplate="selectedItem" let-p>
+                    {{ priorityKeys[p] | translate }}
+                  </ng-template>
+                </sc-select>
+              </div>
+
+              <div class="field field--inline">
+                <sc-toggleswitch
+                  [checked]="form().typification"
+                  [ariaLabel]="'groups.form.fields.typification' | translate"
+                  (checkedChange)="onTypificationChange($event)"
+                />
+                <div>
+                  <span class="field__label-inline">
+                    {{ 'groups.form.fields.typification' | translate }}
+                  </span>
+                  <span class="field__help">
+                    {{ 'groups.form.fields.typification_hint' | translate }}
+                  </span>
+                </div>
+              </div>
+            </div>
+          </sc-section-card>
+        }
+
+        @case ('group-section-channels') {
+          <sc-section-card
+            anchorId="group-section-channels"
+            [icon]="activeIcon()"
+            titleKey="groups.form.section.channels"
+          >
+            <div class="channel-grid">
+              @for (channel of channels; track channel) {
+                <label class="checkbox-row">
+                  <input
+                    type="checkbox"
+                    [checked]="hasChannel(channel)"
+                    (change)="toggleChannel(channel)"
+                  />
+                  <span>{{ channelKeys[channel] | translate }}</span>
+                </label>
+              }
+            </div>
+            <span class="field__error" aria-live="polite">
+              @if (errors()['channels']; as err) {
+                {{ err | translate }}
+              }
+            </span>
+          </sc-section-card>
+        }
+
+        @case ('group-section-strategy') {
+          <sc-section-card
+            anchorId="group-section-strategy"
+            [icon]="activeIcon()"
+            titleKey="groups.form.section.strategy"
+            hintKey="groups.form.section.strategy_hint"
+          >
+            <div class="grid grid--2">
+              <div class="field">
+                <label class="field__label" for="group-strategy">
+                  {{ 'groups.form.fields.phone_strategy' | translate }}
+                </label>
+                <sc-select
+                  inputId="group-strategy"
+                  [options]="phoneStrategies"
+                  [value]="form().strategy"
+                  (valueChange)="onStrategyValueChange($event)"
+                />
+              </div>
+
+              @if (hasChat()) {
+                <div class="field">
+                  <label class="field__label" for="group-chat-strategy">
+                    {{ 'groups.form.fields.chat_strategy' | translate }}
+                  </label>
+                  <sc-select
+                    inputId="group-chat-strategy"
+                    [options]="chatStrategies"
+                    [value]="form().chatStrategy"
+                    (valueChange)="onChatStrategyValueChange($event)"
+                  />
+                </div>
+              }
+
+              @if (hasFixedCapacity()) {
+                <div class="field">
+                  <label class="field__label" for="group-capacity">
+                    {{ 'groups.form.fields.capacity' | translate }}
+                    <span class="field__hint">({{ 'common.optional' | translate }})</span>
+                  </label>
+                  <sc-inputnumber
+                    inputId="group-capacity"
+                    [min]="0"
+                    [value]="form().capacityValue"
+                    (valueChange)="onCapacityValueChange($event)"
+                    [helperText]="'groups.form.fields.capacity_hint' | translate"
+                  />
+                </div>
+              }
+            </div>
+          </sc-section-card>
+        }
+
+        @case ('group-section-agents') {
+          <sc-section-card
+            anchorId="group-section-agents"
+            [icon]="activeIcon()"
+            titleKey="groups.form.section.agents"
+            hintKey="groups.form.section.agents_hint"
+          >
+            <sc-agent-channel-table
+              [groupChannels]="formGroupChannels()"
+              [links]="form().links"
+              [availableAgents]="availableAgents()"
+              [groupId]="editingId() ?? 0"
+              (linksChange)="onLinksChange($event)"
+            />
+          </sc-section-card>
+        }
+      }
+    </div>
+  </div>
+</div>
+
+<sc-delete-entity-dialog
+  [visible]="deleteVisible()"
+  mode="single"
+  [items]="deleteItems()"
+  [entitySingular]="'grupo'"
+  [entityPlural]="'grupos'"
+  (cancelled)="cancelDelete()"
+  (confirm)="confirmDelete()"
+/>
+
+@if (cascadeConfirm(); as c) {
+  <sc-dialog
+    [visible]="true"
+    [title]="'groups.form.cascade.title' | translate"
+    [subtitle]="
+      'groups.form.cascade.body'
+        | translate
+          : {
+              channels: c.removed.map(channelLabel.bind(this)).join(', '),
+              count: c.affected,
+            }
+    "
+    (cancelled)="cancelCascade()"
+  >
+    <div modal-actions>
+      <p-button type="button" size="small" severity="secondary" (onClick)="cancelCascade()">
+        <span>{{ 'common.cancel' | translate }}</span>
+      </p-button>
+      <p-button type="button" size="small" severity="danger" (onClick)="confirmCascade()">
+        <span>{{ 'groups.form.cascade.confirm' | translate }}</span>
+      </p-button>
+    </div>
+  </sc-dialog>
+}

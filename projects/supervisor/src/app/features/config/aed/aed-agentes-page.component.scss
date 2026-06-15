@@ -1,0 +1,58 @@
+/*
+ * Agentes page — Figma Supervisor 1:12496 / 1:12616.
+ * Matriz de comunicaciones (filas × Transferencias / Permisos) + toggles
+ * de configuración + card de URL embebida. Primitivas compartidas en
+ * aed-defaults-page.component.scss.
+ */
+
+.comm-table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--sc-font-size-100);
+
+  th,
+  td {
+    text-align: left;
+    vertical-align: middle;
+  }
+
+  &__th-label {
+    padding: var(--sc-spacing-0-625) var(--sc-spacing-0-875);
+    font-weight: var(--sc-font-weight-semibold);
+    color: var(--sc-text-primary);
+    border-bottom: 1px solid var(--sc-border-default);
+  }
+
+  &__th-col {
+    width: 132px;
+    padding: var(--sc-spacing-0-625) var(--sc-spacing-0-875);
+    font-weight: var(--sc-font-weight-semibold);
+    color: var(--sc-text-primary);
+    border-bottom: 1px solid var(--sc-border-default);
+  }
+
+  &__th-row {
+    padding: var(--sc-spacing-0-625) var(--sc-spacing-0-875);
+    font-weight: var(--sc-font-weight-regular);
+    color: var(--sc-text-secondary);
+  }
+
+  &__cell {
+    padding: var(--sc-spacing-0-625) var(--sc-spacing-0-875);
+  }
+
+  tbody tr:nth-child(even) {
+    background: var(--sc-bg-secondary-subtle);
+  }
+
+  tbody tr {
+    border-bottom: 1px solid var(--sc-border-subtle);
+  }
+
+  input[type='checkbox'] {
+    accent-color: var(--sc-bg-primary);
+    width: 18px;
+    height: 18px;
+    cursor: pointer;
+  }
+}

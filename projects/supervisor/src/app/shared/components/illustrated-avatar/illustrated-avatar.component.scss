@@ -1,0 +1,29 @@
+.avatar {
+  display: inline-block;
+  position: relative;
+  border-radius: 50%;
+  overflow: hidden;
+  flex-shrink: 0;
+  background: var(--sc-color-gray-100);
+
+  &__media {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+    transition: transform var(--sc-transition-base) var(--sc-easing-emphasized);
+  }
+
+  &:hover &__media {
+    transform: scale(1.125);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .avatar__media {
+    transition: none;
+  }
+  .avatar:hover .avatar__media {
+    transform: none;
+  }
+}

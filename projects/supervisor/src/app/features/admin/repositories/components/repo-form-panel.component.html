@@ -1,0 +1,86 @@
+<div
+  class="panel"
+  role="dialog"
+  [attr.aria-label]="
+    (initial() ? 'repositories.form.edit_title' : 'repositories.form.create_title')
+      | translate: { entity: entitySingular() }
+  "
+>
+  <h3 class="panel__title">
+    {{
+      (initial() ? 'repositories.form.edit_title' : 'repositories.form.create_title')
+        | translate: { entity: entitySingular() }
+    }}
+  </h3>
+
+  @for (field of fields(); track field.key; let i = $index) {
+    <div class="panel__field">
+      <label class="panel__label" [attr.for]="'repo-field-' + field.key">
+        {{ field.labelKey | translate }}
+        @if (!field.required) {
+          <span class="panel__hint">({{ 'common.optional' | translate }})</span>
+        }
+      </label>
+
+      @switch (field.type) {
+        @case ('textarea') {
+          <textarea
+            [id]="'repo-field-' + field.key"
+            class="panel__textarea"
+            rows="3"
+            [value]="values()[field.key]"
+            [placeholder]="field.placeholderKey ? (field.placeholderKey | translate) : ''"
+            (input)="onChange(field.key, $any($event.target).value)"
+            (keydown)="onKey($event, false)"
+          ></textarea>
+        }
+        @case ('select') {
+          <sc-select
+            [inputId]="'repo-field-' + field.key"
+            optionValue="value"
+            [options]="field.options ?? []"
+            [value]="values()[field.key]"
+            (valueChange)="onSelectValueChange(field.key, $event)"
+            (keydown)="onKey($event)"
+          >
+            <ng-template pTemplate="item" let-opt>
+              {{ opt.labelKey | translate }}
+            </ng-template>
+            <ng-template pTemplate="selectedItem" let-opt>
+              {{ opt.labelKey | translate }}
+            </ng-template>
+          </sc-select>
+        }
+        @default {
+          <sc-inputtext
+            #firstInput
+            [inputId]="'repo-field-' + field.key"
+            type="text"
+            [value]="values()[field.key]"
+            [placeholder]="field.placeholderKey ? (field.placeholderKey | translate) : ''"
+            (valueChange)="onChange(field.key, $event)"
+            (keydown)="onKey($event)"
+          />
+        }
+      }
+    </div>
+  }
+
+  <div class="panel__error-slot">
+    @if (error()) {
+      <div class="panel__error">
+        <sc-icon [name]="alertIcon" [size]="10" />
+        <span>{{ error() }}</span>
+      </div>
+    }
+  </div>
+
+  <div class="panel__actions">
+    <button type="button" class="panel__btn panel__btn--ghost" (click)="cancelled.emit()">
+      {{ 'common.cancel' | translate }}
+    </button>
+    <button type="button" class="panel__btn panel__btn--primary" (click)="onSave()">
+      {{ (initial() ? 'common.save' : 'common.create') | translate }}
+    </button>
+  </div>
+</div>

@@ -1,0 +1,139 @@
+/*
+ * SCDS — overlay sizes partial.
+ *
+ * Imported by:
+ *   - apps/supervisor/src/styles/main.scss
+ *   - apps/ds-docs/src/styles/main.scss (cuando llegue trigger)
+ *
+ * PrimeNG renderea overlays (`<p-multiselect>` panel, `<p-select>` panel,
+ * `<p-datepicker>` panel) en `<body>`, FUERA del view encapsulation del
+ * componente Angular que lo aloja. Por eso los SCSS scoped del componente
+ * NO alcanzan al overlay — necesitamos selectores globales en un partial
+ * unscoped, como hicimos con `_sc-toast.scss` (S30).
+ *
+ * Las clases `sc-X-panel--sm` / `sc-X-panel--lg` se propagan al overlay
+ * vía `[panelStyleClass]` desde el template del wrapper SCDS.
+ *
+ * Valores 1:1 con Figma SC (S30 audit Nivel-2 nodos 7154:137768 small,
+ * 7154:138077 large). Misma escala que `--sc-inputtext--sm`/`--lg`.
+ */
+
+/* ─── MultiSelect overlay ─────────────────────────────────────────── */
+
+.sc-multiselect-panel--sm {
+  .p-multiselect-header,
+  .p-multiselect-list,
+  .p-multiselect-option,
+  .p-multiselect-item {
+    font-size: var(--sc-font-size-100);
+  }
+  .p-multiselect-option,
+  .p-multiselect-item {
+    padding: 5.25px 8.75px;
+  }
+  .p-multiselect-header {
+    padding: 5.25px 8.75px;
+  }
+  /* Filter search input dentro del header (S49 bug 5): hereda chrome md por
+   * defecto y se ve desmesurado contra el trigger sm. Aplica la misma escala
+   * sm que el trigger (font 12.25 / padding 5.25/8.75). */
+  .p-multiselect-filter {
+    padding: 5.25px 8.75px;
+    font-size: var(--sc-font-size-100);
+  }
+}
+
+.sc-multiselect-panel--lg {
+  .p-multiselect-header,
+  .p-multiselect-list,
+  .p-multiselect-option,
+  .p-multiselect-item {
+    font-size: var(--sc-font-size-300);
+  }
+  .p-multiselect-option,
+  .p-multiselect-item {
+    padding: 8.75px 12.25px;
+  }
+  .p-multiselect-header {
+    padding: 8.75px 12.25px;
+  }
+  .p-multiselect-filter {
+    padding: 8.75px 12.25px;
+    font-size: var(--sc-font-size-300);
+  }
+}
+
+/* ─── Select overlay ──────────────────────────────────────────────── */
+
+.sc-select-panel--sm {
+  .p-select-header,
+  .p-select-list,
+  .p-select-option,
+  .p-select-item {
+    font-size: var(--sc-font-size-100);
+  }
+  .p-select-option,
+  .p-select-item {
+    padding: 5.25px 8.75px;
+  }
+  .p-select-header {
+    padding: 5.25px 8.75px;
+  }
+  /* Filter search input dentro del header — mismo motivo que multiselect. */
+  .p-select-filter {
+    padding: 5.25px 8.75px;
+    font-size: var(--sc-font-size-100);
+  }
+}
+
+.sc-select-panel--lg {
+  .p-select-header,
+  .p-select-list,
+  .p-select-option,
+  .p-select-item {
+    font-size: var(--sc-font-size-300);
+  }
+  .p-select-option,
+  .p-select-item {
+    padding: 8.75px 12.25px;
+  }
+  .p-select-header {
+    padding: 8.75px 12.25px;
+  }
+  .p-select-filter {
+    padding: 8.75px 12.25px;
+    font-size: var(--sc-font-size-300);
+  }
+}
+
+/* ─── Datepicker overlay ──────────────────────────────────────────── */
+
+.sc-datepicker-panel--sm {
+  .p-datepicker-header,
+  .p-datepicker-day,
+  .p-datepicker-month,
+  .p-datepicker-year,
+  .p-datepicker-day-view,
+  .p-datepicker-weekday {
+    font-size: var(--sc-font-size-100);
+  }
+  .p-datepicker-day {
+    width: 24.5px;
+    height: 24.5px;
+  }
+}
+
+.sc-datepicker-panel--lg {
+  .p-datepicker-header,
+  .p-datepicker-day,
+  .p-datepicker-month,
+  .p-datepicker-year,
+  .p-datepicker-day-view,
+  .p-datepicker-weekday {
+    font-size: var(--sc-font-size-300);
+  }
+  .p-datepicker-day {
+    width: 31.5px;
+    height: 31.5px;
+  }
+}

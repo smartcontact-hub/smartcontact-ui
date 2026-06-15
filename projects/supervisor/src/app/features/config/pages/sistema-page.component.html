@@ -1,0 +1,367 @@
+<div class="page">
+  <div class="page__inner">
+    <section class="card">
+      <div class="card__head">
+        <span class="card__head-title">
+          {{ 'config.sistema.appearance.title' | translate }}
+        </span>
+        <span class="card__head-hint">
+          {{ 'config.sistema.appearance.hint' | translate }}
+        </span>
+      </div>
+      <div class="card__body">
+        <div class="theme-row">
+          <div class="theme-row__copy">
+            <span class="theme-row__label">
+              {{ 'config.sistema.appearance.theme_label' | translate }}
+            </span>
+            <p class="theme-row__hint">
+              {{ 'config.sistema.appearance.theme_hint' | translate }}
+            </p>
+          </div>
+
+          <div
+            class="theme-toggle"
+            role="radiogroup"
+            [attr.aria-label]="'config.sistema.appearance.theme_label' | translate"
+          >
+            @for (option of themeOptions; track option.value) {
+              <button
+                type="button"
+                class="theme-toggle__option"
+                role="radio"
+                [class.theme-toggle__option--active]="theme.mode() === option.value"
+                [attr.aria-checked]="theme.mode() === option.value"
+                (click)="select(option.value)"
+              >
+                <sc-icon [name]="option.icon" [size]="14" />
+                <span>{{ option.labelKey | translate }}</span>
+              </button>
+            }
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card__head">
+        <span class="card__head-title">
+          {{ 'config.sistema.language.title' | translate }}
+        </span>
+        <span class="card__head-hint">
+          {{ 'config.sistema.language.hint' | translate }}
+        </span>
+      </div>
+      <div class="card__body">
+        <div class="theme-row">
+          <div class="theme-row__copy">
+            <span class="theme-row__label">
+              {{ 'config.sistema.language.label' | translate }}
+            </span>
+            <p class="theme-row__hint">
+              {{ 'config.sistema.language.lang_hint' | translate }}
+            </p>
+          </div>
+
+          <div
+            class="theme-toggle"
+            role="radiogroup"
+            [attr.aria-label]="'config.sistema.language.label' | translate"
+          >
+            @for (option of languageOptions; track option.value) {
+              <button
+                type="button"
+                class="theme-toggle__option"
+                role="radio"
+                [class.theme-toggle__option--active]="language.lang() === option.value"
+                [attr.aria-checked]="language.lang() === option.value"
+                (click)="language.setLang(option.value)"
+              >
+                <span class="theme-toggle__flag" aria-hidden="true">{{ option.flag }}</span>
+                <span>{{ option.labelKey | translate }}</span>
+              </button>
+            }
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card__head">
+        <span class="card__head-title">
+          {{ 'config.sistema.data.title' | translate }}
+        </span>
+        <span class="card__head-hint">
+          {{ 'config.sistema.data.hint' | translate }}
+        </span>
+      </div>
+      <div class="card__body">
+        <div class="data-row">
+          <div class="data-row__copy">
+            <span class="data-row__label">
+              {{ 'config.sistema.data.reset_label' | translate }}
+            </span>
+            <p class="data-row__hint">
+              {{ 'config.sistema.data.reset_hint' | translate }}
+            </p>
+          </div>
+          <p-button type="button" severity="danger" (onClick)="resetData()">
+            <sc-icon [name]="resetIcon" [size]="14" />
+            <span>{{ 'config.sistema.data.reset_button' | translate }}</span>
+          </p-button>
+        </div>
+      </div>
+    </section>
+
+    <section class="card">
+      <div class="card__head">
+        <span class="card__head-title">{{ 'config.seguridad.policies.title' | translate }}</span>
+      </div>
+      <div class="card__body card__body--policies">
+        <div class="policy-row">
+          <div>
+            <span class="policy-row__label">
+              {{ 'config.seguridad.policies.min_length' | translate }}
+            </span>
+            <p class="policy-row__hint">
+              {{ 'config.seguridad.policies.min_length_hint' | translate }}
+            </p>
+          </div>
+          <select class="policy-row__select">
+            <option>
+              {{ 'config.seguridad.policies.min_length_options.chars_8' | translate }}
+            </option>
+            <option>
+              {{ 'config.seguridad.policies.min_length_options.chars_10' | translate }}
+            </option>
+            <option>
+              {{ 'config.seguridad.policies.min_length_options.chars_12' | translate }}
+            </option>
+            <option>
+              {{ 'config.seguridad.policies.min_length_options.chars_16' | translate }}
+            </option>
+          </select>
+        </div>
+
+        <div class="policy-row policy-row--bordered">
+          <div>
+            <span class="policy-row__label">
+              {{ 'config.seguridad.policies.expiration' | translate }}
+            </span>
+            <p class="policy-row__hint">
+              {{ 'config.seguridad.policies.expiration_hint' | translate }}
+            </p>
+          </div>
+          <select class="policy-row__select">
+            <option>{{ 'config.seguridad.policies.expiration_options.never' | translate }}</option>
+            <option>
+              {{ 'config.seguridad.policies.expiration_options.days_30' | translate }}
+            </option>
+            <option>
+              {{ 'config.seguridad.policies.expiration_options.days_60' | translate }}
+            </option>
+            <option>
+              {{ 'config.seguridad.policies.expiration_options.days_90' | translate }}
+            </option>
+          </select>
+        </div>
+
+        <div class="policy-row policy-row--bordered">
+          <div>
+            <span class="policy-row__label">
+              {{ 'config.seguridad.policies.special_chars' | translate }}
+            </span>
+            <p class="policy-row__hint">
+              {{ 'config.seguridad.policies.special_chars_hint' | translate }}
+            </p>
+          </div>
+          <sc-toggleswitch
+            [checked]="true"
+            [ariaLabel]="'config.seguridad.policies.special_chars' | translate"
+          />
+        </div>
+      </div>
+    </section>
+
+    <sc-numeracion-especial-section />
+
+    <section class="card card--accordion">
+      <button type="button" class="accordion__head" (click)="toggleAccordion()">
+        <sc-icon
+          [name]="regenOpen() ? chevronDown : chevronRight"
+          [size]="14"
+          class="accordion__chevron"
+        />
+        <sc-icon [name]="keyIcon" [size]="14" class="accordion__icon" />
+        <span class="accordion__title">
+          {{ 'config.seguridad.regen.title' | translate }}
+        </span>
+        @if (!regenOpen()) {
+          <span class="accordion__hint">
+            {{ 'config.seguridad.regen.hint_collapsed' | translate }}
+          </span>
+        }
+      </button>
+
+      @if (regenOpen()) {
+        <div class="card__body">
+          <div class="warning-callout">
+            <sc-icon [name]="alertIcon" [size]="15" class="warning-callout__icon" />
+            <div>
+              <span class="warning-callout__title">
+                {{ 'config.seguridad.regen.warning_title' | translate }}
+              </span>
+              <p class="warning-callout__body">
+                {{ 'config.seguridad.regen.warning_body' | translate }}
+              </p>
+            </div>
+          </div>
+
+          <div class="info-callout">
+            <sc-icon [name]="infoIcon" [size]="14" class="info-callout__icon" />
+            <p>{{ 'config.seguridad.regen.use_case' | translate }}</p>
+          </div>
+
+          <div class="search">
+            <sc-icon [name]="searchIcon" [size]="14" class="search__icon" />
+            <input
+              type="text"
+              class="search__input"
+              [placeholder]="'config.seguridad.regen.search_placeholder' | translate"
+              [value]="searchQuery()"
+              (input)="searchQuery.set($any($event.target).value)"
+              (keydown)="onSearchKey($event)"
+            />
+            @if (searchQuery()) {
+              <button
+                type="button"
+                class="search__clear"
+                (click)="searchQuery.set('')"
+                [attr.aria-label]="'labels.clear_search' | translate"
+              >
+                <sc-icon [name]="closeIcon" [size]="13" />
+              </button>
+            }
+          </div>
+
+          <div class="agent-list">
+            <div class="agent-list__head">
+              <input
+                type="checkbox"
+                [checked]="allFilteredSelected()"
+                (change)="toggleAll()"
+                [attr.aria-label]="'labels.select_all' | translate"
+              />
+              <span>
+                @if (selectedIds().size > 0) {
+                  {{
+                    'config.seguridad.regen.selected_count'
+                      | translate: { count: selectedIds().size }
+                  }}
+                } @else {
+                  {{
+                    'config.seguridad.regen.active_count'
+                      | translate: { count: activeAgents().length }
+                  }}
+                }
+              </span>
+            </div>
+
+            @if (filteredAgents().length === 0) {
+              <div class="agent-list__empty">
+                @if (activeAgents().length === 0) {
+                  {{ 'config.seguridad.regen.no_active_agents' | translate }}
+                } @else {
+                  {{ 'config.seguridad.regen.no_results' | translate }}
+                }
+              </div>
+            } @else {
+              @for (agent of filteredAgents(); track agent.id) {
+                <button
+                  type="button"
+                  class="agent-row"
+                  [class.agent-row--selected]="selectedIds().has(agent.id)"
+                  (click)="toggleOne(agent.id)"
+                >
+                  <input
+                    type="checkbox"
+                    [checked]="selectedIds().has(agent.id)"
+                    (click)="$event.stopPropagation()"
+                    (change)="toggleOne(agent.id)"
+                    [attr.aria-label]="agent.name"
+                  />
+                  <span class="agent-row__code">{{ agent.code }}</span>
+                  <span class="agent-row__name">{{ agent.name }}</span>
+                  <span class="agent-row__ext">ext. {{ agent.extension }}</span>
+                  @if (agent.email) {
+                    <span class="agent-row__email">{{ agent.email }}</span>
+                  }
+                </button>
+              }
+            }
+          </div>
+
+          @if (selectedIds().size > 0) {
+            <div class="confirm">
+              <span class="confirm__title">
+                {{ 'config.seguridad.regen.confirm_title' | translate }}
+              </span>
+              <p class="confirm__body">
+                {{
+                  'config.seguridad.regen.confirm_body'
+                    | translate: { confirm: confirmPhraseToken, count: selectedIds().size }
+                }}
+              </p>
+              <div class="confirm__row">
+                <input
+                  type="text"
+                  class="confirm__input"
+                  [placeholder]="
+                    'config.seguridad.regen.confirm_placeholder'
+                      | translate: { confirm: confirmPhraseToken }
+                  "
+                  [value]="confirmText()"
+                  (input)="onConfirmInput($any($event.target).value)"
+                  autocomplete="off"
+                  spellcheck="false"
+                />
+                <p-button
+                  type="button"
+                  severity="danger"
+                  [disabled]="!canExecute()"
+                  (onClick)="regenerate()"
+                >
+                  @if (processing()) {
+                    <sc-icon name="progress_activity" [size]="14" [spin]="true" />
+                    <span>{{ 'config.seguridad.regen.processing' | translate }}</span>
+                  } @else {
+                    <sc-icon [name]="keyIcon" [size]="14" />
+                    <span>{{ 'config.seguridad.regen.execute' | translate }}</span>
+                  }
+                </p-button>
+              </div>
+            </div>
+          }
+
+          @if (result(); as r) {
+            <div class="result">
+              <div class="result__summary">
+                <sc-icon [name]="checkIcon" [size]="15" class="result__check" />
+                <div>
+                  <span class="result__count">
+                    {{ 'config.seguridad.regen.result_count' | translate: { count: r.count } }}
+                  </span>
+                  <p class="result__ts">{{ r.timestamp }}</p>
+                </div>
+              </div>
+              <p-button type="button" severity="secondary" (onClick)="downloadCsv()">
+                <sc-icon [name]="downloadIcon" [size]="14" />
+                <span>{{ 'config.seguridad.regen.download_csv' | translate }}</span>
+              </p-button>
+            </div>
+          }
+        </div>
+      }
+    </section>
+  </div>
+</div>

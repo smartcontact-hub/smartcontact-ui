@@ -1,0 +1,197 @@
+/*
+ * SCDS — sc-toast styles partial.
+ *
+ * Imported by:
+ *   - apps/supervisor/src/app/app.component.scss
+ *   - apps/ds-docs/src/app/pages/toast/toast-gallery.component.scss
+ *
+ * Source of truth para la chrome visual del toast (`.sc-toast` y sus
+ * descendientes). Los strips de PrimeNG (`:host ::ng-deep .p-toast …`)
+ * NO viven aquí — necesitan estar dentro del componente Angular que
+ * usa view encapsulation. Cada consumer mantiene esos strips locales.
+ *
+ * Auditado 1:1 con Figma `Smart Contact Prime → ❖ Toast` en Session 30.
+ * Ver `packages/design-system/docs/components/10-toast.md` para tabla
+ * exhaustiva de tokens y SC extensions documentadas.
+ */
+
+.sc-toast {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sc-toast-gap-content);
+  width: var(--sc-toast-width);
+  padding: var(--sc-toast-padding-y) var(--sc-toast-padding-x);
+  border: 1px solid var(--sc-toast-info-border);
+  border-radius: var(--sc-toast-radius);
+  background: var(--sc-toast-info-bg);
+  /* Backdrop blur — frosted-glass effect per Figma `toast/blur: 1.5`. */
+  backdrop-filter: blur(var(--sc-toast-backdrop-blur));
+  -webkit-backdrop-filter: blur(var(--sc-toast-backdrop-blur));
+  color: var(--sc-toast-title);
+
+  &[data-severity='success'] {
+    background: var(--sc-toast-success-bg);
+    border-color: var(--sc-toast-success-border);
+  }
+  &[data-severity='info'] {
+    background: var(--sc-toast-info-bg);
+    border-color: var(--sc-toast-info-border);
+  }
+  &[data-severity='warn'] {
+    background: var(--sc-toast-warn-bg);
+    border-color: var(--sc-toast-warn-border);
+  }
+  &[data-severity='error'] {
+    background: var(--sc-toast-error-bg);
+    border-color: var(--sc-toast-error-border);
+  }
+  /* Violet "neutral notice" — used for state changes that aren't a
+   * celebration (e.g. "Borrador creado", "Renombrado"). Maps to
+   * PrimeNG `severity: 'secondary'`. SC overload — Figma's secondary
+   * is slate, AED's "neutral notice" pattern needs more presence. */
+  &[data-severity='secondary'] {
+    background: var(--sc-toast-violet-bg);
+    border-color: var(--sc-toast-violet-border);
+  }
+
+  &__icon {
+    flex: 0 0 auto;
+    width: var(--sc-toast-icon-size);
+    height: var(--sc-toast-icon-size);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--sc-toast-icon-radius);
+    color: var(--sc-toast-icon-fg);
+
+    .sc-toast[data-severity='success'] & {
+      background: var(--sc-toast-success-icon-bg);
+    }
+    .sc-toast[data-severity='info'] & {
+      background: var(--sc-toast-info-icon-bg);
+    }
+    .sc-toast[data-severity='warn'] & {
+      background: var(--sc-toast-warn-icon-bg);
+    }
+    .sc-toast[data-severity='error'] & {
+      background: var(--sc-toast-error-icon-bg);
+    }
+    .sc-toast[data-severity='secondary'] & {
+      background: var(--sc-toast-violet-icon-bg);
+    }
+  }
+
+  &__body {
+    flex: 1 1 auto;
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--sc-toast-gap-text);
+  }
+
+  &__title {
+    /* Figma `toast/summary/font/size: 14`, `toast/summary/font/weight: 500`. */
+    font-family: var(--sc-font-family-primary);
+    font-weight: var(--sc-toast-summary-font-weight);
+    font-size: var(--sc-toast-summary-font-size);
+    line-height: var(--sc-line-height-220);
+    color: var(--sc-toast-title);
+  }
+
+  &__message {
+    /* Figma `toast/detail/font/size: 12.25` raw, `toast/detail/font/weight: 500`. */
+    font-family: var(--sc-font-family-primary);
+    font-weight: var(--sc-toast-detail-font-weight);
+    font-size: var(--sc-toast-detail-font-size);
+    line-height: var(--sc-line-height-100);
+    color: var(--sc-toast-message);
+  }
+
+  &__action {
+    flex: 0 0 auto;
+    align-self: flex-start;
+    /* 6px Y off-scale spacing (4 → 8 has no in-between step) — kept raw. */
+    padding: var(--sc-spacing-0-5) var(--sc-spacing-0-875);
+    border: 1px solid var(--sc-border-default);
+    border-radius: var(--sc-radius-200);
+    background: var(--sc-bg-surface);
+    color: var(--sc-toast-title);
+    font-family: var(--sc-font-family-primary);
+    font-size: var(--sc-font-size-100);
+    font-weight: var(--sc-font-weight-medium);
+    line-height: 1;
+    cursor: pointer;
+    /* Scale 1.04 grows the chip ~1px each side — enough to feel reactive
+     * without shifting layout (transforms don't trigger CLS). */
+    transform-origin: center;
+    transition:
+      background var(--sc-transition-fast, 120ms) ease,
+      transform var(--sc-transition-fast, 120ms) ease;
+
+    &:hover {
+      background: var(--sc-bg-subtle);
+      transform: scale(1.04);
+    }
+    &:active {
+      transform: scale(0.98);
+    }
+    &:focus-visible {
+      outline: 2px solid var(--sc-border-focus);
+      outline-offset: 2px;
+    }
+  }
+
+  /* Solid variant: action button reads as the dominant CTA when the
+   * toast carries a high-stakes message (e.g. "Cambios sin guardar —
+   * Reanudar"). Trigger with `data-action="solid"` on the toast root,
+   * or `.sc-toast__action--solid` on the button. */
+  &[data-action='solid'] &__action,
+  &__action--solid {
+    background: var(--sc-bg-primary);
+    border-color: var(--sc-bg-primary);
+    color: var(--sc-text-on-primary);
+
+    &:hover {
+      background: var(--sc-bg-primary-hover);
+      border-color: var(--sc-bg-primary-hover);
+    }
+  }
+
+  &__close {
+    /* Figma `toast/close/button/width|height: 24.5`,
+     * `toast/close/button/border/radius: 12.25` (= circular). */
+    flex: 0 0 auto;
+    align-self: flex-start;
+    margin-left: 4px;
+    width: var(--sc-toast-close-button-width);
+    height: var(--sc-toast-close-button-height);
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--sc-toast-close);
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: var(--sc-toast-close-button-radius);
+
+    &:hover {
+      background: rgb(0 0 0 / 0.06);
+    }
+    &:focus-visible {
+      outline: 2px solid var(--sc-border-focus);
+      outline-offset: 2px;
+    }
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sc-toast__action {
+    transition: background var(--sc-transition-fast, 120ms) ease;
+
+    &:hover,
+    &:active {
+      transform: none;
+    }
+  }
+}

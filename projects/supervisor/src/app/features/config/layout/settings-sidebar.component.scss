@@ -1,0 +1,111 @@
+/*
+ * Settings sidebar — Figma Supervisor 1:12355 (índice). Panel gray/50 que
+ * blende con la página (mismo fondo) → los items quedan sobre el fondo, con
+ * cabecera (título + subtítulo) e items con chip de icono 32×32:
+ *   · inactivo → chip gray/200, label regular
+ *   · activo   → item gray/100, chip navy + icono blanco, label bold
+ */
+:host {
+  display: block;
+}
+
+.settings-sidebar {
+  /* Sin padding: el panel gris llena el rail (235, Figma `índice` 1:12355) y queda
+   * pegado arriba, alineado con la bandeja de contenido. El padding interno (16) lo
+   * pone `__panel`. S67-A: antes 24.5/21 bajaba el índice 24px y lo encogía a 193. */
+  padding: 0;
+}
+
+.settings-sidebar__panel {
+  background: var(--sc-bg-secondary-subtle);
+  /* Figma `índice` 1:12355 = border/radius/xl (12px). Concéntrico con los items
+   * internos (radius-200 / 6px). S66 lo fijó 6→12 en Figma; portado en S67-A. */
+  border-radius: var(--sc-radius-400);
+  padding: var(--sc-spacing-1-143);
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-1-143);
+}
+
+.settings-sidebar__head {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-375);
+}
+
+.settings-sidebar__title {
+  font-size: var(--sc-font-size-300);
+  line-height: 24px;
+  font-weight: var(--sc-font-weight-semibold);
+  color: var(--sc-text-secondary);
+}
+
+.settings-sidebar__subtitle {
+  font-size: var(--sc-font-size-200);
+  line-height: 22px;
+  color: var(--sc-text-subtle);
+}
+
+.settings-sidebar__nav {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-5);
+}
+
+.nav-item {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-875);
+  padding: var(--sc-spacing-0-375) var(--sc-spacing-0-875);
+  border-radius: var(--sc-radius-200);
+  text-decoration: none;
+  color: inherit;
+  transition: background var(--sc-transition-fast) ease;
+
+  &:hover {
+    background: var(--sc-color-gray-100);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--sc-border-focus);
+    outline-offset: 2px;
+  }
+
+  &--active {
+    background: var(--sc-color-gray-100);
+
+    .nav-item__icon {
+      background: var(--sc-bg-primary);
+      color: var(--sc-text-on-primary);
+    }
+
+    .nav-item__label {
+      color: var(--sc-text-primary);
+      font-weight: var(--sc-font-weight-bold);
+    }
+  }
+}
+
+.nav-item__icon {
+  flex: 0 0 auto;
+  width: 32px;
+  height: 32px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: var(--sc-radius-200);
+  background: var(--sc-color-gray-200);
+  color: var(--sc-text-secondary);
+  transition:
+    background var(--sc-transition-fast) ease,
+    color var(--sc-transition-fast) ease;
+}
+
+.nav-item__label {
+  font-family: var(--sc-font-family-primary);
+  font-size: var(--sc-font-size-200);
+  line-height: 22px;
+  font-weight: var(--sc-font-weight-regular);
+  color: var(--sc-text-secondary);
+  white-space: nowrap;
+}

@@ -1,0 +1,113 @@
+/*
+ * RetranscriptionConfirmModal · prototipo React port (S46).
+ *
+ * Destructive multi-line warning box justifica el rojo (Guidelines
+ * "yellow/red boxes reservados para warnings ≥2 líneas o destructivos").
+ * Tokens `--sc-*-danger`, alineados con SCDS.
+ */
+
+.retrans-confirm {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-1-125);
+
+  &__warning {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--sc-spacing-0-875);
+    padding: var(--sc-spacing-1-125);
+    background: var(--sc-bg-danger-subtle);
+    border: 1px solid var(--sc-border-danger);
+    border-radius: var(--sc-radius-200);
+  }
+
+  &__warning-icon {
+    flex: 0 0 auto;
+    color: var(--sc-text-danger);
+    margin-top: 2px;
+  }
+
+  &__warning-text {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sc-spacing-0-25);
+    min-width: 0;
+  }
+
+  &__warning-headline {
+    margin: 0;
+    font-size: var(--sc-font-size-body-2);
+    font-weight: 600;
+    line-height: var(--sc-line-height-body-2);
+    color: var(--sc-text-danger);
+  }
+
+  &__warning-body {
+    margin: 0;
+    font-size: var(--sc-font-size-body-3);
+    line-height: 1.45;
+    color: var(--sc-text-secondary);
+  }
+
+  &__warning-cost {
+    margin: 0;
+    font-size: var(--sc-font-size-body-3);
+    line-height: 1.45;
+    color: var(--sc-text-warning);
+  }
+
+  &__gate {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sc-spacing-0-5);
+  }
+
+  &__gate-label {
+    font-size: var(--sc-font-size-body-3);
+    color: var(--sc-text-secondary);
+  }
+
+  &__gate-token {
+    font-family: var(--sc-font-family-mono);
+    font-weight: 600;
+    letter-spacing: 0.1em;
+    color: var(--sc-text-primary);
+  }
+
+  &__gate-input {
+    /* SC input baseline (mismo height/padding que sc-inputtext) */
+    height: 36px;
+    padding: 0 var(--sc-spacing-0-875);
+    font-family: var(--sc-font-family-mono);
+    font-size: var(--sc-font-size-body-2);
+    letter-spacing: 0.05em;
+    background: var(--sc-bg-surface);
+    border: 1px solid var(--sc-border-default);
+    border-radius: var(--sc-radius-200);
+    color: var(--sc-text-primary);
+    outline: none;
+    transition:
+      border-color 140ms ease,
+      background 140ms ease;
+
+    &::placeholder {
+      letter-spacing: 0.05em;
+      color: var(--sc-text-subtle);
+    }
+
+    &:focus-visible {
+      border-color: var(--sc-color-electric-blue-500);
+      box-shadow: 0 0 0 3px var(--sc-color-blue-100);
+    }
+
+    &.is-invalid {
+      border-color: var(--sc-border-error);
+      background: var(--sc-bg-danger-subtle);
+    }
+
+    &.is-valid {
+      border-color: var(--sc-color-green-500);
+      background: var(--sc-bg-success-subtle);
+    }
+  }
+}

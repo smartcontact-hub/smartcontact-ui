@@ -1,0 +1,153 @@
+<ng-template #topbarActions>
+  @if (dirty()) {
+    <p-button
+      type="button"
+      size="small"
+      severity="secondary"
+      [outlined]="true"
+      (onClick)="cancel()"
+    >
+      <span>{{ 'common.discard_changes' | translate }}</span>
+    </p-button>
+  }
+  <p-button
+    type="button"
+    size="small"
+    severity="primary"
+    [disabled]="!canSave()"
+    [loading]="saving()"
+    (onClick)="save()"
+  >
+    <span>{{ 'common.save' | translate }}</span>
+  </p-button>
+</ng-template>
+
+<div class="page">
+  <div class="page__inner">
+    <header class="page-heading">
+      <sc-icon [name]="pageIcon" [size]="18" class="page-heading__icon" />
+      <h1 class="page-heading__title">
+        {{ 'config.aed.subpages.grupos.heading' | translate }}
+      </h1>
+    </header>
+
+    <!-- Parámetros -->
+    <section class="settings-card" aria-labelledby="grupos-params-title">
+      <div class="settings-card__head">
+        <h2 id="grupos-params-title" class="settings-card__title">
+          {{ 'config.aed.subpages.grupos.params.title' | translate }}
+        </h2>
+      </div>
+
+      <div class="settings-card__body">
+        <sc-multiselect
+          class="field--full"
+          inputId="grupos-estrategia"
+          [label]="'config.aed.subpages.grupos.params.estrategia' | translate"
+          [iftaLabel]="true"
+          [options]="estrategiaOptions"
+          [value]="form().estrategia"
+          [placeholder]="'config.aed.subpages.grupos.params.placeholder' | translate"
+          (valueChange)="onMulti('estrategia', $event)"
+        />
+
+        <sc-multiselect
+          class="field--full"
+          inputId="grupos-prioridad"
+          [label]="'config.aed.subpages.grupos.params.prioridad' | translate"
+          [iftaLabel]="true"
+          [options]="prioridadOptions"
+          [value]="form().prioridad"
+          [placeholder]="'config.aed.subpages.grupos.params.placeholder' | translate"
+          (valueChange)="onMulti('prioridad', $event)"
+        />
+
+        <sc-multiselect
+          class="field--full"
+          inputId="grupos-voz"
+          [label]="'config.aed.subpages.grupos.params.voz' | translate"
+          [iftaLabel]="true"
+          [options]="vozOptions"
+          [value]="form().voz"
+          [placeholder]="'config.aed.subpages.grupos.params.placeholder' | translate"
+          (valueChange)="onMulti('voz', $event)"
+        />
+
+        <sc-multiselect
+          class="field--full"
+          inputId="grupos-tipo-cola"
+          [label]="'config.aed.subpages.grupos.params.tipo_cola' | translate"
+          [iftaLabel]="true"
+          [options]="tipoColaOptions"
+          [value]="form().tipoColaEspera"
+          [placeholder]="'config.aed.subpages.grupos.params.placeholder' | translate"
+          (valueChange)="onMulti('tipoColaEspera', $event)"
+        />
+
+        <sc-inputtext
+          class="field--full"
+          inputId="grupos-capacidad-cola"
+          [label]="'config.aed.subpages.grupos.params.capacidad_cola' | translate"
+          [iftaLabel]="true"
+          [placeholder]="'config.aed.subpages.grupos.params.input_placeholder' | translate"
+          [value]="form().capacidadColaEspera"
+          (valueChange)="update('capacidadColaEspera', $event)"
+        />
+
+        <sc-inputtext
+          class="field--full"
+          inputId="grupos-tiempo-max"
+          [label]="'config.aed.subpages.grupos.params.tiempo_max' | translate"
+          [iftaLabel]="true"
+          [placeholder]="'config.aed.subpages.grupos.params.input_placeholder' | translate"
+          [value]="form().tiempoMaxEspera"
+          (valueChange)="update('tiempoMaxEspera', $event)"
+        />
+
+        <sc-inputtext
+          class="field--full"
+          inputId="grupos-tiempo-transfer"
+          [label]="'config.aed.subpages.grupos.params.tiempo_transfer' | translate"
+          [iftaLabel]="true"
+          [placeholder]="'config.aed.subpages.grupos.params.input_placeholder' | translate"
+          [value]="form().tiempoTransferencia"
+          (valueChange)="update('tiempoTransferencia', $event)"
+        />
+
+        <div class="switch-field">
+          <div class="switch-field__copy">
+            <span class="switch-field__label">
+              {{ 'config.aed.subpages.grupos.params.desbordar' | translate }}
+            </span>
+          </div>
+          <sc-toggleswitch
+            [checked]="form().desbordar"
+            [ariaLabel]="'config.aed.subpages.grupos.params.desbordar' | translate"
+            (checkedChange)="update('desbordar', $event)"
+          />
+        </div>
+      </div>
+    </section>
+
+    <!-- Apertura de ficha -->
+    <section class="settings-card" aria-labelledby="grupos-apertura-title">
+      <div class="settings-card__head">
+        <h2 id="grupos-apertura-title" class="settings-card__title">
+          {{ 'config.aed.subpages.grupos.apertura.title' | translate }}
+        </h2>
+      </div>
+      <div class="settings-card__body">
+        <sc-select
+          class="field--full"
+          inputId="grupos-apertura-tipo"
+          [label]="'config.aed.subpages.grupos.apertura.tipo_label' | translate"
+          [iftaLabel]="true"
+          [options]="aperturaOptions"
+          [value]="form().aperturaTipo"
+          [placeholder]="'config.aed.subpages.grupos.params.placeholder' | translate"
+          (valueChange)="onSelect('aperturaTipo', $event)"
+        />
+      </div>
+    </section>
+  </div>
+</div>

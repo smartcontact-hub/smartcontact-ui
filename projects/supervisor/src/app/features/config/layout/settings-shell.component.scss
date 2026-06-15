@@ -1,0 +1,68 @@
+/*
+ * Settings shell (AED hub) — rail (izquierda) + columna de contenido.
+ * S62: eliminada la banda `sc-page-header` full-width que cruzaba sobre el
+ * rail (mirroring del viejo `sticky-form-header`, patrón que el resto de la
+ * app abandonó con el modelo "todo arriba"). Ahora la columna de contenido
+ * abre con un título + descripción ligeros; la orientación la dan el
+ * breadcrumb + el rail (que resalta la sección activa).
+ */
+:host {
+  display: block;
+  min-height: 100%;
+  /* Figma 1:12270 (`content/background` = #ffffff): el lienzo de config va en
+   * BLANCO. El índice es un panel gray/50 (`--sc-bg-secondary-subtle`) → al ir
+   * la página en blanco, el índice resalta solo (gris sobre blanco); la card de
+   * contenido es blanca (surface) con borde + sombra para separarse del lienzo.
+   * S67-A: antes el lienzo era gray/50 y el índice (también gray/50) se fundía. */
+  background: var(--sc-bg-surface);
+}
+
+/* Dark: los tokens son asimétricos — en light el índice (gray-50) resalta sobre
+ * lienzo blanco; en dark el índice es gray-900 (superficie elevada) y resalta
+ * sobre el "suelo" gray-950. `--sc-bg-surface` vale gray-900 en dark (= el índice
+ * → se fundirían), así que el lienzo baja a `--sc-bg-default` (gray-950). No hay
+ * un token único "blanco en light / gray-950 en dark"; override por tema. */
+:host-context(.sc-dark) {
+  background: var(--sc-bg-default);
+}
+
+.settings-shell {
+  /* Bloque (no flex-column): así `__body` se comporta como contenedor centrado
+   * clásico — llena el ancho, capa a max-width y `margin:auto` lo centra. Como
+   * flex-item, `margin-inline:auto` lo encogía al contenido en vez de capar. */
+  display: block;
+  min-height: 100%;
+}
+
+.settings-shell__body {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sc-spacing-2); /* 28 — separación rail ↔ contenido (Figma scale/2) */
+  /* El panel (rail + contenido) es UNA unidad con tope de ancho. Figma Supervisor
+   * (config AED) lo dibuja con el área de contenido a 1200; aquí capamos el panel
+   * a ese ancho y lo centramos. Por debajo de 1200 el `margin:auto` se resuelve a 0
+   * (llena, sin reflow); por encima deja de estirarse y el bloque flota centrado,
+   * con el rail siempre pegado a su contenido. El margen lateral en monitores
+   * anchos es esperado (patrón de ajustes GitHub/Stripe; el contenido de formulario
+   * NO debe ocupar todo el viewport). Padding/gap = tokens scale/1-625 + scale/2. */
+  max-width: 1200px;
+  margin-inline: auto;
+  padding: var(--sc-spacing-1-625) var(--sc-spacing-2); /* 22.75 / 28 */
+}
+
+.settings-shell__rail {
+  flex: 0 0 235px;
+  width: 235px;
+  /* El rail se ancla arriba del área de contenido (scrollport = `app-shell__content`)
+   * y queda sticky para seguir visible al scrollear. `top` casa con el padding del
+   * body para que no salte al pegarse. */
+  position: sticky;
+  top: var(--sc-spacing-1-625);
+  align-self: flex-start;
+  z-index: 1;
+}
+
+.settings-shell__main {
+  flex: 1;
+  min-width: 0;
+}

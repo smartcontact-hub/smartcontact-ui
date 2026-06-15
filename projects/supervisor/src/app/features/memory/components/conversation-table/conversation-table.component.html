@@ -1,0 +1,188 @@
+<div class="table-card">
+  <table class="table memory-conversations-table">
+    <thead>
+      <tr>
+        <th class="memory-conversations-table__th-select" scope="col">
+          <label class="memory-conversations-table__checkbox-wrap">
+            <input
+              type="checkbox"
+              class="memory-conversations-table__checkbox"
+              [checked]="allSelected()"
+              [attr.aria-label]="'memory.conversations.select_all_aria' | translate"
+              (change)="onHeaderCheckboxChange($event)"
+              (click)="$event.stopPropagation()"
+            />
+          </label>
+        </th>
+        <th class="memory-conversations-table__th-status" scope="col">
+          {{ 'memory.conversations.table.status' | translate }}
+        </th>
+        <th scope="col">{{ 'memory.conversations.table.hour' | translate }}</th>
+        <th scope="col">{{ 'memory.conversations.table.date' | translate }}</th>
+        <th scope="col">{{ 'memory.conversations.table.service' | translate }}</th>
+        <th scope="col">{{ 'memory.conversations.table.origin' | translate }}</th>
+        <th scope="col">{{ 'memory.conversations.table.group' | translate }}</th>
+        <th scope="col">{{ 'memory.conversations.table.destination' | translate }}</th>
+        <th class="table__th-num" scope="col">
+          {{ 'memory.conversations.table.duration' | translate }}
+        </th>
+        <th class="table__th-num" scope="col">
+          {{ 'memory.conversations.table.waiting' | translate }}
+        </th>
+        <th scope="col">{{ 'memory.conversations.table.id' | translate }}</th>
+      </tr>
+    </thead>
+    <tbody>
+      @for (conv of conversations(); track conv.id) {
+        @let selected = isSelected(conv.id);
+        @let processing = isProcessing(conv.id);
+        @let analyzing = isAnalyzing(conv.id);
+        <tr
+          [class.is-deleted]="conv.deleted"
+          [class.is-selected]="selected"
+          [class.is-processing]="processing"
+          [class.is-analyzing]="analyzing"
+          [class.is-failed]="conv.hasFailedTranscription"
+          class="memory-conversations-table__row"
+          tabindex="0"
+          (click)="onRowClick(conv)"
+          (keydown)="onRowKeydown($event, conv)"
+          (contextmenu)="onContextMenu($event, conv)"
+        >
+          <td class="memory-conversations-table__td-select">
+            <label class="memory-conversations-table__checkbox-wrap">
+              <input
+                type="checkbox"
+                class="memory-conversations-table__checkbox"
+                [checked]="selected"
+                [attr.aria-label]="
+                  'memory.conversations.select_row_aria' | translate: { id: conv.id }
+                "
+                (change)="onCheckboxChange($event, conv)"
+                (click)="$event.stopPropagation()"
+                (keydown)="onCheckboxKeydown($event)"
+              />
+            </label>
+          </td>
+          <td class="memory-conversations-table__td-status">
+            <button
+              type="button"
+              class="memory-status-button"
+              [attr.aria-label]="
+                'memory.conversations.open_aria_with_state'
+                  | translate
+                    : {
+                        id: conv.id,
+                        state: statusLabelKey(conv) | translate,
+                      }
+              "
+              [attr.title]="'memory.conversations.open_player' | translate"
+              (click)="onStatusClick($event, conv)"
+              (keydown)="onStatusKeydown($event, conv)"
+            >
+              <sc-memory-status-icon
+                [conversation]="conv"
+                [isProcessing]="processing"
+                [isAnalyzing]="analyzing"
+              />
+              @if (conv.hasFailedTranscription) {
+                <span
+                  class="memory-status-button__failed"
+                  [attr.aria-label]="'memory.conversations.status.failed' | translate"
+                  [attr.title]="'memory.conversations.status.failed' | translate"
+                >
+                  <svg
+                    width="12"
+                    height="12"
+                    viewBox="0 0 24 24"
+                    fill="none"
+                    stroke="currentColor"
+                    stroke-width="2.5"
+                    stroke-linecap="round"
+                    stroke-linejoin="round"
+                    aria-hidden="true"
+                  >
+                    <circle cx="12" cy="12" r="10" />
+                    <line x1="12" y1="8" x2="12" y2="12" />
+                    <line x1="12" y1="16" x2="12.01" y2="16" />
+                  </svg>
+                </span>
+              }
+              @if (recordingsCount(conv) > 1) {
+                <span
+                  class="memory-status-button__multi"
+                  [attr.aria-label]="
+                    'memory.conversations.status.multi_recording'
+                      | translate: { count: recordingsCount(conv) }
+                  "
+                  [attr.title]="
+                    'memory.conversations.status.multi_recording'
+                      | translate: { count: recordingsCount(conv) }
+                  "
+                >
+                  {{ recordingsCount(conv) }}
+                </span>
+              }
+            </button>
+          </td>
+          <td>{{ conv.hour }}</td>
+          <td>{{ conv.date }}</td>
+          <td>
+            @if (conv.service) {
+              <span class="memory-cell-pill">{{ conv.service }}</span>
+            }
+          </td>
+          <td>{{ conv.origin }}</td>
+          <td>
+            @if (conv.group) {
+              <span class="memory-cell-pill">{{ conv.group }}</span>
+            }
+          </td>
+          <td>{{ conv.destination }}</td>
+          <td class="table__td-num">{{ conv.duration }}</td>
+          <td class="table__td-num">{{ conv.waiting }}</td>
+          <td class="memory-conversations-table__id">{{ conv.id }}</td>
+        </tr>
+      } @empty {
+        <tr class="memory-conversations-table__empty-row">
+          <td [attr.colspan]="11">
+            <div class="memory-conversations-table__empty" role="status" aria-live="polite">
+              <sc-icon [name]="emptyIcon" [size]="28" />
+              <h3>{{ 'memory.conversations.empty.title' | translate }}</h3>
+              <p>{{ 'memory.conversations.empty.body' | translate }}</p>
+            </div>
+          </td>
+        </tr>
+      }
+    </tbody>
+  </table>
+</div>
+
+@if (contextMenu(); as ctx) {
+  @if (contextHasItems()) {
+    <div
+      class="context-menu"
+      [style.left.px]="ctx.x"
+      [style.top.px]="ctx.y"
+      (scClickOutside)="closeContextMenu()"
+      [scClickOutsideEnabled]="!!contextMenu()"
+      role="menu"
+    >
+      @if (contextPrimaryAction(); as action) {
+        <button type="button" role="menuitem" (click)="dispatchContext(action)">
+          <sc-icon [name]="primaryActionIcon(action) ?? ''" [size]="13" />
+          <span>{{ primaryActionLabelKey(action) | translate }}</span>
+        </button>
+      }
+      @if (contextShowMarkRead()) {
+        @if (contextPrimaryAction()) {
+          <div class="context-menu__separator" aria-hidden="true"></div>
+        }
+        <button type="button" role="menuitem" (click)="dispatchContext('mark-read')">
+          <sc-icon [name]="markReadIcon" [size]="13" />
+          <span>{{ 'memory.conversations.context.mark_read' | translate }}</span>
+        </button>
+      }
+    </div>
+  }
+}

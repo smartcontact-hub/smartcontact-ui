@@ -1,0 +1,391 @@
+:host {
+  display: block;
+}
+
+/* Context menu (click derecho) — espejo del patrón AED list-pages
+ * (labels/agents/groups). Position fixed via [style.left/top.px] de
+ * `contextMenu` signal. Globals de `_table-elements.scss` aplican al
+ * separator + variantes is-danger. */
+.context-menu {
+  position: fixed;
+  width: 184px;
+  background: var(--sc-bg-surface);
+  border: 1px solid var(--sc-border-default);
+  border-radius: var(--sc-radius-200);
+  padding: var(--sc-spacing-0-25) 0;
+  box-shadow: var(--sc-shadow-popover);
+  z-index: var(--sc-z-popover);
+
+  > button {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: var(--sc-spacing-0-875);
+    padding: var(--sc-spacing-0-5) var(--sc-spacing-0-875);
+    font-size: var(--sc-font-size-200);
+    color: var(--sc-text-secondary);
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+    text-align: left;
+    transition: background-color 120ms var(--sc-easing-default, ease);
+
+    > sc-icon {
+      color: var(--sc-icon-subtle);
+      flex: 0 0 auto;
+    }
+
+    &:hover {
+      background: var(--sc-bg-secondary-hover);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--sc-color-electric-blue-500);
+      outline-offset: -2px;
+    }
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Estilo tabla Memory `/conversaciones` ← adoptado de AED list-pages
+ * (S40 #16). Memory hereda el chrome AED: wrapper con border + radius
+ * + overflow-hidden, thead con bg-default + border-bottom, th uppercase
+ * tracked, filas con border-bottom subtle (sin zebra). Preserva la
+ * densidad propia Memory + sticky header + shimmer is-processing /
+ * is-analyzing.
+ *
+ * NOTA: este patrón está duplicado en AED users/agents/groups list-pages
+ * + Memory. Cuando aparezca un 5º consumer, extraer a partial compartido
+ * (entry en `inconsistencies-backlog.md`).
+ * ------------------------------------------------------------------ */
+/* Base `.table-card` chrome promovido a SCDS partial S55
+ * (`packages/design-system/styles/_sc-list-table.scss`). Delta scoped:
+ * S53 stitched-card pattern — solo radius en esquinas inferiores; el
+ * `border-top` (que viene del partial) actúa como hairline divisor
+ * compartido con el panel de filtros arriba. */
+.table-card {
+  /* BeyondUI vibe (experiment S59): flush — sin caja. La tabla va sobre
+   * la página con solo divisores hairline entre filas (patrón Companies/
+   * Linear). Scoped a Memory; el partial compartido sigue con caja para AED. */
+  border: 0;
+  border-radius: 0;
+}
+
+.memory-conversations-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  thead tr {
+    background: var(--sc-bg-surface);
+    border-bottom: 1px solid var(--sc-border-default);
+  }
+
+  thead th {
+    /* Sticky header: queda fijo al scroll vertical de la tabla. El
+     * contenedor `.page` (con overflow-y: auto) es el scrollport — `top: 0`
+     * en thead th lo ancla a su borde superior. Background opaco evita
+     * que las filas se transparenten por debajo. Override del background
+     * de `thead tr` porque el sticky positioning lo necesita en el th.
+     *
+     * `white-space: nowrap` alinea con el patrón AED list-pages (S41 #16
+     * follow-up): evita que los labels uppercase se partan en dos líneas
+     * en columnas estrechas como T. CONV. o T. ESPERA. */
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    background: var(--sc-bg-surface);
+    padding: var(--sc-spacing-0-75) var(--sc-spacing-0-875);
+    text-align: left;
+    /* BeyondUI vibe (experiment S59): header limpio sentence-case en gris,
+     * NO uppercase tracked diminuto. font-size 100 (12.25px) ≈ Companies. */
+    font-size: var(--sc-font-size-100);
+    font-weight: var(--sc-font-weight-medium);
+    letter-spacing: 0;
+    color: var(--sc-text-secondary);
+    white-space: nowrap;
+    box-shadow: inset 0 -1px 0 var(--sc-border-default);
+  }
+
+  tbody tr {
+    border-bottom: 1px solid var(--sc-border-subtle);
+    transition: background var(--sc-transition-fast) var(--sc-easing-default);
+    cursor: pointer;
+
+    &:hover:not(.is-deleted) {
+      background: var(--sc-bg-default);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--sc-color-electric-blue-500);
+      outline-offset: -2px;
+    }
+  }
+
+  /* `:where()` rebaja la specificity a (0,0,0) para que los overrides
+   * por clase BEM (`&__id`, `&__td-status`, etc.) ganen sin tener que
+   * inflar su propia especificidad — Angular emulated encapsulation
+   * suma 1 attribute selector por cada element/class, y `tbody td`
+   * acababa siendo (0,2,2) > (0,1,1) de `.__id` en el cascade real.
+   */
+  :where(tbody td) {
+    /* BeyondUI vibe (experiment S59): aire vertical (14px) + más aire
+     * horizontal (15.75px) → columnas menos apretadas, layout más airy
+     * tipo Companies. */
+    padding: var(--sc-spacing-1) var(--sc-spacing-1-125);
+    font-size: var(--sc-font-size-200);
+    /* Bloque 1 · tipografía nítida BeyondUI: peso 500 (Medium) + texto
+     * primario (no secondary) → datos crujientes y legibles como Companies. */
+    font-weight: var(--sc-font-weight-medium);
+    color: var(--sc-text-primary);
+    vertical-align: middle;
+  }
+
+  /* th alineado al mismo aire horizontal que las celdas. */
+  thead th {
+    padding-left: var(--sc-spacing-1-125);
+    padding-right: var(--sc-spacing-1-125);
+  }
+
+  /* BeyondUI vibe (experiment S59): columnas categóricas (Servicio, Grupo)
+   * como pills redondeadas — eco de los dominios pill de Companies. Pastilla
+   * sutil: fondo gris claro + hairline, no compite con los datos. */
+  .memory-cell-pill {
+    display: inline-flex;
+    align-items: center;
+    padding: var(--sc-spacing-0-25) var(--sc-spacing-0-625);
+    border-radius: var(--sc-radius-full);
+    background: var(--sc-bg-default);
+    border: 1px solid var(--sc-border-subtle);
+    color: var(--sc-text-primary);
+    font-size: var(--sc-font-size-100);
+    font-weight: var(--sc-font-weight-medium);
+    line-height: 1.3;
+    white-space: nowrap;
+  }
+
+  &__th-status,
+  &__td-status {
+    width: 132px;
+  }
+
+  &__th-select,
+  &__td-select {
+    width: 40px;
+    padding-right: 0;
+  }
+
+  &__checkbox-wrap {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    padding: var(--sc-spacing-0-25);
+    margin: -4px;
+  }
+
+  &__checkbox {
+    width: 16px;
+    height: 16px;
+    accent-color: var(--sc-bg-primary);
+    cursor: pointer;
+
+    &:focus-visible {
+      outline: 2px solid var(--sc-color-electric-blue-500);
+      outline-offset: 2px;
+      border-radius: var(--sc-radius-50);
+    }
+  }
+
+  &__id {
+    font-family: var(--sc-font-family-mono);
+    font-size: var(--sc-font-size-100);
+    color: var(--sc-text-subtle);
+    letter-spacing: 0.02em;
+  }
+
+  tr.is-deleted {
+    opacity: 0.6;
+  }
+
+  tr.is-selected:not(.is-deleted) {
+    background: var(--sc-color-gray-100);
+  }
+
+  /* Estado de procesamiento (mock dispatch). Amber para transcribing,
+   * cyan/blue para analyzing. Sin opacidad fuerte para que la fila
+   * siga siendo legible. El barrido animado tipo "shimmer" comunica
+   * actividad sin spinner por fila. */
+  tr.is-processing:not(.is-deleted) {
+    background: color-mix(in srgb, var(--sc-color-amber-100) 50%, transparent);
+    position: relative;
+    overflow: hidden;
+
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        90deg,
+        transparent 0%,
+        color-mix(in srgb, var(--sc-color-amber-300) 40%, transparent) 50%,
+        transparent 100%
+      );
+      animation: row-shimmer 2200ms ease-in-out infinite;
+      pointer-events: none;
+    }
+  }
+
+  tr.is-analyzing:not(.is-deleted) {
+    background: color-mix(in srgb, var(--sc-color-blue-100) 50%, transparent);
+    position: relative;
+    overflow: hidden;
+
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        90deg,
+        transparent 0%,
+        color-mix(in srgb, var(--sc-color-blue-300) 40%, transparent) 50%,
+        transparent 100%
+      );
+      animation: row-shimmer 2200ms ease-in-out infinite;
+      pointer-events: none;
+    }
+  }
+
+  /* Transcripción fallida: tinte rojo sutil para escaneo rápido + icono
+   * overlay rojo en el status button (señal local doble). Mismo patrón
+   * sutil que tenían los borradores amarillos pre-S47 — los users no
+   * deberían tener que cazar dónde está el error. Sin shimmer porque es
+   * estado terminal, no in-flight.
+   *
+   * `:not(.is-processing):not(.is-analyzing)` para que si una fila falló
+   * y se está reintentando, gane el estado in-flight (intent: "estoy
+   * trabajando ahora", no "fallé antes"). */
+  tr.is-failed:not(.is-deleted):not(.is-processing):not(.is-analyzing) {
+    background: color-mix(in srgb, var(--sc-color-red-100) 50%, transparent);
+
+    &:hover {
+      background: color-mix(in srgb, var(--sc-color-red-200) 50%, transparent);
+    }
+  }
+
+  /* Selected gana sobre failed (consistencia con is-selected over otros tints). */
+  tr.is-failed.is-selected:not(.is-deleted):not(.is-processing):not(.is-analyzing) {
+    background: var(--sc-color-gray-100);
+  }
+}
+
+@keyframes row-shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .memory-conversations-table tr.is-processing::after,
+  .memory-conversations-table tr.is-analyzing::after {
+    animation: none;
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Status button — wrapper de `<sc-memory-status-icon>` con overlays
+ * en esquinas (failed bottom-right + multi-recording count top-right).
+ * Es el affordance EXPLÍCITO que abre el player modal (Audit A5).
+ *
+ * S40 (#15): reemplaza el cluster de 3-5 lucide icons separados por
+ * una pictograma única canal+processing-state. La forma del SVG carga
+ * el estado (sec 15.21 audit prototipo Memory).
+ * ------------------------------------------------------------------ */
+.memory-status-button {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: var(--sc-spacing-0-25) var(--sc-spacing-0-5);
+  border: 0;
+  border-radius: var(--sc-radius-200);
+  background: transparent;
+  cursor: pointer;
+  transition: background-color 200ms ease-out;
+
+  &:hover {
+    background: var(--sc-bg-elevated);
+  }
+  &:focus-visible {
+    outline: 2px solid var(--sc-color-electric-blue-500);
+    outline-offset: 2px;
+  }
+
+  &__failed {
+    pointer-events: none;
+    position: absolute;
+    right: -2px;
+    bottom: -2px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 14px;
+    height: 14px;
+    border-radius: var(--sc-radius-full);
+    background: var(--sc-bg-surface);
+    color: var(--sc-text-danger);
+  }
+
+  &__multi {
+    pointer-events: none;
+    position: absolute;
+    top: -4px;
+    right: -4px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    min-width: 16px;
+    height: 16px;
+    padding: 0 4px;
+    border-radius: var(--sc-radius-full);
+    background: var(--sc-text-info);
+    color: var(--sc-color-gray-0);
+    font-size: var(--sc-font-size-50);
+    font-weight: 600;
+    line-height: 1;
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+/* Estado "sin resultados" (S62, backlog #65): la cabecera de la tabla queda
+ * visible y el cuerpo muestra un mensaje centrado. Conversaciones no se crean
+ * → no hay CTA, solo invita a ajustar filtros. */
+.memory-conversations-table__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sc-spacing-0-5);
+  padding: var(--sc-spacing-3) var(--sc-spacing-1-5);
+  color: var(--sc-text-subtle);
+
+  sc-icon {
+    color: var(--sc-icon-disabled);
+    margin-bottom: var(--sc-spacing-0-5);
+  }
+
+  h3 {
+    margin: 0;
+    font-size: var(--sc-font-size-300);
+    font-weight: var(--sc-font-weight-medium);
+    color: var(--sc-text-secondary);
+  }
+
+  p {
+    margin: 0;
+    max-width: 44ch;
+    text-align: center;
+    font-size: var(--sc-font-size-200);
+  }
+}

@@ -1,0 +1,318 @@
+:host {
+  display: block;
+  height: 100%;
+  background: var(--sc-bg-surface);
+}
+
+.page {
+  flex: 1;
+  overflow-y: auto;
+  background: var(--sc-bg-surface);
+  /* Always reserve room for the overlaid bulk action bar — no CLS. */
+  padding-bottom: calc(var(--sc-bulk-action-bar-height) + var(--sc-spacing-1-125));
+
+  &__inner {
+    max-width: 1400px;
+    margin: 0 auto;
+    padding: var(--sc-spacing-1-75) var(--sc-spacing-2-25);
+  }
+
+  &__header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: var(--sc-spacing-1-5);
+  }
+
+  &__title {
+    margin: 0;
+    font-size: var(--sc-font-size-h3);
+    font-weight: var(--sc-font-weight-semibold);
+    color: var(--sc-text-primary);
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    gap: var(--sc-spacing-0-875);
+  }
+
+  &__action-bar {
+    display: flex;
+    align-items: center;
+    gap: var(--sc-spacing-0-875);
+    margin-bottom: var(--sc-spacing-1-125);
+    /* Sticky on scroll — see DD#43 / agents-list-page.component.scss
+     * for the rationale; the pattern is identical across all three
+     * list pages. */
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    background: var(--sc-bg-surface);
+    padding-block: var(--sc-spacing-0-875);
+
+    &::after {
+      content: '';
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 100%;
+      height: 12px;
+      background: linear-gradient(to bottom, var(--sc-bg-surface), transparent);
+      pointer-events: none;
+    }
+  }
+
+  /* `.page__search` queda como wrapper de sizing del `<sc-search>` (el
+   * componente trae su propio chrome internamente). Las reglas
+   * `&__search-input/-icon/-clear/-kbd` migraron al componente. */
+  &__search {
+    flex: 1 1 auto;
+    min-width: 0;
+    max-width: 480px;
+  }
+}
+
+/* `.table-card` chrome promovido a SCDS partial S55. Sin delta scoped. */
+
+.table {
+  width: 100%;
+  border-collapse: collapse;
+
+  thead tr {
+    /* Header limpio BeyondUI/SnowUI (experiment S59): sin fondo gris. */
+    background: var(--sc-bg-surface);
+    border-bottom: 1px solid var(--sc-border-default);
+  }
+
+  th {
+    padding: var(--sc-spacing-0-875);
+    text-align: left;
+    /* sentence-case gris medium, no UPPERCASE tracked. */
+    font-size: var(--sc-font-size-100);
+    font-weight: var(--sc-font-weight-medium);
+    letter-spacing: 0;
+    color: var(--sc-text-secondary);
+  }
+
+  &__th-check {
+    width: 40px;
+    cursor: pointer;
+  }
+
+  &__th-actions {
+    width: 48px;
+  }
+
+  &__th-num {
+    text-align: right;
+  }
+
+  &__th-sort {
+    cursor: pointer;
+    user-select: none;
+
+    &:hover {
+      color: var(--sc-text-primary);
+    }
+  }
+
+  &__row {
+    border-bottom: 1px solid var(--sc-border-subtle);
+    transition: background var(--sc-transition-fast) var(--sc-easing-default);
+
+    &:hover {
+      background: var(--sc-bg-default);
+    }
+
+    &--selected {
+      background: var(--sc-color-gray-100);
+    }
+
+    &--draft {
+      background: var(--sc-label-amber-bg);
+    }
+
+    &--clickable {
+      cursor: pointer;
+    }
+  }
+
+  &__td {
+    padding: var(--sc-spacing-0-875);
+    font-size: var(--sc-font-size-200);
+    color: var(--sc-text-secondary);
+
+    &--mono {
+      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
+      font-size: var(--sc-font-size-100);
+    }
+
+    &--num {
+      text-align: right;
+      font-variant-numeric: tabular-nums;
+    }
+  }
+
+  &__td-name {
+    padding: var(--sc-spacing-0-875);
+    font-size: var(--sc-font-size-200);
+    font-weight: var(--sc-font-weight-medium);
+    color: var(--sc-text-primary);
+    display: flex;
+    align-items: center;
+    gap: var(--sc-spacing-0-5);
+  }
+
+  &__td-check {
+    padding: var(--sc-spacing-0-875);
+    width: 40px;
+    cursor: pointer;
+  }
+
+  &__td-actions {
+    padding: var(--sc-spacing-0-875);
+    width: 48px;
+    text-align: right;
+  }
+
+  &__no-results {
+    padding: var(--sc-spacing-2-75) var(--sc-spacing-0-875);
+    text-align: center;
+    font-size: var(--sc-font-size-200);
+    color: var(--sc-text-subtle);
+  }
+}
+
+/*
+ * Name cell: avatar + name + draft-badge laid out in a single row.
+ * The cell isn't `display: flex` by default (it's a `<td>`) so we
+ * scope the layout to a wrapper rule.
+ */
+.table__td-name {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-875);
+
+  .table__td-name-text {
+    flex: 0 1 auto;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    min-width: 0;
+  }
+}
+
+@keyframes draft-in {
+  from {
+    transform: scale(0.85);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+}
+
+.row-menu {
+  position: relative;
+  display: inline-block;
+
+  &__btn {
+    padding: var(--sc-spacing-0-5);
+    background: transparent;
+    border: 0;
+    color: var(--sc-icon-subtle);
+    cursor: pointer;
+    border-radius: var(--sc-radius-100);
+
+    &:hover {
+      background: var(--sc-bg-secondary-active);
+      color: var(--sc-text-secondary);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--sc-color-soft-blue-500);
+      outline-offset: 2px;
+    }
+  }
+
+  &__panel {
+    position: absolute;
+    right: 0;
+    top: calc(100% + var(--sc-spacing-0-25));
+    width: 176px;
+    background: var(--sc-bg-surface);
+    border: 1px solid var(--sc-border-default);
+    border-radius: var(--sc-radius-200);
+    padding: var(--sc-spacing-0-25) 0;
+    box-shadow: var(--sc-shadow-popover);
+    z-index: var(--sc-z-dropdown);
+
+    > button {
+      width: 100%;
+      display: flex;
+      align-items: center;
+      gap: var(--sc-spacing-0-875);
+      padding: var(--sc-spacing-0-5) var(--sc-spacing-0-875);
+      font-size: var(--sc-font-size-200);
+      color: var(--sc-text-secondary);
+      background: transparent;
+      border: 0;
+      cursor: pointer;
+      text-align: left;
+
+      > sc-icon {
+        color: var(--sc-icon-subtle);
+      }
+
+      &:hover {
+        background: var(--sc-bg-secondary-hover);
+      }
+    }
+  }
+}
+
+.context-menu {
+  position: fixed;
+  width: 176px;
+  background: var(--sc-bg-surface);
+  border: 1px solid var(--sc-border-default);
+  border-radius: var(--sc-radius-200);
+  padding: var(--sc-spacing-0-25) 0;
+  box-shadow: var(--sc-shadow-popover);
+  z-index: var(--sc-z-popover);
+
+  > button {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    gap: var(--sc-spacing-0-875);
+    padding: var(--sc-spacing-0-5) var(--sc-spacing-0-875);
+    font-size: var(--sc-font-size-200);
+    color: var(--sc-text-secondary);
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+    text-align: left;
+
+    > sc-icon {
+      color: var(--sc-icon-subtle);
+    }
+
+    &:hover {
+      background: var(--sc-bg-secondary-hover);
+    }
+  }
+}
+
+input[type='checkbox'] {
+  width: var(--sc-spacing-1-125);
+  height: var(--sc-spacing-1-125);
+  accent-color: var(--sc-bg-primary);
+  cursor: pointer;
+  vertical-align: middle;
+}

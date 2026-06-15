@@ -1,0 +1,792 @@
+/* Modelo "todo arriba" (experiment S59): fila de identidad (foto + nombre)
+ * al inicio del card de Identificación, ahora que no hay banda sticky-header. */
+.form-identity {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--sc-spacing-1);
+  margin-bottom: var(--sc-spacing-1-25);
+
+  &__name {
+    flex: 1;
+    min-width: 0;
+  }
+}
+
+:host {
+  display: block;
+  /* `min-height: 100%` instead of `height: 100%` — sticky-form-header,
+   * .ipanel and .form-grid__identity all live inside :host. With a
+   * fixed `height: 100%` the host's containing block ends at one
+   * viewport height, so sticky elements un-stick at that boundary and
+   * the rest of the form scrolls under nothing. The bug was invisible
+   * before DD#57 because the form rarely exceeded a single viewport;
+   * "Configuración avanzada" makes long forms easy to hit.
+   */
+  min-height: 100%;
+  background: var(--sc-bg-surface);
+}
+
+.page {
+  background: var(--sc-bg-surface);
+
+  &__inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: var(--sc-spacing-1-75) var(--sc-spacing-2);
+
+    /*
+     * Page layout: a thin sticky rail (section nav only — identity moved
+     * into the rich sticky header at the top of the page) on the left,
+     * and the form column on the right. The form column itself splits
+     * into a 2-column "Identificación + settings" grid in `.form-grid`.
+     */
+    &--with-panel {
+      max-width: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      grid-template-columns: 240px minmax(0, 1fr);
+      gap: 0;
+
+      @media (max-width: 1024px) {
+        grid-template-columns: 1fr;
+      }
+    }
+  }
+
+  &__form {
+    min-width: 0;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: var(--sc-spacing-1-75) var(--sc-spacing-2);
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+}
+
+/* Rail — section index only. Identity / pills / stats moved up to the
+ * rich sticky header at the top of the page.
+ *
+ * `--sc-form-panel-top` is the offset below the sticky-form-header.
+ * 80px = header padding (16+16) + content max (~48px). Previously 64px
+ * left the first nav entry partially hidden behind the header.
+ */
+.ipanel {
+  position: sticky;
+  top: var(--sc-form-panel-top);
+  align-self: start;
+  height: calc(100dvh - var(--sc-form-panel-top));
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-1-125);
+  padding: var(--sc-spacing-1-5);
+  background: transparent;
+  overflow-y: auto;
+
+  @media (max-width: 1024px) {
+    position: static;
+    height: auto;
+  }
+}
+
+/* `.ficha` + `.ipanel__delete` (patrón "todo arriba") promovidos a
+ * `src/styles/_forms.scss` — 3 consumers (agents/users/groups). Aquí solo
+ * quedan las variantes específicas del agente (pill `--presence-*`). */
+
+/* Two-column form layout: Identificación (sticky) + settings (scroll).
+ *
+ * `padding-bottom: 30dvh` ensures the grid's containing block extends
+ * well past the right-column's last visible content. Without it, when
+ * scrolled to page bottom, sticky elements (`.form-grid__identity`
+ * here, `.ipanel` outside) reach their containing block's bottom and
+ * un-stick — getting pushed up above the viewport top by the parent's
+ * bottom anchor, hiding their content behind the sticky-form-header.
+ * The buffer is invisible (matches page bg) and gives sticky room to
+ * stay pinned at `top` throughout user-visible scroll.
+ */
+.form-grid {
+  display: grid;
+  grid-template-columns: 360px minmax(0, 1fr);
+  gap: var(--sc-spacing-1-75);
+  padding-bottom: 30dvh;
+
+  @media (max-width: 1024px) {
+    grid-template-columns: 1fr;
+    padding-bottom: 0;
+  }
+
+  &__identity {
+    @media (min-width: 1025px) {
+      position: sticky;
+      top: calc(var(--sc-form-panel-top) + var(--sc-spacing-1-75));
+      align-self: start;
+      max-height: calc(100dvh - var(--sc-form-panel-top) - var(--sc-spacing-1-75) * 2);
+      overflow-y: auto;
+    }
+  }
+
+  &__settings {
+    display: flex;
+    flex-direction: column;
+    min-width: 0;
+  }
+}
+
+/* ── Identification card internals ──────────────────────────── */
+.identity-card {
+  /* `&__head`, `&__photo`, `&__name` removed — photo + name now live
+   * exclusively in the sticky form header (DD#54 Session 20 moved
+   * identity up; the in-card duplicate was an oversight). */
+
+  &__divider {
+    border-top: 1px solid var(--sc-border-subtle);
+    margin: var(--sc-spacing-1-5) 0;
+  }
+
+  &__row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--sc-spacing-1-125);
+  }
+
+  &__row-label {
+    display: block;
+    font-size: var(--sc-font-size-200);
+    font-weight: var(--sc-font-weight-medium);
+    color: var(--sc-text-primary);
+  }
+}
+
+/* Channels as inline pill toggles (Identificación card) */
+.channel-pills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sc-spacing-0-75);
+}
+
+.channel-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-5);
+  padding: var(--sc-spacing-0-5) var(--sc-spacing-1-125);
+  font-size: var(--sc-font-size-100);
+  font-weight: var(--sc-font-weight-medium);
+  color: var(--sc-text-secondary);
+  background: var(--sc-bg-surface);
+  border: 1px solid var(--sc-border-default);
+  border-radius: var(--sc-radius-100);
+  cursor: pointer;
+  transition:
+    background var(--sc-transition-fast) var(--sc-easing-default),
+    border-color var(--sc-transition-fast) var(--sc-easing-default),
+    color var(--sc-transition-fast) var(--sc-easing-default);
+
+  &:hover {
+    border-color: var(--sc-border-strong);
+    color: var(--sc-text-primary);
+  }
+
+  &--active {
+    background: var(--sc-bg-primary);
+    border-color: var(--sc-bg-primary);
+    color: var(--sc-text-on-primary);
+
+    &:hover {
+      background: var(--sc-bg-primary-hover);
+      border-color: var(--sc-bg-primary-hover);
+      color: var(--sc-text-on-primary);
+    }
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--sc-color-soft-blue-500);
+    outline-offset: 2px;
+  }
+}
+
+/* ── Header meta line — projected into <sc-sticky-form-header> ──
+ * S53.5: gap interior icon+texto 8→10px para que el icono no se
+ * pegue al label dentro del chunk (lectura más clara en line
+ * compacta cuando hay 3 chunks). */
+.header-meta__chunk {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-75);
+  color: var(--sc-text-secondary);
+  font-size: var(--sc-font-size-100);
+
+  > sc-icon {
+    flex: 0 0 auto;
+    color: var(--sc-icon-subtle);
+  }
+}
+
+.header-meta__sub {
+  color: var(--sc-text-subtle);
+  margin-left: 2px;
+}
+
+/* ── Pill presence variants (also projected into the rich header) ──
+ * Base `.pill` + `--type` + `--status-*` (incl. status-pop animation)
+ * live in `src/styles/_forms.scss` (DD#56). Local block keeps only
+ * the agent-only presence palette and the "live" dot pulse.
+ */
+.pill {
+  /* Presence colors (lowercase Spanish keys, matching agents-data.ts) */
+  &--presence-disponible {
+    color: var(--sc-presence-available);
+    background: color-mix(in oklch, var(--sc-presence-available) 10%, var(--sc-bg-surface));
+  }
+  &--presence-no_disponible {
+    color: var(--sc-presence-offline);
+    background: var(--sc-bg-secondary-subtle);
+  }
+  &--presence-bano,
+  &--presence-comida {
+    color: var(--sc-presence-paused);
+    background: color-mix(in oklch, var(--sc-presence-paused) 10%, var(--sc-bg-surface));
+  }
+  &--presence-formacion {
+    color: var(--sc-presence-training);
+    background: color-mix(in oklch, var(--sc-presence-training) 10%, var(--sc-bg-surface));
+  }
+
+  /* "Live" pulse on the presence dot when the agent is available */
+  &--presence-disponible &__dot {
+    animation: ipanel-dot-pulse 2.4s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+  }
+}
+
+@keyframes ipanel-dot-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 color-mix(in oklch, currentColor 50%, transparent);
+  }
+  50% {
+    box-shadow: 0 0 0 4px color-mix(in oklch, currentColor 0%, transparent);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pill--presence-disponible .pill__dot {
+    animation: none;
+  }
+}
+
+/*
+ * `.grid`, `.field`, `.checkbox-grid`, `.checkbox-row`, `.language-chips`,
+ * `.label-chips` are now defined in `src/styles/_forms.scss` (DD#53)
+ * and applied globally — no need to redeclare them here.
+ */
+
+.language-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-75);
+  padding: var(--sc-spacing-0-5) var(--sc-spacing-1);
+  border: 1px solid var(--sc-border-default);
+  background: var(--sc-bg-elevated);
+  font-size: var(--sc-font-size-100);
+  color: var(--sc-text-primary);
+
+  &__remove {
+    border: 0;
+    background: transparent;
+    color: var(--sc-text-subtle);
+    font-size: var(--sc-font-size-300);
+    line-height: 1;
+    cursor: pointer;
+    padding: 0;
+
+    &:hover {
+      color: var(--sc-text-primary);
+    }
+  }
+}
+
+/* Permission toggle row — label + inline (i) tooltip + toggle.
+ * Same pattern as `/admin/aed/agentes` switch-field, but the hint is
+ * accessed through the info icon's tooltip rather than as a sub-text
+ * under the label. Keeps row height constant and reads as a tighter,
+ * more deliberate control. */
+.perm-toggle-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sc-spacing-1-5);
+  padding: var(--sc-spacing-1-125) 0;
+  border-bottom: 1px solid var(--sc-border-subtle);
+
+  &:last-of-type {
+    border-bottom: 0;
+  }
+
+  &__copy {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sc-spacing-0-75);
+    min-width: 0;
+  }
+
+  &__label {
+    font-size: var(--sc-font-size-200);
+    font-weight: var(--sc-font-weight-medium);
+    color: var(--sc-text-primary);
+  }
+
+  &__info {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 18px;
+    height: 18px;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    color: var(--sc-icon-subtle);
+    border-radius: var(--sc-radius-full);
+    cursor: help;
+    transition: color var(--sc-transition-fast) var(--sc-easing-default);
+
+    &:hover {
+      color: var(--sc-text-secondary);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--sc-color-soft-blue-500);
+      outline-offset: 2px;
+    }
+  }
+}
+
+/* `.perm-matrix` moved to `src/styles/_forms.scss` (audit #1 of DD#54).
+ * Visual order in the column-toggle (label → checkbox) is preserved by
+ * DOM order; the shared block stays unopinionated about it. */
+
+input[type='checkbox'] {
+  accent-color: var(--sc-bg-primary);
+  cursor: pointer;
+  vertical-align: middle;
+}
+
+/*
+ * `.sub-section` — progressive-disclosure block inside the
+ * "Configuración avanzada" section card (DD#57). Two variants:
+ *   - Flat: a labelled divider that introduces a body always visible.
+ *   - Accordion: same head but with a leading chevron + collapsible body
+ *     and an optional count badge on the right when collapsed.
+ *
+ * Visual idiom matches the rest of the form's small-caps section-head
+ * pattern (uppercase, tracked, --sc-text-subtle) so it reads as a
+ * sub-heading inside the parent card rather than a card of its own.
+ */
+.sub-section {
+  & + & {
+    margin-top: var(--sc-spacing-1-75);
+    padding-top: var(--sc-spacing-1-75);
+    border-top: 1px solid var(--sc-border-default);
+  }
+
+  /* Accordion-head buttons get a subtle bg-on-hover so they read as
+   * clickable from across the form (DD#57 review). Flat heads stay
+   * static — chevron presence is the only affordance signal. */
+  &__head {
+    width: 100%;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sc-spacing-0-75);
+    padding: var(--sc-spacing-0-5) var(--sc-spacing-0-75);
+    margin: 0 calc(var(--sc-spacing-0-75) * -1);
+    background: none;
+    border: 0;
+    border-radius: var(--sc-radius-100);
+    text-align: left;
+    color: var(--sc-text-subtle);
+    cursor: pointer;
+    font-size: var(--sc-font-size-50);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: var(--sc-font-weight-semibold);
+    transition:
+      background var(--sc-transition-fast) var(--sc-easing-default),
+      color var(--sc-transition-fast) var(--sc-easing-default);
+
+    &:hover {
+      background: var(--sc-bg-secondary-subtle);
+      color: var(--sc-text-secondary);
+    }
+    &:focus-visible {
+      outline: 2px solid var(--sc-color-soft-blue-500);
+      outline-offset: 2px;
+    }
+    /* Tactile press — DD#57 review / impeccable.md principle 3. */
+    &:active {
+      transform: scale(0.98);
+    }
+
+    /* Flat heads are not interactive — kill the hover + cursor cues
+     * and the negative margin (since they don't need the hover-bg
+     * inset). */
+    &--flat {
+      cursor: default;
+      pointer-events: none;
+      padding: 0;
+      margin: 0;
+
+      &:hover {
+        background: none;
+        color: var(--sc-text-subtle);
+      }
+      &:active {
+        transform: none;
+      }
+    }
+
+    > sc-icon {
+      flex: 0 0 auto;
+      color: currentColor;
+    }
+  }
+
+  &__title {
+    flex: 0 1 auto;
+  }
+
+  &__count {
+    margin-left: auto;
+    font-size: var(--sc-font-size-75);
+    color: var(--sc-text-subtle);
+    text-transform: none;
+    letter-spacing: 0;
+    font-weight: var(--sc-font-weight-regular);
+  }
+
+  &__body {
+    margin-top: var(--sc-spacing-1-125);
+
+    /* Stack direct form rows with breathing space. */
+    > .field + .field,
+    > .field + .perm-toggle-row,
+    > .perm-toggle-row + .field,
+    > .perm-toggle-row + .perm-toggle-row,
+    > .grid + .grid,
+    > .grid + .perm-toggle-row,
+    > .grid + .field,
+    > .field + .grid,
+    > .perm-toggle-row + .grid {
+      margin-top: var(--sc-spacing-1-125);
+    }
+
+    /* Spacing between picker-* primitives stacked inside a sub-section
+     * (search → list → chips → footnote). */
+    > .picker-search + .picker-list,
+    > .picker-search + .picker-table-wrap,
+    > .tabs + .picker-search,
+    > .picker-list + .picker-chips,
+    > .picker-list + .sub-section__footnote,
+    > .picker-chips + .sub-section__footnote {
+      margin-top: var(--sc-spacing-0-875);
+    }
+  }
+
+  &__footnote {
+    margin: var(--sc-spacing-0-875) 0 0;
+    font-size: var(--sc-font-size-50);
+    color: var(--sc-text-subtle);
+  }
+
+  /* "Inset" — soft-bounded sub-block inside a sub-section body.
+   * Used by the Sesión > Seguridad cluster to set the password-expire
+   * action apart from the toggle above without introducing a new
+   * sub-section divider. Border uses `color-mix` to read lighter than
+   * the cross-sub-section dividers so the hierarchy stays clear. */
+  &__inset {
+    margin-top: var(--sc-spacing-1-5);
+    padding-top: var(--sc-spacing-1-125);
+    border-top: 1px solid color-mix(in oklch, var(--sc-border-default) 50%, transparent);
+  }
+
+  &__inset-head {
+    font-size: var(--sc-font-size-50);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--sc-text-subtle);
+    font-weight: var(--sc-font-weight-semibold);
+    margin-bottom: var(--sc-spacing-0-875);
+  }
+
+  &__inset-row {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--sc-spacing-1-5);
+  }
+
+  &__inset-copy {
+    min-width: 0;
+  }
+
+  &__inset-label {
+    display: block;
+    font-size: var(--sc-font-size-200);
+    font-weight: var(--sc-font-weight-medium);
+    color: var(--sc-text-primary);
+  }
+
+  &__inset-hint {
+    margin: 4px 0 0;
+    font-size: var(--sc-font-size-75);
+    color: var(--sc-text-subtle);
+  }
+}
+
+/* Narrow field variant — for controls that visually should not span
+ * the full sub-section width (e.g. "Chats simultáneos" — a small
+ * numeric select where stretching to 100% looks excessive). */
+.field--narrow {
+  max-width: 200px;
+}
+
+/*
+ * `picker-*` primitives — small, opinionated controls used inside
+ * "Configuración avanzada" sub-sections (Agendas list + Plantillas
+ * table). Not promoted to `_forms.scss` yet — single consumer; if
+ * user-form or group-form pick them up, extract.
+ */
+/* `.picker-search` queda como hook posicional / margin para que el
+ * `<sc-search size="sm">` se integre dentro del sub-section accordion.
+ * El chrome interno (icon, input, clear) ahora vive en el componente. */
+.picker-search {
+  display: block;
+}
+
+.picker-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border: 1px solid var(--sc-border-default);
+  border-radius: var(--sc-radius-200);
+  overflow: hidden;
+
+  &__row {
+    display: flex;
+    align-items: center;
+    gap: var(--sc-spacing-0-875);
+    padding: var(--sc-spacing-0-875) var(--sc-spacing-1);
+    cursor: pointer;
+    border-bottom: 1px solid var(--sc-border-subtle);
+    transition: background var(--sc-transition-fast) var(--sc-easing-default);
+
+    &:last-child {
+      border-bottom: 0;
+    }
+
+    &:hover {
+      background: var(--sc-bg-secondary-subtle);
+    }
+
+    &--selected {
+      background: var(--sc-bg-primary-subtle);
+
+      &:hover {
+        background: var(--sc-bg-primary-subtle);
+      }
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--sc-color-soft-blue-500);
+      outline-offset: -2px;
+    }
+  }
+
+  &__check {
+    flex: 0 0 auto;
+  }
+
+  &__row-icon {
+    flex: 0 0 auto;
+    color: var(--sc-icon-subtle);
+  }
+
+  &__row-label {
+    font-size: var(--sc-font-size-100);
+    color: var(--sc-text-primary);
+    flex: 0 1 auto;
+  }
+
+  &__row-meta {
+    margin-left: auto;
+    font-size: var(--sc-font-size-75);
+    color: var(--sc-text-subtle);
+    flex: 0 1 auto;
+    max-width: 240px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__empty {
+    padding: var(--sc-spacing-1-5) var(--sc-spacing-1);
+    text-align: center;
+    font-size: var(--sc-font-size-75);
+    color: var(--sc-text-subtle);
+  }
+}
+
+.picker-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sc-spacing-0-5);
+}
+
+.picker-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-5);
+  padding: 4px var(--sc-spacing-0-875);
+  border: 1px solid var(--sc-border-default);
+  border-radius: var(--sc-radius-full);
+  background: var(--sc-bg-surface);
+  font-size: var(--sc-font-size-75);
+  color: var(--sc-text-secondary);
+
+  &__remove {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    border: 0;
+    padding: 0;
+    background: transparent;
+    color: var(--sc-icon-subtle);
+    cursor: pointer;
+    border-radius: var(--sc-radius-full);
+    font-size: var(--sc-font-size-100);
+    line-height: 1;
+    transition: color var(--sc-transition-fast) var(--sc-easing-default);
+
+    &:hover {
+      color: var(--sc-text-secondary);
+    }
+  }
+}
+
+.tabs {
+  display: flex;
+  align-items: center;
+  gap: 0;
+  border-bottom: 1px solid var(--sc-border-default);
+
+  &__tab {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sc-spacing-0-5);
+    padding: var(--sc-spacing-0-875) var(--sc-spacing-1-125);
+    background: none;
+    border: 0;
+    border-bottom: 2px solid transparent;
+    color: var(--sc-text-subtle);
+    cursor: pointer;
+    font-size: var(--sc-font-size-75);
+    transition: color var(--sc-transition-fast) var(--sc-easing-default);
+
+    &:hover {
+      color: var(--sc-text-secondary);
+    }
+
+    &--active {
+      color: var(--sc-text-primary);
+      border-bottom-color: var(--sc-text-primary);
+      font-weight: var(--sc-font-weight-semibold);
+    }
+  }
+
+  &__count {
+    font-size: var(--sc-font-size-50);
+    color: var(--sc-text-subtle);
+    font-weight: var(--sc-font-weight-regular);
+  }
+}
+
+.picker-table-wrap {
+  border: 1px solid var(--sc-border-default);
+  border-radius: var(--sc-radius-200);
+  overflow: hidden;
+}
+
+.picker-table {
+  width: 100%;
+  border-collapse: collapse;
+
+  thead th {
+    text-align: left;
+    padding: var(--sc-spacing-0-875) var(--sc-spacing-1);
+    background: var(--sc-bg-secondary-subtle);
+    font-size: var(--sc-font-size-50);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--sc-text-subtle);
+    font-weight: var(--sc-font-weight-semibold);
+    border-bottom: 1px solid var(--sc-border-default);
+  }
+
+  thead th.picker-table__th-check {
+    width: 36px;
+    text-align: center;
+  }
+
+  &__td-check {
+    text-align: center;
+  }
+
+  &__row {
+    cursor: pointer;
+    border-bottom: 1px solid var(--sc-border-subtle);
+    transition: background var(--sc-transition-fast) var(--sc-easing-default);
+
+    &:last-child {
+      border-bottom: 0;
+    }
+
+    &:hover {
+      background: var(--sc-bg-secondary-subtle);
+    }
+
+    &--selected {
+      background: var(--sc-bg-primary-subtle);
+
+      &:hover {
+        background: var(--sc-bg-primary-subtle);
+      }
+    }
+  }
+
+  tbody td {
+    padding: var(--sc-spacing-0-875) var(--sc-spacing-1);
+    font-size: var(--sc-font-size-100);
+    color: var(--sc-text-primary);
+    vertical-align: middle;
+  }
+
+  &__td-title {
+    font-weight: var(--sc-font-weight-medium);
+  }
+
+  &__td-preview {
+    color: var(--sc-text-subtle);
+    max-width: 280px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  tbody td.picker-table__empty {
+    padding: var(--sc-spacing-1-5) var(--sc-spacing-1);
+    text-align: center;
+    font-size: var(--sc-font-size-75);
+    color: var(--sc-text-subtle);
+  }
+}

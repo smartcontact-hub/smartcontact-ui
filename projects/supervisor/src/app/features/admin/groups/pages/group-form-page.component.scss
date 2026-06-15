@@ -1,0 +1,168 @@
+:host {
+  display: block;
+  /* See note in agent-form-page.component.scss (DD#57): `min-height`
+   * keeps the sticky-form-header / sticky rail in scope when the form
+   * grows past one viewport. */
+  min-height: 100%;
+  background: var(--sc-bg-surface);
+}
+
+.page {
+  background: var(--sc-bg-surface);
+
+  &__inner {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: var(--sc-spacing-1-75) var(--sc-spacing-2);
+
+    /*
+     * Identity-panel layout — edge-to-edge two-column shell mirroring
+     * `sc-settings-shell` in shape: a sticky full-height rail on the
+     * left + a scrollable form column on the right. Distinct from the
+     * SettingsShell rail in *content* (here it's a persona card, not
+     * navigation) but identical in *format*.
+     */
+    &--with-panel {
+      max-width: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      grid-template-columns: 240px minmax(0, 1fr);
+      gap: 0;
+
+      @media (max-width: 1024px) {
+        grid-template-columns: 1fr;
+      }
+    }
+  }
+
+  &__form {
+    min-width: 0;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: var(--sc-spacing-1-75) var(--sc-spacing-2);
+    display: flex;
+    flex-direction: column;
+    width: 100%;
+  }
+}
+
+/* Rail — section index only. Identity (avatar + pills + meta) lives in
+ * the rich sticky header at the top of the page. */
+.ipanel {
+  position: sticky;
+  top: var(--sc-form-panel-top);
+  align-self: start;
+  height: calc(100dvh - var(--sc-form-panel-top));
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-1-125);
+  padding: var(--sc-spacing-1-5);
+  background: transparent;
+  overflow-y: auto;
+
+  @media (max-width: 1024px) {
+    position: static;
+    height: auto;
+  }
+}
+
+/* Header meta line — projected into <sc-sticky-form-header>
+ * S53.5: gap interior 8→10px (icon+label más respirable). */
+.header-meta__chunk {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-75);
+  color: var(--sc-text-secondary);
+  font-size: var(--sc-font-size-100);
+
+  > sc-icon {
+    flex: 0 0 auto;
+    color: var(--sc-icon-subtle);
+  }
+}
+
+/* Base `.pill` + `--type` + `--status-*` live in `src/styles/_forms.scss`
+ * (DD#56). Local block keeps only the group-only priority palette and
+ * its pulse on `--priority-Alta`.
+ */
+.pill {
+  &--priority-Alta {
+    background: color-mix(in oklch, var(--sc-text-danger) 12%, var(--sc-bg-surface));
+    color: var(--sc-text-danger);
+    /* High-priority pulses subtly — visible cue that this group needs
+     * attention even when scanning the panel quickly. */
+    position: relative;
+
+    &::before {
+      content: '';
+      position: absolute;
+      inset: -1px;
+      border-radius: inherit;
+      box-shadow: 0 0 0 0 currentColor;
+      animation: pill-pulse 2.4s cubic-bezier(0.16, 1, 0.3, 1) infinite;
+      pointer-events: none;
+      opacity: 0.4;
+    }
+  }
+  &--priority-Media {
+    background: color-mix(in oklch, var(--sc-priority-medium) 12%, var(--sc-bg-surface));
+    color: var(--sc-priority-medium-deep);
+  }
+  &--priority-Baja {
+    background: var(--sc-bg-secondary-subtle);
+    color: var(--sc-text-secondary);
+  }
+}
+
+@keyframes pill-pulse {
+  0%,
+  100% {
+    box-shadow: 0 0 0 0 currentColor;
+    opacity: 0.4;
+  }
+  50% {
+    box-shadow: 0 0 0 4px color-mix(in oklch, currentColor 0%, transparent);
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pill--priority-Alta::before {
+    animation: none;
+    display: none;
+  }
+}
+
+/*
+ * `.grid`, `.field`, `.checkbox-row` are now defined in
+ * `src/styles/_forms.scss` (DD#53). The shared `&__input--error`
+ * carries the canonical hover/focus triple that this file's local
+ * copy was missing — visual diff verified.
+ */
+
+.channel-grid {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-1-5);
+}
+
+input[type='checkbox'] {
+  accent-color: var(--sc-bg-primary);
+  cursor: pointer;
+  vertical-align: middle;
+}
+
+/* Avatar + nombre re-homed al cuerpo (experiment S59 "todo arriba"): misma
+ * fila que en agent/user-form — avatar a la izquierda, nombre ocupando el resto. */
+.form-identity {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--sc-spacing-1);
+  margin-bottom: var(--sc-spacing-1-25);
+
+  &__name {
+    flex: 1;
+    min-width: 0;
+  }
+}

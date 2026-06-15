@@ -1,0 +1,317 @@
+/* ════════════════════════════════════════════════════════════════════
+ * BulkTranscriptionModal v26 — Figma 297:2559
+ * Hero (Total a procesar) + Decision (Análisis), divididas por hairline
+ * vertical. Body 720×200.
+ *
+ * Política tokens (S39): consume tokens canonical SCDS existentes
+ * (--sc-spacing-*, --sc-border-default, --sc-text-*, --sc-color-amber-*).
+ * NO se cocinan tokens `--sc-bulk-*` específicos para este modal — el
+ * uso es local, no justifica layer de indirección. Valores fijos como
+ * height 200px o hero 88px van inline aquí.
+ * ════════════════════════════════════════════════════════════════════ */
+
+:host {
+  display: block;
+}
+
+/* Override scoped del padding del body del sc-dialog · réplica legacy
+ * `<Modal.Body !p-0>`. El bulk modal v26 usa una grid 720×200 que ocupa
+ * todo el body sin padding (cada celda paga su padding interno). Sin
+ * este override, el padding canónico 17.5/17.5 del dialog reduce el
+ * ancho efectivo y descoloca la grid + las acciones del footer leen
+ * más apretadas. ::ng-deep necesario porque el body vive fuera del
+ * scope encapsulado del modal padre. */
+:host ::ng-deep .sc-dialog__body {
+  padding: 0;
+}
+
+.bulkv26 {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  height: 200px;
+  width: 100%;
+}
+
+.bulkv26__cell {
+  display: flex;
+  flex-direction: column;
+  /* 24px vertical / 32px horizontal — alineado con padding canonical del DS. */
+  padding: var(--sc-spacing-1-75) var(--sc-spacing-2-25);
+
+  &--hero {
+    align-items: flex-start;
+    border-right: 1px solid var(--sc-border-default);
+  }
+
+  &--decision {
+    align-items: stretch;
+  }
+}
+
+.bulkv26__label {
+  font-size: var(--sc-font-size-200);
+  font-weight: 700;
+  text-transform: uppercase;
+  line-height: 1.4;
+  letter-spacing: 0.02em;
+  color: var(--sc-text-secondary);
+}
+
+/* ─── Hero ──────────────────────────────────────────────────── */
+
+.bulkv26__hero-stack {
+  position: relative;
+  display: flex;
+  flex: 1;
+  width: 100%;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--sc-spacing-0-5);
+}
+
+.bulkv26__hero-row {
+  display: flex;
+  align-items: baseline;
+  gap: var(--sc-spacing-1-125);
+}
+
+.bulkv26__hero-number {
+  display: inline-block;
+  /* Display hero. Era 88px off-scale; ajustado al token de display más cercano
+   * `--sc-font-size-900` (70px) → cinturón tipográfico al 100% (S67). */
+  font-size: var(--sc-font-size-900);
+  line-height: 1.05;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  color: var(--sc-text-primary);
+  letter-spacing: -0.025em;
+
+  /* Hero counter cambia al togglear → pulse 1.08 / 360ms (réplica legacy
+   * `BulkTranscriptionModal.tsx`). Sincronizado con `is-pulsing` en caption. */
+  &.is-pulsing {
+    animation: sc-pulse 360ms var(--sc-ease-out, cubic-bezier(0.16, 1, 0.3, 1));
+  }
+}
+
+/* Ghost "+N" / "−N" delta-fly cuando cambia el hero counter.
+ * Posiciona absoluto sobre el lado del hero number, float-up + fade. */
+.bulkv26__hero-delta {
+  position: absolute;
+  margin-left: var(--sc-spacing-0-875);
+  font-size: var(--sc-font-size-300);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  pointer-events: none;
+  animation: sc-delta-fly 750ms var(--sc-ease-out, cubic-bezier(0.16, 1, 0.3, 1)) forwards;
+
+  &.is-positive {
+    color: var(--sc-color-teal-600);
+  }
+  &.is-negative {
+    color: var(--sc-text-subtle);
+  }
+}
+
+.bulkv26__cost-cue {
+  display: inline-block;
+  font-size: var(--sc-font-size-200);
+  font-weight: 400;
+  line-height: 1.4;
+  /* "genera coste" cue — warning amber del DS, no urgente. */
+  color: var(--sc-color-amber-700);
+  min-height: calc(1.4 * 14px); /* reserva altura para evitar CLS al ocultar */
+  transition: opacity 200ms ease;
+
+  &.is-hidden {
+    opacity: 0;
+  }
+}
+
+.bulkv26__hero-hint {
+  display: block;
+  min-height: 1.4em;
+  font-size: var(--sc-font-size-100);
+  line-height: 1.4;
+  color: var(--sc-text-subtle);
+}
+
+/* ─── experiment/beyondui-patterns S58 · Mixed-state badges ─────
+ * Skill redesign-existing-projects: replace single dense hint string with
+ * iconographic chips. 3 kinds: include (verde), warn (amber), exclude
+ * (gray). Patrón SaaS premium (Linear / Vercel / Stripe).
+ */
+.bulkv26__hero-badges {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sc-spacing-0-5);
+  /* Reservar altura mínima para evitar CLS si no hay badges (e.g. isAllProcessed). */
+  min-height: 22px;
+  align-items: center;
+}
+
+.bulkv26__badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  padding: 3px 8px;
+  border-radius: var(--sc-radius-full);
+  font-size: var(--sc-font-size-50);
+  font-weight: 500;
+  line-height: 1.2;
+  border: 1px solid;
+  background: transparent;
+  transition:
+    background-color 150ms ease,
+    border-color 150ms ease,
+    color 150ms ease;
+
+  &.is-include {
+    color: var(--sc-color-green-700);
+    border-color: color-mix(in srgb, var(--sc-color-green-500) 30%, transparent);
+    background: color-mix(in srgb, var(--sc-color-green-500) 8%, transparent);
+  }
+
+  &.is-warn {
+    color: var(--sc-color-amber-800);
+    border-color: color-mix(in srgb, var(--sc-color-amber-500) 35%, transparent);
+    background: color-mix(in srgb, var(--sc-color-amber-500) 10%, transparent);
+  }
+
+  &.is-exclude {
+    color: var(--sc-text-subtle);
+    border-color: var(--sc-border-default);
+    background: var(--sc-bg-elevated);
+  }
+}
+
+.bulkv26__badge-icon {
+  flex: 0 0 auto;
+  opacity: 0.85;
+}
+
+.bulkv26__badge-count {
+  font-variant-numeric: tabular-nums;
+  font-weight: 600;
+}
+
+.bulkv26__badge-label {
+  opacity: 0.92;
+}
+
+/* ─── Decision ──────────────────────────────────────────────── */
+
+.bulkv26__decision-stack {
+  display: flex;
+  flex: 1;
+  width: 100%;
+  flex-direction: column;
+  justify-content: center;
+  gap: var(--sc-spacing-1-125);
+}
+
+.bulkv26__decision-row {
+  display: flex;
+  width: 100%;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sc-spacing-1-125);
+}
+
+.bulkv26__decision-title {
+  font-size: var(--sc-font-size-300);
+  font-weight: 600;
+  line-height: 1.5;
+  transition: color 200ms ease;
+
+  &.is-on {
+    color: var(--sc-text-primary);
+  }
+
+  &.is-off {
+    color: var(--sc-text-disabled);
+  }
+}
+
+.bulkv26__caption {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--sc-spacing-0-5);
+  min-height: 1.4em;
+  font-size: var(--sc-font-size-200);
+  line-height: 1.4;
+}
+
+.bulkv26__caption-muted {
+  color: var(--sc-text-subtle);
+}
+
+.bulkv26__caption-num,
+.bulkv26__caption-pred {
+  display: inline-block;
+  transition: color 200ms ease;
+  color: var(--sc-text-subtle);
+
+  &.is-on {
+    color: var(--sc-color-teal-700);
+    font-weight: 500;
+  }
+
+  &.is-pulsing {
+    animation: sc-pulse 360ms var(--sc-ease-out, cubic-bezier(0.16, 1, 0.3, 1));
+  }
+}
+
+.bulkv26__caption-num {
+  font-variant-numeric: tabular-nums;
+}
+
+/* ─── Cell decision shake (C1 nudge) ────────────────────────── */
+
+.bulkv26__cell--decision.is-shaking {
+  animation: sc-shake 280ms ease;
+}
+
+/* ─── Error strip (Audit A6) ────────────────────────────────── */
+
+.bulkv26__error {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sc-spacing-0-875);
+  border-top: 1px solid var(--sc-color-red-300);
+  background: color-mix(in srgb, var(--sc-color-red-100) 60%, transparent);
+  padding: var(--sc-spacing-1-125) var(--sc-spacing-2-25);
+}
+
+.bulkv26__error-icon {
+  flex-shrink: 0;
+  color: var(--sc-color-red-700);
+  margin-top: 2px;
+}
+
+.bulkv26__error-text {
+  margin: 0;
+  font-size: var(--sc-font-size-200);
+  line-height: 1.4;
+  color: var(--sc-color-red-700);
+}
+
+/* ─── Animations ────────────────────────────────────────────── */
+/* Las 4 animaciones SC (bump/pulse/shake/delta-fly) viven ahora en
+ * `packages/design-system/styles/_sc-animations.scss` (S49). Este
+ * componente las consume vía `animation: sc-bump|sc-pulse|sc-shake|sc-delta-fly`.
+ * El fallback `prefers-reduced-motion: reduce` se hereda del partial. */
+
+/* ─── Responsive: stack a 1 columna en mobile ───────────────── */
+
+@media (max-width: 600px) {
+  .bulkv26 {
+    grid-template-columns: 1fr;
+    height: auto;
+  }
+
+  .bulkv26__cell--hero {
+    border-right: 0;
+    border-bottom: 1px solid var(--sc-border-default);
+  }
+}

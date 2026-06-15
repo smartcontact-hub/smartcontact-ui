@@ -1,0 +1,135 @@
+<div class="gatbl">
+  <!-- Header: título + subtítulo (izq) · buscador (der). Figma 12277-4185. -->
+  <div class="gatbl__head">
+    @if (titleKey() || hintKey()) {
+      <div class="gatbl__title-block">
+        @if (titleKey(); as t) {
+          <h2 class="gatbl__title">{{ t | translate }}</h2>
+        }
+        @if (hintKey(); as h) {
+          <span class="gatbl__hint">{{ h | translate }}</span>
+        }
+      </div>
+    }
+    <div class="gatbl__picker">
+      <sc-icon [name]="searchIcon" [size]="14" class="gatbl__picker-icon" />
+      <input
+        type="text"
+        class="gatbl__picker-input"
+        [placeholder]="'agents.form.assigned.picker_placeholder' | translate"
+        [value]="pickerQuery()"
+        (input)="onPickerInput($event)"
+        (keydown)="onPickerKeydown($event)"
+        (focus)="openPicker()"
+        [attr.aria-label]="'agents.form.assigned.picker_aria' | translate"
+      />
+      @if (pickerQuery() || pickerOpen()) {
+        <button
+          type="button"
+          class="gatbl__picker-clear"
+          (click)="closePicker()"
+          [attr.aria-label]="'labels.clear_search' | translate"
+        >
+          <sc-icon [name]="closeIcon" [size]="13" />
+        </button>
+      }
+      @if (pickerOpen() && pickerCandidates().length > 0) {
+        <ul class="gatbl__picker-menu" role="listbox">
+          @for (cand of pickerCandidates(); track cand.id) {
+            <li role="option" [attr.aria-selected]="false">
+              <button type="button" class="gatbl__picker-option" (click)="addGroup(cand)">
+                <span>{{ cand.name }}</span>
+                <span class="gatbl__picker-meta">
+                  @for (ch of cand.channels; track ch) {
+                    <span class="gatbl__picker-channel">
+                      {{ channelKeys[ch] | translate }}
+                    </span>
+                  }
+                </span>
+              </button>
+            </li>
+          }
+        </ul>
+      }
+    </div>
+  </div>
+
+  @if (assignedRows().length === 0) {
+    <div class="gatbl__empty">
+      <span class="gatbl__empty-icon" aria-hidden="true">
+        <sc-icon [name]="emptyIcon" [size]="22" />
+      </span>
+      <p class="gatbl__empty-title">{{ 'agents.form.assigned.empty_title' | translate }}</p>
+      <p class="gatbl__empty-body">{{ 'agents.form.assigned.empty' | translate }}</p>
+    </div>
+  } @else {
+    <table class="gatbl__table">
+      <thead>
+        <tr>
+          <th class="gatbl__th-name" scope="col">
+            {{ 'agents.form.assigned.col_group' | translate }}
+          </th>
+          <th class="gatbl__th-active" scope="col">
+            {{ 'agents.form.assigned.col_active' | translate }}
+          </th>
+          <th class="gatbl__th-actions" aria-hidden="true"></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (row of assignedRows(); track row.group.id) {
+          <tr class="gatbl__row" [class.gatbl__row--paused]="!row.link.active">
+            <td class="gatbl__td-name">
+              <sc-illustrated-avatar [name]="row.group.name" pool="abstract" [size]="24" />
+              <span class="gatbl__name-label" [title]="row.group.name">{{ row.group.name }}</span>
+              <span class="gatbl__chips">
+                @for (ch of row.group.channels; track ch) {
+                  <label
+                    class="gatbl__chip"
+                    [class.gatbl__chip--on]="hasChannel(row.link, ch)"
+                    [class.gatbl__chip--off]="!hasChannel(row.link, ch)"
+                    [class.gatbl__chip--disabled]="!row.link.active"
+                  >
+                    <input
+                      type="checkbox"
+                      [checked]="hasChannel(row.link, ch)"
+                      [disabled]="!row.link.active"
+                      (change)="toggleChannel(row.group.id, ch)"
+                      [attr.aria-label]="row.group.name + ' — ' + (channelKeys[ch] | translate)"
+                    />
+                    <sc-icon
+                      [name]="hasChannel(row.link, ch) ? checkIcon : plusIcon"
+                      [size]="12"
+                      class="gatbl__chip-icon"
+                    />
+                    <span>{{ channelKeys[ch] | translate }}</span>
+                  </label>
+                }
+              </span>
+            </td>
+            <td class="gatbl__td-active">
+              <sc-toggleswitch
+                [checked]="row.link.active"
+                [ariaLabel]="
+                  'agents.form.assigned.active_aria' | translate: { name: row.group.name }
+                "
+                (checkedChange)="toggleActive(row.group.id, $event)"
+              />
+            </td>
+            <td class="gatbl__td-actions">
+              <button
+                type="button"
+                class="gatbl__remove"
+                (click)="removeRow(row.group.id)"
+                [attr.aria-label]="
+                  'agents.form.assigned.remove_aria' | translate: { name: row.group.name }
+                "
+              >
+                <sc-icon [name]="trashIcon" [size]="14" />
+              </button>
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+  }
+</div>

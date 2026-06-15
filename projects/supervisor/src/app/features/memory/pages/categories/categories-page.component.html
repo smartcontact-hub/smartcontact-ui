@@ -1,0 +1,100 @@
+<!-- Modelo "todo arriba" (experiment S59): sin banda de page-header. La
+     identidad la da el breadcrumb de la TopBar; el CTA se proyecta a la barra
+     vía TopBarSlotService (ver topbarActions en el .ts). -->
+<ng-template #topbarActions>
+  <p-button type="button" severity="primary" (onClick)="onNewCategory()">
+    <sc-icon [name]="plusIcon" [size]="14" />
+    <span>{{ 'memory.categories.new_category' | translate }}</span>
+  </p-button>
+</ng-template>
+
+<div class="page">
+  <div class="page__inner">
+    @if (isEmpty()) {
+      <sc-empty-state
+        [icon]="tagsIcon"
+        titleKey="memory.categories.empty_title"
+        bodyKey="memory.categories.empty_desc"
+        ctaKey="memory.categories.new_category"
+        (cta)="onNewCategory()"
+      />
+    } @else {
+      <table class="categories-table">
+        <thead>
+          <tr>
+            <th scope="col">{{ 'memory.categories.cols.name' | translate }}</th>
+            <th scope="col">{{ 'memory.categories.cols.description' | translate }}</th>
+            <th class="categories-table__th-num" scope="col">
+              {{ 'memory.categories.cols.used_in' | translate }}
+            </th>
+            <th class="categories-table__th-num" scope="col">
+              {{ 'memory.categories.cols.classified' | translate }}
+            </th>
+            <th class="categories-table__th-status" scope="col">
+              {{ 'memory.categories.cols.status' | translate }}
+            </th>
+            <th class="categories-table__th-date" scope="col">
+              {{ 'memory.categories.cols.created' | translate }}
+            </th>
+            <th class="categories-table__th-kebab" scope="col" aria-label="Acciones"></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (cat of categories(); track cat.id) {
+            <tr [class.categories-row--inactive]="!cat.isActive">
+              <td class="categories-table__td-name">
+                <strong>{{ cat.name }}</strong>
+                @if (cat.group) {
+                  <span class="categories-table__group">· {{ cat.group }}</span>
+                }
+              </td>
+              <td class="categories-table__td-desc" [attr.title]="cat.description">
+                {{ cat.description }}
+              </td>
+              <td class="categories-table__td-num">
+                @if (usedInRules(cat.id) > 0) {
+                  <span class="categories-num">{{ usedInRules(cat.id) }}</span>
+                } @else {
+                  <span class="categories-num categories-num--empty">—</span>
+                }
+              </td>
+              <td class="categories-table__td-num">
+                <span class="categories-num">{{ cat.classifiedCalls }}</span>
+              </td>
+              <td class="categories-table__td-status">
+                @if (cat.isActive) {
+                  <span class="rules-status rules-status--active">
+                    {{ 'memory.categories.status.active' | translate }}
+                  </span>
+                } @else {
+                  <span class="rules-status rules-status--inactive">
+                    {{ 'memory.categories.status.inactive' | translate }}
+                  </span>
+                }
+              </td>
+              <td class="categories-table__td-date">{{ formatDate(cat.createdAt) }}</td>
+              <td class="categories-table__td-kebab">
+                <button
+                  type="button"
+                  class="rules-kebab-btn"
+                  [attr.aria-label]="'memory.categories.cols.more' | translate"
+                  (click)="kebabMenu.toggle($event)"
+                >
+                  <sc-icon [name]="kebabIcon" [size]="14" />
+                </button>
+                <p-menu #kebabMenu [model]="buildMenuItems(cat)" [popup]="true" appendTo="body" />
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </div>
+</div>
+
+<sc-memory-category-form-modal
+  [visible]="formOpen()"
+  [category]="formCategory()"
+  (closed)="onFormClose()"
+  (saved)="onFormSaved($event)"
+/>

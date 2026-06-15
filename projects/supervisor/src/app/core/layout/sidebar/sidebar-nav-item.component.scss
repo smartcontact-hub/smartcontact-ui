@@ -1,0 +1,120 @@
+:host {
+  display: block;
+}
+
+.nav-item {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-5);
+  padding: var(--sc-spacing-0-5) var(--sc-spacing-0-875);
+  font-size: var(--sc-font-size-200);
+  line-height: var(--sc-line-height-200);
+  text-align: left;
+  color: rgb(255 255 255 / 0.6);
+  background: transparent;
+  border: 0;
+  cursor: pointer;
+  transition:
+    background var(--sc-transition-fast) var(--sc-easing-default),
+    color var(--sc-transition-fast) var(--sc-easing-default),
+    padding-left var(--sc-transition-base) var(--sc-easing-emphasized);
+
+  /*
+   * Indentation by depth — defaults match the React prototype's
+   * pl-3 / pl-8 / pl-12 / pl-14 ramp. The sidebar's collapsed state
+   * overrides these locals to flatten every depth onto the icon column.
+   */
+  &[data-depth='0'] {
+    padding-left: var(--sidebar-pad-l-0, var(--sc-spacing-0-875));
+  }
+  &[data-depth='1'] {
+    padding-left: var(--sidebar-pad-l-1, var(--sc-spacing-2-25));
+  }
+  &[data-depth='2'] {
+    padding-left: var(--sidebar-pad-l-2, var(--sc-spacing-4));
+  }
+  &[data-depth='3'],
+  &[data-depth='4'],
+  &[data-depth='5'] {
+    padding-left: var(--sidebar-pad-l-3, var(--sc-spacing-5));
+    font-size: var(--sc-font-size-100);
+    line-height: var(--sc-line-height-100);
+  }
+
+  &:hover {
+    color: rgb(255 255 255 / 0.9);
+    background: rgb(255 255 255 / 0.05);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--sc-color-soft-blue-500);
+    outline-offset: -2px;
+  }
+
+  &--child-active {
+    color: rgb(255 255 255 / 0.9);
+  }
+
+  /* Active state: solid tint + bold weight, no left bar.
+   * (Side stripe pattern is banned — see /impeccable absolute_bans.) */
+  &--active {
+    color: var(--sc-color-gray-0);
+    background: rgb(255 255 255 / 0.15);
+    font-weight: var(--sc-font-weight-medium);
+  }
+
+  &__icon {
+    flex-shrink: 0;
+    color: rgb(255 255 255 / 0.5);
+    transition: color var(--sc-transition-fast) var(--sc-easing-default);
+
+    .nav-item--active & {
+      color: var(--sc-color-gray-0);
+    }
+  }
+
+  /*
+   * The parent of the active section gets the brand cyan accent
+   * (`soft-blue-300`) on its icon — a "you are here at the section level"
+   * cue that survives the sidebar collapsing. Other parents stay neutral
+   * so the highlight reads as a unique signal, not as decoration.
+   */
+  &--child-active &__icon {
+    color: var(--sc-color-soft-blue-300);
+  }
+
+  /*
+   * Label and chevron fade with the sidebar's expand state. Hiding them
+   * (rather than relying on `overflow: hidden` to clip) prevents the
+   * "V…" partial-letter bleed that appears when ~12 px of label width
+   * is briefly visible before the column edge.
+   */
+  &__label {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    opacity: var(--sidebar-label-opacity, 1);
+    transition: opacity var(--sc-transition-fast) var(--sc-easing-default);
+  }
+
+  &__chevron {
+    flex-shrink: 0;
+    color: rgb(255 255 255 / 0.3);
+    opacity: var(--sidebar-label-opacity, 1);
+    transition: opacity var(--sc-transition-fast) var(--sc-easing-default);
+  }
+}
+
+.nav-item__children {
+  display: block;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .nav-item,
+  .nav-item__label,
+  .nav-item__chevron {
+    transition: none;
+  }
+}

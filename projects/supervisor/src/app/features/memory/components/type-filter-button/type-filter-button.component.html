@@ -1,0 +1,158 @@
+<button
+  type="button"
+  class="type-filter-trigger"
+  [class.type-filter-trigger--active]="hasActiveFilters()"
+  [attr.aria-pressed]="hasActiveFilters()"
+  [attr.aria-label]="
+    (hasActiveFilters() ? 'memory.type_filter.aria_active' : 'memory.type_filter.aria_default')
+      | translate
+  "
+  (click)="panel.toggle($event)"
+>
+  <sc-icon [name]="filterIcon" [size]="14" />
+  <span>{{ 'memory.type_filter.label' | translate }}</span>
+  @if (hasActiveFilters()) {
+    <span class="type-filter-trigger__dot" aria-hidden="true"></span>
+  }
+</button>
+
+<p-popover
+  #panel
+  [appendTo]="'body'"
+  styleClass="memory-type-filter-popover"
+  role="dialog"
+  [attr.aria-label]="'memory.type_filter.panel_title' | translate"
+>
+  <div class="type-filter-panel">
+    <header class="type-filter-panel__head">
+      <h3>{{ 'memory.type_filter.panel_title' | translate }}</h3>
+      <button type="button" class="type-filter-panel__reset" (click)="resetPopoverFilters()">
+        {{ 'memory.type_filter.reset' | translate }}
+      </button>
+    </header>
+
+    <div class="type-filter-panel__body">
+      <section class="type-filter-group">
+        <h4>{{ 'memory.type_filter.groups.type' | translate }}</h4>
+        <label class="type-filter-row">
+          <input
+            type="checkbox"
+            [checked]="filters().types.interna"
+            (change)="updateTypes('interna', toCheckbox($event))"
+          />
+          <span>{{ 'memory.type_filter.types.interna' | translate }}</span>
+        </label>
+        <label class="type-filter-row">
+          <input
+            type="checkbox"
+            [checked]="filters().types.externa"
+            (change)="updateTypes('externa', toCheckbox($event))"
+          />
+          <span>{{ 'memory.type_filter.types.externa' | translate }}</span>
+        </label>
+      </section>
+
+      <section class="type-filter-group">
+        <h4>{{ 'memory.type_filter.groups.channel' | translate }}</h4>
+        <label class="type-filter-row">
+          <input
+            type="checkbox"
+            [checked]="filters().channels.llamada"
+            (change)="updateChannels('llamada', toCheckbox($event))"
+          />
+          <span>{{ 'memory.type_filter.channels.llamada' | translate }}</span>
+        </label>
+        <label class="type-filter-row">
+          <input
+            type="checkbox"
+            [checked]="filters().channels.chat"
+            (change)="updateChannels('chat', toCheckbox($event))"
+          />
+          <span>{{ 'memory.type_filter.channels.chat' | translate }}</span>
+        </label>
+      </section>
+
+      <section class="type-filter-group">
+        <h4>{{ 'memory.type_filter.groups.direction' | translate }}</h4>
+        <label class="type-filter-row">
+          <input
+            type="checkbox"
+            [checked]="filters().directions.entrante"
+            (change)="updateDirections('entrante', toCheckbox($event))"
+          />
+          <span>{{ 'memory.type_filter.directions.entrante' | translate }}</span>
+        </label>
+        <label class="type-filter-row">
+          <input
+            type="checkbox"
+            [checked]="filters().directions.saliente"
+            (change)="updateDirections('saliente', toCheckbox($event))"
+          />
+          <span>{{ 'memory.type_filter.directions.saliente' | translate }}</span>
+        </label>
+      </section>
+
+      <hr class="type-filter-panel__divider" aria-hidden="true" />
+
+      <section class="type-filter-group">
+        <h4>{{ 'memory.type_filter.groups.rules' | translate }}</h4>
+        <label class="type-filter-row">
+          <input
+            type="checkbox"
+            [checked]="filters().rules.recording"
+            (change)="updateRules('recording', toCheckbox($event))"
+          />
+          <span>{{ 'memory.type_filter.rules.recording' | translate }}</span>
+        </label>
+        <label class="type-filter-row">
+          <input
+            type="checkbox"
+            [checked]="filters().rules.transcription"
+            (change)="updateRules('transcription', toCheckbox($event))"
+          />
+          <span>{{ 'memory.type_filter.rules.transcription' | translate }}</span>
+        </label>
+        <label class="type-filter-row">
+          <input
+            type="checkbox"
+            [checked]="filters().rules.classification"
+            (change)="updateRules('classification', toCheckbox($event))"
+          />
+          <span>{{ 'memory.type_filter.rules.classification' | translate }}</span>
+        </label>
+      </section>
+
+      <section class="type-filter-group">
+        <h4>{{ 'memory.type_filter.groups.status' | translate }}</h4>
+        <label class="type-filter-row">
+          <input
+            type="checkbox"
+            [checked]="filters().status.onlyFailed"
+            (change)="updateStatus(toCheckbox($event))"
+          />
+          <span>{{ 'memory.type_filter.status.only_failed' | translate }}</span>
+        </label>
+      </section>
+
+      <section class="type-filter-group type-filter-group--last">
+        <h4>{{ 'memory.type_filter.groups.multirec' | translate }}</h4>
+        <label class="type-filter-row">
+          <input
+            type="checkbox"
+            [checked]="filters().multirec.onlyMulti"
+            (change)="updateMultirec('onlyMulti', toCheckbox($event))"
+          />
+          <span>{{ 'memory.type_filter.multirec.only_multi' | translate }}</span>
+        </label>
+        <label class="type-filter-row">
+          <input
+            type="checkbox"
+            [checked]="filters().multirec.onlyPartial"
+            (change)="updateMultirec('onlyPartial', toCheckbox($event))"
+          />
+          <span>{{ 'memory.type_filter.multirec.only_partial' | translate }}</span>
+        </label>
+      </section>
+    </div>
+  </div>
+</p-popover>

@@ -1,0 +1,216 @@
+/* RulesPage · listado de reglas Memory · iter 9a
+ * Spec `Memory/docs/specs/rule-constructor-update-1.md §VISTA DE LISTADO`.
+ * Tabla 7 cols + 2 secciones (Activas / Inactivas+Borradores). Drag-drop,
+ * conflictos y delete/duplicar llegan en iters 9b/9c/9d.
+ */
+
+:host {
+  display: block;
+  background: var(--sc-bg-surface);
+}
+
+/* Page chrome alineado con AED list-pages (S41 consistency fix). */
+.page {
+  flex: 1;
+  background: var(--sc-bg-surface);
+
+  &__inner {
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: var(--sc-spacing-1-75) var(--sc-spacing-2-25);
+    display: flex;
+    flex-direction: column;
+    gap: var(--sc-spacing-1-5);
+  }
+}
+
+.rules-section {
+  margin-bottom: var(--sc-spacing-1-5);
+
+  &__head {
+    margin-bottom: var(--sc-spacing-0-875);
+
+    h2 {
+      margin: 0 0 4px 0;
+      font-size: var(--sc-font-size-300);
+      font-weight: 600;
+      color: var(--sc-text-primary);
+    }
+  }
+
+  &__hint {
+    margin: 0;
+    font-size: var(--sc-font-size-200);
+    color: var(--sc-text-secondary);
+  }
+
+  &--secondary &__head h2 {
+    color: var(--sc-text-secondary);
+    font-weight: 500;
+  }
+}
+
+.rules-divider {
+  border: 0;
+  border-top: 1px solid var(--sc-border-default);
+  margin: var(--sc-spacing-1-75) 0 var(--sc-spacing-1-5);
+}
+
+/* Empty state migrado a <sc-empty-state> (S62, backlog #64). */
+
+/* Chrome alineado con AED list-pages (S41 consistency): radius-200,
+ * thead bg-default, font-size-50 + letter-spacing 0.05em, border-bottom
+ * subtle por fila, td secondary + font-size-200. `__td-name` mantiene
+ * el primary medium como en AED. `white-space: nowrap` en th evita
+ * que labels uppercase se partan. */
+.rules-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--sc-bg-surface);
+  border: 1px solid var(--sc-border-default);
+  border-radius: var(--sc-radius-200);
+  overflow: hidden;
+  table-layout: fixed;
+
+  thead th {
+    text-align: left;
+    padding: var(--sc-spacing-0-875);
+    border-bottom: 1px solid var(--sc-border-default);
+    background: var(--sc-bg-default);
+    font-size: var(--sc-font-size-50);
+    font-weight: var(--sc-font-weight-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--sc-text-secondary);
+    white-space: nowrap;
+  }
+
+  tbody tr {
+    border-bottom: 1px solid var(--sc-border-subtle);
+    transition: background var(--sc-transition-fast) var(--sc-easing-default);
+
+    &:hover {
+      background: var(--sc-bg-default);
+    }
+
+    &.rules-row--draft {
+      background: var(--sc-color-amber-50);
+    }
+  }
+
+  tbody td {
+    padding: var(--sc-spacing-0-875);
+    font-size: var(--sc-font-size-200);
+    color: var(--sc-text-secondary);
+    vertical-align: middle;
+  }
+
+  tbody tr:last-child {
+    border-bottom: 0;
+  }
+
+  &__th-order,
+  &__td-order {
+    width: 64px;
+  }
+
+  &__th-actions,
+  &__td-actions {
+    width: 110px;
+  }
+
+  &__th-status,
+  &__td-status {
+    width: 140px;
+  }
+
+  &__th-modified,
+  &__td-modified {
+    width: 120px;
+    color: var(--sc-text-secondary);
+  }
+
+  &__th-kebab,
+  &__td-kebab {
+    width: 44px;
+  }
+
+  &__td-scope {
+    color: var(--sc-text-secondary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__name {
+    color: var(--sc-text-primary);
+    font-weight: 500;
+    text-decoration: none;
+
+    &:hover {
+      color: var(--sc-bg-primary);
+      text-decoration: underline;
+    }
+  }
+}
+
+.rules-handle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-25);
+  color: var(--sc-text-secondary);
+  cursor: grab;
+  font-variant-numeric: tabular-nums;
+
+  &:active {
+    cursor: grabbing;
+  }
+
+  &__num {
+    font-size: var(--sc-font-size-200);
+    font-weight: 500;
+    color: var(--sc-text-primary);
+  }
+}
+
+/* CDK DragDrop visual feedback */
+.rules-table tbody tr.cdk-drag-preview {
+  background: var(--sc-bg-surface);
+  box-shadow: var(--sc-shadow-popover);
+  border-radius: var(--sc-radius-200);
+  display: table;
+  width: 100%;
+}
+
+.rules-table tbody tr.cdk-drag-placeholder {
+  opacity: 0.35;
+  background: var(--sc-bg-primary-subtle);
+}
+
+.cdk-drag-animating {
+  transition: transform 200ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+.rules-table tbody tr:not(.cdk-drag-placeholder) {
+  transition: transform 200ms ease-out;
+}
+
+.rules-actions-chips {
+  display: inline-flex;
+  gap: var(--sc-spacing-0-25);
+}
+
+.rules-action-chip {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 22px;
+  height: 22px;
+  border-radius: var(--sc-radius-100);
+  background: var(--sc-bg-elevated);
+  color: var(--sc-text-secondary);
+}
+
+/* .rules-status y .rules-kebab-btn promovidos a `main.scss` global en
+ * iter 11a para que CategoriesPage + EntitiesPage los consuman sin
+ * duplicar. */

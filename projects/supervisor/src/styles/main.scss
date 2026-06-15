@@ -1,0 +1,618 @@
+/*
+ * AED — Global styles entrypoint
+ * Order matters: tokens must be loaded before any component overrides.
+ */
+
+/* Sass `@use` rules must precede any `@import`. */
+@use 'reset';
+@use 'forms';
+@use 'table-elements';
+
+/* SCDS overlay sizes — partial global porque PrimeNG renderea overlays
+ * en <body>, fuera del scope encapsulado de los wrappers SCDS. Aplica a
+ * multi-select / select / datepicker panels cuando el wrapper propaga
+ * size=sm|lg via `panelStyleClass`. Patrón análogo a `_sc-toast.scss`. */
+@use 'sc-overlay-sizes';
+@use 'sc-animations';
+
+/* SCDS list-table chrome — partial global unscoped. Promovido S55 cuando
+ * cruzó trigger DD-4 (.table-card: 7 consumers consistentes). Los component
+ * SCSS solo mantienen sus deltas. Ver doc en el propio partial.
+ *
+ * NOTA: el .page__inner partial NO se promovió pese a 15 consumers — audit
+ * S55 detectó drift max-width (1600/1400/1200/832 según tipo página) que
+ * NO es safe consolidar sin decisión equipo de diseño. Trigger reabrir:
+ * spec session diseño para definir escala max-width canonical. */
+@use 'sc-list-table';
+
+/* Design tokens — layered system (primitive → semantic → palette →
+ * component → extensions → dark). MONOREPO: consumimos las 6 capas del DS
+ * por RUTA DE SOURCE (`projects/design-tokens/src/...`), igual que sc-prototype
+ * — SCSS no resuelve specifiers npm. Un cambio de token recompila y se refleja
+ * al instante (sin publicar). Mantenemos el reset propio de la app (`@use
+ * 'reset'` arriba) — NO importamos el reset/globals del DS (cero cambio de reset).
+ * La capa 6 (puente PrimeNG) no es CSS: vive en el preset, cableado vía
+ * `provideSmartContactUi()` en app.config.ts. */
+@import '../../../design-tokens/src/lib/styles/tokens/layers/01-primitive.css';
+@import '../../../design-tokens/src/lib/styles/tokens/layers/02-semantic.css';
+@import '../../../design-tokens/src/lib/styles/tokens/layers/03-palette.css';
+@import '../../../design-tokens/src/lib/styles/tokens/layers/04-component.css';
+@import '../../../design-tokens/src/lib/styles/tokens/layers/05-extensions.css';
+@import '../../../design-tokens/src/lib/styles/tokens/layers/07-dark.css';
+
+/* PrimeIcons */
+@import 'primeicons/primeicons.css';
+
+/*
+ * `.sc-icon` font binding — los componentes publicados de @smartcontact-hub
+ * rendean su icono interno como `<span class="sc-icon">{codepoint}</span>` y
+ * esperan que la CSS del paquete de iconos fije la familia. NO importamos esa
+ * CSS (es Material Symbols **Rounded**; decisión de marca: iconos **Outlined**).
+ * En su lugar apuntamos `.sc-icon` a la fuente Outlined ya cargada en
+ * `index.html` → los iconos internos de los componentes publicados rendean
+ * Outlined, consistentes con el `<sc-icon>` local. Los codepoints son idénticos
+ * entre estilos Material, así que el glifo resuelve igual. Replica el contrato
+ * de `@smartcontact-hub/icons/styles/material-symbols.css` salvo la familia y el
+ * `font-variation-settings` estático (lo controla el scss del componente, con
+ * sus ejes FILL/wght/opsz por instancia). Cuando el DS publique su paquete de
+ * iconos en Outlined, esta regla queda en no-op.
+ */
+.sc-icon {
+  display: inline-block;
+  font-family: 'Material Symbols Outlined';
+  font-size: 1em;
+  font-style: normal;
+  font-weight: normal;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  font-feature-settings: 'liga';
+  -webkit-font-feature-settings: 'liga';
+  -webkit-font-smoothing: antialiased;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  font-family: var(--sc-font-family-primary, 'Inter', system-ui, sans-serif);
+  background: var(--sc-bg-default);
+  color: var(--sc-text-primary);
+}
+
+/*
+ * Router cross-fade (View Transitions API, enabled via `withViewTransitions()`
+ * in app.config.ts). The global `*` reduced-motion reset does NOT reach the
+ * document-level `::view-transition-*` pseudo-elements, so honor the
+ * preference explicitly: users who ask for less motion get an instant page
+ * swap instead of the cross-fade. Keeps the subtle transition for everyone else.
+ */
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-group(*),
+  ::view-transition-old(*),
+  ::view-transition-new(*) {
+    animation: none !important;
+  }
+}
+
+/*
+ * `.visually-hidden` — hide visually but keep accessible to screen
+ * readers. Use for headings/labels that the visual hierarchy already
+ * conveys but assistive technology still needs (e.g. form-page <h1>
+ * that's expressed visually as the rich sticky header chrome).
+ *
+ * The `clip-path` keeps it offscreen without taking layout space and
+ * without breaking text-to-speech tools that struggle with `display:
+ * none` content.
+ */
+.visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* DD#169 cross-tab edit conflict banner — shared across all form pages.
+ *
+ * Full 1px border (not the side-stripe pattern banned in /impeccable). The
+ * yellow background tint already signals warning; no need for a chunky
+ * left bar.
+ */
+.cross-tab-warning {
+  margin-bottom: var(--sc-spacing-1-5);
+  padding: var(--sc-spacing-1-125) var(--sc-spacing-1-5);
+  border: 1px solid var(--sc-color-amber-300);
+  border-radius: var(--sc-radius-100);
+  background: var(--sc-color-amber-50);
+  color: var(--sc-color-amber-800);
+  font-size: var(--sc-font-size-200);
+  line-height: 1.45;
+}
+
+/*
+ * Global form-field `:focus-visible` outline. Native focus on
+ * `<input>` / `<select>` / `<textarea>` only changed the border-color
+ * before, which a keyboard user can miss when the border is already
+ * tinted. The outline is unambiguous and respects `outline-offset`.
+ */
+input,
+select,
+textarea {
+  &:focus-visible {
+    outline: 2px solid var(--sc-color-electric-blue-500);
+    outline-offset: 1px;
+  }
+}
+
+/*
+ * Tables get a fixed layout so the column widths don't reshuffle when
+ * the sort indicator (▲ / ▼) appears on a header. Per-page styles can
+ * still set explicit `width:` on individual `<th>` if a column needs a
+ * fixed share of the row.
+ */
+table.table {
+  table-layout: fixed;
+}
+
+/*
+ * Width-stable primary action inside `<sc-page-header>`. Each list page
+ * has a different create-button label ("Nuevo agente" 149 · "Nuevo
+ * usuario" 153 · "Nuevo grupo" 142 · "Nueva label" 134 — measured S34).
+ * Without a floor, the button visibly resizes when the user navigates
+ * between list pages, which reads as the chrome shifting under them.
+ * A 144 px floor with centred content keeps the geometry stable while
+ * still letting longer locales grow.
+ *
+ * Lives in main.scss (unscoped) because Angular ViewEncapsulation can't
+ * reach `<button class="p-button">` — PrimeNG renders it outside the
+ * sc-page-header component's view scope.
+ */
+.page-header__actions p-button > .p-button {
+  min-width: 144px;
+  justify-content: center;
+}
+
+/*
+ * Button line-height (Figma button: `leading-normal`). Sin esto los `.p-button`
+ * heredan el `line-height: 1.5` del reset (`_reset.scss`) → la altura se infla
+ * (~35px el small). Con `normal` + el sizing `button.sm` del preset, el
+ * button-small cae a ~27.5px (1:1 Kit Pro node 7593:168546). Unlayered para
+ * ganar a PrimeNG (@layer primeng). App-wide: corrige TODOS los botones.
+ */
+/* Button line-height: los `.p-button` heredaban `line-height: 1.5` del reset →
+ * altura inflada. `normal` (no es token de botón en el preset) lo corrige. El
+ * font + padding de sm/lg los pone el preset (`button.root.sm/lg`, 1:1 Kit Pro). */
+.p-button {
+  line-height: normal;
+}
+
+/*
+ * Global button micro-interactions (DD#21).
+ *
+ * Hover/focus changes use a short transition so the state feels alive but
+ * not draggy. Press (`:active`) snaps with `scale(0.98)` and zero
+ * transition — the user's click should produce an instant tactile
+ * response, not a fade-out of the prior hover state.
+ *
+ * Applies to every `.p-button` (canonical PrimeNG button), the
+ * empty-state CTA, the toast action button, and the inline-rename
+ * commit/cancel buttons. Component-scoped overrides can opt out by
+ * setting `transition-duration: 0` on `:active`, but should keep the
+ * press transform for consistency.
+ */
+.p-button,
+.empty-state__cta,
+.sc-toast__action,
+.rename__btn,
+.profile-tabs__tab {
+  transition:
+    background-color 100ms ease,
+    border-color 100ms ease,
+    color 100ms ease,
+    box-shadow 100ms ease;
+
+  &:active {
+    transform: scale(0.98);
+    transition-duration: 0ms;
+  }
+
+  /* Disabled buttons must NOT animate on press — they're inert. */
+  &:disabled,
+  &[aria-disabled='true'] {
+    transform: none;
+    cursor: not-allowed;
+
+    &:active {
+      transform: none;
+    }
+  }
+}
+
+/*
+ * Memory · TypeFilter popover panel (iter 7).
+ * PrimeNG `<p-popover>` con `appendTo: 'body'` renderiza el contenido
+ * fuera del scope Angular del TypeFilterButtonComponent — los estilos
+ * scoped no aplican. Por eso vive aquí en main.scss (unscoped).
+ *
+ * styleClass="memory-type-filter-popover" en el <p-popover> es el hook.
+ */
+.memory-type-filter-popover {
+  .type-filter-panel {
+    width: 280px;
+  }
+
+  .type-filter-panel__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--sc-spacing-0-875) var(--sc-spacing-1-125);
+    border-bottom: 1px solid var(--sc-border-default);
+
+    h3 {
+      margin: 0;
+      font-size: var(--sc-font-size-200);
+      font-weight: 500;
+      color: var(--sc-text-primary);
+    }
+  }
+
+  .type-filter-panel__reset {
+    background: transparent;
+    border: 0;
+    padding: 4px 8px;
+    border-radius: var(--sc-radius-100);
+    color: var(--sc-text-link);
+    font-size: var(--sc-font-size-50);
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 200ms ease-out;
+
+    &:hover {
+      background: var(--sc-bg-primary-subtle);
+    }
+    &:focus-visible {
+      outline: 2px solid var(--sc-color-electric-blue-500);
+      outline-offset: 1px;
+    }
+  }
+
+  .type-filter-panel__body {
+    max-height: 420px;
+    overflow-y: auto;
+    padding: var(--sc-spacing-0-875) var(--sc-spacing-1-125);
+  }
+
+  .type-filter-panel__divider {
+    border: 0;
+    border-top: 1px solid var(--sc-border-default);
+    margin: var(--sc-spacing-0-875) 0;
+  }
+
+  .type-filter-group {
+    margin-bottom: var(--sc-spacing-1-125);
+
+    &--last {
+      margin-bottom: 0;
+    }
+
+    h4 {
+      margin: 0 0 var(--sc-spacing-0-5) 0;
+      font-size: var(--sc-font-size-50);
+      font-weight: 600;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      color: var(--sc-text-secondary);
+    }
+  }
+
+  .type-filter-row {
+    display: flex;
+    align-items: center;
+    gap: var(--sc-spacing-0-5);
+    padding: 4px 0;
+    cursor: pointer;
+    font-size: var(--sc-font-size-200);
+    color: var(--sc-text-primary);
+
+    input[type='checkbox'] {
+      width: 14px;
+      height: 14px;
+      accent-color: var(--sc-bg-primary);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+
+    &:hover span {
+      color: var(--sc-text-primary);
+    }
+  }
+}
+
+/* Memory · CategoryFilter popover panel (iter 8). */
+.memory-category-filter-popover {
+  .category-filter-panel {
+    width: 320px;
+  }
+
+  .category-filter-panel__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: var(--sc-spacing-0-875) var(--sc-spacing-1-125);
+    border-bottom: 1px solid var(--sc-border-default);
+
+    h3 {
+      margin: 0;
+      font-size: var(--sc-font-size-200);
+      font-weight: 500;
+      color: var(--sc-text-primary);
+    }
+  }
+
+  .category-filter-panel__clear {
+    background: transparent;
+    border: 0;
+    padding: 4px 8px;
+    border-radius: var(--sc-radius-100);
+    color: var(--sc-text-link);
+    font-size: var(--sc-font-size-50);
+    font-weight: 500;
+    cursor: pointer;
+    transition: background-color 200ms ease-out;
+
+    &:hover {
+      background: var(--sc-bg-primary-subtle);
+    }
+  }
+
+  .category-filter-panel__body {
+    max-height: 240px;
+    overflow-y: auto;
+    padding: var(--sc-spacing-0-5) 0;
+  }
+
+  .category-filter-panel__empty {
+    margin: 0;
+    padding: var(--sc-spacing-1-125);
+    text-align: center;
+    font-size: var(--sc-font-size-200);
+    color: var(--sc-text-secondary);
+  }
+
+  .category-filter-row {
+    display: flex;
+    align-items: center;
+    gap: var(--sc-spacing-0-875);
+    padding: var(--sc-spacing-0-5) var(--sc-spacing-1-125);
+    cursor: pointer;
+    font-size: var(--sc-font-size-200);
+    color: var(--sc-text-primary);
+    transition: background-color 200ms ease-out;
+
+    &:hover {
+      background: var(--sc-bg-elevated);
+    }
+
+    &--selected {
+      background: var(--sc-bg-primary-subtle);
+    }
+
+    input[type='checkbox'] {
+      width: 14px;
+      height: 14px;
+      accent-color: var(--sc-bg-primary);
+      cursor: pointer;
+      flex-shrink: 0;
+    }
+  }
+
+  .category-filter-panel__foot {
+    border-top: 1px solid var(--sc-border-default);
+    padding: var(--sc-spacing-0-875) var(--sc-spacing-1-125);
+  }
+
+  .category-filter-panel__toggle-all {
+    width: 100%;
+    padding: var(--sc-spacing-0-5);
+    border: 0;
+    background: transparent;
+    border-radius: var(--sc-radius-100);
+    font-size: var(--sc-font-size-200);
+    color: var(--sc-text-primary);
+    cursor: pointer;
+    transition: background-color 200ms ease-out;
+
+    &:hover {
+      background: var(--sc-bg-elevated);
+    }
+  }
+}
+
+/* Memory · Status pills compartidas (rules + categories).
+ * Antes vivían scoped en rules-page.component.scss; promovidas a global
+ * en iter 11a para que CategoriesPage las consuma sin duplicar.
+ */
+.rules-status {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: var(--sc-radius-full);
+  font-size: var(--sc-font-size-50);
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.02em;
+
+  &--active {
+    background: var(--sc-color-green-100, #dcfce7);
+    color: var(--sc-color-green-700, #15803d);
+  }
+
+  &--inactive {
+    background: var(--sc-color-gray-100);
+    color: var(--sc-text-secondary);
+  }
+
+  &--draft {
+    background: var(--sc-color-amber-100);
+    color: var(--sc-color-amber-700);
+  }
+
+  &--conflict {
+    background: var(--sc-color-red-100, #fee2e2);
+    color: var(--sc-color-red-700, #b91c1c);
+  }
+
+  &--clickable {
+    border: 0;
+    cursor: pointer;
+    font-family: inherit;
+    transition: filter 200ms ease-out;
+
+    &:hover {
+      filter: brightness(0.95);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--sc-color-electric-blue-500);
+      outline-offset: 2px;
+    }
+  }
+}
+
+/* Kebab button compartido (rules + categories + entities + memoryviews
+ * futuras). Mismo origen — promovido a global en iter 11a.
+ */
+.rules-kebab-btn {
+  width: 28px;
+  height: 28px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  border-radius: var(--sc-radius-100);
+  background: transparent;
+  color: var(--sc-text-secondary);
+  cursor: pointer;
+  transition: background-color 200ms ease-out;
+
+  &:hover {
+    background: var(--sc-bg-elevated);
+    color: var(--sc-text-primary);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--sc-color-electric-blue-500);
+    outline-offset: 2px;
+  }
+}
+
+/* Memory · MockSampleSwitcher popover (S39 prototype switcher).
+ *
+ * `<p-popover>` con appendTo:body monta fuera del scope component → reglas
+ * en main.scss (unscoped). El trigger vive dentro de `<sc-page-header>`
+ * que es `position: sticky; z-index: 1030`, y el pool de overlays PrimeNG
+ * arranca en ~1000 — el panel quedaba por debajo del header al
+ * re-scrollear arriba. `!important` necesario:
+ *   - z-index: PrimeNG asigna z-index inline al overlay; sin `!important`
+ *     el token --sc-z-popover (1080) no llega a aplicarse.
+ *   - padding: el theme aplica padding default sobre `.p-popover-content`
+ *     con specificity equiparable; sin `!important` la regla local cede.
+ */
+.mock-sample-switcher__popover {
+  z-index: var(--sc-z-popover) !important;
+
+  .p-popover-content {
+    padding: 0 !important;
+  }
+}
+
+/* Memory · Rules conflict popover (iter 9d-2).
+ * `<p-popover>` con appendTo:body monta fuera del scope component.
+ */
+.rules-conflict-popover {
+  .conflict-popover {
+    max-width: 320px;
+    padding: var(--sc-spacing-0-875) var(--sc-spacing-1-125);
+
+    h3 {
+      margin: 0 0 4px 0;
+      font-size: var(--sc-font-size-200);
+      font-weight: 600;
+      color: var(--sc-text-primary);
+    }
+  }
+
+  .conflict-popover__desc {
+    margin: 0 0 var(--sc-spacing-0-875) 0;
+    font-size: var(--sc-font-size-100);
+    color: var(--sc-text-secondary);
+  }
+
+  .conflict-popover__list {
+    margin: 0 0 var(--sc-spacing-0-875) 0;
+    padding: 0;
+    list-style: none;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+
+    li {
+      padding: var(--sc-spacing-0-5) var(--sc-spacing-0-75);
+      background: var(--sc-bg-elevated);
+      border-radius: var(--sc-radius-100);
+      font-size: var(--sc-font-size-100);
+    }
+
+    strong {
+      font-weight: 500;
+      color: var(--sc-text-primary);
+    }
+  }
+
+  .conflict-popover__meta {
+    color: var(--sc-text-secondary);
+    margin-left: 4px;
+  }
+
+  .conflict-popover__winner {
+    margin: 0 0 var(--sc-spacing-0-875) 0;
+    padding: var(--sc-spacing-0-5) var(--sc-spacing-0-75);
+    background: var(--sc-bg-primary-subtle);
+    border-radius: var(--sc-radius-100);
+    font-size: var(--sc-font-size-100);
+    color: var(--sc-text-primary);
+  }
+
+  .conflict-popover__hint {
+    margin: 0;
+    font-size: var(--sc-font-size-50);
+    color: var(--sc-text-secondary);
+    font-style: italic;
+  }
+}
+
+/*
+ * Honour `prefers-reduced-motion`: drop the press transform entirely so
+ * users with motion sensitivity get a calm interface.
+ */
+@media (prefers-reduced-motion: reduce) {
+  .p-button,
+  .empty-state__cta,
+  .sc-toast__action,
+  .rename__btn,
+  .profile-tabs__tab {
+    transition: none;
+
+    &:active {
+      transform: none;
+    }
+  }
+}

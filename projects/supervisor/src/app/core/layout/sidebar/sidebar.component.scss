@@ -1,0 +1,306 @@
+:host {
+  display: contents;
+}
+
+/*
+ * Sidebar — collapsed by default to its gutter width, expands on hover
+ * to reveal the full lockup, section titles and nav labels.
+ *
+ * Architecture (DD#32):
+ *   - `position: fixed` so the expanded state OVERLAYS the page content
+ *     instead of pushing it. The page reserves `--sc-sidebar-width`
+ *     (= collapsed width) as its left gutter; that gutter never moves.
+ *   - `:hover` / `:focus-within` → width transitions to
+ *     `--sc-sidebar-width-expanded`.
+ *   - When collapsed, depth-based padding is collapsed via local CSS
+ *     custom properties so child icons line up with parent icons in a
+ *     single clean column. Labels and chevrons fade to `opacity: 0`
+ *     so partial letters never bleed past the gutter.
+ *   - Hover-OUT is delayed by 100 ms to forgive cursor jitter; hover-IN
+ *     is instant.
+ *   - All transitions respect `prefers-reduced-motion`.
+ */
+.sidebar {
+  /*
+   * Depth padding is read from these locals by `<sc-sidebar-nav-item>`.
+   * When the sidebar is collapsed (no hover / no focus-within) we flatten
+   * every depth onto the same icon column so the column reads as a
+   * single, clean strip of icons.
+   */
+  --sidebar-pad-l-0: var(--sc-spacing-0-875);
+  --sidebar-pad-l-1: var(--sc-spacing-2-25);
+  --sidebar-pad-l-2: var(--sc-spacing-4);
+  --sidebar-pad-l-3: var(--sc-spacing-5);
+  --sidebar-label-opacity: 0;
+
+  position: fixed;
+  inset: 0 auto 0 0;
+  z-index: var(--sc-z-sidebar);
+  width: var(--sc-sidebar-width-collapsed);
+  height: 100dvh;
+  display: flex;
+  flex-direction: column;
+  overflow: hidden;
+  background: var(--sc-sidebar-bg);
+  color: var(--sc-color-gray-0);
+  /* Hover-OUT delayed by 100 ms; hover-IN instant (overridden below). */
+  transition: width var(--sc-transition-base) var(--sc-easing-emphasized) 100ms;
+  will-change: width;
+
+  &:hover,
+  &:focus-within {
+    width: var(--sc-sidebar-width-expanded);
+    transition-delay: 0ms;
+    --sidebar-label-opacity: 1;
+  }
+
+  /* -------- Brand (isotype always visible, wordmark fades in) ----- */
+  /*
+   * Two SVGs: a 40×40 isotype that's always visible (centered in the
+   * 64 px gutter when collapsed, anchored left when expanded) and a
+   * wordmark-only SVG ("SmartContact / a Digital Virgo tool") that
+   * fades to opacity 0 when the sidebar is collapsed. The wordmark
+   * also `transform: translateX(-4px)` while collapsed so the fade-in
+   * has a small slide-from-the-isotype motion when the sidebar
+   * expands.
+   */
+
+  &__brand {
+    height: 64px;
+    flex-shrink: 0;
+    display: flex;
+    align-items: center;
+    gap: var(--sc-spacing-0-875);
+    /* Padding-left is calculated to center the 40 px isotype inside
+     * the 64 px collapsed gutter: (64 - 40) / 2 = 12 = spacing-200. */
+    padding: 0 var(--sc-spacing-0-875);
+    border-bottom: 1px solid rgb(255 255 255 / 0.08);
+    color: inherit;
+    text-decoration: none;
+    cursor: pointer;
+    outline: none;
+
+    &:focus-visible {
+      outline: 2px solid var(--sc-color-soft-blue-500);
+      outline-offset: -2px;
+    }
+  }
+
+  &__brand-isotype {
+    flex-shrink: 0;
+    width: 40px;
+    height: 40px;
+    display: block;
+  }
+
+  &__brand-wordmark {
+    flex-shrink: 0;
+    height: 40px;
+    width: auto;
+    display: block;
+    opacity: 0;
+    transform: translateX(-4px);
+    transition:
+      opacity var(--sc-transition-fast) var(--sc-easing-default) 60ms,
+      transform var(--sc-transition-base) var(--sc-easing-emphasized) 60ms;
+  }
+
+  &:hover &__brand-wordmark,
+  &:focus-within &__brand-wordmark {
+    opacity: 1;
+    transform: translateX(0);
+  }
+
+  /* -------- Nav -------- */
+
+  &__nav {
+    flex: 1;
+    overflow-y: auto;
+    overflow-x: hidden;
+    padding: var(--sc-spacing-0-875) 0;
+    display: flex;
+    flex-direction: column;
+    gap: var(--sc-spacing-0-875);
+    scrollbar-width: thin;
+    scrollbar-color: rgb(255 255 255 / 0.16) transparent;
+  }
+
+  &__section {
+    display: flex;
+    flex-direction: column;
+  }
+
+  /*
+   * Section header slot: a 24-px-tall row that hosts BOTH the section
+   * title text and the inter-section divider line as siblings. They
+   * cross-fade when the sidebar's expand state changes (DD#37):
+   *
+   *   collapsed  →  divider visible (opacity 1), title hidden (opacity 0)
+   *   expanded   →  title visible, divider hidden
+   *
+   * Decoupling the divider from the title (instead of nesting it as
+   * the title's `::before`) is necessary because a child of an element
+   * with `opacity: 0` is itself invisible — without this split the
+   * line would disappear together with the title text in the very
+   * collapsed state where it's most useful.
+   */
+
+  &__section-slot {
+    position: relative;
+    height: 24px;
+    display: block;
+    pointer-events: none;
+  }
+
+  &__section-title {
+    position: absolute;
+    inset: 0;
+    padding: 0 var(--sc-spacing-1-125);
+    display: flex;
+    align-items: center;
+    font-size: var(--sc-font-size-50);
+    font-weight: var(--sc-font-weight-semibold);
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: rgb(255 255 255 / 0.3);
+    opacity: 0;
+    transition: opacity var(--sc-transition-fast) var(--sc-easing-default);
+    white-space: nowrap;
+  }
+
+  &__section-divider {
+    position: absolute;
+    left: var(--sc-spacing-0-875);
+    right: var(--sc-spacing-0-875);
+    top: 50%;
+    height: 1px;
+    background: var(--sc-color-blue-500);
+    opacity: 1;
+    transition: opacity var(--sc-transition-fast) var(--sc-easing-default);
+  }
+
+  /* First section has no divider — nothing above it to separate from. */
+  &__section:first-child &__section-divider {
+    display: none;
+  }
+
+  &:hover &__section-title,
+  &:focus-within &__section-title {
+    opacity: 1;
+    transition-delay: 80ms;
+  }
+
+  &:hover &__section-divider,
+  &:focus-within &__section-divider {
+    opacity: 0;
+    transition-delay: 0ms;
+  }
+
+  &__section-items {
+    margin-top: var(--sc-spacing-0-25);
+  }
+
+  /*
+   * Collapsed-state padding overrides:
+   *   - Every depth flattens onto a single icon column.
+   *   - The padding value is `--sc-spacing-1-75` (24 px) so a 16 px icon
+   *     lands centred in the 64 px gutter (24 + 8 = 32 = sidebar midline).
+   *   - On hover, the locals revert to the depth-tiered defaults so the
+   *     expanded view keeps its tree-like indentation.
+   */
+  &:not(:hover):not(:focus-within) {
+    --sidebar-pad-l-0: var(--sc-spacing-1-75);
+    --sidebar-pad-l-1: var(--sc-spacing-1-75);
+    --sidebar-pad-l-2: var(--sc-spacing-1-75);
+    --sidebar-pad-l-3: var(--sc-spacing-1-75);
+  }
+
+  /* -------- Foot -------- */
+
+  &__foot {
+    flex-shrink: 0;
+    /*
+     * Vertical padding only — no horizontal — so the inner button can
+     * own its left padding via `--sidebar-pad-l-0` and land its icon
+     * on the same column as the nav items above. With horizontal foot
+     * padding the icon was offset by `spacing-100` (8 px) and read as
+     * misaligned in the collapsed state.
+     */
+    padding: var(--sc-spacing-0-5) 0;
+    border-top: 1px solid rgb(255 255 255 / 0.08);
+  }
+
+  &__decisions {
+    width: 100%;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sc-spacing-0-875);
+    /* Padding-left flexes from the centred-icon offset (collapsed) to the
+     * label-aligned offset (expanded), mirroring the nav items. */
+    padding: var(--sc-spacing-0-5) var(--sc-spacing-0-875) var(--sc-spacing-0-5)
+      var(--sidebar-pad-l-0, var(--sc-spacing-0-875));
+    font-size: var(--sc-font-size-100);
+    color: rgb(255 255 255 / 0.4);
+    background: transparent;
+    border: 0;
+    border-radius: var(--sc-radius-100);
+    cursor: pointer;
+    white-space: nowrap;
+    overflow: hidden;
+    text-decoration: none;
+    transition:
+      color var(--sc-transition-fast) var(--sc-easing-default),
+      background var(--sc-transition-fast) var(--sc-easing-default),
+      padding-left var(--sc-transition-base) var(--sc-easing-emphasized);
+
+    &:hover {
+      color: rgb(255 255 255 / 0.85);
+      background: rgb(255 255 255 / 0.05);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--sc-color-soft-blue-500);
+      outline-offset: -2px;
+    }
+  }
+
+  &__decisions-icon {
+    flex-shrink: 0;
+  }
+
+  &__decisions-label {
+    flex: 1 1 auto;
+    opacity: 0;
+    transition: opacity var(--sc-transition-fast) var(--sc-easing-default);
+  }
+
+  /* External-link arrow (↗). Communicates "this leaves the app" so the
+   * new-tab gesture isn't a surprise. Hidden in collapsed state — the
+   * sidebar barely shows anything beyond icons there, the affordance
+   * would just add visual noise without context. Fades in with the
+   * label when the sidebar expands. */
+  &__decisions-external {
+    flex-shrink: 0;
+    opacity: 0;
+    color: rgb(255 255 255 / 0.35);
+    transition: opacity var(--sc-transition-fast) var(--sc-easing-default);
+  }
+
+  &:hover &__decisions-label,
+  &:focus-within &__decisions-label,
+  &:hover &__decisions-external,
+  &:focus-within &__decisions-external {
+    opacity: 1;
+    transition-delay: 80ms;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sidebar,
+  .sidebar__brand-wordmark,
+  .sidebar__section-title,
+  .sidebar__section-divider,
+  .sidebar__decisions-label {
+    transition: none;
+  }
+}

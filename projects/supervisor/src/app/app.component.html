@@ -1,0 +1,40 @@
+<p-toast position="bottom-right">
+  <ng-template let-message pTemplate="message">
+    <div
+      class="sc-toast"
+      role="status"
+      aria-live="assertive"
+      aria-atomic="true"
+      [attr.data-severity]="message.severity ?? 'info'"
+    >
+      <div class="sc-toast__icon" aria-hidden="true">
+        <sc-icon [name]="iconFor(message.severity)" [size]="14" />
+      </div>
+      <div class="sc-toast__body">
+        @if (message.summary) {
+          <div class="sc-toast__title">{{ message.summary }}</div>
+        }
+        @if (message.detail) {
+          <div class="sc-toast__message">{{ message.detail }}</div>
+        }
+      </div>
+      @if (message.data?.undoEntryId; as undoId) {
+        <button type="button" class="sc-toast__action" (click)="onUndoClick(undoId)">
+          {{ 'common.undo' | translate }}
+        </button>
+      }
+      <button
+        type="button"
+        class="sc-toast__close"
+        [attr.aria-label]="'common.close' | translate"
+        (click)="onClose()"
+      >
+        <sc-icon [name]="closeIcon" [size]="14" />
+      </button>
+    </div>
+  </ng-template>
+</p-toast>
+<sc-confirm-host />
+<sc-command-palette />
+<sc-keyboard-shortcuts [groups]="shortcutGroups" />
+<router-outlet />

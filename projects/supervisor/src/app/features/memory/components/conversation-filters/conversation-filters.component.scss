@@ -1,0 +1,226 @@
+:host {
+  display: block;
+}
+
+/* S53 stitched-card: filters comparte chrome con .table-card abajo.
+ * - Mismo border-radius (200, alineado AED list-pages) solo en top corners.
+ * - Border sin bottom: la tabla pone su own border-top → 1 hairline shared.
+ * - Sin shadow propia: la sensación de "card flotante" se conserva en la
+ *   tabla y se hereda visualmente.  */
+.memory-conversation-filters {
+  display: flex;
+  flex-direction: column;
+  /* Bloque 2 · layout efficiency BeyondUI: chrome más compacto (gap +
+   * padding 15.75 → 10.5px) → la tabla arranca más arriba, menos vertical
+   * desperdiciado antes de los datos. */
+  gap: var(--sc-spacing-0-75);
+  padding: var(--sc-spacing-0-75) var(--sc-spacing-1-125);
+  background: var(--sc-bg-surface);
+  /* BeyondUI vibe (experiment S59): flush — sin caja. Solo un divisor
+   * hairline abajo separa la toolbar de la tabla (patrón Companies). */
+  border: 0;
+  border-bottom: 1px solid var(--sc-border-subtle);
+  border-radius: 0;
+
+  &__grid {
+    display: grid;
+    grid-template-columns: repeat(6, minmax(0, 1fr));
+    gap: var(--sc-spacing-0-875);
+  }
+
+  /* S50 toolbar inline (legacy parity): row de actions con left
+   * (Tipo/Categorías/Failed + separator + 4 icons) y right (Resultados
+   * + Reset). justify-between los empuja a los extremos. */
+  &__actions {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--sc-spacing-1-125);
+    padding-top: var(--sc-spacing-0-75);
+    border-top: 1px solid var(--sc-border-subtle);
+  }
+
+  &__actions-left {
+    display: flex;
+    align-items: center;
+    gap: var(--sc-spacing-0-5);
+    flex-wrap: wrap;
+  }
+
+  &__actions-right {
+    display: flex;
+    align-items: center;
+    gap: var(--sc-spacing-0-875);
+  }
+
+  &__divider {
+    display: inline-block;
+    width: 1px;
+    height: 24px;
+    background: var(--sc-border-default);
+    margin: 0 var(--sc-spacing-0-5);
+  }
+
+  &__results {
+    font-size: var(--sc-font-size-200);
+    color: var(--sc-text-secondary);
+    white-space: nowrap;
+  }
+
+  &__results-num,
+  &__results-time {
+    color: var(--sc-text-primary);
+    font-variant-numeric: tabular-nums;
+    font-weight: 500;
+  }
+
+  &__results-sep {
+    margin: 0 var(--sc-spacing-0-5);
+    color: var(--sc-text-subtle);
+  }
+}
+
+@media (max-width: 1280px) {
+  .memory-conversation-filters__grid {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    row-gap: var(--sc-spacing-0-875);
+  }
+}
+
+@media (max-width: 768px) {
+  .memory-conversation-filters__grid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .memory-conversation-filters__actions {
+    flex-direction: column;
+    align-items: stretch;
+  }
+}
+
+/* S50 toolbar inline — action icons compactos (h-9 w-9 legacy parity).
+ * Patrón texto-color-only: no background propio; en hover bg subtle. */
+.memory-toolbar-icon {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 36px;
+  padding: 0;
+  border: 0;
+  border-radius: var(--sc-radius-200);
+  background: transparent;
+  color: var(--sc-color-teal-600);
+  cursor: pointer;
+  transition:
+    background-color 160ms ease-out,
+    color 160ms ease-out;
+
+  &:hover:not(:disabled) {
+    background: var(--sc-color-teal-50);
+    color: var(--sc-color-teal-700);
+  }
+
+  &:active:not(:disabled) {
+    transform: scale(0.96);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--sc-color-electric-blue-500);
+    outline-offset: 2px;
+  }
+
+  &:disabled {
+    color: var(--sc-text-disabled);
+    cursor: not-allowed;
+  }
+
+  &--muted {
+    color: var(--sc-text-secondary);
+
+    &:hover:not(:disabled) {
+      background: var(--sc-bg-elevated);
+      color: var(--sc-text-primary);
+    }
+  }
+}
+
+.memory-toolbar-icon__badge {
+  position: absolute;
+  top: -3px;
+  right: -3px;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 16px;
+  height: 16px;
+  padding: 0 4px;
+  border-radius: var(--sc-radius-full);
+  background: var(--sc-text-primary);
+  color: var(--sc-bg-surface);
+  font-size: var(--sc-font-size-50);
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+/* Chip "Solo fallidas" — aparece solo cuando hay errores en el set. */
+.memory-failed-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-25);
+  height: 32px;
+  padding: 0 11px;
+  border: 1px solid var(--sc-color-red-300);
+  border-radius: var(--sc-radius-full);
+  background: color-mix(in srgb, var(--sc-color-red-100) 50%, transparent);
+  font-size: var(--sc-font-size-100);
+  font-weight: 500;
+  color: var(--sc-color-red-800);
+  cursor: pointer;
+  transition:
+    border-color 140ms ease,
+    background 140ms ease,
+    transform 100ms ease;
+
+  &:hover {
+    border-color: var(--sc-color-red-500);
+    background: color-mix(in srgb, var(--sc-color-red-200) 60%, transparent);
+  }
+
+  &.is-active {
+    background: var(--sc-color-red-500);
+    border-color: var(--sc-color-red-600);
+    color: white;
+  }
+
+  &:active {
+    transform: scale(0.97);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--sc-color-red-500);
+    outline-offset: 2px;
+  }
+}
+
+.memory-failed-chip__count {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 18px;
+  padding: 0 var(--sc-spacing-0-5);
+  height: 18px;
+  border-radius: var(--sc-radius-full);
+  background: color-mix(in srgb, var(--sc-color-red-200) 80%, transparent);
+  font-family: var(--sc-font-family-mono);
+  font-size: var(--sc-font-size-50);
+  font-weight: 600;
+  color: var(--sc-color-red-900);
+
+  .is-active & {
+    background: color-mix(in srgb, white 25%, transparent);
+    color: white;
+  }
+}

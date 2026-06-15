@@ -1,0 +1,13 @@
+<span
+  class="avatar"
+  [style.width]="sizePx()"
+  [style.height]="sizePx()"
+  [attr.aria-label]="name()"
+  role="img"
+>
+  @if (photoSrc(); as src) {
+    <img class="avatar__media" [src]="src" [alt]="name()" />
+  } @else {
+    <img class="avatar__media" [src]="illustrationSrc()" alt="" aria-hidden="true" />
+  }
+</span>

@@ -259,6 +259,85 @@
           "defaultConfiguration": "development"
         }
       }
+    },
+    "supervisor": {
+      "projectType": "application",
+      "schematics": {
+        "@schematics/angular:component": {
+          "style": "scss"
+        }
+      },
+      "root": "projects/supervisor",
+      "sourceRoot": "projects/supervisor/src",
+      "prefix": "app",
+      "architect": {
+        "build": {
+          "builder": "@angular-devkit/build-angular:application",
+          "options": {
+            "outputPath": "dist/supervisor",
+            "index": "projects/supervisor/src/index.html",
+            "browser": "projects/supervisor/src/main.ts",
+            "polyfills": [
+              "zone.js"
+            ],
+            "tsConfig": "projects/supervisor/tsconfig.app.json",
+            "inlineStyleLanguage": "scss",
+            "assets": [
+              {
+                "glob": "**/*",
+                "input": "projects/supervisor/public"
+              },
+              {
+                "glob": "**/*",
+                "input": "projects/supervisor/src/assets",
+                "output": "/assets"
+              }
+            ],
+            "styles": [
+              "projects/supervisor/src/styles/main.scss"
+            ],
+            "scripts": []
+          },
+          "configurations": {
+            "production": {
+              "budgets": [
+                {
+                  "type": "initial",
+                  "maximumWarning": "2.5MB",
+                  "maximumError": "5MB"
+                },
+                {
+                  "type": "anyComponentStyle",
+                  "maximumWarning": "16kB",
+                  "maximumError": "24kB"
+                }
+              ],
+              "outputHashing": "all"
+            },
+            "development": {
+              "optimization": false,
+              "extractLicenses": false,
+              "sourceMap": true
+            }
+          },
+          "defaultConfiguration": "production"
+        },
+        "serve": {
+          "builder": "@angular-devkit/build-angular:dev-server",
+          "options": {
+            "buildTarget": "supervisor:build:development"
+          },
+          "configurations": {
+            "production": {
+              "buildTarget": "supervisor:build:production"
+            },
+            "development": {
+              "buildTarget": "supervisor:build:development"
+            }
+          },
+          "defaultConfiguration": "development"
+        }
+      }
     }
   },
   "cli": {

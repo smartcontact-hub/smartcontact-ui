@@ -1,0 +1,208 @@
+<!-- Modelo "todo arriba" (experiment S59): sin banda de page-header. La
+     identidad la da el breadcrumb de la TopBar; el CTA (y su panel de creación
+     inline) se proyectan a la barra vía TopBarSlotService. -->
+<ng-template #topbarActions>
+  <div
+    class="page__create-anchor"
+    (scClickOutside)="closeCreatePanel()"
+    [scClickOutsideEnabled]="creating()"
+  >
+    <p-button type="button" severity="primary" (onClick)="onCreateClick()">
+      <sc-icon [name]="plusIcon" [size]="13" />
+      <span>{{ 'common.create' | translate }}</span>
+    </p-button>
+
+    @if (creating()) {
+      <div class="page__panel-anchor">
+        <sc-repo-form-panel
+          [fields]="config().fields"
+          [existingNames]="existingNames()"
+          [entitySingular]="entitySingular()"
+          (save)="onCreateSubmit($event)"
+          (cancelled)="closeCreatePanel()"
+        />
+      </div>
+    }
+  </div>
+</ng-template>
+
+<div class="page" [class.page--has-selection]="selectedIds().size > 0">
+  <div class="page__inner">
+    <div class="page__action-bar">
+      <sc-search
+        class="page__search"
+        [placeholder]="'repositories.search_placeholder' | translate: { entity: entityPlural() }"
+        shortcutHint="⌘K"
+        [clearAriaLabel]="'labels.clear_search' | translate"
+        [value]="searchQuery()"
+        (valueChange)="searchQuery.set($event)"
+        (keydown)="onSearchKey($event)"
+      />
+      <p-button type="button" severity="secondary" (onClick)="onExport()">
+        <sc-icon [name]="downloadIcon" [size]="13" />
+        <span>{{ 'labels.export_button' | translate }}</span>
+      </p-button>
+    </div>
+
+    <div class="table-card">
+      <table class="table">
+        <thead>
+          <tr>
+            <th class="table__th-check" (click)="toggleSelectAll()">
+              <input
+                type="checkbox"
+                [checked]="allSelected()"
+                (change)="toggleSelectAll()"
+                (click)="$event.stopPropagation()"
+                [attr.aria-label]="'labels.select_all' | translate"
+              />
+            </th>
+            @for (col of config().columns; track col.key) {
+              <th [style.width]="col.width ?? null">{{ col.labelKey | translate }}</th>
+            }
+            <th class="table__th-actions" aria-hidden="true"></th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (item of sorted(); track item.id) {
+            <tr
+              class="table__row"
+              [class.table__row--selected]="selectedIds().has(item.id)"
+              (contextmenu)="onContextMenu($event, item.id)"
+            >
+              <td class="table__td-check" (click)="toggleSelect(item.id); $event.stopPropagation()">
+                <input
+                  type="checkbox"
+                  [checked]="selectedIds().has(item.id)"
+                  (change)="toggleSelect(item.id)"
+                  (click)="$event.stopPropagation()"
+                  [attr.aria-label]="item.name"
+                />
+              </td>
+
+              @for (col of config().columns; track col.key) {
+                <td
+                  class="table__td"
+                  [class.table__td--emphasis]="col.emphasis"
+                  [class.table__td--mono]="col.kind === 'mono'"
+                  [class.table__td--truncate]="col.kind === 'truncate'"
+                >
+                  @if (col.kind === 'status') {
+                    @if (getStatusEntry(item, col.key); as status) {
+                      <span class="status-pill" [attr.data-tone]="status.tone">
+                        {{ status.labelKey | translate }}
+                      </span>
+                    } @else {
+                      <span>{{ getCellValue(item, col.key) }}</span>
+                    }
+                  } @else {
+                    <span>{{ getCellValue(item, col.key) }}</span>
+                  }
+
+                  @if (col.emphasis && editingId() === item.id) {
+                    <div
+                      class="page__panel-anchor page__panel-anchor--row"
+                      (scClickOutside)="closeEditPanel()"
+                      [scClickOutsideEnabled]="editingId() === item.id"
+                    >
+                      <sc-repo-form-panel
+                        [fields]="config().fields"
+                        [initial]="item"
+                        [existingNames]="existingNames()"
+                        [entitySingular]="entitySingular()"
+                        (save)="onEditSubmit(item.id, $event)"
+                        (cancelled)="closeEditPanel()"
+                      />
+                    </div>
+                  }
+                </td>
+              }
+
+              <td class="table__td-actions">
+                <div
+                  class="row-menu"
+                  (scClickOutside)="closeRowMenu()"
+                  [scClickOutsideEnabled]="openMenuId() === item.id"
+                >
+                  <button
+                    type="button"
+                    class="row-menu__btn"
+                    (click)="toggleRowMenu(item.id)"
+                    [attr.aria-expanded]="openMenuId() === item.id"
+                    [attr.aria-label]="'labels.row_menu' | translate"
+                  >
+                    <sc-icon [name]="moreIcon" [size]="15" />
+                  </button>
+
+                  @if (openMenuId() === item.id) {
+                    <div class="row-menu__panel" role="menu">
+                      <button type="button" role="menuitem" (click)="onRowEdit(item)">
+                        <sc-icon [name]="editIcon" [size]="13" />
+                        <span>{{ 'common.edit' | translate }}</span>
+                      </button>
+                      <button type="button" role="menuitem" (click)="onRowDelete(item)">
+                        <sc-icon [name]="trashIcon" [size]="13" />
+                        <span>{{ 'common.delete' | translate }}</span>
+                      </button>
+                    </div>
+                  }
+                </div>
+              </td>
+            </tr>
+          }
+
+          @if (sorted().length === 0) {
+            <tr>
+              <td [attr.colspan]="config().columns.length + 2" class="table__no-results">
+                @if (searchQuery()) {
+                  {{
+                    'repositories.no_results.with_query'
+                      | translate: { entity: entityPlural(), query: searchQuery() }
+                  }}
+                } @else {
+                  {{ 'repositories.no_results.empty' | translate: { entity: entityPlural() } }}
+                }
+              </td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+@if (contextMenu(); as ctx) {
+  <div
+    class="context-menu"
+    [style.left.px]="ctx.x"
+    [style.top.px]="ctx.y"
+    (scClickOutside)="closeContextMenu()"
+    [scClickOutsideEnabled]="!!contextMenu()"
+    role="menu"
+  >
+    <button type="button" role="menuitem" (click)="onContextEdit()">
+      <sc-icon [name]="editIcon" [size]="13" />
+      <span>{{ 'common.edit' | translate }}</span>
+    </button>
+    <button type="button" role="menuitem" (click)="onContextDelete()">
+      <sc-icon [name]="trashIcon" [size]="13" />
+      <span>{{ 'common.delete' | translate }}</span>
+    </button>
+  </div>
+}
+
+<sc-delete-entity-dialog
+  [visible]="!!deleteTarget()"
+  [mode]="(deleteTarget()?.length ?? 0) === 1 ? 'single' : 'bulk'"
+  [items]="deleteItems()"
+  [entitySingular]="entitySingular()"
+  [entityPlural]="entityPlural()"
+  (cancelled)="cancelDelete()"
+  (confirm)="confirmDelete($event)"
+/>
+
+<sc-bulk-action-bar [count]="selectedIds().size" [entity]="bulkEntity()" (clear)="clearSelection()">
+  <p-button type="button" severity="danger" (onClick)="requestDeleteSelection()">
+    <span>{{ 'common.delete' | translate }}</span>
+  </p-button>
+</sc-bulk-action-bar>

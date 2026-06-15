@@ -1,0 +1,39 @@
+<sc-page-header titleKey="sidebar.repositories" [icon]="pageIcon" />
+
+<div class="hub">
+  <div class="hub__inner">
+    <div class="hub__categories">
+      @for (category of categories; track category.titleKey) {
+        <section class="hub__category">
+          <h2 class="hub__category-title">{{ category.titleKey | translate }}</h2>
+          <div class="hub__group">
+            @for (item of category.items; track item.labelKey) {
+              <button
+                type="button"
+                class="hub-item"
+                [class.hub-item--disabled]="!item.ready"
+                [disabled]="!item.ready"
+                (click)="onItemClick(item)"
+              >
+                <span class="hub-item__icon" aria-hidden="true">
+                  <sc-icon [name]="item.icon" [size]="20" />
+                </span>
+                <span class="hub-item__text">
+                  <span class="hub-item__label">{{ item.labelKey | translate }}</span>
+                  <span class="hub-item__description">{{ item.descriptionKey | translate }}</span>
+                </span>
+                @if (item.ready) {
+                  <sc-icon class="hub-item__chevron" [name]="chevronIcon" [size]="15" />
+                } @else {
+                  <span class="hub-item__soon">
+                    {{ 'repositories.hub.coming_soon' | translate }}
+                  </span>
+                }
+              </button>
+            }
+          </div>
+        </section>
+      }
+    </div>
+  </div>
+</div>

@@ -1,0 +1,63 @@
+/* TypeFilterButton + popover · Memory iter 7
+ * Trigger button + popover (PrimeNG `<p-popover>` con styleClass override
+ * para anidar dentro de la toolbar de filters). Dot accent en esquina
+ * cuando hay filtros activos divergentes del default. */
+
+:host {
+  display: inline-block;
+  position: relative;
+}
+
+.type-filter-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-5);
+  height: 36px;
+  padding: 0 var(--sc-spacing-1-125);
+  border: 1px solid var(--sc-border-default);
+  border-radius: var(--sc-radius-300);
+  background: var(--sc-bg-surface);
+  color: var(--sc-text-primary);
+  font-size: var(--sc-font-size-200);
+  font-weight: 500;
+  cursor: pointer;
+  position: relative;
+  transition:
+    background-color 200ms ease-out,
+    border-color 200ms ease-out;
+
+  &:hover {
+    background: var(--sc-bg-elevated);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--sc-color-electric-blue-500);
+    outline-offset: 2px;
+  }
+
+  &--active {
+    border-color: var(--sc-bg-primary);
+    background: var(--sc-bg-primary-subtle);
+    color: var(--sc-text-primary);
+  }
+
+  sc-icon {
+    color: var(--sc-text-secondary);
+  }
+
+  &--active sc-icon {
+    color: var(--sc-bg-primary);
+  }
+
+  &__dot {
+    position: absolute;
+    top: -2px;
+    right: -2px;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--sc-bg-primary);
+    border: 2px solid var(--sc-bg-surface);
+    box-sizing: content-box;
+  }
+}

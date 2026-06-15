@@ -1,0 +1,437 @@
+@let c = conversation();
+
+<sc-dialog
+  [visible]="visible() && !!c"
+  [icon]="isChat() ? chatIcon : phoneIcon"
+  [title]="modalTitle()"
+  [subtitle]="modalSubtitle()"
+  width="720px"
+  (cancelled)="onClose()"
+>
+  @if (c) {
+    <div class="player-body">
+      @if (!isChat()) {
+        @if (isMultiRecording()) {
+          <sc-memory-multi-recording-player
+            [recordings]="c.recordings ?? []"
+            [selectedId]="selectedRecordingId() ?? ''"
+            [isPlaying]="isPlaying()"
+            [currentTime]="currentTime()"
+            [totalDuration]="totalDuration()"
+            [playerEnabled]="playerEnabled()"
+            (togglePlay)="onTogglePlay()"
+            (seek)="onMultiSeek($event)"
+            (selectRecording)="onMultiSelectRecording($event)"
+          />
+        } @else {
+          <div class="player-audio" [class.player-audio--disabled]="!playerEnabled()">
+            <button
+              type="button"
+              class="player-audio__btn"
+              [disabled]="!playerEnabled()"
+              [attr.aria-label]="'memory.player.audio.back10' | translate"
+              (click)="onBack10()"
+            >
+              <sc-icon [name]="back10Icon" [size]="16" />
+            </button>
+
+            <button
+              type="button"
+              class="player-audio__btn player-audio__btn--primary"
+              [disabled]="!playerEnabled()"
+              [attr.aria-label]="
+                (isPlaying() ? 'memory.player.audio.pause' : 'memory.player.audio.play') | translate
+              "
+              (click)="onTogglePlay()"
+            >
+              <sc-icon [name]="isPlaying() ? pauseIcon : playIcon" [size]="18" />
+            </button>
+
+            <button
+              type="button"
+              class="player-audio__btn"
+              [disabled]="!playerEnabled()"
+              [attr.aria-label]="'memory.player.audio.fwd10' | translate"
+              (click)="onFwd10()"
+            >
+              <sc-icon [name]="fwd10Icon" [size]="16" />
+            </button>
+
+            <span class="player-audio__time">{{ currentTimeLabel() }}</span>
+
+            <button
+              type="button"
+              class="player-audio__scrub"
+              role="slider"
+              [disabled]="!playerEnabled()"
+              [attr.aria-label]="'memory.player.audio.seek' | translate"
+              [attr.aria-valuemin]="0"
+              [attr.aria-valuemax]="totalDuration()"
+              [attr.aria-valuenow]="currentTime()"
+              (click)="onScrubClick($event)"
+            >
+              <span class="player-audio__track">
+                <span
+                  aria-hidden="true"
+                  class="player-audio__fill"
+                  [style.transform]="'scaleX(' + progressPct() / 100 + ')'"
+                ></span>
+                <span
+                  aria-hidden="true"
+                  class="player-audio__thumb"
+                  [class.player-audio__thumb--visible]="isPlaying()"
+                  [style.left.%]="progressPct()"
+                ></span>
+              </span>
+            </button>
+
+            <span class="player-audio__time">{{ totalDurationLabel() }}</span>
+          </div>
+        }
+      }
+
+      <div class="player-tabs">
+        <button
+          type="button"
+          class="player-tabs__btn"
+          [class.player-tabs__btn--active]="activeTab() === 'transcription'"
+          (click)="setActiveTab('transcription')"
+        >
+          <sc-icon [name]="fileTextIcon" [size]="14" />
+          {{ 'memory.player.tabs.transcription' | translate }}
+        </button>
+        <button
+          type="button"
+          class="player-tabs__btn"
+          [class.player-tabs__btn--active]="activeTab() === 'analysis'"
+          (click)="setActiveTab('analysis')"
+        >
+          <sc-icon [name]="sparklesIcon" [size]="14" />
+          {{ 'memory.player.tabs.analysis' | translate }}
+        </button>
+
+        <span class="player-tabs__actions">
+          @if (c.hasTranscription) {
+            <button
+              type="button"
+              class="player-tabs__action"
+              [attr.aria-label]="'memory.player.actions.retranscribe' | translate"
+              [attr.title]="'memory.player.actions.retranscribe' | translate"
+              data-testid="player-retrans-btn"
+              (click)="onOpenRetransConfirm()"
+            >
+              <sc-icon [name]="back10Icon" [size]="15" />
+            </button>
+          }
+          <button
+            type="button"
+            class="player-tabs__action"
+            [disabled]="analyzeDisabled()"
+            [attr.aria-label]="'memory.player.actions.analyze' | translate"
+            [attr.title]="analyzeTitleKey() | translate"
+            (click)="onRequestAnalysis()"
+          >
+            <sc-icon [name]="sparklesIcon" [size]="15" />
+          </button>
+          <button
+            type="button"
+            class="player-tabs__action"
+            [attr.aria-label]="
+              (isChat()
+                ? 'memory.player.actions.download_chat'
+                : 'memory.player.actions.download_audio'
+              ) | translate
+            "
+            [attr.title]="
+              (isChat()
+                ? 'memory.player.actions.download_chat'
+                : 'memory.player.actions.download_audio'
+              ) | translate
+            "
+            (click)="onDownload()"
+          >
+            <sc-icon [name]="downloadIcon" [size]="15" />
+          </button>
+        </span>
+      </div>
+
+      <div class="player-tab-body">
+        @if (activeTab() === 'transcription') {
+          @if (isTranscribing()) {
+            <div class="player-state player-state--processing">
+              <sc-icon
+                class="player-state__spinner"
+                name="progress_activity"
+                [size]="24"
+                [spin]="true"
+              />
+              <div class="player-state__text">
+                <h3 class="player-state__title">
+                  {{ 'memory.player.processing.transcribing_title' | translate }}
+                </h3>
+                <p class="player-state__caption">
+                  {{ 'memory.player.processing.transcribing_caption' | translate }}
+                </p>
+              </div>
+            </div>
+          } @else if (!c.hasRecording && c.channel === 'llamada') {
+            <div class="player-state">
+              <sc-icon class="player-state__icon" [name]="fileXIcon" [size]="24" />
+              <h3 class="player-state__title">
+                {{ 'memory.player.empty.no_recording_title' | translate }}
+              </h3>
+              <p class="player-state__desc">
+                {{ 'memory.player.empty.no_recording_desc' | translate }}
+              </p>
+            </div>
+          } @else if (!c.hasTranscription) {
+            <div class="player-state player-state--decision">
+              <sc-icon class="player-state__icon" [name]="fileTextIcon" [size]="24" />
+              <div class="player-state__text">
+                <h3 class="player-state__title">
+                  {{ 'memory.player.empty.no_transcription_title' | translate }}
+                </h3>
+                <p class="player-state__desc">
+                  {{ 'memory.player.empty.no_transcription_desc' | translate }}
+                </p>
+              </div>
+              <div class="player-state__cta">
+                <button
+                  type="button"
+                  class="player-state__btn"
+                  [disabled]="requestingTranscription()"
+                  (click)="onRequestTranscription()"
+                >
+                  @if (requestingTranscription()) {
+                    <sc-icon name="progress_activity" [size]="14" [spin]="true" />
+                  } @else {
+                    <sc-icon [name]="fileTextIcon" [size]="14" />
+                  }
+                  {{
+                    (requestingTranscription()
+                      ? 'memory.player.empty.transcribing_btn'
+                      : 'memory.player.empty.transcribe_btn'
+                    ) | translate
+                  }}
+                </button>
+                <span class="player-state__cost">
+                  <span aria-hidden="true" class="player-state__cost-dot"></span>
+                  {{ 'memory.player.empty.transcribe_cost' | translate }}
+                </span>
+              </div>
+            </div>
+          } @else if (!c.transcription || c.transcription.length === 0) {
+            <div class="player-state">
+              <sc-icon class="player-state__icon" [name]="fileTextIcon" [size]="24" />
+              <h3 class="player-state__title">
+                {{ 'memory.player.empty.transcription_empty_title' | translate }}
+              </h3>
+              <p class="player-state__desc">
+                {{ 'memory.player.empty.transcription_empty_desc' | translate }}
+              </p>
+            </div>
+          } @else {
+            <div class="player-transcript__head">
+              <span class="player-transcript__count">
+                <span class="tabular-nums">{{ filteredLines().length }}</span>
+                {{
+                  (filteredLines().length === 1
+                    ? 'memory.player.transcript.count_one'
+                    : 'memory.player.transcript.count_other'
+                  ) | translate
+                }}
+              </span>
+              <div class="player-transcript__search">
+                <sc-icon class="player-transcript__search-icon" [name]="searchIcon" [size]="12" />
+                <input
+                  type="search"
+                  [value]="searchTerm()"
+                  (input)="onSearchInput($event)"
+                  [placeholder]="'memory.player.transcript.search_placeholder' | translate"
+                  [attr.aria-label]="'memory.player.transcript.search_aria' | translate"
+                />
+              </div>
+            </div>
+
+            <div class="player-transcript__lines">
+              @for (line of filteredLines(); track $index) {
+                @let agent = isAgentSpeaker(line.speaker);
+                <div
+                  class="player-bubble"
+                  [class.player-bubble--agent]="agent"
+                  [class.player-bubble--client]="!agent"
+                >
+                  <div class="player-bubble__meta">
+                    <span class="player-bubble__speaker">{{ line.speaker }}</span>
+                    <span class="player-bubble__time">{{ line.time }}</span>
+                  </div>
+                  <div class="player-bubble__text">{{ line.text }}</div>
+                </div>
+              } @empty {
+                <p class="player-transcript__no-match">
+                  {{ 'memory.player.transcript.no_match' | translate: { q: searchTerm() } }}
+                </p>
+              }
+            </div>
+          }
+        } @else {
+          @if (isAnalyzing() && !c.hasAnalysis) {
+            <div class="player-state player-state--processing">
+              <sc-icon
+                class="player-state__spinner"
+                name="progress_activity"
+                [size]="24"
+                [spin]="true"
+              />
+              <div class="player-state__text">
+                <h3 class="player-state__title">
+                  {{ 'memory.player.processing.analyzing_title' | translate }}
+                </h3>
+                <p class="player-state__caption">
+                  {{ 'memory.player.processing.analyzing_caption' | translate }}
+                </p>
+              </div>
+            </div>
+          } @else if (!c.hasAnalysis) {
+            @if (!canRequestAnalysis()) {
+              <div class="player-state player-state--decision">
+                <sc-icon class="player-state__icon" [name]="sparklesIcon" [size]="24" />
+                <div class="player-state__text">
+                  <h3 class="player-state__title">
+                    {{ 'memory.player.empty.deadend_title' | translate }}
+                  </h3>
+                  <p class="player-state__desc">
+                    {{ 'memory.player.empty.deadend_desc' | translate }}
+                  </p>
+                </div>
+                <div class="player-state__cta">
+                  <button
+                    type="button"
+                    class="player-state__btn"
+                    [disabled]="requestingAnalysis()"
+                    (click)="onRequestBoth()"
+                  >
+                    @if (requestingAnalysis()) {
+                      <sc-icon name="progress_activity" [size]="14" [spin]="true" />
+                    } @else {
+                      <sc-icon [name]="sparklesIcon" [size]="14" />
+                    }
+                    {{
+                      (requestingAnalysis()
+                        ? 'memory.player.empty.processing_btn'
+                        : 'memory.player.empty.deadend_btn'
+                      ) | translate
+                    }}
+                  </button>
+                  <span class="player-state__cost">
+                    <span aria-hidden="true" class="player-state__cost-dot"></span>
+                    {{ 'memory.player.empty.deadend_cost' | translate }}
+                  </span>
+                </div>
+              </div>
+            } @else {
+              <div class="player-state player-state--decision">
+                <sc-icon class="player-state__icon" [name]="sparklesIcon" [size]="24" />
+                <div class="player-state__text">
+                  <h3 class="player-state__title">
+                    {{ 'memory.player.empty.ready_title' | translate }}
+                  </h3>
+                  <p class="player-state__desc">
+                    {{ 'memory.player.empty.ready_desc' | translate }}
+                  </p>
+                </div>
+                <div class="player-state__cta">
+                  <button
+                    type="button"
+                    class="player-state__btn"
+                    [disabled]="requestingAnalysis()"
+                    (click)="onRequestAnalysis()"
+                  >
+                    @if (requestingAnalysis()) {
+                      <sc-icon name="progress_activity" [size]="14" [spin]="true" />
+                    } @else {
+                      <sc-icon [name]="sparklesIcon" [size]="14" />
+                    }
+                    {{
+                      (requestingAnalysis()
+                        ? 'memory.player.empty.requesting_btn'
+                        : 'memory.player.empty.ready_btn'
+                      ) | translate
+                    }}
+                  </button>
+                  <span class="player-state__cost">
+                    <span aria-hidden="true" class="player-state__cost-dot"></span>
+                    {{ 'memory.player.empty.ready_cost' | translate }}
+                  </span>
+                </div>
+              </div>
+            }
+          } @else {
+            <div class="player-analysis">
+              <section class="player-section">
+                <header class="player-section__head">
+                  <span class="player-section__title">
+                    <sc-icon [name]="alignLeftIcon" [size]="13" />
+                    {{ 'memory.player.analysis.summary' | translate }}
+                  </span>
+                  <span
+                    class="player-section__aside"
+                    [attr.title]="'memory.player.analysis.ai_generated_hint' | translate"
+                  >
+                    <sc-icon [name]="sparklesIcon" [size]="10" />
+                    {{ 'memory.player.analysis.ai_generated' | translate }}
+                  </span>
+                </header>
+                @if (summary(); as s) {
+                  <p class="player-section__text">{{ s }}</p>
+                } @else {
+                  <p class="player-section__muted">
+                    {{ 'memory.player.analysis.no_summary' | translate }}
+                  </p>
+                }
+              </section>
+
+              <section class="player-section">
+                <header class="player-section__head">
+                  <span class="player-section__title">
+                    <sc-icon [name]="trendingUpIcon" [size]="13" />
+                    {{ 'memory.player.analysis.sentiment' | translate }}
+                  </span>
+                </header>
+                <div class="player-sentiment">
+                  <span
+                    aria-hidden="true"
+                    class="player-sentiment__dot"
+                    [style.background]="sentiment().color"
+                  ></span>
+                  <span class="player-sentiment__label">
+                    {{ sentiment().labelKey | translate }}
+                  </span>
+                  <span class="player-sentiment__summary">
+                    · {{ sentiment().summaryKey | translate }}
+                  </span>
+                </div>
+              </section>
+            </div>
+          }
+        }
+      </div>
+    </div>
+  }
+
+  <div modal-actions>
+    <p-button type="button" size="small" severity="secondary" (onClick)="onClose()">
+      <span>{{ 'memory.player.close' | translate }}</span>
+    </p-button>
+  </div>
+</sc-dialog>
+
+<!-- Modal de descarga (S47 §10 #4). hasRecordings/hasChats derivados de la
+     conversación activa: chat sin audio → recordings disabled. -->
+<sc-memory-download-modal
+  [visible]="downloadModalVisible()"
+  [hasRecordings]="!isChat() && !!conversation()?.hasRecording"
+  [hasChats]="isChat()"
+  (confirm)="onDownloadConfirmed($event)"
+  (cancelled)="onDownloadCancelled()"
+/>

@@ -1,0 +1,126 @@
+/* CategoriesPage · iter 11a · listado IA categorías. */
+
+:host {
+  display: block;
+  background: var(--sc-bg-surface);
+}
+
+/* Page chrome alineado con AED list-pages (S41 consistency fix). */
+.page {
+  flex: 1;
+  background: var(--sc-bg-surface);
+
+  &__inner {
+    max-width: 1600px;
+    margin: 0 auto;
+    padding: var(--sc-spacing-1-75) var(--sc-spacing-2-25);
+    display: flex;
+    flex-direction: column;
+    gap: var(--sc-spacing-1-5);
+  }
+}
+
+/* Empty state migrado a <sc-empty-state> (S62, backlog #64). */
+
+/* Chrome alineado con AED list-pages (S41 consistency): radius-200,
+ * thead bg-default, font-size-50 + letter-spacing 0.05em, border-bottom
+ * subtle por fila, td secondary + font-size-200. Num cols incluyen
+ * tabular-nums + width 96 (alineado con resto plataforma). */
+.categories-table {
+  width: 100%;
+  border-collapse: collapse;
+  background: var(--sc-bg-surface);
+  border: 1px solid var(--sc-border-default);
+  border-radius: var(--sc-radius-200);
+  overflow: hidden;
+  table-layout: fixed;
+
+  thead th {
+    text-align: left;
+    padding: var(--sc-spacing-0-875);
+    border-bottom: 1px solid var(--sc-border-default);
+    background: var(--sc-bg-default);
+    font-size: var(--sc-font-size-50);
+    font-weight: var(--sc-font-weight-semibold);
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--sc-text-secondary);
+    white-space: nowrap;
+  }
+
+  tbody tr {
+    border-bottom: 1px solid var(--sc-border-subtle);
+    transition: background var(--sc-transition-fast) var(--sc-easing-default);
+
+    &:hover {
+      background: var(--sc-bg-default);
+    }
+  }
+
+  tbody td {
+    padding: var(--sc-spacing-0-875);
+    font-size: var(--sc-font-size-200);
+    color: var(--sc-text-secondary);
+    vertical-align: middle;
+  }
+
+  tbody tr:last-child {
+    border-bottom: 0;
+  }
+
+  &__th-num,
+  &__td-num {
+    width: 96px;
+    text-align: right;
+    font-variant-numeric: tabular-nums;
+  }
+
+  &__th-status,
+  &__td-status {
+    width: 110px;
+  }
+
+  &__th-date,
+  &__td-date {
+    width: 120px;
+    color: var(--sc-text-secondary);
+    font-size: var(--sc-font-size-100);
+  }
+
+  &__th-kebab,
+  &__td-kebab {
+    width: 44px;
+  }
+
+  &__td-desc {
+    color: var(--sc-text-secondary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__td-name strong {
+    font-weight: 500;
+  }
+
+  &__group {
+    margin-left: var(--sc-spacing-0-25);
+    color: var(--sc-text-secondary);
+    font-size: var(--sc-font-size-100);
+    font-weight: 400;
+  }
+
+  .categories-row--inactive {
+    opacity: 0.6;
+  }
+}
+
+.categories-num {
+  font-variant-numeric: tabular-nums;
+  font-size: var(--sc-font-size-200);
+  color: var(--sc-text-primary);
+
+  &--empty {
+    color: var(--sc-text-secondary);
+  }
+}

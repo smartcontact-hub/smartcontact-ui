@@ -1,0 +1,332 @@
+<sc-dialog
+  [visible]="visible()"
+  [icon]="tagsIcon"
+  [title]="
+    (isEditMode() ? 'memory.categories.form.title_edit' : 'memory.categories.form.title_new')
+      | translate
+  "
+  [subtitle]="'memory.categories.form.subtitle' | translate"
+  width="560px"
+  (cancelled)="onCancel()"
+>
+  <div class="category-form">
+    @if (!isEditMode()) {
+      <!-- Botón "Plantillas" solo en modo Create -->
+      <div class="category-form__templates-cta">
+        <button type="button" class="category-form__templates-btn" (click)="openTemplatesDialog()">
+          <sc-icon [name]="layoutTemplateIcon" [size]="14" />
+          {{ 'memory.categories.form.templates_open' | translate }}
+        </button>
+        <span class="category-form__templates-hint">
+          {{ 'memory.categories.form.templates_hint' | translate }}
+        </span>
+      </div>
+    }
+
+    <div class="category-form__row">
+      <sc-inputtext
+        [label]="'memory.categories.form.name_label' | translate"
+        [placeholder]="'memory.categories.form.name_placeholder' | translate"
+        [required]="true"
+        [value]="name()"
+        (valueChange)="setName($event)"
+        [error]="nameError() ? (nameError() ?? '' | translate) : ''"
+      />
+    </div>
+
+    <div class="category-form__row">
+      <label for="cat-description" class="category-form__label">
+        {{ 'memory.categories.form.description_label' | translate }}
+        <span class="category-form__required">*</span>
+      </label>
+      <textarea
+        id="cat-description"
+        class="category-form__textarea"
+        rows="3"
+        [placeholder]="'memory.categories.form.description_placeholder' | translate"
+        [value]="description()"
+        (input)="setDescription($any($event.target).value)"
+      ></textarea>
+      <p class="category-form__hint">
+        {{ 'memory.categories.form.description_hint' | translate }}
+      </p>
+    </div>
+
+    <div class="category-form__row category-form__row--double">
+      <sc-inputtext
+        [label]="'memory.categories.form.group_label' | translate"
+        [placeholder]="'memory.categories.form.group_placeholder' | translate"
+        [value]="group()"
+        (valueChange)="setGroup($event)"
+      />
+
+      <div class="category-form__toggle">
+        <sc-toggleswitch
+          [inputId]="'cat-active-toggle'"
+          [checked]="isActive()"
+          (checkedChange)="isActive.set($event)"
+        />
+        <label for="cat-active-toggle">
+          {{
+            (isActive()
+              ? 'memory.categories.form.active_label'
+              : 'memory.categories.form.inactive_label'
+            ) | translate
+          }}
+        </label>
+      </div>
+    </div>
+
+    <!-- ═══ S49 §10 #13 — Vinculación con reglas (bidireccional) ═══════
+         Solo en modo edit. Réplica de las 4 variantes del React
+         CategoryRuleLinking.tsx. -->
+    @if (isEditMode()) {
+      <div class="category-form__link">
+        <div class="category-form__link-divider"></div>
+
+        <div class="category-form__link-head">
+          <h3>{{ 'memory.categories.linking.title' | translate }}</h3>
+          <button
+            type="button"
+            class="category-form__link-info"
+            [pTooltip]="'memory.categories.linking.tooltip' | translate"
+            tooltipPosition="right"
+            tabindex="0"
+            [attr.aria-label]="'memory.categories.linking.tooltip' | translate"
+          >
+            <sc-icon [name]="infoIcon" [size]="14" />
+          </button>
+        </div>
+
+        @if (linkedRules().length === 0 && !hasAnyRules()) {
+          <!-- Variante A: no vinculada + no hay reglas -->
+          <div class="category-form__link-alert">
+            <sc-icon [name]="alertIcon" [size]="18" />
+            <div>
+              <p class="category-form__link-alert-title">
+                {{ 'memory.categories.linking.inactive_title' | translate }}
+              </p>
+              <p
+                class="category-form__link-alert-body"
+                [innerHTML]="
+                  'memory.categories.linking.no_rules_desc'
+                    | translate: { name: category()?.name ?? '' }
+                "
+              ></p>
+              <p class="category-form__link-alert-tip">
+                {{ 'memory.categories.linking.bidirectional_tip' | translate }}
+              </p>
+              <a
+                class="category-form__link-create-btn"
+                routerLink="/conversaciones/reglas/nueva"
+                [queryParams]="{ type: 'classification' }"
+                target="_blank"
+                rel="noopener"
+              >
+                <sc-icon [name]="plusIcon" [size]="14" />
+                {{ 'memory.categories.linking.create_first_rule' | translate }}
+              </a>
+            </div>
+          </div>
+        } @else if (linkedRules().length === 0 && hasAnyRules()) {
+          <!-- Variante B: no vinculada pero hay reglas -->
+          <div class="category-form__link-alert">
+            <sc-icon [name]="alertIcon" [size]="18" />
+            <div>
+              <p class="category-form__link-alert-title">
+                {{ 'memory.categories.linking.inactive_title' | translate }}
+              </p>
+              <p
+                class="category-form__link-alert-body"
+                [innerHTML]="
+                  'memory.categories.linking.attach_desc'
+                    | translate: { name: category()?.name ?? '' }
+                "
+              ></p>
+            </div>
+          </div>
+
+          <div class="category-form__link-add">
+            <label for="cat-add-rule" class="category-form__link-add-label">
+              {{ 'memory.categories.linking.add_to_existing' | translate }}
+            </label>
+            <sc-select
+              [inputId]="'cat-add-rule'"
+              [options]="availableRuleOptions()"
+              [value]="selectedRuleToAdd()"
+              (valueChange)="onAddRule($any($event))"
+              optionValue="value"
+              optionLabel="label"
+              [filter]="true"
+              filterBy="label,hint"
+              [placeholder]="'memory.categories.linking.select_rule_placeholder' | translate"
+              [showClear]="false"
+              [appendTo]="'body'"
+            >
+              <ng-template let-rule pTemplate="item">
+                <div class="category-form__link-option">
+                  <sc-icon [name]="fileTextIcon" [size]="14" />
+                  <div>
+                    <span class="category-form__link-option-name">{{ rule.label }}</span>
+                    <span class="category-form__link-option-hint">{{ rule.hint }}</span>
+                  </div>
+                </div>
+              </ng-template>
+              <ng-template pTemplate="empty">
+                <span class="category-form__link-option-hint">
+                  {{ 'memory.categories.linking.no_available_rules' | translate }}
+                </span>
+              </ng-template>
+            </sc-select>
+          </div>
+        } @else {
+          <!-- Variantes C + D: linkedRules > 0 (alguna activa o todas inactivas) -->
+          @if (hasActiveRules()) {
+            <p class="category-form__link-status category-form__link-status--ok">
+              <sc-icon [name]="checkIcon" [size]="14" />
+              {{
+                'memory.categories.linking.active_in_n_rules'
+                  | translate: { count: linkedRules().length }
+              }}
+            </p>
+          } @else {
+            <p class="category-form__link-status category-form__link-status--muted">
+              <span aria-hidden="true">⏸️</span>
+              {{
+                'memory.categories.linking.all_inactive_n_rules'
+                  | translate: { count: linkedRules().length }
+              }}
+            </p>
+          }
+
+          <ul class="category-form__link-list">
+            @for (rule of linkedRules(); track rule.id) {
+              <li class="category-form__link-item" [class.is-inactive]="!rule.active">
+                <a
+                  class="category-form__link-item-body"
+                  [routerLink]="['/conversaciones/reglas', rule.id]"
+                  target="_blank"
+                  rel="noopener"
+                >
+                  <sc-icon [name]="fileTextIcon" [size]="14" />
+                  <div>
+                    <div class="category-form__link-item-head">
+                      <span class="category-form__link-item-name">{{ rule.name }}</span>
+                      @if (!rule.active) {
+                        <span class="category-form__link-item-badge">
+                          {{ 'memory.categories.linking.inactive_badge' | translate }}
+                        </span>
+                      }
+                    </div>
+                    <span class="category-form__link-item-meta">
+                      @if (rule.active) {
+                        {{ 'memory.categories.linking.services_meta' | translate }}:
+                        {{ rule.servicios.slice(0, 2).join(', ') }}
+                        @if (rule.servicios.length > 2) {
+                          +{{ rule.servicios.length - 2 }}
+                        }
+                      } @else {
+                        {{ 'memory.categories.linking.rule_disabled_meta' | translate }}
+                      }
+                    </span>
+                  </div>
+                </a>
+                <button
+                  type="button"
+                  class="category-form__link-unlink"
+                  (click)="onUnlinkRule(rule.id)"
+                  [attr.aria-label]="
+                    'memory.categories.linking.unlink_aria' | translate: { name: rule.name }
+                  "
+                >
+                  <sc-icon [name]="xIcon" [size]="14" />
+                </button>
+              </li>
+            }
+          </ul>
+
+          <div class="category-form__link-add">
+            <sc-select
+              [options]="availableRuleOptions()"
+              [value]="selectedRuleToAdd()"
+              (valueChange)="onAddRule($any($event))"
+              optionValue="value"
+              optionLabel="label"
+              [filter]="true"
+              filterBy="label,hint"
+              [placeholder]="'memory.categories.linking.add_another_placeholder' | translate"
+              [showClear]="false"
+              [appendTo]="'body'"
+            >
+              <ng-template let-rule pTemplate="item">
+                <div class="category-form__link-option">
+                  <sc-icon [name]="fileTextIcon" [size]="14" />
+                  <div>
+                    <span class="category-form__link-option-name">{{ rule.label }}</span>
+                    <span class="category-form__link-option-hint">{{ rule.hint }}</span>
+                  </div>
+                </div>
+              </ng-template>
+              <ng-template pTemplate="empty">
+                <span class="category-form__link-option-hint">
+                  {{ 'memory.categories.linking.no_available_rules' | translate }}
+                </span>
+              </ng-template>
+            </sc-select>
+          </div>
+        }
+      </div>
+    }
+  </div>
+
+  <div modal-actions>
+    <p-button type="button" size="small" severity="secondary" (onClick)="onCancel()">
+      <span>{{ 'common.cancel' | translate }}</span>
+    </p-button>
+    <p-button
+      type="button"
+      size="small"
+      severity="primary"
+      [disabled]="!canSave()"
+      (onClick)="onSave()"
+    >
+      <span>
+        @if (isEditMode()) {
+          {{ 'memory.categories.form.save_changes' | translate }}
+        } @else {
+          {{ 'memory.categories.form.create_category' | translate }}
+        }
+      </span>
+    </p-button>
+  </div>
+</sc-dialog>
+
+<!-- Dialog secundario: plantillas predefinidas -->
+<sc-dialog
+  [visible]="templatesDialogVisible()"
+  [icon]="layoutTemplateIcon"
+  [title]="'memory.categories.templates.title' | translate"
+  [subtitle]="'memory.categories.templates.subtitle' | translate"
+  width="640px"
+  (cancelled)="closeTemplatesDialog()"
+>
+  <div class="category-templates">
+    @for (t of templates; track t.id) {
+      <button type="button" class="category-templates__card" (click)="selectTemplate(t)">
+        <span class="category-templates__icon" aria-hidden="true">
+          <sc-icon [name]="t.icon" [size]="18" />
+        </span>
+        <span class="category-templates__body">
+          <span class="category-templates__title">{{ t.title }}</span>
+          <span class="category-templates__hint">{{ t.hint }}</span>
+        </span>
+      </button>
+    }
+  </div>
+
+  <div modal-actions>
+    <p-button type="button" size="small" severity="secondary" (onClick)="closeTemplatesDialog()">
+      <span>{{ 'common.cancel' | translate }}</span>
+    </p-button>
+  </div>
+</sc-dialog>

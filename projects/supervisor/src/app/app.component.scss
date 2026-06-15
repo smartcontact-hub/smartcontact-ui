@@ -1,0 +1,43 @@
+/* ════════════════════════════════════════════════════════════════════
+ * sc-toast — chrome styles importadas desde el partial compartido en
+ * el design-system. La clase `.sc-toast` y todas sus descendientes
+ * viven en `packages/design-system/styles/_sc-toast.scss` para que AED
+ * y ds-docs compartan una única source of truth.
+ *
+ * Ver `packages/design-system/docs/components/10-toast.md` para spec
+ * completo (tokens por severity + SC extensions documentadas).
+ *
+ * Los strips `:host ::ng-deep .p-toast …` MÁS ABAJO en este archivo
+ * NO se pueden mover al partial — necesitan estar dentro del
+ * componente Angular con view encapsulation. Se mantienen locales.
+ * ════════════════════════════════════════════════════════════════════ */
+@use '../styles/sc-toast';
+
+:host {
+  display: block;
+  height: 100%;
+}
+
+/*
+ * PrimeNG wraps each toast in `.p-toast-message-content`. Strip its
+ * default padding/background so our `.sc-toast` is the only chrome.
+ */
+:host ::ng-deep .p-toast .p-toast-message {
+  background: transparent;
+  border: 0;
+  /* Figma `toast/<severity>/shadow: drop-shadow #0X0X0X0A offset(0,4) r8 spread:0`
+   * — single drop-shadow with 4% opacity. Tinted negro neutro plano,
+   * el tint sale del backdrop-blur del .sc-toast. */
+  box-shadow: var(--sc-toast-shadow);
+  margin-bottom: var(--sc-spacing-0-875);
+}
+
+:host ::ng-deep .p-toast .p-toast-message-content {
+  padding: 0;
+  align-items: stretch;
+}
+
+:host ::ng-deep .p-toast .p-toast-message-icon,
+:host ::ng-deep .p-toast .p-toast-close-button {
+  display: none;
+}

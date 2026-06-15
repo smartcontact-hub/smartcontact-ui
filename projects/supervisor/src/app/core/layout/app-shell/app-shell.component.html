@@ -1,0 +1,12 @@
+<a class="app-shell__skip-link" href="#main-content">
+  {{ 'common.skip_to_content' | translate }}
+</a>
+<div class="app-shell">
+  <sc-sidebar />
+  <div class="app-shell__main">
+    <sc-top-bar />
+    <main id="main-content" class="app-shell__content" tabindex="-1">
+      <router-outlet />
+    </main>
+  </div>
+</div>

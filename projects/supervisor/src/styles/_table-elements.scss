@@ -1,0 +1,267 @@
+/*
+ * Shared list-table cell primitives. Lives in `src/styles` (not in any
+ * component) because three pages — agents, users, groups — render the
+ * same grammar of state labels, channel icons and type tags. Owning it
+ * here means the design system is one file, not three.
+ *
+ * BEM blocks all prefixed `sc-` so they can be safely consumed inside
+ * Angular components with default view encapsulation (emulated):
+ * Angular only scopes selectors that match elements in the template,
+ * so global class names defined in `main.scss` flow through.
+ */
+
+/* ------------------------------------------------------------------ *
+ * sc-label — typographic state tag, replaces the dot+text pill.
+ *
+ * Caption-bold uppercase tracked + tinted background, no leading dot.
+ * The dot pattern is the default admin convention; pulling it out and
+ * leaning on type + tint reads as edited rather than templated.
+ * ------------------------------------------------------------------ */
+.sc-label {
+  display: inline-flex;
+  align-items: center;
+  padding: 3px var(--sc-spacing-0-75);
+  font-size: var(--sc-font-size-50);
+  line-height: 1;
+  font-weight: var(--sc-font-weight-semibold);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  border-radius: var(--sc-radius-50);
+  white-space: nowrap;
+
+  &[data-tone='success'] {
+    color: var(--sc-label-green-text);
+    background: var(--sc-label-green-bg);
+  }
+
+  &[data-tone='muted'] {
+    color: var(--sc-text-subtle);
+    background: var(--sc-bg-default);
+  }
+
+  &[data-tone='warning'] {
+    color: var(--sc-label-amber-text);
+    background: var(--sc-label-amber-bg);
+  }
+
+  &[data-tone='danger'] {
+    color: var(--sc-label-red-text);
+    background: var(--sc-label-red-bg);
+  }
+
+  &[data-tone='info'] {
+    color: var(--sc-color-soft-blue-700);
+    background: var(--sc-label-blue-bg);
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * sc-channel-row — bare channel icons, tinted per type.
+ *
+ * Drops the chip-with-border-and-bg wrapper that made every channel
+ * look identical. Each icon now carries the channel's identity via
+ * colour: voice (warm), chat (cyan), email (neutral). Icons sit
+ * directly on the cell — no chip — so they read as a glyph row, not
+ * three repeated buttons.
+ * ------------------------------------------------------------------ */
+.sc-channel-row {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-75);
+
+  &__item {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    color: var(--sc-icon-subtle);
+
+    &[data-channel='phone'] {
+      color: var(--sc-label-green-text);
+    }
+
+    &[data-channel='chat'] {
+      color: var(--sc-color-soft-blue-700);
+    }
+
+    &[data-channel='email'] {
+      color: var(--sc-text-subtle);
+    }
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * sc-type-tag — pill para columnas categóricas (Tipo, Estrategia…).
+ *
+ * Experiment S59 (decisión Rafa "convergir", opción A): pasa de tag
+ * tipográfico sin fondo → pill con fondo gris claro + hairline + radius
+ * full, IDÉNTICA a `.memory-cell-pill` de /conversaciones. Unifica el
+ * tratamiento de datos categóricos entre AED y Memory (vibe BeyondUI/
+ * SnowUI). Revierte a propósito la decisión previa "no chip background".
+ * Consumers: agents (Tipo) · groups (Estrategia) · users (Tipo) + Memory.
+ * ------------------------------------------------------------------ */
+.sc-type-tag {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--sc-spacing-0-25) var(--sc-spacing-0-625);
+  border-radius: var(--sc-radius-full);
+  background: var(--sc-bg-default);
+  border: 1px solid var(--sc-border-subtle);
+  color: var(--sc-text-primary);
+  font-size: var(--sc-font-size-100);
+  font-weight: var(--sc-font-weight-medium);
+  line-height: 1.3;
+  white-space: nowrap;
+
+  &[data-emphasis='strong'] {
+    font-weight: var(--sc-font-weight-semibold);
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * sc-action-divider — 1px vertical separator between primary and
+ * secondary action buttons in list-page toolbars. Visual grouping
+ * makes it obvious that "Crear" / "Editar" are the loud actions and
+ * "Exportar" / column-selector are the quiet ones.
+ * ------------------------------------------------------------------ */
+.sc-action-divider {
+  display: inline-block;
+  width: 1px;
+  height: 20px;
+  background: var(--sc-border-default);
+  margin: 0 var(--sc-spacing-0-5);
+  flex-shrink: 0;
+}
+
+/* ------------------------------------------------------------------ *
+ * sc-icon-btn — icon-only button (export, column selector, etc).
+ *
+ * Square, ghost, 32px. Lives next to ghost buttons in the toolbar
+ * but trades the text label for a tooltip. Saves ~70px and lets the
+ * primary action breathe.
+ * ------------------------------------------------------------------ */
+.sc-icon-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  color: var(--sc-icon-subtle);
+  background: transparent;
+  border: 1px solid var(--sc-border-default);
+  border-radius: var(--sc-radius-100);
+  cursor: pointer;
+  transition:
+    background var(--sc-transition-fast) var(--sc-easing-default),
+    color var(--sc-transition-fast) var(--sc-easing-default),
+    border-color var(--sc-transition-fast) var(--sc-easing-default);
+
+  &:hover {
+    background: var(--sc-bg-default);
+    color: var(--sc-text-secondary);
+    border-color: var(--sc-color-gray-300);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--sc-color-soft-blue-500);
+    outline-offset: 2px;
+  }
+
+  &:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Row + context menu — separator and destructive variant.
+ *
+ * Both `.row-menu__panel` (the inline ⋮ menu per row) and
+ * `.context-menu` (right-click) live as locally-scoped block-class
+ * styles inside each list page's component SCSS, but the destructive
+ * "Eliminar" button + the divider above it follow a shared pattern.
+ * Define them globally so the three list pages don't each reinvent
+ * the rule. View encapsulation keeps the local class rules; these
+ * lower-specificity globals layer the destructive-and-separator
+ * concerns on top without competing with the base styles.
+ * ------------------------------------------------------------------ */
+.row-menu__separator,
+.context-menu__separator {
+  height: 1px;
+  margin: var(--sc-spacing-0-25) var(--sc-spacing-0-875);
+  background: var(--sc-border-subtle);
+}
+
+.row-menu__panel > button.is-danger,
+.context-menu > button.is-danger {
+  color: var(--sc-label-red-text);
+
+  > sc-icon {
+    color: var(--sc-label-red-text);
+  }
+
+  &:hover {
+    background: var(--sc-label-red-bg);
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Numeric columns get an explicit narrow width + right alignment.
+ *
+ * `table.table` runs with `table-layout: fixed` (set globally in
+ * main.scss) so sort indicators don't reshuffle widths when they
+ * appear. A side effect of fixed layout: columns without an explicit
+ * width split the remaining space evenly.
+ *
+ * Floor numeric columns at 96 px and right-align with tabular-nums
+ * for visual rhythm (digits aligned regardless of glyph width).
+ *
+ * Selector convention: dos formas conviven en el codebase por inercia
+ * histórica — AED groups usa `.table__td--num` (BEM modifier doble) y
+ * Memory + AED agents usan `.table__th-num` / `.table__td-num` (dash
+ * único). Cubrir ambas mantiene consistencia visual sin refactor BEM.
+ * ------------------------------------------------------------------ */
+.table__th-num,
+.table__th--num,
+.table__td-num,
+.table__td--num {
+  width: 96px;
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ------------------------------------------------------------------ *
+ * Sortable header — keyboard focus ring.
+ *
+ * `aedSortable` directive (see `core/directives/sortable-header`) sets
+ * `role="button"` + `tabindex="0"` on the `<th>` so keyboard users can
+ * Tab into it and press Enter / Space to sort. The focus ring lives
+ * here (not in each list page's SCSS) so all three admin lists share
+ * the same affordance. Background tint + rounded outline so it reads
+ * as "this column is the focused control" without clashing with the
+ * sticky header chrome above.
+ * ------------------------------------------------------------------ */
+.table__th-sort:focus-visible {
+  outline: 2px solid var(--sc-color-soft-blue-500);
+  outline-offset: -2px;
+  background: var(--sc-bg-secondary-subtle);
+}
+
+/* ------------------------------------------------------------------ *
+ * sc-table-zebra — alternating row tint instead of per-row 1px border.
+ *
+ * The full-width 1px border line per row is the most generic "data
+ * table" treatment that exists. Subtle zebra (5% surface darken on
+ * even rows) gives the eye a horizontal guide without painting a
+ * grid. Apply via `.table.sc-table-zebra` to opt in.
+ * ------------------------------------------------------------------ */
+.sc-table-zebra {
+  tbody tr {
+    border-bottom: 0;
+
+    &:nth-child(even) {
+      background: var(--sc-bg-default);
+    }
+  }
+}

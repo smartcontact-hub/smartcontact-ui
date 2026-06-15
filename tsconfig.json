@@ -12,6 +12,15 @@
       ],
       "@smartcontact-hub/components": [
         "./dist/ui-smartcontact"
+      ],
+      "@shared/*": [
+        "./projects/supervisor/src/app/shared/*"
+      ],
+      "@core/*": [
+        "./projects/supervisor/src/app/core/*"
+      ],
+      "@features/*": [
+        "./projects/supervisor/src/app/features/*"
       ]
     },
     "outDir": "./dist/out-tsc",

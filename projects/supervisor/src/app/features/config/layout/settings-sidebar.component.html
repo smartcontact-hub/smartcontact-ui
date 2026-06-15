@@ -1,0 +1,23 @@
+<aside class="settings-sidebar">
+  <div class="settings-sidebar__panel">
+    <div class="settings-sidebar__head">
+      <span class="settings-sidebar__title">{{ 'config.sidebar.title' | translate }}</span>
+      <span class="settings-sidebar__subtitle">{{ 'config.sidebar.subtitle' | translate }}</span>
+    </div>
+    <nav class="settings-sidebar__nav" aria-label="Contact Center">
+      @for (item of items; track item.path) {
+        <a
+          class="nav-item"
+          routerLinkActive="nav-item--active"
+          ariaCurrentWhenActive="page"
+          [routerLink]="item.path"
+        >
+          <span class="nav-item__icon" aria-hidden="true">
+            <sc-icon [name]="item.icon" [size]="15" />
+          </span>
+          <span class="nav-item__label">{{ item.labelKey | translate }}</span>
+        </a>
+      }
+    </nav>
+  </div>
+</aside>

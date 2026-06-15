@@ -1,0 +1,40 @@
+:host {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}
+
+.memory-status-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--sc-text-subtle);
+  transition: color 200ms ease-out;
+
+  &.is-active {
+    /* Paleta reducida (sec 15.21 audit prototipo): teal/info para
+     * in-flight / completed. La forma del icono carga la distinción
+     * transcrita-vs-analizada (líneas vs sparkle). */
+    color: var(--sc-text-info);
+  }
+
+  &.is-animating {
+    animation: memory-status-icon-pulse 1100ms ease-in-out infinite;
+  }
+}
+
+@keyframes memory-status-icon-pulse {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.35;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .memory-status-icon.is-animating {
+    animation: none;
+  }
+}

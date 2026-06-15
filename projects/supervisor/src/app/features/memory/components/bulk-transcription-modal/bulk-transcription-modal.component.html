@@ -1,0 +1,146 @@
+<sc-dialog
+  [visible]="visible()"
+  [icon]="headerIcon"
+  [title]="'memory.bulk_transcription.modal_title' | translate"
+  [subtitle]="subtitle()"
+  width="720px"
+  (cancelled)="onCancel()"
+>
+  <!-- Body 720×200, dos celdas equal divididas por hairline vertical.
+       Layout v26 (Figma 297:2559). El header del sc-modal y la acción
+       del footer permanecen idénticos al patrón canonical SC. -->
+  <div class="bulkv26" data-testid="bulk-modal-body">
+    <!-- ── Hero cell · Total a procesar ── -->
+    <section class="bulkv26__cell bulkv26__cell--hero">
+      <span class="bulkv26__label">{{ 'memory.bulk_transcription.total_label' | translate }}</span>
+      <div class="bulkv26__hero-stack">
+        <div class="bulkv26__hero-row">
+          <span class="bulkv26__hero-number" [class.is-pulsing]="isPulsing()" aria-live="polite">
+            {{ heroCount() }}
+          </span>
+          <!-- Ghost "+N" / "−N" delta-fly · 750ms float-up (S49 SCDS animation).
+               Cambiar la key via @for fuerza remount → keyframe re-fired. -->
+          @for (g of deltaGhost() ? [deltaGhost()] : []; track g!.key) {
+            <span
+              class="bulkv26__hero-delta"
+              [class.is-positive]="g!.value > 0"
+              [class.is-negative]="g!.value < 0"
+              aria-hidden="true"
+            >
+              {{ g!.value > 0 ? '+' : '' }}{{ g!.value }}
+            </span>
+          }
+          <!-- "{{ 'memory.bulk_transcription.cost_hint' | translate }}" cue. Slot reservado siempre para que C1
+               (isAllProcessed) no haga reflow al esconderlo. -->
+          <span
+            class="bulkv26__cost-cue"
+            [class.is-hidden]="isAllProcessed()"
+            [attr.aria-hidden]="isAllProcessed() ? 'true' : null"
+          >
+            {{ 'memory.bulk_transcription.cost_hint' | translate }}
+          </span>
+        </div>
+        <!-- experiment/beyondui-patterns S58 · Mixed-state badges (Skill
+             redesign-existing-projects). Reemplaza el texto denso por
+             chips iconográficos diferenciados:
+             - verde (include): elegibles
+             - amber (warn): atención multi-tramo
+             - gray (exclude): excluidas en proceso
+             Min-height reservado para evitar CLS. -->
+        <div class="bulkv26__hero-badges" aria-live="polite">
+          @for (b of heroBadges(); track b.kind + b.label) {
+            <span
+              class="bulkv26__badge"
+              [class.is-include]="b.kind === 'include'"
+              [class.is-warn]="b.kind === 'warn'"
+              [class.is-exclude]="b.kind === 'exclude'"
+            >
+              <sc-icon [name]="b.icon" [size]="12" class="bulkv26__badge-icon" />
+              <span class="bulkv26__badge-count">{{ b.count }}</span>
+              <span class="bulkv26__badge-label">{{ b.label }}</span>
+            </span>
+          }
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Decision cell · Análisis ── -->
+    <section class="bulkv26__cell bulkv26__cell--decision" [class.is-shaking]="isShaking()">
+      <span class="bulkv26__label">{{
+        'memory.bulk_transcription.analysis_label' | translate
+      }}</span>
+      <div class="bulkv26__decision-stack">
+        <div class="bulkv26__decision-row">
+          <span
+            class="bulkv26__decision-title"
+            [class.is-on]="toggleOn()"
+            [class.is-off]="!toggleOn()"
+          >
+            {{ 'memory.bulk_transcription.include_analysis' | translate }}
+          </span>
+          <sc-toggleswitch
+            [checked]="toggleOn()"
+            (checkedChange)="onToggleChange($event)"
+            [disabled]="toggleDisabled()"
+            [ariaLabel]="'memory.bulk_transcription.include_analysis' | translate"
+          />
+        </div>
+
+        <!-- Caption: "{{ 'memory.bulk_transcription.all_processed' | translate }}" en C1; "N admiten análisis" resto. -->
+        <div class="bulkv26__caption">
+          @if (toggleDisabled()) {
+            <span class="bulkv26__caption-muted">{{
+              'memory.bulk_transcription.all_processed' | translate
+            }}</span>
+          } @else {
+            <span
+              class="bulkv26__caption-num"
+              [class.is-on]="toggleOn()"
+              [class.is-pulsing]="isPulsing()"
+            >
+              {{ nTrans() + nAnBase() }}
+            </span>
+            <span
+              class="bulkv26__caption-pred"
+              [class.is-on]="toggleOn()"
+              [class.is-pulsing]="isPulsing()"
+            >
+              {{ captionLabel() }}
+            </span>
+          }
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Audit A6 — error inline strip recuperable. Mantiene layout sin
+       reflow al aparecer/desaparecer. -->
+  @if (error(); as e) {
+    <div class="bulkv26__error" role="alert">
+      <sc-icon [name]="alertIcon" [size]="14" class="bulkv26__error-icon" />
+      <p class="bulkv26__error-text">{{ e }}</p>
+    </div>
+  }
+
+  <div modal-actions>
+    <p-button
+      type="button"
+      size="small"
+      severity="secondary"
+      [disabled]="isLoading()"
+      (onClick)="onCancel()"
+    >
+      <span>{{ 'memory.bulk_transcription.close_btn' | translate }}</span>
+    </p-button>
+    <p-button
+      type="button"
+      size="small"
+      severity="primary"
+      [loading]="isLoading()"
+      [disabled]="!canSubmit()"
+      (onClick)="onConfirm()"
+    >
+      <span>{{ 'memory.bulk_transcription.process_btn' | translate }}</span>
+    </p-button>
+  </div>
+</sc-dialog>

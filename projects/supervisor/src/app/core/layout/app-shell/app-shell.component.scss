@@ -1,0 +1,68 @@
+:host {
+  display: block;
+  height: 100%;
+}
+
+/*
+ * The sidebar is fixed to the viewport edge and reserves the
+ * `--sc-sidebar-width` (collapsed value) as a left gutter for everything
+ * else. When the user hovers it, the sidebar grows to its expanded width
+ * and OVERLAYS the page content — the gutter never resizes, so nothing on
+ * the page reflows on hover. (Notion / Linear pattern.)
+ *
+ * `100dvh` follows the dynamic viewport — on iOS Safari the URL bar
+ * sliding up/down no longer crops the bottom row of content.
+ */
+.app-shell {
+  height: 100dvh;
+  width: 100vw;
+  overflow: hidden;
+  background: var(--sc-bg-default);
+
+  &__main {
+    height: 100%;
+    padding-left: var(--sc-sidebar-width);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  &__content {
+    flex: 1;
+    overflow: auto;
+    /* `tabindex="-1"` makes this focusable programmatically (skip-link
+     * targets it) without inserting it into the natural Tab order. Drop
+     * the focus ring so it doesn't render when the user lands here via
+     * the skip link — the page content underneath gets focus next. */
+    &:focus {
+      outline: none;
+    }
+  }
+
+  /* Skip-to-content — visually hidden until focused via Tab from the
+   * top of the page. Lifts above all chrome (z-toast slot) so screen-
+   * reader and keyboard-only users can jump straight into the routed
+   * view without traversing the sidebar nav every time.
+   */
+  &__skip-link {
+    position: absolute;
+    top: var(--sc-spacing-0-875);
+    left: var(--sc-spacing-0-875);
+    z-index: var(--sc-z-toast);
+    padding: var(--sc-spacing-0-875) var(--sc-spacing-1-125);
+    background: var(--sc-bg-primary);
+    color: var(--sc-text-on-primary);
+    font-size: var(--sc-font-size-100);
+    font-weight: var(--sc-font-weight-medium);
+    border-radius: var(--sc-radius-200);
+    text-decoration: none;
+    transform: translateY(-200%);
+    transition: transform var(--sc-transition-fast) var(--sc-easing-default);
+
+    &:focus {
+      transform: translateY(0);
+      outline: 2px solid var(--sc-color-soft-blue-500);
+      outline-offset: 2px;
+    }
+  }
+}

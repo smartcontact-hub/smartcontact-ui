@@ -1,0 +1,125 @@
+<section class="card">
+  <div class="card__head">
+    <sc-icon [name]="hashIcon" [size]="14" class="card__head-icon" />
+    <span class="card__head-title">{{ 'config.aed.section.title' | translate }}</span>
+    <span class="card__head-hint">{{ 'config.aed.section.hint' | translate }}</span>
+  </div>
+
+  <div class="card__body">
+    <div class="info-callout">
+      <sc-icon [name]="infoIcon" [size]="14" class="info-callout__icon" />
+      <p>{{ 'config.aed.info' | translate }}</p>
+    </div>
+
+    <div class="search">
+      <sc-icon [name]="searchIcon" [size]="14" class="search__icon" />
+      <input
+        type="text"
+        class="search__input"
+        [placeholder]="'config.aed.search_placeholder' | translate"
+        [value]="searchQuery()"
+        (input)="searchQuery.set($any($event.target).value)"
+        (keydown)="onSearchKey($event)"
+      />
+      @if (searchQuery()) {
+        <button
+          type="button"
+          class="search__clear"
+          (click)="searchQuery.set('')"
+          [attr.aria-label]="'labels.clear_search' | translate"
+        >
+          <sc-icon [name]="closeIcon" [size]="13" />
+        </button>
+      }
+    </div>
+
+    <div class="country-list">
+      @if (filtered().length === 0) {
+        <div class="country-list__empty">
+          {{ 'config.aed.no_results' | translate: { query: searchQuery() } }}
+        </div>
+      } @else {
+        @for (country of filtered(); track country.code) {
+          <button
+            type="button"
+            class="country-row"
+            [class.country-row--selected]="isSelected(country.code)"
+            (click)="toggle(country.code)"
+          >
+            <input
+              type="checkbox"
+              class="country-row__check"
+              [checked]="isSelected(country.code)"
+              (click)="$event.stopPropagation()"
+              (change)="toggle(country.code)"
+              [attr.aria-label]="country.name"
+            />
+            <span class="country-row__flag" aria-hidden="true">{{ country.flag }}</span>
+            <span class="country-row__name">{{ country.name }}</span>
+            <span class="country-row__code">{{ country.code }}</span>
+            <span class="country-row__prefix">{{ country.prefix }}</span>
+            @if (isSelected(country.code)) {
+              <button
+                type="button"
+                class="country-row__remove"
+                (click)="remove(country.code, $event)"
+                [attr.aria-label]="'common.delete' | translate"
+              >
+                <sc-icon [name]="closeIcon" [size]="12" />
+              </button>
+            }
+          </button>
+        }
+      }
+    </div>
+
+    @if (selectedCodes().size > 0) {
+      <div class="chips">
+        <span class="chips__label">{{ 'config.aed.selected_chips' | translate }}</span>
+        <div class="chips__list">
+          @for (country of selectedCountries(); track country.code) {
+            <span class="chip">
+              <span class="chip__flag" aria-hidden="true">{{ country.flag }}</span>
+              <span class="chip__name">{{ country.name }}</span>
+              <span class="chip__prefix">{{ country.prefix }}</span>
+              <button
+                type="button"
+                class="chip__remove"
+                (click)="remove(country.code)"
+                [attr.aria-label]="'common.delete' | translate"
+              >
+                <sc-icon [name]="closeIcon" [size]="11" />
+              </button>
+            </span>
+          }
+        </div>
+      </div>
+    }
+  </div>
+
+  @if (dirty()) {
+    <div class="card__foot">
+      <p-button
+        type="button"
+        size="small"
+        severity="secondary"
+        [outlined]="true"
+        (onClick)="discard()"
+      >
+        <span>{{ 'common.discard_changes' | translate }}</span>
+      </p-button>
+      <p-button
+        type="button"
+        size="small"
+        severity="primary"
+        [disabled]="saving()"
+        (onClick)="save()"
+      >
+        <sc-icon [name]="saveIcon" [size]="14" />
+        <span>
+          {{ (saving() ? 'config.aed.saving' : 'config.aed.save') | translate }}
+        </span>
+      </p-button>
+    </div>
+  }
+</section>

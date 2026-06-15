@@ -1,0 +1,38 @@
+:host {
+  font-family: 'Material Symbols Outlined';
+  font-weight: normal;
+  font-style: normal;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex: 0 0 auto;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  font-feature-settings: 'liga';
+  -webkit-font-feature-settings: 'liga';
+  -webkit-font-smoothing: antialiased;
+  user-select: none;
+  overflow: hidden;
+}
+
+/* Spinner: `<sc-icon name="progress_activity" [spin]="true">`. Reemplaza al
+ * antiguo `Loader2` de Lucide. La animación se apaga con reduced-motion. */
+:host(.sc-icon--spin) {
+  animation: sc-icon-spin 1s linear infinite;
+}
+
+@keyframes sc-icon-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  :host(.sc-icon--spin) {
+    animation: none;
+  }
+}

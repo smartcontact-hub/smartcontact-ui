@@ -1,0 +1,228 @@
+<!-- Modelo "todo arriba" (experiment S59): fuera la banda sticky-form-header.
+     Identidad → breadcrumb + campos del cuerpo (foto/nombre en Identidad);
+     Guardar/Cancelar → barra de arriba vía TopBarSlotService (ver el .ts). -->
+<ng-template #topbarActions>
+  <p-button type="button" size="small" severity="secondary" (onClick)="cancel()">
+    <span>{{ 'common.cancel' | translate }}</span>
+  </p-button>
+  <p-button
+    type="button"
+    size="small"
+    severity="primary"
+    [disabled]="!canSave()"
+    [loading]="saving()"
+    (onClick)="save()"
+  >
+    <span>{{ 'common.save' | translate }}</span>
+  </p-button>
+</ng-template>
+
+<div class="page">
+  <div class="page__inner page__inner--with-panel">
+    <aside class="ipanel" aria-label="Índice del formulario">
+      <!-- La ficha: resumen de identidad (solo lectura) arriba del índice.
+           Modelo "todo arriba" S59 — quién editas + su tipo, de un vistazo.
+           Solo en editar; al crear no hay identidad todavía. -->
+      @if (mode() === 'edit') {
+        <div class="ficha">
+          <sc-illustrated-avatar
+            class="ficha__avatar"
+            [name]="form().name"
+            [photo]="form().photo"
+            [size]="40"
+          />
+          <div class="ficha__body">
+            <span class="ficha__name">{{ form().name }}</span>
+            <span class="pill">{{ typeLabelKeys[form().type] | translate }}</span>
+            @if (form().email) {
+              <span class="ficha__ext">{{ form().email }}</span>
+            }
+          </div>
+        </div>
+      }
+
+      <sc-form-section-nav
+        [sections]="navSections()"
+        [activeId]="activeSection()"
+        [sectionsWithErrors]="sectionsWithErrors()"
+        [flush]="true"
+        (activeChange)="activeSection.set($event)"
+      />
+
+      <!-- Zona de peligro: Eliminar al fondo del panel, enlace discreto y
+           apartado del índice → fuera del scan primario (S59). -->
+      @if (mode() === 'edit') {
+        <button type="button" class="ipanel__delete" (click)="requestDelete()">
+          <sc-icon [name]="trashIcon" [size]="14" />
+          <span>{{ 'common.delete' | translate }}</span>
+        </button>
+      }
+    </aside>
+
+    <div class="page__form">
+      @switch (activeSection()) {
+        @case ('user-section-identity') {
+          <sc-section-card
+            anchorId="user-section-identity"
+            [icon]="activeIcon()"
+            titleKey="users.form.section.identity"
+          >
+            <!-- Foto + nombre re-homed al cuerpo (experiment S59 "todo arriba"):
+                 al quitar la banda sticky-form-header, la identidad vuelve a
+                 ser campos del form (+ el breadcrumb arriba la repite). -->
+            <div class="form-identity">
+              <sc-photo-upload
+                size="sm"
+                [photo]="form().photo"
+                [name]="form().name"
+                [ariaLabel]="'common.photo.change' | translate"
+                (photoChange)="onPhotoChange($event)"
+              />
+              <div class="field form-identity__name">
+                <sc-inputtext
+                  inputId="user-name"
+                  [label]="'users.form.fields.name' | translate"
+                  [value]="form().name"
+                  [error]="errors()['name'] ? (errors()['name']! | translate) : undefined"
+                  (valueChange)="onNameRename($event)"
+                />
+              </div>
+            </div>
+
+            <div class="grid grid--2">
+              <sc-inputtext
+                inputId="user-email"
+                type="email"
+                autocomplete="email"
+                [label]="'users.form.fields.email' | translate"
+                [required]="true"
+                [value]="form().email"
+                (valueChange)="onTextValue('email', $event)"
+                [error]="errors()['email'] ? (errors()['email']! | translate) : undefined"
+              />
+
+              <sc-inputtext
+                inputId="user-identifier"
+                type="text"
+                [label]="'users.form.fields.identifier' | translate"
+                [helperText]="'users.form.fields.identifier_hint' | translate"
+                [value]="form().identifier"
+                (valueChange)="onTextValue('identifier', $event)"
+              />
+
+              <div class="field">
+                <label class="field__label" for="user-type">
+                  {{ 'users.form.fields.type' | translate }}
+                </label>
+                <sc-select
+                  inputId="user-type"
+                  [options]="userTypes"
+                  [value]="form().type"
+                  (valueChange)="onTypeValueChange($event)"
+                >
+                  <ng-template pTemplate="item" let-t>
+                    {{ typeLabelKeys[t] | translate }}
+                  </ng-template>
+                  <ng-template pTemplate="selectedItem" let-t>
+                    {{ typeLabelKeys[t] | translate }}
+                  </ng-template>
+                </sc-select>
+              </div>
+            </div>
+
+            <div class="field field--inline">
+              <sc-toggleswitch
+                [checked]="form().status === 'active'"
+                [ariaLabel]="'users.form.fields.status' | translate"
+                (checkedChange)="onStatusChange($event)"
+              />
+              <div>
+                <span class="field__label-inline">{{
+                  'users.form.fields.status' | translate
+                }}</span>
+                <span class="field__help">
+                  {{ 'users.form.fields.status_' + form().status | translate }}
+                </span>
+              </div>
+            </div>
+          </sc-section-card>
+        }
+
+        @case ('user-section-sections') {
+          <sc-section-card
+            anchorId="user-section-sections"
+            [icon]="activeIcon()"
+            titleKey="users.form.section.sections"
+            hintKey="users.form.section.sections_hint"
+          >
+            <div class="checkbox-grid">
+              @for (def of sectionDefs; track def.key) {
+                <label class="checkbox-row" [class.checkbox-row--child]="!!def.parent">
+                  <input
+                    type="checkbox"
+                    [checked]="form().sections[def.key]"
+                    (change)="toggleSection(def.key)"
+                  />
+                  <span>{{ def.labelKey | translate }}</span>
+                </label>
+              }
+            </div>
+          </sc-section-card>
+        }
+
+        @case ('user-section-permissions') {
+          <sc-section-card
+            anchorId="user-section-permissions"
+            [icon]="activeIcon()"
+            titleKey="users.form.section.permissions"
+          >
+            <div class="checkbox-grid">
+              @for (def of permissionDefs; track def.key) {
+                <label class="checkbox-row">
+                  <input
+                    type="checkbox"
+                    [checked]="form().permissions[def.key]"
+                    (change)="togglePermission(def.key)"
+                  />
+                  <span>{{ def.labelKey | translate }}</span>
+                </label>
+              }
+            </div>
+          </sc-section-card>
+        }
+
+        @case ('user-section-services') {
+          <sc-section-card
+            anchorId="user-section-services"
+            [icon]="activeIcon()"
+            titleKey="users.form.section.services"
+            hintKey="users.form.section.services_hint"
+          >
+            <div class="checkbox-grid checkbox-grid--services">
+              @for (service of availableServices; track service) {
+                <label class="checkbox-row">
+                  <input
+                    type="checkbox"
+                    [checked]="hasService(service)"
+                    (change)="toggleService(service)"
+                  />
+                  <span>{{ service }}</span>
+                </label>
+              }
+            </div>
+          </sc-section-card>
+        }
+      }
+    </div>
+  </div>
+</div>
+
+<sc-delete-entity-dialog
+  [visible]="deleteVisible()"
+  mode="single"
+  [items]="deleteItems()"
+  [entitySingular]="'usuario'"
+  [entityPlural]="'usuarios'"
+  (cancelled)="cancelDelete()"
+  (confirm)="confirmDelete()"
+/>

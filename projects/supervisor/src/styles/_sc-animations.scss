@@ -1,0 +1,98 @@
+/*
+ * SCDS — SC micro-animations partial.
+ *
+ * Imported by:
+ *   - apps/supervisor/src/styles/main.scss
+ *   - apps/ds-docs/src/styles/main.scss (cuando llegue trigger)
+ *
+ * 4 keyframes canónicas SC (replicadas del prototipo Memory React
+ * `src/styles/sc-design-system.css` líneas 312-352). Todas tocan
+ * EXCLUSIVAMENTE `transform` y `opacity` — nunca propiedades que
+ * disparen reflow (width/height/top/left). Esto es lo que las hace
+ * baratas en CPU y respeta memoria `feedback_no_layout_shift`.
+ *
+ * | Animación   | Duración | Curva                | Uso típico                          |
+ * |-------------|----------|----------------------|-------------------------------------|
+ * | sc-bump     | 260ms    | --sc-ease-out        | counter cambia (cifra hero, badge)  |
+ * | sc-pulse    | 360ms    | --sc-ease-out        | toggle activa/cambia (más visible)  |
+ * | sc-shake    | 280ms    | ease                 | acción bloqueada (toggle disabled)  |
+ * | sc-delta-fly| 750ms    | --sc-ease-out forwds | ghost "+N"/"−N" flotando arriba     |
+ *
+ * Patrón de uso (Angular signals): re-disparar el keyframe cambiando
+ * un atributo `[attr.data-anim-key]="counter()"` o toggleando una
+ * class con un signal counter dummy — el browser remonta el animation
+ * cuando la clase entra de nuevo.
+ *
+ * a11y: `prefers-reduced-motion: reduce` silencia las 4. Son afirmativas
+ * (bump on success, pulse on counter change), no críticas — su ausencia
+ * no rompe ningún flujo.
+ */
+
+@keyframes sc-bump {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.03);
+  }
+}
+
+@keyframes sc-pulse {
+  0%,
+  100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.08);
+  }
+}
+
+@keyframes sc-shake {
+  0%,
+  100% {
+    transform: translateX(0);
+  }
+  25% {
+    transform: translateX(-4px);
+  }
+  75% {
+    transform: translateX(4px);
+  }
+}
+
+@keyframes sc-delta-fly {
+  0% {
+    transform: translateY(0);
+    opacity: 0;
+  }
+  15% {
+    opacity: 1;
+  }
+  100% {
+    transform: translateY(-34px);
+    opacity: 0;
+  }
+}
+
+.animate-sc-bump {
+  animation: sc-bump 260ms var(--sc-ease-out, cubic-bezier(0.16, 1, 0.3, 1));
+}
+.animate-sc-pulse {
+  animation: sc-pulse 360ms var(--sc-ease-out, cubic-bezier(0.16, 1, 0.3, 1));
+}
+.animate-sc-shake {
+  animation: sc-shake 280ms ease;
+}
+.animate-sc-delta-fly {
+  animation: sc-delta-fly 750ms var(--sc-ease-out, cubic-bezier(0.16, 1, 0.3, 1)) forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .animate-sc-bump,
+  .animate-sc-pulse,
+  .animate-sc-shake,
+  .animate-sc-delta-fly {
+    animation: none !important;
+  }
+}

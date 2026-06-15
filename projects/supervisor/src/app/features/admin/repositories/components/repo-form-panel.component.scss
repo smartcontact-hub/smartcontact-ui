@@ -1,0 +1,117 @@
+:host {
+  display: block;
+}
+
+.panel {
+  width: 320px;
+  background: var(--sc-bg-surface);
+  border: 1px solid var(--sc-border-default);
+  border-radius: var(--sc-radius-200);
+  padding: var(--sc-spacing-1-125);
+  box-shadow: var(--sc-shadow-popover);
+
+  &__title {
+    margin: 0 0 var(--sc-spacing-0-875);
+    font-size: var(--sc-font-size-200);
+    font-weight: var(--sc-font-weight-semibold);
+    color: var(--sc-text-primary);
+  }
+
+  &__field {
+    margin-bottom: var(--sc-spacing-0-875);
+  }
+
+  &__label {
+    display: block;
+    margin-bottom: var(--sc-spacing-0-25);
+    font-size: var(--sc-font-size-100);
+    color: var(--sc-text-secondary);
+  }
+
+  &__hint {
+    color: var(--sc-text-disabled);
+    margin-left: var(--sc-spacing-0-25);
+  }
+
+  &__textarea {
+    width: 100%;
+    padding: var(--sc-spacing-0-5) var(--sc-spacing-0-5);
+    font-family: inherit;
+    font-size: var(--sc-font-size-200);
+    color: var(--sc-text-primary);
+    background: var(--sc-bg-surface);
+    border: 1px solid var(--sc-border-default);
+    border-radius: var(--sc-radius-100);
+    outline: none;
+    resize: vertical;
+    min-height: 64px;
+    transition: border-color var(--sc-transition-fast) var(--sc-easing-default);
+
+    &::placeholder {
+      color: var(--sc-text-subtle);
+    }
+
+    &:hover {
+      border-color: var(--sc-border-strong);
+    }
+
+    &:focus {
+      border-color: var(--sc-color-blue-500);
+    }
+  }
+
+  &__error-slot {
+    min-height: var(--sc-spacing-1-125);
+    margin-bottom: var(--sc-spacing-0-5);
+  }
+
+  &__error {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sc-spacing-0-25);
+    font-size: var(--sc-font-size-50);
+    color: var(--sc-text-danger);
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--sc-spacing-0-5);
+  }
+
+  &__btn {
+    padding: var(--sc-spacing-0-5) var(--sc-spacing-1-125);
+    font-size: var(--sc-font-size-100);
+    font-weight: var(--sc-font-weight-medium);
+    border-radius: var(--sc-radius-100);
+    cursor: pointer;
+    transition: background var(--sc-transition-fast) var(--sc-easing-default);
+
+    &--ghost {
+      color: var(--sc-text-secondary);
+      background: var(--sc-bg-surface);
+      border: 1px solid var(--sc-border-default);
+
+      &:hover {
+        background: var(--sc-bg-secondary-hover);
+      }
+    }
+
+    &--primary {
+      color: var(--sc-text-on-primary);
+      background: var(--sc-bg-primary);
+      border: 1px solid var(--sc-bg-primary);
+
+      &:hover {
+        background: var(--sc-bg-primary-hover);
+        border-color: var(--sc-bg-primary-hover);
+      }
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--sc-color-soft-blue-500);
+      outline-offset: 2px;
+    }
+  }
+}

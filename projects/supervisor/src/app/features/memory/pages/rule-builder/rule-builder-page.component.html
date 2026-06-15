@@ -1,0 +1,449 @@
+<div class="rule-builder">
+  <header class="rule-builder__head">
+    <button
+      type="button"
+      class="rule-builder__back"
+      [attr.aria-label]="'memory.rules.builder.back' | translate"
+      (click)="onCancel()"
+    >
+      <sc-icon [name]="backIcon" [size]="16" />
+    </button>
+    <div class="rule-builder__head-text">
+      <h1>
+        @if (isEditMode()) {
+          {{ 'memory.rules.builder.title_edit' | translate }}
+        } @else {
+          {{ 'memory.rules.builder.title_new' | translate }}
+        }
+        ·
+        <span class="rule-builder__type">{{
+          'memory.rules.builder.type.' + ruleType() | translate
+        }}</span>
+      </h1>
+      <p>{{ 'memory.rules.builder.subtitle' | translate }}</p>
+    </div>
+  </header>
+
+  <!-- Banner Borrador sin editar · spec line 122-127. Contenedor
+       siempre reservado para evitar layout shift al cargar. -->
+  <div
+    class="rule-builder__draft-banner-slot"
+    [class.rule-builder__draft-banner-slot--visible]="isDraft()"
+  >
+    @if (isDraft()) {
+      <div class="rule-builder__draft-banner">
+        <div class="rule-builder__draft-message">
+          <sc-icon [name]="alertIcon" [size]="16" />
+          <p>{{ 'memory.rules.builder.draft_banner' | translate }}</p>
+        </div>
+        <button type="button" class="rule-builder__draft-discard" (click)="onDiscardDraft()">
+          <sc-icon [name]="trashIcon" [size]="13" />
+          {{ 'memory.rules.builder.discard_draft' | translate }}
+        </button>
+      </div>
+    }
+  </div>
+
+  <div class="rule-builder__body">
+    <!-- Bloque 1: Metadatos -->
+    <section class="rule-block">
+      <header class="rule-block__head">
+        <h2>{{ 'memory.rules.builder.metadata' | translate }}</h2>
+        <div class="rule-block__active-toggle">
+          <sc-toggleswitch
+            [inputId]="'active-toggle'"
+            [checked]="active()"
+            (checkedChange)="active.set($event)"
+          />
+          <label for="active-toggle">
+            {{
+              (active()
+                ? 'memory.rules.builder.active_label'
+                : 'memory.rules.builder.inactive_label'
+              ) | translate
+            }}
+          </label>
+        </div>
+      </header>
+
+      <div class="rule-block__row">
+        <sc-inputtext
+          [label]="'memory.rules.builder.name_label' | translate"
+          [placeholder]="'memory.rules.builder.name_placeholder' | translate"
+          [required]="true"
+          [value]="name()"
+          (valueChange)="setName($event)"
+          [error]="
+            nameInvalid() && name().length > 0
+              ? ('memory.rules.builder.name_error' | translate)
+              : ''
+          "
+        />
+      </div>
+
+      <div class="rule-block__row">
+        <label for="rule-description" class="rule-builder__textarea-label">
+          {{ 'memory.rules.builder.description_label' | translate }}
+          <span class="rule-builder__optional"> ({{ 'common.optional' | translate }}) </span>
+        </label>
+        <textarea
+          id="rule-description"
+          class="rule-builder__textarea"
+          rows="3"
+          [placeholder]="'memory.rules.builder.description_placeholder' | translate"
+          [value]="description()"
+          (input)="setDescription($any($event.target).value)"
+        ></textarea>
+      </div>
+    </section>
+
+    <!-- Bloque 2: Alcance (3 dimensiones AND) -->
+    <section class="rule-block">
+      <header class="rule-block__head">
+        <h2>{{ 'memory.rules.builder.scope' | translate }}</h2>
+        <p class="rule-block__desc">{{ 'memory.rules.builder.scope_desc' | translate }}</p>
+      </header>
+
+      <div class="scope-dim">
+        <header class="scope-dim__head">
+          <div>
+            <h3>{{ 'memory.rules.builder.scope_dim.servicios.title' | translate }}</h3>
+            <p class="scope-dim__source">
+              <sc-icon [name]="databaseIcon" [size]="11" />
+              {{ 'memory.rules.builder.scope_dim.servicios.source' | translate }}
+            </p>
+          </div>
+          <a
+            class="scope-dim__link"
+            routerLink="/admin/repositorios"
+            target="_blank"
+            rel="noopener"
+          >
+            <sc-icon [name]="externalIcon" [size]="11" />
+            {{ 'memory.rules.builder.see_repository' | translate }}
+          </a>
+        </header>
+        <sc-multiselect
+          [options]="serviceOptions"
+          optionLabel="label"
+          optionValue="value"
+          [placeholder]="'memory.rules.builder.scope_dim.servicios.placeholder' | translate"
+          [filter]="true"
+          [value]="[...servicios()]"
+          (valueChange)="setServicios($event)"
+        />
+      </div>
+
+      <div class="scope-and-connector" aria-hidden="true">
+        <span>{{ 'memory.rules.builder.scope_and' | translate }}</span>
+      </div>
+
+      <div class="scope-dim">
+        <header class="scope-dim__head">
+          <div>
+            <h3>{{ 'memory.rules.builder.scope_dim.grupos.title' | translate }}</h3>
+            <p class="scope-dim__source">
+              <sc-icon [name]="databaseIcon" [size]="11" />
+              {{ 'memory.rules.builder.scope_dim.grupos.source' | translate }}
+            </p>
+          </div>
+          <a
+            class="scope-dim__link"
+            routerLink="/admin/repositorios"
+            target="_blank"
+            rel="noopener"
+          >
+            <sc-icon [name]="externalIcon" [size]="11" />
+            {{ 'memory.rules.builder.see_repository' | translate }}
+          </a>
+        </header>
+        <sc-multiselect
+          [options]="groupOptions"
+          optionLabel="label"
+          optionValue="value"
+          [placeholder]="'memory.rules.builder.scope_dim.grupos.placeholder' | translate"
+          [filter]="true"
+          [value]="[...grupos()]"
+          (valueChange)="setGrupos($event)"
+        />
+      </div>
+
+      <div class="scope-and-connector" aria-hidden="true">
+        <span>{{ 'memory.rules.builder.scope_and' | translate }}</span>
+      </div>
+
+      <div class="scope-dim">
+        <header class="scope-dim__head">
+          <div>
+            <h3>{{ 'memory.rules.builder.scope_dim.agentes.title' | translate }}</h3>
+            <p class="scope-dim__source">
+              <sc-icon [name]="databaseIcon" [size]="11" />
+              {{ 'memory.rules.builder.scope_dim.agentes.source' | translate }}
+            </p>
+          </div>
+          <a
+            class="scope-dim__link"
+            routerLink="/admin/repositorios"
+            target="_blank"
+            rel="noopener"
+          >
+            <sc-icon [name]="externalIcon" [size]="11" />
+            {{ 'memory.rules.builder.see_repository' | translate }}
+          </a>
+        </header>
+        <sc-multiselect
+          [options]="agentOptions"
+          optionLabel="label"
+          optionValue="value"
+          [placeholder]="'memory.rules.builder.scope_dim.agentes.placeholder' | translate"
+          [filter]="true"
+          [value]="[...agentes()]"
+          (valueChange)="setAgentes($event)"
+        />
+      </div>
+
+      <div class="scope-summary">
+        {{ scopeSummary() }}
+      </div>
+    </section>
+
+    <!-- Bloque 3: Grabación (tipo Recording + Classification también lleva
+         opcional · spec §"CAMBIOS EN EL BLOQUE GRABACIÓN") -->
+    @if (ruleType() === 'recording' || ruleType() === 'classification') {
+      <section class="rule-block">
+        <header class="rule-block__head">
+          <h2>
+            <sc-icon [name]="micIcon" [size]="14" />
+            {{ 'memory.rules.builder.recording' | translate }}
+          </h2>
+          <p class="rule-block__desc">{{ 'memory.rules.builder.recording_desc' | translate }}</p>
+        </header>
+
+        <div class="rule-block__row">
+          <label for="rule-direction" class="rule-builder__field-label">
+            {{ 'memory.rules.builder.direction_label' | translate }}
+          </label>
+          <sc-select
+            [inputId]="'rule-direction'"
+            [options]="directionOptions"
+            [(value)]="direction"
+            optionLabel="labelKey"
+            optionValue="value"
+          >
+            <ng-template let-opt pTemplate="selectedItem">
+              {{ opt.labelKey | translate }}
+            </ng-template>
+            <ng-template let-opt pTemplate="item">
+              {{ opt.labelKey | translate }}
+            </ng-template>
+          </sc-select>
+        </div>
+
+        <div class="rule-block__row">
+          <label class="rule-builder__checkbox-row">
+            <input
+              type="checkbox"
+              [checked]="filterBySchedule()"
+              (change)="filterBySchedule.set($any($event.target).checked)"
+            />
+            <span>{{ 'memory.rules.builder.schedule_label' | translate }}</span>
+          </label>
+          @if (filterBySchedule()) {
+            <div class="rule-builder__schedule-inputs">
+              <label>
+                {{ 'memory.rules.builder.schedule_from' | translate }}
+                <input
+                  type="time"
+                  [value]="scheduleFrom()"
+                  (input)="scheduleFrom.set($any($event.target).value)"
+                />
+              </label>
+              <label>
+                {{ 'memory.rules.builder.schedule_to' | translate }}
+                <input
+                  type="time"
+                  [value]="scheduleTo()"
+                  (input)="scheduleTo.set($any($event.target).value)"
+                />
+              </label>
+            </div>
+          }
+        </div>
+      </section>
+    }
+
+    <!-- Bloque 4: Transcripción (tipos Transcription + Classification) -->
+    @if (ruleType() === 'transcription' || ruleType() === 'classification') {
+      <section class="rule-block">
+        <header class="rule-block__head">
+          <h2>
+            <sc-icon [name]="fileTextIcon" [size]="14" />
+            {{ 'memory.rules.builder.transcription' | translate }}
+          </h2>
+          <p class="rule-block__desc">
+            {{ 'memory.rules.builder.transcription_desc' | translate }}
+          </p>
+        </header>
+
+        <div class="rule-block__row">
+          <label for="rule-direction-trans" class="rule-builder__field-label">
+            {{ 'memory.rules.builder.direction_label' | translate }}
+          </label>
+          <sc-select
+            [inputId]="'rule-direction-trans'"
+            [options]="directionOptions"
+            [(value)]="direction"
+            optionLabel="labelKey"
+            optionValue="value"
+          >
+            <ng-template let-opt pTemplate="selectedItem">
+              {{ opt.labelKey | translate }}
+            </ng-template>
+            <ng-template let-opt pTemplate="item">
+              {{ opt.labelKey | translate }}
+            </ng-template>
+          </sc-select>
+        </div>
+
+        <div class="rule-block__row">
+          <label for="rule-duration" class="rule-builder__field-label">
+            {{ 'memory.rules.builder.duration_label' | translate }}
+          </label>
+          <div class="rule-builder__duration">
+            <input
+              id="rule-duration"
+              type="number"
+              min="0"
+              [value]="durationMin()"
+              (input)="durationMin.set(+$any($event.target).value || 0)"
+            />
+            <sc-select
+              [options]="durationUnitOptions"
+              [(value)]="durationUnit"
+              optionLabel="labelKey"
+              optionValue="value"
+            >
+              <ng-template let-opt pTemplate="selectedItem">
+                {{ opt.labelKey | translate }}
+              </ng-template>
+              <ng-template let-opt pTemplate="item">
+                {{ opt.labelKey | translate }}
+              </ng-template>
+            </sc-select>
+          </div>
+          <p class="rule-builder__field-hint">
+            {{ 'memory.rules.builder.duration_hint' | translate }}
+          </p>
+        </div>
+
+        <div class="rule-block__row">
+          <sc-multiselect
+            [label]="'memory.rules.builder.attended_by_label' | translate"
+            [options]="attendedByOptions"
+            optionLabel="label"
+            optionValue="value"
+            [placeholder]="'memory.rules.builder.attended_by_placeholder' | translate"
+            [filter]="true"
+            [value]="[...attendedBy()]"
+            (valueChange)="setAttendedBy($event)"
+          />
+          <p class="rule-builder__field-hint">
+            {{ 'memory.rules.builder.attended_by_hint' | translate }}
+          </p>
+        </div>
+      </section>
+
+      <!-- Sub-bloque Análisis IA dentro de Transcripción · spec line 129-131 -->
+      <section class="rule-block rule-block--ai">
+        <header class="rule-block__head">
+          <div class="rule-builder__ai-head">
+            <span class="rule-builder__ai-badge">
+              <sc-icon [name]="sparklesIcon" [size]="14" />
+            </span>
+            <div>
+              <h2>{{ 'memory.rules.builder.ai_analysis' | translate }}</h2>
+              <p class="rule-block__desc">
+                {{ 'memory.rules.builder.ai_analysis_desc' | translate }}
+              </p>
+            </div>
+          </div>
+          <sc-toggleswitch
+            [inputId]="'ai-toggle'"
+            [checked]="aiAnalysis()"
+            (checkedChange)="aiAnalysis.set($event)"
+            [ariaLabel]="'memory.rules.builder.ai_analysis' | translate"
+          />
+        </header>
+
+        @if (aiAnalysis()) {
+          <div class="rule-builder__ai-chips">
+            <span class="rule-builder__ai-chip">
+              {{ 'memory.rules.builder.ai_chip_summary' | translate }}
+            </span>
+            <span class="rule-builder__ai-chip">
+              {{ 'memory.rules.builder.ai_chip_sentiment' | translate }}
+            </span>
+          </div>
+
+          <!-- Selector Categorías IA · solo classification (S49 §10 #13).
+               El listado vacío muestra CTA "Crear categoría" → /conversaciones/categorias. -->
+          @if (ruleType() === 'classification') {
+            <div class="rule-builder__ai-categories">
+              <header class="rule-builder__ai-categories-head">
+                <h3>{{ 'memory.rules.builder.categorias_label' | translate }}</h3>
+                <a
+                  class="rule-builder__ai-categories-link"
+                  routerLink="/conversaciones/categorias"
+                  target="_blank"
+                  rel="noopener"
+                >
+                  <sc-icon [name]="externalIcon" [size]="11" />
+                  {{ 'memory.rules.builder.categorias_manage' | translate }}
+                </a>
+              </header>
+              @if (categoryOptions().length > 0) {
+                <sc-multiselect
+                  [options]="categoryOptions()"
+                  optionLabel="label"
+                  optionValue="value"
+                  [placeholder]="'memory.rules.builder.categorias_placeholder' | translate"
+                  [filter]="true"
+                  [value]="[...categorias()]"
+                  (valueChange)="setCategorias($event)"
+                />
+                <p class="rule-builder__field-hint">
+                  {{ 'memory.rules.builder.categorias_hint' | translate }}
+                </p>
+              } @else {
+                <div class="rule-builder__ai-categories-empty">
+                  <p>{{ 'memory.rules.builder.categorias_empty' | translate }}</p>
+                </div>
+              }
+            </div>
+          }
+        }
+      </section>
+    }
+  </div>
+
+  <footer class="rule-builder__foot">
+    <p-button type="button" size="small" severity="secondary" (onClick)="onCancel()">
+      <span>{{ 'common.cancel' | translate }}</span>
+    </p-button>
+    <p-button
+      type="button"
+      size="small"
+      severity="primary"
+      [disabled]="!canSave()"
+      (onClick)="onSave()"
+    >
+      <span>
+        @if (isEditMode()) {
+          {{ 'memory.rules.builder.save_changes' | translate }}
+        } @else {
+          {{ 'memory.rules.builder.create_rule' | translate }}
+        }
+      </span>
+    </p-button>
+  </footer>
+</div>

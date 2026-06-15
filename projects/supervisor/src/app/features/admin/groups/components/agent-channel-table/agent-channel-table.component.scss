@@ -1,0 +1,370 @@
+.actbl {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-1-125);
+
+  // ---- head: unified query input + counter ----
+  &__head {
+    display: flex;
+    align-items: center;
+    gap: var(--sc-spacing-1-125);
+    flex-wrap: wrap;
+  }
+
+  &__query {
+    position: relative;
+    flex: 1 1 320px;
+    min-width: 240px;
+    display: flex;
+    align-items: center;
+  }
+
+  &__query-icon {
+    position: absolute;
+    left: var(--sc-spacing-0-875);
+    color: var(--sc-text-subtle);
+    pointer-events: none;
+  }
+
+  &__query-input {
+    width: 100%;
+    padding: var(--sc-spacing-0-5) var(--sc-spacing-0-875) var(--sc-spacing-0-5)
+      calc(var(--sc-spacing-0-875) + 18px + var(--sc-spacing-0-5));
+    height: 32px;
+    font-size: var(--sc-font-size-200);
+    color: var(--sc-text-primary);
+    background: var(--sc-bg-surface);
+    border: 1px solid var(--sc-border-default);
+    border-radius: var(--sc-radius-100);
+    transition: border-color var(--sc-transition-fast) var(--sc-easing-default);
+
+    &::placeholder {
+      color: var(--sc-text-subtle);
+    }
+    &:hover {
+      border-color: var(--sc-border-strong);
+    }
+    &:focus {
+      outline: none;
+      border-color: var(--sc-color-blue-500);
+    }
+  }
+
+  &__query-clear {
+    position: absolute;
+    right: var(--sc-spacing-0-5);
+    background: transparent;
+    border: 0;
+    border-radius: var(--sc-radius-100);
+    padding: var(--sc-spacing-0-25);
+    color: var(--sc-text-subtle);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+      color: var(--sc-text-primary);
+      background: var(--sc-bg-hover);
+    }
+  }
+
+  // ---- suggestion strip ("añadir al grupo: chip chip chip") ----
+  &__suggest {
+    display: flex;
+    align-items: center;
+    gap: var(--sc-spacing-0-875);
+    flex-wrap: wrap;
+    padding: var(--sc-spacing-0-75) var(--sc-spacing-0-875);
+    background: var(--sc-bg-primary-subtle);
+    border: 1px dashed var(--sc-color-blue-300);
+    border-radius: var(--sc-radius-100);
+  }
+
+  &__suggest-label {
+    font-size: var(--sc-font-size-100);
+    color: var(--sc-text-secondary);
+    flex: 0 0 auto;
+  }
+
+  &__suggest-chips {
+    display: inline-flex;
+    flex-wrap: wrap;
+    gap: var(--sc-spacing-0-5);
+  }
+
+  &__suggest-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sc-spacing-0-25);
+    padding: 4px var(--sc-spacing-0-75);
+    background: var(--sc-bg-surface);
+    border: 1px solid var(--sc-border-default);
+    border-radius: var(--sc-radius-full);
+    color: var(--sc-text-primary);
+    font-size: var(--sc-font-size-100);
+    cursor: pointer;
+    transition:
+      background-color 100ms ease,
+      border-color 100ms ease;
+
+    &:hover {
+      background: var(--sc-color-blue-700);
+      border-color: var(--sc-color-blue-700);
+      color: var(--sc-color-gray-0);
+    }
+    &:focus-visible {
+      outline: 2px solid var(--sc-color-electric-blue-500);
+      outline-offset: 2px;
+    }
+  }
+
+  &__counter {
+    font-size: var(--sc-font-size-100);
+    color: var(--sc-text-subtle);
+    flex: 0 0 auto;
+  }
+
+  // ---- empty state ----
+  /* Icon + title + body. The picker bar above the table is the CTA;
+   * the empty state just explains the void without adding another
+   * call-to-action that duplicates it. */
+  &__empty {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: var(--sc-spacing-0-875);
+    padding: var(--sc-spacing-2-25) var(--sc-spacing-1-5);
+    text-align: center;
+    color: var(--sc-text-subtle);
+    border: 1px dashed var(--sc-border-default);
+    border-radius: var(--sc-radius-200);
+  }
+
+  &__empty-icon {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 44px;
+    height: 44px;
+    border-radius: var(--sc-radius-full);
+    background: var(--sc-bg-secondary-subtle);
+    color: var(--sc-text-secondary);
+  }
+
+  &__empty-title {
+    margin: var(--sc-spacing-0-5) 0 0;
+    font-size: var(--sc-font-size-200);
+    font-weight: var(--sc-font-weight-medium);
+    color: var(--sc-text-primary);
+  }
+
+  &__empty-body {
+    margin: 0;
+    font-size: var(--sc-font-size-100);
+    color: var(--sc-text-subtle);
+    max-width: 360px;
+  }
+
+  // ---- table ----
+  &__table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: var(--sc-font-size-200);
+
+    thead th {
+      text-align: left;
+      font-weight: var(--sc-font-weight-medium);
+      color: var(--sc-text-secondary);
+      font-size: var(--sc-font-size-100);
+      padding: var(--sc-spacing-0-75) var(--sc-spacing-0-875);
+      border-bottom: 1px solid var(--sc-border-default);
+      vertical-align: middle;
+    }
+  }
+
+  &__th-check {
+    width: 32px;
+  }
+  &__th-active {
+    width: 84px;
+    text-align: center;
+  }
+  &__th-actions {
+    width: 36px;
+  }
+
+  &__row {
+    transition: background-color 100ms ease;
+
+    &:hover {
+      background: var(--sc-row-hover-bg);
+    }
+    &--selected {
+      background: var(--sc-bg-selected);
+    }
+    &--paused {
+      opacity: 0.6;
+    }
+
+    td {
+      padding: var(--sc-spacing-0-75) var(--sc-spacing-0-875);
+      border-bottom: 1px solid var(--sc-border-subtle);
+      vertical-align: middle;
+    }
+  }
+
+  &__td-check {
+    width: 32px;
+  }
+
+  /* Grid avatar · nombre (ancho FIJO) · chips → chips alineadas en columna en
+   * todas las filas pese a nombres de longitud variable (espejo de gatbl,
+   * S62-ext-3). Ellipsis + title para nombres largos. */
+  &__td-name {
+    display: grid;
+    grid-template-columns: auto var(--actbl-name-w, 160px) 1fr;
+    align-items: center;
+    gap: var(--sc-spacing-0-875);
+  }
+
+  &__name-label {
+    color: var(--sc-text-primary);
+    font-weight: var(--sc-font-weight-medium);
+    min-width: 0;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  /* Chip cluster inline with the agent name — replaces the per-channel
+   * column layout. Mirrors `gatbl__chips` in the sibling
+   * `group-assignment-table` so both tables read with the same rhythm. */
+  &__chips {
+    display: inline-flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--sc-spacing-0-25);
+  }
+
+  &__chip {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sc-spacing-0-25);
+    padding: var(--sc-spacing-0-25) var(--sc-spacing-0-75) var(--sc-spacing-0-25)
+      var(--sc-spacing-0-5);
+    border-radius: var(--sc-radius-full);
+    border: 1px solid var(--sc-border-default);
+    background: var(--sc-bg-surface);
+    color: var(--sc-text-secondary);
+    font-size: var(--sc-font-size-100);
+    cursor: pointer;
+    transition:
+      background-color 100ms ease,
+      color 100ms ease,
+      border-color 100ms ease;
+
+    > input {
+      position: absolute;
+      inset: 0;
+      width: 100%;
+      height: 100%;
+      margin: 0;
+      opacity: 0;
+      cursor: pointer;
+    }
+
+    &:hover {
+      border-color: var(--sc-border-strong);
+    }
+    &--on {
+      background: var(--sc-color-blue-700);
+      border-color: var(--sc-color-blue-700);
+      color: var(--sc-color-gray-0);
+    }
+    /* Off state: visibly "available but not selected" — dashed border +
+     * muted text so it is never confused with the on-state solid fill or
+     * with a read-only label. */
+    &--off {
+      background: transparent;
+      border-style: dashed;
+      border-color: var(--sc-border-subtle);
+      color: var(--sc-text-subtle);
+    }
+    &--disabled {
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+  }
+
+  &__chip-icon {
+    flex: 0 0 auto;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+  }
+
+  &__td-active {
+    text-align: center;
+
+    > * {
+      display: inline-block;
+    }
+  }
+
+  &__remove {
+    background: transparent;
+    border: 0;
+    border-radius: var(--sc-radius-100);
+    padding: var(--sc-spacing-0-25);
+    color: var(--sc-text-subtle);
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    &:hover {
+      color: var(--sc-text-danger);
+      background: var(--sc-bg-hover);
+    }
+    &:focus-visible {
+      outline: 2px solid var(--sc-color-electric-blue-500);
+      outline-offset: 2px;
+    }
+  }
+
+  &__no-results {
+    padding: var(--sc-spacing-1-125);
+    text-align: center;
+    color: var(--sc-text-subtle);
+  }
+
+  // ---- bulk bar (overlay-style — doesn't push content per no-CLS rule) ----
+  &__bulkbar {
+    position: sticky;
+    bottom: var(--sc-spacing-1-125);
+    align-self: stretch;
+    margin-top: var(--sc-spacing-0-875);
+    display: flex;
+    align-items: center;
+    gap: var(--sc-spacing-0-875);
+    padding: var(--sc-spacing-0-75) var(--sc-spacing-1-125);
+    background: var(--sc-color-blue-700);
+    color: var(--sc-color-gray-0);
+    border-radius: var(--sc-radius-200);
+    box-shadow: 0 4px 16px rgb(var(--sc-shadow-color-rgb) / 0.18);
+    z-index: 4;
+  }
+
+  &__bulk-count {
+    font-weight: var(--sc-font-weight-medium);
+    font-size: var(--sc-font-size-200);
+  }
+
+  @media (prefers-reduced-motion: reduce) {
+    &__row {
+      transition: none;
+    }
+  }
+}

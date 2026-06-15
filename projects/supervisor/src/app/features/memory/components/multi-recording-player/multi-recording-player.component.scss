@@ -1,0 +1,239 @@
+/*
+ * MultiRecordingPlayer · prototipo React port (S46 §10 #2).
+ *
+ * Surface bordered apilando transport + segmented bar + labels.
+ * Geometría proporcional preservada del audit React 15.29.
+ */
+
+:host {
+  display: block;
+}
+
+.multi-rec {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-1-125);
+  padding: var(--sc-spacing-1-5) var(--sc-spacing-2-25);
+  background: var(--sc-bg-default);
+  border-bottom: 1px solid var(--sc-border-default);
+
+  /* Mid-tone info derivada — equivalent al React `text-sc-info-strong/80`
+   * (Tailwind alpha modifier). No hay token semántico para "info-strong
+   * softened" en SCDS hoy; si aparece 2º consumer del patrón, promover a
+   * `--sc-text-info-subtle` en 02-semantic.css. */
+  --multi-rec-active-meta: color-mix(in srgb, var(--sc-color-electric-blue-700) 80%, transparent);
+
+  &__transport {
+    display: flex;
+    align-items: center;
+    gap: var(--sc-spacing-1-125);
+  }
+
+  &__btn {
+    flex: 0 0 auto;
+    width: 36px;
+    height: 36px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0;
+    border: 0;
+    border-radius: var(--sc-radius-full);
+    background: transparent;
+    color: var(--sc-text-secondary);
+    cursor: pointer;
+    transition:
+      background var(--sc-transition-fast) var(--sc-easing-default),
+      color var(--sc-transition-fast) var(--sc-easing-default);
+
+    &:hover:not(:disabled) {
+      background: var(--sc-bg-secondary-hover);
+      color: var(--sc-text-primary);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--sc-color-electric-blue-500);
+      outline-offset: 2px;
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.4;
+    }
+
+    &--primary {
+      width: 40px;
+      height: 40px;
+      background: var(--sc-bg-primary);
+      color: var(--sc-text-on-primary);
+      box-shadow: var(--sc-shadow-sm);
+
+      &:hover:not(:disabled) {
+        background: var(--sc-bg-primary-hover);
+        color: var(--sc-text-on-primary);
+      }
+
+      &:active:not(:disabled) {
+        transform: scale(0.97);
+      }
+    }
+  }
+
+  &__time {
+    margin-left: auto;
+    font-family: var(--sc-font-family-mono);
+    font-size: var(--sc-font-size-body-3);
+    color: var(--sc-text-secondary);
+  }
+
+  &__bar-wrap {
+    position: relative;
+    width: 100%;
+    height: 12px;
+  }
+
+  &__bar {
+    position: absolute;
+    inset-inline: 0;
+    top: 50%;
+    height: 6px;
+    display: flex;
+    transform: translateY(-50%);
+    overflow: hidden;
+    border-radius: var(--sc-radius-full);
+  }
+
+  &__seg {
+    position: relative;
+    height: 100%;
+    background: var(--sc-border-default);
+
+    &--active {
+      background: var(--sc-bg-info-subtle);
+    }
+
+    &--divider {
+      border-left: 2px solid var(--sc-bg-default);
+    }
+  }
+
+  &__fill {
+    position: absolute;
+    inset-block: 0;
+    left: 0;
+    transform-origin: left;
+    background: var(--sc-color-electric-blue-500);
+    transition: width 150ms ease;
+    will-change: width;
+  }
+
+  &__scrub {
+    position: absolute;
+    inset-block: 0;
+    padding: 0;
+    border: 0;
+    background: transparent;
+    cursor: pointer;
+    border-radius: var(--sc-radius-full);
+
+    &:focus-visible {
+      outline: 2px solid var(--sc-color-electric-blue-500);
+      outline-offset: 2px;
+    }
+
+    &:disabled {
+      cursor: not-allowed;
+      opacity: 0.5;
+    }
+  }
+
+  &__playhead {
+    pointer-events: none;
+    position: absolute;
+    top: 50%;
+    width: 12px;
+    height: 12px;
+    transform: translate(-50%, -50%);
+    background: var(--sc-color-electric-blue-500);
+    border-radius: var(--sc-radius-full);
+    box-shadow: var(--sc-shadow-sm);
+    opacity: 0;
+    transition: opacity 150ms ease;
+
+    &--visible {
+      opacity: 1;
+    }
+  }
+
+  &__labels {
+    display: flex;
+    width: 100%;
+    gap: var(--sc-spacing-0-5);
+  }
+
+  &__label {
+    flex-basis: 0;
+    min-width: 48px;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 2px;
+    padding: var(--sc-spacing-0-5) var(--sc-spacing-0-875);
+    background: transparent;
+    border: 0;
+    border-radius: var(--sc-radius-100);
+    text-align: left;
+    cursor: pointer;
+    transition: background var(--sc-transition-fast) var(--sc-easing-default);
+
+    &:hover:not(.multi-rec__label--active) {
+      background: var(--sc-bg-secondary-hover);
+    }
+
+    &--active {
+      background: var(--sc-bg-info-subtle);
+      cursor: default;
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--sc-color-electric-blue-500);
+      outline-offset: 2px;
+    }
+  }
+
+  &__label-name {
+    width: 100%;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    font-size: var(--sc-font-size-body-3);
+    font-weight: 500;
+    line-height: 1.25;
+    color: var(--sc-text-primary);
+
+    .multi-rec__label--active & {
+      color: var(--sc-color-electric-blue-700);
+    }
+  }
+
+  &__label-meta {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sc-spacing-0-25);
+    font-family: var(--sc-font-family-mono);
+    font-size: var(--sc-font-size-50);
+    color: var(--sc-text-subtle);
+
+    .multi-rec__label--active & {
+      color: var(--multi-rec-active-meta);
+    }
+  }
+
+  &__label-check {
+    color: var(--sc-color-green-600);
+
+    .multi-rec__label--active & {
+      color: var(--multi-rec-active-meta);
+    }
+  }
+}

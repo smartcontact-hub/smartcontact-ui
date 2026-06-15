@@ -1,0 +1,34 @@
+/*
+ * SCDS — list-table chrome partial.
+ *
+ * Imported by:
+ *   - apps/supervisor/src/styles/main.scss
+ *
+ * Promoción S55 cuando se cruzó el trigger DD-4 (≥5 consumers): hoy 7
+ * consumers reales (6 admin list-pages + 1 Memory conversation-table)
+ * con declaraciones de `.table-card` idénticas en 6 de 7 archivos. La
+ * única variación (overflow-x: auto en agents para tablas anchas con
+ * scroll horizontal) se mantiene como delta scoped en el component
+ * SCSS.
+ *
+ * Rules globales unscoped — funcionan dentro de componentes con
+ * ViewEncapsulation.Emulated porque Angular solo prefija los selectores
+ * de SU OWN component SCSS; selectores globales matchean class names
+ * crudos en cualquier markup.
+ *
+ * Cuándo NO usar este chrome:
+ *   - Si necesitas un layout que NO sea border-card con table interior
+ *     (e.g., grid de cards, masonry, etc.) — busca otro pattern.
+ *
+ * Cuándo abrir delta scoped (en component SCSS):
+ *   - overflow-x: auto si la tabla puede ser más ancha que el viewport.
+ *   - padding-bottom extra si necesitas reservar espacio para overlay
+ *     (ya está el patrón en `.page` chrome separado).
+ */
+
+.table-card {
+  background: var(--sc-bg-surface);
+  border: 1px solid var(--sc-border-default);
+  border-radius: var(--sc-radius-200);
+  overflow: hidden;
+}

@@ -1,0 +1,67 @@
+<sc-dialog
+  [visible]="visible()"
+  [icon]="retransIcon"
+  [title]="'memory.player.retranscribe.title' | translate"
+  [subtitle]="'memory.player.retranscribe.subtitle' | translate"
+  width="460px"
+  (cancelled)="onCancel()"
+>
+  <div class="retrans-confirm">
+    <div class="retrans-confirm__warning" role="alert">
+      <sc-icon class="retrans-confirm__warning-icon" [name]="alertIcon" [size]="14" />
+      <div class="retrans-confirm__warning-text">
+        <p class="retrans-confirm__warning-headline">
+          {{ 'memory.player.retranscribe.warn_headline' | translate }}
+        </p>
+        <p class="retrans-confirm__warning-body">
+          {{ 'memory.player.retranscribe.warn_body' | translate }}
+        </p>
+        <p class="retrans-confirm__warning-cost">
+          {{ 'memory.player.retranscribe.warn_cost' | translate }}
+        </p>
+      </div>
+    </div>
+
+    <div class="retrans-confirm__gate">
+      <label class="retrans-confirm__gate-label" for="retrans-confirm-input">
+        {{ 'memory.player.retranscribe.type_to_confirm_pre' | translate }}
+        <span class="retrans-confirm__gate-token">{{ gateToken() }}</span>
+        {{ 'memory.player.retranscribe.type_to_confirm_post' | translate }}
+      </label>
+      <input
+        id="retrans-confirm-input"
+        type="text"
+        class="retrans-confirm__gate-input"
+        [class.is-invalid]="confirmText().length > 0 && !isValid()"
+        [class.is-valid]="isValid()"
+        [placeholder]="gateToken()"
+        autocomplete="off"
+        spellcheck="false"
+        [ngModel]="confirmText()"
+        (ngModelChange)="confirmText.set($event)"
+      />
+    </div>
+  </div>
+
+  <div modal-actions>
+    <p-button
+      type="button"
+      size="small"
+      severity="secondary"
+      data-testid="retrans-cancel-btn"
+      (onClick)="onCancel()"
+    >
+      <span>{{ 'common.cancel' | translate }}</span>
+    </p-button>
+    <p-button
+      type="button"
+      size="small"
+      severity="danger"
+      [disabled]="!isValid()"
+      data-testid="retrans-confirm-btn"
+      (onClick)="onConfirm()"
+    >
+      <span>{{ 'memory.player.retranscribe.confirm_btn' | translate }}</span>
+    </p-button>
+  </div>
+</sc-dialog>

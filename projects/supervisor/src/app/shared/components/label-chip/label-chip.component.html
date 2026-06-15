@@ -1,0 +1,9 @@
+<span class="chip" [class.chip--xs]="size() === 'xs'" [style]="cssVars()">
+  <span class="chip__dot" aria-hidden="true"></span>
+  <span class="chip__text">{{ label().name }}</span>
+  @if (removable()) {
+    <button type="button" class="chip__remove" (click)="onRemove($event)" aria-label="Quitar">
+      <sc-icon [name]="closeIcon" [size]="iconSizeSm" />
+    </button>
+  }
+</span>

@@ -1,0 +1,73 @@
+<sc-dialog
+  [visible]="visible()"
+  [icon]="downloadIcon"
+  [title]="'memory.player.download.title' | translate"
+  [subtitle]="'memory.player.download.subtitle' | translate"
+  width="440px"
+  (cancelled)="onCancel()"
+>
+  <div class="download-modal">
+    <div class="download-modal__options" role="group">
+      <div class="download-modal__option" [class.is-disabled]="!hasRecordings()">
+        <sc-checkbox
+          [state]="recordingsChecked() && hasRecordings() ? 'all' : 'none'"
+          [disabled]="!hasRecordings()"
+          [ariaLabel]="'memory.player.download.recordings' | translate"
+          (cycle)="onRecordingsToggle($event)"
+        />
+        <div class="download-modal__option-text">
+          <span class="download-modal__option-label">
+            {{ 'memory.player.download.recordings' | translate }}
+          </span>
+          @if (!hasRecordings()) {
+            <span class="download-modal__option-hint">
+              {{ 'memory.player.download.no_recordings_hint' | translate }}
+            </span>
+          }
+        </div>
+      </div>
+
+      <div class="download-modal__option" [class.is-disabled]="!hasChats()">
+        <sc-checkbox
+          [state]="chatsChecked() && hasChats() ? 'all' : 'none'"
+          [disabled]="!hasChats()"
+          [ariaLabel]="'memory.player.download.chats' | translate"
+          (cycle)="onChatsToggle($event)"
+        />
+        <div class="download-modal__option-text">
+          <span class="download-modal__option-label">
+            {{ 'memory.player.download.chats' | translate }}
+          </span>
+          @if (!hasChats()) {
+            <span class="download-modal__option-hint">
+              {{ 'memory.player.download.no_chats_hint' | translate }}
+            </span>
+          }
+        </div>
+      </div>
+    </div>
+
+    <div class="download-modal__gdpr" role="note">
+      <sc-icon class="download-modal__gdpr-icon" [name]="infoIcon" [size]="14" />
+      <p class="download-modal__gdpr-text">
+        {{ 'memory.player.download.gdpr_hint' | translate }}
+      </p>
+    </div>
+  </div>
+
+  <div modal-actions>
+    <p-button type="button" size="small" severity="secondary" (onClick)="onCancel()">
+      <span>{{ 'common.cancel' | translate }}</span>
+    </p-button>
+    <p-button
+      type="button"
+      size="small"
+      severity="primary"
+      [disabled]="!canConfirm()"
+      (onClick)="onConfirm()"
+    >
+      <sc-icon [name]="downloadIcon" [size]="14" />
+      <span>{{ 'memory.player.download.confirm_btn' | translate }}</span>
+    </p-button>
+  </div>
+</sc-dialog>

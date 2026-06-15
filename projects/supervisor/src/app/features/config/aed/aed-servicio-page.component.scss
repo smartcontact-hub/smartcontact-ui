@@ -1,0 +1,225 @@
+/*
+ * General (Servicio) page — Figma Supervisor 1:12270.
+ * Flush single column; shared primitives (page, field, grid, radio,
+ * sub-section, page-heading, inline-check) live in
+ * aed-defaults-page.component.scss. Separadores = <sc-divider> (SCDS).
+ */
+
+/* ---------- Estados de agentes ---------- */
+
+/* Estados fijos (3) → tags. Separados de los chips editables (no se mezclan). */
+.state-tags {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sc-spacing-0-5);
+}
+
+.state-tag {
+  display: inline-flex;
+  align-items: center;
+  height: 26px;
+  padding: 0 var(--sc-spacing-0-625);
+  border-radius: var(--sc-radius-200);
+  font-size: var(--sc-font-size-50);
+  font-weight: var(--sc-font-weight-medium);
+  line-height: 1;
+
+  /* success/danger = Kit `tag` (bg claro + texto oscuro). Administrativo = granate
+   * SÓLIDO (bg red-800 + texto red-100) → destaca como estado "serio" (decisión Rafa). */
+  &[data-tone='green'] {
+    background: var(--sc-color-green-100);
+    color: var(--sc-color-green-700);
+  }
+  &[data-tone='danger'] {
+    background: var(--sc-color-red-100);
+    color: var(--sc-color-red-700);
+  }
+  &[data-tone='granate'] {
+    background: var(--sc-color-red-800);
+    color: var(--sc-color-red-100);
+  }
+}
+
+/* Estados editables → chips removibles con × (re-añadibles). */
+.state-chips {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sc-spacing-0-5);
+}
+
+.state-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-25);
+  height: 26px;
+  padding: 0 var(--sc-spacing-0-25) 0 var(--sc-spacing-0-625);
+  border-radius: var(--sc-radius-200);
+  background: var(--sc-bg-secondary-subtle);
+  border: 1px solid var(--sc-border-default);
+
+  &__label {
+    font-size: var(--sc-font-size-50);
+    font-weight: var(--sc-font-weight-medium);
+    color: var(--sc-text-secondary);
+    line-height: 1;
+  }
+
+  &__remove {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    background: transparent;
+    border: 0;
+    padding: 2px;
+    color: var(--sc-icon-subtle);
+    cursor: pointer;
+    border-radius: var(--sc-radius-full);
+    transition:
+      color var(--sc-transition-fast) ease,
+      background var(--sc-transition-fast) ease;
+
+    &:hover {
+      color: var(--sc-text-primary);
+      background: var(--sc-color-gray-200);
+    }
+    &:focus-visible {
+      outline: 2px solid var(--sc-border-focus);
+      outline-offset: 1px;
+    }
+  }
+}
+
+.add-reason {
+  margin-top: var(--sc-spacing-0-875);
+
+  &__group {
+    display: block;
+    max-width: 420px;
+  }
+}
+
+/* ---------- Inline rows (bloqueo por inactividad) ---------- */
+
+.inline-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sc-spacing-0-625);
+  min-height: 36px;
+
+  &__text {
+    font-size: var(--sc-font-size-100);
+    color: var(--sc-text-secondary);
+  }
+
+  .inline-check {
+    min-width: 110px;
+  }
+
+  sc-inputnumber {
+    width: 84px;
+  }
+}
+
+/* ---------- Estados visibles por el agente ---------- */
+
+.visible-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.visible-row {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-875);
+  padding: var(--sc-spacing-0-625) 0;
+  border-bottom: 1px solid var(--sc-border-subtle);
+
+  &:last-child {
+    border-bottom: 0;
+  }
+
+  &__bar {
+    width: 3px;
+    align-self: stretch;
+    min-height: 28px;
+    border-radius: var(--sc-radius-full);
+    flex-shrink: 0;
+
+    &[data-tone='cyan'] {
+      background: var(--sc-color-soft-blue-500);
+    }
+    &[data-tone='green'] {
+      background: var(--sc-color-green-500);
+    }
+    &[data-tone='amber'] {
+      background: var(--sc-color-amber-500);
+    }
+    &[data-tone='red'] {
+      background: var(--sc-color-red-500);
+    }
+    &[data-tone='gray'] {
+      background: var(--sc-color-gray-400);
+    }
+  }
+
+  &__copy {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    min-width: 0;
+  }
+
+  &__label {
+    font-size: var(--sc-font-size-100);
+    font-weight: var(--sc-font-weight-medium);
+    color: var(--sc-text-primary);
+  }
+
+  &__desc {
+    font-size: var(--sc-font-size-50);
+    line-height: 18px;
+    color: var(--sc-text-subtle);
+  }
+
+  sc-toggleswitch {
+    margin-left: auto;
+  }
+}
+
+/* ---------- Notificaciones a sistemas externos ---------- */
+
+.notif-block {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-625);
+
+  & + & {
+    margin-top: var(--sc-spacing-0-875);
+  }
+
+  .field sc-inputtext {
+    display: block;
+    max-width: 100%;
+  }
+}
+
+.events-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sc-spacing-1-75);
+
+  &--disabled {
+    opacity: 0.5;
+  }
+}

@@ -1,0 +1,15 @@
+.delete-labels {
+  &__text {
+    margin: 0;
+    font-size: var(--sc-font-size-200);
+    line-height: var(--sc-line-height-300);
+    color: var(--sc-text-secondary);
+  }
+
+  &__chips {
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sc-spacing-0-25);
+    margin-top: var(--sc-spacing-0-875);
+  }
+}

@@ -1,0 +1,128 @@
+<section class="multi-rec" [attr.aria-label]="'memory.player.multi.aria_player' | translate">
+  <!-- Row 1 · transport + cumulative time of the active leg -->
+  <div class="multi-rec__transport">
+    <button
+      type="button"
+      class="multi-rec__btn"
+      [disabled]="!playerEnabled()"
+      [attr.aria-label]="'memory.player.audio.back10' | translate"
+      (click)="onBack10()"
+    >
+      <sc-icon [name]="back10Icon" [size]="16" />
+    </button>
+
+    <button
+      type="button"
+      class="multi-rec__btn multi-rec__btn--primary"
+      [disabled]="!playerEnabled()"
+      [attr.aria-label]="
+        (isPlaying() ? 'memory.player.audio.pause' : 'memory.player.audio.play') | translate
+      "
+      (click)="onTogglePlay()"
+    >
+      <sc-icon [name]="isPlaying() ? pauseIcon : playIcon" [size]="18" />
+    </button>
+
+    <button
+      type="button"
+      class="multi-rec__btn"
+      [disabled]="!playerEnabled()"
+      [attr.aria-label]="'memory.player.audio.fwd10' | translate"
+      (click)="onFwd10()"
+    >
+      <sc-icon [name]="fwd10Icon" [size]="16" />
+    </button>
+
+    <span class="multi-rec__time tabular-nums">
+      {{ currentTimeLabel() }} / {{ totalDurationLabel() }}
+    </span>
+  </div>
+
+  <!-- Row 2 · segmented bar with active scrub overlay + playhead -->
+  <div class="multi-rec__bar-wrap">
+    <div class="multi-rec__bar">
+      @for (rec of recordings(); track rec.id; let idx = $index) {
+        @let isActive = idx === selectedIndex();
+        <div
+          class="multi-rec__seg"
+          [class.multi-rec__seg--active]="isActive"
+          [class.multi-rec__seg--divider]="idx > 0"
+          [style.flexGrow]="fractions()[idx]"
+          [style.flexBasis.px]="0"
+        >
+          @if (isActive) {
+            <span
+              aria-hidden="true"
+              class="multi-rec__fill"
+              [style.width.%]="progressFracInSeg() * 100"
+            ></span>
+          }
+        </div>
+      }
+    </div>
+
+    <!-- Click-to-seek overlay, solo sobre segmento activo -->
+    <button
+      type="button"
+      role="slider"
+      class="multi-rec__scrub"
+      [disabled]="!playerEnabled()"
+      [attr.tabindex]="playerEnabled() ? 0 : -1"
+      [attr.aria-label]="'memory.player.multi.aria_seek' | translate"
+      [attr.aria-valuemin]="0"
+      [attr.aria-valuemax]="totalDuration()"
+      [attr.aria-valuenow]="currentTime()"
+      [attr.aria-valuetext]="currentTimeLabel()"
+      [style.left.%]="activeLeftPct()"
+      [style.width.%]="activeWidthPct()"
+      (click)="onScrubClick($event)"
+    ></button>
+
+    @if (playerEnabled()) {
+      <span
+        aria-hidden="true"
+        class="multi-rec__playhead"
+        [class.multi-rec__playhead--visible]="isPlaying()"
+        [style.left.%]="playheadPct()"
+      ></span>
+    }
+  </div>
+
+  <!-- Row 3 · labels alineadas con segmentos (radiogroup) -->
+  <div
+    class="multi-rec__labels"
+    role="radiogroup"
+    [attr.aria-label]="'memory.player.multi.aria_radiogroup' | translate"
+  >
+    @for (rec of recordings(); track rec.id; let idx = $index) {
+      @let isActive = idx === selectedIndex();
+      <button
+        type="button"
+        role="radio"
+        class="multi-rec__label"
+        [class.multi-rec__label--active]="isActive"
+        [attr.aria-checked]="isActive"
+        [attr.aria-label]="ariaLabel(rec, idx)"
+        [attr.tabindex]="isActive ? 0 : -1"
+        [attr.title]="labelText(rec, idx)"
+        [style.flexGrow]="fractions()[idx]"
+        [style.flexBasis.px]="0"
+        (click)="onSelectRecording(rec.id)"
+        (keydown)="onLabelKeydown($event, idx)"
+      >
+        <span class="multi-rec__label-name">{{ labelText(rec, idx) }}</span>
+        <span class="multi-rec__label-meta tabular-nums">
+          {{ rec.duration }}
+          @if (rec.hasTranscription) {
+            <sc-icon
+              class="multi-rec__label-check"
+              [name]="checkIcon"
+              [size]="10"
+              [attr.aria-label]="'memory.player.multi.leg_transcribed' | translate"
+            />
+          }
+        </span>
+      </button>
+    }
+  </div>
+</section>

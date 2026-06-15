@@ -1,0 +1,37 @@
+<sc-dialog
+  [visible]="visible()"
+  [icon]="trashIcon"
+  [title]="dialogTitle()"
+  width="440px"
+  (cancelled)="cancelled.emit()"
+>
+  @if (isSingle()) {
+    <p class="delete-labels__text">
+      {{ 'labels.delete.body_single' | translate: { name: labels()[0]!.name } }}
+      @if (totalAffectedAgents() > 0) {
+        {{ 'labels.delete.affected_agents' | translate: { count: totalAffectedAgents() } }}
+      }
+    </p>
+  } @else {
+    <p class="delete-labels__text">
+      {{ 'labels.delete.body_bulk' | translate }}
+      @if (totalAffectedAgents() > 0) {
+        {{ 'labels.delete.affected_agents' | translate: { count: totalAffectedAgents() } }}
+      }
+    </p>
+    <div class="delete-labels__chips">
+      @for (label of labels(); track label.id) {
+        <sc-label-chip [label]="label" size="xs" />
+      }
+    </div>
+  }
+
+  <div modal-actions>
+    <p-button type="button" size="small" severity="secondary" (onClick)="cancelled.emit()">
+      <span>{{ 'common.cancel' | translate }}</span>
+    </p-button>
+    <p-button type="button" size="small" severity="danger" (onClick)="confirm.emit()">
+      <span>{{ 'common.delete' | translate }}</span>
+    </p-button>
+  </div>
+</sc-dialog>

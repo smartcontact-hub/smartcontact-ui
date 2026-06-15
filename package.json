@@ -8,6 +8,8 @@
     "build": "npm run build:design-tokens && npm run build:components",
     "build:demo": "npm run build:icons && ng build sc-demo --configuration production --output-path dist/sc-demo",
     "build:prototype": "npm run build && ng build sc-prototype --configuration production --output-path dist/sc-prototype",
+    "build:supervisor": "npm run build && ng build supervisor --configuration production",
+    "start:supervisor": "npm run build && ng serve supervisor",
     "build:design-tokens": "ng build design-tokens",
     "generate:icons": "npm --prefix projects/ui-smartcontact-icons run icons:build",
     "build:icons": "npm run generate:icons && ng build ui-smartcontact-icons",
@@ -24,7 +26,7 @@
     "tokens:type-parity": "node scripts/token-type-parity.mjs",
     "tokens:guard": "node scripts/token-guard.mjs",
     "audit:theme-scale": "node scripts/check-theme-scale.mjs",
-    "typecheck": "tsc --noEmit --sourceMap -p projects/ui-smartcontact/tsconfig.lib.json && tsc --noEmit --sourceMap -p projects/ui-smartcontact-icons/tsconfig.lib.json && tsc --noEmit -p projects/sc-demo/tsconfig.app.json && tsc --noEmit -p projects/sc-prototype/tsconfig.app.json",
+    "typecheck": "tsc --noEmit --sourceMap -p projects/ui-smartcontact/tsconfig.lib.json && tsc --noEmit --sourceMap -p projects/ui-smartcontact-icons/tsconfig.lib.json && tsc --noEmit -p projects/sc-demo/tsconfig.app.json && tsc --noEmit -p projects/sc-prototype/tsconfig.app.json && tsc --noEmit -p projects/supervisor/tsconfig.app.json",
     "lint": "eslint .",
     "verify": "npm run tokens:gen && npm run tokens:parity && npm run tokens:guard && npm run tokens:type-parity && npm run audit:theme-scale && npm run test:unit && npm run docs:guard && npm run build && npm run typecheck && npm run lint",
     "e2e": "playwright test",
@@ -47,6 +49,7 @@
     "@ngx-translate/core": "^17.0.0",
     "@ngx-translate/http-loader": "^17.0.0",
     "@primeuix/themes": "^2.0.3",
+    "primeicons": "^7.0.0",
     "primeng": "^21.1.8",
     "rxjs": "~7.8.1",
     "tslib": "^2.4.0",
@@ -57,12 +60,12 @@
     "@angular-devkit/build-angular": "^21.2.12",
     "@angular/cli": "^21.2.12",
     "@angular/compiler-cli": "^21.2.14",
+    "@eslint/js": "^9.20.0",
     "@playwright/test": "^1.50.0",
     "angular-eslint": "^21.0.0",
     "eslint": "^9.20.0",
     "ng-packagr": "^21.2.3",
     "typescript": "~5.9.3",
-    "typescript-eslint": "^8.40.0",
-    "@eslint/js": "^9.20.0"
+    "typescript-eslint": "^8.40.0"
   }
 }

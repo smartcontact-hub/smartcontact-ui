@@ -1,0 +1,167 @@
+<div class="memory-conversation-filters">
+  <div class="memory-conversation-filters__grid">
+    <sc-multiselect
+      size="sm"
+      [label]="'memory.conversations.filters.services_label' | translate"
+      [options]="serviceOptions"
+      optionLabel="label"
+      optionValue="value"
+      [placeholder]="'memory.conversations.filters.services_placeholder' | translate"
+      [filter]="true"
+      [value]="[...filters().services]"
+      (valueChange)="setServices($event)"
+    />
+
+    <sc-datepicker
+      size="sm"
+      [label]="'memory.conversations.filters.date_label' | translate"
+      [placeholder]="'memory.conversations.filters.date_placeholder' | translate"
+      [value]="filters().date"
+      (valueChange)="setDate($event)"
+      [showClear]="true"
+    />
+
+    <sc-inputtext
+      size="sm"
+      [label]="'memory.conversations.filters.origin_label' | translate"
+      [placeholder]="'memory.conversations.filters.origin_placeholder' | translate"
+      [value]="filters().origin"
+      (valueChange)="setOrigin($event)"
+    />
+
+    <sc-inputtext
+      size="sm"
+      [label]="'memory.conversations.filters.destination_label' | translate"
+      [placeholder]="'memory.conversations.filters.destination_placeholder' | translate"
+      [value]="filters().destination"
+      (valueChange)="setDestination($event)"
+    />
+
+    <sc-multiselect
+      size="sm"
+      [label]="'memory.conversations.filters.groups_label' | translate"
+      [options]="groupOptions"
+      optionLabel="label"
+      optionValue="value"
+      [placeholder]="'memory.conversations.filters.groups_placeholder' | translate"
+      [filter]="true"
+      [value]="[...filters().groups]"
+      (valueChange)="setGroups($event)"
+    />
+
+    <sc-multiselect
+      size="sm"
+      [label]="'memory.conversations.filters.agents_label' | translate"
+      [options]="agentOptions"
+      optionLabel="label"
+      optionValue="value"
+      [placeholder]="'memory.conversations.filters.agents_placeholder' | translate"
+      [filter]="true"
+      [value]="[...filters().agents]"
+      (valueChange)="setAgents($event)"
+    />
+  </div>
+
+  <div class="memory-conversation-filters__actions">
+    <div class="memory-conversation-filters__actions-left">
+      <sc-memory-type-filter-button [(filters)]="filters" />
+      <sc-memory-category-filter-button
+        [available]="availableAiCategories()"
+        [selected]="filters().aiCategories"
+        (selectedChange)="onAiCategoriesChange($event)"
+      />
+      @if (failedCount() > 0) {
+        <button
+          type="button"
+          class="memory-failed-chip"
+          [class.is-active]="filters().status.onlyFailed"
+          (click)="toggleOnlyFailed()"
+          [attr.aria-pressed]="filters().status.onlyFailed"
+          [attr.title]="'memory.conversations.filters.only_failed_hint' | translate"
+        >
+          <sc-icon [name]="alertIcon" [size]="13" />
+          <span>{{ 'memory.conversations.filters.only_failed' | translate }}</span>
+          <span class="memory-failed-chip__count">{{ failedCount() }}</span>
+        </button>
+      }
+
+      <!-- S50/S52 toolbar inline (legacy parity): separator + 4 action icons.
+           Las 3 acciones bulk (Transcribir / Download / Marcar leídas) están
+           DISABLED hasta que el usuario seleccione filas — no se opera sobre
+           "todo lo filtrado" por defecto. Badge = nº de seleccionadas.
+           Help (último) siempre habilitado. -->
+      <span class="memory-conversation-filters__divider" aria-hidden="true"></span>
+
+      <button
+        type="button"
+        class="memory-toolbar-icon"
+        [attr.aria-label]="
+          'memory.conversations.filters.transcribe_aria' | translate: { count: selectedCount() }
+        "
+        [attr.title]="'memory.conversations.filters.transcribe' | translate"
+        (click)="bulkTranscribeRequested.emit()"
+        [disabled]="!bulkActionsEnabled()"
+      >
+        <sc-icon [name]="transcribeIcon" [size]="18" />
+        @if (bulkActionsEnabled()) {
+          <span class="memory-toolbar-icon__badge">{{ selectedCount() }}</span>
+        }
+      </button>
+
+      <button
+        type="button"
+        class="memory-toolbar-icon"
+        [attr.aria-label]="'memory.conversations.filters.download' | translate"
+        [attr.title]="'memory.conversations.filters.download' | translate"
+        (click)="downloadRequested.emit()"
+        [disabled]="!bulkActionsEnabled()"
+      >
+        <sc-icon [name]="downloadIcon" [size]="18" />
+      </button>
+
+      @if (failedCount() > 0) {
+        <button
+          type="button"
+          class="memory-toolbar-icon"
+          [attr.aria-label]="
+            'memory.conversations.filters.mark_read_aria' | translate: { count: selectedCount() }
+          "
+          [attr.title]="'memory.conversations.filters.mark_read' | translate"
+          (click)="bulkMarkReadRequested.emit()"
+          [disabled]="selectedCount() === 0"
+        >
+          <sc-icon [name]="markReadIcon" [size]="18" />
+          @if (selectedCount() > 0) {
+            <span class="memory-toolbar-icon__badge">{{ selectedCount() }}</span>
+          }
+        </button>
+      }
+    </div>
+
+    <div class="memory-conversation-filters__actions-right">
+      <span
+        class="memory-conversation-filters__results"
+        role="status"
+        aria-live="polite"
+        aria-atomic="true"
+      >
+        {{ 'memory.conversations.filters.results' | translate }}:
+        <span class="memory-conversation-filters__results-num">{{ filteredCount() }}</span>
+        @if (lastSearchAt()) {
+          <span class="memory-conversation-filters__results-sep">·</span>
+          {{ 'memory.conversations.filters.last_search' | translate }}:
+          <span class="memory-conversation-filters__results-time">{{ lastSearchLabel() }}</span>
+        }
+      </span>
+      <button
+        type="button"
+        class="sc-icon-btn"
+        (click)="onReset()"
+        [attr.aria-label]="'memory.conversations.filters.reset' | translate"
+        [attr.title]="'memory.conversations.filters.reset' | translate"
+      >
+        <sc-icon [name]="resetIcon" [size]="14" />
+      </button>
+    </div>
+  </div>
+</div>

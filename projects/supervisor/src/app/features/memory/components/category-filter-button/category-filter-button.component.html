@@ -1,0 +1,61 @@
+<button
+  type="button"
+  class="category-filter-trigger"
+  [class.category-filter-trigger--active]="hasActive()"
+  [attr.aria-pressed]="hasActive()"
+  [attr.aria-label]="'memory.category_filter.aria' | translate"
+  (click)="panel.toggle($event)"
+>
+  <sc-icon [name]="tagIcon" [size]="14" />
+  <span>{{ 'memory.category_filter.label' | translate }}</span>
+  @if (hasActive()) {
+    <span class="category-filter-trigger__badge">{{ selected().length }}</span>
+  }
+</button>
+
+<p-popover
+  #panel
+  [appendTo]="'body'"
+  styleClass="memory-category-filter-popover"
+  role="dialog"
+  [attr.aria-label]="'memory.category_filter.panel_title' | translate"
+>
+  <div class="category-filter-panel">
+    <header class="category-filter-panel__head">
+      <h3>{{ 'memory.category_filter.panel_title' | translate }}</h3>
+      @if (hasActive()) {
+        <button type="button" class="category-filter-panel__clear" (click)="clearAll()">
+          {{ 'memory.category_filter.clear' | translate }}
+        </button>
+      }
+    </header>
+
+    <div class="category-filter-panel__body">
+      @if (available().length === 0) {
+        <p class="category-filter-panel__empty">
+          {{ 'memory.category_filter.empty' | translate }}
+        </p>
+      } @else {
+        @for (cat of available(); track cat) {
+          <label class="category-filter-row" [class.category-filter-row--selected]="isChecked(cat)">
+            <input type="checkbox" [checked]="isChecked(cat)" (change)="toggle(cat)" />
+            <span>{{ cat }}</span>
+          </label>
+        }
+      }
+    </div>
+
+    @if (available().length > 0) {
+      <footer class="category-filter-panel__foot">
+        <button type="button" class="category-filter-panel__toggle-all" (click)="toggleAll()">
+          {{
+            (allSelected()
+              ? 'memory.category_filter.deselect_all'
+              : 'memory.category_filter.select_all'
+            ) | translate
+          }}
+        </button>
+      </footer>
+    }
+  </div>
+</p-popover>

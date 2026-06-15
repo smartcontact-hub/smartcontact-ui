@@ -24,6 +24,12 @@ module.exports = tseslint.config(
         'error',
         { type: 'element', prefix: ['sc', 'app'], style: 'kebab-case' },
       ],
+      // Convención `_`-prefijo = intencionalmente sin usar (params de firma,
+      // destructuring parcial). No oculta unused reales (esos no van con `_`).
+      '@typescript-eslint/no-unused-vars': [
+        'error',
+        { argsIgnorePattern: '^_', varsIgnorePattern: '^_', caughtErrorsIgnorePattern: '^_' },
+      ],
     },
   },
   {

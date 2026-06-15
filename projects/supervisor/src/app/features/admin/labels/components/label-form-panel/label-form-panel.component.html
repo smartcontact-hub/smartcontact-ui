@@ -1,0 +1,61 @@
+<div
+  class="panel"
+  role="dialog"
+  [attr.aria-label]="
+    (initial() ? 'labels.form.edit_title' : 'labels.form.create_title') | translate
+  "
+>
+  <h3 class="panel__title">
+    {{ (initial() ? 'labels.form.edit_title' : 'labels.form.create_title') | translate }}
+  </h3>
+
+  <div class="panel__field">
+    <sc-inputtext
+      #nameInput
+      inputId="label-name"
+      type="text"
+      [label]="'labels.form.name' | translate"
+      [value]="name()"
+      [placeholder]="'labels.form.name_placeholder' | translate"
+      (valueChange)="onNameInput($event)"
+      (keydown)="onKey($event)"
+    />
+    <div class="panel__error-slot">
+      @if (error()) {
+        <div class="panel__error">
+          <sc-icon [name]="alertIcon" [size]="10" />
+          <span>{{ error() | translate }}</span>
+        </div>
+      }
+    </div>
+  </div>
+
+  <div class="panel__field">
+    <span class="panel__label">{{ 'labels.form.color' | translate }}</span>
+    <sc-color-dot-picker [options]="colorOptions()" [(value)]="color" />
+  </div>
+
+  <div class="panel__field">
+    <label class="panel__label" for="label-desc">
+      {{ 'labels.form.description' | translate }}
+      <span class="panel__hint">({{ 'common.optional' | translate }})</span>
+    </label>
+    <sc-inputtext
+      inputId="label-desc"
+      type="text"
+      [value]="description()"
+      [placeholder]="'labels.form.description_placeholder' | translate"
+      (valueChange)="description.set($event)"
+      (keydown)="onKey($event)"
+    />
+  </div>
+
+  <div class="panel__actions">
+    <button type="button" class="panel__btn panel__btn--ghost" (click)="cancelled.emit()">
+      {{ 'common.cancel' | translate }}
+    </button>
+    <button type="button" class="panel__btn panel__btn--primary" (click)="onSave()">
+      {{ (initial() ? 'common.save' : 'common.create') | translate }}
+    </button>
+  </div>
+</div>

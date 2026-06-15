@@ -1,0 +1,435 @@
+/*
+ * Shared form primitives — extracted from the three admin form pages
+ * (agents, groups, users) where these rules were defined identically.
+ *
+ * Class names are intentionally NOT prefixed with `sc-` because they're
+ * a high-traffic vocabulary (form labels, inputs, errors, the 2-col
+ * grid). With Angular's emulated view encapsulation, these globals
+ * "fall through" to component templates that use them, since no
+ * component re-declares the same class. If a component WANTS to
+ * override one of these (e.g. a tighter `.field__input` for a
+ * compact form), it can declare `.field__input { … }` locally;
+ * Angular scopes that to the component's host attribute, shadowing
+ * the global.
+ *
+ * Source of truth for tokens: `src/app/core/tokens/layers/`.
+ */
+
+/* ------------------------------------------------------------------ *
+ * Form grid — 2-column layout shared across every form page.
+ * ------------------------------------------------------------------ */
+.grid {
+  display: grid;
+  gap: var(--sc-spacing-1-125);
+
+  &--2 {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Field primitives — label, required marker, hint, input, error,
+ * help. Used by every text/select/email/tel input across the forms.
+ *
+ * `--inline` is the variant used next to a toggle switch.
+ * ------------------------------------------------------------------ */
+.field {
+  display: flex;
+  flex-direction: column;
+
+  &--inline {
+    flex-direction: row;
+    align-items: center;
+    gap: var(--sc-spacing-0-875);
+    margin-top: var(--sc-spacing-0-875);
+  }
+
+  &__label,
+  &__label-inline {
+    font-size: var(--sc-font-size-100);
+    font-weight: var(--sc-font-weight-medium);
+    color: var(--sc-text-secondary);
+    margin-bottom: 2px;
+  }
+
+  &__required {
+    color: var(--sc-text-danger);
+    margin-left: 2px;
+  }
+
+  &__hint {
+    color: var(--sc-text-disabled);
+    margin-left: var(--sc-spacing-0-25);
+    font-weight: var(--sc-font-weight-regular);
+  }
+
+  &__input {
+    padding: var(--sc-spacing-0-5) var(--sc-spacing-0-875);
+    font-family: inherit;
+    font-size: var(--sc-font-size-200);
+    color: var(--sc-text-primary);
+    background: var(--sc-bg-surface);
+    border: 1px solid var(--sc-border-default);
+    border-radius: var(--sc-radius-100);
+    outline: none;
+    transition: border-color var(--sc-transition-fast) var(--sc-easing-default);
+
+    &::placeholder {
+      color: var(--sc-text-subtle);
+    }
+
+    &:hover {
+      border-color: var(--sc-border-strong);
+    }
+
+    &:focus {
+      border-color: var(--sc-color-blue-500);
+    }
+
+    &--error,
+    &--error:hover,
+    &--error:focus {
+      border-color: var(--sc-border-error, var(--sc-text-danger));
+    }
+  }
+
+  &__help {
+    margin-top: var(--sc-spacing-0-25);
+    font-size: var(--sc-font-size-50);
+    color: var(--sc-text-subtle);
+  }
+
+  &__error {
+    display: block;
+    /* Reserve space so toggling validation doesn't shift layout (DD#16). */
+    min-height: 1.25em;
+    margin-top: var(--sc-spacing-0-25);
+    font-size: var(--sc-font-size-50);
+    line-height: 1.25;
+    color: var(--sc-text-danger);
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Checkbox grids — used by agent-form (groups, channels, perms),
+ * user-form (sections, services, perms). Column min-width 220px is
+ * the canonical size; user-form's services list overrides to 180px
+ * via `&--services` modifier (kept at component level, since it's
+ * specific to one screen).
+ * ------------------------------------------------------------------ */
+.checkbox-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(220px, 1fr));
+  gap: var(--sc-spacing-0-5) var(--sc-spacing-1-125);
+
+  /* Tighter columns for service-list rows in user-form, where each
+   * service name is short enough to fit comfortably at 180px. */
+  &--services {
+    grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  }
+}
+
+.checkbox-row {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-5);
+  font-size: var(--sc-font-size-200);
+  color: var(--sc-text-secondary);
+  cursor: pointer;
+  padding: var(--sc-spacing-0-25) 0;
+
+  > span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &:hover {
+    color: var(--sc-text-primary);
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Chip rows — `language-chips` and `label-chips` shared the exact
+ * same rule. Both classes are kept (changing either name is a wider
+ * template churn) but they alias the same definition here.
+ *
+ * `min-height: 32px` reserves a row so toggling chips doesn't shift
+ * the section below (DD#8).
+ * ------------------------------------------------------------------ */
+.language-chips,
+.label-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sc-spacing-0-75);
+  min-height: 32px;
+  margin-top: var(--sc-spacing-0-875);
+}
+
+/* ------------------------------------------------------------------ *
+ * Permission matrix — destino × {llamada, transferencia} tables used
+ * by the agent-form permissions section and the `/admin/aed/agentes`
+ * defaults page. Both consumers share the exact same layout (4 rows,
+ * 2 toggle columns, select-all column headers), so the styling lives
+ * here. Each consumer owns its own HTML and data binding.
+ *
+ * The `__head` block (icon + uppercase title strip above the table)
+ * is optional — used by agent-form to subtitle the "LLAMADAS" group.
+ * ------------------------------------------------------------------ */
+.perm-matrix {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: var(--sc-spacing-0-875);
+
+  &__head {
+    display: flex;
+    align-items: center;
+    gap: var(--sc-spacing-0-75);
+    margin-top: var(--sc-spacing-1-5);
+    padding-top: var(--sc-spacing-1-125);
+    border-top: 1px solid var(--sc-border-default);
+    color: var(--sc-text-secondary);
+  }
+
+  &__title {
+    margin: 0;
+    font-size: var(--sc-font-size-100);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: var(--sc-font-weight-semibold);
+    color: var(--sc-text-subtle);
+  }
+
+  thead th {
+    font-size: var(--sc-font-size-50);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--sc-text-subtle);
+    font-weight: var(--sc-font-weight-semibold);
+    text-align: left;
+    padding: var(--sc-spacing-0-75) var(--sc-spacing-0-875);
+    border-bottom: 1px solid var(--sc-border-default);
+  }
+
+  &__th-label {
+    width: auto;
+  }
+
+  thead th.perm-matrix__th-col {
+    text-align: center;
+    width: 140px;
+
+    /*
+     * The column header is an `<sc-checkbox>` that wraps a
+     * projected `<span>` (the column label). Default tri-state layout
+     * is "[box] label"; we want "LABEL [box]" to match Voice's
+     * Figura 15 (DD#55). We also want the projected label to inherit
+     * the header's small-caps treatment instead of the tri-state's
+     * own body-text style.
+     */
+    sc-checkbox .tri-checkbox {
+      flex-direction: row-reverse;
+      justify-content: center;
+      font-size: inherit;
+      color: inherit;
+      text-transform: inherit;
+      letter-spacing: inherit;
+      font-weight: inherit;
+    }
+  }
+
+  tbody th,
+  tbody td {
+    padding: var(--sc-spacing-0-875);
+    border-bottom: 1px solid var(--sc-border-subtle, var(--sc-border-default));
+    vertical-align: middle;
+  }
+
+  &__th-row {
+    text-align: left;
+    font-size: var(--sc-font-size-200);
+    font-weight: var(--sc-font-weight-regular);
+    color: var(--sc-text-primary);
+  }
+
+  &__cell {
+    text-align: center;
+  }
+
+  tr:last-child th,
+  tr:last-child td {
+    border-bottom: 0;
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * Header pills — shared between agent-form, group-form, user-form.
+ *
+ * Base + `--type` (brand-subtle) + `--status` (transition) +
+ * `--status-active/inactive` (presence-token bg + pop animation) live
+ * here because they're identical across all three consumers. Form-
+ * specific variants (`--presence-*` on agent-form, `--priority-*` on
+ * group-form) stay in the form's own SCSS; they layer on top of this
+ * base via cascade.
+ * ------------------------------------------------------------------ */
+.pill {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-5);
+  padding: 3px var(--sc-spacing-0-875);
+  border-radius: var(--sc-radius-full);
+  font-size: var(--sc-font-size-75);
+  font-weight: var(--sc-font-weight-medium, 500);
+  letter-spacing: 0.01em;
+  border: 1px solid transparent;
+  background: var(--sc-bg-surface);
+  color: var(--sc-text-secondary);
+
+  &--type {
+    background: var(--sc-bg-primary-subtle);
+    color: var(--sc-bg-primary);
+  }
+
+  &--status {
+    transition:
+      background var(--sc-transition-base) var(--sc-easing-default),
+      color var(--sc-transition-base) var(--sc-easing-default),
+      border-color var(--sc-transition-base) var(--sc-easing-default);
+  }
+
+  &--status-active {
+    background: color-mix(in oklch, var(--sc-presence-available) 12%, var(--sc-bg-surface));
+    color: var(--sc-presence-available-deep);
+    animation: status-pop-active 360ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+  &--status-inactive {
+    background: var(--sc-bg-secondary-subtle);
+    color: var(--sc-text-subtle);
+    animation: status-pop-inactive 360ms cubic-bezier(0.16, 1, 0.3, 1);
+  }
+
+  &__dot {
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+    flex: 0 0 auto;
+  }
+}
+
+@keyframes status-pop-active {
+  0% {
+    transform: scale(0.94);
+  }
+  55% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+@keyframes status-pop-inactive {
+  0% {
+    transform: scale(0.94);
+  }
+  55% {
+    transform: scale(1.05);
+  }
+  100% {
+    transform: scale(1);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pill--status-active,
+  .pill--status-inactive {
+    animation: none;
+  }
+}
+
+/* ------------------------------------------------------------------ *
+ * La ficha + Eliminar del panel — patrón "todo arriba" (experiment S59).
+ *
+ * Shared aquí porque son idénticos en los 3 form shells (agents / users /
+ * groups). La ficha es el resumen de identidad (solo lectura) en la cabeza
+ * del panel; recupera el contexto que daba la banda sticky-form-header (a
+ * quién editas + su dato de estado) sin reintroducir la banda. Eliminar va
+ * al pie del panel, discreto y apartado del índice → fuera del scan primario.
+ *
+ * Variantes específicas (pill `--presence-*` del agente) se quedan en el
+ * SCSS del form; layeran sobre el `.pill` base por cascade.
+ * ------------------------------------------------------------------ */
+.ficha {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-1);
+  /* Panel gray-50 1:1 con el Figma (ficha 12277:4807: bg gray-50, padding 16,
+   * radio 12) — recogido sobre la página blanca. S62-ext-2. */
+  padding: var(--sc-spacing-1-143);
+  background: var(--sc-bg-secondary-subtle);
+  border-radius: var(--sc-radius-xl);
+
+  &__avatar {
+    flex: 0 0 auto;
+  }
+
+  &__body {
+    min-width: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: var(--sc-spacing-0-5);
+  }
+
+  &__name {
+    max-width: 100%;
+    font-size: var(--sc-font-size-200);
+    font-weight: var(--sc-font-weight-semibold);
+    color: var(--sc-text-primary);
+    line-height: 1.2;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__ext {
+    font-size: var(--sc-font-size-75);
+    color: var(--sc-text-subtle);
+  }
+}
+
+.ipanel__delete {
+  margin-top: auto;
+  align-self: flex-end;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-5);
+  padding: var(--sc-spacing-0-5) var(--sc-spacing-0-75);
+  border: 0;
+  background: transparent;
+  color: var(--sc-text-danger);
+  font-size: var(--sc-font-size-100);
+  font-weight: var(--sc-font-weight-medium);
+  border-radius: var(--sc-radius-100);
+  cursor: pointer;
+  transition: background var(--sc-transition-fast) var(--sc-easing-default);
+
+  > sc-icon {
+    flex: 0 0 auto;
+  }
+
+  &:hover {
+    background: color-mix(in oklch, var(--sc-color-red-500) 10%, transparent);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--sc-color-soft-blue-500);
+    outline-offset: 2px;
+  }
+
+  /* En móvil el rail es estático (sin altura extra) — no hay hueco que
+   * empujar, así que el enlace simplemente sigue al índice. */
+  @media (max-width: 1024px) {
+    margin-top: var(--sc-spacing-1);
+  }
+}

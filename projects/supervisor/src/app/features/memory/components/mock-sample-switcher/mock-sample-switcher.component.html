@@ -1,0 +1,42 @@
+<button
+  type="button"
+  class="mock-sample-switcher__trigger"
+  (click)="op.toggle($event)"
+  title="Cambiar conjunto de datos de demo (solo en prototipo)"
+  aria-label="Cambiar conjunto de datos de demo"
+>
+  <span class="mock-sample-switcher__chip">{{
+    'memory.mock_sample_switcher.chip_label' | translate
+  }}</span>
+  <sc-icon class="mock-sample-switcher__icon" [name]="databaseIcon" [size]="13" />
+  <span class="mock-sample-switcher__label-prefix">{{
+    'memory.mock_sample_switcher.data_prefix' | translate
+  }}</span>
+  <span class="mock-sample-switcher__current">{{ currentSample().labelKey | translate }}</span>
+</button>
+
+<p-popover #op styleClass="mock-sample-switcher__popover">
+  <div class="mock-sample-switcher__list" role="menu">
+    <span class="mock-sample-switcher__list-label">{{
+      'memory.mock_sample_switcher.list_header' | translate
+    }}</span>
+    @for (s of samples; track s.id) {
+      <button
+        type="button"
+        class="mock-sample-switcher__item"
+        [class.is-active]="s.id === currentId()"
+        role="menuitemradio"
+        [attr.aria-checked]="s.id === currentId()"
+        (click)="selectSample(s.id); op.hide()"
+      >
+        <div class="mock-sample-switcher__item-head">
+          <span class="mock-sample-switcher__item-title">{{ s.labelKey | translate }}</span>
+          @if (s.id === currentId()) {
+            <sc-icon class="mock-sample-switcher__item-check" [name]="checkIcon" [size]="13" />
+          }
+        </div>
+        <p class="mock-sample-switcher__item-desc">{{ s.descriptionKey | translate }}</p>
+      </button>
+    }
+  </div>
+</p-popover>

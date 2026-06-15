@@ -1,0 +1,351 @@
+import {
+  afterNextRender,
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  DestroyRef,
+  inject,
+  input,
+  signal,
+  type TemplateRef,
+  viewChild,
+} from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { map, startWith } from 'rxjs';
+import { MessageService } from 'primeng/api';
+import { ButtonModule } from 'primeng/button';
+
+import { ClickOutsideDirective } from '@core/directives/click-outside.directive';
+import { XlsxExportService } from '@core/services/xlsx-export.service';
+import { clampToViewport } from '@core/utils/viewport';
+import { TopBarSlotService } from '@core/layout/top-bar/top-bar-slot.service';
+import { TOAST_LIFE } from '@core/utils/toast-life';
+import { ScBulkActionBarComponent as BulkActionBarComponent } from '@smartcontact-hub/components';
+import { ScDeleteEntityDialogComponent as DeleteEntityDialogComponent } from '@smartcontact-hub/components';
+import { IconComponent } from '@shared/components';
+import { ScSearchComponent as SearchComponent } from '@smartcontact-hub/components';
+import { RepoFormPanelComponent, RepoFormSubmission } from './repo-form-panel.component';
+import { RepoEntity, RepoPageConfig, RepoStore } from './repo-types';
+
+interface ContextMenuPos {
+  readonly x: number;
+  readonly y: number;
+  readonly itemId: number;
+}
+
+/**
+ * Generic CRUD page used by all 9 repository instances. Driven by a
+ * `RepoPageConfig<T>` (columns, fields, breadcrumb, copy) plus a `RepoStore<T>`
+ * that supplies the data. Mirrors the prototype's `RepositoryListPage`
+ * including search, sort, table with row + context menus, dynamic edit panel,
+ * bulk delete (via shared `DeleteEntityDialog`), and XLSX export.
+ */
+@Component({
+  selector: 'sc-repo-list-page',
+  imports: [
+    BulkActionBarComponent,
+    ButtonModule,
+    ClickOutsideDirective,
+    DeleteEntityDialogComponent,
+    IconComponent,
+    RepoFormPanelComponent,
+    SearchComponent,
+    TranslateModule,
+  ],
+  templateUrl: './repo-list-page.component.html',
+  styleUrl: './repo-list-page.component.scss',
+  changeDetection: ChangeDetectionStrategy.OnPush,
+})
+export class RepoListPageComponent<T extends RepoEntity> {
+  private readonly messages = inject(MessageService);
+  private readonly translate = inject(TranslateService);
+  private readonly xlsx = inject(XlsxExportService);
+  private readonly topBarSlot = inject(TopBarSlotService);
+  private readonly destroyRef = inject(DestroyRef);
+
+  readonly config = input.required<RepoPageConfig<T>>();
+  readonly store = input.required<RepoStore<T>>();
+
+  /** CTA + panel inline proyectados a la TopBar (modelo "todo arriba" S59). */
+  private readonly topbarActions = viewChild<TemplateRef<unknown>>('topbarActions');
+
+  constructor() {
+    afterNextRender(() => {
+      const tpl = this.topbarActions();
+      if (tpl) this.topBarSlot.setActions(tpl);
+    });
+    this.destroyRef.onDestroy(() => this.topBarSlot.clearActions());
+  }
+
+  protected readonly plusIcon = 'add';
+  protected readonly searchIcon = 'search';
+  protected readonly closeIcon = 'close';
+  protected readonly downloadIcon = 'download';
+  protected readonly moreIcon = 'more_vert';
+  protected readonly editIcon = 'edit';
+  protected readonly trashIcon = 'delete';
+
+  protected readonly searchQuery = signal('');
+  protected readonly creating = signal(false);
+  protected readonly editingId = signal<number | null>(null);
+  protected readonly selectedIds = signal<ReadonlySet<number>>(new Set());
+  protected readonly contextMenu = signal<ContextMenuPos | null>(null);
+  protected readonly openMenuId = signal<number | null>(null);
+  protected readonly deleteTarget = signal<readonly T[] | null>(null);
+
+  protected readonly items = computed(() => this.store().items());
+
+  protected readonly filtered = computed(() => {
+    const query = this.searchQuery().toLowerCase().trim();
+    const all = this.items();
+    if (!query) return all;
+    const keys = this.config().searchKeys;
+    return all.filter((item) =>
+      keys.some((key) => {
+        const value = (item as unknown as Record<string, unknown>)[key];
+        return typeof value === 'string' && value.toLowerCase().includes(query);
+      }),
+    );
+  });
+
+  protected readonly sorted = computed(() =>
+    [...this.filtered()].sort((a, b) => a.name.localeCompare(b.name)),
+  );
+
+  protected readonly existingNames = computed(() => this.items().map((item) => item.name));
+
+  protected readonly allSelected = computed(() => {
+    const sortedLen = this.sorted().length;
+    return sortedLen > 0 && this.selectedIds().size === sortedLen;
+  });
+
+  protected readonly deleteItems = computed(() =>
+    (this.deleteTarget() ?? []).map((item) => ({ id: item.id, name: item.name })),
+  );
+
+  /** Reactividad al cambio de idioma para resolver `entitySingularKey` y
+   *  `entityPluralKey` del config (S51 sweep AED i18n). Patrón S49 reactive
+   *  pattern — sin esta dependency `translate.instant` no se re-evalúa al
+   *  cambio de idioma. */
+  private readonly currentLang = toSignal(
+    this.translate.onLangChange.pipe(
+      map((e) => e.lang),
+      startWith(this.translate.currentLang),
+    ),
+    { initialValue: this.translate.currentLang },
+  );
+
+  /** Nombre singular de la entidad, traducido. Dependency: config + lang. */
+  protected readonly entitySingular = computed(() => {
+    this.currentLang();
+    return this.translate.instant(this.config().entitySingularKey);
+  });
+
+  /** Nombre plural de la entidad, traducido. */
+  protected readonly entityPlural = computed(() => {
+    this.currentLang();
+    return this.translate.instant(this.config().entityPluralKey);
+  });
+
+  protected readonly bulkEntity = computed(() => ({
+    singular: this.entitySingular(),
+    plural: this.entityPlural(),
+    suffixSingular: this.translate.instant('common.bulk.selected_one'),
+    suffixPlural: this.translate.instant('common.bulk.selected_other'),
+  }));
+
+  protected getCellValue(item: T, key: string): string {
+    const cfg = this.config();
+    const column = cfg.columns.find((c) => c.key === key);
+    if (!column) return '';
+    return column.accessor(item);
+  }
+
+  protected getStatusEntry(
+    item: T,
+    key: string,
+  ): { labelKey: string; tone: 'success' | 'muted' | 'warning' | 'danger' | 'info' } | null {
+    const column = this.config().columns.find((c) => c.key === key);
+    if (!column || column.kind !== 'status' || !column.statusMap) return null;
+    return column.statusMap[column.accessor(item)] ?? null;
+  }
+
+  protected onCreateClick(): void {
+    this.editingId.set(null);
+    this.creating.update((c) => !c);
+  }
+
+  protected onCreateSubmit(submission: RepoFormSubmission): void {
+    const created = this.store().addItem(submission as unknown as Omit<T, 'id'>);
+    this.creating.set(false);
+    this.toastSuccess('repositories.toasts.created', {
+      entity: this.entitySingular(),
+      name: created.name,
+    });
+  }
+
+  protected onEditSubmit(id: number, submission: RepoFormSubmission): void {
+    this.store().updateItem(id, submission as unknown as Partial<T>);
+    this.editingId.set(null);
+    const name = submission['name'] ?? '';
+    this.toastSuccess('repositories.toasts.updated', {
+      entity: this.entitySingular(),
+      name,
+    });
+  }
+
+  protected toggleSelect(id: number): void {
+    this.selectedIds.update((current) => {
+      const next = new Set(current);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }
+
+  protected toggleSelectAll(): void {
+    this.selectedIds.update((current) => {
+      const sorted = this.sorted();
+      if (current.size === sorted.length) return new Set();
+      return new Set(sorted.map((item) => item.id));
+    });
+  }
+
+  protected clearSelection(): void {
+    this.selectedIds.set(new Set());
+  }
+
+  protected requestDeleteSelection(): void {
+    const ids = this.selectedIds();
+    const targets = this.items().filter((item) => ids.has(item.id));
+    if (targets.length > 0) this.deleteTarget.set(targets);
+  }
+
+  protected confirmDelete(remainingIds: readonly number[] | null): void {
+    const target = this.deleteTarget();
+    if (!target) return;
+
+    let ids: number[];
+    let toasted: T[];
+    if (remainingIds === null) {
+      ids = target.map((t) => t.id);
+      toasted = [...target];
+    } else {
+      const idSet = new Set(remainingIds);
+      toasted = target.filter((t) => idSet.has(t.id));
+      ids = toasted.map((t) => t.id);
+    }
+
+    if (ids.length === 1) {
+      this.store().deleteItem(ids[0]!);
+      this.toastSuccess('repositories.toasts.deleted_single', {
+        entity: this.entitySingular(),
+        name: toasted[0]!.name,
+      });
+    } else {
+      this.store().deleteItems(ids);
+      this.toastSuccess('repositories.toasts.deleted_bulk', {
+        count: ids.length,
+        entity: this.entityPlural(),
+      });
+    }
+
+    this.deleteTarget.set(null);
+    this.clearSelection();
+  }
+
+  protected cancelDelete(): void {
+    this.deleteTarget.set(null);
+  }
+
+  protected onContextMenu(event: MouseEvent, itemId: number): void {
+    event.preventDefault();
+    const { x, y } = clampToViewport(event.clientX, event.clientY);
+    this.contextMenu.set({ x, y, itemId });
+  }
+
+  protected closeContextMenu(): void {
+    this.contextMenu.set(null);
+  }
+
+  protected toggleRowMenu(id: number): void {
+    this.openMenuId.update((current) => (current === id ? null : id));
+  }
+
+  protected closeRowMenu(): void {
+    this.openMenuId.set(null);
+  }
+
+  protected onContextEdit(): void {
+    const ctx = this.contextMenu();
+    if (!ctx) return;
+    this.editingId.set(ctx.itemId);
+    this.creating.set(false);
+    this.contextMenu.set(null);
+  }
+
+  protected onContextDelete(): void {
+    const ctx = this.contextMenu();
+    if (!ctx) return;
+    const item = this.items().find((i) => i.id === ctx.itemId);
+    if (item) this.deleteTarget.set([item]);
+    this.contextMenu.set(null);
+  }
+
+  protected onRowEdit(item: T): void {
+    this.editingId.set(item.id);
+    this.creating.set(false);
+    this.openMenuId.set(null);
+  }
+
+  protected onRowDelete(item: T): void {
+    this.deleteTarget.set([item]);
+    this.openMenuId.set(null);
+  }
+
+  protected closeCreatePanel(): void {
+    this.creating.set(false);
+  }
+
+  protected closeEditPanel(): void {
+    this.editingId.set(null);
+  }
+
+  protected onSearchKey(event: KeyboardEvent): void {
+    if (event.key !== 'Escape') return;
+    if (this.searchQuery()) {
+      this.searchQuery.set('');
+    } else {
+      (event.target as HTMLInputElement).blur();
+    }
+  }
+
+  protected onExport(): void {
+    const cfg = this.config();
+    const headers = cfg.columns.map((c) => this.translate.instant(c.labelKey));
+    const rows = this.sorted().map((item) =>
+      cfg.columns.map((c) => {
+        if (c.kind === 'status' && c.statusMap) {
+          const entry = c.statusMap[c.accessor(item)];
+          return entry ? this.translate.instant(entry.labelKey) : c.accessor(item);
+        }
+        return c.accessor(item);
+      }),
+    );
+    this.xlsx.export({
+      headers,
+      rows,
+      sheetName: this.translate.instant(cfg.sheetNameKey),
+      filePrefix: cfg.filePrefix,
+    });
+  }
+
+  private toastSuccess(key: string, params: Record<string, string | number>): void {
+    this.messages.add({
+      severity: 'success',
+      summary: this.translate.instant(key, params),
+      life: TOAST_LIFE.success,
+    });
+  }
+}

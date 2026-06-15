@@ -1,0 +1,183 @@
+<div class="actbl">
+  <!-- Unified search + add bar (Gmail-compose pattern) -->
+  <div class="actbl__head">
+    <div class="actbl__query">
+      <sc-icon [name]="searchIcon" [size]="14" class="actbl__query-icon" />
+      <input
+        type="text"
+        class="actbl__query-input"
+        [placeholder]="'groups.form.assigned.query_placeholder' | translate"
+        [value]="query()"
+        (input)="onQueryInput($event)"
+        (keydown)="onQueryKeydown($event)"
+        [attr.aria-label]="'groups.form.assigned.query_aria' | translate"
+      />
+      @if (query()) {
+        <button
+          type="button"
+          class="actbl__query-clear"
+          (click)="clearQuery()"
+          [attr.aria-label]="'labels.clear_search' | translate"
+        >
+          <sc-icon [name]="closeIcon" [size]="13" />
+        </button>
+      }
+    </div>
+
+    <span class="actbl__counter">
+      {{
+        'groups.form.assigned.counter'
+          | translate: { assigned: assignedRows().length, zero: zeroChannelCount() }
+      }}
+    </span>
+  </div>
+
+  <!-- "Add to group" suggestion strip — appears only when the query has
+       matches in the roster that aren't already assigned. -->
+  @if (addCandidates().length > 0) {
+    <div class="actbl__suggest">
+      <span class="actbl__suggest-label">
+        {{ 'groups.form.assigned.add_suggest' | translate }}
+      </span>
+      <div class="actbl__suggest-chips">
+        @for (cand of addCandidates(); track cand.id) {
+          <button
+            type="button"
+            class="actbl__suggest-chip"
+            (click)="addAgent(cand)"
+            [attr.aria-label]="
+              'groups.form.assigned.add_suggest_aria' | translate: { name: cand.name }
+            "
+          >
+            <sc-icon [name]="plusIcon" [size]="12" />
+            <span>{{ cand.name }}</span>
+          </button>
+        }
+      </div>
+    </div>
+  }
+
+  <!-- Table -->
+  @if (assignedRows().length === 0) {
+    <div class="actbl__empty">
+      <span class="actbl__empty-icon" aria-hidden="true">
+        <sc-icon [name]="emptyIcon" [size]="22" />
+      </span>
+      <p class="actbl__empty-title">{{ 'groups.form.assigned.empty_title' | translate }}</p>
+      <p class="actbl__empty-body">{{ 'groups.form.assigned.empty' | translate }}</p>
+    </div>
+  } @else {
+    <table class="actbl__table">
+      <thead>
+        <tr>
+          <th class="actbl__th-check">
+            <sc-checkbox
+              [state]="allVisibleSelected()"
+              [ariaLabel]="'labels.select_all' | translate"
+              (cycle)="toggleSelectAllVisible($event)"
+            />
+          </th>
+          <th class="actbl__th-name" scope="col">
+            {{ 'groups.form.assigned.col_agent' | translate }}
+          </th>
+          <th class="actbl__th-active" scope="col">
+            {{ 'groups.form.assigned.col_active' | translate }}
+          </th>
+          <th class="actbl__th-actions" aria-hidden="true"></th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (row of visibleRows(); track row.agent.id) {
+          <tr
+            class="actbl__row"
+            [class.actbl__row--selected]="isSelected(row.agent.id)"
+            [class.actbl__row--paused]="!row.link.active"
+          >
+            <td class="actbl__td-check">
+              <input
+                type="checkbox"
+                [checked]="isSelected(row.agent.id)"
+                (change)="toggleSelect(row.agent.id)"
+                [attr.aria-label]="row.agent.name"
+              />
+            </td>
+            <td class="actbl__td-name">
+              <sc-illustrated-avatar [name]="row.agent.name" pool="illustrated" [size]="24" />
+              <span class="actbl__name-label" [title]="row.agent.name">{{ row.agent.name }}</span>
+              <span class="actbl__chips">
+                @for (ch of groupChannels(); track ch) {
+                  <label
+                    class="actbl__chip"
+                    [class.actbl__chip--on]="hasChannel(row.link, ch)"
+                    [class.actbl__chip--off]="!hasChannel(row.link, ch)"
+                    [class.actbl__chip--disabled]="!row.link.active"
+                  >
+                    <input
+                      type="checkbox"
+                      [checked]="hasChannel(row.link, ch)"
+                      [disabled]="!row.link.active"
+                      (change)="toggleChannel(row.agent.id, ch)"
+                      [attr.aria-label]="row.agent.name + ' — ' + (channelKeys[ch] | translate)"
+                    />
+                    <sc-icon
+                      [name]="hasChannel(row.link, ch) ? checkIcon : plusIcon"
+                      [size]="12"
+                      class="actbl__chip-icon"
+                    />
+                    <span>{{ channelKeys[ch] | translate }}</span>
+                  </label>
+                }
+              </span>
+            </td>
+            <td class="actbl__td-active">
+              <sc-toggleswitch
+                [checked]="row.link.active"
+                [ariaLabel]="
+                  'groups.form.assigned.active_aria' | translate: { name: row.agent.name }
+                "
+                (checkedChange)="toggleActive(row.agent.id, $event)"
+              />
+            </td>
+            <td class="actbl__td-actions">
+              <button
+                type="button"
+                class="actbl__remove"
+                (click)="removeRow(row.agent.id)"
+                [attr.aria-label]="
+                  'groups.form.assigned.remove_aria' | translate: { name: row.agent.name }
+                "
+              >
+                <sc-icon [name]="trashIcon" [size]="14" />
+              </button>
+            </td>
+          </tr>
+        }
+        @if (visibleRows().length === 0) {
+          <tr>
+            <td colspan="4" class="actbl__no-results">
+              {{ 'groups.form.assigned.no_results' | translate }}
+            </td>
+          </tr>
+        }
+      </tbody>
+    </table>
+
+    @if (selectedIds().size > 0) {
+      <div
+        class="actbl__bulkbar"
+        role="region"
+        [attr.aria-label]="'labels.bulk_actions' | translate"
+      >
+        <span class="actbl__bulk-count">
+          {{ 'groups.form.assigned.bulk_count' | translate: { count: selectedIds().size } }}
+        </span>
+        <p-button type="button" severity="secondary" size="small" (onClick)="bulkPause()">
+          <span>{{ 'groups.form.assigned.bulk_pause' | translate }}</span>
+        </p-button>
+        <p-button type="button" severity="danger" size="small" (onClick)="bulkUnassign()">
+          <span>{{ 'groups.form.assigned.bulk_unassign' | translate }}</span>
+        </p-button>
+      </div>
+    }
+  }
+</div>

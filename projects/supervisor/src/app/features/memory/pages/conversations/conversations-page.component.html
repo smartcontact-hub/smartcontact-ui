@@ -1,0 +1,63 @@
+<!-- Modelo "todo arriba" (experiment S59): sin banda de page-header — la
+     identidad la da el breadcrumb de la TopBar. El switcher de datos demo
+     también vive arriba (junto al avatar) vía TopBarSlotService. Ver el .ts. -->
+<div class="page">
+  <div class="page__inner">
+    <sc-memory-conversation-filters
+      [filters]="filters()"
+      [availableAiCategories]="availableAiCategories()"
+      [failedCount]="failedCount()"
+      [filteredCount]="filteredCount()"
+      [selectedCount]="selectedCount()"
+      [lastSearchAt]="lastSearchAt()"
+      (filtersChange)="onFiltersChange($event)"
+      (bulkTranscribeRequested)="onBulkTranscribe()"
+      (downloadRequested)="onDownloadRequested()"
+      (bulkMarkReadRequested)="onBulkMarkRead()"
+    />
+    <sc-memory-conversation-table
+      [conversations]="conversations()"
+      [selectedIds]="selectedIds()"
+      [allSelected]="allFilteredSelected()"
+      [processingIds]="processingIds()"
+      [analyzingIds]="analyzingIds()"
+      (conversationOpen)="onConversationOpen($event)"
+      (selectionToggled)="onSelectionToggled($event)"
+      (allToggled)="onAllToggled()"
+      (contextActionRequested)="onContextAction($event)"
+    />
+  </div>
+</div>
+
+<sc-memory-conversation-player-modal
+  [visible]="playerOpen()"
+  [conversation]="playerConversation()"
+  [isTranscribing]="playerIsTranscribing()"
+  [isAnalyzing]="playerIsAnalyzing()"
+  (closed)="onPlayerClose()"
+  (requestTranscription)="onPlayerRequestTranscription($event)"
+  (requestAnalysis)="onPlayerRequestAnalysis($event)"
+  (requestTranscriptionAndAnalysis)="onPlayerRequestTranscriptionAndAnalysis($event)"
+  (requestRetranscriptionConfirm)="onPlayerRequestRetransConfirm($event)"
+/>
+
+<sc-memory-retranscription-confirm-modal
+  [visible]="retransConfirmOpen()"
+  (cancelled)="onRetransCancel()"
+  (confirmed)="onRetransConfirm()"
+/>
+
+<sc-memory-bulk-transcription-modal
+  [visible]="bulkModalOpen()"
+  [selected]="bulkSnapshot()"
+  [processingIds]="processingIdsArray()"
+  [analyzingIds]="analyzingIdsArray()"
+  (closed)="onBulkModalClose()"
+  (confirmed)="onBulkModalConfirm($event)"
+/>
+
+<sc-memory-download-modal
+  [visible]="downloadModalOpen()"
+  (confirm)="onDownloadConfirm($event)"
+  (cancelled)="onDownloadCancel()"
+/>
