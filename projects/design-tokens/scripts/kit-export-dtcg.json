@@ -6519,7 +6519,7 @@
       "border": {
         "radius": {
           "$type": "number",
-          "$value": "{border.radius.md}"
+          "$value": "{border.radius.xl}"
         }
       }
     },
