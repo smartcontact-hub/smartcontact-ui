@@ -36,6 +36,7 @@ import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { loadKitExport } from './dtcg-export.mjs';
 import { scaleSuffix, toRem, dropAlpha } from './token-naming.mjs';
+import { rewriteRegion } from './marker-rewrite.mjs';
 
 const root = resolve(import.meta.dirname, '..');
 const EXPORT_PATH = resolve(root, 'projects/design-tokens/scripts/kit-export-dtcg.json');
@@ -168,16 +169,6 @@ if (emit) {
     log(z.render());
   }
   process.exit(0);
-}
-
-function rewriteRegion(txt, startTag, endTag, header, body) {
-  const si = txt.indexOf(startTag);
-  const ei = txt.indexOf(endTag);
-  if (si < 0 || ei < 0) return null;
-  const lineStart = txt.lastIndexOf('\n', si) + 1;
-  const indent = txt.slice(lineStart, si);
-  const block = `${indent}${header}\n${body}\n${indent}${endTag}`;
-  return txt.slice(0, lineStart) + block + txt.slice(ei + endTag.length);
 }
 
 if (write) {
