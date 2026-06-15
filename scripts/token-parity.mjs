@@ -26,6 +26,7 @@ import { resolve } from 'node:path';
 import { createRequire } from 'node:module';
 import { loadKitExport } from './dtcg-export.mjs';
 import { SIZING, GROUPS, DIVERGE_SIZING } from './sizing-map.mjs';
+import { ENFORCE as COLOR_ENFORCE, DIVERGE as COLOR_DIVERGE } from './color-map.mjs';
 
 const root = resolve(import.meta.dirname, '..');
 const EXPORT_PATH = resolve(root, 'projects/design-tokens/scripts/kit-export-dtcg.json');
@@ -276,50 +277,11 @@ const expHex = (mode, path) => {
   const v = kit.resolve(leaf.$value, mode);
   return typeof v === 'string' && /^#/.test(v) ? normHex(v) : undefined;
 };
-const surfaceRows = ['0', '50', '100', '200', '300', '400', '500', '600', '700', '800', '900', '950'].map(
-  (s) => ['light', `surface.${s}`, s === '0' ? 'sc-color-gray-0' : `sc-color-gray-${s}`],
-);
-const ENFORCE = [
-  ...surfaceRows,
-  ['light', 'primary.color', 'sc-bg-primary'],
-  ['light', 'primary.hover.color', 'sc-bg-primary-hover'],
-  ['light', 'primary.active.color', 'sc-bg-primary-active'],
-  ['light', 'primary.contrast.color', 'sc-text-on-primary'],
-  ['light', 'content.background', 'sc-bg-surface'],
-  ['light', 'content.border.color', 'sc-border-default'],
-  ['light', 'content.color', 'sc-text-primary'],
-  ['light', 'content.hover.background', 'sc-bg-secondary-hover'],
-  ['light', 'text.color', 'sc-text-primary'],
-  ['light', 'text.muted.color', 'sc-text-secondary'],
-  ['light', 'form.field.background', 'sc-bg-surface'],
-  ['light', 'form.field.color', 'sc-text-primary'],
-  ['light', 'form.field.focus.border.color', 'sc-bg-primary'],
-  ['light', 'form.field.hover.border.color', 'sc-border-strong'],
-  ['light', 'form.field.disabled.background', 'sc-bg-disabled'],
-  ['light', 'form.field.invalid.border.color', 'sc-border-error'],
-  ['light', 'form.field.icon.color', 'sc-icon-subtle'],
-  ['light', 'navigation.item.color', 'sc-text-primary'],
-  ['light', 'navigation.item.icon.color', 'sc-icon-subtle'],
-  ['light', 'navigation.item.active.background', 'sc-bg-secondary-hover'],
-  ['light', 'list.option.color', 'sc-text-primary'],
-  ['light', 'list.option.focus.background', 'sc-bg-secondary-hover'],
-  ['light', 'overlay.modal.background', 'sc-bg-surface'],
-  ['light', 'overlay.modal.border.color', 'sc-border-default'],
-  ['light', 'overlay.popover.background', 'sc-bg-surface'],
-  ['light', 'overlay.popover.border.color', 'sc-border-default'],
-  ['dark', 'primary.color', 'sc-bg-primary'],
-  ['dark', 'primary.hover.color', 'sc-bg-primary-hover'],
-  ['dark', 'primary.active.color', 'sc-bg-primary-active'],
-];
-const DIVERGE = [
-  ['dark', 'surface.*', 'gray-* navy-tinted (el Kit usa zinc en dark) — paleta de marca SC'],
-  ['dark', 'primary.contrast.color', 'texto sobre primario dark = gray-900 navy-tinted vs zinc-900 del Kit (misma divergencia que surface.*)'],
-  ['light', 'form.field.border.color', 'borde de input gray-200 (=content/overlay) vs Kit surface-300 — 1 paso, jerarquía propia'],
-  ['light', 'form.field.placeholder.color', 'placeholder gray-400 vs Kit surface-500 — un punto más tenue'],
-  ['light', 'form.field.disabled.color', 'disabled gray-300 vs Kit surface-500 — más tenue a propósito'],
-  ['light', 'overlay.select.background', '--sc-bg-elevated (elevación propia) vs Kit surface-0'],
-  ['dark', 'overlay/content/form.field', 'resuelven vía capa 7 (.sc-dark, navy-tinted) — no se cruzan contra el zinc del Kit'],
-];
+// Filas de color desde la fuente única `color-map.mjs` (extraídas 1:1 de lo que vivía
+// aquí inline). enforce → [mode, exp, token]; diverge → [mode, exp|label, reason]. El
+// generador `token-gen-color.mjs` consume el mismo mapa, así no se desincronizan.
+const ENFORCE = COLOR_ENFORCE.map((r) => [r.mode, r.exp, r.token]);
+const DIVERGE = COLOR_DIVERGE.map((r) => [r.mode, r.exp, r.reason]);
 
 // Reverse hex → primitiva, para sugerir el token exacto a pegar cuando un color de marca
 // diverge. Solo alimenta el MENSAJE de fallo: nunca cambia el veredicto pass/fail.

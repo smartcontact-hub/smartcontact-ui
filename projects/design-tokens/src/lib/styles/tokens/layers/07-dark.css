@@ -36,13 +36,16 @@
   --sc-bg-subtle-active: var(--sc-color-blue-700);
   --sc-bg-disabled: var(--sc-color-gray-800);
 
-  /* Primary (brand) — rampa dark 1:1 con el Kit (export.dark: primaryColor
-   * #4d6990=blue-400, hover #798eab=blue-300, active #a6b4c7=blue-200). El Kit
-   * aclara más que nuestro valor anterior (blue-500) → más contraste en dark.
-   * Vigilado por tokens:parity §6. */
+  /* Primary (brand) dark — base/hover/active 1:1 con el Kit → zona generada.
+   * El Kit aclara (blue-400/300/200) vs nuestro blue-500 anterior → más contraste. */
+  /* @sc-gen:semantic-color-dark — bloque GENERADO desde kit-export-dtcg.json por
+   * `npm run tokens:import` (token-gen-color.mjs). NO editar a mano.
+   * Color de marca 1:1 con el export en dark (hoy solo el primary; el resto del dark
+   * es divergencia consciente y vive FUERA de la zona). */
   --sc-bg-primary: var(--sc-color-blue-400);
   --sc-bg-primary-hover: var(--sc-color-blue-300);
   --sc-bg-primary-active: var(--sc-color-blue-200);
+  /* @sc-gen:semantic-color-dark:end */
   --sc-bg-primary-subtle: var(--sc-color-blue-900);
   --sc-bg-primary-subtle-hover: var(--sc-color-blue-800);
   --sc-bg-primary-subtle-active: var(--sc-color-blue-700);

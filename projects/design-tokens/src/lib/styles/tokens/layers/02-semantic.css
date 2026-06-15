@@ -13,15 +13,35 @@
  */
 
 :root {
+  /* @sc-gen:semantic-color-light — bloque GENERADO desde kit-export-dtcg.json por
+   * `npm run tokens:import` (token-gen-color.mjs). NO editar a mano.
+   * Color semántico de marca (light) 1:1 con el export, vía la primitiva --sc-color-*
+   * (preserva el contrato --sc-* y la indirección). El preset/app referencian estos
+   * --sc-*; así un cambio de color en Figma fluye sin mano. Divergencias conscientes y
+   * color-mix → FUERA de la zona (a mano). Divergencias → DIVERGE en scripts/color-map.mjs. */
+  --sc-bg-primary: var(--sc-color-blue-700);
+  --sc-bg-primary-hover: var(--sc-color-blue-600);
+  --sc-bg-primary-active: var(--sc-color-blue-800);
+  --sc-text-on-primary: var(--sc-color-gray-0);
+  --sc-bg-surface: var(--sc-color-gray-0);
+  --sc-border-default: var(--sc-color-gray-200);
+  --sc-text-primary: var(--sc-color-gray-700);
+  --sc-bg-secondary-hover: var(--sc-color-gray-100);
+  --sc-text-secondary: var(--sc-color-gray-500);
+  --sc-border-strong: var(--sc-color-gray-400);
+  --sc-bg-disabled: var(--sc-color-gray-200);
+  --sc-border-error: var(--sc-color-red-400);
+  --sc-icon-subtle: var(--sc-color-gray-400);
+  /* @sc-gen:semantic-color-light:end */
+
   /* ---------- Text ----------
    * Rampa alineada al Kit (S62-ext-3, parity §6): texto cuerpo = gray-700
    * (export textColor #4f5663), secundario/muted = gray-500 (export
    * textMutedColor #8f97a3). `subtle` (gray-400) y `disabled` (gray-300) son
    * un nivel MÁS FINO que el Kit (que colapsa todo lo no-primario a gray-500):
    * divergencia consciente — placeholder/disabled se ven más tenues a propósito
-   * (mejor jerarquía). Vigilado por parity §6 (enforce primary/secondary) + §7. */
-  --sc-text-primary: var(--sc-color-gray-700);
-  --sc-text-secondary: var(--sc-color-gray-500);
+   * (mejor jerarquía). Vigilado por parity §6 (enforce primary/secondary) + §7.
+   * primary (gray-700) + secondary (gray-500) → zona generada arriba. */
   --sc-text-subtle: var(--sc-color-gray-400);
   --sc-text-disabled: var(--sc-color-gray-300);
   --sc-text-inverse: var(--sc-color-gray-0);
@@ -32,7 +52,6 @@
   --sc-text-danger: var(--sc-color-red-600);
   --sc-text-info: var(--sc-text-accent);
   --sc-text-violet: var(--sc-color-violet-700);
-  --sc-text-on-primary: var(--sc-color-gray-0);
   --sc-text-on-secondary: var(--sc-color-gray-800);
   --sc-text-on-accent: var(--sc-color-gray-800);
   --sc-text-on-error: var(--sc-color-gray-0);
@@ -43,7 +62,6 @@
 
   /* ---------- Background ---------- */
   --sc-bg-default: var(--sc-color-gray-50);
-  --sc-bg-surface: var(--sc-color-gray-0);
   /* Elevated surface (popovers, dropdowns) — currently same as surface
    * because the light theme stays flat; the alias exists so consumers
    * that *semantically* want "elevated" don't reach for raw `#fff`. */
@@ -51,7 +69,6 @@
   --sc-bg-subtle: var(--sc-color-blue-50);
   --sc-bg-subtle-hover: var(--sc-color-blue-100);
   --sc-bg-subtle-active: var(--sc-color-blue-200);
-  --sc-bg-disabled: var(--sc-color-gray-200);
   --sc-bg-overlay-transparent: #ffffff00;
 
   /* Generic hover / selected aliases — consumed by row-style components
@@ -61,20 +78,14 @@
   --sc-bg-selected: var(--sc-bg-primary-subtle);
   --sc-row-hover-bg: var(--sc-bg-secondary-hover);
 
-  /* Primary (brand) — rampa 1:1 con el Kit (export.semanticColorScheme.light:
-   * primaryColor #1b273d=blue-700, primaryHoverColor #243452=blue-600,
-   * primaryActiveColor #131b2b=blue-800). El hover ACLARA el navy (no lo
-   * oscurece) — intención de marca del Kit. Vigilado por tokens:parity §6. */
-  --sc-bg-primary: var(--sc-color-blue-700);
-  --sc-bg-primary-hover: var(--sc-color-blue-600);
-  --sc-bg-primary-active: var(--sc-color-blue-800);
+  /* Primary (brand) — base/hover/active 1:1 con el Kit → zona generada arriba.
+   * El hover ACLARA el navy (no lo oscurece) — intención de marca del Kit. */
   --sc-bg-primary-subtle: var(--sc-color-blue-50);
   --sc-bg-primary-subtle-hover: var(--sc-color-blue-100);
   --sc-bg-primary-subtle-active: var(--sc-color-blue-200);
 
   /* Secondary (gray) */
   --sc-bg-secondary: var(--sc-color-gray-600);
-  --sc-bg-secondary-hover: var(--sc-color-gray-100);
   --sc-bg-secondary-active: var(--sc-color-gray-200);
   --sc-bg-secondary-subtle: var(--sc-color-gray-50);
 
@@ -110,13 +121,11 @@
   --sc-bg-violet-subtle-active: var(--sc-color-violet-200);
 
   /* ---------- Border ----------
-   * gray-200 = export contentBorderColor / overlay*BorderColor (#dadfe6) → 1:1.
-   * (El Kit usa gray-300 SOLO para el borde de form-field; nuestro form-field
-   * usa este mismo gray-200, un punto más claro = chrome más aireado, divergencia
-   * consciente. Alinear el borde de input a gray-300 pediría un token dedicado
-   * `--sc-border-input` — follow-up, no romper el borde de content/overlay.) */
-  --sc-border-default: var(--sc-color-gray-200);
-  --sc-border-strong: var(--sc-color-gray-400);
+   * default (gray-200) + strong (gray-400) → zona generada arriba.
+   * Divergencia consciente: el Kit usa gray-300 SOLO para el borde de form-field;
+   * nuestro form-field usa el mismo gray-200 (un punto más claro = chrome más
+   * aireado). Alinear el input a gray-300 pediría un token dedicado `--sc-border-input`
+   * — follow-up, no romper el borde de content/overlay. */
   --sc-border-subtle: var(--sc-color-gray-100);
   --sc-border-disabled: var(--sc-color-gray-100);
 
@@ -138,7 +147,6 @@
   --sc-border-success-subtle: var(--sc-color-green-200);
   --sc-border-warning: var(--sc-color-amber-500);
   --sc-border-warning-subtle: var(--sc-color-amber-200);
-  --sc-border-error: var(--sc-color-red-400);
   /* Focus-ring border — electric-blue-500 (vibrante saturado). Decisión
    * consciente DIVERGENTE del JSON PrimeOne (que propone navy primary
    * #1b273d): el navy oscuro reduce contraste con el border primary del
@@ -159,7 +167,6 @@
   /* ---------- Icon ---------- */
   --sc-icon-primary: var(--sc-color-gray-800);
   --sc-icon-secondary: var(--sc-color-gray-600);
-  --sc-icon-subtle: var(--sc-color-gray-400);
   --sc-icon-inverse: var(--sc-color-gray-0);
   --sc-icon-disabled: var(--sc-color-gray-300);
   --sc-icon-link: var(--sc-color-soft-blue-600);
