@@ -69,21 +69,32 @@ jobs:
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git add -A
+          # Solo los ficheros de token (NO test-results/ de Playwright, NO .theme-designer/ del plugin).
+          git add projects/design-tokens/
           if git diff --cached --quiet; then
-            echo "Sin cambios respecto a main."
+            CHANGED=0
+            echo "Export == main: la rama se resetea a main limpio (sin residuo del plugin ni de tests)."
           else
+            CHANGED=1
             git commit -m "chore(tokens): export del Theme Designer + primitivos regenerados [skip ci]"
-            # El workflow es el dueño del estado de design-tokens-sync → la reseteamos a un
-            # estado limpio basado en main. force-push seguro (commit con [skip ci], y los
-            # push de GITHUB_TOKEN no re-disparan workflows).
-            git push --force origin HEAD:design-tokens-sync
           fi
-          body=$(printf 'Sync del Theme Designer: export DTCG nuevo aplicado SOBRE main + primitivos @sc-gen regenerados.\n\n- VERDE = cuadra con la escala, listo para mergear.\n- ROJO = drift en capas curadas (color/semantica) -> aplicar a 02-semantic / 03-palette / 04-component antes de mergear.')
-          if gh pr view design-tokens-sync --json state --jq .state 2>/dev/null | grep -q OPEN; then
-            echo "PR ya abierto — los commits nuevos lo actualizan."
-          elif gh pr create --base main --head design-tokens-sync --title "chore(tokens): sync del Theme Designer" --body "$body"; then
-            echo "PR abierto."
+          # El workflow es el ÚNICO dueño de design-tokens-sync: SIEMPRE la reseteamos al estado
+          # canónico (main, o main+cambio). Así nunca queda CSS viejo ni basura del plugin aunque
+          # el cambio iguale a main (p.ej. un revert). force-push seguro: commit con [skip ci] y
+          # los push de GITHUB_TOKEN no re-disparan workflows.
+          git push --force origin HEAD:design-tokens-sync
+
+          if [ "$CHANGED" = 0 ]; then
+            # Revert / no-op: no hay nada que revisar → cierra el PR si quedó abierto.
+            gh pr close design-tokens-sync --comment "Revertido: el export coincide con main; no hay cambio que mergear." 2>/dev/null \
+              && echo "PR cerrado (sin cambio)." || echo "Sin PR que cerrar."
           else
-            echo "::warning title=PR no abierto::Habilita Settings -> Actions -> General -> 'Allow GitHub Actions to create and approve pull requests'."
+            body=$(printf 'Sync del Theme Designer: export DTCG nuevo aplicado SOBRE main + primitivos @sc-gen regenerados.\n\n- VERDE = cuadra con la escala, listo para mergear.\n- ROJO = drift en capas curadas (color/semantica) -> aplicar a 02-semantic / 03-palette / 04-component antes de mergear.')
+            if gh pr view design-tokens-sync --json state --jq .state 2>/dev/null | grep -q OPEN; then
+              echo "PR ya abierto — los commits nuevos lo actualizan."
+            elif gh pr create --base main --head design-tokens-sync --title "chore(tokens): sync del Theme Designer" --body "$body"; then
+              echo "PR abierto."
+            else
+              echo "::warning title=PR no abierto::Habilita Settings -> Actions -> General -> 'Allow GitHub Actions to create and approve pull requests'."
+            fi
           fi
