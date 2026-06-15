@@ -22,6 +22,7 @@
 | **Brand divergences** — dónde SC se aparta del Figma a propósito (incl. las 3 de color) | [`docs/customs-catalog.md`](./customs-catalog.md) | Claude (antes de añadir override/token) + diseño |
 | Reglas de **blindaje / migration-safe** (minimizar customización de PrimeNG) | [`docs/migration-safety.md`](./migration-safety.md) | Claude (antes de tocar HTML/lógica PrimeNG) |
 | **Tokens + puente Figma** (para diseño) · **Figma change-log** · workflow Migration Assistant | [`docs/guia-tokens.md`](./guia-tokens.md) + técnico: [`projects/design-tokens/README.md`](../projects/design-tokens/README.md) | diseño + Claude |
+| **Onboarding / presentación para diseño** (puerta de entrada: flujo operativo, links, plugin, por qué del aparato) — resumen narrativo; el detalle vive en `guia-tokens.md` | [`docs/ppt-proyecto.md`](./ppt-proyecto.md) | diseño (arranque) + claude design |
 | Cómo **consume una app externa** los paquetes publicados | [`docs/consumer-onboarding.md`](./consumer-onboarding.md) | apps consumidoras + Claude |
 | **Convergencia** DS ↔ catálogo dev (unión, naming DD-12, plan de port) | [`docs/convergence-manifesto.md`](./convergence-manifesto.md) | Claude (al portar) |
 | **Fundaciones** (Mitad A): por qué del esqueleto/arquitectura | [`docs/foundations-rationale.md`](./foundations-rationale.md) | Claude (referencia) |
@@ -54,6 +55,9 @@ Los pares que más se confunden — cada uno tiene un trabajo distinto:
 - **`docs/guia-tokens.md` (puente Figma, lenguaje de diseño)** ≠ **`projects/design-tokens/README.md`
   (lo mismo, lenguaje técnico)**. Misma info, dos audiencias: el README es el canónico técnico; la guía
   es la traducción para diseño.
+- **`docs/ppt-proyecto.md` (presentación/onboarding, puerta de entrada)** ≠ **`docs/guia-tokens.md`
+  (manual a fondo)**. La presentación pone a una diseñadora a operar desde cero (resumen narrativo);
+  la guía es la enciclopedia. La presentación **apunta** a la guía, no la copia.
 - **`NEXT-SESSION.md` (estado volátil, se sobreescribe)** ≠ todo lo demás (durable, se acumula).
 
 ---
@@ -71,6 +75,6 @@ Los pares que más se confunden — cada uno tiene un trabajo distinto:
 
 ---
 
-Última actualización: 2026-06-14 — creado el índice (Lote L2 del maratón "sistema operativo").
-Mapeados los 16 docs del repo; fronteras `DECISIONS.md` ↔ `DECISIONS-LOG(-B)` ↔ `customs-catalog`
-↔ `migration-safety` hechas explícitas para matar el solape.
+Última actualización: 2026-06-16 — añadido `ppt-proyecto.md` (presentación de onboarding para diseño, W0).
+2026-06-14 — creado el índice (Lote L2 del maratón "sistema operativo"). Mapeados los docs del repo;
+fronteras `DECISIONS.md` ↔ `DECISIONS-LOG(-B)` ↔ `customs-catalog` ↔ `migration-safety` explícitas.
