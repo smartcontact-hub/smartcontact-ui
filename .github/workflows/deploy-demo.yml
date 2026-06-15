@@ -42,6 +42,10 @@ jobs:
       # base-href = /<repo>/ para project Pages (smartcontact-hub.github.io/smartcontact-ui/).
       # Builder :browser → salida directa en dist/sc-demo (sin subcarpeta /browser).
       - run: npx ng build sc-demo --configuration production --base-href /smartcontact-ui/ --output-path dist/sc-demo
+      # Un repo = un site Pages → el prototipo va DENTRO del mismo site, bajo /prototype/.
+      # sc-prototype consume @smartcontact-hub/* por tsconfig paths → lib local (sin token).
+      - run: npx ng build sc-prototype --configuration production --base-href /smartcontact-ui/prototype/ --output-path dist/sc-prototype
+      - run: cp -r dist/sc-prototype dist/sc-demo/prototype
       - uses: actions/configure-pages@v5
       - uses: actions/upload-pages-artifact@v3
         with:
