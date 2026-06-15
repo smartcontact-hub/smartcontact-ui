@@ -3,18 +3,18 @@ import type { ButtonDesignTokens } from '@primeuix/themes/types/button';
  export default {
     root: {
         lg: {
-            fontSize: "{form.field.lg.font.size}",
-            paddingX: "{form.field.lg.padding.x}",
-            paddingY: "{form.field.lg.padding.y}",
-            iconOnlyWidth: "var(--sc-scale-3)"
+            fontSize: "var(--sc-cmp-button-lg-font-size)",
+            paddingX: "var(--sc-cmp-button-lg-padding-x)",
+            paddingY: "var(--sc-cmp-button-lg-padding-y)",
+            iconOnlyWidth: "var(--sc-cmp-button-lg-icon-only-width)"
         },
         sm: {
-            fontSize: "{form.field.sm.font.size}",
-            paddingX: "{form.field.sm.padding.x}",
-            paddingY: "{form.field.sm.padding.y}",
-            iconOnlyWidth: "var(--sc-scale-2)"
+            fontSize: "var(--sc-cmp-button-sm-font-size)",
+            paddingX: "var(--sc-cmp-button-sm-padding-x)",
+            paddingY: "var(--sc-cmp-button-sm-padding-y)",
+            iconOnlyWidth: "var(--sc-cmp-button-sm-icon-only-width)"
         },
-        gap: "var(--sc-scale-0-5)",
+        gap: "var(--sc-cmp-button-gap)",
         help: {
             focusRing: {
                 shadow: "none"
@@ -53,8 +53,8 @@ import type { ButtonDesignTokens } from '@primeuix/themes/types/button';
                 shadow: "none"
             }
         },
-        paddingX: "{form.field.padding.x}",
-        paddingY: "{form.field.padding.y}",
+        paddingX: "var(--sc-cmp-button-padding-x)",
+        paddingY: "var(--sc-cmp-button-padding-y)",
         badgeSize: "var(--sc-scale-1)",
         focusRing: {
             style: "{focus.ring.style}",
@@ -66,11 +66,11 @@ import type { ButtonDesignTokens } from '@primeuix/themes/types/button';
                 shadow: "none"
             }
         },
-        borderRadius: "{form.field.border.radius}",
+        borderRadius: "var(--sc-cmp-button-border-radius)",
         raisedShadow: "0 0.071429rem 0.357143rem 0 #0000001f, 0 0.142857rem 0.142857rem 0 #00000024, 0 0.214286rem 0.071429rem -0.142857rem #00000033",
-        iconOnlyWidth: "var(--sc-scale-2-5)",
+        iconOnlyWidth: "var(--sc-cmp-button-icon-only-width)",
         transitionDuration: "{form.field.transition.duration}",
-        roundedBorderRadius: "var(--sc-scale-2)"
+        roundedBorderRadius: "var(--sc-cmp-button-rounded-border-radius)"
     },
     colorScheme: {
         dark: {

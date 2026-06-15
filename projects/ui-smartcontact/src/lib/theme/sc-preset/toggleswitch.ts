@@ -2,9 +2,9 @@ import type { ToggleSwitchDesignTokens } from '@primeuix/themes/types/toggleswit
 
 export default {
     root: {
-        gap: "{app.toggleswitch.md.gap}",
-        width: "{app.toggleswitch.md.width}",
-        height: "{app.toggleswitch.md.height}",
+        gap: "var(--sc-cmp-toggleswitch-gap)",
+        width: "var(--sc-cmp-toggleswitch-width)",
+        height: "var(--sc-cmp-toggleswitch-height)",
         shadow: "0 0.071429rem 0.142857rem 0 #1212170d",
         focusRing: {
             color: "{focus.ring.color}",
@@ -24,8 +24,8 @@ export default {
         checkedHoverBorderColor: "#00000000"
     },
     handle: {
-        size: "{app.toggleswitch.md.handle.size}",
-        borderRadius: "{app.toggleswitch.md.handle.border.radius}"
+        size: "var(--sc-cmp-toggleswitch-handle-size)",
+        borderRadius: "var(--sc-cmp-toggleswitch-handle-border-radius)"
     },
     colorScheme: {
         dark: {

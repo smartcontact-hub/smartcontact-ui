@@ -171,7 +171,7 @@ export default {
   },
   semantic: {
     primary: ramp('blue'),
-    iconSize: 'var(--sc-scale-1)',
+    iconSize: 'var(--sc-cmp-icon-size)',
     focusRing: {
       // Divergencia consciente vs Kit (navy, width 1): electric-blue mas ancho por
       // contraste a11y — customs-catalog §1.1.
@@ -207,17 +207,17 @@ export default {
     },
     overlay: {
       modal: {
-        padding: 'var(--sc-scale-1-25)',
-        borderRadius: '{border.radius.xl}',
+        padding: 'var(--sc-cmp-overlay-modal-padding)',
+        borderRadius: 'var(--sc-cmp-overlay-modal-border-radius)',
         shadow: 'var(--sc-shadow-dialog)',
       },
       popover: {
-        padding: 'var(--sc-scale-0-75)',
-        borderRadius: '{border.radius.md}',
+        padding: 'var(--sc-cmp-overlay-popover-padding)',
+        borderRadius: 'var(--sc-cmp-overlay-popover-border-radius)',
         shadow: 'var(--sc-shadow-popover)',
       },
       select: {
-        borderRadius: '{border.radius.md}',
+        borderRadius: 'var(--sc-cmp-overlay-select-border-radius)',
         shadow: 'var(--sc-shadow-dropdown)',
       },
       navigation: {
@@ -227,19 +227,19 @@ export default {
     formField: {
       // Padding 10.5/7 + sm/lg 1:1 del export del Kit (form.field.*) — los
       // tokens de escala caen exactos. Aplica a todos los form fields PrimeNG.
-      paddingX: 'var(--sc-scale-0-75)',
-      paddingY: 'var(--sc-scale-0-5)',
+      paddingX: 'var(--sc-cmp-form-field-padding-x)',
+      paddingY: 'var(--sc-cmp-form-field-padding-y)',
       sm: {
-        fontSize: 'var(--sc-font-size-100)',
-        paddingX: 'var(--sc-scale-0-625)',
-        paddingY: 'var(--sc-scale-0-375)',
+        fontSize: 'var(--sc-cmp-form-field-sm-font-size)',
+        paddingX: 'var(--sc-cmp-form-field-sm-padding-x)',
+        paddingY: 'var(--sc-cmp-form-field-sm-padding-y)',
       },
       lg: {
-        fontSize: 'var(--sc-font-size-300)',
-        paddingX: 'var(--sc-scale-0-875)',
-        paddingY: 'var(--sc-scale-0-625)',
+        fontSize: 'var(--sc-cmp-form-field-lg-font-size)',
+        paddingX: 'var(--sc-cmp-form-field-lg-padding-x)',
+        paddingY: 'var(--sc-cmp-form-field-lg-padding-y)',
       },
-      borderRadius: '{border.radius.md}',
+      borderRadius: 'var(--sc-cmp-form-field-border-radius)',
       transitionDuration: 'var(--sc-transition-base)',
       shadow: 'var(--sc-shadow-xs)',
       focusRing: {

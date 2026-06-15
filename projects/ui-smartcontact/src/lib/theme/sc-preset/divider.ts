@@ -9,16 +9,16 @@ import type { DividerDesignTokens } from '@primeuix/themes/types/divider';
         background: "{content.background}"
     },
     vertical: {
-        margin: "0 var(--sc-scale-1)",
+        margin: "var(--sc-cmp-divider-vertical-margin-y) var(--sc-cmp-divider-vertical-margin-x)",
         content: {
-            padding: "var(--sc-scale-0-5) 0"
+            padding: "var(--sc-cmp-divider-vertical-content-padding-y) var(--sc-cmp-divider-vertical-content-padding-x)"
         },
         padding: "0"
     },
     horizontal: {
-        margin: "var(--sc-scale-1) 0",
+        margin: "var(--sc-cmp-divider-horizontal-margin-y) var(--sc-cmp-divider-horizontal-margin-x)",
         content: {
-            padding: "0 var(--sc-scale-0-5)"
+            padding: "var(--sc-cmp-divider-horizontal-content-padding-y) var(--sc-cmp-divider-horizontal-content-padding-x)"
         },
         padding: "0"
     }
