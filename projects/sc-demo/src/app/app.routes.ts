@@ -9,6 +9,13 @@ export const routes: Routes = [
       import('./pages/foundations/foundations.component').then((m) => m.FoundationsComponent),
   },
   {
+    path: 'foundations-type',
+    loadComponent: () =>
+      import('./pages/foundations-type/foundations-type.component').then(
+        (m) => m.FoundationsTypeComponent,
+      ),
+  },
+  {
     path: 'theme',
     loadComponent: () => import('./pages/theme/theme.component').then((m) => m.ThemeComponent),
   },

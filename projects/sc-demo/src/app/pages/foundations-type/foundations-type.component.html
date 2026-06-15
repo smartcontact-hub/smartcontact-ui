@@ -1,0 +1,51 @@
+<a routerLink="/" class="back">
+  <sc-icon [name]="arrowLeftIcon" [size]="16" />
+  <span>Volver</span>
+</a>
+
+<header class="hero">
+  <div class="hero__icon" aria-hidden="true"><sc-icon [name]="typeIcon" [size]="20" /></div>
+  <div>
+    <p class="hero__eyebrow">Foundations</p>
+    <h1 class="hero__title">Tipografía</h1>
+    <p class="hero__lead">
+      Escala <strong>redonda</strong> en <strong>rem</strong> (root 16),
+      <strong>step-named</strong> (mismo idioma que el Kit Pro y los devs) y
+      <strong>desacoplada</strong> de la escala de espaciado. 8 tamaños + 7 line-heights.
+    </p>
+  </div>
+</header>
+
+<!-- Escala de tamaños: la muestra usa el token real (var) → refleja producción -->
+<ul class="scale">
+  @for (s of sizes; track s.step) {
+    <li class="scale__row">
+      <p class="scale__sample" [style.font-size]="'var(' + s.token + ')'">{{ s.sample }}</p>
+      <div class="scale__meta">
+        <code class="scale__token">font-size-{{ s.step }}</code>
+        <span class="scale__val">{{ s.px }}px · {{ s.rem }}rem</span>
+      </div>
+    </li>
+  }
+</ul>
+
+<!-- Line-heights -->
+<section class="lh">
+  <h2 class="lh__title">Line-heights</h2>
+  <ul class="lh__list">
+    @for (l of lineHeights; track l.step) {
+      <li class="lh__row">
+        <code class="lh__token">line-height-{{ l.step }}</code>
+        <span class="lh__val">{{ l.px }}px · {{ l.rem }}rem</span>
+      </li>
+    }
+  </ul>
+</section>
+
+<p class="foot">
+  Naming por <strong>step</strong> (100…800), no por valor: el nombre no miente si el valor cambia,
+  y Figma, código y los devs hablan el mismo idioma. En <strong>rem</strong> para que la letra
+  escale con el tamaño base del navegador (accesibilidad). <strong>Desacoplada</strong> de
+  <code>--sc-scale</code>: tipografía y espaciado son ejes independientes. Dos pesos: Regular y
+  Semibold.
+</p>
