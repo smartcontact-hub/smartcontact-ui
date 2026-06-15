@@ -31,7 +31,7 @@
     "e2e": "playwright test",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
-    "test:unit": "node --test scripts/__tests__/",
+    "test:unit": "node --test scripts/__tests__/*.test.mjs",
     "docs:guard": "node scripts/docs-guard.mjs"
   },
   "dependencies": {
