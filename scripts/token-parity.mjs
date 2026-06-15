@@ -310,6 +310,67 @@ log(`  ✓ ${colorOk}/${ENFORCE.length} colores de marca 1:1 con el export (ligh
 log('  divergencias de marca conscientes (no fallan):');
 for (const [mode, what, why] of DIVERGE) log(`    · [${mode}] ${what}: ${why}`);
 
+// ── 6b. A11Y · contraste de pares críticos (WCAG AA normal ≥ 4.5:1) ───────────
+// Con el color fluyendo de Figma, un cambio podría hundir el contraste. Gate SOLO
+// los pares de ALTO contraste que SIEMPRE deben pasar (texto-cuerpo y texto-on-primary
+// sobre sus fondos); los grises suaves (secondary/subtle) ya van bajo AA a propósito
+// → se informan, no fallan (decisión de marca, W5). Reusa tokenToHex (resuelve por capas).
+log('\n=== 6b. A11Y · contraste (WCAG AA normal ≥ 4.5:1) ===');
+const relLum = (hex) => {
+  const c = hex.replace('#', '');
+  const ch = [0, 2, 4]
+    .map((i) => parseInt(c.slice(i, i + 2), 16) / 255)
+    .map((v) => (v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4)));
+  return 0.2126 * ch[0] + 0.7152 * ch[1] + 0.0722 * ch[2];
+};
+const contrast = (h1, h2) => {
+  const [hi, lo] = [relLum(h1), relLum(h2)].sort((a, b) => b - a);
+  return (hi + 0.05) / (lo + 0.05);
+};
+const AA = 4.5;
+const A11Y_GATED = [
+  ['sc-text-primary', 'sc-bg-surface'],
+  ['sc-text-primary', 'sc-bg-default'],
+  ['sc-text-on-primary', 'sc-bg-primary'],
+];
+const A11Y_INFO = [
+  ['sc-text-secondary', 'sc-bg-surface'],
+  ['sc-text-subtle', 'sc-bg-surface'],
+];
+// Sub-AA CONOCIDOS y aceptados (pre-existentes — revisión de marca en W5). Se informan
+// con ⚠, NO fallan. Quitar de aquí cuando W5 decida el fix.
+const A11Y_KNOWN = new Map([
+  ['dark|sc-text-on-primary|sc-bg-primary', 'primary dark (gray-900 sobre blue-400) ~3:1; ni gray-900 ni blanco llegan a AA sobre blue-400 — pide cambiar el color del primary dark (W5)'],
+]);
+let a11yOk = 0;
+for (const mode of ['light', 'dark']) {
+  for (const [fg, bg] of A11Y_GATED) {
+    const fh = tokenToHex(fg, mode);
+    const bh = tokenToHex(bg, mode);
+    if (!fh || !bh) {
+      log(`  ? [${mode}] --${fg}/--${bg}: no resuelve a hex`);
+      continue;
+    }
+    const r = contrast(fh, bh);
+    const known = A11Y_KNOWN.get(`${mode}|${fg}|${bg}`);
+    if (known) {
+      log(`  ⚠ [${mode}] --${fg}/--${bg} = ${r.toFixed(2)}:1 (conocido < AA — ${known})`);
+      continue;
+    }
+    if (r < AA) fail(`[${mode}] a11y: --${fg} sobre --${bg} = ${r.toFixed(2)}:1 (< AA ${AA}; ${fh}/${bh})`);
+    else {
+      a11yOk++;
+      log(`  ✓ [${mode}] --${fg}/--${bg} = ${r.toFixed(2)}:1`);
+    }
+  }
+  for (const [fg, bg] of A11Y_INFO) {
+    const fh = tokenToHex(fg, mode);
+    const bh = tokenToHex(bg, mode);
+    if (fh && bh) log(`    · [${mode}] --${fg}/--${bg} = ${contrast(fh, bh).toFixed(2)}:1 (informativo, gris suave — W5)`);
+  }
+}
+log(`  ✓ ${a11yOk}/${2 * A11Y_GATED.length} pares críticos cumplen AA`);
+
 // ── Resumen ──────────────────────────────────────────────────────────────────
 log('\n' + '─'.repeat(60));
 if (problems === 0) {

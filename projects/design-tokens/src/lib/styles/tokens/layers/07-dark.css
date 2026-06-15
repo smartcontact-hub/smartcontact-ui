@@ -22,8 +22,10 @@
   --sc-text-disabled: var(--sc-color-gray-700);
   --sc-text-inverse: var(--sc-color-gray-900);
   /* En dark el botón primary es navy CLARO (blue-400) → el texto encima va
-   * OSCURO, no blanco (export.dark primaryContrastColor #181d26=gray-900).
-   * Mejora el AA: blanco sobre blue-400 ~3.9:1 (falla) vs gray-900 ~5.9:1. */
+   * OSCURO (export.dark primaryContrastColor #181d26=gray-900; seguimos al Kit).
+   * ⚠ a11y: gray-900 sobre blue-400 = ~3:1 (bajo AA); blanco tampoco llega. El fix
+   * pide cambiar el color del primary dark — decisión de marca (W5). Lo vigila
+   * tokens:parity §6b (allowlist A11Y_KNOWN). */
   --sc-text-on-primary: var(--sc-color-gray-900);
   --sc-text-on-secondary: var(--sc-color-gray-50);
   --sc-text-on-accent: var(--sc-color-gray-950);
