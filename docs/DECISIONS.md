@@ -30,6 +30,43 @@
 
 ---
 
+## DD-17 · 2026-06-15 — Consolidación monorepo: el Supervisor entra al repo del DS
+
+**Contexto** · Rafa es operador **solo y no-dev**; quiere feedback **instantáneo** (tocar un token →
+verlo en la doc Y en los flujos) + **ramas compartibles**. El modelo de **2 repos + paquetes
+publicados versionados** está pensado para equipos; para un solo no-dev es **pura fricción** (token
+401 en CI, lag de publicar+bump, dos repos que confunden, Netlify pidiendo suscripción). Su instinto
+inicial ("meter la app dentro del DS") era **correcto para su caso**. (Memoria [[user-solo-nondev-seamless-first]].)
+
+**Decisión** · **UN repo.** El Supervisor entra como `projects/supervisor` y consume el DS por
+`tsconfig paths` → `./dist/*` (como `sc-prototype`): instantáneo, sin publicar/versionar. Los paquetes
+`@smartcontact-hub/*` quedan **APARCADOS** (dormidos, para un futuro consumidor externo). El repo
+`smart-contact-platform` se **archiva** (read-only, reversible), **PR #51 se cierra** (superado). Lo
+útil de `ds-docs` se funde en `sc-demo` + `docs/inventory.md`. Hosting → **Cloudflare Pages** (link
+por rama, gratis); fuera Netlify y GitHub Pages.
+
+**Razón** · El desacople publicado optimiza **multi-consumidor** (que no existe: 1 app, 1 persona) a
+costa de fricción diaria pagada **ahora** → YAGNI. El Supervisor es **frontend + mock, sin secretos**
+(verificado) → seguro como estático público. La migración previa (`feat/adopt-published-ds`) **no se
+desperdicia**: sus imports `@smartcontact-hub/*` resuelven local por paths — es justo lo que se copia.
+
+**Descartadas** ·
+- **Mantener 2 repos + paquetes publicados** → fricción para 1 consumidor solo (lo que sufría Rafa);
+  el beneficio (multi-team) puede no llegar nunca.
+- **Borrar los scripts de publish** → no; se aparcan (coste cero, recuperable si entra otro consumidor).
+- **Netlify (Free, 1 site)** → Rafa quería salir; Cloudflare da per-branch gratis sin cap de créditos.
+- **GitHub Pages para todo** → no da preview por rama (lo que Rafa pidió para compartir).
+- **Re-implementar la app como dogfood en sc-prototype** → desperdicia la app real ya hecha.
+
+**Consecuencias** · Loop seamless: Theme Designer → PR tokens → merge → Cloudflare reconstruye
+`sc-demo` **y** `supervisor` (~1-2 min, sin publicar). Repo público con app + DS + showcase. Los 4
+gaps del DS siguen como **locales** en el Supervisor (`shared/components`). `sc-prototype` se jubila
+(superado). Pendiente operador: conectar Cloudflare (L2) + archivar platform (L4, confirmar con Rafa).
+Paquetes = aparcados (correr `publish:packages` solo antes de un release externo real). Plan completo:
+`~/.claude/plans/async-greeting-pumpkin.md`.
+
+---
+
 ## DD-16 · 2026-06-14 — Showcase (`sc-demo`) desplegado a GitHub Pages; repo abierto a público
 
 **Contexto** · El consumidor (`smart-contact-platform`) tenía su `ds-docs` desplegado que aplicaba
