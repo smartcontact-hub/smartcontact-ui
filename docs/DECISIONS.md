@@ -30,6 +30,43 @@
 
 ---
 
+## DD-18 · 2026-06-15 — Sizing de componente auto-aplicado desde el Kit (puente seamless)
+
+**Contexto** · El loop Theme Designer→código solo era seamless para PRIMITIVOS (escala/radio/zinc):
+el generador los regeneraba y parity los validaba. Un cambio de **sizing de componente** (radio,
+padding, fontSize de botón/input/overlay…) caía en rojo y exigía editar el preset a mano — el
+operador (solo, no-dev) lo vivía como "el puente me persigue". Verificado: el mapa export↔preset ya
+existía en `token-parity.mjs` (las 53 filas §4); solo se comparaba, no se generaba.
+
+**Decisión** · Un segundo generador `token-gen-component.mjs` (hermano de `token-gen.mjs`) lee cada
+slot del mapa compartido `scripts/sizing-map.mjs` desde el export y escribe tokens `--sc-cmp-*` en la
+zona marcada `@sc-gen:cmp-sizing` de `04-component.css` (rem = px/16, igual que los primitivos). El
+preset referencia esos `--sc-cmp-*` en vez de `var(--sc-scale-*)`/`{refs}`. `tokens:import` corre los
+dos generadores; `verify` valida ambas zonas. Así un cambio de **sizing** en Figma fluye a vivo sin
+mano. El **color** sigue con gate humano (protege divergencias de marca; ver `customs-catalog.md`).
+
+**Razón** · El mapa ya era la fuente de verdad (no se reinventa). Estrategia más segura de 3: emitir
+CSS vars `--sc-cmp-*` (reusa el `rewriteRegion` ya probado, cero parsing de TS, imposible
+doble-aplicar la normalización rem) vs reescribir el preset TS in-place (frágil) o un TS generado
+(más novedad). Migración value-preserving: **e2e 58/58 sin un pixel de diff**; parity 53/53. Prueba
+de fuego: `form.field.border.radius` md→lg en el export → `tokens:import` → parity verde sin tocar
+ningún `.ts` (botón + input siguieron al export); revert determinista, idempotente.
+
+**Descartadas** ·
+- **Reescribir el preset TS in-place** → frágil (riesgo de tocar leaves de color en módulos de 500+
+  líneas); el writer de CSS marcado es trivial y ya probado.
+- **Auto-aplicar también el color** → no: el color de marca tiene divergencias conscientes (grises
+  navy vs zinc del Kit); auto-sobrescribirlas las borraría. Color = gate humano + hint copy-paste.
+- **Dejar el sizing como "human applies"** → era la fricción exacta que el operador pidió eliminar.
+
+**Consecuencias** · Cualquier cambio de sizing en el Theme Designer → `tokens:import` → vivo, sin
+intervención. `DIVERGE_SIZING` (`sizing-map.mjs`, vacío hoy) blinda una divergencia de sizing
+deliberada (opt-in, único toque humano). Los 53 `--sc-cmp-*` son GENERADOS — no editar (zona
+`@sc-gen:cmp-sizing`). Pendiente futuro: extender el mapa para slots fuera de las 53 (p.ej. el
+custom `app.toggleswitch`).
+
+---
+
 ## DD-17 · 2026-06-15 — Consolidación monorepo: el Supervisor entra al repo del DS
 
 **Contexto** · Rafa es operador **solo y no-dev**; quiere feedback **instantáneo** (tocar un token →

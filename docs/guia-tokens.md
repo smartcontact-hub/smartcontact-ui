@@ -185,10 +185,11 @@ de escala, radio o tamaño de componente es exactamente el número
 que Figma muestra. A partir de él:
 
 - **`npm run tokens:import`** reescribe automáticamente los bloques
-  generados de `01-primitive.css` (escala, radios y algunas
-  familias de color auxiliares). Esos bloques están marcados con
-  comentarios `@sc-gen:scale`, `@sc-gen:radius` y `@sc-gen:palette`
-  — nadie los edita a mano, el generador los pisa.
+  generados: en `01-primitive.css` (escala, radios y algunas familias
+  de color auxiliares — `@sc-gen:scale/radius/palette`) y en
+  `04-component.css` el **sizing de componente** (`@sc-gen:cmp-sizing`,
+  tokens `--sc-cmp-*`: radio/padding/fontSize de botón, input, overlay,
+  tabs… — DD-18). Nadie los edita a mano, el generador los pisa.
 - **`npm run tokens:gen`** hace lo mismo pero solo *comprueba*, sin
   escribir — para detectar drift.
 - **`npm run tokens:parity`** es la auditoría completa: cruza
@@ -211,10 +212,12 @@ El flujo cuando cambia una métrica en Figma es:
                                                           (capas 2-5 + preset PrimeNG)
 ```
 
-**Los colores de marca NO se auto-importan** — son una decisión
-documentada que se edita a mano en la capa curada (y la auditoría
-de paridad vigila que coincidan con el export). Solo las métricas
-viajan automáticas.
+**Las métricas viajan automáticas** — primitivos (escala/radio) Y el
+**sizing de componente** (radio/padding/fontSize, vía `--sc-cmp-*`,
+DD-18): un cambio en Figma se ve en vivo sin tocar código. **Los
+colores de marca NO se auto-importan** — son una decisión documentada
+que se edita a mano en la capa curada (y parity vigila que coincidan
+con el export).
 
 ### Un detalle que verás en el código: los valores van en rem
 
