@@ -339,6 +339,13 @@ Each entry: **what bites → the rule → why**. Append here when a new one is f
 - **The Theme Designer plugin pushes 2 commits** (token export + `.theme-designer/`).
   *Rule:* the `tokens-sync` workflow works **off `main`** and resets its own branch — it never
   races the plugin's branch. *Why:* a non-fast-forward push race the first time.
+- **Never delete the `design-tokens-sync` branch.** *Bites:* deleting it "to clean up" leaves the
+  Theme Designer plugin with **no target** — its push silently no-ops (no branch → no run → no PR)
+  and the operator's token change just vanishes. *Rule:* the branch is **long-lived**; the
+  `tokens-sync` workflow self-heals it (force-reset to `main + cambio`). Leave it. If it ever needs
+  resetting, push main onto it (`git push origin main:design-tokens-sync`), **never** delete it.
+  *Why:* deleted it after a loop test → the operator's next plugin push left zero trace, looked like
+  the plugin broke. [[integration-glue-full-loop]]: don't touch what an external actor depends on.
 - **Two-strikes rule.** *Bites:* insisting on a blocked approach. *Rule:* if two distinct
   attempts at the same sub-goal fail, **stop** — state the blocker, then pivot or ask. Do not
   keep grinding. *Why:* stubbornness, not lack of skill, is what wastes a session.
