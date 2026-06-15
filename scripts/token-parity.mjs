@@ -25,6 +25,7 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { createRequire } from 'node:module';
 import { loadKitExport } from './dtcg-export.mjs';
+import { SIZING, GROUPS, DIVERGE_SIZING } from './sizing-map.mjs';
 
 const root = resolve(import.meta.dirname, '..');
 const EXPORT_PATH = resolve(root, 'projects/design-tokens/scripts/kit-export-dtcg.json');
@@ -217,84 +218,42 @@ const exp = (group, path) => {
   const v = kit.resolve(leaf.$value);
   return typeof v === 'number' ? v : NaN;
 };
-const CC = 'aura/component/common';
-const SC = 'aura/semantic/common';
-
 // ── 4. SIZING de componente (export ↔ preset evaluado, valor↔valor) ──────────
 log('\n=== 4. SIZING de componente (export ↔ preset modular, valor↔valor) ===');
-const tabPad = shorthand('components.tabs.tab.padding'); // [Y, X]
-const tabpanelPad = shorthand('components.tabs.tabpanel.padding'); // [T, R(=B=L)] o [T,R,B,L]
-const ttPad = shorthand('components.tooltip.root.padding'); // [Y, X]
-const divH = shorthand('components.divider.horizontal.margin'); // [Y, X]
-const divV = shorthand('components.divider.vertical.margin'); // [Y, X]
-const divHC = shorthand('components.divider.horizontal.content.padding'); // [Y, X]
-const divVC = shorthand('components.divider.vertical.content.padding'); // [Y, X]
+// El mapa export↔preset vive en `sizing-map.mjs` (fuente única, compartida con el
+// generador `token-gen-component.mjs`). Reconstruimos [label, esperado(export),
+// obtenido(preset)] con los helpers locales; el veredicto de abajo no cambia.
+const shCache = new Map();
+const sh = (path) => {
+  if (!shCache.has(path)) shCache.set(path, shorthand(path));
+  return shCache.get(path);
+};
+const sizing = SIZING.map((r) => {
+  const expected = exp(GROUPS[r.group], r.exp);
+  let got;
+  if (r.read.index === undefined) got = presetToPx(get(r.read.path));
+  else {
+    const arr = sh(r.read.path);
+    got = arr?.[r.read.index] ?? (r.read.fallback !== undefined ? arr?.[r.read.fallback] : undefined);
+  }
+  return [r.label, expected, got];
+});
 
-const sizing = [
-  ['button.root.paddingX', exp(CC, 'button.padding.x'), presetToPx(get('components.button.root.paddingX'))],
-  ['button.root.paddingY', exp(CC, 'button.padding.y'), presetToPx(get('components.button.root.paddingY'))],
-  ['button.root.borderRadius', exp(CC, 'button.border.radius'), presetToPx(get('components.button.root.borderRadius'))],
-  ['button.root.gap', exp(CC, 'button.gap'), presetToPx(get('components.button.root.gap'))],
-  ['button.root.iconOnlyWidth', exp(CC, 'button.icon.only.width'), presetToPx(get('components.button.root.iconOnlyWidth'))],
-  ['button.root.roundedBorderRadius', exp(CC, 'button.rounded.border.radius'), presetToPx(get('components.button.root.roundedBorderRadius'))],
-  ['button.root.sm.fontSize', exp(CC, 'button.sm.font.size'), presetToPx(get('components.button.root.sm.fontSize'))],
-  ['button.root.sm.paddingX', exp(CC, 'button.sm.padding.x'), presetToPx(get('components.button.root.sm.paddingX'))],
-  ['button.root.sm.paddingY', exp(CC, 'button.sm.padding.y'), presetToPx(get('components.button.root.sm.paddingY'))],
-  ['button.root.sm.iconOnlyWidth', exp(CC, 'button.sm.icon.only.width'), presetToPx(get('components.button.root.sm.iconOnlyWidth'))],
-  ['button.root.lg.fontSize', exp(CC, 'button.lg.font.size'), presetToPx(get('components.button.root.lg.fontSize'))],
-  ['button.root.lg.paddingX', exp(CC, 'button.lg.padding.x'), presetToPx(get('components.button.root.lg.paddingX'))],
-  ['button.root.lg.paddingY', exp(CC, 'button.lg.padding.y'), presetToPx(get('components.button.root.lg.paddingY'))],
-  ['button.root.lg.iconOnlyWidth', exp(CC, 'button.lg.icon.only.width'), presetToPx(get('components.button.root.lg.iconOnlyWidth'))],
-  ['formField.paddingX', exp(SC, 'form.field.padding.x'), presetToPx(get('semantic.formField.paddingX'))],
-  ['formField.paddingY', exp(SC, 'form.field.padding.y'), presetToPx(get('semantic.formField.paddingY'))],
-  ['formField.borderRadius', exp(SC, 'form.field.border.radius'), presetToPx(get('semantic.formField.borderRadius'))],
-  ['formField.sm.fontSize', exp(SC, 'form.field.sm.font.size'), presetToPx(get('semantic.formField.sm.fontSize'))],
-  ['formField.sm.paddingX', exp(SC, 'form.field.sm.padding.x'), presetToPx(get('semantic.formField.sm.paddingX'))],
-  ['formField.sm.paddingY', exp(SC, 'form.field.sm.padding.y'), presetToPx(get('semantic.formField.sm.paddingY'))],
-  ['formField.lg.fontSize', exp(SC, 'form.field.lg.font.size'), presetToPx(get('semantic.formField.lg.fontSize'))],
-  ['formField.lg.paddingX', exp(SC, 'form.field.lg.padding.x'), presetToPx(get('semantic.formField.lg.paddingX'))],
-  ['formField.lg.paddingY', exp(SC, 'form.field.lg.padding.y'), presetToPx(get('semantic.formField.lg.paddingY'))],
-  ['iconSize', exp(SC, 'icon.size'), presetToPx(get('semantic.iconSize'))],
-  ['overlay.modal.padding', exp(SC, 'overlay.modal.padding'), presetToPx(get('semantic.overlay.modal.padding'))],
-  ['overlay.modal.borderRadius', exp(SC, 'overlay.modal.border.radius'), presetToPx(get('semantic.overlay.modal.borderRadius'))],
-  ['overlay.popover.padding', exp(SC, 'overlay.popover.padding'), presetToPx(get('semantic.overlay.popover.padding'))],
-  ['overlay.popover.borderRadius', exp(SC, 'overlay.popover.border.radius'), presetToPx(get('semantic.overlay.popover.borderRadius'))],
-  ['overlay.select.borderRadius', exp(SC, 'overlay.select.border.radius'), presetToPx(get('semantic.overlay.select.borderRadius'))],
-  ['tabs.tab.gap', exp(CC, 'tabs.tab.gap'), presetToPx(get('components.tabs.tab.gap'))],
-  ['tabs.tab.paddingY', exp(CC, 'tabs.tab.padding.y'), tabPad?.[0]],
-  ['tabs.tab.paddingX', exp(CC, 'tabs.tab.padding.x'), tabPad?.[1]],
-  ['tabs.tabpanel.paddingTop', exp(CC, 'tabs.tabpanel.padding.top'), tabpanelPad?.[0]],
-  ['tabs.tabpanel.paddingRight', exp(CC, 'tabs.tabpanel.padding.right'), tabpanelPad?.[1]],
-  ['tabs.tabpanel.paddingBottom', exp(CC, 'tabs.tabpanel.padding.bottom'), tabpanelPad?.[2] ?? tabpanelPad?.[1]],
-  ['tabs.tabpanel.paddingLeft', exp(CC, 'tabs.tabpanel.padding.left'), tabpanelPad?.[3] ?? tabpanelPad?.[1]],
-  ['tooltip.maxWidth', exp(CC, 'tooltip.max.width'), presetToPx(get('components.tooltip.root.maxWidth'))],
-  ['tooltip.gutter', exp(CC, 'tooltip.gutter'), presetToPx(get('components.tooltip.root.gutter'))],
-  ['tooltip.paddingY', exp(CC, 'tooltip.padding.y'), ttPad?.[0]],
-  ['tooltip.paddingX', exp(CC, 'tooltip.padding.x'), ttPad?.[1]],
-  ['divider.horizontal.marginY', exp(CC, 'divider.horizontal.margin.y'), divH?.[0]],
-  ['divider.horizontal.marginX', exp(CC, 'divider.horizontal.margin.x'), divH?.[1]],
-  ['divider.horizontal.content.paddingY', exp(CC, 'divider.horizontal.content.padding.y'), divHC?.[0]],
-  ['divider.horizontal.content.paddingX', exp(CC, 'divider.horizontal.content.padding.x'), divHC?.[1]],
-  ['divider.vertical.marginY', exp(CC, 'divider.vertical.margin.y'), divV?.[0]],
-  ['divider.vertical.marginX', exp(CC, 'divider.vertical.margin.x'), divV?.[1]],
-  ['divider.vertical.content.paddingY', exp(CC, 'divider.vertical.content.padding.y'), divVC?.[0]],
-  ['divider.vertical.content.paddingX', exp(CC, 'divider.vertical.content.padding.x'), divVC?.[1]],
-  ['toggleswitch.width', exp(CC, 'toggleswitch.width'), presetToPx(get('components.toggleswitch.root.width'))],
-  ['toggleswitch.height', exp(CC, 'toggleswitch.height'), presetToPx(get('components.toggleswitch.root.height'))],
-  ['toggleswitch.gap', exp(CC, 'toggleswitch.gap'), presetToPx(get('components.toggleswitch.root.gap'))],
-  ['toggleswitch.handle.size', exp(CC, 'toggleswitch.handle.size'), presetToPx(get('components.toggleswitch.handle.size'))],
-  ['toggleswitch.handle.borderRadius', exp(CC, 'toggleswitch.handle.border.radius'), presetToPx(get('components.toggleswitch.handle.borderRadius'))],
-];
-
+const sizingDiverge = new Set(DIVERGE_SIZING.map((d) => d.label));
 let sizingOk = 0;
 for (const [label, expected, got] of sizing) {
+  if (sizingDiverge.has(label)) continue; // divergencia consciente — se informa abajo, no falla
   if (expected == null) log(`  ? ${label}: la clave no está en el export (¿renombrada en el Kit?)`);
   else if (got === undefined) fail(`${label}: el export dice ${expected} pero el preset no lo fija`);
   else if (Number.isNaN(got)) fail(`${label}: el preset lo fija pero no resuelve a px`);
   else if (Math.abs(got - expected) > 1e-6) fail(`${label}: DRIFT — export=${expected} vs preset=${got}`);
   else sizingOk++;
 }
-log(`  ✓ ${sizingOk}/${sizing.length} valores de sizing fijados 1:1 con el export`);
+log(`  ✓ ${sizingOk}/${sizing.length - sizingDiverge.size} valores de sizing fijados 1:1 con el export`);
+if (sizingDiverge.size) {
+  log('  divergencias de sizing conscientes (no fallan):');
+  for (const d of DIVERGE_SIZING) log(`    · ${d.label}: ${d.reason}`);
+}
 
 // ── 5. Reverse: tokens en código sin valor en el export (informativo) ────────
 log('\n=== 5. Tokens en código sin equivalente en el export (informativo) ===');
