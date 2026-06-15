@@ -4,6 +4,22 @@
 > Se **SOBREESCRIBE** en cada cierre. El *por qué* durable vive en `docs/DECISIONS.md`
 > (DD-N) y el mapa de docs en [`docs/DOCS-INDEX.md`](docs/DOCS-INDEX.md).
 
+## ⏳ EN CURSO — Consolidación monorepo (plan `~/.claude/plans/async-greeting-pumpkin.md`, DD-17)
+> Rama de trabajo: **`feat/monorepo-supervisor`** (NO main). Lotes L0-L6 en la lista de tareas.
+- **HECHO + pusheado**: **L0** (deps: http-loader, xlsx, primeicons) · **L1** (el Supervisor entero
+  vive en `projects/supervisor/`, consume el DS local por tsconfig paths; build/lint/typecheck verdes;
+  smoke en `/admin/agentes` con datos mock OK; cableado en ci.yml). Commits `9844981` y anteriores.
+- **PENDIENTE**: **L2** Cloudflare (necesita a Rafa: conectar repo en dash.cloudflare.com → Pages,
+  2 proyectos: sc-demo `dist/sc-demo` + supervisor `dist/supervisor/browser`, NODE_VERSION=22) ·
+  **L3** fundir lo útil de ds-docs en sc-demo + `docs/inventory.md` · **L4** aparcar paquetes / jubilar
+  sc-prototype / cerrar PR #51 / archivar `smart-contact-platform` (CONFIRMAR con Rafa antes de archivar) ·
+  **L5** docs (DD-17, ROADMAP, DOCS-INDEX, AGENTS trap, .impeccable, guia-tokens) · **L6** atribución Marta.
+- **Fuente del Supervisor migrado** (para L3/L4): worktree `feat/adopt-published-ds` en
+  `/Users/rafareses/dev/smart-contact-platform/.claude/worktrees/sleepy-cartwright-c63dad`
+  (ahí están `apps/ds-docs` para fundir en L3 y `packages/design-system` ya traído). Arrancar local:
+  `npx ng serve supervisor` (puerto 4400, ver `.claude/launch.json`).
+- **Compact-safe**: este bloque + el plan + la lista de tareas + los commits bastan para retomar.
+
 ## Dónde estamos (2026-06-14)
 - DS **publicado** en GitHub Packages — `@smartcontact-hub/{styles,icons,components}` **0.1.0 y 0.2.0**
   (paquetes **privados**).
