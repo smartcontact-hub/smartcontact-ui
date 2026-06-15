@@ -55,16 +55,15 @@
 - **Validación**: **verificar su comportamiento real la 1ª vez** (no asumir): Migration
   Assistant → re-export → `verify` caza el resto → cablear lo nuevo en `sc-preset/`.
 
-## Consolidación monorepo (DD-17, 2026-06-15) — EN CURSO
-> El Supervisor entró al repo (rama `feat/monorepo-supervisor`). Estado vivo en `NEXT-SESSION.md`.
-- **HECHO**: L0 deps · L1 Supervisor en `projects/supervisor` (consume el DS local, instantáneo) ·
-  L3 ds-docs fundido (`docs/inventory.md` + página Tipografía en sc-demo).
-- **L2 · Cloudflare Pages** *(operador: Rafa)* → conectar el repo en dash.cloudflare.com, 2 proyectos:
-  `sc-demo` (output `dist/sc-demo`) y `supervisor` (output `dist/supervisor/browser`), `NODE_VERSION=22`.
-  *Validación*: ambos links abren, F5 en ruta profunda OK, preview por rama funciona.
-- **L4 · Archivar `smart-contact-platform`** *(confirmar con Rafa)* → patrón `playbook-archivar-ui-main.md`.
-  *Pre-flight*: Supervisor verde aquí (✓). El archivo (read-only) preserva audits/galerías de ds-docs.
-  Cerrar PR #51 (superado). Jubilar `sc-prototype` (superado por el Supervisor).
+## Consolidación monorepo (DD-17, 2026-06-15) — ✅ COMPLETADA
+> El Supervisor vive en el repo; un cambio de token se refleja en `sc-demo` **y** en la app real.
+- **L0** deps · **L1** Supervisor en `projects/supervisor` (consume el DS local, instantáneo) ·
+  **L3** ds-docs fundido (`docs/inventory.md` + página Tipografía en sc-demo).
+- **L2 · Cloudflare Pages** ✅ — 2 proyectos servidos en raíz, preview por rama automático
+  (`NODE_VERSION=22`). Verificado en vivo (raíz + F5 en ruta profunda + i18n):
+  **sc-demo** → https://sc-demo.pages.dev · **supervisor** → https://sc-supervisor.pages.dev
+- **L4** ✅ — `sc-prototype` jubilado + **GitHub Pages retirado** (los supera Supervisor + Cloudflare);
+  `smart-contact-platform` **archivado** (read-only; preserva audits/galerías) + **PR #51 cerrado**.
 - **Paquetes APARCADOS** — `scripts/{publish-packages,version-bump}.mjs` + `publishConfig` **intactos**.
   Dormidos en el modelo monorepo-by-path; correr `publish:packages` solo antes de un release externo real.
 - **Atribución por persona en Theme Designer (Marta)** — hoy el plugin empuja con UN token (el de Rafa)

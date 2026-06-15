@@ -4,66 +4,55 @@
 > Se **SOBREESCRIBE** en cada cierre. El *por qué* durable vive en `docs/DECISIONS.md`
 > (DD-N) y el mapa de docs en [`docs/DOCS-INDEX.md`](docs/DOCS-INDEX.md).
 
-## ⏳ EN CURSO — Consolidación monorepo (plan `~/.claude/plans/async-greeting-pumpkin.md`, DD-17)
-> Rama de trabajo: **`feat/monorepo-supervisor`** (NO main). Lotes L0-L6 en la lista de tareas.
-- **HECHO + pusheado**: **L0** (deps: http-loader, xlsx, primeicons) · **L1** (el Supervisor entero
-  vive en `projects/supervisor/`, consume el DS local por tsconfig paths; build/lint/typecheck verdes;
-  smoke en `/admin/agentes` con datos mock OK; cableado en ci.yml). Commits `9844981` y anteriores.
-- **PENDIENTE**: **L2** Cloudflare (necesita a Rafa: conectar repo en dash.cloudflare.com → Pages,
-  2 proyectos: sc-demo `dist/sc-demo` + supervisor `dist/supervisor/browser`, NODE_VERSION=22) ·
-  **L3** fundir lo útil de ds-docs en sc-demo + `docs/inventory.md` · **L4** aparcar paquetes / jubilar
-  sc-prototype / cerrar PR #51 / archivar `smart-contact-platform` (CONFIRMAR con Rafa antes de archivar) ·
-  **L5** docs (DD-17, ROADMAP, DOCS-INDEX, AGENTS trap, .impeccable, guia-tokens) · **L6** atribución Marta.
-- **Fuente del Supervisor migrado** (para L3/L4): worktree `feat/adopt-published-ds` en
-  `/Users/rafareses/dev/smart-contact-platform/.claude/worktrees/sleepy-cartwright-c63dad`
-  (ahí están `apps/ds-docs` para fundir en L3 y `packages/design-system` ya traído). Arrancar local:
-  `npx ng serve supervisor` (puerto 4400, ver `.claude/launch.json`).
-- **Compact-safe**: este bloque + el plan + la lista de tareas + los commits bastan para retomar.
+## ✅ Consolidación monorepo (DD-17) — COMPLETADA (2026-06-15)
 
-## Dónde estamos (2026-06-14)
-- DS **publicado** en GitHub Packages — `@smartcontact-hub/{styles,icons,components}` **0.1.0 y 0.2.0**
-  (paquetes **privados**).
-- **Repo AHORA PÚBLICO** (el source; los paquetes npm siguen privados). Se abrió para habilitar Pages.
-  Historial escaneado limpio antes de abrir. Ver **DD-16**.
-- **Páginas vivas en GitHub Pages** (`.github/workflows/deploy-demo.yml`, on-push-to-main, opt-in Node 24):
-  - **Showcase del DS**: **https://smartcontact-hub.github.io/smartcontact-ui/** (`sc-demo`, catálogo de componentes).
-  - **Prototipo / flujos**: **https://smartcontact-hub.github.io/smartcontact-ui/prototype/** (`sc-prototype`,
-    2 pantallas dogfood — lista de agentes + ficha — consumiendo el DS por tsconfig paths → lib local).
-  - ⚠️ Esto NO es el Supervisor completo. El Supervisor (toda la app real con todas las pantallas)
-    vive en `arebury/smart-contact-platform` (migración aparcada, PR #51); para hostearlo haría falta
-    deploy desde ESE repo + token `read:packages` en su CI + build estático/mock (ver respuesta abajo).
-  - Round-trip de tokens end-to-end visible: variable → PR `design-tokens-sync` → merge → redeploy (~1-2 min).
-- **Sistema operativo del repo** montado (DOCS-INDEX, AGENTS protocolo/trampas/bridge, `.impeccable`,
-  gobernanza Figma, DD-N con Descartadas, `docs:guard` + `test:unit` en `verify`).
+**Un solo repo** = DS (3 libs, sagrado) + `sc-demo` (showcase) + `supervisor` (la app real).
+La app consume el DS **local** por `tsconfig paths` → `./dist/*`: tocar un token se refleja al
+instante en local y, vía Cloudflare, en los dos sitios (~1-2 min, sin publicar ni versionar).
 
-## Hecho (cierre de esta tanda)
-- **Migración `smart-contact-platform` COMPLETA** (sesión aparte, repo consumidor): rama
-  `feat/adopt-published-ds`, 5 lotes (fundación → componentes → shell → ds-docs → borrado copia local),
-  diff **+495 / −8538**. Verificado por lote (supervisor visual-regression 10/10 + smoke 9/9 + runtime
-  ⌘K/?; ds-docs build + smoke 8/8). **Aún sin PR ni merge.** Quedan 4 locales a propósito (icon,
-  illustrated-avatar, label-chip, confirm-host) = los 4 gaps del DS del ROADMAP.
-- Showcase a Pages + repo público (DD-16) · Node 24 opt-in · scope viejo corregido en el demo.
-- Playbook de migración endurecido contra la fuente; 4 gaps del DS registrados en ROADMAP.
+### Sitios vivos — Cloudflare Pages (Node 22, preview por rama automático)
+- **Showcase del DS** → **https://sc-demo.pages.dev** (`sc-demo`, hash-routing → SPA-safe).
+- **App real** → **https://sc-supervisor.pages.dev** (`supervisor`, routing por path + `_redirects`).
+- Verificado en vivo: raíz + F5 en ruta profunda (sin 404) + i18n (`/assets/i18n/*.json` sirve).
+- **Compartir una rama**: haz `git push` de la rama → Cloudflare genera su preview URL sola
+  (pestaña *Deployments* de cada proyecto en el dash). Eso cubre el "abrir ramas y compartirlas".
 
-## Lo siguiente (en orden)
-1. **Abrir el PR de la migración** → en la sesión de `smart-contact-platform`: `git push -u origin
-   feat/adopt-published-ds` + `gh pr create`. NO mergear hasta review + e2e visual cross-app final
-   (el 4200 ya está libre). Follow-ups como issues: KeyboardShortcutsService muerto, docs stale de los
-   27 borrados.
-2. **Desbloquear los 4 locales** = los gaps del DS en [`docs/ROADMAP.md`](docs/ROADMAP.md): px en
-   `sc-avatar`, `xs` en `sc-tag`, paquete de iconos a Outlined, `icon?` overridable en `ScConfirmService`.
-   (+ entrada `styles` tokens-only / `exports`.) Cada uno = decisión de diseño deliberada, no de la migración.
-3. **Archivar `smartcontact-ui-main`** → [playbook](docs/playbook-archivar-ui-main.md) (sesión aparte).
-4. **Backlog durable** → [`docs/ROADMAP.md`](docs/ROADMAP.md): decisión dark, pase a11y de grises sutiles,
-   generador de color, resolver de refs del preset, Migration Assistant.
+### El loop seamless (la prueba de fuego, ya operativa)
+Theme Designer → push tema → PR `design-tokens-sync` → **merge manual** (tu gate) → Cloudflare
+reconstruye `sc-demo` **y** `supervisor` → token visible en los dos. En local, `ng serve` al instante.
+
+### Hecho en esta tanda (cierre)
+- **Supervisor** traído como `projects/supervisor` (consume el DS local; build/lint/typecheck/e2e verdes).
+- **Cloudflare** montado (2 proyectos en raíz) y **GitHub Pages retirado** (`deploy-demo.yml` borrado
+  + Pages deshabilitado) — fuera Netlify, fuera Pages.
+- **`sc-prototype` jubilado** (lo superan sc-demo + supervisor): fuera de `angular.json`/CI/scripts.
+- **`ds-docs` fundido** en sc-demo (`docs/inventory.md` + página Tipografía).
+- **`arebury/smart-contact-platform` archivado** (read-only, reversible; preserva audits/galerías) +
+  **PR #51 cerrado** (superado por DD-17).
+- **Paquetes `@smartcontact-hub/*` APARCADOS** (dormidos; `publish:packages` solo antes de un
+  release externo real). Scripts intactos.
+
+## Lo siguiente (backlog durable — nada urgente, todo en `docs/ROADMAP.md`)
+1. **Los 4 gaps del DS** (hoy resueltos como locales en `supervisor/src/app/shared/components`):
+   px en `sc-avatar`, `xs` en `sc-tag`, paquete de iconos a Outlined, `icon?` overridable en
+   `ScConfirmService`. Cada uno = decisión de diseño deliberada → cuando se haga en el DS, se borra el local.
+2. **Decisiones de marca**: superficies dark (zinc vs cool), pase a11y de grises sutiles.
+3. **Profundidad gated**: generador de color semántico, resolver de refs del preset, Migration Assistant
+   (subir PrimeNG — verificar su comportamiento real la 1ª vez).
+4. **Atribución por persona (Marta)** en Theme Designer: requisitos escritos en ROADMAP + AGENTS
+   (colaboradora con escritura + plugin commitea con SU identidad). Pendiente de capacidad del plugin.
+5. **(Deuda anotada)** i18n absoluto del Supervisor: funciona servido en raíz; si algún día va a
+   subpath, pasar a `APP_BASE_HREF`/ruta relativa.
 
 ## Índice de documentos
 - **Mapa completo** → [`docs/DOCS-INDEX.md`](docs/DOCS-INDEX.md) (qué doc manda en cada tema).
-- **Decisiones + Descartadas** → `docs/DECISIONS.md` (DD-16 = Pages/público). **Reglas / trampas /
-  cierre** → `AGENTS.md`. **Alcance sagrado** → `.impeccable.md`. **Puente Figma + change-log** →
-  `docs/guia-tokens.md`.
+- **Decisiones + Descartadas** → `docs/DECISIONS.md` (**DD-17** = consolidación/Cloudflare; DD-16 superseded).
+- **Reglas / trampas / cierre** → `AGENTS.md`. **Alcance sagrado** → `.impeccable.md`.
+- **Puente Figma + change-log** → `docs/guia-tokens.md`. **Inventario de componentes** → `docs/inventory.md`.
 
-## Cómo reabrir
-- **Seguir aquí**: "continúa con el plan" (cargo memoria + este doc).
-- **Ver el showcase**: en vivo (URL de arriba) o en local `npx ng serve sc-demo` (`.claude/launch.json`).
-- **Abrir PR / archivar ui-main**: abrir sesión EN ese repo y pedir el playbook correspondiente.
+## Cómo reabrir / correr en local
+- **Seguir aquí**: "continúa" (cargo memoria + este doc).
+- **App real en local**: `npm run start:supervisor` (o `npx ng serve supervisor`, puerto 4400 —
+  ver `.claude/launch.json`). Smoke: `/admin/agentes` con datos mock.
+- **Showcase en local**: `npx ng serve sc-demo`. En vivo: las URLs de arriba.
+- **Gate antes de dar algo por bueno**: `npm run verify` (+ `CI=1 npm run e2e` si tocas visual).

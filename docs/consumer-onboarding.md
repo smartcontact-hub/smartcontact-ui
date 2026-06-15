@@ -1,8 +1,13 @@
 # Consumir `@smartcontact-hub/*` en una app
 
 Guía para que una app Angular consuma el Design System publicado en GitHub Packages
-(privado, org `smartcontact-hub`). Validado por el prototipo `projects/sc-prototype`,
-que consume los paquetes **por nombre** igual que una app externa.
+(privado, org `smartcontact-hub`). Validado por `projects/supervisor` (la app real, ya en
+el monorepo), que consume el DS **por nombre** igual que una app externa.
+
+> **Nota (DD-17, 2026-06-15)** · Los paquetes están **APARCADOS**: hoy el único consumidor
+> (el Supervisor) vive en este mismo repo y resuelve `@smartcontact-hub/*` **local** por
+> `tsconfig paths` → `./dist/*` (instantáneo, sin publicar). Esta guía aplica si vuelve a
+> entrar un consumidor **externo** que instale los paquetes publicados.
 
 ## 1. Autenticación (GitHub Packages privado)
 
@@ -66,7 +71,7 @@ import { ScIconComponent } from '@smartcontact-hub/icons';
 <sc-inputtext [(value)]="name" fluid></sc-inputtext>
 ```
 
-## 5. Gotchas (descubiertos dogfoodeando el prototipo)
+## 5. Gotchas (descubiertos dogfoodeando el Supervisor)
 
 - **Componentes i18n-key-driven.** Varios (`sc-page-header`, `sc-empty-state`,
   `sc-section-card`/`sc-subsection`/`sc-slot`…) reciben **claves** (`titleKey`,
@@ -81,5 +86,5 @@ import { ScIconComponent } from '@smartcontact-hub/icons';
 
 ## 6. Referencia viva
 
-`projects/sc-prototype` es el ejemplo canónico de consumo (pantallas reales construidas
+`projects/supervisor` es el ejemplo canónico de consumo (la app real construida
 solo con `sc-*` + tokens). El catálogo completo está en el demo (`projects/sc-demo`).

@@ -30,7 +30,7 @@ This configuration applies to:
 - `projects/sc-demo`
 - `projects/design-tokens`
 - `projects/supervisor` — the real app (Supervisor), brought in-repo 2026-06-15 (**DD-17**).
-  It **consumes the DS locally** by tsconfig paths → `./dist/*` (like `sc-prototype`), so a token
+  It **consumes the DS locally** by tsconfig paths → `./dist/*` (like `sc-demo`), so a token
   change is reflected instantly. It is a **vehicle** (free to evolve); the DS lib/tokens/preset stay
   sacred. The published `@smartcontact-hub/*` packages are now **PARKED** (dormant; run
   `publish:packages` only before a real external release).

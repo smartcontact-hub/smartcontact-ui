@@ -39,7 +39,7 @@ publicados versionados** está pensado para equipos; para un solo no-dev es **pu
 inicial ("meter la app dentro del DS") era **correcto para su caso**. (Memoria [[user-solo-nondev-seamless-first]].)
 
 **Decisión** · **UN repo.** El Supervisor entra como `projects/supervisor` y consume el DS por
-`tsconfig paths` → `./dist/*` (como `sc-prototype`): instantáneo, sin publicar/versionar. Los paquetes
+`tsconfig paths` → `./dist/*` (como `sc-demo`): instantáneo, sin publicar/versionar. Los paquetes
 `@smartcontact-hub/*` quedan **APARCADOS** (dormidos, para un futuro consumidor externo). El repo
 `smart-contact-platform` se **archiva** (read-only, reversible), **PR #51 se cierra** (superado). Lo
 útil de `ds-docs` se funde en `sc-demo` + `docs/inventory.md`. Hosting → **Cloudflare Pages** (link
@@ -60,14 +60,23 @@ desperdicia**: sus imports `@smartcontact-hub/*` resuelven local por paths — e
 
 **Consecuencias** · Loop seamless: Theme Designer → PR tokens → merge → Cloudflare reconstruye
 `sc-demo` **y** `supervisor` (~1-2 min, sin publicar). Repo público con app + DS + showcase. Los 4
-gaps del DS siguen como **locales** en el Supervisor (`shared/components`). `sc-prototype` se jubila
-(superado). Pendiente operador: conectar Cloudflare (L2) + archivar platform (L4, confirmar con Rafa).
-Paquetes = aparcados (correr `publish:packages` solo antes de un release externo real). Plan completo:
-`~/.claude/plans/async-greeting-pumpkin.md`.
+gaps del DS siguen como **locales** en el Supervisor (`shared/components`). Paquetes = aparcados
+(correr `publish:packages` solo antes de un release externo real).
+
+**Ejecutado (2026-06-15)** · `sc-prototype` jubilado y **GitHub Pages retirado** (`deploy-demo.yml`
+borrado, Pages deshabilitado) — los supera el Supervisor + Cloudflare. `smart-contact-platform`
+**archivado** (read-only, reversible; preserva audits/galerías) + **PR #51 cerrado**. Hosting vivo en
+**Cloudflare Pages**, ambos en raíz con preview por rama automático:
+- **sc-demo** → https://sc-demo.pages.dev (showcase; hash-routing, SPA-safe sin `_redirects`).
+- **supervisor** → https://sc-supervisor.pages.dev (app real; routing por path + `_redirects` SPA).
 
 ---
 
 ## DD-16 · 2026-06-14 — Showcase (`sc-demo`) desplegado a GitHub Pages; repo abierto a público
+
+> **SUPERSEDED por DD-17 (2026-06-15)** · GitHub Pages se retiró a favor de **Cloudflare Pages**
+> (preview por rama, ambos sitios en raíz). El repo sigue público. Se conserva este registro como
+> histórico del primer hosting.
 
 **Contexto** · El consumidor (`smart-contact-platform`) tenía su `ds-docs` desplegado que aplicaba
 tokens al instante; este repo no tenía página viva — `sc-demo` solo corría en local y CI hacía
