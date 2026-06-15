@@ -30,6 +30,46 @@
 
 ---
 
+## DD-19 · 2026-06-16 — Color semántico auto-aplicado desde el Kit (espejo de color)
+
+**Contexto** · Tras DD-18 el **sizing** fluía Figma→código solo, pero el **color de marca** seguía con
+gate humano (editar la capa curada a mano). El operador (solo, no-dev) quería que CUALQUIER cambio
+—incl. color— se viera en el preview sin fricción. El mapa export↔`--sc-*` ya existía inline en
+`token-parity.mjs` §6 (41 filas enforce + 7 divergencias conscientes); solo se comparaba, no se generaba.
+
+**Decisión** · Tercer generador `token-gen-color.mjs` (hermano de `token-gen.mjs` / `token-gen-component.mjs`)
+lee las filas GENERABLES del mapa compartido `scripts/color-map.mjs` (extraído 1:1 de parity §6),
+resuelve cada color del export a su hex terminal y lo **mapea a la primitiva `--sc-color-*` existente**,
+escribiendo `--sc-token: var(--sc-color-*)` en zonas `@sc-gen:semantic-color-{light,dark}` de
+`02-semantic.css` / `07-dark.css` (13 light + 3 dark). Respeta las **7 divergencias** (DIVERGE) y los
+~10 `color-mix` (custom SC, fuera del export) que quedan a mano. + chivato a11y en parity **§6b** (WCAG
+AA en pares críticos). `tokens:import` corre los 3 generadores; `verify` valida las 3 zonas.
+
+**Razón** · El mapa ya era fuente de verdad (ahora compartido por parity + generador, como el sizing).
+Emisión **value-preserving**: los 16 valores generados == los curados (e2e **58/58**, parity **41/41**).
+Clave: emitir `var(--sc-color-*)` (no hex crudo) preserva el contrato `--sc-*` + la indirección;
+resolver `export→hex→primitiva` (reverse-map, **0 colisiones** verificadas) absorbe gratis el rename
+slate→gray del Kit. Prueba de fuego: `text.muted.color` {surface.500}→{surface.600} en el export →
+`tokens:import` → `--sc-text-secondary` gray-500→gray-600, parity verde, **0 `.ts` tocado**, revert limpio.
+
+**Descartadas** ·
+- **Adoptar el preset que escupe el plugin (`.theme-designer/`) tal cual** → rompería el contrato
+  `--sc-*`, las divergencias y el a11y: usa el idioma PrimeNG (`--p-*`) con los valores del Kit crudos.
+- **Emitir hex crudo en las zonas** → rompe "sin hex en capas curadas" + pierde la indirección a
+  primitiva (cambiar `blue-700` dejaría de cascadear). Si un hex no tiene primitiva → falla ruidoso.
+- **Una capa generada que OVERRIDE a la curada** → duplica declaraciones (last-wins) y vuelve parity
+  tautológica para esos tokens (compararía generado-desde-export contra el export).
+- **Auto-aplicar los `color-mix` / la paleta de dominio (labels)** → no están en el export (custom SC).
+
+**Consecuencias** · Cualquier cambio de color semántico en el Theme Designer → `tokens:import` → vivo,
+sin mano, como el sizing. Las 13 light + 3 dark son GENERADAS (zonas `@sc-gen:semantic-color-*`, no
+editar). `DIVERGE` en `color-map.mjs` blinda las 7 divergencias (opt-in). El chivato §6b **cazó un real**:
+primary dark `gray-900`/`blue-400` = **3.01:1** (bajo AA; el comentario afirmaba ~5.9:1) → `A11Y_KNOWN`
++ flagged **W5** (ni gray-900 ni blanco llegan a AA sobre blue-400 → pide cambiar el color del primary
+dark). Pendiente W5: ese primary dark + los grises suaves (secondary 2.95:1, subtle 2.04:1, sub-AA a propósito).
+
+---
+
 ## DD-18 · 2026-06-15 — Sizing de componente auto-aplicado desde el Kit (puente seamless)
 
 **Contexto** · El loop Theme Designer→código solo era seamless para PRIMITIVOS (escala/radio/zinc):

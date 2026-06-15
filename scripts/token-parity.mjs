@@ -26,6 +26,7 @@ import { resolve } from 'node:path';
 import { createRequire } from 'node:module';
 import { loadKitExport } from './dtcg-export.mjs';
 import { SIZING, GROUPS, DIVERGE_SIZING } from './sizing-map.mjs';
+import { ENFORCE as COLOR_ENFORCE, DIVERGE as COLOR_DIVERGE } from './color-map.mjs';
 
 const root = resolve(import.meta.dirname, '..');
 const EXPORT_PATH = resolve(root, 'projects/design-tokens/scripts/kit-export-dtcg.json');
@@ -276,50 +277,11 @@ const expHex = (mode, path) => {
   const v = kit.resolve(leaf.$value, mode);
   return typeof v === 'string' && /^#/.test(v) ? normHex(v) : undefined;
 };
-const surfaceRows = ['0', '50', '100', '200', '300', '400', '500', '600', '700', '800', '900', '950'].map(
-  (s) => ['light', `surface.${s}`, s === '0' ? 'sc-color-gray-0' : `sc-color-gray-${s}`],
-);
-const ENFORCE = [
-  ...surfaceRows,
-  ['light', 'primary.color', 'sc-bg-primary'],
-  ['light', 'primary.hover.color', 'sc-bg-primary-hover'],
-  ['light', 'primary.active.color', 'sc-bg-primary-active'],
-  ['light', 'primary.contrast.color', 'sc-text-on-primary'],
-  ['light', 'content.background', 'sc-bg-surface'],
-  ['light', 'content.border.color', 'sc-border-default'],
-  ['light', 'content.color', 'sc-text-primary'],
-  ['light', 'content.hover.background', 'sc-bg-secondary-hover'],
-  ['light', 'text.color', 'sc-text-primary'],
-  ['light', 'text.muted.color', 'sc-text-secondary'],
-  ['light', 'form.field.background', 'sc-bg-surface'],
-  ['light', 'form.field.color', 'sc-text-primary'],
-  ['light', 'form.field.focus.border.color', 'sc-bg-primary'],
-  ['light', 'form.field.hover.border.color', 'sc-border-strong'],
-  ['light', 'form.field.disabled.background', 'sc-bg-disabled'],
-  ['light', 'form.field.invalid.border.color', 'sc-border-error'],
-  ['light', 'form.field.icon.color', 'sc-icon-subtle'],
-  ['light', 'navigation.item.color', 'sc-text-primary'],
-  ['light', 'navigation.item.icon.color', 'sc-icon-subtle'],
-  ['light', 'navigation.item.active.background', 'sc-bg-secondary-hover'],
-  ['light', 'list.option.color', 'sc-text-primary'],
-  ['light', 'list.option.focus.background', 'sc-bg-secondary-hover'],
-  ['light', 'overlay.modal.background', 'sc-bg-surface'],
-  ['light', 'overlay.modal.border.color', 'sc-border-default'],
-  ['light', 'overlay.popover.background', 'sc-bg-surface'],
-  ['light', 'overlay.popover.border.color', 'sc-border-default'],
-  ['dark', 'primary.color', 'sc-bg-primary'],
-  ['dark', 'primary.hover.color', 'sc-bg-primary-hover'],
-  ['dark', 'primary.active.color', 'sc-bg-primary-active'],
-];
-const DIVERGE = [
-  ['dark', 'surface.*', 'gray-* navy-tinted (el Kit usa zinc en dark) — paleta de marca SC'],
-  ['dark', 'primary.contrast.color', 'texto sobre primario dark = gray-900 navy-tinted vs zinc-900 del Kit (misma divergencia que surface.*)'],
-  ['light', 'form.field.border.color', 'borde de input gray-200 (=content/overlay) vs Kit surface-300 — 1 paso, jerarquía propia'],
-  ['light', 'form.field.placeholder.color', 'placeholder gray-400 vs Kit surface-500 — un punto más tenue'],
-  ['light', 'form.field.disabled.color', 'disabled gray-300 vs Kit surface-500 — más tenue a propósito'],
-  ['light', 'overlay.select.background', '--sc-bg-elevated (elevación propia) vs Kit surface-0'],
-  ['dark', 'overlay/content/form.field', 'resuelven vía capa 7 (.sc-dark, navy-tinted) — no se cruzan contra el zinc del Kit'],
-];
+// Filas de color desde la fuente única `color-map.mjs` (extraídas 1:1 de lo que vivía
+// aquí inline). enforce → [mode, exp, token]; diverge → [mode, exp|label, reason]. El
+// generador `token-gen-color.mjs` consume el mismo mapa, así no se desincronizan.
+const ENFORCE = COLOR_ENFORCE.map((r) => [r.mode, r.exp, r.token]);
+const DIVERGE = COLOR_DIVERGE.map((r) => [r.mode, r.exp, r.reason]);
 
 // Reverse hex → primitiva, para sugerir el token exacto a pegar cuando un color de marca
 // diverge. Solo alimenta el MENSAJE de fallo: nunca cambia el veredicto pass/fail.
@@ -347,6 +309,67 @@ for (const [mode, path, token] of ENFORCE) {
 log(`  ✓ ${colorOk}/${ENFORCE.length} colores de marca 1:1 con el export (light+dark)`);
 log('  divergencias de marca conscientes (no fallan):');
 for (const [mode, what, why] of DIVERGE) log(`    · [${mode}] ${what}: ${why}`);
+
+// ── 6b. A11Y · contraste de pares críticos (WCAG AA normal ≥ 4.5:1) ───────────
+// Con el color fluyendo de Figma, un cambio podría hundir el contraste. Gate SOLO
+// los pares de ALTO contraste que SIEMPRE deben pasar (texto-cuerpo y texto-on-primary
+// sobre sus fondos); los grises suaves (secondary/subtle) ya van bajo AA a propósito
+// → se informan, no fallan (decisión de marca, W5). Reusa tokenToHex (resuelve por capas).
+log('\n=== 6b. A11Y · contraste (WCAG AA normal ≥ 4.5:1) ===');
+const relLum = (hex) => {
+  const c = hex.replace('#', '');
+  const ch = [0, 2, 4]
+    .map((i) => parseInt(c.slice(i, i + 2), 16) / 255)
+    .map((v) => (v <= 0.03928 ? v / 12.92 : Math.pow((v + 0.055) / 1.055, 2.4)));
+  return 0.2126 * ch[0] + 0.7152 * ch[1] + 0.0722 * ch[2];
+};
+const contrast = (h1, h2) => {
+  const [hi, lo] = [relLum(h1), relLum(h2)].sort((a, b) => b - a);
+  return (hi + 0.05) / (lo + 0.05);
+};
+const AA = 4.5;
+const A11Y_GATED = [
+  ['sc-text-primary', 'sc-bg-surface'],
+  ['sc-text-primary', 'sc-bg-default'],
+  ['sc-text-on-primary', 'sc-bg-primary'],
+];
+const A11Y_INFO = [
+  ['sc-text-secondary', 'sc-bg-surface'],
+  ['sc-text-subtle', 'sc-bg-surface'],
+];
+// Sub-AA CONOCIDOS y aceptados (pre-existentes — revisión de marca en W5). Se informan
+// con ⚠, NO fallan. Quitar de aquí cuando W5 decida el fix.
+const A11Y_KNOWN = new Map([
+  ['dark|sc-text-on-primary|sc-bg-primary', 'primary dark (gray-900 sobre blue-400) ~3:1; ni gray-900 ni blanco llegan a AA sobre blue-400 — pide cambiar el color del primary dark (W5)'],
+]);
+let a11yOk = 0;
+for (const mode of ['light', 'dark']) {
+  for (const [fg, bg] of A11Y_GATED) {
+    const fh = tokenToHex(fg, mode);
+    const bh = tokenToHex(bg, mode);
+    if (!fh || !bh) {
+      log(`  ? [${mode}] --${fg}/--${bg}: no resuelve a hex`);
+      continue;
+    }
+    const r = contrast(fh, bh);
+    const known = A11Y_KNOWN.get(`${mode}|${fg}|${bg}`);
+    if (known) {
+      log(`  ⚠ [${mode}] --${fg}/--${bg} = ${r.toFixed(2)}:1 (conocido < AA — ${known})`);
+      continue;
+    }
+    if (r < AA) fail(`[${mode}] a11y: --${fg} sobre --${bg} = ${r.toFixed(2)}:1 (< AA ${AA}; ${fh}/${bh})`);
+    else {
+      a11yOk++;
+      log(`  ✓ [${mode}] --${fg}/--${bg} = ${r.toFixed(2)}:1`);
+    }
+  }
+  for (const [fg, bg] of A11Y_INFO) {
+    const fh = tokenToHex(fg, mode);
+    const bh = tokenToHex(bg, mode);
+    if (fh && bh) log(`    · [${mode}] --${fg}/--${bg} = ${contrast(fh, bh).toFixed(2)}:1 (informativo, gris suave — W5)`);
+  }
+}
+log(`  ✓ ${a11yOk}/${2 * A11Y_GATED.length} pares críticos cumplen AA`);
 
 // ── Resumen ──────────────────────────────────────────────────────────────────
 log('\n' + '─'.repeat(60));
