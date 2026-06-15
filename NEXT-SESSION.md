@@ -9,10 +9,14 @@
   (paquetes **privados**).
 - **Repo AHORA PÚBLICO** (el source; los paquetes npm siguen privados). Se abrió para habilitar Pages.
   Historial escaneado limpio antes de abrir. Ver **DD-16**.
-- **Página viva del showcase**: `sc-demo` desplegado a GitHub Pages on-push-to-main →
-  **https://smartcontact-hub.github.io/smartcontact-ui/** (`.github/workflows/deploy-demo.yml`, opt-in
-  a Node 24). Round-trip de tokens ahora end-to-end visible: variable → PR `design-tokens-sync` →
-  merge → redeploy (~1-2 min).
+- **Páginas vivas en GitHub Pages** (`.github/workflows/deploy-demo.yml`, on-push-to-main, opt-in Node 24):
+  - **Showcase del DS**: **https://smartcontact-hub.github.io/smartcontact-ui/** (`sc-demo`, catálogo de componentes).
+  - **Prototipo / flujos**: **https://smartcontact-hub.github.io/smartcontact-ui/prototype/** (`sc-prototype`,
+    2 pantallas dogfood — lista de agentes + ficha — consumiendo el DS por tsconfig paths → lib local).
+  - ⚠️ Esto NO es el Supervisor completo. El Supervisor (toda la app real con todas las pantallas)
+    vive en `arebury/smart-contact-platform` (migración aparcada, PR #51); para hostearlo haría falta
+    deploy desde ESE repo + token `read:packages` en su CI + build estático/mock (ver respuesta abajo).
+  - Round-trip de tokens end-to-end visible: variable → PR `design-tokens-sync` → merge → redeploy (~1-2 min).
 - **Sistema operativo del repo** montado (DOCS-INDEX, AGENTS protocolo/trampas/bridge, `.impeccable`,
   gobernanza Figma, DD-N con Descartadas, `docs:guard` + `test:unit` en `verify`).
 
