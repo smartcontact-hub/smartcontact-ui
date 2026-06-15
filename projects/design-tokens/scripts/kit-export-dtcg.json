@@ -6303,7 +6303,7 @@
       "font": {
         "size": {
           "$type": "number",
-          "$value": "{typography.font.size.200}"
+          "$value": "{typography.font.size.500}"
         }
       },
       "lg": {
@@ -6550,7 +6550,7 @@
         "border": {
           "radius": {
             "$type": "number",
-            "$value": "{border.radius.md}"
+            "$value": "{border.radius.none}"
           }
         },
         "focus": {
