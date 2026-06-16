@@ -76,12 +76,17 @@ jobs:
             echo "Export == main: la rama se resetea a main limpio (sin residuo del plugin ni de tests)."
           else
             CHANGED=1
-            git commit -m "chore(tokens): export del Theme Designer + primitivos regenerados [skip ci]"
+            git commit -m "chore(tokens): export del Theme Designer + primitivos regenerados"
           fi
           # El workflow es el ÚNICO dueño de design-tokens-sync: SIEMPRE la reseteamos al estado
           # canónico (main, o main+cambio). Así nunca queda CSS viejo ni basura del plugin aunque
-          # el cambio iguale a main (p.ej. un revert). force-push seguro: commit con [skip ci] y
-          # los push de GITHUB_TOKEN no re-disparan workflows.
+          # el cambio iguale a main (p.ej. un revert).
+          #
+          # OJO — NADA de [skip ci] en este commit (trampa cazada 2026-06-16):
+          #   · El bucle YA está evitado: GitHub no re-dispara workflows por pushes de GITHUB_TOKEN.
+          #   · Pero Cloudflare Pages TAMBIÉN obedece [skip ci] → se saltaría el build y el preview
+          #     de la rama quedaría CONGELADO (prod mostraba el cambio, el preview de rama no).
+          #   El preview de rama es justo lo que el diseñador mira → no se puede saltar su build.
           git push --force origin HEAD:design-tokens-sync
 
           if [ "$CHANGED" = 0 ]; then
