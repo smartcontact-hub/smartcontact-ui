@@ -16,6 +16,14 @@ Sin mano, respetando las divergencias de marca.
   + zonas `@sc-gen:semantic-color-{light,dark}` (02-semantic/07-dark) + chivato a11y §6b + `color-map.test.mjs`
   + DD-19. **value-preserving** (e2e 58/58, parity 41/41). Prueba de fuego pasada.
 - **Doc de consumo** (`7cc8a5b`, `7f7261d`): `consumer-onboarding.md §0`.
+- **W2 — READMEs + oficialización**: 3 READMEs nuevos (`components`, `sc-demo`, `supervisor`) + badges
+  (Angular/PrimeNG/TS/License) en los 6 READMEs + **metadata npm** en los 3 paquetes (`description`,
+  `keywords`, `license: UNLICENSED`, `author`, `homepage`, `bugs`, `repository.directory`) — verificado
+  que viaja al `dist/` (build verde). + `docs/org-profile.md` (borrador). Drift corregido: el "port
+  pendiente" (era mentira, ya hecho) en README raíz + `public-api.ts`.
+  - `license: UNLICENSED` = propietario/privado (confirmable; cambiar a MIT/Apache solo si se abre).
+  - **→ paso TUYO pendiente:** crear el repo público `smartcontact-hub/.github` y pegar `docs/org-profile.md`
+    en `profile/README.md` (el agente no puede crear repos).
 
 ## 🔴 HILO ABIERTO (el usuario quiere SEGUIR aquí): CÓMO SE CONSUME EL DS
 Compendio del tema → **`docs/consumer-onboarding.md §0`** (seguir AHÍ).
@@ -47,7 +55,6 @@ Compendio del tema → **`docs/consumer-onboarding.md §0`** (seguir AHÍ).
   **+ el primary dark = 3.01:1 (bajo AA)** que cazó el chivato §6b (allowlist `A11Y_KNOWN` en
   `token-parity.mjs`; ni gray-900 ni blanco llegan a AA sobre blue-400 → pide cambiar el color).
 - **W4** — 3 gaps mecánicos: `sc-avatar [size]` px · `sc-tag` `xs` · `ScConfirmRequest icon?`.
-- **W2** — READMEs (faltan ui-smartcontact/sc-demo/supervisor) + perfil de org.
 - **W3** — mapa Figma↔componente (`docs/figma-map.json`; necesita el bridge `mcp__figma__*`).
 - **W-gate (#85) — SECUNDARIO:** ~68 aserciones de métrica del e2e → snapshot, para que un cambio de
   **tamaño** mergee a main sin rojo. (El **color** NO lo necesita — el e2e no asercia color semántico.)

@@ -1,5 +1,10 @@
 # @smartcontact-hub/styles — design tokens
 
+![Design Tokens](https://img.shields.io/badge/Design%20Tokens-DTCG-5A45FF)
+![CSS Variables](https://img.shields.io/badge/CSS-Custom%20Properties-1572B6?logo=css&logoColor=white)
+![PrimeNG](https://img.shields.io/badge/PrimeNG-21-10B981)
+![License](https://img.shields.io/badge/license-Proprietary-lightgrey)
+
 > Looking for the friendly, design-side walkthrough in Spanish?
 > See [`../../docs/guia-tokens.md`](../../docs/guia-tokens.md) — written for
 > designers coming from Figma, with STAR-format walkthroughs of common

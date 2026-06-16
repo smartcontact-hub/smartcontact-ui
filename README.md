@@ -1,5 +1,11 @@
 # Smart Contact UI — Design System
 
+![Angular](https://img.shields.io/badge/Angular-21-DD0031?logo=angular&logoColor=white)
+![PrimeNG](https://img.shields.io/badge/PrimeNG-21-10B981)
+![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6?logo=typescript&logoColor=white)
+![Packages](https://img.shields.io/badge/packages-3-blue)
+![License](https://img.shields.io/badge/license-Proprietary-lightgrey)
+
 Design System de Smart Contact, empaquetado y publicable. Lo que se diseña en
 Figma (Smart Contact Prime UI Kit) se refleja directamente en el código y
 **cada valor es trazable al export del Kit y verificable por máquina**.
@@ -8,10 +14,11 @@ Figma (Smart Contact Prime UI Kit) se refleja directamente en el código y
 
 | Paquete | Proyecto | Contenido |
 |---|---|---|
-| `@smartcontact-hub/styles` | `projects/design-tokens` | Tokens `--sc-*` (7 capas, escala 14-base en rem) + reset/globals |
-| `@smartcontact-hub/icons` | `projects/ui-smartcontact-icons` | `<sc-icon>` + Material Symbols generados |
-| `@smartcontact-hub/components` | `projects/ui-smartcontact` | Preset modular (`theme/sc-preset`, cada slot → `var(--sc-*)`) + `provideSmartContactUi()`. Los wrappers `sc-*` llegan en el port incremental — [docs/component-port-plan.md](docs/component-port-plan.md) |
-| `sc-demo` (privada) | `projects/sc-demo` | App de referencia: fundaciones + smoke del tema |
+| `@smartcontact-hub/styles` | [`projects/design-tokens`](projects/design-tokens/README.md) | Tokens `--sc-*` (7 capas, escala 14-base en rem) + reset/globals |
+| `@smartcontact-hub/icons` | [`projects/ui-smartcontact-icons`](projects/ui-smartcontact-icons/README.md) | `<sc-icon>` + Material Symbols generados |
+| `@smartcontact-hub/components` | [`projects/ui-smartcontact`](projects/ui-smartcontact/README.md) | `provideSmartContactUi()` + preset modular (`theme/sc-preset`, cada slot → `var(--sc-*)`) + ~55 wrappers `sc-*` |
+| `sc-demo` _(app privada)_ | [`projects/sc-demo`](projects/sc-demo/README.md) | Showcase: fundaciones + catálogo + smoke del tema |
+| `supervisor` _(app privada)_ | [`projects/supervisor`](projects/supervisor/README.md) | App real: consumo canónico (solo `sc-*` + tokens) |
 
 ## Construir
 

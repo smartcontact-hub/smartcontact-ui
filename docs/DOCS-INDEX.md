@@ -24,6 +24,7 @@
 | **Tokens + puente Figma** (para diseño) · **Figma change-log** · workflow Migration Assistant | [`docs/guia-tokens.md`](./guia-tokens.md) + técnico: [`projects/design-tokens/README.md`](../projects/design-tokens/README.md) | diseño + Claude |
 | **Onboarding / presentación para diseño** (puerta de entrada: flujo operativo, links, plugin, por qué del aparato) — resumen narrativo; el detalle vive en `guia-tokens.md` | [`docs/ppt-proyecto.md`](./ppt-proyecto.md) | diseño (arranque) + claude design |
 | Cómo **consume una app externa** el DS · **el modelo** (un DS, dos profundidades: "instalar y ya el tema" vs `--sc-*` — combinable + migration-safe) · **propuesta de distribución** (GitHub Packages) | [`docs/consumer-onboarding.md`](./consumer-onboarding.md) | apps consumidoras + los 2 equipos front + Claude |
+| **Perfil público de la org** — borrador para el repo `smartcontact-hub/.github` → `profile/README.md` (lo crea Rafa en GitHub) | [`docs/org-profile.md`](./org-profile.md) | Rafa + Claude |
 | **Convergencia** DS ↔ catálogo dev (unión, naming DD-12, plan de port) | [`docs/convergence-manifesto.md`](./convergence-manifesto.md) | Claude (al portar) |
 | **Fundaciones** (Mitad A): por qué del esqueleto/arquitectura | [`docs/foundations-rationale.md`](./foundations-rationale.md) | Claude (referencia) |
 | **Plan de port** de componentes (Mitad B) | [`docs/component-port-plan.md`](./component-port-plan.md) | Claude (referencia) |
@@ -75,6 +76,7 @@ Los pares que más se confunden — cada uno tiene un trabajo distinto:
 
 ---
 
-Última actualización: 2026-06-16 — añadido `ppt-proyecto.md` (presentación de onboarding para diseño, W0).
+Última actualización: 2026-06-16 — W2: READMEs de paquete (`components`) y de las apps (`sc-demo`, `supervisor`) + badges + metadata npm (description/keywords/license/author) + `org-profile.md` (borrador del perfil de la org). Los README de `projects/**` no los escanea docs:guard (solo `docs/` + raíz).
+2026-06-16 — añadido `ppt-proyecto.md` (presentación de onboarding para diseño, W0).
 2026-06-14 — creado el índice (Lote L2 del maratón "sistema operativo"). Mapeados los docs del repo;
 fronteras `DECISIONS.md` ↔ `DECISIONS-LOG(-B)` ↔ `customs-catalog` ↔ `migration-safety` explícitas.

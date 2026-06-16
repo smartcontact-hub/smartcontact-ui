@@ -1,9 +1,23 @@
 {
   "name": "@smartcontact-hub/styles",
   "version": "0.2.0",
+  "description": "Smart Contact Design System — --sc-* design tokens (7 layers, 14-base rem scale) and base styles.",
+  "keywords": [
+    "design-tokens",
+    "css-variables",
+    "design-system",
+    "primeng",
+    "smart-contact",
+    "smartcontact"
+  ],
+  "homepage": "https://github.com/smartcontact-hub/smartcontact-ui/tree/main/projects/design-tokens#readme",
+  "bugs": "https://github.com/smartcontact-hub/smartcontact-ui/issues",
+  "license": "UNLICENSED",
+  "author": "Smart Contact",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/smartcontact-hub/smartcontact-ui.git"
+    "url": "git+https://github.com/smartcontact-hub/smartcontact-ui.git",
+    "directory": "projects/design-tokens"
   },
   "dependencies": {
     "tslib": "^2.3.0"

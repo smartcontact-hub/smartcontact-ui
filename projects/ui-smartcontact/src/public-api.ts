@@ -1,8 +1,8 @@
 /*
  * Public API Surface of @smartcontact-hub/components
  *
- * Mitad A (fundaciones): preset + frontera de setup. Los wrappers `sc-*`
- * llegan en el port incremental (Mitad B) — ver docs/component-port-plan.md.
+ * Preset (capa 6) + frontera de setup `provideSmartContactUi()` + los wrappers
+ * `sc-*` (port Mitad B completo). Referencia: ../README.md y ../../AGENTS.md.
  */
 export * from './lib/core/types/button.types';
 export * from './lib/core/types/badge.types';

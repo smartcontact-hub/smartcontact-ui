@@ -1,9 +1,23 @@
 {
   "name": "@smartcontact-hub/components",
   "version": "0.2.0",
+  "description": "Smart Contact Design System — Angular components, the PrimeNG preset (--sc-* contract) and the provideSmartContactUi() setup frontier.",
+  "keywords": [
+    "angular",
+    "primeng",
+    "design-system",
+    "ui-components",
+    "smart-contact",
+    "smartcontact"
+  ],
+  "homepage": "https://github.com/smartcontact-hub/smartcontact-ui/tree/main/projects/ui-smartcontact#readme",
+  "bugs": "https://github.com/smartcontact-hub/smartcontact-ui/issues",
+  "license": "UNLICENSED",
+  "author": "Smart Contact",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/smartcontact-hub/smartcontact-ui.git"
+    "url": "git+https://github.com/smartcontact-hub/smartcontact-ui.git",
+    "directory": "projects/ui-smartcontact"
   },
   "peerDependencies": {
     "@angular/common": "^21.0.0",

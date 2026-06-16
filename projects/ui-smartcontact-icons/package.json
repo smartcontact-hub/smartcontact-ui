@@ -1,9 +1,23 @@
 {
   "name": "@smartcontact-hub/icons",
   "version": "0.2.0",
+  "description": "Smart Contact Design System — the <sc-icon> component and the Material Symbols Rounded icon set.",
+  "keywords": [
+    "angular",
+    "icons",
+    "material-symbols",
+    "design-system",
+    "smart-contact",
+    "smartcontact"
+  ],
+  "homepage": "https://github.com/smartcontact-hub/smartcontact-ui/tree/main/projects/ui-smartcontact-icons#readme",
+  "bugs": "https://github.com/smartcontact-hub/smartcontact-ui/issues",
+  "license": "UNLICENSED",
+  "author": "Smart Contact",
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/smartcontact-hub/smartcontact-ui.git"
+    "url": "git+https://github.com/smartcontact-hub/smartcontact-ui.git",
+    "directory": "projects/ui-smartcontact-icons"
   },
   "peerDependencies": {
     "@angular/common": "^21.0.0",
