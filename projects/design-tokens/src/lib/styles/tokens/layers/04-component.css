@@ -179,7 +179,7 @@
    * Divergencias conscientes → DIVERGE_SIZING en scripts/sizing-map.mjs. */
   --sc-cmp-button-padding-x: 0.65625rem; /* 10.5px */
   --sc-cmp-button-padding-y: 0.4375rem; /* 7px */
-  --sc-cmp-button-border-radius: 0; /* 0px */
+  --sc-cmp-button-border-radius: 0.375rem; /* 6px */
   --sc-cmp-button-gap: 0.4375rem; /* 7px */
   --sc-cmp-button-icon-only-width: 2.1875rem; /* 35px */
   --sc-cmp-button-rounded-border-radius: 1.75rem; /* 28px */
@@ -193,7 +193,7 @@
   --sc-cmp-button-lg-icon-only-width: 2.625rem; /* 42px */
   --sc-cmp-form-field-padding-x: 0.65625rem; /* 10.5px */
   --sc-cmp-form-field-padding-y: 0.4375rem; /* 7px */
-  --sc-cmp-form-field-border-radius: 0; /* 0px */
+  --sc-cmp-form-field-border-radius: 0.375rem; /* 6px */
   --sc-cmp-form-field-sm-font-size: 0.75rem; /* 12px */
   --sc-cmp-form-field-sm-padding-x: 0.546875rem; /* 8.75px */
   --sc-cmp-form-field-sm-padding-y: 0.328125rem; /* 5.25px */
