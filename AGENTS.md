@@ -358,6 +358,17 @@ Each entry: **what bites → the rule → why**. Append here when a new one is f
   asking the user to run an operator action (publish, deploy, install), VERIFY the real state
   (`gh api …/versions`, `npm view`, etc.). The hand-off can be stale. *Why:* the mechanism
   (authed `gh`) was available and unused — cost the user a needless command.
+- **`[skip ci]` on the `tokens-sync` reset commit freezes the Cloudflare preview.** *Bites:* the
+  workflow's canonical reset commit carried `[skip ci]` "to avoid re-triggering" — but a `GITHUB_TOKEN`
+  push **already can't** re-trigger a workflow (GitHub's own non-recursion rule), so it was redundant,
+  and **Cloudflare Pages also honors `[skip ci]`** → it skipped the branch build → the per-branch
+  preview stayed frozen on the OLD value (prod — built from `main`'s no-skip merge commit — showed the
+  change; the preview did not). *Rule:* **never** put `[skip ci]`/`[ci skip]`/`[skip-ci]` on the
+  `design-tokens-sync` reset commit. The loop is protected by the `GITHUB_TOKEN` non-recursion rule, not
+  by skip tokens. The per-branch preview is exactly what the designer reviews — its build must not be
+  skipped. *Why:* an operator pushed a radius change, saw it live in prod but frozen in the preview
+  link — looked broken (fixed in `ce49d16`). [[integration-glue-full-loop]]: green pieces ≠ working
+  loop — verify the actual served output, not just the run status.
 
 ---
 

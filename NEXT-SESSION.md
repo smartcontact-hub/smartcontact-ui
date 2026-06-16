@@ -24,6 +24,11 @@ Sin mano, respetando las divergencias de marca.
   - `license: UNLICENSED` = propietario/privado (confirmable; cambiar a MIT/Apache solo si se abre).
   - **→ paso TUYO pendiente:** crear el repo público `smartcontact-hub/.github` y pegar `docs/org-profile.md`
     en `profile/README.md` (el agente no puede crear repos).
+- **Fix del preview congelado** (`ce49d16`): el reset de `tokens-sync.yml` llevaba `[skip ci]` → Cloudflare
+  se saltaba el build del preview de rama (prod mostraba el cambio, el preview no). Quitado (el bucle lo evita
+  la regla de GITHUB_TOKEN) + trampa anotada en AGENTS Known Traps. Verificado: los 4 links sirven el cambio.
+  Disparador: un push de radio (botón/form 6px→0) del usuario; **OJO: ese radio 0 quedó en producción** (PR #10
+  mergeado) — revertir si era prueba.
 
 ## 🔴 HILO ABIERTO (el usuario quiere SEGUIR aquí): CÓMO SE CONSUME EL DS
 Compendio del tema → **`docs/consumer-onboarding.md §0`** (seguir AHÍ).
@@ -46,8 +51,10 @@ Compendio del tema → **`docs/consumer-onboarding.md §0`** (seguir AHÍ).
    NECESITA; **NUNCA borrarla**, ruleset 17705331; reset = `git push --force origin main:design-tokens-sync`).
 2. `tokens-sync.yml` parte de main → `tokens:import` (primitivos + sizing + **color**) → verify + e2e →
    **resetea la rama limpia + abre/actualiza PR** (`if: always()`; un revert→cierra el PR).
-3. **Preview por rama (ON):** `design-tokens-sync.sc-demo.pages.dev` + `…sc-supervisor.pages.dev`.
-   (El nombre `design-tokens-sync` SE QUEDA — decidido; los links se documentan, no se renombra.)
+   El commit de reset va **SIN `[skip ci]`** (`ce49d16`): el bucle ya lo evita la regla de GITHUB_TOKEN,
+   y el `[skip ci]` además **congelaba el build de Cloudflare** del preview. NUNCA re-añadirlo (AGENTS Known Traps).
+3. **Preview por rama (ON, ya rebuildea de verdad):** `design-tokens-sync.sc-demo.pages.dev` +
+   `…sc-supervisor.pages.dev`. (El nombre `design-tokens-sync` SE QUEDA — decidido; se documenta, no se renombra.)
 4. Gusta → merge PR a main → producción (`sc-demo.pages.dev` / `sc-supervisor.pages.dev`).
 
 ## Lotes pendientes (plan durable: `~/.claude/plans/async-greeting-pumpkin.md`)
