@@ -5,7 +5,11 @@ import { buildReport } from '../token-report.mjs';
 // Líneas técnicas REALES (copiadas de la salida de token-parity / token-gen-color).
 const A11Y =
   '  ✗ [light] a11y: --sc-text-on-primary sobre --sc-bg-primary = 1.92:1 (< AA 4.5; #ffffff/#34d399)';
-const OUT_OF_PALETTE = '    · [light] primary.color = #123456 (sin --sc-color-* primitiva)';
+const OUT_OF_PALETTE = '    · [light] primary.color = #facc15 (sin --sc-color-* primitiva)';
+const DS_PALETTE = [
+  { name: 'sc-color-amber-400', hex: '#fbbf24' },
+  { name: 'sc-color-blue-700', hex: '#1b273d' },
+];
 const COLOR_DRIFT =
   '  ✗ [light] primary.color: export=#1b273d vs --sc-bg-primary=#abcdef → pega en 02-semantic.css';
 const SIZING_DRIFT = '  ✗ button.sm.padding.y: DRIFT — export=7 vs preset=8';
@@ -31,10 +35,17 @@ test('dark: el modo se traduce a "modo oscuro"', () => {
   assert.match(md, /modo oscuro/);
 });
 
-test('color fuera de paleta → explica usar un paso existente', () => {
+test('color fuera de paleta → familia no curada, sin el engañoso "tono intermedio"', () => {
   const md = buildReport(OUT_OF_PALETTE, { failed: true });
-  assert.match(md, /fuera de la paleta/);
-  assert.match(md, /#123456/);
+  assert.match(md, /fuera de la paleta del DS/);
+  assert.match(md, /#facc15/);
+  assert.doesNotMatch(md, /intermedio/); // el mensaje viejo era engañoso
+});
+
+test('color fuera de paleta + paleta → sugiere la primitiva EXISTENTE más cercana', () => {
+  const md = buildReport(OUT_OF_PALETTE, { failed: true, palette: DS_PALETTE });
+  assert.match(md, /sc-color-amber-400/); // #facc15 → más cercano amber-400 (#fbbf24)
+  assert.match(md, /#fbbf24/);
 });
 
 test('color desalineado y sizing drift se reconocen', () => {
