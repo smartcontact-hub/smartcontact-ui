@@ -37,6 +37,7 @@ import { resolve } from 'node:path';
 import { loadKitExport } from './dtcg-export.mjs';
 import { scaleSuffix, toRem, dropAlpha } from './token-naming.mjs';
 import { rewriteRegion } from './marker-rewrite.mjs';
+import { GENERATED as GENERATED_COLORS } from './color-map.mjs';
 
 const root = resolve(import.meta.dirname, '..');
 const EXPORT_PATH = resolve(root, 'projects/design-tokens/scripts/kit-export-dtcg.json');
@@ -111,11 +112,54 @@ function renderRadius() {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
-// PALETA COMPLEMENTARIA — familias que el preset referencia ({yellow.*},
-// {zinc.*} = surface dark del Kit) y la capa curada no define. 1:1 del export.
+// PALETA COMPLEMENTARIA — familias primitivas de color que la capa CURADA no
+// define, importadas 1:1 del export. DINÁMICO: el Kit tiene ~22 familias; la capa
+// curada cubre ~12. Importamos `zinc` (base — surface dark del Kit) + CUALQUIER
+// familia que un color semántico GENERADO referencie y la curada no cubra (p.ej. el
+// diseñador pone primary→{yellow.400} en Figma → se importa `yellow` y fluye, sin
+// tocar código). Self-cleaning: si deja de referenciarse, desaparece al re-importar.
 // ─────────────────────────────────────────────────────────────────────────────
-const PALETTE_FAMILIES = ['zinc'];
 const STEPS = ['50', '100', '200', '300', '400', '500', '600', '700', '800', '900', '950'];
+const PALETTE_BASE = ['zinc']; // referenciada por la capa dark, no por un semántico generado
+
+// export: hex → familia primitiva (first-wins).
+const hexToFamily = new Map();
+for (const [path, leaf] of prim) {
+  const m = path.match(/^([a-z]+)\.\d+$/);
+  if (m && typeof leaf.$value === 'string' && /^#/.test(leaf.$value)) {
+    const hex = dropAlpha(String(leaf.$value)).toLowerCase();
+    if (!hexToFamily.has(hex)) hexToFamily.set(hex, m[1]);
+  }
+}
+// hexes YA disponibles como primitiva a mano (fuera de @sc-gen:palette). Filtramos por
+// HEX, no por nombre: si el color que un semántico referencia ya existe —aunque sea bajo
+// otro nombre (el Kit usa `slate`, la capa curada lo tiene como `gray`, mismo hex)— NO se
+// re-importa (evita duplicar la rampa con otro nombre).
+const curatedHexes = (() => {
+  const txt = readFileSync(PRIMITIVE_CSS, 'utf8').replace(
+    /\/\* @sc-gen:palette[\s\S]*?@sc-gen:palette:end \*\//,
+    '',
+  );
+  const set = new Set();
+  for (const m of txt.matchAll(/--sc-color-[a-z0-9-]+\s*:\s*(#[0-9a-fA-F]{6})/g)) set.add(m[1].toLowerCase());
+  return set;
+})();
+// export semantic path → hex terminal (sigue refs DTCG en el modo dado).
+function semHex(mode, path) {
+  const leaf = kit.groups[`aura/semantic/${mode}`]?.get(path);
+  if (!leaf) return undefined;
+  const v = kit.resolve(leaf.$value, mode);
+  return typeof v === 'string' && /^#/.test(v) ? dropAlpha(v).toLowerCase() : undefined;
+}
+const PALETTE_FAMILIES = [
+  ...new Set([
+    ...PALETTE_BASE,
+    ...GENERATED_COLORS.map((r) => semHex(r.mode, r.exp))
+      .filter((hex) => hex && !curatedHexes.has(hex)) // solo colores que aún NO existen
+      .map((hex) => hexToFamily.get(hex))
+      .filter(Boolean),
+  ]),
+].sort();
 
 function renderPalette() {
   const out = [];
@@ -155,9 +199,9 @@ const ZONES = [
   {
     tag: 'palette',
     header:
-      '/* @sc-gen:palette — bloque GENERADO desde kit-export-dtcg.json. Familias que el\n' +
-      '   * preset referencia y la capa curada no cubre (yellow, zinc = surface dark del\n' +
-      '   * Kit). NO editar a mano. */',
+      '/* @sc-gen:palette — bloque GENERADO desde kit-export-dtcg.json. Familias de color\n' +
+      '   * que la capa curada NO cubre, importadas según se REFERENCIAN (zinc base +\n' +
+      '   * cualquier familia que un semántico use — p.ej. primary→yellow). NO editar a mano. */',
     render: renderPalette,
   },
 ];
