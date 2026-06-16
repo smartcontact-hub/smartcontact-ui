@@ -6550,7 +6550,7 @@
         "border": {
           "radius": {
             "$type": "number",
-            "$value": "{border.radius.none}"
+            "$value": "{border.radius.md}"
           }
         },
         "focus": {
