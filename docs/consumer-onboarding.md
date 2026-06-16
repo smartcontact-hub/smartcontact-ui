@@ -52,6 +52,29 @@ sustituye con ventaja (divergencias + a11y + contrato + componentes). Si un equi
 preset (sin la librería de componentes), se puede publicar un `@smartcontact-hub/theme` ligero
 generado de la misma fuente — opción, no obligación.
 
+### En cristiano (para no-devs): las dudas que siempre salen
+
+- **¿Hay dos formas de consumir y dan resultados distintos?** No. Hay **un** DS; "las dos formas" son
+  solo *cuánto se profundiza*. El look es **el mismo** (mismo paquete); quien profundiza tiene MÁS
+  herramientas (tokens `--sc-*` + componentes `sc-*`), pero el tema base es idéntico.
+- **¿Unos piden "el tema" y otros "los tokens"?** No. Todos reciben el MISMO DS, que **ES** el tema **y
+  trae los tokens (`--sc-*`) dentro**. Se usan si se profundiza; si no, se ignoran. Un paquete, no dos pedidos.
+- **¿Algún equipo "va con `--p-*`"?** No. `--p-*` es la fontanería **interna** de PrimeNG — nadie la
+  toca (prohibida). El equipo "instala y ya" usa el DS, que por dentro usa `--sc-*` sin verlo → **se
+  lleva el blindaje anti-PrimeNG gratis**, sin hacer nada. No lo pierde por ir simple.
+- **¿`provideSmartContactUi()` es "solo un wrapper"?** Es un *wrapper* (una capa fina que re-expone
+  PrimeNG en tu idioma con UNA llamada — por eso "instalar y ya") **+ más**: el tema propio (`--sc-*`,
+  divergencias, a11y) **+** los componentes propios (`sc-*`).
+- **¿Y lo custom?** Los componentes `sc-*` **vienen en el DS** y se tematizan igual (`--sc-*`). No hay
+  nada que "solo funcione para lo estándar".
+- **¿Dónde está el control de errores?** En los **guardarraíles** (parity / verify / CI / chivato
+  a11y), automáticos — **competencia de DESARROLLO, no de diseño**. Diseño empuja tokens; si algo
+  rompe, el sistema lo marca a los DEVS, no al diseñador. Por eso diseño está **cubierto** (no se puede
+  romper el producto en silencio).
+
+> **El "tema crudo" del plugin no se ofrece a nadie** — es peor (solo estándar, sin componentes
+> propios, casado con PrimeNG). Una sola oferta para los dos equipos: **el DS.**
+
 ### ¿Qué falta para que los equipos externos puedan instalarlo? (la propuesta)
 
 **Hoy el DS no está subido a ningún sitio.** El Supervisor lo usa porque vive en ESTE mismo repo
