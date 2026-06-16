@@ -24,6 +24,7 @@
     "tokens:gen-color": "node scripts/token-gen-color.mjs",
     "tokens:import": "node scripts/token-gen.mjs --write && node scripts/token-gen-component.mjs --write && node scripts/token-gen-color.mjs --write",
     "tokens:parity": "node scripts/token-parity.mjs",
+    "tokens:report": "node scripts/token-report.mjs",
     "tokens:type-parity": "node scripts/token-type-parity.mjs",
     "tokens:guard": "node scripts/token-guard.mjs",
     "audit:theme-scale": "node scripts/check-theme-scale.mjs",

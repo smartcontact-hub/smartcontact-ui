@@ -1,0 +1,60 @@
+# Carril RÁPIDO de feedback para diseño (~1 min) — corre EN PARALELO al pesado
+# `tokens-sync`. El plugin empuja el export → esto regenera + corre parity/a11y y
+# escribe el veredicto EN CRISTIANO (resumen del run + comentario del PR), SIN esperar
+# al build + e2e + preview (~5 min, eso lo hace `tokens-sync`). Así el diseñador sabe
+# en ~1 min si su color/tamaño cuadra y, si no, POR QUÉ — sin leer logs de CI.
+#
+# NO es un gate: no resetea la rama, no bloquea, no empuja. Solo informa. El gate real
+# sigue siendo `tokens-sync` (verify + e2e) y `verify` en `ci.yml`.
+name: tokens-check
+
+on:
+  push:
+    branches: [design-tokens-sync]
+    paths:
+      - projects/design-tokens/scripts/kit-export-dtcg.json
+
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: tokens-check
+  cancel-in-progress: true
+
+jobs:
+  report:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: main
+          fetch-depth: 0
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+
+      # Igual que tokens-sync: trabaja sobre main + SOLO el export que empujó el plugin.
+      - name: Tomar el export del plugin sobre main
+        run: |
+          git fetch origin design-tokens-sync
+          git checkout origin/design-tokens-sync -- projects/design-tokens/scripts/kit-export-dtcg.json
+
+      # Regenera desde el export. Un color fuera de paleta FALLA aquí → se captura sin
+      # tumbar el step; el informe lo traduce a cristiano.
+      - name: Regenerar desde el export (captura, no falla)
+        run: npm run tokens:import > /tmp/import.log 2>&1 || true
+
+      # Veredicto en cristiano → resumen del run (siempre visible).
+      - name: Informe en cristiano (parity + a11y)
+        run: |
+          node scripts/token-report.mjs /tmp/import.log > /tmp/report.md
+          cat /tmp/report.md >> "$GITHUB_STEP_SUMMARY"
+
+      # …y como comentario del PR si ya existe (en el 1er push del ciclo aún no hay → solo resumen).
+      - name: Comentar el veredicto en el PR (si existe)
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: gh pr comment design-tokens-sync --body-file /tmp/report.md || echo "Sin PR aún — el veredicto está en el resumen del run."
