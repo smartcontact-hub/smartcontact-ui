@@ -23,7 +23,7 @@
 | Reglas de **blindaje / migration-safe** (minimizar customización de PrimeNG) | [`docs/migration-safety.md`](./migration-safety.md) | Claude (antes de tocar HTML/lógica PrimeNG) |
 | **Tokens + puente Figma** (para diseño) · **Figma change-log** · workflow Migration Assistant | [`docs/guia-tokens.md`](./guia-tokens.md) + técnico: [`projects/design-tokens/README.md`](../projects/design-tokens/README.md) | diseño + Claude |
 | **Onboarding / presentación para diseño** (puerta de entrada: flujo operativo, links, plugin, por qué del aparato) — resumen narrativo; el detalle vive en `guia-tokens.md` | [`docs/ppt-proyecto.md`](./ppt-proyecto.md) | diseño (arranque) + claude design |
-| Cómo **consume una app externa** los paquetes publicados | [`docs/consumer-onboarding.md`](./consumer-onboarding.md) | apps consumidoras + Claude |
+| Cómo **consume una app externa** el DS · **el modelo** (un DS, dos profundidades: "instalar y ya el tema" vs `--sc-*` — combinable + migration-safe) · **propuesta de distribución** (GitHub Packages) | [`docs/consumer-onboarding.md`](./consumer-onboarding.md) | apps consumidoras + los 2 equipos front + Claude |
 | **Convergencia** DS ↔ catálogo dev (unión, naming DD-12, plan de port) | [`docs/convergence-manifesto.md`](./convergence-manifesto.md) | Claude (al portar) |
 | **Fundaciones** (Mitad A): por qué del esqueleto/arquitectura | [`docs/foundations-rationale.md`](./foundations-rationale.md) | Claude (referencia) |
 | **Plan de port** de componentes (Mitad B) | [`docs/component-port-plan.md`](./component-port-plan.md) | Claude (referencia) |
