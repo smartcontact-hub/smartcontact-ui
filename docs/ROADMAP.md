@@ -44,6 +44,22 @@
 - **Validación**: las ~35 filas ENFORCE se generan 1:1 desde el export; DIVERGE sigue a mano
   con guard; `verify` verde.
 
+### Feedback rápido para diseño "en cristiano" — ✅ HECHO (2026-06-16)
+- **Qué**: el plugin rechaza/valida sin decir el porqué (la razón vivía enterrada en el log de CI,
+  tras ~5 min de build+e2e+preview). Montado un **carril rápido** (`.github/workflows/tokens-check.yml`
+  + `scripts/token-report.mjs` + test) que corre SOLO parity + a11y y postea el veredicto **en
+  cristiano** (resumen del run + comentario del PR) en **~1 min**. Sin IA: reglas deterministas sobre
+  la salida que los checks YA producen (contraste, color fuera de paleta, drift…). **NO es un gate**
+  (el gate sigue siendo `tokens-sync` + `verify`).
+- **Siguiente nivel (futuro, gated en necesidad)**:
+  - **Plugin-monitor en Figma (tiempo real)** — el sueño: las validaciones DENTRO del plugin según
+    editas, sin ir a GitHub. Proyecto propio (el plugin tendría que pollear el run o replicar los
+    checks). *Disparador*: si tras el carril rápido, ir a GitHub sigue siendo fricción.
+  - **IA: sugerir el color corregido** — cuando un color rompe a11y, proponer el paso de rampa más
+    cercano que SÍ cumple. Aquí una heurística/IA sí aporta. *Disparador*: tras el monitor.
+  - **Comentario PR "sticky"** (editar en vez de añadir, para no acumular al iterar) + **cachear
+    Playwright/npm** en el carril pesado (~1 min menos).
+
 ### Resolver de referencias del preset (E2, la mitad no-redundante)
 - **Qué**: chequear que cada `{ref}`/`var(--sc-*)` de `sc-preset/` resuelve (caza refs
   colgantes). Diferido de L7 por riesgo de falsos positivos en el guard core.

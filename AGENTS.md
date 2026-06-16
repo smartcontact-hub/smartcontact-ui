@@ -369,6 +369,17 @@ Each entry: **what bites → the rule → why**. Append here when a new one is f
   skipped. *Why:* an operator pushed a radius change, saw it live in prod but frozen in the preview
   link — looked broken (fixed in `ce49d16`). [[integration-glue-full-loop]]: green pieces ≠ working
   loop — verify the actual served output, not just the run status.
+- **Theme Designer plugin: `"… does not match <sha>"` = stale cached SHA, not a repo problem.** *Bites:*
+  the plugin caches the file blob SHA of `kit-export-dtcg.json`; the workflow rewrites the branch after
+  every push, and rapid back-to-back pushes (or a cancelled/failed run that didn't reset) leave the
+  plugin's cached SHA pointing at a version that's gone → GitHub's contents API rejects with `does not
+  match`. *Rule:* the operator **re-opens the plugin** (close + re-run from Figma's plugin menu) so it
+  re-fetches the current SHA, then pushes. If it persists, reset the branch to a clean state
+  (`git push --force origin main:design-tokens-sync`) so the plugin re-reads a stable target. *Why:*
+  rapid token-testing churned the branch; the operator hit an opaque error mid-iteration.
+  [[integration-glue-full-loop]]. **Diagnostic for "I pushed but nothing happened":** a real change
+  triggers a `tokens-sync` run within seconds — no new run = the push carried no diff (Figma == branch),
+  GitHub accepts it as a no-op.
 
 ---
 

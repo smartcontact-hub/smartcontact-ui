@@ -27,8 +27,17 @@ Sin mano, respetando las divergencias de marca.
 - **Fix del preview congelado** (`ce49d16`): el reset de `tokens-sync.yml` llevaba `[skip ci]` → Cloudflare
   se saltaba el build del preview de rama (prod mostraba el cambio, el preview no). Quitado (el bucle lo evita
   la regla de GITHUB_TOKEN) + trampa anotada en AGENTS Known Traps. Verificado: los 4 links sirven el cambio.
-  Disparador: un push de radio (botón/form 6px→0) del usuario; **OJO: ese radio 0 quedó en producción** (PR #10
-  mergeado) — revertir si era prueba.
+  Disparador: un push de radio del usuario (era prueba; **revertido** en `dde9d55`; PR #10/#11 cerrados).
+- **Carril rápido de feedback "en cristiano"** (este commit): `.github/workflows/tokens-check.yml` +
+  `scripts/token-report.mjs` (+ test, npm `tokens:report`). Corre SOLO parity+a11y y postea el veredicto
+  **en cristiano** (resumen del run + comentario PR) en **~1 min** — el "¿es válido y por qué?" sin esperar
+  los ~5 min del build+e2e+preview. Sin IA (reglas deterministas). NO es gate. → ROADMAP: plugin-monitor en
+  Figma (tiempo real) + IA-sugiere-color-corregido.
+- **Sesión de testing del loop (color):** color **semántico** (`primary.color`→ámbar/cian) **fluye** y se
+  ve en preview; **per-componente** (`button.primary.background`) NO (footgun #1, a decidir A/C). El chivato
+  a11y cazó un primary verde ilegible (1.92:1) → run rojo (¡funciona!). **Trampa nueva en AGENTS:** plugin
+  "does not match" = SHA viejo cacheado → **re-abrir el plugin**. **Pendiente:** decidir el control A/C del
+  footgun de color per-componente (A=chillar [rec] / C=divergencia declarada).
 
 ## 🔴 HILO ABIERTO (el usuario quiere SEGUIR aquí): CÓMO SE CONSUME EL DS
 Compendio del tema → **`docs/consumer-onboarding.md §0`** (seguir AHÍ).
@@ -56,6 +65,12 @@ Compendio del tema → **`docs/consumer-onboarding.md §0`** (seguir AHÍ).
 3. **Preview por rama (ON, ya rebuildea de verdad):** `design-tokens-sync.sc-demo.pages.dev` +
    `…sc-supervisor.pages.dev`. (El nombre `design-tokens-sync` SE QUEDA — decidido; se documenta, no se renombra.)
 4. Gusta → merge PR a main → producción (`sc-demo.pages.dev` / `sc-supervisor.pages.dev`).
+
+> **Carril rápido (paralelo al paso 2):** `tokens-check.yml` + `token-report.mjs` → veredicto parity+a11y
+> EN CRISTIANO en ~1 min (resumen del run + comentario PR). El "¿válido y por qué?" sin esperar el preview.
+> **Tiempos:** ver el cambio renderizado tiene suelo ~5 min (CI gate ~3 + Cloudflare ~1-2); ritmo bueno =
+> 1 cambio → Push → ~5 min → mirar. Para explorar color rápido, **júzgalo en Figma** (instantáneo); empuja
+> para validar. No es por "el primary toca muchos sitios" (recolorear es instantáneo) ni por los 2 links.
 
 ## Lotes pendientes (plan durable: `~/.claude/plans/async-greeting-pumpkin.md`)
 - **W5** — decisiones de marca (TUYAS): iconos Outlined vs Rounded · dark zinc vs navy · grises a11y.
