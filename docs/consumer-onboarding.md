@@ -25,6 +25,19 @@ estable `--sc-*` y los componentes propios `sc-*`.
    (no se ignora — alimenta todo)   preset --sc-* + CSS + componentes
 ```
 
+### Las piezas (quién toca qué) — para no liarse
+
+| Pieza | Qué es | Quién la usa |
+|---|---|---|
+| **Kit Figma "Smart-Contact Prime"** | donde se diseña (la fuente) | **diseño** |
+| **Plugin Theme Designer** | empuja Figma → repo (el puente) | **diseño**. NI los devs |
+| **El DS** (`@smartcontact-hub/*`) | el producto: tema + componentes | **los dos equipos** instalan ESTO |
+| **"Generar tema" en primeng.org** | un tema *vanilla* de PrimeNG | **nadie** (sería salirse de la marca) |
+
+**¿Y los temas Aura / Material / Lara / Nora?** Son los 4 "sabores" base de PrimeNG. Se elige uno **una
+sola vez** al fundar el sistema — y ya está elegido: **Aura** (el más cercano a la marca). "Jugar" con
+los otros = otra identidad = **dejar de usar el DS** (decisión de producto, no de diseño/dev).
+
 **Un solo DS, dos formas de consumirlo:**
 
 | | Equipo "instalar y ya el tema" | Equipo "`--sc-*`" |

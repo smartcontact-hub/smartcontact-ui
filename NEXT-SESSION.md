@@ -1,75 +1,74 @@
 # NEXT SESSION — Smart Contact DS (hand-off)
 
 > Léeme **primero** al abrir. Estado *volátil* + qué hacer ahora. Se SOBREESCRIBE en cada cierre.
-> El *por qué* durable vive en `docs/DECISIONS.md` (DD-N). Plan durable: `~/.claude/plans/async-greeting-pumpkin.md`.
+> El *por qué* durable vive en `docs/DECISIONS.md` (DD-N). Plan: `~/.claude/plans/async-greeting-pumpkin.md`.
 
 ## Estado de un vistazo
-- **Consolidación (DD-17)**: ✅ un repo · Cloudflare **sc-demo.pages.dev** + **sc-supervisor.pages.dev** · platform archivado.
-- **Puente seamless de SIZING (DD-18, W1)**: ✅ HECHO y en main (commit `1016012`). Un cambio de
-  **radio/padding/fontSize de componente** en Figma → `tokens:import` → se auto-aplica al código vía
-  tokens `--sc-cmp-*` (zona generada `@sc-gen:cmp-sizing` en `04-component.css`). El **color** sigue
-  con gate humano a propósito. Probado: e2e 58/58 sin diff + prueba de fuego (radio md→lg → parity
-  verde sin tocar `.ts`).
+**El espejo Figma→código está COMPLETO.** Sizing (DD-18) **y color** (DD-19) fluyen solos: cambias un
+token en el Theme Designer → `tokens:import` → se auto-aplica al código (zonas `@sc-gen:*`) → preview.
+Sin mano, respetando las divergencias de marca.
 
-## El loop, cómo funciona HOY
-1. Diseñador cambia token en Figma → **Push Tokens** (el plugin empuja `kit-export-dtcg.json` a la
-   rama **`design-tokens-sync`** — el plugin la NECESITA existente; **NUNCA borrarla**, está protegida
-   con ruleset id 17705331; si hay que resetearla: `git push --force origin main:design-tokens-sync`).
-2. El workflow `tokens-sync.yml` parte de `main`, toma el export, corre `tokens:import` (regenera
-   primitivos **y** `--sc-cmp-*`), `verify` + `e2e`, y **publica la rama + abre PR aunque e2e falle**
-   (`if: always()`, línea 63).
-3. **El preview ya funciona**: Cloudflare hace deploy por rama → hay un preview de `design-tokens-sync`
-   (URLs en el dashboard Cloudflare → cada proyecto → pestaña *Deployments*). ⚠️ El usuario NO ha tocado
-   Cloudflare — **verificar que el preview por rama está ON** y encontrar las URLs (1er paso abajo).
-4. Si gusta → mergear el PR a main → corren todos los controles → producción (los links de verdad) se
-   actualiza. Si no → cerrar el PR; producción intacta.
+**Hecho esta sesión** (todo en `main`, CI verde):
+- **Fix del loop** (`e2276ee`): `tokens-sync.yml` SIEMPRE resetea la rama al estado canónico (un revert
+  ya no deja preview stale ni basura del plugin; `add` acotado; revert cierra el PR).
+- **W0** (`690b98c`): `docs/ppt-proyecto.md` — presentación de onboarding para la diseñadora (Marta).
+- **W-color** (`23bb9c7`): generador de color. `scripts/color-map.mjs` + `scripts/token-gen-color.mjs`
+  + zonas `@sc-gen:semantic-color-{light,dark}` (02-semantic/07-dark) + chivato a11y §6b + `color-map.test.mjs`
+  + DD-19. **value-preserving** (e2e 58/58, parity 41/41). Prueba de fuego pasada.
+- **Doc de consumo** (`7cc8a5b`, `7f7261d`): `consumer-onboarding.md §0`.
 
-## ⚠️ Lo que FALTA (pendiente, prioridad alta): "gate verde automático" — tarea #85
-**Problema**: `e2e/components.spec.ts` (+ `e2e/smoke.spec.ts`) tienen **68 aserciones de métrica con px
-clavados a mano** (33 `toEqual({...})` + 33 `.toBe('Npx')`, ej. `'border-radius': '6px'`). En CI **solo
-corren las métricas** (las screenshots se saltan, `if (process.env['CI']) return`, línea 25). Por eso un
-cambio REAL de token → e2e rojo (los tests esperan lo viejo) → **main CI rojo tras mergear**. parity SÍ
-pasa (el código auto-aplicado cuadra con Figma); revienta el e2e de métricas hardcoded.
+## 🔴 HILO ABIERTO (el usuario quiere SEGUIR aquí): CÓMO SE CONSUME EL DS
+Compendio del tema → **`docs/consumer-onboarding.md §0`** (seguir AHÍ).
+- **Modelo (resuelto):** UN DS, dos **profundidades**. Equipo **BI** = instala + `provideSmartContactUi()`
+  → componentes PrimeNG tematizados, NO toca `--sc-*`. Equipo **Voz** = lo mismo + usa `--sc-*` +
+  componentes `sc-*`. **Mismo paquete, misma marca, los dos blindados** (anti-PrimeNG). El tema *crudo*
+  del plugin NO se distribuye. Los 4 sabores base (Aura/Material/Lara/Nora) = fundación elegida 1 vez =
+  **Aura**; "jugar" con otros = salirse de la marca (decisión de PRODUCTO, no diseño/dev).
+- **DECISIÓN PENDIENTE (no urge — proyecto NO lanzado):** ¿dónde se **publica** el DS para equipos
+  externos? Hoy NO se publica (el Supervisor lo usa local por tsconfig paths). Para que instalen →
+  encender `npm run publish:packages` (apagado desde DD-17, cuando Rafa era solo). **Registro: GitHub
+  Packages (recomendado, el DS es dueño de su distribución) vs su GitLab.** → *Pendiente de que el
+  usuario PREGUNTE a sus equipos: "¿podéis usar un token de solo-lectura de GitHub en vuestro CI de
+  GitLab, o todo tiene que ser GitLab?"*. Cuando responda → **DD-20** + alinear el doc + encender publish.
+- **Contexto:** dos equipos front en **GitLab**, repos propios. (Su repo es DEMO, su código NO hace
+  falta → la "convergencia" se DESCARTA.)
 
-**Solución diseñada** (aprobada en concepto): convertir las 68 a **snapshot** (`toMatchSnapshot`, con
-`JSON.stringify` para los objetos) → así `playwright --update-snapshots` las regenera. `tokens-sync.yml`
-corre el e2e con `--update-snapshots` + commitea los snapshots → la rama va verde → preview → merge →
-main verde. La garantía de "es el número correcto de Figma" la SIGUE dando parity (token↔export). Las
-screenshots se quedan local-only (la revisión visual es el **preview de Cloudflare**). Plan: delegar la
-conversión mecánica (68 sitios) a un agente + yo diseño el cambio de workflow + verifico (parity+e2e).
+## El loop HOY (Figma → vivo)
+1. Diseño cambia token en Theme Designer → **Push Tokens** (rama `design-tokens-sync` — el plugin la
+   NECESITA; **NUNCA borrarla**, ruleset 17705331; reset = `git push --force origin main:design-tokens-sync`).
+2. `tokens-sync.yml` parte de main → `tokens:import` (primitivos + sizing + **color**) → verify + e2e →
+   **resetea la rama limpia + abre/actualiza PR** (`if: always()`; un revert→cierra el PR).
+3. **Preview por rama (ON):** `design-tokens-sync.sc-demo.pages.dev` + `…sc-supervisor.pages.dev`.
+   (El nombre `design-tokens-sync` SE QUEDA — decidido; los links se documentan, no se renombra.)
+4. Gusta → merge PR a main → producción (`sc-demo.pages.dev` / `sc-supervisor.pages.dev`).
 
-## Decisión PENDIENTE: nombre de la rama experimental — tarea #86
-El usuario quiere un nombre **fácil y conciso** (hoy `design-tokens-sync`). **Recomendación: `preview`**
-(da `preview.sc-demo.pages.dev` / `preview.sc-supervisor.pages.dev`). Renombrar = coordinar:
-(1) el usuario reconfigura el plugin para empujar a `preview`; (2) cambiar el trigger de `tokens-sync.yml`
-(`branches: [preview]`); (3) mover el ruleset de protección a `preview`; (4) actualizar docs/AGENTS trap.
-**Confirmar el nombre con el usuario antes de tocar.**
+## Lotes pendientes (plan durable: `~/.claude/plans/async-greeting-pumpkin.md`)
+- **W5** — decisiones de marca (TUYAS): iconos Outlined vs Rounded · dark zinc vs navy · grises a11y.
+  **+ el primary dark = 3.01:1 (bajo AA)** que cazó el chivato §6b (allowlist `A11Y_KNOWN` en
+  `token-parity.mjs`; ni gray-900 ni blanco llegan a AA sobre blue-400 → pide cambiar el color).
+- **W4** — 3 gaps mecánicos: `sc-avatar [size]` px · `sc-tag` `xs` · `ScConfirmRequest icon?`.
+- **W2** — READMEs (faltan ui-smartcontact/sc-demo/supervisor) + perfil de org.
+- **W3** — mapa Figma↔componente (`docs/figma-map.json`; necesita el bridge `mcp__figma__*`).
+- **W-gate (#85) — SECUNDARIO:** ~68 aserciones de métrica del e2e → snapshot, para que un cambio de
+  **tamaño** mergee a main sin rojo. (El **color** NO lo necesita — el e2e no asercia color semántico.)
+- **W-docs** — auditoría de drift al final (NO reescribir-todo; corregir solo lo desfasado).
 
-## Próximos pasos (en ORDEN — esto es lo que pidió el usuario)
-1. **Verificar el preview de Cloudflare** (no tocó nada ahí): confirmar que hay deploys por rama y dar
-   las URLs de preview. Si no está ON, guiarle a activarlo (Cloudflare → proyecto → Settings → Builds &
-   deployments → preview deployments = All branches).
-2. **(Opcional ahora) nombre limpio de la rama** (#86) — confirmar `preview` y renombrar.
-3. **TEST del loop con los links**: el usuario cambia un token (un **primitivo** o un **sizing** — esos
-   sí fluyen; un ref semántico suelto no) → Push → ver el cambio **inmediato en el preview link**.
-   (El preview funciona HOY sin el gate; el merge-a-producción-verde necesita el gate #85.)
-4. **Montar el gate #85** (los 68 tests → snapshot) para que el merge a main vaya verde solo.
-5. **Lotes restantes del plan** (tareas #81-84): **W4** cerrar los 4 gaps del DS (avatar px, tag xs,
-   confirm icon — borran locales del Supervisor; iconos Outlined va con decisión de marca) · **W2**
-   READMEs + perfil de org `smartcontact-hub/.github` (humano, sin sopa de links — criterio de Rafa) ·
-   **W3** mapa Figma↔componente (`mcp__figma__*`, NECESITA el bridge conectado; hoy solo ~5 de 47) ·
-   **W5** decisiones de marca (iconos, dark zinc/cool, grises a11y — TUYAS).
+## 🟡 RECAP que el usuario PIDIÓ (al acabar los lotes — no olvidar)
+Darle en lenguaje **mega-dumb, sin ai slop, conciso**: qué se hizo, por qué, todas las conclusiones, lo
+pendiente, y lo que NO se hizo a drede. (Lo pidió explícitamente.)
 
 ## Hechos clave / cómo
-- **Gate local**: `npm run verify` (+ `CI=1 npm run e2e` si visual) + `npm run docs:guard`.
-- **Generador de sizing**: `scripts/token-gen-component.mjs` + mapa `scripts/sizing-map.mjs` (53 slots) +
-  `DIVERGE_SIZING` (vacío; blinda una divergencia de sizing deliberada). `tokens:import` corre ambos
-  generadores. NO editar la zona `@sc-gen:cmp-sizing` a mano.
-- **App en local**: `npm run start:supervisor` (4400) · `npx ng serve sc-demo`.
-- **Bugs ya cerrados esta sesión**: test:unit en Node 22 (ficheros explícitos) · borré la rama del plugin
-  (recreada + protegida). Ver AGENTS Known Traps.
-- **Branch de trabajo**: una por lote (no main) hasta verde; merge ff a main + watch CI.
+- **Gate**: `npm run verify` (+ `CI=1 npm run e2e` si visual) + `npm run docs:guard`.
+- **3 generadores** (corren en `tokens:import`): `token-gen.mjs` (primitivos) · `token-gen-component.mjs`
+  (sizing `--sc-cmp-*`) · `token-gen-color.mjs` (color, zonas `@sc-gen:semantic-color-*`). Fuentes
+  únicas compartidas con parity: `sizing-map.mjs`, `color-map.mjs`. **NO editar zonas `@sc-gen` a mano.**
+- **Chivato a11y**: `token-parity.mjs §6b` (contraste WCAG; gatea pares de alto contraste, informa los
+  grises suaves; `A11Y_KNOWN` = sub-AA conocidos que no fallan).
+- **App local**: `npm run start:supervisor` (4400) · `npx ng serve sc-demo`.
+- **Rama de trabajo**: una por lote hasta verde; merge a main + watch CI. Commits acaban con
+  `Co-Authored-By: Claude Opus 4.8 (1M context)`. `git add` nunca incluye `.claude`.
 
 ## Índice
-- Decisiones → `docs/DECISIONS.md` (DD-18 sizing, DD-17 consolidación). Reglas/trampas → `AGENTS.md`.
-  Alcance sagrado → `.impeccable.md`. Loop Figma → `docs/guia-tokens.md`. Mapa docs → `docs/DOCS-INDEX.md`.
+- Decisiones → `docs/DECISIONS.md` (DD-19 color, DD-18 sizing, DD-17 consolidación).
+- **Consumo del DS (HILO ABIERTO)** → `docs/consumer-onboarding.md §0`. Loop Figma → `docs/guia-tokens.md`.
+- Onboarding diseño → `docs/ppt-proyecto.md`. Reglas/trampas → `AGENTS.md`. Mapa docs → `docs/DOCS-INDEX.md`.
