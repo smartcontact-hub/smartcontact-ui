@@ -206,9 +206,9 @@
   --sc-color-azure-950: #172554;
 
   /* ---------- Color · Complementarias del preset (generadas) ---------- */
-  /* @sc-gen:palette — bloque GENERADO desde kit-export-dtcg.json. Familias que el
-   * preset referencia y la capa curada no cubre (yellow, zinc = surface dark del
-   * Kit). NO editar a mano. */
+  /* @sc-gen:palette — bloque GENERADO desde kit-export-dtcg.json. Familias de color
+   * que la capa curada NO cubre, importadas según se REFERENCIAN (zinc base +
+   * cualquier familia que un semántico use — p.ej. primary→yellow). NO editar a mano. */
   /* zinc — 1:1 export aura/primitive.zinc */
   --sc-color-zinc-50: #fafafa;
   --sc-color-zinc-100: #f4f4f5;
