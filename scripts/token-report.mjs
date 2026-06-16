@@ -23,6 +23,29 @@ import { resolve } from 'node:path';
 
 const root = resolve(import.meta.dirname, '..');
 
+// hex → [r,g,b] · nearest(hex, palette) → la primitiva del DS más próxima (distancia RGB²).
+// Sirve para sugerir un color que SÍ existe cuando el elegido está fuera de la paleta.
+const rgb = (h) => {
+  const m = /^#?([0-9a-fA-F]{6})$/.exec(String(h).trim());
+  return m ? [0, 2, 4].map((i) => parseInt(m[1].slice(i, i + 2), 16)) : null;
+};
+function nearest(hex, palette = []) {
+  const t = rgb(hex);
+  if (!t) return null;
+  let best = null;
+  let bestD = Infinity;
+  for (const { name, hex: ph } of palette) {
+    const c = rgb(ph);
+    if (!c) continue;
+    const d = (t[0] - c[0]) ** 2 + (t[1] - c[1]) ** 2 + (t[2] - c[2]) ** 2;
+    if (d < bestD) {
+      bestD = d;
+      best = { name, hex: ph };
+    }
+  }
+  return best;
+}
+
 // ── Traductores: patrón técnico → frase en cristiano ──────────────────────────
 // Cada uno devuelve { plain } si machea la línea, o null. El orden no importa
 // (se deduplica por texto). Añade uno nuevo cuando aparezca un fallo no cubierto.
@@ -43,14 +66,19 @@ const TRANSLATORS = [
     };
   },
   // color elegido fuera de la paleta del DS (el generador no encuentra primitiva)
-  (line) => {
+  (line, ctx = {}) => {
     const m = line.match(/\[(\w+)\]\s+(\S+)\s*=\s*(#\w+)\s*\(sin --sc-color-\* primitiva\)/);
     if (!m) return null;
     const [, , path, hex] = m;
+    const near = nearest(hex, ctx.palette);
+    const sug = near
+      ? ` Lo más cercano que **sí** existe: \`--${near.name}\` (\`${near.hex}\`).`
+      : '';
     return {
       plain:
-        `**Color fuera de la paleta.** Elegiste \`${hex}\` (en \`${path}\`), pero ese tono exacto ` +
-        `no existe en la rampa del DS. → Usa un paso que sí exista (p.ej. \`amber-600\`), no un tono intermedio.`,
+        `**Color fuera de la paleta del DS.** Elegiste \`${hex}\` (en \`${path}\`). La paleta del DS es un ` +
+        `set **curado** de familias (amber, blue, gray, emerald…) y ese color no está en ninguna.${sug} ` +
+        `→ Usa un color de una familia que el DS ya tenga, **o** añade esa familia a la paleta (decisión de DS).`,
     };
   },
   // color desalineado export ↔ código (parity §6)
@@ -78,12 +106,12 @@ const TRANSLATORS = [
  * @param {{failed:boolean}} opts  si alguna validación salió ≠0
  * @returns {string} Markdown del veredicto en cristiano
  */
-export function buildReport(rawText, { failed }) {
+export function buildReport(rawText, { failed, palette = [] } = {}) {
   const findings = [];
   const seen = new Set();
   for (const line of rawText.split('\n')) {
     for (const t of TRANSLATORS) {
-      const r = t(line);
+      const r = t(line, { palette });
       if (r && !seen.has(r.plain)) {
         seen.add(r.plain);
         findings.push(r);
@@ -144,7 +172,18 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     parityFailed = true;
   }
 
+  // Paleta de primitivas del DS — para sugerir el color EXISTENTE más cercano al elegido.
+  const palette = [];
+  const primPath = resolve(root, 'projects/design-tokens/src/lib/styles/tokens/layers/01-primitive.css');
+  if (existsSync(primPath)) {
+    for (const m of readFileSync(primPath, 'utf8').matchAll(
+      /--(sc-color-[a-z0-9-]+)\s*:\s*(#[0-9a-fA-F]{6})\s*;/g,
+    )) {
+      palette.push({ name: m[1], hex: m[2] });
+    }
+  }
+
   process.stdout.write(
-    buildReport(`${importOut}\n${parityOut}`, { failed: importFailed || parityFailed }) + '\n',
+    buildReport(`${importOut}\n${parityOut}`, { failed: importFailed || parityFailed, palette }) + '\n',
   );
 }
