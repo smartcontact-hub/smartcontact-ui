@@ -6,7 +6,7 @@
 ![Packages](https://img.shields.io/badge/packages-3-blue)
 ![License](https://img.shields.io/badge/license-Proprietary-lightgrey)
 
-Design System de Smart Contact, empaquetado y publicable. Lo que se diseña en
+Design System de Smart Contact, consolidado en el monorepo (consumo LOCAL; publicación a GitHub Packages **aparcada** — ver AGENTS.md / DD-17). Lo que se diseña en
 Figma (Smart Contact Prime UI Kit) se refleja directamente en el código y
 **cada valor es trazable al export del Kit y verificable por máquina**.
 
@@ -16,7 +16,7 @@ Figma (Smart Contact Prime UI Kit) se refleja directamente en el código y
 |---|---|---|
 | `@smartcontact-hub/styles` | [`projects/design-tokens`](projects/design-tokens/README.md) | Tokens `--sc-*` (7 capas, escala 14-base en rem) + reset/globals |
 | `@smartcontact-hub/icons` | [`projects/ui-smartcontact-icons`](projects/ui-smartcontact-icons/README.md) | `<sc-icon>` + Material Symbols generados |
-| `@smartcontact-hub/components` | [`projects/ui-smartcontact`](projects/ui-smartcontact/README.md) | `provideSmartContactUi()` + preset modular (`theme/sc-preset`, cada slot → `var(--sc-*)`) + ~55 wrappers `sc-*` |
+| `@smartcontact-hub/components` | [`projects/ui-smartcontact`](projects/ui-smartcontact/README.md) | `provideSmartContactUi()` + preset modular (`theme/sc-preset`, cada slot → `var(--sc-*)`) + 49 wrappers/customs `sc-*` ([inventario](docs/inventory.md)) |
 | `sc-demo` _(app privada)_ | [`projects/sc-demo`](projects/sc-demo/README.md) | Showcase: fundaciones + catálogo + smoke del tema |
 | `supervisor` _(app privada)_ | [`projects/supervisor`](projects/supervisor/README.md) | App real: consumo canónico (solo `sc-*` + tokens) |
 
@@ -39,11 +39,13 @@ npm run e2e            # smoke en navegador (Playwright)
 
 | Guardarraíl | Comando | Qué garantiza | Estado |
 |---|---|---|---|
-| Generador | `npm run tokens:gen` | Los bloques `@sc-gen` de `01-primitive.css` reproducen el export del Kit (ley v/14, rem) | ✅ |
+| Generadores | `npm run tokens:gen` · `tokens:gen-component` · `tokens:gen-color` · `tokens:gen-cmp-color` | Los bloques `@sc-gen` (primitivos v/14 en rem, sizing, color semántico y **color de componente**) reproducen el export del Kit | ✅ |
 | Paridad | `npm run tokens:parity` | Escala/radios completos + 53 valores de sizing del preset + colores de marca 1:1 con el export (divergencias conscientes listadas) | ✅ |
 | Guard | `npm run tokens:guard` | `--p-*` solo en el preset · componentes con alias `--sc-spacing-*` · sin escala 8-point · campos PrimeNG solo vía wrapper · font-size solo por token | ✅ |
 | Tipografía | `npm run tokens:type-parity` | Cobertura de `font-size` tokenizado (hoy 100 %) | ✅ |
 | Escala del preset | `npm run audit:theme-scale` | Cero `px` en el preset · sin `css:` por-componente · sin hack de `html{font-size}` | ✅ |
+| Tests unitarios | `npm run test:unit` | Suites de los generadores/scripts (`scripts/__tests__/*.test.mjs`) | ✅ |
+| Docs | `npm run docs:guard` · `docs:coherence` | Todo `.md` mapeado en `DOCS-INDEX` + links resuelven · la doc cuadra con el repo (comandos/scripts existen, cadena `verify` documentada, sin tokens muertos) | ✅ |
 | Tipos + lint | `npm run typecheck` · `npm run lint` | | ✅ |
 | e2e smoke | `npm run e2e` | La demo levanta y el botón/form field renderizan la métrica del Kit medida en navegador (10.5/7, radio 6, font 14) | ✅ |
 

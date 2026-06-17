@@ -140,8 +140,8 @@ Agents MUST follow this order:
 1. Run `token-inspector`
 2. Run `component-generator`
 3. If needed → run `primeng-wrapper`
-4. Run `docs-generator`
-5. Run `workspace-sync`
+4. If you touched tokens/theme → run `sync-theme`
+5. Document the change in `docs/` and map it in `docs/DOCS-INDEX.md` (enforced by `docs:guard`)
 6. Run verification: `npm run verify`
 
 Do not skip steps.
@@ -153,7 +153,7 @@ Before considering any token/theme/component change done, run:
 - `npm run tokens:guard` — token guardrails (`--p-*` only in the preset, semantic spacing alias, no 8-point names, `font-size` via token)
 - `npm run tokens:type-parity` — typography parity
 - `npm run audit:theme-scale` — zero `px` in the preset, central `css.ts`
-- `npm run verify` — runs all of the above plus typecheck and lint
+- `npm run verify` — runs the full guardrail chain (canonical list: the table in README.md); also includes test:unit, docs:guard, docs:coherence, build, typecheck, lint
 
 ---
 

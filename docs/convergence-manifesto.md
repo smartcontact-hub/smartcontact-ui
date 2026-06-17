@@ -380,4 +380,4 @@ Las fundaciones (Fases 0–1) están cerradas en este repo:
 
 - **Escala unificada:** 14-base con naming v/14 (`--sc-scale-*`), conversión a `rem` centralizada en un punto único. El choque 8-point ↔ 14-base está resuelto a nivel de fundaciones; el barrido de consumos heredados se completa pieza a pieza durante el port (ver `component-port-plan.md`).
 - **Theme Designer:** exporta DTCG; el export del Kit se versiona en **`projects/design-tokens/scripts/kit-export-dtcg.json`** y es la fuente de verdad de valores que el generador y `tokens:parity` consumen.
-- El detalle de cada decisión tomada durante la construcción de fundaciones está en **`DECISIONS-LOG.md`** (raíz del repo); el rationale en `docs/foundations-rationale.md`.
+- El detalle de cada decisión tomada durante la construcción de fundaciones está en **[`docs/history/DECISIONS-LOG.md`](history/DECISIONS-LOG.md)**; el rationale en `docs/foundations-rationale.md`.

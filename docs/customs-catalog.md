@@ -612,5 +612,5 @@ Recomendación:
 
 ---
 
-Última actualización: 2026-06-13 (adaptación al repo unificado: rutas, export DTCG,
-preset modular, escala en rem, focus-ring 2px).
+Última actualización: 2026-06-14 (adaptación al repo unificado: rutas, export DTCG,
+preset modular, escala en rem, focus-ring 2px reconciliado al Kit).
