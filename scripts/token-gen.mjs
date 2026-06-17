@@ -144,12 +144,51 @@ const curatedHexes = (() => {
   for (const m of txt.matchAll(/--sc-color-[a-z0-9-]+\s*:\s*(#[0-9a-fA-F]{6})/g)) set.add(m[1].toLowerCase());
   return set;
 })();
+// Familias curadas por NOMBRE (≥1 step fuera de @sc-gen:palette). Sirve para NO auto-importar
+// una familia que ya existe a mano (duplicaría la rampa) ni una PARCIAL (un step que falta es
+// un hueco de curación consciente — p.ej. green-950 de marca ≠ vanilla — no un auto-import).
+const curatedFamilies = (() => {
+  const txt = readFileSync(PRIMITIVE_CSS, 'utf8').replace(
+    /\/\* @sc-gen:palette[\s\S]*?@sc-gen:palette:end \*\//,
+    '',
+  );
+  const set = new Set();
+  for (const m of txt.matchAll(/--sc-color-([a-z]+)-\d+\s*:/g)) set.add(m[1]);
+  return set;
+})();
 // export semantic path → hex terminal (sigue refs DTCG en el modo dado).
 function semHex(mode, path) {
   const leaf = kit.groups[`aura/semantic/${mode}`]?.get(path);
   if (!leaf) return undefined;
   const v = kit.resolve(leaf.$value, mode);
   return typeof v === 'string' && /^#/.test(v) ? dropAlpha(v).toLowerCase() : undefined;
+}
+// Familias que SOLO referencia el COLOR DE COMPONENTE (no la capa curada): p.ej. `yellow`
+// (severidad warn de toast/message). Mismo principio que los semánticos: si un componente
+// usa una familia del Kit que aún no existe, se importa sola → su color fluye. Filtro a
+// nivel de FAMILIA (no de hex) para no duplicar una curada ni importar por un step suelto.
+// Ignora el ruido `.figma.` del plugin. Self-cleaning: si deja de usarse, desaparece.
+function cmpFamilies() {
+  const out = new Set();
+  for (const mode of ['light', 'dark']) {
+    const group = kit.groups[`aura/component/${mode}`];
+    if (!group) continue;
+    for (const [path, leaf] of group) {
+      if (/(^|\.)figma\./.test(path)) continue;
+      let v;
+      try {
+        v = kit.resolve(leaf.$value, mode);
+      } catch {
+        continue;
+      }
+      if (typeof v !== 'string' || !/^#/.test(v)) continue;
+      const base = v.slice(0, 7).toLowerCase();
+      if (curatedHexes.has(base)) continue;
+      const fam = hexToFamily.get(base);
+      if (fam && !curatedFamilies.has(fam)) out.add(fam);
+    }
+  }
+  return [...out];
 }
 const PALETTE_FAMILIES = [
   ...new Set([
@@ -158,6 +197,7 @@ const PALETTE_FAMILIES = [
       .filter((hex) => hex && !curatedHexes.has(hex)) // solo colores que aún NO existen
       .map((hex) => hexToFamily.get(hex))
       .filter(Boolean),
+    ...cmpFamilies(),
   ]),
 ].sort();
 
