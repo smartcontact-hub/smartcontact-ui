@@ -1,103 +1,83 @@
 # NEXT SESSION — Smart Contact DS (hand-off)
 
 > Léeme **primero** al abrir. Estado *volátil* + qué hacer ahora. Se SOBREESCRIBE en cada cierre.
-> El *por qué* durable vive en `docs/DECISIONS.md` (DD-N). Plan: `~/.claude/plans/async-greeting-pumpkin.md`.
+> **Plan completo y vivo:** `~/.claude/plans/async-greeting-pumpkin.md` (léelo — es el norte de ahora).
+> El *por qué* durable: `docs/DECISIONS.md`.
 
-## Estado de un vistazo
-**El espejo Figma→código está COMPLETO.** Sizing (DD-18) **y color** (DD-19) fluyen solos: cambias un
-token en el Theme Designer → `tokens:import` → se auto-aplica al código (zonas `@sc-gen:*`) → preview.
-Sin mano, respetando las divergencias de marca.
+## 🎯 Estado de un vistazo (CORREGIDO 2026-06-17)
+**El espejo Figma→código NO está completo — y ese es el trabajo activo.** Fluyen: primitivos, color
+**semántico**, sizing de componente. **NO fluyen (huecos auditados):** **color de COMPONENTE** (toast,
+botón… los 692 tokens `aura/component/light|dark` — esto se comió el cambio sky→toast del usuario),
+**effects** (129: sombras/blur), **app** (6). Cuando el usuario cambia algo de un hueco, el sistema da
+**VERDE pero no hace nada** ("verde-mudo") — **ese es el enemigo a matar.**
 
-**Hecho esta sesión** (todo en `main`, CI verde):
-- **Fix del loop** (`e2276ee`): `tokens-sync.yml` SIEMPRE resetea la rama al estado canónico (un revert
-  ya no deja preview stale ni basura del plugin; `add` acotado; revert cierra el PR).
-- **W0** (`690b98c`): `docs/ppt-proyecto.md` — presentación de onboarding para la diseñadora (Marta).
-- **W-color** (`23bb9c7`): generador de color. `scripts/color-map.mjs` + `scripts/token-gen-color.mjs`
-  + zonas `@sc-gen:semantic-color-{light,dark}` (02-semantic/07-dark) + chivato a11y §6b + `color-map.test.mjs`
-  + DD-19. **value-preserving** (e2e 58/58, parity 41/41). Prueba de fuego pasada.
-- **Doc de consumo** (`7cc8a5b`, `7f7261d`): `consumer-onboarding.md §0`.
-- **W2 — READMEs + oficialización**: 3 READMEs nuevos (`components`, `sc-demo`, `supervisor`) + badges
-  (Angular/PrimeNG/TS/License) en los 6 READMEs + **metadata npm** en los 3 paquetes (`description`,
-  `keywords`, `license: UNLICENSED`, `author`, `homepage`, `bugs`, `repository.directory`) — verificado
-  que viaja al `dist/` (build verde). + `docs/org-profile.md` (borrador). Drift corregido: el "port
-  pendiente" (era mentira, ya hecho) en README raíz + `public-api.ts`.
-  - `license: UNLICENSED` = propietario/privado (confirmable; cambiar a MIT/Apache solo si se abre).
-  - **→ paso TUYO pendiente:** crear el repo público `smartcontact-hub/.github` y pegar `docs/org-profile.md`
-    en `profile/README.md` (el agente no puede crear repos).
-- **Fix del preview congelado** (`ce49d16`): el reset de `tokens-sync.yml` llevaba `[skip ci]` → Cloudflare
-  se saltaba el build del preview de rama (prod mostraba el cambio, el preview no). Quitado (el bucle lo evita
-  la regla de GITHUB_TOKEN) + trampa anotada en AGENTS Known Traps. Verificado: los 4 links sirven el cambio.
-  Disparador: un push de radio del usuario (era prueba; **revertido** en `dde9d55`; PR #10/#11 cerrados).
-- **Carril rápido de feedback "en cristiano"** (este commit): `.github/workflows/tokens-check.yml` +
-  `scripts/token-report.mjs` (+ test, npm `tokens:report`). Corre SOLO parity+a11y y postea el veredicto
-  **en cristiano** (resumen del run + comentario PR) en **~1 min** — el "¿es válido y por qué?" sin esperar
-  los ~5 min del build+e2e+preview. Sin IA (reglas deterministas). NO es gate. → ROADMAP: plugin-monitor en
-  Figma (tiempo real) + IA-sugiere-color-corregido.
-- **Sesión de testing del loop (color):** color **semántico** (`primary.color`→ámbar/cian) **fluye** y se
-  ve en preview; **per-componente** (`button.primary.background`) NO (footgun #1, a decidir A/C). El chivato
-  a11y cazó un primary verde ilegible (1.92:1) → run rojo (¡funciona!). **Trampa nueva en AGENTS:** plugin
-  "does not match" = SHA viejo cacheado → **re-abrir el plugin**. **Pendiente:** decidir el control A/C del
-  footgun de color per-componente (A=chillar [rec] / C=divergencia declarada).
+**El norte (clarísimo, del usuario):** el puente debe ser **impecable y autosuficiente** — cambia
+CUALQUIER token en Figma → fluye solo → lo ve. **No quiere perseguir a un dev** para nada (salvo bugs).
 
-## 🔴 HILO ABIERTO (el usuario quiere SEGUIR aquí): CÓMO SE CONSUME EL DS
-Compendio del tema → **`docs/consumer-onboarding.md §0`** (seguir AHÍ).
-- **Modelo (resuelto):** UN DS, dos **profundidades**. Equipo **BI** = instala + `provideSmartContactUi()`
-  → componentes PrimeNG tematizados, NO toca `--sc-*`. Equipo **Voz** = lo mismo + usa `--sc-*` +
-  componentes `sc-*`. **Mismo paquete, misma marca, los dos blindados** (anti-PrimeNG). El tema *crudo*
-  del plugin NO se distribuye. Los 4 sabores base (Aura/Material/Lara/Nora) = fundación elegida 1 vez =
-  **Aura**; "jugar" con otros = salirse de la marca (decisión de PRODUCTO, no diseño/dev).
-- **DECISIÓN PENDIENTE (no urge — proyecto NO lanzado):** ¿dónde se **publica** el DS para equipos
-  externos? Hoy NO se publica (el Supervisor lo usa local por tsconfig paths). Para que instalen →
-  encender `npm run publish:packages` (apagado desde DD-17, cuando Rafa era solo). **Registro: GitHub
-  Packages (recomendado, el DS es dueño de su distribución) vs su GitLab.** → *Pendiente de que el
-  usuario PREGUNTE a sus equipos: "¿podéis usar un token de solo-lectura de GitHub en vuestro CI de
-  GitLab, o todo tiene que ser GitLab?"*. Cuando responda → **DD-20** + alinear el doc + encender publish.
-- **Contexto:** dos equipos front en **GitLab**, repos propios. (Su repo es DEMO, su código NO hace
-  falta → la "convergencia" se DESCARTA.)
+**Principio rector a implementar:** *todo token del export DEBE (a) fluir por un generador, (b) ser
+divergencia/custom documentada, o (c) DISPARAR EL CHIVATO.* El chivato = **garantía de completitud**.
+
+## 🔴 HILO ACTIVO: completar el puente (ver el PLAN). Orden que el usuario aprobó:
+1. **`npm run preview:live`** (NO existe — su intento dio "Missing script"). Preview LOCAL instantáneo
+   (<2s, HMR). Dejárselo en **doble-click `.command`** (no es de terminal). → flujo de 3 niveles que él
+   propuso y adoptamos: **local (instante) → preview link (~2min, compartible) → main (prod).**
+2. **Generador de COLOR DE COMPONENTE** — UNO general (no uno por componente), hermano de
+   `token-gen-color.mjs`: `token-gen-cmp-color.mjs` + `cmp-color-map.mjs`. Lee `aura/component/*` color,
+   transparencia `#rrggbbaa` → `color-mix(... var(--sc-color-X) N%, transparent)`. Decisión por-fila una
+   vez (`mirror` Kit vs `brand`; **default brand**). Diseño detallado en el PLAN. Esfuerzo M.
+3. **Chivato §7** en `token-parity.mjs` — recorre TODO el export; flowed / divergente / "cambió y nadie
+   lo recoge → ROJO con la razón". Mata el verde-mudo en toda capa.
+4. Cerrar huecos: effects, app, semantic-common no-color.
+5. CI ~2 min (cache Chromium + separar preview del gate) · 6. publish privado (diferible).
+
+## Lotes de marca/docs (en paralelo)
+- **W5** — decisiones de marca CON **comparativo visual antes/después** en el **Supervisor**, **anclado en
+  una página "backlog" de Figma** (que LO VEA, no lo adivine; necesita bridge `mcp__figma__*`): iconos
+  Outlined/Rounded · dark zinc/navy · grises a11y · **primary-dark 3.01:1** (sub-AA conocido) · texto sobre
+  primarios fuertes (ej. amarillo: blanco encima = ilegible).
+- **W3 — Code Connect** (DECIDIDO: **sí**, como referencia). · **W4** — `sc-avatar [size]`·`sc-tag xs`·
+  `ScConfirmRequest icon?`. · **W-docs** — guía (3 niveles preview · duplicado Figma · "does not match"→
+  re-abrir plugin · texto oscuro/claro · mapa de cobertura) + drift. · **W-gate** — 68 tests métrica→snapshot.
+
+## Consumo / distribución (resuelto-mayormente)
+UN DS, dos profundidades del MISMO paquete. **GitHub Packages privado** (ya cableado; encender
+`publish:packages` al mergear verde). Equipo-A usa tokens `--sc-*`, equipo-B "el tema"
+(`provideSmartContactUi()`); ninguno clona el repo. Usuario CONFIRMÓ que **sí consumen** (no es moot).
+Diferible hasta que entren. Detalle: `docs/consumer-onboarding.md §0`.
 
 ## El loop HOY (Figma → vivo)
-1. Diseño cambia token en Theme Designer → **Push Tokens** (rama `design-tokens-sync` — el plugin la
-   NECESITA; **NUNCA borrarla**, ruleset 17705331; reset = `git push --force origin main:design-tokens-sync`).
-2. `tokens-sync.yml` parte de main → `tokens:import` (primitivos + sizing + **color**) → verify + e2e →
-   **resetea la rama limpia + abre/actualiza PR** (`if: always()`; un revert→cierra el PR).
-   El commit de reset va **SIN `[skip ci]`** (`ce49d16`): el bucle ya lo evita la regla de GITHUB_TOKEN,
-   y el `[skip ci]` además **congelaba el build de Cloudflare** del preview. NUNCA re-añadirlo (AGENTS Known Traps).
-3. **Preview por rama (ON, ya rebuildea de verdad):** `design-tokens-sync.sc-demo.pages.dev` +
-   `…sc-supervisor.pages.dev`. (El nombre `design-tokens-sync` SE QUEDA — decidido; se documenta, no se renombra.)
-4. Gusta → merge PR a main → producción (`sc-demo.pages.dev` / `sc-supervisor.pages.dev`).
+1. Plugin Theme Designer → **Push Tokens** → rama `design-tokens-sync` (**NUNCA borrarla**; ruleset
+   17705331; reset = `git push --force origin main:design-tokens-sync`).
+   - **Trampa "does not match"** = SHA viejo cacheado del plugin → **re-abrir el plugin** (re-lee el SHA).
+2. `tokens-sync.yml` parte de main → `tokens:import` → verify + e2e → resetea rama + abre/actualiza PR
+   (`if: always()`). **Commit de reset SIN `[skip ci]`** (Cloudflare lo obedece → congelaría el preview).
+3. **Carril rápido** `tokens-check.yml` + `token-report.mjs` (paralelo) → veredicto parity+a11y EN
+   CRISTIANO en ~1 min (resumen run + comentario PR). Sin IA.
+4. **Preview por rama:** `design-tokens-sync.sc-demo.pages.dev` + `…sc-supervisor.pages.dev`.
+5. Gusta → merge PR → prod (`sc-demo.pages.dev` / `sc-supervisor.pages.dev`).
 
-> **Carril rápido (paralelo al paso 2):** `tokens-check.yml` + `token-report.mjs` → veredicto parity+a11y
-> EN CRISTIANO en ~1 min (resumen del run + comentario PR). El "¿válido y por qué?" sin esperar el preview.
-> **Tiempos:** ver el cambio renderizado tiene suelo ~5 min (CI gate ~3 + Cloudflare ~1-2); ritmo bueno =
-> 1 cambio → Push → ~5 min → mirar. Para explorar color rápido, **júzgalo en Figma** (instantáneo); empuja
-> para validar. No es por "el primary toca muchos sitios" (recolorear es instantáneo) ni por los 2 links.
-
-## Lotes pendientes (plan durable: `~/.claude/plans/async-greeting-pumpkin.md`)
-- **W5** — decisiones de marca (TUYAS): iconos Outlined vs Rounded · dark zinc vs navy · grises a11y.
-  **+ el primary dark = 3.01:1 (bajo AA)** que cazó el chivato §6b (allowlist `A11Y_KNOWN` en
-  `token-parity.mjs`; ni gray-900 ni blanco llegan a AA sobre blue-400 → pide cambiar el color).
-- **W4** — 3 gaps mecánicos: `sc-avatar [size]` px · `sc-tag` `xs` · `ScConfirmRequest icon?`.
-- **W3** — mapa Figma↔componente (`docs/figma-map.json`; necesita el bridge `mcp__figma__*`).
-- **W-gate (#85) — SECUNDARIO:** ~68 aserciones de métrica del e2e → snapshot, para que un cambio de
-  **tamaño** mergee a main sin rojo. (El **color** NO lo necesita — el e2e no asercia color semántico.)
-- **W-docs** — auditoría de drift al final (NO reescribir-todo; corregir solo lo desfasado).
-
-## 🟡 RECAP que el usuario PIDIÓ (al acabar los lotes — no olvidar)
-Darle en lenguaje **mega-dumb, sin ai slop, conciso**: qué se hizo, por qué, todas las conclusiones, lo
-pendiente, y lo que NO se hizo a drede. (Lo pidió explícitamente.)
+## YA HECHO (commits en main, CI verde)
+Fix preview congelado `[skip ci]`/Cloudflare (`ce49d16`) · **auto-import** de familias de primitiva
+referenciadas por semánticos (`6e3addd` — un color semántico nuevo del Kit, p.ej. yellow/sky, se importa
+solo) · carril rápido `tokens-check`+`token-report` (`dff887f`) + mensaje "fuera de paleta" honesto +
+sugiere primitiva más cercana (`7e76ae9`) · **W2** READMEs+badges+metadata npm (`74eeeff`) + `org-profile.md`
+(→ paso TUYO: crear repo `smartcontact-hub/.github`, pegar en `profile/README.md`) · trampas en AGENTS.
 
 ## Hechos clave / cómo
 - **Gate**: `npm run verify` (+ `CI=1 npm run e2e` si visual) + `npm run docs:guard`.
-- **3 generadores** (corren en `tokens:import`): `token-gen.mjs` (primitivos) · `token-gen-component.mjs`
-  (sizing `--sc-cmp-*`) · `token-gen-color.mjs` (color, zonas `@sc-gen:semantic-color-*`). Fuentes
-  únicas compartidas con parity: `sizing-map.mjs`, `color-map.mjs`. **NO editar zonas `@sc-gen` a mano.**
-- **Chivato a11y**: `token-parity.mjs §6b` (contraste WCAG; gatea pares de alto contraste, informa los
-  grises suaves; `A11Y_KNOWN` = sub-AA conocidos que no fallan).
+- **Generadores** (en `tokens:import`): `token-gen.mjs` (primitivos + auto-import) · `token-gen-component.mjs`
+  (sizing) · `token-gen-color.mjs` (color semántico). **Pronto: `token-gen-cmp-color.mjs` (color componente)
+  + effects.** Fuentes únicas con parity: `sizing-map.mjs`, `color-map.mjs` (+ `cmp-color-map.mjs`). NO
+  editar zonas `@sc-gen` a mano.
+- **Chivato a11y**: `token-parity.mjs §6b` (contraste WCAG). **Pronto §7**: garantía de completitud.
 - **App local**: `npm run start:supervisor` (4400) · `npx ng serve sc-demo`.
-- **Rama de trabajo**: una por lote hasta verde; merge a main + watch CI. Commits acaban con
-  `Co-Authored-By: Claude Opus 4.8 (1M context)`. `git add` nunca incluye `.claude`.
+- Commits acaban con `Co-Authored-By: Claude Opus 4.8 (1M context)`. `git add` NUNCA incluye `.claude`.
+
+## 🟡 RECAP que el usuario PIDIÓ (no olvidar al cerrar lotes)
+Lenguaje **mega-dumb, sin ai slop, conciso**: qué se hizo, por qué, conclusiones, pendiente, y lo que NO
+se hizo a drede.
 
 ## Índice
-- Decisiones → `docs/DECISIONS.md` (DD-19 color, DD-18 sizing, DD-17 consolidación).
-- **Consumo del DS (HILO ABIERTO)** → `docs/consumer-onboarding.md §0`. Loop Figma → `docs/guia-tokens.md`.
-- Onboarding diseño → `docs/ppt-proyecto.md`. Reglas/trampas → `AGENTS.md`. Mapa docs → `docs/DOCS-INDEX.md`.
+- Plan → `~/.claude/plans/async-greeting-pumpkin.md`. Decisiones → `docs/DECISIONS.md`.
+- Consumo → `docs/consumer-onboarding.md §0`. Loop/tokens → `docs/guia-tokens.md`. Onboarding →
+  `docs/ppt-proyecto.md`. Reglas/trampas → `AGENTS.md`. Mapa docs → `docs/DOCS-INDEX.md`.

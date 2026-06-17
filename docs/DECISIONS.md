@@ -30,6 +30,46 @@
 
 ---
 
+## DD-20 · 2026-06-17 — Puente Figma→código COMPLETO: un generador por clase de valor + chivato como garantía de completitud
+
+**Contexto** · Tras DD-18 (sizing) y DD-19 (color semántico), una sesión de testing real destapó que el
+espejo NO está completo. Auditoría del export vs los generadores: fluyen primitivos, color **semántico** y
+sizing de componente; NO fluyen el **color de COMPONENTE** (`aura/component/light|dark`, 346+346 tokens —
+toast/botón/tag…), **effects** (129) ni **app** (6). El operador cambió el color de toast (blue→sky) + un
+fondo translúcido y el sistema dio **VERDE en los dos carriles pero no aplicó nada** ("verde-mudo"): el
+cambio se evaporó en silencio. Repetido (radius, yellow, sky), fue la fuente de su frustración. Norte del
+operador (solo, no-dev): el puente debe ser impecable y autosuficiente — cambia CUALQUIER token → fluye →
+lo ve; **no perseguir a un dev** (salvo bugs).
+
+**Decisión** · (1) **Una clase de valor = un generador.** Añadir el set que falta: `token-gen-cmp-color.mjs`
+(+ `cmp-color-map.mjs`) para color de componente — **UNO general para TODOS** (no uno por componente); +
+cubrir effects/app. (2) **Garantía de completitud:** todo token del export debe (a) fluir por un generador,
+(b) ser divergencia/custom documentada, o (c) DISPARAR EL CHIVATO. `token-parity.mjs §7` recorre el export
+ENTERO y FALLA (rojo, en cristiano) cuando un token cambió y nadie lo recogió. (3) **Transparencia:** el
+export trae `#rrggbbaa`; se reconstruye como `color-mix(… var(--sc-color-X) N%, transparent)` (idioma del
+CSS). (4) **Marca vs Kit:** cada color de componente se etiqueta una vez `mirror`/`brand`, default `brand`.
+(5) **Feedback de 3 niveles:** local `preview:live` (instante) → preview link Cloudflare (~2 min) → main.
+
+**Razón** · Auditoría verificada (2026-06-17, `node` sobre el export): `aura/component/light|dark` 346+346,
+`aura/effects` 129, `aura/app` 6, y `grep` confirma que NINGÚN generador los lee. El verde-mudo es el fallo
+de fondo: el operador no puede confiar en un sistema que dice OK sin hacer nada. El chivato como garantía
+hace IMPOSIBLE el silencio sin tener que escribir un generador para cada rincón.
+
+**Descartadas** · (a) *Curar a mano el color de componente (un dev edita 04-component.css a petición)* —
+RECHAZADO por el operador: contradice "no perseguir a un dev". (b) *Un generador por componente* — no
+escala (policing); se hace UNO general table-driven. (c) *Emitir hex/rgba crudo* — rompe "no hex crudo"; se
+reconstruye color-mix (mismo resultado visual, trazable). (d) *Dejar el feedback rápido en el roadmap* —
+RECHAZADO: proceso sin fricción ya. (e) *Solo generadores, sin chivato* — deja huecos silenciosos.
+
+**Consecuencias** · El espejo pasa a COMPLETO + auto-verificado: nada se cae en silencio. Pendiente (orden
+aprobado): `preview:live` → generador color-componente → chivato §7 → effects/app → CI ~2 min. Lo afinado a
+mano (frosted dark…) sigue a mano pero el chivato lo marca (correcto, no fallo). Plan:
+`~/.claude/plans/async-greeting-pumpkin.md`. Absorbe la duda de distribución (DD-19/consumo): **GitHub
+Packages privado, dos profundidades del mismo paquete**; el operador confirmó que los devs SÍ consumen (un
+equipo tokens `--sc-*`, otro "el tema").
+
+---
+
 ## DD-19 · 2026-06-16 — Color semántico auto-aplicado desde el Kit (espejo de color)
 
 **Contexto** · Tras DD-18 el **sizing** fluía Figma→código solo, pero el **color de marca** seguía con
