@@ -114,6 +114,57 @@ zona de pruebas que **solo tú ves**. A producción pasa **solo lo que te gusta*
 
 ---
 
+## 4.bis · El preview LOCAL al instante (los "docks") + ir alineados con git
+
+Además de los links de Cloudflare (que tardan ~5 min), tienes un **preview LOCAL en tu Mac que se ve al
+instante** — ideal para experimentar a toda velocidad tú sola. Son **doble-clicks** (los "docks"), en la
+carpeta **`preview/`** del repo:
+
+| Doble-click | Qué abre |
+|---|---|
+| `preview-componentes.command` | La galería de componentes (sc-demo) |
+| `preview-supervisor.command` | La app real (Supervisor) |
+| `Actualizar.command` | Trae lo último del equipo (no abre web; ver abajo) |
+
+**Cómo se usa un preview:**
+1. Doble-click en el `.command`. Se abre una ventana negra; **la 1ª vez compila (~2 min)**, luego abre el navegador solo.
+2. Cambias un token en Figma → **Push Tokens** → en **~12 segundos** el navegador se recarga con tu cambio. Solo.
+3. Para parar: cierra la ventana negra.
+- ⚠️ **La primera vez** macOS pide **clic derecho → Abrir** (es un script nuevo; solo esa vez).
+- 💡 **Truco:** arrastra el `.command` a la **derecha del Dock** (al lado de la papelera) → un clic para siempre.
+
+**Local vs link de Cloudflare — cuándo cada uno:**
+
+| | Local (los docks) | Link de Cloudflare |
+|---|---|---|
+| Velocidad | **Al instante** (~12s) | ~5 min |
+| Quién lo ve | **Solo tú** (tu Mac) | **Compartible** (mandas el link) |
+| Para qué | Experimentar a tope | Enseñar al equipo / validar |
+
+---
+
+### Trabajar con el repo para ir ALINEADOS (git, sin miedo)
+
+Tienes el repo **clonado** en tu Mac (es lo que hace funcionar los docks). Para que tu copia local tenga **lo
+último** del equipo, hay **un solo gesto**: actualizar (en jerga, `git pull`).
+
+1. **Antes de previsualizar, ACTUALIZA:** doble-click en **`Actualizar.command`** (te lo dejamos listo). Trae lo
+   último del equipo a tu copia. *(Sin terminal; si te manejas, es un `git pull` en la carpeta del repo.)*
+2. **Tú normalmente NO "subes" nada por git.** Tus cambios de diseño viajan por **Figma → Push Tokens** (el plugin),
+   no por git. El **código** lo sube el dev team.
+
+   | Cambio | Cómo viaja | Quién |
+   |---|---|---|
+   | Tokens (color, tamaño…) | Figma → Push Tokens | **Tú** |
+   | Código (componentes, lógica) | git (push / PR) | **Dev team** |
+
+3. **Si al actualizar sale un "conflicto" o algo raro:** **no pelees** — avísanos y lo resolvemos en un minuto. No
+   se rompe nada; solo significa que tu copia y la del equipo tocaron lo mismo.
+
+**Regla de oro:** **Actualiza (pull) antes de empezar.** Así tu preview local muestra lo último y vamos todos a una.
+
+---
+
 ## 5. Los botones del plugin (la duda típica)
 
 El plugin puede mandar **dos cosas distintas**. Esto despeja la confusión:
