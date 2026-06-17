@@ -30,6 +30,7 @@ siempre a la par:
 ### Verlo funcionando
 
 - **Showcase** — https://sc-demo.pages.dev (fundaciones + catálogo de componentes).
+- **App real (Supervisor)** — https://sc-supervisor.pages.dev (el DS en producción).
 
 > Los paquetes son privados (se instalan con permiso). El código del DS es abierto
 > dentro de la organización.

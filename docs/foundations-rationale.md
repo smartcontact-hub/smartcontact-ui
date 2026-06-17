@@ -1,8 +1,8 @@
-<!-- Rationale de las fundaciones del repo (Mitad A): objetivo, decisiones cerradas, arquitectura y estándares. El detalle de decisiones de la construcción está en DECISIONS-LOG.md (raíz). -->
+<!-- Rationale de las fundaciones del repo (Mitad A): objetivo, decisiones cerradas, arquitectura y estándares. El detalle de decisiones de la construcción está en docs/history/DECISIONS-LOG.md. -->
 
 # Rationale de las fundaciones — Smart Contact Design System
 
-> Este documento explica **por qué** las fundaciones del repo son como son: el objetivo del repo, las decisiones cerradas antes de construir, la arquitectura objetivo y los estándares de verificación y documentación. El plan de port de componentes (Mitad B) vive en `component-port-plan.md`; el catálogo y los solapes en `convergence-manifesto.md`; cada decisión concreta tomada durante la construcción, con su base verificada, en **`DECISIONS-LOG.md`** (raíz del repo).
+> Este documento explica **por qué** las fundaciones del repo son como son: el objetivo del repo, las decisiones cerradas antes de construir, la arquitectura objetivo y los estándares de verificación y documentación. El plan de port de componentes (Mitad B) vive en `component-port-plan.md`; el catálogo y los solapes en `convergence-manifesto.md`; cada decisión concreta tomada durante la construcción, con su base verificada, en **[`docs/history/DECISIONS-LOG.md`](history/DECISIONS-LOG.md)**.
 
 ---
 
@@ -72,6 +72,6 @@ Registro **profesional y colaborativo**. La documentación describe **qué** hac
 
 ## 6. Dónde está el detalle
 
-- **Cada decisión de la construcción de fundaciones** (qué se eligió, por qué, qué se verificó): `DECISIONS-LOG.md` en la raíz del repo.
+- **Cada decisión de la construcción de fundaciones** (qué se eligió, por qué, qué se verificó): [`docs/history/DECISIONS-LOG.md`](history/DECISIONS-LOG.md).
 - **Catálogo unión, solapes, huecos y empaquetado**: `docs/convergence-manifesto.md`.
 - **Plan de port de componentes (Mitad B)**: `docs/component-port-plan.md`.

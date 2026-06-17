@@ -551,7 +551,9 @@ El token del plugin necesita scope `repo` sobre la org `smartcontact-hub`.
 
 **Qué fluye solo vs qué no** (importante, sin magia de más). El generador
 (`scripts/token-gen.mjs`) solo regenera **3 zonas**: escala 14-base
-(`--sc-scale-*`), radios y la familia primitiva `zinc`. Por tanto:
+(`--sc-scale-*`), radios y la zona de paleta auto-importada (`@sc-gen:palette`: `zinc`
+base + cualquier familia primitiva que un color del Kit referencie y la capa curada no
+cubra — p.ej. `yellow` de la severidad warn, ver commit 6e3addd). Por tanto:
 
 - Cambias **espaciado / escala / radios** en el plugin → **automático** (regenera
   + verifica + PR verde).

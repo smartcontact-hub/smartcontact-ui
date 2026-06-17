@@ -33,12 +33,13 @@
     "audit:theme-scale": "node scripts/check-theme-scale.mjs",
     "typecheck": "tsc --noEmit --sourceMap -p projects/ui-smartcontact/tsconfig.lib.json && tsc --noEmit --sourceMap -p projects/ui-smartcontact-icons/tsconfig.lib.json && tsc --noEmit -p projects/sc-demo/tsconfig.app.json && tsc --noEmit -p projects/supervisor/tsconfig.app.json",
     "lint": "eslint .",
-    "verify": "npm run tokens:gen && npm run tokens:gen-component && npm run tokens:gen-color && npm run tokens:gen-cmp-color && npm run tokens:parity && npm run tokens:guard && npm run tokens:type-parity && npm run audit:theme-scale && npm run test:unit && npm run docs:guard && npm run build && npm run typecheck && npm run lint",
+    "verify": "npm run tokens:gen && npm run tokens:gen-component && npm run tokens:gen-color && npm run tokens:gen-cmp-color && npm run tokens:parity && npm run tokens:guard && npm run tokens:type-parity && npm run audit:theme-scale && npm run test:unit && npm run docs:guard && npm run docs:coherence && npm run build && npm run typecheck && npm run lint",
     "e2e": "playwright test",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "test:unit": "node --test scripts/__tests__/*.test.mjs",
-    "docs:guard": "node scripts/docs-guard.mjs"
+    "docs:guard": "node scripts/docs-guard.mjs",
+    "docs:coherence": "node scripts/docs-coherence.mjs"
   },
   "dependencies": {
     "@angular/animations": "^21.2.14",

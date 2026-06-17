@@ -33,7 +33,7 @@ recorrido (tokens en 7 capas, preset modular, catálogo de customs).
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│  Apps consumidoras (supervisor, doc-site, …)                 │
+│  Apps consumidoras (supervisor, sc-demo, …)                  │
 │  consume → <sc-*> de @smartcontact-hub/components                │
 └─────────────────────────────────────────────────────────────┘
                             │
