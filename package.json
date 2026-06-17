@@ -23,6 +23,8 @@
     "tokens:gen-component": "node scripts/token-gen-component.mjs",
     "tokens:gen-color": "node scripts/token-gen-color.mjs",
     "tokens:import": "node scripts/token-gen.mjs --write && node scripts/token-gen-component.mjs --write && node scripts/token-gen-color.mjs --write",
+    "preview:live": "node scripts/preview-live.mjs",
+    "preview:check": "node scripts/preview-check.mjs",
     "tokens:parity": "node scripts/token-parity.mjs",
     "tokens:report": "node scripts/token-report.mjs",
     "tokens:type-parity": "node scripts/token-type-parity.mjs",
