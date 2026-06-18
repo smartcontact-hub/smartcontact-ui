@@ -1,6 +1,6 @@
 # NEXT SESSION — Smart Contact DS (hand-off)
 
-> Sello: **2026-06-18**, Fase 1.1 (color) + 1.2 (chivato §7) + paridad de tipografía COMPLETAS (HEAD `63bfa74`). SOBREESCRIBE en cada cierre.
+> Sello: **2026-06-18**, Fase 1.1 (color) + 1.2 (chivato §7) + paridad de tipografía + hand-off durable (tripwire del sello) COMPLETOS (HEAD `de0d285`). SOBREESCRIBE en cada cierre.
 
 ---
 
@@ -19,7 +19,7 @@
 ---
 
 ## 🎯 Estado de un vistazo
-**El puente está VIVO y GUARDADO** (HEAD `63bfa74`). Fluyen+se-verifican: primitivos (color §7), semántico, sizing,
+**El puente está VIVO y GUARDADO** (HEAD `de0d285`). Fluyen+se-verifican: primitivos (color §7), semántico, sizing,
 **color de componente** leído por los 20 componentes con `colorScheme`, y **tipografía** (font-size + line-height parity).
 Un cambio de cualquiera de esos en Figma SE VE y, si no llega al código, salta ROJO (nada en silencio).
 
@@ -70,6 +70,12 @@ no fluyen aún → generador o curado-documentado (zona `@sc-gen:effects` etc.).
 - **Auditoría de tokens (Rafa, fin del puente):** ver §"Orden maestro" — soft-blue↔cyan desfasado ya cazado por §7.
 
 ## ✅ YA HECHO (commits en main, verde)
+- **🧷 HAND-OFF DURABLE (que no se desfase solo)** — `docs:coherence` Check D (`de0d285`, LOCAL-only como
+  `check-export-clean`): el sello `HEAD \`<sha>\`` de ESTE fichero debe EXISTIR en git → el hand-off no puede
+  mentir sobre su estado. **Por qué:** el sello se quedó stale EN SILENCIO una vez (una nota cayó tras sellar).
+  Criterio de Rafa: "cuanto más creemos, más fácil perderse" → NO más docs; la durabilidad la da el verificador.
+  **Regla dura (memoria `session-close-protocol`):** el commit que actualiza NEXT-SESSION es el ÚLTIMO de la
+  sesión; el sello = HEAD real; nada sustantivo aterriza después. Doble cara probada (sello real→verde, fantasma→rojo).
 - **🔤 PARIDAD DE TIPOGRAFÍA (gate nuevo)** — `tokens:type-parity` REESCRITO de informe-siempre-verde a **gate real**:
   cada `typography.font.size.N` Y `typography.line.height.N` del Kit tiene su `--sc-font-size-N`/`--sc-line-height-N`
   1:1 por valor (15/15 hoy). **Antes el line-height se escapaba** (el informe solo miraba font-size) — Rafa lo exigió.
