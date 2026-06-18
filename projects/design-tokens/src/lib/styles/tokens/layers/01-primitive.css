@@ -26,18 +26,21 @@
   --sc-color-blue-900: #0b1019;
   --sc-color-blue-950: #05080d;
 
-  /* ---------- Color · Soft Blue (accent) ---------- */
-  --sc-color-soft-blue-50: #effbfc;
-  --sc-color-soft-blue-100: #d2f4f8;
-  --sc-color-soft-blue-200: #a6e9f2;
-  --sc-color-soft-blue-300: #7edfeb;
-  --sc-color-soft-blue-400: #6bd9e9;
-  --sc-color-soft-blue-500: #5ad3e6;
-  --sc-color-soft-blue-600: #48b8c9;
-  --sc-color-soft-blue-700: #328a99;
-  --sc-color-soft-blue-800: #246b78;
-  --sc-color-soft-blue-900: #1a4d57;
-  --sc-color-soft-blue-950: #0d262b;
+  /* ---------- Color · Soft Blue (accent) ----------
+   * Sigue 1:1 al `cyan` del Kit oficial (re-sync 2026-06-18: antes curado a mano,
+   * se había desfasado en los 11 pasos; lo cazó el chivato §7). El §7 de
+   * token-parity.mjs lo BLOQUEA contra el cyan del export → no se vuelve a desfasar. */
+  --sc-color-soft-blue-50: #eefbfc;
+  --sc-color-soft-blue-100: #d2f5f9;
+  --sc-color-soft-blue-200: #a8eef5;
+  --sc-color-soft-blue-300: #7be1ef;
+  --sc-color-soft-blue-400: #51d5e6;
+  --sc-color-soft-blue-500: #24c6db;
+  --sc-color-soft-blue-600: #2497a8;
+  --sc-color-soft-blue-700: #21717d;
+  --sc-color-soft-blue-800: #1d5058;
+  --sc-color-soft-blue-900: #16363b;
+  --sc-color-soft-blue-950: #0d1a1c;
 
   /* ---------- Color · Gray (neutrals) ----------
    * Mirrors PrimeOne 4.0 `slate` 1:1 (Smart Contact Prime UI Kit Pro,
