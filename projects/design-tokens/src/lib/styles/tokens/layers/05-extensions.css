@@ -65,6 +65,71 @@
     0 8px 10px -6px rgb(var(--sc-shadow-color-rgb) / 0.1);
   --sc-shadow-focus-ring: 0 0 0 3px rgb(var(--sc-shadow-focus-ring-rgb) / 0.35);
 
+  /* @sc-gen:effects — bloque GENERADO desde kit-export-dtcg.json por `npm run tokens:import`
+   * (token-gen-effects.mjs). NO editar a mano. Sombras de componente (aura/effects) 1:1 con el
+   * Kit: px literal + color de efecto exacto. El preset referencia estos --sc-cmp-*-shadow; así
+   * una sombra cambiada en Figma fluye sin mano. Las *.focus.ring.shadow (transparentes) no se
+   * emiten: el foco del DS es por outline (--sc-focus-ring-width), no shadow-ring. */
+  --sc-cmp-autocomplete-shadow: 0 1px 2px 0 #1212170d;
+  --sc-cmp-autocomplete-overlay-shadow: 0 2px 4px -2px #0000001a, 0 4px 6px -1px #0000001a;
+  --sc-cmp-button-raised-shadow: 0 1px 5px 0 #0000001f, 0 2px 2px 0 #00000024, 0 3px 1px -2px #00000033;
+  --sc-cmp-card-shadow: 0 1px 2px -1px #0000001a, 0 1px 3px 0 #0000001a;
+  --sc-cmp-cascadeselect-shadow: 0 1px 2px 0 #1212170d;
+  --sc-cmp-cascadeselect-overlay-shadow: 0 2px 4px -2px #0000001a, 0 4px 6px -1px #0000001a;
+  --sc-cmp-checkbox-shadow: 0 1px 2px 0 #1212170d;
+  --sc-cmp-colorpicker-panel-shadow: 0 2px 4px -2px #0000001a, 0 4px 6px -1px #0000001a;
+  --sc-cmp-confirmpopup-shadow: 0 2px 4px -2px #0000001a, 0 4px 6px -1px #0000001a;
+  --sc-cmp-contextmenu-shadow: 0 2px 4px -2px #0000001a, 0 4px 6px -1px #0000001a;
+  --sc-cmp-datatable-filter-overlay-select-shadow: 0 2px 4px -2px #0000001a, 0 4px 6px -1px #0000001a;
+  --sc-cmp-datatable-filter-overlay-popover-shadow: 0 2px 4px -2px #0000001a, 0 4px 6px -1px #0000001a;
+  --sc-cmp-datepicker-panel-shadow: 0 2px 4px -2px #0000001a, 0 4px 6px -1px #0000001a;
+  --sc-cmp-dialog-shadow: 0 8px 10px -6px #0000001a, 0 20px 25px -5px #0000001a;
+  --sc-cmp-drawer-shadow: 0 8px 10px -6px #0000001a, 0 20px 25px -5px #0000001a;
+  --sc-cmp-editor-overlay-shadow: 0 2px 4px -2px #0000001a, 0 4px 6px -1px #0000001a;
+  --sc-cmp-form-field-shadow: 0 1px 2px 0 #1212170d;
+  --sc-cmp-inputtext-shadow: 0 1px 2px 0 #1212170d;
+  --sc-cmp-listbox-shadow: 0 1px 2px 0 #1212170d;
+  --sc-cmp-megamenu-overlay-shadow: 0 2px 4px -2px #0000001a, 0 4px 6px -1px #0000001a;
+  --sc-cmp-menu-shadow: 0 2px 4px -2px #0000001a, 0 4px 6px -1px #0000001a;
+  --sc-cmp-menubar-submenu-shadow: 0 2px 4px -2px #0000001a, 0 4px 6px -1px #0000001a;
+  --sc-cmp-message-info-shadow: 0 4px 8px 0 #02050a0a;
+  --sc-cmp-message-success-shadow: 0 4px 8px 0 #0108040a;
+  --sc-cmp-message-warn-shadow: 0 4px 8px 0 #0907000a;
+  --sc-cmp-message-error-shadow: 0 4px 8px 0 #0a03030a;
+  --sc-cmp-message-secondary-shadow: 0 4px 8px 0 #0405060a;
+  --sc-cmp-message-contrast-shadow: 0 4px 8px 0 #0000010a;
+  --sc-cmp-multiselect-shadow: 0 1px 2px 0 #1212170d;
+  --sc-cmp-multiselect-overlay-shadow: 0 2px 4px -2px #0000001a, 0 4px 6px -1px #0000001a;
+  --sc-cmp-overlay-select-shadow: 0 2px 4px -2px #0000001a, 0 4px 6px -1px #0000001a;
+  --sc-cmp-overlay-popover-shadow: 0 2px 4px -2px #0000001a, 0 4px 6px -1px #0000001a;
+  --sc-cmp-overlay-modal-shadow: 0 8px 10px -6px #0000001a, 0 20px 25px -5px #0000001a;
+  --sc-cmp-overlay-navigation-shadow: 0 2px 4px -2px #0000001a, 0 4px 6px -1px #0000001a;
+  --sc-cmp-password-overlay-shadow: 0 2px 4px -2px #0000001a, 0 4px 6px -1px #0000001a;
+  --sc-cmp-popover-shadow: 0 2px 4px -2px #0000001a, 0 4px 6px -1px #0000001a;
+  --sc-cmp-radiobutton-shadow: 0 1px 2px 0 #1212170d;
+  --sc-cmp-select-shadow: 0 1px 2px 0 #1212170d;
+  --sc-cmp-select-overlay-shadow: 0 2px 4px -2px #0000001a, 0 4px 6px -1px #0000001a;
+  --sc-cmp-slider-handle-content-shadow: 0 1px 1px 0 #00000024, 0 1px 0 0 #00000014;
+  --sc-cmp-splitbutton-raised-shadow: 0 1px 5px 0 #0000001f, 0 2px 2px 0 #00000024, 0 3px 1px -2px #00000033;
+  --sc-cmp-stepper-step-number-shadow: 0 1px 1px 0 #0000001f, 0 1px 0 0 #0000000f;
+  --sc-cmp-tabview-nav-button-shadow: 0 0 10px 50px #ffffff99;
+  --sc-cmp-tabs-nav-button-shadow: 0 0 10px 50px #ffffff99;
+  --sc-cmp-textarea-shadow: 0 1px 2px 0 #1212170d;
+  --sc-cmp-tieredmenu-shadow: 0 2px 4px -2px #0000001a, 0 4px 6px -1px #0000001a;
+  --sc-cmp-timeline-event-marker-content-inset-shadow: 0 1px 1px 0 #0000001f, 0 1px 0 0 #0000000f;
+  --sc-cmp-toast-info-shadow: 0 4px 8px 0 #02050a0a;
+  --sc-cmp-toast-success-shadow: 0 4px 8px 0 #0108040a;
+  --sc-cmp-toast-warn-shadow: 0 4px 8px 0 #0907000a;
+  --sc-cmp-toast-error-shadow: 0 4px 8px 0 #0a03030a;
+  --sc-cmp-toast-secondary-shadow: 0 4px 8px 0 #0405060a;
+  --sc-cmp-toast-contrast-shadow: 0 4px 8px 0 #0000010a;
+  --sc-cmp-togglebutton-content-checked-shadow: 0 1px 2px 0 #0000000a, 0 1px 2px 0 #00000005;
+  --sc-cmp-toggleswitch-shadow: 0 1px 2px 0 #1212170d;
+  --sc-cmp-tooltip-shadow: 0 2px 4px -2px #0000001a, 0 4px 6px -1px #0000001a;
+  --sc-cmp-treeselect-shadow: 0 1px 2px 0 #1212170d;
+  --sc-cmp-treeselect-overlay-shadow: 0 2px 4px -2px #0000001a, 0 4px 6px -1px #0000001a;
+  /* @sc-gen:effects:end */
+
   /* ---------- Z-index scale ---------- */
   /*
    * Numeric stacking order, top-to-bottom. The sidebar is an OVERLAY
