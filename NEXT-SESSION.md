@@ -2,8 +2,9 @@
 
 > Sello: **2026-06-19**, **FASE 3 (AGENT) HECHA** + auditoría de tokens (soft-blue re-sync) +
 > var-docs de Figma (primitivos) — sobre el puente PROBADO (DD-21) y el Audit CERRADO (pokédex +
-> galería de uso). HEAD-DD `be3232a` (**DD-22**). Siguiente = **W5 (espera TU validación en Figma) ·
-> script de var-docs · Fase 4 AED**. SOBREESCRIBE en cada cierre.
+> galería de uso). HEAD-DD `eb7dbbb` (**DD-23**). Siguiente = **PARIDAD de nombres (rename a Kit) →
+> var-docs script · W5 (espera validación) · Code Connect · Fase 4 AED** (ver §GRANDES BLOQUES).
+> SOBREESCRIBE en cada cierre.
 
 ---
 
@@ -11,7 +12,7 @@
 1. **Lee este fichero entero** (estado + primera acción + trampas).
 2. **Plan maestro:** `~/.claude/plans/async-greeting-pumpkin.md` (el norte: Puente→Audit→Agent→AED).
    Detalle de la última sesión: `~/.claude/plans/retomamos-el-ds-de-whimsical-sparrow.md`.
-3. **El *por qué* durable:** `docs/DECISIONS.md` (último = **DD-22**). Reglas/trampas: `AGENTS.md`.
+3. **El *por qué* durable:** `docs/DECISIONS.md` (último = **DD-23**). Reglas/trampas: `AGENTS.md`.
 4. **PRIMERA ACCIÓN:** ver §PENDIENTE — lo más vivo es **W5** (espera TU validación en Figma) y el
    **script de var-docs**.
 5. **Validar SIEMPRE:** `npm run verify` (+ `CI=1 npm run e2e` si tocas algo visual). `npm run usage:capture`
@@ -37,23 +38,34 @@
 
 ## 🗺️ Orden maestro: Puente ✅ → Audit ✅ → Agent ✅ → **AED (Fase 4, pendiente)**
 
-## 🔴 PENDIENTE (lo vivo)
-1. **W5 — marca al Kit — ESPERA TU VALIDACIÓN.** Pintado el **antes/después** (warn ámbar→amarillo;
-   superficie dark gris-SC→zinc) + rationale **STAR** en la página **BACKLOG** de Figma
-   (`khNq9dJKNi13pNllrqm6dx`, frame `13268:3769`). Si Rafa valida → aplicar: en `base.ts` el remap
-   `yellow:'yellow'` (warn) y/o superficie dark = `ramp('zinc')` (cirugía del dark scheme) + quitar los
-   EXCLUDE de warn/surface en `cmp-color-map.mjs` + regenerar + `verify` + screenshot antes/después.
-   **warn→amarillo = contenido; dark→zinc = amplio** (recolorea TODAS las pantallas oscuras).
-2. **var-docs de Figma (~811 restantes) — script repo-mapping.** Faltan ~669 sizing de componentes DS
-   (alias a scale) + 142 semantic. **NO hay atajo puro-Figma** (daría primitivos `--sc-scale`/`--sc-color`
-   y CONFUNDE; la convención es `--sc-spacing-*` para sizing y `--sc-bg/text-*` para semantic). **Receta:**
-   node-script que lee `kit-export-dtcg.json` + `sizing-map`/`color-map`/`cmp-color-map` →
-   `{var-Figma → token idiomático}` → bulk-write con `figma_execute` (`v.setVariableCodeSyntax('WEB', tok)`
-   + `v.description`). Las non-DS (1027 componentes PrimeNG no envueltos + 88 paletas Tailwind no usadas)
-   se dejan EN BLANCO a propósito (no tienen token `--sc-*`). El bridge ESCRIBE ✓ (probado hoy).
-3. **auto-derive soft-blue** (opcional): generarlo del `cyan` del export → imposible que se desvíe (hoy §7
-   lo CAZA, no lo impide).
-4. **Fase 4 — AED 1:1** (capstone; plan maestro §4). **Baja prioridad:** Code Connect (apuntar a nuestro repo).
+## 🔴 GRANDES BLOQUES PENDIENTES (a planificar — orden propuesto)
+1. **PARIDAD DE NOMBRES (rename a nombres del Kit) — decisión Rafa 2026-06-19. VA PRIMERO.**
+   El token `--sc-*` debe llamarse IGUAL que la variable en Figma; no más rename de marca ("si en Figma
+   es cyan, en código `--sc-color-cyan`"). Renombrar `--sc-color-{soft-blue→cyan, electric-blue→sky,
+   gray→slate}` (blue ya coincide) en TODO: primitivos (`01-primitive.css`), semántico/capas, preset
+   `base.ts` (families/surface/ramp), SCSS de TODOS los componentes, apps (supervisor/sc-demo/agent),
+   `palette-map.mjs` (→ identidad), generadores/auto-import, y re-apuntar las var-docs de Figma
+   (code-syntax → `--sc-color-cyan-*` etc.). El rol de marca (Soft Blue / Electric Blue / Gray) vive en
+   la DESCRIPCIÓN, no en el nombre. Refactor ANCHO pero conceptualmente simple. **SUPERSEDE el
+   "auto-derive soft-blue"** (al renombrar ya no hay rename que derivar; §7 pasa a identidad trivial).
+   Cuidado: find-replace con frontera (`--sc-color-gray-` exacto; `gray` es palabra común).
+2. **var-docs script (~811) — DESPUÉS de la paridad** (si no, se re-hace el code-syntax). Faltan ~669
+   sizing de componentes DS (alias a scale) + 142 semantic. NO hay atajo puro-Figma (daría primitivos
+   `--sc-scale`/`--sc-color` y CONFUNDE; convención = `--sc-spacing-*` sizing, `--sc-bg/text-*` semantic).
+   Receta: node-script lee `kit-export-dtcg.json` + `sizing-map`/`color-map`/`cmp-color-map` →
+   `{var-Figma → token idiomático}` → bulk-write con `figma_execute`. 530 ya hechas (primitivos +
+   component own-token). El bridge ESCRIBE ✓.
+3. **W5 — marca al Kit — ESPERA VALIDACIÓN DE RAFA** (independiente del resto). Pintado el antes/después
+   (warn ámbar→amarillo; dark gris-SC→zinc) + STAR en BACKLOG Figma (`khNq9dJKNi13pNllrqm6dx`, frame
+   `13268:3769`). Si valida → `base.ts` (`yellow:'yellow'` / surface dark=`ramp('zinc')`) + quitar EXCLUDE
+   warn/surface en `cmp-color-map.mjs` + regenerar + verify + screenshot. warn=contenido; dark→zinc=amplio.
+4. **Code Connect (baja prioridad) — DESPUÉS de la paridad.** Prerequisito OK: la Kit tiene 5080
+   componentes + 172 component-sets (mapeables). PERO necesita `@figma/code-connect` + **token Figma
+   válido** (el REST está caducado → publish bloqueado) + ~49 ficheros `figma.connect()` apuntando a
+   nuestro repo. El audit exhaustivo sigue siendo la ref dev-facing principal.
+5. **Fase 4 — AED 1:1** (capstone; plan maestro §4). Flujo config/aed 1:1 con Figma; necesita el bridge.
+6. **Menores:** W4 gaps (`sc-tag` size, `sc-avatar` px → retirar copias locales del Supervisor);
+   descripciones de variables restantes.
 
 ## ⚠️ TRAMPAS / PROTECCIONES
 - **`preview:live` zombie ensucia el export** (pasó hoy): un `preview-live.mjs` viejo re-baja el export de
@@ -75,6 +87,6 @@
 Mega-dumb, sin ai slop, conciso: qué se hizo, por qué, conclusiones, pendiente, y lo que NO se hizo a drede.
 
 ## Índice — dónde mirar
-- **Plan maestro** → `~/.claude/plans/async-greeting-pumpkin.md` · **Decisiones** → `docs/DECISIONS.md` (DD-22).
+- **Plan maestro** → `~/.claude/plans/async-greeting-pumpkin.md` · **Decisiones** → `docs/DECISIONS.md` (DD-23).
 - **Reglas/trampas** → `AGENTS.md` · **Colaboración** → `docs/ppt-proyecto.md` · **Tokens/loop** → `docs/guia-tokens.md`.
 - **Inventario de componentes** → `docs/inventory.md` · **Galería de uso** → sc-demo `/uso` · **Mapa de docs** → `docs/DOCS-INDEX.md`.
