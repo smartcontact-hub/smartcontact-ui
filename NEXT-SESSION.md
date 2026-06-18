@@ -1,6 +1,6 @@
 # NEXT SESSION — Smart Contact DS (hand-off)
 
-> Sello: **2026-06-18**, Fase 1.1 (color) + 1.2 (chivato §7) + **1.3 (completitud §8: effects/app/semantic-common)** + paridad de tipografía + hand-off durable COMPLETOS (HEAD `cf004ed`). SOBREESCRIBE en cada cierre.
+> Sello: **2026-06-18**, Fase 1.1 (color) + 1.2 (chivato §7) + 1.3 (completitud §8) + **generador de sombras (Etapa 1)** + paridad de tipografía + hand-off durable COMPLETOS (HEAD `6e32953`). SOBREESCRIBE en cada cierre.
 
 ---
 
@@ -25,13 +25,14 @@ y ahora **TODOS los grupos del export** (§8 censo de completitud: ningún grupo
 Un cambio de cualquiera de esos en Figma SE VE y, si no llega al código, salta ROJO (nada en silencio).
 
 **Lo que falta para cerrar el puente:**
-1. **Mini-test** end-to-end — Fase 1.4 (puerta). Con eso el puente queda PROBADO completo.
-2. **DECISIÓN abierta (de Rafa) — sombras de `aura/effects`:** 59 sombras o son divergencia de marca (tinte
-   slate, no negro puro del Kit) o están **hardcoded hex en presets de componente** (`#1212170d`, `#0000001a`,
-   message/toast `#…0a`). Coinciden con el Kit HOY pero **NO fluyen** (un cambio de sombra en Figma sería mudo) y
-   no hay value-check (el §8 las CLASIFICA como divergencia, no las verifica). **Opciones:** (a) generador
-   `@sc-gen:effects` (fluyen como el resto) · (b) chivato que cace si el hex hardcoded se desfasa del Kit · (c)
-   aceptar como divergencia de marca documentada (tinte propio a propósito). No lo decido yo: es marca + esfuerzo (toca ~50 presets).
+1. **Sombras — Etapa 2 (rewire + preview):** Rafa decidió **PUENTE REAL** (generador). Etapa 1 HECHA (`6e32953`):
+   `token-gen-effects` emite las 58 sombras a `--sc-cmp-*-shadow` (`@sc-gen:effects`), CERO cambio visual (nadie
+   las lee aún). **Falta la Etapa 2:** re-cablear los ~50 presets de su hex hardcoded a `var(--sc-cmp-*-shadow)`,
+   con value-equality (como Fase 1.1). **OJO visual:** unas sombras hoy están tintadas de slate (base.ts
+   `--sc-shadow-*`) y otras ya en negro puro del Kit (hex hardcoded en presets) → el rewire las unifica al valor
+   del Kit; **pausa + preview para que Rafa apruebe el delta** antes de commitear. Tras el rewire, §8 sube de
+   "generadas" a "value-check componente==Kit".
+2. **Mini-test** end-to-end — Fase 1.4 (puerta). Con eso el puente queda PROBADO completo.
 
 **Decisión de marca DIFERIDA (Rafa, 2026-06-18):** "primero el puente, marca después". El repunte preservó 2 divergencias
 de marca SIN cambiar pixeles (vía EXCLUDE): **warn = ámbar** (no yellow/orange del Kit) y **superficie oscura = gris SC**
@@ -65,21 +66,30 @@ de marca SIN cambiar pixeles (vía EXCLUDE): **warn = ámbar** (no yellow/orange
 - **Baja prioridad (tras las 4):** Code Connect (apuntando a NUESTRO repo, interim) + auto-documentar variables Figma.
 - **En paralelo (sin bloquear):** doc-fixes one-time restantes · endurecer `preview:live` · W5 marca.
 
-## 🔴 PRIMERA ACCIÓN — Fase 1.4: mini-test de extremo a extremo (PUERTA)
-Fases 1.1 (rewire de color), **1.2 (chivato §7)** y **1.3 (completitud §8)** HECHAS y en main (ver YA HECHO). Ya
-NINGÚN grupo del export queda DIFERIDO: el censo §7b los marca todos `cubierto`. **Falta la PUERTA (1.4):** un
-mini-test que tome el export-fixture, le meta UN cambio de CADA clase (primitivo, color semántico, color de
-componente, sizing, y un effect/sombra), corra `tokens:import` + `tokens:parity` y asserte que cada cambio aparece
-en el CSS y que el censo §8 sigue VERDE. Committed = regresión para siempre. **+ pasada manual real** (Rafa cambia
-un token de cada clase en Figma → lo ve en preview de rama). Si pasa → el puente está PROBADO completo.
-- **Antes/junto al mini-test:** zanjar la **DECISIÓN de sombras** (ver §"Lo que falta" arriba) — si Rafa elige
-  generador/chivato, el mini-test debe cubrir también ese camino; si elige divergencia documentada, basta el §8 actual.
+## 🔴 PRIMERA ACCIÓN — Sombras Etapa 2: rewire del preset + preview
+La Etapa 1 (generador de sombras) está HECHA y en main (`6e32953`): los `--sc-cmp-*-shadow` ya existen en
+`@sc-gen:effects`, **sin que nadie los lea**. **Etapa 2 = re-cablear los ~50 presets** de su `shadow:` hardcoded
+(hex) a `var(--sc-cmp-<comp>-shadow)`, con **value-equality** (mismo método que Fase 1.1: probar que cada repoint
+es no-op O un cambio intencional al valor del Kit). **PAUSA + PREVIEW obligatoria:** unas sombras hoy van tintadas
+de slate (`--sc-shadow-*` de base.ts), otras ya en negro del Kit → el rewire las unifica al Kit; Rafa lo ve en
+preview y aprueba el delta antes del commit. **Verificador:** §8 sube de "generadas" a value-check
+(componente lee `--sc-cmp-*-shadow` == Kit) + e2e. Mapa de qué preset usa qué sombra: `grep 'shadow:'
+projects/ui-smartcontact/src/lib/theme/sc-preset/`.
+- **Luego Fase 1.4 — mini-test (PUERTA):** export-fixture con UN cambio de CADA clase (primitivo, color semántico,
+  color de componente, sizing, **sombra**) → `tokens:import` + `tokens:parity` asserta que cada cambio aparece en
+  el CSS y §8 sigue VERDE. Committed = regresión para siempre. + pasada manual real (Rafa en Figma). Puente PROBADO.
 - **W5 (cuando Rafa quiera):** alinear warn→amarillo + dark→zinc. Necesita **ponerlo en Figma en la página de BACKLOG**
   (`figma.com/design/khNq9dJKNi13pNllrqm6dx/...?node-id=13097-13517`) para ver ANTES/DESPUÉS antes de commitear. Decisión de
   marca, no del puente. Necesita el bridge Figma (`mcp__figma__*`).
 - **Auditoría de tokens (Rafa, fin del puente):** ver §"Orden maestro" — soft-blue↔cyan desfasado ya cazado por §7.
 
 ## ✅ YA HECHO (commits en main, verde)
+- **🌑 GENERADOR DE SOMBRAS — Etapa 1 (`6e32953`, CERO cambio visual):** Rafa decidió **puente real** para las
+  sombras. `scripts/token-gen-effects.mjs` + `scripts/effects-map.mjs` leen `aura/effects` del Kit y emiten 58
+  sombras a `--sc-cmp-*-shadow` en `@sc-gen:effects` (05-extensions.css) — hermano de `token-gen-cmp-color`. Px
+  literal + color de efecto exacto del Kit; las 71 `*.focus.ring.shadow` transparentes NO se emiten (foco por
+  outline). En `tokens:import` + `verify`. Test doble cara (`effects-map.test.mjs`). **Nadie las lee aún** → el
+  preset sigue con el hex hardcoded; el rewire es la Etapa 2 (ver PRIMERA ACCIÓN).
 - **🧩 COMPLETITUD §8 (Fase 1.3) — los 3 grupos restantes CUBIERTOS** (`cf004ed`): `aura/semantic/common` (60),
   `aura/app` (6), `aura/effects` (129) ya NO quedan DIFERIDO. **Sin generadores nuevos** (habrían sido
   sobre-ingeniería: estos valores ya fluyen por REFERENCIA —§1·2·7—, están cableados en `base.ts`, divergen a
