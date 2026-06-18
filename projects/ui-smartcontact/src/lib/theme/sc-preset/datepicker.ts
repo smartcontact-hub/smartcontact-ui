@@ -111,7 +111,7 @@ import type { DatePickerDesignTokens } from '@primeuix/themes/types/datepicker';
     colorScheme: {
         dark: {
             today: {
-                color: "{surface.0}",
+                color: "var(--sc-cmp-datepicker-today-color)",
                 background: "{surface.700}"
             },
             dropdown: {
@@ -125,16 +125,16 @@ import type { DatePickerDesignTokens } from '@primeuix/themes/types/datepicker';
         },
         light: {
             today: {
-                color: "{surface.900}",
-                background: "{surface.200}"
+                color: "var(--sc-cmp-datepicker-today-color)",
+                background: "var(--sc-cmp-datepicker-today-background)"
             },
             dropdown: {
-                color: "{surface.600}",
-                background: "{surface.100}",
-                hoverColor: "{surface.700}",
-                activeColor: "{surface.800}",
-                hoverBackground: "{surface.200}",
-                activeBackground: "{surface.300}"
+                color: "var(--sc-cmp-datepicker-dropdown-color)",
+                background: "var(--sc-cmp-datepicker-dropdown-background)",
+                hoverColor: "var(--sc-cmp-datepicker-dropdown-hover-color)",
+                activeColor: "var(--sc-cmp-datepicker-dropdown-active-color)",
+                hoverBackground: "var(--sc-cmp-datepicker-dropdown-hover-background)",
+                activeBackground: "var(--sc-cmp-datepicker-dropdown-active-background)"
             }
         }
     },

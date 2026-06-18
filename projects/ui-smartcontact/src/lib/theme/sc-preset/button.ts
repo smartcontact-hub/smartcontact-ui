@@ -195,42 +195,42 @@ import type { ButtonDesignTokens } from '@primeuix/themes/types/button';
             },
             text: {
                 help: {
-                    color: "{purple.400}",
-                    hoverBackground: "#c084fc0a",
-                    activeBackground: "#c084fc29"
+                    color: "var(--sc-cmp-button-text-help-color)",
+                    hoverBackground: "var(--sc-cmp-button-text-help-hover-background)",
+                    activeBackground: "var(--sc-cmp-button-text-help-active-background)"
                 },
                 info: {
-                    color: "{sky.400}",
+                    color: "var(--sc-cmp-button-text-info-color)",
                     hoverBackground: "#38bdf80a",
                     activeBackground: "#38bdf829"
                 },
                 warn: {
                     color: "{orange.400}",
-                    hoverBackground: "#fb923c0a",
-                    activeBackground: "#fb923c29"
+                    hoverBackground: "var(--sc-cmp-button-text-warn-hover-background)",
+                    activeBackground: "var(--sc-cmp-button-text-warn-active-background)"
                 },
                 plain: {
-                    color: "{surface.0}",
+                    color: "var(--sc-cmp-button-text-plain-color)",
                     hoverBackground: "{surface.800}",
                     activeBackground: "{surface.700}"
                 },
                 danger: {
-                    color: "{red.400}",
-                    hoverBackground: "#f871710a",
-                    activeBackground: "#f8717129"
+                    color: "var(--sc-cmp-button-text-danger-color)",
+                    hoverBackground: "var(--sc-cmp-button-text-danger-hover-background)",
+                    activeBackground: "var(--sc-cmp-button-text-danger-active-background)"
                 },
                 primary: {
                     color: "{primary.color}",
-                    hoverBackground: "#34d3990a",
-                    activeBackground: "#34d39929"
+                    hoverBackground: "var(--sc-cmp-button-text-primary-hover-background)",
+                    activeBackground: "var(--sc-cmp-button-text-primary-active-background)"
                 },
                 success: {
-                    color: "{green.400}",
-                    hoverBackground: "#4ade800a",
-                    activeBackground: "#4ade8029"
+                    color: "var(--sc-cmp-button-text-success-color)",
+                    hoverBackground: "var(--sc-cmp-button-text-success-hover-background)",
+                    activeBackground: "var(--sc-cmp-button-text-success-active-background)"
                 },
                 contrast: {
-                    color: "{surface.0}",
+                    color: "var(--sc-cmp-button-text-contrast-color)",
                     hoverBackground: "{surface.800}",
                     activeBackground: "{surface.700}"
                 },
@@ -242,49 +242,49 @@ import type { ButtonDesignTokens } from '@primeuix/themes/types/button';
             },
             outlined: {
                 help: {
-                    color: "{purple.400}",
-                    borderColor: "{purple.700}",
-                    hoverBackground: "#c084fc0a",
-                    activeBackground: "#c084fc29"
+                    color: "var(--sc-cmp-button-outlined-help-color)",
+                    borderColor: "var(--sc-cmp-button-outlined-help-border-color)",
+                    hoverBackground: "var(--sc-cmp-button-outlined-help-hover-background)",
+                    activeBackground: "var(--sc-cmp-button-outlined-help-active-background)"
                 },
                 info: {
-                    color: "{sky.400}",
-                    borderColor: "{sky.700}",
+                    color: "var(--sc-cmp-button-outlined-info-color)",
+                    borderColor: "var(--sc-cmp-button-outlined-info-border-color)",
                     hoverBackground: "#38bdf80a",
                     activeBackground: "#38bdf829"
                 },
                 warn: {
                     color: "{orange.400}",
                     borderColor: "{orange.700}",
-                    hoverBackground: "#fb923c0a",
-                    activeBackground: "#fb923c29"
+                    hoverBackground: "var(--sc-cmp-button-outlined-warn-hover-background)",
+                    activeBackground: "var(--sc-cmp-button-outlined-warn-active-background)"
                 },
                 plain: {
-                    color: "{surface.0}",
+                    color: "var(--sc-cmp-button-outlined-plain-color)",
                     borderColor: "{surface.600}",
                     hoverBackground: "{surface.800}",
                     activeBackground: "{surface.700}"
                 },
                 danger: {
-                    color: "{red.400}",
-                    borderColor: "{red.700}",
-                    hoverBackground: "#f871710a",
-                    activeBackground: "#f8717129"
+                    color: "var(--sc-cmp-button-outlined-danger-color)",
+                    borderColor: "var(--sc-cmp-button-outlined-danger-border-color)",
+                    hoverBackground: "var(--sc-cmp-button-outlined-danger-hover-background)",
+                    activeBackground: "var(--sc-cmp-button-outlined-danger-active-background)"
                 },
                 primary: {
                     color: "{primary.color}",
                     borderColor: "{primary.700}",
-                    hoverBackground: "#34d3990a",
-                    activeBackground: "#34d39929"
+                    hoverBackground: "var(--sc-cmp-button-outlined-primary-hover-background)",
+                    activeBackground: "var(--sc-cmp-button-outlined-primary-active-background)"
                 },
                 success: {
-                    color: "{green.400}",
-                    borderColor: "{green.700}",
-                    hoverBackground: "#4ade800a",
-                    activeBackground: "#4ade8029"
+                    color: "var(--sc-cmp-button-outlined-success-color)",
+                    borderColor: "var(--sc-cmp-button-outlined-success-border-color)",
+                    hoverBackground: "var(--sc-cmp-button-outlined-success-hover-background)",
+                    activeBackground: "var(--sc-cmp-button-outlined-success-active-background)"
                 },
                 contrast: {
-                    color: "{surface.0}",
+                    color: "var(--sc-cmp-button-outlined-contrast-color)",
                     borderColor: "{surface.500}",
                     hoverBackground: "{surface.800}",
                     activeBackground: "{surface.700}"
@@ -292,8 +292,8 @@ import type { ButtonDesignTokens } from '@primeuix/themes/types/button';
                 secondary: {
                     color: "{surface.400}",
                     borderColor: "{surface.700}",
-                    hoverBackground: "#ffffff0a",
-                    activeBackground: "#ffffff29"
+                    hoverBackground: "var(--sc-cmp-button-outlined-secondary-hover-background)",
+                    activeBackground: "var(--sc-cmp-button-outlined-secondary-active-background)"
                 }
             }
         },
@@ -419,14 +419,14 @@ import type { ButtonDesignTokens } from '@primeuix/themes/types/button';
             },
             text: {
                 help: {
-                    color: "{purple.500}",
-                    hoverBackground: "{purple.50}",
-                    activeBackground: "{purple.100}"
+                    color: "var(--sc-cmp-button-text-help-color)",
+                    hoverBackground: "var(--sc-cmp-button-text-help-hover-background)",
+                    activeBackground: "var(--sc-cmp-button-text-help-active-background)"
                 },
                 info: {
-                    color: "{sky.500}",
-                    hoverBackground: "{sky.50}",
-                    activeBackground: "{sky.100}"
+                    color: "var(--sc-cmp-button-text-info-color)",
+                    hoverBackground: "var(--sc-cmp-button-text-info-hover-background)",
+                    activeBackground: "var(--sc-cmp-button-text-info-active-background)"
                 },
                 warn: {
                     color: "{orange.500}",
@@ -434,14 +434,14 @@ import type { ButtonDesignTokens } from '@primeuix/themes/types/button';
                     activeBackground: "{orange.100}"
                 },
                 plain: {
-                    color: "{surface.700}",
-                    hoverBackground: "{surface.50}",
-                    activeBackground: "{surface.100}"
+                    color: "var(--sc-cmp-button-text-plain-color)",
+                    hoverBackground: "var(--sc-cmp-button-text-plain-hover-background)",
+                    activeBackground: "var(--sc-cmp-button-text-plain-active-background)"
                 },
                 danger: {
-                    color: "{red.500}",
-                    hoverBackground: "{red.50}",
-                    activeBackground: "{red.100}"
+                    color: "var(--sc-cmp-button-text-danger-color)",
+                    hoverBackground: "var(--sc-cmp-button-text-danger-hover-background)",
+                    activeBackground: "var(--sc-cmp-button-text-danger-active-background)"
                 },
                 primary: {
                     color: "{primary.color}",
@@ -449,33 +449,33 @@ import type { ButtonDesignTokens } from '@primeuix/themes/types/button';
                     activeBackground: "{primary.100}"
                 },
                 success: {
-                    color: "{green.500}",
-                    hoverBackground: "{green.50}",
-                    activeBackground: "{green.100}"
+                    color: "var(--sc-cmp-button-text-success-color)",
+                    hoverBackground: "var(--sc-cmp-button-text-success-hover-background)",
+                    activeBackground: "var(--sc-cmp-button-text-success-active-background)"
                 },
                 contrast: {
-                    color: "{surface.950}",
-                    hoverBackground: "{surface.50}",
-                    activeBackground: "{surface.100}"
+                    color: "var(--sc-cmp-button-text-contrast-color)",
+                    hoverBackground: "var(--sc-cmp-button-text-contrast-hover-background)",
+                    activeBackground: "var(--sc-cmp-button-text-contrast-active-background)"
                 },
                 secondary: {
-                    color: "{surface.500}",
-                    hoverBackground: "{surface.50}",
-                    activeBackground: "{surface.100}"
+                    color: "var(--sc-cmp-button-text-secondary-color)",
+                    hoverBackground: "var(--sc-cmp-button-text-secondary-hover-background)",
+                    activeBackground: "var(--sc-cmp-button-text-secondary-active-background)"
                 }
             },
             outlined: {
                 help: {
-                    color: "{purple.500}",
-                    borderColor: "{purple.200}",
-                    hoverBackground: "{purple.50}",
-                    activeBackground: "{purple.100}"
+                    color: "var(--sc-cmp-button-outlined-help-color)",
+                    borderColor: "var(--sc-cmp-button-outlined-help-border-color)",
+                    hoverBackground: "var(--sc-cmp-button-outlined-help-hover-background)",
+                    activeBackground: "var(--sc-cmp-button-outlined-help-active-background)"
                 },
                 info: {
-                    color: "{sky.500}",
-                    borderColor: "{sky.200}",
-                    hoverBackground: "{sky.50}",
-                    activeBackground: "{sky.100}"
+                    color: "var(--sc-cmp-button-outlined-info-color)",
+                    borderColor: "var(--sc-cmp-button-outlined-info-border-color)",
+                    hoverBackground: "var(--sc-cmp-button-outlined-info-hover-background)",
+                    activeBackground: "var(--sc-cmp-button-outlined-info-active-background)"
                 },
                 warn: {
                     color: "{orange.500}",
@@ -484,16 +484,16 @@ import type { ButtonDesignTokens } from '@primeuix/themes/types/button';
                     activeBackground: "{orange.100}"
                 },
                 plain: {
-                    color: "{surface.700}",
-                    borderColor: "{surface.200}",
-                    hoverBackground: "{surface.50}",
-                    activeBackground: "{surface.100}"
+                    color: "var(--sc-cmp-button-outlined-plain-color)",
+                    borderColor: "var(--sc-cmp-button-outlined-plain-border-color)",
+                    hoverBackground: "var(--sc-cmp-button-outlined-plain-hover-background)",
+                    activeBackground: "var(--sc-cmp-button-outlined-plain-active-background)"
                 },
                 danger: {
-                    color: "{red.500}",
-                    borderColor: "{red.200}",
-                    hoverBackground: "{red.50}",
-                    activeBackground: "{red.100}"
+                    color: "var(--sc-cmp-button-outlined-danger-color)",
+                    borderColor: "var(--sc-cmp-button-outlined-danger-border-color)",
+                    hoverBackground: "var(--sc-cmp-button-outlined-danger-hover-background)",
+                    activeBackground: "var(--sc-cmp-button-outlined-danger-active-background)"
                 },
                 primary: {
                     color: "{primary.color}",
@@ -502,22 +502,22 @@ import type { ButtonDesignTokens } from '@primeuix/themes/types/button';
                     activeBackground: "{primary.100}"
                 },
                 success: {
-                    color: "{green.500}",
-                    borderColor: "{green.200}",
-                    hoverBackground: "{green.50}",
-                    activeBackground: "{green.100}"
+                    color: "var(--sc-cmp-button-outlined-success-color)",
+                    borderColor: "var(--sc-cmp-button-outlined-success-border-color)",
+                    hoverBackground: "var(--sc-cmp-button-outlined-success-hover-background)",
+                    activeBackground: "var(--sc-cmp-button-outlined-success-active-background)"
                 },
                 contrast: {
-                    color: "{surface.950}",
-                    borderColor: "{surface.700}",
-                    hoverBackground: "{surface.50}",
-                    activeBackground: "{surface.100}"
+                    color: "var(--sc-cmp-button-outlined-contrast-color)",
+                    borderColor: "var(--sc-cmp-button-outlined-contrast-border-color)",
+                    hoverBackground: "var(--sc-cmp-button-outlined-contrast-hover-background)",
+                    activeBackground: "var(--sc-cmp-button-outlined-contrast-active-background)"
                 },
                 secondary: {
-                    color: "{surface.500}",
-                    borderColor: "{surface.200}",
-                    hoverBackground: "{surface.50}",
-                    activeBackground: "{surface.100}"
+                    color: "var(--sc-cmp-button-outlined-secondary-color)",
+                    borderColor: "var(--sc-cmp-button-outlined-secondary-border-color)",
+                    hoverBackground: "var(--sc-cmp-button-outlined-secondary-hover-background)",
+                    activeBackground: "var(--sc-cmp-button-outlined-secondary-active-background)"
                 }
             }
         }

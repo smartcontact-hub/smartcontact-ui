@@ -76,7 +76,7 @@ import type { AutoCompleteDesignTokens } from '@primeuix/themes/types/autocomple
     colorScheme: {
         dark: {
             chip: {
-                focusColor: "{surface.0}",
+                focusColor: "var(--sc-cmp-autocomplete-chip-focus-color)",
                 focusBackground: "{surface.700}"
             },
             dropdown: {
@@ -90,16 +90,16 @@ import type { AutoCompleteDesignTokens } from '@primeuix/themes/types/autocomple
         },
         light: {
             chip: {
-                focusColor: "{surface.800}",
-                focusBackground: "{surface.200}"
+                focusColor: "var(--sc-cmp-autocomplete-chip-focus-color)",
+                focusBackground: "var(--sc-cmp-autocomplete-chip-focus-background)"
             },
             dropdown: {
-                color: "{surface.600}",
-                background: "{surface.100}",
-                hoverColor: "{surface.700}",
-                activeColor: "{surface.800}",
-                hoverBackground: "{surface.200}",
-                activeBackground: "{surface.300}"
+                color: "var(--sc-cmp-autocomplete-dropdown-color)",
+                background: "var(--sc-cmp-autocomplete-dropdown-background)",
+                hoverColor: "var(--sc-cmp-autocomplete-dropdown-hover-color)",
+                activeColor: "var(--sc-cmp-autocomplete-dropdown-active-color)",
+                hoverBackground: "var(--sc-cmp-autocomplete-dropdown-hover-background)",
+                activeBackground: "var(--sc-cmp-autocomplete-dropdown-active-background)"
             }
         }
     },

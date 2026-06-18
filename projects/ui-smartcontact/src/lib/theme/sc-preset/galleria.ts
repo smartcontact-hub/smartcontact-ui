@@ -60,19 +60,19 @@ import type { GalleriaDesignTokens } from '@primeuix/themes/types/galleria';
             },
             thumbnailNavButton: {
                 color: "{surface.400}",
-                hoverColor: "{surface.0}",
+                hoverColor: "var(--sc-cmp-galleria-thumbnail-nav-button-hover-color)",
                 hoverBackground: "{surface.700}"
             }
         },
         light: {
             indicatorButton: {
-                background: "{surface.200}",
-                hoverBackground: "{surface.300}"
+                background: "var(--sc-cmp-galleria-indicator-button-background)",
+                hoverBackground: "var(--sc-cmp-galleria-indicator-button-hover-background)"
             },
             thumbnailNavButton: {
-                color: "{surface.600}",
-                hoverColor: "{surface.700}",
-                hoverBackground: "{surface.100}"
+                color: "var(--sc-cmp-galleria-thumbnail-nav-button-color)",
+                hoverColor: "var(--sc-cmp-galleria-thumbnail-nav-button-hover-color)",
+                hoverBackground: "var(--sc-cmp-galleria-thumbnail-nav-button-hover-background)"
             }
         }
     },

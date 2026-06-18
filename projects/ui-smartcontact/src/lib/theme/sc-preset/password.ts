@@ -23,16 +23,16 @@ import type { PasswordDesignTokens } from '@primeuix/themes/types/password';
     colorScheme: {
         dark: {
             strength: {
-                weakBackground: "{red.400}",
-                mediumBackground: "{amber.400}",
-                strongBackground: "{green.400}"
+                weakBackground: "var(--sc-cmp-password-strength-weak-background)",
+                mediumBackground: "var(--sc-cmp-password-strength-medium-background)",
+                strongBackground: "var(--sc-cmp-password-strength-strong-background)"
             }
         },
         light: {
             strength: {
-                weakBackground: "{red.500}",
-                mediumBackground: "{amber.500}",
-                strongBackground: "{green.500}"
+                weakBackground: "var(--sc-cmp-password-strength-weak-background)",
+                mediumBackground: "var(--sc-cmp-password-strength-medium-background)",
+                strongBackground: "var(--sc-cmp-password-strength-strong-background)"
             }
         }
     }

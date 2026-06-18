@@ -44,7 +44,7 @@ import type { SliderDesignTokens } from '@primeuix/themes/types/slider';
         light: {
             handle: {
                 content: {
-                    background: "{surface.0}"
+                    background: "var(--sc-cmp-slider-handle-content-background)"
                 }
             }
         }

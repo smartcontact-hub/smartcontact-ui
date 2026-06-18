@@ -23,7 +23,7 @@ import type { ScrollPanelDesignTokens } from '@primeuix/themes/types/scrollpanel
         },
         light: {
             bar: {
-                background: "{surface.100}"
+                background: "var(--sc-cmp-scrollpanel-bar-background)"
             }
         }
     }

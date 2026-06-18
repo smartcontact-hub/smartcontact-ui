@@ -30,16 +30,16 @@ import type { BadgeDesignTokens } from '@primeuix/themes/types/badge';
     colorScheme: {
         dark: {
             info: {
-                color: "{sky.950}",
-                background: "{sky.400}"
+                color: "var(--sc-cmp-badge-info-color)",
+                background: "var(--sc-cmp-badge-info-background)"
             },
             warn: {
                 color: "{surface.950}",
                 background: "{orange.400}"
             },
             danger: {
-                color: "{red.950}",
-                background: "{red.400}"
+                color: "var(--sc-cmp-badge-danger-color)",
+                background: "var(--sc-cmp-badge-danger-background)"
             },
             primary: {
                 color: "{primary.contrast.color}",
@@ -47,11 +47,11 @@ import type { BadgeDesignTokens } from '@primeuix/themes/types/badge';
             },
             success: {
                 color: "{green.950}",
-                background: "{green.400}"
+                background: "var(--sc-cmp-badge-success-background)"
             },
             contrast: {
                 color: "{surface.950}",
-                background: "{surface.0}"
+                background: "var(--sc-cmp-badge-contrast-background)"
             },
             secondary: {
                 color: "{surface.300}",
@@ -60,32 +60,32 @@ import type { BadgeDesignTokens } from '@primeuix/themes/types/badge';
         },
         light: {
             info: {
-                color: "{surface.0}",
-                background: "{sky.500}"
+                color: "var(--sc-cmp-badge-info-color)",
+                background: "var(--sc-cmp-badge-info-background)"
             },
             warn: {
-                color: "{surface.0}",
+                color: "var(--sc-cmp-badge-warn-color)",
                 background: "{orange.500}"
             },
             danger: {
-                color: "{surface.0}",
-                background: "{red.500}"
+                color: "var(--sc-cmp-badge-danger-color)",
+                background: "var(--sc-cmp-badge-danger-background)"
             },
             primary: {
                 color: "{primary.contrast.color}",
                 background: "{primary.color}"
             },
             success: {
-                color: "{surface.0}",
-                background: "{green.500}"
+                color: "var(--sc-cmp-badge-success-color)",
+                background: "var(--sc-cmp-badge-success-background)"
             },
             contrast: {
-                color: "{surface.0}",
-                background: "{surface.950}"
+                color: "var(--sc-cmp-badge-contrast-color)",
+                background: "var(--sc-cmp-badge-contrast-background)"
             },
             secondary: {
-                color: "{surface.600}",
-                background: "{surface.100}"
+                color: "var(--sc-cmp-badge-secondary-color)",
+                background: "var(--sc-cmp-badge-secondary-background)"
             }
         }
     }
