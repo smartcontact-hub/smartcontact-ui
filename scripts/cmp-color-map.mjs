@@ -37,7 +37,7 @@ export const EXCLUDE = new Set([
   //    (warn de marca = amber #f59e0b, más cálido que el yellow #eab308 del Kit). Estos
   //    slots se renderizan por `{yellow.*}` → amber; el Kit los espejaría a yellow y
   //    rompería la marca. Se preservan a mano (los fondos/bordes literales yellow SÍ se
-  //    generan — son no-op). Verificado por scripts/cmp-color-rewire.mjs (value-equality).
+  //    generan). El guard `cmp-color-rewire` vela que no se hardcodee un hex en un slot generado.
   'dark:toast.warn.color',
   'dark:toast.warn.close.button.focus.ring.color',
   'light:toast.warn.color',
@@ -90,7 +90,7 @@ export const EXCLUDE = new Set([
   //    no lista). Aquí solo quedan las 2 divergencias de MARCA que el Kit no puede inferir:
   //    · superficie oscura = gris SC (base.ts surface→gray) en vez de zinc del Kit → W5.
   //    · warn = amber (base.ts orange/yellow→amber) en vez de orange/yellow del Kit.
-  //    Generadas por `node scripts/cmp-color-rewire.mjs excludes <comps>` (status diverge).
+  //    Divergencias de marca excluidas a mano de la generación (no se repuntan).
   'dark:autocomplete.chip.focus.background',
   'dark:autocomplete.dropdown.color',
   'dark:autocomplete.dropdown.background',
