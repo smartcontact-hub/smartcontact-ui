@@ -1027,4 +1027,45 @@ divergencias conscientes (warn→amarillo, dark→zinc, soft-blue↔cyan) como p
 
 ---
 
-Última actualización: 2026-06-18 (cierre del puente probado + pokédex auto-generada).
+## DD-22 · 2026-06-19 — Fase 2.2 (galería de uso) + Fase 3 (Agent + sc-gauge) + auditoría de tokens + var-docs Figma
+
+**Contexto**: Sesión larga tras cerrar el puente (DD-21). Se atacaron Fase 2.2, Fase 3, la
+auditoría de tokens que el chivato §7 dejó pendiente, y se empezó a documentar las variables de Figma.
+
+**Decisión**:
+- **Fase 2.2 (galería de uso real)** — entregable = **página navegable en sc-demo** (`/uso`), NO doc
+  markdown (SUPERSEDE el plan). Captura Playwright del Supervisor (config aislada `:4290`) escanea el
+  DOM por componentes `sc-*` (verdad de campo) → `_usage-status.json` + PNGs; guard `usage:check` sin
+  navegador. (commit `b9f3e53`)
+- **Fase 3 (Agent)** — app nueva **`projects/agent`** (standalone) + componente DS nuevo **`sc-gauge`**
+  (anillo SVG; el único gap del recon). Dashboard oscuro montado 100% con el DS + sc-gauge. (`44033ef`)
+- **Auditoría de tokens** — todas las paletas 1:1 con el Kit salvo `soft-blue` (curado a mano, desviado)
+  y green-950 (divergencia consciente). Decisión de Rafa: **re-sync soft-blue al cyan del Kit** (adoptar
+  Kit, NO auto-derive) + el §7 lo BLOQUEA 1:1 (quitada la excepción "pendiente"). (`ea3962b`)
+- **cmp-color-rewire adelgazado** — la value-equality del `check` era CIRCULAR (HEAD ya tiene el var)
+  → retirada + herramientas de migración (report/excludes/rewire); queda SOLO el guard vivo (hex
+  hardcodeado en slot generado, por-modo). 318→137 líneas. (`08dfe46`)
+- **standard/extended** — dejado cosmético (sin cambio); override 1-línea en component-audit-map cuando se quiera.
+- **W5 (marca al Kit)** — PINTADO el antes/después (warn ámbar→amarillo, dark gris-SC→zinc) + STAR en la
+  página BACKLOG de Figma (`khNq9dJKNi13pNllrqm6dx`, frame `13268:3769`). **PENDIENTE: validación de Rafa**.
+- **var-docs Figma** — probado que el bridge ESCRIBE description + code-syntax. **530 variables
+  documentadas** (todas las de token `--sc-*` directo): 154 primitivos color (renames cyan→soft-blue,
+  slate→gray, sky→electric-blue visibles en Dev Mode), 40 radius/scale, 336 component own-token. Las
+  non-DS (1027 componentes PrimeNG no envueltos + 88 paletas Tailwind no usadas) se dejan EN BLANCO a
+  propósito (no tienen token `--sc-*`).
+
+**Razón**: cada fase del orden maestro + cerrar el desfase real que §7 cazó; documentar la fuente
+(Figma) para que la rename cyan↔soft-blue no confunda a un dev.
+
+**Consecuencia / PENDIENTE**:
+- **W5**: aplicar (base.ts warn→yellow / surface dark→zinc + quitar EXCLUDEs + regenerar) SOLO tras
+  validación de Rafa en la página backlog de Figma.
+- **var-docs (~811)**: component-sizing-alias (669 de componentes DS) + semantic (142) necesitan un
+  **script repo-mapping** que dé el token IDIOMÁTICO (sizing→`--sc-spacing-*`, semantic→`--sc-bg/text-*`),
+  NO el primitivo (puro-Figma daría `--sc-scale` y confundiría). Receta: leer kit-export +
+  sizing-map/color-map/cmp-color-map → {var Figma → token} → bulk-write vía bridge.
+- **auto-derive soft-blue**: opcional (generarlo del cyan → imposible que se desvíe; hoy §7 lo caza).
+
+---
+
+Última actualización: 2026-06-19 (Fase 2.2 + Fase 3 [Agent/sc-gauge] + auditoría soft-blue + cmp-rewire slim + var-docs Figma primitivos).
