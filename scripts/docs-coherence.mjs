@@ -15,10 +15,14 @@
  *      documenta, falla.
  *   C. Tokens muertos: AGENTS.md no cita skills inexistentes; ningún doc sitúa DECISIONS-LOG.md
  *      en la "raíz" (vive en docs/history/).
+ *   D. (LOCAL-only) El sello `HEAD `<sha>`` de NEXT-SESSION apunta a un commit que EXISTE en git
+ *      → el hand-off no puede mentir sobre su propio estado. NO exige sello==HEAD (eso lagearía
+ *      a propósito mid-sesión); solo que el SHA citado sea real. Se salta en CI (clone shallow).
  *
  * Uso:  node scripts/docs-coherence.mjs   (parte de `npm run verify`)
  */
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
+import { execFileSync } from 'node:child_process';
 import { resolve } from 'node:path';
 
 const root = resolve(import.meta.dirname, '..');
@@ -86,6 +90,30 @@ for (const { path, lines } of files)
     if (/DECISIONS-LOG\.md[^\n]{0,40}?ra[íi]z/i.test(line))
       fail(`${rel(path)}:${i + 1} — sitúa DECISIONS-LOG.md en la "raíz"; vive en docs/history/`);
   });
+
+// ── CHECK D — el sello del hand-off no apunta a un commit fantasma (LOCAL-only) ──
+// El doc anti-pérdida-de-contexto se desfasó EN SILENCIO una vez (sello a un commit ya superado).
+// Esta red NO exige sello==HEAD (mid-sesión el sello lagea a propósito hasta el cierre); solo que
+// el SHA EXISTA. Se salta en CI: el clone suele ser shallow → `git cat-file` daría falso positivo
+// con un sello viejo. Es la red para el HUMANO que retoma la sesión en local, su contexto natural.
+if (!process.env.CI) {
+  const handoff = files.find((f) => rel(f.path) === 'NEXT-SESSION.md');
+  if (handoff) {
+    const seen = new Set();
+    handoff.lines.forEach((line, i) => {
+      for (const m of line.matchAll(/HEAD `([0-9a-f]{7,40})`/g)) {
+        const sha = m[1];
+        if (seen.has(sha)) continue;
+        seen.add(sha);
+        try {
+          execFileSync('git', ['cat-file', '-e', sha], { cwd: root, stdio: 'ignore' });
+        } catch {
+          fail(`NEXT-SESSION.md:${i + 1} — el sello \`HEAD ${sha}\` no existe en git (¿fabricado/tecleado mal?). El hand-off no puede apuntar a un commit fantasma.`);
+        }
+      }
+    });
+  }
+}
 
 // ── veredicto ───────────────────────────────────────────────────────────────────
 log('─'.repeat(60));
