@@ -37,9 +37,12 @@ const all = [
   ...mdBasenames(resolve(root, 'docs')), // incluye docs/history/
   ...readdirSync(root).filter((f) => f.endsWith('.md')),
 ];
+// Match con FRONTERA (no substring): 'INDEX.md' NO debe colar por estar dentro de 'DOCS-INDEX.md'.
+const esc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 for (const base of new Set(all)) {
   if (EXEMPT.has(base)) continue;
-  if (!idx.includes(base)) fail(`'${base}' existe pero el DOCS-INDEX no lo mapea (mapéalo o bórralo).`);
+  if (!new RegExp(`(?<![\\w-])${esc(base)}(?![\\w-])`).test(idx))
+    fail(`'${base}' existe pero el DOCS-INDEX no lo mapea (mapéalo o bórralo).`);
 }
 
 // (2) Todo link relativo del índice resuelve.

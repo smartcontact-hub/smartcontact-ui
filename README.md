@@ -44,7 +44,7 @@ npm run e2e            # smoke en navegador (Playwright)
 | Guard | `npm run tokens:guard` | `--p-*` solo en el preset · componentes con alias `--sc-spacing-*` · sin escala 8-point · campos PrimeNG solo vía wrapper · font-size solo por token | ✅ |
 | Export limpio | `npm run tokens:export-clean` | En LOCAL, `kit-export-dtcg.json` coincide con HEAD (caza el export sucio que deja un `preview:live` zombie; se salta en CI, donde el sync lo aplica sobre main a propósito) | ✅ |
 | Repunte de color | `npm run tokens:cmp-rewire` | Cada `colorScheme` repuntado a `var(--sc-cmp-*)` es value-equal vs HEAD (no-op demostrable) y no deja hex hardcodeado para un slot que sí generamos | ✅ |
-| Tipografía | `npm run tokens:type-parity` | Cobertura de `font-size` tokenizado (hoy 100 %) | ✅ |
+| Tipografía | `npm run tokens:type-parity` | **Paridad** de tipografía: cada `font-size` Y `line-height` del Kit tiene su `--sc-font-size-*`/`--sc-line-height-*` 1:1 por valor (un cambio de tipografía de Figma no se escapa). El `font-size` literal lo bloquea `tokens:guard` | ✅ |
 | Escala del preset | `npm run audit:theme-scale` | Cero `px` en el preset · sin `css:` por-componente · sin hack de `html{font-size}` | ✅ |
 | Tests unitarios | `npm run test:unit` | Suites de los generadores/scripts (`scripts/__tests__/*.test.mjs`) | ✅ |
 | Docs | `npm run docs:guard` · `docs:coherence` | Todo `.md` mapeado en `DOCS-INDEX` + links resuelven · la doc cuadra con el repo (comandos/scripts existen, cadena `verify` documentada, sin tokens muertos) | ✅ |

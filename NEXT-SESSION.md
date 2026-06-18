@@ -69,6 +69,16 @@ no fluyen aún → generador o curado-documentado (zona `@sc-gen:effects` etc.).
 - **Auditoría de tokens (Rafa, fin del puente):** ver §"Orden maestro" — soft-blue↔cyan desfasado ya cazado por §7.
 
 ## ✅ YA HECHO (commits en main, verde)
+- **🔤 PARIDAD DE TIPOGRAFÍA (gate nuevo)** — `tokens:type-parity` REESCRITO de informe-siempre-verde a **gate real**:
+  cada `typography.font.size.N` Y `typography.line.height.N` del Kit tiene su `--sc-font-size-N`/`--sc-line-height-N`
+  1:1 por valor (15/15 hoy). **Antes el line-height se escapaba** (el informe solo miraba font-size) — Rafa lo exigió.
+  Test de doble cara (`token-type-parity.test.mjs`). El `font-size` LITERAL lo sigue bloqueando `tokens:guard` rule 5.
+- **🧹 AUDITORÍA DE GUARDIANES (13 agentes + crítico)** — veredicto: el suite NO está sobre-ingenierizado (12 guardianes,
+  cada uno caza un bug distinto), PERO hay andamiaje de migración muerto. HECHO: docs:guard substring→frontera (bug real).
+  **PENDIENTE (confirmado-seguro, retomar):** **adelgazar `cmp-color-rewire.mjs`** — la value-equality del `check` es
+  CIRCULAR/muerta (compara el token vs `HEAD:` del preset ya repunteado → token==token trivial; un cambio de Figma lo caza
+  `tokens:gen-cmp-color`, no esto). Conservar SOLO la rama VIVA (hex hardcodeado en un slot generado = guard anti-regresión).
+  Borra ~238 LOC sin perder cobertura. (NO tocar `tokens:parity` el grande — es esencial; `type-parity` ya NO se corta, se mejoró.)
 - **🚨 CHIVATO §7 (Fase 1.2)** — `token-parity.mjs` §7 + `scripts/palette-map.mjs`: verifica que cada **primitiva de
   color** del DS sigue 1:1 a su fuente del export (mapa Tailwind→marca). Era el hueco de §1-6 (nunca miraban color
   primitivo) por el que `soft-blue` se desfasó del `cyan` SIN que nadie lo viera — ahora un desfase mudo = ROJO.
