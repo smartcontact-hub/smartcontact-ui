@@ -1002,4 +1002,29 @@ tokens y al preset (vigilado por `tokens:guard`).
 
 ---
 
-Última actualización: 2026-06-13 (adaptación al repo unificado).
+## DD-21 · 2026-06-18 — Puente PROBADO de extremo a extremo + sombras fluyen + pokédex
+
+**Contexto**: DD-20 declaró la ARQUITECTURA del puente (un generador por clase de valor). Esta
+sesión lo CIERRA y lo PRUEBA.
+
+**Decisión**:
+- **Sombras (`aura/effects`) fluyen del Kit** vía `token-gen-effects.mjs` → `--sc-cmp-*-shadow`,
+  leídas por el preset (rewire de 53 slots). El Kit es la verdad: el tinte slate de marca se retira
+  ("el Kit es el camino", Rafa). Guard `tokens:effects-rewire` impide volver a hardcodear hex.
+- **Completitud §8**: cada hoja de `semantic/common`/`app`/`effects` queda clasificada (fluye /
+  divergencia / no-consumida); una hoja NUEVA del Kit sin clasificar → ROJO.
+- **Mini-test e2e (la "puerta")**: `bridge-e2e.test.mjs` prueba en sandbox que un cambio del Kit
+  aparece en el CSS por CADA generador. Regresión para siempre → el puente está PROBADO, no solo montado.
+- **Hand-off durable**: `docs:coherence` verifica que el sello de `NEXT-SESSION` apunta a un commit real.
+- **Pokédex** (`audit:components`): clasificación dev-facing auto-generada (provenance / PrimeNG / API /
+  uso real en el Supervisor), guard anti-desfase. Base de la Fase 2.
+
+**Razón**: "nada se cae en silencio" hasta el final — toda clase de token fluye Y se verifica, y el
+hand-off no puede mentir. Verificado por Rafa a mano (cambió radius/color/tamaños en Figma → localhost).
+
+**Consecuencia**: la Fase 1 (el puente) está CERRADA. Pendiente de MARCA (no del puente): alinear las
+divergencias conscientes (warn→amarillo, dark→zinc, soft-blue↔cyan) como paso DELIBERADO (W5).
+
+---
+
+Última actualización: 2026-06-18 (cierre del puente probado + pokédex auto-generada).
