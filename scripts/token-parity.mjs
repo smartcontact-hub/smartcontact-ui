@@ -28,6 +28,7 @@ import { loadKitExport } from './dtcg-export.mjs';
 import { SIZING, GROUPS, DIVERGE_SIZING } from './sizing-map.mjs';
 import { ENFORCE as COLOR_ENFORCE, DIVERGE as COLOR_DIVERGE } from './color-map.mjs';
 import { PRIMITIVE_SOURCE, PRIMITIVE_DIVERGE, primitiveDrift } from './palette-map.mjs';
+import { classify, PRIMARY_STEPS } from './coverage-map.mjs';
 
 const root = resolve(import.meta.dirname, '..');
 const EXPORT_PATH = resolve(root, 'projects/design-tokens/scripts/kit-export-dtcg.json');
@@ -416,12 +417,43 @@ const census = [
   ['aura/component/common', 'cubierto', '§4 + token-gen-component'],
   ['aura/component/light', 'cubierto', 'token-gen-cmp-color'],
   ['aura/component/dark', 'cubierto', 'token-gen-cmp-color'],
-  ['aura/semantic/common', 'DIFERIDO', 'Fase 1.3'],
-  ['aura/app', 'DIFERIDO', 'Fase 1.3'],
-  ['aura/effects', 'DIFERIDO', 'Fase 1.3'],
+  ['aura/semantic/common', 'cubierto', '§8 (censo + primary value-check)'],
+  ['aura/app', 'cubierto', '§8 (no-consumido, documentado)'],
+  ['aura/effects', 'cubierto', '§8 (foco=outline + sombras divergencia)'],
   ['aura/custom', 'inverso', 'code→Figma (round-trip)'],
 ];
 for (const [g, status, by] of census) log(`  ${g.padEnd(24)} ${String(kit.groups[g]?.size ?? 0).padStart(4)} leaves · ${status.padEnd(9)} · ${by}`);
+
+// ── 8. COBERTURA de los grupos restantes (semantic/common · app · effects) ────
+// La "garantía de completitud" del puente (Fase 1.3): cada hoja de estos 3 grupos cae en
+// EXACTAMENTE un bucket (coverage-map.mjs). Una hoja NUEVA del Kit sin bucket → ROJO: no se
+// cuela en silencio. + value-check fuerte de la rampa `primary` (lo único que el DS consume
+// 1:1 aquí). El resto: ref que fluye (§1·2·7), cableado en base.ts, divergencia documentada o
+// no-consumido — ver notas del mapa. Sombras: divergencia/hardcoded, decisión en NEXT-SESSION.
+log('\n=== 8. COBERTURA · semantic/common · app · effects (completitud) ===');
+for (const g of ['aura/semantic/common', 'aura/app', 'aura/effects']) {
+  const paths = [...(kit.groups[g]?.keys() ?? [])];
+  const { byKind, unmatched } = classify(g, paths);
+  const kinds = Object.entries(byKind).map(([k, arr]) => `${k}:${arr.length}`).join(' · ');
+  log(`  ${g.padEnd(24)} ${String(paths.length).padStart(4)} leaves → ${kinds}`);
+  for (const p of unmatched)
+    fail(`[cobertura] ${g} · '${p}' no encaja en ningún bucket de coverage-map → hoja del Kit sin clasificar (clasifícala o documenta su divergencia)`);
+}
+// Value-check: primary.N (export) == --sc-color-blue-N (código), 1:1 por hex. Caza un desfase
+// MUDO de la marca primary (si el Kit mueve blue y la rampa primary no lo recoge).
+let primaryOk = 0;
+const scCommon = kit.groups['aura/semantic/common'];
+for (const step of PRIMARY_STEPS) {
+  const leaf = scCommon?.get(`primary.${step}`);
+  const expected = leaf ? normHex(kit.resolve(leaf.$value)) : undefined;
+  const got = tokenToHex(`sc-color-blue-${step}`, 'light');
+  if (expected === undefined) log(`  ? primary.${step}: no está en el export`);
+  else if (got === undefined) fail(`[primary] primary.${step} → --sc-color-blue-${step}: no resuelve a hex`);
+  else if (got !== expected) fail(`[primary] primary.${step}: export=${expected} vs --sc-color-blue-${step}=${got} → la rampa primary se desfasó de blue`);
+  else primaryOk++;
+}
+log(`  ✓ ${primaryOk}/${PRIMARY_STEPS.length} primary.N = --sc-color-blue-N (1:1 por valor)`);
+log('  (sombras = divergencia de marca / hex hardcoded en presets, NO bridged — decisión generador-vs-documentar pendiente, ver NEXT-SESSION)');
 
 // ── Resumen ──────────────────────────────────────────────────────────────────
 log('\n' + '─'.repeat(60));

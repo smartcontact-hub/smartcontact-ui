@@ -40,7 +40,7 @@ npm run e2e            # smoke en navegador (Playwright)
 | Guardarraíl | Comando | Qué garantiza | Estado |
 |---|---|---|---|
 | Generadores | `npm run tokens:gen` · `tokens:gen-component` · `tokens:gen-color` · `tokens:gen-cmp-color` | Los bloques `@sc-gen` (primitivos v/14 en rem, sizing, color semántico y **color de componente**) reproducen el export del Kit | ✅ |
-| Paridad | `npm run tokens:parity` | Escala/radios completos + 53 valores de sizing del preset + colores de marca 1:1 con el export (divergencias conscientes listadas) | ✅ |
+| Paridad | `npm run tokens:parity` | Escala/radios completos + 53 valores de sizing del preset + colores de marca 1:1 con el export + **completitud** (§8: cada hoja de `semantic/common`·`app`·`effects` clasificada en `coverage-map.mjs` + rampa `primary`=`blue` 1:1; una hoja nueva del Kit sin clasificar → rojo) — divergencias conscientes listadas | ✅ |
 | Guard | `npm run tokens:guard` | `--p-*` solo en el preset · componentes con alias `--sc-spacing-*` · sin escala 8-point · campos PrimeNG solo vía wrapper · font-size solo por token | ✅ |
 | Export limpio | `npm run tokens:export-clean` | En LOCAL, `kit-export-dtcg.json` coincide con HEAD (caza el export sucio que deja un `preview:live` zombie; se salta en CI, donde el sync lo aplica sobre main a propósito) | ✅ |
 | Repunte de color | `npm run tokens:cmp-rewire` | Cada `colorScheme` repuntado a `var(--sc-cmp-*)` es value-equal vs HEAD (no-op demostrable) y no deja hex hardcodeado para un slot que sí generamos | ✅ |
