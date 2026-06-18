@@ -1,86 +1,100 @@
 #!/usr/bin/env node
 /*
- * tokens:type-parity — comprobador SOLO-LECTURA de tipografía (font-size).
+ * tokens:type-parity — PARIDAD de tipografía (font-size + line-height) export ↔ código. GATE.
  * ============================================================================
- * Hermano de `tokens:parity` (escala/radio/color), enfocado a TIPO. Cruza los
- * `font-size` del código contra los tokens `--sc-font-size-*` (resueltos a px
- * desde la rampa redonda en rem: `font-size-X → calc(N/16*1rem) → N px`). Reporta:
- *   - cobertura: tokenizado `var(--sc-font-size-*)` vs literal px/rem
- *   - mapa valor→token más cercano (Δpx)
- *   - olas: 1 (snap ≤0.5px, cambio invisible) / 2 (off-scale, requiere decisión)
+ * Verifica que cada `typography.font.size.N` y `typography.line.height.N` del Kit (Figma)
+ * tiene su `--sc-font-size-N` / `--sc-line-height-N` en código con el MISMO valor px. Sale ≠0
+ * si alguno DRIFTA (un cambio de tipografía en Figma que no llegó al código → se escaparía).
  *
- * NO reescribe nada (comprobador, no generador). Line-heights no se cubren
- * (mueven layout → fase aparte con regresión visual).
+ * Por qué importa (Rafa, 2026-06-18): los text styles de Figma vinculan font-size Y line-height
+ * a variables; antes esto era un informe SOLO-LECTURA que solo miraba font-size y NUNCA
+ * line-height → el line-height podía desfasarse en silencio. Ahora NO.
+ *
+ * Reparto de trabajo:
+ *   - `tokens:guard` rule 5 bloquea el `font-size` LITERAL en SCSS (que se use el token).
+ *   - ESTE bloquea el DRIFT del VALOR del token vs el export (font-size + line-height).
+ *   - letter-spacing / tracking: NO existe en el export → nada que vigilar.
+ *   - font-weight / font-family: semánticos de código, no primitivas del export → fuera de alcance.
  */
-import { readFileSync, readdirSync, statSync } from 'node:fs';
-import { join, resolve } from 'node:path';
+import { readFileSync } from 'node:fs';
+import { resolve } from 'node:path';
+import { loadKitExport } from './dtcg-export.mjs';
 
-const ROOT = resolve(import.meta.dirname, '..');
-const PRIM = 'projects/design-tokens/src/lib/styles/tokens/layers/01-primitive.css';
-const SNAP = 0.5; // ≤ esto = ola 1 (imperceptible)
+const root = resolve(import.meta.dirname, '..');
+const EXPORT = resolve(root, 'projects/design-tokens/scripts/kit-export-dtcg.json');
+const LAYERS = resolve(root, 'projects/design-tokens/src/lib/styles/tokens/layers');
+const log = (s = '') => process.stdout.write(s + '\n');
 
-// 1. Resolver --sc-font-size-* → px
-const prim = readFileSync(join(ROOT, PRIM), 'utf8');
-const tokenPx = {};
-for (const m of prim.matchAll(/--sc-font-size-(\w+):\s*calc\(([\d.]+)\s*\/\s*16\s*\*\s*1rem\)/g)) {
-  tokenPx[`font-size-${m[1]}`] = +parseFloat(m[2]).toFixed(3);
-}
-const tokens = [...new Set(Object.values(tokenPx))].sort((a, b) => a - b);
-const tokenFor = (px) => Object.keys(tokenPx).find((k) => tokenPx[k] === px);
+// Las dos clases de tipografía primitiva del export y su prefijo de token en código.
+const KINDS = [
+  { ns: 'font.size', prefix: 'sc-font-size-' },
+  { ns: 'line.height', prefix: 'sc-line-height-' },
+];
 
-// 2. Escanear SCSS de projects/
-function walk(dir, acc = []) {
-  for (const e of readdirSync(dir)) {
-    if (e === 'node_modules' || e === 'dist' || e.startsWith('.')) continue;
-    const p = join(dir, e);
-    if (statSync(p).isDirectory()) walk(p, acc);
-    else if (e.endsWith('.scss')) acc.push(p);
+/** Lista [{ kind, step, token, exp }] de las primitivas de tipografía del export (resueltas a px). */
+export function exportTypography(kit) {
+  const custom = kit.groups['aura/custom'];
+  const out = [];
+  if (!custom) return out;
+  for (const { ns, prefix } of KINDS) {
+    const re = new RegExp(`^typography\\.${ns.replace('.', '\\.')}\\.(\\w+)$`);
+    for (const [p, leaf] of custom) {
+      const m = p.match(re);
+      if (m) out.push({ kind: ns, step: m[1], token: prefix + m[1], exp: kit.resolve(leaf.$value) });
+    }
   }
-  return acc;
+  return out;
 }
-const files = walk(join(ROOT, 'projects'));
 
-let tokenized = 0;
-const literals = {};
-for (const f of files) {
-  const css = readFileSync(f, 'utf8');
-  tokenized += (css.match(/font-size:\s*var\(--sc-font-size-/g) || []).length;
-  for (const m of css.matchAll(/font-size:\s*([0-9.]+)(px|rem)\b/g)) {
-    const px = +(parseFloat(m[1]) * (m[2] === 'rem' ? 16 : 1)).toFixed(3);
-    literals[px] = (literals[px] || 0) + 1;
+/** `--name` → px de código: calc(N/16*1rem)→N · rem→×16 · número crudo (line-height) · si no, undefined. */
+export function codePx(css, name) {
+  const m = css.match(new RegExp(`--${name}\\s*:\\s*([^;]+);`));
+  if (!m) return undefined;
+  const v = m[1].trim();
+  let g = v.match(/calc\(\s*([\d.]+)\s*\/\s*16/);
+  if (g) return +(+g[1]).toFixed(3);
+  g = v.match(/^([\d.]+)rem$/);
+  if (g) return +(+g[1] * 16).toFixed(3);
+  g = v.match(/^([\d.]+)(px)?$/);
+  if (g) return +(+g[1]).toFixed(3);
+  return undefined;
+}
+
+/**
+ * PURA (testeable): drift entre el listado del export y el código. `pxOf(token)` resuelve un
+ * token a px (o undefined). Devuelve [{ token, exp, got }] — vacío = todo 1:1.
+ */
+export function typographyDrift(list, pxOf) {
+  const drift = [];
+  for (const { token, exp } of list) {
+    const got = pxOf(token);
+    if (got === undefined) drift.push({ token, exp, got: 'AUSENTE' });
+    else if (typeof exp === 'number' && Math.abs(exp - got) > 0.01) drift.push({ token, exp, got });
   }
+  return drift;
 }
 
-// 3. Clasificar literales
-const totalLit = Object.values(literals).reduce((a, b) => a + b, 0);
-let ola1 = 0;
-let ola2 = 0;
-const rows = Object.entries(literals)
-  .map(([pxStr, n]) => {
-    const px = +pxStr;
-    const near = tokens.reduce((a, b) => (Math.abs(b - px) < Math.abs(a - px) ? b : a));
-    const d = +(px - near).toFixed(2);
-    const wave = Math.abs(d) <= SNAP ? 1 : 2;
-    if (wave === 1) ola1 += n;
-    else ola2 += n;
-    return { px, n, token: tokenFor(near), d, wave };
-  })
-  .sort((a, b) => b.n - a.n);
+// ── CLI ───────────────────────────────────────────────────────────────────────
+if (import.meta.url === `file://${process.argv[1]}`) {
+  const kit = loadKitExport(EXPORT);
+  const css = ['01-primitive', '02-semantic', '03-palette', '04-component', '05-extensions']
+    .map((l) => readFileSync(resolve(LAYERS, `${l}.css`), 'utf8'))
+    .join('\n');
+  const list = exportTypography(kit);
+  const drift = typographyDrift(list, (t) => codePx(css, t));
 
-// 4. Reporte
-console.log('=== tokens --sc-font-size-* (px, rampa redonda) ===');
-console.log('  ' + tokens.map((t) => `${t}=${tokenFor(t)}`).join('  '));
-console.log('\n=== cobertura font-size en SCSS (projects/) ===');
-const denom = tokenized + totalLit;
-const pct = denom ? ((tokenized / denom) * 100).toFixed(0) : '100';
-console.log(`  tokenizado var(--sc-font-size-*): ${tokenized}  (${pct}%)`);
-console.log(`  literal px/rem: ${totalLit}  →  ola1 (snap ≤${SNAP}px): ${ola1} · ola2 (decidir): ${ola2}`);
-if (rows.length) {
-  console.log('\n=== literales font-size → token más cercano ===');
-  for (const r of rows) {
-    console.log(
-      `  ${String(r.px).padStart(6)} ×${String(r.n).padStart(3)}  → ${(r.token || '?').padEnd(15)} Δ${String(r.d).padStart(5)}  ${r.wave === 1 ? 'ola 1 (invisible)' : 'ola 2 (decidir)'}`,
-    );
+  log('\n=== tokens:type-parity · font-size + line-height (export ↔ código, 1:1 por valor) ===');
+  for (const d of drift)
+    log(`  ✗ --${d.token} = ${d.got} pero el Kit dice ${d.exp}px → DRIFT (cambio de tipografía de Figma que no llegó al código).`);
+  const fs = list.filter((x) => x.kind === 'font.size').length;
+  const lh = list.filter((x) => x.kind === 'line.height').length;
+  log(`  ✓ ${list.length - drift.length}/${list.length} valores 1:1 con el export (${fs} font-size + ${lh} line-height).`);
+  log('  (literal font-size → lo bloquea tokens:guard rule 5 · letter-spacing no existe en el export.)');
+
+  if (drift.length) {
+    log(`\n✗ ${drift.length} drift(s) de tipografía — corre \`npm run tokens:import\` o cuadra el valor en la capa.`);
+    process.exit(1);
   }
+  log('✓ tipografía al día con el export.');
+  process.exit(0);
 }
-console.log('\nSolo lectura. Ola 1 = snap directo. Ola 2 = decisión humana.');
