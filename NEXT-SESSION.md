@@ -1,6 +1,6 @@
 # NEXT SESSION — Smart Contact DS (hand-off)
 
-> Sello: **2026-06-18**, Fase 1.1 (puente de color) COMPLETA (HEAD `91ae6e6`). Se SOBREESCRIBE en cada cierre.
+> Sello: **2026-06-18**, Fase 1.1 (color) + 1.2 (chivato §7) + paridad de tipografía COMPLETAS (HEAD `63bfa74`). SOBREESCRIBE en cada cierre.
 
 ---
 
@@ -8,8 +8,10 @@
 1. **Lee este fichero entero** (estado + primera acción + trampas).
 2. **Lee el plan maestro:** `~/.claude/plans/async-greeting-pumpkin.md` — es el norte (4 fases: Puente → Audit → Agent → AED).
 3. **El *por qué* durable:** `docs/DECISIONS.md`. Reglas/trampas operativas: `AGENTS.md`.
-4. **PRIMERA ACCIÓN de esta sesión:** Fase 1.2 — el **CHIVATO §7** (ver §"PRIMERA ACCIÓN" abajo). Fase 1.1 (rewire de
-   color) ya está hecha y en main. ⚠️ Antes de tocar tokens, mira la 1ª TRAMPA (preview:live zombie ensucia el export).
+4. **PRIMERA ACCIÓN:** Fase **1.3** — cerrar huecos effects/app/semantic-common (ver §"PRIMERA ACCIÓN" abajo). Fase 1.1
+   (color), 1.2 (chivato §7) y la paridad de tipografía YA están en main. ⚠️ Antes de tocar tokens, mira la 1ª TRAMPA
+   (preview:live zombie ensucia el export). **Opciones alternativas si Rafa lo pide:** adelgazar `cmp-color-rewire` (cleanup
+   confirmado-seguro, ver YA HECHO) · W5 (marca, necesita la página de backlog en Figma) · auditoría de tokens (soft-blue).
 5. **Cómo validar SIEMPRE antes de dar algo por hecho:** `npm run verify` (+ `CI=1 npm run e2e` si tocaste algo visual).
 6. **Protocolo:** cada lote con su verificador VERDE; commits a main acaban en `Co-Authored-By: Claude Opus 4.8 (1M context)`;
    `git add` **nunca** incluye `.claude`.
@@ -17,14 +19,13 @@
 ---
 
 ## 🎯 Estado de un vistazo
-**El puente de COLOR de componente está VIVO y completo** (Fase 1.1 ✅, sello 2026-06-18, HEAD `91ae6e6`). Fluyen a
-código: primitivos, color **semántico**, **sizing** de componente, y **color de componente LEÍDO** por los 20 componentes
-con `colorScheme`. Un cambio de color de componente en Figma ahora SE VE. Auditado: **0 huecos de primitivos**.
+**El puente está VIVO y GUARDADO** (HEAD `63bfa74`). Fluyen+se-verifican: primitivos (color §7), semántico, sizing,
+**color de componente** leído por los 20 componentes con `colorScheme`, y **tipografía** (font-size + line-height parity).
+Un cambio de cualquiera de esos en Figma SE VE y, si no llega al código, salta ROJO (nada en silencio).
 
 **Lo que falta para cerrar el puente:**
-1. **Chivato §7** (garantía de completitud) — Fase 1.2, lo inmediato.
-2. Huecos **effects** (129) + **app** (6) — Fase 1.3.
-3. **Mini-test** end-to-end — Fase 1.4 (puerta).
+1. Huecos **effects** (129) + **app** (6) + **semantic-common** (60) — Fase **1.3** (lo inmediato; el censo §7b los lista).
+2. **Mini-test** end-to-end — Fase 1.4 (puerta). Con eso el puente queda PROBADO completo.
 
 **Decisión de marca DIFERIDA (Rafa, 2026-06-18):** "primero el puente, marca después". El repunte preservó 2 divergencias
 de marca SIN cambiar pixeles (vía EXCLUDE): **warn = ámbar** (no yellow/orange del Kit) y **superficie oscura = gris SC**
