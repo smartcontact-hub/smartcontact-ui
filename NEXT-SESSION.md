@@ -36,6 +36,12 @@ de marca SIN cambiar pixeles (vía EXCLUDE): **warn = ámbar** (no yellow/orange
 
 ## 🗺️ Orden maestro (aprobado 2026-06-18) — el detalle está en el PLAN
 - **Fase 1 — Puente:** 1.1 rewire de color ✅ · **1.2 chivato §7 (siguiente)** · 1.3 effects/app · 1.4 mini-test.
+- **🔍 AUDITORÍA DE TOKENS (Rafa la pidió para el FINAL del puente, `/audit-design-system`):** confirmar que TODAS las
+  paletas del `~/Downloads/design-tokens.json` oficial (= mismo formato/valores que nuestro kit-export) quedan PERFECTAS
+  en el DS. Mapa Tailwind→marca en memoria [[palette-rename-map-tailwind-to-brand]]. **Hallazgo ya cazado (2026-06-18):**
+  3/4 paletas clave perfectas (blue→Primary, slate→Gray, sky→Electric-Blue), pero **`cyan→soft-blue` DESFASADO** (los 11
+  valores difieren un pelín) porque `soft-blue` está CURADO A MANO (fuera de `@sc-gen`) sin guard. Fix: re-sync soft-blue↔
+  cyan, idealmente AUTO-derivarlo + un parity-guard de familias curadas (que no se vuelva a desfasar). Auditar TODAS, no solo las 4.
 - **Fase 2 — Audit DS:** clasificación AUTO-generada (standard/extended/custom/anidados/cobertura) como guard +
   capturas del **flujo real** (Supervisor). Es la **referencia dev-facing exhaustiva**.
 - **Fase 3 — Agent:** inventario de la pantalla Figma → mapeo a la "pokédex" (nuestro DS) → esqueleto + preview.
