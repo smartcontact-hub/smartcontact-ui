@@ -142,12 +142,17 @@ export const unresolved = resolved.flatMap((z) => z.unresolved);
 // ── CLI (solo al ejecutar directo; al importar desde un test, NADA de esto corre —
 //    el módulo solo expone las puras + resolved/missing/unresolved, sin process.exit) ──
 if (import.meta.url === `file://${process.argv[1]}`) {
-  // En --emit informamos pero NO abortamos (queremos VER el panorama). En check/write, fallamos.
+  // RED DE SEGURIDAD (no tumbar el sync entero por un color): si un color elegido en Figma
+  // NO está en la paleta (su base no tiene primitiva --sc-color-*), se OMITE ese slot (no se
+  // aplica) y se AVISA — el resto de tokens fluye igual. Antes esto era `exit 1` y un solo
+  // color fuera de paleta crasheaba TODO el sync. El veredicto en cristiano (token-report.mjs)
+  // traduce estas líneas y sugiere el color registrado más cercano. NO sale ≠0 por esto.
   if (missing.length && !emit) {
-    log('✗ token-gen-cmp-color: colores cuya base NO tiene primitiva --sc-color-* (¿falta auto-import?):');
+    log(`⚠ token-gen-cmp-color: ${missing.length} color(es) FUERA DE LA PALETA → OMITIDO(s) (no aplicados).`);
+    log('  Añade esa familia como primitiva en Figma, o elige un color que el DS ya tenga:');
     for (const l of missing.slice(0, 40)) log(`    · ${l}`);
     if (missing.length > 40) log(`    … y ${missing.length - 40} más`);
-    process.exit(1);
+    // sigue: escribe las zonas SIN esos slots (ya quedaron fuera en resolveZone).
   }
   if (unresolved.length && !emit) {
     log('✗ token-gen-cmp-color: referencias sin resolver en el export:');

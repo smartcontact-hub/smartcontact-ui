@@ -65,19 +65,24 @@ const TRANSLATORS = [
         `→ Usa colores con más diferencia de luz (oscurece el fondo si el texto es claro, o al revés).`,
     };
   },
-  // color elegido fuera de la paleta del DS (el generador no encuentra primitiva)
+  // color elegido fuera de la paleta del DS (el generador OMITE el slot y avisa).
+  // Formato real: `[dark] toast.info.border.color = #0369a15c (base #0369a1 sin --sc-color-* primitiva)`.
+  // Capturamos la BASE de 6 dígitos (sin alfa) → así `nearest()` puede sugerir la primitiva más próxima.
   (line, ctx = {}) => {
-    const m = line.match(/\[(\w+)\]\s+(\S+)\s*=\s*(#\w+)\s*\(sin --sc-color-\* primitiva\)/);
+    const m = line.match(
+      /\[(\w+)\]\s+(\S+)\s*=\s*#\w+\s*\(base\s*(#[0-9a-fA-F]{6})\s*sin --sc-color-\* primitiva\)/,
+    );
     if (!m) return null;
-    const [, , path, hex] = m;
-    const near = nearest(hex, ctx.palette);
+    const [, , path, base] = m;
+    const near = nearest(base, ctx.palette);
     const sug = near
       ? ` Lo más cercano que **sí** existe: \`--${near.name}\` (\`${near.hex}\`).`
       : '';
     return {
       plain:
-        `**Color fuera de la paleta del DS.** Elegiste \`${hex}\` (en \`${path}\`). La paleta del DS es un ` +
-        `set **curado** de familias (amber, blue, gray, emerald…) y ese color no está en ninguna.${sug} ` +
+        `**Color fuera de la paleta del DS** (omitido, NO aplicado — el resto de tu cambio sí fluye). ` +
+        `Elegiste \`${base}\` (en \`${path}\`). La paleta del DS es un set **curado** de familias ` +
+        `(amber, blue, gray, emerald…) y ese color no está en ninguna.${sug} ` +
         `→ Usa un color de una familia que el DS ya tenga, **o** añade esa familia a la paleta (decisión de DS).`,
     };
   },
