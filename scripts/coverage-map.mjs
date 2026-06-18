@@ -44,10 +44,10 @@ export const BUCKETS = [
   // 71 *.focus.ring.shadow = #00000000 (no-op): el DS hace el foco por OUTLINE
   // (--sc-focus-ring-width), no por shadow-ring → divergencia estructural vs Aura.
   { group: 'aura/effects', test: /\.focus\.ring\.shadow$/, kind: 'divergence', note: 'foco por outline (--sc-focus-ring-width), no shadow-ring → sombra transparente (no-op)' },
-  // El resto = sombras de elevación. GENERADAS a --sc-cmp-*-shadow (@sc-gen:effects, token-gen-
-  // effects.mjs) → fluyen del Kit. Etapa 1 hecha (emitidas); el preset las lee hardcoded todavía →
-  // rewire pendiente (Etapa 2) para que el componente lea var(--sc-cmp-*-shadow).
-  { group: 'aura/effects', test: /\.shadow$/, kind: 'shadow', note: 'sombra de elevación — GENERADA a --sc-cmp-*-shadow (@sc-gen:effects, fluye del Kit); rewire del preset pendiente (Etapa 2)' },
+  // El resto = sombras de elevación. GENERADAS a --sc-cmp-*-shadow (@sc-gen:effects) y LEÍDAS por
+  // el preset (var(--sc-cmp-*-shadow)) → fluyen del Kit. Puente completo (Etapa 1 emite, Etapa 2
+  // repunta); el guard tokens:effects-rewire impide que vuelva a colarse un hex hardcoded.
+  { group: 'aura/effects', test: /\.shadow$/, kind: 'shadow', note: 'sombra de elevación — GENERADA a --sc-cmp-*-shadow y LEÍDA por el preset → fluye del Kit (guard: tokens:effects-rewire)' },
 ];
 
 /**

@@ -40,7 +40,7 @@ import type { DataTableDesignTokens } from '@primeuix/themes/types/datatable';
         },
         overlaySelect: {
             color: "{overlay.select.color}",
-            shadow: "0 0.142857rem 0.285714rem -0.142857rem #0000001a, 0 0.285714rem 0.428571rem -0.071429rem #0000001a",
+            shadow: "var(--sc-cmp-datatable-filter-overlay-select-shadow)",
             background: "{overlay.select.background}",
             borderColor: "{overlay.select.border.color}",
             borderRadius: "{overlay.select.border.radius}"
@@ -52,7 +52,7 @@ import type { DataTableDesignTokens } from '@primeuix/themes/types/datatable';
         overlayPopover: {
             gap: "var(--sc-scale-0-5)",
             color: "{overlay.popover.color}",
-            shadow: "0 0.142857rem 0.285714rem -0.142857rem #0000001a, 0 0.285714rem 0.428571rem -0.071429rem #0000001a",
+            shadow: "var(--sc-cmp-datatable-filter-overlay-select-shadow)",
             padding: "{overlay.popover.padding}",
             background: "{overlay.popover.background}",
             borderColor: "{overlay.popover.border.color}",

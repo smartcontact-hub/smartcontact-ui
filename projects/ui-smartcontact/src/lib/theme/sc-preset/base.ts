@@ -154,7 +154,7 @@ const formFieldScheme = {
   floatLabelFocusColor: 'var(--sc-text-subtle)',
   floatLabelActiveColor: 'var(--sc-text-subtle)',
   floatLabelInvalidColor: '{form.field.invalid.placeholder.color}',
-  shadow: 'var(--sc-shadow-xs)',
+  shadow: 'var(--sc-cmp-form-field-shadow)',
 };
 
 export default {
@@ -209,19 +209,19 @@ export default {
       modal: {
         padding: 'var(--sc-cmp-overlay-modal-padding)',
         borderRadius: 'var(--sc-cmp-overlay-modal-border-radius)',
-        shadow: 'var(--sc-shadow-dialog)',
+        shadow: 'var(--sc-cmp-overlay-modal-shadow)',
       },
       popover: {
         padding: 'var(--sc-cmp-overlay-popover-padding)',
         borderRadius: 'var(--sc-cmp-overlay-popover-border-radius)',
-        shadow: 'var(--sc-shadow-popover)',
+        shadow: 'var(--sc-cmp-overlay-popover-shadow)',
       },
       select: {
         borderRadius: 'var(--sc-cmp-overlay-select-border-radius)',
-        shadow: 'var(--sc-shadow-dropdown)',
+        shadow: 'var(--sc-cmp-overlay-select-shadow)',
       },
       navigation: {
-        shadow: 'var(--sc-shadow-dropdown)',
+        shadow: 'var(--sc-cmp-overlay-navigation-shadow)',
       },
     },
     formField: {
@@ -241,7 +241,7 @@ export default {
       },
       borderRadius: 'var(--sc-cmp-form-field-border-radius)',
       transitionDuration: 'var(--sc-transition-base)',
-      shadow: 'var(--sc-shadow-xs)',
+      shadow: 'var(--sc-cmp-form-field-shadow)',
       focusRing: {
         // El Kit apaga el ring del campo (focus = borde): width 0.
         color: 'transparent',

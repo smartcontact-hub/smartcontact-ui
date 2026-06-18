@@ -3,7 +3,7 @@ import type { DrawerDesignTokens } from '@primeuix/themes/types/drawer';
  export default {
     root: {
         color: "{overlay.modal.color}",
-        shadow: "0 0.571429rem 0.714286rem -0.428571rem #0000001a, 0 1.428571rem 1.785714rem -0.357143rem #0000001a",
+        shadow: "var(--sc-cmp-drawer-shadow)",
         background: "{overlay.modal.background}",
         borderColor: "{overlay.modal.border.color}"
     },

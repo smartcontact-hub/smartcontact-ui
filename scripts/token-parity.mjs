@@ -419,7 +419,7 @@ const census = [
   ['aura/component/dark', 'cubierto', 'token-gen-cmp-color'],
   ['aura/semantic/common', 'cubierto', '§8 (censo + primary value-check)'],
   ['aura/app', 'cubierto', '§8 (no-consumido, documentado)'],
-  ['aura/effects', 'cubierto', '§8 (foco=outline + sombras GENERADAS, rewire pend.)'],
+  ['aura/effects', 'cubierto', '§8 (foco=outline + sombras GENERADAS y leídas por el preset)'],
   ['aura/custom', 'inverso', 'code→Figma (round-trip)'],
 ];
 for (const [g, status, by] of census) log(`  ${g.padEnd(24)} ${String(kit.groups[g]?.size ?? 0).padStart(4)} leaves · ${status.padEnd(9)} · ${by}`);
@@ -453,7 +453,7 @@ for (const step of PRIMARY_STEPS) {
   else primaryOk++;
 }
 log(`  ✓ ${primaryOk}/${PRIMARY_STEPS.length} primary.N = --sc-color-blue-N (1:1 por valor)`);
-log('  (sombras de effects → GENERADAS a --sc-cmp-*-shadow por token-gen-effects [@sc-gen:effects]; rewire del preset pendiente, Etapa 2)');
+log('  (sombras de effects → GENERADAS a --sc-cmp-*-shadow [@sc-gen:effects] y LEÍDAS por el preset; guard: tokens:effects-rewire)');
 
 // ── Resumen ──────────────────────────────────────────────────────────────────
 log('\n' + '─'.repeat(60));

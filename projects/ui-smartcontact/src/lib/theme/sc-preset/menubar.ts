@@ -33,7 +33,7 @@ import type { MenubarDesignTokens } from '@primeuix/themes/types/menubar';
             focusColor: "{navigation.submenu.icon.focus.color}",
             activeColor: "{navigation.submenu.icon.active.color}"
         },
-        shadow: "0 0.142857rem 0.285714rem -0.142857rem #0000001a, 0 0.285714rem 0.428571rem -0.071429rem #0000001a",
+        shadow: "var(--sc-cmp-menubar-submenu-shadow)",
         padding: "{navigation.list.padding}",
         background: "{content.background}",
         borderColor: "{content.border.color}",

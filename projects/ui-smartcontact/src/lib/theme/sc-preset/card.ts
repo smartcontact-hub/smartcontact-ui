@@ -7,7 +7,7 @@ import type { CardDesignTokens } from '@primeuix/themes/types/card';
     },
     root: {
         color: "{content.color}",
-        shadow: "0 0.071429rem 0.142857rem -0.071429rem #0000001a, 0 0.071429rem 0.214286rem 0 #0000001a",
+        shadow: "var(--sc-cmp-card-shadow)",
         background: "{content.background}",
         borderRadius: "{border.radius.xl}"
     },

@@ -19,7 +19,7 @@ import type { MenuDesignTokens } from '@primeuix/themes/types/menu';
     },
     root: {
         color: "{content.color}",
-        shadow: "0 0.142857rem 0.285714rem -0.142857rem #0000001a, 0 0.285714rem 0.428571rem -0.071429rem #0000001a",
+        shadow: "var(--sc-cmp-menu-shadow)",
         background: "{content.background}",
         borderColor: "{content.border.color}",
         borderRadius: "{content.border.radius}",

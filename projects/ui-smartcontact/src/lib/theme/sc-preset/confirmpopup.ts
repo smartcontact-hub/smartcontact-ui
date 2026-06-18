@@ -8,7 +8,7 @@ import type { ConfirmPopupDesignTokens } from '@primeuix/themes/types/confirmpop
     root: {
         color: "{overlay.popover.color}",
         gutter: "0.714286rem",
-        shadow: "0 0.142857rem 0.285714rem -0.142857rem #0000001a, 0 0.285714rem 0.428571rem -0.071429rem #0000001a",
+        shadow: "var(--sc-cmp-confirmpopup-shadow)",
         background: "{overlay.popover.background}",
         arrowOffset: "var(--sc-scale-1-25)",
         borderColor: "{overlay.popover.border.color}",

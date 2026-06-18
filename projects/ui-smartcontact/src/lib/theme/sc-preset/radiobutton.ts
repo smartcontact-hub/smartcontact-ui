@@ -24,7 +24,7 @@ import type { RadioButtonDesignTokens } from '@primeuix/themes/types/radiobutton
         },
         width: "var(--sc-scale-1-25)",
         height: "var(--sc-scale-1-25)",
-        shadow: "0 0.071429rem 0.142857rem 0 #1212170d",
+        shadow: "var(--sc-cmp-radiobutton-shadow)",
         focusRing: {
             color: "{focus.ring.color}",
             style: "{focus.ring.style}",

@@ -14,7 +14,7 @@ import type { PasswordDesignTokens } from '@primeuix/themes/types/password';
     },
     overlay: {
         color: "{overlay.popover.color}",
-        shadow: "0 0.142857rem 0.285714rem -0.142857rem #0000001a, 0 0.285714rem 0.428571rem -0.071429rem #0000001a",
+        shadow: "var(--sc-cmp-password-overlay-shadow)",
         padding: "{overlay.popover.padding}",
         background: "{overlay.popover.background}",
         borderColor: "{overlay.popover.border.color}",

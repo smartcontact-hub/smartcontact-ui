@@ -16,7 +16,7 @@ import type { TreeSelectDesignTokens } from '@primeuix/themes/types/treeselect';
             paddingY: "{form.field.sm.padding.y}"
         },
         color: "{form.field.color}",
-        shadow: "0 0.071429rem 0.142857rem 0 #1212170d",
+        shadow: "var(--sc-cmp-treeselect-shadow)",
         paddingX: "{form.field.padding.x}",
         paddingY: "{form.field.padding.y}",
         focusRing: {
@@ -46,7 +46,7 @@ import type { TreeSelectDesignTokens } from '@primeuix/themes/types/treeselect';
     },
     overlay: {
         color: "{overlay.select.color}",
-        shadow: "0 0.142857rem 0.285714rem -0.142857rem #0000001a, 0 0.285714rem 0.428571rem -0.071429rem #0000001a",
+        shadow: "var(--sc-cmp-treeselect-overlay-shadow)",
         background: "{overlay.select.background}",
         borderColor: "{overlay.select.border.color}",
         borderRadius: "{overlay.select.border.radius}"

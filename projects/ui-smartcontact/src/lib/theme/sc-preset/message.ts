@@ -11,7 +11,7 @@ import type { MessageDesignTokens } from '@primeuix/themes/types/message';
         size: "var(--sc-scale-1-125)"
     },
     info: {
-        shadow: "0 0.285714rem 0.571429rem 0 #02050a0a",
+        shadow: "var(--sc-cmp-message-info-shadow)",
         closeButton: {
             focusRing: {
                 shadow: "none"
@@ -34,7 +34,7 @@ import type { MessageDesignTokens } from '@primeuix/themes/types/message';
         fontWeight: "500"
     },
     warn: {
-        shadow: "0 0.285714rem 0.571429rem 0 #0907000a",
+        shadow: "var(--sc-cmp-message-warn-shadow)",
         closeButton: {
             focusRing: {
                 shadow: "none"
@@ -42,7 +42,7 @@ import type { MessageDesignTokens } from '@primeuix/themes/types/message';
         }
     },
     error: {
-        shadow: "0 0.285714rem 0.571429rem 0 #0a03030a",
+        shadow: "var(--sc-cmp-message-error-shadow)",
         closeButton: {
             focusRing: {
                 shadow: "none"
@@ -65,7 +65,7 @@ import type { MessageDesignTokens } from '@primeuix/themes/types/message';
         padding: "var(--sc-scale-0-5) var(--sc-scale-0-75)"
     },
     success: {
-        shadow: "0 0.285714rem 0.571429rem 0 #0108040a",
+        shadow: "var(--sc-cmp-message-success-shadow)",
         closeButton: {
             focusRing: {
                 shadow: "none"
@@ -73,7 +73,7 @@ import type { MessageDesignTokens } from '@primeuix/themes/types/message';
         }
     },
     contrast: {
-        shadow: "0 0.285714rem 0.571429rem 0 #0000010a",
+        shadow: "var(--sc-cmp-message-contrast-shadow)",
         closeButton: {
             focusRing: {
                 shadow: "none"
@@ -95,7 +95,7 @@ import type { MessageDesignTokens } from '@primeuix/themes/types/message';
         size: "var(--sc-scale-1)"
     },
     secondary: {
-        shadow: "0 0.285714rem 0.571429rem 0 #0405060a",
+        shadow: "var(--sc-cmp-message-secondary-shadow)",
         closeButton: {
             focusRing: {
                 shadow: "none"

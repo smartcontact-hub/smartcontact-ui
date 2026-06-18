@@ -52,7 +52,7 @@ import type { TabsDesignTokens } from '@primeuix/themes/types/tabs';
     navButton: {
         color: "{text.muted.color}",
         width: "var(--sc-scale-2-5)",
-        shadow: "0 0 0.714286rem 3.571429rem #ffffff99",
+        shadow: "var(--sc-cmp-tabs-nav-button-shadow)",
         focusRing: {
             color: "{focus.ring.color}",
             style: "{focus.ring.style}",
