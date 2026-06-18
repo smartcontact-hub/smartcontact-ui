@@ -1,6 +1,6 @@
 # NEXT SESSION — Smart Contact DS (hand-off)
 
-> Sello: **2026-06-18**, tras aprobar el plan maestro (HEAD `6b95ad7`). Se SOBREESCRIBE en cada cierre.
+> Sello: **2026-06-18**, Fase 1.1 (puente de color) COMPLETA (HEAD `91ae6e6`). Se SOBREESCRIBE en cada cierre.
 
 ---
 
@@ -8,8 +8,8 @@
 1. **Lee este fichero entero** (estado + primera acción + trampas).
 2. **Lee el plan maestro:** `~/.claude/plans/async-greeting-pumpkin.md` — es el norte (4 fases: Puente → Audit → Agent → AED).
 3. **El *por qué* durable:** `docs/DECISIONS.md`. Reglas/trampas operativas: `AGENTS.md`.
-4. **PRIMERA ACCIÓN de esta sesión:** Fase 1.1 — el **REWIRE de color de componente, empezando por toast + message**
-   (ver §"PRIMERA ACCIÓN" abajo). NO empieces otra cosa; foco en eso.
+4. **PRIMERA ACCIÓN de esta sesión:** Fase 1.2 — el **CHIVATO §7** (ver §"PRIMERA ACCIÓN" abajo). Fase 1.1 (rewire de
+   color) ya está hecha y en main. ⚠️ Antes de tocar tokens, mira la 1ª TRAMPA (preview:live zombie ensucia el export).
 5. **Cómo validar SIEMPRE antes de dar algo por hecho:** `npm run verify` (+ `CI=1 npm run e2e` si tocaste algo visual).
 6. **Protocolo:** cada lote con su verificador VERDE; commits a main acaban en `Co-Authored-By: Claude Opus 4.8 (1M context)`;
    `git add` **nunca** incluye `.claude`.
@@ -17,20 +17,25 @@
 ---
 
 ## 🎯 Estado de un vistazo
-**El puente Figma→código avanza, NO está completo.** Fluyen a código: primitivos (escala/radio/paleta + auto-import),
-color **semántico**, **sizing** de componente, y **color de componente** (EMITIDO). Auditado: **0 huecos de primitivos**.
+**El puente de COLOR de componente está VIVO y completo** (Fase 1.1 ✅, sello 2026-06-18, HEAD `91ae6e6`). Fluyen a
+código: primitivos, color **semántico**, **sizing** de componente, y **color de componente LEÍDO** por los 20 componentes
+con `colorScheme`. Un cambio de color de componente en Figma ahora SE VE. Auditado: **0 huecos de primitivos**.
 
 **Lo que falta para cerrar el puente:**
-1. **REWIRE** del color de componente — el generador EMITE los `--sc-cmp-*` color pero el preset los tiene
-   **hardcodeados** → **nadie los lee** todavía → el toast→sky **aún no se ve**. ESTO es lo inmediato.
-2. **Chivato §7** (garantía de completitud).
-3. Huecos **effects** (129) + **app** (6).
+1. **Chivato §7** (garantía de completitud) — Fase 1.2, lo inmediato.
+2. Huecos **effects** (129) + **app** (6) — Fase 1.3.
+3. **Mini-test** end-to-end — Fase 1.4 (puerta).
+
+**Decisión de marca DIFERIDA (Rafa, 2026-06-18):** "primero el puente, marca después". El repunte preservó 2 divergencias
+de marca SIN cambiar pixeles (vía EXCLUDE): **warn = ámbar** (no yellow/orange del Kit) y **superficie oscura = gris SC**
+(no zinc). Rafa quiere ALINEAR al Kit (warn amarillo + zinc) pero como paso DELIBERADO con preview de toda la app → es el
+**W5**, no parte del puente. Verlas: `node scripts/cmp-color-rewire.mjs report <comp>`.
 
 **El norte (del usuario):** cambiar CUALQUIER token en Figma → fluye solo al preview → lo ve → a main cuando quiere.
 **Impecable y autosuficiente. No perseguir a un dev** (salvo bugs).
 
 ## 🗺️ Orden maestro (aprobado 2026-06-18) — el detalle está en el PLAN
-- **Fase 1 — Puente:** 1.1 rewire (toast/msg → resto) · 1.2 chivato §7 · 1.3 effects/app · 1.4 mini-test.
+- **Fase 1 — Puente:** 1.1 rewire de color ✅ · **1.2 chivato §7 (siguiente)** · 1.3 effects/app · 1.4 mini-test.
 - **Fase 2 — Audit DS:** clasificación AUTO-generada (standard/extended/custom/anidados/cobertura) como guard +
   capturas del **flujo real** (Supervisor). Es la **referencia dev-facing exhaustiva**.
 - **Fase 3 — Agent:** inventario de la pantalla Figma → mapeo a la "pokédex" (nuestro DS) → esqueleto + preview.
@@ -39,19 +44,27 @@ color **semántico**, **sizing** de componente, y **color de componente** (EMITI
 - **Baja prioridad (tras las 4):** Code Connect (apuntando a NUESTRO repo, interim) + auto-documentar variables Figma.
 - **En paralelo (sin bloquear):** doc-fixes one-time restantes · endurecer `preview:live` · W5 marca.
 
-## 🔴 PRIMERA ACCIÓN — Fase 1.1: REWIRE de color de componente (Lote 2.2)
-- **Qué:** repuntar el `colorScheme` de los componentes del preset (`projects/ui-smartcontact/src/lib/theme/sc-preset/*.ts`,
-  26 con color) de hex hardcodeado a `var(--sc-cmp-*)`. Mismo patrón que la migración de sizing (W1c) pero color.
-- **Cadencia:** POR TANDAS, **e2e tras cada una**. EMPEZAR por **toast + message** (el dolor: sky+transparencia).
-  **Pausa tras la 1ª tanda** para que el usuario lo VEA en preview, luego seguir el resto (rewire completo).
-- **VERIFICADOR (doble, IMPORTANTE):** (a) un guard que falle si un `colorScheme` deja **hex hardcodeado** para un slot
-  que SÍ generamos (mata el 2º verde-mudo). (b) **value-equality:** el `var(--sc-cmp-*)` resuelto DEBE igualar el hex que
-  estaba hardcodeado → no-op visual DEMOSTRABLE (donde difiera = cambio intencional a revisar).
-- ⚠️ **OJO (sesgo cazado en el review):** el `e2e` del repo es de **MÉTRICA** (padding/radio) → puede NO cazar un cambio de
-  COLOR. La **value-equality** es el verificador fuerte aquí, + revisión visual de toast/message. NO fiarse solo del e2e.
-- Las divergencias de marca ya excluidas (`scripts/cmp-color-map.mjs` EXCLUDE: green-950, sky-info) se quedan a mano.
+## 🔴 PRIMERA ACCIÓN — Fase 1.2: CHIVATO §7 (garantía de completitud)
+Fase 1.1 (rewire de color) **HECHA y en main** (ver YA HECHO). Lo inmediato es el **chivato §7**: extender
+`token-parity.mjs` para que recorra **TODO** el export y cada token sea: espejado-OK / divergente-a-propósito /
+"cambió pero nadie lo recoge → ROJO con la razón". Mata el verde-mudo en CUALQUIER capa (incl. las sin generador).
+- **VERIFICADOR:** test de DOBLE CARA (fixture que no fluye → ROJO; fixture que fluye → VERDE).
+- El chivato debe vigilar las divergencias de marca EXCLUIDAS en `cmp-color-map.mjs` (warn-ámbar, surface-gris): si Figma
+  cambia uno de esos slots, avisar para re-decidir (es el mecanismo sostenible de la lista EXCLUDE, no se desfasa).
+- (Alternativa si Rafa quiere: arrancar el **W5** = alinear warn→amarillo + dark→zinc, con preview de TODA la app antes de
+  commitear. Es decisión de marca, no del puente.)
 
 ## ✅ YA HECHO (commits en main, verde)
+- **🌉 REWIRE de color COMPLETO (Fase 1.1)** — los 20 componentes con `colorScheme` leen ya `var(--sc-cmp-*)`:
+  toast+message (`a325b31`) + los otros 18 (`91ae6e6`). **306 slots no-op repuntados, value-equality DEMOSTRADA**;
+  40 divergencias de marca preservadas SIN cambiar pixeles. Probado en runtime (preview): `--p-*` fluye por `--sc-cmp-*`,
+  colores idénticos, warn sigue ámbar, el cascade `.sc-dark` flipa light↔dark.
+  - **Verificador nuevo `npm run tokens:cmp-rewire`** (`scripts/cmp-color-rewire.mjs`, en `verify`): resuelve los dos
+    lados a RGBA y exige value-equality vs HEAD + sin hex hardcodeado para slots generados. Subcomandos:
+    `report` (tabla noop/diverge/no-token) · `excludes` (claves EXCLUDE de los diverge) · `rewire` · `check`.
+  - **Regla sostenible `isSemanticRef`** (`cmp-color-map.mjs`): el generador NO emite slots cuyo valor del Kit es ref
+    SEMÁNTICA (`{primary/text/form/content}.*`) → se quedan semánticos (arrastran marca). No es lista a mano.
+  - **EXCLUDE = solo 2 divergencias de marca** (surface-gris dark, warn-ámbar) que el Kit no infiere → W5 + chivato §7.
 - **`preview:live` + `preview:check`** — preview LOCAL instantáneo, doble-click en `preview/preview-componentes.command`
   / `preview/preview-supervisor.command`. Verificado por el usuario: **funciona** (`6cc4330`, carpeta `6b95ad7`).
 - **Generador de color de componente** — `scripts/token-gen-cmp-color.mjs` + `scripts/cmp-color-map.mjs`: emite 652
@@ -62,8 +75,13 @@ color **semántico**, **sizing** de componente, y **color de componente** (EMITI
   carril rápido (`dff887f`) · W2 (`74eeeff`).
 
 ## ⚠️ TRAMPAS / PROTECCIONES (no fallar aquí)
-- **`preview:live` deja el export sucio si se cierra la ventana de golpe** (el restore no dispara). Cosmético (cada run
-  re-baja el export); pendiente endurecer. Si ves `kit-export-dtcg.json` modificado sin querer: `git checkout -- <ruta>`.
+- **🔴 `preview:live` ENSUCIA el export y `verify` NO lo caza** (me mordió fuerte 2026-06-18). Quedan procesos
+  `node scripts/preview-live.mjs` ZOMBIE de sesiones previas que cada ~12s re-bajan el export de la RAMA (distinta de
+  main) al fichero trackeado. `verify` PASA en verde igual porque regenera las capas contra el export sucio (todo
+  auto-consistente) → un export de rama se podría commitear sin querer. **Antes de tocar tokens:** `ps aux | grep
+  preview-live` → si hay procesos, `pkill -f preview-live.mjs`; luego `git checkout HEAD -- projects/design-tokens/
+  scripts/kit-export-dtcg.json projects/design-tokens/src/lib/styles/tokens/layers/01-primitive.css` y `npm run
+  tokens:import`. **Endurecerlo es una task spawneada** (restore fiable + anti-zombie + guard de export-drift en verify).
 - **NUNCA `[skip ci]`** en el commit de reset del workflow (Cloudflare lo obedece → congela el preview de rama).
 - **NUNCA borrar la rama `design-tokens-sync`** (el plugin la necesita; ruleset 17705331; reset =
   `git push --force origin main:design-tokens-sync`).
