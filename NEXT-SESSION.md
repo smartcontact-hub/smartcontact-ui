@@ -74,6 +74,9 @@ no fluyen aún → generador o curado-documentado (zona `@sc-gen:effects` etc.).
   cada `typography.font.size.N` Y `typography.line.height.N` del Kit tiene su `--sc-font-size-N`/`--sc-line-height-N`
   1:1 por valor (15/15 hoy). **Antes el line-height se escapaba** (el informe solo miraba font-size) — Rafa lo exigió.
   Test de doble cara (`token-type-parity.test.mjs`). El `font-size` LITERAL lo sigue bloqueando `tokens:guard` rule 5.
+  **OJO (verificado):** font-size/line-height están **CURADOS A MANO** (fuera de `@sc-gen`, sin generador) → un cambio de
+  Figma NO llega solo al código (como soft-blue). El verificador es la única defensa HOY. **Mejora de raíz (auditoría de
+  tipos):** AUTO-generar las primitivas de tipografía del export (como la escala) → fluyen solas y el verificador pasa a red de respaldo.
 - **🧹 AUDITORÍA DE GUARDIANES (13 agentes + crítico)** — veredicto: el suite NO está sobre-ingenierizado (12 guardianes,
   cada uno caza un bug distinto), PERO hay andamiaje de migración muerto. HECHO: docs:guard substring→frontera (bug real).
   **PENDIENTE (confirmado-seguro, retomar):** **adelgazar `cmp-color-rewire.mjs`** — la value-equality del `check` es
