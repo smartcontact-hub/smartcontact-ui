@@ -1068,4 +1068,27 @@ auditoría de tokens que el chivato §7 dejó pendiente, y se empezó a document
 
 ---
 
-Última actualización: 2026-06-19 (Fase 2.2 + Fase 3 [Agent/sc-gauge] + auditoría soft-blue + cmp-rewire slim + var-docs Figma primitivos).
+## DD-23 · 2026-06-19 — Paridad de nombres token ↔ Figma (rename a los nombres del Kit)
+
+**Contexto**: Tras el re-sync de valores soft-blue↔cyan (DD-22), Rafa aclaró que el punto NO es de
+marca sino de **paridad de nombres**: no tiene sentido que un token `--sc-*` se llame distinto que su
+variable en Figma. "Si en Figma es `cyan`, en código `--sc-color-cyan`."
+
+**Decisión (Rafa)**: los nombres de familia de color del CÓDIGO adoptan los nombres del Kit/Figma:
+`soft-blue → cyan`, `electric-blue → sky`, `gray → slate` (`blue` ya coincide). El **rol de marca**
+(Soft Blue / Electric Blue / Gray) vive en la **descripción** de la variable, NO en el nombre del token.
+**SUPERSEDE** el "auto-derive soft-blue" de DD-22 (al renombrar no queda rename que derivar; el chivato
+§7 pasa a identidad trivial; `palette-map` queda identidad).
+
+**Razón**: un dev no debería traducir nombres entre Figma y código. Paridad = cero confusión y el puente
+más legible. Es el principio "el Kit es la verdad" aplicado también al NOMBRE, no solo al valor.
+
+**Consecuencia / pendiente**: refactor ANCHO (rename en primitivos, semántico, `base.ts`, SCSS de TODOS
+los componentes, apps, `palette-map.mjs`→identidad, generadores/auto-import, + re-apuntar las var-docs de
+Figma a `--sc-color-cyan-*` etc.). Es el **PRIMER gran bloque** (desbloquea var-docs limpio + Code Connect).
+Planificado en `NEXT-SESSION.md` §GRANDES BLOQUES; NO ejecutado aún (se planifica fresco). Conceptualmente
+simple pero amplio → find-replace con frontera (`--sc-color-gray-` exacto; `gray` es palabra común).
+
+---
+
+Última actualización: 2026-06-19 (DD-22 sesión Fase 2.2/3 + auditoría/var-docs · DD-23 paridad de nombres planificada).
