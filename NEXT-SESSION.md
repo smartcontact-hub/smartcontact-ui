@@ -1,6 +1,6 @@
 # NEXT SESSION — Smart Contact DS (hand-off)
 
-> Sello: **2026-06-18**, Fase 1.1 (color) + 1.2 (chivato §7) + paridad de tipografía + hand-off durable (tripwire del sello) COMPLETOS (HEAD `de0d285`). SOBREESCRIBE en cada cierre.
+> Sello: **2026-06-18**, Fase 1.1 (color) + 1.2 (chivato §7) + **1.3 (completitud §8: effects/app/semantic-common)** + paridad de tipografía + hand-off durable COMPLETOS (HEAD `cf004ed`). SOBREESCRIBE en cada cierre.
 
 ---
 
@@ -19,13 +19,19 @@
 ---
 
 ## 🎯 Estado de un vistazo
-**El puente está VIVO y GUARDADO** (HEAD `de0d285`). Fluyen+se-verifican: primitivos (color §7), semántico, sizing,
-**color de componente** leído por los 20 componentes con `colorScheme`, y **tipografía** (font-size + line-height parity).
+**El puente está VIVO y GUARDADO** (HEAD `cf004ed`). Fluyen+se-verifican: primitivos (color §7), semántico, sizing,
+**color de componente** leído por los 20 componentes con `colorScheme`, **tipografía** (font-size + line-height parity)
+y ahora **TODOS los grupos del export** (§8 censo de completitud: ningún grupo queda DIFERIDO).
 Un cambio de cualquiera de esos en Figma SE VE y, si no llega al código, salta ROJO (nada en silencio).
 
 **Lo que falta para cerrar el puente:**
-1. Huecos **effects** (129) + **app** (6) + **semantic-common** (60) — Fase **1.3** (lo inmediato; el censo §7b los lista).
-2. **Mini-test** end-to-end — Fase 1.4 (puerta). Con eso el puente queda PROBADO completo.
+1. **Mini-test** end-to-end — Fase 1.4 (puerta). Con eso el puente queda PROBADO completo.
+2. **DECISIÓN abierta (de Rafa) — sombras de `aura/effects`:** 59 sombras o son divergencia de marca (tinte
+   slate, no negro puro del Kit) o están **hardcoded hex en presets de componente** (`#1212170d`, `#0000001a`,
+   message/toast `#…0a`). Coinciden con el Kit HOY pero **NO fluyen** (un cambio de sombra en Figma sería mudo) y
+   no hay value-check (el §8 las CLASIFICA como divergencia, no las verifica). **Opciones:** (a) generador
+   `@sc-gen:effects` (fluyen como el resto) · (b) chivato que cace si el hex hardcoded se desfasa del Kit · (c)
+   aceptar como divergencia de marca documentada (tinte propio a propósito). No lo decido yo: es marca + esfuerzo (toca ~50 presets).
 
 **Decisión de marca DIFERIDA (Rafa, 2026-06-18):** "primero el puente, marca después". El repunte preservó 2 divergencias
 de marca SIN cambiar pixeles (vía EXCLUDE): **warn = ámbar** (no yellow/orange del Kit) y **superficie oscura = gris SC**
@@ -36,7 +42,7 @@ de marca SIN cambiar pixeles (vía EXCLUDE): **warn = ámbar** (no yellow/orange
 **Impecable y autosuficiente. No perseguir a un dev** (salvo bugs).
 
 ## 🗺️ Orden maestro (aprobado 2026-06-18) — el detalle está en el PLAN
-- **Fase 1 — Puente:** 1.1 rewire de color ✅ · 1.2 chivato §7 ✅ · **1.3 effects/app (siguiente)** · 1.4 mini-test.
+- **Fase 1 — Puente:** 1.1 rewire de color ✅ · 1.2 chivato §7 ✅ · 1.3 completitud §8 ✅ · **1.4 mini-test (siguiente)**.
 - **🔍 AUDITORÍA DE TOKENS (Rafa la pidió para el FINAL del puente, `/audit-design-system`):** confirmar que TODAS las
   paletas del `~/Downloads/design-tokens.json` oficial (= mismo formato/valores que nuestro kit-export) quedan PERFECTAS
   en el DS. Mapa Tailwind→marca en memoria [[palette-rename-map-tailwind-to-brand]]. **Hallazgo ya cazado (2026-06-18):**
@@ -59,17 +65,30 @@ de marca SIN cambiar pixeles (vía EXCLUDE): **warn = ámbar** (no yellow/orange
 - **Baja prioridad (tras las 4):** Code Connect (apuntando a NUESTRO repo, interim) + auto-documentar variables Figma.
 - **En paralelo (sin bloquear):** doc-fixes one-time restantes · endurecer `preview:live` · W5 marca.
 
-## 🔴 PRIMERA ACCIÓN — Fase 1.3: cerrar huecos effects + app + semantic-common
-Fases 1.1 (rewire de color) y **1.2 (chivato §7) HECHAS y en main** (ver YA HECHO). El censo de cobertura (§7b en
-`token-parity.mjs`) deja a la vista lo que falta: **`aura/effects` (129), `aura/app` (6), `aura/semantic/common` (60)**
-no fluyen aún → generador o curado-documentado (zona `@sc-gen:effects` etc.). **VERIFICADOR:** que el censo §7b los marque
-`cubierto`, no `DIFERIDO`. Luego **1.4 mini-test** (puerta end-to-end) y el puente queda PROBADO completo.
+## 🔴 PRIMERA ACCIÓN — Fase 1.4: mini-test de extremo a extremo (PUERTA)
+Fases 1.1 (rewire de color), **1.2 (chivato §7)** y **1.3 (completitud §8)** HECHAS y en main (ver YA HECHO). Ya
+NINGÚN grupo del export queda DIFERIDO: el censo §7b los marca todos `cubierto`. **Falta la PUERTA (1.4):** un
+mini-test que tome el export-fixture, le meta UN cambio de CADA clase (primitivo, color semántico, color de
+componente, sizing, y un effect/sombra), corra `tokens:import` + `tokens:parity` y asserte que cada cambio aparece
+en el CSS y que el censo §8 sigue VERDE. Committed = regresión para siempre. **+ pasada manual real** (Rafa cambia
+un token de cada clase en Figma → lo ve en preview de rama). Si pasa → el puente está PROBADO completo.
+- **Antes/junto al mini-test:** zanjar la **DECISIÓN de sombras** (ver §"Lo que falta" arriba) — si Rafa elige
+  generador/chivato, el mini-test debe cubrir también ese camino; si elige divergencia documentada, basta el §8 actual.
 - **W5 (cuando Rafa quiera):** alinear warn→amarillo + dark→zinc. Necesita **ponerlo en Figma en la página de BACKLOG**
   (`figma.com/design/khNq9dJKNi13pNllrqm6dx/...?node-id=13097-13517`) para ver ANTES/DESPUÉS antes de commitear. Decisión de
   marca, no del puente. Necesita el bridge Figma (`mcp__figma__*`).
 - **Auditoría de tokens (Rafa, fin del puente):** ver §"Orden maestro" — soft-blue↔cyan desfasado ya cazado por §7.
 
 ## ✅ YA HECHO (commits en main, verde)
+- **🧩 COMPLETITUD §8 (Fase 1.3) — los 3 grupos restantes CUBIERTOS** (`cf004ed`): `aura/semantic/common` (60),
+  `aura/app` (6), `aura/effects` (129) ya NO quedan DIFERIDO. **Sin generadores nuevos** (habrían sido
+  sobre-ingeniería: estos valores ya fluyen por REFERENCIA —§1·2·7—, están cableados en `base.ts`, divergen a
+  propósito o no se consumen). `scripts/coverage-map.mjs` = buckets declarativos: cada hoja cae en EXACTAMENTE uno;
+  una hoja NUEVA del Kit sin bucket → ROJO (garantía de completitud). `token-parity` §8 aplica + **value-check
+  fuerte de la rampa `primary`** (primary.N == --sc-color-blue-N, 1:1 por hex → caza un desfase mudo de la marca).
+  Test doble cara (`coverage-map.test.mjs`). Reparto real: semantic/common = 15 sizing(§4) + 11 primary(value-check)
+  + 29 cableado-base + 3 value-match + 1 aura-default + 1 divergencia(foco) · app = 6 no-consumido · effects = 70
+  foco-outline + 59 sombras. **Sombras = DECISIÓN abierta de Rafa** (ver §"Lo que falta para cerrar el puente").
 - **🧷 HAND-OFF DURABLE (que no se desfase solo)** — `docs:coherence` Check D (`de0d285`, LOCAL-only como
   `check-export-clean`): el sello `HEAD \`<sha>\`` de ESTE fichero debe EXISTIR en git → el hand-off no puede
   mentir sobre su estado. **Por qué:** el sello se quedó stale EN SILENCIO una vez (una nota cayó tras sellar).
