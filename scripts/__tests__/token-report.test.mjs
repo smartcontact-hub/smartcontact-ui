@@ -5,7 +5,9 @@ import { buildReport } from '../token-report.mjs';
 // Líneas técnicas REALES (copiadas de la salida de token-parity / token-gen-color).
 const A11Y =
   '  ✗ [light] a11y: --sc-text-on-primary sobre --sc-bg-primary = 1.92:1 (< AA 4.5; #ffffff/#34d399)';
-const OUT_OF_PALETTE = '    · [light] primary.color = #facc15 (sin --sc-color-* primitiva)';
+// Formato REAL del generador (token-gen-cmp-color): `= <resuelto> (base <base> sin --sc-color-* primitiva)`.
+// (El viejo fixture `= #facc15 (sin …)` NO coincidía con la salida real → el traductor fallaba.)
+const OUT_OF_PALETTE = '    · [light] primary.color = #facc1580 (base #facc15 sin --sc-color-* primitiva)';
 const DS_PALETTE = [
   { name: 'sc-color-amber-400', hex: '#fbbf24' },
   { name: 'sc-color-blue-700', hex: '#1b273d' },
@@ -35,10 +37,11 @@ test('dark: el modo se traduce a "modo oscuro"', () => {
   assert.match(md, /modo oscuro/);
 });
 
-test('color fuera de paleta → familia no curada, sin el engañoso "tono intermedio"', () => {
-  const md = buildReport(OUT_OF_PALETTE, { failed: true });
+test('color fuera de paleta → familia no curada + "omitido, el resto fluye" (red de seguridad)', () => {
+  const md = buildReport(OUT_OF_PALETTE, { failed: false }); // generador ya NO falla (no-fatal) → failed:false
   assert.match(md, /fuera de la paleta del DS/);
-  assert.match(md, /#facc15/);
+  assert.match(md, /#facc15/); // la BASE de 6 dígitos
+  assert.match(md, /omitido/i); // deja claro que no se aplica pero el resto sí
   assert.doesNotMatch(md, /intermedio/); // el mensaje viejo era engañoso
 });
 

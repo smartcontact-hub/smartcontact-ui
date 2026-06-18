@@ -75,13 +75,15 @@ Fase 1.1 (rewire de color) **HECHA y en main** (ver YA HECHO). Lo inmediato es e
   carril rápido (`dff887f`) · W2 (`74eeeff`).
 
 ## ⚠️ TRAMPAS / PROTECCIONES (no fallar aquí)
-- **🔴 `preview:live` ENSUCIA el export y `verify` NO lo caza** (me mordió fuerte 2026-06-18). Quedan procesos
-  `node scripts/preview-live.mjs` ZOMBIE de sesiones previas que cada ~12s re-bajan el export de la RAMA (distinta de
-  main) al fichero trackeado. `verify` PASA en verde igual porque regenera las capas contra el export sucio (todo
-  auto-consistente) → un export de rama se podría commitear sin querer. **Antes de tocar tokens:** `ps aux | grep
-  preview-live` → si hay procesos, `pkill -f preview-live.mjs`; luego `git checkout HEAD -- projects/design-tokens/
-  scripts/kit-export-dtcg.json projects/design-tokens/src/lib/styles/tokens/layers/01-primitive.css` y `npm run
-  tokens:import`. **Endurecerlo es una task spawneada** (restore fiable + anti-zombie + guard de export-drift en verify).
+- **`preview:live` export sucio — ENDURECIDO 2026-06-18 (`68b8c9d`).** Antes: zombies re-bajaban el export de la rama y
+  `verify` pasaba en verde igual (regenera contra el export sucio). Ahora: anti-zombie (mata instancias previas + PID
+  file), restore en `process.on('exit')`, y **guard `tokens:export-clean`** (primero en `verify`) que FALLA en local si
+  `kit-export-dtcg.json` ≠ HEAD (se salta en CI, donde el sync aplica el export sobre main a propósito). Si aún ves el
+  export sucio: `pkill -f preview-live.mjs && git checkout HEAD -- <export> <01-primitive.css> && npm run tokens:import`.
+- **RED DE SEGURIDAD color fuera de paleta (`68b8c9d`+ siguiente):** un color elegido en Figma que NO esté en una primitiva
+  ya NO crashea el sync entero — `token-gen-cmp-color` lo OMITE + avisa (⚠), el resto fluye, y `token-report` lo explica en
+  cristiano + sugiere la primitiva más cercana. (Diagnóstico del experimento de Rafa: el `#0369a1` era Tailwind-sky default,
+  no su sky; su `sky` = `electric-blue`, mismos 11 valores. El export sano fluye solo.)
 - **NUNCA `[skip ci]`** en el commit de reset del workflow (Cloudflare lo obedece → congela el preview de rama).
 - **NUNCA borrar la rama `design-tokens-sync`** (el plugin la necesita; ruleset 17705331; reset =
   `git push --force origin main:design-tokens-sync`).
