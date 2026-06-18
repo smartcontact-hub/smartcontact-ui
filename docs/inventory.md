@@ -6,42 +6,73 @@
 > `sc-demo` ([showcase en Pages/Cloudflare](README.md)); este doc es el índice **textual**,
 > findable y mantenible.
 >
-> **Fuente**: `projects/ui-smartcontact/src/lib/components/`. Para regenerar la clasificación:
-> por cada componente, "wrapper" = su `.ts` importa de `primeng/`; "pure" = no.
+> **Fuente**: `projects/ui-smartcontact/src/lib/components/`. La tabla de abajo es **auto-generada**
+> por `scripts/component-audit.mjs` (comando `audit:components`): provenance, base PrimeNG, API propia
+> (CVA / nº de inputs), anidados, cobertura demo y **uso real en el Supervisor** se DERIVAN del código.
+> El juicio standard-vs-extended y las exenciones de demo se curan en `scripts/component-audit-map.mjs`
+> (lo confirma Rafa). **No editar la tabla a mano** → `node scripts/component-audit.mjs --write`.
+> Manifiesto máquina: `docs/_component-status.json`.
+>
+> **Leyenda:** *CUSTOM* = pieza propia, cero PrimeNG · *STANDARD* = wrapper passthrough sobre PrimeNG ·
+> *EXTENDED* = wrapper con API propia (CVA, inputs, comportamiento) · *Anidados* = otros `sc-*` que
+> compone (sin contar `sc-icon`) · *Usos en Supervisor* = adopción en la app real.
 
-## Resumen
+## Clasificación (auto-generada)
 
-- **47 componentes** + `ScDynamicDialogService` (servicio, sin componente).
-- **13 pure-custom** (~28%) — el diseño **original** del DS, no "estilar PrimeNG".
-- **34 wrappers/híbridos** — interpretación 1:1 de PrimeNG con el contrato `--sc-*`.
+<!-- @audit:components — TABLA GENERADA por `node scripts/component-audit.mjs --write`. NO editar a mano. -->
+**48 componentes** · 14 custom · 11 standard · 23 extended · 27 usados en Supervisor.
 
-## Pure-custom (13) — pieza propia, cero PrimeNG
-
-| Componente | Selector | Notas |
-|---|---|---|
-| bulk-action-bar | `sc-bulk-action-bar` | Barra de acciones en selección masiva |
-| bulk-transcription-modal | `sc-bulk-transcription-modal` | Modal presentacional |
-| checkbox | `sc-checkbox` | `<input type=checkbox>` nativo tri-estado (NO wrapper p-checkbox) |
-| color-dot-picker | `sc-color-dot-picker` | Selector de color por puntos |
-| command-palette | `sc-command-palette` | ⌘K, data-driven (`setCommands`) |
-| empty-state | `sc-empty-state` | Estado vacío con CTA |
-| form-section-nav | `sc-form-section-nav` | Navegación de secciones de formulario |
-| inline-rename-cell | `sc-inline-rename-cell` | Renombrado inline en celda |
-| keyboard-shortcuts | `sc-keyboard-shortcuts` | Cheat-sheet `?`, data-driven (`[groups]`) |
-| page-header | `sc-page-header` | Cabecera de página con acciones |
-| section-card | `sc-section-card` | Card de sección (+ subsection + slot) |
-| slot | `sc-slot` | Fila titulada con divisor |
-| subsection | `sc-subsection` | Card blanca dentro de section-card |
-
-## Wrappers / híbridos (34) — sobre PrimeNG, contrato `--sc-*`
-
-`sc-avatar` · `sc-badge` · `sc-bulk-edit-menu` · `sc-button` · `sc-card` · `sc-chip` ·
-`sc-column-selector` · `sc-confirmdialog` · `sc-datatable` · `sc-datepicker` ·
-`sc-delete-entity-dialog` · `sc-dialog` · `sc-divider` · `sc-drawer` · `sc-form-danger-zone` ·
-`sc-group-popover` · `sc-impact-preview-dialog` · `sc-inputgroup` · `sc-inputnumber` ·
-`sc-inputtext` · `sc-message` · `sc-multiselect` · `sc-panel` · `sc-photo-upload` ·
-`sc-progressbar` · `sc-progressspinner` · `sc-radiobutton` · `sc-search` · `sc-select` ·
-`sc-skeleton` · `sc-sticky-form-header` · `sc-tag` · `sc-textarea` · `sc-toast` · `sc-toggleswitch`
+| Componente | Tipo | PrimeNG base | API propia | Anidados | Demo | Usos en Supervisor |
+|---|---|---|---|---|---|---|
+| `sc-avatar` | EXTENDED | primeng/avatar, primeng/overlaybadge | 11 inputs | — | ✓ | — |
+| `sc-badge` | STANDARD | primeng/badge | 3 inputs | — | ✓ | — |
+| `sc-bulk-action-bar` | CUSTOM | — | 0 inputs | — | — | 7 |
+| `sc-bulk-edit-menu` | STANDARD | primeng/button | 1 inputs | sc-select | — | 2 |
+| `sc-bulk-transcription-modal` | CUSTOM | — | 16 inputs | sc-button sc-toggleswitch | — | — |
+| `sc-button` | EXTENDED | primeng/button | 15 inputs | — | ✓ | — |
+| `sc-card` | STANDARD | primeng/card | 2 inputs | — | ✓ | — |
+| `sc-checkbox` | CUSTOM | — | 5 inputs | — | ✓ | 16 |
+| `sc-chip` | EXTENDED | primeng/chip | 9 inputs | — | ✓ | — |
+| `sc-color-dot-picker` | CUSTOM | — | 1 inputs | — | — | 3 |
+| `sc-column-selector` | STANDARD | primeng/popover | 1 inputs | — | — | 3 |
+| `sc-command-palette` | CUSTOM | — | 0 inputs | — | — | 4 |
+| `sc-confirmdialog` | STANDARD | primeng/confirmdialog | 0 inputs | — | ✓ | — |
+| `sc-datatable` | EXTENDED | primeng/table | 19 inputs | — | ✓ | — |
+| `sc-datepicker` | EXTENDED | primeng/datepicker | CVA · 17 inputs | — | ✓ | 2 |
+| `sc-delete-entity-dialog` | STANDARD | primeng/button | 2 inputs | sc-dialog | — | 8 |
+| `sc-dialog` | EXTENDED | primeng/dialog | 12 inputs | — | ✓ | 9 |
+| `sc-divider` | STANDARD | primeng/divider | 3 inputs | — | ✓ | 4 |
+| `sc-drawer` | EXTENDED | primeng/drawer | 8 inputs | — | ✓ | — |
+| `sc-empty-state` | CUSTOM | — | 1 inputs | — | — | 7 |
+| `sc-form-danger-zone` | STANDARD | primeng/button | 3 inputs | — | — | — |
+| `sc-form-section-nav` | CUSTOM | — | 4 inputs | — | — | 5 |
+| `sc-group-popover` | STANDARD | primeng/popover | 0 inputs | — | — | 3 |
+| `sc-impact-preview-dialog` | STANDARD | primeng/button | 3 inputs | sc-dialog | — | 2 |
+| `sc-inline-rename-cell` | CUSTOM | — | 2 inputs | — | — | 3 |
+| `sc-inputgroup` | STANDARD | primeng/inputgroup | 2 inputs | — | ✓ | 1 |
+| `sc-inputnumber` | EXTENDED | primeng/inputtext | CVA · 13 inputs | — | ✓ | 4 |
+| `sc-inputtext` | EXTENDED | primeng/inputtext | CVA · 18 inputs | — | ✓ | 28 |
+| `sc-keyboard-shortcuts` | CUSTOM | — | 1 inputs | — | — | 2 |
+| `sc-message` | EXTENDED | primeng/message | 6 inputs | — | ✓ | — |
+| `sc-multiselect` | EXTENDED | primeng/multiselect | CVA · 23 inputs | — | ✓ | 14 |
+| `sc-page-header` | CUSTOM | — | 3 inputs | — | — | 2 |
+| `sc-panel` | EXTENDED | primeng/panel | 4 inputs | — | ✓ | — |
+| `sc-photo-upload` | CUSTOM | — | 6 inputs | — | — | 2 |
+| `sc-progressbar` | EXTENDED | primeng/progressbar | 4 inputs | — | ✓ | — |
+| `sc-progressspinner` | EXTENDED | primeng/progressspinner | 4 inputs | — | ✓ | — |
+| `sc-radiobutton` | EXTENDED | primeng/radiobutton | 7 inputs | — | ✓ | — |
+| `sc-search` | EXTENDED | primeng/iconfield, primeng/inputicon, primeng/inputtext | CVA · 9 inputs | — | ✓ | 8 |
+| `sc-section-card` | CUSTOM | — | 6 inputs | — | — | 11 |
+| `sc-select` | EXTENDED | primeng/select | CVA · 22 inputs | — | ✓ | 30 |
+| `sc-skeleton` | EXTENDED | primeng/skeleton | 6 inputs | — | ✓ | — |
+| `sc-slot` | CUSTOM | — | 2 inputs | — | — | — |
+| `sc-sticky-form-header` | EXTENDED | primeng/button | 4 inputs | — | — | 3 |
+| `sc-subsection` | CUSTOM | — | 4 inputs | — | — | — |
+| `sc-tag` | EXTENDED | primeng/tag | 6 inputs | — | ✓ | — |
+| `sc-textarea` | EXTENDED | primeng/textarea | 13 inputs | — | ✓ | — |
+| `sc-toast` | EXTENDED | primeng/toast | 6 inputs | — | ✓ | — |
+| `sc-toggleswitch` | EXTENDED | primeng/toggleswitch | 7 inputs | — | ✓ | 21 |
+<!-- @audit:components:end -->
 
 ## Gaps abiertos (el consumidor real los necesita; el DS aún no los cubre)
 
