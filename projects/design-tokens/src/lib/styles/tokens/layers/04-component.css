@@ -183,21 +183,21 @@
   --sc-cmp-button-gap: 0.4375rem; /* 7px */
   --sc-cmp-button-icon-only-width: 2.1875rem; /* 35px */
   --sc-cmp-button-rounded-border-radius: 1.75rem; /* 28px */
-  --sc-cmp-button-sm-font-size: 0.75rem; /* 12px */
+  --sc-cmp-button-sm-font-size: 0.765625rem; /* 12.25px */
   --sc-cmp-button-sm-padding-x: 0.546875rem; /* 8.75px */
   --sc-cmp-button-sm-padding-y: 0.328125rem; /* 5.25px */
   --sc-cmp-button-sm-icon-only-width: 1.75rem; /* 28px */
-  --sc-cmp-button-lg-font-size: 1rem; /* 16px */
+  --sc-cmp-button-lg-font-size: 0.984375rem; /* 15.75px */
   --sc-cmp-button-lg-padding-x: 0.765625rem; /* 12.25px */
   --sc-cmp-button-lg-padding-y: 0.546875rem; /* 8.75px */
   --sc-cmp-button-lg-icon-only-width: 2.625rem; /* 42px */
   --sc-cmp-form-field-padding-x: 0.65625rem; /* 10.5px */
   --sc-cmp-form-field-padding-y: 0.4375rem; /* 7px */
   --sc-cmp-form-field-border-radius: 0.375rem; /* 6px */
-  --sc-cmp-form-field-sm-font-size: 0.75rem; /* 12px */
+  --sc-cmp-form-field-sm-font-size: 0.765625rem; /* 12.25px */
   --sc-cmp-form-field-sm-padding-x: 0.546875rem; /* 8.75px */
   --sc-cmp-form-field-sm-padding-y: 0.328125rem; /* 5.25px */
-  --sc-cmp-form-field-lg-font-size: 1rem; /* 16px */
+  --sc-cmp-form-field-lg-font-size: 0.984375rem; /* 15.75px */
   --sc-cmp-form-field-lg-padding-x: 0.765625rem; /* 12.25px */
   --sc-cmp-form-field-lg-padding-y: 0.546875rem; /* 8.75px */
   --sc-cmp-icon-size: 0.875rem; /* 14px */
@@ -519,7 +519,7 @@
   --sc-cmp-togglebutton-icon-checked-color: var(--sc-color-gray-900);
   --sc-cmp-togglebutton-content-checked-background: var(--sc-color-gray-0);
   --sc-cmp-toast-info-background: color-mix(in srgb, var(--sc-color-azure-50) 95%, transparent);
-  --sc-cmp-toast-info-color: var(--sc-color-blue-600);
+  --sc-cmp-toast-info-color: var(--sc-color-pink-600);
   --sc-cmp-toast-info-border-color: var(--sc-color-blue-200);
   --sc-cmp-toast-info-detail-color: var(--sc-color-gray-700);
   --sc-cmp-toast-info-close-button-hover-background: var(--sc-color-blue-100);

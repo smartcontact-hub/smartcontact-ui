@@ -209,6 +209,19 @@
   /* @sc-gen:palette — bloque GENERADO desde kit-export-dtcg.json. Familias de color
    * que la capa curada NO cubre, importadas según se REFERENCIAN (zinc base +
    * cualquier familia que un semántico use — p.ej. primary→yellow). NO editar a mano. */
+  /* pink — 1:1 export aura/primitive.pink */
+  --sc-color-pink-50: #fdf2f8;
+  --sc-color-pink-100: #fce7f3;
+  --sc-color-pink-200: #fbcfe8;
+  --sc-color-pink-300: #f9a8d4;
+  --sc-color-pink-400: #f472b6;
+  --sc-color-pink-500: #ec4899;
+  --sc-color-pink-600: #db2777;
+  --sc-color-pink-700: #be185d;
+  --sc-color-pink-800: #9d174d;
+  --sc-color-pink-900: #831843;
+  --sc-color-pink-950: #500724;
+
   /* yellow — 1:1 export aura/primitive.yellow */
   --sc-color-yellow-50: #fefce8;
   --sc-color-yellow-100: #fef9c3;
