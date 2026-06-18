@@ -25,11 +25,14 @@ import { rewriteRegion } from './marker-rewrite.mjs';
 import { SIZING, GROUPS, DIVERGE_SIZING, cmpName } from './sizing-map.mjs';
 
 const root = resolve(import.meta.dirname, '..');
-const EXPORT_PATH = resolve(root, 'projects/design-tokens/scripts/kit-export-dtcg.json');
-const COMPONENT_CSS = resolve(
-  root,
-  'projects/design-tokens/src/lib/styles/tokens/layers/04-component.css',
-);
+// Override por env (SC_KIT_EXPORT / SC_LAYERS_DIR) para el mini-test e2e en sandbox.
+const EXPORT_PATH = process.env.SC_KIT_EXPORT
+  ? resolve(process.env.SC_KIT_EXPORT)
+  : resolve(root, 'projects/design-tokens/scripts/kit-export-dtcg.json');
+const LAYERS_DIR = process.env.SC_LAYERS_DIR
+  ? resolve(process.env.SC_LAYERS_DIR)
+  : resolve(root, 'projects/design-tokens/src/lib/styles/tokens/layers');
+const COMPONENT_CSS = resolve(LAYERS_DIR, '04-component.css');
 const START = '/* @sc-gen:cmp-sizing';
 const END = '/* @sc-gen:cmp-sizing:end */';
 
