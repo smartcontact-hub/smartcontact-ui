@@ -1,0 +1,56 @@
+.sc-gauge {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+
+  &__svg {
+    width: 100%;
+    height: 100%;
+  }
+
+  &__track {
+    stroke: var(--sc-border-subtle);
+  }
+
+  &__arc {
+    &--success {
+      stroke: var(--sc-icon-success);
+    }
+    &--danger {
+      stroke: var(--sc-icon-error);
+    }
+    &--warning {
+      stroke: var(--sc-icon-warning);
+    }
+    &--info {
+      stroke: var(--sc-icon-accent);
+    }
+    &--neutral {
+      stroke: var(--sc-text-subtle);
+    }
+  }
+
+  &__center {
+    position: absolute;
+    inset: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: var(--sc-spacing-0-25);
+    text-align: center;
+  }
+
+  &__value {
+    font-size: var(--sc-font-size-400);
+    font-weight: 700;
+    line-height: 1;
+    color: var(--sc-text-primary);
+  }
+
+  &__sublabel {
+    font-size: var(--sc-font-size-100);
+    color: var(--sc-text-subtle);
+  }
+}

@@ -1,0 +1,44 @@
+<div class="sc-gauge" [style.width.px]="sizePx()" [style.height.px]="sizePx()">
+  <svg class="sc-gauge__svg" viewBox="0 0 100 100" role="img" [attr.aria-label]="ariaLabel()">
+    @if (trackVisible()) {
+      <circle
+        class="sc-gauge__track"
+        cx="50"
+        cy="50"
+        [attr.r]="geom().radius"
+        [attr.stroke-width]="thickness()"
+        fill="none"
+      />
+    }
+    <g [attr.transform]="rotation()">
+      @for (arc of geom().arcs; track $index) {
+        <circle
+          class="sc-gauge__arc"
+          [class.sc-gauge__arc--success]="arc.severity === 'success'"
+          [class.sc-gauge__arc--danger]="arc.severity === 'danger'"
+          [class.sc-gauge__arc--warning]="arc.severity === 'warning'"
+          [class.sc-gauge__arc--info]="arc.severity === 'info'"
+          [class.sc-gauge__arc--neutral]="arc.severity === 'neutral'"
+          cx="50"
+          cy="50"
+          [attr.r]="geom().radius"
+          [attr.stroke-width]="thickness()"
+          [attr.stroke-dasharray]="arc.dashArray"
+          [attr.stroke-dashoffset]="arc.dashOffset"
+          fill="none"
+          stroke-linecap="butt"
+        />
+      }
+    </g>
+  </svg>
+  <div class="sc-gauge__center">
+    <ng-content>
+      @if (label() !== null) {
+        <span class="sc-gauge__value">{{ label() }}</span>
+      }
+      @if (sublabel() !== null) {
+        <span class="sc-gauge__sublabel">{{ sublabel() }}</span>
+      }
+    </ng-content>
+  </div>
+</div>

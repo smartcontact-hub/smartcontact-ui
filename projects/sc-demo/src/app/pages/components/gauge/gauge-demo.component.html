@@ -1,0 +1,20 @@
+<h1>sc-gauge</h1>
+
+<div class="row">
+  <sc-gauge
+    data-testid="sc-gauge"
+    [segments]="bicolor"
+    size="lg"
+    label="234"
+    sublabel="Conv. Totales"
+    ariaLabel="234 conversaciones totales, 54 no atendidas"
+  />
+  <sc-gauge [segments]="tri" size="md" label="8" sublabel="Tickets" />
+  <sc-gauge [segments]="single" size="md" label="100%" sublabel="Atendidas" />
+</div>
+
+<div class="row">
+  <sc-gauge [segments]="bicolor" size="sm" />
+  <sc-gauge [segments]="bicolor" size="md" [thickness]="18" label="234" sublabel="grueso" />
+  <sc-gauge [segments]="bicolor" size="md" [trackVisible]="false" label="234" sublabel="sin track" />
+</div>

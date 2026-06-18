@@ -1,0 +1,72 @@
+/*
+ * Agent — entrypoint global de estilos. El orden importa: tokens antes que overrides.
+ */
+
+/* `@use` antes que cualquier `@import`. */
+@use 'reset';
+
+/* Design tokens — 6 capas del DS por RUTA DE SOURCE (SCSS no resuelve specifiers npm),
+ * igual que supervisor/sc-prototype. La capa 6 (puente PrimeNG) vive en el preset,
+ * cableado vía `provideSmartContactUi()` en app.config.ts. */
+@import '../../../design-tokens/src/lib/styles/tokens/layers/01-primitive.css';
+@import '../../../design-tokens/src/lib/styles/tokens/layers/02-semantic.css';
+@import '../../../design-tokens/src/lib/styles/tokens/layers/03-palette.css';
+@import '../../../design-tokens/src/lib/styles/tokens/layers/04-component.css';
+@import '../../../design-tokens/src/lib/styles/tokens/layers/05-extensions.css';
+@import '../../../design-tokens/src/lib/styles/tokens/layers/07-dark.css';
+
+@import 'primeicons/primeicons.css';
+
+/*
+ * `.sc-icon` font binding — los componentes publicados de @smartcontact-hub rendean
+ * su icono interno como `<span class="sc-icon">`; apuntamos a Material Symbols
+ * Outlined (cargada en index.html), igual que supervisor.
+ */
+.sc-icon {
+  display: inline-block;
+  font-family: 'Material Symbols Outlined';
+  font-size: 1em;
+  font-style: normal;
+  font-weight: normal;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  font-feature-settings: 'liga';
+  -webkit-font-feature-settings: 'liga';
+  -webkit-font-smoothing: antialiased;
+}
+
+html,
+body {
+  height: 100%;
+  margin: 0;
+  font-family: var(--sc-font-family-primary, 'Inter', system-ui, sans-serif);
+  background: var(--sc-bg-default);
+  color: var(--sc-text-primary);
+}
+
+/* ── Chrome compartido del dashboard (global, sin encapsular) ─────────────── */
+.agent-card {
+  background: var(--sc-bg-elevated);
+  border: 1px solid var(--sc-border-subtle);
+  border-radius: var(--sc-radius-300);
+  padding: var(--sc-spacing-1-5);
+}
+
+.agent-muted {
+  color: var(--sc-text-secondary);
+  font-size: var(--sc-font-size-100);
+}
+
+/* Las tiles KPI rellenan la altura de su celda del grid. */
+.kpis > * {
+  display: block;
+  height: 100%;
+}
+.kpis .agent-card {
+  height: 100%;
+}
+

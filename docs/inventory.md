@@ -25,7 +25,7 @@
 ## Clasificación (auto-generada)
 
 <!-- @audit:components — TABLA GENERADA por `node scripts/component-audit.mjs --write`. NO editar a mano. -->
-**48 componentes** · 14 custom · 11 standard · 23 extended · 27 usados en Supervisor.
+**49 componentes** · 15 custom · 11 standard · 23 extended · 27 usados en Supervisor.
 
 | Componente | Tipo | PrimeNG base | API propia | Anidados | Demo | Usos en Supervisor |
 |---|---|---|---|---|---|---|
@@ -51,6 +51,7 @@
 | `sc-empty-state` | CUSTOM | — | 1 inputs | — | — | 7 |
 | `sc-form-danger-zone` | STANDARD | primeng/button | 3 inputs | — | — | — |
 | `sc-form-section-nav` | CUSTOM | — | 4 inputs | — | — | 5 |
+| `sc-gauge` | CUSTOM | — | 8 inputs | — | ✓ | — |
 | `sc-group-popover` | STANDARD | primeng/popover | 0 inputs | — | — | 3 |
 | `sc-impact-preview-dialog` | STANDARD | primeng/button | 3 inputs | sc-dialog | — | 2 |
 | `sc-inline-rename-cell` | CUSTOM | — | 2 inputs | — | — | 3 |

@@ -70,6 +70,11 @@ export const SC_DEMO_COMPONENT_PAGES = [
     load: () => import('./progressspinner/progressspinner-demo.component').then((m) => m.ProgressSpinnerDemoComponent),
   },
   {
+    path: 'gauge',
+    label: 'Gauge',
+    load: () => import('./gauge/gauge-demo.component').then((m) => m.GaugeDemoComponent),
+  },
+  {
     path: 'radiobutton',
     label: 'RadioButton',
     load: () => import('./radiobutton/radiobutton-demo.component').then((m) => m.RadioButtonDemoComponent),
