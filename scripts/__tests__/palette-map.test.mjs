@@ -26,19 +26,23 @@ test('CARA VERDE · divergencia consciente green-950 (step exacto) NO es drift',
   );
 });
 
-test('CARA VERDE · soft-blue.* (familia entera) cubierta → su drift no rompe (pendiente auditoría)', () => {
-  assert.deepEqual(primitiveDrift({ 'soft-blue': { 50: '#effbfc' } }, { cyan: { 50: '#eefbfc' } }), []);
+test('CARA ROJA · soft-blue YA NO es divergencia (re-sync 2026-06-18) → su desfase del cyan SÍ es drift', () => {
+  const d = primitiveDrift({ 'soft-blue': { 50: '#effbfc' } }, { cyan: { 50: '#eefbfc' } });
+  assert.equal(d.length, 1);
+  assert.equal(d[0].family, 'soft-blue');
+  assert.equal(d[0].src, 'cyan');
 });
 
 test('familia sin fuente (azure) → ignorada (no es drift; se informa aparte)', () => {
   assert.deepEqual(primitiveDrift({ azure: { 500: '#3b82f6' } }, {}), []);
 });
 
-test('isPrimitiveDiverge: step exacto (green.950) vs familia entera (soft-blue.)', () => {
+test('isPrimitiveDiverge: step exacto (green.950) vs familia entera (azure.)', () => {
   assert.ok(isPrimitiveDiverge('green', '950'));
   assert.ok(!isPrimitiveDiverge('green', '500'));
-  assert.ok(isPrimitiveDiverge('soft-blue', '50'));
-  assert.ok(isPrimitiveDiverge('soft-blue', '900'));
+  assert.ok(isPrimitiveDiverge('azure', '500'));
+  assert.ok(isPrimitiveDiverge('azure', '900'));
+  assert.ok(!isPrimitiveDiverge('soft-blue', '500')); // re-sync 2026-06-18: ya NO es divergencia
 });
 
 test('el mapa codifica los renombres clave (sky→electric-blue, cyan→soft-blue, slate→gray)', () => {

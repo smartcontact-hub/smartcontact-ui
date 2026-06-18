@@ -38,12 +38,6 @@ export const PRIMITIVE_DIVERGE = [
     reason: 'green-950 de MARCA (#0a2916, un punto más oscuro) vs el vanilla del export (#052e16) — consciente',
   },
   {
-    match: 'soft-blue.',
-    reason:
-      'soft-blue (accent) curado a mano se DESFASÓ del cyan oficial (los 11 difieren un pelín) — PENDIENTE: ' +
-      're-sync soft-blue↔cyan en la auditoría de tokens (idealmente auto-derivarlo). Quitar de aquí al arreglar.',
-  },
-  {
     match: 'azure.',
     reason:
       'azure (#3b82f6, Tailwind blue) NO tiene familia fuente en el export (el export "blue" es navy) — curado/huérfano, ' +
