@@ -115,21 +115,21 @@ import type { MessageDesignTokens } from '@primeuix/themes/types/message';
     colorScheme: {
         dark: {
             info: {
-                color: "{blue.500}",
+                color: "var(--sc-cmp-message-info-color)",
                 simple: {
-                    color: "{blue.500}"
+                    color: "var(--sc-cmp-message-info-simple-color)"
                 },
                 outlined: {
-                    color: "{blue.500}",
-                    borderColor: "{blue.500}"
+                    color: "var(--sc-cmp-message-info-outlined-color)",
+                    borderColor: "var(--sc-cmp-message-info-outlined-border-color)"
                 },
-                background: "#3b82f629",
-                borderColor: "#1d4ed85c",
+                background: "var(--sc-cmp-message-info-background)",
+                borderColor: "var(--sc-cmp-message-info-border-color)",
                 closeButton: {
                     focusRing: {
-                        color: "{blue.500}"
+                        color: "var(--sc-cmp-message-info-close-button-focus-ring-color)"
                     },
-                    hoverBackground: "#ffffff0d"
+                    hoverBackground: "var(--sc-cmp-message-info-close-button-hover-background)"
                 }
             },
             warn: {
@@ -141,61 +141,61 @@ import type { MessageDesignTokens } from '@primeuix/themes/types/message';
                     color: "{yellow.500}",
                     borderColor: "{yellow.500}"
                 },
-                background: "#eab30829",
-                borderColor: "#a162075c",
+                background: "var(--sc-cmp-message-warn-background)",
+                borderColor: "var(--sc-cmp-message-warn-border-color)",
                 closeButton: {
                     focusRing: {
                         color: "{yellow.500}"
                     },
-                    hoverBackground: "#ffffff0d"
+                    hoverBackground: "var(--sc-cmp-message-warn-close-button-hover-background)"
                 }
             },
             error: {
-                color: "{red.500}",
+                color: "var(--sc-cmp-message-error-color)",
                 simple: {
-                    color: "{red.500}"
+                    color: "var(--sc-cmp-message-error-simple-color)"
                 },
                 outlined: {
-                    color: "{red.500}",
-                    borderColor: "{red.500}"
+                    color: "var(--sc-cmp-message-error-outlined-color)",
+                    borderColor: "var(--sc-cmp-message-error-outlined-border-color)"
                 },
-                background: "#ef444429",
-                borderColor: "#b91c1c5c",
+                background: "var(--sc-cmp-message-error-background)",
+                borderColor: "var(--sc-cmp-message-error-border-color)",
                 closeButton: {
                     focusRing: {
-                        color: "{red.500}"
+                        color: "var(--sc-cmp-message-error-close-button-focus-ring-color)"
                     },
-                    hoverBackground: "#ffffff0d"
+                    hoverBackground: "var(--sc-cmp-message-error-close-button-hover-background)"
                 }
             },
             success: {
-                color: "{green.500}",
+                color: "var(--sc-cmp-message-success-color)",
                 simple: {
-                    color: "{green.500}"
+                    color: "var(--sc-cmp-message-success-simple-color)"
                 },
                 outlined: {
-                    color: "{green.500}",
-                    borderColor: "{green.500}"
+                    color: "var(--sc-cmp-message-success-outlined-color)",
+                    borderColor: "var(--sc-cmp-message-success-outlined-border-color)"
                 },
-                background: "#22c55e29",
-                borderColor: "#15803d5c",
+                background: "var(--sc-cmp-message-success-background)",
+                borderColor: "var(--sc-cmp-message-success-border-color)",
                 closeButton: {
                     focusRing: {
-                        color: "{green.500}"
+                        color: "var(--sc-cmp-message-success-close-button-focus-ring-color)"
                     },
-                    hoverBackground: "#ffffff0d"
+                    hoverBackground: "var(--sc-cmp-message-success-close-button-hover-background)"
                 }
             },
             contrast: {
                 color: "{surface.950}",
                 simple: {
-                    color: "{surface.0}"
+                    color: "var(--sc-cmp-message-contrast-simple-color)"
                 },
                 outlined: {
-                    color: "{surface.0}",
-                    borderColor: "{surface.0}"
+                    color: "var(--sc-cmp-message-contrast-outlined-color)",
+                    borderColor: "var(--sc-cmp-message-contrast-outlined-border-color)"
                 },
-                background: "{surface.0}",
+                background: "var(--sc-cmp-message-contrast-background)",
                 borderColor: "{surface.100}",
                 closeButton: {
                     focusRing: {
@@ -225,21 +225,21 @@ import type { MessageDesignTokens } from '@primeuix/themes/types/message';
         },
         light: {
             info: {
-                color: "{blue.600}",
+                color: "var(--sc-cmp-message-info-color)",
                 simple: {
-                    color: "{blue.600}"
+                    color: "var(--sc-cmp-message-info-simple-color)"
                 },
                 outlined: {
-                    color: "{blue.600}",
-                    borderColor: "{blue.600}"
+                    color: "var(--sc-cmp-message-info-outlined-color)",
+                    borderColor: "var(--sc-cmp-message-info-outlined-border-color)"
                 },
-                background: "#eff6fff2",
-                borderColor: "{blue.200}",
+                background: "var(--sc-cmp-message-info-background)",
+                borderColor: "var(--sc-cmp-message-info-border-color)",
                 closeButton: {
                     focusRing: {
-                        color: "{blue.600}"
+                        color: "var(--sc-cmp-message-info-close-button-focus-ring-color)"
                     },
-                    hoverBackground: "{blue.100}"
+                    hoverBackground: "var(--sc-cmp-message-info-close-button-hover-background)"
                 }
             },
             warn: {
@@ -251,7 +251,7 @@ import type { MessageDesignTokens } from '@primeuix/themes/types/message';
                     color: "{yellow.600}",
                     borderColor: "{yellow.600}"
                 },
-                background: "#fefce8f2",
+                background: "var(--sc-cmp-message-warn-background)",
                 borderColor: "{yellow.200}",
                 closeButton: {
                     focusRing: {
@@ -261,75 +261,75 @@ import type { MessageDesignTokens } from '@primeuix/themes/types/message';
                 }
             },
             error: {
-                color: "{red.600}",
+                color: "var(--sc-cmp-message-error-color)",
                 simple: {
-                    color: "{red.600}"
+                    color: "var(--sc-cmp-message-error-simple-color)"
                 },
                 outlined: {
-                    color: "{red.600}",
-                    borderColor: "{red.600}"
+                    color: "var(--sc-cmp-message-error-outlined-color)",
+                    borderColor: "var(--sc-cmp-message-error-outlined-border-color)"
                 },
-                background: "#fef2f2f2",
-                borderColor: "{red.200}",
+                background: "var(--sc-cmp-message-error-background)",
+                borderColor: "var(--sc-cmp-message-error-border-color)",
                 closeButton: {
                     focusRing: {
-                        color: "{red.600}"
+                        color: "var(--sc-cmp-message-error-close-button-focus-ring-color)"
                     },
-                    hoverBackground: "{red.100}"
+                    hoverBackground: "var(--sc-cmp-message-error-close-button-hover-background)"
                 }
             },
             success: {
-                color: "{green.600}",
+                color: "var(--sc-cmp-message-success-color)",
                 simple: {
-                    color: "{green.600}"
+                    color: "var(--sc-cmp-message-success-simple-color)"
                 },
                 outlined: {
-                    color: "{green.600}",
-                    borderColor: "{green.600}"
+                    color: "var(--sc-cmp-message-success-outlined-color)",
+                    borderColor: "var(--sc-cmp-message-success-outlined-border-color)"
                 },
-                background: "#f0fdf4f2",
-                borderColor: "{green.200}",
+                background: "var(--sc-cmp-message-success-background)",
+                borderColor: "var(--sc-cmp-message-success-border-color)",
                 closeButton: {
                     focusRing: {
-                        color: "{green.600}"
+                        color: "var(--sc-cmp-message-success-close-button-focus-ring-color)"
                     },
-                    hoverBackground: "{green.100}"
+                    hoverBackground: "var(--sc-cmp-message-success-close-button-hover-background)"
                 }
             },
             contrast: {
-                color: "{surface.50}",
+                color: "var(--sc-cmp-message-contrast-color)",
                 simple: {
-                    color: "{surface.950}"
+                    color: "var(--sc-cmp-message-contrast-simple-color)"
                 },
                 outlined: {
-                    color: "{surface.950}",
-                    borderColor: "{surface.950}"
+                    color: "var(--sc-cmp-message-contrast-outlined-color)",
+                    borderColor: "var(--sc-cmp-message-contrast-outlined-border-color)"
                 },
-                background: "{surface.900}",
-                borderColor: "{surface.950}",
+                background: "var(--sc-cmp-message-contrast-background)",
+                borderColor: "var(--sc-cmp-message-contrast-border-color)",
                 closeButton: {
                     focusRing: {
-                        color: "{surface.50}"
+                        color: "var(--sc-cmp-message-contrast-close-button-focus-ring-color)"
                     },
-                    hoverBackground: "{surface.800}"
+                    hoverBackground: "var(--sc-cmp-message-contrast-close-button-hover-background)"
                 }
             },
             secondary: {
-                color: "{surface.600}",
+                color: "var(--sc-cmp-message-secondary-color)",
                 simple: {
-                    color: "{surface.500}"
+                    color: "var(--sc-cmp-message-secondary-simple-color)"
                 },
                 outlined: {
-                    color: "{surface.500}",
-                    borderColor: "{surface.500}"
+                    color: "var(--sc-cmp-message-secondary-outlined-color)",
+                    borderColor: "var(--sc-cmp-message-secondary-outlined-border-color)"
                 },
-                background: "{surface.100}",
-                borderColor: "{surface.200}",
+                background: "var(--sc-cmp-message-secondary-background)",
+                borderColor: "var(--sc-cmp-message-secondary-border-color)",
                 closeButton: {
                     focusRing: {
-                        color: "{surface.600}"
+                        color: "var(--sc-cmp-message-secondary-close-button-focus-ring-color)"
                     },
-                    hoverBackground: "{surface.200}"
+                    hoverBackground: "var(--sc-cmp-message-secondary-close-button-hover-background)"
                 }
             }
         }

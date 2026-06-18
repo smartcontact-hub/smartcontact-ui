@@ -89,59 +89,59 @@ import type { ToastDesignTokens } from '@primeuix/themes/types/toast';
     colorScheme: {
         dark: {
             info: {
-                color: "{blue.500}",
-                background: "#3b82f629",
-                borderColor: "#1d4ed85c",
+                color: "var(--sc-cmp-toast-info-color)",
+                background: "var(--sc-cmp-toast-info-background)",
+                borderColor: "var(--sc-cmp-toast-info-border-color)",
                 closeButton: {
                     focusRing: {
-                        color: "{blue.500}"
+                        color: "var(--sc-cmp-toast-info-close-button-focus-ring-color)"
                     },
-                    hoverBackground: "#ffffff0d"
+                    hoverBackground: "var(--sc-cmp-toast-info-close-button-hover-background)"
                 },
-                detailColor: "{surface.0}"
+                detailColor: "var(--sc-cmp-toast-info-detail-color)"
             },
             root: {
                 blur: "0.714286rem"
             },
             warn: {
                 color: "{yellow.500}",
-                background: "#eab30829",
-                borderColor: "#a162075c",
+                background: "var(--sc-cmp-toast-warn-background)",
+                borderColor: "var(--sc-cmp-toast-warn-border-color)",
                 closeButton: {
                     focusRing: {
                         color: "{yellow.500}"
                     },
-                    hoverBackground: "#ffffff0d"
+                    hoverBackground: "var(--sc-cmp-toast-warn-close-button-hover-background)"
                 },
-                detailColor: "{surface.0}"
+                detailColor: "var(--sc-cmp-toast-warn-detail-color)"
             },
             error: {
-                color: "{red.500}",
-                background: "#ef444429",
-                borderColor: "#b91c1c5c",
+                color: "var(--sc-cmp-toast-error-color)",
+                background: "var(--sc-cmp-toast-error-background)",
+                borderColor: "var(--sc-cmp-toast-error-border-color)",
                 closeButton: {
                     focusRing: {
-                        color: "{red.500}"
+                        color: "var(--sc-cmp-toast-error-close-button-focus-ring-color)"
                     },
-                    hoverBackground: "#ffffff0d"
+                    hoverBackground: "var(--sc-cmp-toast-error-close-button-hover-background)"
                 },
-                detailColor: "{surface.0}"
+                detailColor: "var(--sc-cmp-toast-error-detail-color)"
             },
             success: {
-                color: "{green.500}",
-                background: "#22c55e29",
-                borderColor: "#15803d5c",
+                color: "var(--sc-cmp-toast-success-color)",
+                background: "var(--sc-cmp-toast-success-background)",
+                borderColor: "var(--sc-cmp-toast-success-border-color)",
                 closeButton: {
                     focusRing: {
-                        color: "{green.500}"
+                        color: "var(--sc-cmp-toast-success-close-button-focus-ring-color)"
                     },
-                    hoverBackground: "#ffffff0d"
+                    hoverBackground: "var(--sc-cmp-toast-success-close-button-hover-background)"
                 },
-                detailColor: "{surface.0}"
+                detailColor: "var(--sc-cmp-toast-success-detail-color)"
             },
             contrast: {
                 color: "{surface.950}",
-                background: "{surface.0}",
+                background: "var(--sc-cmp-toast-contrast-background)",
                 borderColor: "{surface.100}",
                 closeButton: {
                     focusRing: {
@@ -161,28 +161,28 @@ import type { ToastDesignTokens } from '@primeuix/themes/types/toast';
                     },
                     hoverBackground: "{surface.700}"
                 },
-                detailColor: "{surface.0}"
+                detailColor: "var(--sc-cmp-toast-secondary-detail-color)"
             }
         },
         light: {
             info: {
-                color: "{blue.600}",
-                background: "#eff6fff2",
-                borderColor: "{blue.200}",
+                color: "var(--sc-cmp-toast-info-color)",
+                background: "var(--sc-cmp-toast-info-background)",
+                borderColor: "var(--sc-cmp-toast-info-border-color)",
                 closeButton: {
                     focusRing: {
-                        color: "{blue.600}"
+                        color: "var(--sc-cmp-toast-info-close-button-focus-ring-color)"
                     },
-                    hoverBackground: "{blue.100}"
+                    hoverBackground: "var(--sc-cmp-toast-info-close-button-hover-background)"
                 },
-                detailColor: "{surface.700}"
+                detailColor: "var(--sc-cmp-toast-info-detail-color)"
             },
             root: {
                 blur: "0.107143rem"
             },
             warn: {
                 color: "{yellow.600}",
-                background: "#fefce8f2",
+                background: "var(--sc-cmp-toast-warn-background)",
                 borderColor: "{yellow.200}",
                 closeButton: {
                     focusRing: {
@@ -190,55 +190,55 @@ import type { ToastDesignTokens } from '@primeuix/themes/types/toast';
                     },
                     hoverBackground: "{yellow.100}"
                 },
-                detailColor: "{surface.700}"
+                detailColor: "var(--sc-cmp-toast-warn-detail-color)"
             },
             error: {
-                color: "{red.600}",
-                background: "#fef2f2f2",
-                borderColor: "{red.200}",
+                color: "var(--sc-cmp-toast-error-color)",
+                background: "var(--sc-cmp-toast-error-background)",
+                borderColor: "var(--sc-cmp-toast-error-border-color)",
                 closeButton: {
                     focusRing: {
-                        color: "{red.600}"
+                        color: "var(--sc-cmp-toast-error-close-button-focus-ring-color)"
                     },
-                    hoverBackground: "{red.100}"
+                    hoverBackground: "var(--sc-cmp-toast-error-close-button-hover-background)"
                 },
-                detailColor: "{surface.700}"
+                detailColor: "var(--sc-cmp-toast-error-detail-color)"
             },
             success: {
-                color: "{green.600}",
-                background: "#f0fdf4f2",
-                borderColor: "{green.200}",
+                color: "var(--sc-cmp-toast-success-color)",
+                background: "var(--sc-cmp-toast-success-background)",
+                borderColor: "var(--sc-cmp-toast-success-border-color)",
                 closeButton: {
                     focusRing: {
-                        color: "{green.600}"
+                        color: "var(--sc-cmp-toast-success-close-button-focus-ring-color)"
                     },
-                    hoverBackground: "{green.100}"
+                    hoverBackground: "var(--sc-cmp-toast-success-close-button-hover-background)"
                 },
-                detailColor: "{surface.700}"
+                detailColor: "var(--sc-cmp-toast-success-detail-color)"
             },
             contrast: {
-                color: "{surface.50}",
-                background: "{surface.900}",
-                borderColor: "{surface.950}",
+                color: "var(--sc-cmp-toast-contrast-color)",
+                background: "var(--sc-cmp-toast-contrast-background)",
+                borderColor: "var(--sc-cmp-toast-contrast-border-color)",
                 closeButton: {
                     focusRing: {
-                        color: "{surface.50}"
+                        color: "var(--sc-cmp-toast-contrast-close-button-focus-ring-color)"
                     },
-                    hoverBackground: "{surface.800}"
+                    hoverBackground: "var(--sc-cmp-toast-contrast-close-button-hover-background)"
                 },
-                detailColor: "{surface.0}"
+                detailColor: "var(--sc-cmp-toast-contrast-detail-color)"
             },
             secondary: {
-                color: "{surface.600}",
-                background: "{surface.100}",
-                borderColor: "{surface.200}",
+                color: "var(--sc-cmp-toast-secondary-color)",
+                background: "var(--sc-cmp-toast-secondary-background)",
+                borderColor: "var(--sc-cmp-toast-secondary-border-color)",
                 closeButton: {
                     focusRing: {
-                        color: "{surface.600}"
+                        color: "var(--sc-cmp-toast-secondary-close-button-focus-ring-color)"
                     },
-                    hoverBackground: "{surface.200}"
+                    hoverBackground: "var(--sc-cmp-toast-secondary-close-button-hover-background)"
                 },
-                detailColor: "{surface.700}"
+                detailColor: "var(--sc-cmp-toast-secondary-detail-color)"
             }
         }
     }

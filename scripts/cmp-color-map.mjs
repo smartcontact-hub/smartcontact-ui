@@ -32,6 +32,58 @@ export const EXCLUDE = new Set([
   'dark:button.outlined.info.active.background',
   'dark:button.text.info.hover.background',
   'dark:button.text.info.active.background',
+
+  // ── warn → amber, NO yellow (toast/message). `base.ts` remapea `yellow→amber`
+  //    (warn de marca = amber #f59e0b, más cálido que el yellow #eab308 del Kit). Estos
+  //    slots se renderizan por `{yellow.*}` → amber; el Kit los espejaría a yellow y
+  //    rompería la marca. Se preservan a mano (los fondos/bordes literales yellow SÍ se
+  //    generan — son no-op). Verificado por scripts/cmp-color-rewire.mjs (value-equality).
+  'dark:toast.warn.color',
+  'dark:toast.warn.close.button.focus.ring.color',
+  'light:toast.warn.color',
+  'light:toast.warn.border.color',
+  'light:toast.warn.close.button.focus.ring.color',
+  'light:toast.warn.close.button.hover.background',
+  'dark:message.warn.color',
+  'dark:message.warn.simple.color',
+  'dark:message.warn.outlined.color',
+  'dark:message.warn.outlined.border.color',
+  'dark:message.warn.close.button.focus.ring.color',
+  'light:message.warn.color',
+  'light:message.warn.simple.color',
+  'light:message.warn.outlined.color',
+  'light:message.warn.outlined.border.color',
+  'light:message.warn.border.color',
+  'light:message.warn.close.button.focus.ring.color',
+  'light:message.warn.close.button.hover.background',
+
+  // ── dark contrast/secondary → surface de MARCA (gris frío SC), NO zinc (toast/message).
+  //    El preset usa `{surface.*}` y `base.ts` mapea surface→gray (gris navy de marca); el
+  //    Kit, en dark, usa zinc neutro. Espejarlos forkearía el sistema de surface (un zinc
+  //    suelto solo en toast/message). Se preservan: toast/message secondary/contrast siguen
+  //    el surface general de la app. (Sus slots LITERALES blanco/azul SÍ se generan — no-op.)
+  'dark:toast.contrast.color',
+  'dark:toast.contrast.border.color',
+  'dark:toast.contrast.close.button.focus.ring.color',
+  'dark:toast.contrast.close.button.hover.background',
+  'dark:toast.contrast.detail.color',
+  'dark:toast.secondary.color',
+  'dark:toast.secondary.background',
+  'dark:toast.secondary.border.color',
+  'dark:toast.secondary.close.button.focus.ring.color',
+  'dark:toast.secondary.close.button.hover.background',
+  'dark:message.contrast.color',
+  'dark:message.contrast.border.color',
+  'dark:message.contrast.close.button.focus.ring.color',
+  'dark:message.contrast.close.button.hover.background',
+  'dark:message.secondary.color',
+  'dark:message.secondary.simple.color',
+  'dark:message.secondary.outlined.color',
+  'dark:message.secondary.outlined.border.color',
+  'dark:message.secondary.background',
+  'dark:message.secondary.border.color',
+  'dark:message.secondary.close.button.focus.ring.color',
+  'dark:message.secondary.close.button.hover.background',
 ]);
 
 /**
