@@ -24,8 +24,8 @@
  *   npm run preview:live -- supervisor  # la app Supervisor
  */
 import { spawn, execFileSync } from 'node:child_process';
-import { existsSync, writeFileSync } from 'node:fs';
-import { resolve } from 'node:path';
+import { existsSync, writeFileSync, mkdirSync, unlinkSync } from 'node:fs';
+import { resolve, dirname } from 'node:path';
 import { setInterval, clearInterval } from 'node:timers';
 
 const root = resolve(import.meta.dirname, '..');
@@ -43,6 +43,9 @@ const POLL_MS = 12_000;
 
 const arg = (process.argv[2] || 'sc-demo').toLowerCase();
 const APP = arg === 'supervisor' ? 'supervisor' : 'sc-demo';
+
+// PID file (no-trackeado) para el ANTI-ZOMBIE: un solo preview:live a la vez.
+const PID_FILE = resolve(root, 'node_modules/.cache/preview-live.pid');
 
 const C = { cyan: '\x1b[36m', dim: '\x1b[2m', yellow: '\x1b[33m', green: '\x1b[32m', reset: '\x1b[0m' };
 const log = (m) => process.stdout.write(`${C.cyan}▸ preview:live${C.reset} ${m}\n`);
@@ -87,7 +90,7 @@ function regenerate() {
   }
 }
 
-// Al salir: restaura los ficheros de token al estado committeado (repo limpio).
+// Al salir: restaura los ficheros de token al estado committeado (repo limpio) + borra el PID.
 let restored = false;
 function restore() {
   if (restored) return;
@@ -95,6 +98,43 @@ function restore() {
   try {
     git('checkout', '--', ...TOKEN_FILES);
     log('repo restaurado al estado committeado.');
+  } catch {
+    /* best-effort */
+  }
+  try {
+    unlinkSync(PID_FILE);
+  } catch {
+    /* ya no existe */
+  }
+}
+
+// ── ANTI-ZOMBIE: garantiza UN solo preview:live (los previos re-bajan el export y ensucian) ──
+// Mata cualquier OTRA instancia de preview:live antes de arrancar (su propio handler restaura
+// sus ficheros). Sin esto se acumulan watch-loops que dejan el export sucio para siempre.
+function killPriorInstances() {
+  let killed = 0;
+  try {
+    const out = execFileSync('pgrep', ['-f', 'scripts/preview-live.mjs'], { encoding: 'utf8' });
+    for (const line of out.split('\n')) {
+      const pid = parseInt(line.trim(), 10);
+      if (!pid || pid === process.pid || pid === process.ppid) continue;
+      try {
+        process.kill(pid, 'SIGTERM');
+        killed++;
+      } catch {
+        /* ya muerto / sin permiso */
+      }
+    }
+  } catch {
+    /* pgrep no encontró nada (o no existe en el SO) → nada que matar */
+  }
+  if (killed) warn(`maté ${killed} preview:live previo(s) (anti-zombie) para no acumular export sucio.`);
+}
+
+function writePidFile() {
+  try {
+    mkdirSync(dirname(PID_FILE), { recursive: true });
+    writeFileSync(PID_FILE, String(process.pid));
   } catch {
     /* best-effort */
   }
@@ -107,6 +147,8 @@ process.stdout.write(
     `  Para parar: cierra esta ventana.${C.reset}\n\n`,
 );
 
+killPriorInstances(); // anti-zombie: un solo preview:live a la vez
+writePidFile();
 ensureBuilt();
 log(`bajando el export de "${BRANCH}" y regenerando los tokens…`);
 let lastSha = pullExport();
@@ -144,6 +186,10 @@ function shutdown() {
 process.on('SIGINT', shutdown);
 process.on('SIGTERM', shutdown);
 process.on('SIGHUP', shutdown);
+// Red de seguridad: restaura (síncrono) ante CUALQUIER salida del proceso — cierre normal,
+// excepción no capturada, etc. (No cubre SIGKILL/cierre forzado de ventana → para ESE caso
+// está el guard `tokens:export-clean` en verify + el anti-zombie del próximo arranque.)
+process.on('exit', restore);
 ng.on('exit', () => {
   clearInterval(poll);
   restore();
