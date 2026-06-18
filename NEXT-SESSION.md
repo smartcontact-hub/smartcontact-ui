@@ -1,6 +1,6 @@
 # NEXT SESSION — Smart Contact DS (hand-off)
 
-> Sello: **2026-06-18**, Fase 1.1 (color) + 1.2 (chivato §7) + 1.3 (completitud §8) + **puente de sombras COMPLETO (gen + rewire)** + paridad de tipografía + hand-off durable COMPLETOS (HEAD `e16fdd5`). SOBREESCRIBE en cada cierre.
+> Sello: **2026-06-18**, **🌉 FASE 1 (EL PUENTE) PROBADA COMPLETA** — color (1.1) + chivato §7 (1.2) + completitud §8 (1.3) + puente de sombras (gen+rewire) + tipografía + **mini-test e2e (1.4 PUERTA)** + hand-off durable (HEAD `d3c247a`). Siguiente = **Fase 2 (Audit DS)**. SOBREESCRIBE en cada cierre.
 
 ---
 
@@ -19,14 +19,15 @@
 ---
 
 ## 🎯 Estado de un vistazo
-**El puente está VIVO y GUARDADO** (HEAD `cf004ed`). Fluyen+se-verifican: primitivos (color §7), semántico, sizing,
-**color de componente** leído por los 20 componentes con `colorScheme`, **tipografía** (font-size + line-height parity)
-y ahora **TODOS los grupos del export** (§8 censo de completitud: ningún grupo queda DIFERIDO).
-Un cambio de cualquiera de esos en Figma SE VE y, si no llega al código, salta ROJO (nada en silencio).
+**EL PUENTE ESTÁ PROBADO COMPLETO** (HEAD `d3c247a`). Fluyen+se-verifican: primitivos (color §7), semántico, sizing,
+**color de componente**, **sombras** (effects → `--sc-cmp-*-shadow`, leídas por el preset), **tipografía** (parity)
+y **TODOS los grupos del export** (§8 censo de completitud). El **mini-test e2e (1.4)** prueba que un cambio en el
+Kit FLUYE al CSS por CADA generador (regresión para siempre). Un cambio de cualquier clase en Figma SE VE y, si no
+llega al código, salta ROJO (nada en silencio). **La Fase 1 (el puente) está CERRADA.**
 
-**Lo que falta para cerrar el puente:**
-1. **Mini-test** end-to-end — Fase 1.4 (puerta). ÚNICO pendiente. Con eso el puente queda PROBADO completo.
-   (Las sombras ya FLUYEN: puente de sombras COMPLETO, ver YA HECHO.)
+**Único pendiente del puente (de Rafa, no bloquea):** la **pasada manual real** — cambiar un token de CADA clase
+en Figma (un primitivo, un color semántico, una sombra, un sizing) → Push Tokens → verlo en el preview de rama.
+Es la confirmación humana del loop entero; lo automatizado ya está PROBADO.
 
 **Decisión de marca DIFERIDA (Rafa, 2026-06-18):** "primero el puente, marca después". El repunte preservó 2 divergencias
 de marca SIN cambiar pixeles (vía EXCLUDE): **warn = ámbar** (no yellow/orange del Kit) y **superficie oscura = gris SC**
@@ -37,7 +38,7 @@ de marca SIN cambiar pixeles (vía EXCLUDE): **warn = ámbar** (no yellow/orange
 **Impecable y autosuficiente. No perseguir a un dev** (salvo bugs).
 
 ## 🗺️ Orden maestro (aprobado 2026-06-18) — el detalle está en el PLAN
-- **Fase 1 — Puente:** 1.1 rewire de color ✅ · 1.2 chivato §7 ✅ · 1.3 completitud §8 ✅ · **1.4 mini-test (siguiente)**.
+- **Fase 1 — Puente:** 1.1 color ✅ · 1.2 chivato §7 ✅ · 1.3 completitud §8 ✅ · sombras ✅ · **1.4 mini-test ✅ → PUENTE CERRADO**.
 - **🔍 AUDITORÍA DE TOKENS (Rafa la pidió para el FINAL del puente, `/audit-design-system`):** confirmar que TODAS las
   paletas del `~/Downloads/design-tokens.json` oficial (= mismo formato/valores que nuestro kit-export) quedan PERFECTAS
   en el DS. Mapa Tailwind→marca en memoria [[palette-rename-map-tailwind-to-brand]]. **Hallazgo ya cazado (2026-06-18):**
@@ -60,22 +61,28 @@ de marca SIN cambiar pixeles (vía EXCLUDE): **warn = ámbar** (no yellow/orange
 - **Baja prioridad (tras las 4):** Code Connect (apuntando a NUESTRO repo, interim) + auto-documentar variables Figma.
 - **En paralelo (sin bloquear):** doc-fixes one-time restantes · endurecer `preview:live` · W5 marca.
 
-## 🔴 PRIMERA ACCIÓN — Fase 1.4: mini-test de extremo a extremo (PUERTA — ÚLTIMO del puente)
-TODAS las clases de token ya fluyen y se verifican (color primitivo §7, semántico §6, sizing §4, color de
-componente, tipografía, **sombras** effects, completitud §8). **Falta la PUERTA (1.4):** un mini-test que tome el
-export-fixture, le meta UN cambio de CADA clase (primitivo, color semántico, color de componente, sizing, **una
-sombra/effect**) → `tokens:import` + `tokens:parity` y asserte que cada cambio aparece en el CSS y que §8 sigue
-VERDE. Committed = regresión para siempre. **+ pasada manual real** (Rafa cambia un token de cada clase en Figma →
-lo ve en preview de rama). Si pasa → **el puente está PROBADO completo** y se pasa a Fase 2 (Audit DS).
-- **Idea de implementación:** un test `node:test` que copie `kit-export-dtcg.json` a un tmp, aplique un delta por
-  clase, corra los generadores sobre el tmp y asserte el CSS resultante + el censo §8. Sin tocar el export real
-  (ojo: `tokens:export-clean`). Cuelga del harness existente.
+## 🔴 PRIMERA ACCIÓN — Fase 2: AUDIT / CHECKLIST del DS (auto-generado, Rafa valida)
+**La Fase 1 (el puente) está CERRADA y probada.** Siguiente fase del orden maestro = **Fase 2 (Audit DS)**: la
+clasificación AUTO-generada de los componentes (STANDARD / EXTENDED / CUSTOM / anidados / cobertura demo / dónde-se-usa)
+como **guard sostenible** + capturas del flujo real (Supervisor). Es la **referencia dev-facing exhaustiva**.
+Detalle completo en el PLAN (`~/.claude/plans/async-greeting-pumpkin.md`, sección "FASE 2"). Arranque sugerido:
+`scripts/component-audit.mjs` (`npm run audit:components`) que recorre `projects/ui-smartcontact/src/lib/components/*`
+y DERIVA del código provenance/primengBase/anidados/cobertura, con guard que falla si un componente no está clasificado.
+- **Antes de Fase 2, una tarea rápida de Rafa (no bloquea):** la **pasada manual real** del puente (ver "Estado de un
+  vistazo") — cambiar un token de cada clase en Figma y verlo en preview. Es la última validación humana del loop.
+- **Alternativas si Rafa prefiere:** Fase 3 (Agent, recon hecho) · W5 (alinear marca: warn→amarillo, dark→zinc) ·
+  auditoría de tokens (soft-blue↔cyan) · adelgazar `cmp-color-rewire` (cleanup confirmado-seguro).
 - **W5 (cuando Rafa quiera):** alinear warn→amarillo + dark→zinc. Necesita **ponerlo en Figma en la página de BACKLOG**
   (`figma.com/design/khNq9dJKNi13pNllrqm6dx/...?node-id=13097-13517`) para ver ANTES/DESPUÉS antes de commitear. Decisión de
   marca, no del puente. Necesita el bridge Figma (`mcp__figma__*`).
 - **Auditoría de tokens (Rafa, fin del puente):** ver §"Orden maestro" — soft-blue↔cyan desfasado ya cazado por §7.
 
 ## ✅ YA HECHO (commits en main, verde)
+- **🚪 MINI-TEST E2E — LA PUERTA (Fase 1.4, `d3c247a`):** `scripts/__tests__/bridge-e2e.test.mjs` prueba que un
+  cambio en el export del Kit FLUYE al CSS por CADA generador, en un **sandbox** (copia de capas + export mutado,
+  los generadores apuntados ahí por env `SC_KIT_EXPORT`/`SC_LAYERS_DIR`). 5 clases: primitivo, sizing, sombra,
+  color semántico, color de componente. Si un generador deja de propagar → ROJO. Regresión para siempre. Corre en
+  `test:unit` (verify). Los 5 generadores ganaron override por env (sin las env = rutas reales → todo intacto).
 - **🌑 PUENTE DE SOMBRAS COMPLETO (`6e32953` gen + `e16fdd5` rewire):** Rafa decidió **puente real** (el Kit es el
   camino). **Etapa 1** — `token-gen-effects.mjs` + `effects-map.mjs` leen `aura/effects` y emiten 58 sombras a
   `--sc-cmp-*-shadow` en `@sc-gen:effects` (las 71 `*.focus.ring.shadow` transparentes NO, foco por outline). **Etapa
