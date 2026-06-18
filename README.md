@@ -47,6 +47,7 @@ npm run e2e            # smoke en navegador (Playwright)
 | Repunte de sombras | `npm run tokens:effects-rewire` | Ningún preset deja un `shadow:` con hex hardcodeado para un slot que generamos (`@sc-gen:effects`) → la sombra se lee de `var(--sc-cmp-*-shadow)` y fluye del Kit | ✅ |
 | Tipografía | `npm run tokens:type-parity` | **Paridad** de tipografía: cada `font-size` Y `line-height` del Kit tiene su `--sc-font-size-*`/`--sc-line-height-*` 1:1 por valor (un cambio de tipografía de Figma no se escapa). El `font-size` literal lo bloquea `tokens:guard` | ✅ |
 | Escala del preset | `npm run audit:theme-scale` | Cero `px` en el preset · sin `css:` por-componente · sin hack de `html{font-size}` | ✅ |
+| Audit de componentes | `npm run audit:components` | La pokédex (`docs/inventory.md` + `_component-status.json`) está al día con el código: provenance/PrimeNG-base/API/anidados/demo/uso-en-Supervisor derivados; falla si la tabla se desfasa (cobertura demo se informa) | ✅ |
 | Tests unitarios | `npm run test:unit` | Suites de los generadores/scripts (`scripts/__tests__/*.test.mjs`) | ✅ |
 | Docs | `npm run docs:guard` · `docs:coherence` | Todo `.md` mapeado en `DOCS-INDEX` + links resuelven · la doc cuadra con el repo (comandos/scripts existen, cadena `verify` documentada, sin tokens muertos) | ✅ |
 | Tipos + lint | `npm run typecheck` · `npm run lint` | | ✅ |
