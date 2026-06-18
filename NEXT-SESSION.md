@@ -1,6 +1,6 @@
 # NEXT SESSION — Smart Contact DS (hand-off)
 
-> Sello: **2026-06-18**, **🌉 FASE 1 (EL PUENTE) PROBADA COMPLETA** + **Fase 2.1 (pokédex auto-generada)** — bridge (1.1-1.4 + sombras + tipografía) + hand-off durable + `audit:components` (HEAD `38ae2bd`). Siguiente = **Fase 2.2 (capturas del flujo real) + Rafa confirma standard/extended**. SOBREESCRIBE en cada cierre.
+> Sello: **2026-06-18**, **🌉 FASE 1 (EL PUENTE) PROBADA COMPLETA** + **Fase 2.1 (pokédex auto-generada)** — bridge (1.1-1.4 + sombras + tipografía) + hand-off durable + `audit:components` + **DD-21** (HEAD `d650ddb`). Siguiente = **Fase 2.2 (capturas del flujo real) + Rafa confirma standard/extended**. SOBREESCRIBE en cada cierre.
 
 ---
 
@@ -19,7 +19,7 @@
 ---
 
 ## 🎯 Estado de un vistazo
-**EL PUENTE ESTÁ PROBADO COMPLETO** (HEAD `d3c247a`). Fluyen+se-verifican: primitivos (color §7), semántico, sizing,
+**EL PUENTE ESTÁ PROBADO COMPLETO** (HEAD `d650ddb`; ver `docs/DECISIONS.md` DD-21). Fluyen+se-verifican: primitivos (color §7), semántico, sizing,
 **color de componente**, **sombras** (effects → `--sc-cmp-*-shadow`, leídas por el preset), **tipografía** (parity)
 y **TODOS los grupos del export** (§8 censo de completitud). El **mini-test e2e (1.4)** prueba que un cambio en el
 Kit FLUYE al CSS por CADA generador (regresión para siempre). Un cambio de cualquier clase en Figma SE VE y, si no
