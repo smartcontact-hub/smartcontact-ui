@@ -1,6 +1,6 @@
 # NEXT SESSION — Smart Contact DS (hand-off)
 
-> Sello: **2026-06-18**, **🌉 FASE 1 (EL PUENTE) PROBADA COMPLETA** — color (1.1) + chivato §7 (1.2) + completitud §8 (1.3) + puente de sombras (gen+rewire) + tipografía + **mini-test e2e (1.4 PUERTA)** + hand-off durable (HEAD `d3c247a`). Siguiente = **Fase 2 (Audit DS)**. SOBREESCRIBE en cada cierre.
+> Sello: **2026-06-18**, **🌉 FASE 1 (EL PUENTE) PROBADA COMPLETA** + **Fase 2.1 (pokédex auto-generada)** — bridge (1.1-1.4 + sombras + tipografía) + hand-off durable + `audit:components` (HEAD `38ae2bd`). Siguiente = **Fase 2.2 (capturas del flujo real) + Rafa confirma standard/extended**. SOBREESCRIBE en cada cierre.
 
 ---
 
@@ -61,23 +61,31 @@ de marca SIN cambiar pixeles (vía EXCLUDE): **warn = ámbar** (no yellow/orange
 - **Baja prioridad (tras las 4):** Code Connect (apuntando a NUESTRO repo, interim) + auto-documentar variables Figma.
 - **En paralelo (sin bloquear):** doc-fixes one-time restantes · endurecer `preview:live` · W5 marca.
 
-## 🔴 PRIMERA ACCIÓN — Fase 2: AUDIT / CHECKLIST del DS (auto-generado, Rafa valida)
-**La Fase 1 (el puente) está CERRADA y probada.** Siguiente fase del orden maestro = **Fase 2 (Audit DS)**: la
-clasificación AUTO-generada de los componentes (STANDARD / EXTENDED / CUSTOM / anidados / cobertura demo / dónde-se-usa)
-como **guard sostenible** + capturas del flujo real (Supervisor). Es la **referencia dev-facing exhaustiva**.
-Detalle completo en el PLAN (`~/.claude/plans/async-greeting-pumpkin.md`, sección "FASE 2"). Arranque sugerido (A
-CREAR): un script tipo `component-audit` (comando `audit:components`) que recorra `projects/ui-smartcontact/src/lib/components/`
-y DERIVE del código provenance/primengBase/anidados/cobertura, con guard que falla si un componente no está clasificado.
-- **Antes de Fase 2, una tarea rápida de Rafa (no bloquea):** la **pasada manual real** del puente (ver "Estado de un
-  vistazo") — cambiar un token de cada clase en Figma y verlo en preview. Es la última validación humana del loop.
-- **Alternativas si Rafa prefiere:** Fase 3 (Agent, recon hecho) · W5 (alinear marca: warn→amarillo, dark→zinc) ·
-  auditoría de tokens (soft-blue↔cyan) · adelgazar `cmp-color-rewire` (cleanup confirmado-seguro).
+## 🔴 PRIMERA ACCIÓN — Fase 2.2: capturas del flujo real + Rafa confirma standard/extended
+**Fase 2.1 HECHA:** la pokédex auto-generada (`audit:components`) ya clasifica los 48 componentes en
+`docs/inventory.md` + `docs/_component-status.json`. **Siguiente (2.2):** para cada componente **usado en el
+Supervisor** (el manifiesto da el nº de usos), capturar con **Playwright** las pantallas reales donde aparece →
+doc visual "cada componente + dónde se usa en la app". Se regeneran (no se quedan viejas). Decisión al construir:
+¿capturas en un .md o página navegable en sc-demo?
+- **2 juicios de Rafa pendientes (rápidos, no bloquean):** (1) revisar la columna **STANDARD vs EXTENDED** de la
+  tabla y forzar las que discrepe en `scripts/component-audit-map.mjs` (`PROVENANCE_OVERRIDE`); (2) los **20
+  componentes sin demo** (customs de flujo) — decidir si se les exige página demo (entonces el guard sube a fallo)
+  o se documentan como "se ven en el flujo del Supervisor, no aislados". Hoy el guard los INFORMA, no bloquea.
+- **Alternativas si Rafa prefiere saltar:** Fase 3 (Agent, recon hecho) · W5 (marca: warn→amarillo, dark→zinc) ·
+  auditoría de tokens (soft-blue↔cyan) · adelgazar `cmp-color-rewire`. La **pasada manual del puente** ya la hizo Rafa ✅.
 - **W5 (cuando Rafa quiera):** alinear warn→amarillo + dark→zinc. Necesita **ponerlo en Figma en la página de BACKLOG**
   (`figma.com/design/khNq9dJKNi13pNllrqm6dx/...?node-id=13097-13517`) para ver ANTES/DESPUÉS antes de commitear. Decisión de
   marca, no del puente. Necesita el bridge Figma (`mcp__figma__*`).
 - **Auditoría de tokens (Rafa, fin del puente):** ver §"Orden maestro" — soft-blue↔cyan desfasado ya cazado por §7.
 
 ## ✅ YA HECHO (commits en main, verde)
+- **📇 POKÉDEX AUTO-GENERADA (Fase 2.1, `38ae2bd`):** `scripts/component-audit.mjs` (`audit:components`, en verify)
+  deriva del CÓDIGO por componente: provenance (CUSTOM/STANDARD/EXTENDED), base PrimeNG, API propia (CVA + nº
+  inputs), anidados (sc-* sin sc-icon), demo y **uso real en el Supervisor**. Emite `docs/_component-status.json`
+  + tabla en `docs/inventory.md` (zona `@audit:components`; sustituyó las tablas a mano que ya habían driftado —
+  photo-upload mal clasificado). **48 comp: 14 custom · 11 standard · 23 extended · 27 usados en Supervisor.**
+  standard/extended = heurística (CVA o ≥4 inputs) + override curado (`component-audit-map.mjs`, lo confirma Rafa).
+  Guard FALLA por desfase; los 20 sin demo se INFORMAN (no bloquean). Test de la pura (`component-audit.test.mjs`).
 - **🚪 MINI-TEST E2E — LA PUERTA (Fase 1.4, `d3c247a`):** `scripts/__tests__/bridge-e2e.test.mjs` prueba que un
   cambio en el export del Kit FLUYE al CSS por CADA generador, en un **sandbox** (copia de capas + export mutado,
   los generadores apuntados ahí por env `SC_KIT_EXPORT`/`SC_LAYERS_DIR`). 5 clases: primitivo, sizing, sombra,
