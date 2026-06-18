@@ -30,6 +30,8 @@ jobs:
         run: npm run build:demo
       - name: Build supervisor (la app real, consume el DS local)
         run: npx ng build supervisor --configuration production
+      - name: Build agent (consume el DS local)
+        run: npx ng build agent --configuration production
       - name: e2e smoke
         run: |
           npx playwright install --with-deps chromium

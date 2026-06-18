@@ -1,0 +1,27 @@
+.shell {
+  display: flex;
+  flex-direction: column;
+  height: 100vh;
+  overflow: hidden;
+  background: var(--sc-bg-default);
+}
+
+.kpis {
+  display: grid;
+  grid-template-columns: 1.4fr 0.7fr 1.4fr 1fr 1.1fr;
+  gap: var(--sc-spacing-1);
+  padding: var(--sc-spacing-1-5) var(--sc-spacing-1-5) 0;
+}
+
+.tablewrap {
+  margin: var(--sc-spacing-1-5);
+  flex: 1;
+  min-height: 0;
+  overflow: auto;
+}
+
+@media (max-width: 75rem) {
+  .kpis {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}

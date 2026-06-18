@@ -42,7 +42,7 @@ const GENERATORS = ['token-gen.mjs', 'token-gen-component.mjs', 'token-gen-color
 const POLL_MS = 12_000;
 
 const arg = (process.argv[2] || 'sc-demo').toLowerCase();
-const APP = arg === 'supervisor' ? 'supervisor' : 'sc-demo';
+const APP = arg === 'supervisor' ? 'supervisor' : arg === 'agent' ? 'agent' : 'sc-demo';
 
 // PID file (no-trackeado) para el ANTI-ZOMBIE: un solo preview:live a la vez.
 const PID_FILE = resolve(root, 'node_modules/.cache/preview-live.pid');

@@ -1,6 +1,6 @@
 {
   "generated": "component-audit.mjs",
-  "summary": "48 componentes · 14 custom · 11 standard · 23 extended · 27 usados en Supervisor.",
+  "summary": "49 componentes · 15 custom · 11 standard · 23 extended · 27 usados en Supervisor.",
   "components": [
     {
       "name": "avatar",
@@ -272,6 +272,18 @@
       "nested": [],
       "hasDemo": false,
       "usedInSupervisor": 5
+    },
+    {
+      "name": "gauge",
+      "selector": "sc-gauge",
+      "provenance": "CUSTOM",
+      "kind": "CUSTOM",
+      "primengBase": "—",
+      "cva": false,
+      "inputs": 8,
+      "nested": [],
+      "hasDemo": true,
+      "usedInSupervisor": 0
     },
     {
       "name": "group-popover",
