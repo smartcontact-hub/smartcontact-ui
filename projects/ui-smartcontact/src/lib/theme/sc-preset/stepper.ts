@@ -40,7 +40,7 @@ import type { StepperDesignTokens } from '@primeuix/themes/types/stepper';
     stepNumber: {
         size: "var(--sc-scale-2)",
         color: "{text.muted.color}",
-        shadow: "0 0.071429rem 0.071429rem 0 #0000001f, 0 0.071429rem 0 0 #0000000f",
+        shadow: "var(--sc-cmp-stepper-step-number-shadow)",
         fontSize: "var(--sc-scale-1-143)",
         background: "{content.background}",
         fontWeight: "500",

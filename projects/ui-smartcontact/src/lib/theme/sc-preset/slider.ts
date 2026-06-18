@@ -18,7 +18,7 @@ import type { SliderDesignTokens } from '@primeuix/themes/types/slider';
         content: {
             width: "var(--sc-scale-1-143)",
             height: "var(--sc-scale-1-143)",
-            shadow: "0 0.071429rem 0.071429rem 0 #00000024, 0 0.071429rem 0 0 #00000014",
+            shadow: "var(--sc-cmp-slider-handle-content-shadow)",
             borderRadius: "0.571429rem",
             hoverBackground: "{content.background}"
         },

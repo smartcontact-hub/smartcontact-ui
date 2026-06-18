@@ -10,7 +10,7 @@ import type { ListboxDesignTokens } from '@primeuix/themes/types/listbox';
     },
     root: {
         color: "{form.field.color}",
-        shadow: "0 0.071429rem 0.142857rem 0 #1212170d",
+        shadow: "var(--sc-cmp-listbox-shadow)",
         background: "{form.field.background}",
         borderColor: "{form.field.border.color}",
         borderRadius: "{form.field.border.radius}",

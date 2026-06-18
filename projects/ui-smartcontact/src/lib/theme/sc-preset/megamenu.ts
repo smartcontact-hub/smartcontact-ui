@@ -35,7 +35,7 @@ import type { MegaMenuDesignTokens } from '@primeuix/themes/types/megamenu';
     overlay: {
         gap: "var(--sc-scale-0-5)",
         color: "{content.color}",
-        shadow: "0 0.142857rem 0.285714rem -0.142857rem #0000001a, 0 0.285714rem 0.428571rem -0.071429rem #0000001a",
+        shadow: "var(--sc-cmp-megamenu-overlay-shadow)",
         padding: "0",
         background: "{content.background}",
         borderColor: "{content.border.color}",

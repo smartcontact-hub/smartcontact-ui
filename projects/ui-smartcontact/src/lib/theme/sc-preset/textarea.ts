@@ -13,7 +13,7 @@ import type { TextareaDesignTokens } from '@primeuix/themes/types/textarea';
             paddingY: "{form.field.sm.padding.y}"
         },
         color: "{form.field.color}",
-        shadow: "0 0.071429rem 0.142857rem 0 #1212170d",
+        shadow: "var(--sc-cmp-textarea-shadow)",
         paddingX: "{form.field.padding.x}",
         paddingY: "{form.field.padding.y}",
         focusRing: {

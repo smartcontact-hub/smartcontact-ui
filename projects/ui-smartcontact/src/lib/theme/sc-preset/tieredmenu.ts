@@ -22,7 +22,7 @@ import type { TieredMenuDesignTokens } from '@primeuix/themes/types/tieredmenu';
     },
     root: {
         color: "{content.color}",
-        shadow: "0 0.142857rem 0.285714rem -0.142857rem #0000001a, 0 0.285714rem 0.428571rem -0.071429rem #0000001a",
+        shadow: "var(--sc-cmp-tieredmenu-shadow)",
         background: "{content.background}",
         borderColor: "{content.border.color}",
         borderRadius: "{content.border.radius}",

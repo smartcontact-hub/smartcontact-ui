@@ -9,7 +9,7 @@ import type { EditorDesignTokens } from '@primeuix/themes/types/editor';
     },
     overlay: {
         color: "{overlay.select.color}",
-        shadow: "0 0.142857rem 0.285714rem -0.142857rem #0000001a, 0 0.285714rem 0.428571rem -0.071429rem #0000001a",
+        shadow: "var(--sc-cmp-editor-overlay-shadow)",
         padding: "{list.padding}",
         background: "{overlay.select.background}",
         borderColor: "{overlay.select.border.color}",
