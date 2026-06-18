@@ -26,6 +26,11 @@ export const routes: Routes = [
         (m) => m.ComponentsIndexComponent,
       ),
   },
+  {
+    path: 'uso',
+    loadComponent: () =>
+      import('./pages/uso/usage-gallery.component').then((m) => m.UsageGalleryComponent),
+  },
   ...SC_DEMO_COMPONENT_PAGES.map((page) => ({
     path: `components/${page.path}`,
     loadComponent: page.load as never,
