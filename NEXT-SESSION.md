@@ -45,7 +45,15 @@ de marca SIN cambiar pixeles (vía EXCLUDE): **warn = ámbar** (no yellow/orange
 - **Fase 2 — Audit DS:** clasificación AUTO-generada (standard/extended/custom/anidados/cobertura) como guard +
   capturas del **flujo real** (Supervisor). Es la **referencia dev-facing exhaustiva**.
 - **Fase 3 — Agent:** inventario de la pantalla Figma → mapeo a la "pokédex" (nuestro DS) → esqueleto + preview.
-  (Necesito el link del Figma del agent.)
+  **RECON HECHO 2026-06-18** (Figma `Dle87qs0Pjq0OjIaaCfmm7`, nodo **`382:14079`** "Agent - Prueba colores", DARK).
+  Es un **dashboard de AGENTE de contact center**, FLAT (mockup, solo 2 instancias → mapear por reconocimiento visual,
+  no por estructura). **Pokédex (reúsa el DS ~90%):** tiles KPI → `sc-section-card` · estados ("Conexión/Desconexión",
+  Tipificación N1/N2/N3, "No atendidas 54") → `sc-tag`/`sc-badge` · Grupos Asignados (search+filas) → `sc-inputtext`(search)
+  + `sc-toggleswitch` + `sc-icon` · perfil → `sc-avatar` + `sc-button` · **tabla central de llamadas → `sc-datatable`** (la
+  pieza grande) · iconos dirección llamada (verde/rojo) → `sc-icon` severidad · toggle claro/oscuro → `sc-toggleswitch` ·
+  footer estado ("Conversando", contadores) → composición + `sc-button`/`sc-badge`. **ÚNICO GAP claro:** el **donut/gauge
+  "234 Conv. Totales"** (anillo verde/rojo) — el DS NO tiene gauge → decidir (PrimeNG `knob`/chart vs SVG custom). El resto
+  es composición/layout (shell del agente, grid de KPIs, footer-bar), no componentes nuevos. NO crear tokens salvo imprescindible.
 - **Fase 4 — AED 1:1** (capstone, necesita el puente probado + bridge Figma).
 - **Baja prioridad (tras las 4):** Code Connect (apuntando a NUESTRO repo, interim) + auto-documentar variables Figma.
 - **En paralelo (sin bloquear):** doc-fixes one-time restantes · endurecer `preview:live` · W5 marca.
