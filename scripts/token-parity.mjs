@@ -27,6 +27,7 @@ import { createRequire } from 'node:module';
 import { loadKitExport } from './dtcg-export.mjs';
 import { SIZING, GROUPS, DIVERGE_SIZING } from './sizing-map.mjs';
 import { ENFORCE as COLOR_ENFORCE, DIVERGE as COLOR_DIVERGE } from './color-map.mjs';
+import { PRIMITIVE_SOURCE, PRIMITIVE_DIVERGE, primitiveDrift } from './palette-map.mjs';
 
 const root = resolve(import.meta.dirname, '..');
 const EXPORT_PATH = resolve(root, 'projects/design-tokens/scripts/kit-export-dtcg.json');
@@ -370,6 +371,57 @@ for (const mode of ['light', 'dark']) {
   }
 }
 log(`  ✓ ${a11yOk}/${2 * A11Y_GATED.length} pares críticos cumplen AA`);
+
+// ── 7. CHIVATO de completitud — PRIMITIVAS DE COLOR (el hueco de §1-6) ─────────
+// §1-6 cazan escala/radio/sizing/color-semántico, pero NUNCA el color PRIMITIVO. Por ahí se
+// desfasó `soft-blue` del `cyan` sin que nadie lo viera. §7 verifica que cada familia primitiva
+// del DS sigue 1:1 a su FUENTE del export (mapa Tailwind→marca en `palette-map.mjs`). Las
+// divergencias conscientes se informan; cualquier OTRO desajuste → ROJO (un cambio en esa
+// primitiva sería MUDO: no lo recogería nadie). Es la "garantía de completitud" para color.
+log('\n=== 7. CHIVATO · primitivas de color (DS ← export, 1:1) ===');
+const hexFamilies = (entries, re) => {
+  const fams = {};
+  for (const [k, hex] of entries) {
+    const m = String(k).match(re);
+    if (m && /^#[0-9a-f]{6}/i.test(hex)) (fams[m[1]] ??= {})[m[2]] = String(hex).toLowerCase().slice(0, 7);
+  }
+  return fams;
+};
+const exFamilies = hexFamilies(
+  [...prim].map(([p, l]) => [p, typeof l.$value === 'string' ? l.$value : '']),
+  /^([a-z-]+)\.(\d+)$/,
+);
+const dsFamilies = hexFamilies(
+  [...primCssText.matchAll(/--sc-color-([a-z-]+)-(\d+)\s*:\s*(#[0-9a-f]{6})/gi)].map((m) => [`${m[1]}.${m[2]}`, m[3]]),
+  /^([a-z-]+)\.(\d+)$/,
+);
+const drift = primitiveDrift(dsFamilies, exFamilies);
+let primColorChecked = 0;
+for (const [dsFam, steps] of Object.entries(dsFamilies))
+  if (PRIMITIVE_SOURCE[dsFam]) for (const s of Object.keys(steps)) if (exFamilies[PRIMITIVE_SOURCE[dsFam]]?.[s] !== undefined) primColorChecked++;
+for (const d of drift)
+  fail(`[primitiva] --sc-color-${d.family}-${d.step} = ${d.dsHex} pero su fuente export ${d.src}.${d.step} = ${d.exHex} → DESFASE MUDO`);
+log(`  ✓ ${primColorChecked - drift.length}/${primColorChecked} primitivas de color 1:1 con su fuente del export`);
+log('  divergencias de primitiva conscientes (no fallan):');
+for (const d of PRIMITIVE_DIVERGE) log(`    · ${d.match} ${d.reason}`);
+const noSource = Object.keys(dsFamilies).filter((f) => !PRIMITIVE_SOURCE[f]);
+if (noSource.length) log(`  ℹ familias del DS sin fuente directa en el export (curadas, revisar en auditoría): ${noSource.join(', ')}`);
+
+// ── 7b. CENSO de cobertura del export (visibilidad: qué fluye, qué queda diferido) ──
+log('\n=== 7b. CENSO de cobertura del export ===');
+const census = [
+  ['aura/primitive', 'cubierto', '§1·2·7'],
+  ['aura/semantic/light', 'cubierto', '§6 + token-gen-color'],
+  ['aura/semantic/dark', 'cubierto', '§6 + token-gen-color'],
+  ['aura/component/common', 'cubierto', '§4 + token-gen-component'],
+  ['aura/component/light', 'cubierto', 'token-gen-cmp-color'],
+  ['aura/component/dark', 'cubierto', 'token-gen-cmp-color'],
+  ['aura/semantic/common', 'DIFERIDO', 'Fase 1.3'],
+  ['aura/app', 'DIFERIDO', 'Fase 1.3'],
+  ['aura/effects', 'DIFERIDO', 'Fase 1.3'],
+  ['aura/custom', 'inverso', 'code→Figma (round-trip)'],
+];
+for (const [g, status, by] of census) log(`  ${g.padEnd(24)} ${String(kit.groups[g]?.size ?? 0).padStart(4)} leaves · ${status.padEnd(9)} · ${by}`);
 
 // ── Resumen ──────────────────────────────────────────────────────────────────
 log('\n' + '─'.repeat(60));

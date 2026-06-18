@@ -35,7 +35,7 @@ de marca SIN cambiar pixeles (vía EXCLUDE): **warn = ámbar** (no yellow/orange
 **Impecable y autosuficiente. No perseguir a un dev** (salvo bugs).
 
 ## 🗺️ Orden maestro (aprobado 2026-06-18) — el detalle está en el PLAN
-- **Fase 1 — Puente:** 1.1 rewire de color ✅ · **1.2 chivato §7 (siguiente)** · 1.3 effects/app · 1.4 mini-test.
+- **Fase 1 — Puente:** 1.1 rewire de color ✅ · 1.2 chivato §7 ✅ · **1.3 effects/app (siguiente)** · 1.4 mini-test.
 - **🔍 AUDITORÍA DE TOKENS (Rafa la pidió para el FINAL del puente, `/audit-design-system`):** confirmar que TODAS las
   paletas del `~/Downloads/design-tokens.json` oficial (= mismo formato/valores que nuestro kit-export) quedan PERFECTAS
   en el DS. Mapa Tailwind→marca en memoria [[palette-rename-map-tailwind-to-brand]]. **Hallazgo ya cazado (2026-06-18):**
@@ -50,17 +50,25 @@ de marca SIN cambiar pixeles (vía EXCLUDE): **warn = ámbar** (no yellow/orange
 - **Baja prioridad (tras las 4):** Code Connect (apuntando a NUESTRO repo, interim) + auto-documentar variables Figma.
 - **En paralelo (sin bloquear):** doc-fixes one-time restantes · endurecer `preview:live` · W5 marca.
 
-## 🔴 PRIMERA ACCIÓN — Fase 1.2: CHIVATO §7 (garantía de completitud)
-Fase 1.1 (rewire de color) **HECHA y en main** (ver YA HECHO). Lo inmediato es el **chivato §7**: extender
-`token-parity.mjs` para que recorra **TODO** el export y cada token sea: espejado-OK / divergente-a-propósito /
-"cambió pero nadie lo recoge → ROJO con la razón". Mata el verde-mudo en CUALQUIER capa (incl. las sin generador).
-- **VERIFICADOR:** test de DOBLE CARA (fixture que no fluye → ROJO; fixture que fluye → VERDE).
-- El chivato debe vigilar las divergencias de marca EXCLUIDAS en `cmp-color-map.mjs` (warn-ámbar, surface-gris): si Figma
-  cambia uno de esos slots, avisar para re-decidir (es el mecanismo sostenible de la lista EXCLUDE, no se desfasa).
-- (Alternativa si Rafa quiere: arrancar el **W5** = alinear warn→amarillo + dark→zinc, con preview de TODA la app antes de
-  commitear. Es decisión de marca, no del puente.)
+## 🔴 PRIMERA ACCIÓN — Fase 1.3: cerrar huecos effects + app + semantic-common
+Fases 1.1 (rewire de color) y **1.2 (chivato §7) HECHAS y en main** (ver YA HECHO). El censo de cobertura (§7b en
+`token-parity.mjs`) deja a la vista lo que falta: **`aura/effects` (129), `aura/app` (6), `aura/semantic/common` (60)**
+no fluyen aún → generador o curado-documentado (zona `@sc-gen:effects` etc.). **VERIFICADOR:** que el censo §7b los marque
+`cubierto`, no `DIFERIDO`. Luego **1.4 mini-test** (puerta end-to-end) y el puente queda PROBADO completo.
+- **W5 (cuando Rafa quiera):** alinear warn→amarillo + dark→zinc. Necesita **ponerlo en Figma en la página de BACKLOG**
+  (`figma.com/design/khNq9dJKNi13pNllrqm6dx/...?node-id=13097-13517`) para ver ANTES/DESPUÉS antes de commitear. Decisión de
+  marca, no del puente. Necesita el bridge Figma (`mcp__figma__*`).
+- **Auditoría de tokens (Rafa, fin del puente):** ver §"Orden maestro" — soft-blue↔cyan desfasado ya cazado por §7.
 
 ## ✅ YA HECHO (commits en main, verde)
+- **🚨 CHIVATO §7 (Fase 1.2)** — `token-parity.mjs` §7 + `scripts/palette-map.mjs`: verifica que cada **primitiva de
+  color** del DS sigue 1:1 a su fuente del export (mapa Tailwind→marca). Era el hueco de §1-6 (nunca miraban color
+  primitivo) por el que `soft-blue` se desfasó del `cyan` SIN que nadie lo viera — ahora un desfase mudo = ROJO.
+  Divergencias conscientes (green-950 marca, soft-blue pendiente-audit, azure huérfano) listadas → no fallan. + censo
+  §7b (qué grupo del export está cubierto/diferido). Test de DOBLE CARA (`palette-map.test.mjs`).
+- **🪂 RED DE SEGURIDAD color fuera de paleta** — `token-gen-cmp-color` non-fatal + `token-report` traduce y sugiere la
+  primitiva más cercana (el `#0369a1` del experimento ya no crashea el sync) (`6b509be`).
+- **🛡️ preview:live endurecido** — anti-zombie + restore fiable + guard `tokens:export-clean` en verify (`68b8c9d`).
 - **🌉 REWIRE de color COMPLETO (Fase 1.1)** — los 20 componentes con `colorScheme` leen ya `var(--sc-cmp-*)`:
   toast+message (`a325b31`) + los otros 18 (`91ae6e6`). **306 slots no-op repuntados, value-equality DEMOSTRADA**;
   40 divergencias de marca preservadas SIN cambiar pixeles. Probado en runtime (preview): `--p-*` fluye por `--sc-cmp-*`,
