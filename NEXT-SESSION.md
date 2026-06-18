@@ -65,9 +65,9 @@ de marca SIN cambiar pixeles (vía EXCLUDE): **warn = ámbar** (no yellow/orange
 **La Fase 1 (el puente) está CERRADA y probada.** Siguiente fase del orden maestro = **Fase 2 (Audit DS)**: la
 clasificación AUTO-generada de los componentes (STANDARD / EXTENDED / CUSTOM / anidados / cobertura demo / dónde-se-usa)
 como **guard sostenible** + capturas del flujo real (Supervisor). Es la **referencia dev-facing exhaustiva**.
-Detalle completo en el PLAN (`~/.claude/plans/async-greeting-pumpkin.md`, sección "FASE 2"). Arranque sugerido:
-`scripts/component-audit.mjs` (`npm run audit:components`) que recorre `projects/ui-smartcontact/src/lib/components/*`
-y DERIVA del código provenance/primengBase/anidados/cobertura, con guard que falla si un componente no está clasificado.
+Detalle completo en el PLAN (`~/.claude/plans/async-greeting-pumpkin.md`, sección "FASE 2"). Arranque sugerido (A
+CREAR): un script tipo `component-audit` (comando `audit:components`) que recorra `projects/ui-smartcontact/src/lib/components/`
+y DERIVE del código provenance/primengBase/anidados/cobertura, con guard que falla si un componente no está clasificado.
 - **Antes de Fase 2, una tarea rápida de Rafa (no bloquea):** la **pasada manual real** del puente (ver "Estado de un
   vistazo") — cambiar un token de cada clase en Figma y verlo en preview. Es la última validación humana del loop.
 - **Alternativas si Rafa prefiere:** Fase 3 (Agent, recon hecho) · W5 (alinear marca: warn→amarillo, dark→zinc) ·
