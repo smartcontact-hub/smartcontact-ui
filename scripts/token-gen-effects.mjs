@@ -23,8 +23,13 @@ import { rewriteRegion } from './marker-rewrite.mjs';
 import { shadowToCss, tokenName } from './effects-map.mjs';
 
 const root = resolve(import.meta.dirname, '..');
-const EXPORT_PATH = resolve(root, 'projects/design-tokens/scripts/kit-export-dtcg.json');
-const LAYERS = resolve(root, 'projects/design-tokens/src/lib/styles/tokens/layers');
+// Override por env (SC_KIT_EXPORT / SC_LAYERS_DIR) para el mini-test e2e en sandbox.
+const EXPORT_PATH = process.env.SC_KIT_EXPORT
+  ? resolve(process.env.SC_KIT_EXPORT)
+  : resolve(root, 'projects/design-tokens/scripts/kit-export-dtcg.json');
+const LAYERS = process.env.SC_LAYERS_DIR
+  ? resolve(process.env.SC_LAYERS_DIR)
+  : resolve(root, 'projects/design-tokens/src/lib/styles/tokens/layers');
 const EXT_CSS = resolve(LAYERS, '05-extensions.css');
 
 const emit = process.argv.includes('--emit');
