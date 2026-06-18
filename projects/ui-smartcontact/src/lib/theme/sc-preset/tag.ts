@@ -15,28 +15,28 @@ import type { TagDesignTokens } from '@primeuix/themes/types/tag';
     colorScheme: {
         dark: {
             info: {
-                color: "{sky.300}",
+                color: "var(--sc-cmp-tag-info-color)",
                 background: "#0ea5e929"
             },
             warn: {
                 color: "{orange.300}",
-                background: "#f9731629"
+                background: "var(--sc-cmp-tag-warn-background)"
             },
             danger: {
-                color: "{red.300}",
-                background: "#ef444429"
+                color: "var(--sc-cmp-tag-danger-color)",
+                background: "var(--sc-cmp-tag-danger-background)"
             },
             primary: {
                 color: "{primary.300}",
-                background: "#10b98129"
+                background: "var(--sc-cmp-tag-primary-background)"
             },
             success: {
-                color: "{green.300}",
-                background: "#22c55e29"
+                color: "var(--sc-cmp-tag-success-color)",
+                background: "var(--sc-cmp-tag-success-background)"
             },
             contrast: {
                 color: "{surface.950}",
-                background: "{surface.0}"
+                background: "var(--sc-cmp-tag-contrast-background)"
             },
             secondary: {
                 color: "{surface.300}",
@@ -45,32 +45,32 @@ import type { TagDesignTokens } from '@primeuix/themes/types/tag';
         },
         light: {
             info: {
-                color: "{sky.700}",
-                background: "{sky.100}"
+                color: "var(--sc-cmp-tag-info-color)",
+                background: "var(--sc-cmp-tag-info-background)"
             },
             warn: {
                 color: "{orange.700}",
                 background: "{orange.100}"
             },
             danger: {
-                color: "{red.700}",
-                background: "{red.100}"
+                color: "var(--sc-cmp-tag-danger-color)",
+                background: "var(--sc-cmp-tag-danger-background)"
             },
             primary: {
                 color: "{primary.700}",
                 background: "{primary.100}"
             },
             success: {
-                color: "{green.700}",
-                background: "{green.100}"
+                color: "var(--sc-cmp-tag-success-color)",
+                background: "var(--sc-cmp-tag-success-background)"
             },
             contrast: {
-                color: "{surface.0}",
-                background: "{surface.950}"
+                color: "var(--sc-cmp-tag-contrast-color)",
+                background: "var(--sc-cmp-tag-contrast-background)"
             },
             secondary: {
-                color: "{surface.600}",
-                background: "{surface.100}"
+                color: "var(--sc-cmp-tag-secondary-color)",
+                background: "var(--sc-cmp-tag-secondary-background)"
             }
         }
     }

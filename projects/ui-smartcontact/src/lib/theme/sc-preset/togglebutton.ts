@@ -46,7 +46,7 @@ import type { ToggleButtonDesignTokens } from '@primeuix/themes/types/togglebutt
             icon: {
                 color: "{surface.400}",
                 hoverColor: "{surface.300}",
-                checkedColor: "{surface.0}"
+                checkedColor: "var(--sc-cmp-togglebutton-icon-checked-color)"
             },
             root: {
                 color: "{surface.400}",
@@ -64,9 +64,9 @@ import type { ToggleButtonDesignTokens } from '@primeuix/themes/types/togglebutt
         },
         light: {
             icon: {
-                color: "{surface.500}",
-                hoverColor: "{surface.700}",
-                checkedColor: "{surface.900}"
+                color: "var(--sc-cmp-togglebutton-icon-color)",
+                hoverColor: "var(--sc-cmp-togglebutton-icon-hover-color)",
+                checkedColor: "var(--sc-cmp-togglebutton-icon-checked-color)"
             },
             root: {
                 color: "{surface.500}",
@@ -79,7 +79,7 @@ import type { ToggleButtonDesignTokens } from '@primeuix/themes/types/togglebutt
                 checkedBorderColor: "{surface.100}"
             },
             content: {
-                checkedBackground: "{surface.0}"
+                checkedBackground: "var(--sc-cmp-togglebutton-content-checked-background)"
             }
         }
     }

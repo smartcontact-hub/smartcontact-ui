@@ -58,14 +58,14 @@ export default {
             },
             handle: {
                 color: "{text.muted.color}",
-                background: "{surface.0}",
+                background: "var(--sc-cmp-toggleswitch-handle-background)",
                 hoverColor: "{text.color}",
                 checkedColor: "{primary.color}",
-                hoverBackground: "{surface.0}",
-                checkedBackground: "{surface.0}",
+                hoverBackground: "var(--sc-cmp-toggleswitch-handle-hover-background)",
+                checkedBackground: "var(--sc-cmp-toggleswitch-handle-checked-background)",
                 checkedHoverColor: "{primary.hover.color}",
                 disabledBackground: "{form.field.disabled.color}",
-                checkedHoverBackground: "{surface.0}"
+                checkedHoverBackground: "var(--sc-cmp-toggleswitch-handle-checked-hover-background)"
             }
         }
     }

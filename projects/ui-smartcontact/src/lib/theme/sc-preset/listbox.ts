@@ -43,7 +43,7 @@ import type { ListboxDesignTokens } from '@primeuix/themes/types/listbox';
         },
         light: {
             option: {
-                stripedBackground: "{surface.50}"
+                stripedBackground: "var(--sc-cmp-listbox-option-striped-background)"
             }
         }
     },

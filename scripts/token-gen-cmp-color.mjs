@@ -88,7 +88,7 @@ function resolveZone(mode) {
   const missing = [];
   const unresolved = [];
   for (const [path, leaf] of group) {
-    if (isExcluded(mode, path)) continue;
+    if (isExcluded(mode, path, leaf.$value)) continue;
     let resolved;
     try {
       resolved = kit.resolve(leaf.$value, mode);

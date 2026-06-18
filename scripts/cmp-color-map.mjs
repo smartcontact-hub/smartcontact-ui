@@ -84,12 +84,109 @@ export const EXCLUDE = new Set([
   'dark:message.secondary.border.color',
   'dark:message.secondary.close.button.focus.ring.color',
   'dark:message.secondary.close.button.hover.background',
+
+  // ══ RESTO DE COMPONENTES (rewire Fase 1.1, tanda 2) — mismas 2 familias de marca ══
+  //    Las refs SEMÁNTICAS ({primary/text/form/content}.*) ya las salta isSemanticRef (regla,
+  //    no lista). Aquí solo quedan las 2 divergencias de MARCA que el Kit no puede inferir:
+  //    · superficie oscura = gris SC (base.ts surface→gray) en vez de zinc del Kit → W5.
+  //    · warn = amber (base.ts orange/yellow→amber) en vez de orange/yellow del Kit.
+  //    Generadas por `node scripts/cmp-color-rewire.mjs excludes <comps>` (status diverge).
+  'dark:autocomplete.chip.focus.background',
+  'dark:autocomplete.dropdown.color',
+  'dark:autocomplete.dropdown.background',
+  'dark:autocomplete.dropdown.hover.color',
+  'dark:autocomplete.dropdown.active.color',
+  'dark:autocomplete.dropdown.hover.background',
+  'dark:autocomplete.dropdown.active.background',
+  'dark:badge.warn.color',
+  'dark:badge.warn.background',
+  'dark:badge.contrast.color',
+  'dark:badge.secondary.color',
+  'dark:badge.secondary.background',
+  'light:badge.warn.background',
+  'dark:button.text.warn.color',
+  'dark:button.text.plain.hover.background',
+  'dark:button.text.plain.active.background',
+  'dark:button.text.contrast.hover.background',
+  'dark:button.text.contrast.active.background',
+  'dark:button.text.secondary.color',
+  'dark:button.text.secondary.hover.background',
+  'dark:button.text.secondary.active.background',
+  'dark:button.outlined.warn.color',
+  'dark:button.outlined.warn.border.color',
+  'dark:button.outlined.plain.border.color',
+  'dark:button.outlined.plain.hover.background',
+  'dark:button.outlined.plain.active.background',
+  'dark:button.outlined.contrast.border.color',
+  'dark:button.outlined.contrast.hover.background',
+  'dark:button.outlined.contrast.active.background',
+  'dark:button.outlined.secondary.color',
+  'dark:button.outlined.secondary.border.color',
+  'light:button.text.warn.color',
+  'light:button.text.warn.hover.background',
+  'light:button.text.warn.active.background',
+  'light:button.outlined.warn.color',
+  'light:button.outlined.warn.border.color',
+  'light:button.outlined.warn.hover.background',
+  'light:button.outlined.warn.active.background',
+  'dark:carousel.indicator.background',
+  'dark:carousel.indicator.hover.background',
+  'dark:datatable.row.striped.background',
+  'dark:datepicker.today.background',
+  'dark:datepicker.dropdown.color',
+  'dark:datepicker.dropdown.background',
+  'dark:datepicker.dropdown.hover.color',
+  'dark:datepicker.dropdown.active.color',
+  'dark:datepicker.dropdown.hover.background',
+  'dark:datepicker.dropdown.active.background',
+  'dark:galleria.indicator.button.background',
+  'dark:galleria.indicator.button.hover.background',
+  'dark:galleria.thumbnail.nav.button.color',
+  'dark:galleria.thumbnail.nav.button.hover.background',
+  'dark:inputnumber.button.color',
+  'dark:inputnumber.button.hover.color',
+  'dark:inputnumber.button.active.color',
+  'dark:inputnumber.button.hover.background',
+  'dark:inputnumber.button.active.background',
+  'dark:listbox.option.striped.background',
+  'dark:scrollpanel.bar.background',
+  'dark:slider.handle.content.background',
+  'dark:tag.warn.color',
+  'dark:tag.contrast.color',
+  'dark:tag.secondary.color',
+  'dark:tag.secondary.background',
+  'light:tag.warn.color',
+  'light:tag.warn.background',
+  'dark:togglebutton.icon.color',
+  'dark:togglebutton.icon.hover.color',
+  'dark:togglebutton.content.checked.background',
+  'dark:toggleswitch.handle.color',
+  'dark:toggleswitch.handle.background',
+  'dark:toggleswitch.handle.hover.color',
+  'dark:toggleswitch.handle.hover.background',
+  'dark:toggleswitch.handle.checked.background',
+  'dark:toggleswitch.handle.disabled.background',
+  'dark:toggleswitch.handle.checked.hover.background',
 ]);
 
 /**
- * ¿Se genera este slot? No si está en EXCLUDE (divergencia de marca), o si es ruido del
- * plugin: el namespace `*.figma.*` son hints internos del Theme Designer (sombras raised
- * simuladas como fondo, contenedores de figma…), NO tokens que el tema PrimeNG consuma.
+ * SKIP por REGLA (sostenible, no hace falta listar slot a slot): si el VALOR del Kit es una
+ * referencia a un namespace SEMÁNTICO (`{primary.*}`, `{text.*}`, `{form.*}`, `{content.*}`),
+ * ese slot NO es color de componente — es el componente consumiendo el TEMA. Debe quedarse
+ * como ref semántica en el preset (así un cambio de marca/tema lo arrastra), no congelarse en
+ * una primitiva del Kit. El color de componente solo emite severidades FIJAS (info/success/
+ * warn/error + sus familias primitivas) y literales. `surface` NO entra aquí a propósito:
+ * tiene una divergencia de marca VIVA (dark gris SC vs zinc del Kit) que se cura por EXCLUDE
+ * hasta decidir el W5; su dark va a EXCLUDE y su light (no-op) se repunta como el resto.
  */
-export const isExcluded = (mode, path) =>
-  /(^|\.)figma\./.test(path) || EXCLUDE.has(`${mode}:${path}`) || EXCLUDE.has(path);
+export const isSemanticRef = (value) =>
+  typeof value === 'string' && /^\{(primary|text|form|content)\./.test(value);
+
+/**
+ * ¿Se genera este slot? No si su valor es una ref semántica (regla de arriba), si está en
+ * EXCLUDE (divergencia de marca), o si es ruido del plugin: el namespace `*.figma.*` son
+ * hints internos del Theme Designer (sombras raised simuladas como fondo, contenedores de
+ * figma…), NO tokens que el tema PrimeNG consuma.
+ */
+export const isExcluded = (mode, path, value) =>
+  isSemanticRef(value) || /(^|\.)figma\./.test(path) || EXCLUDE.has(`${mode}:${path}`) || EXCLUDE.has(path);

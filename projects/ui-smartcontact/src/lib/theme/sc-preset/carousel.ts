@@ -29,8 +29,8 @@ import type { CarouselDesignTokens } from '@primeuix/themes/types/carousel';
         },
         light: {
             indicator: {
-                background: "{surface.200}",
-                hoverBackground: "{surface.300}"
+                background: "var(--sc-cmp-carousel-indicator-background)",
+                hoverBackground: "var(--sc-cmp-carousel-indicator-hover-background)"
             }
         }
     },

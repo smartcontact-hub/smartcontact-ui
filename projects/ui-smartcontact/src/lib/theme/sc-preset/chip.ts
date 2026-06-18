@@ -28,26 +28,26 @@ import type { ChipDesignTokens } from '@primeuix/themes/types/chip';
     colorScheme: {
         dark: {
             icon: {
-                color: "{surface.0}"
+                color: "var(--sc-cmp-chip-icon-color)"
             },
             root: {
                 color: "{surface.0}",
                 background: "{surface.800}"
             },
             removeIcon: {
-                color: "{surface.0}"
+                color: "var(--sc-cmp-chip-remove-icon-color)"
             }
         },
         light: {
             icon: {
-                color: "{surface.800}"
+                color: "var(--sc-cmp-chip-icon-color)"
             },
             root: {
                 color: "{surface.800}",
                 background: "{surface.100}"
             },
             removeIcon: {
-                color: "{surface.800}"
+                color: "var(--sc-cmp-chip-remove-icon-color)"
             }
         }
     }

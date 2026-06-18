@@ -153,7 +153,7 @@ import type { DataTableDesignTokens } from '@primeuix/themes/types/datatable';
         },
         light: {
             row: {
-                stripedBackground: "{surface.50}"
+                stripedBackground: "var(--sc-cmp-datatable-row-striped-background)"
             },
             root: {
                 borderColor: "{content.border.color}"
