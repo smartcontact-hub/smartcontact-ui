@@ -19,7 +19,7 @@
    * (preserva el contrato --sc-* y la indirección). El preset/app referencian estos
    * --sc-*; así un cambio de color en Figma fluye sin mano. Divergencias conscientes y
    * color-mix → FUERA de la zona (a mano). Divergencias → DIVERGE en scripts/color-map.mjs. */
-  --sc-bg-primary: var(--sc-color-blue-700);
+  --sc-bg-primary: var(--sc-color-cyan-400);
   --sc-bg-primary-hover: var(--sc-color-blue-600);
   --sc-bg-primary-active: var(--sc-color-blue-800);
   --sc-text-on-primary: var(--sc-color-gray-0);
