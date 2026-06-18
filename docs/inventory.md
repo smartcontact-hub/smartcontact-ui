@@ -13,6 +13,11 @@
 > (lo confirma Rafa). **No editar la tabla a mano** → `node scripts/component-audit.mjs --write`.
 > Manifiesto máquina: `docs/_component-status.json`.
 >
+> **¿Dónde se usa cada componente?** La galería **Uso real** en `sc-demo` (ruta `/uso`) muestra las
+> pantallas REALES del Supervisor donde aparece cada componente — capturas del DOM renderizado,
+> auto-generadas por `npm run usage:capture` (no se desfasan). Manifiesto:
+> `projects/sc-demo/public/usage/_usage-status.json`.
+>
 > **Leyenda:** *CUSTOM* = pieza propia, cero PrimeNG · *STANDARD* = wrapper passthrough sobre PrimeNG ·
 > *EXTENDED* = wrapper con API propia (CVA, inputs, comportamiento) · *Anidados* = otros `sc-*` que
 > compone (sin contar `sc-icon`) · *Usos en Supervisor* = adopción en la app real.

@@ -1,0 +1,430 @@
+{
+  "generated": "usage-status.mjs",
+  "capturedAt": "2026-06-18",
+  "viewport": "1440x900",
+  "theme": "light",
+  "dsSelectors": 48,
+  "screens": [
+    {
+      "id": "admin-agendas",
+      "route": "admin/agendas",
+      "label": "Agendas",
+      "shots": [
+        "admin-agendas.png"
+      ],
+      "ds": [
+        "sc-bulk-action-bar",
+        "sc-command-palette",
+        "sc-delete-entity-dialog",
+        "sc-dialog",
+        "sc-keyboard-shortcuts",
+        "sc-search"
+      ]
+    },
+    {
+      "id": "admin-agentes",
+      "route": "admin/agentes",
+      "label": "Agentes · listado",
+      "shots": [
+        "admin-agentes.png",
+        "admin-agentes-seleccion.png"
+      ],
+      "ds": [
+        "sc-bulk-action-bar",
+        "sc-bulk-edit-menu",
+        "sc-column-selector",
+        "sc-command-palette",
+        "sc-delete-entity-dialog",
+        "sc-dialog",
+        "sc-group-popover",
+        "sc-impact-preview-dialog",
+        "sc-keyboard-shortcuts",
+        "sc-search",
+        "sc-select"
+      ]
+    },
+    {
+      "id": "admin-grupos",
+      "route": "admin/grupos",
+      "label": "Grupos · listado",
+      "shots": [
+        "admin-grupos.png",
+        "admin-grupos-cmdk.png"
+      ],
+      "ds": [
+        "sc-bulk-action-bar",
+        "sc-column-selector",
+        "sc-command-palette",
+        "sc-delete-entity-dialog",
+        "sc-dialog",
+        "sc-impact-preview-dialog",
+        "sc-keyboard-shortcuts",
+        "sc-search"
+      ]
+    },
+    {
+      "id": "admin-labels",
+      "route": "admin/labels",
+      "label": "Etiquetas",
+      "shots": [
+        "admin-labels.png",
+        "admin-labels-crear.png"
+      ],
+      "ds": [
+        "sc-bulk-action-bar",
+        "sc-color-dot-picker",
+        "sc-command-palette",
+        "sc-dialog",
+        "sc-inputtext",
+        "sc-keyboard-shortcuts",
+        "sc-search"
+      ]
+    },
+    {
+      "id": "admin-plantillas",
+      "route": "admin/plantillas",
+      "label": "Plantillas",
+      "shots": [
+        "admin-plantillas.png"
+      ],
+      "ds": [
+        "sc-bulk-action-bar",
+        "sc-command-palette",
+        "sc-delete-entity-dialog",
+        "sc-dialog",
+        "sc-keyboard-shortcuts",
+        "sc-search"
+      ]
+    },
+    {
+      "id": "admin-repositorios",
+      "route": "admin/repositorios",
+      "label": "Repositorios · hub",
+      "shots": [
+        "admin-repositorios.png"
+      ],
+      "ds": [
+        "sc-command-palette",
+        "sc-keyboard-shortcuts",
+        "sc-page-header"
+      ]
+    },
+    {
+      "id": "admin-usuarios",
+      "route": "admin/usuarios",
+      "label": "Usuarios · listado",
+      "shots": [
+        "admin-usuarios.png",
+        "admin-usuarios-seleccion.png",
+        "admin-usuarios-borrar.png"
+      ],
+      "ds": [
+        "sc-bulk-action-bar",
+        "sc-column-selector",
+        "sc-command-palette",
+        "sc-delete-entity-dialog",
+        "sc-dialog",
+        "sc-keyboard-shortcuts",
+        "sc-search"
+      ]
+    },
+    {
+      "id": "admin-usuarios-crear",
+      "route": "admin/usuarios/crear",
+      "label": "Usuarios · crear",
+      "shots": [
+        "admin-usuarios-crear.png"
+      ],
+      "ds": [
+        "sc-command-palette",
+        "sc-delete-entity-dialog",
+        "sc-dialog",
+        "sc-form-section-nav",
+        "sc-inputtext",
+        "sc-keyboard-shortcuts",
+        "sc-photo-upload",
+        "sc-section-card",
+        "sc-select",
+        "sc-toggleswitch"
+      ]
+    },
+    {
+      "id": "config-aed-agentes",
+      "route": "config/aed/agentes",
+      "label": "Contact Center · Agentes",
+      "shots": [
+        "config-aed-agentes.png"
+      ],
+      "ds": [
+        "sc-checkbox",
+        "sc-command-palette",
+        "sc-divider",
+        "sc-inputtext",
+        "sc-keyboard-shortcuts",
+        "sc-toggleswitch"
+      ]
+    },
+    {
+      "id": "config-aed-grupos",
+      "route": "config/aed/grupos",
+      "label": "Contact Center · Grupos",
+      "shots": [
+        "config-aed-grupos.png"
+      ],
+      "ds": [
+        "sc-command-palette",
+        "sc-inputtext",
+        "sc-keyboard-shortcuts",
+        "sc-multiselect",
+        "sc-select",
+        "sc-toggleswitch"
+      ]
+    },
+    {
+      "id": "config-aed-servicio",
+      "route": "config/aed/servicio",
+      "label": "Contact Center · Servicio",
+      "shots": [
+        "config-aed-servicio.png"
+      ],
+      "ds": [
+        "sc-checkbox",
+        "sc-command-palette",
+        "sc-divider",
+        "sc-inputgroup",
+        "sc-inputnumber",
+        "sc-inputtext",
+        "sc-keyboard-shortcuts",
+        "sc-select",
+        "sc-toggleswitch"
+      ]
+    },
+    {
+      "id": "config-seguridad",
+      "route": "config/seguridad",
+      "label": "Seguridad",
+      "shots": [
+        "config-seguridad.png"
+      ],
+      "ds": [
+        "sc-command-palette",
+        "sc-keyboard-shortcuts"
+      ]
+    },
+    {
+      "id": "config-sistema",
+      "route": "config/sistema",
+      "label": "Sistema",
+      "shots": [
+        "config-sistema.png"
+      ],
+      "ds": [
+        "sc-command-palette",
+        "sc-keyboard-shortcuts",
+        "sc-toggleswitch"
+      ]
+    },
+    {
+      "id": "conversaciones",
+      "route": "conversaciones",
+      "label": "Conversaciones",
+      "shots": [
+        "conversaciones.png"
+      ],
+      "ds": [
+        "sc-command-palette",
+        "sc-datepicker",
+        "sc-dialog",
+        "sc-inputtext",
+        "sc-keyboard-shortcuts",
+        "sc-multiselect"
+      ]
+    },
+    {
+      "id": "conversaciones-categorias",
+      "route": "conversaciones/categorias",
+      "label": "Categorías",
+      "shots": [
+        "conversaciones-categorias.png"
+      ],
+      "ds": [
+        "sc-command-palette",
+        "sc-dialog",
+        "sc-keyboard-shortcuts"
+      ]
+    },
+    {
+      "id": "conversaciones-entidades",
+      "route": "conversaciones/entidades",
+      "label": "Entidades",
+      "shots": [
+        "conversaciones-entidades.png"
+      ],
+      "ds": [
+        "sc-command-palette",
+        "sc-dialog",
+        "sc-keyboard-shortcuts"
+      ]
+    },
+    {
+      "id": "conversaciones-reglas",
+      "route": "conversaciones/reglas",
+      "label": "Reglas · listado",
+      "shots": [
+        "conversaciones-reglas.png"
+      ],
+      "ds": [
+        "sc-command-palette",
+        "sc-keyboard-shortcuts"
+      ]
+    },
+    {
+      "id": "conversaciones-reglas-nueva",
+      "route": "conversaciones/reglas/nueva",
+      "label": "Reglas · nueva",
+      "shots": [
+        "conversaciones-reglas-nueva.png"
+      ],
+      "ds": [
+        "sc-command-palette",
+        "sc-inputtext",
+        "sc-keyboard-shortcuts",
+        "sc-multiselect",
+        "sc-select",
+        "sc-toggleswitch"
+      ]
+    }
+  ],
+  "components": {
+    "sc-bulk-action-bar": [
+      "admin-agendas",
+      "admin-agentes",
+      "admin-grupos",
+      "admin-labels",
+      "admin-plantillas",
+      "admin-usuarios"
+    ],
+    "sc-bulk-edit-menu": [
+      "admin-agentes"
+    ],
+    "sc-checkbox": [
+      "config-aed-agentes",
+      "config-aed-servicio"
+    ],
+    "sc-color-dot-picker": [
+      "admin-labels"
+    ],
+    "sc-column-selector": [
+      "admin-agentes",
+      "admin-grupos",
+      "admin-usuarios"
+    ],
+    "sc-datepicker": [
+      "conversaciones"
+    ],
+    "sc-delete-entity-dialog": [
+      "admin-agendas",
+      "admin-agentes",
+      "admin-grupos",
+      "admin-plantillas",
+      "admin-usuarios",
+      "admin-usuarios-crear"
+    ],
+    "sc-dialog": [
+      "admin-agendas",
+      "admin-agentes",
+      "admin-grupos",
+      "admin-labels",
+      "admin-plantillas",
+      "admin-usuarios",
+      "admin-usuarios-crear",
+      "conversaciones",
+      "conversaciones-categorias",
+      "conversaciones-entidades"
+    ],
+    "sc-divider": [
+      "config-aed-agentes",
+      "config-aed-servicio"
+    ],
+    "sc-form-section-nav": [
+      "admin-usuarios-crear"
+    ],
+    "sc-group-popover": [
+      "admin-agentes"
+    ],
+    "sc-impact-preview-dialog": [
+      "admin-agentes",
+      "admin-grupos"
+    ],
+    "sc-inputgroup": [
+      "config-aed-servicio"
+    ],
+    "sc-inputnumber": [
+      "config-aed-servicio"
+    ],
+    "sc-inputtext": [
+      "admin-labels",
+      "admin-usuarios-crear",
+      "config-aed-agentes",
+      "config-aed-grupos",
+      "config-aed-servicio",
+      "conversaciones",
+      "conversaciones-reglas-nueva"
+    ],
+    "sc-multiselect": [
+      "config-aed-grupos",
+      "conversaciones",
+      "conversaciones-reglas-nueva"
+    ],
+    "sc-page-header": [
+      "admin-repositorios"
+    ],
+    "sc-photo-upload": [
+      "admin-usuarios-crear"
+    ],
+    "sc-search": [
+      "admin-agendas",
+      "admin-agentes",
+      "admin-grupos",
+      "admin-labels",
+      "admin-plantillas",
+      "admin-usuarios"
+    ],
+    "sc-section-card": [
+      "admin-usuarios-crear"
+    ],
+    "sc-select": [
+      "admin-agentes",
+      "admin-usuarios-crear",
+      "config-aed-grupos",
+      "config-aed-servicio",
+      "conversaciones-reglas-nueva"
+    ],
+    "sc-toggleswitch": [
+      "admin-usuarios-crear",
+      "config-aed-agentes",
+      "config-aed-grupos",
+      "config-aed-servicio",
+      "config-sistema",
+      "conversaciones-reglas-nueva"
+    ]
+  },
+  "global": [
+    "sc-command-palette",
+    "sc-keyboard-shortcuts"
+  ],
+  "gated": [
+    {
+      "selector": "sc-empty-state",
+      "usedInSupervisor": 7
+    },
+    {
+      "selector": "sc-inline-rename-cell",
+      "usedInSupervisor": 3
+    },
+    {
+      "selector": "sc-sticky-form-header",
+      "usedInSupervisor": 3
+    }
+  ]
+}
