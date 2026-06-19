@@ -263,24 +263,24 @@
                 [attr.aria-label]="'config.aed.subpages.servicio.aviso.alerting_label' | translate"
               >
                 <label class="radio">
-                  <input
-                    type="radio"
+                  <sc-radiobutton
+                    inputId="alerting-nombre"
                     name="alerting-tipo"
-                    value="nombre"
-                    [checked]="form().alertingTipo === 'nombre'"
-                    (change)="onAlertingChange('nombre')"
+                    [value]="'nombre'"
+                    [modelValue]="form().alertingTipo"
+                    (modelValueChange)="onAlertingChange($any($event))"
                   />
                   <span>{{
                     'config.aed.subpages.servicio.aviso.alerting_nombre' | translate
                   }}</span>
                 </label>
                 <label class="radio">
-                  <input
-                    type="radio"
+                  <sc-radiobutton
+                    inputId="alerting-telefono"
                     name="alerting-tipo"
-                    value="telefono"
-                    [checked]="form().alertingTipo === 'telefono'"
-                    (change)="onAlertingChange('telefono')"
+                    [value]="'telefono'"
+                    [modelValue]="form().alertingTipo"
+                    (modelValueChange)="onAlertingChange($any($event))"
                   />
                   <span>{{
                     'config.aed.subpages.servicio.aviso.alerting_telefono' | translate

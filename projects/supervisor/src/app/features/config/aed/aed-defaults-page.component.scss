@@ -34,7 +34,7 @@
   &__title {
     margin: 0;
     font-size: var(--sc-font-size-h2);
-    line-height: 36px;
+    line-height: var(--sc-line-height-500);
     font-weight: var(--sc-font-weight-semibold);
     color: var(--sc-text-primary);
   }
@@ -42,7 +42,7 @@
   &__subtitle {
     margin: 4px 0 0;
     font-size: var(--sc-font-size-200);
-    line-height: 24px;
+    line-height: var(--sc-line-height-300);
     color: var(--sc-text-subtle);
   }
 }
@@ -63,7 +63,7 @@
   &__title {
     margin: 0;
     font-size: var(--sc-font-size-h3, var(--sc-font-size-300));
-    line-height: 28px;
+    line-height: var(--sc-line-height-450);
     font-weight: var(--sc-font-weight-semibold);
     color: var(--sc-text-primary);
   }
@@ -123,7 +123,7 @@
 
   &__title--lg {
     font-size: var(--sc-font-size-300);
-    line-height: 24px;
+    line-height: var(--sc-line-height-300);
     font-weight: var(--sc-font-weight-semibold);
   }
 
@@ -138,7 +138,7 @@
   &__hint {
     margin: 4px 0 0;
     font-size: var(--sc-font-size-50);
-    line-height: 18px;
+    line-height: var(--sc-line-height-50);
     color: var(--sc-text-subtle);
   }
 
@@ -169,7 +169,7 @@
 
   &__link {
     font-size: var(--sc-font-size-50);
-    line-height: 18px;
+    line-height: var(--sc-line-height-50);
     color: var(--sc-color-cyan-700);
     text-decoration: none;
 
@@ -210,7 +210,7 @@
   &__hint {
     margin: 0;
     font-size: var(--sc-font-size-50);
-    line-height: 18px;
+    line-height: var(--sc-line-height-50);
     color: var(--sc-text-subtle);
   }
 }
@@ -233,7 +233,7 @@
     align-items: center;
     gap: var(--sc-spacing-0-5);
     font-size: var(--sc-font-size-50);
-    line-height: 18px;
+    line-height: var(--sc-line-height-50);
     font-weight: var(--sc-font-weight-medium);
     color: var(--sc-text-secondary);
   }
@@ -335,19 +335,6 @@ select.field__input {
   cursor: pointer;
   font-size: var(--sc-font-size-100);
   color: var(--sc-text-primary);
-
-  > input[type='radio'] {
-    accent-color: var(--sc-bg-primary);
-    width: 16px;
-    height: 16px;
-    cursor: pointer;
-  }
-
-  &:focus-within > span {
-    outline: 2px solid var(--sc-border-focus);
-    outline-offset: 3px;
-    border-radius: var(--sc-radius-50);
-  }
 }
 
 /* ---------- Switch fields ---------- */
@@ -375,7 +362,7 @@ select.field__input {
   &__hint {
     margin: 0;
     font-size: var(--sc-font-size-50);
-    line-height: 18px;
+    line-height: var(--sc-line-height-50);
     color: var(--sc-text-subtle);
   }
 }
