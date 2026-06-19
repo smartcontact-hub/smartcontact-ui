@@ -8,7 +8,7 @@
  *
  * Components MUST NOT reference these directly — go through a semantic
  * alias in layer 2. The only exception is rare cases where a primitive
- * IS the right semantic (e.g. `--sc-color-gray-0` == white background
+ * IS the right semantic (e.g. `--sc-color-slate-0` == white background
  * for an inverted surface).
  */
 
@@ -30,17 +30,17 @@
    * Sigue 1:1 al `cyan` del Kit oficial (re-sync 2026-06-18: antes curado a mano,
    * se había desfasado en los 11 pasos; lo cazó el chivato §7). El §7 de
    * token-parity.mjs lo BLOQUEA contra el cyan del export → no se vuelve a desfasar. */
-  --sc-color-soft-blue-50: #eefbfc;
-  --sc-color-soft-blue-100: #d2f5f9;
-  --sc-color-soft-blue-200: #a8eef5;
-  --sc-color-soft-blue-300: #7be1ef;
-  --sc-color-soft-blue-400: #51d5e6;
-  --sc-color-soft-blue-500: #24c6db;
-  --sc-color-soft-blue-600: #2497a8;
-  --sc-color-soft-blue-700: #21717d;
-  --sc-color-soft-blue-800: #1d5058;
-  --sc-color-soft-blue-900: #16363b;
-  --sc-color-soft-blue-950: #0d1a1c;
+  --sc-color-cyan-50: #eefbfc;
+  --sc-color-cyan-100: #d2f5f9;
+  --sc-color-cyan-200: #a8eef5;
+  --sc-color-cyan-300: #7be1ef;
+  --sc-color-cyan-400: #51d5e6;
+  --sc-color-cyan-500: #24c6db;
+  --sc-color-cyan-600: #2497a8;
+  --sc-color-cyan-700: #21717d;
+  --sc-color-cyan-800: #1d5058;
+  --sc-color-cyan-900: #16363b;
+  --sc-color-cyan-950: #0d1a1c;
 
   /* ---------- Color · Gray (neutrals) ----------
    * Mirrors PrimeOne 4.0 `slate` 1:1 (Smart Contact Prime UI Kit Pro,
@@ -48,18 +48,18 @@
    * que Tailwind slate (que era la ramp anterior). Aligned para cerrar
    * drift con Figma Variables oficiales.
    * `gray-0` stays at pure white (used as inverted surface). */
-  --sc-color-gray-0: #ffffff;
-  --sc-color-gray-50: #f7f8fa;
-  --sc-color-gray-100: #eceff3;
-  --sc-color-gray-200: #dadfe6;
-  --sc-color-gray-300: #c6ccd6;
-  --sc-color-gray-400: #aeb6c2;
-  --sc-color-gray-500: #8f97a3;
-  --sc-color-gray-600: #6f7784;
-  --sc-color-gray-700: #4f5663;
-  --sc-color-gray-800: #2f3642;
-  --sc-color-gray-900: #181d26;
-  --sc-color-gray-950: #0b0f14;
+  --sc-color-slate-0: #ffffff;
+  --sc-color-slate-50: #f7f8fa;
+  --sc-color-slate-100: #eceff3;
+  --sc-color-slate-200: #dadfe6;
+  --sc-color-slate-300: #c6ccd6;
+  --sc-color-slate-400: #aeb6c2;
+  --sc-color-slate-500: #8f97a3;
+  --sc-color-slate-600: #6f7784;
+  --sc-color-slate-700: #4f5663;
+  --sc-color-slate-800: #2f3642;
+  --sc-color-slate-900: #181d26;
+  --sc-color-slate-950: #0b0f14;
 
   /* ---------- Color · Green (success) ---------- */
   --sc-color-green-50: #f0fdf4;
@@ -103,17 +103,17 @@
   --sc-color-red-950: #450a0a;
 
   /* ---------- Color · Electric Blue (info) ---------- */
-  --sc-color-electric-blue-50: #eef4ff;
-  --sc-color-electric-blue-100: #d5e6ff;
-  --sc-color-electric-blue-200: #abceff;
-  --sc-color-electric-blue-300: #7db3ff;
-  --sc-color-electric-blue-400: #4a8fff;
-  --sc-color-electric-blue-500: #1464fe;
-  --sc-color-electric-blue-600: #0d4fd4;
-  --sc-color-electric-blue-700: #0a3ba0;
-  --sc-color-electric-blue-800: #07296e;
-  --sc-color-electric-blue-900: #041840;
-  --sc-color-electric-blue-950: #020c21;
+  --sc-color-sky-50: #eef4ff;
+  --sc-color-sky-100: #d5e6ff;
+  --sc-color-sky-200: #abceff;
+  --sc-color-sky-300: #7db3ff;
+  --sc-color-sky-400: #4a8fff;
+  --sc-color-sky-500: #1464fe;
+  --sc-color-sky-600: #0d4fd4;
+  --sc-color-sky-700: #0a3ba0;
+  --sc-color-sky-800: #07296e;
+  --sc-color-sky-900: #041840;
+  --sc-color-sky-950: #020c21;
 
   /* ---------- Color · Violet ----------
    * Mirrors PrimeOne 4.0 `violet` 1:1 (= Tailwind violet). Antes era

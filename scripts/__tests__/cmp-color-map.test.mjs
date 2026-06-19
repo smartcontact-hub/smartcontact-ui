@@ -5,7 +5,7 @@ import { splitAlpha, toCssColor, tokenName, resolved, missing, unresolved } from
 // Mapa hex→primitiva FIJO (no depende del export) — para asertar la conversión de valor.
 const MAP = new Map([
   ['#22c55e', 'sc-color-green-500'],
-  ['#ffffff', 'sc-color-gray-0'],
+  ['#ffffff', 'sc-color-slate-0'],
 ]);
 
 // ── conversión de valor (lo "difícil": reconstruir el alfa como color-mix) ──────

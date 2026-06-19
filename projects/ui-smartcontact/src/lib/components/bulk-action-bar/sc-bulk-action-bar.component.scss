@@ -25,7 +25,7 @@
     font-size: var(--sc-font-size-200);
     line-height: var(--sc-line-height-220);
     font-weight: var(--sc-font-weight-medium);
-    color: var(--sc-color-soft-blue-950);
+    color: var(--sc-color-cyan-950);
   }
 
   &__clear {
@@ -45,11 +45,11 @@
 
     &:hover {
       color: var(--sc-text-primary);
-      background: var(--sc-color-gray-100);
+      background: var(--sc-color-slate-100);
     }
 
     &:focus-visible {
-      outline: 2px solid var(--sc-color-soft-blue-500);
+      outline: 2px solid var(--sc-color-cyan-500);
       outline-offset: 2px;
     }
 

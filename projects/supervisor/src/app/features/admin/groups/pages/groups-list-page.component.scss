@@ -126,7 +126,7 @@
     }
 
     &--selected {
-      background: var(--sc-color-gray-100);
+      background: var(--sc-color-slate-100);
     }
 
     &--draft {
@@ -235,7 +235,7 @@
     }
 
     &:focus-visible {
-      outline: 2px solid var(--sc-color-soft-blue-500);
+      outline: 2px solid var(--sc-color-cyan-500);
       outline-offset: 2px;
     }
   }

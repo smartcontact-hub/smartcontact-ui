@@ -147,7 +147,7 @@ input,
 select,
 textarea {
   &:focus-visible {
-    outline: 2px solid var(--sc-color-electric-blue-500);
+    outline: 2px solid var(--sc-color-sky-500);
     outline-offset: 1px;
   }
 }
@@ -279,7 +279,7 @@ table.table {
       background: var(--sc-bg-primary-subtle);
     }
     &:focus-visible {
-      outline: 2px solid var(--sc-color-electric-blue-500);
+      outline: 2px solid var(--sc-color-sky-500);
       outline-offset: 1px;
     }
   }
@@ -456,7 +456,7 @@ table.table {
   }
 
   &--inactive {
-    background: var(--sc-color-gray-100);
+    background: var(--sc-color-slate-100);
     color: var(--sc-text-secondary);
   }
 
@@ -481,7 +481,7 @@ table.table {
     }
 
     &:focus-visible {
-      outline: 2px solid var(--sc-color-electric-blue-500);
+      outline: 2px solid var(--sc-color-sky-500);
       outline-offset: 2px;
     }
   }
@@ -509,7 +509,7 @@ table.table {
   }
 
   &:focus-visible {
-    outline: 2px solid var(--sc-color-electric-blue-500);
+    outline: 2px solid var(--sc-color-sky-500);
     outline-offset: 2px;
   }
 }

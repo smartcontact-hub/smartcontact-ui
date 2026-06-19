@@ -129,7 +129,7 @@
     }
 
     &:focus-visible {
-      outline: 2px solid var(--sc-color-electric-blue-500);
+      outline: 2px solid var(--sc-color-sky-500);
       outline-offset: 2px;
     }
   }
@@ -186,7 +186,7 @@
     gap: var(--sc-spacing-0-25);
     padding: var(--sc-spacing-0-5) var(--sc-spacing-0-875);
     border-radius: var(--sc-radius-200);
-    background: var(--sc-color-electric-blue-500);
+    background: var(--sc-color-sky-500);
     color: #fff;
     font-size: var(--sc-font-size-200);
     font-weight: 500;
@@ -194,7 +194,7 @@
     transition: background-color 150ms ease-out;
 
     &:hover {
-      background: var(--sc-color-electric-blue-600);
+      background: var(--sc-color-sky-600);
     }
   }
 
@@ -282,7 +282,7 @@
       background-color 160ms ease-out;
 
     &:hover {
-      border-color: var(--sc-color-electric-blue-300);
+      border-color: var(--sc-color-sky-300);
       background: var(--sc-bg-elevated);
 
       .category-form__link-unlink {
@@ -334,7 +334,7 @@
     align-items: center;
     padding: 0 var(--sc-spacing-0-5);
     border-radius: var(--sc-radius-full);
-    background: var(--sc-color-gray-100);
+    background: var(--sc-color-slate-100);
     color: var(--sc-text-secondary);
     font-size: var(--sc-font-size-50);
     font-weight: 500;
@@ -372,7 +372,7 @@
 
     &:focus-visible {
       opacity: 1;
-      outline: 2px solid var(--sc-color-electric-blue-500);
+      outline: 2px solid var(--sc-color-sky-500);
       outline-offset: 1px;
     }
   }

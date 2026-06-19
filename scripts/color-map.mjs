@@ -16,7 +16,7 @@
  *   - `reason` : solo en `diverge` — por qué diverge (lo informa parity).
  *
  * GENERABLE vs no: el generador solo escribe las filas enforce cuyo `token` NO es una
- * primitiva (`isGenerated`). Las filas `surface.*` → `sc-color-gray-*` son primitivas
+ * primitiva (`isGenerated`). Las filas `surface.*` → `sc-color-slate-*` son primitivas
  * que posee el generador de primitivos (`token-gen.mjs`, zona `@sc-gen:palette`); aquí
  * están solo para que `parity` las cruce.
  *
@@ -28,13 +28,13 @@
 export const SURFACE_STEPS = ['0', '50', '100', '200', '300', '400', '500', '600', '700', '800', '900', '950'];
 
 export const COLOR = [
-  // ── surface ramp (light) → primitivas --sc-color-gray-* ───────────────────────
+  // ── surface ramp (light) → primitivas --sc-color-slate-* ───────────────────────
   //    (el Kit nombra la rampa `slate`; nuestra `gray` ES esa rampa, renombrada).
   //    enforce para parity; NO generables (las posee `token-gen.mjs`).
   ...SURFACE_STEPS.map((s) => ({
     mode: 'light',
     exp: `surface.${s}`,
-    token: s === '0' ? 'sc-color-gray-0' : `sc-color-gray-${s}`,
+    token: s === '0' ? 'sc-color-slate-0' : `sc-color-slate-${s}`,
     kind: 'enforce',
   })),
 

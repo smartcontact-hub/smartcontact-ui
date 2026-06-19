@@ -139,7 +139,7 @@
       background: var(--sc-bg-hover);
     }
     &:focus-visible {
-      outline: 2px solid var(--sc-color-electric-blue-500);
+      outline: 2px solid var(--sc-color-sky-500);
       outline-offset: -2px;
     }
   }
@@ -356,7 +356,7 @@
       background: var(--sc-border-subtle);
     }
     &:focus-visible {
-      outline: 2px solid var(--sc-color-electric-blue-500);
+      outline: 2px solid var(--sc-color-sky-500);
       outline-offset: 2px;
     }
   }

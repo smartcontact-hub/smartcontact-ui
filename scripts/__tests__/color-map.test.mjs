@@ -34,7 +34,7 @@ test('GENERATED ⊆ ENFORCE y nunca escribe una primitiva sc-color-*', () => {
     assert.ok(isGenerated(r));
     assert.ok(!r.token.startsWith('sc-color-'), `el generador no debe escribir primitivas: ${r.token}`);
   }
-  // Las filas surface (sc-color-gray-*) son enforce (para parity) pero NO generadas:
+  // Las filas surface (sc-color-slate-*) son enforce (para parity) pero NO generadas:
   // las posee el generador de primitivos.
   const surface = ENFORCE.filter((r) => r.token.startsWith('sc-color-'));
   assert.ok(surface.length > 0, 'se esperaban filas surface enforce');

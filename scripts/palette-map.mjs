@@ -1,21 +1,19 @@
 /**
- * Fuente ÚNICA del mapa de PALETAS primitivas: familia del DS ← familia del export (Kit).
+ * Fuente ÚNICA del mapa de PALETAS primitivas: familia del DS ↔ familia del export (Kit).
  *
- * El export usa nombres Tailwind; el DS los renombra a marca (la "piedra Rosetta"). Este mapa
- * deja la correspondencia EXPLÍCITA para que el chivato §7 de `token-parity.mjs` verifique que
- * cada primitiva de color del DS sigue 1:1 a su fuente del export — el hueco por el que
- * `soft-blue` se desfasó del `cyan` sin que nadie lo cazara (§1-6 nunca miran color primitivo).
- *
- * Renombres confirmados por VALOR 2026-06-18 (11/11 salvo divergencias listadas abajo):
- *   blue→blue · slate→gray · sky→electric-blue · cyan→soft-blue · (resto, identidad).
+ * PARIDAD DE NOMBRES (DD-23, ejecutada 2026-06-19): el DS ya nombra sus familias IGUAL que el
+ * Kit (cyan/sky/slate, no soft-blue/electric-blue/gray). Este mapa es ahora IDENTIDAD; se mantiene
+ * EXPLÍCITO como ancla del chivato §7 de `token-parity.mjs`, que verifica que cada primitiva de
+ * color del DS sigue 1:1 a su fuente del export — el hueco por el que `soft-blue` se desfasó del
+ * `cyan` sin que nadie lo cazara (§1-6 nunca miran color primitivo).
  */
 
 /** DS family → export family (de dónde DEBE seguir su valor). `azure` no tiene fuente directa. */
 export const PRIMITIVE_SOURCE = {
   blue: 'blue', // Primary (navy SC)
-  gray: 'slate', // surface
-  'electric-blue': 'sky', // info ("electric blue" del legacy = "sky" en Figma)
-  'soft-blue': 'cyan', // accent
+  slate: 'slate', // surface (antes 'gray' — renombrada al Kit, DD-23)
+  sky: 'sky', // info (antes 'electric-blue' — renombrada al Kit, DD-23)
+  cyan: 'cyan', // accent (antes 'soft-blue' — renombrada al Kit, DD-23)
   green: 'green',
   amber: 'amber',
   red: 'red',

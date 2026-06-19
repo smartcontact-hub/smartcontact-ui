@@ -26,7 +26,7 @@ export const EXCLUDE = new Set([
   'dark:button.success.active.color',
   // ── info translúcido (dark): el export hardcodea Tailwind sky (#0ea5e9/#38bdf8) que NO está
   //    en la paleta de marca (su `sky` es un azul de marca). Fuera de paleta → decisión de DS
-  //    (¿añadir sky, o remapear info a azure/electric-blue?). El chivato §7 lo recordará.
+  //    (¿añadir esa variante, o remapear info a azure/sky?). El chivato §7 lo recordará.
   'dark:tag.info.background',
   'dark:button.outlined.info.hover.background',
   'dark:button.outlined.info.active.background',

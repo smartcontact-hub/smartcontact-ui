@@ -42,7 +42,7 @@
    * `rgb(var(--sc-shadow-color-rgb) / 0.04)`.
    */
   --sc-shadow-color-rgb: 15 23 42;
-  --sc-shadow-focus-ring-rgb: 36 198 219; /* soft-blue-500 channels (#24c6db = cyan-500 del Kit) */
+  --sc-shadow-focus-ring-rgb: 36 198 219; /* cyan-500 channels (#24c6db) */
 
   --sc-shadow-xs: 0 1px 2px 0 rgb(var(--sc-shadow-color-rgb) / 0.04);
   /* Numeric alias kept for /config consumers that follow the 100/200…

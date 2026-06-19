@@ -6,8 +6,8 @@
  * en px: el preset REDIRIGE (`--p-*` → `var(--sc-*)`), no declara.
  *
  * Mapa de familias (verificado por valor contra el export del Kit):
- *   sky    → --sc-color-electric-blue-*  (el Kit ya trae sky = electric blue)
- *   slate  → --sc-color-gray-*           (gris de marca SC)
+ *   sky    → --sc-color-sky-*  (el Kit ya trae sky = electric blue)
+ *   slate  → --sc-color-slate-*           (gris de marca SC)
  *   orange → --sc-color-amber-*          (warn de marca = amber; la familia
  *            --sc-color-orange-* de la paleta de labels no pasa por aquí)
  *   yellow → --sc-color-amber-*          (ídem: severities warn de toast/message)
@@ -25,9 +25,9 @@
 
 const families = {
   red: 'red',
-  sky: 'electric-blue',
+  sky: 'sky',
   blue: 'blue',
-  slate: 'gray',
+  slate: 'slate',
   zinc: 'zinc',
   amber: 'amber',
   green: 'green',
@@ -42,8 +42,8 @@ const ramp = (scToken: string) =>
   Object.fromEntries(STEPS.map((step) => [step, `var(--sc-color-${scToken}-${step})`]));
 
 const surface = {
-  0: 'var(--sc-color-gray-0)',
-  ...ramp('gray'),
+  0: 'var(--sc-color-slate-0)',
+  ...ramp('slate'),
 };
 
 /** Bloques compartidos light/dark: el flip lo hace la capa 7 (`.sc-dark`). */
@@ -308,9 +308,9 @@ export default {
         // Sin token semántico propio: receta Aura/Kit (emerald-400 translúcido
         // al 16 %) expresada sobre primitivos — sin hex en base.
         highlight: {
-          color: 'color-mix(in srgb, var(--sc-color-gray-0) 87%, transparent)',
+          color: 'color-mix(in srgb, var(--sc-color-slate-0) 87%, transparent)',
           background: 'color-mix(in srgb, var(--sc-color-emerald-400) 16%, transparent)',
-          focusColor: 'color-mix(in srgb, var(--sc-color-gray-0) 87%, transparent)',
+          focusColor: 'color-mix(in srgb, var(--sc-color-slate-0) 87%, transparent)',
           focusBackground: 'color-mix(in srgb, var(--sc-color-emerald-400) 24%, transparent)',
         },
       },

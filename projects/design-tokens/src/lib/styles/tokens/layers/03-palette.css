@@ -32,10 +32,10 @@
    *
    * All label hues now reference primitives; no hex literals.
    */
-  --sc-label-gray-bg: var(--sc-color-gray-100);
-  --sc-label-gray-text: var(--sc-color-gray-700);
-  --sc-label-gray-border: var(--sc-color-gray-300);
-  --sc-label-gray-dot: var(--sc-color-gray-500);
+  --sc-label-gray-bg: var(--sc-color-slate-100);
+  --sc-label-gray-text: var(--sc-color-slate-700);
+  --sc-label-gray-border: var(--sc-color-slate-300);
+  --sc-label-gray-dot: var(--sc-color-slate-500);
 
   --sc-label-red-bg: var(--sc-color-red-50);
   --sc-label-red-text: var(--sc-color-red-700);

@@ -111,10 +111,10 @@
     &:hover {
       background: var(--sc-color-blue-700);
       border-color: var(--sc-color-blue-700);
-      color: var(--sc-color-gray-0);
+      color: var(--sc-color-slate-0);
     }
     &:focus-visible {
-      outline: 2px solid var(--sc-color-electric-blue-500);
+      outline: 2px solid var(--sc-color-sky-500);
       outline-offset: 2px;
     }
   }
@@ -281,7 +281,7 @@
     &--on {
       background: var(--sc-color-blue-700);
       border-color: var(--sc-color-blue-700);
-      color: var(--sc-color-gray-0);
+      color: var(--sc-color-slate-0);
     }
     /* Off state: visibly "available but not selected" — dashed border +
      * muted text so it is never confused with the on-state solid fill or
@@ -329,7 +329,7 @@
       background: var(--sc-bg-hover);
     }
     &:focus-visible {
-      outline: 2px solid var(--sc-color-electric-blue-500);
+      outline: 2px solid var(--sc-color-sky-500);
       outline-offset: 2px;
     }
   }
@@ -351,7 +351,7 @@
     gap: var(--sc-spacing-0-875);
     padding: var(--sc-spacing-0-75) var(--sc-spacing-1-125);
     background: var(--sc-color-blue-700);
-    color: var(--sc-color-gray-0);
+    color: var(--sc-color-slate-0);
     border-radius: var(--sc-radius-200);
     box-shadow: 0 4px 16px rgb(var(--sc-shadow-color-rgb) / 0.18);
     z-index: 4;

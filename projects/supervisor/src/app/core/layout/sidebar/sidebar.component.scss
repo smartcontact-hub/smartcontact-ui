@@ -42,7 +42,7 @@
   flex-direction: column;
   overflow: hidden;
   background: var(--sc-sidebar-bg);
-  color: var(--sc-color-gray-0);
+  color: var(--sc-color-slate-0);
   /* Hover-OUT delayed by 100 ms; hover-IN instant (overridden below). */
   transition: width var(--sc-transition-base) var(--sc-easing-emphasized) 100ms;
   will-change: width;
@@ -81,7 +81,7 @@
     outline: none;
 
     &:focus-visible {
-      outline: 2px solid var(--sc-color-soft-blue-500);
+      outline: 2px solid var(--sc-color-cyan-500);
       outline-offset: -2px;
     }
   }
@@ -259,7 +259,7 @@
     }
 
     &:focus-visible {
-      outline: 2px solid var(--sc-color-soft-blue-500);
+      outline: 2px solid var(--sc-color-cyan-500);
       outline-offset: -2px;
     }
   }

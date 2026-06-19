@@ -33,8 +33,9 @@ export const BUCKETS = [
   { group: 'aura/semantic/common', test: /^disabled\.opacity$/, kind: 'wired-base', note: 'disabledOpacity 0.6 (= 60%) — base.ts' },
   { group: 'aura/semantic/common', test: /^focus\.ring\.(width|offset)$/, kind: 'wired-base', note: 'focus ring width/offset — base.ts (--sc-focus-ring-*)' },
   { group: 'aura/semantic/common', test: /^overlay\.title\.font\.size$/, kind: 'aura-default', note: 'overlay.title.fontSize — default de Aura (ref a typography que fluye); SC no lo re-cablea' },
-  // DIVERGENCIA consciente: el foco del DS es electric-blue ancho (a11y), no sky del Kit.
-  { group: 'aura/semantic/common', test: /^focus\.ring\.color$/, kind: 'divergence', note: 'color de foco = electric-blue/--sc-border-focus (a11y, customs-catalog §1.1), NO sky del Kit' },
+  // DIVERGENCIA consciente: el foco del DS usa sky de marca ancho (a11y); difiere del valor que el
+  // export pone en focus.ring.color (Tailwind sky #0ea5e9), no de la primitiva sky del Kit.
+  { group: 'aura/semantic/common', test: /^focus\.ring\.color$/, kind: 'divergence', note: 'color de foco = sky de marca/--sc-border-focus (a11y, customs-catalog §1.1), NO el focus.ring.color del export (Tailwind sky #0ea5e9)' },
 
   // ── aura/app ────────────────────────────────────────────────────────────────
   // base.ts no tiene sección `app`: SC no renderiza la capa app del preset Aura.
