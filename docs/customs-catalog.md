@@ -12,6 +12,11 @@
 > Estándar de calidad: cada token trazable al export del Kit
 > (`projects/design-tokens/scripts/kit-export-dtcg.json`, formato DTCG), verificado
 > en CI (`npm run verify`).
+>
+> **Nomenclatura (DD-23, 2026-06-19):** las familias primitivas de color se llaman como en el
+> Kit/Figma — `cyan` (antes "soft-blue"), `sky` (antes "electric-blue"), `slate` (antes "gray").
+> Donde abajo se lea "electric-blue" / "gray" / "soft-blue" como rol o valor de marca, la familia
+> y el token son `sky` / `slate` / `cyan` (`--sc-color-{sky,slate,cyan}-*`).
 
 ---
 
@@ -52,17 +57,20 @@ Sobre Figma SC: pedir el link del componente ANTES de tocar nada. Replicar 1:1 l
 
 **Razón**: brand identity SC = navy oscuro, distinto del Aura primary default. Marca corporate consistente en CTAs principales.
 
-**Trade-off**: el focus ring usa `--sc-color-electric-blue-500` (azure vibrante) para que el contraste de accesibilidad no sufra el navy oscuro, con **`--sc-focus-ring-width` = 2px**. **RECONCILIADO al Kit (2026-06-14)**: el Kit (Figma) ahora define el focus ring en electric-blue (`focus/ring/color` → `{sky.500}`) + width 2 → ya **no es divergencia**, es lo que dice la fuente de verdad (antes: navy + width 1). Round-trip: variable cambiada en Figma por MCP → re-export → código.
+**Trade-off**: el focus ring usa `--sc-color-sky-500` (azure vibrante) para que el contraste de accesibilidad no sufra el navy oscuro, con **`--sc-focus-ring-width` = 2px**. **RECONCILIADO al Kit (2026-06-14)**: el Kit (Figma) ahora define el focus ring en electric-blue (`focus/ring/color` → `{sky.500}`) + width 2 → ya **no es divergencia**, es lo que dice la fuente de verdad (antes: navy + width 1). Round-trip: variable cambiada en Figma por MCP → re-export → código.
 
 ---
 
-### 1.2 Info → electric-blue (vibrante)
+### 1.2 Info → sky de marca (rol: Electric Blue)
 
-| Componente | Figma | SC | Mapping |
+> El Kit y el código nombran esta familia `sky` (`--sc-color-sky-*`, `#1464fe` — azul de marca
+> vibrante). NO es el Tailwind sky (`#0ea5e9`) que el PrimeOne/Aura vanilla trae por defecto.
+
+| Componente | Aura vanilla | SC (`sky` de marca) | Mapping |
 |------------|-------|-----|---------|
-| Button `severity=info` | sky-500 (`#0ea5e9`) | electric-blue-500 (`#1464fe`) | `primitive.sky → electric-blue` (preset `base.ts`) |
-| Toast `severity=info` icon-bg | (mapeado a primitive sky) | electric-blue | `--sc-toast-info-icon-bg = var(--sc-color-electric-blue-500)` |
-| Message / Notification info chrome | sky | electric-blue | (idem, vía primitive.sky override) |
+| Button `severity=info` | sky-500 (`#0ea5e9`) | `--sc-color-sky-500` (`#1464fe`) | preset `base.ts` (familia `sky` = marca) |
+| Toast `severity=info` icon-bg | Tailwind sky | `sky` de marca | `--sc-toast-info-icon-bg = var(--sc-color-sky-500)` |
+| Message / Notification info chrome | sky | `sky` de marca | (idem, vía familia `sky`) |
 
 **Razón**: el sky default de Aura es demasiado suave para el tratamiento de info de la app. Electric-blue da el peso visual que la marca SC necesita para notificaciones sistémicas (Toast info, Message info, Banner info).
 
@@ -287,7 +295,7 @@ Para el caso futuro de backend real: el grace period del undo vive **server-side
 | Token | Razón |
 |---|---|
 | `--sc-color-navy-*` (5 steps) | Brand primary SC (vs azure Aura) — §1.1 |
-| `--sc-color-electric-blue-*` (5 steps) | Brand info SC (vs sky Aura) — §1.2 |
+| `--sc-color-sky-*` (5 steps) | Brand info SC (vs sky Aura) — §1.2 |
 | `--sc-shadow-card-soft`, `--sc-shadow-toast-*` | Brand chrome SC — §2.x |
 | `--sc-z-{sticky-form-header,bulk-action-bar,modal-backdrop,...}` | Pool overlay SC (no en Kit Pro) — §5.8 |
 | `--sc-font-family-mono` | System mono stack (no exportado por Kit Pro) — §5.8 |
@@ -491,7 +499,7 @@ Un audit cruzó la capa `semantic.*` del código vs Kit Pro Variables (`aura/sem
 
 | Categoría Kit Pro | Cobertura en código | Naming 1:1 | Estructura 1:1 | Acción |
 |---|---|---|---|---|
-| `surface.{0-950}` (12 stops) | `--sc-color-gray-*` mapping vía `colorScheme.light.surface` | ✅ | ✅ | OK — sin cambios |
+| `surface.{0-950}` (12 stops) | `--sc-color-slate-*` mapping vía `colorScheme.light.surface` | ✅ | ✅ | OK — sin cambios |
 | `focus.ring.*` | electric-blue + width 2 (reconciliado 2026-06-14) | ✅ | En el Kit, ya no diverge | §1.1 |
 | `disabled.opacity` | N/A en Kit Pro | N/A | Custom legítimo (defensive 0.6) | Documentado en el preset |
 | `form.field.*` (11 paths) | Vive en el preset (`base.ts` colorScheme.light.formField, 10/11 paths) | ❌ camelCase TS vs JSON nested | ⚠️ Subset, no expone CSS `--sc-form-field-*` | **Documentar como preset-native** ↓ |

@@ -80,7 +80,7 @@ plus two product-specific layers for things PrimeNG doesn't model.
 
 | You want to express... | Layer | Examples |
 | --- | --- | --- |
-| A raw value (a specific gray, a specific radius step) | **01-primitive** | `--sc-color-gray-200`, `--sc-radius-md`, `--sc-scale-1` |
+| A raw value (a specific gray, a specific radius step) | **01-primitive** | `--sc-color-slate-200`, `--sc-radius-md`, `--sc-scale-1` |
 | A *role* in the UI ("text-primary", "bg-surface", "border-default") | **02-semantic** | `--sc-text-primary`, `--sc-bg-surface`, `--sc-border-focus` |
 | A Smart Contact domain palette (agent presence, group priority, label color) | **03-palette** | `--sc-presence-available`, `--sc-priority-medium-deep`, `--sc-label-amber-bg` |
 | A pre-baked spec for a specific reusable component | **04-component** | `--sc-btn-primary-bg`, `--sc-modal-radius`, `--sc-toast-padding-x` |

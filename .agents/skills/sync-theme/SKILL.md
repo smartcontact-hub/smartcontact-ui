@@ -73,7 +73,8 @@ scripts/token-parity.mjs
 
 ## Preset contract
 - `base.ts`: primitive families and semantic slots resolve to `var(--sc-*)`.
-  Family map: sky→electric-blue, slate→gray, orange/yellow→amber, zinc→zinc.
+  Family map (paridad DD-23): identidad — sky/slate/cyan/blue/red/green/purple/zinc se llaman
+  igual que en el Kit; solo orange→amber y yellow→amber.
 - Application-owned tokens live in `extend.ts` under `app.*`:
   `app.typography.{sm,md,lg}` (control typography — fonts via
   `--sc-font-size-100/200/300`, line-heights 18/21/24) and

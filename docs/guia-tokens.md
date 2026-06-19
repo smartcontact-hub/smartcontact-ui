@@ -979,7 +979,7 @@ momento.
   en el preset (`semantic.focusRing.width`).
 
 - **Escala de grises alineada a la slate del Kit.** Los
-  `--sc-color-gray-*` siguen la slate custom del Kit de Figma —
+  `--sc-color-slate-*` siguen la slate custom del Kit de Figma —
   tono cálido y azulado oscuro, alineado 1:1 con lo que el equipo
   de diseño usa en Figma. Si en algún sitio el gris se siente
   "incorrecto", reportar — no asumir que hay drift.
