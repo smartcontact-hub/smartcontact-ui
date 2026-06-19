@@ -42,7 +42,10 @@
             </h2>
           </header>
 
-          <!-- Estados fijos (3) → tags. NO editables, NO removibles. -->
+          <!-- Por defecto: estados fijos (3) → tags. NO editables, NO removibles. -->
+          <span class="sub-label">
+            {{ 'config.aed.subpages.servicio.estados.por_defecto' | translate }}
+          </span>
           <div class="state-tags">
             <span class="state-tag" data-tone="green">
               {{ 'config.aed.subpages.servicio.estados.disponible' | translate }}
@@ -63,52 +66,33 @@
             <span>{{ 'config.aed.subpages.servicio.estados.admin_checkbox' | translate }}</span>
           </sc-checkbox>
 
-          <!-- Estados editables → chips con × (removibles, re-añadibles). -->
-          @if (form().estadosNoDisponibles.length) {
-            <ul class="state-chips">
+          <!-- Personalización: estados editables → chips removibles + alta por modal. -->
+          <span class="sub-label">
+            {{ 'config.aed.subpages.servicio.estados.personalizacion' | translate }}
+          </span>
+          <div class="reasons-row">
+            <div class="reasons-row__chips">
               @for (reason of form().estadosNoDisponibles; track reason) {
-                <li class="state-chip">
-                  <span class="state-chip__label">{{ reason }}</span>
-                  <button
-                    type="button"
-                    class="state-chip__remove"
-                    (click)="removeReason(reason)"
-                    [attr.aria-label]="('common.delete' | translate) + ' — ' + reason"
-                  >
-                    <sc-icon [name]="removeIcon" [size]="14" />
-                  </button>
-                </li>
+                <sc-chip
+                  class="reason-chip"
+                  variant="label"
+                  labelColor="gray"
+                  [label]="reason"
+                  [removable]="true"
+                  [removeAriaLabel]="('common.delete' | translate) + ' — ' + reason"
+                  (removed)="removeReason(reason)"
+                />
               }
-            </ul>
-          }
-
-          <div class="field add-reason">
-            <label class="field__label" for="general-reason">
-              {{ 'config.aed.subpages.servicio.estados.nombre_label' | translate }}
-            </label>
-            <sc-inputgroup class="add-reason__group">
-              <input
-                pInputText
-                id="general-reason"
-                type="text"
-                [value]="tagInput()"
-                (input)="tagInput.set($any($event.target).value)"
-                (keydown)="onReasonKeydown($event)"
-                [placeholder]="
-                  'config.aed.subpages.servicio.estados.nombre_placeholder' | translate
-                "
-              />
-              <p-button
-                type="button"
-                severity="secondary"
-                [outlined]="true"
-                [disabled]="!tagInput().trim()"
-                (onClick)="addReason()"
-              >
-                <sc-icon [name]="addIcon" [size]="14" />
-                <span>{{ 'config.aed.subpages.servicio.estados.add' | translate }}</span>
-              </p-button>
-            </sc-inputgroup>
+            </div>
+            <sc-button
+              class="reasons-row__add"
+              variant="secondary"
+              appearance="outlined"
+              size="sm"
+              [icon]="addIcon"
+              [label]="'config.aed.subpages.servicio.estados.add' | translate"
+              (clicked)="openAddModal()"
+            />
           </div>
         </section>
 
@@ -383,5 +367,38 @@
         </section>
       </div>
     </section>
+
+    <!-- Modal "Añadir estado" (Figma 103:2718) -->
+    <sc-dialog
+      [visible]="modalOpen()"
+      (cancelled)="modalOpen.set(false)"
+      [title]="'config.aed.subpages.servicio.estados.modal_title' | translate"
+      [subtitle]="'config.aed.subpages.servicio.estados.modal_subtitle' | translate"
+      [icon]="addIcon"
+      width="420px"
+    >
+      <sc-inputtext
+        inputId="general-new-estado"
+        [label]="'config.aed.subpages.servicio.estados.modal_input_label' | translate"
+        [placeholder]="'config.aed.subpages.servicio.estados.modal_input_placeholder' | translate"
+        [value]="draft()"
+        (valueChange)="draft.set($event)"
+        (keyup.enter)="confirmAddReason()"
+      />
+      <div modal-actions>
+        <sc-button
+          variant="secondary"
+          appearance="text"
+          [label]="'common.cancel' | translate"
+          (clicked)="modalOpen.set(false)"
+        />
+        <sc-button
+          variant="primary"
+          [label]="'config.aed.subpages.servicio.estados.add' | translate"
+          [disabled]="!draft().trim()"
+          (clicked)="confirmAddReason()"
+        />
+      </div>
+    </sc-dialog>
   </div>
 </div>

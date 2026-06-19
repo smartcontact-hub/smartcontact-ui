@@ -12,17 +12,18 @@ import {
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
-import { InputTextModule } from 'primeng/inputtext';
 
 import { DirtyAware } from '@core/guards';
 import { TopBarSlotService } from '@core/layout/top-bar/top-bar-slot.service';
 import { TOAST_LIFE } from '@core/utils/toast-life';
 import { IconComponent } from '@shared/components';
 import {
+  ScButtonComponent as ButtonComponent,
   ScCheckboxComponent as CheckboxComponent,
+  ScChipComponent as ChipComponent,
+  ScDialogComponent as DialogComponent,
   ScDividerComponent as DividerComponent,
   ScInputTextComponent as InputTextComponent,
-  ScInputGroupComponent as InputGroupComponent,
   ScInputNumberComponent as InputNumberComponent,
   ScSelectComponent as SelectComponent,
   ScToggleSwitchComponent as ToggleSwitchComponent,
@@ -127,13 +128,14 @@ const NOTIF_EVENTOS: readonly (keyof NotifEventos)[] = ['inicio', 'fin', 'result
   selector: 'sc-aed-servicio-page',
   imports: [
     ButtonModule,
+    ButtonComponent,
     CheckboxComponent,
+    ChipComponent,
+    DialogComponent,
     DividerComponent,
     IconComponent,
     InputTextComponent,
-    InputGroupComponent,
     InputNumberComponent,
-    InputTextModule,
     SelectComponent,
     ToggleSwitchComponent,
     TranslateModule,
@@ -149,7 +151,6 @@ export class AedServicioPageComponent implements OnDestroy, DirtyAware {
 
   protected readonly pageIcon = 'call';
   protected readonly addIcon = 'add';
-  protected readonly removeIcon = 'close';
 
   protected readonly descuelgueOptions = DESCUELGUE_OPTIONS;
   protected readonly visibilidadLabels = VISIBILIDAD_LABELS;
@@ -160,8 +161,11 @@ export class AedServicioPageComponent implements OnDestroy, DirtyAware {
    * guardar — no hay cambio que persistir. */
   private readonly pristine = signal<FormState>(this.cloneDefault());
   protected readonly form = signal<FormState>(this.cloneDefault());
-  protected readonly tagInput = signal('');
   protected readonly saving = signal(false);
+
+  /** Modal "Añadir estado" (Figma 103:2718): visibilidad + draft del input. */
+  protected readonly modalOpen = signal(false);
+  protected readonly draft = signal('');
 
   protected readonly dirty = computed(
     () => JSON.stringify(this.form()) !== JSON.stringify(this.pristine()),
@@ -186,18 +190,23 @@ export class AedServicioPageComponent implements OnDestroy, DirtyAware {
 
   /* ---------- Estados de agentes ---------- */
 
-  protected addReason(): void {
-    const next = this.tagInput().trim();
-    if (!next) return;
-    if (this.form().estadosNoDisponibles.includes(next)) {
-      this.tagInput.set('');
-      return;
+  protected openAddModal(): void {
+    this.draft.set('');
+    this.modalOpen.set(true);
+  }
+
+  /** Confirma el alta desde el modal: añade el estado (si no vacío ni duplicado)
+   * y cierra. El chip nuevo entra animado (CSS `chip-appear`, ver SCSS). */
+  protected confirmAddReason(): void {
+    const next = this.draft().trim();
+    if (next && !this.form().estadosNoDisponibles.includes(next)) {
+      this.form.update((f) => ({
+        ...f,
+        estadosNoDisponibles: [...f.estadosNoDisponibles, next],
+      }));
     }
-    this.form.update((f) => ({
-      ...f,
-      estadosNoDisponibles: [...f.estadosNoDisponibles, next],
-    }));
-    this.tagInput.set('');
+    this.modalOpen.set(false);
+    this.draft.set('');
   }
 
   protected removeReason(reason: string): void {
@@ -205,13 +214,6 @@ export class AedServicioPageComponent implements OnDestroy, DirtyAware {
       ...f,
       estadosNoDisponibles: f.estadosNoDisponibles.filter((t) => t !== reason),
     }));
-  }
-
-  protected onReasonKeydown(event: KeyboardEvent): void {
-    if (event.key === 'Enter') {
-      event.preventDefault();
-      this.addReason();
-    }
   }
 
   /* ---------- Estados visibles ---------- */
@@ -264,7 +266,8 @@ export class AedServicioPageComponent implements OnDestroy, DirtyAware {
 
   protected cancel(): void {
     this.form.set(structuredClone(this.pristine()));
-    this.tagInput.set('');
+    this.modalOpen.set(false);
+    this.draft.set('');
   }
 
   protected save(): void {

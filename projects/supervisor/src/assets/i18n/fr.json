@@ -1473,7 +1473,13 @@
             "admin_checkbox": "État administratif",
             "nombre_label": "Nom",
             "nombre_placeholder": "N'importe quel nom",
-            "add": "Ajouter"
+            "add": "Ajouter",
+            "por_defecto": "Par défaut",
+            "personalizacion": "Personnalisation des indisponibilités",
+            "modal_title": "Ajouter un état",
+            "modal_subtitle": "Ajoutez des états personnalisés qui seront visibles par les agents à côté des états par défaut.",
+            "modal_input_label": "Nouvel état",
+            "modal_input_placeholder": "Ex : Pause"
           },
           "inactividad": {
             "title": "Verrouillage du poste par inactivité",
