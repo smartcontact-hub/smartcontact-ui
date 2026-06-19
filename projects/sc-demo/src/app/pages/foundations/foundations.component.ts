@@ -36,8 +36,8 @@ export class FoundationsComponent {
 
   readonly colorFamilies: ColorFamily[] = [
     { name: 'Blue (marca)', token: 'blue', steps: [50, 100, 300, 500, 700, 900] },
-    { name: 'Gray (neutros)', token: 'gray', steps: [50, 100, 300, 500, 700, 900] },
-    { name: 'Electric blue (info)', token: 'electric-blue', steps: [50, 100, 300, 500, 700, 900] },
+    { name: 'Slate (neutros)', token: 'slate', steps: [50, 100, 300, 500, 700, 900] },
+    { name: 'Sky (info)', token: 'sky', steps: [50, 100, 300, 500, 700, 900] },
     { name: 'Green (success)', token: 'green', steps: [50, 100, 300, 500, 700, 900] },
     { name: 'Amber (warning)', token: 'amber', steps: [50, 100, 300, 500, 700, 900] },
     { name: 'Red (danger)', token: 'red', steps: [50, 100, 300, 500, 700, 900] },

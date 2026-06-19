@@ -16,27 +16,27 @@
 
 .sc-dark {
   /* ---------- Semantic · Text ---------- */
-  --sc-text-primary: var(--sc-color-gray-50);
-  --sc-text-secondary: var(--sc-color-gray-300);
-  --sc-text-subtle: var(--sc-color-gray-500);
-  --sc-text-disabled: var(--sc-color-gray-700);
-  --sc-text-inverse: var(--sc-color-gray-900);
+  --sc-text-primary: var(--sc-color-slate-50);
+  --sc-text-secondary: var(--sc-color-slate-300);
+  --sc-text-subtle: var(--sc-color-slate-500);
+  --sc-text-disabled: var(--sc-color-slate-700);
+  --sc-text-inverse: var(--sc-color-slate-900);
   /* En dark el botón primary es navy CLARO (blue-400) → el texto encima va
    * OSCURO (export.dark primaryContrastColor #181d26=gray-900; seguimos al Kit).
    * ⚠ a11y: gray-900 sobre blue-400 = ~3:1 (bajo AA); blanco tampoco llega. El fix
    * pide cambiar el color del primary dark — decisión de marca (W5). Lo vigila
    * tokens:parity §6b (allowlist A11Y_KNOWN). */
-  --sc-text-on-primary: var(--sc-color-gray-900);
-  --sc-text-on-secondary: var(--sc-color-gray-50);
-  --sc-text-on-accent: var(--sc-color-gray-950);
+  --sc-text-on-primary: var(--sc-color-slate-900);
+  --sc-text-on-secondary: var(--sc-color-slate-50);
+  --sc-text-on-accent: var(--sc-color-slate-950);
 
   /* ---------- Semantic · Background ---------- */
-  --sc-bg-default: var(--sc-color-gray-950);
-  --sc-bg-surface: var(--sc-color-gray-900);
+  --sc-bg-default: var(--sc-color-slate-950);
+  --sc-bg-surface: var(--sc-color-slate-900);
   --sc-bg-subtle: var(--sc-color-blue-900);
   --sc-bg-subtle-hover: var(--sc-color-blue-800);
   --sc-bg-subtle-active: var(--sc-color-blue-700);
-  --sc-bg-disabled: var(--sc-color-gray-800);
+  --sc-bg-disabled: var(--sc-color-slate-800);
 
   /* Primary (brand) dark — base/hover/active 1:1 con el Kit → zona generada.
    * El Kit aclara (blue-400/300/200) vs nuestro blue-500 anterior → más contraste. */
@@ -53,13 +53,13 @@
    * `npm run tokens:import` (token-gen-cmp-color.mjs). NO editar a mano.
    * Color de componente (dark, .sc-dark) 1:1 con el export. Divergencias afinadas a
    * mano → scripts/cmp-color-map.mjs (EXCLUDE), vigiladas por el chivato §7. */
-  --sc-cmp-autocomplete-chip-focus-color: var(--sc-color-gray-0);
+  --sc-cmp-autocomplete-chip-focus-color: var(--sc-color-slate-0);
   --sc-cmp-badge-success-background: var(--sc-color-green-400);
-  --sc-cmp-badge-info-background: var(--sc-color-electric-blue-400);
-  --sc-cmp-badge-info-color: var(--sc-color-electric-blue-950);
+  --sc-cmp-badge-info-background: var(--sc-color-sky-400);
+  --sc-cmp-badge-info-color: var(--sc-color-sky-950);
   --sc-cmp-badge-danger-background: var(--sc-color-red-400);
   --sc-cmp-badge-danger-color: var(--sc-color-red-950);
-  --sc-cmp-badge-contrast-background: var(--sc-color-gray-0);
+  --sc-cmp-badge-contrast-background: var(--sc-color-slate-0);
   --sc-cmp-button-secondary-background: var(--sc-color-zinc-800);
   --sc-cmp-button-secondary-color: var(--sc-color-zinc-300);
   --sc-cmp-button-secondary-hover-background: var(--sc-color-zinc-700);
@@ -70,16 +70,16 @@
   --sc-cmp-button-secondary-active-border-color: var(--sc-color-zinc-600);
   --sc-cmp-button-secondary-border-color: var(--sc-color-zinc-800);
   --sc-cmp-button-secondary-focus-ring-color: var(--sc-color-zinc-300);
-  --sc-cmp-button-info-background: var(--sc-color-electric-blue-400);
-  --sc-cmp-button-info-color: var(--sc-color-electric-blue-950);
-  --sc-cmp-button-info-hover-background: var(--sc-color-electric-blue-300);
-  --sc-cmp-button-info-hover-color: var(--sc-color-electric-blue-950);
-  --sc-cmp-button-info-hover-border-color: var(--sc-color-electric-blue-300);
-  --sc-cmp-button-info-active-background: var(--sc-color-electric-blue-200);
-  --sc-cmp-button-info-active-color: var(--sc-color-electric-blue-950);
-  --sc-cmp-button-info-active-border-color: var(--sc-color-electric-blue-200);
-  --sc-cmp-button-info-border-color: var(--sc-color-electric-blue-400);
-  --sc-cmp-button-info-focus-ring-color: var(--sc-color-electric-blue-400);
+  --sc-cmp-button-info-background: var(--sc-color-sky-400);
+  --sc-cmp-button-info-color: var(--sc-color-sky-950);
+  --sc-cmp-button-info-hover-background: var(--sc-color-sky-300);
+  --sc-cmp-button-info-hover-color: var(--sc-color-sky-950);
+  --sc-cmp-button-info-hover-border-color: var(--sc-color-sky-300);
+  --sc-cmp-button-info-active-background: var(--sc-color-sky-200);
+  --sc-cmp-button-info-active-color: var(--sc-color-sky-950);
+  --sc-cmp-button-info-active-border-color: var(--sc-color-sky-200);
+  --sc-cmp-button-info-border-color: var(--sc-color-sky-400);
+  --sc-cmp-button-info-focus-ring-color: var(--sc-color-sky-400);
   --sc-cmp-button-success-background: var(--sc-color-green-400);
   --sc-cmp-button-success-hover-background: var(--sc-color-green-300);
   --sc-cmp-button-success-hover-border-color: var(--sc-color-green-300);
@@ -117,7 +117,7 @@
   --sc-cmp-button-danger-active-border-color: var(--sc-color-red-200);
   --sc-cmp-button-danger-border-color: var(--sc-color-red-400);
   --sc-cmp-button-danger-focus-ring-color: var(--sc-color-red-400);
-  --sc-cmp-button-contrast-background: var(--sc-color-gray-0);
+  --sc-cmp-button-contrast-background: var(--sc-color-slate-0);
   --sc-cmp-button-contrast-color: var(--sc-color-zinc-950);
   --sc-cmp-button-contrast-hover-background: var(--sc-color-zinc-100);
   --sc-cmp-button-contrast-hover-color: var(--sc-color-zinc-950);
@@ -125,18 +125,18 @@
   --sc-cmp-button-contrast-active-background: var(--sc-color-zinc-200);
   --sc-cmp-button-contrast-active-color: var(--sc-color-zinc-950);
   --sc-cmp-button-contrast-active-border-color: var(--sc-color-zinc-200);
-  --sc-cmp-button-contrast-border-color: var(--sc-color-gray-0);
-  --sc-cmp-button-contrast-focus-ring-color: var(--sc-color-gray-0);
+  --sc-cmp-button-contrast-border-color: var(--sc-color-slate-0);
+  --sc-cmp-button-contrast-focus-ring-color: var(--sc-color-slate-0);
   --sc-cmp-button-outlined-primary-hover-background: color-mix(in srgb, var(--sc-color-emerald-400) 4%, transparent);
   --sc-cmp-button-outlined-primary-active-background: color-mix(in srgb, var(--sc-color-emerald-400) 16%, transparent);
-  --sc-cmp-button-outlined-secondary-hover-background: color-mix(in srgb, var(--sc-color-gray-0) 4%, transparent);
-  --sc-cmp-button-outlined-secondary-active-background: color-mix(in srgb, var(--sc-color-gray-0) 16%, transparent);
+  --sc-cmp-button-outlined-secondary-hover-background: color-mix(in srgb, var(--sc-color-slate-0) 4%, transparent);
+  --sc-cmp-button-outlined-secondary-active-background: color-mix(in srgb, var(--sc-color-slate-0) 16%, transparent);
   --sc-cmp-button-outlined-success-color: var(--sc-color-green-400);
   --sc-cmp-button-outlined-success-hover-background: color-mix(in srgb, var(--sc-color-green-400) 4%, transparent);
   --sc-cmp-button-outlined-success-active-background: color-mix(in srgb, var(--sc-color-green-400) 16%, transparent);
   --sc-cmp-button-outlined-success-border-color: var(--sc-color-green-700);
-  --sc-cmp-button-outlined-info-color: var(--sc-color-electric-blue-400);
-  --sc-cmp-button-outlined-info-border-color: var(--sc-color-electric-blue-700);
+  --sc-cmp-button-outlined-info-color: var(--sc-color-sky-400);
+  --sc-cmp-button-outlined-info-border-color: var(--sc-color-sky-700);
   --sc-cmp-button-outlined-warn-hover-background: color-mix(in srgb, var(--sc-color-orange-400) 4%, transparent);
   --sc-cmp-button-outlined-warn-active-background: color-mix(in srgb, var(--sc-color-orange-400) 16%, transparent);
   --sc-cmp-button-outlined-help-color: var(--sc-color-purple-400);
@@ -147,14 +147,14 @@
   --sc-cmp-button-outlined-danger-hover-background: color-mix(in srgb, var(--sc-color-red-400) 4%, transparent);
   --sc-cmp-button-outlined-danger-active-background: color-mix(in srgb, var(--sc-color-red-400) 16%, transparent);
   --sc-cmp-button-outlined-danger-border-color: var(--sc-color-red-700);
-  --sc-cmp-button-outlined-contrast-color: var(--sc-color-gray-0);
-  --sc-cmp-button-outlined-plain-color: var(--sc-color-gray-0);
+  --sc-cmp-button-outlined-contrast-color: var(--sc-color-slate-0);
+  --sc-cmp-button-outlined-plain-color: var(--sc-color-slate-0);
   --sc-cmp-button-text-primary-hover-background: color-mix(in srgb, var(--sc-color-emerald-400) 4%, transparent);
   --sc-cmp-button-text-primary-active-background: color-mix(in srgb, var(--sc-color-emerald-400) 16%, transparent);
   --sc-cmp-button-text-success-color: var(--sc-color-green-400);
   --sc-cmp-button-text-success-hover-background: color-mix(in srgb, var(--sc-color-green-400) 4%, transparent);
   --sc-cmp-button-text-success-active-background: color-mix(in srgb, var(--sc-color-green-400) 16%, transparent);
-  --sc-cmp-button-text-info-color: var(--sc-color-electric-blue-400);
+  --sc-cmp-button-text-info-color: var(--sc-color-sky-400);
   --sc-cmp-button-text-warn-hover-background: color-mix(in srgb, var(--sc-color-orange-400) 4%, transparent);
   --sc-cmp-button-text-warn-active-background: color-mix(in srgb, var(--sc-color-orange-400) 16%, transparent);
   --sc-cmp-button-text-help-color: var(--sc-color-purple-400);
@@ -163,23 +163,23 @@
   --sc-cmp-button-text-danger-color: var(--sc-color-red-400);
   --sc-cmp-button-text-danger-hover-background: color-mix(in srgb, var(--sc-color-red-400) 4%, transparent);
   --sc-cmp-button-text-danger-active-background: color-mix(in srgb, var(--sc-color-red-400) 16%, transparent);
-  --sc-cmp-button-text-plain-color: var(--sc-color-gray-0);
-  --sc-cmp-button-text-contrast-color: var(--sc-color-gray-0);
+  --sc-cmp-button-text-plain-color: var(--sc-color-slate-0);
+  --sc-cmp-button-text-contrast-color: var(--sc-color-slate-0);
   --sc-cmp-chip-background: var(--sc-color-zinc-800);
-  --sc-cmp-chip-color: var(--sc-color-gray-0);
-  --sc-cmp-chip-icon-color: var(--sc-color-gray-0);
-  --sc-cmp-chip-remove-icon-color: var(--sc-color-gray-0);
+  --sc-cmp-chip-color: var(--sc-color-slate-0);
+  --sc-cmp-chip-icon-color: var(--sc-color-slate-0);
+  --sc-cmp-chip-remove-icon-color: var(--sc-color-slate-0);
   --sc-cmp-colorpicker-panel-background: var(--sc-color-zinc-900);
   --sc-cmp-colorpicker-panel-border-color: var(--sc-color-zinc-700);
-  --sc-cmp-colorpicker-handle-color: var(--sc-color-gray-0);
-  --sc-cmp-datepicker-today-color: var(--sc-color-gray-0);
+  --sc-cmp-colorpicker-handle-color: var(--sc-color-slate-0);
+  --sc-cmp-datepicker-today-color: var(--sc-color-slate-0);
   --sc-cmp-datatable-border-color: var(--sc-color-zinc-800);
-  --sc-cmp-galleria-thumbnail-nav-button-hover-color: var(--sc-color-gray-0);
+  --sc-cmp-galleria-thumbnail-nav-button-hover-color: var(--sc-color-slate-0);
   --sc-cmp-inputnumber-button-background: transparent;
   --sc-cmp-message-info-background: color-mix(in srgb, var(--sc-color-azure-500) 16%, transparent);
   --sc-cmp-message-info-color: var(--sc-color-blue-500);
   --sc-cmp-message-info-border-color: color-mix(in srgb, var(--sc-color-azure-700) 36%, transparent);
-  --sc-cmp-message-info-close-button-hover-background: color-mix(in srgb, var(--sc-color-gray-0) 5%, transparent);
+  --sc-cmp-message-info-close-button-hover-background: color-mix(in srgb, var(--sc-color-slate-0) 5%, transparent);
   --sc-cmp-message-info-close-button-focus-ring-color: var(--sc-color-blue-500);
   --sc-cmp-message-info-outlined-color: var(--sc-color-blue-500);
   --sc-cmp-message-info-outlined-border-color: var(--sc-color-blue-500);
@@ -187,26 +187,26 @@
   --sc-cmp-message-success-background: color-mix(in srgb, var(--sc-color-green-500) 16%, transparent);
   --sc-cmp-message-success-color: var(--sc-color-green-500);
   --sc-cmp-message-success-border-color: color-mix(in srgb, var(--sc-color-green-700) 36%, transparent);
-  --sc-cmp-message-success-close-button-hover-background: color-mix(in srgb, var(--sc-color-gray-0) 5%, transparent);
+  --sc-cmp-message-success-close-button-hover-background: color-mix(in srgb, var(--sc-color-slate-0) 5%, transparent);
   --sc-cmp-message-success-close-button-focus-ring-color: var(--sc-color-green-500);
   --sc-cmp-message-success-outlined-color: var(--sc-color-green-500);
   --sc-cmp-message-success-outlined-border-color: var(--sc-color-green-500);
   --sc-cmp-message-success-simple-color: var(--sc-color-green-500);
   --sc-cmp-message-warn-background: color-mix(in srgb, var(--sc-color-yellow-500) 16%, transparent);
   --sc-cmp-message-warn-border-color: color-mix(in srgb, var(--sc-color-yellow-700) 36%, transparent);
-  --sc-cmp-message-warn-close-button-hover-background: color-mix(in srgb, var(--sc-color-gray-0) 5%, transparent);
+  --sc-cmp-message-warn-close-button-hover-background: color-mix(in srgb, var(--sc-color-slate-0) 5%, transparent);
   --sc-cmp-message-error-background: color-mix(in srgb, var(--sc-color-red-500) 16%, transparent);
   --sc-cmp-message-error-color: var(--sc-color-red-500);
   --sc-cmp-message-error-border-color: color-mix(in srgb, var(--sc-color-red-700) 36%, transparent);
-  --sc-cmp-message-error-close-button-hover-background: color-mix(in srgb, var(--sc-color-gray-0) 5%, transparent);
+  --sc-cmp-message-error-close-button-hover-background: color-mix(in srgb, var(--sc-color-slate-0) 5%, transparent);
   --sc-cmp-message-error-close-button-focus-ring-color: var(--sc-color-red-500);
   --sc-cmp-message-error-outlined-color: var(--sc-color-red-500);
   --sc-cmp-message-error-outlined-border-color: var(--sc-color-red-500);
   --sc-cmp-message-error-simple-color: var(--sc-color-red-500);
-  --sc-cmp-message-contrast-background: var(--sc-color-gray-0);
-  --sc-cmp-message-contrast-outlined-color: var(--sc-color-gray-0);
-  --sc-cmp-message-contrast-outlined-border-color: var(--sc-color-gray-0);
-  --sc-cmp-message-contrast-simple-color: var(--sc-color-gray-0);
+  --sc-cmp-message-contrast-background: var(--sc-color-slate-0);
+  --sc-cmp-message-contrast-outlined-color: var(--sc-color-slate-0);
+  --sc-cmp-message-contrast-outlined-border-color: var(--sc-color-slate-0);
+  --sc-cmp-message-contrast-simple-color: var(--sc-color-slate-0);
   --sc-cmp-password-strength-weak-background: var(--sc-color-red-400);
   --sc-cmp-password-strength-medium-background: var(--sc-color-amber-400);
   --sc-cmp-password-strength-strong-background: var(--sc-color-green-400);
@@ -214,53 +214,53 @@
   --sc-cmp-progressspinner-color-two: var(--sc-color-blue-400);
   --sc-cmp-progressspinner-color-three: var(--sc-color-green-400);
   --sc-cmp-progressspinner-color-four: var(--sc-color-yellow-400);
-  --sc-cmp-skeleton-background: color-mix(in srgb, var(--sc-color-gray-0) 6%, transparent);
+  --sc-cmp-skeleton-background: color-mix(in srgb, var(--sc-color-slate-0) 6%, transparent);
   --sc-cmp-tag-primary-background: color-mix(in srgb, var(--sc-color-emerald-500) 16%, transparent);
   --sc-cmp-tag-success-background: color-mix(in srgb, var(--sc-color-green-500) 16%, transparent);
   --sc-cmp-tag-success-color: var(--sc-color-green-300);
-  --sc-cmp-tag-info-color: var(--sc-color-electric-blue-300);
+  --sc-cmp-tag-info-color: var(--sc-color-sky-300);
   --sc-cmp-tag-warn-background: color-mix(in srgb, var(--sc-color-orange-500) 16%, transparent);
   --sc-cmp-tag-danger-background: color-mix(in srgb, var(--sc-color-red-500) 16%, transparent);
   --sc-cmp-tag-danger-color: var(--sc-color-red-300);
-  --sc-cmp-tag-contrast-background: var(--sc-color-gray-0);
+  --sc-cmp-tag-contrast-background: var(--sc-color-slate-0);
   --sc-cmp-togglebutton-background: var(--sc-color-zinc-950);
   --sc-cmp-togglebutton-color: var(--sc-color-zinc-400);
   --sc-cmp-togglebutton-checked-background: var(--sc-color-zinc-950);
-  --sc-cmp-togglebutton-checked-color: var(--sc-color-gray-0);
+  --sc-cmp-togglebutton-checked-color: var(--sc-color-slate-0);
   --sc-cmp-togglebutton-checked-border-color: var(--sc-color-zinc-950);
   --sc-cmp-togglebutton-hover-background: var(--sc-color-zinc-950);
   --sc-cmp-togglebutton-hover-color: var(--sc-color-zinc-300);
   --sc-cmp-togglebutton-border-color: var(--sc-color-zinc-950);
-  --sc-cmp-togglebutton-icon-checked-color: var(--sc-color-gray-0);
+  --sc-cmp-togglebutton-icon-checked-color: var(--sc-color-slate-0);
   --sc-cmp-toast-info-background: color-mix(in srgb, var(--sc-color-azure-500) 16%, transparent);
   --sc-cmp-toast-info-color: var(--sc-color-blue-500);
   --sc-cmp-toast-info-border-color: color-mix(in srgb, var(--sc-color-azure-700) 36%, transparent);
-  --sc-cmp-toast-info-detail-color: var(--sc-color-gray-0);
-  --sc-cmp-toast-info-close-button-hover-background: color-mix(in srgb, var(--sc-color-gray-0) 5%, transparent);
+  --sc-cmp-toast-info-detail-color: var(--sc-color-slate-0);
+  --sc-cmp-toast-info-close-button-hover-background: color-mix(in srgb, var(--sc-color-slate-0) 5%, transparent);
   --sc-cmp-toast-info-close-button-focus-ring-color: var(--sc-color-blue-500);
   --sc-cmp-toast-success-background: color-mix(in srgb, var(--sc-color-green-500) 16%, transparent);
   --sc-cmp-toast-success-color: var(--sc-color-green-500);
   --sc-cmp-toast-success-border-color: color-mix(in srgb, var(--sc-color-green-700) 36%, transparent);
-  --sc-cmp-toast-success-detail-color: var(--sc-color-gray-0);
-  --sc-cmp-toast-success-close-button-hover-background: color-mix(in srgb, var(--sc-color-gray-0) 5%, transparent);
+  --sc-cmp-toast-success-detail-color: var(--sc-color-slate-0);
+  --sc-cmp-toast-success-close-button-hover-background: color-mix(in srgb, var(--sc-color-slate-0) 5%, transparent);
   --sc-cmp-toast-success-close-button-focus-ring-color: var(--sc-color-green-500);
   --sc-cmp-toast-warn-background: color-mix(in srgb, var(--sc-color-yellow-500) 16%, transparent);
   --sc-cmp-toast-warn-border-color: color-mix(in srgb, var(--sc-color-yellow-700) 36%, transparent);
-  --sc-cmp-toast-warn-detail-color: var(--sc-color-gray-0);
-  --sc-cmp-toast-warn-close-button-hover-background: color-mix(in srgb, var(--sc-color-gray-0) 5%, transparent);
+  --sc-cmp-toast-warn-detail-color: var(--sc-color-slate-0);
+  --sc-cmp-toast-warn-close-button-hover-background: color-mix(in srgb, var(--sc-color-slate-0) 5%, transparent);
   --sc-cmp-toast-error-background: color-mix(in srgb, var(--sc-color-red-500) 16%, transparent);
   --sc-cmp-toast-error-color: var(--sc-color-red-500);
   --sc-cmp-toast-error-border-color: color-mix(in srgb, var(--sc-color-red-700) 36%, transparent);
-  --sc-cmp-toast-error-detail-color: var(--sc-color-gray-0);
-  --sc-cmp-toast-error-close-button-hover-background: color-mix(in srgb, var(--sc-color-gray-0) 5%, transparent);
+  --sc-cmp-toast-error-detail-color: var(--sc-color-slate-0);
+  --sc-cmp-toast-error-close-button-hover-background: color-mix(in srgb, var(--sc-color-slate-0) 5%, transparent);
   --sc-cmp-toast-error-close-button-focus-ring-color: var(--sc-color-red-500);
-  --sc-cmp-toast-secondary-detail-color: var(--sc-color-gray-0);
-  --sc-cmp-toast-contrast-background: var(--sc-color-gray-0);
+  --sc-cmp-toast-secondary-detail-color: var(--sc-color-slate-0);
+  --sc-cmp-toast-contrast-background: var(--sc-color-slate-0);
   --sc-cmp-toggleswitch-background: var(--sc-color-zinc-700);
   --sc-cmp-toggleswitch-hover-background: var(--sc-color-zinc-600);
   --sc-cmp-toggleswitch-disabled-background: var(--sc-color-zinc-600);
   --sc-cmp-tooltip-background: var(--sc-color-zinc-700);
-  --sc-cmp-tooltip-color: var(--sc-color-gray-0);
+  --sc-cmp-tooltip-color: var(--sc-color-slate-0);
   --sc-cmp-treetable-border-color: var(--sc-color-zinc-800);
   /* @sc-gen:cmp-color-dark:end */
   --sc-bg-primary-subtle: var(--sc-color-blue-900);
@@ -268,10 +268,10 @@
   --sc-bg-primary-subtle-active: var(--sc-color-blue-700);
 
   /* Secondary (gray) */
-  --sc-bg-secondary: var(--sc-color-gray-300);
-  --sc-bg-secondary-hover: var(--sc-color-gray-800);
-  --sc-bg-secondary-active: var(--sc-color-gray-700);
-  --sc-bg-secondary-subtle: var(--sc-color-gray-900);
+  --sc-bg-secondary: var(--sc-color-slate-300);
+  --sc-bg-secondary-hover: var(--sc-color-slate-800);
+  --sc-bg-secondary-active: var(--sc-color-slate-700);
+  --sc-bg-secondary-subtle: var(--sc-color-slate-900);
 
   /* Status — bgs darken, text lifts. Translucency expressed as a
    * `color-mix` over a deep status-color token (the 800-step from
@@ -285,43 +285,43 @@
   --sc-bg-danger-subtle: color-mix(in srgb, var(--sc-color-red-900) 22%, transparent);
   --sc-bg-danger-subtle-hover: color-mix(in srgb, var(--sc-color-red-900) 32%, transparent);
   --sc-bg-danger-subtle-active: color-mix(in srgb, var(--sc-color-red-900) 42%, transparent);
-  --sc-bg-info-subtle: color-mix(in srgb, var(--sc-color-electric-blue-800) 22%, transparent);
+  --sc-bg-info-subtle: color-mix(in srgb, var(--sc-color-sky-800) 22%, transparent);
   --sc-bg-violet-subtle: color-mix(in srgb, var(--sc-color-violet-800) 22%, transparent);
 
   /* ---------- Semantic · Border ---------- */
-  --sc-border-default: var(--sc-color-gray-800);
-  --sc-border-strong: var(--sc-color-gray-600);
-  --sc-border-subtle: var(--sc-color-gray-900);
-  --sc-border-disabled: var(--sc-color-gray-800);
+  --sc-border-default: var(--sc-color-slate-800);
+  --sc-border-strong: var(--sc-color-slate-600);
+  --sc-border-subtle: var(--sc-color-slate-900);
+  --sc-border-disabled: var(--sc-color-slate-800);
 
   --sc-border-secondary: var(--sc-color-blue-700);
   --sc-border-secondary-hover: var(--sc-color-blue-600);
   --sc-border-secondary-active: var(--sc-color-blue-500);
 
   /* ---------- Semantic · Icons ---------- */
-  --sc-icon-primary: var(--sc-color-gray-200);
-  --sc-icon-secondary: var(--sc-color-gray-400);
-  --sc-icon-subtle: var(--sc-color-gray-500);
-  --sc-icon-disabled: var(--sc-color-gray-700);
+  --sc-icon-primary: var(--sc-color-slate-200);
+  --sc-icon-secondary: var(--sc-color-slate-400);
+  --sc-icon-subtle: var(--sc-color-slate-500);
+  --sc-icon-disabled: var(--sc-color-slate-700);
 
   /* `--sc-btn-*` removed S34 (light + dark) — see comment in 04-component.css */
 
   /* ---------- Component · Modal ---------- */
-  --sc-dialog-bg: var(--sc-color-gray-900);
-  --sc-dialog-border: var(--sc-color-gray-800);
-  --sc-dialog-divider: var(--sc-color-gray-800);
-  --sc-dialog-title: var(--sc-color-gray-50);
-  --sc-dialog-subtitle: var(--sc-color-gray-300);
-  --sc-dialog-close-fg: var(--sc-color-gray-300);
-  --sc-dialog-close-bg-hover: var(--sc-color-gray-800);
+  --sc-dialog-bg: var(--sc-color-slate-900);
+  --sc-dialog-border: var(--sc-color-slate-800);
+  --sc-dialog-divider: var(--sc-color-slate-800);
+  --sc-dialog-title: var(--sc-color-slate-50);
+  --sc-dialog-subtitle: var(--sc-color-slate-300);
+  --sc-dialog-close-fg: var(--sc-color-slate-300);
+  --sc-dialog-close-bg-hover: var(--sc-color-slate-800);
   --sc-dialog-shadow: 0 24px 48px rgb(0 0 0 / 0.5);
 
   /* ---------- Component · Toast ---------- */
-  --sc-toast-title: var(--sc-color-gray-50);
-  --sc-toast-message: var(--sc-color-gray-300);
-  --sc-toast-close: var(--sc-color-gray-200);
+  --sc-toast-title: var(--sc-color-slate-50);
+  --sc-toast-message: var(--sc-color-slate-300);
+  --sc-toast-close: var(--sc-color-slate-200);
   --sc-toast-success-bg: color-mix(in srgb, var(--sc-color-green-900) 40%, transparent);
-  --sc-toast-info-bg: color-mix(in srgb, var(--sc-color-electric-blue-800) 40%, transparent);
+  --sc-toast-info-bg: color-mix(in srgb, var(--sc-color-sky-800) 40%, transparent);
   --sc-toast-warn-bg: color-mix(in srgb, var(--sc-color-amber-800) 40%, transparent);
   --sc-toast-error-bg: color-mix(in srgb, var(--sc-color-red-900) 40%, transparent);
   --sc-toast-violet-bg: color-mix(in srgb, var(--sc-color-violet-800) 40%, transparent);

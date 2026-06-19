@@ -481,7 +481,7 @@ const SENTIMENT_PALETTE = [
   {
     labelKey: 'memory.player.sentiment.neutral',
     summaryKey: 'memory.player.sentiment.neutral_summary',
-    color: 'var(--sc-color-gray-400)',
+    color: 'var(--sc-color-slate-400)',
   },
   {
     labelKey: 'memory.player.sentiment.negative',

@@ -24,11 +24,11 @@
     }
 
     &--selected {
-      border-color: var(--sc-color-gray-600);
+      border-color: var(--sc-color-slate-600);
     }
 
     &:focus-visible {
-      outline: 2px solid var(--sc-color-soft-blue-500);
+      outline: 2px solid var(--sc-color-cyan-500);
       outline-offset: 1px;
     }
   }

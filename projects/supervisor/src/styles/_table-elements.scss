@@ -50,7 +50,7 @@
   }
 
   &[data-tone='info'] {
-    color: var(--sc-color-soft-blue-700);
+    color: var(--sc-color-cyan-700);
     background: var(--sc-label-blue-bg);
   }
 }
@@ -82,7 +82,7 @@
     }
 
     &[data-channel='chat'] {
-      color: var(--sc-color-soft-blue-700);
+      color: var(--sc-color-cyan-700);
     }
 
     &[data-channel='email'] {
@@ -160,11 +160,11 @@
   &:hover {
     background: var(--sc-bg-default);
     color: var(--sc-text-secondary);
-    border-color: var(--sc-color-gray-300);
+    border-color: var(--sc-color-slate-300);
   }
 
   &:focus-visible {
-    outline: 2px solid var(--sc-color-soft-blue-500);
+    outline: 2px solid var(--sc-color-cyan-500);
     outline-offset: 2px;
   }
 
@@ -243,7 +243,7 @@
  * sticky header chrome above.
  * ------------------------------------------------------------------ */
 .table__th-sort:focus-visible {
-  outline: 2px solid var(--sc-color-soft-blue-500);
+  outline: 2px solid var(--sc-color-cyan-500);
   outline-offset: -2px;
   background: var(--sc-bg-secondary-subtle);
 }

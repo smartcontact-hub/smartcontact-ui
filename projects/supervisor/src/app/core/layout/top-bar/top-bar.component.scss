@@ -63,12 +63,12 @@
       color var(--sc-transition-fast) var(--sc-easing-default);
 
     &:hover {
-      background: var(--sc-color-gray-100);
+      background: var(--sc-color-slate-100);
       color: var(--sc-text-secondary);
     }
 
     &:focus-visible {
-      outline: 2px solid var(--sc-color-soft-blue-500);
+      outline: 2px solid var(--sc-color-cyan-500);
       outline-offset: 2px;
     }
   }
@@ -98,7 +98,7 @@
   }
 
   &__crumb-sep {
-    color: var(--sc-color-gray-300);
+    color: var(--sc-color-slate-300);
     font-size: var(--sc-font-size-100);
   }
 
@@ -110,12 +110,12 @@
     cursor: pointer;
 
     &:hover {
-      color: var(--sc-color-gray-700);
+      color: var(--sc-color-slate-700);
       text-decoration: underline;
     }
 
     &:focus-visible {
-      outline: 2px solid var(--sc-color-soft-blue-500);
+      outline: 2px solid var(--sc-color-cyan-500);
       outline-offset: 2px;
       border-radius: var(--sc-radius-50);
     }
@@ -124,7 +124,7 @@
   &__crumb-current {
     /* Modelo "todo arriba" (experiment S59): al quitar la banda de page-header,
      * el crumb actual ES el título de la página → más prominente (14px
-     * semibold) pero conservando el acento de marca soft-blue-700 del spec
+     * semibold) pero conservando el acento de marca cyan-700 del spec
      * Figma de breadcrumb. */
     color: var(--sc-text-primary);
     font-size: var(--sc-font-size-200);
@@ -132,7 +132,7 @@
   }
 
   &__crumb-muted {
-    color: var(--sc-color-gray-400);
+    color: var(--sc-color-slate-400);
   }
 
   &__user {
@@ -169,11 +169,11 @@
 
     &:hover,
     &--open {
-      box-shadow: 0 0 0 2px var(--sc-color-soft-blue-300);
+      box-shadow: 0 0 0 2px var(--sc-color-cyan-300);
     }
 
     &:focus-visible {
-      outline: 2px solid var(--sc-color-soft-blue-500);
+      outline: 2px solid var(--sc-color-cyan-500);
       outline-offset: 2px;
     }
   }
@@ -202,7 +202,7 @@
 
   &__avatar:hover &__avatar-presence,
   &__avatar--open &__avatar-presence {
-    box-shadow: 0 0 0 2px var(--sc-color-soft-blue-300);
+    box-shadow: 0 0 0 2px var(--sc-color-cyan-300);
   }
 
   &__menu {
@@ -259,7 +259,7 @@
 
   &__menu-sep {
     margin: 0 var(--sc-spacing-0-25);
-    color: var(--sc-color-gray-300);
+    color: var(--sc-color-slate-300);
   }
 
   /* Trailing icon button on the identity line — opens the keyboard
@@ -290,7 +290,7 @@
     }
 
     &:focus-visible {
-      outline: 2px solid var(--sc-color-soft-blue-500);
+      outline: 2px solid var(--sc-color-cyan-500);
       outline-offset: 2px;
     }
   }
@@ -328,7 +328,7 @@
     }
 
     &:focus-visible {
-      outline: 2px solid var(--sc-color-soft-blue-500);
+      outline: 2px solid var(--sc-color-cyan-500);
       outline-offset: -2px;
     }
   }

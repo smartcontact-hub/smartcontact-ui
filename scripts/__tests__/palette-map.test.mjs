@@ -26,10 +26,10 @@ test('CARA VERDE · divergencia consciente green-950 (step exacto) NO es drift',
   );
 });
 
-test('CARA ROJA · soft-blue YA NO es divergencia (re-sync 2026-06-18) → su desfase del cyan SÍ es drift', () => {
-  const d = primitiveDrift({ 'soft-blue': { 50: '#effbfc' } }, { cyan: { 50: '#eefbfc' } });
+test('CARA ROJA · cyan (antes soft-blue) desfasado de su fuente cyan del Kit → drift', () => {
+  const d = primitiveDrift({ cyan: { 50: '#effbfc' } }, { cyan: { 50: '#eefbfc' } });
   assert.equal(d.length, 1);
-  assert.equal(d[0].family, 'soft-blue');
+  assert.equal(d[0].family, 'cyan');
   assert.equal(d[0].src, 'cyan');
 });
 
@@ -42,12 +42,16 @@ test('isPrimitiveDiverge: step exacto (green.950) vs familia entera (azure.)', (
   assert.ok(!isPrimitiveDiverge('green', '500'));
   assert.ok(isPrimitiveDiverge('azure', '500'));
   assert.ok(isPrimitiveDiverge('azure', '900'));
-  assert.ok(!isPrimitiveDiverge('soft-blue', '500')); // re-sync 2026-06-18: ya NO es divergencia
+  assert.ok(!isPrimitiveDiverge('cyan', '500')); // cyan (antes soft-blue): 1:1 con el Kit, no es divergencia
 });
 
-test('el mapa codifica los renombres clave (sky→electric-blue, cyan→soft-blue, slate→gray)', () => {
-  assert.equal(PRIMITIVE_SOURCE['electric-blue'], 'sky');
-  assert.equal(PRIMITIVE_SOURCE['soft-blue'], 'cyan');
-  assert.equal(PRIMITIVE_SOURCE['gray'], 'slate');
+test('PARIDAD (DD-23): el mapa es IDENTIDAD — el DS nombra igual que el Kit (cyan/sky/slate)', () => {
+  assert.equal(PRIMITIVE_SOURCE['cyan'], 'cyan');
+  assert.equal(PRIMITIVE_SOURCE['sky'], 'sky');
+  assert.equal(PRIMITIVE_SOURCE['slate'], 'slate');
   assert.equal(PRIMITIVE_SOURCE['blue'], 'blue');
+  // los nombres de marca legacy ya NO existen como familia del DS
+  assert.equal(PRIMITIVE_SOURCE['soft-blue'], undefined);
+  assert.equal(PRIMITIVE_SOURCE['electric-blue'], undefined);
+  assert.equal(PRIMITIVE_SOURCE['gray'], undefined);
 });

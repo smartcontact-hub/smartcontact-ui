@@ -22,16 +22,16 @@
   --sc-bg-primary: var(--sc-color-blue-700);
   --sc-bg-primary-hover: var(--sc-color-blue-600);
   --sc-bg-primary-active: var(--sc-color-blue-800);
-  --sc-text-on-primary: var(--sc-color-gray-0);
-  --sc-bg-surface: var(--sc-color-gray-0);
-  --sc-border-default: var(--sc-color-gray-200);
-  --sc-text-primary: var(--sc-color-gray-700);
-  --sc-bg-secondary-hover: var(--sc-color-gray-100);
-  --sc-text-secondary: var(--sc-color-gray-500);
-  --sc-border-strong: var(--sc-color-gray-400);
-  --sc-bg-disabled: var(--sc-color-gray-200);
+  --sc-text-on-primary: var(--sc-color-slate-0);
+  --sc-bg-surface: var(--sc-color-slate-0);
+  --sc-border-default: var(--sc-color-slate-200);
+  --sc-text-primary: var(--sc-color-slate-700);
+  --sc-bg-secondary-hover: var(--sc-color-slate-100);
+  --sc-text-secondary: var(--sc-color-slate-500);
+  --sc-border-strong: var(--sc-color-slate-400);
+  --sc-bg-disabled: var(--sc-color-slate-200);
   --sc-border-error: var(--sc-color-red-400);
-  --sc-icon-subtle: var(--sc-color-gray-400);
+  --sc-icon-subtle: var(--sc-color-slate-400);
   /* @sc-gen:semantic-color-light:end */
 
   /* ---------- Text ----------
@@ -42,26 +42,26 @@
    * divergencia consciente — placeholder/disabled se ven más tenues a propósito
    * (mejor jerarquía). Vigilado por parity §6 (enforce primary/secondary) + §7.
    * primary (gray-700) + secondary (gray-500) → zona generada arriba. */
-  --sc-text-subtle: var(--sc-color-gray-400);
-  --sc-text-disabled: var(--sc-color-gray-300);
-  --sc-text-inverse: var(--sc-color-gray-0);
-  --sc-text-accent: var(--sc-color-soft-blue-600);
-  --sc-text-link: var(--sc-color-soft-blue-600);
+  --sc-text-subtle: var(--sc-color-slate-400);
+  --sc-text-disabled: var(--sc-color-slate-300);
+  --sc-text-inverse: var(--sc-color-slate-0);
+  --sc-text-accent: var(--sc-color-cyan-600);
+  --sc-text-link: var(--sc-color-cyan-600);
   --sc-text-success: var(--sc-color-green-600);
   --sc-text-warning: var(--sc-color-amber-600);
   --sc-text-danger: var(--sc-color-red-600);
   --sc-text-info: var(--sc-text-accent);
   --sc-text-violet: var(--sc-color-violet-700);
-  --sc-text-on-secondary: var(--sc-color-gray-800);
-  --sc-text-on-accent: var(--sc-color-gray-800);
-  --sc-text-on-error: var(--sc-color-gray-0);
-  --sc-text-on-success: var(--sc-color-gray-0);
-  --sc-text-on-warning: var(--sc-color-gray-0);
-  --sc-text-on-info: var(--sc-color-gray-0);
-  --sc-text-on-violet: var(--sc-color-gray-0);
+  --sc-text-on-secondary: var(--sc-color-slate-800);
+  --sc-text-on-accent: var(--sc-color-slate-800);
+  --sc-text-on-error: var(--sc-color-slate-0);
+  --sc-text-on-success: var(--sc-color-slate-0);
+  --sc-text-on-warning: var(--sc-color-slate-0);
+  --sc-text-on-info: var(--sc-color-slate-0);
+  --sc-text-on-violet: var(--sc-color-slate-0);
 
   /* ---------- Background ---------- */
-  --sc-bg-default: var(--sc-color-gray-50);
+  --sc-bg-default: var(--sc-color-slate-50);
   /* Elevated surface (popovers, dropdowns) — currently same as surface
    * because the light theme stays flat; the alias exists so consumers
    * that *semantically* want "elevated" don't reach for raw `#fff`. */
@@ -85,14 +85,14 @@
   --sc-bg-primary-subtle-active: var(--sc-color-blue-200);
 
   /* Secondary (gray) */
-  --sc-bg-secondary: var(--sc-color-gray-600);
-  --sc-bg-secondary-active: var(--sc-color-gray-200);
-  --sc-bg-secondary-subtle: var(--sc-color-gray-50);
+  --sc-bg-secondary: var(--sc-color-slate-600);
+  --sc-bg-secondary-active: var(--sc-color-slate-200);
+  --sc-bg-secondary-subtle: var(--sc-color-slate-50);
 
   /* Accent (cyan) */
-  --sc-bg-accent: var(--sc-color-soft-blue-500);
-  --sc-bg-accent-hover: var(--sc-color-soft-blue-600);
-  --sc-bg-accent-active: var(--sc-color-soft-blue-700);
+  --sc-bg-accent: var(--sc-color-cyan-500);
+  --sc-bg-accent-hover: var(--sc-color-cyan-600);
+  --sc-bg-accent-active: var(--sc-color-cyan-700);
 
   /* Status */
   --sc-bg-success: var(--sc-color-green-600);
@@ -107,10 +107,10 @@
   --sc-bg-danger-subtle-active: var(--sc-color-red-200);
 
   /* Info (electric blue) */
-  --sc-bg-info: var(--sc-color-electric-blue-500);
-  --sc-bg-info-hover: var(--sc-color-electric-blue-600);
-  --sc-bg-info-active: var(--sc-color-electric-blue-700);
-  --sc-bg-info-subtle: var(--sc-color-electric-blue-50);
+  --sc-bg-info: var(--sc-color-sky-500);
+  --sc-bg-info-hover: var(--sc-color-sky-600);
+  --sc-bg-info-active: var(--sc-color-sky-700);
+  --sc-bg-info-subtle: var(--sc-color-sky-50);
 
   /* Violet */
   --sc-bg-violet: var(--sc-color-violet-500);
@@ -126,8 +126,8 @@
    * nuestro form-field usa el mismo gray-200 (un punto más claro = chrome más
    * aireado). Alinear el input a gray-300 pediría un token dedicado `--sc-border-input`
    * — follow-up, no romper el borde de content/overlay. */
-  --sc-border-subtle: var(--sc-color-gray-100);
-  --sc-border-disabled: var(--sc-color-gray-100);
+  --sc-border-subtle: var(--sc-color-slate-100);
+  --sc-border-disabled: var(--sc-color-slate-100);
 
   /* El borde primary acompaña a la rampa de fondo (mismo paso) para que el
    * contorno del botón/outline siga al fill. Tracking de --sc-bg-primary-*. */
@@ -139,9 +139,9 @@
   --sc-border-secondary-hover: var(--sc-color-blue-300);
   --sc-border-secondary-active: var(--sc-color-blue-400);
 
-  --sc-border-accent: var(--sc-color-soft-blue-500);
-  --sc-border-accent-hover: var(--sc-color-soft-blue-600);
-  --sc-border-accent-active: var(--sc-color-soft-blue-700);
+  --sc-border-accent: var(--sc-color-cyan-500);
+  --sc-border-accent-hover: var(--sc-color-cyan-600);
+  --sc-border-accent-active: var(--sc-color-cyan-700);
 
   --sc-border-success: var(--sc-color-green-600);
   --sc-border-success-subtle: var(--sc-color-green-200);
@@ -154,36 +154,36 @@
    * `docs/customs-catalog.md §1.1`. Antes apuntaba a `soft-blue-500`
    * (drift interno con `sc-preset.ts.focusRing.color = electric-blue-500`);
    * unificado S54 a electric-blue para single source of truth. */
-  --sc-border-focus: var(--sc-color-electric-blue-500);
+  --sc-border-focus: var(--sc-color-sky-500);
   --sc-border-danger: var(--sc-color-red-600);
   --sc-border-danger-hover: var(--sc-color-red-700);
   --sc-border-danger-active: var(--sc-color-red-800);
 
-  --sc-border-info: var(--sc-color-electric-blue-500);
-  --sc-border-info-subtle: var(--sc-color-electric-blue-200);
+  --sc-border-info: var(--sc-color-sky-500);
+  --sc-border-info-subtle: var(--sc-color-sky-200);
   --sc-border-violet: var(--sc-color-violet-500);
   --sc-border-violet-subtle: var(--sc-color-violet-200);
 
   /* ---------- Icon ---------- */
-  --sc-icon-primary: var(--sc-color-gray-800);
-  --sc-icon-secondary: var(--sc-color-gray-600);
-  --sc-icon-inverse: var(--sc-color-gray-0);
-  --sc-icon-disabled: var(--sc-color-gray-300);
-  --sc-icon-link: var(--sc-color-soft-blue-600);
+  --sc-icon-primary: var(--sc-color-slate-800);
+  --sc-icon-secondary: var(--sc-color-slate-600);
+  --sc-icon-inverse: var(--sc-color-slate-0);
+  --sc-icon-disabled: var(--sc-color-slate-300);
+  --sc-icon-link: var(--sc-color-cyan-600);
 
-  --sc-icon-accent: var(--sc-color-soft-blue-600);
+  --sc-icon-accent: var(--sc-color-cyan-600);
   --sc-icon-success: var(--sc-color-green-600);
   --sc-icon-warning: var(--sc-color-amber-600);
   --sc-icon-error: var(--sc-color-red-600);
   --sc-icon-info: var(--sc-icon-accent);
   --sc-icon-violet: var(--sc-color-violet-500);
 
-  --sc-icon-on-primary: var(--sc-color-gray-0);
-  --sc-icon-on-secondary: var(--sc-color-gray-800);
-  --sc-icon-on-accent: var(--sc-color-soft-blue-800);
-  --sc-icon-on-danger: var(--sc-color-gray-0);
-  --sc-icon-on-success: var(--sc-color-gray-0);
-  --sc-icon-on-warning: var(--sc-color-gray-800);
+  --sc-icon-on-primary: var(--sc-color-slate-0);
+  --sc-icon-on-secondary: var(--sc-color-slate-800);
+  --sc-icon-on-accent: var(--sc-color-cyan-800);
+  --sc-icon-on-danger: var(--sc-color-slate-0);
+  --sc-icon-on-success: var(--sc-color-slate-0);
+  --sc-icon-on-warning: var(--sc-color-slate-800);
   --sc-icon-on-info: var(--sc-icon-on-accent);
   --sc-icon-on-violet: var(--sc-color-violet-50);
 

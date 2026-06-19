@@ -48,7 +48,7 @@
   }
 
   &:focus-visible {
-    outline: 2px solid var(--sc-color-soft-blue-500);
+    outline: 2px solid var(--sc-color-cyan-500);
     outline-offset: -2px;
   }
 
@@ -59,7 +59,7 @@
   /* Active state: solid tint + bold weight, no left bar.
    * (Side stripe pattern is banned — see /impeccable absolute_bans.) */
   &--active {
-    color: var(--sc-color-gray-0);
+    color: var(--sc-color-slate-0);
     background: rgb(255 255 255 / 0.15);
     font-weight: var(--sc-font-weight-medium);
   }
@@ -70,18 +70,18 @@
     transition: color var(--sc-transition-fast) var(--sc-easing-default);
 
     .nav-item--active & {
-      color: var(--sc-color-gray-0);
+      color: var(--sc-color-slate-0);
     }
   }
 
   /*
    * The parent of the active section gets the brand cyan accent
-   * (`soft-blue-300`) on its icon — a "you are here at the section level"
+   * (`cyan-300`) on its icon — a "you are here at the section level"
    * cue that survives the sidebar collapsing. Other parents stay neutral
    * so the highlight reads as a unique signal, not as decoration.
    */
   &--child-active &__icon {
-    color: var(--sc-color-soft-blue-300);
+    color: var(--sc-color-cyan-300);
   }
 
   /*

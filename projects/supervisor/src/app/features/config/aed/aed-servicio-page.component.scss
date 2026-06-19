@@ -84,7 +84,7 @@
 
     &:hover {
       color: var(--sc-text-primary);
-      background: var(--sc-color-gray-200);
+      background: var(--sc-color-slate-200);
     }
     &:focus-visible {
       outline: 2px solid var(--sc-border-focus);
@@ -154,7 +154,7 @@
     flex-shrink: 0;
 
     &[data-tone='cyan'] {
-      background: var(--sc-color-soft-blue-500);
+      background: var(--sc-color-cyan-500);
     }
     &[data-tone='green'] {
       background: var(--sc-color-green-500);
@@ -166,7 +166,7 @@
       background: var(--sc-color-red-500);
     }
     &[data-tone='gray'] {
-      background: var(--sc-color-gray-400);
+      background: var(--sc-color-slate-400);
     }
   }
 

@@ -138,7 +138,7 @@
     }
 
     &--selected {
-      background: var(--sc-color-gray-100);
+      background: var(--sc-color-slate-100);
     }
 
     &--draft {
@@ -243,7 +243,7 @@
     width: 8px;
     height: 8px;
     border-radius: var(--sc-radius-full);
-    background: var(--sc-color-gray-400);
+    background: var(--sc-color-slate-400);
     transition: background var(--sc-transition-base) var(--sc-easing-default);
     box-shadow: 0 0 0 2px transparent;
   }
@@ -328,7 +328,7 @@
     }
 
     &:focus-visible {
-      outline: 2px solid var(--sc-color-soft-blue-500);
+      outline: 2px solid var(--sc-color-cyan-500);
       outline-offset: 2px;
     }
   }

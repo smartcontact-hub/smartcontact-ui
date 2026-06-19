@@ -43,7 +43,7 @@
     cursor: inherit;
 
     &:focus-visible + .tri-checkbox__box {
-      outline: 2px solid var(--sc-color-electric-blue-500);
+      outline: 2px solid var(--sc-color-sky-500);
       outline-offset: 2px;
     }
   }
@@ -117,12 +117,12 @@
 
   /* ──────────────────────────────────────────────────────────────
    * Filled — Figma `Filled=True` (5801:52774):
-   *   `checkbox/filled/background: #f8fafc` (slate-50 = --sc-color-gray-50)
+   *   `checkbox/filled/background: #f8fafc` (slate-50 = --sc-color-slate-50)
    * Solo afecta el bg unchecked; checked sigue usando primary.
    * ──────────────────────────────────────────────────────────────
    */
   &--filled .tri-checkbox__box {
-    background: var(--sc-color-gray-50);
+    background: var(--sc-color-slate-50);
   }
 
   /* ──────────────────────────────────────────────────────────────
@@ -140,7 +140,7 @@
     border-color: var(--sc-bg-primary);
   }
   &__input:checked + .tri-checkbox__box .tri-checkbox__mark {
-    background: var(--sc-color-gray-0);
+    background: var(--sc-color-slate-0);
     -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'><path d='M2 6.5l2.5 2.5L10 3.5' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/></svg>")
       center / contain no-repeat;
     mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'><path d='M2 6.5l2.5 2.5L10 3.5' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/></svg>")
@@ -157,7 +157,7 @@
     border-color: var(--sc-bg-primary);
   }
   &__input:indeterminate + .tri-checkbox__box .tri-checkbox__mark {
-    background: var(--sc-color-gray-0);
+    background: var(--sc-color-slate-0);
     height: 2px;
     border-radius: 1px;
     -webkit-mask: none;

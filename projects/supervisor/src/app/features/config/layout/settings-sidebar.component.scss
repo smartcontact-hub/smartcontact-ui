@@ -63,7 +63,7 @@
   transition: background var(--sc-transition-fast) ease;
 
   &:hover {
-    background: var(--sc-color-gray-100);
+    background: var(--sc-color-slate-100);
   }
 
   &:focus-visible {
@@ -72,7 +72,7 @@
   }
 
   &--active {
-    background: var(--sc-color-gray-100);
+    background: var(--sc-color-slate-100);
 
     .nav-item__icon {
       background: var(--sc-bg-primary);
@@ -94,7 +94,7 @@
   align-items: center;
   justify-content: center;
   border-radius: var(--sc-radius-200);
-  background: var(--sc-color-gray-200);
+  background: var(--sc-color-slate-200);
   color: var(--sc-text-secondary);
   transition:
     background var(--sc-transition-fast) ease,
