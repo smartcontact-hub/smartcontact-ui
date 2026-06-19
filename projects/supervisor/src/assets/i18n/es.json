@@ -1473,7 +1473,13 @@
             "admin_checkbox": "Estado administrativo",
             "nombre_label": "Nombre",
             "nombre_placeholder": "Cualquier nombre",
-            "add": "Añadir"
+            "add": "Añadir",
+            "por_defecto": "Por defecto",
+            "personalizacion": "Personalización de no disponibles",
+            "modal_title": "Añadir estado",
+            "modal_subtitle": "Añade estados personalizados que estarán visibles para los agentes junto a los estados por defecto.",
+            "modal_input_label": "Nuevo estado",
+            "modal_input_placeholder": "Ej: Baño"
           },
           "inactividad": {
             "title": "Bloqueo de puesto por inactividad",

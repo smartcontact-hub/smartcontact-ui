@@ -41,64 +41,56 @@
   }
 }
 
-/* Estados editables → chips removibles con × (re-añadibles). */
-.state-chips {
-  list-style: none;
-  margin: 0;
-  padding: 0;
+/* Sub-etiqueta de bloque ("Por defecto", "Personalización de no disponibles"). */
+.sub-label {
+  display: block;
+  margin-top: var(--sc-spacing-0-25);
+  font-size: var(--sc-font-size-50);
+  font-weight: var(--sc-font-weight-medium);
+  color: var(--sc-text-secondary);
+}
+
+/* Personalización: chips removibles (sc-chip) a la izquierda + botón de alta
+ * (abre el modal "Añadir estado") a la derecha. */
+.reasons-row {
   display: flex;
-  flex-wrap: wrap;
-  gap: var(--sc-spacing-0-5);
-}
+  align-items: flex-start;
+  gap: var(--sc-spacing-0-75);
 
-.state-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--sc-spacing-0-25);
-  height: 26px;
-  padding: 0 var(--sc-spacing-0-25) 0 var(--sc-spacing-0-625);
-  border-radius: var(--sc-radius-200);
-  background: var(--sc-bg-secondary-subtle);
-  border: 1px solid var(--sc-border-default);
-
-  &__label {
-    font-size: var(--sc-font-size-50);
-    font-weight: var(--sc-font-weight-medium);
-    color: var(--sc-text-secondary);
-    line-height: 1;
+  &__chips {
+    flex: 1 1 auto;
+    display: flex;
+    flex-wrap: wrap;
+    gap: var(--sc-spacing-0-5);
+    min-width: 0;
   }
 
-  &__remove {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    background: transparent;
-    border: 0;
-    padding: 2px;
-    color: var(--sc-icon-subtle);
-    cursor: pointer;
-    border-radius: var(--sc-radius-full);
-    transition:
-      color var(--sc-transition-fast) ease,
-      background var(--sc-transition-fast) ease;
-
-    &:hover {
-      color: var(--sc-text-primary);
-      background: var(--sc-color-slate-200);
-    }
-    &:focus-visible {
-      outline: 2px solid var(--sc-border-focus);
-      outline-offset: 1px;
-    }
+  &__add {
+    flex: 0 0 auto;
   }
 }
 
-.add-reason {
-  margin-top: var(--sc-spacing-0-875);
+/* Alta de un chip: entra con un "pop" para indicar que existe. Solo el chip
+ * NUEVO se anima — `track reason` reusa los existentes, así que el keyframe
+ * corre únicamente al crear el elemento (no en cambios no relacionados). */
+.reason-chip {
+  animation: chip-appear var(--sc-transition-base) var(--sc-easing-emphasized);
+}
 
-  &__group {
-    display: block;
-    max-width: 420px;
+@keyframes chip-appear {
+  from {
+    transform: scale(0.85);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reason-chip {
+    animation: none;
   }
 }
 

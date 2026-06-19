@@ -1473,7 +1473,13 @@
             "admin_checkbox": "Administrative state",
             "nombre_label": "Name",
             "nombre_placeholder": "Any name",
-            "add": "Add"
+            "add": "Add",
+            "por_defecto": "Default",
+            "personalizacion": "Custom unavailable states",
+            "modal_title": "Add status",
+            "modal_subtitle": "Add custom states that will be visible to agents alongside the default ones.",
+            "modal_input_label": "New status",
+            "modal_input_placeholder": "E.g. Break"
           },
           "inactividad": {
             "title": "Idle workstation lock",
