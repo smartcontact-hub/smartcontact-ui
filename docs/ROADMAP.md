@@ -16,6 +16,25 @@
   de la lista DIVERGE en `scripts/token-parity.mjs` (ya no diverge) + actualizar
   `customs-catalog.md` (deja de ser divergencia de marca, está en el Kit).
 
+### Round-trip DD-24 (icono↔font-size) → Figma + cabos (2026-06-22)
+- **Qué**: DD-24 EJECUTADA en código (DS + app: `sc-icon` gana `inherit`; los companion heredan el font-size
+  del texto). Faltan los cabos de Figma + dos revisiones.
+- **Por punto (qué · disparador · validación)**:
+  - **(4a) Atar W/H de iconos companion a la var de font-size en Figma** (md=`app/font/size`; sm/lg=
+    `{cmp}/sm·lg/font`). Huecos: **button-default** (icono raw → `app/font/size`), **inputtext** (el TEXTO raw →
+    font-size del input). *Guiado con Rafa, una var a la vez + screenshot.* Bridge vivo (`mcp__figma__*`, WS 9224).
+  - **(4b) Sync de los 3 copys de General a los nodos de TEXTO de Figma** (ventana.title, aviso.title →
+    "Recepción de conversaciones", alerting_label → "Mostrar"). Grep antes para no crear drift. *Validación*:
+    el texto en Figma = el `es.json`.
+  - **Validación visual COMPLETA de Bloque 3** (41 pantallas de la app): se validó el chrome (top-bar/sidebar)
+    + AOT + verify, pero NO se navegó cada pantalla. *Disparador*: al QA la app. *Riesgo*: un companion migrado
+    (13/14→inherit) que descuadre en una pantalla no vista (los controles deliberados ya se revirtieron).
+  - **Revisar traducciones EN/FR/PT** de los copys de Recepción (Rafa es nativo ES; las redactó el subagente). Menor.
+- **Deuda estructural surfaceada**: el supervisor usa su **PROPIO `<sc-icon>`** (`shared/components/icon`,
+  `size: number | 'inherit'`), NO el `ScIconComponent` del DS — **duplicación** de implementación (el DS tiene
+  ejes FILL/grade/optical que el wrapper de la app no expone). Ambos ya soportan `inherit` pero divergen. Liga
+  con el item "Iconos: estilo + peso" de abajo (Rounded vs Outlined). *Disparador*: al unificar iconografía.
+
 ## Decisiones de marca pendientes (system-wide → review)
 
 ### Superficies dark — ¿alinear a zinc o mantener cool?
