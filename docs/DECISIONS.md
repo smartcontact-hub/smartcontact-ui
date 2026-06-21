@@ -1153,8 +1153,12 @@ Las **33 variables primitivas de color** (cyan/sky/slate × 11 shades) tenían `
 en los nombres viejos (soft-blue/electric-blue/gray) pese a que el **nombre** de la variable ya era
 cyan/sky/slate → Dev Mode mentía. Re-apuntadas en Figma vía el bridge: `codeSyntax` → `--sc-color-{cyan,sky,
 slate}-N`; descripción con el rol de marca (`(marca: Soft-Blue/Electric-Blue/Gray)`). Verificado: 0 nombres
-viejos restantes en ningún campo. (Eran 33, no las 530 que estimaba el plan.) Pendiente Figma: atar W/H de
-iconos companion a la var de font-size (Bloque 4a).
+viejos restantes en ningún campo. **Aclaración del "530"**: solo había **33** vars a re-apuntar (las primitivas
+cyan/sky/slate × 11 con el nombre VIEJO en codeSyntax). El "530" del plan NO era un error de Figma (Figma es la
+fuente de verdad, no desvía) — era el TOTAL de vars documentadas el 2026-06-19 (154 color + 40 scale + 336
+component, ver el DD de var-docs arriba); el plan aplicó ese número-de-otra-cosa a esta tarea. Las ~497
+non-color tienen codeSyntax `--sc-cmp-*`/`--sc-scale-*`, nunca apuntaron a una paleta. Pendiente Figma: atar
+W/H de iconos companion a la var de font-size (Bloque 4a).
 
 ---
 
