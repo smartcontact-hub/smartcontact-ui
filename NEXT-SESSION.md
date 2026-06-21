@@ -2,8 +2,8 @@
 
 > Sello: **2026-06-22** (sesión 2). Tanda casi cerrada: **Bloques 1·2·3 + dialog-fix + var-docs Figma HECHOS**.
 > DD-24 (icono↔font-size) **EJECUTADA en el DS Y en la app** (153 companion del supervisor → `inherit`).
-> Commits en `main`: `9ba5415 · 3d7a7cf · ce9010c · 67a21c9 · f697fe7` (+ este cierre).
-> **Solo queda lo de Figma (Bloque 4a + sync de copys), que es GUIADO con Rafa.** SOBREESCRIBE en cada cierre.
+> Todo pusheado en `main` (último: `63825c6`). **Mañana arranca con la PPT del PUENTE** (redactar el prompt para
+> Claude Design — specs ya decididas, §EMPIEZA AQUÍ) → luego **Bloque 4a** (Figma, guiado). SOBREESCRIBE al cerrar.
 
 ---
 
@@ -11,15 +11,31 @@
 1. **Lee este fichero entero.**
 2. **PLAN DE LA TANDA:** `~/.claude/plans/retomamos-el-ds-de-whimsical-sparrow.md` (5 bloques; 1·2·3·4b hechos).
 3. **El *por qué* durable:** `docs/DECISIONS.md` (DD-24 EJECUTADA DS+app · DD-25 gap footer · sync var-docs).
-4. **PRIMERA ACCIÓN — Bloque 4a (Figma, GUIADO con Rafa).** El bridge `mcp__figma__*` está vivo (WS port **9224**).
-   Dos cosas, una variable a la vez + screenshot para confirmar + reversible:
-   - **(a) Atar W/H de iconos companion** a la var de font-size del texto (md=`app/font/size`; sm/lg=`{cmp}/sm·lg/font`).
-     Huecos conocidos: **button-default** (icono raw → `app/font/size`); **inputtext** (el TEXTO raw → font-size del
-     input; el icono ya cuelga vía iconfield).
+4. **PRIMERA ACCIÓN — PPT del PUENTE código↔Figma (redactar el PROMPT para Claude Design).** Rafa monta la PPT
+   en Claude Design; aquí solo se redacta el prompt. Specs YA decididas con él (2026-06-22):
+   - **Audiencia:** **devs**, contando NUESTRO pipeline — pero **accesible / no extremadamente técnico**: la
+     **presenta Rafa (no-dev)**, así que las slides deben sostener la explicación solas (poco depende de él en vivo).
+   - **Tamaño:** corta — **6-8 slides, ~10 min**.
+   - **Mensaje:** las tres → **QUÉ** es + **CÓMO** funciona (el flujo) + **QUÉ GANAMOS**.
+   - **Tono:** **mixto** — gancho visual + 1-2 diagramas claros del flujo, poco texto. (Lo eligió Claude; Rafa
+     dijo "me gustan todas".)
+   - **Contenido (esqueleto a refinar al redactar el prompt):**
+     - **QUÉ:** puente bidireccional código↔Figma; UNA sola fuente de verdad para los design tokens.
+     - **CÓMO (el flujo):** Theme Designer/plugin → export DTCG (`kit-export-dtcg.json`) → `npm run tokens:import`
+       genera las capas CSS `--sc-*` → el DS Angular las consume → `verify` (parity + scale auditor + guards) caza
+       el drift → desplegado en Cloudflare. Vuelta: el bridge MCP escribe metadata en Figma (codeSyntax, vars)
+       para que Dev Mode muestre el código real (justo lo de Bloque 4b: 33 var-docs re-apuntadas).
+     - **QUÉ GANAMOS:** una sola fuente de verdad; diseño y código no driftan; feedback rápido (carril a11y/parity
+       en ~1 min); Dev Mode no miente.
+   - **Arranque:** redacto el prompt con esto → Rafa lo revisa → lo manda a Claude Design. **La PPT NO la hago yo.**
+5. **Bloque 4a (Figma, GUIADO con Rafa).** Bridge `mcp__figma__*` vivo (WS port **9224**). Una var a la vez +
+   screenshot + reversible:
+   - **(a) Atar W/H de iconos companion** a la var de font-size (md=`app/font/size`; sm/lg=`{cmp}/sm·lg/font`).
+     Huecos: **button-default** (icono raw → `app/font/size`); **inputtext** (el TEXTO raw → font-size del input).
    - **(b) Sync de los 3 copys de General a los nodos de texto de Figma** (ventana.title, aviso.title→"Recepción
      de conversaciones", alerting_label→"Mostrar"). Grep antes para no crear drift.
-5. **Validar:** `npm run verify`. Si tocas pantallas del supervisor → `node scripts/component-audit.mjs --write`.
-6. **Protocolo:** commits a main → `Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>`;
+6. **Validar:** `npm run verify`. Si tocas pantallas del supervisor → `node scripts/component-audit.mjs --write`.
+7. **Protocolo:** commits a main → `Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>`;
    `git add` **nunca** `.claude`; **nunca** `[skip ci]`; **nunca** borrar `design-tokens-sync`.
 
 ---
@@ -37,9 +53,11 @@
 - **Bridge Figma `mcp__figma__*`: VIVO** (WS port 9224). Conectado a "Smart-Contact Design System".
 
 ## 🗺️ Lo que queda
-1. **Bloque 4a (Figma, GUIADO):** atar W/H de iconos a font-size (button-default, inputtext) + sync de los 3
+1. **PPT del PUENTE (1er punto):** redactar el prompt para Claude Design (specs decididas, §EMPIEZA AQUÍ). La
+   PPT la monta Claude Design, no nosotros.
+2. **Bloque 4a (Figma, GUIADO):** atar W/H de iconos a font-size (button-default, inputtext) + sync de los 3
    copys de General a Figma. Ver §EMPIEZA AQUÍ.
-2. **Bloque 5:** cierre (push + reseal + DDs) — hecho este cierre; repetir al acabar 4a.
+3. **Bloque 5:** cierre (push + reseal + DDs) — hecho este cierre; repetir al acabar.
 
 **Diferido:** Neutral gray/slate (equipo de Rafa) · W5 · Code Connect · Fase 4 AED.
 
