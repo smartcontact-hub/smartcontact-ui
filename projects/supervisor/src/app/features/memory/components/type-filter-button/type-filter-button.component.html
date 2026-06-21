@@ -9,7 +9,7 @@
   "
   (click)="panel.toggle($event)"
 >
-  <sc-icon [name]="filterIcon" [size]="14" />
+  <sc-icon [name]="filterIcon" size="inherit" />
   <span>{{ 'memory.type_filter.label' | translate }}</span>
   @if (hasActiveFilters()) {
     <span class="type-filter-trigger__dot" aria-hidden="true"></span>

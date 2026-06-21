@@ -23,7 +23,7 @@
     <div class="panel__error-slot">
       @if (error()) {
         <div class="panel__error">
-          <sc-icon [name]="alertIcon" [size]="10" />
+          <sc-icon [name]="alertIcon" size="inherit" />
           <span>{{ error() | translate }}</span>
         </div>
       }

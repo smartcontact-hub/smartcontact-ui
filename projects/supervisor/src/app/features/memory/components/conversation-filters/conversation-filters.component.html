@@ -79,7 +79,7 @@
           [attr.aria-pressed]="filters().status.onlyFailed"
           [attr.title]="'memory.conversations.filters.only_failed_hint' | translate"
         >
-          <sc-icon [name]="alertIcon" [size]="13" />
+          <sc-icon [name]="alertIcon" size="inherit" />
           <span>{{ 'memory.conversations.filters.only_failed' | translate }}</span>
           <span class="memory-failed-chip__count">{{ failedCount() }}</span>
         </button>
@@ -160,7 +160,7 @@
         [attr.aria-label]="'memory.conversations.filters.reset' | translate"
         [attr.title]="'memory.conversations.filters.reset' | translate"
       >
-        <sc-icon [name]="resetIcon" [size]="14" />
+        <sc-icon [name]="resetIcon" size="inherit" />
       </button>
     </div>
   </div>

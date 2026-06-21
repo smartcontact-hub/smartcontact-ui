@@ -8,7 +8,7 @@
     [scClickOutsideEnabled]="creating()"
   >
     <p-button type="button" severity="primary" (onClick)="onCreateClick()">
-      <sc-icon [name]="plusIcon" [size]="13" />
+      <sc-icon [name]="plusIcon" size="inherit" />
       <span>{{ 'common.create' | translate }}</span>
     </p-button>
 
@@ -39,7 +39,7 @@
         (keydown)="onSearchKey($event)"
       />
       <p-button type="button" severity="secondary" (onClick)="onExport()">
-        <sc-icon [name]="downloadIcon" [size]="13" />
+        <sc-icon [name]="downloadIcon" size="inherit" />
         <span>{{ 'labels.export_button' | translate }}</span>
       </p-button>
     </div>
@@ -131,17 +131,17 @@
                     [attr.aria-expanded]="openMenuId() === item.id"
                     [attr.aria-label]="'labels.row_menu' | translate"
                   >
-                    <sc-icon [name]="moreIcon" [size]="15" />
+                    <sc-icon [name]="moreIcon" size="inherit" />
                   </button>
 
                   @if (openMenuId() === item.id) {
                     <div class="row-menu__panel" role="menu">
                       <button type="button" role="menuitem" (click)="onRowEdit(item)">
-                        <sc-icon [name]="editIcon" [size]="13" />
+                        <sc-icon [name]="editIcon" size="inherit" />
                         <span>{{ 'common.edit' | translate }}</span>
                       </button>
                       <button type="button" role="menuitem" (click)="onRowDelete(item)">
-                        <sc-icon [name]="trashIcon" [size]="13" />
+                        <sc-icon [name]="trashIcon" size="inherit" />
                         <span>{{ 'common.delete' | translate }}</span>
                       </button>
                     </div>
@@ -181,11 +181,11 @@
     role="menu"
   >
     <button type="button" role="menuitem" (click)="onContextEdit()">
-      <sc-icon [name]="editIcon" [size]="13" />
+      <sc-icon [name]="editIcon" size="inherit" />
       <span>{{ 'common.edit' | translate }}</span>
     </button>
     <button type="button" role="menuitem" (click)="onContextDelete()">
-      <sc-icon [name]="trashIcon" [size]="13" />
+      <sc-icon [name]="trashIcon" size="inherit" />
       <span>{{ 'common.delete' | translate }}</span>
     </button>
   </div>

@@ -8,7 +8,7 @@
     [scClickOutsideEnabled]="creating()"
   >
     <p-button type="button" severity="primary" (onClick)="onCreateClick()">
-      <sc-icon [name]="plusIcon" [size]="15" />
+      <sc-icon [name]="plusIcon" size="inherit" />
       <span>{{ 'templates.create_button' | translate }}</span>
     </p-button>
 
@@ -36,7 +36,7 @@
         [attr.aria-selected]="activeTab() === 'chat'"
         (click)="switchTab('chat')"
       >
-        <sc-icon [name]="chatIcon" [size]="14" />
+        <sc-icon [name]="chatIcon" size="inherit" />
         <span>{{ 'templates.type.chat' | translate }}</span>
         <span class="tabs__count">{{ chatCount() }}</span>
       </button>
@@ -48,7 +48,7 @@
         [attr.aria-selected]="activeTab() === 'email'"
         (click)="switchTab('email')"
       >
-        <sc-icon [name]="emailIcon" [size]="14" />
+        <sc-icon [name]="emailIcon" size="inherit" />
         <span>{{ 'templates.type.email' | translate }}</span>
         <span class="tabs__count">{{ emailCount() }}</span>
       </button>
@@ -153,17 +153,17 @@
                       [attr.aria-expanded]="openMenuId() === tpl.id"
                       [attr.aria-label]="'labels.row_menu' | translate"
                     >
-                      <sc-icon [name]="moreIcon" [size]="16" />
+                      <sc-icon [name]="moreIcon" size="inherit" />
                     </button>
 
                     @if (openMenuId() === tpl.id) {
                       <div class="row-menu__panel" role="menu">
                         <button type="button" role="menuitem" (click)="onRowEdit(tpl)">
-                          <sc-icon [name]="editIcon" [size]="13" />
+                          <sc-icon [name]="editIcon" size="inherit" />
                           <span>{{ 'common.edit' | translate }}</span>
                         </button>
                         <button type="button" role="menuitem" (click)="onRowDelete(tpl)">
-                          <sc-icon [name]="trashIcon" [size]="13" />
+                          <sc-icon [name]="trashIcon" size="inherit" />
                           <span>{{ 'common.delete' | translate }}</span>
                         </button>
                       </div>
@@ -217,11 +217,11 @@
     role="menu"
   >
     <button type="button" role="menuitem" (click)="onContextEdit()">
-      <sc-icon [name]="editIcon" [size]="13" />
+      <sc-icon [name]="editIcon" size="inherit" />
       <span>{{ 'common.edit' | translate }}</span>
     </button>
     <button type="button" role="menuitem" (click)="onContextDelete()">
-      <sc-icon [name]="trashIcon" [size]="13" />
+      <sc-icon [name]="trashIcon" size="inherit" />
       <span>{{ 'common.delete' | translate }}</span>
     </button>
   </div>

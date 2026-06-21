@@ -24,7 +24,7 @@ import { SC_ICON_SIZE_DEFAULT } from '@shared/utils/icon-size';
     class: 'sc-icon material-symbols-outlined',
     'aria-hidden': 'true',
     '[class.sc-icon--spin]': 'spin()',
-    '[style.font-size.px]': 'size()',
+    '[style.font-size]': 'fontSize()',
     '[style.font-variation-settings]': 'variation()',
   },
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -32,8 +32,13 @@ import { SC_ICON_SIZE_DEFAULT } from '@shared/utils/icon-size';
 export class IconComponent {
   /** Nombre del símbolo Material (snake_case, p.ej. `space_dashboard`). */
   readonly name = input.required<string>();
-  /** Tamaño en px. Default `--sc-icon-size` (14). También alimenta `opsz`. */
-  readonly size = input<number>(SC_ICON_SIZE_DEFAULT);
+  /**
+   * Tamaño en px o `'inherit'`. Default `--sc-icon-size` (14). El numérico
+   * mapea a font-size px y alimenta `opsz`. `'inherit'` (DD-24) → el icono
+   * *companion* hereda el font-size de su contenedor (`1em`) y rima con el
+   * texto adyacente (los `<button>`/inputs ya están reseteados a `font: inherit`).
+   */
+  readonly size = input<number | 'inherit'>(SC_ICON_SIZE_DEFAULT);
   /** Relleno del glifo (eje FILL 0→1). */
   readonly fill = input<boolean>(false);
   /** Grosor del trazo (eje wght 100→700). */
@@ -41,7 +46,20 @@ export class IconComponent {
   /** Gira el glifo en bucle (spinner). Respeta `prefers-reduced-motion`. */
   readonly spin = input<boolean>(false);
 
+  /** `'inherit'` → `1em` (hereda el font-size del contenedor); numérico → px. */
+  protected readonly fontSize = computed(() => {
+    const s = this.size();
+    return s === 'inherit' ? '1em' : `${s}px`;
+  });
+
+  /** opsz numérico: el px cuando es numérico; el default del Kit al heredar. */
+  protected readonly opticalSize = computed(() => {
+    const s = this.size();
+    return s === 'inherit' ? SC_ICON_SIZE_DEFAULT : s;
+  });
+
   protected readonly variation = computed(
-    () => `'FILL' ${this.fill() ? 1 : 0}, 'wght' ${this.weight()}, 'GRAD' 0, 'opsz' ${this.size()}`,
+    () =>
+      `'FILL' ${this.fill() ? 1 : 0}, 'wght' ${this.weight()}, 'GRAD' 0, 'opsz' ${this.opticalSize()}`,
   );
 }

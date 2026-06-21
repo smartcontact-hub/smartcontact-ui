@@ -97,7 +97,7 @@
           [class.player-tabs__btn--active]="activeTab() === 'transcription'"
           (click)="setActiveTab('transcription')"
         >
-          <sc-icon [name]="fileTextIcon" [size]="14" />
+          <sc-icon [name]="fileTextIcon" size="inherit" />
           {{ 'memory.player.tabs.transcription' | translate }}
         </button>
         <button
@@ -106,7 +106,7 @@
           [class.player-tabs__btn--active]="activeTab() === 'analysis'"
           (click)="setActiveTab('analysis')"
         >
-          <sc-icon [name]="sparklesIcon" [size]="14" />
+          <sc-icon [name]="sparklesIcon" size="inherit" />
           {{ 'memory.player.tabs.analysis' | translate }}
         </button>
 
@@ -120,7 +120,7 @@
               data-testid="player-retrans-btn"
               (click)="onOpenRetransConfirm()"
             >
-              <sc-icon [name]="back10Icon" [size]="15" />
+              <sc-icon [name]="back10Icon" size="inherit" />
             </button>
           }
           <button
@@ -131,7 +131,7 @@
             [attr.title]="analyzeTitleKey() | translate"
             (click)="onRequestAnalysis()"
           >
-            <sc-icon [name]="sparklesIcon" [size]="15" />
+            <sc-icon [name]="sparklesIcon" size="inherit" />
           </button>
           <button
             type="button"
@@ -150,7 +150,7 @@
             "
             (click)="onDownload()"
           >
-            <sc-icon [name]="downloadIcon" [size]="15" />
+            <sc-icon [name]="downloadIcon" size="inherit" />
           </button>
         </span>
       </div>
@@ -203,9 +203,9 @@
                   (click)="onRequestTranscription()"
                 >
                   @if (requestingTranscription()) {
-                    <sc-icon name="progress_activity" [size]="14" [spin]="true" />
+                    <sc-icon name="progress_activity" size="inherit" [spin]="true" />
                   } @else {
-                    <sc-icon [name]="fileTextIcon" [size]="14" />
+                    <sc-icon [name]="fileTextIcon" size="inherit" />
                   }
                   {{
                     (requestingTranscription()
@@ -242,7 +242,7 @@
                 }}
               </span>
               <div class="player-transcript__search">
-                <sc-icon class="player-transcript__search-icon" [name]="searchIcon" [size]="12" />
+                <sc-icon class="player-transcript__search-icon" [name]="searchIcon" size="inherit" />
                 <input
                   type="search"
                   [value]="searchTerm()"
@@ -312,9 +312,9 @@
                     (click)="onRequestBoth()"
                   >
                     @if (requestingAnalysis()) {
-                      <sc-icon name="progress_activity" [size]="14" [spin]="true" />
+                      <sc-icon name="progress_activity" size="inherit" [spin]="true" />
                     } @else {
-                      <sc-icon [name]="sparklesIcon" [size]="14" />
+                      <sc-icon [name]="sparklesIcon" size="inherit" />
                     }
                     {{
                       (requestingAnalysis()
@@ -348,9 +348,9 @@
                     (click)="onRequestAnalysis()"
                   >
                     @if (requestingAnalysis()) {
-                      <sc-icon name="progress_activity" [size]="14" [spin]="true" />
+                      <sc-icon name="progress_activity" size="inherit" [spin]="true" />
                     } @else {
-                      <sc-icon [name]="sparklesIcon" [size]="14" />
+                      <sc-icon [name]="sparklesIcon" size="inherit" />
                     }
                     {{
                       (requestingAnalysis()
@@ -371,14 +371,14 @@
               <section class="player-section">
                 <header class="player-section__head">
                   <span class="player-section__title">
-                    <sc-icon [name]="alignLeftIcon" [size]="13" />
+                    <sc-icon [name]="alignLeftIcon" size="inherit" />
                     {{ 'memory.player.analysis.summary' | translate }}
                   </span>
                   <span
                     class="player-section__aside"
                     [attr.title]="'memory.player.analysis.ai_generated_hint' | translate"
                   >
-                    <sc-icon [name]="sparklesIcon" [size]="10" />
+                    <sc-icon [name]="sparklesIcon" size="inherit" />
                     {{ 'memory.player.analysis.ai_generated' | translate }}
                   </span>
                 </header>
@@ -394,7 +394,7 @@
               <section class="player-section">
                 <header class="player-section__head">
                   <span class="player-section__title">
-                    <sc-icon [name]="trendingUpIcon" [size]="13" />
+                    <sc-icon [name]="trendingUpIcon" size="inherit" />
                     {{ 'memory.player.analysis.sentiment' | translate }}
                   </span>
                 </header>

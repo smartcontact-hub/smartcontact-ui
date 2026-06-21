@@ -4,7 +4,7 @@
      hace appendTo="body" y se ancla al botón vía toggle($event). -->
 <ng-template #topbarActions>
   <p-button type="button" severity="primary" (onClick)="newRuleMenu.toggle($event)">
-    <sc-icon [name]="plusIcon" [size]="14" />
+    <sc-icon [name]="plusIcon" size="inherit" />
     <span>{{ 'memory.rules.new_rule' | translate }}</span>
   </p-button>
   <p-menu
@@ -63,7 +63,7 @@
                 <tr cdkDrag [cdkDragData]="rule">
                   <td class="rules-table__td-order">
                     <span class="rules-handle" aria-label="Reordenar" cdkDragHandle>
-                      <sc-icon [name]="gripIcon" [size]="14" />
+                      <sc-icon [name]="gripIcon" size="inherit" />
                       <span class="rules-handle__num">{{ i + 1 }}</span>
                     </span>
                   </td>
@@ -170,7 +170,7 @@
                       [attr.aria-label]="'memory.rules.cols.more' | translate"
                       (click)="setMenuTarget(rule); kebabMenu.toggle($event)"
                     >
-                      <sc-icon [name]="kebabIcon" [size]="14" />
+                      <sc-icon [name]="kebabIcon" size="inherit" />
                     </button>
                     <p-menu
                       #kebabMenu
@@ -263,7 +263,7 @@
                       [attr.aria-label]="'memory.rules.cols.more' | translate"
                       (click)="setMenuTarget(rule); kebabMenuInactive.toggle($event)"
                     >
-                      <sc-icon [name]="kebabIcon" [size]="14" />
+                      <sc-icon [name]="kebabIcon" size="inherit" />
                     </button>
                     <p-menu
                       #kebabMenuInactive

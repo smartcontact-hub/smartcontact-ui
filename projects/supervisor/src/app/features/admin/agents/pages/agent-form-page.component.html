@@ -63,7 +63,7 @@
            sin querer. Reemplaza la banda danger-zone del cuerpo (S59). -->
       @if (mode() === 'edit') {
         <button type="button" class="ipanel__delete" (click)="requestDelete()">
-          <sc-icon [name]="trashIcon" [size]="14" />
+          <sc-icon [name]="trashIcon" size="inherit" />
           <span>{{ 'common.delete' | translate }}</span>
         </button>
       }
@@ -290,7 +290,7 @@
                   [title]="'agents.form.permissions.manage_devices_hint' | translate"
                   [attr.aria-label]="'agents.form.permissions.manage_devices_hint' | translate"
                 >
-                  <sc-icon [name]="infoIcon" [size]="13" />
+                  <sc-icon [name]="infoIcon" size="inherit" />
                 </button>
               </div>
               <sc-toggleswitch
@@ -311,7 +311,7 @@
                   [title]="'agents.form.permissions.self_activate_hint' | translate"
                   [attr.aria-label]="'agents.form.permissions.self_activate_hint' | translate"
                 >
-                  <sc-icon [name]="infoIcon" [size]="13" />
+                  <sc-icon [name]="infoIcon" size="inherit" />
                 </button>
               </div>
               <sc-toggleswitch
@@ -323,7 +323,7 @@
 
             <!-- Matriz de Llamadas / Transferencias por destino -->
             <header class="perm-matrix__head">
-              <sc-icon [name]="phoneCallIcon" [size]="14" />
+              <sc-icon [name]="phoneCallIcon" size="inherit" />
               <h3 class="perm-matrix__title">
                 {{ 'agents.form.permissions.calls_section' | translate }}
               </h3>
@@ -410,9 +410,9 @@
               >
                 <sc-icon
                   [name]="labelsAccOpen() ? chevronDownIcon : chevronRightIcon"
-                  [size]="13"
+                  size="inherit"
                 />
-                <sc-icon [name]="tagIcon" [size]="13" />
+                <sc-icon [name]="tagIcon" size="inherit" />
                 <span class="sub-section__title">
                   {{ 'agents.form.advanced.labels.title' | translate }}
                 </span>
@@ -474,9 +474,9 @@
               >
                 <sc-icon
                   [name]="agendasAccOpen() ? chevronDownIcon : chevronRightIcon"
-                  [size]="13"
+                  size="inherit"
                 />
-                <sc-icon [name]="phoneIcon" [size]="13" />
+                <sc-icon [name]="phoneIcon" size="inherit" />
                 <span class="sub-section__title">
                   {{ 'agents.form.advanced.agendas.title' | translate }}
                 </span>
@@ -531,7 +531,7 @@
                             [attr.aria-label]="sched.name"
                             tabindex="-1"
                           />
-                          <sc-icon [name]="phoneIcon" [size]="13" class="picker-list__row-icon" />
+                          <sc-icon [name]="phoneIcon" size="inherit" class="picker-list__row-icon" />
                           <span class="picker-list__row-label">{{ sched.name }}</span>
                           @if (sched.numbers) {
                             <span class="picker-list__row-meta">{{ sched.numbers }}</span>
@@ -575,9 +575,9 @@
               >
                 <sc-icon
                   [name]="templatesAccOpen() ? chevronDownIcon : chevronRightIcon"
-                  [size]="13"
+                  size="inherit"
                 />
-                <sc-icon [name]="fileStackIcon" [size]="13" />
+                <sc-icon [name]="fileStackIcon" size="inherit" />
                 <span class="sub-section__title">
                   {{ 'agents.form.advanced.plantillas.title' | translate }}
                 </span>
@@ -604,7 +604,7 @@
                         [class.tabs__tab--active]="templateTab() === tab"
                         (click)="setTemplateTab(tab)"
                       >
-                        <sc-icon [name]="tab === 'chat' ? chatIcon : mailIcon" [size]="12" />
+                        <sc-icon [name]="tab === 'chat' ? chatIcon : mailIcon" size="inherit" />
                         {{ 'agents.form.advanced.plantillas.tab_' + tab | translate }}
                         <span class="tabs__count">
                           {{ templateTabCounts()[tab].assigned }}/{{
@@ -685,7 +685,7 @@
             <!-- Comportamiento (flat sub-section) -->
             <section class="sub-section">
               <div class="sub-section__head sub-section__head--flat">
-                <sc-icon [name]="slidersIcon" [size]="13" />
+                <sc-icon [name]="slidersIcon" size="inherit" />
                 <span class="sub-section__title">
                   {{ 'agents.form.advanced.comportamiento.title' | translate }}
                 </span>
@@ -758,7 +758,7 @@
                       "
                       [title]="'agents.form.advanced.comportamiento.random_order_hint' | translate"
                     >
-                      <sc-icon [name]="infoIcon" [size]="14" />
+                      <sc-icon [name]="infoIcon" size="inherit" />
                     </button>
                   </div>
                   <sc-toggleswitch
@@ -773,7 +773,7 @@
             <!-- Integración (flat sub-section) -->
             <section class="sub-section">
               <div class="sub-section__head sub-section__head--flat">
-                <sc-icon [name]="plugIcon" [size]="13" />
+                <sc-icon [name]="plugIcon" size="inherit" />
                 <span class="sub-section__title">
                   {{ 'agents.form.advanced.integracion.title' | translate }}
                 </span>
@@ -808,7 +808,7 @@
                         'agents.form.advanced.integracion.dispositivos_externos_hint' | translate
                       "
                     >
-                      <sc-icon [name]="infoIcon" [size]="14" />
+                      <sc-icon [name]="infoIcon" size="inherit" />
                     </button>
                   </div>
                   <sc-toggleswitch
@@ -825,7 +825,7 @@
             <!-- Regional (flat sub-section) -->
             <section class="sub-section">
               <div class="sub-section__head sub-section__head--flat">
-                <sc-icon [name]="globeIcon" [size]="13" />
+                <sc-icon [name]="globeIcon" size="inherit" />
                 <span class="sub-section__title">
                   {{ 'agents.form.advanced.regional.title' | translate }}
                 </span>
@@ -864,7 +864,7 @@
             <!-- Sesión (flat sub-section) -->
             <section class="sub-section">
               <div class="sub-section__head sub-section__head--flat">
-                <sc-icon [name]="logInIcon" [size]="13" />
+                <sc-icon [name]="logInIcon" size="inherit" />
                 <span class="sub-section__title">
                   {{ 'agents.form.advanced.sesion.title' | translate }}
                 </span>
@@ -883,7 +883,7 @@
                       "
                       [title]="'agents.form.advanced.sesion.login_ext_override_hint' | translate"
                     >
-                      <sc-icon [name]="infoIcon" [size]="14" />
+                      <sc-icon [name]="infoIcon" size="inherit" />
                     </button>
                   </div>
                   <sc-toggleswitch
@@ -912,7 +912,7 @@
                         severity="secondary"
                         (onClick)="requestExpirePassword()"
                       >
-                        <sc-icon [name]="keyIcon" [size]="14" />
+                        <sc-icon [name]="keyIcon" size="inherit" />
                         <span>{{ 'agents.form.advanced.sesion.expire_pwd' | translate }}</span>
                       </p-button>
                     </div>

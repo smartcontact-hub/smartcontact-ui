@@ -12,7 +12,7 @@
     </div>
 
     <div class="search">
-      <sc-icon [name]="searchIcon" [size]="14" class="search__icon" />
+      <sc-icon [name]="searchIcon" size="inherit" class="search__icon" />
       <input
         type="text"
         class="search__input"
@@ -28,7 +28,7 @@
           (click)="searchQuery.set('')"
           [attr.aria-label]="'labels.clear_search' | translate"
         >
-          <sc-icon [name]="closeIcon" [size]="13" />
+          <sc-icon [name]="closeIcon" size="inherit" />
         </button>
       }
     </div>
@@ -65,7 +65,7 @@
                 (click)="remove(country.code, $event)"
                 [attr.aria-label]="'common.delete' | translate"
               >
-                <sc-icon [name]="closeIcon" [size]="12" />
+                <sc-icon [name]="closeIcon" size="inherit" />
               </button>
             }
           </button>
@@ -88,7 +88,7 @@
                 (click)="remove(country.code)"
                 [attr.aria-label]="'common.delete' | translate"
               >
-                <sc-icon [name]="closeIcon" [size]="11" />
+                <sc-icon [name]="closeIcon" size="inherit" />
               </button>
             </span>
           }
@@ -115,7 +115,7 @@
         [disabled]="saving()"
         (onClick)="save()"
       >
-        <sc-icon [name]="saveIcon" [size]="14" />
+        <sc-icon [name]="saveIcon" size="inherit" />
         <span>
           {{ (saving() ? 'config.aed.saving' : 'config.aed.save') | translate }}
         </span>

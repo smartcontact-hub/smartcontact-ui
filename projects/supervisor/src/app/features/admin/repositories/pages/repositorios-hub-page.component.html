@@ -23,7 +23,7 @@
                   <span class="hub-item__description">{{ item.descriptionKey | translate }}</span>
                 </span>
                 @if (item.ready) {
-                  <sc-icon class="hub-item__chevron" [name]="chevronIcon" [size]="15" />
+                  <sc-icon class="hub-item__chevron" [name]="chevronIcon" size="inherit" />
                 } @else {
                   <span class="hub-item__soon">
                     {{ 'repositories.hub.coming_soon' | translate }}

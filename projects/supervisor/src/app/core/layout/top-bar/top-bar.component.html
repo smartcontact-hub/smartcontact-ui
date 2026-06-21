@@ -7,7 +7,7 @@
       [attr.aria-label]="'topbar.go_to_dashboard' | translate"
       [attr.title]="'topbar.go_to_dashboard' | translate"
     >
-      <sc-icon name="space_dashboard" [size]="15" />
+      <sc-icon name="space_dashboard" size="inherit" />
     </button>
     @if (trail().length > 0) {
       <span class="top-bar__lead-divider" aria-hidden="true"></span>
@@ -95,16 +95,16 @@
             [attr.aria-label]="'topbar.keyboard_shortcuts' | translate"
             [attr.title]="'topbar.keyboard_shortcuts' | translate"
           >
-            <sc-icon name="keyboard" [size]="14" />
+            <sc-icon name="keyboard" size="inherit" />
           </button>
         </div>
         <div class="top-bar__menu-actions">
           <button type="button" class="top-bar__menu-item" role="menuitem">
-            <sc-icon name="help" [size]="14" />
+            <sc-icon name="help" size="inherit" />
             <span>{{ 'topbar.user.help' | translate }}</span>
           </button>
           <button type="button" class="top-bar__menu-item" role="menuitem">
-            <sc-icon name="logout" [size]="14" />
+            <sc-icon name="logout" size="inherit" />
             <span>{{ 'topbar.user.logout' | translate }}</span>
           </button>
         </div>

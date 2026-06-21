@@ -102,7 +102,7 @@
                   [attr.aria-label]="'memory.entities.form.list_remove' | translate"
                   (click)="removeListValue($index)"
                 >
-                  <sc-icon [name]="trashIcon" [size]="13" />
+                  <sc-icon [name]="trashIcon" size="inherit" />
                 </button>
               </div>
 
@@ -137,7 +137,7 @@
           }
         </div>
         <button type="button" class="entity-form__list-add" (click)="addListValue()">
-          <sc-icon [name]="plusIcon" [size]="13" />
+          <sc-icon [name]="plusIcon" size="inherit" />
           {{ 'memory.entities.form.add_list_value' | translate }}
         </button>
       </div>
