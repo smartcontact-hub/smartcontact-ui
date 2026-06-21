@@ -11,7 +11,7 @@ import {
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ButtonModule } from 'primeng/button';
 
-import { SC_ICON_SIZE_MD, SC_ICON_SIZE_SM, ScIconComponent } from '@smartcontact-hub/icons';
+import { ScIconComponent } from '@smartcontact-hub/icons';
 
 import { ScDialogComponent } from '../dialog/sc-dialog.component';
 import { SC_IMPACT_PREVIEW_DIALOG_TRANSLATIONS } from './i18n/sc-impact-preview-dialog.translations';
@@ -69,8 +69,6 @@ export class ScImpactPreviewDialogComponent {
   protected readonly arrowIcon = 'arrow_forward';
   protected readonly duplicateIcon = 'content_copy';
   protected readonly closeIcon = 'close';
-  protected readonly iconSizeMd = SC_ICON_SIZE_MD;
-  protected readonly iconSizeSm = SC_ICON_SIZE_SM;
 
   protected readonly removedIds = signal<ReadonlySet<number>>(new Set());
 

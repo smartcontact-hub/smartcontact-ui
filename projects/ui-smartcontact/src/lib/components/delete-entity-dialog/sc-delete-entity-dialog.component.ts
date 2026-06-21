@@ -13,7 +13,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 
-import { SC_ICON_SIZE_MD, SC_ICON_SIZE_SM, ScIconComponent } from '@smartcontact-hub/icons';
+import { ScIconComponent } from '@smartcontact-hub/icons';
 
 import { ScClipboardService } from '../../core/services/sc-clipboard.service';
 import { ScDialogComponent } from '../dialog/sc-dialog.component';
@@ -76,8 +76,6 @@ export class ScDeleteEntityDialogComponent {
   protected readonly copyIcon = 'content_copy';
   protected readonly checkIcon = 'check';
   protected readonly closeIcon = 'close';
-  protected readonly iconSizeMd = SC_ICON_SIZE_MD;
-  protected readonly iconSizeSm = SC_ICON_SIZE_SM;
 
   protected readonly confirmText = signal('');
   protected readonly copied = signal(false);

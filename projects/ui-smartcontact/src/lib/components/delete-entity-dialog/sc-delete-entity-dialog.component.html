@@ -23,9 +23,9 @@
       >
         <span>{{ singleTarget() }}</span>
         @if (copied()) {
-          <sc-icon [name]="checkIcon" [size]="iconSizeMd" class="delete-entity__copy-check" />
+          <sc-icon [name]="checkIcon" size="inherit" class="delete-entity__copy-check" />
         } @else {
-          <sc-icon [name]="copyIcon" [size]="iconSizeMd" class="delete-entity__copy-icon" />
+          <sc-icon [name]="copyIcon" size="inherit" class="delete-entity__copy-icon" />
         }
       </button>
       <input
@@ -63,7 +63,7 @@
               [attr.aria-label]="'sc.deleteEntityDialog.removeFromList' | translate: { name: item.name }"
               (click)="removeChip(item.id)"
             >
-              <sc-icon [name]="closeIcon" [size]="iconSizeSm" />
+              <sc-icon [name]="closeIcon" size="inherit" />
             </button>
           </span>
         }

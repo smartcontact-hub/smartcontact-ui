@@ -18,7 +18,7 @@ import { InputIconModule } from 'primeng/inputicon';
 import { InputTextModule } from 'primeng/inputtext';
 
 
-import { SC_ICON_SIZE_DEFAULT, SC_ICON_SIZE_MD, ScIconComponent } from '@smartcontact-hub/icons';
+import { ScIconComponent } from '@smartcontact-hub/icons';
 
 export type ScSearchSize = 'sm' | 'md' | 'lg';
 
@@ -102,8 +102,6 @@ export class ScSearchComponent implements ControlValueAccessor {
   // ─── Derived / internal ────────────────────────────────────────────
   protected readonly searchIcon = 'search';
   protected readonly clearIcon = 'close';
-  protected readonly iconSizeDefault = SC_ICON_SIZE_DEFAULT;
-  protected readonly iconSizeMd = SC_ICON_SIZE_MD;
   protected readonly resolvedId = computed(
     () => this.inputId() ?? `sc-search-${++scSearchIdCounter}`,
   );

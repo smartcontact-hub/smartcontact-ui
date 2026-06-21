@@ -109,6 +109,9 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    /* DD-24 — botón transparente al font-size: la × companion (`size="inherit"`)
+       rima con el texto del item (14), no con el reset UA del <button>. */
+    font-size: inherit;
     background: transparent;
     border: 0;
     border-radius: var(--sc-radius-full);

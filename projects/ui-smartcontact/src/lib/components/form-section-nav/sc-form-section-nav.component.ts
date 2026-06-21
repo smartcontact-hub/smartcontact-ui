@@ -1,7 +1,7 @@
 import { booleanAttribute, ChangeDetectionStrategy, Component, inject, input, output } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
-import { SC_ICON_SIZE_DEFAULT, ScIconComponent } from '@smartcontact-hub/icons';
+import { ScIconComponent } from '@smartcontact-hub/icons';
 
 import { SC_FORM_SECTION_NAV_TRANSLATIONS } from './i18n/sc-form-section-nav.translations';
 
@@ -63,8 +63,6 @@ export class ScFormSectionNavComponent {
   readonly sectionsWithErrors = input<ReadonlySet<string>>(new Set());
 
   readonly activeChange = output<string>();
-
-  protected readonly iconSizeDefault = SC_ICON_SIZE_DEFAULT;
 
   constructor() {
     // Copy fijo colocado: registra solo el diccionario del componente.

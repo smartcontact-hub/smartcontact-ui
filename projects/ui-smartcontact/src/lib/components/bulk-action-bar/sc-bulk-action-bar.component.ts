@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
-import { SC_ICON_SIZE_DEFAULT, ScIconComponent } from '@smartcontact-hub/icons';
+import { ScIconComponent } from '@smartcontact-hub/icons';
 
 import { registerScBulkActionBarTranslations } from './i18n/sc-bulk-action-bar.translations';
 
@@ -41,7 +41,6 @@ export class ScBulkActionBarComponent {
 
   private readonly translate = inject(TranslateService);
   protected readonly closeIcon = 'close';
-  protected readonly iconSizeDefault = SC_ICON_SIZE_DEFAULT;
 
   protected readonly visible = computed(() => this.count() > 0);
 

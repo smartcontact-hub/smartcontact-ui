@@ -22,12 +22,18 @@ export class ScIconComponent {
     @Input() name: ScIconName | string | null = null;
 
     /**
-     * Tamaño tokenizado ('sm'|'md'|'lg') o numérico en px (px de diseño del
-     * Kit, p. ej. SC_ICON_SIZE_DEFAULT = 14). El numérico aplica font-size
-     * inline y alimenta el eje opsz — reconciliación con el sc-icon del
-     * catálogo de diseño (ejes FILL/wght/opsz conservados).
+     * Tamaño tokenizado ('sm'|'md'|'lg'), numérico en px (px de diseño del
+     * Kit, p. ej. SC_ICON_SIZE_DEFAULT = 14) o 'inherit'. El numérico aplica
+     * font-size inline y alimenta el eje opsz — reconciliación con el sc-icon
+     * del catálogo de diseño (ejes FILL/wght/opsz conservados).
+     *
+     * 'inherit' (DD-24) → el icono *companion* hereda el font-size de su
+     * componente (`font-size: 1em`): icono y texto riman por fuente y escalan
+     * juntos en sm/lg. Es el default semántico de los iconos junto a texto
+     * dentro de un control (button/input/search/chip/tag/menu…); el size
+     * pinneado queda como escape hatch e iconos sueltos/decorativos.
      */
-    @Input() size: ScIconSize | number = 'md';
+    @Input() size: ScIconSize | number | 'inherit' = 'md';
 
     @Input() filled = false;
 
@@ -63,6 +69,7 @@ export class ScIconComponent {
             'sc-icon--sm': this.size === 'sm',
             'sc-icon--md': this.size === 'md',
             'sc-icon--lg': this.size === 'lg',
+            'sc-icon--inherit': this.size === 'inherit',
             'sc-icon--spin': this.spin,
             'sc-icon--filled': this.filled,
             [`sc-icon--weight-${this.weight}`]: true,

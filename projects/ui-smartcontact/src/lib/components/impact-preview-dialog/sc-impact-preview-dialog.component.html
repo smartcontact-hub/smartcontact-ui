@@ -11,7 +11,7 @@
       @if (b.currentValueLabel) {
         <span class="badge__current">{{ b.currentValueLabel }}</span>
         <span class="badge__arrow" aria-hidden="true">
-          <sc-icon [name]="arrowIcon" [size]="iconSizeMd" />
+          <sc-icon [name]="arrowIcon" size="inherit" />
         </span>
       }
       <span class="badge__new">{{ b.newValueLabel }}</span>
@@ -32,7 +32,7 @@
           [attr.aria-label]="'sc.impactPreviewDialog.remove' | translate: { name: item.name }"
           [disabled]="survivingItems().length <= 1"
         >
-          <sc-icon [name]="closeIcon" [size]="iconSizeSm" />
+          <sc-icon [name]="closeIcon" size="inherit" />
         </button>
       </li>
     }

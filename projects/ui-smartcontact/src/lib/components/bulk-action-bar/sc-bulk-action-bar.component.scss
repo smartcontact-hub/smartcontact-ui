@@ -32,6 +32,9 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    /* DD-24 — botón transparente al font-size para que su icono companion
+       (`size="inherit"`) rime con el texto del summary (14). */
+    font-size: inherit;
     background: transparent;
     border: 0;
     color: var(--sc-icon-secondary);

@@ -5,7 +5,7 @@
   [title]="buttonLabel()"
   (click)="popover.toggle($event)"
 >
-  <sc-icon [name]="columnsIcon" [size]="iconSizeLg" />
+  <sc-icon [name]="columnsIcon" size="inherit" />
 </button>
 
 <p-popover #popover [appendTo]="'body'" styleClass="sc-column-popover">
@@ -18,7 +18,7 @@
         (click)="reset(); popover.hide()"
         aria-label="Restablecer"
       >
-        <sc-icon [name]="resetIcon" [size]="iconSizeMd" />
+        <sc-icon [name]="resetIcon" size="inherit" />
         <span>Restablecer</span>
       </button>
     </div>
@@ -26,7 +26,7 @@
       @for (col of menuItems(); track col.key) {
         <li class="row" [class.row--locked]="col.locked" cdkDrag [cdkDragDisabled]="!!col.locked">
           <span class="row__grip" [class.row__grip--hidden]="col.locked" aria-hidden="true">
-            <sc-icon [name]="gripIcon" [size]="iconSizeMd" />
+            <sc-icon [name]="gripIcon" size="inherit" />
           </span>
           <label class="row__label-block">
             <input
@@ -40,7 +40,7 @@
               <sc-icon
                 class="row__lock"
                 [name]="lockIcon"
-                [size]="iconSizeSm"
+                size="inherit"
                 [attr.aria-label]="'Columna fijada'"
               />
             }

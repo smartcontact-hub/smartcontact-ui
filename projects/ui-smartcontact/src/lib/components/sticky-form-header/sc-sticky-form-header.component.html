@@ -40,7 +40,7 @@
             (click)="confirmRename()"
             [attr.aria-label]="'sc.stickyFormHeader.save' | translate"
           >
-            <sc-icon [name]="checkIcon" [size]="iconSizeDefault" />
+            <sc-icon [name]="checkIcon" size="inherit" />
           </button>
           <button
             type="button"
@@ -48,7 +48,7 @@
             (click)="cancelRename()"
             [attr.aria-label]="'sc.stickyFormHeader.cancel' | translate"
           >
-            <sc-icon [name]="closeIcon" [size]="iconSizeDefault" />
+            <sc-icon [name]="closeIcon" size="inherit" />
           </button>
         } @else {
           <span class="sticky-header__name">{{ name() }}</span>
@@ -58,7 +58,7 @@
             (click)="onPencilClick()"
             [attr.aria-label]="'sc.stickyFormHeader.edit' | translate"
           >
-            <sc-icon [name]="pencilIcon" [size]="iconSizeMd" />
+            <sc-icon [name]="pencilIcon" size="inherit" />
           </button>
         }
       }
@@ -74,13 +74,13 @@
   <div class="sticky-header__actions">
     @if (showBack()) {
       <p-button type="button" severity="secondary" (onClick)="cancelled.emit()">
-        <sc-icon [name]="backIcon" [size]="iconSizeDefault" />
+        <sc-icon [name]="backIcon" size="inherit" />
         <span>{{ 'sc.stickyFormHeader.back' | translate }}</span>
       </p-button>
     }
     <p-button type="button" [disabled]="!canSave() || saving()" (onClick)="save.emit()">
       @if (saving()) {
-        <sc-icon name="progress_activity" [size]="iconSizeMd" [spin]="true" />
+        <sc-icon name="progress_activity" size="inherit" [spin]="true" />
         <span>{{ 'sc.stickyFormHeader.loading' | translate }}</span>
       } @else {
         <span>{{ 'sc.stickyFormHeader.save' | translate }}</span>
