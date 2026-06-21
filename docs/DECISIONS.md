@@ -1110,10 +1110,48 @@ Aplicación **GLOBAL** (todos los companion) pero ejecución por pantalla con QA
 **Razón**: hace que icono y texto **rimen por fuente** (escalan juntos en sm/lg), no por casualidad de
 valor. Mismo principio que la paridad: una sola fuente de verdad — aquí, el font-size del componente.
 
-**Consecuencia / pendiente**: `sc-icon` gana `size="inherit"`; barrer los companion (DS + apps) a heredar;
-confirmar que el md no se fuga al `1rem` de PrimeNG; en Figma atar W/H (huecos: button-default, inputtext).
-Planificado en `~/.claude/plans/retomamos-el-ds-de-whimsical-sparrow.md`; NO ejecutado aún.
+**Estado (2026-06-22) — EJECUTADO en el DS**: `sc-icon` gana `size="inherit"` (`font-size: 1em`); migrados los
+11 companion de la cara-A del DS (search, chip, inline-rename, delete-entity, column-selector, bulk-action-bar,
+form-section-nav, keyboard-shortcuts, sticky-form-header, command-palette, impact-preview). Dos hallazgos del
+QA visual: **(1)** cuando el icono es **hermano** del texto y no descendiente (iconfield de sc-search, head de
+command-palette) el **host** debe portar el font-size por variante para que el icono herede el correcto a sm/lg
+(si no, a sm el icono se queda en 14 con el input a 12). **(2)** los `<button>` **resetean** el font-size al
+default del UA (~13.3px) → el wrapper debe ser **transparente** (`font-size: inherit`) para que el icono rime;
+en el DS se hizo por-componente. En las **apps** el reset global ya existe
+(`supervisor/styles/_reset.scss` → `input, button, textarea, select { font: inherit }`), así que el barrido de
+la app (Bloque 3) NO necesita plumbing por-botón — es mecánico. **md no-leak** confirmado: `.p-button`/
+`.p-inputtext` a md ya llevan `--sc-font-size-200` (14), no se fuga al 1rem de PrimeNG.
+**Pendiente**: Bloque 3 (resto de companion de supervisor/agent — 203 `<sc-icon [size]>` pinneados, ~188 son
+≤16px ⇒ probables companion; clasificar companion vs standalone + QA) + Figma atar W/H (button-default,
+inputtext).
 
 ---
 
-Última actualización: 2026-06-19 (DD-23 paridad **EJECUTADA** + General Contact Center [chips-modal · radios DS · line-heights] · DD-24 regla icono↔font-size planificada).
+## DD-25 · 2026-06-22 — Gap del footer de sc-dialog: el wrapper proyectado es la fila flex
+
+**Contexto**: Rafa reportó los botones del footer de los dialogs "muy juntos", comparando con el ConfirmDialog
+de Figma (`323:12317`, footer/gap 7 Kit). El token `--sc-dialog-footer-gap` (10.5px, divergencia consciente
+del 7 de Figma por feedback de diseño previo) estaba aplicado a `.sc-dialog__foot`, pero su **único hijo** es
+el `<div modal-actions>` que el consumidor envuelve → el `gap` separaba el wrapper, no los botones, que
+quedaban a **0px** (medido).
+
+**Decisión**: el `[modal-actions]` **proyectado** es quien debe ser la fila flex (`display:flex` +
+`justify-content:flex-end` + `flex-wrap` + `gap`), vía `::ng-deep` (contenido proyectado bajo encapsulation
+Emulated). Un solo punto en sc-dialog arregla los **13 dialogs** del repo. Medido en sc-demo: **0px → 10.5px**.
+
+---
+
+## Sync Figma (DD-23) · 2026-06-22 — var-docs de color re-apuntadas al Kit
+
+Las **33 variables primitivas de color** (cyan/sky/slate × 11 shades) tenían `codeSyntax` + `description` aún
+en los nombres viejos (soft-blue/electric-blue/gray) pese a que el **nombre** de la variable ya era
+cyan/sky/slate → Dev Mode mentía. Re-apuntadas en Figma vía el bridge: `codeSyntax` → `--sc-color-{cyan,sky,
+slate}-N`; descripción con el rol de marca (`(marca: Soft-Blue/Electric-Blue/Gray)`). Verificado: 0 nombres
+viejos restantes en ningún campo. (Eran 33, no las 530 que estimaba el plan.) Pendiente Figma: atar W/H de
+iconos companion a la var de font-size (Bloque 4a).
+
+---
+
+Última actualización: 2026-06-22 (DD-24 **EJECUTADA en el DS** [sc-icon inherit + 11 companion + hallazgos
+host-font/button-reset] · Bloque 2 Contact Center [topbar `sc-button` en servicio/agentes/grupos + copys de
+Recepción es/en/fr/pt] · DD-25 gap footer sc-dialog · var-docs de color re-apuntadas en Figma).
