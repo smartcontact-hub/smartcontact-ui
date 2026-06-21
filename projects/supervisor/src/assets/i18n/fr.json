@@ -1491,7 +1491,7 @@
             "seconds": "secondes"
           },
           "ventana": {
-            "title": "Paramètres de la fenêtre d'appel et de transfert",
+            "title": "Paramètres de la fenêtre de conversations",
             "ver_estado": "Afficher l'état des autres agents",
             "ver_aleatorio": "Afficher les agents dans un ordre aléatoire"
           },
@@ -1510,10 +1510,10 @@
             "filtrar": "Permettre aux agents de filtrer les états"
           },
           "aviso": {
-            "title": "Alerte de conversation",
+            "title": "Réception des conversations",
             "descuelgue_label": "Type de décrochage par défaut",
             "descuelgue_placeholder": "Sélectionner",
-            "alerting_label": "Alerte du service",
+            "alerting_label": "Afficher",
             "alerting_nombre": "Nom",
             "alerting_telefono": "Numéro de téléphone"
           },

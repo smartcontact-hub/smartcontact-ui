@@ -1,25 +1,21 @@
 <ng-template #topbarActions>
   @if (dirty()) {
-    <p-button
-      type="button"
-      size="small"
-      severity="secondary"
-      [outlined]="true"
-      (onClick)="cancel()"
-    >
-      <span>{{ 'common.discard_changes' | translate }}</span>
-    </p-button>
+    <sc-button
+      variant="secondary"
+      appearance="outlined"
+      size="sm"
+      [label]="'common.discard_changes' | translate"
+      (clicked)="cancel()"
+    />
   }
-  <p-button
-    type="button"
-    size="small"
-    severity="primary"
+  <sc-button
+    variant="primary"
+    size="sm"
     [disabled]="!canSave()"
     [loading]="saving()"
-    (onClick)="save()"
-  >
-    <span>{{ 'common.save' | translate }}</span>
-  </p-button>
+    [label]="'common.save' | translate"
+    (clicked)="save()"
+  />
 </ng-template>
 
 <div class="page">

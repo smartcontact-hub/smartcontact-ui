@@ -1491,7 +1491,7 @@
             "seconds": "seconds"
           },
           "ventana": {
-            "title": "Call and transfer window settings",
+            "title": "Conversation window settings",
             "ver_estado": "Show other agents' status",
             "ver_aleatorio": "Show agents in random order"
           },
@@ -1510,10 +1510,10 @@
             "filtrar": "Allow agents to filter states"
           },
           "aviso": {
-            "title": "Conversation alerting",
+            "title": "Receiving conversations",
             "descuelgue_label": "Default pickup type",
             "descuelgue_placeholder": "Select",
-            "alerting_label": "Service alerting",
+            "alerting_label": "Show",
             "alerting_nombre": "Name",
             "alerting_telefono": "Phone number"
           },

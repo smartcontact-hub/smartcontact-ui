@@ -1491,7 +1491,7 @@
             "seconds": "segundos"
           },
           "ventana": {
-            "title": "Configuración de ventana de llamada y transferencia",
+            "title": "Configuración de ventana de conversaciones",
             "ver_estado": "Visualizar el estado de otros agentes",
             "ver_aleatorio": "Visualizar agentes de forma aleatoria"
           },
@@ -1510,10 +1510,10 @@
             "filtrar": "Permitir a los agentes filtrar los estados"
           },
           "aviso": {
-            "title": "Aviso de conversación",
+            "title": "Recepción de conversaciones",
             "descuelgue_label": "Tipo de descuelgue por defecto",
             "descuelgue_placeholder": "Seleccionar",
-            "alerting_label": "Alerting del servicio",
+            "alerting_label": "Mostrar",
             "alerting_nombre": "Nombre",
             "alerting_telefono": "Número de teléfono"
           },
