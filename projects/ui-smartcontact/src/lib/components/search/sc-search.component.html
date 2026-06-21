@@ -1,6 +1,6 @@
 <p-iconfield iconPosition="left" class="sc-search__field">
   <p-inputicon>
-    <sc-icon [name]="searchIcon" [size]="iconSizeDefault" />
+    <sc-icon [name]="searchIcon" size="inherit" />
   </p-inputicon>
 
   <input
@@ -28,7 +28,7 @@
       (click)="onClear()"
       [attr.aria-label]="clearAriaLabel()"
     >
-      <sc-icon [name]="clearIcon" [size]="iconSizeMd" />
+      <sc-icon [name]="clearIcon" size="inherit" />
     </button>
   } @else if (shortcutHint() && !value()) {
     <kbd class="sc-search__kbd" aria-hidden="true">{{ shortcutHint() }}</kbd>

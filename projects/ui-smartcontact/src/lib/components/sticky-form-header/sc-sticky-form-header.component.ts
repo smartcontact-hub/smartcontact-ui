@@ -13,7 +13,7 @@ import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ButtonModule } from 'primeng/button';
 
-import { SC_ICON_SIZE_DEFAULT, SC_ICON_SIZE_MD, ScIconComponent } from '@smartcontact-hub/icons';
+import { ScIconComponent } from '@smartcontact-hub/icons';
 
 import { SC_STICKY_FORM_HEADER_TRANSLATIONS } from './i18n/sc-sticky-form-header.translations';
 
@@ -72,8 +72,6 @@ export class ScStickyFormHeaderComponent {
   protected readonly checkIcon = 'check';
   protected readonly closeIcon = 'close';
   protected readonly backIcon = 'arrow_back';
-  protected readonly iconSizeDefault = SC_ICON_SIZE_DEFAULT;
-  protected readonly iconSizeMd = SC_ICON_SIZE_MD;
 
   protected readonly editing = signal(false);
   protected readonly draftName = signal('');

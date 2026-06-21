@@ -16,6 +16,10 @@
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  /* DD-24 — botón transparente al font-size: su icono companion
+     (`size="inherit"`) rima con el search contiguo de la barra (14), no con
+     el reset UA del <button>. */
+  font-size: inherit;
   background: var(--sc-bg-surface);
   color: var(--sc-text-secondary);
   border: 1px solid var(--sc-border-default);

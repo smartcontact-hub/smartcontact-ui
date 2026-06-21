@@ -128,6 +128,9 @@
     background: var(--sc-bg-secondary-subtle);
     border: 0;
     padding: var(--sc-spacing-0-5);
+    /* DD-24 — botón transparente al font-size: el lápiz/check/close companion
+       (`size="inherit"`) rima con la name-line (14), no con el reset UA. */
+    font-size: inherit;
     color: var(--sc-text-secondary);
     cursor: pointer;
     border-radius: var(--sc-radius-100);

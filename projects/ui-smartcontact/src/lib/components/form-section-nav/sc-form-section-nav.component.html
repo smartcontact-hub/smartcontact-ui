@@ -13,7 +13,7 @@
         >
           @if (section.icon; as ic) {
             <span class="form-nav__icon" aria-hidden="true">
-              <sc-icon [name]="ic" [size]="iconSizeDefault" />
+              <sc-icon [name]="ic" size="inherit" />
             </span>
           }
           <span class="form-nav__label">{{ section.labelKey | translate }}</span>

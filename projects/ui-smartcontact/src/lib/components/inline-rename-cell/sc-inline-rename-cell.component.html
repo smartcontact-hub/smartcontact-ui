@@ -18,7 +18,7 @@
     [disabled]="!value().trim()"
     [attr.aria-label]="'sc.inlineRenameCell.confirm' | translate"
   >
-    <sc-icon [name]="checkIcon" [size]="iconSizeMd" />
+    <sc-icon [name]="checkIcon" size="inherit" />
   </button>
   <button
     type="button"
@@ -26,6 +26,6 @@
     (click)="onCancel()"
     [attr.aria-label]="'sc.inlineRenameCell.cancel' | translate"
   >
-    <sc-icon [name]="closeIcon" [size]="iconSizeMd" />
+    <sc-icon [name]="closeIcon" size="inherit" />
   </button>
 </div>

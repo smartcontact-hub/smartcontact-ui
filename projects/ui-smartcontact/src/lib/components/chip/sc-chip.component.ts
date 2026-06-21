@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
 import { ChipModule } from 'primeng/chip';
 
-import { SC_ICON_SIZE_SM, ScIconComponent } from '@smartcontact-hub/icons';
+import { ScIconComponent } from '@smartcontact-hub/icons';
 
 import { resolveScComponentIconClass } from '../../core/icons/sc-component-icon-resolver';
 import { LabelColor } from '../../core/types/label.types';
@@ -45,7 +45,6 @@ export class ScChipComponent {
     @Output() imageError = new EventEmitter<unknown>();
 
     protected readonly closeIcon = 'close';
-    protected readonly iconSizeSm = SC_ICON_SIZE_SM;
 
     protected get chipIcon(): string | undefined {
         return resolveScComponentIconClass(this.icon);

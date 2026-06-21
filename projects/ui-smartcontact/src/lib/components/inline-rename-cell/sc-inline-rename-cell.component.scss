@@ -46,6 +46,9 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
+    /* DD-24 — botón transparente al font-size: su icono companion
+       (`size="inherit"`) rima con el texto del control, no con el reset UA. */
+    font-size: inherit;
     border: 0;
     border-radius: var(--sc-radius-full);
     background: transparent;

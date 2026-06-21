@@ -19,6 +19,11 @@
 .sc-search {
   display: block;
   min-width: 0;
+  /* DD-24 — el host porta el font-size del control (md = 14). Los iconos
+     companion (search + clear) cuelgan del iconfield, hermano del input, no
+     de él; heredan de aquí vía `size="inherit"` y riman con el texto en cada
+     variante (sm/lg lo re-pisan en la sección de tamaños). */
+  font-size: var(--sc-font-size-200);
 }
 
 .sc-search__field {
@@ -51,6 +56,10 @@
   right: var(--sc-spacing-0-75);
   top: 50%;
   transform: translateY(-50%);
+  /* DD-24 — el <button> resetea font-size al default del UA (≈13.3px); lo
+     hacemos transparente para que su icono companion (`size="inherit"`) rime
+     con el font-size del control igual que el icono de búsqueda. */
+  font-size: inherit;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -104,8 +113,18 @@
 
 /* ────────────────────────────────────────────────────────────────────
  * Size variants — replicar los del sc-inputtext (chrome consistency).
+ * El font-size del host por variante (abajo) baja a los iconos companion
+ * (search + clear) vía `size="inherit"`; el del input lo fija su propia regla.
  * ────────────────────────────────────────────────────────────────────
  */
+.sc-search--sm {
+  font-size: var(--sc-font-size-100);
+}
+
+.sc-search--lg {
+  font-size: var(--sc-font-size-300);
+}
+
 .sc-search--sm .sc-search__control {
   padding-top: var(--sc-spacing-0-375);
   padding-bottom: var(--sc-spacing-0-375);

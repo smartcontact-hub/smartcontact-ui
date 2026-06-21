@@ -7,7 +7,7 @@
     aria-modal="true"
   >
     <div class="palette__head">
-      <sc-icon class="palette__head-icon" [name]="searchIcon" [size]="iconSizeLg" />
+      <sc-icon class="palette__head-icon" [name]="searchIcon" size="inherit" />
       <input
         #searchInput
         type="text"
@@ -38,7 +38,7 @@
                 (click)="run(cmd)"
               >
                 @if (cmd.icon; as ic) {
-                  <sc-icon class="palette__item-icon" [name]="ic" [size]="iconSizeDefault" />
+                  <sc-icon class="palette__item-icon" [name]="ic" size="inherit" />
                 }
                 <span class="palette__item-label">{{ cmd.label }}</span>
               </button>

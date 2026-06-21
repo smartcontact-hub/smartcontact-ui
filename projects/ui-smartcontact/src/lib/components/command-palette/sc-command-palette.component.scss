@@ -34,6 +34,10 @@
     gap: var(--sc-spacing-0-875);
     padding: var(--sc-spacing-1-125) var(--sc-spacing-1-5);
     border-bottom: 1px solid var(--sc-border-subtle);
+    /* DD-24 — el head porta el font-size del input (body-1) para que el icono
+       de búsqueda companion (`size="inherit"`) rime con el texto que precede;
+       cuelga del head, hermano del input, no de él. */
+    font-size: var(--sc-font-size-body-1);
   }
 
   &__head-icon {

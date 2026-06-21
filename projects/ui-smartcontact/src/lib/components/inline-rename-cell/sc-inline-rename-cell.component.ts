@@ -11,7 +11,7 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { SC_ICON_SIZE_MD, ScIconComponent } from '@smartcontact-hub/icons';
+import { ScIconComponent } from '@smartcontact-hub/icons';
 
 import { SC_INLINE_RENAME_CELL_TRANSLATIONS } from './i18n/sc-inline-rename-cell.translations';
 
@@ -51,7 +51,6 @@ export class ScInlineRenameCellComponent implements AfterViewInit {
 
   protected readonly checkIcon = 'check';
   protected readonly closeIcon = 'close';
-  protected readonly iconSizeMd = SC_ICON_SIZE_MD;
 
   protected readonly value = signal('');
 

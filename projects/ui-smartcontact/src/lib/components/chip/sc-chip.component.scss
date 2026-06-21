@@ -34,6 +34,9 @@
     padding: 0;
     margin-left: var(--sc-spacing-0-25);
     color: inherit;
+    /* DD-24 — botón transparente al font-size: la × companion (`size="inherit"`)
+       rima con el texto del chip (12), no con el reset UA del <button>. */
+    font-size: inherit;
     cursor: pointer;
     display: inline-flex;
     align-items: center;

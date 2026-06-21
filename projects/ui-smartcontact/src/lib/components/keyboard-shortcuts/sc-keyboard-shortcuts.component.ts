@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, HostListener, inject, input } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { SC_ICON_SIZE_DEFAULT, ScIconComponent } from '@smartcontact-hub/icons';
+import { ScIconComponent } from '@smartcontact-hub/icons';
 
 import { isTypingTarget } from '../../core/utils/is-typing-target';
 import { ScCommandPaletteService } from '../command-palette/sc-command-palette.service';
@@ -68,7 +68,6 @@ export class ScKeyboardShortcutsComponent {
   readonly groups = input<readonly ScShortcutGroup[]>(SC_KEYBOARD_SHORTCUTS_DEFAULT_GROUPS);
 
   protected readonly closeIcon = 'close';
-  protected readonly iconSizeDefault = SC_ICON_SIZE_DEFAULT;
   protected readonly visible = this.shortcuts.visible;
 
   constructor() {

@@ -21,6 +21,13 @@
     font-size: var(--sc-font-size-400);
 }
 
+/* DD-24 — companion: el icono hereda el font-size de su componente (rima por
+   fuente con el texto, escala junto a él en sm/lg). El eje opsz cae al default
+   (24) en lugar de seguir un px pinneado. */
+.sc-icon--inherit {
+    font-size: 1em;
+}
+
 .sc-icon--weight-100 {
     --sc-icon-weight: 100;
 }

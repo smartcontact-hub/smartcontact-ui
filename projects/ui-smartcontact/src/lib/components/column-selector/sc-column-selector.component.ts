@@ -11,7 +11,7 @@ import {
 import { PopoverModule } from 'primeng/popover';
 
 
-import { SC_ICON_SIZE_LG, SC_ICON_SIZE_MD, SC_ICON_SIZE_SM, ScIconComponent } from '@smartcontact-hub/icons';
+import { ScIconComponent } from '@smartcontact-hub/icons';
 
 export interface ColumnDef {
   /** Stable key persisted in localStorage. */
@@ -80,9 +80,6 @@ export class ScColumnSelectorComponent {
   protected readonly resetIcon = 'rotate_left';
   protected readonly gripIcon = 'drag_indicator';
   protected readonly lockIcon = 'lock';
-  protected readonly iconSizeLg = SC_ICON_SIZE_LG;
-  protected readonly iconSizeMd = SC_ICON_SIZE_MD;
-  protected readonly iconSizeSm = SC_ICON_SIZE_SM;
 
   /** Default = the column declaration order, filtered by `defaultVisible`. */
   private readonly defaultOrdered = computed<OrderedVisible>(() =>
