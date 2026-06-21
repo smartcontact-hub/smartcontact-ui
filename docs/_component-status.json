@@ -77,7 +77,7 @@
       "inputs": 15,
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 3
+      "usedInSupervisor": 9
     },
     {
       "name": "card",

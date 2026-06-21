@@ -11,13 +11,13 @@ import {
 } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
-import { ButtonModule } from 'primeng/button';
 
 import { DirtyAware } from '@core/guards';
 import { TopBarSlotService } from '@core/layout/top-bar/top-bar-slot.service';
 import { TOAST_LIFE } from '@core/utils/toast-life';
 import { IconComponent } from '@shared/components';
 import {
+  ScButtonComponent as ButtonComponent,
   ScCheckboxComponent as CheckboxComponent,
   ScDividerComponent as DividerComponent,
   ScInputTextComponent as InputTextComponent,
@@ -79,7 +79,7 @@ const DEFAULT_FORM: FormState = {
 @Component({
   selector: 'sc-aed-agentes-page',
   imports: [
-    ButtonModule,
+    ButtonComponent,
     CheckboxComponent,
     DividerComponent,
     IconComponent,

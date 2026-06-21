@@ -1491,7 +1491,7 @@
             "seconds": "segundos"
           },
           "ventana": {
-            "title": "Configuração da janela de chamada e transferência",
+            "title": "Configuração da janela de conversas",
             "ver_estado": "Visualizar o estado de outros agentes",
             "ver_aleatorio": "Visualizar agentes de forma aleatória"
           },
@@ -1510,10 +1510,10 @@
             "filtrar": "Permitir que os agentes filtrem os estados"
           },
           "aviso": {
-            "title": "Aviso de conversa",
+            "title": "Receção de conversas",
             "descuelgue_label": "Tipo de atendimento por defeito",
             "descuelgue_placeholder": "Selecionar",
-            "alerting_label": "Alerta do serviço",
+            "alerting_label": "Mostrar",
             "alerting_nombre": "Nome",
             "alerting_telefono": "Número de telefone"
           },

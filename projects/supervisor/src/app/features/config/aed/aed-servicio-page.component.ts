@@ -11,7 +11,6 @@ import {
 } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
-import { ButtonModule } from 'primeng/button';
 
 import { DirtyAware } from '@core/guards';
 import { TopBarSlotService } from '@core/layout/top-bar/top-bar-slot.service';
@@ -128,7 +127,6 @@ const NOTIF_EVENTOS: readonly (keyof NotifEventos)[] = ['inicio', 'fin', 'result
 @Component({
   selector: 'sc-aed-servicio-page',
   imports: [
-    ButtonModule,
     ButtonComponent,
     CheckboxComponent,
     ChipComponent,
