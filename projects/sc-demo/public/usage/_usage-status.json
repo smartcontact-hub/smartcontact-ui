@@ -1,6 +1,6 @@
 {
   "generated": "usage-status.mjs",
-  "capturedAt": "2026-06-18",
+  "capturedAt": "2026-06-21",
   "viewport": "1440x900",
   "theme": "light",
   "dsSelectors": 49,
@@ -188,13 +188,16 @@
         "config-aed-servicio.png"
       ],
       "ds": [
+        "sc-button",
         "sc-checkbox",
+        "sc-chip",
         "sc-command-palette",
+        "sc-dialog",
         "sc-divider",
-        "sc-inputgroup",
         "sc-inputnumber",
         "sc-inputtext",
         "sc-keyboard-shortcuts",
+        "sc-radiobutton",
         "sc-select",
         "sc-toggleswitch"
       ]
@@ -307,8 +310,14 @@
     "sc-bulk-edit-menu": [
       "admin-agentes"
     ],
+    "sc-button": [
+      "config-aed-servicio"
+    ],
     "sc-checkbox": [
       "config-aed-agentes",
+      "config-aed-servicio"
+    ],
+    "sc-chip": [
       "config-aed-servicio"
     ],
     "sc-color-dot-picker": [
@@ -338,6 +347,7 @@
       "admin-plantillas",
       "admin-usuarios",
       "admin-usuarios-crear",
+      "config-aed-servicio",
       "conversaciones",
       "conversaciones-categorias",
       "conversaciones-entidades"
@@ -355,9 +365,6 @@
     "sc-impact-preview-dialog": [
       "admin-agentes",
       "admin-grupos"
-    ],
-    "sc-inputgroup": [
-      "config-aed-servicio"
     ],
     "sc-inputnumber": [
       "config-aed-servicio"
@@ -381,6 +388,9 @@
     ],
     "sc-photo-upload": [
       "admin-usuarios-crear"
+    ],
+    "sc-radiobutton": [
+      "config-aed-servicio"
     ],
     "sc-search": [
       "admin-agendas",
