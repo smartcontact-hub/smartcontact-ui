@@ -14,7 +14,7 @@
       <!-- Botón "Plantillas" solo en modo Create -->
       <div class="category-form__templates-cta">
         <button type="button" class="category-form__templates-btn" (click)="openTemplatesDialog()">
-          <sc-icon [name]="layoutTemplateIcon" [size]="14" />
+          <sc-icon [name]="layoutTemplateIcon" size="inherit" />
           {{ 'memory.categories.form.templates_open' | translate }}
         </button>
         <span class="category-form__templates-hint">
@@ -94,7 +94,7 @@
             tabindex="0"
             [attr.aria-label]="'memory.categories.linking.tooltip' | translate"
           >
-            <sc-icon [name]="infoIcon" [size]="14" />
+            <sc-icon [name]="infoIcon" size="inherit" />
           </button>
         </div>
 
@@ -123,7 +123,7 @@
                 target="_blank"
                 rel="noopener"
               >
-                <sc-icon [name]="plusIcon" [size]="14" />
+                <sc-icon [name]="plusIcon" size="inherit" />
                 {{ 'memory.categories.linking.create_first_rule' | translate }}
               </a>
             </div>
@@ -165,7 +165,7 @@
             >
               <ng-template let-rule pTemplate="item">
                 <div class="category-form__link-option">
-                  <sc-icon [name]="fileTextIcon" [size]="14" />
+                  <sc-icon [name]="fileTextIcon" size="inherit" />
                   <div>
                     <span class="category-form__link-option-name">{{ rule.label }}</span>
                     <span class="category-form__link-option-hint">{{ rule.hint }}</span>
@@ -208,7 +208,7 @@
                   target="_blank"
                   rel="noopener"
                 >
-                  <sc-icon [name]="fileTextIcon" [size]="14" />
+                  <sc-icon [name]="fileTextIcon" size="inherit" />
                   <div>
                     <div class="category-form__link-item-head">
                       <span class="category-form__link-item-name">{{ rule.name }}</span>
@@ -239,7 +239,7 @@
                     'memory.categories.linking.unlink_aria' | translate: { name: rule.name }
                   "
                 >
-                  <sc-icon [name]="xIcon" [size]="14" />
+                  <sc-icon [name]="xIcon" size="inherit" />
                 </button>
               </li>
             }
@@ -260,7 +260,7 @@
             >
               <ng-template let-rule pTemplate="item">
                 <div class="category-form__link-option">
-                  <sc-icon [name]="fileTextIcon" [size]="14" />
+                  <sc-icon [name]="fileTextIcon" size="inherit" />
                   <div>
                     <span class="category-form__link-option-name">{{ rule.label }}</span>
                     <span class="category-form__link-option-hint">{{ rule.hint }}</span>

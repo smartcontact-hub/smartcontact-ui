@@ -3,7 +3,7 @@
      vía TopBarSlotService (ver topbarActions en el .ts). -->
 <ng-template #topbarActions>
   <p-button type="button" severity="primary" (onClick)="onNewCategory()">
-    <sc-icon [name]="plusIcon" [size]="14" />
+    <sc-icon [name]="plusIcon" size="inherit" />
     <span>{{ 'memory.categories.new_category' | translate }}</span>
   </p-button>
 </ng-template>
@@ -80,7 +80,7 @@
                   [attr.aria-label]="'memory.categories.cols.more' | translate"
                   (click)="kebabMenu.toggle($event)"
                 >
-                  <sc-icon [name]="kebabIcon" [size]="14" />
+                  <sc-icon [name]="kebabIcon" size="inherit" />
                 </button>
                 <p-menu #kebabMenu [model]="buildMenuItems(cat)" [popup]="true" appendTo="body" />
               </td>

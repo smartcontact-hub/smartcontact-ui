@@ -3,7 +3,7 @@
      vía TopBarSlotService (ver topbarActions en el .ts). -->
 <ng-template #topbarActions>
   <p-button type="button" severity="primary" (onClick)="onCreateClick()">
-    <sc-icon [name]="plusIcon" [size]="14" />
+    <sc-icon [name]="plusIcon" size="inherit" />
     <span>{{ 'groups.create_button' | translate }}</span>
   </p-button>
 </ng-template>
@@ -33,7 +33,7 @@
         [attr.aria-label]="'labels.export_button' | translate"
         [attr.title]="'labels.export_button' | translate"
       >
-        <sc-icon [name]="downloadIcon" [size]="14" />
+        <sc-icon [name]="downloadIcon" size="inherit" />
       </button>
     </div>
 
@@ -195,17 +195,17 @@
                       [attr.aria-expanded]="openMenuId() === group.id"
                       [attr.aria-label]="'labels.row_menu' | translate"
                     >
-                      <sc-icon [name]="moreIcon" [size]="15" />
+                      <sc-icon [name]="moreIcon" size="inherit" />
                     </button>
                     @if (openMenuId() === group.id) {
                       <div class="row-menu__panel" role="menu">
                         <button type="button" role="menuitem" (click)="onRowEdit(group)">
-                          <sc-icon [name]="editIcon" [size]="13" />
+                          <sc-icon [name]="editIcon" size="inherit" />
                           <span>{{ 'common.edit' | translate }}</span>
                         </button>
                         @if (selectedIds().size <= 1) {
                           <button type="button" role="menuitem" (click)="onRowDuplicate(group)">
-                            <sc-icon [name]="copyIcon" [size]="13" />
+                            <sc-icon [name]="copyIcon" size="inherit" />
                             <span>{{ 'common.duplicate' | translate }}</span>
                           </button>
                         }
@@ -216,7 +216,7 @@
                           role="menuitem"
                           (click)="onRowDelete(group)"
                         >
-                          <sc-icon [name]="trashIcon" [size]="13" />
+                          <sc-icon [name]="trashIcon" size="inherit" />
                           <span>{{ 'common.delete' | translate }}</span>
                         </button>
                       </div>
@@ -249,18 +249,18 @@
     role="menu"
   >
     <button type="button" role="menuitem" (click)="onContextEdit()">
-      <sc-icon [name]="editIcon" [size]="13" />
+      <sc-icon [name]="editIcon" size="inherit" />
       <span>{{ 'common.edit' | translate }}</span>
     </button>
     @if (selectedIds().size <= 1) {
       <button type="button" role="menuitem" (click)="onContextDuplicate()">
-        <sc-icon [name]="copyIcon" [size]="13" />
+        <sc-icon [name]="copyIcon" size="inherit" />
         <span>{{ 'common.duplicate' | translate }}</span>
       </button>
     }
     <div class="context-menu__separator" role="separator" aria-hidden="true"></div>
     <button type="button" class="is-danger" role="menuitem" (click)="onContextDelete()">
-      <sc-icon [name]="trashIcon" [size]="13" />
+      <sc-icon [name]="trashIcon" size="inherit" />
       <span>{{ 'common.delete' | translate }}</span>
     </button>
   </div>

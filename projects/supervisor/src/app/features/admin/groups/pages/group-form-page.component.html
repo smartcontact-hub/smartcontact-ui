@@ -55,7 +55,7 @@
            apartado del índice → fuera del scan primario (S59). -->
       @if (mode() === 'edit') {
         <button type="button" class="ipanel__delete" (click)="requestDelete()">
-          <sc-icon [name]="trashIcon" [size]="14" />
+          <sc-icon [name]="trashIcon" size="inherit" />
           <span>{{ 'common.delete' | translate }}</span>
         </button>
       }

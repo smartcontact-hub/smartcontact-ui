@@ -35,10 +35,10 @@
           (click)="setType(option)"
         >
           @if (option === 'chat') {
-            <sc-icon [name]="chatIcon" [size]="12" />
+            <sc-icon [name]="chatIcon" size="inherit" />
             <span>{{ 'templates.type.chat' | translate }}</span>
           } @else {
-            <sc-icon [name]="emailIcon" [size]="12" />
+            <sc-icon [name]="emailIcon" size="inherit" />
             <span>{{ 'templates.type.email' | translate }}</span>
           }
         </button>
@@ -67,7 +67,7 @@
   <div class="panel__error-slot">
     @if (error()) {
       <div class="panel__error">
-        <sc-icon [name]="alertIcon" [size]="10" />
+        <sc-icon [name]="alertIcon" size="inherit" />
         <span>{{ error() | translate }}</span>
       </div>
     }

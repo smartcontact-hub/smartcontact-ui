@@ -2,7 +2,7 @@
   <!-- Unified search + add bar (Gmail-compose pattern) -->
   <div class="actbl__head">
     <div class="actbl__query">
-      <sc-icon [name]="searchIcon" [size]="14" class="actbl__query-icon" />
+      <sc-icon [name]="searchIcon" size="inherit" class="actbl__query-icon" />
       <input
         type="text"
         class="actbl__query-input"
@@ -19,7 +19,7 @@
           (click)="clearQuery()"
           [attr.aria-label]="'labels.clear_search' | translate"
         >
-          <sc-icon [name]="closeIcon" [size]="13" />
+          <sc-icon [name]="closeIcon" size="inherit" />
         </button>
       }
     </div>
@@ -49,7 +49,7 @@
               'groups.form.assigned.add_suggest_aria' | translate: { name: cand.name }
             "
           >
-            <sc-icon [name]="plusIcon" [size]="12" />
+            <sc-icon [name]="plusIcon" size="inherit" />
             <span>{{ cand.name }}</span>
           </button>
         }
@@ -121,7 +121,7 @@
                     />
                     <sc-icon
                       [name]="hasChannel(row.link, ch) ? checkIcon : plusIcon"
-                      [size]="12"
+                      size="inherit"
                       class="actbl__chip-icon"
                     />
                     <span>{{ channelKeys[ch] | translate }}</span>
@@ -147,7 +147,7 @@
                   'groups.form.assigned.remove_aria' | translate: { name: row.agent.name }
                 "
               >
-                <sc-icon [name]="trashIcon" [size]="14" />
+                <sc-icon [name]="trashIcon" size="inherit" />
               </button>
             </td>
           </tr>

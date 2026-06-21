@@ -12,7 +12,7 @@
       </div>
     }
     <div class="gatbl__picker">
-      <sc-icon [name]="searchIcon" [size]="14" class="gatbl__picker-icon" />
+      <sc-icon [name]="searchIcon" size="inherit" class="gatbl__picker-icon" />
       <input
         type="text"
         class="gatbl__picker-input"
@@ -30,7 +30,7 @@
           (click)="closePicker()"
           [attr.aria-label]="'labels.clear_search' | translate"
         >
-          <sc-icon [name]="closeIcon" [size]="13" />
+          <sc-icon [name]="closeIcon" size="inherit" />
         </button>
       }
       @if (pickerOpen() && pickerCandidates().length > 0) {
@@ -98,7 +98,7 @@
                     />
                     <sc-icon
                       [name]="hasChannel(row.link, ch) ? checkIcon : plusIcon"
-                      [size]="12"
+                      size="inherit"
                       class="gatbl__chip-icon"
                     />
                     <span>{{ channelKeys[ch] | translate }}</span>
@@ -124,7 +124,7 @@
                   'agents.form.assigned.remove_aria' | translate: { name: row.group.name }
                 "
               >
-                <sc-icon [name]="trashIcon" [size]="14" />
+                <sc-icon [name]="trashIcon" size="inherit" />
               </button>
             </td>
           </tr>
