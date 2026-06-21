@@ -1,6 +1,6 @@
 {
   "generated": "usage-capture.spec.ts",
-  "capturedAt": "2026-06-18",
+  "capturedAt": "2026-06-21",
   "viewport": "1440x900",
   "theme": "light",
   "screens": [
@@ -287,16 +287,19 @@
       "tags": [
         "sc-aed-servicio-page",
         "sc-app-shell",
+        "sc-button",
         "sc-checkbox",
+        "sc-chip",
         "sc-command-palette",
         "sc-confirm-host",
+        "sc-dialog",
         "sc-divider",
         "sc-icon",
         "sc-illustrated-avatar",
-        "sc-inputgroup",
         "sc-inputnumber",
         "sc-inputtext",
         "sc-keyboard-shortcuts",
+        "sc-radiobutton",
         "sc-root",
         "sc-select",
         "sc-settings-shell",
