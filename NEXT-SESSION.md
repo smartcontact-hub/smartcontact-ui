@@ -1,67 +1,56 @@
 # NEXT SESSION — Smart Contact DS (hand-off)
 
-> Sello: **2026-06-22**. Sesión larga y productiva: **Bloque 1 (icono↔font-size, DD-24) EJECUTADO en el DS** ·
-> **Bloque 2 (Contact Center: topbar `sc-button` + copys Recepción)** · **fix gap footer sc-dialog (DD-25)** ·
-> **Bloque 4b (var-docs de color re-apuntadas en Figma)**. Commits en `main`: `9ba5415 · 3d7a7cf · ce9010c`
-> (+ este cierre). **Queda: Bloque 3 (iconos de la app) + Bloque 4a (Figma atar W/H) + revisar copys EN/FR/PT.**
-> SOBREESCRIBE en cada cierre.
+> Sello: **2026-06-22** (sesión 2). Tanda casi cerrada: **Bloques 1·2·3 + dialog-fix + var-docs Figma HECHOS**.
+> DD-24 (icono↔font-size) **EJECUTADA en el DS Y en la app** (153 companion del supervisor → `inherit`).
+> Commits en `main`: `9ba5415 · 3d7a7cf · ce9010c · 67a21c9 · f697fe7` (+ este cierre).
+> **Solo queda lo de Figma (Bloque 4a + sync de copys), que es GUIADO con Rafa.** SOBREESCRIBE en cada cierre.
 
 ---
 
 ## ▶️ EMPIEZA AQUÍ
-1. **Lee este fichero entero** (estado + primera acción + trampas).
-2. **PLAN DE LA TANDA:** `~/.claude/plans/retomamos-el-ds-de-whimsical-sparrow.md` (5 bloques; 1·2·4b hechos).
-3. **El *por qué* durable:** `docs/DECISIONS.md` (últimos = **DD-24 EJECUTADA** · **DD-25** gap footer · sync var-docs).
-4. **PRIMERA ACCIÓN — Bloque 3 (iconos de la app), ahora MECÁNICO:** migrar los companion `<sc-icon [size]="N">`
-   de supervisor/agent → `size="inherit"`. **Hallazgo clave que lo desbloquea:** el supervisor YA resetea
-   `button { font: inherit }` (`supervisor/styles/_reset.scss`), así que los iconos en botones heredan solo —
-   **no hace falta el plumbing por-botón de Bloque 1** (ese era para la lib/sc-demo, sin ese reset).
-   - **Scope:** `grep -rnE '<sc-icon[^>]*\[size\]="[0-9]' projects/supervisor/src` → **203** (0 en agent).
-     Distribución: ~188 son ≤16px (probables **companion** → migrar); 18-44px suelen ser **standalone** (page
-     headers, avatares, ilustraciones → **se quedan pin**). **NO sed a ciegas:** clasificar companion vs
-     standalone. **NO tocar `[size]="22"`** (fuera de rampa, fiel a Figma).
-   - **Criterio de cierre:** tras migrar, `grep '<sc-icon \[size\]="[0-9]'` debe dejar SOLO standalone.
-5. **Validar:** `npm run verify`. Si tocas pantallas del supervisor → regen manifiesto
-   (`node scripts/component-audit.mjs --write`); `usage:check` NO se desfasó esta vez (no hizo falta capturar).
-   QA visual con el preview del supervisor (`ng serve supervisor`, hash-routing `/#/...`).
-6. **Protocolo:** commits a main acaban en `Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>`;
+1. **Lee este fichero entero.**
+2. **PLAN DE LA TANDA:** `~/.claude/plans/retomamos-el-ds-de-whimsical-sparrow.md` (5 bloques; 1·2·3·4b hechos).
+3. **El *por qué* durable:** `docs/DECISIONS.md` (DD-24 EJECUTADA DS+app · DD-25 gap footer · sync var-docs).
+4. **PRIMERA ACCIÓN — Bloque 4a (Figma, GUIADO con Rafa).** El bridge `mcp__figma__*` está vivo (WS port **9224**).
+   Dos cosas, una variable a la vez + screenshot para confirmar + reversible:
+   - **(a) Atar W/H de iconos companion** a la var de font-size del texto (md=`app/font/size`; sm/lg=`{cmp}/sm·lg/font`).
+     Huecos conocidos: **button-default** (icono raw → `app/font/size`); **inputtext** (el TEXTO raw → font-size del
+     input; el icono ya cuelga vía iconfield).
+   - **(b) Sync de los 3 copys de General a los nodos de texto de Figma** (ventana.title, aviso.title→"Recepción
+     de conversaciones", alerting_label→"Mostrar"). Grep antes para no crear drift.
+5. **Validar:** `npm run verify`. Si tocas pantallas del supervisor → `node scripts/component-audit.mjs --write`.
+6. **Protocolo:** commits a main → `Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>`;
    `git add` **nunca** `.claude`; **nunca** `[skip ci]`; **nunca** borrar `design-tokens-sync`.
 
 ---
 
 ## 🎯 Estado de un vistazo
-- **Bloque 1 (DD-24 icono↔font-size): EJECUTADO en el DS** (`9ba5415`). `sc-icon` gana `size="inherit"`; 11
-  companion del DS migrados. Hallazgos: (a) icono **hermano** del texto → el host porta el font-size por
-  variante (sc-search md/sm/lg, command-palette head); (b) `<button>` resetea a ~13.3px → wrapper transparente
-  (`font-size: inherit`), hecho por-componente en el DS. **md no-leak** confirmado.
-- **Bloque 2 (Contact Center): HECHO** (`3d7a7cf`). Topbar `p-button`→`sc-button` en servicio/agentes/grupos
-  (migré también servicio para no dejar 2 de 3 hermanas). Copys General es/en/fr/pt: ventana.title +
-  aviso.title→"Recepción de conversaciones" + alerting_label→"Mostrar". **EN/FR/PT los traduje yo →
-  PENDIENTE revisión de Rafa.** Claves/código `alerting_*` siguen como internos a propósito.
-- **Fix gap footer sc-dialog (DD-25): HECHO** (`ce9010c`). El `[modal-actions]` proyectado ahora es la fila
-  flex con el gap → botones 0px→10.5px. Arregla los 13 dialogs de una vez.
-- **Bloque 4b (var-docs Figma): HECHO.** 33 vars de color (cyan/sky/slate) re-apuntadas (codeSyntax +
-  descripción) a los nombres del Kit. Dev Mode ya no miente. (Eran 33, no 530.)
-- **Bridge Figma `mcp__figma__*`: VIVO** (WebSocket port **9224**, fallback de 9223). Conectado a "Smart-Contact
-  Design System".
+- **Bloque 1 (DD-24, DS): HECHO** (`9ba5415`). `sc-icon` (DS) gana `inherit`; 11 companion del DS + QA.
+- **Bloque 2 (Contact Center): HECHO** (`3d7a7cf`). Topbar `sc-button` (servicio/agentes/grupos) + copys es/en/fr/pt.
+  **idiomas: cerrados** — las traducciones EN/FR/PT verificadas (ES es el de Rafa).
+- **Fix gap footer sc-dialog (DD-25): HECHO** (`ce9010c`). 0px→10.5px, 13 dialogs.
+- **Bloque 3 (DD-24, app): HECHO** (`f697fe7`). 153 companion del supervisor → `inherit`. El `<sc-icon>` del
+  supervisor es un **wrapper propio** (`shared/components/icon`) — le añadí `inherit` (lo cazó el AOT).
+  Standalone + controles deliberados (transport del reproductor, toolbar filters, back rule-builder) pinneados
+  a propósito. Validado AOT + verify + render en vivo.
+- **Bloque 4b (var-docs Figma): HECHO.** 33 vars de color re-apuntadas (codeSyntax + desc) a cyan/sky/slate.
+- **Bridge Figma `mcp__figma__*`: VIVO** (WS port 9224). Conectado a "Smart-Contact Design System".
 
 ## 🗺️ Lo que queda
-1. **Bloque 3** — barrer el RESTO de companion icons de supervisor/agent a `inherit` (ahora mecánico, ver
-   §EMPIEZA AQUÍ). Criterio de cierre por grep.
-2. **Bloque 4a** — Figma: atar W/H de iconos companion a la var de font-size (huecos: **button-default**
-   icono raw→`app/font/size`; **inputtext** texto raw→font-size del input). Guiado, una var a la vez + screenshot.
-3. **Revisar copys EN/FR/PT** de Bloque 2 (Rafa, nativo ES, validó solo el ES).
-4. **Bloque 5** — cierre (push + reseal + DDs) — hecho este cierre; repetir al acabar la próxima.
+1. **Bloque 4a (Figma, GUIADO):** atar W/H de iconos a font-size (button-default, inputtext) + sync de los 3
+   copys de General a Figma. Ver §EMPIEZA AQUÍ.
+2. **Bloque 5:** cierre (push + reseal + DDs) — hecho este cierre; repetir al acabar 4a.
 
 **Diferido:** Neutral gray/slate (equipo de Rafa) · W5 · Code Connect · Fase 4 AED.
 
 ## ⚠️ TRAMPAS / PROTECCIONES
-- **Bloque 3 NO es sed a ciegas:** clasificar companion (≤16px, junto a texto) vs standalone (headers/avatares/
-  ilustraciones, se quedan pin). `[size]="22"` NO se toca.
-- **Tocar pantallas del supervisor DESFASA el manifiesto:** `node scripts/component-audit.mjs --write` antes de verify.
+- **El supervisor tiene su PROPIO `<sc-icon>`** (`shared/components/icon`, no el del DS). Si tocas iconos de la
+  app, recuerda que es ese wrapper (ya soporta `inherit`).
+- **Figma `figma_execute` da "timeout" (7s) en batches** pero **suele aplicar igual** — confirma releyendo, no
+  reintentes a ciegas. Sube `timeout` (≤30000) o trocea.
+- **Tocar pantallas del supervisor** que cambie USO de componentes DS → `component-audit.mjs --write`. (Cambiar
+  solo `[size]` de un icono NO desfasa el manifiesto.)
 - **`preview:live` zombie ensucia el export:** `pkill -f preview-live.mjs` antes de `verify`.
-- **Figma `figma_execute` da "timeout" (7s) en batches** pero **suele aplicar igual** — confirma releyendo el
-  estado, no reintentes a ciegas. Sube `timeout` (hasta 30000) o trocea.
 - **Bridge Figma**: si cae, re-correr el plugin **Desktop Bridge**; doble-instancia 9223/9224 → usa el vivo.
 - **NUNCA `[skip ci]`** · **NUNCA borrar `design-tokens-sync`** · **`git add` NUNCA `.claude`**.
 
@@ -69,6 +58,6 @@
 Mega-dumb, sin ai slop, conciso: qué se hizo, por qué, conclusiones, pendiente, y lo que NO se hizo a drede.
 
 ## Índice — dónde mirar
-- **Plan de la tanda** → `~/.claude/plans/retomamos-el-ds-de-whimsical-sparrow.md` · **Decisiones** → `docs/DECISIONS.md` (DD-25).
+- **Plan** → `~/.claude/plans/retomamos-el-ds-de-whimsical-sparrow.md` · **Decisiones** → `docs/DECISIONS.md`.
 - **Reglas/trampas** → `AGENTS.md` · **Tokens/loop** → `docs/guia-tokens.md` · **Customs** → `docs/customs-catalog.md`.
 - **Inventario** → `docs/inventory.md` · **Galería de uso** → sc-demo `/uso` · **Mapa de docs** → `docs/DOCS-INDEX.md`.

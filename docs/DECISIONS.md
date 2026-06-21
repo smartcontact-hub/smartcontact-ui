@@ -1121,9 +1121,15 @@ en el DS se hizo por-componente. En las **apps** el reset global ya existe
 (`supervisor/styles/_reset.scss` → `input, button, textarea, select { font: inherit }`), así que el barrido de
 la app (Bloque 3) NO necesita plumbing por-botón — es mecánico. **md no-leak** confirmado: `.p-button`/
 `.p-inputtext` a md ya llevan `--sc-font-size-200` (14), no se fuga al 1rem de PrimeNG.
-**Pendiente**: Bloque 3 (resto de companion de supervisor/agent — 203 `<sc-icon [size]>` pinneados, ~188 son
-≤16px ⇒ probables companion; clasificar companion vs standalone + QA) + Figma atar W/H (button-default,
-inputtext).
+**Bloque 3 (app) — EJECUTADO (2026-06-22)**: 153 companion del supervisor pasados a `size="inherit"`. Hallazgo:
+el `<sc-icon>` del supervisor es un **wrapper propio** (`shared/components/icon`, `size: number`), NO el
+`ScIconComponent` del DS — lo cazó el build AOT; le añadí soporte `inherit` (`1em`, opsz al default, espejo
+del DS). **Standalone pinneados a propósito**: page-headings, empty-states (20/28), avatares, focal del
+player-state (24), chips de tamaño fijo, `[size]="22"`. **Controles deliberados revertidos** (no riman con
+texto): transport del reproductor (back10/play/fwd10), toolbar de conversation-filters, back del rule-builder.
+Validado: AOT + verify + render en vivo (space_dashboard→16, arrow_outward→12).
+**Pendiente**: Figma 4a (atar W/H de iconos companion a la var de font-size: huecos button-default, inputtext)
++ sync de los 3 copys de General (Recepción/Mostrar) a los nodos de texto de Figma.
 
 ---
 
