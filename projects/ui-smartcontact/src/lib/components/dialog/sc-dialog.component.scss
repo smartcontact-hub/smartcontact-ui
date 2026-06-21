@@ -107,13 +107,25 @@
 
   &__foot {
     /* Figma `dialog/footer/padding`: 17.5 lados/abajo, top:0 (content
-     * ya pone 17.5 abajo). `dialog/footer/gap: 7` entre botones. */
+     * ya pone 17.5 abajo). */
     flex: 0 0 auto;
     display: flex;
     justify-content: flex-end;
-    gap: var(--sc-dialog-footer-gap);
     padding: 0 var(--sc-dialog-padding) var(--sc-dialog-padding);
     border-top: 0;
+
+    /* Los consumidores proyectan `<div modal-actions>` como hijo ÚNICO del
+     * footer (13 consumidores, botonera a la derecha). El `gap` puesto en el
+     * footer solo separaba ese wrapper → los botones quedaban pegados (0px,
+     * "apelotonados"). Hacemos flex el wrapper PROYECTADO para que
+     * `dialog/footer/gap` (10.5px) llegue de verdad a los botones.
+     * ::ng-deep: es contenido proyectado bajo encapsulation Emulated. */
+    ::ng-deep [modal-actions] {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: var(--sc-dialog-footer-gap);
+    }
   }
 
   /* Bodyless modals (confirm-host etc.) have no body slot. Sin border-bottom
