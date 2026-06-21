@@ -1089,6 +1089,31 @@ Figma a `--sc-color-cyan-*` etc.). Es el **PRIMER gran bloque** (desbloquea var-
 Planificado en `NEXT-SESSION.md` §GRANDES BLOQUES; NO ejecutado aún (se planifica fresco). Conceptualmente
 simple pero amplio → find-replace con frontera (`--sc-color-gray-` exacto; `gray` es palabra común).
 
+**EJECUTADA 2026-06-19** (commits `89be2be` código + `4da83a6` docs): rename completo (73 ficheros, valores ya idénticos al Kit → cambio nominal), `palette-map`→identidad, alias `--sc-spacing-*` blindado 1:1, var-docs de Figma PENDIENTES de re-apuntar (necesita el bridge).
+
 ---
 
-Última actualización: 2026-06-19 (DD-22 sesión Fase 2.2/3 + auditoría/var-docs · DD-23 paridad de nombres planificada).
+## DD-24 · 2026-06-19 — Regla icono↔font-size: los iconos *companion* siguen el font-size
+
+**Contexto**: Estudiando el Kit (button, inputtext, iconfield) Rafa detectó incoherencia en cómo se
+dimensionan los iconos. Hallazgo: en PrimeOne/el Kit un icono junto a texto es un **glifo de fuente** →
+su tamaño ES el `font-size`. En código un icono-fuente hereda el font-size por cascada CSS; en Figma hay
+que atar la W/H del icono a la misma variable de font-size que el texto (no hay cascada). `IconField` solo
+posiciona y colorea (token oficial = solo `iconfield.icon.color`); **NO dimensiona**.
+
+**Decisión (Rafa)**: un icono **companion** (junto a texto, dentro de un control: button/input/search/
+chip/tag/select/menu…) **sigue el font-size de su componente** — `inherit`/`1em` en código; W/H atada a
+la var de font-size en Figma (md=`app/font/size`; sm/lg=`{cmp}/sm·lg/font`). `--sc-icon-size-*` (DD-13)
+queda **solo para iconos sueltos/decorativos** (ilustraciones, headers, logos), que conservan su tamaño.
+Aplicación **GLOBAL** (todos los companion) pero ejecución por pantalla con QA visual (no sed a ciegas).
+
+**Razón**: hace que icono y texto **rimen por fuente** (escalan juntos en sm/lg), no por casualidad de
+valor. Mismo principio que la paridad: una sola fuente de verdad — aquí, el font-size del componente.
+
+**Consecuencia / pendiente**: `sc-icon` gana `size="inherit"`; barrer los companion (DS + apps) a heredar;
+confirmar que el md no se fuga al `1rem` de PrimeNG; en Figma atar W/H (huecos: button-default, inputtext).
+Planificado en `~/.claude/plans/retomamos-el-ds-de-whimsical-sparrow.md`; NO ejecutado aún.
+
+---
+
+Última actualización: 2026-06-19 (DD-23 paridad **EJECUTADA** + General Contact Center [chips-modal · radios DS · line-heights] · DD-24 regla icono↔font-size planificada).
