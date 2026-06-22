@@ -212,6 +212,19 @@
   /* @sc-gen:palette — bloque GENERADO desde kit-export-dtcg.json. Familias de color
    * que la capa curada NO cubre, importadas según se REFERENCIAN (zinc base +
    * cualquier familia que un semántico use — p.ej. primary→yellow). NO editar a mano. */
+  /* lime — 1:1 export aura/primitive.lime */
+  --sc-color-lime-50: #f7fee7;
+  --sc-color-lime-100: #ecfccb;
+  --sc-color-lime-200: #d9f99d;
+  --sc-color-lime-300: #bef264;
+  --sc-color-lime-400: #a3e635;
+  --sc-color-lime-500: #84cc16;
+  --sc-color-lime-600: #65a30d;
+  --sc-color-lime-700: #4d7c0f;
+  --sc-color-lime-800: #3f6212;
+  --sc-color-lime-900: #365314;
+  --sc-color-lime-950: #1a2e05;
+
   /* yellow — 1:1 export aura/primitive.yellow */
   --sc-color-yellow-50: #fefce8;
   --sc-color-yellow-100: #fef9c3;

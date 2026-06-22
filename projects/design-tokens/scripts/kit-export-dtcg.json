@@ -6303,20 +6303,20 @@
       "font": {
         "size": {
           "$type": "number",
-          "$value": "{typography.font.size.200}"
+          "$value": "{typography.font.size.14}"
         }
       },
       "lg": {
         "line": {
           "height": {
             "$type": "number",
-            "$value": "{typography.line.height.300}"
+            "$value": "{typography.line.height.24}"
           }
         },
         "font": {
           "size": {
             "$type": "number",
-            "$value": "{typography.font.size.300}"
+            "$value": "{typography.font.size.16}"
           }
         }
       },
@@ -6324,20 +6324,20 @@
         "line": {
           "height": {
             "$type": "number",
-            "$value": "{typography.line.height.100}"
+            "$value": "{typography.line.height.18}"
           }
         },
         "font": {
           "size": {
             "$type": "number",
-            "$value": "{typography.font.size.100}"
+            "$value": "{typography.font.size.12}"
           }
         }
       }
     }
   },
   "aura/custom": {
-    "bulk transcription modal": {
+    "bulkTranscriptionModal": {
       "border": {
         "color": {
           "$type": "color",
@@ -6376,11 +6376,7 @@
         "font": {
           "size": {
             "$type": "number",
-            "$value": "{typography.font.size.400}"
-          },
-          "weight": {
-            "$type": "number",
-            "$value": 600
+            "$value": "{scale.1-25}"
           }
         }
       },
@@ -6440,35 +6436,35 @@
     "typography": {
       "font": {
         "size": {
-          "100": {
+          "12": {
             "$type": "number",
             "$value": 12
           },
-          "200": {
+          "14": {
             "$type": "number",
             "$value": 14
           },
-          "300": {
+          "16": {
             "$type": "number",
             "$value": 16
           },
-          "400": {
+          "18": {
             "$type": "number",
             "$value": 18
           },
-          "450": {
+          "20": {
             "$type": "number",
             "$value": 20
           },
-          "500": {
+          "24": {
             "$type": "number",
             "$value": 24
           },
-          "650": {
+          "32": {
             "$type": "number",
             "$value": 32
           },
-          "800": {
+          "48": {
             "$type": "number",
             "$value": 48
           }
@@ -6476,31 +6472,31 @@
       },
       "line": {
         "height": {
-          "100": {
+          "18": {
             "$type": "number",
             "$value": 18
           },
-          "200": {
+          "20": {
             "$type": "number",
             "$value": 20
           },
-          "300": {
+          "24": {
             "$type": "number",
             "$value": 24
           },
-          "450": {
+          "28": {
             "$type": "number",
             "$value": 28
           },
-          "500": {
+          "36": {
             "$type": "number",
             "$value": 36
           },
-          "650": {
+          "40": {
             "$type": "number",
             "$value": 40
           },
-          "800": {
+          "58": {
             "$type": "number",
             "$value": 58
           }
@@ -6533,11 +6529,11 @@
       "ring": {
         "width": {
           "$type": "number",
-          "$value": 2
+          "$value": 1
         },
         "color": {
           "$type": "color",
-          "$value": "{sky.500}"
+          "$value": "{primary.700}"
         },
         "offset": {
           "$type": "number",
@@ -6583,7 +6579,7 @@
           "font": {
             "size": {
               "$type": "number",
-              "$value": "{typography.font.size.100}"
+              "$value": "{scale.0-875}"
             }
           },
           "padding": {
@@ -6601,7 +6597,7 @@
           "font": {
             "size": {
               "$type": "number",
-              "$value": "{typography.font.size.300}"
+              "$value": "{scale.1-125}"
             }
           },
           "padding": {
@@ -6798,7 +6794,7 @@
         "font": {
           "size": {
             "$type": "number",
-            "$value": "{typography.font.size.450}"
+            "$value": "{scale.1-5}"
           }
         }
       }
@@ -6834,7 +6830,7 @@
       },
       "700": {
         "$type": "color",
-        "$value": "{blue.700}"
+        "$value": "{lime.400}"
       },
       "800": {
         "$type": "color",
@@ -7656,7 +7652,7 @@
         "font": {
           "size": {
             "$type": "number",
-            "$value": "{typography.font.size.100}"
+            "$value": "{form.field.sm.font.size}"
           }
         },
         "icon": {
@@ -7682,7 +7678,7 @@
         "font": {
           "size": {
             "$type": "number",
-            "$value": "{typography.font.size.300}"
+            "$value": "{form.field.lg.font.size}"
           }
         },
         "padding": {
@@ -7760,7 +7756,7 @@
         "font": {
           "size": {
             "$type": "number",
-            "$value": "{typography.font.size.400}"
+            "$value": "{scale.1-25}"
           },
           "weight": {
             "$type": "number",
@@ -8062,7 +8058,7 @@
         "font": {
           "size": {
             "$type": "number",
-            "$value": "{typography.font.size.100}"
+            "$value": "{form.field.sm.font.size}"
           }
         },
         "padding": {
@@ -8080,7 +8076,7 @@
         "font": {
           "size": {
             "$type": "number",
-            "$value": "{typography.font.size.300}"
+            "$value": "{form.field.lg.font.size}"
           }
         },
         "padding": {
@@ -9858,7 +9854,7 @@
         "font": {
           "size": {
             "$type": "number",
-            "$value": "{typography.font.size.400}"
+            "$value": "{scale.1-25}"
           },
           "weight": {
             "$type": "number",
@@ -10096,7 +10092,7 @@
           },
           "size": {
             "$type": "number",
-            "$value": "{typography.font.size.450}"
+            "$value": "{scale.1-5}"
           }
         }
       }
@@ -10474,7 +10470,7 @@
           },
           "size": {
             "$type": "number",
-            "$value": "{typography.font.size.100}"
+            "$value": "{scale.0-75}"
           }
         }
       },
@@ -10907,7 +10903,7 @@
         },
         "size": {
           "$type": "number",
-          "$value": "{typography.font.size.100}"
+          "$value": "{scale.0-75}"
         }
       },
       "focus": {
@@ -11278,7 +11274,7 @@
         "font": {
           "size": {
             "$type": "number",
-            "$value": "{typography.font.size.100}"
+            "$value": "{scale.0-875}"
           }
         },
         "padding": {
@@ -11306,7 +11302,7 @@
         "font": {
           "size": {
             "$type": "number",
-            "$value": "{typography.font.size.300}"
+            "$value": "{scale.1-125}"
           }
         }
       }
@@ -12252,7 +12248,7 @@
         "font": {
           "size": {
             "$type": "number",
-            "$value": "{typography.font.size.200}"
+            "$value": "{scale.1}"
           },
           "weight": {
             "$type": "number",
@@ -12263,7 +12259,7 @@
           "font": {
             "size": {
               "$type": "number",
-              "$value": "{typography.font.size.100}"
+              "$value": "{scale.0-875}"
             }
           }
         },
@@ -12271,7 +12267,7 @@
           "font": {
             "size": {
               "$type": "number",
-              "$value": "{typography.font.size.300}"
+              "$value": "{scale.1-125}"
             }
           }
         }
@@ -12690,7 +12686,7 @@
         "font": {
           "size": {
             "$type": "number",
-            "$value": "{typography.font.size.100}"
+            "$value": "{form.field.sm.font.size}"
           }
         }
       },
@@ -12708,7 +12704,7 @@
         "font": {
           "size": {
             "$type": "number",
-            "$value": "{typography.font.size.300}"
+            "$value": "{form.field.lg.font.size}"
           }
         }
       },
@@ -13398,7 +13394,7 @@
         "font": {
           "size": {
             "$type": "number",
-            "$value": "{typography.font.size.100}"
+            "$value": "{scale.0-75}"
           },
           "weight": {
             "$type": "number",
@@ -13926,7 +13922,7 @@
         "font": {
           "size": {
             "$type": "number",
-            "$value": "{typography.font.size.100}"
+            "$value": "{form.field.sm.font.size}"
           }
         },
         "padding": {
@@ -13944,7 +13940,7 @@
         "font": {
           "size": {
             "$type": "number",
-            "$value": "{typography.font.size.300}"
+            "$value": "{form.field.lg.font.size}"
           }
         },
         "padding": {
@@ -14275,7 +14271,7 @@
           "font": {
             "size": {
               "$type": "number",
-              "$value": "{typography.font.size.300}"
+              "$value": "{scale.1-143}"
             },
             "weight": {
               "$type": "number",
@@ -14531,7 +14527,7 @@
       "font": {
         "size": {
           "$type": "number",
-          "$value": "{typography.font.size.100}"
+          "$value": "{scale.0-875}"
         },
         "weight": {
           "$type": "number",
@@ -14744,7 +14740,7 @@
         "font": {
           "size": {
             "$type": "number",
-            "$value": "{typography.font.size.100}"
+            "$value": "{form.field.sm.font.size}"
           }
         }
       },
@@ -14762,7 +14758,7 @@
         "font": {
           "size": {
             "$type": "number",
-            "$value": "{typography.font.size.300}"
+            "$value": "{form.field.lg.font.size}"
           }
         }
       }
@@ -15036,7 +15032,7 @@
           },
           "size": {
             "$type": "number",
-            "$value": "{typography.font.size.200}"
+            "$value": "{scale.1}"
           }
         }
       },
@@ -15048,7 +15044,7 @@
           },
           "size": {
             "$type": "number",
-            "$value": "{typography.font.size.100}"
+            "$value": "{scale.0-875}"
           }
         }
       },
@@ -15222,7 +15218,7 @@
         "font": {
           "size": {
             "$type": "number",
-            "$value": "{typography.font.size.100}"
+            "$value": "{form.field.sm.font.size}"
           }
         },
         "zadding": {
@@ -15244,7 +15240,7 @@
         "font": {
           "size": {
             "$type": "number",
-            "$value": "{typography.font.size.300}"
+            "$value": "{form.field.lg.font.size}"
           }
         },
         "zadding": {
@@ -15592,7 +15588,7 @@
         "font": {
           "size": {
             "$type": "number",
-            "$value": "{typography.font.size.100}"
+            "$value": "{form.field.sm.font.size}"
           }
         },
         "padding": {
@@ -15610,7 +15606,7 @@
         "font": {
           "size": {
             "$type": "number",
-            "$value": "{typography.font.size.300}"
+            "$value": "{form.field.lg.font.size}"
           }
         },
         "padding": {
