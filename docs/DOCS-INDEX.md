@@ -22,7 +22,7 @@
 | **Brand divergences** — dónde SC se aparta del Figma a propósito (incl. las 3 de color) | [`docs/customs-catalog.md`](./customs-catalog.md) | Claude (antes de añadir override/token) + diseño |
 | Reglas de **blindaje / migration-safe** (minimizar customización de PrimeNG) | [`docs/migration-safety.md`](./migration-safety.md) | Claude (antes de tocar HTML/lógica PrimeNG) |
 | **Tokens + puente Figma** (para diseño) · **Figma change-log** · workflow Migration Assistant | [`docs/guia-tokens.md`](./guia-tokens.md) + técnico: [`projects/design-tokens/README.md`](../projects/design-tokens/README.md) | diseño + Claude |
-| **Onboarding / presentación para diseño** (puerta de entrada: flujo operativo, links, plugin, por qué del aparato) — resumen narrativo; el detalle vive en `guia-tokens.md` | [`docs/ppt-proyecto.md`](./ppt-proyecto.md) | diseño (arranque) + claude design |
+| **Colaboración + arranque de diseño** (puerta de entrada práctica: flujo día a día, links, setup del token, docks, git pull, qué tocar/evitar) — el detalle a fondo vive en `guia-tokens.md` | [`docs/colaboracion.md`](./colaboracion.md) | diseño (Marta) + equipo |
 | Cómo **consume una app externa** el DS · **el modelo** (un DS, dos profundidades: "instalar y ya el tema" vs `--sc-*` — combinable + migration-safe) · **propuesta de distribución** (GitHub Packages) | [`docs/consumer-onboarding.md`](./consumer-onboarding.md) | apps consumidoras + los 2 equipos front + Claude |
 | **Perfil público de la org** — borrador para el repo `smartcontact-hub/.github` → `profile/README.md` (lo crea Rafa en GitHub) | [`docs/org-profile.md`](./org-profile.md) | Rafa + Claude |
 | **Convergencia** DS ↔ catálogo dev (unión, naming DD-12, plan de port) | [`docs/convergence-manifesto.md`](./convergence-manifesto.md) | Claude (al portar) |
@@ -56,9 +56,9 @@ Los pares que más se confunden — cada uno tiene un trabajo distinto:
 - **`docs/guia-tokens.md` (puente Figma, lenguaje de diseño)** ≠ **`projects/design-tokens/README.md`
   (lo mismo, lenguaje técnico)**. Misma info, dos audiencias: el README es el canónico técnico; la guía
   es la traducción para diseño.
-- **`docs/ppt-proyecto.md` (presentación/onboarding, puerta de entrada)** ≠ **`docs/guia-tokens.md`
-  (manual a fondo)**. La presentación pone a una diseñadora a operar desde cero (resumen narrativo);
-  la guía es la enciclopedia. La presentación **apunta** a la guía, no la copia.
+- **`docs/colaboracion.md` (arranque + colaboración de diseño, puerta de entrada práctica)** ≠ **`docs/guia-tokens.md`
+  (manual a fondo)**. `colaboracion.md` pone a la diseñadora a operar y a ir alineada con el equipo (lean,
+  práctico, flujo día a día); la guía es la enciclopedia. `colaboracion.md` **apunta** a la guía, no la copia.
 - **`NEXT-SESSION.md` (estado volátil, se sobreescribe)** ≠ todo lo demás (durable, se acumula).
 
 ---
@@ -76,7 +76,8 @@ Los pares que más se confunden — cada uno tiene un trabajo distinto:
 
 ---
 
-Última actualización: 2026-06-16 — W2: READMEs de paquete (`components`) y de las apps (`sc-demo`, `supervisor`) + badges + metadata npm (description/keywords/license/author) + `org-profile.md` (borrador del perfil de la org). Los README de `projects/**` no los escanea docs:guard (solo `docs/` + raíz).
+Última actualización: 2026-06-23 — `ppt-proyecto.md` consolidado y renombrado a `colaboracion.md` (lean + práctico + flujo día a día + colaboración git + nota de caducidad del token); borrado el viejo.
+2026-06-16 — W2: READMEs de paquete (`components`) y de las apps (`sc-demo`, `supervisor`) + badges + metadata npm (description/keywords/license/author) + `org-profile.md` (borrador del perfil de la org). Los README de `projects/**` no los escanea docs:guard (solo `docs/` + raíz).
 2026-06-16 — añadido `ppt-proyecto.md` (presentación de onboarding para diseño, W0).
 2026-06-14 — creado el índice (Lote L2 del maratón "sistema operativo"). Mapeados los docs del repo;
 fronteras `DECISIONS.md` ↔ `DECISIONS-LOG(-B)` ↔ `customs-catalog` ↔ `migration-safety` explícitas.
