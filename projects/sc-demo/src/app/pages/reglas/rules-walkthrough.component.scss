@@ -1,0 +1,225 @@
+:host {
+  display: block;
+}
+
+h1 {
+  font-size: var(--sc-font-size-h1);
+  line-height: var(--sc-line-height-h1);
+  font-weight: var(--sc-font-weight-h1);
+  margin-bottom: var(--sc-spacing-0-5);
+}
+
+.lead {
+  font-size: var(--sc-font-size-300);
+  line-height: var(--sc-line-height-300);
+  color: var(--sc-text-secondary);
+  max-width: 46rem;
+}
+
+/* --- RAFA: huecos de dominio --- */
+.rafa-tag {
+  display: inline-block;
+  font-size: var(--sc-font-size-50);
+  line-height: var(--sc-line-height-50);
+  font-weight: var(--sc-font-weight-bold);
+  text-transform: uppercase;
+  color: var(--sc-text-on-warning);
+  background: var(--sc-bg-warning);
+  border-radius: var(--sc-radius-sm);
+  padding: var(--sc-spacing-0-125) var(--sc-spacing-0-375);
+  vertical-align: middle;
+}
+
+.rafa-legend {
+  font-size: var(--sc-font-size-100);
+  line-height: var(--sc-line-height-100);
+  color: var(--sc-text-secondary);
+}
+
+.rafa-block {
+  background: var(--sc-bg-warning-subtle);
+  border: 1px solid var(--sc-border-warning-subtle);
+  border-radius: var(--sc-radius-md);
+  padding: var(--sc-spacing-0-875) var(--sc-spacing-1);
+  color: var(--sc-text-primary);
+
+  .rafa-tag {
+    margin-right: var(--sc-spacing-0-5);
+  }
+}
+
+/* --- Pasos --- */
+.step {
+  margin-top: var(--sc-spacing-3);
+  padding-top: var(--sc-spacing-2);
+  border-top: 1px solid var(--sc-border-subtle);
+
+  h2 {
+    display: flex;
+    align-items: center;
+    gap: var(--sc-spacing-0-75);
+    font-size: var(--sc-font-size-h3);
+    line-height: var(--sc-line-height-h3);
+    font-weight: var(--sc-font-weight-h3);
+    margin: 0 0 var(--sc-spacing-0-75);
+  }
+
+  h3 {
+    font-size: var(--sc-font-size-subtitle-1);
+    line-height: var(--sc-line-height-subtitle-1);
+    font-weight: var(--sc-font-weight-semibold);
+    margin: var(--sc-spacing-1-5) 0 var(--sc-spacing-0-5);
+  }
+
+  p {
+    line-height: var(--sc-line-height-body-2);
+  }
+
+  ul,
+  ol {
+    padding-left: var(--sc-spacing-1-5);
+  }
+
+  li {
+    margin-block: var(--sc-spacing-0-375);
+    line-height: var(--sc-line-height-body-2);
+  }
+}
+
+.step__n {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--sc-spacing-2);
+  height: var(--sc-spacing-2);
+  font-size: var(--sc-font-size-100);
+  font-weight: var(--sc-font-weight-bold);
+  color: var(--sc-text-on-primary);
+  background: var(--sc-bg-primary);
+  border-radius: var(--sc-radius-full);
+}
+
+/* El paso núcleo (complejidad) se destaca como caja */
+.step--core {
+  background: var(--sc-bg-info-subtle);
+  border: 1px solid var(--sc-border-info-subtle);
+  border-radius: var(--sc-radius-lg);
+  padding: var(--sc-spacing-1-5);
+}
+
+.aside {
+  color: var(--sc-text-subtle);
+  border-left: 1px solid var(--sc-border-default);
+  padding-left: var(--sc-spacing-1);
+}
+
+/* --- Snippets de código --- */
+.snippet {
+  margin: var(--sc-spacing-1) 0;
+
+  pre {
+    margin: 0;
+    overflow-x: auto;
+    background: var(--sc-bg-subtle);
+    border: 1px solid var(--sc-border-default);
+    border-radius: var(--sc-radius-md);
+    padding: var(--sc-spacing-1);
+  }
+
+  code {
+    font-family: var(--sc-font-family-mono);
+    font-size: var(--sc-font-size-100);
+    line-height: var(--sc-line-height-200);
+    color: var(--sc-text-primary);
+    white-space: pre;
+  }
+
+  figcaption {
+    margin-top: var(--sc-spacing-0-375);
+    font-family: var(--sc-font-family-mono);
+    font-size: var(--sc-font-size-50);
+    color: var(--sc-text-subtle);
+  }
+}
+
+/* Código inline en prosa */
+p code,
+li code {
+  font-family: var(--sc-font-family-mono);
+  font-size: var(--sc-font-size-100);
+  background: var(--sc-bg-subtle);
+  border-radius: var(--sc-radius-xs);
+  padding: 0 var(--sc-spacing-0-25);
+}
+
+/* --- Capturas --- */
+.shot {
+  margin: var(--sc-spacing-1) 0;
+
+  img {
+    display: block;
+    width: 100%;
+    height: auto;
+    border: 1px solid var(--sc-border-default);
+    border-radius: var(--sc-radius-md);
+  }
+
+  figcaption {
+    margin-top: var(--sc-spacing-0-5);
+    font-size: var(--sc-font-size-100);
+    line-height: var(--sc-line-height-100);
+    color: var(--sc-text-secondary);
+  }
+}
+
+/* Pregunta abierta */
+.open-q {
+  background: var(--sc-bg-info-subtle);
+  border: 1px solid var(--sc-border-info);
+  border-radius: var(--sc-radius-md);
+  padding: var(--sc-spacing-0-75) var(--sc-spacing-1);
+  color: var(--sc-text-primary);
+}
+
+/* --- Concerns --- */
+.concerns {
+  list-style: none;
+  padding: 0;
+  margin: var(--sc-spacing-1) 0 0;
+  display: grid;
+  gap: var(--sc-spacing-0-75);
+
+  li {
+    background: var(--sc-bg-surface);
+    border: 1px solid var(--sc-border-default);
+    border-radius: var(--sc-radius-md);
+    padding: var(--sc-spacing-1);
+  }
+
+  &__item--rafa {
+    background: var(--sc-bg-warning-subtle);
+    border-color: var(--sc-border-warning-subtle);
+  }
+
+  &__q {
+    display: block;
+    font-weight: var(--sc-font-weight-semibold);
+    margin-bottom: var(--sc-spacing-0-25);
+
+    .rafa-tag {
+      margin-left: var(--sc-spacing-0-5);
+    }
+  }
+
+  &__detail {
+    display: block;
+    color: var(--sc-text-secondary);
+    font-size: var(--sc-font-size-100);
+    line-height: var(--sc-line-height-body-1);
+  }
+}
+
+.step--close p {
+  color: var(--sc-text-secondary);
+}

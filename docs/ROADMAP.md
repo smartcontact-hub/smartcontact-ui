@@ -45,6 +45,15 @@
 - **Disparador**: charla de alineación con el equipo. PPT vía Claude Design — master prompt redactado
   (why/what/how/when/who + concerns), con huecos `[RAFA]` de dominio: qué dice la ley SEC, diseño de
   transcripciones múltiples, quién la usa y timeline.
+- **HECHO (2026-06-23) — recorrido vivo en sc-demo `/reglas`** (decisión B sobre la PPT estática): página
+  paso a paso en `projects/sc-demo/src/app/pages/reglas/` (qué es regla vs bulk · el pivote · anatomía del
+  modelo · el builder · la lista · **prioridad/conflictos = la complejidad** · transcripción en detalle ·
+  concerns). Los snippets son **código real** (`rules.store.ts`: `scopeOverlaps` + `conflictsByRuleId` O(n²);
+  `rules-page.ts`: quién gana por prioridad) y las capturas son del **Supervisor real** (`public/usage/`,
+  regeneradas por `npm run usage:capture`, no se desfasan). Verificado: AOT `build:demo` + typecheck + lint +
+  `audit:theme-scale`. La PPT-prompt queda como backup. Los 3 huecos `[RAFA]` resueltos (2026-06-23): la ley
+  queda fuera de alcance; transcripciones múltiples = varios tramos por conversación, cada uno transcribible
+  por separado; quién = los supervisores. **Pendiente**: dar la charla y cerrar los concerns con el equipo.
 - **Concerns a decidir en la charla**: migración de las reglas de grabación obsoletas (¿auto-desactivar?,
   ¿datos ya grabados?) · resolución de conflictos/prioridad cuando varias reglas chocan · coste de
   transcripción (compute/IA) y límites · gobierno de transcripciones múltiples (qué regla gobierna cuál,

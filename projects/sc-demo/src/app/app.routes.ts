@@ -31,6 +31,13 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./pages/uso/usage-gallery.component').then((m) => m.UsageGalleryComponent),
   },
+  {
+    path: 'reglas',
+    loadComponent: () =>
+      import('./pages/reglas/rules-walkthrough.component').then(
+        (m) => m.RulesWalkthroughComponent,
+      ),
+  },
   ...SC_DEMO_COMPONENT_PAGES.map((page) => ({
     path: `components/${page.path}`,
     loadComponent: page.load as never,

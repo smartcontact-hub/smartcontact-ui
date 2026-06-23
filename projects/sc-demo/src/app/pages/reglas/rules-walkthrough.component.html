@@ -1,0 +1,185 @@
+<h1>Sistema de reglas</h1>
+<p class="lead">
+  Recorrido del estado actual del sistema de reglas del Supervisor, paso a paso y con el
+  porqué de cada parte. Foco en el pivote a <strong>transcripción</strong>. Las capturas son del
+  Supervisor real y los bloques de código son del repo (ruta indicada en cada uno).
+</p>
+
+<!-- 1 -->
+<section class="step">
+  <h2><span class="step__n">1</span> Qué es una regla, y qué no</h2>
+  <p>
+    Una regla automatiza qué pasa con las conversaciones que <strong>entren a partir de ahora</strong>:
+    si se graban, se transcriben, o se clasifican con IA. No toca lo que ya existe.
+  </p>
+  <p class="aside">
+    Tocar lo que ya existe es otra cosa distinta: las acciones <em>bulk</em> (transcribir ahora una
+    selección). Regla = a futuro. Bulk = ahora. Es la confusión más fácil de cometer.
+  </p>
+</section>
+
+<!-- 2 -->
+<section class="step">
+  <h2><span class="step__n">2</span> El pivote: de grabación a transcripción</h2>
+  <p>
+    Hasta ahora el caso fuerte eran las reglas de <strong>grabación</strong>. Eso cambia.
+  </p>
+  <p>
+    El motivo es un cambio en la normativa que deja sin sentido las reglas de grabación. El detalle legal
+    queda fuera de esta charla; aquí importa la consecuencia: el peso se mueve a transcripción.
+  </p>
+  <p>
+    El foco pasa a <strong>transcripción</strong> y <strong>clasificación</strong>, justo cuando entra en
+    desarrollo el sistema de <strong>transcripciones múltiples</strong>. Por eso esta sección existe ahora.
+  </p>
+</section>
+
+<!-- 3 -->
+<section class="step">
+  <h2><span class="step__n">3</span> Anatomía de una regla</h2>
+  <p>El modelo real. Tres bloques: qué hace, a qué aplica, y con qué prioridad.</p>
+  <figure class="snippet">
+    <pre><code>{{ model.code }}</code></pre>
+    <figcaption>{{ model.src }}</figcaption>
+  </figure>
+  <ul>
+    <li><strong>Tipo</strong>: grabación, transcripción o clasificación.</li>
+    <li>
+      <strong>Alcance</strong>: servicios, grupos y agentes. Las tres dimensiones se cruzan con
+      <strong>AND</strong>. Una dimensión vacía significa <em>cualquiera</em>. Esta regla, sencilla de
+      leer, es el origen de casi toda la complejidad (paso 6).
+    </li>
+    <li><strong>Criterios</strong>: dirección, horario, duración, quién atiende, análisis IA.</li>
+    <li><strong>Prioridad</strong>: un número. El más bajo gana cuando dos reglas se pisan.</li>
+  </ul>
+</section>
+
+<!-- 4 -->
+<section class="step">
+  <h2><span class="step__n">4</span> Cómo se crea (el builder)</h2>
+  <p>
+    El formulario va por bloques: información básica, alcance, y los criterios del tipo. El subtítulo
+    de la propia pantalla lo deja claro: <em>define cómo procesar las conversaciones que entren a partir
+    de ahora</em>.
+  </p>
+  <figure class="shot">
+    <img
+      src="/usage/conversaciones-reglas-nueva.png"
+      alt="Pantalla de creación de una regla en el Supervisor: información básica y alcance"
+      loading="lazy"
+    />
+    <figcaption>Supervisor real · crear regla. Fíjate en la <strong>«Y»</strong> entre Servicios y Grupos: es el AND del alcance.</figcaption>
+  </figure>
+</section>
+
+<!-- 5 -->
+<section class="step">
+  <h2><span class="step__n">5</span> La lista y el orden</h2>
+  <p>
+    Las reglas activas se muestran <strong>en orden de prioridad</strong>. Arrastrarlas reordena, y eso
+    reasigna las prioridades 1..N. Las pausadas y los borradores van aparte.
+  </p>
+  <figure class="shot">
+    <img
+      src="/usage/conversaciones-reglas.png"
+      alt="Lista de reglas del Supervisor con dos reglas marcadas EN CONFLICTO"
+      loading="lazy"
+    />
+    <figcaption>Supervisor real · lista de reglas. Mira la columna <strong>ESTADO</strong>: hay dos <strong>EN CONFLICTO</strong>.</figcaption>
+  </figure>
+</section>
+
+<!-- 6 -->
+<section class="step step--core">
+  <h2><span class="step__n">6</span> Dónde está la complejidad: prioridad y conflictos</h2>
+  <p>
+    La pregunta del millón: cuando varias reglas pueden aplicar a la misma conversación,
+    <strong>¿cuál manda?</strong> Aquí está la chicha.
+  </p>
+
+  <h3>Dos reglas chocan si son del mismo tipo y sus alcances se cruzan</h3>
+  <p>
+    Y «cruzarse» no es ser iguales: es tener intersección, con el comodín del vacío. Por eso
+    <code>Soporte Técnico / Soporte Nivel 1</code> choca con <code>Soporte Técnico / [Nivel 1, Nivel 2]</code>:
+    comparten Nivel 1. Eso es justo lo que se nos escapa cuando pensamos «mis reglas no se pisan».
+  </p>
+  <figure class="snippet">
+    <pre><code>{{ overlap.code }}</code></pre>
+    <figcaption>{{ overlap.src }}</figcaption>
+  </figure>
+
+  <h3>La detección es por pares, sobre las activas</h3>
+  <p>
+    Se comparan todas las reglas activas dos a dos (coste cuadrático). Si el tipo coincide y los alcances
+    se cruzan, quedan marcadas como en conflicto, en ambos sentidos.
+  </p>
+  <figure class="snippet">
+    <pre><code>{{ conflict.code }}</code></pre>
+    <figcaption>{{ conflict.src }}</figcaption>
+  </figure>
+
+  <h3>Gana la de prioridad más baja</h3>
+  <p>
+    El sistema <strong>no inventa una fusión</strong>. Detecta el choque, te avisa con el estado
+    <code>conflict</code>, y deja que ganes tú: arrastrando la regla que quieres arriba. La decisión es humana.
+  </p>
+  <figure class="snippet">
+    <pre><code>{{ winner.code }}</code></pre>
+    <figcaption>{{ winner.src }}</figcaption>
+  </figure>
+
+  <p class="open-q">
+    Pregunta abierta: con transcripciones múltiples, ¿basta con que «gane una», o necesitamos que varias
+    reglas apliquen a la vez (varias transcripciones de la misma conversación)?
+  </p>
+</section>
+
+<!-- 7 -->
+<section class="step">
+  <h2><span class="step__n">7</span> Transcripción en detalle</h2>
+  <p>
+    <strong>Qué son las transcripciones múltiples</strong>: una misma conversación (una llamada) puede tener
+    varios tramos de grabación, y cada tramo se transcribe por separado. Por eso una llamada con N tramos
+    cuenta como N audios a transcribir, y cada tramo lleva su propio estado de transcripción.
+  </p>
+  <ul>
+    <li>
+      <strong>La base ya está en el código</strong>: el reproductor multi-tramo y el estado de transcripción
+      por tramo (transcrito o sin transcribir) ya existen, y el bulk de transcripción ya cuenta los tramos.
+    </li>
+    <li>
+      <strong>Coste</strong>: el bulk de transcripción ya cuenta cuántos audios entran y cuántos admiten
+      análisis IA (un toggle aparte). El coste es real y crece con las múltiples.
+    </li>
+    <li>
+      <strong>Re-transcribir es destructivo</strong>: borra la transcripción y los análisis derivados. Por
+      eso tiene una compuerta de confirmación escrita, para que no se haga sin querer.
+    </li>
+  </ul>
+</section>
+
+<!-- 8 -->
+<section class="step">
+  <h2><span class="step__n">8</span> Qué se nos puede escapar</h2>
+  <p>Las decisiones grandes a debatir. Cada una es una pregunta abierta, no una respuesta cerrada.</p>
+  <ol class="concerns">
+    @for (c of concerns; track c.q) {
+      <li [class.concerns__item--rafa]="c.rafa">
+        <span class="concerns__q">
+          {{ c.q }}
+          @if (c.rafa) { <span class="rafa-tag">RAFA</span> }
+        </span>
+        <span class="concerns__detail">{{ c.detail }}</span>
+      </li>
+    }
+  </ol>
+</section>
+
+<section class="step step--close">
+  <h2>Cierre</h2>
+  <p>
+    Qué decidimos hoy y qué queda abierto. Esta página vive dentro de sc-demo, así que se actualiza con
+    el código; las capturas se regeneran con <code>npm run usage:capture</code> y los bloques de código
+    apuntan al archivo real, para que no se desfase.
+  </p>
+</section>

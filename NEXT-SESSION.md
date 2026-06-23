@@ -1,81 +1,71 @@
 # NEXT SESSION — Smart Contact DS (hand-off)
 
-> Sello: **2026-06-22** (sesión 2). Tanda casi cerrada: **Bloques 1·2·3 + dialog-fix + var-docs Figma HECHOS**.
-> DD-24 (icono↔font-size) **EJECUTADA en el DS Y en la app** (153 companion del supervisor → `inherit`).
-> Todo pusheado en `main` (último: `63825c6`). **Mañana arranca con la PPT del PUENTE** (redactar el prompt para
-> Claude Design — specs ya decididas, §EMPIEZA AQUÍ) → luego **Bloque 4a** (Figma, guiado). SOBREESCRIBE al cerrar.
+> Sello: **2026-06-23** (sesión 3). Esta sesión: **recorrido vivo del Sistema de reglas montado en sc-demo
+> `/reglas`** (DD-26), pivote a transcripción explicado paso a paso, con snippets de código real + capturas del
+> Supervisor. Los 3 huecos `[RAFA]` resueltos. Verificado (AOT + typecheck + lint + auditor) y pusheado a `main`.
+> **Quedan pendientes de antes:** el PROMPT de la PPT del PUENTE (sin redactar aún) y el **Bloque 4a** (Figma).
+> SOBREESCRIBE este fichero al cerrar.
 
 ---
 
 ## ▶️ EMPIEZA AQUÍ
 1. **Lee este fichero entero.**
-2. **PLAN DE LA TANDA:** `~/.claude/plans/retomamos-el-ds-de-whimsical-sparrow.md` (5 bloques; 1·2·3·4b hechos).
-3. **El *por qué* durable:** `docs/DECISIONS.md` (DD-24 EJECUTADA DS+app · DD-25 gap footer · sync var-docs).
-4. **PRIMERA ACCIÓN — PPT del PUENTE código↔Figma (redactar el PROMPT para Claude Design).** Rafa monta la PPT
-   en Claude Design; aquí solo se redacta el prompt. Specs YA decididas con él (2026-06-22):
-   - **Audiencia:** **devs**, contando NUESTRO pipeline — pero **accesible / no extremadamente técnico**: la
-     **presenta Rafa (no-dev)**, así que las slides deben sostener la explicación solas (poco depende de él en vivo).
-   - **Tamaño:** corta — **6-8 slides, ~10 min**.
-   - **Mensaje:** las tres → **QUÉ** es + **CÓMO** funciona (el flujo) + **QUÉ GANAMOS**.
-   - **Tono:** **mixto** — gancho visual + 1-2 diagramas claros del flujo, poco texto. (Lo eligió Claude; Rafa
-     dijo "me gustan todas".)
-   - **Contenido (esqueleto a refinar al redactar el prompt):**
-     - **QUÉ:** puente bidireccional código↔Figma; UNA sola fuente de verdad para los design tokens.
-     - **CÓMO (el flujo):** Theme Designer/plugin → export DTCG (`kit-export-dtcg.json`) → `npm run tokens:import`
-       genera las capas CSS `--sc-*` → el DS Angular las consume → `verify` (parity + scale auditor + guards) caza
-       el drift → desplegado en Cloudflare. Vuelta: el bridge MCP escribe metadata en Figma (codeSyntax, vars)
-       para que Dev Mode muestre el código real (justo lo de Bloque 4b: 33 var-docs re-apuntadas).
-     - **QUÉ GANAMOS:** una sola fuente de verdad; diseño y código no driftan; feedback rápido (carril a11y/parity
-       en ~1 min); Dev Mode no miente.
-   - **Arranque:** redacto el prompt con esto → Rafa lo revisa → lo manda a Claude Design. **La PPT NO la hago yo.**
-5. **Bloque 4a (Figma, GUIADO con Rafa).** Bridge `mcp__figma__*` vivo (WS port **9224**). Una var a la vez +
-   screenshot + reversible:
-   - **(a) Atar W/H de iconos companion** a la var de font-size (md=`app/font/size`; sm/lg=`{cmp}/sm·lg/font`).
-     Huecos: **button-default** (icono raw → `app/font/size`); **inputtext** (el TEXTO raw → font-size del input).
-   - **(b) Sync de los 3 copys de General a los nodos de texto de Figma** (ventana.title, aviso.title→"Recepción
-     de conversaciones", alerting_label→"Mostrar"). Grep antes para no crear drift.
-6. **Validar:** `npm run verify`. Si tocas pantallas del supervisor → `node scripts/component-audit.mjs --write`.
-7. **Protocolo:** commits a main → `Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>`;
-   `git add` **nunca** `.claude`; **nunca** `[skip ci]`; **nunca** borrar `design-tokens-sync`.
+2. **El *por qué* durable:** `docs/DECISIONS.md` (DD-26 recorrido de reglas · DD-24/25 · sync var-docs).
+3. **Backlog durable:** `docs/ROADMAP.md` (sección "Sistema de reglas — pivote a transcripción").
+4. **Elige tarea de §Lo que queda.** No hay una sola "primera acción" forzada: las 3 son independientes.
 
 ---
 
 ## 🎯 Estado de un vistazo
-- **Bloque 1 (DD-24, DS): HECHO** (`9ba5415`). `sc-icon` (DS) gana `inherit`; 11 companion del DS + QA.
-- **Bloque 2 (Contact Center): HECHO** (`3d7a7cf`). Topbar `sc-button` (servicio/agentes/grupos) + copys es/en/fr/pt.
-  **idiomas: cerrados** — las traducciones EN/FR/PT verificadas (ES es el de Rafa).
-- **Fix gap footer sc-dialog (DD-25): HECHO** (`ce9010c`). 0px→10.5px, 13 dialogs.
-- **Bloque 3 (DD-24, app): HECHO** (`f697fe7`). 153 companion del supervisor → `inherit`. El `<sc-icon>` del
-  supervisor es un **wrapper propio** (`shared/components/icon`) — le añadí `inherit` (lo cazó el AOT).
-  Standalone + controles deliberados (transport del reproductor, toolbar filters, back rule-builder) pinneados
-  a propósito. Validado AOT + verify + render en vivo.
-- **Bloque 4b (var-docs Figma): HECHO.** 33 vars de color re-apuntadas (codeSyntax + desc) a cyan/sky/slate.
-- **Bridge Figma `mcp__figma__*`: VIVO** (WS port 9224). Conectado a "Smart-Contact Design System".
+- **Sistema de reglas — recorrido vivo (DD-26): HECHO.** `projects/sc-demo/src/app/pages/reglas/`, ruta `/reglas`,
+  enlace "Sistema de reglas" en la nav. 9 pasos (regla vs bulk · pivote · modelo · builder · lista ·
+  **prioridad/conflictos = la complejidad** · transcripción · concerns · cierre). Snippets = **código real**
+  (`rules.store.ts`: `scopeOverlaps` + `conflictsByRuleId` O(n²); `rules-page.ts`: quién gana por prioridad).
+  Capturas = **Supervisor real** reutilizadas de `public/usage/` (las regenera `npm run usage:capture`).
+  - **Huecos `[RAFA]` resueltos:** ley = fuera de alcance · transcripciones múltiples = varios tramos por
+    conversación, cada uno transcribible por separado (ya en el código) · quién = los supervisores.
+  - **Para la charla:** Rafa comparte `/reglas` + abre el Supervisor real + baja al código. No es PPT.
+- **Bloques 1·2·3 + dialog-fix + var-docs (sesiones previas): HECHOS.** DD-24 (icono↔font-size) ejecutada DS+app.
+- **Bridge Figma `mcp__figma__*`:** vivo cuando se re-corre el plugin (WS port 9224).
 
-## 🗺️ Lo que queda
-1. **PPT del PUENTE (1er punto):** redactar el prompt para Claude Design (specs decididas, §EMPIEZA AQUÍ). La
-   PPT la monta Claude Design, no nosotros.
-2. **Bloque 4a (Figma, GUIADO):** atar W/H de iconos a font-size (button-default, inputtext) + sync de los 3
-   copys de General a Figma. Ver §EMPIEZA AQUÍ.
-3. **Bloque 5:** cierre (push + reseal + DDs) — hecho este cierre; repetir al acabar.
+## 🗺️ Lo que queda (3 independientes)
+1. **PROMPT de la PPT del PUENTE código↔Figma** (aún sin redactar). La monta Claude Design; aquí solo el prompt.
+   Specs decididas con Rafa (2026-06-22):
+   - **Audiencia:** devs, contando NUESTRO pipeline, pero **accesible** (la presenta Rafa, no-dev → las slides
+     se sostienen solas). **Tamaño:** 6-8 slides, ~10 min. **Mensaje:** QUÉ es + CÓMO (el flujo) + QUÉ GANAMOS.
+     **Tono:** mixto (gancho visual + 1-2 diagramas del flujo, poco texto).
+   - **Esqueleto:** QUÉ = puente bidireccional, UNA fuente de verdad para tokens. CÓMO = Theme Designer → export
+     DTCG (`kit-export-dtcg.json`) → `tokens:import` genera capas `--sc-*` → el DS las consume → `verify` caza
+     drift → Cloudflare; vuelta = bridge MCP escribe metadata en Figma (codeSyntax/vars) para Dev Mode.
+     QUÉ GANAMOS = una fuente de verdad, sin drift, feedback en ~1 min, Dev Mode no miente.
+2. **Bloque 4a (Figma, GUIADO con Rafa).** Una var a la vez + screenshot + reversible:
+   - **(a) Atar W/H de iconos companion** a la var de font-size (md=`app/font/size`; sm/lg=`{cmp}/sm·lg/font`).
+     Huecos: **button-default** (icono raw → `app/font/size`); **inputtext** (el TEXTO raw → font-size del input).
+   - **(b) Sync de los 3 copys de General a los nodos de texto de Figma** (ventana.title; aviso.title→"Recepción
+     de conversaciones"; alerting_label→"Mostrar"). Grep antes para no crear drift.
+3. **Charla del Sistema de reglas con el equipo** (Rafa la da; `/reglas` ya está listo). Cerrar los concerns:
+   migración de grabación obsoleta · resolución de conflictos con solape parcial · coste transcripción/IA ·
+   gobierno de transcripciones múltiples · dependencia transcripción→clasificación · retención/borrado.
 
-**Diferido:** Neutral gray/slate (equipo de Rafa) · W5 · Code Connect · Fase 4 AED.
+**Diferido:** Neutral gray/slate (equipo de Rafa) · W5 · Code Connect · Fase 4 AED · dark zinc vs cool · grises a11y.
 
 ## ⚠️ TRAMPAS / PROTECCIONES
-- **El supervisor tiene su PROPIO `<sc-icon>`** (`shared/components/icon`, no el del DS). Si tocas iconos de la
-  app, recuerda que es ese wrapper (ya soporta `inherit`).
-- **Figma `figma_execute` da "timeout" (7s) en batches** pero **suele aplicar igual** — confirma releyendo, no
-  reintentes a ciegas. Sube `timeout` (≤30000) o trocea.
-- **Tocar pantallas del supervisor** que cambie USO de componentes DS → `component-audit.mjs --write`. (Cambiar
-  solo `[size]` de un icono NO desfasa el manifiesto.)
+- **`kit-export-dtcg.json` está SUCIO en el árbol** (cambio del rol info `{blue}`→`{sky}`, del pipeline de
+  tokens). **NO commitearlo a main** (viaja por el plugin → `design-tokens-sync`). Es lo que corta `verify` en
+  el paso 1 (`tokens:export-clean`). Para validar un cambio ajeno a tokens: corre el **subconjunto relevante**
+  (`build:demo` AOT + `typecheck` + `lint` + `audit:theme-scale`), no el `verify` entero.
+- **El supervisor tiene su PROPIO `<sc-icon>`** (`shared/components/icon`, no el del DS; ya soporta `inherit`).
+- **sc-demo usa hash routing** (`/#/reglas`). Capturas del Supervisor servidas desde `/usage/*.png`.
+- **Figma `figma_execute` "timeout" (7s) en batches** suele aplicar igual: confirma releyendo, no reintentes a
+  ciegas. Sube `timeout` (≤30000) o trocea.
 - **`preview:live` zombie ensucia el export:** `pkill -f preview-live.mjs` antes de `verify`.
-- **Bridge Figma**: si cae, re-correr el plugin **Desktop Bridge**; doble-instancia 9223/9224 → usa el vivo.
 - **NUNCA `[skip ci]`** · **NUNCA borrar `design-tokens-sync`** · **`git add` NUNCA `.claude`**.
+- **Commits a main** → `Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>`.
 
 ## 🟡 RECAP al cerrar lotes (lo pidió Rafa)
 Mega-dumb, sin ai slop, conciso: qué se hizo, por qué, conclusiones, pendiente, y lo que NO se hizo a drede.
 
 ## Índice — dónde mirar
-- **Plan** → `~/.claude/plans/retomamos-el-ds-de-whimsical-sparrow.md` · **Decisiones** → `docs/DECISIONS.md`.
+- **Decisiones** → `docs/DECISIONS.md` · **Backlog** → `docs/ROADMAP.md` · **Mapa de docs** → `docs/DOCS-INDEX.md`.
 - **Reglas/trampas** → `AGENTS.md` · **Tokens/loop** → `docs/guia-tokens.md` · **Customs** → `docs/customs-catalog.md`.
-- **Inventario** → `docs/inventory.md` · **Galería de uso** → sc-demo `/uso` · **Mapa de docs** → `docs/DOCS-INDEX.md`.
+- **Recorrido de reglas** → sc-demo `/reglas` · **Galería de uso** → sc-demo `/uso` · **Inventario** → `docs/inventory.md`.
