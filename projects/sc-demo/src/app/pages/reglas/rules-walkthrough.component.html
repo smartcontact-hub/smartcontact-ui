@@ -2,7 +2,8 @@
 <p class="lead">
   Recorrido del estado actual del sistema de reglas del Supervisor, paso a paso y con el
   porqué de cada parte. Foco en el pivote a <strong>transcripción</strong>. Las capturas son del
-  Supervisor real y los bloques de código son del repo (ruta indicada en cada uno).
+  Supervisor real y los bloques de código son del repo. Al final, las
+  <strong>conclusiones y accionables</strong> de la charla con el equipo.
 </p>
 
 <!-- 1 -->
@@ -129,8 +130,9 @@
   </figure>
 
   <p class="open-q">
-    Pregunta abierta: con transcripciones múltiples, ¿basta con que «gane una», o necesitamos que varias
-    reglas apliquen a la vez (varias transcripciones de la misma conversación)?
+    En la charla con el equipo esto se cerró para el MVP: <strong>solo una regla activa a la vez</strong>, así
+    no hay conflictos que resolver. La priorización vuelve a importar el día que haya varias activas. Ver
+    «Conclusiones y accionables» al final.
   </p>
 </section>
 
@@ -161,7 +163,7 @@
 <!-- 8 -->
 <section class="step">
   <h2><span class="step__n">8</span> Qué se nos puede escapar</h2>
-  <p>Las decisiones grandes a debatir. Cada una es una pregunta abierta, no una respuesta cerrada.</p>
+  <p>Las preguntas que llevamos a la charla. Abajo, en «Conclusiones y accionables», en qué quedaron.</p>
   <ol class="concerns">
     @for (c of concerns; track c.q) {
       <li [class.concerns__item--rafa]="c.rafa">
@@ -175,11 +177,43 @@
   </ol>
 </section>
 
+<!-- Conclusiones y accionables -->
+<section class="step step--mvp">
+  <h2>Conclusiones y accionables · charla con el equipo</h2>
+  <p>
+    De la sesión de alineación (2026-06-23). Lo que se decidió y lo que toca hacer. Solo lo que se habló; lo
+    que quedó en el aire va al final como «a confirmar».
+  </p>
+
+  <h3>Conclusiones · el rumbo del MVP</h3>
+  <ol class="decisions">
+    @for (c of conclusiones; track c.t) {
+      <li>
+        <span class="decisions__t">{{ c.t }}</span>
+        <span class="decisions__d">{{ c.d }}</span>
+      </li>
+    }
+  </ol>
+
+  <h3>Accionables</h3>
+  <ul class="actions">
+    @for (a of accionables; track a) {
+      <li>{{ a }}</li>
+    }
+  </ul>
+
+  <h3>A confirmar · quedó en el aire</h3>
+  <ul class="a-confirmar">
+    @for (x of aConfirmar; track x) {
+      <li>{{ x }}</li>
+    }
+  </ul>
+</section>
+
 <section class="step step--close">
   <h2>Cierre</h2>
   <p>
-    Qué decidimos hoy y qué queda abierto. Esta página vive dentro de sc-demo, así que se actualiza con
-    el código; las capturas se regeneran con <code>npm run usage:capture</code> y los bloques de código
-    apuntan al archivo real, para que no se desfase.
+    Esta página vive dentro de sc-demo, así que se actualiza con el código: las capturas se regeneran con
+    <code>npm run usage:capture</code> y los bloques de código apuntan al archivo real, para que no se desfase.
   </p>
 </section>

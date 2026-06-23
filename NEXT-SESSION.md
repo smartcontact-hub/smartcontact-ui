@@ -2,7 +2,8 @@
 
 > Sello: **2026-06-23** (sesión 3). Esta sesión: **recorrido vivo del Sistema de reglas montado en sc-demo
 > `/reglas`**, pivote a transcripción explicado paso a paso, con snippets de código real + capturas del
-> Supervisor. Los 3 huecos `[RAFA]` resueltos. Verificado (AOT + typecheck + lint + auditor) y pusheado a `main`.
+> Supervisor. Los 3 huecos `[RAFA]` resueltos. Después se sumaron las **conclusiones y accionables de la charla
+> con el equipo** (2026-06-23) a `/reglas`. Verificado (AOT + typecheck + lint + auditor) y pusheado a `main`.
 > **Quedan pendientes de antes:** el PROMPT de la PPT del PUENTE (sin redactar aún) y el **Bloque 4a** (Figma).
 > SOBREESCRIBE este fichero al cerrar.
 
@@ -45,9 +46,11 @@
      Huecos: **button-default** (icono raw → `app/font/size`); **inputtext** (el TEXTO raw → font-size del input).
    - **(b) Sync de los 3 copys de General a los nodos de texto de Figma** (ventana.title; aviso.title→"Recepción
      de conversaciones"; alerting_label→"Mostrar"). Grep antes para no crear drift.
-3. **Charla del Sistema de reglas con el equipo** (Rafa la da; `/reglas` ya está listo). Cerrar los concerns:
-   migración de grabación obsoleta · resolución de conflictos con solape parcial · coste transcripción/IA ·
-   gobierno de transcripciones múltiples · dependencia transcripción→clasificación · retención/borrado.
+3. **Accionables de la charla de reglas (DADA 2026-06-23; conclusiones + accionables en `/reglas`).** Rumbo
+   MVP: una sola regla activa (esquiva priorización) · tipificación como entidad AND/OR · grabación=aviso ·
+   casa=Repositorios · clasificación después · retroactivo=bulk. **Pendiente**: hablar con desarrollo
+   (VAC/Lucas) — cerrar criterios (faltan duración + tipificación) y backend sin UI · crear sección
+   Repositorios (transcripción+tipificación) · módulo simulador de coste (vs mes anterior) · avanzar AED.
 
 **Diferido:** Neutral gray/slate (equipo de Rafa) · W5 · Code Connect · Fase 4 AED · dark zinc vs cool · grises a11y.
 

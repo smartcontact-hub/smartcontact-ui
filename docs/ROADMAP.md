@@ -53,7 +53,15 @@
   regeneradas por `npm run usage:capture`, no se desfasan). Verificado: AOT `build:demo` + typecheck + lint +
   `audit:theme-scale`. La PPT-prompt queda como backup. Los 3 huecos `[RAFA]` resueltos (2026-06-23): la ley
   queda fuera de alcance; transcripciones múltiples = varios tramos por conversación, cada uno transcribible
-  por separado; quién = los supervisores. **Pendiente**: dar la charla y cerrar los concerns con el equipo.
+  por separado; quién = los supervisores.
+- **CHARLA DADA (2026-06-23)** — conclusiones + accionables sumados a `/reglas`. **Rumbo MVP**: una sola regla
+  ACTIVA a la vez (esquiva la priorización); tipificación como entidad de alcance (AND/OR); grabación = aviso,
+  no bloqueo; criterios MVP = dirección + duración mínima + tipificación + horario (recuperar); casa = una
+  sección de **Repositorios** (transcripción + tipificación), no modal; clasificación/categorías después; nada
+  retroactivo (eso es bulk). **Accionables**: hablar con desarrollo (VAC/Lucas) para cerrar criterios y que el
+  backend avance sin UI · crear sección Repositorios (empezar por tabla) · módulo **simulador de coste** (vs
+  mes anterior) · avanzar **AED** (tipificación/agendas/migración). A confirmar: naming (contactantes vs
+  grupos/ACD) · invertir-excluir condición · detalle de conversación en ventana propia.
 - **Concerns a decidir en la charla**: migración de las reglas de grabación obsoletas (¿auto-desactivar?,
   ¿datos ya grabados?) · resolución de conflictos/prioridad cuando varias reglas chocan · coste de
   transcripción (compute/IA) y límites · gobierno de transcripciones múltiples (qué regla gobierna cuál,
