@@ -14,6 +14,11 @@ interface Concern {
   readonly rafa?: boolean;
 }
 
+interface Decision {
+  readonly t: string;
+  readonly d: string;
+}
+
 /**
  * Recorrido del "sistema de reglas" del Supervisor, centrado en el pivote a
  * transcripción. No es un componente del DS: explica el ESTADO del producto para
@@ -135,5 +140,62 @@ protected winningRuleId(rule: Rule): number {
       detail:
         'Las reglas las configuran los supervisores, desde el Supervisor. Queda por fijar cuándo entra en producción el sistema de transcripciones múltiples.',
     },
+  ];
+
+  // --- De la charla con el equipo (2026-06-23): solo lo que se dijo ---
+
+  readonly conclusiones: Decision[] = [
+    {
+      t: 'MVP: una sola regla activa a la vez',
+      d: 'Puedes crear varias reglas de transcripción, pero solo una activa. Así no hay reglas que se pisen ni priorización que resolver (justo la complejidad del paso 6): es la vía rápida para salir y empezar a probar.',
+    },
+    {
+      t: 'Una conversación cumple la condición o no (uno o cero)',
+      d: 'No hay cumplimiento parcial: no se transcribe «por un trozo» de la condición. Con una sola regla activa tampoco hay doble transcripción.',
+    },
+    {
+      t: 'El alcance combina entidades con AND y OR',
+      d: 'Servicios, grupos, agentes y tipificación. Ej.: servicio Y grupo Y agente O tipificación=ventas. La tipificación es una entidad más (no una condición suelta) y es el caso de valor más claro: «quiero solo las que acabaron en venta».',
+    },
+    {
+      t: 'Criterios del MVP',
+      d: 'Dirección y duración mínima ya están; hay que añadir tipificación y recuperar el horario (estaba y se perdió en el prototipo). El canal (chat) es el siguiente nivel; primero llamadas.',
+    },
+    {
+      t: 'Grabación como requisito: avisar, no bloquear',
+      d: 'Si la regla incluye un servicio o agente sin permiso de grabación, mostrar un aviso al activarla, no impedir seleccionarlo. Los permisos cambian con el tiempo; validar en duro sería frágil y obligaría a volver a tocar la regla.',
+    },
+    {
+      t: 'La transcripción ya limpia música y ruido por defecto',
+      d: 'No se manda la música en espera. El ajuste fino de esfuerzo y calidad (y por tanto del coste) no entra ahora: a confirmar con Lucas si es viable.',
+    },
+    {
+      t: 'Casa de las reglas: una sección de Repositorios',
+      d: 'En administración, no un modal de configuración (es un formulario y se ve mejor a pantalla completa). El mismo repositorio sirve para reglas de transcripción y tipificación, y a futuro las listas de orígenes de IVR (hoy hay que replicarlas a mano en 15-16 nodos). Empezar simple, con una tabla.',
+    },
+    {
+      t: 'Las reglas son a futuro; la clasificación va después',
+      d: 'Nada retroactivo aquí: aplicar a conversaciones pasadas es bulk. Y la clasificación con IA (categorías) es la parte de más valor, pero se saca de aquí de momento: primero la transcripción.',
+    },
+    {
+      t: 'Lo potente queda como futuro, no MVP',
+      d: 'Constructor de condiciones anidadas (AND/OR agrupados), invertir/excluir («todo esto menos X»), simulador de impacto y coste, abrir el detalle de la conversación en ventana propia (reproductor no bloqueante) y re-transcripción.',
+    },
+  ];
+
+  readonly accionables: string[] = [
+    'Hablar con desarrollo (VAC / Lucas) cuanto antes, hoy o mañana: enseñarles el concepto y cerrar qué criterios entran. Los que faltaban: duración y tipificación.',
+    'Pasarles este link de Cloudflare como resumen del estado para la conversación con desarrollo.',
+    'El backend puede ir por delante del interfaz: el VAC crea la tabla, mete las reglas y evalúa la condición aunque la UI no exista todavía, y se prueba así.',
+    'Preguntar a Lucas por el ajuste fino de calidad y esfuerzo de la transcripción (viabilidad y coste).',
+    'Crear la sección de Repositorios (transcripción + tipificación), empezando por una tabla simple.',
+    'Avanzar AED con tipificación, agendas y la regla de transcripción (y el tema de migración).',
+    'Construir el módulo simulador de coste: estima qué porcentaje se transcribiría y el gasto, comparando con el mes anterior.',
+  ];
+
+  readonly aConfirmar: string[] = [
+    'Naming definitivo de las entidades («contactantes» frente a grupos/ACD).',
+    'Si entra la opción de invertir o excluir condición.',
+    'El detalle de la conversación en ventana propia (reproductor no bloqueante).',
   ];
 }
