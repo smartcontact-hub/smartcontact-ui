@@ -49,7 +49,7 @@
 3. **Accionables de la charla de reglas (DADA 2026-06-23; conclusiones + accionables en `/reglas`).** Rumbo
    MVP: una sola regla activa (esquiva priorización) · tipificación como entidad AND/OR · grabación=aviso ·
    casa=Repositorios · clasificación después · retroactivo=bulk. **Pendiente**: hablar con desarrollo
-   (VAC/Lucas) — cerrar criterios (faltan duración + tipificación) y backend sin UI · crear sección
+   backend (VAP/Lucas) — cerrar criterios (faltan duración + tipificación) y backend sin UI · crear sección
    Repositorios (transcripción+tipificación) · módulo simulador de coste (vs mes anterior) · avanzar AED.
 
 **Diferido:** Neutral gray/slate (equipo de Rafa) · W5 · Code Connect · Fase 4 AED · dark zinc vs cool · grises a11y.
