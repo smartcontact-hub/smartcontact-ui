@@ -1162,24 +1162,6 @@ W/H de iconos companion a la var de font-size (Bloque 4a).
 
 ---
 
-## DD-26 · 2026-06-23 — Explicar el sistema de reglas como recorrido VIVO en sc-demo (no PPT)
-
-**Contexto**: para alinear al equipo sobre el sistema de reglas (pivote a transcripción) había un master prompt
-de PPT (Claude Design) redactado. Rafa replanteó: mejor explicar los flujos y el ESTADO real paso a paso, con
-snippets del workflow y dónde está la complejidad (la priorización), abierto en el link de sc-demo.
-
-**Decisión**: nueva sección en sc-demo, ruta `/reglas` (`projects/sc-demo/src/app/pages/reglas/`), recorrido de
-9 pasos. Yo recomendé un doc en repo (meter dominio de app en el showcase del DS era *category-error*); Rafa
-eligió esta opción porque sc-demo YA hostea capturas reales del Supervisor (la galería `/uso`), así que no
-rompe la separación. Mitigado: snippets = **código real** (`rules.store.ts` `scopeOverlaps`/`conflictsByRuleId`
-O(n²); `rules-page.ts` quién gana por prioridad); capturas = **Supervisor real** reutilizadas de
-`public/usage/` (las regenera `usage:capture`, no se desfasan). Verificado AOT `build:demo` + typecheck + lint
-+ `audit:theme-scale`. El master prompt de PPT queda de **backup**. Los 3 huecos de dominio los resolvió Rafa:
-la ley queda fuera de alcance; transcripciones múltiples = varios tramos por conversación, cada uno
-transcribible por separado (ya en el código); quién = los supervisores.
-
----
-
-Última actualización: 2026-06-23 (DD-26 sistema de reglas como recorrido vivo en sc-demo `/reglas` [9 pasos,
-snippets de código real + capturas del Supervisor, RAFAs resueltos]). 2026-06-22 (DD-24 EJECUTADA en el DS ·
-Bloque 2 Contact Center · DD-25 gap footer sc-dialog · var-docs de color re-apuntadas en Figma).
+Última actualización: 2026-06-22 (DD-24 **EJECUTADA en el DS** [sc-icon inherit + 11 companion + hallazgos
+host-font/button-reset] · Bloque 2 Contact Center [topbar `sc-button` en servicio/agentes/grupos + copys de
+Recepción es/en/fr/pt] · DD-25 gap footer sc-dialog · var-docs de color re-apuntadas en Figma).
