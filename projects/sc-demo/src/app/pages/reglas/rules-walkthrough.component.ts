@@ -10,8 +10,6 @@ interface Snippet {
 interface Concern {
   readonly q: string;
   readonly detail: string;
-  /** true = depende de dominio que solo tiene el equipo (hueco a rellenar). */
-  readonly rafa?: boolean;
 }
 
 interface Decision {
