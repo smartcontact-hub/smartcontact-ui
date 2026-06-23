@@ -58,7 +58,7 @@
   ACTIVA a la vez (esquiva la priorización); tipificación como entidad de alcance (AND/OR); grabación = aviso,
   no bloqueo; criterios MVP = dirección + duración mínima + tipificación + horario (recuperar); casa = una
   sección de **Repositorios** (transcripción + tipificación), no modal; clasificación/categorías después; nada
-  retroactivo (eso es bulk). **Accionables**: hablar con desarrollo (VAC/Lucas) para cerrar criterios y que el
+  retroactivo (eso es bulk). **Accionables**: hablar con desarrollo backend (VAP/Lucas) para cerrar criterios y que el
   backend avance sin UI · crear sección Repositorios (empezar por tabla) · módulo **simulador de coste** (vs
   mes anterior) · avanzar **AED** (tipificación/agendas/migración). A confirmar: naming (contactantes vs
   grupos/ACD) · invertir-excluir condición · detalle de conversación en ventana propia.

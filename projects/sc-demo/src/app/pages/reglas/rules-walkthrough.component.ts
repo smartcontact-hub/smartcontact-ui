@@ -184,9 +184,9 @@ protected winningRuleId(rule: Rule): number {
   ];
 
   readonly accionables: string[] = [
-    'Hablar con desarrollo (VAC / Lucas) cuanto antes, hoy o mañana: enseñarles el concepto y cerrar qué criterios entran. Los que faltaban: duración y tipificación.',
+    'Hablar con desarrollo backend (VAP) y Lucas cuanto antes, hoy o mañana: enseñarles el concepto y cerrar qué criterios entran. Los que faltaban: duración y tipificación.',
     'Pasarles este link de Cloudflare como resumen del estado para la conversación con desarrollo.',
-    'El backend puede ir por delante del interfaz: el VAC crea la tabla, mete las reglas y evalúa la condición aunque la UI no exista todavía, y se prueba así.',
+    'El backend puede ir por delante del interfaz: el VAP crea la tabla, mete las reglas y evalúa la condición aunque la UI no exista todavía, y se prueba así.',
     'Preguntar a Lucas por el ajuste fino de calidad y esfuerzo de la transcripción (viabilidad y coste).',
     'Crear la sección de Repositorios (transcripción + tipificación), empezando por una tabla simple.',
     'Avanzar AED con tipificación, agendas y la regla de transcripción (y el tema de migración).',
