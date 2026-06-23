@@ -35,6 +35,22 @@
   ejes FILL/grade/optical que el wrapper de la app no expone). Ambos ya soportan `inherit` pero divergen. Liga
   con el item "Iconos: estilo + peso" de abajo (Rounded vs Outlined). *Disparador*: al unificar iconografía.
 
+## Producto · Sistema de reglas — pivote a transcripción (charla con el equipo)
+
+- **Qué**: las reglas de **grabación** quedan obsoletas por la **nueva ley SEC** → el foco pasa a reglas de
+  **transcripción** (+clasificación), con el **sistema de transcripciones múltiples EN DESARROLLO**. Modelo:
+  `supervisor/.../memory/data/rule.types.ts` (`recording|transcription|classification`; alcance
+  servicio/grupo/agente; criterios dirección/horario/duración/IA/categorías; prioridad; estado `conflict`).
+  Regla = qué pasa con conversaciones FUTURAS; bulk = qué hago AHORA con las existentes.
+- **Disparador**: charla de alineación con el equipo. PPT vía Claude Design — master prompt redactado
+  (why/what/how/when/who + concerns), con huecos `[RAFA]` de dominio: qué dice la ley SEC, diseño de
+  transcripciones múltiples, quién la usa y timeline.
+- **Concerns a decidir en la charla**: migración de las reglas de grabación obsoletas (¿auto-desactivar?,
+  ¿datos ya grabados?) · resolución de conflictos/prioridad cuando varias reglas chocan · coste de
+  transcripción (compute/IA) y límites · gobierno de transcripciones múltiples (qué regla gobierna cuál,
+  almacenamiento, re-transcripción) · dependencia transcripción→clasificación IA · legal/retención (ley SEC).
+- **Validación**: el equipo cierra las decisiones grandes; las que apliquen se registran como DD en `DECISIONS.md`.
+
 ## Decisiones de marca pendientes (system-wide → review)
 
 ### Superficies dark — ¿alinear a zinc o mantener cool?
