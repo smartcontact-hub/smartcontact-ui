@@ -1,7 +1,7 @@
 # NEXT SESSION — Smart Contact DS (hand-off)
 
 > Sello: **2026-06-23** (sesión 3). Esta sesión: **recorrido vivo del Sistema de reglas montado en sc-demo
-> `/reglas`** (DD-26), pivote a transcripción explicado paso a paso, con snippets de código real + capturas del
+> `/reglas`**, pivote a transcripción explicado paso a paso, con snippets de código real + capturas del
 > Supervisor. Los 3 huecos `[RAFA]` resueltos. Verificado (AOT + typecheck + lint + auditor) y pusheado a `main`.
 > **Quedan pendientes de antes:** el PROMPT de la PPT del PUENTE (sin redactar aún) y el **Bloque 4a** (Figma).
 > SOBREESCRIBE este fichero al cerrar.
@@ -10,14 +10,16 @@
 
 ## ▶️ EMPIEZA AQUÍ
 1. **Lee este fichero entero.**
-2. **El *por qué* durable:** `docs/DECISIONS.md` (DD-26 recorrido de reglas · DD-24/25 · sync var-docs).
-3. **Backlog durable:** `docs/ROADMAP.md` (sección "Sistema de reglas — pivote a transcripción").
+2. **Backlog durable:** `docs/ROADMAP.md` (sección "Sistema de reglas — pivote a transcripción"; ahí está el
+   recorrido `/reglas` y los concerns para la charla).
+3. **El *por qué* durable:** `docs/DECISIONS.md` (DD-24/25 · sync var-docs). El recorrido `/reglas` NO es un DD:
+   es material de presentación para el equipo (Cloudflare), no una decisión de producción.
 4. **Elige tarea de §Lo que queda.** No hay una sola "primera acción" forzada: las 3 son independientes.
 
 ---
 
 ## 🎯 Estado de un vistazo
-- **Sistema de reglas — recorrido vivo (DD-26): HECHO.** `projects/sc-demo/src/app/pages/reglas/`, ruta `/reglas`,
+- **Sistema de reglas — recorrido vivo: HECHO.** `projects/sc-demo/src/app/pages/reglas/`, ruta `/reglas`,
   enlace "Sistema de reglas" en la nav. 9 pasos (regla vs bulk · pivote · modelo · builder · lista ·
   **prioridad/conflictos = la complejidad** · transcripción · concerns · cierre). Snippets = **código real**
   (`rules.store.ts`: `scopeOverlaps` + `conflictsByRuleId` O(n²); `rules-page.ts`: quién gana por prioridad).
