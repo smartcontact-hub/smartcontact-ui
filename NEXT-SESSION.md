@@ -1,11 +1,11 @@
 # NEXT SESSION — Smart Contact DS (hand-off)
 
-> Sello: **2026-06-23** (sesión 3). Esta sesión: **recorrido vivo del Sistema de reglas montado en sc-demo
-> `/reglas`**, pivote a transcripción explicado paso a paso, con snippets de código real + capturas del
-> Supervisor. Los 3 huecos `[RAFA]` resueltos. Después se sumaron las **conclusiones y accionables de la charla
-> con el equipo** (2026-06-23) a `/reglas`. Verificado (AOT + typecheck + lint + auditor) y pusheado a `main`.
-> **Quedan pendientes de antes:** el PROMPT de la PPT del PUENTE (sin redactar aún) y el **Bloque 4a** (Figma).
-> SOBREESCRIBE este fichero al cerrar.
+> Sello: **2026-06-29** (sesión 4). Esta sesión: **diagnóstico completo del modal bulk-transcription** (ticket
+> Jira W26) con DevTools + Figma MCP, verificado en vivo sin adivinanzas. El marco/stroke ya estaba resuelto; el
+> corte de "genera coste" = `height: 239px` fijo en el `:host` (el componente en Figma es **Hug**, no fija → el
+> fix es quitar esa línea). Comentario para Jira redactado y pulido (empático, no intrusivo, apoyado en Figma);
+> **los devs van a tomar mano del tema.** Próxima sesión: **reglas de transcripción — preparar un LOTE con varios
+> bloques** para dejarlo maravilloso, lógico, consistente e intuitivo. SOBREESCRIBE este fichero al cerrar.
 
 ---
 
@@ -30,6 +30,23 @@
   - **Para la charla:** Rafa comparte `/reglas` + abre el Supervisor real + baja al código. No es PPT.
 - **Bloques 1·2·3 + dialog-fix + var-docs (sesiones previas): HECHOS.** DD-24 (icono↔font-size) ejecutada DS+app.
 - **Bridge Figma `mcp__figma__*`:** vivo cuando se re-corre el plugin (WS port 9224).
+
+## 🔧 Modal bulk-transcription (Jira W26) — CERRADO esta sesión, en manos de los devs
+Diagnóstico verificado en vivo (DevTools + Figma MCP); comentario de Jira ya redactado y enviado. Referencia por si vuelve:
+- **Marco (482→480): RESUELTO** (host 480×239 border-box, stroke `#DADFE6`).
+- **"genera coste" se corta: PENDIENTE, y es de IMPLEMENTACIÓN, no de diseño.**
+  - **Figma = auto-layout con min/max, NO altura fija.** Maestro `12489-11524`: `min-w-480 max-w-800`,
+    altura hug con `max-h-600`. El `h-[239px]` del code-gen es lo que mide VACÍO (un fixed no llevaría
+    `max-h`). Con contenido real crece a ~249. Confirmación 100% = panel de Figma (altura "Hug").
+  - **Web:** el `:host` del componente clava `height:239px` + `overflow:hidden` → recorta los ~10px del
+    contenido real (249). El 239 NO está en la config de apertura (p-dialog sin height inline) → está en
+    el SCSS del `:host` (repo devs).
+  - **Fix:** el `:host` no debe fijar 239; debe adaptarse al contenido (hug) como el Figma. Verificado en
+    vivo: con altura auto el modal pasa a 249 y "genera coste" deja de cortarse.
+- **Alcance: solo el bulk.** `ScDynamicDialogService` limpio; diálogo normal + `sc-dialog` +
+  `impact-preview` sanos. El bulk es el único full-bleed "a pelo" en el p-dialog (no usa sc-dialog).
+- **OJO (autocorrección):** durante el análisis fluctué; la lectura BUENA es esta (Figma auto-layout, no
+  fija). El `h-[239px]` del code-gen es valor computado, no un flag de altura fija.
 
 ## 🗺️ Lo que queda (3 independientes)
 1. **PROMPT de la PPT del PUENTE código↔Figma** (aún sin redactar). La monta Claude Design; aquí solo el prompt.
