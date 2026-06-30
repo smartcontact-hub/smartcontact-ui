@@ -424,7 +424,37 @@
         "draft_banner": "Esta regla es una copia sin modificar. Edita al menos un campo y guarda para poder activarla.",
         "discard_draft": "Descartar copia",
         "draft_ready_toast": "Regla lista para activar",
-        "discarded_toast": "Copia descartada"
+        "discarded_toast": "Copia descartada",
+        "cond": {
+          "match_with": "Coincidir con",
+          "match_all": "todas",
+          "match_any": "cualquiera",
+          "of_conditions": "de las condiciones",
+          "of_groups": "de estos grupos",
+          "add_condition": "Añadir condición",
+          "add_group": "Añadir grupo",
+          "add_group_or": "Añadir grupo para combinar con O",
+          "empty_title": "Sin condiciones",
+          "empty_body": "Se aplica a todas las conversaciones.",
+          "remove_group": "Eliminar grupo",
+          "remove_condition": "Eliminar condición",
+          "toggle_root": "Cambiar la combinación entre grupos",
+          "toggle_group": "Cambiar la combinación dentro del grupo",
+          "match_conditions_aria": "Cómo se combinan las condiciones",
+          "match_groups_aria": "Cómo se combinan los grupos",
+          "impact": "Afecta a {{count}} de {{total}} conversaciones de muestra.",
+          "impact_note": "tipificación y categoría se evalúan en backend",
+          "pick_all": "Todos",
+          "pick_all_hint": "· incluye nuevos",
+          "search": "Buscar…",
+          "pick_all_row": "Todos · se aplica a cualquiera, incluidos los nuevos.",
+          "pick_manual": "Elegir manualmente",
+          "pick_groups": "Grupos (sus miembros)",
+          "pick_individuals": "Individuales",
+          "pick_empty": "Sin resultados.",
+          "select_all": "Seleccionar todo (cualquiera)",
+          "remove": "Quitar"
+        }
       }
     },
     "entities": {

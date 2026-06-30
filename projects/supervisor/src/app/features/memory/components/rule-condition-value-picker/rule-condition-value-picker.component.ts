@@ -10,6 +10,7 @@ import {
   signal,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { TranslateModule } from '@ngx-translate/core';
 
 import { IconComponent } from '@shared/components';
 
@@ -41,7 +42,7 @@ export function refKey(ref: ConditionRef): string {
  */
 @Component({
   selector: 'sc-rule-condition-value-picker',
-  imports: [FormsModule, IconComponent],
+  imports: [FormsModule, IconComponent, TranslateModule],
   templateUrl: './rule-condition-value-picker.component.html',
   styleUrl: './rule-condition-value-picker.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
