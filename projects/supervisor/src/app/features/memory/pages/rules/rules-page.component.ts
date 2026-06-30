@@ -21,6 +21,8 @@ import { ConfirmHostService } from '@core/services/confirm-host.service';
 import { TopBarSlotService } from '@core/layout/top-bar/top-bar-slot.service';
 import { TOAST_LIFE } from '@core/utils/toast-life';
 
+import { ConditionResolverService } from '../../data/condition-resolver.service';
+import { describeConditionTree } from '../../data/condition.types';
 import type { Rule } from '../../data/rule.types';
 import { RulesStore } from '../../state/rules.store';
 
@@ -48,6 +50,7 @@ import { RulesStore } from '../../state/rules.store';
 })
 export class RulesPageComponent {
   private readonly rulesStore = inject(RulesStore);
+  private readonly resolver = inject(ConditionResolverService);
   private readonly confirm = inject(ConfirmHostService);
   private readonly messages = inject(MessageService);
   private readonly translate = inject(TranslateService);
@@ -99,7 +102,16 @@ export class RulesPageComponent {
     },
   ];
 
+  /** Resumen del alcance: la PROSA del árbol (refleja tipificación/duración/
+   *  contradicciones de verdad). Reglas antiguas sin árbol → fallback plano. */
   protected scopeSummary(rule: Rule): string {
+    if (rule.conditionTree) {
+      return describeConditionTree(rule.conditionTree, (ref) => this.resolver.label(ref));
+    }
+    return this.legacyScopeSummary(rule);
+  }
+
+  private legacyScopeSummary(rule: Rule): string {
     const parts: string[] = [];
     if (rule.servicios.length === 1) {
       parts.push(`Servicio ${rule.servicios[0]}`);

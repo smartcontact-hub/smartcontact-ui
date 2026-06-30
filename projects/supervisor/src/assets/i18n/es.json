@@ -334,7 +334,6 @@
         "deactivate": "Desactivar",
         "activate_draft_tooltip": "Edita al menos un campo para poder activar esta regla."
       },
-      "order_updated": "Orden actualizado",
       "conflict": {
         "title": "En conflicto",
         "desc": "Esta regla solapa su alcance con {{count}} regla(s) del mismo tipo. El supervisor puede convivir con conflictos — la UI muestra cuál gana.",
@@ -434,7 +433,6 @@
           "of_groups": "de estos grupos",
           "add_condition": "Añadir condición",
           "add_group": "Añadir grupo",
-          "add_group_or": "Añadir grupo para combinar con O",
           "empty_title": "Sin condiciones",
           "empty_body": "Se aplica a todas las conversaciones.",
           "remove_group": "Eliminar grupo",
@@ -444,7 +442,6 @@
           "match_groups_aria": "Cómo se combinan los grupos",
           "impact": "Afectaría a {{count}} de las últimas {{total}} conversaciones.",
           "impact_note": "tipificación y categoría se evalúan en backend",
-          "est_title": "Estimación de procesado",
           "est_projection": "≈ {{day}} al día · ≈ {{month}} al mes, a este ritmo.",
           "pick_all": "Todos",
           "pick_all_hint": "· incluye nuevos",
@@ -463,7 +460,8 @@
             "contradiction": "Estas dos condiciones no pueden cumplirse a la vez.",
             "tautology": "Con «o», esto incluye todas las conversaciones.",
             "impact_zero": "Ninguna de las últimas {{total}} conversaciones cumpliría estas condiciones.",
-            "blocked": "Revisa las condiciones marcadas antes de guardar."
+            "blocked": "Revisa las condiciones marcadas antes de guardar.",
+            "unfinished": "{{n}} sin terminar"
           }
         }
       }
