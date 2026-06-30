@@ -42,3 +42,18 @@ export const AGENT_OPTIONS: readonly FilterOption[] = [
   { value: 'Laura Díaz', label: 'Laura Díaz' },
   { value: 'Sergio Ruiz', label: 'Sergio Ruiz' },
 ];
+
+/**
+ * Tipificaciones — espejo de los nombres del repositorio de Tipificaciones
+ * (`admin/repositories/instances/tipificaciones.ts`). Usado como campo del
+ * constructor de condiciones. En backend real saldría de su store.
+ */
+export const TIPIFICACION_OPTIONS: readonly FilterOption[] = [
+  { value: 'Consulta resuelta', label: 'Consulta resuelta' },
+  { value: 'Consulta escalada', label: 'Consulta escalada' },
+  { value: 'Venta cerrada', label: 'Venta cerrada' },
+  { value: 'Venta pendiente', label: 'Venta pendiente' },
+  { value: 'Venta rechazada', label: 'Venta rechazada' },
+  { value: 'Reclamación abierta', label: 'Reclamación abierta' },
+  { value: 'Reclamación resuelta', label: 'Reclamación resuelta' },
+];

@@ -15,9 +15,14 @@
  * con `deriveLegacyScope` (sobre-aproximación segura: nunca pierde un solapamiento).
  */
 import type { FilterOption } from './conversation-filter-options';
-import { AGENT_OPTIONS, GROUP_OPTIONS, SERVICE_OPTIONS } from './conversation-filter-options';
+import {
+  AGENT_OPTIONS,
+  GROUP_OPTIONS,
+  SERVICE_OPTIONS,
+  TIPIFICACION_OPTIONS,
+} from './conversation-filter-options';
 
-export type ConditionFieldId = 'servicio' | 'grupo' | 'agente';
+export type ConditionFieldId = 'servicio' | 'grupo' | 'agente' | 'tipificacion';
 export type ConditionOperator = 'is' | 'is_not';
 export type GroupMatch = 'all' | 'any';
 
@@ -54,6 +59,13 @@ export const CONDITION_FIELDS: readonly ConditionFieldDef[] = [
     noun: 'el agente',
     options: AGENT_OPTIONS,
     placeholder: 'Selecciona agentes…',
+  },
+  {
+    id: 'tipificacion',
+    label: 'Tipificación',
+    noun: 'la tipificación',
+    options: TIPIFICACION_OPTIONS,
+    placeholder: 'Selecciona tipificaciones…',
   },
 ];
 
@@ -119,15 +131,19 @@ export function deriveLegacyScope(tree: ConditionTree): {
   grupos: string[];
   agentes: string[];
 } {
-  const acc: Record<ConditionFieldId, Set<string>> = {
-    servicio: new Set(),
-    grupo: new Set(),
-    agente: new Set(),
+  const acc = {
+    servicio: new Set<string>(),
+    grupo: new Set<string>(),
+    agente: new Set<string>(),
   };
   for (const group of tree.groups) {
     for (const cond of group.conditions) {
       if (cond.operator !== 'is') continue;
-      for (const v of cond.values) acc[cond.field].add(v);
+      // `tipificacion` (y futuros campos) no tienen dimensión plana legacy:
+      // solo viven en `conditionTree`. Se ignoran para la derivación.
+      if (cond.field === 'servicio' || cond.field === 'grupo' || cond.field === 'agente') {
+        for (const v of cond.values) acc[cond.field].add(v);
+      }
     }
   }
   return {
