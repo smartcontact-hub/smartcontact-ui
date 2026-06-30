@@ -14,30 +14,24 @@
   min-height: 100vh;
   background: var(--sc-color-slate-50);
 
-  &__head {
-    display: flex;
-    align-items: flex-start;
-    gap: var(--sc-spacing-1-125);
-    padding: var(--sc-spacing-0-625) var(--sc-spacing-1-75) var(--sc-spacing-0-875);
-    background: var(--sc-bg-surface);
-    border-bottom: 1px solid var(--sc-border-default);
-  }
-
+  /* Cabecera proyectada a la TopBar (back + título + chip de tipo + subtítulo):
+   * convive con el avatar a la derecha; ya no es una banda propia debajo. */
   &__back {
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 32px;
-    height: 32px;
+    width: 28px;
+    height: 28px;
+    flex-shrink: 0;
     border: 0;
-    border-radius: var(--sc-radius-200);
+    border-radius: var(--sc-radius-100);
     background: transparent;
     color: var(--sc-text-secondary);
     cursor: pointer;
-    transition: background-color 200ms ease-out;
+    transition: background-color var(--sc-transition-fast) var(--sc-easing-default);
 
     &:hover {
-      background: var(--sc-bg-elevated);
+      background: var(--sc-color-slate-100);
       color: var(--sc-text-primary);
     }
 
@@ -47,60 +41,45 @@
     }
   }
 
-  &__head-text {
-    flex: 1;
-
-    h1 {
-      margin: 0;
-      font-size: var(--sc-font-size-400);
-      font-weight: 600;
-      color: var(--sc-text-primary);
-    }
-
-    p {
-      margin: 4px 0 0 0;
-      font-size: var(--sc-font-size-200);
-      color: var(--sc-text-secondary);
-    }
+  &__headline {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    min-width: 0;
   }
 
-  &__type {
-    color: var(--sc-text-secondary);
-    font-weight: 400;
-    text-transform: capitalize;
-  }
-
-  &__crumbs {
+  &__title {
     display: flex;
     align-items: center;
-    gap: var(--sc-spacing-0-25);
-    margin-bottom: 2px;
-    font-size: var(--sc-font-size-100);
-    color: var(--sc-text-secondary);
-
-    sc-icon {
-      opacity: 0.55;
-    }
+    gap: var(--sc-spacing-0-625);
+    margin: 0;
+    font-size: var(--sc-font-size-300);
+    line-height: var(--sc-line-height-300);
+    font-weight: var(--sc-font-weight-semibold);
+    color: var(--sc-text-primary);
   }
 
-  &__crumb {
-    border: 0;
-    background: transparent;
-    padding: 0;
-    font: inherit;
+  /* Tipo (Transcripción / Clasificación) como pill, no como texto tras un "·". */
+  &__type-chip {
+    flex-shrink: 0;
+    padding: 1px var(--sc-spacing-0-5);
+    border-radius: var(--sc-radius-full);
+    background: var(--sc-color-sky-50, var(--sc-bg-subtle));
+    color: var(--sc-color-sky-600, var(--sc-text-accent));
+    font-size: var(--sc-font-size-50);
+    font-weight: var(--sc-font-weight-semibold);
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+  }
+
+  &__subtitle {
+    margin: 0;
     font-size: var(--sc-font-size-100);
-    color: var(--sc-color-sky-500);
-    cursor: pointer;
-
-    &:hover {
-      text-decoration: underline;
-    }
-
-    &:focus-visible {
-      outline: 2px solid var(--sc-color-sky-500);
-      outline-offset: 2px;
-      border-radius: var(--sc-radius-100);
-    }
+    line-height: var(--sc-line-height-100);
+    color: var(--sc-text-secondary);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
   }
 
   /* Zona central: el formulario (scrollea con la página) + el aside fijo de impacto. */

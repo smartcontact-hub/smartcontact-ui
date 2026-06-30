@@ -59,6 +59,10 @@ export class TopBarComponent {
    * template. Modelo "todo arriba" (experiment S59). */
   protected readonly slotActions = this.topBarSlot.actions;
 
+  /** Cabecera contextual (título + subtítulo) que una página-formulario
+   * proyecta en el lead, reemplazando el breadcrumb. */
+  protected readonly slotLead = this.topBarSlot.lead;
+
   /* Hard-coded today; eventually flows from a Supervisor / session service. */
   protected readonly userName = 'Mario Supervisor';
   protected readonly userPhone = '+34 917 945 449';

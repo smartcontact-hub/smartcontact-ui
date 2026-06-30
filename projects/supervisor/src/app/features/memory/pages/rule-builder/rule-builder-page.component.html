@@ -1,5 +1,7 @@
 <div class="rule-builder">
-  <header class="rule-builder__head">
+  <!-- Cabecera proyectada a la TopBar (junto al avatar): back + título + chip de
+       tipo + subtítulo. Ver `topBarSlot.setLead` en el componente. -->
+  <ng-template #topbarHeader>
     <button
       type="button"
       class="rule-builder__back"
@@ -8,31 +10,19 @@
     >
       <sc-icon [name]="backIcon" [size]="16" />
     </button>
-    <div class="rule-builder__head-text">
-      <nav class="rule-builder__crumbs" aria-label="Ruta">
-        <button type="button" class="rule-builder__crumb" (click)="onCancel()">
-          {{ 'memory.rules.builder.crumb_rules' | translate }}
-        </button>
-        <sc-icon name="chevron_right" [size]="13" aria-hidden="true" />
-        <span>{{
+    <div class="rule-builder__headline">
+      <h1 class="rule-builder__title">
+        {{
           (isEditMode() ? 'memory.rules.builder.title_edit' : 'memory.rules.builder.title_new')
             | translate
-        }}</span>
-      </nav>
-      <h1>
-        @if (isEditMode()) {
-          {{ 'memory.rules.builder.title_edit' | translate }}
-        } @else {
-          {{ 'memory.rules.builder.title_new' | translate }}
-        }
-        ·
-        <span class="rule-builder__type">{{
+        }}
+        <span class="rule-builder__type-chip">{{
           'memory.rules.builder.type.' + ruleType() | translate
         }}</span>
       </h1>
-      <p>{{ 'memory.rules.builder.subtitle' | translate }}</p>
+      <p class="rule-builder__subtitle">{{ 'memory.rules.builder.subtitle' | translate }}</p>
     </div>
-  </header>
+  </ng-template>
 
   <div class="rule-builder__main">
     <div class="rule-builder__body">

@@ -9,27 +9,34 @@
     >
       <sc-icon name="space_dashboard" size="inherit" />
     </button>
-    @if (trail().length > 0) {
+    @if (slotLead(); as lead) {
       <span class="top-bar__lead-divider" aria-hidden="true"></span>
-    }
-    <ol class="top-bar__crumbs" aria-label="breadcrumb">
-      @for (crumb of trail(); track $index) {
-        <li class="top-bar__crumb">
-          @if ($index > 0) {
-            <span class="top-bar__crumb-sep" aria-hidden="true">›</span>
-          }
-          @if (crumb.path && $index !== lastIndex()) {
-            <button type="button" class="top-bar__crumb-link" (click)="onCrumbClick(crumb.path)">
-              {{ crumb.label }}
-            </button>
-          } @else if ($index === lastIndex()) {
-            <span class="top-bar__crumb-current" aria-current="page">{{ crumb.label }}</span>
-          } @else {
-            <span class="top-bar__crumb-muted">{{ crumb.label }}</span>
-          }
-        </li>
+      <div class="top-bar__lead-slot">
+        <ng-container [ngTemplateOutlet]="lead" />
+      </div>
+    } @else {
+      @if (trail().length > 0) {
+        <span class="top-bar__lead-divider" aria-hidden="true"></span>
       }
-    </ol>
+      <ol class="top-bar__crumbs" aria-label="breadcrumb">
+        @for (crumb of trail(); track $index) {
+          <li class="top-bar__crumb">
+            @if ($index > 0) {
+              <span class="top-bar__crumb-sep" aria-hidden="true">›</span>
+            }
+            @if (crumb.path && $index !== lastIndex()) {
+              <button type="button" class="top-bar__crumb-link" (click)="onCrumbClick(crumb.path)">
+                {{ crumb.label }}
+              </button>
+            } @else if ($index === lastIndex()) {
+              <span class="top-bar__crumb-current" aria-current="page">{{ crumb.label }}</span>
+            } @else {
+              <span class="top-bar__crumb-muted">{{ crumb.label }}</span>
+            }
+          </li>
+        }
+      </ol>
+    }
   </div>
 
   <!-- Slot contextual: la página activa puede inyectar chrome propio aquí
