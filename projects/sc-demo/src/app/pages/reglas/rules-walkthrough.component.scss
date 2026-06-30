@@ -571,3 +571,125 @@ summary:focus-visible {
     padding: var(--sc-spacing-1);
   }
 }
+
+/* ---------- capturas ampliables + lightbox ---------- */
+.compare__shot img {
+  cursor: zoom-in;
+  transition:
+    border-color var(--sc-transition-fast),
+    box-shadow var(--sc-transition-fast);
+}
+
+.compare__shot img:hover {
+  border-color: var(--sc-border-accent);
+  box-shadow: var(--sc-shadow-popover);
+}
+
+.compare__shot img:focus-visible {
+  outline: 2px solid var(--sc-border-focus);
+  outline-offset: 2px;
+}
+
+/* velo oscuro FIJO: un lightbox atenúa todo, así que no sigue el tema */
+.lightbox {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: grid;
+  place-items: center;
+  padding: var(--sc-spacing-3);
+  background: rgba(9, 13, 22, 0.86);
+  cursor: zoom-out;
+}
+
+.lightbox__dialog {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sc-spacing-0-75);
+  max-width: min(96rem, 100%);
+  margin: 0;
+  cursor: default;
+}
+
+.lightbox__img {
+  display: block;
+  max-width: 100%;
+  max-height: 84vh;
+  width: auto;
+  height: auto;
+  border-radius: var(--sc-radius-md);
+  box-shadow: var(--sc-shadow-dialog);
+}
+
+.lightbox__hint {
+  margin: 0;
+  font-size: var(--sc-font-size-100);
+  color: rgba(255, 255, 255, 0.66);
+}
+
+.lightbox__hint kbd {
+  padding: 0 var(--sc-spacing-0-375);
+  border: 1px solid rgba(255, 255, 255, 0.28);
+  border-radius: var(--sc-radius-xs);
+  font-family: var(--sc-font-family-mono);
+  font-size: var(--sc-font-size-50);
+  color: rgba(255, 255, 255, 0.85);
+}
+
+.lightbox__close {
+  position: fixed;
+  top: var(--sc-spacing-1-5);
+  right: var(--sc-spacing-1-5);
+  display: grid;
+  place-items: center;
+  width: var(--sc-spacing-2-5);
+  height: var(--sc-spacing-2-5);
+  padding: 0;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  border-radius: var(--sc-radius-md);
+  background: rgba(255, 255, 255, 0.1);
+  color: rgba(255, 255, 255, 0.92);
+  font-size: var(--sc-font-size-400);
+  line-height: 1;
+  cursor: pointer;
+  transition: background var(--sc-transition-fast);
+}
+
+.lightbox__close:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+.lightbox__close:focus-visible {
+  outline: 2px solid rgba(255, 255, 255, 0.9);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  .lightbox {
+    animation: lightbox-fade 160ms ease-out;
+  }
+  .lightbox__img {
+    animation: lightbox-pop var(--sc-transition-slow) both;
+  }
+}
+
+@keyframes lightbox-fade {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes lightbox-pop {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+  }
+  to {
+    opacity: 1;
+    transform: none;
+  }
+}

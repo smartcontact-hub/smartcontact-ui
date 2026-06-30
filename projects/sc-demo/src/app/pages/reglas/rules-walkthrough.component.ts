@@ -1,4 +1,14 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  DestroyRef,
+  ElementRef,
+  HostListener,
+  effect,
+  inject,
+  signal,
+  viewChild,
+} from '@angular/core';
 
 interface Snippet {
   /** Código REAL del repo (o el de antes, reconstruido), recortado para leerse. */
@@ -35,6 +45,49 @@ interface Decision {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class RulesWalkthroughComponent {
+  private readonly destroyRef = inject(DestroyRef);
+
+  /* ─────────── Lightbox: clic en una captura para ampliarla, Esc para cerrarla ─────────── */
+
+  /** Captura ampliada (null = cerrado). */
+  protected readonly zoomed = signal<{ src: string; alt: string } | null>(null);
+  private readonly lightboxClose = viewChild<ElementRef<HTMLButtonElement>>('lightboxClose');
+  /** La imagen que abrió el lightbox, para devolverle el foco al cerrar. */
+  private zoomTrigger: HTMLElement | null = null;
+
+  constructor() {
+    // Cuando el lightbox aparece en el DOM, el foco va al botón cerrar (a11y).
+    effect(() => {
+      if (this.zoomed()) this.lightboxClose()?.nativeElement.focus();
+    });
+    this.destroyRef.onDestroy(() => this.unlockScroll());
+  }
+
+  protected openZoom(target: EventTarget | null): void {
+    const img = target as HTMLImageElement | null;
+    if (!img) return;
+    this.zoomTrigger = img;
+    this.zoomed.set({ src: img.src, alt: img.alt });
+    document.body.style.overflow = 'hidden';
+  }
+
+  protected closeZoom(): void {
+    if (!this.zoomed()) return;
+    this.zoomed.set(null);
+    this.unlockScroll();
+    this.zoomTrigger?.focus();
+    this.zoomTrigger = null;
+  }
+
+  private unlockScroll(): void {
+    document.body.style.overflow = '';
+  }
+
+  @HostListener('document:keydown.escape')
+  protected onEscape(): void {
+    this.closeZoom();
+  }
+
   /* ─────────── Beat: el alcance ─────────── */
 
   /** ANTES: tres casillas fijas + nombres congelados. */

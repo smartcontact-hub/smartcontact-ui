@@ -67,6 +67,12 @@
             src="/usage/conversaciones-reglas-nueva-antes.png"
             alt="Pantalla vieja de crear regla: tres casillas Servicios Y Grupos Y Agentes"
             loading="lazy"
+            role="button"
+            tabindex="0"
+            title="Ampliar"
+            (click)="openZoom($event.currentTarget)"
+            (keydown.enter)="openZoom($event.currentTarget)"
+            (keydown.space)="openZoom($event.currentTarget); $event.preventDefault()"
           />
           <figcaption>Tres casillas fijas (Servicios <strong>Y</strong> Grupos <strong>Y</strong> Agentes).</figcaption>
         </figure>
@@ -78,6 +84,12 @@
             src="/usage/conversaciones-reglas-nueva.png"
             alt="Constructor nuevo: árbol de condiciones campo·operador·valor con Y u O"
             loading="lazy"
+            role="button"
+            tabindex="0"
+            title="Ampliar"
+            (click)="openZoom($event.currentTarget)"
+            (keydown.enter)="openZoom($event.currentTarget)"
+            (keydown.space)="openZoom($event.currentTarget); $event.preventDefault()"
           />
           <figcaption>Un árbol de condiciones <code>campo · operador · valor</code>, con <strong>Y</strong> u <strong>O</strong>.</figcaption>
         </figure>
@@ -129,6 +141,12 @@
             src="/usage/conversaciones-reglas-antes.png"
             alt="Listado viejo: columna de prioridad, dos reglas EN CONFLICTO, sección de borradores"
             loading="lazy"
+            role="button"
+            tabindex="0"
+            title="Ampliar"
+            (click)="openZoom($event.currentTarget)"
+            (keydown.enter)="openZoom($event.currentTarget)"
+            (keydown.space)="openZoom($event.currentTarget); $event.preventDefault()"
           />
           <figcaption>Varias activas, ordenadas por <strong>prioridad</strong>, con dos marcadas <strong>EN CONFLICTO</strong>.</figcaption>
         </figure>
@@ -140,6 +158,12 @@
             src="/usage/conversaciones-reglas.png"
             alt="Listado nuevo: una sola regla activa y el resto inactivas, sin prioridad ni conflictos"
             loading="lazy"
+            role="button"
+            tabindex="0"
+            title="Ampliar"
+            (click)="openZoom($event.currentTarget)"
+            (keydown.enter)="openZoom($event.currentTarget)"
+            (keydown.space)="openZoom($event.currentTarget); $event.preventDefault()"
           />
           <figcaption>Una sola <strong>activa</strong>. Sin números de prioridad, sin conflictos.</figcaption>
         </figure>
@@ -186,6 +210,12 @@
             src="/usage/conversaciones-reglas-antes.png"
             alt="Listado viejo con una sección «Inactivas y borradores» y un BORRADOR SIN EDITAR"
             loading="lazy"
+            role="button"
+            tabindex="0"
+            title="Ampliar"
+            (click)="openZoom($event.currentTarget)"
+            (keydown.enter)="openZoom($event.currentTarget)"
+            (keydown.space)="openZoom($event.currentTarget); $event.preventDefault()"
           />
           <figcaption>Activa, inactiva… y «<strong>Borrador sin editar</strong>», en su propia sección.</figcaption>
         </figure>
@@ -197,6 +227,12 @@
             src="/usage/conversaciones-reglas.png"
             alt="Listado nuevo con solo dos estados: activa o inactiva"
             loading="lazy"
+            role="button"
+            tabindex="0"
+            title="Ampliar"
+            (click)="openZoom($event.currentTarget)"
+            (keydown.enter)="openZoom($event.currentTarget)"
+            (keydown.space)="openZoom($event.currentTarget); $event.preventDefault()"
           />
           <figcaption>Dos estados y ya: <strong>activa</strong> o <strong>inactiva</strong>.</figcaption>
         </figure>
@@ -322,3 +358,27 @@
     </p>
   </footer>
 </article>
+
+@if (zoomed(); as z) {
+  <div class="lightbox" (click)="closeZoom()">
+    <button
+      #lightboxClose
+      type="button"
+      class="lightbox__close"
+      aria-label="Cerrar (Esc)"
+      (click)="closeZoom()"
+    >
+      <span aria-hidden="true">&times;</span>
+    </button>
+    <figure
+      class="lightbox__dialog"
+      role="dialog"
+      aria-modal="true"
+      [attr.aria-label]="z.alt"
+      (click)="$event.stopPropagation()"
+    >
+      <img class="lightbox__img" [src]="z.src" [alt]="z.alt" />
+      <figcaption class="lightbox__hint">Pulsa <kbd>Esc</kbd> o haz clic fuera para cerrar</figcaption>
+    </figure>
+  </div>
+}
