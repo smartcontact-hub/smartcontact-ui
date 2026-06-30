@@ -1,17 +1,17 @@
 # NEXT SESSION — Smart Contact DS (hand-off)
 
 > Sello: **2026-06-30** (sesión 8). Tema: **borradores fuera + «una sola regla activa» en toda la plataforma**, y
-> **recorrido `/reglas` (sc-demo) reescrito** al modelo real. **OJO: trabajo en working tree, COMMIT PENDIENTE de OK
-> de Rafa** (no se ha pusheado a main aún). Decisión nueva: **DD-28**. Verify verde salvo 1 falso-positivo
-> pre-existente (`docs:coherence`). SOBREESCRIBE este fichero al cerrar.
+> **recorrido `/reglas` (sc-demo) reescrito como historia antes/después**. **Mergeado a main** (commits `9d9859b` +
+> el de este arreglo) + desplegándose en Cloudflare (sc-demo.pages.dev). Decisión nueva: **DD-28**. Verify verde
+> salvo 1 falso-positivo pre-existente (`docs:coherence`). SOBREESCRIBE este fichero al cerrar.
 
 ---
 
 ## ▶️ EMPIEZA AQUÍ
 1. **Lee este fichero entero.**
-2. Si Rafa aprobó el commit: el cambio ya está en main. Si no: revisa el working tree (`git status`) — son solo
-   los ficheros de reglas (supervisor + sc-demo/reglas + i18n + 2 capturas + DECISIONS).
-3. El *por qué* durable: `docs/DECISIONS.md` → **DD-28** (esta sesión) sobre DD-27/26.
+2. Ya está todo en main y desplegándose. El *por qué* durable: `docs/DECISIONS.md` → **DD-28** (esta sesión)
+   sobre DD-27/26.
+3. Pendiente de calidad ajeno a reglas: el falso-positivo de `docs:coherence` (ver TRAMPAS) sigue cortando `verify`.
 
 ---
 
