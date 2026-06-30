@@ -92,10 +92,6 @@
     &:hover {
       background: var(--sc-bg-default);
     }
-
-    &.rules-row--draft {
-      background: var(--sc-color-amber-50);
-    }
   }
 
   tbody td {
@@ -107,11 +103,6 @@
 
   tbody tr:last-child {
     border-bottom: 0;
-  }
-
-  &__th-order,
-  &__td-order {
-    width: 64px;
   }
 
   &__th-actions,

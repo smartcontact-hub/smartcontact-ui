@@ -306,11 +306,10 @@
       "empty_title": "Ainda sem regras",
       "empty_desc": "As regras automatizam o que é gravado, transcrito e analisado das conversas que entram no sistema.",
       "empty_cta": "Criar primeira regra",
-      "active_title": "Regras ativas · ordem de prioridade",
+      "active_title": "Regra ativa",
       "no_active_hint": "Nenhuma regra ativa. Ative uma regra para começar a aplicá-la.",
-      "inactive_title": "Inativas e rascunhos",
+      "inactive_title": "Inativas",
       "cols": {
-        "order": "#",
         "name": "Regra",
         "scope": "Alcance",
         "actions": "Ações",
@@ -325,27 +324,16 @@
       },
       "status": {
         "active": "Ativa",
-        "inactive": "Inativa",
-        "draft": "Rascunho sem editar",
-        "conflict": "Em conflito"
+        "inactive": "Inativa"
       },
       "menu": {
         "activate": "Ativar",
-        "deactivate": "Desativar",
-        "activate_draft_tooltip": "Edite pelo menos um campo para ativar esta regra."
-      },
-      "order_updated": "Ordem atualizada",
-      "conflict": {
-        "title": "Em conflito",
-        "desc": "Esta regra sobrepõe seu alcance com {{count}} regra(s) do mesmo tipo. O supervisor pode conviver com conflitos — a UI mostra qual vence.",
-        "winner": "Vence",
-        "hint": "Reordene arrastando para mudar a prioridade.",
-        "priority_meta": "· prioridade {{n}}"
+        "deactivate": "Desativar"
       },
       "delete_title": "Eliminar regra",
       "delete_body": "Você vai eliminar «{{name}}». Esta ação não pode ser desfeita.",
       "deleted_toast": "Regra «{{name}}» eliminada",
-      "duplicated_toast": "Regra duplicada. Edite pelo menos um campo para poder ativá-la.",
+      "duplicated_toast": "Regra duplicada. A cópia fica inativa.",
       "builder": {
         "back": "Voltar à lista",
         "title_new": "Nova regra",
@@ -420,11 +408,7 @@
         "save_changes": "Salvar alterações",
         "create_rule": "Criar regra",
         "created_toast": "Regra criada",
-        "updated_toast": "Regra atualizada",
-        "draft_banner": "Esta regra é uma cópia sem modificar. Edite pelo menos um campo e salve para poder ativá-la.",
-        "discard_draft": "Descartar cópia",
-        "draft_ready_toast": "Regra pronta para ativar",
-        "discarded_toast": "Cópia descartada"
+        "updated_toast": "Regra atualizada"
       }
     },
     "entities": {

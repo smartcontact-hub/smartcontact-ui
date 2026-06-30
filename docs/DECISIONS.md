@@ -1230,8 +1230,44 @@ W/H de iconos companion a la var de font-size (Bloque 4a).
 
 ---
 
-Última actualización: 2026-06-30 (**DD-27** constructor de condiciones **v2** — refs tipadas dinámicas + modelo
-`value` + estimación de procesado [barra de proporción + proyección día/mes] + guía de errores + duración con presets
-+ scope MVP [fuera grabación/borradores]; 118 tests, mergeado a main. · **DD-26** la base Variante B `conditionTree`
-2 niveles + tipificación + builder progresivo · DD-24 **EJECUTADA en el DS** [sc-icon inherit + 11 companion] · DD-25
-gap footer sc-dialog · var-docs de color re-apuntadas en Figma).
+## DD-28 · 2026-06-30 — Reglas MVP: borradores fuera del todo + invariante «una sola activa» + sin prioridad/conflictos
+
+Cierra la limpieza que **DD-27** dejó pendiente a propósito ("`isDraft`/`recording`/`'draft'` se dejan en el modelo
+para no cascadear errores antes del merge — limpieza follow-up"). Origen: feedback de Rafa — *«solo una regla puede
+estar activa; al desactivar no crea inactivas ni borradores, solo aparece como inactiva»*. El supervisor aún
+contradecía ese modelo: el listado mostraba la sección «Inactivas y borradores», el estado «Borrador sin editar»,
+duplicar→borrador no-activable y el gating del botón Activar; el store mantenía `priority` + detección de conflictos
+(vivos en código, invisibles en UI).
+
+**Decisión** (solo `features/memory`; el `draft` de admin —agents/groups/users, DD#294— es OTRO concepto, intacto):
+- **Borrador fuera del modelo**: `isDraft`/`duplicatedFromId`/`RuleStatus` eliminados de `rule.types.ts`; 2ª sección
+  del listado «Inactivas y borradores» → «Inactivas»; **duplicar crea una copia inactiva normal** (editable/activable,
+  sin estado especial); fuera el gating del botón Activar + i18n `status.draft`/`status.conflict`/`activate_draft_tooltip`/
+  `builder.{draft_banner,discard_draft,draft_ready_toast,discarded_toast}`/`order_updated`/`cols.order`/bloque `conflict.*`
+  en los 4 idiomas + el scss muerto del banner de borrador.
+- **Invariante «una sola activa»** en `RulesStore`: `toggleActive`/`addRule`/`updateRule` desactivan el resto al activar
+  una (patrón radio). El seed (`rules-mock.ts`) arranca con **1 activa + 3 inactivas** (antes 4 activas con `priority` 1..4).
+- **Prioridad y conflictos eliminados** (maquinaria de un mundo multi-activa que ya no existe, muerta en UI): fuera
+  `priority`, `conflictsByRuleId`, `isInConflict`, `getConflictingRules`, `reorderActive`, `scopeOverlaps`/`dimensionOverlaps`.
+  El alcance plano (`servicios/grupos/agentes` vía `deriveLegacyScope`) se mantiene solo para el resumen en prosa del
+  listado. Título del listado → «Regla activa» (singular).
+
+**Verificado**: AOT supervisor + sc-demo verde · typecheck (5 apps) + lint + **125 tests** + `audit:components` verde ·
+capturas reales del Supervisor (listado: 1 activa / 3 inactivas, alcance en prosa; builder editando una regla con
+estimación «6 de 34» + barra + «≈74/día»). Único ✗ de `verify`: falso-positivo **pre-existente** de `docs:coherence`
+(`AUDIT-DEUDA-2026-06.md:72` propone crear `scripts/paths.mjs`), ajeno a este cambio.
+
+**Presentación (no es DD, nota de consecuencia)**: el recorrido `/reglas` de sc-demo (material, NO producto) reescrito
+como **historia antes/después** — el giro a transcripción + 3 beats de transformación (alcance · prioridad/conflictos ·
+borradores), cada uno con Antes / Ahora / Por qué, capturas comparadas (las «antes» extraídas de git) y código
+antes/después. Skills `/impeccable`+`/minimalist-ui` aplicadas solo donde no contrastan con el DS (anti-slop, jerarquía,
+editorial; descartadas sus fuentes/colores/iconos propios). Nombres propios → genéricos. Dark-safe + AOT/typecheck/lint verde.
+
+---
+
+Última actualización: 2026-06-30 (**DD-28** reglas MVP: borradores fuera del todo + invariante «una sola activa»
+(radio) + fuera prioridad/conflictos en el supervisor; recorrido `/reglas` realineado · **DD-27** constructor de
+condiciones **v2** — refs tipadas dinámicas + modelo `value` + estimación de procesado [barra de proporción +
+proyección día/mes] + guía de errores + duración con presets + scope MVP [fuera grabación/borradores]; mergeado a
+main. · **DD-26** la base Variante B `conditionTree` 2 niveles + tipificación + builder progresivo · DD-25 gap footer
+sc-dialog · var-docs de color re-apuntadas en Figma).

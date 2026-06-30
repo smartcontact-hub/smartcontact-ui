@@ -118,7 +118,7 @@
         }
       </section>
 
-      @if (inactiveOrDraftRules().length > 0) {
+      @if (inactiveRules().length > 0) {
         <hr class="rules-divider" aria-hidden="true" />
 
         <section class="rules-section rules-section--secondary">
@@ -144,7 +144,7 @@
               </tr>
             </thead>
             <tbody>
-              @for (rule of inactiveOrDraftRules(); track rule.id) {
+              @for (rule of inactiveRules(); track rule.id) {
                 <tr class="rules-row-inactive">
                   <td class="rules-table__td-name">
                     <a href="javascript:void(0)" class="rules-table__name">{{ rule.name }}</a>

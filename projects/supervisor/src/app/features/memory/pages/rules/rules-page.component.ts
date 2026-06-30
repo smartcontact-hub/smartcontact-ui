@@ -70,7 +70,7 @@ export class RulesPageComponent {
   }
 
   protected readonly activeRules = this.rulesStore.activeRules;
-  protected readonly inactiveOrDraftRules = this.rulesStore.inactiveOrDraftRules;
+  protected readonly inactiveRules = this.rulesStore.inactiveRules;
   protected readonly isEmpty = this.rulesStore.isEmpty;
 
   protected readonly menuTargetRule = signal<Rule | null>(null);
@@ -150,13 +150,9 @@ export class RulesPageComponent {
   }
 
   protected buildMenuItems(rule: Rule): MenuItem[] {
-    const isActive = rule.active && !rule.isDraft;
-    const toggleLabel = isActive
+    const toggleLabel = rule.active
       ? this.translate.instant('memory.rules.menu.deactivate')
       : this.translate.instant('memory.rules.menu.activate');
-    // Spec line 113-116: Borrador sin editar NO se puede activar
-    // hasta editar al menos un campo. Tooltip explica.
-    const toggleDisabled = !!rule.isDraft;
     return [
       {
         label: this.translate.instant('common.edit'),
@@ -173,12 +169,8 @@ export class RulesPageComponent {
       },
       {
         label: toggleLabel,
-        icon: isActive ? 'pi pi-pause' : 'pi pi-play',
-        disabled: toggleDisabled,
-        tooltip: toggleDisabled
-          ? this.translate.instant('memory.rules.menu.activate_draft_tooltip')
-          : undefined,
-        command: toggleDisabled ? undefined : () => this.rulesStore.toggleActive(rule.id),
+        icon: rule.active ? 'pi pi-pause' : 'pi pi-play',
+        command: () => this.rulesStore.toggleActive(rule.id),
       },
       {
         label: this.translate.instant('common.delete'),

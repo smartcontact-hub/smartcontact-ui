@@ -115,7 +115,12 @@ export const USAGE_SCREENS: readonly UsageScreen[] = [
   // ── Conversaciones (memoria) ────────────────────────────────────────────────
   { id: 'conversaciones', route: 'conversaciones', label: 'Conversaciones' },
   { id: 'conversaciones-reglas', route: 'conversaciones/reglas', label: 'Reglas · listado' },
-  { id: 'conversaciones-reglas-nueva', route: 'conversaciones/reglas/nueva', label: 'Reglas · nueva' },
+  {
+    id: 'conversaciones-reglas-nueva',
+    route: 'conversaciones/reglas/1',
+    label: 'Reglas · constructor',
+    readySelector: '.rule-builder',
+  },
   { id: 'conversaciones-entidades', route: 'conversaciones/entidades', label: 'Entidades' },
   { id: 'conversaciones-categorias', route: 'conversaciones/categorias', label: 'Categorías' },
 ];

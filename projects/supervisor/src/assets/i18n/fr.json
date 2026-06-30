@@ -306,11 +306,10 @@
       "empty_title": "Pas encore de règles",
       "empty_desc": "Les règles automatisent ce qui est enregistré, transcrit et analysé des conversations entrant dans le système.",
       "empty_cta": "Créer la première règle",
-      "active_title": "Règles actives · ordre de priorité",
+      "active_title": "Règle active",
       "no_active_hint": "Aucune règle active. Activez une règle pour commencer à l'appliquer.",
-      "inactive_title": "Inactives et brouillons",
+      "inactive_title": "Inactives",
       "cols": {
-        "order": "#",
         "name": "Règle",
         "scope": "Portée",
         "actions": "Actions",
@@ -325,27 +324,16 @@
       },
       "status": {
         "active": "Active",
-        "inactive": "Inactive",
-        "draft": "Brouillon non édité",
-        "conflict": "En conflit"
+        "inactive": "Inactive"
       },
       "menu": {
         "activate": "Activer",
-        "deactivate": "Désactiver",
-        "activate_draft_tooltip": "Éditez au moins un champ pour activer cette règle."
-      },
-      "order_updated": "Ordre mis à jour",
-      "conflict": {
-        "title": "En conflit",
-        "desc": "Cette règle chevauche sa portée avec {{count}} règle(s) du même type. Le superviseur peut coexister avec les conflits — l'UI montre laquelle gagne.",
-        "winner": "Gagne",
-        "hint": "Glisser pour réordonner et changer la priorité.",
-        "priority_meta": "· priorité {{n}}"
+        "deactivate": "Désactiver"
       },
       "delete_title": "Supprimer la règle",
       "delete_body": "Vous allez supprimer «{{name}}». Cette action ne peut pas être annulée.",
       "deleted_toast": "Règle «{{name}}» supprimée",
-      "duplicated_toast": "Règle dupliquée. Éditez au moins un champ pour pouvoir l'activer.",
+      "duplicated_toast": "Règle dupliquée. La copie reste inactive.",
       "builder": {
         "back": "Retour à la liste",
         "title_new": "Nouvelle règle",
@@ -420,11 +408,7 @@
         "save_changes": "Sauvegarder les modifications",
         "create_rule": "Créer la règle",
         "created_toast": "Règle créée",
-        "updated_toast": "Règle mise à jour",
-        "draft_banner": "Cette règle est une copie non modifiée. Éditez au moins un champ et sauvegardez pour pouvoir l'activer.",
-        "discard_draft": "Annuler la copie",
-        "draft_ready_toast": "Règle prête à activer",
-        "discarded_toast": "Copie annulée"
+        "updated_toast": "Règle mise à jour"
       }
     },
     "entities": {

@@ -249,9 +249,9 @@ export class RuleBuilderPageComponent implements DirtyAware {
     this.submitted.set(true);
     if (!this.canSave()) return;
     // El árbol es la fuente de verdad del alcance; derivamos los campos planos
-    // para que listado y detección de conflictos sigan funcionando sin cambios.
+    // para alimentar el resumen del listado sin recalcular el árbol cada vez.
     const scope = deriveLegacyScope(this.conditionTree(), this.resolver);
-    const base: Omit<Rule, 'id' | 'lastModified' | 'priority'> = {
+    const base: Omit<Rule, 'id' | 'lastModified'> = {
       type: this.ruleType(),
       name: this.name().trim(),
       description: this.description().trim() || undefined,

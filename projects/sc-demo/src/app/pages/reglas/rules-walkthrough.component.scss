@@ -287,6 +287,107 @@ li code {
   color: var(--sc-text-secondary);
 }
 
+/* ---------- beat: antes / ahora / por qué ---------- */
+.beat__lead {
+  max-width: var(--measure);
+  margin: 0 0 var(--sc-spacing-1-25);
+  font-size: var(--sc-font-size-300);
+  line-height: var(--sc-line-height-300);
+  color: var(--sc-text-secondary);
+}
+
+/* comparación lado a lado; colapsa a una columna en estrecho */
+.compare {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--sc-spacing-1-5);
+  align-items: start;
+  margin-bottom: var(--sc-spacing-1-25);
+}
+
+.compare__tag {
+  margin: 0 0 var(--sc-spacing-0-5);
+  font-size: var(--sc-font-size-caption);
+  line-height: var(--sc-line-height-caption);
+  font-weight: var(--sc-font-weight-semibold);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.compare__side--before .compare__tag {
+  color: var(--sc-text-subtle);
+}
+
+.compare__side--after .compare__tag {
+  color: var(--sc-text-accent);
+}
+
+.compare__shot {
+  margin: 0;
+}
+
+.compare__shot img {
+  display: block;
+  width: 100%;
+  height: auto;
+  border: 1px solid var(--sc-border-default);
+  border-radius: var(--sc-radius-md);
+  box-shadow: var(--sc-shadow-sm);
+}
+
+/* el pasado, un punto más callado — sin perder legibilidad */
+.compare__side--before .compare__shot img {
+  opacity: 0.9;
+}
+
+.compare__shot figcaption {
+  margin-top: var(--sc-spacing-0-5);
+  font-size: var(--sc-font-size-100);
+  line-height: var(--sc-line-height-100);
+  color: var(--sc-text-secondary);
+}
+
+/* "por qué": hairline full-width + label acento (NUNCA stripe lateral) */
+.why {
+  max-width: var(--measure);
+  margin-bottom: var(--sc-spacing-1);
+  padding-top: var(--sc-spacing-1);
+  border-top: 1px solid var(--sc-border-default);
+}
+
+.why__label {
+  margin: 0 0 var(--sc-spacing-0-375);
+  font-size: var(--sc-font-size-caption);
+  font-weight: var(--sc-font-weight-semibold);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--sc-text-accent);
+}
+
+.why__text {
+  margin: 0;
+  line-height: var(--sc-line-height-300);
+  color: var(--sc-text-primary);
+}
+
+/* par de snippets antes/ahora apilados dentro del disclosure */
+.snippet-pair {
+  display: flex;
+  flex-direction: column;
+}
+
+.snippet-pair .snippet + .snippet,
+.snippet-pair + .snippet--full {
+  border-top: 1px solid var(--sc-border-default);
+}
+
+@media (max-width: 44rem) {
+  .compare {
+    grid-template-columns: 1fr;
+    gap: var(--sc-spacing-1-25);
+  }
+}
+
 /* ---------- lista de preguntas (paso 8) ---------- */
 .qlist {
   max-width: var(--measure);

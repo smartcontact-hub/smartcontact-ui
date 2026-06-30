@@ -3,9 +3,10 @@ import type { Rule } from './rule.types';
 /**
  * Mock de reglas Memory · MVP transcripción.
  *
- * MVP sin priorización de reglas y sin grabación (obsoleta por ley) → solo
- * reglas de transcripción / clasificación, activas. Sin borradores. La regla #4
- * reproduce el caso compuesto de la PPT (varios grupos + tipificación + duración).
+ * MVP sin priorización ni grabación (obsoleta por ley) → solo reglas de
+ * transcripción / clasificación. Sin borradores. **Solo una activa a la vez**:
+ * la #1 está activa y el resto inactivas. La #4 reproduce el caso compuesto de
+ * la PPT (grupo + tipificación + duración) — se edita para ver el árbol completo.
  */
 export const MOCK_RULES: readonly Rule[] = [
   {
@@ -43,7 +44,6 @@ export const MOCK_RULES: readonly Rule[] = [
     transcripcion: true,
     clasificacion: false,
     active: true,
-    priority: 1,
     lastModified: '2026-05-16T15:45:00Z',
   },
   {
@@ -80,8 +80,7 @@ export const MOCK_RULES: readonly Rule[] = [
     recording: false,
     transcripcion: true,
     clasificacion: true,
-    active: true,
-    priority: 2,
+    active: false,
     aiAnalysis: true,
     categorias: ['cat_queja_facturacion', 'cat_retencion'],
     lastModified: '2026-05-18T09:12:00Z',
@@ -97,8 +96,7 @@ export const MOCK_RULES: readonly Rule[] = [
     recording: false,
     transcripcion: true,
     clasificacion: false,
-    active: true,
-    priority: 3,
+    active: false,
     lastModified: '2026-05-15T08:20:00Z',
   },
   {
@@ -155,8 +153,7 @@ export const MOCK_RULES: readonly Rule[] = [
     recording: false,
     transcripcion: true,
     clasificacion: false,
-    active: true,
-    priority: 4,
+    active: false,
     lastModified: '2026-05-18T12:00:00Z',
   },
 ];
