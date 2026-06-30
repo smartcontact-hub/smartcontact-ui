@@ -453,7 +453,16 @@
           "pick_individuals": "Individuales",
           "pick_empty": "Sin resultados.",
           "select_all": "Seleccionar todo (cualquiera)",
-          "remove": "Quitar"
+          "remove": "Quitar",
+          "val": {
+            "incomplete": "Falta elegir un valor.",
+            "invalid_range": "El mínimo debe ser menor que el máximo.",
+            "duplicate": "Esta condición está repetida.",
+            "contradiction": "Estas dos condiciones no pueden cumplirse a la vez.",
+            "tautology": "Con «o», esto incluye todas las conversaciones.",
+            "impact_zero": "Ninguna conversación de muestra cumple estas condiciones.",
+            "blocked": "Revisa las condiciones marcadas antes de guardar."
+          }
         }
       }
     },

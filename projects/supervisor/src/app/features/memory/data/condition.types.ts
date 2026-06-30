@@ -209,6 +209,30 @@ export interface ConditionTree {
   readonly groups: readonly ConditionGroup[];
 }
 
+/* ── Validación / guía de errores (lógica pura en condition-validate.core.mjs) ── */
+
+export type IssueSeverity = 'error' | 'warning';
+export type IssueCode =
+  | 'incomplete'
+  | 'invalid_range'
+  | 'duplicate'
+  | 'contradiction'
+  | 'tautology';
+
+/**
+ * Incidencia de validación, SIN prosa: el componente mapea `code` → i18n y la
+ * pinta junto a la(s) condición(es) marcada(s). `condId` para incidencias de una
+ * sola condición (incompleta, rango); `condIds` para las de un par
+ * (contradicción, tautología). `error` bloquea guardar; `warning` solo avisa.
+ */
+export interface ValidationIssue {
+  readonly severity: IssueSeverity;
+  readonly code: IssueCode;
+  readonly groupId: string;
+  readonly condId?: string;
+  readonly condIds?: readonly string[];
+}
+
 /* ── Factories (ids secuenciales por sesión, deterministas) ── */
 
 let _seq = 0;

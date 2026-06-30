@@ -168,6 +168,20 @@
     box-shadow: 0 -4px 12px rgb(0 0 0 / 0.04);
   }
 
+  /* Hint a la izquierda del footer cuando hay un error que bloquea guardar. */
+  &__save-blocked {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sc-spacing-0-25);
+    margin: 0 auto 0 0;
+    font-size: var(--sc-font-size-100);
+    color: var(--sc-text-danger);
+
+    sc-icon {
+      flex-shrink: 0;
+    }
+  }
+
   &__textarea-label,
   &__field-label {
     display: block;

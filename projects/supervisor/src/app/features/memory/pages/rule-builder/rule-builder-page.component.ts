@@ -28,6 +28,7 @@ import {
   deriveTreeFromLegacy,
   emptyConditionTree,
 } from '../../data/condition.types';
+import { validateConditionTree } from '../../data/condition-validate';
 import type { Direction, Rule, RuleType } from '../../data/rule.types';
 import { CategoriesStore } from '../../state/categories.store';
 import { RulesStore } from '../../state/rules.store';
@@ -112,7 +113,13 @@ export class RuleBuilderPageComponent implements DirtyAware {
   protected readonly categorias = signal<readonly string[]>([]);
 
   protected readonly nameInvalid = computed(() => this.name().trim().length < 3);
-  protected readonly canSave = computed(() => !this.nameInvalid());
+  /** Errores objetivos del árbol (condición incompleta / rango inválido) —
+   *  bloquean guardar. Duplicados y contradicciones son `warning`: avisan en el
+   *  builder pero NO bloquean (pueden ser intencionales). */
+  protected readonly condBlocking = computed(() =>
+    validateConditionTree(this.conditionTree()).some((i) => i.severity === 'error'),
+  );
+  protected readonly canSave = computed(() => !this.nameInvalid() && !this.condBlocking());
 
   /** JSON snapshot of every editable field — feeds the unsaved-changes guard. */
   private buildSnapshot(): string {

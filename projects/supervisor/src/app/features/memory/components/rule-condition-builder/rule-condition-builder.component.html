@@ -153,6 +153,13 @@
       <span class="cond-builder__impact-note">{{ 'memory.rules.builder.cond.impact_note' | translate }}</span>
     }
   </div>
+
+  @if (touched() && showEmptyImpact()) {
+    <p class="cond-builder__empty-impact">
+      <sc-icon name="warning" [size]="13" />
+      {{ 'memory.rules.builder.cond.val.impact_zero' | translate }}
+    </p>
+  }
 </div>
 
 <ng-template #rows let-group let-flat="flat">
@@ -169,87 +176,104 @@
         </button>
       }
 
-      <div class="cond-row">
-        <sc-select
-          class="cond-row__field"
-          [options]="fieldOptions"
-          optionLabel="label"
-          optionValue="value"
-          [value]="cond.field"
-          (valueChange)="setField(group.id, cond.id, $event)"
-        >
-          <ng-template let-opt pTemplate="selectedItem">
-            <sc-icon class="cond-row__field-ic" [name]="opt.icon" size="inherit" />
-            {{ opt.label }}
-          </ng-template>
-          <ng-template let-opt pTemplate="item">
-            <sc-icon class="cond-row__field-ic" [name]="opt.icon" size="inherit" />
-            {{ opt.label }}
-          </ng-template>
-        </sc-select>
-
-        <sc-select
-          class="cond-row__op"
-          [options]="operatorOptionsFor(cond.field)"
-          optionLabel="label"
-          optionValue="value"
-          [value]="cond.operator"
-          (valueChange)="setOperator(group.id, cond.id, $event)"
-        />
-
-        @if (fieldDef(cond.field).kind === 'list') {
-          <sc-rule-condition-value-picker
-            class="cond-row__value"
-            [refKind]="refKindOf(cond.field)"
-            [placeholder]="fieldDef(cond.field).placeholder"
-            [value]="cond.value"
-            (valueChange)="setValue(group.id, cond.id, $event)"
-          />
-        } @else if (fieldDef(cond.field).kind === 'enum') {
+      <div class="cond-item">
+        <div class="cond-row">
           <sc-select
-            class="cond-row__value"
-            [options]="directionOptionsFor(cond.field)"
+            class="cond-row__field"
+            [options]="fieldOptions"
             optionLabel="label"
             optionValue="value"
-            [value]="enumValue(cond)"
-            (valueChange)="setEnum(group.id, cond.id, $event)"
+            [value]="cond.field"
+            (valueChange)="setField(group.id, cond.id, $event)"
+          >
+            <ng-template let-opt pTemplate="selectedItem">
+              <sc-icon class="cond-row__field-ic" [name]="opt.icon" size="inherit" />
+              {{ opt.label }}
+            </ng-template>
+            <ng-template let-opt pTemplate="item">
+              <sc-icon class="cond-row__field-ic" [name]="opt.icon" size="inherit" />
+              {{ opt.label }}
+            </ng-template>
+          </sc-select>
+
+          <sc-select
+            class="cond-row__op"
+            [options]="operatorOptionsFor(cond.field)"
+            optionLabel="label"
+            optionValue="value"
+            [value]="cond.operator"
+            (valueChange)="setOperator(group.id, cond.id, $event)"
           />
-        } @else {
-          <div class="cond-row__value cond-row__num">
-            <input
-              type="number"
-              min="0"
-              [value]="numAmount(cond)"
-              (input)="setAmount(group.id, cond.id, $any($event.target).value, 1)"
+
+          @if (fieldDef(cond.field).kind === 'list') {
+            <sc-rule-condition-value-picker
+              class="cond-row__value"
+              [refKind]="refKindOf(cond.field)"
+              [placeholder]="fieldDef(cond.field).placeholder"
+              [value]="cond.value"
+              (valueChange)="setValue(group.id, cond.id, $event)"
             />
-            @if (cond.operator === 'between') {
-              <span class="cond-row__num-sep">y</span>
+          } @else if (fieldDef(cond.field).kind === 'enum') {
+            <sc-select
+              class="cond-row__value"
+              [options]="directionOptionsFor(cond.field)"
+              optionLabel="label"
+              optionValue="value"
+              [value]="enumValue(cond)"
+              (valueChange)="setEnum(group.id, cond.id, $event)"
+            />
+          } @else {
+            <div class="cond-row__value cond-row__num">
               <input
                 type="number"
                 min="0"
-                [value]="numAmount2(cond)"
-                (input)="setAmount(group.id, cond.id, $any($event.target).value, 2)"
+                [value]="numAmount(cond)"
+                (input)="setAmount(group.id, cond.id, $any($event.target).value, 1)"
               />
-            }
-            <sc-select
-              class="cond-row__num-unit"
-              [options]="durationUnitOptions"
-              optionLabel="label"
-              optionValue="value"
-              [value]="numUnit(cond)"
-              (valueChange)="setUnit(group.id, cond.id, $event)"
-            />
-          </div>
-        }
+              @if (cond.operator === 'between') {
+                <span class="cond-row__num-sep">y</span>
+                <input
+                  type="number"
+                  min="0"
+                  [value]="numAmount2(cond)"
+                  (input)="setAmount(group.id, cond.id, $any($event.target).value, 2)"
+                />
+              }
+              <sc-select
+                class="cond-row__num-unit"
+                [options]="durationUnitOptions"
+                optionLabel="label"
+                optionValue="value"
+                [value]="numUnit(cond)"
+                (valueChange)="setUnit(group.id, cond.id, $event)"
+              />
+            </div>
+          }
 
-        <button
-          type="button"
-          class="cond-row__remove"
-          (click)="removeCondition(group.id, cond.id)"
-          [attr.aria-label]="'memory.rules.builder.cond.remove_condition' | translate"
-        >
-          <sc-icon [name]="closeIcon" size="inherit" />
-        </button>
+          <button
+            type="button"
+            class="cond-row__remove"
+            (click)="removeCondition(group.id, cond.id)"
+            [attr.aria-label]="'memory.rules.builder.cond.remove_condition' | translate"
+          >
+            <sc-icon [name]="closeIcon" size="inherit" />
+          </button>
+        </div>
+
+        @if (touched() && issuesForCond(cond.id).length) {
+          <ul class="cond-issues">
+            @for (issue of issuesForCond(cond.id); track issue.code) {
+              <li
+                class="cond-issue"
+                [class.cond-issue--error]="issue.severity === 'error'"
+                [class.cond-issue--warn]="issue.severity === 'warning'"
+              >
+                <sc-icon [name]="issue.severity === 'error' ? 'error' : 'warning'" [size]="13" />
+                <span>{{ 'memory.rules.builder.cond.val.' + issue.code | translate }}</span>
+              </li>
+            }
+          </ul>
+        }
       </div>
     }
 
