@@ -1,18 +1,16 @@
 /**
- * Modelo de condiciones para el constructor de reglas (Variante B).
+ * Modelo de condiciones del constructor de reglas (v2: referencias dinámicas).
  *
- * Reemplaza el alcance rígido de 3 dimensiones (Servicio Y Grupo Y Agente)
- * por un árbol de condiciones con potencia booleana real:
- *   - `match: 'all' | 'any'` (coincidir con TODAS / CUALQUIERA) a dos niveles.
- *   - Mezcla AND/OR entre grupos y dentro de cada grupo.
- *   - Agrupación: 2 niveles (raíz → grupos → condiciones). NO anidación libre
- *     (eso sería la Variante C); el tope de 2 niveles cubre casi todo caso y
- *     mantiene la UI legible para un supervisor.
+ * Una condición es `campo · operador · valor`. El valor guarda **referencias
+ * tipadas** (no nombres) que se resuelven a etiqueta/membresía en vivo, o un
+ * **comodín** "cualquiera" (incluye entidades futuras), o un número (duración) o
+ * un enum (dirección). Dos niveles de agrupación (raíz → grupos → condiciones),
+ * cada uno con `match: 'all'|'any'`.
  *
- * Persistencia: se guarda en `Rule.conditionTree` (campo aditivo, opcional).
- * Para no romper el listado ni la detección de conflictos del store —que leen
- * `servicios/grupos/agentes`— al guardar se deriva la unión plana del árbol
- * con `deriveLegacyScope` (sobre-aproximación segura: nunca pierde un solapamiento).
+ * La proyección a `Rule.servicios/grupos/agentes` planos (`deriveLegacyScope`)
+ * mantiene vivo el listado + la detección de conflictos sin tocarlos. La
+ * resolución de etiquetas/membresía la provee un `RefResolver` (el componente
+ * inyecta `ConditionResolverService`); las funciones de aquí son puras.
  */
 import type { FilterOption } from './conversation-filter-options';
 import {
@@ -22,25 +20,25 @@ import {
   TIPIFICACION_OPTIONS,
 } from './conversation-filter-options';
 
-export type ConditionFieldId = 'servicio' | 'grupo' | 'agente' | 'tipificacion';
-// Bloque 2 extiende con 'direccion' | 'duracion' | 'categoria'.
+export type ConditionFieldId =
+  | 'servicio'
+  | 'grupo'
+  | 'agente'
+  | 'tipificacion'
+  | 'direccion'
+  | 'duracion'
+  | 'categoria';
 
-/** Operadores. `is`/`is_not` para campos lista/enum; `gt`/`lt`/`between` para número. */
 export type ConditionOperator = 'is' | 'is_not' | 'gt' | 'lt' | 'between';
 export type GroupMatch = 'all' | 'any';
-
-/** Tipo de campo → qué editor de valor y qué operadores aplican. */
 export type ConditionFieldKind = 'list' | 'enum' | 'number';
-/** Sección del dropdown de campo. */
 export type ConditionFieldGroup = 'conversacion' | 'clasificacion';
-/** Para campos lista: a qué entidad apuntan sus valores (resolución en vivo). */
 export type RefKind = 'service' | 'group' | 'agent' | 'tipificacion' | 'category';
 
 /**
- * Referencia tipada a una entidad (constructor v2). Reemplaza el snapshot de
- * nombre: se guarda la referencia y se resuelve etiqueta/membresía al vuelo.
- * - `service` no tiene ID en el sistema → por nombre.
- * - `group` = la cola; `agentGroup` = ese mismo grupo usado como sus agentes-miembros.
+ * Referencia tipada a una entidad. Reemplaza el snapshot de nombre.
+ * - `service` no tiene ID → por nombre.
+ * - `group` = la cola; `agentGroup` = ese grupo usado como sus agentes-miembros.
  */
 export type ConditionRef =
   | { readonly kind: 'service'; readonly name: string }
@@ -50,13 +48,9 @@ export type ConditionRef =
   | { readonly kind: 'tipificacion'; readonly id: number }
   | { readonly kind: 'category'; readonly id: string };
 
-/**
- * Operando de una condición, según el kind del campo.
- * - `any` = comodín "cualquiera" (incluye entidades futuras) — campos lista.
- * - `refs` = referencias seleccionadas — campos lista.
- * - `enum` = un valor (p.ej. dirección entrante/saliente).
- * - `number` = umbral(es) de duración (`between` usa amount + amount2).
- */
+export type DurationUnit = 'seconds' | 'minutes';
+
+/** Operando de una condición, según el kind del campo. */
 export type ConditionValue =
   | { readonly mode: 'any' }
   | { readonly mode: 'refs'; readonly refs: readonly ConditionRef[] }
@@ -65,29 +59,29 @@ export type ConditionValue =
       readonly mode: 'number';
       readonly amount: number;
       readonly amount2?: number;
-      readonly unit: 'seconds' | 'minutes';
+      readonly unit: DurationUnit;
     };
 
 export interface ConditionFieldDef {
   readonly id: ConditionFieldId;
-  /** Etiqueta para el selector de campo. */
   readonly label: string;
   /** Sustantivo con artículo para el resumen en prosa ("el servicio"). */
   readonly noun: string;
-  /** Tipo de campo (editor de valor + operadores aplicables). */
   readonly kind: ConditionFieldKind;
-  /** Sección del dropdown de campo. */
   readonly group: ConditionFieldGroup;
-  /** Material symbol del campo. */
   readonly icon: string;
   /** Solo campos lista: a qué entidad apuntan sus valores. */
   readonly refKind?: RefKind;
+  /** Solo enum: las opciones (p.ej. dirección). */
   readonly options: readonly FilterOption[];
   readonly placeholder: string;
 }
 
-/** Catálogo de campos sobre los que se construyen condiciones. Extensible:
- *  dirección/duración/atendida-por entran aquí cuando se unifiquen criterios. */
+export const DIRECTION_OPTIONS: readonly FilterOption[] = [
+  { value: 'inbound', label: 'Entrante' },
+  { value: 'outbound', label: 'Saliente' },
+];
+
 export const CONDITION_FIELDS: readonly ConditionFieldDef[] = [
   {
     id: 'servicio',
@@ -123,6 +117,26 @@ export const CONDITION_FIELDS: readonly ConditionFieldDef[] = [
     placeholder: 'Selecciona agentes o grupos…',
   },
   {
+    id: 'direccion',
+    label: 'Dirección',
+    noun: 'la dirección',
+    kind: 'enum',
+    group: 'conversacion',
+    icon: 'swap_horiz',
+    options: DIRECTION_OPTIONS,
+    placeholder: '',
+  },
+  {
+    id: 'duracion',
+    label: 'Duración',
+    noun: 'la duración',
+    kind: 'number',
+    group: 'conversacion',
+    icon: 'schedule',
+    options: [],
+    placeholder: '',
+  },
+  {
     id: 'tipificacion',
     label: 'Tipificación',
     noun: 'la tipificación',
@@ -133,24 +147,53 @@ export const CONDITION_FIELDS: readonly ConditionFieldDef[] = [
     options: TIPIFICACION_OPTIONS,
     placeholder: 'Selecciona tipificaciones…',
   },
+  {
+    id: 'categoria',
+    label: 'Categoría IA',
+    noun: 'la categoría',
+    kind: 'list',
+    group: 'clasificacion',
+    icon: 'auto_awesome',
+    refKind: 'category',
+    options: [],
+    placeholder: 'Selecciona categorías…',
+  },
 ];
 
 export function fieldDefById(id: ConditionFieldId): ConditionFieldDef {
   return CONDITION_FIELDS.find((f) => f.id === id) ?? CONDITION_FIELDS[0];
 }
 
+/* ── Operadores ── */
+
+export interface OperatorDef {
+  readonly id: ConditionOperator;
+  readonly label: string;
+  /** Solo aplica a campos número (Duración). En otros se muestra bloqueado. */
+  readonly numberOnly: boolean;
+}
+
+export const OPERATORS: readonly OperatorDef[] = [
+  { id: 'is', label: 'es', numberOnly: false },
+  { id: 'is_not', label: 'no es', numberOnly: false },
+  { id: 'gt', label: 'mayor que', numberOnly: true },
+  { id: 'lt', label: 'menor que', numberOnly: true },
+  { id: 'between', label: 'entre', numberOnly: true },
+];
+
+export function operatorsForKind(kind: ConditionFieldKind): readonly ConditionOperator[] {
+  return kind === 'number' ? ['gt', 'lt', 'between'] : ['is', 'is_not'];
+}
+
+export function operatorLabel(op: ConditionOperator): string {
+  return OPERATORS.find((o) => o.id === op)?.label ?? op;
+}
+
 export interface Condition {
   readonly id: string;
   readonly field: ConditionFieldId;
   readonly operator: ConditionOperator;
-  /**
-   * Operando v2 (referencias tipadas / comodín / número / enum). Fuente de
-   * verdad cuando está presente. Durante la migración incremental convive con
-   * `values` (legacy, nombres planos); el Bloque 2 mueve el builder a `value`.
-   */
-  readonly value?: ConditionValue;
-  /** Legacy: nombres planos. Se mantiene hasta completar la migración. */
-  readonly values: readonly string[];
+  readonly value: ConditionValue;
 }
 
 export interface ConditionGroup {
@@ -166,9 +209,7 @@ export interface ConditionTree {
   readonly groups: readonly ConditionGroup[];
 }
 
-/* ------------------------------------------------------------------ */
-/* Factories — ids secuenciales por sesión (deterministas, sin uuid).  */
-/* ------------------------------------------------------------------ */
+/* ── Factories (ids secuenciales por sesión, deterministas) ── */
 
 let _seq = 0;
 function nextId(prefix: string): string {
@@ -176,11 +217,19 @@ function nextId(prefix: string): string {
   return `${prefix}-${_seq}`;
 }
 
-export function makeCondition(
-  field: ConditionFieldId = 'servicio',
-  values: readonly string[] = [],
-): Condition {
-  return { id: nextId('c'), field, operator: 'is', values };
+export function emptyValueFor(field: ConditionFieldId): ConditionValue {
+  const def = fieldDefById(field);
+  if (def.kind === 'number') return { mode: 'number', amount: 30, unit: 'seconds' };
+  if (def.kind === 'enum') return { mode: 'enum', value: def.options[0]?.value ?? '' };
+  return { mode: 'refs', refs: [] };
+}
+
+export function defaultOperatorFor(field: ConditionFieldId): ConditionOperator {
+  return fieldDefById(field).kind === 'number' ? 'gt' : 'is';
+}
+
+export function makeCondition(field: ConditionFieldId = 'servicio'): Condition {
+  return { id: nextId('c'), field, operator: defaultOperatorFor(field), value: emptyValueFor(field) };
 }
 
 export function makeGroup(): ConditionGroup {
@@ -192,82 +241,139 @@ export function emptyConditionTree(): ConditionTree {
   return { match: 'all', groups: [makeGroup()] };
 }
 
-/* ------------------------------------------------------------------ */
-/* Puentes con el modelo plano legacy (compatibilidad listado/store).  */
-/* ------------------------------------------------------------------ */
+/* ── Puentes con el modelo plano legacy + resolución ── */
 
-/** Deriva el alcance plano (unión de valores `is` por dimensión) desde el
- *  árbol. Sobre-aproximación: usada por el listado y la detección de
- *  conflictos, nunca infra-estima un solapamiento. */
-export function deriveLegacyScope(tree: ConditionTree): {
-  servicios: string[];
-  grupos: string[];
-  agentes: string[];
-} {
+/** Lo mínimo que las funciones puras necesitan del resolver (lo implementa
+ *  `ConditionResolverService`). Mantiene este módulo libre de DI. */
+export interface RefResolver {
+  label(ref: ConditionRef): string;
+  memberAgentNames(groupId: number): readonly string[];
+}
+
+/**
+ * Deriva el alcance plano (`servicios/grupos/agentes` por nombre) desde el árbol,
+ * para que listado + detección de conflictos sigan funcionando. Sobre-aproxima
+ * (solo condiciones `is` de campos lista; `agentGroup` expande a miembros vivos).
+ * Comodín "any" → dimensión vacía = "cualquiera".
+ */
+export function deriveLegacyScope(
+  tree: ConditionTree,
+  resolver: RefResolver,
+): { servicios: string[]; grupos: string[]; agentes: string[] } {
   const acc = {
-    servicio: new Set<string>(),
-    grupo: new Set<string>(),
-    agente: new Set<string>(),
+    servicios: new Set<string>(),
+    grupos: new Set<string>(),
+    agentes: new Set<string>(),
   };
   for (const group of tree.groups) {
     for (const cond of group.conditions) {
-      if (cond.operator !== 'is') continue;
-      // `tipificacion` (y futuros campos) no tienen dimensión plana legacy:
-      // solo viven en `conditionTree`. Se ignoran para la derivación.
-      if (cond.field === 'servicio' || cond.field === 'grupo' || cond.field === 'agente') {
-        for (const v of cond.values) acc[cond.field].add(v);
+      if (cond.operator !== 'is' || cond.value.mode !== 'refs') continue;
+      for (const ref of cond.value.refs) {
+        switch (ref.kind) {
+          case 'service':
+            acc.servicios.add(ref.name);
+            break;
+          case 'group':
+            acc.grupos.add(resolver.label(ref));
+            break;
+          case 'agent':
+            acc.agentes.add(resolver.label(ref));
+            break;
+          case 'agentGroup':
+            resolver.memberAgentNames(ref.id).forEach((n) => acc.agentes.add(n));
+            break;
+          // tipificacion / category: sin dimensión plana legacy
+        }
       }
     }
   }
   return {
-    servicios: [...acc.servicio],
-    grupos: [...acc.grupo],
-    agentes: [...acc.agente],
+    servicios: [...acc.servicios],
+    grupos: [...acc.grupos],
+    agentes: [...acc.agentes],
   };
 }
 
-/** Reconstruye un árbol desde el alcance plano de una regla antigua (sin
- *  `conditionTree`): un grupo `all` con una condición `is` por dimensión. */
-export function deriveTreeFromLegacy(scope: {
-  servicios?: readonly string[];
-  grupos?: readonly string[];
-  agentes?: readonly string[];
-}): ConditionTree {
+/**
+ * Reconstruye un árbol desde el alcance plano (reglas antiguas sin árbol). Mejor
+ * esfuerzo: servicios por nombre; grupos/agentes intentan resolver id por nombre
+ * (vía el reverse-lookup del catálogo), y se omiten los que no casan. Las reglas
+ * de demo traen su `conditionTree` ya tipado, así que este camino es marginal.
+ */
+export function deriveTreeFromLegacy(
+  scope: {
+    servicios?: readonly string[];
+    grupos?: readonly string[];
+    agentes?: readonly string[];
+  },
+  reverse?: { groupIdByName(name: string): number | undefined; agentIdByName(name: string): number | undefined },
+): ConditionTree {
   const conditions: Condition[] = [];
-  if (scope.servicios?.length) conditions.push(makeCondition('servicio', scope.servicios));
-  if (scope.grupos?.length) conditions.push(makeCondition('grupo', scope.grupos));
-  if (scope.agentes?.length) conditions.push(makeCondition('agente', scope.agentes));
+  const push = (field: ConditionFieldId, refs: ConditionRef[]) => {
+    if (refs.length) conditions.push({ id: nextId('c'), field, operator: 'is', value: { mode: 'refs', refs } });
+  };
+  push('servicio', (scope.servicios ?? []).map((name) => ({ kind: 'service', name })));
+  if (reverse) {
+    push(
+      'grupo',
+      (scope.grupos ?? [])
+        .map((n) => reverse.groupIdByName(n))
+        .filter((id): id is number => id !== undefined)
+        .map((id) => ({ kind: 'group', id })),
+    );
+    push(
+      'agente',
+      (scope.agentes ?? [])
+        .map((n) => reverse.agentIdByName(n))
+        .filter((id): id is number => id !== undefined)
+        .map((id) => ({ kind: 'agent', id })),
+    );
+  }
   if (conditions.length === 0) return emptyConditionTree();
   return { match: 'all', groups: [{ id: nextId('g'), match: 'all', conditions }] };
 }
 
-/* ------------------------------------------------------------------ */
-/* Resumen en lenguaje natural.                                        */
-/* ------------------------------------------------------------------ */
+/* ── Resumen en lenguaje natural ── */
 
-function describeCondition(cond: Condition): string {
+function describeCondition(cond: Condition, labelFor: (ref: ConditionRef) => string): string {
   const def = fieldDefById(cond.field);
+  const v = cond.value;
+  if (v.mode === 'any') return `${def.noun} es cualquiera`;
+  if (v.mode === 'number') {
+    const unit = v.unit === 'minutes' ? 'min' : 's';
+    if (cond.operator === 'between') {
+      return `${def.noun} está entre ${v.amount} y ${v.amount2 ?? v.amount} ${unit}`;
+    }
+    const opTxt = cond.operator === 'gt' ? 'supera' : 'es menor que';
+    return `${def.noun} ${opTxt} ${v.amount} ${unit}`;
+  }
+  if (v.mode === 'enum') {
+    const lbl = def.options.find((o) => o.value === v.value)?.label ?? v.value;
+    return `${def.noun} ${cond.operator === 'is' ? 'es' : 'no es'} ${lbl}`;
+  }
   const verb = cond.operator === 'is' ? 'es' : 'no es';
-  if (cond.values.length === 0) return `${def.noun} ${verb} …`;
-  if (cond.values.length === 1) return `${def.noun} ${verb} ${cond.values[0]}`;
-  const last = cond.values[cond.values.length - 1];
-  const head = cond.values.slice(0, -1).join(', ');
+  if (v.refs.length === 0) return `${def.noun} ${verb} …`;
+  const labels = v.refs.map(labelFor);
+  if (labels.length === 1) return `${def.noun} ${verb} ${labels[0]}`;
   const link = cond.operator === 'is' ? ' o ' : ' ni ';
-  return `${def.noun} ${verb} ${head}${link}${last}`;
+  return `${def.noun} ${verb} ${labels.slice(0, -1).join(', ')}${link}${labels[labels.length - 1]}`;
 }
 
-function describeGroup(group: ConditionGroup): string {
+function describeGroup(group: ConditionGroup, labelFor: (ref: ConditionRef) => string): string {
   const sep = group.match === 'all' ? ' y ' : ' o ';
-  return group.conditions.map(describeCondition).join(sep);
+  return group.conditions.map((c) => describeCondition(c, labelFor)).join(sep);
 }
 
 /** Traduce el árbol a una frase legible. Vacío → "todas las conversaciones". */
-export function describeConditionTree(tree: ConditionTree): string {
+export function describeConditionTree(
+  tree: ConditionTree,
+  labelFor: (ref: ConditionRef) => string,
+): string {
   const groups = tree.groups.filter((g) => g.conditions.length > 0);
   if (groups.length === 0) return 'Esta regla se aplica a todas las conversaciones.';
   const sep = tree.match === 'all' ? ' Y ' : ' O ';
   const parts = groups.map((g) => {
-    const text = describeGroup(g);
+    const text = describeGroup(g, labelFor);
     return groups.length > 1 && g.conditions.length > 1 ? `(${text})` : text;
   });
   return `Aplica cuando ${parts.join(sep)}.`;

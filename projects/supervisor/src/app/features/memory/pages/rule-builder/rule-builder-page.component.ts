@@ -22,6 +22,7 @@ import { ScSelectComponent as SelectComponent } from '@smartcontact-hub/componen
 import { ScToggleSwitchComponent as ToggleSwitchComponent } from '@smartcontact-hub/components';
 
 import { RuleConditionBuilderComponent } from '../../components/rule-condition-builder/rule-condition-builder.component';
+import { ConditionResolverService } from '../../data/condition-resolver.service';
 import {
   type ConditionTree,
   deriveLegacyScope,
@@ -77,6 +78,7 @@ export class RuleBuilderPageComponent implements DirtyAware {
   private readonly categoriesStore = inject(CategoriesStore);
   private readonly messages = inject(MessageService);
   private readonly translate = inject(TranslateService);
+  private readonly resolver = inject(ConditionResolverService);
 
   /** Catálogo de categorías IA para el selector — solo activas + sólo
    *  visible en `type: 'classification'`. Spec S49 §10 #13. */
@@ -212,7 +214,7 @@ export class RuleBuilderPageComponent implements DirtyAware {
     if (!this.canSave()) return;
     // El árbol es la fuente de verdad del alcance; derivamos los campos planos
     // para que listado y detección de conflictos sigan funcionando sin cambios.
-    const scope = deriveLegacyScope(this.conditionTree());
+    const scope = deriveLegacyScope(this.conditionTree(), this.resolver);
     const base: Omit<Rule, 'id' | 'lastModified' | 'priority'> = {
       type: this.ruleType(),
       name: this.name().trim(),
