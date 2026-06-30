@@ -18,7 +18,6 @@ import { DirtyAware } from '@core/guards';
 import { IconComponent } from '@shared/components';
 import { ScInputTextComponent as InputTextComponent } from '@smartcontact-hub/components';
 import { ScMultiSelectComponent as MultiSelectComponent } from '@smartcontact-hub/components';
-import { ScSelectComponent as SelectComponent } from '@smartcontact-hub/components';
 import { ScToggleSwitchComponent as ToggleSwitchComponent } from '@smartcontact-hub/components';
 
 import { RuleConditionBuilderComponent } from '../../components/rule-condition-builder/rule-condition-builder.component';
@@ -63,7 +62,6 @@ import { RulesStore } from '../../state/rules.store';
     MultiSelectComponent,
     RouterLink,
     RuleConditionBuilderComponent,
-    SelectComponent,
     ToggleSwitchComponent,
     TranslateModule,
   ],
@@ -88,22 +86,9 @@ export class RuleBuilderPageComponent implements DirtyAware {
 
   protected readonly backIcon = 'arrow_back';
   protected readonly externalIcon = 'open_in_new';
-  protected readonly micIcon = 'mic';
-  protected readonly fileTextIcon = 'description';
   protected readonly sparklesIcon = 'auto_awesome';
   protected readonly alertIcon = 'warning';
   protected readonly trashIcon = 'delete';
-
-  protected readonly directionOptions = [
-    { value: 'all' as Direction, labelKey: 'memory.rules.builder.direction.all' },
-    { value: 'inbound' as Direction, labelKey: 'memory.rules.builder.direction.inbound' },
-    { value: 'outbound' as Direction, labelKey: 'memory.rules.builder.direction.outbound' },
-  ];
-
-  protected readonly durationUnitOptions = [
-    { value: 'seconds', labelKey: 'memory.rules.builder.duration_unit.seconds' },
-    { value: 'minutes', labelKey: 'memory.rules.builder.duration_unit.minutes' },
-  ];
 
   protected readonly ruleId = signal<number | null>(null);
   protected readonly ruleType = signal<RuleType>('recording');

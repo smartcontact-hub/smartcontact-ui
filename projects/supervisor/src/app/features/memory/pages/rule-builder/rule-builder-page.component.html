@@ -108,37 +108,16 @@
       <sc-rule-condition-builder [(value)]="conditionTree" />
     </section>
 
-    <!-- Bloque 3: Grabación (tipo Recording + Classification también lleva
-         opcional · spec §"CAMBIOS EN EL BLOQUE GRABACIÓN") -->
+    <!-- Horario — control aparte (decisión: fuera del builder). Solo grabación. -->
     @if (ruleType() === 'recording' || ruleType() === 'classification') {
       <section class="rule-block">
         <header class="rule-block__head">
           <h2>
-            <sc-icon [name]="micIcon" [size]="14" />
-            {{ 'memory.rules.builder.recording' | translate }}
+            <sc-icon name="schedule" [size]="14" />
+            Horario
           </h2>
-          <p class="rule-block__desc">{{ 'memory.rules.builder.recording_desc' | translate }}</p>
+          <p class="rule-block__desc">Restringe la grabación a una franja horaria del día.</p>
         </header>
-
-        <div class="rule-block__row">
-          <label for="rule-direction" class="rule-builder__field-label">
-            {{ 'memory.rules.builder.direction_label' | translate }}
-          </label>
-          <sc-select
-            [inputId]="'rule-direction'"
-            [options]="directionOptions"
-            [(value)]="direction"
-            optionLabel="labelKey"
-            optionValue="value"
-          >
-            <ng-template let-opt pTemplate="selectedItem">
-              {{ opt.labelKey | translate }}
-            </ng-template>
-            <ng-template let-opt pTemplate="item">
-              {{ opt.labelKey | translate }}
-            </ng-template>
-          </sc-select>
-        </div>
 
         <div class="rule-block__row">
           <label class="rule-builder__checkbox-row">
@@ -173,72 +152,11 @@
       </section>
     }
 
-    <!-- Bloque 4: Transcripción (tipos Transcription + Classification) -->
+    <!-- Análisis IA (tipos Transcription + Classification). Dirección y duración
+         son ahora campos del builder (Alcance), no un bloque aparte. -->
     @if (ruleType() === 'transcription' || ruleType() === 'classification') {
-      <section class="rule-block">
-        <header class="rule-block__head">
-          <h2>
-            <sc-icon [name]="fileTextIcon" [size]="14" />
-            {{ 'memory.rules.builder.transcription' | translate }}
-          </h2>
-          <p class="rule-block__desc">
-            {{ 'memory.rules.builder.transcription_desc' | translate }}
-          </p>
-        </header>
-
-        <div class="rule-block__row">
-          <label for="rule-direction-trans" class="rule-builder__field-label">
-            {{ 'memory.rules.builder.direction_label' | translate }}
-          </label>
-          <sc-select
-            [inputId]="'rule-direction-trans'"
-            [options]="directionOptions"
-            [(value)]="direction"
-            optionLabel="labelKey"
-            optionValue="value"
-          >
-            <ng-template let-opt pTemplate="selectedItem">
-              {{ opt.labelKey | translate }}
-            </ng-template>
-            <ng-template let-opt pTemplate="item">
-              {{ opt.labelKey | translate }}
-            </ng-template>
-          </sc-select>
-        </div>
-
-        <div class="rule-block__row">
-          <label for="rule-duration" class="rule-builder__field-label">
-            {{ 'memory.rules.builder.duration_label' | translate }}
-          </label>
-          <div class="rule-builder__duration">
-            <input
-              id="rule-duration"
-              type="number"
-              min="0"
-              [value]="durationMin()"
-              (input)="durationMin.set(+$any($event.target).value || 0)"
-            />
-            <sc-select
-              [options]="durationUnitOptions"
-              [(value)]="durationUnit"
-              optionLabel="labelKey"
-              optionValue="value"
-            >
-              <ng-template let-opt pTemplate="selectedItem">
-                {{ opt.labelKey | translate }}
-              </ng-template>
-              <ng-template let-opt pTemplate="item">
-                {{ opt.labelKey | translate }}
-              </ng-template>
-            </sc-select>
-          </div>
-          <p class="rule-builder__field-hint">
-            {{ 'memory.rules.builder.duration_hint' | translate }}
-          </p>
-        </div>
-      </section>
-
-      <!-- Sub-bloque Análisis IA dentro de Transcripción · spec line 129-131 -->
+      <!-- Sub-bloque Análisis IA · resumen + sentimiento; "categorías a DETECTAR"
+           (distinto del campo "Categoría IA" del builder, que FILTRA). -->
       <section class="rule-block rule-block--ai">
         <header class="rule-block__head">
           <div class="rule-builder__ai-head">
