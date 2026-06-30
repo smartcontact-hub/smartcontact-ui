@@ -54,13 +54,20 @@ const files = mdFiles().map((f) => ({ path: f, lines: readFileSync(f, 'utf8').sp
 const pkg = JSON.parse(readFileSync(resolve(root, 'package.json'), 'utf8'));
 const scripts = pkg.scripts || {};
 
+// Scripts PROPUESTOS en backlog: la doc los nombra como trabajo futuro (`→ scripts/X.mjs`,
+// "propone crear …"), no como ficheros existentes. El checker no distingue propuesta de
+// afirmación, así que se exoneran aquí (mismo patrón que DEMO_EXEMPT/NESTED_IGNORE). Cuando
+// el script se cree, `existsSync` lo cubre → quítalo de esta lista.
+const PROPOSED_SCRIPTS = new Set(['scripts/paths.mjs']);
+
 // ── CHECK A — refs a comandos/scripts que deben existir ────────────────────────
 for (const { path, lines } of files) {
   lines.forEach((line, i) => {
     for (const m of line.matchAll(/npm run ([a-z][\w:-]*)/g))
       if (!scripts[m[1]]) fail(`${rel(path)}:${i + 1} — \`npm run ${m[1]}\` no existe en package.json`);
     for (const m of line.matchAll(/(scripts\/[\w./-]+\.mjs)/g))
-      if (!existsSync(resolve(root, m[1]))) fail(`${rel(path)}:${i + 1} — referencia a \`${m[1]}\` que no existe`);
+      if (!existsSync(resolve(root, m[1])) && !PROPOSED_SCRIPTS.has(m[1]))
+        fail(`${rel(path)}:${i + 1} — referencia a \`${m[1]}\` que no existe`);
   });
 }
 
@@ -68,7 +75,7 @@ for (const { path, lines } of files) {
 const verifySteps = (scripts.verify || '')
   .split('&&')
   .map((s) => s.trim().replace(/^npm run /, ''))
-  .filter((s) => /^(tokens|audit|test|docs):/.test(s)); // los guards específicos (no build/typecheck/lint genéricos)
+  .filter((s) => /^(tokens|audit|test|docs|i18n):/.test(s)); // los guards específicos (no build/typecheck/lint genéricos)
 const readme = readFileSync(resolve(root, 'README.md'), 'utf8');
 for (const step of verifySteps)
   if (!readme.includes(step))

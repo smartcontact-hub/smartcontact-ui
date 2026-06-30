@@ -35,7 +35,7 @@
       "cva": false,
       "inputs": 0,
       "nested": [],
-      "hasDemo": false,
+      "hasDemo": true,
       "usedInSupervisor": 7
     },
     {
@@ -49,7 +49,7 @@
       "nested": [
         "sc-select"
       ],
-      "hasDemo": false,
+      "hasDemo": true,
       "usedInSupervisor": 2
     },
     {
@@ -64,7 +64,7 @@
         "sc-button",
         "sc-toggleswitch"
       ],
-      "hasDemo": false,
+      "hasDemo": true,
       "usedInSupervisor": 0
     },
     {
@@ -124,7 +124,7 @@
       "cva": false,
       "inputs": 1,
       "nested": [],
-      "hasDemo": false,
+      "hasDemo": true,
       "usedInSupervisor": 3
     },
     {
@@ -136,7 +136,7 @@
       "cva": false,
       "inputs": 1,
       "nested": [],
-      "hasDemo": false,
+      "hasDemo": true,
       "usedInSupervisor": 3
     },
     {
@@ -148,7 +148,7 @@
       "cva": false,
       "inputs": 0,
       "nested": [],
-      "hasDemo": false,
+      "hasDemo": true,
       "usedInSupervisor": 4
     },
     {
@@ -198,7 +198,7 @@
       "nested": [
         "sc-dialog"
       ],
-      "hasDemo": false,
+      "hasDemo": true,
       "usedInSupervisor": 8
     },
     {
@@ -246,7 +246,7 @@
       "cva": false,
       "inputs": 1,
       "nested": [],
-      "hasDemo": false,
+      "hasDemo": true,
       "usedInSupervisor": 7
     },
     {
@@ -258,7 +258,7 @@
       "cva": false,
       "inputs": 3,
       "nested": [],
-      "hasDemo": false,
+      "hasDemo": true,
       "usedInSupervisor": 0
     },
     {
@@ -270,7 +270,7 @@
       "cva": false,
       "inputs": 4,
       "nested": [],
-      "hasDemo": false,
+      "hasDemo": true,
       "usedInSupervisor": 5
     },
     {
@@ -294,7 +294,7 @@
       "cva": false,
       "inputs": 0,
       "nested": [],
-      "hasDemo": false,
+      "hasDemo": true,
       "usedInSupervisor": 3
     },
     {
@@ -308,7 +308,7 @@
       "nested": [
         "sc-dialog"
       ],
-      "hasDemo": false,
+      "hasDemo": true,
       "usedInSupervisor": 2
     },
     {
@@ -320,7 +320,7 @@
       "cva": false,
       "inputs": 2,
       "nested": [],
-      "hasDemo": false,
+      "hasDemo": true,
       "usedInSupervisor": 3
     },
     {
@@ -368,7 +368,7 @@
       "cva": false,
       "inputs": 1,
       "nested": [],
-      "hasDemo": false,
+      "hasDemo": true,
       "usedInSupervisor": 2
     },
     {
@@ -404,7 +404,7 @@
       "cva": false,
       "inputs": 3,
       "nested": [],
-      "hasDemo": false,
+      "hasDemo": true,
       "usedInSupervisor": 2
     },
     {
@@ -428,7 +428,7 @@
       "cva": false,
       "inputs": 6,
       "nested": [],
-      "hasDemo": false,
+      "hasDemo": true,
       "usedInSupervisor": 2
     },
     {
@@ -488,7 +488,7 @@
       "cva": false,
       "inputs": 6,
       "nested": [],
-      "hasDemo": false,
+      "hasDemo": true,
       "usedInSupervisor": 11
     },
     {
@@ -536,7 +536,7 @@
       "cva": false,
       "inputs": 4,
       "nested": [],
-      "hasDemo": false,
+      "hasDemo": true,
       "usedInSupervisor": 3
     },
     {

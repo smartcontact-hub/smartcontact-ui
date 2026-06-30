@@ -58,7 +58,14 @@ export function analyzeComponent({ name, tsText, htmlText, pagesText, supervisor
   }
   const nested = [...new Set([...htmlText.matchAll(/<(sc-[a-z0-9-]+)/g)].map((m) => m[1]))]
     .filter((s) => s !== selector && !NESTED_IGNORE.has(s));
-  const hasDemo = new RegExp(`path:\\s*['"]${name}['"]`).test(pagesText) || pagesText.includes(`'${selector.replace(/^sc-/, '')}'`);
+  // El registro de demos usa el path SIN guiones (`sectioncard`), pero `name` y el
+  // selector vienen CON guiones (`section-card`). Hay que casar ambas formas: si no,
+  // 18 componentes que SÍ tienen demo aparecían como "—" (falso negativo). Ver AUDIT-2026-07.
+  const deHyphen = name.replace(/-/g, '');
+  const hasDemo =
+    new RegExp(`path:\\s*['"](?:${name}|${deHyphen})['"]`).test(pagesText) ||
+    pagesText.includes(`'${selector.replace(/^sc-/, '')}'`) ||
+    pagesText.includes(`'${deHyphen}'`);
   const usedInSupervisor = (supervisorBlob.match(new RegExp(`<${selector}[\\s>]`, 'g')) || []).length;
   return { name, selector, provenance, kind, primengBase: primeng.map((p) => `primeng/${p}`).join(', ') || '—', cva, inputs, nested, hasDemo, usedInSupervisor };
 }

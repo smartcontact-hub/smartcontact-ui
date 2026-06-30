@@ -336,6 +336,7 @@
       "duplicated_toast": "Rule duplicated. The copy is inactive.",
       "builder": {
         "back": "Back to list",
+        "crumb_rules": "Rules",
         "title_new": "New rule",
         "title_edit": "Edit rule",
         "subtitle": "Define how to process conversations entering from now on. Applies to future, not existing ones.",
@@ -408,7 +409,47 @@
         "save_changes": "Save changes",
         "create_rule": "Create rule",
         "created_toast": "Rule created",
-        "updated_toast": "Rule updated"
+        "updated_toast": "Rule updated",
+        "cond": {
+          "match_with": "Match",
+          "match_all": "all",
+          "match_any": "any",
+          "of_conditions": "of the conditions",
+          "of_groups": "of these groups",
+          "add_condition": "Add condition",
+          "add_group": "Add group",
+          "empty_title": "No conditions",
+          "empty_body": "Applies to every conversation.",
+          "remove_group": "Remove group",
+          "remove_condition": "Remove condition",
+          "group_n": "Group {{n}}",
+          "match_conditions_aria": "How the conditions combine",
+          "match_groups_aria": "How the groups combine",
+          "impact_title": "Estimated impact",
+          "impact": "Would affect {{count}} of the last {{total}} conversations.",
+          "impact_note": "type and category are evaluated in the backend",
+          "est_projection": "≈ {{day}} per day · ≈ {{month}} per month, at this rate.",
+          "pick_all": "All",
+          "pick_all_hint": "· includes new ones",
+          "search": "Search…",
+          "pick_all_row": "All · applies to anyone, including new ones.",
+          "pick_manual": "Choose manually",
+          "pick_groups": "Groups (their members)",
+          "pick_individuals": "Individuals",
+          "pick_empty": "No results.",
+          "select_all": "Select all (any)",
+          "remove": "Remove",
+          "val": {
+            "incomplete": "Pick a value.",
+            "invalid_range": "The minimum must be lower than the maximum.",
+            "duplicate": "This condition is duplicated.",
+            "contradiction": "These two conditions can't both be true.",
+            "tautology": "With “or”, this includes every conversation.",
+            "impact_zero": "None of the last {{total}} conversations would meet these conditions.",
+            "blocked": "Review the flagged conditions before saving.",
+            "unfinished": "{{n}} unfinished"
+          }
+        }
       }
     },
     "entities": {

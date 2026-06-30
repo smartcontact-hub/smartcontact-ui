@@ -68,7 +68,7 @@
 ### P1 — Agent / Scripts / i18n
 - [ ] PROFILE duplicado (`profile-card` + `agent-footer`) → sub-componente.
 - [ ] **[quick]** seed `"Nombre Grupo 1"` ×4 (`seed.ts:44`) → nombres reales.
-- [ ] **[quick]** i18n: ~35 claves `memory.rules.builder.*` faltan en en/fr/pt → sincronizar + **`i18n:check` en verify** (el mejor ROI: deja un verifier permanente).
+- [x] **[quick]** i18n: ~35 claves `memory.rules.builder.*` faltan en en/fr/pt → sincronizar + **`i18n:check` en verify** — *RESUELTO 2026-07-01:* 37 claves traducidas (es ↔ en/fr/pt a 1:1, 1277 c/u) + `i18n:check` permanente en `verify`. Ver [`AUDIT-2026-07.md`](./AUDIT-2026-07.md) §3.
 - [ ] `EXPORT_PATH` ×7 + cadena de 5 generadores en `package.json:29` → `scripts/paths.mjs` + meta-generador.
 
 ## 3. Secuencia recomendada

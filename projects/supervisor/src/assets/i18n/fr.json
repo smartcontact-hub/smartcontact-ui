@@ -336,6 +336,7 @@
       "duplicated_toast": "Règle dupliquée. La copie reste inactive.",
       "builder": {
         "back": "Retour à la liste",
+        "crumb_rules": "Règles",
         "title_new": "Nouvelle règle",
         "title_edit": "Éditer la règle",
         "subtitle": "Définissez comment traiter les conversations entrant à partir de maintenant. S'applique au futur, pas aux existantes.",
@@ -408,7 +409,47 @@
         "save_changes": "Sauvegarder les modifications",
         "create_rule": "Créer la règle",
         "created_toast": "Règle créée",
-        "updated_toast": "Règle mise à jour"
+        "updated_toast": "Règle mise à jour",
+        "cond": {
+          "match_with": "Correspondre à",
+          "match_all": "toutes",
+          "match_any": "au moins une",
+          "of_conditions": "des conditions",
+          "of_groups": "de ces groupes",
+          "add_condition": "Ajouter une condition",
+          "add_group": "Ajouter un groupe",
+          "empty_title": "Aucune condition",
+          "empty_body": "S'applique à toutes les conversations.",
+          "remove_group": "Supprimer le groupe",
+          "remove_condition": "Supprimer la condition",
+          "group_n": "Groupe {{n}}",
+          "match_conditions_aria": "Comment les conditions se combinent",
+          "match_groups_aria": "Comment les groupes se combinent",
+          "impact_title": "Impact estimé",
+          "impact": "Affecterait {{count}} des {{total}} dernières conversations.",
+          "impact_note": "le type et la catégorie sont évalués côté serveur",
+          "est_projection": "≈ {{day}} par jour · ≈ {{month}} par mois, à ce rythme.",
+          "pick_all": "Tous",
+          "pick_all_hint": "· inclut les nouveaux",
+          "search": "Rechercher…",
+          "pick_all_row": "Tous · s'applique à n'importe qui, y compris les nouveaux.",
+          "pick_manual": "Choisir manuellement",
+          "pick_groups": "Groupes (leurs membres)",
+          "pick_individuals": "Individuels",
+          "pick_empty": "Aucun résultat.",
+          "select_all": "Tout sélectionner (au moins un)",
+          "remove": "Retirer",
+          "val": {
+            "incomplete": "Choisissez une valeur.",
+            "invalid_range": "Le minimum doit être inférieur au maximum.",
+            "duplicate": "Cette condition est en double.",
+            "contradiction": "Ces deux conditions ne peuvent pas être vraies en même temps.",
+            "tautology": "Avec « ou », cela inclut toutes les conversations.",
+            "impact_zero": "Aucune des {{total}} dernières conversations ne remplirait ces conditions.",
+            "blocked": "Vérifiez les conditions signalées avant d'enregistrer.",
+            "unfinished": "{{n}} à terminer"
+          }
+        }
       }
     },
     "entities": {

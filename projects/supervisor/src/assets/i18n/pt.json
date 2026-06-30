@@ -336,6 +336,7 @@
       "duplicated_toast": "Regra duplicada. A cópia fica inativa.",
       "builder": {
         "back": "Voltar à lista",
+        "crumb_rules": "Regras",
         "title_new": "Nova regra",
         "title_edit": "Editar regra",
         "subtitle": "Defina como processar as conversas que entrem a partir de agora. Aplica-se ao futuro, não às existentes.",
@@ -408,7 +409,47 @@
         "save_changes": "Salvar alterações",
         "create_rule": "Criar regra",
         "created_toast": "Regra criada",
-        "updated_toast": "Regra atualizada"
+        "updated_toast": "Regra atualizada",
+        "cond": {
+          "match_with": "Corresponder a",
+          "match_all": "todas",
+          "match_any": "qualquer",
+          "of_conditions": "das condições",
+          "of_groups": "destes grupos",
+          "add_condition": "Adicionar condição",
+          "add_group": "Adicionar grupo",
+          "empty_title": "Sem condições",
+          "empty_body": "Aplica-se a todas as conversas.",
+          "remove_group": "Remover grupo",
+          "remove_condition": "Remover condição",
+          "group_n": "Grupo {{n}}",
+          "match_conditions_aria": "Como as condições se combinam",
+          "match_groups_aria": "Como os grupos se combinam",
+          "impact_title": "Impacto estimado",
+          "impact": "Afetaria {{count}} das últimas {{total}} conversas.",
+          "impact_note": "tipificação e categoria são avaliadas no backend",
+          "est_projection": "≈ {{day}} por dia · ≈ {{month}} por mês, a este ritmo.",
+          "pick_all": "Todos",
+          "pick_all_hint": "· inclui novos",
+          "search": "Buscar…",
+          "pick_all_row": "Todos · aplica-se a qualquer um, incluindo os novos.",
+          "pick_manual": "Escolher manualmente",
+          "pick_groups": "Grupos (os seus membros)",
+          "pick_individuals": "Individuais",
+          "pick_empty": "Sem resultados.",
+          "select_all": "Selecionar tudo (qualquer)",
+          "remove": "Remover",
+          "val": {
+            "incomplete": "Falta escolher um valor.",
+            "invalid_range": "O mínimo deve ser menor que o máximo.",
+            "duplicate": "Esta condição está repetida.",
+            "contradiction": "Estas duas condições não podem cumprir-se ao mesmo tempo.",
+            "tautology": "Com «ou», isto inclui todas as conversas.",
+            "impact_zero": "Nenhuma das últimas {{total}} conversas cumpriria estas condições.",
+            "blocked": "Reveja as condições assinaladas antes de guardar.",
+            "unfinished": "{{n}} por terminar"
+          }
+        }
       }
     },
     "entities": {
