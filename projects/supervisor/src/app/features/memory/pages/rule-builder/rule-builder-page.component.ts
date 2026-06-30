@@ -88,13 +88,10 @@ export class RuleBuilderPageComponent implements DirtyAware {
   protected readonly backIcon = 'arrow_back';
   protected readonly externalIcon = 'open_in_new';
   protected readonly sparklesIcon = 'auto_awesome';
-  protected readonly alertIcon = 'warning';
-  protected readonly trashIcon = 'delete';
 
   protected readonly ruleId = signal<number | null>(null);
-  protected readonly ruleType = signal<RuleType>('recording');
+  protected readonly ruleType = signal<RuleType>('transcription');
   protected readonly isEditMode = computed(() => this.ruleId() !== null);
-  protected readonly isDraft = signal(false);
 
   // Form state
   protected readonly name = signal('');
@@ -168,11 +165,7 @@ export class RuleBuilderPageComponent implements DirtyAware {
         return;
       }
       const typeParam = this.route.snapshot.queryParamMap.get('type') as RuleType | null;
-      if (
-        typeParam === 'recording' ||
-        typeParam === 'transcription' ||
-        typeParam === 'classification'
-      ) {
+      if (typeParam === 'transcription' || typeParam === 'classification') {
         this.ruleType.set(typeParam);
       }
       // New rule: capture the blank baseline so the guard only fires after edits.
@@ -182,7 +175,6 @@ export class RuleBuilderPageComponent implements DirtyAware {
 
   private loadFromRule(rule: Rule): void {
     this.ruleType.set(rule.type);
-    this.isDraft.set(!!rule.isDraft);
     this.name.set(rule.name);
     this.description.set(rule.description ?? '');
     this.active.set(rule.active);
@@ -220,7 +212,7 @@ export class RuleBuilderPageComponent implements DirtyAware {
       grupos: scope.grupos,
       agentes: scope.agentes,
       conditionTree: this.conditionTree(),
-      recording: this.ruleType() === 'recording',
+      recording: false,
       transcripcion: this.ruleType() === 'transcription',
       clasificacion: this.ruleType() === 'classification',
       active: this.active(),
@@ -239,15 +231,10 @@ export class RuleBuilderPageComponent implements DirtyAware {
     };
 
     if (this.isEditMode()) {
-      // Si era borrador → guardar retira el flag (spec line 130-139).
-      const patch = this.isDraft() ? { ...base, isDraft: false } : base;
-      this.rulesStore.updateRule(this.ruleId()!, patch);
-      const summaryKey = this.isDraft()
-        ? 'memory.rules.builder.draft_ready_toast'
-        : 'memory.rules.builder.updated_toast';
+      this.rulesStore.updateRule(this.ruleId()!, base);
       this.messages.add({
         severity: 'success',
-        summary: this.translate.instant(summaryKey),
+        summary: this.translate.instant('memory.rules.builder.updated_toast'),
         life: TOAST_LIFE.success,
       });
     } else {
@@ -259,20 +246,6 @@ export class RuleBuilderPageComponent implements DirtyAware {
       });
     }
     // Just saved → the current form IS the clean state; don't prompt on the way out.
-    this.pristine.set(this.buildSnapshot());
-    this.router.navigate(['/conversaciones/reglas']);
-  }
-
-  protected onDiscardDraft(): void {
-    const id = this.ruleId();
-    if (id === null || !this.isDraft()) return;
-    this.rulesStore.deleteRule(id);
-    this.messages.add({
-      severity: 'info',
-      summary: this.translate.instant('memory.rules.builder.discarded_toast'),
-      life: TOAST_LIFE.info,
-    });
-    // Discarding the draft is an explicit exit — skip the dirty guard prompt.
     this.pristine.set(this.buildSnapshot());
     this.router.navigate(['/conversaciones/reglas']);
   }

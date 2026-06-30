@@ -460,6 +460,25 @@
   color: var(--sc-text-secondary);
 }
 
+/* Barra de proporción: % del tráfico que toca la regla (amplia vs quirúrgica).
+ * Dato real (matched/total), no decorativo — el texto da la cifra exacta. */
+.cond-builder__estimate-bar {
+  height: 6px;
+  margin: var(--sc-spacing-0-25) 0;
+  border-radius: var(--sc-radius-full);
+  background: var(--sc-color-slate-100, var(--sc-color-slate-50));
+  overflow: hidden;
+}
+
+.cond-builder__estimate-bar-fill {
+  display: block;
+  height: 100%;
+  min-width: 2px;
+  border-radius: var(--sc-radius-full);
+  background: var(--sc-color-sky-500);
+  transition: width 240ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
 .cond-builder__estimate-note {
   font-size: var(--sc-font-size-50);
   color: var(--sc-text-secondary);

@@ -9,6 +9,16 @@
       <sc-icon [name]="backIcon" [size]="16" />
     </button>
     <div class="rule-builder__head-text">
+      <nav class="rule-builder__crumbs" aria-label="Ruta">
+        <button type="button" class="rule-builder__crumb" (click)="onCancel()">
+          {{ 'memory.rules.builder.crumb_rules' | translate }}
+        </button>
+        <sc-icon name="chevron_right" [size]="13" aria-hidden="true" />
+        <span>{{
+          (isEditMode() ? 'memory.rules.builder.title_edit' : 'memory.rules.builder.title_new')
+            | translate
+        }}</span>
+      </nav>
       <h1>
         @if (isEditMode()) {
           {{ 'memory.rules.builder.title_edit' | translate }}
@@ -23,26 +33,6 @@
       <p>{{ 'memory.rules.builder.subtitle' | translate }}</p>
     </div>
   </header>
-
-  <!-- Banner Borrador sin editar · spec line 122-127. Contenedor
-       siempre reservado para evitar layout shift al cargar. -->
-  <div
-    class="rule-builder__draft-banner-slot"
-    [class.rule-builder__draft-banner-slot--visible]="isDraft()"
-  >
-    @if (isDraft()) {
-      <div class="rule-builder__draft-banner">
-        <div class="rule-builder__draft-message">
-          <sc-icon [name]="alertIcon" [size]="16" />
-          <p>{{ 'memory.rules.builder.draft_banner' | translate }}</p>
-        </div>
-        <button type="button" class="rule-builder__draft-discard" (click)="onDiscardDraft()">
-          <sc-icon [name]="trashIcon" size="inherit" />
-          {{ 'memory.rules.builder.discard_draft' | translate }}
-        </button>
-      </div>
-    }
-  </div>
 
   <div class="rule-builder__body">
     <!-- Bloque 1: Metadatos -->
@@ -107,50 +97,6 @@
 
       <sc-rule-condition-builder [(value)]="conditionTree" [revealEmpty]="submitted()" />
     </section>
-
-    <!-- Horario — control aparte (decisión: fuera del builder). Solo grabación. -->
-    @if (ruleType() === 'recording' || ruleType() === 'classification') {
-      <section class="rule-block">
-        <header class="rule-block__head">
-          <h2>
-            <sc-icon name="schedule" [size]="14" />
-            Horario
-          </h2>
-          <p class="rule-block__desc">Restringe la grabación a una franja horaria del día.</p>
-        </header>
-
-        <div class="rule-block__row">
-          <label class="rule-builder__checkbox-row">
-            <input
-              type="checkbox"
-              [checked]="filterBySchedule()"
-              (change)="filterBySchedule.set($any($event.target).checked)"
-            />
-            <span>{{ 'memory.rules.builder.schedule_label' | translate }}</span>
-          </label>
-          @if (filterBySchedule()) {
-            <div class="rule-builder__schedule-inputs">
-              <label>
-                {{ 'memory.rules.builder.schedule_from' | translate }}
-                <input
-                  type="time"
-                  [value]="scheduleFrom()"
-                  (input)="scheduleFrom.set($any($event.target).value)"
-                />
-              </label>
-              <label>
-                {{ 'memory.rules.builder.schedule_to' | translate }}
-                <input
-                  type="time"
-                  [value]="scheduleTo()"
-                  (input)="scheduleTo.set($any($event.target).value)"
-                />
-              </label>
-            </div>
-          }
-        </div>
-      </section>
-    }
 
     <!-- Análisis IA (tipos Transcription + Classification). Dirección y duración
          son ahora campos del builder (Alcance), no un bloque aparte. -->

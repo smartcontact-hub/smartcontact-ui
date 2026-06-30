@@ -348,6 +348,7 @@
       "duplicated_toast": "Regla duplicada. Edita al menos un campo para poder activarla.",
       "builder": {
         "back": "Volver al listado",
+        "crumb_rules": "Reglas",
         "title_new": "Nueva regla",
         "title_edit": "Editar regla",
         "subtitle": "Define cómo procesar las conversaciones que entren a partir de ahora. Aplica a futuro, no a las existentes.",

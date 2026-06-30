@@ -157,10 +157,13 @@
       @if (hasUnevaluable()) {
         <p class="cond-builder__estimate-note">{{ 'memory.rules.builder.cond.impact_note' | translate }}</p>
       } @else {
+        <div class="cond-builder__estimate-bar" aria-hidden="true">
+          <span class="cond-builder__estimate-bar-fill" [style.width.%]="impactPct()"></span>
+        </div>
         <p class="cond-builder__estimate-proj">
           {{
             'memory.rules.builder.cond.est_projection'
-              | translate: { day: estimate().perDay, month: estimate().perMonth }
+              | translate: { day: fmt(estimate().perDay), month: fmt(estimate().perMonth) }
           }}
         </p>
       }
