@@ -124,53 +124,56 @@
           />
         </header>
 
-        @if (aiAnalysis()) {
-          <div class="rule-builder__ai-chips">
-            <span class="rule-builder__ai-chip">
-              {{ 'memory.rules.builder.ai_chip_summary' | translate }}
-            </span>
-            <span class="rule-builder__ai-chip">
-              {{ 'memory.rules.builder.ai_chip_sentiment' | translate }}
-            </span>
-          </div>
-
-          <!-- Selector Categorías IA · solo classification (S49 §10 #13).
-               El listado vacío muestra CTA "Crear categoría" → /conversaciones/categorias. -->
-          @if (ruleType() === 'classification') {
-            <div class="rule-builder__ai-categories">
-              <header class="rule-builder__ai-categories-head">
-                <h3>{{ 'memory.rules.builder.categorias_label' | translate }}</h3>
-                <a
-                  class="rule-builder__ai-categories-link"
-                  routerLink="/conversaciones/categorias"
-                  target="_blank"
-                  rel="noopener"
-                >
-                  <sc-icon [name]="externalIcon" size="inherit" />
-                  {{ 'memory.rules.builder.categorias_manage' | translate }}
-                </a>
-              </header>
-              @if (categoryOptions().length > 0) {
-                <sc-multiselect
-                  [options]="categoryOptions()"
-                  optionLabel="label"
-                  optionValue="value"
-                  [placeholder]="'memory.rules.builder.categorias_placeholder' | translate"
-                  [filter]="true"
-                  [value]="[...categorias()]"
-                  (valueChange)="setCategorias($event)"
-                />
-                <p class="rule-builder__field-hint">
-                  {{ 'memory.rules.builder.categorias_hint' | translate }}
-                </p>
-              } @else {
-                <div class="rule-builder__ai-categories-empty">
-                  <p>{{ 'memory.rules.builder.categorias_empty' | translate }}</p>
-                </div>
-              }
+        <!-- Reveal con grid-template-rows → expande suave, sin layout shift de golpe. -->
+        <div class="rule-builder__ai-reveal" [class.rule-builder__ai-reveal--open]="aiAnalysis()">
+          <div class="rule-builder__ai-reveal-inner">
+            <div class="rule-builder__ai-chips">
+              <span class="rule-builder__ai-chip">
+                {{ 'memory.rules.builder.ai_chip_summary' | translate }}
+              </span>
+              <span class="rule-builder__ai-chip">
+                {{ 'memory.rules.builder.ai_chip_sentiment' | translate }}
+              </span>
             </div>
-          }
-        }
+
+            <!-- Selector Categorías IA · solo classification (S49 §10 #13).
+                 El listado vacío muestra CTA "Crear categoría" → /conversaciones/categorias. -->
+            @if (ruleType() === 'classification') {
+              <div class="rule-builder__ai-categories">
+                <header class="rule-builder__ai-categories-head">
+                  <h3>{{ 'memory.rules.builder.categorias_label' | translate }}</h3>
+                  <a
+                    class="rule-builder__ai-categories-link"
+                    routerLink="/conversaciones/categorias"
+                    target="_blank"
+                    rel="noopener"
+                  >
+                    <sc-icon [name]="externalIcon" size="inherit" />
+                    {{ 'memory.rules.builder.categorias_manage' | translate }}
+                  </a>
+                </header>
+                @if (categoryOptions().length > 0) {
+                  <sc-multiselect
+                    [options]="categoryOptions()"
+                    optionLabel="label"
+                    optionValue="value"
+                    [placeholder]="'memory.rules.builder.categorias_placeholder' | translate"
+                    [filter]="true"
+                    [value]="[...categorias()]"
+                    (valueChange)="setCategorias($event)"
+                  />
+                  <p class="rule-builder__field-hint">
+                    {{ 'memory.rules.builder.categorias_hint' | translate }}
+                  </p>
+                } @else {
+                  <div class="rule-builder__ai-categories-empty">
+                    <p>{{ 'memory.rules.builder.categorias_empty' | translate }}</p>
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        </div>
       </section>
     }
   </div>
