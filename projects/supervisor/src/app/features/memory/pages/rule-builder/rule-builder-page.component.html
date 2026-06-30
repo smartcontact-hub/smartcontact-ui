@@ -124,75 +124,109 @@
           />
         </header>
 
-        @if (aiAnalysis()) {
-          <div class="rule-builder__ai-chips">
-            <span class="rule-builder__ai-chip">
-              {{ 'memory.rules.builder.ai_chip_summary' | translate }}
-            </span>
-            <span class="rule-builder__ai-chip">
-              {{ 'memory.rules.builder.ai_chip_sentiment' | translate }}
-            </span>
-          </div>
-
-          <!-- Selector Categorías IA · solo classification (S49 §10 #13).
-               El listado vacío muestra CTA "Crear categoría" → /conversaciones/categorias. -->
-          @if (ruleType() === 'classification') {
-            <div class="rule-builder__ai-categories">
-              <header class="rule-builder__ai-categories-head">
-                <h3>{{ 'memory.rules.builder.categorias_label' | translate }}</h3>
-                <a
-                  class="rule-builder__ai-categories-link"
-                  routerLink="/conversaciones/categorias"
-                  target="_blank"
-                  rel="noopener"
-                >
-                  <sc-icon [name]="externalIcon" size="inherit" />
-                  {{ 'memory.rules.builder.categorias_manage' | translate }}
-                </a>
-              </header>
-              @if (categoryOptions().length > 0) {
-                <sc-multiselect
-                  [options]="categoryOptions()"
-                  optionLabel="label"
-                  optionValue="value"
-                  [placeholder]="'memory.rules.builder.categorias_placeholder' | translate"
-                  [filter]="true"
-                  [value]="[...categorias()]"
-                  (valueChange)="setCategorias($event)"
-                />
-                <p class="rule-builder__field-hint">
-                  {{ 'memory.rules.builder.categorias_hint' | translate }}
-                </p>
-              } @else {
-                <div class="rule-builder__ai-categories-empty">
-                  <p>{{ 'memory.rules.builder.categorias_empty' | translate }}</p>
-                </div>
-              }
+        <!-- Reveal con grid-template-rows → expande suave, sin layout shift de golpe. -->
+        <div class="rule-builder__ai-reveal" [class.rule-builder__ai-reveal--open]="aiAnalysis()">
+          <div class="rule-builder__ai-reveal-inner">
+            <div class="rule-builder__ai-chips">
+              <span class="rule-builder__ai-chip">
+                {{ 'memory.rules.builder.ai_chip_summary' | translate }}
+              </span>
+              <span class="rule-builder__ai-chip">
+                {{ 'memory.rules.builder.ai_chip_sentiment' | translate }}
+              </span>
             </div>
-          }
-        }
+
+            <!-- Selector Categorías IA · solo classification (S49 §10 #13).
+                 El listado vacío muestra CTA "Crear categoría" → /conversaciones/categorias. -->
+            @if (ruleType() === 'classification') {
+              <div class="rule-builder__ai-categories">
+                <header class="rule-builder__ai-categories-head">
+                  <h3>{{ 'memory.rules.builder.categorias_label' | translate }}</h3>
+                  <a
+                    class="rule-builder__ai-categories-link"
+                    routerLink="/conversaciones/categorias"
+                    target="_blank"
+                    rel="noopener"
+                  >
+                    <sc-icon [name]="externalIcon" size="inherit" />
+                    {{ 'memory.rules.builder.categorias_manage' | translate }}
+                  </a>
+                </header>
+                @if (categoryOptions().length > 0) {
+                  <sc-multiselect
+                    [options]="categoryOptions()"
+                    optionLabel="label"
+                    optionValue="value"
+                    [placeholder]="'memory.rules.builder.categorias_placeholder' | translate"
+                    [filter]="true"
+                    [value]="[...categorias()]"
+                    (valueChange)="setCategorias($event)"
+                  />
+                  <p class="rule-builder__field-hint">
+                    {{ 'memory.rules.builder.categorias_hint' | translate }}
+                  </p>
+                } @else {
+                  <div class="rule-builder__ai-categories-empty">
+                    <p>{{ 'memory.rules.builder.categorias_empty' | translate }}</p>
+                  </div>
+                }
+              </div>
+            }
+          </div>
+        </div>
       </section>
     }
   </div>
 
-  <footer class="rule-builder__foot">
-    @if (submitted() && condBlocking()) {
-      <p class="rule-builder__save-blocked">
-        <sc-icon name="error" [size]="14" />
-        {{ 'memory.rules.builder.cond.val.blocked' | translate }}
-      </p>
-    }
-    <p-button type="button" size="small" severity="secondary" (onClick)="onCancel()">
-      <span>{{ 'common.cancel' | translate }}</span>
-    </p-button>
-    <p-button type="button" size="small" severity="primary" (onClick)="onSave()">
-      <span>
-        @if (isEditMode()) {
-          {{ 'memory.rules.builder.save_changes' | translate }}
+  <div class="rule-builder__dock">
+    <div class="rule-builder__impact" aria-live="polite">
+      @if (showEmptyImpact()) {
+        <span class="rule-builder__impact-empty">
+          <sc-icon name="warning" [size]="14" aria-hidden="true" />
+          {{ 'memory.rules.builder.cond.val.impact_zero' | translate: { total: impactTotal() } }}
+        </span>
+      } @else {
+        <sc-icon class="rule-builder__impact-ic" name="leaderboard" [size]="14" aria-hidden="true" />
+        <span class="rule-builder__impact-main">
+          {{ 'memory.rules.builder.cond.impact' | translate: { count: impactCount(), total: impactTotal() } }}
+        </span>
+        @if (hasUnevaluable()) {
+          <span class="rule-builder__impact-note">
+            {{ 'memory.rules.builder.cond.impact_note' | translate }}
+          </span>
         } @else {
-          {{ 'memory.rules.builder.create_rule' | translate }}
+          <div class="rule-builder__impact-bar" aria-hidden="true">
+            <span class="rule-builder__impact-bar-fill" [style.width.%]="impactPct()"></span>
+          </div>
+          <span class="rule-builder__impact-proj">
+            {{
+              'memory.rules.builder.cond.est_projection'
+                | translate: { day: fmt(estimate().perDay), month: fmt(estimate().perMonth) }
+            }}
+          </span>
         }
-      </span>
-    </p-button>
-  </footer>
+      }
+    </div>
+
+    <footer class="rule-builder__foot">
+      @if (submitted() && condBlocking()) {
+        <p class="rule-builder__save-blocked">
+          <sc-icon name="error" [size]="14" />
+          {{ 'memory.rules.builder.cond.val.blocked' | translate }}
+        </p>
+      }
+      <p-button type="button" size="small" severity="secondary" (onClick)="onCancel()">
+        <span>{{ 'common.cancel' | translate }}</span>
+      </p-button>
+      <p-button type="button" size="small" severity="primary" (onClick)="onSave()">
+        <span>
+          @if (isEditMode()) {
+            {{ 'memory.rules.builder.save_changes' | translate }}
+          } @else {
+            {{ 'memory.rules.builder.create_rule' | translate }}
+          }
+        </span>
+      </p-button>
+    </footer>
+  </div>
 </div>

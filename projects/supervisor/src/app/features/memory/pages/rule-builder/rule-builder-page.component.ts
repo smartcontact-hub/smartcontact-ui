@@ -29,8 +29,14 @@ import {
   emptyConditionTree,
 } from '../../data/condition.types';
 import { validateConditionTree } from '../../data/condition-validate';
+import {
+  conversationMatchesTree,
+  hasUnevaluableConditions,
+  projectImpact,
+} from '../../data/condition-eval';
 import type { Direction, Rule, RuleType } from '../../data/rule.types';
 import { CategoriesStore } from '../../state/categories.store';
+import { ConversationsStore } from '../../state/conversations.store';
 import { RulesStore } from '../../state/rules.store';
 
 /**
@@ -78,6 +84,7 @@ export class RuleBuilderPageComponent implements DirtyAware {
   private readonly messages = inject(MessageService);
   private readonly translate = inject(TranslateService);
   private readonly resolver = inject(ConditionResolverService);
+  private readonly conversations = inject(ConversationsStore);
 
   /** Catálogo de categorías IA para el selector — solo activas + sólo
    *  visible en `type: 'classification'`. Spec S49 §10 #13. */
@@ -121,6 +128,38 @@ export class RuleBuilderPageComponent implements DirtyAware {
     validateConditionTree(this.conditionTree()).some((i) => i.severity === 'error'),
   );
   protected readonly canSave = computed(() => !this.nameInvalid() && !this.condBlocking());
+
+  /* ── Estimación de procesado (impacto en vivo; se pinta en el dock del footer,
+   *  siempre visible junto a la acción). Resuelve membresía de grupos al vuelo;
+   *  servicio/dirección/duración exactos, grupo/agente vía puente demo. ── */
+  protected readonly impactTotal = computed(() => this.conversations.conversations().length);
+  protected readonly impactCount = computed(() => {
+    const ctx = { memberAgentIds: (id: number) => this.resolver.memberAgentIds(id) };
+    return this.conversations
+      .conversations()
+      .filter((c) => conversationMatchesTree(c, this.conditionTree(), ctx)).length;
+  });
+  protected readonly hasUnevaluable = computed(() =>
+    hasUnevaluableConditions(this.conditionTree()),
+  );
+  protected readonly estimate = computed(() => projectImpact(this.impactCount(), this.impactTotal()));
+  /** % del tráfico que toca la regla → barra de proporción (amplia vs quirúrgica). */
+  protected readonly impactPct = computed(() => {
+    const total = this.impactTotal();
+    return total ? Math.round((this.impactCount() / total) * 100) : 0;
+  });
+  /** Pista honesta: evaluable, sin errores y NINGUNA conversación casa. */
+  protected readonly showEmptyImpact = computed(
+    () =>
+      this.conditionTree().groups.some((g) => g.conditions.length > 0) &&
+      this.impactTotal() > 0 &&
+      this.impactCount() === 0 &&
+      !this.hasUnevaluable() &&
+      !this.condBlocking(),
+  );
+  protected fmt(n: number): string {
+    return n.toLocaleString('es-ES');
+  }
 
   /** JSON snapshot of every editable field — feeds the unsaved-changes guard. */
   private buildSnapshot(): string {

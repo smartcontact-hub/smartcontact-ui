@@ -1,4 +1,3 @@
-import { CdkDrag, CdkDragDrop, CdkDropList, moveItemInArray } from '@angular/cdk/drag-drop';
 import {
   afterNextRender,
   ChangeDetectionStrategy,
@@ -14,7 +13,6 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 import { MenuModule } from 'primeng/menu';
-import { PopoverModule } from 'primeng/popover';
 import type { MenuItem } from 'primeng/api';
 
 import { IconComponent } from '@shared/components';
@@ -39,12 +37,9 @@ import { RulesStore } from '../../state/rules.store';
   selector: 'sc-memory-rules-page',
   imports: [
     ButtonModule,
-    CdkDrag,
-    CdkDropList,
     EmptyStateComponent,
     IconComponent,
     MenuModule,
-    PopoverModule,
     TranslateModule,
   ],
   templateUrl: './rules-page.component.html',
@@ -74,18 +69,15 @@ export class RulesPageComponent {
   protected readonly activeRules = this.rulesStore.activeRules;
   protected readonly inactiveOrDraftRules = this.rulesStore.inactiveOrDraftRules;
   protected readonly isEmpty = this.rulesStore.isEmpty;
-  protected readonly conflictsByRuleId = this.rulesStore.conflictsByRuleId;
-  protected readonly conflictPopoverRule = signal<Rule | null>(null);
 
   protected readonly menuTargetRule = signal<Rule | null>(null);
 
   protected readonly settingsIcon = 'tune';
   protected readonly emptyIcon = 'rule';
   protected readonly plusIcon = 'add';
-  protected readonly gripIcon = 'drag_indicator';
-  protected readonly micIcon = 'mic';
+  /** Mismo icono que el flujo de transcripciones (player, `description`) → ley de similitud. */
+  protected readonly transcriptionIcon = 'description';
   protected readonly sparklesIcon = 'auto_awesome';
-  protected readonly alertIcon = 'report';
   protected readonly kebabIcon = 'more_vert';
 
   protected onNewRule(type: 'transcription' | 'classification' = 'transcription'): void {
@@ -106,29 +98,6 @@ export class RulesPageComponent {
       command: () => this.onNewRule('classification'),
     },
   ];
-
-  protected hasConflict(rule: Rule): boolean {
-    return this.conflictsByRuleId().has(rule.id);
-  }
-
-  protected getConflictingRules(rule: Rule): readonly Rule[] {
-    return this.rulesStore.getConflictingRules(rule.id);
-  }
-
-  protected winningRuleId(rule: Rule): number {
-    // Spec line 67-68: arriba en la lista = más prioridad. La regla
-    // ganadora es la de menor priority entre la actual + sus conflicts.
-    const conflictings = this.getConflictingRules(rule);
-    const all = [rule, ...conflictings];
-    return all.reduce((winnerId, r) => {
-      const winner = all.find((x) => x.id === winnerId)!;
-      return (r.priority ?? 999) < (winner.priority ?? 999) ? r.id : winnerId;
-    }, rule.id);
-  }
-
-  protected openConflictPopover(rule: Rule): void {
-    this.conflictPopoverRule.set(rule);
-  }
 
   protected scopeSummary(rule: Rule): string {
     const parts: string[] = [];
@@ -163,17 +132,6 @@ export class RulesPageComponent {
     return date.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
   }
 
-  protected onActiveReorder(event: CdkDragDrop<Rule[]>): void {
-    if (event.previousIndex === event.currentIndex) return;
-    const current = [...this.activeRules()];
-    moveItemInArray(current, event.previousIndex, event.currentIndex);
-    this.rulesStore.reorderActive(current.map((r) => r.id));
-    this.messages.add({
-      severity: 'success',
-      summary: this.translate.instant('memory.rules.order_updated'),
-      life: TOAST_LIFE.success,
-    });
-  }
 
   protected setMenuTarget(rule: Rule): void {
     this.menuTargetRule.set(rule);
