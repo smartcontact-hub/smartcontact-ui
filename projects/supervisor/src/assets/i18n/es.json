@@ -463,7 +463,8 @@
             "contradiction": "Estas dos condiciones no pueden cumplirse a la vez.",
             "tautology": "Con «o», esto incluye todas las conversaciones.",
             "impact_zero": "Ninguna de las últimas {{total}} conversaciones cumpliría estas condiciones.",
-            "blocked": "Revisa las condiciones marcadas antes de guardar."
+            "blocked": "Revisa las condiciones marcadas antes de guardar.",
+            "unfinished": "{{n}} sin terminar"
           }
         }
       }

@@ -275,6 +275,13 @@
     }
   }
 
+  /* Guía proactiva sutil (mientras montas): cuántas condiciones quedan sin valor. */
+  &__unfinished {
+    margin: 0 auto 0 0;
+    font-size: var(--sc-font-size-100);
+    color: var(--sc-text-secondary);
+  }
+
   &__textarea-label,
   &__field-label {
     display: block;

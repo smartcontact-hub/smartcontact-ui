@@ -214,6 +214,10 @@
           <sc-icon name="error" [size]="14" />
           {{ 'memory.rules.builder.cond.val.blocked' | translate }}
         </p>
+      } @else if (unfinishedCount() > 0) {
+        <p class="rule-builder__unfinished">
+          {{ 'memory.rules.builder.cond.val.unfinished' | translate: { n: unfinishedCount() } }}
+        </p>
       }
       <p-button type="button" size="small" severity="secondary" (onClick)="onCancel()">
         <span>{{ 'common.cancel' | translate }}</span>
