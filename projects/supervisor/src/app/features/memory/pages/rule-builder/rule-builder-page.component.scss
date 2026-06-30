@@ -103,67 +103,6 @@
     }
   }
 
-  &__draft-banner-slot {
-    /* Contenedor pre-reservado (spec line 122). El min-height evita
-     * layout shift cuando el banner aparece o desaparece. */
-    min-height: 0;
-    flex-shrink: 0;
-
-    &--visible {
-      min-height: auto;
-    }
-  }
-
-  &__draft-banner {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--sc-spacing-1-125);
-    padding: var(--sc-spacing-1-125) var(--sc-spacing-1-75);
-    background: var(--sc-color-amber-50);
-    border-bottom: 1px solid var(--sc-color-amber-200);
-  }
-
-  &__draft-message {
-    display: flex;
-    align-items: center;
-    gap: var(--sc-spacing-0-875);
-    color: var(--sc-color-amber-700);
-
-    sc-icon {
-      flex-shrink: 0;
-    }
-
-    p {
-      margin: 0;
-      font-size: var(--sc-font-size-200);
-    }
-  }
-
-  &__draft-discard {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--sc-spacing-0-25);
-    padding: var(--sc-spacing-0-5) var(--sc-spacing-0-875);
-    border: 1px solid var(--sc-color-amber-300);
-    border-radius: var(--sc-radius-200);
-    background: transparent;
-    color: var(--sc-color-amber-700);
-    font-size: var(--sc-font-size-100);
-    font-weight: 500;
-    cursor: pointer;
-    transition: background-color 200ms ease-out;
-
-    &:hover {
-      background: var(--sc-color-amber-100);
-    }
-
-    &:focus-visible {
-      outline: 2px solid var(--sc-color-amber-700);
-      outline-offset: 2px;
-    }
-  }
-
   &__body {
     flex: 1;
     overflow-y: auto;

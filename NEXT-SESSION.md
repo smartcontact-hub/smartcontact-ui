@@ -1,91 +1,75 @@
 # NEXT SESSION — Smart Contact DS (hand-off)
 
-> Sello: **2026-06-30** (sesión 7). Esta sesión, todo **mergeado a main + live en Cloudflare** (`main-X3D7M2FY.js`):
-> (1) **pulido del listado de reglas** — la columna Alcance muestra la **PROSA del árbol** (servicio+grupo+
-> tipificación+duración), no el alcance plano; **guía proactiva "N sin terminar"** junto a Guardar; 3 claves i18n
-> huérfanas fuera. (2) **Dirty-state en TODA la plataforma** — primitivo compartido `createFormDirtyState` (snapshot
-> estable que maneja Sets) → Guardar refleja **CAMBIO NETO** (se apaga si deshaces) en los 5 forms. (3) **Auditoría
-> de deuda del monorepo** por bloques (9 agentes, 99 hallazgos) → `docs/AUDIT-DEUDA-2026-06.md`. Verify entero verde,
-> **125 tests**. SOBREESCRIBE este fichero al cerrar.
+> Sello: **2026-06-30** (sesión 8). Tema: **borradores fuera + «una sola regla activa» en toda la plataforma**, y
+> **recorrido `/reglas` (sc-demo) reescrito** al modelo real. **OJO: trabajo en working tree, COMMIT PENDIENTE de OK
+> de Rafa** (no se ha pusheado a main aún). Decisión nueva: **DD-28**. Verify verde salvo 1 falso-positivo
+> pre-existente (`docs:coherence`). SOBREESCRIBE este fichero al cerrar.
 
 ---
 
 ## ▶️ EMPIEZA AQUÍ
 1. **Lee este fichero entero.**
-2. El backlog priorizado de la sesión: **`docs/AUDIT-DEUDA-2026-06.md`** (temas A-G + P0/P1 + quick-wins, con checkboxes).
-3. El *por qué* durable: `docs/DECISIONS.md` (DD-27 = cond-builder v2). Elige tarea de §Lo que queda.
+2. Si Rafa aprobó el commit: el cambio ya está en main. Si no: revisa el working tree (`git status`) — son solo
+   los ficheros de reglas (supervisor + sc-demo/reglas + i18n + 2 capturas + DECISIONS).
+3. El *por qué* durable: `docs/DECISIONS.md` → **DD-28** (esta sesión) sobre DD-27/26.
 
 ---
 
-## 🎯 Estado de un vistazo — qué se hizo esta sesión (todo en main)
+## 🎯 Qué se hizo esta sesión
 
-**1. Listado de reglas + builder (commit `e2d425b`)**
-- `rules-page.scopeSummary` ahora usa `describeConditionTree` → la fila **dice de verdad qué hace la regla** (fallback
-  plano solo para reglas antiguas sin árbol). Verificado en vivo.
-- Builder: **"N sin terminar"** (color secundario, no rojo) en el dock junto a Guardar — guía proactiva mientras montas,
-  además del hint rojo que sale al intentar guardar.
+**1. Borrador FUERA del modelo de reglas + invariante «una sola activa» (supervisor real) — DD-28**
+- Origen: feedback de Rafa — *«solo una regla puede estar activa; al desactivar no crea inactivas ni borradores,
+  solo aparece como inactiva»*. El supervisor aún arrastraba el concepto (DD-27 lo dejó como limpieza follow-up).
+- `rule.types.ts`: fuera `isDraft`/`duplicatedFromId`/`priority`/`RuleStatus`. `rules.store.ts` reescrito:
+  `inactiveOrDraftRules`→`inactiveRules`; `toggleActive`/`addRule`/`updateRule` **desactivan el resto al activar**
+  (radio); **duplicar crea copia inactiva normal** (no borrador no-activable); fuera `priority`/`conflictsByRuleId`/
+  `getConflictingRules`/`isInConflict`/`reorderActive`/`scopeOverlaps` (muertos en UI). `rules-mock.ts` reseed:
+  **1 activa + 3 inactivas** (antes 4 activas con priority 1..4). Listado: «Inactivas y borradores»→«Inactivas»,
+  título «Regla activa» (singular), sin gating del botón Activar.
+- i18n (es/en/fr/pt): fuera `status.draft`/`status.conflict`/`activate_draft_tooltip`/`builder.{draft_banner,
+  discard_draft,draft_ready_toast,discarded_toast}`/`order_updated`/`cols.order`/bloque `conflict.*`; `duplicated_toast`
+  reescrito. + scss muerto del banner de borrador fuera. **OJO: el `draft` de admin (agents/groups/users, DD#294)
+  es OTRO concepto — intacto.**
+- **Verificado en vivo** (capturas reales del Supervisor): listado 1 activa/3 inactivas con alcance en prosa;
+  builder con estimación «6 de 34» + barra + «≈74/día».
 
-**2. Dirty-state plataforma-wide (commit `60f20da`) — resuelve Tema C del audit**
-- **Primitivo compartido**: `projects/supervisor/src/app/shared/utils/form-dirty-state.{core.mjs,core.d.mts,ts}`.
-  `createFormDirtyState(() => snapshot)` → `dirty` por CAMBIO NETO (computed snapshot vs pristine) + `markPristine()`.
-  `stableStringify` maneja **Sets** (→ ordenados) y orden de claves (clave: `JSON.stringify` rompe Sets). 7 tests en
-  `scripts/__tests__/form-dirty-state.test.mjs`.
-- **Cableado**: agentes/grupos/usuarios usan el primitivo (antes tenían un flag manual de un solo sentido, ~25
-  `formDirty.set(true)` muertos, fuera); rule-builder usa su propio snapshot + ahora **gatea `canSave`**; **AED ya era
-  correcto** (no se tocó). Patrón: `canSave = válido && (esNuevo || dirty())` — en CREAR ignora dirty, en EDITAR lo exige.
-- **Verificado en vivo** (vía `ng.getComponent`): editar→cambiar→Guardar ON→deshacer→Guardar OFF, incl. ciclo del Set.
+**2. Recorrido `/reglas` (sc-demo) reescrito como HISTORIA antes/después** (presentación, NO producto)
+- `projects/sc-demo/src/app/pages/reglas/rules-walkthrough.component.{ts,html,scss}`: la página cuenta el cambio como
+  storytelling — el giro a transcripción, y **3 beats de transformación** (alcance rígido→árbol+refs vivas ·
+  prioridad/conflictos→una activa [core] · borradores→activa/inactiva), cada uno con **Antes / Ahora / Por qué** en
+  lenguaje llano. Componente nuevo `.compare` (2 col→1, flat, 1px borders, label Antes muted / Ahora acento) con
+  **capturas antes/después** + snippets de código antes/después. Concerns/conclusiones a *decidido→hecho*; nombres
+  genéricos. **Skills `/impeccable` + `/minimalist-ui`**: aplicados solo donde NO contrastan con el DS (anti-slop —cero
+  border-left stripes, cero gradient-text—, jerarquía, whitespace, editorial); se descartaron sus fuentes/colores/iconos
+  propios (romperían la consonancia). Dark-safe + responsive verificados; AOT + typecheck + lint verde.
+- **Assets**: 4 capturas en `public/usage/` — `conversaciones-reglas{,-nueva}.png` (AHORA, regeneradas del Supervisor)
+  + `conversaciones-reglas{,-nueva}-antes.png` (ANTES, extraídas de git: modelo viejo con prioridad/conflicto/borradores).
 
-**3. Auditoría de deuda (commit `b25b782`)** → `docs/AUDIT-DEUDA-2026-06.md` (enlazada en DOCS-INDEX).
-- Lo gordo: **P0 = field-pattern copy-pasteado ×5** (inputtext/select/multiselect/datepicker/inputnumber: template+CVA+
-  9 computeds) — el mayor multiplicador del repo. **2 eras de API** (16 wrappers legacy vs 31 signals).
+## 🗺️ Lo que queda (del audit + nuevo)
+- **El backlog grande sigue**: `docs/AUDIT-DEUDA-2026-06.md` (P0 = `sc-field-wrapper`; base común admin; quick-wins).
+- **Nuevo de esta sesión**: si Rafa quiere consonancia total, el `chip.recording`/`builder.type.recording` y la
+  `RuleType: 'recording'` siguen vestigiales (grabación fuera del MVP) — limpieza menor, no se tocó (fuera de scope).
 
-## 🗺️ Lo que queda (orden recomendado por el audit)
+## ⚠️ TRAMPAS / PROTECCIONES (nuevas de esta sesión, importantes)
+- **`npm run e2e` ES UN FOOTGUN**: `playwright.config.ts` tiene `testDir:'e2e'` SIN `testIgnore`, así que **corre
+  también `e2e/usage/usage-capture.spec.ts` contra sc-demo:4280** (donde las rutas del supervisor no existen) →
+  **CLOBBEA los PNG de `public/usage/`** con páginas equivocadas. Esta sesión clobbeó 13 PNG; se restauraron con git
+  + se re-capturaron las 2 de reglas. **Para capturar reglas usa SOLO**: `npx playwright test -c
+  playwright.usage.config.ts --grep "conversaciones-reglas"` (sirve el supervisor:4290) **y `git checkout --
+  _usage-raw.json`** después (el `afterAll` lo reduce a las pantallas capturadas). *Fix sugerido (no aplicado):
+  añadir `testIgnore: '**/usage/**'` al config principal.*
+- **e2e de componentes NO pasa en entorno fresco**: son snapshots visuales `-darwin.png` sensibles al render de
+  fuentes (+ 15 componentes sin baseline commiteada). Fallan por entorno, no por código. No persigas esos ✘.
+- **`docs:coherence` falso-positivo pre-existente**: `AUDIT-DEUDA-2026-06.md:72` propone crear `scripts/paths.mjs`
+  (backlog `- [ ]`) y el checker lo lee como referencia rota → corta `verify`. Ajeno a reglas; arréglalo aparte.
+- Verify entero verde salvo eso (125 tests, audit:components, AOT supervisor+demo, typecheck, lint).
+- **NUNCA `git add .claude`** · commits a main con `Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>`.
 
-**A. Quick-wins de verificación (mejor ROI — baratos, dejan gates):**
-- `i18n:check` como gate del verify (cierra ~35 claves `memory.rules.builder.*` que faltan en en/fr/pt).
-- `font-size` px→token (`04-component.css:69,106,108`); `SC_ICON_SIZE_LG=15.75`→16 (`sc-icon-sizes.ts:36`).
-- Borrar handlers legacy `onLabelAdd`/`onLanguageAdd` (`agent-form`); `shared/utils/audio.ts` (3 funcs duplicadas).
-
-**B. El P0 — `sc-field-wrapper`** (extraer label+required+slot+footer + CVA + computeds de los 5 fields). **Detrás de
-`npm run e2e`** (toca render). Piloto: migra inputtext, valida visual, replica. Es duplicación GENUINA → sí extraer.
-
-**C. Base común admin** (`BaseCrudStore<T>`/`FilteredSortedTable`) — ataca el grueso de P1 admin. Dirty-state ya hecho.
-
-**D. Follow-ups menores ya identificados:**
-- **Picker (#1):** decisión cerrada = **mantener el custom** `rule-condition-value-picker` (su comodín "Todos"+`agentGroup`
-  son app-domain, NO van al `sc-multiselect` del DS — lo ensuciarían). Queda: igualar fino su look al multiselect + nota
-  de doc de por qué es feature-scoped.
-- **Consistencia builder ↔ forms admin (#3):** mismo patrón de footer sticky/secciones (no investigado a fondo).
-- **Muerto invisible (#5 resto):** bloques i18n `conflict.*`/`draft.*` + `cols.order`/`status.draft` en `es.json`;
-  métodos `getConflictingRules`/`reorderActive`/`conflictsByRuleId` en `rules.store` (0 consumidores).
-- **`sc-demo /reglas`** (`projects/sc-demo/src/app/pages/reglas/`) — material de PRESENTACIÓN — sigue mostrando el modelo
-  VIEJO (grabación, Prioridad, borradores). Si se va a presentar, alinear con DD-27 (o avisar).
-- **`DECISIONS.md` newest-first** roto (DD-21..27 al final) — reordenar.
-
-**Diferido de antes:** PPT puente código↔Figma · accionables backend (Repositorios transcripción/tipificación,
-simulador de coste, AED Fase 4) · Neutral gray/slate · Code Connect.
-
-## ⚠️ TRAMPAS / PROTECCIONES
-- **`npm run verify` ENTERO antes de cada commit que toque componentes.** Los subsets (AOT+lint) **SALTAN
-  `audit:components`**; la staleness se acumula y rompe el gate al final. Confirma verde **leyendo el log** (`grep ✗`),
-  no el exit-code de un background con `&` (puede ser espurio).
-- **Verificar el OUTCOME, no un proxy:** screenshot a viewport real (`preview_resize` 1200+ ANTES) para lo visual; para
-  **lógica de signals** usa `window.ng.getComponent(el)` + ejercita la cadena real (`canSave()` antes/después de mutar
-  el form) + 1 check del render. NO te quedes en una propiedad del DOM.
-- **El `ng serve` se cae solo a mitad** (esbuild) → reinicia el preview; no es tu código (AOT pasa). **AOT = gate de
-  plantillas** (`tsc` no las type-checkea a fondo); el supervisor usa su PROPIO `<sc-icon>` (`@shared/components`).
-- **Subagentes (edits o AUDITORÍA):** sus reportes/hallazgos son LEADS — verifica cada uno contra el código antes de
-  actuar (el audit marcó AED como "dirty divergente" y al abrirlo ya era correcto; no toqué un no-bug).
-- **NUNCA `git add .claude`** · **NUNCA commitear `kit-export-dtcg.json`** · commits a main con
-  `Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>`.
-
-## 🟡 RECAP al cerrar lotes (lo pidió Rafa)
-Mega-dumb, sin AI slop, conciso: qué se hizo, por qué, conclusiones, pendiente, y lo que NO se hizo a drede.
+## 🟡 RECAP al cerrar (lo pidió Rafa)
+Mega-dumb, sin AI slop: qué se hizo, por qué, conclusiones, pendiente, y lo que NO se hizo a drede.
 
 ## Índice — dónde mirar
-- **Backlog priorizado de deuda** → `docs/AUDIT-DEUDA-2026-06.md` · **Decisiones** → `docs/DECISIONS.md` (DD-27/26) ·
-  **Backlog durable** → `docs/ROADMAP.md` · **Mapa de docs** → `docs/DOCS-INDEX.md`.
-- **Dirty-state compartido** → `supervisor/src/app/shared/utils/form-dirty-state.*` (+ test en `scripts/__tests__/`).
-- **Builder real** → supervisor `features/memory/` (`components/rule-condition-builder` + `rule-condition-value-picker`
-  + `data/condition-*.{ts,mjs}` + `pages/rule-builder`) · **Forms admin** → `features/admin/{agents,groups,users}/pages`.
-- **Recorrido `/reglas`** → sc-demo (presentación, **modelo viejo**, no producto).
+- **Decisiones** → `docs/DECISIONS.md` (**DD-28** reglas MVP sin borradores/prioridad · DD-27/26 constructor) ·
+  **Backlog deuda** → `docs/AUDIT-DEUDA-2026-06.md` · **Mapa docs** → `docs/DOCS-INDEX.md`.
+- **Reglas (producto)** → supervisor `features/memory/` (`state/rules.store.ts` + `data/rule.types.ts` +
+  `data/rules-mock.ts` + `pages/rules` + `pages/rule-builder`) · **Recorrido** → sc-demo `pages/reglas` (presentación).

@@ -3,185 +3,281 @@
     <p class="eyebrow">Estado del proyecto</p>
     <h1>Sistema de reglas</h1>
     <p class="lead">
-      Recorrido del estado actual del sistema de reglas del Supervisor, paso a paso y con el porqué de cada
-      parte. Foco en el pivote a <strong>transcripción</strong>. Las capturas son del Supervisor real y el
-      código del repo. Al final, las <strong>conclusiones y accionables</strong> de la charla con el equipo.
+      El sistema de reglas se rehízo de arriba abajo. Esta es la historia: de dónde venía —grabar llamadas, con
+      prioridades, conflictos y borradores— a dónde llegó —<strong>transcribir</strong>, con una sola regla activa y
+      un constructor que cualquiera entiende—. Cada cambio, con su <strong>antes</strong>, su <strong>ahora</strong>
+      y su <strong>porqué</strong>. Las capturas son del Supervisor real.
     </p>
   </header>
 
   <nav class="toc" aria-label="En esta página">
-    <p class="toc__title">En esta página</p>
+    <p class="toc__title">La historia, paso a paso</p>
     <ol class="toc__list">
       <li><a href="#paso-1">Qué es una regla</a></li>
-      <li><a href="#paso-2">El pivote a transcripción</a></li>
-      <li><a href="#paso-3">Anatomía de una regla</a></li>
-      <li><a href="#paso-4">Cómo se crea</a></li>
-      <li><a href="#paso-5">La lista y el orden</a></li>
-      <li><a href="#paso-6">Prioridad y conflictos</a></li>
-      <li><a href="#paso-7">Transcripción en detalle</a></li>
-      <li><a href="#paso-8">Qué se nos puede escapar</a></li>
-      <li><a href="#conclusiones">Conclusiones y accionables</a></li>
+      <li><a href="#paso-2">El giro a transcripción</a></li>
+      <li><a href="#paso-3">El alcance: de casillas a un árbol</a></li>
+      <li><a href="#paso-4">Prioridad y conflictos: de lo difícil a nada</a></li>
+      <li><a href="#paso-5">Borradores: un estado de menos</a></li>
+      <li><a href="#paso-6">La estimación en vivo</a></li>
+      <li><a href="#paso-7">Dónde viven: Repositorios</a></li>
+      <li><a href="#paso-8">Transcripción en detalle</a></li>
+      <li><a href="#paso-9">Lo que queda por cerrar</a></li>
+      <li><a href="#conclusiones">Conclusiones</a></li>
     </ol>
   </nav>
 
   <section class="step" id="paso-1">
-    <h2><span class="step__n">01</span> Qué es una regla, y qué no</h2>
+    <h2><span class="step__n">01</span> Primero, qué es una regla</h2>
     <p>
-      Una regla automatiza qué pasa con las conversaciones que <strong>entren a partir de ahora</strong>: si
-      se graban, se transcriben, o se clasifican con IA. No toca lo que ya existe.
+      Una regla automatiza qué pasa con las conversaciones que <strong>entren a partir de ahora</strong>: si se
+      transcriben y si se analizan con IA. No toca lo que ya existe.
     </p>
     <p class="note">
-      Tocar lo que ya existe es otra cosa: las acciones <em>bulk</em> (transcribir ahora una selección).
-      Regla = a futuro. Bulk = ahora. Es la confusión más fácil de cometer.
+      Tocar lo que ya existe es otra cosa: las acciones <em>bulk</em> (transcribir ahora una selección). Regla =
+      a futuro. Bulk = ahora. Es la confusión más fácil de cometer, así que conviene fijarla antes de empezar.
     </p>
   </section>
 
   <section class="step" id="paso-2">
-    <h2><span class="step__n">02</span> El pivote: de grabación a transcripción</h2>
+    <h2><span class="step__n">02</span> El giro: de grabar a transcribir</h2>
     <p>
-      Hasta ahora el caso fuerte eran las reglas de <strong>grabación</strong>. Eso cambia: un cambio en la
-      normativa las deja sin sentido. El detalle legal queda fuera de esta charla; aquí importa la consecuencia.
+      Durante mucho tiempo, el caso fuerte fueron las reglas de <strong>grabación</strong>. Un cambio en la normativa
+      las dejó sin sentido, así que salen del MVP. El detalle legal queda fuera; aquí importa la consecuencia.
     </p>
     <p>
-      El peso se mueve a <strong>transcripción</strong> y <strong>clasificación</strong>, justo cuando entra en
-      desarrollo el sistema de <strong>transcripciones múltiples</strong>. Por eso esta sección existe ahora.
+      El peso se movió a <strong>transcripción</strong> y <strong>clasificación</strong>, justo cuando entra en
+      desarrollo el sistema de <strong>transcripciones múltiples</strong>. Ese giro fue el que destapó todo lo demás:
+      al rehacer las reglas para transcribir, se aprovechó para simplificar lo que se había vuelto complicado. Los
+      tres cambios que vienen son esa simplificación.
     </p>
   </section>
 
-  <section class="step" id="paso-3">
-    <h2><span class="step__n">03</span> Anatomía de una regla</h2>
-    <p>El modelo real, en cuatro piezas:</p>
-    <ul class="parts">
-      <li><strong>Tipo</strong>: grabación, transcripción o clasificación.</li>
-      <li>
-        <strong>Alcance</strong>: servicios, grupos y agentes. Las tres se cruzan con <strong>AND</strong>, y
-        una dimensión vacía significa <em>cualquiera</em>. Esta regla, sencilla de leer, es el origen de casi
-        toda la complejidad (paso 06).
-      </li>
-      <li><strong>Criterios</strong>: dirección, horario, duración, quién atiende, análisis IA.</li>
-      <li><strong>Prioridad</strong>: un número. El más bajo gana cuando dos reglas se pisan.</li>
-    </ul>
+  <section class="step beat" id="paso-3">
+    <h2><span class="step__n">03</span> El alcance: de tres casillas rígidas a un árbol</h2>
+    <p class="beat__lead">
+      El «alcance» es a qué conversaciones llega una regla. Era lo más rígido del modelo viejo, y es donde más se notó
+      el cambio.
+    </p>
+
+    <div class="compare">
+      <div class="compare__side compare__side--before">
+        <p class="compare__tag">Antes</p>
+        <figure class="compare__shot">
+          <img
+            src="/usage/conversaciones-reglas-nueva-antes.png"
+            alt="Pantalla vieja de crear regla: tres casillas Servicios Y Grupos Y Agentes"
+            loading="lazy"
+          />
+          <figcaption>Tres casillas fijas (Servicios <strong>Y</strong> Grupos <strong>Y</strong> Agentes).</figcaption>
+        </figure>
+      </div>
+      <div class="compare__side compare__side--after">
+        <p class="compare__tag">Ahora</p>
+        <figure class="compare__shot">
+          <img
+            src="/usage/conversaciones-reglas-nueva.png"
+            alt="Constructor nuevo: árbol de condiciones campo·operador·valor con Y u O"
+            loading="lazy"
+          />
+          <figcaption>Un árbol de condiciones <code>campo · operador · valor</code>, con <strong>Y</strong> u <strong>O</strong>.</figcaption>
+        </figure>
+      </div>
+    </div>
+
+    <div class="why">
+      <p class="why__label">Por qué se cambió</p>
+      <p class="why__text">
+        Las tres casillas no sabían decir cosas normales del negocio: «ventas <em>o</em> incidencias», o mezclar
+        condiciones. Y guardaban <strong>nombres</strong>: si renombrabas un grupo o le cambiabas los miembros, la
+        regla se quedaba mirando un nombre viejo. El árbol expresa cualquier combinación, y guarda
+        <strong>referencias vivas</strong>: «Todos» incluye también lo que se cree mañana, y un grupo en el campo
+        Agente significa «sus miembros <strong>ahora</strong>».
+      </p>
+    </div>
+
     <details class="ref">
-      <summary>Ver el modelo en código</summary>
-      <figure class="snippet">
-        <pre><code>{{ model.code }}</code></pre>
-        <figcaption>{{ model.src }}</figcaption>
+      <summary>Antes y ahora, en código</summary>
+      <div class="snippet-pair">
+        <figure class="snippet">
+          <pre><code>{{ scopeBefore.code }}</code></pre>
+          <figcaption>{{ scopeBefore.src }}</figcaption>
+        </figure>
+        <figure class="snippet">
+          <pre><code>{{ treeAfter.code }}</code></pre>
+          <figcaption>{{ treeAfter.src }}</figcaption>
+        </figure>
+      </div>
+      <figure class="snippet snippet--full">
+        <pre><code>{{ refsAfter.code }}</code></pre>
+        <figcaption>{{ refsAfter.src }}</figcaption>
       </figure>
     </details>
   </section>
 
-  <section class="step" id="paso-4">
-    <h2><span class="step__n">04</span> Cómo se crea</h2>
-    <p>
-      El formulario va por bloques: información básica, alcance, y los criterios del tipo. El subtítulo de la
-      propia pantalla lo deja claro: <em>define cómo procesar las conversaciones que entren a partir de ahora</em>.
+  <section class="step beat step--core" id="paso-4">
+    <h2><span class="step__n">04</span> Prioridad y conflictos: de lo más difícil a nada</h2>
+    <p class="beat__lead">
+      Aquí estaba toda la complejidad del sistema viejo. Y la forma de resolverla fue, sencillamente, hacerla
+      desaparecer.
     </p>
-    <figure class="shot">
-      <img
-        src="/usage/conversaciones-reglas-nueva.png"
-        alt="Pantalla de creación de una regla en el Supervisor: información básica y alcance"
-        loading="lazy"
-      />
-      <figcaption>Supervisor real, crear regla. La <strong>«Y»</strong> entre Servicios y Grupos es el AND del alcance.</figcaption>
-    </figure>
+
+    <div class="compare">
+      <div class="compare__side compare__side--before">
+        <p class="compare__tag">Antes</p>
+        <figure class="compare__shot">
+          <img
+            src="/usage/conversaciones-reglas-antes.png"
+            alt="Listado viejo: columna de prioridad, dos reglas EN CONFLICTO, sección de borradores"
+            loading="lazy"
+          />
+          <figcaption>Varias activas, ordenadas por <strong>prioridad</strong>, con dos marcadas <strong>EN CONFLICTO</strong>.</figcaption>
+        </figure>
+      </div>
+      <div class="compare__side compare__side--after">
+        <p class="compare__tag">Ahora</p>
+        <figure class="compare__shot">
+          <img
+            src="/usage/conversaciones-reglas.png"
+            alt="Listado nuevo: una sola regla activa y el resto inactivas, sin prioridad ni conflictos"
+            loading="lazy"
+          />
+          <figcaption>Una sola <strong>activa</strong>. Sin números de prioridad, sin conflictos.</figcaption>
+        </figure>
+      </div>
+    </div>
+
+    <div class="why">
+      <p class="why__label">Por qué se cambió</p>
+      <p class="why__text">
+        Con varias reglas activas a la vez, cuando dos podían aplicar a la misma conversación había que decidir
+        <strong>cuál manda</strong>: un número de prioridad, arrastrar para ordenar, y un detector que te avisaba de
+        cada choque. Era lo más complejo de todo. El MVP lo esquiva con una idea simple: <strong>una sola regla
+        activa</strong>. Si no hay dos que se pisen, no hay nada que priorizar ni ningún conflicto que resolver.
+        Activar una apaga la anterior, y a probar. La priorización volverá el día que haga falta tener varias a la vez.
+      </p>
+    </div>
+
+    <details class="ref">
+      <summary>Antes y ahora, en código</summary>
+      <div class="snippet-pair">
+        <figure class="snippet">
+          <pre><code>{{ conflictBefore.code }}</code></pre>
+          <figcaption>{{ conflictBefore.src }}</figcaption>
+        </figure>
+        <figure class="snippet">
+          <pre><code>{{ oneActiveAfter.code }}</code></pre>
+          <figcaption>{{ oneActiveAfter.src }}</figcaption>
+        </figure>
+      </div>
+    </details>
   </section>
 
-  <section class="step" id="paso-5">
-    <h2><span class="step__n">05</span> La lista y el orden</h2>
-    <p>
-      Las reglas activas se muestran <strong>en orden de prioridad</strong>. Arrastrarlas reordena, y eso
-      reasigna las prioridades 1..N. Las pausadas y los borradores van aparte.
+  <section class="step beat" id="paso-5">
+    <h2><span class="step__n">05</span> Borradores: un estado de menos</h2>
+    <p class="beat__lead">
+      El listado viejo tenía un estado intermedio que nadie había pedido. Se quitó.
     </p>
-    <figure class="shot">
-      <img
-        src="/usage/conversaciones-reglas.png"
-        alt="Lista de reglas del Supervisor con dos reglas marcadas EN CONFLICTO"
-        loading="lazy"
-      />
-      <figcaption>Supervisor real, lista de reglas. En la columna <strong>ESTADO</strong> hay dos <strong>EN CONFLICTO</strong>.</figcaption>
-    </figure>
+
+    <div class="compare">
+      <div class="compare__side compare__side--before">
+        <p class="compare__tag">Antes</p>
+        <figure class="compare__shot">
+          <img
+            src="/usage/conversaciones-reglas-antes.png"
+            alt="Listado viejo con una sección «Inactivas y borradores» y un BORRADOR SIN EDITAR"
+            loading="lazy"
+          />
+          <figcaption>Activa, inactiva… y «<strong>Borrador sin editar</strong>», en su propia sección.</figcaption>
+        </figure>
+      </div>
+      <div class="compare__side compare__side--after">
+        <p class="compare__tag">Ahora</p>
+        <figure class="compare__shot">
+          <img
+            src="/usage/conversaciones-reglas.png"
+            alt="Listado nuevo con solo dos estados: activa o inactiva"
+            loading="lazy"
+          />
+          <figcaption>Dos estados y ya: <strong>activa</strong> o <strong>inactiva</strong>.</figcaption>
+        </figure>
+      </div>
+    </div>
+
+    <div class="why">
+      <p class="why__label">Por qué se cambió</p>
+      <p class="why__text">
+        El «borrador» era una copia sin editar que no se podía activar hasta tocarla, y vivía en una sección aparte.
+        Un estado de más que solo confundía. Ahora desactivar una regla <strong>solo la pasa a Inactiva</strong> —sin
+        copias ni borradores— y duplicar crea una copia inactiva normal, lista para editar o activar. Activar y
+        desactivar es lo único que un supervisor necesita.
+      </p>
+    </div>
   </section>
 
-  <section class="step step--core" id="paso-6">
-    <h2><span class="step__n">06</span> Dónde está la complejidad: prioridad y conflictos</h2>
+  <section class="step" id="paso-6">
+    <h2><span class="step__n">06</span> Lo que se ganó: una estimación en vivo</h2>
     <p>
-      La pregunta del millón: cuando varias reglas pueden aplicar a la misma conversación,
-      <strong>¿cuál manda?</strong>
+      No todo fue quitar. Mientras montas una regla, el pie del constructor te dice a cuántas conversaciones
+      afectaría: «<strong>Afectaría a N de las últimas M conversaciones</strong>», con una barra de proporción
+      (amplia frente a quirúrgica) y una proyección «≈ N al día». Es una <strong>estimación</strong> sobre el
+      histórico, no un dato cerrado —y es honesta: cuenta de verdad cuántas casan.
     </p>
-
-    <h3>Dos reglas chocan si son del mismo tipo y sus alcances se cruzan</h3>
-    <p>
-      «Cruzarse» no es ser iguales: es tener intersección, con el comodín del vacío. Por eso
-      <code>Soporte Técnico / Soporte Nivel 1</code> choca con <code>Soporte Técnico / [Nivel 1, Nivel 2]</code>:
-      comparten Nivel 1. Eso es lo que se nos escapa al pensar «mis reglas no se pisan».
+    <p class="note">
+      Y guía sin estorbar: al intentar guardar, una condición incompleta o un rango imposible se marcan y bloquean;
+      un duplicado o una contradicción solo <strong>avisan</strong>.
     </p>
     <details class="ref">
       <summary>Ver el código real</summary>
-      <figure class="snippet">
-        <pre><code>{{ overlap.code }}</code></pre>
-        <figcaption>{{ overlap.src }}</figcaption>
+      <figure class="snippet snippet--full">
+        <pre><code>{{ estimate.code }}</code></pre>
+        <figcaption>{{ estimate.src }}</figcaption>
       </figure>
     </details>
-
-    <h3>La detección es por pares, sobre las activas</h3>
-    <p>
-      Se comparan todas las reglas activas dos a dos. Si el tipo coincide y los alcances se cruzan, quedan
-      marcadas en conflicto, en ambos sentidos.
-    </p>
-    <details class="ref">
-      <summary>Ver el código real</summary>
-      <figure class="snippet">
-        <pre><code>{{ conflict.code }}</code></pre>
-        <figcaption>{{ conflict.src }}</figcaption>
-      </figure>
-    </details>
-
-    <h3>Gana la de prioridad más baja</h3>
-    <p>
-      El sistema <strong>no inventa una fusión</strong>. Detecta el choque, te avisa con el estado
-      <code>conflict</code>, y decides tú: arrastras arriba la regla que quieres que gane. La decisión es humana.
-    </p>
-    <details class="ref">
-      <summary>Ver el código real</summary>
-      <figure class="snippet">
-        <pre><code>{{ winner.code }}</code></pre>
-        <figcaption>{{ winner.src }}</figcaption>
-      </figure>
-    </details>
-
-    <p class="resolved">
-      En la charla, esto se cerró para el MVP: <strong>solo una regla activa a la vez</strong>, así no hay
-      conflictos que resolver. La priorización vuelve a importar el día que haya varias activas.
-      <a href="#conclusiones">Ver conclusiones</a>.
-    </p>
   </section>
 
   <section class="step" id="paso-7">
-    <h2><span class="step__n">07</span> Transcripción en detalle</h2>
+    <h2><span class="step__n">07</span> Dónde viven: Repositorios</h2>
     <p>
-      <strong>Qué son las transcripciones múltiples</strong>: una misma conversación (una llamada) puede tener
-      varios tramos de grabación, y cada tramo se transcribe por separado. Por eso una llamada con N tramos
-      cuenta como N audios, y cada tramo lleva su propio estado de transcripción.
+      Las reglas viven en <strong>Repositorios</strong>, dentro de administración —el mismo sitio que servicios,
+      grupos o tipificaciones—. Es una tabla simple: nombre, el alcance <strong>en prosa</strong>, qué hace y su
+      estado. Esa frase del listado («Aplica cuando el servicio es Ventas Comercial y la duración supera 60 s») sale
+      directa del árbol de condiciones, para que leas qué hace una regla sin abrirla.
+    </p>
+    <details class="ref">
+      <summary>Ver el código real</summary>
+      <figure class="snippet snippet--full">
+        <pre><code>{{ summary.code }}</code></pre>
+        <figcaption>{{ summary.src }}</figcaption>
+      </figure>
+    </details>
+  </section>
+
+  <section class="step" id="paso-8">
+    <h2><span class="step__n">08</span> Transcripción en detalle</h2>
+    <p>
+      <strong>Qué son las transcripciones múltiples</strong>: una misma conversación (una llamada) puede tener varios
+      tramos de grabación, y cada tramo se transcribe por separado. Por eso una llamada con N tramos cuenta como N
+      audios, y cada tramo lleva su propio estado de transcripción.
     </p>
     <ul class="parts">
       <li>
-        <strong>La base ya está en el código</strong>: el reproductor multi-tramo y el estado por tramo
-        (transcrito o no) ya existen, y el bulk de transcripción ya cuenta los tramos.
+        <strong>La base ya está en el código</strong>: el reproductor multi-tramo y el estado por tramo (transcrito o
+        no) ya existen, y el bulk de transcripción ya cuenta los tramos.
       </li>
       <li>
-        <strong>Coste</strong>: el bulk ya cuenta cuántos audios entran y cuántos admiten análisis IA (un
-        toggle aparte). El coste es real y crece con las múltiples.
+        <strong>Coste</strong>: el bulk ya cuenta cuántos audios entran y cuántos admiten análisis IA (un toggle
+        aparte). El coste es real y crece con las múltiples.
       </li>
       <li>
-        <strong>Re-transcribir es destructivo</strong>: borra la transcripción y los análisis derivados. Por
-        eso pide una confirmación escrita.
+        <strong>Re-transcribir es destructivo</strong>: borra la transcripción y los análisis derivados. Por eso pide
+        una confirmación escrita.
       </li>
     </ul>
   </section>
 
-  <section class="step" id="paso-8">
-    <h2><span class="step__n">08</span> Qué se nos puede escapar</h2>
-    <p>Las preguntas que llevamos a la charla. Abajo, en qué quedaron.</p>
+  <section class="step" id="paso-9">
+    <h2><span class="step__n">09</span> Lo que queda por cerrar</h2>
+    <p>Las preguntas que el MVP deja abiertas a propósito. Abajo, lo que ya se decidió.</p>
     <ul class="qlist">
       @for (c of concerns; track c.q) {
         <li><strong>{{ c.q }}.</strong> {{ c.detail }}</li>
@@ -190,9 +286,9 @@
   </section>
 
   <section class="outcome" id="conclusiones">
-    <p class="eyebrow">Charla con el equipo · 2026-06-23</p>
-    <h2>Conclusiones y accionables</h2>
-    <p>Lo que se decidió y lo que toca hacer. Solo lo que se habló; lo que quedó en el aire va al final.</p>
+    <p class="eyebrow">De la charla con el equipo · 2026-06-23</p>
+    <h2>Conclusiones</h2>
+    <p>Lo que se decidió y lo que ya está <strong>construido</strong> desde entonces. Lo que quedó en el aire va al final.</p>
 
     <h3>El rumbo del MVP</h3>
     <ol class="decisions">
@@ -204,9 +300,9 @@
       }
     </ol>
 
-    <h3>Accionables</h3>
+    <h3>Lo que queda</h3>
     <ul class="actions">
-      @for (a of accionables; track a) {
+      @for (a of pendiente; track a) {
         <li>{{ a }}</li>
       }
     </ul>
@@ -221,8 +317,8 @@
 
   <footer class="rules__foot">
     <p>
-      Esta página vive dentro de sc-demo: se actualiza con el código. Las capturas se regeneran con
-      <code>npm run usage:capture</code> y el código apunta al archivo real, para que no se desfase.
+      Esta página vive dentro de sc-demo: se actualiza con el código. Las capturas «ahora» se regeneran con
+      <code>npm run usage:capture</code> y las «antes» quedan guardadas para contar el cambio.
     </p>
   </footer>
 </article>

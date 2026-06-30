@@ -306,11 +306,10 @@
       "empty_title": "Aún no hay reglas",
       "empty_desc": "Las reglas automatizan qué se graba, transcribe y analiza de las conversaciones que entren al sistema.",
       "empty_cta": "Crear primera regla",
-      "active_title": "Reglas activas · orden de prioridad",
+      "active_title": "Regla activa",
       "no_active_hint": "Ninguna regla activa. Activa una regla para empezar a aplicarla.",
-      "inactive_title": "Inactivas y borradores",
+      "inactive_title": "Inactivas",
       "cols": {
-        "order": "#",
         "name": "Regla",
         "scope": "Alcance",
         "actions": "Acciones",
@@ -325,26 +324,16 @@
       },
       "status": {
         "active": "Activa",
-        "inactive": "Inactiva",
-        "draft": "Borrador sin editar",
-        "conflict": "En conflicto"
+        "inactive": "Inactiva"
       },
       "menu": {
         "activate": "Activar",
-        "deactivate": "Desactivar",
-        "activate_draft_tooltip": "Edita al menos un campo para poder activar esta regla."
-      },
-      "conflict": {
-        "title": "En conflicto",
-        "desc": "Esta regla solapa su alcance con {{count}} regla(s) del mismo tipo. El supervisor puede convivir con conflictos — la UI muestra cuál gana.",
-        "winner": "Gana",
-        "hint": "Reordena arrastrando para cambiar la prioridad.",
-        "priority_meta": "· prioridad {{n}}"
+        "deactivate": "Desactivar"
       },
       "delete_title": "Eliminar regla",
       "delete_body": "Vas a eliminar «{{name}}». Esta acción no se puede deshacer.",
       "deleted_toast": "Regla «{{name}}» eliminada",
-      "duplicated_toast": "Regla duplicada. Edita al menos un campo para poder activarla.",
+      "duplicated_toast": "Regla duplicada. La copia queda inactiva.",
       "builder": {
         "back": "Volver al listado",
         "crumb_rules": "Reglas",
@@ -421,10 +410,6 @@
         "create_rule": "Crear regla",
         "created_toast": "Regla creada",
         "updated_toast": "Regla actualizada",
-        "draft_banner": "Esta regla es una copia sin modificar. Edita al menos un campo y guarda para poder activarla.",
-        "discard_draft": "Descartar copia",
-        "draft_ready_toast": "Regla lista para activar",
-        "discarded_toast": "Copia descartada",
         "cond": {
           "match_with": "Coincidir con",
           "match_all": "todas",

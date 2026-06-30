@@ -306,11 +306,10 @@
       "empty_title": "No rules yet",
       "empty_desc": "Rules automate what gets recorded, transcribed and analyzed from conversations entering the system.",
       "empty_cta": "Create first rule",
-      "active_title": "Active rules · priority order",
+      "active_title": "Active rule",
       "no_active_hint": "No active rules. Activate a rule to start applying it.",
-      "inactive_title": "Inactive and drafts",
+      "inactive_title": "Inactive",
       "cols": {
-        "order": "#",
         "name": "Rule",
         "scope": "Scope",
         "actions": "Actions",
@@ -325,27 +324,16 @@
       },
       "status": {
         "active": "Active",
-        "inactive": "Inactive",
-        "draft": "Unedited draft",
-        "conflict": "In conflict"
+        "inactive": "Inactive"
       },
       "menu": {
         "activate": "Activate",
-        "deactivate": "Deactivate",
-        "activate_draft_tooltip": "Edit at least one field to activate this rule."
-      },
-      "order_updated": "Order updated",
-      "conflict": {
-        "title": "In conflict",
-        "desc": "This rule overlaps its scope with {{count}} rule(s) of the same type. The supervisor can coexist with conflicts — the UI shows which one wins.",
-        "winner": "Wins",
-        "hint": "Drag to reorder and change priority.",
-        "priority_meta": "· priority {{n}}"
+        "deactivate": "Deactivate"
       },
       "delete_title": "Delete rule",
       "delete_body": "You are about to delete «{{name}}». This action cannot be undone.",
       "deleted_toast": "Rule «{{name}}» deleted",
-      "duplicated_toast": "Rule duplicated. Edit at least one field to activate it.",
+      "duplicated_toast": "Rule duplicated. The copy is inactive.",
       "builder": {
         "back": "Back to list",
         "title_new": "New rule",
@@ -420,11 +408,7 @@
         "save_changes": "Save changes",
         "create_rule": "Create rule",
         "created_toast": "Rule created",
-        "updated_toast": "Rule updated",
-        "draft_banner": "This rule is an unmodified copy. Edit at least one field and save to activate it.",
-        "discard_draft": "Discard copy",
-        "draft_ready_toast": "Rule ready to activate",
-        "discarded_toast": "Copy discarded"
+        "updated_toast": "Rule updated"
       }
     },
     "entities": {

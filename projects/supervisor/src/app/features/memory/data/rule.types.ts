@@ -2,20 +2,18 @@
  * Modelo de regla Memory — automatización programada a futuro.
  *
  * Migrado desde `RulesContext.tsx` del prototipo React. Subset acotado a lo
- * que necesita iter 9a (listado): tipo, nombre, alcance resumido, acciones
- * configuradas, estado, prioridad, última modificación.
+ * que necesita el listado: tipo, nombre, alcance resumido, acciones
+ * configuradas, estado (activa/inactiva), última modificación.
  *
- * Campos del constructor completo (durationMin, schedule, percentage,
- * scopeOrGroups, etc.) llegan en iter 9c.
- *
- * Las reglas viven en `RulesStore` (Memory-specific). El concepto NO se
- * mezcla con bulk actions: regla = "qué pasa con conversaciones futuras",
- * bulk = "qué hago ahora con las existentes" (spec `rule-constructor-update.md`).
+ * MVP transcripción: solo dos estados, activa o inactiva — sin borradores ni
+ * priorización (solo una regla puede estar activa a la vez, así que no hay
+ * orden que resolver). Las reglas viven en `RulesStore` (Memory-specific). El
+ * concepto NO se mezcla con bulk actions: regla = "qué pasa con conversaciones
+ * futuras", bulk = "qué hago ahora con las existentes".
  */
 import type { ConditionTree } from './condition.types';
 
 export type RuleType = 'recording' | 'transcription' | 'classification';
-export type RuleStatus = 'active' | 'inactive' | 'draft' | 'conflict';
 
 export type Direction = 'all' | 'inbound' | 'outbound';
 
@@ -38,7 +36,7 @@ export interface Rule {
    * Árbol de condiciones (Variante B: match all/any · AND/OR · grupos). Fuente
    * de verdad del alcance cuando está presente; el constructor lo edita. Los
    * campos planos `servicios/grupos/agentes` se derivan de él al guardar
-   * (`deriveLegacyScope`) para no romper listado ni detección de conflictos.
+   * (`deriveLegacyScope`) para alimentar el resumen del listado sin recalcular.
    * Opcional: reglas antiguas sin árbol lo reconstruyen con `deriveTreeFromLegacy`.
    */
   readonly conditionTree?: ConditionTree;
@@ -59,13 +57,6 @@ export interface Rule {
    * se deriva contando reglas con la categoría en este array.
    */
   readonly categorias?: readonly string[];
-  // Estado
-  /** Borrador sin editar — copia recién creada que aún no se ha modificado. */
-  readonly isDraft?: boolean;
-  /** Id de la regla origen si fue duplicada. */
-  readonly duplicatedFromId?: number;
-  /** Posición en el orden de prioridad (solo válido si `active === true`). */
-  readonly priority?: number;
   /** ISO timestamp última modificación. */
   readonly lastModified: string;
 }
