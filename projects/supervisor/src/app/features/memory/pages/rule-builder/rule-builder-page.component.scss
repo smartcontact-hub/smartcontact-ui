@@ -176,29 +176,89 @@
     width: 100%;
   }
 
-  &__foot {
-    /* Sticky bottom (S44): el rule-builder es un wizard lineal con 4-5
-     * secciones stackeadas verticalmente. Sin sticky-bottom, el save
-     * solo aparece tras scroll-to-end de un body largo. AED forms
-     * usan `sc-sticky-form-header` (sticky TOP con eyebrow+name+save)
-     * porque tienen tabs sidebar para saltar entre secciones; el
-     * rule-builder es lineal AND wizard, por eso sticky BOTTOM
-     * encaja mejor con el flujo "termina y guarda" sin imponer el
-     * pattern AED. Patrón consistente con `sc-bulk-action-bar` overlay
-     * (también sticky bottom) del conversations-page.
-     */
+  /* Dock inferior STICKY: barra de impacto siempre visible + acciones. La
+   * "Estimación de procesado" vive aquí (no en el builder) porque `sticky` solo
+   * funciona a nivel de página — junto a la acción, decides viendo el impacto. */
+  &__dock {
     position: sticky;
     bottom: 0;
     z-index: 5;
     display: flex;
-    justify-content: flex-end;
-    gap: var(--sc-spacing-0-875);
-    padding: var(--sc-spacing-1-5) var(--sc-spacing-1-75);
+    flex-direction: column;
     background: var(--sc-bg-surface);
     border-top: 1px solid var(--sc-border-default);
-    /* Soft shadow upward (Y-inverse) — no SCDS token aplica (todos tienen Y+);
-     * intencional para hint scroll-beneath-foot del rule-builder sticky footer. */
+    /* Sombra hacia arriba (Y-inverse) — intencional, ningún token SCDS aplica. */
     box-shadow: 0 -4px 12px rgb(0 0 0 / 0.04);
+  }
+
+  &__foot {
+    display: flex;
+    align-items: center;
+    justify-content: flex-end;
+    gap: var(--sc-spacing-0-875);
+    padding: var(--sc-spacing-1) var(--sc-spacing-1-75) var(--sc-spacing-1-25);
+  }
+
+  /* Barra de impacto compacta (horizontal) encima de las acciones. */
+  &__impact {
+    display: flex;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: var(--sc-spacing-0-5);
+    padding: var(--sc-spacing-0-75) var(--sc-spacing-1-75);
+    font-size: var(--sc-font-size-100);
+    color: var(--sc-text-secondary);
+    border-bottom: 1px solid var(--sc-border-default);
+  }
+
+  &__impact-ic {
+    flex-shrink: 0;
+    color: var(--sc-color-sky-500);
+  }
+
+  &__impact-main {
+    color: var(--sc-text-primary);
+    font-weight: 500;
+  }
+
+  &__impact-bar {
+    flex: 1;
+    min-width: 80px;
+    max-width: 220px;
+    height: 6px;
+    border-radius: var(--sc-radius-full);
+    background: var(--sc-color-slate-100, var(--sc-color-slate-50));
+    overflow: hidden;
+  }
+
+  &__impact-bar-fill {
+    display: block;
+    height: 100%;
+    min-width: 2px;
+    border-radius: var(--sc-radius-full);
+    background: var(--sc-color-sky-500);
+    transition: width 240ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+
+  &__impact-proj {
+    color: var(--sc-text-secondary);
+  }
+
+  &__impact-note {
+    font-size: var(--sc-font-size-50);
+    font-style: italic;
+    color: var(--sc-text-secondary);
+  }
+
+  &__impact-empty {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sc-spacing-0-25);
+    color: var(--sc-text-warning);
+
+    sc-icon {
+      flex-shrink: 0;
+    }
   }
 
   /* Hint a la izquierda del footer cuando hay un error que bloquea guardar. */

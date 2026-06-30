@@ -127,11 +127,7 @@
   @if (tree.groups.length >= 1) {
     <button type="button" class="add-group" (click)="addGroup()">
       <sc-icon [name]="addIcon" size="inherit" />
-      @if (tree.groups.length === 1) {
-        {{ 'memory.rules.builder.cond.add_group_or' | translate }}
-      } @else {
-        {{ 'memory.rules.builder.cond.add_group' | translate }}
-      }
+      {{ 'memory.rules.builder.cond.add_group' | translate }}
     </button>
   }
 
@@ -140,35 +136,6 @@
     <p>{{ summary() }}</p>
   </div>
 
-  <div class="cond-builder__estimate" aria-live="polite">
-    <p class="cond-builder__estimate-title">
-      <sc-icon name="leaderboard" [size]="14" aria-hidden="true" />
-      {{ 'memory.rules.builder.cond.est_title' | translate }}
-    </p>
-    @if (showEmptyImpact()) {
-      <p class="cond-builder__estimate-empty">
-        <sc-icon name="warning" [size]="13" aria-hidden="true" />
-        {{ 'memory.rules.builder.cond.val.impact_zero' | translate: { total: impactTotal() } }}
-      </p>
-    } @else {
-      <p class="cond-builder__estimate-main">
-        {{ 'memory.rules.builder.cond.impact' | translate: { count: impactCount(), total: impactTotal() } }}
-      </p>
-      @if (hasUnevaluable()) {
-        <p class="cond-builder__estimate-note">{{ 'memory.rules.builder.cond.impact_note' | translate }}</p>
-      } @else {
-        <div class="cond-builder__estimate-bar" aria-hidden="true">
-          <span class="cond-builder__estimate-bar-fill" [style.width.%]="impactPct()"></span>
-        </div>
-        <p class="cond-builder__estimate-proj">
-          {{
-            'memory.rules.builder.cond.est_projection'
-              | translate: { day: fmt(estimate().perDay), month: fmt(estimate().perMonth) }
-          }}
-        </p>
-      }
-    }
-  </div>
 </div>
 
 <ng-template #rows let-group let-flat="flat">

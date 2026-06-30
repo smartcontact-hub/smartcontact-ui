@@ -15,11 +15,6 @@ import { TranslateModule } from '@ngx-translate/core';
 import { IconComponent } from '@shared/components';
 import { ScSelectComponent as SelectComponent } from '@smartcontact-hub/components';
 
-import {
-  conversationMatchesTree,
-  hasUnevaluableConditions,
-  projectImpact,
-} from '../../data/condition-eval';
 import { ConditionResolverService } from '../../data/condition-resolver.service';
 import { validateConditionTree } from '../../data/condition-validate';
 import {
@@ -47,7 +42,6 @@ import {
   operatorsForKind,
   type ValidationIssue,
 } from '../../data/condition.types';
-import { ConversationsStore } from '../../state/conversations.store';
 import { RuleConditionValuePickerComponent } from '../rule-condition-value-picker/rule-condition-value-picker.component';
 
 /**
@@ -79,7 +73,6 @@ export class RuleConditionBuilderComponent {
   readonly revealEmpty = input(true);
 
   private readonly resolver = inject(ConditionResolverService);
-  private readonly conversations = inject(ConversationsStore);
 
   protected readonly fieldOptions = CONDITION_FIELDS.map((f) => ({
     value: f.id,
@@ -109,35 +102,6 @@ export class RuleConditionBuilderComponent {
     describeConditionTree(this.value(), (ref) => this.resolver.label(ref)),
   );
 
-  /** Preview de impacto: conversaciones del mock que casan con el árbol (en vivo;
-   *  resuelve membresía de grupos al vuelo). Servicio/dirección/duración exactos;
-   *  grupo/agente vía puente demo; tipificación/categoría no se evalúan aquí. */
-  protected readonly impactTotal = computed(() => this.conversations.conversations().length);
-  protected readonly impactCount = computed(() => {
-    const tree = this.value();
-    const ctx = { memberAgentIds: (id: number) => this.resolver.memberAgentIds(id) };
-    return this.conversations
-      .conversations()
-      .filter((c) => conversationMatchesTree(c, tree, ctx)).length;
-  });
-  protected readonly hasUnevaluable = computed(() => hasUnevaluableConditions(this.value()));
-
-  /** Proyección día/mes desde el ratio real (estimación; volumen base = demo). */
-  protected readonly estimate = computed(() =>
-    projectImpact(this.impactCount(), this.impactTotal()),
-  );
-
-  /** % del tráfico que toca la regla → barra de proporción (amplia vs quirúrgica). */
-  protected readonly impactPct = computed(() => {
-    const total = this.impactTotal();
-    return total ? Math.round((this.impactCount() / total) * 100) : 0;
-  });
-
-  /** Formato es-ES (separador de miles) para las cifras de proyección. */
-  protected fmt(n: number): string {
-    return n.toLocaleString('es-ES');
-  }
-
   /* ── Validación / guía de errores (lógica pura; ver condition-validate) ── */
   private readonly issues = computed(() => validateConditionTree(this.value()));
 
@@ -159,18 +123,6 @@ export class RuleConditionBuilderComponent {
     const all = this.issuesByCond().get(id) ?? [];
     return this.revealEmpty() ? all : all.filter((i) => i.code !== 'incomplete');
   }
-
-  /** Pista honesta: hay condiciones evaluables, sin errores, y NINGUNA
-   *  conversación de muestra casa. Se suprime si hay no-evaluables (no podemos
-   *  fiarnos del 0) o errores (el error ya explica el 0). */
-  protected readonly showEmptyImpact = computed(
-    () =>
-      this.value().groups.some((g) => g.conditions.length > 0) &&
-      this.impactTotal() > 0 &&
-      this.impactCount() === 0 &&
-      !this.hasUnevaluable() &&
-      !this.issues().some((i) => i.severity === 'error'),
-  );
 
   protected fieldDef = fieldDefById;
 
