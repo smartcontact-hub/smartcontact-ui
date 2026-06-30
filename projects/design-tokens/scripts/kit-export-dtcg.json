@@ -1213,16 +1213,16 @@
       "info": {
         "background": {
           "$type": "color",
-          "$value": "#eff6fff2"
+          "$value": "#eef4fff2"
         },
         "color": {
           "$type": "color",
-          "$value": "{blue.600}"
+          "$value": "{sky.600}"
         },
         "border": {
           "color": {
             "$type": "color",
-            "$value": "{blue.200}"
+            "$value": "{sky.200}"
           }
         },
         "close": {
@@ -1230,14 +1230,14 @@
             "hover": {
               "background": {
                 "$type": "color",
-                "$value": "{blue.100}"
+                "$value": "{sky.100}"
               }
             },
             "focus": {
               "ring": {
                 "color": {
                   "$type": "color",
-                  "$value": "{blue.600}"
+                  "$value": "{sky.600}"
                 }
               }
             }
@@ -1246,19 +1246,19 @@
         "outlined": {
           "color": {
             "$type": "color",
-            "$value": "{blue.600}"
+            "$value": "{sky.600}"
           },
           "border": {
             "color": {
               "$type": "color",
-              "$value": "{blue.600}"
+              "$value": "{sky.600}"
             }
           }
         },
         "simple": {
           "color": {
             "$type": "color",
-            "$value": "{blue.600}"
+            "$value": "{sky.600}"
           }
         }
       },
@@ -1755,16 +1755,16 @@
       "info": {
         "background": {
           "$type": "color",
-          "$value": "#eff6fff2"
+          "$value": "#eef4fff2"
         },
         "color": {
           "$type": "color",
-          "$value": "{blue.600}"
+          "$value": "{sky.600}"
         },
         "border": {
           "color": {
             "$type": "color",
-            "$value": "{blue.200}"
+            "$value": "{sky.200}"
           }
         },
         "detail": {
@@ -1778,14 +1778,14 @@
             "hover": {
               "background": {
                 "$type": "color",
-                "$value": "{blue.100}"
+                "$value": "{sky.100}"
               }
             },
             "focus": {
               "ring": {
                 "color": {
                   "$type": "color",
-                  "$value": "{blue.600}"
+                  "$value": "{sky.600}"
                 }
               }
             }
@@ -3313,16 +3313,16 @@
       "info": {
         "background": {
           "$type": "color",
-          "$value": "#3b82f629"
+          "$value": "#7db3ff29"
         },
         "color": {
           "$type": "color",
-          "$value": "{blue.500}"
+          "$value": "{sky.300}"
         },
         "border": {
           "color": {
             "$type": "color",
-            "$value": "#1d4ed85c"
+            "$value": "#0369a15c"
           }
         },
         "close": {
@@ -3337,7 +3337,7 @@
               "ring": {
                 "color": {
                   "$type": "color",
-                  "$value": "{blue.500}"
+                  "$value": "{sky.300}"
                 }
               }
             }
@@ -3346,19 +3346,19 @@
         "outlined": {
           "color": {
             "$type": "color",
-            "$value": "{blue.500}"
+            "$value": "{sky.300}"
           },
           "border": {
             "color": {
               "$type": "color",
-              "$value": "{blue.500}"
+              "$value": "{sky.300}"
             }
           }
         },
         "simple": {
           "color": {
             "$type": "color",
-            "$value": "{blue.500}"
+            "$value": "{sky.300}"
           }
         }
       },
@@ -3855,16 +3855,16 @@
       "info": {
         "background": {
           "$type": "color",
-          "$value": "#3b82f629"
+          "$value": "#eef4ff29"
         },
         "color": {
           "$type": "color",
-          "$value": "{blue.500}"
+          "$value": "{sky.300}"
         },
         "border": {
           "color": {
             "$type": "color",
-            "$value": "#1d4ed85c"
+            "$value": "#0369a15c"
           }
         },
         "detail": {
@@ -3885,7 +3885,7 @@
               "ring": {
                 "color": {
                   "$type": "color",
-                  "$value": "{blue.500}"
+                  "$value": "{sky.500}"
                 }
               }
             }
@@ -6337,7 +6337,7 @@
     }
   },
   "aura/custom": {
-    "bulk transcription modal": {
+    "bulktranscriptionmodal": {
       "border": {
         "color": {
           "$type": "color",
