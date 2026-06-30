@@ -2,12 +2,11 @@
 
 <div class="cond-builder" [class.cond-builder--nested]="tree.groups.length > 1">
   @if (tree.groups.length === 0) {
-    <!-- Vacío: enseña qué pasa y ofrece empezar -->
     <div class="cond-builder__empty">
-      <sc-icon [name]="layersIcon" [size]="20" />
+      <sc-icon [name]="summaryIcon" [size]="20" />
       <div>
         <p class="cond-builder__empty-title">Sin condiciones</p>
-        <p class="cond-builder__empty-body">La regla se aplica a <strong>todas</strong> las conversaciones.</p>
+        <p class="cond-builder__empty-body">Se aplica a <strong>todas</strong> las conversaciones.</p>
       </div>
       <button type="button" class="add-btn" (click)="addGroup()">
         <sc-icon [name]="addIcon" size="inherit" />
@@ -15,7 +14,6 @@
       </button>
     </div>
   } @else if (tree.groups.length === 1) {
-    <!-- Caso simple: un grupo, plano, con un único control de coincidencia -->
     <div class="cond-builder__lead">
       <span class="cond-builder__lead-text">Coincidir con</span>
       <div class="seg" role="group" aria-label="Cómo se combinan las condiciones">
@@ -43,7 +41,6 @@
 
     <ng-container *ngTemplateOutlet="rows; context: { $implicit: tree.groups[0], flat: true }" />
   } @else {
-    <!-- Caso avanzado: varios grupos combinados con Y/O -->
     <div class="cond-builder__root">
       <span class="cond-builder__root-label">Coincidir con</span>
       <div class="seg" role="group" aria-label="Cómo se combinan los grupos">
@@ -130,14 +127,12 @@
     </button>
   }
 
-  <!-- Resumen en lenguaje natural -->
   <div class="cond-builder__summary">
-    <sc-icon [name]="sparklesIcon" [size]="14" />
+    <sc-icon [name]="summaryIcon" [size]="14" />
     <p>{{ summary() }}</p>
   </div>
 </div>
 
-<!-- Filas de condición — compartidas entre el modo plano y el agrupado -->
 <ng-template #rows let-group let-flat="flat">
   <div class="rows" [class.rows--flat]="flat">
     @for (cond of group.conditions; track trackCondition($index, cond); let ci = $index) {
@@ -160,25 +155,71 @@
           optionValue="value"
           [value]="cond.field"
           (valueChange)="setField(group.id, cond.id, $event)"
-        />
+        >
+          <ng-template let-opt pTemplate="selectedItem">
+            <sc-icon class="cond-row__field-ic" [name]="opt.icon" size="inherit" />
+            {{ opt.label }}
+          </ng-template>
+          <ng-template let-opt pTemplate="item">
+            <sc-icon class="cond-row__field-ic" [name]="opt.icon" size="inherit" />
+            {{ opt.label }}
+          </ng-template>
+        </sc-select>
+
         <sc-select
           class="cond-row__op"
-          [options]="operatorOptions"
+          [options]="operatorOptionsFor(cond.field)"
           optionLabel="label"
           optionValue="value"
           [value]="cond.operator"
           (valueChange)="setOperator(group.id, cond.id, $event)"
         />
-        <sc-multiselect
-          class="cond-row__value"
-          [options]="fieldOptionsFor(cond.field)"
-          optionLabel="label"
-          optionValue="value"
-          [filter]="true"
-          [placeholder]="placeholderFor(cond.field)"
-          [value]="[...cond.values]"
-          (valueChange)="setValues(group.id, cond.id, $event)"
-        />
+
+        @if (fieldDef(cond.field).kind === 'list') {
+          <sc-rule-condition-value-picker
+            class="cond-row__value"
+            [refKind]="refKindOf(cond.field)"
+            [placeholder]="fieldDef(cond.field).placeholder"
+            [value]="cond.value"
+            (valueChange)="setValue(group.id, cond.id, $event)"
+          />
+        } @else if (fieldDef(cond.field).kind === 'enum') {
+          <sc-select
+            class="cond-row__value"
+            [options]="directionOptionsFor(cond.field)"
+            optionLabel="label"
+            optionValue="value"
+            [value]="enumValue(cond)"
+            (valueChange)="setEnum(group.id, cond.id, $event)"
+          />
+        } @else {
+          <div class="cond-row__value cond-row__num">
+            <input
+              type="number"
+              min="0"
+              [value]="numAmount(cond)"
+              (input)="setAmount(group.id, cond.id, $any($event.target).value, 1)"
+            />
+            @if (cond.operator === 'between') {
+              <span class="cond-row__num-sep">y</span>
+              <input
+                type="number"
+                min="0"
+                [value]="numAmount2(cond)"
+                (input)="setAmount(group.id, cond.id, $any($event.target).value, 2)"
+              />
+            }
+            <sc-select
+              class="cond-row__num-unit"
+              [options]="durationUnitOptions"
+              optionLabel="label"
+              optionValue="value"
+              [value]="numUnit(cond)"
+              (valueChange)="setUnit(group.id, cond.id, $event)"
+            />
+          </div>
+        }
+
         <button
           type="button"
           class="cond-row__remove"

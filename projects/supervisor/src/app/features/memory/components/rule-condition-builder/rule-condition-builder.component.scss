@@ -107,9 +107,50 @@
   gap: var(--sc-spacing-0-5);
 
   sc-select,
-  sc-multiselect {
+  sc-multiselect,
+  sc-rule-condition-value-picker {
     display: block;
     width: 100%;
+    min-width: 0;
+  }
+
+  &__field-ic {
+    color: var(--sc-text-secondary);
+    margin-right: 3px;
+    vertical-align: -2px;
+  }
+
+  &__num {
+    display: flex;
+    align-items: center;
+    gap: var(--sc-spacing-0-25);
+
+    input[type='number'] {
+      width: 60px;
+      min-width: 0;
+      padding: var(--sc-spacing-0-25) var(--sc-spacing-0-5);
+      border: 1px solid var(--sc-border-default);
+      border-radius: var(--sc-radius-200);
+      background: var(--sc-bg-surface);
+      color: var(--sc-text-primary);
+      font: inherit;
+      font-size: var(--sc-font-size-200);
+
+      &:focus {
+        outline: none;
+        border-color: var(--sc-bg-primary);
+      }
+    }
+  }
+
+  &__num-sep {
+    color: var(--sc-text-secondary);
+    font-size: var(--sc-font-size-100);
+  }
+
+  &__num-unit {
+    flex: 1;
+    min-width: 88px;
   }
 
   &__remove {
