@@ -34,6 +34,7 @@
 | **Log de construcción** per-lote (journal histórico CERRADO, no se re-litiga) | [`docs/history/DECISIONS-LOG.md`](./history/DECISIONS-LOG.md) (Mitad A) · [`docs/history/DECISIONS-LOG-B.md`](./history/DECISIONS-LOG-B.md) (Mitad B) | Claude (referencia histórica) |
 | **Versiones publicadas** (semver, qué cambió por release) | [`CHANGELOG.md`](../CHANGELOG.md) | todos |
 | **Backlog durable** — lo diferido-pero-rastreado (qué + disparador + cómo se valida) | [`docs/ROADMAP.md`](./ROADMAP.md) | Claude + Rafa |
+| **Auditoría de deuda** (snapshot fechado, por bloques) — temas transversales + P0/P1 + quick-wins, backlog con checkboxes. Los items que se prioricen se mueven a `ROADMAP.md` | [`docs/AUDIT-DEUDA-2026-06.md`](./AUDIT-DEUDA-2026-06.md) | Claude + Rafa |
 | **Handoff volátil** — estado actual + próximos pasos (se SOBREESCRIBE cada cierre) | [`NEXT-SESSION.md`](../NEXT-SESSION.md) | Claude (lee PRIMERO al arrancar) |
 | Preferencias / comportamiento Claude + atajos (privado, fuera del repo) | `~/.claude/projects/.../memory/` | Solo Claude |
 
@@ -76,7 +77,8 @@ Los pares que más se confunden — cada uno tiene un trabajo distinto:
 
 ---
 
-Última actualización: 2026-06-30 — sesión 6: **DD-27** (constructor de condiciones v2 + recorte MVP sin grabación/borradores) registrado en `DECISIONS.md`; `ROADMAP.md` §reglas marcada EJECUTADA; ningún *source* nuevo cambió de sitio (mapa intacto). Pendiente de orden: `DECISIONS.md` newest-first (DD-21..27 al final).
+Última actualización: 2026-06-30 — sesión 7: **dirty-state compartido** (primitivo `createFormDirtyState`, Guardar por cambio neto en los 5 forms) mergeado + **auditoría de deuda por bloques** del monorepo → nuevo `docs/AUDIT-DEUDA-2026-06.md` (Tema C ya cerrado ahí). Añadida su fila arriba.
+2026-06-30 — sesión 6: **DD-27** (constructor de condiciones v2 + recorte MVP sin grabación/borradores) registrado en `DECISIONS.md`; `ROADMAP.md` §reglas marcada EJECUTADA; ningún *source* nuevo cambió de sitio (mapa intacto). Pendiente de orden: `DECISIONS.md` newest-first (DD-21..27 al final).
 2026-06-23 — `ppt-proyecto.md` consolidado y renombrado a `colaboracion.md` (lean + práctico + flujo día a día + colaboración git + nota de caducidad del token); borrado el viejo.
 2026-06-16 — W2: READMEs de paquete (`components`) y de las apps (`sc-demo`, `supervisor`) + badges + metadata npm (description/keywords/license/author) + `org-profile.md` (borrador del perfil de la org). Los README de `projects/**` no los escanea docs:guard (solo `docs/` + raíz).
 2026-06-16 — añadido `ppt-proyecto.md` (presentación de onboarding para diseño, W0).
