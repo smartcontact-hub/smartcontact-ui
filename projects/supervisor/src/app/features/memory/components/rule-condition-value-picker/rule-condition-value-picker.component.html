@@ -1,7 +1,10 @@
 <div class="vpick" [class.vpick--open]="open()">
   <button type="button" class="vpick__trigger" (click)="toggleOpen()">
     @if (isAny()) {
-      <span class="vpick__all">Todos <span class="vpick__all-hint">· incluye nuevos</span></span>
+      <span class="vpick__all">
+        {{ 'memory.rules.builder.cond.pick_all' | translate }}
+        <span class="vpick__all-hint">{{ 'memory.rules.builder.cond.pick_all_hint' | translate }}</span>
+      </span>
     } @else if (chips().length === 0) {
       <span class="vpick__ph">{{ placeholder() }}</span>
     } @else {
@@ -15,7 +18,7 @@
               tabindex="0"
               (click)="removeChip(c.ref); $event.stopPropagation()"
               (keydown.enter)="removeChip(c.ref); $event.stopPropagation()"
-              aria-label="Quitar"
+              [attr.aria-label]="'memory.rules.builder.cond.remove' | translate"
             >
               <sc-icon [name]="closeIcon" size="inherit" />
             </span>
@@ -34,19 +37,21 @@
           type="text"
           [ngModel]="search()"
           (ngModelChange)="search.set($event)"
-          placeholder="Buscar…"
+          [placeholder]="'memory.rules.builder.cond.search' | translate"
         />
       </div>
 
       @if (isAny()) {
         <div class="vpick__any-row">
-          <span><strong>Todos</strong> · se aplica a cualquiera, incluidos los nuevos.</span>
-          <button type="button" class="vpick__link" (click)="clearAny()">Elegir manualmente</button>
+          <span>{{ 'memory.rules.builder.cond.pick_all_row' | translate }}</span>
+          <button type="button" class="vpick__link" (click)="clearAny()">
+            {{ 'memory.rules.builder.cond.pick_manual' | translate }}
+          </button>
         </div>
       } @else {
         <div class="vpick__list">
           @if (filteredGroups().length) {
-            <p class="vpick__sect">Grupos (sus miembros)</p>
+            <p class="vpick__sect">{{ 'memory.rules.builder.cond.pick_groups' | translate }}</p>
             @for (o of filteredGroups(); track o.label) {
               <button
                 type="button"
@@ -66,7 +71,7 @@
                 }
               </button>
             }
-            <p class="vpick__sect">Individuales</p>
+            <p class="vpick__sect">{{ 'memory.rules.builder.cond.pick_individuals' | translate }}</p>
           }
 
           @for (o of filteredEntities(); track o.label) {
@@ -84,13 +89,13 @@
           }
 
           @if (!filteredEntities().length && !filteredGroups().length) {
-            <p class="vpick__empty">Sin resultados.</p>
+            <p class="vpick__empty">{{ 'memory.rules.builder.cond.pick_empty' | translate }}</p>
           }
         </div>
 
         <button type="button" class="vpick__selectall" (click)="selectAll()">
           <sc-icon [name]="checkIcon" [size]="14" />
-          Seleccionar todo (cualquiera)
+          {{ 'memory.rules.builder.cond.select_all' | translate }}
         </button>
       }
     </div>

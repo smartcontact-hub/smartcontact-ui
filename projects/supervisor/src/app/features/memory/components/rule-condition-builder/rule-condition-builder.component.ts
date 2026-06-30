@@ -2,6 +2,8 @@ import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, inject, model } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
+import { TranslateModule } from '@ngx-translate/core';
+
 import { IconComponent } from '@shared/components';
 import { ScSelectComponent as SelectComponent } from '@smartcontact-hub/components';
 
@@ -44,6 +46,7 @@ import { RuleConditionValuePickerComponent } from '../rule-condition-value-picke
     NgTemplateOutlet,
     RuleConditionValuePickerComponent,
     SelectComponent,
+    TranslateModule,
   ],
   templateUrl: './rule-condition-builder.component.html',
   styleUrl: './rule-condition-builder.component.scss',

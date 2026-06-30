@@ -5,18 +5,22 @@
     <div class="cond-builder__empty">
       <sc-icon [name]="summaryIcon" [size]="20" />
       <div>
-        <p class="cond-builder__empty-title">Sin condiciones</p>
-        <p class="cond-builder__empty-body">Se aplica a <strong>todas</strong> las conversaciones.</p>
+        <p class="cond-builder__empty-title">{{ 'memory.rules.builder.cond.empty_title' | translate }}</p>
+        <p class="cond-builder__empty-body">{{ 'memory.rules.builder.cond.empty_body' | translate }}</p>
       </div>
       <button type="button" class="add-btn" (click)="addGroup()">
         <sc-icon [name]="addIcon" size="inherit" />
-        Añadir condición
+        {{ 'memory.rules.builder.cond.add_condition' | translate }}
       </button>
     </div>
   } @else if (tree.groups.length === 1) {
     <div class="cond-builder__lead">
-      <span class="cond-builder__lead-text">Coincidir con</span>
-      <div class="seg" role="group" aria-label="Cómo se combinan las condiciones">
+      <span class="cond-builder__lead-text">{{ 'memory.rules.builder.cond.match_with' | translate }}</span>
+      <div
+        class="seg"
+        role="group"
+        [attr.aria-label]="'memory.rules.builder.cond.match_conditions_aria' | translate"
+      >
         <button
           type="button"
           class="seg__btn"
@@ -24,7 +28,7 @@
           [attr.aria-pressed]="tree.groups[0].match === 'all'"
           (click)="setGroupMatch(tree.groups[0].id, 'all')"
         >
-          todas
+          {{ 'memory.rules.builder.cond.match_all' | translate }}
         </button>
         <button
           type="button"
@@ -33,17 +37,21 @@
           [attr.aria-pressed]="tree.groups[0].match === 'any'"
           (click)="setGroupMatch(tree.groups[0].id, 'any')"
         >
-          cualquiera
+          {{ 'memory.rules.builder.cond.match_any' | translate }}
         </button>
       </div>
-      <span class="cond-builder__lead-text">de las condiciones</span>
+      <span class="cond-builder__lead-text">{{ 'memory.rules.builder.cond.of_conditions' | translate }}</span>
     </div>
 
     <ng-container *ngTemplateOutlet="rows; context: { $implicit: tree.groups[0], flat: true }" />
   } @else {
     <div class="cond-builder__root">
-      <span class="cond-builder__root-label">Coincidir con</span>
-      <div class="seg" role="group" aria-label="Cómo se combinan los grupos">
+      <span class="cond-builder__root-label">{{ 'memory.rules.builder.cond.match_with' | translate }}</span>
+      <div
+        class="seg"
+        role="group"
+        [attr.aria-label]="'memory.rules.builder.cond.match_groups_aria' | translate"
+      >
         <button
           type="button"
           class="seg__btn"
@@ -51,7 +59,7 @@
           [attr.aria-pressed]="tree.match === 'all'"
           (click)="setRootMatch('all')"
         >
-          todas
+          {{ 'memory.rules.builder.cond.match_all' | translate }}
         </button>
         <button
           type="button"
@@ -60,10 +68,10 @@
           [attr.aria-pressed]="tree.match === 'any'"
           (click)="setRootMatch('any')"
         >
-          cualquiera
+          {{ 'memory.rules.builder.cond.match_any' | translate }}
         </button>
       </div>
-      <span class="cond-builder__root-label">de estos grupos</span>
+      <span class="cond-builder__root-label">{{ 'memory.rules.builder.cond.of_groups' | translate }}</span>
     </div>
 
     @for (group of tree.groups; track trackGroup($index, group); let gi = $index) {
@@ -72,7 +80,7 @@
           type="button"
           class="connector connector--group"
           (click)="toggleRootMatch()"
-          aria-label="Cambiar la combinación entre grupos"
+          [attr.aria-label]="'memory.rules.builder.cond.toggle_root' | translate"
         >
           {{ tree.match === 'all' ? 'Y' : 'O' }}
         </button>
@@ -80,7 +88,11 @@
 
       <section class="group">
         <header class="group__head">
-          <div class="seg seg--sm" role="group" aria-label="Cómo se combinan las condiciones del grupo">
+          <div
+            class="seg seg--sm"
+            role="group"
+            [attr.aria-label]="'memory.rules.builder.cond.match_conditions_aria' | translate"
+          >
             <button
               type="button"
               class="seg__btn"
@@ -88,7 +100,7 @@
               [attr.aria-pressed]="group.match === 'all'"
               (click)="setGroupMatch(group.id, 'all')"
             >
-              todas
+              {{ 'memory.rules.builder.cond.match_all' | translate }}
             </button>
             <button
               type="button"
@@ -97,15 +109,15 @@
               [attr.aria-pressed]="group.match === 'any'"
               (click)="setGroupMatch(group.id, 'any')"
             >
-              cualquiera
+              {{ 'memory.rules.builder.cond.match_any' | translate }}
             </button>
           </div>
-          <span class="group__hint">de las condiciones</span>
+          <span class="group__hint">{{ 'memory.rules.builder.cond.of_conditions' | translate }}</span>
           <button
             type="button"
             class="group__remove"
             (click)="removeGroup(group.id)"
-            aria-label="Eliminar grupo"
+            [attr.aria-label]="'memory.rules.builder.cond.remove_group' | translate"
           >
             <sc-icon [name]="closeIcon" size="inherit" />
           </button>
@@ -120,9 +132,9 @@
     <button type="button" class="add-group" (click)="addGroup()">
       <sc-icon [name]="addIcon" size="inherit" />
       @if (tree.groups.length === 1) {
-        Añadir grupo para combinar con O
+        {{ 'memory.rules.builder.cond.add_group_or' | translate }}
       } @else {
-        Añadir grupo
+        {{ 'memory.rules.builder.cond.add_group' | translate }}
       }
     </button>
   }
@@ -135,10 +147,10 @@
   <div class="cond-builder__impact">
     <sc-icon name="leaderboard" [size]="14" />
     <span>
-      Afecta a <strong>{{ impactCount() }}</strong> de {{ impactTotal() }} conversaciones de muestra.
+      {{ 'memory.rules.builder.cond.impact' | translate: { count: impactCount(), total: impactTotal() } }}
     </span>
     @if (hasUnevaluable()) {
-      <span class="cond-builder__impact-note">tipificación y categoría se evalúan en backend</span>
+      <span class="cond-builder__impact-note">{{ 'memory.rules.builder.cond.impact_note' | translate }}</span>
     }
   </div>
 </div>
@@ -151,7 +163,7 @@
           type="button"
           class="connector connector--inline"
           (click)="toggleGroupMatch(group.id)"
-          aria-label="Cambiar la combinación dentro del grupo"
+          [attr.aria-label]="'memory.rules.builder.cond.toggle_group' | translate"
         >
           {{ group.match === 'all' ? 'Y' : 'O' }}
         </button>
@@ -234,7 +246,7 @@
           type="button"
           class="cond-row__remove"
           (click)="removeCondition(group.id, cond.id)"
-          aria-label="Eliminar condición"
+          [attr.aria-label]="'memory.rules.builder.cond.remove_condition' | translate"
         >
           <sc-icon [name]="closeIcon" size="inherit" />
         </button>
@@ -243,7 +255,7 @@
 
     <button type="button" class="add-btn add-btn--sm" (click)="addCondition(group.id)">
       <sc-icon [name]="addIcon" size="inherit" />
-      Añadir condición
+      {{ 'memory.rules.builder.cond.add_condition' | translate }}
     </button>
   </div>
 </ng-template>
