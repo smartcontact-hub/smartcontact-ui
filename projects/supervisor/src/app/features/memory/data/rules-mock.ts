@@ -5,8 +5,8 @@ import type { Rule } from './rule.types';
  *
  * MVP sin priorización ni grabación (obsoleta por ley) → solo reglas de
  * transcripción / clasificación. Sin borradores. **Solo una activa a la vez**:
- * la #1 está activa y el resto inactivas. La #4 reproduce el caso compuesto de
- * la PPT (grupo + tipificación + duración) — se edita para ver el árbol completo.
+ * la #1 está activa y el resto inactivas. La #4 es un ejemplo compuesto (grupo +
+ * tipificación + duración) — se edita para ver el árbol de condiciones completo.
  */
 export const MOCK_RULES: readonly Rule[] = [
   {
@@ -100,12 +100,12 @@ export const MOCK_RULES: readonly Rule[] = [
     lastModified: '2026-05-15T08:20:00Z',
   },
   {
-    /* Caso compuesto de la PPT: servicio Ventas Comercial Y grupo Ventas Y
+    /* Ejemplo compuesto: servicio Ventas Comercial Y grupo Ventas Y
      * (tipificación venta O incidencia) Y duración entre 1 y 30 min. */
     id: 4,
     type: 'transcription',
     name: 'Transcribir Ventas: venta o incidencia (1–30 min)',
-    description: 'Caso del jefe — servicio Ventas Comercial, grupo Ventas, tipificación venta o incidencia, y duración entre 1 y 30 minutos.',
+    description: 'Servicio Ventas Comercial, grupo Ventas, tipificación venta o incidencia, y duración entre 1 y 30 minutos.',
     servicios: ['Ventas Comercial'],
     grupos: ['Ventas'],
     agentes: [],
