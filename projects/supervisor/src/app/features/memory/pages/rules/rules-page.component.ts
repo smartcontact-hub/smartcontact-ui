@@ -88,18 +88,13 @@ export class RulesPageComponent {
   protected readonly alertIcon = 'report';
   protected readonly kebabIcon = 'more_vert';
 
-  protected onNewRule(type: 'recording' | 'transcription' | 'classification' = 'recording'): void {
+  protected onNewRule(type: 'transcription' | 'classification' = 'transcription'): void {
     this.router.navigate(['/conversaciones/reglas/nueva'], {
       queryParams: { type },
     });
   }
 
   protected readonly newRuleMenuItems: MenuItem[] = [
-    {
-      label: 'Regla de grabación',
-      icon: 'pi pi-microphone',
-      command: () => this.onNewRule('recording'),
-    },
     {
       label: 'Regla de transcripción',
       icon: 'pi pi-file',

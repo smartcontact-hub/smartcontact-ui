@@ -127,6 +127,17 @@ export class RuleConditionBuilderComponent {
     projectImpact(this.impactCount(), this.impactTotal()),
   );
 
+  /** % del tráfico que toca la regla → barra de proporción (amplia vs quirúrgica). */
+  protected readonly impactPct = computed(() => {
+    const total = this.impactTotal();
+    return total ? Math.round((this.impactCount() / total) * 100) : 0;
+  });
+
+  /** Formato es-ES (separador de miles) para las cifras de proyección. */
+  protected fmt(n: number): string {
+    return n.toLocaleString('es-ES');
+  }
+
   /* ── Validación / guía de errores (lógica pura; ver condition-validate) ── */
   private readonly issues = computed(() => validateConditionTree(this.value()));
 
