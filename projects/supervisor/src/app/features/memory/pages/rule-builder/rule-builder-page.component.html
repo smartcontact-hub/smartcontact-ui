@@ -105,7 +105,7 @@
       </header>
       <p class="rule-block__desc">{{ 'memory.rules.builder.scope_desc' | translate }}</p>
 
-      <sc-rule-condition-builder [(value)]="conditionTree" />
+      <sc-rule-condition-builder [(value)]="conditionTree" [touched]="formDirty()" />
     </section>
 
     <!-- Horario — control aparte (decisión: fuera del builder). Solo grabación. -->
@@ -230,6 +230,12 @@
   </div>
 
   <footer class="rule-builder__foot">
+    @if (formDirty() && condBlocking()) {
+      <p class="rule-builder__save-blocked">
+        <sc-icon name="error" [size]="14" />
+        {{ 'memory.rules.builder.cond.val.blocked' | translate }}
+      </p>
+    }
     <p-button type="button" size="small" severity="secondary" (onClick)="onCancel()">
       <span>{{ 'common.cancel' | translate }}</span>
     </p-button>

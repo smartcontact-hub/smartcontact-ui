@@ -1,5 +1,5 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject, model } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, model } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { TranslateModule } from '@ngx-translate/core';
@@ -9,6 +9,7 @@ import { ScSelectComponent as SelectComponent } from '@smartcontact-hub/componen
 
 import { conversationMatchesTree, hasUnevaluableConditions } from '../../data/condition-eval';
 import { ConditionResolverService } from '../../data/condition-resolver.service';
+import { validateConditionTree } from '../../data/condition-validate';
 import {
   type Condition,
   CONDITION_FIELDS,
@@ -27,6 +28,7 @@ import {
   makeGroup,
   operatorLabel,
   operatorsForKind,
+  type ValidationIssue,
 } from '../../data/condition.types';
 import { ConversationsStore } from '../../state/conversations.store';
 import { RuleConditionValuePickerComponent } from '../rule-condition-value-picker/rule-condition-value-picker.component';
@@ -54,6 +56,9 @@ import { RuleConditionValuePickerComponent } from '../rule-condition-value-picke
 })
 export class RuleConditionBuilderComponent {
   readonly value = model.required<ConditionTree>();
+  /** El form se ha tocado: revela la guía de errores (como el campo nombre, que
+   *  solo muestra su error tras escribir). Pristine → sin rojos de bienvenida. */
+  readonly touched = input(true);
 
   private readonly resolver = inject(ConditionResolverService);
   private readonly conversations = inject(ConversationsStore);
@@ -90,6 +95,39 @@ export class RuleConditionBuilderComponent {
       .filter((c) => conversationMatchesTree(c, tree, ctx)).length;
   });
   protected readonly hasUnevaluable = computed(() => hasUnevaluableConditions(this.value()));
+
+  /* ── Validación / guía de errores (lógica pura; ver condition-validate) ── */
+  private readonly issues = computed(() => validateConditionTree(this.value()));
+
+  /** Incidencias indexadas por la condición donde se pintan. Un par
+   *  (contradicción/tautología) se asigna a su 2ª condición para no duplicar. */
+  private readonly issuesByCond = computed(() => {
+    const map = new Map<string, ValidationIssue[]>();
+    for (const issue of this.issues()) {
+      const target = issue.condId ?? issue.condIds?.[issue.condIds.length - 1];
+      if (!target) continue;
+      const list = map.get(target);
+      if (list) list.push(issue);
+      else map.set(target, [issue]);
+    }
+    return map;
+  });
+
+  protected issuesForCond(id: string): readonly ValidationIssue[] {
+    return this.issuesByCond().get(id) ?? [];
+  }
+
+  /** Pista honesta: hay condiciones evaluables, sin errores, y NINGUNA
+   *  conversación de muestra casa. Se suprime si hay no-evaluables (no podemos
+   *  fiarnos del 0) o errores (el error ya explica el 0). */
+  protected readonly showEmptyImpact = computed(
+    () =>
+      this.value().groups.some((g) => g.conditions.length > 0) &&
+      this.impactTotal() > 0 &&
+      this.impactCount() === 0 &&
+      !this.hasUnevaluable() &&
+      !this.issues().some((i) => i.severity === 'error'),
+  );
 
   protected fieldDef = fieldDefById;
 
