@@ -1,3 +1,4 @@
+import { NgTemplateOutlet } from '@angular/common';
 import { ChangeDetectionStrategy, Component, computed, model } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
@@ -29,7 +30,7 @@ import {
  */
 @Component({
   selector: 'sc-rule-condition-builder',
-  imports: [FormsModule, IconComponent, MultiSelectComponent, SelectComponent],
+  imports: [FormsModule, IconComponent, MultiSelectComponent, NgTemplateOutlet, SelectComponent],
   templateUrl: './rule-condition-builder.component.html',
   styleUrl: './rule-condition-builder.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -74,7 +75,12 @@ export class RuleConditionBuilderComponent {
   }
 
   protected addGroup(): void {
-    this.value.update((t) => ({ ...t, groups: [...t.groups, makeGroup()] }));
+    this.value.update((t) => {
+      // Al pasar de 1→2 grupos por primera vez, el match raíz por defecto pasa
+      // a "cualquiera": añadir un grupo casi siempre expresa una alternativa (O).
+      const match: GroupMatch = t.groups.length === 1 ? 'any' : t.match;
+      return { ...t, match, groups: [...t.groups, makeGroup()] };
+    });
   }
 
   protected removeGroup(groupId: string): void {
