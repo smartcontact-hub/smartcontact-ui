@@ -108,6 +108,12 @@
     overflow: hidden;
   }
 
+  /* Abre hacia arriba cuando no cabe debajo (no tapa resumen/impacto). */
+  &__panel--up {
+    top: auto;
+    bottom: calc(100% + 4px);
+  }
+
   &__search {
     display: flex;
     align-items: center;

@@ -61,6 +61,9 @@ export class RuleConditionValuePickerComponent {
   protected readonly searchIcon = 'search';
 
   protected readonly open = signal(false);
+  /** El panel se abre hacia arriba si no cabe debajo (evita tapar el resumen +
+   *  el preview de impacto cuando la condición está en la parte baja del form). */
+  protected readonly openUp = signal(false);
   protected readonly search = signal('');
 
   protected readonly isAny = computed(() => this.value().mode === 'any');
@@ -114,6 +117,13 @@ export class RuleConditionValuePickerComponent {
   }
 
   protected toggleOpen(): void {
+    if (!this.open()) {
+      // Decide la dirección antes de abrir: si debajo no caben ~320px (descontando
+      // el footer sticky) y arriba hay más sitio, abre hacia arriba.
+      const r = this.host.nativeElement.getBoundingClientRect();
+      const below = window.innerHeight - r.bottom - 80;
+      this.openUp.set(below < 320 && r.top > below);
+    }
     this.open.update((o) => !o);
     if (!this.open()) this.search.set('');
   }
