@@ -251,6 +251,14 @@
     gap: var(--sc-spacing-0-5);
   }
 
+  &__num {
+    font-size: var(--sc-font-size-50);
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: var(--sc-text-secondary);
+  }
+
   &__hint {
     font-size: var(--sc-font-size-50);
     color: var(--sc-text-secondary);
@@ -287,10 +295,9 @@
 
 /* ─── Conectores Y/O clicables ─── */
 
+/* Conectores Y/O — indicadores de SOLO LECTURA (el control es todas/cualquiera). */
 .connector {
-  appearance: none;
   font-family: inherit;
-  cursor: pointer;
 
   &--group {
     position: relative;
@@ -301,13 +308,11 @@
     width: 32px;
     height: 32px;
     margin: var(--sc-spacing-0-25) 0;
-    border: 0;
     border-radius: var(--sc-radius-full);
     background: var(--sc-bg-primary);
     color: var(--sc-text-on-primary);
     font-size: var(--sc-font-size-100);
     font-weight: 700;
-    transition: filter 150ms ease;
 
     &::before {
       content: '';
@@ -319,10 +324,6 @@
       background: var(--sc-border-default);
       transform: translateX(-50%);
       z-index: -1;
-    }
-
-    &:hover {
-      filter: brightness(1.08);
     }
   }
 
@@ -339,19 +340,6 @@
     color: var(--sc-text-secondary);
     font-size: var(--sc-font-size-50);
     font-weight: 600;
-    transition:
-      border-color 150ms ease,
-      color 150ms ease;
-
-    &:hover {
-      border-color: var(--sc-bg-primary);
-      color: var(--sc-text-primary);
-    }
-  }
-
-  &:focus-visible {
-    outline: 2px solid var(--sc-color-sky-500);
-    outline-offset: 2px;
   }
 }
 
@@ -425,12 +413,21 @@
 
 /* ─── Estimación de procesado (adaptada de la PPT del jefe) ─── */
 
+/* Sticky: la estimación queda SIEMPRE visible mientras configuras condiciones.
+ * `bottom` despeja el footer sticky (~80px) para no solaparlo. */
 .cond-builder__estimate {
+  position: sticky;
+  bottom: 84px;
+  z-index: 3;
   display: flex;
   flex-direction: column;
   gap: 2px;
-  margin-top: var(--sc-spacing-0-25);
-  padding: 0 var(--sc-spacing-0-25);
+  margin-top: var(--sc-spacing-0-5);
+  padding: var(--sc-spacing-0-625) var(--sc-spacing-0-875);
+  background: var(--sc-bg-surface);
+  border: 1px solid var(--sc-border-default);
+  border-radius: var(--sc-radius-200);
+  box-shadow: 0 6px 18px rgb(0 0 0 / 0.08);
 
   p {
     margin: 0;

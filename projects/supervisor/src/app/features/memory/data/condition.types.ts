@@ -176,8 +176,8 @@ export interface OperatorDef {
 export const OPERATORS: readonly OperatorDef[] = [
   { id: 'is', label: 'es', numberOnly: false },
   { id: 'is_not', label: 'no es', numberOnly: false },
-  { id: 'gt', label: 'mayor que', numberOnly: true },
-  { id: 'lt', label: 'menor que', numberOnly: true },
+  { id: 'gt', label: 'más de', numberOnly: true },
+  { id: 'lt', label: 'menos de', numberOnly: true },
   { id: 'between', label: 'entre', numberOnly: true },
 ];
 

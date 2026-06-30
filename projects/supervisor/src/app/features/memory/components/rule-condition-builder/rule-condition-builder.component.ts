@@ -230,9 +230,6 @@ export class RuleConditionBuilderComponent {
   protected setRootMatch(match: GroupMatch): void {
     this.value.update((t) => ({ ...t, match }));
   }
-  protected toggleRootMatch(): void {
-    this.value.update((t) => ({ ...t, match: t.match === 'all' ? 'any' : 'all' }));
-  }
   protected addGroup(): void {
     this.value.update((t) => {
       const match: GroupMatch = t.groups.length === 1 ? 'any' : t.match;
@@ -246,9 +243,6 @@ export class RuleConditionBuilderComponent {
   /* ── Grupos ── */
   protected setGroupMatch(groupId: string, match: GroupMatch): void {
     this.patchGroup(groupId, (g) => ({ ...g, match }));
-  }
-  protected toggleGroupMatch(groupId: string): void {
-    this.patchGroup(groupId, (g) => ({ ...g, match: g.match === 'all' ? 'any' : 'all' }));
   }
   protected addCondition(groupId: string): void {
     this.patchGroup(groupId, (g) => ({ ...g, conditions: [...g.conditions, makeCondition()] }));
