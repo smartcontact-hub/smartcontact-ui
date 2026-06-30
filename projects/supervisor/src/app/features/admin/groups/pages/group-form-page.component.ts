@@ -21,6 +21,7 @@ import { CrossTabLockService } from '@core/services';
 import { TopBarSlotService } from '@core/layout/top-bar/top-bar-slot.service';
 import { TOAST_LIFE } from '@core/utils/toast-life';
 import { IconComponent, IllustratedAvatarComponent } from '@shared/components';
+import { createFormDirtyState } from '@shared/utils/form-dirty-state';
 import {
   ScDeleteEntityDialogComponent as DeleteEntityDialogComponent,
   ScFormSectionNavComponent as FormSectionNavComponent,
@@ -190,7 +191,11 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     readonly affected: number;
   } | null>(null);
 
-  readonly formDirty = signal(false);
+  /** Dirty-state por CAMBIO NETO (snapshot vs pristine): Guardar refleja si hay
+   *  algo distinto que guardar (vuelve a off si deshaces). Patrón compartido
+   *  (admin/AED/builder); `formDirty` queda de alias para el guard de salida. */
+  private readonly dirtyState = createFormDirtyState(() => this.form());
+  readonly formDirty = this.dirtyState.dirty;
   protected readonly conflictWarning = signal(false);
   private releaseLock: (() => void) | null = null;
 
@@ -222,7 +227,10 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
 
   protected readonly canSave = computed(() => {
     const f = this.form();
-    return f.name.trim().length > 0 && f.channels.size > 0;
+    if (f.name.trim().length === 0 || f.channels.size === 0) return false;
+    // En EDITAR exige cambio neto; en crear/duplicar basta con que sea válido.
+    if (this.mode() === 'edit' && !this.dirtyState.dirty()) return false;
+    return true;
   });
 
   protected readonly hasChat = computed(() => this.form().channels.has('chat'));
@@ -271,6 +279,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
       });
       this.initialChannels.set(new Set(group.channels));
       this.initialLinks.set(seedLinks);
+      this.dirtyState.markPristine();
       // En edición aterriza en Canales (1ª del orden de edición): identidad va
       // al fondo porque casi no se toca tras crear; la ficha la resume (S60).
       this.activeSection.set('group-section-channels');
@@ -307,7 +316,8 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
       });
       this.initialChannels.set(new Set(source.channels));
       this.initialLinks.set(seedLinks);
-      this.formDirty.set(true);
+      // El duplicado nace "sucio" por construcción (datos sin guardar): el
+      // snapshot ya difiere del pristine vacío → el guard de salida avisa solo.
     }
   }
 
@@ -331,7 +341,6 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   }
 
   protected updateField<K extends keyof FormState>(key: K, value: FormState[K]): void {
-    this.formDirty.set(true);
     this.form.update((f) => ({ ...f, [key]: value }));
   }
 
@@ -370,7 +379,6 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   }
 
   protected toggleChannel(channel: GroupChannel): void {
-    this.formDirty.set(true);
     this.form.update((f) => {
       const next = new Set(f.channels);
       if (next.has(channel)) next.delete(channel);
@@ -390,7 +398,6 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   }
 
   protected onLinksChange(links: readonly GroupAgentLink[]): void {
-    this.formDirty.set(true);
     this.form.update((f) => ({ ...f, links }));
   }
 
@@ -456,7 +463,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
         });
       }
       this.saving.set(false);
-      this.formDirty.set(false);
+      this.dirtyState.markPristine();
       void this.router.navigateByUrl('/admin/grupos');
     }, 400);
   }
@@ -494,7 +501,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     this.groupsStore.deleteGroup(id);
     this.linksStore.removeGroup(id);
     this.deleteVisible.set(false);
-    this.formDirty.set(false);
+    this.dirtyState.markPristine();
     this.messages.add({
       severity: 'success',
       summary: this.translate.instant('groups.toasts.deleted_single', {

@@ -22,6 +22,7 @@ import { TopBarSlotService } from '@core/layout/top-bar/top-bar-slot.service';
 import { EMAIL_RE } from '@core/utils/validators';
 import { TOAST_LIFE } from '@core/utils/toast-life';
 import { IconComponent, IllustratedAvatarComponent } from '@shared/components';
+import { createFormDirtyState } from '@shared/utils/form-dirty-state';
 import {
   ScDeleteEntityDialogComponent as DeleteEntityDialogComponent,
   ScFormSectionNavComponent as FormSectionNavComponent,
@@ -129,7 +130,11 @@ export class UserFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   protected readonly saving = signal(false);
   protected readonly deleteVisible = signal(false);
 
-  readonly formDirty = signal(false);
+  /** Dirty-state por CAMBIO NETO (snapshot vs pristine): Guardar refleja si hay
+   *  algo distinto que guardar (vuelve a off si deshaces). Patrón compartido
+   *  (admin/AED/builder); `formDirty` queda de alias para el guard de salida. */
+  private readonly dirtyState = createFormDirtyState(() => this.form());
+  readonly formDirty = this.dirtyState.dirty;
   protected readonly conflictWarning = signal(false);
   private releaseLock: (() => void) | null = null;
 
@@ -202,7 +207,10 @@ export class UserFormPageComponent implements DirtyAware, OnInit, OnDestroy {
 
   protected readonly canSave = computed(() => {
     const f = this.form();
-    return f.name.trim().length > 0 && EMAIL_RE.test(f.email.trim());
+    if (f.name.trim().length === 0 || !EMAIL_RE.test(f.email.trim())) return false;
+    // En EDITAR exige cambio neto; en crear/duplicar basta con que sea válido.
+    if (this.mode() === 'edit' && !this.dirtyState.dirty()) return false;
+    return true;
   });
 
   protected readonly deleteItems = computed(() => {
@@ -238,6 +246,7 @@ export class UserFormPageComponent implements DirtyAware, OnInit, OnDestroy {
         services: new Set(user.assignedServices),
         photo: user.photo ?? null,
       });
+      this.dirtyState.markPristine();
       // En edición aterriza en Secciones (1ª del orden de edición): identidad
       // va al fondo porque casi no se toca tras crear; la ficha la resume (S60).
       this.activeSection.set('user-section-sections');
@@ -273,7 +282,8 @@ export class UserFormPageComponent implements DirtyAware, OnInit, OnDestroy {
         services: new Set(source.assignedServices),
         photo: source.photo ?? null,
       });
-      this.formDirty.set(true);
+      // El duplicado nace "sucio" por construcción (datos sin guardar): el
+      // snapshot ya difiere del pristine vacío → el guard de salida avisa solo.
     }
   }
 
@@ -297,7 +307,6 @@ export class UserFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   }
 
   protected updateField<K extends keyof FormState>(key: K, value: FormState[K]): void {
-    this.formDirty.set(true);
     this.form.update((f) => ({ ...f, [key]: value }));
   }
 
@@ -314,7 +323,6 @@ export class UserFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   }
 
   protected toggleSection(key: keyof UserSections): void {
-    this.formDirty.set(true);
     this.form.update((f) => ({
       ...f,
       sections: { ...f.sections, [key]: !f.sections[key] },
@@ -322,7 +330,6 @@ export class UserFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   }
 
   protected togglePermission(key: keyof UserPermissions): void {
-    this.formDirty.set(true);
     this.form.update((f) => ({
       ...f,
       permissions: { ...f.permissions, [key]: !f.permissions[key] },
@@ -330,7 +337,6 @@ export class UserFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   }
 
   protected toggleGroup(id: number): void {
-    this.formDirty.set(true);
     this.form.update((f) => {
       const next = new Set(f.groups);
       if (next.has(id)) next.delete(id);
@@ -340,7 +346,6 @@ export class UserFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   }
 
   protected toggleService(name: string): void {
-    this.formDirty.set(true);
     this.form.update((f) => {
       const next = new Set(f.services);
       if (next.has(name)) next.delete(name);
@@ -350,7 +355,6 @@ export class UserFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   }
 
   protected onPhotoChange(photo: string | null): void {
-    this.formDirty.set(true);
     this.form.update((f) => ({ ...f, photo }));
   }
 
@@ -400,7 +404,7 @@ export class UserFormPageComponent implements DirtyAware, OnInit, OnDestroy {
       }
 
       this.saving.set(false);
-      this.formDirty.set(false);
+      this.dirtyState.markPristine();
       void this.router.navigateByUrl('/admin/usuarios');
     }, 400);
   }
@@ -423,7 +427,7 @@ export class UserFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     const user = this.initial();
     this.usersStore.deleteUser(id);
     this.deleteVisible.set(false);
-    this.formDirty.set(false);
+    this.dirtyState.markPristine();
     this.messages.add({
       severity: 'success',
       summary: this.translate.instant('users.toasts.deleted_single', {

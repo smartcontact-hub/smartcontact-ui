@@ -23,6 +23,7 @@ import { TopBarSlotService } from '@core/layout/top-bar/top-bar-slot.service';
 import { EMAIL_RE, PIN_RE } from '@core/utils/validators';
 import { TOAST_LIFE } from '@core/utils/toast-life';
 import { IconComponent, IllustratedAvatarComponent, LabelChipComponent } from '@shared/components';
+import { createFormDirtyState } from '@shared/utils/form-dirty-state';
 import {
   ScDeleteEntityDialogComponent as DeleteEntityDialogComponent,
   ScFormSectionNavComponent as FormSectionNavComponent,
@@ -291,7 +292,6 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   });
 
   protected toggleSchedule(id: number): void {
-    this.formDirty.set(true);
     this.form.update((f) => {
       const next = new Set(f.scheduleIds);
       if (next.has(id)) next.delete(id);
@@ -301,7 +301,6 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   }
 
   protected removeSchedule(id: number): void {
-    this.formDirty.set(true);
     this.form.update((f) => {
       const next = new Set(f.scheduleIds);
       next.delete(id);
@@ -348,7 +347,6 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   });
 
   protected toggleTemplate(id: number): void {
-    this.formDirty.set(true);
     this.form.update((f) => {
       const next = new Set(f.templateIds);
       if (next.has(id)) next.delete(id);
@@ -360,7 +358,6 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   protected toggleAllFilteredTemplates(next: boolean): void {
     const visible = this.filteredTemplates();
     if (visible.length === 0) return;
-    this.formDirty.set(true);
     this.form.update((f) => {
       const updated = new Set(f.templateIds);
       for (const t of visible) {
@@ -447,7 +444,6 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   }
 
   protected toggleColumnAll(col: DestinoCol, next: boolean): void {
-    this.formDirty.set(true);
     this.form.update((f) => {
       const permissions = { ...f.permissions };
       for (const row of this.destinoKeys) {
@@ -479,8 +475,12 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   protected readonly saving = signal(false);
   protected readonly deleteVisible = signal(false);
 
-  /** Set on the first user-triggered field change; cleared after save / delete. */
-  readonly formDirty = signal(false);
+  /** Dirty-state por CAMBIO NETO (snapshot vs pristine): Guardar se reactiva
+   *  solo si hay algo distinto que guardar y vuelve a apagarse si deshaces.
+   *  Patrón compartido (admin/AED/builder); `formDirty` queda de alias de
+   *  lectura para el guard de salida (DirtyAware) y el template. */
+  private readonly dirtyState = createFormDirtyState(() => this.form());
+  readonly formDirty = this.dirtyState.dirty;
   /** True while another tab also holds the edit lock (DD#169). */
   protected readonly conflictWarning = signal(false);
   private releaseLock: (() => void) | null = null;
@@ -519,6 +519,8 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     if (!f.name.trim() || !f.extension) return false;
     if (f.email && !EMAIL_RE.test(f.email.trim())) return false;
     if (f.pin && !PIN_RE.test(f.pin.trim())) return false;
+    // En EDITAR exige cambio neto; en crear/duplicar basta con que sea válido.
+    if (this.mode() === 'edit' && !this.dirtyState.dirty()) return false;
     return true;
   });
 
@@ -560,6 +562,7 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
         scheduleIds: new Set(agent.schedules ?? []),
         templateIds: new Set(agent.templates ?? []),
       });
+      this.dirtyState.markPristine();
       // En edición aterriza en Grupos (1ª del orden de edición): identidad va
       // al fondo porque casi no se toca tras crear; la ficha ya la resume (S60).
       this.activeSection.set('agent-section-groups');
@@ -607,8 +610,9 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
         scheduleIds: new Set(source.schedules ?? []),
         templateIds: new Set(source.templates ?? []),
       });
-      // Form arranca dirty para que el formDirtyGuard pida confirm al salir.
-      this.formDirty.set(true);
+      // El duplicado nace "sucio" por construcción (datos sin guardar): el
+      // snapshot ya difiere del pristine vacío, así que el guard de salida
+      // avisa solo. No hace falta marcarlo a mano.
     }
   }
 
@@ -632,7 +636,6 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   }
 
   protected updateField<K extends keyof FormState>(key: K, value: FormState[K]): void {
-    this.formDirty.set(true);
     this.form.update((f) => ({ ...f, [key]: value }));
   }
 
@@ -738,12 +741,10 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   }
 
   protected onLinksChange(links: readonly GroupAgentLink[]): void {
-    this.formDirty.set(true);
     this.form.update((f) => ({ ...f, links }));
   }
 
   protected togglePermission(key: keyof AgentPermissions): void {
-    this.formDirty.set(true);
     this.form.update((f) => ({
       ...f,
       permissions: { ...f.permissions, [key]: !f.permissions[key] },
@@ -751,7 +752,6 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   }
 
   protected onRecordingChange(checked: boolean): void {
-    this.formDirty.set(true);
     this.form.update((f) => ({
       ...f,
       permissions: { ...f.permissions, recording: checked },
@@ -759,7 +759,6 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   }
 
   protected onPhotoChange(photo: string | null): void {
-    this.formDirty.set(true);
     this.form.update((f) => ({ ...f, photo }));
   }
 
@@ -771,7 +770,6 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     this.form.update((f) =>
       f.languages.includes(lang) ? f : { ...f, languages: [...f.languages, lang] },
     );
-    this.formDirty.set(true);
   }
 
   /**
@@ -784,12 +782,10 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     this.form.update((f) =>
       f.languages.includes(value) ? f : { ...f, languages: [...f.languages, value] },
     );
-    this.formDirty.set(true);
     this.languagePickValue.set(null);
   }
 
   protected onLanguageRemove(lang: string): void {
-    this.formDirty.set(true);
     this.form.update((f) => ({ ...f, languages: f.languages.filter((l) => l !== lang) }));
   }
 
@@ -806,7 +802,6 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
       next.add(value);
       return { ...f, labelIds: next };
     });
-    this.formDirty.set(true);
     this.labelPickValue.set(null);
   }
 
@@ -821,11 +816,9 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
       next.add(id);
       return { ...f, labelIds: next };
     });
-    this.formDirty.set(true);
   }
 
   protected onLabelRemove(id: number): void {
-    this.formDirty.set(true);
     this.form.update((f) => {
       const next = new Set(f.labelIds);
       next.delete(id);
@@ -897,7 +890,7 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
         });
       }
       this.saving.set(false);
-      this.formDirty.set(false);
+      this.dirtyState.markPristine();
     }, 400);
   }
 
@@ -928,7 +921,7 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     this.agentsStore.deleteAgent(id);
     this.linksStore.removeAgent(id);
     this.deleteVisible.set(false);
-    this.formDirty.set(false);
+    this.dirtyState.markPristine();
     this.messages.add({
       severity: 'success',
       summary: this.translate.instant('agents.toasts.deleted_single', {
