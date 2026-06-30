@@ -56,9 +56,10 @@ import { RuleConditionValuePickerComponent } from '../rule-condition-value-picke
 })
 export class RuleConditionBuilderComponent {
   readonly value = model.required<ConditionTree>();
-  /** El form se ha tocado: revela la guía de errores (como el campo nombre, que
-   *  solo muestra su error tras escribir). Pristine → sin rojos de bienvenida. */
-  readonly touched = input(true);
+  /** Tras intentar guardar: revela los errores de "falta elegir un valor". Antes,
+   *  una condición recién añadida NO se marca incompleta (no acusa al crearla).
+   *  El resto de avisos (duplicado/contradicción/rango) sí son en vivo. */
+  readonly revealEmpty = input(true);
 
   private readonly resolver = inject(ConditionResolverService);
   private readonly conversations = inject(ConversationsStore);
@@ -114,7 +115,8 @@ export class RuleConditionBuilderComponent {
   });
 
   protected issuesForCond(id: string): readonly ValidationIssue[] {
-    return this.issuesByCond().get(id) ?? [];
+    const all = this.issuesByCond().get(id) ?? [];
+    return this.revealEmpty() ? all : all.filter((i) => i.code !== 'incomplete');
   }
 
   /** Pista honesta: hay condiciones evaluables, sin errores, y NINGUNA

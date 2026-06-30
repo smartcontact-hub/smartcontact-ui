@@ -112,6 +112,10 @@ export class RuleBuilderPageComponent implements DirtyAware {
   // Categorías IA (solo classification + aiAnalysis ON) · S49 §10 #13
   protected readonly categorias = signal<readonly string[]>([]);
 
+  /** El usuario ya pulsó guardar → revela los errores que esperan al envío
+   *  (nombre corto + "falta elegir un valor"), sin acusar mientras construye. */
+  protected readonly submitted = signal(false);
+
   protected readonly nameInvalid = computed(() => this.name().trim().length < 3);
   /** Errores objetivos del árbol (condición incompleta / rango inválido) —
    *  bloquean guardar. Duplicados y contradicciones son `warning`: avisan en el
@@ -203,6 +207,7 @@ export class RuleBuilderPageComponent implements DirtyAware {
   }
 
   protected onSave(): void {
+    this.submitted.set(true);
     if (!this.canSave()) return;
     // El árbol es la fuente de verdad del alcance; derivamos los campos planos
     // para que listado y detección de conflictos sigan funcionando sin cambios.
