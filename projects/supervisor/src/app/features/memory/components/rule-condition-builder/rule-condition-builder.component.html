@@ -154,7 +154,7 @@
     }
   </div>
 
-  @if (touched() && showEmptyImpact()) {
+  @if (showEmptyImpact()) {
     <p class="cond-builder__empty-impact">
       <sc-icon name="warning" [size]="13" />
       {{ 'memory.rules.builder.cond.val.impact_zero' | translate }}
@@ -260,7 +260,7 @@
           </button>
         </div>
 
-        @if (touched() && issuesForCond(cond.id).length) {
+        @if (issuesForCond(cond.id).length) {
           <ul class="cond-issues">
             @for (issue of issuesForCond(cond.id); track issue.code) {
               <li

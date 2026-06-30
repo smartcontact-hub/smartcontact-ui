@@ -74,7 +74,7 @@
           [value]="name()"
           (valueChange)="setName($event)"
           [error]="
-            nameInvalid() && name().length > 0
+            nameInvalid() && (name().length > 0 || submitted())
               ? ('memory.rules.builder.name_error' | translate)
               : ''
           "
@@ -105,7 +105,7 @@
       </header>
       <p class="rule-block__desc">{{ 'memory.rules.builder.scope_desc' | translate }}</p>
 
-      <sc-rule-condition-builder [(value)]="conditionTree" [touched]="formDirty()" />
+      <sc-rule-condition-builder [(value)]="conditionTree" [revealEmpty]="submitted()" />
     </section>
 
     <!-- Horario — control aparte (decisión: fuera del builder). Solo grabación. -->
@@ -230,7 +230,7 @@
   </div>
 
   <footer class="rule-builder__foot">
-    @if (formDirty() && condBlocking()) {
+    @if (submitted() && condBlocking()) {
       <p class="rule-builder__save-blocked">
         <sc-icon name="error" [size]="14" />
         {{ 'memory.rules.builder.cond.val.blocked' | translate }}
@@ -239,13 +239,7 @@
     <p-button type="button" size="small" severity="secondary" (onClick)="onCancel()">
       <span>{{ 'common.cancel' | translate }}</span>
     </p-button>
-    <p-button
-      type="button"
-      size="small"
-      severity="primary"
-      [disabled]="!canSave()"
-      (onClick)="onSave()"
-    >
+    <p-button type="button" size="small" severity="primary" (onClick)="onSave()">
       <span>
         @if (isEditMode()) {
           {{ 'memory.rules.builder.save_changes' | translate }}
