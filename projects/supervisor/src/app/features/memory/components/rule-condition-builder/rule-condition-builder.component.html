@@ -76,18 +76,14 @@
 
     @for (group of tree.groups; track trackGroup($index, group); let gi = $index) {
       @if (gi > 0) {
-        <button
-          type="button"
-          class="connector connector--group"
-          (click)="toggleRootMatch()"
-          [attr.aria-label]="'memory.rules.builder.cond.toggle_root' | translate"
-        >
+        <span class="connector connector--group" aria-hidden="true">
           {{ tree.match === 'all' ? 'Y' : 'O' }}
-        </button>
+        </span>
       }
 
       <section class="group">
         <header class="group__head">
+          <span class="group__num">{{ 'memory.rules.builder.cond.group_n' | translate: { n: gi + 1 } }}</span>
           <div
             class="seg seg--sm"
             role="group"
@@ -176,14 +172,9 @@
   <div class="rows" [class.rows--flat]="flat">
     @for (cond of group.conditions; track trackCondition($index, cond); let ci = $index) {
       @if (ci > 0) {
-        <button
-          type="button"
-          class="connector connector--inline"
-          (click)="toggleGroupMatch(group.id)"
-          [attr.aria-label]="'memory.rules.builder.cond.toggle_group' | translate"
-        >
+        <span class="connector connector--inline" aria-hidden="true">
           {{ group.match === 'all' ? 'Y' : 'O' }}
-        </button>
+        </span>
       }
 
       <div class="cond-item">
