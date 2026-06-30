@@ -131,6 +131,16 @@
     <sc-icon [name]="summaryIcon" [size]="14" />
     <p>{{ summary() }}</p>
   </div>
+
+  <div class="cond-builder__impact">
+    <sc-icon name="leaderboard" [size]="14" />
+    <span>
+      Afecta a <strong>{{ impactCount() }}</strong> de {{ impactTotal() }} conversaciones de muestra.
+    </span>
+    @if (hasUnevaluable()) {
+      <span class="cond-builder__impact-note">tipificación y categoría se evalúan en backend</span>
+    }
+  </div>
 </div>
 
 <ng-template #rows let-group let-flat="flat">
