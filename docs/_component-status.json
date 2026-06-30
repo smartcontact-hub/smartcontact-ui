@@ -393,7 +393,7 @@
       "inputs": 23,
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 11
+      "usedInSupervisor": 10
     },
     {
       "name": "page-header",
@@ -501,7 +501,7 @@
       "inputs": 22,
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 32
+      "usedInSupervisor": 33
     },
     {
       "name": "skeleton",

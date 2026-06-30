@@ -1,0 +1,103 @@
+<div class="vpick" [class.vpick--open]="open()">
+  <button type="button" class="vpick__trigger" (click)="toggleOpen()">
+    @if (isAny()) {
+      <span class="vpick__all">
+        {{ 'memory.rules.builder.cond.pick_all' | translate }}
+        <span class="vpick__all-hint">{{ 'memory.rules.builder.cond.pick_all_hint' | translate }}</span>
+      </span>
+    } @else if (chips().length === 0) {
+      <span class="vpick__ph">{{ placeholder() }}</span>
+    } @else {
+      <span class="vpick__chips">
+        @for (c of chips(); track c.key) {
+          <span class="vpick__chip">
+            {{ c.label }}
+            <span
+              class="vpick__chip-x"
+              role="button"
+              tabindex="0"
+              (click)="removeChip(c.ref); $event.stopPropagation()"
+              (keydown.enter)="removeChip(c.ref); $event.stopPropagation()"
+              [attr.aria-label]="'memory.rules.builder.cond.remove' | translate"
+            >
+              <sc-icon [name]="closeIcon" size="inherit" />
+            </span>
+          </span>
+        }
+      </span>
+    }
+    <sc-icon class="vpick__caret" name="expand_more" size="inherit" />
+  </button>
+
+  @if (open()) {
+    <div class="vpick__panel" [class.vpick__panel--up]="openUp()">
+      <div class="vpick__search">
+        <sc-icon [name]="searchIcon" [size]="15" />
+        <input
+          type="text"
+          [ngModel]="search()"
+          (ngModelChange)="search.set($event)"
+          [placeholder]="'memory.rules.builder.cond.search' | translate"
+        />
+      </div>
+
+      @if (isAny()) {
+        <div class="vpick__any-row">
+          <span>{{ 'memory.rules.builder.cond.pick_all_row' | translate }}</span>
+          <button type="button" class="vpick__link" (click)="clearAny()">
+            {{ 'memory.rules.builder.cond.pick_manual' | translate }}
+          </button>
+        </div>
+      } @else {
+        <div class="vpick__list">
+          @if (filteredGroups().length) {
+            <p class="vpick__sect">{{ 'memory.rules.builder.cond.pick_groups' | translate }}</p>
+            @for (o of filteredGroups(); track o.label) {
+              <button
+                type="button"
+                class="vpick__opt"
+                [class.vpick__opt--on]="isSelected(o.ref)"
+                (click)="toggle(o.ref)"
+              >
+                <sc-icon class="vpick__opt-ic" name="groups" size="inherit" />
+                <span class="vpick__opt-main">
+                  {{ o.label }}
+                  @if (o.sub) {
+                    <span class="vpick__opt-sub">{{ o.sub }}</span>
+                  }
+                </span>
+                @if (isSelected(o.ref)) {
+                  <sc-icon class="vpick__opt-check" [name]="checkIcon" size="inherit" />
+                }
+              </button>
+            }
+            <p class="vpick__sect">{{ 'memory.rules.builder.cond.pick_individuals' | translate }}</p>
+          }
+
+          @for (o of filteredEntities(); track o.label) {
+            <button
+              type="button"
+              class="vpick__opt"
+              [class.vpick__opt--on]="isSelected(o.ref)"
+              (click)="toggle(o.ref)"
+            >
+              <span class="vpick__opt-main">{{ o.label }}</span>
+              @if (isSelected(o.ref)) {
+                <sc-icon class="vpick__opt-check" [name]="checkIcon" size="inherit" />
+              }
+            </button>
+          }
+
+          @if (!filteredEntities().length && !filteredGroups().length) {
+            <p class="vpick__empty">{{ 'memory.rules.builder.cond.pick_empty' | translate }}</p>
+          }
+        </div>
+
+        <button type="button" class="vpick__selectall" (click)="selectAll()">
+          <sc-icon [name]="checkIcon" [size]="14" />
+          {{ 'memory.rules.builder.cond.select_all' | translate }}
+        </button>
+      }
+    </div>
+  }
+</div>

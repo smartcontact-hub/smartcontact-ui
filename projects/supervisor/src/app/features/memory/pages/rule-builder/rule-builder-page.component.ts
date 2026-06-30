@@ -18,16 +18,17 @@ import { DirtyAware } from '@core/guards';
 import { IconComponent } from '@shared/components';
 import { ScInputTextComponent as InputTextComponent } from '@smartcontact-hub/components';
 import { ScMultiSelectComponent as MultiSelectComponent } from '@smartcontact-hub/components';
-import { ScSelectComponent as SelectComponent } from '@smartcontact-hub/components';
 import { ScToggleSwitchComponent as ToggleSwitchComponent } from '@smartcontact-hub/components';
 
 import { RuleConditionBuilderComponent } from '../../components/rule-condition-builder/rule-condition-builder.component';
+import { ConditionResolverService } from '../../data/condition-resolver.service';
 import {
   type ConditionTree,
   deriveLegacyScope,
   deriveTreeFromLegacy,
   emptyConditionTree,
 } from '../../data/condition.types';
+import { validateConditionTree } from '../../data/condition-validate';
 import type { Direction, Rule, RuleType } from '../../data/rule.types';
 import { CategoriesStore } from '../../state/categories.store';
 import { RulesStore } from '../../state/rules.store';
@@ -62,7 +63,6 @@ import { RulesStore } from '../../state/rules.store';
     MultiSelectComponent,
     RouterLink,
     RuleConditionBuilderComponent,
-    SelectComponent,
     ToggleSwitchComponent,
     TranslateModule,
   ],
@@ -77,6 +77,7 @@ export class RuleBuilderPageComponent implements DirtyAware {
   private readonly categoriesStore = inject(CategoriesStore);
   private readonly messages = inject(MessageService);
   private readonly translate = inject(TranslateService);
+  private readonly resolver = inject(ConditionResolverService);
 
   /** Catálogo de categorías IA para el selector — solo activas + sólo
    *  visible en `type: 'classification'`. Spec S49 §10 #13. */
@@ -86,27 +87,11 @@ export class RuleBuilderPageComponent implements DirtyAware {
 
   protected readonly backIcon = 'arrow_back';
   protected readonly externalIcon = 'open_in_new';
-  protected readonly micIcon = 'mic';
-  protected readonly fileTextIcon = 'description';
   protected readonly sparklesIcon = 'auto_awesome';
-  protected readonly alertIcon = 'warning';
-  protected readonly trashIcon = 'delete';
-
-  protected readonly directionOptions = [
-    { value: 'all' as Direction, labelKey: 'memory.rules.builder.direction.all' },
-    { value: 'inbound' as Direction, labelKey: 'memory.rules.builder.direction.inbound' },
-    { value: 'outbound' as Direction, labelKey: 'memory.rules.builder.direction.outbound' },
-  ];
-
-  protected readonly durationUnitOptions = [
-    { value: 'seconds', labelKey: 'memory.rules.builder.duration_unit.seconds' },
-    { value: 'minutes', labelKey: 'memory.rules.builder.duration_unit.minutes' },
-  ];
 
   protected readonly ruleId = signal<number | null>(null);
-  protected readonly ruleType = signal<RuleType>('recording');
+  protected readonly ruleType = signal<RuleType>('transcription');
   protected readonly isEditMode = computed(() => this.ruleId() !== null);
-  protected readonly isDraft = signal(false);
 
   // Form state
   protected readonly name = signal('');
@@ -124,8 +109,18 @@ export class RuleBuilderPageComponent implements DirtyAware {
   // Categorías IA (solo classification + aiAnalysis ON) · S49 §10 #13
   protected readonly categorias = signal<readonly string[]>([]);
 
+  /** El usuario ya pulsó guardar → revela los errores que esperan al envío
+   *  (nombre corto + "falta elegir un valor"), sin acusar mientras construye. */
+  protected readonly submitted = signal(false);
+
   protected readonly nameInvalid = computed(() => this.name().trim().length < 3);
-  protected readonly canSave = computed(() => !this.nameInvalid());
+  /** Errores objetivos del árbol (condición incompleta / rango inválido) —
+   *  bloquean guardar. Duplicados y contradicciones son `warning`: avisan en el
+   *  builder pero NO bloquean (pueden ser intencionales). */
+  protected readonly condBlocking = computed(() =>
+    validateConditionTree(this.conditionTree()).some((i) => i.severity === 'error'),
+  );
+  protected readonly canSave = computed(() => !this.nameInvalid() && !this.condBlocking());
 
   /** JSON snapshot of every editable field — feeds the unsaved-changes guard. */
   private buildSnapshot(): string {
@@ -170,11 +165,7 @@ export class RuleBuilderPageComponent implements DirtyAware {
         return;
       }
       const typeParam = this.route.snapshot.queryParamMap.get('type') as RuleType | null;
-      if (
-        typeParam === 'recording' ||
-        typeParam === 'transcription' ||
-        typeParam === 'classification'
-      ) {
+      if (typeParam === 'transcription' || typeParam === 'classification') {
         this.ruleType.set(typeParam);
       }
       // New rule: capture the blank baseline so the guard only fires after edits.
@@ -184,7 +175,6 @@ export class RuleBuilderPageComponent implements DirtyAware {
 
   private loadFromRule(rule: Rule): void {
     this.ruleType.set(rule.type);
-    this.isDraft.set(!!rule.isDraft);
     this.name.set(rule.name);
     this.description.set(rule.description ?? '');
     this.active.set(rule.active);
@@ -209,10 +199,11 @@ export class RuleBuilderPageComponent implements DirtyAware {
   }
 
   protected onSave(): void {
+    this.submitted.set(true);
     if (!this.canSave()) return;
     // El árbol es la fuente de verdad del alcance; derivamos los campos planos
     // para que listado y detección de conflictos sigan funcionando sin cambios.
-    const scope = deriveLegacyScope(this.conditionTree());
+    const scope = deriveLegacyScope(this.conditionTree(), this.resolver);
     const base: Omit<Rule, 'id' | 'lastModified' | 'priority'> = {
       type: this.ruleType(),
       name: this.name().trim(),
@@ -221,7 +212,7 @@ export class RuleBuilderPageComponent implements DirtyAware {
       grupos: scope.grupos,
       agentes: scope.agentes,
       conditionTree: this.conditionTree(),
-      recording: this.ruleType() === 'recording',
+      recording: false,
       transcripcion: this.ruleType() === 'transcription',
       clasificacion: this.ruleType() === 'classification',
       active: this.active(),
@@ -240,15 +231,10 @@ export class RuleBuilderPageComponent implements DirtyAware {
     };
 
     if (this.isEditMode()) {
-      // Si era borrador → guardar retira el flag (spec line 130-139).
-      const patch = this.isDraft() ? { ...base, isDraft: false } : base;
-      this.rulesStore.updateRule(this.ruleId()!, patch);
-      const summaryKey = this.isDraft()
-        ? 'memory.rules.builder.draft_ready_toast'
-        : 'memory.rules.builder.updated_toast';
+      this.rulesStore.updateRule(this.ruleId()!, base);
       this.messages.add({
         severity: 'success',
-        summary: this.translate.instant(summaryKey),
+        summary: this.translate.instant('memory.rules.builder.updated_toast'),
         life: TOAST_LIFE.success,
       });
     } else {
@@ -260,20 +246,6 @@ export class RuleBuilderPageComponent implements DirtyAware {
       });
     }
     // Just saved → the current form IS the clean state; don't prompt on the way out.
-    this.pristine.set(this.buildSnapshot());
-    this.router.navigate(['/conversaciones/reglas']);
-  }
-
-  protected onDiscardDraft(): void {
-    const id = this.ruleId();
-    if (id === null || !this.isDraft()) return;
-    this.rulesStore.deleteRule(id);
-    this.messages.add({
-      severity: 'info',
-      summary: this.translate.instant('memory.rules.builder.discarded_toast'),
-      life: TOAST_LIFE.info,
-    });
-    // Discarding the draft is an explicit exit — skip the dirty guard prompt.
     this.pristine.set(this.buildSnapshot());
     this.router.navigate(['/conversaciones/reglas']);
   }

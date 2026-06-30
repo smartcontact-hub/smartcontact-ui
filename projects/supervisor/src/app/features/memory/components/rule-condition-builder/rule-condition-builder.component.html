@@ -2,23 +2,25 @@
 
 <div class="cond-builder" [class.cond-builder--nested]="tree.groups.length > 1">
   @if (tree.groups.length === 0) {
-    <!-- Vacío: enseña qué pasa y ofrece empezar -->
     <div class="cond-builder__empty">
-      <sc-icon [name]="layersIcon" [size]="20" />
+      <sc-icon [name]="summaryIcon" [size]="20" />
       <div>
-        <p class="cond-builder__empty-title">Sin condiciones</p>
-        <p class="cond-builder__empty-body">La regla se aplica a <strong>todas</strong> las conversaciones.</p>
+        <p class="cond-builder__empty-title">{{ 'memory.rules.builder.cond.empty_title' | translate }}</p>
+        <p class="cond-builder__empty-body">{{ 'memory.rules.builder.cond.empty_body' | translate }}</p>
       </div>
       <button type="button" class="add-btn" (click)="addGroup()">
         <sc-icon [name]="addIcon" size="inherit" />
-        Añadir condición
+        {{ 'memory.rules.builder.cond.add_condition' | translate }}
       </button>
     </div>
   } @else if (tree.groups.length === 1) {
-    <!-- Caso simple: un grupo, plano, con un único control de coincidencia -->
     <div class="cond-builder__lead">
-      <span class="cond-builder__lead-text">Coincidir con</span>
-      <div class="seg" role="group" aria-label="Cómo se combinan las condiciones">
+      <span class="cond-builder__lead-text">{{ 'memory.rules.builder.cond.match_with' | translate }}</span>
+      <div
+        class="seg"
+        role="group"
+        [attr.aria-label]="'memory.rules.builder.cond.match_conditions_aria' | translate"
+      >
         <button
           type="button"
           class="seg__btn"
@@ -26,7 +28,7 @@
           [attr.aria-pressed]="tree.groups[0].match === 'all'"
           (click)="setGroupMatch(tree.groups[0].id, 'all')"
         >
-          todas
+          {{ 'memory.rules.builder.cond.match_all' | translate }}
         </button>
         <button
           type="button"
@@ -35,18 +37,21 @@
           [attr.aria-pressed]="tree.groups[0].match === 'any'"
           (click)="setGroupMatch(tree.groups[0].id, 'any')"
         >
-          cualquiera
+          {{ 'memory.rules.builder.cond.match_any' | translate }}
         </button>
       </div>
-      <span class="cond-builder__lead-text">de las condiciones</span>
+      <span class="cond-builder__lead-text">{{ 'memory.rules.builder.cond.of_conditions' | translate }}</span>
     </div>
 
     <ng-container *ngTemplateOutlet="rows; context: { $implicit: tree.groups[0], flat: true }" />
   } @else {
-    <!-- Caso avanzado: varios grupos combinados con Y/O -->
     <div class="cond-builder__root">
-      <span class="cond-builder__root-label">Coincidir con</span>
-      <div class="seg" role="group" aria-label="Cómo se combinan los grupos">
+      <span class="cond-builder__root-label">{{ 'memory.rules.builder.cond.match_with' | translate }}</span>
+      <div
+        class="seg"
+        role="group"
+        [attr.aria-label]="'memory.rules.builder.cond.match_groups_aria' | translate"
+      >
         <button
           type="button"
           class="seg__btn"
@@ -54,7 +59,7 @@
           [attr.aria-pressed]="tree.match === 'all'"
           (click)="setRootMatch('all')"
         >
-          todas
+          {{ 'memory.rules.builder.cond.match_all' | translate }}
         </button>
         <button
           type="button"
@@ -63,27 +68,27 @@
           [attr.aria-pressed]="tree.match === 'any'"
           (click)="setRootMatch('any')"
         >
-          cualquiera
+          {{ 'memory.rules.builder.cond.match_any' | translate }}
         </button>
       </div>
-      <span class="cond-builder__root-label">de estos grupos</span>
+      <span class="cond-builder__root-label">{{ 'memory.rules.builder.cond.of_groups' | translate }}</span>
     </div>
 
     @for (group of tree.groups; track trackGroup($index, group); let gi = $index) {
       @if (gi > 0) {
-        <button
-          type="button"
-          class="connector connector--group"
-          (click)="toggleRootMatch()"
-          aria-label="Cambiar la combinación entre grupos"
-        >
+        <span class="connector connector--group" aria-hidden="true">
           {{ tree.match === 'all' ? 'Y' : 'O' }}
-        </button>
+        </span>
       }
 
       <section class="group">
         <header class="group__head">
-          <div class="seg seg--sm" role="group" aria-label="Cómo se combinan las condiciones del grupo">
+          <span class="group__num">{{ 'memory.rules.builder.cond.group_n' | translate: { n: gi + 1 } }}</span>
+          <div
+            class="seg seg--sm"
+            role="group"
+            [attr.aria-label]="'memory.rules.builder.cond.match_conditions_aria' | translate"
+          >
             <button
               type="button"
               class="seg__btn"
@@ -91,7 +96,7 @@
               [attr.aria-pressed]="group.match === 'all'"
               (click)="setGroupMatch(group.id, 'all')"
             >
-              todas
+              {{ 'memory.rules.builder.cond.match_all' | translate }}
             </button>
             <button
               type="button"
@@ -100,15 +105,15 @@
               [attr.aria-pressed]="group.match === 'any'"
               (click)="setGroupMatch(group.id, 'any')"
             >
-              cualquiera
+              {{ 'memory.rules.builder.cond.match_any' | translate }}
             </button>
           </div>
-          <span class="group__hint">de las condiciones</span>
+          <span class="group__hint">{{ 'memory.rules.builder.cond.of_conditions' | translate }}</span>
           <button
             type="button"
             class="group__remove"
             (click)="removeGroup(group.id)"
-            aria-label="Eliminar grupo"
+            [attr.aria-label]="'memory.rules.builder.cond.remove_group' | translate"
           >
             <sc-icon [name]="closeIcon" size="inherit" />
           </button>
@@ -123,76 +128,190 @@
     <button type="button" class="add-group" (click)="addGroup()">
       <sc-icon [name]="addIcon" size="inherit" />
       @if (tree.groups.length === 1) {
-        Añadir grupo para combinar con O
+        {{ 'memory.rules.builder.cond.add_group_or' | translate }}
       } @else {
-        Añadir grupo
+        {{ 'memory.rules.builder.cond.add_group' | translate }}
       }
     </button>
   }
 
-  <!-- Resumen en lenguaje natural -->
   <div class="cond-builder__summary">
-    <sc-icon [name]="sparklesIcon" [size]="14" />
+    <sc-icon [name]="summaryIcon" [size]="14" />
     <p>{{ summary() }}</p>
+  </div>
+
+  <div class="cond-builder__estimate" aria-live="polite">
+    <p class="cond-builder__estimate-title">
+      <sc-icon name="leaderboard" [size]="14" aria-hidden="true" />
+      {{ 'memory.rules.builder.cond.est_title' | translate }}
+    </p>
+    @if (showEmptyImpact()) {
+      <p class="cond-builder__estimate-empty">
+        <sc-icon name="warning" [size]="13" aria-hidden="true" />
+        {{ 'memory.rules.builder.cond.val.impact_zero' | translate: { total: impactTotal() } }}
+      </p>
+    } @else {
+      <p class="cond-builder__estimate-main">
+        {{ 'memory.rules.builder.cond.impact' | translate: { count: impactCount(), total: impactTotal() } }}
+      </p>
+      @if (hasUnevaluable()) {
+        <p class="cond-builder__estimate-note">{{ 'memory.rules.builder.cond.impact_note' | translate }}</p>
+      } @else {
+        <div class="cond-builder__estimate-bar" aria-hidden="true">
+          <span class="cond-builder__estimate-bar-fill" [style.width.%]="impactPct()"></span>
+        </div>
+        <p class="cond-builder__estimate-proj">
+          {{
+            'memory.rules.builder.cond.est_projection'
+              | translate: { day: fmt(estimate().perDay), month: fmt(estimate().perMonth) }
+          }}
+        </p>
+      }
+    }
   </div>
 </div>
 
-<!-- Filas de condición — compartidas entre el modo plano y el agrupado -->
 <ng-template #rows let-group let-flat="flat">
   <div class="rows" [class.rows--flat]="flat">
     @for (cond of group.conditions; track trackCondition($index, cond); let ci = $index) {
       @if (ci > 0) {
-        <button
-          type="button"
-          class="connector connector--inline"
-          (click)="toggleGroupMatch(group.id)"
-          aria-label="Cambiar la combinación dentro del grupo"
-        >
+        <span class="connector connector--inline" aria-hidden="true">
           {{ group.match === 'all' ? 'Y' : 'O' }}
-        </button>
+        </span>
       }
 
-      <div class="cond-row">
-        <sc-select
-          class="cond-row__field"
-          [options]="fieldOptions"
-          optionLabel="label"
-          optionValue="value"
-          [value]="cond.field"
-          (valueChange)="setField(group.id, cond.id, $event)"
-        />
-        <sc-select
-          class="cond-row__op"
-          [options]="operatorOptions"
-          optionLabel="label"
-          optionValue="value"
-          [value]="cond.operator"
-          (valueChange)="setOperator(group.id, cond.id, $event)"
-        />
-        <sc-multiselect
-          class="cond-row__value"
-          [options]="fieldOptionsFor(cond.field)"
-          optionLabel="label"
-          optionValue="value"
-          [filter]="true"
-          [placeholder]="placeholderFor(cond.field)"
-          [value]="[...cond.values]"
-          (valueChange)="setValues(group.id, cond.id, $event)"
-        />
-        <button
-          type="button"
-          class="cond-row__remove"
-          (click)="removeCondition(group.id, cond.id)"
-          aria-label="Eliminar condición"
-        >
-          <sc-icon [name]="closeIcon" size="inherit" />
-        </button>
+      <div class="cond-item">
+        <div class="cond-row">
+          <sc-select
+            class="cond-row__field"
+            [options]="fieldOptions"
+            optionLabel="label"
+            optionValue="value"
+            [value]="cond.field"
+            (valueChange)="setField(group.id, cond.id, $event)"
+          >
+            <ng-template let-opt pTemplate="selectedItem">
+              <sc-icon class="cond-row__field-ic" [name]="opt.icon" size="inherit" />
+              {{ opt.label }}
+            </ng-template>
+            <ng-template let-opt pTemplate="item">
+              <sc-icon class="cond-row__field-ic" [name]="opt.icon" size="inherit" />
+              {{ opt.label }}
+            </ng-template>
+          </sc-select>
+
+          <sc-select
+            class="cond-row__op"
+            [options]="operatorOptionsFor(cond.field)"
+            optionLabel="label"
+            optionValue="value"
+            [value]="cond.operator"
+            (valueChange)="setOperator(group.id, cond.id, $event)"
+          />
+
+          @if (fieldDef(cond.field).kind === 'list') {
+            <sc-rule-condition-value-picker
+              class="cond-row__value"
+              [refKind]="refKindOf(cond.field)"
+              [placeholder]="fieldDef(cond.field).placeholder"
+              [value]="cond.value"
+              (valueChange)="setValue(group.id, cond.id, $event)"
+            />
+          } @else if (fieldDef(cond.field).kind === 'enum') {
+            <sc-select
+              class="cond-row__value"
+              [options]="directionOptionsFor(cond.field)"
+              optionLabel="label"
+              optionValue="value"
+              [value]="enumValue(cond)"
+              (valueChange)="setEnum(group.id, cond.id, $event)"
+            />
+          } @else {
+            <div class="cond-row__value cond-row__num">
+              @if (cond.operator === 'between') {
+                <input
+                  type="number"
+                  min="0"
+                  aria-label="Duración mínima"
+                  [value]="numAmount(cond)"
+                  (input)="setAmount(group.id, cond.id, $any($event.target).value, 1)"
+                />
+                <span class="cond-row__num-sep">y</span>
+                <input
+                  type="number"
+                  min="0"
+                  aria-label="Duración máxima"
+                  [value]="numAmount2(cond)"
+                  (input)="setAmount(group.id, cond.id, $any($event.target).value, 2)"
+                />
+                <sc-select
+                  class="cond-row__num-unit"
+                  [options]="durationUnitOptions"
+                  optionLabel="label"
+                  optionValue="value"
+                  [value]="numUnit(cond)"
+                  (valueChange)="setUnit(group.id, cond.id, $event)"
+                />
+              } @else {
+                <sc-select
+                  class="cond-row__preset"
+                  [options]="durationPresetOptions"
+                  optionLabel="label"
+                  optionValue="value"
+                  [value]="durationPresetValue(cond)"
+                  (valueChange)="setDurationPreset(group.id, cond.id, $event)"
+                />
+                @if (isCustomDur(cond)) {
+                  <input
+                    type="number"
+                    min="0"
+                    aria-label="Duración"
+                    [value]="numAmount(cond)"
+                    (input)="setAmount(group.id, cond.id, $any($event.target).value, 1)"
+                  />
+                  <sc-select
+                    class="cond-row__num-unit"
+                    [options]="durationUnitOptions"
+                    optionLabel="label"
+                    optionValue="value"
+                    [value]="numUnit(cond)"
+                    (valueChange)="setUnit(group.id, cond.id, $event)"
+                  />
+                }
+              }
+            </div>
+          }
+
+          <button
+            type="button"
+            class="cond-row__remove"
+            (click)="removeCondition(group.id, cond.id)"
+            [attr.aria-label]="'memory.rules.builder.cond.remove_condition' | translate"
+          >
+            <sc-icon [name]="closeIcon" size="inherit" />
+          </button>
+        </div>
+
+        @if (issuesForCond(cond.id).length) {
+          <ul class="cond-issues">
+            @for (issue of issuesForCond(cond.id); track issue.code) {
+              <li
+                class="cond-issue"
+                [class.cond-issue--error]="issue.severity === 'error'"
+                [class.cond-issue--warn]="issue.severity === 'warning'"
+              >
+                <sc-icon [name]="issue.severity === 'error' ? 'error' : 'warning'" [size]="13" />
+                <span>{{ 'memory.rules.builder.cond.val.' + issue.code | translate }}</span>
+              </li>
+            }
+          </ul>
+        }
       </div>
     }
 
     <button type="button" class="add-btn add-btn--sm" (click)="addCondition(group.id)">
       <sc-icon [name]="addIcon" size="inherit" />
-      Añadir condición
+      {{ 'memory.rules.builder.cond.add_condition' | translate }}
     </button>
   </div>
 </ng-template>
