@@ -37,11 +37,18 @@
 
 ## Producto · Sistema de reglas — pivote a transcripción (charla con el equipo)
 
+> **✅ EJECUTADO (DD-26 → DD-27, 2026-06-30, en main).** El constructor de condiciones está **construido y
+> mergeado**. El modelo de condiciones vive en `supervisor/.../memory/data/condition.types.ts` (refs tipadas
+> **dinámicas** + `value`), **no** en `rule.types.ts`. Del "Rumbo MVP" de abajo ya está hecho: dirección+duración
+> unificadas como **campos del builder** · tipificación como campo · **grabación y borradores ELIMINADOS** (y la
+> priorización, fuera del MVP) · Horario quitado · **estimación de impacto en vivo** (primer paso del simulador de
+> coste). Sigue ABIERTO del backlog: sección **Repositorios**, **simulador de coste** completo, **AED**, y los
+> accionables backend (VAP/Lucas). Detalle y por-qué en **DD-27** (`docs/DECISIONS.md`).
+
 - **Qué**: las reglas de **grabación** quedan obsoletas por la **nueva ley SEC** → el foco pasa a reglas de
-  **transcripción** (+clasificación), con el **sistema de transcripciones múltiples EN DESARROLLO**. Modelo:
-  `supervisor/.../memory/data/rule.types.ts` (`recording|transcription|classification`; alcance
-  servicio/grupo/agente; criterios dirección/horario/duración/IA/categorías; prioridad; estado `conflict`).
-  Regla = qué pasa con conversaciones FUTURAS; bulk = qué hago AHORA con las existentes.
+  **transcripción** (+clasificación), con el **sistema de transcripciones múltiples EN DESARROLLO**. Modelo
+  (histórico, ver nota EJECUTADO arriba): la charla partió de `rule.types.ts`; el constructor v2 movió las
+  condiciones a `condition.types.ts`. Regla = qué pasa con conversaciones FUTURAS; bulk = qué hago AHORA con las existentes.
 - **Disparador**: charla de alineación con el equipo. PPT vía Claude Design — master prompt redactado
   (why/what/how/when/who + concerns), con huecos `[RAFA]` de dominio: qué dice la ley SEC, diseño de
   transcripciones múltiples, quién la usa y timeline.

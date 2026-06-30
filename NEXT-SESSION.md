@@ -44,6 +44,9 @@ del jefe** (caso compuesto de su PPT: servicio + grupo + tipificación venta/inc
 0. **Limpieza follow-up del recorte MVP** (no rompe, no se ve, lo dejé a drede para no cascadear antes del merge):
    scss del draft-banner + badge "draft" en rules-page + claves i18n de borrador + señales schedule/direction de la
    página + miembros de tipo `recording`/`isDraft`/`'draft'`. Quitar cuando se quiera el modelo limpio.
+   **OJO punto ciego (lo cazó la auditoría de docs):** el recorrido vivo **`sc-demo` `/reglas`**
+   (`projects/sc-demo/src/app/pages/reglas/`) — material de PRESENTACIÓN — sigue enseñando el modelo VIEJO como
+   actual: grabación, **Prioridad** ("el más bajo gana"), borradores. Si se va a presentar, alinear con DD-27 (o avisar).
 1. **Header/breadcrumb (11c)**: resuelto a nivel de página (breadcrumb "Reglas › …"). Si Rafa lo quería en el
    `.top-bar` del shell (compartido, app-wide), es otro cambio — confirmar.
 2. (de antes) PPT puente código↔Figma · Bloque 4a Figma guiado · accionables backend (VAP/Lucas): sección

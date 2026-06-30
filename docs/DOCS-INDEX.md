@@ -76,7 +76,8 @@ Los pares que más se confunden — cada uno tiene un trabajo distinto:
 
 ---
 
-Última actualización: 2026-06-23 — `ppt-proyecto.md` consolidado y renombrado a `colaboracion.md` (lean + práctico + flujo día a día + colaboración git + nota de caducidad del token); borrado el viejo.
+Última actualización: 2026-06-30 — sesión 6: **DD-27** (constructor de condiciones v2 + recorte MVP sin grabación/borradores) registrado en `DECISIONS.md`; `ROADMAP.md` §reglas marcada EJECUTADA; ningún *source* nuevo cambió de sitio (mapa intacto). Pendiente de orden: `DECISIONS.md` newest-first (DD-21..27 al final).
+2026-06-23 — `ppt-proyecto.md` consolidado y renombrado a `colaboracion.md` (lean + práctico + flujo día a día + colaboración git + nota de caducidad del token); borrado el viejo.
 2026-06-16 — W2: READMEs de paquete (`components`) y de las apps (`sc-demo`, `supervisor`) + badges + metadata npm (description/keywords/license/author) + `org-profile.md` (borrador del perfil de la org). Los README de `projects/**` no los escanea docs:guard (solo `docs/` + raíz).
 2026-06-16 — añadido `ppt-proyecto.md` (presentación de onboarding para diseño, W0).
 2026-06-14 — creado el índice (Lote L2 del maratón "sistema operativo"). Mapeados los docs del repo;
