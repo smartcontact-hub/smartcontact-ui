@@ -132,7 +132,10 @@ export class RuleBuilderPageComponent implements DirtyAware {
   protected readonly unfinishedCount = computed(
     () => this.conditionIssues().filter((i) => i.code === 'incomplete').length,
   );
-  protected readonly canSave = computed(() => !this.nameInvalid() && !this.condBlocking());
+  // En EDITAR exige cambio neto (formDirty); en crear basta con que sea válido.
+  protected readonly canSave = computed(
+    () => !this.nameInvalid() && !this.condBlocking() && (!this.isEditMode() || this.formDirty()),
+  );
 
   /* ── Estimación de procesado (impacto en vivo; se pinta en el dock del footer,
    *  siempre visible junto a la acción). Resuelve membresía de grupos al vuelo;
