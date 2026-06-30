@@ -24,12 +24,26 @@ export class TopBarSlotService {
   /** Acciones primarias (template) a renderizar a la derecha de la TopBar. */
   readonly actions = signal<TemplateRef<unknown> | null>(null);
 
+  /** Cabecera contextual (template) a renderizar en el LEAD (izquierda) de la
+   *  TopBar, reemplazando el breadcrumb. Para páginas-formulario con su propio
+   *  título + subtítulo (p.ej. el constructor de reglas) → conviven con el
+   *  avatar a la derecha en la misma barra. */
+  readonly lead = signal<TemplateRef<unknown> | null>(null);
+
   set(component: Type<unknown>): void {
     this.component.set(component);
   }
 
   clear(): void {
     this.component.set(null);
+  }
+
+  setLead(tpl: TemplateRef<unknown>): void {
+    this.lead.set(tpl);
+  }
+
+  clearLead(): void {
+    this.lead.set(null);
   }
 
   setActions(tpl: TemplateRef<unknown>): void {

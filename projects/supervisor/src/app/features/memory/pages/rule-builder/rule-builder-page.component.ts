@@ -1,11 +1,15 @@
 import {
+  afterNextRender,
   ChangeDetectionStrategy,
   Component,
   computed,
+  DestroyRef,
   effect,
   inject,
   signal,
+  type TemplateRef,
   untracked,
+  viewChild,
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
@@ -15,6 +19,7 @@ import { ButtonModule } from 'primeng/button';
 
 import { TOAST_LIFE } from '@core/utils/toast-life';
 import { DirtyAware } from '@core/guards';
+import { TopBarSlotService } from '@core/layout/top-bar/top-bar-slot.service';
 import { IconComponent } from '@shared/components';
 import { ScInputTextComponent as InputTextComponent } from '@smartcontact-hub/components';
 import { ScMultiSelectComponent as MultiSelectComponent } from '@smartcontact-hub/components';
@@ -85,6 +90,12 @@ export class RuleBuilderPageComponent implements DirtyAware {
   private readonly translate = inject(TranslateService);
   private readonly resolver = inject(ConditionResolverService);
   private readonly conversations = inject(ConversationsStore);
+  private readonly topBarSlot = inject(TopBarSlotService);
+  private readonly destroyRef = inject(DestroyRef);
+
+  /** Cabecera (back + título + tipo + subtítulo) proyectada a la TopBar, junto
+   *  al avatar — sustituye la banda de header propia. */
+  private readonly topbarHeader = viewChild<TemplateRef<unknown>>('topbarHeader');
 
   /** Catálogo de categorías IA para el selector — solo activas + sólo
    *  visible en `type: 'classification'`. Spec S49 §10 #13. */
@@ -218,6 +229,14 @@ export class RuleBuilderPageComponent implements DirtyAware {
       // New rule: capture the blank baseline so the guard only fires after edits.
       this.pristine.set(untracked(() => this.buildSnapshot()));
     });
+
+    // Proyecta la cabecera (título + subtítulo) a la TopBar — convive con el
+    // avatar a la derecha; se limpia al salir de la ruta.
+    afterNextRender(() => {
+      const tpl = this.topbarHeader();
+      if (tpl) this.topBarSlot.setLead(tpl);
+    });
+    this.destroyRef.onDestroy(() => this.topBarSlot.clearLead());
   }
 
   private loadFromRule(rule: Rule): void {
