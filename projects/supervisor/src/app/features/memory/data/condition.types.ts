@@ -23,8 +23,50 @@ import {
 } from './conversation-filter-options';
 
 export type ConditionFieldId = 'servicio' | 'grupo' | 'agente' | 'tipificacion';
-export type ConditionOperator = 'is' | 'is_not';
+// Bloque 2 extiende con 'direccion' | 'duracion' | 'categoria'.
+
+/** Operadores. `is`/`is_not` para campos lista/enum; `gt`/`lt`/`between` para número. */
+export type ConditionOperator = 'is' | 'is_not' | 'gt' | 'lt' | 'between';
 export type GroupMatch = 'all' | 'any';
+
+/** Tipo de campo → qué editor de valor y qué operadores aplican. */
+export type ConditionFieldKind = 'list' | 'enum' | 'number';
+/** Sección del dropdown de campo. */
+export type ConditionFieldGroup = 'conversacion' | 'clasificacion';
+/** Para campos lista: a qué entidad apuntan sus valores (resolución en vivo). */
+export type RefKind = 'service' | 'group' | 'agent' | 'tipificacion' | 'category';
+
+/**
+ * Referencia tipada a una entidad (constructor v2). Reemplaza el snapshot de
+ * nombre: se guarda la referencia y se resuelve etiqueta/membresía al vuelo.
+ * - `service` no tiene ID en el sistema → por nombre.
+ * - `group` = la cola; `agentGroup` = ese mismo grupo usado como sus agentes-miembros.
+ */
+export type ConditionRef =
+  | { readonly kind: 'service'; readonly name: string }
+  | { readonly kind: 'group'; readonly id: number }
+  | { readonly kind: 'agent'; readonly id: number }
+  | { readonly kind: 'agentGroup'; readonly id: number }
+  | { readonly kind: 'tipificacion'; readonly id: number }
+  | { readonly kind: 'category'; readonly id: string };
+
+/**
+ * Operando de una condición, según el kind del campo.
+ * - `any` = comodín "cualquiera" (incluye entidades futuras) — campos lista.
+ * - `refs` = referencias seleccionadas — campos lista.
+ * - `enum` = un valor (p.ej. dirección entrante/saliente).
+ * - `number` = umbral(es) de duración (`between` usa amount + amount2).
+ */
+export type ConditionValue =
+  | { readonly mode: 'any' }
+  | { readonly mode: 'refs'; readonly refs: readonly ConditionRef[] }
+  | { readonly mode: 'enum'; readonly value: string }
+  | {
+      readonly mode: 'number';
+      readonly amount: number;
+      readonly amount2?: number;
+      readonly unit: 'seconds' | 'minutes';
+    };
 
 export interface ConditionFieldDef {
   readonly id: ConditionFieldId;
@@ -32,6 +74,14 @@ export interface ConditionFieldDef {
   readonly label: string;
   /** Sustantivo con artículo para el resumen en prosa ("el servicio"). */
   readonly noun: string;
+  /** Tipo de campo (editor de valor + operadores aplicables). */
+  readonly kind: ConditionFieldKind;
+  /** Sección del dropdown de campo. */
+  readonly group: ConditionFieldGroup;
+  /** Material symbol del campo. */
+  readonly icon: string;
+  /** Solo campos lista: a qué entidad apuntan sus valores. */
+  readonly refKind?: RefKind;
   readonly options: readonly FilterOption[];
   readonly placeholder: string;
 }
@@ -43,13 +93,21 @@ export const CONDITION_FIELDS: readonly ConditionFieldDef[] = [
     id: 'servicio',
     label: 'Servicio',
     noun: 'el servicio',
+    kind: 'list',
+    group: 'conversacion',
+    icon: 'deployed_code',
+    refKind: 'service',
     options: SERVICE_OPTIONS,
     placeholder: 'Selecciona servicios…',
   },
   {
     id: 'grupo',
-    label: 'Grupo ACD',
+    label: 'Grupo/Cola',
     noun: 'el grupo',
+    kind: 'list',
+    group: 'conversacion',
+    icon: 'groups',
+    refKind: 'group',
     options: GROUP_OPTIONS,
     placeholder: 'Selecciona grupos…',
   },
@@ -57,13 +115,21 @@ export const CONDITION_FIELDS: readonly ConditionFieldDef[] = [
     id: 'agente',
     label: 'Agente',
     noun: 'el agente',
+    kind: 'list',
+    group: 'conversacion',
+    icon: 'person',
+    refKind: 'agent',
     options: AGENT_OPTIONS,
-    placeholder: 'Selecciona agentes…',
+    placeholder: 'Selecciona agentes o grupos…',
   },
   {
     id: 'tipificacion',
     label: 'Tipificación',
     noun: 'la tipificación',
+    kind: 'list',
+    group: 'conversacion',
+    icon: 'sell',
+    refKind: 'tipificacion',
     options: TIPIFICACION_OPTIONS,
     placeholder: 'Selecciona tipificaciones…',
   },
@@ -77,6 +143,13 @@ export interface Condition {
   readonly id: string;
   readonly field: ConditionFieldId;
   readonly operator: ConditionOperator;
+  /**
+   * Operando v2 (referencias tipadas / comodín / número / enum). Fuente de
+   * verdad cuando está presente. Durante la migración incremental convive con
+   * `values` (legacy, nombres planos); el Bloque 2 mueve el builder a `value`.
+   */
+  readonly value?: ConditionValue;
+  /** Legacy: nombres planos. Se mantiene hasta completar la migración. */
   readonly values: readonly string[];
 }
 
