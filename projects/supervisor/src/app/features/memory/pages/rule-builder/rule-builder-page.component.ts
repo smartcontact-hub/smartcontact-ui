@@ -21,11 +21,14 @@ import { ScMultiSelectComponent as MultiSelectComponent } from '@smartcontact-hu
 import { ScSelectComponent as SelectComponent } from '@smartcontact-hub/components';
 import { ScToggleSwitchComponent as ToggleSwitchComponent } from '@smartcontact-hub/components';
 
+import { RuleConditionBuilderComponent } from '../../components/rule-condition-builder/rule-condition-builder.component';
 import {
-  AGENT_OPTIONS,
-  GROUP_OPTIONS,
-  SERVICE_OPTIONS,
-} from '../../data/conversation-filter-options';
+  type ConditionTree,
+  deriveLegacyScope,
+  deriveTreeFromLegacy,
+  emptyConditionTree,
+} from '../../data/condition.types';
+import { AGENT_OPTIONS, GROUP_OPTIONS } from '../../data/conversation-filter-options';
 import type { Direction, Rule, RuleType } from '../../data/rule.types';
 import { CategoriesStore } from '../../state/categories.store';
 import { RulesStore } from '../../state/rules.store';
@@ -59,6 +62,7 @@ import { RulesStore } from '../../state/rules.store';
     InputTextComponent,
     MultiSelectComponent,
     RouterLink,
+    RuleConditionBuilderComponent,
     SelectComponent,
     ToggleSwitchComponent,
     TranslateModule,
@@ -75,10 +79,6 @@ export class RuleBuilderPageComponent implements DirtyAware {
   private readonly messages = inject(MessageService);
   private readonly translate = inject(TranslateService);
 
-  protected readonly serviceOptions = SERVICE_OPTIONS;
-  protected readonly groupOptions = GROUP_OPTIONS;
-  protected readonly agentOptions = AGENT_OPTIONS;
-
   /** Catálogo de categorías IA para el selector — solo activas + sólo
    *  visible en `type: 'classification'`. Spec S49 §10 #13. */
   protected readonly categoryOptions = computed(() =>
@@ -90,7 +90,6 @@ export class RuleBuilderPageComponent implements DirtyAware {
   protected readonly micIcon = 'mic';
   protected readonly fileTextIcon = 'description';
   protected readonly sparklesIcon = 'auto_awesome';
-  protected readonly databaseIcon = 'database';
   protected readonly alertIcon = 'warning';
   protected readonly trashIcon = 'delete';
 
@@ -124,9 +123,7 @@ export class RuleBuilderPageComponent implements DirtyAware {
   protected readonly name = signal('');
   protected readonly description = signal('');
   protected readonly active = signal(true);
-  protected readonly servicios = signal<readonly string[]>([]);
-  protected readonly grupos = signal<readonly string[]>([]);
-  protected readonly agentes = signal<readonly string[]>([]);
+  protected readonly conditionTree = signal<ConditionTree>(emptyConditionTree());
   protected readonly direction = signal<Direction>('all');
   protected readonly filterBySchedule = signal(false);
   protected readonly scheduleFrom = signal('09:00');
@@ -148,9 +145,7 @@ export class RuleBuilderPageComponent implements DirtyAware {
       name: this.name(),
       description: this.description(),
       active: this.active(),
-      servicios: this.servicios(),
-      grupos: this.grupos(),
-      agentes: this.agentes(),
+      conditionTree: this.conditionTree(),
       direction: this.direction(),
       filterBySchedule: this.filterBySchedule(),
       scheduleFrom: this.scheduleFrom(),
@@ -171,20 +166,6 @@ export class RuleBuilderPageComponent implements DirtyAware {
    * with the shared discard dialog, like the admin forms and AED config.
    */
   readonly formDirty = computed(() => this.buildSnapshot() !== this.pristine());
-
-  /**
-   * Resumen del alcance en prosa — spec line 94. Recalcula en tiempo real.
-   */
-  protected readonly scopeSummary = computed(() => {
-    const services = this.servicios();
-    const groups = this.grupos();
-    const agents = this.agentes();
-    const parts: string[] = [];
-    parts.push(this.formatDimension(services, 'servicio', 'servicios'));
-    parts.push(this.formatDimension(groups, 'grupo', 'grupos'));
-    parts.push(this.formatDimension(agents, 'agente', 'agentes'));
-    return `Esta regla aplica a conversaciones ${parts.join(' Y ')}.`;
-  });
 
   constructor() {
     effect(() => {
@@ -220,9 +201,7 @@ export class RuleBuilderPageComponent implements DirtyAware {
     this.name.set(rule.name);
     this.description.set(rule.description ?? '');
     this.active.set(rule.active);
-    this.servicios.set(rule.servicios);
-    this.grupos.set(rule.grupos);
-    this.agentes.set(rule.agentes);
+    this.conditionTree.set(rule.conditionTree ?? deriveTreeFromLegacy(rule));
     this.direction.set(rule.direction ?? 'all');
     this.filterBySchedule.set(rule.schedule?.enabled ?? false);
     this.scheduleFrom.set(rule.schedule?.from ?? '09:00');
@@ -243,21 +222,19 @@ export class RuleBuilderPageComponent implements DirtyAware {
     this.pristine.set(untracked(() => this.buildSnapshot()));
   }
 
-  private formatDimension(values: readonly string[], singular: string, plural: string): string {
-    if (values.length === 0) return `de cualquier ${singular}`;
-    if (values.length === 1) return `del ${singular} ${values[0]}`;
-    return `de ${values.length} ${plural} (${values.slice(0, 2).join(', ')}${values.length > 2 ? '…' : ''})`;
-  }
-
   protected onSave(): void {
     if (!this.canSave()) return;
+    // El árbol es la fuente de verdad del alcance; derivamos los campos planos
+    // para que listado y detección de conflictos sigan funcionando sin cambios.
+    const scope = deriveLegacyScope(this.conditionTree());
     const base: Omit<Rule, 'id' | 'lastModified' | 'priority'> = {
       type: this.ruleType(),
       name: this.name().trim(),
       description: this.description().trim() || undefined,
-      servicios: this.servicios(),
-      grupos: this.grupos(),
-      agentes: this.agentes(),
+      servicios: scope.servicios,
+      grupos: scope.grupos,
+      agentes: scope.agentes,
+      conditionTree: this.conditionTree(),
       recording: this.ruleType() === 'recording',
       transcripcion: this.ruleType() === 'transcription',
       clasificacion: this.ruleType() === 'classification',
@@ -326,18 +303,6 @@ export class RuleBuilderPageComponent implements DirtyAware {
 
   protected setDescription(v: string): void {
     this.description.set(v);
-  }
-
-  protected setServicios(v: unknown[] | readonly string[]): void {
-    this.servicios.set((v ?? []) as readonly string[]);
-  }
-
-  protected setGrupos(v: unknown[] | readonly string[]): void {
-    this.grupos.set((v ?? []) as readonly string[]);
-  }
-
-  protected setAgentes(v: unknown[] | readonly string[]): void {
-    this.agentes.set((v ?? []) as readonly string[]);
   }
 
   protected setAttendedBy(v: unknown[] | readonly string[]): void {

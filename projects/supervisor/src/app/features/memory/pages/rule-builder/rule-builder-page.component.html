@@ -97,114 +97,15 @@
       </div>
     </section>
 
-    <!-- Bloque 2: Alcance (3 dimensiones AND) -->
+    <!-- Bloque 2: Alcance — constructor de condiciones (Variante B: match
+         all/any · AND/OR · grupos). Reemplaza las 3 dimensiones rígidas. -->
     <section class="rule-block">
       <header class="rule-block__head">
         <h2>{{ 'memory.rules.builder.scope' | translate }}</h2>
-        <p class="rule-block__desc">{{ 'memory.rules.builder.scope_desc' | translate }}</p>
       </header>
+      <p class="rule-block__desc">{{ 'memory.rules.builder.scope_desc' | translate }}</p>
 
-      <div class="scope-dim">
-        <header class="scope-dim__head">
-          <div>
-            <h3>{{ 'memory.rules.builder.scope_dim.servicios.title' | translate }}</h3>
-            <p class="scope-dim__source">
-              <sc-icon [name]="databaseIcon" [size]="11" />
-              {{ 'memory.rules.builder.scope_dim.servicios.source' | translate }}
-            </p>
-          </div>
-          <a
-            class="scope-dim__link"
-            routerLink="/admin/repositorios"
-            target="_blank"
-            rel="noopener"
-          >
-            <sc-icon [name]="externalIcon" size="inherit" />
-            {{ 'memory.rules.builder.see_repository' | translate }}
-          </a>
-        </header>
-        <sc-multiselect
-          [options]="serviceOptions"
-          optionLabel="label"
-          optionValue="value"
-          [placeholder]="'memory.rules.builder.scope_dim.servicios.placeholder' | translate"
-          [filter]="true"
-          [value]="[...servicios()]"
-          (valueChange)="setServicios($event)"
-        />
-      </div>
-
-      <div class="scope-and-connector" aria-hidden="true">
-        <span>{{ 'memory.rules.builder.scope_and' | translate }}</span>
-      </div>
-
-      <div class="scope-dim">
-        <header class="scope-dim__head">
-          <div>
-            <h3>{{ 'memory.rules.builder.scope_dim.grupos.title' | translate }}</h3>
-            <p class="scope-dim__source">
-              <sc-icon [name]="databaseIcon" [size]="11" />
-              {{ 'memory.rules.builder.scope_dim.grupos.source' | translate }}
-            </p>
-          </div>
-          <a
-            class="scope-dim__link"
-            routerLink="/admin/repositorios"
-            target="_blank"
-            rel="noopener"
-          >
-            <sc-icon [name]="externalIcon" size="inherit" />
-            {{ 'memory.rules.builder.see_repository' | translate }}
-          </a>
-        </header>
-        <sc-multiselect
-          [options]="groupOptions"
-          optionLabel="label"
-          optionValue="value"
-          [placeholder]="'memory.rules.builder.scope_dim.grupos.placeholder' | translate"
-          [filter]="true"
-          [value]="[...grupos()]"
-          (valueChange)="setGrupos($event)"
-        />
-      </div>
-
-      <div class="scope-and-connector" aria-hidden="true">
-        <span>{{ 'memory.rules.builder.scope_and' | translate }}</span>
-      </div>
-
-      <div class="scope-dim">
-        <header class="scope-dim__head">
-          <div>
-            <h3>{{ 'memory.rules.builder.scope_dim.agentes.title' | translate }}</h3>
-            <p class="scope-dim__source">
-              <sc-icon [name]="databaseIcon" [size]="11" />
-              {{ 'memory.rules.builder.scope_dim.agentes.source' | translate }}
-            </p>
-          </div>
-          <a
-            class="scope-dim__link"
-            routerLink="/admin/repositorios"
-            target="_blank"
-            rel="noopener"
-          >
-            <sc-icon [name]="externalIcon" size="inherit" />
-            {{ 'memory.rules.builder.see_repository' | translate }}
-          </a>
-        </header>
-        <sc-multiselect
-          [options]="agentOptions"
-          optionLabel="label"
-          optionValue="value"
-          [placeholder]="'memory.rules.builder.scope_dim.agentes.placeholder' | translate"
-          [filter]="true"
-          [value]="[...agentes()]"
-          (valueChange)="setAgentes($event)"
-        />
-      </div>
-
-      <div class="scope-summary">
-        {{ scopeSummary() }}
-      </div>
+      <sc-rule-condition-builder [(value)]="conditionTree" />
     </section>
 
     <!-- Bloque 3: Grabación (tipo Recording + Classification también lleva
