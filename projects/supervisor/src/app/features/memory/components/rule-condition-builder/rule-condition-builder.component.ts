@@ -5,6 +5,7 @@ import { FormsModule } from '@angular/forms';
 import { IconComponent } from '@shared/components';
 import { ScSelectComponent as SelectComponent } from '@smartcontact-hub/components';
 
+import { conversationMatchesTree, hasUnevaluableConditions } from '../../data/condition-eval';
 import { ConditionResolverService } from '../../data/condition-resolver.service';
 import {
   type Condition,
@@ -25,6 +26,7 @@ import {
   operatorLabel,
   operatorsForKind,
 } from '../../data/condition.types';
+import { ConversationsStore } from '../../state/conversations.store';
 import { RuleConditionValuePickerComponent } from '../rule-condition-value-picker/rule-condition-value-picker.component';
 
 /**
@@ -51,6 +53,7 @@ export class RuleConditionBuilderComponent {
   readonly value = model.required<ConditionTree>();
 
   private readonly resolver = inject(ConditionResolverService);
+  private readonly conversations = inject(ConversationsStore);
 
   protected readonly fieldOptions = CONDITION_FIELDS.map((f) => ({
     value: f.id,
@@ -71,6 +74,19 @@ export class RuleConditionBuilderComponent {
   protected readonly summary = computed(() =>
     describeConditionTree(this.value(), (ref) => this.resolver.label(ref)),
   );
+
+  /** Preview de impacto: conversaciones del mock que casan con el árbol (en vivo;
+   *  resuelve membresía de grupos al vuelo). Servicio/dirección/duración exactos;
+   *  grupo/agente vía puente demo; tipificación/categoría no se evalúan aquí. */
+  protected readonly impactTotal = computed(() => this.conversations.conversations().length);
+  protected readonly impactCount = computed(() => {
+    const tree = this.value();
+    const ctx = { memberAgentIds: (id: number) => this.resolver.memberAgentIds(id) };
+    return this.conversations
+      .conversations()
+      .filter((c) => conversationMatchesTree(c, tree, ctx)).length;
+  });
+  protected readonly hasUnevaluable = computed(() => hasUnevaluableConditions(this.value()));
 
   protected fieldDef = fieldDefById;
 

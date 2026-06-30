@@ -353,7 +353,8 @@ function describeCondition(cond: Condition, labelFor: (ref: ConditionRef) => str
   }
   const verb = cond.operator === 'is' ? 'es' : 'no es';
   if (v.refs.length === 0) return `${def.noun} ${verb} …`;
-  const labels = v.refs.map(labelFor);
+  // `agentGroup` = el agente es MIEMBRO del grupo (no "es el grupo").
+  const labels = v.refs.map((r) => (r.kind === 'agentGroup' ? `miembro de ${labelFor(r)}` : labelFor(r)));
   if (labels.length === 1) return `${def.noun} ${verb} ${labels[0]}`;
   const link = cond.operator === 'is' ? ' o ' : ' ni ';
   return `${def.noun} ${verb} ${labels.slice(0, -1).join(', ')}${link}${labels[labels.length - 1]}`;
