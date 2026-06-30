@@ -103,21 +103,50 @@
     }
   }
 
-  &__body {
+  /* Zona central: el formulario (scrollea con la página) + el aside fijo de impacto. */
+  &__main {
     flex: 1;
-    overflow-y: auto;
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    gap: var(--sc-spacing-2);
     padding: var(--sc-spacing-1-75);
+  }
+
+  &__body {
+    flex: 1 1 760px;
+    min-width: 0;
+    max-width: 760px;
     display: flex;
     flex-direction: column;
     gap: var(--sc-spacing-1-75);
-    max-width: 760px;
-    margin: 0 auto;
-    width: 100%;
   }
 
-  /* Dock inferior STICKY: barra de impacto siempre visible + acciones. La
-   * "Estimación de procesado" vive aquí (no en el builder) porque `sticky` solo
-   * funciona a nivel de página — junto a la acción, decides viendo el impacto. */
+  /* Impacto SIEMPRE visible a la derecha: sticky al scroll de página, junto al
+   * formulario (ya no en el dock). align-self para que pueda pegarse. */
+  &__aside {
+    position: sticky;
+    top: var(--sc-spacing-1-75);
+    align-self: flex-start;
+    flex: none;
+    width: clamp(15rem, 22vw, 20rem);
+  }
+
+  /* En estrecho, el panel pasa arriba (sticky) y el formulario debajo. */
+  @media (max-width: 60rem) {
+    &__main {
+      flex-direction: column;
+      align-items: stretch;
+    }
+    &__aside {
+      width: auto;
+      order: -1;
+      top: 0;
+    }
+  }
+
+  /* Dock inferior STICKY: solo las acciones (cancelar / guardar) + la guía de
+   * errores. La estimación de impacto vive en el aside derecho (sticky). */
   &__dock {
     position: sticky;
     bottom: 0;
@@ -138,32 +167,43 @@
     padding: var(--sc-spacing-1) var(--sc-spacing-1-75) var(--sc-spacing-1-25);
   }
 
-  /* Barra de impacto compacta (horizontal) encima de las acciones. */
+  /* Panel de impacto (vertical) en el aside derecho. */
   &__impact {
     display: flex;
-    align-items: center;
-    flex-wrap: wrap;
-    gap: var(--sc-spacing-0-5);
-    padding: var(--sc-spacing-0-75) var(--sc-spacing-1-75);
+    flex-direction: column;
+    gap: var(--sc-spacing-0-625);
+    padding: var(--sc-spacing-1-25);
+    background: var(--sc-bg-subtle);
+    border: 1px solid var(--sc-border-default);
+    border-radius: var(--sc-radius-lg);
     font-size: var(--sc-font-size-100);
     color: var(--sc-text-secondary);
-    border-bottom: 1px solid var(--sc-border-default);
   }
 
-  &__impact-ic {
-    flex-shrink: 0;
-    color: var(--sc-color-sky-500);
+  &__impact-label {
+    display: flex;
+    align-items: center;
+    gap: var(--sc-spacing-0-375);
+    margin: 0;
+    font-size: var(--sc-font-size-50);
+    font-weight: 600;
+    letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--sc-text-secondary);
+
+    sc-icon {
+      color: var(--sc-color-sky-500);
+    }
   }
 
   &__impact-main {
+    margin: 0;
     color: var(--sc-text-primary);
     font-weight: 500;
   }
 
   &__impact-bar {
-    flex: 1;
-    min-width: 80px;
-    max-width: 220px;
+    width: 100%;
     height: 6px;
     border-radius: var(--sc-radius-full);
     background: var(--sc-color-slate-100, var(--sc-color-slate-50));
@@ -180,19 +220,22 @@
   }
 
   &__impact-proj {
+    margin: 0;
     color: var(--sc-text-secondary);
   }
 
   &__impact-note {
+    margin: 0;
     font-size: var(--sc-font-size-50);
     font-style: italic;
     color: var(--sc-text-secondary);
   }
 
   &__impact-empty {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--sc-spacing-0-25);
+    display: flex;
+    align-items: flex-start;
+    gap: var(--sc-spacing-0-375);
+    margin: 0;
     color: var(--sc-text-warning);
 
     sc-icon {

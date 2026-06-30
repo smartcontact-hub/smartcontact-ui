@@ -425,6 +425,7 @@
           "group_n": "Grupo {{n}}",
           "match_conditions_aria": "Cómo se combinan las condiciones",
           "match_groups_aria": "Cómo se combinan los grupos",
+          "impact_title": "Impacto estimado",
           "impact": "Afectaría a {{count}} de las últimas {{total}} conversaciones.",
           "impact_note": "tipificación y categoría se evalúan en backend",
           "est_projection": "≈ {{day}} al día · ≈ {{month}} al mes, a este ritmo.",

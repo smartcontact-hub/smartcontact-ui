@@ -34,7 +34,8 @@
     </div>
   </header>
 
-  <div class="rule-builder__body">
+  <div class="rule-builder__main">
+    <div class="rule-builder__body">
     <!-- Bloque 1: Metadatos -->
     <section class="rule-block">
       <header class="rule-block__head">
@@ -178,36 +179,42 @@
     }
   </div>
 
-  <div class="rule-builder__dock">
-    <div class="rule-builder__impact" aria-live="polite">
-      @if (showEmptyImpact()) {
-        <span class="rule-builder__impact-empty">
-          <sc-icon name="warning" [size]="14" aria-hidden="true" />
-          {{ 'memory.rules.builder.cond.val.impact_zero' | translate: { total: impactTotal() } }}
-        </span>
-      } @else {
-        <sc-icon class="rule-builder__impact-ic" name="leaderboard" [size]="14" aria-hidden="true" />
-        <span class="rule-builder__impact-main">
-          {{ 'memory.rules.builder.cond.impact' | translate: { count: impactCount(), total: impactTotal() } }}
-        </span>
-        @if (hasUnevaluable()) {
-          <span class="rule-builder__impact-note">
-            {{ 'memory.rules.builder.cond.impact_note' | translate }}
-          </span>
+    <aside class="rule-builder__aside">
+      <div class="rule-builder__impact" aria-live="polite">
+        <p class="rule-builder__impact-label">
+          <sc-icon name="leaderboard" [size]="14" aria-hidden="true" />
+          {{ 'memory.rules.builder.cond.impact_title' | translate }}
+        </p>
+        @if (showEmptyImpact()) {
+          <p class="rule-builder__impact-empty">
+            <sc-icon name="warning" [size]="14" aria-hidden="true" />
+            {{ 'memory.rules.builder.cond.val.impact_zero' | translate: { total: impactTotal() } }}
+          </p>
         } @else {
-          <div class="rule-builder__impact-bar" aria-hidden="true">
-            <span class="rule-builder__impact-bar-fill" [style.width.%]="impactPct()"></span>
-          </div>
-          <span class="rule-builder__impact-proj">
-            {{
-              'memory.rules.builder.cond.est_projection'
-                | translate: { day: fmt(estimate().perDay), month: fmt(estimate().perMonth) }
-            }}
-          </span>
+          <p class="rule-builder__impact-main">
+            {{ 'memory.rules.builder.cond.impact' | translate: { count: impactCount(), total: impactTotal() } }}
+          </p>
+          @if (hasUnevaluable()) {
+            <p class="rule-builder__impact-note">
+              {{ 'memory.rules.builder.cond.impact_note' | translate }}
+            </p>
+          } @else {
+            <div class="rule-builder__impact-bar" aria-hidden="true">
+              <span class="rule-builder__impact-bar-fill" [style.width.%]="impactPct()"></span>
+            </div>
+            <p class="rule-builder__impact-proj">
+              {{
+                'memory.rules.builder.cond.est_projection'
+                  | translate: { day: fmt(estimate().perDay), month: fmt(estimate().perMonth) }
+              }}
+            </p>
+          }
         }
-      }
-    </div>
+      </div>
+    </aside>
+  </div>
 
+  <div class="rule-builder__dock">
     <footer class="rule-builder__foot">
       @if (submitted() && condBlocking()) {
         <p class="rule-builder__save-blocked">
