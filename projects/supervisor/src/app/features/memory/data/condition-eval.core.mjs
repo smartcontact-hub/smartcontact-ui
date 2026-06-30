@@ -93,3 +93,15 @@ export function hasUnevaluableConditions(tree) {
     g.conditions.some((c) => c.field === 'tipificacion' || c.field === 'categoria'),
   );
 }
+
+/**
+ * Proyecta el ratio de impacto REAL (count/total sobre el mock) a un volumen
+ * día/mes. `perDayBase` es un volumen diario típico (constante demo inyectada):
+ * solo ESE dato es supuesto, el ratio es real → la cifra es una ESTIMACIÓN, no un
+ * dato medido. `total<=0` → ceros (sin conversaciones evaluables).
+ */
+export function projectImpact(count, total, perDayBase) {
+  if (!total || total <= 0) return { perDay: 0, perMonth: 0 };
+  const perDay = Math.round((count / total) * perDayBase);
+  return { perDay, perMonth: perDay * 30 };
+}

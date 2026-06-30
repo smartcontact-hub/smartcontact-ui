@@ -12,9 +12,10 @@ import type { ConditionTree } from './condition.types';
 import {
   conversationMatchesTree as coreMatch,
   hasUnevaluableConditions as coreUnevaluable,
+  projectImpact as coreProject,
 } from './condition-eval.core.mjs';
 import type { Conversation } from './conversation.types';
-import { agentConvName, groupConvName } from './demo-impact-bridge';
+import { agentConvName, CONVERSATIONS_PER_DAY, groupConvName } from './demo-impact-bridge';
 
 export interface EvalCtx {
   /** IDs de agentes miembros (vivos) de un grupo — del ConditionResolverService. */
@@ -31,4 +32,9 @@ export function conversationMatchesTree(
 
 export function hasUnevaluableConditions(tree: ConditionTree): boolean {
   return coreUnevaluable(tree);
+}
+
+/** Estimación día/mes desde el ratio real, con el volumen base demo ya inyectado. */
+export function projectImpact(count: number, total: number): { perDay: number; perMonth: number } {
+  return coreProject(count, total, CONVERSATIONS_PER_DAY);
 }

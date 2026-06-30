@@ -1,5 +1,13 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { ChangeDetectionStrategy, Component, computed, inject, input, model } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  input,
+  model,
+  signal,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { TranslateModule } from '@ngx-translate/core';
@@ -7,9 +15,18 @@ import { TranslateModule } from '@ngx-translate/core';
 import { IconComponent } from '@shared/components';
 import { ScSelectComponent as SelectComponent } from '@smartcontact-hub/components';
 
-import { conversationMatchesTree, hasUnevaluableConditions } from '../../data/condition-eval';
+import {
+  conversationMatchesTree,
+  hasUnevaluableConditions,
+  projectImpact,
+} from '../../data/condition-eval';
 import { ConditionResolverService } from '../../data/condition-resolver.service';
 import { validateConditionTree } from '../../data/condition-validate';
+import {
+  DURATION_PRESETS,
+  durationPresetBySecs,
+  matchDurationPreset,
+} from '../../data/duration-presets.core.mjs';
 import {
   type Condition,
   CONDITION_FIELDS,
@@ -76,6 +93,14 @@ export class RuleConditionBuilderComponent {
     { value: 'minutes', label: 'minutos' },
   ];
 
+  /** Presets de duración (idea PPT) + escape "Personalizado…" (value -1). */
+  protected readonly durationPresetOptions = [
+    ...DURATION_PRESETS.map((p) => ({ value: p.secs, label: p.label })),
+    { value: -1, label: 'Personalizado…' },
+  ];
+  /** Condiciones de duración con input libre (en vez del desplegable de presets). */
+  private readonly customDur = signal(new Set<string>());
+
   protected readonly addIcon = 'add';
   protected readonly closeIcon = 'close';
   protected readonly summaryIcon = 'rule';
@@ -96,6 +121,11 @@ export class RuleConditionBuilderComponent {
       .filter((c) => conversationMatchesTree(c, tree, ctx)).length;
   });
   protected readonly hasUnevaluable = computed(() => hasUnevaluableConditions(this.value()));
+
+  /** Proyección día/mes desde el ratio real (estimación; volumen base = demo). */
+  protected readonly estimate = computed(() =>
+    projectImpact(this.impactCount(), this.impactTotal()),
+  );
 
   /* ── Validación / guía de errores (lógica pura; ver condition-validate) ── */
   private readonly issues = computed(() => validateConditionTree(this.value()));
@@ -160,6 +190,37 @@ export class RuleConditionBuilderComponent {
   }
   protected numUnit(cond: Condition): DurationUnit {
     return cond.value.mode === 'number' ? cond.value.unit : 'seconds';
+  }
+
+  /* ── Presets de duración (gt/lt) ── */
+  protected isCustomDur(cond: Condition): boolean {
+    if (this.customDur().has(cond.id)) return true;
+    if (cond.value.mode !== 'number') return false;
+    return matchDurationPreset(cond.value.amount, cond.value.unit) === null;
+  }
+  protected durationPresetValue(cond: Condition): number {
+    if (this.customDur().has(cond.id)) return -1;
+    if (cond.value.mode !== 'number') return 30;
+    return matchDurationPreset(cond.value.amount, cond.value.unit)?.secs ?? -1;
+  }
+  protected setDurationPreset(groupId: string, condId: string, value: unknown): void {
+    const secs = Number(value);
+    if (secs === -1) {
+      this.customDur.update((s) => new Set(s).add(condId));
+      return;
+    }
+    this.customDur.update((s) => {
+      const next = new Set(s);
+      next.delete(condId);
+      return next;
+    });
+    const preset = durationPresetBySecs(secs);
+    if (!preset) return;
+    this.patchCondition(groupId, condId, (c) =>
+      c.value.mode === 'number'
+        ? { ...c, value: { ...c.value, amount: preset.amount, unit: preset.unit } }
+        : c,
+    );
   }
 
   protected trackGroup = (_: number, g: ConditionGroup) => g.id;

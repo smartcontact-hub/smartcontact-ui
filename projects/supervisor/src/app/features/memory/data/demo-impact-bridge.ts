@@ -16,6 +16,14 @@
  */
 import { GROUPS_SEED } from '../../admin/groups/data/groups-data';
 
+/**
+ * 🎭 DEMO-ONLY — volumen diario típico para proyectar la "Estimación de procesado"
+ * a día/mes. El ratio de impacto es REAL (sobre el mock); este volumen base es el
+ * ÚNICO supuesto → por eso la cifra se rotula como estimación, no como dato. En
+ * producción saldría del histórico real de la cuenta.
+ */
+export const CONVERSATIONS_PER_DAY = 420;
+
 const groupRealName = new Map<number, string>(GROUPS_SEED.map((g) => [g.id, g.name]));
 
 /** Nombre del grupo tal y como aparece en `conversation.group` (nombre real admin). */

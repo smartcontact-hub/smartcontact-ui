@@ -19,3 +19,8 @@ export function conversationMatchesTree(
   ctx: CoreCtx,
 ): boolean;
 export function hasUnevaluableConditions(tree: ConditionTree): boolean;
+export function projectImpact(
+  count: number,
+  total: number,
+  perDayBase: number,
+): { perDay: number; perMonth: number };
