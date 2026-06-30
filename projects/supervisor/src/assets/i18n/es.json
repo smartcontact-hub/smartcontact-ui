@@ -365,7 +365,7 @@
         "description_label": "Descripción",
         "description_placeholder": "Documenta el propósito de esta regla para tu equipo…",
         "scope": "Alcance",
-        "scope_desc": "Define a qué conversaciones aplica la regla combinando condiciones con Y / O y grupos. Sin condiciones, aplica a todas.",
+        "scope_desc": "Elige a qué conversaciones llega esta regla. Combina condiciones con Y u O, y agrúpalas si necesitas mezclar. Sin condiciones, llega a todas.",
         "see_repository": "Ver repositorio",
         "scope_and": "Y",
         "scope_dim": {
@@ -408,7 +408,7 @@
         "attended_by_hint": "De entre las conversaciones del alcance, transcribir solo las atendidas por…",
         "attended_by_placeholder": "Cualquier agente o grupo",
         "ai_analysis": "Análisis IA",
-        "ai_analysis_desc": "Genera resumen y análisis de sentimiento de cada conversación transcrita.",
+        "ai_analysis_desc": "Resumen y análisis de sentimiento automáticos en cada conversación transcrita.",
         "ai_chip_summary": "Resumen automático",
         "ai_chip_sentiment": "Análisis de sentimiento",
         "ai_chip_categories": "Categorías IA",

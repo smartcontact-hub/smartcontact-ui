@@ -35,8 +35,31 @@ export const MOCK_RULES: readonly Rule[] = [
     name: 'Transcribir Ventas Comercial >60s',
     description: 'Solo conversaciones de ventas con duración relevante.',
     servicios: ['Ventas Comercial'],
-    grupos: ['ACD outbound', 'Campaigns'],
+    grupos: [],
     agentes: [],
+    conditionTree: {
+      match: 'all',
+      groups: [
+        {
+          id: 'g-r2',
+          match: 'all',
+          conditions: [
+            {
+              id: 'c-r2-1',
+              field: 'servicio',
+              operator: 'is',
+              value: { mode: 'refs', refs: [{ kind: 'service', name: 'Ventas Comercial' }] },
+            },
+            {
+              id: 'c-r2-2',
+              field: 'duracion',
+              operator: 'gt',
+              value: { mode: 'number', amount: 60, unit: 'seconds' },
+            },
+          ],
+        },
+      ],
+    },
     recording: true,
     transcripcion: true,
     clasificacion: false,
@@ -50,8 +73,31 @@ export const MOCK_RULES: readonly Rule[] = [
     name: 'Clasificar VIP con IA',
     description: 'Análisis completo (resumen + sentimiento + categorías) para clientes VIP.',
     servicios: ['Postventa'],
-    grupos: ['Clientes vip'],
-    agentes: ['María García', 'Luis Sánchez'],
+    grupos: [],
+    agentes: [],
+    conditionTree: {
+      match: 'all',
+      groups: [
+        {
+          id: 'g-r3',
+          match: 'all',
+          conditions: [
+            {
+              id: 'c-r3-1',
+              field: 'servicio',
+              operator: 'is',
+              value: { mode: 'refs', refs: [{ kind: 'service', name: 'Postventa' }] },
+            },
+            {
+              id: 'c-r3-2',
+              field: 'agente',
+              operator: 'is',
+              value: { mode: 'refs', refs: [{ kind: 'agentGroup', id: 5 }] },
+            },
+          ],
+        },
+      ],
+    },
     recording: true,
     transcripcion: true,
     clasificacion: true,
