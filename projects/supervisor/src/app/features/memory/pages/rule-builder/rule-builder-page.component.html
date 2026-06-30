@@ -175,24 +175,55 @@
     }
   </div>
 
-  <footer class="rule-builder__foot">
-    @if (submitted() && condBlocking()) {
-      <p class="rule-builder__save-blocked">
-        <sc-icon name="error" [size]="14" />
-        {{ 'memory.rules.builder.cond.val.blocked' | translate }}
-      </p>
-    }
-    <p-button type="button" size="small" severity="secondary" (onClick)="onCancel()">
-      <span>{{ 'common.cancel' | translate }}</span>
-    </p-button>
-    <p-button type="button" size="small" severity="primary" (onClick)="onSave()">
-      <span>
-        @if (isEditMode()) {
-          {{ 'memory.rules.builder.save_changes' | translate }}
+  <div class="rule-builder__dock">
+    <div class="rule-builder__impact" aria-live="polite">
+      @if (showEmptyImpact()) {
+        <span class="rule-builder__impact-empty">
+          <sc-icon name="warning" [size]="14" aria-hidden="true" />
+          {{ 'memory.rules.builder.cond.val.impact_zero' | translate: { total: impactTotal() } }}
+        </span>
+      } @else {
+        <sc-icon class="rule-builder__impact-ic" name="leaderboard" [size]="14" aria-hidden="true" />
+        <span class="rule-builder__impact-main">
+          {{ 'memory.rules.builder.cond.impact' | translate: { count: impactCount(), total: impactTotal() } }}
+        </span>
+        @if (hasUnevaluable()) {
+          <span class="rule-builder__impact-note">
+            {{ 'memory.rules.builder.cond.impact_note' | translate }}
+          </span>
         } @else {
-          {{ 'memory.rules.builder.create_rule' | translate }}
+          <div class="rule-builder__impact-bar" aria-hidden="true">
+            <span class="rule-builder__impact-bar-fill" [style.width.%]="impactPct()"></span>
+          </div>
+          <span class="rule-builder__impact-proj">
+            {{
+              'memory.rules.builder.cond.est_projection'
+                | translate: { day: fmt(estimate().perDay), month: fmt(estimate().perMonth) }
+            }}
+          </span>
         }
-      </span>
-    </p-button>
-  </footer>
+      }
+    </div>
+
+    <footer class="rule-builder__foot">
+      @if (submitted() && condBlocking()) {
+        <p class="rule-builder__save-blocked">
+          <sc-icon name="error" [size]="14" />
+          {{ 'memory.rules.builder.cond.val.blocked' | translate }}
+        </p>
+      }
+      <p-button type="button" size="small" severity="secondary" (onClick)="onCancel()">
+        <span>{{ 'common.cancel' | translate }}</span>
+      </p-button>
+      <p-button type="button" size="small" severity="primary" (onClick)="onSave()">
+        <span>
+          @if (isEditMode()) {
+            {{ 'memory.rules.builder.save_changes' | translate }}
+          } @else {
+            {{ 'memory.rules.builder.create_rule' | translate }}
+          }
+        </span>
+      </p-button>
+    </footer>
+  </div>
 </div>
