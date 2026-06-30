@@ -124,8 +124,13 @@ export class RuleBuilderPageComponent implements DirtyAware {
   /** Errores objetivos del árbol (condición incompleta / rango inválido) —
    *  bloquean guardar. Duplicados y contradicciones son `warning`: avisan en el
    *  builder pero NO bloquean (pueden ser intencionales). */
+  private readonly conditionIssues = computed(() => validateConditionTree(this.conditionTree()));
   protected readonly condBlocking = computed(() =>
-    validateConditionTree(this.conditionTree()).some((i) => i.severity === 'error'),
+    this.conditionIssues().some((i) => i.severity === 'error'),
+  );
+  /** Condiciones sin terminar (campo vacío) — guía proactiva sutil, sin acusar. */
+  protected readonly unfinishedCount = computed(
+    () => this.conditionIssues().filter((i) => i.code === 'incomplete').length,
   );
   protected readonly canSave = computed(() => !this.nameInvalid() && !this.condBlocking());
 
