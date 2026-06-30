@@ -157,7 +157,7 @@
   @if (showEmptyImpact()) {
     <p class="cond-builder__empty-impact">
       <sc-icon name="warning" [size]="13" />
-      {{ 'memory.rules.builder.cond.val.impact_zero' | translate }}
+      {{ 'memory.rules.builder.cond.val.impact_zero' | translate: { total: impactTotal() } }}
     </p>
   }
 </div>
