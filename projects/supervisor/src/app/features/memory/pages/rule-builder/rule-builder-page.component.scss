@@ -39,6 +39,11 @@
       outline: 2px solid var(--sc-color-sky-500);
       outline-offset: 2px;
     }
+
+    /* Motion sutil: push al pulsar. */
+    &:active {
+      transform: translateY(1px);
+    }
   }
 
   &__headline {
@@ -146,15 +151,20 @@
     padding: var(--sc-spacing-1) var(--sc-spacing-1-75) var(--sc-spacing-1-25);
   }
 
-  /* Panel de impacto (vertical) en el aside derecho. */
+  /* Panel de impacto (vertical) en el aside derecho. Es el ÚNICO elemento elevado
+   * de la página: el formulario va des-encajonado (plano) y la sombra señala que
+   * este panel está "vivo" (se recalcula con cada condición). */
   &__impact {
     display: flex;
     flex-direction: column;
     gap: var(--sc-spacing-0-625);
     padding: var(--sc-spacing-1-25);
-    background: var(--sc-bg-subtle);
+    background: var(--sc-bg-surface);
     border: 1px solid var(--sc-border-default);
     border-radius: var(--sc-radius-lg);
+    box-shadow:
+      0 1px 2px rgb(var(--sc-shadow-color-rgb) / 0.04),
+      0 12px 28px -12px rgb(var(--sc-shadow-color-rgb) / 0.12);
     font-size: var(--sc-font-size-100);
     color: var(--sc-text-secondary);
   }
@@ -333,31 +343,6 @@
     }
   }
 
-  &__ai-head {
-    display: flex;
-    align-items: flex-start;
-    gap: var(--sc-spacing-0-875);
-
-    h2 {
-      margin: 0;
-      font-size: var(--sc-font-size-300);
-      font-weight: 600;
-      color: var(--sc-text-primary);
-    }
-  }
-
-  &__ai-badge {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 32px;
-    height: 32px;
-    border-radius: var(--sc-radius-200);
-    background: var(--sc-color-teal-100);
-    color: var(--sc-color-teal-600);
-    flex-shrink: 0;
-  }
-
   /* Reveal del contenido AI: grid-template-rows 0fr→1fr expande suave (sin pop). */
   &__ai-reveal {
     display: grid;
@@ -383,7 +368,6 @@
     flex-wrap: wrap;
     gap: var(--sc-spacing-0-5);
     margin-top: var(--sc-spacing-0-875);
-    padding-left: 48px;
   }
 
   &__ai-chip {
@@ -400,7 +384,6 @@
   /* S49 §10 #13 — Selector Categorías IA (solo type=classification) */
   &__ai-categories {
     margin-top: var(--sc-spacing-1-125);
-    padding-left: 48px;
     display: flex;
     flex-direction: column;
     gap: var(--sc-spacing-0-5);
@@ -472,34 +455,77 @@
   }
 }
 
+/* ─── Secciones DES-ENCAJONADAS ───
+ * Antes: 3 tarjetas blancas anidadas sobre slate-50 (pesadas, "formulario 2018").
+ * Ahora: una sola hoja aireada; las secciones se separan por un hairline + aire,
+ * con un índice editorial (eyebrow) sobre el título semibold. Jerarquía por
+ * peso/color, no por caja. La elevación se reserva al panel de impacto sticky. */
 .rule-block {
-  background: var(--sc-bg-surface);
-  border: 1px solid var(--sc-border-default);
-  border-radius: var(--sc-radius-300);
-  padding: var(--sc-spacing-1-5);
   display: flex;
   flex-direction: column;
   gap: var(--sc-spacing-1-125);
+  padding: var(--sc-spacing-1-75) 0;
+
+  &:first-child {
+    padding-top: var(--sc-spacing-0-5);
+  }
+
+  /* Separador entre secciones: hairline en el aire, no marco de tarjeta. */
+  & + & {
+    border-top: 1px solid var(--sc-border-default);
+  }
 
   &__head {
-    h2 {
-      display: inline-flex;
-      align-items: center;
-      gap: var(--sc-spacing-0-875);
-      margin: 0;
-      font-size: var(--sc-font-size-300);
-      font-weight: 600;
-      color: var(--sc-text-primary);
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--sc-spacing-1-125);
+  }
 
-      sc-icon {
-        color: var(--sc-text-secondary);
-      }
+  /* Eyebrow (índice) apilado sobre el título. */
+  &__heading {
+    flex: 1 1 auto;
+    display: flex;
+    flex-direction: column;
+    gap: var(--sc-spacing-0-125);
+    min-width: 0;
+  }
+
+  &__eyebrow {
+    font-size: var(--sc-font-size-50);
+    font-weight: var(--sc-font-weight-bold);
+    letter-spacing: 0.12em;
+    font-variant-numeric: tabular-nums;
+    color: var(--sc-text-secondary);
+  }
+
+  &__head h2 {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sc-spacing-0-5);
+    margin: 0;
+    font-size: var(--sc-font-size-300);
+    line-height: var(--sc-line-height-300);
+    font-weight: var(--sc-font-weight-semibold);
+    color: var(--sc-text-primary);
+
+    sc-icon {
+      color: var(--sc-text-secondary);
     }
   }
 
+  /* Identidad IA: chispa teal inline en el título (sustituye al badge-caja). */
+  &__ai-spark {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--sc-color-teal-600);
+  }
+
   &__desc {
-    margin: 4px 0 0 0;
+    margin: var(--sc-spacing-0-375) 0 0 0;
     font-size: var(--sc-font-size-200);
+    line-height: 1.5;
     color: var(--sc-text-secondary);
   }
 
@@ -507,9 +533,9 @@
     display: inline-flex;
     align-items: center;
     gap: var(--sc-spacing-0-875);
+    flex-shrink: 0;
     font-size: var(--sc-font-size-200);
     color: var(--sc-text-secondary);
-    margin-left: auto;
 
     label {
       cursor: pointer;
@@ -523,108 +549,30 @@
   }
 }
 
-.rule-block__head {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: var(--sc-spacing-1-125);
-}
-
-/* ─── Bloque Alcance (3 dimensiones AND con conector "Y") ─── */
-
-.scope-dim {
-  display: flex;
-  flex-direction: column;
-  gap: var(--sc-spacing-0-875);
-  padding: var(--sc-spacing-1-125);
-  background: var(--sc-color-slate-50);
-  border-radius: var(--sc-radius-200);
-  border: 1px solid var(--sc-border-default);
-
-  &__head {
-    display: flex;
-    align-items: flex-start;
-    justify-content: space-between;
-    gap: var(--sc-spacing-0-875);
-
-    h3 {
-      margin: 0;
-      font-size: var(--sc-font-size-200);
-      font-weight: 600;
-      color: var(--sc-text-primary);
-    }
+/* Motion sutil: las secciones entran escaladas en cascada al cargar. Solo si el
+ * usuario no pidió reducir movimiento (densidad app: corto y discreto). */
+@media (prefers-reduced-motion: no-preference) {
+  .rule-block {
+    animation: rule-block-in var(--sc-transition-base) var(--sc-easing-emphasized) both;
   }
-
-  &__source {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--sc-spacing-0-25);
-    margin: 2px 0 0 0;
-    font-size: var(--sc-font-size-50);
-    color: var(--sc-text-secondary);
-
-    sc-icon {
-      color: var(--sc-text-secondary);
-    }
+  .rule-block:nth-child(1) {
+    animation-delay: 30ms;
   }
-
-  &__link {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--sc-spacing-0-25);
-    font-size: var(--sc-font-size-50);
-    color: var(--sc-text-link);
-    text-decoration: none;
-    transition: color 200ms ease-out;
-
-    &:hover {
-      text-decoration: underline;
-    }
+  .rule-block:nth-child(2) {
+    animation-delay: 90ms;
+  }
+  .rule-block:nth-child(3) {
+    animation-delay: 150ms;
   }
 }
 
-.scope-and-connector {
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  position: relative;
-  padding: var(--sc-spacing-0-5) 0;
-
-  span {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 32px;
-    height: 32px;
-    border-radius: var(--sc-radius-full);
-    background: var(--sc-bg-primary);
-    color: var(--sc-text-on-primary);
-    font-size: var(--sc-font-size-100);
-    font-weight: 700;
-    z-index: 1;
+@keyframes rule-block-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
   }
-
-  &::before {
-    content: '';
-    position: absolute;
-    left: 50%;
-    top: 0;
-    bottom: 0;
-    width: 1px;
-    background: var(--sc-border-default);
-    transform: translateX(-50%);
+  to {
+    opacity: 1;
+    transform: none;
   }
-}
-
-.scope-summary {
-  /* Guidelines.md banea `border-left: 3px+ solid color` como accent
-   * stripe. El background tint + radius son suficientes para destacar
-   * que es un resumen derivado (no contenido editable). */
-  padding: var(--sc-spacing-1-125);
-  background: var(--sc-bg-primary-subtle);
-  border: 1px solid var(--sc-bg-primary);
-  border-radius: var(--sc-radius-200);
-  font-size: var(--sc-font-size-200);
-  line-height: 1.5;
-  color: var(--sc-text-primary);
 }

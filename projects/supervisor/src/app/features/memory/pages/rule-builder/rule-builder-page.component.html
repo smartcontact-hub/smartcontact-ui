@@ -29,7 +29,10 @@
     <!-- Bloque 1: Metadatos -->
     <section class="rule-block">
       <header class="rule-block__head">
-        <h2>{{ 'memory.rules.builder.metadata' | translate }}</h2>
+        <div class="rule-block__heading">
+          <span class="rule-block__eyebrow" aria-hidden="true">01</span>
+          <h2>{{ 'memory.rules.builder.metadata' | translate }}</h2>
+        </div>
         <div class="rule-block__active-toggle">
           <sc-toggleswitch
             [inputId]="'active-toggle'"
@@ -82,9 +85,12 @@
          all/any · AND/OR · grupos). Reemplaza las 3 dimensiones rígidas. -->
     <section class="rule-block">
       <header class="rule-block__head">
-        <h2>{{ 'memory.rules.builder.scope' | translate }}</h2>
+        <div class="rule-block__heading">
+          <span class="rule-block__eyebrow" aria-hidden="true">02</span>
+          <h2>{{ 'memory.rules.builder.scope' | translate }}</h2>
+          <p class="rule-block__desc">{{ 'memory.rules.builder.scope_desc' | translate }}</p>
+        </div>
       </header>
-      <p class="rule-block__desc">{{ 'memory.rules.builder.scope_desc' | translate }}</p>
 
       <sc-rule-condition-builder [(value)]="conditionTree" [revealEmpty]="submitted()" />
     </section>
@@ -96,16 +102,17 @@
            (distinto del campo "Categoría IA" del builder, que FILTRA). -->
       <section class="rule-block rule-block--ai">
         <header class="rule-block__head">
-          <div class="rule-builder__ai-head">
-            <span class="rule-builder__ai-badge">
-              <sc-icon [name]="sparklesIcon" [size]="14" />
-            </span>
-            <div>
-              <h2>{{ 'memory.rules.builder.ai_analysis' | translate }}</h2>
-              <p class="rule-block__desc">
-                {{ 'memory.rules.builder.ai_analysis_desc' | translate }}
-              </p>
-            </div>
+          <div class="rule-block__heading">
+            <span class="rule-block__eyebrow" aria-hidden="true">03</span>
+            <h2>
+              <span class="rule-block__ai-spark" aria-hidden="true">
+                <sc-icon [name]="sparklesIcon" [size]="15" />
+              </span>
+              {{ 'memory.rules.builder.ai_analysis' | translate }}
+            </h2>
+            <p class="rule-block__desc">
+              {{ 'memory.rules.builder.ai_analysis_desc' | translate }}
+            </p>
           </div>
           <sc-toggleswitch
             [inputId]="'ai-toggle'"
