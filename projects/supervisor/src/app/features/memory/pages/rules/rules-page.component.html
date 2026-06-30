@@ -41,9 +41,6 @@
           <table class="rules-table">
             <thead>
               <tr>
-                <th class="rules-table__th-order" scope="col">
-                  {{ 'memory.rules.cols.order' | translate }}
-                </th>
                 <th scope="col">{{ 'memory.rules.cols.name' | translate }}</th>
                 <th scope="col">{{ 'memory.rules.cols.scope' | translate }}</th>
                 <th class="rules-table__th-actions" scope="col">
@@ -58,15 +55,9 @@
                 <th class="rules-table__th-kebab" scope="col" aria-label="Acciones"></th>
               </tr>
             </thead>
-            <tbody cdkDropList (cdkDropListDropped)="onActiveReorder($event)">
-              @for (rule of activeRules(); track rule.id; let i = $index) {
-                <tr cdkDrag [cdkDragData]="rule">
-                  <td class="rules-table__td-order">
-                    <span class="rules-handle" aria-label="Reordenar" cdkDragHandle>
-                      <sc-icon [name]="gripIcon" size="inherit" />
-                      <span class="rules-handle__num">{{ i + 1 }}</span>
-                    </span>
-                  </td>
+            <tbody>
+              @for (rule of activeRules(); track rule.id) {
+                <tr>
                   <td class="rules-table__td-name">
                     <a href="javascript:void(0)" class="rules-table__name">{{ rule.name }}</a>
                   </td>
@@ -75,22 +66,13 @@
                   </td>
                   <td class="rules-table__td-actions">
                     <div class="rules-actions-chips">
-                      @if (rule.recording) {
-                        <span
-                          class="rules-action-chip"
-                          [attr.title]="'memory.rules.chip.recording' | translate"
-                          [attr.aria-label]="'memory.rules.chip.recording' | translate"
-                        >
-                          <sc-icon [name]="micIcon" [size]="12" />
-                        </span>
-                      }
                       @if (rule.transcripcion) {
                         <span
                           class="rules-action-chip"
                           [attr.title]="'memory.rules.chip.transcription' | translate"
                           [attr.aria-label]="'memory.rules.chip.transcription' | translate"
                         >
-                          <sc-icon [name]="sparklesIcon" [size]="12" />
+                          <sc-icon [name]="transcriptionIcon" [size]="12" />
                         </span>
                       }
                       @if (rule.clasificacion) {
@@ -99,66 +81,15 @@
                           [attr.title]="'memory.rules.chip.classification' | translate"
                           [attr.aria-label]="'memory.rules.chip.classification' | translate"
                         >
-                          <sc-icon [name]="alertIcon" [size]="12" />
+                          <sc-icon [name]="sparklesIcon" [size]="12" />
                         </span>
                       }
                     </div>
                   </td>
                   <td class="rules-table__td-status">
-                    @if (hasConflict(rule)) {
-                      <button
-                        type="button"
-                        class="rules-status rules-status--conflict rules-status--clickable"
-                        (click)="conflictPanel.toggle($event); openConflictPopover(rule)"
-                      >
-                        {{ 'memory.rules.status.conflict' | translate }}
-                      </button>
-                      <p-popover
-                        #conflictPanel
-                        [appendTo]="'body'"
-                        styleClass="rules-conflict-popover"
-                      >
-                        <div class="conflict-popover">
-                          <h3>{{ 'memory.rules.conflict.title' | translate }}</h3>
-                          <p class="conflict-popover__desc">
-                            {{
-                              'memory.rules.conflict.desc'
-                                | translate: { count: getConflictingRules(rule).length }
-                            }}
-                          </p>
-                          <ul class="conflict-popover__list">
-                            @for (other of getConflictingRules(rule); track other.id) {
-                              <li>
-                                <strong>{{ other.name }}</strong>
-                                <span class="conflict-popover__meta">
-                                  {{
-                                    'memory.rules.conflict.priority_meta'
-                                      | translate: { n: other.priority }
-                                  }}
-                                </span>
-                              </li>
-                            }
-                          </ul>
-                          <p class="conflict-popover__winner">
-                            <strong>{{ 'memory.rules.conflict.winner' | translate }}:</strong>
-                            {{
-                              winningRuleId(rule) === rule.id
-                                ? rule.name
-                                : getConflictingRules(rule).find(
-                                    (r) => r.id === winningRuleId(rule)
-                                  )?.name
-                            }}
-                          </p>
-                          <p class="conflict-popover__hint">
-                            {{ 'memory.rules.conflict.hint' | translate }}
-                          </p>
-                        </div>
-                      </p-popover>
-                    } @else {
-                      <span class="rules-status rules-status--active">
-                        {{ 'memory.rules.status.active' | translate }}
-                      </span>
-                    }
+                    <span class="rules-status rules-status--active">
+                      {{ 'memory.rules.status.active' | translate }}
+                    </span>
                   </td>
                   <td class="rules-table__td-modified">
                     {{ formatRelativeDate(rule.lastModified) }}
@@ -198,7 +129,6 @@
           <table class="rules-table">
             <thead>
               <tr>
-                <th class="rules-table__th-order" scope="col" aria-hidden="true"></th>
                 <th scope="col">{{ 'memory.rules.cols.name' | translate }}</th>
                 <th scope="col">{{ 'memory.rules.cols.scope' | translate }}</th>
                 <th class="rules-table__th-actions" scope="col">
@@ -215,8 +145,7 @@
             </thead>
             <tbody>
               @for (rule of inactiveOrDraftRules(); track rule.id) {
-                <tr [class.rules-row--draft]="rule.isDraft" class="rules-row-inactive">
-                  <td class="rules-table__td-order"></td>
+                <tr class="rules-row-inactive">
                   <td class="rules-table__td-name">
                     <a href="javascript:void(0)" class="rules-table__name">{{ rule.name }}</a>
                   </td>
@@ -225,33 +154,22 @@
                   </td>
                   <td class="rules-table__td-actions">
                     <div class="rules-actions-chips">
-                      @if (rule.recording) {
-                        <span class="rules-action-chip">
-                          <sc-icon [name]="micIcon" [size]="12" />
-                        </span>
-                      }
                       @if (rule.transcripcion) {
                         <span class="rules-action-chip">
-                          <sc-icon [name]="sparklesIcon" [size]="12" />
+                          <sc-icon [name]="transcriptionIcon" [size]="12" />
                         </span>
                       }
                       @if (rule.clasificacion) {
                         <span class="rules-action-chip">
-                          <sc-icon [name]="alertIcon" [size]="12" />
+                          <sc-icon [name]="sparklesIcon" [size]="12" />
                         </span>
                       }
                     </div>
                   </td>
                   <td class="rules-table__td-status">
-                    @if (rule.isDraft) {
-                      <span class="rules-status rules-status--draft">
-                        {{ 'memory.rules.status.draft' | translate }}
-                      </span>
-                    } @else {
-                      <span class="rules-status rules-status--inactive">
-                        {{ 'memory.rules.status.inactive' | translate }}
-                      </span>
-                    }
+                    <span class="rules-status rules-status--inactive">
+                      {{ 'memory.rules.status.inactive' | translate }}
+                    </span>
                   </td>
                   <td class="rules-table__td-modified">
                     {{ formatRelativeDate(rule.lastModified) }}
