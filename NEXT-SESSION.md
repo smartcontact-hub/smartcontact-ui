@@ -1,88 +1,75 @@
 # NEXT SESSION — Smart Contact DS (hand-off)
 
-> Sello: **2026-06-29** (sesión 4). Esta sesión: **diagnóstico completo del modal bulk-transcription** (ticket
-> Jira W26) con DevTools + Figma MCP, verificado en vivo sin adivinanzas. El marco/stroke ya estaba resuelto; el
-> corte de "genera coste" = `height: 239px` fijo en el `:host` (el componente en Figma es **Hug**, no fija → el
-> fix es quitar esa línea). Comentario para Jira redactado y pulido (empático, no intrusivo, apoyado en Figma);
-> **los devs van a tomar mano del tema.** Próxima sesión: **reglas de transcripción — preparar un LOTE con varios
-> bloques** para dejarlo maravilloso, lógico, consistente e intuitivo. SOBREESCRIBE este fichero al cerrar.
+> Sello: **2026-06-30** (sesión 5). Esta sesión: **construido y mergeado a main el constructor de condiciones
+> de reglas (DD-26)** — Variante B (`conditionTree` 2 niveles, match all/any, mezcla AND/OR, agrupar) +
+> campo **tipificación**, **builder progresivo** (1 grupo = plano sin toggle raíz redundante; el chrome de
+> grupos solo con 2+) y **quitado "Atendida por"** (redundante). Verificado AOT + typecheck + lint + preview
+> en vivo. Próximo paso natural: **unificar dirección/duración como campos del builder** (un solo sitio para
+> filtrar) — abierto en DD-26. SOBREESCRIBE este fichero al cerrar.
 
 ---
 
 ## ▶️ EMPIEZA AQUÍ
 1. **Lee este fichero entero.**
-2. **Backlog durable:** `docs/ROADMAP.md` (sección "Sistema de reglas — pivote a transcripción"; ahí está el
-   recorrido `/reglas` y los concerns para la charla).
-3. **El *por qué* durable:** `docs/DECISIONS.md` (DD-24/25 · sync var-docs). El recorrido `/reglas` NO es un DD:
-   es material de presentación para el equipo (Cloudflare), no una decisión de producción.
-4. **Elige tarea de §Lo que queda.** No hay una sola "primera acción" forzada: las 3 son independientes.
+2. **El *por qué* durable:** `docs/DECISIONS.md` (**DD-26** = constructor de condiciones; modelo + puente
+   legacy + builder progresivo). **Backlog:** `docs/ROADMAP.md`.
+3. **Elige tarea de §Lo que queda.** Son independientes; la #0 (unificar dirección/duración) es la
+   continuación directa de esta sesión.
 
 ---
 
 ## 🎯 Estado de un vistazo
-- **Sistema de reglas — recorrido vivo: HECHO.** `projects/sc-demo/src/app/pages/reglas/`, ruta `/reglas`,
-  enlace "Sistema de reglas" en la nav. 9 pasos (regla vs bulk · pivote · modelo · builder · lista ·
-  **prioridad/conflictos = la complejidad** · transcripción · concerns · cierre). Snippets = **código real**
-  (`rules.store.ts`: `scopeOverlaps` + `conflictsByRuleId` O(n²); `rules-page.ts`: quién gana por prioridad).
-  Capturas = **Supervisor real** reutilizadas de `public/usage/` (las regenera `npm run usage:capture`).
-  - **Huecos `[RAFA]` resueltos:** ley = fuera de alcance · transcripciones múltiples = varios tramos por
-    conversación, cada uno transcribible por separado (ya en el código) · quién = los supervisores.
-  - **Para la charla:** Rafa comparte `/reglas` + abre el Supervisor real + baja al código. No es PPT.
-- **Bloques 1·2·3 + dialog-fix + var-docs (sesiones previas): HECHOS.** DD-24 (icono↔font-size) ejecutada DS+app.
+- **Constructor de condiciones de reglas — HECHO y en main** (DD-26). Vive en el supervisor:
+  `features/memory/components/rule-condition-builder/` + integrado en `pages/rule-builder/`. Modelo en
+  `features/memory/data/condition.types.ts` (`ConditionTree` 2 niveles + helpers `deriveLegacyScope` /
+  `deriveTreeFromLegacy` / `describeConditionTree`). Campo `tipificación` con valores de
+  `conversation-filter-options.ts` (espejo del repo de Tipificaciones). Commits `d873308`/`c815c0d`,
+  merges `2d3af1a`/`b22b7db`.
+  - **Puente legacy**: al guardar se derivan `servicios/grupos/agentes` (sobre-aproximación segura) → listado
+    y `scopeOverlaps` intactos. `tipificación` solo vive en el árbol.
+  - **Builder progresivo**: 1 grupo = plano (un único toggle); 2+ = grupos + toggle raíz + conectores navy.
+- **Recorrido `/reglas` (sc-demo): material de presentación, NO producto.** No confundir con el builder real
+  del supervisor (DD-26).
+- **Bloques 1·2·3 + dialog-fix + var-docs + modal bulk W26 (sesiones previas): HECHOS.** El bulk W26 quedó en
+  manos de los devs (fix = quitar `height:239px` del `:host`, el componente en Figma es Hug).
 - **Bridge Figma `mcp__figma__*`:** vivo cuando se re-corre el plugin (WS port 9224).
 
-## 🔧 Modal bulk-transcription (Jira W26) — CERRADO esta sesión, en manos de los devs
-Diagnóstico verificado en vivo (DevTools + Figma MCP); comentario de Jira ya redactado y enviado. Referencia por si vuelve:
-- **Marco (482→480): RESUELTO** (host 480×239 border-box, stroke `#DADFE6`).
-- **"genera coste" se corta: PENDIENTE, y es de IMPLEMENTACIÓN, no de diseño.**
-  - **Figma = auto-layout con min/max, NO altura fija.** Maestro `12489-11524`: `min-w-480 max-w-800`,
-    altura hug con `max-h-600`. El `h-[239px]` del code-gen es lo que mide VACÍO (un fixed no llevaría
-    `max-h`). Con contenido real crece a ~249. Confirmación 100% = panel de Figma (altura "Hug").
-  - **Web:** el `:host` del componente clava `height:239px` + `overflow:hidden` → recorta los ~10px del
-    contenido real (249). El 239 NO está en la config de apertura (p-dialog sin height inline) → está en
-    el SCSS del `:host` (repo devs).
-  - **Fix:** el `:host` no debe fijar 239; debe adaptarse al contenido (hug) como el Figma. Verificado en
-    vivo: con altura auto el modal pasa a 249 y "genera coste" deja de cortarse.
-- **Alcance: solo el bulk.** `ScDynamicDialogService` limpio; diálogo normal + `sc-dialog` +
-  `impact-preview` sanos. El bulk es el único full-bleed "a pelo" en el p-dialog (no usa sc-dialog).
-- **OJO (autocorrección):** durante el análisis fluctué; la lectura BUENA es esta (Figma auto-layout, no
-  fija). El `h-[239px]` del code-gen es valor computado, no un flag de altura fija.
+## 🗺️ Lo que queda
+0. **Unificar dirección + duración como campos del builder** (continuación de DD-26). Un solo sitio para
+   filtrar conversaciones, sin el bloque "Criterios de transcripción" aparte. **Coste**: el builder necesita
+   tipos de campo **enum** (dirección → `es`) y **número** (duración → `mayor/menor que`, con unidad), y
+   **dirección vive también en el bloque de grabación** → toca ese flujo. Decisión abierta: hacerlo, o dejar
+   dirección/duración como "filtros de coste" separados.
+1. **PROMPT de la PPT del PUENTE código↔Figma** (sin redactar). La monta Claude Design; aquí solo el prompt.
+   Specs (2026-06-22): audiencia devs pero accesible (la presenta Rafa) · 6-8 slides ~10 min · QUÉ (puente
+   bidireccional, una fuente de verdad) + CÓMO (Theme Designer → DTCG → `tokens:import` → DS → `verify` →
+   Cloudflare; vuelta = bridge MCP escribe metadata Dev Mode) + QUÉ GANAMOS (sin drift, feedback ~1 min).
+2. **Bloque 4a (Figma, GUIADO con Rafa).** Una var a la vez + screenshot + reversible: (a) atar W/H de iconos
+   companion a la var de font-size (huecos: button-default, inputtext); (b) sync de los 3 copys de General a
+   los nodos de texto de Figma. Grep antes para no crear drift.
+3. **Accionables de la charla de reglas** (en `/reglas`). Pendiente: hablar con backend (VAP/Lucas) — cerrar
+   criterios (duración + tipificación) y backend sin UI · crear sección Repositorios (transcripción+
+   tipificación) · módulo simulador de coste (vs mes anterior) · avanzar AED.
 
-## 🗺️ Lo que queda (3 independientes)
-1. **PROMPT de la PPT del PUENTE código↔Figma** (aún sin redactar). La monta Claude Design; aquí solo el prompt.
-   Specs decididas con Rafa (2026-06-22):
-   - **Audiencia:** devs, contando NUESTRO pipeline, pero **accesible** (la presenta Rafa, no-dev → las slides
-     se sostienen solas). **Tamaño:** 6-8 slides, ~10 min. **Mensaje:** QUÉ es + CÓMO (el flujo) + QUÉ GANAMOS.
-     **Tono:** mixto (gancho visual + 1-2 diagramas del flujo, poco texto).
-   - **Esqueleto:** QUÉ = puente bidireccional, UNA fuente de verdad para tokens. CÓMO = Theme Designer → export
-     DTCG (`kit-export-dtcg.json`) → `tokens:import` genera capas `--sc-*` → el DS las consume → `verify` caza
-     drift → Cloudflare; vuelta = bridge MCP escribe metadata en Figma (codeSyntax/vars) para Dev Mode.
-     QUÉ GANAMOS = una fuente de verdad, sin drift, feedback en ~1 min, Dev Mode no miente.
-2. **Bloque 4a (Figma, GUIADO con Rafa).** Una var a la vez + screenshot + reversible:
-   - **(a) Atar W/H de iconos companion** a la var de font-size (md=`app/font/size`; sm/lg=`{cmp}/sm·lg/font`).
-     Huecos: **button-default** (icono raw → `app/font/size`); **inputtext** (el TEXTO raw → font-size del input).
-   - **(b) Sync de los 3 copys de General a los nodos de texto de Figma** (ventana.title; aviso.title→"Recepción
-     de conversaciones"; alerting_label→"Mostrar"). Grep antes para no crear drift.
-3. **Accionables de la charla de reglas (DADA 2026-06-23; conclusiones + accionables en `/reglas`).** Rumbo
-   MVP: una sola regla activa (esquiva priorización) · tipificación como entidad AND/OR · grabación=aviso ·
-   casa=Repositorios · clasificación después · retroactivo=bulk. **Pendiente**: hablar con desarrollo
-   backend (VAP/Lucas) — cerrar criterios (faltan duración + tipificación) y backend sin UI · crear sección
-   Repositorios (transcripción+tipificación) · módulo simulador de coste (vs mes anterior) · avanzar AED.
-
-**Diferido:** Neutral gray/slate (equipo de Rafa) · W5 · Code Connect · Fase 4 AED · dark zinc vs cool · grises a11y.
+**Diferido:** Neutral gray/slate (equipo de Rafa) · W5 · Code Connect · Fase 4 AED · dark zinc vs cool.
 
 ## ⚠️ TRAMPAS / PROTECCIONES
-- **`kit-export-dtcg.json` está SUCIO en el árbol** (cambio del rol info `{blue}`→`{sky}`, del pipeline de
-  tokens). **NO commitearlo a main** (viaja por el plugin → `design-tokens-sync`). Es lo que corta `verify` en
-  el paso 1 (`tokens:export-clean`). Para validar un cambio ajeno a tokens: corre el **subconjunto relevante**
-  (`build:demo` AOT + `typecheck` + `lint` + `audit:theme-scale`), no el `verify` entero.
-- **El supervisor tiene su PROPIO `<sc-icon>`** (`shared/components/icon`, no el del DS; ya soporta `inherit`).
-- **sc-demo usa hash routing** (`/#/reglas`). Capturas del Supervisor servidas desde `/usage/*.png`.
-- **Figma `figma_execute` "timeout" (7s) en batches** suele aplicar igual: confirma releyendo, no reintentes a
-  ciegas. Sube `timeout` (≤30000) o trocea.
+- **AOT es el gate de plantillas**: `tsc`/`typecheck` NO type-checkean a fondo las plantillas. Corre
+  `ng build supervisor` (AOT) antes de commitear cambios de binding. **El supervisor tiene su PROPIO
+  `<sc-icon>`** (`shared/components/icon`, ya soporta `inherit`) — importa ese, no el del DS.
+- **`withViewTransitions()` activo** (app.config.ts): navegación rápida (varios `location.href`/reload
+  seguidos en pruebas) lanza `InvalidStateError: Transition was aborted` en consola → **benigno**, es el
+  router abortando transiciones, no tu código. En uso normal no pasa.
+- **Overlays PrimeNG (p-select/p-multiselect)** no fijan selección por click-CSS desde el preview de forma
+  fiable; verifica las opciones por DOM, no la selección por click.
+- **`kit-export-dtcg.json`**: vigilar si aparece sucio (viaja por el plugin → `design-tokens-sync`); puede
+  cortar `verify` en el paso `tokens:export-clean`. **Esta sesión estaba limpio.** Si lo está, corre el
+  subconjunto relevante (`ng build supervisor` AOT + typecheck + lint) en vez del verify entero.
+- **sc-demo usa hash routing** (`/#/reglas`); el supervisor usa routing normal (`/conversaciones/reglas/...`).
 - **`preview:live` zombie ensucia el export:** `pkill -f preview-live.mjs` antes de `verify`.
-- **NUNCA `[skip ci]`** · **NUNCA borrar `design-tokens-sync`** · **`git add` NUNCA `.claude`**.
-- **Commits a main** → `Co-Authored-By: Claude Opus 4.8 (1M context) <noreply@anthropic.com>`.
+- **NUNCA `[skip ci]`** · **NUNCA borrar `design-tokens-sync`** · **`git add` NUNCA `.claude`** (stagea rutas
+  explícitas o el dir de la feature).
+- **Commits a main** → `Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>`.
 
 ## 🟡 RECAP al cerrar lotes (lo pidió Rafa)
 Mega-dumb, sin ai slop, conciso: qué se hizo, por qué, conclusiones, pendiente, y lo que NO se hizo a drede.
@@ -90,4 +77,4 @@ Mega-dumb, sin ai slop, conciso: qué se hizo, por qué, conclusiones, pendiente
 ## Índice — dónde mirar
 - **Decisiones** → `docs/DECISIONS.md` · **Backlog** → `docs/ROADMAP.md` · **Mapa de docs** → `docs/DOCS-INDEX.md`.
 - **Reglas/trampas** → `AGENTS.md` · **Tokens/loop** → `docs/guia-tokens.md` · **Customs** → `docs/customs-catalog.md`.
-- **Recorrido de reglas** → sc-demo `/reglas` · **Galería de uso** → sc-demo `/uso` · **Inventario** → `docs/inventory.md`.
+- **Builder de reglas (real)** → supervisor `features/memory/` · **Recorrido `/reglas`** → sc-demo (presentación).

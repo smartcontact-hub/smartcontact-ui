@@ -1147,6 +1147,39 @@ Emulated). Un solo punto en sc-dialog arregla los **13 dialogs** del repo. Medid
 
 ---
 
+## DD-26 · 2026-06-30 — Constructor de condiciones de reglas (Variante B + builder progresivo)
+
+**Contexto**: el alcance de una regla de transcripción era rígido — 3 dimensiones (Servicio Y Grupo Y
+Agente), AND entre ellas / OR dentro. La charla de reglas pidió potencia booleana real (match all/any,
+mezcla AND/OR, agrupar) modelando la tipificación como entidad AND/OR, y "una sola regla activa" (esquiva
+priorización). Esto es **producto real en el supervisor (app), no material de charla** → sí es DD.
+
+**Decisión**:
+- **Modelo recursivo aditivo** `Rule.conditionTree?` (`features/memory/data/condition.types.ts`): árbol de
+  **2 niveles** (raíz → grupos → condiciones), cada nivel con `match: 'all'|'any'`. Campos: servicio /
+  grupo / agente / **tipificación** (lista, op `es`/`no es`). NO anidación libre (sería Variante C) — el
+  tope de 2 niveles cubre el caso real y mantiene la UI legible para un supervisor.
+- **Puente con el modelo plano legacy**: al guardar se deriva `servicios/grupos/agentes`
+  (`deriveLegacyScope`, unión de los `is`) para **no tocar** el listado ni `scopeOverlaps`. Es una
+  **sobre-aproximación** (los `is_not` y el OR entre grupos no caben en los 3 campos planos) → marca
+  conflictos de más, nunca de menos. Coherente con "una sola regla activa". `tipificación` no tiene
+  dimensión plana → vive solo en el árbol. Reglas antiguas reconstruyen el árbol con `deriveTreeFromLegacy`.
+- **Divulgación progresiva (lente `/impeccable`)**: con 1 grupo el builder es **plano** (un único control de
+  coincidencia, sin toggle raíz ni caja); el chrome de grupos (toggle raíz + cajas slate-50 + conectores
+  navy) solo aparece con **2+**. Al añadir el 2º grupo la raíz arranca en `any` (añadir grupo = alternativa
+  O). Quita la redundancia del doble-toggle del caso común.
+- **Quita "Atendida por"** del bloque Transcripción: era redundante con agente/grupo del builder
+  (`attendedBy` fuera del modelo, builder y store).
+
+**Verificado**: AOT + typecheck + lint + preview en vivo (plano↔agrupado, derivación legacy al editar regla
+antigua, guardar→listado, mezcla AND/OR con precedencia). Commits `d873308`/`c815c0d`.
+
+**Pendiente (decisión abierta)**: unificar **dirección + duración** como campos del builder (un solo sitio
+para filtrar, sin el bloque "Criterios de transcripción" aparte) — requiere tipos de campo enum/número y
+toca el flujo de **grabación** (dirección vive también ahí). Hoy siguen como bloque separado.
+
+---
+
 ## Sync Figma (DD-23) · 2026-06-22 — var-docs de color re-apuntadas al Kit
 
 Las **33 variables primitivas de color** (cyan/sky/slate × 11 shades) tenían `codeSyntax` + `description` aún
@@ -1162,6 +1195,7 @@ W/H de iconos companion a la var de font-size (Bloque 4a).
 
 ---
 
-Última actualización: 2026-06-22 (DD-24 **EJECUTADA en el DS** [sc-icon inherit + 11 companion + hallazgos
-host-font/button-reset] · Bloque 2 Contact Center [topbar `sc-button` en servicio/agentes/grupos + copys de
-Recepción es/en/fr/pt] · DD-25 gap footer sc-dialog · var-docs de color re-apuntadas en Figma).
+Última actualización: 2026-06-30 (**DD-26** constructor de condiciones de reglas — Variante B `conditionTree`
+2 niveles + tipificación + builder progresivo, quita "atendida por"; en producción en el supervisor. · DD-24
+**EJECUTADA en el DS** [sc-icon inherit + 11 companion] · DD-25 gap footer sc-dialog · var-docs de color
+re-apuntadas en Figma).
