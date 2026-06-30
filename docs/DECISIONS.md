@@ -1180,6 +1180,41 @@ toca el flujo de **grabación** (dirección vive también ahí). Hoy siguen como
 
 ---
 
+## DD-27 · 2026-06-30 — Constructor de condiciones v2: referencias dinámicas + estimación + scope MVP
+
+Evoluciona **DD-26** a producción real con membresía **dinámica** y recorta el scope al MVP. Mergeado a main.
+
+**El problema de DD-26**: las condiciones guardaban **snapshots de nombre** (`agentes: ['María García']`) →
+frágil (cambiar miembros de un grupo o renombrar no se reflejaba). Y dirección/duración filtraban en **dos sitios**
+(builder + "Criterios de transcripción") con un bug (dirección ×2).
+
+**Decisión**:
+- **Referencias tipadas, no nombres** (`ConditionRef`: service por nombre [sin id] / group·agent·agentGroup·
+  tipificacion·category por id) + **modelo `value`** (`any` comodín | `refs` | `enum` | `número`). Etiqueta y
+  **membresía** se resuelven EN VIVO (`ConditionResolverService` + `GroupAgentLinksStore`), no se congelan. "Todos"
+  = comodín (incluye futuros); un grupo en el campo **Agente** = `agentGroup` = "sus miembros AHORA". El árbol sigue
+  derivando `servicios/grupos/agentes` planos (`deriveLegacyScope`) → listado/`scopeOverlaps` intactos.
+- **Unifica dirección + duración como campos** del builder (cierra el abierto de DD-26) → mata el bug dirección-×2
+  por construcción. Operadores contextuales por kind (lista: es/no es · número: más de/menos de/entre).
+- **Estimación de procesado** (adaptada de la PPT del jefe, sticky): proyección día/mes desde el **ratio REAL**
+  (matched/total sobre el mock) × volumen base demo documentado (`CONVERSATIONS_PER_DAY`) → es **estimación, no dato**.
+  Barra de proporción (amplia vs quirúrgica). **Rechazado** un gráfico día/mes (2 números de escala distinta = slop).
+- **Guía de errores** (`condition-validate.core.mjs`, pura+testeada): incompleta/rango inválido = **error** (bloquean
+  guardar, revelado al **intentar guardar** — no acusa al crear); duplicado/contradicción/tautología = **aviso**
+  (elección de Rafa: "guía, bloquea solo lo roto"). Honestidad: contradicción/0-impacto se apoyan en el preview real.
+- **Scope MVP**: sin priorización ni grabación (obsoleta por ley) → **fuera reglas de grabación** (seed + creación +
+  Horario) y **borradores** (banner + flujo + toasts). Tipo por defecto = transcripción. Miembros de tipo
+  `recording`/`isDraft`/`'draft'` se dejan en el modelo para no cascadear errores antes del merge (limpieza follow-up).
+- **Arquitectura de tests**: lógica pura en `.mjs` (`condition-eval.core` [impacto+proyección], `condition-validate.core`,
+  `duration-presets.core`) + `.d.mts` + wrapper `.ts` → cubierta por `test:unit` (node:test) en el gate. **118 tests.**
+
+**Verificado**: verify entero verde (incl. `audit:components` regenerado: `sc-select` 31→33 por los presets), AOT,
+118 tests, preview en vivo (impacto 8/34 → barra 24%, contradicción, presets, MVP sin grabación/borradores, regla del
+jefe en la lista). **Slop/impeccable**: builder limpio (0 gradient-text, 0 border-left stripes, 0 glassmorphism); el
+único visual añadido (barra de proporción) es dato real, no decoración.
+
+---
+
 ## Sync Figma (DD-23) · 2026-06-22 — var-docs de color re-apuntadas al Kit
 
 Las **33 variables primitivas de color** (cyan/sky/slate × 11 shades) tenían `codeSyntax` + `description` aún
@@ -1195,7 +1230,8 @@ W/H de iconos companion a la var de font-size (Bloque 4a).
 
 ---
 
-Última actualización: 2026-06-30 (**DD-26** constructor de condiciones de reglas — Variante B `conditionTree`
-2 niveles + tipificación + builder progresivo, quita "atendida por"; en producción en el supervisor. · DD-24
-**EJECUTADA en el DS** [sc-icon inherit + 11 companion] · DD-25 gap footer sc-dialog · var-docs de color
-re-apuntadas en Figma).
+Última actualización: 2026-06-30 (**DD-27** constructor de condiciones **v2** — refs tipadas dinámicas + modelo
+`value` + estimación de procesado [barra de proporción + proyección día/mes] + guía de errores + duración con presets
++ scope MVP [fuera grabación/borradores]; 118 tests, mergeado a main. · **DD-26** la base Variante B `conditionTree`
+2 niveles + tipificación + builder progresivo · DD-24 **EJECUTADA en el DS** [sc-icon inherit + 11 companion] · DD-25
+gap footer sc-dialog · var-docs de color re-apuntadas en Figma).

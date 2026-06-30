@@ -107,9 +107,55 @@
   gap: var(--sc-spacing-0-5);
 
   sc-select,
-  sc-multiselect {
+  sc-multiselect,
+  sc-rule-condition-value-picker {
     display: block;
     width: 100%;
+    min-width: 0;
+  }
+
+  &__field-ic {
+    color: var(--sc-text-secondary);
+    margin-right: 3px;
+    vertical-align: -2px;
+  }
+
+  &__num {
+    display: flex;
+    align-items: center;
+    gap: var(--sc-spacing-0-25);
+
+    input[type='number'] {
+      width: 60px;
+      min-width: 0;
+      padding: var(--sc-spacing-0-25) var(--sc-spacing-0-5);
+      border: 1px solid var(--sc-border-default);
+      border-radius: var(--sc-radius-200);
+      background: var(--sc-bg-surface);
+      color: var(--sc-text-primary);
+      font: inherit;
+      font-size: var(--sc-font-size-200);
+
+      &:focus {
+        outline: none;
+        border-color: var(--sc-bg-primary);
+      }
+    }
+  }
+
+  &__num-sep {
+    color: var(--sc-text-secondary);
+    font-size: var(--sc-font-size-100);
+  }
+
+  &__num-unit {
+    flex: 1;
+    min-width: 88px;
+  }
+
+  &__preset {
+    flex: 1;
+    min-width: 0;
   }
 
   &__remove {
@@ -205,6 +251,14 @@
     gap: var(--sc-spacing-0-5);
   }
 
+  &__num {
+    font-size: var(--sc-font-size-50);
+    font-weight: 700;
+    letter-spacing: 0.02em;
+    text-transform: uppercase;
+    color: var(--sc-text-secondary);
+  }
+
   &__hint {
     font-size: var(--sc-font-size-50);
     color: var(--sc-text-secondary);
@@ -241,10 +295,9 @@
 
 /* ─── Conectores Y/O clicables ─── */
 
+/* Conectores Y/O — indicadores de SOLO LECTURA (el control es todas/cualquiera). */
 .connector {
-  appearance: none;
   font-family: inherit;
-  cursor: pointer;
 
   &--group {
     position: relative;
@@ -255,13 +308,11 @@
     width: 32px;
     height: 32px;
     margin: var(--sc-spacing-0-25) 0;
-    border: 0;
     border-radius: var(--sc-radius-full);
     background: var(--sc-bg-primary);
     color: var(--sc-text-on-primary);
     font-size: var(--sc-font-size-100);
     font-weight: 700;
-    transition: filter 150ms ease;
 
     &::before {
       content: '';
@@ -273,10 +324,6 @@
       background: var(--sc-border-default);
       transform: translateX(-50%);
       z-index: -1;
-    }
-
-    &:hover {
-      filter: brightness(1.08);
     }
   }
 
@@ -293,19 +340,6 @@
     color: var(--sc-text-secondary);
     font-size: var(--sc-font-size-50);
     font-weight: 600;
-    transition:
-      border-color 150ms ease,
-      color 150ms ease;
-
-    &:hover {
-      border-color: var(--sc-bg-primary);
-      color: var(--sc-text-primary);
-    }
-  }
-
-  &:focus-visible {
-    outline: 2px solid var(--sc-color-sky-500);
-    outline-offset: 2px;
   }
 }
 
@@ -374,6 +408,129 @@
   &:focus-visible {
     outline: 2px solid var(--sc-color-sky-500);
     outline-offset: 2px;
+  }
+}
+
+/* ─── Estimación de procesado (adaptada de la PPT del jefe) ─── */
+
+/* Sticky: la estimación queda SIEMPRE visible mientras configuras condiciones.
+ * `bottom` despeja el footer sticky (~80px) para no solaparlo. */
+.cond-builder__estimate {
+  position: sticky;
+  bottom: 84px;
+  z-index: 3;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  margin-top: var(--sc-spacing-0-5);
+  padding: var(--sc-spacing-0-625) var(--sc-spacing-0-875);
+  background: var(--sc-bg-surface);
+  border: 1px solid var(--sc-border-default);
+  border-radius: var(--sc-radius-200);
+  box-shadow: 0 6px 18px rgb(0 0 0 / 0.08);
+
+  p {
+    margin: 0;
+  }
+}
+
+.cond-builder__estimate-title {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-5);
+  font-size: var(--sc-font-size-50);
+  font-weight: 600;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
+  color: var(--sc-text-secondary);
+
+  sc-icon {
+    color: var(--sc-color-sky-500);
+    flex-shrink: 0;
+  }
+}
+
+.cond-builder__estimate-main {
+  font-size: var(--sc-font-size-200);
+  color: var(--sc-text-primary);
+}
+
+.cond-builder__estimate-proj {
+  font-size: var(--sc-font-size-100);
+  color: var(--sc-text-secondary);
+}
+
+/* Barra de proporción: % del tráfico que toca la regla (amplia vs quirúrgica).
+ * Dato real (matched/total), no decorativo — el texto da la cifra exacta. */
+.cond-builder__estimate-bar {
+  height: 6px;
+  margin: var(--sc-spacing-0-25) 0;
+  border-radius: var(--sc-radius-full);
+  background: var(--sc-color-slate-100, var(--sc-color-slate-50));
+  overflow: hidden;
+}
+
+.cond-builder__estimate-bar-fill {
+  display: block;
+  height: 100%;
+  min-width: 2px;
+  border-radius: var(--sc-radius-full);
+  background: var(--sc-color-sky-500);
+  transition: width 240ms cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+.cond-builder__estimate-note {
+  font-size: var(--sc-font-size-50);
+  color: var(--sc-text-secondary);
+  font-style: italic;
+}
+
+/* ─── Guía de errores (inline; texto coloreado, sin caja ni accent-stripe) ─── */
+
+.cond-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-25);
+}
+
+.cond-issues {
+  list-style: none;
+  margin: 0;
+  padding: 0 var(--sc-spacing-0-25);
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.cond-issue {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-25);
+  font-size: var(--sc-font-size-50);
+  line-height: 1.4;
+
+  sc-icon {
+    flex-shrink: 0;
+  }
+
+  &--error {
+    color: var(--sc-text-danger);
+  }
+
+  &--warn {
+    color: var(--sc-text-warning);
+  }
+}
+
+.cond-builder__estimate-empty {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-25);
+  font-size: var(--sc-font-size-100);
+  color: var(--sc-text-warning);
+
+  sc-icon {
+    flex-shrink: 0;
   }
 }
 

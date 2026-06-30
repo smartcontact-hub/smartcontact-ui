@@ -9,6 +9,16 @@
       <sc-icon [name]="backIcon" [size]="16" />
     </button>
     <div class="rule-builder__head-text">
+      <nav class="rule-builder__crumbs" aria-label="Ruta">
+        <button type="button" class="rule-builder__crumb" (click)="onCancel()">
+          {{ 'memory.rules.builder.crumb_rules' | translate }}
+        </button>
+        <sc-icon name="chevron_right" [size]="13" aria-hidden="true" />
+        <span>{{
+          (isEditMode() ? 'memory.rules.builder.title_edit' : 'memory.rules.builder.title_new')
+            | translate
+        }}</span>
+      </nav>
       <h1>
         @if (isEditMode()) {
           {{ 'memory.rules.builder.title_edit' | translate }}
@@ -23,26 +33,6 @@
       <p>{{ 'memory.rules.builder.subtitle' | translate }}</p>
     </div>
   </header>
-
-  <!-- Banner Borrador sin editar · spec line 122-127. Contenedor
-       siempre reservado para evitar layout shift al cargar. -->
-  <div
-    class="rule-builder__draft-banner-slot"
-    [class.rule-builder__draft-banner-slot--visible]="isDraft()"
-  >
-    @if (isDraft()) {
-      <div class="rule-builder__draft-banner">
-        <div class="rule-builder__draft-message">
-          <sc-icon [name]="alertIcon" [size]="16" />
-          <p>{{ 'memory.rules.builder.draft_banner' | translate }}</p>
-        </div>
-        <button type="button" class="rule-builder__draft-discard" (click)="onDiscardDraft()">
-          <sc-icon [name]="trashIcon" size="inherit" />
-          {{ 'memory.rules.builder.discard_draft' | translate }}
-        </button>
-      </div>
-    }
-  </div>
 
   <div class="rule-builder__body">
     <!-- Bloque 1: Metadatos -->
@@ -74,7 +64,7 @@
           [value]="name()"
           (valueChange)="setName($event)"
           [error]="
-            nameInvalid() && name().length > 0
+            nameInvalid() && (name().length > 0 || submitted())
               ? ('memory.rules.builder.name_error' | translate)
               : ''
           "
@@ -105,140 +95,14 @@
       </header>
       <p class="rule-block__desc">{{ 'memory.rules.builder.scope_desc' | translate }}</p>
 
-      <sc-rule-condition-builder [(value)]="conditionTree" />
+      <sc-rule-condition-builder [(value)]="conditionTree" [revealEmpty]="submitted()" />
     </section>
 
-    <!-- Bloque 3: Grabación (tipo Recording + Classification también lleva
-         opcional · spec §"CAMBIOS EN EL BLOQUE GRABACIÓN") -->
-    @if (ruleType() === 'recording' || ruleType() === 'classification') {
-      <section class="rule-block">
-        <header class="rule-block__head">
-          <h2>
-            <sc-icon [name]="micIcon" [size]="14" />
-            {{ 'memory.rules.builder.recording' | translate }}
-          </h2>
-          <p class="rule-block__desc">{{ 'memory.rules.builder.recording_desc' | translate }}</p>
-        </header>
-
-        <div class="rule-block__row">
-          <label for="rule-direction" class="rule-builder__field-label">
-            {{ 'memory.rules.builder.direction_label' | translate }}
-          </label>
-          <sc-select
-            [inputId]="'rule-direction'"
-            [options]="directionOptions"
-            [(value)]="direction"
-            optionLabel="labelKey"
-            optionValue="value"
-          >
-            <ng-template let-opt pTemplate="selectedItem">
-              {{ opt.labelKey | translate }}
-            </ng-template>
-            <ng-template let-opt pTemplate="item">
-              {{ opt.labelKey | translate }}
-            </ng-template>
-          </sc-select>
-        </div>
-
-        <div class="rule-block__row">
-          <label class="rule-builder__checkbox-row">
-            <input
-              type="checkbox"
-              [checked]="filterBySchedule()"
-              (change)="filterBySchedule.set($any($event.target).checked)"
-            />
-            <span>{{ 'memory.rules.builder.schedule_label' | translate }}</span>
-          </label>
-          @if (filterBySchedule()) {
-            <div class="rule-builder__schedule-inputs">
-              <label>
-                {{ 'memory.rules.builder.schedule_from' | translate }}
-                <input
-                  type="time"
-                  [value]="scheduleFrom()"
-                  (input)="scheduleFrom.set($any($event.target).value)"
-                />
-              </label>
-              <label>
-                {{ 'memory.rules.builder.schedule_to' | translate }}
-                <input
-                  type="time"
-                  [value]="scheduleTo()"
-                  (input)="scheduleTo.set($any($event.target).value)"
-                />
-              </label>
-            </div>
-          }
-        </div>
-      </section>
-    }
-
-    <!-- Bloque 4: Transcripción (tipos Transcription + Classification) -->
+    <!-- Análisis IA (tipos Transcription + Classification). Dirección y duración
+         son ahora campos del builder (Alcance), no un bloque aparte. -->
     @if (ruleType() === 'transcription' || ruleType() === 'classification') {
-      <section class="rule-block">
-        <header class="rule-block__head">
-          <h2>
-            <sc-icon [name]="fileTextIcon" [size]="14" />
-            {{ 'memory.rules.builder.transcription' | translate }}
-          </h2>
-          <p class="rule-block__desc">
-            {{ 'memory.rules.builder.transcription_desc' | translate }}
-          </p>
-        </header>
-
-        <div class="rule-block__row">
-          <label for="rule-direction-trans" class="rule-builder__field-label">
-            {{ 'memory.rules.builder.direction_label' | translate }}
-          </label>
-          <sc-select
-            [inputId]="'rule-direction-trans'"
-            [options]="directionOptions"
-            [(value)]="direction"
-            optionLabel="labelKey"
-            optionValue="value"
-          >
-            <ng-template let-opt pTemplate="selectedItem">
-              {{ opt.labelKey | translate }}
-            </ng-template>
-            <ng-template let-opt pTemplate="item">
-              {{ opt.labelKey | translate }}
-            </ng-template>
-          </sc-select>
-        </div>
-
-        <div class="rule-block__row">
-          <label for="rule-duration" class="rule-builder__field-label">
-            {{ 'memory.rules.builder.duration_label' | translate }}
-          </label>
-          <div class="rule-builder__duration">
-            <input
-              id="rule-duration"
-              type="number"
-              min="0"
-              [value]="durationMin()"
-              (input)="durationMin.set(+$any($event.target).value || 0)"
-            />
-            <sc-select
-              [options]="durationUnitOptions"
-              [(value)]="durationUnit"
-              optionLabel="labelKey"
-              optionValue="value"
-            >
-              <ng-template let-opt pTemplate="selectedItem">
-                {{ opt.labelKey | translate }}
-              </ng-template>
-              <ng-template let-opt pTemplate="item">
-                {{ opt.labelKey | translate }}
-              </ng-template>
-            </sc-select>
-          </div>
-          <p class="rule-builder__field-hint">
-            {{ 'memory.rules.builder.duration_hint' | translate }}
-          </p>
-        </div>
-      </section>
-
-      <!-- Sub-bloque Análisis IA dentro de Transcripción · spec line 129-131 -->
+      <!-- Sub-bloque Análisis IA · resumen + sentimiento; "categorías a DETECTAR"
+           (distinto del campo "Categoría IA" del builder, que FILTRA). -->
       <section class="rule-block rule-block--ai">
         <header class="rule-block__head">
           <div class="rule-builder__ai-head">
@@ -312,16 +176,16 @@
   </div>
 
   <footer class="rule-builder__foot">
+    @if (submitted() && condBlocking()) {
+      <p class="rule-builder__save-blocked">
+        <sc-icon name="error" [size]="14" />
+        {{ 'memory.rules.builder.cond.val.blocked' | translate }}
+      </p>
+    }
     <p-button type="button" size="small" severity="secondary" (onClick)="onCancel()">
       <span>{{ 'common.cancel' | translate }}</span>
     </p-button>
-    <p-button
-      type="button"
-      size="small"
-      severity="primary"
-      [disabled]="!canSave()"
-      (onClick)="onSave()"
-    >
+    <p-button type="button" size="small" severity="primary" (onClick)="onSave()">
       <span>
         @if (isEditMode()) {
           {{ 'memory.rules.builder.save_changes' | translate }}
