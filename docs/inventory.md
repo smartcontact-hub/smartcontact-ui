@@ -60,7 +60,7 @@
 | `sc-inputtext` | EXTENDED | primeng/inputtext | CVA · 18 inputs | — | ✓ | 29 |
 | `sc-keyboard-shortcuts` | CUSTOM | — | 1 inputs | — | — | 2 |
 | `sc-message` | EXTENDED | primeng/message | 6 inputs | — | ✓ | — |
-| `sc-multiselect` | EXTENDED | primeng/multiselect | CVA · 23 inputs | — | ✓ | 14 |
+| `sc-multiselect` | EXTENDED | primeng/multiselect | CVA · 23 inputs | — | ✓ | 11 |
 | `sc-page-header` | CUSTOM | — | 3 inputs | — | — | 2 |
 | `sc-panel` | EXTENDED | primeng/panel | 4 inputs | — | ✓ | — |
 | `sc-photo-upload` | CUSTOM | — | 6 inputs | — | — | 2 |
@@ -69,7 +69,7 @@
 | `sc-radiobutton` | EXTENDED | primeng/radiobutton | 7 inputs | — | ✓ | 2 |
 | `sc-search` | EXTENDED | primeng/iconfield, primeng/inputicon, primeng/inputtext | CVA · 9 inputs | — | ✓ | 8 |
 | `sc-section-card` | CUSTOM | — | 6 inputs | — | — | 11 |
-| `sc-select` | EXTENDED | primeng/select | CVA · 22 inputs | — | ✓ | 30 |
+| `sc-select` | EXTENDED | primeng/select | CVA · 22 inputs | — | ✓ | 32 |
 | `sc-skeleton` | EXTENDED | primeng/skeleton | 6 inputs | — | ✓ | — |
 | `sc-slot` | CUSTOM | — | 2 inputs | — | — | — |
 | `sc-sticky-form-header` | EXTENDED | primeng/button | 4 inputs | — | — | 3 |
