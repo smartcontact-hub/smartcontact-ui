@@ -30,7 +30,7 @@
   </button>
 
   @if (open()) {
-    <div class="vpick__panel">
+    <div class="vpick__panel" [class.vpick__panel--up]="openUp()">
       <div class="vpick__search">
         <sc-icon [name]="searchIcon" [size]="15" />
         <input
