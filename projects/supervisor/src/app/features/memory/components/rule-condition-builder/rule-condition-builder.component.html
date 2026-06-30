@@ -1,153 +1,134 @@
 @let tree = value();
 
-<div class="cond-builder">
-  <!-- Cabecera raíz: cómo se combinan los grupos -->
-  <div class="cond-builder__root">
-    <span class="cond-builder__root-label">Coincidir con</span>
-    <div class="seg" role="group" aria-label="Combinación entre grupos">
-      <button
-        type="button"
-        class="seg__btn"
-        [class.seg__btn--on]="tree.match === 'all'"
-        [attr.aria-pressed]="tree.match === 'all'"
-        (click)="setRootMatch('all')"
-      >
-        todas
-      </button>
-      <button
-        type="button"
-        class="seg__btn"
-        [class.seg__btn--on]="tree.match === 'any'"
-        [attr.aria-pressed]="tree.match === 'any'"
-        (click)="setRootMatch('any')"
-      >
-        cualquiera
-      </button>
-    </div>
-    <span class="cond-builder__root-label">
-      @if (tree.groups.length > 1) {
-        de estos grupos
-      } @else {
-        de las condiciones
-      }
-    </span>
-  </div>
-
+<div class="cond-builder" [class.cond-builder--nested]="tree.groups.length > 1">
   @if (tree.groups.length === 0) {
+    <!-- Vacío: enseña qué pasa y ofrece empezar -->
     <div class="cond-builder__empty">
       <sc-icon [name]="layersIcon" [size]="20" />
-      <p>Sin condiciones. La regla se aplicará a <strong>todas</strong> las conversaciones.</p>
-    </div>
-  }
-
-  @for (group of tree.groups; track trackGroup($index, group); let gi = $index) {
-    @if (gi > 0) {
-      <button
-        type="button"
-        class="connector connector--group"
-        (click)="toggleRootMatch()"
-        [attr.aria-label]="'Cambiar combinación entre grupos'"
-      >
-        {{ tree.match === 'all' ? 'Y' : 'O' }}
+      <div>
+        <p class="cond-builder__empty-title">Sin condiciones</p>
+        <p class="cond-builder__empty-body">La regla se aplica a <strong>todas</strong> las conversaciones.</p>
+      </div>
+      <button type="button" class="add-btn" (click)="addGroup()">
+        <sc-icon [name]="addIcon" size="inherit" />
+        Añadir condición
       </button>
-    }
-
-    <section class="group">
-      <header class="group__head">
-        <div class="seg seg--sm" role="group" aria-label="Combinación dentro del grupo">
-          <button
-            type="button"
-            class="seg__btn"
-            [class.seg__btn--on]="group.match === 'all'"
-            [attr.aria-pressed]="group.match === 'all'"
-            (click)="setGroupMatch(group.id, 'all')"
-          >
-            todas
-          </button>
-          <button
-            type="button"
-            class="seg__btn"
-            [class.seg__btn--on]="group.match === 'any'"
-            [attr.aria-pressed]="group.match === 'any'"
-            (click)="setGroupMatch(group.id, 'any')"
-          >
-            cualquiera
-          </button>
-        </div>
-        <span class="group__hint">de las condiciones</span>
+    </div>
+  } @else if (tree.groups.length === 1) {
+    <!-- Caso simple: un grupo, plano, con un único control de coincidencia -->
+    <div class="cond-builder__lead">
+      <span class="cond-builder__lead-text">Coincidir con</span>
+      <div class="seg" role="group" aria-label="Cómo se combinan las condiciones">
         <button
           type="button"
-          class="group__remove"
-          (click)="removeGroup(group.id)"
-          aria-label="Eliminar grupo"
+          class="seg__btn"
+          [class.seg__btn--on]="tree.groups[0].match === 'all'"
+          [attr.aria-pressed]="tree.groups[0].match === 'all'"
+          (click)="setGroupMatch(tree.groups[0].id, 'all')"
         >
-          <sc-icon [name]="closeIcon" size="inherit" />
+          todas
         </button>
-      </header>
-
-      <div class="group__body">
-        @for (cond of group.conditions; track trackCondition($index, cond); let ci = $index) {
-          @if (ci > 0) {
-            <button
-              type="button"
-              class="connector connector--inline"
-              (click)="toggleGroupMatch(group.id)"
-              aria-label="Cambiar combinación dentro del grupo"
-            >
-              {{ group.match === 'all' ? 'Y' : 'O' }}
-            </button>
-          }
-
-          <div class="cond-row">
-            <sc-select
-              class="cond-row__field"
-              [options]="fieldOptions"
-              optionLabel="label"
-              optionValue="value"
-              [value]="cond.field"
-              (valueChange)="setField(group.id, cond.id, $event)"
-            />
-            <sc-select
-              class="cond-row__op"
-              [options]="operatorOptions"
-              optionLabel="label"
-              optionValue="value"
-              [value]="cond.operator"
-              (valueChange)="setOperator(group.id, cond.id, $event)"
-            />
-            <sc-multiselect
-              class="cond-row__value"
-              [options]="fieldOptionsFor(cond.field)"
-              optionLabel="label"
-              optionValue="value"
-              [filter]="true"
-              [placeholder]="placeholderFor(cond.field)"
-              [value]="[...cond.values]"
-              (valueChange)="setValues(group.id, cond.id, $event)"
-            />
-            <button
-              type="button"
-              class="cond-row__remove"
-              (click)="removeCondition(group.id, cond.id)"
-              aria-label="Eliminar condición"
-            >
-              <sc-icon [name]="closeIcon" size="inherit" />
-            </button>
-          </div>
-        }
-
-        <button type="button" class="add-btn add-btn--sm" (click)="addCondition(group.id)">
-          <sc-icon [name]="addIcon" size="inherit" />
-          Añadir condición
+        <button
+          type="button"
+          class="seg__btn"
+          [class.seg__btn--on]="tree.groups[0].match === 'any'"
+          [attr.aria-pressed]="tree.groups[0].match === 'any'"
+          (click)="setGroupMatch(tree.groups[0].id, 'any')"
+        >
+          cualquiera
         </button>
       </div>
-    </section>
+      <span class="cond-builder__lead-text">de las condiciones</span>
+    </div>
+
+    <ng-container *ngTemplateOutlet="rows; context: { $implicit: tree.groups[0], flat: true }" />
+  } @else {
+    <!-- Caso avanzado: varios grupos combinados con Y/O -->
+    <div class="cond-builder__root">
+      <span class="cond-builder__root-label">Coincidir con</span>
+      <div class="seg" role="group" aria-label="Cómo se combinan los grupos">
+        <button
+          type="button"
+          class="seg__btn"
+          [class.seg__btn--on]="tree.match === 'all'"
+          [attr.aria-pressed]="tree.match === 'all'"
+          (click)="setRootMatch('all')"
+        >
+          todas
+        </button>
+        <button
+          type="button"
+          class="seg__btn"
+          [class.seg__btn--on]="tree.match === 'any'"
+          [attr.aria-pressed]="tree.match === 'any'"
+          (click)="setRootMatch('any')"
+        >
+          cualquiera
+        </button>
+      </div>
+      <span class="cond-builder__root-label">de estos grupos</span>
+    </div>
+
+    @for (group of tree.groups; track trackGroup($index, group); let gi = $index) {
+      @if (gi > 0) {
+        <button
+          type="button"
+          class="connector connector--group"
+          (click)="toggleRootMatch()"
+          aria-label="Cambiar la combinación entre grupos"
+        >
+          {{ tree.match === 'all' ? 'Y' : 'O' }}
+        </button>
+      }
+
+      <section class="group">
+        <header class="group__head">
+          <div class="seg seg--sm" role="group" aria-label="Cómo se combinan las condiciones del grupo">
+            <button
+              type="button"
+              class="seg__btn"
+              [class.seg__btn--on]="group.match === 'all'"
+              [attr.aria-pressed]="group.match === 'all'"
+              (click)="setGroupMatch(group.id, 'all')"
+            >
+              todas
+            </button>
+            <button
+              type="button"
+              class="seg__btn"
+              [class.seg__btn--on]="group.match === 'any'"
+              [attr.aria-pressed]="group.match === 'any'"
+              (click)="setGroupMatch(group.id, 'any')"
+            >
+              cualquiera
+            </button>
+          </div>
+          <span class="group__hint">de las condiciones</span>
+          <button
+            type="button"
+            class="group__remove"
+            (click)="removeGroup(group.id)"
+            aria-label="Eliminar grupo"
+          >
+            <sc-icon [name]="closeIcon" size="inherit" />
+          </button>
+        </header>
+
+        <ng-container *ngTemplateOutlet="rows; context: { $implicit: group, flat: false }" />
+      </section>
+    }
   }
 
-  <button type="button" class="add-btn" (click)="addGroup()">
-    <sc-icon [name]="addIcon" size="inherit" />
-    Añadir grupo
-  </button>
+  @if (tree.groups.length >= 1) {
+    <button type="button" class="add-group" (click)="addGroup()">
+      <sc-icon [name]="addIcon" size="inherit" />
+      @if (tree.groups.length === 1) {
+        Añadir grupo para combinar con O
+      } @else {
+        Añadir grupo
+      }
+    </button>
+  }
 
   <!-- Resumen en lenguaje natural -->
   <div class="cond-builder__summary">
@@ -155,3 +136,63 @@
     <p>{{ summary() }}</p>
   </div>
 </div>
+
+<!-- Filas de condición — compartidas entre el modo plano y el agrupado -->
+<ng-template #rows let-group let-flat="flat">
+  <div class="rows" [class.rows--flat]="flat">
+    @for (cond of group.conditions; track trackCondition($index, cond); let ci = $index) {
+      @if (ci > 0) {
+        <button
+          type="button"
+          class="connector connector--inline"
+          (click)="toggleGroupMatch(group.id)"
+          aria-label="Cambiar la combinación dentro del grupo"
+        >
+          {{ group.match === 'all' ? 'Y' : 'O' }}
+        </button>
+      }
+
+      <div class="cond-row">
+        <sc-select
+          class="cond-row__field"
+          [options]="fieldOptions"
+          optionLabel="label"
+          optionValue="value"
+          [value]="cond.field"
+          (valueChange)="setField(group.id, cond.id, $event)"
+        />
+        <sc-select
+          class="cond-row__op"
+          [options]="operatorOptions"
+          optionLabel="label"
+          optionValue="value"
+          [value]="cond.operator"
+          (valueChange)="setOperator(group.id, cond.id, $event)"
+        />
+        <sc-multiselect
+          class="cond-row__value"
+          [options]="fieldOptionsFor(cond.field)"
+          optionLabel="label"
+          optionValue="value"
+          [filter]="true"
+          [placeholder]="placeholderFor(cond.field)"
+          [value]="[...cond.values]"
+          (valueChange)="setValues(group.id, cond.id, $event)"
+        />
+        <button
+          type="button"
+          class="cond-row__remove"
+          (click)="removeCondition(group.id, cond.id)"
+          aria-label="Eliminar condición"
+        >
+          <sc-icon [name]="closeIcon" size="inherit" />
+        </button>
+      </div>
+    }
+
+    <button type="button" class="add-btn add-btn--sm" (click)="addCondition(group.id)">
+      <sc-icon [name]="addIcon" size="inherit" />
+      Añadir condición
+    </button>
+  </div>
+</ng-template>

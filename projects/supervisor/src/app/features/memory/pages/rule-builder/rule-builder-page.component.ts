@@ -28,7 +28,6 @@ import {
   deriveTreeFromLegacy,
   emptyConditionTree,
 } from '../../data/condition.types';
-import { AGENT_OPTIONS, GROUP_OPTIONS } from '../../data/conversation-filter-options';
 import type { Direction, Rule, RuleType } from '../../data/rule.types';
 import { CategoriesStore } from '../../state/categories.store';
 import { RulesStore } from '../../state/rules.store';
@@ -93,16 +92,6 @@ export class RuleBuilderPageComponent implements DirtyAware {
   protected readonly alertIcon = 'warning';
   protected readonly trashIcon = 'delete';
 
-  /**
-   * Catálogo combinado grupos + agentes para "Atendida por" en
-   * Transcripción. Spec line 123-127: "Multi-select con agentes o
-   * grupos del repositorio".
-   */
-  protected readonly attendedByOptions = [
-    ...GROUP_OPTIONS.map((g) => ({ value: g.value, label: `Grupo · ${g.label}` })),
-    ...AGENT_OPTIONS.map((a) => ({ value: a.value, label: a.label })),
-  ];
-
   protected readonly directionOptions = [
     { value: 'all' as Direction, labelKey: 'memory.rules.builder.direction.all' },
     { value: 'inbound' as Direction, labelKey: 'memory.rules.builder.direction.inbound' },
@@ -131,7 +120,6 @@ export class RuleBuilderPageComponent implements DirtyAware {
   // Transcripción (iter 9c-2)
   protected readonly durationMin = signal(30);
   protected readonly durationUnit = signal<'seconds' | 'minutes'>('seconds');
-  protected readonly attendedBy = signal<readonly string[]>([]);
   protected readonly aiAnalysis = signal(false);
   // Categorías IA (solo classification + aiAnalysis ON) · S49 §10 #13
   protected readonly categorias = signal<readonly string[]>([]);
@@ -152,7 +140,6 @@ export class RuleBuilderPageComponent implements DirtyAware {
       scheduleTo: this.scheduleTo(),
       durationMin: this.durationMin(),
       durationUnit: this.durationUnit(),
-      attendedBy: this.attendedBy(),
       aiAnalysis: this.aiAnalysis(),
       categorias: this.categorias(),
     });
@@ -215,7 +202,6 @@ export class RuleBuilderPageComponent implements DirtyAware {
       this.durationMin.set(durMin);
       this.durationUnit.set('seconds');
     }
-    this.attendedBy.set(rule.attendedBy ?? []);
     this.aiAnalysis.set(rule.aiAnalysis ?? false);
     this.categorias.set(rule.categorias ?? []);
     // Loaded values are the clean baseline for the unsaved-changes guard.
@@ -246,7 +232,6 @@ export class RuleBuilderPageComponent implements DirtyAware {
         to: this.scheduleTo(),
       },
       durationMin: this.durationUnit() === 'minutes' ? this.durationMin() * 60 : this.durationMin(),
-      attendedBy: this.attendedBy(),
       aiAnalysis: this.aiAnalysis(),
       // Solo persistimos categorías si la regla es classification + aiAnalysis;
       // si el usuario cambia el tipo o desactiva el toggle quedan limpias.
@@ -303,10 +288,6 @@ export class RuleBuilderPageComponent implements DirtyAware {
 
   protected setDescription(v: string): void {
     this.description.set(v);
-  }
-
-  protected setAttendedBy(v: unknown[] | readonly string[]): void {
-    this.attendedBy.set((v ?? []) as readonly string[]);
   }
 
   protected setCategorias(v: unknown[] | readonly string[]): void {

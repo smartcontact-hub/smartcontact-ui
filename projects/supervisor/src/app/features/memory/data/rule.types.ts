@@ -51,7 +51,6 @@ export interface Rule {
   readonly direction?: Direction;
   readonly schedule?: Schedule;
   readonly durationMin?: number; // segundos
-  readonly attendedBy?: readonly string[]; // agentes o grupos
   readonly aiAnalysis?: boolean;
   /**
    * IDs de categorías IA que esta regla detecta. Solo aplica a reglas

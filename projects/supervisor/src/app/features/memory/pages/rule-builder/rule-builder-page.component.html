@@ -236,22 +236,6 @@
             {{ 'memory.rules.builder.duration_hint' | translate }}
           </p>
         </div>
-
-        <div class="rule-block__row">
-          <sc-multiselect
-            [label]="'memory.rules.builder.attended_by_label' | translate"
-            [options]="attendedByOptions"
-            optionLabel="label"
-            optionValue="value"
-            [placeholder]="'memory.rules.builder.attended_by_placeholder' | translate"
-            [filter]="true"
-            [value]="[...attendedBy()]"
-            (valueChange)="setAttendedBy($event)"
-          />
-          <p class="rule-builder__field-hint">
-            {{ 'memory.rules.builder.attended_by_hint' | translate }}
-          </p>
-        </div>
       </section>
 
       <!-- Sub-bloque Análisis IA dentro de Transcripción · spec line 129-131 -->
