@@ -444,6 +444,8 @@
           "match_groups_aria": "Cómo se combinan los grupos",
           "impact": "Afectaría a {{count}} de las últimas {{total}} conversaciones.",
           "impact_note": "tipificación y categoría se evalúan en backend",
+          "est_title": "Estimación de procesado",
+          "est_projection": "≈ {{day}} al día · ≈ {{month}} al mes, a este ritmo.",
           "pick_all": "Todos",
           "pick_all_hint": "· incluye nuevos",
           "search": "Buscar…",

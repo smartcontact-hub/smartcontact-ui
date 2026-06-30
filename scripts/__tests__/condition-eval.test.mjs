@@ -10,6 +10,7 @@ import {
   conversationMatchesTree,
   hasUnevaluableConditions,
   parseDurationSecs,
+  projectImpact,
 } from '../../projects/supervisor/src/app/features/memory/data/condition-eval.core.mjs';
 
 /** Stub: grupo 5 → agente 7; agente 7 → "María García"; grupo 1 → "ACD Demo C2CB". */
@@ -101,6 +102,13 @@ test('grupo match all exige todas; match any basta una', () => {
   const any = tree(conds, 'any');
   assert.equal(conversationMatchesTree(conv({ service: 'Soporte', direction: 'entrante' }), any, ctx), true);
   assert.equal(conversationMatchesTree(conv({ service: 'Soporte', direction: 'saliente' }), any, ctx), false);
+});
+
+test('projectImpact: proyecta el ratio real a día/mes; total 0 → ceros', () => {
+  assert.deepEqual(projectImpact(8, 34, 420), { perDay: 99, perMonth: 2970 }); // 8/34·420≈99
+  assert.deepEqual(projectImpact(34, 34, 420), { perDay: 420, perMonth: 12600 }); // ratio 1
+  assert.deepEqual(projectImpact(0, 34, 420), { perDay: 0, perMonth: 0 });
+  assert.deepEqual(projectImpact(5, 0, 420), { perDay: 0, perMonth: 0 }); // sin evaluables
 });
 
 test('grupos raíz: all vs any', () => {

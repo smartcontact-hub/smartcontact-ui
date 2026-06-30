@@ -144,22 +144,32 @@
     <p>{{ summary() }}</p>
   </div>
 
-  <div class="cond-builder__impact">
-    <sc-icon name="leaderboard" [size]="14" />
-    <span>
-      {{ 'memory.rules.builder.cond.impact' | translate: { count: impactCount(), total: impactTotal() } }}
-    </span>
-    @if (hasUnevaluable()) {
-      <span class="cond-builder__impact-note">{{ 'memory.rules.builder.cond.impact_note' | translate }}</span>
+  <div class="cond-builder__estimate" aria-live="polite">
+    <p class="cond-builder__estimate-title">
+      <sc-icon name="leaderboard" [size]="14" aria-hidden="true" />
+      {{ 'memory.rules.builder.cond.est_title' | translate }}
+    </p>
+    @if (showEmptyImpact()) {
+      <p class="cond-builder__estimate-empty">
+        <sc-icon name="warning" [size]="13" aria-hidden="true" />
+        {{ 'memory.rules.builder.cond.val.impact_zero' | translate: { total: impactTotal() } }}
+      </p>
+    } @else {
+      <p class="cond-builder__estimate-main">
+        {{ 'memory.rules.builder.cond.impact' | translate: { count: impactCount(), total: impactTotal() } }}
+      </p>
+      @if (hasUnevaluable()) {
+        <p class="cond-builder__estimate-note">{{ 'memory.rules.builder.cond.impact_note' | translate }}</p>
+      } @else {
+        <p class="cond-builder__estimate-proj">
+          {{
+            'memory.rules.builder.cond.est_projection'
+              | translate: { day: estimate().perDay, month: estimate().perMonth }
+          }}
+        </p>
+      }
     }
   </div>
-
-  @if (showEmptyImpact()) {
-    <p class="cond-builder__empty-impact">
-      <sc-icon name="warning" [size]="13" />
-      {{ 'memory.rules.builder.cond.val.impact_zero' | translate: { total: impactTotal() } }}
-    </p>
-  }
 </div>
 
 <ng-template #rows let-group let-flat="flat">
@@ -224,29 +234,57 @@
             />
           } @else {
             <div class="cond-row__value cond-row__num">
-              <input
-                type="number"
-                min="0"
-                [value]="numAmount(cond)"
-                (input)="setAmount(group.id, cond.id, $any($event.target).value, 1)"
-              />
               @if (cond.operator === 'between') {
+                <input
+                  type="number"
+                  min="0"
+                  aria-label="Duración mínima"
+                  [value]="numAmount(cond)"
+                  (input)="setAmount(group.id, cond.id, $any($event.target).value, 1)"
+                />
                 <span class="cond-row__num-sep">y</span>
                 <input
                   type="number"
                   min="0"
+                  aria-label="Duración máxima"
                   [value]="numAmount2(cond)"
                   (input)="setAmount(group.id, cond.id, $any($event.target).value, 2)"
                 />
+                <sc-select
+                  class="cond-row__num-unit"
+                  [options]="durationUnitOptions"
+                  optionLabel="label"
+                  optionValue="value"
+                  [value]="numUnit(cond)"
+                  (valueChange)="setUnit(group.id, cond.id, $event)"
+                />
+              } @else {
+                <sc-select
+                  class="cond-row__preset"
+                  [options]="durationPresetOptions"
+                  optionLabel="label"
+                  optionValue="value"
+                  [value]="durationPresetValue(cond)"
+                  (valueChange)="setDurationPreset(group.id, cond.id, $event)"
+                />
+                @if (isCustomDur(cond)) {
+                  <input
+                    type="number"
+                    min="0"
+                    aria-label="Duración"
+                    [value]="numAmount(cond)"
+                    (input)="setAmount(group.id, cond.id, $any($event.target).value, 1)"
+                  />
+                  <sc-select
+                    class="cond-row__num-unit"
+                    [options]="durationUnitOptions"
+                    optionLabel="label"
+                    optionValue="value"
+                    [value]="numUnit(cond)"
+                    (valueChange)="setUnit(group.id, cond.id, $event)"
+                  />
+                }
               }
-              <sc-select
-                class="cond-row__num-unit"
-                [options]="durationUnitOptions"
-                optionLabel="label"
-                optionValue="value"
-                [value]="numUnit(cond)"
-                (valueChange)="setUnit(group.id, cond.id, $event)"
-              />
             </div>
           }
 
