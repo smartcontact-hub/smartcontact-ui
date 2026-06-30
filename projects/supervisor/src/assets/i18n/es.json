@@ -365,7 +365,7 @@
         "description_label": "Descripción",
         "description_placeholder": "Documenta el propósito de esta regla para tu equipo…",
         "scope": "Alcance",
-        "scope_desc": "A qué conversaciones aplica la regla. Una dimensión vacía significa «cualquiera».",
+        "scope_desc": "Define a qué conversaciones aplica la regla combinando condiciones con Y / O y grupos. Sin condiciones, aplica a todas.",
         "see_repository": "Ver repositorio",
         "scope_and": "Y",
         "scope_dim": {

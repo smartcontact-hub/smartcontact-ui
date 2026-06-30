@@ -12,6 +12,8 @@
  * mezcla con bulk actions: regla = "qué pasa con conversaciones futuras",
  * bulk = "qué hago ahora con las existentes" (spec `rule-constructor-update.md`).
  */
+import type { ConditionTree } from './condition.types';
+
 export type RuleType = 'recording' | 'transcription' | 'classification';
 export type RuleStatus = 'active' | 'inactive' | 'draft' | 'conflict';
 
@@ -32,6 +34,14 @@ export interface Rule {
   readonly servicios: readonly string[];
   readonly grupos: readonly string[];
   readonly agentes: readonly string[];
+  /**
+   * Árbol de condiciones (Variante B: match all/any · AND/OR · grupos). Fuente
+   * de verdad del alcance cuando está presente; el constructor lo edita. Los
+   * campos planos `servicios/grupos/agentes` se derivan de él al guardar
+   * (`deriveLegacyScope`) para no romper listado ni detección de conflictos.
+   * Opcional: reglas antiguas sin árbol lo reconstruyen con `deriveTreeFromLegacy`.
+   */
+  readonly conditionTree?: ConditionTree;
   // Flags qué hace la regla
   readonly recording: boolean;
   readonly transcripcion: boolean;
