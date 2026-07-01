@@ -1263,9 +1263,37 @@ borradores), cada uno con Antes / Ahora / Por qué, capturas comparadas (las «a
 antes/después. Skills `/impeccable`+`/minimalist-ui` aplicadas solo donde no contrastan con el DS (anti-slop, jerarquía,
 editorial; descartadas sus fuentes/colores/iconos propios). Nombres propios → genéricos. Dark-safe + AOT/typecheck/lint verde.
 
+## DD-29 · 2026-07-01 — Showcase de componentes «estilo Storybook» en sc-demo (motor propio, sin tooling nuevo)
+
+La doc de componentes eran páginas con variantes hardcodeadas (sin canvas aislado, sin controles en vivo, sin código,
+sin tabla de API, sin sidebar/categorías). Se reconvierte a un **showcase estilo Storybook COMPLETO** — pero como
+**motor propio dentro de `sc-demo`** (Angular 21, tokens `--sc-*`, deploy Cloudflare Pages), **sin añadir Storybook ni
+tooling nuevo**.
+
+**Alternativas descartadas.** (a) *Storybook oficial*: pesado, otra build/estética, otra fuente de verdad de tokens
+— rompe consonancia y el deploy actual. (b) *`NgComponentOutlet`* para pintar el componente desde metadatos: **no
+soporta** el content-projection de `sc-select`/`sc-multiselect` (`pTemplate` vía `contentChildren`) ni el `model()`
+two-way + `cellTemplate` de `sc-datatable` sin un adaptador por componente (= el trabajo manual que se quería evitar).
+
+**Decisión — patrón `<ng-template>` por story.** El demo declara cada story como un `<ng-template>` con la API real
+del componente (type-safe, proyección y `model()` nativos); el motor lo pinta vía `viewChild` + `ngTemplateOutlet` y
+dibuja alrededor: **canvas aislado** (tema claro/oscuro/comparar local, aplicado a un wrapper, no a `documentElement`),
+**knobs en vivo** (un `signal<Args>` que muta el contexto del outlet → re-bind instantáneo, OnPush; los controles
+hacen *dogfooding* de sc-select/toggleswitch/inputtext/inputnumber), **snippet** serializado (`serialize-args`, puro) +
+copiar, y **tabla de API**. `StoryHost` es **apilado** (todas las stories a la vista, no por pestañas) a propósito:
+así los `data-testid` del Kit siguen en el DOM y los e2e de métrica los miden.
+
+**Shell + rutas.** `/components` pasa a `StorybookShell` (sidebar fija: 7 categorías + búsqueda, derivada de
+`component-catalog.ts` que evoluciona `component-pages.ts`) con las páginas como children; `/foundations`·`/uso`·
+`/reglas` y el top-nav intactos; el toggle dark global sigue. **Los 49 componentes** quedan en formato story (button
+piloto + 46 migrados por lotes + `slot`/`subsection` nuevos) → **pokédex 49/49**. Migración por subagentes paralelos
+con spec común + gate de integración (AOT + spot-check) por lote. `verify` entero verde.
+
 ---
 
-Última actualización: 2026-06-30 (**DD-28** reglas MVP: borradores fuera del todo + invariante «una sola activa»
+Última actualización: 2026-07-01 (**DD-29** showcase «estilo Storybook» en sc-demo — motor propio, render por
+`<ng-template>`+`viewChild` [no `NgComponentOutlet`], canvas aislado + knobs en vivo + snippet + API + sidebar por
+categorías; 49/49 en formato story · **DD-28** reglas MVP: borradores fuera del todo + invariante «una sola activa»
 (radio) + fuera prioridad/conflictos en el supervisor; recorrido `/reglas` realineado · **DD-27** constructor de
 condiciones **v2** — refs tipadas dinámicas + modelo `value` + estimación de procesado [barra de proporción +
 proyección día/mes] + guía de errores + duración con presets + scope MVP [fuera grabación/borradores]; mergeado a
