@@ -289,7 +289,7 @@ function describeConditionTree(tree, labelFor) {
           d: 'Guardar vive abajo, en el footer; la cabecera (volver + título + tipo) va proyectada a la TopBar. La acción principal queda lejos de la navegación y puede solaparse con el breadcrumb de la app. Resolver dónde viven navegación y Guardar.',
         },
         {
-          t: 'Copy de la tabla — columna «Alcance»',
+          t: 'Copy de la tabla, columna «Alcance»',
           d: 'Muestra la prosa completa del árbol (servicio + grupo + tipificación + duración): puede salir larga y confusa en una celda. La lista NO tiene columna de descripción hoy: decidir si conviene nombre + descripción corta, o acortar la prosa con tooltip.',
         },
         {
