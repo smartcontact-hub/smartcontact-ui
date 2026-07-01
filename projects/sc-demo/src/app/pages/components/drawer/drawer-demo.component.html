@@ -1,14 +1,23 @@
-<h1>sc-drawer</h1>
+<app-story-host [meta]="meta" [stories]="stories()" />
 
-<div class="row">
+<!-- Story como `<ng-template>`: el botón abre el drawer (estado en el signal `open`).
+     El motor pinta canvas/knobs/código. Los `data-testid` los miden los e2e (no quitar). -->
+
+<ng-template #playground let-args>
   <sc-button label="Abrir drawer" data-testid="open-drawer" (clicked)="open.set(true)" />
-</div>
 
-<sc-drawer
-  header="Cabecera del drawer"
-  [visible]="open()"
-  (visibleChange)="open.set($event)"
-  data-testid="sc-drawer"
->
-  Contenido del drawer.
-</sc-drawer>
+  <sc-drawer
+    [header]="args.header || null"
+    [position]="args.position"
+    [modal]="args.modal"
+    [dismissible]="args.dismissible"
+    [closeOnEscape]="args.closeOnEscape"
+    [showCloseIcon]="args.showCloseIcon"
+    [fullScreen]="args.fullScreen"
+    [visible]="open()"
+    (visibleChange)="open.set($event)"
+    data-testid="sc-drawer"
+  >
+    Contenido del drawer.
+  </sc-drawer>
+</ng-template>

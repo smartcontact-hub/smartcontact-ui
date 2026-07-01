@@ -1,0 +1,14 @@
+<app-story-host [meta]="meta" [stories]="stories()" />
+
+<ng-template #playground let-args>
+  <sc-slot [titleKey]="args.titleKey" [icon]="args.icon || null" [hintKey]="args.hintKey || null">
+    Laura Gómez
+  </sc-slot>
+</ng-template>
+
+<ng-template #context>
+  <sc-subsection titleKey="Identidad" data-testid="sc-slot-context">
+    <sc-slot titleKey="Nombre">Laura Gómez</sc-slot>
+    <sc-slot titleKey="Extensión" hintKey="Interna">204</sc-slot>
+  </sc-subsection>
+</ng-template>

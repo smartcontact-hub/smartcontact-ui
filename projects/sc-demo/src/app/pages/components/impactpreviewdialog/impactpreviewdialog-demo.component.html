@@ -1,26 +1,28 @@
-<h1>sc-impact-preview-dialog</h1>
+<app-story-host [meta]="meta" [stories]="stories()" />
 
-<p>
-  Previsualización de una operación en bloque antes de aplicar. Los items se
-  pueden quitar uno a uno (el último no); el confirm emite los ids
-  supervivientes. Compone la <code>sc-dialog</code> canónica.
-</p>
+<!-- Story como `<ng-template>`: el botón abre el diálogo (estado en el signal `open`).
+     Los knobs mutan modo/título/etiquetas; items y badge vienen de signals del `.ts`.
+     Los `data-testid` los miden los e2e (no quitar). -->
 
-<button type="button" (click)="open.set(true)" data-testid="open-impact">
-  Previsualizar impacto
-</button>
+<ng-template #playground let-args>
+  <button type="button" (click)="open.set(true)" data-testid="open-impact">
+    Previsualizar impacto
+  </button>
 
-<sc-impact-preview-dialog
-  [visible]="open()"
-  mode="bulkEdit"
-  title="Aplicar cambios a 3 agentes"
-  [items]="items()"
-  [badge]="badge"
-  (cancelled)="open.set(false)"
-  (confirm)="onConfirm($event)"
-  data-testid="sc-impact"
-/>
+  <sc-impact-preview-dialog
+    [visible]="open()"
+    [mode]="args.mode"
+    [title]="args.title"
+    [items]="items()"
+    [badge]="badge"
+    [confirmLabel]="args.confirmLabel || null"
+    [cancelLabel]="args.cancelLabel || null"
+    (cancelled)="open.set(false)"
+    (confirm)="onConfirm($event)"
+    data-testid="sc-impact"
+  />
 
-@if (result(); as r) {
-  <p data-testid="impact-result">confirmado: {{ r.length }}</p>
-}
+  @if (result(); as r) {
+    <p data-testid="impact-result">confirmado: {{ r.length }}</p>
+  }
+</ng-template>

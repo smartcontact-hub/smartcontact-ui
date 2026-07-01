@@ -1,21 +1,60 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  TemplateRef,
+  computed,
+  inject,
+  signal,
+  viewChild,
+} from '@angular/core';
 
 import {
   ScCommandPaletteComponent,
   ScCommandPaletteService,
   ScPaletteCommand,
 } from '../../../../../../ui-smartcontact/src/public-api';
+import { StoryContext, StoryDef, StoryHostComponent, StoryMeta } from '../../../storybook';
 
+/** Demo de `sc-command-palette` en formato story (motor «Storybook-like»). */
 @Component({
   selector: 'app-commandpalette-demo',
-  imports: [ScCommandPaletteComponent],
+  imports: [ScCommandPaletteComponent, StoryHostComponent],
   templateUrl: './commandpalette-demo.component.html',
-  styleUrl: '../component-page.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CommandPaletteDemoComponent {
   protected readonly palette = inject(ScCommandPaletteService);
   protected readonly lastRun = signal<string | null>(null);
+
+  protected readonly playgroundTpl = viewChild<TemplateRef<StoryContext>>('playground');
+
+  protected readonly meta: StoryMeta = {
+    tag: 'sc-command-palette',
+    title: 'CommandPalette',
+    description:
+      'Paleta de comandos global (⌘K / Ctrl K), data-driven: `ScCommandPaletteService` no conoce rutas ni navegación; el consumidor publica comandos con `setCommands()` y cablea cada `action`. El host se monta una vez en el shell. Atajos: ↑↓ navegar · ↵ ejecutar · Esc cerrar · / enfoca el buscador.',
+    argTypes: [],
+    defaultArgs: {},
+    props: [
+      {
+        name: 'setCommands()',
+        type: '(cmds: ScPaletteCommand[]) => void',
+        description: 'Publica la lista de comandos disponibles.',
+      },
+      { name: 'open()', type: '() => void', description: 'Abre la paleta imperativamente.' },
+      {
+        name: 'visible()',
+        type: 'Signal<boolean>',
+        description: 'Estado de visibilidad (poseído por el servicio).',
+      },
+    ],
+  };
+
+  protected readonly stories = computed<readonly StoryDef[]>(() => {
+    const pg = this.playgroundTpl();
+    if (!pg) return [];
+    return [{ name: 'Playground', playground: true, template: pg }];
+  });
 
   constructor() {
     const run = (label: string) => (): void => this.lastRun.set(label);

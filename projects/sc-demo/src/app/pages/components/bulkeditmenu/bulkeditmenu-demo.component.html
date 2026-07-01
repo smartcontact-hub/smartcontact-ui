@@ -1,15 +1,17 @@
-<h1>sc-bulk-edit-menu</h1>
+<app-story-host [meta]="meta" [stories]="stories()" />
 
-<p>
-  Editor inline «Cambiar [campo] a [valor] [Aplicar]» que vive en la bulk action
-  bar. El consumidor suministra campos y valores; el componente orquesta los
-  selects y emite un único <code>commit</code> al pulsar Aplicar.
-</p>
+<!-- Stories declaradas como `<ng-template>`: el motor las pinta en su canvas. El
+     componente compone `sc-select` internamente (no hay proyección que declarar
+     aquí). Los `data-testid` los miden los e2e de métrica del Kit (no quitar). -->
 
-<div class="row">
+<ng-template #playground>
+  <sc-bulk-edit-menu [fields]="fields" (commit)="onCommit($event)" />
+</ng-template>
+
+<ng-template #inline>
   <sc-bulk-edit-menu [fields]="fields" (commit)="onCommit($event)" data-testid="sc-bulkedit" />
-</div>
 
-@if (lastCommit(); as c) {
-  <p data-testid="sc-bulkedit-result">Commit: {{ c.fieldLabel }} → {{ c.valueLabel }}</p>
-}
+  @if (lastCommit(); as c) {
+    <p data-testid="sc-bulkedit-result">Commit: {{ c.fieldLabel }} → {{ c.valueLabel }}</p>
+  }
+</ng-template>

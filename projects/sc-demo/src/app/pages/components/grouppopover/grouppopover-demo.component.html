@@ -1,8 +1,14 @@
-<h1>sc-grouppopover</h1>
+<app-story-host [meta]="meta" [stories]="stories()" />
 
-<p>Celda inline con conteo de grupos; lista flotante en hover/focus (máx. 5 + «+N más»).</p>
+<!-- Inline cell + hover popover (no hay trigger/estado): data-driven vía `[groups]`,
+     sin inputs escalares. El Playground muestra una celda; la 2ª story contrasta
+     pocos vs. muchos (+N más). Los `data-testid` los miden los e2e (no quitar). -->
 
-<div class="row">
+<ng-template #playground let-args>
   <sc-group-popover [groups]="few" data-testid="sc-grouppopover-few" />
+</ng-template>
+
+<ng-template #overflow>
+  <sc-group-popover [groups]="few" />
   <sc-group-popover [groups]="many" data-testid="sc-grouppopover-many" />
-</div>
+</ng-template>

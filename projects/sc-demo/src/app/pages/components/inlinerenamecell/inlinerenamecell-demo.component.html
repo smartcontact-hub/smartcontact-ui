@@ -1,29 +1,32 @@
-<h1>sc-inline-rename-cell</h1>
+<app-story-host [meta]="meta" [stories]="stories()" />
 
-<p>
-  Celda de nombre editable in-place (bespoke §10, input nativo — no
-  <code>p-inplace</code>). <strong>autofocus + select-all</strong> al montar;
-  <kbd>Enter</kbd> o ✓ confirma (valor trimmeado), <kbd>Esc</kbd> o ✗ cancela; un
-  valor vacío deshabilita el commit. Sin reflow: iguala la celda en reposo (Figma
-  12422:26385). Renderer agnóstico — se proyecta en cualquier celda de tabla.
-</p>
+<ng-template #playground let-args>
+  <sc-inline-rename-cell
+    [initialValue]="args.initialValue"
+    [placeholder]="args.placeholder"
+    [ariaLabel]="args.ariaLabel"
+  />
+</ng-template>
 
-<h2>Demo (celda de tabla)</h2>
-<div class="cell" data-testid="rename-cell">
-  @if (editing()) {
-    <sc-inline-rename-cell
-      [initialValue]="name()"
-      placeholder="Nombre del equipo"
-      [ariaLabel]="'Renombrar ' + name()"
-      (commit)="onCommit($event)"
-      (cancelled)="onCancel()"
-      data-testid="sc-inline-rename"
-    />
-  } @else {
-    <button type="button" class="cell__name" (click)="startEdit()" data-testid="start-edit">
-      {{ name() }}
-    </button>
-  }
-</div>
+<ng-template #demo>
+  <div class="col">
+    <div class="cell" data-testid="rename-cell">
+      @if (editing()) {
+        <sc-inline-rename-cell
+          [initialValue]="name()"
+          placeholder="Nombre del equipo"
+          [ariaLabel]="'Renombrar ' + name()"
+          (commit)="onCommit($event)"
+          (cancelled)="onCancel()"
+          data-testid="sc-inline-rename"
+        />
+      } @else {
+        <button type="button" class="cell__name" (click)="startEdit()" data-testid="start-edit">
+          {{ name() }}
+        </button>
+      }
+    </div>
 
-<p data-testid="rename-value">Valor: {{ name() }}</p>
+    <p data-testid="rename-value">Valor: {{ name() }}</p>
+  </div>
+</ng-template>

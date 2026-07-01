@@ -281,4 +281,14 @@ export const SC_DEMO_COMPONENT_PAGES = [
     load: () =>
       import('./sectioncard/sectioncard-demo.component').then((m) => m.SectionCardDemoComponent),
   },
+  {
+    path: 'subsection',
+    label: 'Subsection',
+    load: () => import('./subsection/subsection-demo.component').then((m) => m.SubsectionDemoComponent),
+  },
+  {
+    path: 'slot',
+    label: 'Slot',
+    load: () => import('./slot/slot-demo.component').then((m) => m.SlotDemoComponent),
+  },
 ] satisfies ScDemoComponentPage[];

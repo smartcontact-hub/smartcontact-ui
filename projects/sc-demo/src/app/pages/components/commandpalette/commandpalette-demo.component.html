@@ -1,22 +1,17 @@
-<h1>sc-command-palette</h1>
+<app-story-host [meta]="meta" [stories]="stories()" />
 
-<p>
-  Paleta de comandos global (<kbd>⌘K</kbd> / <kbd>Ctrl K</kbd>) — versión
-  <strong>data-driven</strong>: <code>ScCommandPaletteService</code> no conoce
-  rutas ni navegación; el consumidor publica los comandos con
-  <code>setCommands()</code> y cablea cada <code>action</code>. El componente se
-  monta una vez en el shell y reacciona a <code>visible()</code>. Atajos: <kbd>↑</kbd
-  ><kbd>↓</kbd> navegar · <kbd>↵</kbd> ejecutar · <kbd>Esc</kbd> cerrar ·
-  <kbd>/</kbd> enfoca el buscador de la página.
-</p>
+<!-- Service-driven: el host `<sc-command-palette>` se monta una vez y reacciona a
+     `visible()`; el servicio posee la apertura. Sin inputs de host → el Playground
+     es host + un disparador. Los `data-testid` los miden los e2e (no quitar). -->
 
-<h2>Demo</h2>
-<button type="button" class="demo-trigger" (click)="palette.open()" data-testid="open-palette">
-  Abrir paleta (⌘K)
-</button>
+<ng-template #playground let-args>
+  <button type="button" class="demo-trigger" (click)="palette.open()" data-testid="open-palette">
+    Abrir paleta (⌘K)
+  </button>
 
-@if (lastRun(); as r) {
-  <p data-testid="palette-last-run">Ejecutado: {{ r }}</p>
-}
+  @if (lastRun(); as r) {
+    <p data-testid="palette-last-run">Ejecutado: {{ r }}</p>
+  }
 
-<sc-command-palette />
+  <sc-command-palette />
+</ng-template>

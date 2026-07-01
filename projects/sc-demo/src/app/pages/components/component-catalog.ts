@@ -75,7 +75,9 @@ const CATEGORY: Record<string, ComponentCategory> = {
   pageheader: 'Layout',
   panel: 'Layout',
   sectioncard: 'Layout',
+  slot: 'Layout',
   stickyformheader: 'Layout',
+  subsection: 'Layout',
   // Patrones
   bulkactionbar: 'Patrones',
   bulkeditmenu: 'Patrones',
