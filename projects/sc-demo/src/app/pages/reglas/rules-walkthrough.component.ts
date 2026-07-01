@@ -27,6 +27,17 @@ interface Decision {
   readonly d: string;
 }
 
+interface FeedbackNote {
+  readonly t: string;
+  readonly d: string;
+}
+
+interface FeedbackEntry {
+  /** Fecha legible de la sesión de feedback. */
+  readonly date: string;
+  readonly notes: FeedbackNote[];
+}
+
 /**
  * Recorrido del "sistema de reglas" del Supervisor, contado como una HISTORIA:
  * de dónde venía (grabación, prioridad, conflictos, borradores) a dónde está
@@ -260,5 +271,40 @@ function describeConditionTree(tree, labelFor) {
     'Si entra la opción de invertir o excluir condición («todo esto menos X»).',
     'Constructor anidado más allá de 2 niveles y simulador de impacto/coste como evolución, no MVP.',
     'El detalle de la conversación en ventana propia (reproductor no bloqueante).',
+  ];
+
+  /* ─────────── Log de feedback de revisión (cronológico, más reciente arriba) ───────────
+   * Acumula las indicaciones del equipo junto al recorrido, para acceso cronológico.
+   * Cada punto se VALIDÓ contra el prototipo real (código + flujo) antes de anotarlo. */
+  readonly feedback: FeedbackEntry[] = [
+    {
+      date: '1 jul 2026',
+      notes: [
+        {
+          t: 'Pausar una regla (futuro)',
+          d: 'Hoy solo hay Activa/Inactiva (un booleano). Añadir «Pausar» como acción propia, distinta de desactivar, para más adelante.',
+        },
+        {
+          t: 'Trabajar la cabecera del constructor',
+          d: 'Guardar vive abajo, en el footer; la cabecera (volver + título + tipo) va proyectada a la TopBar. La acción principal queda lejos de la navegación y puede solaparse con el breadcrumb de la app. Resolver dónde viven navegación y Guardar.',
+        },
+        {
+          t: 'Copy de la tabla — columna «Alcance»',
+          d: 'Muestra la prosa completa del árbol (servicio + grupo + tipificación + duración): puede salir larga y confusa en una celda. La lista NO tiene columna de descripción hoy: decidir si conviene nombre + descripción corta, o acortar la prosa con tooltip.',
+        },
+        {
+          t: '¿Excluyentes o cascada en el alcance?',
+          d: 'Entender si al marcar Grupos ya no debería poder elegir Servicios. Hoy NO son excluyentes: servicio/grupo/agente se combinan libremente con Y/O en el árbol. Decidir si debe haber cascada o exclusión (enlaza con «invertir/excluir condición», ya en A confirmar).',
+        },
+        {
+          t: 'Una sola tabla, no Activas/Inactivas',
+          d: 'Unificar las dos secciones en una tabla: como solo puede haber una regla activa (el store lo fuerza), la columna Estado ya distingue Activa/Inactiva. Menos ruido.',
+        },
+        {
+          t: 'Modal de confirmación al activar',
+          d: 'Hoy activar una regla desactiva la anterior en SILENCIO. Añadir confirmación «esto desactivará [X] · afectará a…»: (a) tienes una activa y activas otra → confirmar; (b) todas inactivas, creas una y activas el toggle → sin modal; (c) tienes una activa, creas otra y activas su toggle → confirmar.',
+        },
+      ],
+    },
   ];
 }

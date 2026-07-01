@@ -1,4 +1,5 @@
 <article class="rules">
+  <div class="rules__main">
   <header class="rules__head">
     <p class="eyebrow">Estado del proyecto</p>
     <h1>Sistema de reglas</h1>
@@ -357,6 +358,29 @@
       <code>npm run usage:capture</code> y las «antes» quedan guardadas para contar el cambio.
     </p>
   </footer>
+  </div>
+
+  <aside class="rules__feedback" aria-label="Feedback del equipo, por fecha">
+    <div class="rules__feedback-inner">
+      <p class="rules__feedback-eyebrow">Feedback</p>
+      <p class="rules__feedback-hint">
+        Notas de revisión, por fecha (la más reciente arriba). Cada punto, validado contra el prototipo.
+      </p>
+      @for (entry of feedback; track entry.date) {
+        <section class="fb">
+          <h2 class="fb__date">{{ entry.date }}</h2>
+          <ul class="fb__list">
+            @for (n of entry.notes; track n.t) {
+              <li class="fb__item">
+                <strong>{{ n.t }}</strong>
+                <span>{{ n.d }}</span>
+              </li>
+            }
+          </ul>
+        </section>
+      }
+    </div>
+  </aside>
 </article>
 
 @if (zoomed(); as z) {
