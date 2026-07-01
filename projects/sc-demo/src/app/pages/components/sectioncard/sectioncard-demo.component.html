@@ -1,55 +1,77 @@
-<h1>sc-section-card</h1>
+<app-story-host [meta]="meta" [stories]="stories()" />
 
-<p>
-  Sistema anidado <strong>Section → Subsection → Slot</strong> (§4.5, 1:1 con el
-  nodo Figma "Section"). La <code>sc-section-card</code> es el contenedor gris;
-  cada <code>sc-subsection</code> es una card blanca con su cabecera; cada
-  <code>sc-slot</code> es una fila titulada separada por un divisor. Los títulos
-  son claves i18n que traduce el consumidor. Retrocompatible: una sección con
-  contenido directo (sin subsecciones) sigue funcionando.
-</p>
+<!-- Stories declaradas como `<ng-template>`: el motor las pinta en su canvas. El
+     Playground recibe `args` (knobs); los ejemplos son estáticos. El wrapper
+     `.demo-canvas` da fondo blanco: la sc-section-card es un panel gris pensado
+     para verse SOBRE blanco (como en Figma). Los `data-testid` los miden los e2e
+     de métrica del Kit (no quitar). -->
 
-<!-- Lienzo blanco = página de formulario: la sección gris se ve SOBRE blanco (como en Figma). -->
-<div class="demo-canvas">
-  <h2>Anidado (Section → 2 Subsections → Slots)</h2>
-  <sc-section-card titleKey="Configuración del agente" icon="settings" data-testid="sc-section">
-    <sc-subsection titleKey="Identidad" data-testid="sc-subsection">
-      <sc-slot titleKey="Nombre" data-testid="sc-slot-1">
-        <p class="demo-field">Campo de nombre del agente…</p>
-      </sc-slot>
-      <sc-slot titleKey="Extensión" data-testid="sc-slot-2">
-        <p class="demo-field">Campo de extensión…</p>
-      </sc-slot>
-    </sc-subsection>
-    <sc-subsection titleKey="Canales">
-      <sc-slot titleKey="Voz">
-        <p class="demo-field">Configuración de voz…</p>
-      </sc-slot>
-    </sc-subsection>
-  </sc-section-card>
+<ng-template #playground let-args>
+  <div class="demo-canvas">
+    <sc-section-card
+      [titleKey]="args.titleKey"
+      [hintKey]="args.hintKey || null"
+      [icon]="args.icon || null"
+      [collapsible]="args.collapsible"
+      [initiallyCollapsed]="args.initiallyCollapsed"
+      [flush]="args.flush"
+    >
+      <p class="demo-field">Contenido proyectado de la sección…</p>
+    </sc-section-card>
+  </div>
+</ng-template>
 
-  <h2>Plano (retrocompatible) + hint</h2>
-  <sc-section-card
-    titleKey="Sección plana"
-    hintKey="contenido directo, sin subsecciones"
-    icon="description"
-    data-testid="sc-section-flat"
-  >
-    <p class="demo-field">Contenido proyectado directo — renderiza como el card plano.</p>
-  </sc-section-card>
+<ng-template #nested>
+  <div class="demo-canvas">
+    <sc-section-card titleKey="Configuración del agente" icon="settings" data-testid="sc-section">
+      <sc-subsection titleKey="Identidad" data-testid="sc-subsection">
+        <sc-slot titleKey="Nombre" data-testid="sc-slot-1">
+          <p class="demo-field">Campo de nombre del agente…</p>
+        </sc-slot>
+        <sc-slot titleKey="Extensión" data-testid="sc-slot-2">
+          <p class="demo-field">Campo de extensión…</p>
+        </sc-slot>
+      </sc-subsection>
+      <sc-subsection titleKey="Canales">
+        <sc-slot titleKey="Voz">
+          <p class="demo-field">Configuración de voz…</p>
+        </sc-slot>
+      </sc-subsection>
+    </sc-section-card>
+  </div>
+</ng-template>
 
-  <h2>Colapsable (inicia plegada) + flush</h2>
-  <sc-section-card
-    titleKey="Ajustes avanzados"
-    icon="tune"
-    [collapsible]="true"
-    [initiallyCollapsed]="true"
-    data-testid="sc-section-collapsible"
-  >
-    <p class="demo-field">Contenido colapsable — clic en la cabecera para desplegar.</p>
-  </sc-section-card>
+<ng-template #flat>
+  <div class="demo-canvas">
+    <sc-section-card
+      titleKey="Sección plana"
+      hintKey="contenido directo, sin subsecciones"
+      icon="description"
+      data-testid="sc-section-flat"
+    >
+      <p class="demo-field">Contenido proyectado directo — renderiza como el card plano.</p>
+    </sc-section-card>
+  </div>
+</ng-template>
 
-  <sc-section-card titleKey="Sección flush (sin caja)" [flush]="true" data-testid="sc-section-flush">
-    <p class="demo-field">Sin fondo ni borde — el contenido va a sangre.</p>
-  </sc-section-card>
-</div>
+<ng-template #collapsible>
+  <div class="demo-canvas">
+    <sc-section-card
+      titleKey="Ajustes avanzados"
+      icon="tune"
+      [collapsible]="true"
+      [initiallyCollapsed]="true"
+      data-testid="sc-section-collapsible"
+    >
+      <p class="demo-field">Contenido colapsable — clic en la cabecera para desplegar.</p>
+    </sc-section-card>
+
+    <sc-section-card
+      titleKey="Sección flush (sin caja)"
+      [flush]="true"
+      data-testid="sc-section-flush"
+    >
+      <p class="demo-field">Sin fondo ni borde — el contenido va a sangre.</p>
+    </sc-section-card>
+  </div>
+</ng-template>

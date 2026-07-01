@@ -1,10 +1,25 @@
-<h1>sc-toast</h1>
+<app-story-host [meta]="meta" [stories]="stories()" />
 
-<sc-toast data-testid="sc-toast-host" />
+<!-- Stories declaradas como `<ng-template>`: el motor las pinta en su canvas. El
+     Playground recibe `args` (knobs) y expone el host `<sc-toast>` + un disparador
+     para ver la posición/duración en vivo. Los `data-testid` los miden los e2e de
+     métrica del Kit (no quitar). -->
 
-<div class="row">
+<ng-template #playground let-args>
+  <sc-toast
+    [position]="args.position"
+    [life]="args.life"
+    [baseZIndex]="args.baseZIndex"
+    [preventDuplicates]="args.preventDuplicates"
+    [preventOpenDuplicates]="args.preventOpenDuplicates"
+  />
+  <sc-button label="Lanzar toast" (clicked)="show('info')" />
+</ng-template>
+
+<ng-template #triggers>
+  <sc-toast data-testid="sc-toast-host" />
   <sc-button label="Success" variant="success" data-testid="toast-success" (clicked)="show('success')" />
   <sc-button label="Info" variant="info" (clicked)="show('info')" />
   <sc-button label="Warn" variant="warn" (clicked)="show('warn')" />
   <sc-button label="Danger" variant="danger" (clicked)="show('error')" />
-</div>
+</ng-template>

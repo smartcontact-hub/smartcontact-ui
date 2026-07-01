@@ -1,7 +1,14 @@
-<h1>sc-badge</h1>
+<app-story-host [meta]="meta" [stories]="stories()" />
 
-<h2>Variantes</h2>
-<div class="row">
+<!-- Stories declaradas como `<ng-template>`: el motor las pinta en su canvas. El
+     Playground recibe `args` (knobs); los ejemplos son estáticos. Los `data-testid`
+     los miden los e2e de métrica del Kit (no quitar). -->
+
+<ng-template #playground let-args>
+  <sc-badge [label]="args.label" [variant]="args.variant" [size]="args.size" />
+</ng-template>
+
+<ng-template #variants>
   <sc-badge label="3" data-testid="sc-badge-md" />
   <sc-badge label="5" variant="secondary" />
   <sc-badge label="OK" variant="success" />
@@ -9,12 +16,11 @@
   <sc-badge label="!" variant="warning" />
   <sc-badge label="9+" variant="danger" />
   <sc-badge label="C" variant="contrast" />
-</div>
+</ng-template>
 
-<h2>Tamaños</h2>
-<div class="row">
+<ng-template #sizes>
   <sc-badge label="s" size="sm" data-testid="sc-badge-sm" />
   <sc-badge label="m" />
   <sc-badge label="l" size="lg" />
   <sc-badge label="xl" size="xl" data-testid="sc-badge-xl" />
-</div>
+</ng-template>

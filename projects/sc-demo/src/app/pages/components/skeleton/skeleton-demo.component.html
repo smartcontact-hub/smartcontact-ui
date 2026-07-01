@@ -1,9 +1,26 @@
-<h1>sc-skeleton</h1>
+<app-story-host [meta]="meta" [stories]="stories()" />
 
-<div class="col" style="max-width: 24rem">
-  <sc-skeleton data-testid="sc-skeleton" />
-  <sc-skeleton width="60%" />
-  <sc-skeleton height="4rem" />
-  <sc-skeleton shape="circle" size="3rem" />
-  <sc-skeleton animation="none" />
-</div>
+<!-- Stories declaradas como `<ng-template>`: el motor las pinta en su canvas. El
+     Playground recibe `args` (knobs); los ejemplos son estáticos. Los `data-testid`
+     los miden los e2e de métrica del Kit (no quitar). -->
+
+<ng-template #playground let-args>
+  <sc-skeleton
+    [shape]="args.shape"
+    [animation]="args.animation"
+    [width]="args.width"
+    [height]="args.height"
+    [size]="args.size || null"
+    [borderRadius]="args.borderRadius || null"
+  />
+</ng-template>
+
+<ng-template #shapes>
+  <div class="col" style="max-width: 24rem">
+    <sc-skeleton data-testid="sc-skeleton" />
+    <sc-skeleton width="60%" />
+    <sc-skeleton height="4rem" />
+    <sc-skeleton shape="circle" size="3rem" />
+    <sc-skeleton animation="none" />
+  </div>
+</ng-template>

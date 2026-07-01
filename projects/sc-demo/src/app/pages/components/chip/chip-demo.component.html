@@ -1,14 +1,28 @@
-<h1>sc-chip</h1>
+<app-story-host [meta]="meta" [stories]="stories()" />
 
-<div class="row">
+<!-- Stories declaradas como `<ng-template>`: el motor las pinta en su canvas. El
+     Playground recibe `args` (knobs); los ejemplos son estáticos. Los `data-testid`
+     los miden los e2e de métrica del Kit (no quitar). -->
+
+<ng-template #playground let-args>
+  <sc-chip
+    [label]="args.label"
+    [icon]="args.icon || null"
+    [removable]="args.removable"
+    [disabled]="args.disabled"
+    [variant]="args.variant"
+    [labelColor]="args.labelColor"
+  />
+</ng-template>
+
+<ng-template #base>
   <sc-chip label="Etiqueta" data-testid="sc-chip" />
   <sc-chip label="Con icono" icon="check" />
   <sc-chip label="Quitable" [removable]="true" data-testid="sc-chip-removable" />
   <sc-chip label="Deshabilitado" [disabled]="true" />
-</div>
+</ng-template>
 
-<h2>Variante label (8 colores categóricos, quitable, §4.1)</h2>
-<div class="row">
+<ng-template #label>
   <sc-chip variant="label" labelColor="green" label="Verde" />
   <sc-chip
     variant="label"
@@ -19,8 +33,7 @@
     (removed)="onLabelRemove()"
     data-testid="sc-chip-label"
   />
-</div>
-
-@if (labelRemoved()) {
-  <p data-testid="sc-chip-label-removed">label removido</p>
-}
+  @if (labelRemoved()) {
+    <p data-testid="sc-chip-label-removed">label removido</p>
+  }
+</ng-template>

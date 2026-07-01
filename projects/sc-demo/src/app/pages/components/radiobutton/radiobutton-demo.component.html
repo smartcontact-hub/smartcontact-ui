@@ -1,15 +1,29 @@
-<h1>sc-radiobutton</h1>
+<app-story-host [meta]="meta" [stories]="stories()" />
 
-<div class="row">
-  <sc-radiobutton value="a" [modelValue]="selected()" (modelValueChange)="selected.set($any($event))" inputId="opt-a" name="demo" data-testid="sc-radio-md" />
-  <label for="opt-a">Opción A</label>
-  <sc-radiobutton value="b" [modelValue]="selected()" (modelValueChange)="selected.set($any($event))" inputId="opt-b" name="demo" />
-  <label for="opt-b">Opción B</label>
-</div>
+<ng-template #playground let-args>
+  <sc-radiobutton
+    [value]="args.value"
+    [modelValue]="args.modelValue"
+    [name]="args.name"
+    [size]="args.size"
+    [variant]="args.variant"
+    [ariaLabel]="args.ariaLabel"
+  />
+</ng-template>
 
-<h2>Tamaños</h2>
-<div class="row">
-  <sc-radiobutton value="s" size="sm" name="sizes" data-testid="sc-radio-sm" />
-  <sc-radiobutton value="m" name="sizes" />
-  <sc-radiobutton value="l" size="lg" name="sizes" data-testid="sc-radio-lg" />
-</div>
+<ng-template #group>
+  <div class="row">
+    <sc-radiobutton value="a" [modelValue]="selected()" (modelValueChange)="selected.set($any($event))" inputId="opt-a" name="demo" data-testid="sc-radio-md" />
+    <label for="opt-a">Opción A</label>
+    <sc-radiobutton value="b" [modelValue]="selected()" (modelValueChange)="selected.set($any($event))" inputId="opt-b" name="demo" />
+    <label for="opt-b">Opción B</label>
+  </div>
+</ng-template>
+
+<ng-template #sizes>
+  <div class="row">
+    <sc-radiobutton value="s" size="sm" name="sizes" data-testid="sc-radio-sm" />
+    <sc-radiobutton value="m" name="sizes" />
+    <sc-radiobutton value="l" size="lg" name="sizes" data-testid="sc-radio-lg" />
+  </div>
+</ng-template>

@@ -1,5 +1,18 @@
-<h1>sc-progressspinner</h1>
+<app-story-host [meta]="meta" [stories]="stories()" />
 
-<div class="row">
+<!-- Stories declaradas como `<ng-template>`: el motor las pinta en su canvas. El
+     Playground recibe `args` (knobs); los ejemplos son estáticos. Los `data-testid`
+     los miden los e2e de métrica del Kit (no quitar). -->
+
+<ng-template #playground let-args>
+  <sc-progressspinner
+    [strokeWidth]="args.strokeWidth"
+    [fill]="args.fill"
+    [animationDuration]="args.animationDuration"
+    [ariaLabel]="args.ariaLabel"
+  />
+</ng-template>
+
+<ng-template #default>
   <sc-progressspinner data-testid="sc-progressspinner" />
-</div>
+</ng-template>

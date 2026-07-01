@@ -1,8 +1,29 @@
-<h1>sc-inputnumber</h1>
+<app-story-host [meta]="meta" [stories]="stories()" />
 
-<div class="col">
-  <sc-inputnumber label="Cantidad" placeholder="0" data-testid="sc-inputnumber" />
-  <sc-inputnumber label="Con límites" [min]="0" [max]="100" />
-  <sc-inputnumber label="Con error" error="Fuera de rango" data-testid="sc-inputnumber-error" />
-  <sc-inputnumber label="Deshabilitado" [disabled]="true" />
-</div>
+<ng-template #playground let-args>
+  <sc-inputnumber
+    [label]="args.label"
+    [value]="args.value"
+    [placeholder]="args.placeholder"
+    [suffix]="args.suffix || undefined"
+    [helperText]="args.helperText || undefined"
+    [error]="args.error || undefined"
+    [min]="args.min ?? undefined"
+    [max]="args.max ?? undefined"
+    [step]="args.step"
+    [size]="args.size"
+    [required]="args.required"
+    [disabled]="args.disabled"
+    [readonly]="args.readonly"
+  />
+</ng-template>
+
+<ng-template #states>
+  <div class="col">
+    <sc-inputnumber label="Cantidad" placeholder="0" data-testid="sc-inputnumber" />
+    <sc-inputnumber label="Con límites" [min]="0" [max]="100" />
+    <sc-inputnumber label="Con sufijo" suffix="agentes" [value]="5" />
+    <sc-inputnumber label="Con error" error="Fuera de rango" data-testid="sc-inputnumber-error" />
+    <sc-inputnumber label="Deshabilitado" [disabled]="true" />
+  </div>
+</ng-template>

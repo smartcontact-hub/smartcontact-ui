@@ -1,27 +1,41 @@
-<h1>sc-sticky-form-header</h1>
+<app-story-host [meta]="meta" [stories]="stories()" />
 
-<p>
-  ⚠️ <strong>Deprecated / retenido</strong> (rollback DD#65): ya no lo usa ningún
-  form (los 3 shells migraron a «todo arriba»). Se conserva como red de
-  seguridad. Header sticky de Create/Edit: eyebrow + nombre editable inline +
-  Guardar.
-</p>
+<!-- Stories declaradas como `<ng-template>`: el motor las pinta en su canvas. El
+     Playground recibe `args` (knobs); `name` es required → se bindea desde el
+     signal del componente para que la edición inline funcione. Los `data-testid`
+     los miden los e2e de métrica del Kit (no quitar). -->
 
-<h2>Edit (nombre editable con lápiz)</h2>
-<sc-sticky-form-header
-  mode="edit"
-  entityKey="AGENTE"
-  [name]="name()"
-  (nameChange)="onNameChange($event)"
-  (save)="onSave()"
-  data-testid="sc-sticky-edit"
-/>
+<ng-template #playground let-args>
+  <sc-sticky-form-header
+    [mode]="args.mode"
+    [entityKey]="args.entityKey"
+    [name]="name()"
+    [canSave]="args.canSave"
+    [saving]="args.saving"
+    [namePlaceholderKey]="args.namePlaceholderKey"
+    [showBack]="args.showBack"
+    (nameChange)="onNameChange($event)"
+    (save)="onSave()"
+  />
+</ng-template>
 
-<h2>Create (input de nombre)</h2>
-<sc-sticky-form-header
-  mode="create"
-  entityKey="Nuevo agente"
-  [name]="''"
-  namePlaceholderKey="Nombre del agente"
-  data-testid="sc-sticky-create"
-/>
+<ng-template #edit>
+  <sc-sticky-form-header
+    mode="edit"
+    entityKey="AGENTE"
+    [name]="name()"
+    (nameChange)="onNameChange($event)"
+    (save)="onSave()"
+    data-testid="sc-sticky-edit"
+  />
+</ng-template>
+
+<ng-template #create>
+  <sc-sticky-form-header
+    mode="create"
+    entityKey="Nuevo agente"
+    [name]="''"
+    namePlaceholderKey="Nombre del agente"
+    data-testid="sc-sticky-create"
+  />
+</ng-template>

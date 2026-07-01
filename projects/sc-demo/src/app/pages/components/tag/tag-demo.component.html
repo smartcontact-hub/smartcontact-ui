@@ -1,7 +1,21 @@
-<h1>sc-tag</h1>
+<app-story-host [meta]="meta" [stories]="stories()" />
 
-<h2>Severities</h2>
-<div class="row">
+<!-- Stories declaradas como `<ng-template>`: el motor las pinta en su canvas. El
+     Playground recibe `args` (knobs); los ejemplos son estáticos. Los `data-testid`
+     los miden los e2e de métrica del Kit (no quitar). -->
+
+<ng-template #playground let-args>
+  <sc-tag
+    [value]="args.value || null"
+    [severity]="args.severity"
+    [icon]="args.icon || null"
+    [rounded]="args.rounded"
+    [variant]="args.variant"
+    [labelColor]="args.labelColor"
+  />
+</ng-template>
+
+<ng-template #severities>
   <sc-tag value="Primary" data-testid="sc-tag" />
   <sc-tag value="Secondary" severity="secondary" />
   <sc-tag value="Success" severity="success" />
@@ -9,16 +23,14 @@
   <sc-tag value="Warn" severity="warn" />
   <sc-tag value="Danger" severity="danger" />
   <sc-tag value="Contrast" severity="contrast" />
-</div>
+</ng-template>
 
-<h2>Variantes</h2>
-<div class="row">
+<ng-template #variants>
   <sc-tag value="Rounded" [rounded]="true" />
   <sc-tag value="Con icono" icon="check" />
-</div>
+</ng-template>
 
-<h2>Variante label (8 colores categóricos, §4.1)</h2>
-<div class="row">
+<ng-template #label>
   <sc-tag variant="label" labelColor="gray" value="Gris" />
   <sc-tag variant="label" labelColor="red" value="Rojo" data-testid="sc-tag-label-red" />
   <sc-tag variant="label" labelColor="orange" value="Naranja" />
@@ -27,4 +39,4 @@
   <sc-tag variant="label" labelColor="teal" value="Teal" />
   <sc-tag variant="label" labelColor="blue" value="Azul" />
   <sc-tag variant="label" labelColor="purple" value="Morado" />
-</div>
+</ng-template>

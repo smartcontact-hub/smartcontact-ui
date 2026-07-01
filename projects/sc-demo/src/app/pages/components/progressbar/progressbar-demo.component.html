@@ -1,7 +1,20 @@
-<h1>sc-progressbar</h1>
+<app-story-host [meta]="meta" [stories]="stories()" />
 
-<div class="col">
+<!-- Stories declaradas como `<ng-template>`: el motor las pinta en su canvas. El
+     Playground recibe `args` (knobs); los ejemplos son estáticos. Los `data-testid`
+     los miden los e2e de métrica del Kit (no quitar). -->
+
+<ng-template #playground let-args>
+  <sc-progressbar
+    [value]="args.value"
+    [showValue]="args.showValue"
+    [unit]="args.unit"
+    [mode]="args.mode"
+  />
+</ng-template>
+
+<ng-template #modes>
   <sc-progressbar [value]="40" data-testid="sc-progressbar" />
   <sc-progressbar [value]="80" [showValue]="false" />
   <sc-progressbar mode="indeterminate" />
-</div>
+</ng-template>
