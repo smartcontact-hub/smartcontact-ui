@@ -7,8 +7,8 @@
   --measure: 68ch;
 }
 
-/* ritmo vertical entre bloques de primer nivel */
-.rules > * + * {
+/* ritmo vertical entre bloques de primer nivel de la narrativa */
+.rules__main > * + * {
   margin-top: var(--sc-spacing-3);
 }
 
@@ -691,5 +691,104 @@ summary:focus-visible {
   to {
     opacity: 1;
     transform: none;
+  }
+}
+
+/* ---------- Rail de feedback: log cronológico de revisión ----------
+   Por defecto (pantallas estrechas) fluye al final del recorrido. En pantallas
+   anchas (>=80rem), `.rules` pasa a flex y el rail queda sticky a la derecha,
+   con acceso cronológico mientras se lee. */
+.rules__feedback {
+  margin-top: var(--sc-spacing-3);
+}
+
+.rules__feedback-inner {
+  padding: var(--sc-spacing-1-25);
+  border: 1px solid var(--sc-border-subtle);
+  border-radius: var(--sc-radius-lg);
+  background: var(--sc-bg-subtle);
+}
+
+.rules__feedback-eyebrow {
+  margin: 0 0 var(--sc-spacing-0-5);
+  font-size: var(--sc-font-size-caption);
+  line-height: var(--sc-line-height-caption);
+  font-weight: var(--sc-font-weight-semibold);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--sc-text-accent);
+}
+
+.rules__feedback-hint {
+  margin: 0 0 var(--sc-spacing-1);
+  font-size: var(--sc-font-size-caption);
+  line-height: var(--sc-line-height-caption);
+  color: var(--sc-text-subtle);
+}
+
+.fb + .fb {
+  margin-top: var(--sc-spacing-1-25);
+  padding-top: var(--sc-spacing-1-25);
+  border-top: 1px solid var(--sc-border-default);
+}
+
+.fb__date {
+  margin: 0 0 var(--sc-spacing-0-75);
+  font-size: var(--sc-font-size-200);
+  line-height: var(--sc-line-height-200);
+  font-weight: var(--sc-font-weight-semibold);
+  color: var(--sc-text-primary);
+}
+
+.fb__list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-1);
+}
+
+.fb__item {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.fb__item strong {
+  font-size: var(--sc-font-size-100);
+  line-height: var(--sc-line-height-100);
+  font-weight: var(--sc-font-weight-semibold);
+  color: var(--sc-text-primary);
+}
+
+.fb__item span {
+  font-size: var(--sc-font-size-caption);
+  line-height: var(--sc-line-height-caption);
+  color: var(--sc-text-secondary);
+}
+
+@media (min-width: 80rem) {
+  .rules {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--sc-spacing-3);
+  }
+
+  .rules__main {
+    flex: 1 1 auto;
+    min-width: 0;
+  }
+
+  .rules__feedback {
+    flex: 0 0 18rem;
+    margin-top: 0;
+  }
+
+  .rules__feedback-inner {
+    position: sticky;
+    top: var(--sc-spacing-1-5);
+    max-height: calc(100vh - var(--sc-spacing-3));
+    overflow-y: auto;
   }
 }
