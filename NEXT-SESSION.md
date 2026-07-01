@@ -41,6 +41,10 @@ subagentes paralelos + slot/subsection NUEVOS) → **pokédex 49/49**. Header sc
 Engineering». → `1b1d69a`, `4cfea44`, `432f424`, `22dba57`.
 
 ## 🗺️ Lo que queda
+- **[lead deuda DS]** El overflow del lienzo del showcase se arregló (`.sb-canvas` ya no lleva `overflow:hidden`, que
+  recortaba los paneles inline). Pero **`sc-multiselect` NO expone `appendTo`** (sc-select SÍ, `appendTo='body'`;
+  sc-datepicker lo hardcodea). Si un overlay se recorta dentro de un contenedor `overflow:hidden` (p.ej. `sc-dialog`),
+  la causa es esa → **candidato a igualar el appendTo en el DS** (sc-multiselect/otros overlays inline).
 - **[follow-up local, NO bloquea]** Los **baselines de screenshot de componentes** (`e2e/components.spec.ts-snapshots/
   *-darwin.png`, 24 tracked) quedaron obsoletos: TODAS las páginas cambiaron (shell + formato story). Son **darwin +
   local-only** (el e2e salta el screenshot en CI con `process.env.CI`; CI se apoya en las métricas del Kit, que pasan
