@@ -1,7 +1,25 @@
-<h1>sc-select</h1>
+<app-story-host [meta]="meta" [stories]="stories()" />
 
-<div class="col">
-  <sc-select label="Grupo" [options]="groups" placeholder="Selecciona" [(value)]="value" data-testid="sc-select" />
+<ng-template #playground let-args>
+  <sc-select
+    [label]="args.label"
+    [options]="groups"
+    [placeholder]="args.placeholder"
+    [helperText]="args.helperText || undefined"
+    [error]="args.error || undefined"
+    [size]="args.size"
+    [required]="args.required"
+    [showClear]="args.showClear"
+    [filter]="args.filter"
+    [filled]="args.filled"
+    [iftaLabel]="args.iftaLabel"
+    [disabled]="args.disabled"
+    [loading]="args.loading"
+    [(value)]="value"
+  />
+</ng-template>
+
+<ng-template #objetos>
   <sc-select
     label="Prioridad (objetos + pTemplate)"
     [options]="objOptions"
@@ -12,9 +30,15 @@
   >
     <ng-template pTemplate="item" let-opt>★ {{ opt.name }}</ng-template>
   </sc-select>
-  <sc-select label="Con clear + filtro" [options]="groups" [showClear]="true" [filter]="true" placeholder="Buscar…" data-testid="sc-select-filter" />
-  <sc-select label="Con error" [options]="groups" error="Selecciona un grupo" data-testid="sc-select-error" />
-  <sc-select label="Small" [options]="groups" size="sm" placeholder="sm" data-testid="sc-select-sm" />
-  <sc-select label="Deshabilitado" [options]="groups" [disabled]="true" placeholder="off" />
-</div>
-<p>Valor: «{{ value() }}»</p>
+</ng-template>
+
+<ng-template #estados>
+  <div class="col">
+    <sc-select label="Grupo" [options]="groups" placeholder="Selecciona" [(value)]="value" data-testid="sc-select" />
+    <sc-select label="Con clear + filtro" [options]="groups" [showClear]="true" [filter]="true" placeholder="Buscar…" data-testid="sc-select-filter" />
+    <sc-select label="Con error" [options]="groups" error="Selecciona un grupo" data-testid="sc-select-error" />
+    <sc-select label="Small" [options]="groups" size="sm" placeholder="sm" data-testid="sc-select-sm" />
+    <sc-select label="Deshabilitado" [options]="groups" [disabled]="true" placeholder="off" />
+    <p>Valor: «{{ value() }}»</p>
+  </div>
+</ng-template>

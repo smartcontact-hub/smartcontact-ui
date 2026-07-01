@@ -1,8 +1,35 @@
-<h1>sc-datepicker</h1>
+<app-story-host [meta]="meta" [stories]="stories()" />
 
-<div class="col">
-  <sc-datepicker label="Fecha de inicio" data-testid="sc-datepicker" />
-  <sc-datepicker label="Obligatoria" [required]="true" />
-  <sc-datepicker label="Con error" error="La fecha no es válida" data-testid="sc-datepicker-error" />
-  <sc-datepicker label="Deshabilitada" [disabled]="true" />
-</div>
+<ng-template #playground let-args>
+  <sc-datepicker
+    [label]="args.label"
+    [placeholder]="args.placeholder"
+    [helperText]="args.helperText || undefined"
+    [error]="args.error || undefined"
+    [dateFormat]="args.dateFormat"
+    [view]="args.view"
+    [size]="args.size"
+    [required]="args.required"
+    [showIcon]="args.showIcon"
+    [showClear]="args.showClear"
+    [showButtonBar]="args.showButtonBar"
+    [inline]="args.inline"
+    [disabled]="args.disabled"
+    [(value)]="value"
+  />
+</ng-template>
+
+<ng-template #basico>
+  <div class="col">
+    <sc-datepicker label="Fecha de inicio" [(value)]="value" data-testid="sc-datepicker" />
+    <p>Valor: «{{ value() ? value()!.toLocaleDateString('es-ES') : '' }}»</p>
+  </div>
+</ng-template>
+
+<ng-template #estados>
+  <div class="col">
+    <sc-datepicker label="Obligatoria" [required]="true" />
+    <sc-datepicker label="Con error" error="La fecha no es válida" data-testid="sc-datepicker-error" />
+    <sc-datepicker label="Deshabilitada" [disabled]="true" />
+  </div>
+</ng-template>

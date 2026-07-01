@@ -1,10 +1,19 @@
-<h1>sc-confirmdialog</h1>
+<app-story-host [meta]="meta" [stories]="stories()" />
 
-<sc-confirmdialog />
+<!-- Service-driven: el host `<sc-confirmdialog>` se coloca una vez y `ScConfirmService`
+     posee la visibilidad. Sin inputs de host → el Playground es host + un disparador.
+     Los `data-testid` los miden los e2e (no quitar). -->
 
-<div class="row">
-  <sc-button label="Confirmación primaria" data-testid="confirm-primary" (clicked)="ask('primary', 'accept')" />
+<ng-template #playground let-args>
+  <sc-confirmdialog />
+  <sc-button label="Pedir confirmación" data-testid="confirm-primary" (clicked)="ask('primary', 'accept')" />
+  <p>Resultado: <span data-testid="confirm-result">{{ result() }}</span></p>
+</ng-template>
+
+<ng-template #triggers>
+  <sc-confirmdialog />
+  <sc-button label="Confirmación primaria" (clicked)="ask('primary', 'accept')" />
   <sc-button label="Destructiva" variant="danger" data-testid="confirm-danger" (clicked)="ask('danger', 'accept')" />
   <sc-button label="Descartar cambios (énfasis reject)" appearance="outlined" (clicked)="ask('danger', 'reject')" />
-</div>
-<p>Resultado: <span data-testid="confirm-result">{{ result() }}</span></p>
+  <p>Resultado: <span>{{ result() }}</span></p>
+</ng-template>

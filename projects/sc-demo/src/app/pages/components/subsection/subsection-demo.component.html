@@ -1,0 +1,21 @@
+<app-story-host [meta]="meta" [stories]="stories()" />
+
+<ng-template #playground let-args>
+  <sc-subsection
+    [titleKey]="args.titleKey"
+    [hintKey]="args.hintKey || null"
+    [icon]="args.icon || null"
+    [collapsible]="args.collapsible"
+    [initiallyCollapsed]="args.initiallyCollapsed"
+  >
+    <sc-slot titleKey="Nombre">Laura Gómez</sc-slot>
+    <sc-slot titleKey="Extensión" hintKey="Interna">204</sc-slot>
+  </sc-subsection>
+</ng-template>
+
+<ng-template #collapsible>
+  <sc-subsection titleKey="Canales" hintKey="Voz y digital" collapsible data-testid="sc-subsection-collapsible">
+    <sc-slot titleKey="Voz">Extensión 204</sc-slot>
+    <sc-slot titleKey="WhatsApp">+34 600 123 456</sc-slot>
+  </sc-subsection>
+</ng-template>

@@ -1,67 +1,68 @@
-<h1>sc-datatable</h1>
+<app-story-host [meta]="meta" [stories]="stories()" />
 
-<p>
-  Tabla de datos sobre PrimeNG <code>p-table</code> — el theming lo resuelve el
-  preset <code>datatable.ts</code> (ya tokenizado); el wrapper aporta la API
-  <strong>data-driven</strong> (column-defs + <code>cellTemplate</code> por
-  columna) y la proyección de slots <code>[scTableCaption]</code> /
-  <code>[scTableEmpty]</code>. MVP no-lazy: orden y paginación client-side.
-  <code>header</code> va ya traducido por el consumidor (el DS no traduce
-  contenido).
-</p>
+<ng-template #playground let-args>
+  <sc-datatable
+    [value]="agents()"
+    [columns]="playColumns"
+    dataKey="id"
+    [selectionMode]="args.selectionMode"
+    [paginator]="args.paginator"
+    [rows]="args.rows"
+    [stripedRows]="args.stripedRows"
+    [showGridlines]="args.showGridlines"
+    [size]="args.size"
+    [loading]="args.loading"
+  />
+</ng-template>
 
-<h2>MVP: columnas, orden, selección múltiple, paginador</h2>
-<sc-datatable
-  [value]="agents()"
-  [columns]="columns()"
-  dataKey="id"
-  selectionMode="multiple"
-  [selection]="selection()"
-  (selectionChange)="onSelectionChange($event)"
-  [paginator]="true"
-  [rows]="5"
-  [rowsPerPageOptions]="[5, 10]"
-  [stripedRows]="true"
-  data-testid="sc-datatable"
->
-  <div scTableCaption class="dt-caption">Agentes ({{ agents().length }})</div>
-  <div scTableEmpty class="dt-empty">No hay agentes</div>
-</sc-datatable>
+<ng-template #mvp>
+  <sc-datatable
+    [value]="agents()"
+    [columns]="columns()"
+    dataKey="id"
+    selectionMode="multiple"
+    [selection]="selection()"
+    (selectionChange)="onSelectionChange($event)"
+    [paginator]="true"
+    [rows]="5"
+    [rowsPerPageOptions]="[5, 10]"
+    [stripedRows]="true"
+    data-testid="sc-datatable"
+  >
+    <div scTableCaption class="dt-caption">Agentes ({{ agents().length }})</div>
+    <div scTableEmpty class="dt-empty">No hay agentes</div>
+  </sc-datatable>
 
-<p data-testid="dt-selected">Seleccionados: {{ selection().length }}</p>
-<button type="button" (click)="clear()" data-testid="dt-clear">Vaciar</button>
+  <p data-testid="dt-selected">Seleccionados: {{ selection().length }}</p>
+  <button type="button" (click)="clear()" data-testid="dt-clear">Vaciar</button>
+</ng-template>
 
-<h2>Lazy (server-driven): paginación + orden + filtro global</h2>
-<p>
-  En modo <code>[lazy]</code> p-table no ordena/pagina/filtra en cliente: emite
-  <code>(lazyLoad)</code> con los metadatos y el consumidor sirve los datos +
-  <code>totalRecords</code>. El filtro es imperativo
-  (<code>datatable.filterGlobal()</code>) porque p-table no reacciona a cambios del
-  input <code>[filters]</code>.
-</p>
-<input
-  type="text"
-  class="dt-search"
-  placeholder="Buscar por nombre…"
-  (input)="lazyTable.filterGlobal($any($event.target).value, 'contains')"
-  data-testid="dt-lazy-search"
-/>
-<sc-datatable
-  #lazyTable
-  [value]="lazyRows()"
-  [columns]="lazyColumns"
-  dataKey="id"
-  [lazy]="true"
-  [totalRecords]="lazyTotal()"
-  [globalFilterFields]="['name']"
-  [paginator]="true"
-  [rows]="5"
-  (lazyLoad)="onLazyLoad($event)"
-  data-testid="sc-datatable-lazy"
-/>
-<p data-testid="dt-lazy-total">Total: {{ lazyTotal() }}</p>
+<ng-template #lazy>
+  <input
+    type="text"
+    class="dt-search"
+    placeholder="Buscar por nombre…"
+    (input)="lazyTable.filterGlobal($any($event.target).value, 'contains')"
+    data-testid="dt-lazy-search"
+  />
+  <sc-datatable
+    #lazyTable
+    [value]="lazyRows()"
+    [columns]="lazyColumns"
+    dataKey="id"
+    [lazy]="true"
+    [totalRecords]="lazyTotal()"
+    [globalFilterFields]="['name']"
+    [paginator]="true"
+    [rows]="5"
+    (lazyLoad)="onLazyLoad($event)"
+    data-testid="sc-datatable-lazy"
+  />
+  <p data-testid="dt-lazy-total">Total: {{ lazyTotal() }}</p>
+</ng-template>
 
-<!-- cellTemplate de la columna 'status': el consumidor compone la celda. -->
+<!-- cellTemplate de la columna 'status': el consumidor compone la celda.
+     Vive fuera de las stories para que `viewChild('statusTpl')` lo resuelva. -->
 <ng-template #statusTpl let-agent>
   <span class="dt-status" [attr.data-active]="agent.status === 'active'">
     {{ agent.status === 'active' ? 'Activo' : 'Inactivo' }}

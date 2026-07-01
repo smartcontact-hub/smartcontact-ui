@@ -1,38 +1,55 @@
-<h1>sc-bulk-transcription-modal</h1>
+<app-story-host [meta]="meta" [stories]="stories()" />
 
-<p>
-  Modal de procesamiento masivo (transcripción + análisis). <strong>Port
-  presentacional</strong>: recibe los contadores YA calculados como
-  <code>&#64;Input</code> y emite la decisión (<code>processed</code>) — la lógica
-  de dominio (derivar contadores de <code>Conversation[]</code>) se queda en la
-  app. Renderiza su propia <code>&lt;section role="dialog"&gt;</code>; el overlay
-  lo provee el consumidor. Anima el hero (count-up), el delta flotante (+/-), el
-  pulse del caption y el nudge del toggle deshabilitado.
-</p>
+<!-- Stories declaradas como `<ng-template>`: el motor las pinta en su canvas. El
+     modal renderiza su propia `<section role="dialog">`; el estado de apertura
+     vive en el signal `open` (patrón overlay: disparador + estado). El Playground
+     recibe `args` (knobs). Los `data-testid` los miden los e2e de métrica del Kit
+     (no quitar). -->
 
-<h2>Híbrido (transcripción + análisis), surface default</h2>
-@if (open()) {
-  <sc-bulk-transcription-modal
-    [selectedCount]="12"
-    [newCallsCount]="8"
-    [transcribedCallsPendingAnalysisCount]="3"
-    [chatsPendingAnalysisCount]="1"
-    [readyToTranscribeIds]="['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8']"
-    [readyToAnalyzeIds]="['c9', 'c10', 'c11', 'c12']"
-    [multiSegmentCallsCount]="2"
-    [excludedInProgressCount]="1"
-    (processed)="onProcessed($event)"
-    (closed)="onClosed()"
-    data-testid="sc-bulk-modal"
-  />
-} @else {
-  <button type="button" class="demo-trigger" (click)="reopen()" data-testid="reopen">
-    Reabrir modal
-  </button>
-}
+<ng-template #playground let-args>
+  @if (open()) {
+    <sc-bulk-transcription-modal
+      [selectedCount]="args.selectedCount"
+      [newCallsCount]="args.newCallsCount"
+      [transcribedCallsPendingAnalysisCount]="args.transcribedCallsPendingAnalysisCount"
+      [chatsPendingAnalysisCount]="args.chatsPendingAnalysisCount"
+      [readyToTranscribeIds]="ids('t', args.newCallsCount)"
+      [readyToAnalyzeIds]="ids('a', args.transcribedCallsPendingAnalysisCount)"
+      [multiSegmentCallsCount]="args.multiSegmentCallsCount"
+      [excludedInProgressCount]="args.excludedInProgressCount"
+      [surface]="args.surface"
+      (processed)="onProcessed($event)"
+      (closed)="onClosed()"
+    />
+  } @else {
+    <button type="button" class="demo-trigger" (click)="reopen()">Abrir modal</button>
+  }
+</ng-template>
 
-@if (lastResult(); as r) {
-  <p data-testid="modal-result">
-    Procesado: hero={{ r.heroCount }}, análisis={{ r.includeAnalysis }}, ids={{ r.eligibleIds.length }}
-  </p>
-}
+<ng-template #hybrid>
+  @if (open()) {
+    <sc-bulk-transcription-modal
+      [selectedCount]="12"
+      [newCallsCount]="8"
+      [transcribedCallsPendingAnalysisCount]="3"
+      [chatsPendingAnalysisCount]="1"
+      [readyToTranscribeIds]="['c1', 'c2', 'c3', 'c4', 'c5', 'c6', 'c7', 'c8']"
+      [readyToAnalyzeIds]="['c9', 'c10', 'c11', 'c12']"
+      [multiSegmentCallsCount]="2"
+      [excludedInProgressCount]="1"
+      (processed)="onProcessed($event)"
+      (closed)="onClosed()"
+      data-testid="sc-bulk-modal"
+    />
+  } @else {
+    <button type="button" class="demo-trigger" (click)="reopen()" data-testid="reopen">
+      Reabrir modal
+    </button>
+  }
+
+  @if (lastResult(); as r) {
+    <p data-testid="modal-result">
+      Procesado: hero={{ r.heroCount }}, análisis={{ r.includeAnalysis }}, ids={{ r.eligibleIds.length }}
+    </p>
+  }
+</ng-template>

@@ -1,7 +1,11 @@
-<h1>sc-column-selector</h1>
+<app-story-host [meta]="meta" [stories]="stories()" />
 
-<p>Gestor de columnas sobre popover: visibilidad + reordenado por arrastre, persistido en localStorage.</p>
+<ng-template #playground let-args>
+  <sc-column-selector [columns]="columns" storageKey="demo_columns_v1" [buttonLabel]="args.buttonLabel" />
+</ng-template>
 
-<div class="row">
-  <sc-column-selector [columns]="columns" storageKey="demo_columns_v1" data-testid="sc-column-selector" />
-</div>
+<ng-template #basico>
+  <div class="row">
+    <sc-column-selector [columns]="columns" storageKey="demo_columns_v1" data-testid="sc-column-selector" />
+  </div>
+</ng-template>

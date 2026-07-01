@@ -1,41 +1,42 @@
-<h1>sc-delete-entity-dialog</h1>
+<app-story-host [meta]="meta" [stories]="stories()" />
 
-<p>
-  Diálogo de confirmación de borrado sobre la <code>sc-dialog</code> canónica.
-  <strong>Single</strong>: retype del nombre (+ botón copiar via ScClipboardService).
-  <strong>Bulk</strong>: chips quitables (el último no auto-cierra; reset
-  restaura).
-</p>
+<!-- Story como `<ng-template>`: dos disparadores abren el diálogo en modo single/bulk
+     (estado en signals `openSingle`/`openBulk`). Los knobs mutan las etiquetas de
+     entidad y los mensajes. Los `data-testid` los miden los e2e (no quitar). -->
 
-<div class="row">
+<ng-template #playground let-args>
   <button type="button" (click)="openSingle.set(true)" data-testid="open-single">
     Borrar (single)
   </button>
   <button type="button" (click)="openBulk.set(true)" data-testid="open-bulk">Borrar (bulk)</button>
-</div>
 
-<sc-delete-entity-dialog
-  [visible]="openSingle()"
-  mode="single"
-  [items]="singleItem"
-  entitySingular="agente"
-  entityPlural="agentes"
-  (cancelled)="openSingle.set(false)"
-  (confirm)="onConfirmSingle()"
-  data-testid="sc-delete-single"
-/>
+  <sc-delete-entity-dialog
+    [visible]="openSingle()"
+    mode="single"
+    [items]="singleItem"
+    [entitySingular]="args.entitySingular"
+    [entityPlural]="args.entityPlural"
+    [singleDetailMessage]="args.singleDetailMessage || null"
+    [bulkFooterMessage]="args.bulkFooterMessage || null"
+    (cancelled)="openSingle.set(false)"
+    (confirm)="onConfirmSingle()"
+    data-testid="sc-delete-single"
+  />
 
-<sc-delete-entity-dialog
-  [visible]="openBulk()"
-  mode="bulk"
-  [items]="bulkItems"
-  entitySingular="agente"
-  entityPlural="agentes"
-  (cancelled)="openBulk.set(false)"
-  (confirm)="onConfirmBulk($event)"
-  data-testid="sc-delete-bulk"
-/>
+  <sc-delete-entity-dialog
+    [visible]="openBulk()"
+    mode="bulk"
+    [items]="bulkItems"
+    [entitySingular]="args.entitySingular"
+    [entityPlural]="args.entityPlural"
+    [singleDetailMessage]="args.singleDetailMessage || null"
+    [bulkFooterMessage]="args.bulkFooterMessage || null"
+    (cancelled)="openBulk.set(false)"
+    (confirm)="onConfirmBulk($event)"
+    data-testid="sc-delete-bulk"
+  />
 
-@if (deleted(); as d) {
-  <p data-testid="delete-result">borrado: {{ d }}</p>
-}
+  @if (deleted(); as d) {
+    <p data-testid="delete-result">borrado: {{ d }}</p>
+  }
+</ng-template>

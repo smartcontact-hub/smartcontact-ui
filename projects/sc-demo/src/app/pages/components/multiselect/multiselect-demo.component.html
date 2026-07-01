@@ -1,8 +1,33 @@
-<h1>sc-multiselect</h1>
+<app-story-host [meta]="meta" [stories]="stories()" />
 
-<div class="col">
+<ng-template #playground let-args>
+  <sc-multiselect
+    [label]="args.label"
+    [options]="groups"
+    [placeholder]="args.placeholder"
+    [helperText]="args.helperText || undefined"
+    [error]="args.error || undefined"
+    [display]="args.display"
+    [size]="args.size"
+    [required]="args.required"
+    [filter]="args.filter"
+    [showToggleAll]="args.showToggleAll"
+    [showClear]="args.showClear"
+    [filled]="args.filled"
+    [iftaLabel]="args.iftaLabel"
+    [disabled]="args.disabled"
+    [(value)]="value"
+  />
+</ng-template>
+
+<ng-template #basico>
   <sc-multiselect label="Grupos" [options]="groups" placeholder="Selecciona grupos" data-testid="sc-multiselect" />
-  <sc-multiselect label="Con chips" [options]="groups" display="chip" />
-  <sc-multiselect label="Con filtro" [options]="groups" [filter]="true" />
-  <sc-multiselect label="Con error" [options]="groups" error="Selecciona al menos uno" data-testid="sc-multiselect-error" />
-</div>
+</ng-template>
+
+<ng-template #estados>
+  <div class="col">
+    <sc-multiselect label="Con chips" [options]="groups" display="chip" />
+    <sc-multiselect label="Con filtro" [options]="groups" [filter]="true" />
+    <sc-multiselect label="Con error" [options]="groups" error="Selecciona al menos uno" data-testid="sc-multiselect-error" />
+  </div>
+</ng-template>

@@ -1,23 +1,24 @@
-<h1>sc-bulk-action-bar</h1>
+<app-story-host [meta]="meta" [stories]="stories()" />
 
-<p>
-  Barra fija inferior que aparece al seleccionar filas en list pages. Resumen
-  «N entidad seleccionados» + botón de limpiar a la izquierda; acciones
-  proyectadas a la derecha. <strong>Aparece fija al fondo de la página.</strong>
-</p>
+<!-- Stories declaradas como `<ng-template>`: el motor las pinta en su canvas. El
+     Playground recibe `args` (knobs) y las acciones proyectadas son estáticas. La
+     barra es `position: fixed` al fondo: se ve al pie de la página. Los
+     `data-testid` los miden los e2e de métrica del Kit (no quitar). -->
 
-<div class="row">
+<ng-template #playground let-args>
+  <sc-bulk-action-bar [count]="args.count" [entity]="entity" (clear)="count.set(0)">
+    <button type="button">Editar</button>
+    <button type="button">Eliminar</button>
+  </sc-bulk-action-bar>
+</ng-template>
+
+<ng-template #selection>
   <button type="button" (click)="count.set(3)">Seleccionar 3</button>
   <button type="button" (click)="count.set(1)">Seleccionar 1</button>
   <button type="button" (click)="count.set(0)">Deseleccionar</button>
-</div>
 
-<sc-bulk-action-bar
-  [count]="count()"
-  [entity]="entity"
-  (clear)="count.set(0)"
-  data-testid="sc-bulkbar"
->
-  <button type="button">Editar</button>
-  <button type="button">Eliminar</button>
-</sc-bulk-action-bar>
+  <sc-bulk-action-bar [count]="count()" [entity]="entity" (clear)="count.set(0)" data-testid="sc-bulkbar">
+    <button type="button">Editar</button>
+    <button type="button">Eliminar</button>
+  </sc-bulk-action-bar>
+</ng-template>
