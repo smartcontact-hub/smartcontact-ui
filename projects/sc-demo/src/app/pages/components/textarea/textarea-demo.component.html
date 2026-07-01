@@ -1,11 +1,28 @@
-<h1>sc-textarea</h1>
+<app-story-host [meta]="meta" [stories]="stories()" />
 
-<div class="col">
-  <sc-textarea placeholder="Escribe aquí…" data-testid="sc-textarea" />
-  <sc-textarea placeholder="Auto-resize" [autoResize]="true" />
-  <sc-textarea placeholder="Small" size="sm" data-testid="sc-textarea-sm" />
-  <sc-textarea placeholder="Large" size="lg" />
-  <sc-textarea placeholder="Inválido" [invalid]="true" />
-  <sc-textarea placeholder="Deshabilitado" [disabled]="true" />
-  <sc-textarea placeholder="Fluid" [fluid]="true" />
-</div>
+<ng-template #playground let-args>
+  <sc-textarea
+    [placeholder]="args.placeholder"
+    [value]="args.value"
+    [rows]="args.rows"
+    [size]="args.size"
+    [variant]="args.variant"
+    [autoResize]="args.autoResize"
+    [invalid]="args.invalid"
+    [fluid]="args.fluid"
+    [disabled]="args.disabled"
+    [readonly]="args.readonly"
+  />
+</ng-template>
+
+<ng-template #states>
+  <div class="col">
+    <sc-textarea placeholder="Escribe aquí…" data-testid="sc-textarea" />
+    <sc-textarea placeholder="Auto-resize" [autoResize]="true" />
+    <sc-textarea placeholder="Small" size="sm" data-testid="sc-textarea-sm" />
+    <sc-textarea placeholder="Large" size="lg" />
+    <sc-textarea placeholder="Inválido" [invalid]="true" />
+    <sc-textarea placeholder="Deshabilitado" [disabled]="true" />
+    <sc-textarea placeholder="Fluid" [fluid]="true" />
+  </div>
+</ng-template>

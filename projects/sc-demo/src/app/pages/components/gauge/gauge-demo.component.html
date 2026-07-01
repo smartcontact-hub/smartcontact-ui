@@ -1,6 +1,23 @@
-<h1>sc-gauge</h1>
+<app-story-host [meta]="meta" [stories]="stories()" />
 
-<div class="row">
+<!-- Stories declaradas como `<ng-template>`: el motor las pinta en su canvas. El
+     Playground recibe `args` (knobs); los ejemplos son estáticos. Los `data-testid`
+     los miden los e2e de métrica del Kit (no quitar). El `segments` del Playground
+     es un array fijo (bicolor); no se puede editar como knob escalar. -->
+
+<ng-template #playground let-args>
+  <sc-gauge
+    [segments]="bicolor"
+    [size]="args.size"
+    [thickness]="args.thickness"
+    [trackVisible]="args.trackVisible"
+    [startAngle]="args.startAngle"
+    [label]="args.label || null"
+    [sublabel]="args.sublabel || null"
+  />
+</ng-template>
+
+<ng-template #kpis>
   <sc-gauge
     data-testid="sc-gauge"
     [segments]="bicolor"
@@ -11,10 +28,10 @@
   />
   <sc-gauge [segments]="tri" size="md" label="8" sublabel="Tickets" />
   <sc-gauge [segments]="single" size="md" label="100%" sublabel="Atendidas" />
-</div>
+</ng-template>
 
-<div class="row">
+<ng-template #variants>
   <sc-gauge [segments]="bicolor" size="sm" />
   <sc-gauge [segments]="bicolor" size="md" [thickness]="18" label="234" sublabel="grueso" />
   <sc-gauge [segments]="bicolor" size="md" [trackVisible]="false" label="234" sublabel="sin track" />
-</div>
+</ng-template>

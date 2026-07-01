@@ -1,21 +1,33 @@
-<h1>sc-page-header</h1>
+<app-story-host [meta]="meta" [stories]="stories()" />
 
-<p>
-  Cabecera estática de página (rutas no-entity: list / config). Icono chip
-  36×36, eyebrow en mayúsculas, título grande (subtitle-1) y subtítulo sutil.
-  La acción primaria se proyecta en <code>[page-header-actions]</code>.
-</p>
+<!-- Stories declaradas como `<ng-template>`: el motor las pinta en su canvas. El
+     Playground recibe `args` (knobs); los ejemplos son estáticos. La acción
+     primaria se proyecta en [page-header-actions]. Los `data-testid` los miden
+     los e2e de métrica del Kit (no quitar). -->
 
-<h2>Completa (icono + eyebrow + título + subtítulo + acción)</h2>
-<sc-page-header
-  icon="groups"
-  entityKey="CONFIGURACIÓN"
-  titleKey="Agentes"
-  subtitleKey="Gestiona los agentes de voz de tu organización."
-  data-testid="sc-pageheader-full"
->
-  <button type="button" page-header-actions>Nuevo agente</button>
-</sc-page-header>
+<ng-template #playground let-args>
+  <sc-page-header
+    [icon]="args.icon || null"
+    [entityKey]="args.entityKey || null"
+    [titleKey]="args.titleKey"
+    [subtitleKey]="args.subtitleKey || null"
+  >
+    <button type="button" page-header-actions>Nuevo agente</button>
+  </sc-page-header>
+</ng-template>
 
-<h2>Mínima (solo título)</h2>
-<sc-page-header titleKey="Etiquetas" data-testid="sc-pageheader-min" />
+<ng-template #full>
+  <sc-page-header
+    icon="groups"
+    entityKey="CONFIGURACIÓN"
+    titleKey="Agentes"
+    subtitleKey="Gestiona los agentes de voz de tu organización."
+    data-testid="sc-pageheader-full"
+  >
+    <button type="button" page-header-actions>Nuevo agente</button>
+  </sc-page-header>
+</ng-template>
+
+<ng-template #minimal>
+  <sc-page-header titleKey="Etiquetas" data-testid="sc-pageheader-min" />
+</ng-template>

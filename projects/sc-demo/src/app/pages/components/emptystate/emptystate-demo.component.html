@@ -1,25 +1,28 @@
-<h1>sc-empty-state</h1>
+<app-story-host [meta]="meta" [stories]="stories()" />
 
-<p>
-  Estado vacío centrado para list pages sin filas: icono circular grande,
-  título, cuerpo descriptivo y CTA primaria opcional. Reserva
-  <code>min-height</code> para que la cabecera no salte al pasar de
-  vacío→poblado. <code>titleKey</code>/<code>bodyKey</code>/<code>ctaKey</code>
-  son claves i18n que resuelve el consumidor.
-</p>
+<!-- Stories declaradas como `<ng-template>`: el motor las pinta en su canvas. El
+     Playground recibe `args` (knobs); los ejemplos son estáticos. Los `data-testid`
+     los miden los e2e de métrica del Kit (no quitar). -->
 
-<h2>Sin CTA</h2>
-<div class="row">
+<ng-template #playground let-args>
+  <sc-empty-state
+    [icon]="args.icon"
+    [titleKey]="args.titleKey"
+    [bodyKey]="args.bodyKey"
+    [ctaKey]="args.ctaKey || null"
+  />
+</ng-template>
+
+<ng-template #plain>
   <sc-empty-state
     icon="inbox"
     titleKey="No hay agentes todavía"
     bodyKey="Crea tu primer agente para empezar a recibir llamadas."
     data-testid="sc-emptystate-plain"
   />
-</div>
+</ng-template>
 
-<h2>Con CTA</h2>
-<div class="row">
+<ng-template #cta>
   <sc-empty-state
     icon="group"
     titleKey="Sin grupos"
@@ -27,4 +30,4 @@
     ctaKey="Crear grupo"
     data-testid="sc-emptystate-cta"
   />
-</div>
+</ng-template>

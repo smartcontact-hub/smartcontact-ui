@@ -1,9 +1,30 @@
-<h1>sc-search</h1>
+<app-story-host [meta]="meta" [stories]="stories()" />
 
-<div class="col">
-  <sc-search placeholder="Buscar agentes…" [(ngModel)]="term" data-testid="sc-search" />
-  <sc-search placeholder="Con atajo" shortcutHint="⌘K" />
-  <sc-search placeholder="Small" size="sm" />
-  <sc-search placeholder="Deshabilitado" [disabled]="true" />
-</div>
-<p>Término: «{{ term() }}»</p>
+<ng-template #playground let-args>
+  <sc-search
+    [value]="args.value"
+    [placeholder]="args.placeholder"
+    [shortcutHint]="args.shortcutHint || undefined"
+    [size]="args.size"
+    [showClear]="args.showClear"
+    [filled]="args.filled"
+    [disabled]="args.disabled"
+    [autoFocus]="args.autoFocus"
+  />
+</ng-template>
+
+<ng-template #basic>
+  <div class="col">
+    <sc-search placeholder="Buscar agentes…" [(ngModel)]="term" data-testid="sc-search" />
+    <p>Término: «{{ term() }}»</p>
+  </div>
+</ng-template>
+
+<ng-template #variants>
+  <div class="col">
+    <sc-search placeholder="Con atajo" shortcutHint="⌘K" />
+    <sc-search placeholder="Small" size="sm" />
+    <sc-search placeholder="Filled" [filled]="true" />
+    <sc-search placeholder="Deshabilitado" [disabled]="true" />
+  </div>
+</ng-template>

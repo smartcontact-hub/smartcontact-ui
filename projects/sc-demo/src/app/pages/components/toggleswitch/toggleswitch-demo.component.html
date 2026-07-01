@@ -1,24 +1,36 @@
-<h1>sc-toggleswitch</h1>
+<app-story-host [meta]="meta" [stories]="stories()" />
 
-<div class="col">
-  <label>
-    <sc-toggleswitch [checked]="a()" (checkedChange)="a.set($event)" ariaLabel="Activar" data-testid="sc-toggle" />
-    Estado: {{ a() ? 'on' : 'off' }}
-  </label>
-  <label>
-    <sc-toggleswitch [checked]="b()" (checkedChange)="b.set($event)" size="sm" data-testid="sc-toggle-sm" />
-    Small
-  </label>
-  <label>
-    <sc-toggleswitch [checked]="true" size="lg" data-testid="sc-toggle-lg" />
-    Large
-  </label>
-  <label>
-    <sc-toggleswitch [checked]="true" [readonly]="true" data-testid="sc-toggle-ro" />
-    Readonly (no emite)
-  </label>
-  <label>
-    <sc-toggleswitch [checked]="false" [disabled]="true" />
-    Deshabilitado
-  </label>
-</div>
+<ng-template #playground let-args>
+  <sc-toggleswitch
+    [checked]="args.checked"
+    [size]="args.size"
+    [disabled]="args.disabled"
+    [readonly]="args.readonly"
+    [ariaLabel]="args.ariaLabel || null"
+  />
+</ng-template>
+
+<ng-template #states>
+  <div class="col">
+    <label>
+      <sc-toggleswitch [checked]="a()" (checkedChange)="a.set($event)" ariaLabel="Activar" data-testid="sc-toggle" />
+      Estado: {{ a() ? 'on' : 'off' }}
+    </label>
+    <label>
+      <sc-toggleswitch [checked]="b()" (checkedChange)="b.set($event)" size="sm" data-testid="sc-toggle-sm" />
+      Small
+    </label>
+    <label>
+      <sc-toggleswitch [checked]="true" size="lg" data-testid="sc-toggle-lg" />
+      Large
+    </label>
+    <label>
+      <sc-toggleswitch [checked]="true" [readonly]="true" data-testid="sc-toggle-ro" />
+      Readonly (no emite)
+    </label>
+    <label>
+      <sc-toggleswitch [checked]="false" [disabled]="true" />
+      Deshabilitado
+    </label>
+  </div>
+</ng-template>

@@ -1,10 +1,21 @@
-<h1>sc-panel</h1>
+<app-story-host [meta]="meta" [stories]="stories()" />
 
-<div class="col">
-  <sc-panel header="Panel básico" data-testid="sc-panel">
+<!-- Stories declaradas como `<ng-template>`: el motor las pinta en su canvas. El
+     Playground recibe `args` (knobs); los ejemplos son estáticos. Los `data-testid`
+     los miden los e2e de métrica del Kit (no quitar). -->
+
+<ng-template #playground let-args>
+  <sc-panel
+    [header]="args.header || null"
+    [toggleable]="args.toggleable"
+    [collapsed]="args.collapsed"
+    [showHeader]="args.showHeader"
+  >
     Contenido del panel.
   </sc-panel>
-  <sc-panel header="Colapsable" [toggleable]="true">
-    Contenido colapsable.
-  </sc-panel>
-</div>
+</ng-template>
+
+<ng-template #basic>
+  <sc-panel header="Panel básico" data-testid="sc-panel"> Contenido del panel. </sc-panel>
+  <sc-panel header="Colapsable" [toggleable]="true"> Contenido colapsable. </sc-panel>
+</ng-template>

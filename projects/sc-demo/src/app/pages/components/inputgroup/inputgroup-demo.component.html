@@ -1,14 +1,24 @@
-<h1>sc-inputgroup</h1>
+<app-story-host [meta]="meta" [stories]="stories()" />
 
-<div class="col">
-  <sc-inputgroup data-testid="sc-inputgroup">
+<ng-template #playground let-args>
+  <sc-inputgroup [size]="args.size" [fluid]="args.fluid">
     <p-inputgroup-addon>$</p-inputgroup-addon>
-    <input pInputText placeholder="Precio" data-testid="ig-input" />
+    <input pInputText placeholder="Precio" />
     <p-inputgroup-addon>.00</p-inputgroup-addon>
   </sc-inputgroup>
+</ng-template>
 
-  <sc-inputgroup size="sm">
-    <p-inputgroup-addon>@</p-inputgroup-addon>
-    <input pInputText placeholder="Usuario (sm)" />
-  </sc-inputgroup>
-</div>
+<ng-template #addons>
+  <div class="col">
+    <sc-inputgroup data-testid="sc-inputgroup">
+      <p-inputgroup-addon>$</p-inputgroup-addon>
+      <input pInputText placeholder="Precio" data-testid="ig-input" />
+      <p-inputgroup-addon>.00</p-inputgroup-addon>
+    </sc-inputgroup>
+
+    <sc-inputgroup size="sm">
+      <p-inputgroup-addon>@</p-inputgroup-addon>
+      <input pInputText placeholder="Usuario (sm)" />
+    </sc-inputgroup>
+  </div>
+</ng-template>

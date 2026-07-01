@@ -1,16 +1,29 @@
-<h1>sc-divider</h1>
+<app-story-host [meta]="meta" [stories]="stories()" />
 
-<div class="col" data-testid="sc-divider-block">
+<!-- Stories declaradas como `<ng-template>`: el motor las pinta en su canvas. El
+     Playground recibe `args` (knobs); los ejemplos son estáticos. Los `data-testid`
+     los miden los e2e de métrica del Kit (no quitar). -->
+
+<ng-template #playground let-args>
   Texto antes del separador.
-  <sc-divider data-testid="sc-divider" />
+  <sc-divider [layout]="args.layout" [type]="args.type" [align]="args.align || null" />
   Texto después.
-  <sc-divider align="center"><span>o</span></sc-divider>
-  <sc-divider type="dashed" />
-</div>
+</ng-template>
 
-<h2>Vertical</h2>
-<div class="row" style="height: 4rem">
-  Izquierda
-  <sc-divider layout="vertical" data-testid="sc-divider-v" />
-  Derecha
-</div>
+<ng-template #horizontal>
+  <div data-testid="sc-divider-block">
+    Texto antes del separador.
+    <sc-divider data-testid="sc-divider" />
+    Texto después.
+    <sc-divider align="center"><span>o</span></sc-divider>
+    <sc-divider type="dashed" />
+  </div>
+</ng-template>
+
+<ng-template #vertical>
+  <div class="row" style="height: 4rem">
+    Izquierda
+    <sc-divider layout="vertical" data-testid="sc-divider-v" />
+    Derecha
+  </div>
+</ng-template>

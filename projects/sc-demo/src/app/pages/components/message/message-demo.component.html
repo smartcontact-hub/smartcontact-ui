@@ -1,19 +1,32 @@
-<h1>sc-message</h1>
+<app-story-host [meta]="meta" [stories]="stories()" />
 
-<h2>Severities</h2>
-<div class="col">
+<!-- Stories declaradas como `<ng-template>`: el motor las pinta en su canvas. El
+     Playground recibe `args` (knobs); los ejemplos son estáticos. Los `data-testid`
+     los miden los e2e de métrica del Kit (no quitar). -->
+
+<ng-template #playground let-args>
+  <sc-message
+    [text]="args.text"
+    [severity]="args.severity"
+    [variant]="args.variant"
+    [size]="args.size"
+    [icon]="args.icon || null"
+    [closable]="args.closable"
+  />
+</ng-template>
+
+<ng-template #severities>
   <sc-message text="Mensaje informativo." data-testid="sc-message" />
   <sc-message text="Operación completada." severity="success" />
   <sc-message text="Atención requerida." severity="warn" />
   <sc-message text="Algo ha fallado." severity="danger" />
   <sc-message text="Mensaje secundario." severity="secondary" />
-</div>
+</ng-template>
 
-<h2>Variantes y tamaños</h2>
-<div class="col">
+<ng-template #variants>
   <sc-message text="Outlined" variant="outlined" data-testid="sc-message-outlined" />
   <sc-message text="Texto plano" variant="text" />
   <sc-message text="Small" size="sm" />
   <sc-message text="Large" size="lg" />
   <sc-message text="Cerrable" [closable]="true" />
-</div>
+</ng-template>

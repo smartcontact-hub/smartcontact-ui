@@ -1,13 +1,18 @@
-<h1>sc-color-dot-picker</h1>
+<app-story-host [meta]="meta" [stories]="stories()" />
 
-<p>
-  Fila de puntos de color seleccionables — el picker categórico de 8 colores del
-  DS (<code>LABEL_COLORS</code>, los mismos de la variante <em>label</em> de
-  tag/chip). Two-way <code>[(value)]</code>.
-</p>
+<ng-template #playground let-args>
+  <sc-color-dot-picker
+    [options]="options"
+    [value]="args.value"
+    [ariaLabel]="args.ariaLabel"
+  />
+</ng-template>
 
-<div class="row">
-  <sc-color-dot-picker [options]="options" [(value)]="value" data-testid="sc-dotpicker" />
-</div>
-
-<p data-testid="dotpicker-value">seleccionado: {{ value() }}</p>
+<ng-template #basic>
+  <div class="col">
+    <div class="row">
+      <sc-color-dot-picker [options]="options" [(value)]="value" data-testid="sc-dotpicker" />
+    </div>
+    <p data-testid="dotpicker-value">seleccionado: {{ value() }}</p>
+  </div>
+</ng-template>

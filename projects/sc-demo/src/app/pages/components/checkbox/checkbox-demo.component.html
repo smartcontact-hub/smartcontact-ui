@@ -1,25 +1,37 @@
-<h1>sc-checkbox</h1>
+<app-story-host [meta]="meta" [stories]="stories()" />
 
-<h2>Tri-estado (cabecera "seleccionar todo")</h2>
-<div class="col">
-  <label>
-    <sc-checkbox [state]="headerState()" (cycle)="onHeaderCycle($event)" ariaLabel="Seleccionar todo" data-testid="sc-checkbox-header" />
-    Cabecera ({{ headerState() }})
-  </label>
-  @for (row of rows(); track $index) {
-    <label style="margin-left: 1.5rem">
-      <sc-checkbox [state]="rowState($index)" (cycle)="toggleRow($index)" [attr.data-testid]="'sc-checkbox-row-' + $index" />
-      Fila {{ $index + 1 }}
+<ng-template #playground let-args>
+  <sc-checkbox
+    [state]="args.state"
+    [size]="args.size"
+    [filled]="args.filled"
+    [disabled]="args.disabled"
+    [ariaLabel]="args.ariaLabel || null"
+  />
+</ng-template>
+
+<ng-template #tristate>
+  <div class="col">
+    <label>
+      <sc-checkbox [state]="headerState()" (cycle)="onHeaderCycle($event)" ariaLabel="Seleccionar todo" data-testid="sc-checkbox-header" />
+      Cabecera ({{ headerState() }})
     </label>
-  }
-</div>
+    @for (row of rows(); track $index) {
+      <label style="margin-left: 1.5rem">
+        <sc-checkbox [state]="rowState($index)" (cycle)="toggleRow($index)" [attr.data-testid]="'sc-checkbox-row-' + $index" />
+        Fila {{ $index + 1 }}
+      </label>
+    }
+  </div>
+</ng-template>
 
-<h2>Tamaños y variantes</h2>
-<div class="col">
-  <label><sc-checkbox [state]="'all'" size="sm" data-testid="sc-checkbox-sm" /> Small</label>
-  <label><sc-checkbox [state]="'all'" data-testid="sc-checkbox-md" /> Medium</label>
-  <label><sc-checkbox [state]="'all'" size="lg" data-testid="sc-checkbox-lg" /> Large</label>
-  <label><sc-checkbox [state]="'some'" data-testid="sc-checkbox-some" /> Indeterminado</label>
-  <label><sc-checkbox [state]="'all'" [filled]="true" /> Filled</label>
-  <label><sc-checkbox [state]="'none'" [disabled]="true" /> Deshabilitado</label>
-</div>
+<ng-template #sizes>
+  <div class="col">
+    <label><sc-checkbox [state]="'all'" size="sm" data-testid="sc-checkbox-sm" /> Small</label>
+    <label><sc-checkbox [state]="'all'" data-testid="sc-checkbox-md" /> Medium</label>
+    <label><sc-checkbox [state]="'all'" size="lg" data-testid="sc-checkbox-lg" /> Large</label>
+    <label><sc-checkbox [state]="'some'" data-testid="sc-checkbox-some" /> Indeterminado</label>
+    <label><sc-checkbox [state]="'all'" [filled]="true" /> Filled</label>
+    <label><sc-checkbox [state]="'none'" [disabled]="true" /> Deshabilitado</label>
+  </div>
+</ng-template>

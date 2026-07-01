@@ -1,39 +1,46 @@
-<h1>sc-avatar</h1>
+<app-story-host [meta]="meta" [stories]="stories()" />
 
-<h2>Tipos (Label / Icon)</h2>
-<div class="row">
+<!-- Stories declaradas como `<ng-template>`: el motor las pinta en su canvas. El
+     Playground recibe `args` (knobs); los ejemplos son estáticos. Los `data-testid`
+     los miden los e2e de métrica del Kit (no quitar). -->
+
+<ng-template #playground let-args>
+  <sc-avatar
+    [label]="args.label || null"
+    [icon]="args.icon || null"
+    [size]="args.size"
+    [shape]="args.shape"
+    [badge]="args.badge || null"
+    [badgeVariant]="args.badgeVariant"
+  />
+</ng-template>
+
+<ng-template #types>
   <sc-avatar label="SC" data-testid="sc-avatar-md" />
   <sc-avatar icon="user" />
   <sc-avatar label="SQ" shape="square" />
-</div>
+</ng-template>
 
-<h2>Tamaños (28 / 42 / 56)</h2>
-<div class="row">
+<ng-template #sizes>
   <sc-avatar label="N" />
   <sc-avatar label="L" size="large" data-testid="sc-avatar-lg" />
   <sc-avatar label="XL" size="xlarge" data-testid="sc-avatar-xl" />
-</div>
+</ng-template>
 
-<h2>Badge</h2>
-<div class="row">
+<ng-template #badge>
   <sc-avatar label="B" [badge]="4" data-testid="sc-avatar-badge" />
   <sc-avatar icon="user" [badge]="''" badgeVariant="success" />
-</div>
+</ng-template>
 
-<h2>Grupo</h2>
-<sc-avatargroup data-testid="sc-avatargroup">
-  <sc-avatar label="A" />
-  <sc-avatar label="B" />
-  <sc-avatar label="+3" />
-</sc-avatargroup>
+<ng-template #group>
+  <sc-avatargroup data-testid="sc-avatargroup">
+    <sc-avatar label="A" />
+    <sc-avatar label="B" />
+    <sc-avatar label="+3" />
+  </sc-avatargroup>
+</ng-template>
 
-<h2>Fallback de ilustración (§4.2, sin foto → SVG por hash del nombre)</h2>
-<p>
-  El paquete no empaqueta los SVG; el consumidor los sirve bajo
-  <code>illustrationBase</code> (aquí <code>assets/avatars</code>, pool
-  <code>abstract</code>).
-</p>
-<div class="row">
+<ng-template #illustration>
   <sc-avatar
     illustrationName="Inés García"
     illustrationPool="abstract"
@@ -42,4 +49,4 @@
   />
   <sc-avatar illustrationName="Carlos Ruiz" illustrationPool="abstract" size="xlarge" />
   <sc-avatar illustrationName="Soporte Ventas" illustrationPool="abstract" size="xlarge" />
-</div>
+</ng-template>

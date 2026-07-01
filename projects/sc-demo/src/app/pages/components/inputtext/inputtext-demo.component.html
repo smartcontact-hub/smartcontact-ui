@@ -1,14 +1,46 @@
-<h1>sc-inputtext</h1>
+<app-story-host [meta]="meta" [stories]="stories()" />
 
-<div class="col">
-  <sc-inputtext label="Nombre" placeholder="Escribe…" [(value)]="name" data-testid="sc-inputtext" />
-  <sc-inputtext label="Obligatorio" [required]="true" helperText="Campo requerido" />
-  <sc-inputtext label="Con error" error="El nombre no es válido" data-testid="sc-inputtext-error" />
-  <sc-inputtext label="Filled" [filled]="true" />
-  <sc-inputtext label="IftaLabel" [iftaLabel]="true" placeholder=" " data-testid="sc-inputtext-ifta" />
-  <sc-inputtext label="Small" size="sm" data-testid="sc-inputtext-sm" />
-  <sc-inputtext label="Large" size="lg" />
-  <sc-inputtext label="Fluid" [fluid]="true" />
-  <sc-inputtext label="Deshabilitado" [disabled]="true" />
-</div>
-<p>Valor: «{{ name() }}»</p>
+<ng-template #playground let-args>
+  <sc-inputtext
+    [label]="args.label"
+    [value]="args.value"
+    [placeholder]="args.placeholder"
+    [helperText]="args.helperText || undefined"
+    [error]="args.error || undefined"
+    [type]="args.type"
+    [size]="args.size"
+    [required]="args.required"
+    [invalid]="args.invalid"
+    [filled]="args.filled"
+    [iftaLabel]="args.iftaLabel"
+    [fluid]="args.fluid"
+    [disabled]="args.disabled"
+    [readonly]="args.readonly"
+  />
+</ng-template>
+
+<ng-template #basic>
+  <div class="col">
+    <sc-inputtext label="Nombre" placeholder="Escribe…" [(value)]="name" data-testid="sc-inputtext" />
+    <p>Valor: «{{ name() }}»</p>
+  </div>
+</ng-template>
+
+<ng-template #states>
+  <div class="col">
+    <sc-inputtext label="Obligatorio" [required]="true" helperText="Campo requerido" />
+    <sc-inputtext label="Con error" error="El nombre no es válido" data-testid="sc-inputtext-error" />
+    <sc-inputtext label="Filled" [filled]="true" />
+    <sc-inputtext label="IftaLabel" [iftaLabel]="true" placeholder=" " data-testid="sc-inputtext-ifta" />
+    <sc-inputtext label="Deshabilitado" [disabled]="true" />
+  </div>
+</ng-template>
+
+<ng-template #sizes>
+  <div class="col">
+    <sc-inputtext label="Small" size="sm" data-testid="sc-inputtext-sm" />
+    <sc-inputtext label="Medium" />
+    <sc-inputtext label="Large" size="lg" />
+    <sc-inputtext label="Fluid" [fluid]="true" />
+  </div>
+</ng-template>
