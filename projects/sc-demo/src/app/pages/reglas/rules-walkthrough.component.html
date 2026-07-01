@@ -4,10 +4,10 @@
     <p class="eyebrow">Estado del proyecto</p>
     <h1>Sistema de reglas</h1>
     <p class="lead">
-      El sistema de reglas se rehízo de arriba abajo. Esta es la historia: de dónde venía —grabar llamadas, con
-      prioridades, conflictos y borradores— a dónde llegó —<strong>transcribir</strong>, con una sola regla activa y
-      un constructor que cualquiera entiende—. Cada cambio, con su <strong>antes</strong>, su <strong>ahora</strong>
-      y su <strong>porqué</strong>. Las capturas son del Supervisor real.
+      El sistema de reglas se rehízo entero. Antes: grabar llamadas, con prioridades, conflictos y borradores.
+      Ahora: <strong>transcribir</strong>, con una sola regla activa y un constructor que cualquiera entiende.
+      Cada cambio se cuenta con su <strong>antes</strong>, su <strong>ahora</strong> y su <strong>porqué</strong>.
+      Las capturas son del Supervisor real.
     </p>
   </header>
 
@@ -46,10 +46,10 @@
       las dejó sin sentido, así que salen del MVP. El detalle legal queda fuera; aquí importa la consecuencia.
     </p>
     <p>
-      El peso se movió a <strong>transcripción</strong> y <strong>clasificación</strong>, justo cuando entra en
-      desarrollo el sistema de <strong>transcripciones múltiples</strong>. Ese giro fue el que destapó todo lo demás:
-      al rehacer las reglas para transcribir, se aprovechó para simplificar lo que se había vuelto complicado. Los
-      tres cambios que vienen son esa simplificación.
+      El peso se movió a <strong>transcripción</strong> y <strong>clasificación</strong>, a la vez que entra en
+      desarrollo el sistema de <strong>transcripciones múltiples</strong>. Al rehacer las reglas para transcribir,
+      se aprovechó para simplificar lo que se había vuelto complicado. Los tres cambios que vienen son esa
+      simplificación.
     </p>
   </section>
 
@@ -244,9 +244,9 @@
       <p class="why__label">Por qué se cambió</p>
       <p class="why__text">
         El «borrador» era una copia sin editar que no se podía activar hasta tocarla, y vivía en una sección aparte.
-        Un estado de más que solo confundía. Ahora desactivar una regla <strong>solo la pasa a Inactiva</strong> —sin
-        copias ni borradores— y duplicar crea una copia inactiva normal, lista para editar o activar. Activar y
-        desactivar es lo único que un supervisor necesita.
+        Un estado de más que solo confundía. Ahora desactivar una regla <strong>solo la pasa a Inactiva</strong>
+        (sin copias ni borradores), y duplicar crea una copia inactiva normal, lista para editar o activar. Activar
+        y desactivar es lo único que un supervisor necesita.
       </p>
     </div>
   </section>
@@ -257,7 +257,7 @@
       No todo fue quitar. Mientras montas una regla, un panel fijo a la derecha te dice a cuántas conversaciones
       afectaría: «<strong>Afectaría a N de las últimas M conversaciones</strong>», con una barra de proporción
       (amplia frente a quirúrgica) y una proyección «≈ N al día». Es una <strong>estimación</strong> sobre el
-      histórico, no un dato cerrado —y es honesta: cuenta de verdad cuántas casan.
+      histórico, no un dato cerrado. Cuenta de verdad cuántas conversaciones casan.
     </p>
     <p class="note">
       Y guía sin estorbar: al intentar guardar, una condición incompleta o un rango imposible se marcan y bloquean;
@@ -275,8 +275,8 @@
   <section class="step" id="paso-7">
     <h2><span class="step__n">07</span> Dónde viven: Repositorios</h2>
     <p>
-      Las reglas viven en <strong>Repositorios</strong>, dentro de administración —el mismo sitio que servicios,
-      grupos o tipificaciones—. Es una tabla simple: nombre, el alcance <strong>en prosa</strong>, qué hace y su
+      Las reglas viven en <strong>Repositorios</strong>, dentro de administración, el mismo sitio que servicios,
+      grupos o tipificaciones. Es una tabla simple: nombre, el alcance <strong>en prosa</strong>, qué hace y su
       estado. Esa frase del listado («Aplica cuando el servicio es Ventas Comercial y la duración supera 60 s») sale
       directa del árbol de condiciones, para que leas qué hace una regla sin abrirla.
     </p>
