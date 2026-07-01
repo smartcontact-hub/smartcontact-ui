@@ -1,9 +1,9 @@
 import { SC_DEMO_COMPONENT_PAGES, ScDemoComponentPage } from './component-pages';
 
 /**
- * Catálogo del showcase: EVOLUCIONA `component-pages.ts` añadiendo categoría + flag de
- * «storyfied» (migrado al motor story). No duplica el registro — lo deriva, así las rutas
- * y el catálogo nunca se desfasan. La categoría agrupa la sidebar; el flag pinta el badge.
+ * Catálogo del showcase: EVOLUCIONA `component-pages.ts` añadiendo la categoría. No duplica
+ * el registro — lo deriva, así las rutas y el catálogo nunca se desfasan. La categoría agrupa
+ * la sidebar. (Ya no hay flag «storyfied»: los 49 están en formato story.)
  */
 export type ComponentCategory =
   | 'Botones'
@@ -84,19 +84,14 @@ const CATEGORY: Record<string, ComponentCategory> = {
   bulktranscriptionmodal: 'Patrones',
 };
 
-/** Componentes migrados al motor story (pintan badge «nuevo» en la sidebar). */
-const STORYFIED = new Set<string>(['button', 'select', 'datatable']);
-
 export interface CatalogEntry extends ScDemoComponentPage {
   readonly category: ComponentCategory;
-  readonly storyfied: boolean;
 }
 
 /** Catálogo plano, derivado del registro de páginas. */
 export const COMPONENT_CATALOG: readonly CatalogEntry[] = SC_DEMO_COMPONENT_PAGES.map((page) => ({
   ...page,
   category: CATEGORY[page.path] ?? 'Patrones',
-  storyfied: STORYFIED.has(page.path),
 }));
 
 export interface CatalogGroup {

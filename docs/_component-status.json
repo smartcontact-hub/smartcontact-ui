@@ -524,7 +524,7 @@
       "cva": false,
       "inputs": 2,
       "nested": [],
-      "hasDemo": false,
+      "hasDemo": true,
       "usedInSupervisor": 0
     },
     {
@@ -548,7 +548,7 @@
       "cva": false,
       "inputs": 4,
       "nested": [],
-      "hasDemo": false,
+      "hasDemo": true,
       "usedInSupervisor": 0
     },
     {
