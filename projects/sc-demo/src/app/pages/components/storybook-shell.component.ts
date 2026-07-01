@@ -35,9 +35,6 @@ import { groupCatalog } from './component-catalog';
                   <li>
                     <a [routerLink]="['/components', e.path]" routerLinkActive="is-active">
                       <span>{{ e.label }}</span>
-                      @if (e.storyfied) {
-                        <span class="sb-shell__badge" title="Formato story">●</span>
-                      }
                     </a>
                   </li>
                 }

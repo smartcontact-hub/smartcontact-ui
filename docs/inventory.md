@@ -71,9 +71,9 @@
 | `sc-section-card` | CUSTOM | — | 6 inputs | — | ✓ | 11 |
 | `sc-select` | EXTENDED | primeng/select | CVA · 22 inputs | — | ✓ | 33 |
 | `sc-skeleton` | EXTENDED | primeng/skeleton | 6 inputs | — | ✓ | — |
-| `sc-slot` | CUSTOM | — | 2 inputs | — | — | — |
+| `sc-slot` | CUSTOM | — | 2 inputs | — | ✓ | — |
 | `sc-sticky-form-header` | EXTENDED | primeng/button | 4 inputs | — | ✓ | 3 |
-| `sc-subsection` | CUSTOM | — | 4 inputs | — | — | — |
+| `sc-subsection` | CUSTOM | — | 4 inputs | — | ✓ | — |
 | `sc-tag` | EXTENDED | primeng/tag | 6 inputs | — | ✓ | — |
 | `sc-textarea` | EXTENDED | primeng/textarea | 13 inputs | — | ✓ | — |
 | `sc-toast` | EXTENDED | primeng/toast | 6 inputs | — | ✓ | — |
