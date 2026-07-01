@@ -1,75 +1,76 @@
 # NEXT SESSION — Smart Contact DS (hand-off)
 
-> Sello: **2026-06-30** (sesión 8). Tema: **borradores fuera + «una sola regla activa» en toda la plataforma**, y
-> **recorrido `/reglas` (sc-demo) reescrito como historia antes/después**. **Mergeado a main** (commits `9d9859b` +
-> el de este arreglo) + desplegándose en Cloudflare (sc-demo.pages.dev). Decisión nueva: **DD-28**. Verify verde
-> salvo 1 falso-positivo pre-existente (`docs:coherence`). SOBREESCRIBE este fichero al cerrar.
+> Sello: **2026-07-01** (sesión 9). Temas: **(0)** modernizar el constructor de reglas · **(1)** auditoría +
+> arreglo pokédex + **gate i18n** · **(2-4)** motor **«Storybook-like»** en sc-demo → **49/49 componentes en
+> formato story** (canvas + knobs en vivo + snippet + tabla API + sidebar por categorías). **Todo en main** +
+> desplegándose (sc-demo.pages.dev). Decisión nueva: **DD-29**. `npm run verify` **ENTERO VERDE**. SOBREESCRIBE
+> este fichero al cerrar.
 
 ---
 
 ## ▶️ EMPIEZA AQUÍ
 1. **Lee este fichero entero.**
-2. Ya está todo en main y desplegándose. El *por qué* durable: `docs/DECISIONS.md` → **DD-28** (esta sesión)
-   sobre DD-27/26.
-3. Pendiente de calidad ajeno a reglas: el falso-positivo de `docs:coherence` (ver TRAMPAS) sigue cortando `verify`.
+2. Todo está en main (`22dba57` y anteriores) y desplegándose. El *por qué* durable: `docs/DECISIONS.md` → **DD-29**
+   (motor Storybook) · informe de esta auditoría: `docs/AUDIT-2026-07.md`.
+3. `verify` entero verde (ya NO hay el falso-positivo de `docs:coherence` — se arregló, ver TRAMPAS).
 
 ---
 
-## 🎯 Qué se hizo esta sesión
+## 🎯 Qué se hizo esta sesión (5 fases, cada una en main)
 
-**1. Borrador FUERA del modelo de reglas + invariante «una sola activa» (supervisor real) — DD-28**
-- Origen: feedback de Rafa — *«solo una regla puede estar activa; al desactivar no crea inactivas ni borradores,
-  solo aparece como inactiva»*. El supervisor aún arrastraba el concepto (DD-27 lo dejó como limpieza follow-up).
-- `rule.types.ts`: fuera `isDraft`/`duplicatedFromId`/`priority`/`RuleStatus`. `rules.store.ts` reescrito:
-  `inactiveOrDraftRules`→`inactiveRules`; `toggleActive`/`addRule`/`updateRule` **desactivan el resto al activar**
-  (radio); **duplicar crea copia inactiva normal** (no borrador no-activable); fuera `priority`/`conflictsByRuleId`/
-  `getConflictingRules`/`isInConflict`/`reorderActive`/`scopeOverlaps` (muertos en UI). `rules-mock.ts` reseed:
-  **1 activa + 3 inactivas** (antes 4 activas con priority 1..4). Listado: «Inactivas y borradores»→«Inactivas»,
-  título «Regla activa» (singular), sin gating del botón Activar.
-- i18n (es/en/fr/pt): fuera `status.draft`/`status.conflict`/`activate_draft_tooltip`/`builder.{draft_banner,
-  discard_draft,draft_ready_toast,discarded_toast}`/`order_updated`/`cols.order`/bloque `conflict.*`; `duplicated_toast`
-  reescrito. + scss muerto del banner de borrador fuera. **OJO: el `draft` de admin (agents/groups/users, DD#294)
-  es OTRO concepto — intacto.**
-- **Verificado en vivo** (capturas reales del Supervisor): listado 1 activa/3 inactivas con alcance en prosa;
-  builder con estimación «6 de 34» + barra + «≈74/día».
+**Fase 0 — Modernizar el rule-builder** (`supervisor/features/memory/pages/rule-builder/`). Des-encajonado: las 3
+secciones dejan de ser tarjetas blancas → una hoja aireada con hairline + eyebrow «01/02/03» + título semibold
+(jerarquía por peso/color, no por caja). Elevación reservada al panel de impacto sticky. Motion sutil (revelado
+escalonado + push :active, respeta `prefers-reduced-motion`). Badge-caja IA → chispa teal inline. Claro/oscuro
+verificado. Re-captura del «después» del recorrido `/reglas`. → `c73897c`.
 
-**2. Recorrido `/reglas` (sc-demo) reescrito como HISTORIA antes/después** (presentación, NO producto)
-- `projects/sc-demo/src/app/pages/reglas/rules-walkthrough.component.{ts,html,scss}`: la página cuenta el cambio como
-  storytelling — el giro a transcripción, y **3 beats de transformación** (alcance rígido→árbol+refs vivas ·
-  prioridad/conflictos→una activa [core] · borradores→activa/inactiva), cada uno con **Antes / Ahora / Por qué** en
-  lenguaje llano. Componente nuevo `.compare` (2 col→1, flat, 1px borders, label Antes muted / Ahora acento) con
-  **capturas antes/después** + snippets de código antes/después. Concerns/conclusiones a *decidido→hecho*; nombres
-  genéricos. **Skills `/impeccable` + `/minimalist-ui`**: aplicados solo donde NO contrastan con el DS (anti-slop —cero
-  border-left stripes, cero gradient-text—, jerarquía, whitespace, editorial); se descartaron sus fuentes/colores/iconos
-  propios (romperían la consonancia). Dark-safe + responsive verificados; AOT + typecheck + lint verde.
-- **Assets**: 4 capturas en `public/usage/` — `conversaciones-reglas{,-nueva}.png` (AHORA, regeneradas del Supervisor)
-  + `conversaciones-reglas{,-nueva}-antes.png` (ANTES, extraídas de git: modelo viejo con prioridad/conflicto/borradores).
+**Fase 1 — Auditoría + pokédex + i18n** (`docs/AUDIT-2026-07.md`, complementa `AUDIT-DEUDA-2026-06`). (a) Bug
+`hasDemo` en `scripts/component-audit.mjs`: casaba el demo solo CON guiones (`section-card`) pero el registro usa
+SIN guiones (`sectioncard`) → 18 con demo salían como «—». Arreglado → casa ambas. (b) **Gate `i18n:check`**
+(`scripts/i18n-check.mjs`) en `verify`: paridad de claves es↔en/fr/pt; cerradas 37 claves (`cond.*`+`crumb_rules`)
+que solo estaban en es. (c) Falso-positivo de `docs:coherence` (refs a `scripts/paths.mjs`, backlog propuesto)
+resuelto con allowlist `PROPOSED_SCRIPTS`. → `1577453`.
 
-## 🗺️ Lo que queda (del audit + nuevo)
-- **El backlog grande sigue**: `docs/AUDIT-DEUDA-2026-06.md` (P0 = `sc-field-wrapper`; base común admin; quick-wins).
-- **Nuevo de esta sesión**: si Rafa quiere consonancia total, el `chip.recording`/`builder.type.recording` y la
-  `RuleType: 'recording'` siguen vestigiales (grabación fuera del MVP) — limpieza menor, no se tocó (fuera de scope).
+**Fases 2-4 — Motor «Storybook-like» en sc-demo** (`projects/sc-demo/src/app/storybook/`). Motor propio (sin tooling
+nuevo): render por `<ng-template>` por story + `viewChild` (NO `NgComponentOutlet` — soporta content-projection de
+sc-select y `model()`/cellTemplate de sc-datatable). `StoryHost` (apilado, e2e-safe) · `StoryCanvas` (lienzo aislado,
+tema claro/oscuro/comparar local) · `StoryControls` (**knobs en vivo**, dogfooding sc-select/toggleswitch/inputtext/
+inputnumber) · `StorySnippet` (código + copiar) · `StoryPropsTable` · `serialize-args` (puro). **Shell** con sidebar
+(7 categorías + búsqueda), `/components` anidada. **Los 49 componentes migrados** (button piloto + 46 por lotes con
+subagentes paralelos + slot/subsection NUEVOS) → **pokédex 49/49**. Header sc-demo → «Smart Contact Design
+Engineering». → `1b1d69a`, `4cfea44`, `432f424`, `22dba57`.
 
-## ⚠️ TRAMPAS / PROTECCIONES (nuevas de esta sesión, importantes)
-- **`npm run e2e` ES UN FOOTGUN**: `playwright.config.ts` tiene `testDir:'e2e'` SIN `testIgnore`, así que **corre
-  también `e2e/usage/usage-capture.spec.ts` contra sc-demo:4280** (donde las rutas del supervisor no existen) →
-  **CLOBBEA los PNG de `public/usage/`** con páginas equivocadas. Esta sesión clobbeó 13 PNG; se restauraron con git
-  + se re-capturaron las 2 de reglas. **Para capturar reglas usa SOLO**: `npx playwright test -c
-  playwright.usage.config.ts --grep "conversaciones-reglas"` (sirve el supervisor:4290) **y `git checkout --
-  _usage-raw.json`** después (el `afterAll` lo reduce a las pantallas capturadas). *Fix sugerido (no aplicado):
-  añadir `testIgnore: '**/usage/**'` al config principal.*
-- **e2e de componentes NO pasa en entorno fresco**: son snapshots visuales `-darwin.png` sensibles al render de
-  fuentes (+ 15 componentes sin baseline commiteada). Fallan por entorno, no por código. No persigas esos ✘.
-- **`docs:coherence` falso-positivo pre-existente**: `AUDIT-DEUDA-2026-06.md:72` propone crear `scripts/paths.mjs`
-  (backlog `- [ ]`) y el checker lo lee como referencia rota → corta `verify`. Ajeno a reglas; arréglalo aparte.
-- Verify entero verde salvo eso (125 tests, audit:components, AOT supervisor+demo, typecheck, lint).
-- **NUNCA `git add .claude`** · commits a main con `Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>`.
+## 🗺️ Lo que queda
+- **[follow-up local, NO bloquea]** Los **baselines de screenshot de componentes** (`e2e/components.spec.ts-snapshots/
+  *-darwin.png`, 24 tracked) quedaron obsoletos: TODAS las páginas cambiaron (shell + formato story). Son **darwin +
+  local-only** (el e2e salta el screenshot en CI con `process.env.CI`; CI se apoya en las métricas del Kit, que pasan
+  porque los `data-testid` se preservaron). Regenéralos cuando toque con `npx playwright test e2e/components.spec.ts
+  --update-snapshots` (NO `npm run e2e` entero — footgun, ver abajo) y commítealos.
+- **[decisión de Rafa]** **TypeUI plugin** (`~/Downloads/SKILL.md`+`DESIGN.md`, en scratchpad `typeui-*.md`): son un
+  volcado plano del MISMO Figma que ya consume nuestro pipeline verificado (`kit-export-dtcg.json` + generadores +
+  `tokens:parity`/`type-parity`). **NO sustituibles** (regresaría a doc plana sin round-trip). Alineación confirmada
+  (radios 8/6/12/4/2 exactos; tipografía 1:1 vía type-parity verde). **Única divergencia real**: DESIGN.md (Figma
+  crudo) dice `warn=orange/500` pero el DS remapea a **amber** a propósito (`customs-catalog.md §1.3`). Si Figma es la
+  fuente de verdad y se quiere warn=orange, es lo único a reconciliar; si amber es la marca, divergimos bien.
+- **Backlog grande sigue**: `docs/AUDIT-DEUDA-2026-06.md` (P0 = `sc-field-wrapper`; base común admin; 2 eras de API).
 
-## 🟡 RECAP al cerrar (lo pidió Rafa)
-Mega-dumb, sin AI slop: qué se hizo, por qué, conclusiones, pendiente, y lo que NO se hizo a drede.
+## ⚠️ TRAMPAS / PROTECCIONES
+- **`npm run e2e` ES UN FOOTGUN**: corre `e2e/usage/usage-capture.spec.ts` contra sc-demo:4280 y **CLOBBEA los PNG de
+  `public/usage/`**. Para capturar uso usa SOLO `npx playwright test -c playwright.usage.config.ts` (sirve el
+  supervisor:4290) + `git checkout -- _usage-raw.json` después. Para baselines de componentes, filtra al fichero:
+  `npx playwright test e2e/components.spec.ts` (NO corre el usage spec).
+- **`preview_logs level:error` acumula TODO el historial** del dev server (errores ya arreglados incluidos). No te fíes
+  del buffer: corre un `tsc`/`ng build` FRESCO para el estado real (esta sesión un «exit 0» de background fue espurio y
+  el buffer mostró errores de casing ya arreglados).
+- **Casing de clases DS**: es `ScInputTextComponent`/`ScToggleSwitchComponent`/`ScInputNumberComponent` (mayúsculas
+  internas), NO `ScInputtextComponent`. Verifica el nombre EXPORTADO en `public-api.ts`, no lo infieras del selector.
+- **NUNCA `git add .claude`** · **NUNCA commitees `kit-export-dtcg.json`** · commits a main con
+  `Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>` · `npm run verify` entero antes de pushear cambios de `sc-*`.
 
 ## Índice — dónde mirar
-- **Decisiones** → `docs/DECISIONS.md` (**DD-28** reglas MVP sin borradores/prioridad · DD-27/26 constructor) ·
-  **Backlog deuda** → `docs/AUDIT-DEUDA-2026-06.md` · **Mapa docs** → `docs/DOCS-INDEX.md`.
-- **Reglas (producto)** → supervisor `features/memory/` (`state/rules.store.ts` + `data/rule.types.ts` +
-  `data/rules-mock.ts` + `pages/rules` + `pages/rule-builder`) · **Recorrido** → sc-demo `pages/reglas` (presentación).
+- **Decisiones** → `docs/DECISIONS.md` (**DD-29** motor Storybook · DD-28 reglas MVP · DD-27/26 constructor) ·
+  **Auditorías** → `docs/AUDIT-2026-07.md` (consistencia/cobertura, esta sesión) + `docs/AUDIT-DEUDA-2026-06.md`
+  (deuda de código) · **Pokédex** → `docs/inventory.md` (49/49) · **Mapa docs** → `docs/DOCS-INDEX.md`.
+- **Motor Storybook** → `sc-demo/src/app/storybook/` (+ `pages/components/component-catalog.ts` + `storybook-shell`) ·
+  **Demos** → `sc-demo/src/app/pages/components/*/` (49, formato story) · **rule-builder** → `supervisor/features/memory/
+  pages/rule-builder/`.
