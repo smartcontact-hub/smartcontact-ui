@@ -20,3 +20,11 @@ body {
   line-height: var(--sc-line-height-200);
   font-weight: var(--sc-font-weight-regular);
 }
+
+/* El showcase de componentes (shell con sidebar) necesita más ancho que las páginas de
+   prosa; sólo se ensancha cuando `.demo-main` contiene el shell (no afecta a /foundations).
+   `!important` para ganar a la regla base `.demo-main` (encapsulada en app.component → más
+   específica); este override de layout puntual es deliberado. */
+.demo-main:has(app-storybook-shell) {
+  max-width: 82rem !important;
+}
