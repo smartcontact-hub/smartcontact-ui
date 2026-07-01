@@ -20,11 +20,26 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/theme/theme.component').then((m) => m.ThemeComponent),
   },
   {
+    // Shell del showcase: sidebar (categorías + búsqueda) + outlet. Las páginas de
+    // componentes (migradas o no) son children → se renderizan DENTRO del shell.
     path: 'components',
     loadComponent: () =>
-      import('./pages/components/components-index.component').then(
-        (m) => m.ComponentsIndexComponent,
+      import('./pages/components/storybook-shell.component').then(
+        (m) => m.StorybookShellComponent,
       ),
+    children: [
+      {
+        path: '',
+        loadComponent: () =>
+          import('./pages/components/components-index.component').then(
+            (m) => m.ComponentsIndexComponent,
+          ),
+      },
+      ...SC_DEMO_COMPONENT_PAGES.map((page) => ({
+        path: page.path,
+        loadComponent: page.load as never,
+      })),
+    ],
   },
   {
     path: 'uso',
@@ -38,9 +53,5 @@ export const routes: Routes = [
         (m) => m.RulesWalkthroughComponent,
       ),
   },
-  ...SC_DEMO_COMPONENT_PAGES.map((page) => ({
-    path: `components/${page.path}`,
-    loadComponent: page.load as never,
-  })),
   { path: '', pathMatch: 'full', redirectTo: 'foundations' },
 ];

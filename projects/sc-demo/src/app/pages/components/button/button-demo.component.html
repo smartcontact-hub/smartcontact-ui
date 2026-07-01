@@ -1,7 +1,24 @@
-<h1>sc-button</h1>
+<app-story-host [meta]="meta" [stories]="stories()" />
 
-<h2>Variantes</h2>
-<div class="row">
+<!-- Stories declaradas como `<ng-template>`: el motor las pinta en su canvas. El
+     Playground recibe `args` (knobs); los ejemplos son estáticos. Los `data-testid`
+     los miden los e2e de métrica del Kit (no quitar). -->
+
+<ng-template #playground let-args>
+  <sc-button
+    [label]="args.label"
+    [variant]="args.variant"
+    [appearance]="args.appearance"
+    [size]="args.size"
+    [icon]="args.icon || null"
+    [loading]="args.loading"
+    [disabled]="args.disabled"
+    [rounded]="args.rounded"
+    [fullWidth]="args.fullWidth"
+  />
+</ng-template>
+
+<ng-template #variants>
   <sc-button label="Primario" data-testid="sc-btn-md" />
   <sc-button label="Secundario" variant="secondary" />
   <sc-button label="Success" variant="success" />
@@ -9,29 +26,26 @@
   <sc-button label="Warn" variant="warn" />
   <sc-button label="Danger" variant="danger" />
   <sc-button label="Contrast" variant="contrast" />
-</div>
+</ng-template>
 
-<h2>Apariencias</h2>
-<div class="row">
+<ng-template #appearances>
   <sc-button label="Filled" />
   <sc-button label="Outlined" appearance="outlined" />
   <sc-button label="Text" appearance="text" />
   <sc-button label="Link" appearance="link" />
-</div>
+</ng-template>
 
-<h2>Tamaños</h2>
-<div class="row">
+<ng-template #sizes>
   <sc-button label="Small" size="sm" data-testid="sc-btn-sm" />
   <sc-button label="Medium" />
   <sc-button label="Large" size="lg" data-testid="sc-btn-lg" />
-</div>
+</ng-template>
 
-<h2>Iconos y estados</h2>
-<div class="row">
+<ng-template #icons>
   <sc-button label="Con icono" icon="check" />
   <sc-button icon="check" iconAriaLabel="Confirmar" data-testid="sc-btn-icononly" />
   <sc-button label="Legacy pi" icon="pi pi-trash" variant="danger" data-testid="sc-btn-legacy-icon" />
   <sc-button label="Cargando" [loading]="true" />
   <sc-button label="Deshabilitado" [disabled]="true" />
   <sc-button label="Full width" [fullWidth]="true" />
-</div>
+</ng-template>
