@@ -2,6 +2,7 @@ import {
   afterNextRender,
   ChangeDetectionStrategy,
   Component,
+  computed,
   DestroyRef,
   inject,
   signal,
@@ -72,6 +73,13 @@ export class RulesPageComponent {
   protected readonly activeRules = this.rulesStore.activeRules;
   protected readonly inactiveRules = this.rulesStore.inactiveRules;
   protected readonly isEmpty = this.rulesStore.isEmpty;
+
+  /** Una sola tabla: la regla activa primero, luego las inactivas (cada grupo
+   *  por lastModified desc). El estado va en columna, sin secciones separadas. */
+  protected readonly allRules = computed(() => [
+    ...this.rulesStore.activeRules(),
+    ...this.rulesStore.inactiveRules(),
+  ]);
 
   protected readonly menuTargetRule = signal<Rule | null>(null);
 
@@ -147,6 +155,11 @@ export class RulesPageComponent {
 
   protected setMenuTarget(rule: Rule): void {
     this.menuTargetRule.set(rule);
+  }
+
+  /** Click en la fila abre la regla en el constructor (la fila actúa de enlace). */
+  protected openRule(rule: Rule): void {
+    this.router.navigate(['/conversaciones/reglas', rule.id]);
   }
 
   protected buildMenuItems(rule: Rule): MenuItem[] {

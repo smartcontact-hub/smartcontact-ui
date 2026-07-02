@@ -1,7 +1,7 @@
-/* RulesPage · listado de reglas Memory · iter 9a
- * Spec `Memory/docs/specs/rule-constructor-update-1.md §VISTA DE LISTADO`.
- * Tabla 7 cols + 2 secciones (Activas / Inactivas+Borradores). Drag-drop,
- * conflictos y delete/duplicar llegan en iters 9b/9c/9d.
+/* RulesPage · listado de reglas Memory.
+ * MVP: una sola tabla (estado activa/inactiva en columna, sin secciones ni
+ * borradores). Cada fila enlaza al constructor; acciones por fila en el kebab
+ * (editar / duplicar / activar-desactivar / eliminar).
  */
 
 :host {
@@ -88,6 +88,7 @@
   tbody tr {
     border-bottom: 1px solid var(--sc-border-subtle);
     transition: background var(--sc-transition-fast) var(--sc-easing-default);
+    cursor: pointer;
 
     &:hover {
       background: var(--sc-bg-default);

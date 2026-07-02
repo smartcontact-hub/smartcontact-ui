@@ -27,176 +27,97 @@
         (cta)="onNewRule()"
       />
     } @else {
+      <!-- Una sola tabla: el estado (activa/inactiva) va en columna, sin
+           secciones separadas. Cada fila enlaza al constructor. -->
       <section class="rules-section">
-        <header class="rules-section__head">
-          <h2>{{ 'memory.rules.active_title' | translate }}</h2>
-          @if (activeRules().length === 0) {
-            <p class="rules-section__hint">
-              {{ 'memory.rules.no_active_hint' | translate }}
-            </p>
-          }
-        </header>
-
-        @if (activeRules().length > 0) {
-          <table class="rules-table">
-            <thead>
-              <tr>
-                <th scope="col">{{ 'memory.rules.cols.name' | translate }}</th>
-                <th scope="col">{{ 'memory.rules.cols.scope' | translate }}</th>
-                <th class="rules-table__th-actions" scope="col">
-                  {{ 'memory.rules.cols.actions' | translate }}
-                </th>
-                <th class="rules-table__th-status" scope="col">
-                  {{ 'memory.rules.cols.status' | translate }}
-                </th>
-                <th class="rules-table__th-modified" scope="col">
-                  {{ 'memory.rules.cols.last_modified' | translate }}
-                </th>
-                <th class="rules-table__th-kebab" scope="col" aria-label="Acciones"></th>
-              </tr>
-            </thead>
-            <tbody>
-              @for (rule of activeRules(); track rule.id) {
-                <tr>
-                  <td class="rules-table__td-name">
-                    <a href="javascript:void(0)" class="rules-table__name">{{ rule.name }}</a>
-                  </td>
-                  <td class="rules-table__td-scope" [attr.title]="scopeSummary(rule)">
-                    {{ scopeSummary(rule) }}
-                  </td>
-                  <td class="rules-table__td-actions">
-                    <div class="rules-actions-chips">
-                      @if (rule.transcripcion) {
-                        <span
-                          class="rules-action-chip"
-                          [attr.title]="'memory.rules.chip.transcription' | translate"
-                          [attr.aria-label]="'memory.rules.chip.transcription' | translate"
-                        >
-                          <sc-icon [name]="transcriptionIcon" [size]="12" />
-                        </span>
-                      }
-                      @if (rule.clasificacion) {
-                        <span
-                          class="rules-action-chip"
-                          [attr.title]="'memory.rules.chip.classification' | translate"
-                          [attr.aria-label]="'memory.rules.chip.classification' | translate"
-                        >
-                          <sc-icon [name]="sparklesIcon" [size]="12" />
-                        </span>
-                      }
-                    </div>
-                  </td>
-                  <td class="rules-table__td-status">
+        <table class="rules-table">
+          <thead>
+            <tr>
+              <th scope="col">{{ 'memory.rules.cols.name' | translate }}</th>
+              <th scope="col">{{ 'memory.rules.cols.scope' | translate }}</th>
+              <th class="rules-table__th-actions" scope="col">
+                {{ 'memory.rules.cols.actions' | translate }}
+              </th>
+              <th class="rules-table__th-status" scope="col">
+                {{ 'memory.rules.cols.status' | translate }}
+              </th>
+              <th class="rules-table__th-modified" scope="col">
+                {{ 'memory.rules.cols.last_modified' | translate }}
+              </th>
+              <th class="rules-table__th-kebab" scope="col" aria-label="Acciones"></th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (rule of allRules(); track rule.id) {
+              <tr
+                class="rules-row"
+                [class.rules-row-inactive]="!rule.active"
+                (click)="openRule(rule)"
+              >
+                <td class="rules-table__td-name">
+                  <span class="rules-table__name">{{ rule.name }}</span>
+                </td>
+                <td class="rules-table__td-scope" [attr.title]="scopeSummary(rule)">
+                  {{ scopeSummary(rule) }}
+                </td>
+                <td class="rules-table__td-actions">
+                  <div class="rules-actions-chips">
+                    @if (rule.transcripcion) {
+                      <span
+                        class="rules-action-chip"
+                        [attr.title]="'memory.rules.chip.transcription' | translate"
+                        [attr.aria-label]="'memory.rules.chip.transcription' | translate"
+                      >
+                        <sc-icon [name]="transcriptionIcon" [size]="12" />
+                      </span>
+                    }
+                    @if (rule.clasificacion) {
+                      <span
+                        class="rules-action-chip"
+                        [attr.title]="'memory.rules.chip.classification' | translate"
+                        [attr.aria-label]="'memory.rules.chip.classification' | translate"
+                      >
+                        <sc-icon [name]="sparklesIcon" [size]="12" />
+                      </span>
+                    }
+                  </div>
+                </td>
+                <td class="rules-table__td-status">
+                  @if (rule.active) {
                     <span class="rules-status rules-status--active">
                       {{ 'memory.rules.status.active' | translate }}
                     </span>
-                  </td>
-                  <td class="rules-table__td-modified">
-                    {{ formatRelativeDate(rule.lastModified) }}
-                  </td>
-                  <td class="rules-table__td-kebab">
-                    <button
-                      type="button"
-                      class="rules-kebab-btn"
-                      [attr.aria-label]="'memory.rules.cols.more' | translate"
-                      (click)="setMenuTarget(rule); kebabMenu.toggle($event)"
-                    >
-                      <sc-icon [name]="kebabIcon" size="inherit" />
-                    </button>
-                    <p-menu
-                      #kebabMenu
-                      [model]="buildMenuItems(rule)"
-                      [popup]="true"
-                      appendTo="body"
-                      styleClass="rules-kebab-menu"
-                    />
-                  </td>
-                </tr>
-              }
-            </tbody>
-          </table>
-        }
-      </section>
-
-      @if (inactiveRules().length > 0) {
-        <hr class="rules-divider" aria-hidden="true" />
-
-        <section class="rules-section rules-section--secondary">
-          <header class="rules-section__head">
-            <h2>{{ 'memory.rules.inactive_title' | translate }}</h2>
-          </header>
-
-          <table class="rules-table">
-            <thead>
-              <tr>
-                <th scope="col">{{ 'memory.rules.cols.name' | translate }}</th>
-                <th scope="col">{{ 'memory.rules.cols.scope' | translate }}</th>
-                <th class="rules-table__th-actions" scope="col">
-                  {{ 'memory.rules.cols.actions' | translate }}
-                </th>
-                <th class="rules-table__th-status" scope="col">
-                  {{ 'memory.rules.cols.status' | translate }}
-                </th>
-                <th class="rules-table__th-modified" scope="col">
-                  {{ 'memory.rules.cols.last_modified' | translate }}
-                </th>
-                <th class="rules-table__th-kebab" scope="col" aria-label="Acciones"></th>
-              </tr>
-            </thead>
-            <tbody>
-              @for (rule of inactiveRules(); track rule.id) {
-                <tr class="rules-row-inactive">
-                  <td class="rules-table__td-name">
-                    <a href="javascript:void(0)" class="rules-table__name">{{ rule.name }}</a>
-                  </td>
-                  <td class="rules-table__td-scope" [attr.title]="scopeSummary(rule)">
-                    {{ scopeSummary(rule) }}
-                  </td>
-                  <td class="rules-table__td-actions">
-                    <div class="rules-actions-chips">
-                      @if (rule.transcripcion) {
-                        <span class="rules-action-chip">
-                          <sc-icon [name]="transcriptionIcon" [size]="12" />
-                        </span>
-                      }
-                      @if (rule.clasificacion) {
-                        <span class="rules-action-chip">
-                          <sc-icon [name]="sparklesIcon" [size]="12" />
-                        </span>
-                      }
-                    </div>
-                  </td>
-                  <td class="rules-table__td-status">
+                  } @else {
                     <span class="rules-status rules-status--inactive">
                       {{ 'memory.rules.status.inactive' | translate }}
                     </span>
-                  </td>
-                  <td class="rules-table__td-modified">
-                    {{ formatRelativeDate(rule.lastModified) }}
-                  </td>
-                  <td class="rules-table__td-kebab">
-                    <button
-                      type="button"
-                      class="rules-kebab-btn"
-                      [attr.aria-label]="'memory.rules.cols.more' | translate"
-                      (click)="setMenuTarget(rule); kebabMenuInactive.toggle($event)"
-                    >
-                      <sc-icon [name]="kebabIcon" size="inherit" />
-                    </button>
-                    <p-menu
-                      #kebabMenuInactive
-                      [model]="buildMenuItems(rule)"
-                      [popup]="true"
-                      appendTo="body"
-                      styleClass="rules-kebab-menu"
-                    />
-                  </td>
-                </tr>
-              }
-            </tbody>
-          </table>
-        </section>
-      }
+                  }
+                </td>
+                <td class="rules-table__td-modified">
+                  {{ formatRelativeDate(rule.lastModified) }}
+                </td>
+                <td class="rules-table__td-kebab">
+                  <button
+                    type="button"
+                    class="rules-kebab-btn"
+                    [attr.aria-label]="'memory.rules.cols.more' | translate"
+                    (click)="$event.stopPropagation(); setMenuTarget(rule); kebabMenu.toggle($event)"
+                  >
+                    <sc-icon [name]="kebabIcon" size="inherit" />
+                  </button>
+                  <p-menu
+                    #kebabMenu
+                    [model]="buildMenuItems(rule)"
+                    [popup]="true"
+                    appendTo="body"
+                    styleClass="rules-kebab-menu"
+                  />
+                </td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </section>
     }
   </div>
 </div>
