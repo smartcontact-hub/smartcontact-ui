@@ -6,11 +6,9 @@ import type { Rule } from '../data/rule.types';
 /**
  * Signal store de reglas Memory.
  *
- * MVP transcripción: dos estados, activa o inactiva. **Solo una regla puede
- * estar activa a la vez** → activar una desactiva el resto (patrón radio). Sin
- * borradores ni priorización: como nunca hay dos activas, no hay orden ni
- * conflictos que resolver. Expone la lista mock + los computeds de las dos
- * secciones del listado (Activa / Inactivas) y el CRUD que mantiene el invariante.
+ * Transcripción: dos estados, activa o inactiva. **Puede haber varias reglas
+ * activas a la vez** — activar una no desactiva al resto. Expone la lista mock +
+ * los computeds de las dos secciones del listado (Activas / Inactivas) y el CRUD.
  */
 @Injectable({ providedIn: 'root' })
 export class RulesStore {
@@ -18,7 +16,7 @@ export class RulesStore {
 
   readonly rules = this._rules.asReadonly();
 
-  /** Regla activa. MVP: como mucho una; el array facilita el render del listado. */
+  /** Reglas activas, más recientes primero. */
   readonly activeRules = computed(() =>
     [...this._rules()]
       .filter((r) => r.active)
@@ -97,57 +95,42 @@ export class RulesStore {
   }
 
   /**
-   * Activa o desactiva una regla. Invariante "una sola activa": al activar una,
-   * cualquier otra activa pasa a inactiva (radio). Desactivar solo la apaga.
+   * Activa o desactiva una regla. Pueden coexistir varias activas: activar una
+   * NO toca a las demás; desactivar solo la apaga.
    */
   toggleActive(id: number): void {
     this._rules.update((rules) => {
       const target = rules.find((r) => r.id === id);
       if (!target) return rules;
       const now = new Date().toISOString();
-      if (target.active) {
-        return rules.map((r) => (r.id === id ? { ...r, active: false, lastModified: now } : r));
-      }
-      return rules.map((r) => {
-        if (r.id === id) return { ...r, active: true, lastModified: now };
-        if (r.active) return { ...r, active: false, lastModified: now };
-        return r;
-      });
+      return rules.map((r) =>
+        r.id === id ? { ...r, active: !r.active, lastModified: now } : r,
+      );
     });
   }
 
   /**
-   * Crear una regla nueva. Asigna id auto-incremental + lastModified now. Si
-   * nace activa, desactiva el resto (solo una activa a la vez).
+   * Crear una regla nueva. Asigna id auto-incremental + lastModified now. Puede
+   * nacer activa sin afectar a las demás (varias activas permitidas).
    */
   addRule(partial: Omit<Rule, 'id' | 'lastModified'>): Rule {
     const now = new Date().toISOString();
     const nextId = this._rules().reduce((max, r) => Math.max(max, r.id), 0) + 1;
     const newRule: Rule = { ...partial, id: nextId, lastModified: now };
-    this._rules.update((rules) => {
-      const base = newRule.active
-        ? rules.map((r) => (r.active ? { ...r, active: false } : r))
-        : rules;
-      return [...base, newRule];
-    });
+    this._rules.update((rules) => [...rules, newRule]);
     return newRule;
   }
 
   /**
-   * Actualizar una regla existente. Si queda activa, desactiva el resto para
-   * mantener el invariante de "una sola activa". Marca lastModified.
+   * Actualizar una regla existente. Marca lastModified. Varias reglas pueden
+   * quedar activas a la vez.
    */
   updateRule(id: number, patch: Partial<Rule>): void {
     this._rules.update((rules) => {
       const now = new Date().toISOString();
       const target = rules.find((r) => r.id === id);
       if (!target) return rules;
-      const willBeActive = patch.active ?? target.active;
-      return rules.map((r) => {
-        if (r.id === id) return { ...r, ...patch, lastModified: now };
-        if (willBeActive && r.active) return { ...r, active: false, lastModified: now };
-        return r;
-      });
+      return rules.map((r) => (r.id === id ? { ...r, ...patch, lastModified: now } : r));
     });
   }
 
