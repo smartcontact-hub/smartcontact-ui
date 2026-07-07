@@ -66,6 +66,36 @@
       </div>
     </section>
 
+    <!-- Descripción en vivo del alcance ("Se cumple si…") — encima del 02.
+         Campos y valores en negrita; conectores Y/O como badges azules. -->
+    @let scope = scopeDescription();
+    <div class="scope-desc" aria-live="polite">
+      <span class="scope-desc__lead">Se cumple si:</span>
+      @if (scope.empty) {
+        <span class="scope-desc__all">todas las conversaciones</span>
+      } @else {
+        @for (group of scope.groups; track $index; let gi = $index) {
+          @if (gi > 0) {
+            <span class="cond-badge">{{ scope.rootJoin }}</span>
+          }
+          @if (scope.groups.length > 1) {
+            <span class="scope-desc__paren">(</span>
+          }
+          @for (c of group.conditions; track $index; let ci = $index) {
+            @if (ci > 0) {
+              <span class="cond-badge">{{ group.join }}</span>
+            }
+            <strong class="scope-desc__field">{{ c.field }}</strong>
+            <span class="scope-desc__op">{{ c.operator }}</span>
+            <strong class="scope-desc__val">{{ c.value }}</strong>
+          }
+          @if (scope.groups.length > 1) {
+            <span class="scope-desc__paren">)</span>
+          }
+        }
+      }
+    </div>
+
     <!-- Bloque 2: Alcance — constructor de condiciones (Variante B: match
          all/any · AND/OR · grupos). Reemplaza las 3 dimensiones rígidas. -->
     <section class="rule-block">

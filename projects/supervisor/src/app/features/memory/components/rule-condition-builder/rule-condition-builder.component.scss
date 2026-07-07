@@ -327,19 +327,20 @@
     }
   }
 
+  /* Y intra-grupo: MISMA identidad que el O entre grupos (círculo azul, texto
+   * blanco) para que el usuario relacione ambos conectores. */
   &--inline {
-    align-self: flex-start;
+    align-self: center;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-width: 30px;
-    padding: 2px var(--sc-spacing-0-5);
-    border: 1px solid var(--sc-border-default);
+    width: 32px;
+    height: 32px;
     border-radius: var(--sc-radius-full);
-    background: var(--sc-bg-surface);
-    color: var(--sc-text-secondary);
-    font-size: var(--sc-font-size-50);
-    font-weight: 600;
+    background: var(--sc-bg-primary);
+    color: var(--sc-text-on-primary);
+    font-size: var(--sc-font-size-100);
+    font-weight: 700;
   }
 }
 

@@ -83,6 +83,15 @@ export class RulesPageComponent {
 
   protected readonly menuTargetRule = signal<Rule | null>(null);
 
+  /** Modelo del menú kebab (único y compartido). Es un computed estable: solo
+   *  cambia al abrir otro kebab. Antes `[model]="buildMenuItems(rule)"` recreaba
+   *  el array en cada ciclo de CD → PrimeNG repintaba el menú y se perdía el 1er
+   *  clic (hacía falta doble). Con esto, un solo clic aplica la acción. */
+  protected readonly menuItems = computed<MenuItem[]>(() => {
+    const rule = this.menuTargetRule();
+    return rule ? this.buildMenuItems(rule) : [];
+  });
+
   protected readonly settingsIcon = 'tune';
   protected readonly emptyIcon = 'rule';
   protected readonly plusIcon = 'add';
