@@ -241,7 +241,9 @@
   flex-direction: column;
   gap: var(--sc-spacing-0-875);
   padding: var(--sc-spacing-1-125);
-  background: var(--sc-color-slate-50);
+  /* Blanco (#FFFFFF) para diferenciar la caja de grupo del fondo slate-50 de la
+   * página; solo aplica en multi-grupo, que es cuando se pinta `.group`. */
+  background: var(--sc-bg-surface);
   border: 1px solid var(--sc-border-default);
   border-radius: var(--sc-radius-200);
 
