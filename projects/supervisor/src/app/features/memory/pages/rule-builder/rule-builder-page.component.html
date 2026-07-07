@@ -64,21 +64,6 @@
           "
         />
       </div>
-
-      <div class="rule-block__row">
-        <label for="rule-description" class="rule-builder__textarea-label">
-          {{ 'memory.rules.builder.description_label' | translate }}
-          <span class="rule-builder__optional"> ({{ 'common.optional' | translate }}) </span>
-        </label>
-        <textarea
-          id="rule-description"
-          class="rule-builder__textarea"
-          rows="3"
-          [placeholder]="'memory.rules.builder.description_placeholder' | translate"
-          [value]="description()"
-          (input)="setDescription($any($event.target).value)"
-        ></textarea>
-      </div>
     </section>
 
     <!-- Bloque 2: Alcance — constructor de condiciones (Variante B: match

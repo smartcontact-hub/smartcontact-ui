@@ -14,66 +14,8 @@
       </button>
     </div>
   } @else if (tree.groups.length === 1) {
-    <div class="cond-builder__lead">
-      <span class="cond-builder__lead-text">{{ 'memory.rules.builder.cond.match_with' | translate }}</span>
-      <div
-        class="seg"
-        role="group"
-        [attr.aria-label]="'memory.rules.builder.cond.match_conditions_aria' | translate"
-      >
-        <button
-          type="button"
-          class="seg__btn"
-          [class.seg__btn--on]="tree.groups[0].match === 'all'"
-          [attr.aria-pressed]="tree.groups[0].match === 'all'"
-          (click)="setGroupMatch(tree.groups[0].id, 'all')"
-        >
-          {{ 'memory.rules.builder.cond.match_all' | translate }}
-        </button>
-        <button
-          type="button"
-          class="seg__btn"
-          [class.seg__btn--on]="tree.groups[0].match === 'any'"
-          [attr.aria-pressed]="tree.groups[0].match === 'any'"
-          (click)="setGroupMatch(tree.groups[0].id, 'any')"
-        >
-          {{ 'memory.rules.builder.cond.match_any' | translate }}
-        </button>
-      </div>
-      <span class="cond-builder__lead-text">{{ 'memory.rules.builder.cond.of_conditions' | translate }}</span>
-    </div>
-
     <ng-container *ngTemplateOutlet="rows; context: { $implicit: tree.groups[0], flat: true }" />
   } @else {
-    <div class="cond-builder__root">
-      <span class="cond-builder__root-label">{{ 'memory.rules.builder.cond.match_with' | translate }}</span>
-      <div
-        class="seg"
-        role="group"
-        [attr.aria-label]="'memory.rules.builder.cond.match_groups_aria' | translate"
-      >
-        <button
-          type="button"
-          class="seg__btn"
-          [class.seg__btn--on]="tree.match === 'all'"
-          [attr.aria-pressed]="tree.match === 'all'"
-          (click)="setRootMatch('all')"
-        >
-          {{ 'memory.rules.builder.cond.match_all' | translate }}
-        </button>
-        <button
-          type="button"
-          class="seg__btn"
-          [class.seg__btn--on]="tree.match === 'any'"
-          [attr.aria-pressed]="tree.match === 'any'"
-          (click)="setRootMatch('any')"
-        >
-          {{ 'memory.rules.builder.cond.match_any' | translate }}
-        </button>
-      </div>
-      <span class="cond-builder__root-label">{{ 'memory.rules.builder.cond.of_groups' | translate }}</span>
-    </div>
-
     @for (group of tree.groups; track trackGroup($index, group); let gi = $index) {
       @if (gi > 0) {
         <span class="connector connector--group" aria-hidden="true">
@@ -84,31 +26,6 @@
       <section class="group">
         <header class="group__head">
           <span class="group__num">{{ 'memory.rules.builder.cond.group_n' | translate: { n: gi + 1 } }}</span>
-          <div
-            class="seg seg--sm"
-            role="group"
-            [attr.aria-label]="'memory.rules.builder.cond.match_conditions_aria' | translate"
-          >
-            <button
-              type="button"
-              class="seg__btn"
-              [class.seg__btn--on]="group.match === 'all'"
-              [attr.aria-pressed]="group.match === 'all'"
-              (click)="setGroupMatch(group.id, 'all')"
-            >
-              {{ 'memory.rules.builder.cond.match_all' | translate }}
-            </button>
-            <button
-              type="button"
-              class="seg__btn"
-              [class.seg__btn--on]="group.match === 'any'"
-              [attr.aria-pressed]="group.match === 'any'"
-              (click)="setGroupMatch(group.id, 'any')"
-            >
-              {{ 'memory.rules.builder.cond.match_any' | translate }}
-            </button>
-          </div>
-          <span class="group__hint">{{ 'memory.rules.builder.cond.of_conditions' | translate }}</span>
           <button
             type="button"
             class="group__remove"
