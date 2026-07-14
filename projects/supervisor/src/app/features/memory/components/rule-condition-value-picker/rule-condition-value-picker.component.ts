@@ -25,6 +25,8 @@ interface PickerOption {
   readonly sub?: string;
   /** Categoría padre para agrupar (tipificación); ausente → lista plana. */
   readonly group?: string;
+  /** Profundidad en el árbol (tipificación): 1 = categoría padre, ≥2 = hoja. */
+  readonly depth?: number;
 }
 
 export function refKey(ref: ConditionRef): string {
@@ -104,8 +106,9 @@ export class RuleConditionValuePickerComponent {
       case 'tipificacion':
         return this.resolver.tipificaciones.map((t) => ({
           ref: { kind: 'tipificacion', id: t.id },
-          label: `${t.category} / ${t.name}`,
-          group: t.category,
+          label: t.path.join(' / '),
+          group: t.path[0],
+          depth: t.path.length,
         }));
       case 'category':
         return [];
@@ -128,24 +131,30 @@ export class RuleConditionValuePickerComponent {
 
   /** Agrupa las entidades filtradas por su `group` (categoría) — solo cuando lo
    *  tienen (tipificación). `null` = lista plana (servicios/grupos/agentes). */
-  protected readonly entityGroups = computed<{ name: string; options: PickerOption[] }[] | null>(
-    () => {
-      const opts = this.filteredEntities();
-      if (!opts.some((o) => o.group)) return null;
-      const order: string[] = [];
-      const byGroup = new Map<string, PickerOption[]>();
-      for (const o of opts) {
-        const g = o.group ?? '—';
-        const list = byGroup.get(g);
-        if (list) list.push(o);
-        else {
-          byGroup.set(g, [o]);
-          order.push(g);
-        }
+  protected readonly entityGroups = computed<
+    { name: string; parent?: PickerOption; children: PickerOption[] }[] | null
+  >(() => {
+    const opts = this.filteredEntities();
+    if (!opts.some((o) => o.group)) return null;
+    const order: string[] = [];
+    const byGroup = new Map<string, { parent?: PickerOption; children: PickerOption[] }>();
+    for (const o of opts) {
+      const g = o.group ?? '—';
+      let entry = byGroup.get(g);
+      if (!entry) {
+        entry = { children: [] };
+        byGroup.set(g, entry);
+        order.push(g);
       }
-      return order.map((name) => ({ name, options: byGroup.get(name)! }));
-    },
-  );
+      // depth 1 = nodo categoría (padre, con checkbox propio); ≥2 = hoja.
+      if (o.depth === 1) entry.parent = o;
+      else entry.children.push(o);
+    }
+    return order.map((name) => {
+      const e = byGroup.get(name)!;
+      return { name, parent: e.parent, children: e.children };
+    });
+  });
 
   /** Categorías colapsadas (por nombre) en el panel de tipificación. */
   private readonly collapsedGroups = signal<ReadonlySet<string>>(new Set());
