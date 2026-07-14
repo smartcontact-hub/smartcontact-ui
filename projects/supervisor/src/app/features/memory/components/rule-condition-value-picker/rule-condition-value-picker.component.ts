@@ -2,6 +2,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
+  effect,
   ElementRef,
   HostListener,
   inject,
@@ -22,6 +23,8 @@ interface PickerOption {
   readonly label: string;
   /** Subtexto (p.ej. "12 agentes" en un grupo, o el rol del agente). */
   readonly sub?: string;
+  /** Categoría padre para agrupar (tipificación); ausente → lista plana. */
+  readonly group?: string;
 }
 
 export function refKey(ref: ConditionRef): string {
@@ -51,9 +54,19 @@ export class RuleConditionValuePickerComponent {
   readonly refKind = input.required<RefKind>();
   readonly value = model.required<ConditionValue>();
   readonly placeholder = input('Seleccionar…');
+  /** Flujo guiado: al pasar a true, el panel se auto-abre (tras elegir el campo). */
+  readonly autoOpen = input(false);
 
   private readonly resolver = inject(ConditionResolverService);
   private readonly host = inject(ElementRef<HTMLElement>);
+
+  constructor() {
+    // Flujo guiado: auto-abrir el panel cuando `autoOpen` pasa a true. El efecto
+    // NO lee `open()`, así que cerrar (clic fuera) no lo re-dispara.
+    effect(() => {
+      if (this.autoOpen()) this.openPanel();
+    });
+  }
 
   protected readonly addIcon = 'add';
   protected readonly closeIcon = 'close';
@@ -91,7 +104,8 @@ export class RuleConditionValuePickerComponent {
       case 'tipificacion':
         return this.resolver.tipificaciones.map((t) => ({
           ref: { kind: 'tipificacion', id: t.id },
-          label: t.name,
+          label: `${t.category} / ${t.name}`,
+          group: t.category,
         }));
       case 'category':
         return [];
@@ -112,20 +126,58 @@ export class RuleConditionValuePickerComponent {
   protected readonly filteredEntities = computed(() => filterBy(this.entityOptions(), this.search()));
   protected readonly filteredGroups = computed(() => filterBy(this.groupOptions(), this.search()));
 
+  /** Agrupa las entidades filtradas por su `group` (categoría) — solo cuando lo
+   *  tienen (tipificación). `null` = lista plana (servicios/grupos/agentes). */
+  protected readonly entityGroups = computed<{ name: string; options: PickerOption[] }[] | null>(
+    () => {
+      const opts = this.filteredEntities();
+      if (!opts.some((o) => o.group)) return null;
+      const order: string[] = [];
+      const byGroup = new Map<string, PickerOption[]>();
+      for (const o of opts) {
+        const g = o.group ?? '—';
+        const list = byGroup.get(g);
+        if (list) list.push(o);
+        else {
+          byGroup.set(g, [o]);
+          order.push(g);
+        }
+      }
+      return order.map((name) => ({ name, options: byGroup.get(name)! }));
+    },
+  );
+
+  /** Categorías colapsadas (por nombre) en el panel de tipificación. */
+  private readonly collapsedGroups = signal<ReadonlySet<string>>(new Set());
+  protected isGroupCollapsed(name: string): boolean {
+    return this.collapsedGroups().has(name);
+  }
+  protected toggleGroup(name: string): void {
+    this.collapsedGroups.update((s) => {
+      const next = new Set(s);
+      if (next.has(name)) next.delete(name);
+      else next.add(name);
+      return next;
+    });
+  }
+
   protected isSelected(ref: ConditionRef): boolean {
     return this.selectedKeys().has(refKey(ref));
   }
 
   protected toggleOpen(): void {
-    if (!this.open()) {
-      // Decide la dirección antes de abrir: si debajo no caben ~320px (descontando
-      // el footer sticky) y arriba hay más sitio, abre hacia arriba.
-      const r = this.host.nativeElement.getBoundingClientRect();
-      const below = window.innerHeight - r.bottom - 80;
-      this.openUp.set(below < 320 && r.top > below);
-    }
-    this.open.update((o) => !o);
-    if (!this.open()) this.search.set('');
+    if (this.open()) this.close();
+    else this.openPanel();
+  }
+
+  /** Abre el panel decidiendo la dirección: si debajo no caben ~320px (descontando
+   *  el footer sticky) y arriba hay más sitio, abre hacia arriba. No lee `open()`
+   *  para que sea seguro llamarlo desde el efecto de auto-open. */
+  private openPanel(): void {
+    const r = this.host.nativeElement.getBoundingClientRect();
+    const below = window.innerHeight - r.bottom - 80;
+    this.openUp.set(below < 320 && r.top > below);
+    this.open.set(true);
   }
 
   protected close(): void {

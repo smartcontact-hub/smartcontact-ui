@@ -120,6 +120,16 @@
     vertical-align: -2px;
   }
 
+  /* Operador fijo "es" (sustituye al desplegable es/no es en listas/enum). */
+  &__op--static {
+    display: inline-flex;
+    align-items: center;
+    height: 100%;
+    padding-left: var(--sc-spacing-0-5);
+    color: var(--sc-text-secondary);
+    font-size: var(--sc-font-size-200);
+  }
+
   &__num {
     display: flex;
     align-items: center;
