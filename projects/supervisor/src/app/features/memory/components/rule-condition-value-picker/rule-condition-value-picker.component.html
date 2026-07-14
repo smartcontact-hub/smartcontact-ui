@@ -78,22 +78,43 @@
 
           @if (entityGroups(); as groups) {
             @for (grp of groups; track grp.name) {
-              <button
-                type="button"
-                class="vpick__group"
-                [attr.aria-expanded]="!isGroupCollapsed(grp.name)"
-                (click)="toggleGroup(grp.name)"
-              >
-                <sc-icon
-                  class="vpick__group-caret"
-                  [name]="isGroupCollapsed(grp.name) ? 'chevron_right' : 'expand_more'"
-                  size="inherit"
-                />
-                <span class="vpick__group-name">{{ grp.name }}</span>
-                <span class="vpick__group-count">{{ grp.options.length }}</span>
-              </button>
+              <div class="vpick__grouphead">
+                @if (grp.parent; as p) {
+                  <button
+                    type="button"
+                    class="vpick__opt vpick__grouphead-select"
+                    [class.vpick__opt--on]="isSelected(p.ref)"
+                    (click)="toggle(p.ref)"
+                  >
+                    <sc-icon
+                      class="vpick__check"
+                      [name]="isSelected(p.ref) ? 'check_box' : 'check_box_outline_blank'"
+                      size="inherit"
+                    />
+                    <span class="vpick__grouphead-name">{{ grp.name }}</span>
+                  </button>
+                } @else {
+                  <span class="vpick__grouphead-name vpick__grouphead-name--plain">
+                    {{ grp.name }}
+                  </span>
+                }
+                <button
+                  type="button"
+                  class="vpick__grouphead-toggle"
+                  [attr.aria-expanded]="!isGroupCollapsed(grp.name)"
+                  aria-label="Contraer o expandir categoría"
+                  (click)="toggleGroup(grp.name)"
+                >
+                  <span class="vpick__group-count">{{ grp.children.length }}</span>
+                  <sc-icon
+                    class="vpick__group-caret"
+                    [name]="isGroupCollapsed(grp.name) ? 'chevron_right' : 'expand_more'"
+                    size="inherit"
+                  />
+                </button>
+              </div>
               @if (!isGroupCollapsed(grp.name)) {
-                @for (o of grp.options; track o.label) {
+                @for (o of grp.children; track o.label) {
                   <button
                     type="button"
                     class="vpick__opt vpick__opt--nested"
