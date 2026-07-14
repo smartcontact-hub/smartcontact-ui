@@ -199,6 +199,60 @@
     flex-shrink: 0;
   }
 
+  /* Checkbox (izquierda) — indica multiselección. Marcado = sky (acento del picker). */
+  &__check {
+    flex-shrink: 0;
+    color: var(--sc-text-secondary);
+    font-size: var(--sc-font-size-300);
+  }
+
+  &__opt--on &__check {
+    color: var(--sc-color-sky-500);
+  }
+
+  /* Cabecera de categoría colapsable (tipificación → "Categoría / Nombre"). */
+  &__group {
+    display: flex;
+    align-items: center;
+    gap: var(--sc-spacing-0-25);
+    width: 100%;
+    margin-top: var(--sc-spacing-0-25);
+    padding: var(--sc-spacing-0-25) var(--sc-spacing-0-5);
+    border: 0;
+    border-radius: var(--sc-radius-200);
+    background: transparent;
+    color: var(--sc-text-secondary);
+    font: inherit;
+    font-size: var(--sc-font-size-50);
+    font-weight: 600;
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
+    cursor: pointer;
+
+    &:hover {
+      background: var(--sc-color-slate-50);
+    }
+  }
+
+  &__group-caret {
+    flex-shrink: 0;
+    font-size: var(--sc-font-size-300);
+  }
+
+  &__group-name {
+    flex: 1;
+    text-align: left;
+  }
+
+  &__group-count {
+    color: var(--sc-text-secondary);
+    font-weight: 500;
+  }
+
+  &__opt--nested {
+    padding-left: var(--sc-spacing-1-125);
+  }
+
   &__empty {
     margin: 0;
     padding: var(--sc-spacing-0-875);

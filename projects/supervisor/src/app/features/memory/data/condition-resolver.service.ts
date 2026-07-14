@@ -10,6 +10,7 @@ import {
   GROUP_ENTITIES,
   groupById_,
   SERVICE_NAMES,
+  type TipificacionEntity,
   TIPIFICACION_ENTITIES,
   tipificacionById_,
 } from './entity-catalog';
@@ -29,7 +30,7 @@ export class ConditionResolverService {
   /** Catálogos para los pickers (Bloque 3). Estáticos (mock); en real, un store. */
   readonly agents: readonly AgentEntity[] = AGENT_ENTITIES;
   readonly groups: readonly EntityRef[] = GROUP_ENTITIES;
-  readonly tipificaciones: readonly EntityRef[] = TIPIFICACION_ENTITIES;
+  readonly tipificaciones: readonly TipificacionEntity[] = TIPIFICACION_ENTITIES;
   readonly services: readonly string[] = SERVICE_NAMES;
 
   /** Etiqueta legible de una referencia. */

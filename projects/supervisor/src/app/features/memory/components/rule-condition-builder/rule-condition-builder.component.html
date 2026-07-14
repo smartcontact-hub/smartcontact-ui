@@ -79,14 +79,18 @@
             </ng-template>
           </sc-select>
 
-          <sc-select
-            class="cond-row__op"
-            [options]="operatorOptionsFor(cond.field)"
-            optionLabel="label"
-            optionValue="value"
-            [value]="cond.operator"
-            (valueChange)="setOperator(group.id, cond.id, $event)"
-          />
+          @if (fieldDef(cond.field).kind === 'number') {
+            <sc-select
+              class="cond-row__op"
+              [options]="operatorOptionsFor(cond.field)"
+              optionLabel="label"
+              optionValue="value"
+              [value]="cond.operator"
+              (valueChange)="setOperator(group.id, cond.id, $event)"
+            />
+          } @else {
+            <span class="cond-row__op cond-row__op--static">es</span>
+          }
 
           @if (fieldDef(cond.field).kind === 'list') {
             <sc-rule-condition-value-picker
@@ -94,6 +98,7 @@
               [refKind]="refKindOf(cond.field)"
               [placeholder]="fieldDef(cond.field).placeholder"
               [value]="cond.value"
+              [autoOpen]="autoOpenCondId() === cond.id"
               (valueChange)="setValue(group.id, cond.id, $event)"
             />
           } @else if (fieldDef(cond.field).kind === 'enum') {

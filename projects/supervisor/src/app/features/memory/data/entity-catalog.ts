@@ -81,21 +81,28 @@ export const GROUP_ENTITIES: readonly EntityRef[] = GROUPS_SEED.map((g) => ({
   name: GROUP_DISPLAY_NAMES[g.id] ?? g.name,
 }));
 
+/** Tipificación con su categoría (2 niveles) — el picker la muestra como ruta
+ *  "Categoría / Nombre" y agrupa por categoría. */
+export interface TipificacionEntity extends EntityRef {
+  readonly category: string;
+}
+
 /** Espejo del seed de Tipificaciones (`repositories/instances/tipificaciones.ts`,
- *  cuyo SEED es interno y no se exporta). Mantener en sync si cambia allí. */
-export const TIPIFICACION_ENTITIES: readonly EntityRef[] = [
-  { id: 1, name: 'Consulta resuelta' },
-  { id: 2, name: 'Consulta escalada' },
-  { id: 3, name: 'Venta cerrada' },
-  { id: 4, name: 'Venta pendiente' },
-  { id: 5, name: 'Venta rechazada' },
-  { id: 6, name: 'Reclamación abierta' },
-  { id: 7, name: 'Reclamación resuelta' },
-  { id: 8, name: 'Incidencia técnica' },
-  { id: 9, name: 'Incidencia resuelta' },
-  { id: 10, name: 'Llamada abandonada' },
-  { id: 11, name: 'Llamada perdida' },
-  { id: 12, name: 'Información proporcionada' },
+ *  cuyo SEED es interno y no se exporta). Mantener en sync si cambia allí —
+ *  incluye la `category` del seed para las rutas jerárquicas del picker. */
+export const TIPIFICACION_ENTITIES: readonly TipificacionEntity[] = [
+  { id: 1, name: 'Consulta resuelta', category: 'Consulta' },
+  { id: 2, name: 'Consulta escalada', category: 'Consulta' },
+  { id: 3, name: 'Venta cerrada', category: 'Ventas' },
+  { id: 4, name: 'Venta pendiente', category: 'Ventas' },
+  { id: 5, name: 'Venta rechazada', category: 'Ventas' },
+  { id: 6, name: 'Reclamación abierta', category: 'Reclamación' },
+  { id: 7, name: 'Reclamación resuelta', category: 'Reclamación' },
+  { id: 8, name: 'Incidencia técnica', category: 'Soporte' },
+  { id: 9, name: 'Incidencia resuelta', category: 'Soporte' },
+  { id: 10, name: 'Llamada abandonada', category: 'Otros' },
+  { id: 11, name: 'Llamada perdida', category: 'Otros' },
+  { id: 12, name: 'Información proporcionada', category: 'Consulta' },
 ];
 
 /** Servicios: solo nombres (sin entidad/ID en el sistema). */
