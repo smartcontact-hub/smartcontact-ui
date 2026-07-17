@@ -53,5 +53,9 @@ export const routes: Routes = [
         (m) => m.RulesWalkthroughComponent,
       ),
   },
+  {
+    path: 'lab',
+    loadComponent: () => import('./pages/lab/lab.component').then((m) => m.LabComponent),
+  },
   { path: '', pathMatch: 'full', redirectTo: 'foundations' },
 ];
