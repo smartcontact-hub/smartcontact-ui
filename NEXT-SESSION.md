@@ -1,80 +1,82 @@
 # NEXT SESSION — Smart Contact DS (hand-off)
 
-> Sello: **2026-07-01** (sesión 9). Temas: **(0)** modernizar el constructor de reglas · **(1)** auditoría +
-> arreglo pokédex + **gate i18n** · **(2-4)** motor **«Storybook-like»** en sc-demo → **49/49 componentes en
-> formato story** (canvas + knobs en vivo + snippet + tabla API + sidebar por categorías). **Todo en main** +
-> desplegándose (sc-demo.pages.dev). Decisión nueva: **DD-29**. `npm run verify` **ENTERO VERDE**. SOBREESCRIBE
-> este fichero al cerrar.
+> Sello: **2026-07-17** (sesión 10). Vuelta de vacaciones: **ordenado el caos de
+> ramas**, **arreglado el CI** (2 semanas en rojo), **integrado el trabajo de la UI
+> designer (Marta)** con **DD-30 «varias reglas activas» + regla de la unión**,
+> montado **`/lab`** (nido de prototipos), **verificación integral OK**, y una tanda
+> de **optimización** (iconos fuera de la app real ~340 KB, dedup −124 KB, limpieza,
+> footgun blindado). **Todo en main + CI verde** (6 commits, todos success).
+> SOBREESCRIBE este fichero al cerrar.
 
 ---
 
 ## ▶️ EMPIEZA AQUÍ
-1. **Lee este fichero entero.**
-2. Todo está en main (`22dba57` y anteriores) y desplegándose. El *por qué* durable: `docs/DECISIONS.md` → **DD-29**
-   (motor Storybook) · informe de esta auditoría: `docs/AUDIT-2026-07.md`.
-3. `verify` entero verde (ya NO hay el falso-positivo de `docs:coherence` — se arregló, ver TRAMPAS).
+1. Lee este fichero entero.
+2. Todo en main (`ef4ee9f` y anteriores). **Confirma el CI verde LEYENDO el run en
+   GitHub Actions, NO te fíes de este hand-off** (hoy el rojo llevaba 2 semanas
+   mientras los hand-offs lo daban por verde — la trampa de siempre).
+3. El *por qué* durable: `docs/DECISIONS.md` → **DD-30** (varias activas).
 
----
+## 🎯 Qué se hizo (sesión 10)
+- **Ramas limpias:** borradas 7 locales fusionadas + 2 remotas. Vivas: `main`,
+  `sandbox` (Marta, conservada), `design-tokens-sync` (bot).
+- **CI arreglado** (`c0d7ce3`): las demos de `toast`/`confirmdialog` montaban el
+  overlay 2 veces (StoryHost apila stories) → strict-mode violation en e2e. Fix: un
+  solo host por demo.
+- **Marta integrada + DD-30** (`61dcf92`, `ca2313c`): merge de `sandbox` (constructor
+  de reglas: tipificación jerárquica, alcance, checkbox, descripción). Adoptado
+  **varias reglas activas a la vez**; el solape se resuelve por **unión** (una
+  conversación se procesa UNA vez, categorías sumadas; sin prioridad ni conflictos ni
+  doble transcripción). Presentación `/reglas` reescrita; DD-30 supersede el invariante
+  de DD-28.
+- **`/lab`** (`a0e21c3`): copiadas al repo las 2 exploraciones de carga de Marta
+  (skeleton HTML + icono Lottie/GIF) en `public/explorations/`, página `/lab`
+  etiquetada como prototipo (no producto).
+- **Optimización** (auditoría multi-agente + escéptico):
+  - Iconos (`ef41ea9`): `SC_MATERIAL_SYMBOL_GLYPHS` era derivado del catálogo completo
+    → arrastraba ~340 KB de labels/keywords a TODOS los bundles (supervisor incluido).
+    Ahora es literal independiente → catálogo fuera por tree-shaking.
+  - Dedup −124 KB (`211f333`): 2 demos importaban iconos por ruta de fuente (2ª
+    identidad de módulo) → reapuntadas al alias `@smartcontact-hub/icons`. Rutas de
+    componentes diferidas (loadChildren). Logo huérfano borrado + preconnect en sc-demo.
+  - Footgun blindado (`ef4ee9f`): borrado `SC_ICON_CATALOG` + 4 exports muertos que
+    podían re-atar los 340 KB.
 
-## 🎯 Qué se hizo esta sesión (5 fases, cada una en main)
+## 🗺️ Lo que queda (backlog de optimización — pasada enfocada)
+- **Bug doble-clic del menú kebab** en `features/memory/pages/categories/` y
+  `.../entities/`: `[model]="buildMenuItems(x)"` se recrea por ciclo de CD. Reglas ya
+  lo arregló (patrón `menuTargetRule` signal + `menuItems` computed, ver
+  `rules-page.component.ts:84-93`); NO se propagó. **Necesita el supervisor levantado
+  para verificar el «1er clic funciona».**
+- **145 claves i18n huérfanas** en supervisor (×4 = 580 entradas, restos del rediseño
+  del builder de reglas). Borrado con re-verificación clave-por-clave (un falso
+  positivo rompe un texto). El escéptico ya las midió, pero verificar de nuevo.
+- **Dedups menores:** `formatTime()` en los 2 reproductores de audio; helper CRUD de
+  `categories.store`/`entities.store`. Micro-opts de plantilla (repo-list, etc.).
+- **Opcional/gordo (uno a uno):** virtualizar `conversation-table` (solo si crece el
+  dataset real de 156 filas), optimizar el GIF de `/lab` + PNGs de `/usage` a webp,
+  soltar `primeicons`, migrar builder webpack→esbuild (exige e2e completo de 4 apps),
+  reconciliar el doble modal de transcripción masiva.
+- **Descartado por el escéptico (NO perseguir):** aligerar la fuente de iconos
+  (requisito del contrato sc-icon), podar el preset PrimeNG (intencionado), la CSS de
+  311 KB (comprime a 41 KB y está en uso).
+- **Rutina «PR Revision» (del cowork):** ya apunta al repo correcto. Pendiente aplicar
+  el texto reformulado en modo solo-reporte; editable **solo en Claude Code web** (tú).
 
-**Fase 0 — Modernizar el rule-builder** (`supervisor/features/memory/pages/rule-builder/`). Des-encajonado: las 3
-secciones dejan de ser tarjetas blancas → una hoja aireada con hairline + eyebrow «01/02/03» + título semibold
-(jerarquía por peso/color, no por caja). Elevación reservada al panel de impacto sticky. Motion sutil (revelado
-escalonado + push :active, respeta `prefers-reduced-motion`). Badge-caja IA → chispa teal inline. Claro/oscuro
-verificado. Re-captura del «después» del recorrido `/reglas`. → `c73897c`.
+## ⚠️ TRAMPAS
+- **NUNCA `git add .claude`** · commits a main con
+  `Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>` · `npm run verify` + build
+  AOT antes de pushear cambios de `sc-*`.
+- **`npm run e2e` es footgun** (clobbea `public/usage/*.png`): para baselines usa
+  `npx playwright test e2e/components.spec.ts`.
+- **Iconos generados:** `SC_MATERIAL_SYMBOL_GLYPHS` es literal A PROPÓSITO. Si lo
+  derivas del array (`Object.fromEntries(SC_MATERIAL_SYMBOLS.map...)`) vuelven los 340 KB
+  del catálogo al bundle. Generador: `projects/ui-smartcontact-icons/scripts/generate-material-symbols.js`.
+- **Imports first-party:** usa siempre los alias `@smartcontact-hub/*`, NUNCA rutas a
+  `.../src/public-api` (crea 2ª identidad de módulo → duplica en el bundle).
 
-**Fase 1 — Auditoría + pokédex + i18n** (`docs/AUDIT-2026-07.md`, complementa `AUDIT-DEUDA-2026-06`). (a) Bug
-`hasDemo` en `scripts/component-audit.mjs`: casaba el demo solo CON guiones (`section-card`) pero el registro usa
-SIN guiones (`sectioncard`) → 18 con demo salían como «—». Arreglado → casa ambas. (b) **Gate `i18n:check`**
-(`scripts/i18n-check.mjs`) en `verify`: paridad de claves es↔en/fr/pt; cerradas 37 claves (`cond.*`+`crumb_rules`)
-que solo estaban en es. (c) Falso-positivo de `docs:coherence` (refs a `scripts/paths.mjs`, backlog propuesto)
-resuelto con allowlist `PROPOSED_SCRIPTS`. → `1577453`.
-
-**Fases 2-4 — Motor «Storybook-like» en sc-demo** (`projects/sc-demo/src/app/storybook/`). Motor propio (sin tooling
-nuevo): render por `<ng-template>` por story + `viewChild` (NO `NgComponentOutlet` — soporta content-projection de
-sc-select y `model()`/cellTemplate de sc-datatable). `StoryHost` (apilado, e2e-safe) · `StoryCanvas` (lienzo aislado,
-tema claro/oscuro/comparar local) · `StoryControls` (**knobs en vivo**, dogfooding sc-select/toggleswitch/inputtext/
-inputnumber) · `StorySnippet` (código + copiar) · `StoryPropsTable` · `serialize-args` (puro). **Shell** con sidebar
-(7 categorías + búsqueda), `/components` anidada. **Los 49 componentes migrados** (button piloto + 46 por lotes con
-subagentes paralelos + slot/subsection NUEVOS) → **pokédex 49/49**. Header sc-demo → «Smart Contact Design
-Engineering». → `1b1d69a`, `4cfea44`, `432f424`, `22dba57`.
-
-## 🗺️ Lo que queda
-- **[lead deuda DS]** El overflow del lienzo del showcase se arregló (`.sb-canvas` ya no lleva `overflow:hidden`, que
-  recortaba los paneles inline). Pero **`sc-multiselect` NO expone `appendTo`** (sc-select SÍ, `appendTo='body'`;
-  sc-datepicker lo hardcodea). Si un overlay se recorta dentro de un contenedor `overflow:hidden` (p.ej. `sc-dialog`),
-  la causa es esa → **candidato a igualar el appendTo en el DS** (sc-multiselect/otros overlays inline).
-- **[follow-up local, NO bloquea]** Los **baselines de screenshot de componentes** (`e2e/components.spec.ts-snapshots/
-  *-darwin.png`, 24 tracked) quedaron obsoletos: TODAS las páginas cambiaron (shell + formato story). Son **darwin +
-  local-only** (el e2e salta el screenshot en CI con `process.env.CI`; CI se apoya en las métricas del Kit, que pasan
-  porque los `data-testid` se preservaron). Regenéralos cuando toque con `npx playwright test e2e/components.spec.ts
-  --update-snapshots` (NO `npm run e2e` entero — footgun, ver abajo) y commítealos.
-- **[decisión de Rafa]** **TypeUI plugin** (`~/Downloads/SKILL.md`+`DESIGN.md`, en scratchpad `typeui-*.md`): son un
-  volcado plano del MISMO Figma que ya consume nuestro pipeline verificado (`kit-export-dtcg.json` + generadores +
-  `tokens:parity`/`type-parity`). **NO sustituibles** (regresaría a doc plana sin round-trip). Alineación confirmada
-  (radios 8/6/12/4/2 exactos; tipografía 1:1 vía type-parity verde). **Única divergencia real**: DESIGN.md (Figma
-  crudo) dice `warn=orange/500` pero el DS remapea a **amber** a propósito (`customs-catalog.md §1.3`). Si Figma es la
-  fuente de verdad y se quiere warn=orange, es lo único a reconciliar; si amber es la marca, divergimos bien.
-- **Backlog grande sigue**: `docs/AUDIT-DEUDA-2026-06.md` (P0 = `sc-field-wrapper`; base común admin; 2 eras de API).
-
-## ⚠️ TRAMPAS / PROTECCIONES
-- **`npm run e2e` ES UN FOOTGUN**: corre `e2e/usage/usage-capture.spec.ts` contra sc-demo:4280 y **CLOBBEA los PNG de
-  `public/usage/`**. Para capturar uso usa SOLO `npx playwright test -c playwright.usage.config.ts` (sirve el
-  supervisor:4290) + `git checkout -- _usage-raw.json` después. Para baselines de componentes, filtra al fichero:
-  `npx playwright test e2e/components.spec.ts` (NO corre el usage spec).
-- **`preview_logs level:error` acumula TODO el historial** del dev server (errores ya arreglados incluidos). No te fíes
-  del buffer: corre un `tsc`/`ng build` FRESCO para el estado real (esta sesión un «exit 0» de background fue espurio y
-  el buffer mostró errores de casing ya arreglados).
-- **Casing de clases DS**: es `ScInputTextComponent`/`ScToggleSwitchComponent`/`ScInputNumberComponent` (mayúsculas
-  internas), NO `ScInputtextComponent`. Verifica el nombre EXPORTADO en `public-api.ts`, no lo infieras del selector.
-- **NUNCA `git add .claude`** · **NUNCA commitees `kit-export-dtcg.json`** · commits a main con
-  `Co-Authored-By: Claude Opus 4.8 <noreply@anthropic.com>` · `npm run verify` entero antes de pushear cambios de `sc-*`.
-
-## Índice — dónde mirar
-- **Decisiones** → `docs/DECISIONS.md` (**DD-29** motor Storybook · DD-28 reglas MVP · DD-27/26 constructor) ·
-  **Auditorías** → `docs/AUDIT-2026-07.md` (consistencia/cobertura, esta sesión) + `docs/AUDIT-DEUDA-2026-06.md`
-  (deuda de código) · **Pokédex** → `docs/inventory.md` (49/49) · **Mapa docs** → `docs/DOCS-INDEX.md`.
-- **Motor Storybook** → `sc-demo/src/app/storybook/` (+ `pages/components/component-catalog.ts` + `storybook-shell`) ·
-  **Demos** → `sc-demo/src/app/pages/components/*/` (49, formato story) · **rule-builder** → `supervisor/features/memory/
-  pages/rule-builder/`.
+## Índice
+- **Decisiones** → `docs/DECISIONS.md` (**DD-30** varias activas · DD-29 storybook · DD-28 reglas MVP).
+- **Reglas producto** → `supervisor/src/app/features/memory/`. **Presentación** →
+  `sc-demo/src/app/pages/reglas/`. **Lab** → `sc-demo/src/app/pages/lab/`.
+- **Deploys:** sc-supervisor.pages.dev · sc-demo.pages.dev · sandbox.sc-supervisor.pages.dev (rama Marta).
