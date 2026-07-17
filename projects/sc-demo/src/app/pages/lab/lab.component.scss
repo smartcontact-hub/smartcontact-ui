@@ -1,0 +1,148 @@
+:host {
+  display: block;
+}
+
+.lab {
+  /* misma medida de lectura editorial que el recorrido hermano */
+  --measure: 68ch;
+}
+
+.lab > * + * {
+  margin-top: var(--sc-spacing-3);
+}
+
+/* ---------- cabecera ---------- */
+.eyebrow {
+  margin: 0 0 var(--sc-spacing-0-5);
+  font-size: var(--sc-font-size-caption);
+  line-height: var(--sc-line-height-caption);
+  font-weight: var(--sc-font-weight-semibold);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--sc-text-subtle);
+}
+
+.lab__head h1 {
+  margin: 0;
+  max-width: var(--measure);
+  font-size: var(--sc-font-size-800);
+  line-height: var(--sc-line-height-800);
+  font-weight: var(--sc-font-weight-bold);
+  letter-spacing: -0.01em;
+}
+
+.lead {
+  margin: var(--sc-spacing-1) 0 0;
+  max-width: var(--measure);
+  font-size: var(--sc-font-size-300);
+  line-height: var(--sc-line-height-300);
+  color: var(--sc-text-secondary);
+}
+
+/* ---------- cada exploración ---------- */
+.expl {
+  display: grid;
+  grid-template-columns: minmax(15rem, 21rem) 1fr;
+  gap: var(--sc-spacing-1-5);
+  align-items: start;
+  padding-top: var(--sc-spacing-2, 1.5rem);
+  border-top: 1px solid var(--sc-border-subtle);
+}
+
+@media (max-width: 760px) {
+  .expl {
+    grid-template-columns: 1fr;
+  }
+}
+
+.expl__meta > * + * {
+  margin-top: var(--sc-spacing-0-75);
+}
+
+.expl__kind {
+  margin: 0;
+  font-size: var(--sc-font-size-caption);
+  font-weight: var(--sc-font-weight-semibold);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--sc-text-subtle);
+}
+
+.expl__title {
+  margin: 0;
+  font-size: var(--sc-font-size-400);
+  line-height: var(--sc-line-height-400);
+  font-weight: var(--sc-font-weight-semibold);
+}
+
+.expl__by {
+  margin: 0;
+  font-size: var(--sc-font-size-100);
+  color: var(--sc-text-subtle);
+}
+
+.tag--proto {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--sc-spacing-0-25) var(--sc-spacing-0-75);
+  border: 1px solid var(--sc-border-subtle);
+  border-radius: 999px;
+  background: var(--sc-bg-subtle);
+  color: var(--sc-text-secondary);
+  font-size: var(--sc-font-size-caption);
+  font-weight: var(--sc-font-weight-medium);
+  letter-spacing: 0.02em;
+}
+
+.expl__note {
+  margin: 0;
+  max-width: 44ch;
+  font-size: var(--sc-font-size-200);
+  line-height: var(--sc-line-height-200);
+  color: var(--sc-text-secondary);
+}
+
+.expl__note code {
+  font-family: var(--sc-font-family-mono, ui-monospace, monospace);
+  font-size: 0.9em;
+  color: var(--sc-text-primary);
+}
+
+.expl__open {
+  display: inline-block;
+  font-size: var(--sc-font-size-200);
+  font-weight: var(--sc-font-weight-semibold);
+  color: var(--sc-text-link, var(--sc-text-primary));
+  text-decoration: none;
+}
+
+.expl__open:hover {
+  text-decoration: underline;
+}
+
+/* ---------- lienzo del prototipo ---------- */
+.expl__frame {
+  border: 1px solid var(--sc-border-subtle);
+  border-radius: var(--sc-radius-lg);
+  overflow: hidden;
+  background: var(--sc-bg-subtle);
+}
+
+.expl__frame iframe {
+  display: block;
+  width: 100%;
+  height: 32rem;
+  border: 0;
+}
+
+.expl__frame--icon {
+  display: grid;
+  place-items: center;
+  padding: var(--sc-spacing-3);
+}
+
+.expl__frame--icon img {
+  width: 100%;
+  max-width: 22rem;
+  height: auto;
+}
