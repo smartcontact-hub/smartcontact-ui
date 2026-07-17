@@ -3,7 +3,6 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
-  inject,
   input,
   model,
   signal,
@@ -15,7 +14,6 @@ import { TranslateModule } from '@ngx-translate/core';
 import { IconComponent } from '@shared/components';
 import { ScSelectComponent as SelectComponent } from '@smartcontact-hub/components';
 
-import { ConditionResolverService } from '../../data/condition-resolver.service';
 import { validateConditionTree } from '../../data/condition-validate';
 import {
   DURATION_PRESETS,
@@ -31,7 +29,6 @@ import {
   type ConditionTree,
   type ConditionValue,
   defaultOperatorFor,
-  describeConditionTree,
   type DurationUnit,
   emptyValueFor,
   fieldDefById,
@@ -72,8 +69,6 @@ export class RuleConditionBuilderComponent {
    *  El resto de avisos (duplicado/contradicción/rango) sí son en vivo. */
   readonly revealEmpty = input(true);
 
-  private readonly resolver = inject(ConditionResolverService);
-
   protected readonly fieldOptions = CONDITION_FIELDS.map((f) => ({
     value: f.id,
     label: f.label,
@@ -101,10 +96,6 @@ export class RuleConditionBuilderComponent {
   protected readonly addIcon = 'add';
   protected readonly closeIcon = 'close';
   protected readonly summaryIcon = 'rule';
-
-  protected readonly summary = computed(() =>
-    describeConditionTree(this.value(), (ref) => this.resolver.label(ref)),
-  );
 
   /* ── Validación / guía de errores (lógica pura; ver condition-validate) ── */
   private readonly issues = computed(() => validateConditionTree(this.value()));
@@ -194,9 +185,6 @@ export class RuleConditionBuilderComponent {
   protected trackCondition = (_: number, c: Condition) => c.id;
 
   /* ── Raíz ── */
-  protected setRootMatch(match: GroupMatch): void {
-    this.value.update((t) => ({ ...t, match }));
-  }
   protected addGroup(): void {
     this.value.update((t) => {
       const match: GroupMatch = t.groups.length === 1 ? 'any' : t.match;
@@ -208,9 +196,6 @@ export class RuleConditionBuilderComponent {
   }
 
   /* ── Grupos ── */
-  protected setGroupMatch(groupId: string, match: GroupMatch): void {
-    this.patchGroup(groupId, (g) => ({ ...g, match }));
-  }
   protected addCondition(groupId: string): void {
     this.patchGroup(groupId, (g) => ({ ...g, conditions: [...g.conditions, makeCondition()] }));
   }
