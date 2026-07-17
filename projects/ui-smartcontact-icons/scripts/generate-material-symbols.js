@@ -46,18 +46,31 @@ function buildTypescript(icons) {
         return `    { name: ${stringLiteral(icon.name)}, glyph: ${stringLiteral(icon.glyph)}, label: ${stringLiteral(icon.label)}, codepoint: ${stringLiteral(icon.codepoint)}, keywords: ${keywords} }`;
     });
 
+    const glyphs = icons.map(
+        (icon) => `    ${stringLiteral(icon.name)}: ${stringLiteral(icon.glyph)}`,
+    );
+
     return [
         '/* Auto-generated from material-symbols-rounded.codepoints. Do not edit directly. */',
+        '',
+        '// Mapa lean nombre -> glifo, emitido como LITERAL independiente (NO derivado de',
+        '// SC_MATERIAL_SYMBOLS). Es lo unico que necesita el render (resolveScIconGlyph /',
+        '// isScMaterialSymbolName), de modo que el catalogo completo (label/keywords/',
+        '// codepoint) se cae por tree-shaking en las apps que solo pintan iconos. Si lo',
+        '// vuelves a derivar del array, el catalogo entero regresa al bundle.',
+        'export const SC_MATERIAL_SYMBOL_GLYPHS = {',
+        glyphs.join(',\n'),
+        '};',
+        '',
+        'export type ScMaterialSymbolName = keyof typeof SC_MATERIAL_SYMBOL_GLYPHS;',
+        '',
+        '// Catalogo completo (label/keywords/codepoint), para un futuro buscador de iconos.',
+        '// Solo entra al bundle si algo lo importa explicitamente (hoy nadie en runtime).',
         'export const SC_MATERIAL_SYMBOLS = [',
         items.join(',\n'),
         '] as const;',
         '',
         "export type ScMaterialSymbolCatalogItem = typeof SC_MATERIAL_SYMBOLS[number];",
-        "export type ScMaterialSymbolName = ScMaterialSymbolCatalogItem['name'];",
-        '',
-        'export const SC_MATERIAL_SYMBOL_GLYPHS = Object.fromEntries(',
-        "    SC_MATERIAL_SYMBOLS.map((icon) => [icon.name, icon.glyph])",
-        ') as Record<ScMaterialSymbolName, string>;',
         '',
     ].join('\n');
 }
