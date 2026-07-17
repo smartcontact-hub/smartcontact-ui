@@ -35,8 +35,3 @@ export interface GroupAgentLink {
   /** False = paused (config preserved, agent does not receive contacts in this group). */
   readonly active: boolean;
 }
-
-/** Composite key helper — useful for Map<string, GroupAgentLink> lookups. */
-export function linkKey(agentId: number, groupId: number): string {
-  return `${agentId}:${groupId}`;
-}
