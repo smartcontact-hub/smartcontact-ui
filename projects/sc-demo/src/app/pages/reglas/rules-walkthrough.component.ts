@@ -9,6 +9,7 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
+import { ScIconComponent } from '@smartcontact-hub/icons';
 
 interface Snippet {
   /** Código REAL del repo (o el de antes, reconstruido), recortado para leerse. */
@@ -51,6 +52,7 @@ interface FeedbackEntry {
  */
 @Component({
   selector: 'app-rules-walkthrough',
+  imports: [ScIconComponent],
   templateUrl: './rules-walkthrough.component.html',
   styleUrl: './rules-walkthrough.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -66,12 +68,36 @@ export class RulesWalkthroughComponent {
   /** La imagen que abrió el lightbox, para devolverle el foco al cerrar. */
   private zoomTrigger: HTMLElement | null = null;
 
+  /* ─────────── Panel de feedback: pestaña flotante abajo-derecha (no-modal) ─────────── */
+
+  /** Panel de feedback abierto/cerrado. */
+  protected readonly feedbackOpen = signal(false);
+  /** El botón «×» dentro del panel: recibe el foco al abrir (a11y). */
+  private readonly feedbackClose = viewChild<ElementRef<HTMLButtonElement>>('feedbackClose');
+  /** El handle que abre el panel: recupera el foco al cerrar. */
+  private readonly feedbackHandle = viewChild<ElementRef<HTMLButtonElement>>('feedbackHandle');
+
   constructor() {
     // Cuando el lightbox aparece en el DOM, el foco va al botón cerrar (a11y).
     effect(() => {
       if (this.zoomed()) this.lightboxClose()?.nativeElement.focus();
     });
+    // Al montar el panel, el foco va a su botón cerrar (mismo patrón que el lightbox).
+    effect(() => {
+      if (this.feedbackOpen()) this.feedbackClose()?.nativeElement.focus();
+    });
     this.destroyRef.onDestroy(() => this.unlockScroll());
+  }
+
+  protected toggleFeedback(): void {
+    if (this.feedbackOpen()) this.closeFeedback();
+    else this.feedbackOpen.set(true);
+  }
+
+  protected closeFeedback(): void {
+    if (!this.feedbackOpen()) return;
+    this.feedbackOpen.set(false);
+    this.feedbackHandle()?.nativeElement.focus();
   }
 
   protected openZoom(target: EventTarget | null): void {
@@ -96,7 +122,12 @@ export class RulesWalkthroughComponent {
 
   @HostListener('document:keydown.escape')
   protected onEscape(): void {
-    this.closeZoom();
+    // El lightbox tiene prioridad: si está abierto, Esc lo cierra a él primero.
+    if (this.zoomed()) {
+      this.closeZoom();
+      return;
+    }
+    this.closeFeedback();
   }
 
   /* ─────────── Beat: el alcance ─────────── */

@@ -174,13 +174,6 @@
   color: var(--sc-text-accent);
 }
 
-.resolved {
-  margin-top: var(--sc-spacing-1-25);
-  padding-top: var(--sc-spacing-1);
-  border-top: 1px solid var(--sc-border-default);
-  color: var(--sc-text-primary);
-}
-
 .step a {
   color: var(--sc-text-accent);
 }
@@ -263,28 +256,6 @@ li code {
   font-family: var(--sc-font-family-mono);
   font-size: var(--sc-font-size-50);
   color: var(--sc-text-subtle);
-}
-
-/* ---------- capturas ---------- */
-.shot {
-  margin: 0;
-}
-
-.shot img {
-  display: block;
-  width: 100%;
-  height: auto;
-  border: 1px solid var(--sc-border-default);
-  border-radius: var(--sc-radius-md);
-  box-shadow: var(--sc-shadow-sm);
-}
-
-.shot figcaption {
-  max-width: var(--measure);
-  margin-top: var(--sc-spacing-0-625);
-  font-size: var(--sc-font-size-100);
-  line-height: var(--sc-line-height-100);
-  color: var(--sc-text-secondary);
 }
 
 /* ---------- beat: antes / ahora / por qué ---------- */
@@ -594,7 +565,8 @@ summary:focus-visible {
 .lightbox {
   position: fixed;
   inset: 0;
-  z-index: 1000;
+  /* por encima del dock de feedback (--sc-z-fixed); antes hardcode 1000 */
+  z-index: var(--sc-z-modal);
   display: grid;
   place-items: center;
   padding: var(--sc-spacing-3);
@@ -694,36 +666,123 @@ summary:focus-visible {
   }
 }
 
-/* ---------- Rail de feedback: log cronológico de revisión ----------
-   Por defecto (pantallas estrechas) fluye al final del recorrido. En pantallas
-   anchas (>=80rem), `.rules` pasa a flex y el rail queda sticky a la derecha,
-   con acceso cronológico mientras se lee. */
-.rules__feedback {
-  margin-top: var(--sc-spacing-3);
+/* ---------- Dock de feedback: pestaña flotante + panel (abajo-derecha) ----------
+   El log de revisión sale del flujo de lectura para devolverle el ancho completo
+   al texto. Vive como pestaña fija abajo-derecha (sin offset de sidebar: sc-demo
+   no tiene) que abre un panel NO-modal, con foco y Esc gestionados y por debajo
+   del lightbox (--sc-z-modal). */
+.rules__fb-dock {
+  position: fixed;
+  right: var(--sc-spacing-1-5);
+  bottom: var(--sc-spacing-1-5);
+  z-index: var(--sc-z-fixed);
 }
 
-.rules__feedback-inner {
+/* handle: píldora discreta (el acento vive en el icono, no en el fondo) */
+.rules__fb-handle {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-5);
+  padding: var(--sc-spacing-0-625) var(--sc-spacing-1);
+  border: 1px solid var(--sc-border-default);
+  border-radius: var(--sc-radius-full);
+  background: var(--sc-bg-surface);
+  color: var(--sc-text-primary);
+  font: inherit;
+  font-size: var(--sc-font-size-100);
+  font-weight: var(--sc-font-weight-medium);
+  box-shadow: var(--sc-shadow-dropdown);
+  cursor: pointer;
+  transition:
+    border-color var(--sc-transition-fast),
+    box-shadow var(--sc-transition-fast),
+    transform var(--sc-transition-fast);
+}
+
+.rules__fb-handle sc-icon {
+  color: var(--sc-icon-accent);
+}
+
+.rules__fb-handle:hover {
+  border-color: var(--sc-border-accent);
+  box-shadow: var(--sc-shadow-popover);
+}
+
+.rules__fb-handle:focus-visible,
+.rules__fb-close:focus-visible {
+  outline: 2px solid var(--sc-border-focus);
+  outline-offset: 2px;
+}
+
+.rules__fb-handle:active {
+  transform: scale(0.98);
+}
+
+/* panel: crece hacia arriba desde el handle (se monta con @if al abrir) */
+.rules__fb-panel {
+  position: absolute;
+  right: 0;
+  bottom: calc(100% + var(--sc-spacing-0-75));
+  display: flex;
+  flex-direction: column;
+  width: min(23rem, calc(100vw - 2 * var(--sc-spacing-1-5)));
+  max-height: min(30rem, 70vh);
   padding: var(--sc-spacing-1-25);
-  border: 1px solid var(--sc-border-subtle);
+  border: 1px solid var(--sc-border-default);
   border-radius: var(--sc-radius-lg);
-  background: var(--sc-bg-subtle);
+  background: var(--sc-bg-elevated);
+  box-shadow: var(--sc-shadow-dialog);
 }
 
-.rules__feedback-eyebrow {
-  margin: 0 0 var(--sc-spacing-0-5);
-  font-size: var(--sc-font-size-caption);
-  line-height: var(--sc-line-height-caption);
-  font-weight: var(--sc-font-weight-semibold);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
+.rules__fb-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sc-spacing-1);
+  margin-bottom: var(--sc-spacing-0-5);
+}
+
+/* reusa la utilidad global `.eyebrow`; solo cambia margen y color de acento */
+.rules__fb-eyebrow {
+  margin: 0;
   color: var(--sc-text-accent);
 }
 
-.rules__feedback-hint {
+.rules__fb-close {
+  display: grid;
+  place-items: center;
+  width: var(--sc-spacing-2);
+  height: var(--sc-spacing-2);
+  padding: 0;
+  border: 0;
+  border-radius: var(--sc-radius-sm);
+  background: transparent;
+  color: var(--sc-icon-secondary);
+  font-size: var(--sc-font-size-400);
+  line-height: 1;
+  cursor: pointer;
+  transition:
+    background var(--sc-transition-fast),
+    color var(--sc-transition-fast);
+}
+
+.rules__fb-close:hover {
+  background: var(--sc-bg-subtle);
+  color: var(--sc-text-primary);
+}
+
+.rules__fb-hint {
   margin: 0 0 var(--sc-spacing-1);
   font-size: var(--sc-font-size-caption);
   line-height: var(--sc-line-height-caption);
   color: var(--sc-text-subtle);
+}
+
+/* la lista de notas es lo único que scrollea dentro del panel */
+.rules__fb-scroll {
+  flex: 1 1 auto;
+  min-height: 0;
+  overflow-y: auto;
 }
 
 .fb + .fb {
@@ -768,27 +827,9 @@ summary:focus-visible {
   color: var(--sc-text-secondary);
 }
 
-@media (min-width: 80rem) {
-  .rules {
-    display: flex;
-    align-items: flex-start;
-    gap: var(--sc-spacing-3);
-  }
-
-  .rules__main {
-    flex: 1 1 auto;
-    min-width: 0;
-  }
-
-  .rules__feedback {
-    flex: 0 0 18rem;
-    margin-top: 0;
-  }
-
-  .rules__feedback-inner {
-    position: sticky;
-    top: var(--sc-spacing-1-5);
-    max-height: calc(100vh - var(--sc-spacing-3));
-    overflow-y: auto;
+/* entrada del panel: reutiliza el keyframe rules-rise (fade + subida) */
+@media (prefers-reduced-motion: no-preference) {
+  .rules__fb-panel {
+    animation: rules-rise var(--sc-transition-base) var(--sc-easing-emphasized) both;
   }
 }
