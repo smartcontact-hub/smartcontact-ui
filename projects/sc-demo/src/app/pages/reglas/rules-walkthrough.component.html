@@ -360,29 +360,63 @@
     </p>
   </footer>
   </div>
+</article>
 
-  <aside class="rules__feedback" aria-label="Feedback del equipo, por fecha">
-    <div class="rules__feedback-inner">
-      <p class="rules__feedback-eyebrow">Feedback</p>
-      <p class="rules__feedback-hint">
+<!-- Feedback del equipo: pestaña flotante abajo-derecha (fuera del flujo de lectura). -->
+<div class="rules__fb-dock">
+  @if (feedbackOpen()) {
+    <section
+      class="rules__fb-panel"
+      role="dialog"
+      aria-modal="false"
+      aria-label="Feedback del equipo, por fecha"
+    >
+      <header class="rules__fb-head">
+        <p class="eyebrow rules__fb-eyebrow">Feedback</p>
+        <button
+          #feedbackClose
+          type="button"
+          class="rules__fb-close"
+          aria-label="Cerrar (Esc)"
+          (click)="closeFeedback()"
+        >
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </header>
+      <p class="rules__fb-hint">
         Notas de revisión, por fecha (la más reciente arriba). Cada punto, validado contra el prototipo.
       </p>
-      @for (entry of feedback; track entry.date) {
-        <section class="fb">
-          <h2 class="fb__date">{{ entry.date }}</h2>
-          <ul class="fb__list">
-            @for (n of entry.notes; track n.t) {
-              <li class="fb__item">
-                <strong>{{ n.t }}</strong>
-                <span>{{ n.d }}</span>
-              </li>
-            }
-          </ul>
-        </section>
-      }
-    </div>
-  </aside>
-</article>
+      <div class="rules__fb-scroll">
+        @for (entry of feedback; track entry.date) {
+          <section class="fb">
+            <h3 class="fb__date">{{ entry.date }}</h3>
+            <ul class="fb__list">
+              @for (n of entry.notes; track n.t) {
+                <li class="fb__item">
+                  <strong>{{ n.t }}</strong>
+                  <span>{{ n.d }}</span>
+                </li>
+              }
+            </ul>
+          </section>
+        }
+      </div>
+    </section>
+  }
+
+  <button
+    #feedbackHandle
+    type="button"
+    class="rules__fb-handle"
+    aria-label="Feedback"
+    aria-haspopup="dialog"
+    [attr.aria-expanded]="feedbackOpen()"
+    (click)="toggleFeedback()"
+  >
+    <sc-icon name="feedback" [size]="18" aria-hidden="true" />
+    <span>Feedback</span>
+  </button>
+</div>
 
 @if (zoomed(); as z) {
   <div class="lightbox" (click)="closeZoom()">
