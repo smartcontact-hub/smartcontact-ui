@@ -398,7 +398,7 @@
         "attended_by_placeholder": "Cualquier agente o grupo",
         "ai_analysis": "Análisis IA",
         "ai_analysis_desc": "Resumen y análisis de sentimiento automáticos en cada conversación transcrita.",
-        "ai_chip_summary": "Resumen automático",
+        "ai_chip_summary": "Resumen",
         "ai_chip_sentiment": "Análisis de sentimiento",
         "ai_chip_categories": "Categorías IA",
         "categorias_label": "Categorías IA a detectar",

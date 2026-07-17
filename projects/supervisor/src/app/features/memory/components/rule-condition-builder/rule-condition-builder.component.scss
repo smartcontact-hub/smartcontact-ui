@@ -120,6 +120,16 @@
     vertical-align: -2px;
   }
 
+  /* Operador fijo "es" (sustituye al desplegable es/no es en listas/enum). */
+  &__op--static {
+    display: inline-flex;
+    align-items: center;
+    height: 100%;
+    padding-left: var(--sc-spacing-0-5);
+    color: var(--sc-text-secondary);
+    font-size: var(--sc-font-size-200);
+  }
+
   &__num {
     display: flex;
     align-items: center;
@@ -241,7 +251,9 @@
   flex-direction: column;
   gap: var(--sc-spacing-0-875);
   padding: var(--sc-spacing-1-125);
-  background: var(--sc-color-slate-50);
+  /* Blanco (#FFFFFF) para diferenciar la caja de grupo del fondo slate-50 de la
+   * página; solo aplica en multi-grupo, que es cuando se pinta `.group`. */
+  background: var(--sc-bg-surface);
   border: 1px solid var(--sc-border-default);
   border-radius: var(--sc-radius-200);
 
@@ -327,19 +339,20 @@
     }
   }
 
+  /* Y intra-grupo: MISMA identidad que el O entre grupos (círculo azul, texto
+   * blanco) para que el usuario relacione ambos conectores. */
   &--inline {
-    align-self: flex-start;
+    align-self: center;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    min-width: 30px;
-    padding: 2px var(--sc-spacing-0-5);
-    border: 1px solid var(--sc-border-default);
+    width: 32px;
+    height: 32px;
     border-radius: var(--sc-radius-full);
-    background: var(--sc-bg-surface);
-    color: var(--sc-text-secondary);
-    font-size: var(--sc-font-size-50);
-    font-weight: 600;
+    background: var(--sc-bg-primary);
+    color: var(--sc-text-on-primary);
+    font-size: var(--sc-font-size-100);
+    font-weight: 700;
   }
 }
 

@@ -403,3 +403,87 @@ export function describeConditionTree(
   });
   return `Aplica cuando ${parts.join(sep)}.`;
 }
+
+/* ── Descripción estructurada del alcance (vista "Se cumple si…" con badges Y/O
+ *    + campos y valores en negrita). Misma lógica que describeConditionTree pero
+ *    devuelve estructura para que la plantilla pinte negritas y badges. ── */
+
+/** Una condición resuelta a texto: campo + operador + valor (campo/valor en negrita). */
+export interface ScopeDescCondition {
+  readonly field: string;
+  readonly operator: string;
+  /** Valor(es) resueltos; '…' si la condición aún está incompleta. */
+  readonly value: string;
+}
+
+/** Un grupo + su conector interno ('Y' = all · 'O' = any). */
+export interface ScopeDescGroup {
+  readonly conditions: readonly ScopeDescCondition[];
+  readonly join: 'Y' | 'O';
+}
+
+/** Árbol completo listo para pintar con negritas + badges. `empty` = sin condiciones. */
+export interface ScopeDesc {
+  readonly empty: boolean;
+  readonly groups: readonly ScopeDescGroup[];
+  /** Conector entre grupos ('Y' = all · 'O' = any). */
+  readonly rootJoin: 'Y' | 'O';
+}
+
+function conditionToDesc(
+  cond: Condition,
+  labelFor: (ref: ConditionRef) => string,
+): ScopeDescCondition {
+  const def = fieldDefById(cond.field);
+  const v = cond.value;
+  if (v.mode === 'any') return { field: def.label, operator: 'es', value: 'cualquiera' };
+  if (v.mode === 'number') {
+    const unit = v.unit === 'minutes' ? 'min' : 's';
+    if (cond.operator === 'between') {
+      return {
+        field: def.label,
+        operator: 'entre',
+        value: `${v.amount} y ${v.amount2 ?? v.amount} ${unit}`,
+      };
+    }
+    return {
+      field: def.label,
+      operator: cond.operator === 'gt' ? 'mayor que' : 'menor que',
+      value: `${v.amount} ${unit}`,
+    };
+  }
+  if (v.mode === 'enum') {
+    const lbl = def.options.find((o) => o.value === v.value)?.label ?? v.value;
+    return { field: def.label, operator: cond.operator === 'is' ? 'es' : 'no es', value: lbl };
+  }
+  const verb = cond.operator === 'is' ? 'es' : 'no es';
+  if (v.refs.length === 0) return { field: def.label, operator: verb, value: '…' };
+  const labels = v.refs.map((r) => (r.kind === 'agentGroup' ? `miembro de ${labelFor(r)}` : labelFor(r)));
+  const link = cond.operator === 'is' ? ' o ' : ' ni ';
+  const value =
+    labels.length === 1
+      ? labels[0]
+      : `${labels.slice(0, -1).join(', ')}${link}${labels[labels.length - 1]}`;
+  return { field: def.label, operator: verb, value };
+}
+
+/**
+ * Igual que `describeConditionTree` pero estructurado: la plantilla pinta los
+ * campos/valores en negrita y los conectores Y/O como badges. Vacío → `empty`.
+ */
+export function describeConditionScope(
+  tree: ConditionTree,
+  labelFor: (ref: ConditionRef) => string,
+): ScopeDesc {
+  const groups = tree.groups.filter((g) => g.conditions.length > 0);
+  const rootJoin: 'Y' | 'O' = tree.match === 'all' ? 'Y' : 'O';
+  if (groups.length === 0) return { empty: true, groups: [], rootJoin };
+  return {
+    empty: false,
+    rootJoin,
+    groups: groups.map((g) => ({
+      join: g.match === 'all' ? 'Y' : 'O',
+      conditions: g.conditions.map((c) => conditionToDesc(c, labelFor)),
+    })),
+  };
+}

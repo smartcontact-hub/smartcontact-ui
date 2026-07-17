@@ -59,6 +59,11 @@
                 [class.vpick__opt--on]="isSelected(o.ref)"
                 (click)="toggle(o.ref)"
               >
+                <sc-icon
+                  class="vpick__check"
+                  [name]="isSelected(o.ref) ? 'check_box' : 'check_box_outline_blank'"
+                  size="inherit"
+                />
                 <sc-icon class="vpick__opt-ic" name="groups" size="inherit" />
                 <span class="vpick__opt-main">
                   {{ o.label }}
@@ -66,26 +71,82 @@
                     <span class="vpick__opt-sub">{{ o.sub }}</span>
                   }
                 </span>
-                @if (isSelected(o.ref)) {
-                  <sc-icon class="vpick__opt-check" [name]="checkIcon" size="inherit" />
-                }
               </button>
             }
             <p class="vpick__sect">{{ 'memory.rules.builder.cond.pick_individuals' | translate }}</p>
           }
 
-          @for (o of filteredEntities(); track o.label) {
-            <button
-              type="button"
-              class="vpick__opt"
-              [class.vpick__opt--on]="isSelected(o.ref)"
-              (click)="toggle(o.ref)"
-            >
-              <span class="vpick__opt-main">{{ o.label }}</span>
-              @if (isSelected(o.ref)) {
-                <sc-icon class="vpick__opt-check" [name]="checkIcon" size="inherit" />
+          @if (entityGroups(); as groups) {
+            @for (grp of groups; track grp.name) {
+              <div class="vpick__grouphead">
+                @if (grp.parent; as p) {
+                  <button
+                    type="button"
+                    class="vpick__opt vpick__grouphead-select"
+                    [class.vpick__opt--on]="isSelected(p.ref)"
+                    (click)="toggle(p.ref)"
+                  >
+                    <sc-icon
+                      class="vpick__check"
+                      [name]="isSelected(p.ref) ? 'check_box' : 'check_box_outline_blank'"
+                      size="inherit"
+                    />
+                    <span class="vpick__grouphead-name">{{ grp.name }}</span>
+                  </button>
+                } @else {
+                  <span class="vpick__grouphead-name vpick__grouphead-name--plain">
+                    {{ grp.name }}
+                  </span>
+                }
+                <button
+                  type="button"
+                  class="vpick__grouphead-toggle"
+                  [attr.aria-expanded]="!isGroupCollapsed(grp.name)"
+                  aria-label="Contraer o expandir categoría"
+                  (click)="toggleGroup(grp.name)"
+                >
+                  <span class="vpick__group-count">{{ grp.children.length }}</span>
+                  <sc-icon
+                    class="vpick__group-caret"
+                    [name]="isGroupCollapsed(grp.name) ? 'chevron_right' : 'expand_more'"
+                    size="inherit"
+                  />
+                </button>
+              </div>
+              @if (!isGroupCollapsed(grp.name)) {
+                @for (o of grp.children; track o.label) {
+                  <button
+                    type="button"
+                    class="vpick__opt vpick__opt--nested"
+                    [class.vpick__opt--on]="isSelected(o.ref)"
+                    (click)="toggle(o.ref)"
+                  >
+                    <sc-icon
+                      class="vpick__check"
+                      [name]="isSelected(o.ref) ? 'check_box' : 'check_box_outline_blank'"
+                      size="inherit"
+                    />
+                    <span class="vpick__opt-main">{{ o.label }}</span>
+                  </button>
+                }
               }
-            </button>
+            }
+          } @else {
+            @for (o of filteredEntities(); track o.label) {
+              <button
+                type="button"
+                class="vpick__opt"
+                [class.vpick__opt--on]="isSelected(o.ref)"
+                (click)="toggle(o.ref)"
+              >
+                <sc-icon
+                  class="vpick__check"
+                  [name]="isSelected(o.ref) ? 'check_box' : 'check_box_outline_blank'"
+                  size="inherit"
+                />
+                <span class="vpick__opt-main">{{ o.label }}</span>
+              </button>
+            }
           }
 
           @if (!filteredEntities().length && !filteredGroups().length) {

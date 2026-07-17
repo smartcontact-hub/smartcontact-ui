@@ -31,6 +31,7 @@ import {
   type ConditionTree,
   deriveLegacyScope,
   deriveTreeFromLegacy,
+  describeConditionScope,
   emptyConditionTree,
 } from '../../data/condition.types';
 import { validateConditionTree } from '../../data/condition-validate';
@@ -116,6 +117,13 @@ export class RuleBuilderPageComponent implements DirtyAware {
   protected readonly description = signal('');
   protected readonly active = signal(true);
   protected readonly conditionTree = signal<ConditionTree>(emptyConditionTree());
+
+  /** Descripción en vivo del alcance ("Se cumple si…") — se pinta encima del
+   *  bloque 02 con campos/valores en negrita y conectores Y/O como badges. */
+  protected readonly scopeDescription = computed(() =>
+    describeConditionScope(this.conditionTree(), (ref) => this.resolver.label(ref)),
+  );
+
   protected readonly direction = signal<Direction>('all');
   protected readonly filterBySchedule = signal(false);
   protected readonly scheduleFrom = signal('09:00');
