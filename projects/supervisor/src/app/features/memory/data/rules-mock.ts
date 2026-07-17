@@ -4,9 +4,10 @@ import type { Rule } from './rule.types';
  * Mock de reglas Memory · MVP transcripción.
  *
  * MVP sin priorización ni grabación (obsoleta por ley) → solo reglas de
- * transcripción / clasificación. Sin borradores. **Solo una activa a la vez**:
- * la #1 está activa y el resto inactivas. La #4 es un ejemplo compuesto (grupo +
- * tipificación + duración) — se edita para ver el árbol de condiciones completo.
+ * transcripción / clasificación. Sin borradores. **Pueden estar varias activas a
+ * la vez** (el solape se resuelve por unión, ver DD-30); el seed arranca con la #1
+ * activa y el resto inactivas. La #4 es un ejemplo compuesto (grupo + tipificación
+ * + duración): se edita para ver el árbol de condiciones completo.
  */
 export const MOCK_RULES: readonly Rule[] = [
   {

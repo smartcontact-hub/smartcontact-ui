@@ -41,8 +41,8 @@ interface FeedbackEntry {
 /**
  * Recorrido del "sistema de reglas" del Supervisor, contado como una HISTORIA:
  * de dónde venía (grabación, prioridad, conflictos, borradores) a dónde está
- * (transcripción, una sola regla activa, árbol de condiciones). Cada cambio se
- * cuenta con su antes, su ahora y su porqué, en lenguaje llano.
+ * (transcripción, varias reglas activas sin conflictos, árbol de condiciones).
+ * Cada cambio se cuenta con su antes, su ahora y su porqué, en lenguaje llano.
  *
  * No es un componente del DS: explica el ESTADO del producto para alinear al
  * equipo. Las capturas `*-antes` salen del modelo viejo (guardadas de git); las
@@ -154,15 +154,16 @@ for (let i = 0; i < active.length; i++)
   }`,
   };
 
-  /** AHORA: una sola activa, nada que comparar. */
-  readonly oneActiveAfter: Snippet = {
+  /** AHORA: varias activas; el solape se disuelve por unión, sin prioridad. */
+  readonly manyActiveAfter: Snippet = {
     src: 'ahora · features/memory/state/rules.store.ts',
-    code: `// No hay dos activas que comparar. Activar una apaga la anterior (radio).
+    code: `// Varias pueden estar activas: encender una no apaga a las demás.
 toggleActive(id) {
-  // inactiva → activa: enciende esta, apaga el resto
   return rules.map((r) =>
-    r.id === id ? { ...r, active: true } : { ...r, active: false });
-}`,
+    r.id === id ? { ...r, active: !r.active } : r);
+}
+// El solape se resuelve sin prioridad ni conflictos: una conversación se
+// procesa UNA vez, aplicando la unión de lo que pidan las que encajan.`,
   };
 
   /* ─────────── La estimación + el resumen en prosa ─────────── */
@@ -225,8 +226,8 @@ function describeConditionTree(tree, labelFor) {
 
   readonly conclusiones: Decision[] = [
     {
-      t: 'Una sola regla activa a la vez · hecho',
-      d: 'Puedes tener varias reglas, pero solo una activa. Activar una desactiva la anterior; desactivar solo la pasa a Inactiva (sin copias ni borradores). Así no hay reglas que se pisen ni priorización que resolver: la vía rápida para salir a probar.',
+      t: 'Varias reglas activas, sin conflictos · hecho',
+      d: 'Varias reglas pueden estar activas a la vez; encender una no apaga a las demás. Y sin la vieja complejidad: una conversación se procesa una vez, aplicando la unión de lo que pidan las reglas que encajan. Sin prioridad, sin orden, sin conflictos que resolver.',
     },
     {
       t: 'El alcance combina con Y y O · hecho',
@@ -246,7 +247,7 @@ function describeConditionTree(tree, labelFor) {
     },
     {
       t: 'Una conversación cumple la condición o no · decidido',
-      d: 'Uno o cero: no hay cumplimiento parcial, no se transcribe «por un trozo» de la condición. Con una sola regla activa tampoco hay doble transcripción.',
+      d: 'Uno o cero: no hay cumplimiento parcial, no se transcribe «por un trozo» de la condición. Y aunque encaje en varias reglas activas, se procesa una sola vez: nunca hay doble transcripción.',
     },
     {
       t: 'Casa de las reglas: Repositorios · en marcha',
@@ -277,6 +278,15 @@ function describeConditionTree(tree, labelFor) {
    * Acumula las indicaciones del equipo junto al recorrido, para acceso cronológico.
    * Cada punto se VALIDÓ contra el prototipo real (código + flujo) antes de anotarlo. */
   readonly feedback: FeedbackEntry[] = [
+    {
+      date: '17 jul 2026',
+      notes: [
+        {
+          t: 'Varias reglas activas a la vez',
+          d: 'Se levanta el límite de «una sola activa»: ahora varias pueden estar encendidas. El solape se resuelve sin prioridad ni conflictos, con la regla de la unión: una conversación se procesa una vez, aplicando lo que pidan juntas las reglas que encajan. Desaparece de paso el «desactivar en silencio» que quedaba pendiente.',
+        },
+      ],
+    },
     {
       date: '1 jul 2026',
       notes: [
