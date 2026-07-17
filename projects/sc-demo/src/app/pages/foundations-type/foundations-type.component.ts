@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
-import { ScIconComponent } from '../../../../../ui-smartcontact-icons/src/public-api';
+import { ScIconComponent } from '@smartcontact-hub/icons';
 
 /** Una fila de la escala tipográfica: un step y su valor. */
 interface TypeRow {
