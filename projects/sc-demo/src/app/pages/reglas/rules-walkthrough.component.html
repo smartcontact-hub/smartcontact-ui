@@ -5,7 +5,7 @@
     <h1>Sistema de reglas</h1>
     <p class="lead">
       El sistema de reglas se rehízo entero. Antes: grabar llamadas, con prioridades, conflictos y borradores.
-      Ahora: <strong>transcribir</strong>, con una sola regla activa y un constructor que cualquiera entiende.
+      Ahora: <strong>transcribir</strong>, con varias reglas activas sin conflictos y un constructor que cualquiera entiende.
       Cada cambio se cuenta con su <strong>antes</strong>, su <strong>ahora</strong> y su <strong>porqué</strong>.
       Las capturas son del Supervisor real.
     </p>
@@ -157,7 +157,7 @@
         <figure class="compare__shot">
           <img
             src="/usage/conversaciones-reglas.png"
-            alt="Listado nuevo: una sola regla activa y el resto inactivas, sin prioridad ni conflictos"
+            alt="Listado nuevo: sin prioridad ni conflictos, el estado activa o inactiva por fila"
             loading="lazy"
             role="button"
             tabindex="0"
@@ -166,7 +166,7 @@
             (keydown.enter)="openZoom($event.currentTarget)"
             (keydown.space)="openZoom($event.currentTarget); $event.preventDefault()"
           />
-          <figcaption>Una sola <strong>activa</strong>. Sin números de prioridad, sin conflictos.</figcaption>
+          <figcaption>Varias pueden estar <strong>activas</strong>. Sin números de prioridad, sin conflictos.</figcaption>
         </figure>
       </div>
     </div>
@@ -174,11 +174,12 @@
     <div class="why">
       <p class="why__label">Por qué se cambió</p>
       <p class="why__text">
-        Con varias reglas activas a la vez, cuando dos podían aplicar a la misma conversación había que decidir
+        Antes, con varias reglas activas, cuando dos podían aplicar a la misma conversación había que decidir
         <strong>cuál manda</strong>: un número de prioridad, arrastrar para ordenar, y un detector que te avisaba de
-        cada choque. Era lo más complejo de todo. El MVP lo esquiva con una idea simple: <strong>una sola regla
-        activa</strong>. Si no hay dos que se pisen, no hay nada que priorizar ni ningún conflicto que resolver.
-        Activar una apaga la anterior, y a probar. La priorización volverá el día que haga falta tener varias a la vez.
+        cada choque. Era lo más complejo de todo. Ahora siguen pudiendo estar <strong>varias activas</strong>, pero
+        el lío desaparece con una idea simple: una conversación se procesa <strong>una sola vez</strong>, aplicando
+        la <strong>unión</strong> de lo que pidan las reglas que encajan. Sin decidir cuál gana, sin orden, sin
+        conflictos. Encender una ya no apaga a las demás.
       </p>
     </div>
 
@@ -190,8 +191,8 @@
           <figcaption>{{ conflictBefore.src }}</figcaption>
         </figure>
         <figure class="snippet">
-          <pre><code>{{ oneActiveAfter.code }}</code></pre>
-          <figcaption>{{ oneActiveAfter.src }}</figcaption>
+          <pre><code>{{ manyActiveAfter.code }}</code></pre>
+          <figcaption>{{ manyActiveAfter.src }}</figcaption>
         </figure>
       </div>
     </details>

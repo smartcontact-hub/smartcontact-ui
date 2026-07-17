@@ -1232,6 +1232,10 @@ W/H de iconos companion a la var de font-size (Bloque 4a).
 
 ## DD-28 · 2026-06-30 — Reglas MVP: borradores fuera del todo + invariante «una sola activa» + sin prioridad/conflictos
 
+> **El invariante «una sola activa» queda supersedido por DD-30** (2026-07-17): se
+> readmiten varias activas, con el solape resuelto por unión. El resto de DD-28
+> (borradores fuera, sin grabación, sin prioridad/conflictos) sigue vigente.
+
 Cierra la limpieza que **DD-27** dejó pendiente a propósito ("`isDraft`/`recording`/`'draft'` se dejan en el modelo
 para no cascadear errores antes del merge — limpieza follow-up"). Origen: feedback de Rafa — *«solo una regla puede
 estar activa; al desactivar no crea inactivas ni borradores, solo aparece como inactiva»*. El supervisor aún
@@ -1289,9 +1293,39 @@ así los `data-testid` del Kit siguen en el DOM y los e2e de métrica los miden.
 piloto + 46 migrados por lotes + `slot`/`subsection` nuevos) → **pokédex 49/49**. Migración por subagentes paralelos
 con spec común + gate de integración (AOT + spot-check) por lote. `verify` entero verde.
 
+## DD-30 · 2026-07-17 — Reglas: varias activas a la vez, solape por unión (supersede el invariante de DD-28)
+
+Revierte el invariante «una sola activa» de **DD-28**. Origen: trabajo de la UI
+designer (rama `sandbox`) que levantó el límite en `RulesStore`, adoptado como
+decisión de producto tras sopesar la consecuencia (reabre el solape que DD-28
+esquivaba).
+
+**Decisión:**
+- **Varias reglas pueden estar activas a la vez.** `toggleActive` solo conmuta la
+  regla tocada; encender una no apaga a las demás. `addRule`/`updateRule` dejan de
+  forzar el patrón radio.
+- **El solape se resuelve por unión, sin prioridad ni conflictos.** Si una
+  conversación encaja en varias reglas activas, se procesa **una sola vez**
+  aplicando la unión de lo que pidan (p.ej. la suma de categorías IA a detectar).
+  Sin orden, sin «cuál gana», sin doble transcripción. Por eso NO se reintroduce la
+  maquinaria de prioridad/conflictos que DD-28 retiró.
+
+**Consecuencia (presentación, no producto):** el recorrido `/reglas` de sc-demo se
+realinea: el beat «Prioridad y conflictos» pasa de «lo simplificamos a una sola
+activa» a «siguen varias activas, pero el lío se disuelve con la regla de la
+unión». Misma moraleja, distinto mecanismo. Snippet `manyActiveAfter` con el
+`toggleActive` real.
+
+**Abierto (producto, no bloquea el mock):** el detalle fino de la unión cuando dos
+reglas piden análisis distintos (¿siempre se suman todas las categorías?, ¿algún
+tope de coste?) lo cierra el equipo cuando exista el motor real. Hoy es mock.
+
+**Verificado:** merge limpio de `sandbox` · AOT supervisor + sc-demo · typecheck (5
+apps) + lint + i18n 1:1 (en/fr/pt) · CI verde.
+
 ---
 
-Última actualización: 2026-07-01 (**DD-29** showcase «estilo Storybook» en sc-demo — motor propio, render por
+Última actualización: 2026-07-17 (**DD-30** varias reglas activas a la vez + solape por unión [una conversación se procesa una vez, sin prioridad/conflictos], supersede el invariante «una sola activa» de DD-28; recorrido `/reglas` realineado · **DD-29** showcase «estilo Storybook» en sc-demo — motor propio, render por
 `<ng-template>`+`viewChild` [no `NgComponentOutlet`], canvas aislado + knobs en vivo + snippet + API + sidebar por
 categorías; 49/49 en formato story · **DD-28** reglas MVP: borradores fuera del todo + invariante «una sola activa»
 (radio) + fuera prioridad/conflictos en el supervisor; recorrido `/reglas` realineado · **DD-27** constructor de

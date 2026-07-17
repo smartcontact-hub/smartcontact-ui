@@ -7,8 +7,10 @@ import type { Rule } from '../data/rule.types';
  * Signal store de reglas Memory.
  *
  * Transcripción: dos estados, activa o inactiva. **Puede haber varias reglas
- * activas a la vez** — activar una no desactiva al resto. Expone la lista mock +
- * los computeds de las dos secciones del listado (Activas / Inactivas) y el CRUD.
+ * activas a la vez**: activar una no desactiva al resto. El solape se resuelve por
+ * unión (una conversación se procesa una vez aplicando lo que pidan las reglas que
+ * encajan; sin prioridad ni conflictos, ver DD-30). Expone la lista mock + los
+ * computeds de activas/inactivas del listado y el CRUD.
  */
 @Injectable({ providedIn: 'root' })
 export class RulesStore {

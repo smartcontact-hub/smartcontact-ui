@@ -74,7 +74,7 @@ export class RulesPageComponent {
   protected readonly inactiveRules = this.rulesStore.inactiveRules;
   protected readonly isEmpty = this.rulesStore.isEmpty;
 
-  /** Una sola tabla: la regla activa primero, luego las inactivas (cada grupo
+  /** Una sola tabla: las activas primero, luego las inactivas (cada grupo
    *  por lastModified desc). El estado va en columna, sin secciones separadas. */
   protected readonly allRules = computed(() => [
     ...this.rulesStore.activeRules(),
