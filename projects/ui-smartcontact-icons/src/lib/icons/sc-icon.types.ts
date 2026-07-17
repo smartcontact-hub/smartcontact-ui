@@ -1,7 +1,5 @@
 import {
     SC_MATERIAL_SYMBOL_GLYPHS,
-    SC_MATERIAL_SYMBOLS,
-    ScMaterialSymbolCatalogItem,
     ScMaterialSymbolName
 } from './sc-material-symbols.generated';
 
@@ -32,9 +30,6 @@ export type ScIconGrade = -25 | 0 | 200;
 
 export type ScIconOpticalSize = 20 | 24 | 40 | 48;
 
-export type ScIconCatalogItem = ScMaterialSymbolCatalogItem;
-
-export const SC_ICON_CATALOG = SC_MATERIAL_SYMBOLS;
 export const SC_ICON_GLYPHS = SC_MATERIAL_SYMBOL_GLYPHS;
 
 const SC_LEGACY_PRIME_ICON_MAP = {
@@ -63,10 +58,6 @@ const SC_LEGACY_PRIME_ICON_MAP = {
 
 export function isScMaterialSymbolName(icon: string): icon is ScMaterialSymbolName {
     return Object.prototype.hasOwnProperty.call(SC_ICON_GLYPHS, icon);
-}
-
-export function isScIconName(icon: string): icon is ScIconName {
-    return isScMaterialSymbolName(icon) || Object.prototype.hasOwnProperty.call(SC_ICON_ALIAS_MAP, icon);
 }
 
 export function resolveScIconName(icon: string | null | undefined): ScMaterialSymbolName | null {
@@ -109,20 +100,4 @@ export function resolveScIconGlyph(icon: string | null | undefined): string {
     }
 
     return normalizedIcon;
-}
-
-export function resolveScIconClass(icon: string | null | undefined): string | undefined {
-    const normalizedIcon = icon?.trim();
-
-    if (!normalizedIcon) {
-        return undefined;
-    }
-
-    const iconName = resolveScIconName(normalizedIcon);
-
-    if (!iconName) {
-        return normalizedIcon;
-    }
-
-    return `sc-icon-font sc-icon-font--${iconName}`;
 }
