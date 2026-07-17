@@ -44,6 +44,13 @@
 - **Peso/ejes del icono** sigue abierto (la otra mitad del item de iconografía del ROADMAP;
   DD-31 solo cerró el ESTILO). Icono de cabecera de `ScConfirmService` (API `icon?`) también.
 
+## Operativo (s11)
+- **PR #16 cerrada** (sync auto stale, `info` blue→sky): nunca la validó el gate `ci`
+  (`action_required` en PRs de bot) + generados de hace 25 días. `info` se mantiene en blue
+  por decisión. Reabrible / recreable con un sync fresco si se quiere info→sky.
+- **⚠️ `tokens-sync` (Theme Designer) está ROTO**: sus últimas corridas fallan (6/30, 6/22).
+  Hay que arreglarlo para que el round-trip DTCG vuelva a sincronizar tokens. Task propia.
+
 ---
 
 # BLOQUE 3 — deuda de diseño P1 (estado CORREGIDO)
