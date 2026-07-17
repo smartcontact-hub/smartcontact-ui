@@ -1,7 +1,5 @@
 import { Routes } from '@angular/router';
 
-import { SC_DEMO_COMPONENT_PAGES } from './pages/components/component-pages';
-
 export const routes: Routes = [
   {
     path: 'foundations',
@@ -20,26 +18,11 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/theme/theme.component').then((m) => m.ThemeComponent),
   },
   {
-    // Shell del showcase: sidebar (categorías + búsqueda) + outlet. Las páginas de
-    // componentes (migradas o no) son children → se renderizan DENTRO del shell.
+    // Showcase de componentes: shell (sidebar + outlet) + ~60 páginas, TODO lazy
+    // vía loadChildren, así el registro y su glue de import() no entran en main.js.
     path: 'components',
-    loadComponent: () =>
-      import('./pages/components/storybook-shell.component').then(
-        (m) => m.StorybookShellComponent,
-      ),
-    children: [
-      {
-        path: '',
-        loadComponent: () =>
-          import('./pages/components/components-index.component').then(
-            (m) => m.ComponentsIndexComponent,
-          ),
-      },
-      ...SC_DEMO_COMPONENT_PAGES.map((page) => ({
-        path: page.path,
-        loadComponent: page.load as never,
-      })),
-    ],
+    loadChildren: () =>
+      import('./pages/components/components.routes').then((m) => m.COMPONENT_ROUTES),
   },
   {
     path: 'uso',

@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject, input, signal } from '@angular/core';
 
 import { ScClipboardService } from '../../../../ui-smartcontact/src/public-api';
-import { ScIconComponent } from '../../../../ui-smartcontact-icons/src/public-api';
+import { ScIconComponent } from '@smartcontact-hub/icons';
 
 /** Bloque de código de una story + botón copiar (vía ScClipboardService, con feedback). */
 @Component({
