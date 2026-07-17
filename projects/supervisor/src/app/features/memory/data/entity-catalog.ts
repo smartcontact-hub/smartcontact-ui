@@ -81,21 +81,43 @@ export const GROUP_ENTITIES: readonly EntityRef[] = GROUPS_SEED.map((g) => ({
   name: GROUP_DISPLAY_NAMES[g.id] ?? g.name,
 }));
 
-/** Espejo del seed de Tipificaciones (`repositories/instances/tipificaciones.ts`,
- *  cuyo SEED es interno y no se exporta). Mantener en sync si cambia allí. */
-export const TIPIFICACION_ENTITIES: readonly EntityRef[] = [
-  { id: 1, name: 'Consulta resuelta' },
-  { id: 2, name: 'Consulta escalada' },
-  { id: 3, name: 'Venta cerrada' },
-  { id: 4, name: 'Venta pendiente' },
-  { id: 5, name: 'Venta rechazada' },
-  { id: 6, name: 'Reclamación abierta' },
-  { id: 7, name: 'Reclamación resuelta' },
-  { id: 8, name: 'Incidencia técnica' },
-  { id: 9, name: 'Incidencia resuelta' },
-  { id: 10, name: 'Llamada abandonada' },
-  { id: 11, name: 'Llamada perdida' },
-  { id: 12, name: 'Información proporcionada' },
+/** Tipificación jerárquica — el picker muestra la ruta `path` unida por " / " y
+ *  agrupa por el 1er segmento. Los nodos de `path.length === 1` son la categoría
+ *  padre (seleccionable de forma independiente); `name` = último segmento (hoja). */
+export interface TipificacionEntity extends EntityRef {
+  readonly path: readonly string[];
+}
+
+/** Espejo del repositorio de Tipificaciones + jerarquía de demo. Cada categoría
+ *  tiene su nodo padre (ids 100+) y sus hojas; algunas hojas tienen un 3er nivel
+ *  (p.ej. "Ventas / Venta cerrada / Nueva alta"). Mantener en sync con el seed. */
+export const TIPIFICACION_ENTITIES: readonly TipificacionEntity[] = [
+  // Consulta
+  { id: 100, name: 'Consulta', path: ['Consulta'] },
+  { id: 1, name: 'Consulta resuelta', path: ['Consulta', 'Consulta resuelta'] },
+  { id: 2, name: 'Consulta escalada', path: ['Consulta', 'Consulta escalada'] },
+  { id: 12, name: 'Información proporcionada', path: ['Consulta', 'Información proporcionada'] },
+  // Ventas — con 3er nivel bajo "Venta cerrada"
+  { id: 101, name: 'Ventas', path: ['Ventas'] },
+  { id: 3, name: 'Venta cerrada', path: ['Ventas', 'Venta cerrada'] },
+  { id: 13, name: 'Nueva alta', path: ['Ventas', 'Venta cerrada', 'Nueva alta'] },
+  { id: 14, name: 'Renovación', path: ['Ventas', 'Venta cerrada', 'Renovación'] },
+  { id: 4, name: 'Venta pendiente', path: ['Ventas', 'Venta pendiente'] },
+  { id: 5, name: 'Venta rechazada', path: ['Ventas', 'Venta rechazada'] },
+  // Reclamación
+  { id: 102, name: 'Reclamación', path: ['Reclamación'] },
+  { id: 6, name: 'Reclamación abierta', path: ['Reclamación', 'Reclamación abierta'] },
+  { id: 7, name: 'Reclamación resuelta', path: ['Reclamación', 'Reclamación resuelta'] },
+  // Soporte — con 3er nivel bajo "Incidencia técnica"
+  { id: 103, name: 'Soporte', path: ['Soporte'] },
+  { id: 8, name: 'Incidencia técnica', path: ['Soporte', 'Incidencia técnica'] },
+  { id: 15, name: 'Hardware', path: ['Soporte', 'Incidencia técnica', 'Hardware'] },
+  { id: 16, name: 'Software', path: ['Soporte', 'Incidencia técnica', 'Software'] },
+  { id: 9, name: 'Incidencia resuelta', path: ['Soporte', 'Incidencia resuelta'] },
+  // Otros
+  { id: 104, name: 'Otros', path: ['Otros'] },
+  { id: 10, name: 'Llamada abandonada', path: ['Otros', 'Llamada abandonada'] },
+  { id: 11, name: 'Llamada perdida', path: ['Otros', 'Llamada perdida'] },
 ];
 
 /** Servicios: solo nombres (sin entidad/ID en el sistema). */

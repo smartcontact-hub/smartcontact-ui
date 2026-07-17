@@ -94,6 +94,10 @@ export class RuleConditionBuilderComponent {
   /** Condiciones de duración con input libre (en vez del desplegable de presets). */
   private readonly customDur = signal(new Set<string>());
 
+  /** Flujo guiado: id de la condición cuyo value-picker debe auto-abrirse al
+   *  elegir el campo (se despliega el 2º desplegable). */
+  protected readonly autoOpenCondId = signal<string | null>(null);
+
   protected readonly addIcon = 'add';
   protected readonly closeIcon = 'close';
   protected readonly summaryIcon = 'rule';
@@ -226,6 +230,8 @@ export class RuleConditionBuilderComponent {
       operator: defaultOperatorFor(f),
       value: emptyValueFor(f),
     }));
+    // Flujo guiado: si el nuevo campo usa el value-picker (lista), auto-abrirlo.
+    this.autoOpenCondId.set(fieldDefById(f).kind === 'list' ? condId : null);
   }
   protected setOperator(groupId: string, condId: string, operator: unknown): void {
     const op = operator as ConditionOperator;
