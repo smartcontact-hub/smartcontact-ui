@@ -1323,6 +1323,42 @@ tope de coste?) lo cierra el equipo cuando exista el motor real. Hoy es mock.
 **Verificado:** merge limpio de `sandbox` · AOT supervisor + sc-demo · typecheck (5
 apps) + lint + i18n 1:1 (en/fr/pt) · CI verde.
 
+## DD-31 · 2026-07-17 — Icono canónico del DS = Material Symbols **Outlined**, self-hospedado (unifica demo↔apps)
+
+Cierra la mitad de «estilo» de la decisión abierta de iconografía del ROADMAP
+(*Iconos: estilo + peso*). Estado previo: drift en tres sitios — el código del DS
+servía **Rounded** self-hospedado (`@fontsource-variable/material-symbols-rounded`),
+las apps (supervisor/agent) lo overrideaban a **Outlined** por CDN con una «decisión
+de marca» documentada, y `customs-catalog.md` ya describía Outlined. sc-demo mostraba
+Rounded; las apps reales, Outlined.
+
+**Decisión:**
+- **El icono canónico del DS es Material Symbols Outlined**, servido
+  **self-hospedado** por `@smartcontact-hub/icons`
+  (`@fontsource-variable/material-symbols-outlined`, familia
+  `'Material Symbols Outlined Variable'`). Alinea código↔docs↔apps con el look que
+  las apps reales ya tenían.
+- **Las apps sueltan el CDN y su `.sc-icon` replicado.** supervisor/agent importan el
+  `material-symbols.css` del DS (fuente única) y quitan el `<link>` de Google Fonts +
+  el override; el `<sc-icon>` local del supervisor apunta a la familia self-hospedada.
+  Los codepoints son idénticos entre estilos Material → el mapa de glifos generado no
+  cambia.
+
+**Consecuencia:** sc-demo pasa a Outlined (iguala a las apps); cada app sirve el woff2
+self-hospedado (~340KB) en vez del CDN. El `font-display` del @fontsource es `swap` (el
+CDN usaba `block`): posible FOUT breve de la ligadura en carga fría — aceptable (fuente
+local, ya vigente en sc-demo).
+
+**Abierto (no bloquea):** el **peso** del icono a la par de la tipografía y el ajuste
+fino de ejes (wght/fill/opsz) sigue pendiente — la otra mitad del item de iconografía
+del ROADMAP. Y el icono de cabecera de `ScConfirmService` (API `icon?`).
+
+**Verificado:** `npm run verify` verde · AOT supervisor + agent + sc-demo · iconos
+renderizan Outlined self-hospedado (sc-demo + supervisor: familia computada + woff2 200,
+sin CDN) · CI no afectado (los snapshots de píxeles se saltan en CI,
+`components.spec.ts:25`). Baselines visuales `-darwin` locales quedan por refrescar (no
+gatean CI).
+
 ---
 
 Última actualización: 2026-07-17 (**DD-30** varias reglas activas a la vez + solape por unión [una conversación se procesa una vez, sin prioridad/conflictos], supersede el invariante «una sola activa» de DD-28; recorrido `/reglas` realineado · **DD-29** showcase «estilo Storybook» en sc-demo — motor propio, render por

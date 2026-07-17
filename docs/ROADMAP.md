@@ -187,12 +187,13 @@ El ente evolutivo en acción: la migración de la app real saca a la luz huecos 
   para exponer el CSS con nombre (`.` o `./tokens`). *Disparador*: lo pide la migración de la app;
   hoy se resuelve con ruta directa en `angular.json styles[]`. *Validación*: el consumidor importa
   tokens-only por nombre sin arrastrar el reset del DS; `verify` verde.
-- **Iconos: estilo + peso (Material Symbols) = decisión de diseño deliberada** — `@smartcontact-hub/icons`
-  usa **Rounded**; la app usa **Outlined**. Y el **peso** del icono debe ir a la par con el peso de la
-  tipografía (principio registrado en `.impeccable.md` → *Iconografía*). Hay que elegir los ejes de
-  Material Symbols (style · weight · fill · optical size) por **lo que case con la UI de SC**, no al
-  azar. Migrar = cambia el aspecto de ~217 iconos. *Validación*: la suite visual-regression de la app
-  (14 baselines) lo caza. *Disparador*: decisión de diseño antes de migrar iconos.
+- **Iconos: peso + ejes (Material Symbols) = decisión de diseño deliberada** — el **estilo** ya está
+  cerrado: **Outlined**, self-hospedado por el DS (**DD-31**), unificando demo↔apps (antes el DS servía
+  Rounded y las apps overrideaban a Outlined por CDN). Queda abierto el **peso** del icono a la par del
+  peso de la tipografía (principio registrado en `.impeccable.md` → *Iconografía*) y el ajuste fino de
+  ejes (weight · fill · optical size) por **lo que case con la UI de SC**, no al azar. *Validación*: la
+  suite visual-regression de sc-demo (baselines por-plataforma; en CI mandan las métricas). *Disparador*:
+  decisión de diseño antes de tocar los ejes.
 - (Menor) **Drift de tokens local↔publicado**: caracterizado por la migración como **convergencia
   intencional** (rampa zinc aditiva + px→rem que resuelve idéntico a root 16px + refactor de refs),
   no regresión. Confirmado visual/numéricamente idéntico → swap de fundación = bajo riesgo.

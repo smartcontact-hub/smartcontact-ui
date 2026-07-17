@@ -25,15 +25,10 @@
       href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Open+Sans:wght@400;600&display=swap"
     />
     <!--
-      Material Symbols (Outlined) — icon set del SCDS (migración Lucide→Material,
-      S60+). Variable font con ejes opsz/wght/FILL/GRAD; <sc-icon> los modula.
-      `display=block` evita el flash del nombre-ligadura como texto mientras
-      carga. Iconos de marca (GitHub…) NO existen aquí → se quedan en Lucide.
+      Material Symbols (Outlined) — icon set del SCDS. Ya NO se carga por CDN:
+      el DS lo sirve self-hospedado (@fontsource), importado en main.scss vía
+      `@smartcontact-hub/icons/styles/material-symbols.css`. Fuente única.
     -->
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=block"
-    />
   </head>
   <body>
     <sc-root></sc-root>

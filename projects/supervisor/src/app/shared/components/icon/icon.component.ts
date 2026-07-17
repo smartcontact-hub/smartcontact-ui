@@ -21,7 +21,7 @@ import { SC_ICON_SIZE_DEFAULT } from '@shared/utils/icon-size';
   template: `{{ name() }}`,
   styleUrl: './icon.component.scss',
   host: {
-    class: 'sc-icon material-symbols-outlined',
+    class: 'sc-icon',
     'aria-hidden': 'true',
     '[class.sc-icon--spin]': 'spin()',
     '[style.font-size]': 'fontSize()',

@@ -44,35 +44,12 @@
 @import 'primeicons/primeicons.css';
 
 /*
- * `.sc-icon` font binding — los componentes publicados de @smartcontact-hub
- * rendean su icono interno como `<span class="sc-icon">{codepoint}</span>` y
- * esperan que la CSS del paquete de iconos fije la familia. NO importamos esa
- * CSS (es Material Symbols **Rounded**; decisión de marca: iconos **Outlined**).
- * En su lugar apuntamos `.sc-icon` a la fuente Outlined ya cargada en
- * `index.html` → los iconos internos de los componentes publicados rendean
- * Outlined, consistentes con el `<sc-icon>` local. Los codepoints son idénticos
- * entre estilos Material, así que el glifo resuelve igual. Replica el contrato
- * de `@smartcontact-hub/icons/styles/material-symbols.css` salvo la familia y el
- * `font-variation-settings` estático (lo controla el scss del componente, con
- * sus ejes FILL/wght/opsz por instancia). Cuando el DS publique su paquete de
- * iconos en Outlined, esta regla queda en no-op.
+ * Iconos del DS: Material Symbols **Outlined**, self-hospedado. Antes replicábamos
+ * el contrato `.sc-icon` apuntando al CDN Outlined (porque el DS servía Rounded);
+ * ahora el DS publica Outlined, así que importamos su `material-symbols.css`
+ * directamente — fuente única, sin CDN. Los codepoints son idénticos entre estilos.
  */
-.sc-icon {
-  display: inline-block;
-  font-family: 'Material Symbols Outlined';
-  font-size: 1em;
-  font-style: normal;
-  font-weight: normal;
-  line-height: 1;
-  letter-spacing: normal;
-  text-transform: none;
-  white-space: nowrap;
-  word-wrap: normal;
-  direction: ltr;
-  font-feature-settings: 'liga';
-  -webkit-font-feature-settings: 'liga';
-  -webkit-font-smoothing: antialiased;
-}
+@import '../../../ui-smartcontact-icons/src/lib/styles/material-symbols.css';
 
 html,
 body {
