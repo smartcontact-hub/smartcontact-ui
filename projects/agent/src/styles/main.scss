@@ -18,26 +18,11 @@
 @import 'primeicons/primeicons.css';
 
 /*
- * `.sc-icon` font binding — los componentes publicados de @smartcontact-hub rendean
- * su icono interno como `<span class="sc-icon">`; apuntamos a Material Symbols
- * Outlined (cargada en index.html), igual que supervisor.
+ * Iconos del DS: Material Symbols **Outlined**, self-hospedado. Importamos el
+ * `material-symbols.css` del DS (que ya sirve Outlined) en vez de replicar el
+ * contrato apuntando al CDN — fuente única, sin CDN. Igual que supervisor.
  */
-.sc-icon {
-  display: inline-block;
-  font-family: 'Material Symbols Outlined';
-  font-size: 1em;
-  font-style: normal;
-  font-weight: normal;
-  line-height: 1;
-  letter-spacing: normal;
-  text-transform: none;
-  white-space: nowrap;
-  word-wrap: normal;
-  direction: ltr;
-  font-feature-settings: 'liga';
-  -webkit-font-feature-settings: 'liga';
-  -webkit-font-smoothing: antialiased;
-}
+@import '../../../ui-smartcontact-icons/src/lib/styles/material-symbols.css';
 
 html,
 body {

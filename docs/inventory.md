@@ -87,7 +87,7 @@ hasta que el DS los resuelva. Detalle + disparador en [`ROADMAP.md`](ROADMAP.md)
 
 | Gap | Local en el Supervisor | Qué falta en el DS |
 |---|---|---|
-| Iconos Outlined | `icon` (IconComponent) | `@smartcontact-hub/icons` usa Rounded; decidir ejes Material |
+| Iconos Outlined | `icon` (IconComponent) | Estilo resuelto (DD-31): el DS sirve **Outlined** self-hospedado; queda converger el `IconComponent` local a `<sc-icon>` + decidir peso/ejes |
 | Avatar en px | `illustrated-avatar` | `sc-avatar` solo expone buckets, no px |
 | Tag `xs` | `label-chip` | `sc-tag` no expone tamaño `xs` |
 | Icono de confirm overridable | `confirm-host` | `ScConfirmService` hardcodea el icono de cabecera |
