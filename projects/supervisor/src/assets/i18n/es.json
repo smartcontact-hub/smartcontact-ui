@@ -77,7 +77,9 @@
       },
       "cols": {
         "more": "Más acciones"
-      }
+      },
+      "bulk_hint": "Selecciona conversaciones para transcribirlas o descargarlas en lote. Mayús+clic selecciona un rango.",
+      "select_row_title": "Seleccionar (no abre la conversación)"
     },
     "type_filter": {
       "label": "Tipo",

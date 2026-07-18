@@ -38,6 +38,23 @@
         (cta)="onClearFilters()"
       />
     } @else {
+      <!-- Puerta de entrada al flujo en LOTE.
+           Cuando las 3 acciones masivas vivían en la toolbar como iconos
+           grises, eran un mal control pero al menos ANUNCIABAN que se podía
+           transcribir. Al llevarlas a la barra de selección se ganó el
+           antipatrón de Nielsen y se perdió el anuncio: un recorrido cognitivo
+           destapó que la palabra "transcribir" no aparecía en ninguna parte de
+           la pantalla de entrada, y ningún test podía verlo.
+           Esta línea lo devuelve, ya no como control muerto sino como frase, y
+           de paso nombra el atajo del rango, que tampoco se anunciaba.
+           Desaparece en cuanto hay selección: a partir de ahí lo cuenta todo la
+           barra, y repetirlo sería ruido. -->
+      @if (selectedCount() === 0) {
+        <p class="conversations-bulk-hint">
+          {{ 'memory.conversations.bulk_hint' | translate }}
+        </p>
+      }
+
       <sc-memory-conversation-table
         [conversations]="conversations()"
         [selectedIds]="selectedIds()"

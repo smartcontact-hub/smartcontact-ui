@@ -77,7 +77,9 @@
       },
       "cols": {
         "more": "More actions"
-      }
+      },
+      "bulk_hint": "Select conversations to transcribe or download them in bulk. Shift+click selects a range.",
+      "select_row_title": "Select (does not open the conversation)"
     },
     "type_filter": {
       "label": "Type",
