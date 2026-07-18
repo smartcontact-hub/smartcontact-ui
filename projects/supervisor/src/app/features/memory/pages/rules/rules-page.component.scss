@@ -143,6 +143,14 @@
       color: var(--sc-bg-primary);
       text-decoration: underline;
     }
+
+    /* El enlace es el camino accesible por teclado a la regla: su foco tiene que
+       verse (la fila entera no es un tab-stop). */
+    &:focus-visible {
+      outline: 2px solid var(--sc-border-focus);
+      outline-offset: 2px;
+      border-radius: var(--sc-radius-xs);
+    }
   }
 }
 

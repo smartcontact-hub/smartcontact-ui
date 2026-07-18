@@ -9,7 +9,7 @@ import {
   type TemplateRef,
   viewChild,
 } from '@angular/core';
-import { Router } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
@@ -43,6 +43,7 @@ import { RulesStore } from '../../state/rules.store';
     EmptyStateComponent,
     IconComponent,
     MenuModule,
+    RouterLink,
     TranslateModule,
   ],
   templateUrl: './rules-page.component.html',

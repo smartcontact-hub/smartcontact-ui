@@ -65,7 +65,15 @@
                 (click)="openRule(rule)"
               >
                 <td class="rules-table__td-name">
-                  <span class="rules-table__name">{{ rule.name }}</span>
+                  <!-- Enlace REAL: la fila sigue siendo clicable con ratón, pero la
+                       navegación operable por teclado vive aquí (WCAG 2.1.1). Además
+                       permite cmd+click / abrir en pestaña nueva. -->
+                  <a
+                    class="rules-table__name"
+                    [routerLink]="['/conversaciones/reglas', rule.id]"
+                    (click)="$event.stopPropagation()"
+                    >{{ rule.name }}</a
+                  >
                 </td>
                 <td class="rules-table__td-scope" [attr.title]="scopeSummary(rule)">
                   {{ scopeSummary(rule) }}
