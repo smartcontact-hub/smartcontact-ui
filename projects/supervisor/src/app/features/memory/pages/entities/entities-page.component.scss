@@ -181,3 +181,31 @@
     color: var(--sc-text-secondary);
   }
 }
+
+/* Fila clicable + nombre como camino accesible por teclado — mismo patrón que
+   Reglas y Categorías. Es un <button> porque abre un modal, no navega. */
+.entities-table {
+  tbody tr.entities-row {
+    cursor: pointer;
+  }
+
+  &__name {
+    padding: 0;
+    border: 0;
+    background: none;
+    font: inherit;
+    color: inherit;
+    cursor: pointer;
+
+    &:hover code {
+      color: var(--sc-bg-primary);
+      text-decoration: underline;
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--sc-border-focus);
+      outline-offset: 2px;
+      border-radius: var(--sc-radius-xs);
+    }
+  }
+}

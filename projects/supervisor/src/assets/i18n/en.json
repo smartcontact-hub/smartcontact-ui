@@ -453,6 +453,7 @@
       "user_desc": "Custom data that AI extracts from conversation text.",
       "system_title": "System entities",
       "system_desc": "Standard variables and entities included by default. Immutable.",
+      "empty_user_title": "No entities yet",
       "empty_user": "You haven't created any entities yet. Create one so AI starts extracting it from the text.",
       "coming_soon_toast": "Creation modal arrives in iter 10b",
       "cols": {
@@ -535,7 +536,10 @@
         "active": "Active",
         "inactive": "Inactive"
       },
-      "menu": {},
+      "menu": {
+        "activate": "Activate",
+        "deactivate": "Deactivate"
+      },
       "delete_title": "Delete category",
       "delete_body": "You are about to delete category «{{name}}». Rules referencing it will lose this tag.",
       "deleted_toast": "Category «{{name}}» deleted",

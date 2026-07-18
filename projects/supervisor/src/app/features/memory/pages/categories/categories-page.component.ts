@@ -116,6 +116,17 @@ export class CategoriesPageComponent {
       {
         separator: true,
       },
+      // La tabla ya pinta el estado ACTIVA/INACTIVA; sin esto no había forma de
+      // cambiarlo. Mismo orden e iconos que el kebab de reglas.
+      {
+        label: this.translate.instant(
+          cat.isActive ? 'memory.categories.menu.deactivate' : 'memory.categories.menu.activate',
+        ),
+        icon: cat.isActive
+          ? 'sc-icon-font sc-icon-font--pause'
+          : 'sc-icon-font sc-icon-font--play_arrow',
+        command: () => this.categoriesStore.updateCategory(cat.id, { isActive: !cat.isActive }),
+      },
       {
         label: this.translate.instant('common.delete'),
         icon: 'sc-icon-font sc-icon-font--delete',

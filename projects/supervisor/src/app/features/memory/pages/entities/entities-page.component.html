@@ -18,13 +18,14 @@
       </header>
 
       @if (!hasUserEntities()) {
-        <div class="entities-empty" role="status" aria-live="polite">
-          <sc-icon [name]="databaseIcon" [size]="20" />
-          <p>{{ 'memory.entities.empty_user' | translate }}</p>
-          <sc-button type="button" appearance="link" size="sm" (clicked)="onNewEntity()">
-            <span>{{ 'memory.entities.new_entity' | translate }}</span>
-          </sc-button>
-        </div>
+        <!-- Mismo vacío que Reglas y Categorías (antes, un div a medida). -->
+        <sc-empty-state
+          [icon]="databaseIcon"
+          titleKey="memory.entities.empty_user_title"
+          bodyKey="memory.entities.empty_user"
+          ctaKey="memory.entities.new_entity"
+          (cta)="onNewEntity()"
+        />
       } @else {
         <!-- Menú kebab ÚNICO y compartido (antes 1 <p-menu> por fila): su modelo
              es un computed estable → basta 1 clic para aplicar (no doble). Cada
@@ -52,9 +53,16 @@
           </thead>
           <tbody>
             @for (entity of userEntities(); track entity.id) {
-              <tr>
+              <!-- La fila abre la edición, igual que Reglas y Categorías. -->
+              <tr class="entities-row" (click)="openEditForm(entity)">
                 <td class="entities-table__td-name">
-                  <code>{{ entity.name }}</code>
+                  <button
+                    type="button"
+                    class="entities-table__name"
+                    (click)="$event.stopPropagation(); openEditForm(entity)"
+                  >
+                    <code>{{ entity.name }}</code>
+                  </button>
                 </td>
                 <td class="entities-table__td-type">
                   <span class="entity-type-chip">
@@ -70,7 +78,7 @@
                     type="button"
                     class="rules-kebab-btn"
                     [attr.aria-label]="'memory.entities.cols.more' | translate"
-                    (click)="setMenuTarget(entity); kebabMenu.toggle($event)"
+                    (click)="$event.stopPropagation(); setMenuTarget(entity); kebabMenu.toggle($event)"
                   >
                     <sc-icon [name]="kebabIcon" size="inherit" />
                   </button>

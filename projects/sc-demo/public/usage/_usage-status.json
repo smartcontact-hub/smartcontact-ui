@@ -426,7 +426,7 @@
   "gated": [
     {
       "selector": "sc-empty-state",
-      "usedInSupervisor": 7
+      "usedInSupervisor": 8
     },
     {
       "selector": "sc-inline-rename-cell",
