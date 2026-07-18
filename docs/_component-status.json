@@ -1,6 +1,6 @@
 {
   "generated": "component-audit.mjs",
-  "summary": "50 componentes · 16 custom · 11 standard · 23 extended · 32 usados en Supervisor.",
+  "summary": "50 componentes · 16 custom · 11 standard · 23 extended · 33 usados en Supervisor.",
   "components": [
     {
       "name": "avatar",
@@ -173,7 +173,7 @@
       "inputs": 21,
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 0
+      "usedInSupervisor": 4
     },
     {
       "name": "datepicker",
