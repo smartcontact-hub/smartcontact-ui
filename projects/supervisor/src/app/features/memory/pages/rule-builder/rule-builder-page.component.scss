@@ -256,10 +256,28 @@
     color: var(--sc-text-primary);
   }
 
+  /* El índice como BADGE, no como texto gris delante del título: la página son
+   * tres pasos y el número es lo que lo cuenta. Como texto suelto se leía como
+   * decoración; en pastilla se lee como posición dentro de una secuencia.
+   *
+   * Círculo de tamaño fijo (`min-width` = `height`) para que 01, 02 y 03
+   * ocupen exactamente lo mismo y los títulos arranquen alineados en las tres
+   * tarjetas — si el badge creciera con el contenido, la columna bailaría. */
   &__num {
-    color: var(--sc-text-subtle);
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    min-width: var(--sc-spacing-1-75);
+    height: var(--sc-spacing-1-75);
+    padding: 0 var(--sc-spacing-0-25);
+    border-radius: var(--sc-radius-full);
+    background: var(--sc-bg-info-subtle);
+    color: var(--sc-text-primary);
+    font-size: var(--sc-font-size-100);
     font-variant-numeric: tabular-nums;
     font-weight: var(--sc-font-weight-semibold);
+    line-height: 1;
   }
 
   /* Identidad IA: chispa inline en el título. */
@@ -580,6 +598,32 @@
       font-variant-numeric: tabular-nums;
       color: var(--sc-text-primary);
     }
+  }
+
+  /* Dirección del último cambio en el estimado mensual. Neutro mientras no ha
+   * variado nada: al abrir la página no hay con qué comparar.
+   *
+   * Los modificadores van CALIFICADOS con `dd` a propósito. Sin eso pierden:
+   * la regla base es `.impact__metric dd` (0,2,1 con la encapsulación de
+   * Angular) y el modificador a secas se queda en (0,2,0). Medido — el número
+   * subía, la flecha aparecía y el verde no entraba. */
+  &__metric-value {
+    display: inline-flex;
+    align-items: baseline;
+    gap: var(--sc-spacing-0-25);
+  }
+
+  &__metric dd#{&}__metric-value--up {
+    color: var(--sc-text-success);
+  }
+
+  &__metric dd#{&}__metric-value--down {
+    color: var(--sc-text-danger);
+  }
+
+  &__trend {
+    font-size: var(--sc-font-size-50);
+    line-height: 1;
   }
 
   &__note {

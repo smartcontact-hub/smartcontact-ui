@@ -456,7 +456,9 @@
           "scope_lead": "Applies when:",
           "scope_all": "all conversations",
           "impact_hero_one": "{{count}} conversation",
-          "impact_hero_other": "{{count}} conversations"
+          "impact_hero_other": "{{count}} conversations",
+          "trend_up": "Reach went up since your last change",
+          "trend_down": "Reach went down since your last change"
         },
         "ai_row_recommended": "Recommended",
         "ai_row_summary_desc": "Extracts the key points and agreements from each transcribed conversation.",
