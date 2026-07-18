@@ -50,7 +50,7 @@
         "sc-select"
       ],
       "hasDemo": true,
-      "usedInSupervisor": 2
+      "usedInSupervisor": 3
     },
     {
       "name": "bulk-transcription-modal",
@@ -324,7 +324,7 @@
         "sc-dialog"
       ],
       "hasDemo": true,
-      "usedInSupervisor": 2
+      "usedInSupervisor": 3
     },
     {
       "name": "inline-rename-cell",

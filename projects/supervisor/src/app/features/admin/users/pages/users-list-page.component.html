@@ -209,7 +209,27 @@
   (confirm)="confirmDelete($event)"
 />
 
+<!-- Antes de aplicar, se enseña A QUIÉN afecta y qué se le va a poner. En un
+     cambio masivo la pregunta del usuario no es "¿seguro?" sino "¿seguro sobre
+     ESTOS?", y la lista contesta eso. Mismo diálogo que agentes y grupos. -->
+<sc-impact-preview-dialog
+  [visible]="!!pendingBulkEdit()"
+  [mode]="'bulkEdit'"
+  [title]="'Aplicar cambio a ' + selectedIds().size + ' usuario(s)'"
+  [items]="impactItems()"
+  [badge]="impactBadge()"
+  (cancelled)="onBulkPreviewCancel()"
+  (confirm)="onBulkPreviewConfirm($event)"
+/>
+
 <sc-bulk-action-bar [count]="selectedIds().size" [entity]="bulkEntity()" (clear)="clearSelection()">
+  <!-- Usuarios era la única de las tres hermanas sin edición masiva, y la
+       ausencia era accidental: los tres ficheros son casi el mismo. -->
+  <sc-bulk-edit-menu
+    [fields]="bulkEditFields()"
+    [buttonLabel]="'Editar'"
+    (commit)="onBulkEditCommit($event)"
+  />
   <sc-button type="button" variant="danger" (clicked)="requestDeleteSelection()">
     <span>{{ 'common.delete' | translate }}</span>
   </sc-button>
