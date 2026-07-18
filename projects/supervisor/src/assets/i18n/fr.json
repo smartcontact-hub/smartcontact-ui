@@ -453,6 +453,7 @@
       "user_desc": "Données personnalisées que l'IA extrait du texte des conversations.",
       "system_title": "Entités système",
       "system_desc": "Variables et entités standard incluses par défaut. Immuables.",
+      "empty_user_title": "Aucune entité pour l'instant",
       "empty_user": "Vous n'avez pas encore créé d'entités. Créez-en une pour que l'IA commence à l'extraire du texte.",
       "coming_soon_toast": "Modal de création arrive en iter 10b",
       "cols": {
@@ -535,7 +536,10 @@
         "active": "Active",
         "inactive": "Inactive"
       },
-      "menu": {},
+      "menu": {
+        "activate": "Activer",
+        "deactivate": "Désactiver"
+      },
       "delete_title": "Supprimer la catégorie",
       "delete_body": "Vous allez supprimer la catégorie «{{name}}». Les règles qui la référencent perdront cette étiquette.",
       "deleted_toast": "Catégorie «{{name}}» supprimée",

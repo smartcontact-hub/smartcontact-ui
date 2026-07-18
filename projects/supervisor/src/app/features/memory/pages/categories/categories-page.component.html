@@ -51,9 +51,22 @@
         </thead>
         <tbody>
           @for (cat of categories(); track cat.id) {
-            <tr [class.categories-row--inactive]="!cat.isActive">
+            <!-- La fila abre la edición, igual que en Reglas (mismo gesto en las
+                 tres páginas hermanas). El nombre es el enlace operable por
+                 teclado; el kebab detiene la propagación. -->
+            <tr
+              class="categories-row"
+              [class.categories-row--inactive]="!cat.isActive"
+              (click)="openEditForm(cat)"
+            >
               <td class="categories-table__td-name">
-                <strong>{{ cat.name }}</strong>
+                <button
+                  type="button"
+                  class="categories-table__name"
+                  (click)="$event.stopPropagation(); openEditForm(cat)"
+                >
+                  {{ cat.name }}
+                </button>
                 @if (cat.group) {
                   <span class="categories-table__group">· {{ cat.group }}</span>
                 }
@@ -88,7 +101,7 @@
                   type="button"
                   class="rules-kebab-btn"
                   [attr.aria-label]="'memory.categories.cols.more' | translate"
-                  (click)="setMenuTarget(cat); kebabMenu.toggle($event)"
+                  (click)="$event.stopPropagation(); setMenuTarget(cat); kebabMenu.toggle($event)"
                 >
                   <sc-icon [name]="kebabIcon" size="inherit" />
                 </button>

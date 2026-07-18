@@ -51,6 +51,8 @@
   tbody tr {
     border-bottom: 1px solid var(--sc-border-subtle);
     transition: background var(--sc-transition-fast) var(--sc-easing-default);
+    /* La fila abre la edición, como en Reglas. */
+    cursor: pointer;
 
     &:hover {
       background: var(--sc-bg-default);
@@ -99,8 +101,28 @@
     white-space: nowrap;
   }
 
-  &__td-name strong {
+  /* Mismo tratamiento que `rules-table__name`: el nombre es el camino accesible
+     por teclado a la edición (la fila entera no es un tab-stop). Es un <button>
+     porque abre un modal, no navega a una URL. */
+  &__name {
+    padding: 0;
+    border: 0;
+    background: none;
+    font: inherit;
+    color: var(--sc-text-primary);
     font-weight: 500;
+    cursor: pointer;
+
+    &:hover {
+      color: var(--sc-bg-primary);
+      text-decoration: underline;
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--sc-border-focus);
+      outline-offset: 2px;
+      border-radius: var(--sc-radius-xs);
+    }
   }
 
   &__group {

@@ -77,7 +77,7 @@
       "inputs": 15,
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 59
+      "usedInSupervisor": 58
     },
     {
       "name": "card",
@@ -247,7 +247,7 @@
       "inputs": 1,
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 7
+      "usedInSupervisor": 8
     },
     {
       "name": "form-danger-zone",
