@@ -9,6 +9,15 @@
  * Se reserva SIEMPRE, como las cinco listas admin, y no solo cuando hay
  * selección: así el fondo de la tabla no da un salto al marcar la primera
  * fila. Es el precio que ya pagan sus hermanas. */
+/* Pista del flujo en lote. Tenue y sin caja a propósito: es una ayuda de
+ * descubrimiento, no un aviso — si compitiera con los datos, la tabla dejaría
+ * de ser lo primero que se lee, que es justo lo que esta página busca. */
+.conversations-bulk-hint {
+  margin: 0 0 var(--sc-spacing-0-75);
+  font-size: var(--sc-font-size-100);
+  color: var(--sc-text-secondary);
+}
+
 :host {
   display: block;
   height: 100%;

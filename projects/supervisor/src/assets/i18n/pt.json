@@ -77,7 +77,9 @@
       },
       "cols": {
         "more": "Mais ações"
-      }
+      },
+      "bulk_hint": "Seleciona conversas para as transcrever ou descarregar em lote. Shift+clique seleciona um intervalo.",
+      "select_row_title": "Selecionar (não abre a conversa)"
     },
     "type_filter": {
       "label": "Tipo",

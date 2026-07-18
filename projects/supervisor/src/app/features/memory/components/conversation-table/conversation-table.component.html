@@ -53,8 +53,12 @@
           <!-- La CELDA entera toglea, no solo la casilla: el objetivo de 16px
                es diminuto y fallarlo abría el reproductor, que es lo contrario
                de lo que querías. Mismo patrón que `users-list-page`. -->
+          <!-- El `title` diferencia la zona: la fila abre y esta celda
+               selecciona, pero ambas son `cursor: pointer`, así que sin esto
+               dos significados distintos daban exactamente la misma señal. -->
           <td
             class="memory-conversations-table__td-select"
+            [attr.title]="'memory.conversations.select_row_title' | translate"
             (click)="onSelectCellClick($event, conv, $index)"
           >
             <label class="memory-conversations-table__checkbox-wrap">

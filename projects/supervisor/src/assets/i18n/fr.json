@@ -77,7 +77,9 @@
       },
       "cols": {
         "more": "Plus d'actions"
-      }
+      },
+      "bulk_hint": "Sélectionnez des conversations pour les transcrire ou les télécharger en lot. Maj+clic sélectionne une plage.",
+      "select_row_title": "Sélectionner (n'ouvre pas la conversation)"
     },
     "type_filter": {
       "label": "Type",
