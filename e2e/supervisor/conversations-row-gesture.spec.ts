@@ -63,6 +63,38 @@ test('shift+click selecciona el rango, sin abrir nada', async ({ page }) => {
   await expect(rows.nth(0).locator(CHECKBOX)).not.toBeChecked();
 });
 
+/**
+ * El coste del error de memoria muscular.
+ *
+ * Quien ya usaba esta pantalla clicaba filas para SELECCIONAR. Tras la Ola 6
+ * ese mismo gesto abre el reproductor. Ese error va a ocurrir, así que lo que
+ * importa no es evitarlo sino que sea BARATO: que no se lleve por delante la
+ * selección que el usuario llevaba construida.
+ */
+test('el error de dedo no destruye la selección', async ({ page }) => {
+  const rows = page.locator(ROW);
+
+  // El usuario lleva 3 filas seleccionadas con el gesto nuevo.
+  for (const i of [0, 1, 2]) {
+    await rows.nth(i).locator('.memory-conversations-table__td-select').click();
+  }
+  await expect(page.locator('sc-bulk-action-bar .bulk-bar')).toContainText('3');
+
+  // Y ahora clica una fila con el dedo viejo, esperando seleccionar la cuarta.
+  await rows.nth(3).click();
+  await expect(page.locator(PLAYER)).toBeVisible();
+
+  // Sale del paso. La selección debe seguir INTACTA: perderla convertiría un
+  // gesto equivocado en trabajo perdido.
+  await page.keyboard.press('Escape');
+  await expect(page.locator(PLAYER)).toBeHidden();
+
+  for (const i of [0, 1, 2]) {
+    await expect(rows.nth(i).locator(CHECKBOX)).toBeChecked();
+  }
+  await expect(page.locator('sc-bulk-action-bar .bulk-bar')).toContainText('3');
+});
+
 test('con el teclado: Enter abre y Espacio selecciona', async ({ page }) => {
   const row = page.locator(ROW).first();
 
