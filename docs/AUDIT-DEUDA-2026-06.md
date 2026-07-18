@@ -54,7 +54,7 @@
 ### P1 — Admin/Config (misma raíz: falta base form/store)
 - [x] ~~`formDirty.set(true)` en 20+ handlers~~ → resuelto (Tema C).
 - [x] ~~dirty-state divergente admin vs AED~~ → unificado (primitivo) / AED ya correcto.
-- [ ] User sin `crossTab`/`conflictWarning` que sí tienen Agent/Group → unificar o documentar excepción.
+- [x] ~~User sin `crossTab`/`conflictWarning`~~ → verificado 2026-07-18: `user-form-page` ya los tiene.
 - [ ] `isNameTaken` duplicado (`categories.store:50` ↔ `entities.store:69`).
 - [ ] `PERMISSION_MATRIX_KEYS` duplicado (agent-form ↔ aed-agentes) → `admin/data/permission-matrix.ts`.
 - [ ] **[quick]** handlers legacy `onLabelAdd`/`onLanguageAdd` vivos en paralelo (`agent-form:766+`) → borrar.
@@ -66,8 +66,8 @@
 - [ ] selección reimplementada ignorando `SelectionState` (`conversations.store`).
 
 ### P1 — Agent / Scripts / i18n
-- [ ] PROFILE duplicado (`profile-card` + `agent-footer`) → sub-componente.
-- [ ] **[quick]** seed `"Nombre Grupo 1"` ×4 (`seed.ts:44`) → nombres reales.
+- [x] ~~PROFILE duplicado (`profile-card` + `agent-footer`)~~ → eliminado (verificado 2026-07-18).
+- [x] ~~seed `"Nombre Grupo 1"` ×4~~ → 0 ocurrencias (verificado 2026-07-18).
 - [x] **[quick]** i18n: ~35 claves `memory.rules.builder.*` faltan en en/fr/pt → sincronizar + **`i18n:check` en verify** — *RESUELTO 2026-07-01:* 37 claves traducidas (es ↔ en/fr/pt a 1:1, 1277 c/u) + `i18n:check` permanente en `verify`. Ver [`AUDIT-2026-07.md`](./AUDIT-2026-07.md) §3.
 - [ ] `EXPORT_PATH` ×7 + cadena de 5 generadores en `package.json:29` → `scripts/paths.mjs` + meta-generador.
 

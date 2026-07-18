@@ -46,24 +46,20 @@ import { ConversationsStore } from '../../state/conversations.store';
 import { RulesStore } from '../../state/rules.store';
 
 /**
- * Constructor de reglas Memory · iter 9c-1.
- *
- * Réplica de `Memory/docs/specs/rule-constructor-update.md` para tipo
- * Recording (resto de tipos en iter 9c-2).
+ * Constructor de reglas Memory (tipos transcription/classification — DD-27
+ * retiró recording del MVP).
  *
  * Bloques verticales apilados:
- *   1. Metadatos (nombre + descripción + active toggle).
- *   2. Alcance (3 dimensiones AND, OR dentro): Servicios + Grupos +
- *      Agentes. Microcopy "Desde repositorio de X" + enlace "Ver
- *      repositorio" + chips con contador para grupos/agentes.
- *   3. Grabación: Dirección + Filtrar por horario.
+ *   1. Metadatos (nombre + active toggle).
+ *   2. Alcance: árbol de condiciones campo·operador·valor (Y dentro de un
+ *      grupo, O entre grupos) vía `sc-rule-condition-builder`, con preview
+ *      de prosa "Se cumple si:" y estimación de impacto en vivo (aside).
+ *   3. Análisis IA: toggle resumen+sentimiento; en classification, además
+ *      las categorías a detectar.
  *
  * Rutas:
- *   - `/conversaciones/reglas/nueva?type=recording` — nueva regla vacía.
+ *   - `/conversaciones/reglas/nueva?type=transcription|classification`.
  *   - `/conversaciones/reglas/:id` — edit.
- *
- * Bloque Transcripción + Análisis IA + tipos
- * Classification/Transcription quedan para iter 9c-2.
  */
 @Component({
   selector: 'sc-memory-rule-builder-page',
