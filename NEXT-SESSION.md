@@ -43,6 +43,21 @@ Gates: `e2e:supervisor` 14/14 · `verify` entero (26 gates) · AOT · capturas a
 
 ## B5 (parcial) · `scope_lead`/`scope_all` a los 4 locales (commit `1afe5cc`)
 
+## Extra · `filled` del DS arreglado en oscuro (commit `912e718`)
+
+Los 5 componentes con variante rellena (`inputtext`, `select`, `multiselect`,
+`checkbox`, `search`) hardcodeaban `--sc-color-slate-50`/`-100`. Las primitivas
+no voltean → input casi blanco sobre superficie oscura, **contradiciendo al
+propio preset**, que ya declaraba `filledBackground: var(--sc-bg-default)`.
+Pasados a roles semánticos (el patrón de la casa: ningún componente usa
+overrides `.sc-dark`; el oscuro se resuelve en `07-dark.css`).
+
+**En claro es un no-op EXACTO**, medido: `--sc-bg-default` ES `#f7f8fa` y
+`--sc-bg-hover` ES `#eceff3`. Solo cambia oscuro (`#0b0f14`, 18:1 de contraste).
+Riesgo de CI descartado leyendo los specs: `components.spec.ts` no ejercita
+oscuro ni `filled`. Con esto, la fila de condición recupera el input suave del
+Figma.
+
 ---
 
 # Bloques abiertos (con su precondición YA verificada)
@@ -109,16 +124,9 @@ teclas vacías).
 
 # Decisiones que necesitan a Rafa
 
-1. **`filled` de `sc-select` está roto en oscuro** (todo el DS, no solo reglas).
-   `sc-select.component.scss` hardcodea `background: var(--sc-color-slate-50)`,
-   una primitiva que no voltea → input casi blanco sobre tarjeta oscura. Y
-   **contradice a su propio preset**: `sc-preset/base.ts` declara
-   `filledBackground: var(--sc-bg-default)` (que sí voltea). Se quitó `filled` de
-   B1 para no shippear la regresión. Arreglarlo es una línea, pero elegir el
-   valor oscuro es decisión de diseño → no la tomo yo.
-2. **Incoherencia en la capa semántica**: `--sc-bg-info` → sky, pero
+1. **Incoherencia en la capa semántica**: `--sc-bg-info` → sky, pero
    `--sc-text-info` → `--sc-text-accent` → **cyan-600**. Fondo sky con texto cyan.
-3. **Fondo del listado vs el constructor**: el constructor va sobre
+2. **Fondo del listado vs el constructor**: el constructor va sobre
    `--sc-bg-default` y las páginas-lista sobre `--sc-bg-surface` (blanco). No lo
    toqué: el listado está deliberadamente alineado con las AED list-pages (S41) y
    s12 dejó **las tres hermanas idénticas**; cambiar solo reglas rompería esa
