@@ -444,12 +444,13 @@
             "unfinished": "{{n}} por terminar"
           },
           "impact_lead": "Com o tráfego recente, esta regra alcançaria:",
-          "impact_unit": "conversas",
           "impact_caption": "das últimas {{total}} analisadas",
           "est_day_label": "Estimado por dia",
           "est_month_label": "Estimado por mês",
           "scope_lead": "Aplica-se se:",
-          "scope_all": "todas as conversas"
+          "scope_all": "todas as conversas",
+          "impact_hero_one": "{{count}} conversa",
+          "impact_hero_other": "{{count}} conversas"
         },
         "ai_row_recommended": "Recomendado",
         "ai_row_summary_desc": "Extrai os pontos-chave e os acordos de cada conversa transcrita.",

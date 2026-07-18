@@ -294,17 +294,27 @@
         } @else {
           <p class="impact__lead">{{ 'memory.rules.builder.cond.impact_lead' | translate }}</p>
 
-          <p class="impact__hero">
-            <span class="impact__hero-num">{{ fmt(impactCount()) }}</span>
-            <span class="impact__hero-unit">{{
-              'memory.rules.builder.cond.impact_unit' | translate
-            }}</span>
-          </p>
-          <p class="impact__caption">
-            {{
-              'memory.rules.builder.cond.impact_caption' | translate: { total: impactTotal() }
-            }}
-          </p>
+          <!-- El héroe es UNA FRASE, no un número con etiqueta: en el Figma
+               (nodo 51:10316) "1,842 calls" es un solo nodo de texto, entero al
+               mismo tamaño y color. Partirlo en cifra grande + unidad pequeña
+               gris lo degrada a "dato con leyenda" y pierde la afirmación. -->
+          <!-- stat-block del Figma (51:10315): héroe y caption forman UN grupo
+               con ritmo propio (6px), más apretado que el aire entre bloques. -->
+          <div class="impact__stat">
+            <p class="impact__hero">
+              {{
+                (impactCount() === 1
+                  ? 'memory.rules.builder.cond.impact_hero_one'
+                  : 'memory.rules.builder.cond.impact_hero_other'
+                ) | translate: { count: fmt(impactCount()) }
+              }}
+            </p>
+            <p class="impact__caption">
+              {{
+                'memory.rules.builder.cond.impact_caption' | translate: { total: impactTotal() }
+              }}
+            </p>
+          </div>
 
           @if (hasUnevaluable()) {
             <p class="impact__note">

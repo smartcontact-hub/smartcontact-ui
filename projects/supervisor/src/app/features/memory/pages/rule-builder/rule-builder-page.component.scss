@@ -506,11 +506,15 @@
  * Único sitio de la página con número héroe. 32px es el TOPE real de la rampa
  * (`--sc-font-size-650`); el Figma pedía 40 y eso exigiría un token display
  * nuevo, que solo puede entrar por el export del Kit. */
+/* Medidas tomadas del nodo 51:10310, no de su resumen: padding 32, gap 24 entre
+ * bloques, título 16 bold, intro 14, stat-block con gap 6, filas métrica con
+ * gap 14 y valor semibold. Donde la rampa no llega (Figma 40 y 13 px) se elige
+ * conservando la DIRECCIÓN de la jerarquía, no el número. */
 .impact {
   display: flex;
   flex-direction: column;
-  gap: var(--sc-spacing-0-75);
-  padding: var(--sc-spacing-1-75);
+  gap: var(--sc-spacing-1-75); /* 24,5 ≈ 24 */
+  padding: var(--sc-spacing-2-25); /* 31,5 ≈ 32 */
   background: var(--sc-bg-surface);
   border: 1px solid var(--sc-border-subtle);
   border-radius: var(--sc-radius-xl);
@@ -520,10 +524,10 @@
   &__label {
     display: flex;
     align-items: center;
-    gap: var(--sc-spacing-0-375);
+    gap: var(--sc-spacing-0-5);
     margin: 0;
-    font-size: var(--sc-font-size-200);
-    font-weight: var(--sc-font-weight-semibold);
+    font-size: var(--sc-font-size-300); /* 16, como el Figma */
+    font-weight: var(--sc-font-weight-bold);
     color: var(--sc-text-primary);
 
     sc-icon {
@@ -533,33 +537,29 @@
 
   &__lead {
     margin: 0;
-    font-size: var(--sc-font-size-100);
+    font-size: var(--sc-font-size-200); /* 14, como el Figma */
     line-height: 1.5;
     color: var(--sc-text-secondary);
   }
 
-  /* Aire generoso ARRIBA del héroe: la separación es la que crea la jerarquía,
-   * no un tamaño mayor todavía. */
-  &__hero {
+  /* stat-block: héroe + caption son UN grupo con ritmo propio. */
+  &__stat {
     display: flex;
-    align-items: baseline;
-    gap: var(--sc-spacing-0-375);
-    margin: var(--sc-spacing-0-5) 0 0;
+    flex-direction: column;
+    gap: var(--sc-spacing-0-375); /* 5,25 ≈ 6 */
   }
 
-  &__hero-num {
+  /* El héroe es una FRASE completa al mismo tamaño y color — no una cifra con
+   * etiqueta gris al lado. 32px es el techo real de la rampa (el Figma pide 40,
+   * que exigiría un token display nuevo por el export del Kit). */
+  &__hero {
+    margin: 0;
     font-size: var(--sc-font-size-650);
     font-weight: var(--sc-font-weight-bold);
     line-height: 1.1;
     letter-spacing: -0.02em;
     font-variant-numeric: tabular-nums;
     color: var(--sc-color-sky-600);
-  }
-
-  &__hero-unit {
-    font-size: var(--sc-font-size-200);
-    font-weight: var(--sc-font-weight-medium);
-    color: var(--sc-text-secondary);
   }
 
   &__caption {
@@ -590,13 +590,15 @@
     }
   }
 
-  /* Filo divisor + filas métrica label/valor (del Figma). */
+  /* Filo divisor + filas métrica label/valor. El filo del Figma es un elemento
+   * propio con 24 de aire a cada lado; aquí se resuelve con borde + padding
+   * equivalente, que da el mismo ritmo con un nodo menos. */
   &__metrics {
     display: flex;
     flex-direction: column;
-    gap: var(--sc-spacing-0-5);
-    margin: var(--sc-spacing-0-625) 0 0;
-    padding-top: var(--sc-spacing-1-125);
+    gap: var(--sc-spacing-1); /* 14, exacto */
+    margin: 0;
+    padding-top: var(--sc-spacing-1-75);
     border-top: 1px solid var(--sc-border-subtle);
   }
 
@@ -606,6 +608,10 @@
     justify-content: space-between;
     gap: var(--sc-spacing-0-875);
 
+    /* El Figma pone estas filas a 13, por debajo de la intro (14). La rampa
+     * salta de 14 a 12, así que se elige 12: preserva la DIRECCIÓN de la
+     * jerarquía (métrica < intro), que es lo que comunica. A 14 quedarían al
+     * mismo peso que la intro y se perdería. */
     dt {
       font-size: var(--sc-font-size-100);
       color: var(--sc-text-secondary);
@@ -650,7 +656,7 @@
     color: var(--sc-color-sky-300);
   }
 
-  .impact__hero-num {
+  .impact__hero {
     color: var(--sc-color-sky-400);
   }
 }
