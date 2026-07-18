@@ -110,12 +110,12 @@ export class RulesPageComponent {
   protected readonly newRuleMenuItems: MenuItem[] = [
     {
       label: 'Regla de transcripción',
-      icon: 'pi pi-file',
+      icon: 'sc-icon-font sc-icon-font--description',
       command: () => this.onNewRule('transcription'),
     },
     {
       label: 'Regla de clasificación con IA',
-      icon: 'pi pi-sparkles',
+      icon: 'sc-icon-font sc-icon-font--auto_awesome',
       command: () => this.onNewRule('classification'),
     },
   ];
@@ -179,12 +179,12 @@ export class RulesPageComponent {
     return [
       {
         label: this.translate.instant('common.edit'),
-        icon: 'pi pi-pencil',
+        icon: 'sc-icon-font sc-icon-font--edit',
         command: () => this.router.navigate(['/conversaciones/reglas', rule.id]),
       },
       {
         label: this.translate.instant('common.duplicate'),
-        icon: 'pi pi-copy',
+        icon: 'sc-icon-font sc-icon-font--content_copy',
         command: () => this.duplicateRule(rule),
       },
       {
@@ -192,12 +192,12 @@ export class RulesPageComponent {
       },
       {
         label: toggleLabel,
-        icon: rule.active ? 'pi pi-pause' : 'pi pi-play',
+        icon: rule.active ? 'sc-icon-font sc-icon-font--pause' : 'sc-icon-font sc-icon-font--play_arrow',
         command: () => this.rulesStore.toggleActive(rule.id),
       },
       {
         label: this.translate.instant('common.delete'),
-        icon: 'pi pi-trash',
+        icon: 'sc-icon-font sc-icon-font--delete',
         styleClass: 'rules-menu-item--danger',
         command: () => this.confirmDelete(rule),
       },

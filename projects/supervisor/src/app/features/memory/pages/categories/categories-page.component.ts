@@ -105,12 +105,12 @@ export class CategoriesPageComponent {
     return [
       {
         label: this.translate.instant('common.edit'),
-        icon: 'pi pi-pencil',
+        icon: 'sc-icon-font sc-icon-font--edit',
         command: () => this.openEditForm(cat),
       },
       {
         label: this.translate.instant('common.duplicate'),
-        icon: 'pi pi-copy',
+        icon: 'sc-icon-font sc-icon-font--content_copy',
         command: () => this.duplicateCategory(cat),
       },
       {
@@ -118,7 +118,7 @@ export class CategoriesPageComponent {
       },
       {
         label: this.translate.instant('common.delete'),
-        icon: 'pi pi-trash',
+        icon: 'sc-icon-font sc-icon-font--delete',
         styleClass: 'rules-menu-item--danger',
         command: () => this.confirmDelete(cat),
       },

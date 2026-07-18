@@ -51,6 +51,22 @@
  */
 @import '../../../ui-smartcontact-icons/src/lib/styles/material-symbols.css';
 
+/*
+ * Iconos de los menús de PrimeNG. `MenuItem.icon` es una CLASE CSS, no un
+ * componente, así que ahí no cabe `<sc-icon>`: usamos la convención
+ * `.sc-icon-font--NAME` del DS (el base `.sc-icon-font::before` ya trae la
+ * familia Material del import de arriba; aquí solo el glifo). Declaramos SOLO
+ * los que usamos — el catálogo generado del DS son miles de reglas y sobra.
+ */
+.sc-icon-font--edit::before { content: 'edit'; }
+.sc-icon-font--content_copy::before { content: 'content_copy'; }
+.sc-icon-font--delete::before { content: 'delete'; }
+.sc-icon-font--pause::before { content: 'pause'; }
+.sc-icon-font--play_arrow::before { content: 'play_arrow'; }
+.sc-icon-font--description::before { content: 'description'; }
+.sc-icon-font--auto_awesome::before { content: 'auto_awesome'; }
+.sc-icon-font--warning::before { content: 'warning'; }
+
 html,
 body {
   height: 100%;

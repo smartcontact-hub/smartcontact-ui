@@ -89,7 +89,7 @@ export class EntitiesPageComponent {
     return [
       {
         label: this.translate.instant('common.edit'),
-        icon: 'pi pi-pencil',
+        icon: 'sc-icon-font sc-icon-font--edit',
         command: () => this.openEditForm(entity),
       },
       {
@@ -97,7 +97,7 @@ export class EntitiesPageComponent {
       },
       {
         label: this.translate.instant('common.delete'),
-        icon: 'pi pi-trash',
+        icon: 'sc-icon-font sc-icon-font--delete',
         styleClass: 'rules-menu-item--danger',
         command: () => this.confirmDelete(entity),
       },
