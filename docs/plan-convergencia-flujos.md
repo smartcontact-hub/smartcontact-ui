@@ -26,6 +26,13 @@ De ahí salen tres encargos que se atacan juntos porque comparten raíz —consi
 
 Y siguen abiertos B2 (`sc-field-wrapper`), B4 (tablas → `sc-datatable`) y B5 (i18n).
 
+> **CERRADO (2026-07-19).** Las 6 olas, B2 y B4 están hechos. Este documento
+> pasa a ser HISTÓRICO: describe el plan tal y como se aprobó, no el estado
+> actual — y en varios puntos el código no le dio la razón (el piloto de B4
+> ejercitaba 2 de las 4 capacidades, no 4; son 14 tablas, no 11). Lo vivo está
+> en [`NEXT-SESSION.md`](../NEXT-SESSION.md); la receta de tablas, en
+> [`receta-migracion-tablas.md`](./receta-migracion-tablas.md).
+
 > **Honestidad de alcance**: esto es trabajo de varias sesiones. Las fases están
 > ordenadas por riesgo creciente y cada una es entregable y verificable por separado.
 > No se empieza la siguiente sin cerrar los gates de la anterior.

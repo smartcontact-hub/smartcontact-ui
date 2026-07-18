@@ -160,3 +160,17 @@
     peor que ninguno de los dos veía: en oscuro `--sc-border-subtle` **es el mismo color que la
     tarjeta** (1:1), o sea que ahí no hay borde. Medir convirtió una discusión de opiniones en un
     hallazgo, y de paso le dio la razón a él.
+
+20. **Tu comprobación da VERDE → pregúntate si mide algo que tú no escribiste.** Cuando el
+    arreglo y la lista de comprobación salen de la misma cabeza, el verde es circular: mides
+    justo las propiedades que te propusiste reproducir, y por eso coinciden. *Evidencia (s16)*:
+    al migrar labels a `sc-datatable` medí alto de fila, paddings, tipografía y colores contra
+    la tabla original — **"DIFERENCIAS: ninguna"**. La captura, hecha a continuación, enseñaba
+    dos defectos que mi lista no podía ver porque yo no los había pensado: una franja vacía
+    sobre la cabecera (PrimeNG pinta siempre la banda de `caption`) y las columnas recolocadas
+    ~290px (`main.scss` fuerza `table-layout: fixed` en `table.table` y la tabla del DS es
+    `auto`). Las dos venían de cosas que yo no había escrito: una del componente de terceros y
+    otra de una regla global de hace meses. **Acción**: cierra siempre con una observación que
+    no dependa de tu inventario — la pantalla entera, o comparar contra un control que no has
+    tocado (aquí, una tabla sin migrar; fue lo que confirmó que en oscuro el defecto era
+    preexistente y no mío).
