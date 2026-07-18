@@ -28,3 +28,56 @@ body {
 .demo-main:has(app-storybook-shell) {
   max-width: 82rem !important;
 }
+
+/* ─────────── Story de gestos de `sc-datatable` (B4) ───────────
+   `.dt-row--inactive` va aquí y NO en el componente demo A PROPÓSITO: la clase
+   la pone `[rowStyleClass]` sobre un `<tr>` que pinta la plantilla de
+   `sc-datatable`, así que ese nodo lleva el `_ngcontent` del DS, no el del
+   demo. Una regla encapsulada en el demo no lo alcanzaría nunca — es la misma
+   trampa de encapsulación de siempre, y aquí es visible en cuanto la clase no
+   pinta nada. */
+.dt-row--inactive {
+  opacity: 0.55;
+  font-style: italic;
+}
+
+.dt-toggles {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sc-spacing-0-5);
+  margin-bottom: var(--sc-spacing-0-75);
+}
+
+.dt-toggle {
+  padding: var(--sc-spacing-0-25) var(--sc-spacing-0-75);
+  border: 1px solid var(--sc-border-default);
+  border-radius: var(--sc-radius-full);
+  background: var(--sc-bg-surface);
+  color: var(--sc-text-secondary);
+  font: inherit;
+  font-size: var(--sc-font-size-100);
+  cursor: pointer;
+
+  &--on {
+    border-color: var(--sc-border-primary);
+    background: var(--sc-bg-primary-subtle);
+    color: var(--sc-text-primary);
+  }
+}
+
+.dt-readout {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: var(--sc-spacing-0-25) var(--sc-spacing-0-75);
+  margin-top: var(--sc-spacing-0-75);
+  font-size: var(--sc-font-size-100);
+
+  dt {
+    color: var(--sc-text-secondary);
+  }
+
+  dd {
+    margin: 0;
+    font-weight: var(--sc-font-weight-medium);
+  }
+}

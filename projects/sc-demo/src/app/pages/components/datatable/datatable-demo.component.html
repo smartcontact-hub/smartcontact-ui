@@ -61,6 +61,53 @@
   <p data-testid="dt-lazy-total">Total: {{ lazyTotal() }}</p>
 </ng-template>
 
+<ng-template #gestures>
+  <div class="dt-toggles">
+    @for (col of gestureColumns; track col.field) {
+      <button
+        type="button"
+        class="dt-toggle"
+        [class.dt-toggle--on]="visibleFields().includes(col.field)"
+        [attr.aria-pressed]="visibleFields().includes(col.field)"
+        (click)="toggleField(col.field)"
+        [attr.data-testid]="'dt-toggle-' + col.field"
+      >
+        {{ col.header }}
+      </button>
+    }
+    <button type="button" class="dt-toggle" (click)="reverseFields()" data-testid="dt-reverse">
+      Invertir orden
+    </button>
+  </div>
+
+  <sc-datatable
+    [value]="agents()"
+    [columns]="gestureColumns"
+    [visibleColumns]="visibleFields()"
+    [rowStyleClass]="rowClassFn"
+    dataKey="id"
+    selectionMode="multiple"
+    [selection]="selection()"
+    (selectionChange)="onSelectionChange($event)"
+    (rowClick)="onRowOpen($event)"
+    (rowContextMenu)="onRowMenu($event)"
+    data-testid="sc-datatable-gestures"
+  >
+    <div scTableEmpty class="dt-empty">No hay agentes</div>
+  </sc-datatable>
+
+  <dl class="dt-readout">
+    <dt>Abierta con click</dt>
+    <dd data-testid="dt-last-opened">{{ lastOpened() }}</dd>
+    <dt>Veces que se abrió</dt>
+    <dd data-testid="dt-open-count">{{ openCount() }}</dd>
+    <dt>Click derecho sobre</dt>
+    <dd data-testid="dt-last-context">{{ lastContext() }}</dd>
+    <dt>Seleccionadas</dt>
+    <dd data-testid="dt-gestures-selected">{{ selection().length }}</dd>
+  </dl>
+</ng-template>
+
 <!-- cellTemplate de la columna 'status': el consumidor compone la celda.
      Vive fuera de las stories para que `viewChild('statusTpl')` lo resuelva. -->
 <ng-template #statusTpl let-agent>

@@ -1,4 +1,4 @@
-import { NgTemplateOutlet } from '@angular/common';
+import { NgClass, NgTemplateOutlet } from '@angular/common';
 import {
   booleanAttribute,
   ChangeDetectionStrategy,
@@ -18,7 +18,11 @@ import {
   type TablePageEvent,
 } from 'primeng/table';
 
-import { ScColumnDef } from '../../core/types/datatable.types';
+import {
+  ScColumnDef,
+  ScDatatableRowEvent,
+  ScRowStyleClassFn,
+} from '../../core/types/datatable.types';
 import { ScComponentSize } from '../../core/types/theme-component.types';
 
 /** Mapa de filtros de p-table (por campo + `global`). */
@@ -44,10 +48,17 @@ export interface ScDatatableSortEvent {
  *   - `[scTableCaption]` → cabecera de la tabla (toolbar: search, column-selector…).
  *   - `[scTableEmpty]`   → fila sin-datos (envuelve `sc-empty-state`).
  * Celdas custom: `ScColumnDef.cellTemplate` (contexto `{ $implicit: row, rowIndex }`).
+ *
+ * B4 añade las 4 capacidades que las tablas del supervisor traían a mano y que
+ * eran justo lo que impedía migrarlas:
+ *   - `[rowStyleClass]`     → clases por fila (seleccionada, clicable, leída…).
+ *   - `(rowClick)`          → la fila abre; la casilla de selección no.
+ *   - `(rowContextMenu)`    → click derecho, para el `<p-menu>` compartido.
+ *   - `[visibleColumns]`    → visibilidad y ORDEN, cableable a `sc-column-selector`.
  */
 @Component({
   selector: 'sc-datatable',
-  imports: [TableModule, NgTemplateOutlet],
+  imports: [TableModule, NgClass, NgTemplateOutlet],
   templateUrl: './sc-datatable.component.html',
   styleUrl: './sc-datatable.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -56,6 +67,16 @@ export class ScDatatableComponent<T = unknown> {
   readonly value = input<readonly T[]>([]);
   readonly columns = input<readonly ScColumnDef<T>[]>([]);
   readonly dataKey = input<string | undefined>(undefined);
+
+  /**
+   * Columnas visibles, por `field` y **en orden de pintado**. Es el formato que
+   * emite `sc-column-selector` en `(orderedVisibleChange)` (su `key` = nuestro
+   * `field`), así que cablear las dos es pasar el array tal cual.
+   *
+   * Sin informar, se pintan todas las de `columns()` en su orden declarado. Un
+   * `field` del array que no exista en `columns()` se ignora.
+   */
+  readonly visibleColumns = input<readonly string[] | undefined>(undefined);
 
   readonly paginator = input(false, { transform: booleanAttribute });
   readonly rows = input<number | undefined>(undefined);
@@ -78,6 +99,14 @@ export class ScDatatableComponent<T = unknown> {
   readonly loading = input(false, { transform: booleanAttribute });
 
   /**
+   * Clases extra por fila — el equivalente a los `[class.table__row--x]` que
+   * cada tabla del supervisor escribe a mano. Se aplica con `ngClass`, que
+   * convive con las clases que p-table pone por su cuenta (`p-highlight` al
+   * seleccionar) en vez de pisarlas como haría un `[class]` a pelo.
+   */
+  readonly rowStyleClass = input<ScRowStyleClassFn<T> | undefined>(undefined);
+
+  /**
    * Modo lazy (server-driven): p-table deja de ordenar/paginar/filtrar en cliente
    * y emite `(lazyLoad)` con los metadatos (page/sort/filter). El consumidor
    * busca los datos y actualiza `value` + `totalRecords`.
@@ -95,15 +124,62 @@ export class ScDatatableComponent<T = unknown> {
   readonly lazyLoad = output<TableLazyLoadEvent>();
   readonly filterChange = output<TableFilterEvent>();
 
+  /**
+   * Click en la fila. **No se emite desde la celda de selección**: esa celda
+   * corta la propagación, porque el reparto canónico es «la fila abre, la
+   * casilla selecciona» y si el click de la casilla también abriera, marcar
+   * cinco filas abriría cinco veces el detalle.
+   */
+  readonly rowClick = output<ScDatatableRowEvent<T>>();
+
+  /**
+   * Click derecho en la fila, con el menú nativo ya cancelado.
+   *
+   * Emite un evento en vez de montar un `<p-contextmenu>` dentro: la app tiene
+   * UN `<p-menu popup>` por tabla que sirven a la vez el kebab y el click
+   * derecho (Ola 2 mató justo el segundo motor de menú). Un menú propio del DS
+   * volvería a poner dos modelos donde ahora hay uno.
+   */
+  readonly rowContextMenu = output<ScDatatableRowEvent<T>>();
+
   /** Mapea sm/md/lg a la prop `size` de p-table (md = sin atributo → padding base del preset). */
   protected readonly pSize = computed<'small' | 'large' | undefined>(() => {
     const s = this.size();
     return s === 'sm' ? 'small' : s === 'lg' ? 'large' : undefined;
   });
 
-  /** colspan de la fila vacía: columnas + la de checkbox si aplica. */
+  /**
+   * Las columnas que se pintan de verdad: `columns()` filtrada y REORDENADA por
+   * `visibleColumns()`. El orden lo manda el array de visibles, no el declarado,
+   * porque `sc-column-selector` deja arrastrar para reordenar y esa es la única
+   * forma de que la tabla obedezca al arrastre.
+   */
+  protected readonly visibleCols = computed<readonly ScColumnDef<T>[]>(() => {
+    const declared = this.columns();
+    const visible = this.visibleColumns();
+    if (!visible) return declared;
+    const byField = new Map(declared.map((col) => [col.field, col] as const));
+    return visible
+      .map((field) => byField.get(field))
+      .filter((col): col is ScColumnDef<T> => col !== undefined);
+  });
+
+  /**
+   * En `multiple`, `pSelectableRow` de PrimeNG selecciona al clicar la fila —
+   * y eso choca con el modelo canónico que fijó la Ola 6: **la fila abre, la
+   * casilla selecciona**. Con los dos activos, un click hacía las dos cosas.
+   *
+   * En `single` no se desactiva: ahí seleccionar ES clicar la fila, que es lo
+   * que ese modo significa en p-table.
+   */
+  protected readonly rowSelectDisabled = computed<boolean>(() => {
+    const mode = this.selectionMode();
+    return !mode || mode === 'multiple';
+  });
+
+  /** colspan de la fila vacía: columnas VISIBLES + la de checkbox si aplica. */
   protected readonly colspan = computed<number>(
-    () => this.columns().length + (this.selectionMode() === 'multiple' ? 1 : 0),
+    () => this.visibleCols().length + (this.selectionMode() === 'multiple' ? 1 : 0),
   );
 
   /** Filtros para p-table: referencia estable `{}` cuando el consumidor no informa. */
@@ -127,6 +203,22 @@ export class ScDatatableComponent<T = unknown> {
   /** Lee `row[field]` sin indexar `unknown` directo en plantilla. */
   protected cellValue(row: T, field: string): unknown {
     return (row as Record<string, unknown>)[field];
+  }
+
+  /** Clases de la fila; `ngClass` acepta `undefined` sin quejarse. */
+  protected rowClass(row: T, index: number): string | undefined {
+    return this.rowStyleClass()?.(row, index);
+  }
+
+  protected onRowClick(event: MouseEvent, row: T, index: number): void {
+    this.rowClick.emit({ row, index, originalEvent: event });
+  }
+
+  protected onRowContextMenu(event: MouseEvent, row: T, index: number): void {
+    // El menú nativo del navegador tapa el nuestro y no ofrece ninguna de las
+    // acciones de la fila: cancelarlo es la única lectura útil del gesto.
+    event.preventDefault();
+    this.rowContextMenu.emit({ row, index, originalEvent: event });
   }
 
   protected onSortEvent(event: { field?: string; order?: number }): void {
