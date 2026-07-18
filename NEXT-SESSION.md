@@ -12,7 +12,8 @@
 2. Todo pusheado a main. Desplegado en Pages: sc-demo (`/#/reglas` rediseñado) + supervisor
    + agent (iconos Outlined). Verifica visualmente si vas a construir encima.
 3. **Dos decisiones pendientes**, ambas grandes: (a) adoptar `sc-button` en el supervisor
-   (111 usos de `p-button` / 24 ficheros); (b) migrar list-pages a `sc-datatable` — ojo:
+   (47 tags de `p-button` / 22 ficheros — medido 2026-07-18; la cifra «111» anterior contaba
+   cierres y clases CSS); (b) migrar list-pages a `sc-datatable` — ojo:
    su justificación principal (a11y de filas) **ya está resuelta** por otra vía, ver abajo.
 
 ---
@@ -83,9 +84,10 @@
 > eran más grandes o su precondición era falsa. Verifica cada uno contra el código antes de
 > ejecutarlo. Lo acotado ya está cerrado (ver arriba).
 
-- **`sc-button`** (decisión pendiente): **111 usos / 24 ficheros** de `p-button` vs 3 de
-  `sc-button`. Migración grande. Decidir adoptar antes de empezar; patrón sugerido: piloto en
-  una list-page + forms, validar, resto por lotes con AOT por lote.
+- **`sc-button`** (decisión pendiente): **47 tags / 22 ficheros** de `p-button` vs 12 de
+  `sc-button` (medido 2026-07-18; todos con `(onClick)`, 46 `severity`, 4 `[loading]`,
+  1 outlined, 1 link, 2 testid). Piloto ya hecho (`1c8e350`, category-form-modal) con
+  receta documentada; resto por lotes con AOT por lote.
 - **Tablas → `sc-datatable`** (decisión pendiente): **su justificación se debilitó**. Era el
   «linchpin» porque cerraba a11y de filas + kebab + tablas de golpe, pero **a11y y kebab ya
   están resueltos** por vías propias (arriba). Queda el valor de consistencia y de quitar

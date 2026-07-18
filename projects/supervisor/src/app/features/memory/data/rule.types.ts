@@ -6,8 +6,8 @@
  * configuradas, estado (activa/inactiva), última modificación.
  *
  * MVP transcripción: solo dos estados, activa o inactiva — sin borradores ni
- * priorización (solo una regla puede estar activa a la vez, así que no hay
- * orden que resolver). Las reglas viven en `RulesStore` (Memory-specific). El
+ * priorización. Pueden convivir VARIAS reglas activas; el solape se resuelve
+ * por unión (DD-30). Las reglas viven en `RulesStore` (Memory-specific). El
  * concepto NO se mezcla con bulk actions: regla = "qué pasa con conversaciones
  * futuras", bulk = "qué hago ahora con las existentes".
  */

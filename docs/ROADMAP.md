@@ -31,9 +31,10 @@
     (13/14→inherit) que descuadre en una pantalla no vista (los controles deliberados ya se revirtieron).
   - **Revisar traducciones EN/FR/PT** de los copys de Recepción (Rafa es nativo ES; las redactó el subagente). Menor.
 - **Deuda estructural surfaceada**: el supervisor usa su **PROPIO `<sc-icon>`** (`shared/components/icon`,
-  `size: number | 'inherit'`), NO el `ScIconComponent` del DS — **duplicación** de implementación (el DS tiene
-  ejes FILL/grade/optical que el wrapper de la app no expone). Ambos ya soportan `inherit` pero divergen. Liga
-  con el item "Iconos: estilo + peso" de abajo (Rounded vs Outlined). *Disparador*: al unificar iconografía.
+  227 usos / 48 ficheros — medido 2026-07-18), NO el `ScIconComponent` del DS — **duplicación** de
+  implementación. El local expone `fill` + `weight` desde 2026-07-17 (GRAD fijo 0, opsz derivado del size);
+  lo que NO expone es grade/optical explícitos. Ambos soportan `inherit` pero divergen en el opsz de
+  `inherit` (local 14 vs DS 24). *Disparador*: al unificar iconografía (plan F5, 2026-07-18: converger a 14).
 
 ## Producto · Sistema de reglas — pivote a transcripción (charla con el equipo)
 

@@ -8,7 +8,7 @@
  * cada uno con `match: 'all'|'any'`.
  *
  * La proyección a `Rule.servicios/grupos/agentes` planos (`deriveLegacyScope`)
- * mantiene vivo el listado + la detección de conflictos sin tocarlos. La
+ * mantiene vivo el listado sin tocarlo. La
  * resolución de etiquetas/membresía la provee un `RefResolver` (el componente
  * inyecta `ConditionResolverService`); las funciones de aquí son puras.
  */
@@ -276,7 +276,7 @@ export interface RefResolver {
 
 /**
  * Deriva el alcance plano (`servicios/grupos/agentes` por nombre) desde el árbol,
- * para que listado + detección de conflictos sigan funcionando. Sobre-aproxima
+ * para que el listado siga funcionando. Sobre-aproxima
  * (solo condiciones `is` de campos lista; `agentGroup` expande a miembros vivos).
  * Comodín "any" → dimensión vacía = "cualquiera".
  */

@@ -30,11 +30,9 @@ import { RulesStore } from '../../state/rules.store';
 /**
  * Listado de reglas Memory.
  *
- * Iter 9a: tabla 7 cols + 2 secciones.
- * Iter 9b: + drag-drop priorización activas (CDK DragDrop) + kebab menu
- *          (Editar / Activar-Desactivar / Eliminar) + delete confirmación
- *          danger (alta fricción real con input "escribir nombre" diferida
- *          a iter futura — anotado en backlog).
+ * Tabla única (activas primero) + kebab (Editar / Duplicar / Activar-Desactivar /
+ * Eliminar con confirmación danger). Sin priorización: pueden convivir varias
+ * reglas activas y el solape se resuelve por unión (DD-30).
  */
 @Component({
   selector: 'sc-memory-rules-page',
