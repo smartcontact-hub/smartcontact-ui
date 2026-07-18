@@ -55,6 +55,22 @@
    ESTILOS y no contra `location.href`, o te inventas un 404 que no existe (me pasó, y casi
    firmo "la fuente no carga" con una sonda mal construida).
 
+19. **Vas a comprobar un comportamiento INTERACTIVO (click, tecla, arrastre, foco, overlay) →
+   escríbelo como test de Playwright, no lo conduzcas a mano por el navegador.** Un
+   `dispatchEvent` apunta al elemento que TÚ eliges y se salta el hit-testing, así que es
+   estructuralmente incapaz de detectar el fallo más común de la interacción: *que el click
+   real lo reciba otro elemento*. Playwright clica coordenadas de verdad y sí lo cazaría.
+   *Evidencia (s15), medida contra el MISMO código roto —reintroduje el bug a propósito para
+   comprobarlo, porque al principio me lo estaba deduciendo—*: el shift+click de rango
+   fallaba porque la casilla ocupa 16px en el centro de una celda de 40 y su
+   `stopPropagation` se comía el handler del rango. Mi sonda (`dispatchEvent` sobre el
+   `<td>`) daba **[1,2,3,4] = verde**; el test de Playwright daba **rojo**. El bug vivía
+   exactamente donde apunta todo el mundo y mi canal no podía verlo.
+   **Corolario**: no encadenes dos interacciones en la misma llamada síncrona. Al hacerlo
+   para "reproducir más rápido" obtuve un tercer resultado distinto ([2,3,4]) que no era ni
+   el bug ni el comportamiento bueno, sino estado rancio de signals — y casi lo escribo como
+   si fuera el hallazgo. Una interacción por llamada, o un test.
+
 ## Gates y push
 
 7. **El commit toca componentes (`sc-*`, plantillas) y va a `git push` → corre `npm run verify`
