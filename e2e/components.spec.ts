@@ -18,7 +18,18 @@ const styleOf = (locator: Locator, props: string[]) =>
 
 const gotoPage = async (page: Page, path: string) => {
   await page.goto(`/#/components/${path}`);
-  await page.waitForLoadState('networkidle');
+  /* `networkidle` es una espera de CONVENIENCIA —estabiliza la captura—, no una
+   * aserción: aquí no se comprueba nada del producto. Dejarla sin acotar la
+   * convierte en una forma de tumbar el build sin que falle ninguna aserción, y
+   * eso es justo lo que pasó en CI: agotó los 60s del test y las comprobaciones
+   * del datepicker NO llegaron a correr. La página descarga una fuente de
+   * iconos de 3,9 MB y chunks perezosos, así que con la máquina cargada la red
+   * tarda en callarse.
+   *
+   * Best-effort: si se estabiliza pronto, mejor; si no, seguimos y que el
+   * auto-waiting de los locators haga su trabajo. Mismo patrón que ya usaba
+   * `usage-capture.spec.ts`. */
+  await page.waitForLoadState('networkidle', { timeout: 10_000 }).catch(() => undefined);
 };
 
 const screenshotBaseline = async (page: Page, name: string) => {

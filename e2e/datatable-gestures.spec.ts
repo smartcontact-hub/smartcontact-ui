@@ -24,7 +24,9 @@ test.describe('sc-datatable · gestos de fila', () => {
     // los assets y la app no llega a arrancar: la página sale en blanco y los
     // tests fallan por el arnés, no por el componente.
     await page.goto('/#/components/datatable');
-    await page.waitForLoadState('networkidle');
+    // Best-effort: acotada y sin `throw`. Sin acotar tumba el build sin que
+    // falle ninguna aserción (pasó en CI con el datepicker).
+    await page.waitForLoadState('networkidle', { timeout: 10_000 }).catch(() => undefined);
     await expect(page.locator(STORY)).toBeVisible();
   });
 
