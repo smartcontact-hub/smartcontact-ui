@@ -1,7 +1,7 @@
+import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
-import { IconComponent } from '@shared/components';
 
 import type { Recording } from '../../data/conversation.types';
 

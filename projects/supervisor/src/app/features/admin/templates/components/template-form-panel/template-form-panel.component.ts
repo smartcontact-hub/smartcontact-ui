@@ -13,7 +13,7 @@ import {
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 
-import { IconComponent } from '@shared/components';
+import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ScInputTextComponent as InputTextComponent } from '@smartcontact-hub/components';
 import { Template, TemplateType } from '../../data/templates-data';
 

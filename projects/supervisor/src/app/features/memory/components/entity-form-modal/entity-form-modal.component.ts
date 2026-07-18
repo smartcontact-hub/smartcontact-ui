@@ -10,9 +10,9 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
+import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 
-import { IconComponent } from '@shared/components';
 import { ScInputTextComponent as InputTextComponent } from '@smartcontact-hub/components';
 import { ScDialogComponent as DialogComponent } from '@smartcontact-hub/components';
 import { ScSelectComponent as SelectComponent } from '@smartcontact-hub/components';

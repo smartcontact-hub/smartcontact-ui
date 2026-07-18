@@ -1,3 +1,4 @@
+import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -11,7 +12,6 @@ import {
 } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 
-import { IconComponent } from '@shared/components';
 import { NAV_ICONS } from '../../icons/nav-icons';
 import type { NavItem } from './nav-data';
 

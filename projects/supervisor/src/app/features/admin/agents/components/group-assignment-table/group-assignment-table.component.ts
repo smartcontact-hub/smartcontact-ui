@@ -1,7 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, input, output, signal } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 
-import { IconComponent, IllustratedAvatarComponent } from '@shared/components';
+import { IllustratedAvatarComponent } from '@shared/components';
+import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ScToggleSwitchComponent as ToggleSwitchComponent } from '@smartcontact-hub/components';
 
 import { CHANNEL_LABEL_KEYS, GroupChannel } from '@features/admin/groups/data/groups-data';

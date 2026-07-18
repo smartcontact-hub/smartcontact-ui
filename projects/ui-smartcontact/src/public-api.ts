@@ -35,6 +35,8 @@ export * from './lib/components/datepicker/sc-datepicker.component';
 export * from './lib/components/inputnumber/sc-inputnumber.component';
 export * from './lib/components/multiselect/sc-multiselect.component';
 export * from './lib/components/group-popover/sc-group-popover.component';
+// El tipo del input `groups`: sin exportarlo, cada consumidor mantenía su copia.
+export * from './lib/components/group-popover/group-popover.types';
 export * from './lib/components/column-selector/sc-column-selector.component';
 export * from './lib/components/confirmdialog/sc-confirmdialog.component';
 export * from './lib/components/confirmdialog/sc-confirm.service';

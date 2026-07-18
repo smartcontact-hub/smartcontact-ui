@@ -9,6 +9,7 @@ import {
 
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
+import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 
 import {
@@ -20,7 +21,7 @@ import {
 } from '@core/services';
 import { PageHeaderService } from '@core/services';
 import { TOAST_LIFE } from '@core/utils/toast-life';
-import { IconComponent } from '@shared/components';
+
 import { ScToggleSwitchComponent as ToggleSwitchComponent } from '@smartcontact-hub/components';
 import { AgentsStore } from '@features/admin/agents/state/agents.store';
 

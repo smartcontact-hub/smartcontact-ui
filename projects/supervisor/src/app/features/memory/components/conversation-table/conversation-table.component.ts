@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, input, output, signal } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 
-import { IconComponent } from '@shared/components';
+import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ClickOutsideDirective } from '@core/directives';
 import { clampToViewport } from '@core/utils/viewport';
 

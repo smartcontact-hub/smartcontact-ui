@@ -28,6 +28,19 @@
     font-size: 1em;
 }
 
+/* opsz al default del Kit (14 = `SC_ICON_SIZE_DEFAULT` ↔ `--sc-icon-size`) en vez
+   de al 24 genérico: es el tamaño con el que se dibujó la iconografía de SC, así
+   que un icono heredado rima de trazo con uno pinneado. Decisión de marca
+   (2026-07-18) al converger las 3 apps a este componente.
+
+   El selector lleva `--optical-24` a propósito: solo pisa el opsz cuando está en
+   su DEFAULT. Si el consumidor pide `opticalSize` explícito, su clase es otra y
+   esta regla no casa — su elección manda. Los dos selectores además ganan por
+   especificidad a `.sc-icon--optical-24`, así que no depende del orden. */
+.sc-icon--inherit.sc-icon--optical-24 {
+    --sc-icon-optical-size: 14;
+}
+
 .sc-icon--weight-100 {
     --sc-icon-weight: 100;
 }

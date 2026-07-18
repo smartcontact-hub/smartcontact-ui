@@ -12,10 +12,11 @@ import {
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
 
+import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { DirtyAware } from '@core/guards';
 import { TopBarSlotService } from '@core/layout/top-bar/top-bar-slot.service';
 import { TOAST_LIFE } from '@core/utils/toast-life';
-import { IconComponent } from '@shared/components';
+
 import {
   ScButtonComponent as ButtonComponent,
   ScCheckboxComponent as CheckboxComponent,

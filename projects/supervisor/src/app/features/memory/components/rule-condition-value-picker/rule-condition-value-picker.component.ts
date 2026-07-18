@@ -1,3 +1,4 @@
+import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -13,7 +14,6 @@ import {
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 
-import { IconComponent } from '@shared/components';
 
 import { ConditionResolverService } from '../../data/condition-resolver.service';
 import type { ConditionRef, ConditionValue, RefKind } from '../../data/condition.types';

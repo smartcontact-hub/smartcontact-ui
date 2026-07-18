@@ -12,6 +12,7 @@ import {
 import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
+import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 
 import { ClickOutsideDirective, SortableHeaderDirective } from '@core/directives';
@@ -20,7 +21,7 @@ import { TopBarSlotService } from '@core/layout/top-bar/top-bar-slot.service';
 import { SelectionState } from '@core/utils/selection-state';
 import { clampToViewport } from '@core/utils/viewport';
 import { TOAST_LIFE } from '@core/utils/toast-life';
-import { IconComponent } from '@shared/components';
+
 import {
   ScBulkActionBarComponent as BulkActionBarComponent,
   useBulkEntityI18n,

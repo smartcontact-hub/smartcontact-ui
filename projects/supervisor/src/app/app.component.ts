@@ -17,9 +17,10 @@ import {
   ThemeService,
   UndoStackService,
 } from '@core/services';
+import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { NAV_ICONS } from '@core/icons/nav-icons';
 // confirm-host (+ su servicio) y el icono se quedan LOCALES en esta migración.
-import { ConfirmHostComponent, IconComponent } from '@shared/components';
+import { ConfirmHostComponent } from '@shared/components';
 
 type ToastSeverity = 'success' | 'info' | 'warn' | 'error' | 'secondary' | 'contrast';
 

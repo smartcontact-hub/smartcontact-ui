@@ -1,3 +1,4 @@
+import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -11,7 +12,6 @@ import { NavigationEnd, Router, RouterLink } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 import { filter, map, startWith } from 'rxjs/operators';
 
-import { IconComponent } from '@shared/components';
 import { NAV_ICONS } from '../../icons/nav-icons';
 import { NAV_SECTIONS } from './nav-data';
 import { normalizeRoutePath } from './path-utils';

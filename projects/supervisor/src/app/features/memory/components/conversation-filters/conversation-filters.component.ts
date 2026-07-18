@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, input, model, output } fr
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 
-import { IconComponent } from '@shared/components';
+import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ScDatepickerComponent as DatepickerComponent } from '@smartcontact-hub/components';
 import { ScInputTextComponent as InputTextComponent } from '@smartcontact-hub/components';
 import { ScMultiSelectComponent as MultiSelectComponent } from '@smartcontact-hub/components';

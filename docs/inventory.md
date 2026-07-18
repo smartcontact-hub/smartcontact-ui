@@ -52,7 +52,7 @@
 | `sc-form-danger-zone` | STANDARD | primeng/button | 3 inputs | — | ✓ | — |
 | `sc-form-section-nav` | CUSTOM | — | 4 inputs | — | ✓ | 5 |
 | `sc-gauge` | CUSTOM | — | 8 inputs | — | ✓ | — |
-| `sc-group-popover` | STANDARD | primeng/popover | 0 inputs | — | ✓ | 3 |
+| `sc-group-popover` | STANDARD | primeng/popover | 0 inputs | — | ✓ | 2 |
 | `sc-impact-preview-dialog` | STANDARD | primeng/button | 3 inputs | sc-dialog | ✓ | 2 |
 | `sc-inline-rename-cell` | CUSTOM | — | 2 inputs | — | ✓ | 3 |
 | `sc-inputgroup` | STANDARD | primeng/inputgroup | 2 inputs | — | ✓ | — |

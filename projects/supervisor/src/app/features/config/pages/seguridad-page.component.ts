@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 
+import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { PageHeaderService } from '@core/services';
-import { IconComponent } from '@shared/components';
 
 /**
  * Seguridad page (`/config/seguridad`).

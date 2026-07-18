@@ -1,8 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, input, output, signal } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
+import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 
-import { IconComponent } from '@shared/components';
 import {
   ScDialogComponent as DialogComponent,
   ScCheckboxComponent as CheckboxComponent,

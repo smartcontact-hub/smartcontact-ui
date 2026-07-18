@@ -11,13 +11,14 @@ import {
 } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
+import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 
 import { ClickOutsideDirective } from '@core/directives';
 import { clampToViewport } from '@core/utils/viewport';
 import { TopBarSlotService } from '@core/layout/top-bar/top-bar-slot.service';
 import { TOAST_LIFE } from '@core/utils/toast-life';
-import { IconComponent } from '@shared/components';
+
 import {
   ScBulkActionBarComponent as BulkActionBarComponent,
   useBulkEntityI18n,

@@ -1,3 +1,4 @@
+import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import {
   AfterViewInit,
   ChangeDetectionStrategy,
@@ -14,7 +15,6 @@ import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { PrimeTemplate } from 'primeng/api';
 
-import { IconComponent } from '@shared/components';
 import {
   ScInputTextComponent as InputTextComponent,
   ScSelectComponent as SelectComponent,

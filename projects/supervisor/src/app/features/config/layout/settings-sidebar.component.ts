@@ -1,8 +1,8 @@
+import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterLink, RouterLinkActive } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 
-import { IconComponent } from '@shared/components';
 
 interface SettingsNavItem {
   readonly path: string;

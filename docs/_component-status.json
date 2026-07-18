@@ -295,7 +295,7 @@
       "inputs": 0,
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 3
+      "usedInSupervisor": 2
     },
     {
       "name": "impact-preview-dialog",

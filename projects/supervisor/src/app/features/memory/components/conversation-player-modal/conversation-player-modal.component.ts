@@ -10,10 +10,11 @@ import {
 } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
+import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 
 import { TOAST_LIFE } from '@core/utils/toast-life';
-import { IconComponent } from '@shared/components';
+
 import { ScDialogComponent as DialogComponent } from '@smartcontact-hub/components';
 import type { Conversation, Recording, TranscriptionLine } from '../../data/conversation.types';
 import { DownloadModalComponent } from '../download-modal/download-modal.component';
