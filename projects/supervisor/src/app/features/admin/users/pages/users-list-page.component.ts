@@ -17,7 +17,7 @@ import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 
 import { SortableHeaderDirective } from '@core/directives';
-import { XlsxExportService } from '@core/services';
+import { UndoStackService, XlsxExportService } from '@core/services';
 import { TopBarSlotService } from '@core/layout/top-bar/top-bar-slot.service';
 import { SelectionState } from '@core/utils/selection-state';
 import { TOAST_LIFE } from '@core/utils/toast-life';
@@ -25,28 +25,43 @@ import { TOAST_LIFE } from '@core/utils/toast-life';
 import {
   ScBulkActionBarComponent as BulkActionBarComponent,
   useBulkEntityI18n,
+  BulkEditCommit,
+  BulkEditFieldOption,
+  ScBulkEditMenuComponent as BulkEditMenuComponent,
   ColumnDef,
   ScColumnSelectorComponent as ColumnSelectorComponent,
   ScDeleteEntityDialogComponent as DeleteEntityDialogComponent,
   ScEmptyStateComponent as EmptyStateComponent,
+  ImpactBadge,
+  ImpactItem,
+  ScImpactPreviewDialogComponent as ImpactPreviewDialogComponent,
   ScInlineRenameCellComponent as InlineRenameCellComponent,
   ScSearchComponent as SearchComponent,
 } from '@smartcontact-hub/components';
 import { USER_TYPE_LABEL_KEYS, USER_TYPES, User, UserType } from '../data/users-data';
-import { UsersStore } from '../state/users.store';
+import { UsersStore, type UserBulkField } from '../state/users.store';
 
 const COLUMN_PREF_KEY = 'sc-users-columns-v1';
 
 type SortField = 'name' | 'email' | 'type' | 'identifier' | 'status';
 
+interface PendingBulkEdit {
+  readonly field: UserBulkField;
+  readonly fieldLabel: string;
+  readonly value: unknown;
+  readonly valueLabel: string;
+}
+
 @Component({
   selector: 'sc-users-list-page',
   imports: [
     BulkActionBarComponent,
+    BulkEditMenuComponent,
     ButtonComponent,
     ColumnSelectorComponent,
     DeleteEntityDialogComponent,
     EmptyStateComponent,
+    ImpactPreviewDialogComponent,
     IconComponent,
     InlineRenameCellComponent,
     MenuModule,
@@ -65,6 +80,7 @@ export class UsersListPageComponent {
   private readonly translate = inject(TranslateService);
   private readonly router = inject(Router);
   private readonly topBarSlot = inject(TopBarSlotService);
+  private readonly undoStack = inject(UndoStackService);
   private readonly destroyRef = inject(DestroyRef);
 
   /** CTA proyectado a la TopBar (modelo "todo arriba" S59): la banda de
@@ -229,6 +245,83 @@ export class UsersListPageComponent {
 
   protected clearSelection(): void {
     this.selection.clear();
+  }
+
+  /* ── Edición masiva ──────────────────────────────────────────────────────
+   *
+   * Solo `type` y `status`. El resto de campos del usuario —nombre, email,
+   * identificador— son ÚNICOS por persona: ofrecerlos en lote sería ofrecer
+   * dejar a diez usuarios con el mismo email. */
+  protected readonly pendingBulkEdit = signal<PendingBulkEdit | null>(null);
+
+  protected readonly bulkEditFields = computed<readonly BulkEditFieldOption[]>(() => [
+    {
+      key: 'type',
+      label: this.translate.instant('users.table.type'),
+      values: USER_TYPES.map((t) => ({
+        value: t,
+        label: this.translate.instant(this.typeLabelKeys[t]),
+      })),
+    },
+    {
+      key: 'status',
+      label: this.translate.instant('users.table.status'),
+      values: (['active', 'inactive'] as const).map((s) => ({
+        value: s,
+        label: this.translate.instant(`users.status.${s}`),
+      })),
+    },
+  ]);
+
+  protected readonly impactItems = computed<readonly ImpactItem[]>(() => {
+    const ids = this.selectedIds();
+    return this.users()
+      .filter((u) => ids.has(u.id))
+      .map((u) => ({ id: u.id, name: u.name, hint: u.email }));
+  });
+
+  protected readonly impactBadge = computed<ImpactBadge | null>(() => {
+    const op = this.pendingBulkEdit();
+    return op ? { fieldLabel: op.fieldLabel, newValueLabel: op.valueLabel } : null;
+  });
+
+  protected onBulkEditCommit(commit: BulkEditCommit): void {
+    this.pendingBulkEdit.set({
+      field: commit.fieldKey as UserBulkField,
+      fieldLabel: commit.fieldLabel,
+      value: commit.value,
+      valueLabel: commit.valueLabel,
+    });
+  }
+
+  protected onBulkPreviewCancel(): void {
+    this.pendingBulkEdit.set(null);
+  }
+
+  protected onBulkPreviewConfirm(remainingIds: readonly number[]): void {
+    const op = this.pendingBulkEdit();
+    if (!op) return;
+
+    // Foto ANTES de tocar nada: es lo que devuelve el undo. Se guarda una copia
+    // y no una referencia, o el "deshacer" restauraría el estado ya cambiado.
+    const idSet = new Set(remainingIds);
+    const snapshot = this.users()
+      .filter((u) => idSet.has(u.id))
+      .map((u) => ({ ...u }));
+
+    this.usersStore.bulkUpdate(remainingIds, op.field, op.value);
+    this.pendingBulkEdit.set(null);
+    this.clearSelection();
+
+    this.undoStack.push(
+      this.translate.instant('common.bulk_updated', { count: remainingIds.length }),
+      this.translate.instant('common.change_reverted'),
+      () => {
+        for (const prev of snapshot) {
+          this.usersStore.updateUser(prev.id, prev);
+        }
+      },
+    );
   }
 
   protected onCreateClick(): void {

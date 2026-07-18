@@ -32,7 +32,7 @@
 | `sc-avatar` | EXTENDED | primeng/avatar, primeng/overlaybadge | 11 inputs | — | ✓ | — |
 | `sc-badge` | STANDARD | primeng/badge | 3 inputs | — | ✓ | — |
 | `sc-bulk-action-bar` | CUSTOM | — | 0 inputs | — | ✓ | 10 |
-| `sc-bulk-edit-menu` | STANDARD | primeng/button | 1 inputs | sc-select | ✓ | 2 |
+| `sc-bulk-edit-menu` | STANDARD | primeng/button | 1 inputs | sc-select | ✓ | 3 |
 | `sc-bulk-transcription-modal` | CUSTOM | — | 16 inputs | sc-button sc-toggleswitch | ✓ | — |
 | `sc-button` | EXTENDED | primeng/button | 15 inputs | — | ✓ | 61 |
 | `sc-card` | STANDARD | primeng/card | 2 inputs | — | ✓ | — |
@@ -54,7 +54,7 @@
 | `sc-form-section-nav` | CUSTOM | — | 4 inputs | — | ✓ | 5 |
 | `sc-gauge` | CUSTOM | — | 8 inputs | — | ✓ | — |
 | `sc-group-popover` | STANDARD | primeng/popover | 0 inputs | — | ✓ | 2 |
-| `sc-impact-preview-dialog` | STANDARD | primeng/button | 3 inputs | sc-dialog | ✓ | 2 |
+| `sc-impact-preview-dialog` | STANDARD | primeng/button | 3 inputs | sc-dialog | ✓ | 3 |
 | `sc-inline-rename-cell` | CUSTOM | — | 2 inputs | — | ✓ | 3 |
 | `sc-inputgroup` | STANDARD | primeng/inputgroup | 2 inputs | — | ✓ | — |
 | `sc-inputnumber` | EXTENDED | primeng/inputtext | CVA · 13 inputs | sc-field-label sc-field-msg | ✓ | 4 |
