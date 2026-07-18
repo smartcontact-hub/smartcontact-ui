@@ -123,24 +123,24 @@
   }
 
   <div modal-actions>
-    <p-button
+    <sc-button
       type="button"
-      size="small"
-      severity="secondary"
+      size="sm"
+      variant="secondary"
       [disabled]="isLoading()"
-      (onClick)="onCancel()"
+      (clicked)="onCancel()"
     >
       <span>{{ 'memory.bulk_transcription.close_btn' | translate }}</span>
-    </p-button>
-    <p-button
+    </sc-button>
+    <sc-button
       type="button"
-      size="small"
-      severity="primary"
+      size="sm"
+      variant="primary"
       [loading]="isLoading()"
       [disabled]="!canSubmit()"
-      (onClick)="onConfirm()"
+      (clicked)="onConfirm()"
     >
       <span>{{ 'memory.bulk_transcription.process_btn' | translate }}</span>
-    </p-button>
+    </sc-button>
   </div>
 </sc-dialog>

@@ -2,19 +2,19 @@
      Identidad → breadcrumb + campos del cuerpo (avatar/nombre en Identidad);
      Guardar/Cancelar → barra de arriba vía TopBarSlotService (ver el .ts). -->
 <ng-template #topbarActions>
-  <p-button type="button" size="small" severity="secondary" (onClick)="cancel()">
+  <sc-button type="button" size="sm" variant="secondary" (clicked)="cancel()">
     <span>{{ 'common.cancel' | translate }}</span>
-  </p-button>
-  <p-button
+  </sc-button>
+  <sc-button
     type="button"
-    size="small"
-    severity="primary"
+    size="sm"
+    variant="primary"
     [disabled]="!canSave()"
     [loading]="saving()"
-    (onClick)="save()"
+    (clicked)="save()"
   >
     <span>{{ 'common.save' | translate }}</span>
-  </p-button>
+  </sc-button>
 </ng-template>
 
 <div class="page">
@@ -266,12 +266,12 @@
     (cancelled)="cancelCascade()"
   >
     <div modal-actions>
-      <p-button type="button" size="small" severity="secondary" (onClick)="cancelCascade()">
+      <sc-button type="button" size="sm" variant="secondary" (clicked)="cancelCascade()">
         <span>{{ 'common.cancel' | translate }}</span>
-      </p-button>
-      <p-button type="button" size="small" severity="danger" (onClick)="confirmCascade()">
+      </sc-button>
+      <sc-button type="button" size="sm" variant="danger" (clicked)="confirmCascade()">
         <span>{{ 'groups.form.cascade.confirm' | translate }}</span>
-      </p-button>
+      </sc-button>
     </div>
   </sc-dialog>
 }

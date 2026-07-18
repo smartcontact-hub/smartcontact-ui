@@ -2,10 +2,10 @@
      identidad la da el breadcrumb de la TopBar; el CTA se proyecta a la barra
      vía TopBarSlotService (ver topbarActions en el .ts). -->
 <ng-template #topbarActions>
-  <p-button type="button" severity="primary" (onClick)="onNewCategory()">
+  <sc-button type="button" variant="primary" (clicked)="onNewCategory()">
     <sc-icon [name]="plusIcon" size="inherit" />
     <span>{{ 'memory.categories.new_category' | translate }}</span>
-  </p-button>
+  </sc-button>
 </ng-template>
 
 <div class="page">

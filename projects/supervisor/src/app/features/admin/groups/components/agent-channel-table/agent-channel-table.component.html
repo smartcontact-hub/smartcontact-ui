@@ -171,12 +171,12 @@
         <span class="actbl__bulk-count">
           {{ 'groups.form.assigned.bulk_count' | translate: { count: selectedIds().size } }}
         </span>
-        <p-button type="button" severity="secondary" size="small" (onClick)="bulkPause()">
+        <sc-button type="button" variant="secondary" size="sm" (clicked)="bulkPause()">
           <span>{{ 'groups.form.assigned.bulk_pause' | translate }}</span>
-        </p-button>
-        <p-button type="button" severity="danger" size="small" (onClick)="bulkUnassign()">
+        </sc-button>
+        <sc-button type="button" variant="danger" size="sm" (clicked)="bulkUnassign()">
           <span>{{ 'groups.form.assigned.bulk_unassign' | translate }}</span>
-        </p-button>
+        </sc-button>
       </div>
     }
   }

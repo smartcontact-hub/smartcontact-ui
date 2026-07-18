@@ -12,7 +12,7 @@ import {
 import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
-import { ButtonModule } from 'primeng/button';
+import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 
 import { ClickOutsideDirective, SortableHeaderDirective } from '@core/directives';
 import { XlsxExportService } from '@core/services';
@@ -48,7 +48,7 @@ interface ContextMenuPos {
   selector: 'sc-users-list-page',
   imports: [
     BulkActionBarComponent,
-    ButtonModule,
+    ButtonComponent,
     ClickOutsideDirective,
     ColumnSelectorComponent,
     DeleteEntityDialogComponent,

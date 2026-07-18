@@ -254,10 +254,10 @@
           {{ 'memory.rules.builder.cond.val.unfinished' | translate: { n: unfinishedCount() } }}
         </p>
       }
-      <p-button type="button" size="small" severity="secondary" (onClick)="onCancel()">
+      <sc-button type="button" size="sm" variant="secondary" (clicked)="onCancel()">
         <span>{{ 'common.cancel' | translate }}</span>
-      </p-button>
-      <p-button type="button" size="small" severity="primary" (onClick)="onSave()">
+      </sc-button>
+      <sc-button type="button" size="sm" variant="primary" (clicked)="onSave()">
         <span>
           @if (isEditMode()) {
             {{ 'memory.rules.builder.save_changes' | translate }}
@@ -265,7 +265,7 @@
             {{ 'memory.rules.builder.create_rule' | translate }}
           }
         </span>
-      </p-button>
+      </sc-button>
     </footer>
   </div>
 </div>

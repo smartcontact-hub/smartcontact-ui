@@ -8,10 +8,10 @@
     (scClickOutside)="closeCreatePanel()"
     [scClickOutsideEnabled]="creating()"
   >
-    <p-button type="button" severity="primary" (onClick)="onCreateClick()">
+    <sc-button type="button" variant="primary" (clicked)="onCreateClick()">
       <sc-icon [name]="plusIcon" size="inherit" />
       <span>{{ 'labels.create_button' | translate }}</span>
-    </p-button>
+    </sc-button>
 
     @if (creating()) {
       <div class="page__panel-anchor">
@@ -38,10 +38,10 @@
         (keydown)="onSearchKey($event)"
       />
 
-      <p-button type="button" severity="secondary" (onClick)="onExport()">
+      <sc-button type="button" variant="secondary" (clicked)="onExport()">
         <sc-icon [name]="downloadIcon" size="inherit" />
         <span>{{ 'labels.export_button' | translate }}</span>
-      </p-button>
+      </sc-button>
     </div>
 
     @if (labels().length === 0) {
@@ -202,7 +202,7 @@
 />
 
 <sc-bulk-action-bar [count]="selectedIds().size" [entity]="bulkEntity()" (clear)="clearSelection()">
-  <p-button type="button" severity="danger" (onClick)="requestDeleteSelection()">
+  <sc-button type="button" variant="danger" (clicked)="requestDeleteSelection()">
     <span>{{ 'common.delete' | translate }}</span>
-  </p-button>
+  </sc-button>
 </sc-bulk-action-bar>

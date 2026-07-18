@@ -11,7 +11,7 @@ import {
 } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
-import { ButtonModule } from 'primeng/button';
+import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 
 import { ClickOutsideDirective } from '@core/directives';
 import { clampToViewport } from '@core/utils/viewport';
@@ -42,7 +42,7 @@ interface ContextMenuPos {
   selector: 'sc-templates-page',
   imports: [
     BulkActionBarComponent,
-    ButtonModule,
+    ButtonComponent,
     ClickOutsideDirective,
     DeleteEntityDialogComponent,
     EmptyStateComponent,

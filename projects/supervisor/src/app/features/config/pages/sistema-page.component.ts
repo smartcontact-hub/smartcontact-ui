@@ -9,7 +9,7 @@ import {
 
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
-import { ButtonModule } from 'primeng/button';
+import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 
 import {
   ConfirmHostService,
@@ -83,7 +83,7 @@ const APP_DATA_PREFIX = 'sc-';
 @Component({
   selector: 'sc-sistema-page',
   imports: [
-    ButtonModule,
+    ButtonComponent,
     IconComponent,
     NumeracionEspecialSectionComponent,
     ToggleSwitchComponent,

@@ -11,7 +11,7 @@ import {
 } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
-import { ButtonModule } from 'primeng/button';
+import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 import { MenuModule } from 'primeng/menu';
 import type { MenuItem } from 'primeng/api';
 
@@ -39,7 +39,7 @@ import { RulesStore } from '../../state/rules.store';
 @Component({
   selector: 'sc-memory-categories-page',
   imports: [
-    ButtonModule,
+    ButtonComponent,
     CategoryFormModalComponent,
     EmptyStateComponent,
     IconComponent,

@@ -99,27 +99,27 @@
 
   @if (dirty()) {
     <div class="card__foot">
-      <p-button
+      <sc-button
         type="button"
-        size="small"
-        severity="secondary"
-        [outlined]="true"
-        (onClick)="discard()"
+        size="sm"
+        variant="secondary"
+        appearance="outlined"
+        (clicked)="discard()"
       >
         <span>{{ 'common.discard_changes' | translate }}</span>
-      </p-button>
-      <p-button
+      </sc-button>
+      <sc-button
         type="button"
-        size="small"
-        severity="primary"
+        size="sm"
+        variant="primary"
         [disabled]="saving()"
-        (onClick)="save()"
+        (clicked)="save()"
       >
         <sc-icon [name]="saveIcon" size="inherit" />
         <span>
           {{ (saving() ? 'config.aed.saving' : 'config.aed.save') | translate }}
         </span>
-      </p-button>
+      </sc-button>
     </div>
   }
 </section>

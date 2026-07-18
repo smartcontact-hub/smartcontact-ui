@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, input, output, signal } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
-import { ButtonModule } from 'primeng/button';
+import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 
 import { IconComponent, IllustratedAvatarComponent } from '@shared/components';
 import {
@@ -50,7 +50,7 @@ interface VisibleRow {
   selector: 'sc-agent-channel-table',
   standalone: true,
   imports: [
-    ButtonModule,
+    ButtonComponent,
     IconComponent,
     IllustratedAvatarComponent,
     ToggleSwitchComponent,

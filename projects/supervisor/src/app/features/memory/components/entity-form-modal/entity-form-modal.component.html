@@ -145,15 +145,15 @@
   </div>
 
   <div modal-actions>
-    <p-button type="button" size="small" severity="secondary" (onClick)="onCancel()">
+    <sc-button type="button" size="sm" variant="secondary" (clicked)="onCancel()">
       <span>{{ 'common.cancel' | translate }}</span>
-    </p-button>
-    <p-button
+    </sc-button>
+    <sc-button
       type="button"
-      size="small"
-      severity="primary"
+      size="sm"
+      variant="primary"
       [disabled]="!canSave()"
-      (onClick)="onSave()"
+      (clicked)="onSave()"
     >
       <span>
         @if (isEditMode()) {
@@ -162,6 +162,6 @@
           {{ 'memory.entities.form.create_entity' | translate }}
         }
       </span>
-    </p-button>
+    </sc-button>
   </div>
 </sc-dialog>

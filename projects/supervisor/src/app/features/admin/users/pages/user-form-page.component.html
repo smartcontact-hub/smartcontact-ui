@@ -2,19 +2,19 @@
      Identidad → breadcrumb + campos del cuerpo (foto/nombre en Identidad);
      Guardar/Cancelar → barra de arriba vía TopBarSlotService (ver el .ts). -->
 <ng-template #topbarActions>
-  <p-button type="button" size="small" severity="secondary" (onClick)="cancel()">
+  <sc-button type="button" size="sm" variant="secondary" (clicked)="cancel()">
     <span>{{ 'common.cancel' | translate }}</span>
-  </p-button>
-  <p-button
+  </sc-button>
+  <sc-button
     type="button"
-    size="small"
-    severity="primary"
+    size="sm"
+    variant="primary"
     [disabled]="!canSave()"
     [loading]="saving()"
-    (onClick)="save()"
+    (clicked)="save()"
   >
     <span>{{ 'common.save' | translate }}</span>
-  </p-button>
+  </sc-button>
 </ng-template>
 
 <div class="page">

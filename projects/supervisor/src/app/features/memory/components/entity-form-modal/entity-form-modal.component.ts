@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
-import { ButtonModule } from 'primeng/button';
+import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 
 import { IconComponent } from '@shared/components';
 import { ScInputTextComponent as InputTextComponent } from '@smartcontact-hub/components';
@@ -55,7 +55,7 @@ interface ListValueDraft {
 @Component({
   selector: 'sc-memory-entity-form-modal',
   imports: [
-    ButtonModule,
+    ButtonComponent,
     FormsModule,
     IconComponent,
     InputTextComponent,
