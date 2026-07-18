@@ -18,6 +18,7 @@ import type { MenuItem } from 'primeng/api';
 
 import { IconComponent } from '@shared/components';
 import { ScEmptyStateComponent as EmptyStateComponent } from '@smartcontact-hub/components';
+import { ScMessageComponent as MessageComponent } from '@smartcontact-hub/components';
 import { ConfirmHostService } from '@core/services/confirm-host.service';
 import { TopBarSlotService } from '@core/layout/top-bar/top-bar-slot.service';
 import { TOAST_LIFE } from '@core/utils/toast-life';
@@ -41,6 +42,7 @@ import { RulesStore } from '../../state/rules.store';
     EmptyStateComponent,
     IconComponent,
     MenuModule,
+    MessageComponent,
     RouterLink,
     TranslateModule,
   ],
@@ -72,6 +74,7 @@ export class RulesPageComponent {
   protected readonly activeRules = this.rulesStore.activeRules;
   protected readonly inactiveRules = this.rulesStore.inactiveRules;
   protected readonly isEmpty = this.rulesStore.isEmpty;
+  protected readonly hasActive = this.rulesStore.hasActive;
 
   /** Una sola tabla: las activas primero, luego las inactivas (cada grupo
    *  por lastModified desc). El estado va en columna, sin secciones separadas. */

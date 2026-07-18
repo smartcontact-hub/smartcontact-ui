@@ -214,3 +214,9 @@
 /* .rules-status y .rules-kebab-btn promovidos a `main.scss` global en
  * iter 11a para que CategoriesPage + EntitiesPage los consuman sin
  * duplicar. */
+
+/* Aviso "0 reglas activas" (DD-30 permite quedarse sin ninguna). */
+.rules-no-active {
+  display: block;
+  margin-bottom: var(--sc-spacing-1);
+}

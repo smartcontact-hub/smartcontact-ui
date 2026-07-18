@@ -64,6 +64,22 @@
           "
         />
       </div>
+
+      <!-- Descripción (opcional): el modelo y el guardado ya existían; solo
+           faltaba pintarla — coherente con el modal de categorías. -->
+      <div class="rule-block__row">
+        <label for="rule-description" class="rule-builder__field-label">
+          {{ 'memory.rules.builder.description_label' | translate }}
+        </label>
+        <sc-textarea
+          [inputId]="'rule-description'"
+          [rows]="2"
+          [fluid]="true"
+          [placeholder]="'memory.rules.builder.description_placeholder' | translate"
+          [value]="description()"
+          (valueChange)="setDescription($event)"
+        />
+      </div>
     </section>
 
     <!-- Descripción en vivo del alcance ("Se cumple si…") — encima del 02.

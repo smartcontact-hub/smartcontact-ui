@@ -148,12 +148,13 @@ export class RulesWalkthroughComponent {
   readonly treeAfter: Snippet = {
     src: 'ahora · features/memory/data/condition.types.ts',
     code: `interface Condition {
-  field: ConditionFieldId;     // servicio · grupo · agente · tipificación · dirección · duración
+  field: ConditionFieldId;     // servicio · grupo · agente · tipificación · dirección · duración · categoría IA
   operator: ConditionOperator; // es · no es · más de · menos de · entre
   value: ConditionValue;       // "Todos" · referencias · un enum · un número
 }
 interface ConditionTree {
-  match: 'all' | 'any';        // Y / O entre grupos
+  // Y dentro de una alternativa; O entre alternativas (así se expresa cualquier combinación)
+  match: 'all' | 'any';
   groups: { match: 'all' | 'any'; conditions: Condition[] }[];
 }`,
   };
@@ -167,7 +168,8 @@ type ConditionRef =
   | { kind: 'group'; id: number }       // la cola
   | { kind: 'agent'; id: number }
   | { kind: 'agentGroup'; id: number }  // ese grupo = sus miembros AHORA
-  | { kind: 'tipificacion'; id: number };`,
+  | { kind: 'tipificacion'; id: number }
+  | { kind: 'category'; id: string };   // categoría IA (catálogo vivo)`,
   };
 
   /* ─────────── Beat: prioridad y conflictos ─────────── */
@@ -262,7 +264,7 @@ function describeConditionTree(tree, labelFor) {
     },
     {
       t: 'El alcance combina con Y y O · hecho',
-      d: 'Servicios, grupos, agentes y tipificación, mezclados con Y u O y agrupados si hace falta. La tipificación es una entidad más (no una condición suelta) y es el caso de valor más claro: «quiero solo las que acabaron en venta».',
+      d: 'Dentro de una alternativa las condiciones se combinan con Y; añadir otra alternativa es el O. Esa estructura fija expresa cualquier combinación sin interruptores que aprender. La tipificación es una entidad más (no una condición suelta) y es el caso de valor más claro: «quiero solo las que acabaron en venta».',
     },
     {
       t: 'Referencias vivas, no nombres congelados · hecho',
@@ -339,11 +341,11 @@ function describeConditionTree(tree, labelFor) {
         },
         {
           t: 'Una sola tabla, no Activas/Inactivas',
-          d: 'Unificar las dos secciones en una tabla: como solo puede haber una regla activa (el store lo fuerza), la columna Estado ya distingue Activa/Inactiva. Menos ruido.',
+          d: 'Unificar las dos secciones en una tabla: la columna Estado ya distingue Activa/Inactiva. Menos ruido. (Escrito bajo el modelo «una sola activa» de entonces; ese límite se levantó el 17 jul — la tabla única sigue vigente.)',
         },
         {
-          t: 'Modal de confirmación al activar',
-          d: 'Hoy activar una regla desactiva la anterior en SILENCIO. Añadir confirmación «esto desactivará [X] · afectará a…»: (a) tienes una activa y activas otra → confirmar; (b) todas inactivas, creas una y activas el toggle → sin modal; (c) tienes una activa, creas otra y activas su toggle → confirmar.',
+          t: 'Modal de confirmación al activar — resuelto el 17 jul',
+          d: 'Entonces, activar una regla desactivaba la anterior en SILENCIO y se pedía una confirmación «esto desactivará [X]». Con varias activas a la vez (17 jul) ya no se desactiva nada al activar: el modal dejó de ser necesario.',
         },
       ],
     },

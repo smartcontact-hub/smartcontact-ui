@@ -303,6 +303,7 @@
     "rules": {
       "page_title": "Rules",
       "new_rule": "New rule",
+      "no_active_banner": "No rule is active: new conversations won't be transcribed or classified automatically.",
       "empty_title": "No rules yet",
       "empty_desc": "Rules automate what gets recorded, transcribed and analyzed from conversations entering the system.",
       "empty_cta": "Create first rule",
@@ -412,12 +413,12 @@
         "updated_toast": "Rule updated",
         "cond": {
           "add_condition": "Add condition",
-          "add_group": "Add group",
+          "add_group": "Add alternative (OR)",
           "empty_title": "No conditions",
           "empty_body": "Applies to every conversation.",
-          "remove_group": "Remove group",
+          "remove_group": "Remove alternative",
           "remove_condition": "Remove condition",
-          "group_n": "Group {{n}}",
+          "group_n": "Alternative {{n}}",
           "impact_title": "Estimated impact",
           "impact": "Would affect {{count}} of the last {{total}} conversations.",
           "impact_note": "type and category are evaluated in the backend",

@@ -1,6 +1,6 @@
 {
   "generated": "component-audit.mjs",
-  "summary": "49 componentes · 15 custom · 11 standard · 23 extended · 29 usados en Supervisor.",
+  "summary": "49 componentes · 15 custom · 11 standard · 23 extended · 31 usados en Supervisor.",
   "components": [
     {
       "name": "avatar",
@@ -381,7 +381,7 @@
       "inputs": 6,
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 0
+      "usedInSupervisor": 1
     },
     {
       "name": "multiselect",
@@ -573,7 +573,7 @@
       "inputs": 13,
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 0
+      "usedInSupervisor": 1
     },
     {
       "name": "toast",

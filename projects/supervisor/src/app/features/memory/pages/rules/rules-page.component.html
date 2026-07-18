@@ -7,14 +7,18 @@
     <sc-icon [name]="plusIcon" size="inherit" />
     <span>{{ 'memory.rules.new_rule' | translate }}</span>
   </p-button>
-  <p-menu
-    #newRuleMenu
-    [model]="newRuleMenuItems"
-    [popup]="true"
-    appendTo="body"
-    styleClass="rules-new-menu"
-  />
 </ng-template>
+
+<!-- Menú "nueva regla" compartido: lo abren el CTA de la TopBar y el del empty
+     state (mismo modelo, elección de tipo en ambos). appendTo="body" → da igual
+     dónde viva en el DOM; se ancla al botón que le pasa su $event. -->
+<p-menu
+  #newRuleMenu
+  [model]="newRuleMenuItems"
+  [popup]="true"
+  appendTo="body"
+  styleClass="rules-new-menu"
+/>
 
 <div class="page">
   <div class="page__inner">
@@ -24,7 +28,7 @@
         titleKey="memory.rules.empty_title"
         bodyKey="memory.rules.empty_desc"
         ctaKey="memory.rules.empty_cta"
-        (cta)="onNewRule()"
+        (cta)="newRuleMenu.toggle($event)"
       />
     } @else {
       <!-- Menú kebab ÚNICO y compartido (antes 1 <p-menu> por fila): su modelo
@@ -37,6 +41,15 @@
         appendTo="body"
         styleClass="rules-kebab-menu"
       />
+      <!-- Aviso no bloqueante (DD-30 permite 0 activas): sin ninguna regla activa
+           las conversaciones nuevas no se transcriben ni clasifican solas. -->
+      @if (!hasActive()) {
+        <sc-message
+          class="rules-no-active"
+          severity="info"
+          [text]="'memory.rules.no_active_banner' | translate"
+        />
+      }
       <!-- Una sola tabla: el estado (activa/inactiva) va en columna, sin
            secciones separadas. Cada fila enlaza al constructor. -->
       <section class="rules-section">

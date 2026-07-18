@@ -83,7 +83,7 @@
         <figure class="compare__shot">
           <img
             src="/usage/conversaciones-reglas-nueva.png"
-            alt="Constructor nuevo: árbol de condiciones campo·operador·valor con Y u O"
+            alt="Constructor nuevo: árbol de condiciones campo·operador·valor — Y dentro de cada alternativa, O entre alternativas"
             loading="lazy"
             role="button"
             tabindex="0"
@@ -92,7 +92,7 @@
             (keydown.enter)="openZoom($event.currentTarget)"
             (keydown.space)="openZoom($event.currentTarget); $event.preventDefault()"
           />
-          <figcaption>Un árbol de condiciones <code>campo · operador · valor</code>, con <strong>Y</strong> u <strong>O</strong>.</figcaption>
+          <figcaption>Un árbol de condiciones <code>campo · operador · valor</code>: <strong>Y</strong> dentro de cada alternativa, <strong>O</strong> entre alternativas.</figcaption>
         </figure>
       </div>
     </div>
@@ -296,6 +296,11 @@
       <strong>Qué son las transcripciones múltiples</strong>: una misma conversación (una llamada) puede tener varios
       tramos de grabación, y cada tramo se transcribe por separado. Por eso una llamada con N tramos cuenta como N
       audios, y cada tramo lleva su propio estado de transcripción.
+    </p>
+    <p>
+      Esto vive en el lado de <strong>Conversaciones</strong> (el reproductor multi-tramo y las acciones en bloque),
+      no en el constructor de reglas: la regla decide <em>qué</em> se transcribe a futuro; los tramos son cómo se
+      almacena y gestiona lo ya transcrito.
     </p>
     <ul class="parts">
       <li>
