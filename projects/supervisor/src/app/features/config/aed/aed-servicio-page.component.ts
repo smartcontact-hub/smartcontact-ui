@@ -198,14 +198,44 @@ export class AedServicioPageComponent implements OnDestroy, DirtyAware {
 
   /** Confirma el alta desde el modal: añade el estado (si no vacío ni duplicado)
    * y cierra. El chip nuevo entra animado (CSS `chip-appear`, ver SCSS). */
+  /*
+   * R6 en el alta de estados.
+   *
+   * Antes, `confirmAddReason` comprobaba el duplicado y, si lo era, NO añadía
+   * nada, cerraba el modal y limpiaba el campo. Desde fuera era indistinguible
+   * de un fallo de la aplicación: escribías un nombre, pulsabas Añadir y no
+   * pasaba nada. El sistema descartaba tu texto en silencio.
+   *
+   * Misma regla que en los formularios admin: el error se dice por CONTENIDO
+   * equivocado y en vivo; el campo vacío calla, porque aún no es un error.
+   */
+  protected readonly draftError = computed<string | null>(() => {
+    const value = this.draft().trim();
+    if (value.length === 0) return null;
+    return this.form().estadosNoDisponibles.includes(value)
+      ? 'config.aed.subpages.servicio.estados.error_duplicate'
+      : null;
+  });
+
+  protected readonly canAddReason = computed(
+    () => this.draft().trim().length > 0 && this.draftError() === null,
+  );
+
+  /** Por qué no se puede añadir, en palabras: un botón gris sin motivo obliga
+   *  a adivinar. Vacío no se explica en el botón —lo dice el propio campo con
+   *  su placeholder— pero el duplicado sí. */
+  protected readonly addReasonDisabledReason = computed<string | null>(() =>
+    this.canAddReason() ? null : this.draftError(),
+  );
+
   protected confirmAddReason(): void {
-    const next = this.draft().trim();
-    if (next && !this.form().estadosNoDisponibles.includes(next)) {
-      this.form.update((f) => ({
-        ...f,
-        estadosNoDisponibles: [...f.estadosNoDisponibles, next],
-      }));
-    }
+    // La guarda se mantiene: `keyup.enter` puede disparar con el botón
+    // deshabilitado, así que el estado inválido no puede colarse por ahí.
+    if (!this.canAddReason()) return;
+    this.form.update((f) => ({
+      ...f,
+      estadosNoDisponibles: [...f.estadosNoDisponibles, this.draft().trim()],
+    }));
     this.modalOpen.set(false);
     this.draft.set('');
   }

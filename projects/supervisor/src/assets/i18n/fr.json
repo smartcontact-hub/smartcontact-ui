@@ -1523,7 +1523,8 @@
             "modal_title": "Ajouter un état",
             "modal_subtitle": "Ajoutez des états personnalisés qui seront visibles par les agents à côté des états par défaut.",
             "modal_input_label": "Nouvel état",
-            "modal_input_placeholder": "Ex : Pause"
+            "modal_input_placeholder": "Ex : Pause",
+            "error_duplicate": "Cet état existe déjà"
           },
           "inactividad": {
             "title": "Verrouillage du poste par inactivité",

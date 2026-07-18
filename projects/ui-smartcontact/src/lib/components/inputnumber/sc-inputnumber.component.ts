@@ -163,7 +163,37 @@ export class ScInputNumberComponent implements ControlValueAccessor {
     this._onChange(next);
   }
 
+  /**
+   * Aplica `min`/`max` AL SALIR del campo, y esto no es un extra: hasta ahora
+   * el componente los declaraba en su API y solo los pintaba como atributos
+   * HTML, que no impiden teclear nada. O sea que todo consumidor que pasaba
+   * `[min]="0"` se creía protegido y no lo estaba.
+   *
+   * El síntoma era feo de verdad: en la página de AED se podía escribir -5 en
+   * el campo de cuarentena; la página rechazaba el valor por su cuenta y se
+   * quedaba con el anterior, pero el campo seguía enseñando -5. Medido:
+   * pantalla y modelo discrepando, y el usuario sin enterarse de que lo suyo
+   * se había descartado.
+   *
+   * Se acota en `blur` y no en `input` a propósito: acotar mientras teclea
+   * pelea con el usuario — para llegar a 50 con `max` 40 hay que pasar por el
+   * 5, y no queremos corregirle a mitad del número.
+   */
   protected onBlur(): void {
     this._onTouched();
+
+    const current = this.value();
+    if (current === null) return;
+
+    const min = this.min();
+    const max = this.max();
+    let next = current;
+    if (min !== undefined && next < min) next = min;
+    if (max !== undefined && next > max) next = max;
+
+    if (next !== current) {
+      this.value.set(next);
+      this._onChange(next);
+    }
   }
 }

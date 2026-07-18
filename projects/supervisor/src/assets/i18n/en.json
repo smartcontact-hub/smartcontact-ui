@@ -1523,7 +1523,8 @@
             "modal_title": "Add status",
             "modal_subtitle": "Add custom states that will be visible to agents alongside the default ones.",
             "modal_input_label": "New status",
-            "modal_input_placeholder": "E.g. Break"
+            "modal_input_placeholder": "E.g. Break",
+            "error_duplicate": "That state already exists"
           },
           "inactividad": {
             "title": "Idle workstation lock",

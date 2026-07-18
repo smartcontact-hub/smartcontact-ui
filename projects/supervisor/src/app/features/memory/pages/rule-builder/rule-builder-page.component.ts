@@ -262,6 +262,20 @@ export class RuleBuilderPageComponent implements DirtyAware {
     this.pristine.set(untracked(() => this.buildSnapshot()));
   }
 
+  /*
+   * R6 aquí es una VARIANTE deliberada, no un despiste: el botón está siempre
+   * activo y la validación se revela al INTENTO de guardar. Los formularios de
+   * admin hacen lo contrario (botón deshabilitado con su motivo).
+   *
+   * No se unifican, y el criterio es la longitud del formulario. En admin caben
+   * dos campos en pantalla: un botón gris con su motivo te lleva directo a lo
+   * que falta. Aquí lo que bloquea puede estar tres secciones más abajo, dentro
+   * de un árbol de condiciones — un botón gris te dejaría cazando. Pulsar y que
+   * te lo cuente todo de golpe es más barato.
+   *
+   * Petición explícita de Rafa, además: "botón siempre activo, valida en click".
+   * Si alguien viene a 'converger' esto con admin, esto es lo que rompería.
+   */
   protected onSave(): void {
     this.submitted.set(true);
     if (!this.canSave()) return;

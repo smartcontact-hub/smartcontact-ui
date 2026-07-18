@@ -373,12 +373,17 @@
       [icon]="addIcon"
       width="420px"
     >
+      <!-- R6: el duplicado se dice EN VIVO. Antes, escribir un estado que ya
+           existía cerraba el modal y no añadía nada, sin explicar por qué: el
+           sistema descartaba lo que habías escrito en silencio. El campo vacío
+           sigue callado — todavía no es un error, es un campo sin rellenar. -->
       <sc-inputtext
         inputId="general-new-estado"
         [label]="'config.aed.subpages.servicio.estados.modal_input_label' | translate"
         [placeholder]="'config.aed.subpages.servicio.estados.modal_input_placeholder' | translate"
         [value]="draft()"
         (valueChange)="draft.set($event)"
+        [error]="draftError() ? (draftError()! | translate) : undefined"
         (keyup.enter)="confirmAddReason()"
       />
       <div modal-actions>
@@ -391,7 +396,8 @@
         <sc-button
           variant="primary"
           [label]="'config.aed.subpages.servicio.estados.add' | translate"
-          [disabled]="!draft().trim()"
+          [disabled]="!canAddReason()"
+          [attr.title]="addReasonDisabledReason() ? (addReasonDisabledReason()! | translate) : null"
           (clicked)="confirmAddReason()"
         />
       </div>
