@@ -447,7 +447,9 @@
           "impact_unit": "conversations",
           "impact_caption": "of the last {{total}} analysed",
           "est_day_label": "Estimated per day",
-          "est_month_label": "Estimated per month"
+          "est_month_label": "Estimated per month",
+          "scope_lead": "Applies when:",
+          "scope_all": "all conversations"
         },
         "ai_row_recommended": "Recommended",
         "ai_row_summary_desc": "Extracts the key points and agreements from each transcribed conversation.",
