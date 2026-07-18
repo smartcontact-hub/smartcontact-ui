@@ -118,9 +118,13 @@
           <div class="scope-desc" aria-live="polite">
             <sc-icon class="scope-desc__icon" name="info" [size]="15" aria-hidden="true" />
             <span class="scope-desc__body">
-              <span class="scope-desc__lead">Se cumple si:</span>
+              <span class="scope-desc__lead">{{
+                'memory.rules.builder.cond.scope_lead' | translate
+              }}</span>
               @if (scope.empty) {
-                <span class="scope-desc__all">todas las conversaciones</span>
+                <span class="scope-desc__all">{{
+                  'memory.rules.builder.cond.scope_all' | translate
+                }}</span>
               } @else {
                 @for (group of scope.groups; track $index; let gi = $index) {
                   @if (gi > 0) {
