@@ -336,7 +336,6 @@
       "deleted_toast": "Regra «{{name}}» eliminada",
       "duplicated_toast": "Regra duplicada. A cópia fica inativa.",
       "builder": {
-        "back": "Voltar à lista",
         "crumb_rules": "Regras",
         "title_new": "Nova regra",
         "title_edit": "Editar regra",

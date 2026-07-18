@@ -24,13 +24,6 @@
   /* Cabecera contextual proyectada por una página-formulario (constructor de
    * reglas): título + subtítulo a la izquierda; el lead crece a 2 líneas y el
    * avatar de la derecha sigue centrado por el `align-items: center` del header. */
-  &__lead-slot {
-    display: flex;
-    align-items: center;
-    gap: var(--sc-spacing-0-875);
-    min-width: 0;
-  }
-
   /* Slot contextual (experiment S59): empujado a la derecha con margin-left
    * auto para sentarse junto al avatar. Separación a su izquierda del
    * breadcrumb y a su derecha del avatar. */

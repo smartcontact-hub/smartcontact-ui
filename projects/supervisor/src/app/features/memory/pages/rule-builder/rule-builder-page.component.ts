@@ -93,10 +93,6 @@ export class RuleBuilderPageComponent implements DirtyAware {
   private readonly topBarSlot = inject(TopBarSlotService);
   private readonly destroyRef = inject(DestroyRef);
 
-  /** Cabecera (back + título + tipo + subtítulo) proyectada a la TopBar, junto
-   *  al avatar — sustituye la banda de header propia. */
-  private readonly topbarHeader = viewChild<TemplateRef<unknown>>('topbarHeader');
-
   /** Acciones primarias (Cancelar / Crear) proyectadas a la TopBar — suben del
    *  dock inferior, que desaparece: guardar deja de vivir lejos de la
    *  navegación (feedback del recorrido del 1-jul). */
@@ -108,7 +104,6 @@ export class RuleBuilderPageComponent implements DirtyAware {
     this.categoriesStore.activeCategories().map((c) => ({ value: c.id, label: c.name })),
   );
 
-  protected readonly backIcon = 'arrow_back';
   protected readonly externalIcon = 'open_in_new';
   protected readonly sparklesIcon = 'auto_awesome';
 
@@ -242,16 +237,15 @@ export class RuleBuilderPageComponent implements DirtyAware {
       this.pristine.set(untracked(() => this.buildSnapshot()));
     });
 
-    // Proyecta la cabecera (título + subtítulo) a la TopBar — convive con el
-    // avatar a la derecha; se limpia al salir de la ruta.
+    // Solo las ACCIONES suben a la TopBar. La identidad de la página la da el
+    // breadcrumb declarado en `memory.routes.ts` (Ola 1), como en los tres
+    // formularios hermanos de admin — antes esta página se lo saltaba
+    // proyectando su propia cabecera al lead.
     afterNextRender(() => {
-      const tpl = this.topbarHeader();
-      if (tpl) this.topBarSlot.setLead(tpl);
       const actions = this.topbarActions();
       if (actions) this.topBarSlot.setActions(actions);
     });
     this.destroyRef.onDestroy(() => {
-      this.topBarSlot.clearLead();
       this.topBarSlot.clearActions();
     });
   }

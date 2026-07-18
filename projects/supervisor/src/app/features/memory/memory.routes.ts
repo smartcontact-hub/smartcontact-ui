@@ -36,8 +36,26 @@ export const memoryRoutes: Routes = [
     loadComponent: () =>
       import('./pages/rules/rules-page.component').then((m) => m.RulesPageComponent),
   },
+  /*
+   * El constructor cuelga de `reglas` conceptualmente, pero es su HERMANO en
+   * el árbol de rutas (`reglas/nueva`, no `reglas/:id` bajo `reglas`). Por eso
+   * declara el trail completo en forma de array con `link` explícito al padre:
+   * la URL acumulada aquí es la del propio constructor, no la del listado.
+   * Mismo patrón que `labels`/`plantillas` en `admin.routes.ts`.
+   *
+   * El label de la hoja es estático por ruta —crear y editar son rutas
+   * distintas—, así que no hace falta `BreadcrumbService.set()`: se reusan las
+   * claves que ya tenía el título (traducidas en los 4 locales), igual que
+   * hacen los tres formularios hermanos de admin.
+   */
   {
     path: 'reglas/nueva',
+    data: {
+      breadcrumb: [
+        { labelKey: 'memory.rules.page_title', link: '/conversaciones/reglas' },
+        { labelKey: 'memory.rules.builder.title_new' },
+      ],
+    },
     canDeactivate: [formDirtyGuard],
     loadComponent: () =>
       import('./pages/rule-builder/rule-builder-page.component').then(
@@ -46,6 +64,12 @@ export const memoryRoutes: Routes = [
   },
   {
     path: 'reglas/:id',
+    data: {
+      breadcrumb: [
+        { labelKey: 'memory.rules.page_title', link: '/conversaciones/reglas' },
+        { labelKey: 'memory.rules.builder.title_edit' },
+      ],
+    },
     canDeactivate: [formDirtyGuard],
     loadComponent: () =>
       import('./pages/rule-builder/rule-builder-page.component').then(
