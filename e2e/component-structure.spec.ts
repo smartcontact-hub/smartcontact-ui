@@ -67,7 +67,10 @@ const normalize = (html: string): string =>
 
 const structureOf = async (page: Page, route: string, tag: string): Promise<string[]> => {
   await page.goto(`/#/components/${route}`);
-  await page.waitForLoadState('networkidle');
+  // Best-effort: acotada y sin `throw`. La espera es de conveniencia; la
+  // aserción de verdad es la de abajo. Sin acotar tumba el build sin que falle
+  // ninguna aserción (pasó en CI con el datepicker).
+  await page.waitForLoadState('networkidle', { timeout: 10_000 }).catch(() => undefined);
   // Que exista al menos uno: si la ruta del demo cambia de nombre, este test
   // debe fallar en vez de fijar un baseline vacío y dar verde para siempre.
   await expect(page.locator(tag).first()).toBeVisible();
