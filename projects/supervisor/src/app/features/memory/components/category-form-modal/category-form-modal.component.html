@@ -116,12 +116,13 @@
               <p class="category-form__link-alert-tip">
                 {{ 'memory.categories.linking.bidirectional_tip' | translate }}
               </p>
+              <!-- Mismo tab + `categoria`: el builder preselecciona la categoría y la
+                   vinculación se deriva de `Rule.categorias` al guardar. En crear
+                   (sin id aún) el param se omite y el builder abre normal. -->
               <a
                 class="category-form__link-create-btn"
                 routerLink="/conversaciones/reglas/nueva"
-                [queryParams]="{ type: 'classification' }"
-                target="_blank"
-                rel="noopener"
+                [queryParams]="{ type: 'classification', categoria: category()?.id }"
               >
                 <sc-icon [name]="plusIcon" size="inherit" />
                 {{ 'memory.categories.linking.create_first_rule' | translate }}

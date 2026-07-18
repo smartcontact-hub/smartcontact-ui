@@ -23,6 +23,7 @@ import { TopBarSlotService } from '@core/layout/top-bar/top-bar-slot.service';
 import { IconComponent } from '@shared/components';
 import { ScInputTextComponent as InputTextComponent } from '@smartcontact-hub/components';
 import { ScMultiSelectComponent as MultiSelectComponent } from '@smartcontact-hub/components';
+import { ScTextareaComponent as TextareaComponent } from '@smartcontact-hub/components';
 import { ScToggleSwitchComponent as ToggleSwitchComponent } from '@smartcontact-hub/components';
 
 import { RuleConditionBuilderComponent } from '../../components/rule-condition-builder/rule-condition-builder.component';
@@ -71,6 +72,7 @@ import { RulesStore } from '../../state/rules.store';
     MultiSelectComponent,
     RouterLink,
     RuleConditionBuilderComponent,
+    TextareaComponent,
     ToggleSwitchComponent,
     TranslateModule,
   ],
@@ -217,7 +219,20 @@ export class RuleBuilderPageComponent implements DirtyAware {
       if (typeParam === 'transcription' || typeParam === 'classification') {
         this.ruleType.set(typeParam);
       }
-      // New rule: capture the blank baseline so the guard only fires after edits.
+      // Cross-link desde el modal de categoría (`?categoria=<id>`): preselecciona
+      // esa categoría a detectar — la vinculación se deriva de `Rule.categorias`
+      // al guardar. Solo si existe y está activa (el multiselect solo lista
+      // activas). `untracked`: no añadir el store de categorías como dep del efecto.
+      const catParam = this.route.snapshot.queryParamMap.get('categoria');
+      if (catParam && typeParam === 'classification') {
+        const cat = untracked(() => this.categoriesStore.getCategory(catParam));
+        if (cat?.isActive) {
+          this.aiAnalysis.set(true);
+          this.categorias.set([catParam]);
+        }
+      }
+      // New rule: capture the baseline AFTER the preselección — so arriving from
+      // the cross-link doesn't mark the fresh form as dirty.
       this.pristine.set(untracked(() => this.buildSnapshot()));
     });
 

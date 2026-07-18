@@ -1,6 +1,7 @@
 import { inject, Injectable } from '@angular/core';
 
 import { GroupAgentLinksStore } from '../../admin/services/group-agent-links.store';
+import { CategoriesStore } from '../state/categories.store';
 import type { ConditionRef } from './condition.types';
 import {
   AGENT_ENTITIES,
@@ -26,12 +27,15 @@ import {
 @Injectable({ providedIn: 'root' })
 export class ConditionResolverService {
   private readonly links = inject(GroupAgentLinksStore);
+  private readonly categoriesStore = inject(CategoriesStore);
 
   /** Catálogos para los pickers (Bloque 3). Estáticos (mock); en real, un store. */
   readonly agents: readonly AgentEntity[] = AGENT_ENTITIES;
   readonly groups: readonly EntityRef[] = GROUP_ENTITIES;
   readonly tipificaciones: readonly TipificacionEntity[] = TIPIFICACION_ENTITIES;
   readonly services: readonly string[] = SERVICE_NAMES;
+  /** Categorías IA: catálogo VIVO (tienen CRUD en la app) — señal, no snapshot. */
+  readonly categories = this.categoriesStore.activeCategories;
 
   /** Etiqueta legible de una referencia. */
   label(ref: ConditionRef): string {
@@ -47,8 +51,9 @@ export class ConditionResolverService {
       case 'tipificacion':
         return tipificacionById_(ref.id)?.name ?? `Tipificación #${ref.id}`;
       case 'category':
-        // Bloque 2: resolver vía CategoriesStore cuando se añada el campo.
-        return ref.id;
+        // Contra TODAS (no solo activas): un chip de categoría desactivada
+        // debe seguir mostrando su nombre, no el id crudo.
+        return this.categoriesStore.getCategory(ref.id)?.name ?? ref.id;
     }
   }
 

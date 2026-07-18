@@ -25,7 +25,7 @@
 ## Clasificación (auto-generada)
 
 <!-- @audit:components — TABLA GENERADA por `node scripts/component-audit.mjs --write`. NO editar a mano. -->
-**49 componentes** · 15 custom · 11 standard · 23 extended · 29 usados en Supervisor.
+**49 componentes** · 15 custom · 11 standard · 23 extended · 31 usados en Supervisor.
 
 | Componente | Tipo | PrimeNG base | API propia | Anidados | Demo | Usos en Supervisor |
 |---|---|---|---|---|---|---|
@@ -59,7 +59,7 @@
 | `sc-inputnumber` | EXTENDED | primeng/inputtext | CVA · 13 inputs | — | ✓ | 4 |
 | `sc-inputtext` | EXTENDED | primeng/inputtext | CVA · 18 inputs | — | ✓ | 29 |
 | `sc-keyboard-shortcuts` | CUSTOM | — | 1 inputs | — | ✓ | 2 |
-| `sc-message` | EXTENDED | primeng/message | 6 inputs | — | ✓ | — |
+| `sc-message` | EXTENDED | primeng/message | 6 inputs | — | ✓ | 1 |
 | `sc-multiselect` | EXTENDED | primeng/multiselect | CVA · 23 inputs | — | ✓ | 10 |
 | `sc-page-header` | CUSTOM | — | 3 inputs | — | ✓ | 2 |
 | `sc-panel` | EXTENDED | primeng/panel | 4 inputs | — | ✓ | — |
@@ -75,7 +75,7 @@
 | `sc-sticky-form-header` | EXTENDED | primeng/button | 4 inputs | — | ✓ | 3 |
 | `sc-subsection` | CUSTOM | — | 4 inputs | — | ✓ | — |
 | `sc-tag` | EXTENDED | primeng/tag | 6 inputs | — | ✓ | — |
-| `sc-textarea` | EXTENDED | primeng/textarea | 13 inputs | — | ✓ | — |
+| `sc-textarea` | EXTENDED | primeng/textarea | 13 inputs | — | ✓ | 1 |
 | `sc-toast` | EXTENDED | primeng/toast | 6 inputs | — | ✓ | — |
 | `sc-toggleswitch` | EXTENDED | primeng/toggleswitch | 7 inputs | — | ✓ | 21 |
 <!-- @audit:components:end -->

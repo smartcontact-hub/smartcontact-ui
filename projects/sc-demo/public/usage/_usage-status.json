@@ -433,8 +433,16 @@
       "usedInSupervisor": 3
     },
     {
+      "selector": "sc-message",
+      "usedInSupervisor": 1
+    },
+    {
       "selector": "sc-sticky-form-header",
       "usedInSupervisor": 3
+    },
+    {
+      "selector": "sc-textarea",
+      "usedInSupervisor": 1
     }
   ]
 }

@@ -5,7 +5,7 @@
   <h2 class="empty-state__title">{{ titleKey() | translate }}</h2>
   <p class="empty-state__body">{{ bodyKey() | translate }}</p>
   @if (ctaKey(); as cta) {
-    <button type="button" class="empty-state__cta" (click)="onCtaClick()">
+    <button type="button" class="empty-state__cta" (click)="onCtaClick($event)">
       <sc-icon [name]="plusIcon" [size]="iconSizeDefault" />
       <span>{{ cta | translate }}</span>
     </button>

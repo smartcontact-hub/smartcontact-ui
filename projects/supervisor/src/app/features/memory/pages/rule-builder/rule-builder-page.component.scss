@@ -631,3 +631,15 @@
     transform: none;
   }
 }
+
+/* Label externo para campos sin label propio (sc-textarea es wrapper passthrough).
+ * Mismos valores que el label del field-pattern del DS (.sc-inputtext__label). */
+.rule-builder__field-label {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 2px;
+  font-size: var(--sc-font-size-200);
+  font-weight: var(--sc-font-weight-medium);
+  color: var(--sc-text-secondary);
+  margin-bottom: 2px;
+}

@@ -303,6 +303,7 @@
     "rules": {
       "page_title": "Regras",
       "new_rule": "Nova regra",
+      "no_active_banner": "Nenhuma regra está ativa: as novas conversas não serão transcritas nem classificadas automaticamente.",
       "empty_title": "Ainda sem regras",
       "empty_desc": "As regras automatizam o que é gravado, transcrito e analisado das conversas que entram no sistema.",
       "empty_cta": "Criar primeira regra",
@@ -412,12 +413,12 @@
         "updated_toast": "Regra atualizada",
         "cond": {
           "add_condition": "Adicionar condição",
-          "add_group": "Adicionar grupo",
+          "add_group": "Adicionar alternativa (OU)",
           "empty_title": "Sem condições",
           "empty_body": "Aplica-se a todas as conversas.",
-          "remove_group": "Remover grupo",
+          "remove_group": "Remover alternativa",
           "remove_condition": "Remover condição",
-          "group_n": "Grupo {{n}}",
+          "group_n": "Alternativa {{n}}",
           "impact_title": "Impacto estimado",
           "impact": "Afetaria {{count}} das últimas {{total}} conversas.",
           "impact_note": "tipificação e categoria são avaliadas no backend",

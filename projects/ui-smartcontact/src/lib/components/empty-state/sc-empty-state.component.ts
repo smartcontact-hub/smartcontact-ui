@@ -31,13 +31,15 @@ export class ScEmptyStateComponent {
   /** When set, renders a primary action button labeled with this i18n key. */
   readonly ctaKey = input<string | null>(null);
 
-  readonly cta = output<void>();
+  /** Emite el MouseEvent del click — permite anclar menús popup al botón
+   *  (`menu.toggle($event)`). Los listeners sin parámetro siguen valiendo. */
+  readonly cta = output<MouseEvent>();
 
   protected readonly plusIcon = 'add';
   protected readonly iconSizeDefault = SC_ICON_SIZE_DEFAULT;
   protected readonly iconSizeDisplay = SC_ICON_SIZE_DISPLAY_SM;
 
-  protected onCtaClick(): void {
-    this.cta.emit();
+  protected onCtaClick(ev: MouseEvent): void {
+    this.cta.emit(ev);
   }
 }

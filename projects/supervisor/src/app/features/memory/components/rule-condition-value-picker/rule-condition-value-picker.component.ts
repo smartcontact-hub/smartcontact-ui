@@ -111,7 +111,11 @@ export class RuleConditionValuePickerComponent {
           depth: t.path.length,
         }));
       case 'category':
-        return [];
+        return this.resolver.categories().map((c) => ({
+          ref: { kind: 'category', id: c.id },
+          label: c.name,
+          sub: c.group,
+        }));
     }
   });
 
