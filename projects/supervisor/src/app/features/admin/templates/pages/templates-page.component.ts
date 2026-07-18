@@ -22,6 +22,10 @@ import { TOAST_LIFE } from '@core/utils/toast-life';
 import {
   ScBulkActionBarComponent as BulkActionBarComponent,
   useBulkEntityI18n,
+  type ScColumnCellContext,
+  type ScColumnDef,
+  ScDatatableComponent as DatatableComponent,
+  type ScDatatableRowEvent,
   ScDeleteEntityDialogComponent as DeleteEntityDialogComponent,
   ScEmptyStateComponent as EmptyStateComponent,
   ScSearchComponent as SearchComponent,
@@ -39,6 +43,7 @@ import {
     BulkActionBarComponent,
     ButtonComponent,
     ClickOutsideDirective,
+    DatatableComponent,
     DeleteEntityDialogComponent,
     EmptyStateComponent,
     IconComponent,
@@ -114,10 +119,58 @@ export class TemplatesPageComponent {
 
   protected readonly existingTitles = computed(() => this.templates().map((t) => t.title));
 
-  protected readonly allSelected = computed(() => {
-    const sortedLen = this.sorted().length;
-    return sortedLen > 0 && this.selectedIds().size === sortedLen;
+  /* ── La tabla, ahora `sc-datatable` (B4) — misma receta que labels ─────
+   * `columns` es un `computed()` que lee los `viewChild`: los `TemplateRef`
+   * resuelven tarde y una lista fija se quedaría sin `cellTemplate`. */
+  private readonly titleTpl = viewChild<TemplateRef<ScColumnCellContext<Template>>>('titleTpl');
+  private readonly bodyTpl = viewChild<TemplateRef<ScColumnCellContext<Template>>>('bodyTpl');
+  private readonly updatedTpl = viewChild<TemplateRef<ScColumnCellContext<Template>>>('updatedTpl');
+  private readonly actionsTpl = viewChild<TemplateRef<ScColumnCellContext<Template>>>('actionsTpl');
+
+  protected readonly columns = computed<readonly ScColumnDef<Template>[]>(() => [
+    {
+      field: 'title',
+      header: this.translate.instant('templates.table.title'),
+      cellTemplate: this.titleTpl(),
+    },
+    {
+      field: 'body',
+      header: this.translate.instant('templates.table.body'),
+      cellTemplate: this.bodyTpl(),
+    },
+    /* `updatedAt` sí lleva cellTemplate aunque sea texto plano: su tipografía
+     * (12px, gris tenue) vive en el SCSS de ESTA página, y el `<td>` lo pinta
+     * ahora el DS — una regla encapsulada aquí no lo alcanzaría. El `<span>`
+     * proyectado sí conserva el encapsulado de la página. */
+    {
+      field: 'updatedAt',
+      header: this.translate.instant('templates.table.updated'),
+      width: '112px',
+      cellTemplate: this.updatedTpl(),
+    },
+    { field: 'actions', header: '', width: '48px', cellTemplate: this.actionsTpl() },
+  ]);
+
+  /* Puente de selección: `selectedIds` sigue siendo la fuente de verdad (de
+   * ella cuelgan la barra masiva y el borrado); `sc-datatable` habla de filas. */
+  protected readonly selectedTemplates = computed<readonly Template[]>(() => {
+    const ids = this.selectedIds();
+    return this.sorted().filter((tpl) => ids.has(tpl.id));
   });
+
+  protected onSelectionChange(selection: Template | readonly Template[] | null): void {
+    const rows = Array.isArray(selection) ? selection : selection ? [selection as Template] : [];
+    this.selectedIds.set(new Set(rows.map((tpl) => tpl.id)));
+  }
+
+  /** Click derecho → el MISMO `<p-menu>` que el kebab (R3). */
+  protected onRowContextMenu(
+    event: ScDatatableRowEvent<Template>,
+    menu: { toggle: (e: Event) => void },
+  ): void {
+    this.setMenuTarget(event.row);
+    menu.toggle(event.originalEvent);
+  }
 
   protected readonly deleteItems = computed(() =>
     (this.deleteTarget() ?? []).map((t) => ({ id: t.id, name: t.title })),
@@ -167,22 +220,10 @@ export class TemplatesPageComponent {
     this.toastSuccess('templates.toasts.updated', { name: submission.title });
   }
 
-  protected toggleSelect(id: number): void {
-    this.selectedIds.update((current) => {
-      const next = new Set(current);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
-      return next;
-    });
-  }
-
-  protected toggleSelectAll(): void {
-    this.selectedIds.update((current) => {
-      const sorted = this.sorted();
-      if (current.size === sorted.length) return new Set();
-      return new Set(sorted.map((t) => t.id));
-    });
-  }
+  /* `toggleSelect` / `toggleSelectAll` / `allSelected` murieron con la
+   * migración: los sirven `p-tableCheckbox` y `p-tableHeaderCheckbox`, con la
+   * misma semántica (la de cabecera marca lo FILTRADO, que aquí además es lo
+   * de la pestaña activa). */
 
   protected clearSelection(): void {
     this.selectedIds.set(new Set());

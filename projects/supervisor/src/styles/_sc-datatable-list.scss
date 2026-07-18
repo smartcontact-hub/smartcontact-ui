@@ -1,0 +1,110 @@
+/* ------------------------------------------------------------------ *
+ * `.list-table` — la gramática de tabla-lista de la app, aplicada a
+ * `sc-datatable`.
+ *
+ * POR QUÉ EXISTE. El preset del DS y las tablas del supervisor no pintan
+ * igual, y está medido:
+ *
+ *              preset sc-datatable   .table del supervisor
+ *   alto fila       42px                  54px
+ *   cabecera        14px / 600            12px / 500
+ *   color cab.      #4f5663               #8f97a3  (text-secondary)
+ *   borde fila      border-default        border-subtle
+ *
+ * La cabecera silenciosa (gris, medium, sentence-case) no es un descuido:
+ * es la decisión de S59, escrita en el SCSS de cada página —«sin fondo
+ * gris», «sentence-case gris medium, no UPPERCASE tracked». Migrar sin
+ * esta capa dejaría labels y templates densas y con cabecera oscura, y
+ * las otras seis tablas como están: convergencia que produce divergencia.
+ *
+ * POR QUÉ AQUÍ Y NO EN EL PRESET. Tocar el preset cambiaría también la
+ * tabla de llamadas de la app `agent`, que no es una tabla-lista de
+ * administración. Que la tabla de la casa se parezca a la de la casa es
+ * decisión de la casa; el DS aporta el componente.
+ *
+ * POR QUÉ GLOBAL. Los `<tr>`/`<th>` los pinta la plantilla de
+ * `sc-datatable`, así que llevan SU `_ngcontent`: una regla encapsulada
+ * en la página no los alcanza nunca.
+ *
+ * Al migrar una tabla nueva: `<sc-datatable class="list-table">` y borra
+ * su bloque `.table` local. Esto sustituye ~90 líneas por página.
+ * ------------------------------------------------------------------ */
+
+sc-datatable.list-table {
+  display: block;
+
+  /* `main.scss` fuerza `table-layout: fixed` en `table.table` — con el motivo
+   * escrito: que las columnas no bailen al aparecer el indicador de orden. La
+   * tabla del DS es `auto`, así que sin esto el reparto pasa a ser por
+   * CONTENIDO y las columnas se recolocan al migrar (medido en labels: la
+   * columna de descripción saltaba ~290px a la izquierda). Con `fixed`, las
+   * columnas sin ancho declarado se reparten a partes iguales, que es
+   * exactamente lo que hacían antes. */
+  .p-datatable-table {
+    table-layout: fixed;
+  }
+
+  /* PrimeNG pinta SIEMPRE la banda de `caption`, incluso cuando el consumidor
+   * no proyecta nada en `[scTableCaption]` — deja una franja vacía sobre la
+   * cabecera. Estas listas llevan su toolbar fuera de la tarjeta, así que
+   * nunca la usan. */
+  .p-datatable-header:empty {
+    display: none;
+  }
+
+  /* Cabecera: sin fondo, hairline inferior marcada, tipografía silenciosa. */
+  .p-datatable-thead > tr > th {
+    padding: var(--sc-spacing-0-875);
+    background: var(--sc-bg-surface);
+    border-bottom: 1px solid var(--sc-border-default);
+    font-size: var(--sc-font-size-100);
+    font-weight: var(--sc-font-weight-medium);
+    letter-spacing: 0;
+    color: var(--sc-text-secondary);
+    text-align: left;
+  }
+
+  /* Cuerpo: el mismo padding generoso que daba las filas de 54px. */
+  .p-datatable-tbody > tr > td {
+    padding: var(--sc-spacing-0-875);
+    border-bottom: 1px solid var(--sc-border-subtle);
+
+    /* Bloque contenedor para los paneles anclados a una fila (el editor
+       inline de labels y plantillas cuelga de su celda). Antes lo daba
+       `.table__td-name { position: relative }` en cada página; aquí el `<td>`
+       lo pinta el DS, así que una regla encapsulada en la página no lo
+       alcanzaría. Sin esto el panel se ancla al viewport y se va de la fila. */
+    position: relative;
+  }
+
+  .p-datatable-tbody > tr {
+    transition: background var(--sc-transition-fast) var(--sc-easing-default);
+
+    &:hover {
+      background: var(--sc-bg-default);
+    }
+
+    /* La fila seleccionada es gris neutro, no el resaltado azul de
+       PrimeNG: en estas listas la selección es para actuar en lote, no
+       para marcar «la fila activa». */
+    &.p-datatable-row-selected {
+      background: var(--sc-color-slate-100);
+    }
+  }
+
+  /* La columna de selección la dimensiona el DS a `--sc-spacing-2-5`; las
+     tablas de la app la quieren de 40px, como su `.table__th-check`. */
+  .sc-datatable__check {
+    width: 40px;
+  }
+
+  /* La fila vacía (búsqueda sin resultados) se proyecta vía [scTableEmpty]
+     y no debe llevar la hairline: no es una fila de datos. */
+  .p-datatable-tbody > tr:has(> td[colspan]) {
+    background: none;
+
+    > td {
+      border-bottom: 0;
+    }
+  }
+}

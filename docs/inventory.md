@@ -25,7 +25,7 @@
 ## Clasificación (auto-generada)
 
 <!-- @audit:components — TABLA GENERADA por `node scripts/component-audit.mjs --write`. NO editar a mano. -->
-**50 componentes** · 16 custom · 11 standard · 23 extended · 32 usados en Supervisor.
+**50 componentes** · 16 custom · 11 standard · 23 extended · 33 usados en Supervisor.
 
 | Componente | Tipo | PrimeNG base | API propia | Anidados | Demo | Usos en Supervisor |
 |---|---|---|---|---|---|---|
@@ -42,7 +42,7 @@
 | `sc-column-selector` | STANDARD | primeng/popover | 1 inputs | — | ✓ | 3 |
 | `sc-command-palette` | CUSTOM | — | 0 inputs | — | ✓ | 4 |
 | `sc-confirmdialog` | STANDARD | primeng/confirmdialog | 0 inputs | — | ✓ | 1 |
-| `sc-datatable` | EXTENDED | primeng/table | 21 inputs | — | ✓ | — |
+| `sc-datatable` | EXTENDED | primeng/table | 21 inputs | — | ✓ | 4 |
 | `sc-datepicker` | EXTENDED | primeng/datepicker | CVA · 17 inputs | sc-field-label sc-field-msg | ✓ | 2 |
 | `sc-delete-entity-dialog` | STANDARD | primeng/button | 2 inputs | sc-dialog | ✓ | 9 |
 | `sc-dialog` | EXTENDED | primeng/dialog | 12 inputs | — | ✓ | 10 |

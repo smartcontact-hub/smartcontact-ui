@@ -24,6 +24,10 @@ import { LabelChipComponent } from '@shared/components';
 import {
   ScBulkActionBarComponent as BulkActionBarComponent,
   useBulkEntityI18n,
+  type ScColumnCellContext,
+  type ScColumnDef,
+  ScDatatableComponent as DatatableComponent,
+  type ScDatatableRowEvent,
   ScEmptyStateComponent as EmptyStateComponent,
   ScSearchComponent as SearchComponent,
 } from '@smartcontact-hub/components';
@@ -43,6 +47,7 @@ import {
     BulkActionBarComponent,
     ButtonComponent,
     ClickOutsideDirective,
+    DatatableComponent,
     DeleteLabelsDialogComponent,
     EmptyStateComponent,
     FormsModule,
@@ -115,10 +120,55 @@ export class LabelsPageComponent {
 
   protected readonly existingNames = computed(() => this.labels().map((label) => label.name));
 
-  protected readonly allSelected = computed(() => {
-    const sortedLen = this.sorted().length;
-    return sortedLen > 0 && this.selectedIds().size === sortedLen;
+  /* ── La tabla, ahora `sc-datatable` (B4) ──────────────────────────────
+   * Las tres celdas son composiciones propias de la página (chip de color,
+   * panel de edición anclado, kebab), así que van por `cellTemplate`: el DS
+   * no conoce el tipo `Label` ni tiene por qué.
+   *
+   * `columns` es un `computed()` que LEE los `viewChild` a propósito. Esos
+   * `TemplateRef` resuelven tarde, y una lista construida en el campo se
+   * quedaría con `cellTemplate: undefined` para siempre — la tabla pintaría
+   * `row[field]` en crudo. Al ser computed, se recalcula en cuanto resuelven.
+   */
+  private readonly nameTpl = viewChild<TemplateRef<ScColumnCellContext<Label>>>('nameTpl');
+  private readonly descTpl = viewChild<TemplateRef<ScColumnCellContext<Label>>>('descTpl');
+  private readonly actionsTpl = viewChild<TemplateRef<ScColumnCellContext<Label>>>('actionsTpl');
+
+  protected readonly columns = computed<readonly ScColumnDef<Label>[]>(() => [
+    {
+      field: 'name',
+      header: this.translate.instant('labels.table.name'),
+      cellTemplate: this.nameTpl(),
+    },
+    {
+      field: 'description',
+      header: this.translate.instant('labels.table.description'),
+      cellTemplate: this.descTpl(),
+    },
+    // Columna sin datos: `field` es solo su identidad, y la cabecera va vacía
+    // igual que el `<th aria-hidden>` que sustituye.
+    { field: 'actions', header: '', width: '48px', cellTemplate: this.actionsTpl() },
+  ]);
+
+  /* Puente de selección: la fuente de verdad sigue siendo `selectedIds` —de
+   * ella cuelgan la barra masiva, el borrado y el export— y `sc-datatable`
+   * habla de filas. Traducir en los dos sentidos aquí evita reescribir media
+   * página por un cambio de tabla. */
+  protected readonly selectedLabels = computed<readonly Label[]>(() => {
+    const ids = this.selectedIds();
+    return this.sorted().filter((label) => ids.has(label.id));
   });
+
+  protected onSelectionChange(selection: Label | readonly Label[] | null): void {
+    const rows = Array.isArray(selection) ? selection : selection ? [selection as Label] : [];
+    this.selectedIds.set(new Set(rows.map((label) => label.id)));
+  }
+
+  /** Click derecho → el MISMO `<p-menu>` que el kebab (R3). */
+  protected onRowContextMenu(event: ScDatatableRowEvent<Label>, menu: { toggle: (e: Event) => void }): void {
+    this.setMenuTarget(event.row);
+    menu.toggle(event.originalEvent);
+  }
 
   protected readonly bulkEntity = useBulkEntityI18n({
     singular: 'common.bulk.entity.label_singular',
@@ -152,22 +202,10 @@ export class LabelsPageComponent {
     this.toastSuccess('labels.toasts.updated', { name: submission.name });
   }
 
-  protected toggleSelect(id: number): void {
-    this.selectedIds.update((current) => {
-      const next = new Set(current);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
-      return next;
-    });
-  }
-
-  protected toggleSelectAll(): void {
-    this.selectedIds.update((current) => {
-      const sorted = this.sorted();
-      if (current.size === sorted.length) return new Set();
-      return new Set(sorted.map((l) => l.id));
-    });
-  }
+  /* `toggleSelect` / `toggleSelectAll` / `allSelected` murieron con la
+   * migración a `sc-datatable`: la casilla de fila y la de cabecera las
+   * sirven `p-tableCheckbox` y `p-tableHeaderCheckbox`, con la misma
+   * semántica de antes (la de cabecera marca lo FILTRADO, no todo). */
 
   protected clearSelection(): void {
     this.selectedIds.set(new Set());

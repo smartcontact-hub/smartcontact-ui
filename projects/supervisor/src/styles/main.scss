@@ -20,6 +20,12 @@
  * SCSS solo mantienen sus deltas. Ver doc en el propio partial. */
 @use 'sc-list-table';
 
+/* La misma gramática de tabla-lista, pero aplicada a `sc-datatable` (B4). El
+ * preset del DS pinta 42px de fila y cabecera 14px/600; estas listas son de
+ * 54px y cabecera silenciosa desde S59. Sin esta capa, migrar una tabla al
+ * componente del DS la separa visualmente de las que aún no migraron. */
+@use 'sc-datatable-list';
+
 /* `.page__inner` — S55 lo dejó SIN promover a propósito, con este disparador
  * escrito: "reabrir cuando haya spec de diseño que defina la escala canónica
  * de max-width". Ese disparador se cumplió en la Ola 3, así que el partial

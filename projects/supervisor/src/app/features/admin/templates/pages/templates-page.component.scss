@@ -118,93 +118,34 @@
 
 /* `.table-card` chrome promovido a SCDS partial S55. Sin delta scoped. */
 
+/* B4: el bloque `.table` (cabecera, filas, celdas, hover, seleccionada) se fue
+ * a la piel compartida `styles/_sc-datatable-list.scss`, que se la pone a
+ * `sc-datatable`. Aquí queda solo lo que es de ESTA página: la tipografía de
+ * sus cuatro celdas y el vacío de búsqueda, que se proyectan desde la
+ * plantilla y por eso conservan el encapsulado del componente. */
 .table {
-  width: 100%;
-  border-collapse: collapse;
-
-  thead tr {
-    /* Header limpio BeyondUI/SnowUI (experiment S59): sin fondo gris. */
-    background: var(--sc-bg-surface);
-    border-bottom: 1px solid var(--sc-border-default);
-  }
-
-  th {
-    padding: var(--sc-spacing-0-875) var(--sc-spacing-0-875);
-    text-align: left;
-    /* sentence-case gris medium, no UPPERCASE tracked. */
-    font-size: var(--sc-font-size-100);
-    font-weight: var(--sc-font-weight-medium);
-    letter-spacing: 0;
-    color: var(--sc-text-secondary);
-  }
-
-  &__th-check {
-    width: 40px;
-    cursor: pointer;
-  }
-
-  &__th-actions {
-    width: 48px;
-  }
-
-  &__th-updated {
-    width: 112px;
-  }
-
-  &__row {
-    border-bottom: 1px solid var(--sc-border-subtle);
-    transition: background var(--sc-transition-fast) var(--sc-easing-default);
-
-    &:hover {
-      background: var(--sc-bg-default);
-    }
-
-    &--selected {
-      background: var(--sc-color-slate-100);
-    }
-  }
-
-  &__td-check {
-    padding: var(--sc-spacing-0-875);
-    width: 40px;
-    cursor: pointer;
-  }
-
-  &__td-title {
-    padding: var(--sc-spacing-0-875);
-    position: relative;
-  }
-
   &__title-text {
     font-size: var(--sc-font-size-200);
     font-weight: var(--sc-font-weight-medium);
     color: var(--sc-text-primary);
   }
 
-  &__td-body {
-    padding: var(--sc-spacing-0-875);
-    max-width: 400px;
-  }
-
   &__body-text {
     display: block;
     font-size: var(--sc-font-size-200);
     color: var(--sc-text-subtle);
+    /* El cuerpo se recorta a una línea. Antes el corte lo acotaba
+     * `.table__td-body { max-width: 400px }`; ahora el ancho lo fija el
+     * reparto a partes iguales de `table-layout: fixed`, y el `overflow`
+     * del propio span es lo que lo mantiene en una sola línea. */
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
 
-  &__td-updated {
-    padding: var(--sc-spacing-0-875);
-    width: 112px;
+  &__updated-text {
     font-size: var(--sc-font-size-100);
     color: var(--sc-text-subtle);
-  }
-
-  &__td-actions {
-    padding: var(--sc-spacing-0-875);
-    text-align: right;
   }
 
   &__no-results {

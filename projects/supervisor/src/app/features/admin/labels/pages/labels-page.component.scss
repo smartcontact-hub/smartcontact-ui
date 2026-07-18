@@ -77,63 +77,17 @@
 /* Empty state migrado a <sc-empty-state> (S62, backlog #64). */
 
 /* ─────────── Table ─────────── */
-/* `.table-card` chrome promovido a SCDS partial S55. Sin delta scoped. */
+/* `.table-card` chrome promovido a SCDS partial S55. Sin delta scoped.
+ *
+ * B4: el bloque `.table` (cabecera, filas, celdas, hover, seleccionada —
+ * unas 70 líneas) desapareció de aquí. Lo pinta ahora `sc-datatable` con la
+ * piel compartida `.list-table` de `styles/_sc-datatable-list.scss`. Lo que
+ * queda abajo es lo que sigue siendo de ESTA página: el contenido de dos
+ * celdas y el vacío de búsqueda, que se proyectan desde su plantilla y por
+ * tanto conservan el encapsulado del componente. */
 
 .table {
-  width: 100%;
-  border-collapse: collapse;
-
-  thead tr {
-    /* Header limpio BeyondUI/SnowUI (experiment S59): sin fondo gris. */
-    background: var(--sc-bg-surface);
-    border-bottom: 1px solid var(--sc-border-default);
-  }
-
-  th {
-    padding: var(--sc-spacing-0-875) var(--sc-spacing-0-875);
-    text-align: left;
-    /* sentence-case gris medium, no UPPERCASE tracked. */
-    font-size: var(--sc-font-size-100);
-    font-weight: var(--sc-font-weight-medium);
-    letter-spacing: 0;
-    color: var(--sc-text-secondary);
-  }
-
-  &__th-check {
-    width: 40px;
-    cursor: pointer;
-  }
-
-  &__th-actions {
-    width: 48px;
-  }
-
-  &__row {
-    border-bottom: 1px solid var(--sc-border-subtle);
-    transition: background var(--sc-transition-fast) var(--sc-easing-default);
-
-    &:hover {
-      background: var(--sc-bg-default);
-    }
-
-    &--selected {
-      background: var(--sc-color-slate-100);
-    }
-  }
-
-  &__td-check {
-    padding: var(--sc-spacing-0-875);
-    width: 40px;
-    cursor: pointer;
-  }
-
-  &__td-name {
-    padding: var(--sc-spacing-0-875);
-    position: relative;
-  }
-
   &__td-desc {
-    padding: var(--sc-spacing-0-875);
     font-size: var(--sc-font-size-200);
     color: var(--sc-text-subtle);
 
@@ -141,11 +95,6 @@
       color: var(--sc-text-disabled);
       font-style: italic;
     }
-  }
-
-  &__td-actions {
-    padding: var(--sc-spacing-0-875);
-    text-align: right;
   }
 
   &__no-results {
