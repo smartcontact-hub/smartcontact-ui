@@ -1,10 +1,10 @@
 @if (label() && !iftaLabel()) {
-  <label class="sc-inputtext__label" [attr.for]="resolvedId()">
-    {{ label() }}
-    @if (required()) {
-      <span class="sc-inputtext__required" aria-hidden="true">*</span>
-    }
-  </label>
+  <sc-field-label
+    block="sc-inputtext"
+    [text]="label()!"
+    [required]="required()"
+    [for]="resolvedId()"
+  />
 }
 
 <div class="sc-inputtext__field">
@@ -42,11 +42,10 @@
 </div>
 
 @if (footerText()) {
-  <span
-    class="sc-inputtext__msg"
-    [class.sc-inputtext__msg--error]="!!error()"
-    [id]="resolvedId() + '-msg'"
-  >
-    {{ footerText() }}
-  </span>
+  <sc-field-msg
+    block="sc-inputtext"
+    [text]="footerText()"
+    [isError]="!!error()"
+    [msgId]="resolvedId() + '-msg'"
+  />
 }

@@ -3,7 +3,7 @@
   "capturedAt": "2026-06-21",
   "viewport": "1440x900",
   "theme": "light",
-  "dsSelectors": 49,
+  "dsSelectors": 50,
   "screens": [
     {
       "id": "admin-agendas",
