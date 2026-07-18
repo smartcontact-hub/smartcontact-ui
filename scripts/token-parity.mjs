@@ -334,6 +334,18 @@ const A11Y_GATED = [
   ['sc-text-primary', 'sc-bg-surface'],
   ['sc-text-primary', 'sc-bg-default'],
   ['sc-text-on-primary', 'sc-bg-primary'],
+  /* Los colores de texto semánticos. Estaban SIN vigilar y seis de ellos no
+   * tenían valor en oscuro: heredaban el del claro, calculado contra blanco.
+   * Sobre slate-900 eso daba 2.48:1 en los ENLACES, 2.38 en violet y 3.50 en
+   * danger. Y en claro, success (3.30) y warning (3.19) tampoco llegaban.
+   * Arreglados los dos temas; se gatean para que no puedan volver: es un
+   * defecto que nadie vio durante meses porque nada lo medía. */
+  ['sc-text-link', 'sc-bg-surface'],
+  ['sc-text-accent', 'sc-bg-surface'],
+  ['sc-text-success', 'sc-bg-surface'],
+  ['sc-text-warning', 'sc-bg-surface'],
+  ['sc-text-danger', 'sc-bg-surface'],
+  ['sc-text-violet', 'sc-bg-surface'],
 ];
 const A11Y_INFO = [
   ['sc-text-secondary', 'sc-bg-surface'],

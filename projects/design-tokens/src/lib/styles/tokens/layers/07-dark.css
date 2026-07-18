@@ -21,6 +21,30 @@
   --sc-text-subtle: var(--sc-color-slate-500);
   --sc-text-disabled: var(--sc-color-slate-700);
   --sc-text-inverse: var(--sc-color-slate-900);
+
+  /* ---------- Semantic · Text de color ----------
+   * Estos SEIS no tenían valor en oscuro y heredaban el del claro, que está
+   * calculado contra BLANCO. Sobre slate-900 el resultado era ilegible, y el
+   * peor caso eran los enlaces: `text-link` daba 2.48:1. Medido por familia,
+   * el tono que pasa AA sobre slate-900 es entre 2 y 3 pasos más claro.
+   *
+   *            claro (heredado)   →   oscuro (este bloque)
+   *   link/accent   2.48 ✗              sky-400     5.36 ✓
+   *   violet        2.38 ✗              violet-400  6.21 ✓
+   *   danger        3.50 ✗              red-400     6.11 ✓
+   *   success       5.13 ✓ (ya pasaba)  green-600   5.13 ✓
+   *   warning       5.30 ✓ (ya pasaba)  amber-600   5.30 ✓
+   *
+   * success y warning se declaran aquí porque su valor CLARO subió al 700
+   * para cumplir AA sobre blanco; sin este bloque, el 700 se colaría en
+   * oscuro y caería a 3.37. `text-info` no hace falta: es un alias de
+   * `text-accent` y las custom properties se resuelven en el punto de uso. */
+  --sc-text-accent: var(--sc-color-sky-400);
+  --sc-text-link: var(--sc-color-sky-400);
+  --sc-text-success: var(--sc-color-green-600);
+  --sc-text-warning: var(--sc-color-amber-600);
+  --sc-text-danger: var(--sc-color-red-400);
+  --sc-text-violet: var(--sc-color-violet-400);
   /* En dark el botón primary es navy CLARO (blue-400) → el texto encima va
    * OSCURO (export.dark primaryContrastColor #181d26=gray-900; seguimos al Kit).
    * ⚠ a11y: gray-900 sobre blue-400 = ~3:1 (bajo AA); blanco tampoco llega. El fix

@@ -16,10 +16,14 @@
 
   <div class="page__inner page__inner--list">
     <div class="page__action-bar">
+      <!-- `orderedVisibleChange` y no `visibilityChange`: el `Set` solo dice
+           CUÁLES, y `[visibleColumns]` de la tabla respeta también el ORDEN —
+           que es lo que el usuario arrastra en el selector. Su `key` es el
+           `field` de la columna. -->
       <sc-column-selector
         [columns]="columnDefs()"
         [storageKey]="columnPrefKey"
-        (visibilityChange)="onColumnsChange($event)"
+        (orderedVisibleChange)="onColumnsChange($event)"
       />
       <sc-search
         class="page__search"
@@ -51,148 +55,92 @@
         (cta)="onCreateClick()"
       />
     } @else {
-      <div class="table-card">
-        <table class="table sc-table-zebra">
-          <thead>
-            <tr>
-              <th class="table__th-check" (click)="toggleSelectAll()">
-                <input
-                  type="checkbox"
-                  [checked]="allSelected()"
-                  (change)="toggleSelectAll()"
-                  (click)="$event.stopPropagation()"
-                  [attr.aria-label]="'labels.select_all' | translate"
-                />
-              </th>
-              <th
-                class="table__th-sort"
-                [scSortable]="getSortDir('name')"
-                (activate)="toggleSort('name')"
-              >
-                {{ 'users.table.name' | translate }}
-              </th>
-              @if (isColVisible('email')) {
-                <th
-                  class="table__th-sort"
-                  [scSortable]="getSortDir('email')"
-                  (activate)="toggleSort('email')"
-                >
-                  {{ 'users.table.email' | translate }}
-                </th>
-              }
-              @if (isColVisible('identifier')) {
-                <th
-                  class="table__th-sort"
-                  [scSortable]="getSortDir('identifier')"
-                  (activate)="toggleSort('identifier')"
-                >
-                  {{ 'users.table.identifier' | translate }}
-                </th>
-              }
-              @if (isColVisible('type')) {
-                <th
-                  class="table__th-sort"
-                  [scSortable]="getSortDir('type')"
-                  (activate)="toggleSort('type')"
-                >
-                  {{ 'users.table.type' | translate }}
-                </th>
-              }
-              @if (isColVisible('status')) {
-                <th
-                  class="table__th-sort"
-                  [scSortable]="getSortDir('status')"
-                  (activate)="toggleSort('status')"
-                >
-                  {{ 'users.table.status' | translate }}
-                </th>
-              }
-              <th class="table__th-actions" aria-hidden="true"></th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (user of sorted(); track user.id) {
-              <tr
-                class="table__row"
-                [class.table__row--selected]="selectedIds().has(user.id)"
-                [class.table__row--clickable]="renamingId() !== user.id"
-                (click)="onRowClick(user)"
-                (contextmenu)="
-                  $event.preventDefault(); setMenuTarget(user); rowMenu.toggle($event)
-                "
-              >
-                <td
-                  class="table__td-check"
-                  (click)="toggleSelect(user.id); $event.stopPropagation()"
-                >
-                  <input
-                    type="checkbox"
-                    [checked]="selectedIds().has(user.id)"
-                    (change)="toggleSelect(user.id)"
-                    (click)="$event.stopPropagation()"
-                    [attr.aria-label]="user.name"
-                  />
-                </td>
-                <td class="table__td-name">
-                  @if (renamingId() === user.id) {
-                    <sc-inline-rename-cell
-                      [initialValue]="user.name"
-                      placeholder="Nombre del usuario"
-                      [ariaLabel]="'Renombrar ' + user.name"
-                      (commit)="onRenameCommit(user.id, $event)"
-                      (cancelled)="onRenameCancel(user.id)"
-                    />
-                  } @else {
-                    <span>{{ user.name }}</span>
-                  }
-                </td>
-                @if (isColVisible('email')) {
-                  <td class="table__td">{{ user.email }}</td>
-                }
-                @if (isColVisible('identifier')) {
-                  <td class="table__td table__td--mono">{{ user.identifier || '—' }}</td>
-                }
-                @if (isColVisible('type')) {
-                  <td class="table__td">
-                    <span class="sc-type-tag">{{ typeLabel(user.type) }}</span>
-                  </td>
-                }
-                @if (isColVisible('status')) {
-                  <td class="table__td">
-                    <span
-                      class="sc-label"
-                      [attr.data-tone]="user.status === 'active' ? 'success' : 'muted'"
-                    >
-                      {{ 'users.status.' + user.status | translate }}
-                    </span>
-                  </td>
-                }
-                <td class="table__td-actions" (click)="$event.stopPropagation()">
-                  <button
-                    type="button"
-                    class="rules-kebab-btn"
-                    [attr.aria-label]="'labels.row_menu' | translate"
-                    (click)="setMenuTarget(user); rowMenu.toggle($event)"
-                  >
-                    <sc-icon [name]="moreIcon" size="inherit" />
-                  </button>
-                </td>
-              </tr>
-            }
+      <!-- B4: la tabla la pinta el componente del DS. `class="list-table"` le
+           pone la gramática de tabla-lista de la app (54px de fila, cabecera
+           silenciosa de S59); sin ella el preset la dejaría más densa y con la
+           cabecera oscura, distinta de las tablas hermanas.
 
-            @if (sorted().length === 0) {
-              <tr>
-                <td colspan="7" class="table__no-results">
-                  {{ 'users.no_results' | translate }}
-                </td>
-              </tr>
-            }
-          </tbody>
-        </table>
+           La zebra de `.sc-table-zebra` NO viaja: la separación de filas en una
+           tabla-lista la fija la piel con su hairline, igual que en labels,
+           plantillas, agentes y grupos. `[stripedRows]` del DS la traería de
+           vuelta, pero dejaría a usuarios como la única con las dos. -->
+
+      <div class="table-card">
+        <sc-datatable
+          class="list-table"
+          [value]="sorted()"
+          [columns]="columns()"
+          [visibleColumns]="tableColumns()"
+          [rowStyleClass]="rowStyleClass"
+          dataKey="id"
+          selectionMode="multiple"
+          [selection]="selectedUsers()"
+          (selectionChange)="onSelectionChange($any($event))"
+          (rowClick)="onRowClick($event.row)"
+          (rowContextMenu)="onRowContextMenu($event, rowMenu)"
+          data-testid="users-table"
+        >
+          <div scTableEmpty class="table__no-results">
+            {{ 'users.no_results' | translate }}
+          </div>
+        </sc-datatable>
       </div>
     }
   </div>
 </div>
+
+<!-- Celdas de la tabla. Viven FUERA del `<sc-datatable>` para que los
+     `viewChild` las resuelvan; `columns()` las recoge. El contexto es
+     `{ $implicit: user }`. -->
+<ng-template #nameTpl let-user>
+  <div class="table__td-name">
+    @if (renamingId() === user.id) {
+      <sc-inline-rename-cell
+        [initialValue]="user.name"
+        placeholder="Nombre del usuario"
+        [ariaLabel]="'Renombrar ' + user.name"
+        (commit)="onRenameCommit(user.id, $event)"
+        (cancelled)="onRenameCancel(user.id)"
+      />
+    } @else {
+      <span>{{ user.name }}</span>
+    }
+  </div>
+</ng-template>
+
+<!-- Texto plano, pero con `<span>` propio: el `<td>` lo pinta ahora el DS y una
+     regla encapsulada de esta página no lo alcanzaría (trampa 3 de la receta). -->
+<ng-template #emailTpl let-user>
+  <span class="table__td-text">{{ user.email }}</span>
+</ng-template>
+
+<ng-template #identifierTpl let-user>
+  <span class="table__td-text table__td-text--mono">{{ user.identifier || '—' }}</span>
+</ng-template>
+
+<ng-template #typeTpl let-user>
+  <span class="sc-type-tag">{{ typeLabel(user.type) }}</span>
+</ng-template>
+
+<ng-template #statusTpl let-user>
+  <span class="sc-label" [attr.data-tone]="user.status === 'active' ? 'success' : 'muted'">
+    {{ 'users.status.' + user.status | translate }}
+  </span>
+</ng-template>
+
+<!-- `stopPropagation` no es decorativo: el `<td>` del DS ya no corta el click
+     (solo lo hace la celda de la casilla), así que sin él abrir el kebab
+     dispararía además `rowClick` y navegaría al detalle. -->
+<ng-template #actionsTpl let-user>
+  <button
+    type="button"
+    class="rules-kebab-btn"
+    [attr.aria-label]="'labels.row_menu' | translate"
+    (click)="setMenuTarget(user); rowMenu.toggle($event); $event.stopPropagation()"
+  >
+    <sc-icon [name]="moreIcon" size="inherit" />
+  </button>
+</ng-template>
 
 <!-- Kebab ÚNICO y compartido por toda la tabla (antes: un panel HTML por fila
      MÁS un menú contextual aparte con sus propios handlers). El click derecho

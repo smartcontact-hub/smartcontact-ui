@@ -16,10 +16,8 @@ import { MenuModule } from 'primeng/menu';
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 
-import { SortableHeaderDirective } from '@core/directives';
 import { UndoStackService, XlsxExportService } from '@core/services';
 import { TopBarSlotService } from '@core/layout/top-bar/top-bar-slot.service';
-import { SelectionState } from '@core/utils/selection-state';
 import { TOAST_LIFE } from '@core/utils/toast-life';
 import { IllustratedAvatarComponent } from '@shared/components';
 import {
@@ -28,8 +26,14 @@ import {
   BulkEditCommit,
   BulkEditFieldOption,
   ScBulkEditMenuComponent as BulkEditMenuComponent,
+  type ScColumnCellContext,
+  type ScColumnDef,
   ColumnDef,
   ScColumnSelectorComponent as ColumnSelectorComponent,
+  ScDatatableComponent as DatatableComponent,
+  type ScDatatableRowEvent,
+  type ScRowStyleClassFn,
+  type ScDatatableSortEvent,
   ScDeleteEntityDialogComponent as DeleteEntityDialogComponent,
   ScEmptyStateComponent as EmptyStateComponent,
   ScGroupPopoverComponent as GroupPopoverComponent,
@@ -81,6 +85,7 @@ const PRESENCE_STATES: readonly PresenceStatus[] = [
     BulkEditMenuComponent,
     ButtonComponent,
     ColumnSelectorComponent,
+    DatatableComponent,
     DeleteEntityDialogComponent,
     EmptyStateComponent,
     IconComponent,
@@ -90,7 +95,6 @@ const PRESENCE_STATES: readonly PresenceStatus[] = [
     InlineRenameCellComponent,
     MenuModule,
     SearchComponent,
-    SortableHeaderDirective,
     TranslateModule,
   ],
   templateUrl: './agents-list-page.component.html',
@@ -166,13 +170,17 @@ export class AgentsListPageComponent {
   protected readonly sortField = signal<SortField | null>(null);
   protected readonly sortDir = signal<'asc' | 'desc'>('asc');
   /**
-   * Row-selection state. Pages keep the existing `selectedIds` /
-   * `toggleSelect` / `toggleSelectAll` / `clearSelection` API as thin
-   * delegates so templates and tests don't need to change. The shared
-   * `SelectionState` class lives in `@core/utils/selection-state`.
+   * Selección por id — la fuente de verdad de la página. De ella cuelgan la
+   * barra masiva, la edición en lote, el borrado y el diálogo de impacto;
+   * `sc-datatable` habla de FILAS, así que `selectedAgents` / `onSelectionChange`
+   * traducen en los dos sentidos y nada más de la página cambia.
+   *
+   * `SelectionState` se fue con la migración: lo único que aportaba —`allSelected`
+   * y `toggleAll` sobre la lista visible— lo sirven ahora `p-tableHeaderCheckbox`
+   * y `p-tableCheckbox`, con la misma semántica (la casilla de cabecera marca lo
+   * FILTRADO, no todo).
    */
-  private readonly selection = new SelectionState<{ readonly id: number }>(() => this.sorted());
-  protected readonly selectedIds = this.selection.ids;
+  protected readonly selectedIds = signal<ReadonlySet<number>>(new Set());
   /** Fila a la que apunta el kebab compartido. Ver `menuItems`. */
   protected readonly menuTargetAgent = signal<Agent | null>(null);
   protected readonly deleteTarget = signal<readonly Agent[] | null>(null);
@@ -187,10 +195,9 @@ export class AgentsListPageComponent {
   /**
    * Effective column order rendered by the table. Falls back to the
    * declared columnDefs (filtered by `defaultVisible`) when the
-   * column-selector hasn't emitted yet — without this guard the
-   * `<thead>` / `<tbody>` `@for` loops iterate over an empty array
-   * on first paint and the table renders rows with only the leading
-   * checkbox + trailing actions, no content cells.
+   * column-selector hasn't emitted yet — without this guard the table
+   * would paint with an EMPTY visible list on first paint, es decir sin
+   * ninguna columna de contenido.
    */
   protected readonly visibleColumnKeys = computed<readonly string[]>(() => {
     const ordered = this.orderedColumns();
@@ -213,6 +220,105 @@ export class AgentsListPageComponent {
     { key: 'presence', label: this.translate.instant('agents.table.presence') },
     { key: 'status', label: this.translate.instant('agents.table.status') },
     { key: 'groups', label: this.translate.instant('agents.table.groups') },
+  ]);
+
+  /* ── La tabla, ahora `sc-datatable` ───────────────────────────────────
+   * Las nueve celdas son composiciones propias de la página (avatar +
+   * renombrado inline, chips de canal, selector de presencia, kebab…), así
+   * que todas van por `cellTemplate`: el DS no conoce el tipo `Agent` ni
+   * tiene por qué.
+   *
+   * `columns` es un `computed()` que LEE los `viewChild` a propósito. Esos
+   * `TemplateRef` resuelven tarde, y una lista construida en el campo se
+   * quedaría con `cellTemplate: undefined` para siempre — la tabla pintaría
+   * `row[field]` en crudo. Al ser computed, se recalcula en cuanto resuelven.
+   *
+   * El `field` de cada columna es EL MISMO `key` que usa el `columnDefs` del
+   * `sc-column-selector`: es lo que casa `[visibleColumns]` con el selector
+   * (y lo que hay persistido en `sc-agents-columns-v2`).
+   */
+  private readonly codeTpl = viewChild<TemplateRef<ScColumnCellContext<Agent>>>('codeTpl');
+  private readonly nameTpl = viewChild<TemplateRef<ScColumnCellContext<Agent>>>('nameTpl');
+  private readonly extensionTpl =
+    viewChild<TemplateRef<ScColumnCellContext<Agent>>>('extensionTpl');
+  private readonly channelsTpl = viewChild<TemplateRef<ScColumnCellContext<Agent>>>('channelsTpl');
+  private readonly typeTpl = viewChild<TemplateRef<ScColumnCellContext<Agent>>>('typeTpl');
+  private readonly presenceTpl = viewChild<TemplateRef<ScColumnCellContext<Agent>>>('presenceTpl');
+  private readonly statusTpl = viewChild<TemplateRef<ScColumnCellContext<Agent>>>('statusTpl');
+  private readonly groupsTpl = viewChild<TemplateRef<ScColumnCellContext<Agent>>>('groupsTpl');
+  private readonly actionsTpl = viewChild<TemplateRef<ScColumnCellContext<Agent>>>('actionsTpl');
+
+  protected readonly columns = computed<readonly ScColumnDef<Agent>[]>(() => [
+    {
+      field: 'code',
+      header: this.translate.instant('agents.table.code'),
+      sortable: true,
+      cellTemplate: this.codeTpl(),
+    },
+    {
+      field: 'name',
+      header: this.translate.instant('agents.table.name'),
+      sortable: true,
+      cellTemplate: this.nameTpl(),
+    },
+    {
+      field: 'extension',
+      header: this.translate.instant('agents.table.extension'),
+      sortable: true,
+      cellTemplate: this.extensionTpl(),
+    },
+    {
+      field: 'channels',
+      header: this.translate.instant('agents.table.channels'),
+      cellTemplate: this.channelsTpl(),
+    },
+    {
+      // `field: 'type'` no existe en `Agent` (la propiedad es `agentType`), así
+      // que el orden client-side de p-table sobre esta columna compara
+      // undefined con undefined: es un no-op estable. Quien ordena de verdad es
+      // `sorted()`, que sí sabe leer `agentType`. El `field` no se puede
+      // renombrar: es la identidad de la columna para el selector y lo que hay
+      // guardado en localStorage.
+      field: 'type',
+      header: this.translate.instant('agents.table.type'),
+      sortable: true,
+      cellTemplate: this.typeTpl(),
+    },
+    {
+      field: 'presence',
+      header: this.translate.instant('agents.table.presence'),
+      cellTemplate: this.presenceTpl(),
+    },
+    {
+      field: 'status',
+      header: this.translate.instant('agents.table.status'),
+      sortable: true,
+      cellTemplate: this.statusTpl(),
+    },
+    {
+      field: 'groups',
+      header: this.translate.instant('agents.table.groups'),
+      cellTemplate: this.groupsTpl(),
+    },
+    // Columna sin datos: `field` es solo su identidad, y la cabecera va vacía
+    // igual que el `<th aria-hidden>` que sustituye.
+    {
+      field: 'actions',
+      header: '',
+      width: '48px',
+      align: 'right',
+      cellTemplate: this.actionsTpl(),
+    },
+  ]);
+
+  /**
+   * Lo que `sc-datatable` pinta: las columnas que manda el `sc-column-selector`
+   * (visibilidad Y orden) más la de acciones, que no es configurable y va
+   * siempre la última.
+   */
+  protected readonly tableVisibleColumns = computed<readonly string[]>(() => [
+    ...this.visibleColumnKeys(),
+    'actions',
   ]);
 
   protected readonly bulkEditFields = computed<readonly BulkEditFieldOption[]>(() => [
@@ -292,7 +398,29 @@ export class AgentsListPageComponent {
     return list;
   });
 
-  protected readonly allSelected = this.selection.allSelected;
+  /* Puente de selección: la fuente de verdad sigue siendo `selectedIds` —de
+   * ella cuelgan la barra masiva, la edición en lote, el borrado y el export— y
+   * `sc-datatable` habla de filas. Traducir en los dos sentidos aquí evita
+   * reescribir media página por un cambio de tabla. */
+  /* La fila abre la ficha, así que tiene que ANUNCIARLO. Al pintar el `<tr>`
+   * el DS, `pSelectableRowDisabled` (modo multiple) le quita la clase de la
+   * que PrimeNG saca el cursor, y la fila quedaba abriendo en silencio —
+   * medido: `cursor: auto`. La clase la recoge la piel compartida. Mientras
+   * se renombra en sitio no se marca: ahí el click es del input. */
+  protected readonly rowClass = computed<ScRowStyleClassFn<Agent>>(() => {
+    const renaming = this.renamingId();
+    return (row) => (row.id === renaming ? undefined : 'table__row--clickable');
+  });
+
+  protected readonly selectedAgents = computed<readonly Agent[]>(() => {
+    const ids = this.selectedIds();
+    return this.sorted().filter((agent) => ids.has(agent.id));
+  });
+
+  protected onSelectionChange(selection: Agent | readonly Agent[] | null): void {
+    const rows = Array.isArray(selection) ? selection : selection ? [selection as Agent] : [];
+    this.selectedIds.set(new Set(rows.map((agent) => agent.id)));
+  }
 
   protected readonly deleteItems = computed(() =>
     (this.deleteTarget() ?? []).map((a) => ({ id: a.id, name: a.name })),
@@ -322,44 +450,66 @@ export class AgentsListPageComponent {
     return this.emailIcon;
   }
 
+  /**
+   * Clave i18n del tipo de agente. Es un método y no un indexado en plantilla
+   * porque el contexto de `<ng-template let-agent>` es `any`, y `typeKeys[any]`
+   * sobre un `Record<AgentType, string>` es un índice implícitamente `any` que
+   * el AOT rechaza (TS7053). Con la fila dentro de un `@for` tipado no pasaba.
+   */
+  protected typeLabelKey(agent: Agent): string {
+    return this.typeKeys[agent.agentType];
+  }
+
   protected onOrderedColumnsChange(keys: readonly string[]): void {
     this.orderedColumns.set(keys);
   }
 
-  protected toggleSort(field: SortField): void {
-    if (this.sortField() === field) {
-      this.sortDir.update((d) => (d === 'asc' ? 'desc' : 'asc'));
-    } else {
-      this.sortField.set(field);
-      this.sortDir.set('asc');
-    }
+  /**
+   * La cabecera de orden la pinta ahora el DS (`pSortableColumn` + icono, con
+   * su `aria-sort` y su activación por teclado), así que `toggleSort` y
+   * `getSortDir` desaparecen: aquí solo se recoge el estado que emite.
+   *
+   * `sorted()` sigue siendo quien ordena de verdad —es lo que lee el export y
+   * lo que sabe que "type" se ordena por `agentType`—. p-table reordena
+   * ADEMÁS el mismo array en sitio con un comparador idéntico
+   * (`localeCompare`), así que las dos pasadas convergen en vez de pelearse.
+   */
+  protected onSortChange(event: ScDatatableSortEvent): void {
+    this.sortField.set((event.field as SortField | undefined) ?? null);
+    this.sortDir.set(event.order < 0 ? 'desc' : 'asc');
   }
 
-  /** Current sort direction for `field`, or `null` if not the active column. */
-  protected getSortDir(field: SortField): 'asc' | 'desc' | null {
-    return this.sortField() === field ? this.sortDir() : null;
-  }
-
-  protected toggleSelect(id: number): void {
-    this.selection.toggle(id);
-  }
-
-  protected toggleSelectAll(): void {
-    this.selection.toggleAll();
-  }
+  /* `toggleSelect` / `toggleSelectAll` / `allSelected` murieron con la
+   * migración a `sc-datatable`: la casilla de fila y la de cabecera las sirven
+   * `p-tableCheckbox` y `p-tableHeaderCheckbox`, con la misma semántica de
+   * antes (la de cabecera marca lo FILTRADO, no todo). */
 
   protected clearSelection(): void {
-    this.selection.clear();
+    this.selectedIds.set(new Set());
   }
 
   protected onCreateClick(): void {
     void this.router.navigateByUrl('/admin/agentes/crear');
   }
 
-  /** Row-body click → enter edit. Ignored if user is renaming this row. */
+  /** Row-body click → enter edit. Ignored if user is renaming this row.
+   *
+   *  El DS ya separa los dos gestos: la celda de la casilla corta la
+   *  propagación, así que marcar cinco filas no abre cinco fichas. Lo mismo
+   *  hacen el kebab y el selector de presencia desde su plantilla. */
   protected onRowClick(agent: Agent): void {
     if (this.renamingId() === agent.id) return;
     void this.router.navigateByUrl(`/admin/agentes/editar/${agent.id}`);
+  }
+
+  /** Click derecho → el MISMO `<p-menu>` que el kebab (R3). El
+   *  `preventDefault()` del menú nativo ya lo hace el DS. */
+  protected onRowContextMenu(
+    event: ScDatatableRowEvent<Agent>,
+    menu: { toggle: (e: Event) => void },
+  ): void {
+    this.setMenuTarget(event.row);
+    menu.toggle(event.originalEvent);
   }
 
   /** Modelo del kebab compartido. Es un computed ESTABLE: solo cambia al

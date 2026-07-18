@@ -16,7 +16,6 @@ import { MenuModule } from 'primeng/menu';
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 
-import { SortableHeaderDirective } from '@core/directives';
 import { UndoStackService, XlsxExportService } from '@core/services';
 import { TopBarSlotService } from '@core/layout/top-bar/top-bar-slot.service';
 import { SelectionState } from '@core/utils/selection-state';
@@ -30,6 +29,11 @@ import {
   ScBulkEditMenuComponent as BulkEditMenuComponent,
   ColumnDef,
   ScColumnSelectorComponent as ColumnSelectorComponent,
+  type ScColumnCellContext,
+  type ScColumnDef,
+  ScDatatableComponent as DatatableComponent,
+  type ScDatatableRowEvent,
+  type ScRowStyleClassFn,
   ScDeleteEntityDialogComponent as DeleteEntityDialogComponent,
   ScEmptyStateComponent as EmptyStateComponent,
   ImpactBadge,
@@ -42,8 +46,6 @@ import { USER_TYPE_LABEL_KEYS, USER_TYPES, User, UserType } from '../data/users-
 import { UsersStore, type UserBulkField } from '../state/users.store';
 
 const COLUMN_PREF_KEY = 'sc-users-columns-v1';
-
-type SortField = 'name' | 'email' | 'type' | 'identifier' | 'status';
 
 interface PendingBulkEdit {
   readonly field: UserBulkField;
@@ -59,6 +61,7 @@ interface PendingBulkEdit {
     BulkEditMenuComponent,
     ButtonComponent,
     ColumnSelectorComponent,
+    DatatableComponent,
     DeleteEntityDialogComponent,
     EmptyStateComponent,
     ImpactPreviewDialogComponent,
@@ -66,7 +69,6 @@ interface PendingBulkEdit {
     InlineRenameCellComponent,
     MenuModule,
     SearchComponent,
-    SortableHeaderDirective,
     TranslateModule,
   ],
   templateUrl: './users-list-page.component.html',
@@ -107,12 +109,11 @@ export class UsersListPageComponent {
   protected readonly users = this.usersStore.users;
 
   /**
-   * Translated user-type label table — built once on init so filter
-   * and sort comparators can do `O(1)` map lookups instead of calling
-   * `translate.instant()` inside `.filter()` / `.sort()` (per-row,
-   * per-keystroke). Language is static (`'es'`) at runtime so the
-   * cache doesn't need an invalidation hook; revisit if a runtime
-   * language switcher is ever added.
+   * Translated user-type label table — built once on init so the filter
+   * can do `O(1)` map lookups instead of calling `translate.instant()`
+   * inside `.filter()` (per-row, per-keystroke). Language is static
+   * (`'es'`) at runtime so the cache doesn't need an invalidation hook;
+   * revisit if a runtime language switcher is ever added.
    */
   private readonly translatedTypeLabels = (() => {
     const map = new Map<UserType, string>();
@@ -123,8 +124,6 @@ export class UsersListPageComponent {
   })();
 
   protected readonly searchQuery = signal('');
-  protected readonly sortField = signal<SortField | null>(null);
-  protected readonly sortDir = signal<'asc' | 'desc'>('asc');
   /** See `agents-list-page` for the rationale behind the delegate pattern. */
   private readonly selection = new SelectionState<{ readonly id: number }>(() => this.sorted());
   protected readonly selectedIds = this.selection.ids;
@@ -133,7 +132,9 @@ export class UsersListPageComponent {
   protected readonly deleteTarget = signal<readonly User[] | null>(null);
   protected readonly renamingId = signal<number | null>(null);
   protected readonly columnPrefKey = COLUMN_PREF_KEY;
-  protected readonly visibleColumns = signal<ReadonlySet<string>>(new Set());
+  /** Columnas elegidas en el selector, EN SU ORDEN (antes era un `Set`: el
+   *  orden lo fijaba el marcado, que ya no existe). */
+  protected readonly visibleColumnKeys = signal<readonly string[]>([]);
 
   protected readonly columnDefs = computed<readonly ColumnDef[]>(() => [
     { key: 'name', label: this.translate.instant('users.table.name'), locked: true },
@@ -156,41 +157,18 @@ export class UsersListPageComponent {
     );
   });
 
-  protected readonly sorted = computed(() => {
-    const list = [...this.filtered()];
-    const field = this.sortField();
-    const dir = this.sortDir();
-
-    list.sort((a, b) => {
-      // Drafts always first.
-      if (!field) return 0;
-
-      let cmp = 0;
-      switch (field) {
-        case 'name':
-          cmp = a.name.localeCompare(b.name, 'es');
-          break;
-        case 'email':
-          cmp = a.email.localeCompare(b.email);
-          break;
-        case 'type':
-          cmp = (this.translatedTypeLabels.get(a.type) ?? '').localeCompare(
-            this.translatedTypeLabels.get(b.type) ?? '',
-          );
-          break;
-        case 'identifier':
-          cmp = a.identifier.localeCompare(b.identifier);
-          break;
-        case 'status':
-          cmp = a.status.localeCompare(b.status);
-          break;
-      }
-      return dir === 'asc' ? cmp : -cmp;
-    });
-    return list;
-  });
-
-  protected readonly allSelected = this.selection.allSelected;
+  /**
+   * Lo que ve la tabla. El ORDEN ya no lo pone esta página: las columnas van
+   * `sortable`, así que lo resuelve p-table client-side (y por eso `sortField`,
+   * `sortDir`, `toggleSort` y `getSortDir` murieron con la migración).
+   *
+   * Sigue siendo una COPIA de `filtered()`, y eso no es cosmético: p-table
+   * ordena el array que recibe **in place**, y `filtered()` devuelve el array
+   * del store tal cual cuando no hay búsqueda. Sin la copia, ordenar la tabla
+   * reordenaría el store. Como la copia es la MISMA que ordena p-table, el
+   * export sigue saliendo en el orden que se ve.
+   */
+  protected readonly sorted = computed(() => [...this.filtered()]);
 
   protected readonly deleteItems = computed(() =>
     (this.deleteTarget() ?? []).map((u) => ({ id: u.id, name: u.name })),
@@ -205,43 +183,124 @@ export class UsersListPageComponent {
     return this.translate.instant(this.typeLabelKeys[type]);
   }
 
-  protected isColVisible(key: string): boolean {
-    const set = this.visibleColumns();
-    /* See groups-list-page.component.ts for context — same fallback so a
-     * future `defaultVisible: false` column doesn't render on first
-     * paint. */
-    if (set.size === 0) {
-      const col = this.columnDefs().find((c) => c.key === key);
-      return !!col && col.defaultVisible !== false;
-    }
-    return set.has(key);
+  /* ── La tabla, ahora `sc-datatable` (B4) ──────────────────────────────
+   * Las seis celdas son composiciones propias de la página (renombrado
+   * inline, pills, kebab) o llevan tipografía propia, así que van todas por
+   * `cellTemplate`: el `<td>` lo pinta el DS y una regla encapsulada de esta
+   * página no lo alcanzaría.
+   *
+   * `columns` es un `computed()` que LEE los `viewChild` a propósito. Esos
+   * `TemplateRef` resuelven tarde, y una lista construida en el campo se
+   * quedaría con `cellTemplate: undefined` para siempre — la tabla pintaría
+   * `row[field]` en crudo. Al ser computed, se recalcula en cuanto resuelven.
+   */
+  private readonly nameTpl = viewChild<TemplateRef<ScColumnCellContext<User>>>('nameTpl');
+  private readonly emailTpl = viewChild<TemplateRef<ScColumnCellContext<User>>>('emailTpl');
+  private readonly identifierTpl =
+    viewChild<TemplateRef<ScColumnCellContext<User>>>('identifierTpl');
+  private readonly typeTpl = viewChild<TemplateRef<ScColumnCellContext<User>>>('typeTpl');
+  private readonly statusTpl = viewChild<TemplateRef<ScColumnCellContext<User>>>('statusTpl');
+  private readonly actionsTpl = viewChild<TemplateRef<ScColumnCellContext<User>>>('actionsTpl');
+
+  protected readonly columns = computed<readonly ScColumnDef<User>[]>(() => [
+    {
+      field: 'name',
+      header: this.translate.instant('users.table.name'),
+      sortable: true,
+      cellTemplate: this.nameTpl(),
+    },
+    {
+      field: 'email',
+      header: this.translate.instant('users.table.email'),
+      sortable: true,
+      cellTemplate: this.emailTpl(),
+    },
+    {
+      field: 'identifier',
+      header: this.translate.instant('users.table.identifier'),
+      sortable: true,
+      cellTemplate: this.identifierTpl(),
+    },
+    {
+      field: 'type',
+      header: this.translate.instant('users.table.type'),
+      sortable: true,
+      cellTemplate: this.typeTpl(),
+    },
+    {
+      field: 'status',
+      header: this.translate.instant('users.table.status'),
+      sortable: true,
+      cellTemplate: this.statusTpl(),
+    },
+    // Columna sin datos: `field` es solo su identidad, y la cabecera va vacía
+    // igual que el `<th aria-hidden>` que sustituye.
+    {
+      field: 'actions',
+      header: '',
+      width: '48px',
+      align: 'right',
+      cellTemplate: this.actionsTpl(),
+    },
+  ]);
+
+  /**
+   * Lo que la tabla pinta de verdad: las columnas elegidas en el selector, EN
+   * SU ORDEN, más la de acciones — que no es configurable y por eso no está en
+   * el selector, pero sí en `columns()`. `[visibleColumns]` FILTRA por este
+   * array, así que omitirla la borraría de la tabla.
+   *
+   * Esto sustituye a los `@if (isColVisible(...))` del marcado: la visibilidad
+   * ya no se decide celda a celda, y el orden —que antes fijaba el orden de los
+   * `<th>`— ahora obedece al arrastre del selector.
+   */
+  protected readonly tableColumns = computed<readonly string[]>(() => {
+    const chosen = this.visibleColumnKeys();
+    /* Hasta que el selector hidrata desde localStorage no ha emitido nada, y
+     * un array vacío dejaría la tabla con solo la columna de acciones. Mismo
+     * fallback que hacía `isColVisible`: las declaradas, salvo las que nazcan
+     * con `defaultVisible: false`. */
+    const base =
+      chosen.length > 0
+        ? chosen
+        : this.columnDefs()
+            .filter((c) => c.defaultVisible !== false)
+            .map((c) => c.key);
+    return [...base, 'actions'];
+  });
+
+  protected onColumnsChange(ordered: readonly string[]): void {
+    this.visibleColumnKeys.set(ordered);
   }
 
-  protected onColumnsChange(set: ReadonlySet<string>): void {
-    this.visibleColumns.set(set);
+  /**
+   * Clases por fila. Solo queda el cursor: «fila seleccionada» la pinta ahora
+   * la piel `.list-table` vía `p-datatable-row-selected`.
+   *
+   * Lee `renamingId()` a propósito, aunque no dependa de la fila: mientras se
+   * renombra, `onRowClick` no abre nada, y un cursor de mano ahí mentiría.
+   */
+  protected readonly rowStyleClass: ScRowStyleClassFn<User> = (user) =>
+    this.renamingId() === user.id ? undefined : 'table__row--clickable';
+
+  /* Puente de selección: la fuente de verdad sigue siendo `selectedIds` —de
+   * ella cuelgan la barra masiva, la edición masiva, el borrado y el export— y
+   * `sc-datatable` habla de filas. Traducir en los dos sentidos aquí evita
+   * reescribir media página por un cambio de tabla. */
+  protected readonly selectedUsers = computed<readonly User[]>(() => {
+    const ids = this.selectedIds();
+    return this.sorted().filter((user) => ids.has(user.id));
+  });
+
+  protected onSelectionChange(selection: User | readonly User[] | null): void {
+    const rows = Array.isArray(selection) ? selection : selection ? [selection as User] : [];
+    this.selection.ids.set(new Set(rows.map((user) => user.id)));
   }
 
-  protected toggleSort(field: SortField): void {
-    if (this.sortField() === field) {
-      this.sortDir.update((d) => (d === 'asc' ? 'desc' : 'asc'));
-    } else {
-      this.sortField.set(field);
-      this.sortDir.set('asc');
-    }
-  }
-
-  /** Current sort direction for `field`, or `null` if not the active column. */
-  protected getSortDir(field: SortField): 'asc' | 'desc' | null {
-    return this.sortField() === field ? this.sortDir() : null;
-  }
-
-  protected toggleSelect(id: number): void {
-    this.selection.toggle(id);
-  }
-
-  protected toggleSelectAll(): void {
-    this.selection.toggleAll();
-  }
+  /* `toggleSelect` / `toggleSelectAll` / `allSelected` murieron con la
+   * migración a `sc-datatable`: la casilla de fila y la de cabecera las sirven
+   * `p-tableCheckbox` y `p-tableHeaderCheckbox`, con la misma semántica de
+   * antes (la de cabecera marca lo FILTRADO, no todo). */
 
   protected clearSelection(): void {
     this.selection.clear();
@@ -331,6 +390,16 @@ export class UsersListPageComponent {
   protected onRowClick(user: User): void {
     if (this.renamingId() === user.id) return;
     void this.router.navigateByUrl(`/admin/usuarios/editar/${user.id}`);
+  }
+
+  /** Click derecho → el MISMO `<p-menu>` que el kebab (R3). El
+   *  `preventDefault()` del menú nativo lo hace ya `sc-datatable`. */
+  protected onRowContextMenu(
+    event: ScDatatableRowEvent<User>,
+    menu: { toggle: (e: Event) => void },
+  ): void {
+    this.setMenuTarget(event.row);
+    menu.toggle(event.originalEvent);
   }
 
   /** Modelo del kebab compartido. Es un computed ESTABLE: solo cambia al

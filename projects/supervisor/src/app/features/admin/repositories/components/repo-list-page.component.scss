@@ -129,12 +129,13 @@
     }
   }
 
-  &__td {
-    padding: var(--sc-spacing-0-875);
+  /* B4: `padding`, `position: relative` y el borde los pone ahora la piel
+   * `.list-table` sobre el `<td>` que pinta el DS. Aquí queda solo la
+   * tipografía de la celda, que va en el `<span>` proyectado y por eso
+   * conserva el encapsulado de esta página. */
+  &__cell {
     font-size: var(--sc-font-size-200);
     color: var(--sc-text-secondary);
-    vertical-align: middle;
-    position: relative;
 
     &--emphasis {
       color: var(--sc-text-primary);
@@ -147,15 +148,13 @@
       color: var(--sc-text-primary);
     }
 
+    /* El ancho lo fija ya el reparto de `table-layout: fixed`; lo que hace
+     * falta aquí es que el texto largo se recorte en una línea. */
     &--truncate {
-      max-width: 280px;
-
-      > span {
-        display: block;
-        overflow: hidden;
-        text-overflow: ellipsis;
-        white-space: nowrap;
-      }
+      display: block;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      white-space: nowrap;
     }
   }
 

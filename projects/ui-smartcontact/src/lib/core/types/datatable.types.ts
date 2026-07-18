@@ -6,6 +6,15 @@ export interface ScColumnCellContext<T = unknown> {
   readonly $implicit: T;
   /** Índice de la fila en el render actual. */
   readonly rowIndex: number;
+  /**
+   * La columna que se está pintando (`let-col="col"`).
+   *
+   * Imprescindible para las tablas con columnas CONFIGURABLES, que no pueden
+   * declarar un `<ng-template>` por columna porque no saben cuáles habrá: con
+   * una sola plantilla genérica, sin esto no hay forma de saber qué campo leer
+   * ni cómo pintarlo. Las tablas de columnas fijas pueden ignorarlo.
+   */
+  readonly col: ScColumnDef<T>;
 }
 
 /**

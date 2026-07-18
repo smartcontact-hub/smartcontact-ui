@@ -26,6 +26,12 @@ import { ScBulkActionBarComponent as BulkActionBarComponent } from '@smartcontac
 import { ScDeleteEntityDialogComponent as DeleteEntityDialogComponent } from '@smartcontact-hub/components';
 
 import { ScSearchComponent as SearchComponent } from '@smartcontact-hub/components';
+import {
+  type ScColumnCellContext,
+  type ScColumnDef,
+  ScDatatableComponent as DatatableComponent,
+  type ScDatatableRowEvent,
+} from '@smartcontact-hub/components';
 import { RepoFormPanelComponent, RepoFormSubmission } from './repo-form-panel.component';
 import { RepoEntity, RepoPageConfig, RepoStore } from './repo-types';
 
@@ -42,6 +48,7 @@ import { RepoEntity, RepoPageConfig, RepoStore } from './repo-types';
   imports: [
     BulkActionBarComponent,
     ButtonComponent,
+    DatatableComponent,
     ClickOutsideDirective,
     DeleteEntityDialogComponent,
     IconComponent,
@@ -110,11 +117,6 @@ export class RepoListPageComponent<T extends RepoEntity> {
 
   protected readonly existingNames = computed(() => this.items().map((item) => item.name));
 
-  protected readonly allSelected = computed(() => {
-    const sortedLen = this.sorted().length;
-    return sortedLen > 0 && this.selectedIds().size === sortedLen;
-  });
-
   protected readonly deleteItems = computed(() =>
     (this.deleteTarget() ?? []).map((item) => ({ id: item.id, name: item.name })),
   );
@@ -149,6 +151,60 @@ export class RepoListPageComponent<T extends RepoEntity> {
     suffixSingular: this.translate.instant('common.bulk.selected_one'),
     suffixPlural: this.translate.instant('common.bulk.selected_other'),
   }));
+
+  /* ── La tabla, ahora `sc-datatable` (B4) ──────────────────────────────
+   * Caso especial: las columnas salen de `config()`, así que NO se puede
+   * declarar un `<ng-template>` por columna. Hay UNA plantilla genérica y el
+   * contexto lleva la columna (`let-col="col"`) para saber qué pintar. Ese
+   * hueco lo destapó esta página, no el piloto.
+   */
+  private readonly cellTpl = viewChild<TemplateRef<ScColumnCellContext<T>>>('cellTpl');
+  private readonly actionsTpl = viewChild<TemplateRef<ScColumnCellContext<T>>>('actionsTpl');
+
+  protected readonly columns = computed<readonly ScColumnDef<T>[]>(() => {
+    const cell = this.cellTpl();
+    const actions = this.actionsTpl();
+    return [
+      ...this.config().columns.map((c) => ({
+        field: c.key,
+        header: this.translate.instant(c.labelKey),
+        width: c.width,
+        cellTemplate: cell,
+      })),
+      // Columna sin datos: `field` es solo su identidad.
+      { field: '__actions', header: '', width: '48px', cellTemplate: actions },
+    ];
+  });
+
+  /** ¿Esta columna es la destacada (la que ancla el panel de edición)? */
+  protected isEmphasis(key: string): boolean {
+    return !!this.config().columns.find((c) => c.key === key)?.emphasis;
+  }
+
+  /** ¿Esta columna es de este `kind`? (mono, truncate…) */
+  protected isKind(key: string, kind: string): boolean {
+    return this.config().columns.find((c) => c.key === key)?.kind === kind;
+  }
+
+  /* Puente de selección: `selectedIds` sigue siendo la fuente de verdad. */
+  protected readonly selectedItems = computed<readonly T[]>(() => {
+    const ids = this.selectedIds();
+    return this.sorted().filter((item) => ids.has(item.id));
+  });
+
+  protected onSelectionChange(selection: T | readonly T[] | null): void {
+    const rows = Array.isArray(selection) ? selection : selection ? [selection as T] : [];
+    this.selectedIds.set(new Set(rows.map((item) => item.id)));
+  }
+
+  /** Click derecho → el MISMO `<p-menu>` que el kebab (R3). */
+  protected onRowContextMenu(
+    event: ScDatatableRowEvent<T>,
+    menu: { toggle: (e: Event) => void },
+  ): void {
+    this.setMenuTarget(event.row);
+    menu.toggle(event.originalEvent);
+  }
 
   protected getCellValue(item: T, key: string): string {
     const cfg = this.config();
@@ -190,22 +246,8 @@ export class RepoListPageComponent<T extends RepoEntity> {
     });
   }
 
-  protected toggleSelect(id: number): void {
-    this.selectedIds.update((current) => {
-      const next = new Set(current);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
-      return next;
-    });
-  }
-
-  protected toggleSelectAll(): void {
-    this.selectedIds.update((current) => {
-      const sorted = this.sorted();
-      if (current.size === sorted.length) return new Set();
-      return new Set(sorted.map((item) => item.id));
-    });
-  }
+  /* `toggleSelect` / `toggleSelectAll` / `allSelected` murieron con la
+   * migración: los sirven `p-tableCheckbox` y `p-tableHeaderCheckbox`. */
 
   protected clearSelection(): void {
     this.selectedIds.set(new Set());

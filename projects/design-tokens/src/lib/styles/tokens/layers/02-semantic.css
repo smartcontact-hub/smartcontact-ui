@@ -52,8 +52,13 @@
    * cyan-600 sobre blanco daba 3.46:1 — bajo AA; sky-600 da 6.80:1. */
   --sc-text-accent: var(--sc-color-sky-600);
   --sc-text-link: var(--sc-color-sky-600);
-  --sc-text-success: var(--sc-color-green-600);
-  --sc-text-warning: var(--sc-color-amber-600);
+  /* success y warning suben un paso: green-600 daba 3.30:1 sobre blanco y
+   * amber-600 daba 3.19:1 — los dos bajo el 4.5 de AA para texto normal.
+   * green-700 da 5.02 y amber-700 da 5.02. Mismo arreglo que ya se le hizo
+   * a `text-accent` (ver comentario de arriba: cyan-600 3.46 → sky-600 6.80).
+   * Su valor en OSCURO se queda en el 600, que allí sí pasa — ver 07-dark. */
+  --sc-text-success: var(--sc-color-green-700);
+  --sc-text-warning: var(--sc-color-amber-700);
   --sc-text-danger: var(--sc-color-red-600);
   --sc-text-info: var(--sc-text-accent);
   --sc-text-violet: var(--sc-color-violet-700);
