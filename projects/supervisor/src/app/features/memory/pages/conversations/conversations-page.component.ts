@@ -45,6 +45,8 @@ import { TOAST_LIFE } from '@core/utils/toast-life';
  *               transcripción/análisis con state machine).
  * Iter 6a (S38): + selección múltiple. Row click toggle selección (Audit A5
  *                del React); cluster status icons sigue abriendo modal.
+ * Ola 6:        el row click pasa a ABRIR el reproductor (R1) y la selección
+ *                se hace desde la celda de la casilla. Ver la tabla.
  * Ola 5:        las acciones masivas pasan al `<sc-bulk-action-bar>` compartido.
  *                Esto REVIERTE el backlog #65, que las había dejado inline en
  *                la toolbar por paridad con el legacy S50/S52. La paridad con

@@ -61,7 +61,11 @@
   [entity]="bulkEntity()"
   (clear)="onClearSelection()"
 >
-  <sc-button type="button" variant="secondary" (clicked)="onBulkTranscribe()">
+  <!-- Transcribir es la acción PRIMARIA: es la razón por la que alguien
+       selecciona filas aquí. Con las tres en secundario, la barra entera se
+       leía gris sobre gris —indistinguible de deshabilitada, justo la
+       percepción que esta ola viene a corregir— y sin jerarquía. -->
+  <sc-button type="button" variant="primary" (clicked)="onBulkTranscribe()">
     <span>{{ 'memory.conversations.filters.transcribe' | translate }}</span>
   </sc-button>
   <sc-button type="button" variant="secondary" (clicked)="onDownloadRequested()">
