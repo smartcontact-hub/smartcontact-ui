@@ -40,7 +40,7 @@ import {
   hasUnevaluableConditions,
   projectImpact,
 } from '../../data/condition-eval';
-import type { Direction, Rule, RuleType } from '../../data/rule.types';
+import type { Rule, RuleType } from '../../data/rule.types';
 import { CategoriesStore } from '../../state/categories.store';
 import { ConversationsStore } from '../../state/conversations.store';
 import { RulesStore } from '../../state/rules.store';
@@ -124,13 +124,6 @@ export class RuleBuilderPageComponent implements DirtyAware {
     describeConditionScope(this.conditionTree(), (ref) => this.resolver.label(ref)),
   );
 
-  protected readonly direction = signal<Direction>('all');
-  protected readonly filterBySchedule = signal(false);
-  protected readonly scheduleFrom = signal('09:00');
-  protected readonly scheduleTo = signal('18:00');
-  // Transcripción (iter 9c-2)
-  protected readonly durationMin = signal(30);
-  protected readonly durationUnit = signal<'seconds' | 'minutes'>('seconds');
   protected readonly aiAnalysis = signal(false);
   // Categorías IA (solo classification + aiAnalysis ON) · S49 §10 #13
   protected readonly categorias = signal<readonly string[]>([]);
@@ -195,12 +188,6 @@ export class RuleBuilderPageComponent implements DirtyAware {
       description: this.description(),
       active: this.active(),
       conditionTree: this.conditionTree(),
-      direction: this.direction(),
-      filterBySchedule: this.filterBySchedule(),
-      scheduleFrom: this.scheduleFrom(),
-      scheduleTo: this.scheduleTo(),
-      durationMin: this.durationMin(),
-      durationUnit: this.durationUnit(),
       aiAnalysis: this.aiAnalysis(),
       categorias: this.categorias(),
     });
@@ -253,19 +240,6 @@ export class RuleBuilderPageComponent implements DirtyAware {
     this.description.set(rule.description ?? '');
     this.active.set(rule.active);
     this.conditionTree.set(rule.conditionTree ?? deriveTreeFromLegacy(rule));
-    this.direction.set(rule.direction ?? 'all');
-    this.filterBySchedule.set(rule.schedule?.enabled ?? false);
-    this.scheduleFrom.set(rule.schedule?.from ?? '09:00');
-    this.scheduleTo.set(rule.schedule?.to ?? '18:00');
-    // Transcripción
-    const durMin = rule.durationMin ?? 30;
-    if (durMin >= 60 && durMin % 60 === 0) {
-      this.durationMin.set(durMin / 60);
-      this.durationUnit.set('minutes');
-    } else {
-      this.durationMin.set(durMin);
-      this.durationUnit.set('seconds');
-    }
     this.aiAnalysis.set(rule.aiAnalysis ?? false);
     this.categorias.set(rule.categorias ?? []);
     // Loaded values are the clean baseline for the unsaved-changes guard.
@@ -290,13 +264,6 @@ export class RuleBuilderPageComponent implements DirtyAware {
       transcripcion: this.ruleType() === 'transcription',
       clasificacion: this.ruleType() === 'classification',
       active: this.active(),
-      direction: this.direction(),
-      schedule: {
-        enabled: this.filterBySchedule(),
-        from: this.scheduleFrom(),
-        to: this.scheduleTo(),
-      },
-      durationMin: this.durationUnit() === 'minutes' ? this.durationMin() * 60 : this.durationMin(),
       aiAnalysis: this.aiAnalysis(),
       // Solo persistimos categorías si la regla es classification + aiAnalysis;
       // si el usuario cambia el tipo o desactiva el toggle quedan limpias.
