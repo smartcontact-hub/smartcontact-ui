@@ -26,6 +26,11 @@
 </ng-template>
 
 <div class="page" [class.page--has-selection]="selectedIds().size > 0">
+  <!-- El modelo "todo arriba" (S59) dejó estas páginas sin <h1>: la
+       identidad la daba solo un <ol> de breadcrumb, y el documento quedaba
+       sin encabezado. Visualmente oculto porque el diseño no lo pide. -->
+  <h1 class="visually-hidden">{{ 'templates.breadcrumb' | translate }}</h1>
+
   <div class="page__inner">
     <div class="tabs" role="tablist">
       <button

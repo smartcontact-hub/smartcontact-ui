@@ -13,16 +13,17 @@ import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 
 import {
-  ConfirmHostService,
   LanguageService,
   ThemeService,
   type AppLanguage,
   type ThemeMode,
 } from '@core/services';
-import { PageHeaderService } from '@core/services';
 import { TOAST_LIFE } from '@core/utils/toast-life';
 
-import { ScToggleSwitchComponent as ToggleSwitchComponent } from '@smartcontact-hub/components';
+import {
+  ScConfirmService,
+  ScToggleSwitchComponent as ToggleSwitchComponent,
+} from '@smartcontact-hub/components';
 import { AgentsStore } from '@features/admin/agents/state/agents.store';
 
 import { NumeracionEspecialSectionComponent } from '../sections/numeracion-especial-section.component';
@@ -97,21 +98,11 @@ const APP_DATA_PREFIX = 'sc-';
 export class SistemaPageComponent {
   protected readonly theme = inject(ThemeService);
   protected readonly language = inject(LanguageService);
-  private readonly confirm = inject(ConfirmHostService);
+  private readonly confirm = inject(ScConfirmService);
   private readonly translate = inject(TranslateService);
   private readonly doc = inject(DOCUMENT);
   private readonly messages = inject(MessageService);
   private readonly agentsStore = inject(AgentsStore);
-  private readonly pageHeader = inject(PageHeaderService);
-
-  constructor() {
-    this.pageHeader.set({
-      titleKey: 'config.sistema.heading',
-      subtitleKey: 'config.sistema.subtitle',
-      entityKey: 'config.sidebar.title',
-      icon: 'settings',
-    });
-  }
 
   protected readonly settingsIcon = 'settings';
   protected readonly resetIcon = 'rotate_left';

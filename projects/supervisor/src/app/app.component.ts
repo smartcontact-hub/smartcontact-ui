@@ -19,8 +19,11 @@ import {
 } from '@core/services';
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { NAV_ICONS } from '@core/icons/nav-icons';
-// confirm-host (+ su servicio) y el icono se quedan LOCALES en esta migración.
-import { ConfirmHostComponent } from '@shared/components';
+// El confirm ya NO es local: la copia de la app era verbatim del DS (misma
+// lógica de botones, mismo `<p-confirmdialog />`, mismo SCSS) y el resolver del
+// DS produce exactamente la misma clase de icono que la app hardcodeaba
+// (`exclamation-triangle` → `sc-icon-font sc-icon-font--warning`).
+import { ScConfirmDialogComponent } from '@smartcontact-hub/components';
 
 type ToastSeverity = 'success' | 'info' | 'warn' | 'error' | 'secondary' | 'contrast';
 
@@ -42,7 +45,7 @@ const APP_SHORTCUT_GROUP: ScShortcutGroup = {
   selector: 'sc-root',
   imports: [
     ScCommandPaletteComponent,
-    ConfirmHostComponent,
+    ScConfirmDialogComponent,
     IconComponent,
     ScKeyboardShortcutsComponent,
     RouterOutlet,

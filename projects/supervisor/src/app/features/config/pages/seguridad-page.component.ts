@@ -1,8 +1,7 @@
-import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
-import { PageHeaderService } from '@core/services';
 
 /**
  * Seguridad page (`/config/seguridad`).
@@ -21,16 +20,5 @@ import { PageHeaderService } from '@core/services';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SeguridadPageComponent {
-  private readonly pageHeader = inject(PageHeaderService);
-
-  constructor() {
-    this.pageHeader.set({
-      titleKey: 'config.seguridad.heading',
-      subtitleKey: 'config.seguridad.subtitle_empty',
-      entityKey: 'config.sidebar.title',
-      icon: 'shield',
-    });
-  }
-
   protected readonly shieldIcon = 'shield';
 }

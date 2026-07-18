@@ -25,7 +25,7 @@
 ## Clasificación (auto-generada)
 
 <!-- @audit:components — TABLA GENERADA por `node scripts/component-audit.mjs --write`. NO editar a mano. -->
-**49 componentes** · 15 custom · 11 standard · 23 extended · 31 usados en Supervisor.
+**49 componentes** · 15 custom · 11 standard · 23 extended · 32 usados en Supervisor.
 
 | Componente | Tipo | PrimeNG base | API propia | Anidados | Demo | Usos en Supervisor |
 |---|---|---|---|---|---|---|
@@ -41,7 +41,7 @@
 | `sc-color-dot-picker` | CUSTOM | — | 1 inputs | — | ✓ | 3 |
 | `sc-column-selector` | STANDARD | primeng/popover | 1 inputs | — | ✓ | 3 |
 | `sc-command-palette` | CUSTOM | — | 0 inputs | — | ✓ | 4 |
-| `sc-confirmdialog` | STANDARD | primeng/confirmdialog | 0 inputs | — | ✓ | — |
+| `sc-confirmdialog` | STANDARD | primeng/confirmdialog | 0 inputs | — | ✓ | 1 |
 | `sc-datatable` | EXTENDED | primeng/table | 19 inputs | — | ✓ | — |
 | `sc-datepicker` | EXTENDED | primeng/datepicker | CVA · 17 inputs | — | ✓ | 2 |
 | `sc-delete-entity-dialog` | STANDARD | primeng/button | 2 inputs | sc-dialog | ✓ | 8 |
@@ -61,7 +61,7 @@
 | `sc-keyboard-shortcuts` | CUSTOM | — | 1 inputs | — | ✓ | 2 |
 | `sc-message` | EXTENDED | primeng/message | 6 inputs | — | ✓ | 1 |
 | `sc-multiselect` | EXTENDED | primeng/multiselect | CVA · 23 inputs | — | ✓ | 10 |
-| `sc-page-header` | CUSTOM | — | 3 inputs | — | ✓ | 2 |
+| `sc-page-header` | CUSTOM | — | 3 inputs | — | ✓ | 1 |
 | `sc-panel` | EXTENDED | primeng/panel | 4 inputs | — | ✓ | — |
 | `sc-photo-upload` | CUSTOM | — | 6 inputs | — | ✓ | 2 |
 | `sc-progressbar` | EXTENDED | primeng/progressbar | 4 inputs | — | ✓ | — |

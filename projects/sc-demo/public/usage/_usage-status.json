@@ -425,6 +425,10 @@
   ],
   "gated": [
     {
+      "selector": "sc-confirmdialog",
+      "usedInSupervisor": 1
+    },
+    {
       "selector": "sc-empty-state",
       "usedInSupervisor": 8
     },

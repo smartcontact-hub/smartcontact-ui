@@ -8,8 +8,8 @@ import {
 } from '@angular/router';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
 import { provideHttpClient, withFetch } from '@angular/common/http';
-import { ConfirmationService, MessageService } from 'primeng/api';
-import { provideSmartContactUi } from '@smartcontact-hub/components';
+import { MessageService } from 'primeng/api';
+import { provideScConfirm, provideSmartContactUi } from '@smartcontact-hub/components';
 import { provideTranslateService } from '@ngx-translate/core';
 import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
 
@@ -50,7 +50,7 @@ export const appConfig: ApplicationConfig = {
       },
     }),
     MessageService,
-    ConfirmationService,
+    ...provideScConfirm(),
     // ngx-translate v17: `provideTranslateService` + `provideTranslateHttpLoader`
     // (el constructor de TranslateHttpLoader ya no toma args; la config va por
     // el provider funcional). Carga `/assets/i18n/<lang>.json`, idioma `es`.

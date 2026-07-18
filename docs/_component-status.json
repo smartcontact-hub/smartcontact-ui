@@ -1,6 +1,6 @@
 {
   "generated": "component-audit.mjs",
-  "summary": "49 componentes · 15 custom · 11 standard · 23 extended · 31 usados en Supervisor.",
+  "summary": "49 componentes · 15 custom · 11 standard · 23 extended · 32 usados en Supervisor.",
   "components": [
     {
       "name": "avatar",
@@ -161,7 +161,7 @@
       "inputs": 0,
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 0
+      "usedInSupervisor": 1
     },
     {
       "name": "datatable",
@@ -405,7 +405,7 @@
       "inputs": 3,
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 2
+      "usedInSupervisor": 1
     },
     {
       "name": "panel",

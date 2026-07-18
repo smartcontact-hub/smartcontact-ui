@@ -19,7 +19,7 @@ import type { MenuItem } from 'primeng/api';
 
 import { ScEmptyStateComponent as EmptyStateComponent } from '@smartcontact-hub/components';
 import { ScMessageComponent as MessageComponent } from '@smartcontact-hub/components';
-import { ConfirmHostService } from '@core/services/confirm-host.service';
+import { ScConfirmService } from '@smartcontact-hub/components';
 import { TopBarSlotService } from '@core/layout/top-bar/top-bar-slot.service';
 import { TOAST_LIFE } from '@core/utils/toast-life';
 
@@ -53,7 +53,7 @@ import { RulesStore } from '../../state/rules.store';
 export class RulesPageComponent {
   private readonly rulesStore = inject(RulesStore);
   private readonly resolver = inject(ConditionResolverService);
-  private readonly confirm = inject(ConfirmHostService);
+  private readonly confirm = inject(ScConfirmService);
   private readonly messages = inject(MessageService);
   private readonly translate = inject(TranslateService);
   private readonly router = inject(Router);

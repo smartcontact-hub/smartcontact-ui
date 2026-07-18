@@ -12,8 +12,6 @@ export type { LocalStore, LocalStoreConfig } from './local-store.factory';
 export { CommandPaletteService } from './command-palette.service';
 export type { PaletteCommand } from './command-palette.service';
 
-export { ConfirmHostService } from './confirm-host.service';
-export type { ConfirmRequest } from './confirm-host.service';
 
 export { DiscardDialogService } from './discard-dialog.service';
 
@@ -26,9 +24,6 @@ export { LanguageService } from './language.service';
 export type { AppLanguage } from './language.service';
 
 export { KeyboardShortcutsService } from './keyboard-shortcuts.service';
-
-export { PageHeaderService } from './page-header.service';
-export type { PageHeaderState } from './page-header.service';
 
 export { UndoStackService } from './undo-stack.service';
 export type { UndoEntry } from './undo-stack.service';
