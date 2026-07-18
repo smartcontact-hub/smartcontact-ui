@@ -43,12 +43,12 @@
   &__all {
     flex: 1;
     color: var(--sc-color-sky-500);
-    font-weight: 500;
+    font-weight: var(--sc-font-weight-medium);
   }
 
   &__all-hint {
     color: var(--sc-text-secondary);
-    font-weight: 400;
+    font-weight: var(--sc-font-weight-regular);
     font-size: var(--sc-font-size-50);
   }
 
@@ -146,7 +146,7 @@
     margin: var(--sc-spacing-0-25) 0;
     padding: var(--sc-spacing-0-25) var(--sc-spacing-0-5) 0;
     font-size: var(--sc-font-size-50);
-    font-weight: 600;
+    font-weight: var(--sc-font-weight-semibold);
     letter-spacing: 0.03em;
     text-transform: uppercase;
     color: var(--sc-text-secondary);
@@ -228,7 +228,7 @@
     flex: 1;
     min-width: 0;
     font-size: var(--sc-font-size-50);
-    font-weight: 600;
+    font-weight: var(--sc-font-weight-semibold);
     letter-spacing: 0.03em;
     text-transform: uppercase;
     color: var(--sc-text-secondary);
@@ -268,7 +268,7 @@
 
   &__group-count {
     color: var(--sc-text-secondary);
-    font-weight: 500;
+    font-weight: var(--sc-font-weight-medium);
   }
 
   &__opt--nested {
@@ -299,7 +299,7 @@
     color: var(--sc-color-sky-500);
     font: inherit;
     font-size: var(--sc-font-size-100);
-    font-weight: 500;
+    font-weight: var(--sc-font-weight-medium);
     cursor: pointer;
     padding: 0;
 
@@ -320,7 +320,7 @@
     color: var(--sc-color-sky-500);
     font: inherit;
     font-size: var(--sc-font-size-100);
-    font-weight: 500;
+    font-weight: var(--sc-font-weight-medium);
     cursor: pointer;
 
     &:hover {

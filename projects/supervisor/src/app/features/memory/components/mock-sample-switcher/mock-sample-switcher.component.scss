@@ -22,7 +22,7 @@
   background: color-mix(in srgb, var(--sc-color-amber-100) 70%, white);
   font-family: var(--sc-font-family-primary);
   font-size: var(--sc-font-size-100);
-  font-weight: 500;
+  font-weight: var(--sc-font-weight-medium);
   color: var(--sc-color-amber-800);
   cursor: pointer;
   transition:
@@ -52,7 +52,7 @@
   background: color-mix(in srgb, var(--sc-color-amber-200) 90%, white);
   color: var(--sc-color-amber-900);
   font-size: var(--sc-font-size-50);
-  font-weight: 700;
+  font-weight: var(--sc-font-weight-bold);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
@@ -78,7 +78,7 @@
 
 .mock-sample-switcher__current {
   color: var(--sc-color-amber-900);
-  font-weight: 600;
+  font-weight: var(--sc-font-weight-semibold);
 }
 
 /* ─── Popover content (overlay rendered en <body>) ──────────────── */
@@ -103,7 +103,7 @@
   padding: var(--sc-spacing-0-5) var(--sc-spacing-0-75) var(--sc-spacing-0-5);
   font-family: var(--sc-font-family-primary);
   font-size: var(--sc-font-size-50);
-  font-weight: 500;
+  font-weight: var(--sc-font-weight-medium);
   text-transform: uppercase;
   letter-spacing: 0.05em;
   color: var(--sc-text-subtle);
@@ -146,7 +146,7 @@
 
 .mock-sample-switcher__item-title {
   font-size: var(--sc-font-size-200);
-  font-weight: 600;
+  font-weight: var(--sc-font-weight-semibold);
   color: var(--sc-text-primary);
 }
 

@@ -32,7 +32,7 @@
 
   &__field,
   &__val {
-    font-weight: 700;
+    font-weight: var(--sc-font-weight-bold);
     color: var(--sc-text-primary);
   }
 
@@ -42,7 +42,7 @@
 
   &__paren {
     color: var(--sc-text-secondary);
-    font-weight: 700;
+    font-weight: var(--sc-font-weight-bold);
   }
 }
 
@@ -59,7 +59,7 @@
   background: var(--sc-bg-primary);
   color: var(--sc-text-on-primary);
   font-size: var(--sc-font-size-50);
-  font-weight: 700;
+  font-weight: var(--sc-font-weight-bold);
   line-height: 1;
 }
 
@@ -230,7 +230,7 @@
     gap: var(--sc-spacing-0-375);
     margin: 0;
     font-size: var(--sc-font-size-50);
-    font-weight: 600;
+    font-weight: var(--sc-font-weight-semibold);
     letter-spacing: 0.04em;
     text-transform: uppercase;
     color: var(--sc-text-secondary);
@@ -243,7 +243,7 @@
   &__impact-main {
     margin: 0;
     color: var(--sc-text-primary);
-    font-weight: 500;
+    font-weight: var(--sc-font-weight-medium);
   }
 
   &__impact-bar {
@@ -312,14 +312,14 @@
   &__field-label {
     display: block;
     font-size: var(--sc-font-size-200);
-    font-weight: 500;
+    font-weight: var(--sc-font-weight-medium);
     color: var(--sc-text-primary);
     margin-bottom: var(--sc-spacing-0-25);
   }
 
   &__optional {
     color: var(--sc-text-secondary);
-    font-weight: 400;
+    font-weight: var(--sc-font-weight-regular);
     font-size: var(--sc-font-size-50);
   }
 
@@ -453,7 +453,7 @@
     h3 {
       margin: 0;
       font-size: var(--sc-font-size-200);
-      font-weight: 500;
+      font-weight: var(--sc-font-weight-medium);
       color: var(--sc-text-primary);
     }
   }

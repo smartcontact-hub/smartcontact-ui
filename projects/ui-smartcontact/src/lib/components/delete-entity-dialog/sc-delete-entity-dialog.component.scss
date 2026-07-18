@@ -22,7 +22,7 @@
     background: transparent;
     color: var(--sc-text-primary);
     font-size: var(--sc-font-size-100);
-    font-weight: 500;
+    font-weight: var(--sc-font-weight-medium);
     cursor: pointer;
 
     &:hover {

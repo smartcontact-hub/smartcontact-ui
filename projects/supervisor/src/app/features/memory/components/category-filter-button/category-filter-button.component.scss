@@ -18,7 +18,7 @@
   background: var(--sc-bg-surface);
   color: var(--sc-text-primary);
   font-size: var(--sc-font-size-200);
-  font-weight: 500;
+  font-weight: var(--sc-font-weight-medium);
   cursor: pointer;
   transition:
     background-color 200ms ease-out,
@@ -57,7 +57,7 @@
     background: var(--sc-bg-primary);
     color: var(--sc-text-on-primary);
     font-size: var(--sc-font-size-50);
-    font-weight: 600;
+    font-weight: var(--sc-font-weight-semibold);
     font-variant-numeric: tabular-nums;
   }
 }

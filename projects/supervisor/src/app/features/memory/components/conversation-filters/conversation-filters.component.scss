@@ -71,7 +71,7 @@
   &__results-time {
     color: var(--sc-text-primary);
     font-variant-numeric: tabular-nums;
-    font-weight: 500;
+    font-weight: var(--sc-font-weight-medium);
   }
 
   &__results-sep {
@@ -160,7 +160,7 @@
   background: var(--sc-text-primary);
   color: var(--sc-bg-surface);
   font-size: var(--sc-font-size-50);
-  font-weight: 500;
+  font-weight: var(--sc-font-weight-medium);
   font-variant-numeric: tabular-nums;
   line-height: 1;
 }
@@ -176,7 +176,7 @@
   border-radius: var(--sc-radius-full);
   background: color-mix(in srgb, var(--sc-color-red-100) 50%, transparent);
   font-size: var(--sc-font-size-100);
-  font-weight: 500;
+  font-weight: var(--sc-font-weight-medium);
   color: var(--sc-color-red-800);
   cursor: pointer;
   transition:
@@ -216,7 +216,7 @@
   background: color-mix(in srgb, var(--sc-color-red-200) 80%, transparent);
   font-family: var(--sc-font-family-mono);
   font-size: var(--sc-font-size-50);
-  font-weight: 600;
+  font-weight: var(--sc-font-weight-semibold);
   color: var(--sc-color-red-900);
 
   .is-active & {

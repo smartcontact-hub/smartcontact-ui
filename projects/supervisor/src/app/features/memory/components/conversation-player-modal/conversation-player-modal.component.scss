@@ -70,7 +70,7 @@
 
 .player-audio__time {
   width: 48px;
-  font-family: ui-monospace, 'SFMono-Regular', 'Menlo', monospace;
+  font-family: var(--sc-font-family-mono);
   font-size: var(--sc-font-size-200);
   font-variant-numeric: tabular-nums;
   color: var(--sc-color-slate-700);
@@ -160,7 +160,7 @@
   border: 0;
   background: transparent;
   font-size: var(--sc-font-size-200);
-  font-weight: 500;
+  font-weight: var(--sc-font-weight-medium);
   color: var(--sc-color-slate-500);
   cursor: pointer;
   transition: color 200ms ease-out;
@@ -276,7 +276,7 @@
 .player-state__title {
   margin: 0;
   font-size: var(--sc-font-size-300);
-  font-weight: 600;
+  font-weight: var(--sc-font-weight-semibold);
   line-height: 1.4;
   color: var(--sc-color-slate-900);
 }
@@ -309,7 +309,7 @@
   background: var(--sc-bg-primary);
   color: white;
   font-size: var(--sc-font-size-200);
-  font-weight: 500;
+  font-weight: var(--sc-font-weight-medium);
   cursor: pointer;
   box-shadow: var(--sc-shadow-xs);
   transition:
@@ -450,12 +450,12 @@
 
 .player-bubble__speaker {
   font-size: var(--sc-font-size-50);
-  font-weight: 500;
+  font-weight: var(--sc-font-weight-medium);
   color: var(--sc-color-slate-700);
 }
 
 .player-bubble__time {
-  font-family: ui-monospace, 'SFMono-Regular', 'Menlo', monospace;
+  font-family: var(--sc-font-family-mono);
   font-size: var(--sc-font-size-50);
   color: var(--sc-color-slate-500);
 }
@@ -505,7 +505,7 @@
   align-items: center;
   gap: var(--sc-spacing-0-875);
   font-size: var(--sc-font-size-50);
-  font-weight: 700;
+  font-weight: var(--sc-font-weight-bold);
   text-transform: uppercase;
   letter-spacing: 0.04em;
   color: var(--sc-color-slate-700);
@@ -554,7 +554,7 @@
 
 .player-sentiment__label {
   font-size: var(--sc-font-size-200);
-  font-weight: 500;
+  font-weight: var(--sc-font-weight-medium);
   color: var(--sc-color-slate-900);
 }
 

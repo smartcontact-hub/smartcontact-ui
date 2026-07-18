@@ -110,7 +110,7 @@
     background: none;
     font: inherit;
     color: var(--sc-text-primary);
-    font-weight: 500;
+    font-weight: var(--sc-font-weight-medium);
     cursor: pointer;
 
     &:hover {
@@ -129,7 +129,7 @@
     margin-left: var(--sc-spacing-0-25);
     color: var(--sc-text-secondary);
     font-size: var(--sc-font-size-100);
-    font-weight: 400;
+    font-weight: var(--sc-font-weight-regular);
   }
 
   .categories-row--inactive {

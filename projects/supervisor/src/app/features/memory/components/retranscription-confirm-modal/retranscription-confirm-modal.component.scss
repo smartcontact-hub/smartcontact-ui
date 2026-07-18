@@ -37,7 +37,7 @@
   &__warning-headline {
     margin: 0;
     font-size: var(--sc-font-size-body-2);
-    font-weight: 600;
+    font-weight: var(--sc-font-weight-semibold);
     line-height: var(--sc-line-height-body-2);
     color: var(--sc-text-danger);
   }
@@ -69,7 +69,7 @@
 
   &__gate-token {
     font-family: var(--sc-font-family-mono);
-    font-weight: 600;
+    font-weight: var(--sc-font-weight-semibold);
     letter-spacing: 0.1em;
     color: var(--sc-text-primary);
   }
