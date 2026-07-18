@@ -481,6 +481,39 @@ table.table {
   }
 }
 
+/* Item DESTRUCTIVO del menú de fila.
+ *
+ * `rules-menu-item--danger` se venía pasando como `styleClass` desde hace
+ * tiempo y no tenía CSS en ninguna parte: el "Eliminar" se veía exactamente
+ * igual que el "Editar" en las 7 tablas que usan el kebab compartido. La
+ * acción irreversible no se distinguía de la inocua, que es lo único que ese
+ * hook pretendía comprar.
+ *
+ * Va aquí y no en un SCSS de componente porque el `<p-menu>` monta con
+ * `appendTo="body"`, fuera del scope encapsulado de la página. PrimeNG deja la
+ * clase en el `<li>`, así que se baja al enlace y a su icono. */
+.rules-menu-item--danger {
+  .p-menu-item-link {
+    color: var(--sc-text-danger);
+  }
+
+  /* El icono hereda el color del enlace salvo que el tema le ponga el suyo. */
+  .p-menu-item-icon {
+    color: var(--sc-text-danger);
+  }
+
+  /* En hover el tinte refuerza la advertencia; el rojo del texto por sí solo
+   * podría leerse como un estado, no como la consecuencia de pulsar. */
+  .p-menu-item-content:hover {
+    background: var(--sc-bg-danger-subtle);
+
+    .p-menu-item-link,
+    .p-menu-item-icon {
+      color: var(--sc-text-danger);
+    }
+  }
+}
+
 /* Motivo por el que Guardar está deshabilitado (R6, Ola 4). Global y no scoped
  * a propósito: este nodo se PROYECTA a la TopBar vía TopBarSlotService, o sea
  * fuera del host de la página, donde el SCSS del componente no lo alcanza
