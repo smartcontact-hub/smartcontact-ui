@@ -18,7 +18,12 @@ export interface ScColumnCellContext<T = unknown> {
  * que el DS conozca tipos de celda.
  */
 export interface ScColumnDef<T = unknown> {
-  /** Propiedad de la fila que se lee y por la que se ordena. */
+  /**
+   * Propiedad de la fila que se lee y por la que se ordena. Es también la
+   * identidad de la columna: `[visibleColumns]` casa por este valor, así que
+   * una columna sin datos (acciones, kebab) necesita igualmente un `field`
+   * único aunque no exista en la fila.
+   */
   readonly field: string;
   /** Cabecera ya traducida por el consumidor. */
   readonly header: string;
@@ -34,3 +39,27 @@ export interface ScColumnDef<T = unknown> {
    */
   readonly cellTemplate?: TemplateRef<ScColumnCellContext<T>>;
 }
+
+/**
+ * Payload de los gestos de fila (`rowClick`, `rowContextMenu`).
+ *
+ * Lleva el evento original **sin consumir**: el DS solo hace el
+ * `preventDefault()` del menú contextual (evitar el menú nativo del navegador
+ * es la única lectura posible de ese gesto). Todo lo demás —parar la
+ * propagación, leer `shiftKey`— es del consumidor, que es quien sabe qué
+ * significa un click en su tabla.
+ */
+export interface ScDatatableRowEvent<T = unknown> {
+  /** La fila sobre la que se hizo el gesto. */
+  readonly row: T;
+  /** Índice de la fila en el render actual (ojo: cambia al ordenar/paginar). */
+  readonly index: number;
+  /** El evento del DOM, por si el consumidor necesita `shiftKey` o coordenadas. */
+  readonly originalEvent: MouseEvent;
+}
+
+/**
+ * Clases extra por fila. Se resuelve en cada render, así que debe ser barata y
+ * pura: nada de leer señales que no dependan de la propia fila.
+ */
+export type ScRowStyleClassFn<T = unknown> = (row: T, index: number) => string | undefined;

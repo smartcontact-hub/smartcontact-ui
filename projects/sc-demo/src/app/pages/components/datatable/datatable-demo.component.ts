@@ -6,6 +6,8 @@ import {
   ScColumnCellContext,
   ScColumnDef,
   ScDatatableComponent,
+  ScDatatableRowEvent,
+  ScRowStyleClassFn,
 } from '../../../../../../ui-smartcontact/src/public-api';
 import { StoryContext, StoryDef, StoryHostComponent, StoryMeta } from '../../../storybook';
 
@@ -63,6 +65,31 @@ const LAZY_SNIPPET = `<input (input)="lazyTable.filterGlobal($any($event.target)
   (lazyLoad)="onLazyLoad($event)"
 />`;
 
+const GESTURES_SNIPPET = `<sc-datatable
+  [value]="agents()"
+  [columns]="gestureColumns"
+  [visibleColumns]="visibleFields()"
+  [rowStyleClass]="rowClassFn"
+  selectionMode="multiple"
+  (rowClick)="onRowOpen($event)"
+  (rowContextMenu)="onRowMenu($event); rowMenu.toggle($event.originalEvent)"
+/>
+<p-menu #rowMenu [model]="menuItems()" [popup]="true" appendTo="body" />
+
+<!-- rowClassFn es una propiedad, NO un método: se resuelve en cada render y
+     una flecha nueva por ciclo tiraría OnPush al suelo. -->
+protected readonly rowClassFn: ScRowStyleClassFn<Agent> = (agent) =>
+  agent.status === 'inactive' ? 'dt-row--inactive' : undefined;
+
+<!-- Columnas conmutables: sc-column-selector emite exactamente este formato
+     (su \`key\` = nuestro \`field\`), así que se cablea sin adaptador. -->
+<sc-column-selector
+  scTableCaption
+  [columns]="columnDefs"
+  storageKey="demo-agents_v1"
+  (orderedVisibleChange)="visibleFields.set($event)"
+/>`;
+
 /** Demo de `sc-datatable` en formato story (motor «Storybook-like»). */
 @Component({
   selector: 'app-datatable-demo',
@@ -74,6 +101,7 @@ export class DatatableDemoComponent {
   protected readonly playgroundTpl = viewChild<TemplateRef<StoryContext>>('playground');
   protected readonly mvpTpl = viewChild<TemplateRef<StoryContext>>('mvp');
   protected readonly lazyTpl = viewChild<TemplateRef<StoryContext>>('lazy');
+  protected readonly gesturesTpl = viewChild<TemplateRef<StoryContext>>('gestures');
 
   protected readonly statusTpl = viewChild<TemplateRef<ScColumnCellContext<Agent>>>('statusTpl');
 
@@ -109,6 +137,56 @@ export class DatatableDemoComponent {
     { field: 'name', header: 'Nombre', sortable: true },
     { field: 'extension', header: 'Extensión', width: '10rem', align: 'center' },
   ];
+
+  // --- B4: gestos de fila + columnas conmutables ---------------------------
+  // Estas dos capacidades NO las ejercita el piloto del supervisor (labels y
+  // templates no tienen click de fila ni selector de columnas), así que su
+  // única verificación real está aquí. Los `data-testid` son para eso.
+
+  /** Última fila abierta con click. Marca que `rowClick` llegó. */
+  protected readonly lastOpened = signal('—');
+  /** Última fila con click derecho. Marca que `rowContextMenu` llegó. */
+  protected readonly lastContext = signal('—');
+  /** Cuántas veces se abrió: si la casilla disparase `rowClick`, subiría al marcar. */
+  protected readonly openCount = signal(0);
+
+  protected readonly gestureColumns: readonly ScColumnDef<Agent>[] = [
+    { field: 'name', header: 'Nombre', sortable: true },
+    { field: 'extension', header: 'Extensión', width: '10rem', align: 'center' },
+    { field: 'status', header: 'Estado', align: 'center' },
+  ];
+
+  /** Visibles y en orden — el array manda sobre el orden declarado. */
+  protected readonly visibleFields = signal<readonly string[]>([
+    'name',
+    'extension',
+    'status',
+  ]);
+
+  /* Propiedad, no método: `rowStyleClass` se resuelve en cada render y una
+   * flecha nueva por ciclo de CD haría trabajar a OnPush de más. */
+  protected readonly rowClassFn: ScRowStyleClassFn<Agent> = (agent) =>
+    agent.status === 'inactive' ? 'dt-row--inactive' : undefined;
+
+  protected onRowOpen(event: ScDatatableRowEvent<Agent>): void {
+    this.lastOpened.set(event.row.name);
+    this.openCount.update((n) => n + 1);
+  }
+
+  protected onRowMenu(event: ScDatatableRowEvent<Agent>): void {
+    this.lastContext.set(event.row.name);
+  }
+
+  protected toggleField(field: string): void {
+    this.visibleFields.update((current) =>
+      current.includes(field) ? current.filter((f) => f !== field) : [...current, field],
+    );
+  }
+
+  /** Invierte el orden para enseñar que `visibleColumns` reordena, no solo filtra. */
+  protected reverseFields(): void {
+    this.visibleFields.update((current) => [...current].reverse());
+  }
 
   protected onLazyLoad(event: TableLazyLoadEvent): void {
     const first = event.first ?? 0;
@@ -180,9 +258,13 @@ export class DatatableDemoComponent {
       { name: 'lazy', type: 'boolean', default: 'false', description: 'Server-driven (emite `(lazyLoad)`).' },
       { name: 'totalRecords', type: 'number', default: '—', description: 'Total del servidor (modo lazy).' },
       { name: 'globalFilterFields', type: 'string[]', default: '—' },
+      { name: 'visibleColumns', type: 'string[]', default: '—', description: 'Columnas visibles por `field`, EN ORDEN. Formato de `sc-column-selector`.' },
+      { name: 'rowStyleClass', type: '(row: T, i: number) => string | undefined', default: '—', description: 'Clases extra por fila.' },
       { name: 'selectionChange', type: 'EventEmitter<T | T[] | null>' },
       { name: 'sortChange', type: 'EventEmitter<ScDatatableSortEvent>' },
       { name: 'lazyLoad', type: 'EventEmitter<TableLazyLoadEvent>' },
+      { name: 'rowClick', type: 'EventEmitter<ScDatatableRowEvent<T>>', description: 'Click en la fila. NO se emite desde la celda de selección.' },
+      { name: 'rowContextMenu', type: 'EventEmitter<ScDatatableRowEvent<T>>', description: 'Click derecho, con el menú nativo ya cancelado.' },
     ],
   };
 
@@ -190,14 +272,16 @@ export class DatatableDemoComponent {
     const pg = this.playgroundTpl();
     const mvp = this.mvpTpl();
     const lz = this.lazyTpl();
+    const gs = this.gesturesTpl();
     const st = this.statusTpl();
     // `st` (statusTpl) alimenta `columns()`; espera a que resuelva para no
     // pintar la story MVP con la columna de estado sin su cellTemplate.
-    if (!pg || !mvp || !lz || !st) return [];
+    if (!pg || !mvp || !lz || !gs || !st) return [];
     return [
       { name: 'Playground', playground: true, template: pg },
       { name: 'Columnas, selección múltiple y paginador', template: mvp, snippet: MVP_SNIPPET },
       { name: 'Lazy (server-driven): paginación + orden + filtro global', template: lz, snippet: LAZY_SNIPPET },
+      { name: 'Gestos de fila y columnas conmutables', template: gs, snippet: GESTURES_SNIPPET },
     ];
   });
 }

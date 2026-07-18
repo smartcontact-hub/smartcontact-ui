@@ -34,7 +34,7 @@
       @if (selectionMode() === 'multiple') {
         <th class="sc-datatable__check"><p-tableHeaderCheckbox /></th>
       }
-      @for (col of columns(); track col.field) {
+      @for (col of visibleCols(); track col.field) {
         @if (col.sortable) {
           <th
             [pSortableColumn]="col.field"
@@ -53,11 +53,22 @@
   </ng-template>
 
   <ng-template pTemplate="body" let-row let-rowIndex="rowIndex">
-    <tr [pSelectableRow]="row" [pSelectableRowDisabled]="!selectionMode()">
+    <tr
+      [pSelectableRow]="row"
+      [pSelectableRowDisabled]="rowSelectDisabled()"
+      [ngClass]="rowClass(row, rowIndex)"
+      (click)="onRowClick($event, row, rowIndex)"
+      (contextmenu)="onRowContextMenu($event, row, rowIndex)"
+    >
       @if (selectionMode() === 'multiple') {
-        <td class="sc-datatable__check"><p-tableCheckbox [value]="row" /></td>
+        <!-- `stopPropagation` aquí es lo que separa los dos gestos: marcar la
+             casilla NO dispara `rowClick`. Sin esto, seleccionar cinco filas
+             abriría cinco veces el detalle. -->
+        <td class="sc-datatable__check" (click)="$event.stopPropagation()">
+          <p-tableCheckbox [value]="row" />
+        </td>
       }
-      @for (col of columns(); track col.field) {
+      @for (col of visibleCols(); track col.field) {
         <td [style.text-align]="col.align ?? null">
           @if (col.cellTemplate) {
             <ng-container
