@@ -7,15 +7,15 @@
 
 1. Lee este fichero y luego [`LEARNINGS.md`](LEARNINGS.md).
 2. **Confirma el CI LEYENDO el run** del último commit.
-3. El plan sigue siendo [`docs/plan-convergencia-flujos.md`](docs/plan-convergencia-flujos.md).
-   **Las olas 0-4 están HECHAS.** Quedan la 5 y la 6, y su orden es obligatorio:
-   la 6 no se toca antes que la 5.
-4. **Pendiente de TUS ojos**: la Ola 3 cambió anchos de página y unificó el
-   lienzo. Los gates no firman eso. Ver «Validación humana pendiente» abajo.
+3. **El plan de convergencia está CERRADO**: las 6 olas de
+   [`docs/plan-convergencia-flujos.md`](docs/plan-convergencia-flujos.md) están
+   hechas. Ese fichero pasa a ser histórico; lo vivo es este hand-off.
+4. **Pendiente de TUS ojos**: las olas 3 y 6 cambian cosas que los gates no
+   firman. Ver «Validación humana pendiente» abajo.
 
 ---
 
-# HECHO en la sesión 15 — olas 1 a 4 (4 commits, CI verde)
+# HECHO en la sesión 15 — las 6 olas (6 commits, CI verde)
 
 | Ola | Commit | Qué cambió |
 |---|---|---|
@@ -23,6 +23,12 @@
 | 2 · Menú de fila | `e426bde` | Un solo `<p-menu>` compartido en 7 tablas |
 | 3 · Página canónica | `27b7d70` | Un lienzo, 4 arquetipos de ancho, bordes que se ven |
 | 4 · Validación | `9707c7f` | R6 en los 3 formularios admin |
+| 5 · Selección | `83608cb` | Barra masiva compartida en transcripciones |
+| 6 · Gesto de fila | `1c86e41` | La fila ABRE; la casilla selecciona |
+
+La red e2e del supervisor pasa de **14 a 21 tests**: las olas 2 y 6 trajeron su
+propia cobertura porque la suite existente no ejercitaba nada de lo que
+cambiaban.
 
 ## Ola 1 · una sola gramática de identidad
 
@@ -90,12 +96,39 @@ real pero NO `aria-describedby`, así que el texto colgaba del custom element,
 sin rol ni foco. Un aria que no llega al control es peor que ninguno. Ahora va
 visible (`.form-save-reason`, global porque se proyecta a la TopBar).
 
+## Ola 5 · la selección se manifiesta en un solo sitio
+
+Las 3 acciones masivas vivían en la toolbar de filtros, deshabilitadas hasta
+seleccionar. **Esto revierte el backlog #65**, que las había dejado inline por
+paridad con el legacy S50/S52 — reversión aprobada en el plan, no unilateral.
+
+Al volver la barra volvió su consecuencia, que S62 había dejado escrita: es
+`position: fixed`, así que sin reservarle sitio tapa las últimas filas. Reserva
+recuperada; medido con la página abajo del todo, 0px de solape.
+
+El vacío pasa a `sc-empty-state` con CTA **"limpiar filtros"** (no "crear": no
+se crean conversaciones), y solo si hay filtros que limpiar.
+
+**Cambio en el DS**: `sc-empty-state` gana un input `ctaIcon` (default `add`).
+Hardcodeaba el "+", así que "Limpiar filtros" salía con un más al lado diciendo
+lo contrario de lo que hace.
+
+## Ola 6 · la fila abre
+
+Transcripciones era la única tabla donde el click de fila no abría. Reparto
+nuevo: **fila abre · celda de la casilla selecciona · shift+click rango · Enter
+abre · Espacio selecciona**.
+
+Lo cazó su propio test: como la casilla ocupa el centro de la celda, el
+shift+click aterriza en ella y su `stopPropagation` se comía el handler del
+rango. El rango funcionaba en la teoría y fallaba justo donde todo el mundo
+apunta.
+
 ---
 
-# ⚠️ VALIDACIÓN HUMANA PENDIENTE (Ola 3)
+# ⚠️ VALIDACIÓN HUMANA PENDIENTE
 
-El plan marca la Ola 3 como no firmable por gates. Medido en navegador en los
-dos temas, pero **quiere tus ojos**:
+Medido en navegador (y en los dos temas donde aplica), pero **quiere tus ojos**:
 
 1. **Las 4 listas admin pasan de 1400 a 1600px.** users/groups/agents eran
    plantillas idénticas línea a línea y aun así agents iba a 1600 y sus dos
@@ -106,32 +139,15 @@ dos temas, pero **quiere tus ojos**:
    **Si no te convence, es cambiar una clase en su plantilla.**
 3. **El constructor de reglas sobre lienzo blanco**, con las tarjetas leyéndose
    por el borde. En oscuro es donde más cambia: antes el borde era invisible.
+4. **El gesto de fila en transcripciones (Ola 6)**: es el cambio con más riesgo
+   de memoria muscular de todo el lote. Quien ya usaba la pantalla clicaba filas
+   para seleccionar y ahora se le abre el reproductor. Está cubierto por 4 tests
+   y es lo que hacen las otras tres tablas, pero conviene que lo pruebes con las
+   manos.
 
 ---
 
 # Bloques abiertos
-
-## Ola 5 · selección en transcripciones — SIN EMPEZAR (precondición verificada)
-
-Lo que el plan llama «mover los 3 iconos» es más que eso. Medido:
-
-- La página de conversaciones **ya tiene** selección (`selectedIds`,
-  `selectedCount`) y sus handlers (`onBulkTranscribe`, `onBulkMarkRead`).
-- Pero **no usa** el `<sc-bulk-action-bar>` compartido que sí usan las 5 listas
-  admin: sus acciones viven en la toolbar de filtros.
-- Así que la ola es: sacar esas acciones de la toolbar (quitando sus outputs del
-  componente de filtros) y montarlas en la barra compartida, más el empty state
-  a `sc-empty-state` con CTA **"limpiar filtros"** (no "crear": no se crean
-  conversaciones).
-
-## Ola 6 · click en fila abre — SIN EMPEZAR, Y NO ANTES QUE LA 5
-
-El plan es explícito: la 6 sola, y solo después de la 5. Cambiar el click de
-fila antes de que exista la bulk bar deja al usuario sin gesto de selección y
-sin feedback de que la selección existe.
-
-Cuando toque: sonda de teclado con `page.keyboard` de Playwright, **nunca** con
-el navegador (entrega teclas vacías — LEARNINGS #1).
 
 ## B2 · `sc-field-wrapper` — BLOQUEADO POR FALTA DE RED (sin cambios)
 
@@ -153,10 +169,19 @@ Mismo problema de red que B2.
 `conditionToDesc()` compone gramática española (` o ` / ` ni `). Necesita ICU o
 un compositor por locale. Lo mecánico son ~28 claves.
 
-## Validación de AED y del constructor — FUERA DE LA OLA 4
+## Validación de AED y del constructor — LO ÚNICO QUE QUEDA DEL PLAN
 
 La Ola 4 cubrió los 3 formularios admin. **AED sigue sin validar nada con 6
-campos**, y el constructor tiene su propia política. Es la mitad que falta de R6.
+campos**, y el constructor tiene su propia política. Es la mitad que falta de
+R6, y es lo único del plan de convergencia que no entró.
+
+## Descarga de "todo lo filtrado" — capacidad que ya no existe (y ya no existía)
+
+`onDownloadRequested` tiene documentado un fallback: sin selección, descarga
+todo el filtrado. Ese camino era **inalcanzable desde antes de esta sesión**
+(el botón estaba deshabilitado sin selección) y ahora tampoco lo es, porque la
+barra masiva solo aparece con selección. No es una regresión, pero si quieres
+"descargar lo que estoy viendo" necesita su propio botón en la toolbar.
 
 ---
 
