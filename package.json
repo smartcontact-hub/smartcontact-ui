@@ -50,7 +50,9 @@
     "test": "ng test",
     "test:unit": "node --test scripts/__tests__/*.test.mjs",
     "docs:guard": "node scripts/docs-guard.mjs",
-    "docs:coherence": "node scripts/docs-coherence.mjs"
+    "docs:coherence": "node scripts/docs-coherence.mjs",
+    "e2e:structure": "playwright test -c playwright.config.ts component-structure",
+    "e2e:structure:update": "SC_UPDATE_STRUCTURE=1 playwright test -c playwright.config.ts component-structure"
   },
   "dependencies": {
     "@angular/animations": "^21.2.14",
