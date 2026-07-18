@@ -717,7 +717,8 @@
     "danger_zone": {
       "title": "Danger zone"
     },
-    "delete_gate": "Delete…"
+    "delete_gate": "Delete…",
+    "no_changes": "No changes to save"
   },
   "topbar": {
     "go_to_dashboard": "Go to dashboard",

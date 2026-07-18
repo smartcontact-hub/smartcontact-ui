@@ -2,6 +2,14 @@
      Identidad → breadcrumb + campos del cuerpo (foto/nombre en Identificación);
      Guardar/Cancelar → barra de arriba vía TopBarSlotService (ver el .ts). -->
 <ng-template #topbarActions>
+  <!-- El motivo va VISIBLE, no en un aria oculto: 'sc-button' reenvía
+       'ariaLabel' al <button> real pero no 'aria-describedby', así que ese
+       texto se quedaba colgando del custom element, sin rol y sin foco — un
+       aria que no llega al control es peor que ninguno, porque parece
+       accesible. Visible sirve además a quien ve la pantalla. -->
+  @if (saveDisabledReason(); as reason) {
+    <span class="form-save-reason">{{ reason | translate }}</span>
+  }
   <sc-button type="button" size="sm" variant="secondary" (clicked)="cancel()">
     <span>{{ 'common.cancel' | translate }}</span>
   </sc-button>
@@ -11,6 +19,7 @@
     variant="primary"
     [disabled]="!canSave()"
     [loading]="saving()"
+    [attr.title]="saveDisabledReason() ? (saveDisabledReason()! | translate) : null"
     (clicked)="save()"
   >
     <span>{{ 'common.save' | translate }}</span>
@@ -94,11 +103,14 @@
                 (photoChange)="onPhotoChange($event)"
               />
               <div class="field form-identity__name">
+                <!-- El nombre no tiene regla de contenido: o está o no está, y
+                     que falte lo dice el motivo del botón, no un error rojo
+                     sobre un campo que aún no has tocado. -->
                 <sc-inputtext
                   inputId="agent-name"
                   [label]="'agents.form.fields.name' | translate"
+                  [required]="true"
                   [value]="form().name"
-                  [error]="errors()['name'] ? (errors()['name'] | translate) : undefined"
                   (valueChange)="onNameRename($event)"
                 />
               </div>
@@ -113,7 +125,7 @@
                   autocomplete="email"
                   [label]="'agents.form.fields.email' | translate"
                   [value]="form().email"
-                  [error]="errors()['email'] ? (errors()['email'] | translate) : undefined"
+                  [error]="emailError() ? (emailError()! | translate) : undefined"
                   (valueChange)="updateField('email', $event)"
                 />
               </div>
@@ -141,16 +153,20 @@
                   {{ 'agents.form.fields.extension' | translate }}
                   <span class="field__required" aria-hidden="true">*</span>
                 </label>
+                <!-- La extensión tampoco tiene regla de contenido: se elige de
+                     una lista cerrada, así que o hay una o no la hay. El `*`
+                     ya lo pinta la etiqueta de arriba; `[required]` aquí solo
+                     añade el aria-required que le faltaba al control. -->
                 <sc-select
                   inputId="agent-ext"
                   optionLabel="number"
                   optionValue="number"
                   [filter]="true"
                   filterBy="number"
+                  [required]="true"
                   [options]="availableExtensions"
                   [placeholder]="'agents.form.fields.extension_placeholder' | translate"
                   [value]="form().extension"
-                  [error]="errors()['extension'] ? (errors()['extension'] | translate) : undefined"
                   (valueChange)="onExtensionValueChange($event)"
                 >
                   <ng-template pTemplate="item" let-ext>
@@ -256,7 +272,7 @@
                 [maxlength]="6"
                 [value]="form().pin"
                 [helperText]="'agents.form.fields.pin_hint' | translate"
-                [error]="errors()['pin'] ? (errors()['pin'] | translate) : undefined"
+                [error]="pinError() ? (pinError()! | translate) : undefined"
                 (valueChange)="updateField('pin', $event)"
               />
             </div>

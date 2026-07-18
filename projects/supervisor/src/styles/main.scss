@@ -481,6 +481,20 @@ table.table {
   }
 }
 
+/* Motivo por el que Guardar está deshabilitado (R6, Ola 4). Global y no scoped
+ * a propósito: este nodo se PROYECTA a la TopBar vía TopBarSlotService, o sea
+ * fuera del host de la página, donde el SCSS del componente no lo alcanza
+ * (`:host-context` exige un `[_nghost]` ancestro que ahí no existe).
+ *
+ * Va en color secundario, no en rojo: no es un error que el usuario haya
+ * cometido, es lo que le queda por hacer. */
+.form-save-reason {
+  margin-right: var(--sc-spacing-0-5);
+  font-size: var(--sc-font-size-100);
+  color: var(--sc-text-secondary);
+  white-space: nowrap;
+}
+
 /* Kebab button compartido (rules + categories + entities + memoryviews
  * futuras). Mismo origen — promovido a global en iter 11a.
  */
