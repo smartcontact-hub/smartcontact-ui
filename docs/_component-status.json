@@ -173,7 +173,7 @@
       "inputs": 21,
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 4
+      "usedInSupervisor": 11
     },
     {
       "name": "datepicker",

@@ -67,7 +67,19 @@ sc-datatable.list-table {
   /* Cuerpo: el mismo padding generoso que daba las filas de 54px. */
   .p-datatable-tbody > tr > td {
     padding: var(--sc-spacing-0-875);
-    border-bottom: 1px solid var(--sc-border-subtle);
+
+    /* `border-default`, NO `subtle`, y no es una decisión nueva: es la regla
+     * que escribió la Ola 3 —«subtle es legítimo sobre `bg-default`, donde se
+     * ve (1.14:1); sobre otra superficie, no»— aplicada a un caso que se le
+     * pasó. Las filas van sobre la tarjeta, que es `bg-surface`, y ahí en
+     * oscuro `subtle` (slate-900) es EL MISMO COLOR que el fondo: 1.00:1, o
+     * sea que el separador no existía. Con `default`: 1.39:1 en oscuro.
+     *
+     * Se paga en claro, y conviene saberlo: el separador pasa de 1.10:1 a
+     * 1.34:1 — se ve más que antes. Un separador que casi no se ve tampoco
+     * estaba haciendo su trabajo, pero es un cambio visible en todas las
+     * tablas. Lo fija `list-table-grammar.spec.ts`. */
+    border-bottom: 1px solid var(--sc-border-default);
 
     /* Bloque contenedor para los paneles anclados a una fila (el editor
        inline de labels y plantillas cuelga de su celda). Antes lo daba
@@ -96,6 +108,15 @@ sc-datatable.list-table {
      tablas de la app la quieren de 40px, como su `.table__th-check`. */
   .sc-datatable__check {
     width: 40px;
+  }
+
+  /* Fila clicable. Vive aquí y no en cada página porque el `<tr>` lo pinta el
+   * DS: una regla encapsulada de la página no lo alcanza, y las dos que
+   * migraron primero acabaron cada una con su `::ng-deep` para lo mismo.
+   * `--clickable` se pone con `[rowStyleClass]`; las tablas que no abren fila
+   * simplemente no lo emiten. */
+  .p-datatable-tbody > tr.table__row--clickable {
+    cursor: pointer;
   }
 
   /* La fila vacía (búsqueda sin resultados) se proyecta vía [scTableEmpty]

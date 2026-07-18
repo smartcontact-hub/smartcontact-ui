@@ -71,73 +71,19 @@
   }
 }
 
-/* `.table-card` chrome promovido a SCDS partial S55. Sin delta scoped. */
+/* `.table-card` chrome promovido a SCDS partial S55. Sin delta scoped.
+ *
+ * B4: el bloque `.table` (cabecera, filas, hover, seleccionada, paddings —
+ * unas 105 líneas) desapareció de aquí. Lo pinta ahora `sc-datatable` con la
+ * piel compartida `.list-table` de `styles/_sc-datatable-list.scss`. Lo que
+ * queda abajo es lo que sigue siendo de ESTA página: el contenido de las
+ * celdas y el vacío de búsqueda, que se proyectan desde su plantilla y por
+ * tanto conservan el encapsulado del componente. */
 
 .table {
-  width: 100%;
-  border-collapse: collapse;
-
-  thead tr {
-    /* Header limpio BeyondUI/SnowUI (experiment S59): sin fondo gris. */
-    background: var(--sc-bg-surface);
-    border-bottom: 1px solid var(--sc-border-default);
-  }
-
-  th {
-    padding: var(--sc-spacing-0-875);
-    text-align: left;
-    /* sentence-case gris medium, no UPPERCASE tracked. */
-    font-size: var(--sc-font-size-100);
-    font-weight: var(--sc-font-weight-medium);
-    letter-spacing: 0;
-    color: var(--sc-text-secondary);
-  }
-
-  &__th-check {
-    width: 40px;
-    cursor: pointer;
-  }
-
-  &__th-actions {
-    width: 48px;
-  }
-
-  &__th-num {
-    text-align: right;
-  }
-
-  &__th-sort {
-    cursor: pointer;
-    user-select: none;
-
-    &:hover {
-      color: var(--sc-text-primary);
-    }
-  }
-
-  &__row {
-    border-bottom: 1px solid var(--sc-border-subtle);
-    transition: background var(--sc-transition-fast) var(--sc-easing-default);
-
-    &:hover {
-      background: var(--sc-bg-default);
-    }
-
-    &--selected {
-      background: var(--sc-color-slate-100);
-    }
-
-    &--draft {
-      background: var(--sc-label-amber-bg);
-    }
-
-    &--clickable {
-      cursor: pointer;
-    }
-  }
-
-  &__td {
-    padding: var(--sc-spacing-0-875);
+  /* Tipografía de celda: la que daba `.table__td`. Ahora vive en un `<span>`
+   * dentro de la celda, porque el `<td>` lo pinta el DS. */
+  &__cell {
     font-size: var(--sc-font-size-200);
     color: var(--sc-text-secondary);
 
@@ -146,32 +92,11 @@
       font-size: var(--sc-font-size-100);
     }
 
+    /* El ancho (96px) y la alineación derecha los declara la column-def; aquí
+     * queda solo lo que era de `.table__td--num` y no cabe en ella. */
     &--num {
-      text-align: right;
       font-variant-numeric: tabular-nums;
     }
-  }
-
-  &__td-name {
-    padding: var(--sc-spacing-0-875);
-    font-size: var(--sc-font-size-200);
-    font-weight: var(--sc-font-weight-medium);
-    color: var(--sc-text-primary);
-    display: flex;
-    align-items: center;
-    gap: var(--sc-spacing-0-5);
-  }
-
-  &__td-check {
-    padding: var(--sc-spacing-0-875);
-    width: 40px;
-    cursor: pointer;
-  }
-
-  &__td-actions {
-    padding: var(--sc-spacing-0-875);
-    width: 48px;
-    text-align: right;
   }
 
   &__no-results {
@@ -183,14 +108,16 @@
 }
 
 /*
- * Name cell: avatar + name + draft-badge laid out in a single row.
- * The cell isn't `display: flex` by default (it's a `<td>`) so we
- * scope the layout to a wrapper rule.
+ * Name cell: avatar + nombre (o el editor de renombrado) en una sola línea.
+ * Antes era el `<td>`; ahora es el `<span>` que va dentro.
  */
 .table__td-name {
   display: flex;
   align-items: center;
   gap: var(--sc-spacing-0-875);
+  font-size: var(--sc-font-size-200);
+  font-weight: var(--sc-font-weight-medium);
+  color: var(--sc-text-primary);
 
   .table__td-name-text {
     flex: 0 1 auto;
@@ -201,29 +128,7 @@
   }
 }
 
-@keyframes draft-in {
-  from {
-    transform: scale(0.85);
-    opacity: 0;
-  }
-  to {
-    transform: scale(1);
-    opacity: 1;
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-}
-
 /* El panel de fila y el menú contextual propios murieron en la Ola 2: ambos
  * los sustituye el <p-menu> compartido, y el botón usa `.rules-kebab-btn`,
  * el kebab global de `main.scss` que ya compartían las tres hermanas de
  * memory (y que la e2e localiza por esa misma clase). */
-
-input[type='checkbox'] {
-  width: var(--sc-spacing-1-125);
-  height: var(--sc-spacing-1-125);
-  accent-color: var(--sc-bg-primary);
-  cursor: pointer;
-  vertical-align: middle;
-}

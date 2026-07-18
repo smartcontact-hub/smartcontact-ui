@@ -16,7 +16,6 @@ import { MenuModule } from 'primeng/menu';
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 
-import { SortableHeaderDirective } from '@core/directives';
 import { UndoStackService, XlsxExportService } from '@core/services';
 import { TopBarSlotService } from '@core/layout/top-bar/top-bar-slot.service';
 import { SelectionState } from '@core/utils/selection-state';
@@ -28,8 +27,14 @@ import {
   BulkEditCommit,
   BulkEditFieldOption,
   ScBulkEditMenuComponent as BulkEditMenuComponent,
+  type ScColumnCellContext,
   ColumnDef,
+  type ScColumnDef,
   ScColumnSelectorComponent as ColumnSelectorComponent,
+  ScDatatableComponent as DatatableComponent,
+  type ScDatatableRowEvent,
+  type ScDatatableSortEvent,
+  type ScRowStyleClassFn,
   ScDeleteEntityDialogComponent as DeleteEntityDialogComponent,
   ScEmptyStateComponent as EmptyStateComponent,
   ImpactBadge,
@@ -44,6 +49,7 @@ import {
   GROUP_PRIORITIES,
   Group,
   GroupChannel,
+  GroupPriority,
   PHONE_STRATEGIES,
   PRIORITY_LABEL_KEYS,
 } from '../data/groups-data';
@@ -70,6 +76,7 @@ const COLUMN_PREF_KEY = 'sc-groups-columns-v2';
     BulkEditMenuComponent,
     ButtonComponent,
     ColumnSelectorComponent,
+    DatatableComponent,
     DeleteEntityDialogComponent,
     EmptyStateComponent,
     IconComponent,
@@ -78,7 +85,6 @@ const COLUMN_PREF_KEY = 'sc-groups-columns-v2';
     InlineRenameCellComponent,
     MenuModule,
     SearchComponent,
-    SortableHeaderDirective,
     TranslateModule,
   ],
   templateUrl: './groups-list-page.component.html',
@@ -214,7 +220,133 @@ export class GroupsListPageComponent {
     return list;
   });
 
-  protected readonly allSelected = this.selection.allSelected;
+  /* ── La tabla, ahora `sc-datatable` (B4) ──────────────────────────────
+   * Todas las celdas son composiciones propias de la página (avatar + nombre
+   * o `sc-inline-rename-cell`, chips de canal, `sc-label` de prioridad,
+   * kebab), así que van por `cellTemplate`: el DS no conoce el tipo `Group`
+   * ni tiene por qué.
+   *
+   * `columns` es un `computed()` que LEE los `viewChild` a propósito. Esos
+   * `TemplateRef` resuelven tarde, y una lista construida en el campo se
+   * quedaría con `cellTemplate: undefined` para siempre — la tabla pintaría
+   * `row[field]` en crudo. Al ser computed, se recalcula en cuanto resuelven.
+   */
+  private readonly codeTpl = viewChild<TemplateRef<ScColumnCellContext<Group>>>('codeTpl');
+  private readonly nameTpl = viewChild<TemplateRef<ScColumnCellContext<Group>>>('nameTpl');
+  private readonly phoneTpl = viewChild<TemplateRef<ScColumnCellContext<Group>>>('phoneTpl');
+  private readonly channelsTpl = viewChild<TemplateRef<ScColumnCellContext<Group>>>('channelsTpl');
+  private readonly priorityTpl = viewChild<TemplateRef<ScColumnCellContext<Group>>>('priorityTpl');
+  private readonly strategyTpl = viewChild<TemplateRef<ScColumnCellContext<Group>>>('strategyTpl');
+  private readonly agentsTpl = viewChild<TemplateRef<ScColumnCellContext<Group>>>('agentsTpl');
+  private readonly actionsTpl = viewChild<TemplateRef<ScColumnCellContext<Group>>>('actionsTpl');
+
+  /** `sortable` en las MISMAS cinco que llevaban `scSortable`: el gesto sigue
+   *  siendo idéntico, solo cambia quién pinta la flecha. Anchos y alineación
+   *  replican `.table__th-num` (96px) y `.table__th-actions` (48px). */
+  protected readonly columns = computed<readonly ScColumnDef<Group>[]>(() => [
+    {
+      field: 'code',
+      header: this.translate.instant('groups.table.code'),
+      sortable: true,
+      cellTemplate: this.codeTpl(),
+    },
+    {
+      field: 'name',
+      header: this.translate.instant('groups.table.name'),
+      sortable: true,
+      cellTemplate: this.nameTpl(),
+    },
+    {
+      field: 'phone',
+      header: this.translate.instant('groups.table.phone'),
+      cellTemplate: this.phoneTpl(),
+    },
+    {
+      field: 'channels',
+      header: this.translate.instant('groups.table.channels'),
+      cellTemplate: this.channelsTpl(),
+    },
+    {
+      field: 'priority',
+      header: this.translate.instant('groups.table.priority'),
+      sortable: true,
+      cellTemplate: this.priorityTpl(),
+    },
+    {
+      field: 'strategy',
+      header: this.translate.instant('groups.table.strategy'),
+      sortable: true,
+      cellTemplate: this.strategyTpl(),
+    },
+    {
+      field: 'agents',
+      header: this.translate.instant('groups.table.agents'),
+      sortable: true,
+      width: '96px',
+      align: 'right',
+      cellTemplate: this.agentsTpl(),
+    },
+    // Columna sin datos: `field` es solo su identidad para `[visibleColumns]`,
+    // y la cabecera va vacía igual que el `<th aria-hidden>` que sustituye.
+    { field: 'actions', header: '', width: '48px', align: 'right', cellTemplate: this.actionsTpl() },
+  ]);
+
+  /**
+   * Campos visibles EN ORDEN DE PINTADO, que es el formato de
+   * `[visibleColumns]`. Se deriva del mecanismo que ya existía
+   * (`sc-column-selector` → `(visibilityChange)` → Set → `isColVisible`) en
+   * vez de saltar a `(orderedVisibleChange)`: el orden de pintado sigue siendo
+   * el DECLARADO, igual que cuando la plantilla escribía los `<th>` a mano.
+   * Con el array del selector, activar «código» lo mandaría al final (el
+   * selector lo hace `push`) en vez de dejarlo el primero — un cambio de
+   * comportamiento que esta migración no tiene por qué traer.
+   *
+   * `actions` no está en el selector (no se puede ocultar): se añade siempre
+   * al final, como el `<th aria-hidden>` de antes.
+   */
+  protected readonly visibleFields = computed<readonly string[]>(() => [
+    ...this.columnDefs()
+      .filter((col) => this.isColVisible(col.key))
+      .map((col) => col.key),
+    'actions',
+  ]);
+
+  /* Puente de selección: la fuente de verdad sigue siendo `selectedIds` —de
+   * ella cuelgan la barra masiva, el bulk-edit, el borrado y el export— y
+   * `sc-datatable` habla de filas. Traducir en los dos sentidos aquí evita
+   * reescribir media página por un cambio de tabla. */
+  protected readonly selectedGroups = computed<readonly Group[]>(() => {
+    const ids = this.selectedIds();
+    return this.sorted().filter((group) => ids.has(group.id));
+  });
+
+  protected onSelectionChange(selection: Group | readonly Group[] | null): void {
+    const rows = Array.isArray(selection) ? selection : selection ? [selection as Group] : [];
+    this.selectedIds.set(new Set(rows.map((group) => group.id)));
+  }
+
+  /**
+   * `table__row--clickable` sobrevive a la migración: la fila abre el detalle
+   * y el cursor tiene que decirlo, salvo mientras se renombra en línea.
+   *
+   * Es un `computed` que DEVUELVE la función —y no una función que lee la
+   * señal— para respetar el contrato de `rowStyleClass`: se resuelve en cada
+   * render, así que debe ser pura respecto a la fila. Al colgar `renamingId`
+   * del computed, la identidad del input cambia cuando cambia el renombrado y
+   * el DS repinta; la función en sí no lee señales.
+   */
+  protected readonly rowClass = computed<ScRowStyleClassFn<Group>>(() => {
+    const renaming = this.renamingId();
+    return (row) => (row.id === renaming ? undefined : 'table__row--clickable');
+  });
+
+  /* El orden lo sigue resolviendo ESTA página, no p-table: dos de los cinco
+   * criterios no son `row[field]` —`agents` es un contador DERIVADO de
+   * `linksStore` y `name` compara con locale 'es'— y el wrapper del DS no
+   * expone `customSort`. El DS aporta la cabecera y el gesto; `sorted()`
+   * aporta la comparación. Ver `onSortChange`. */
+  protected readonly tableSortField = computed<string | undefined>(() => this.sortField() ?? undefined);
+  protected readonly tableSortOrder = computed<number>(() => (this.sortDir() === 'asc' ? 1 : -1));
 
   protected readonly deleteItems = computed(() =>
     (this.deleteTarget() ?? []).map((g) => ({ id: g.id, name: g.name })),
@@ -248,6 +380,18 @@ export class GroupsListPageComponent {
     return this.emailIcon;
   }
 
+  /* El contexto de un `<ng-template>` de celda es `any`, así que indexar
+   * `Record<GroupChannel, string>` desde la plantilla —como hacía el `@for`,
+   * donde la fila venía tipada— ya no compila en AOT. Se resuelve aquí, que
+   * es donde los tipos existen; `channelIcon` ya seguía este patrón. */
+  protected channelLabelKey(channel: GroupChannel): string {
+    return this.channelKeys[channel];
+  }
+
+  protected priorityLabelKey(priority: GroupPriority): string {
+    return this.priorityKeys[priority];
+  }
+
   protected priorityTone(priority: string): 'muted' | 'info' | 'warning' | 'danger' {
     switch (priority) {
       case 'Media':
@@ -279,27 +423,23 @@ export class GroupsListPageComponent {
     this.visibleColumns.set(set);
   }
 
-  protected toggleSort(field: SortField): void {
-    if (this.sortField() === field) {
-      this.sortDir.update((d) => (d === 'asc' ? 'desc' : 'asc'));
-    } else {
-      this.sortField.set(field);
-      this.sortDir.set('asc');
-    }
+  /**
+   * El gesto de ordenar lo lee el DS (`pSortableColumn`) y esta página lo
+   * ESPEJA: p-table ya resolvió el toggle asc↔desc en el evento, así que aquí
+   * solo se asigna —volver a togglear lo desharía.
+   *
+   * Sustituye a `toggleSort` / `getSortDir`, que servían al `<th scSortable>`
+   * que ya no existe.
+   */
+  protected onSortChange(event: ScDatatableSortEvent): void {
+    this.sortField.set((event.field as SortField | undefined) ?? null);
+    this.sortDir.set(event.order === -1 ? 'desc' : 'asc');
   }
 
-  /** Current sort direction for `field`, or `null` if not the active column. */
-  protected getSortDir(field: SortField): 'asc' | 'desc' | null {
-    return this.sortField() === field ? this.sortDir() : null;
-  }
-
-  protected toggleSelect(id: number): void {
-    this.selection.toggle(id);
-  }
-
-  protected toggleSelectAll(): void {
-    this.selection.toggleAll();
-  }
+  /* `toggleSelect` / `toggleSelectAll` / `allSelected` murieron con la
+   * migración a `sc-datatable`: la casilla de fila y la de cabecera las
+   * sirven `p-tableCheckbox` y `p-tableHeaderCheckbox`, con la misma
+   * semántica de antes (la de cabecera marca lo FILTRADO, no todo). */
 
   protected clearSelection(): void {
     this.selection.clear();
@@ -325,6 +465,16 @@ export class GroupsListPageComponent {
 
   protected setMenuTarget(group: Group): void {
     this.menuTargetGroup.set(group);
+  }
+
+  /** Click derecho → el MISMO `<p-menu>` que el kebab (R3). El DS ya canceló
+   *  el menú nativo del navegador. */
+  protected onRowContextMenu(
+    event: ScDatatableRowEvent<Group>,
+    menu: { toggle: (e: Event) => void },
+  ): void {
+    this.setMenuTarget(event.row);
+    menu.toggle(event.originalEvent);
   }
 
   private buildMenuItems(group: Group): MenuItem[] {

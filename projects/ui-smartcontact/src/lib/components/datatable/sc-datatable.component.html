@@ -72,7 +72,10 @@
         <td [style.text-align]="col.align ?? null">
           @if (col.cellTemplate) {
             <ng-container
-              *ngTemplateOutlet="col.cellTemplate; context: { $implicit: row, rowIndex: rowIndex }"
+              *ngTemplateOutlet="
+                col.cellTemplate;
+                context: { $implicit: row, rowIndex: rowIndex, col: col }
+              "
             />
           } @else {
             {{ cellValue(row, col.field) }}
