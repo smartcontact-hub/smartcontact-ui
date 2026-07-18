@@ -1,0 +1,59 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "sc-demo",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["--yes", "http-server", "dist/sc-demo", "-p", "4200", "-c-1", "--silent"],
+      "port": 4200
+    },
+    {
+      "name": "supervisor-static",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["--yes", "http-server", "dist/supervisor/browser", "-p", "4402", "-c-1", "--silent"],
+      "port": 4402
+    },
+    {
+      "name": "sc-demo-clean",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["--yes", "http-server", "dist/sc-demo", "-p", "4201", "-c-1", "--silent"],
+      "port": 4201
+    },
+    {
+      "name": "sc-prototype",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["--yes", "http-server", "dist/sc-prototype", "-p", "4300", "-c-1", "--silent"],
+      "port": 4300
+    },
+    {
+      "name": "supervisor",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["ng", "serve", "supervisor", "--port", "4400"],
+      "port": 4400
+    },
+    {
+      "name": "supervisor-b1",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["ng", "serve", "supervisor", "--port", "4406"],
+      "port": 4406
+    },
+    {
+      "name": "supervisor-olas",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["ng", "serve", "supervisor", "--port", "4408"],
+      "port": 4408
+    },
+    {
+      "name": "sc-demo-dev",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["ng", "serve", "sc-demo", "--port", "4280"],
+      "port": 4280
+    },
+    {
+      "name": "agent-dev",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["ng", "serve", "agent", "--port", "4290"],
+      "port": 4290
+    }
+  ]
+}
