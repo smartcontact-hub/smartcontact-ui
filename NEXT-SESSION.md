@@ -139,11 +139,22 @@ Medido en navegador (y en los dos temas donde aplica), pero **quiere tus ojos**:
    **Si no te convence, es cambiar una clase en su plantilla.**
 3. **El constructor de reglas sobre lienzo blanco**, con las tarjetas leyéndose
    por el borde. En oscuro es donde más cambia: antes el borde era invisible.
-4. **El gesto de fila en transcripciones (Ola 6)**: es el cambio con más riesgo
-   de memoria muscular de todo el lote. Quien ya usaba la pantalla clicaba filas
-   para seleccionar y ahora se le abre el reproductor. Está cubierto por 4 tests
-   y es lo que hacen las otras tres tablas, pero conviene que lo pruebes con las
-   manos.
+4. **El gesto de fila en transcripciones (Ola 6)**: sigue siendo el cambio con
+   más riesgo de memoria muscular del lote, pero ya no te lo paso como
+   corazonada — el coste del error está **medido**:
+   - Con 3 filas seleccionadas, un click de dedo viejo abre el reproductor,
+     Escape lo cierra y **la selección sigue intacta**. El error cuesta una
+     tecla y cero trabajo. Fijado en test.
+   - Abrir una fila sin grabación (9 de 34) no da un reproductor roto: da un
+     vacío que explica por qué no hay audio y apunta a las reglas de grabación.
+
+   **Lo que SÍ queda flojo, y es lo único que de verdad quiere tu criterio**:
+   seleccionar muchas filas ahora exige acertar en la columna de la casilla, y
+   el atajo que lo arregla —shift+click para rango— **no se anuncia en ninguna
+   parte**. Gmail y Linear tienen el mismo atajo y tampoco lo anuncian, así que
+   puede que baste; pero si en el uso real duele, lo barato es un `title` en la
+   casilla de la cabecera o una línea en la barra masiva. No lo he añadido por
+   mi cuenta: es una decisión de producto sobre cuánto explicar.
 
 ---
 
