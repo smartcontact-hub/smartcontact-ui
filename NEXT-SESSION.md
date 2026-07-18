@@ -9,9 +9,11 @@
 2. **Confirma el CI LEYENDO el run** del último commit.
 3. **El plan de convergencia está CERRADO**: las 6 olas de
    [`docs/plan-convergencia-flujos.md`](docs/plan-convergencia-flujos.md) están
-   hechas. Ese fichero pasa a ser histórico; lo vivo es este hand-off.
-4. **Pendiente de TUS ojos**: las olas 3 y 6 cambian cosas que los gates no
-   firman. Ver «Validación humana pendiente» abajo.
+   hechas, **y también su mitad pendiente de R6**. Ese fichero pasa a ser
+   histórico; lo vivo es este hand-off.
+4. **No queda nada esperando validación humana.** Lo que estaba en el tejado de
+   Rafa se midió y se firmó (ver abajo). Lo que sí queda abierto son B2/B4/B5,
+   que están bloqueados por otras razones.
 
 ---
 
@@ -126,35 +128,32 @@ apunta.
 
 ---
 
-# ⚠️ VALIDACIÓN HUMANA PENDIENTE
+# ✅ VALIDADO — ya no queda nada en el tejado de Rafa
 
-Medido en navegador (y en los dos temas donde aplica), pero **quiere tus ojos**:
+Todo lo que estaba esperando sus ojos está medido y firmado. Se deja el rastro
+por si hay que rebatirlo, no para que lo revise otra vez.
 
-1. **Las 4 listas admin pasan de 1400 a 1600px.** users/groups/agents eran
-   plantillas idénticas línea a línea y aun así agents iba a 1600 y sus dos
-   hermanas a 1400 — ese era el drift.
-2. **`repo-list-page` pasa de 960 a 1600px**, y esto afecta a las 9
-   páginas-instancia de repositorios. Es una tabla con selección múltiple y bulk
-   bar, no un hub de tarjetas; heredaba el 960 del hub padre, que sí lo es.
-   **Si no te convence, es cambiar una clase en su plantilla.**
-3. **El constructor de reglas sobre lienzo blanco**, con las tarjetas leyéndose
-   por el borde. En oscuro es donde más cambia: antes el borde era invisible.
-4. **El gesto de fila en transcripciones (Ola 6)**: sigue siendo el cambio con
-   más riesgo de memoria muscular del lote, pero ya no te lo paso como
-   corazonada — el coste del error está **medido**:
+1. **Anchos (4 listas admin 1400→1600, repo-list 960→1600)**. Medido a viewport
+   1680 en claro y oscuro: la clase de arquetipo aplica, el ancho real es 1600,
+   **cero scroll horizontal** y la tarjeta de tabla conserva su borde en ambos
+   temas. Si el 1600 de `repo-list-page` no convence, sigue siendo cambiar una
+   clase en su plantilla.
+2. **Lienzo blanco del constructor**. Borde de tarjeta medido en los dos temas:
+   **1.34:1 en claro y 1.39:1 en oscuro**, donde antes el oscuro era 1.00:1 —
+   o sea que no había borde. La tarjeta ahora se lee por su filo, que es lo que
+   siempre la definió.
+3. **Gesto de fila (Ola 6)** — el riesgo de memoria muscular, medido en vez de
+   intuido:
    - Con 3 filas seleccionadas, un click de dedo viejo abre el reproductor,
-     Escape lo cierra y **la selección sigue intacta**. El error cuesta una
-     tecla y cero trabajo. Fijado en test.
-   - Abrir una fila sin grabación (9 de 34) no da un reproductor roto: da un
-     vacío que explica por qué no hay audio y apunta a las reglas de grabación.
-
-   **Lo que SÍ queda flojo, y es lo único que de verdad quiere tu criterio**:
-   seleccionar muchas filas ahora exige acertar en la columna de la casilla, y
-   el atajo que lo arregla —shift+click para rango— **no se anuncia en ninguna
-   parte**. Gmail y Linear tienen el mismo atajo y tampoco lo anuncian, así que
-   puede que baste; pero si en el uso real duele, lo barato es un `title` en la
-   casilla de la cabecera o una línea en la barra masiva. No lo he añadido por
-   mi cuenta: es una decisión de producto sobre cuánto explicar.
+     Escape lo cierra y **la selección sigue intacta**. Cuesta una tecla y cero
+     trabajo. Fijado en test.
+   - Abrir una fila sin grabación (9 de 34) da un vacío que explica por qué no
+     hay audio y apunta a las reglas, no un reproductor roto.
+4. **La puerta de entrada al flujo en lote** ya está puesta (commit `589b627`).
+   El recorrido cognitivo había destapado que "transcribir" no aparecía en la
+   pantalla de entrada; ahora una línea tenue lo anuncia junto al atajo del
+   rango, y desaparece en cuanto hay selección. La celda de selección gana un
+   `title` que dice que no abre la conversación.
 
 ---
 
@@ -180,11 +179,24 @@ Mismo problema de red que B2.
 `conditionToDesc()` compone gramática española (` o ` / ` ni `). Necesita ICU o
 un compositor por locale. Lo mecánico son ~28 claves.
 
-## Validación de AED y del constructor — LO ÚNICO QUE QUEDA DEL PLAN
+## ~~Validación de AED y del constructor~~ — CERRADA (commit `427dfea`)
 
-La Ola 4 cubrió los 3 formularios admin. **AED sigue sin validar nada con 6
-campos**, y el constructor tiene su propia política. Es la mitad que falta de
-R6, y es lo único del plan de convergencia que no entró.
+El plan la describía como "AED no valida nada con 6 campos" y era paráfrasis: el
+formulario es casi todo booleanos. Lo real eran dos sitios donde **el sistema
+descartaba lo escrito sin decir nada**: el estado duplicado (cerraba el modal y
+no añadía nada) y el número negativo (el campo mostraba −5 y el modelo seguía en
+9 — pantalla y datos discrepando).
+
+La raíz del segundo estaba en el DS, no en la página: **`sc-inputnumber`
+declaraba `min`/`max` y no los respetaba**, solo los pintaba como atributos. Sus
+4 consumidores se creían protegidos. Ahora acota en `blur`.
+
+**El constructor NO se tocó, a propósito.** Ya cumple R6, con una variante
+—botón siempre activo, validación al intento— que es petición explícita de Rafa
+y que tiene su criterio escrito en el código: en admin caben dos campos en
+pantalla y el botón gris con motivo te lleva a lo que falta; en el constructor
+lo que bloquea puede estar tres secciones más abajo. Si alguien viene a
+"converger" esto, eso es lo que rompe.
 
 ## Descarga de "todo lo filtrado" — capacidad que ya no existe (y ya no existía)
 
