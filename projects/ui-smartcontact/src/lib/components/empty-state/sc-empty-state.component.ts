@@ -31,11 +31,17 @@ export class ScEmptyStateComponent {
   /** When set, renders a primary action button labeled with this i18n key. */
   readonly ctaKey = input<string | null>(null);
 
+  /**
+   * Icono del CTA. Por defecto `add`, que es el caso mayoritario ("Nuevo X").
+   * Existe porque NO todo CTA de un vacío crea algo: en transcripciones el
+   * vacío ofrece "limpiar filtros" —no se crean conversaciones, entran solas—
+   * y un "+" ahí decía justo lo contrario de lo que hace el botón.
+   */
+  readonly ctaIcon = input<string>('add');
+
   /** Emite el MouseEvent del click — permite anclar menús popup al botón
    *  (`menu.toggle($event)`). Los listeners sin parámetro siguen valiendo. */
   readonly cta = output<MouseEvent>();
-
-  protected readonly plusIcon = 'add';
   protected readonly iconSizeDefault = SC_ICON_SIZE_DEFAULT;
   protected readonly iconSizeDisplay = SC_ICON_SIZE_DISPLAY_SM;
 

@@ -11,7 +11,9 @@
     "conversations": {
       "empty": {
         "title": "No conversations to show",
-        "body": "Adjust the filters or date range to see results."
+        "body": "Adjust the filters or date range to see results.",
+        "body_unfiltered": "No conversations have come in yet.",
+        "clear_filters": "Clear filters"
       },
       "page_title": "Conversations",
       "open_aria": "Open conversation {{id}}",
@@ -648,7 +650,9 @@
         "template_selected_one": "selected",
         "template_selected_other": "selected",
         "label_selected_one": "selected",
-        "label_selected_other": "selected"
+        "label_selected_other": "selected",
+        "conversation_singular": "conversation",
+        "conversation_plural": "conversations"
       }
     },
     "form_nav": {

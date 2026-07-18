@@ -333,33 +333,5 @@
   }
 }
 
-/* Estado "sin resultados" (S62, backlog #65): la cabecera de la tabla queda
- * visible y el cuerpo muestra un mensaje centrado. Conversaciones no se crean
- * → no hay CTA, solo invita a ajustar filtros. */
-.memory-conversations-table__empty {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: var(--sc-spacing-0-5);
-  padding: var(--sc-spacing-3) var(--sc-spacing-1-5);
-  color: var(--sc-text-subtle);
-
-  sc-icon {
-    color: var(--sc-icon-disabled);
-    margin-bottom: var(--sc-spacing-0-5);
-  }
-
-  h3 {
-    margin: 0;
-    font-size: var(--sc-font-size-300);
-    font-weight: var(--sc-font-weight-medium);
-    color: var(--sc-text-secondary);
-  }
-
-  p {
-    margin: 0;
-    max-width: 44ch;
-    text-align: center;
-    font-size: var(--sc-font-size-200);
-  }
-}
+/* El bloque del vacío murió en la Ola 5: lo sirve el <sc-empty-state>
+ * compartido desde la PAGINA, no un <tr> dentro de la tabla. */

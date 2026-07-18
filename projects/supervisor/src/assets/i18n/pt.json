@@ -11,7 +11,9 @@
     "conversations": {
       "empty": {
         "title": "Nenhuma conversa para mostrar",
-        "body": "Ajuste os filtros ou o intervalo de datas para ver resultados."
+        "body": "Ajuste os filtros ou o intervalo de datas para ver resultados.",
+        "body_unfiltered": "Ainda não entrou nenhuma conversa.",
+        "clear_filters": "Limpar filtros"
       },
       "page_title": "Conversas",
       "open_aria": "Abrir conversa {{id}}",
@@ -640,7 +642,9 @@
         "template_selected_one": "selecionado",
         "template_selected_other": "selecionados",
         "label_selected_one": "selecionada",
-        "label_selected_other": "selecionadas"
+        "label_selected_other": "selecionadas",
+        "conversation_singular": "conversa",
+        "conversation_plural": "conversas"
       }
     },
     "skip_to_content": "Ir para o conteúdo principal",

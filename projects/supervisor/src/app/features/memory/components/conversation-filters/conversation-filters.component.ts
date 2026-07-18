@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, input, model, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, model } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 
@@ -64,15 +64,16 @@ export class ConversationFiltersComponent {
   /** Count de conversaciones con `hasFailedTranscription: true` en el set
    *  actual. Si es 0 el chip "Solo fallidas" se oculta automáticamente. */
   readonly failedCount = input<number>(0);
-  /** S50 toolbar inline (legacy parity): conteos para los action icons. */
+  /** Nº de conversaciones que pasan el filtro — se muestra en "Resultados". */
   readonly filteredCount = input<number>(0);
-  readonly selectedCount = input<number>(0);
   /** Timestamp de la última búsqueda — null si no ha ocurrido. */
   readonly lastSearchAt = input<Date | null>(null);
 
-  readonly bulkTranscribeRequested = output<void>();
-  readonly downloadRequested = output<void>();
-  readonly bulkMarkReadRequested = output<void>();
+  /* Las 3 acciones masivas (Transcribir / Descargar / Marcar leídas) vivían
+   * aquí, deshabilitadas mientras no hubiera selección. Se fueron a la
+   * `<sc-bulk-action-bar>` de la página en la Ola 5: la selección se manifiesta
+   * en un solo sitio. Con ellas se fueron sus outputs, sus iconos y el
+   * `selectedCount` que este componente ya no necesita saber. */
 
   protected readonly serviceOptions = SERVICE_OPTIONS;
   protected readonly groupOptions = GROUP_OPTIONS;
@@ -81,18 +82,6 @@ export class ConversationFiltersComponent {
   protected readonly searchIcon = 'search';
   protected readonly resetIcon = 'rotate_left';
   protected readonly alertIcon = 'error';
-  protected readonly transcribeIcon = 'notes';
-  protected readonly downloadIcon = 'download';
-  protected readonly markReadIcon = 'done_all';
-
-  /** Badge del botón "Transcribir": número de seleccionadas. Disabled si 0.
-   *  S52: las 3 acciones (Transcribir / Download / Marcar leídas) requieren
-   *  selección explícita — el operador no descarga/procesa 75 filas
-   *  accidentalmente con un click. */
-  protected readonly transcribeBadge = computed(() => this.selectedCount());
-
-  /** Las 3 acciones bulk están enabled SOLO cuando hay selección. */
-  protected readonly bulkActionsEnabled = computed(() => this.selectedCount() > 0);
 
   /** Hora última búsqueda en formato `HH:mm - dd/mm/yyyy` ES. */
   protected readonly lastSearchLabel = computed(() => {

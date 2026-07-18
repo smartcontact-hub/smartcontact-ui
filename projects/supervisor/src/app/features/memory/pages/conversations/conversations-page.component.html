@@ -13,26 +13,66 @@
       [availableAiCategories]="availableAiCategories()"
       [failedCount]="failedCount()"
       [filteredCount]="filteredCount()"
-      [selectedCount]="selectedCount()"
       [lastSearchAt]="lastSearchAt()"
       (filtersChange)="onFiltersChange($event)"
-      (bulkTranscribeRequested)="onBulkTranscribe()"
-      (downloadRequested)="onDownloadRequested()"
-      (bulkMarkReadRequested)="onBulkMarkRead()"
     />
-    <sc-memory-conversation-table
-      [conversations]="conversations()"
-      [selectedIds]="selectedIds()"
-      [allSelected]="allFilteredSelected()"
-      [processingIds]="processingIds()"
-      [analyzingIds]="analyzingIds()"
-      (conversationOpen)="onConversationOpen($event)"
-      (selectionToggled)="onSelectionToggled($event)"
-      (allToggled)="onAllToggled()"
-      (contextActionRequested)="onContextAction($event)"
-    />
+
+    @if (conversations().length === 0) {
+      <!-- El vacío pasa al componente compartido, como las tres hermanas de
+           memory. El CTA es "limpiar filtros" y NO "crear": aquí no se crean
+           conversaciones, entran solas. Ofrecer un "crear" sería mentir sobre
+           lo que el usuario puede hacer.
+           Y solo se ofrece si hay filtros que limpiar: sin filtros activos no
+           hay nada que deshacer, y un botón que no hace nada es peor que
+           ninguno. -->
+      <sc-empty-state
+        [icon]="emptyIcon"
+        titleKey="memory.conversations.empty.title"
+        [bodyKey]="
+          hasActiveFilters()
+            ? 'memory.conversations.empty.body'
+            : 'memory.conversations.empty.body_unfiltered'
+        "
+        [ctaKey]="hasActiveFilters() ? 'memory.conversations.empty.clear_filters' : ''"
+        ctaIcon="filter_alt_off"
+        (cta)="onClearFilters()"
+      />
+    } @else {
+      <sc-memory-conversation-table
+        [conversations]="conversations()"
+        [selectedIds]="selectedIds()"
+        [allSelected]="allFilteredSelected()"
+        [processingIds]="processingIds()"
+        [analyzingIds]="analyzingIds()"
+        (conversationOpen)="onConversationOpen($event)"
+        (selectionToggled)="onSelectionToggled($event)"
+        (allToggled)="onAllToggled()"
+        (contextActionRequested)="onContextAction($event)"
+      />
+    }
   </div>
 </div>
+
+<!-- R5 · la selección se manifiesta en UN solo sitio. Estas tres acciones
+     estaban en la toolbar de filtros, grises hasta que seleccionabas algo.
+     Ahora la barra aparece con la selección y se va con ella. -->
+<sc-bulk-action-bar
+  [count]="selectedCount()"
+  [entity]="bulkEntity()"
+  (clear)="onClearSelection()"
+>
+  <sc-button type="button" variant="secondary" (clicked)="onBulkTranscribe()">
+    <span>{{ 'memory.conversations.filters.transcribe' | translate }}</span>
+  </sc-button>
+  <sc-button type="button" variant="secondary" (clicked)="onDownloadRequested()">
+    <span>{{ 'memory.conversations.filters.download' | translate }}</span>
+  </sc-button>
+  @if (failedCount() > 0) {
+    <sc-button type="button" variant="secondary" (clicked)="onBulkMarkRead()">
+      <span>{{ 'memory.conversations.filters.mark_read' | translate }}</span>
+    </sc-button>
+  }
+</sc-bulk-action-bar>
 
 <sc-memory-conversation-player-modal
   [visible]="playerOpen()"

@@ -11,6 +11,13 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
 import { ButtonModule } from 'primeng/button';
 
+import {
+  ScBulkActionBarComponent as BulkActionBarComponent,
+  useBulkEntityI18n,
+  ScButtonComponent as ButtonComponent,
+  ScEmptyStateComponent as EmptyStateComponent,
+} from '@smartcontact-hub/components';
+
 import { BulkTranscriptionModalComponent } from '../../components/bulk-transcription-modal/bulk-transcription-modal.component';
 import { ConversationFiltersComponent } from '../../components/conversation-filters/conversation-filters.component';
 import { ConversationPlayerModalComponent } from '../../components/conversation-player-modal/conversation-player-modal.component';
@@ -22,6 +29,7 @@ import { DownloadModalComponent } from '../../components/download-modal/download
 import { MockSampleSwitcherComponent } from '../../components/mock-sample-switcher/mock-sample-switcher.component';
 import { RetranscriptionConfirmModalComponent } from '../../components/retranscription-confirm-modal/retranscription-confirm-modal.component';
 import type { Conversation } from '../../data/conversation.types';
+import { EMPTY_FILTERS } from '../../data/conversation-filters.types';
 import { ConversationsStore } from '../../state/conversations.store';
 import { TopBarSlotService } from '../../../../core/layout/top-bar/top-bar-slot.service';
 import { TOAST_LIFE } from '@core/utils/toast-life';
@@ -37,9 +45,13 @@ import { TOAST_LIFE } from '@core/utils/toast-life';
  *               transcripción/análisis con state machine).
  * Iter 6a (S38): + selección múltiple. Row click toggle selección (Audit A5
  *                del React); cluster status icons sigue abriendo modal.
- *                (S62: las acciones bulk viven inline en la toolbar de filtros
- *                —paridad legacy S50/S52—, NO en el `<sc-bulk-action-bar>`
- *                overlay de AED. Decisión consciente, ver backlog #65.)
+ * Ola 5:        las acciones masivas pasan al `<sc-bulk-action-bar>` compartido.
+ *                Esto REVIERTE el backlog #65, que las había dejado inline en
+ *                la toolbar por paridad con el legacy S50/S52. La paridad con
+ *                un sistema viejo pesa menos que R5: la selección se manifiesta
+ *                en un solo sitio, y tres iconos grises que no dicen por qué
+ *                están grises son el antipatrón nº1 de Nielsen. Reversión
+ *                aprobada en el plan de convergencia, no unilateral.
  * Iter 6b (S38): + BulkTranscriptionModal v11 (state machine 6 escenarios,
  *                3 destinos MECE, toggle locked, warning costes).
  *
@@ -51,11 +63,14 @@ import { TOAST_LIFE } from '@core/utils/toast-life';
   imports: [
     TranslateModule,
     ButtonModule,
+    BulkActionBarComponent,
     BulkTranscriptionModalComponent,
+    ButtonComponent,
     ConversationFiltersComponent,
     ConversationTableComponent,
     ConversationPlayerModalComponent,
     DownloadModalComponent,
+    EmptyStateComponent,
     RetranscriptionConfirmModalComponent,
   ],
   templateUrl: './conversations-page.component.html',
@@ -91,6 +106,28 @@ export class ConversationsPageComponent implements OnInit, OnDestroy {
   /** Versión `readonly string[]` para los modals que esperan array, no Set. */
   protected readonly processingIdsArray = computed(() => [...this.processingIds()]);
   protected readonly analyzingIdsArray = computed(() => [...this.analyzingIds()]);
+
+  protected readonly emptyIcon = 'search_off';
+
+  /** Rótulos de la barra masiva. Conversación es FEMENINO, así que el sufijo
+   *  sale de las claves `_f` ("seleccionada/s"), no de las por defecto. */
+  protected readonly bulkEntity = useBulkEntityI18n({
+    singular: 'common.bulk.entity.conversation_singular',
+    plural: 'common.bulk.entity.conversation_plural',
+    selectedOne: 'common.bulk.selected_one_f',
+    selectedOther: 'common.bulk.selected_other_f',
+  });
+
+  /** ¿Hay algo que limpiar? Compara el filtro vivo contra el vacío. Se usa para
+   *  no ofrecer un "limpiar filtros" cuando no hay filtros: un botón que no
+   *  cambia nada es peor que no tenerlo. */
+  protected readonly hasActiveFilters = computed(
+    () => JSON.stringify(this.filters()) !== JSON.stringify(EMPTY_FILTERS),
+  );
+
+  protected onClearFilters(): void {
+    this.conversationsStore.setFilters(EMPTY_FILTERS);
+  }
   protected readonly pageIcon = 'forum';
 
   /** Última búsqueda — placeholder hoy = now. Con backend real, lo seteará

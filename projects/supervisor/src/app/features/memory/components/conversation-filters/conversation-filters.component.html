@@ -85,57 +85,14 @@
         </button>
       }
 
-      <!-- S50/S52 toolbar inline (legacy parity): separator + 4 action icons.
-           Las 3 acciones bulk (Transcribir / Download / Marcar leídas) están
-           DISABLED hasta que el usuario seleccione filas — no se opera sobre
-           "todo lo filtrado" por defecto. Badge = nº de seleccionadas.
-           Help (último) siempre habilitado. -->
-      <span class="memory-conversation-filters__divider" aria-hidden="true"></span>
-
-      <button
-        type="button"
-        class="memory-toolbar-icon"
-        [attr.aria-label]="
-          'memory.conversations.filters.transcribe_aria' | translate: { count: selectedCount() }
-        "
-        [attr.title]="'memory.conversations.filters.transcribe' | translate"
-        (click)="bulkTranscribeRequested.emit()"
-        [disabled]="!bulkActionsEnabled()"
-      >
-        <sc-icon [name]="transcribeIcon" [size]="18" />
-        @if (bulkActionsEnabled()) {
-          <span class="memory-toolbar-icon__badge">{{ selectedCount() }}</span>
-        }
-      </button>
-
-      <button
-        type="button"
-        class="memory-toolbar-icon"
-        [attr.aria-label]="'memory.conversations.filters.download' | translate"
-        [attr.title]="'memory.conversations.filters.download' | translate"
-        (click)="downloadRequested.emit()"
-        [disabled]="!bulkActionsEnabled()"
-      >
-        <sc-icon [name]="downloadIcon" [size]="18" />
-      </button>
-
-      @if (failedCount() > 0) {
-        <button
-          type="button"
-          class="memory-toolbar-icon"
-          [attr.aria-label]="
-            'memory.conversations.filters.mark_read_aria' | translate: { count: selectedCount() }
-          "
-          [attr.title]="'memory.conversations.filters.mark_read' | translate"
-          (click)="bulkMarkReadRequested.emit()"
-          [disabled]="selectedCount() === 0"
-        >
-          <sc-icon [name]="markReadIcon" [size]="18" />
-          @if (selectedCount() > 0) {
-            <span class="memory-toolbar-icon__badge">{{ selectedCount() }}</span>
-          }
-        </button>
-      }
+      <!-- Aquí vivían Transcribir / Descargar / Marcar leídas, los tres
+           DESHABILITADOS mientras no hubiese selección: tres controles grises
+           que no explicaban por qué (antipatrón nº1 de Nielsen) y que además
+           partían la selección en dos sitios — la casilla en la fila, sus
+           consecuencias arriba del todo.
+           R5: la selección se manifiesta en UN solo sitio. Las tres se han ido
+           a la `<sc-bulk-action-bar>` de la página, que aparece cuando hay algo
+           seleccionado y desaparece cuando no. Ver la Ola 5 del plan. -->
     </div>
 
     <div class="memory-conversation-filters__actions-right">
