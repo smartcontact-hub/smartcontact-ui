@@ -19,6 +19,16 @@
         (cta)="onNewCategory()"
       />
     } @else {
+      <!-- Menú kebab ÚNICO y compartido (antes 1 <p-menu> por fila): su modelo
+           es un computed estable → basta 1 clic para aplicar (no doble). Cada
+           botón lo abre pasando su propio $event para anclarlo a su fila. -->
+      <p-menu
+        #kebabMenu
+        [model]="menuItems()"
+        [popup]="true"
+        appendTo="body"
+        styleClass="rules-kebab-menu"
+      />
       <table class="categories-table">
         <thead>
           <tr>
@@ -78,11 +88,10 @@
                   type="button"
                   class="rules-kebab-btn"
                   [attr.aria-label]="'memory.categories.cols.more' | translate"
-                  (click)="kebabMenu.toggle($event)"
+                  (click)="setMenuTarget(cat); kebabMenu.toggle($event)"
                 >
                   <sc-icon [name]="kebabIcon" size="inherit" />
                 </button>
-                <p-menu #kebabMenu [model]="buildMenuItems(cat)" [popup]="true" appendTo="body" />
               </td>
             </tr>
           }

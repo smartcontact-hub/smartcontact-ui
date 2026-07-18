@@ -2,6 +2,7 @@ import {
   afterNextRender,
   ChangeDetectionStrategy,
   Component,
+  computed,
   DestroyRef,
   inject,
   signal,
@@ -84,6 +85,21 @@ export class CategoriesPageComponent {
   protected readonly tagsIcon = 'label';
   protected readonly plusIcon = 'add';
   protected readonly kebabIcon = 'more_vert';
+
+  protected readonly menuTargetCategory = signal<Category | null>(null);
+
+  /** Modelo del menú kebab (único y compartido). Es un computed estable: solo
+   *  cambia al abrir otro kebab. Antes `[model]="buildMenuItems(cat)"` recreaba
+   *  el array en cada ciclo de CD → PrimeNG repintaba el menú y se perdía el 1er
+   *  clic (hacía falta doble). Con esto, un solo clic aplica la acción. */
+  protected readonly menuItems = computed<MenuItem[]>(() => {
+    const cat = this.menuTargetCategory();
+    return cat ? this.buildMenuItems(cat) : [];
+  });
+
+  protected setMenuTarget(cat: Category): void {
+    this.menuTargetCategory.set(cat);
+  }
 
   protected buildMenuItems(cat: Category): MenuItem[] {
     return [
