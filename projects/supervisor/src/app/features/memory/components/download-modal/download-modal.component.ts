@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, input, output, signal } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
-import { ButtonModule } from 'primeng/button';
+import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 
 import { IconComponent } from '@shared/components';
 import {
@@ -30,7 +30,7 @@ import {
 @Component({
   selector: 'sc-memory-download-modal',
   standalone: true,
-  imports: [ButtonModule, CheckboxComponent, DialogComponent, IconComponent, TranslateModule],
+  imports: [ButtonComponent, CheckboxComponent, DialogComponent, IconComponent, TranslateModule],
   templateUrl: './download-modal.component.html',
   styleUrl: './download-modal.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

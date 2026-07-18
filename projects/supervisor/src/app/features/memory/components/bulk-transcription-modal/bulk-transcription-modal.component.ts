@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { ButtonModule } from 'primeng/button';
+import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 import { FormsModule } from '@angular/forms';
 import { map, startWith } from 'rxjs';
 
@@ -54,7 +54,7 @@ import type { Conversation } from '../../data/conversation.types';
 @Component({
   selector: 'sc-memory-bulk-transcription-modal',
   imports: [
-    ButtonModule,
+    ButtonComponent,
     FormsModule,
     IconComponent,
     DialogComponent,

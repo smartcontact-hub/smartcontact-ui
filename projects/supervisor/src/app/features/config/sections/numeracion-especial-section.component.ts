@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
-import { ButtonModule } from 'primeng/button';
+import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 
 import { TOAST_LIFE } from '@core/utils/toast-life';
 import { IconComponent } from '@shared/components';
@@ -22,7 +22,7 @@ import { COUNTRY_PREFIXES, type CountryPrefix } from '../data/country-prefixes';
  */
 @Component({
   selector: 'sc-numeracion-especial-section',
-  imports: [ButtonModule, IconComponent, TranslateModule],
+  imports: [ButtonComponent, IconComponent, TranslateModule],
   templateUrl: './numeracion-especial-section.component.html',
   styleUrl: './numeracion-especial-section.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
-import { ButtonModule } from 'primeng/button';
+import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 
 import { TOAST_LIFE } from '@core/utils/toast-life';
 import { IconComponent } from '@shared/components';
@@ -58,7 +58,7 @@ import { MultiRecordingPlayerComponent } from '../multi-recording-player/multi-r
 @Component({
   selector: 'sc-memory-conversation-player-modal',
   imports: [
-    ButtonModule,
+    ButtonComponent,
     IconComponent,
     DialogComponent,
     DownloadModalComponent,

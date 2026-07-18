@@ -11,7 +11,7 @@ import {
 import { toSignal } from '@angular/core/rxjs-interop';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { ButtonModule } from 'primeng/button';
+import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 import { map, startWith } from 'rxjs';
 
 import { IconComponent } from '@shared/components';
@@ -30,7 +30,7 @@ import { ScDialogComponent as DialogComponent } from '@smartcontact-hub/componen
  */
 @Component({
   selector: 'sc-memory-retranscription-confirm-modal',
-  imports: [ButtonModule, FormsModule, IconComponent, DialogComponent, TranslateModule],
+  imports: [ButtonComponent, FormsModule, IconComponent, DialogComponent, TranslateModule],
   templateUrl: './retranscription-confirm-modal.component.html',
   styleUrl: './retranscription-confirm-modal.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

@@ -2,10 +2,10 @@
      identidad la da el breadcrumb de la TopBar; el CTA se proyecta a la barra
      vía TopBarSlotService (ver topbarActions en el .ts). -->
 <ng-template #topbarActions>
-  <p-button type="button" severity="primary" (onClick)="onNewEntity()">
+  <sc-button type="button" variant="primary" (clicked)="onNewEntity()">
     <sc-icon [name]="plusIcon" size="inherit" />
     <span>{{ 'memory.entities.new_entity' | translate }}</span>
-  </p-button>
+  </sc-button>
 </ng-template>
 
 <div class="page">
@@ -21,9 +21,9 @@
         <div class="entities-empty" role="status" aria-live="polite">
           <sc-icon [name]="databaseIcon" [size]="20" />
           <p>{{ 'memory.entities.empty_user' | translate }}</p>
-          <p-button type="button" [link]="true" size="small" (onClick)="onNewEntity()">
+          <sc-button type="button" appearance="link" size="sm" (clicked)="onNewEntity()">
             <span>{{ 'memory.entities.new_entity' | translate }}</span>
-          </p-button>
+          </sc-button>
         </div>
       } @else {
         <!-- Menú kebab ÚNICO y compartido (antes 1 <p-menu> por fila): su modelo

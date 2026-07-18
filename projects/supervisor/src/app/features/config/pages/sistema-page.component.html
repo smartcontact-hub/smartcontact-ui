@@ -105,10 +105,10 @@
               {{ 'config.sistema.data.reset_hint' | translate }}
             </p>
           </div>
-          <p-button type="button" severity="danger" (onClick)="resetData()">
+          <sc-button type="button" variant="danger" (clicked)="resetData()">
             <sc-icon [name]="resetIcon" size="inherit" />
             <span>{{ 'config.sistema.data.reset_button' | translate }}</span>
-          </p-button>
+          </sc-button>
         </div>
       </div>
     </section>
@@ -325,11 +325,11 @@
                   autocomplete="off"
                   spellcheck="false"
                 />
-                <p-button
+                <sc-button
                   type="button"
-                  severity="danger"
+                  variant="danger"
                   [disabled]="!canExecute()"
-                  (onClick)="regenerate()"
+                  (clicked)="regenerate()"
                 >
                   @if (processing()) {
                     <sc-icon name="progress_activity" size="inherit" [spin]="true" />
@@ -338,7 +338,7 @@
                     <sc-icon [name]="keyIcon" size="inherit" />
                     <span>{{ 'config.seguridad.regen.execute' | translate }}</span>
                   }
-                </p-button>
+                </sc-button>
               </div>
             </div>
           }
@@ -354,10 +354,10 @@
                   <p class="result__ts">{{ r.timestamp }}</p>
                 </div>
               </div>
-              <p-button type="button" severity="secondary" (onClick)="downloadCsv()">
+              <sc-button type="button" variant="secondary" (clicked)="downloadCsv()">
                 <sc-icon [name]="downloadIcon" size="inherit" />
                 <span>{{ 'config.seguridad.regen.download_csv' | translate }}</span>
-              </p-button>
+              </sc-button>
             </div>
           }
         </div>

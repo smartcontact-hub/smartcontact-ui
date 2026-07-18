@@ -15,7 +15,7 @@ import { FormsModule } from '@angular/forms';
 import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
-import { ButtonModule } from 'primeng/button';
+import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 
 import { TOAST_LIFE } from '@core/utils/toast-life';
 import { DirtyAware } from '@core/guards';
@@ -65,7 +65,7 @@ import { RulesStore } from '../../state/rules.store';
 @Component({
   selector: 'sc-memory-rule-builder-page',
   imports: [
-    ButtonModule,
+    ButtonComponent,
     FormsModule,
     IconComponent,
     InputTextComponent,

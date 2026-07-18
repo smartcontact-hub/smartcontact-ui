@@ -2,10 +2,10 @@
      identidad la da el breadcrumb de la TopBar; el CTA se proyecta a la barra
      vía TopBarSlotService (ver topbarActions en el .ts). -->
 <ng-template #topbarActions>
-  <p-button type="button" severity="primary" (onClick)="onCreateClick()">
+  <sc-button type="button" variant="primary" (clicked)="onCreateClick()">
     <sc-icon [name]="plusIcon" size="inherit" />
     <span>{{ 'groups.create_button' | translate }}</span>
-  </p-button>
+  </sc-button>
 </ng-template>
 
 <div class="page">
@@ -292,7 +292,7 @@
     [buttonLabel]="'Editar'"
     (commit)="onBulkEditCommit($event)"
   />
-  <p-button type="button" severity="danger" (onClick)="requestDeleteSelection()">
+  <sc-button type="button" variant="danger" (clicked)="requestDeleteSelection()">
     <span>{{ 'common.delete' | translate }}</span>
-  </p-button>
+  </sc-button>
 </sc-bulk-action-bar>

@@ -44,24 +44,24 @@
   </div>
 
   <div modal-actions>
-    <p-button
+    <sc-button
       type="button"
-      size="small"
-      severity="secondary"
+      size="sm"
+      variant="secondary"
       data-testid="retrans-cancel-btn"
-      (onClick)="onCancel()"
+      (clicked)="onCancel()"
     >
       <span>{{ 'common.cancel' | translate }}</span>
-    </p-button>
-    <p-button
+    </sc-button>
+    <sc-button
       type="button"
-      size="small"
-      severity="danger"
+      size="sm"
+      variant="danger"
       [disabled]="!isValid()"
       data-testid="retrans-confirm-btn"
-      (onClick)="onConfirm()"
+      (clicked)="onConfirm()"
     >
       <span>{{ 'memory.player.retranscribe.confirm_btn' | translate }}</span>
-    </p-button>
+    </sc-button>
   </div>
 </sc-dialog>

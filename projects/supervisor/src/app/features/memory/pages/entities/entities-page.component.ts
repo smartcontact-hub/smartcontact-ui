@@ -11,7 +11,7 @@ import {
 } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
-import { ButtonModule } from 'primeng/button';
+import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 import { MenuModule } from 'primeng/menu';
 import type { MenuItem } from 'primeng/api';
 
@@ -34,7 +34,7 @@ import { EntitiesStore } from '../../state/entities.store';
  */
 @Component({
   selector: 'sc-memory-entities-page',
-  imports: [ButtonModule, EntityFormModalComponent, IconComponent, MenuModule, TranslateModule],
+  imports: [ButtonComponent, EntityFormModalComponent, IconComponent, MenuModule, TranslateModule],
   templateUrl: './entities-page.component.html',
   styleUrl: './entities-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

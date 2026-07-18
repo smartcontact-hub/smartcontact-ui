@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { ButtonModule } from 'primeng/button';
+import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 
 import { LabelChipComponent } from '@shared/components';
 import { ScDialogComponent as DialogComponent } from '@smartcontact-hub/components';
@@ -16,7 +16,7 @@ import { Label } from '../../data/labels-data';
  */
 @Component({
   selector: 'sc-delete-labels-dialog',
-  imports: [ButtonModule, LabelChipComponent, DialogComponent, TranslateModule],
+  imports: [ButtonComponent, LabelChipComponent, DialogComponent, TranslateModule],
   templateUrl: './delete-labels-dialog.component.html',
   styleUrl: './delete-labels-dialog.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

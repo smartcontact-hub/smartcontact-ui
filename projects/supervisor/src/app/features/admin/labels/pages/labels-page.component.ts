@@ -12,7 +12,7 @@ import {
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
-import { ButtonModule } from 'primeng/button';
+import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 
 import { ClickOutsideDirective } from '@core/directives';
 import { XlsxExportService } from '@core/services';
@@ -46,7 +46,7 @@ interface ContextMenuPos {
   selector: 'sc-labels-page',
   imports: [
     BulkActionBarComponent,
-    ButtonModule,
+    ButtonComponent,
     ClickOutsideDirective,
     DeleteLabelsDialogComponent,
     EmptyStateComponent,

@@ -14,7 +14,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { map, startWith } from 'rxjs';
 import { MessageService } from 'primeng/api';
-import { ButtonModule } from 'primeng/button';
+import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 
 import { ClickOutsideDirective } from '@core/directives/click-outside.directive';
 import { XlsxExportService } from '@core/services/xlsx-export.service';
@@ -45,7 +45,7 @@ interface ContextMenuPos {
   selector: 'sc-repo-list-page',
   imports: [
     BulkActionBarComponent,
-    ButtonModule,
+    ButtonComponent,
     ClickOutsideDirective,
     DeleteEntityDialogComponent,
     IconComponent,

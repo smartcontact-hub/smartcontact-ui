@@ -3,10 +3,10 @@
      "nueva regla") se proyectan a la barra vía TopBarSlotService. El p-menu
      hace appendTo="body" y se ancla al botón vía toggle($event). -->
 <ng-template #topbarActions>
-  <p-button type="button" severity="primary" (onClick)="newRuleMenu.toggle($event)">
+  <sc-button type="button" variant="primary" (clicked)="newRuleMenu.toggle($event)">
     <sc-icon [name]="plusIcon" size="inherit" />
     <span>{{ 'memory.rules.new_rule' | translate }}</span>
-  </p-button>
+  </sc-button>
 </ng-template>
 
 <!-- Menú "nueva regla" compartido: lo abren el CTA de la TopBar y el del empty

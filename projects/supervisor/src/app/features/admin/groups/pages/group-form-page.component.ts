@@ -14,7 +14,7 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
-import { ButtonModule } from 'primeng/button';
+import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 
 import { DirtyAware } from '@core/guards';
 import { CrossTabLockService } from '@core/services';
@@ -72,7 +72,7 @@ interface FormState {
   selector: 'sc-group-form-page',
   imports: [
     AgentChannelTableComponent,
-    ButtonModule,
+    ButtonComponent,
     DeleteEntityDialogComponent,
     FormSectionNavComponent,
     IconComponent,

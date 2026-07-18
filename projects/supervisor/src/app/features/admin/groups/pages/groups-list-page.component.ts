@@ -12,7 +12,7 @@ import {
 import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
-import { ButtonModule } from 'primeng/button';
+import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 
 import { ClickOutsideDirective, SortableHeaderDirective } from '@core/directives';
 import { UndoStackService, XlsxExportService } from '@core/services';
@@ -73,7 +73,7 @@ const COLUMN_PREF_KEY = 'sc-groups-columns-v2';
   imports: [
     BulkActionBarComponent,
     BulkEditMenuComponent,
-    ButtonModule,
+    ButtonComponent,
     ClickOutsideDirective,
     ColumnSelectorComponent,
     DeleteEntityDialogComponent,
