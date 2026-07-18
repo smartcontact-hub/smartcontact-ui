@@ -16,6 +16,8 @@ import {
 } from '@angular/core';
 import { FormsModule, ControlValueAccessor, NG_VALUE_ACCESSOR, NgControl } from '@angular/forms';
 import { PrimeTemplate } from 'primeng/api';
+import { ScFieldLabelComponent } from '../field/sc-field-label.component';
+import { ScFieldMsgComponent } from '../field/sc-field-msg.component';
 import { SelectModule } from 'primeng/select';
 
 export type ScSelectSize = 'sm' | 'md' | 'lg';
@@ -39,7 +41,7 @@ let scSelectIdCounter = 0;
 @Component({
   selector: 'sc-select',
   standalone: true,
-  imports: [SelectModule, FormsModule, PrimeTemplate, NgTemplateOutlet],
+  imports: [SelectModule, FormsModule, PrimeTemplate, NgTemplateOutlet, ScFieldLabelComponent, ScFieldMsgComponent],
   templateUrl: './sc-select.component.html',
   styleUrl: './sc-select.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

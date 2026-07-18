@@ -13,6 +13,8 @@ import {
 } from '@angular/core';
 import { ControlValueAccessor, NG_VALUE_ACCESSOR, NgControl } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
+import { ScFieldLabelComponent } from '../field/sc-field-label.component';
+import { ScFieldMsgComponent } from '../field/sc-field-msg.component';
 
 export type ScInputNumberSize = 'sm' | 'md' | 'lg';
 
@@ -37,7 +39,7 @@ let scInputNumberIdCounter = 0;
 @Component({
   selector: 'sc-inputnumber',
   standalone: true,
-  imports: [InputTextModule],
+  imports: [InputTextModule, ScFieldLabelComponent, ScFieldMsgComponent],
   templateUrl: './sc-inputnumber.component.html',
   styleUrl: './sc-inputnumber.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

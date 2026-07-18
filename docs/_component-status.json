@@ -1,6 +1,6 @@
 {
   "generated": "component-audit.mjs",
-  "summary": "49 componentes · 15 custom · 11 standard · 23 extended · 32 usados en Supervisor.",
+  "summary": "50 componentes · 16 custom · 11 standard · 23 extended · 32 usados en Supervisor.",
   "components": [
     {
       "name": "avatar",
@@ -183,7 +183,10 @@
       "primengBase": "primeng/datepicker",
       "cva": true,
       "inputs": 17,
-      "nested": [],
+      "nested": [
+        "sc-field-label",
+        "sc-field-msg"
+      ],
       "hasDemo": true,
       "usedInSupervisor": 2
     },
@@ -248,6 +251,18 @@
       "nested": [],
       "hasDemo": true,
       "usedInSupervisor": 10
+    },
+    {
+      "name": "field",
+      "selector": "sc-field-label",
+      "provenance": "CUSTOM",
+      "kind": "CUSTOM",
+      "primengBase": "—",
+      "cva": false,
+      "inputs": 2,
+      "nested": [],
+      "hasDemo": false,
+      "usedInSupervisor": 0
     },
     {
       "name": "form-danger-zone",
@@ -343,7 +358,10 @@
       "primengBase": "primeng/inputtext",
       "cva": true,
       "inputs": 13,
-      "nested": [],
+      "nested": [
+        "sc-field-label",
+        "sc-field-msg"
+      ],
       "hasDemo": true,
       "usedInSupervisor": 4
     },
@@ -355,7 +373,10 @@
       "primengBase": "primeng/inputtext",
       "cva": true,
       "inputs": 18,
-      "nested": [],
+      "nested": [
+        "sc-field-label",
+        "sc-field-msg"
+      ],
       "hasDemo": true,
       "usedInSupervisor": 29
     },
@@ -391,7 +412,10 @@
       "primengBase": "primeng/multiselect",
       "cva": true,
       "inputs": 23,
-      "nested": [],
+      "nested": [
+        "sc-field-label",
+        "sc-field-msg"
+      ],
       "hasDemo": true,
       "usedInSupervisor": 10
     },
@@ -499,7 +523,10 @@
       "primengBase": "primeng/select",
       "cva": true,
       "inputs": 22,
-      "nested": [],
+      "nested": [
+        "sc-field-label",
+        "sc-field-msg"
+      ],
       "hasDemo": true,
       "usedInSupervisor": 33
     },

@@ -1,10 +1,10 @@
 @if (label()) {
-  <label class="sc-inputnumber__label" [attr.for]="resolvedId()">
-    {{ label() }}
-    @if (required()) {
-      <span class="sc-inputnumber__required" aria-hidden="true">*</span>
-    }
-  </label>
+  <sc-field-label
+    block="sc-inputnumber"
+    [text]="label()!"
+    [required]="required()"
+    [for]="resolvedId()"
+  />
 }
 
 <div class="sc-inputnumber__field" [class.sc-inputnumber__field--has-suffix]="hasSuffix()">
@@ -35,11 +35,10 @@
 </div>
 
 @if (footerText()) {
-  <span
-    class="sc-inputnumber__msg"
-    [class.sc-inputnumber__msg--error]="!!error()"
-    [id]="resolvedId() + '-msg'"
-  >
-    {{ footerText() }}
-  </span>
+  <sc-field-msg
+    block="sc-inputnumber"
+    [text]="footerText()"
+    [isError]="!!error()"
+    [msgId]="resolvedId() + '-msg'"
+  />
 }

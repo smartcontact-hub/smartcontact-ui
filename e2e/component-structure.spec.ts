@@ -107,11 +107,17 @@ test.describe('estructura de los componentes del DS', () => {
 
     // Se compara componente a componente para que el fallo diga CUÁL se movió,
     // en vez de escupir un diff de miles de líneas de todo el DS junto.
+    //
+    // `expect.soft` y no `expect`: en un refactor transversal —que es para lo
+    // que existe esta red— se tocan varios componentes a la vez, y una
+    // aserción dura corta en el primero y te esconde los otros cuatro. Lo
+    // aprendí usándola: al extraer el campo compartido solo vi `sc-inputtext`
+    // y tuve que adivinar si los demás estaban bien.
     for (const { tag } of COMPONENTS) {
-      expect(actual[tag], `${tag}: nº de instancias renderizadas en el demo`).toHaveLength(
-        expected[tag]?.length ?? -1,
-      );
-      expect(actual[tag], `${tag}: el HTML renderizado cambió`).toEqual(expected[tag]);
+      expect
+        .soft(actual[tag], `${tag}: nº de instancias renderizadas en el demo`)
+        .toHaveLength(expected[tag]?.length ?? -1);
+      expect.soft(actual[tag], `${tag}: el HTML renderizado cambió`).toEqual(expected[tag]);
     }
   });
 });

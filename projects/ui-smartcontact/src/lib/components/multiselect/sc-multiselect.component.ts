@@ -13,6 +13,8 @@ import {
 } from '@angular/core';
 import { FormsModule, ControlValueAccessor, NG_VALUE_ACCESSOR, NgControl } from '@angular/forms';
 import { MultiSelectModule } from 'primeng/multiselect';
+import { ScFieldLabelComponent } from '../field/sc-field-label.component';
+import { ScFieldMsgComponent } from '../field/sc-field-msg.component';
 
 export type ScMultiSelectSize = 'sm' | 'md' | 'lg';
 export type ScMultiSelectDisplay = 'chip' | 'comma';
@@ -35,7 +37,7 @@ let scMultiSelectIdCounter = 0;
 @Component({
   selector: 'sc-multiselect',
   standalone: true,
-  imports: [MultiSelectModule, FormsModule],
+  imports: [MultiSelectModule, FormsModule, ScFieldLabelComponent, ScFieldMsgComponent],
   templateUrl: './sc-multiselect.component.html',
   styleUrl: './sc-multiselect.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

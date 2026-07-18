@@ -13,6 +13,8 @@ import {
 } from '@angular/core';
 import { FormsModule, ControlValueAccessor, NG_VALUE_ACCESSOR, NgControl } from '@angular/forms';
 import { DatePickerModule } from 'primeng/datepicker';
+import { ScFieldLabelComponent } from '../field/sc-field-label.component';
+import { ScFieldMsgComponent } from '../field/sc-field-msg.component';
 
 export type ScDatepickerSize = 'sm' | 'md' | 'lg';
 export type ScDatepickerView = 'date' | 'month' | 'year';
@@ -39,7 +41,7 @@ let scDatepickerIdCounter = 0;
 @Component({
   selector: 'sc-datepicker',
   standalone: true,
-  imports: [DatePickerModule, FormsModule],
+  imports: [DatePickerModule, FormsModule, ScFieldLabelComponent, ScFieldMsgComponent],
   templateUrl: './sc-datepicker.component.html',
   styleUrl: './sc-datepicker.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
