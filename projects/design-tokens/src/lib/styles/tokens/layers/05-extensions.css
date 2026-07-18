@@ -42,7 +42,10 @@
    * `rgb(var(--sc-shadow-color-rgb) / 0.04)`.
    */
   --sc-shadow-color-rgb: 15 23 42;
-  --sc-shadow-focus-ring-rgb: 36 198 219; /* cyan-500 channels (#24c6db) */
+  /* sky-500 (#1464fe), a juego con --sc-border-focus. Antes era cyan-500: el
+   * HALO del foco y su BORDE eran de familias distintas — el anillo se veía
+   * turquesa alrededor de un borde azul. Unificado con el acento (§1.4). */
+  --sc-shadow-focus-ring-rgb: 20 100 254;
 
   --sc-shadow-xs: 0 1px 2px 0 rgb(var(--sc-shadow-color-rgb) / 0.04);
   /* Numeric alias kept for /config consumers that follow the 100/200…

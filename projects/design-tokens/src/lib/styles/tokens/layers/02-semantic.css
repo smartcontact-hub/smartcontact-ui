@@ -45,15 +45,22 @@
   --sc-text-subtle: var(--sc-color-slate-400);
   --sc-text-disabled: var(--sc-color-slate-300);
   --sc-text-inverse: var(--sc-color-slate-0);
-  --sc-text-accent: var(--sc-color-cyan-600);
-  --sc-text-link: var(--sc-color-cyan-600);
+  /* Accent = SKY de marca (unificado 2026-07-18, `docs/customs-catalog.md §1.4`).
+   * Antes cyan-600: era un resto del andamiaje inicial, nunca documentado como
+   * divergencia consciente, y el rename DD-23 que llevó `info` a sky no revisó
+   * este alias. Convivían dos acentos (fondo sky con texto cyan). Además
+   * cyan-600 sobre blanco daba 3.46:1 — bajo AA; sky-600 da 6.80:1. */
+  --sc-text-accent: var(--sc-color-sky-600);
+  --sc-text-link: var(--sc-color-sky-600);
   --sc-text-success: var(--sc-color-green-600);
   --sc-text-warning: var(--sc-color-amber-600);
   --sc-text-danger: var(--sc-color-red-600);
   --sc-text-info: var(--sc-text-accent);
   --sc-text-violet: var(--sc-color-violet-700);
   --sc-text-on-secondary: var(--sc-color-slate-800);
-  --sc-text-on-accent: var(--sc-color-slate-800);
+  /* OBLIGATORIO al pasar accent a sky: slate-800 daba 5.89:1 sobre cyan-500,
+   * pero sobre sky-500 se hunde a 2.48:1. Blanco da 4.90:1. */
+  --sc-text-on-accent: var(--sc-color-slate-0);
   --sc-text-on-error: var(--sc-color-slate-0);
   --sc-text-on-success: var(--sc-color-slate-0);
   --sc-text-on-warning: var(--sc-color-slate-0);
@@ -89,10 +96,10 @@
   --sc-bg-secondary-active: var(--sc-color-slate-200);
   --sc-bg-secondary-subtle: var(--sc-color-slate-50);
 
-  /* Accent (cyan) */
-  --sc-bg-accent: var(--sc-color-cyan-500);
-  --sc-bg-accent-hover: var(--sc-color-cyan-600);
-  --sc-bg-accent-active: var(--sc-color-cyan-700);
+  /* Accent (sky de marca — unificado con info; ver §1.4) */
+  --sc-bg-accent: var(--sc-color-sky-500);
+  --sc-bg-accent-hover: var(--sc-color-sky-600);
+  --sc-bg-accent-active: var(--sc-color-sky-700);
 
   /* Status */
   --sc-bg-success: var(--sc-color-green-600);
@@ -139,9 +146,9 @@
   --sc-border-secondary-hover: var(--sc-color-blue-300);
   --sc-border-secondary-active: var(--sc-color-blue-400);
 
-  --sc-border-accent: var(--sc-color-cyan-500);
-  --sc-border-accent-hover: var(--sc-color-cyan-600);
-  --sc-border-accent-active: var(--sc-color-cyan-700);
+  --sc-border-accent: var(--sc-color-sky-500);
+  --sc-border-accent-hover: var(--sc-color-sky-600);
+  --sc-border-accent-active: var(--sc-color-sky-700);
 
   --sc-border-success: var(--sc-color-green-600);
   --sc-border-success-subtle: var(--sc-color-green-200);
@@ -169,9 +176,9 @@
   --sc-icon-secondary: var(--sc-color-slate-600);
   --sc-icon-inverse: var(--sc-color-slate-0);
   --sc-icon-disabled: var(--sc-color-slate-300);
-  --sc-icon-link: var(--sc-color-cyan-600);
+  --sc-icon-link: var(--sc-color-sky-600);
 
-  --sc-icon-accent: var(--sc-color-cyan-600);
+  --sc-icon-accent: var(--sc-color-sky-600);
   --sc-icon-success: var(--sc-color-green-600);
   --sc-icon-warning: var(--sc-color-amber-600);
   --sc-icon-error: var(--sc-color-red-600);
@@ -180,7 +187,8 @@
 
   --sc-icon-on-primary: var(--sc-color-slate-0);
   --sc-icon-on-secondary: var(--sc-color-slate-800);
-  --sc-icon-on-accent: var(--sc-color-cyan-800);
+  /* Misma razón que --sc-text-on-accent: sobre sky-500 hace falta blanco. */
+  --sc-icon-on-accent: var(--sc-color-slate-0);
   --sc-icon-on-danger: var(--sc-color-slate-0);
   --sc-icon-on-success: var(--sc-color-slate-0);
   --sc-icon-on-warning: var(--sc-color-slate-800);

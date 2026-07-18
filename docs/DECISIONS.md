@@ -1361,7 +1361,50 @@ gatean CI).
 
 ---
 
-Última actualización: 2026-07-17 (**DD-30** varias reglas activas a la vez + solape por unión [una conversación se procesa una vez, sin prioridad/conflictos], supersede el invariante «una sola activa» de DD-28; recorrido `/reglas` realineado · **DD-29** showcase «estilo Storybook» en sc-demo — motor propio, render por
+## DD-32 · 2026-07-18 — Un solo acento: la familia `accent` se unifica con `info` bajo `sky`
+
+**El problema no era una decisión discutible, era una que nunca se tomó.** `--sc-text-accent`
+apuntaba a `cyan-600` desde el andamiaje inicial. No estaba en `customs-catalog.md` (el sitio
+donde viven las divergencias conscientes), no hay ninguna DD que lo justifique, y **DD-23** —
+que llevó `info` a la familia `sky` de marca — no revisó el alias. El DS acabó con **dos
+acentos conviviendo**: `--sc-bg-info` en sky con `--sc-text-info` en cyan, y el **halo** del
+foco en cyan alrededor de un **borde** de foco ya en sky.
+
+**Decisión.** Toda la familia (`text/bg/border/icon` de `accent` y `link`, más el halo de foco)
+pasa a `sky`. Detalle completo y tabla de tokens en `docs/customs-catalog.md §1.4`.
+
+**No es solo estética — repara accesibilidad.** `cyan-600` sobre blanco daba **3.46:1**, por
+debajo de AA para texto normal; `sky-600` da **6.80:1**. La contrapartida obligatoria:
+`--sc-text-on-accent` e `--sc-icon-on-accent` **pasan a blanco**, porque `slate-800` sobre
+`sky-500` cae a **2.48:1** (sobre `cyan-500` daba 5.89:1). Blanco sobre `sky-500`: 4.90:1.
+
+**Barrido asociado.** 38 declaraciones `outline: 2px solid var(--sc-color-cyan-500)` en 31
+ficheros hardcodeaban la primitiva para el anillo de foco en vez de consumir
+`--sc-border-focus`. Verificado que las 38 estaban dentro de un `:focus-visible` antes de
+migrarlas (cero falsos positivos).
+
+**Alternativa descartada.** *Cambiar solo `--sc-text-info`* (una línea): arreglaba el síntoma
+visible pero dejaba links, iconos y halo de foco en la otra familia — es decir, dejaba el
+problema de consistencia intacto y sin registrar.
+
+**Sin round-trip con Figma.** El export del Kit **no tiene concepto de `accent`** (0
+coincidencias); `info` solo existe a nivel de componente y ya resuelve a `{sky.500}`. Las
+líneas viven fuera de toda zona `@sc-gen` → el cambio sobrevive a `tokens:import` y ningún
+gate lo marca como drift. **Corolario incómodo**: por eso mismo **ningún gate los vigila**;
+`token-parity` §6 solo cruza lo que está en `scripts/color-map.mjs`.
+
+**Abierto (no bloquea):** la rampa de texto atenuado está bajo AA sobre blanco —
+`--sc-text-subtle` (slate-400) **2.04:1** y `--sc-text-secondary` (slate-500) **2.95:1**. No se
+toca aquí: `subtle` es una divergencia consciente documentada (`02-semantic.css:40-44`) y
+`secondary` está *enforced* 1:1 con el Kit por parity §6, así que subirlo es conversación de
+marca con Figma, no un cambio de código.
+
+---
+
+Última actualización: 2026-07-18 (**DD-32** un solo acento: la familia `accent`/`link` +
+halo de foco se unifican con `info` bajo `sky`; repara 3.46:1 → 6.80:1 y obliga a
+`text-on-accent`/`icon-on-accent` a blanco; barrido de 38 outlines hardcodeados a
+`--sc-border-focus` · **DD-30** varias reglas activas a la vez + solape por unión [una conversación se procesa una vez, sin prioridad/conflictos], supersede el invariante «una sola activa» de DD-28; recorrido `/reglas` realineado · **DD-29** showcase «estilo Storybook» en sc-demo — motor propio, render por
 `<ng-template>`+`viewChild` [no `NgComponentOutlet`], canvas aislado + knobs en vivo + snippet + API + sidebar por
 categorías; 49/49 en formato story · **DD-28** reglas MVP: borradores fuera del todo + invariante «una sola activa»
 (radio) + fuera prioridad/conflictos en el supervisor; recorrido `/reglas` realineado · **DD-27** constructor de
