@@ -201,7 +201,7 @@
   }
 
   &:focus-visible {
-    outline: 2px solid var(--sc-color-cyan-500);
+    outline: 2px solid var(--sc-border-focus);
     outline-offset: 2px;
   }
 }
@@ -355,7 +355,7 @@
     }
 
     &:focus-visible {
-      outline: 2px solid var(--sc-color-cyan-500);
+      outline: 2px solid var(--sc-border-focus);
       outline-offset: 2px;
     }
   }
@@ -418,7 +418,7 @@ input[type='checkbox'] {
       color: var(--sc-text-secondary);
     }
     &:focus-visible {
-      outline: 2px solid var(--sc-color-cyan-500);
+      outline: 2px solid var(--sc-border-focus);
       outline-offset: 2px;
     }
     /* Tactile press — DD#57 review / impeccable.md principle 3. */
@@ -596,7 +596,7 @@ input[type='checkbox'] {
     }
 
     &:focus-visible {
-      outline: 2px solid var(--sc-color-cyan-500);
+      outline: 2px solid var(--sc-border-focus);
       outline-offset: -2px;
     }
   }

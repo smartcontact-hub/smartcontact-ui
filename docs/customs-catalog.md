@@ -90,6 +90,40 @@ Sobre Figma SC: pedir el link del componente ANTES de tocar nada. Replicar 1:1 l
 
 ---
 
+### 1.4 Accent → sky (unificado con info) · 2026-07-18
+
+> **Esto NO es una divergencia nueva: es la RETIRADA de una que nunca se decidió.**
+
+`--sc-text-accent` apuntaba a `cyan-600` desde el andamiaje inicial del DS. No estaba
+registrado en este catálogo, no hay ninguna decisión en `DECISIONS.md` que lo justifique,
+y el rename **DD-23** (que llevó `info` a la familia `sky` de marca) no revisó el alias.
+Resultado: el DS tenía **dos acentos conviviendo**.
+
+| Token | Antes | Ahora | Por qué |
+|---|---|---|---|
+| `--sc-text-accent` · `--sc-text-link` | `cyan-600` | `sky-600` | Contraste sobre blanco: **3.46:1 → 6.80:1**. El valor anterior estaba **bajo AA** para texto normal. |
+| `--sc-text-info` | alias de accent (→ cyan) | alias de accent (→ **sky**) | Antes `--sc-bg-info` era sky y `--sc-text-info` cyan: fondo de una familia con texto de otra. |
+| `--sc-bg-accent{,-hover,-active}` | `cyan-500/600/700` | `sky-500/600/700` | Una sola familia de acento. |
+| `--sc-border-accent{,-hover,-active}` | `cyan-500/600/700` | `sky-500/600/700` | idem. |
+| `--sc-icon-link` · `--sc-icon-accent` | `cyan-600` | `sky-600` | idem (`--sc-icon-info` ya aliasaba a accent). |
+| **`--sc-text-on-accent` · `--sc-icon-on-accent`** | `slate-800` / `cyan-800` | **`slate-0` (blanco)** | **Obligatorio**: slate-800 daba 5.89:1 sobre cyan-500, pero sobre sky-500 cae a **2.48:1**. Blanco da 4.90:1. |
+| `--sc-shadow-focus-ring-rgb` (`05-extensions.css`) | `cyan-500` | `sky-500` | El **halo** del foco era cyan mientras su **borde** (`--sc-border-focus`) ya era sky: el anillo se veía turquesa alrededor de un borde azul. |
+
+**Barrido asociado**: 38 declaraciones `outline: 2px solid var(--sc-color-cyan-500)` en 31
+ficheros (DS + app) hardcodeaban la primitiva para su anillo de foco en vez de consumir
+`--sc-border-focus`, que existe exactamente para eso. Verificado que las **38 estaban
+dentro de un `:focus-visible`** (cero falsos positivos) antes de migrarlas.
+
+**Sin round-trip con Figma**: el export del Kit **no tiene concepto de `accent`** (0
+coincidencias en 3.054 hojas de `kit-export-dtcg.json`); `info` solo existe a nivel de
+componente y ya resuelve a `{sky.500}`. Estas líneas viven fuera de toda zona `@sc-gen`,
+así que el cambio sobrevive a `npm run tokens:import` y ningún gate lo marca como drift.
+
+**Consecuencia que conviene saber**: por eso mismo, **ningún gate vigila estos tokens**.
+`token-parity` §6 solo cruza lo que está en `scripts/color-map.mjs`, y accent no está.
+
+---
+
 ## 2. Component extensions (el DS añade lo que Figma no modela)
 
 ### 2.1 Toast action button (undo pattern)
