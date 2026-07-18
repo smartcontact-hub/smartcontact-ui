@@ -46,6 +46,15 @@
    `tokens:export-clean` se salta con `CI=1`, así que sin esa variable "reproduje" un fallo que
    en el workflow no existe. Un repro con el entorno equivocado mide otra cosa.
 
+6b. **Mides en un dev server con HMR y el valor no cuadra → RECARGA DURA antes de acusar a tu
+   código.** El hot-reload deja vistas y `TemplateRef` del componente ANTERIOR: sus nodos
+   conservan el `_ngcontent` viejo, cuyos estilos ya se han retirado. *Evidencia (s13)*: el
+   título y el chip proyectados a la TopBar medían 32px y sin píldora; concluí "mi SCSS no
+   entra". Tras `location.reload()`: 16px y píldora correcta — el CSS siempre estuvo bien.
+   Corolario del mismo día: al sondear la URL de un `@font-face`, resuélvela contra la HOJA DE
+   ESTILOS y no contra `location.href`, o te inventas un 404 que no existe (me pasó, y casi
+   firmo "la fuente no carga" con una sonda mal construida).
+
 ## Gates y push
 
 7. **El commit toca componentes (`sc-*`, plantillas) y va a `git push` → corre `npm run verify`
