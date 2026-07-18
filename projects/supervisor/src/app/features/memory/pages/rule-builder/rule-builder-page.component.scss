@@ -28,84 +28,12 @@
   min-height: 100%;
   background: var(--sc-bg-default);
 
-  /* ── Piezas proyectadas a la TopBar ── */
-
-  &__back {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 28px;
-    height: 28px;
-    flex-shrink: 0;
-    border: 0;
-    border-radius: var(--sc-radius-100);
-    background: transparent;
-    color: var(--sc-text-secondary);
-    cursor: pointer;
-    transition: background-color var(--sc-transition-fast) var(--sc-easing-default);
-
-    &:hover {
-      background: var(--sc-bg-hover);
-      color: var(--sc-text-primary);
-    }
-
-    &:focus-visible {
-      outline: 2px solid var(--sc-border-focus);
-      outline-offset: 2px;
-    }
-
-    &:active {
-      transform: translateY(1px);
-    }
-  }
-
-  &__headline {
-    display: flex;
-    flex-direction: column;
-    gap: var(--sc-spacing-0-125);
-    min-width: 0;
-  }
-
-  &__title {
-    display: flex;
-    align-items: center;
-    gap: var(--sc-spacing-0-625);
-    margin: 0;
-    font-size: var(--sc-font-size-300);
-    line-height: var(--sc-line-height-300);
-    font-weight: var(--sc-font-weight-semibold);
-    color: var(--sc-text-primary);
-  }
-
-  /* Tipo (Transcripción / Clasificación) como pill, no como texto tras un "·".
-   * OJO: este nodo se PROYECTA a la TopBar, fuera del host de la página. Ahí no
-   * hay forma de aplicarle un override de tema desde este SCSS: `:host-context`
-   * exige un `[_nghost]` ancestro (no lo hay) y un descendente `.sc-dark .x`
-   * compila con `[_ngcontent]` pegado TAMBIÉN a `.sc-dark`, que vive en <html>
-   * y no lo lleva. Por eso el color sale de un rol que YA voltea, no de una
-   * primitiva: el tinte de fondo da el acento y el texto queda legible en ambos
-   * temas sin regla extra. */
-  &__type-chip {
-    flex-shrink: 0;
-    padding: 1px var(--sc-spacing-0-5);
-    border-radius: var(--sc-radius-full);
-    background: var(--sc-bg-info-subtle);
-    color: var(--sc-text-primary);
-    font-size: var(--sc-font-size-50);
-    font-weight: var(--sc-font-weight-semibold);
-    letter-spacing: 0.03em;
-    text-transform: uppercase;
-  }
-
-  &__subtitle {
-    margin: 0;
-    font-size: var(--sc-font-size-100);
-    line-height: var(--sc-line-height-100);
-    color: var(--sc-text-secondary);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
+  /* ── Piezas proyectadas a la TopBar ──
+   *
+   * La Ola 1 se llevó la cabecera que esta página proyectaba al lead (back +
+   * título + chip + subtítulo). La identidad la da ahora el breadcrumb, el
+   * subtítulo bajó a la tarjeta 01 y el chip de tipo también. Solo quedan las
+   * acciones. */
 
   /* Cancelar + Crear, ya en la barra superior. */
   &__actions {
@@ -350,6 +278,22 @@
       cursor: pointer;
       white-space: nowrap;
     }
+  }
+
+  /* Tipo (Transcripción / Clasificación) como pill. Bajó de la TopBar en la
+   * Ola 1. El color sigue saliendo de un ROL que ya voltea en oscuro
+   * (`--sc-bg-info-subtle` es un color-mix de sky-800) y no de una primitiva
+   * `--sc-color-sky-*`, que no voltearía. */
+  &__type-chip {
+    flex-shrink: 0;
+    padding: 1px var(--sc-spacing-0-5);
+    border-radius: var(--sc-radius-full);
+    background: var(--sc-bg-info-subtle);
+    color: var(--sc-text-primary);
+    font-size: var(--sc-font-size-50);
+    font-weight: var(--sc-font-weight-semibold);
+    letter-spacing: 0.03em;
+    text-transform: uppercase;
   }
 
   &__body {

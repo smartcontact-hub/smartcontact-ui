@@ -1,28 +1,14 @@
 <div class="rule-builder">
-  <!-- Cabecera proyectada a la TopBar (junto al avatar): back + título + chip de
-       tipo + subtítulo. Ver `topBarSlot.setLead` en el componente. -->
-  <ng-template #topbarHeader>
-    <button
-      type="button"
-      class="rule-builder__back"
-      [attr.aria-label]="'memory.rules.builder.back' | translate"
-      (click)="onCancel()"
-    >
-      <sc-icon [name]="backIcon" [size]="16" />
-    </button>
-    <div class="rule-builder__headline">
-      <h1 class="rule-builder__title">
-        {{
-          (isEditMode() ? 'memory.rules.builder.title_edit' : 'memory.rules.builder.title_new')
-            | translate
-        }}
-        <span class="rule-builder__type-chip">{{
-          'memory.rules.builder.type.' + ruleType() | translate
-        }}</span>
-      </h1>
-      <p class="rule-builder__subtitle">{{ 'memory.rules.builder.subtitle' | translate }}</p>
-    </div>
-  </ng-template>
+  <!-- La identidad la da el breadcrumb ("Reglas › Nueva regla"), declarado en
+       `memory.routes.ts`. Este <h1> existe para que el documento tenga
+       encabezado; visualmente oculto porque el diseño no lo pide — mismo
+       patrón que los tres formularios hermanos de admin. -->
+  <h1 class="visually-hidden">
+    {{
+      (isEditMode() ? 'memory.rules.builder.title_edit' : 'memory.rules.builder.title_new')
+        | translate
+    }}
+  </h1>
 
   <!-- Acciones primarias proyectadas a la TopBar (`topBarSlot.setActions`): el
        guardar sube del dock inferior a la barra, junto a la navegación. Mismo
@@ -60,11 +46,22 @@
       <!-- ── 01 · Información básica ── -->
       <section class="rule-card">
         <header class="rule-card__head">
-          <h2 class="rule-card__title">
-            <span class="rule-card__num" aria-hidden="true">01.</span>
-            {{ 'memory.rules.builder.metadata' | translate }}
-          </h2>
+          <div class="rule-card__heading">
+            <h2 class="rule-card__title">
+              <span class="rule-card__num" aria-hidden="true">01.</span>
+              {{ 'memory.rules.builder.metadata' | translate }}
+            </h2>
+            <!-- Bajó de la TopBar (Ola 1): es contenido, no chrome, y arriba
+                 vivía truncado con ellipsis. Aquí se lee entero. -->
+            <p class="rule-card__desc">{{ 'memory.rules.builder.subtitle' | translate }}</p>
+          </div>
           <div class="rule-card__control">
+            <!-- El tipo es ESTADO de la regla (fijado al crearla), no
+                 navegación: se agrupa con el otro estado de nivel-regla —el
+                 toggle activa/inactiva— en vez de decorar el breadcrumb. -->
+            <span class="rule-card__type-chip">{{
+              'memory.rules.builder.type.' + ruleType() | translate
+            }}</span>
             <label for="active-toggle">
               {{
                 (active()

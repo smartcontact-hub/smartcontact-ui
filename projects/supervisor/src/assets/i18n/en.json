@@ -336,7 +336,6 @@
       "deleted_toast": "Rule «{{name}}» deleted",
       "duplicated_toast": "Rule duplicated. The copy is inactive.",
       "builder": {
-        "back": "Back to list",
         "crumb_rules": "Rules",
         "title_new": "New rule",
         "title_edit": "Edit rule",
