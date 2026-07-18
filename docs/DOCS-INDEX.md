@@ -37,6 +37,7 @@
 | **Auditoría de deuda** (snapshot fechado, por bloques) — temas transversales + P0/P1 + quick-wins, backlog con checkboxes. Los items que se prioricen se mueven a `ROADMAP.md` | [`docs/AUDIT-DEUDA-2026-06.md`](./AUDIT-DEUDA-2026-06.md) | Claude + Rafa |
 | **Auditoría de consistencia y cobertura** (snapshot fechado) — pokédex, i18n, divergencias de token, cobertura demo/uso + arreglos concretos; complementa (no reescribe) la deuda de código | [`docs/AUDIT-2026-07.md`](./AUDIT-2026-07.md) | Claude + Rafa |
 | **Handoff volátil** — estado actual + próximos pasos (se SOBREESCRIBE cada cierre) | [`NEXT-SESSION.md`](../NEXT-SESSION.md) | Claude (lee PRIMERO al arrancar) |
+| **Reglas de proceso ganadas** — cómo trabajar en este repo (disparador → acción), destiladas de errores reales; se AFILA, no se acumula (tope ~20) | [`LEARNINGS.md`](../LEARNINGS.md) | Claude (lee al EMPEZAR tarea; `/reflect` lo escribe al cerrar) |
 | Preferencias / comportamiento Claude + atajos (privado, fuera del repo) | `~/.claude/projects/.../memory/` | Solo Claude |
 
 ## Punteros (no contienen info nueva)
