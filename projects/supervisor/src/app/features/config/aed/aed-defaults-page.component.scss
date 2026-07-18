@@ -100,7 +100,7 @@
    * (sin sombra); el gap del tray separa cards. */
   display: block;
   background: var(--sc-bg-surface);
-  border: 1px solid var(--sc-border-subtle);
+  border: 1px solid var(--sc-border-default);
   border-radius: var(--sc-radius-300);
 
   &__head {

@@ -15,7 +15,7 @@
   padding: var(--sc-spacing-0-5) var(--sc-spacing-0-875);
   margin-bottom: var(--sc-spacing-1-125);
   background: var(--sc-bg-secondary-subtle);
-  border: 1px solid var(--sc-border-subtle);
+  border: 1px solid var(--sc-border-default);
   border-radius: var(--sc-radius-200);
   font-size: var(--sc-font-size-200);
 
@@ -51,7 +51,7 @@
   padding: 0;
   max-height: 280px;
   overflow-y: auto;
-  border: 1px solid var(--sc-border-subtle);
+  border: 1px solid var(--sc-border-default);
   border-radius: var(--sc-radius-200);
 
   &[data-empty='true'] {
