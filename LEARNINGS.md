@@ -55,21 +55,28 @@
    ESTILOS y no contra `location.href`, o te inventas un 404 que no existe (me pasó, y casi
    firmo "la fuente no carga" con una sonda mal construida).
 
-19. **Vas a comprobar un comportamiento INTERACTIVO (click, tecla, arrastre, foco, overlay) →
-   escríbelo como test de Playwright, no lo conduzcas a mano por el navegador.** Un
-   `dispatchEvent` apunta al elemento que TÚ eliges y se salta el hit-testing, así que es
-   estructuralmente incapaz de detectar el fallo más común de la interacción: *que el click
-   real lo reciba otro elemento*. Playwright clica coordenadas de verdad y sí lo cazaría.
-   *Evidencia (s15), medida contra el MISMO código roto —reintroduje el bug a propósito para
-   comprobarlo, porque al principio me lo estaba deduciendo—*: el shift+click de rango
-   fallaba porque la casilla ocupa 16px en el centro de una celda de 40 y su
-   `stopPropagation` se comía el handler del rango. Mi sonda (`dispatchEvent` sobre el
-   `<td>`) daba **[1,2,3,4] = verde**; el test de Playwright daba **rojo**. El bug vivía
-   exactamente donde apunta todo el mundo y mi canal no podía verlo.
+19. **Elige el validador por la PREGUNTA que tienes, y ten claro que ninguno contesta la de
+   usabilidad.** No hay una escalera fija de herramientas; hay tres preguntas distintas:
+   - *¿el gesto hace lo que digo?* → **Playwright**. Un `dispatchEvent` apunta al elemento
+     que TÚ eliges y se salta el hit-testing, así que es incapaz por construcción de
+     detectar el fallo más común: *que el click real lo reciba otro elemento*. *Evidencia
+     (s15), medida contra el MISMO código roto —reintroduje el bug a propósito, porque al
+     principio me lo estaba deduciendo—*: el shift+click de rango fallaba porque la casilla
+     ocupa 16px en el centro de una celda de 40 y su `stopPropagation` se comía el handler.
+     Mi sonda daba **verde**; Playwright daba **rojo**.
+   - *¿esto se ve bien?* → **screenshot a viewport real**, mirando la pantalla entera.
+   - *¿alguien sabrá usarlo?* → **ninguna de las dos**. Un test solo comprueba lo que ya se
+     te ocurrió afirmar; nunca te dirá que algo confunde o que una capacidad es invisible.
+     Para eso, **recorrido cognitivo**: haz la tarea real y pregunta en cada paso si el
+     usuario (a) sabrá qué intentar, (b) verá el control, (c) entenderá que hace eso, (d)
+     notará que funcionó. *Evidencia (s15)*: con 22 tests en verde, el recorrido destapó que
+     tras mover las acciones masivas a la barra de selección, la palabra "transcribir" no
+     aparece en la pantalla de entrada — medido, cero coincidencias. Los tests no podían
+     verlo porque yo nunca escribí esa afirmación.
    **Corolario**: no encadenes dos interacciones en la misma llamada síncrona. Al hacerlo
-   para "reproducir más rápido" obtuve un tercer resultado distinto ([2,3,4]) que no era ni
-   el bug ni el comportamiento bueno, sino estado rancio de signals — y casi lo escribo como
-   si fuera el hallazgo. Una interacción por llamada, o un test.
+   para "reproducir más rápido" obtuve un tercer resultado ([2,3,4]) que no era ni el bug ni
+   el comportamiento bueno, sino estado rancio de signals — y casi lo escribo como hallazgo.
+   Una interacción por llamada, o un test.
 
 ## Gates y push
 
