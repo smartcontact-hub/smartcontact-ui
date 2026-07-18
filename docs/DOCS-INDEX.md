@@ -30,6 +30,7 @@
 | **Plan de port** de componentes (Mitad B) | [`docs/component-port-plan.md`](./component-port-plan.md) | Claude (referencia) |
 | **Plan de convergencia** de los 4 flujos (7 olas + modelo canónico R1-R7) | [`docs/plan-convergencia-flujos.md`](./plan-convergencia-flujos.md) | Claude + Rafa |
 | **Inventario de componentes** — tracklist: cada componente + wrapper/pure + los 4 gaps abiertos | [`docs/inventory.md`](./inventory.md) | Claude + diseño + Rafa |
+| **Receta para migrar una tabla** a `sc-datatable` — pasos, la piel `.list-table`, las 3 trampas medidas y las 14 tablas que quedan por dificultad | [`docs/receta-migracion-tablas.md`](./receta-migracion-tablas.md) | Claude (al migrar una tabla) |
 | **Playbook** migrar `smart-contact-platform` (sesión aparte) | [`docs/playbook-migracion-platform.md`](./playbook-migracion-platform.md) | Claude (en sesión sobre ese repo) |
 | **Playbook** archivar `smartcontact-ui-main` (sesión aparte) | [`docs/playbook-archivar-ui-main.md`](./playbook-archivar-ui-main.md) | Claude (en sesión sobre ese repo) |
 | **Log de construcción** per-lote (journal histórico CERRADO, no se re-litiga) | [`docs/history/DECISIONS-LOG.md`](./history/DECISIONS-LOG.md) (Mitad A) · [`docs/history/DECISIONS-LOG-B.md`](./history/DECISIONS-LOG-B.md) (Mitad B) | Claude (referencia histórica) |
