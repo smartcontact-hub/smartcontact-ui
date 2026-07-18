@@ -129,6 +129,13 @@ beneficio. Las clases compartidas están puestas como seam.
 
 # TRAMPAS (verificadas, las nuevas primero)
 
+- **`waitForLoadState('networkidle')` sin acotar puede tumbar el CI sin que
+  falle ninguna aserción.** Pasó: el test del datepicker agotó sus 60s en el
+  `goto` y sus comprobaciones ni corrieron. sc-demo descarga 3,9 MB de fuente
+  más chunks perezosos, así que con 2 workers la red tarda en callarse. Ya está
+  acotado a 10s y sin `throw` en los 4 sitios. **Si añades un `goto` nuevo, usa
+  el mismo patrón.** (La re-ejecución pasó: era flake, pero el arreglo va a la
+  causa, no al síntoma.)
 - **`table-layout`**: `main.scss` fuerza `fixed` en `table.table`; `sc-datatable`
   es `auto`. Al migrar, las columnas se recolocan si no lo corriges (la piel
   `.list-table` ya lo hace).
