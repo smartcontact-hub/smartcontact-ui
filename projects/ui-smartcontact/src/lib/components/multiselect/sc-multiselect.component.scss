@@ -116,10 +116,10 @@
  * ────────────────────────────────────────────────────────────────────
  */
 .sc-multiselect--filled .sc-multiselect__control {
-  background: var(--sc-color-slate-50);
+  background: var(--sc-bg-default);
 
   &:hover {
-    background: var(--sc-color-slate-100);
+    background: var(--sc-bg-hover);
   }
 }
 

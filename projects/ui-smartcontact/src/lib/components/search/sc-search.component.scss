@@ -141,12 +141,14 @@
   font-size: var(--sc-font-size-300);
 }
 
-/* Filled variant — slate-50 bg, alineado con sc-inputtext. */
+/* Filled variant — alineado con sc-inputtext. Va por ROL, no por primitiva: en
+ * claro `--sc-bg-default` ES slate-50 (mismo píxel que antes), pero la primitiva
+ * no voltea en oscuro y dejaba un input casi blanco sobre superficie oscura. */
 .sc-search--filled .sc-search__control {
-  background: var(--sc-color-slate-50);
+  background: var(--sc-bg-default);
 
   &:hover {
-    background: var(--sc-color-slate-100);
+    background: var(--sc-bg-hover);
   }
 }
 

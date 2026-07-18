@@ -64,6 +64,7 @@
           <sc-select
             appendTo="body"
             class="cond-row__field"
+            [filled]="true"
             [options]="fieldOptions"
             optionLabel="label"
             optionValue="value"
@@ -83,6 +84,7 @@
           <sc-select
             appendTo="body"
             class="cond-row__op"
+            [filled]="true"
             [options]="operatorOptionsFor(cond.field)"
             optionLabel="label"
             optionValue="value"
@@ -103,6 +105,7 @@
             <sc-select
               appendTo="body"
               class="cond-row__value"
+              [filled]="true"
               [options]="directionOptionsFor(cond.field)"
               optionLabel="label"
               optionValue="value"
@@ -130,6 +133,7 @@
                 <sc-select
                   appendTo="body"
                   class="cond-row__num-unit"
+                  [filled]="true"
                   [options]="durationUnitOptions"
                   optionLabel="label"
                   optionValue="value"
@@ -140,6 +144,7 @@
                 <sc-select
                   appendTo="body"
                   class="cond-row__preset"
+                  [filled]="true"
                   [options]="durationPresetOptions"
                   optionLabel="label"
                   optionValue="value"
@@ -157,6 +162,7 @@
                   <sc-select
                     appendTo="body"
                     class="cond-row__num-unit"
+                    [filled]="true"
                     [options]="durationUnitOptions"
                     optionLabel="label"
                     optionValue="value"
