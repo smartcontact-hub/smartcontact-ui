@@ -24,7 +24,7 @@
   &__title {
     margin: 0;
     font-size: var(--sc-font-size-300);
-    font-weight: 600;
+    font-weight: var(--sc-font-weight-semibold);
     color: var(--sc-text-primary);
   }
 
@@ -46,7 +46,7 @@
     background: var(--sc-bg-primary);
     color: var(--sc-text-on-primary);
     font-size: var(--sc-font-size-100);
-    font-weight: 500;
+    font-weight: var(--sc-font-weight-medium);
     cursor: pointer;
     transition: background 150ms ease;
 

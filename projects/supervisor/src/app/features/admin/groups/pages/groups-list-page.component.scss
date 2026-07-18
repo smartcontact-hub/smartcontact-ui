@@ -144,7 +144,7 @@
     color: var(--sc-text-secondary);
 
     &--mono {
-      font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, monospace;
+      font-family: var(--sc-font-family-mono);
       font-size: var(--sc-font-size-100);
     }
 

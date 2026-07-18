@@ -49,7 +49,7 @@
   &__empty-title {
     margin: 0;
     font-size: var(--sc-font-size-200);
-    font-weight: 500;
+    font-weight: var(--sc-font-weight-medium);
     color: var(--sc-text-primary);
   }
 
@@ -214,7 +214,7 @@
     cursor: pointer;
     font-family: inherit;
     font-size: var(--sc-font-size-100);
-    font-weight: 500;
+    font-weight: var(--sc-font-weight-medium);
     color: var(--sc-text-secondary);
     padding: var(--sc-spacing-0-25) var(--sc-spacing-0-75);
     border-radius: var(--sc-radius-100);
@@ -265,7 +265,7 @@
 
   &__num {
     font-size: var(--sc-font-size-50);
-    font-weight: 700;
+    font-weight: var(--sc-font-weight-bold);
     letter-spacing: 0.02em;
     text-transform: uppercase;
     color: var(--sc-text-secondary);
@@ -324,7 +324,7 @@
     background: var(--sc-bg-primary);
     color: var(--sc-text-on-primary);
     font-size: var(--sc-font-size-100);
-    font-weight: 700;
+    font-weight: var(--sc-font-weight-bold);
 
     &::before {
       content: '';
@@ -352,7 +352,7 @@
     background: var(--sc-bg-primary);
     color: var(--sc-text-on-primary);
     font-size: var(--sc-font-size-100);
-    font-weight: 700;
+    font-weight: var(--sc-font-weight-bold);
   }
 }
 
@@ -371,7 +371,7 @@
   color: var(--sc-text-secondary);
   font-family: inherit;
   font-size: var(--sc-font-size-100);
-  font-weight: 500;
+  font-weight: var(--sc-font-weight-medium);
   cursor: pointer;
   transition:
     background-color 150ms ease,
@@ -410,7 +410,7 @@
   color: var(--sc-text-secondary);
   font-family: inherit;
   font-size: var(--sc-font-size-100);
-  font-weight: 500;
+  font-weight: var(--sc-font-weight-medium);
   cursor: pointer;
   transition: color 150ms ease;
 

@@ -178,7 +178,7 @@
   padding-right: 6rem;
   overflow-x: auto;
   color: rgb(226 232 240 / 1);
-  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-family: var(--sc-font-family-mono);
   font-size: var(--sc-font-size-100);
   line-height: 1.6;
 }
@@ -228,7 +228,7 @@
 }
 
 .sb-host__tag {
-  font-family: ui-monospace, "SF Mono", Menlo, Consolas, monospace;
+  font-family: var(--sc-font-family-mono);
   font-size: var(--sc-font-size-200);
   color: var(--sc-text-secondary);
 }

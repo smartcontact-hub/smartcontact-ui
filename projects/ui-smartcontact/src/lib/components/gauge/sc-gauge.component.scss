@@ -44,7 +44,7 @@
 
   &__value {
     font-size: var(--sc-font-size-400);
-    font-weight: 700;
+    font-weight: var(--sc-font-weight-bold);
     line-height: 1;
     color: var(--sc-text-primary);
   }

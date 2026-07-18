@@ -19,7 +19,7 @@
   background: var(--sc-bg-surface);
   color: var(--sc-text-primary);
   font-size: var(--sc-font-size-200);
-  font-weight: 500;
+  font-weight: var(--sc-font-weight-medium);
   cursor: pointer;
   position: relative;
   transition:

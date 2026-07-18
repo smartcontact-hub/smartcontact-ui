@@ -25,7 +25,7 @@
   &__label {
     display: block;
     font-size: var(--sc-font-size-200);
-    font-weight: 500;
+    font-weight: var(--sc-font-weight-medium);
     color: var(--sc-text-primary);
     margin-bottom: var(--sc-spacing-0-25);
   }
@@ -33,7 +33,7 @@
   &__optional {
     margin-left: var(--sc-spacing-0-25);
     color: var(--sc-text-secondary);
-    font-weight: 400;
+    font-weight: var(--sc-font-weight-regular);
     font-size: var(--sc-font-size-50);
   }
 
@@ -167,7 +167,7 @@
 
   &__synonyms-label {
     font-size: var(--sc-font-size-50);
-    font-weight: 500;
+    font-weight: var(--sc-font-weight-medium);
     color: var(--sc-text-primary);
   }
 
@@ -210,7 +210,7 @@
     background: transparent;
     color: var(--sc-text-link);
     font-size: var(--sc-font-size-100);
-    font-weight: 500;
+    font-weight: var(--sc-font-weight-medium);
     cursor: pointer;
     transition:
       background-color 200ms ease-out,

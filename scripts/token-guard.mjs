@@ -17,6 +17,8 @@
  *     sobre primitivos sin wrapper).
  *  5. `font-size` literal px/rem en SCSS → token `--sc-font-size-*`
  *     (cinturón tipográfico migration-safe).
+ *  6. `font-weight` literal en SCSS → token `--sc-font-weight-*`.
+ *  7. stack monoespaciado a mano → `var(--sc-font-family-mono)`.
  *
  * Uso:  node scripts/token-guard.mjs   (CI/pre-commit; sale ≠0 si hay violación)
  */
@@ -85,12 +87,38 @@ for (const f of files) {
       fail(`${at} usa font-size literal → usa un token --sc-font-size-*.`);
       log(`      ${line.trim()}`);
     }
+    // 6 — font-weight literal en SCSS → token --sc-font-weight-*. El peso es el
+    // eje tipográfico que más se descuadra al cambiar de fuente: con literales,
+    // un "500" queda a merced de qué pesos traiga la familia nueva.
+    if (
+      /\.(scss|css)$/.test(f) &&
+      !inTokens &&
+      !inPreset &&
+      /(?<![\w-])font-weight:\s*\d{3}\b/.test(line) &&
+      !/^\s*(\/\/|\*|\/\*)/.test(line) &&
+      !/(\/\/|\/\*).*font-weight/.test(line)
+    ) {
+      fail(`${at} usa font-weight literal → usa un token --sc-font-weight-*.`);
+      log(`      ${line.trim()}`);
+    }
+    // 7 — stack mono literal → var(--sc-font-family-mono).
+    if (
+      /\.(scss|css)$/.test(f) &&
+      !inTokens &&
+      !inPreset &&
+      /font-family:[^;]*\bmonospace\b/.test(line) &&
+      !/var\(--sc-font-family-mono\)/.test(line) &&
+      !/^\s*(\/\/|\*|\/\*)/.test(line)
+    ) {
+      fail(`${at} escribe el stack monoespaciado a mano → usa var(--sc-font-family-mono).`);
+      log(`      ${line.trim()}`);
+    }
   });
 }
 
 log('─'.repeat(60));
 if (problems === 0) {
-  log(`✓ GUARDARRAÍL OK — sin --p-* fuera del preset, sin primitivas de escala en componentes, sin 8-point, sin font-size literal (${files.length} ficheros).`);
+  log(`✓ GUARDARRAÍL OK — sin --p-* fuera del preset, sin primitivas de escala en componentes, sin 8-point, sin font-size/font-weight literal, sin stack mono a mano (${files.length} ficheros).`);
   process.exit(0);
 }
 log(`✗ ${problems} violación(es).`);

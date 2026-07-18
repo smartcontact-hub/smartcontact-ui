@@ -252,7 +252,7 @@ table.table {
     h3 {
       margin: 0;
       font-size: var(--sc-font-size-200);
-      font-weight: 500;
+      font-weight: var(--sc-font-weight-medium);
       color: var(--sc-text-primary);
     }
   }
@@ -264,7 +264,7 @@ table.table {
     border-radius: var(--sc-radius-100);
     color: var(--sc-text-link);
     font-size: var(--sc-font-size-50);
-    font-weight: 500;
+    font-weight: var(--sc-font-weight-medium);
     cursor: pointer;
     transition: background-color 200ms ease-out;
 
@@ -299,7 +299,7 @@ table.table {
     h4 {
       margin: 0 0 var(--sc-spacing-0-5) 0;
       font-size: var(--sc-font-size-50);
-      font-weight: 600;
+      font-weight: var(--sc-font-weight-semibold);
       text-transform: uppercase;
       letter-spacing: 0.04em;
       color: var(--sc-text-secondary);
@@ -345,7 +345,7 @@ table.table {
     h3 {
       margin: 0;
       font-size: var(--sc-font-size-200);
-      font-weight: 500;
+      font-weight: var(--sc-font-weight-medium);
       color: var(--sc-text-primary);
     }
   }
@@ -357,7 +357,7 @@ table.table {
     border-radius: var(--sc-radius-100);
     color: var(--sc-text-link);
     font-size: var(--sc-font-size-50);
-    font-weight: 500;
+    font-weight: var(--sc-font-weight-medium);
     cursor: pointer;
     transition: background-color 200ms ease-out;
 
@@ -439,7 +439,7 @@ table.table {
   padding: 2px 8px;
   border-radius: var(--sc-radius-full);
   font-size: var(--sc-font-size-50);
-  font-weight: 600;
+  font-weight: var(--sc-font-weight-semibold);
   text-transform: uppercase;
   letter-spacing: 0.02em;
 
@@ -538,7 +538,7 @@ table.table {
     h3 {
       margin: 0 0 4px 0;
       font-size: var(--sc-font-size-200);
-      font-weight: 600;
+      font-weight: var(--sc-font-weight-semibold);
       color: var(--sc-text-primary);
     }
   }
@@ -565,7 +565,7 @@ table.table {
     }
 
     strong {
-      font-weight: 500;
+      font-weight: var(--sc-font-weight-medium);
       color: var(--sc-text-primary);
     }
   }

@@ -50,7 +50,7 @@
 
 .bulkv26__label {
   font-size: var(--sc-font-size-200);
-  font-weight: 700;
+  font-weight: var(--sc-font-weight-bold);
   text-transform: uppercase;
   line-height: 1.4;
   letter-spacing: 0.02em;
@@ -81,7 +81,7 @@
    * `--sc-font-size-900` (70px) → cinturón tipográfico al 100% (S67). */
   font-size: var(--sc-font-size-900);
   line-height: 1.05;
-  font-weight: 600;
+  font-weight: var(--sc-font-weight-semibold);
   font-variant-numeric: tabular-nums;
   color: var(--sc-text-primary);
   letter-spacing: -0.025em;
@@ -99,7 +99,7 @@
   position: absolute;
   margin-left: var(--sc-spacing-0-875);
   font-size: var(--sc-font-size-300);
-  font-weight: 500;
+  font-weight: var(--sc-font-weight-medium);
   font-variant-numeric: tabular-nums;
   pointer-events: none;
   animation: sc-delta-fly 750ms var(--sc-ease-out, cubic-bezier(0.16, 1, 0.3, 1)) forwards;
@@ -115,7 +115,7 @@
 .bulkv26__cost-cue {
   display: inline-block;
   font-size: var(--sc-font-size-200);
-  font-weight: 400;
+  font-weight: var(--sc-font-weight-regular);
   line-height: 1.4;
   /* "genera coste" cue — warning amber del DS, no urgente. */
   color: var(--sc-color-amber-700);
@@ -156,7 +156,7 @@
   padding: 3px 8px;
   border-radius: var(--sc-radius-full);
   font-size: var(--sc-font-size-50);
-  font-weight: 500;
+  font-weight: var(--sc-font-weight-medium);
   line-height: 1.2;
   border: 1px solid;
   background: transparent;
@@ -191,7 +191,7 @@
 
 .bulkv26__badge-count {
   font-variant-numeric: tabular-nums;
-  font-weight: 600;
+  font-weight: var(--sc-font-weight-semibold);
 }
 
 .bulkv26__badge-label {
@@ -219,7 +219,7 @@
 
 .bulkv26__decision-title {
   font-size: var(--sc-font-size-300);
-  font-weight: 600;
+  font-weight: var(--sc-font-weight-semibold);
   line-height: 1.5;
   transition: color 200ms ease;
 
@@ -254,7 +254,7 @@
 
   &.is-on {
     color: var(--sc-color-teal-700);
-    font-weight: 500;
+    font-weight: var(--sc-font-weight-medium);
   }
 
   &.is-pulsing {
