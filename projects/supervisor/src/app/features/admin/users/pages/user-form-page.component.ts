@@ -127,7 +127,38 @@ export class UserFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   protected readonly duplicatingFromName = signal<string | null>(null);
   protected readonly initial = signal<User | null>(null);
   protected readonly form = signal<FormState>(this.emptyForm());
-  protected readonly errors = signal<Readonly<Record<string, string>>>({});
+  /*
+   * R6 · una sola política de error.
+   *
+   * Antes había un `validate()` que rellenaba un mapa `errors` — y era código
+   * MUERTO: `save()` ya salía antes si `!canSave()`, y `canSave()` comprobaba
+   * el mismo predicado, así que el mapa nunca llegaba a tener nada. Resultado:
+   * estas pantallas no enseñaban ni un mensaje de campo, nunca. Solo un botón
+   * gris sin explicar por qué (el antipatrón nº1 de Nielsen).
+   *
+   * Regla: el error se revela por CONTENIDO equivocado, en vivo. Un campo
+   * vacío calla — todavía no es un error, es un campo sin rellenar, y acusar a
+   * un formulario recién abierto es ruido. Lo que falta por rellenar se
+   * comunica por la otra vía: el motivo del botón deshabilitado.
+   * Mismo modelo que `category-form-modal`.
+   */
+  protected readonly emailError = computed<string | null>(() => {
+    const email = this.form().email.trim();
+    if (email.length === 0) return null;
+    return EMAIL_RE.test(email) ? null : 'users.errors.email_invalid';
+  });
+
+  /** Por qué NO se puede guardar, en palabras. Alimenta el `title` y el
+   *  `aria-describedby` del botón: un control deshabilitado sin motivo obliga
+   *  al usuario a adivinar cuál de los campos le falta. */
+  protected readonly saveDisabledReason = computed<string | null>(() => {
+    if (this.canSave()) return null;
+    const f = this.form();
+    if (f.name.trim().length === 0) return 'users.errors.name_required';
+    if (!EMAIL_RE.test(f.email.trim())) return 'users.errors.email_invalid';
+    if (this.mode() === 'edit' && !this.dirtyState.dirty()) return 'common.no_changes';
+    return null;
+  });
   protected readonly saving = signal(false);
   protected readonly deleteVisible = signal(false);
 
@@ -369,7 +400,6 @@ export class UserFormPageComponent implements DirtyAware, OnInit, OnDestroy {
 
   protected save(): void {
     if (!this.canSave() || this.saving()) return;
-    if (!this.validate()) return;
 
     this.saving.set(true);
     setTimeout(() => {
@@ -454,12 +484,4 @@ export class UserFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     };
   }
 
-  private validate(): boolean {
-    const f = this.form();
-    const next: Record<string, string> = {};
-    if (!f.name.trim()) next['name'] = 'users.errors.name_required';
-    if (!EMAIL_RE.test(f.email.trim())) next['email'] = 'users.errors.email_invalid';
-    this.errors.set(next);
-    return Object.keys(next).length === 0;
-  }
 }

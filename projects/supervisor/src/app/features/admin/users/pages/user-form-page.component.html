@@ -2,6 +2,14 @@
      Identidad → breadcrumb + campos del cuerpo (foto/nombre en Identidad);
      Guardar/Cancelar → barra de arriba vía TopBarSlotService (ver el .ts). -->
 <ng-template #topbarActions>
+  <!-- El motivo va VISIBLE, no en un aria oculto: 'sc-button' reenvía
+       'ariaLabel' al <button> real pero no 'aria-describedby', así que ese
+       texto se quedaba colgando del custom element, sin rol y sin foco — un
+       aria que no llega al control es peor que ninguno, porque parece
+       accesible. Visible sirve además a quien ve la pantalla. -->
+  @if (saveDisabledReason(); as reason) {
+    <span class="form-save-reason">{{ reason | translate }}</span>
+  }
   <sc-button type="button" size="sm" variant="secondary" (clicked)="cancel()">
     <span>{{ 'common.cancel' | translate }}</span>
   </sc-button>
@@ -11,6 +19,7 @@
     variant="primary"
     [disabled]="!canSave()"
     [loading]="saving()"
+    [attr.title]="saveDisabledReason() ? (saveDisabledReason()! | translate) : null"
     (clicked)="save()"
   >
     <span>{{ 'common.save' | translate }}</span>
@@ -84,11 +93,14 @@
                 (photoChange)="onPhotoChange($event)"
               />
               <div class="field form-identity__name">
+                <!-- El nombre no tiene regla de contenido: o está o no está, y
+                     que falte lo dice el motivo del botón, no un error rojo
+                     sobre un campo que aún no has tocado. -->
                 <sc-inputtext
                   inputId="user-name"
                   [label]="'users.form.fields.name' | translate"
+                  [required]="true"
                   [value]="form().name"
-                  [error]="errors()['name'] ? (errors()['name']! | translate) : undefined"
                   (valueChange)="onNameRename($event)"
                 />
               </div>
@@ -103,7 +115,7 @@
                 [required]="true"
                 [value]="form().email"
                 (valueChange)="onTextValue('email', $event)"
-                [error]="errors()['email'] ? (errors()['email']! | translate) : undefined"
+                [error]="emailError() ? (emailError()! | translate) : undefined"
               />
 
               <sc-inputtext

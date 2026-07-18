@@ -717,7 +717,8 @@
     "danger_zone": {
       "title": "Zone de risque"
     },
-    "delete_gate": "Supprimer…"
+    "delete_gate": "Supprimer…",
+    "no_changes": "Aucune modification à enregistrer"
   },
   "topbar": {
     "go_to_dashboard": "Aller au tableau de bord",

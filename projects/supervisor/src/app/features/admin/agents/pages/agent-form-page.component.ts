@@ -473,7 +473,60 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   protected readonly duplicatingFromName = signal<string | null>(null);
   protected readonly initial = signal<Agent | null>(null);
   protected readonly form = signal<FormState>(this.emptyForm());
-  protected readonly errors = signal<Readonly<Record<string, string>>>({});
+  /*
+   * R6 · una sola política de error.
+   *
+   * Antes había un `validate()` que rellenaba un mapa `errors` — y era código
+   * MUERTO: `save()` ya salía antes si `!canSave()`, y `canSave()` comprobaba
+   * el mismo predicado, así que el mapa nunca llegaba a tener nada. Resultado:
+   * estas pantallas no enseñaban ni un mensaje de campo, nunca. Solo un botón
+   * gris sin explicar por qué (el antipatrón nº1 de Nielsen).
+   *
+   * Regla: el error se revela por CONTENIDO equivocado, en vivo. Un campo
+   * vacío calla — todavía no es un error, es un campo sin rellenar, y acusar a
+   * un formulario recién abierto es ruido. Lo que falta por rellenar se
+   * comunica por la otra vía: el motivo del botón deshabilitado.
+   * Mismo modelo que `category-form-modal`.
+   *
+   * En esta pantalla solo email y PIN tienen regla de CONTENIDO (los dos son
+   * opcionales: si los escribes, con formato válido). Nombre y extensión son
+   * solo obligatorios — no hay contenido equivocado que señalar, así que no
+   * llevan computed: su ausencia la cuenta el motivo del botón.
+   */
+  protected readonly emailError = computed<string | null>(() => {
+    const email = this.form().email.trim();
+    if (email.length === 0) return null;
+    return EMAIL_RE.test(email) ? null : 'agents.errors.email_invalid';
+  });
+
+  protected readonly pinError = computed<string | null>(() => {
+    const pin = this.form().pin.trim();
+    if (pin.length === 0) return null;
+    return PIN_RE.test(pin) ? null : 'agents.errors.pin_invalid';
+  });
+
+  /** Por qué NO se puede guardar, en palabras. Alimenta el `title` y el
+   *  `aria-describedby` del botón: un control deshabilitado sin motivo obliga
+   *  al usuario a adivinar cuál de los campos le falta.
+   *
+   *  El orden reproduce el de `canSave()` — y no por comodidad: delante van
+   *  los obligatorios vacíos (nombre, extensión), que NO tienen otro canal
+   *  porque sus campos callan por diseño; detrás los de formato, que además
+   *  ya se están viendo en rojo sobre el propio input.
+   *
+   *  Los predicados se copian de `canSave()` en vez de delegar en los
+   *  computed de arriba: esos devuelven `null` con el campo en blancos, y un
+   *  email de solo espacios dejaría el botón gris otra vez sin motivo. */
+  protected readonly saveDisabledReason = computed<string | null>(() => {
+    if (this.canSave()) return null;
+    const f = this.form();
+    if (!f.name.trim()) return 'agents.errors.name_required';
+    if (!f.extension) return 'agents.errors.extension_required';
+    if (f.email && !EMAIL_RE.test(f.email.trim())) return 'agents.errors.email_invalid';
+    if (f.pin && !PIN_RE.test(f.pin.trim())) return 'agents.errors.pin_invalid';
+    if (this.mode() === 'edit' && !this.dirtyState.dirty()) return 'common.no_changes';
+    return null;
+  });
   protected readonly saving = signal(false);
   protected readonly deleteVisible = signal(false);
 
@@ -834,7 +887,6 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
 
   protected save(): void {
     if (!this.canSave() || this.saving()) return;
-    if (!this.validate()) return;
 
     this.saving.set(true);
     setTimeout(() => {
@@ -958,18 +1010,5 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
       scheduleIds: new Set(),
       templateIds: new Set(),
     };
-  }
-
-  private validate(): boolean {
-    const f = this.form();
-    const next: Record<string, string> = {};
-    if (!f.name.trim()) next['name'] = 'agents.errors.name_required';
-    if (!f.extension) next['extension'] = 'agents.errors.extension_required';
-    const email = f.email.trim();
-    if (email && !EMAIL_RE.test(email)) next['email'] = 'agents.errors.email_invalid';
-    const pin = f.pin.trim();
-    if (pin && !PIN_RE.test(pin)) next['pin'] = 'agents.errors.pin_invalid';
-    this.errors.set(next);
-    return Object.keys(next).length === 0;
   }
 }
