@@ -1,17 +1,19 @@
 # NEXT SESSION — Smart Contact DS (hand-off)
 
-> Sello: **2026-07-17** (cierre sesión 11). La sesión 11 cerró **Bloque 1 (rediseño
-> `/reglas`)** + **Bloque 2a (tipografías P1: Open Sans + icono Outlined)** y los
-> **pusheó a main con CI verde**. Quedan Bloques 3/4/2b/5. Este fichero corrige los
-> hallazgos del Bloque 3 (los items del audit estaban **simplificados de más** — ver
-> abajo). SOBREESCRIBE este fichero al cerrar.
+> Sello: **2026-07-18** (cierre sesión 11). Cerrados **Bloque 1** (rediseño `/reglas`),
+> **Bloque 2a** (Open Sans + icono Outlined, DD-31) y **todo lo acotado del Bloque 3**
+> (a11y de filas, bug del kebab, vestigiales de `Rule`, PrimeIcons→Material). Quedan las
+> **dos piezas grandes del Bloque 3** (sc-button, migración a sc-datatable) + Bloques 4/2b/5.
+> Este fichero corrige los hallazgos del audit, que estaban **simplificados de más**.
+> SOBREESCRIBE este fichero al cerrar.
 
 ## ▶️ EMPIEZA AQUÍ
 1. Lee este fichero. **Confirma el CI LEYENDO el run** en GitHub Actions, no este hand-off.
-2. Lo pusheado (3 commits, hasta `6df7ebc`) desplegó en Pages: sc-demo (`/#/reglas` rediseñado)
-   + supervisor + agent (iconos Outlined). Verifica visualmente si vas a construir encima.
-3. **Dos decisiones pendientes** antes del grueso del Bloque 3: (a) migrar list-pages a
-   `sc-datatable`; (b) adoptar `sc-button` en el supervisor (111 usos de `p-button`).
+2. Todo pusheado a main. Desplegado en Pages: sc-demo (`/#/reglas` rediseñado) + supervisor
+   + agent (iconos Outlined). Verifica visualmente si vas a construir encima.
+3. **Dos decisiones pendientes**, ambas grandes: (a) adoptar `sc-button` en el supervisor
+   (111 usos de `p-button` / 24 ficheros); (b) migrar list-pages a `sc-datatable` — ojo:
+   su justificación principal (a11y de filas) **ya está resuelta** por otra vía, ver abajo.
 
 ---
 
@@ -33,6 +35,28 @@
   sc-demo iguala solo. `npm run verify` verde · AOT de las 3 apps · iconos renderizan
   (familia computada + woff2 200, sin CDN). Docs: DD-31 + ROADMAP + inventory.
 
+## Bloque 3 — lo ACOTADO, cerrado y verificado en el supervisor
+- **a11y de filas** (`f596918`): el nombre de la regla es un **enlace real** (`<a routerLink>`)
+  en vez de depender del `(click)` de la fila. Nativo al teclado, se anuncia como enlace y
+  permite cmd+click. Verificado: Tab lleva el foco al enlace (anillo visible) y activarlo
+  navega a `/conversaciones/reglas/:id`. **No es trabajo tirado**: al migrar a datatable el
+  enlace vive dentro del `cellTemplate` de la columna nombre. `categories`/`entities` no
+  tenían filas clicables → era el único caso.
+- **Bug del kebab** (`d5fed4b`): propagado a categories/entities el patrón de rules
+  (menú ÚNICO compartido + `menuTarget*` signal + `menuItems` computed estable). Antes
+  `[model]="buildMenuItems(x)"` recreaba el array en cada CD → se perdía el 1er clic, y había
+  un `<p-menu>` POR FILA. Verificado: 1 clic abre y aplica, sobre la fila correcta; `p-menu`
+  en el DOM de 6 → 1.
+- **Vestigiales de `Rule`** (`3019824`): retirados `direction`/`schedule`/`durationMin` + sus
+  6 signals sin binding + los tipos muertos `Direction`/`Schedule`. El audit decía "nada los
+  lee" y era **falso** (los leía el plumbing de load/save/duplicate) — pero la retirada es
+  segura porque `deriveTreeFromLegacy` NO depende de ellos. Verificado: cargar/guardar/duplicar
+  conservan el alcance «…la duración supera 60 s», que sale del `conditionTree` (DD-27).
+- **PrimeIcons → Material** (`ccb8b46`): los 12 `MenuItem.icon` restantes renderizaban
+  PrimeIcons DE VERDAD (comprobado: `font-family: primeicons`), no mapeados por ningún
+  resolver. `MenuItem.icon` es una CLASE, no un componente → se usa la convención
+  `.sc-icon-font--NAME` del DS, declarando en `main.scss` solo los 8 glifos usados.
+
 ## Abierto de la sesión 11 (no bloquea)
 - **Baselines visuales `-darwin`** (`e2e/components.spec.ts-snapshots/`): stale para
   componentes con icono (muestran Rounded). **CI no afectado** (los snapshots de píxeles
@@ -53,36 +77,36 @@
 
 ---
 
-# BLOQUE 3 — deuda de diseño P1 (estado CORREGIDO)
+# BLOQUE 3 — lo que QUEDA (solo las 2 piezas grandes)
 
-> ⚠️ Los items de `AUDIT-2026-07.md` están **simplificados de más**. Verificado esta sesión
-> contra el código — cada uno es más grande de lo que dice el audit. NO ejecutar a ciegas.
+> ⚠️ Los items de `AUDIT-2026-07.md` están **simplificados de más**: en esta sesión, 4 de 4
+> eran más grandes o su precondición era falsa. Verifica cada uno contra el código antes de
+> ejecutarlo. Lo acotado ya está cerrado (ver arriba).
 
-- **Tablas → `sc-datatable`** = **linchpin**. Verificado: `sc-datatable` soporta celdas
-  custom (`ScColumnDef.cellTemplate` → chips, columna de acciones/kebab) y fila seleccionable
-  (`selectionMode='single'`, con teclado vía PrimeNG). Migrar las 5 list-pages
-  (rules/categories/entities/users/groups) **cierra a11y de filas + kebab + tablas de golpe**.
-  Es una migración **grande** (patrón: piloto en `rules` → valida → resto por lotes).
-- **a11y filas** (`rules-page.component.html:62-65`): `<tr (click)="openRule">` sin teclado
-  (WCAG 2.1.1). REAL. Se resuelve al migrar a datatable (selección con teclado). Hacerlo a
-  mano ahora = parcialmente tirado.
-- **Bug kebab** (categories/entities SIN el patrón `menuTargetX`/`menuItems` que sí tiene
-  `rules-page.component.ts:84-92`): REAL. También lo absorbe la migración a datatable
-  (columna de acciones única). Verificar 1er-clic con supervisor levantado.
-- **`sc-button`** (decisión 1): **111 usos / 24 ficheros** de `p-button` vs 3 de `sc-button`.
-  Migración grande. Decidir adoptar antes.
-- **PrimeIcons** (`pi pi-*` en confirm-host + rules/categories/entities): son
-  `MenuItem.icon: 'pi pi-*'` que **el resolver pi→Material del DS ya mapea a Outlined**
-  (test e2e `components.spec.ts:61` lo confirma) → probablemente **ya renderizan Material**.
-  El "cleanup" es cosmético (usar nombres Material directos) + toca el resolver/preset de menú
-  + la pregunta de si se puede soltar `primeicons` (¿otros usos?). NO mecánico. El
-  confirm-host está gated por la API `icon?` de `ScConfirmService` (ROADMAP).
-- **rule-builder vestigial** (audit #4): los planos `direction`/`schedule`/`durationMin` NO
-  son "nada los lee" (el audit se equivoca) — sin UI en el template (son condiciones del
-  árbol, DD-27), pero SÍ plumbing de `loadFromRule`/`buildSnapshot`/`onSave` + copia en
-  `rules.store.ts:158-160` + `deriveTreeFromLegacy` (backward-compat). Refactor **moderado**:
-  quitar el tipo + el plumbing + confirmar que `deriveTreeFromLegacy` está muerto (¿alguna
-  regla sin `conditionTree`?). Verificación interactiva del flujo create/edit/save/duplicate.
+- **`sc-button`** (decisión pendiente): **111 usos / 24 ficheros** de `p-button` vs 3 de
+  `sc-button`. Migración grande. Decidir adoptar antes de empezar; patrón sugerido: piloto en
+  una list-page + forms, validar, resto por lotes con AOT por lote.
+- **Tablas → `sc-datatable`** (decisión pendiente): **su justificación se debilitó**. Era el
+  «linchpin» porque cerraba a11y de filas + kebab + tablas de golpe, pero **a11y y kebab ya
+  están resueltos** por vías propias (arriba). Queda el valor de consistencia y de quitar
+  ~14 tablas a mano. Antes de migrar, dos cosas:
+  - **Cerrar 2 huecos de API del DS** (verificados leyendo `sc-datatable.component.ts`
+    entero): (1) **no hay hook de clase por fila** (`rowStyleClass`) → el atenuado de filas
+    inactivas (`rules-row-inactive`, `categories-row--inactive`) no tiene dónde vivir;
+    (2) **no hay output de activación de fila** (`rowClick`/`rowActivate`) → la navegación
+    tendría que ir sobre el modelo `selection`, con el efecto raro de que reseleccionar la
+    MISMA fila no vuelve a emitir.
+  - **Sonda de teclado en `selectionMode='single'`**. Lo que sí está verificado: las filas
+    reciben `tabindex="0"` vía `pSelectableRow` y PrimeNG 21 tiene los handlers
+    (`onEnterKey`/`onSpaceKey`). Lo que **NO** está verificado: que la activación por teclado
+    funcione de punta a punta (ver TRAMPAS: el tooling entrega teclas malformadas, así que una
+    prueba en contra no vale). El demo de sc-demo está cableado para `multiple`, no sirve.
+  - Sí está cubierto el CONTENIDO: chips/estado/kebab vía `ScColumnDef.cellTemplate`, orden,
+    anchos/alineación y slots `[scTableCaption]`/`[scTableEmpty]`.
+- **Soltar `primeicons`**: NO se puede aún. Verificado que **PrimeNG 21 referencia clases `pi`
+  por dentro** (`api`, `cascadeselect`, `multiselect`, `select`). Retirar el `@import` de
+  `main.scss:44` + la dependencia exige barrer y verificar esos componentes.
+- **`ScConfirmService` sin API de icono de cabecera** (`icon?`) sigue abierto (ROADMAP).
 
 # BLOQUE 4 — deuda técnica P0 (multiplicador, máxima verif)
 - **`sc-field-wrapper` + CVA + computeds** (P0): 5 fields duplican CVA + 9 computeds +
@@ -92,6 +116,9 @@
   `@Input`→signals** por lotes · **`shared/utils/audio.ts`** (formatTime ×2 + parseDuration + hash).
 
 # BLOQUE 2b — gobernanza tipografía (P2)
+> ⚠️ **Es todo-o-nada**: en cuanto el guard nuevo entre, romperá `npm run verify` hasta que
+> los ~190 literales estén migrados. Planifícalo como un solo golpe (o con allowlist temporal).
+
 Extender `scripts/token-guard.mjs` a `line-height`/`font-weight`/stack-mono literales; migrar
 ~93 font-weight + ~98 line-height a tokens (75% en supervisor). Peor primero: px de line-height
 en config (settings-sidebar, sistema-page, aed-defaults, form-section-nav). Mono `var(--sc-font-family-mono)` ×9.
@@ -102,8 +129,11 @@ Doble modal transcripción · `SC_ICON_SIZE_LG` 15.75→16 · font-size px "Figm
 `permission-matrix` centralizada · `GroupChannelCascadeService` · `TriStateToggleUtil`.
 
 ## Orden recomendado
-1. Confirmar decisiones (datatable + sc-button) · 2. Bloque 3 datatable-céntrico (piloto→lotes)
-· 3. Bloque 4 (field-wrapper P0) · 4. Bloque 2b + 5. Top-down, parar donde toque.
+Lo acotado del Bloque 3 ya está hecho, así que lo que queda son **piezas grandes de sesión
+propia**. Sugerido: 1. **`sc-button`** (decidir + piloto→lotes) — es la mayor ganancia de
+consistencia que queda · 2. **Bloque 4** (`sc-field-wrapper`, el mayor multiplicador, máxima
+verificación) · 3. **`sc-datatable`** (cerrar antes los 2 huecos de API + la sonda de teclado)
+· 4. Bloque 2b (de un golpe) + 5. Ninguna es de "cola de sesión": empiézalas frescas.
 
 ## Verificación transversal
 `sc-*`/tokens/icons → `npm run verify` + AOT de las 3 apps · datatable/kebab/a11y → supervisor
@@ -111,7 +141,17 @@ levantado + teclado + 1er clic · tipografía → `type-parity` + guard · CI ve
 
 ## TRAMPAS
 - Los items de **AUDIT-2026-07 están simplificados** — verifica la precondición de cada uno
-  contra el código antes de tocar (esta sesión: 3 de 3 eran más grandes de lo dicho).
+  contra el código antes de tocar (esta sesión: 4 de 4 eran más grandes o falsos).
+- ⚠️ **El tooling de navegador entrega las teclas MALFORMADAS** (llegan con `key`/`code`
+  vacíos, comprobado con un listener). Consecuencia: una prueba de teclado que "falla" NO
+  prueba nada — en esta sesión me llevó a afirmar en falso que las filas de `sc-datatable` no
+  se activaban con Enter. Para verificar teclado: haz **clic en la página primero** (si no, ni
+  llegan), y valida por foco + comportamiento nativo, no por una tecla que no puedes sintetizar.
+- Los **errores de consola por View Transitions** (`InvalidStateError: Transition was aborted`)
+  son **PREEXISTENTES** (`withViewTransitions()` en `app.config.ts:24`), no regresión.
+  Comprobado haciendo stash del cambio y reproduciéndolos igual.
+- Comprobar el DOM **en la misma llamada síncrona** que dispara la acción da falsos negativos
+  (Angular aún no ha renderizado): comprueba en una llamada aparte.
 - `npm run e2e` clobbea `public/usage/*.png` → baselines con `npx playwright test e2e/components.spec.ts`.
 - CI (ubuntu) **salta los snapshots de píxeles** (`components.spec.ts:25`) y gatea por métricas;
   los baselines `-darwin` son solo para regresión visual local.
@@ -123,7 +163,9 @@ levantado + teclado + 1er clic · tipografía → `type-parity` + guard · CI ve
 ## Estado cerrado (NO es deuda, verificado)
 dirty-state centralizado · user crossTab/conflictWarning · PROFILE dup eliminado · seeds sin
 placeholders · (s10: iconos ~340KB, dedup, DD-30, /lab) · (s11: /reglas rediseñado, Open Sans,
-icono Outlined self-hospedado DD-31).
+icono Outlined self-hospedado DD-31, a11y de filas por enlace real, bug del kebab, vestigiales
+de `Rule`, menús en Material). **a11y de filas y kebab NO son deuda ya** — no los reabras al
+migrar a datatable, solo trasládalos (el enlace va al `cellTemplate`).
 
 ## Índice
 Decisiones → `docs/DECISIONS.md` (**DD-31 icono Outlined** · DD-30 varias activas · DD-29
