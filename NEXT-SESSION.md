@@ -7,9 +7,9 @@
 
 1. Lee este fichero y luego [`LEARNINGS.md`](LEARNINGS.md).
 2. **Confirma el CI LEYENDO el run** del último commit.
-3. **El plan aprobado vive en `~/.claude/plans/adelante-con-b2-y-rosy-wren.md`** — 7
-   olas de convergencia + B2/B4/B5, con el modelo de interacción canónico (R1-R7).
-   Léelo: aquí solo está el delta y las correcciones.
+3. **El plan aprobado está en [`docs/plan-convergencia-flujos.md`](docs/plan-convergencia-flujos.md)**
+   — 7 olas + B2/B4/B5 + el modelo de interacción canónico (R1-R7). Léelo DESPUÉS de
+   este fichero: aquí están el delta y las correcciones que lo pisan.
 4. **Siguiente en la cola: Ola 1.** Su orden interno NO es negociable: declarar el
    breadcrumb ANTES de matar `setLead`, o el constructor se queda con la TopBar vacía
    (hoy esas dos rutas producen un trail de cero crumbs).
@@ -30,14 +30,44 @@ Lo que zanjó el debate fueron las medidas, no el argumento:
 | `--sc-border-subtle` en OSCURO | **1:1** | **es el MISMO color que la tarjeta: el borde es invisible** |
 | `border-subtle/default/strong` sobre blanco | 1.15 / 1.34 / 2.04 : 1 | ninguno llega a 3:1 |
 
-O sea: **las tarjetas están mal delimitadas en los DOS temas** y nadie lo había visto.
-La palanca real es el **stroke**, no el fondo. La Ola 3 pasa a ser *un solo lienzo + un
-borde de tarjeta que se lea en claro y en oscuro*, que además es más simple y es lo que
-pedía el encargo de consistencia.
+**RECALIBRADO (misma sesión, midiendo otra vez):** mi «mal delimitadas en los DOS temas»
+estaba sobrecalibrado para claro. A 1px, un borde de tarjeta a **1.34:1** es práctica
+normal; en claro no hay defecto. **El defecto real es SOLO el oscuro**, donde el borde es
+del mismo color que la tarjeta y por tanto no existe.
 
 Matiz honesto para no inflar el caso: el 3:1 de WCAG 1.4.11 aplica a objetos *necesarios
 para entender el contenido*; el borde de una tarjeta es discutible que lo sea. Esto es
-legibilidad, no incumplimiento duro.
+legibilidad, no incumplimiento duro. No armes el argumento con esa norma.
+
+### Ola 3 — DECIDIDO (Rafa delegó la decisión)
+
+1. **Un solo lienzo**, como pedía Rafa. Se acaba la distinción de fondo lista-vs-editor.
+2. **Borde de tarjeta en claro**: `--sc-border-default` (1.34:1). Se queda como está.
+3. **Borde de tarjeta en OSCURO: `--sc-border-subtle` pasa de `slate-900` a `slate-800`**
+   → **1.39:1**, que es el simétrico exacto del claro. Hoy es `slate-900`, *idéntico* a
+   `--sc-bg-surface`: por eso no se ve. Ese es el único cambio de token de la ola.
+4. Sigue en pie el barrido de `max-width` a `styles/_page.scss` (drift real:
+   1600/1400/1200/1100/960/832/78rem) con 3 variantes, y dejar `seguridad`/`sistema` en
+   832 (columna de lectura, un cuarto arquetipo legítimo).
+5. **Trampa C3 viva**: `settings-shell.component.scss:20-25` documenta que S67-A puso el
+   lienzo blanco *porque el rail gris se fundía con lienzo gris*. Si se toca ese lienzo,
+   el token del rail cambia EN EL MISMO EDIT.
+
+### Otras decisiones delegadas (2026-07-18)
+
+- **Rampa de texto atenuado** → *responsabilidad partida*. `--sc-text-subtle` (2.04:1) se
+  queda como está: su propósito documentado es placeholder/disabled, donde el bajo
+  contraste es deliberado. Lo que NO puede es usarse para **contenido**. Acción concreta:
+  el caption de la tarjeta de impacto pasa de `subtle` a `--sc-text-secondary`.
+  `--sc-text-secondary` (2.95:1) **no se toca**: está *enforced* 1:1 con el Kit por parity
+  §6, así que subirlo rompe el gate → se escala a Figma con el número, no se parchea.
+- **Capturas desfasadas del recorrido `/reglas`** → recapturar **después de la Ola 3**, no
+  antes: las olas 1-3 cambian cabecera, menú y lienzo, así que recapturar ahora garantiza
+  volver a quedar desfasado. Con script aislado fuera del repo, **nunca `npm run e2e`**.
+- **Bulk-edit en usuarios** (la falsa «asimetría de undo») → **sí se añade**, porque las
+  tres hermanas son casi el mismo fichero y la ausencia es accidental, no diseñada. Pero
+  va **al final, después de las olas**: es funcionalidad nueva, no convergencia. Asumo la
+  decisión por delegación explícita de Rafa; si prefiere no ampliar alcance, se cae sola.
 
 ---
 
@@ -184,14 +214,14 @@ teclas vacías).
 
 # Decisiones que necesitan a Rafa
 
-0. **La rampa de texto atenuado está bajo AA sobre blanco** y NO se puede arreglar
-   unilateralmente: `--sc-text-subtle` (slate-400) da **2.04:1** y `--sc-text-secondary`
-   (slate-500) **2.95:1**. `subtle` es una divergencia consciente documentada
-   (`02-semantic.css:40-44`, «se ven más tenues a propósito») y `secondary` está
-   *enforced* 1:1 con el Kit por parity §6. Subirlo es conversación de marca con Figma.
-   Se ve en carne viva en el caption de la tarjeta de impacto.
-1. **Las capturas de tu material de presentación están desfasadas**: el recorrido
-   `/reglas` de sc-demo incrusta PNGs del constructor ANTERIOR al rediseño de B1.
+> Las que él delegó ya están **tomadas y escritas arriba** (Ola 3, rampa atenuada,
+> capturas, bulk-edit). Aquí solo queda lo que de verdad no puede decidir un agente.
+
+1. **`--sc-text-secondary` está a 2.95:1 sobre blanco** — bajo AA para texto normal, y es
+   el color del texto secundario de TODA la app. No es parcheable desde código: está
+   *enforced* 1:1 con el Kit por parity §6, así que subirlo exige cambiarlo en Figma y
+   re-exportar. **Requiere a Rafa + Marta.** El dato para esa conversación: slate-500
+   `#8f97a3` → haría falta ~slate-600 `#6f7784` (4.52:1).
 2. **Incoherencia en la capa semántica**: `--sc-bg-info` → sky, pero
    `--sc-text-info` → `--sc-text-accent` → **cyan-600**. Fondo sky con texto cyan.
 2. **Fondo del listado vs el constructor**: el constructor va sobre
