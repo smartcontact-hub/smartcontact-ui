@@ -11,10 +11,10 @@ import {
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 import { RouterLink } from '@angular/router';
-import { ButtonModule } from 'primeng/button';
 import { TooltipModule } from 'primeng/tooltip';
 
 import { IconComponent } from '@shared/components';
+import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 import { ScInputTextComponent as InputTextComponent } from '@smartcontact-hub/components';
 import { ScDialogComponent as DialogComponent } from '@smartcontact-hub/components';
 import { ScSelectComponent as SelectComponent } from '@smartcontact-hub/components';
@@ -103,7 +103,7 @@ const CATEGORY_TEMPLATES: readonly CategoryTemplate[] = [
 @Component({
   selector: 'sc-memory-category-form-modal',
   imports: [
-    ButtonModule,
+    ButtonComponent,
     FormsModule,
     IconComponent,
     InputTextComponent,
