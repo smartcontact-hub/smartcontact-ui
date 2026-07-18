@@ -3,14 +3,12 @@
     <sc-button
       variant="secondary"
       appearance="outlined"
-      size="sm"
       [label]="'common.discard_changes' | translate"
       (clicked)="cancel()"
     />
   }
   <sc-button
     variant="primary"
-    size="sm"
     [disabled]="!canSave()"
     [loading]="saving()"
     [label]="'common.save' | translate"

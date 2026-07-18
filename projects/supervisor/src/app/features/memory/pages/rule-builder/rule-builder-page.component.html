@@ -15,10 +15,10 @@
        mecanismo que ya usa el listado. -->
   <ng-template #topbarActions>
     <div class="rule-builder__actions">
-      <sc-button type="button" size="sm" variant="secondary" (clicked)="onCancel()">
+      <sc-button type="button" variant="secondary" (clicked)="onCancel()">
         <span>{{ 'common.cancel' | translate }}</span>
       </sc-button>
-      <sc-button type="button" size="sm" variant="primary" (clicked)="onSave()">
+      <sc-button type="button" variant="primary" (clicked)="onSave()">
         <span>
           @if (isEditMode()) {
             {{ 'memory.rules.builder.save_changes' | translate }}

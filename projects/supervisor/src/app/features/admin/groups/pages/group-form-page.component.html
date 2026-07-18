@@ -10,12 +10,11 @@
   @if (saveDisabledReason(); as reason) {
     <span class="form-save-reason">{{ reason | translate }}</span>
   }
-  <sc-button type="button" size="sm" variant="secondary" (clicked)="cancel()">
+  <sc-button type="button" variant="secondary" (clicked)="cancel()">
     <span>{{ 'common.cancel' | translate }}</span>
   </sc-button>
   <sc-button
     type="button"
-    size="sm"
     variant="primary"
     [disabled]="!canSave()"
     [loading]="saving()"
