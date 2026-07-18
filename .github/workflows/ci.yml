@@ -36,3 +36,8 @@ jobs:
         run: |
           npx playwright install --with-deps chromium
           npm run e2e
+      # Comportamiento de la app real: formularios (rellenar → validar → guardar)
+      # y el flujo de reglas de punta a punta. Playwright levanta su propio
+      # `ng serve` (:4405) — ver playwright.supervisor.config.ts.
+      - name: e2e supervisor (formularios + flujo de reglas)
+        run: npm run e2e:supervisor
