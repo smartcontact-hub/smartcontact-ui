@@ -72,7 +72,7 @@ export class ConfirmHostService {
       this.confirmation.confirm({
         header: req.title,
         message: req.body,
-        icon: 'pi pi-exclamation-triangle',
+        icon: 'sc-icon-font sc-icon-font--warning',
         acceptButtonProps,
         rejectButtonProps,
         accept: () => resolve(true),
