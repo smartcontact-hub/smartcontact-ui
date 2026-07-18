@@ -11,15 +11,15 @@ import {
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { MessageService } from 'primeng/api';
+import { MessageService, type MenuItem } from 'primeng/api';
+import { MenuModule } from 'primeng/menu';
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 
-import { ClickOutsideDirective, SortableHeaderDirective } from '@core/directives';
+import { SortableHeaderDirective } from '@core/directives';
 import { XlsxExportService } from '@core/services';
 import { TopBarSlotService } from '@core/layout/top-bar/top-bar-slot.service';
 import { SelectionState } from '@core/utils/selection-state';
-import { clampToViewport } from '@core/utils/viewport';
 import { TOAST_LIFE } from '@core/utils/toast-life';
 
 import {
@@ -39,23 +39,17 @@ const COLUMN_PREF_KEY = 'sc-users-columns-v1';
 
 type SortField = 'name' | 'email' | 'type' | 'identifier' | 'status';
 
-interface ContextMenuPos {
-  readonly x: number;
-  readonly y: number;
-  readonly userId: number;
-}
-
 @Component({
   selector: 'sc-users-list-page',
   imports: [
     BulkActionBarComponent,
     ButtonComponent,
-    ClickOutsideDirective,
     ColumnSelectorComponent,
     DeleteEntityDialogComponent,
     EmptyStateComponent,
     IconComponent,
     InlineRenameCellComponent,
+    MenuModule,
     SearchComponent,
     SortableHeaderDirective,
     TranslateModule,
@@ -90,9 +84,6 @@ export class UsersListPageComponent {
   protected readonly closeIcon = 'close';
   protected readonly downloadIcon = 'download';
   protected readonly moreIcon = 'more_vert';
-  protected readonly editIcon = 'edit';
-  protected readonly trashIcon = 'delete';
-  protected readonly copyIcon = 'content_copy';
   protected readonly emptyIcon = 'manage_accounts';
   protected readonly pageIcon = 'manage_accounts';
 
@@ -121,8 +112,8 @@ export class UsersListPageComponent {
   /** See `agents-list-page` for the rationale behind the delegate pattern. */
   private readonly selection = new SelectionState<{ readonly id: number }>(() => this.sorted());
   protected readonly selectedIds = this.selection.ids;
-  protected readonly contextMenu = signal<ContextMenuPos | null>(null);
-  protected readonly openMenuId = signal<number | null>(null);
+  /** Fila a la que apunta el kebab compartido. Ver `menuItems`. */
+  protected readonly menuTargetUser = signal<User | null>(null);
   protected readonly deleteTarget = signal<readonly User[] | null>(null);
   protected readonly renamingId = signal<number | null>(null);
   protected readonly columnPrefKey = COLUMN_PREF_KEY;
@@ -249,13 +240,49 @@ export class UsersListPageComponent {
     void this.router.navigateByUrl(`/admin/usuarios/editar/${user.id}`);
   }
 
+  /** Modelo del kebab compartido. Es un computed ESTABLE: solo cambia al
+   *  apuntar a otra fila. Con `[model]="build(user)"` el array se recreaba en
+   *  cada ciclo de CD, PrimeNG repintaba el menú y se perdía el primer clic
+   *  (hacía falta doble). Mismo patrón que las tres hermanas de memory. */
+  protected readonly menuItems = computed<MenuItem[]>(() => {
+    const user = this.menuTargetUser();
+    return user ? this.buildMenuItems(user) : [];
+  });
+
+  protected setMenuTarget(user: User): void {
+    this.menuTargetUser.set(user);
+  }
+
+  private buildMenuItems(user: User): MenuItem[] {
+    return [
+      {
+        label: this.translate.instant('common.edit'),
+        icon: 'sc-icon-font sc-icon-font--edit',
+        command: () => this.onRowEdit(user),
+      },
+      {
+        label: this.translate.instant('common.duplicate'),
+        icon: 'sc-icon-font sc-icon-font--content_copy',
+        command: () => this.onRowDuplicate(user),
+      },
+      { separator: true },
+      {
+        // Puntos suspensivos porque lleva a la puerta tecleada, no a un
+        // borrado inmediato (C4 del plan): convención de menús de escritorio
+        // — "…" significa "esto abre algo antes de hacerlo".
+        label: this.translate.instant('common.delete_gate'),
+        icon: 'sc-icon-font sc-icon-font--delete',
+        styleClass: 'rules-menu-item--danger',
+        command: () => this.onRowDelete(user),
+      },
+    ];
+  }
+
   protected onRowEdit(user: User): void {
-    this.openMenuId.set(null);
     void this.router.navigateByUrl(`/admin/usuarios/editar/${user.id}`);
   }
 
   protected onRowDuplicate(user: User): void {
-    this.openMenuId.set(null);
     // Navega al form de creación con el source precargado vía queryParam.
     // El form-page detecta `?seedFromId` y precarga los campos copiables
     // (todos excepto los unique: name, email, identifier).
@@ -267,7 +294,6 @@ export class UsersListPageComponent {
 
   protected onRowDelete(user: User): void {
     this.deleteTarget.set([user]);
-    this.openMenuId.set(null);
   }
 
   protected onRenameCommit(id: number, value: string): void {
@@ -329,46 +355,10 @@ export class UsersListPageComponent {
     this.deleteTarget.set(null);
   }
 
-  protected onContextMenu(event: MouseEvent, userId: number): void {
-    event.preventDefault();
-    const { x, y } = clampToViewport(event.clientX, event.clientY);
-    this.contextMenu.set({ x, y, userId });
-  }
-
-  protected closeContextMenu(): void {
-    this.contextMenu.set(null);
-  }
-
-  protected toggleRowMenu(id: number): void {
-    this.openMenuId.update((current) => (current === id ? null : id));
-  }
-
-  protected closeRowMenu(): void {
-    this.openMenuId.set(null);
-  }
-
-  protected onContextEdit(): void {
-    const ctx = this.contextMenu();
-    if (!ctx) return;
-    this.contextMenu.set(null);
-    void this.router.navigateByUrl(`/admin/usuarios/editar/${ctx.userId}`);
-  }
-
-  protected onContextDuplicate(): void {
-    const ctx = this.contextMenu();
-    if (!ctx) return;
-    const user = this.users().find((u) => u.id === ctx.userId);
-    this.contextMenu.set(null);
-    if (user) this.onRowDuplicate(user);
-  }
-
-  protected onContextDelete(): void {
-    const ctx = this.contextMenu();
-    if (!ctx) return;
-    const user = this.users().find((u) => u.id === ctx.userId);
-    if (user) this.deleteTarget.set([user]);
-    this.contextMenu.set(null);
-  }
+  /* El click derecho abre EL MISMO menú que el kebab (R3): un solo motor, un
+   * solo modelo, un solo sitio donde añadir una acción. Antes había un panel
+   * HTML por fila y, aparte, un menú contextual con sus propios handlers
+   * duplicados — dos implementaciones que ya divergían. */
 
   protected onSearchKey(event: KeyboardEvent): void {
     if (event.key !== 'Escape') return;

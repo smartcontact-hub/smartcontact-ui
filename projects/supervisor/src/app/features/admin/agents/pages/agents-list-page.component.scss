@@ -310,97 +310,10 @@
   }
 }
 
-.row-menu {
-  position: relative;
-  display: inline-block;
-
-  &__btn {
-    padding: var(--sc-spacing-0-5);
-    background: transparent;
-    border: 0;
-    color: var(--sc-icon-subtle);
-    cursor: pointer;
-    border-radius: var(--sc-radius-100);
-
-    &:hover {
-      background: var(--sc-bg-secondary-active);
-      color: var(--sc-text-secondary);
-    }
-
-    &:focus-visible {
-      outline: 2px solid var(--sc-border-focus);
-      outline-offset: 2px;
-    }
-  }
-
-  &__panel {
-    position: absolute;
-    right: 0;
-    top: calc(100% + var(--sc-spacing-0-25));
-    width: 176px;
-    background: var(--sc-bg-surface);
-    border: 1px solid var(--sc-border-default);
-    border-radius: var(--sc-radius-200);
-    padding: var(--sc-spacing-0-25) 0;
-    box-shadow: var(--sc-shadow-popover);
-    z-index: var(--sc-z-dropdown);
-
-    > button {
-      width: 100%;
-      display: flex;
-      align-items: center;
-      gap: var(--sc-spacing-0-875);
-      padding: var(--sc-spacing-0-5) var(--sc-spacing-0-875);
-      font-size: var(--sc-font-size-200);
-      color: var(--sc-text-secondary);
-      background: transparent;
-      border: 0;
-      cursor: pointer;
-      text-align: left;
-
-      > sc-icon {
-        color: var(--sc-icon-subtle);
-      }
-
-      &:hover {
-        background: var(--sc-bg-secondary-hover);
-      }
-    }
-  }
-}
-
-.context-menu {
-  position: fixed;
-  width: 176px;
-  background: var(--sc-bg-surface);
-  border: 1px solid var(--sc-border-default);
-  border-radius: var(--sc-radius-200);
-  padding: var(--sc-spacing-0-25) 0;
-  box-shadow: var(--sc-shadow-popover);
-  z-index: var(--sc-z-popover);
-
-  > button {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    gap: var(--sc-spacing-0-875);
-    padding: var(--sc-spacing-0-5) var(--sc-spacing-0-875);
-    font-size: var(--sc-font-size-200);
-    color: var(--sc-text-secondary);
-    background: transparent;
-    border: 0;
-    cursor: pointer;
-    text-align: left;
-
-    > sc-icon {
-      color: var(--sc-icon-subtle);
-    }
-
-    &:hover {
-      background: var(--sc-bg-secondary-hover);
-    }
-  }
-}
+/* El panel de fila y el menú contextual propios murieron en la Ola 2: ambos
+ * los sustituye el <p-menu> compartido, y el botón usa `.rules-kebab-btn`,
+ * el kebab global de `main.scss` que ya compartían las tres hermanas de
+ * memory (y que la e2e localiza por esa misma clase). */
 
 input[type='checkbox'] {
   width: var(--sc-spacing-1-125);

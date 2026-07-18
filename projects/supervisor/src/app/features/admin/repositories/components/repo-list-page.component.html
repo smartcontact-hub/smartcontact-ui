@@ -68,7 +68,9 @@
             <tr
               class="table__row"
               [class.table__row--selected]="selectedIds().has(item.id)"
-              (contextmenu)="onContextMenu($event, item.id)"
+              (contextmenu)="
+                $event.preventDefault(); setMenuTarget(item); rowMenu.toggle($event)
+              "
             >
               <td class="table__td-check" (click)="toggleSelect(item.id); $event.stopPropagation()">
                 <input
@@ -119,34 +121,14 @@
               }
 
               <td class="table__td-actions">
-                <div
-                  class="row-menu"
-                  (scClickOutside)="closeRowMenu()"
-                  [scClickOutsideEnabled]="openMenuId() === item.id"
+                <button
+                  type="button"
+                  class="rules-kebab-btn"
+                  [attr.aria-label]="'labels.row_menu' | translate"
+                  (click)="setMenuTarget(item); rowMenu.toggle($event)"
                 >
-                  <button
-                    type="button"
-                    class="row-menu__btn"
-                    (click)="toggleRowMenu(item.id)"
-                    [attr.aria-expanded]="openMenuId() === item.id"
-                    [attr.aria-label]="'labels.row_menu' | translate"
-                  >
-                    <sc-icon [name]="moreIcon" size="inherit" />
-                  </button>
-
-                  @if (openMenuId() === item.id) {
-                    <div class="row-menu__panel" role="menu">
-                      <button type="button" role="menuitem" (click)="onRowEdit(item)">
-                        <sc-icon [name]="editIcon" size="inherit" />
-                        <span>{{ 'common.edit' | translate }}</span>
-                      </button>
-                      <button type="button" role="menuitem" (click)="onRowDelete(item)">
-                        <sc-icon [name]="trashIcon" size="inherit" />
-                        <span>{{ 'common.delete' | translate }}</span>
-                      </button>
-                    </div>
-                  }
-                </div>
+                  <sc-icon [name]="moreIcon" size="inherit" />
+                </button>
               </td>
             </tr>
           }
@@ -171,25 +153,10 @@
   </div>
 </div>
 
-@if (contextMenu(); as ctx) {
-  <div
-    class="context-menu"
-    [style.left.px]="ctx.x"
-    [style.top.px]="ctx.y"
-    (scClickOutside)="closeContextMenu()"
-    [scClickOutsideEnabled]="!!contextMenu()"
-    role="menu"
-  >
-    <button type="button" role="menuitem" (click)="onContextEdit()">
-      <sc-icon [name]="editIcon" size="inherit" />
-      <span>{{ 'common.edit' | translate }}</span>
-    </button>
-    <button type="button" role="menuitem" (click)="onContextDelete()">
-      <sc-icon [name]="trashIcon" size="inherit" />
-      <span>{{ 'common.delete' | translate }}</span>
-    </button>
-  </div>
-}
+<!-- Kebab ÚNICO y compartido por toda la tabla (antes: un panel HTML por fila
+     MÁS un menú contextual aparte con sus propios handlers). El click derecho
+     en la fila abre este mismo menú — R3 del modelo canónico. -->
+<p-menu #rowMenu [model]="menuItems()" [popup]="true" appendTo="body" styleClass="rules-kebab-menu" />
 
 <sc-delete-entity-dialog
   [visible]="!!deleteTarget()"

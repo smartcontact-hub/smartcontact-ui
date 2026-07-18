@@ -10,12 +10,12 @@ import {
   viewChild,
 } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { MessageService } from 'primeng/api';
+import { MessageService, type MenuItem } from 'primeng/api';
+import { MenuModule } from 'primeng/menu';
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 
 import { ClickOutsideDirective } from '@core/directives';
-import { clampToViewport } from '@core/utils/viewport';
 import { TopBarSlotService } from '@core/layout/top-bar/top-bar-slot.service';
 import { TOAST_LIFE } from '@core/utils/toast-life';
 
@@ -33,12 +33,6 @@ import {
   TemplateFormSubmission,
 } from '../components/template-form-panel/template-form-panel.component';
 
-interface ContextMenuPos {
-  readonly x: number;
-  readonly y: number;
-  readonly templateId: number;
-}
-
 @Component({
   selector: 'sc-templates-page',
   imports: [
@@ -48,6 +42,7 @@ interface ContextMenuPos {
     DeleteEntityDialogComponent,
     EmptyStateComponent,
     IconComponent,
+    MenuModule,
     SearchComponent,
     TemplateFormPanelComponent,
     TranslateModule,
@@ -82,8 +77,6 @@ export class TemplatesPageComponent {
   protected readonly chatIcon = 'chat_bubble';
   protected readonly emailIcon = 'mail';
   protected readonly moreIcon = 'more_vert';
-  protected readonly editIcon = 'edit';
-  protected readonly trashIcon = 'delete';
 
   protected readonly templates = this.templatesStore.templates;
 
@@ -92,8 +85,8 @@ export class TemplatesPageComponent {
   protected readonly creating = signal(false);
   protected readonly editingId = signal<number | null>(null);
   protected readonly selectedIds = signal<ReadonlySet<number>>(new Set());
-  protected readonly contextMenu = signal<ContextMenuPos | null>(null);
-  protected readonly openMenuId = signal<number | null>(null);
+  /** Fila a la que apunta el kebab compartido. Ver `menuItems`. */
+  protected readonly menuTargetTemplate = signal<Template | null>(null);
   protected readonly deleteTarget = signal<readonly Template[] | null>(null);
 
   protected readonly chatCount = computed(
@@ -232,49 +225,51 @@ export class TemplatesPageComponent {
     this.deleteTarget.set(null);
   }
 
-  protected onContextMenu(event: MouseEvent, templateId: number): void {
-    event.preventDefault();
-    const { x, y } = clampToViewport(event.clientX, event.clientY);
-    this.contextMenu.set({ x, y, templateId });
+  /* El click derecho abre EL MISMO menú que el kebab (R3): un solo motor, un
+   * solo modelo, un solo sitio donde añadir una acción. Antes había un panel
+   * HTML por fila y, aparte, un menú contextual con sus propios handlers
+   * duplicados — dos implementaciones que ya divergían. */
+
+  /** Modelo del kebab compartido. Es un computed ESTABLE: solo cambia al
+   *  apuntar a otra fila. Con `[model]="build(tpl)"` el array se recreaba en
+   *  cada ciclo de CD, PrimeNG repintaba el menú y se perdía el primer clic
+   *  (hacía falta doble). Mismo patrón que las tres hermanas de memory. */
+  protected readonly menuItems = computed<MenuItem[]>(() => {
+    const tpl = this.menuTargetTemplate();
+    return tpl ? this.buildMenuItems(tpl) : [];
+  });
+
+  protected setMenuTarget(tpl: Template): void {
+    this.menuTargetTemplate.set(tpl);
   }
 
-  protected closeContextMenu(): void {
-    this.contextMenu.set(null);
-  }
-
-  protected toggleRowMenu(id: number): void {
-    this.openMenuId.update((current) => (current === id ? null : id));
-  }
-
-  protected closeRowMenu(): void {
-    this.openMenuId.set(null);
-  }
-
-  protected onContextEdit(): void {
-    const ctx = this.contextMenu();
-    if (!ctx) return;
-    this.editingId.set(ctx.templateId);
-    this.creating.set(false);
-    this.contextMenu.set(null);
-  }
-
-  protected onContextDelete(): void {
-    const ctx = this.contextMenu();
-    if (!ctx) return;
-    const tpl = this.templates().find((t) => t.id === ctx.templateId);
-    if (tpl) this.deleteTarget.set([tpl]);
-    this.contextMenu.set(null);
+  private buildMenuItems(tpl: Template): MenuItem[] {
+    return [
+      {
+        label: this.translate.instant('common.edit'),
+        icon: 'sc-icon-font sc-icon-font--edit',
+        command: () => this.onRowEdit(tpl),
+      },
+      { separator: true },
+      {
+        // Puntos suspensivos porque lleva a la puerta tecleada, no a un
+        // borrado inmediato (C4 del plan): convención de menús de escritorio
+        // — "…" significa "esto abre algo antes de hacerlo".
+        label: this.translate.instant('common.delete_gate'),
+        icon: 'sc-icon-font sc-icon-font--delete',
+        styleClass: 'rules-menu-item--danger',
+        command: () => this.onRowDelete(tpl),
+      },
+    ];
   }
 
   protected onRowEdit(tpl: Template): void {
     this.editingId.set(tpl.id);
     this.creating.set(false);
-    this.openMenuId.set(null);
   }
 
   protected onRowDelete(tpl: Template): void {
     this.deleteTarget.set([tpl]);
-    this.openMenuId.set(null);
   }
 
   protected closeCreatePanel(): void {

@@ -13,13 +13,13 @@ import {
 import { toSignal } from '@angular/core/rxjs-interop';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { map, startWith } from 'rxjs';
-import { MessageService } from 'primeng/api';
+import { MessageService, type MenuItem } from 'primeng/api';
+import { MenuModule } from 'primeng/menu';
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 
 import { ClickOutsideDirective } from '@core/directives/click-outside.directive';
 import { XlsxExportService } from '@core/services/xlsx-export.service';
-import { clampToViewport } from '@core/utils/viewport';
 import { TopBarSlotService } from '@core/layout/top-bar/top-bar-slot.service';
 import { TOAST_LIFE } from '@core/utils/toast-life';
 import { ScBulkActionBarComponent as BulkActionBarComponent } from '@smartcontact-hub/components';
@@ -29,18 +29,13 @@ import { ScSearchComponent as SearchComponent } from '@smartcontact-hub/componen
 import { RepoFormPanelComponent, RepoFormSubmission } from './repo-form-panel.component';
 import { RepoEntity, RepoPageConfig, RepoStore } from './repo-types';
 
-interface ContextMenuPos {
-  readonly x: number;
-  readonly y: number;
-  readonly itemId: number;
-}
-
 /**
  * Generic CRUD page used by all 9 repository instances. Driven by a
  * `RepoPageConfig<T>` (columns, fields, breadcrumb, copy) plus a `RepoStore<T>`
  * that supplies the data. Mirrors the prototype's `RepositoryListPage`
- * including search, sort, table with row + context menus, dynamic edit panel,
- * bulk delete (via shared `DeleteEntityDialog`), and XLSX export.
+ * including search, sort, table with a shared row menu (kebab + right-click),
+ * dynamic edit panel, bulk delete (via shared `DeleteEntityDialog`), and XLSX
+ * export.
  */
 @Component({
   selector: 'sc-repo-list-page',
@@ -50,6 +45,7 @@ interface ContextMenuPos {
     ClickOutsideDirective,
     DeleteEntityDialogComponent,
     IconComponent,
+    MenuModule,
     RepoFormPanelComponent,
     SearchComponent,
     TranslateModule,
@@ -84,15 +80,13 @@ export class RepoListPageComponent<T extends RepoEntity> {
   protected readonly closeIcon = 'close';
   protected readonly downloadIcon = 'download';
   protected readonly moreIcon = 'more_vert';
-  protected readonly editIcon = 'edit';
-  protected readonly trashIcon = 'delete';
 
   protected readonly searchQuery = signal('');
   protected readonly creating = signal(false);
   protected readonly editingId = signal<number | null>(null);
   protected readonly selectedIds = signal<ReadonlySet<number>>(new Set());
-  protected readonly contextMenu = signal<ContextMenuPos | null>(null);
-  protected readonly openMenuId = signal<number | null>(null);
+  /** Fila a la que apunta el kebab compartido. Ver `menuItems`. */
+  protected readonly menuTargetItem = signal<T | null>(null);
   protected readonly deleteTarget = signal<readonly T[] | null>(null);
 
   protected readonly items = computed(() => this.store().items());
@@ -260,49 +254,52 @@ export class RepoListPageComponent<T extends RepoEntity> {
     this.deleteTarget.set(null);
   }
 
-  protected onContextMenu(event: MouseEvent, itemId: number): void {
-    event.preventDefault();
-    const { x, y } = clampToViewport(event.clientX, event.clientY);
-    this.contextMenu.set({ x, y, itemId });
+  /** Modelo del kebab compartido. Es un computed ESTABLE: solo cambia al
+   *  apuntar a otra fila. Con `[model]="build(item)"` el array se recreaba en
+   *  cada ciclo de CD, PrimeNG repintaba el menú y se perdía el primer clic
+   *  (hacía falta doble). Mismo patrón que las tres hermanas de memory. */
+  protected readonly menuItems = computed<MenuItem[]>(() => {
+    const item = this.menuTargetItem();
+    return item ? this.buildMenuItems(item) : [];
+  });
+
+  protected setMenuTarget(item: T): void {
+    this.menuTargetItem.set(item);
   }
 
-  protected closeContextMenu(): void {
-    this.contextMenu.set(null);
+  private buildMenuItems(item: T): MenuItem[] {
+    return [
+      {
+        label: this.translate.instant('common.edit'),
+        icon: 'sc-icon-font sc-icon-font--edit',
+        command: () => this.onRowEdit(item),
+      },
+      { separator: true },
+      {
+        // Puntos suspensivos porque lleva a la puerta tecleada
+        // (<sc-delete-entity-dialog>), no a un borrado inmediato (C4 del
+        // plan): convención de menús de escritorio — "…" significa "esto
+        // abre algo antes de hacerlo".
+        label: this.translate.instant('common.delete_gate'),
+        icon: 'sc-icon-font sc-icon-font--delete',
+        styleClass: 'rules-menu-item--danger',
+        command: () => this.onRowDelete(item),
+      },
+    ];
   }
 
-  protected toggleRowMenu(id: number): void {
-    this.openMenuId.update((current) => (current === id ? null : id));
-  }
-
-  protected closeRowMenu(): void {
-    this.openMenuId.set(null);
-  }
-
-  protected onContextEdit(): void {
-    const ctx = this.contextMenu();
-    if (!ctx) return;
-    this.editingId.set(ctx.itemId);
-    this.creating.set(false);
-    this.contextMenu.set(null);
-  }
-
-  protected onContextDelete(): void {
-    const ctx = this.contextMenu();
-    if (!ctx) return;
-    const item = this.items().find((i) => i.id === ctx.itemId);
-    if (item) this.deleteTarget.set([item]);
-    this.contextMenu.set(null);
-  }
+  /* El click derecho abre EL MISMO menú que el kebab (R3): un solo motor, un
+   * solo modelo, un solo sitio donde añadir una acción. Antes había un panel
+   * HTML por fila y, aparte, un menú contextual con sus propios handlers
+   * duplicados — dos implementaciones que ya divergían. */
 
   protected onRowEdit(item: T): void {
     this.editingId.set(item.id);
     this.creating.set(false);
-    this.openMenuId.set(null);
   }
 
   protected onRowDelete(item: T): void {
     this.deleteTarget.set([item]);
-    this.openMenuId.set(null);
   }
 
   protected closeCreatePanel(): void {

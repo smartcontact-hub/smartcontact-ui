@@ -11,15 +11,15 @@ import {
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { MessageService } from 'primeng/api';
+import { MessageService, type MenuItem } from 'primeng/api';
+import { MenuModule } from 'primeng/menu';
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 
-import { ClickOutsideDirective, SortableHeaderDirective } from '@core/directives';
+import { SortableHeaderDirective } from '@core/directives';
 import { UndoStackService, XlsxExportService } from '@core/services';
 import { TopBarSlotService } from '@core/layout/top-bar/top-bar-slot.service';
 import { SelectionState } from '@core/utils/selection-state';
-import { clampToViewport } from '@core/utils/viewport';
 import { TOAST_LIFE } from '@core/utils/toast-life';
 import { IllustratedAvatarComponent } from '@shared/components';
 import {
@@ -52,12 +52,6 @@ import { GroupAgentLinksStore } from '@features/admin/services/group-agent-links
 
 type SortField = 'name' | 'code' | 'priority' | 'agents' | 'strategy';
 
-interface ContextMenuPos {
-  readonly x: number;
-  readonly y: number;
-  readonly groupId: number;
-}
-
 interface PendingBulkEdit {
   readonly field: GroupBulkField;
   readonly fieldLabel: string;
@@ -75,7 +69,6 @@ const COLUMN_PREF_KEY = 'sc-groups-columns-v2';
     BulkActionBarComponent,
     BulkEditMenuComponent,
     ButtonComponent,
-    ClickOutsideDirective,
     ColumnSelectorComponent,
     DeleteEntityDialogComponent,
     EmptyStateComponent,
@@ -83,6 +76,7 @@ const COLUMN_PREF_KEY = 'sc-groups-columns-v2';
     IllustratedAvatarComponent,
     ImpactPreviewDialogComponent,
     InlineRenameCellComponent,
+    MenuModule,
     SearchComponent,
     SortableHeaderDirective,
     TranslateModule,
@@ -124,9 +118,6 @@ export class GroupsListPageComponent {
   protected readonly closeIcon = 'close';
   protected readonly downloadIcon = 'download';
   protected readonly moreIcon = 'more_vert';
-  protected readonly editIcon = 'edit';
-  protected readonly trashIcon = 'delete';
-  protected readonly copyIcon = 'content_copy';
   protected readonly phoneIcon = 'call';
   protected readonly chatIcon = 'chat_bubble';
   protected readonly emailIcon = 'mail';
@@ -143,8 +134,8 @@ export class GroupsListPageComponent {
   /** See `agents-list-page` for the rationale behind the delegate pattern. */
   private readonly selection = new SelectionState<{ readonly id: number }>(() => this.sorted());
   protected readonly selectedIds = this.selection.ids;
-  protected readonly contextMenu = signal<ContextMenuPos | null>(null);
-  protected readonly openMenuId = signal<number | null>(null);
+  /** Fila a la que apunta el kebab compartido. Ver `menuItems`. */
+  protected readonly menuTargetGroup = signal<Group | null>(null);
   protected readonly deleteTarget = signal<readonly Group[] | null>(null);
   protected readonly renamingId = signal<number | null>(null);
   protected readonly pendingBulkEdit = signal<PendingBulkEdit | null>(null);
@@ -323,13 +314,54 @@ export class GroupsListPageComponent {
     void this.router.navigateByUrl(`/admin/grupos/editar/${group.id}`);
   }
 
+  /** Modelo del kebab compartido. Es un computed ESTABLE: solo cambia al
+   *  apuntar a otra fila. Con `[model]="build(group)"` el array se recreaba en
+   *  cada ciclo de CD, PrimeNG repintaba el menú y se perdía el primer clic
+   *  (hacía falta doble). Mismo patrón que las tres hermanas de memory. */
+  protected readonly menuItems = computed<MenuItem[]>(() => {
+    const group = this.menuTargetGroup();
+    return group ? this.buildMenuItems(group) : [];
+  });
+
+  protected setMenuTarget(group: Group): void {
+    this.menuTargetGroup.set(group);
+  }
+
+  private buildMenuItems(group: Group): MenuItem[] {
+    return [
+      {
+        label: this.translate.instant('common.edit'),
+        icon: 'sc-icon-font sc-icon-font--edit',
+        command: () => this.onRowEdit(group),
+      },
+      {
+        label: this.translate.instant('common.duplicate'),
+        icon: 'sc-icon-font sc-icon-font--content_copy',
+        // Con una selección múltiple viva, duplicar UNA fila es ambiguo: el
+        // gesto que el usuario tiene en la cabeza es el masivo. Control
+        // deliberado que ya existía en las dos listas con bulk-edit (esta y
+        // agentes); el cambio de motor de menú no es motivo para retirarlo.
+        visible: this.selectedIds().size <= 1,
+        command: () => this.onRowDuplicate(group),
+      },
+      { separator: true },
+      {
+        // Puntos suspensivos porque lleva a la puerta tecleada, no a un
+        // borrado inmediato (C4 del plan): convención de menús de escritorio
+        // — "…" significa "esto abre algo antes de hacerlo".
+        label: this.translate.instant('common.delete_gate'),
+        icon: 'sc-icon-font sc-icon-font--delete',
+        styleClass: 'rules-menu-item--danger',
+        command: () => this.onRowDelete(group),
+      },
+    ];
+  }
+
   protected onRowEdit(group: Group): void {
-    this.openMenuId.set(null);
     void this.router.navigateByUrl(`/admin/grupos/editar/${group.id}`);
   }
 
   protected onRowDuplicate(group: Group): void {
-    this.openMenuId.set(null);
     // Navega al form de creación con el source precargado vía queryParam.
     // El form-page detecta `?seedFromId` y precarga los campos copiables
     // excepto el name (único). Si abandona sin guardar, no queda nada
@@ -341,7 +373,6 @@ export class GroupsListPageComponent {
 
   protected onRowDelete(group: Group): void {
     this.deleteTarget.set([group]);
-    this.openMenuId.set(null);
   }
 
   protected onRenameCommit(id: number, value: string): void {
@@ -441,46 +472,10 @@ export class GroupsListPageComponent {
     this.deleteTarget.set(null);
   }
 
-  protected onContextMenu(event: MouseEvent, groupId: number): void {
-    event.preventDefault();
-    const { x, y } = clampToViewport(event.clientX, event.clientY);
-    this.contextMenu.set({ x, y, groupId });
-  }
-
-  protected closeContextMenu(): void {
-    this.contextMenu.set(null);
-  }
-
-  protected toggleRowMenu(id: number): void {
-    this.openMenuId.update((current) => (current === id ? null : id));
-  }
-
-  protected closeRowMenu(): void {
-    this.openMenuId.set(null);
-  }
-
-  protected onContextEdit(): void {
-    const ctx = this.contextMenu();
-    if (!ctx) return;
-    this.contextMenu.set(null);
-    void this.router.navigateByUrl(`/admin/grupos/editar/${ctx.groupId}`);
-  }
-
-  protected onContextDuplicate(): void {
-    const ctx = this.contextMenu();
-    if (!ctx) return;
-    const group = this.groups().find((g) => g.id === ctx.groupId);
-    this.contextMenu.set(null);
-    if (group) this.onRowDuplicate(group);
-  }
-
-  protected onContextDelete(): void {
-    const ctx = this.contextMenu();
-    if (!ctx) return;
-    const group = this.groups().find((g) => g.id === ctx.groupId);
-    if (group) this.deleteTarget.set([group]);
-    this.contextMenu.set(null);
-  }
+  /* El click derecho abre EL MISMO menú que el kebab (R3): un solo motor, un
+   * solo modelo, un solo sitio donde añadir una acción. Antes había un panel
+   * HTML por fila y, aparte, un menú contextual con sus propios handlers
+   * duplicados — dos implementaciones que ya divergían. */
 
   protected onSearchKey(event: KeyboardEvent): void {
     if (event.key !== 'Escape') return;
