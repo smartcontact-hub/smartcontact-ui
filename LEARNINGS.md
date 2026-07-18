@@ -114,8 +114,26 @@
     abría el modal al hacer la fila clicable). Sin ella, la migración de 47 botones y el swap de
     220 iconos se habrían pusheado a ciegas.
 
-17. **Un diagnóstico heredado ("está roto por X") es una hipótesis, no un hecho: reprodúcelo
-    antes de construir encima.** *Evidencia (s12)*: el hand-off decía que `tokens-sync` fallaba
-    por "drift en capas curadas"; reproducido, la causa real era otra (`info` mapeado a sky de
-    Tailwind, cuyo `#0369a1` no tiene primitiva porque en este DS `sky` está renombrada a la
-    marca). Arreglar la causa equivocada habría costado la sesión entera.
+17. **Cualquier DESCRIPCIÓN heredada de una fuente de verdad externa —diagnóstico, spec, nodo de
+    Figma, contrato— es una paráfrasis: vuelve a la fuente antes de construir encima.** No vale
+    solo para "está roto por X": vale igual para "el diseño dice Y". *Evidencia (s12)*: el
+    hand-off decía que `tokens-sync` fallaba por "drift en capas curadas"; reproducido, la causa
+    era otra. *Evidencia (s14) — **la regla ya existía y aun así la incumplí***: implementé la
+    tarjeta de impacto desde el resumen escrito de s12 («número héroe 40px, extrabold, color de
+    acento») en vez de abrir el nodo. El resumen decía *número*; el nodo tenía **una frase entera
+    en un solo nodo de texto**. Salió una cifra grande con una etiqueta gris al lado, que es otra
+    cosa. Al medir contra el nodo aparecieron 6 desviaciones más que el resumen no mencionaba.
+    **Por qué no disparó**: la regla hablaba de *diagnósticos de fallo* y yo estaba leyendo un
+    *spec de diseño*, así que no me sentí aludido. El disparador correcto es: **si vas a
+    implementar contra algo que existe fuera del repo y lo que tienes delante es texto sobre ello,
+    para y abre la fuente** — cuesta una llamada.
+
+18. **Vas a rebatir una propuesta del usuario con un principio de diseño → MIDE primero el estado
+    actual.** Un principio bien enunciado suena a autoridad y no lo es: puede estar protegiendo
+    algo que en el código ya no existe. *Evidencia (s14)*: rechacé unificar el fondo de página con
+    «una tarjeta sobre un lienzo de su mismo color deja de ser tarjeta». Al medirlo, la diferencia
+    de relleno tarjeta/lienzo era de **1.06:1** — las tarjetas ya se leían por su borde, no por el
+    fondo, así que mi principio defendía una distinción inexistente. Y la medición destapó algo
+    peor que ninguno de los dos veía: en oscuro `--sc-border-subtle` **es el mismo color que la
+    tarjeta** (1:1), o sea que ahí no hay borde. Medir convirtió una discusión de opiniones en un
+    hallazgo, y de paso le dio la razón a él.
