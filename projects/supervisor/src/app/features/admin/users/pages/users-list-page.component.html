@@ -9,6 +9,11 @@
 </ng-template>
 
 <div class="page">
+  <!-- El modelo "todo arriba" (S59) dejó estas páginas sin <h1>: la
+       identidad la daba solo un <ol> de breadcrumb, y el documento quedaba
+       sin encabezado. Visualmente oculto porque el diseño no lo pide. -->
+  <h1 class="visually-hidden">{{ 'sidebar.users' | translate }}</h1>
+
   <div class="page__inner">
     <div class="page__action-bar">
       <sc-column-selector

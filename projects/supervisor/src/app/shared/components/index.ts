@@ -7,14 +7,11 @@
  *     Alinear el set de iconos del paquete a Outlined es tarea aparte del DS.
  *   - illustrated-avatar: el paquete (sc-avatar) aún no expone tamaño en px.
  *   - label-chip: el paquete (sc-tag) aún no expone el tamaño `xs`.
- *   - confirm-host: el ScConfirmService publicado hardcodea el icono de cabecera
- *     (Material, sin override) → cae en la decisión de iconos diferida.
  *     shape) cubre a los consumidores de `sc-group-popover` publicado.
  *
  * El resto de componentes se consumen desde `@smartcontact-hub/components`.
  */
 
-export { ConfirmHostComponent } from './confirm-host/confirm-host.component';
 
 export { IllustratedAvatarComponent } from './illustrated-avatar/illustrated-avatar.component';
 export type { IllustratedAvatarPool } from './illustrated-avatar/illustrated-avatar.component';

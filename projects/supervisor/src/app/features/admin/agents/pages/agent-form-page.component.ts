@@ -19,7 +19,8 @@ import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 
 import { DirtyAware } from '@core/guards';
-import { ConfirmHostService, CrossTabLockService } from '@core/services';
+import { CrossTabLockService } from '@core/services';
+import { ScConfirmService } from '@smartcontact-hub/components';
 import { TopBarSlotService } from '@core/layout/top-bar/top-bar-slot.service';
 import { EMAIL_RE, PIN_RE } from '@core/utils/validators';
 import { TOAST_LIFE } from '@core/utils/toast-life';
@@ -151,7 +152,7 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   private readonly labelsStore = inject(LabelsStore);
   private readonly templatesStore = inject(TemplatesStore);
   private readonly agendasStore = inject(AgendasStore);
-  private readonly confirmHost = inject(ConfirmHostService);
+  private readonly confirmHost = inject(ScConfirmService);
   private readonly topBarSlot = inject(TopBarSlotService);
 
   /** Guardar/Cancelar proyectados a la TopBar (modelo "todo arriba" S59):

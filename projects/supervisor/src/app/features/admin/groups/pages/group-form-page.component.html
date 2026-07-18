@@ -18,6 +18,11 @@
 </ng-template>
 
 <div class="page">
+  <!-- El modelo "todo arriba" (S59) dejó estas páginas sin <h1>: la
+       identidad la daba solo un <ol> de breadcrumb, y el documento quedaba
+       sin encabezado. Visualmente oculto porque el diseño no lo pide. -->
+  <h1 class="visually-hidden">{{ (mode() === 'edit' ? 'groups.form.edit_breadcrumb' : 'groups.form.create_breadcrumb') | translate }}</h1>
+
   <div class="page__inner page__inner--with-panel">
     <aside class="ipanel" aria-label="Índice del formulario">
       <!-- La ficha: resumen de identidad (solo lectura) arriba del índice.

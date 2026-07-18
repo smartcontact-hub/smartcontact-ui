@@ -2,6 +2,11 @@
      identidad la da el breadcrumb de la TopBar. El switcher de datos demo
      también vive arriba (junto al avatar) vía TopBarSlotService. Ver el .ts. -->
 <div class="page">
+  <!-- El modelo "todo arriba" (S59) dejó estas páginas sin <h1>: la
+       identidad la daba solo un <ol> de breadcrumb, y el documento quedaba
+       sin encabezado. Visualmente oculto porque el diseño no lo pide. -->
+  <h1 class="visually-hidden">{{ 'memory.conversations.page_title' | translate }}</h1>
+
   <div class="page__inner">
     <sc-memory-conversation-filters
       [filters]="filters()"
