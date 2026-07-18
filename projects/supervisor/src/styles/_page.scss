@@ -1,0 +1,42 @@
+/* Contenedor de página · escala canónica de anchos (Ola 3)
+ *
+ * `main.scss` llevaba desde S55 una nota diciendo que había drift de
+ * `max-width` y que hacía falta una escala canónica. Lo había, y medido eran
+ * SIETE valores para el mismo trabajo: 1600, 1400, 1200, 1100, 960, 832 y
+ * 78rem. Dos listas hermanas idénticas no coincidían entre sí.
+ *
+ * Aquí viven los cuatro arquetipos que sí existen, y el `max-width` sale de
+ * los SCSS de página. Cada página declara CUÁL es en su plantilla, así que el
+ * ancho deja de ser un número suelto y pasa a ser una afirmación sobre el tipo
+ * de página.
+ *
+ * Ojo con la especificidad: estas reglas son globales (sin `[_ngcontent]`), y
+ * un `max-width` en el SCSS de un componente les gana siempre. Si una página
+ * no respeta su arquetipo, busca un `max-width` superviviente en su SCSS antes
+ * de tocar nada de aquí.
+ */
+.page__inner {
+  margin: 0 auto;
+
+  /* Editor: formulario con controles. Por defecto, porque es el caso en el que
+   * una línea demasiado larga más duele al rellenar. */
+  max-width: 1200px;
+
+  /* Lista: la tabla ES el contenido y agradece el ancho — más columnas
+   * visibles sin scroll horizontal. */
+  &--list {
+    max-width: 1600px;
+  }
+
+  /* Hub de tarjetas: rejilla de destinos, no contenido continuo. */
+  &--hub {
+    max-width: 960px;
+  }
+
+  /* Columna de LECTURA (config: seguridad, sistema). Prosa y ajustes en
+   * vertical: pasar de ~832px empeora la lectura, no la mejora. Cuarto
+   * arquetipo legítimo, no un resto del drift. */
+  &--reading {
+    max-width: 832px;
+  }
+}

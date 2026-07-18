@@ -14,7 +14,7 @@
        sin encabezado. Visualmente oculto porque el diseño no lo pide. -->
   <h1 class="visually-hidden">{{ 'memory.categories.page_title' | translate }}</h1>
 
-  <div class="page__inner">
+  <div class="page__inner page__inner--list">
     @if (isEmpty()) {
       <sc-empty-state
         [icon]="tagsIcon"

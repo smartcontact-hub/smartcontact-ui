@@ -8,9 +8,11 @@
   overflow-y: auto;
   background: var(--sc-bg-surface);
 
+  /* El ancho lo pone `page__inner--hub` (partial `_page.scss`), que la
+   * plantilla lleva en este mismo elemento: es la única página cuyo bloque
+   * se llama `.hub` y no `.page`, así que declara el arquetipo con la clase
+   * canónica añadida. Aquí queda solo el padding, que es delta suyo. */
   &__inner {
-    max-width: 960px;
-    margin: 0 auto;
     padding: var(--sc-spacing-2-75) var(--sc-spacing-2-25);
   }
 

@@ -17,13 +17,14 @@
 
 /* SCDS list-table chrome — partial global unscoped. Promovido S55 cuando
  * cruzó trigger DD-4 (.table-card: 7 consumers consistentes). Los component
- * SCSS solo mantienen sus deltas. Ver doc en el propio partial.
- *
- * NOTA: el .page__inner partial NO se promovió pese a 15 consumers — audit
- * S55 detectó drift max-width (1600/1400/1200/832 según tipo página) que
- * NO es safe consolidar sin decisión equipo de diseño. Trigger reabrir:
- * spec session diseño para definir escala max-width canonical. */
+ * SCSS solo mantienen sus deltas. Ver doc en el propio partial. */
 @use 'sc-list-table';
+
+/* `.page__inner` — S55 lo dejó SIN promover a propósito, con este disparador
+ * escrito: "reabrir cuando haya spec de diseño que defina la escala canónica
+ * de max-width". Ese disparador se cumplió en la Ola 3, así que el partial
+ * existe ya y el drift de siete valores se acabó. Ver `_page.scss`. */
+@use 'page';
 
 /* Design tokens — layered system (primitive → semantic → palette →
  * component → extensions → dark). MONOREPO: consumimos las 6 capas del DS
