@@ -1,8 +1,8 @@
+import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ChangeDetectionStrategy, Component, computed, input, model } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { PopoverModule } from 'primeng/popover';
 
-import { IconComponent } from '@shared/components';
 
 /**
  * CategoryFilterButton + popover · Memory iter 8.

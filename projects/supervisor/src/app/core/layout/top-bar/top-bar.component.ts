@@ -16,8 +16,9 @@ import { BreadcrumbService } from '../../services/breadcrumb.service';
 import { TopBarSlotService } from './top-bar-slot.service';
 // El cheat-sheet de atajos ahora lo renderiza `<sc-keyboard-shortcuts>` del
 // paquete, cuya visibilidad la posee `ScKeyboardShortcutsService` publicado.
+import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ScKeyboardShortcutsService } from '@smartcontact-hub/components';
-import { IconComponent } from '@shared/components';
+
 import { IllustratedAvatarComponent } from '@shared/components';
 
 /**

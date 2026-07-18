@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 
-import { IconComponent } from '../icon/icon.component';
+import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { SC_ICON_SIZE_SM } from '@shared/utils/icon-size';
 
 import type { LabelColor } from './label-chip.types';

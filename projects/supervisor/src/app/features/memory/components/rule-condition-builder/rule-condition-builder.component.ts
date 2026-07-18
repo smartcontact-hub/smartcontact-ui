@@ -11,7 +11,7 @@ import { FormsModule } from '@angular/forms';
 
 import { TranslateModule } from '@ngx-translate/core';
 
-import { IconComponent } from '@shared/components';
+import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ScSelectComponent as SelectComponent } from '@smartcontact-hub/components';
 
 import { validateConditionTree } from '../../data/condition-validate';

@@ -10,11 +10,11 @@ import {
 } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 import { FormsModule } from '@angular/forms';
 import { map, startWith } from 'rxjs';
 
-import { IconComponent } from '@shared/components';
 import { ScDialogComponent as DialogComponent } from '@smartcontact-hub/components';
 import { ScToggleSwitchComponent as ToggleSwitchComponent } from '@smartcontact-hub/components';
 

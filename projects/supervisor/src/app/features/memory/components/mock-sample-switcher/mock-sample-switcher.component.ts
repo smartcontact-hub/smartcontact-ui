@@ -1,8 +1,8 @@
+import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
 import { PopoverModule } from 'primeng/popover';
 import { TranslateModule } from '@ngx-translate/core';
 
-import { IconComponent } from '@shared/components';
 
 import { ConversationsStore } from '../../state/conversations.store';
 

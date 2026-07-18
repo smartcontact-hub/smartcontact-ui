@@ -22,6 +22,13 @@ export interface ScConfirmRequest {
      * destructivo pero sutil.
      */
     readonly emphasis?: 'accept' | 'reject';
+    /**
+     * Icono de la cabecera. Nombre de símbolo Material (p. ej. `'delete'`,
+     * `'info'`) o clase ya resuelta. Default: `'exclamation-triangle'` — el
+     * aviso genérico, que es lo correcto para un confirm destructivo. Se expone
+     * porque un confirm informativo con triángulo de peligro miente al usuario.
+     */
+    readonly icon?: string;
 }
 
 /**
@@ -58,7 +65,7 @@ export class ScConfirmService {
                 header: req.title,
                 message: req.body,
                 // Material vía resolver — PrimeIcons no forma parte del DS.
-                icon: resolveScComponentIconClass('exclamation-triangle'),
+                icon: resolveScComponentIconClass(req.icon ?? 'exclamation-triangle'),
                 acceptButtonProps,
                 rejectButtonProps,
                 accept: () => resolve(true),

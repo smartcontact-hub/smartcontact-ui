@@ -12,11 +12,11 @@ import {
 import { Router, RouterLink } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
+import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 import { MenuModule } from 'primeng/menu';
 import type { MenuItem } from 'primeng/api';
 
-import { IconComponent } from '@shared/components';
 import { ScEmptyStateComponent as EmptyStateComponent } from '@smartcontact-hub/components';
 import { ScMessageComponent as MessageComponent } from '@smartcontact-hub/components';
 import { ConfirmHostService } from '@core/services/confirm-host.service';
@@ -162,7 +162,6 @@ export class RulesPageComponent {
     if (diffDays < 7) return `hace ${diffDays} d`;
     return date.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
   }
-
 
   protected setMenuTarget(rule: Rule): void {
     this.menuTargetRule.set(rule);

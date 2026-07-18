@@ -1,8 +1,9 @@
 import { ChangeDetectionStrategy, Component, computed, input, output, signal } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
+import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 
-import { IconComponent, IllustratedAvatarComponent } from '@shared/components';
+import { IllustratedAvatarComponent } from '@shared/components';
 import {
   ScToggleSwitchComponent as ToggleSwitchComponent,
   TriState,
