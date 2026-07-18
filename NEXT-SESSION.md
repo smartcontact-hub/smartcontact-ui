@@ -159,20 +159,50 @@ por si hay que rebatirlo, no para que lo revise otra vez.
 
 # Bloques abiertos
 
-## B2 · `sc-field-wrapper` — BLOQUEADO POR FALTA DE RED (sin cambios)
+## ~~B2~~ y la red de componentes — CERRADOS (`cee845e`, `7ab5aae`)
 
-Sigue sin haber un solo test de componente Angular (0 `TestBed`). Contrato
-externo a preservar: `e2e/supervisor/category-modal.spec.ts:52` usa
-`.sc-inputtext__msg--error`.
+**El bloqueo estructural se acabó.** El repo seguía sin un solo `TestBed`, así
+que la red se montó sobre lo que YA funciona: Playwright + `sc-demo`. Fija el
+HTML renderizado de 7 componentes (63 instancias), normalizado para que los
+hashes de Angular y los ids autogenerados no la hagan fallar en cada build.
+
+- `npm run e2e:structure` · `npm run e2e:structure:update` tras un cambio
+  deliberado (y **revisa el diff del JSON** antes de commitear).
+- Entra sola en el CI, que ya corre `npm run e2e`.
+- Si el baseline desaparece, en CI **falla** en vez de regenerarlo en verde.
+- **Demostrada, no supuesta**: se rompió un componente a propósito, se vio roja,
+  se revirtió y volvió a verde.
+
+Con la red, **B2 entró**: la etiqueta y el mensaje de campo dejan de estar cinco
+veces. Doble clase (`sc-field__label` + `sc-inputtext__label`) para no tocar ni
+una regla CSS y conservar el contrato de la e2e. La red marcó exactamente los 5
+componentes tocados y ninguno más.
+
+**Lo que NO entró de B2**: la consolidación del SCSS bajo `.sc-field__*`. Es la
+mitad arriesgada (cinco ficheros con divergencias reales, como el margen de 2px)
+y de menos beneficio. Las clases compartidas quedan puestas como seam.
 
 ## B3 · tokens-sync — **NO HAY NADA QUE ARREGLAR EN CÓDIGO**
 
 **Único paso pendiente, y NO lo puede dar un agente**: Rafa re-exporta desde el
 Theme Designer para que el workflow corra y quede verde.
 
-## B4 · Tablas → `sc-datatable` — SIN EMPEZAR
+## B4 · Tablas → `sc-datatable` — DESBLOQUEADO, sin empezar
 
-Mismo problema de red que B2.
+**Ya no está bloqueado**: la red de estructura existe y cubre el DS. Lo que
+queda es el trabajo en sí, que no es pequeño: faltan 4 capacidades en
+`sc-datatable` (`rowStyleClass`, output `rowClick`, menú contextual y columnas
+conmutables), sus demos en `sc-demo`, y migrar 2 tablas fáciles (`labels`,
+`templates`) como plantilla verificada.
+
+No se empezó por criterio, no por impedimento: es una sesión entera de trabajo y
+meterlo con calzador al final de otra muy larga es como se cuelan los fallos
+sutiles en el núcleo del DS.
+
+**Trampa ya conocida**: `columns` debe ser un `computed()` que lea los
+`viewChild<TemplateRef>`, que resuelven tarde. Las 3 hermanas
+(agents/groups/users) concentran las 4 carencias a la vez → **no** entran en el
+piloto.
 
 ## B5 · i18n del constructor — NO ES MECÁNICO
 
@@ -215,7 +245,11 @@ barra masiva solo aparece con selección. No es una regresión, pero si quieres
    desde código: está *enforced* 1:1 con el Kit por parity §6, así que subirlo
    exige cambiarlo en Figma y re-exportar. **Requiere a Rafa + Marta.** El dato:
    slate-500 `#8f97a3` → haría falta ~slate-600 `#6f7784` (4.52:1).
-2. **Bulk-edit en usuarios**: sigue decidido que se añade, al final de las olas.
+2. **`--sc-text-success` está a 3.30:1 sobre la tarjeta en CLARO** — no llega al
+   4.5 que pide AA para el texto de 12px del estimado mensual. En oscuro da 5.13
+   y pasa; el rojo pasa en ambos (4.83). Subirlo a `green-700` son 5.02:1 y una
+   línea, pero es el verde de TODA la app: decisión tuya, igual que la de
+   arriba. ~~Bulk-edit en usuarios~~ → hecho (`094f0f4`).
 3. ~~Incoherencia sky/cyan en la capa semántica~~ — **ya no existe**: el commit
    `c4aca4a` la resolvió. El hand-off anterior la listaba sin re-verificar.
 
