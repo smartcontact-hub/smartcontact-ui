@@ -442,8 +442,16 @@
             "impact_zero": "Aucune des {{total}} dernières conversations ne remplirait ces conditions.",
             "blocked": "Vérifiez les conditions signalées avant d'enregistrer.",
             "unfinished": "{{n}} à terminer"
-          }
-        }
+          },
+          "impact_lead": "Au rythme actuel, cette règle toucherait :",
+          "impact_unit": "conversations",
+          "impact_caption": "sur les {{total}} dernières analysées",
+          "est_day_label": "Estimation par jour",
+          "est_month_label": "Estimation par mois"
+        },
+        "ai_row_recommended": "Recommandé",
+        "ai_row_summary_desc": "Extrait les points clés et les accords de chaque conversation transcrite.",
+        "ai_row_sentiment_desc": "Détecte le ton et les moments de friction tout au long de la conversation."
       }
     },
     "entities": {

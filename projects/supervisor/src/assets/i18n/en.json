@@ -442,8 +442,16 @@
             "impact_zero": "None of the last {{total}} conversations would meet these conditions.",
             "blocked": "Review the flagged conditions before saving.",
             "unfinished": "{{n}} unfinished"
-          }
-        }
+          },
+          "impact_lead": "At recent traffic levels, this rule would reach:",
+          "impact_unit": "conversations",
+          "impact_caption": "of the last {{total}} analysed",
+          "est_day_label": "Estimated per day",
+          "est_month_label": "Estimated per month"
+        },
+        "ai_row_recommended": "Recommended",
+        "ai_row_summary_desc": "Extracts the key points and agreements from each transcribed conversation.",
+        "ai_row_sentiment_desc": "Detects tone and friction moments throughout the conversation."
       }
     },
     "entities": {
