@@ -155,9 +155,6 @@ export class RulesStore {
       transcripcion: source.transcripcion,
       clasificacion: source.clasificacion,
       active: false,
-      direction: source.direction,
-      schedule: source.schedule,
-      durationMin: source.durationMin,
       aiAnalysis: source.aiAnalysis,
       categorias: source.categorias,
     });

@@ -15,14 +15,6 @@ import type { ConditionTree } from './condition.types';
 
 export type RuleType = 'recording' | 'transcription' | 'classification';
 
-export type Direction = 'all' | 'inbound' | 'outbound';
-
-export interface Schedule {
-  readonly enabled: boolean;
-  readonly from: string; // 'HH:MM'
-  readonly to: string;
-}
-
 export interface Rule {
   readonly id: number;
   readonly type: RuleType;
@@ -45,10 +37,9 @@ export interface Rule {
   readonly transcripcion: boolean;
   readonly clasificacion: boolean;
   readonly active: boolean;
-  // Criterios específicos (iter 9c-1 cubre Recording; iter 9c-2 añade resto)
-  readonly direction?: Direction;
-  readonly schedule?: Schedule;
-  readonly durationMin?: number; // segundos
+  /* Dirección y duración NO viven aquí: son condiciones del `conditionTree`
+     (DD-27). Los planos `direction`/`schedule`/`durationMin` quedaron sin UI y
+     sin lectura de comportamiento, y se retiraron. */
   readonly aiAnalysis?: boolean;
   /**
    * IDs de categorías IA que esta regla detecta. Solo aplica a reglas
