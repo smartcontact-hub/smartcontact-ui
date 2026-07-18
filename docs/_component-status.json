@@ -36,7 +36,7 @@
       "inputs": 0,
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 7
+      "usedInSupervisor": 10
     },
     {
       "name": "bulk-edit-menu",
@@ -77,7 +77,7 @@
       "inputs": 15,
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 58
+      "usedInSupervisor": 61
     },
     {
       "name": "card",
@@ -244,10 +244,10 @@
       "kind": "CUSTOM",
       "primengBase": "—",
       "cva": false,
-      "inputs": 1,
+      "inputs": 2,
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 8
+      "usedInSupervisor": 10
     },
     {
       "name": "form-danger-zone",

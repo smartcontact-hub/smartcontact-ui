@@ -2,11 +2,13 @@
  * El ancho ya NO se declara aquí: la plantilla marca el arquetipo
  * (`page__inner--list`) y `styles/_page.scss` pone max-width + centrado.
  * Lo que queda abajo es el delta propio de esta página: el padding.
- * S62 (backlog #65): Memory NO usa el <sc-bulk-action-bar> overlay — las
- * acciones masivas viven inline en la toolbar de filtros (paridad legacy
- * S50/S52, deshabilitadas hasta seleccionar + badge). Eliminada la reserva
- * de `padding-bottom` con `--sc-bulk-action-bar-height` que dejaba un hueco
- * muerto al fondo; el padding inferior lo aporta `&__inner`. */
+ * Ola 5: vuelve el <sc-bulk-action-bar> overlay (revierte el backlog #65), y
+ * con él vuelve su consecuencia: la barra es `position: fixed`, así que sin
+ * reservarle sitio TAPA las últimas filas. S62 había quitado esa reserva
+ * precisamente porque no había barra que tapara nada.
+ * Se reserva SIEMPRE, como las cinco listas admin, y no solo cuando hay
+ * selección: así el fondo de la tabla no da un salto al marcar la primera
+ * fila. Es el precio que ya pagan sus hermanas. */
 :host {
   display: block;
   height: 100%;
@@ -16,6 +18,7 @@
 .page {
   flex: 1;
   background: var(--sc-bg-surface);
+  padding-bottom: calc(var(--sc-bulk-action-bar-height) + var(--sc-spacing-1-125));
 
   &__inner {
     /* Bloque 2 · layout efficiency: menos padding-top (24.5 → 14px) para

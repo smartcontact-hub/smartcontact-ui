@@ -160,17 +160,12 @@
             }
           </td>
         </tr>
-      } @empty {
-        <tr class="memory-conversations-table__empty-row">
-          <td [attr.colspan]="12">
-            <div class="memory-conversations-table__empty" role="status" aria-live="polite">
-              <sc-icon [name]="emptyIcon" [size]="28" />
-              <h3>{{ 'memory.conversations.empty.title' | translate }}</h3>
-              <p>{{ 'memory.conversations.empty.body' | translate }}</p>
-            </div>
-          </td>
-        </tr>
       }
+      <!-- Ya no hay `@empty`: cuando no hay conversaciones, la PÁGINA no monta
+           esta tabla y enseña el `<sc-empty-state>` compartido, como las tres
+           hermanas de memory. Un vacío dibujado dentro de un `<tr>` obligaba
+           además a mantener a mano el `colspan`. -->
+
     </tbody>
   </table>
 </div>

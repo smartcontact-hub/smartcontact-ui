@@ -103,7 +103,6 @@ export class ConversationTableComponent {
    *  mientras el menú está abierto. */
   protected readonly menuTargetId = signal<string | null>(null);
 
-  protected readonly emptyIcon = 'search_off';
   protected readonly moreIcon = 'more_vert';
 
   /** Conversación referenciada por el menú actual (si abierto). */

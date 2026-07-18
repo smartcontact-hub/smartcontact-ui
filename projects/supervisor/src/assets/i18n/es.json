@@ -11,7 +11,9 @@
     "conversations": {
       "empty": {
         "title": "No hay conversaciones que mostrar",
-        "body": "Ajusta los filtros o el rango de fechas para ver resultados."
+        "body": "Ajusta los filtros o el rango de fechas para ver resultados.",
+        "body_unfiltered": "Todavía no ha entrado ninguna conversación.",
+        "clear_filters": "Limpiar filtros"
       },
       "page_title": "Conversaciones",
       "open_aria": "Abrir conversación {{id}}",
@@ -648,7 +650,9 @@
         "template_selected_one": "seleccionada",
         "template_selected_other": "seleccionadas",
         "label_selected_one": "seleccionada",
-        "label_selected_other": "seleccionadas"
+        "label_selected_other": "seleccionadas",
+        "conversation_singular": "conversación",
+        "conversation_plural": "conversaciones"
       }
     },
     "form_nav": {
