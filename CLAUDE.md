@@ -2,7 +2,14 @@
 
 Repo del Design System Smart Contact (3 paquetes ng-packagr + demo). Las
 convenciones completas del trabajo con agentes están en [AGENTS.md](AGENTS.md)
-— leerlas antes de tocar componentes o tokens. Resumen operativo:
+— leerlas antes de tocar componentes o tokens.
+
+- **AL EMPEZAR CUALQUIER TAREA, lee [LEARNINGS.md](LEARNINGS.md)** (raíz): reglas de
+  proceso `disparador → acción` destiladas de errores reales en este repo (verificación,
+  gates antes de pushear, dimensionar alcance). Es corto a propósito. Lo escribe y afila
+  `/reflect` al cerrar cada tarea; si solo se escribe y no se lee, no sirve de nada.
+
+Resumen operativo:
 
 - **Tokens**: `--sc-*` es el contrato; `--p-*` solo existe dentro de
   `projects/ui-smartcontact/src/lib/theme/sc-preset/`. No inventar tokens: todo
