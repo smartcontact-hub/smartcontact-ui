@@ -72,6 +72,9 @@
         "process": "Process",
         "analyze": "Analyze",
         "mark_read": "Mark as read"
+      },
+      "cols": {
+        "more": "More actions"
       }
     },
     "type_filter": {
@@ -713,7 +716,8 @@
     },
     "danger_zone": {
       "title": "Danger zone"
-    }
+    },
+    "delete_gate": "Delete…"
   },
   "topbar": {
     "go_to_dashboard": "Go to dashboard",

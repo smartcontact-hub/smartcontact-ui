@@ -72,6 +72,9 @@
         "process": "Traiter",
         "analyze": "Analyser",
         "mark_read": "Marquer comme lue"
+      },
+      "cols": {
+        "more": "Plus d'actions"
       }
     },
     "type_filter": {
@@ -713,7 +716,8 @@
     },
     "danger_zone": {
       "title": "Zone de risque"
-    }
+    },
+    "delete_gate": "Supprimer…"
   },
   "topbar": {
     "go_to_dashboard": "Aller au tableau de bord",

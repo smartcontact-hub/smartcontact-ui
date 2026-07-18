@@ -11,14 +11,14 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { MessageService } from 'primeng/api';
+import { MessageService, type MenuItem } from 'primeng/api';
+import { MenuModule } from 'primeng/menu';
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 
 import { ClickOutsideDirective } from '@core/directives';
 import { XlsxExportService } from '@core/services';
 import { TopBarSlotService } from '@core/layout/top-bar/top-bar-slot.service';
-import { clampToViewport } from '@core/utils/viewport';
 import { TOAST_LIFE } from '@core/utils/toast-life';
 import { LabelChipComponent } from '@shared/components';
 import {
@@ -37,12 +37,6 @@ import {
   LabelFormSubmission,
 } from '../components/label-form-panel/label-form-panel.component';
 
-interface ContextMenuPos {
-  readonly x: number;
-  readonly y: number;
-  readonly labelId: number;
-}
-
 @Component({
   selector: 'sc-labels-page',
   imports: [
@@ -55,6 +49,7 @@ interface ContextMenuPos {
     IconComponent,
     LabelChipComponent,
     LabelFormPanelComponent,
+    MenuModule,
     SearchComponent,
     TranslateModule,
   ],
@@ -91,8 +86,6 @@ export class LabelsPageComponent {
   protected readonly downloadIcon = 'download';
   protected readonly tagIcon = 'label';
   protected readonly moreIcon = 'more_vert';
-  protected readonly editIcon = 'edit';
-  protected readonly trashIcon = 'delete';
 
   protected readonly labels = this.labelsStore.labels;
   protected readonly agentCountByLabel = this.agentsStore.agentCountByLabel;
@@ -101,8 +94,8 @@ export class LabelsPageComponent {
   protected readonly creating = signal(false);
   protected readonly editingId = signal<number | null>(null);
   protected readonly selectedIds = signal<ReadonlySet<number>>(new Set());
-  protected readonly contextMenu = signal<ContextMenuPos | null>(null);
-  protected readonly openMenuId = signal<number | null>(null);
+  /** Fila a la que apunta el kebab compartido. Ver `menuItems`. */
+  protected readonly menuTargetLabel = signal<Label | null>(null);
   protected readonly deleteTarget = signal<readonly Label[] | null>(null);
 
   protected readonly filtered = computed(() => {
@@ -182,8 +175,6 @@ export class LabelsPageComponent {
 
   protected requestDeleteSingle(label: Label): void {
     this.deleteTarget.set([label]);
-    this.openMenuId.set(null);
-    this.contextMenu.set(null);
   }
 
   protected requestDeleteSelection(): void {
@@ -213,49 +204,51 @@ export class LabelsPageComponent {
     this.deleteTarget.set(null);
   }
 
-  protected onContextMenu(event: MouseEvent, labelId: number): void {
-    event.preventDefault();
-    const { x, y } = clampToViewport(event.clientX, event.clientY);
-    this.contextMenu.set({ x, y, labelId });
+  /* El click derecho abre EL MISMO menú que el kebab (R3): un solo motor, un
+   * solo modelo, un solo sitio donde añadir una acción. Antes había un panel
+   * HTML por fila MÁS un menú contextual aparte con sus propios handlers
+   * duplicados — dos implementaciones que ya divergían. */
+
+  /** Modelo del kebab compartido. Es un computed ESTABLE: solo cambia al
+   *  apuntar a otra fila. Con `[model]="build(label)"` el array se recreaba en
+   *  cada ciclo de CD, PrimeNG repintaba el menú y se perdía el primer clic
+   *  (hacía falta doble). Mismo patrón que las tres hermanas de memory. */
+  protected readonly menuItems = computed<MenuItem[]>(() => {
+    const label = this.menuTargetLabel();
+    return label ? this.buildMenuItems(label) : [];
+  });
+
+  protected setMenuTarget(label: Label): void {
+    this.menuTargetLabel.set(label);
   }
 
-  protected closeContextMenu(): void {
-    this.contextMenu.set(null);
-  }
-
-  protected toggleRowMenu(id: number): void {
-    this.openMenuId.update((current) => (current === id ? null : id));
-  }
-
-  protected closeRowMenu(): void {
-    this.openMenuId.set(null);
-  }
-
-  protected onContextEdit(): void {
-    const ctx = this.contextMenu();
-    if (!ctx) return;
-    this.editingId.set(ctx.labelId);
-    this.creating.set(false);
-    this.contextMenu.set(null);
-  }
-
-  protected onContextDelete(): void {
-    const ctx = this.contextMenu();
-    if (!ctx) return;
-    const label = this.labels().find((l) => l.id === ctx.labelId);
-    if (label) this.deleteTarget.set([label]);
-    this.contextMenu.set(null);
+  private buildMenuItems(label: Label): MenuItem[] {
+    return [
+      {
+        label: this.translate.instant('common.edit'),
+        icon: 'sc-icon-font sc-icon-font--edit',
+        command: () => this.onRowEdit(label),
+      },
+      { separator: true },
+      {
+        // Sin puntos suspensivos (C4 del plan): `sc-delete-labels-dialog` es
+        // una confirmación simple (Cancelar / Eliminar), no una puerta
+        // tecleada — no hay nada que rellenar antes de borrar.
+        label: this.translate.instant('common.delete'),
+        icon: 'sc-icon-font sc-icon-font--delete',
+        styleClass: 'rules-menu-item--danger',
+        command: () => this.onRowDelete(label),
+      },
+    ];
   }
 
   protected onRowEdit(label: Label): void {
     this.editingId.set(label.id);
     this.creating.set(false);
-    this.openMenuId.set(null);
   }
 
   protected onRowDelete(label: Label): void {
     this.deleteTarget.set([label]);
-    this.openMenuId.set(null);
   }
 
   protected closeCreatePanel(): void {

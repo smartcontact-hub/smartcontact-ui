@@ -44,7 +44,7 @@
 | `sc-confirmdialog` | STANDARD | primeng/confirmdialog | 0 inputs | — | ✓ | 1 |
 | `sc-datatable` | EXTENDED | primeng/table | 19 inputs | — | ✓ | — |
 | `sc-datepicker` | EXTENDED | primeng/datepicker | CVA · 17 inputs | — | ✓ | 2 |
-| `sc-delete-entity-dialog` | STANDARD | primeng/button | 2 inputs | sc-dialog | ✓ | 8 |
+| `sc-delete-entity-dialog` | STANDARD | primeng/button | 2 inputs | sc-dialog | ✓ | 9 |
 | `sc-dialog` | EXTENDED | primeng/dialog | 12 inputs | — | ✓ | 10 |
 | `sc-divider` | STANDARD | primeng/divider | 3 inputs | — | ✓ | 4 |
 | `sc-drawer` | EXTENDED | primeng/drawer | 8 inputs | — | ✓ | — |

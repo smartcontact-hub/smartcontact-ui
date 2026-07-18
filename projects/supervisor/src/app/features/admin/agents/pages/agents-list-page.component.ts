@@ -11,15 +11,15 @@ import {
 } from '@angular/core';
 import { Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { MessageService } from 'primeng/api';
+import { MessageService, type MenuItem } from 'primeng/api';
+import { MenuModule } from 'primeng/menu';
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 
-import { ClickOutsideDirective, SortableHeaderDirective } from '@core/directives';
+import { SortableHeaderDirective } from '@core/directives';
 import { UndoStackService, XlsxExportService } from '@core/services';
 import { TopBarSlotService } from '@core/layout/top-bar/top-bar-slot.service';
 import { SelectionState } from '@core/utils/selection-state';
-import { clampToViewport } from '@core/utils/viewport';
 import { TOAST_LIFE } from '@core/utils/toast-life';
 import { IllustratedAvatarComponent } from '@shared/components';
 import {
@@ -54,12 +54,6 @@ import { Channel } from '@features/admin/services/group-agent-links.types';
 
 type SortField = 'name' | 'code' | 'extension' | 'type' | 'status';
 
-interface ContextMenuPos {
-  readonly x: number;
-  readonly y: number;
-  readonly agentId: number;
-}
-
 interface PendingBulkEdit {
   readonly field: AgentBulkField;
   readonly fieldLabel: string;
@@ -86,7 +80,6 @@ const PRESENCE_STATES: readonly PresenceStatus[] = [
     BulkActionBarComponent,
     BulkEditMenuComponent,
     ButtonComponent,
-    ClickOutsideDirective,
     ColumnSelectorComponent,
     DeleteEntityDialogComponent,
     EmptyStateComponent,
@@ -95,6 +88,7 @@ const PRESENCE_STATES: readonly PresenceStatus[] = [
     GroupPopoverComponent,
     ImpactPreviewDialogComponent,
     InlineRenameCellComponent,
+    MenuModule,
     SearchComponent,
     SortableHeaderDirective,
     TranslateModule,
@@ -157,9 +151,6 @@ export class AgentsListPageComponent {
   protected readonly closeIcon = 'close';
   protected readonly downloadIcon = 'download';
   protected readonly moreIcon = 'more_vert';
-  protected readonly editIcon = 'edit';
-  protected readonly trashIcon = 'delete';
-  protected readonly copyIcon = 'content_copy';
   protected readonly phoneIcon = 'call';
   protected readonly chatIcon = 'chat_bubble';
   protected readonly emailIcon = 'mail';
@@ -182,8 +173,8 @@ export class AgentsListPageComponent {
    */
   private readonly selection = new SelectionState<{ readonly id: number }>(() => this.sorted());
   protected readonly selectedIds = this.selection.ids;
-  protected readonly contextMenu = signal<ContextMenuPos | null>(null);
-  protected readonly openMenuId = signal<number | null>(null);
+  /** Fila a la que apunta el kebab compartido. Ver `menuItems`. */
+  protected readonly menuTargetAgent = signal<Agent | null>(null);
   protected readonly deleteTarget = signal<readonly Agent[] | null>(null);
   protected readonly renamingId = signal<number | null>(null);
   protected readonly pendingBulkEdit = signal<PendingBulkEdit | null>(null);
@@ -371,13 +362,54 @@ export class AgentsListPageComponent {
     void this.router.navigateByUrl(`/admin/agentes/editar/${agent.id}`);
   }
 
+  /** Modelo del kebab compartido. Es un computed ESTABLE: solo cambia al
+   *  apuntar a otra fila (o al variar el tamaño de la selección, que decide
+   *  si "Duplicar" aplica). Con `[model]="build(agent)"` el array se recreaba
+   *  en cada ciclo de CD, PrimeNG repintaba el menú y se perdía el primer
+   *  clic (hacía falta doble). Mismo patrón que las tres hermanas de memory. */
+  protected readonly menuItems = computed<MenuItem[]>(() => {
+    const agent = this.menuTargetAgent();
+    return agent ? this.buildMenuItems(agent) : [];
+  });
+
+  protected setMenuTarget(agent: Agent): void {
+    this.menuTargetAgent.set(agent);
+  }
+
+  private buildMenuItems(agent: Agent): MenuItem[] {
+    return [
+      {
+        label: this.translate.instant('common.edit'),
+        icon: 'sc-icon-font sc-icon-font--edit',
+        command: () => this.onRowEdit(agent),
+      },
+      {
+        // Duplicar una fila suelta no tiene sentido con una selección
+        // múltiple activa — se ocultaba ya en el panel HTML y en el menú
+        // contextual anteriores, y esa regla sobrevive al cambio de motor.
+        label: this.translate.instant('common.duplicate'),
+        icon: 'sc-icon-font sc-icon-font--content_copy',
+        visible: this.selectedIds().size <= 1,
+        command: () => this.onRowDuplicate(agent),
+      },
+      { separator: true },
+      {
+        // Puntos suspensivos porque lleva a la puerta tecleada, no a un
+        // borrado inmediato (C4 del plan): convención de menús de escritorio
+        // — "…" significa "esto abre algo antes de hacerlo".
+        label: this.translate.instant('common.delete_gate'),
+        icon: 'sc-icon-font sc-icon-font--delete',
+        styleClass: 'rules-menu-item--danger',
+        command: () => this.onRowDelete(agent),
+      },
+    ];
+  }
+
   protected onRowEdit(agent: Agent): void {
-    this.openMenuId.set(null);
     void this.router.navigateByUrl(`/admin/agentes/editar/${agent.id}`);
   }
 
   protected onRowDuplicate(agent: Agent): void {
-    this.openMenuId.set(null);
     // Navega al form de creación con el source precargado en memoria.
     // El form-page detecta `?seedFromId` y precarga los campos copiables
     // (todos excepto los unique: name, email, extension, pin).
@@ -390,7 +422,6 @@ export class AgentsListPageComponent {
 
   protected onRowDelete(agent: Agent): void {
     this.deleteTarget.set([agent]);
-    this.openMenuId.set(null);
   }
 
   protected onRenameCommit(id: number, value: string): void {
@@ -513,46 +544,10 @@ export class AgentsListPageComponent {
     this.deleteTarget.set(null);
   }
 
-  protected onContextMenu(event: MouseEvent, agentId: number): void {
-    event.preventDefault();
-    const { x, y } = clampToViewport(event.clientX, event.clientY);
-    this.contextMenu.set({ x, y, agentId });
-  }
-
-  protected closeContextMenu(): void {
-    this.contextMenu.set(null);
-  }
-
-  protected toggleRowMenu(id: number): void {
-    this.openMenuId.update((current) => (current === id ? null : id));
-  }
-
-  protected closeRowMenu(): void {
-    this.openMenuId.set(null);
-  }
-
-  protected onContextEdit(): void {
-    const ctx = this.contextMenu();
-    if (!ctx) return;
-    this.contextMenu.set(null);
-    void this.router.navigateByUrl(`/admin/agentes/editar/${ctx.agentId}`);
-  }
-
-  protected onContextDuplicate(): void {
-    const ctx = this.contextMenu();
-    if (!ctx) return;
-    const agent = this.agents().find((a) => a.id === ctx.agentId);
-    this.contextMenu.set(null);
-    if (agent) this.onRowDuplicate(agent);
-  }
-
-  protected onContextDelete(): void {
-    const ctx = this.contextMenu();
-    if (!ctx) return;
-    const agent = this.agents().find((a) => a.id === ctx.agentId);
-    if (agent) this.deleteTarget.set([agent]);
-    this.contextMenu.set(null);
-  }
+  /* El click derecho abre EL MISMO menú que el kebab (R3): un solo motor, un
+   * solo modelo, un solo sitio donde añadir una acción. Antes había un panel
+   * HTML por fila y, aparte, un menú contextual con sus propios handlers
+   * duplicados — dos implementaciones que ya divergían. */
 
   protected onSearchKey(event: KeyboardEvent): void {
     if (event.key !== 'Escape') return;

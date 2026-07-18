@@ -2,49 +2,9 @@
   display: block;
 }
 
-/* Context menu (click derecho) — espejo del patrón AED list-pages
- * (labels/agents/groups). Position fixed via [style.left/top.px] de
- * `contextMenu` signal. Globals de `_table-elements.scss` aplican al
- * separator + variantes is-danger. */
-.context-menu {
-  position: fixed;
-  width: 184px;
-  background: var(--sc-bg-surface);
-  border: 1px solid var(--sc-border-default);
-  border-radius: var(--sc-radius-200);
-  padding: var(--sc-spacing-0-25) 0;
-  box-shadow: var(--sc-shadow-popover);
-  z-index: var(--sc-z-popover);
-
-  > button {
-    width: 100%;
-    display: flex;
-    align-items: center;
-    gap: var(--sc-spacing-0-875);
-    padding: var(--sc-spacing-0-5) var(--sc-spacing-0-875);
-    font-size: var(--sc-font-size-200);
-    color: var(--sc-text-secondary);
-    background: transparent;
-    border: 0;
-    cursor: pointer;
-    text-align: left;
-    transition: background-color 120ms var(--sc-easing-default, ease);
-
-    > sc-icon {
-      color: var(--sc-icon-subtle);
-      flex: 0 0 auto;
-    }
-
-    &:hover {
-      background: var(--sc-bg-secondary-hover);
-    }
-
-    &:focus-visible {
-      outline: 2px solid var(--sc-color-sky-500);
-      outline-offset: -2px;
-    }
-  }
-}
+/* El menú posicional propio murió en la Ola 2: lo sustituye el `<p-menu>`
+ * compartido de la casa, que ahora abren tanto el kebab visible como el click
+ * derecho. El botón usa `.rules-kebab-btn`, el kebab global de `main.scss`. */
 
 /* ------------------------------------------------------------------ *
  * Estilo tabla Memory `/conversaciones` ← adoptado de AED list-pages
@@ -201,6 +161,20 @@
     font-size: var(--sc-font-size-100);
     color: var(--sc-text-subtle);
     letter-spacing: 0.02em;
+  }
+
+  /* Columna del kebab: ancho fijo para que la celda no baile entre filas con
+   * acciones y filas sin ellas (las ya procesadas no pintan botón).
+   *
+   * 44px NO es decorativo: la tabla es `table-layout: fixed`, y por debajo de
+   * ese ancho la columna queda infra-asignada y el wrapper empieza a
+   * desbordar en horizontal (medido: 40px → 4px de scroll, 36px → 8px).
+   * A partir de 44 el desborde es 0 y se queda en 0. */
+  &__th-kebab,
+  &__td-kebab {
+    width: 44px;
+    text-align: center;
+    padding-right: 0;
   }
 
   tr.is-deleted {

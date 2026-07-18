@@ -1,9 +1,17 @@
-import { ChangeDetectionStrategy, Component, computed, input, output, signal } from '@angular/core';
-import { TranslateModule } from '@ngx-translate/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  input,
+  output,
+  signal,
+} from '@angular/core';
+import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import type { MenuItem } from 'primeng/api';
+import { MenuModule } from 'primeng/menu';
 
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
-import { ClickOutsideDirective } from '@core/directives';
-import { clampToViewport } from '@core/utils/viewport';
 
 import type { Conversation } from '../../data/conversation.types';
 import {
@@ -19,10 +27,24 @@ import {
  *  - `mark-read`: solo se ofrece si `hasFailedTranscription`. */
 export type ConversationContextAction = 'process' | 'analyze' | 'mark-read';
 
-interface ContextMenuPos {
-  readonly x: number;
-  readonly y: number;
-  readonly conversationId: string;
+/**
+ * Acción principal disponible según el estado:
+ * - sin transcripción (no recording o recording sin procesar) → process
+ * - con transcripción sin análisis → analyze
+ * - todo completo → null (no se ofrece acción)
+ *
+ * Premisa clarificada S53.5 por el usuario: sin recording no puede haber
+ * transcripción, así que "transcribir" no es un item separado del menú —
+ * "procesar" cubre el caso (mismo wording que el bulk modal).
+ *
+ * Función libre, no computed, porque la necesitan DOS consumidores con
+ * granularidad distinta: el modelo del menú (la fila apuntada) y el kebab de
+ * CADA fila, que decide si pintarse.
+ */
+function primaryActionFor(conv: Conversation): ConversationContextAction | null {
+  if (conv.hasTranscription && conv.hasAnalysis) return null;
+  if (conv.hasTranscription) return 'analyze';
+  return 'process';
 }
 
 /**
@@ -40,20 +62,25 @@ interface ContextMenuPos {
  *                diseño Memory) + overlays failed (bottom-right) y
  *                multi-recording count (top-right). Sigue `sistema-de-
  *                diseno.md §Iconografía` (sec 15.21 audit prototipo).
- * Iter S53.5: + menú contextual click-derecho con acciones dinámicas
- *                según estado: Procesar / Transcribir / Analizar +
- *                "Marcar como leída" (solo si hasFailedTranscription).
- *                Patrón espejo de `<sc-labels-page>` (clampToViewport,
- *                scClickOutside, signal contextMenu posicional fijo).
+ * Iter S53.5: + menú click-derecho con acciones dinámicas según estado:
+ *                Procesar / Transcribir / Analizar + "Marcar como leída"
+ *                (solo si hasFailedTranscription).
+ * Ola 2:       ese menú pasa al `<p-menu>` compartido de la casa y GANA UN
+ *                KEBAB VISIBLE. Antes solo se abría con click derecho, que no
+ *                se anuncia: quien no lo supiera no tenía forma de descubrir
+ *                estas acciones (Nielsen #6). Se va el menú posicional propio
+ *                (clampToViewport + scClickOutside).
  */
 @Component({
   selector: 'sc-memory-conversation-table',
-  imports: [ClickOutsideDirective, IconComponent, TranslateModule, MemoryStatusIconComponent],
+  imports: [IconComponent, MenuModule, TranslateModule, MemoryStatusIconComponent],
   templateUrl: './conversation-table.component.html',
   styleUrl: './conversation-table.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ConversationTableComponent {
+  private readonly translate = inject(TranslateService);
+
   readonly conversations = input.required<readonly Conversation[]>();
   readonly selectedIds = input.required<ReadonlySet<string>>();
   readonly allSelected = input.required<boolean>();
@@ -71,47 +98,56 @@ export class ConversationTableComponent {
     conversation: Conversation;
   }>();
 
-  protected readonly contextMenu = signal<ContextMenuPos | null>(null);
+  /** Fila a la que apunta el menú compartido. Se guarda el ID y no el objeto
+   *  para que el modelo siga vivo si la conversación cambia de estado
+   *  mientras el menú está abierto. */
+  protected readonly menuTargetId = signal<string | null>(null);
 
-  protected readonly processIcon = 'bolt';
-  protected readonly analyzeIcon = 'auto_awesome';
-  protected readonly markReadIcon = 'done_all';
   protected readonly emptyIcon = 'search_off';
+  protected readonly moreIcon = 'more_vert';
 
-  /** Conversación referenciada por el menú contextual actual (si abierto). */
+  /** Conversación referenciada por el menú actual (si abierto). */
   protected readonly contextConv = computed<Conversation | null>(() => {
-    const ctx = this.contextMenu();
-    if (!ctx) return null;
-    return this.conversations().find((c) => c.id === ctx.conversationId) ?? null;
+    const id = this.menuTargetId();
+    if (!id) return null;
+    return this.conversations().find((c) => c.id === id) ?? null;
   });
 
-  /**
-   * Acción principal disponible según el estado:
-   * - sin transcripción (no recording o recording sin procesar) → process
-   * - con transcripción sin análisis → analyze
-   * - todo completo → null (no se ofrece acción)
-   *
-   * Premisa clarificada S53.5 por el usuario: sin recording no puede haber
-   * transcripción, así que "transcribir" no es un item separado del menú —
-   * "procesar" cubre el caso (mismo wording que el bulk modal).
-   */
-  protected readonly contextPrimaryAction = computed<ConversationContextAction | null>(() => {
-    const c = this.contextConv();
-    if (!c) return null;
-    if (c.hasTranscription && c.hasAnalysis) return null;
-    if (c.hasTranscription) return 'analyze';
-    return 'process';
-  });
+  /** Modelo del menú compartido — computed ESTABLE: solo cambia al apuntar a
+   *  otra fila. Los items dependen del estado de ESA conversación, así que
+   *  aquí no hay una lista fija como en las listas admin. */
+  protected readonly menuItems = computed<MenuItem[]>(() => {
+    const conv = this.contextConv();
+    if (!conv) return [];
+    const items: MenuItem[] = [];
+    const primary = primaryActionFor(conv);
 
-  /** "Marcar como leída" solo aparece si la fila tiene transcripción fallida. */
-  protected readonly contextShowMarkRead = computed<boolean>(() => {
-    const c = this.contextConv();
-    return !!c?.hasFailedTranscription;
-  });
+    if (primary) {
+      items.push({
+        label: this.translate.instant(
+          primary === 'process'
+            ? 'memory.conversations.context.process'
+            : 'memory.conversations.context.analyze',
+        ),
+        icon:
+          primary === 'process'
+            ? 'sc-icon-font sc-icon-font--bolt'
+            : 'sc-icon-font sc-icon-font--auto_awesome',
+        command: () => this.dispatchContext(primary),
+      });
+    }
 
-  protected readonly contextHasItems = computed<boolean>(
-    () => this.contextPrimaryAction() !== null || this.contextShowMarkRead(),
-  );
+    // "Marcar como leída" solo si la fila tiene transcripción fallida.
+    if (conv.hasFailedTranscription) {
+      if (primary) items.push({ separator: true });
+      items.push({
+        label: this.translate.instant('memory.conversations.context.mark_read'),
+        icon: 'sc-icon-font sc-icon-font--done_all',
+        command: () => this.dispatchContext('mark-read'),
+      });
+    }
+    return items;
+  });
 
   protected isSelected(id: string): boolean {
     return this.selectedIds().has(id);
@@ -180,46 +216,24 @@ export class ConversationTableComponent {
     return resolveStatusLabelKey(conv, this.isProcessing(conv.id), this.isAnalyzing(conv.id));
   }
 
-  protected onContextMenu(event: MouseEvent, conv: Conversation): void {
-    // Sin acciones disponibles → no abrir menú (evita popover vacío).
-    const willHaveActions =
-      (conv.hasTranscription && conv.hasAnalysis) === false || conv.hasFailedTranscription;
-    if (!willHaveActions) return;
-    event.preventDefault();
-    const { x, y } = clampToViewport(event.clientX, event.clientY);
-    this.contextMenu.set({ x, y, conversationId: conv.id });
+  /** Apunta el menú compartido a una fila. Devuelve si esa fila tiene alguna
+   *  acción — el llamante solo abre el menú si la hay, para no enseñar un
+   *  popover vacío. */
+  protected setMenuTarget(conv: Conversation): boolean {
+    this.menuTargetId.set(conv.id);
+    return this.rowHasActions(conv);
   }
 
-  protected closeContextMenu(): void {
-    this.contextMenu.set(null);
+  /** Una fila ya procesada y analizada no ofrece nada: ahí no se pinta kebab.
+   *  Un kebab que abre un menú vacío es peor que no tenerlo. */
+  protected rowHasActions(conv: Conversation): boolean {
+    return primaryActionFor(conv) !== null || !!conv.hasFailedTranscription;
   }
 
   protected dispatchContext(action: ConversationContextAction): void {
     const conv = this.contextConv();
-    this.closeContextMenu();
     if (!conv) return;
     this.contextActionRequested.emit({ action, conversation: conv });
   }
 
-  protected primaryActionLabelKey(action: ConversationContextAction | null): string {
-    switch (action) {
-      case 'process':
-        return 'memory.conversations.context.process';
-      case 'analyze':
-        return 'memory.conversations.context.analyze';
-      default:
-        return '';
-    }
-  }
-
-  protected primaryActionIcon(action: ConversationContextAction | null) {
-    switch (action) {
-      case 'process':
-        return this.processIcon;
-      case 'analyze':
-        return this.analyzeIcon;
-      default:
-        return undefined;
-    }
-  }
 }
