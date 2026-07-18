@@ -1,18 +1,78 @@
 # NEXT-SESSION — hand-off
 
 > Estado volátil. Se SOBREESCRIBE en cada cierre. Lo durable vive en `docs/`.
-> **Sello: 2026-07-18, cierre sesión 13.**
+> **Sello: 2026-07-18, cierre sesión 14.**
 
 ## ▶️ EMPIEZA AQUÍ
 
 1. Lee este fichero y luego [`LEARNINGS.md`](LEARNINGS.md).
-2. **Confirma el CI LEYENDO el run** de los commits de s13.
-3. Lo que queda vivo está en «Bloques abiertos». **Los tres llevan una precondición
-   verificada contra el código** — no re-descubras el alcance, pero sí re-comprueba
-   antes de ejecutar.
-4. Figma: el bridge que FUNCIONA es el **plugin de escritorio** (`mcp__Figma__*`,
-   probado con `get_metadata`/`get_screenshot` sobre 51:10239). El conector de
-   claude.ai también sirve. El server `plugin:figma:figma` pide re-auth.
+2. **Confirma el CI LEYENDO el run** del último commit.
+3. **El plan aprobado vive en `~/.claude/plans/adelante-con-b2-y-rosy-wren.md`** — 7
+   olas de convergencia + B2/B4/B5, con el modelo de interacción canónico (R1-R7).
+   Léelo: aquí solo está el delta y las correcciones.
+4. **Siguiente en la cola: Ola 1.** Su orden interno NO es negociable: declarar el
+   breadcrumb ANTES de matar `setLead`, o el constructor se queda con la TopBar vacía
+   (hoy esas dos rutas producen un trail de cero crumbs).
+5. Figma: el bridge que FUNCIONA es el **plugin de escritorio** (`mcp__Figma__*`,
+   probado con `get_metadata`/`get_screenshot`/`get_design_context`). El server
+   `plugin:figma:figma` pide re-auth.
+
+## ⚠️ CORRECCIÓN AL PLAN APROBADO — la Ola 3 cambia
+
+El plan decía «dos arquetipos de página: lista sobre `--sc-bg-surface`, editor sobre
+`--sc-bg-default` con tarjetas». **Rafa propuso lienzo blanco + stroke, y tiene razón.**
+Lo que zanjó el debate fueron las medidas, no el argumento:
+
+| | contraste | lectura |
+|---|---|---|
+| tarjeta vs lienzo (claro) | **1.06:1** | el relleno no separa nada; las tarjetas YA se leen por su borde |
+| tarjeta vs lienzo (oscuro) | **1.14:1** | idem |
+| `--sc-border-subtle` en OSCURO | **1:1** | **es el MISMO color que la tarjeta: el borde es invisible** |
+| `border-subtle/default/strong` sobre blanco | 1.15 / 1.34 / 2.04 : 1 | ninguno llega a 3:1 |
+
+O sea: **las tarjetas están mal delimitadas en los DOS temas** y nadie lo había visto.
+La palanca real es el **stroke**, no el fondo. La Ola 3 pasa a ser *un solo lienzo + un
+borde de tarjeta que se lea en claro y en oscuro*, que además es más simple y es lo que
+pedía el encargo de consistencia.
+
+Matiz honesto para no inflar el caso: el 3:1 de WCAG 1.4.11 aplica a objetos *necesarios
+para entender el contenido*; el borde de una tarjeta es discutible que lo sea. Esto es
+legibilidad, no incumplimiento duro.
+
+---
+
+# HECHO en la sesión 14
+
+## Fidelidad al Figma · tarjeta de impacto (commit `0c2a1d0`)
+
+Rafa señaló que no reproducía el nodo. **Causa raíz mía, de método**: implementé desde el
+RESUMEN escrito de s12 («número héroe 40px…») en vez de volver al nodo. La paráfrasis
+decía *número*; `51:10316` es **un solo nodo de texto** con la frase entera. Partirla en
+cifra grande + unidad pequeña gris la degradaba a «dato con leyenda».
+
+Al medir aparecieron 6 desviaciones más (padding 24,5→32 · gap 10,5→24 · título 14→16
+bold · intro 12→14 · stat-block con ritmo propio · métricas con gap 14). Donde la rampa
+no llega se eligió conservando la **dirección** de la jerarquía: las métricas se quedan
+en 12 y NO suben a 14 (el Figma las pone por debajo de la intro; a 14 empatarían).
+
+## Acento único (commit `c4aca4a`) — DD-32 + `customs-catalog §1.4`
+
+`accent = cyan` era un **resto del andamiaje**, nunca documentado, y DD-23 no revisó el
+alias. Toda la familia (`text/bg/border/icon` de accent y link + halo de foco) pasa a sky.
+No es solo estética: cyan-600 sobre blanco daba **3.46:1, bajo AA**; sky-600 da 6.80:1.
+Contrapartida obligatoria incluida: `text-on-accent`/`icon-on-accent` a **blanco** (sobre
+sky-500, slate-800 caía a 2.48:1).
+
+**Hallazgo colateral**: 38 declaraciones `outline: 2px solid var(--sc-color-cyan-500)` en
+31 ficheros hardcodeaban la primitiva del anillo de foco. Verificadas las 38 dentro de un
+`:focus-visible` antes de migrarlas a `--sc-border-focus`.
+
+## Ola 0 · código muerto (commit `ed75603`)
+
+`PageHeaderService` borrado · la copia local del confirm sustituida por la del DS (era
+duplicado verbatim; verificado que el resolver produce la MISMA clase de icono) · **14
+páginas recuperan su `<h1>`** (el modelo «todo arriba» había dejado el documento sin
+encabezado).
 
 ---
 
@@ -124,7 +184,15 @@ teclas vacías).
 
 # Decisiones que necesitan a Rafa
 
-1. **Incoherencia en la capa semántica**: `--sc-bg-info` → sky, pero
+0. **La rampa de texto atenuado está bajo AA sobre blanco** y NO se puede arreglar
+   unilateralmente: `--sc-text-subtle` (slate-400) da **2.04:1** y `--sc-text-secondary`
+   (slate-500) **2.95:1**. `subtle` es una divergencia consciente documentada
+   (`02-semantic.css:40-44`, «se ven más tenues a propósito») y `secondary` está
+   *enforced* 1:1 con el Kit por parity §6. Subirlo es conversación de marca con Figma.
+   Se ve en carne viva en el caption de la tarjeta de impacto.
+1. **Las capturas de tu material de presentación están desfasadas**: el recorrido
+   `/reglas` de sc-demo incrusta PNGs del constructor ANTERIOR al rediseño de B1.
+2. **Incoherencia en la capa semántica**: `--sc-bg-info` → sky, pero
    `--sc-text-info` → `--sc-text-accent` → **cyan-600**. Fondo sky con texto cyan.
 2. **Fondo del listado vs el constructor**: el constructor va sobre
    `--sc-bg-default` y las páginas-lista sobre `--sc-bg-surface` (blanco). No lo
