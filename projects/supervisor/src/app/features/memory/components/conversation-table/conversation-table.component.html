@@ -46,11 +46,17 @@
           [class.is-failed]="conv.hasFailedTranscription"
           class="memory-conversations-table__row"
           tabindex="0"
-          (click)="onRowClick(conv)"
-          (keydown)="onRowKeydown($event, conv)"
+          (click)="onRowClick($event, conv, $index)"
+          (keydown)="onRowKeydown($event, conv, $index)"
           (contextmenu)="$event.preventDefault(); setMenuTarget(conv) && rowMenu.toggle($event)"
         >
-          <td class="memory-conversations-table__td-select">
+          <!-- La CELDA entera toglea, no solo la casilla: el objetivo de 16px
+               es diminuto y fallarlo abría el reproductor, que es lo contrario
+               de lo que querías. Mismo patrón que `users-list-page`. -->
+          <td
+            class="memory-conversations-table__td-select"
+            (click)="onSelectCellClick($event, conv, $index)"
+          >
             <label class="memory-conversations-table__checkbox-wrap">
               <input
                 type="checkbox"
@@ -59,8 +65,8 @@
                 [attr.aria-label]="
                   'memory.conversations.select_row_aria' | translate: { id: conv.id }
                 "
-                (change)="onCheckboxChange($event, conv)"
-                (click)="$event.stopPropagation()"
+                (change)="onCheckboxChange($event, conv, $index)"
+                (click)="onCheckboxClick($event, $index)"
                 (keydown)="onCheckboxKeydown($event)"
               />
             </label>

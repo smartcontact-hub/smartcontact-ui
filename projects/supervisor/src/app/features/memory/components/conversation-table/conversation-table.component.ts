@@ -57,6 +57,10 @@ function primaryActionFor(conv: Conversation): ConversationContextAction | null 
  * Iter 6a (S38): + columna checkbox de selección al inicio. Row click pasa
  *                a togglear selección (replicando Audit A5 del prototipo
  *                Memory React).
+ * Ola 6:        ese gesto se INVIERTE. La fila abre (R1) y la casilla —su
+ *                celda entera— selecciona. Era la única tabla de la casa donde
+ *                el click de fila significaba otra cosa; un gesto que cambia
+ *                de significado según la pantalla no se puede predecir.
  * Iter S40 (#15): cluster lucide cambiado por `<sc-memory-status-icon>` —
  *                pictograma única canal+processing-state (SVGs custom de
  *                diseño Memory) + overlays failed (bottom-right) y
@@ -160,20 +164,106 @@ export class ConversationTableComponent {
     return this.analyzingIds().has(id);
   }
 
-  protected onRowClick(conv: Conversation): void {
-    this.selectionToggled.emit(conv.id);
+  /* ── R1 · el click en una fila ABRE ──────────────────────────────────────
+   *
+   * Hasta la Ola 6 esta tabla era la excepción de la casa: su fila toglea
+   * selección (Audit A5 del prototipo React) mientras las de categorías,
+   * entidades y reglas abren. El usuario no puede predecir un gesto que
+   * cambia de significado según la pantalla, así que converge — y converge
+   * hacia lo que ya afirman los tests de las hermanas y hacen Gmail, Linear,
+   * Jira y GitHub: la casilla selecciona, la fila abre.
+   *
+   * El reparto queda: fila → abre · celda de la casilla → toglea ·
+   * shift+click → rango · Enter → abre · Espacio → toglea.
+   */
+
+  /** Ancla del rango con shift+click: última fila cuya selección se tocó. */
+  private lastSelectedIndex: number | null = null;
+
+  protected onRowClick(event: MouseEvent, conv: Conversation, index: number): void {
+    // Shift+click sobre la fila selecciona rango en vez de abrir: es el gesto
+    // aprendido de cualquier gestor de ficheros, y quien lo hace no espera que
+    // se le abra un reproductor encima.
+    if (event.shiftKey) {
+      event.preventDefault();
+      this.selectRangeTo(index);
+      return;
+    }
+    this.conversationOpen.emit(conv);
   }
 
-  protected onRowKeydown(event: KeyboardEvent, conv: Conversation): void {
-    if (event.key === 'Enter' || event.key === ' ') {
+  protected onRowKeydown(event: KeyboardEvent, conv: Conversation, index: number): void {
+    // Enter ABRE (acción primaria) y Espacio SELECCIONA. Es la convención de
+    // listas de escritorio, y mantiene el teclado a la par del ratón: cada
+    // gesto tiene su equivalente.
+    if (event.key === 'Enter') {
       event.preventDefault();
-      this.selectionToggled.emit(conv.id);
+      this.conversationOpen.emit(conv);
+      return;
+    }
+    if (event.key === ' ') {
+      event.preventDefault();
+      this.toggleAt(conv, index);
     }
   }
 
-  protected onCheckboxChange(event: Event, conv: Conversation): void {
+  /** Click en cualquier punto de la celda de la casilla. */
+  protected onSelectCellClick(event: MouseEvent, conv: Conversation, index: number): void {
+    // No debe llegar a la fila: si llegara, abriría el reproductor además de
+    // seleccionar.
     event.stopPropagation();
+    if (event.shiftKey) {
+      this.selectRangeTo(index);
+      return;
+    }
+    this.toggleAt(conv, index);
+  }
+
+  /**
+   * La casilla ocupa 16px en el centro de una celda de 40, así que un click
+   * "en la celda" aterriza casi siempre AQUÍ. Si este handler solo parase la
+   * propagación, el shift+click nunca llegaría al de la celda y el rango no
+   * funcionaría al apuntar a la casilla — que es justo donde apunta todo el
+   * mundo. Por eso el rango se resuelve también aquí.
+   */
+  protected onCheckboxClick(event: MouseEvent, index: number): void {
+    event.stopPropagation();
+    if (!event.shiftKey) return;
+    // `preventDefault` evita que el toggle nativo dispare además un `change`,
+    // que desharía una de las filas del rango.
+    event.preventDefault();
+    this.selectRangeTo(index);
+  }
+
+  protected onCheckboxChange(event: Event, conv: Conversation, index: number): void {
+    event.stopPropagation();
+    this.toggleAt(conv, index);
+  }
+
+  private toggleAt(conv: Conversation, index: number): void {
+    this.lastSelectedIndex = index;
     this.selectionToggled.emit(conv.id);
+  }
+
+  /** Selecciona desde el ancla hasta `index`, ambos incluidos. Sin ancla
+   *  previa, se comporta como un toggle simple. */
+  private selectRangeTo(index: number): void {
+    const anchor = this.lastSelectedIndex;
+    const rows = this.conversations();
+    if (anchor === null) {
+      const conv = rows[index];
+      if (conv) this.toggleAt(conv, index);
+      return;
+    }
+    const [from, to] = anchor <= index ? [anchor, index] : [index, anchor];
+    const selected = this.selectedIds();
+    for (let i = from; i <= to; i++) {
+      const conv = rows[i];
+      // Solo se AÑADE al rango: arrastrar sobre filas ya marcadas no las
+      // desmarca, que es lo que espera quien viene de un gestor de ficheros.
+      if (conv && !selected.has(conv.id)) this.selectionToggled.emit(conv.id);
+    }
+    this.lastSelectedIndex = index;
   }
 
   protected onCheckboxKeydown(event: KeyboardEvent): void {
