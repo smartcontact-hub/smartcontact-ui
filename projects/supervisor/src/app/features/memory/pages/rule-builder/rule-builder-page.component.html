@@ -48,7 +48,7 @@
         <header class="rule-card__head">
           <div class="rule-card__heading">
             <h2 class="rule-card__title">
-              <span class="rule-card__num" aria-hidden="true">01.</span>
+              <span class="rule-card__num" aria-hidden="true">01</span>
               {{ 'memory.rules.builder.metadata' | translate }}
             </h2>
             <!-- Bajó de la TopBar (Ola 1): es contenido, no chrome, y arriba
@@ -154,7 +154,7 @@
         <header class="rule-card__head">
           <div class="rule-card__heading">
             <h2 class="rule-card__title">
-              <span class="rule-card__num" aria-hidden="true">02.</span>
+              <span class="rule-card__num" aria-hidden="true">02</span>
               {{ 'memory.rules.builder.scope' | translate }}
             </h2>
             <p class="rule-card__desc">{{ 'memory.rules.builder.scope_desc' | translate }}</p>
@@ -182,7 +182,7 @@
           <header class="rule-card__head">
             <div class="rule-card__heading">
               <h2 class="rule-card__title">
-                <span class="rule-card__num" aria-hidden="true">03.</span>
+                <span class="rule-card__num" aria-hidden="true">03</span>
                 <span class="rule-card__spark" aria-hidden="true">
                   <sc-icon [name]="sparklesIcon" [size]="16" />
                 </span>
@@ -326,9 +326,32 @@
                 <dt>{{ 'memory.rules.builder.cond.est_day_label' | translate }}</dt>
                 <dd>≈ {{ fmt(estimate().perDay) }}</dd>
               </div>
+              <!-- El mensual dice además si tu último cambio AMPLIÓ o REDUJO el
+                   alcance. La flecha no es decoración: el color solo no puede
+                   ser el único portador del significado (WCAG 1.4.1), y aquí
+                   además hay daltonismo rojo-verde de por medio, que es
+                   justamente el par que se usa. -->
               <div class="impact__metric">
                 <dt>{{ 'memory.rules.builder.cond.est_month_label' | translate }}</dt>
-                <dd>≈ {{ fmt(estimate().perMonth) }}</dd>
+                <dd
+                  class="impact__metric-value"
+                  [class.impact__metric-value--up]="monthTrend() === 'up'"
+                  [class.impact__metric-value--down]="monthTrend() === 'down'"
+                >
+                  @if (monthTrend(); as trend) {
+                    <span
+                      class="impact__trend"
+                      [attr.aria-label]="
+                        (trend === 'up'
+                          ? 'memory.rules.builder.cond.trend_up'
+                          : 'memory.rules.builder.cond.trend_down'
+                        ) | translate
+                      "
+                      >{{ trend === 'up' ? '↑' : '↓' }}</span
+                    >
+                  }
+                  ≈ {{ fmt(estimate().perMonth) }}
+                </dd>
               </div>
             </dl>
           }

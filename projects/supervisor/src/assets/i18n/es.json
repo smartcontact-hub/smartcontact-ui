@@ -456,7 +456,9 @@
           "scope_lead": "Se cumple si:",
           "scope_all": "todas las conversaciones",
           "impact_hero_one": "{{count}} conversación",
-          "impact_hero_other": "{{count}} conversaciones"
+          "impact_hero_other": "{{count}} conversaciones",
+          "trend_up": "El alcance ha subido respecto al cambio anterior",
+          "trend_down": "El alcance ha bajado respecto al cambio anterior"
         },
         "ai_row_recommended": "Recomendado",
         "ai_row_summary_desc": "Extrae los puntos clave y los acuerdos de cada conversación transcrita.",

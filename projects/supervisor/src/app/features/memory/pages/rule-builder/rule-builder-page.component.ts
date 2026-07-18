@@ -162,6 +162,21 @@ export class RuleBuilderPageComponent implements DirtyAware {
     hasUnevaluableConditions(this.conditionTree()),
   );
   protected readonly estimate = computed(() => projectImpact(this.impactCount(), this.impactTotal()));
+
+  /*
+   * Dirección del último cambio en el estimado mensual.
+   *
+   * La cifra se recalcula en vivo mientras construyes condiciones, así que
+   * puede decir algo más que su valor: si lo que acabas de tocar AMPLIÓ o
+   * REDUJO el alcance de la regla. Eso es lo que responde al construir un
+   * filtro — "¿me he pasado de restrictivo?" — y hasta ahora había que
+   * recordar el número anterior de cabeza.
+   *
+   * Arranca en `null` a propósito: al abrir la página no ha variado nada
+   * todavía, y pintar una flecha ahí sería inventarse una comparación.
+   */
+  protected readonly monthTrend = signal<'up' | 'down' | null>(null);
+  private lastPerMonth: number | null = null;
   /** % del tráfico que toca la regla → barra de proporción (amplia vs quirúrgica). */
   protected readonly impactPct = computed(() => {
     const total = this.impactTotal();
@@ -235,6 +250,21 @@ export class RuleBuilderPageComponent implements DirtyAware {
       // New rule: capture the baseline AFTER the preselección — so arriving from
       // the cross-link doesn't mark the fresh form as dirty.
       this.pristine.set(untracked(() => this.buildSnapshot()));
+    });
+
+    // Compara el estimado mensual con el de antes para saber si el último
+    // cambio amplió o redujo el alcance. `untracked` en la escritura: el
+    // efecto depende de `estimate()` y de nada más — si leyera su propia
+    // señal, se re-dispararía solo.
+    effect(() => {
+      const next = this.estimate().perMonth;
+      untracked(() => {
+        const prev = this.lastPerMonth;
+        if (prev !== null && next !== prev) {
+          this.monthTrend.set(next > prev ? 'up' : 'down');
+        }
+        this.lastPerMonth = next;
+      });
     });
 
     // Solo las ACCIONES suben a la TopBar. La identidad de la página la da el
