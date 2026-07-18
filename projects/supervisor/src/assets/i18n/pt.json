@@ -1523,7 +1523,8 @@
             "modal_title": "Adicionar estado",
             "modal_subtitle": "Adicione estados personalizados que ficarão visíveis para os agentes junto aos estados padrão.",
             "modal_input_label": "Novo estado",
-            "modal_input_placeholder": "Ex.: Pausa"
+            "modal_input_placeholder": "Ex.: Pausa",
+            "error_duplicate": "Esse estado já existe"
           },
           "inactividad": {
             "title": "Bloqueio de posto por inatividade",
