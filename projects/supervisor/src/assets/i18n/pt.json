@@ -442,8 +442,16 @@
             "impact_zero": "Nenhuma das últimas {{total}} conversas cumpriria estas condições.",
             "blocked": "Reveja as condições assinaladas antes de guardar.",
             "unfinished": "{{n}} por terminar"
-          }
-        }
+          },
+          "impact_lead": "Com o tráfego recente, esta regra alcançaria:",
+          "impact_unit": "conversas",
+          "impact_caption": "das últimas {{total}} analisadas",
+          "est_day_label": "Estimado por dia",
+          "est_month_label": "Estimado por mês"
+        },
+        "ai_row_recommended": "Recomendado",
+        "ai_row_summary_desc": "Extrai os pontos-chave e os acordos de cada conversa transcrita.",
+        "ai_row_sentiment_desc": "Deteta o tom e os momentos de fricção ao longo da conversa."
       }
     },
     "entities": {

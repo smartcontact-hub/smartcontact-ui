@@ -442,8 +442,16 @@
             "impact_zero": "Ninguna de las últimas {{total}} conversaciones cumpliría estas condiciones.",
             "blocked": "Revisa las condiciones marcadas antes de guardar.",
             "unfinished": "{{n}} sin terminar"
-          }
-        }
+          },
+          "impact_lead": "Con el tráfico reciente, esta regla alcanzaría:",
+          "impact_unit": "conversaciones",
+          "impact_caption": "de las últimas {{total}} analizadas",
+          "est_day_label": "Estimado al día",
+          "est_month_label": "Estimado al mes"
+        },
+        "ai_row_recommended": "Recomendado",
+        "ai_row_summary_desc": "Extrae los puntos clave y los acuerdos de cada conversación transcrita.",
+        "ai_row_sentiment_desc": "Detecta el tono y los momentos de fricción a lo largo de la conversación."
       }
     },
     "entities": {

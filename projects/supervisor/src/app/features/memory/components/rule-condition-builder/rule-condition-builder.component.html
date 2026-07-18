@@ -19,7 +19,7 @@
     @for (group of tree.groups; track trackGroup($index, group); let gi = $index) {
       @if (gi > 0) {
         <span class="connector connector--group" aria-hidden="true">
-          {{ tree.match === 'all' ? 'Y' : 'O' }}
+          <span class="connector__pill">{{ tree.match === 'all' ? 'Y' : 'O' }}</span>
         </span>
       }
 
@@ -55,7 +55,7 @@
     @for (cond of group.conditions; track trackCondition($index, cond); let ci = $index) {
       @if (ci > 0) {
         <span class="connector connector--inline" aria-hidden="true">
-          {{ group.match === 'all' ? 'Y' : 'O' }}
+          <span class="connector__pill">{{ group.match === 'all' ? 'Y' : 'O' }}</span>
         </span>
       }
 

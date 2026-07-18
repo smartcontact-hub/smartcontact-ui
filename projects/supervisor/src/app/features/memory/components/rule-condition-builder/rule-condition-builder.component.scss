@@ -2,9 +2,10 @@
  *
  * Un solo grupo (caso común) → plano: un único control de coincidencia, sin
  * caja ni toggle raíz redundante. Dos o más grupos → se revela el chrome de
- * agrupación (grupos en slate-50 + toggle raíz + conectores navy). Vive dentro
- * de un `.rule-block` (card blanca). Sin accent-stripes border-left (baneadas);
- * destaque por tint + radius. Solo tokens --sc-* existentes.
+ * agrupación (grupos hundidos sobre el fondo de página + conectores de acento).
+ * Vive dentro de una `.rule-card` (tarjeta blanca), por eso el grupo NO puede
+ * ser otra tarjeta blanca. Sin accent-stripes border-left (baneadas); destaque
+ * por tint + radius. Solo tokens --sc-* existentes.
  */
 
 :host {
@@ -37,8 +38,8 @@
     gap: var(--sc-spacing-0-875);
     padding: var(--sc-spacing-1-125);
     border: 1px dashed var(--sc-border-default);
-    border-radius: var(--sc-radius-300);
-    background: var(--sc-bg-surface);
+    border-radius: var(--sc-radius-lg);
+    background: var(--sc-bg-default);
 
     sc-icon {
       flex-shrink: 0;
@@ -251,11 +252,12 @@
   flex-direction: column;
   gap: var(--sc-spacing-0-875);
   padding: var(--sc-spacing-1-125);
-  /* Blanco (#FFFFFF) para diferenciar la caja de grupo del fondo slate-50 de la
-   * página; solo aplica en multi-grupo, que es cuando se pinta `.group`. */
-  background: var(--sc-bg-surface);
-  border: 1px solid var(--sc-border-default);
-  border-radius: var(--sc-radius-200);
+  /* La sección ya es una tarjeta blanca, así que el grupo NO puede ser otra
+   * tarjeta blanca (tarjeta-dentro-de-tarjeta). Se hunde con el fondo de página
+   * y un filo suave: agrupa sin añadir una segunda capa de elevación. */
+  background: var(--sc-bg-default);
+  border: 1px solid var(--sc-border-subtle);
+  border-radius: var(--sc-radius-lg);
 
   &__head {
     display: flex;
@@ -307,92 +309,83 @@
 
 /* ─── Conectores Y/O clicables ─── */
 
-/* Conectores Y/O — indicadores de SOLO LECTURA (el control es todas/cualquiera). */
+/* Conectores Y/O — indicadores de SOLO LECTURA (el control es todas/cualquiera).
+ * Patrón del Figma: píldora sólida de acento centrada entre dos filos que
+ * cruzan la fila. La línea hace de "costura" entre condiciones; la píldora es
+ * uno de los tres únicos sitios donde aparece el acento en la página. */
 .connector {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-875);
+  align-self: stretch;
+  margin: var(--sc-spacing-0-25) 0;
   font-family: inherit;
 
-  &--group {
-    position: relative;
-    align-self: center;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 32px;
-    height: 32px;
-    margin: var(--sc-spacing-0-25) 0;
-    border-radius: var(--sc-radius-full);
-    background: var(--sc-bg-primary);
-    color: var(--sc-text-on-primary);
-    font-size: var(--sc-font-size-100);
-    font-weight: var(--sc-font-weight-bold);
-
-    &::before {
-      content: '';
-      position: absolute;
-      left: 50%;
-      top: -8px;
-      bottom: -8px;
-      width: 1px;
-      background: var(--sc-border-default);
-      transform: translateX(-50%);
-      z-index: -1;
-    }
+  &::before,
+  &::after {
+    content: '';
+    flex: 1 1 auto;
+    height: 1px;
+    background: var(--sc-border-subtle);
   }
 
-  /* Y intra-grupo: MISMA identidad que el O entre grupos (círculo azul, texto
-   * blanco) para que el usuario relacione ambos conectores. */
-  &--inline {
-    align-self: center;
+  &__pill {
+    flex-shrink: 0;
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    width: 32px;
-    height: 32px;
+    min-width: 34px;
+    padding: 3px var(--sc-spacing-0-625);
     border-radius: var(--sc-radius-full);
-    background: var(--sc-bg-primary);
-    color: var(--sc-text-on-primary);
-    font-size: var(--sc-font-size-100);
+    background: var(--sc-bg-info);
+    color: var(--sc-text-on-info);
+    font-size: var(--sc-font-size-50);
     font-weight: var(--sc-font-weight-bold);
+    letter-spacing: 0.04em;
+    line-height: 1.4;
   }
 }
 
-/* ─── Añadir condición (dashed) ─── */
+/* ─── Añadir condición · text-button de acento con "+" (patrón del Figma) ───
+ * Deja de ser una caja dashed: la acción de añadir no compite con los controles
+ * de la fila, solo se ofrece. */
 
 .add-btn {
   display: inline-flex;
   align-items: center;
-  justify-content: center;
-  gap: var(--sc-spacing-0-25);
+  gap: var(--sc-spacing-0-375);
   align-self: flex-start;
-  padding: var(--sc-spacing-0-5) var(--sc-spacing-0-875);
-  border: 1px dashed var(--sc-border-strong, var(--sc-border-default));
-  border-radius: var(--sc-radius-200);
+  padding: var(--sc-spacing-0-375) var(--sc-spacing-0-5);
+  margin-left: calc(-1 * var(--sc-spacing-0-5));
+  border: 0;
+  border-radius: var(--sc-radius-100);
   background: transparent;
-  color: var(--sc-text-secondary);
+  color: var(--sc-color-sky-600);
   font-family: inherit;
-  font-size: var(--sc-font-size-100);
+  font-size: var(--sc-font-size-200);
   font-weight: var(--sc-font-weight-medium);
   cursor: pointer;
   transition:
     background-color 150ms ease,
-    border-color 150ms ease,
     color 150ms ease;
 
   &:hover {
-    background: var(--sc-bg-primary-subtle);
-    border-color: var(--sc-bg-primary);
-    color: var(--sc-bg-primary);
+    background: var(--sc-bg-info-subtle);
   }
 
   &:focus-visible {
-    outline: 2px solid var(--sc-color-sky-500);
+    outline: 2px solid var(--sc-border-focus);
     outline-offset: 2px;
   }
 
   &--sm {
     margin-top: var(--sc-spacing-0-25);
-    font-size: var(--sc-font-size-50);
+    font-size: var(--sc-font-size-100);
   }
+}
+
+:host-context(.sc-dark) .add-btn {
+  color: var(--sc-color-sky-400);
 }
 
 /* ─── Añadir grupo (acción secundaria, menor jerarquía) ─── */

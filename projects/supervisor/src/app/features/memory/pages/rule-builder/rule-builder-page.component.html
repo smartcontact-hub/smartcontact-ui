@@ -24,236 +24,11 @@
     </div>
   </ng-template>
 
-  <div class="rule-builder__main">
-    <div class="rule-builder__body">
-    <!-- Bloque 1: Metadatos -->
-    <section class="rule-block">
-      <header class="rule-block__head">
-        <div class="rule-block__heading">
-          <span class="rule-block__eyebrow" aria-hidden="true">01</span>
-          <h2>{{ 'memory.rules.builder.metadata' | translate }}</h2>
-        </div>
-        <div class="rule-block__active-toggle">
-          <sc-toggleswitch
-            [inputId]="'active-toggle'"
-            [checked]="active()"
-            (checkedChange)="active.set($event)"
-          />
-          <label for="active-toggle">
-            {{
-              (active()
-                ? 'memory.rules.builder.active_label'
-                : 'memory.rules.builder.inactive_label'
-              ) | translate
-            }}
-          </label>
-        </div>
-      </header>
-
-      <div class="rule-block__row">
-        <sc-inputtext
-          [label]="'memory.rules.builder.name_label' | translate"
-          [placeholder]="'memory.rules.builder.name_placeholder' | translate"
-          [required]="true"
-          [value]="name()"
-          (valueChange)="setName($event)"
-          [error]="
-            nameInvalid() && (name().length > 0 || submitted())
-              ? ('memory.rules.builder.name_error' | translate)
-              : ''
-          "
-        />
-      </div>
-
-      <!-- Descripción (opcional): el modelo y el guardado ya existían; solo
-           faltaba pintarla — coherente con el modal de categorías. -->
-      <div class="rule-block__row">
-        <label for="rule-description" class="rule-builder__field-label">
-          {{ 'memory.rules.builder.description_label' | translate }}
-        </label>
-        <sc-textarea
-          [inputId]="'rule-description'"
-          [rows]="2"
-          [fluid]="true"
-          [placeholder]="'memory.rules.builder.description_placeholder' | translate"
-          [value]="description()"
-          (valueChange)="setDescription($event)"
-        />
-      </div>
-    </section>
-
-    <!-- Descripción en vivo del alcance ("Se cumple si…") — encima del 02.
-         Campos y valores en negrita; conectores Y/O como badges azules. -->
-    @let scope = scopeDescription();
-    <div class="scope-desc" aria-live="polite">
-      <span class="scope-desc__lead">Se cumple si:</span>
-      @if (scope.empty) {
-        <span class="scope-desc__all">todas las conversaciones</span>
-      } @else {
-        @for (group of scope.groups; track $index; let gi = $index) {
-          @if (gi > 0) {
-            <span class="cond-badge">{{ scope.rootJoin }}</span>
-          }
-          @if (scope.groups.length > 1) {
-            <span class="scope-desc__paren">(</span>
-          }
-          @for (c of group.conditions; track $index; let ci = $index) {
-            @if (ci > 0) {
-              <span class="cond-badge">{{ group.join }}</span>
-            }
-            <strong class="scope-desc__field">{{ c.field }}</strong>
-            <span class="scope-desc__op">{{ c.operator }}</span>
-            <strong class="scope-desc__val">{{ c.value }}</strong>
-          }
-          @if (scope.groups.length > 1) {
-            <span class="scope-desc__paren">)</span>
-          }
-        }
-      }
-    </div>
-
-    <!-- Bloque 2: Alcance — constructor de condiciones (Variante B: match
-         all/any · AND/OR · grupos). Reemplaza las 3 dimensiones rígidas. -->
-    <section class="rule-block">
-      <header class="rule-block__head">
-        <div class="rule-block__heading">
-          <span class="rule-block__eyebrow" aria-hidden="true">02</span>
-          <h2>{{ 'memory.rules.builder.scope' | translate }}</h2>
-          <p class="rule-block__desc">{{ 'memory.rules.builder.scope_desc' | translate }}</p>
-        </div>
-      </header>
-
-      <sc-rule-condition-builder [(value)]="conditionTree" [revealEmpty]="submitted()" />
-    </section>
-
-    <!-- Análisis IA (tipos Transcription + Classification). Dirección y duración
-         son ahora campos del builder (Alcance), no un bloque aparte. -->
-    @if (ruleType() === 'transcription' || ruleType() === 'classification') {
-      <!-- Sub-bloque Análisis IA · resumen + sentimiento; "categorías a DETECTAR"
-           (distinto del campo "Categoría IA" del builder, que FILTRA). -->
-      <section class="rule-block rule-block--ai">
-        <header class="rule-block__head">
-          <div class="rule-block__heading">
-            <span class="rule-block__eyebrow" aria-hidden="true">03</span>
-            <h2>
-              <span class="rule-block__ai-spark" aria-hidden="true">
-                <sc-icon [name]="sparklesIcon" [size]="15" />
-              </span>
-              {{ 'memory.rules.builder.ai_analysis' | translate }}
-            </h2>
-            <p class="rule-block__desc">
-              {{ 'memory.rules.builder.ai_analysis_desc' | translate }}
-            </p>
-          </div>
-          <sc-toggleswitch
-            [inputId]="'ai-toggle'"
-            [checked]="aiAnalysis()"
-            (checkedChange)="aiAnalysis.set($event)"
-            [ariaLabel]="'memory.rules.builder.ai_analysis' | translate"
-          />
-        </header>
-
-        <!-- Reveal con grid-template-rows → expande suave, sin layout shift de golpe. -->
-        <div class="rule-builder__ai-reveal" [class.rule-builder__ai-reveal--open]="aiAnalysis()">
-          <div class="rule-builder__ai-reveal-inner">
-            <div class="rule-builder__ai-chips">
-              <span class="rule-builder__ai-chip">
-                {{ 'memory.rules.builder.ai_chip_summary' | translate }}
-              </span>
-              <span class="rule-builder__ai-chip">
-                {{ 'memory.rules.builder.ai_chip_sentiment' | translate }}
-              </span>
-            </div>
-
-            <!-- Selector Categorías IA · solo classification (S49 §10 #13).
-                 El listado vacío muestra CTA "Crear categoría" → /conversaciones/categorias. -->
-            @if (ruleType() === 'classification') {
-              <div class="rule-builder__ai-categories">
-                <header class="rule-builder__ai-categories-head">
-                  <h3>{{ 'memory.rules.builder.categorias_label' | translate }}</h3>
-                  <a
-                    class="rule-builder__ai-categories-link"
-                    routerLink="/conversaciones/categorias"
-                    target="_blank"
-                    rel="noopener"
-                  >
-                    <sc-icon [name]="externalIcon" size="inherit" />
-                    {{ 'memory.rules.builder.categorias_manage' | translate }}
-                  </a>
-                </header>
-                @if (categoryOptions().length > 0) {
-                  <sc-multiselect
-                    [options]="categoryOptions()"
-                    optionLabel="label"
-                    optionValue="value"
-                    [placeholder]="'memory.rules.builder.categorias_placeholder' | translate"
-                    [filter]="true"
-                    [value]="[...categorias()]"
-                    (valueChange)="setCategorias($event)"
-                  />
-                  <p class="rule-builder__field-hint">
-                    {{ 'memory.rules.builder.categorias_hint' | translate }}
-                  </p>
-                } @else {
-                  <div class="rule-builder__ai-categories-empty">
-                    <p>{{ 'memory.rules.builder.categorias_empty' | translate }}</p>
-                  </div>
-                }
-              </div>
-            }
-          </div>
-        </div>
-      </section>
-    }
-  </div>
-
-    <aside class="rule-builder__aside">
-      <div class="rule-builder__impact" aria-live="polite">
-        <p class="rule-builder__impact-label">
-          <sc-icon name="leaderboard" [size]="14" aria-hidden="true" />
-          {{ 'memory.rules.builder.cond.impact_title' | translate }}
-        </p>
-        @if (showEmptyImpact()) {
-          <p class="rule-builder__impact-empty">
-            <sc-icon name="warning" [size]="14" aria-hidden="true" />
-            {{ 'memory.rules.builder.cond.val.impact_zero' | translate: { total: impactTotal() } }}
-          </p>
-        } @else {
-          <p class="rule-builder__impact-main">
-            {{ 'memory.rules.builder.cond.impact' | translate: { count: impactCount(), total: impactTotal() } }}
-          </p>
-          @if (hasUnevaluable()) {
-            <p class="rule-builder__impact-note">
-              {{ 'memory.rules.builder.cond.impact_note' | translate }}
-            </p>
-          } @else {
-            <div class="rule-builder__impact-bar" aria-hidden="true">
-              <span class="rule-builder__impact-bar-fill" [style.width.%]="impactPct()"></span>
-            </div>
-            <p class="rule-builder__impact-proj">
-              {{
-                'memory.rules.builder.cond.est_projection'
-                  | translate: { day: fmt(estimate().perDay), month: fmt(estimate().perMonth) }
-              }}
-            </p>
-          }
-        }
-      </div>
-    </aside>
-  </div>
-
-  <div class="rule-builder__dock">
-    <footer class="rule-builder__foot">
-      @if (submitted() && condBlocking()) {
-        <p class="rule-builder__save-blocked">
-          <sc-icon name="error" [size]="14" />
-          {{ 'memory.rules.builder.cond.val.blocked' | translate }}
-        </p>
-      } @else if (unfinishedCount() > 0) {
-        <p class="rule-builder__unfinished">
-          {{ 'memory.rules.builder.cond.val.unfinished' | translate: { n: unfinishedCount() } }}
-        </p>
-      }
+  <!-- Acciones primarias proyectadas a la TopBar (`topBarSlot.setActions`): el
+       guardar sube del dock inferior a la barra, junto a la navegación. Mismo
+       mecanismo que ya usa el listado. -->
+  <ng-template #topbarActions>
+    <div class="rule-builder__actions">
       <sc-button type="button" size="sm" variant="secondary" (clicked)="onCancel()">
         <span>{{ 'common.cancel' | translate }}</span>
       </sc-button>
@@ -266,6 +41,288 @@
           }
         </span>
       </sc-button>
-    </footer>
+    </div>
+  </ng-template>
+
+  <div class="rule-builder__main">
+    <div class="rule-builder__form">
+      <!-- Solo el error que BLOQUEA sube aquí: la acción que lo dispara vive
+           ahora en la TopBar, así que su feedback va a su lado. La guía suave de
+           "condiciones sin terminar" NO sube — acusaría en un formulario recién
+           abierto; vive junto a las condiciones que describe (tarjeta 02). -->
+      @if (submitted() && condBlocking()) {
+        <p class="rule-notice rule-notice--error" aria-live="polite">
+          <sc-icon name="error" [size]="15" aria-hidden="true" />
+          {{ 'memory.rules.builder.cond.val.blocked' | translate }}
+        </p>
+      }
+
+      <!-- ── 01 · Información básica ── -->
+      <section class="rule-card">
+        <header class="rule-card__head">
+          <h2 class="rule-card__title">
+            <span class="rule-card__num" aria-hidden="true">01.</span>
+            {{ 'memory.rules.builder.metadata' | translate }}
+          </h2>
+          <div class="rule-card__control">
+            <label for="active-toggle">
+              {{
+                (active()
+                  ? 'memory.rules.builder.active_label'
+                  : 'memory.rules.builder.inactive_label'
+                ) | translate
+              }}
+            </label>
+            <sc-toggleswitch
+              [inputId]="'active-toggle'"
+              [checked]="active()"
+              (checkedChange)="active.set($event)"
+            />
+          </div>
+        </header>
+
+        <div class="rule-card__body">
+          <sc-inputtext
+            [label]="'memory.rules.builder.name_label' | translate"
+            [placeholder]="'memory.rules.builder.name_placeholder' | translate"
+            [required]="true"
+            [value]="name()"
+            (valueChange)="setName($event)"
+            [error]="
+              nameInvalid() && (name().length > 0 || submitted())
+                ? ('memory.rules.builder.name_error' | translate)
+                : ''
+            "
+          />
+
+          <!-- Descripción (opcional): el modelo y el guardado ya existían; solo
+               faltaba pintarla — coherente con el modal de categorías. -->
+          <div class="rule-field">
+            <label for="rule-description" class="rule-field__label">
+              {{ 'memory.rules.builder.description_label' | translate }}
+            </label>
+            <sc-textarea
+              [inputId]="'rule-description'"
+              [rows]="2"
+              [fluid]="true"
+              [placeholder]="'memory.rules.builder.description_placeholder' | translate"
+              [value]="description()"
+              (valueChange)="setDescription($event)"
+            />
+          </div>
+
+          <!-- Descripción en vivo del alcance ("Se cumple si…") — caja TINTADA
+               dentro de esta tarjeta, no un cajón gris suelto entre secciones.
+               Campos y valores en negrita; conectores Y/O como badges. -->
+          @let scope = scopeDescription();
+          <div class="scope-desc" aria-live="polite">
+            <sc-icon class="scope-desc__icon" name="info" [size]="15" aria-hidden="true" />
+            <span class="scope-desc__body">
+              <span class="scope-desc__lead">Se cumple si:</span>
+              @if (scope.empty) {
+                <span class="scope-desc__all">todas las conversaciones</span>
+              } @else {
+                @for (group of scope.groups; track $index; let gi = $index) {
+                  @if (gi > 0) {
+                    <span class="cond-badge">{{ scope.rootJoin }}</span>
+                  }
+                  @if (scope.groups.length > 1) {
+                    <span class="scope-desc__paren">(</span>
+                  }
+                  @for (c of group.conditions; track $index; let ci = $index) {
+                    @if (ci > 0) {
+                      <span class="cond-badge">{{ group.join }}</span>
+                    }
+                    <strong class="scope-desc__field">{{ c.field }}</strong>
+                    <span class="scope-desc__op">{{ c.operator }}</span>
+                    <strong class="scope-desc__val">{{ c.value }}</strong>
+                  }
+                  @if (scope.groups.length > 1) {
+                    <span class="scope-desc__paren">)</span>
+                  }
+                }
+              }
+            </span>
+          </div>
+        </div>
+      </section>
+
+      <!-- ── 02 · Alcance — constructor de condiciones (match all/any · Y/O ·
+           grupos). Reemplaza las 3 dimensiones rígidas. ── -->
+      <section class="rule-card">
+        <header class="rule-card__head">
+          <div class="rule-card__heading">
+            <h2 class="rule-card__title">
+              <span class="rule-card__num" aria-hidden="true">02.</span>
+              {{ 'memory.rules.builder.scope' | translate }}
+            </h2>
+            <p class="rule-card__desc">{{ 'memory.rules.builder.scope_desc' | translate }}</p>
+          </div>
+        </header>
+
+        <div class="rule-card__body">
+          <sc-rule-condition-builder [(value)]="conditionTree" [revealEmpty]="submitted()" />
+
+          <!-- Guía proactiva SUTIL (mientras construyes): cuántas condiciones
+               quedan sin valor. Texto tenue, sin caja ni icono de alerta — no
+               es un error hasta que se intenta guardar. -->
+          @if (unfinishedCount() > 0) {
+            <p class="rule-hint" aria-live="polite">
+              {{ 'memory.rules.builder.cond.val.unfinished' | translate: { n: unfinishedCount() } }}
+            </p>
+          }
+        </div>
+      </section>
+
+      <!-- ── 03 · Análisis IA (tipos Transcription + Classification). Dirección y
+           duración son campos del builder (Alcance), no un bloque aparte. ── -->
+      @if (ruleType() === 'transcription' || ruleType() === 'classification') {
+        <section class="rule-card">
+          <header class="rule-card__head">
+            <div class="rule-card__heading">
+              <h2 class="rule-card__title">
+                <span class="rule-card__num" aria-hidden="true">03.</span>
+                <span class="rule-card__spark" aria-hidden="true">
+                  <sc-icon [name]="sparklesIcon" [size]="16" />
+                </span>
+                {{ 'memory.rules.builder.ai_analysis' | translate }}
+              </h2>
+              <p class="rule-card__desc">
+                {{ 'memory.rules.builder.ai_analysis_desc' | translate }}
+              </p>
+            </div>
+            <div class="rule-card__control">
+              <sc-toggleswitch
+                [inputId]="'ai-toggle'"
+                [checked]="aiAnalysis()"
+                (checkedChange)="aiAnalysis.set($event)"
+                [ariaLabel]="'memory.rules.builder.ai_analysis' | translate"
+              />
+            </div>
+          </header>
+
+          <!-- Reveal con grid-template-rows → expande suave, sin layout shift de golpe. -->
+          <div class="rule-builder__ai-reveal" [class.rule-builder__ai-reveal--open]="aiAnalysis()">
+            <div class="rule-builder__ai-reveal-inner">
+              <div class="rule-card__body">
+                <!-- Lo que hace el análisis, como filas descriptivas separadas por
+                     filos. NO son toggles independientes: el modelo tiene UN flag
+                     (`aiAnalysis`) y pintar dos interruptores sería mentir. -->
+                <ul class="ai-rows">
+                  <li class="ai-row">
+                    <p class="ai-row__title">
+                      {{ 'memory.rules.builder.ai_chip_summary' | translate }}
+                      <span class="ai-row__badge">{{
+                        'memory.rules.builder.ai_row_recommended' | translate
+                      }}</span>
+                    </p>
+                    <p class="ai-row__desc">
+                      {{ 'memory.rules.builder.ai_row_summary_desc' | translate }}
+                    </p>
+                  </li>
+                  <li class="ai-row">
+                    <p class="ai-row__title">
+                      {{ 'memory.rules.builder.ai_chip_sentiment' | translate }}
+                    </p>
+                    <p class="ai-row__desc">
+                      {{ 'memory.rules.builder.ai_row_sentiment_desc' | translate }}
+                    </p>
+                  </li>
+                </ul>
+
+                <!-- Selector Categorías IA · solo classification (S49 §10 #13).
+                     El listado vacío muestra CTA → /conversaciones/categorias. -->
+                @if (ruleType() === 'classification') {
+                  <div class="rule-builder__ai-categories">
+                    <header class="rule-builder__ai-categories-head">
+                      <h3>{{ 'memory.rules.builder.categorias_label' | translate }}</h3>
+                      <a
+                        class="rule-builder__ai-categories-link"
+                        routerLink="/conversaciones/categorias"
+                        target="_blank"
+                        rel="noopener"
+                      >
+                        <sc-icon [name]="externalIcon" size="inherit" />
+                        {{ 'memory.rules.builder.categorias_manage' | translate }}
+                      </a>
+                    </header>
+                    @if (categoryOptions().length > 0) {
+                      <sc-multiselect
+                        [options]="categoryOptions()"
+                        optionLabel="label"
+                        optionValue="value"
+                        [placeholder]="'memory.rules.builder.categorias_placeholder' | translate"
+                        [filter]="true"
+                        [value]="[...categorias()]"
+                        (valueChange)="setCategorias($event)"
+                      />
+                      <p class="rule-field__hint">
+                        {{ 'memory.rules.builder.categorias_hint' | translate }}
+                      </p>
+                    } @else {
+                      <div class="rule-builder__ai-categories-empty">
+                        <p>{{ 'memory.rules.builder.categorias_empty' | translate }}</p>
+                      </div>
+                    }
+                  </div>
+                }
+              </div>
+            </div>
+          </div>
+        </section>
+      }
+    </div>
+
+    <!-- ── Aside de impacto: tarjeta hermana del formulario en su PROPIA columna
+         de grid (no flota encima) — a anchos medios apila, nunca se solapa. ── -->
+    <aside class="rule-builder__aside">
+      <div class="impact" aria-live="polite">
+        <p class="impact__label">
+          <sc-icon name="leaderboard" [size]="15" aria-hidden="true" />
+          {{ 'memory.rules.builder.cond.impact_title' | translate }}
+        </p>
+
+        @if (showEmptyImpact()) {
+          <p class="impact__empty">
+            <sc-icon name="warning" [size]="15" aria-hidden="true" />
+            {{ 'memory.rules.builder.cond.val.impact_zero' | translate: { total: impactTotal() } }}
+          </p>
+        } @else {
+          <p class="impact__lead">{{ 'memory.rules.builder.cond.impact_lead' | translate }}</p>
+
+          <p class="impact__hero">
+            <span class="impact__hero-num">{{ fmt(impactCount()) }}</span>
+            <span class="impact__hero-unit">{{
+              'memory.rules.builder.cond.impact_unit' | translate
+            }}</span>
+          </p>
+          <p class="impact__caption">
+            {{
+              'memory.rules.builder.cond.impact_caption' | translate: { total: impactTotal() }
+            }}
+          </p>
+
+          @if (hasUnevaluable()) {
+            <p class="impact__note">
+              {{ 'memory.rules.builder.cond.impact_note' | translate }}
+            </p>
+          } @else {
+            <div class="impact__bar" aria-hidden="true">
+              <span class="impact__bar-fill" [style.width.%]="impactPct()"></span>
+            </div>
+            <dl class="impact__metrics">
+              <div class="impact__metric">
+                <dt>{{ 'memory.rules.builder.cond.est_day_label' | translate }}</dt>
+                <dd>≈ {{ fmt(estimate().perDay) }}</dd>
+              </div>
+              <div class="impact__metric">
+                <dt>{{ 'memory.rules.builder.cond.est_month_label' | translate }}</dt>
+                <dd>≈ {{ fmt(estimate().perMonth) }}</dd>
+              </div>
+            </dl>
+          }
+        }
+      </div>
+    </aside>
   </div>
 </div>

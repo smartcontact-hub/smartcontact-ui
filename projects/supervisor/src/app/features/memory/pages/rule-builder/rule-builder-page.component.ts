@@ -97,6 +97,11 @@ export class RuleBuilderPageComponent implements DirtyAware {
    *  al avatar — sustituye la banda de header propia. */
   private readonly topbarHeader = viewChild<TemplateRef<unknown>>('topbarHeader');
 
+  /** Acciones primarias (Cancelar / Crear) proyectadas a la TopBar — suben del
+   *  dock inferior, que desaparece: guardar deja de vivir lejos de la
+   *  navegación (feedback del recorrido del 1-jul). */
+  private readonly topbarActions = viewChild<TemplateRef<unknown>>('topbarActions');
+
   /** Catálogo de categorías IA para el selector — solo activas + sólo
    *  visible en `type: 'classification'`. Spec S49 §10 #13. */
   protected readonly categoryOptions = computed(() =>
@@ -242,8 +247,13 @@ export class RuleBuilderPageComponent implements DirtyAware {
     afterNextRender(() => {
       const tpl = this.topbarHeader();
       if (tpl) this.topBarSlot.setLead(tpl);
+      const actions = this.topbarActions();
+      if (actions) this.topBarSlot.setActions(actions);
     });
-    this.destroyRef.onDestroy(() => this.topBarSlot.clearLead());
+    this.destroyRef.onDestroy(() => {
+      this.topBarSlot.clearLead();
+      this.topBarSlot.clearActions();
+    });
   }
 
   private loadFromRule(rule: Rule): void {
