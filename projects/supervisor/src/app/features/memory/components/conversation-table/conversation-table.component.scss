@@ -76,7 +76,7 @@
     }
 
     &:focus-visible {
-      outline: 2px solid var(--sc-color-sky-500);
+      outline: 2px solid var(--sc-border-focus);
       outline-offset: -2px;
     }
   }
@@ -150,7 +150,7 @@
     cursor: pointer;
 
     &:focus-visible {
-      outline: 2px solid var(--sc-color-sky-500);
+      outline: 2px solid var(--sc-border-focus);
       outline-offset: 2px;
       border-radius: var(--sc-radius-50);
     }
@@ -303,7 +303,7 @@
     background: var(--sc-bg-elevated);
   }
   &:focus-visible {
-    outline: 2px solid var(--sc-color-sky-500);
+    outline: 2px solid var(--sc-border-focus);
     outline-offset: 2px;
   }
 
