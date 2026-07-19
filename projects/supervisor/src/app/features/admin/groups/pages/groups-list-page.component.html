@@ -69,7 +69,9 @@
           [sortOrder]="tableSortOrder()"
           (sortChange)="onSortChange($event)"
           [rowStyleClass]="rowClass()"
-          (rowClick)="onRowClick($event.row)"
+          rowsFocusable
+        (rowClick)="onRowClick($event.row)"
+        (rowKeydown)="onRowKeydown($event)"
           (rowContextMenu)="onRowContextMenu($event, rowMenu)"
           data-testid="groups-table"
         >

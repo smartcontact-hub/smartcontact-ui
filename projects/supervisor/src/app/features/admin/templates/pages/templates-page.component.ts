@@ -148,7 +148,7 @@ export class TemplatesPageComponent {
       width: '112px',
       cellTemplate: this.updatedTpl(),
     },
-    { field: 'actions', header: '', width: '48px', cellTemplate: this.actionsTpl() },
+    { field: 'actions', stopRowClick: true, header: '', width: '48px', cellTemplate: this.actionsTpl() },
   ]);
 
   /* Puente de selección: `selectedIds` sigue siendo la fuente de verdad (de

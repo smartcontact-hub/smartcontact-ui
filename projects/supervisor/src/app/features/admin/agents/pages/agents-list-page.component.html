@@ -69,7 +69,9 @@
           [selection]="selectedAgents()"
           (selectionChange)="onSelectionChange($any($event))"
           (sortChange)="onSortChange($event)"
-          (rowClick)="onRowClick($event.row)"
+          rowsFocusable
+        (rowClick)="onRowClick($event.row)"
+        (rowKeydown)="onRowKeydown($event)"
           (rowContextMenu)="onRowContextMenu($event, rowMenu)"
           data-testid="agents-table"
         >

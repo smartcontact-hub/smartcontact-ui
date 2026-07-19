@@ -172,7 +172,7 @@ export class RepoListPageComponent<T extends RepoEntity> {
         cellTemplate: cell,
       })),
       // Columna sin datos: `field` es solo su identidad.
-      { field: '__actions', header: '', width: '48px', cellTemplate: actions },
+      { field: '__actions', stopRowClick: true, header: '', width: '48px', cellTemplate: actions },
     ];
   });
 
