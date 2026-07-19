@@ -181,8 +181,18 @@
     opacity: 0.6;
   }
 
+  /* Los cuatro tintes de fila iban a paleta CRUDA, que no se remapea en
+   * oscuro. Al componerse sobre la fila oscura no quedaban "claros" (0.24 de
+   * luminancia, así que la primera versión de `dark-surfaces.spec` ni los
+   * veía) pero sí lo bastante claros para matar el texto de encima: el id de
+   * la conversación medía 1.30:1 sobre la fila fallida.
+   *
+   * Pasan a la rampa `--sc-bg-*-subtle`, que es exactamente esto: un tinte de
+   * estado con valor propio en cada tema. En claro el aspecto se conserva
+   * —`X-100` al 50% sobre blanco es prácticamente `X-50`, que es lo que vale
+   * la rampa. */
   tr.is-selected:not(.is-deleted) {
-    background: var(--sc-color-slate-100);
+    background: var(--sc-bg-secondary-hover);
   }
 
   /* Estado de procesamiento (mock dispatch). Amber para transcribing,
@@ -190,7 +200,7 @@
    * siga siendo legible. El barrido animado tipo "shimmer" comunica
    * actividad sin spinner por fila. */
   tr.is-processing:not(.is-deleted) {
-    background: color-mix(in srgb, var(--sc-color-amber-100) 50%, transparent);
+    background: var(--sc-bg-warning-subtle);
     position: relative;
     overflow: hidden;
 
@@ -210,7 +220,7 @@
   }
 
   tr.is-analyzing:not(.is-deleted) {
-    background: color-mix(in srgb, var(--sc-color-blue-100) 50%, transparent);
+    background: var(--sc-bg-primary-subtle);
     position: relative;
     overflow: hidden;
 
@@ -239,16 +249,16 @@
    * y se está reintentando, gane el estado in-flight (intent: "estoy
    * trabajando ahora", no "fallé antes"). */
   tr.is-failed:not(.is-deleted):not(.is-processing):not(.is-analyzing) {
-    background: color-mix(in srgb, var(--sc-color-red-100) 50%, transparent);
+    background: var(--sc-bg-danger-subtle);
 
     &:hover {
-      background: color-mix(in srgb, var(--sc-color-red-200) 50%, transparent);
+      background: var(--sc-bg-danger-subtle-hover);
     }
   }
 
   /* Selected gana sobre failed (consistencia con is-selected over otros tints). */
   tr.is-failed.is-selected:not(.is-deleted):not(.is-processing):not(.is-analyzing) {
-    background: var(--sc-color-slate-100);
+    background: var(--sc-bg-secondary-hover);
   }
 }
 
@@ -324,7 +334,16 @@
     height: 16px;
     padding: 0 4px;
     border-radius: var(--sc-radius-full);
-    background: var(--sc-text-info);
+    /* Usaba `--sc-text-info` como FONDO — el reverso del error de
+     * `.entity-type-chip`, que usaba un fondo como texto. En oscuro
+     * `--sc-text-info` sube a un azul claro y el blanco de encima se quedaba
+     * en 3.15:1. `--sc-bg-info` es el relleno, vale sky-500 en los dos temas
+     * y da 4.90:1 con blanco.
+     *
+     * El blanco SÍ va en paleta cruda a propósito: el relleno es estable
+     * entre temas, así que la tinta también tiene que serlo. `--sc-text-inverse`
+     * voltearía a slate-900 en oscuro y dejaría texto negro sobre azul. */
+    background: var(--sc-bg-info);
     color: var(--sc-color-slate-0);
     font-size: var(--sc-font-size-50);
     font-weight: var(--sc-font-weight-semibold);
