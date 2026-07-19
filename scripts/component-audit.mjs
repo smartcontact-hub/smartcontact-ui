@@ -51,6 +51,23 @@ export function analyzeComponent({ name, tsText, htmlText, pagesText, supervisor
   const provenance = primeng.length ? 'WRAPPER' : 'CUSTOM';
   const cva = /ControlValueAccessor|NG_VALUE_ACCESSOR/.test(tsText);
   const inputs = (tsText.match(/(?:^|[^.\w])input\s*[<(]/g) || []).length + (tsText.match(/@Input\(/g) || []).length;
+
+  /* Los NOMBRES de la API pública, no solo cuántos hay.
+   *
+   * Con un conteo, añadir o quitar un input se caza (11 → 10 desfasa el
+   * manifiesto y el audit se pone rojo), pero un RENAME es invisible: el número
+   * no se mueve. Y un rename es justo el cambio que rompe a un consumidor.
+   * Guardando los nombres, cualquier cambio de la superficie del DS aparece en
+   * el diff del manifiesto y hay que mirarlo a conciencia antes de commitear.
+   *
+   * Es la instantánea de `public-api` que hacía falta, sin script nuevo ni
+   * comando nuevo que recordar: vive dentro del audit que ya corría. */
+  const nombresApi = [
+    ...new Set([
+      ...[...tsText.matchAll(/readonly\s+(\w+)\s*=\s*(?:input|model|output)\s*[<(]/g)].map((m) => m[1]),
+      ...[...tsText.matchAll(/@(?:Input|Output)\(\)\s*(?:readonly\s+)?(\w+)/g)].map((m) => m[1]),
+    ]),
+  ].sort();
   // sub-clasificación de wrappers: override > heurística (CVA o API propia rica).
   let kind = provenance;
   if (provenance === 'WRAPPER') {
@@ -67,7 +84,7 @@ export function analyzeComponent({ name, tsText, htmlText, pagesText, supervisor
     pagesText.includes(`'${selector.replace(/^sc-/, '')}'`) ||
     pagesText.includes(`'${deHyphen}'`);
   const usedInSupervisor = (supervisorBlob.match(new RegExp(`<${selector}[\\s>]`, 'g')) || []).length;
-  return { name, selector, provenance, kind, primengBase: primeng.map((p) => `primeng/${p}`).join(', ') || '—', cva, inputs, nested, hasDemo, usedInSupervisor };
+  return { name, selector, provenance, kind, primengBase: primeng.map((p) => `primeng/${p}`).join(', ') || '—', cva, inputs, api: nombresApi, nested, hasDemo, usedInSupervisor };
 }
 
 /** Recorre todos los componentes. */

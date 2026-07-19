@@ -10,6 +10,20 @@
       "primengBase": "primeng/avatar, primeng/overlaybadge",
       "cva": false,
       "inputs": 11,
+      "api": [
+        "ariaLabel",
+        "badge",
+        "badgeVariant",
+        "icon",
+        "illustrationBase",
+        "illustrationName",
+        "illustrationPool",
+        "image",
+        "imageError",
+        "label",
+        "shape",
+        "size"
+      ],
       "nested": [],
       "hasDemo": true,
       "usedInSupervisor": 0
@@ -22,6 +36,11 @@
       "primengBase": "primeng/badge",
       "cva": false,
       "inputs": 3,
+      "api": [
+        "label",
+        "size",
+        "variant"
+      ],
       "nested": [],
       "hasDemo": true,
       "usedInSupervisor": 0
@@ -34,6 +53,9 @@
       "primengBase": "—",
       "cva": false,
       "inputs": 0,
+      "api": [
+        "clear"
+      ],
       "nested": [],
       "hasDemo": true,
       "usedInSupervisor": 10
@@ -46,6 +68,10 @@
       "primengBase": "primeng/button",
       "cva": false,
       "inputs": 1,
+      "api": [
+        "buttonLabel",
+        "commit"
+      ],
       "nested": [
         "sc-select"
       ],
@@ -60,6 +86,26 @@
       "primengBase": "—",
       "cva": false,
       "inputs": 16,
+      "api": [
+        "alreadyProcessedCount",
+        "analysisCount",
+        "chatsPendingAnalysisCount",
+        "closeRequested",
+        "closed",
+        "excludedInProgressCount",
+        "multiSegmentCallsCount",
+        "newCallsCount",
+        "partialSegmentConversationsCount",
+        "processRequested",
+        "processed",
+        "readyToAnalyzeIds",
+        "readyToTranscribeIds",
+        "selectedCount",
+        "styleClass",
+        "surface",
+        "transcribedCallsPendingAnalysisCount",
+        "transcriptionCount"
+      ],
       "nested": [
         "sc-button",
         "sc-toggleswitch"
@@ -75,6 +121,24 @@
       "primengBase": "primeng/button",
       "cva": false,
       "inputs": 15,
+      "api": [
+        "appearance",
+        "ariaLabel",
+        "clicked",
+        "disabled",
+        "fullWidth",
+        "icon",
+        "iconAriaLabel",
+        "iconFilled",
+        "iconPosition",
+        "iconSize",
+        "label",
+        "loading",
+        "rounded",
+        "size",
+        "type",
+        "variant"
+      ],
       "nested": [],
       "hasDemo": true,
       "usedInSupervisor": 61
@@ -87,6 +151,10 @@
       "primengBase": "primeng/card",
       "cva": false,
       "inputs": 2,
+      "api": [
+        "header",
+        "subheader"
+      ],
       "nested": [],
       "hasDemo": true,
       "usedInSupervisor": 0
@@ -99,6 +167,14 @@
       "primengBase": "—",
       "cva": false,
       "inputs": 5,
+      "api": [
+        "ariaLabel",
+        "cycle",
+        "disabled",
+        "filled",
+        "inputId",
+        "size"
+      ],
       "nested": [],
       "hasDemo": true,
       "usedInSupervisor": 16
@@ -111,6 +187,19 @@
       "primengBase": "primeng/chip",
       "cva": false,
       "inputs": 9,
+      "api": [
+        "alt",
+        "disabled",
+        "icon",
+        "image",
+        "imageError",
+        "label",
+        "labelColor",
+        "removable",
+        "removeAriaLabel",
+        "removed",
+        "variant"
+      ],
       "nested": [],
       "hasDemo": true,
       "usedInSupervisor": 1
@@ -123,6 +212,9 @@
       "primengBase": "—",
       "cva": false,
       "inputs": 1,
+      "api": [
+        "ariaLabel"
+      ],
       "nested": [],
       "hasDemo": true,
       "usedInSupervisor": 3
@@ -135,6 +227,11 @@
       "primengBase": "primeng/popover",
       "cva": false,
       "inputs": 1,
+      "api": [
+        "buttonLabel",
+        "orderedVisibleChange",
+        "visibilityChange"
+      ],
       "nested": [],
       "hasDemo": true,
       "usedInSupervisor": 3
@@ -147,6 +244,7 @@
       "primengBase": "—",
       "cva": false,
       "inputs": 0,
+      "api": [],
       "nested": [],
       "hasDemo": true,
       "usedInSupervisor": 4
@@ -159,6 +257,7 @@
       "primengBase": "primeng/confirmdialog",
       "cva": false,
       "inputs": 0,
+      "api": [],
       "nested": [],
       "hasDemo": true,
       "usedInSupervisor": 1
@@ -171,6 +270,40 @@
       "primengBase": "primeng/table",
       "cva": false,
       "inputs": 24,
+      "api": [
+        "columns",
+        "dataKey",
+        "filterChange",
+        "filters",
+        "globalFilterFields",
+        "lazy",
+        "lazyLoad",
+        "loading",
+        "page",
+        "paginator",
+        "rowClick",
+        "rowContextMenu",
+        "rowKeydown",
+        "rowSelectionAriaLabel",
+        "rowStyleClass",
+        "rows",
+        "rowsFocusable",
+        "rowsPerPageOptions",
+        "scrollHeight",
+        "scrollable",
+        "selectAllAriaLabel",
+        "selection",
+        "selectionMode",
+        "showGridlines",
+        "size",
+        "sortChange",
+        "sortField",
+        "sortOrder",
+        "stripedRows",
+        "totalRecords",
+        "value",
+        "visibleColumns"
+      ],
       "nested": [],
       "hasDemo": true,
       "usedInSupervisor": 18
@@ -183,6 +316,27 @@
       "primengBase": "primeng/datepicker",
       "cva": true,
       "inputs": 17,
+      "api": [
+        "dateFormat",
+        "disabled",
+        "error",
+        "helperText",
+        "inline",
+        "inputId",
+        "label",
+        "locale",
+        "maxDate",
+        "minDate",
+        "name",
+        "placeholder",
+        "required",
+        "showButtonBar",
+        "showClear",
+        "showIcon",
+        "size",
+        "value",
+        "view"
+      ],
       "nested": [
         "sc-field-label",
         "sc-field-msg"
@@ -198,6 +352,12 @@
       "primengBase": "primeng/button",
       "cva": false,
       "inputs": 2,
+      "api": [
+        "bulkFooterMessage",
+        "cancelled",
+        "confirm",
+        "singleDetailMessage"
+      ],
       "nested": [
         "sc-dialog"
       ],
@@ -212,6 +372,24 @@
       "primengBase": "primeng/dialog",
       "cva": false,
       "inputs": 12,
+      "api": [
+        "bodyless",
+        "cancelled",
+        "closable",
+        "closeAriaLabel",
+        "dismissableMask",
+        "draggable",
+        "hasFooter",
+        "hidden",
+        "icon",
+        "modal",
+        "position",
+        "resizable",
+        "shown",
+        "subtitle",
+        "visible",
+        "width"
+      ],
       "nested": [],
       "hasDemo": true,
       "usedInSupervisor": 10
@@ -224,6 +402,11 @@
       "primengBase": "primeng/divider",
       "cva": false,
       "inputs": 3,
+      "api": [
+        "align",
+        "layout",
+        "type"
+      ],
       "nested": [],
       "hasDemo": true,
       "usedInSupervisor": 4
@@ -236,6 +419,19 @@
       "primengBase": "primeng/drawer",
       "cva": false,
       "inputs": 8,
+      "api": [
+        "closeOnEscape",
+        "dismissible",
+        "fullScreen",
+        "header",
+        "hidden",
+        "modal",
+        "position",
+        "showCloseIcon",
+        "shown",
+        "visible",
+        "visibleChange"
+      ],
       "nested": [],
       "hasDemo": true,
       "usedInSupervisor": 0
@@ -248,6 +444,11 @@
       "primengBase": "—",
       "cva": false,
       "inputs": 2,
+      "api": [
+        "cta",
+        "ctaIcon",
+        "ctaKey"
+      ],
       "nested": [],
       "hasDemo": true,
       "usedInSupervisor": 10
@@ -260,6 +461,10 @@
       "primengBase": "—",
       "cva": false,
       "inputs": 2,
+      "api": [
+        "for",
+        "required"
+      ],
       "nested": [],
       "hasDemo": false,
       "usedInSupervisor": 0
@@ -272,6 +477,12 @@
       "primengBase": "primeng/button",
       "cva": false,
       "inputs": 3,
+      "api": [
+        "action",
+        "actionKey",
+        "disabled",
+        "titleKey"
+      ],
       "nested": [],
       "hasDemo": true,
       "usedInSupervisor": 0
@@ -284,6 +495,13 @@
       "primengBase": "—",
       "cva": false,
       "inputs": 4,
+      "api": [
+        "activeChange",
+        "activeId",
+        "flush",
+        "labelKey",
+        "sectionsWithErrors"
+      ],
       "nested": [],
       "hasDemo": true,
       "usedInSupervisor": 5
@@ -296,6 +514,16 @@
       "primengBase": "—",
       "cva": false,
       "inputs": 8,
+      "api": [
+        "ariaLabel",
+        "label",
+        "segments",
+        "size",
+        "startAngle",
+        "sublabel",
+        "thickness",
+        "trackVisible"
+      ],
       "nested": [],
       "hasDemo": true,
       "usedInSupervisor": 0
@@ -308,6 +536,7 @@
       "primengBase": "primeng/popover",
       "cva": false,
       "inputs": 0,
+      "api": [],
       "nested": [],
       "hasDemo": true,
       "usedInSupervisor": 2
@@ -320,6 +549,13 @@
       "primengBase": "primeng/button",
       "cva": false,
       "inputs": 3,
+      "api": [
+        "badge",
+        "cancelLabel",
+        "cancelled",
+        "confirm",
+        "confirmLabel"
+      ],
       "nested": [
         "sc-dialog"
       ],
@@ -334,6 +570,12 @@
       "primengBase": "—",
       "cva": false,
       "inputs": 2,
+      "api": [
+        "ariaLabel",
+        "cancelled",
+        "commit",
+        "placeholder"
+      ],
       "nested": [],
       "hasDemo": true,
       "usedInSupervisor": 3
@@ -346,6 +588,10 @@
       "primengBase": "primeng/inputgroup",
       "cva": false,
       "inputs": 2,
+      "api": [
+        "fluid",
+        "size"
+      ],
       "nested": [],
       "hasDemo": true,
       "usedInSupervisor": 0
@@ -358,6 +604,23 @@
       "primengBase": "primeng/inputtext",
       "cva": true,
       "inputs": 13,
+      "api": [
+        "disabled",
+        "error",
+        "helperText",
+        "inputId",
+        "label",
+        "max",
+        "min",
+        "name",
+        "placeholder",
+        "readonly",
+        "required",
+        "size",
+        "step",
+        "suffix",
+        "value"
+      ],
       "nested": [
         "sc-field-label",
         "sc-field-msg"
@@ -373,6 +636,30 @@
       "primengBase": "primeng/inputtext",
       "cva": true,
       "inputs": 18,
+      "api": [
+        "ariaLabel",
+        "autocomplete",
+        "blurred",
+        "disabled",
+        "error",
+        "filled",
+        "fluid",
+        "focused",
+        "helperText",
+        "iftaLabel",
+        "inputId",
+        "inputmode",
+        "invalid",
+        "label",
+        "maxlength",
+        "name",
+        "placeholder",
+        "readonly",
+        "required",
+        "size",
+        "type",
+        "value"
+      ],
       "nested": [
         "sc-field-label",
         "sc-field-msg"
@@ -388,6 +675,9 @@
       "primengBase": "—",
       "cva": false,
       "inputs": 1,
+      "api": [
+        "groups"
+      ],
       "nested": [],
       "hasDemo": true,
       "usedInSupervisor": 2
@@ -400,6 +690,15 @@
       "primengBase": "primeng/message",
       "cva": false,
       "inputs": 6,
+      "api": [
+        "closable",
+        "closed",
+        "icon",
+        "severity",
+        "size",
+        "text",
+        "variant"
+      ],
       "nested": [],
       "hasDemo": true,
       "usedInSupervisor": 1
@@ -412,6 +711,33 @@
       "primengBase": "primeng/multiselect",
       "cva": true,
       "inputs": 23,
+      "api": [
+        "disabled",
+        "display",
+        "emptyFilterMessage",
+        "emptyMessage",
+        "error",
+        "filled",
+        "filter",
+        "filterBy",
+        "helperText",
+        "iftaLabel",
+        "inputId",
+        "label",
+        "maxSelectedLabels",
+        "name",
+        "optionLabel",
+        "optionValue",
+        "options",
+        "placeholder",
+        "required",
+        "selectedItemsLabel",
+        "selectionLimit",
+        "showClear",
+        "showToggleAll",
+        "size",
+        "value"
+      ],
       "nested": [
         "sc-field-label",
         "sc-field-msg"
@@ -427,6 +753,11 @@
       "primengBase": "—",
       "cva": false,
       "inputs": 3,
+      "api": [
+        "entityKey",
+        "icon",
+        "subtitleKey"
+      ],
       "nested": [],
       "hasDemo": true,
       "usedInSupervisor": 1
@@ -439,6 +770,15 @@
       "primengBase": "primeng/panel",
       "cva": false,
       "inputs": 4,
+      "api": [
+        "afterToggle",
+        "beforeToggle",
+        "collapsed",
+        "collapsedChange",
+        "header",
+        "showHeader",
+        "toggleable"
+      ],
       "nested": [],
       "hasDemo": true,
       "usedInSupervisor": 0
@@ -451,6 +791,15 @@
       "primengBase": "—",
       "cva": false,
       "inputs": 6,
+      "api": [
+        "ariaLabel",
+        "illustrationBase",
+        "illustrationPool",
+        "name",
+        "photo",
+        "photoChange",
+        "size"
+      ],
       "nested": [],
       "hasDemo": true,
       "usedInSupervisor": 2
@@ -463,6 +812,12 @@
       "primengBase": "primeng/progressbar",
       "cva": false,
       "inputs": 4,
+      "api": [
+        "mode",
+        "showValue",
+        "unit",
+        "value"
+      ],
       "nested": [],
       "hasDemo": true,
       "usedInSupervisor": 0
@@ -475,6 +830,12 @@
       "primengBase": "primeng/progressspinner",
       "cva": false,
       "inputs": 4,
+      "api": [
+        "animationDuration",
+        "ariaLabel",
+        "fill",
+        "strokeWidth"
+      ],
       "nested": [],
       "hasDemo": true,
       "usedInSupervisor": 0
@@ -487,6 +848,17 @@
       "primengBase": "primeng/radiobutton",
       "cva": false,
       "inputs": 7,
+      "api": [
+        "ariaLabel",
+        "clicked",
+        "inputId",
+        "modelValue",
+        "modelValueChange",
+        "name",
+        "size",
+        "value",
+        "variant"
+      ],
       "nested": [],
       "hasDemo": true,
       "usedInSupervisor": 2
@@ -499,6 +871,20 @@
       "primengBase": "primeng/iconfield, primeng/inputicon, primeng/inputtext",
       "cva": true,
       "inputs": 9,
+      "api": [
+        "autoFocus",
+        "clearAriaLabel",
+        "disabled",
+        "filled",
+        "inputId",
+        "keydown",
+        "name",
+        "placeholder",
+        "shortcutHint",
+        "showClear",
+        "size",
+        "value"
+      ],
       "nested": [],
       "hasDemo": true,
       "usedInSupervisor": 8
@@ -511,6 +897,14 @@
       "primengBase": "—",
       "cva": false,
       "inputs": 6,
+      "api": [
+        "anchorId",
+        "collapsible",
+        "flush",
+        "hintKey",
+        "icon",
+        "initiallyCollapsed"
+      ],
       "nested": [],
       "hasDemo": true,
       "usedInSupervisor": 11
@@ -523,6 +917,34 @@
       "primengBase": "primeng/select",
       "cva": true,
       "inputs": 22,
+      "api": [
+        "appendTo",
+        "blurred",
+        "disabled",
+        "emptyFilterMessage",
+        "emptyMessage",
+        "error",
+        "filled",
+        "filter",
+        "filterBy",
+        "focused",
+        "helperText",
+        "iftaLabel",
+        "inputId",
+        "label",
+        "loading",
+        "name",
+        "optionDisabled",
+        "optionLabel",
+        "optionValue",
+        "options",
+        "placeholder",
+        "readonly",
+        "required",
+        "showClear",
+        "size",
+        "value"
+      ],
       "nested": [
         "sc-field-label",
         "sc-field-msg"
@@ -538,6 +960,14 @@
       "primengBase": "primeng/skeleton",
       "cva": false,
       "inputs": 6,
+      "api": [
+        "animation",
+        "borderRadius",
+        "height",
+        "shape",
+        "size",
+        "width"
+      ],
       "nested": [],
       "hasDemo": true,
       "usedInSupervisor": 0
@@ -550,6 +980,10 @@
       "primengBase": "—",
       "cva": false,
       "inputs": 2,
+      "api": [
+        "hintKey",
+        "icon"
+      ],
       "nested": [],
       "hasDemo": true,
       "usedInSupervisor": 0
@@ -562,6 +996,15 @@
       "primengBase": "primeng/button",
       "cva": false,
       "inputs": 4,
+      "api": [
+        "canSave",
+        "cancelled",
+        "nameChange",
+        "namePlaceholderKey",
+        "save",
+        "saving",
+        "showBack"
+      ],
       "nested": [],
       "hasDemo": true,
       "usedInSupervisor": 3
@@ -574,6 +1017,12 @@
       "primengBase": "—",
       "cva": false,
       "inputs": 4,
+      "api": [
+        "collapsible",
+        "hintKey",
+        "icon",
+        "initiallyCollapsed"
+      ],
       "nested": [],
       "hasDemo": true,
       "usedInSupervisor": 0
@@ -586,6 +1035,14 @@
       "primengBase": "primeng/tag",
       "cva": false,
       "inputs": 6,
+      "api": [
+        "icon",
+        "labelColor",
+        "rounded",
+        "severity",
+        "value",
+        "variant"
+      ],
       "nested": [],
       "hasDemo": true,
       "usedInSupervisor": 0
@@ -598,6 +1055,23 @@
       "primengBase": "primeng/textarea",
       "cva": false,
       "inputs": 13,
+      "api": [
+        "autoResize",
+        "cols",
+        "disabled",
+        "fluid",
+        "inputId",
+        "invalid",
+        "name",
+        "placeholder",
+        "readonly",
+        "resized",
+        "rows",
+        "size",
+        "value",
+        "valueChange",
+        "variant"
+      ],
       "nested": [],
       "hasDemo": true,
       "usedInSupervisor": 1
@@ -610,6 +1084,15 @@
       "primengBase": "primeng/toast",
       "cva": false,
       "inputs": 6,
+      "api": [
+        "baseZIndex",
+        "closed",
+        "key",
+        "life",
+        "position",
+        "preventDuplicates",
+        "preventOpenDuplicates"
+      ],
       "nested": [],
       "hasDemo": true,
       "usedInSupervisor": 0
@@ -622,6 +1105,17 @@
       "primengBase": "primeng/toggleswitch",
       "cva": false,
       "inputs": 7,
+      "api": [
+        "ariaLabel",
+        "ariaLabelledBy",
+        "changed",
+        "checked",
+        "checkedChange",
+        "disabled",
+        "inputId",
+        "readonly",
+        "size"
+      ],
       "nested": [],
       "hasDemo": true,
       "usedInSupervisor": 21
