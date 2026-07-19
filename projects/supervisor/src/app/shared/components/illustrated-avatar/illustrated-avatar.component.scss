@@ -4,7 +4,16 @@
   border-radius: 50%;
   overflow: hidden;
   flex-shrink: 0;
-  background: var(--sc-color-slate-100);
+  /* Semántico, no paleta cruda: `--sc-color-*` NO se remapea en oscuro (0
+   * definiciones en `07-dark.css`), así que este círculo se quedaba claro
+   * sobre el lienzo oscuro mientras carga el SVG. Medido 1.09:1 en
+   * /admin/grupos y /admin/agentes.
+   *
+   * El token dice "hover" y esto no es un hover: en claro vale slate-100,
+   * exactamente lo que había, y es el único semántico que da ese paso. Al DS
+   * le falta una rampa neutra para RELLENOS no interactivos —todos los
+   * neutros están nombrados por estado— y esa es la deuda de fondo. */
+  background: var(--sc-bg-secondary-hover);
 
   &__media {
     width: 100%;

@@ -163,6 +163,50 @@ cumpla AA y se re-exporte. Entonces esta fila vuelve a `enforce` y esta entrada 
 
 ---
 
+### 1.6 Las insignias hablan un solo idioma: `--sc-label-*` · 2026-07-19
+
+> **No es una divergencia del Kit: el Kit no modela esta familia.** Es una decisión de
+> color del DS que no se puede rastrear a Figma, y por eso vive aquí.
+
+Los 32 tokens `--sc-label-*` (8 colores × `bg`/`text`/`border`/`dot`) son la paleta de
+INSIGNIA, curada a mano en `03-palette.css`. Estaban **solo en claro**: `07-dark.css` no
+definía ni uno. Como la paleta primitiva `--sc-color-*` tampoco se remapea en oscuro
+(cero definiciones), en tema oscuro las insignias heredaban el pastel del claro.
+
+**Qué se veía.** Medido en 28 rutas del supervisor: 10 chips claros en `/admin/labels`,
+5 en `/admin/usuarios`, pastillas en las 9 páginas de repositorios, y las etiquetas de
+`sc-chip` / `sc-tag` — que son **del DS**, así que el defecto salía de la app y llegaba a
+cualquier consumidor. No era ilegible (texto oscuro sobre pastel claro cumple AA dentro
+del propio chip) pero rompía el tema: islas blancas sobre lienzo oscuro.
+
+**La forma de los valores oscuros** la copia el bloque `--sc-bg-*-subtle` que ya existía:
+fondo `color-mix` translúcido sobre el paso 900 de la familia (así la insignia respira el
+lienzo que tenga debajo — tabla, modal o tarjeta) y texto en el paso 300. Medido:
+**7.7–9.7:1** en oscuro, **4.8–6.4:1** en claro.
+
+**El corolario, que es lo que de verdad importa a futuro.** Cuatro sitios de la app se
+habían hecho su propio vocabulario de insignia (`.rules-status`, `.state-tag`,
+`.status-pill[muted]`, `.entity-type-chip`) mezclando paleta cruda con tokens semánticos.
+Esa mezcla es la forma exacta en que esto se rompe: **un fondo que no voltea con un texto
+que sí voltea**. `.rules-status--inactive` daba **1.40:1** en oscuro — la palabra
+"INACTIVA" no se leía. Todos pasan a `--sc-label-*`.
+
+Se probó antes con la rampa `--sc-bg-*-subtle` / `--sc-text-*` y **salió peor**: esa
+pareja está calibrada para texto sobre el LIENZO, no dentro de una pastilla, y dejaba
+`danger` en 4.41:1 (bajo AA). La familia `label` empareja fondo y texto a propósito
+(50/700 en vez de 50/600). Es la razón de que exista como familia aparte.
+
+**Regla operativa**: una insignia usa `--sc-label-<color>-{bg,text,border,dot}`. Nunca
+`--sc-color-*` (no voltea) ni `--sc-bg-*` como color de texto (`--sc-bg-primary` es un
+relleno, no un color de tinta: usarlo así daba 3.39:1 en `.entity-type-chip`).
+
+**Vigilado por** `e2e/supervisor/dark-surfaces.spec.ts` (34 tests, 17 rutas × 2
+preguntas): ninguna superficie clara en oscuro, y el texto se lee sobre su fondo. La
+segunda pregunta existe porque al oscurecer un fondo se puede dejar texto oscuro encima —
+el mismo fallo del revés, que es justo lo que cazó en `.entity-type-chip`.
+
+---
+
 ## 2. Component extensions (el DS añade lo que Figma no modela)
 
 ### 2.1 Toast action button (undo pattern)

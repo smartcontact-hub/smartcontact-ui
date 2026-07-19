@@ -25,6 +25,20 @@ export const forceLightTheme = async (page: Page): Promise<void> => {
   });
 };
 
+/** Tema OSCURO antes del primer paint. Mismo mecanismo que el claro: el
+ *  `ThemeService` lee `sc-theme` de localStorage al construirse y pone
+ *  `.sc-dark` en `<html>`. No inventes una clase propia — probé con una
+ *  `sc-theme-dark` que no existe y la medición salió incoherente. */
+export const forceDarkTheme = async (page: Page): Promise<void> => {
+  await page.addInitScript(() => {
+    try {
+      localStorage.setItem('sc-theme', 'dark');
+    } catch {
+      /* contexto sin storage — ignorar */
+    }
+  });
+};
+
 /**
  * Mata animaciones y view-transitions. Sin esto, los overlays de PrimeNG (select,
  * menú, diálogo) entran animados y Playwright los rechaza por "element is not

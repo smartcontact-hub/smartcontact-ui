@@ -450,24 +450,38 @@ table.table {
   text-transform: uppercase;
   letter-spacing: 0.02em;
 
+  /* Las cuatro variantes iban a paleta CRUDA (`--sc-color-*`), que no se
+   * remapea en oscuro. La peor era `--inactive`: fondo crudo slate-100 (fijo)
+   * con `--sc-text-secondary` encima (semántico, que en oscuro sube a
+   * slate-300) = 1.40:1. La palabra "INACTIVA" no se leía en /reglas ni en
+   * /categorias. Mezclar un fondo que no voltea con un texto que sí voltea es
+   * la forma exacta en que esto se rompe.
+   *
+   * Ahora las cuatro beben de `--sc-label-*`, que es el vocabulario de
+   * INSIGNIA del DS —el que ya usan `.sc-label`, `.chip` y `.status-pill`— y
+   * que desde hoy tiene valor oscuro. Se probó antes con la rampa
+   * `--sc-bg-*-subtle` / `--sc-text-*` y salió peor: esa pareja está calibrada
+   * para texto sobre el LIENZO, no dentro de una pastilla, y dejaba `danger`
+   * en 4.41:1. La familia `label` empareja fondo y texto a propósito (50/700
+   * en vez de 50/600) y mide 5.2-6.4:1. Medido, no deducido. */
   &--active {
-    background: var(--sc-color-green-100, #dcfce7);
-    color: var(--sc-color-green-700, #15803d);
+    background: var(--sc-label-green-bg);
+    color: var(--sc-label-green-text);
   }
 
   &--inactive {
-    background: var(--sc-color-slate-100);
-    color: var(--sc-text-secondary);
+    background: var(--sc-label-gray-bg);
+    color: var(--sc-label-gray-text);
   }
 
   &--draft {
-    background: var(--sc-color-amber-100);
-    color: var(--sc-color-amber-700);
+    background: var(--sc-label-amber-bg);
+    color: var(--sc-label-amber-text);
   }
 
   &--conflict {
-    background: var(--sc-color-red-100, #fee2e2);
-    color: var(--sc-color-red-700, #b91c1c);
+    background: var(--sc-label-red-bg);
+    color: var(--sc-label-red-text);
   }
 
   &--clickable {

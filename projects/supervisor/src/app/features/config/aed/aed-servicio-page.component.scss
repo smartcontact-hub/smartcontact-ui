@@ -27,14 +27,20 @@
 
   /* success/danger = Kit `tag` (bg claro + texto oscuro). Administrativo = granate
    * SÓLIDO (bg red-800 + texto red-100) → destaca como estado "serio" (decisión Rafa). */
+  /* `--sc-label-*`, el vocabulario de insignia del DS (mismo que `.sc-label` y
+   * `.status-pill`), no la rampa `--sc-bg-*-subtle`: esa está calibrada para
+   * texto sobre el lienzo y aquí dejaba `danger` en 4.41:1, bajo AA. */
   &[data-tone='green'] {
-    background: var(--sc-color-green-100);
-    color: var(--sc-color-green-700);
+    background: var(--sc-label-green-bg);
+    color: var(--sc-label-green-text);
   }
   &[data-tone='danger'] {
-    background: var(--sc-color-red-100);
-    color: var(--sc-color-red-700);
+    background: var(--sc-label-red-bg);
+    color: var(--sc-label-red-text);
   }
+  /* `granate` se queda en paleta cruda A PROPÓSITO: es un fondo SÓLIDO y
+   * oscuro con texto claro encima, así que ya funciona en los dos temas. Es
+   * una decisión de diseño (destacar el estado "serio"), no un descuido. */
   &[data-tone='granate'] {
     background: var(--sc-color-red-800);
     color: var(--sc-color-red-100);

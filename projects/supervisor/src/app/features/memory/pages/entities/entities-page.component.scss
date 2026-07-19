@@ -169,8 +169,12 @@
   align-items: center;
   padding: 2px 8px;
   border-radius: var(--sc-radius-full);
-  background: var(--sc-bg-primary-subtle);
-  color: var(--sc-bg-primary);
+  /* Usaba `--sc-bg-primary` como COLOR DE TEXTO. Es un token de relleno: está
+   * calibrado para llevar texto encima, no para ser texto. En claro colaba
+   * (blue-700 sobre blue-50); en oscuro pasa a blue-400 sobre blue-900 y cae
+   * a 3.39:1. Va a la familia de insignia, como el resto de chips de la app. */
+  background: var(--sc-label-blue-bg);
+  color: var(--sc-label-blue-text);
   font-size: var(--sc-font-size-50);
   font-weight: var(--sc-font-weight-medium);
 
