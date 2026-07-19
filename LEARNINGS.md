@@ -102,12 +102,19 @@
 
 ## Gates y push
 
-7. **El commit toca componentes (`sc-*`, plantillas) y va a `git push` → corre `npm run verify`
-   ENTERO antes, no un subset.** "AOT verde" NO basta: el AOT caza plantillas pero no corre
-   `test:unit` ni `audit:components`. *Evidencia (s11)*: racionalicé el subset y pusheé; luego,
-   en el piloto de `sc-button`, el verify completo cazó el desfase de `audit:components`
-   (`sc-button` 9→12 usos) que el subset se habría comido. Fix: `node
+7. **Vas a `git push` → corre lo que corre el CI, y el CI NO es `npm run verify`.** `verify` es
+   **uno de los cinco pasos** de `ci.yml`; los otros cuatro son `build:demo`, el build AOT de
+   supervisor y de agent, `e2e` y `e2e:supervisor`. Abre `ci.yml` y córrelos; es enumerable, no
+   hay que adivinarlo.
+   *Evidencia (s11)*: racionalicé un subset y pusheé; el verify completo cazó luego el desfase
+   de `audit:components` (`sc-button` 9→12) que el subset se habría comido. Fix: `node
    scripts/component-audit.mjs --write` + commitea `docs/inventory.md` + `_component-status.json`.
+   *Evidencia (s18) — **la regla existía, la cumplí al pie de la letra y aun así pusheé rojo***:
+   corrí `verify` ENTERO (verde, 40s) y me salté `e2e:supervisor`, que es donde vivía mi
+   cambio. CI rojo en 17 tests. La regla decía "verify entero" y yo leí eso como "todo"; el
+   artefacto estaba mal nombrado. **Y el carril rápido que acababa de construir agrava esto**:
+   itera con él, pero antes de pushear corre la suite entera — el fallo estaba justo en la
+   parte que el carril no cubría.
 
 8. **Vas a crear un `.md` nuevo en el repo → regístralo en `docs/DOCS-INDEX.md` en el mismo
    commit.** `docs:guard` escanea **todos** los `.md` (docs/ recursivo + raíz) y exige mapeo por
@@ -130,16 +137,32 @@
    word-splitting como bash); lo cazó el `grep "pi pi-" || echo ninguno` del final. Sin él habría
    commiteado una migración de 12 iconos inexistente. En zsh, enumera los ficheros explícitamente.
 
-12. **Un reemplazo masivo de ATRIBUTO se acota a su ETIQUETA, y se verifica preguntando a qué
-    etiqueta pertenece cada match.** Un `sed`/regex por fichero entero pilla homónimos de otros
-    componentes. *Evidencia (s12)*: migrando `severity=`→`variant=` de `p-button` convertí el
-    `severity` de un `<sc-message>` (que no tiene `variant`). Lo cazó un chequeo posterior que,
-    por cada match, buscaba hacia atrás la etiqueta contenedora.
+12. **Tu patrón casa algo distinto de lo que crees — al CONTAR y al REEMPLAZAR. Antes de dar
+    una cifra o de ejecutar un `sed`, pregúntate qué está casando cada match.**
+    - *Contando de más (s11)*: dije "111 usos de `p-button`" y lo escribí en el hand-off; los
+      `<p-button>` reales eran **50** — el resto, etiquetas de cierre y clases CSS.
+    - *Contando de menos (s18)*: `grep 'test('` me dio 39 tests en el supervisor; el runner
+      dice **108**. Mis tests viven dentro de bucles `for`, así que el grep cuenta
+      DECLARACIONES y el runner cuenta INSTANCIAS. **Cuando exista un ejecutor que sepa el
+      número de verdad, el número es el suyo, no el de tu grep.**
+    - *Reemplazando de más (s12)*: migrando `severity=`→`variant=` de `p-button` convertí el
+      `severity` de un `<sc-message>`, que no tiene `variant`. Un `sed` por fichero entero
+      pilla homónimos: acota el reemplazo a su ETIQUETA y verifica, por cada match, a qué
+      etiqueta pertenece.
 
-13. **Antes de dar una cifra de alcance ("N usos"), comprueba QUÉ está contando tu grep.**
-    *Evidencia (s11)*: dije "111 usos de `p-button`" y escribí eso en el hand-off; los
-    `<p-button>` reales eran **50** — el resto eran etiquetas de cierre y clases CSS. Acota el
-    match a la etiqueta real antes de dimensionar una migración.
+13. **Construyes un comprobador (guardián, red, sonda) → enumera las DIMENSIONES sobre las que
+    varía y pruébalo en cada una, no solo en la que tenías en la cabeza.** Probar un checker
+    en un eje y darlo por bueno es el mismo agujero que él existe para tapar.
+    *Evidencia (s18), y duele porque es dentro del arreglo*: escribí un guardián de "build
+    rancio" y lo validé en el eje **rancio↔fresco** —rojo contra un build viejo, verde contra
+    uno nuevo, muy satisfactorio—. No lo validé en el eje **claro↔oscuro**: leía siempre el
+    valor claro del token, así que en tema oscuro comparaba slate-600 contra el slate-500 que
+    el navegador computa CORRECTAMENTE, y acusaba de rancio a un build recién hecho. 17 tests
+    rojos en CI. Un guardián con falsos positivos es peor que ninguno: enseña a ignorarlo.
+    **Corolario**: y cuando lo pruebes contra un artefacto "viejo", **comprueba que sigue
+    siendo viejo**. Reusé `dist/supervisor/browser` como build rancio sin mirar que se había
+    regenerado entretanto; el verde que obtuve no probaba nada. Fabricar el caso malo a mano
+    (copiar y rebobinar el valor) cuesta 30 segundos y no caduca.
 
 ## Entrega
 
