@@ -41,6 +41,23 @@ selección». También agranda el objetivo de click a la celda entera a propósi
 (la casilla mide 16px). Migrarla hoy es romper cinco comportamientos cubiertos;
 antes hay que añadir esa capacidad al DS, con sus tests.
 
+## Antes de commitear: `npm run migrate:check`
+
+**Córrelo. Comprueba en segundos lo que antes costaba una revisión por tabla.**
+
+Cubre lo mecánico: la piel `list-table`, las columnas en `computed`, las
+plantillas fuera del componente, el teclado (`rowsFocusable`/`rowKeydown`), las
+clases que usan los e2e y desaparecen del DOM, la ruta en el guardián de la
+gramática, los DOS manifiestos (`_component-status` y `_usage-status`), i18n en
+los cuatro locales, y el veto de `<th scope="row">`.
+
+Cada comprobación viene de algo que **pasó de verdad**. No sustituye a mirar la
+pantalla: la captura es lo que cazó la franja de `caption` y las columnas
+movidas, y ningún grep habría visto eso.
+
+Ojo: mide el DIFF contra `HEAD`, así que es un gate de ANTES de commitear. Para
+revisar un commit ya hecho: `npm run migrate:check HEAD~1`.
+
 ## Los pasos
 
 ### 1. La plantilla
@@ -164,35 +181,22 @@ la app y no en el preset porque el preset viste también la tabla de llamadas de
    en el mismo commit (`e2e/supervisor/admin-datatable-pilot.spec.ts`, 9 tests).
    Si la tabla que migras tampoco tiene red, esa es parte del trabajo.
 
-## Las 14 que quedan, por dificultad
+## Lo que queda (2026-07-19)
 
-**Fáciles** — sin click de fila ni selector de columnas. Empieza por aquí:
+**Ninguna tabla pendiente debe migrar tal cual.** Es un estado, no una excusa —
+las razones están arriba, en «¿esta tabla debe migrar?».
 
-| Tabla | Nota |
+| Tabla | Estado |
 |---|---|
-| `admin/repositories/repo-list-page` | |
-| `config/aed/aed-agentes-page` | |
-| `admin/agents/agent-form-page` (×2) | una de ellas con click de fila |
+| `memory/conversation-table` | **La única migrable de verdad.** Le falta al DS lo que ya tiene a medias: la selección de rango con ancla existe en `sc-datatable` desde la sesión 19, así que el bloqueo real que queda es la migración en sí (13 columnas, 4 estados de fila con shimmer) y adaptar sus 5 tests de gesto **sin debilitar lo que afirman** |
+| `admin/agents/agent-form-page` → `.perm-matrix` | NO migra: matriz de permisos |
+| `admin/agents/agent-form-page` → `.picker-table` | Caso límite: su fila SELECCIONA al clicar, contra el modelo canónico de la Ola 6 |
+| `admin/groups/agent-channel-table` | NO migra: matriz de permisos |
+| `admin/agents/group-assignment-table` | NO migra: matriz de permisos |
+| `config/aed/aed-agentes-page` → `.comm-table` | NO migra: matriz de permisos **y** usa `<th scope="row">`, que el DS no sabe emitir (`migrate:check` lo veta) |
 
-**Medias** — click de fila, sin selector de columnas:
-
-| Tabla | Nota |
-|---|---|
-| `memory/pages/categories` | cubierta por `sibling-pages.spec.ts` |
-| `memory/pages/entities` (×2) | ídem |
-| `memory/pages/rules` | cubierta por `rules-flow.spec.ts` |
-
-**Difíciles** — concentran las 4 capacidades a la vez:
-
-| Tabla | Por qué |
-|---|---|
-| `admin/agents/agents-list-page` | click de fila + `sc-column-selector` + renombrado inline |
-| `admin/groups/groups-list-page` | ídem |
-| `admin/users/users-list-page` | ídem |
-| `memory/components/conversation-table` | lo peor: shift+click por rango, Enter abre / Espacio selecciona, y `table-layout: fixed` con una columna de 44px medida al píxel (Ola 6) |
-
-**No migrar**: `group-assignment-table` y `agent-channel-table` — formularios
-disfrazados de tabla.
+**Ya migradas (9)**: labels · plantillas · repo-list · agentes · grupos ·
+usuarios · reglas · categorías · entidades.
 
 ## Pendiente conocido (no lo arregla esta receta)
 

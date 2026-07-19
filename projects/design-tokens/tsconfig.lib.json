@@ -6,6 +6,10 @@
     "outDir": "../../out-tsc/lib",
     "declaration": true,
     "declarationMap": true,
+    /* Ver la nota en `projects/ui-smartcontact/tsconfig.lib.json`: `inlineSources`
+     * exige `sourceMap`, y sin él este fichero solo es válido si quien lo usa
+     * pasa `--sourceMap` a mano. Los tres proyectos tenían el mismo defecto. */
+    "sourceMap": true,
     "inlineSources": true,
     "types": []
   },
