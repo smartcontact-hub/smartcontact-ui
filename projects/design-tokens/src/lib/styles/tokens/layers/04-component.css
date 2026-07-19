@@ -328,7 +328,6 @@
   --sc-cmp-button-contrast-active-border-color: var(--sc-color-slate-800);
   --sc-cmp-button-contrast-border-color: var(--sc-color-slate-950);
   --sc-cmp-button-contrast-focus-ring-color: var(--sc-color-slate-950);
-  --sc-cmp-button-outlined-secondary-color: var(--sc-color-slate-500);
   --sc-cmp-button-outlined-secondary-hover-background: var(--sc-color-slate-50);
   --sc-cmp-button-outlined-secondary-active-background: var(--sc-color-slate-100);
   --sc-cmp-button-outlined-secondary-border-color: var(--sc-color-slate-200);
@@ -519,4 +518,24 @@
   --sc-cmp-tooltip-background: var(--sc-color-slate-700);
   --sc-cmp-tooltip-color: var(--sc-color-slate-0);
   /* @sc-gen:cmp-color-light:end */
+
+  /* ---------- Botón `outlined secondary`: su etiqueta estaba bajo AA ----------
+   *
+   * Fuera de la zona `@sc-gen` y con su slot en `EXCLUDE` (cmp-color-map),
+   * porque es una divergencia consciente del Kit. Mismo mecanismo que ya usan
+   * los bordes de `info`.
+   *
+   * El Kit da `slate-500` para la etiqueta: **2.95:1** sobre blanco. Es el
+   * botón "Añadir" de AED, un control primario de esa pantalla, no un adorno.
+   * `slate-600` da 4.52 — el mismo escalón al que subieron `text-secondary`
+   * (§1.5) y `text-subtle` (§1.7), por la misma aritmética: sobre blanco solo
+   * cumplen dos pasos de la rampa de grises.
+   *
+   * El OTRO fallo de botón, el `danger` sólido, NO se arregla aquí: sus
+   * `--sc-cmp-button-danger-*` corresponden a otro slot y no los lee nadie
+   * (comprobado midiendo el píxel). Va en el preset, por referencia de
+   * paleta. Ver `sc-preset/button.ts` y customs-catalog §1.8.
+   *
+   * Se cierra cuando el Kit suba `button.outlined.secondary.color`. */
+  --sc-cmp-button-outlined-secondary-color: var(--sc-color-slate-600);
 }

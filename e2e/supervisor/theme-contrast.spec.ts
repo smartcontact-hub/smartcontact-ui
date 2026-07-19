@@ -112,10 +112,16 @@ const L_CLARO = 0.5;
  *     pantalla. Preset del DS.
  */
 const CONOCIDOS_CLARO = [
-  // 1 · --sc-text-subtle: FUERA de esta lista desde el 2026-07-19. Ya cumple.
-  'fg=rgb(111,119,132)', // 2 · --sc-text-secondary (slate-600) sobre lienzo
-  'bg=rgb(239,68,68) fg=rgb(255,255,255)', // 3 · p-button-danger
-  'fg=rgb(143,151,163)', // 4 · slate-500: etiqueta de p-button-secondary outlined
+  // 1 · --sc-text-subtle          → FUERA desde el 2026-07-19 (§1.7). Cumple.
+  // 3 · p-button-danger           → FUERA desde el 2026-07-19 (§1.8). Cumple.
+  // 4 · p-button-secondary outlined → FUERA desde el 2026-07-19 (§1.8). Cumple.
+  //
+  // Queda UNO, y es el único de toda la app: `--sc-text-secondary` sobre el
+  // LIENZO (no sobre tarjeta). 4.25:1, y 3.92 sobre slate-100. Aceptado a
+  // propósito en §1.5 — subirlo a slate-700 lo pega a `text-primary` y cambia
+  // un fallo de contraste por uno de jerarquía. Sobre tarjeta (que es donde
+  // vive la mayor parte del texto secundario) mide 4.52 y cumple.
+  'fg=rgb(111,119,132)',
 ];
 
 /** Recorre `main` en el navegador y devuelve las superficies problemáticas. */
