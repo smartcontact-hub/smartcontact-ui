@@ -56,10 +56,10 @@ export const COLOR = [
   { mode: 'light', exp: 'form.field.hover.border.color', token: 'sc-border-strong', kind: 'enforce' },
   { mode: 'light', exp: 'form.field.disabled.background', token: 'sc-bg-disabled', kind: 'enforce' },
   { mode: 'light', exp: 'form.field.invalid.border.color', token: 'sc-border-error', kind: 'enforce' },
-  { mode: 'light', exp: 'form.field.icon.color', token: 'sc-icon-subtle', kind: 'enforce' },
+  { mode: 'light', exp: 'form.field.icon.color', token: null, kind: 'diverge', reason: 'icono de campo slate-600 vs Kit gray-400: el del Kit da 2.04:1 sobre blanco y un icono necesita 3:1 (WCAG 1.4.11). slate-500 tampoco llega (2.95). Mismo movimiento y mismo motivo que text.muted.color. Revertir cuando el Kit suba el suyo.' },
   // ── navigation (light) ────────────────────────────────────────────────────────
   { mode: 'light', exp: 'navigation.item.color', token: 'sc-text-primary', kind: 'enforce' },
-  { mode: 'light', exp: 'navigation.item.icon.color', token: 'sc-icon-subtle', kind: 'enforce' },
+  { mode: 'light', exp: 'navigation.item.icon.color', token: null, kind: 'diverge', reason: 'icono de navegación slate-600 vs Kit gray-400: mismo token y mismo motivo que form.field.icon.color — 2.04:1, por debajo del 3:1 de 1.4.11.' },
   { mode: 'light', exp: 'navigation.item.active.background', token: 'sc-bg-secondary-hover', kind: 'enforce' },
   // ── list (light) ──────────────────────────────────────────────────────────────
   { mode: 'light', exp: 'list.option.color', token: 'sc-text-primary', kind: 'enforce' },

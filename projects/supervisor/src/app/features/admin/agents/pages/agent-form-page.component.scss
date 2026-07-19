@@ -691,8 +691,17 @@ input[type='checkbox'] {
     font-size: var(--sc-font-size-75);
     transition: color var(--sc-transition-fast) var(--sc-easing-default);
 
+    /* Esta pestaña usaba los TRES grises: reposo `subtle`, hover `secondary`,
+     * activo `primary`. Al subir `subtle` a slate-600 (misma decisión de AA
+     * que ves en `02-semantic.css`) reposo y hover pasaron a valer lo mismo y
+     * el hover se quedó MUDO — y como aquí solo se transiciona `color`, el
+     * ratón no producía ningún cambio visible.
+     *
+     * El hover sube a `primary`. Sigue distinguiéndose del activo, que además
+     * del color lleva subrayado y peso semibold: la jerarquía que se pierde
+     * en claridad se recupera donde el token no llega. */
     &:hover {
-      color: var(--sc-text-secondary);
+      color: var(--sc-text-primary);
     }
 
     &--active {

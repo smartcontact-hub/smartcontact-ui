@@ -144,8 +144,13 @@
     /* Era `--sc-icon-disabled` en un botón que NO está deshabilitado: 2.29:1
      * en oscuro, por debajo del 3:1 de 1.4.11. El chevron es la única señal
      * de que la fila lleva a algún sitio; que el token diga "disabled" era
-     * simplemente el token equivocado para un control vivo. */
-    color: var(--sc-icon-subtle);
+     * simplemente el token equivocado para un control vivo.
+     *
+     * Primero lo puse en `--sc-icon-subtle`, que arregla el oscuro y NO el
+     * claro (slate-400 = 2.04:1), y encima mi propia lista de conocidos lo
+     * tapaba porque `--sc-text-subtle` compartía ese mismo rgb. `secondary`
+     * es slate-600 en claro y slate-400 en oscuro: cumple en los dos. */
+    color: var(--sc-icon-secondary);
     transition: color var(--sc-transition-fast) var(--sc-easing-default);
 
     .hub-item:hover & {

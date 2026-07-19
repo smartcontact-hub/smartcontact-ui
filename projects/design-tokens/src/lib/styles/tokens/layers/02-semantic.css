@@ -30,8 +30,21 @@
   --sc-border-strong: var(--sc-color-slate-400);
   --sc-bg-disabled: var(--sc-color-slate-200);
   --sc-border-error: var(--sc-color-red-400);
-  --sc-icon-subtle: var(--sc-color-slate-400);
   /* @sc-gen:semantic-color-light:end */
+
+  /* `--sc-icon-subtle` sale de la zona generada por la MISMA razón que
+   * `--sc-text-secondary` de abajo: es una divergencia consciente, y dentro de
+   * la zona `tokens:import` la reescribiría a slate-400 y el fallo volvería en
+   * silencio. Sus dos filas de `color-map.mjs` pasan de `enforce` a `diverge`.
+   *
+   * Valía slate-400 = **2.04:1 sobre blanco**. Un icono es un elemento
+   * gráfico, así que su listón es el 3:1 de WCAG 1.4.11, no el 4.5 del texto
+   * — y ni aun así llegaba. slate-500 tampoco (2.95). El primer escalón que
+   * cumple es slate-600, el mismo al que sube `text-subtle`, que es lo
+   * coherente: el icono de un hint y su texto deben pesar igual.
+   *
+   * Se cierra cuando el Kit suba su `form.field.icon.color`. */
+  --sc-icon-subtle: var(--sc-color-slate-600);
 
   /* --sc-text-secondary vive AQUÍ, fuera de la zona `@sc-gen`, porque es una
    * divergencia consciente del Kit (`customs-catalog` §1.5) y el generador solo
@@ -47,12 +60,28 @@
    * Rampa alineada al Kit (S62-ext-3, parity §6): texto cuerpo = gray-700
    * (export textColor #4f5663). El secundario YA NO sigue al Kit: su
    * textMutedColor (#8f97a3, gray-500) da 2.95:1 y no cumple AA — ver §1.5 del
-   * catálogo de divergencias y la declaración de arriba. `subtle` (gray-400) y `disabled` (gray-300) son
-   * un nivel MÁS FINO que el Kit (que colapsa todo lo no-primario a gray-500):
-   * divergencia consciente — placeholder/disabled se ven más tenues a propósito
-   * (mejor jerarquía). Vigilado por parity §6 (enforce primary/secondary) + §7.
-   * primary (gray-700) + secondary (gray-500) → zona generada arriba. */
-  --sc-text-subtle: var(--sc-color-slate-400);
+   * catálogo de divergencias y la declaración de arriba.
+   *
+   * `subtle` TAMPOCO lo sigue ya, y esto es una decisión de Rafa del
+   * 2026-07-19: **AA por delante de la jerarquía**. Valía gray-400 y medía
+   * 2.04:1 sobre blanco en 161 usos —descripciones del hub, cuerpo de los
+   * estados vacíos, hints, placeholders— o sea texto real, no adorno.
+   *
+   * La consecuencia hay que decirla entera: sobre blanco la rampa de grises
+   * solo tiene DOS pasos que cumplan (600 = 4.52, 700 = 7.38); el 500 se
+   * queda en 2.95. Así que subtle a gray-600 lo iguala a `secondary` y el
+   * tercer nivel de jerarquía desaparece EN CLARO. Quien necesite distinguir
+   * un hint de una etiqueta tiene que hacerlo por tamaño, peso o cursiva, no
+   * por claridad. Se acepta a sabiendas.
+   *
+   * En OSCURO se queda en gray-500, que ahí mide ~6.5:1 sobre el lienzo: no
+   * se degrada un tema que ya cumplía solo por simetría. El resultado es que
+   * el oscuro conserva los tres niveles y el claro tiene dos.
+   *
+   * `disabled` (gray-300) sigue por debajo a propósito: 1.4.3 exime a los
+   * controles inactivos, y un control deshabilitado tiene que parecerlo.
+   * Vigilado por parity §6 (gateado desde hoy, ya no solo informado). */
+  --sc-text-subtle: var(--sc-color-slate-600);
   --sc-text-disabled: var(--sc-color-slate-300);
   --sc-text-inverse: var(--sc-color-slate-0);
   /* Accent = SKY de marca (unificado 2026-07-18, `docs/customs-catalog.md §1.4`).
