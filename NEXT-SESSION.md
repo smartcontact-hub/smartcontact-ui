@@ -147,6 +147,21 @@ alcanzables por teclado — cero `tabindex`, cero `keydown`, cero enlaces,
 comprobado en el árbol anterior. No lo rompió la migración; llevaba así siempre
 y nada lo medía. Enter abre en las tres, con test.
 
+## Cabeceras duplicadas — 4 páginas (lo cazó Rafa en pantalla)
+
+El hub de repositorios y las 3 subpáginas AED decían su nombre DOS veces: en
+el breadcrumb y otra vez en una banda debajo, con la MISMA clave i18n. Eran las
+últimas sin convertir al modelo "todo arriba" de S59. El `<h1>` no se borró, se
+ocultó (`visually-hidden`): era el único encabezado del documento.
+
+**`sc-page-header` queda SIN consumidores en la app** — solo lo usa su propio
+demo. No lo he borrado (es API pública del DS y otra app podría quererlo), pero
+si sigue así en la próxima revisión, es candidato a retirar.
+
+Red: `page-identity.spec.ts` (7 tests). Comprueba que hay UN h1, que mide 1px
+—o sea que está oculto de verdad, porque uno visible pasaría un simple conteo— y
+que su texto coincide con la miga actual.
+
 ## La red que faltaba
 
 `e2e/supervisor/list-table-grammar.spec.ts` — 12 tests que fijan los valores
