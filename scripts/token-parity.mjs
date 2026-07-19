@@ -346,9 +346,11 @@ const A11Y_GATED = [
   ['sc-text-warning', 'sc-bg-surface'],
   ['sc-text-danger', 'sc-bg-surface'],
   ['sc-text-violet', 'sc-bg-surface'],
+  /* Sube de A11Y_INFO a gateado: llevaba meses informándose en 2.95:1 y nadie
+   * actuaba, que es lo que pasa cuando un defecto solo se avisa. */
+  ['sc-text-secondary', 'sc-bg-surface'],
 ];
 const A11Y_INFO = [
-  ['sc-text-secondary', 'sc-bg-surface'],
   ['sc-text-subtle', 'sc-bg-surface'],
 ];
 // Sub-AA CONOCIDOS y aceptados (pre-existentes — revisión de marca en W5). Se informan

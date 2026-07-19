@@ -202,7 +202,6 @@
   --sc-cmp-inputnumber-button-background: transparent;
   --sc-cmp-message-info-background: color-mix(in srgb, var(--sc-color-azure-500) 16%, transparent);
   --sc-cmp-message-info-color: var(--sc-color-blue-500);
-  --sc-cmp-message-info-border-color: color-mix(in srgb, var(--sc-color-azure-700) 36%, transparent);
   --sc-cmp-message-info-close-button-hover-background: color-mix(in srgb, var(--sc-color-slate-0) 5%, transparent);
   --sc-cmp-message-info-close-button-focus-ring-color: var(--sc-color-blue-500);
   --sc-cmp-message-info-outlined-color: var(--sc-color-blue-500);
@@ -258,7 +257,6 @@
   --sc-cmp-togglebutton-icon-checked-color: var(--sc-color-slate-0);
   --sc-cmp-toast-info-background: color-mix(in srgb, var(--sc-color-azure-500) 16%, transparent);
   --sc-cmp-toast-info-color: var(--sc-color-blue-500);
-  --sc-cmp-toast-info-border-color: color-mix(in srgb, var(--sc-color-azure-700) 36%, transparent);
   --sc-cmp-toast-info-detail-color: var(--sc-color-slate-0);
   --sc-cmp-toast-info-close-button-hover-background: color-mix(in srgb, var(--sc-color-slate-0) 5%, transparent);
   --sc-cmp-toast-info-close-button-focus-ring-color: var(--sc-color-blue-500);
@@ -287,6 +285,21 @@
   --sc-cmp-tooltip-color: var(--sc-color-slate-0);
   --sc-cmp-treetable-border-color: var(--sc-color-zinc-800);
   /* @sc-gen:cmp-color-dark:end */
+
+  /* Borde de info en OSCURO — a mano, y por eso está fuera de la zona.
+   *
+   * El export trae aquí `#0369a15c` (Tailwind sky-700 + 36% de alfa), que NO
+   * tiene primitiva en la paleta de marca. El generador no puede espejarlo sin
+   * inventarse un hex, así que aborta — y eso es lo que llevaba tumbando
+   * `tokens-sync` desde el 22 de junio. Sus dos slots pasan a EXCLUDE
+   * (`cmp-color-map.mjs`), como los otros cinco de info que ya estaban.
+   *
+   * El valor es EXACTAMENTE el que ya se servía: la exclusión no cambia el
+   * aspecto de nada, solo impide que un color fuera de paleta rompa el
+   * pipeline. Cuando el Kit remapee info a la familia de marca (§1.4), estos
+   * dos vuelven a generarse solos y estas líneas se borran. */
+  --sc-cmp-message-info-border-color: color-mix(in srgb, var(--sc-color-azure-700) 36%, transparent);
+  --sc-cmp-toast-info-border-color: color-mix(in srgb, var(--sc-color-azure-700) 36%, transparent);
   --sc-bg-primary-subtle: var(--sc-color-blue-900);
   --sc-bg-primary-subtle-hover: var(--sc-color-blue-800);
   --sc-bg-primary-subtle-active: var(--sc-color-blue-700);
