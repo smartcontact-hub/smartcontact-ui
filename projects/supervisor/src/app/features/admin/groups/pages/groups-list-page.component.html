@@ -63,6 +63,8 @@
           [visibleColumns]="visibleFields()"
           dataKey="id"
           selectionMode="multiple"
+    [rowSelectionAriaLabel]="ariaFila"
+    [selectAllAriaLabel]="ariaTodo"
           [selection]="selectedGroups()"
           (selectionChange)="onSelectionChange($any($event))"
           [sortField]="tableSortField()"

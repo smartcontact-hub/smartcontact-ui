@@ -89,6 +89,8 @@
           [columns]="columns()"
           dataKey="id"
           selectionMode="multiple"
+    [rowSelectionAriaLabel]="ariaFila"
+    [selectAllAriaLabel]="ariaTodo"
           [selection]="selectedTemplates()"
           (selectionChange)="onSelectionChange($any($event))"
           (rowContextMenu)="onRowContextMenu($event, rowMenu)"

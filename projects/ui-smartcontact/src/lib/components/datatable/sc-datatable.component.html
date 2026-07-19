@@ -33,7 +33,7 @@
     <tr>
       @if (selectionMode() === 'multiple') {
         <th class="sc-datatable__check" scope="col">
-          <p-tableHeaderCheckbox />
+          <p-tableHeaderCheckbox [ariaLabel]="selectAllAriaLabel()" />
         </th>
       }
       @for (col of visibleCols(); track col.field) {
@@ -76,7 +76,7 @@
              casilla NO dispara `rowClick`. Sin esto, seleccionar cinco filas
              abriría cinco veces el detalle. -->
         <td class="sc-datatable__check" (click)="onCheckCellClick($event, rowIndex)">
-          <p-tableCheckbox [value]="row" />
+          <p-tableCheckbox [value]="row" [ariaLabel]="rowSelectionAriaLabel()?.(row, rowIndex)" />
         </td>
       }
       @for (col of visibleCols(); track col.field) {

@@ -22,6 +22,7 @@ import {
   ScColumnDef,
   ScDatatableRowEvent,
   ScDatatableRowKeyEvent,
+  ScRowAriaLabelFn,
   ScRowStyleClassFn,
 } from '../../core/types/datatable.types';
 import { ScComponentSize } from '../../core/types/theme-component.types';
@@ -120,6 +121,13 @@ export class ScDatatableComponent<T = unknown> {
    */
   readonly rowsFocusable = input(false, { transform: booleanAttribute });
 
+  /** Nombre accesible de la casilla de cada fila. Ver `ScRowAriaLabelFn`: sin
+   *  esto PrimeNG anuncia `'Row Selected'` en inglés y sin identidad de fila. */
+  readonly rowSelectionAriaLabel = input<ScRowAriaLabelFn<T> | undefined>(undefined);
+
+  /** Nombre accesible de la casilla de CABECERA (seleccionar todo). */
+  readonly selectAllAriaLabel = input<string | undefined>(undefined);
+
   /**
    * Modo lazy (server-driven): p-table deja de ordenar/paginar/filtrar en cliente
    * y emite `(lazyLoad)` con los metadatos (page/sort/filter). El consumidor
@@ -213,17 +221,19 @@ export class ScDatatableComponent<T = unknown> {
    * más grande que tiene hoy este repo. Treinta líneas propias salen más
    * baratas que un acoplamiento más.
    *
-   * El ancla es la última fila cuya casilla se tocó SIN shift, y con shift no
-   * se mueve.
+   * El ancla es la última fila cuya casilla se tocó, con shift o sin él.
    *
-   * AVISO honesto: hoy esa decisión **no es observable**. El rango se UNE a lo
-   * ya seleccionado, y como la fila del ancla siempre está dentro, mover el
-   * ancla o no produce exactamente el mismo conjunto. Lo descubrió una prueba
-   * de mutación: al hacer que el ancla SÍ se moviera, los 17 tests siguieron
-   * en verde. Se deja fijo porque es lo correcto el día que shift+click
-   * REEMPLACE el rango en vez de sumarlo (Finder, Gmail), que es cuando
-   * reencuadrar empieza a significar algo — pero no se afirma un beneficio
-   * que hoy no se puede medir. Ver la nota en el spec.
+   * SEMÁNTICA: el rango SUMA, no reemplaza — arrastrar sobre filas ya marcadas
+   * no las desmarca. Y el ancla SE MUEVE con shift. Las dos cosas se copian de
+   * `conversation-table`, que es la tabla que hoy tiene este gesto a mano y la
+   * que va a migrar: replicar su comportamiento por construcción es lo que
+   * hace que la migración no cambie nada bajo los pies del usuario.
+   *
+   * (Que el ancla se mueva o no HOY no es observable: bajo unión, la fila del
+   * ancla ya está seleccionada, así que ambos caminos dan el mismo conjunto —
+   * lo demostró una prueba de mutación, que siguió en verde al invertirlo. Se
+   * alinea con la app porque es gratis y porque el día que alguien quiera
+   * semántica de reemplazo, el punto de partida ya será el correcto.)
    */
   private anclaRango: number | null = null;
 
@@ -268,7 +278,6 @@ export class ScDatatableComponent<T = unknown> {
         }
       }
       this.selection.set(union);
-      return; // el ancla NO se mueve: permite reencuadrar desde el mismo origen
     }
 
     this.anclaRango = index;

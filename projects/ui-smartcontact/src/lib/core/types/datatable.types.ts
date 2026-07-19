@@ -100,3 +100,15 @@ export interface ScDatatableRowKeyEvent<T = unknown> {
  * pura: nada de leer señales que no dependan de la propia fila.
  */
 export type ScRowStyleClassFn<T = unknown> = (row: T, index: number) => string | undefined;
+
+/**
+ * Nombre accesible de la casilla de una fila.
+ *
+ * Existe porque sin él PrimeNG cae a sus literales por defecto —`'Row Selected'`,
+ * `'All items selected'`— que son **inglés fijo**: no pasan por i18n y no dicen
+ * QUÉ fila es. En una app de cuatro idiomas eso convierte una tabla
+ * seleccionable en una lista de casillas anónimas para un lector de pantalla.
+ * Las tablas escritas a mano sí las nombraban (`[attr.aria-label]="user.name"`),
+ * así que cada migración lo perdía en silencio.
+ */
+export type ScRowAriaLabelFn<T = unknown> = (row: T, index: number) => string;

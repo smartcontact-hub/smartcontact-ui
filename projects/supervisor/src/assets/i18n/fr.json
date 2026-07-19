@@ -727,7 +727,9 @@
     },
     "delete_gate": "Supprimer…",
     "no_changes": "Aucune modification à enregistrer",
-    "actions": "Actions"
+    "actions": "Actions",
+    "select_row": "Sélectionner {{name}}",
+    "select_all": "Tout sélectionner"
   },
   "topbar": {
     "go_to_dashboard": "Aller au tableau de bord",

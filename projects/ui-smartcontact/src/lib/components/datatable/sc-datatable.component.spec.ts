@@ -165,19 +165,16 @@ describe('sc-datatable · selección de rango con ancla', () => {
     expect(ids(c)).toEqual([5, 2, 3, 4]);
   });
 
-  /* AQUÍ FALTA UN TEST, y es más honesto decirlo que fingirlo.
+  /* NO hay test del movimiento del ancla, y es deliberado.
    *
-   * Escribí uno que afirmaba «el ancla no se mueve con shift, así que se puede
-   * reencuadrar desde el mismo origen». Pasaba. Una prueba de mutación —hacer
-   * que el ancla SÍ se moviera— lo dejó igual de verde: era vacuo.
+   * Escribí uno y una prueba de mutación lo destapó como vacuo: bajo unión, la
+   * fila del ancla ya está seleccionada, así que moverla o no da el mismo
+   * conjunto. La propiedad no es observable, y un test que no puede fallar es
+   * ruido con aspecto de cobertura.
    *
-   * La razón no es el test, es la semántica: el rango se UNE a lo seleccionado
-   * y la fila del ancla siempre está dentro, así que mover el ancla no cambia
-   * el conjunto resultante. La propiedad no es observable HOY.
-   *
-   * Se vuelve observable el día que shift+click REEMPLACE el rango en vez de
-   * sumarlo (que es lo que hacen Finder y Gmail). Esa es una decisión de
-   * producto pendiente; cuando se tome, este test se escribe de verdad.
+   * El comportamiento se alinea con `conversation-table` (suma + ancla que se
+   * mueve) por construcción, no por aserción. Se vuelve observable —y
+   * comprobable— el día que shift+click REEMPLACE el rango en vez de sumarlo.
    */
 
   it('sin ancla previa, shift+click no inventa un rango', () => {
