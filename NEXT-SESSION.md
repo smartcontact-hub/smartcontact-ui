@@ -1,7 +1,7 @@
 # NEXT-SESSION — hand-off
 
 > Estado volátil. Se SOBREESCRIBE en cada cierre. Lo durable vive en `docs/`.
-> **Sello: 2026-07-19, cierre sesión 18.**
+> **Sello: 2026-07-19, cierre sesión 19.**
 
 ## ▶️ EMPIEZA AQUÍ
 
@@ -169,6 +169,37 @@ que su texto coincide con la miga actual.
 `e2e/supervisor/list-table-grammar.spec.ts` — 12 tests que fijan los valores
 COMPUTADOS de la piel (que se agarra a clases internas de PrimeNG), el separador
 en oscuro, el cursor y el teclado. Suite del supervisor: **43 tests**.
+
+# SESIÓN 19 — se acaba el contraste, y las tablas llegan a su tope real
+
+| Commit | Qué |
+|---|---|
+| `631ea98` | Los dos últimos botones bajo AA (§1.8). **Cero fallos de contraste** salvo el límite conocido de §1.5 |
+| `158855d` | reglas + categorias + entidades a `sc-datatable` (9 migradas) + 4 arreglos que destapó la revisión |
+
+## Lo que hay que saber antes de tocar tablas
+
+**Quedan 5 `<table>` a mano y NINGUNA debe migrar tal cual.** Está escrito con
+su razón en `docs/receta-migracion-tablas.md`: tres son matrices de permisos
+(una casilla por celda — ahí `<table>` con `<th scope="row">` es MEJOR
+accesibilidad, no peor), una es un picker cuya fila selecciona al clicar
+(contradice el modelo de la Ola 6) y `conversation-table` necesita **una
+capacidad nueva del DS**: selección de rango con ancla (shift+click). Hoy la
+cubren 5 tests e2e que una migración rompería.
+
+**Los 29 checkboxes nativos NO caen migrando tablas** — corrijo lo que decía el
+hand-off anterior. Están en filtros desplegables (12 solo en
+`type-filter-button`) y formularios, no en tablas. Cambiarlos por `<sc-checkbox>`
+es una tarea propia y legítima, pero es otra tarea.
+
+## El patrón que funcionó, y su pega
+
+Tres agentes en paralelo (worktree cada uno) + **un revisor adversarial por
+migración**. Los tres autores dieron su trabajo por verde; los revisores
+encontraron cuatro cosas reales, una grave (la tabla inerte que se iluminaba al
+pasar el ratón). **El valor estuvo en la revisión, no en el paralelismo.**
+Pega: los worktrees dejan `dist/` y `.angular/cache`, y eslint los escanea →
+`verify` en rojo hasta hacer `git worktree remove` + borrar las ramas.
 
 # SESIÓN 18 — el tema oscuro estaba a medias
 
