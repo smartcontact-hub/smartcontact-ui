@@ -48,7 +48,7 @@
     opacity: 0.4;
   }
   &:focus-visible {
-    outline: 2px solid var(--sc-color-sky-500);
+    outline: 2px solid var(--sc-border-focus);
     outline-offset: 2px;
   }
 
@@ -96,7 +96,7 @@
     opacity: 0.5;
   }
   &:focus-visible {
-    outline: 2px solid var(--sc-color-sky-500);
+    outline: 2px solid var(--sc-border-focus);
     outline-offset: 2px;
   }
 }
@@ -169,7 +169,7 @@
     color: var(--sc-color-slate-700);
   }
   &:focus-visible {
-    outline: 2px solid var(--sc-color-sky-500);
+    outline: 2px solid var(--sc-border-focus);
     outline-offset: 2px;
     border-radius: var(--sc-radius-100);
   }
@@ -227,7 +227,7 @@
     color: var(--sc-color-slate-300);
   }
   &:focus-visible {
-    outline: 2px solid var(--sc-color-sky-500);
+    outline: 2px solid var(--sc-border-focus);
     outline-offset: 2px;
   }
 }
@@ -327,7 +327,7 @@
     opacity: 0.6;
   }
   &:focus-visible {
-    outline: 2px solid var(--sc-color-sky-500);
+    outline: 2px solid var(--sc-border-focus);
     outline-offset: 2px;
   }
 }

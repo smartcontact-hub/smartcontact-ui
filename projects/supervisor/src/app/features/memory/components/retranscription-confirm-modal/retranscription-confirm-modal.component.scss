@@ -95,9 +95,14 @@
       color: var(--sc-text-subtle);
     }
 
+    /* Era el único foco de la app que no era un `outline`: borde + halo, los
+     * dos en paleta cruda. El halo (`blue-100`) es claro y no voltea, así que
+     * en oscuro dejaba un cerco blanco alrededor del campo. Pasa al anillo de
+     * la casa; el `color-mix` sobre el token de foco da un halo que sigue al
+     * tema en vez de ignorarlo. */
     &:focus-visible {
-      border-color: var(--sc-color-sky-500);
-      box-shadow: 0 0 0 3px var(--sc-color-blue-100);
+      border-color: var(--sc-border-focus);
+      box-shadow: 0 0 0 3px color-mix(in srgb, var(--sc-border-focus) 25%, transparent);
     }
 
     &.is-invalid {
