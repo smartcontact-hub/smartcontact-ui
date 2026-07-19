@@ -35,19 +35,30 @@ import { expect, type Page } from '@playwright/test';
  * → hex), lo compara con lo que el navegador computa de verdad, y si no cuadran
  * dice explícitamente que estás midiendo un build anterior. No hay ningún hex
  * escrito aquí: si mañana el token cambia de valor, el guardián sigue valiendo.
+ *
+ * **Y resuelve POR TEMA.** La primera versión leía siempre el valor claro y
+ * reventaba las 17 rutas oscuras en CI acusando de "build rancio" a un build
+ * perfectamente fresco — un guardián que da falsos positivos es peor que no
+ * tenerlo, porque enseña a ignorarlo. Lo probé rancio-contra-fresco y no lo
+ * probé claro-contra-oscuro: el mismo agujero que llevo toda la sesión
+ * documentando, en la herramienta escrita para taparlo.
  */
 const TOKEN_CANARIO = '--sc-text-subtle';
-const RUTA_SEMANTICO = 'projects/design-tokens/src/lib/styles/tokens/layers/02-semantic.css';
 const RUTA_PRIMITIVO = 'projects/design-tokens/src/lib/styles/tokens/layers/01-primitive.css';
+const RUTA_POR_TEMA = {
+  claro: 'projects/design-tokens/src/lib/styles/tokens/layers/02-semantic.css',
+  oscuro: 'projects/design-tokens/src/lib/styles/tokens/layers/07-dark.css',
+} as const;
 
-/** Resuelve el canario en el FUENTE hasta su hex. Lanza si el token desaparece. */
-const hexDelFuente = (): string => {
-  const semantico = readFileSync(RUTA_SEMANTICO, 'utf8');
+/** Resuelve el canario en el FUENTE del tema pedido hasta su hex. */
+const hexDelFuente = (tema: keyof typeof RUTA_POR_TEMA): string => {
+  const ruta = RUTA_POR_TEMA[tema];
+  const capa = readFileSync(ruta, 'utf8');
   const aPrimitiva = new RegExp(`^\\s*${TOKEN_CANARIO}:\\s*var\\((--sc-color-[a-z0-9-]+)\\)`, 'm');
-  const salto = semantico.match(aPrimitiva);
+  const salto = capa.match(aPrimitiva);
   if (!salto) {
     throw new Error(
-      `El guardián de build no encuentra "${TOKEN_CANARIO}: var(--sc-color-…)" en ${RUTA_SEMANTICO}. ` +
+      `El guardián de build no encuentra "${TOKEN_CANARIO}: var(--sc-color-…)" en ${ruta} (tema ${tema}). ` +
         `Si el token se renombró, actualiza TOKEN_CANARIO en helpers.ts — no borres el guardián.`,
     );
   }
@@ -60,11 +71,16 @@ const hexDelFuente = (): string => {
 
 /**
  * Falla si el navegador no está sirviendo el CSS de tokens que hay en disco.
- * Llámalo en el `beforeEach` de cualquier spec que MIDA colores: sin esto, un
- * server rancio no te da un rojo, te da un verde equivocado.
+ * Llámalo en cualquier spec que MIDA colores: sin esto, un server rancio no te
+ * da un rojo, te da un verde equivocado.
+ *
+ * Se llama DESPUÉS de que el tema esté aplicado: detecta cuál es y compara
+ * contra la capa que corresponde.
  */
 export const asegurarBuildFresco = async (page: Page): Promise<void> => {
-  const esperado = hexDelFuente();
+  const oscuro = await page.evaluate(() => document.documentElement.classList.contains('sc-dark'));
+  const tema = oscuro ? 'oscuro' : 'claro';
+  const esperado = hexDelFuente(tema);
   const servido = await page.evaluate((token) => {
     // Resolver la var a un color computado: el canvas normaliza cualquier sintaxis.
     const s = document.createElement('span');
@@ -83,8 +99,8 @@ export const asegurarBuildFresco = async (page: Page): Promise<void> => {
   expect(
     aHex(servido),
     `ESTÁS MIDIENDO UN BUILD ANTERIOR A TU EDICIÓN.\n` +
-      `  ${TOKEN_CANARIO} en el fuente: ${esperado}\n` +
-      `  lo que sirve el navegador:   ${aHex(servido)} (${servido})\n` +
+      `  ${TOKEN_CANARIO} en el fuente (tema ${tema}): ${esperado}\n` +
+      `  lo que sirve el navegador:              ${aHex(servido)} (${servido})\n` +
       `Reinicia el dev server. Suele pasar tras un "npm run verify": reescribe dist/ ` +
       `por debajo del "ng serve", que se queda muerto pero sigue sirviendo el bundle viejo.`,
   ).toBe(esperado);
