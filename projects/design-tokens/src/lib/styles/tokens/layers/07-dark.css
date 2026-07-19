@@ -325,6 +325,65 @@
   --sc-bg-info-subtle: color-mix(in srgb, var(--sc-color-sky-800) 22%, transparent);
   --sc-bg-violet-subtle: color-mix(in srgb, var(--sc-color-violet-800) 22%, transparent);
 
+  /* ---------- Palette · Labels ----------
+   *
+   * Los 32 tokens `--sc-label-*` vivían SOLO en `03-palette.css`, es decir solo
+   * en claro. En oscuro heredaban el pastel del claro, así que `sc-chip` y
+   * `sc-tag` —y los cuatro clones que la app se hizo (`.chip`, `.sc-label`,
+   * `.status-pill`, `.state-tag`)— pintaban islas claras sobre el lienzo
+   * oscuro. Medido en 28 rutas del supervisor: 10 chips en `/admin/labels`,
+   * 5 en `/admin/usuarios`, pastillas en las 9 páginas de repositorios.
+   *
+   * No era ilegible (el texto oscuro sobre pastel claro seguía cumpliendo AA
+   * dentro del propio chip) pero rompía el tema: el resto de la pantalla es
+   * oscuro y estas etiquetas no se enteraban. Mismo agujero que tenían los
+   * seis `--sc-text-*` sin valor oscuro, de la misma familia y a medio cerrar.
+   *
+   * La forma la copia el bloque de `--sc-bg-*-subtle` de más arriba: el fondo
+   * es un `color-mix` translúcido sobre el paso profundo de la familia (así
+   * el chip respira el lienzo que tenga debajo, tabla o modal) y el texto
+   * sube a los pasos 200/300 para cumplir AA contra ese fondo compuesto.
+   * Los ratios están medidos, no estimados — ver `dark-surfaces.spec.ts`. */
+  --sc-label-gray-bg: color-mix(in srgb, var(--sc-color-slate-700) 45%, transparent);
+  --sc-label-gray-text: var(--sc-color-slate-200);
+  --sc-label-gray-border: color-mix(in srgb, var(--sc-color-slate-500) 45%, transparent);
+  --sc-label-gray-dot: var(--sc-color-slate-400);
+
+  --sc-label-red-bg: color-mix(in srgb, var(--sc-color-red-900) 40%, transparent);
+  --sc-label-red-text: var(--sc-color-red-300);
+  --sc-label-red-border: color-mix(in srgb, var(--sc-color-red-700) 45%, transparent);
+  --sc-label-red-dot: var(--sc-color-red-400);
+
+  --sc-label-orange-bg: color-mix(in srgb, var(--sc-color-orange-900) 40%, transparent);
+  --sc-label-orange-text: var(--sc-color-orange-300);
+  --sc-label-orange-border: color-mix(in srgb, var(--sc-color-orange-700) 45%, transparent);
+  --sc-label-orange-dot: var(--sc-color-orange-400);
+
+  --sc-label-amber-bg: color-mix(in srgb, var(--sc-color-amber-900) 40%, transparent);
+  --sc-label-amber-text: var(--sc-color-amber-300);
+  --sc-label-amber-border: color-mix(in srgb, var(--sc-color-amber-700) 45%, transparent);
+  --sc-label-amber-dot: var(--sc-color-amber-400);
+
+  --sc-label-green-bg: color-mix(in srgb, var(--sc-color-emerald-900) 40%, transparent);
+  --sc-label-green-text: var(--sc-color-emerald-300);
+  --sc-label-green-border: color-mix(in srgb, var(--sc-color-emerald-700) 45%, transparent);
+  --sc-label-green-dot: var(--sc-color-emerald-400);
+
+  --sc-label-teal-bg: color-mix(in srgb, var(--sc-color-teal-900) 40%, transparent);
+  --sc-label-teal-text: var(--sc-color-teal-300);
+  --sc-label-teal-border: color-mix(in srgb, var(--sc-color-teal-700) 45%, transparent);
+  --sc-label-teal-dot: var(--sc-color-teal-400);
+
+  --sc-label-blue-bg: color-mix(in srgb, var(--sc-color-azure-900) 40%, transparent);
+  --sc-label-blue-text: var(--sc-color-azure-300);
+  --sc-label-blue-border: color-mix(in srgb, var(--sc-color-azure-700) 45%, transparent);
+  --sc-label-blue-dot: var(--sc-color-azure-400);
+
+  --sc-label-purple-bg: color-mix(in srgb, var(--sc-color-purple-900) 40%, transparent);
+  --sc-label-purple-text: var(--sc-color-purple-300);
+  --sc-label-purple-border: color-mix(in srgb, var(--sc-color-purple-700) 45%, transparent);
+  --sc-label-purple-dot: var(--sc-color-purple-400);
+
   /* ---------- Semantic · Border ---------- */
   --sc-border-default: var(--sc-color-slate-800);
   --sc-border-strong: var(--sc-color-slate-600);

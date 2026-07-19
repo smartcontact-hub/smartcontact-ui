@@ -34,9 +34,13 @@
     background: var(--sc-label-green-bg);
   }
 
+  /* 1.92:1 medido en /admin/usuarios: `--sc-text-subtle` sobre `--sc-bg-default`
+   * son dos grises casi iguales. Esa pareja vale para texto auxiliar sobre el
+   * LIENZO, no para una pastilla que tiene que leerse sola. El gris de la
+   * familia `label` empareja fondo y texto a propósito: 6.4:1. */
   &[data-tone='muted'] {
-    color: var(--sc-text-subtle);
-    background: var(--sc-bg-default);
+    color: var(--sc-label-gray-text);
+    background: var(--sc-label-gray-bg);
   }
 
   &[data-tone='warning'] {
@@ -49,8 +53,13 @@
     background: var(--sc-label-red-bg);
   }
 
+  /* El texto iba a paleta CRUDA (cyan-700) sobre un fondo de la familia
+   * `--sc-label-*`. Mientras esa familia no tenía valor oscuro daba igual —
+   * los dos se quedaban claros. En cuanto el fondo pasa a oscuro (07-dark),
+   * un texto que no voltea encima es texto oscuro sobre fondo oscuro: el
+   * mismo fallo de antes, del revés. Va emparejado con su propio texto. */
   &[data-tone='info'] {
-    color: var(--sc-color-cyan-700);
+    color: var(--sc-label-blue-text);
     background: var(--sc-label-blue-bg);
   }
 }

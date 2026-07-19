@@ -63,7 +63,7 @@
   transition: background var(--sc-transition-fast) ease;
 
   &:hover {
-    background: var(--sc-color-slate-100);
+    background: var(--sc-bg-hover);
   }
 
   &:focus-visible {
@@ -71,8 +71,17 @@
     outline-offset: 2px;
   }
 
+  /* El item ACTIVO llevaba `--sc-color-slate-100` (paleta cruda, que no
+   * voltea) con `--sc-text-primary` encima (semántico, que sí voltea): en
+   * oscuro quedaba texto casi blanco sobre gris casi blanco, 1.09:1. El item
+   * seleccionado del menú de AED era invisible en las tres páginas.
+   *
+   * `--sc-bg-hover` vale slate-100 en claro —idéntico a lo que había— y
+   * slate-800 en oscuro. Que activo y hover compartan token es lo que ya
+   * pasaba con el valor crudo; diferenciarlos sería una decisión de diseño,
+   * no parte de arreglar el contraste. */
   &--active {
-    background: var(--sc-color-slate-100);
+    background: var(--sc-bg-hover);
 
     .nav-item__icon {
       background: var(--sc-bg-primary);
@@ -94,7 +103,10 @@
   align-items: center;
   justify-content: center;
   border-radius: var(--sc-radius-200);
-  background: var(--sc-color-slate-200);
+  /* Mismo caso que `--active`: crudo slate-200 (fijo) + `--sc-text-secondary`
+   * (voltea) = 1.21:1 en oscuro. En claro `--sc-bg-secondary-active` es
+   * slate-200, el mismo valor. */
+  background: var(--sc-bg-secondary-active);
   color: var(--sc-text-secondary);
   transition:
     background var(--sc-transition-fast) ease,

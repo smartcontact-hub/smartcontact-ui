@@ -192,10 +192,13 @@
     border-color: var(--sc-label-green-border);
   }
 
+  /* Los otros cuatro tonos ya hablaban `--sc-label-*`; `muted` era el único
+   * que se salía, y medía 1.92:1 en /admin/agendas — dos grises casi iguales.
+   * Con el gris de la familia, 6.4:1. */
   &[data-tone='muted'] {
-    color: var(--sc-text-subtle);
-    background: var(--sc-bg-default);
-    border-color: var(--sc-border-default);
+    color: var(--sc-label-gray-text);
+    background: var(--sc-label-gray-bg);
+    border-color: var(--sc-label-gray-border);
   }
 
   &[data-tone='warning'] {
