@@ -1,18 +1,19 @@
 # NEXT-SESSION — hand-off
 
 > Estado volátil. Se SOBREESCRIBE en cada cierre. Lo durable vive en `docs/`.
-> **Sello: 2026-07-19, cierre sesión 17.**
+> **Sello: 2026-07-19, cierre sesión 18.**
 
 ## ▶️ EMPIEZA AQUÍ
 
 1. Lee este fichero y luego [`LEARNINGS.md`](LEARNINGS.md).
 2. **Confirma el CI LEYENDO el run** del último commit.
-3. **B4 está cerrado.** Con él caen los tres bloques que llevaban meses
-   abiertos: B2 (sesión 15), la red de componentes (15) y B4 (16). De los
-   bloques del plan de convergencia solo quedan **B3** (necesita a Rafa) y
-   **B5b** (necesita diseño).
+3. **B3 y B4 están cerrados.** De los bloques del plan de convergencia solo
+   queda **B5b** (necesita diseño). Suite del supervisor: **108 tests**.
 4. Si vas a migrar otra tabla, la receta está escrita y medida:
    [`docs/receta-migracion-tablas.md`](docs/receta-migracion-tablas.md).
+5. **La decisión más grande abierta es `--sc-text-subtle`** (2.04:1, 161 usos).
+   No es un arreglo mecánico: cumplir AA lo convierte en `text-secondary`, o
+   sea la jerarquía de tres grises no cabe. Ver más abajo.
 
 ---
 
@@ -168,25 +169,100 @@ que su texto coincide con la miga actual.
 COMPUTADOS de la piel (que se agarra a clases internas de PrimeNG), el separador
 en oscuro, el cursor y el teclado. Suite del supervisor: **43 tests**.
 
+# SESIÓN 18 — el tema oscuro estaba a medias
+
+| Commit | Qué |
+|---|---|
+| `2506483` | El arnés unitario existía a medias — ahora corre (vitest, 10 tests) |
+| `7265a2f` | `--sc-label-*` gana tema oscuro; un solo vocabulario de insignia |
+| `6a0b5a1` | La red tenía un agujero, y por él cabían seis defectos |
+| `ca9e959` | Un solo anillo de foco, no cuatro |
+
+## La causa raíz, en una frase
+
+`--sc-color-*` es la paleta PRIMITIVA y **`07-dark.css` no redefine ni una**.
+Escribir `background: var(--sc-color-slate-100)` en una hoja de página es
+escribir un valor FIJO: en claro se ve bien y nadie se entera, en oscuro se
+queda claro. Si encima el texto sí es semántico, sale gris claro sobre gris
+claro. Medido en 28 rutas: `.rules-status--inactive` 1.40:1, `.avatar` 1.09,
+el item ACTIVO del menú de AED 1.09, el chip que avisa de errores 2.16, el id
+de una conversación fallida 1.30.
+
+Y debajo: los **32 tokens `--sc-label-*` no tenían valor oscuro**, así que
+`sc-chip` y `sc-tag` —que son del DS— pintaban islas pastel en media app, y
+el defecto llegaba a cualquier consumidor.
+
+## Lo que dejó de ser opinión
+
+Ahora hay **un solo vocabulario de insignia**: `--sc-label-*`. Lo hablan
+`.sc-label`, `.chip`, `.status-pill`, `.rules-status`, `.state-tag`,
+`.entity-type-chip` y `.memory-failed-chip`. Se probó antes con la rampa
+`--sc-bg-*-subtle`/`--sc-text-*` y **salió peor** (danger a 4.41:1): esa
+pareja está calibrada para texto sobre el LIENZO, no dentro de una pastilla.
+Ver `customs-catalog` §1.6.
+
+## Las redes nuevas
+
+- **`theme-contrast.spec.ts`** — 51 tests, 17 rutas × 2 temas. Dos preguntas:
+  ¿queda alguna superficie clara en oscuro? y ¿se lee el texto encima? La
+  segunda existe porque al oscurecer un fondo puedes dejar texto oscuro
+  encima. **Corre también en claro**: al arreglar el oscuro salieron 4 fallos
+  de AA en claro que llevaban ahí desde siempre.
+- **`focus-ring.spec.ts`** — 7 rutas tabulando. No fija el hex (lo resuelve
+  del token en vivo): vigila la UNANIMIDAD. Cuenta los anillos que ve y falla
+  si son menos de 3, para no pasar en verde sin medir.
+- **`sc-datatable.component.spec.ts`** — el primer `TestBed` del repo. Los
+  targets `test` apuntaban a karma y karma nunca se instaló: los "0 tests
+  unitarios" no eran una decisión, eran un arnés sin terminar.
+
 # Decisiones que siguen necesitando a Rafa
 
-1. **`--sc-text-secondary` a 2.95:1 sobre blanco** — bajo AA para texto normal, y
-   es el texto secundario de TODA la app. Está *enforced* 1:1 con el Kit por
-   parity §6: subirlo exige cambiarlo en Figma y re-exportar. **Rafa + Marta.**
-   slate-500 `#8f97a3` → haría falta ~slate-600 `#6f7784` (4.52:1).
-2. ~~`--sc-text-success`~~ — **HECHO en la sesión 17**, y resultó que yo estaba
-   equivocado al listarlo aquí: no estaba enforced con el Kit, así que nunca
-   necesitó a nadie. Ver la sección de contraste de arriba.
-3. ~~El separador de filas en oscuro~~ — **hecho**: `border-default` en vez de
-   `subtle`, aplicando la regla que ya escribió la Ola 3. Se paga en claro (el
-   separador pasa de 1.10:1 a 1.34:1, se ve más). Si no te convence, es una
-   línea en `_sc-datatable-list.scss`.
+1. **`--sc-text-subtle` a 2.04:1 sobre blanco, en 161 usos.** Descripciones
+   del hub de repositorios, cuerpo de los estados vacíos, hints, placeholders.
+   **Corrijo lo que decía este mismo fichero** ("su uso es placeholder/
+   disabled"): eso es falso, está medido en contenido real.
+   **No tiene arreglo mecánico**: para llegar a 4.5:1 sobre blanco hay que
+   subir a slate-600, que **es** el valor de `--sc-text-secondary`. O sea, la
+   jerarquía de tres grises no cabe en AA sobre blanco; caben dos. El tercer
+   nivel tendría que distinguirse por tamaño, peso o cursiva. Cambia el
+   aspecto de casi todas las pantallas → decisión tuya, no mía.
+2. **Dos botones del preset, bajo AA en claro**: `p-button-danger` (blanco
+   sobre red-500, 3.76:1) y la etiqueta de `p-button-secondary outlined`
+   (slate-500, 2.95:1 — es el botón "Añadir" de AED, un control primario).
+   Vienen del Kit → **Rafa + Marta**.
+3. Los cuatro están fijados en `theme-contrast.spec.ts` con su número, a la
+   vista. Cualquier OTRO fallo rompe la prueba; estos no, hasta que decidas.
+4. ~~`--sc-text-secondary` 2.95:1~~ · ~~`--sc-text-success`~~ · ~~separador en
+   oscuro~~ — hechos en la 17.
 
 
 ---
 
 # TRAMPAS (verificadas, las nuevas primero)
 
+- **La paleta `--sc-color-*` NO se remapea en oscuro** (cero definiciones en
+  `07-dark.css`). Usarla en un `background` o un `color` de página es escribir
+  un valor fijo. Si además la pareja del otro lado sí es semántica, el
+  resultado es ilegible en uno de los dos temas. Es la causa de casi todo lo
+  de la sesión 18.
+- **Un token de FONDO no es un color de texto, ni al revés.** `--sc-bg-primary`
+  como `color:` daba 3.39:1; `--sc-text-info` como `background:` daba 3.15.
+  Los dos colaban en claro y se rompían en oscuro.
+- **`npm run verify` reescribe `dist/` debajo de un `ng serve` vivo** y lo deja
+  con `Cannot find module '@smartcontact-hub/components'`. El server sigue
+  sirviendo el bundle ANTERIOR, así que mides código viejo sin enterarte. Tras
+  un `verify`, reinicia el dev server antes de volver a medir. Me pasó.
+- **Los iconos de Material son LIGATURAS**: llegan al DOM como nodos de texto.
+  Al medir contraste hay que darles el umbral de 1.4.11 (3:1, gráfico), no el
+  de texto (4.5), o la medición se llena de falsos positivos y acabas
+  silenciando la red.
+- **Un `color-mix(... transparent)` claro sobre un fondo oscuro no sale
+  "claro"** (0.24 de luminancia) pero sí lo bastante claro para matar el texto
+  de encima. Medir solo la luminancia del fondo no basta; hay que medir el
+  contraste con lo que lleva encima.
+- **Al medir contraste, no filtres por "tiene fondo propio".** El texto casi
+  siempre vive en un `<span>` sin fondo dentro de un contenedor que sí lo
+  tiene. Con ese filtro la red pasa en verde saltándose el caso más común.
 - **`waitForLoadState('networkidle')` sin acotar puede tumbar el CI sin que
   falle ninguna aserción.** Pasó: el test del datepicker agotó sus 60s en el
   `goto` y sus comprobaciones ni corrieron. sc-demo descarga 3,9 MB de fuente
@@ -236,7 +312,7 @@ en oscuro, el cursor y el teclado. Suite del supervisor: **43 tests**.
 |---|---|
 | Soltar `primeicons` | PrimeNG 21 usa `pi pi-*` 631 veces por dentro. |
 | `line-height` sin unidad (~55) | Sin token destino en el Kit. |
-| `--sc-text-subtle` 2.04:1 | Decisión de marca; su uso es placeholder/disabled. |
+| ~~`--sc-text-subtle` 2.04:1~~ | **Salió de aquí en la 18**: era falso que su uso fuera placeholder/disabled. Está en contenido real (161 usos). Sube a «Decisiones que necesitan a Rafa». |
 | Storybook fases 2/3 (DD-29) | Proyecto propio, no deuda. |
 | `group-assignment-table` y `agent-channel-table` | NO deben migrar: son formularios disfrazados de tabla. |
 | Paginación de las tablas | Valor ≈ 0 hoy (6-84 filas). |
