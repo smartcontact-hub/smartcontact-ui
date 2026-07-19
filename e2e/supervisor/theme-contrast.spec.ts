@@ -255,8 +255,10 @@ for (const { nombre, aplicar, claseRaiz } of TEMAS) {
 
       test(`${ruta} · el texto se lee sobre su fondo`, async ({ page }) => {
         await goto(page, ruta);
-        await asegurarBuildFresco(page);
+        // El orden importa: el guardián resuelve el valor esperado SEGÚN EL TEMA,
+        // así que primero hay que confirmar cuál está aplicado.
         await asegurarTema(page, claseRaiz);
+        await asegurarBuildFresco(page);
         const { ilegibles } = await page.evaluate(medir, L_CLARO);
         // La lista de conocidos es SOLO del tema claro: en oscuro no se
         // perdona ninguno, porque en oscuro no queda ninguno.
