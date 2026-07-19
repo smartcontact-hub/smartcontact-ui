@@ -1,0 +1,14 @@
+/* Config de TS para los tests unitarios del DS.
+ *
+ * El repo tenía targets `test` con el builder karma pero karma/jasmine NUNCA
+ * se instalaron: `ng test` no arrancaba y por eso el proyecto llevaba 0 tests
+ * unitarios. No era una decisión, era un arnés a medio montar. Angular 21 trae
+ * `@angular/build:unit-test` sobre vitest, que sí funciona sin karma. */
+{
+  "extends": "../../tsconfig.json",
+  "compilerOptions": {
+    "outDir": "../../out-tsc/spec",
+    "types": ["vitest/globals"]
+  },
+  "include": ["src/**/*.spec.ts", "src/**/*.d.ts"]
+}
