@@ -33,6 +33,7 @@ import {
   ScColumnSelectorComponent as ColumnSelectorComponent,
   ScDatatableComponent as DatatableComponent,
   type ScDatatableRowEvent,
+  type ScDatatableRowKeyEvent,
   type ScDatatableSortEvent,
   type ScRowStyleClassFn,
   ScDeleteEntityDialogComponent as DeleteEntityDialogComponent,
@@ -288,7 +289,7 @@ export class GroupsListPageComponent {
     },
     // Columna sin datos: `field` es solo su identidad para `[visibleColumns]`,
     // y la cabecera va vacía igual que el `<th aria-hidden>` que sustituye.
-    { field: 'actions', header: '', width: '48px', align: 'right', cellTemplate: this.actionsTpl() },
+    { field: 'actions', stopRowClick: true, header: '', width: '48px', align: 'right', cellTemplate: this.actionsTpl() },
   ]);
 
   /**
@@ -469,6 +470,18 @@ export class GroupsListPageComponent {
 
   /** Click derecho → el MISMO `<p-menu>` que el kebab (R3). El DS ya canceló
    *  el menú nativo del navegador. */
+  /* WCAG 2.1.1: la fila abre la ficha con el ratón, así que tiene que abrirla
+   * también con el teclado. Estas tres listas NUNCA lo tuvieron —ni antes ni
+   * después de migrar; se comprobó en el árbol anterior: cero `tabindex`, cero
+   * `keydown`, cero enlaces— o sea que la acción existía solo para quien usa
+   * ratón. Enter abre; Espacio lo deja para la casilla, que es el reparto que
+   * fijó la Ola 6 en transcripciones. */
+  protected onRowKeydown(event: ScDatatableRowKeyEvent<Group>): void {
+    if (event.originalEvent.key !== 'Enter') return;
+    event.originalEvent.preventDefault();
+    this.onRowClick(event.row);
+  }
+
   protected onRowContextMenu(
     event: ScDatatableRowEvent<Group>,
     menu: { toggle: (e: Event) => void },

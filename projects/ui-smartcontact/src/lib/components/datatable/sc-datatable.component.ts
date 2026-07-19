@@ -21,6 +21,7 @@ import {
 import {
   ScColumnDef,
   ScDatatableRowEvent,
+  ScDatatableRowKeyEvent,
   ScRowStyleClassFn,
 } from '../../core/types/datatable.types';
 import { ScComponentSize } from '../../core/types/theme-component.types';
@@ -107,6 +108,19 @@ export class ScDatatableComponent<T = unknown> {
   readonly rowStyleClass = input<ScRowStyleClassFn<T> | undefined>(undefined);
 
   /**
+   * Hace las filas alcanzables con el tabulador (`tabindex="0"`).
+   *
+   * Si consumes `(rowClick)`, esto NO es opcional: una fila que abre algo al
+   * clicar y no se puede enfocar es un fallo de WCAG 2.1.1 — la acción existe
+   * solo para quien usa ratón. Va como input y no automático porque el
+   * componente no puede saber si alguien escucha el output, y meter 50 paradas
+   * de tabulador en una tabla que no las necesita también es un defecto.
+   *
+   * Emparéjalo con `(rowKeydown)` para decidir qué hace cada tecla.
+   */
+  readonly rowsFocusable = input(false, { transform: booleanAttribute });
+
+  /**
    * Modo lazy (server-driven): p-table deja de ordenar/paginar/filtrar en cliente
    * y emite `(lazyLoad)` con los metadatos (page/sort/filter). El consumidor
    * busca los datos y actualiza `value` + `totalRecords`.
@@ -141,6 +155,14 @@ export class ScDatatableComponent<T = unknown> {
    * volvería a poner dos modelos donde ahora hay uno.
    */
   readonly rowContextMenu = output<ScDatatableRowEvent<T>>();
+
+  /**
+   * Tecla pulsada sobre la fila. El DS **no interpreta ninguna**: el reparto
+   * canónico (Enter abre · Espacio selecciona) es del consumidor, porque solo
+   * él sabe qué significa "abrir" en su tabla. El DS solo garantiza que el
+   * evento llega — que es lo que no se podía hacer antes.
+   */
+  readonly rowKeydown = output<ScDatatableRowKeyEvent<T>>();
 
   /** Mapea sm/md/lg a la prop `size` de p-table (md = sin atributo → padding base del preset). */
   protected readonly pSize = computed<'small' | 'large' | undefined>(() => {
@@ -212,6 +234,10 @@ export class ScDatatableComponent<T = unknown> {
 
   protected onRowClick(event: MouseEvent, row: T, index: number): void {
     this.rowClick.emit({ row, index, originalEvent: event });
+  }
+
+  protected onRowKeydown(event: KeyboardEvent, row: T, index: number): void {
+    this.rowKeydown.emit({ row, index, originalEvent: event });
   }
 
   protected onRowContextMenu(event: MouseEvent, row: T, index: number): void {

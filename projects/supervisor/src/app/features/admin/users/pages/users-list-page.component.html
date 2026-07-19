@@ -76,7 +76,9 @@
           selectionMode="multiple"
           [selection]="selectedUsers()"
           (selectionChange)="onSelectionChange($any($event))"
-          (rowClick)="onRowClick($event.row)"
+          rowsFocusable
+        (rowClick)="onRowClick($event.row)"
+        (rowKeydown)="onRowKeydown($event)"
           (rowContextMenu)="onRowContextMenu($event, rowMenu)"
           data-testid="users-table"
         >

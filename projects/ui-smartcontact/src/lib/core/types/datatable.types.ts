@@ -47,6 +47,15 @@ export interface ScColumnDef<T = unknown> {
    * omite, la celda pinta `row[field]`.
    */
   readonly cellTemplate?: TemplateRef<ScColumnCellContext<T>>;
+  /**
+   * La celda de esta columna NO dispara `(rowClick)`.
+   *
+   * Para columnas de acciones: el kebab ya para la propagación por su cuenta,
+   * pero el HUECO alrededor —el padding de la celda— no, así que fallar el
+   * botón por unos píxeles abría la ficha. Antes de migrar lo tragaba el `<td>`
+   * de la página; ahora el `<td>` lo pinta el DS, y por eso se declara aquí.
+   */
+  readonly stopRowClick?: boolean;
 }
 
 /**
@@ -65,6 +74,16 @@ export interface ScDatatableRowEvent<T = unknown> {
   readonly index: number;
   /** El evento del DOM, por si el consumidor necesita `shiftKey` o coordenadas. */
   readonly originalEvent: MouseEvent;
+}
+
+/**
+ * Payload de `rowKeydown`. Igual que `ScDatatableRowEvent` pero con el evento
+ * de teclado, para que el consumidor lea `key` sin castear.
+ */
+export interface ScDatatableRowKeyEvent<T = unknown> {
+  readonly row: T;
+  readonly index: number;
+  readonly originalEvent: KeyboardEvent;
 }
 
 /**

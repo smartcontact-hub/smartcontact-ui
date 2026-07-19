@@ -150,3 +150,21 @@ for (const { ruta, nombre } of ABREN_FILA) {
     await expect(fila).toHaveCSS('cursor', 'pointer');
   });
 }
+
+for (const { ruta, nombre } of ABREN_FILA) {
+  test(`${nombre} · la fila se abre TAMBIÉN con el teclado (WCAG 2.1.1)`, async ({ page }) => {
+    await goto(page, ruta);
+    const fila = page.locator('sc-datatable.list-table .p-datatable-tbody > tr').first();
+    await expect(fila).toBeVisible();
+
+    /* Estas tres listas abrían la ficha al clicar y NO eran alcanzables por
+     * teclado: cero `tabindex`, cero `keydown`, cero enlaces — comprobado en
+     * el árbol anterior a la migración. La acción existía solo para quien usa
+     * ratón, que es un fallo de WCAG 2.1.1, no una carencia estética. */
+    await expect(fila).toHaveAttribute('tabindex', '0');
+
+    await fila.focus();
+    await page.keyboard.press('Enter');
+    await expect(page).toHaveURL(/\/(editar|nuevo)\//);
+  });
+}

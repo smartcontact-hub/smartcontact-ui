@@ -33,6 +33,7 @@ import {
   type ScColumnDef,
   ScDatatableComponent as DatatableComponent,
   type ScDatatableRowEvent,
+  type ScDatatableRowKeyEvent,
   type ScRowStyleClassFn,
   ScDeleteEntityDialogComponent as DeleteEntityDialogComponent,
   ScEmptyStateComponent as EmptyStateComponent,
@@ -236,7 +237,7 @@ export class UsersListPageComponent {
     // Columna sin datos: `field` es solo su identidad, y la cabecera va vacía
     // igual que el `<th aria-hidden>` que sustituye.
     {
-      field: 'actions',
+      field: 'actions', stopRowClick: true,
       header: '',
       width: '48px',
       align: 'right',
@@ -394,6 +395,18 @@ export class UsersListPageComponent {
 
   /** Click derecho → el MISMO `<p-menu>` que el kebab (R3). El
    *  `preventDefault()` del menú nativo lo hace ya `sc-datatable`. */
+  /* WCAG 2.1.1: la fila abre la ficha con el ratón, así que tiene que abrirla
+   * también con el teclado. Estas tres listas NUNCA lo tuvieron —ni antes ni
+   * después de migrar; se comprobó en el árbol anterior: cero `tabindex`, cero
+   * `keydown`, cero enlaces— o sea que la acción existía solo para quien usa
+   * ratón. Enter abre; Espacio lo deja para la casilla, que es el reparto que
+   * fijó la Ola 6 en transcripciones. */
+  protected onRowKeydown(event: ScDatatableRowKeyEvent<User>): void {
+    if (event.originalEvent.key !== 'Enter') return;
+    event.originalEvent.preventDefault();
+    this.onRowClick(event.row);
+  }
+
   protected onRowContextMenu(
     event: ScDatatableRowEvent<User>,
     menu: { toggle: (e: Event) => void },
