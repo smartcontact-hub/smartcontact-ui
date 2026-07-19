@@ -20,119 +20,71 @@
 
 /* Empty state migrado a <sc-empty-state> (S62, backlog #64). */
 
-/* Chrome alineado con AED list-pages (S41 consistency): radius-200,
- * thead bg-default, font-size-50 + letter-spacing 0.05em, border-bottom
- * subtle por fila, td secondary + font-size-200. Num cols incluyen
- * tabular-nums + width 96 (alineado con resto plataforma). */
-.categories-table {
-  width: 100%;
-  border-collapse: collapse;
-  background: var(--sc-bg-surface);
-  border: 1px solid var(--sc-border-default);
-  border-radius: var(--sc-radius-200);
+/* ─────────── Tabla ───────────
+ * El bloque `.categories-table` (chrome de la tarjeta, cabecera, filas,
+ * celdas, hover, anchos por columna) desapareció de aquí: lo pinta ahora
+ * `sc-datatable` con la piel compartida `.list-table`
+ * (`styles/_sc-datatable-list.scss`) dentro de un `.table-card`
+ * (`styles/_sc-list-table.scss`), y los anchos/alineaciones viajan en los
+ * column-defs del .ts.
+ *
+ * Lo que queda es lo que sigue siendo de ESTA página: el CONTENIDO de las
+ * celdas, que se proyecta desde su plantilla y por tanto conserva el
+ * encapsulado del componente. Los `<td>` no: los pinta el DS.
+ *
+ * Los nombres `categories-table__*` se conservan aunque el elemento
+ * `.categories-table` ya no exista: son selectores planos (`&__x` no anida),
+ * los llevan los `<span>`/`<button>` proyectados, y renombrarlos no aportaría
+ * nada salvo diff. */
+
+/* Mismo tratamiento que `rules-table__name`: el nombre es el camino accesible
+   por teclado a la edición para quien llega tabulando dentro de la fila. Es un
+   <button> porque abre un modal, no navega a una URL.
+   `font-size` explícito: antes lo heredaba del `<td>` de esta página, que ya
+   no es suyo. */
+.categories-table__name {
+  padding: 0;
+  border: 0;
+  background: none;
+  font: inherit;
+  font-size: var(--sc-font-size-200);
+  color: var(--sc-text-primary);
+  font-weight: var(--sc-font-weight-medium);
+  cursor: pointer;
+
+  &:hover {
+    color: var(--sc-bg-primary);
+    text-decoration: underline;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--sc-border-focus);
+    outline-offset: 2px;
+    border-radius: var(--sc-radius-xs);
+  }
+}
+
+.categories-table__group {
+  margin-left: var(--sc-spacing-0-25);
+  color: var(--sc-text-secondary);
+  font-size: var(--sc-font-size-100);
+  font-weight: var(--sc-font-weight-regular);
+}
+
+/* El recorte con puntos suspensivos vivía en el `<td>`; ahora va en el `<span>`
+   proyectado, que necesita ser bloque para que el ancho de la celda lo limite. */
+.categories-table__td-desc {
+  display: block;
+  font-size: var(--sc-font-size-200);
+  color: var(--sc-text-secondary);
   overflow: hidden;
-  table-layout: fixed;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
 
-  thead th {
-    text-align: left;
-    padding: var(--sc-spacing-0-875);
-    border-bottom: 1px solid var(--sc-border-default);
-    background: var(--sc-bg-default);
-    font-size: var(--sc-font-size-50);
-    font-weight: var(--sc-font-weight-semibold);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: var(--sc-text-secondary);
-    white-space: nowrap;
-  }
-
-  tbody tr {
-    border-bottom: 1px solid var(--sc-border-subtle);
-    transition: background var(--sc-transition-fast) var(--sc-easing-default);
-    /* La fila abre la edición, como en Reglas. */
-    cursor: pointer;
-
-    &:hover {
-      background: var(--sc-bg-default);
-    }
-  }
-
-  tbody td {
-    padding: var(--sc-spacing-0-875);
-    font-size: var(--sc-font-size-200);
-    color: var(--sc-text-secondary);
-    vertical-align: middle;
-  }
-
-  tbody tr:last-child {
-    border-bottom: 0;
-  }
-
-  &__th-num,
-  &__td-num {
-    width: 96px;
-    text-align: right;
-    font-variant-numeric: tabular-nums;
-  }
-
-  &__th-status,
-  &__td-status {
-    width: 110px;
-  }
-
-  &__th-date,
-  &__td-date {
-    width: 120px;
-    color: var(--sc-text-secondary);
-    font-size: var(--sc-font-size-100);
-  }
-
-  &__th-kebab,
-  &__td-kebab {
-    width: 44px;
-  }
-
-  &__td-desc {
-    color: var(--sc-text-secondary);
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  /* Mismo tratamiento que `rules-table__name`: el nombre es el camino accesible
-     por teclado a la edición (la fila entera no es un tab-stop). Es un <button>
-     porque abre un modal, no navega a una URL. */
-  &__name {
-    padding: 0;
-    border: 0;
-    background: none;
-    font: inherit;
-    color: var(--sc-text-primary);
-    font-weight: var(--sc-font-weight-medium);
-    cursor: pointer;
-
-    &:hover {
-      color: var(--sc-bg-primary);
-      text-decoration: underline;
-    }
-
-    &:focus-visible {
-      outline: 2px solid var(--sc-border-focus);
-      outline-offset: 2px;
-      border-radius: var(--sc-radius-xs);
-    }
-  }
-
-  &__group {
-    margin-left: var(--sc-spacing-0-25);
-    color: var(--sc-text-secondary);
-    font-size: var(--sc-font-size-100);
-    font-weight: var(--sc-font-weight-regular);
-  }
-
-  .categories-row--inactive {
-    opacity: 0.6;
-  }
+.categories-table__td-date {
+  color: var(--sc-text-secondary);
+  font-size: var(--sc-font-size-100);
 }
 
 .categories-num {
@@ -143,4 +95,13 @@
   &--empty {
     color: var(--sc-text-secondary);
   }
+}
+
+/* La fila inactiva se atenúa entera. El `<tr>` lo pinta la plantilla de
+ * `sc-datatable`, así que lleva SU `_ngcontent` y una regla encapsulada de esta
+ * página no lo alcanza nunca: `::ng-deep` es la única vía sin tocar la piel
+ * compartida. Si otra tabla acaba necesitando lo mismo, el sitio es
+ * `_sc-datatable-list.scss`, como pasó con `--clickable`. */
+:host ::ng-deep sc-datatable.list-table .p-datatable-tbody > tr.categories-row--inactive {
+  opacity: 0.6;
 }

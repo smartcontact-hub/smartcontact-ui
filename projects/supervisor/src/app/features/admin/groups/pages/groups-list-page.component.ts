@@ -289,7 +289,7 @@ export class GroupsListPageComponent {
     },
     // Columna sin datos: `field` es solo su identidad para `[visibleColumns]`,
     // y la cabecera va vacía igual que el `<th aria-hidden>` que sustituye.
-    { field: 'actions', stopRowClick: true, header: '', width: '48px', align: 'right', cellTemplate: this.actionsTpl() },
+    { field: 'actions', stopRowClick: true, header: '', headerAriaLabel: this.translate.instant('common.actions'), width: '48px', align: 'right', cellTemplate: this.actionsTpl() },
   ]);
 
   /**

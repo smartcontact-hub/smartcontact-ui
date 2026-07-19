@@ -36,16 +36,6 @@
         (cta)="newRuleMenu.toggle($event)"
       />
     } @else {
-      <!-- Menú kebab ÚNICO y compartido (antes 1 <p-menu> por fila): su modelo
-           es un computed estable → basta 1 clic para aplicar (no doble). Cada
-           botón lo abre pasando su propio $event para anclarlo a su fila. -->
-      <p-menu
-        #kebabMenu
-        [model]="menuItems()"
-        [popup]="true"
-        appendTo="body"
-        styleClass="rules-kebab-menu"
-      />
       <!-- Aviso no bloqueante (DD-30 permite 0 activas): sin ninguna regla activa
            las conversaciones nuevas no se transcriben ni clasifican solas. -->
       @if (!hasActive()) {
@@ -56,97 +46,117 @@
         />
       }
       <!-- Una sola tabla: el estado (activa/inactiva) va en columna, sin
-           secciones separadas. Cada fila enlaza al constructor. -->
-      <section class="rules-section">
-        <table class="rules-table">
-          <thead>
-            <tr>
-              <th scope="col">{{ 'memory.rules.cols.name' | translate }}</th>
-              <th scope="col">{{ 'memory.rules.cols.scope' | translate }}</th>
-              <th class="rules-table__th-actions" scope="col">
-                {{ 'memory.rules.cols.actions' | translate }}
-              </th>
-              <th class="rules-table__th-status" scope="col">
-                {{ 'memory.rules.cols.status' | translate }}
-              </th>
-              <th class="rules-table__th-modified" scope="col">
-                {{ 'memory.rules.cols.last_modified' | translate }}
-              </th>
-              <th class="rules-table__th-kebab" scope="col" aria-label="Acciones"></th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (rule of allRules(); track rule.id) {
-              <tr
-                class="rules-row"
-                [class.rules-row-inactive]="!rule.active"
-                (click)="openRule(rule)"
-              >
-                <td class="rules-table__td-name">
-                  <!-- Enlace REAL: la fila sigue siendo clicable con ratón, pero la
-                       navegación operable por teclado vive aquí (WCAG 2.1.1). Además
-                       permite cmd+click / abrir en pestaña nueva. -->
-                  <a
-                    class="rules-table__name"
-                    [routerLink]="['/conversaciones/reglas', rule.id]"
-                    (click)="$event.stopPropagation()"
-                    >{{ rule.name }}</a
-                  >
-                </td>
-                <td class="rules-table__td-scope" [attr.title]="scopeSummary(rule)">
-                  {{ scopeSummary(rule) }}
-                </td>
-                <td class="rules-table__td-actions">
-                  <div class="rules-actions-chips">
-                    @if (rule.transcripcion) {
-                      <span
-                        class="rules-action-chip"
-                        [attr.title]="'memory.rules.chip.transcription' | translate"
-                        [attr.aria-label]="'memory.rules.chip.transcription' | translate"
-                      >
-                        <sc-icon [name]="transcriptionIcon" [size]="12" />
-                      </span>
-                    }
-                    @if (rule.clasificacion) {
-                      <span
-                        class="rules-action-chip"
-                        [attr.title]="'memory.rules.chip.classification' | translate"
-                        [attr.aria-label]="'memory.rules.chip.classification' | translate"
-                      >
-                        <sc-icon [name]="sparklesIcon" [size]="12" />
-                      </span>
-                    }
-                  </div>
-                </td>
-                <td class="rules-table__td-status">
-                  @if (rule.active) {
-                    <span class="rules-status rules-status--active">
-                      {{ 'memory.rules.status.active' | translate }}
-                    </span>
-                  } @else {
-                    <span class="rules-status rules-status--inactive">
-                      {{ 'memory.rules.status.inactive' | translate }}
-                    </span>
-                  }
-                </td>
-                <td class="rules-table__td-modified">
-                  {{ formatRelativeDate(rule.lastModified) }}
-                </td>
-                <td class="rules-table__td-kebab">
-                  <button
-                    type="button"
-                    class="rules-kebab-btn"
-                    [attr.aria-label]="'memory.rules.cols.more' | translate"
-                    (click)="$event.stopPropagation(); setMenuTarget(rule); kebabMenu.toggle($event)"
-                  >
-                    <sc-icon [name]="kebabIcon" size="inherit" />
-                  </button>
-                </td>
-              </tr>
-            }
-          </tbody>
-        </table>
-      </section>
+           secciones separadas. Cada fila enlaza al constructor.
+
+           B4: la pinta el componente del DS. `class="list-table"` le pone la
+           gramática de tabla-lista de la app (54px de fila, cabecera silenciosa
+           de S59); sin ella el preset la dejaría más densa y con la cabecera
+           oscura, distinta de las tablas sin migrar. -->
+      <div class="table-card">
+        <sc-datatable
+          class="list-table"
+          [value]="allRules()"
+          [columns]="columns()"
+          dataKey="id"
+          [rowStyleClass]="rowClass"
+          rowsFocusable
+          (rowClick)="openRule($event.row)"
+          (rowKeydown)="onRowKeydown($event)"
+          (rowContextMenu)="onRowContextMenu($event, kebabMenu)"
+          data-testid="rules-table"
+        />
+      </div>
     }
   </div>
 </div>
+
+<!-- Celdas de la tabla. Viven FUERA del `<sc-datatable>` para que los
+     `viewChild` las resuelvan; `columns()` las recoge. El contexto es
+     `{ $implicit: rule }`.
+
+     Todas envuelven su contenido en un elemento con clase propia: el `<td>` lo
+     pinta ahora el DS, así que una regla encapsulada de esta página que
+     apuntara a `.rules-table__td-*` ya no lo alcanzaría. -->
+<ng-template #nameTpl let-rule>
+  <!-- Enlace REAL: la fila sigue siendo clicable con ratón (y ahora también
+       enfocable, ver `rowsFocusable`), pero cmd+click / abrir en pestaña nueva
+       viven aquí. `stopPropagation` evita que el click navegue dos veces. -->
+  <a
+    class="rules-table__name"
+    [routerLink]="['/conversaciones/reglas', rule.id]"
+    (click)="$event.stopPropagation()"
+    >{{ rule.name }}</a
+  >
+</ng-template>
+
+<ng-template #scopeTpl let-rule>
+  <span class="rules-cell rules-cell--scope" [attr.title]="scopeSummary(rule)">
+    {{ scopeSummary(rule) }}
+  </span>
+</ng-template>
+
+<ng-template #actionsTpl let-rule>
+  <span class="rules-actions-chips">
+    @if (rule.transcripcion) {
+      <span
+        class="rules-action-chip"
+        [attr.title]="'memory.rules.chip.transcription' | translate"
+        [attr.aria-label]="'memory.rules.chip.transcription' | translate"
+      >
+        <sc-icon [name]="transcriptionIcon" [size]="12" />
+      </span>
+    }
+    @if (rule.clasificacion) {
+      <span
+        class="rules-action-chip"
+        [attr.title]="'memory.rules.chip.classification' | translate"
+        [attr.aria-label]="'memory.rules.chip.classification' | translate"
+      >
+        <sc-icon [name]="sparklesIcon" [size]="12" />
+      </span>
+    }
+  </span>
+</ng-template>
+
+<ng-template #statusTpl let-rule>
+  @if (rule.active) {
+    <span class="rules-status rules-status--active">
+      {{ 'memory.rules.status.active' | translate }}
+    </span>
+  } @else {
+    <span class="rules-status rules-status--inactive">
+      {{ 'memory.rules.status.inactive' | translate }}
+    </span>
+  }
+</ng-template>
+
+<ng-template #modifiedTpl let-rule>
+  <span class="rules-cell">{{ formatRelativeDate(rule.lastModified) }}</span>
+</ng-template>
+
+<ng-template #kebabTpl let-rule>
+  <button
+    type="button"
+    class="rules-kebab-btn"
+    [attr.aria-label]="'memory.rules.cols.more' | translate"
+    (click)="$event.stopPropagation(); setMenuTarget(rule); kebabMenu.toggle($event)"
+  >
+    <sc-icon [name]="kebabIcon" size="inherit" />
+  </button>
+</ng-template>
+
+<!-- Menú kebab ÚNICO y compartido (antes 1 <p-menu> por fila): su modelo es un
+     computed estable → basta 1 clic para aplicar (no doble). Cada botón lo abre
+     pasando su propio $event para anclarlo a su fila; el click derecho sobre la
+     fila abre ESTE mismo menú (R3).
+
+     Vive en el nivel raíz de la plantilla, no dentro del `@else`: las celdas son
+     `<ng-template>` de la vista raíz y una referencia declarada dentro de un
+     bloque `@if` no es visible desde fuera de su vista embebida. -->
+<p-menu
+  #kebabMenu
+  [model]="menuItems()"
+  [popup]="true"
+  appendTo="body"
+  styleClass="rules-kebab-menu"
+/>

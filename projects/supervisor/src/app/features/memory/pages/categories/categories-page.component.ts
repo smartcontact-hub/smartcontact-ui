@@ -16,7 +16,15 @@ import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/componen
 import { MenuModule } from 'primeng/menu';
 import type { MenuItem } from 'primeng/api';
 
-import { ScEmptyStateComponent as EmptyStateComponent } from '@smartcontact-hub/components';
+import {
+  type ScColumnCellContext,
+  type ScColumnDef,
+  ScDatatableComponent as DatatableComponent,
+  type ScDatatableRowEvent,
+  type ScDatatableRowKeyEvent,
+  ScEmptyStateComponent as EmptyStateComponent,
+  type ScRowStyleClassFn,
+} from '@smartcontact-hub/components';
 import { ScConfirmService } from '@smartcontact-hub/components';
 import { TopBarSlotService } from '@core/layout/top-bar/top-bar-slot.service';
 import { TOAST_LIFE } from '@core/utils/toast-life';
@@ -30,8 +38,8 @@ import { RulesStore } from '../../state/rules.store';
  * Listado de Categorías IA · iter 11a.
  *
  * Categorías = temas/motivos de contacto que la IA etiqueta sobre las
- * conversaciones (ej. "queja facturación"). Tabla con 5 cols: Nombre ·
- * Descripción · Usada en · Llamadas · Estado · Kebab.
+ * conversaciones (ej. "queja facturación"). Tabla (`sc-datatable`) con
+ * Nombre · Descripción · Usada en · Llamadas · Estado · Creada · Kebab.
  *
  * Iter 11b: Create/Edit panel + CategoryRuleLinking (relación
  * bidireccional con reglas).
@@ -41,6 +49,7 @@ import { RulesStore } from '../../state/rules.store';
   imports: [
     ButtonComponent,
     CategoryFormModalComponent,
+    DatatableComponent,
     EmptyStateComponent,
     IconComponent,
     MenuModule,
@@ -87,6 +96,101 @@ export class CategoriesPageComponent {
   protected readonly kebabIcon = 'more_vert';
 
   protected readonly menuTargetCategory = signal<Category | null>(null);
+
+  /* ── La tabla, ahora `sc-datatable` ───────────────────────────────────
+   * Las siete celdas son composiciones propias de la página (el nombre con su
+   * botón, la pastilla de estado, los contadores tabulares, el kebab), así que
+   * todas van por `cellTemplate`: el DS no conoce el tipo `Category`.
+   *
+   * `columns` es un `computed()` que LEE los `viewChild` a propósito. Esos
+   * `TemplateRef` resuelven tarde, y una lista construida en el campo se
+   * quedaría con `cellTemplate: undefined` para siempre — la tabla pintaría
+   * `row[field]` en crudo. Al ser computed, se recalcula en cuanto resuelven.
+   */
+  private readonly nameTpl = viewChild<TemplateRef<ScColumnCellContext<Category>>>('nameTpl');
+  private readonly descTpl = viewChild<TemplateRef<ScColumnCellContext<Category>>>('descTpl');
+  private readonly usedInTpl = viewChild<TemplateRef<ScColumnCellContext<Category>>>('usedInTpl');
+  private readonly classifiedTpl =
+    viewChild<TemplateRef<ScColumnCellContext<Category>>>('classifiedTpl');
+  private readonly statusTpl = viewChild<TemplateRef<ScColumnCellContext<Category>>>('statusTpl');
+  private readonly createdTpl = viewChild<TemplateRef<ScColumnCellContext<Category>>>('createdTpl');
+  private readonly kebabTpl = viewChild<TemplateRef<ScColumnCellContext<Category>>>('kebabTpl');
+
+  protected readonly columns = computed<readonly ScColumnDef<Category>[]>(() => [
+    {
+      field: 'name',
+      header: this.translate.instant('memory.categories.cols.name'),
+      cellTemplate: this.nameTpl(),
+    },
+    {
+      field: 'description',
+      header: this.translate.instant('memory.categories.cols.description'),
+      cellTemplate: this.descTpl(),
+    },
+    // `usedIn` no existe en `Category` —se deriva de `RulesStore`—, pero la
+    // columna necesita igualmente un `field` único: es su identidad.
+    {
+      field: 'usedIn',
+      header: this.translate.instant('memory.categories.cols.used_in'),
+      width: '96px',
+      align: 'right',
+      cellTemplate: this.usedInTpl(),
+    },
+    {
+      field: 'classifiedCalls',
+      header: this.translate.instant('memory.categories.cols.classified'),
+      width: '96px',
+      align: 'right',
+      cellTemplate: this.classifiedTpl(),
+    },
+    {
+      field: 'status',
+      header: this.translate.instant('memory.categories.cols.status'),
+      width: '110px',
+      cellTemplate: this.statusTpl(),
+    },
+    {
+      field: 'createdAt',
+      header: this.translate.instant('memory.categories.cols.created'),
+      width: '120px',
+      cellTemplate: this.createdTpl(),
+    },
+    // Columna sin datos: cabecera vacía, igual que el `<th aria-label>` que
+    // sustituye. `stopRowClick` porque el botón para la propagación pero el
+    // padding de la celda no, y fallar el kebab por dos píxeles abría la ficha.
+    {
+      field: 'actions',
+      header: '', headerAriaLabel: this.translate.instant('common.actions'),
+      width: '44px',
+      stopRowClick: true,
+      cellTemplate: this.kebabTpl(),
+    },
+  ]);
+
+  /** Clases por fila. `table__row--clickable` (cursor) lo pinta la piel
+   *  `.list-table`; `--inactive` es de esta página. */
+  protected readonly rowStyleClass: ScRowStyleClassFn<Category> = (cat) =>
+    cat.isActive ? 'table__row--clickable' : 'table__row--clickable categories-row--inactive';
+
+  /** Enter sobre la fila abre la edición, igual que el clic. Se ignora cuando
+   *  el foco está en un control DENTRO de la fila (el nombre, el kebab): esos
+   *  ya tienen su propia acción y el evento burbujea hasta el `<tr>`. */
+  protected onRowKeydown(event: ScDatatableRowKeyEvent<Category>): void {
+    const native = event.originalEvent;
+    if (native.key !== 'Enter') return;
+    if ((native.target as HTMLElement | null)?.tagName !== 'TR') return;
+    native.preventDefault();
+    this.openEditForm(event.row);
+  }
+
+  /** Click derecho → el MISMO `<p-menu>` que el kebab. */
+  protected onRowContextMenu(
+    event: ScDatatableRowEvent<Category>,
+    menu: { toggle: (e: Event) => void },
+  ): void {
+    this.setMenuTarget(event.row);
+    menu.toggle(event.originalEvent);
+  }
 
   /** Modelo del menú kebab (único y compartido). Es un computed estable: solo
    *  cambia al abrir otro kebab. Antes `[model]="buildMenuItems(cat)"` recreaba

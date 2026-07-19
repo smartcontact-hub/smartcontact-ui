@@ -238,7 +238,7 @@ export class UsersListPageComponent {
     // igual que el `<th aria-hidden>` que sustituye.
     {
       field: 'actions', stopRowClick: true,
-      header: '',
+      header: '', headerAriaLabel: this.translate.instant('common.actions'),
       width: '48px',
       align: 'right',
       cellTemplate: this.actionsTpl(),

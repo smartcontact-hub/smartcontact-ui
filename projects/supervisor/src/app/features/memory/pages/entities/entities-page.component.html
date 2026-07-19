@@ -32,66 +32,29 @@
           (cta)="onNewEntity()"
         />
       } @else {
-        <!-- Menú kebab ÚNICO y compartido (antes 1 <p-menu> por fila): su modelo
-             es un computed estable → basta 1 clic para aplicar (no doble). Cada
-             botón lo abre pasando su propio $event para anclarlo a su fila. -->
-        <p-menu
-          #kebabMenu
-          [model]="menuItems()"
-          [popup]="true"
-          appendTo="body"
-          styleClass="rules-kebab-menu"
-        />
-        <table class="entities-table">
-          <thead>
-            <tr>
-              <th scope="col">{{ 'memory.entities.cols.name' | translate }}</th>
-              <th class="entities-table__th-type" scope="col">
-                {{ 'memory.entities.cols.type' | translate }}
-              </th>
-              <th scope="col">{{ 'memory.entities.cols.description' | translate }}</th>
-              <th class="entities-table__th-format" scope="col">
-                {{ 'memory.entities.cols.format' | translate }}
-              </th>
-              <th class="entities-table__th-kebab" scope="col" aria-label="Acciones"></th>
-            </tr>
-          </thead>
-          <tbody>
-            @for (entity of userEntities(); track entity.id) {
-              <!-- La fila abre la edición, igual que Reglas y Categorías. -->
-              <tr class="entities-row" (click)="openEditForm(entity)">
-                <td class="entities-table__td-name">
-                  <button
-                    type="button"
-                    class="entities-table__name"
-                    (click)="$event.stopPropagation(); openEditForm(entity)"
-                  >
-                    <code>{{ entity.name }}</code>
-                  </button>
-                </td>
-                <td class="entities-table__td-type">
-                  <span class="entity-type-chip">
-                    {{ 'memory.entities.types.' + entity.type | translate }}
-                  </span>
-                </td>
-                <td class="entities-table__td-desc">{{ entity.description }}</td>
-                <td class="entities-table__td-format">
-                  {{ entity.format ?? '—' }}
-                </td>
-                <td class="entities-table__td-kebab">
-                  <button
-                    type="button"
-                    class="rules-kebab-btn"
-                    [attr.aria-label]="'memory.entities.cols.more' | translate"
-                    (click)="$event.stopPropagation(); setMenuTarget(entity); kebabMenu.toggle($event)"
-                  >
-                    <sc-icon [name]="kebabIcon" size="inherit" />
-                  </button>
-                </td>
-              </tr>
-            }
-          </tbody>
-        </table>
+        <!-- La tabla la pinta el componente del DS. `class="list-table"` le pone
+             la gramática de tabla-lista de la app (54px de fila, cabecera
+             silenciosa de S59); sin ella el preset la dejaría más densa y con la
+             cabecera oscura, distinta del resto de tablas de la app.
+
+             `entities-table` ya no estiliza nada: es el gancho por el que
+             `e2e/supervisor/sibling-pages.spec.ts` distingue esta tabla de la de
+             system entities (`:not(.entities-table--readonly)`). No la quites sin
+             tocar esa spec. -->
+        <div class="table-card">
+          <sc-datatable
+            class="list-table entities-table"
+            [value]="userEntities()"
+            [columns]="userColumns()"
+            dataKey="id"
+            [rowStyleClass]="rowClass"
+            rowsFocusable
+            (rowClick)="openEditForm($event.row)"
+            (rowKeydown)="onRowKeydown($event)"
+            (rowContextMenu)="onRowContextMenu($event, kebabMenu)"
+            data-testid="entities-table"
+          />
+        </div>
       }
     </section>
 
@@ -107,41 +70,74 @@
         <p>{{ 'memory.entities.system_desc' | translate }}</p>
       </header>
 
-      <table class="entities-table entities-table--readonly">
-        <thead>
-          <tr>
-            <th scope="col">{{ 'memory.entities.cols.name' | translate }}</th>
-            <th class="entities-table__th-type" scope="col">
-              {{ 'memory.entities.cols.type' | translate }}
-            </th>
-            <th scope="col">{{ 'memory.entities.cols.description' | translate }}</th>
-            <th class="entities-table__th-format" scope="col">
-              {{ 'memory.entities.cols.format' | translate }}
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (entity of systemEntities(); track entity.id) {
-            <tr>
-              <td class="entities-table__td-name">
-                <code>{{ entity.name }}</code>
-              </td>
-              <td class="entities-table__td-type">
-                <span class="entity-type-chip entity-type-chip--system">
-                  {{ 'memory.entities.types.' + entity.type | translate }}
-                </span>
-              </td>
-              <td class="entities-table__td-desc">{{ entity.description }}</td>
-              <td class="entities-table__td-format">
-                {{ entity.format ?? '—' }}
-              </td>
-            </tr>
-          }
-        </tbody>
-      </table>
+      <!-- Migra con su hermana a propósito: son dos tablas apiladas en la MISMA
+           pantalla, y dejar una con la gramática del DS y la otra con la
+           artesanal las separaría en alto de fila, cabecera y separador. Sin
+           gestos: las system entities son inmutables. -->
+      <div class="table-card">
+        <sc-datatable
+          class="list-table entities-table entities-table--readonly"
+          [value]="systemEntities()"
+          [columns]="systemColumns()"
+          dataKey="id"
+          data-testid="entities-system-table"
+        />
+      </div>
     </section>
   </div>
 </div>
+
+<!-- Celdas de las dos tablas. Viven FUERA del `<sc-datatable>` para que los
+     `viewChild` las resuelvan; `userColumns()` / `systemColumns()` las recogen.
+     El contexto es `{ $implicit: entity }`.
+
+     Todas envuelven su contenido en un `<span>` con clase propia: el `<td>` lo
+     pinta ahora el DS, así que una regla encapsulada de esta página que
+     apuntara a `.entities-table__td-*` ya no lo alcanzaría — el `<span>`
+     proyectado sí conserva el `_ngcontent` de la página. -->
+<ng-template #nameTpl let-entity>
+  <span class="entities-table__td-name"><code>{{ entity.name }}</code></span>
+</ng-template>
+
+<ng-template #typeTpl let-entity>
+  <span class="entity-type-chip" [class.entity-type-chip--system]="entity.isSystem">
+    {{ 'memory.entities.types.' + entity.type | translate }}
+  </span>
+</ng-template>
+
+<ng-template #descTpl let-entity>
+  <span class="entities-table__td-desc">{{ entity.description }}</span>
+</ng-template>
+
+<ng-template #formatTpl let-entity>
+  <span class="entities-table__td-format">{{ entity.format ?? '—' }}</span>
+</ng-template>
+
+<ng-template #actionsTpl let-entity>
+  <button
+    type="button"
+    class="rules-kebab-btn"
+    [attr.aria-label]="'memory.entities.cols.more' | translate"
+    (click)="$event.stopPropagation(); setMenuTarget(entity); kebabMenu.toggle($event)"
+  >
+    <sc-icon [name]="kebabIcon" size="inherit" />
+  </button>
+</ng-template>
+
+<!-- Menú kebab ÚNICO y compartido (antes 1 <p-menu> por fila): su modelo es un
+     computed estable → basta 1 clic para aplicar (no doble). El click derecho
+     en la fila abre este mismo menú — R3 del modelo canónico.
+
+     Vive en la raíz de la plantilla y no dentro del `@else`: las celdas son
+     `<ng-template>` hermanas y no alcanzan una referencia declarada dentro de
+     un bloque de control de flujo. -->
+<p-menu
+  #kebabMenu
+  [model]="menuItems()"
+  [popup]="true"
+  appendTo="body"
+  styleClass="rules-kebab-menu"
+/>
 
 <sc-memory-entity-form-modal
   [visible]="formOpen()"

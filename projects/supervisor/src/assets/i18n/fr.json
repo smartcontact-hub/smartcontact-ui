@@ -726,7 +726,8 @@
       "title": "Zone de risque"
     },
     "delete_gate": "Supprimer…",
-    "no_changes": "Aucune modification à enregistrer"
+    "no_changes": "Aucune modification à enregistrer",
+    "actions": "Actions"
   },
   "topbar": {
     "go_to_dashboard": "Aller au tableau de bord",

@@ -42,6 +42,13 @@ const PAGINAS = [
   { ruta: 'admin/usuarios', nombre: 'usuarios', altoFila: 54 },
   { ruta: 'admin/agentes', nombre: 'agentes', altoFila: 63 },
   { ruta: 'admin/grupos', nombre: 'grupos', altoFila: 63 },
+  // El trío de memory, migrado el 2026-07-19. Entraron aquí en el MISMO
+  // commit que la migración, y eso no es formalismo: sin esta línea el spec
+  // pasaba en verde sin visitar la página, y el "108/108" que traían los
+  // informes de migración no probaba nada sobre lo migrado.
+  { ruta: 'conversaciones/reglas', nombre: 'reglas', altoFila: 54 },
+  { ruta: 'conversaciones/categorias', nombre: 'categorias', altoFila: 54 },
+  { ruta: 'conversaciones/entidades', nombre: 'entidades', altoFila: 54 },
 ] as const;
 
 /** Las tablas cuya fila ABRE algo tienen que anunciarlo con el cursor. */
@@ -49,7 +56,18 @@ const ABREN_FILA = [
   { ruta: 'admin/usuarios', nombre: 'usuarios' },
   { ruta: 'admin/agentes', nombre: 'agentes' },
   { ruta: 'admin/grupos', nombre: 'grupos' },
+  { ruta: 'conversaciones/reglas', nombre: 'reglas' },
+  { ruta: 'conversaciones/categorias', nombre: 'categorias' },
+  { ruta: 'conversaciones/entidades', nombre: 'entidades' },
 ] as const;
+
+/**
+ * Las tres de memory abren un MODAL, no una ruta. El test de teclado de abajo
+ * comprueba la URL, que para ellas no cambia; se les mide el cursor y el
+ * `tabindex` igual, y la apertura por teclado la fija `sibling-pages.spec.ts`,
+ * que sabe esperar al diálogo.
+ */
+const ABREN_MODAL = new Set(['conversaciones/reglas', 'conversaciones/categorias', 'conversaciones/entidades']);
 
 /** El contrato, medido sobre la tabla original antes de migrarla (B4). */
 const GRAMATICA = {
@@ -79,7 +97,10 @@ for (const { ruta, nombre, altoFila } of PAGINAS) {
       const th = host.querySelector('.p-datatable-thead th:not(.sc-datatable__check)')!;
       const tr = host.querySelector('.p-datatable-tbody > tr')!;
       const td = tr.querySelector('td:not(.sc-datatable__check)')!;
-      const thCheck = host.querySelector('.p-datatable-thead th.sc-datatable__check')!;
+      // NO todas las list-table tienen selección: el trío de memory nunca la
+      // tuvo. La casilla se mide SOLO si existe; exigirla convertía una
+      // diferencia legítima en un fallo (y así petó la primera vez).
+      const thCheck = host.querySelector('.p-datatable-thead th.sc-datatable__check');
       const banda = host.querySelector('.p-datatable-header');
       return {
         altoFila: Math.round(tr.getBoundingClientRect().height),
@@ -90,7 +111,7 @@ for (const { ruta, nombre, altoFila } of PAGINAS) {
           color: cs(th, 'color'),
           padding: cs(th, 'padding-top'),
         },
-        anchoCasilla: Math.round(thCheck.getBoundingClientRect().width),
+        anchoCasilla: thCheck ? Math.round(thCheck.getBoundingClientRect().width) : null,
         tableLayout: cs(host.querySelector('.p-datatable-table')!, 'table-layout'),
         // La banda de caption de PrimeNG se pinta aunque no proyectes nada:
         // si reaparece, deja una franja vacía sobre la cabecera.
@@ -101,7 +122,9 @@ for (const { ruta, nombre, altoFila } of PAGINAS) {
     expect(medido.altoFila).toBe(altoFila);
     expect(medido.paddingCelda).toBe(GRAMATICA.paddingCelda);
     expect(medido.cabecera).toEqual(GRAMATICA.cabecera);
-    expect(medido.anchoCasilla).toBe(GRAMATICA.anchoCasilla);
+    // `null` = esta tabla no tiene selección, que es una decisión de la
+    // página, no una desviación de la gramática.
+    if (medido.anchoCasilla !== null) expect(medido.anchoCasilla).toBe(GRAMATICA.anchoCasilla);
     expect(medido.tableLayout).toBe(GRAMATICA.tableLayout);
     expect(medido.bandaCaptionVisible).toBe(false);
   });
@@ -166,6 +189,7 @@ for (const { ruta, nombre } of ABREN_FILA) {
      * ratón, que es un fallo de WCAG 2.1.1, no una carencia estética. */
     await expect(fila).toHaveAttribute('tabindex', '0');
 
+    if (ABREN_MODAL.has(ruta)) return; // su Enter lo cubre sibling-pages.spec.ts
     await fila.focus();
     await page.keyboard.press('Enter');
     await expect(page).toHaveURL(/\/(editar|nuevo)\//);

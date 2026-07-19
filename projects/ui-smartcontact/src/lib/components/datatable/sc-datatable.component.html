@@ -32,19 +32,28 @@
   <ng-template pTemplate="header">
     <tr>
       @if (selectionMode() === 'multiple') {
-        <th class="sc-datatable__check"><p-tableHeaderCheckbox /></th>
+        <th class="sc-datatable__check" scope="col">
+          <p-tableHeaderCheckbox />
+        </th>
       }
       @for (col of visibleCols(); track col.field) {
         @if (col.sortable) {
           <th
+            scope="col"
             [pSortableColumn]="col.field"
             [style.width]="col.width ?? null"
             [style.text-align]="col.align ?? null"
+            [attr.aria-label]="col.headerAriaLabel ?? null"
           >
             {{ col.header }}<p-sortIcon [field]="col.field" />
           </th>
         } @else {
-          <th [style.width]="col.width ?? null" [style.text-align]="col.align ?? null">
+          <th
+            scope="col"
+            [style.width]="col.width ?? null"
+            [style.text-align]="col.align ?? null"
+            [attr.aria-label]="col.headerAriaLabel ?? null"
+          >
             {{ col.header }}
           </th>
         }
