@@ -92,8 +92,35 @@ sc-datatable.list-table {
   .p-datatable-tbody > tr {
     transition: background var(--sc-transition-fast) var(--sc-easing-default);
 
-    &:hover {
+    /* El hover SOLO si la fila hace algo.
+     *
+     * Estaba incondicional, y con la primera tabla genuinamente INERTE de la
+     * app (las entidades del sistema: sin click, sin kebab, sin selección) eso
+     * se convirtió en una afordancia mentirosa — filas que se iluminan al pasar
+     * el ratón y no responden. Y peor por vecindad: en esa misma pantalla, la
+     * tabla de arriba SÍ abre al clicar, así que la misma señal significaba dos
+     * cosas distintas a diez píxeles de distancia.
+     *
+     * La versión a mano de esa tabla llevaba un `tbody tr:hover { background:
+     * transparent }` explícito para evitarlo; al migrar, esa regla dejó de
+     * alcanzar el `<tr>` (lo pinta el DS, con SU `_ngcontent`). Aquí es donde
+     * tiene que vivir la condición.
+     *
+     * `--clickable` la emite `[rowStyleClass]`, o sea la pone la página cuando
+     * la fila de verdad abre algo. Sin ella, ni cursor ni hover. */
+    &.table__row--clickable:hover,
+    &.p-selectable-row:hover {
       background: var(--sc-bg-default);
+    }
+
+    /* Y hay que APAGARLO explícitamente, no basta con no encenderlo: el DS
+     * fuerza `[rowHover]="true"` en `sc-datatable.component.html`, así que el
+     * preset de PrimeNG pinta su propio hover por debajo. Medido: la fila
+     * inerte seguía cambiando a slate-100 después de condicionar la regla de
+     * arriba — un valor DISTINTO del de la fila viva, que es cómo supe que
+     * venía de otro sitio. */
+    &:not(.table__row--clickable):not(.p-selectable-row):hover {
+      background: transparent;
     }
 
     /* La fila seleccionada es gris neutro, no el resaltado azul de

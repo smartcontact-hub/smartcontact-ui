@@ -36,6 +36,15 @@ export interface ScColumnDef<T = unknown> {
   readonly field: string;
   /** Cabecera ya traducida por el consumidor. */
   readonly header: string;
+  /** Nombre accesible de la cabecera cuando `header` va vacío.
+   *
+   * Las columnas de acciones (kebab, menú) se pintan con `header: ''` a
+   * propósito: visualmente no deben decir nada. Pero un `<th>` vacío es una
+   * cabecera de columna ANÓNIMA para un lector de pantalla, y las tablas a
+   * mano que se migraron sí llevaban su `aria-label="Acciones"` — o sea que
+   * la migración lo perdía en silencio. Lo destaparon tres revisiones
+   * independientes el 2026-07-19, cada una en su tabla. */
+  readonly headerAriaLabel?: string;
   /** Activa la UI de orden por esta columna (orden client-side de p-table). */
   readonly sortable?: boolean;
   /** Ancho CSS de la columna (p.ej. `'12rem'`, `'20%'`). */

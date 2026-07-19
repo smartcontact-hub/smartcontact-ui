@@ -20,6 +20,14 @@ import type { MenuItem } from 'primeng/api';
 import { ScEmptyStateComponent as EmptyStateComponent } from '@smartcontact-hub/components';
 import { ScMessageComponent as MessageComponent } from '@smartcontact-hub/components';
 import { ScConfirmService } from '@smartcontact-hub/components';
+import {
+  type ScColumnCellContext,
+  type ScColumnDef,
+  ScDatatableComponent as DatatableComponent,
+  type ScDatatableRowEvent,
+  type ScDatatableRowKeyEvent,
+  type ScRowStyleClassFn,
+} from '@smartcontact-hub/components';
 import { TopBarSlotService } from '@core/layout/top-bar/top-bar-slot.service';
 import { TOAST_LIFE } from '@core/utils/toast-life';
 
@@ -39,6 +47,7 @@ import { RulesStore } from '../../state/rules.store';
   selector: 'sc-memory-rules-page',
   imports: [
     ButtonComponent,
+    DatatableComponent,
     EmptyStateComponent,
     IconComponent,
     MenuModule,
@@ -82,6 +91,74 @@ export class RulesPageComponent {
     ...this.rulesStore.activeRules(),
     ...this.rulesStore.inactiveRules(),
   ]);
+
+  /* ── La tabla, ahora `sc-datatable` (B4) ──────────────────────────────
+   * Las seis celdas son composiciones propias de la página (enlace a la
+   * regla, prosa del alcance, chips de acción, pastilla de estado, fecha
+   * relativa, kebab), así que van todas por `cellTemplate`: el DS no conoce
+   * el tipo `Rule` ni tiene por qué.
+   *
+   * `columns` es un `computed()` que LEE los `viewChild` a propósito. Esos
+   * `TemplateRef` resuelven tarde, y una lista construida en el campo se
+   * quedaría con `cellTemplate: undefined` para siempre — la tabla pintaría
+   * `row[field]` en crudo. Al ser computed, se recalcula en cuanto resuelven.
+   */
+  private readonly nameTpl = viewChild<TemplateRef<ScColumnCellContext<Rule>>>('nameTpl');
+  private readonly scopeTpl = viewChild<TemplateRef<ScColumnCellContext<Rule>>>('scopeTpl');
+  private readonly actionsTpl = viewChild<TemplateRef<ScColumnCellContext<Rule>>>('actionsTpl');
+  private readonly statusTpl = viewChild<TemplateRef<ScColumnCellContext<Rule>>>('statusTpl');
+  private readonly modifiedTpl = viewChild<TemplateRef<ScColumnCellContext<Rule>>>('modifiedTpl');
+  private readonly kebabTpl = viewChild<TemplateRef<ScColumnCellContext<Rule>>>('kebabTpl');
+
+  /** Los anchos son los mismos `width` que tenían los `<th>` a mano; con
+   *  `table-layout: fixed` (lo pone `.list-table`) nombre y alcance se reparten
+   *  el resto, igual que antes. */
+  protected readonly columns = computed<readonly ScColumnDef<Rule>[]>(() => [
+    {
+      field: 'name',
+      header: this.translate.instant('memory.rules.cols.name'),
+      cellTemplate: this.nameTpl(),
+    },
+    {
+      field: 'scope',
+      header: this.translate.instant('memory.rules.cols.scope'),
+      cellTemplate: this.scopeTpl(),
+    },
+    {
+      field: 'actions',
+      header: this.translate.instant('memory.rules.cols.actions'),
+      width: '110px',
+      cellTemplate: this.actionsTpl(),
+    },
+    {
+      field: 'status',
+      header: this.translate.instant('memory.rules.cols.status'),
+      width: '140px',
+      cellTemplate: this.statusTpl(),
+    },
+    {
+      field: 'lastModified',
+      header: this.translate.instant('memory.rules.cols.last_modified'),
+      width: '120px',
+      cellTemplate: this.modifiedTpl(),
+    },
+    // Columna sin datos: `field` es solo su identidad, y la cabecera va vacía
+    // igual que el `<th aria-hidden>` que sustituye. `stopRowClick` porque
+    // fallar el botón por unos píxeles abría la regla: el kebab para la
+    // propagación, pero el padding del `<td>` —que ahora pinta el DS— no.
+    {
+      field: 'kebab',
+      header: '', headerAriaLabel: this.translate.instant('common.actions'),
+      width: '44px',
+      stopRowClick: true,
+      cellTemplate: this.kebabTpl(),
+    },
+  ]);
+
+  /** La fila abre la regla, y el cursor tiene que decirlo. Vive aquí y no en el
+   *  SCSS de la página porque el `<tr>` lo pinta el DS; `.list-table` define
+   *  `table__row--clickable`. Es constante: no lee ninguna señal. */
+  protected readonly rowClass: ScRowStyleClassFn<Rule> = () => 'table__row--clickable';
 
   protected readonly menuTargetRule = signal<Rule | null>(null);
 
@@ -170,6 +247,25 @@ export class RulesPageComponent {
   /** Click en la fila abre la regla en el constructor (la fila actúa de enlace). */
   protected openRule(rule: Rule): void {
     this.router.navigate(['/conversaciones/reglas', rule.id]);
+  }
+
+  /* WCAG 2.1.1: la fila abre la regla con el ratón, así que tiene que abrirla
+   * también con el teclado. `rowsFocusable` la hace parada de tabulador; qué
+   * hace cada tecla lo decide el consumidor (el DS no interpreta ninguna). */
+  protected onRowKeydown(event: ScDatatableRowKeyEvent<Rule>): void {
+    if (event.originalEvent.key !== 'Enter') return;
+    event.originalEvent.preventDefault();
+    this.openRule(event.row);
+  }
+
+  /** Click derecho → el MISMO `<p-menu>` que el kebab (R3). El DS ya canceló
+   *  el menú nativo del navegador. */
+  protected onRowContextMenu(
+    event: ScDatatableRowEvent<Rule>,
+    menu: { toggle: (e: Event) => void },
+  ): void {
+    this.setMenuTarget(event.row);
+    menu.toggle(event.originalEvent);
   }
 
   protected buildMenuItems(rule: Rule): MenuItem[] {

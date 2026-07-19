@@ -24,100 +24,105 @@
         (cta)="onNewCategory()"
       />
     } @else {
-      <!-- Menú kebab ÚNICO y compartido (antes 1 <p-menu> por fila): su modelo
-           es un computed estable → basta 1 clic para aplicar (no doble). Cada
-           botón lo abre pasando su propio $event para anclarlo a su fila. -->
-      <p-menu
-        #kebabMenu
-        [model]="menuItems()"
-        [popup]="true"
-        appendTo="body"
-        styleClass="rules-kebab-menu"
-      />
-      <table class="categories-table">
-        <thead>
-          <tr>
-            <th scope="col">{{ 'memory.categories.cols.name' | translate }}</th>
-            <th scope="col">{{ 'memory.categories.cols.description' | translate }}</th>
-            <th class="categories-table__th-num" scope="col">
-              {{ 'memory.categories.cols.used_in' | translate }}
-            </th>
-            <th class="categories-table__th-num" scope="col">
-              {{ 'memory.categories.cols.classified' | translate }}
-            </th>
-            <th class="categories-table__th-status" scope="col">
-              {{ 'memory.categories.cols.status' | translate }}
-            </th>
-            <th class="categories-table__th-date" scope="col">
-              {{ 'memory.categories.cols.created' | translate }}
-            </th>
-            <th class="categories-table__th-kebab" scope="col" aria-label="Acciones"></th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (cat of categories(); track cat.id) {
-            <!-- La fila abre la edición, igual que en Reglas (mismo gesto en las
-                 tres páginas hermanas). El nombre es el enlace operable por
-                 teclado; el kebab detiene la propagación. -->
-            <tr
-              class="categories-row"
-              [class.categories-row--inactive]="!cat.isActive"
-              (click)="openEditForm(cat)"
-            >
-              <td class="categories-table__td-name">
-                <button
-                  type="button"
-                  class="categories-table__name"
-                  (click)="$event.stopPropagation(); openEditForm(cat)"
-                >
-                  {{ cat.name }}
-                </button>
-                @if (cat.group) {
-                  <span class="categories-table__group">· {{ cat.group }}</span>
-                }
-              </td>
-              <td class="categories-table__td-desc" [attr.title]="cat.description">
-                {{ cat.description }}
-              </td>
-              <td class="categories-table__td-num">
-                @if (usedInRules(cat.id) > 0) {
-                  <span class="categories-num">{{ usedInRules(cat.id) }}</span>
-                } @else {
-                  <span class="categories-num categories-num--empty">—</span>
-                }
-              </td>
-              <td class="categories-table__td-num">
-                <span class="categories-num">{{ cat.classifiedCalls }}</span>
-              </td>
-              <td class="categories-table__td-status">
-                @if (cat.isActive) {
-                  <span class="rules-status rules-status--active">
-                    {{ 'memory.categories.status.active' | translate }}
-                  </span>
-                } @else {
-                  <span class="rules-status rules-status--inactive">
-                    {{ 'memory.categories.status.inactive' | translate }}
-                  </span>
-                }
-              </td>
-              <td class="categories-table__td-date">{{ formatDate(cat.createdAt) }}</td>
-              <td class="categories-table__td-kebab">
-                <button
-                  type="button"
-                  class="rules-kebab-btn"
-                  [attr.aria-label]="'memory.categories.cols.more' | translate"
-                  (click)="$event.stopPropagation(); setMenuTarget(cat); kebabMenu.toggle($event)"
-                >
-                  <sc-icon [name]="kebabIcon" size="inherit" />
-                </button>
-              </td>
-            </tr>
-          }
-        </tbody>
-      </table>
+      <!-- La tabla la pinta el componente del DS. `class="list-table"` le pone
+           la gramática de tabla-lista de la app (54px de fila, cabecera
+           silenciosa de S59); sin ella el preset la dejaría más densa y con la
+           cabecera oscura, distinta de las tablas hermanas.
+
+           `rowsFocusable` no es decorativo: la fila abre la edición al clicar
+           y sin él esa acción existiría solo para quien usa ratón (WCAG
+           2.1.1). El botón del nombre sigue ahí porque es el gesto que
+           comparten las tres hermanas de Memory (reglas · categorías ·
+           entidades) y solo dos de ellas están migradas. -->
+      <div class="table-card">
+        <sc-datatable
+          class="list-table"
+          [value]="categories()"
+          [columns]="columns()"
+          [rowStyleClass]="rowStyleClass"
+          dataKey="id"
+          rowsFocusable
+          (rowClick)="openEditForm($event.row)"
+          (rowKeydown)="onRowKeydown($event)"
+          (rowContextMenu)="onRowContextMenu($event, kebabMenu)"
+          data-testid="categories-table"
+        />
+      </div>
     }
   </div>
 </div>
+
+<!-- Celdas de la tabla. Viven FUERA del `<sc-datatable>` para que los
+     `viewChild` las resuelvan; `columns()` las recoge. El contexto es
+     `{ $implicit: cat }`.
+
+     Cada celda con estilo propio lleva su `<span>`: el `<td>` lo pinta ahora
+     el DS y una regla encapsulada de esta página no lo alcanzaría; lo
+     proyectado desde aquí sí conserva su `_ngcontent`. -->
+<ng-template #nameTpl let-cat>
+  <button
+    type="button"
+    class="categories-table__name"
+    (click)="$event.stopPropagation(); openEditForm(cat)"
+  >
+    {{ cat.name }}
+  </button>
+  @if (cat.group) {
+    <span class="categories-table__group">· {{ cat.group }}</span>
+  }
+</ng-template>
+
+<ng-template #descTpl let-cat>
+  <span class="categories-table__td-desc" [attr.title]="cat.description">{{ cat.description }}</span>
+</ng-template>
+
+<ng-template #usedInTpl let-cat>
+  @if (usedInRules(cat.id) > 0) {
+    <span class="categories-num">{{ usedInRules(cat.id) }}</span>
+  } @else {
+    <span class="categories-num categories-num--empty">—</span>
+  }
+</ng-template>
+
+<ng-template #classifiedTpl let-cat>
+  <span class="categories-num">{{ cat.classifiedCalls }}</span>
+</ng-template>
+
+<ng-template #statusTpl let-cat>
+  @if (cat.isActive) {
+    <span class="rules-status rules-status--active">
+      {{ 'memory.categories.status.active' | translate }}
+    </span>
+  } @else {
+    <span class="rules-status rules-status--inactive">
+      {{ 'memory.categories.status.inactive' | translate }}
+    </span>
+  }
+</ng-template>
+
+<ng-template #createdTpl let-cat>
+  <span class="categories-table__td-date">{{ formatDate(cat.createdAt) }}</span>
+</ng-template>
+
+<ng-template #kebabTpl let-cat>
+  <button
+    type="button"
+    class="rules-kebab-btn"
+    [attr.aria-label]="'memory.categories.cols.more' | translate"
+    (click)="$event.stopPropagation(); setMenuTarget(cat); kebabMenu.toggle($event)"
+  >
+    <sc-icon [name]="kebabIcon" size="inherit" />
+  </button>
+</ng-template>
+
+<!-- Menú kebab ÚNICO y compartido (antes 1 <p-menu> por fila): su modelo es un
+     computed estable → basta 1 clic para aplicar (no doble). El click derecho
+     sobre la fila abre ESTE mismo menú, no uno propio.
+
+     Vive en la raíz de la plantilla y no dentro del `@else`: las celdas son
+     `<ng-template>` hermanas y una referencia declarada dentro de un bloque
+     embebido no llega hasta ellas. -->
+<p-menu #kebabMenu [model]="menuItems()" [popup]="true" appendTo="body" styleClass="rules-kebab-menu" />
 
 <sc-memory-category-form-modal
   [visible]="formOpen()"

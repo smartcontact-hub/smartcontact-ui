@@ -80,69 +80,37 @@
   }
 }
 
-/* Chrome alineado con AED list-pages (S41 consistency): radius-200,
- * thead bg-default, font-size-50 + letter-spacing 0.05em, border-bottom
- * subtle por fila, td secondary + font-size-200. */
+/* Celdas de las dos tablas. El chrome de la tabla (tarjeta, cabecera, filas,
+ * separadores, hover) ya no vive aquí: lo ponen `.table-card` global y
+ * `styles/_sc-datatable-list.scss` (`.list-table`), porque los `<th>`/`<tr>`/
+ * `<td>` los pinta la plantilla del DS y llevan SU `_ngcontent`.
+ *
+ * Lo que queda son los `<span>` que esta página PROYECTA dentro de la celda:
+ * esos sí conservan el encapsulado y por eso sus reglas siguen aplicando. Los
+ * anchos de columna (tipo 140px, formato 140px, kebab 44px) se declaran ahora
+ * en el column-def del .ts, no en CSS. */
 .entities-table {
-  width: 100%;
-  border-collapse: collapse;
-  background: var(--sc-bg-surface);
-  border: 1px solid var(--sc-border-default);
-  border-radius: var(--sc-radius-200);
-  overflow: hidden;
-  table-layout: fixed;
-
-  thead th {
-    text-align: left;
-    padding: var(--sc-spacing-0-875);
-    border-bottom: 1px solid var(--sc-border-default);
-    background: var(--sc-bg-default);
-    font-size: var(--sc-font-size-50);
-    font-weight: var(--sc-font-weight-semibold);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: var(--sc-text-secondary);
-    white-space: nowrap;
-  }
-
-  tbody tr {
-    border-bottom: 1px solid var(--sc-border-subtle);
-    transition: background var(--sc-transition-fast) var(--sc-easing-default);
-
-    &:hover {
-      background: var(--sc-bg-default);
-    }
-  }
-
-  tbody td {
-    padding: var(--sc-spacing-0-875);
+  /* El `font-size` de las celdas lo daba `tbody td` (14px, `font-size-200`).
+   * Esa regla muere con la migración —el `<td>` ya no es nuestro— y sin
+   * repetirla aquí las celdas heredaban los 16px del documento: medido en
+   * /conversaciones/entidades, la descripción salía a 16px contra los 14px de
+   * `.table__td-desc` en labels. Se declara en cada `<span>` proyectado, que
+   * es lo que sí conserva el encapsulado de la página. */
+  &__td-name,
+  &__td-desc {
     font-size: var(--sc-font-size-200);
-    color: var(--sc-text-secondary);
-    vertical-align: middle;
   }
 
-  tbody tr:last-child {
-    border-bottom: 0;
-  }
-
-  &__th-type,
-  &__td-type {
-    width: 140px;
-  }
-
-  &__th-format,
   &__td-format {
-    width: 140px;
     color: var(--sc-text-secondary);
     font-size: var(--sc-font-size-100);
   }
 
-  &__th-kebab,
-  &__td-kebab {
-    width: 44px;
-  }
-
   &__td-desc {
+    /* `block` es nuevo y no es cosmético: los puntos suspensivos los daba el
+     * `<td>` (que era un bloque con ancho fijo); un `<span>` en línea no
+     * recorta. Como bloque hereda el ancho de la celda y vuelve a hacerlo. */
+    display: block;
     color: var(--sc-text-secondary);
     overflow: hidden;
     text-overflow: ellipsis;
@@ -156,11 +124,6 @@
     background: var(--sc-bg-elevated);
     padding: 2px var(--sc-spacing-0-5);
     border-radius: var(--sc-radius-100);
-  }
-
-  &--readonly tbody tr:hover {
-    background: transparent;
-    cursor: default;
   }
 }
 
@@ -184,30 +147,12 @@
   }
 }
 
-/* Fila clicable + nombre como camino accesible por teclado — mismo patrón que
-   Reglas y Categorías. Es un <button> porque abre un modal, no navega. */
-.entities-table {
-  tbody tr.entities-row {
-    cursor: pointer;
-  }
-
-  &__name {
-    padding: 0;
-    border: 0;
-    background: none;
-    font: inherit;
-    color: inherit;
-    cursor: pointer;
-
-    &:hover code {
-      color: var(--sc-bg-primary);
-      text-decoration: underline;
-    }
-
-    &:focus-visible {
-      outline: 2px solid var(--sc-border-focus);
-      outline-offset: 2px;
-      border-radius: var(--sc-radius-xs);
-    }
-  }
-}
+/* La fila clicable y su cursor los pone ahora `.table__row--clickable`
+ * (emitido por `[rowStyleClass]`, estilado en `_sc-datatable-list.scss`): el
+ * `<tr>` lo pinta el DS y una regla de esta página no lo alcanza.
+ *
+ * El `<button>` con el nombre dentro de la celda —el camino de teclado de
+ * antes, cuando el `<tr>` no era enfocable— desaparece con él: la fila es
+ * ahora el objetivo focusable (`rowsFocusable` + Enter en `onRowKeydown`), y
+ * mantener los dos dejaría dos paradas de tabulador por fila para la misma
+ * acción. Es el mismo reparto que groups/users ya migradas. */

@@ -147,7 +147,7 @@ export class LabelsPageComponent {
     },
     // Columna sin datos: `field` es solo su identidad, y la cabecera va vacía
     // igual que el `<th aria-hidden>` que sustituye.
-    { field: 'actions', stopRowClick: true, header: '', width: '48px', cellTemplate: this.actionsTpl() },
+    { field: 'actions', stopRowClick: true, header: '', headerAriaLabel: this.translate.instant('common.actions'), width: '48px', cellTemplate: this.actionsTpl() },
   ]);
 
   /* Puente de selección: la fuente de verdad sigue siendo `selectedIds` —de

@@ -22,31 +22,9 @@
   }
 }
 
-.rules-section {
-  margin-bottom: var(--sc-spacing-1-5);
-
-  &__head {
-    margin-bottom: var(--sc-spacing-0-875);
-
-    h2 {
-      margin: 0 0 4px 0;
-      font-size: var(--sc-font-size-300);
-      font-weight: var(--sc-font-weight-semibold);
-      color: var(--sc-text-primary);
-    }
-  }
-
-  &__hint {
-    margin: 0;
-    font-size: var(--sc-font-size-200);
-    color: var(--sc-text-secondary);
-  }
-
-  &--secondary &__head h2 {
-    color: var(--sc-text-secondary);
-    font-weight: var(--sc-font-weight-medium);
-  }
-}
+/* `.rules-section` (y su `__head` / `__hint` / `--secondary`) murió con la
+ * migración a `sc-datatable`: el envoltorio de la tabla es ahora `.table-card`,
+ * el chrome compartido de `styles/_sc-list-table.scss`. */
 
 .rules-divider {
   border: 0;
@@ -56,99 +34,56 @@
 
 /* Empty state migrado a <sc-empty-state> (S62, backlog #64). */
 
-/* Chrome alineado con AED list-pages (S41 consistency): radius-200,
- * thead bg-default, font-size-50 + letter-spacing 0.05em, border-bottom
- * subtle por fila, td secondary + font-size-200. `__td-name` mantiene
- * el primary medium como en AED. `white-space: nowrap` en th evita
- * que labels uppercase se partan. */
-.rules-table {
-  width: 100%;
-  border-collapse: collapse;
-  background: var(--sc-bg-surface);
-  border: 1px solid var(--sc-border-default);
-  border-radius: var(--sc-radius-200);
-  overflow: hidden;
-  table-layout: fixed;
+/* B4: el bloque `.rules-table` (tabla, cabecera, filas, celdas, hover y los
+ * anchos por columna — unas 90 líneas) desapareció de aquí. Lo pinta ahora
+ * `sc-datatable` con la piel compartida `.list-table` de
+ * `styles/_sc-datatable-list.scss`, y los anchos viajaron a `columns()` como
+ * `width`. Lo que queda es lo que sigue siendo de ESTA página: el contenido de
+ * las celdas, que se proyecta desde su plantilla y por tanto conserva el
+ * encapsulado del componente.
+ *
+ * La cabecera cambia a propósito: de UPPERCASE tracked semibold (S41) a la
+ * cabecera silenciosa de S59 que ya llevan las tablas migradas. Es la
+ * convergencia que persigue `.list-table`, no un descuido. */
 
-  thead th {
-    text-align: left;
-    padding: var(--sc-spacing-0-875);
-    border-bottom: 1px solid var(--sc-border-default);
-    background: var(--sc-bg-default);
-    font-size: var(--sc-font-size-50);
-    font-weight: var(--sc-font-weight-semibold);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: var(--sc-text-secondary);
-    white-space: nowrap;
-  }
+/* La tipografía que daba `.rules-table tbody td` (font-size-200 /
+ * text-secondary) vive ahora en el `<span>` de cada celda: el `<td>` lo pinta
+ * el DS y una regla encapsulada de la página no lo alcanzaría. */
+.rules-cell {
+  font-size: var(--sc-font-size-200);
+  color: var(--sc-text-secondary);
 
-  tbody tr {
-    border-bottom: 1px solid var(--sc-border-subtle);
-    transition: background var(--sc-transition-fast) var(--sc-easing-default);
-    cursor: pointer;
-
-    &:hover {
-      background: var(--sc-bg-default);
-    }
-  }
-
-  tbody td {
-    padding: var(--sc-spacing-0-875);
-    font-size: var(--sc-font-size-200);
-    color: var(--sc-text-secondary);
-    vertical-align: middle;
-  }
-
-  tbody tr:last-child {
-    border-bottom: 0;
-  }
-
-  &__th-actions,
-  &__td-actions {
-    width: 110px;
-  }
-
-  &__th-status,
-  &__td-status {
-    width: 140px;
-  }
-
-  &__th-modified,
-  &__td-modified {
-    width: 120px;
-    color: var(--sc-text-secondary);
-  }
-
-  &__th-kebab,
-  &__td-kebab {
-    width: 44px;
-  }
-
-  &__td-scope {
-    color: var(--sc-text-secondary);
+  /* El truncado del alcance lo hacía el `<td>`; con `table-layout: fixed` (que
+     pone `.list-table`) el span en bloque hereda el ancho de la columna y
+     recorta igual. */
+  &--scope {
+    display: block;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
+}
 
-  &__name {
-    color: var(--sc-text-primary);
-    font-weight: var(--sc-font-weight-medium);
-    text-decoration: none;
+/* El nombre de la regla. Sigue siendo un enlace REAL dentro de la celda, así
+ * que su clase la conserva la plantilla de la página (y con ella `rules-flow`,
+ * que localiza filas por `.rules-table__name`). */
+.rules-table__name {
+  color: var(--sc-text-primary);
+  font-weight: var(--sc-font-weight-medium);
+  font-size: var(--sc-font-size-200);
+  text-decoration: none;
 
-    &:hover {
-      color: var(--sc-bg-primary);
-      text-decoration: underline;
-    }
+  &:hover {
+    color: var(--sc-bg-primary);
+    text-decoration: underline;
+  }
 
-    /* El enlace es el camino accesible por teclado a la regla: su foco tiene que
-       verse (la fila entera no es un tab-stop). */
-    &:focus-visible {
-      outline: 2px solid var(--sc-border-focus);
-      outline-offset: 2px;
-      border-radius: var(--sc-radius-xs);
-    }
+  /* El enlace es un camino accesible por teclado a la regla, además de la fila
+     (`rowsFocusable`): su foco tiene que verse. */
+  &:focus-visible {
+    outline: 2px solid var(--sc-border-focus);
+    outline-offset: 2px;
+    border-radius: var(--sc-radius-xs);
   }
 }
 
@@ -171,27 +106,9 @@
   }
 }
 
-/* CDK DragDrop visual feedback */
-.rules-table tbody tr.cdk-drag-preview {
-  background: var(--sc-bg-surface);
-  box-shadow: var(--sc-shadow-popover);
-  border-radius: var(--sc-radius-200);
-  display: table;
-  width: 100%;
-}
-
-.rules-table tbody tr.cdk-drag-placeholder {
-  opacity: 0.35;
-  background: var(--sc-bg-primary-subtle);
-}
-
-.cdk-drag-animating {
-  transition: transform 200ms cubic-bezier(0, 0, 0.2, 1);
-}
-
-.rules-table tbody tr:not(.cdk-drag-placeholder) {
-  transition: transform 200ms ease-out;
-}
+/* El bloque de feedback visual de CDK DragDrop se fue con `.rules-table`: tres
+ * de sus cuatro reglas colgaban de ese selector, y en `features/memory` no hay
+ * ningún `cdkDrag` (el MVP DD-28 no prioriza reglas, así que no se arrastran). */
 
 .rules-actions-chips {
   display: inline-flex;

@@ -3,14 +3,43 @@
 > Escrito tras migrar `labels` y `templates` (B4, sesión 16). No es teoría: es
 > lo que hizo falta, incluidas las tres cosas que estuvieron a punto de colarse.
 >
-> **Estado**: 2 tablas migradas · **14 sin migrar** en 12 ficheros.
+> **Estado (2026-07-19)**: **9 tablas migradas**. De las que quedan, **ninguna
+> debe migrar tal cual** — ver «¿esta tabla debe migrar?» justo abajo. La única
+> pendiente de verdad es `conversation-table`, y necesita una capacidad NUEVA del
+> DS antes (selección de rango con ancla).
 
 ## Antes de nada: ¿esta tabla debe migrar?
 
-`sc-datatable` es para tablas de datos con filas homogéneas. **No** para las
-que son un formulario disfrazado (`group-assignment-table`,
-`agent-channel-table`: casillas por celda, sin selección ni menú). Ahí una
-`<table>` a mano es lo correcto y migrarla no gana nada.
+`sc-datatable` es para tablas de datos con filas homogéneas.
+
+**NO migran, y no es pereza — una `<table>` a mano es ahí el HTML correcto:**
+
+| Tabla | Qué es de verdad |
+|---|---|
+| `group-assignment-table` | matriz de permisos: una casilla por celda |
+| `agent-channel-table` | ídem |
+| `agent-form-page` → `.perm-matrix` | matriz de permisos con cabecera tri-estado |
+| `aed-agentes-page` → `.comm-table` | ídem |
+
+Una matriz de permisos no tiene filas de datos: tiene ejes. Meterla en un
+componente de tabla de datos añade selección, menú de fila y ordenación que ahí
+no significan nada, y quita el control fino de las celdas. El `<table>` semántico
+con `<th scope="row">` es mejor accesibilidad, no peor.
+
+**Caso límite:** `agent-form-page` → `.picker-table` **sí** es una tabla de datos
+(filas homogéneas, seleccionar-todo, vacío), pero su fila SELECCIONA al clicar, y
+el modelo canónico del DS es el contrario (la fila abre, la casilla selecciona —
+Ola 6). Migrarla obliga a elegir: o cambias su interacción, o el DS aprende un
+modo «la fila selecciona». Es una decisión de producto, no una migración.
+
+**Pendiente de verdad — `conversation-table`**, y lo que le falta al DS:
+`sc-datatable` no modela **selección de rango con ancla** (shift+click desde la
+última fila tocada). Esa tabla la tiene, resuelta en dos sitios por la
+propagación del evento, y con **cinco tests e2e** que la fijan
+(`conversations-row-gesture.spec.ts`), incluido «el error de dedo no destruye la
+selección». También agranda el objetivo de click a la celda entera a propósito
+(la casilla mide 16px). Migrarla hoy es romper cinco comportamientos cubiertos;
+antes hay que añadir esa capacidad al DS, con sus tests.
 
 ## Los pasos
 
