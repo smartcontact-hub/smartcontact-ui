@@ -60,6 +60,7 @@ npm run e2e:contrast   # carril rápido para cambios de COLOR (~80s)
 | Tests unitarios | `npm run test:unit` | Suites de los generadores/scripts (`scripts/__tests__/*.test.mjs`) | ✅ |
 | Docs | `npm run docs:guard` · `docs:coherence` | Todo `.md` mapeado en `DOCS-INDEX` + links resuelven · la doc cuadra con el repo (comandos/scripts existen, cadena `verify` documentada, sin tokens muertos) | ✅ |
 | Tests unitarios del DS | `npm run test:components` | `TestBed` sobre vitest (Angular 21). Cubre los CASOS LÍMITE que la e2e no alcanza sin montar una página entera: `field` inexistente en `[visibleColumns]`, array vacío, `colspan` con columnas ocultas | ✅ |
+| Migración de tabla | `npm run migrate:check` | Las consecuencias MECÁNICAS de pasar una `<table>` a `<sc-datatable>`: la piel `list-table`, columnas en `computed`, plantillas fuera, teclado, ganchos que usan los e2e, la ruta en el guardián, los dos manifiestos, i18n en los 4 locales. **No entra en `verify`**: mide el DIFF contra `HEAD`, así que en CI (todo commiteado) no vería nada. Es un gate de ANTES de commitear — o con un ref: `npm run migrate:check HEAD~1` | ✅ |
 | Tipos + lint | `npm run typecheck` · `npm run lint` | | ✅ |
 | e2e smoke | `npm run e2e` | La demo levanta y el botón/form field renderizan la métrica del Kit medida en navegador (10.5/7, radio 6, font 14) | ✅ |
 

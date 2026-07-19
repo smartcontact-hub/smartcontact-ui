@@ -6,6 +6,15 @@
     "outDir": "../../out-tsc/lib",
     "declaration": true,
     "declarationMap": true,
+    /* `sourceMap` explícito porque `inlineSources` lo EXIGE: sin él, TypeScript
+     * aborta con TS5051 («inlineSources solo se puede usar con --inlineSourceMap
+     * o --sourceMap»). Funcionaba solo porque el script `typecheck` de
+     * package.json pasa `--sourceMap` a mano, así que la config era correcta
+     * únicamente por la puerta bendecida: cualquiera que corriera
+     * `npx tsc -p projects/ui-smartcontact/tsconfig.lib.json` se comía un error
+     * que no tiene nada que ver con su código. Me pasó a mí y a un subagente el
+     * mismo día. Un fichero de configuración tiene que ser válido por sí solo. */
+    "sourceMap": true,
     "inlineSources": true,
     "types": []
   },
