@@ -1,3 +1,5 @@
+import { map, startWith } from 'rxjs';
+import { toSignal } from '@angular/core/rxjs-interop';
 import {
   afterNextRender,
   ChangeDetectionStrategy,
@@ -133,6 +135,25 @@ export class LabelsPageComponent {
   private readonly nameTpl = viewChild<TemplateRef<ScColumnCellContext<Label>>>('nameTpl');
   private readonly descTpl = viewChild<TemplateRef<ScColumnCellContext<Label>>>('descTpl');
   private readonly actionsTpl = viewChild<TemplateRef<ScColumnCellContext<Label>>>('actionsTpl');
+
+  /** Dependencia de IDIOMA para las cabeceras.
+   *
+   * `columns` es un `computed()` cuyas únicas dependencias eran los `viewChild`
+   * de las plantillas de celda. Como los `header` se resuelven con
+   * `translate.instant()` —no con el pipe `| translate`, que es impuro y sí
+   * reaccionaba— el computed NO se re-evaluaba al cambiar de idioma y las
+   * cabeceras se quedaban CONGELADAS en el idioma de carga.
+   *
+   * Lo destapó `audit:datatables` en su primera pasada, sobre 7 páginas. No lo
+   * veía ningún gate: `i18n:check` solo compara claves y todo el e2e corre en
+   * español. Mismo patrón que ya usaba `repo-list-page` para otra cosa. */
+  private readonly currentLang = toSignal(
+    this.translate.onLangChange.pipe(
+      map((e) => e.lang),
+      startWith(this.translate.currentLang),
+    ),
+    { initialValue: this.translate.currentLang },
+  );
 
   protected readonly columns = computed<readonly ScColumnDef<Label>[]>(() => [
     {

@@ -49,6 +49,11 @@ const PAGINAS = [
   { ruta: 'conversaciones/reglas', nombre: 'reglas', altoFila: 54 },
   { ruta: 'conversaciones/categorias', nombre: 'categorias', altoFila: 54 },
   { ruta: 'conversaciones/entidades', nombre: 'entidades', altoFila: 54 },
+  /* Una de las NUEVE páginas de repositorios, que comparten `repo-list-page`.
+   * No estaba ninguna: `audit:datatables` lo destapó al no encontrar su ruta.
+   * Con una basta —las nueve son el mismo componente— pero sin ninguna, la
+   * tabla más reutilizada de la app era la única sin vigilar. */
+  { ruta: 'admin/agendas', nombre: 'agendas', altoFila: 54 },
 ] as const;
 
 /** Las tablas cuya fila ABRE algo tienen que anunciarlo con el cursor. */
