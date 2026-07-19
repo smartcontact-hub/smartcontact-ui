@@ -199,6 +199,81 @@ export class ScDatatableComponent<T = unknown> {
     return !mode || mode === 'multiple';
   });
 
+  /**
+   * SELECCIÓN DE RANGO CON ANCLA (shift+click sobre la casilla).
+   *
+   * PrimeNG YA sabe hacer rangos (`table.mjs`, `isMultipleSelectionMode() &&
+   * shiftKey && anchorRowIndex != null`), pero su ancla la fija **solo** su
+   * camino de click-de-fila. Y en el modelo canónico de la Ola 6 el click de
+   * fila NO selecciona: abre. Así que su ancla se queda en `null` para siempre
+   * y su rango no se dispara nunca, por mucho que se reactive `pSelectableRow`.
+   *
+   * La alternativa era pilotar su campo interno inyectando la `Table`. Se
+   * descartó: añade otro agarre a internos de PrimeNG, que es la fragilidad
+   * más grande que tiene hoy este repo. Treinta líneas propias salen más
+   * baratas que un acoplamiento más.
+   *
+   * El ancla es la última fila cuya casilla se tocó SIN shift, y con shift no
+   * se mueve.
+   *
+   * AVISO honesto: hoy esa decisión **no es observable**. El rango se UNE a lo
+   * ya seleccionado, y como la fila del ancla siempre está dentro, mover el
+   * ancla o no produce exactamente el mismo conjunto. Lo descubrió una prueba
+   * de mutación: al hacer que el ancla SÍ se moviera, los 17 tests siguieron
+   * en verde. Se deja fijo porque es lo correcto el día que shift+click
+   * REEMPLACE el rango en vez de sumarlo (Finder, Gmail), que es cuando
+   * reencuadrar empieza a significar algo — pero no se afirma un beneficio
+   * que hoy no se puede medir. Ver la nota en el spec.
+   */
+  private anclaRango: number | null = null;
+
+  /** La selección actual, siempre como array (el modelo admite T | T[] | null). */
+  private selectionComoArray(): readonly T[] {
+    const sel = this.selection();
+    if (sel === null || sel === undefined) return [];
+    return Array.isArray(sel) ? (sel as readonly T[]) : [sel as T];
+  }
+
+  /** Identidad de fila: por `dataKey` si lo hay, por referencia si no. */
+  private idDe(row: T): unknown {
+    const clave = this.dataKey();
+    return clave ? (row as Record<string, unknown>)[clave] : row;
+  }
+
+  /**
+   * Click en la CELDA de la casilla.
+   *
+   * `stopPropagation` siempre: sin él, marcar cinco filas abriría cinco veces
+   * el detalle. El rango se resuelve DESPUÉS de que `p-tableCheckbox` haya
+   * hecho lo suyo —este handler burbujea, así que llega el segundo— y por eso
+   * no hay que interceptarlo ni cancelarlo: basta con reponer el rango entero
+   * encima. Si la fila clicada estaba marcada, la casilla la desmarca y esta
+   * unión la vuelve a poner, que es lo que se espera de un shift+click.
+   */
+  protected onCheckCellClick(event: MouseEvent, index: number): void {
+    event.stopPropagation();
+    if (this.selectionMode() !== 'multiple') return;
+
+    const ancla = this.anclaRango;
+    if (event.shiftKey && ancla !== null) {
+      const [ini, fin] = ancla <= index ? [ancla, index] : [index, ancla];
+      const enRango = this.value().slice(ini, fin + 1);
+      const vistos = new Set(this.selectionComoArray().map((r) => this.idDe(r)));
+      const union = [...this.selectionComoArray()];
+      for (const fila of enRango) {
+        const id = this.idDe(fila);
+        if (!vistos.has(id)) {
+          vistos.add(id);
+          union.push(fila);
+        }
+      }
+      this.selection.set(union);
+      return; // el ancla NO se mueve: permite reencuadrar desde el mismo origen
+    }
+
+    this.anclaRango = index;
+  }
+
   /** colspan de la fila vacía: columnas VISIBLES + la de checkbox si aplica. */
   protected readonly colspan = computed<number>(
     () => this.visibleCols().length + (this.selectionMode() === 'multiple' ? 1 : 0),
