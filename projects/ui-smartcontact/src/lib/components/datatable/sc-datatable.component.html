@@ -75,7 +75,7 @@
         <!-- `stopPropagation` aquí es lo que separa los dos gestos: marcar la
              casilla NO dispara `rowClick`. Sin esto, seleccionar cinco filas
              abriría cinco veces el detalle. -->
-        <td class="sc-datatable__check" (click)="$event.stopPropagation()">
+        <td class="sc-datatable__check" (click)="onCheckCellClick($event, rowIndex)">
           <p-tableCheckbox [value]="row" />
         </td>
       }

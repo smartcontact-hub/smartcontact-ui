@@ -39,6 +39,8 @@ type Interno = {
   visibleCols: () => readonly ScColumnDef<Fila>[];
   colspan: () => number;
   rowSelectDisabled: () => boolean;
+  onCheckCellClick: (event: MouseEvent, index: number) => void;
+  selection: { (): unknown; set: (v: unknown) => void };
 };
 
 function montar(inputs: Record<string, unknown> = {}) {
@@ -114,5 +116,92 @@ describe('sc-datatable · quién selecciona al clicar la fila', () => {
   it('sin selección, la fila no selecciona nada', () => {
     const c = montar({ selectionMode: null });
     expect(c.rowSelectDisabled()).toBe(true);
+  });
+});
+
+
+describe('sc-datatable · selección de rango con ancla', () => {
+  const FILAS: Fila[] = [
+    { id: 1, nombre: 'uno' },
+    { id: 2, nombre: 'dos' },
+    { id: 3, nombre: 'tres' },
+    { id: 4, nombre: 'cuatro' },
+    { id: 5, nombre: 'cinco' },
+  ];
+
+  /** Monta en el modo donde el rango tiene sentido, con `dataKey` puesto. */
+  function tabla(inputs: Record<string, unknown> = {}) {
+    return montar({ columns: COLS, value: FILAS, dataKey: 'id', selectionMode: 'multiple', ...inputs });
+  }
+
+  const click = (shift = false) => new MouseEvent('click', { shiftKey: shift });
+  const ids = (c: Interno) => (c.selection() as Fila[]).map((f) => f.id);
+
+  /* Este handler corre DESPUÉS de que `p-tableCheckbox` haya marcado su fila
+   * (burbujea, llega el segundo). En estos tests no hay checkbox real, así que
+   * se simula ese paso previo poniendo la selección a mano antes del shift. */
+
+  it('sin shift solo fija el ancla: no toca la selección', () => {
+    const c = tabla();
+    c.onCheckCellClick(click(), 1);
+    expect(c.selection()).toBeNull();
+  });
+
+  it('shift+click extiende desde el ancla hasta la fila clicada', () => {
+    const c = tabla();
+    c.onCheckCellClick(click(), 1); // ancla en la 2ª fila
+    c.selection.set([FILAS[1]]); // lo que habría hecho la casilla
+    c.onCheckCellClick(click(true), 4);
+    expect(ids(c)).toEqual([2, 3, 4, 5]);
+  });
+
+  it('el rango funciona HACIA ATRÁS', () => {
+    /* Seleccionar de abajo a arriba es la mitad de los usos reales y es donde
+     * un `slice(ancla, index)` ingenuo devuelve vacío. */
+    const c = tabla();
+    c.onCheckCellClick(click(), 4);
+    c.selection.set([FILAS[4]]);
+    c.onCheckCellClick(click(true), 1);
+    expect(ids(c)).toEqual([5, 2, 3, 4]);
+  });
+
+  /* AQUÍ FALTA UN TEST, y es más honesto decirlo que fingirlo.
+   *
+   * Escribí uno que afirmaba «el ancla no se mueve con shift, así que se puede
+   * reencuadrar desde el mismo origen». Pasaba. Una prueba de mutación —hacer
+   * que el ancla SÍ se moviera— lo dejó igual de verde: era vacuo.
+   *
+   * La razón no es el test, es la semántica: el rango se UNE a lo seleccionado
+   * y la fila del ancla siempre está dentro, así que mover el ancla no cambia
+   * el conjunto resultante. La propiedad no es observable HOY.
+   *
+   * Se vuelve observable el día que shift+click REEMPLACE el rango en vez de
+   * sumarlo (que es lo que hacen Finder y Gmail). Esa es una decisión de
+   * producto pendiente; cuando se tome, este test se escribe de verdad.
+   */
+
+  it('sin ancla previa, shift+click no inventa un rango', () => {
+    const c = tabla();
+    c.onCheckCellClick(click(true), 3);
+    expect(c.selection()).toBeNull();
+  });
+
+  it('no duplica lo ya seleccionado', () => {
+    /* La casilla ya marcó la fila clicada antes de que llegue este handler:
+     * sin deduplicar, esa fila entraría dos veces y el contador de la barra
+     * masiva mentiría. */
+    const c = tabla();
+    c.onCheckCellClick(click(), 0);
+    c.selection.set([FILAS[0], FILAS[2]]);
+    c.onCheckCellClick(click(true), 2);
+    expect(ids(c)).toEqual([1, 3, 2]);
+  });
+
+  it('fuera de `multiple` no hay rango', () => {
+    const c = tabla({ selectionMode: 'single' });
+    c.onCheckCellClick(click(), 0);
+    c.selection.set([FILAS[0]]);
+    c.onCheckCellClick(click(true), 3);
+    expect(ids(c)).toEqual([1]);
   });
 });
