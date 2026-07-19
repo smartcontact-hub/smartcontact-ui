@@ -170,6 +170,69 @@ que su texto coincide con la miga actual.
 COMPUTADOS de la piel (que se agarra a clases internas de PrimeNG), el separador
 en oscuro, el cursor y el teclado. Suite del supervisor: **43 tests**.
 
+# ▶︎ LO SIGUIENTE, DECIDIDO Y ACOTADO: rango con ancla en `sc-datatable`
+
+**Rafa dijo que sí. Empieza por el PUNTO 1 y no por la migración.**
+
+## El dato que lo desbloquea (verificado, no supuesto)
+
+Durante la sesión 19 dije que `conversation-table` no migraba porque el rango
+con shift+click era «una función nueva del DS». **Era falso, y bastó un grep.**
+PrimeNG YA trae la lógica:
+
+```
+node_modules/primeng/fesm2022/primeng-table.mjs:1766
+if (this.isMultipleSelectionMode() && event.originalEvent.shiftKey && this.anchorRowIndex != null)
+```
+
+Pero —y esto es la otra mitad, que también verifiqué— ese `anchorRowIndex`
+**solo lo pone `handleRowClick`** (línea 1781). El camino de la CASILLA
+(`toggleRowWithCheckbox`, línea 2103) **no lo toca**. Y en nuestro modelo
+canónico el click de fila no selecciona: abre. O sea que el ancla se queda en
+`null` y el rango no se dispara nunca, por mucho que quites el
+`pSelectableRowDisabled`.
+
+**Conclusión**: la lógica existe pero solo es alcanzable por un modelo de
+interacción que rechazamos a propósito (Ola 6).
+
+## Los dos caminos, y cuál se eligió
+
+- **(a) Pilotar `anchorRowIndex` desde `sc-datatable`** inyectando la instancia
+  de `Table`. Funciona, y añade un punto más de agarre a internos de PrimeNG —
+  que es el riesgo nº1 medido del proyecto (138 puntos). **Descartado.**
+- **(b) Implementar el rango en `sc-datatable`**: ~30 líneas, ancla propia +
+  `shiftKey` en el handler de la casilla. Es lo que la app ya hace hoy a mano,
+  movido al componente que gobierna las filas — por eso allí sale «resuelto en
+  dos sitios por la propagación», que es el síntoma de estar en el sitio
+  equivocado. **ELEGIDO.**
+
+## Punto 1 — lo único que hay que hacer primero
+
+`sc-datatable` guarda su PROPIA ancla al seleccionar por casilla, y con
+`shiftKey` selecciona el rango. **Con test unitario**: el arnés ya existe
+(`sc-datatable.component.spec.ts`, vitest) y este es justo el tipo de lógica de
+casos límite que la e2e no alcanza sin montar una página.
+
+Ojo al implementar: el binding de `pSelectableRowDisabled` se re-evalúa por
+detección de cambios, así que cualquier solución que dependa de leer `shiftKey`
+entre `mousedown` y `click` es **dependiente de temporización** — hay que verla
+correr, no razonarla. Por eso no se empezó con poco margen: de `sc-datatable`
+cuelgan ya **9 tablas**.
+
+## Puntos 2 y 3 — DESPUÉS, y no antes
+
+2. Migrar `conversation-table`: la tabla más grande de la app (13 columnas, 4
+   estados de fila con shimmer, 185/328/356 líneas).
+3. Los **5 tests** de `conversations-row-gesture.spec.ts` cambian de SELECTOR
+   (el `<td>` y la casilla los pinta el DS: `.sc-datatable__check`,
+   `p-tableCheckbox`) pero **NO de afirmación**. Aquí está el peligro real:
+   reescribir un test para que case con el markup nuevo es exactamente cómo se
+   debilita sin querer. Relee los cinco contra lo que AFIRMAN —fila abre ·
+   celda selecciona · shift+click hace rango · el error de dedo no destruye la
+   selección · Enter abre y Espacio selecciona— no contra lo que localizan.
+
+---
+
 # SESIÓN 19 — se acaba el contraste, y las tablas llegan a su tope real
 
 | Commit | Qué |
