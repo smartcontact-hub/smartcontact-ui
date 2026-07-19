@@ -65,6 +65,8 @@
           [visibleColumns]="tableVisibleColumns()"
           dataKey="id"
           selectionMode="multiple"
+    [rowSelectionAriaLabel]="ariaFila"
+    [selectAllAriaLabel]="ariaTodo"
         [rowStyleClass]="rowClass()"
           [selection]="selectedAgents()"
           (selectionChange)="onSelectionChange($any($event))"

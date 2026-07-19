@@ -262,6 +262,16 @@ export class AgentsListPageComponent {
    * Lo destapó `audit:datatables` en su primera pasada, sobre 7 páginas. No lo
    * veía ningún gate: `i18n:check` solo compara claves y todo el e2e corre en
    * español. Mismo patrón que ya usaba `repo-list-page` para otra cosa. */
+  /** Nombre accesible de las casillas de selección.
+   *
+   * Sin esto PrimeNG anuncia sus literales por defecto —`'Row Selected'`,
+   * `'All items selected'`— que son inglés FIJO (no pasan por i18n) y no dicen
+   * qué fila es. La tabla a mano sí las nombraba; la migración lo perdió en
+   * silencio en todas. Ver `ScRowAriaLabelFn`. */
+  protected readonly ariaFila = (row: { name: string }): string =>
+    this.translate.instant('common.select_row', { name: row.name });
+  protected readonly ariaTodo = this.translate.instant('common.select_all');
+
   private readonly currentLang = toSignal(
     this.translate.onLangChange.pipe(
       map((e) => e.lang),

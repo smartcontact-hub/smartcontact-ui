@@ -74,6 +74,8 @@
           [rowStyleClass]="rowStyleClass"
           dataKey="id"
           selectionMode="multiple"
+    [rowSelectionAriaLabel]="ariaFila"
+    [selectAllAriaLabel]="ariaTodo"
           [selection]="selectedUsers()"
           (selectionChange)="onSelectionChange($any($event))"
           rowsFocusable
