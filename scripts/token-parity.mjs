@@ -349,10 +349,18 @@ const A11Y_GATED = [
   /* Sube de A11Y_INFO a gateado: llevaba meses informándose en 2.95:1 y nadie
    * actuaba, que es lo que pasa cuando un defecto solo se avisa. */
   ['sc-text-secondary', 'sc-bg-surface'],
-];
-const A11Y_INFO = [
+  /* Mismo movimiento, un año tarde, con el que quedaba: `subtle` llevaba
+   * MESES informándose en 2.04:1 desde A11Y_INFO. Decisión de Rafa
+   * (2026-07-19): AA por delante de la jerarquía. Ver customs-catalog §1.7. */
   ['sc-text-subtle', 'sc-bg-surface'],
 ];
+/* Vacío a propósito. Si vuelve a llenarse, lee la historia de las dos filas de
+ * arriba antes de añadir nada: "informar" un fallo de contraste sin gatearlo es
+ * exactamente cómo `text-secondary` estuvo en 2.95:1 y `text-subtle` en 2.04:1
+ * durante meses, con el aviso saliendo en cada `verify` y nadie mirándolo. Si
+ * un par no puede cumplir hoy, va a A11Y_KNOWN con su razón y su dueño — no a
+ * una lista que solo susurra. */
+const A11Y_INFO = [];
 // Sub-AA CONOCIDOS y aceptados (pre-existentes — revisión de marca en W5). Se informan
 // con ⚠, NO fallan. Quitar de aquí cuando W5 decida el fix.
 const A11Y_KNOWN = new Map([

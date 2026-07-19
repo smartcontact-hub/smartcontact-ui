@@ -11,9 +11,10 @@
    queda **B5b** (necesita diseño). Suite del supervisor: **108 tests**.
 4. Si vas a migrar otra tabla, la receta está escrita y medida:
    [`docs/receta-migracion-tablas.md`](docs/receta-migracion-tablas.md).
-5. **La decisión más grande abierta es `--sc-text-subtle`** (2.04:1, 161 usos).
-   No es un arreglo mecánico: cumplir AA lo convierte en `text-secondary`, o
-   sea la jerarquía de tres grises no cabe. Ver más abajo.
+5. **`--sc-text-subtle` está DECIDIDO y hecho** (Rafa: AA por delante de la
+   jerarquía). En claro hay ahora **dos** niveles de gris, no tres; en oscuro
+   siguen siendo tres. Si compensas jerarquía, hazlo con peso o tamaño, nunca
+   con claridad. Ver `customs-catalog` §1.7 antes de tocar un gris.
 
 ---
 
@@ -217,23 +218,29 @@ Ver `customs-catalog` §1.6.
 
 # Decisiones que siguen necesitando a Rafa
 
-1. **`--sc-text-subtle` a 2.04:1 sobre blanco, en 161 usos.** Descripciones
-   del hub de repositorios, cuerpo de los estados vacíos, hints, placeholders.
-   **Corrijo lo que decía este mismo fichero** ("su uso es placeholder/
-   disabled"): eso es falso, está medido en contenido real.
-   **No tiene arreglo mecánico**: para llegar a 4.5:1 sobre blanco hay que
-   subir a slate-600, que **es** el valor de `--sc-text-secondary`. O sea, la
-   jerarquía de tres grises no cabe en AA sobre blanco; caben dos. El tercer
-   nivel tendría que distinguirse por tamaño, peso o cursiva. Cambia el
-   aspecto de casi todas las pantallas → decisión tuya, no mía.
-2. **Dos botones del preset, bajo AA en claro**: `p-button-danger` (blanco
+1. **Dos botones del preset, bajo AA en claro**: `p-button-danger` (blanco
    sobre red-500, 3.76:1) y la etiqueta de `p-button-secondary outlined`
    (slate-500, 2.95:1 — es el botón "Añadir" de AED, un control primario).
-   Vienen del Kit → **Rafa + Marta**.
-3. Los cuatro están fijados en `theme-contrast.spec.ts` con su número, a la
+   Vienen del Kit → **Rafa + Marta**. Es lo ÚLTIMO que queda bajo AA, y ya no
+   hay nada de CSS de página en la lista.
+2. **`--sc-text-secondary` sobre el lienzo**: 4.25:1 (y 3.92 sobre slate-100).
+   Aceptado a propósito en §1.5 — subirlo lo pega a `text-primary`.
+3. Los tres están fijados en `theme-contrast.spec.ts` con su número, a la
    vista. Cualquier OTRO fallo rompe la prueba; estos no, hasta que decidas.
-4. ~~`--sc-text-secondary` 2.95:1~~ · ~~`--sc-text-success`~~ · ~~separador en
-   oscuro~~ — hechos en la 17.
+4. ~~`--sc-text-subtle` 2.04:1~~ — **decidido y hecho** (§1.7). ~~`text-secondary`
+   2.95~~ · ~~`text-success`~~ · ~~separador en oscuro~~ — hechos en la 17.
+
+## Lo que hay que saber antes de tocar un gris
+
+Sobre blanco, de la rampa slate **solo cumplen AA dos pasos**: 600 (4.52) y 700
+(7.38, que es `text-primary`). El 500 se queda en 2.95 y el 400 en 2.04. Por eso
+`subtle` y `secondary` valen ya lo mismo en claro: no es un descuido, es que no
+caben tres. **Si necesitas un tercer nivel, sepáralo por peso o tamaño.**
+
+Al aplicarlo aparecieron tres pestañas cuyo único hover era el salto
+`subtle → secondary` y se quedaron mudas; su hover subió a `primary`. Si añades
+un control con estados, comprueba que su feedback no dependa solo de la
+claridad del gris.
 
 
 ---

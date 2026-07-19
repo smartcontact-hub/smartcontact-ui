@@ -213,10 +213,71 @@ página está cerrado:
 
 | Qué | Medido | Por qué no se toca aquí |
 |---|---|---|
-| `--sc-text-subtle` sobre blanco | **2.04:1**, 161 usos | Para cumplir hay que subir a slate-600, que **es** `--sc-text-secondary`: la jerarquía de tres grises no cabe en AA sobre blanco. El tercer nivel tendría que distinguirse por tamaño/peso/cursiva. Decisión de diseño. |
+| ~~`--sc-text-subtle`~~ | ~~2.04:1~~ → **4.52:1** | **Decidido y hecho el 2026-07-19** — ver §1.7. |
 | `--sc-text-secondary` sobre `--sc-bg-default` | 4.25:1 (y 3.92 sobre slate-100) | Ya aceptado en §1.5: subirlo más lo pega a `text-primary` y rompe la jerarquía. |
 | `p-button-danger` | 3.76:1 | Preset del DS (blanco sobre red-500). Toca al Kit. |
 | `p-button-secondary` `outlined` | 2.95:1 | La etiqueta en slate-500. Es el botón "Añadir" de AED, un control primario. Toca al Kit. |
+
+---
+
+### 1.7 AA por delante de la jerarquía: `subtle` sube a slate-600 · 2026-07-19
+
+> **Decisión de Rafa, no inferencia.** Se le presentó el dilema medido y eligió:
+> *«sube text-subtle a slate-600, prefiero AA que la jerarquía»*.
+
+`--sc-text-subtle` valía `slate-400`: **2.04:1 sobre blanco**, en **161 usos** que no son
+adorno — descripciones del hub de repositorios, cuerpo de los estados vacíos, hints de
+formulario, placeholders. `token-parity` llevaba **meses** informándolo desde `A11Y_INFO`
+sin que nadie actuara, que es el mismo patrón que hubo que romper con §1.5.
+
+**Por qué no había un arreglo indoloro.** La rampa de grises sobre las tres superficies
+claras de la casa, medida:
+
+| Paso | sobre blanco | sobre `--sc-bg-default` | sobre slate-100 |
+|---|---|---|---|
+| slate-400 | 2.04 | 1.92 | 1.77 |
+| slate-500 | 2.95 | 2.77 | 2.56 |
+| **slate-600** | **4.52** | 4.25 | 3.92 |
+| slate-700 | 7.38 | 6.95 | 6.40 |
+
+Sobre blanco solo cumplen **dos** pasos, y el 700 ya es `--sc-text-primary`. Así que
+cualquier valor que cumpla convierte a `subtle` en `secondary`: **la jerarquía de tres
+grises no cabe en AA**. No es una limitación del DS, es aritmética de la rampa.
+
+**Lo que se pierde y dónde se compensa.** En claro `subtle` y `secondary` son ahora el
+mismo color. Donde el diseño usaba los tres niveles para distinguir estados hay que
+compensar con algo que no sea claridad. Al aplicarlo aparecieron **tres pestañas** cuyo
+único feedback de hover era el salto `subtle → secondary` y que se quedaban **mudas**
+(`agent-form-page`, `templates-page`, `template-form-panel`): su hover sube a `primary`,
+y el estado activo se sigue distinguiendo por subrayado, fondo o peso. Comprobado que el
+resto del patrón ya llevaba una segunda señal: en las pestañas de plantillas, activo =
+slate-700 **peso 600** contra inactivo = slate-600 **peso 400**.
+
+**El oscuro NO se toca.** Ahí `subtle` es slate-500 y mide ~5.7:1: cumple de sobra. No se
+degrada un tema que ya funcionaba solo por simetría. Consecuencia asumida: **el claro
+tiene dos niveles de gris y el oscuro tres.**
+
+**Efectos colaterales, verificados uno a uno:**
+
+- **`--sc-icon-subtle` sube también**, a slate-600. Era el mismo `slate-400` y como
+  elemento gráfico su listón es el 3:1 de 1.4.11 — que tampoco alcanzaba. Sale de la
+  zona `@sc-gen` y sus dos filas de `color-map.mjs` (`form.field.icon.color`,
+  `navigation.item.icon.color`) pasan de `enforce` a `diverge`. Sin esto, el texto de un
+  hint cumpliría y su icono no.
+- **Los placeholders suben con él** (`base.ts` los cuelga de `--sc-text-subtle`). Se
+  midió que siguen distinguiéndose del valor escrito: placeholder slate-600 (4.52) contra
+  valor `--sc-text-primary` slate-700 (7.38).
+- **`--sc-presence-offline` hereda** (`03-palette.css`). Se deja: el punto de "offline"
+  pasa a 4.52:1, y como indicador de estado le aplica el 3:1 de 1.4.11 que antes no
+  cumplía. Además encaja mejor con sus hermanos, que son hexes saturados.
+
+**Vigilado por**: el par sube de `A11Y_INFO` a `A11Y_GATED` en `token-parity` — y
+`A11Y_INFO` **se queda vacía a propósito**, con una nota que explica por qué no debe
+volver a llenarse. Más `theme-contrast.spec.ts`, de cuya lista de conocidos sale.
+
+**Cómo se cierra la divergencia**: que el Kit suba `form.field.icon.color` y su gris
+auxiliar a valores que cumplan. Entonces las dos filas vuelven a `enforce` y esta entrada
+se borra.
 
 ---
 

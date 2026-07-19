@@ -80,8 +80,12 @@
     cursor: pointer;
     transition: color var(--sc-transition-fast) var(--sc-easing-default);
 
+    /* Mismo caso que las pestañas de plantillas: el hover se quedaba mudo al
+     * igualarse `subtle` y `secondary`, y aquí solo se transiciona `color`,
+     * así que el ratón no cambiaba nada. El activo lleva fondo y borde
+     * propios, así que subir el hover a `primary` no los confunde. */
     &:hover {
-      color: var(--sc-text-secondary);
+      color: var(--sc-text-primary);
     }
 
     &--active {

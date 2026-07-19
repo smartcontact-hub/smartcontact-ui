@@ -88,16 +88,10 @@ const L_CLARO = 0.5;
  * Se fijan AQUÍ, con su número, no se esconden: cualquier OTRO fallo rompe la
  * prueba. Cada línea se borra el día que se decida su valor.
  *
- *  1. `--sc-text-subtle` = slate-400 → **2.04:1 sobre blanco**, en 161 usos
- *     (descripciones del hub, cuerpo de los estados vacíos, hints,
- *     placeholders de `p-multiselect`). `token-parity` lleva meses
- *     informándolo en `A11Y_INFO` sin que nadie actúe — el mismo patrón que
- *     hubo que romper con `text-secondary`.
- *     **No tiene arreglo mecánico**: para llegar a 4.5:1 sobre blanco hay que
- *     subir a slate-600, que es el valor de `--sc-text-secondary`. Es decir,
- *     la jerarquía de TRES grises no cabe en AA sobre blanco; caben dos. El
- *     tercer nivel tendría que distinguirse por tamaño, peso o cursiva en vez
- *     de por claridad.
+ *  1. ~~`--sc-text-subtle`~~ — **RESUELTO el 2026-07-19**. Rafa eligió: AA por
+ *     delante de la jerarquía. Sube de slate-400 (2.04:1) a slate-600 (4.52),
+ *     con lo que se iguala a `secondary` y el tercer nivel de gris desaparece
+ *     en claro. Ver `customs-catalog` §1.7. Su par ya no se informa: se gatea.
  *
  *  2. `--sc-text-secondary` sobre `--sc-bg-default` → **4.25:1**, y sobre
  *     slate-100 → **3.92:1**. Límite ya documentado y aceptado a propósito en
@@ -112,7 +106,7 @@ const L_CLARO = 0.5;
  *     pantalla. Preset del DS.
  */
 const CONOCIDOS_CLARO = [
-  'fg=rgb(174,182,194)', // 1 · --sc-text-subtle (slate-400)
+  // 1 · --sc-text-subtle: FUERA de esta lista desde el 2026-07-19. Ya cumple.
   'fg=rgb(111,119,132)', // 2 · --sc-text-secondary (slate-600) sobre lienzo
   'bg=rgb(239,68,68) fg=rgb(255,255,255)', // 3 · p-button-danger
   'fg=rgb(143,151,163)', // 4 · slate-500: etiqueta de p-button-secondary outlined

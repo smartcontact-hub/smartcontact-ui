@@ -91,8 +91,13 @@
       color var(--sc-transition-fast) var(--sc-easing-default),
       border-color var(--sc-transition-fast) var(--sc-easing-default);
 
+    /* Reposo `subtle` → hover `secondary` → activo `primary` era la jerarquía
+     * de tres grises. Con `subtle` en slate-600 (decisión de AA, ver
+     * `02-semantic.css`) el hover valía lo mismo que el reposo y dejaba de
+     * verse. Sube a `primary`; el activo se sigue distinguiendo por el
+     * subrayado. */
     &:hover {
-      color: var(--sc-text-secondary);
+      color: var(--sc-text-primary);
     }
 
     &--active {
