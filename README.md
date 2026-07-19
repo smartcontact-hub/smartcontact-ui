@@ -33,9 +33,17 @@ npm run export:all     # tarballs npm en dist/archives/
 ## Verificar (guardarraíles)
 
 ```bash
-npm run verify         # todos los checks estáticos
+npm run verify         # todos los checks estáticos (~40s)
 npm run e2e            # smoke en navegador (Playwright)
+npm run e2e:contrast   # carril rápido para cambios de COLOR (~80s)
 ```
+
+> **Si tocas un token de color, `e2e:contrast` es el bucle corto**: reconstruye
+> tokens y corre solo contraste (los dos temas) + anillo de foco, sin la suite
+> entera. Lleva dentro un **guardián de build rancio**: si el dev server está
+> sirviendo un bundle anterior a tu edición —pasa tras un `verify`, que
+> reescribe `dist/` por debajo del `ng serve`— la prueba lo dice en vez de
+> devolverte números viejos. Ver `asegurarBuildFresco` en `e2e/supervisor/helpers.ts`.
 
 | Guardarraíl | Comando | Qué garantiza | Estado |
 |---|---|---|---|

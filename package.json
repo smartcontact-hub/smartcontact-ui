@@ -46,6 +46,7 @@
     "verify": "npm run tokens:export-clean && npm run tokens:gen && npm run tokens:gen-component && npm run tokens:gen-color && npm run tokens:gen-cmp-color && npm run tokens:gen-effects && npm run tokens:parity && npm run tokens:guard && npm run tokens:cmp-rewire && npm run tokens:effects-rewire && npm run tokens:type-parity && npm run audit:theme-scale && npm run audit:components && npm run usage:check && npm run i18n:check && npm run test:unit && npm run docs:guard && npm run docs:coherence && npm run build && npm run test:components && npm run typecheck && npm run lint",
     "e2e": "playwright test",
     "e2e:supervisor": "playwright test -c playwright.supervisor.config.ts",
+    "e2e:contrast": "npm run build:design-tokens && playwright test -c playwright.supervisor.config.ts theme-contrast focus-ring",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "test:unit": "node --test scripts/__tests__/*.test.mjs",
