@@ -90,12 +90,19 @@
       color: var(--sc-label-green-text);
     }
 
+    /* Era `--sc-color-cyan-700` crudo — el único de los tres que no volteaba,
+     * y en oscuro se quedaba en 2.99:1, justo por debajo del 3:1 que pide
+     * 1.4.11 para gráficos. `phone` ya usaba la familia `label`; ahora los
+     * tres hablan igual. */
     &[data-channel='chat'] {
-      color: var(--sc-color-cyan-700);
+      color: var(--sc-label-teal-text);
     }
 
+    /* `--sc-text-subtle` es slate-400: 2.04:1 sobre blanco, ni el 3:1 que
+     * pide 1.4.11 para un glifo. `--sc-icon-secondary` es el token de icono
+     * neutro y cumple en los dos temas. */
     &[data-channel='email'] {
-      color: var(--sc-text-subtle);
+      color: var(--sc-icon-secondary);
     }
   }
 }

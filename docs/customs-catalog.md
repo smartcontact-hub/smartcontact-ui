@@ -200,10 +200,23 @@ pareja está calibrada para texto sobre el LIENZO, no dentro de una pastilla, y 
 `--sc-color-*` (no voltea) ni `--sc-bg-*` como color de texto (`--sc-bg-primary` es un
 relleno, no un color de tinta: usarlo así daba 3.39:1 en `.entity-type-chip`).
 
-**Vigilado por** `e2e/supervisor/dark-surfaces.spec.ts` (34 tests, 17 rutas × 2
-preguntas): ninguna superficie clara en oscuro, y el texto se lee sobre su fondo. La
-segunda pregunta existe porque al oscurecer un fondo se puede dejar texto oscuro encima —
-el mismo fallo del revés, que es justo lo que cazó en `.entity-type-chip`.
+**Vigilado por** `e2e/supervisor/theme-contrast.spec.ts` (51 tests: 17 rutas × 2 temas,
+más la pregunta de superficies en oscuro). La segunda pregunta —¿se lee el texto?— existe
+porque al oscurecer un fondo se puede dejar texto oscuro encima; es la que cazó
+`.entity-type-chip`. Y corre también **en claro** porque al arreglar el oscuro salieron
+cuatro fallos de AA que llevaban ahí desde siempre: una red que solo mira un tema sugiere
+que el otro está comprobado.
+
+**Lo que queda abierto, medido y sin arreglar** (los cuatro viven en el spec, con su
+número, no escondidos). Ninguno es CSS de página — todo lo que dependía de una hoja de
+página está cerrado:
+
+| Qué | Medido | Por qué no se toca aquí |
+|---|---|---|
+| `--sc-text-subtle` sobre blanco | **2.04:1**, 161 usos | Para cumplir hay que subir a slate-600, que **es** `--sc-text-secondary`: la jerarquía de tres grises no cabe en AA sobre blanco. El tercer nivel tendría que distinguirse por tamaño/peso/cursiva. Decisión de diseño. |
+| `--sc-text-secondary` sobre `--sc-bg-default` | 4.25:1 (y 3.92 sobre slate-100) | Ya aceptado en §1.5: subirlo más lo pega a `text-primary` y rompe la jerarquía. |
+| `p-button-danger` | 3.76:1 | Preset del DS (blanco sobre red-500). Toca al Kit. |
+| `p-button-secondary` `outlined` | 2.95:1 | La etiqueta en slate-500. Es el botón "Añadir" de AED, un control primario. Toca al Kit. |
 
 ---
 

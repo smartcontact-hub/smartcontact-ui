@@ -141,7 +141,11 @@
 
   &__chevron {
     flex-shrink: 0;
-    color: var(--sc-icon-disabled);
+    /* Era `--sc-icon-disabled` en un botón que NO está deshabilitado: 2.29:1
+     * en oscuro, por debajo del 3:1 de 1.4.11. El chevron es la única señal
+     * de que la fila lleva a algún sitio; que el token diga "disabled" era
+     * simplemente el token equivocado para un control vivo. */
+    color: var(--sc-icon-subtle);
     transition: color var(--sc-transition-fast) var(--sc-easing-default);
 
     .hub-item:hover & {

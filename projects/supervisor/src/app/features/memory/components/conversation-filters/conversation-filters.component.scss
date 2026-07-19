@@ -172,12 +172,16 @@
   gap: var(--sc-spacing-0-25);
   height: 32px;
   padding: 0 11px;
-  border: 1px solid var(--sc-color-red-300);
+  /* Estaba entero en paleta CRUDA. En oscuro el fondo (`red-100` al 50%) se
+   * componía en un rosa embarrado y el texto (`red-800`) seguía siendo rojo
+   * oscuro: 2.16:1. El chip que avisa de los errores era el que no se leía.
+   * Con la familia de insignia, 7.7:1 en oscuro y 5.9:1 en claro. */
+  border: 1px solid var(--sc-label-red-border);
   border-radius: var(--sc-radius-full);
-  background: color-mix(in srgb, var(--sc-color-red-100) 50%, transparent);
+  background: var(--sc-label-red-bg);
   font-size: var(--sc-font-size-100);
   font-weight: var(--sc-font-weight-medium);
-  color: var(--sc-color-red-800);
+  color: var(--sc-label-red-text);
   cursor: pointer;
   transition:
     border-color 140ms ease,
@@ -185,22 +189,26 @@
     transform 100ms ease;
 
   &:hover {
-    border-color: var(--sc-color-red-500);
-    background: color-mix(in srgb, var(--sc-color-red-200) 60%, transparent);
+    border-color: var(--sc-label-red-dot);
+    background: var(--sc-bg-danger-subtle-hover);
   }
 
+  /* Pulsado SÍ es sólido a propósito: es el estado "filtro activo" y tiene que
+   * cantar. Fondo oscuro con texto blanco funciona en los dos temas. */
   &.is-active {
-    background: var(--sc-color-red-500);
-    border-color: var(--sc-color-red-600);
-    color: white;
+    background: var(--sc-bg-danger);
+    border-color: var(--sc-bg-danger);
+    color: var(--sc-text-inverse);
   }
 
   &:active {
     transform: scale(0.97);
   }
 
+  /* El anillo de foco es el MISMO en toda la app. Que cambie de color según el
+   * control es un fallo de identificación consistente, no una personalidad. */
   &:focus-visible {
-    outline: 2px solid var(--sc-color-red-500);
+    outline: 2px solid var(--sc-border-focus);
     outline-offset: 2px;
   }
 }

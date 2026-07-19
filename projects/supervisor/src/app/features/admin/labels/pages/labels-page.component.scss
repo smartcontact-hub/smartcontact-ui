@@ -91,8 +91,16 @@
     font-size: var(--sc-font-size-200);
     color: var(--sc-text-subtle);
 
+    /* "Sin descripción" iba con `--sc-text-disabled` y medía 2.29:1 en oscuro.
+     * La exención de AA de 1.4.3 es para controles INACTIVOS, y esto no lo es:
+     * es texto informativo que el usuario tiene que poder leer.
+     *
+     * Primero lo puse en `--sc-text-subtle` (el token de la línea de arriba) y
+     * eso era cambiar un fallo por otro: subtle vale slate-400 y mide 2.04:1
+     * sobre blanco. Ver la nota de `theme-contrast.spec.ts`. La cursiva ya
+     * dice "esto está vacío"; el color no necesita decirlo otra vez. */
     &--empty {
-      color: var(--sc-text-disabled);
+      color: var(--sc-text-secondary);
       font-style: italic;
     }
   }
