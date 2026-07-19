@@ -346,19 +346,36 @@ import type { ButtonDesignTokens } from '@primeuix/themes/types/button';
                     hoverBorderColor: "{orange.600}",
                     activeBorderColor: "{orange.700}"
                 },
+                /* AA · 2026-07-19 — el botón `danger` sólido subía a 3.76:1 con
+                 * su texto blanco: era uno de los dos últimos fallos de
+                 * contraste de la app. La rampa entera se desplaza un escalón,
+                 * de 500/600/700 a 600/700/800, para conservar el recorrido
+                 * reposo → hover → pulsado. red-600 con blanco da **4.83:1**.
+                 *
+                 * Se cambia AQUÍ, por referencia de paleta, y no vía
+                 * `--sc-cmp-button-danger-*`: esos tokens existen pero
+                 * corresponden a otro slot y **nadie los lee** para el sólido —
+                 * lo comprobé cambiándolos y midiendo el píxel, que seguía en
+                 * #ef4444. Cablear el preset a ellos rompe `cmp-color-rewire`,
+                 * que exige que cada `var(--sc-cmp-*)` case con SU slot
+                 * (`root.danger` pediría `--sc-cmp-button-root-danger-*`, que no
+                 * existe). Ver customs-catalog §1.8.
+                 *
+                 * `focusRing` se queda en {red.500}: es un anillo, no lleva
+                 * texto encima, y no cambiarlo evita mover una señal de foco. */
                 danger: {
                     color: "#ffffffff",
                     focusRing: {
                         color: "{red.500}"
                     },
-                    background: "{red.500}",
+                    background: "{red.600}",
                     hoverColor: "#ffffffff",
                     activeColor: "#ffffffff",
-                    borderColor: "{red.500}",
-                    hoverBackground: "{red.600}",
-                    activeBackground: "{red.700}",
-                    hoverBorderColor: "{red.600}",
-                    activeBorderColor: "{red.700}"
+                    borderColor: "{red.600}",
+                    hoverBackground: "{red.700}",
+                    activeBackground: "{red.800}",
+                    hoverBorderColor: "{red.700}",
+                    activeBorderColor: "{red.800}"
                 },
                 primary: {
                     color: "{primary.contrast.color}",

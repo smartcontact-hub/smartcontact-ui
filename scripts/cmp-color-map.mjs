@@ -18,6 +18,15 @@
 /** Slots que NO se generan (divergencia de marca / afinado a mano). Se siembra vacío;
  *  se añade una fila cuando una reconciliación export↔código decide preservar el valor. */
 export const EXCLUDE = new Set([
+  // ── etiqueta del botón `outlined secondary` (light) · 2026-07-19 ──────────────
+  //    El Kit da slate-500 = 2.95:1 sobre blanco. Es el "Añadir" de AED, un control
+  //    primario, no un adorno. slate-600 (4.52) — el mismo escalón al que subieron
+  //    text-secondary y text-subtle, por la misma aritmética: sobre blanco solo
+  //    cumplen dos pasos de la rampa de grises.
+  //    El otro fallo de botón (el `danger` sólido) NO se cura por aquí: sus tokens
+  //    no los consume nadie. Va por referencia de paleta en `sc-preset/button.ts`.
+  //    Se borra cuando el Kit suba el suyo. Ver customs-catalog §1.8.
+  'light:button.outlined.secondary.color',
   // ── success text (dark): el export usa green-950 vanilla (#052e16); la DS cura su propio
   //    green-950 de marca (#0a2916, un punto más oscuro). Divergencia consciente → no espejar.
   'dark:badge.success.color',
