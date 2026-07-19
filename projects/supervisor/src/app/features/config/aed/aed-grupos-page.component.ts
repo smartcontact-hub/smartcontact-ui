@@ -12,7 +12,6 @@ import {
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
 
-import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { DirtyAware } from '@core/guards';
 import { TopBarSlotService } from '@core/layout/top-bar/top-bar-slot.service';
 import { TOAST_LIFE } from '@core/utils/toast-life';
@@ -80,7 +79,6 @@ const DEFAULT_FORM: FormState = {
   selector: 'sc-aed-grupos-page',
   imports: [
     ButtonComponent,
-    IconComponent,
     InputTextComponent,
     MultiSelectComponent,
     SelectComponent,
@@ -95,8 +93,6 @@ export class AedGruposPageComponent implements OnDestroy, DirtyAware {
   private readonly messages = inject(MessageService);
   private readonly translate = inject(TranslateService);
   private readonly topBarSlot = inject(TopBarSlotService);
-
-  protected readonly pageIcon = 'groups';
 
   protected readonly estrategiaOptions = ESTRATEGIA_OPTIONS;
   protected readonly prioridadOptions = PRIORIDAD_OPTIONS;

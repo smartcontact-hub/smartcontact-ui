@@ -47,28 +47,6 @@
   }
 }
 
-/* ---------- Page heading (icono + título, modelo "todo arriba") ---------- */
-
-.page-heading {
-  display: flex;
-  align-items: center;
-  gap: var(--sc-spacing-0-625);
-  /* Sin margin: el gap del tray (`.page__inner`) separa heading ↔ primera card. */
-  margin-bottom: 0;
-
-  &__icon {
-    color: var(--sc-text-secondary);
-  }
-
-  &__title {
-    margin: 0;
-    font-size: var(--sc-font-size-h3, var(--sc-font-size-300));
-    line-height: var(--sc-line-height-450);
-    font-weight: var(--sc-font-weight-semibold);
-    color: var(--sc-text-primary);
-  }
-}
-
 /* ---------- Inline checkbox + label ---------- */
 
 .inline-check {

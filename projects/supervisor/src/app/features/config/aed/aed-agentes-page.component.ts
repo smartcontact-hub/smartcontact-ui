@@ -12,7 +12,6 @@ import {
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
 
-import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { DirtyAware } from '@core/guards';
 import { TopBarSlotService } from '@core/layout/top-bar/top-bar-slot.service';
 import { TOAST_LIFE } from '@core/utils/toast-life';
@@ -83,7 +82,6 @@ const DEFAULT_FORM: FormState = {
     ButtonComponent,
     CheckboxComponent,
     DividerComponent,
-    IconComponent,
     InputTextComponent,
     ToggleSwitchComponent,
     TranslateModule,
@@ -96,8 +94,6 @@ export class AedAgentesPageComponent implements OnDestroy, DirtyAware {
   private readonly messages = inject(MessageService);
   private readonly translate = inject(TranslateService);
   private readonly topBarSlot = inject(TopBarSlotService);
-
-  protected readonly pageIcon = 'verified_user';
 
   protected readonly comunicacionKeys = COMUNICACION_KEYS;
 

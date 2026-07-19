@@ -12,7 +12,6 @@ import {
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
 
-import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { DirtyAware } from '@core/guards';
 import { TopBarSlotService } from '@core/layout/top-bar/top-bar-slot.service';
 import { TOAST_LIFE } from '@core/utils/toast-life';
@@ -133,7 +132,6 @@ const NOTIF_EVENTOS: readonly (keyof NotifEventos)[] = ['inicio', 'fin', 'result
     ChipComponent,
     DialogComponent,
     DividerComponent,
-    IconComponent,
     InputTextComponent,
     InputNumberComponent,
     RadioButtonComponent,
@@ -149,8 +147,6 @@ export class AedServicioPageComponent implements OnDestroy, DirtyAware {
   private readonly messages = inject(MessageService);
   private readonly translate = inject(TranslateService);
   private readonly topBarSlot = inject(TopBarSlotService);
-
-  protected readonly pageIcon = 'call';
   protected readonly addIcon = 'add';
 
   protected readonly descuelgueOptions = DESCUELGUE_OPTIONS;

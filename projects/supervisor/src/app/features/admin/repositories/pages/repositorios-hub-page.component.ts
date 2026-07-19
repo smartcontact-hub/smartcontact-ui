@@ -3,7 +3,6 @@ import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
-import { ScPageHeaderComponent as PageHeaderComponent } from '@smartcontact-hub/components';
 import type { LucideIconData } from '../components/repo-types';
 
 interface HubItem {
@@ -26,7 +25,7 @@ interface HubCategory {
  */
 @Component({
   selector: 'sc-repositorios-hub-page',
-  imports: [IconComponent, PageHeaderComponent, TranslateModule],
+  imports: [IconComponent, TranslateModule],
   templateUrl: './repositorios-hub-page.component.html',
   styleUrl: './repositorios-hub-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -35,7 +34,6 @@ export class RepositoriosHubPageComponent {
   private readonly router = inject(Router);
 
   protected readonly chevronIcon = 'chevron_right';
-  protected readonly pageIcon = 'account_tree';
 
   protected readonly categories: readonly HubCategory[] = [
     {

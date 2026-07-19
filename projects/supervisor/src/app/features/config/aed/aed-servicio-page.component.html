@@ -18,12 +18,15 @@
 
 <div class="page">
   <div class="page__inner">
-    <header class="page-heading">
-      <sc-icon [name]="pageIcon" [size]="16" class="page-heading__icon" />
-      <h1 id="general-page-title" class="page-heading__title">
-        {{ 'config.aed.subpages.servicio.heading' | translate }}
-      </h1>
-    </header>
+    <!-- El `<h1>` va OCULTO, no fuera: era la única cabecera del
+         documento y sin él la página se queda sin encabezado. Lo que
+         desaparece es la BANDA visible, que repetía palabra por palabra
+         el breadcrumb de la TopBar — misma clave i18n en los dos sitios.
+         Es lo que ya dice el docblock del shell padre: estas rutas van
+         "sin banda full-width ni título de página de un solo uso" porque
+         la orientación la da el breadcrumb. Mismo patrón que las nueve
+         listas y que el hub de repositorios. -->
+    <h1 class="visually-hidden">{{ 'config.aed.subpages.servicio.heading' | translate }}</h1>
 
     <!-- Card 1: Estados · Bloqueo · Ventana · Estados visibles -->
     <section class="settings-card" aria-labelledby="general-estados-title">
