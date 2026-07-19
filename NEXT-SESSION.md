@@ -170,6 +170,38 @@ que su texto coincide con la miga actual.
 COMPUTADOS de la piel (que se agarra a clases internas de PrimeNG), el separador
 en oscuro, el cursor y el teclado. Suite del supervisor: **43 tests**.
 
+# ▶︎ CÓMO SE TRABAJA AQUÍ: EN RAMA, NO EN `main`
+
+**Esto cambia el bucle de Rafa, no el mío. Es lo primero.**
+
+Cloudflare Pages ya da **preview por rama automático** desde junio — verificado
+en vivo, documentado en `DECISIONS.md` y `ROADMAP.md`. Los dos proyectos:
+
+- **sc-demo** → https://sc-demo.pages.dev
+- **supervisor** → https://sc-supervisor.pages.dev
+
+O sea: **la infraestructura para que Rafa vea cualquier cambio sin depender de
+mí ya existía**, y durante la sesión 19 pusheé ~12 commits directos a `main`
+sin usarla ni una vez. Cada cambio fue a producción sin que él pudiera mirarlo
+antes. No fue falta de herramienta: fue no seguir la regla.
+
+**A partir de aquí:**
+
+1. Todo trabajo va en una rama (`feat/…`, `fix/…`, `flujo/…`).
+2. Se pushea la RAMA. Cloudflare construye su preview solo.
+3. Rafa mira el enlace. Si le vale, se mergea a `main`.
+4. `main` deja de ser el sitio donde se experimenta.
+
+Coste de montarlo: **cero** — ya está. Coste de no hacerlo: él no ve nada hasta
+que está en producción, y para verlo antes necesita que yo levante un servidor.
+
+> Corolario del mismo error: **antes de proponer construir algo, grepea `docs/`
+> y `DECISIONS.md`.** Iba a proponer «montar preview por rama» como proyecto
+> nuevo. Existía desde hacía un mes. La regla ya estaba escrita en memoria y no
+> la disparé.
+
+---
+
 # ▶︎ LO SIGUIENTE, DECIDIDO Y ACOTADO: rango con ancla en `sc-datatable`
 
 **Rafa dijo que sí. Empieza por el PUNTO 1 y no por la migración.**
