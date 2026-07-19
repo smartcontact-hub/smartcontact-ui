@@ -41,22 +41,31 @@ selección». También agranda el objetivo de click a la celda entera a propósi
 (la casilla mide 16px). Migrarla hoy es romper cinco comportamientos cubiertos;
 antes hay que añadir esa capacidad al DS, con sus tests.
 
-## Antes de commitear: `npm run migrate:check`
+## El gate va solo: `audit:datatables`
 
-**Córrelo. Comprueba en segundos lo que antes costaba una revisión por tabla.**
+**No tienes que acordarte de nada.** Corre dentro de `npm run verify`, y por
+tanto en cada CI.
 
-Cubre lo mecánico: la piel `list-table`, las columnas en `computed`, las
-plantillas fuera del componente, el teclado (`rowsFocusable`/`rowKeydown`), las
-clases que usan los e2e y desaparecen del DOM, la ruta en el guardián de la
-gramática, los DOS manifiestos (`_component-status` y `_usage-status`), i18n en
-los cuatro locales, y el veto de `<th scope="row">`.
+Nació como `migrate:check`, un comando suelto que medía el diff y había que
+recordar. Rafa lo señaló el mismo día con una regla que se quedó: *una
+comprobación que no está en una cadena automática no es una comprobación, es
+documentación* — y la documentación que hay que recordar se pierde. Al
+reescribirlo se vio que casi todo lo que comprobaba **no necesitaba el diff**:
+son invariantes del árbol, y un invariante se comprueba siempre, no solo el día
+que migras.
 
-Cada comprobación viene de algo que **pasó de verdad**. No sustituye a mirar la
-pantalla: la captura es lo que cazó la franja de `caption` y las columnas
-movidas, y ningún grep habría visto eso.
+Vigila, en TODA página con `<sc-datatable>`: la piel `list-table` · columnas en
+`computed` y no en campo · plantillas fuera del componente · `<th scope="row">`,
+que el DS no sabe emitir · la columna de acciones con nombre accesible · las
+cabeceras reaccionando al cambio de idioma · y que su ruta esté en el guardián
+de la gramática.
 
-Ojo: mide el DIFF contra `HEAD`, así que es un gate de ANTES de commitear. Para
-revisar un commit ya hecho: `npm run migrate:check HEAD~1`.
+Lo que se cayó a propósito por estar ya cubierto: los dos manifiestos
+(`audit:components` y `usage:check`), la paridad de locales (`i18n:check`) y las
+clases que un e2e usa y desaparecen (lo caza el e2e al ponerse rojo).
+
+**No juzga si la pantalla se ve bien.** Eso sigue siendo mirarla: la captura es
+lo que cazó la franja de `caption` y las columnas movidas.
 
 ## Los pasos
 
