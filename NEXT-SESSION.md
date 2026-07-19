@@ -1,7 +1,7 @@
 # NEXT-SESSION — hand-off
 
 > Estado volátil. Se SOBREESCRIBE en cada cierre. Lo durable vive en `docs/`.
-> **Sello: 2026-07-19, cierre sesión 16.**
+> **Sello: 2026-07-19, cierre sesión 17.**
 
 ## ▶️ EMPIEZA AQUÍ
 
@@ -92,27 +92,66 @@ beneficio. Las clases compartidas están puestas como seam.
 
 ---
 
-# HALLAZGOS de esta sesión (medidos, sin arreglar)
+# SESIÓN 17 — lo que cambió
 
-1. **En oscuro el separador de filas es invisible — 1.00:1 — en las OCHO tablas
-   de lista**, migradas y sin migrar por igual (`border-subtle` sobre
-   `bg-surface`, que en oscuro son el mismo color). Es un rezagado de la Ola 3,
-   que migró 7 bordes pero no estos. **No lo arreglé porque tocarlo solo en las
-   dos migradas las separaría del resto**: va en un cambio propio que toque las
-   ocho, y se te nota en pantalla, así que decides tú.
+## Tablas: de 2 migradas a 6
 
-2. **Las claves i18n huérfanas son ≤88, no 145.** Cada vez que afiné el detector
-   bajó el número (145 → 108 → 88): los falsos positivos son las claves
-   construidas por interpolación (`` `memory.mock_samples.${id}.label` ``), que
-   un escaneo ingenuo da por muertas — y borrarlas deja la clave cruda en
-   pantalla. **No las borré**: el detector ya se equivocó dos veces, el beneficio
-   para el usuario es cero y el fallo sí se ve. Es un barrido de 20 minutos con
-   la app delante, pantalla por pantalla; a ciegas no.
-   Cluster de más confianza: `memory.rules.active_title` / `inactive_title` (del
-   diseño de dos secciones que ya no existe) y `memory.rules.builder.crumb_rules`
-   (sobra desde la Ola 1).
+`repo-list`, `agentes`, `grupos`, `usuarios` (las 3 hermanas, delegadas con la
+receta como spec y revisadas por riesgo). **Queda 1 de la familia `.table`:
+`conversation-table`.**
 
----
+**Por qué NO migra conversation-table** — y no es pereza: su selección por rango
+tiene anclaje propio (`lastSelectedIndex`), su casilla de CABECERA necesitaría
+plantillas de cabecera en el DS (3ª capacidad nueva), y su modelo de selección
+lo posee el componente PADRE, no la tabla. Eso no es aplicar la receta, es
+rediseñar su contrato. Si se aborda: `sc-datatable` necesita `headerTemplate`
+por columna, y hay que decidir si el rango con anclaje sube al DS o se queda.
+
+**Quedan además las 3 de memory** (`rules`, `categories`, `entities`): misma
+gramática con otro nombre de clase, sin selección, sin selector de columnas. Son
+las MÁS fáciles que quedan y su arrastre CDK murió con DD-28. Empieza por ahí.
+
+Capacidades nuevas del DS en esta sesión: `col` en el contexto de celda (lo
+exigió repo-list, cuyas columnas salen de config), `[rowsFocusable]`,
+`(rowKeydown)` y `stopRowClick` por columna.
+
+## Divergencias que la convergencia creó, y hubo que corregir a mano
+
+Pasa siempre que se delega en paralelo. Vigílalo:
+
+- **Zebra**: users la conservó, agents y groups la soltaron. Unificado en
+  hairline (6 de 9 ya lo eran). Cambio visible en 3 tablas; se revierte con
+  `[stripedRows]`.
+- **`cursor: pointer`**: agentes quedó abriendo EN SILENCIO. El `<tr>` lo pinta
+  el DS y `pSelectableRowDisabled` le quita la clase de la que PrimeNG saca el
+  cursor.
+- **Dos `::ng-deep`** para lo mismo → una regla en la piel compartida.
+- **El hueco alrededor del kebab** abría la ficha (el `<td>` del DS no corta la
+  propagación) → `stopRowClick`.
+
+## Contraste: era un fallo sistemático, no una decisión de marca
+
+Yo había dicho que `text-success` necesitaba Figma y a Marta. **Falso**: solo
+`text-secondary` está enforced con el Kit. Al verificarlo apareció lo de verdad:
+SEIS colores de texto semánticos no tenían valor en oscuro y heredaban el del
+claro, calculado contra blanco. `text-link` daba **2.48:1** sobre slate-900.
+
+Arreglados los dos temas (ningún tono pasa AA en ambos: hace falta valor por
+tema) y añadidos a `A11Y_GATED`. **17/18 pares cumplen AA**; el que falta es el
+conocido de W5, donde ni negro ni blanco pasan sobre blue-400.
+
+## WCAG 2.1.1: las filas que abren ya se abren con el teclado
+
+Agentes, grupos y usuarios abrían la ficha al clicar y **nunca** fueron
+alcanzables por teclado — cero `tabindex`, cero `keydown`, cero enlaces,
+comprobado en el árbol anterior. No lo rompió la migración; llevaba así siempre
+y nada lo medía. Enter abre en las tres, con test.
+
+## La red que faltaba
+
+`e2e/supervisor/list-table-grammar.spec.ts` — 12 tests que fijan los valores
+COMPUTADOS de la piel (que se agarra a clases internas de PrimeNG), el separador
+en oscuro, el cursor y el teclado. Suite del supervisor: **43 tests**.
 
 # Decisiones que siguen necesitando a Rafa
 
@@ -123,7 +162,11 @@ beneficio. Las clases compartidas están puestas como seam.
 2. **`--sc-text-success` a 3.30:1 sobre la tarjeta en CLARO** — no llega al 4.5
    que pide AA para el texto de 12px del estimado mensual. En oscuro da 5.13. A
    `green-700` serían 5.02:1 y una línea, pero es el verde de toda la app.
-3. **El separador de filas en oscuro** (hallazgo 1 de arriba).
+3. ~~El separador de filas en oscuro~~ — **hecho**: `border-default` en vez de
+   `subtle`, aplicando la regla que ya escribió la Ola 3. Se paga en claro (el
+   separador pasa de 1.10:1 a 1.34:1, se ve más). Si no te convence, es una
+   línea en `_sc-datatable-list.scss`.
+4. ~~`--sc-text-success`~~ — **hecho**, junto con otros cinco. Ver arriba.
 
 ---
 
