@@ -170,35 +170,32 @@ que su texto coincide con la miga actual.
 COMPUTADOS de la piel (que se agarra a clases internas de PrimeNG), el separador
 en oscuro, el cursor y el teclado. Suite del supervisor: **43 tests**.
 
-# ▶︎ CÓMO SE TRABAJA AQUÍ: EN RAMA, NO EN `main`
+# ▶︎ RAMA SOLO SI HAY ALGO QUE MIRAR
 
-**Esto cambia el bucle de Rafa, no el mío. Es lo primero.**
+Cloudflare Pages da **preview por rama automático** desde junio (verificado en
+vivo, ver `DECISIONS.md`). El patrón es `<rama-con-guiones>.<proyecto>.pages.dev`:
 
-Cloudflare Pages ya da **preview por rama automático** desde junio — verificado
-en vivo, documentado en `DECISIONS.md` y `ROADMAP.md`. Los dos proyectos:
-
-- **sc-demo** → https://sc-demo.pages.dev
 - **supervisor** → https://sc-supervisor.pages.dev
+- **sc-demo** → https://sc-demo.pages.dev
 
-O sea: **la infraestructura para que Rafa vea cualquier cambio sin depender de
-mí ya existía**, y durante la sesión 19 pusheé ~12 commits directos a `main`
-sin usarla ni una vez. Cada cambio fue a producción sin que él pudiera mirarlo
-antes. No fue falta de herramienta: fue no seguir la regla.
+**La regla:**
 
-**A partir de aquí:**
+| | |
+|---|---|
+| **Rama** | El cambio se VE: pantallas, color, tipografía, espaciado, un flujo nuevo. Rafa abre el enlace, compara con producción en otra pestaña, y decide. Si no le vale, no se mergea y no hay nada que deshacer. |
+| **Directo a `main`** | El cambio NO se ve: tokens sin efecto visual, scripts, guardianes, tests, documentación. Lo cubren los gates. Una rama ahí es papeleo y además deja `main` atrás. |
 
-1. Todo trabajo va en una rama (`feat/…`, `fix/…`, `flujo/…`).
-2. Se pushea la RAMA. Cloudflare construye su preview solo.
-3. Rafa mira el enlace. Si le vale, se mergea a `main`.
-4. `main` deja de ser el sitio donde se experimenta.
+**Por qué importa, con el caso real:** el 2026-07-19 Rafa decidió subir
+`--sc-text-subtle` a slate-600. Eso cambió la jerarquía de grises de TODA la
+app y lo aprobó fiándose de mi descripción, porque no había dónde mirarlo. Es
+el ejemplo exacto de cambio que debía ir en rama.
 
-Coste de montarlo: **cero** — ya está. Coste de no hacerlo: él no ve nada hasta
-que está en producción, y para verlo antes necesita que yo levante un servidor.
-
-> Corolario del mismo error: **antes de proponer construir algo, grepea `docs/`
-> y `DECISIONS.md`.** Iba a proponer «montar preview por rama» como proyecto
-> nuevo. Existía desde hacía un mes. La regla ya estaba escrita en memoria y no
-> la disparé.
+> **Y lo que NO hay que hacer**, porque ya lo hice: escribí «todo trabajo va en
+> una rama». Es la respuesta de manual, y para un operador que trabaja SOLO las
+> razones clásicas —varias personas, revisión, mantener main desplegable— no
+> aplican. La única que aplica es el enlace para mirar. Si no hay nada que
+> mirar, no hay razón. (Tercera vez que doy la respuesta de equipo en vez de la
+> de su situación; ver la memoria `user-solo-nondev-seamless-first`.)
 
 ---
 
