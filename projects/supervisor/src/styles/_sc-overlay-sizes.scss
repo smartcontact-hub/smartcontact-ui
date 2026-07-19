@@ -24,13 +24,7 @@
   .p-multiselect-header,
   .p-multiselect-list,
   .p-multiselect-option,
-  .p-multiselect-item {
-    font-size: var(--sc-font-size-100);
-  }
   .p-multiselect-option,
-  .p-multiselect-item {
-    padding: 5.25px 8.75px;
-  }
   .p-multiselect-header {
     padding: 5.25px 8.75px;
   }
@@ -47,13 +41,7 @@
   .p-multiselect-header,
   .p-multiselect-list,
   .p-multiselect-option,
-  .p-multiselect-item {
-    font-size: var(--sc-font-size-300);
-  }
   .p-multiselect-option,
-  .p-multiselect-item {
-    padding: 8.75px 12.25px;
-  }
   .p-multiselect-header {
     padding: 8.75px 12.25px;
   }
@@ -68,12 +56,10 @@
 .sc-select-panel--sm {
   .p-select-header,
   .p-select-list,
-  .p-select-option,
-  .p-select-item {
+  .p-select-option {
     font-size: var(--sc-font-size-100);
   }
-  .p-select-option,
-  .p-select-item {
+  .p-select-option {
     padding: 5.25px 8.75px;
   }
   .p-select-header {
@@ -89,12 +75,10 @@
 .sc-select-panel--lg {
   .p-select-header,
   .p-select-list,
-  .p-select-option,
-  .p-select-item {
+  .p-select-option {
     font-size: var(--sc-font-size-300);
   }
-  .p-select-option,
-  .p-select-item {
+  .p-select-option {
     padding: 8.75px 12.25px;
   }
   .p-select-header {
