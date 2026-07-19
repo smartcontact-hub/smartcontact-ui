@@ -57,7 +57,10 @@ const GRAMATICA = {
   cabecera: {
     fontSize: '12px', // --sc-font-size-100
     fontWeight: '500', // --sc-font-weight-medium
-    color: 'rgb(143, 151, 163)', // --sc-text-secondary
+    // slate-600 desde 2026-07-19. Era slate-500 `rgb(143,151,163)` y daba
+    // 2.95:1 — bajo AA. Ver customs-catalog §1.5. Si esto vuelve al valor
+    // anterior, es que `tokens:import` pisó la divergencia.
+    color: 'rgb(111, 119, 132)', // --sc-text-secondary
     padding: '12.25px',
   },
   anchoCasilla: 40,

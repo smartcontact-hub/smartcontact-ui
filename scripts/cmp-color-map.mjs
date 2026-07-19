@@ -32,6 +32,14 @@ export const EXCLUDE = new Set([
   'dark:button.outlined.info.active.background',
   'dark:button.text.info.hover.background',
   'dark:button.text.info.active.background',
+  /* Mismos dos, encontrados al reproducir por qué tokens-sync llevaba fallando
+   * desde el 22 de junio. NO era staleness ni "drift en capas curadas" como
+   * decía el hand-off: el export trae `#0369a15c` (Tailwind sky-700 + alfa) en
+   * el borde de info en OSCURO, mientras en claro sí usa la referencia
+   * `{sky.200}`. Sin primitiva de marca que case → el gate cuenta 2 y aborta.
+   * Es exactamente el caso de arriba, en dos slots que no estaban en la lista. */
+  'dark:message.info.border.color',
+  'dark:toast.info.border.color',
 
   // ── warn → amber, NO yellow (toast/message). `base.ts` remapea `yellow→amber`
   //    (warn de marca = amber #f59e0b, más cálido que el yellow #eab308 del Kit). Estos

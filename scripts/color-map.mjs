@@ -49,7 +49,6 @@ export const COLOR = [
   { mode: 'light', exp: 'content.color', token: 'sc-text-primary', kind: 'enforce' },
   { mode: 'light', exp: 'content.hover.background', token: 'sc-bg-secondary-hover', kind: 'enforce' },
   { mode: 'light', exp: 'text.color', token: 'sc-text-primary', kind: 'enforce' },
-  { mode: 'light', exp: 'text.muted.color', token: 'sc-text-secondary', kind: 'enforce' },
   // ── form field (light) ────────────────────────────────────────────────────────
   { mode: 'light', exp: 'form.field.background', token: 'sc-bg-surface', kind: 'enforce' },
   { mode: 'light', exp: 'form.field.color', token: 'sc-text-primary', kind: 'enforce' },
@@ -86,6 +85,7 @@ export const COLOR = [
   { mode: 'light', exp: 'form.field.placeholder.color', token: null, kind: 'diverge', reason: 'placeholder gray-400 vs Kit surface-500 — un punto más tenue' },
   { mode: 'light', exp: 'form.field.disabled.color', token: null, kind: 'diverge', reason: 'disabled gray-300 vs Kit surface-500 — más tenue a propósito' },
   { mode: 'light', exp: 'overlay.select.background', token: null, kind: 'diverge', reason: '--sc-bg-elevated (elevación propia) vs Kit surface-0' },
+  { mode: 'light', exp: 'text.muted.color', token: null, kind: 'diverge', reason: 'texto secundario slate-600 vs Kit surface-500: el del Kit da 2.95:1 sobre blanco, bajo AA en sus 178 usos. Mismo movimiento que accent en customs-catalog §1.4 (cyan-600 3.46 → sky-600). Revertir cuando el Kit suba el suyo.' },
   { mode: 'dark', exp: 'overlay/content/form.field', token: null, kind: 'diverge', reason: 'resuelven vía capa 7 (.sc-dark, navy-tinted) — no se cruzan contra el zinc del Kit' },
 ];
 

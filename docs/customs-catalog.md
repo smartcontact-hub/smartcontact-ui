@@ -124,6 +124,45 @@ así que el cambio sobrevive a `npm run tokens:import` y ningún gate lo marca c
 
 ---
 
+### 1.5 Texto secundario → slate-600 (AA) · 2026-07-19
+
+> **Es el mismo movimiento que §1.4, aplicado al token que se le pasó.**
+
+`--sc-text-secondary` valía `slate-500`: **2.95:1 sobre blanco**. Eso no es solo estar
+bajo el 4.5 de AA para texto normal — es que **ni siquiera llega al 3:1 de texto grande**,
+así que fallaba en sus **178 usos** del supervisor, sin excepción. Es el color del texto
+secundario de toda la app: descripciones, etiquetas de campo, cabeceras de tabla.
+
+| Token | Antes | Ahora | Contraste sobre blanco |
+|---|---|---|---|
+| `--sc-text-secondary` (claro) | `slate-500` | **`slate-600`** | 2.95:1 → **4.52:1** |
+| `--sc-text-secondary` (oscuro) | `slate-300` | `slate-300` (sin cambio) | 10.47:1, ya cumplía |
+
+**Por qué diverge del Kit y con qué permiso.** El Kit dice `text.muted.color = {surface.500}`
+y `color-map.mjs` lo tenía como `enforce`, o sea 1:1 obligatorio. Su fila pasa a
+`kind: 'diverge'` — que es el mecanismo que el propio fichero documenta para esto:
+*«para divergir un color a propósito: mover su fila enforce a aquí»*. Ya lo usan otras
+siete filas por motivos bastante más leves («un punto más tenue»).
+
+**Esto no es criterio nuevo.** §1.4 subió accent de `cyan-600` a `sky-600` por
+exactamente el mismo motivo (3.46:1, bajo AA). Aquí solo se aplica esa misma decisión al
+token al que no se le aplicó.
+
+**Límite conocido, y por qué no se va más lejos.** Sobre `--sc-bg-default` (el lienzo
+gris) slate-600 da **4.25:1**, aún 0,25 corto. `slate-700` lo arreglaría (6.95:1) pero
+queda a un paso de `--sc-text-primary`, y entonces «secundario» deja de significar nada:
+se cambiaría un fallo de contraste por uno de jerarquía. La mayor parte del texto
+secundario vive dentro de tarjetas (`bg-surface`, blanco), donde sí cumple.
+
+**A diferencia de §1.4, este SÍ está vigilado**: el par sube de `A11Y_INFO` a
+`A11Y_GATED` en `token-parity`. Llevaba meses informándose en 2.95:1 sin que nadie
+actuara, que es exactamente lo que pasa cuando un defecto solo se avisa.
+
+**Cómo se cierra la divergencia**: que Marta suba `text.muted` en el Kit a un valor que
+cumpla AA y se re-exporte. Entonces esta fila vuelve a `enforce` y esta entrada se borra.
+
+---
+
 ## 2. Component extensions (el DS añade lo que Figma no modela)
 
 ### 2.1 Toast action button (undo pattern)

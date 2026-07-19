@@ -27,17 +27,27 @@
   --sc-border-default: var(--sc-color-slate-200);
   --sc-text-primary: var(--sc-color-slate-700);
   --sc-bg-secondary-hover: var(--sc-color-slate-100);
-  --sc-text-secondary: var(--sc-color-slate-500);
   --sc-border-strong: var(--sc-color-slate-400);
   --sc-bg-disabled: var(--sc-color-slate-200);
   --sc-border-error: var(--sc-color-red-400);
   --sc-icon-subtle: var(--sc-color-slate-400);
   /* @sc-gen:semantic-color-light:end */
 
+  /* --sc-text-secondary vive AQUÍ, fuera de la zona `@sc-gen`, porque es una
+   * divergencia consciente del Kit (`customs-catalog` §1.5) y el generador solo
+   * emite las filas `enforce`. Si se devolviera a la zona, `tokens:import`
+   * lo reescribiría a slate-500 y el fallo de contraste volvería en silencio.
+   *
+   * slate-500 daba 2.95:1 sobre blanco: bajo AA para texto normal, y ni
+   * siquiera llegaba al 3:1 de texto grande, o sea que fallaba en sus 178 usos.
+   * slate-600 da 4.52:1. Mismo movimiento que accent en §1.4. */
+  --sc-text-secondary: var(--sc-color-slate-600);
+
   /* ---------- Text ----------
    * Rampa alineada al Kit (S62-ext-3, parity §6): texto cuerpo = gray-700
-   * (export textColor #4f5663), secundario/muted = gray-500 (export
-   * textMutedColor #8f97a3). `subtle` (gray-400) y `disabled` (gray-300) son
+   * (export textColor #4f5663). El secundario YA NO sigue al Kit: su
+   * textMutedColor (#8f97a3, gray-500) da 2.95:1 y no cumple AA — ver §1.5 del
+   * catálogo de divergencias y la declaración de arriba. `subtle` (gray-400) y `disabled` (gray-300) son
    * un nivel MÁS FINO que el Kit (que colapsa todo lo no-primario a gray-500):
    * divergencia consciente — placeholder/disabled se ven más tenues a propósito
    * (mejor jerarquía). Vigilado por parity §6 (enforce primary/secondary) + §7.
