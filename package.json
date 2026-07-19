@@ -43,7 +43,7 @@
     "i18n:check": "node scripts/i18n-check.mjs",
     "typecheck": "tsc --noEmit --sourceMap -p projects/ui-smartcontact/tsconfig.lib.json && tsc --noEmit --sourceMap -p projects/ui-smartcontact-icons/tsconfig.lib.json && tsc --noEmit -p projects/sc-demo/tsconfig.app.json && tsc --noEmit -p projects/supervisor/tsconfig.app.json && tsc --noEmit -p projects/agent/tsconfig.app.json",
     "lint": "eslint .",
-    "verify": "npm run tokens:export-clean && npm run tokens:gen && npm run tokens:gen-component && npm run tokens:gen-color && npm run tokens:gen-cmp-color && npm run tokens:gen-effects && npm run tokens:parity && npm run tokens:guard && npm run tokens:cmp-rewire && npm run tokens:effects-rewire && npm run tokens:type-parity && npm run audit:theme-scale && npm run audit:components && npm run usage:check && npm run i18n:check && npm run test:unit && npm run docs:guard && npm run docs:coherence && npm run build && npm run typecheck && npm run lint",
+    "verify": "npm run tokens:export-clean && npm run tokens:gen && npm run tokens:gen-component && npm run tokens:gen-color && npm run tokens:gen-cmp-color && npm run tokens:gen-effects && npm run tokens:parity && npm run tokens:guard && npm run tokens:cmp-rewire && npm run tokens:effects-rewire && npm run tokens:type-parity && npm run audit:theme-scale && npm run audit:components && npm run usage:check && npm run i18n:check && npm run test:unit && npm run docs:guard && npm run docs:coherence && npm run build && npm run test:components && npm run typecheck && npm run lint",
     "e2e": "playwright test",
     "e2e:supervisor": "playwright test -c playwright.supervisor.config.ts",
     "watch": "ng build --watch --configuration development",
@@ -52,7 +52,8 @@
     "docs:guard": "node scripts/docs-guard.mjs",
     "docs:coherence": "node scripts/docs-coherence.mjs",
     "e2e:structure": "playwright test -c playwright.config.ts component-structure",
-    "e2e:structure:update": "SC_UPDATE_STRUCTURE=1 playwright test -c playwright.config.ts component-structure"
+    "e2e:structure:update": "SC_UPDATE_STRUCTURE=1 playwright test -c playwright.config.ts component-structure",
+    "test:components": "ng test ui-smartcontact --watch=false"
   },
   "dependencies": {
     "@angular/animations": "^21.2.14",
@@ -84,8 +85,10 @@
     "@playwright/test": "^1.50.0",
     "angular-eslint": "^21.0.0",
     "eslint": "^9.20.0",
+    "jsdom": "^29.1.1",
     "ng-packagr": "^21.2.3",
     "typescript": "~5.9.3",
-    "typescript-eslint": "^8.40.0"
+    "typescript-eslint": "^8.40.0",
+    "vitest": "^4.1.10"
   }
 }

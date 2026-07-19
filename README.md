@@ -51,6 +51,7 @@ npm run e2e            # smoke en navegador (Playwright)
 | i18n | `npm run i18n:check` | Paridad de **claves** entre los locales del Supervisor (`es` canónico ↔ `en`/`fr`/`pt`): ni claves sin traducir ni huérfanas, para que la UI no muestre la clave cruda. No juzga la calidad de la traducción (`scripts/i18n-check.mjs`) | ✅ |
 | Tests unitarios | `npm run test:unit` | Suites de los generadores/scripts (`scripts/__tests__/*.test.mjs`) | ✅ |
 | Docs | `npm run docs:guard` · `docs:coherence` | Todo `.md` mapeado en `DOCS-INDEX` + links resuelven · la doc cuadra con el repo (comandos/scripts existen, cadena `verify` documentada, sin tokens muertos) | ✅ |
+| Tests unitarios del DS | `npm run test:components` | `TestBed` sobre vitest (Angular 21). Cubre los CASOS LÍMITE que la e2e no alcanza sin montar una página entera: `field` inexistente en `[visibleColumns]`, array vacío, `colspan` con columnas ocultas | ✅ |
 | Tipos + lint | `npm run typecheck` · `npm run lint` | | ✅ |
 | e2e smoke | `npm run e2e` | La demo levanta y el botón/form field renderizan la métrica del Kit medida en navegador (10.5/7, radio 6, font 14) | ✅ |
 
