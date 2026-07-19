@@ -159,14 +159,14 @@ en oscuro, el cursor y el teclado. Suite del supervisor: **43 tests**.
    es el texto secundario de TODA la app. Está *enforced* 1:1 con el Kit por
    parity §6: subirlo exige cambiarlo en Figma y re-exportar. **Rafa + Marta.**
    slate-500 `#8f97a3` → haría falta ~slate-600 `#6f7784` (4.52:1).
-2. **`--sc-text-success` a 3.30:1 sobre la tarjeta en CLARO** — no llega al 4.5
-   que pide AA para el texto de 12px del estimado mensual. En oscuro da 5.13. A
-   `green-700` serían 5.02:1 y una línea, pero es el verde de toda la app.
+2. ~~`--sc-text-success`~~ — **HECHO en la sesión 17**, y resultó que yo estaba
+   equivocado al listarlo aquí: no estaba enforced con el Kit, así que nunca
+   necesitó a nadie. Ver la sección de contraste de arriba.
 3. ~~El separador de filas en oscuro~~ — **hecho**: `border-default` en vez de
    `subtle`, aplicando la regla que ya escribió la Ola 3. Se paga en claro (el
    separador pasa de 1.10:1 a 1.34:1, se ve más). Si no te convence, es una
    línea en `_sc-datatable-list.scss`.
-4. ~~`--sc-text-success`~~ — **hecho**, junto con otros cinco. Ver arriba.
+
 
 ---
 
