@@ -1,6 +1,12 @@
 import { expect, test, type Page } from '@playwright/test';
 
-import { disableAnimations, forceDarkTheme, forceLightTheme, goto } from './helpers';
+import {
+  asegurarBuildFresco,
+  disableAnimations,
+  forceDarkTheme,
+  forceLightTheme,
+  goto,
+} from './helpers';
 
 /**
  * SE LEE EN LOS DOS TEMAS.
@@ -249,6 +255,7 @@ for (const { nombre, aplicar, claseRaiz } of TEMAS) {
 
       test(`${ruta} · el texto se lee sobre su fondo`, async ({ page }) => {
         await goto(page, ruta);
+        await asegurarBuildFresco(page);
         await asegurarTema(page, claseRaiz);
         const { ilegibles } = await page.evaluate(medir, L_CLARO);
         // La lista de conocidos es SOLO del tema claro: en oscuro no se
