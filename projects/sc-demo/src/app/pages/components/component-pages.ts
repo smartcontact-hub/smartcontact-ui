@@ -20,6 +20,12 @@ export const SC_DEMO_COMPONENT_PAGES = [
     load: () => import('./badge/badge-demo.component').then((m) => m.BadgeDemoComponent),
   },
   {
+    path: 'breadcrumb',
+    label: 'Breadcrumb',
+    load: () =>
+      import('./breadcrumb/breadcrumb-demo.component').then((m) => m.BreadcrumbDemoComponent),
+  },
+  {
     path: 'card',
     label: 'Card',
     load: () => import('./card/card-demo.component').then((m) => m.CardDemoComponent),
