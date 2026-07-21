@@ -12,6 +12,7 @@ export * from './lib/core/types/datatable.types';
 export * from './lib/core/types/gauge.types';
 export * from './lib/components/button/sc-button.component';
 export * from './lib/components/badge/sc-badge.component';
+export * from './lib/components/breadcrumb/sc-breadcrumb.component';
 export * from './lib/components/card/sc-card.component';
 export * from './lib/components/chip/sc-chip.component';
 export * from './lib/components/tag/sc-tag.component';

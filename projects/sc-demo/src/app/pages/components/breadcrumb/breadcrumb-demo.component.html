@@ -1,0 +1,17 @@
+<app-story-host [meta]="meta" [stories]="stories()" />
+
+<!-- Stories como `<ng-template>`. El breadcrumb se configura por modelo (no por
+     knobs), así que el Playground pinta el caso Básico (el mismo de los Examples
+     de Figma). El toggle claro/oscuro del showcase cubre los dos modos. -->
+
+<ng-template #playground>
+  <sc-breadcrumb [home]="home" [model]="trail" homeAriaLabel="Inicio" data-testid="sc-breadcrumb" />
+</ng-template>
+
+<ng-template #noHome>
+  <sc-breadcrumb [model]="trail" />
+</ng-template>
+
+<ng-template #root>
+  <sc-breadcrumb [home]="home" [model]="rootOnly" homeAriaLabel="Inicio" />
+</ng-template>
