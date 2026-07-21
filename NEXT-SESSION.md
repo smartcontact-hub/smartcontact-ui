@@ -7,9 +7,12 @@
 
 1. Lee este fichero y luego [`LEARNINGS.md`](LEARNINGS.md).
 2. **Confirma el CI LEYENDO el run** del último commit.
-3. **B3 y B4 están cerrados.** De los bloques del plan de convergencia solo
-   queda **B5b** (necesita diseño). Suite del supervisor: **108 tests**.
-4. Si vas a migrar otra tabla, la receta está escrita y medida:
+3. **EL SIGUIENTE FRENTE ES FIGMA, no más deuda de diseño.** La deuda (tablas,
+   contraste, acoplamiento) está esencialmente cerrada. Ver «EL SIGUIENTE FRENTE»
+   abajo antes de buscar cosas internas que pulir — su valor ya cae en picado.
+4. **B3 y B4 están cerrados.** Del plan de convergencia solo queda **B5b**
+   (necesita diseño). Suite del supervisor: **118 tests**. La familia `.table`
+   está migrada entera; la receta queda por si aparece una tabla nueva:
    [`docs/receta-migracion-tablas.md`](docs/receta-migracion-tablas.md).
 5. **`--sc-text-subtle` está DECIDIDO y hecho** (Rafa: AA por delante de la
    jerarquía). En claro hay ahora **dos** niveles de gris, no tres; en oscuro
@@ -234,6 +237,48 @@ dilo y se hace.**
 `audit:primeng-coupling` contaba las `.p-*` que salían en COMENTARIOS, no solo en
 selectores. El número real era **36**, no 41 (5 eran fantasma). Ahora los quita
 antes de contar y el tope baja a 36 — trinquete más ceñido.
+
+---
+
+# ▶︎ EL SIGUIENTE FRENTE — el puente con Figma (lo estratégico, no más deuda)
+
+El objetivo que Rafa nombró de verdad es el puente **bidireccional con Figma**, y
+no se ha tocado mientras se limpiaba deuda. Estado REAL, para no re-arrancarlo de
+cero (el detalle durable vive en `ROADMAP.md` + `DECISIONS.md`, no aquí):
+
+**La mitad de TOKENS ya está HECHA y es seamless** (DD-18…DD-22; DD-20 la cierra):
+un cambio de color/sizing/escala/tipografía en el Theme Designer → export DTCG →
+`tokens:import` → `verify` → Cloudflare reconstruye, con un carril que postea el
+veredicto «en cristiano» en ~1 min (`tokens-check.yml`). **Esto NO se rehace.**
+
+**Lo que FALTA es la mitad de COMPONENTES/PANTALLAS + el registro** — justo lo que
+Rafa pide con «pedir un diseño desde Figma» y «registrar en el pokédex lo que se
+hace en Figma»:
+
+- **Figma → código**: generar un componente/pantalla desde un nodo (hoy el puente
+  lleva VALORES, no estructura). NUEVO.
+- **código → Figma**: reflejar lo construido de vuelta. Hoy solo se escriben
+  variables sueltas y guiadas — los round-trips pendientes (focus-ring, cabos
+  DD-24) están en `ROADMAP.md § En curso`.
+- **pokédex**: `docs/inventory.md` es el registro; sincronizarlo con Figma es NUEVO.
+- **Code Connect**: BAJA prioridad hoy (los devs usan su repo; la referencia
+  dev-facing real es el AUDIT del DS). Ver memoria `code-connect-low-priority…`.
+
+**Bloqueadores que solo Rafa quita** (sin esto no se avanza):
+
+1. **Autorizar el conector de Figma** — esta sesión `plugin:figma:figma` pedía
+   auth; sin él no se lee/escribe Figma. Ajustes de conectores de claude.ai, o
+   una sesión interactiva.
+2. **La URL del Kit OFICIAL** (el que lee el Theme Designer) — es la fila «Figma
+   pendiente» del Lab; con ella se fija ahí para siempre.
+3. **Qué dirección primero.** Recomendado: cerrar antes los round-trips pendientes
+   (pequeños, guiados, alta certeza) que arrancar el generador de componentes
+   (grande, necesita diseño). Decisión de Rafa.
+
+Operativo al arrancar: memorias `figma-bridge-which-mcp` (qué MCP para leer vs
+escribir — NUNCA ClaudeTalkToFigma), `figma-ds-tokens-icons-reference` y
+`figma-asset-discovery-probes`, + la convención de cierre con palabras-gatillo
+(DD sobre escrituras en Figma).
 
 ---
 
