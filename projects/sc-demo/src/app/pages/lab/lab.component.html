@@ -1,61 +1,109 @@
 <article class="lab">
   <header class="lab__head">
-    <p class="eyebrow">Lab · Exploraciones</p>
-    <h1>Exploraciones</h1>
+    <p class="eyebrow">Lab</p>
+    <h1>Lab</h1>
     <p class="lead">
-      Prototipos de diseño reunidos aquí para no perderlos ni dejarlos dispersos.
-      <strong>Aún no forman parte del sistema</strong>: son ideas para valorar, no
-      componentes del DS. Las copias se guardan en el repo, así que no dependen de
-      sitios externos.
+      Banco de trabajo del sistema: los <strong>enlaces</strong> que usas a diario
+      siempre a mano, y las <strong>exploraciones</strong> de diseño que aún no
+      forman parte del DS.
     </p>
   </header>
 
-  <section class="expl">
-    <div class="expl__meta">
-      <p class="expl__kind">Patrón · pantalla de carga</p>
-      <h2 class="expl__title">Pantalla de carga (esqueleto)</h2>
-      <p class="expl__by">Marta Recio · jul 2026</p>
-      <span class="tag tag--proto">Prototipo · aún no en el DS</span>
-      <p class="expl__note">
-        Boceto de la pantalla completa mientras carga la app del agente (barras
-        grises tipo «skeleton»). Es un HTML autónomo: todavía no usa los tokens ni
-        los componentes del sistema. El DS ya tiene la pieza <code>skeleton</code>
-        suelta; convertir esto en un patrón real es trabajo aparte.
-      </p>
-      <a class="expl__open" href="/explorations/skeleton-screen/index.html" target="_blank" rel="noopener">
-        Abrir a pantalla completa ↗
-      </a>
-    </div>
-    <div class="expl__frame">
-      <iframe
-        src="/explorations/skeleton-screen/index.html"
-        title="Pantalla de carga (esqueleto) — prototipo"
-        loading="lazy"
-      ></iframe>
-    </div>
+  <!-- ─────────────────────────── ENLACES ─────────────────────────── -->
+  <section class="links" aria-labelledby="links-title">
+    <h2 id="links-title" class="section-title">Enlaces</h2>
+    <p class="section-lead">
+      Todo lo desplegado y el repositorio, en un sitio, para no memorizar URLs.
+    </p>
+
+    @for (group of linkGroups; track group.title) {
+      <div class="link-group">
+        <h3 class="link-group__title">{{ group.title }}</h3>
+        <ul class="link-list">
+          @for (link of group.links; track link.label) {
+            <li class="link-item">
+              @if (link.href) {
+                <a class="link-item__a" [href]="link.href" target="_blank" rel="noopener">
+                  <span class="link-item__label">{{ link.label }} <span aria-hidden="true">↗</span></span>
+                  <span class="link-item__url">{{ display(link.href) }}</span>
+                </a>
+                <p class="link-item__note">{{ link.note }}</p>
+              } @else {
+                <div class="link-item__a link-item__a--pending">
+                  <span class="link-item__label">{{ link.label }}</span>
+                  <span class="link-item__url">pendiente</span>
+                </div>
+                <p class="link-item__note">{{ link.note }}</p>
+              }
+            </li>
+          }
+        </ul>
+      </div>
+    }
+
+    <p class="branch-note">
+      <strong>Preview por rama:</strong> cada rama con cambios visibles publica su
+      propia copia en <code>&lt;rama&gt;.sc-demo.pages.dev</code> y
+      <code>&lt;rama&gt;.sc-supervisor.pages.dev</code> (guiones en vez de barras).
+    </p>
   </section>
 
-  <section class="expl">
-    <div class="expl__meta">
-      <p class="expl__kind">Asset · icono animado</p>
-      <h2 class="expl__title">Icono de carga (búsqueda)</h2>
-      <p class="expl__by">Marta Recio · jul 2026</p>
-      <span class="tag tag--proto">Prototipo · aún no en el DS</span>
-      <p class="expl__note">
-        Lupa buscando (círculo + dos arcos girando) con «Cargando resultados…».
-        Hecho en vectorial y exportado a Lottie y GIF. Es un asset suelto: si el
-        producto lo necesita, habría que decidir si sustituye al spinner actual.
-      </p>
-      <a class="expl__open" href="/explorations/search-loading/search_loading_icon.gif" target="_blank" rel="noopener">
-        Abrir el GIF ↗
-      </a>
+  <!-- ──────────────────────── EXPLORACIONES ───────────────────────── -->
+  <section class="explorations" aria-labelledby="expl-title">
+    <h2 id="expl-title" class="section-title">Exploraciones</h2>
+    <p class="section-lead">
+      Prototipos reunidos para no perderlos. <strong>Aún no forman parte del
+      sistema</strong>: son ideas para valorar. Las copias se guardan en el repo,
+      así que no dependen de sitios externos.
+    </p>
+
+    <div class="expl">
+      <div class="expl__meta">
+        <p class="expl__kind">Patrón · pantalla de carga</p>
+        <h3 class="expl__title">Pantalla de carga (esqueleto)</h3>
+        <p class="expl__by">Marta Recio · jul 2026</p>
+        <span class="tag tag--proto">Prototipo · aún no en el DS</span>
+        <p class="expl__note">
+          Boceto de la pantalla completa mientras carga la app del agente (barras
+          grises tipo «skeleton»). Es un HTML autónomo: todavía no usa los tokens ni
+          los componentes del sistema. El DS ya tiene la pieza <code>skeleton</code>
+          suelta; convertir esto en un patrón real es trabajo aparte.
+        </p>
+        <a class="expl__open" href="/explorations/skeleton-screen/index.html" target="_blank" rel="noopener">
+          Abrir a pantalla completa ↗
+        </a>
+      </div>
+      <div class="expl__frame">
+        <iframe
+          src="/explorations/skeleton-screen/index.html"
+          title="Pantalla de carga (esqueleto) — prototipo"
+          loading="lazy"
+        ></iframe>
+      </div>
     </div>
-    <div class="expl__frame expl__frame--icon">
-      <img
-        src="/explorations/search-loading/search_loading_icon.gif"
-        alt="Icono animado de carga: una lupa buscando con el texto Cargando resultados"
-        loading="lazy"
-      />
+
+    <div class="expl">
+      <div class="expl__meta">
+        <p class="expl__kind">Asset · icono animado</p>
+        <h3 class="expl__title">Icono de carga (búsqueda)</h3>
+        <p class="expl__by">Marta Recio · jul 2026</p>
+        <span class="tag tag--proto">Prototipo · aún no en el DS</span>
+        <p class="expl__note">
+          Lupa buscando (círculo + dos arcos girando) con «Cargando resultados…».
+          Hecho en vectorial y exportado a Lottie y GIF. Es un asset suelto: si el
+          producto lo necesita, habría que decidir si sustituye al spinner actual.
+        </p>
+        <a class="expl__open" href="/explorations/search-loading/search_loading_icon.gif" target="_blank" rel="noopener">
+          Abrir el GIF ↗
+        </a>
+      </div>
+      <div class="expl__frame expl__frame--icon">
+        <img
+          src="/explorations/search-loading/search_loading_icon.gif"
+          alt="Icono animado de carga: una lupa buscando con el texto Cargando resultados"
+          loading="lazy"
+        />
+      </div>
     </div>
   </section>
 </article>
