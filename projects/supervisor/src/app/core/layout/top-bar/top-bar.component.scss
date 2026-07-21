@@ -83,59 +83,11 @@
     flex-shrink: 0;
   }
 
-  &__crumbs {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    align-items: center;
-    gap: var(--sc-spacing-0-5);
-    font-size: var(--sc-font-size-200);
-    line-height: var(--sc-line-height-200);
-  }
-
-  &__crumb {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--sc-spacing-0-5);
-  }
-
-  &__crumb-sep {
-    color: var(--sc-color-slate-300);
-    font-size: var(--sc-font-size-100);
-  }
-
-  &__crumb-link {
-    color: var(--sc-text-secondary);
-    background: transparent;
-    border: 0;
-    padding: 0;
-    cursor: pointer;
-
-    &:hover {
-      color: var(--sc-color-slate-700);
-      text-decoration: underline;
-    }
-
-    &:focus-visible {
-      outline: 2px solid var(--sc-border-focus);
-      outline-offset: 2px;
-      border-radius: var(--sc-radius-50);
-    }
-  }
-
-  &__crumb-current {
-    /* Modelo "todo arriba" (experiment S59): al quitar la banda de page-header,
-     * el crumb actual ES el título de la página → más prominente (14px
-     * semibold) pero conservando el acento de marca cyan-700 del spec
-     * Figma de breadcrumb. */
-    color: var(--sc-text-primary);
-    font-size: var(--sc-font-size-200);
-    font-weight: var(--sc-font-weight-semibold);
-  }
-
-  &__crumb-muted {
-    color: var(--sc-color-slate-400);
+  /* La miga la pinta `sc-breadcrumb` (puente Figma→código): el aspecto sale del
+   * preset del DS, idéntico a Figma. Solo se le deja encoger en el flex del
+   * lead para que una ruta larga no empuje al avatar. */
+  &__breadcrumb {
+    min-width: 0;
   }
 
   &__user {
