@@ -10,6 +10,7 @@ import {
 import { NgComponentOutlet, NgTemplateOutlet } from '@angular/common';
 import { Router } from '@angular/router';
 import { TranslateModule } from '@ngx-translate/core';
+import type { MenuItem } from 'primeng/api';
 
 import { ClickOutsideDirective } from '../../directives/click-outside.directive';
 import { BreadcrumbService } from '../../services/breadcrumb.service';
@@ -17,7 +18,7 @@ import { TopBarSlotService } from './top-bar-slot.service';
 // El cheat-sheet de atajos ahora lo renderiza `<sc-keyboard-shortcuts>` del
 // paquete, cuya visibilidad la posee `ScKeyboardShortcutsService` publicado.
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
-import { ScKeyboardShortcutsService } from '@smartcontact-hub/components';
+import { ScBreadcrumbComponent, ScKeyboardShortcutsService } from '@smartcontact-hub/components';
 
 import { IllustratedAvatarComponent } from '@shared/components';
 
@@ -38,6 +39,7 @@ import { IllustratedAvatarComponent } from '@shared/components';
     IllustratedAvatarComponent,
     NgComponentOutlet,
     NgTemplateOutlet,
+    ScBreadcrumbComponent,
     TranslateModule,
   ],
   templateUrl: './top-bar.component.html',
@@ -52,6 +54,16 @@ export class TopBarComponent {
 
   protected readonly trail = this.breadcrumbs.trail;
 
+  /** El trail como modelo de `sc-breadcrumb` (puente Figma→código). El tramo con
+   *  `path` navega; el último no lo lleva. Se pinta idéntico a Figma —tramos
+   *  uniformes muted—: sin el retoque local de "último tramo en negrita". */
+  protected readonly crumbModel = computed<MenuItem[]>(() =>
+    this.trail().map((crumb) => ({
+      label: crumb.label,
+      command: crumb.path ? (): void => this.onCrumbClick(crumb.path) : undefined,
+    })),
+  );
+
   /** Componente contextual inyectado por la página activa (p.ej. el selector
    * de datos demo de Memory). Vacío en la mayoría de rutas. */
   protected readonly slotComponent = this.topBarSlot.component;
@@ -65,7 +77,6 @@ export class TopBarComponent {
   protected readonly userPhone = '+34 917 945 449';
 
   protected readonly userMenuOpen = signal(false);
-  protected readonly lastIndex = computed(() => this.trail().length - 1);
   private readonly avatarBtn = viewChild<ElementRef<HTMLButtonElement>>('avatarBtn');
 
   protected goToDashboard(): void {

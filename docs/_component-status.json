@@ -1,6 +1,6 @@
 {
   "generated": "component-audit.mjs",
-  "summary": "51 componentes · 16 custom · 12 standard · 23 extended · 33 usados en Supervisor.",
+  "summary": "51 componentes · 16 custom · 12 standard · 23 extended · 34 usados en Supervisor.",
   "components": [
     {
       "name": "avatar",
@@ -61,7 +61,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 0
+      "usedInSupervisor": 1
     },
     {
       "name": "bulk-action-bar",

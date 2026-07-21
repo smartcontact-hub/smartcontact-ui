@@ -61,8 +61,12 @@ for (const { ruta, nombre } of PAGINAS) {
     expect(medido.alto).toBeLessThanOrEqual(2);
     expect(medido.ancho).toBeLessThanOrEqual(2);
 
-    // Y dice lo mismo que la miga actual, que es lo que el usuario SÍ lee.
-    const crumb = (await page.locator('.top-bar__crumb-current').last().innerText()).trim();
+    // Y dice lo mismo que la miga actual, que es lo que el usuario SÍ lee. La
+    // miga la pinta ahora `sc-breadcrumb`: el tramo actual es el ÚLTIMO item de
+    // la lista de PrimeNG (antes era `.top-bar__crumb-current`).
+    const crumb = (
+      await page.locator('sc-top-bar sc-breadcrumb .p-breadcrumb-list > li:last-child').last().innerText()
+    ).trim();
     expect(medido.texto).toBe(crumb);
   });
 }
