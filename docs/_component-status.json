@@ -306,7 +306,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 18
+      "usedInSupervisor": 21
     },
     {
       "name": "datepicker",

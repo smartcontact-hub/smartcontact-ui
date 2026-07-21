@@ -84,6 +84,16 @@
      principio me lo estaba deduciendo—*: el shift+click de rango fallaba porque la casilla
      ocupa 16px en el centro de una celda de 40 y su `stopPropagation` se comía el handler.
      Mi sonda daba **verde**; Playwright daba **rojo**.
+     *Corolario (s20), y es el MISMO agujero por otra puerta*: un test unitario que llama al
+     método a pelo (`c.onCheckCellClick(...)`) prueba su LÓGICA, no que un evento del navegador
+     lo dispare ni que su efecto SOBREVIVA al framework. El rango de `sc-datatable` tenía siete
+     tests unitarios en verde y **no funcionaba en el navegador**: la casilla de PrimeNG togglea
+     en `change` (después del `click`), así que el handler leía la selección rancia y, encima,
+     el `selectionChange` de p-table la re-emitía y pisaba el rango. Tres capas —orden de
+     eventos, binding de dos vías, render de p-table— que NINGÚN unitario podía ver porque
+     todas están fuera del método. Regla: la lógica pura, unitaria; el gesto de principio a
+     fin, Playwright — y una capacidad de interacción NUEVA no está hecha hasta que un clic
+     REAL la ejerce.
    - *¿esto se ve bien?* → **screenshot a viewport real**, mirando la pantalla entera.
    - *¿alguien sabrá usarlo?* → **ninguna de las dos**. Un test solo comprueba lo que ya se
      te ocurrió afirmar; nunca te dirá que algo confunde o que una capacidad es invisible.

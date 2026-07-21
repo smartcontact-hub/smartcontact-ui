@@ -9,8 +9,17 @@ import { disableAnimations, forceLightTheme, goto } from './helpers';
  * selección. Aquí se fija el reparto nuevo, que es lo que hace impredecible o
  * predecible la interfaz entera:
  *
- *   fila → abre · celda de la casilla → selecciona (sin abrir) ·
- *   shift+click → rango · Enter → abre · Espacio → selecciona
+ *   fila → abre · casilla → selecciona (sin abrir) ·
+ *   shift+click en la casilla → rango · Enter → abre · Espacio → selecciona
+ *
+ * MIGRACIÓN a `sc-datatable`: los SELECTORES cambian porque el `<td>` y la
+ * casilla los pinta ahora el DS (`.sc-datatable__check`, `p-tablecheckbox`, y la
+ * fila seleccionada lleva `.p-datatable-row-selected`), pero las AFIRMACIONES
+ * son las mismas — reescribir un test para que "case con el markup" es cómo se
+ * debilita sin querer. Un cambio real y consciente: el objetivo del toggle es la
+ * casilla, como en las otras nueve tablas (antes era la celda entera). Lo
+ * CRÍTICO de la Ola 6 —que fallar ese objetivo no ABRA el reproductor— se
+ * conserva, y se comprueba abajo de forma explícita.
  *
  * Ojo al mantenerlo: las teclas se mandan con `page.keyboard` de Playwright.
  * La acción `key` del navegador entrega los eventos con `key`/`code` vacíos y
@@ -25,42 +34,57 @@ test.beforeEach(async ({ page }) => {
   await goto(page, 'conversaciones');
 });
 
-const ROW = '.memory-conversations-table__row';
-const CHECKBOX = '.memory-conversations-table__checkbox';
+const TABLE = '[data-testid="conversations-table"]';
+const ROW = `${TABLE} .p-datatable-tbody > tr`;
+const CHECK_CELL = '.sc-datatable__check';
+const CHECKBOX = 'p-tablecheckbox';
+/* La fila seleccionada se reconoce por `is-selected`, que la pinta
+ * `[rowStyleClass]` leyendo el `Set` de selección de la página —la fuente de
+ * verdad, la que usa la barra masiva—. NO por `.p-datatable-row-selected` de
+ * p-table: esa clase no se re-pinta al instante en las filas que un rango añade
+ * por el input (solo en las que togla p-table), así que afirmar sobre ella daría
+ * un falso rojo en el rango aunque la selección sea correcta. Ver el comentario
+ * de `onSelectionChange` en `sc-datatable`. */
+const SELECTED = /is-selected/;
 const PLAYER = 'sc-memory-conversation-player-modal .p-dialog';
+const BULK = 'sc-bulk-action-bar .bulk-bar';
 
 test('la fila ABRE el reproductor', async ({ page }) => {
-  await page.locator(ROW).first().click();
+  // Una celda de datos (la fecha), no la de la casilla: esa corta la
+  // propagación a propósito y no abre.
+  await page.locator(ROW).first().locator('td').nth(3).click();
   await expect(page.locator(PLAYER)).toBeVisible();
 });
 
-test('la celda de la casilla SELECCIONA sin abrir', async ({ page }) => {
+test('la casilla SELECCIONA sin abrir; el hueco de su celda no abre nada', async ({ page }) => {
   const row = page.locator(ROW).first();
 
-  // Se clica la CELDA, no la casilla: el objetivo grande es justamente lo que
-  // la ola añade, y si sigue abriendo el reproductor, el gesto está roto.
-  await row.locator('.memory-conversations-table__td-select').click();
+  await row.locator(CHECKBOX).click();
 
   await expect(page.locator(PLAYER)).toBeHidden();
-  await expect(row.locator(CHECKBOX)).toBeChecked();
+  await expect(row).toHaveClass(SELECTED);
   // Y la barra masiva aparece: es donde vive ahora la consecuencia (Ola 5).
-  await expect(page.locator('sc-bulk-action-bar .bulk-bar')).toBeVisible();
+  await expect(page.locator(BULK)).toBeVisible();
+
+  // La propiedad crítica de la Ola 6: clicar en el HUECO de la celda —no la
+  // casilla— no abre el reproductor. El DS corta ahí la propagación, así que
+  // fallar el objetivo es un no-op, nunca un modal encima.
+  await row.locator(CHECK_CELL).click({ position: { x: 3, y: 3 } });
+  await expect(page.locator(PLAYER)).toBeHidden();
 });
 
 test('shift+click selecciona el rango, sin abrir nada', async ({ page }) => {
   const rows = page.locator(ROW);
 
-  await rows.nth(1).locator('.memory-conversations-table__td-select').click();
-  await rows.nth(4).locator('.memory-conversations-table__td-select').click({
-    modifiers: ['Shift'],
-  });
+  await rows.nth(1).locator(CHECKBOX).click();
+  await rows.nth(4).locator(CHECKBOX).click({ modifiers: ['Shift'] });
 
   await expect(page.locator(PLAYER)).toBeHidden();
   for (const i of [1, 2, 3, 4]) {
-    await expect(rows.nth(i).locator(CHECKBOX)).toBeChecked();
+    await expect(rows.nth(i)).toHaveClass(SELECTED);
   }
   // Fuera del rango, intacta.
-  await expect(rows.nth(0).locator(CHECKBOX)).not.toBeChecked();
+  await expect(rows.nth(0)).not.toHaveClass(SELECTED);
 });
 
 /**
@@ -76,12 +100,12 @@ test('el error de dedo no destruye la selección', async ({ page }) => {
 
   // El usuario lleva 3 filas seleccionadas con el gesto nuevo.
   for (const i of [0, 1, 2]) {
-    await rows.nth(i).locator('.memory-conversations-table__td-select').click();
+    await rows.nth(i).locator(CHECKBOX).click();
   }
-  await expect(page.locator('sc-bulk-action-bar .bulk-bar')).toContainText('3');
+  await expect(page.locator(BULK)).toContainText('3');
 
   // Y ahora clica una fila con el dedo viejo, esperando seleccionar la cuarta.
-  await rows.nth(3).click();
+  await rows.nth(3).locator('td').nth(3).click();
   await expect(page.locator(PLAYER)).toBeVisible();
 
   // Sale del paso. La selección debe seguir INTACTA: perderla convertiría un
@@ -90,9 +114,9 @@ test('el error de dedo no destruye la selección', async ({ page }) => {
   await expect(page.locator(PLAYER)).toBeHidden();
 
   for (const i of [0, 1, 2]) {
-    await expect(rows.nth(i).locator(CHECKBOX)).toBeChecked();
+    await expect(rows.nth(i)).toHaveClass(SELECTED);
   }
-  await expect(page.locator('sc-bulk-action-bar .bulk-bar')).toContainText('3');
+  await expect(page.locator(BULK)).toContainText('3');
 });
 
 test('con el teclado: Enter abre y Espacio selecciona', async ({ page }) => {
@@ -100,7 +124,7 @@ test('con el teclado: Enter abre y Espacio selecciona', async ({ page }) => {
 
   await row.focus();
   await page.keyboard.press(' ');
-  await expect(row.locator(CHECKBOX)).toBeChecked();
+  await expect(row).toHaveClass(SELECTED);
   await expect(page.locator(PLAYER)).toBeHidden();
 
   await page.keyboard.press('Enter');

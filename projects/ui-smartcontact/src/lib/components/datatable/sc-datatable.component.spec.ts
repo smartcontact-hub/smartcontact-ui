@@ -39,7 +39,8 @@ type Interno = {
   visibleCols: () => readonly ScColumnDef<Fila>[];
   colspan: () => number;
   rowSelectDisabled: () => boolean;
-  onCheckCellClick: (event: MouseEvent, index: number) => void;
+  onCheckMousedown: (event: MouseEvent, index: number) => void;
+  onSelectionChange: (nueva: Fila | readonly Fila[] | null) => void;
   selection: { (): unknown; set: (v: unknown) => void };
 };
 
@@ -134,24 +135,33 @@ describe('sc-datatable · selección de rango con ancla', () => {
     return montar({ columns: COLS, value: FILAS, dataKey: 'id', selectionMode: 'multiple', ...inputs });
   }
 
-  const click = (shift = false) => new MouseEvent('click', { shiftKey: shift });
-  const ids = (c: Interno) => (c.selection() as Fila[]).map((f) => f.id);
+  /* El flujo REAL, que es lo que estos tests reproducen ahora (la versión
+   * anterior llamaba a un handler de click que en navegador ni se disparaba —
+   * lo destapó Playwright): (1) `mousedown` sobre la casilla captura el
+   * `shiftKey`; (2) p-table togglea la fila y emite la selección nueva por
+   * `onSelectionChange`, que es donde se aplica el rango. El `target` con
+   * `closest` finge que el gesto empezó sobre la casilla (el guard lo exige). */
+  const md = (c: Interno, shift: boolean, index: number) =>
+    c.onCheckMousedown({ shiftKey: shift, target: { closest: () => ({}) } } as unknown as MouseEvent, index);
+  const ids = (c: Interno) => {
+    const s = c.selection();
+    const arr = Array.isArray(s) ? (s as Fila[]) : s ? [s as Fila] : [];
+    return arr.map((f) => f.id).sort((a, b) => a - b);
+  };
 
-  /* Este handler corre DESPUÉS de que `p-tableCheckbox` haya marcado su fila
-   * (burbujea, llega el segundo). En estos tests no hay checkbox real, así que
-   * se simula ese paso previo poniendo la selección a mano antes del shift. */
-
-  it('sin shift solo fija el ancla: no toca la selección', () => {
+  it('un click normal (sin shift) pasa la selección tal cual y fija el ancla', () => {
     const c = tabla();
-    c.onCheckCellClick(click(), 1);
-    expect(c.selection()).toBeNull();
+    md(c, false, 1);
+    c.onSelectionChange([FILAS[1]!]); // lo que emite p-table tras togglear
+    expect(ids(c)).toEqual([2]);
   });
 
   it('shift+click extiende desde el ancla hasta la fila clicada', () => {
     const c = tabla();
-    c.onCheckCellClick(click(), 1); // ancla en la 2ª fila
-    c.selection.set([FILAS[1]]); // lo que habría hecho la casilla
-    c.onCheckCellClick(click(true), 4);
+    md(c, false, 1);
+    c.onSelectionChange([FILAS[1]!]); // ancla en idx1
+    md(c, true, 4);
+    c.onSelectionChange([FILAS[1]!, FILAS[4]!]); // p-table ya togló idx4
     expect(ids(c)).toEqual([2, 3, 4, 5]);
   });
 
@@ -159,46 +169,64 @@ describe('sc-datatable · selección de rango con ancla', () => {
     /* Seleccionar de abajo a arriba es la mitad de los usos reales y es donde
      * un `slice(ancla, index)` ingenuo devuelve vacío. */
     const c = tabla();
-    c.onCheckCellClick(click(), 4);
-    c.selection.set([FILAS[4]]);
-    c.onCheckCellClick(click(true), 1);
-    expect(ids(c)).toEqual([5, 2, 3, 4]);
+    md(c, false, 4);
+    c.onSelectionChange([FILAS[4]!]);
+    md(c, true, 1);
+    c.onSelectionChange([FILAS[4]!, FILAS[1]!]);
+    expect(ids(c)).toEqual([2, 3, 4, 5]);
   });
 
-  /* NO hay test del movimiento del ancla, y es deliberado.
-   *
-   * Escribí uno y una prueba de mutación lo destapó como vacuo: bajo unión, la
-   * fila del ancla ya está seleccionada, así que moverla o no da el mismo
-   * conjunto. La propiedad no es observable, y un test que no puede fallar es
-   * ruido con aspecto de cobertura.
-   *
-   * El comportamiento se alinea con `conversation-table` (suma + ancla que se
-   * mueve) por construcción, no por aserción. Se vuelve observable —y
-   * comprobable— el día que shift+click REEMPLACE el rango en vez de sumarlo.
-   */
-
-  it('sin ancla previa, shift+click no inventa un rango', () => {
+  it('el rango SUMA: no desmarca lo que ya había fuera de él', () => {
     const c = tabla();
-    c.onCheckCellClick(click(true), 3);
-    expect(c.selection()).toBeNull();
+    md(c, false, 0);
+    c.onSelectionChange([FILAS[0]!]); // idx0 suelta
+    md(c, false, 2);
+    c.onSelectionChange([FILAS[0]!, FILAS[2]!]); // ancla=2
+    md(c, true, 4);
+    c.onSelectionChange([FILAS[0]!, FILAS[2]!, FILAS[4]!]); // rango 2..4
+    expect(ids(c)).toEqual([1, 3, 4, 5]);
   });
 
-  it('no duplica lo ya seleccionado', () => {
-    /* La casilla ya marcó la fila clicada antes de que llegue este handler:
+  it('no duplica una fila que el rango vuelve a tocar', () => {
+    /* La casilla ya marcó la fila clicada antes de que se aplique el rango:
      * sin deduplicar, esa fila entraría dos veces y el contador de la barra
      * masiva mentiría. */
     const c = tabla();
-    c.onCheckCellClick(click(), 0);
-    c.selection.set([FILAS[0], FILAS[2]]);
-    c.onCheckCellClick(click(true), 2);
-    expect(ids(c)).toEqual([1, 3, 2]);
+    md(c, false, 0);
+    c.onSelectionChange([FILAS[0]!]);
+    md(c, true, 2);
+    c.onSelectionChange([FILAS[0]!, FILAS[2]!]); // rango 0..2 sobre [1,3]
+    expect(ids(c)).toEqual([1, 2, 3]);
+    expect(c.selection() as Fila[]).toHaveLength(3);
+  });
+
+  it('sin ancla previa, shift+click solo selecciona esa fila', () => {
+    const c = tabla();
+    md(c, true, 3);
+    c.onSelectionChange([FILAS[3]!]);
+    expect(ids(c)).toEqual([4]);
   });
 
   it('fuera de `multiple` no hay rango', () => {
     const c = tabla({ selectionMode: 'single' });
-    c.onCheckCellClick(click(), 0);
-    c.selection.set([FILAS[0]]);
-    c.onCheckCellClick(click(true), 3);
-    expect(ids(c)).toEqual([1]);
+    md(c, false, 0);
+    c.onSelectionChange(FILAS[0]!);
+    md(c, true, 3);
+    c.onSelectionChange(FILAS[3]!);
+    expect(ids(c)).toEqual([4]);
+  });
+
+  it('un mousedown en el HUECO de la celda no deja un shift pendiente', () => {
+    /* El guard `closest('p-tablecheckbox')` evita que un shift sobre el padding
+     * contamine el siguiente cambio (p. ej. el de la casilla de cabecera). */
+    const c = tabla();
+    md(c, false, 1);
+    c.onSelectionChange([FILAS[1]!]); // ancla=1
+    c.onCheckMousedown(
+      { shiftKey: true, target: { closest: () => null } } as unknown as MouseEvent,
+      4,
+    );
+    c.onSelectionChange([FILAS[1]!, FILAS[4]!]); // cambio ajeno, sin rango
+    expect(ids(c)).toEqual([2, 5]);
   });
 });

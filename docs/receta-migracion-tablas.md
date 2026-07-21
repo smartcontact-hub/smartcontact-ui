@@ -3,10 +3,10 @@
 > Escrito tras migrar `labels` y `templates` (B4, sesión 16). No es teoría: es
 > lo que hizo falta, incluidas las tres cosas que estuvieron a punto de colarse.
 >
-> **Estado (2026-07-19)**: **9 tablas migradas**. De las que quedan, **ninguna
-> debe migrar tal cual** — ver «¿esta tabla debe migrar?» justo abajo. La única
-> pendiente de verdad es `conversation-table`, y necesita una capacidad NUEVA del
-> DS antes (selección de rango con ancla).
+> **Estado (2026-07-21)**: **10 tablas migradas** — `conversation-table`, la
+> última y la más grande, ya está. De las que quedan, **ninguna debe migrar tal
+> cual**: son matrices de permisos o un picker cuya fila selecciona (ver «¿esta
+> tabla debe migrar?» justo abajo). La familia `.table` de la casa está migrada.
 
 ## Antes de nada: ¿esta tabla debe migrar?
 
@@ -32,14 +32,29 @@ el modelo canónico del DS es el contrario (la fila abre, la casilla selecciona 
 Ola 6). Migrarla obliga a elegir: o cambias su interacción, o el DS aprende un
 modo «la fila selecciona». Es una decisión de producto, no una migración.
 
-**Pendiente de verdad — `conversation-table`**, y lo que le falta al DS:
-`sc-datatable` no modela **selección de rango con ancla** (shift+click desde la
-última fila tocada). Esa tabla la tiene, resuelta en dos sitios por la
-propagación del evento, y con **cinco tests e2e** que la fijan
-(`conversations-row-gesture.spec.ts`), incluido «el error de dedo no destruye la
-selección». También agranda el objetivo de click a la celda entera a propósito
-(la casilla mide 16px). Migrarla hoy es romper cinco comportamientos cubiertos;
-antes hay que añadir esa capacidad al DS, con sus tests.
+**`conversation-table` — HECHA (sesión 20).** Fue la más cara, y la mitad del
+coste NO fue la tabla sino un bug latente del DS que la migración destapó:
+
+- **El rango con ancla no funcionaba en el navegador.** Se añadió en la sesión 19
+  con siete tests unitarios en verde, pero esos tests llamaban al handler a pelo.
+  En un clic real la casilla de PrimeNG togglea en `change` (después del `click`),
+  así que el handler del rango leía la selección rancia y, encima, el
+  `selectionChange` de p-table la re-emitía y pisaba el rango. Se reescribió: el
+  `shiftKey` se captura en `mousedown` y el rango se aplica en `onSelectionChange`
+  (después del toggle de p-table). **Lo cazó Playwright; ningún unitario podía.**
+- **p-table no re-resalta las filas que un rango añade por el input** (solo las
+  que togla él). La SELECCIÓN es correcta (la barra masiva cuenta bien), pero el
+  tinte visual hay que pintarlo desde `[rowStyleClass]` leyendo el `Set` de la
+  página (la fuente de verdad), no desde `.p-datatable-row-selected`.
+- **El objetivo grande (celda entera) NO se preservó**: se unificó a la casilla,
+  como en las otras nueve tablas. El `stopPropagation` del DS ya evita el fallo
+  que importaba (que fallar el objetivo ABRA el reproductor). Es una decisión de
+  producto abierta si se quiere recuperar (haría falta ampliar el hit-area del DS).
+
+Su piel propia (plana, densa, cabecera fija, 4 estados con shimmer) vive en
+`styles/_memory-conversation-table.scss`, por ENCIMA de `.list-table`. Los cinco
+tests de gesto siguen fijando lo mismo, con selectores nuevos y una aserción MÁS
+fuerte (el hueco de la celda no abre nada).
 
 ## El gate va solo: `audit:datatables`
 
@@ -190,14 +205,16 @@ la app y no en el preset porque el preset viste también la tabla de llamadas de
    en el mismo commit (`e2e/supervisor/admin-datatable-pilot.spec.ts`, 9 tests).
    Si la tabla que migras tampoco tiene red, esa es parte del trabajo.
 
-## Lo que queda (2026-07-19)
+## Lo que queda (2026-07-21)
 
-**Ninguna tabla pendiente debe migrar tal cual.** Es un estado, no una excusa —
-las razones están arriba, en «¿esta tabla debe migrar?».
+**La familia `.table` de la casa está migrada.** Lo que queda son cuatro `<table>`
+a mano que **NO deben migrar** (matrices de permisos) más un picker que es una
+decisión de producto. No es una excusa — las razones están arriba, en «¿esta
+tabla debe migrar?».
 
 | Tabla | Estado |
 |---|---|
-| `memory/conversation-table` | **La única migrable de verdad.** Le falta al DS lo que ya tiene a medias: la selección de rango con ancla existe en `sc-datatable` desde la sesión 19, así que el bloqueo real que queda es la migración en sí (13 columnas, 4 estados de fila con shimmer) y adaptar sus 5 tests de gesto **sin debilitar lo que afirman** |
+| `memory/conversation-table` | ✅ **MIGRADA (sesión 20)** — la última y la más grande. Destapó (y arregló) que el rango con ancla del DS no funcionaba en el navegador. Ver arriba. |
 | `admin/agents/agent-form-page` → `.perm-matrix` | NO migra: matriz de permisos |
 | `admin/agents/agent-form-page` → `.picker-table` | Caso límite: su fila SELECCIONA al clicar, contra el modelo canónico de la Ola 6 |
 | `admin/groups/agent-channel-table` | NO migra: matriz de permisos |
