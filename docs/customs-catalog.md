@@ -447,6 +447,14 @@ Para el caso futuro de backend real: el grace period del undo vive **server-side
 - **Chips editables**: estados custom como **chips removibles con ×** (re-añadibles), **separados visualmente** de los tags fijos para que se lea la diferencia "sistémico vs editable".
 - **Por qué aquí**: es reasignación de severidad/visual en UI de config (no componente nuevo del DS), pero al introducir un tratamiento de color propio (granate) DD-7 pide registrarlo.
 
+### 2.12 Breadcrumb — el tramo ACTUAL más oscuro (estado que el maestro de Figma no modela)
+
+- **Estado**: `<sc-breadcrumb>` (wrapper fino de `<p-breadcrumb>`, del `❖ Breadcrumb` del Kit, node `185:6637`). El aspecto base sale del preset ya tokenizado, 1:1 con Figma.
+- **La divergencia**: el DS marca el **último tramo (la página actual) un pelín más oscuro** —`--sc-text-primary`, **mismo peso**, solo color—; los tramos padre van en gris muted. PrimeNG pinta todos los tramos iguales, y el **componente maestro de Figma también va uniforme**. Esto es un "aquí estás" que **la guía UX pide** (*"la página actual debe indicarse; no todos los enlaces igual"*) y que las **referencias limpias lo hacen** (medido en Snow UI: padre negro al 64%, actual al 100%, mismo peso).
+- **Cómo, sin acoplamiento**: el componente añade `labelStyle` (estilo EN LÍNEA) al último item del modelo → gana al color del preset sin una regla CSS, sin `::ng-deep` y **sin tocar internos `.p-*`** (el `audit:primeng-coupling` sigue en 36).
+- **NO es el título de página**: el breadcrumb hace wayfinding; el título de pantalla, cuando haga falta, es cosa aparte (ver el modelo de Snow UI: un `<h2>` modesto en el cuerpo en dashboards, nada en el feed). Esto **revierte** el "breadcrumb-en-negrita-como-título" del S59, que mezclaba dos trabajos.
+- **Cómo se cierra la divergencia**: se lleva a Figma como **ejemplo del comportamiento** (sección aparte del breadcrumb, SIN tocar el componente maestro) para que el diseño lo valore. Cuando lo incorpore al maestro, esto deja de ser divergencia y pasa a ser 1:1.
+
 ---
 
 ## 3. Component overloads (slots reusados con semántica SC)

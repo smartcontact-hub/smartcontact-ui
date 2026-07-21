@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 import type { MenuItem, MenuItemCommandEvent } from 'primeng/api';
 import { BreadcrumbModule } from 'primeng/breadcrumb';
 
@@ -44,4 +44,29 @@ export class ScBreadcrumbComponent {
 
   /** Click en un tramo (o en el inicio). Reemite el evento de PrimeNG. */
   readonly itemClick = output<MenuItemCommandEvent>();
+
+  /**
+   * El modelo que se pinta de verdad: `model()` pero con el ÚLTIMO tramo marcado
+   * como la página ACTUAL, un pelín más oscuro (mismo peso, solo color) — el
+   * "aquí estás" que PrimeNG no hace (pinta todos los tramos iguales) y que la
+   * guía UX pide y las referencias limpias (Snow UI) tienen: el actual en color
+   * pleno, los padres en gris muted.
+   *
+   * Se hace con `labelStyle` (estilo en LÍNEA sobre la etiqueta): gana al color
+   * del preset sin una regla CSS, sin `::ng-deep` y sin tocar internos `.p-*` —
+   * cero acoplamiento nuevo.
+   *
+   * DIVERGENCIA CONSCIENTE del componente MAESTRO de Figma, que va uniforme
+   * (`customs-catalog` §breadcrumb): es una mejora propuesta. Hay un ejemplo del
+   * comportamiento en el propio Figma (sección aparte, sin tocar el maestro);
+   * cuando el diseño lo incorpore, esto deja de ser divergencia.
+   */
+  protected readonly renderModel = computed<MenuItem[]>(() => {
+    const items = this.model();
+    if (items.length === 0) return items;
+    const ultimo = items.length - 1;
+    return items.map((item, i) =>
+      i === ultimo ? { ...item, labelStyle: { color: 'var(--sc-text-primary)' } } : item,
+    );
+  });
 }
