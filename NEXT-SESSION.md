@@ -1,7 +1,7 @@
 # NEXT-SESSION — hand-off
 
 > Estado volátil. Se SOBREESCRIBE en cada cierre. Lo durable vive en `docs/`.
-> **Sello: 2026-07-21, sesión 20 (conversation-table en rama, sin mergear).**
+> **Sello: 2026-07-21, cierre sesión 20 (conversation-table MERGEADA a main).**
 
 ## ▶️ EMPIEZA AQUÍ
 
@@ -201,9 +201,9 @@ el ejemplo exacto de cambio que debía ir en rama.
 
 # ▶︎ SESIÓN 20 — conversation-table migrada (la última de la familia `.table`)
 
-**En rama `flujo/conversation-table-datatable`, verde en los 6 pasos de CI.
-Falta que Rafa lo mire en el preview y lo mergee.** Aspecto idéntico al original
-(comparado captura a captura).
+**MERGEADA a main** (`f475429`), verde en los 6 pasos de CI local + CI de main.
+Aspecto idéntico al original (comparado captura a captura). Rafa delegó el merge
+("confío en tu criterio") tras leer la decisión de producto abierta de abajo.
 
 ## Lo que costó de verdad: un bug latente del DS, no la tabla
 

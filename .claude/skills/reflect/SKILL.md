@@ -59,7 +59,22 @@ Give **near-misses** the same weight as failures: a mistake that a check caught 
 
 **→ memory files: facts about THIS PROJECT** (architecture, decisions, gotchas of a specific tool/component, who decides what). Follow the memory instructions already in context: `type: feedback`, **Why:** / **How to apply:**, sharpen an existing file rather than duplicate, add the one-line pointer to `MEMORY.md`.
 
-The split, in one line: **LEARNINGS.md = process; memory = terrain.** If a lesson is "always do X before Y", it's process. If it's "in this repo, Z behaves like W", it's terrain.
+**→ a GATE, when the lesson is machine-checkable — and prefer this over prose.**
+A rule in `LEARNINGS.md` fires only if someone reads it; a check in `npm run verify`
+fires every time, forever. The house rule (README) is exact: *una comprobación que
+no está en una cadena automática no es una comprobación, es documentación.* So when
+the lesson is "X must never regress" and X is detectable by a script, the strongest
+persistence is a **new/sharper check inside `verify` (or an `e2e:*`)**, not a
+paragraph. *Evidencia (s20)*: el guardián de acoplamiento a PrimeNG contaba las
+`.p-*` de los comentarios; en vez de anotar «ojo, no menciones clases en
+comentarios», se arregló el propio gate. Un gate que mide mal enseña a ignorarlo.
+Caveat: no todo cabe en un gate — lo que no es mecánico (criterio, recorrido
+cognitivo, decisión de producto) sigue yendo a prosa.
+
+The split, in one line: **gate = lo que una máquina puede vigilar; LEARNINGS.md =
+proceso que solo un humano/agente juzga; memory = terreno del proyecto.** If a
+lesson is "always do X before Y" and a script can see Y, make it a gate. If only a
+person can tell, it's process. If it's "in this repo, Z behaves like W", it's terrain.
 
 If genuinely nothing transfers, skip persistence — and say so explicitly. Don't invent lessons to fill the file.
 
