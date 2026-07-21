@@ -2,8 +2,9 @@
 /**
  * AUDIT · el acoplamiento a los INTERNOS de PrimeNG.
  *
- * POR QUÉ. Es la deuda estructural más grande del repo, medida: 43 clases
- * `.p-*` distintas usadas desde nuestro SCSS. **No son API pública.** Una
+ * POR QUÉ. Es la deuda estructural más grande del repo, medida: 36 clases
+ * `.p-*` distintas usadas desde SELECTORES de nuestro SCSS. **No son API
+ * pública.** Una
  * subida de PrimeNG puede renombrar cualquiera y entonces las pantallas
  * revierten al aspecto del preset —filas de 42px, cabecera oscura— **sin que
  * falle ni un solo test de comportamiento**, porque el comportamiento sigue
@@ -24,6 +25,7 @@
  * El guardián avisa de que no crezca; reducirlo es trabajo aparte.
  */
 import { execSync } from 'node:child_process';
+import { readFileSync } from 'node:fs';
 
 const log = (s = '') => process.stdout.write(s + '\n');
 const sh = (cmd) => {
@@ -39,14 +41,34 @@ const sh = (cmd) => {
  * alguien lo decida a conciencia. Si lo bajas porque has quitado dependencias,
  * perfecto — actualiza el número. Si lo subes, escribe por qué.
  */
-const TOPE = 41;
+const TOPE = 36;
+
+/* Cuenta las clases `.p-*` que aparecen en SELECTORES, no en comentarios. Un
+ * comentario que menciona `.p-datatable-*` para explicar POR QUÉ dependemos de
+ * ella no es una dependencia nueva — contarlo inflaba el número (y peor: un
+ * glob como `.p-datatable-*` entraba como una "clase" fantasma con guion al
+ * final). Se listan los ficheros que tienen algún `.p-`, se les quitan los
+ * comentarios de bloque y de línea, y solo entonces se extraen las clases. */
+const ficheros = sh(
+  "grep -rl '\\.p-' --include='*.scss' projects/supervisor/src projects/ui-smartcontact/src",
+)
+  .split('\n')
+  .filter(Boolean);
+
+const sinComentarios = (scss) =>
+  scss.replace(/\/\*[\s\S]*?\*\//g, '').replace(/(^|\s)\/\/.*$/gm, '$1');
 
 const usados = [
   ...new Set(
-    sh("grep -rho '\\.p-[a-z0-9-]*' --include='*.scss' projects/supervisor/src projects/ui-smartcontact/src")
-      .split('\n')
-      .map((s) => s.trim().replace(/^\./, ''))
-      .filter(Boolean),
+    ficheros.flatMap((f) => {
+      try {
+        return [...sinComentarios(readFileSync(f, 'utf8')).matchAll(/\.p-[a-z0-9]+(?:-[a-z0-9]+)*/g)].map(
+          (m) => m[0].replace(/^\./, ''),
+        );
+      } catch {
+        return [];
+      }
+    }),
   ),
 ].sort();
 

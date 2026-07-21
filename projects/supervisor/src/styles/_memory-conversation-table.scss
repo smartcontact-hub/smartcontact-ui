@@ -1,0 +1,137 @@
+/* ------------------------------------------------------------------ *
+ * `.memory-conversations` — la piel PROPIA de la tabla de transcripciones,
+ * por encima de la piel compartida `.list-table`.
+ *
+ * POR QUÉ APARTE DE `.list-table`. Las nueve tablas de administración
+ * comparten una gramática (fila de 54px, cabecera silenciosa, borde
+ * hairline). Transcripciones diverge A PROPÓSITO (experiment S59, BeyondUI):
+ * va PLANA sobre la página, más densa, con cabecera FIJA al scroll y —lo que
+ * ninguna otra tiene— cuatro estados de fila que comunican trabajo en curso
+ * (transcribiendo, analizando), error (fallida) y baja (borrada), dos de
+ * ellos con un barrido "shimmer". Eso es semántica de Memory, no cromo de
+ * lista, así que se queda aquí y no sube a la piel compartida.
+ *
+ * POR QUÉ GLOBAL. El `<tr>`/`<th>`/`<td>` los pinta `sc-datatable`, con SU
+ * `_ngcontent`: una regla encapsulada en el componente no los alcanza nunca.
+ * Lo que va DENTRO de una celda (pills, botón de estado, id) sí se pinta desde
+ * las plantillas del componente y vive en su SCSS.
+ *
+ * POR QUÉ ESTE ACOPLAMIENTO A `.p-datatable-*` NO SUBE EL CONTADOR. Reusa
+ * EXACTAMENTE las clases que la piel compartida ya usa (`.p-datatable-thead`,
+ * `-tbody`), así que el número de clases internas distintas no crece (lo
+ * vigila `audit:primeng-coupling`). No añadas una nueva aquí sin mirar ese
+ * tope.
+ * ------------------------------------------------------------------ */
+
+sc-datatable.list-table.memory-conversations {
+  /* Cabecera FIJA al scroll vertical de la página. El scrollport es `.page`
+   * (overflow-y: auto); `top: 0` ancla el th a su borde. El fondo opaco
+   * —que ya pone la piel compartida— evita que las filas se transparenten por
+   * debajo; el `box-shadow` inset repone la hairline inferior, que un
+   * `border-bottom` normal no siempre pinta bajo un elemento sticky. */
+  .p-datatable-thead > tr > th {
+    position: sticky;
+    top: 0;
+    z-index: 5;
+    padding: var(--sc-spacing-0-75) var(--sc-spacing-1-125);
+    white-space: nowrap;
+    box-shadow: inset 0 -1px 0 var(--sc-border-default);
+  }
+
+  /* Cuerpo: más aire que la piel de admin (14px → 16px vertical, 18px
+   * horizontal) → columnas menos apretadas, layout más "airy" tipo Companies. */
+  .p-datatable-tbody > tr > td {
+    padding: var(--sc-spacing-1) var(--sc-spacing-1-125);
+  }
+
+  /* Fila borrada: atenuada. */
+  .p-datatable-tbody > tr.is-deleted {
+    opacity: 0.6;
+  }
+
+  /* Seleccionada: gris neutro propio de Memory (no el slate-100 de la piel
+   * compartida). Gana en especificidad por la clase extra `.memory-conversations`
+   * — a propósito, para que la selección de Memory mande sobre el
+   * `.p-datatable-row-selected` de la piel. */
+  .p-datatable-tbody > tr.is-selected:not(.is-deleted) {
+    background: var(--sc-bg-secondary-hover);
+  }
+
+  /* Estado de procesamiento (mock dispatch). Amber para transcribiendo, azul
+   * para analizando. El barrido animado comunica actividad sin spinner por
+   * fila. Los tintes van a la rampa `--sc-bg-*-subtle`, que tiene valor propio
+   * en cada tema (la paleta cruda no se remapea en oscuro). */
+  .p-datatable-tbody > tr.is-processing:not(.is-deleted) {
+    background: var(--sc-bg-warning-subtle);
+    position: relative;
+    overflow: hidden;
+
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        90deg,
+        transparent 0%,
+        color-mix(in srgb, var(--sc-color-amber-300) 40%, transparent) 50%,
+        transparent 100%
+      );
+      animation: memory-row-shimmer 2200ms ease-in-out infinite;
+      pointer-events: none;
+    }
+  }
+
+  .p-datatable-tbody > tr.is-analyzing:not(.is-deleted) {
+    background: var(--sc-bg-primary-subtle);
+    position: relative;
+    overflow: hidden;
+
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      background: linear-gradient(
+        90deg,
+        transparent 0%,
+        color-mix(in srgb, var(--sc-color-blue-300) 40%, transparent) 50%,
+        transparent 100%
+      );
+      animation: memory-row-shimmer 2200ms ease-in-out infinite;
+      pointer-events: none;
+    }
+  }
+
+  /* Transcripción fallida: tinte rojo sutil para escaneo rápido. Sin shimmer
+   * porque es estado terminal, no in-flight. `:not(.is-processing):not(.is-
+   * analyzing)` para que si una fila falló y se reintenta, gane el estado
+   * in-flight ("estoy trabajando ahora", no "fallé antes"). */
+  .p-datatable-tbody > tr.is-failed:not(.is-deleted):not(.is-processing):not(.is-analyzing) {
+    background: var(--sc-bg-danger-subtle);
+
+    &:hover {
+      background: var(--sc-bg-danger-subtle-hover);
+    }
+  }
+
+  /* Selected gana sobre failed (consistencia con el resto de tints). */
+  .p-datatable-tbody
+    > tr.is-failed.is-selected:not(.is-deleted):not(.is-processing):not(.is-analyzing) {
+    background: var(--sc-bg-secondary-hover);
+  }
+}
+
+@keyframes memory-row-shimmer {
+  0% {
+    transform: translateX(-100%);
+  }
+  100% {
+    transform: translateX(100%);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  sc-datatable.list-table.memory-conversations .p-datatable-tbody > tr.is-processing::after,
+  sc-datatable.list-table.memory-conversations .p-datatable-tbody > tr.is-analyzing::after {
+    animation: none;
+  }
+}

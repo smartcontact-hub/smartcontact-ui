@@ -26,6 +26,11 @@
  * componente del DS la separa visualmente de las que aún no migraron. */
 @use 'sc-datatable-list';
 
+/* La piel PROPIA de transcripciones (Memory), por encima de `.list-table`:
+ * plana, densa, cabecera fija y cuatro estados de fila con shimmer. Es la única
+ * tabla que diverge a propósito de la gramática de admin (S59, BeyondUI). */
+@use 'memory-conversation-table';
+
 /* `.page__inner` — S55 lo dejó SIN promover a propósito, con este disparador
  * escrito: "reabrir cuando haya spec de diseño que defina la escala canónica
  * de max-width". Ese disparador se cumplió en la Ola 3, así que el partial

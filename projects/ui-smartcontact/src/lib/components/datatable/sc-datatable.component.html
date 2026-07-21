@@ -6,7 +6,7 @@
   [rowsPerPageOptions]="$any(rowsPerPageOptions())"
   [selectionMode]="selectionMode()"
   [selection]="selection()"
-  (selectionChange)="selection.set($event)"
+  (selectionChange)="onSelectionChange($any($event))"
   [sortField]="sortField()"
   [sortOrder]="sortOrder()"
   [size]="pSize()"
@@ -72,10 +72,17 @@
       (keydown)="onRowKeydown($event, row, rowIndex)"
     >
       @if (selectionMode() === 'multiple') {
-        <!-- `stopPropagation` aquí es lo que separa los dos gestos: marcar la
-             casilla NO dispara `rowClick`. Sin esto, seleccionar cinco filas
-             abriría cinco veces el detalle. -->
-        <td class="sc-datatable__check" (click)="onCheckCellClick($event, rowIndex)">
+        <!-- `stopPropagation` en el click separa los dos gestos: marcar la
+             casilla NO dispara `rowClick` (sin esto, seleccionar cinco filas
+             abriría cinco veces el detalle). El `mousedown` captura el
+             `shiftKey` ANTES de que la casilla togglee — es de donde sale el
+             rango (ver `onCheckMousedown`); el `click` ya no lo lleva porque
+             p-table togglea en el `change`, que no conserva el modificador. -->
+        <td
+          class="sc-datatable__check"
+          (mousedown)="onCheckMousedown($event, rowIndex)"
+          (click)="$event.stopPropagation()"
+        >
           <p-tableCheckbox [value]="row" [ariaLabel]="rowSelectionAriaLabel()?.(row, rowIndex)" />
         </td>
       }

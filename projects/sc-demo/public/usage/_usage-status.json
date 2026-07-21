@@ -430,7 +430,7 @@
     },
     {
       "selector": "sc-datatable",
-      "usedInSupervisor": 18
+      "usedInSupervisor": 21
     },
     {
       "selector": "sc-empty-state",

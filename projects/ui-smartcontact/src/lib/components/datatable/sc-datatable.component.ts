@@ -210,36 +210,51 @@ export class ScDatatableComponent<T = unknown> {
   /**
    * SELECCIÓN DE RANGO CON ANCLA (shift+click sobre la casilla).
    *
-   * PrimeNG YA sabe hacer rangos (`table.mjs`, `isMultipleSelectionMode() &&
-   * shiftKey && anchorRowIndex != null`), pero su ancla la fija **solo** su
-   * camino de click-de-fila. Y en el modelo canónico de la Ola 6 el click de
-   * fila NO selecciona: abre. Así que su ancla se queda en `null` para siempre
-   * y su rango no se dispara nunca, por mucho que se reactive `pSelectableRow`.
+   * PrimeNG YA sabe hacer rangos, pero su ancla la fija **solo** su camino de
+   * click-de-fila (`handleRowClick`), y en el modelo canónico de la Ola 6 el
+   * click de fila NO selecciona: abre. Su `toggleRowWithCheckbox` —el camino de
+   * la casilla— ni mira `shiftKey` ni el ancla. Así que por la casilla no hay
+   * rango: hay que ponerlo.
    *
-   * La alternativa era pilotar su campo interno inyectando la `Table`. Se
-   * descartó: añade otro agarre a internos de PrimeNG, que es la fragilidad
-   * más grande que tiene hoy este repo. Treinta líneas propias salen más
-   * baratas que un acoplamiento más.
+   * POR QUÉ NO EN EL CLICK DE LA CELDA (como estaba, y no funcionaba en
+   * navegador — lo destapó Playwright, no el test unitario que llamaba al método
+   * a pelo): la casilla de PrimeNG togglea en su evento `change`, que se dispara
+   * como acción por defecto DESPUÉS del `click`. Un handler de rango en el
+   * `click` corre ANTES del toggle, fija la selección… y acto seguido el toggle
+   * de p-table emite su propio `selectionChange` sobre su estado interno aún sin
+   * sincronizar y la PISA. Medido: shift+click de la 2ª a la 5ª dejaba [2,5], no
+   * [2,3,4,5].
    *
-   * El ancla es la última fila cuya casilla se tocó, con shift o sin él.
+   * CÓMO SÍ: el `shiftKey` se captura en `mousedown` (que sí llega a la celda y
+   * conserva el modificador), y el rango se aplica en `onSelectionChange`, que
+   * corre DESPUÉS del toggle de p-table y sobre su array ya togglado —sin
+   * lecturas rancias ni pisotones—. Es también el sitio natural: p-table nos
+   * está entregando la selección nueva; solo la ampliamos al rango.
    *
-   * SEMÁNTICA: el rango SUMA, no reemplaza — arrastrar sobre filas ya marcadas
-   * no las desmarca. Y el ancla SE MUEVE con shift. Las dos cosas se copian de
-   * `conversation-table`, que es la tabla que hoy tiene este gesto a mano y la
-   * que va a migrar: replicar su comportamiento por construcción es lo que
-   * hace que la migración no cambie nada bajo los pies del usuario.
+   * SEMÁNTICA: el rango SUMA, no reemplaza (arrastrar sobre filas ya marcadas no
+   * las desmarca) y el ancla SE MUEVE con shift. Copiado de `conversation-table`
+   * —la tabla que trae este gesto a mano— para que su migración no cambie nada
+   * bajo los pies del usuario.
    *
-   * (Que el ancla se mueva o no HOY no es observable: bajo unión, la fila del
-   * ancla ya está seleccionada, así que ambos caminos dan el mismo conjunto —
-   * lo demostró una prueba de mutación, que siguió en verde al invertirlo. Se
-   * alinea con la app porque es gratis y porque el día que alguien quiera
-   * semántica de reemplazo, el punto de partida ya será el correcto.)
+   * LÍMITE MEDIDO de p-table: la SELECCIÓN queda correcta (el modelo y lo que
+   * emitimos llevan el rango entero; la barra masiva cuenta bien), pero p-table
+   * solo re-pinta su clase `.p-datatable-row-selected` en las filas que togló
+   * ÉL — las que añade el rango por el input no se re-resaltan hasta el
+   * siguiente ciclo que las toque. Si una tabla quiere el TINTE visual del
+   * rango al instante, que lo pinte desde `[rowStyleClass]` leyendo su propia
+   * fuente de selección (que es lo que hace `conversation-table`), no desde la
+   * clase de p-table.
    */
   private anclaRango: number | null = null;
+  /** `shiftKey` del último `mousedown` sobre una casilla (no lo lleva el
+   *  `change` que togglea). Se consume en el siguiente `onSelectionChange`. */
+  private shiftAlPulsar = false;
+  /** Fila del último `mousedown` sobre una casilla; `null` fuera de ese gesto,
+   *  para que un cambio ajeno (la casilla de cabecera) no herede un rango. */
+  private indicePendiente: number | null = null;
 
   /** La selección actual, siempre como array (el modelo admite T | T[] | null). */
-  private selectionComoArray(): readonly T[] {
-    const sel = this.selection();
+  private selectionComoArray(sel: T | readonly T[] | null = this.selection()): readonly T[] {
     if (sel === null || sel === undefined) return [];
     return Array.isArray(sel) ? (sel as readonly T[]) : [sel as T];
   }
@@ -251,36 +266,47 @@ export class ScDatatableComponent<T = unknown> {
   }
 
   /**
-   * Click en la CELDA de la casilla.
-   *
-   * `stopPropagation` siempre: sin él, marcar cinco filas abriría cinco veces
-   * el detalle. El rango se resuelve DESPUÉS de que `p-tableCheckbox` haya
-   * hecho lo suyo —este handler burbujea, así que llega el segundo— y por eso
-   * no hay que interceptarlo ni cancelarlo: basta con reponer el rango entero
-   * encima. Si la fila clicada estaba marcada, la casilla la desmarca y esta
-   * unión la vuelve a poner, que es lo que se espera de un shift+click.
+   * `mousedown` sobre la celda de la casilla. Solo cuenta si empieza SOBRE la
+   * casilla: un `mousedown` en el hueco de la celda no va a togglear nada, y
+   * dejar ahí un shift pendiente contaminaría el siguiente cambio (p. ej. el de
+   * la casilla de cabecera).
    */
-  protected onCheckCellClick(event: MouseEvent, index: number): void {
-    event.stopPropagation();
+  protected onCheckMousedown(event: MouseEvent, index: number): void {
     if (this.selectionMode() !== 'multiple') return;
+    if (!(event.target as HTMLElement | null)?.closest('p-tablecheckbox')) return;
+    this.shiftAlPulsar = event.shiftKey;
+    this.indicePendiente = index;
+  }
 
+  /**
+   * p-table emite la selección nueva tras togglear una casilla. Si el gesto
+   * empezó con Mayús sobre una casilla y hay ancla, la ampliamos al RANGO
+   * [ancla … fila]; si no, se pasa tal cual. En ambos casos el ancla se mueve a
+   * la fila tocada y el gesto pendiente se consume.
+   */
+  protected onSelectionChange(nueva: T | readonly T[] | null): void {
+    const idx = this.indicePendiente;
     const ancla = this.anclaRango;
-    if (event.shiftKey && ancla !== null) {
-      const [ini, fin] = ancla <= index ? [ancla, index] : [index, ancla];
-      const enRango = this.value().slice(ini, fin + 1);
-      const vistos = new Set(this.selectionComoArray().map((r) => this.idDe(r)));
-      const union = [...this.selectionComoArray()];
-      for (const fila of enRango) {
+
+    if (this.selectionMode() === 'multiple' && this.shiftAlPulsar && ancla !== null && idx !== null) {
+      const [ini, fin] = ancla <= idx ? [ancla, idx] : [idx, ancla];
+      const conRango = [...this.selectionComoArray(nueva)];
+      const vistos = new Set(conRango.map((r) => this.idDe(r)));
+      for (const fila of this.value().slice(ini, fin + 1)) {
         const id = this.idDe(fila);
         if (!vistos.has(id)) {
           vistos.add(id);
-          union.push(fila);
+          conRango.push(fila);
         }
       }
-      this.selection.set(union);
+      this.selection.set(conRango);
+    } else {
+      this.selection.set(nueva);
     }
 
-    this.anclaRango = index;
+    if (idx !== null) this.anclaRango = idx;
+    this.shiftAlPulsar = false;
+    this.indicePendiente = null;
   }
 
   /** colspan de la fila vacía: columnas VISIBLES + la de checkbox si aplica. */

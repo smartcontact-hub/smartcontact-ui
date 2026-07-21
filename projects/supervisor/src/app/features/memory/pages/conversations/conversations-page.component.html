@@ -58,12 +58,10 @@
       <sc-memory-conversation-table
         [conversations]="conversations()"
         [selectedIds]="selectedIds()"
-        [allSelected]="allFilteredSelected()"
         [processingIds]="processingIds()"
         [analyzingIds]="analyzingIds()"
         (conversationOpen)="onConversationOpen($event)"
-        (selectionToggled)="onSelectionToggled($event)"
-        (allToggled)="onAllToggled()"
+        (selectionChange)="onSelectionChange($event)"
         (contextActionRequested)="onContextAction($event)"
       />
     }

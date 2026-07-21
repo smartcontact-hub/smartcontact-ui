@@ -1,184 +1,126 @@
 <div class="table-card">
-  <table class="table memory-conversations-table">
-    <thead>
-      <tr>
-        <th class="memory-conversations-table__th-select" scope="col">
-          <label class="memory-conversations-table__checkbox-wrap">
-            <input
-              type="checkbox"
-              class="memory-conversations-table__checkbox"
-              [checked]="allSelected()"
-              [attr.aria-label]="'memory.conversations.select_all_aria' | translate"
-              (change)="onHeaderCheckboxChange($event)"
-              (click)="$event.stopPropagation()"
-            />
-          </label>
-        </th>
-        <th class="memory-conversations-table__th-status" scope="col">
-          {{ 'memory.conversations.table.status' | translate }}
-        </th>
-        <th scope="col">{{ 'memory.conversations.table.hour' | translate }}</th>
-        <th scope="col">{{ 'memory.conversations.table.date' | translate }}</th>
-        <th scope="col">{{ 'memory.conversations.table.service' | translate }}</th>
-        <th scope="col">{{ 'memory.conversations.table.origin' | translate }}</th>
-        <th scope="col">{{ 'memory.conversations.table.group' | translate }}</th>
-        <th scope="col">{{ 'memory.conversations.table.destination' | translate }}</th>
-        <th class="table__th-num" scope="col">
-          {{ 'memory.conversations.table.duration' | translate }}
-        </th>
-        <th class="table__th-num" scope="col">
-          {{ 'memory.conversations.table.waiting' | translate }}
-        </th>
-        <th scope="col">{{ 'memory.conversations.table.id' | translate }}</th>
-        <th class="memory-conversations-table__th-kebab" scope="col" aria-label="Acciones"></th>
-      </tr>
-    </thead>
-    <tbody>
-      @for (conv of conversations(); track conv.id) {
-        @let selected = isSelected(conv.id);
-        @let processing = isProcessing(conv.id);
-        @let analyzing = isAnalyzing(conv.id);
-        <tr
-          [class.is-deleted]="conv.deleted"
-          [class.is-selected]="selected"
-          [class.is-processing]="processing"
-          [class.is-analyzing]="analyzing"
-          [class.is-failed]="conv.hasFailedTranscription"
-          class="memory-conversations-table__row"
-          tabindex="0"
-          (click)="onRowClick($event, conv, $index)"
-          (keydown)="onRowKeydown($event, conv, $index)"
-          (contextmenu)="$event.preventDefault(); setMenuTarget(conv) && rowMenu.toggle($event)"
-        >
-          <!-- La CELDA entera toglea, no solo la casilla: el objetivo de 16px
-               es diminuto y fallarlo abría el reproductor, que es lo contrario
-               de lo que querías. Mismo patrón que `users-list-page`. -->
-          <!-- El `title` diferencia la zona: la fila abre y esta celda
-               selecciona, pero ambas son `cursor: pointer`, así que sin esto
-               dos significados distintos daban exactamente la misma señal. -->
-          <td
-            class="memory-conversations-table__td-select"
-            [attr.title]="'memory.conversations.select_row_title' | translate"
-            (click)="onSelectCellClick($event, conv, $index)"
-          >
-            <label class="memory-conversations-table__checkbox-wrap">
-              <input
-                type="checkbox"
-                class="memory-conversations-table__checkbox"
-                [checked]="selected"
-                [attr.aria-label]="
-                  'memory.conversations.select_row_aria' | translate: { id: conv.id }
-                "
-                (change)="onCheckboxChange($event, conv, $index)"
-                (click)="onCheckboxClick($event, $index)"
-                (keydown)="onCheckboxKeydown($event)"
-              />
-            </label>
-          </td>
-          <td class="memory-conversations-table__td-status">
-            <button
-              type="button"
-              class="memory-status-button"
-              [attr.aria-label]="
-                'memory.conversations.open_aria_with_state'
-                  | translate
-                    : {
-                        id: conv.id,
-                        state: statusLabelKey(conv) | translate,
-                      }
-              "
-              [attr.title]="'memory.conversations.open_player' | translate"
-              (click)="onStatusClick($event, conv)"
-              (keydown)="onStatusKeydown($event, conv)"
-            >
-              <sc-memory-status-icon
-                [conversation]="conv"
-                [isProcessing]="processing"
-                [isAnalyzing]="analyzing"
-              />
-              @if (conv.hasFailedTranscription) {
-                <span
-                  class="memory-status-button__failed"
-                  [attr.aria-label]="'memory.conversations.status.failed' | translate"
-                  [attr.title]="'memory.conversations.status.failed' | translate"
-                >
-                  <svg
-                    width="12"
-                    height="12"
-                    viewBox="0 0 24 24"
-                    fill="none"
-                    stroke="currentColor"
-                    stroke-width="2.5"
-                    stroke-linecap="round"
-                    stroke-linejoin="round"
-                    aria-hidden="true"
-                  >
-                    <circle cx="12" cy="12" r="10" />
-                    <line x1="12" y1="8" x2="12" y2="12" />
-                    <line x1="12" y1="16" x2="12.01" y2="16" />
-                  </svg>
-                </span>
-              }
-              @if (recordingsCount(conv) > 1) {
-                <span
-                  class="memory-status-button__multi"
-                  [attr.aria-label]="
-                    'memory.conversations.status.multi_recording'
-                      | translate: { count: recordingsCount(conv) }
-                  "
-                  [attr.title]="
-                    'memory.conversations.status.multi_recording'
-                      | translate: { count: recordingsCount(conv) }
-                  "
-                >
-                  {{ recordingsCount(conv) }}
-                </span>
-              }
-            </button>
-          </td>
-          <td>{{ conv.hour }}</td>
-          <td>{{ conv.date }}</td>
-          <td>
-            @if (conv.service) {
-              <span class="memory-cell-pill">{{ conv.service }}</span>
-            }
-          </td>
-          <td>{{ conv.origin }}</td>
-          <td>
-            @if (conv.group) {
-              <span class="memory-cell-pill">{{ conv.group }}</span>
-            }
-          </td>
-          <td>{{ conv.destination }}</td>
-          <td class="table__td-num">{{ conv.duration }}</td>
-          <td class="table__td-num">{{ conv.waiting }}</td>
-          <td class="memory-conversations-table__id">{{ conv.id }}</td>
-          <td class="memory-conversations-table__td-kebab">
-            <!-- Kebab VISIBLE: hasta ahora estas acciones solo existían por
-                 click derecho, que no se anuncia (Nielsen #6) — nadie que no
-                 lo supiera podía descubrirlas. En las filas ya procesadas y
-                 analizadas no hay nada que ofrecer, y ahí no se pinta. -->
-            @if (rowHasActions(conv)) {
-              <button
-                type="button"
-                class="rules-kebab-btn"
-                [attr.aria-label]="'memory.conversations.cols.more' | translate"
-                (click)="$event.stopPropagation(); setMenuTarget(conv); rowMenu.toggle($event)"
-              >
-                <sc-icon [name]="moreIcon" size="inherit" />
-              </button>
-            }
-          </td>
-        </tr>
-      }
-      <!-- Ya no hay `@empty`: cuando no hay conversaciones, la PÁGINA no monta
-           esta tabla y enseña el `<sc-empty-state>` compartido, como las tres
-           hermanas de memory. Un vacío dibujado dentro de un `<tr>` obligaba
-           además a mantener a mano el `colspan`. -->
-
-    </tbody>
-  </table>
+  <sc-datatable
+    class="list-table memory-conversations"
+    [value]="conversations()"
+    [columns]="columns()"
+    [rowStyleClass]="rowStyleClass"
+    dataKey="id"
+    selectionMode="multiple"
+    [rowSelectionAriaLabel]="ariaFila"
+    [selectAllAriaLabel]="ariaTodo"
+    [selection]="selectedRows()"
+    (selectionChange)="onSelectionChange($any($event))"
+    rowsFocusable
+    (rowClick)="onRowClick($event)"
+    (rowKeydown)="onRowKeydown($event)"
+    (rowContextMenu)="onRowContextMenu($event, rowMenu)"
+    data-testid="conversations-table"
+  >
+    <!-- La página monta `<sc-empty-state>` cuando no hay conversaciones, así que
+         esta rama solo se ve si un filtro deja la tabla a cero — defensivo. -->
+    <div scTableEmpty class="table__no-results">
+      {{ 'memory.conversations.empty.title' | translate }}
+    </div>
+  </sc-datatable>
 </div>
+
+<!-- ── Plantillas de celda. Fuera del `<sc-datatable>` para que resuelvan los
+     `viewChild`; el contexto es `{ $implicit: conv }`. ─────────────────────── -->
+
+<ng-template #statusTpl let-conv>
+  <button
+    type="button"
+    class="memory-status-button"
+    [attr.aria-label]="
+      'memory.conversations.open_aria_with_state'
+        | translate: { id: conv.id, state: statusLabelKey(conv) | translate }
+    "
+    [attr.title]="'memory.conversations.open_player' | translate"
+    (click)="onStatusClick($event, conv)"
+    (keydown)="onStatusKeydown($event, conv)"
+  >
+    <sc-memory-status-icon
+      [conversation]="conv"
+      [isProcessing]="isProcessing(conv.id)"
+      [isAnalyzing]="isAnalyzing(conv.id)"
+    />
+    @if (conv.hasFailedTranscription) {
+      <span
+        class="memory-status-button__failed"
+        [attr.aria-label]="'memory.conversations.status.failed' | translate"
+        [attr.title]="'memory.conversations.status.failed' | translate"
+      >
+        <svg
+          width="12"
+          height="12"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2.5"
+          stroke-linecap="round"
+          stroke-linejoin="round"
+          aria-hidden="true"
+        >
+          <circle cx="12" cy="12" r="10" />
+          <line x1="12" y1="8" x2="12" y2="12" />
+          <line x1="12" y1="16" x2="12.01" y2="16" />
+        </svg>
+      </span>
+    }
+    @if (recordingsCount(conv) > 1) {
+      <span
+        class="memory-status-button__multi"
+        [attr.aria-label]="
+          'memory.conversations.status.multi_recording' | translate: { count: recordingsCount(conv) }
+        "
+        [attr.title]="
+          'memory.conversations.status.multi_recording' | translate: { count: recordingsCount(conv) }
+        "
+      >
+        {{ recordingsCount(conv) }}
+      </span>
+    }
+  </button>
+</ng-template>
+
+<ng-template #servicePillTpl let-conv>
+  @if (conv.service) {
+    <span class="memory-cell-pill">{{ conv.service }}</span>
+  }
+</ng-template>
+
+<ng-template #groupPillTpl let-conv>
+  @if (conv.group) {
+    <span class="memory-cell-pill">{{ conv.group }}</span>
+  }
+</ng-template>
+
+<!-- Un único template para las dos columnas numéricas (T. Conv. / T. Espera):
+     lee el campo por `col.field`, así no hace falta uno por columna. -->
+<ng-template #numTpl let-conv let-col="col">
+  <span class="memory-num-cell">{{ $any(conv)[col.field] }}</span>
+</ng-template>
+
+<ng-template #idTpl let-conv>
+  <span class="memory-id-cell">{{ conv.id }}</span>
+</ng-template>
+
+<!-- Kebab VISIBLE (Ola 2): estas acciones solo existían por click derecho, que
+     no se anuncia. En las filas ya procesadas y analizadas no hay nada que
+     ofrecer, y ahí no se pinta. `stopPropagation` porque el `<td>` lo pinta el
+     DS y sin él abrir el kebab dispararía además el `rowClick`. -->
+<ng-template #actionsTpl let-conv>
+  @if (rowHasActions(conv)) {
+    <button
+      type="button"
+      class="rules-kebab-btn"
+      [attr.aria-label]="'memory.conversations.cols.more' | translate"
+      (click)="setMenuTarget(conv); rowMenu.toggle($event); $event.stopPropagation()"
+    >
+      <sc-icon [name]="moreIcon" size="inherit" />
+    </button>
+  }
+</ng-template>
 
 <!-- Menú ÚNICO de la tabla, abierto por el kebab y por el click derecho (R3).
      Sus items dependen del estado de la fila apuntada — ver `menuItems`. -->

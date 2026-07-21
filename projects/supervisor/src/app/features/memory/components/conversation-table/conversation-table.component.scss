@@ -2,290 +2,61 @@
   display: block;
 }
 
-/* El menú posicional propio murió en la Ola 2: lo sustituye el `<p-menu>`
- * compartido de la casa, que ahora abren tanto el kebab visible como el click
- * derecho. El botón usa `.rules-kebab-btn`, el kebab global de `main.scss`. */
-
-/* ------------------------------------------------------------------ *
- * Estilo tabla Memory `/conversaciones` ← adoptado de AED list-pages
- * (S40 #16). Memory hereda el chrome AED: wrapper con border + radius
- * + overflow-hidden, thead con bg-default + border-bottom, th uppercase
- * tracked, filas con border-bottom subtle (sin zebra). Preserva la
- * densidad propia Memory + sticky header + shimmer is-processing /
- * is-analyzing.
+/* La tabla la pinta ahora `sc-datatable`; su cromo de tabla-lista (piel
+ * compartida) + los cuatro estados de fila con shimmer + la cabecera fija viven
+ * en el partial GLOBAL `styles/_memory-conversation-table.scss`, porque el
+ * `<tr>`/`<th>`/`<td>` los emite el DS con SU `_ngcontent` y una regla
+ * encapsulada de aquí no los alcanzaría.
  *
- * NOTA: este patrón está duplicado en AED users/agents/groups list-pages
- * + Memory. Cuando aparezca un 5º consumer, extraer a partial compartido
- * (entry en `inconsistencies-backlog.md`).
- * ------------------------------------------------------------------ */
-/* Base `.table-card` chrome promovido a SCDS partial S55
- * (`packages/design-system/styles/_sc-list-table.scss`). Delta scoped:
- * S53 stitched-card pattern — solo radius en esquinas inferiores; el
- * `border-top` (que viene del partial) actúa como hairline divisor
- * compartido con el panel de filtros arriba. */
+ * Lo que SÍ vive aquí es lo que va dentro de una celda: esos nodos se pintan
+ * desde las `<ng-template>` de ESTE componente, así que conservan su
+ * `_ngcontent` y la encapsulación los alcanza. */
+
+/* Flush (experiment S59 BeyondUI): la tabla va sobre la página, sin caja — solo
+ * divisores hairline entre filas (patrón Companies/Linear). El `.table-card` es
+ * un `<div>` de la plantilla de este componente, así que se alcanza sin más. */
 .table-card {
-  /* BeyondUI vibe (experiment S59): flush — sin caja. La tabla va sobre
-   * la página con solo divisores hairline entre filas (patrón Companies/
-   * Linear). Scoped a Memory; el partial compartido sigue con caja para AED. */
   border: 0;
   border-radius: 0;
 }
 
-.memory-conversations-table {
-  width: 100%;
-  border-collapse: collapse;
-
-  thead tr {
-    background: var(--sc-bg-surface);
-    border-bottom: 1px solid var(--sc-border-default);
-  }
-
-  thead th {
-    /* Sticky header: queda fijo al scroll vertical de la tabla. El
-     * contenedor `.page` (con overflow-y: auto) es el scrollport — `top: 0`
-     * en thead th lo ancla a su borde superior. Background opaco evita
-     * que las filas se transparenten por debajo. Override del background
-     * de `thead tr` porque el sticky positioning lo necesita en el th.
-     *
-     * `white-space: nowrap` alinea con el patrón AED list-pages (S41 #16
-     * follow-up): evita que los labels uppercase se partan en dos líneas
-     * en columnas estrechas como T. CONV. o T. ESPERA. */
-    position: sticky;
-    top: 0;
-    z-index: 5;
-    background: var(--sc-bg-surface);
-    padding: var(--sc-spacing-0-75) var(--sc-spacing-0-875);
-    text-align: left;
-    /* BeyondUI vibe (experiment S59): header limpio sentence-case en gris,
-     * NO uppercase tracked diminuto. font-size 100 (12.25px) ≈ Companies. */
-    font-size: var(--sc-font-size-100);
-    font-weight: var(--sc-font-weight-medium);
-    letter-spacing: 0;
-    color: var(--sc-text-secondary);
-    white-space: nowrap;
-    box-shadow: inset 0 -1px 0 var(--sc-border-default);
-  }
-
-  tbody tr {
-    border-bottom: 1px solid var(--sc-border-subtle);
-    transition: background var(--sc-transition-fast) var(--sc-easing-default);
-    cursor: pointer;
-
-    &:hover:not(.is-deleted) {
-      background: var(--sc-bg-default);
-    }
-
-    &:focus-visible {
-      outline: 2px solid var(--sc-border-focus);
-      outline-offset: -2px;
-    }
-  }
-
-  /* `:where()` rebaja la specificity a (0,0,0) para que los overrides
-   * por clase BEM (`&__id`, `&__td-status`, etc.) ganen sin tener que
-   * inflar su propia especificidad — Angular emulated encapsulation
-   * suma 1 attribute selector por cada element/class, y `tbody td`
-   * acababa siendo (0,2,2) > (0,1,1) de `.__id` en el cascade real.
-   */
-  :where(tbody td) {
-    /* BeyondUI vibe (experiment S59): aire vertical (14px) + más aire
-     * horizontal (15.75px) → columnas menos apretadas, layout más airy
-     * tipo Companies. */
-    padding: var(--sc-spacing-1) var(--sc-spacing-1-125);
-    font-size: var(--sc-font-size-200);
-    /* Bloque 1 · tipografía nítida BeyondUI: peso 500 (Medium) + texto
-     * primario (no secondary) → datos crujientes y legibles como Companies. */
-    font-weight: var(--sc-font-weight-medium);
-    color: var(--sc-text-primary);
-    vertical-align: middle;
-  }
-
-  /* th alineado al mismo aire horizontal que las celdas. */
-  thead th {
-    padding-left: var(--sc-spacing-1-125);
-    padding-right: var(--sc-spacing-1-125);
-  }
-
-  /* BeyondUI vibe (experiment S59): columnas categóricas (Servicio, Grupo)
-   * como pills redondeadas — eco de los dominios pill de Companies. Pastilla
-   * sutil: fondo gris claro + hairline, no compite con los datos. */
-  .memory-cell-pill {
-    display: inline-flex;
-    align-items: center;
-    padding: var(--sc-spacing-0-25) var(--sc-spacing-0-625);
-    border-radius: var(--sc-radius-full);
-    background: var(--sc-bg-default);
-    border: 1px solid var(--sc-border-subtle);
-    color: var(--sc-text-primary);
-    font-size: var(--sc-font-size-100);
-    font-weight: var(--sc-font-weight-medium);
-    line-height: 1.3;
-    white-space: nowrap;
-  }
-
-  &__th-status,
-  &__td-status {
-    width: 132px;
-  }
-
-  &__th-select,
-  &__td-select {
-    width: 40px;
-    padding-right: 0;
-  }
-
-  &__checkbox-wrap {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    cursor: pointer;
-    padding: var(--sc-spacing-0-25);
-    margin: -4px;
-  }
-
-  &__checkbox {
-    width: 16px;
-    height: 16px;
-    accent-color: var(--sc-bg-primary);
-    cursor: pointer;
-
-    &:focus-visible {
-      outline: 2px solid var(--sc-border-focus);
-      outline-offset: 2px;
-      border-radius: var(--sc-radius-50);
-    }
-  }
-
-  &__id {
-    font-family: var(--sc-font-family-mono);
-    font-size: var(--sc-font-size-100);
-    color: var(--sc-text-subtle);
-    letter-spacing: 0.02em;
-  }
-
-  /* Columna del kebab: ancho fijo para que la celda no baile entre filas con
-   * acciones y filas sin ellas (las ya procesadas no pintan botón).
-   *
-   * 44px NO es decorativo: la tabla es `table-layout: fixed`, y por debajo de
-   * ese ancho la columna queda infra-asignada y el wrapper empieza a
-   * desbordar en horizontal (medido: 40px → 4px de scroll, 36px → 8px).
-   * A partir de 44 el desborde es 0 y se queda en 0. */
-  &__th-kebab,
-  &__td-kebab {
-    width: 44px;
-    text-align: center;
-    padding-right: 0;
-  }
-
-  tr.is-deleted {
-    opacity: 0.6;
-  }
-
-  /* Los cuatro tintes de fila iban a paleta CRUDA, que no se remapea en
-   * oscuro. Al componerse sobre la fila oscura no quedaban "claros" (0.24 de
-   * luminancia, así que la primera versión de `dark-surfaces.spec` ni los
-   * veía) pero sí lo bastante claros para matar el texto de encima: el id de
-   * la conversación medía 1.30:1 sobre la fila fallida.
-   *
-   * Pasan a la rampa `--sc-bg-*-subtle`, que es exactamente esto: un tinte de
-   * estado con valor propio en cada tema. En claro el aspecto se conserva
-   * —`X-100` al 50% sobre blanco es prácticamente `X-50`, que es lo que vale
-   * la rampa. */
-  tr.is-selected:not(.is-deleted) {
-    background: var(--sc-bg-secondary-hover);
-  }
-
-  /* Estado de procesamiento (mock dispatch). Amber para transcribing,
-   * cyan/blue para analyzing. Sin opacidad fuerte para que la fila
-   * siga siendo legible. El barrido animado tipo "shimmer" comunica
-   * actividad sin spinner por fila. */
-  tr.is-processing:not(.is-deleted) {
-    background: var(--sc-bg-warning-subtle);
-    position: relative;
-    overflow: hidden;
-
-    &::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(
-        90deg,
-        transparent 0%,
-        color-mix(in srgb, var(--sc-color-amber-300) 40%, transparent) 50%,
-        transparent 100%
-      );
-      animation: row-shimmer 2200ms ease-in-out infinite;
-      pointer-events: none;
-    }
-  }
-
-  tr.is-analyzing:not(.is-deleted) {
-    background: var(--sc-bg-primary-subtle);
-    position: relative;
-    overflow: hidden;
-
-    &::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      background: linear-gradient(
-        90deg,
-        transparent 0%,
-        color-mix(in srgb, var(--sc-color-blue-300) 40%, transparent) 50%,
-        transparent 100%
-      );
-      animation: row-shimmer 2200ms ease-in-out infinite;
-      pointer-events: none;
-    }
-  }
-
-  /* Transcripción fallida: tinte rojo sutil para escaneo rápido + icono
-   * overlay rojo en el status button (señal local doble). Mismo patrón
-   * sutil que tenían los borradores amarillos pre-S47 — los users no
-   * deberían tener que cazar dónde está el error. Sin shimmer porque es
-   * estado terminal, no in-flight.
-   *
-   * `:not(.is-processing):not(.is-analyzing)` para que si una fila falló
-   * y se está reintentando, gane el estado in-flight (intent: "estoy
-   * trabajando ahora", no "fallé antes"). */
-  tr.is-failed:not(.is-deleted):not(.is-processing):not(.is-analyzing) {
-    background: var(--sc-bg-danger-subtle);
-
-    &:hover {
-      background: var(--sc-bg-danger-subtle-hover);
-    }
-  }
-
-  /* Selected gana sobre failed (consistencia con is-selected over otros tints). */
-  tr.is-failed.is-selected:not(.is-deleted):not(.is-processing):not(.is-analyzing) {
-    background: var(--sc-bg-secondary-hover);
-  }
+/* ------------------------------------------------------------------ *
+ * memory-cell-pill — columnas categóricas (Servicio, Grupo) como pills
+ * redondeadas (eco de los dominios pill de Companies). Pastilla sutil:
+ * fondo gris claro + hairline, no compite con los datos.
+ * ------------------------------------------------------------------ */
+.memory-cell-pill {
+  display: inline-flex;
+  align-items: center;
+  padding: var(--sc-spacing-0-25) var(--sc-spacing-0-625);
+  border-radius: var(--sc-radius-full);
+  background: var(--sc-bg-default);
+  border: 1px solid var(--sc-border-subtle);
+  color: var(--sc-text-primary);
+  font-size: var(--sc-font-size-100);
+  font-weight: var(--sc-font-weight-medium);
+  line-height: 1.3;
+  white-space: nowrap;
 }
 
-@keyframes row-shimmer {
-  0% {
-    transform: translateX(-100%);
-  }
-  100% {
-    transform: translateX(100%);
-  }
+/* Columna ID: monoespaciada y sutil. */
+.memory-id-cell {
+  font-family: var(--sc-font-family-mono);
+  font-size: var(--sc-font-size-100);
+  color: var(--sc-text-subtle);
+  letter-spacing: 0.02em;
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .memory-conversations-table tr.is-processing::after,
-  .memory-conversations-table tr.is-analyzing::after {
-    animation: none;
-  }
+/* Columnas numéricas (T. Conv. / T. Espera): cifras alineadas por dígito. La
+ * alineación a la derecha la da `align: 'right'` de la columna. */
+.memory-num-cell {
+  font-variant-numeric: tabular-nums;
 }
 
 /* ------------------------------------------------------------------ *
- * Status button — wrapper de `<sc-memory-status-icon>` con overlays
+ * memory-status-button — wrapper de `<sc-memory-status-icon>` con overlays
  * en esquinas (failed bottom-right + multi-recording count top-right).
  * Es el affordance EXPLÍCITO que abre el player modal (Audit A5).
- *
- * S40 (#15): reemplaza el cluster de 3-5 lucide icons separados por
- * una pictograma única canal+processing-state. La forma del SVG carga
- * el estado (sec 15.21 audit prototipo Memory).
  * ------------------------------------------------------------------ */
 .memory-status-button {
   position: relative;
@@ -334,15 +105,9 @@
     height: 16px;
     padding: 0 4px;
     border-radius: var(--sc-radius-full);
-    /* Usaba `--sc-text-info` como FONDO — el reverso del error de
-     * `.entity-type-chip`, que usaba un fondo como texto. En oscuro
-     * `--sc-text-info` sube a un azul claro y el blanco de encima se quedaba
-     * en 3.15:1. `--sc-bg-info` es el relleno, vale sky-500 en los dos temas
-     * y da 4.90:1 con blanco.
-     *
-     * El blanco SÍ va en paleta cruda a propósito: el relleno es estable
-     * entre temas, así que la tinta también tiene que serlo. `--sc-text-inverse`
-     * voltearía a slate-900 en oscuro y dejaría texto negro sobre azul. */
+    /* `--sc-bg-info` es el relleno (sky-500 en los dos temas): 4.90:1 con el
+     * blanco. El blanco va en paleta cruda a propósito — el relleno es estable
+     * entre temas, así que la tinta también. */
     background: var(--sc-bg-info);
     color: var(--sc-color-slate-0);
     font-size: var(--sc-font-size-50);
@@ -351,6 +116,3 @@
     font-variant-numeric: tabular-nums;
   }
 }
-
-/* El bloque del vacío murió en la Ola 5: lo sirve el <sc-empty-state>
- * compartido desde la PAGINA, no un <tr> dentro de la tabla. */

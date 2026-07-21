@@ -100,7 +100,6 @@ export class ConversationsPageComponent implements OnInit, OnDestroy {
   protected readonly filters = this.conversationsStore.filters;
   protected readonly selectedIds = this.conversationsStore.selectedIds;
   protected readonly selectedCount = this.conversationsStore.selectedCount;
-  protected readonly allFilteredSelected = this.conversationsStore.allFilteredSelected;
   protected readonly availableAiCategories = this.conversationsStore.availableAiCategories;
   protected readonly processingIds = this.conversationsStore.processingIds;
   protected readonly analyzingIds = this.conversationsStore.analyzingIds;
@@ -174,16 +173,16 @@ export class ConversationsPageComponent implements OnInit, OnDestroy {
     this.conversationsStore.setFilters(filters);
   }
 
-  protected onSelectionToggled(id: string): void {
-    this.conversationsStore.toggleSelection(id);
-  }
-
-  protected onAllToggled(): void {
-    if (this.allFilteredSelected()) {
-      this.conversationsStore.clearSelection();
-    } else {
-      this.conversationsStore.selectAllFiltered();
-    }
+  /**
+   * La selección la gobierna ahora `sc-datatable` (casilla, casilla de
+   * cabecera y rango con ancla) y emite el conjunto COMPLETO. Se vuelca tal
+   * cual al store, que sigue siendo la fuente de verdad (de él cuelgan la barra
+   * masiva y el dispatch). Sustituye a los antiguos `onSelectionToggled` (un
+   * id) y `onAllToggled` (todo/nada): los dos son casos de "aquí está la
+   * selección nueva".
+   */
+  protected onSelectionChange(ids: ReadonlySet<string>): void {
+    this.conversationsStore.setSelection(ids);
   }
 
   protected onClearSelection(): void {

@@ -1,3 +1,5 @@
+import { map, startWith } from 'rxjs';
+import { toSignal } from '@angular/core/rxjs-interop';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -6,12 +8,22 @@ import {
   input,
   output,
   signal,
+  type TemplateRef,
+  viewChild,
 } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import type { MenuItem } from 'primeng/api';
 import { MenuModule } from 'primeng/menu';
 
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
+import {
+  type ScColumnCellContext,
+  type ScColumnDef,
+  ScDatatableComponent as DatatableComponent,
+  type ScDatatableRowEvent,
+  type ScDatatableRowKeyEvent,
+  type ScRowStyleClassFn,
+} from '@smartcontact-hub/components';
 
 import type { Conversation } from '../../data/conversation.types';
 import {
@@ -51,33 +63,30 @@ function primaryActionFor(conv: Conversation): ConversationContextAction | null 
  * Tabla densa de conversaciones Memory.
  *
  * Iter 1 (S36): 9 columnas básicas + chrome `.table sc-table-zebra` AED.
- * Iter 2 (S37): + columna Estado (cluster 3-5 lucide icons separados) +
- *               sticky header + hover.
+ * Iter 2 (S37): + columna Estado + sticky header + hover.
  * Iter 5 (S38): + abre player modal (originalmente desde row click).
- * Iter 6a (S38): + columna checkbox de selección al inicio. Row click pasa
- *                a togglear selección (replicando Audit A5 del prototipo
- *                Memory React).
+ * Iter 6a (S38): + columna checkbox de selección al inicio.
  * Ola 6:        ese gesto se INVIERTE. La fila abre (R1) y la casilla —su
- *                celda entera— selecciona. Era la única tabla de la casa donde
- *                el click de fila significaba otra cosa; un gesto que cambia
- *                de significado según la pantalla no se puede predecir.
- * Iter S40 (#15): cluster lucide cambiado por `<sc-memory-status-icon>` —
- *                pictograma única canal+processing-state (SVGs custom de
- *                diseño Memory) + overlays failed (bottom-right) y
- *                multi-recording count (top-right). Sigue `sistema-de-
- *                diseno.md §Iconografía` (sec 15.21 audit prototipo).
- * Iter S53.5: + menú click-derecho con acciones dinámicas según estado:
- *                Procesar / Transcribir / Analizar + "Marcar como leída"
- *                (solo si hasFailedTranscription).
- * Ola 2:       ese menú pasa al `<p-menu>` compartido de la casa y GANA UN
- *                KEBAB VISIBLE. Antes solo se abría con click derecho, que no
- *                se anuncia: quien no lo supiera no tenía forma de descubrir
- *                estas acciones (Nielsen #6). Se va el menú posicional propio
- *                (clampToViewport + scClickOutside).
+ *                celda entera— selecciona.
+ * Iter S40 (#15): cluster lucide cambiado por `<sc-memory-status-icon>`.
+ * Iter S53.5:  + menú click-derecho con acciones dinámicas según estado.
+ * Ola 2:       ese menú pasa al `<p-menu>` compartido de la casa + kebab visible.
+ *
+ * B4 (esta sesión): el `<table>` a mano pasa a `sc-datatable`, la última de las
+ *   diez tablas de la casa que quedaba sin migrar. Conserva su piel propia
+ *   —densa, plana, con los cuatro estados de fila con shimmer y el botón de
+ *   estado— sobre la piel compartida `.list-table` (ver
+ *   `_memory-conversation-table.scss`): la gramática es la de la casa; el aspecto
+ *   BeyondUI de Memory (S59) se mantiene por encima.
+ *
+ *   La selección deja de ser "toglea este id": `sc-datatable` gobierna la
+ *   casilla, la casilla de cabecera y el rango con ancla, y emite la selección
+ *   COMPLETA. Este componente la traduce a/desde el `Set` que sigue siendo la
+ *   fuente de verdad en la página (de él cuelgan la barra masiva y el dispatch).
  */
 @Component({
   selector: 'sc-memory-conversation-table',
-  imports: [IconComponent, MenuModule, TranslateModule, MemoryStatusIconComponent],
+  imports: [DatatableComponent, IconComponent, MenuModule, TranslateModule, MemoryStatusIconComponent],
   templateUrl: './conversation-table.component.html',
   styleUrl: './conversation-table.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -87,15 +96,16 @@ export class ConversationTableComponent {
 
   readonly conversations = input.required<readonly Conversation[]>();
   readonly selectedIds = input.required<ReadonlySet<string>>();
-  readonly allSelected = input.required<boolean>();
   /** IDs en proceso de transcripción (mock dispatch). Pintan fila amber. */
   readonly processingIds = input<ReadonlySet<string>>(new Set());
   /** IDs en proceso de análisis IA. Pintan fila cyan. */
   readonly analyzingIds = input<ReadonlySet<string>>(new Set());
 
   readonly conversationOpen = output<Conversation>();
-  readonly selectionToggled = output<string>();
-  readonly allToggled = output<void>();
+  /** La selección COMPLETA tras un gesto de casilla/cabecera/rango. Reemplaza a
+   *  los antiguos `selectionToggled`/`allToggled`: `sc-datatable` piensa en el
+   *  conjunto entero, no en toggles. */
+  readonly selectionChange = output<ReadonlySet<string>>();
   /** Click derecho sobre una fila → acción dinámica según estado. */
   readonly contextActionRequested = output<{
     action: ConversationContextAction;
@@ -109,6 +119,174 @@ export class ConversationTableComponent {
 
   protected readonly moreIcon = 'more_vert';
 
+  /** Nombre accesible de las casillas. Sin esto PrimeNG cae a `'Row Selected'`
+   *  / `'All items selected'` — inglés fijo, sin identidad de fila. La tabla a
+   *  mano sí las nombraba; se reutilizan sus claves. Ver `ScRowAriaLabelFn`. */
+  protected readonly ariaFila = (conv: Conversation): string =>
+    this.translate.instant('memory.conversations.select_row_aria', { id: conv.id });
+  protected readonly ariaTodo = this.translate.instant('memory.conversations.select_all_aria');
+
+  /** Idioma vivo: dependencia del `columns` computed para que las cabeceras NO
+   *  se queden congeladas al cambiar de idioma. `translate.instant()` no es
+   *  reactivo (a diferencia del pipe `| translate`), así que sin esto el
+   *  computed no se re-evaluaría — lo vigila `audit:datatables`. */
+  private readonly currentLang = toSignal(
+    this.translate.onLangChange.pipe(
+      map((e) => e.lang),
+      startWith(this.translate.currentLang),
+    ),
+    { initialValue: this.translate.currentLang },
+  );
+
+  /* ── Plantillas de celda ─────────────────────────────────────────────────
+   * Viven FUERA del `<sc-datatable>` (el `<td>` lo pinta el DS y una regla
+   * encapsulada no lo alcanzaría); `columns()` las recoge. Son `computed` que
+   * LEEN los `viewChild`, que resuelven tarde: en un campo se quedarían en
+   * `undefined` para siempre. */
+  private readonly statusTpl = viewChild<TemplateRef<ScColumnCellContext<Conversation>>>('statusTpl');
+  private readonly servicePillTpl =
+    viewChild<TemplateRef<ScColumnCellContext<Conversation>>>('servicePillTpl');
+  private readonly groupPillTpl =
+    viewChild<TemplateRef<ScColumnCellContext<Conversation>>>('groupPillTpl');
+  private readonly numTpl = viewChild<TemplateRef<ScColumnCellContext<Conversation>>>('numTpl');
+  private readonly idTpl = viewChild<TemplateRef<ScColumnCellContext<Conversation>>>('idTpl');
+  private readonly actionsTpl = viewChild<TemplateRef<ScColumnCellContext<Conversation>>>('actionsTpl');
+
+  protected readonly columns = computed<readonly ScColumnDef<Conversation>[]>(() => {
+    this.currentLang();
+    const t = (k: string): string => this.translate.instant(`memory.conversations.table.${k}`);
+    return [
+      { field: 'status', header: t('status'), width: '132px', cellTemplate: this.statusTpl() },
+      { field: 'hour', header: t('hour') },
+      { field: 'date', header: t('date') },
+      { field: 'service', header: t('service'), cellTemplate: this.servicePillTpl() },
+      { field: 'origin', header: t('origin') },
+      { field: 'group', header: t('group'), cellTemplate: this.groupPillTpl() },
+      { field: 'destination', header: t('destination') },
+      { field: 'duration', header: t('duration'), align: 'right', cellTemplate: this.numTpl() },
+      { field: 'waiting', header: t('waiting'), align: 'right', cellTemplate: this.numTpl() },
+      { field: 'id', header: t('id'), cellTemplate: this.idTpl() },
+      {
+        field: 'actions',
+        header: '',
+        headerAriaLabel: this.translate.instant('memory.conversations.cols.more'),
+        width: '44px',
+        align: 'center',
+        stopRowClick: true,
+        cellTemplate: this.actionsTpl(),
+      },
+    ];
+  });
+
+  /* Puente de selección: la fuente de verdad es el `Set` de la página. Aquí se
+   * traduce a las filas que `sc-datatable` necesita para su casilla, y de vuelta
+   * al `Set` cuando el DS emite una selección nueva. */
+  protected readonly selectedRows = computed<readonly Conversation[]>(() => {
+    const ids = this.selectedIds();
+    return this.conversations().filter((c) => ids.has(c.id));
+  });
+
+  protected onSelectionChange(selection: Conversation | readonly Conversation[] | null): void {
+    const rows = Array.isArray(selection) ? selection : selection ? [selection as Conversation] : [];
+    this.selectionChange.emit(new Set(rows.map((c) => c.id)));
+  }
+
+  /**
+   * Clases por fila. Los cuatro estados de Memory (deleted/processing/analyzing/
+   * failed) + el seleccionado los pinta la piel `_memory-conversation-table`
+   * sobre estas clases; `--clickable` da cursor y hover a la fila que abre.
+   *
+   * `is-selected` sale del `Set` de la página —la fuente de verdad de la
+   * selección—, NO de la clase `.p-datatable-row-selected` de p-table. Es a
+   * propósito: p-table no re-resalta al instante las filas que un rango añade
+   * por el input (solo las que togla él); leer el `Set` pinta las N filas del
+   * rango sin depender de ese detalle. Se re-evalúa porque `[selection]` cambia
+   * y con él se re-renderiza la tabla. */
+  protected readonly rowStyleClass: ScRowStyleClassFn<Conversation> = (conv) => {
+    const clases = ['table__row--clickable'];
+    if (this.selectedIds().has(conv.id)) clases.push('is-selected');
+    if (conv.deleted) clases.push('is-deleted');
+    if (this.processingIds().has(conv.id)) clases.push('is-processing');
+    if (this.analyzingIds().has(conv.id)) clases.push('is-analyzing');
+    if (conv.hasFailedTranscription) clases.push('is-failed');
+    return clases.join(' ');
+  };
+
+  protected isProcessing(id: string): boolean {
+    return this.processingIds().has(id);
+  }
+
+  protected isAnalyzing(id: string): boolean {
+    return this.analyzingIds().has(id);
+  }
+
+  /* ── R1 · el click en una fila ABRE ──────────────────────────────────────
+   * fila → abre · casilla → selecciona · shift+click en la casilla → rango
+   * (lo sirve `sc-datatable`) · Enter → abre · Espacio → selecciona.
+   */
+  protected onRowClick(event: ScDatatableRowEvent<Conversation>): void {
+    // Shift+click sobre la fila NO abre el reproductor: quien encadena
+    // selecciones con Mayús no espera que se le abra un modal encima. El rango
+    // de verdad se hace desde la casilla (lo gobierna el DS); aquí basta con no
+    // abrir.
+    if (event.originalEvent.shiftKey) return;
+    this.conversationOpen.emit(event.row);
+  }
+
+  protected onRowKeydown(event: ScDatatableRowKeyEvent<Conversation>): void {
+    // Enter ABRE (acción primaria) y Espacio SELECCIONA. Es la convención de
+    // listas de escritorio y mantiene el teclado a la par del ratón.
+    const key = event.originalEvent.key;
+    if (key === 'Enter') {
+      event.originalEvent.preventDefault();
+      this.conversationOpen.emit(event.row);
+      return;
+    }
+    if (key === ' ') {
+      event.originalEvent.preventDefault();
+      const next = new Set(this.selectedIds());
+      if (next.has(event.row.id)) next.delete(event.row.id);
+      else next.add(event.row.id);
+      this.selectionChange.emit(next);
+    }
+  }
+
+  /** Click derecho → el MISMO `<p-menu>` que el kebab (R3). Solo abre si la fila
+   *  tiene acciones: un menú vacío es peor que ninguno. */
+  protected onRowContextMenu(
+    event: ScDatatableRowEvent<Conversation>,
+    menu: { toggle: (e: Event) => void },
+  ): void {
+    if (this.setMenuTarget(event.row)) menu.toggle(event.originalEvent);
+  }
+
+  /** El botón de estado abre el reproductor. `stopPropagation` evita que además
+   *  dispare el `rowClick` de la fila y lo abra dos veces. */
+  protected onStatusClick(event: Event, conv: Conversation): void {
+    event.stopPropagation();
+    this.conversationOpen.emit(conv);
+  }
+
+  protected onStatusKeydown(event: KeyboardEvent, conv: Conversation): void {
+    if (event.key === 'Enter' || event.key === ' ') {
+      event.preventDefault();
+      event.stopPropagation();
+      this.conversationOpen.emit(conv);
+    }
+  }
+
+  protected recordingsCount(conv: Conversation): number {
+    return conv.recordings?.length ?? 0;
+  }
+
+  /**
+   * Devuelve la i18n key del estado resuelto para que la plantilla la combine
+   * con `open_aria_with_state` en el `aria-label` del botón.
+   */
+  protected statusLabelKey(conv: Conversation): string {
+    return resolveStatusLabelKey(conv, this.isProcessing(conv.id), this.isAnalyzing(conv.id));
+  }
+
   /** Conversación referenciada por el menú actual (si abierto). */
   protected readonly contextConv = computed<Conversation | null>(() => {
     const id = this.menuTargetId();
@@ -117,8 +295,7 @@ export class ConversationTableComponent {
   });
 
   /** Modelo del menú compartido — computed ESTABLE: solo cambia al apuntar a
-   *  otra fila. Los items dependen del estado de ESA conversación, así que
-   *  aquí no hay una lista fija como en las listas admin. */
+   *  otra fila. Los items dependen del estado de ESA conversación. */
   protected readonly menuItems = computed<MenuItem[]>(() => {
     const conv = this.contextConv();
     if (!conv) return [];
@@ -152,169 +329,14 @@ export class ConversationTableComponent {
     return items;
   });
 
-  protected isSelected(id: string): boolean {
-    return this.selectedIds().has(id);
-  }
-
-  protected isProcessing(id: string): boolean {
-    return this.processingIds().has(id);
-  }
-
-  protected isAnalyzing(id: string): boolean {
-    return this.analyzingIds().has(id);
-  }
-
-  /* ── R1 · el click en una fila ABRE ──────────────────────────────────────
-   *
-   * Hasta la Ola 6 esta tabla era la excepción de la casa: su fila toglea
-   * selección (Audit A5 del prototipo React) mientras las de categorías,
-   * entidades y reglas abren. El usuario no puede predecir un gesto que
-   * cambia de significado según la pantalla, así que converge — y converge
-   * hacia lo que ya afirman los tests de las hermanas y hacen Gmail, Linear,
-   * Jira y GitHub: la casilla selecciona, la fila abre.
-   *
-   * El reparto queda: fila → abre · celda de la casilla → toglea ·
-   * shift+click → rango · Enter → abre · Espacio → toglea.
-   */
-
-  /** Ancla del rango con shift+click: última fila cuya selección se tocó. */
-  private lastSelectedIndex: number | null = null;
-
-  protected onRowClick(event: MouseEvent, conv: Conversation, index: number): void {
-    // Shift+click sobre la fila selecciona rango en vez de abrir: es el gesto
-    // aprendido de cualquier gestor de ficheros, y quien lo hace no espera que
-    // se le abra un reproductor encima.
-    if (event.shiftKey) {
-      event.preventDefault();
-      this.selectRangeTo(index);
-      return;
-    }
-    this.conversationOpen.emit(conv);
-  }
-
-  protected onRowKeydown(event: KeyboardEvent, conv: Conversation, index: number): void {
-    // Enter ABRE (acción primaria) y Espacio SELECCIONA. Es la convención de
-    // listas de escritorio, y mantiene el teclado a la par del ratón: cada
-    // gesto tiene su equivalente.
-    if (event.key === 'Enter') {
-      event.preventDefault();
-      this.conversationOpen.emit(conv);
-      return;
-    }
-    if (event.key === ' ') {
-      event.preventDefault();
-      this.toggleAt(conv, index);
-    }
-  }
-
-  /** Click en cualquier punto de la celda de la casilla. */
-  protected onSelectCellClick(event: MouseEvent, conv: Conversation, index: number): void {
-    // No debe llegar a la fila: si llegara, abriría el reproductor además de
-    // seleccionar.
-    event.stopPropagation();
-    if (event.shiftKey) {
-      this.selectRangeTo(index);
-      return;
-    }
-    this.toggleAt(conv, index);
-  }
-
-  /**
-   * La casilla ocupa 16px en el centro de una celda de 40, así que un click
-   * "en la celda" aterriza casi siempre AQUÍ. Si este handler solo parase la
-   * propagación, el shift+click nunca llegaría al de la celda y el rango no
-   * funcionaría al apuntar a la casilla — que es justo donde apunta todo el
-   * mundo. Por eso el rango se resuelve también aquí.
-   */
-  protected onCheckboxClick(event: MouseEvent, index: number): void {
-    event.stopPropagation();
-    if (!event.shiftKey) return;
-    // `preventDefault` evita que el toggle nativo dispare además un `change`,
-    // que desharía una de las filas del rango.
-    event.preventDefault();
-    this.selectRangeTo(index);
-  }
-
-  protected onCheckboxChange(event: Event, conv: Conversation, index: number): void {
-    event.stopPropagation();
-    this.toggleAt(conv, index);
-  }
-
-  private toggleAt(conv: Conversation, index: number): void {
-    this.lastSelectedIndex = index;
-    this.selectionToggled.emit(conv.id);
-  }
-
-  /** Selecciona desde el ancla hasta `index`, ambos incluidos. Sin ancla
-   *  previa, se comporta como un toggle simple. */
-  private selectRangeTo(index: number): void {
-    const anchor = this.lastSelectedIndex;
-    const rows = this.conversations();
-    if (anchor === null) {
-      const conv = rows[index];
-      if (conv) this.toggleAt(conv, index);
-      return;
-    }
-    const [from, to] = anchor <= index ? [anchor, index] : [index, anchor];
-    const selected = this.selectedIds();
-    for (let i = from; i <= to; i++) {
-      const conv = rows[i];
-      // Solo se AÑADE al rango: arrastrar sobre filas ya marcadas no las
-      // desmarca, que es lo que espera quien viene de un gestor de ficheros.
-      if (conv && !selected.has(conv.id)) this.selectionToggled.emit(conv.id);
-    }
-    this.lastSelectedIndex = index;
-  }
-
-  protected onCheckboxKeydown(event: KeyboardEvent): void {
-    if (event.key === 'Enter' || event.key === ' ') {
-      event.stopPropagation();
-    }
-  }
-
-  protected onStatusClick(event: Event, conv: Conversation): void {
-    event.stopPropagation();
-    this.conversationOpen.emit(conv);
-  }
-
-  protected onStatusKeydown(event: KeyboardEvent, conv: Conversation): void {
-    if (event.key === 'Enter' || event.key === ' ') {
-      event.preventDefault();
-      event.stopPropagation();
-      this.conversationOpen.emit(conv);
-    }
-  }
-
-  protected onHeaderCheckboxChange(event: Event): void {
-    event.stopPropagation();
-    this.allToggled.emit();
-  }
-
-  protected recordingsCount(conv: Conversation): number {
-    return conv.recordings?.length ?? 0;
-  }
-
-  /**
-   * Devuelve la i18n key del estado resuelto para que la plantilla la
-   * combine con `open_aria_with_state` en el `aria-label` del button.
-   * Fix S41 a11y: el screen reader debe oír el estado además del
-   * "Abrir conversación X". Antes el estado quedaba mudo en el span
-   * hijo (no era el focus target).
-   */
-  protected statusLabelKey(conv: Conversation): string {
-    return resolveStatusLabelKey(conv, this.isProcessing(conv.id), this.isAnalyzing(conv.id));
-  }
-
   /** Apunta el menú compartido a una fila. Devuelve si esa fila tiene alguna
-   *  acción — el llamante solo abre el menú si la hay, para no enseñar un
-   *  popover vacío. */
+   *  acción — el llamante solo abre el menú si la hay. */
   protected setMenuTarget(conv: Conversation): boolean {
     this.menuTargetId.set(conv.id);
     return this.rowHasActions(conv);
   }
 
-  /** Una fila ya procesada y analizada no ofrece nada: ahí no se pinta kebab.
-   *  Un kebab que abre un menú vacío es peor que no tenerlo. */
+  /** Una fila ya procesada y analizada no ofrece nada: ahí no se pinta kebab. */
   protected rowHasActions(conv: Conversation): boolean {
     return primaryActionFor(conv) !== null || !!conv.hasFailedTranscription;
   }
@@ -324,5 +346,4 @@ export class ConversationTableComponent {
     if (!conv) return;
     this.contextActionRequested.emit({ action, conversation: conv });
   }
-
 }

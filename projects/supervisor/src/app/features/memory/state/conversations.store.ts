@@ -102,18 +102,6 @@ export class ConversationsStore {
 
   readonly selectedCount = computed(() => this._selectedIds().size);
 
-  /**
-   * Subset filtrado que entraría en un select-all. Excluye nada — siguiendo
-   * la decisión Memory 15.45 ("ninguna fila se bloquea"). El filtrado por
-   * estado (en proceso, retención vencida) vive en el modal bulk, no aquí.
-   */
-  readonly allFilteredSelected = computed(() => {
-    const filtered = this.filteredConversations();
-    if (filtered.length === 0) return false;
-    const selected = this._selectedIds();
-    return filtered.every((c) => selected.has(c.id));
-  });
-
   setFilters(filters: MemoryConversationFilters): void {
     this._filters.set(filters);
   }
@@ -135,17 +123,18 @@ export class ConversationsStore {
     this._filters.set(EMPTY_FILTERS);
   }
 
-  toggleSelection(id: string): void {
-    this._selectedIds.update((curr) => {
-      const next = new Set(curr);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
-      return next;
-    });
-  }
-
-  selectAllFiltered(): void {
-    const ids = this.filteredConversations().map((c) => c.id);
+  /**
+   * Reemplaza la selección entera por el conjunto dado.
+   *
+   * Es la ÚNICA vía de selección desde que la tabla es `sc-datatable`: su
+   * casilla, su casilla de cabecera (marcar todo lo filtrado) y su rango con
+   * ancla los sirve el componente del DS, que emite la selección COMPLETA —no
+   * "toglea este id" ni "marca todo". Por eso `toggleSelection`,
+   * `selectAllFiltered` y `allFilteredSelected` se retiraron: los sustituye
+   * este método más el propio DS. El atajo de teclado (Espacio) también compone
+   * su conjunto y entra por aquí.
+   */
+  setSelection(ids: Iterable<string>): void {
     this._selectedIds.set(new Set(ids));
   }
 
