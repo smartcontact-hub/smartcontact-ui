@@ -106,9 +106,12 @@ for (const { ruta, nombre } of FORMULARIOS) {
 
 /**
  * El título mide lo mismo en TODAS las páginas de contenido. Se comprueba
- * aparte porque lo garantiza una clase compartida (`.page__heading`) y hay ~9
- * hojas de página con un `.page__title` MUERTO heredado de la banda de S59:
- * una regla encapsulada le ganaría a la global sin avisar de nada.
+ * aparte porque lo garantiza una clase compartida (`.page__heading`) y una
+ * regla encapsulada de componente le gana siempre a la global, sin avisar de
+ * nada. Nació con un motivo concreto: 9 hojas de página arrastraban un
+ * `.page__title` MUERTO de la banda de S59. Ese CSS ya está borrado (S22), así
+ * que hoy este test vigila que no vuelva a aparecer una regla de página que
+ * pise el tamaño del título en una ruta y no en las demás.
  */
 test('el título de página mide igual en todas partes', async ({ page }) => {
   const medidas: { ruta: string; size: string; weight: string }[] = [];

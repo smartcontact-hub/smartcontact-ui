@@ -44,25 +44,6 @@
       margin-bottom: 0;
     }
   }
-
-  &__header {
-    margin-bottom: var(--sc-spacing-1-125);
-  }
-
-  &__title {
-    margin: 0;
-    font-size: var(--sc-font-size-h2);
-    line-height: var(--sc-line-height-500);
-    font-weight: var(--sc-font-weight-semibold);
-    color: var(--sc-text-primary);
-  }
-
-  &__subtitle {
-    margin: 4px 0 0;
-    font-size: var(--sc-font-size-200);
-    line-height: var(--sc-line-height-300);
-    color: var(--sc-text-subtle);
-  }
 }
 
 /* ---------- Inline checkbox + label ---------- */

@@ -18,21 +18,6 @@
     padding: var(--sc-spacing-1-75) var(--sc-spacing-2-25);
   }
 
-  &__header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    margin-bottom: var(--sc-spacing-1-5);
-  }
-
-  &__title {
-    margin: 0;
-    font-size: var(--sc-font-size-h3);
-    font-weight: var(--sc-font-weight-semibold);
-    color: var(--sc-text-primary);
-    line-height: var(--sc-line-height-h3);
-  }
-
   &__create-anchor {
     position: relative;
   }
@@ -59,14 +44,6 @@
   &__search {
     position: relative;
     width: 288px;
-  }
-
-  &__footer {
-    display: flex;
-    justify-content: flex-end;
-    margin-top: var(--sc-spacing-0-875);
-    font-size: var(--sc-font-size-100);
-    color: var(--sc-text-subtle);
   }
 }
 
