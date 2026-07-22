@@ -1213,16 +1213,16 @@
       "info": {
         "background": {
           "$type": "color",
-          "$value": "#eff6fff2"
+          "$value": "#eef4fff2"
         },
         "color": {
           "$type": "color",
-          "$value": "{blue.600}"
+          "$value": "{sky.600}"
         },
         "border": {
           "color": {
             "$type": "color",
-            "$value": "{blue.200}"
+            "$value": "{sky.200}"
           }
         },
         "close": {
@@ -1230,14 +1230,14 @@
             "hover": {
               "background": {
                 "$type": "color",
-                "$value": "{blue.100}"
+                "$value": "{sky.100}"
               }
             },
             "focus": {
               "ring": {
                 "color": {
                   "$type": "color",
-                  "$value": "{blue.600}"
+                  "$value": "{sky.600}"
                 }
               }
             }
@@ -1246,19 +1246,19 @@
         "outlined": {
           "color": {
             "$type": "color",
-            "$value": "{blue.600}"
+            "$value": "{sky.600}"
           },
           "border": {
             "color": {
               "$type": "color",
-              "$value": "{blue.600}"
+              "$value": "{sky.600}"
             }
           }
         },
         "simple": {
           "color": {
             "$type": "color",
-            "$value": "{blue.600}"
+            "$value": "{sky.600}"
           }
         }
       },
@@ -1755,16 +1755,16 @@
       "info": {
         "background": {
           "$type": "color",
-          "$value": "#eff6fff2"
+          "$value": "#eef4fff2"
         },
         "color": {
           "$type": "color",
-          "$value": "{blue.600}"
+          "$value": "{sky.600}"
         },
         "border": {
           "color": {
             "$type": "color",
-            "$value": "{blue.200}"
+            "$value": "{sky.200}"
           }
         },
         "detail": {
@@ -1778,14 +1778,14 @@
             "hover": {
               "background": {
                 "$type": "color",
-                "$value": "{blue.100}"
+                "$value": "{sky.100}"
               }
             },
             "focus": {
               "ring": {
                 "color": {
                   "$type": "color",
-                  "$value": "{blue.600}"
+                  "$value": "{sky.600}"
                 }
               }
             }
@@ -3313,16 +3313,16 @@
       "info": {
         "background": {
           "$type": "color",
-          "$value": "#3b82f629"
+          "$value": "#7db3ff29"
         },
         "color": {
           "$type": "color",
-          "$value": "{blue.500}"
+          "$value": "{sky.300}"
         },
         "border": {
           "color": {
             "$type": "color",
-            "$value": "#1d4ed85c"
+            "$value": "#0369a15c"
           }
         },
         "close": {
@@ -3337,7 +3337,7 @@
               "ring": {
                 "color": {
                   "$type": "color",
-                  "$value": "{blue.500}"
+                  "$value": "{sky.300}"
                 }
               }
             }
@@ -3346,19 +3346,19 @@
         "outlined": {
           "color": {
             "$type": "color",
-            "$value": "{blue.500}"
+            "$value": "{sky.300}"
           },
           "border": {
             "color": {
               "$type": "color",
-              "$value": "{blue.500}"
+              "$value": "{sky.300}"
             }
           }
         },
         "simple": {
           "color": {
             "$type": "color",
-            "$value": "{blue.500}"
+            "$value": "{sky.300}"
           }
         }
       },
@@ -3855,16 +3855,16 @@
       "info": {
         "background": {
           "$type": "color",
-          "$value": "#3b82f629"
+          "$value": "#eef4ff29"
         },
         "color": {
           "$type": "color",
-          "$value": "{blue.500}"
+          "$value": "{sky.300}"
         },
         "border": {
           "color": {
             "$type": "color",
-            "$value": "#1d4ed85c"
+            "$value": "#0369a15c"
           }
         },
         "detail": {
@@ -3885,7 +3885,7 @@
               "ring": {
                 "color": {
                   "$type": "color",
-                  "$value": "{blue.500}"
+                  "$value": "{sky.500}"
                 }
               }
             }
@@ -6337,7 +6337,7 @@
     }
   },
   "aura/custom": {
-    "bulk transcription modal": {
+    "bulktranscriptionmodal": {
       "border": {
         "color": {
           "$type": "color",
@@ -6380,7 +6380,7 @@
           },
           "weight": {
             "$type": "number",
-            "$value": 600
+            "$value": "{typography.font.weight.semibold}"
           }
         }
       },
@@ -6439,6 +6439,24 @@
     },
     "typography": {
       "font": {
+        "weight": {
+          "regular": {
+            "$type": "number",
+            "$value": 400
+          },
+          "medium": {
+            "$type": "number",
+            "$value": 500
+          },
+          "semibold": {
+            "$type": "number",
+            "$value": 600
+          },
+          "bold": {
+            "$type": "number",
+            "$value": 700
+          }
+        },
         "size": {
           "100": {
             "$type": "number",
@@ -6663,7 +6681,7 @@
           "font": {
             "weight": {
               "$type": "number",
-              "$value": 600
+              "$value": "{typography.font.weight.semibold}"
             }
           },
           "padding": {
@@ -6733,7 +6751,7 @@
           "font": {
             "weight": {
               "$type": "number",
-              "$value": 600
+              "$value": "{typography.font.weight.semibold}"
             }
           }
         },
@@ -6910,7 +6928,7 @@
         "font": {
           "weight": {
             "$type": "number",
-            "$value": 600
+            "$value": "{typography.font.weight.semibold}"
           }
         },
         "border": {
@@ -7467,7 +7485,7 @@
         },
         "weight": {
           "$type": "number",
-          "$value": 700
+          "$value": "{typography.font.weight.bold}"
         }
       },
       "min": {
@@ -7708,7 +7726,7 @@
         "font": {
           "weight": {
             "$type": "number",
-            "$value": 500
+            "$value": "{typography.font.weight.medium}"
           }
         }
       },
@@ -7764,7 +7782,7 @@
           },
           "weight": {
             "$type": "number",
-            "$value": 500
+            "$value": "{typography.font.weight.semibold}"
           }
         }
       },
@@ -8836,7 +8854,7 @@
         "font": {
           "weight": {
             "$type": "number",
-            "$value": 500
+            "$value": "{typography.font.weight.medium}"
           }
         }
       },
@@ -8873,7 +8891,7 @@
           "font": {
             "weight": {
               "$type": "number",
-              "$value": 500
+              "$value": "{typography.font.weight.medium}"
             }
           }
         }
@@ -9477,7 +9495,7 @@
           "font": {
             "weight": {
               "$type": "number",
-              "$value": 600
+              "$value": "{typography.font.weight.semibold}"
             }
           }
         },
@@ -9485,7 +9503,7 @@
           "font": {
             "weight": {
               "$type": "number",
-              "$value": 600
+              "$value": "{typography.font.weight.semibold}"
             }
           }
         },
@@ -9862,7 +9880,7 @@
           },
           "weight": {
             "$type": "number",
-            "$value": 600
+            "$value": "{typography.font.weight.semibold}"
           }
         }
       },
@@ -10092,7 +10110,7 @@
         "font": {
           "weight": {
             "$type": "number",
-            "$value": 600
+            "$value": "{typography.font.weight.semibold}"
           },
           "size": {
             "$type": "number",
@@ -10286,7 +10304,7 @@
         "font": {
           "weight": {
             "$type": "number",
-            "$value": 600
+            "$value": "{typography.font.weight.semibold}"
           }
         },
         "focus": {
@@ -10470,7 +10488,7 @@
         "font": {
           "weight": {
             "$type": "number",
-            "$value": 400
+            "$value": "{typography.font.weight.regular}"
           },
           "size": {
             "$type": "number",
@@ -10491,7 +10509,7 @@
       "font": {
         "weight": {
           "$type": "number",
-          "$value": 500
+          "$value": "{typography.font.weight.medium}"
         }
       },
       "over": {
@@ -10903,7 +10921,7 @@
       "font": {
         "weight": {
           "$type": "number",
-          "$value": 400
+          "$value": "{typography.font.weight.regular}"
         },
         "size": {
           "$type": "number",
@@ -12256,7 +12274,7 @@
           },
           "weight": {
             "$type": "number",
-            "$value": 500
+            "$value": "{typography.font.weight.medium}"
           }
         },
         "sm": {
@@ -13124,7 +13142,7 @@
         "font": {
           "weight": {
             "$type": "number",
-            "$value": 600
+            "$value": "{typography.font.weight.semibold}"
           }
         }
       }
@@ -13402,7 +13420,7 @@
           },
           "weight": {
             "$type": "number",
-            "$value": 600
+            "$value": "{typography.font.weight.semibold}"
           }
         }
       }
@@ -14229,7 +14247,7 @@
           "font": {
             "weight": {
               "$type": "number",
-              "$value": 500
+              "$value": "{typography.font.weight.medium}"
             }
           }
         },
@@ -14279,7 +14297,7 @@
             },
             "weight": {
               "$type": "number",
-              "$value": 500
+              "$value": "{typography.font.weight.medium}"
             }
           }
         }
@@ -14404,7 +14422,7 @@
         "font": {
           "weight": {
             "$type": "number",
-            "$value": 600
+            "$value": "{typography.font.weight.semibold}"
           }
         },
         "focus": {
@@ -14535,7 +14553,7 @@
         },
         "weight": {
           "$type": "number",
-          "$value": 700
+          "$value": "{typography.font.weight.bold}"
         }
       },
       "border": {
@@ -15032,7 +15050,7 @@
         "font": {
           "weight": {
             "$type": "number",
-            "$value": 500
+            "$value": "{typography.font.weight.medium}"
           },
           "size": {
             "$type": "number",
@@ -15044,7 +15062,7 @@
         "font": {
           "weight": {
             "$type": "number",
-            "$value": 500
+            "$value": "{typography.font.weight.medium}"
           },
           "size": {
             "$type": "number",
@@ -15121,7 +15139,7 @@
       "font": {
         "weight": {
           "$type": "number",
-          "$value": 500
+          "$value": "{typography.font.weight.medium}"
         }
       },
       "disabled": {
@@ -15217,15 +15235,7 @@
       "sm": {
         "padding": {
           "$type": "number",
-          "$value": "{scale.0-25}"
-        },
-        "font": {
-          "size": {
-            "$type": "number",
-            "$value": "{typography.font.size.100}"
-          }
-        },
-        "zadding": {
+          "$value": "{scale.0-25}",
           "x": {
             "$type": "number",
             "$value": "{scale.0-75}"
@@ -15234,20 +15244,18 @@
             "$type": "number",
             "$value": "{scale.0-375}"
           }
+        },
+        "font": {
+          "size": {
+            "$type": "number",
+            "$value": "{typography.font.size.100}"
+          }
         }
       },
       "lg": {
         "padding": {
           "$type": "number",
-          "$value": "{scale.0-25}"
-        },
-        "font": {
-          "size": {
-            "$type": "number",
-            "$value": "{typography.font.size.300}"
-          }
-        },
-        "zadding": {
+          "$value": "{scale.0-25}",
           "x": {
             "$type": "number",
             "$value": "{scale.1-25}"
@@ -15255,6 +15263,12 @@
           "y": {
             "$type": "number",
             "$value": "{scale.0-625}"
+          }
+        },
+        "font": {
+          "size": {
+            "$type": "number",
+            "$value": "{typography.font.size.300}"
           }
         }
       }
@@ -15899,7 +15913,7 @@
           "font": {
             "weight": {
               "$type": "number",
-              "$value": 600
+              "$value": "{typography.font.weight.semibold}"
             }
           }
         },
@@ -15907,7 +15921,7 @@
           "font": {
             "weight": {
               "$type": "number",
-              "$value": 600
+              "$value": "{typography.font.weight.semibold}"
             }
           }
         },
