@@ -9,12 +9,13 @@
 </ng-template>
 
 <div class="page">
-  <!-- El modelo "todo arriba" (S59) dejó estas páginas sin <h1>: la
-       identidad la daba solo un <ol> de breadcrumb, y el documento quedaba
-       sin encabezado. Visualmente oculto porque el diseño no lo pide. -->
-  <h1 class="visually-hidden">{{ 'sidebar.groups' | translate }}</h1>
-
   <div class="page__inner page__inner--list">
+    <!-- El título de la página vive en el CUERPO, no en la barra: la miga de
+         arriba dice DÓNDE estás y esta línea dice QUÉ miras (modelo Snow UI,
+         medido en `/orders`). Es el MISMO `<h1>` que S59 dejó oculto —no hay un
+         encabezado nuevo—, así que sigue habiendo exactamente uno por documento. -->
+    <h1 class="page__heading">{{ 'sidebar.groups' | translate }}</h1>
+
     <div class="page__action-bar">
       <sc-column-selector
         [columns]="columnDefs()"

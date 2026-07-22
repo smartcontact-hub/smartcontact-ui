@@ -28,6 +28,13 @@
 
 <div class="page" [class.page--has-selection]="selectedIds().size > 0">
   <div class="page__inner page__inner--list">
+    <!-- Las NUEVE páginas de repositorio se pintan desde aquí y NINGUNA tenía
+         `<h1>`: no es que estuviera oculto como en el resto, es que no existía,
+         así que su documento no tenía encabezado. `titleKey` es la misma clave
+         que la ruta usa para su última miga, o sea que el título y el breadcrumb
+         no pueden divergir. -->
+    <h1 class="page__heading">{{ config().titleKey | translate }}</h1>
+
     <div class="page__action-bar">
       <sc-search
         class="page__search"

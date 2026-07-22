@@ -61,9 +61,19 @@ export const configRoutes: Routes = [
       },
     ],
   },
+  /*
+   * "Configuración" abre el trail igual que "AED" abre el de sus tres
+   * subpáginas: sin él, la barra repetía la palabra que el título del cuerpo
+   * (`.page__heading`) ya dice. No es una ruta navegable → `link: false`.
+   */
   {
     path: 'seguridad',
-    data: { breadcrumb: { labelKey: 'config.seguridad.title' } },
+    data: {
+      breadcrumb: [
+        { labelKey: 'sidebar.configuration', link: false },
+        { labelKey: 'config.seguridad.title' },
+      ],
+    },
     loadComponent: () =>
       import('./pages/seguridad-page.component').then((m) => m.SeguridadPageComponent),
   },
@@ -71,7 +81,12 @@ export const configRoutes: Routes = [
   { path: 'integraciones', loadComponent: placeholder },
   {
     path: 'sistema',
-    data: { breadcrumb: { labelKey: 'config.sistema.title' } },
+    data: {
+      breadcrumb: [
+        { labelKey: 'sidebar.configuration', link: false },
+        { labelKey: 'config.sistema.title' },
+      ],
+    },
     loadComponent: () =>
       import('./pages/sistema-page.component').then((m) => m.SistemaPageComponent),
   },

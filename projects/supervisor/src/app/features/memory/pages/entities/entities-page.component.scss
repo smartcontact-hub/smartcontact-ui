@@ -17,6 +17,13 @@
     display: flex;
     flex-direction: column;
     gap: var(--sc-spacing-1-5);
+
+    /* El `gap` de este contenedor ya separa el título de lo que viene
+     * debajo; sin esto sumaría además su propio margen y quedaría al doble
+     * de distancia que en las páginas que no usan `gap` (medido: 42 vs 21). */
+    .page__heading {
+      margin-bottom: 0;
+    }
   }
 }
 

@@ -9,7 +9,9 @@ import { Routes } from '@angular/router';
 /**
  * Each instance route declares its breadcrumb as a 2-element array:
  * `[Repositorios → <instance>]`. The "Repositorios" crumb links back to
- * the hub. The hub itself is a leaf — declares only its own crumb.
+ * the hub. The hub opens with the menu section instead, because with a
+ * single crumb the bar repeated word for word the page heading that now
+ * lives in the body (`.page__heading`).
  */
 const repoInstance = (labelKey: string) => ({
   breadcrumb: [
@@ -21,7 +23,12 @@ const repoInstance = (labelKey: string) => ({
 export const REPOSITORIES_ROUTES: Routes = [
   {
     path: 'repositorios',
-    data: { breadcrumb: { labelKey: 'sidebar.repositories' } },
+    data: {
+      breadcrumb: [
+        { labelKey: 'sidebar.administration', link: false as const },
+        { labelKey: 'sidebar.repositories' },
+      ],
+    },
     loadComponent: () =>
       import('./pages/repositorios-hub-page.component').then((m) => m.RepositoriosHubPageComponent),
   },

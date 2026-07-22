@@ -40,3 +40,29 @@
     max-width: 832px;
   }
 }
+
+/* Título de página — la línea que abre el contenido.
+ *
+ * Medido en vivo sobre Snow UI (`/orders`, la referencia elegida): el título
+ * de página NO vive en el breadcrumb, vive en el CUERPO, con peso de subtítulo
+ * (16px/600) y SIN banda — ni borde, ni sombra, ni fondo propio. La barra de
+ * arriba dice DÓNDE estás; esta línea dice QUÉ estás mirando. Es lo contrario
+ * de la banda que S59 retiró, que sí competía con los datos.
+ *
+ * No añade un encabezado nuevo: DESTAPA el `<h1>` que ya existía oculto en
+ * cada página, así que el conteo de `page-identity.spec.ts` sigue siendo 1 y
+ * el documento no gana ni pierde estructura.
+ *
+ * Se llama `__heading` y no `__title` A PROPÓSITO: `.page__title` sobrevive
+ * como CSS muerto de aquella banda en ~9 páginas, y una regla encapsulada de
+ * componente le gana siempre a una global — reusar el nombre habría dado
+ * tamaños distintos por página sin que nada lo avisara.
+ */
+.page__heading {
+  margin: 0 0 var(--sc-spacing-1-5);
+  font-family: var(--sc-font-family-subtitle-1);
+  font-size: var(--sc-font-size-subtitle-1);
+  line-height: var(--sc-line-height-subtitle-1);
+  font-weight: var(--sc-font-weight-subtitle-1);
+  color: var(--sc-text-primary);
+}
