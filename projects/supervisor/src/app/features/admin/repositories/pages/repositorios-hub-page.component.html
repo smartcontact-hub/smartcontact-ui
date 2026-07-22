@@ -1,14 +1,16 @@
-<!-- Modelo "todo arriba" (S59): la identidad la da el breadcrumb de la TopBar,
-     no una banda propia. Esta página era la ÚLTIMA que seguía llevando
-     `<sc-page-header>`, así que enseñaba "Repositorios" dos veces seguidas —
-     en la barra y otra vez debajo, sin acción ni contexto que lo justificara.
-     El `<h1>` sigue existiendo, oculto: lo pintaba el componente que se va, y
-     sin él el documento se quedaba sin encabezado. Mismo patrón que las nueve
-     páginas de listado. -->
+<!-- Esta página fue la ÚLTIMA que llevó `<sc-page-header>`, y lo que sobraba
+     de aquella BANDA no era el título: era la banda —icono, borde, sombra y
+     `position: sticky`— compitiendo con la rejilla de destinos. S59 se la
+     llevó entera y de paso escondió el `<h1>`; lo que vuelve ahora es solo la
+     línea de título, sin chrome. Mismo patrón que las nueve listas. -->
 <div class="hub">
-  <h1 class="visually-hidden">{{ 'sidebar.repositories' | translate }}</h1>
-
   <div class="hub__inner page__inner page__inner--hub">
+    <!-- El título de la página vive en el CUERPO, no en la barra: la miga de
+         arriba dice DÓNDE estás y esta línea dice QUÉ miras (modelo Snow UI,
+         medido en `/orders`). Es el MISMO `<h1>` que S59 dejó oculto —no hay un
+         encabezado nuevo—, así que sigue habiendo exactamente uno por documento. -->
+    <h1 class="page__heading">{{ 'sidebar.repositories' | translate }}</h1>
+
     <div class="hub__categories">
       @for (category of categories; track category.titleKey) {
         <section class="hub__category">
