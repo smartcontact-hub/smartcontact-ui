@@ -140,6 +140,18 @@
    itera con él, pero antes de pushear corre la suite entera — el fallo estaba justo en la
    parte que el carril no cubría.
 
+   *Corolario (s21), y es de COSTE, no de cobertura: la cadena entera SÍ, pero UNA sola vez por
+   tarea.* Esta regla dice qué correr y no dice cuántas veces, así que la cumplí commit a
+   commit: **4 rondas de `verify`, 3 de `e2e:supervisor`, 2 de `e2e` y 2 de los tres builds AOT**
+   para una sola tarea, más la espera del CI en 5 pushes. Cada `verify` reconstruye el DS entero
+   y cada `e2e:supervisor` son 125 tests: eso fue el grueso del tiempo de la tarea, y Rafa lo
+   preguntó. **Acción**: commitea las veces que la historia merezca —los commits separados son
+   los que hacen revertible una pieza sin las otras— pero **agrupa el PUSH**, y corre la cadena
+   completa una vez, sobre el árbol final. Mientras iteras, el subconjunto que toca tu cambio.
+   Y para un cambio que solo toca `.md`, lo único que puede romperse es `docs:guard`,
+   `docs:coherence` y `lint`: correr `verify` entero ahí es exactamente el desperdicio que este
+   corolario nombra.
+
 8. **Vas a crear un `.md` nuevo en el repo → regístralo en `docs/DOCS-INDEX.md` en el mismo
    commit.** `docs:guard` escanea **todos** los `.md` (docs/ recursivo + raíz) y exige mapeo por
    basename; solo `README.md` y el propio índice están exentos. Sin registrar = `verify` rojo.
