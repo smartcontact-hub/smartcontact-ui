@@ -1,15 +1,18 @@
 # NEXT-SESSION — hand-off
 
 > Estado volátil. Se SOBREESCRIBE en cada cierre. Lo durable vive en `docs/`.
-> **Sello: 2026-07-21, cierre sesión 20 (conversation-table MERGEADA a main).**
+> **Sello: 2026-07-21, cierre sesión 20 (conversation-table MERGEADA + el puente
+> Figma EN MARCHA y BIDIRECCIONAL — breadcrumb de punta a punta).**
 
 ## ▶️ EMPIEZA AQUÍ
 
 1. Lee este fichero y luego [`LEARNINGS.md`](LEARNINGS.md).
 2. **Confirma el CI LEYENDO el run** del último commit.
-3. **EL SIGUIENTE FRENTE ES FIGMA, no más deuda de diseño.** La deuda (tablas,
-   contraste, acoplamiento) está esencialmente cerrada. Ver «EL SIGUIENTE FRENTE»
-   abajo antes de buscar cosas internas que pulir — su valor ya cae en picado.
+3. **EL PUENTE FIGMA YA ESTÁ EN MARCHA Y VA EN LOS DOS SENTIDOS** (probado con el
+   breadcrumb, ver «EL PUENTE FIGMA» abajo). La deuda de diseño (tablas,
+   contraste, acoplamiento) está cerrada; el trabajo de valor ahora es el puente,
+   no pulir cosas internas. **El conector de Figma está autorizado y la escritura
+   código→Figma FUNCIONA** (`use_figma`, file `khNq9dJKNi13pNllrqm6dx`).
 4. **B3 y B4 están cerrados.** Del plan de convergencia solo queda **B5b**
    (necesita diseño). Suite del supervisor: **118 tests**. La familia `.table`
    está migrada entera; la receta queda por si aparece una tabla nueva:
@@ -240,45 +243,71 @@ antes de contar y el tope baja a 36 — trinquete más ceñido.
 
 ---
 
-# ▶︎ EL SIGUIENTE FRENTE — el puente con Figma (lo estratégico, no más deuda)
+# ▶︎ EL PUENTE FIGMA — EN MARCHA, y ya va en los DOS sentidos (breadcrumb = 1er caso)
 
-El objetivo que Rafa nombró de verdad es el puente **bidireccional con Figma**, y
-no se ha tocado mientras se limpiaba deuda. Estado REAL, para no re-arrancarlo de
-cero (el detalle durable vive en `ROADMAP.md` + `DECISIONS.md`, no aquí):
+Los bloqueadores se levantaron esta sesión: **el conector de Figma está
+autorizado** y **la escritura código→Figma FUNCIONA**. El Kit oficial es el file
+`khNq9dJKNi13pNllrqm6dx` («Smart Contact Design System»). El puente ya está probado
+de punta a punta con un componente real — el **breadcrumb**:
 
-**La mitad de TOKENS ya está HECHA y es seamless** (DD-18…DD-22; DD-20 la cierra):
-un cambio de color/sizing/escala/tipografía en el Theme Designer → export DTCG →
-`tokens:import` → `verify` → Cloudflare reconstruye, con un carril que postea el
-veredicto «en cristiano» en ~1 min (`tokens-check.yml`). **Esto NO se rehace.**
+| Commit | Qué |
+|---|---|
+| `6033838` | `sc-breadcrumb` — 1er componente traído por el puente Figma→código |
+| `0b8c38a` | la miga de la TopBar adopta `sc-breadcrumb` (código→app) |
+| `6b70f2a` | `sc-breadcrumb` marca el tramo actual (más oscuro, mismo peso) |
+| Figma | frame `Current state · propuesta` node `13890:157` (código→Figma) |
+| `5c83b85` | `customs-catalog §2.12` referencia el ejemplo de Figma |
 
-**Lo que FALTA es la mitad de COMPONENTES/PANTALLAS + el registro** — justo lo que
-Rafa pide con «pedir un diseño desde Figma» y «registrar en el pokédex lo que se
-hace en Figma»:
+Todos en `main`, CI verde leído del run (incluido `e2e:supervisor`).
 
-- **Figma → código**: generar un componente/pantalla desde un nodo (hoy el puente
-  lleva VALORES, no estructura). NUEVO.
-- **código → Figma**: reflejar lo construido de vuelta. Hoy solo se escriben
-  variables sueltas y guiadas — los round-trips pendientes (focus-ring, cabos
-  DD-24) están en `ROADMAP.md § En curso`.
-- **pokédex**: `docs/inventory.md` es el registro; sincronizarlo con Figma es NUEVO.
-- **Code Connect**: BAJA prioridad hoy (los devs usan su repo; la referencia
-  dev-facing real es el AUDIT del DS). Ver memoria `code-connect-low-priority…`.
 
-**Bloqueadores que solo Rafa quita** (sin esto no se avanza):
+- **Figma → código**: `sc-breadcrumb` (wrapper de `<p-breadcrumb>`) creado desde el
+  nodo `185:6637`. Destapó un preset DORMIDO (themed pero sin componente/consumidor)
+  — el puente no solo trae diseños, AUDITA lo que tienes a medias. Demo + pokédex.
+- **código → app**: adoptado en la **TopBar** del supervisor. La clave que zanjó el
+  debate: *Figma es la fuente de verdad del COMPONENTE, no de la composición de
+  página*. Se pinta idéntico a Figma; se soltó el retoque local S59 (último tramo
+  en negrita como título) — mezclaba wayfinding con título.
+- **código → Figma** (PRIMERA escritura): frame `Current state · propuesta` (node
+  `13890:157`) en la página `❖ Breadcrumb`, debajo de los Examples, SIN tocar el
+  maestro. Propone el estado «tramo actual más oscuro».
 
-1. **Autorizar el conector de Figma** — esta sesión `plugin:figma:figma` pedía
-   auth; sin él no se lee/escribe Figma. Ajustes de conectores de claude.ai, o
-   una sesión interactiva.
-2. **La URL del Kit OFICIAL** (el que lee el Theme Designer) — es la fila «Figma
-   pendiente» del Lab; con ella se fija ahí para siempre.
-3. **Qué dirección primero.** Recomendado: cerrar antes los round-trips pendientes
-   (pequeños, guiados, alta certeza) que arrancar el generador de componentes
-   (grande, necesita diseño). Decisión de Rafa.
+**Lo que validó los biases (con evidencia, no opinión)**: `/ui-ux-pro-max` + medir
+**Snow UI** en vivo (`snow-interface.netlify.app`). Hallazgos: (a) un breadcrumb
+DEBE marcar el actual —Snow UI: padre al 64%, actual al 100%, MISMO peso—; el DS lo
+hace ahora (`--sc-text-primary`, `labelStyle` en línea, cero acoplamiento). (b) El
+título de página **no** vive en el breadcrumb: es un `<h2>` modesto en el CUERPO,
+contextual (dashboards sí, feeds no). Ver `customs-catalog §2.12`.
 
-Operativo al arrancar: memorias `figma-bridge-which-mcp` (qué MCP para leer vs
-escribir — NUNCA ClaudeTalkToFigma), `figma-ds-tokens-icons-reference` y
-`figma-asset-discovery-probes`, + la convención de cierre con palabras-gatillo
-(DD sobre escrituras en Figma).
+**La mitad de TOKENS sigue HECHA y seamless** (DD-18…DD-22): Theme Designer → export
+DTCG → `tokens:import` → `verify` → Cloudflare. Con carril «en cristiano» ~1 min
+(`tokens-check.yml`). No se rehace.
+
+## Abierto del breadcrumb (para cerrarlo del todo)
+
+1. **Marta mira la propuesta en Figma** (`Current state · propuesta`) y, si le vale,
+   la sube al **componente maestro**. Ahí deja de ser divergencia (`customs-catalog
+   §2.12`) y pasa a 1:1.
+2. **Título de página** — decisión de producto APARTE (revierte parte del S59
+   «todo-arriba»): ¿volvemos a un `<h2>` modesto en el cuerpo, como Snow UI en
+   dashboards? Hoy el `<h1>` va `visually-hidden` → el vidente no tiene título.
+
+## Cómo seguir con el puente
+
+- **Más componentes Figma→código**: Rafa pasa un nodo; se repite el patrón
+  `sc-divider`/`sc-breadcrumb` (wrapper fino + preset + demo + pokédex + adopción).
+- **Round-trips pendientes** (código→Figma, guiados): focus-ring, cabos DD-24 — en
+  `ROADMAP.md § En curso`.
+- **Code Connect**: BAJA prioridad (los devs usan su repo). Figma lo ofrece al hacer
+  `get_design_context`; se declina por nuestra decisión (`code-connect-low-priority`).
+
+**Operativo de escritura a Figma** (aprendido esta sesión): SIEMPRE carga el skill
+`figma-use` (recurso MCP `get_figma_skill` → `skill://figma/figma-use/SKILL.md`)
+ANTES de `use_figma`, y pásalo en `skillNames` con prefijo `resource:`. Reglas que
+duelen: cargar la FUENTE antes de tocar texto, colores en 0–1, posicionar nodos
+nuevos lejos de (0,0) —escanea `page.children`—, auto-layout para hijos
+relacionados, y `return` de TODOS los ids creados. NUNCA ClaudeTalkToFigma (memoria
+`figma-bridge-which-mcp`). El write es atómico: si peta, no deja nada a medias.
 
 ---
 
