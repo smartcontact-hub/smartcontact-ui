@@ -388,11 +388,21 @@ Each entry: **what bites → the rule → why**. Append here when a new one is f
 The Figma source-of-truth file is **"Smart-Contact Prime"** (file key
 `khNq9dJKNi13pNllrqm6dx`). To read/write it from an agent:
 
-- **Use `mcp__figma__*`** — the *Figma Console MCP* "Desktop Bridge" plugin (compact panel,
+- **Prefer the OFFICIAL Figma MCP** (tools under the long `mcp__acb3d14c-…__*` id):
+  `get_metadata` / `get_design_context` / `get_screenshot` to read, `use_figma` to write.
+  **Verified working in s22** — it reads and writes this file key without a local plugin.
+  Before EVERY `use_figma` call, load the `figma-use` skill and pass `skillNames`.
+- **Fallback: `mcp__figma__*`** — the *Figma Console MCP* "Desktop Bridge" plugin (compact panel,
   `</>` icon, green **"MCP ready"**). WebSocket on `localhost:9223`, no channel needed.
   Key tools: `figma_get_status` (health, pass `probe:true`), `figma_execute` (runs JS with the
-  `figma` global), `figma_capture_screenshot`.
+  `figma` global), `figma_capture_screenshot`. Needs Figma Desktop open with the plugin running,
+  so it is **not** available in headless/cron runs.
 - **Do NOT use `mcp__ClaudeTalkToFigma__*`** — a different, channel-based plugin that is not running.
+- **`get_metadata` with no `nodeId` only lists the pages Figma has LOADED** (in s22: just
+  `🖼 Cover`). That is not "the file has one page" — switch pages with
+  `await figma.setCurrentPageAsync(page)` inside `use_figma` to enumerate the real 100+.
+- **Node ids in docs go stale — resolve them before building on them.** DD-34 cited
+  `Main Content 1:12381`; that node does not exist. Verify with `get_metadata` first.
 - **Reconnect:** if the MCP server restarts, the panel still shows "MCP ready" but the socket is
   dead (`transport: none`, "No active file connected"). Re-run the plugin: Figma → *Plugins →
   Development → Figma Desktop Bridge*. (Via computer-use, Figma Desktop's bundle id is
