@@ -38,8 +38,17 @@
 | `36edfc8` | El gris que asomaba bajo la tabla era una FUGA, no un fondo |
 | `4645072` | `--sc-border-subtle` existe en oscuro — valía el color de la tarjeta |
 | `2474adf` | Se retira la bandeja gris de Contact Center (**DD-34**) |
+| `a3ef758` | Cierre: este hand-off + DD-33 + DD-34 + `customs-catalog §1.9` |
+| `ff1ea04` | **`audit:border-surfaces`** — guardián nuevo DENTRO de `verify` |
+| `aaf53c0` · `4ee5a30` | `/reflect`: afila las reglas 18 y 7 de `LEARNINGS.md` |
 
-Los cuatro en `main`, CI verde leído del run.
+Los ocho en `main`, CI verde leído del run.
+
+> **Si vienes a tocar tokens de borde**: `verify` tiene un paso más que antes,
+> `npm run audit:border-surfaces` (104 pares token × lienzo × tema). Falla si un
+> `--sc-border-*` resuelve a menos de 1.02:1 de `--sc-bg-surface` o
+> `--sc-bg-default` **en su tema**. Sus exenciones son condicionales: valen solo
+> mientras el token no lo lea nadie, y el guardián comprueba esa condición.
 
 ## Lo que hizo girar la sesión: medir la referencia antes de opinar
 
