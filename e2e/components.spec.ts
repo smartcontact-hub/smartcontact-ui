@@ -32,6 +32,22 @@ const gotoPage = async (page: Page, path: string) => {
   await page.waitForLoadState('networkidle', { timeout: 10_000 }).catch(() => undefined);
 };
 
+/**
+ * Baseline visual, SOLO local (los baselines de Playwright son por-plataforma;
+ * en CI mandan las métricas de arriba, que sí corren siempre).
+ *
+ * **Si cambias el diseño de sc-demo a propósito, REGENERA en el mismo commit**:
+ *
+ *     npx playwright test -c playwright.config.ts components --update-snapshots
+ *
+ * No hacerlo sale caro y ya pasó: el rediseño «estilo Storybook» (DD-29) dejó
+ * estas 25 en rojo durante cinco sesiones —diffs de 100k-650k píxeles, o sea la
+ * página entera recompuesta, no ruido— y se acabó culpando al entorno. Una red
+ * que lleva meses roja no avisa de nada: enseña a ignorarla.
+ *
+ * Que sigue cazando de verdad está medido, no supuesto: con UNA letra cambiada
+ * en una story, este assert se pone rojo (1501 px).
+ */
 const screenshotBaseline = async (page: Page, name: string) => {
   if (process.env['CI']) return;
   await expect(page).toHaveScreenshot(`${name}.png`, { fullPage: true, animations: 'disabled' });
