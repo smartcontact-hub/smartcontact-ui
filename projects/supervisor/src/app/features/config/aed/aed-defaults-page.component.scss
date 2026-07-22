@@ -1,8 +1,7 @@
 /*
  * Shared styles for the three AED defaults pages
- * (Servicio · Agentes · Grupos). Lives inside SettingsShell so the
- * host doesn't paint a background; the shell already owns the
- * #f7f8fa canvas.
+ * (Servicio · Agentes · Grupos). Lives inside SettingsShell, que es quien
+ * pinta el lienzo.
  */
 
 :host {
@@ -11,16 +10,28 @@
 
 .page {
   &__inner {
-    /* Bandeja GRIS exterior (Figma `Main Content` 1:12381 → gray/50, radius 12).
-     * Contiene el header "General" sobre el gris + las cards de sección BLANCAS,
-     * separadas por gaps de 28 (Figma p-card `flex flex-col gap-[scale/2]`). El
-     * ancho/centrado/padding del panel completo los controla `settings-shell__body`. */
+    /* AQUÍ HABÍA UNA BANDEJA GRIS (Figma `Main Content` 1:12381 → gray/50,
+     * radius 12) y era el único sitio de la app donde `--sc-bg-default` pintaba
+     * una región grande de CONTENIDO. Se retira porque, medida, no separaba
+     * nada en ninguno de los dos temas:
+     *
+     *   - claro: bandeja gray-50 sobre lienzo blanco = **1.06:1**. Invisible.
+     *     Además era un resto del modelo anterior a S67-A, cuando el lienzo de
+     *     config TAMBIÉN era gray-50; al pasar el lienzo a blanco (para que el
+     *     índice resaltara solo) la bandeja se quedó sin trabajo.
+     *   - oscuro: bandeja gray-950 sobre lienzo gray-950 = **1.00:1**. El
+     *     "suelo" que la bandeja decía aportar ya lo pone el propio shell, así
+     *     que las cards siguen flotando exactamente igual sin ella.
+     *
+     * Lo que separa una sección de su lienzo es su BORDE, como en las otras
+     * dieciséis rutas y como en la referencia. El `padding` se queda: era lo
+     * único de la bandeja que hacía trabajo real (que las cards no toquen el
+     * borde del panel).
+     *
+     * OJO: esto DIVERGE del maestro de Figma, igual que el tramo actual del
+     * breadcrumb. Va al puente código→Figma como propuesta, no se corrige aquí.
+     */
     margin: 0;
-    /* `bg-default` = gray-50 (light) / gray-950 (dark). En light idéntico al gris del
-     * índice; en dark baja al "suelo" para que las cards (surface = gray-900) resalten
-     * dentro de la bandeja (secondary-subtle valdría gray-900 = card → se fundirían). */
-    background: var(--sc-bg-default);
-    border-radius: var(--sc-radius-400);
     padding: var(--sc-spacing-1-143);
     display: flex;
     flex-direction: column;
