@@ -1475,10 +1475,33 @@ a 1.063 contra la bandeja.
   hueco gray-950—; en claro miden 1.06:1 y solo se leen por su borde. Es una asimetría real con
   su propia decisión detrás: queda **anotada, no aplanada**.
 
-**Round-trip pendiente con Figma.** La bandeja venía del maestro (`Main Content` 1:12381 →
-gray/50, radius 12), así que retirarla es una **divergencia** — misma categoría que el tramo
-actual del breadcrumb (`customs-catalog §2.12`). Va al puente código→Figma como propuesta para
-Marta, no se corrige en el código.
+**Round-trip pendiente con Figma.** Retirar la bandeja es una **divergencia** con el maestro —
+misma categoría que el tramo actual del breadcrumb (`customs-catalog §2.12`). Va al puente
+código→Figma como propuesta para Marta, no se corrige en el código.
+
+> **Corrección (S22), tras abrir la fuente.** Este párrafo describía la divergencia de oídas y
+> se equivocaba en casi todo: el nodo `1:12381` **no existe**, el maestro real es `13593:5401`
+> y ese `Main Content` **no pinta nada** (`fills: []`, radius 0) — ni gray/50 ni radius 12. Y
+> la pantalla del maestro no es Contact Center: es **`ScMemoryRuleBuilderPage`** (el constructor
+> de reglas), en la página `Flujos`.
+>
+> La divergencia **existe**, pero es más ancha y de otra naturaleza: lo que el maestro pinta en
+> gris es el **lienzo de página** (`13593:5402` → `#f7f8fa` = `slate-50` = `--sc-bg-default`),
+> con las cards blancas radius 8 encima. Medido a ambos lados, sobre la misma pantalla:
+>
+> | | lienzo | card | separación |
+> |---|---|---|---|
+> | maestro Figma | `#f7f8fa` | `#ffffff` | **1.063:1** |
+> | código tras DD-34 | `#ffffff` | `#ffffff` | **1.00:1** (lo hace el borde) |
+>
+> O sea: el maestro usa exactamente el modelo que esta DD midió y descartó. La propuesta a Marta
+> no es «quitamos una bandeja de una pantalla», es «el lienzo de página pasa de gris a blanco y
+> la separación la hace el borde» — decisión de más alcance, **pendiente de confirmar antes de
+> escribirla en Figma**.
+>
+> De paso, la fuente **respalda** el punto de abajo: los huecos hundidos SÍ están en el maestro
+> (tres `Container` `#f7f8fa` radius 6 dentro de la card blanca del Alcance). La asimetría que
+> esta DD dejó anotada es intención de diseño, no un descuido del código.
 
 ---
 
