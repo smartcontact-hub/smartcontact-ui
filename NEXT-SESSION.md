@@ -248,13 +248,24 @@ de las dos páginas tenía uno antes. La suite del supervisor pasa de 22 a **31*
 
 # Abierto — por qué y qué haría falta
 
-## ~~B3 · tokens-sync~~ — **CERRADO el 2026-07-22**
+## B3 · tokens-sync — **el workflow ya pasa; falta MERGEAR el PR #17**
 
-Rafa re-exportó desde el Theme Designer y el workflow corrió **verde**
-(run `29922768184`, leído: `completed`/`success`). Es el **primer `tokens-sync`
-que pasa** — los dos anteriores, de junio, fallaron. El carril entero
-(Theme Designer → export DTCG → `tokens:import` → `verify` → Cloudflare) queda
-probado de punta a punta. Nada que hacer aquí.
+Rafa re-exportó desde el Theme Designer y el workflow corrió **verde** (run
+`29922768184`, leído `completed`/`success`). Es el **primer `tokens-sync` que
+pasa** — los dos de junio fallaron. Hasta ahí, arreglado.
+
+**Pero el loop no está cerrado**, y conviene no confundirlo (yo lo di por
+cerrado y no lo estaba): el workflow no escribe en `main`, abre una rama.
+
+| | |
+|---|---|
+| **PR** | **#17** · `chore(tokens): sync del Theme Designer` · rama `design-tokens-sync` |
+| **Qué trae** | 3 ficheros y solo de tokens: `kit-export-dtcg.json`, `04-component.css`, `07-dark.css` |
+| **Su CI** | **`action_required`** — no ha corrido: espera aprobación manual en GitHub |
+| **Conflictos** | ninguno con la s22 (esto toca tokens; la s22 tocó SCSS de página, tests y docs) |
+
+**Qué falta**: aprobar su CI, leerlo verde, y mergear. No lo he hecho yo — son
+los tokens del DS entero y su CI ni siquiera ha llegado a correr.
 
 ## B5b · la prosa i18n del constructor — **NECESITA DISEÑO**
 
