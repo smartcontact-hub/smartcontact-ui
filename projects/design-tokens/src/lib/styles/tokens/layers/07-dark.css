@@ -387,7 +387,23 @@
   /* ---------- Semantic · Border ---------- */
   --sc-border-default: var(--sc-color-slate-800);
   --sc-border-strong: var(--sc-color-slate-600);
-  --sc-border-subtle: var(--sc-color-slate-900);
+  /*
+   * `subtle` valía slate-900, que es EXACTAMENTE `--sc-bg-surface` en oscuro:
+   * 1.00:1 contra la tarjeta que bordea, o sea 56 filos que no se pintaban en
+   * medio tema. No era una elección discreta, era un borde inexistente.
+   *
+   * En claro la relación es surface(slate-0) → subtle(slate-100) = 1.13:1. La
+   * rampa no tiene un slate-850 con el que repetir ese salto desde slate-900,
+   * y usar slate-800 lo igualaría a `border-default` (1.39:1) — un token que se
+   * llama "subtle" dejaría de serlo. Se mezcla hasta clavar la MISMA sutileza
+   * que en claro: 1.13:1. Es el idioma que ya usan aquí abajo las etiquetas y
+   * los mensajes.
+   *
+   * (La referencia, Snow UI, lo resuelve con alfa del color de texto —10% en
+   * los dos temas— y por eso no necesita tabla oscura. Nuestro sistema mapea
+   * roles a primitivas por tema, así que la equivalencia se escribe aquí.)
+   */
+  --sc-border-subtle: color-mix(in srgb, var(--sc-color-slate-800) 40%, var(--sc-color-slate-900));
   --sc-border-disabled: var(--sc-color-slate-800);
 
   --sc-border-secondary: var(--sc-color-blue-700);
