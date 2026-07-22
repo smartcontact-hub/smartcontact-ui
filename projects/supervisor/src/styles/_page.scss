@@ -53,10 +53,13 @@
  * cada página, así que el conteo de `page-identity.spec.ts` sigue siendo 1 y
  * el documento no gana ni pierde estructura.
  *
- * Se llama `__heading` y no `__title` A PROPÓSITO: `.page__title` sobrevive
- * como CSS muerto de aquella banda en ~9 páginas, y una regla encapsulada de
- * componente le gana siempre a una global — reusar el nombre habría dado
- * tamaños distintos por página sin que nada lo avisara.
+ * Se llama `__heading` y no `__title` A PROPÓSITO: cuando nació, `.page__title`
+ * sobrevivía como CSS muerto de aquella banda en 9 páginas, y una regla
+ * encapsulada de componente le gana siempre a una global — reusar el nombre
+ * habría dado tamaños distintos por página sin que nada lo avisara. Aquel CSS
+ * muerto ya está borrado (S22: 7 clases de la banda, 192 líneas), pero el
+ * nombre se queda: renombrar ahora tocaría los 16 `<h1>` sin ganar nada, y la
+ * trampa que lo motivó sigue siendo real para cualquier clase global futura.
  */
 .page__heading {
   margin: 0 0 var(--sc-spacing-1-5);
