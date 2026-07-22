@@ -1401,7 +1401,95 @@ marca con Figma, no un cambio de código.
 
 ---
 
-Última actualización: 2026-07-18 (**DD-32** un solo acento: la familia `accent`/`link` +
+## DD-33 · 2026-07-22 — El título de página vive en el CUERPO (revisa parte de S59)
+
+**Qué se revisa.** S59 («todo arriba») quitó de cada página su banda de título y dejó la
+identidad SOLO en el breadcrumb de la TopBar. El `<h1>` sobrevivió `visually-hidden`: existía
+para lectores de pantalla y el vidente no tenía título de página en ninguna ruta.
+
+**Lo que la medición cambió.** Se midió en vivo la referencia que eligió Rafa —Snow UI
+`/orders`, que es nuestro mismo arquetipo: barra con miga + tabla— y el título de página **no
+vive en la barra**: es un encabezado de **16px/600 en el cuerpo, sin banda**. Lo que sobraba en
+S59 era el CHROME de aquella banda (icono, borde, sombra, `position: sticky`), no el título.
+
+**Decisión.** El `<h1>` se destapa como `.page__heading` (tokens `--sc-*-subtle-1`, que valen
+exactamente 16px/600) en las 15 páginas de contenido. **No se añade encabezado**: sigue habiendo
+uno por documento, así que el conteo de `page-identity.spec.ts` no cambia — cambia su veredicto.
+Los **formularios quedan fuera**: su identidad la pinta su chrome propio (cabecera sticky /
+ficha), y un título más sería el duplicado de S59 por otra puerta.
+
+**Consecuencia obligatoria: el trail gana un padre.** Con la miga de un solo tramo, el título
+del cuerpo repetía la palabra a 95px —«Usuarios» sobre «Usuarios»—, que es literalmente el
+defecto que Rafa cazó en la sesión 17. Las diez rutas que tenían miga corta abren ahora con su
+sección (`Administración ›`, `Configuración ›`, `Conversaciones ›`); las secciones que no son
+rutas van con `link: false`. Es lo que hace la referencia (`Dashboards / Order List` arriba,
+`Order List` en el cuerpo): la barra dice DÓNDE estás, el título QUÉ miras. **Sin el padre, esta
+DD reintroduce el defecto que dice arreglar** — no se revierte una mitad sin la otra.
+
+**Hallazgo de paso.** Las NUEVE páginas de repositorio no tenían `<h1>` **ninguno** — no oculto,
+inexistente— así que su documento iba sin encabezado y `page-identity.spec.ts` no las cubría.
+Ahora lo tienen, resuelto desde `config().titleKey`, que es la misma clave que la ruta usa para
+su última miga: título y breadcrumb no pueden divergir.
+
+**Nombre `__heading` y no `__title`, a propósito.** `.page__title` sobrevive como CSS MUERTO de
+la banda de S59 en unas nueve hojas de página, con tamaños distintos entre sí (h2 en seguridad,
+h3 en el hub). Una regla encapsulada de componente le gana siempre a una global, así que reusar
+el nombre habría dado un tamaño por página sin que nada avisara. Lo vigila un test de
+uniformidad que compara los 11 valores computados y exige uno solo.
+
+**Alternativa descartada.** *Pintar el título en el shell desde el breadcrumb* (un sitio, cero
+duplicación): el título tiene que alinearse con la columna de contenido, y su ancho sale del
+arquetipo de página (`--list` 1600 / `--hub` 960 / `--reading` 832), que el shell no conoce.
+
+## DD-34 · 2026-07-22 — `--sc-bg-default` es el SUELO del shell, nunca una superficie de contenido
+
+**La pregunta era otra.** Rafa preguntó por qué en Contact Center el fondo parece gris y en el
+resto blanco. Medidas las 17 rutas en los dos temas: **no existe tal división**. El lienzo de
+página es `--sc-bg-surface` en 17 de 17. El gris que se veía era el del SHELL asomando por
+debajo de donde acababa el contenido, en tres páginas cuyo `:host` no llevaba `height: 100%`
+(452px de gris en `/reglas`, 345 en `/categorias`, y `/entidades` con el defecto **latente**).
+
+**Lo que sí destapó la medición.** El sistema tiene tres tokens de superficie y **dos valores**
+—`--sc-bg-elevated` vale lo mismo que `--sc-bg-surface` en ambos temas—, y los dos que difieren
+lo hacen por nada: `bg-default` contra `bg-surface` es **1.06:1 en claro y 1.14:1 en oscuro**.
+Lo que separa una tarjeta de su lienzo **no es el relleno** (1.00:1, son el mismo color): es su
+borde de 1px, 1.34:1 en claro y 1.39:1 en oscuro. Es el mismo modelo que la referencia (Snow UI:
+lienzo blanco, tarjeta blanca, borde al 10% del color de texto).
+
+**Decisión.** `--sc-bg-default` es el suelo sobre el que se apoya un lienzo —el fondo del shell
+detrás de sidebar y barra, y el lienzo del `settings-shell` en oscuro, donde `bg-surface` vale
+lo mismo que el índice y se fundirían—. **Dentro de `main`, una región es o el lienzo de página
+(`bg-surface`) o un bloque que se lee por su BORDE.** Se retira el único sitio que lo
+incumplía: la bandeja gris de las tres páginas AED, invisible en claro (1.06:1 sobre lienzo
+blanco) e **idéntica al lienzo** en oscuro (1.00:1). Era un resto del modelo anterior a S67-A,
+cuando el lienzo de config también era gray-50; al pasar el lienzo a blanco se quedó sin
+trabajo. Medido después: en oscuro la card **gana** separación, 1.581:1 contra el suelo frente
+a 1.063 contra la bandeja.
+
+**Lo que la decisión NO cubre, y hay que no confundir.** Siguen usando `bg-default`:
+
+- **Estados** (hover de fila, seleccionado, deshabilitado, activo). Un estado no es una
+  superficie; retirarlos borra feedback, no ruido.
+- **Huecos hundidos dentro de una tarjeta** (grupo de condiciones del constructor, cajas de
+  aviso de sistema, pie de numeración especial). En oscuro **funcionan** —card gray-900 sobre
+  hueco gray-950—; en claro miden 1.06:1 y solo se leen por su borde. Es una asimetría real con
+  su propia decisión detrás: queda **anotada, no aplanada**.
+
+**Round-trip pendiente con Figma.** La bandeja venía del maestro (`Main Content` 1:12381 →
+gray/50, radius 12), así que retirarla es una **divergencia** — misma categoría que el tramo
+actual del breadcrumb (`customs-catalog §2.12`). Va al puente código→Figma como propuesta para
+Marta, no se corrige en el código.
+
+---
+
+Última actualización: 2026-07-22 (**DD-34** `--sc-bg-default` es el suelo del shell, nunca una
+superficie de contenido [3 tokens de superficie y 2 valores; default↔surface = 1.06:1 claro /
+1.14:1 oscuro, o sea que lo que separa es el BORDE]; se retira la bandeja gris de Contact
+Center — divergencia a proponer en Figma; estados y huecos hundidos quedan fuera y anotados ·
+**DD-33** el título de página vuelve al CUERPO a 16px/600 sin banda [medido en Snow UI], el
+`<h1>` se destapa como `.page__heading` y el trail gana un padre para no repetir la palabra;
+las 9 páginas de repositorio no tenían `<h1>` ninguno · **DD-32** un solo acento: la familia
+`accent`/`link` +
 halo de foco se unifican con `info` bajo `sky`; repara 3.46:1 → 6.80:1 y obliga a
 `text-on-accent`/`icon-on-accent` a blanco; barrido de 38 outlines hardcodeados a
 `--sc-border-focus` · **DD-30** varias reglas activas a la vez + solape por unión [una conversación se procesa una vez, sin prioridad/conflictos], supersede el invariante «una sola activa» de DD-28; recorrido `/reglas` realineado · **DD-29** showcase «estilo Storybook» en sc-demo — motor propio, render por
