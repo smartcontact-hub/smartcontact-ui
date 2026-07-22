@@ -88,8 +88,14 @@ salto de color: **4 de 34 → 0 de 34**.
 - **`bg-default` como hueco hundido dentro de una tarjeta** (constructor de
   condiciones, avisos de sistema, pie de numeración especial): funciona en oscuro,
   mide 1.06:1 en claro. Asimetría real, decisión propia. Ver DD-34.
-- **Nadie vigila que un token de borde no iguale a su superficie.** Es lo que dejó
-  `border-subtle` mudo en oscuro durante meses. Un guardián cerraría la familia.
+- ~~Nadie vigila que un token de borde no iguale a su superficie.~~ **HECHO**:
+  `npm run audit:border-surfaces`, dentro de `verify` (104 pares: token × lienzo ×
+  tema). En su primera ejecución destapó un SEGUNDO caso —
+  `--sc-border-primary-active`, `blue-800` heredado a oscuro, 1.019:1 contra
+  `slate-900`— **latente**, porque hoy no lo lee nadie. Está exento, pero la
+  exención es **condicional**: el guardián comprueba que siga sin consumidores y
+  se pone rojo el día que alguien lo use. Si lo vas a usar, dale valor oscuro
+  antes.
 - **Las 25 baselines visuales de `npm run e2e` llevan tiempo en rojo en local.**
   Comprobado con stash-y-reproduce: fallan igual sin cambios. El CI las salta por
   diseño (`if (process.env['CI']) return`), así que la red está muda sin avisar.

@@ -39,6 +39,20 @@
    si el pipeline computa algo (color, medida, agregado), pásale primero un caso conocido;
    y para colores, que los normalice el navegador (`canvas.fillStyle`), no un regex tuyo.
 
+   *Corolario A (s21) — un parser correcto midiendo la MAGNITUD equivocada sigue siendo un
+   hallazgo falso.* La pregunta era «¿de qué color ve el usuario la franja de debajo de la
+   tabla?» y mi sonda medía `main.bottom - page.bottom`: eso es GEOMETRÍA —cuántos píxeles
+   quedan, no de qué color son—, así que reportó 489px de costura gris en una ruta donde la
+   pantalla es **blanca** (el `:host` de esa página sí se estira y la pinta él). Estuve a punto
+   de decírselo a Rafa como hallazgo. El número bueno salió de preguntar por el PÍXEL
+   (`elementFromPoint` + subir al primer ancestro con alfa 1): **4 rutas de 34, no 9**. Antes de
+   correr la sonda, di en voz alta qué magnitud devuelve y si es la de la pregunta.
+
+   *Corolario B (s21) — un control que no LEES no es un control.* En la sonda siguiente sí puse
+   un valor conocido… y el control falló (`ctx.fillStyle = 'var(--x)'` no resuelve la variable:
+   devolvía negro donde esperaba blanco). Solo sirvió porque miré su línea antes que las demás.
+   Si el control no pasa, la medición entera queda invalidada aunque el resto parezca sensato.
+
 3. **Vas a atribuir un warning/error a tu cambio (o a "ya estaba") → pruébalo con
    stash-y-reproduce.** Cuesta ~2 llamadas y convierte "creo" en "comprobado". *Evidencia
    (s11)*: el warning de presupuesto SÍ era mío (lo arreglé borrando CSS muerto en vez de
