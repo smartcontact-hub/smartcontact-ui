@@ -220,15 +220,23 @@
     implementar contra algo que existe fuera del repo y lo que tienes delante es texto sobre ello,
     para y abre la fuente** — cuesta una llamada.
 
-18. **Vas a rebatir una propuesta del usuario con un principio de diseño → MIDE primero el estado
-    actual.** Un principio bien enunciado suena a autoridad y no lo es: puede estar protegiendo
-    algo que en el código ya no existe. *Evidencia (s14)*: rechacé unificar el fondo de página con
+18. **Vas a zanjar una decisión VISUAL con un argumento —rebatiendo al usuario o discutiéndola
+    contigo mismo— → constrúyela en su versión mínima y MÍRALA.** Un principio bien enunciado
+    suena a autoridad y no lo es: puede estar protegiendo algo que en el código ya no existe.
+    *Evidencia (s14)*: rechacé unificar el fondo de página con
     «una tarjeta sobre un lienzo de su mismo color deja de ser tarjeta». Al medirlo, la diferencia
     de relleno tarjeta/lienzo era de **1.06:1** — las tarjetas ya se leían por su borde, no por el
     fondo, así que mi principio defendía una distinción inexistente. Y la medición destapó algo
     peor que ninguno de los dos veía: en oscuro `--sc-border-subtle` **es el mismo color que la
     tarjeta** (1:1), o sea que ahí no hay borde. Medir convirtió una discusión de opiniones en un
     hallazgo, y de paso le dio la razón a él.
+
+    *Corolario (s21) — vale igual cuando el que discute eres tú solo.* Al devolver el título de
+    página al cuerpo me quedé un buen rato sopesando en abstracto si la miga necesitaba un tramo
+    padre: enumeré cuatro modelos, me fui a los pros y contras de cada uno y no avancé. Lo zanjó
+    **una captura**: puesto el título, «Usuarios» encima de «Usuarios» se ve en un segundo y no
+    hay nada que sopesar. La versión mínima ya construida es más barata que la deliberación —
+    móntala y mírala **antes** de escribir el tercer argumento, no después.
 
 20. **Tu comprobación da VERDE → pregúntate si mide algo que tú no escribiste.** Cuando el
     arreglo y la lista de comprobación salen de la misma cabeza, el verde es circular: mides
