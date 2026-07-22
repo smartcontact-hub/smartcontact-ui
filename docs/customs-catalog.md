@@ -318,6 +318,33 @@ vigila nadie.
 `button.outlined.secondary.color`. Entonces la fila de `EXCLUDE` y el bloque del preset se
 borran.
 
+### 1.9 `--sc-border-subtle` existía solo en claro · 2026-07-22
+
+En oscuro valía `slate-900`, que es **exactamente** `--sc-bg-surface`: **1.00:1** contra la
+superficie que bordea. No era un filo discreto, era un filo que no se pintaba — y lo consumen
+**56 sitios** entre el DS, sc-demo, agent y el supervisor (cabeceras de card, pies de panel,
+separadores de la paleta de comandos, el selector de columnas). Medio tema sin ellos.
+
+| | claro | oscuro (antes) | oscuro (ahora) |
+|---|---|---|---|
+| `--sc-border-subtle` | `#eceff3` · **1.153:1** | `slate-900` · **1.000:1** | `#212731` · **1.126:1** |
+| `--sc-border-default` | `#dadfe6` · 1.339:1 | `#2f3642` · 1.390:1 | igual |
+
+**Por qué un `color-mix` y no un escalón.** La relación en claro es `surface`(slate-0) →
+`subtle`(slate-100). La rampa **no tiene un `slate-850`** con el que repetir ese salto desde
+`slate-900`, y usar `slate-800` lo igualaría a `border-default` (1.39:1): un token llamado
+*subtle* dejaría de serlo. Se mezcla al 40% para clavar la MISMA sutileza que en claro. El
+`color-mix` es el idioma que ya usan en `07-dark.css` las etiquetas y los mensajes.
+
+**La referencia lo evita de raíz.** Snow UI resuelve bordes y rellenos con **alfa del color de
+texto** —10% en los dos temas— y por eso su oscuro no necesita tabla propia. Nuestro sistema
+mapea roles a primitivas POR TEMA, así que la equivalencia hay que escribirla a mano; es el
+mismo modo de fallo que dejó seis colores de texto sin valor oscuro (§1.5).
+
+**Qué lo vigila**: nada específico todavía. `theme-contrast.spec.ts` mide texto sobre fondo, no
+bordes contra su superficie. Un guardián «ningún token de borde iguala a su superficie» cerraría
+la familia entera; queda anotado, no hecho.
+
 ---
 
 ## 2. Component extensions (el DS añade lo que Figma no modela)

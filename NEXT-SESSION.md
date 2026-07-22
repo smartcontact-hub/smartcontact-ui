@@ -1,26 +1,98 @@
 # NEXT-SESSION — hand-off
 
 > Estado volátil. Se SOBREESCRIBE en cada cierre. Lo durable vive en `docs/`.
-> **Sello: 2026-07-21, cierre sesión 20 (conversation-table MERGEADA + el puente
-> Figma EN MARCHA y BIDIRECCIONAL — breadcrumb de punta a punta).**
+> **Sello: 2026-07-22, cierre sesión 21 (el título de página vuelve al cuerpo +
+> el modelo de superficies queda medido y decidido — DD-33 y DD-34).**
 
 ## ▶️ EMPIEZA AQUÍ
 
 1. Lee este fichero y luego [`LEARNINGS.md`](LEARNINGS.md).
 2. **Confirma el CI LEYENDO el run** del último commit.
-3. **EL PUENTE FIGMA YA ESTÁ EN MARCHA Y VA EN LOS DOS SENTIDOS** (probado con el
-   breadcrumb, ver «EL PUENTE FIGMA» abajo). La deuda de diseño (tablas,
-   contraste, acoplamiento) está cerrada; el trabajo de valor ahora es el puente,
-   no pulir cosas internas. **El conector de Figma está autorizado y la escritura
-   código→Figma FUNCIONA** (`use_figma`, file `khNq9dJKNi13pNllrqm6dx`).
-4. **B3 y B4 están cerrados.** Del plan de convergencia solo queda **B5b**
-   (necesita diseño). Suite del supervisor: **118 tests**. La familia `.table`
+3. **Lo último que se tocó fue la IDENTIDAD DE PÁGINA y los FONDOS**, y las dos
+   cosas están cerradas con DD: **DD-33** (el título vive en el cuerpo, la miga
+   gana un padre) y **DD-34** (`--sc-bg-default` es el suelo del shell, nunca una
+   superficie de contenido). Si vas a tocar un fondo o un título, **lee esas dos
+   DD antes**: las dos revisan decisiones anteriores (S59 y S67-A) y las dos
+   tienen una mitad que no se revierte sin la otra.
+4. **EL PUENTE FIGMA ESTÁ EN MARCHA Y VA EN LOS DOS SENTIDOS** (probado con el
+   breadcrumb, ver «EL PUENTE FIGMA» abajo). **El conector está autorizado y la
+   escritura código→Figma FUNCIONA** (`use_figma`, file `khNq9dJKNi13pNllrqm6dx`).
+   Hay ahora **DOS divergencias esperando propuesta**: el tramo actual del
+   breadcrumb y la bandeja gris retirada de Contact Center.
+5. **B3 y B4 están cerrados.** Del plan de convergencia solo queda **B5b**
+   (necesita diseño). Suite del supervisor: **125 tests**. La familia `.table`
    está migrada entera; la receta queda por si aparece una tabla nueva:
    [`docs/receta-migracion-tablas.md`](docs/receta-migracion-tablas.md).
-5. **`--sc-text-subtle` está DECIDIDO y hecho** (Rafa: AA por delante de la
+6. **`--sc-text-subtle` está DECIDIDO y hecho** (Rafa: AA por delante de la
    jerarquía). En claro hay ahora **dos** niveles de gris, no tres; en oscuro
    siguen siendo tres. Si compensas jerarquía, hazlo con peso o tamaño, nunca
    con claridad. Ver `customs-catalog` §1.7 antes de tocar un gris.
+
+---
+
+# ▶︎ SESIÓN 21 — la identidad de página y el modelo de superficies
+
+| Commit | Qué |
+|---|---|
+| `6f2efc0` | El título de página vuelve al CUERPO, y se ve (**DD-33**) |
+| `36edfc8` | El gris que asomaba bajo la tabla era una FUGA, no un fondo |
+| `4645072` | `--sc-border-subtle` existe en oscuro — valía el color de la tarjeta |
+| `2474adf` | Se retira la bandeja gris de Contact Center (**DD-34**) |
+
+Los cuatro en `main`, CI verde leído del run.
+
+## Lo que hizo girar la sesión: medir la referencia antes de opinar
+
+Snow UI `/orders` es nuestro **mismo arquetipo** (barra con miga + tabla), así que
+se midió en vivo en vez de discutirlo. Tres datos que decidieron todo:
+
+- El título de página **no vive en la barra**: es 16px/600 **en el cuerpo, sin
+  banda**. Lo que sobraba en S59 era el chrome, no el título.
+- Su lienzo es **blanco** y la tarjeta **también**: lo que las separa es un borde
+  al **10% del color de texto**, el mismo alfa en claro y en oscuro.
+- Por eso su oscuro no se rompe. El nuestro sí se rompía, porque mapeamos roles a
+  primitivas **por tema** y hay que escribir las dos.
+
+## Los números que conviene no volver a derivar
+
+| | claro | oscuro |
+|---|---|---|
+| relleno tarjeta vs lienzo | 1.00:1 | 1.00:1 |
+| borde de tarjeta (`border-default`) | 1.34:1 | 1.39:1 |
+| `bg-default` vs `bg-surface` | **1.06:1** | **1.14:1** |
+| `border-subtle` vs superficie | 1.15:1 | **1.13:1** (era 1.00) |
+
+**Corolario que ya está en DD-34**: hay tres tokens de superficie y **dos
+valores** (`--sc-bg-elevated` == `--sc-bg-surface` en ambos temas), y los dos que
+difieren no separan nada. **Lo que separa es el borde.**
+
+## La fuga del gris: geometría no es color
+
+Tu captura de `/reglas` enseñaba gris bajo la tabla. No era un fondo de diseño:
+era el shell asomando por debajo de donde acaba el contenido, en las **tres**
+páginas de memory cuyo `:host` no llevaba `height: 100%` (las otras trece sí).
+452px en `/reglas`, 345 en `/categorias`, y `/entidades` con el defecto
+**latente** — invisible solo porque su contenido llegaba abajo.
+
+**Y una sonda mía mintió por el camino**: la primera versión medía
+`main.bottom - page.bottom` y acusaba a `/config/seguridad` de 489px de costura
+donde la pantalla es blanca (allí el `:host` SÍ se estira y pinta él). Rehecha
+para preguntar por el **píxel** (`elementFromPoint` + fondo efectivo). Rutas con
+salto de color: **4 de 34 → 0 de 34**.
+
+## Deuda que la sesión destapó y NO cerró
+
+- **`.page__title` es CSS muerto en ~9 hojas de página** (resto de la banda de
+  S59), con tamaños distintos entre sí. Por eso la clase nueva se llama
+  `.page__heading`. Borrarlo es limpieza segura: cero referencias en `.html`.
+- **`bg-default` como hueco hundido dentro de una tarjeta** (constructor de
+  condiciones, avisos de sistema, pie de numeración especial): funciona en oscuro,
+  mide 1.06:1 en claro. Asimetría real, decisión propia. Ver DD-34.
+- **Nadie vigila que un token de borde no iguale a su superficie.** Es lo que dejó
+  `border-subtle` mudo en oscuro durante meses. Un guardián cerraría la familia.
+- **Las 25 baselines visuales de `npm run e2e` llevan tiempo en rojo en local.**
+  Comprobado con stash-y-reproduce: fallan igual sin cambios. El CI las salta por
+  diseño (`if (process.env['CI']) return`), así que la red está muda sin avisar.
 
 ---
 
@@ -283,14 +355,19 @@ contextual (dashboards sí, feeds no). Ver `customs-catalog §2.12`.
 DTCG → `tokens:import` → `verify` → Cloudflare. Con carril «en cristiano» ~1 min
 (`tokens-check.yml`). No se rehace.
 
-## Abierto del breadcrumb (para cerrarlo del todo)
+## DOS divergencias esperando propuesta en Figma (esto es lo siguiente del puente)
 
-1. **Marta mira la propuesta en Figma** (`Current state · propuesta`) y, si le vale,
-   la sube al **componente maestro**. Ahí deja de ser divergencia (`customs-catalog
-   §2.12`) y pasa a 1:1.
-2. **Título de página** — decisión de producto APARTE (revierte parte del S59
-   «todo-arriba»): ¿volvemos a un `<h2>` modesto en el cuerpo, como Snow UI en
-   dashboards? Hoy el `<h1>` va `visually-hidden` → el vidente no tiene título.
+1. **Tramo actual del breadcrumb** — frame `Current state · propuesta` (node
+   `13890:157`) ya escrito en Figma. **Marta lo mira** y, si le vale, lo sube al
+   componente maestro; ahí deja de ser divergencia (`customs-catalog §2.12`) y pasa
+   a 1:1.
+2. **La bandeja gris de Contact Center, retirada** (DD-34) — el maestro la dibuja
+   (`Main Content` 1:12381 → gray/50, radius 12) y el código ya no. **Todavía NO
+   está propuesta en Figma**: es el siguiente round-trip código→Figma, y el caso es
+   fuerte porque va con números (1.06:1 en claro, 1.00:1 en oscuro).
+
+> El **título de página** salió de esta lista: era la decisión abierta de la sesión
+> 20 y Rafa la cerró — está hecha y documentada en **DD-33**.
 
 ## Cómo seguir con el puente
 
@@ -399,8 +476,14 @@ Ver `customs-catalog` §1.6.
    Aceptado a propósito en §1.5 — subirlo lo pega a `text-primary`.
 3. Los tres están fijados en `theme-contrast.spec.ts` con su número, a la
    vista. Cualquier OTRO fallo rompe la prueba; estos no, hasta que decidas.
-4. ~~`--sc-text-subtle` 2.04:1~~ — **decidido y hecho** (§1.7). ~~`text-secondary`
+4. **Los huecos hundidos en claro** (DD-34): `bg-default` dentro de una tarjeta
+   mide 1.06:1 y solo se lee por su borde; en oscuro sí funciona. O se acepta que
+   el hueco lo dibuje el borde, o hace falta un token de relleno hundido que valga
+   algo en claro. **No lo decido yo**: son 9 sitios con intención declarada.
+5. ~~`--sc-text-subtle` 2.04:1~~ — **decidido y hecho** (§1.7). ~~`text-secondary`
    2.95~~ · ~~`text-success`~~ · ~~separador en oscuro~~ — hechos en la 17.
+   ~~Título de página~~ · ~~`bg-default` como superficie~~ · ~~`border-subtle` en
+   oscuro~~ — **decididos y hechos en la 21** (DD-33, DD-34, §1.9).
 
 ## Lo que hay que saber antes de tocar un gris
 
@@ -419,6 +502,26 @@ claridad del gris.
 
 # TRAMPAS (verificadas, las nuevas primero)
 
+- **Geometría no es color.** `main.bottom - page.bottom` te dice cuántos píxeles
+  quedan por debajo del contenido, NO de qué color son: si el `:host` de la página
+  se estira, los pinta él. Para «¿qué ve el usuario ahí?», `elementFromPoint` +
+  subir buscando el primer ancestro con alfa 1. Me dio 489px de costura falsa.
+- **Un `color-mix` computa a `color(srgb …)`**, no a `rgb()`. Cualquier
+  normalizador que parsee `rgb()`/hex devuelve `null` o basura ahí. Que convierta
+  el navegador: pinta 1px en un canvas y lee `getImageData`. Y **valida el control
+  de la sonda**: `ctx.fillStyle = 'var(--x)'` NO resuelve la variable (se queda en
+  negro) — el control tiene que pasar por `getComputedStyle` como los demás.
+- **Una regla encapsulada de componente le gana a una global.** Hay `.page__title`
+  MUERTO en ~9 hojas de página con tamaños distintos: reusar ese nombre para una
+  clase global habría dado un tamaño por página sin que nada avisara. Antes de
+  bautizar una clase compartida, `grep` el nombre en los `.scss` de componente.
+- **Un `:host` de página sin `height: 100%` deja ver el shell por debajo.** Trece
+  páginas lo llevan y tres no lo llevaban. El defecto es LATENTE mientras el
+  contenido llegue abajo: no fíes en «se ve bien», mira la regla.
+- **Las baselines visuales de `npm run e2e` se saltan en CI**
+  (`if (process.env['CI']) return`). En local llevan 25 en rojo por entorno. Si te
+  fallan, haz stash-y-reproduce antes de culpar a tu cambio — y no las uses como
+  red, porque no lo son.
 - **La paleta `--sc-color-*` NO se remapea en oscuro** (cero definiciones en
   `07-dark.css`). Usarla en un `background` o un `color` de página es escribir
   un valor fijo. Si además la pareja del otro lado sí es semántica, el
