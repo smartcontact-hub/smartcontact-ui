@@ -1,8 +1,9 @@
 # NEXT-SESSION — hand-off
 
 > Estado volátil. Se SOBREESCRIBE en cada cierre. Lo durable vive en `docs/`.
-> **Sello: 2026-07-22, cierre sesión 21 (el título de página vuelve al cuerpo +
-> el modelo de superficies queda medido y decidido — DD-33 y DD-34).**
+> **Sello: 2026-07-22, cierre sesión 22 (limpieza de la banda de S59, las
+> baselines visuales vuelven a ser una red, y la divergencia de Figma resulta
+> ser otra — hay UNA decisión esperando a Rafa).**
 
 ## ▶️ EMPIEZA AQUÍ
 
@@ -29,6 +30,88 @@
    jerarquía). En claro hay ahora **dos** niveles de gris, no tres; en oscuro
    siguen siendo tres. Si compensas jerarquía, hazlo con peso o tamaño, nunca
    con claridad. Ver `customs-catalog` §1.7 antes de tocar un gris.
+
+---
+
+# ▶︎ SESIÓN 22 — tres cosas que la doc daba por sabidas y no eran
+
+| Commit | Qué |
+|---|---|
+| `fce05d4` | La banda de S59 se borra ENTERA: 7 clases muertas, 192 líneas |
+| `510b7ea` | La divergencia con Figma no era la que estaba escrita (DD-34 corregida) |
+| `77088af` | Las 25 baselines visuales estaban **obsoletas**, no rotas |
+| — | `customs-catalog §6` avisado: su «réplica 1:1» no se pudo verificar |
+
+## 📍 LA PROPUESTA NUEVA, Y DÓNDE ESTÁ EXACTAMENTE
+
+Rafa la aprobó en la s22 con el enunciado corregido. **Ya escrita en Figma:**
+
+| | |
+|---|---|
+| **Fichero** | `khNq9dJKNi13pNllrqm6dx` («Smart Contact Design System») |
+| **Página** | `Flujos` |
+| **Frame** | `Lienzo de página — Current state · propuesta (código S22)` |
+| **Node** | **`13920:4298`** · `?node-id=13920-4298` |
+| **Dónde en el lienzo** | `x 6500, y 14094` — a la DERECHA del maestro `SmartContact AED` (`13593:5374`), en la misma banda que las «Label Variante A/B/C» |
+| **Qué lleva** | el porqué en prosa + comparativa **A (maestro, lienzo gris) / B (propuesta, lienzo blanco)** con los números debajo de cada una |
+| **Maestro** | **NO se ha tocado** — la escritura solo crea nodos nuevos en espacio libre |
+
+Registrada en `docs/guia-tokens.md` → *Figma change-log*, como manda AGENTS.md.
+**Ahora le toca a Marta**: si le vale, sube al maestro y deja de ser divergencia.
+
+> Al escribirla apareció el dato que más la refuerza: **la card del maestro YA
+> lleva el borde `#dadfe6` de 1px**, el mismo del código. O sea que el maestro
+> tiene borde *y* gris; la propuesta solo quita el que no hace nada.
+
+## El patrón de la sesión: la doc describía la fuente de oídas
+
+Las tres cosas salieron del mismo sitio — un texto que parafraseaba algo
+externo y nadie había vuelto a mirar:
+
+- **El CSS muerto no era una clase, eran siete.** El hand-off decía
+  «`.page__title` en ~9 hojas». Mapeado el conjunto: `__header`, `__title`,
+  `__subtitle`, `__actions`, `__title-block`, `__icon` y `__footer`, todas sin
+  un consumidor. Un `grep` plano no las ve —son `&__x` anidados dentro de
+  `.page`—, así que hizo falta una sonda que resolviera el anidamiento SCSS.
+  **Controles leídos antes de creerla**: `page__inner` sale viva con 19 usos,
+  una clase inventada sale con 0.
+- **La divergencia de Figma no era la descrita** (ver abajo). El nodo citado
+  no existe.
+- **Las baselines no fallaban «por entorno»**: fallaban por un rediseño
+  deliberado (DD-29) que nadie acompañó de un `--update-snapshots`.
+
+## Lo que casi firmo mal, y cómo se evitó
+
+Dos veces, y las dos por lo mismo: mirar una muestra y creerla el todo.
+
+1. **«12 píxeles, es antialiasing».** Fue mi primer diagnóstico de las
+   baselines, sacado del único bloque de error que el log truncado enseñaba.
+   Con la distribución de los 25 delante: entre **94.000 y 651.000** píxeles.
+   El 12 era el mínimo. La conclusión correcta era la contraria: la tolerancia
+   por defecto está bien y lo viejo era la baseline.
+2. **«No hay bandeja en Figma».** Lo había buscado **por nombre**. Y
+   `customs-catalog §6` insistía en una bandeja radius 12 «réplica 1:1 del
+   Figma». Antes de firmar, segunda búsqueda **por propiedad** —que falla de
+   otra manera—: 118.347 nodos de todas las páginas filtrados por relleno
+   `slate-50` + radius ≥ 8 + ancho > 500. **Cero.** Los dos métodos coinciden,
+   y por eso el veredicto se sostiene.
+
+## Las baselines vuelven a ser una red (y está medido)
+
+Regeneradas las 25 y verificadas en **los dos ejes**, porque quedarse en el
+primero es silenciar la red, no arreglarla:
+
+| eje | comprobación | resultado |
+|---|---|---|
+| pasan | suite entera | **54/54 verde** |
+| **cazan** | UNA letra cambiada en una story de `sc-tag` | **rojo, 1501 px** |
+
+Revertida la letra, vuelve a verde. El helper `screenshotBaseline` lleva ahora
+escrito que regenerar va en el MISMO commit que el cambio de diseño, con el
+comando.
+
+> **Ojo con `--update-snapshots`**: bendice lo que haya en pantalla. Úsalo solo
+> cuando el cambio visual sea deliberado y lo hayas mirado.
 
 ---
 

@@ -837,6 +837,23 @@ Los tokens **brand-visible** (paletas, spacing, radius, scale, surface, shadows 
 > Réplica 1:1 del Figma de config. Documenta **qué color lleva cada superficie**
 > de la pantalla de config y por qué. Es el hogar canónico de esta jerarquía.
 
+> ⚠️ **DESACTUALIZADO en dos puntos (S22) — léelo antes de usar esta tabla.**
+>
+> 1. **La fila «Bandeja» ya no existe en el código**: la retiró **DD-34** (medía
+>    1.06:1 en claro y 1.00:1 en oscuro, o sea que no separaba nada). El `padding`
+>    de `.page__inner` se quedó; el fondo y el radius, no.
+> 2. **El «1:1» no se pudo verificar.** Buscando esa bandeja en el fichero del Kit
+>    (`khNq9dJKNi13pNllrqm6dx`) **no aparece**: ni por nombre, ni por propiedad —
+>    escaneados **118.347 nodos de todas las páginas** filtrando por relleno
+>    `slate-50` + radius ≥ 8 + ancho > 500, resultado **cero**. Lo que sí hay es
+>    el constructor de reglas (`13593:5401`), y ahí el gris es el **lienzo de
+>    página**, sin radius.
+>
+> No sé cuál de las tres es la causa —que viviera en otro fichero, que se rehiciera
+> después, o que la descripción fuera interpretación y no medición— y no me la
+> invento. Queda anotado para que nadie vuelva a construir encima de ella: DD-34
+> ya lo hizo y heredó un nodo inexistente y unos atributos que no eran.
+
 | Superficie | Selector | Light | Dark | Forma |
 |---|---|---|---|---|
 | **Lienzo de página** | shell `:host` / `:host-context(.sc-dark)` | `--sc-bg-surface` (blanco) | `--sc-bg-default` (gray-950) | — (deuda `--sc-bg-canvas` §5.11) |
