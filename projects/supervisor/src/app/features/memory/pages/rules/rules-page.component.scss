@@ -6,6 +6,13 @@
 
 :host {
   display: block;
+  /* MEDIDO: sin esto el host solo mide lo que mide su contenido, y por debajo
+   * asoma el gris del shell (`--sc-bg-default`) — un corte de color a una
+   * altura que depende de CUÁNTAS FILAS haya. En /reglas eran 452px de gris y
+   * en /categorias 345. Lo tienen las otras trece páginas; estas tres no, y en
+   * entidades el defecto estaba latente: no se veía solo porque su contenido
+   * llegaba abajo. */
+  height: 100%;
   background: var(--sc-bg-surface);
 }
 
