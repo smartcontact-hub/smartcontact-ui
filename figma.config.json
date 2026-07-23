@@ -1,0 +1,7 @@
+{
+  "codeConnect": {
+    "parser": "html",
+    "label": "Angular",
+    "include": ["code-connect/**/*.figma.ts"]
+  }
+}
