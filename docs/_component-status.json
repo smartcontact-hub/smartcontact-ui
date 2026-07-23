@@ -168,9 +168,10 @@
       "kind": "STANDARD",
       "primengBase": "primeng/card",
       "cva": false,
-      "inputs": 2,
+      "inputs": 3,
       "api": [
         "header",
+        "icon",
         "subheader"
       ],
       "nested": [],

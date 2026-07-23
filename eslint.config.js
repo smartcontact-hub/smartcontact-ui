@@ -5,7 +5,7 @@ const angular = require('angular-eslint');
 
 module.exports = tseslint.config(
   {
-    ignores: ['dist/', 'node_modules/', '.angular/', 'playwright-report/', 'test-results/'],
+    ignores: ['dist/', 'node_modules/', '.angular/', 'playwright-report/', 'test-results/', 'code-connect/'],
   },
   {
     files: ['**/*.ts'],

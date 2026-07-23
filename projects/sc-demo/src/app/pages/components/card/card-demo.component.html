@@ -5,7 +5,7 @@
      los miden los e2e de métrica del Kit (no quitar). -->
 
 <ng-template #playground let-args>
-  <sc-card [header]="args.header || null" [subheader]="args.subheader || null">
+  <sc-card [header]="args.header || null" [subheader]="args.subheader || null" [icon]="args.icon || null">
     Contenido proyectado de la tarjeta. Hereda tipografía y tokens del tema.
   </sc-card>
 </ng-template>
@@ -15,4 +15,10 @@
     Contenido proyectado de la tarjeta. Hereda tipografía y tokens del tema.
   </sc-card>
   <sc-card>Sin cabecera — solo contenido.</sc-card>
+</ng-template>
+
+<ng-template #withIcon>
+  <sc-card header="Card con icono" subheader="Subtítulo" icon="auto_awesome">
+    El icono de cabecera es opcional: cualquier nombre de Material Symbols.
+  </sc-card>
 </ng-template>

@@ -381,6 +381,59 @@ Each entry: **what bites → the rule → why**. Append here when a new one is f
   triggers a `tokens-sync` run within seconds — no new run = the push carried no diff (Figma == branch),
   GitHub accepts it as a no-op.
 
+### Trampas de CSS / medición / testing (destiladas de las sesiones de componentes)
+
+- **Geometría ≠ color.** `main.bottom - page.bottom` dice cuántos px quedan bajo el
+  contenido, NO de qué color son (si el `:host` de la página se estira, los pinta él).
+  Para «¿qué ve el usuario ahí?»: `elementFromPoint` + subir al primer ancestro con alfa 1.
+- **`color-mix` computa a `color(srgb …)`, no a `rgb()`.** Cualquier parser de `rgb()`/hex
+  devuelve basura ahí. Que convierta el navegador (1px en canvas + `getImageData`), y valida
+  el control: `ctx.fillStyle = 'var(--x)'` NO resuelve la variable (se queda en negro).
+- **Una regla encapsulada de componente le gana a una global.** Antes de bautizar una clase
+  compartida, `grep` el nombre en los `.scss` de componente (hubo `.page__title` muerto en
+  ~9 hojas con tamaños distintos).
+- **Un `:host` de página sin `height: 100%` deja ver el shell por debajo.** Defecto LATENTE
+  mientras el contenido llegue abajo: mira la regla, no fíes en «se ve bien».
+- **Las baselines visuales de `npm run e2e` se saltan en CI** (`if (process.env['CI']) return`).
+  En local pueden llevar tiempo en rojo por entorno; stash-y-reproduce antes de culpar tu
+  cambio, y no las uses como red si no las has regenerado.
+- **La paleta `--sc-color-*` NO se remapea en oscuro** (cero definiciones en `07-dark.css`).
+  Usarla en un `background`/`color` de página es escribir un valor fijo → ilegible en un tema.
+- **Un token de FONDO no es de texto, ni al revés.** `--sc-bg-primary` como `color:` → 3.39:1;
+  `--sc-text-info` como `background:` → 3.15. Cuelan en claro y rompen en oscuro.
+- **`npm run verify` reescribe `dist/` bajo un `ng serve` vivo** y lo deja con `Cannot find
+  module '@smartcontact-hub/components'`; el server sigue sirviendo el bundle ANTERIOR. Tras un
+  `verify`, reinicia el dev server antes de volver a medir.
+- **Los iconos Material son LIGATURAS** (llegan al DOM como texto): umbral de contraste 1.4.11
+  (3:1), no 4.5. Y salen en `innerText` aunque estén bien pintados → para comprobar que la
+  fuente cargó, mira la imagen, no el texto.
+- **`waitForLoadState('networkidle')` sin acotar puede tumbar el CI sin fallar ninguna
+  aserción** (agota el timeout del `goto`). Acótalo a ~10s sin `throw`. sc-demo baja 3,9 MB de
+  fuente + chunks perezosos.
+- **`table-layout`:** `main.scss` fuerza `fixed` en `table.table`; `sc-datatable` es `auto` →
+  columnas recolocadas al migrar (la piel `.list-table` lo corrige). Y **PrimeNG pinta SIEMPRE
+  la banda de `caption`** → franja vacía sobre la cabecera.
+- **Los `<td>` los pinta el DS**: reglas encapsuladas de página a `.table__td-*` dejan de
+  aplicar; usa un `cellTemplate` con su `<span>`. **La casilla de PrimeNG mide 17,5px** (nativa
+  15,75): con `table-layout: auto` ensancha la columna 2px.
+- **`sc-demo` enruta por HASH** (`/#/components/x`): sin la almohadilla el deep-link rompe los
+  assets y la app no arranca. **`http-server` no hace fallback SPA**: para rutas profundas,
+  `ng serve`.
+- **El tema oscuro se activa con `.sc-dark` en `<html>`** vía `localStorage sc-theme`
+  (ThemeService); ponerlo a mano no vale (el servicio lo revierte).
+- **`borderBottomColor` existe aunque el ancho sea 0** (vale `currentColor`): mide también
+  `borderBottomWidth`. **La fuente de iconos pesa 3,9 MB**: espera `document.fonts.ready` +
+  `document.fonts.load(...)` antes de medir/capturar.
+- **El dev server sirve el DS COMPILADO**: tocar `projects/ui-smartcontact*/src` no se ve hasta
+  `build:components` + **reiniciar** (una recarga dura no basta). **`export-clean` se salta con
+  `CI=1`.**
+- **Sin backticks en mensajes de commit**; usa `-F -` con heredoc. **Nada de `page.reload()`**
+  en journeys de memory (stores en RAM).
+- **`npm run e2e` pisa `public/usage/*.png`** y `usage:capture` reescribe `_usage-raw.json`:
+  para capturar, script aislado con la API de Playwright.
+- **Añadir o quitar un `<sc-*>` desfasa `audit:components`** → `node
+  scripts/component-audit.mjs --write` + commitea `docs/inventory.md` y `docs/_component-status.json`.
+
 ---
 
 ## Figma MCP Bridge (recorded)

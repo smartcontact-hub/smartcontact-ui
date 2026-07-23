@@ -1,3 +1,13 @@
 <p-card [header]="header || undefined" [subheader]="subheader || undefined">
+    @if (icon) {
+        <ng-template #title>
+            <span class="sc-card__title">
+                <sc-icon [name]="icon" [size]="iconSize" />
+                @if (header) {
+                    <span>{{ header }}</span>
+                }
+            </span>
+        </ng-template>
+    }
     <ng-content></ng-content>
 </p-card>

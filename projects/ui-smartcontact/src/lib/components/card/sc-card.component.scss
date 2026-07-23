@@ -1,0 +1,7 @@
+/* Fila título con icono de cabecera opcional. Solo se pinta cuando `icon` está
+   presente (plantilla `#title` de p-card); sin icono el wrapper queda intacto. */
+.sc-card__title {
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sc-spacing-0-5);
+}
