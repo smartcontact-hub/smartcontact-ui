@@ -23,6 +23,7 @@
 | Reglas de **blindaje / migration-safe** (minimizar customización de PrimeNG) | [`docs/migration-safety.md`](./migration-safety.md) | Claude (antes de tocar HTML/lógica PrimeNG) |
 | **Tokens + puente Figma** (para diseño) · **Figma change-log** · workflow Migration Assistant | [`docs/guia-tokens.md`](./guia-tokens.md) + técnico: [`projects/design-tokens/README.md`](../projects/design-tokens/README.md) | diseño + Claude |
 | **Colaboración + arranque de diseño** (puerta de entrada práctica: flujo día a día, links, setup del token, docks, git pull, qué tocar/evitar) — el detalle a fondo vive en `guia-tokens.md` | [`docs/colaboracion.md`](./colaboracion.md) | diseño (Marta) + equipo |
+| **Code Connect** (piloto Figma ↔ código: qué es, requisitos de publicación, cómo quitarlo) | [`docs/code-connect.md`](./code-connect.md) | Claude + diseño + devs |
 | Cómo **consume una app externa** el DS · **el modelo** (un DS, dos profundidades: "instalar y ya el tema" vs `--sc-*` — combinable + migration-safe) · **propuesta de distribución** (GitHub Packages) | [`docs/consumer-onboarding.md`](./consumer-onboarding.md) | apps consumidoras + los 2 equipos front + Claude |
 | **Perfil público de la org** — borrador para el repo `smartcontact-hub/.github` → `profile/README.md` (lo crea Rafa en GitHub) | [`docs/org-profile.md`](./org-profile.md) | Rafa + Claude |
 | **Convergencia** DS ↔ catálogo dev (unión, naming DD-12, plan de port) | [`docs/convergence-manifesto.md`](./convergence-manifesto.md) | Claude (al portar) |
@@ -81,7 +82,8 @@ Los pares que más se confunden — cada uno tiene un trabajo distinto:
 
 ---
 
-Última actualización: 2026-06-30 — sesión 7: **dirty-state compartido** (primitivo `createFormDirtyState`, Guardar por cambio neto en los 5 forms) mergeado + **auditoría de deuda por bloques** del monorepo → nuevo `docs/AUDIT-DEUDA-2026-06.md` (Tema C ya cerrado ahí). Añadida su fila arriba.
+Última actualización: 2026-07-23 — `sc-card` gana input `icon` (icono de cabecera opcional) + piloto de **Code Connect** (`card` → `sc-card`); nueva fila `docs/code-connect.md`.
+2026-06-30 — sesión 7: **dirty-state compartido** (primitivo `createFormDirtyState`, Guardar por cambio neto en los 5 forms) mergeado + **auditoría de deuda por bloques** del monorepo → nuevo `docs/AUDIT-DEUDA-2026-06.md` (Tema C ya cerrado ahí). Añadida su fila arriba.
 2026-06-30 — sesión 6: **DD-27** (constructor de condiciones v2 + recorte MVP sin grabación/borradores) registrado en `DECISIONS.md`; `ROADMAP.md` §reglas marcada EJECUTADA; ningún *source* nuevo cambió de sitio (mapa intacto). Pendiente de orden: `DECISIONS.md` newest-first (DD-21..27 al final).
 2026-06-23 — `ppt-proyecto.md` consolidado y renombrado a `colaboracion.md` (lean + práctico + flujo día a día + colaboración git + nota de caducidad del token); borrado el viejo.
 2026-06-16 — W2: READMEs de paquete (`components`) y de las apps (`sc-demo`, `supervisor`) + badges + metadata npm (description/keywords/license/author) + `org-profile.md` (borrador del perfil de la org). Los README de `projects/**` no los escanea docs:guard (solo `docs/` + raíz).

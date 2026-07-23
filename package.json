@@ -57,7 +57,9 @@
     "e2e:structure": "playwright test -c playwright.config.ts component-structure",
     "e2e:structure:update": "SC_UPDATE_STRUCTURE=1 playwright test -c playwright.config.ts component-structure",
     "test:components": "ng test ui-smartcontact --watch=false",
-    "audit:border-surfaces": "node scripts/check-border-surfaces.mjs"
+    "audit:border-surfaces": "node scripts/check-border-surfaces.mjs",
+    "figma:connect:parse": "figma connect parse",
+    "figma:connect:publish": "figma connect publish"
   },
   "dependencies": {
     "@angular/animations": "^21.2.14",
@@ -86,6 +88,7 @@
     "@angular/cli": "^21.2.12",
     "@angular/compiler-cli": "^21.2.14",
     "@eslint/js": "^9.20.0",
+    "@figma/code-connect": "^1.4.9",
     "@playwright/test": "^1.50.0",
     "angular-eslint": "^21.0.0",
     "eslint": "^9.20.0",
