@@ -32,7 +32,6 @@
 | **Plan de convergencia** de los 4 flujos (7 olas + modelo canónico R1-R7) | [`docs/plan-convergencia-flujos.md`](./plan-convergencia-flujos.md) | Claude + Rafa |
 | **Inventario de componentes** — tracklist: cada componente + wrapper/pure + los 4 gaps abiertos | [`docs/inventory.md`](./inventory.md) | Claude + diseño + Rafa |
 | **Receta para migrar una tabla** a `sc-datatable` — pasos, la piel `.list-table`, las 3 trampas medidas y las 14 tablas que quedan por dificultad | [`docs/receta-migracion-tablas.md`](./receta-migracion-tablas.md) | Claude (al migrar una tabla) |
-| **Playbook** migrar `smart-contact-platform` (sesión aparte) | [`docs/playbook-migracion-platform.md`](./playbook-migracion-platform.md) | Claude (en sesión sobre ese repo) |
 | **Playbook** archivar `smartcontact-ui-main` (sesión aparte) | [`docs/playbook-archivar-ui-main.md`](./playbook-archivar-ui-main.md) | Claude (en sesión sobre ese repo) |
 | **Log de construcción** per-lote (journal histórico CERRADO, no se re-litiga) | [`docs/history/DECISIONS-LOG.md`](./history/DECISIONS-LOG.md) (Mitad A) · [`docs/history/DECISIONS-LOG-B.md`](./history/DECISIONS-LOG-B.md) (Mitad B) | Claude (referencia histórica) |
 | **Versiones publicadas** (semver, qué cambió por release) | [`CHANGELOG.md`](../CHANGELOG.md) | todos |
@@ -82,7 +81,7 @@ Los pares que más se confunden — cada uno tiene un trabajo distinto:
 
 ---
 
-Última actualización: 2026-07-23 — `sc-card` gana input `icon` (icono de cabecera opcional) + piloto de **Code Connect** (`card` → `sc-card`); nueva fila `docs/code-connect.md`.
+Última actualización: 2026-07-23 — `sc-card` gana input `icon` (icono de cabecera opcional) + piloto de **Code Connect** (`card` → `sc-card`); nueva fila `docs/code-connect.md`. **Limpieza s23**: borrado `playbook-migracion-platform.md` (muerto por DD-17) + su fila; 3 `README.md` duplicados de `.agents/skills/`; TRAMPAS de `NEXT-SESSION` movidas a `AGENTS.md`; `pull_request_template` apunta a `docs/DECISIONS.md`.
 2026-06-30 — sesión 7: **dirty-state compartido** (primitivo `createFormDirtyState`, Guardar por cambio neto en los 5 forms) mergeado + **auditoría de deuda por bloques** del monorepo → nuevo `docs/AUDIT-DEUDA-2026-06.md` (Tema C ya cerrado ahí). Añadida su fila arriba.
 2026-06-30 — sesión 6: **DD-27** (constructor de condiciones v2 + recorte MVP sin grabación/borradores) registrado en `DECISIONS.md`; `ROADMAP.md` §reglas marcada EJECUTADA; ningún *source* nuevo cambió de sitio (mapa intacto). Pendiente de orden: `DECISIONS.md` newest-first (DD-21..27 al final).
 2026-06-23 — `ppt-proyecto.md` consolidado y renombrado a `colaboracion.md` (lean + práctico + flujo día a día + colaboración git + nota de caducidad del token); borrado el viejo.
