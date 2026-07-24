@@ -10,9 +10,14 @@ on:
     branches: [main]
   pull_request:
 
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
 jobs:
   verify:
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     # El PR de `design-tokens-sync` lo verifica el workflow `tokens-sync` (regenera
     # primitivos antes de verificar); aquí lo saltamos para no dar un rojo de drift
     # espurio. En el merge a main, este `verify` corre igual (push → main).
