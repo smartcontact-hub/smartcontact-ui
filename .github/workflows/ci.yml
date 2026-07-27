@@ -32,10 +32,21 @@ jobs:
         run: npx ng build supervisor --configuration production
       - name: Build agent (consume el DS local)
         run: npx ng build agent --configuration production
-      - name: e2e smoke
+      - name: Cache Playwright browsers
+        id: playwright-cache
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/ms-playwright
+          key: playwright-${{ runner.os }}-${{ hashFiles('package-lock.json') }}
+      - name: Install Playwright browsers
         run: |
-          npx playwright install --with-deps chromium
-          npm run e2e
+          if [ "${{ steps.playwright-cache.outputs.cache-hit }}" = "true" ]; then
+            npx playwright install-deps chromium
+          else
+            npx playwright install --with-deps chromium
+          fi
+      - name: e2e smoke
+        run: npm run e2e
       # Comportamiento de la app real: formularios (rellenar → validar → guardar)
       # y el flujo de reglas de punta a punta. Playwright levanta su propio
       # `ng serve` (:4405) — ver playwright.supervisor.config.ts.
