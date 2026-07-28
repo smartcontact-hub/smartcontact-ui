@@ -232,6 +232,15 @@
     implementar contra algo que existe fuera del repo y lo que tienes delante es texto sobre ello,
     para y abre la fuente** — cuesta una llamada.
 
+    *Corolario (s23) — vale también cuando solo ACONSEJAS, y cuando la fuente es tu propio
+    código.* La regla decía «implementar» contra una fuente «fuera del repo», así que no disparó
+    al soltar una recomendación de refactor a devs («cambiad el kebab por p-button, exponed
+    [contextMenu]») redactada sin abrir el componente: ya había un p-menu compartido reusado por
+    kebab Y click derecho, y el swap era fiddly. El mismo día aconsejé sobre un token («quizá ya
+    tengas accent/violet») sin leer el CSS, y --sc-text-violet sí existía. Disparador afilado:
+    antes de RECOMENDAR un cambio o AFIRMAR un estado de este código, abre el fichero primero; si
+    no lo has abierto, di "no lo he mirado", no lo supongas — aunque solo estés conversando.
+
 18. **Vas a zanjar una decisión VISUAL con un argumento —rebatiendo al usuario o discutiéndola
     contigo mismo— → constrúyela en su versión mínima y MÍRALA.** Un principio bien enunciado
     suena a autoridad y no lo es: puede estar protegiendo algo que en el código ya no existe.
