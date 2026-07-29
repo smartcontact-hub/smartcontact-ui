@@ -69,7 +69,6 @@
     "@angular/core": "^21.2.14",
     "@angular/forms": "^21.2.14",
     "@angular/platform-browser": "^21.2.14",
-    "@angular/platform-browser-dynamic": "^21.2.14",
     "@angular/router": "^21.2.14",
     "@fontsource-variable/material-symbols-outlined": "^5.2.45",
     "@fontsource-variable/material-symbols-rounded": "^5.2.45",
