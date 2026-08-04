@@ -38,6 +38,7 @@
 | **Backlog durable** — lo diferido-pero-rastreado (qué + disparador + cómo se valida) | [`docs/ROADMAP.md`](./ROADMAP.md) | Claude + Rafa |
 | **Auditoría de deuda** (snapshot fechado, por bloques) — temas transversales + P0/P1 + quick-wins, backlog con checkboxes. Los items que se prioricen se mueven a `ROADMAP.md` | [`docs/AUDIT-DEUDA-2026-06.md`](./AUDIT-DEUDA-2026-06.md) | Claude + Rafa |
 | **Auditoría de consistencia y cobertura** (snapshot fechado) — pokédex, i18n, divergencias de token, cobertura demo/uso + arreglos concretos; complementa (no reescribe) la deuda de código | [`docs/AUDIT-2026-07.md`](./AUDIT-2026-07.md) | Claude + Rafa |
+| **Auditoría de juicio semanal** (backlog vivo autogenerado por la rutina cloud) — deuda de diseño + deriva semántica de docs que los 25 gates no ven; hallazgos con `file:line`, triaje gate-able/arréglalo/intencional. Skill: `.claude/skills/auditoria-semanal/SKILL.md` | [`docs/AUDIT-SEMANAL.md`](./AUDIT-SEMANAL.md) | Claude (rutina) + Rafa |
 | **Handoff volátil** — estado actual + próximos pasos (se SOBREESCRIBE cada cierre) | [`NEXT-SESSION.md`](../NEXT-SESSION.md) | Claude (lee PRIMERO al arrancar) |
 | **Reglas de proceso ganadas** — cómo trabajar en este repo (disparador → acción), destiladas de errores reales; se AFILA, no se acumula (tope ~20) | [`LEARNINGS.md`](../LEARNINGS.md) | Claude (lee al EMPEZAR tarea; `/reflect` lo escribe al cerrar) |
 | Preferencias / comportamiento Claude + atajos (privado, fuera del repo) | `~/.claude/projects/.../memory/` | Solo Claude |
@@ -81,7 +82,8 @@ Los pares que más se confunden — cada uno tiene un trabajo distinto:
 
 ---
 
-Última actualización: 2026-07-23 — `sc-card` gana input `icon` (icono de cabecera opcional) + piloto de **Code Connect** (`card` → `sc-card`); nueva fila `docs/code-connect.md`. **Limpieza s23**: borrado `playbook-migracion-platform.md` (muerto por DD-17) + su fila; 3 `README.md` duplicados de `.agents/skills/`; TRAMPAS de `NEXT-SESSION` movidas a `AGENTS.md`; `pull_request_template` apunta a `docs/DECISIONS.md`.
+Última actualización: 2026-08-04 — nueva fila `docs/AUDIT-SEMANAL.md` (backlog vivo autogenerado por la rutina de auditoría de juicio semanal; su skill vive en `.claude/skills/auditoria-semanal/SKILL.md`, fuera del alcance de docs:guard).
+2026-07-23 — `sc-card` gana input `icon` (icono de cabecera opcional) + piloto de **Code Connect** (`card` → `sc-card`); nueva fila `docs/code-connect.md`. **Limpieza s23**: borrado `playbook-migracion-platform.md` (muerto por DD-17) + su fila; 3 `README.md` duplicados de `.agents/skills/`; TRAMPAS de `NEXT-SESSION` movidas a `AGENTS.md`; `pull_request_template` apunta a `docs/DECISIONS.md`.
 2026-06-30 — sesión 7: **dirty-state compartido** (primitivo `createFormDirtyState`, Guardar por cambio neto en los 5 forms) mergeado + **auditoría de deuda por bloques** del monorepo → nuevo `docs/AUDIT-DEUDA-2026-06.md` (Tema C ya cerrado ahí). Añadida su fila arriba.
 2026-06-30 — sesión 6: **DD-27** (constructor de condiciones v2 + recorte MVP sin grabación/borradores) registrado en `DECISIONS.md`; `ROADMAP.md` §reglas marcada EJECUTADA; ningún *source* nuevo cambió de sitio (mapa intacto). Pendiente de orden: `DECISIONS.md` newest-first (DD-21..27 al final).
 2026-06-23 — `ppt-proyecto.md` consolidado y renombrado a `colaboracion.md` (lean + práctico + flujo día a día + colaboración git + nota de caducidad del token); borrado el viejo.
