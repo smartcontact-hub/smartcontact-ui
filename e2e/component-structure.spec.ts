@@ -54,14 +54,18 @@ const COMPONENTS = [
  * destino de toda red ruidosa:
  *  - `_ngcontent-ng-cNNN` / `_nghost-ng-cNNN`: el hash de encapsulación de
  *    Angular cambia cuando recompila el componente.
- *  - ids autogenerados (`sc-inputnumber-7`, `pn_id_12`): llevan un contador de
- *    instancia global que depende del orden de render de la página.
+ *  - ids autogenerados (`sc-inputnumber-7`, `pn_id_12`, `pc286`): llevan un
+ *    contador de instancia global que depende del orden de render de la página.
+ *    `pcNNN` es el esquema nuevo de PrimeNG; el datepicker instancia un número
+ *    variable de piezas internas según el timing, así que sin normalizarlo el
+ *    snapshot da falso rojo en CI (a él y a los componentes que van detrás).
  */
 const normalize = (html: string): string =>
   html
     .replace(/\s*_ng(content|host)-[a-z0-9-]+=""/g, '')
     .replace(/(sc-[a-z]+)-\d+/g, '$1-N')
     .replace(/pn_id_\d+/g, 'pn_id_N')
+    .replace(/pc\d+/g, 'pcN')
     .replace(/\s+/g, ' ')
     .trim();
 
