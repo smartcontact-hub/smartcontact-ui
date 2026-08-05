@@ -1018,7 +1018,9 @@ momento.
 
 ## Figma change-log (registro de la fuente de verdad)
 
-**Regla:** el archivo Figma **"Smart-Contact Prime"** es la fuente de verdad — **no se escribe en
+**Regla:** el archivo Figma **"Smart-Contact Prime"** (título real hoy en Figma:
+**"Smart-Contact-Design-System"**, key `khNq9dJKNi13pNllrqm6dx`; «Prime» es el mote
+histórico del repo) es la fuente de verdad — **no se escribe en
 él sin dejar constancia aquí**. (El bridge MCP que se usa para escribir está documentado en
 [`AGENTS.md`](../AGENTS.md) → *Figma MCP Bridge*.)
 
