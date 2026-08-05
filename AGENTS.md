@@ -439,7 +439,10 @@ Each entry: **what bites → the rule → why**. Append here when a new one is f
 ## Figma MCP Bridge (recorded)
 
 The Figma source-of-truth file is **"Smart-Contact Prime"** (file key
-`khNq9dJKNi13pNllrqm6dx`). To read/write it from an agent:
+`khNq9dJKNi13pNllrqm6dx`). **Its actual title in Figma today is
+"Smart-Contact-Design-System"** — same file/key; "Prime" is this repo's historical
+shorthand (it was duplicated from the PrimeOne UI Kit). If you open the file and see
+"Smart-Contact-Design-System", that's the right one. To read/write it from an agent:
 
 - **Prefer the OFFICIAL Figma MCP** (tools under the long `mcp__acb3d14c-…__*` id):
   `get_metadata` / `get_design_context` / `get_screenshot` to read, `use_figma` to write.
