@@ -241,6 +241,18 @@
     antes de RECOMENDAR un cambio o AFIRMAR un estado de este código, abre el fichero primero; si
     no lo has abierto, di "no lo he mirado", no lo supongas — aunque solo estés conversando.
 
+    *Corolario (s24) — el disparador es cualquier ESTADO que vas a firmar en un entregable, venga
+    de donde venga, no solo "este código".* El corolario anterior decía "este código", así que no
+    disparó al meter "Casi" en la tabla de estado de Chip/Toast: ese veredicto salía del comentario
+    de Marta en Jira, no de una medición mía, pero dentro de la tabla se lee como MI dictamen. Rafa
+    preguntó "¿tú lo has mirado?" — no. Lo mismo con el ancho: escribí "el select no tiene ancho
+    fijo" (cierto en la WEB) como verdad a secas, y en Figma la instancia está a **216 fijos**; una
+    propiedad medida en UN artefacto/estado hay que acotarla a ése. **Disparador afilado**: antes de
+    que un estado entre en un entregable (tabla, PNG, comentario que firmas), o lo mides tú, o lo
+    etiquetas "según X / sin verificar"; y toda medida lleva pegado DE QUÉ artefacto y estado sale
+    (web vs Figma, vacío vs elegido). Corolario barato: si al final lo mides —como hice con el Toast
+    tras la pregunta—, casi siempre confirma la pista, pero ahora es medido, no heredado.
+
 18. **Vas a zanjar una decisión VISUAL con un argumento —rebatiendo al usuario o discutiéndola
     contigo mismo— → constrúyela en su versión mínima y MÍRALA.** Un principio bien enunciado
     suena a autoridad y no lo es: puede estar protegiendo algo que en el código ya no existe.
