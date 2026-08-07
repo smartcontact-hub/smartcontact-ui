@@ -5,10 +5,10 @@
  * Playwright `e2e/usage/usage-capture.spec.ts`).
  *
  * Lee:
- *   - `projects/sc-demo/public/usage/_usage-raw.json` (pantalla → todos los tags sc-*),
+ *   - `projects/sc-docs/public/usage/_usage-raw.json` (pantalla → todos los tags sc-*),
  *   - `docs/_component-status.json` (la pokédex: los 48 selectores DS reales).
- * Escribe el derivado `projects/sc-demo/public/usage/_usage-status.json` que lee la
- * página sc-demo:
+ * Escribe el derivado `projects/sc-docs/public/usage/_usage-status.json` que lee la
+ * página sc-docs:
  *   - `screens[*].ds` = tags ∩ selectores DS (descarta app-locals: sc-top-bar, sc-sidebar…),
  *   - `components`    = índice inverso DS-only (componente → [pantallas]), EXCLUYE globales,
  *   - `global`        = DS presentes en (casi) todas las pantallas (shell: command-palette,
@@ -25,7 +25,7 @@ import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 
 const root = resolve(import.meta.dirname, '..');
-const USAGE_DIR = resolve(root, 'projects/sc-demo/public/usage');
+const USAGE_DIR = resolve(root, 'projects/sc-docs/public/usage');
 const RAW = resolve(USAGE_DIR, '_usage-raw.json');
 const STATUS = resolve(USAGE_DIR, '_usage-status.json');
 const AUDIT = resolve(root, 'docs/_component-status.json');
@@ -127,7 +127,7 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     (process.argv.includes('--write') ? '--write' : process.argv.includes('--emit') ? '--emit' : 'check');
 
   if (!existsSync(RAW)) {
-    log('✗ Falta projects/sc-demo/public/usage/_usage-raw.json — corre `npm run usage:capture` primero.');
+    log('✗ Falta projects/sc-docs/public/usage/_usage-raw.json — corre `npm run usage:capture` primero.');
     process.exit(1);
   }
   if (!existsSync(AUDIT)) {

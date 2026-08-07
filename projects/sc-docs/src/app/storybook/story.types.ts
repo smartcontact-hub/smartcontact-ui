@@ -1,7 +1,7 @@
 import { TemplateRef } from '@angular/core';
 
 /**
- * Modelo del motor «Storybook-like» de sc-demo.
+ * Modelo del motor «Storybook-like» de sc-docs.
  *
  * Patrón de render: cada story se declara como un `<ng-template>` en el demo (con la
  * API real del componente DS) y el motor pinta canvas/knobs/código alrededor. NO se usa

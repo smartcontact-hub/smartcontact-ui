@@ -2,7 +2,7 @@ import { defineConfig } from '@playwright/test';
 
 /**
  * Config AISLADA para la captura de la galería de uso (Fase 2.2). Separada de
- * `playwright.config.ts` a propósito: aquella sirve sc-demo (:4280) y de ella
+ * `playwright.config.ts` a propósito: aquella sirve sc-docs (:4280) y de ella
  * dependen los baselines visuales — esta sirve el SUPERVISOR (:4290) para
  * fotografiar el flujo real. Puertos distintos → `reuseExistingServer`
  * independiente; `npm run e2e` queda intacto.

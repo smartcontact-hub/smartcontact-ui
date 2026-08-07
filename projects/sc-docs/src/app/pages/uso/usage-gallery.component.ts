@@ -9,7 +9,7 @@ interface UsageScreen {
   ds: string[];
 }
 
-/** Forma de `projects/sc-demo/public/usage/_usage-status.json` (lo deriva `scripts/usage-status.mjs`). */
+/** Forma de `projects/sc-docs/public/usage/_usage-status.json` (lo deriva `scripts/usage-status.mjs`). */
 interface UsageStatus {
   capturedAt: string;
   viewport: string;

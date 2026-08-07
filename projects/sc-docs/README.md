@@ -1,4 +1,4 @@
-# sc-demo — showcase del Design System
+# sc-docs — showcase del Design System
 
 ![Angular](https://img.shields.io/badge/Angular-21-DD0031?logo=angular&logoColor=white)
 ![PrimeNG](https://img.shields.io/badge/PrimeNG-21-10B981)
@@ -28,8 +28,8 @@ por nombre. Es la prueba de que el paquete funciona consumido "desde fuera".
 Desde la raíz del workspace:
 
 ```bash
-npm start            # ng serve (build:icons + demo en local)
-npm run build:demo   # build de producción → dist/sc-demo
+npm start            # ng serve (build:icons + docs en local)
+npm run build:docs   # build de producción → dist/sc-docs
 ```
 
 ## Enlaces (Cloudflare Pages)

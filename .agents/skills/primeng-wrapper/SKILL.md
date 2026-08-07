@@ -60,7 +60,7 @@ Verify:
 - how events are re-emitted
 - how tokens are applied in SCSS
 - export pattern in `public-api.ts`
-- demo usage in `projects/sc-demo`
+- demo usage in `projects/sc-docs`
 
 ## Input
 - PrimeNG component (e.g. Button, InputText)

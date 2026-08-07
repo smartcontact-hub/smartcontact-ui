@@ -33,7 +33,7 @@ const LAYER_FILES = ['01-primitive', '02-semantic', '03-palette', '04-component'
 const GENERATORS = ['token-gen.mjs', 'token-gen-component.mjs', 'token-gen-color.mjs'];
 // El app sirve las capas DESDE FUENTE por estos entrypoints (directa o vía index.css) → HMR.
 const ENTRYPOINTS = [
-  { file: 'projects/sc-demo/src/styles.scss', needle: 'design-tokens/src/lib/styles/index.css' },
+  { file: 'projects/sc-docs/src/styles.scss', needle: 'design-tokens/src/lib/styles/index.css' },
   { file: 'projects/supervisor/src/styles/main.scss', needle: 'tokens/layers/01-primitive.css' },
 ];
 

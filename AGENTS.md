@@ -27,10 +27,10 @@ Agents must generate code that is:
 This configuration applies to:
 - `projects/ui-smartcontact`
 - `projects/ui-smartcontact-icons`
-- `projects/sc-demo`
+- `projects/sc-docs`
 - `projects/design-tokens`
 - `projects/supervisor` — the real app (Supervisor), brought in-repo 2026-06-15 (**DD-17**).
-  It **consumes the DS locally** by tsconfig paths → `./dist/*` (like `sc-demo`), so a token
+  It **consumes the DS locally** by tsconfig paths → `./dist/*` (like `sc-docs`), so a token
   change is reflected instantly. It is a **vehicle** (free to evolve); the DS lib/tokens/preset stay
   sacred. The published `@smartcontact-hub/*` packages are now **PARKED** (dormant; run
   `publish:packages` only before a real external release).
@@ -68,7 +68,7 @@ Before any component or style change, analyze:
 - `sc-toggleswitch`
 - `sc-inputtext`
 - existing tokens (the layer files above)
-- demo implementation in `projects/sc-demo`
+- demo implementation in `projects/sc-docs`
 
 Components are being ported incrementally. If a reference component does not
 exist yet in `projects/ui-smartcontact/src/lib/components`, fall back to:
@@ -205,14 +205,14 @@ Every generated component MUST include:
 - HTML (clean structure)
 - SCSS using tokens
 - export in `public-api.ts`
-- documentation page in `sc-demo`
+- documentation page in `sc-docs`
 
 ---
 
 ## Documentation Rules
 
 Docs MUST:
-- match the existing `projects/sc-demo` page style (see `src/app/pages/`)
+- match the existing `projects/sc-docs` page style (see `src/app/pages/`)
 - use real API
 - include variants, states, usage, API
 - not invent features
@@ -408,7 +408,7 @@ Each entry: **what bites → the rule → why**. Append here when a new one is f
   (3:1), no 4.5. Y salen en `innerText` aunque estén bien pintados → para comprobar que la
   fuente cargó, mira la imagen, no el texto.
 - **`waitForLoadState('networkidle')` sin acotar puede tumbar el CI sin fallar ninguna
-  aserción** (agota el timeout del `goto`). Acótalo a ~10s sin `throw`. sc-demo baja 3,9 MB de
+  aserción** (agota el timeout del `goto`). Acótalo a ~10s sin `throw`. sc-docs baja 3,9 MB de
   fuente + chunks perezosos.
 - **`table-layout`:** `main.scss` fuerza `fixed` en `table.table`; `sc-datatable` es `auto` →
   columnas recolocadas al migrar (la piel `.list-table` lo corrige). Y **PrimeNG pinta SIEMPRE
@@ -416,7 +416,7 @@ Each entry: **what bites → the rule → why**. Append here when a new one is f
 - **Los `<td>` los pinta el DS**: reglas encapsuladas de página a `.table__td-*` dejan de
   aplicar; usa un `cellTemplate` con su `<span>`. **La casilla de PrimeNG mide 17,5px** (nativa
   15,75): con `table-layout: auto` ensancha la columna 2px.
-- **`sc-demo` enruta por HASH** (`/#/components/x`): sin la almohadilla el deep-link rompe los
+- **`sc-docs` enruta por HASH** (`/#/components/x`): sin la almohadilla el deep-link rompe los
   assets y la app no arranca. **`http-server` no hace fallback SPA**: para rutas profundas,
   `ng serve`.
 - **El tema oscuro se activa con `.sc-dark` en `<html>`** vía `localStorage sc-theme`

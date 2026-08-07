@@ -21,7 +21,7 @@ The generated result must align with:
 ## Scope
 Use this skill when creating or refactoring a SmartContact UI component inside:
 - `projects/ui-smartcontact`
-- `projects/sc-demo`
+- `projects/sc-docs`
 
 This skill covers:
 - component generation
@@ -67,7 +67,7 @@ Before writing code, inspect all relevant existing files and patterns for the ta
 At minimum, verify:
 - current component folder conventions
 - existing export conventions in `public-api.ts`
-- current demo/docs page structure in `projects/sc-demo/src/app/pages/`
+- current demo/docs page structure in `projects/sc-docs/src/app/pages/`
 - current i18n pattern in custom components and demo pages (if present)
 - current route and navigation registration pattern
 - available design tokens in `projects/design-tokens/src/lib/styles/tokens/layers/`
@@ -102,7 +102,7 @@ When applicable, this skill must generate or update:
 - `*.component.scss`
 - supporting local exports if the repo uses them
 - library export in `public-api.ts`
-- demo/docs page in `projects/sc-demo`
+- demo/docs page in `projects/sc-docs`
 - component-local i18n file if a custom component owns fixed text
 - route registration if required by the current demo architecture
 - navigation entry if required by the current demo architecture
@@ -210,7 +210,7 @@ The goal is maintainability inside this repo, not architectural novelty.
 Use `smartcontact-i18n` whenever generating or refactoring a custom component or demo page that contains visible text.
 
 - Custom components with fixed design-system or business copy must own a colocated `i18n/<component>.translations.ts` file.
-- Demo page text must use `projects/sc-demo/src/app/i18n/sc-demo.translations.ts` (create the file following the skill pattern if the demo does not have it yet).
+- Demo page text must use `projects/sc-docs/src/app/i18n/sc-docs.translations.ts` (create the file following the skill pattern if the demo does not have it yet).
 - Primitive wrappers should not depend on translation services when text is supplied by consumer inputs.
 - Derive supported languages from translation dictionary keys; keep `en` complete as fallback and do not use `es-ES` unless explicitly requested.
 
@@ -288,7 +288,7 @@ Do not add dead routes.
 Do not add navigation entries for pages that do not exist.
 
 ## Documentation Requirements
-If the component is documented in `sc-demo`, match the existing documentation style already present in `projects/sc-demo/src/app/pages/`.
+If the component is documented in `sc-docs`, match the existing documentation style already present in `projects/sc-docs/src/app/pages/`.
 
 When applicable, include:
 - overview
@@ -352,7 +352,7 @@ In these cases, prefer a constrained implementation over invented code.
 Create a new `sc-badge` component with variants `neutral`, `success`, and `danger`, following the same conventions as `sc-button`.
 
 ### Example 2
-Generate a new `sc-inputtext` component as a PrimeNG wrapper, using existing SmartContact tokens and producing full docs in `sc-demo`.
+Generate a new `sc-inputtext` component as a PrimeNG wrapper, using existing SmartContact tokens and producing full docs in `sc-docs`.
 
 ### Example 3
 Refactor `sc-button` to reduce duplication, preserve its public API, and make it a stronger reference implementation for future component generation.

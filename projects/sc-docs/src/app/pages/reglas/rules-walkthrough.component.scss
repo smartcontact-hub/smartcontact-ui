@@ -668,7 +668,7 @@ summary:focus-visible {
 
 /* ---------- Dock de feedback: pestaña flotante + panel (abajo-derecha) ----------
    El log de revisión sale del flujo de lectura para devolverle el ancho completo
-   al texto. Vive como pestaña fija abajo-derecha (sin offset de sidebar: sc-demo
+   al texto. Vive como pestaña fija abajo-derecha (sin offset de sidebar: sc-docs
    no tiene) que abre un panel NO-modal, con foco y Esc gestionados y por debajo
    del lightbox (--sc-z-modal). */
 .rules__fb-dock {

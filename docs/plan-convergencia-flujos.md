@@ -131,14 +131,14 @@ andamiaje inicial (`git blame`: la línea es del scaffolding, y el rename DD-23 
 `info` a sky no revisó el alias). Añadir §1.4 a `docs/customs-catalog.md` y una entrada
 en `docs/DECISIONS.md` registrando que accent se unifica con info bajo sky.
 
-**Ojo al radio de blast**: `sc-demo/.../rules-walkthrough.component.scss` tiene **11
+**Ojo al radio de blast**: `sc-docs/.../rules-walkthrough.component.scss` tiene **11
 referencias** a accent — es tu material de presentación y cambiará de color entero.
 Verificar a ojo.
 
 **Deuda de a11y que va en el mismo lote**: `--sc-text-subtle` está a 2.04:1 (aparcado
 desde s12). Con el auditor de contraste ya montado para esta fase, resolverlo aquí.
 
-**Riesgo de pipeline: ninguno** (H5). Riesgo real: contraste y sc-demo.
+**Riesgo de pipeline: ninguno** (H5). Riesgo real: contraste y sc-docs.
 
 ---
 
@@ -224,7 +224,7 @@ reales: `inputtext`/`select`/`multiselect` → `!iftaLabel()`; `datepicker` → 
 
 **Por eso B2 empieza por su red**, igual que s12 montó la e2e antes del refactor
 transversal (LEARNINGS #16): un arnés de **diff de `outerHTML`** por componente contra
-`sc-demo`, que es el gate que el propio diseño de s12 pedía. Con la red verde, el
+`sc-docs`, que es el gate que el propio diseño de s12 pedía. Con la red verde, el
 refactor: `:host{display:contents}` · doble clase (`sc-field__label` +
 `{{block}}__label`) · estilos bajo `.sc-field__*` · `--sc-field-label-mb` para la
 divergencia de 2px · input `showLabel` · `sc-search` fuera.
@@ -235,7 +235,7 @@ divergencia de 2px · input `showLabel` · `sc-search` fuera.
 ### B4 · Extender `sc-datatable` + piloto en 2 tablas
 
 Faltan 4 capacidades (H7): `rowStyleClass`, output `rowClick`, menú contextual y columnas
-conmutables. Se añaden al DS con sus demos en `sc-demo`, y se migran **2 tablas fáciles**
+conmutables. Se añaden al DS con sus demos en `sc-docs`, y se migran **2 tablas fáciles**
 (`labels`, `templates`) como plantilla verificada. Las 11 restantes quedan documentadas
 con su receta.
 
@@ -277,7 +277,7 @@ compositor por locale**, que es diseño y va después.
 **Específico por fase**:
 
 - **Fase 1**: medir contraste computado en el navegador (claro y oscuro) para cada par
-  que cambie; capturas de la tarjeta de impacto y de `sc-demo /reglas` (los 11 refs de
+  que cambie; capturas de la tarjeta de impacto y de `sc-docs /reglas` (los 11 refs de
   accent).
 - **Olas 3 y 6**: **validación humana obligatoria** mirando pantalla, claro y oscuro. No
   se firman por gates.

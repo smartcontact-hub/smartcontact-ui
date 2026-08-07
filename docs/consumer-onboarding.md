@@ -202,4 +202,4 @@ import { ScIconComponent } from '@smartcontact-hub/icons';
 ## 6. Referencia viva
 
 `projects/supervisor` es el ejemplo canónico de consumo (la app real construida
-solo con `sc-*` + tokens). El catálogo completo está en el demo (`projects/sc-demo`).
+solo con `sc-*` + tokens). El catálogo completo está en el demo (`projects/sc-docs`).

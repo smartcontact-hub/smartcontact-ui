@@ -9,7 +9,7 @@ import { expect, test, type Page } from '@playwright/test';
  * El repo no tiene ni un test de componente Angular (0 `TestBed`), y eso lleva
  * meses bloqueando los refactores del DS (B2, B4): tocar cinco componentes
  * núcleo sin forma de saber si el HTML resultante cambia es apostar. Esta es
- * esa red, montada sobre lo que YA funciona aquí — Playwright y `sc-demo`, que
+ * esa red, montada sobre lo que YA funciona aquí — Playwright y `sc-docs`, que
  * renderiza todos los componentes.
  *
  * Qué fija: el HTML RENDERIZADO de cada componente, normalizado. Un refactor

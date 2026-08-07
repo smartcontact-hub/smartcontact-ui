@@ -26,7 +26,7 @@ import { PROVENANCE_OVERRIDE, DEMO_EXEMPT, PRIMENG_UTIL, NESTED_IGNORE } from '.
 const root = resolve(import.meta.dirname, '..');
 const COMPONENTS = resolve(root, 'projects/ui-smartcontact/src/lib/components');
 const SUPERVISOR = resolve(root, 'projects/supervisor/src');
-const PAGES = resolve(root, 'projects/sc-demo/src/app/pages/components/component-pages.ts');
+const PAGES = resolve(root, 'projects/sc-docs/src/app/pages/components/component-pages.ts');
 const INVENTORY = resolve(root, 'docs/inventory.md');
 const MANIFEST = resolve(root, 'docs/_component-status.json');
 const log = (s = '') => process.stdout.write(s + '\n');
