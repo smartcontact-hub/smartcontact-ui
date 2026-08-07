@@ -12,7 +12,7 @@ import { USAGE_SCREENS, type UsageScreen, type UsageState } from './screens.mani
  *  3. acumula y escribe el CRUDO `_usage-raw.json`.
  *
  * `scripts/usage-status.mjs` (puro, sin navegador) deriva de ese crudo el JSON que
- * lee la página sc-demo, intersectando con los 48 selectores DS de la pokédex.
+ * lee la página sc-docs, intersectando con los 48 selectores DS de la pokédex.
  *
  * Determinismo: storage limpio (re-siembra de SEED) · tema claro antes del paint ·
  * animaciones off · fuentes/iconos listos. No es una suite de aserciones: es un
@@ -20,7 +20,7 @@ import { USAGE_SCREENS, type UsageScreen, type UsageState } from './screens.mani
  * `npm run usage:capture`, nunca en `verify`.
  */
 
-const OUT_DIR = resolve(process.cwd(), 'projects/sc-demo/public/usage');
+const OUT_DIR = resolve(process.cwd(), 'projects/sc-docs/public/usage');
 const VIEWPORT = '1440x900';
 
 interface CapturedScreen {
@@ -141,5 +141,5 @@ test.afterAll(() => {
     screens: captured,
   };
   writeFileSync(resolve(OUT_DIR, '_usage-raw.json'), JSON.stringify(raw, null, 2) + '\n');
-  process.stdout.write(`\n✓ usage-capture: ${captured.length} pantallas → projects/sc-demo/public/usage/_usage-raw.json\n`);
+  process.stdout.write(`\n✓ usage-capture: ${captured.length} pantallas → projects/sc-docs/public/usage/_usage-raw.json\n`);
 });

@@ -8,7 +8,7 @@
  * clave nueva en es se quede sin versión en los demás idiomas y la UI muestre la clave
  * cruda (p. ej. `memory.rules.builder.cond.impact`) en vez del texto.
  *
- * Sólo el Supervisor está localizado (sc-demo/agent no consumen i18n). Si en el futuro
+ * Sólo el Supervisor está localizado (sc-docs/agent no consumen i18n). Si en el futuro
  * otra app añade `assets/i18n/`, amplía APPS.
  *
  * Uso: `node scripts/i18n-check.mjs` (en la cadena `verify`).

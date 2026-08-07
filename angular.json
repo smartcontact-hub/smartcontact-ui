@@ -82,37 +82,37 @@
         }
       }
     },
-    "sc-demo": {
+    "sc-docs": {
       "projectType": "application",
       "schematics": {
         "@schematics/angular:component": {
           "style": "scss"
         }
       },
-      "root": "projects/sc-demo",
-      "sourceRoot": "projects/sc-demo/src",
+      "root": "projects/sc-docs",
+      "sourceRoot": "projects/sc-docs/src",
       "prefix": "app",
       "architect": {
         "build": {
           "builder": "@angular-devkit/build-angular:browser",
           "options": {
-            "outputPath": "dist/sc-demo",
-            "index": "projects/sc-demo/src/index.html",
-            "main": "projects/sc-demo/src/main.ts",
+            "outputPath": "dist/sc-docs",
+            "index": "projects/sc-docs/src/index.html",
+            "main": "projects/sc-docs/src/main.ts",
             "polyfills": [
               "zone.js"
             ],
-            "tsConfig": "projects/sc-demo/tsconfig.app.json",
+            "tsConfig": "projects/sc-docs/tsconfig.app.json",
             "inlineStyleLanguage": "scss",
             "assets": [
               {
                 "glob": "**/*",
-                "input": "projects/sc-demo/public",
+                "input": "projects/sc-docs/public",
                 "output": "/"
               }
             ],
             "styles": [
-              "projects/sc-demo/src/styles.scss"
+              "projects/sc-docs/src/styles.scss"
             ],
             "scripts": []
           },
@@ -143,14 +143,14 @@
         "serve": {
           "builder": "@angular-devkit/build-angular:dev-server",
           "options": {
-            "buildTarget": "sc-demo:build:development"
+            "buildTarget": "sc-docs:build:development"
           },
           "configurations": {
             "production": {
-              "buildTarget": "sc-demo:build:production"
+              "buildTarget": "sc-docs:build:production"
             },
             "development": {
-              "buildTarget": "sc-demo:build:development"
+              "buildTarget": "sc-docs:build:development"
             }
           },
           "defaultConfiguration": "development"

@@ -17,7 +17,7 @@ Figma (Smart Contact Prime UI Kit) se refleja directamente en el código y
 | `@smartcontact-hub/styles` | [`projects/design-tokens`](projects/design-tokens/README.md) | Tokens `--sc-*` (7 capas, escala 14-base en rem) + reset/globals |
 | `@smartcontact-hub/icons` | [`projects/ui-smartcontact-icons`](projects/ui-smartcontact-icons/README.md) | `<sc-icon>` + Material Symbols generados |
 | `@smartcontact-hub/components` | [`projects/ui-smartcontact`](projects/ui-smartcontact/README.md) | `provideSmartContactUi()` + preset modular (`theme/sc-preset`, cada slot → `var(--sc-*)`) + 49 wrappers/customs `sc-*` ([inventario](docs/inventory.md)) |
-| `sc-demo` _(app privada)_ | [`projects/sc-demo`](projects/sc-demo/README.md) | Showcase: fundaciones + catálogo + smoke del tema |
+| `sc-docs` _(app privada)_ | [`projects/sc-docs`](projects/sc-docs/README.md) | Showcase: fundaciones + catálogo + smoke del tema |
 | `supervisor` _(app privada)_ | [`projects/supervisor`](projects/supervisor/README.md) | App real: consumo canónico (solo `sc-*` + tokens) |
 
 ## Construir
@@ -25,8 +25,8 @@ Figma (Smart Contact Prime UI Kit) se refleja directamente en el código y
 ```bash
 npm ci
 npm run build          # design-tokens + icons + components → dist/
-npm run build:demo     # demo producción
-npm start              # demo en local (ng serve)
+npm run build:docs     # docs producción
+npm start              # docs en local (ng serve)
 npm run export:all     # tarballs npm en dist/archives/
 ```
 

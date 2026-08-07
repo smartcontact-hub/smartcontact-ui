@@ -3,7 +3,7 @@ import { defineConfig } from '@playwright/test';
 /**
  * Config del e2e de COMPORTAMIENTO del Supervisor. Aislada de las otras dos a
  * propósito:
- *  - `playwright.config.ts` sirve sc-demo (:4280) → métricas de token + baselines,
+ *  - `playwright.config.ts` sirve sc-docs (:4280) → métricas de token + baselines,
  *  - `playwright.usage.config.ts` sirve el supervisor (:4290) pero es un GENERADOR
  *    de capturas sin aserciones (y escribe artefactos compartidos),
  *  - esta (:4405) conduce la app real y **asevera**: rellenar → validar → guardar.

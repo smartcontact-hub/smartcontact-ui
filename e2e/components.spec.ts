@@ -36,7 +36,7 @@ const gotoPage = async (page: Page, path: string) => {
  * Baseline visual, SOLO local (los baselines de Playwright son por-plataforma;
  * en CI mandan las métricas de arriba, que sí corren siempre).
  *
- * **Si cambias el diseño de sc-demo a propósito, REGENERA en el mismo commit**:
+ * **Si cambias el diseño de sc-docs a propósito, REGENERA en el mismo commit**:
  *
  *     npx playwright test -c playwright.config.ts components --update-snapshots
  *

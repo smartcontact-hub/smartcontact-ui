@@ -60,7 +60,7 @@ Decisiones ya cerradas. No se re-litigan; se reflejan tal cual.
 
 ### 2.4 Estructura / empaquetado objetivo
 
-**Estructura de empaquetado del catálogo de desarrollo + tokens/preset/tooling del catálogo de diseño.** Split de 3 paquetes ng-packagr publicables (`@smartcontact-hub/styles`, `@smartcontact-hub/icons`, `@smartcontact-hub/components`) + `sc-demo` privado de referencia. API de setup pública `provideSmartContactUi()`. Detalle concreto en §6.
+**Estructura de empaquetado del catálogo de desarrollo + tokens/preset/tooling del catálogo de diseño.** Split de 3 paquetes ng-packagr publicables (`@smartcontact-hub/styles`, `@smartcontact-hub/icons`, `@smartcontact-hub/components`) + `sc-docs` privado de referencia. API de setup pública `provideSmartContactUi()`. Detalle concreto en §6.
 
 ---
 
@@ -213,7 +213,7 @@ Componentes que **ningún origen** tiene como wrapper Angular, pero el **preset 
 | tokens | `@smartcontact-hub/styles` | `projects/design-tokens/` | **tokens 14-base** (7 capas `01-primitive…07-dark.css` en `src/lib/styles/tokens/layers/`, escala `--sc-scale-*`, alias font-size/line-height) + reset/globals | — (solo tslib) |
 | iconos | `@smartcontact-hub/icons` | `projects/ui-smartcontact-icons/` | `<sc-icon>` + Material Symbols generados (el `sc-icon` del catálogo de diseño migra aquí) | `@angular/core` + `@angular/common` |
 | componentes | `@smartcontact-hub/components` | `projects/ui-smartcontact/` | wrappers `sc-*` (ambos orígenes) + **preset modular** (`src/lib/theme/sc-preset/`) + `provideSmartContactUi` | primeng, @primeuix/themes, `@smartcontact-hub/icons`, `@smartcontact-hub/styles`, ngx-translate |
-| demo | (privado) | `projects/sc-demo/` | app consumidora de referencia / doc-site | — |
+| demo | (privado) | `projects/sc-docs/` | app consumidora de referencia / doc-site | — |
 
 Cada lib compila con **ng-packagr** (`ng-package.json` → `dist/<lib>`); peerDeps por versión exacta. Esto da **publicabilidad real** (paquetes versionados, no consumo por path).
 
@@ -258,7 +258,7 @@ Las apps consumidoras (supervisor, doc-site) migran de imports por path de monor
 
 ### Fase 1 — Fundaciones (tokens / escala / preset / setup) ✓
 
-- Split de 3 paquetes ng-packagr + `sc-demo`.
+- Split de 3 paquetes ng-packagr + `sc-docs`.
 - Capas 14-base + alias semánticos en `@smartcontact-hub/styles`.
 - Preset modular apuntando a `var(--sc-*)` (sin hex en `base.ts`); overrides portados a la estructura por-componente.
 - `tokens:parity`/generador/auditor de escala conectados al pipeline; `export:*` portados a Node.
@@ -288,7 +288,7 @@ Las apps consumidoras (supervisor, doc-site) migran de imports por path de monor
 
 - Migrar **Memory** y, al hacerlo, validar las dos implementaciones de `sc-bulk-transcription-modal` (§4.4).
 - Migrar las apps consumidoras (supervisor, doc-site) de imports por path a los paquetes versionados.
-- Usar `sc-demo` como app de referencia / piloto de validación.
+- Usar `sc-docs` como app de referencia / piloto de validación.
 
 > **Red de seguridad:** tras cualquier toque cross-surface (tokens, preset, renames cross-app, sweeps masivos), correr el e2e smoke por inercia.
 

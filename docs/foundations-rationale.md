@@ -32,7 +32,7 @@ Decisiones tomadas antes de construir las fundaciones; no se re-litigan.
 | **Orden de construcción** | Fundaciones completas primero (Mitad A); port de componentes después, incremental (Mitad B). | El port exige verificación visual por pantalla → es incremental por naturaleza. La escala bloquea el preset, el preset bloquea el setup. |
 | **Documentación** | Documentación de ambos orígenes, adaptada a las convenciones unificadas. Registro **colaborativo y profesional**. | El repo es consultable por todo el equipo. La gobernanza vive en los guardarraíles, no en el lenguaje. |
 | **Verificación** | Guardarraíles automáticos como **gate de CI**. | Cada valor trazable a Figma, comprobado por máquina. Es el estándar de calidad del repo. |
-| **Consumo** | `sc-demo` (dentro del repo) = doc-site de referencia (un deploy). El supervisor consume los paquetes (el otro deploy). | El supervisor "bebe" del DS empaquetado y el doc-site habla el mismo idioma visual que los paquetes. |
+| **Consumo** | `sc-docs` (dentro del repo) = doc-site de referencia (un deploy). El supervisor consume los paquetes (el otro deploy). | El supervisor "bebe" del DS empaquetado y el doc-site habla el mismo idioma visual que los paquetes. |
 
 ---
 
@@ -44,7 +44,7 @@ Decisiones tomadas antes de construir las fundaciones; no se re-litigan.
   - `@smartcontact-hub/styles` (`projects/design-tokens/`) ← las 7 capas de tokens 14-base→rem (`src/lib/styles/tokens/layers/01-primitive…07-dark.css`) + reset/globals.
   - `@smartcontact-hub/icons` (`projects/ui-smartcontact-icons/`) ← paquete de iconos (Material Symbols) al que migra el `sc-icon` del catálogo de diseño.
   - `@smartcontact-hub/components` (`projects/ui-smartcontact/`) ← wrappers `sc-*` + **preset modular** (`src/lib/theme/sc-preset/`) + `provideSmartContactUi`.
-  - `sc-demo` (privado, `projects/sc-demo/`) ← doc-site / app consumidora de referencia.
+  - `sc-docs` (privado, `projects/sc-docs/`) ← doc-site / app consumidora de referencia.
 - **Preset modular** (un módulo por componente) con **cada slot apuntando a `var(--sc-*)`**; `base.ts` sin color hardcodeado. Conversión a rem por el mecanismo central adoptado.
 - **`provideSmartContactUi()`** como frontera única de setup, con `darkModeSelector` por defecto a `.sc-dark`.
 - **Tooling de verificación fundido**: el generador único DTCG-aware + `parity` + `guard` + el auditor de escala, conectados como gate.

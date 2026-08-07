@@ -110,7 +110,7 @@ Son doble-clicks en la carpeta `preview/`:
 
 | Doble-click | Qué abre |
 |---|---|
-| `preview-componentes.command` | La galería de componentes (sc-demo) |
+| `preview-componentes.command` | La galería de componentes (sc-docs) |
 | `preview-supervisor.command` | La app real (Supervisor) |
 | `Actualizar.command` | Trae lo último del equipo (no abre web) |
 

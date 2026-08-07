@@ -127,7 +127,7 @@
 ## Gates y push
 
 7. **Vas a `git push` → corre lo que corre el CI, y el CI NO es `npm run verify`.** `verify` es
-   **uno de los cinco pasos** de `ci.yml`; los otros cuatro son `build:demo`, el build AOT de
+   **uno de los cinco pasos** de `ci.yml`; los otros cuatro son `build:docs`, el build AOT de
    supervisor y de agent, `e2e` y `e2e:supervisor`. Abre `ci.yml` y córrelos; es enumerable, no
    hay que adivinarlo.
    *Evidencia (s11)*: racionalicé un subset y pusheé; el verify completo cazó luego el desfase
