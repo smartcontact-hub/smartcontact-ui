@@ -1,19 +1,23 @@
-/** Datos seed del esqueleto del Agent (sin backend). */
+/** Datos seed del cartón pluma del Agent (réplica fiel de la web real, sin backend). */
 
 export type CallDirection = 'in' | 'out' | 'missed';
-export type Tipificacion = 'N1' | 'N2' | 'N3';
+export type CallChannel = 'call' | 'chat';
 
 export interface CallRow {
   readonly id: number;
-  readonly fecha: string;
-  readonly numero: string;
-  readonly grupo: string;
-  readonly origen: string;
-  readonly destino: string;
-  readonly duracion: string;
-  readonly direction: CallDirection;
-  readonly tipo: readonly Tipificacion[];
-  readonly comentarios: string;
+  readonly date: string;
+  readonly number: string;
+  readonly group: string;
+  readonly origin: string;
+  readonly destination: string;
+  readonly support: string; // 1er tiempo (Support)
+  readonly wait: string; // 2º tiempo (Wait) → chip
+  readonly waitOver: boolean; // chip rojo si supera umbral
+  readonly categorization: string;
+  readonly comments: string;
+  readonly direction: CallDirection; // flecha ↗ (out) / ↙ (in)
+  readonly channel: CallChannel; // 2º icono: teléfono (call) / bocadillo (chat)
+  readonly selected?: boolean;
 }
 
 export interface Grupo {
@@ -21,47 +25,34 @@ export interface Grupo {
   readonly on: boolean;
 }
 
-const COMENTARIO = 'Lorem ipsum dolor sit amet, consetetur sadipscing elitr, sed diam nonumy eirmod';
-
 export const CALLS: readonly CallRow[] = [
-  { id: 1, fecha: '18/06 12:14', numero: '900345678', grupo: 'Pedidos', origen: 'Madrid', destino: 'Ext 101', duracion: '00:31', direction: 'in', tipo: ['N1', 'N2', 'N3'], comentarios: COMENTARIO },
-  { id: 2, fecha: '18/06 12:14', numero: '900345678', grupo: 'Pedidos', origen: 'Sevilla', destino: 'Ext 104', duracion: '00:00', direction: 'missed', tipo: ['N1', 'N2', 'N3'], comentarios: COMENTARIO },
-  { id: 3, fecha: '18/06 12:14', numero: '900345678', grupo: 'Pedidos', origen: 'Valencia', destino: 'Ext 101', duracion: '00:31', direction: 'in', tipo: ['N1', 'N2', 'N3'], comentarios: COMENTARIO },
-  { id: 4, fecha: '18/06 12:14', numero: '900345678', grupo: 'Pedidos', origen: 'Bilbao', destino: 'Ext 102', duracion: '01:12', direction: 'out', tipo: ['N1', 'N2', 'N3'], comentarios: COMENTARIO },
-  { id: 5, fecha: '18/06 12:14', numero: '900345678', grupo: 'Pedidos', origen: 'Madrid', destino: 'Ext 101', duracion: '00:31', direction: 'in', tipo: ['N1', 'N2', 'N3'], comentarios: COMENTARIO },
-  { id: 6, fecha: '18/06 12:14', numero: '900345678', grupo: 'Pedidos', origen: 'Málaga', destino: 'Ext 103', duracion: '00:45', direction: 'in', tipo: ['N1', 'N2', 'N3'], comentarios: COMENTARIO },
-  { id: 7, fecha: '18/06 12:14', numero: '900345678', grupo: 'Pedidos', origen: 'Madrid', destino: 'Ext 101', duracion: '00:31', direction: 'out', tipo: ['N1', 'N2', 'N3'], comentarios: COMENTARIO },
-  { id: 8, fecha: '18/06 12:14', numero: '900345678', grupo: 'Pedidos', origen: 'Vigo', destino: 'Ext 105', duracion: '00:00', direction: 'missed', tipo: ['N1', 'N2', 'N3'], comentarios: COMENTARIO },
-  { id: 9, fecha: '18/06 12:14', numero: '900345678', grupo: 'Pedidos', origen: 'Madrid', destino: 'Ext 101', duracion: '00:31', direction: 'in', tipo: ['N1', 'N2', 'N3'], comentarios: COMENTARIO },
-  { id: 10, fecha: '18/06 12:14', numero: '900345678', grupo: 'Pedidos', origen: 'Sevilla', destino: 'Ext 102', duracion: '02:03', direction: 'in', tipo: ['N1', 'N2', 'N3'], comentarios: COMENTARIO },
-  { id: 11, fecha: '18/06 12:14', numero: '900345678', grupo: 'Pedidos', origen: 'Madrid', destino: 'Ext 101', duracion: '00:31', direction: 'out', tipo: ['N1', 'N2', 'N3'], comentarios: COMENTARIO },
-  { id: 12, fecha: '18/06 12:14', numero: '900345678', grupo: 'Pedidos', origen: 'Granada', destino: 'Ext 104', duracion: '00:31', direction: 'in', tipo: ['N1', 'N2', 'N3'], comentarios: COMENTARIO },
-  { id: 13, fecha: '18/06 12:14', numero: '900345678', grupo: 'Pedidos', origen: 'Madrid', destino: 'Ext 101', duracion: '00:31', direction: 'in', tipo: ['N1', 'N2', 'N3'], comentarios: COMENTARIO },
-  { id: 14, fecha: '18/06 12:14', numero: '900345678', grupo: 'Pedidos', origen: 'Murcia', destino: 'Ext 103', duracion: '00:31', direction: 'out', tipo: ['N1', 'N2', 'N3'], comentarios: COMENTARIO },
-  { id: 15, fecha: '18/06 12:14', numero: '900345678', grupo: 'Pedidos', origen: 'Madrid', destino: 'Ext 101', duracion: '00:31', direction: 'in', tipo: ['N1', 'N2', 'N3'], comentarios: COMENTARIO },
+  { id: 1, date: '6 Aug', number: 'Mario Per…', group: 'Soporte T…', origin: 'Rafael', destination: 'Mario Per…', support: '00:00', wait: '00:10', waitOver: false, categorization: '-', comments: '-', direction: 'out', channel: 'chat' },
+  { id: 2, date: '21 May', number: 'Agente Jo…', group: 'Soporte T…', origin: 'Agente Jo…', destination: '-', support: '00:09', wait: '02:24', waitOver: true, categorization: '-', comments: '-', direction: 'in', channel: 'call' },
+  { id: 3, date: '21 May', number: '34609502…', group: 'Grupo de…', origin: '34609502…', destination: 'Demo Sm…', support: '00:00', wait: '00:01', waitOver: false, categorization: '-', comments: '-', direction: 'in', channel: 'call', selected: true },
+  { id: 4, date: '21 May', number: '34609502…', group: 'Grupo de…', origin: '34609502…', destination: 'Demo Sm…', support: '01:05', wait: '00:05', waitOver: false, categorization: '-', comments: '-', direction: 'in', channel: 'call' },
+  { id: 5, date: '21 May', number: 'Agente Jo…', group: 'Grupo de…', origin: 'Agente Jo…', destination: 'Demo Sm…', support: '00:24', wait: '01:26', waitOver: true, categorization: '-', comments: '-', direction: 'in', channel: 'call' },
 ];
 
 export const GRUPOS: readonly Grupo[] = [
-  { name: 'Nombre Grupo 1', on: true },
-  { name: 'Nombre Grupo 1', on: true },
-  { name: 'Nombre Grupo 1', on: true },
-  { name: 'Nombre Grupo 1', on: true },
+  { name: 'ACD Demo C2CB', on: true },
+  { name: 'ACD demo cuscare', on: true },
+  { name: 'ACD outbound', on: true },
 ];
 
 export const PROFILE = {
-  name: 'Nombre apellido',
-  pin: '4855458745641',
-  ext: 'Extensión',
-  photo: 'https://i.pravatar.cc/128?img=47',
+  name: 'Rafael',
+  pin: '694124',
+  ext: '113',
+  extType: 'language', // Material Symbol: globo (Type of ext.)
+  avatarLetter: 'R',
 } as const;
 
 export const KPIS = {
-  activeTime: '05:32:11',
-  connectedAt: '09:00 am',
-  statusTime: '00:32:21',
-  total: 234,
-  attended: 180,
-  missed: 54,
-  tmr: '00:31',
-  tmc: '00:31',
+  activeTime: '00:24:29',
+  connectedAt: '9:45 am',
+  disconnectedAt: '10:36 am',
+  statusTime: '00:04:18',
+  total: 0,
+  art: '-',
+  act: '-',
 } as const;

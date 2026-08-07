@@ -1,23 +1,34 @@
 .shell {
   display: flex;
   flex-direction: column;
-  height: 100vh;
-  overflow: hidden;
-  background: var(--sc-bg-default);
+  /* Diseño de referencia 1456px escalado al ancho real (fluido, como la web). */
+  width: 1456px;
+  min-height: calc(100vh / var(--ag-zoom, 1));
+  zoom: var(--ag-zoom, 1);
+  background: var(--ag-canvas);
+  overflow-x: hidden;
+  line-height: 1.3;
 }
 
 .kpis {
   display: grid;
-  grid-template-columns: 1.4fr 0.7fr 1.4fr 1fr 1.1fr;
-  gap: var(--sc-spacing-1);
-  padding: var(--sc-spacing-1-5) var(--sc-spacing-1-5) 0;
+  grid-template-columns: 1.9fr 1.05fr 1.3fr 1.1fr 1.45fr;
+  gap: 28px;
+  padding: 14px 37px 0;
+}
+/* Los items del grid deben poder encogerse por debajo de su min-content. */
+.kpis > * {
+  min-width: 0;
 }
 
+/* La tabla va en su panel .list (#1f2429), más oscuro que el fondo (#3e4246). */
 .tablewrap {
-  margin: var(--sc-spacing-1-5);
+  margin: 26px 37px 37px;
   flex: 1;
   min-height: 0;
   overflow: auto;
+  background: var(--ag-list);
+  border-radius: 9.125px;
 }
 
 @media (max-width: 75rem) {

@@ -1,85 +1,98 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { ScGaugeComponent, ScTagComponent, type ScGaugeSegment } from '@smartcontact-hub/components';
-import { ScIconComponent } from '@smartcontact-hub/icons';
 
 import { KPIS } from '../../data/seed';
+import { AgIconComponent } from '../ui/app-icon.component';
 
-/** Tile KPI: anillo de conversaciones (sc-gauge) + No atendidas + TMR/TMC. */
+/** Tile KPI: anillo de conversaciones (estado vacío) + métricas ART / ACT. */
 @Component({
   selector: 'app-kpi-gauge-card',
   standalone: true,
-  imports: [ScGaugeComponent, ScTagComponent, ScIconComponent],
+  imports: [AgIconComponent],
   template: `
-    <div class="agent-card gaugecard">
-      <div class="gaugecard__ring">
-        <span class="gaugecard__badge">
-          <sc-tag [value]="'No atendidas · ' + kpis.missed" severity="danger" icon="phone_missed" [rounded]="true" />
-        </span>
-        <sc-gauge
-          [segments]="segments"
-          size="lg"
-          [label]="kpis.total.toString()"
-          sublabel="Conv. Totales"
-          [ariaLabel]="ariaLabel"
-        />
+    <div class="agent-card gauge">
+      <div class="gauge__ring">
+        <svg viewBox="0 0 120 120" width="84" height="84" aria-hidden="true">
+          <circle class="gauge__track" cx="60" cy="60" r="53" fill="none" stroke-width="5" />
+        </svg>
+        <div class="gauge__center">
+          <div class="gauge__num">{{ kpis.total }}</div>
+          <div class="gauge__sub">Total Conv.</div>
+        </div>
       </div>
-      <div class="gaugecard__metrics">
+      <div class="gauge__metrics">
         <div class="metric">
-          <span class="metric__value">{{ kpis.tmr }}</span>
-          <span class="agent-muted"><sc-icon name="schedule" [size]="13" /> TMR</span>
+          <span class="metric__val">{{ kpis.art }}</span>
+          <span class="metric__label"><app-icon name="clock" [size]="10" /> ART</span>
         </div>
         <div class="metric">
-          <span class="metric__value">{{ kpis.tmc }}</span>
-          <span class="agent-muted"><sc-icon name="schedule" [size]="13" /> TMC</span>
+          <span class="metric__val">{{ kpis.act }}</span>
+          <span class="metric__label"><app-icon name="clock" [size]="10" /> ACT</span>
         </div>
       </div>
     </div>
   `,
   styles: `
-    .gaugecard {
+    .gauge {
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: var(--sc-spacing-1-5);
+      gap: 22px;
       height: 100%;
+      padding: 12px 16px;
     }
-    .gaugecard__ring {
+    .gauge__ring {
       position: relative;
       display: inline-flex;
+      flex: none;
     }
-    .gaugecard__badge {
+    .gauge__track {
+      stroke: var(--ag-ring);
+    }
+    .gauge__center {
       position: absolute;
-      top: calc(var(--sc-spacing-1) * -1);
-      left: 50%;
-      transform: translateX(-50%);
-      white-space: nowrap;
-      z-index: 1;
-    }
-    .gaugecard__metrics {
+      inset: 0;
       display: flex;
       flex-direction: column;
-      gap: var(--sc-spacing-1);
+      align-items: center;
+      justify-content: center;
+      gap: 2px;
+    }
+    .gauge__num {
+      font-size: 21.3px;
+      font-weight: 400;
+      color: var(--ag-text);
+      line-height: 1;
+    }
+    .gauge__sub {
+      font-size: 9.1px;
+      color: var(--ag-dim);
+    }
+    .gauge__metrics {
+      display: flex;
+      flex-direction: column;
+      gap: 13px;
     }
     .metric {
       display: flex;
       flex-direction: column;
+      gap: 2px;
     }
-    .metric__value {
-      font-size: var(--sc-font-size-400);
-      font-weight: 600;
-      color: var(--sc-text-primary);
+    .metric__val {
+      font-size: 11.7px;
+      font-weight: 400;
+      color: var(--ag-text);
+      line-height: 1;
     }
-    .agent-muted sc-icon {
-      vertical-align: -2px;
+    .metric__label {
+      display: inline-flex;
+      align-items: center;
+      gap: 4px;
+      font-size: 9.1px;
+      color: var(--ag-muted);
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class KpiGaugeCardComponent {
   protected readonly kpis = KPIS;
-  protected readonly segments: ScGaugeSegment[] = [
-    { value: KPIS.attended, severity: 'success' },
-    { value: KPIS.missed, severity: 'danger' },
-  ];
-  protected readonly ariaLabel = `${KPIS.total} conversaciones totales, ${KPIS.missed} no atendidas`;
 }

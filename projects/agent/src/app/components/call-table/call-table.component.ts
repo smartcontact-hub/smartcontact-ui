@@ -1,118 +1,139 @@
-import { ChangeDetectionStrategy, Component, computed, signal, TemplateRef, viewChild } from '@angular/core';
-import {
-  ScColumnCellContext,
-  ScColumnDef,
-  ScDatatableComponent,
-  ScSearchComponent,
-  ScTagComponent,
-} from '@smartcontact-hub/components';
-import { ScIconComponent } from '@smartcontact-hub/icons';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { CALLS } from '../../data/seed';
+import { AgIconComponent } from '../ui/app-icon.component';
 
-import { CALLS, type CallDirection, type CallRow, type Tipificacion } from '../../data/seed';
-
-/** Tabla central de llamadas — sc-datatable con celdas compuestas (dirección, duración, tipificación). */
+/** Tabla central de llamadas — rejilla fiel a la web real (dirección + canal, Support/Wait, chips). */
 @Component({
   selector: 'app-call-table',
   standalone: true,
-  imports: [ScDatatableComponent, ScSearchComponent, ScTagComponent, ScIconComponent],
+  imports: [AgIconComponent],
   template: `
-    <sc-datatable
-      #table
-      [value]="calls()"
-      [columns]="columns()"
-      dataKey="id"
-      [globalFilterFields]="['numero', 'grupo', 'origen', 'destino', 'comentarios']"
-      [stripedRows]="true"
-    >
-      <div scTableCaption class="cap">
-        <sc-search
-          placeholder="Buscar..."
-          size="sm"
-          (valueChange)="table.filterGlobal($event, 'contains')"
-        />
-      </div>
-      <div scTableEmpty class="agent-muted">Sin llamadas</div>
-    </sc-datatable>
-
-    <ng-template #dirTpl let-row>
-      <span class="dir" [class.dir--missed]="row.direction === 'missed'">
-        <sc-icon [name]="dirIcon(row.direction)" [size]="16" />
-      </span>
-      <span class="dir__num">{{ row.numero }}</span>
-    </ng-template>
-
-    <ng-template #durTpl let-row>
-      <span class="durpill">{{ row.duracion }}</span>
-    </ng-template>
-
-    <ng-template #tipoTpl let-row>
-      <span class="tipos">
-        @for (t of row.tipo; track t) {
-          <sc-tag variant="label" [labelColor]="tipoColor(t)" [value]="t + ' ' + tipoLabel(t)" />
+    <table class="tbl">
+      <thead>
+        <tr>
+          <th class="col-dir"></th>
+          <th>Date</th>
+          <th>Number</th>
+          <th>Group</th>
+          <th>Origin</th>
+          <th>Destination</th>
+          <th>Support/Wait.</th>
+          <th>Categorization</th>
+          <th class="col-com">Comments</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (r of calls; track r.id) {
+          <tr [class.is-selected]="r.selected" [class.is-out]="r.direction === 'out'">
+            <td class="col-dir">
+              <span class="dir">
+                <app-icon name="arrow-out" [size]="11" [class.flip]="r.direction !== 'out'" />
+                <app-icon [name]="r.channel === 'chat' ? 'chat' : 'phone'" [size]="13" />
+              </span>
+            </td>
+            <td>{{ r.date }}</td>
+            <td>{{ r.number }}</td>
+            <td>{{ r.group }}</td>
+            <td>{{ r.origin }}</td>
+            <td>{{ r.destination }}</td>
+            <td class="col-sw">
+              <span class="sw__a">{{ r.support }}</span>
+              <span class="sw__b" [class.sw__b--over]="r.waitOver">{{ r.wait }}</span>
+            </td>
+            <td class="muted">{{ r.categorization }}</td>
+            <td class="muted col-com">{{ r.comments }}</td>
+          </tr>
         }
-      </span>
-    </ng-template>
+      </tbody>
+    </table>
   `,
   styles: `
     :host {
       display: block;
     }
-    .cap {
-      display: flex;
-      justify-content: flex-end;
+    .tbl {
+      width: 100%;
+      border-collapse: collapse;
+      font-size: 11.7px;
     }
+    thead th {
+      height: 34px;
+      text-align: left;
+      font-weight: 400;
+      color: var(--ag-thead);
+      padding: 0 14.25px;
+      border-bottom: 1px solid var(--ag-head-line);
+      white-space: nowrap;
+    }
+    tbody td {
+      height: 42px;
+      color: var(--ag-text);
+      padding: 0 14.25px;
+      border-bottom: 1px solid var(--ag-line-soft);
+      vertical-align: middle;
+      white-space: nowrap;
+    }
+    /* Rejilla: separador vertical SOLO en el cuerpo (el thead real no lo tiene). */
+    tbody td:not(:last-child) {
+      border-right: 1px solid var(--ag-line-soft);
+    }
+    .col-dir {
+      width: 62px;
+      padding-right: 8px;
+    }
+    .col-com {
+      width: 32%;
+      white-space: normal;
+    }
+    .muted {
+      color: var(--ag-muted);
+    }
+
+    /* Fila seleccionada: fondo sutil + barra roja izquierda + iconos rojos. */
+    .is-selected td {
+      background: rgba(255, 255, 255, 0.035);
+    }
+    .is-selected td:first-child {
+      box-shadow: inset 3px 0 0 0 var(--ag-red);
+    }
+
+    /* Celda de dirección: flecha + icono de canal. Verde (in) / gris (out) / rojo (selected). */
     .dir {
       display: inline-flex;
-      vertical-align: -3px;
-      margin-right: var(--sc-spacing-0-5);
-      color: var(--sc-icon-success);
+      align-items: center;
+      gap: 5px;
+      color: var(--ag-green);
     }
-    .dir--missed {
-      color: var(--sc-icon-error);
+    .is-out .dir {
+      color: var(--ag-muted);
     }
-    .durpill {
+    .is-selected .dir {
+      color: var(--ag-red);
+    }
+    .dir app-icon.flip {
+      transform: rotate(180deg);
+    }
+
+    /* Support/Wait: 1er tiempo plano + 2º como chip #5f6776 (rojo si supera umbral). */
+    .sw__a {
+      font-variant-numeric: tabular-nums;
+      margin-right: 8px;
+    }
+    .sw__b {
       display: inline-block;
-      padding: var(--sc-spacing-0-25) var(--sc-spacing-0-5);
-      border-radius: var(--sc-radius-full);
-      background: var(--sc-bg-success-subtle);
-      color: var(--sc-text-success);
+      padding: 1px 3.07px;
+      border-radius: 5.26px;
+      background: var(--ag-chip-bg);
+      color: var(--ag-chip-text);
       font-variant-numeric: tabular-nums;
     }
-    .tipos {
-      display: inline-flex;
-      flex-wrap: wrap;
-      gap: var(--sc-spacing-0-5);
+    .sw__b--over {
+      background: var(--ag-red);
+      color: #fff;
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class CallTableComponent {
-  private readonly dirTpl = viewChild<TemplateRef<ScColumnCellContext<CallRow>>>('dirTpl');
-  private readonly durTpl = viewChild<TemplateRef<ScColumnCellContext<CallRow>>>('durTpl');
-  private readonly tipoTpl = viewChild<TemplateRef<ScColumnCellContext<CallRow>>>('tipoTpl');
-
-  protected readonly calls = signal<readonly CallRow[]>(CALLS);
-
-  protected readonly columns = computed<readonly ScColumnDef<CallRow>[]>(() => [
-    { field: 'fecha', header: 'Fecha', width: '7rem' },
-    { field: 'numero', header: 'Número', width: '12rem', cellTemplate: this.dirTpl() },
-    { field: 'grupo', header: 'Grupo', width: '8rem' },
-    { field: 'origen', header: 'Origen', width: '7rem' },
-    { field: 'destino', header: 'Destino', width: '7rem' },
-    { field: 'duracion', header: 'Durac./Esp.', width: '9rem', align: 'center', cellTemplate: this.durTpl() },
-    { field: 'tipo', header: 'Tipificación', width: '21rem', cellTemplate: this.tipoTpl() },
-    { field: 'comentarios', header: 'Comentarios' },
-  ]);
-
-  protected dirIcon(d: CallDirection): string {
-    return d === 'out' ? 'call_made' : d === 'missed' ? 'call_missed' : 'call_received';
-  }
-
-  protected tipoLabel(t: Tipificacion): string {
-    return t === 'N1' ? 'Pedidos' : t === 'N2' ? 'Consultas' : 'Reclamaciones';
-  }
-
-  protected tipoColor(t: Tipificacion): 'blue' | 'amber' | 'red' {
-    return t === 'N1' ? 'blue' : t === 'N2' ? 'amber' : 'red';
-  }
+  protected readonly calls = CALLS;
 }
