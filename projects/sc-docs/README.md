@@ -34,9 +34,9 @@ npm run build:docs   # build de producción → dist/sc-docs
 
 ## Enlaces (Cloudflare Pages)
 
-- **Producción:** https://sc-demo.pages.dev
+- **Producción:** https://sc-doc.pages.dev
 - **Preview por rama** (cambios de Figma antes de mergear):
-  https://design-tokens-sync.sc-demo.pages.dev
+  https://design-tokens-sync.sc-doc.pages.dev
 
 > El loop Figma → preview está descrito en
 > [`../../NEXT-SESSION.md`](../../NEXT-SESSION.md) y [`../../docs/guia-tokens.md`](../../docs/guia-tokens.md).

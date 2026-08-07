@@ -38,7 +38,7 @@ export class LabComponent {
       links: [
         {
           label: 'Showcase del Design System',
-          href: 'https://sc-demo.pages.dev',
+          href: 'https://sc-doc.pages.dev',
           note: 'Este mismo sitio: fundaciones, componentes, tema y uso real.',
         },
         {

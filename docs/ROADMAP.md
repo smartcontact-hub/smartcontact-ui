@@ -137,7 +137,7 @@
   **L3** ds-docs fundido (`docs/inventory.md` + página Tipografía en sc-docs).
 - **L2 · Cloudflare Pages** ✅ — 2 proyectos servidos en raíz, preview por rama automático
   (`NODE_VERSION=22`). Verificado en vivo (raíz + F5 en ruta profunda + i18n):
-  **sc-docs** → https://sc-demo.pages.dev · **supervisor** → https://sc-supervisor.pages.dev
+  **sc-docs** → https://sc-doc.pages.dev · **supervisor** → https://sc-supervisor.pages.dev
 - **L4** ✅ — `sc-prototype` jubilado + **GitHub Pages retirado** (los supera Supervisor + Cloudflare);
   `smart-contact-platform` **archivado** (read-only; preserva audits/galerías) + **PR #51 cerrado**.
 - **Paquetes APARCADOS** — `scripts/{publish-packages,version-bump}.mjs` + `publishConfig` **intactos**.

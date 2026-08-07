@@ -81,7 +81,7 @@ con `git am` desde el propio setup del operador.
 
 ## ▶︎ RAMA SÓLO SI HAY ALGO QUE MIRAR
 
-Cloudflare da preview por rama: `sc-supervisor.pages.dev`, `sc-demo.pages.dev`.
+Cloudflare da preview por rama: `sc-supervisor.pages.dev`, `sc-doc.pages.dev`.
 
 | | |
 |---|---|
