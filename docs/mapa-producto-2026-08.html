@@ -30,6 +30,7 @@
     --col: 880px;
     --sans: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
     --mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+    --ease: cubic-bezier(.16, 1, .3, 1);
   }
 
   @media (prefers-color-scheme: dark) {
@@ -167,36 +168,145 @@
 
   .top .tally b { color: var(--band-ink); font-weight: 650; }
 
-  /* ============ navegación ============ */
+  /* ============ índice ============ */
 
-  nav {
-    position: sticky;
+  .index { padding-block: 64px 72px; }
+
+  .index-head {
+    display: grid;
+    grid-template-columns: 1fr 2.1fr;
+    gap: 10px 48px;
+    align-items: start;
+  }
+
+  .index-head p {
+    margin: 0;
+    font-size: 15px;
+    color: var(--ink-3);
+    max-width: 34ch;
+  }
+
+  .index-head .label {
+    font-size: 12px;
+    letter-spacing: .12em;
+    text-transform: uppercase;
+    font-weight: 650;
+    color: var(--ink);
+  }
+
+  .toc { margin: 32px 0 0; padding: 0; list-style: none; counter-reset: toc; }
+
+  .toc li { counter-increment: toc; }
+
+  .toc a {
+    display: grid;
+    grid-template-columns: 44px 1fr auto;
+    gap: 0 20px;
+    align-items: baseline;
+    padding: 17px 0;
+    border-top: 1px solid var(--hair);
+    text-decoration: none;
+    color: inherit;
+    transition: border-color .4s var(--ease);
+  }
+
+  .toc li:last-child a { border-bottom: 1px solid var(--hair); }
+  .toc a:hover { border-color: var(--ink-3); }
+
+  .toc a::before {
+    content: counter(toc, decimal-leading-zero);
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--mark);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .toc .t {
+    font-size: 18px;
+    font-weight: 600;
+    letter-spacing: -.015em;
+    display: inline-block;
+    transition: transform .4s var(--ease), color .25s var(--ease);
+  }
+
+  .toc a:hover .t { transform: translateX(5px); color: var(--accent); }
+  .toc .g { display: block; font-size: 14px; color: var(--ink-3); margin-top: 2px; }
+
+  .toc .c {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--ink-3);
+    font-variant-numeric: tabular-nums;
+    white-space: nowrap;
+  }
+
+  @media (max-width: 700px) {
+    .index-head { grid-template-columns: 1fr; }
+    .toc a { grid-template-columns: 32px 1fr; gap: 0 14px; }
+    .toc .c { grid-column: 2; margin-top: 4px; }
+  }
+
+  /* ============ raíl de posición ============ */
+
+  .rail {
+    position: fixed;
     top: 0;
-    z-index: 30;
-    background: var(--ground);
+    left: 0;
+    right: 0;
+    z-index: 40;
+    background: color-mix(in srgb, var(--ground) 88%, transparent);
+    backdrop-filter: blur(12px);
     border-bottom: 1px solid var(--hair);
+    opacity: 0;
+    transform: translateY(-100%);
+    transition: opacity .35s var(--ease), transform .35s var(--ease);
+    pointer-events: none;
   }
 
-  nav .col {
+  .rail.on { opacity: 1; transform: translateY(0); pointer-events: auto; }
+
+  .rail .col {
     display: flex;
-    gap: 22px;
-    overflow-x: auto;
-    scrollbar-width: none;
-    padding-block: 13px;
+    align-items: center;
+    justify-content: space-between;
+    gap: 20px;
+    padding-block: 12px;
   }
 
-  nav .col::-webkit-scrollbar { display: none; }
+  .rail .here {
+    font-size: 13.5px;
+    font-weight: 600;
+    letter-spacing: -.01em;
+    display: flex;
+    align-items: center;
+    gap: 9px;
+    min-width: 0;
+  }
 
-  nav a {
+  .rail .here span {
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  .rail .here i {
+    font-family: var(--mono);
+    font-style: normal;
+    font-size: 11px;
+    color: var(--mark);
     flex: none;
-    font-size: 13px;
+  }
+
+  .rail a {
+    font-size: 12.5px;
     font-weight: 500;
     color: var(--ink-3);
     text-decoration: none;
     white-space: nowrap;
+    transition: color .25s var(--ease);
   }
 
-  nav a:hover { color: var(--ink); }
+  .rail a:hover { color: var(--accent); }
 
   /* ============ secciones ============ */
 
@@ -430,6 +540,31 @@
   }
 
   .heads-up.sharp { border-left-color: var(--block); }
+
+  /* ============ relevo de diseño ============ */
+
+  .relay .item:last-of-type { border-bottom: 1px solid var(--hair); }
+
+  .xref {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 13px;
+    font-weight: 500;
+    text-decoration: none;
+    color: var(--mark);
+    margin-top: 4px;
+  }
+
+  .xref::before {
+    content: "";
+    width: 12px;
+    height: 1px;
+    background: currentColor;
+    transition: width .35s var(--ease);
+  }
+
+  .xref:hover::before { width: 20px; }
 
   /* ============ bloques plegables grandes ============ */
 
@@ -695,8 +830,57 @@
   footer p { margin: 0 0 8px; max-width: 64ch; font-size: 14px; color: var(--ink-3); }
   footer b { color: var(--ink-2); font-weight: 600; }
 
+  /* ============ movimiento ============ *
+   * Solo transform y opacity, para que lo resuelva la GPU. Los estados de
+   * partida (opacity 0) se aplican ÚNICAMENTE si el script ha arrancado
+   * —clase .anim en el root—, para que sin JS no quede nada invisible.
+   * ------------------------------------------------------------------ */
+
+  .anim .reveal { opacity: 0; transform: translateY(14px); }
+
+  .anim .reveal.in {
+    opacity: 1;
+    transform: none;
+    transition: opacity .6s var(--ease), transform .6s var(--ease);
+    transition-delay: calc(var(--i, 0) * 55ms);
+  }
+
+  @keyframes rise {
+    from { opacity: 0; transform: translateY(12px); }
+    to { opacity: 1; transform: none; }
+  }
+
+  .anim .top .kicker,
+  .anim .top h1,
+  .anim .top .stand,
+  .anim .top .tally {
+    animation: rise .75s var(--ease) both;
+  }
+
+  .anim .top h1 { animation-delay: .07s; }
+  .anim .top .stand { animation-delay: .14s; }
+  .anim .top .tally { animation-delay: .21s; }
+
+  .anim .item[open] > .more,
+  .anim .ask[open] > .body,
+  .anim .panel[open] > .inner {
+    animation: rise .4s var(--ease) both;
+  }
+
+  /* Feedback táctil: el control cede al pulsarlo. */
+  .filter button:active,
+  button.copy:active { transform: translateY(1px) scale(.985); }
+
+  .filter button,
+  button.copy { transition: background .25s var(--ease), border-color .25s var(--ease), color .25s var(--ease), transform .12s var(--ease); }
+
+  .item > summary::after,
+  .panel > summary::after,
+  .ask > summary::after { transition: transform .35s var(--ease); }
+
   @media (prefers-reduced-motion: reduce) {
-    * { transition: none !important; }
+    * { transition: none !important; animation: none !important; }
+    .anim .reveal { opacity: 1; transform: none; }
   }
 </style>
 
@@ -710,24 +894,63 @@
       alguien y qué es mejor no abrir.
     </p>
     <p class="tally">
-      <b>21</b> frentes &nbsp;·&nbsp; <b>21</b> tarjetas &nbsp;·&nbsp;
+      <b>21</b> frentes &nbsp;·&nbsp; <b>6</b> encargos de diseño &nbsp;·&nbsp;
       <b>8</b> preguntas sin respuesta
     </p>
   </div>
 </header>
 
-<nav>
+<div class="rail" id="rail">
   <div class="col">
-    <a href="#mes">El mes</a>
-    <a href="#empezar">Por dónde empezar</a>
-    <a href="#tablero">El tablero</a>
-    <a href="#pruebas">Las dos pruebas</a>
-    <a href="#preguntas">Preguntas</a>
-    <a href="#entornos">Entornos</a>
-    <a href="#choques">Discrepancias</a>
-    <a href="#audio">El audio</a>
+    <span class="here"><i id="rail-n">01</i><span id="rail-t">El mes</span></span>
+    <a href="#indice">Volver al índice</a>
   </div>
-</nav>
+</div>
+
+<div class="index" id="indice">
+  <div class="col">
+    <div class="index-head reveal">
+      <span class="label">Índice</span>
+      <p>Ocho bloques. Los tres primeros se leen de una vez; los demás se
+        consultan el día que hagan falta.</p>
+    </div>
+
+    <ol class="toc reveal">
+      <li><a href="#mes">
+        <span><span class="t">Cómo funciona el mes</span><span class="g">Los tres acuerdos que van por delante de todo</span></span>
+        <span class="c">3 acuerdos</span>
+      </a></li>
+      <li><a href="#empezar">
+        <span><span class="t">Por dónde empezar</span><span class="g">Lo que mueve la aguja esta semana</span></span>
+        <span class="c">5 cosas</span>
+      </a></li>
+      <li><a href="#tablero">
+        <span><span class="t">El tablero</span><span class="g">Todo lo abierto, filtrable por lo que podéis hacer con ello</span></span>
+        <span class="c">21 frentes</span>
+      </a></li>
+      <li><a href="#marta">
+        <span><span class="t">El relevo de Marta</span><span class="g">En qué punto deja cada frente de diseño</span></span>
+        <span class="c">6 encargos</span>
+      </a></li>
+      <li><a href="#pruebas">
+        <span><span class="t">Las dos pruebas</span><span class="g">Los protocolos, paso a paso, para el día que toque</span></span>
+        <span class="c">2 protocolos</span>
+      </a></li>
+      <li><a href="#preguntas">
+        <span><span class="t">Preguntas sin respuesta</span><span class="g">Con el mensaje ya redactado para cada una</span></span>
+        <span class="c">8 preguntas</span>
+      </a></li>
+      <li><a href="#entornos">
+        <span><span class="t">Entornos y enlaces</span><span class="g">Para no volver a buscarlos en el correo</span></span>
+        <span class="c">4 bloques</span>
+      </a></li>
+      <li><a href="#choques">
+        <span><span class="t">Cuando las fuentes no coinciden</span><span class="g">Lo que cambió entre el email y el recap</span></span>
+        <span class="c">7 discrepancias</span>
+      </a></li>
+    </ol>
+  </div>
+</div>
 
 <main>
 
@@ -797,6 +1020,14 @@
             <span class="by">Con Bea</span>
           </div>
         </li>
+        <li>
+          <div>
+            <h3>Simplificar la visual de errores de conectividad</h3>
+            <p>Si queda tiempo. La card sigue parada hasta septiembre, pero Miguel ha
+              pedido algo concreto y el diseño de Marta ya está hecho.</p>
+            <span class="by">Rafa / Marta · con Edu</span>
+          </div>
+        </li>
       </ol>
     </div>
   </section>
@@ -842,7 +1073,7 @@
             </div>
           </details>
 
-          <details class="item">
+          <details class="item" id="f-masiva">
             <summary>
               <span class="name">Transcripción masiva</span>
               <span class="meta">
@@ -860,7 +1091,7 @@
             </div>
           </details>
 
-          <details class="item">
+          <details class="item" id="f-tabla">
             <summary>
               <span class="name">Componente tabla</span>
               <span class="meta">
@@ -872,28 +1103,43 @@
             <div class="more">
               <p>Buscamos que cubra cuatro cosas: skeleton, agrupar filas, mover filas
                 y columnas dinámicas. Si las cubre, la idea era tirar con lo que ya hay.</p>
+              <p><b>Marta ya se ha mojado</b>: le parece que la de PrimeNG cubre la
+                necesidad, aunque hay que verlo con dev. Y Miguel dijo que iba a
+                hablarlo con Edu — si esa conversación ya ha pasado, ahí está media
+                respuesta. Cuando se decida hay que actualizarlo en la card.</p>
               <p class="heads-up sharp">Arrastra más que ninguna otra: afecta a todo
                 AED y también a las reglas.</p>
             </div>
           </details>
 
-          <details class="item">
+          <details class="item" id="f-errores">
             <summary>
               <span class="name">Errores en el puesto de agente</span>
               <span class="meta">
                 <a class="tag" href="https://jira.dvtech.io/browse/SISMAC-4292">SISMAC-4292</a>
                 <span class="by">Rafa + Marta</span>
               </span>
-              <p class="lead">Queda por decidir las variantes de modal.</p>
+              <p class="lead">El diseño de cada error está hecho. Lo que falta es una
+                decisión de producto que va antes.</p>
             </summary>
             <div class="more">
-              <p>De ahí sale el melón de los <b>PrimeBlocks</b>, que estudia Rafa.</p>
-              <p>Se empieza por el puesto de agente, aunque en principio sea para
-                los tres puestos.</p>
+              <p class="heads-up"><b>Marta reordena esto:</b> las variantes de modal no
+                son la primera decisión, son la consecuencia. Primero hay que decidir si
+                el usuario puede pulsar «reiniciar» o si el puesto lo hace solo, como
+                está configurado ahora.</p>
+              <ul>
+                <li><b>Si es manual</b> — hacen falta variantes del componente dialog,
+                  para que se vea de un golpe si eso es un error o un aviso.</li>
+                <li><b>Si es automático</b> — basta con Toast y Message, que ya existen.
+                  Cero componentes nuevos.</li>
+              </ul>
+              <p>De aquí sale también el melón de los <b>PrimeBlocks</b>, que estudia
+                Rafa. Se empieza por el puesto de agente, aunque en principio sea para
+                los tres.</p>
             </div>
           </details>
 
-          <details class="item">
+          <details class="item" id="f-conectividad">
             <summary>
               <span class="name">Conectividad</span>
               <span class="meta">
@@ -904,12 +1150,12 @@
                 una petición concreta: ya hay algo que decidir.</p>
             </summary>
             <div class="more">
-              <p class="heads-up">Lo nuevo, con captura de la pantalla actual:
-                <b>definir qué se descarga y en qué orden</b>, y de la visual de errores
-                de la derecha, <b>decidir qué se enseña</b> — columnas, tipos de error
-                y literales.</p>
-              <p>La dirección pedida es clara: <b>algo sencillo</b>, una línea por
-                evento en lenguaje llano. Del estilo de:</p>
+              <p class="heads-up">Lo nuevo lo manda <b>Miguel</b>, con captura de la
+                pantalla actual: <b>definir qué se descarga y en qué orden</b>, y de la
+                visual de errores de la derecha, <b>decidir qué se enseña</b> — columnas,
+                tipos de error y literales.</p>
+              <p>Miguel se inclina por <b>algo sencillo</b>: una línea por evento en
+                lenguaje llano. Del estilo de:</p>
               <ul>
                 <li>11:00 — detectada inestabilidad de red</li>
                 <li>11:30 — error de conexión grave</li>
@@ -919,6 +1165,10 @@
                 (<code>COD_001</code>, <code>COD_002</code>…) y descripciones de varias
                 líneas con causas y remedios dentro de la celda. El trabajo es traducir
                 eso a la frase corta.</p>
+              <p><b>El diseño ya existe</b>: Marta lo tiene hecho siguiendo la PPT que
+                dejó Ángel adjunta en la card, y Miguel lo vio por encima. Falta
+                enseñárselo otra vez para el OK final — y ahí está el freno, porque
+                Miguel se acaba de ir.</p>
               <p>Y sigue pendiente de antes:</p>
               <ul>
                 <li>Cómo borrar los errores de uno en uno.</li>
@@ -1047,18 +1297,25 @@
             </div>
           </details>
 
-          <details class="item">
+          <details class="item" id="f-oscai">
             <summary>
               <span class="name">Demo de feria · OscAI</span>
               <span class="meta"><span class="by">JR · interfaz: Lucas avisado</span></span>
-              <p class="lead">El componente React no cuesta dinero: lo de pago es el
-                despliegue, y ese lo hacemos nosotros.</p>
+              <p class="lead">Antes que el precio o el tamaño, hay un problema de
+                fondo: el componente es React y nosotros vamos en Angular.</p>
             </summary>
             <div class="more">
-              <p>Están con dos cards, una de stats y otra de inteligencia artificial.</p>
-              <p class="heads-up">Quedan dos preguntas sin contestar: si el modal se
-                puede agrandar (Óscar lo quiere más grande) y quién lleva la parte
-                de interfaz.</p>
+              <p class="heads-up sharp"><b>Lo que ha visto Marta al investigarlo:</b>
+                el chat de assistant-ui que propuso Miguel está en React, y meterlo en
+                una app Angular acabaría dando guerra. Su propuesta es verlo con dev —
+                o se confirma que es viable, o compensa más que hagamos chat propio.
+                Como alternativas en Angular apunta <b>NLUX</b> y <b>Deepgram</b>.</p>
+              <p>Eso deja la pregunta del tamaño en segundo plano: no tiene sentido
+                preguntar si el modal se puede agrandar antes de saber si el componente
+                entra.</p>
+              <p>Lo demás sigue en pie: el componente <b>no cuesta dinero</b> —lo de
+                pago es el despliegue, y ese lo hacemos nosotros— y están con dos cards,
+                una de stats y otra de inteligencia artificial.</p>
             </div>
           </details>
         </div>
@@ -1195,6 +1452,113 @@
       </div>
 
       <p class="footnote" id="empty-note" hidden>Nada en este estado.</p>
+    </div>
+  </section>
+
+  <!-- ================= relevo de marta ================= -->
+  <section id="marta">
+    <div class="col">
+      <h2>El relevo de Marta</h2>
+      <p class="lede">Antes de irse dejó por escrito en qué punto queda cada frente de
+        diseño. Cuatro de los seis tocan cosas que ya están en el tablero — y en dos de
+        ellos cambia el orden en que hay que decidir.</p>
+
+      <div class="relay after-lede">
+
+        <details class="item">
+          <summary>
+            <span class="name">Conectividad</span>
+            <p class="lead">El diseño está hecho. Lo que falta es un visto bueno.</p>
+          </summary>
+          <div class="more">
+            <p>Marta lo ha ido siguiendo a partir de la PPT que hizo Ángel, que está
+              adjunta en la card. Miguel ya lo vio por encima, pero hace falta
+              enseñárselo otra vez para el OK final.</p>
+            <p class="heads-up sharp">Ese OK depende de alguien que acaba de irse. Si
+              queréis mover la card este mes, ese es el cuello de botella real — no el
+              diseño.</p>
+            <a class="xref" href="#f-conectividad">Ver Conectividad en el tablero</a>
+          </div>
+        </details>
+
+        <details class="item">
+          <summary>
+            <span class="name">Transcripciones masivas</span>
+            <p class="lead">La card de impacto ya está en la documentación. Queda la
+              tabla.</p>
+          </summary>
+          <div class="more">
+            <p>A Marta le parece que la tabla de PrimeNG cubre nuestra necesidad, pero
+              hay que verlo con dev. Miguel dijo que iba a hablarlo con Edu. En cuanto
+              se decida, hay que actualizar esa información en la card.</p>
+            <p>Es la misma decisión que el componente tabla, vista desde diseño: si
+              alguien busca por dónde empezar a resolverla, aquí ya hay una opinión
+              formada.</p>
+            <a class="xref" href="#f-masiva">Ver Transcripción masiva en el tablero</a>
+            <a class="xref" href="#f-tabla" style="margin-left:18px;">Ver Componente tabla</a>
+          </div>
+        </details>
+
+        <details class="item">
+          <summary>
+            <span class="name">Gestión de errores</span>
+            <p class="lead">Diseñado error por error. Falta una decisión de producto
+              que va antes que el diseño de componentes.</p>
+          </summary>
+          <div class="more">
+            <p>La pregunta es si el usuario puede pulsar «reiniciar» o si el puesto lo
+              hace solo, como está configurado ahora. De ahí sale todo lo demás:</p>
+            <ul>
+              <li><b>Reinicio manual</b> — hacen falta variantes del componente dialog,
+                para que visualmente quede claro si es un error, un aviso u otra cosa.</li>
+              <li><b>Reinicio automático</b> — se tira de lo que ya hay: Toast y
+                Message, según la necesidad.</li>
+            </ul>
+            <p>Dicho de otro modo: la decisión de las variantes de modal que teníamos
+              apuntada no es la primera, es la que sale de esta.</p>
+            <a class="xref" href="#f-errores">Ver Errores en el puesto de agente</a>
+          </div>
+        </details>
+
+        <details class="item">
+          <summary>
+            <span class="name">OscAI</span>
+            <p class="lead">Aviso de viabilidad: el chat propuesto está en React y
+              nosotros vamos en Angular.</p>
+          </summary>
+          <div class="more">
+            <p>Marta ha investigado el assistant-ui que propuso Miguel y le sale que
+              mezclarlo con Angular acabaría dando problemas. Su propuesta: verlo con
+              dev y decidir si es viable o si compensa más desarrollar chat propio.
+              Alternativas en Angular que apunta: <b>NLUX</b> y <b>Deepgram</b>.</p>
+            <a class="xref" href="#f-oscai">Ver Demo de feria en el tablero</a>
+          </div>
+        </details>
+
+        <details class="item">
+          <summary>
+            <span class="name">Componentes</span>
+            <p class="lead">Quedan por revisar los que va subiendo Carlos.</p>
+          </summary>
+          <div class="more">
+            <p>El último que revisó Marta fue la <b>tag</b>, así que ahí se retoma el
+              hilo. Es lo más fácil de reanudar de los seis: no depende de nadie.</p>
+          </div>
+        </details>
+
+        <details class="item">
+          <summary>
+            <span class="name">CusCare</span>
+            <p class="lead">Revisado, con las discrepancias anotadas.</p>
+          </summary>
+          <div class="more">
+            <p>Las diferencias que vio entre prepro y el diseño están apuntadas en la
+              card. Y si Conchi pregunta por los cambios de la V3, están en el
+              Playground del diseño.</p>
+          </div>
+        </details>
+
+      </div>
     </div>
   </section>
 
@@ -1348,14 +1712,15 @@
         <details class="ask">
           <summary>
             <span class="to">Lucas</span>
-            <span class="q">¿El modal de la demo se puede agrandar? ¿Y quién lleva la interfaz?</span>
-            <p class="why">Óscar lo quiere más grande, y no sabemos con quién hablar de la interfaz.</p>
+            <span class="q">¿El chat de la demo es viable en Angular?</span>
+            <p class="why">Marta avisa de que está en React. Esa pregunta va antes que la del tamaño.</p>
           </summary>
           <div class="body">
-            <div class="draft" id="d3">Hola Lucas, dos cosas sobre el componente React de la demo (el modal de assistant-ui):
+            <div class="draft" id="d3">Hola Lucas, tres cosas sobre el chat de la demo (assistant-ui):
 
-1. Óscar lo quiere más grande. ¿Se puede cambiar el tamaño del modal, o hacerlo redimensionable? Tal como está, para preguntas sobre informes se queda corto.
-2. ¿Quién está llevando la parte de interfaz y quién lo va a integrar?
+1. Lo primero, viabilidad. El componente está en React y nosotros vamos en Angular. Marta lo ha mirado y cree que acabaría dando problemas. ¿Lo veis integrable sin pelea, o compensa más que desarrollemos el chat nosotros? Como alternativas en Angular tenemos NLUX y Deepgram.
+2. Si sale adelante: Óscar lo quiere más grande. ¿Se puede cambiar el tamaño del modal o hacerlo redimensionable? Tal como está, para preguntas sobre informes se queda corto.
+3. ¿Quién está llevando la parte de interfaz y quién lo va a integrar?
 
 Si necesitáis algo de interfaz, decidnos y lo vemos. Gracias.</div>
             <button class="copy js-copy" data-target="d3" type="button">Copiar mensaje</button>
@@ -1546,56 +1911,6 @@ Gracias.</div>
     </div>
   </section>
 
-  <!-- ================= audio ================= -->
-  <section id="audio">
-    <div class="col">
-      <h2>Lo que el audio no deja claro</h2>
-      <p class="lede">El recap se grabó con el sistema nuevo de DeepGram, y era su
-        primera prueba. Hay tramos rotos, así que conviene saber qué de aquí es dato
-        y qué es interpretación mía.</p>
-
-      <details class="panel">
-        <summary>
-          <span class="name">Mis lecturas de lo que se oye mal</span>
-          <p class="sub">13 términos · son lecturas, no confirmaciones — corrígelas de un vistazo</p>
-        </summary>
-        <div class="inner">
-          <div class="reads">
-            <div><span class="heard">aire 1 / aire 2</span><span class="to">→</span><span class="real">AED 1 / AED 2</span></div>
-            <div><span class="heard">Ertin / alertin</span><span class="to">→</span><span class="real">alerting</span></div>
-            <div><span class="heard">Lesac / Lisac</span><span class="to">→</span><span class="real">Ley SAC</span></div>
-            <div><span class="heard">vea / mea</span><span class="to">→</span><span class="real">Bea</span></div>
-            <div><span class="heard">Sysmac</span><span class="to">→</span><span class="real">SISMAC</span></div>
-            <div><span class="heard">el Langyar</span><span class="to">→</span><span class="real">lanyard</span></div>
-            <div><span class="heard">Follies</span><span class="to">→</span><span class="real">folletos</span></div>
-            <div><span class="heard">prem blogs</span><span class="to">→</span><span class="real">PrimeBlocks</span></div>
-            <div><span class="heard">barra pram ui</span><span class="to">→</span><span class="real">PrimeUI</span></div>
-            <div><span class="heard">el oscay</span><span class="to">→</span><span class="real">OscAI</span></div>
-            <div><span class="heard">no de Google ven nada</span><span class="to">→</span><span class="real">no devuelven nada</span></div>
-            <div><span class="heard">asesorci / a misis</span><span class="to">→</span><span class="real">la petición de análisis</span></div>
-          </div>
-
-          <h4>Lo que preferí dejar en blanco</h4>
-          <p class="intro">Un hueco es mejor que un dato inventado. Si alguno de estos
-            tramos escondía algo importante, aquí es donde hay que volver al audio:</p>
-          <div class="blanks">
-            <span>«la web sapsal»</span>
-            <span>«para el presidente están fallando cosas»</span>
-            <span>«es répandos»</span>
-            <span>«Decre tú un par de días y pollas»</span>
-            <span>«igual tenemos algunos suentos… Agatha»</span>
-          </div>
-
-          <h4>Un sesgo que conviene tener presente</h4>
-          <p class="intro">El audio de Miguel salió bastante limpio y el de Rafa casi
-            entero como ruido. O sea que este mapa recoge mejor lo que dijo él. Si
-            echas en falta algo vuestro, probablemente sea por eso y no porque no se
-            dijera.</p>
-        </div>
-      </details>
-    </div>
-  </section>
-
 </main>
 
 <footer>
@@ -1610,6 +1925,68 @@ Gracias.</div>
 </footer>
 
 <script>
+  /* --- entrada escalonada de cada bloque -------------------------------
+   * La clase .anim solo se pone si hay IntersectionObserver, porque es la
+   * que activa el estado de partida (opacity 0). Sin ella, o sin JS, la
+   * página se ve entera: nunca puede quedarse en blanco por la animación.
+   * -------------------------------------------------------------------- */
+  if ('IntersectionObserver' in window) {
+    document.documentElement.classList.add('anim');
+
+    document.querySelectorAll('section > .col, .index > .col').forEach(function (col) {
+      Array.prototype.forEach.call(col.children, function (kid, i) {
+        kid.classList.add('reveal');
+        kid.style.setProperty('--i', i);
+      });
+    });
+
+    var shown = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) { return; }
+        entry.target.classList.add('in');
+        shown.unobserve(entry.target);
+      });
+    }, { rootMargin: '0px 0px -6% 0px', threshold: 0.04 });
+
+    document.querySelectorAll('.reveal').forEach(function (el) { shown.observe(el); });
+
+    /* --- raíl: dice en qué bloque estás una vez pasas el índice --- */
+    var rail = document.getElementById('rail');
+    var railN = document.getElementById('rail-n');
+    var railT = document.getElementById('rail-t');
+    var indice = document.getElementById('indice');
+    var meta = {};
+
+    document.querySelectorAll('.toc a').forEach(function (link, i) {
+      meta[link.getAttribute('href').slice(1)] = {
+        n: ('0' + (i + 1)).slice(-2),
+        t: link.querySelector('.t').textContent
+      };
+    });
+
+    var spy = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        if (!entry.isIntersecting) { return; }
+        var m = meta[entry.target.id];
+        if (!m) { return; }
+        railN.textContent = m.n;
+        railT.textContent = m.t;
+      });
+    }, { rootMargin: '-45% 0px -50% 0px' });
+
+    document.querySelectorAll('main section[id]').forEach(function (s) { spy.observe(s); });
+
+    var gate = new IntersectionObserver(function (entries) {
+      entries.forEach(function (entry) {
+        var pasado = entry.boundingClientRect.top < 0;
+        if (entry.isIntersecting) { pasado = false; }
+        rail.classList.toggle('on', pasado);
+      });
+    }, { threshold: 0 });
+
+    gate.observe(indice);
+  }
+
   /* --- copiar borradores, con salida de emergencia si el portapapeles falla --- */
   document.querySelectorAll('.js-copy').forEach(function (btn) {
     var box = document.getElementById(btn.getAttribute('data-target'));
