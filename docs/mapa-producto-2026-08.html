@@ -12,8 +12,8 @@
     --ground: #ffffff;
     --surface: #f7f8fa;
     --raised: #eceff3;
-    --line: #dadfe6;
-    --hair: #eceff3;
+    --line: #c6ccd6;
+    --hair: #dadfe6;
     --ink: #181d26;
     --ink-2: #4f5663;
     --ink-3: #6f7784;
@@ -38,8 +38,8 @@
       --ground: #0b0f14;
       --surface: #181d26;
       --raised: #2f3642;
-      --line: #2f3642;
-      --hair: #181d26;
+      --line: #4f5663;
+      --hair: #2f3642;
       --ink: #f7f8fa;
       --ink-2: #c6ccd6;
       --ink-3: #aeb6c2;
@@ -59,8 +59,8 @@
     --ground: #0b0f14;
     --surface: #181d26;
     --raised: #2f3642;
-    --line: #2f3642;
-    --hair: #181d26;
+    --line: #4f5663;
+    --hair: #2f3642;
     --ink: #f7f8fa;
     --ink-2: #c6ccd6;
     --ink-3: #aeb6c2;
@@ -79,8 +79,8 @@
     --ground: #ffffff;
     --surface: #f7f8fa;
     --raised: #eceff3;
-    --line: #dadfe6;
-    --hair: #eceff3;
+    --line: #c6ccd6;
+    --hair: #dadfe6;
     --ink: #181d26;
     --ink-2: #4f5663;
     --ink-3: #6f7784;
@@ -168,145 +168,148 @@
 
   .top .tally b { color: var(--band-ink); font-weight: 650; }
 
-  /* ============ índice ============ */
+  /* ============ estructura: barra lateral + columna ============ */
 
-  .index { padding-block: 64px 72px; }
-
-  .index-head {
+  .shell {
     display: grid;
-    grid-template-columns: 1fr 2.1fr;
-    gap: 10px 48px;
+    grid-template-columns: 268px minmax(0, 1fr);
     align-items: start;
   }
 
-  .index-head p {
-    margin: 0;
-    font-size: 15px;
-    color: var(--ink-3);
-    max-width: 34ch;
-  }
+  .side { border-right: 1px solid var(--line); }
 
-  .index-head .label {
-    font-size: 12px;
-    letter-spacing: .12em;
-    text-transform: uppercase;
-    font-weight: 650;
-    color: var(--ink);
-  }
-
-  .toc { margin: 32px 0 0; padding: 0; list-style: none; counter-reset: toc; }
-
-  .toc li { counter-increment: toc; }
-
-  .toc a {
-    display: grid;
-    grid-template-columns: 44px 1fr auto;
-    gap: 0 20px;
-    align-items: baseline;
-    padding: 17px 0;
-    border-top: 1px solid var(--hair);
-    text-decoration: none;
-    color: inherit;
-    transition: border-color .4s var(--ease);
-  }
-
-  .toc li:last-child a { border-bottom: 1px solid var(--hair); }
-  .toc a:hover { border-color: var(--ink-3); }
-
-  .toc a::before {
-    content: counter(toc, decimal-leading-zero);
-    font-family: var(--mono);
-    font-size: 12px;
-    color: var(--mark);
-    font-variant-numeric: tabular-nums;
-  }
-
-  .toc .t {
-    font-size: 18px;
-    font-weight: 600;
-    letter-spacing: -.015em;
-    display: inline-block;
-    transition: transform .4s var(--ease), color .25s var(--ease);
-  }
-
-  .toc a:hover .t { transform: translateX(5px); color: var(--accent); }
-  .toc .g { display: block; font-size: 14px; color: var(--ink-3); margin-top: 2px; }
-
-  .toc .c {
-    font-family: var(--mono);
-    font-size: 12px;
-    color: var(--ink-3);
-    font-variant-numeric: tabular-nums;
-    white-space: nowrap;
-  }
-
-  @media (max-width: 700px) {
-    .index-head { grid-template-columns: 1fr; }
-    .toc a { grid-template-columns: 32px 1fr; gap: 0 14px; }
-    .toc .c { grid-column: 2; margin-top: 4px; }
-  }
-
-  /* ============ raíl de posición ============ */
-
-  .rail {
-    position: fixed;
+  .side-in {
+    position: sticky;
     top: 0;
-    left: 0;
-    right: 0;
-    z-index: 40;
-    background: color-mix(in srgb, var(--ground) 88%, transparent);
-    backdrop-filter: blur(12px);
-    border-bottom: 1px solid var(--hair);
-    opacity: 0;
-    transform: translateY(-100%);
-    transition: opacity .35s var(--ease), transform .35s var(--ease);
-    pointer-events: none;
-  }
-
-  .rail.on { opacity: 1; transform: translateY(0); pointer-events: auto; }
-
-  .rail .col {
+    height: 100dvh;
+    overflow-y: auto;
+    padding: 30px 20px 40px;
     display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: 20px;
-    padding-block: 12px;
+    flex-direction: column;
+    gap: 24px;
   }
 
-  .rail .here {
+  .brand { text-decoration: none; color: inherit; display: block; }
+
+  .brand .bt {
+    display: block;
+    font-size: 15px;
+    font-weight: 650;
+    letter-spacing: -.015em;
+  }
+
+  .brand .bs {
+    display: block;
+    margin-top: 3px;
+    font-size: 11.5px;
+    letter-spacing: .05em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    font-weight: 550;
+  }
+
+  .side-nav ol { margin: 0; padding: 0; list-style: none; counter-reset: nav; }
+  .side-nav li { counter-increment: nav; }
+
+  .side-nav a {
+    display: grid;
+    grid-template-columns: 22px minmax(0, 1fr) auto;
+    gap: 0 9px;
+    align-items: baseline;
+    padding: 8px 10px;
+    border-radius: 7px;
     font-size: 13.5px;
-    font-weight: 600;
-    letter-spacing: -.01em;
-    display: flex;
-    align-items: center;
-    gap: 9px;
-    min-width: 0;
-  }
-
-  .rail .here span {
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  .rail .here i {
-    font-family: var(--mono);
-    font-style: normal;
-    font-size: 11px;
-    color: var(--mark);
-    flex: none;
-  }
-
-  .rail a {
-    font-size: 12.5px;
-    font-weight: 500;
+    line-height: 1.35;
     color: var(--ink-3);
     text-decoration: none;
-    white-space: nowrap;
-    transition: color .25s var(--ease);
+    transition: background .25s var(--ease), color .25s var(--ease);
   }
 
-  .rail a:hover { color: var(--accent); }
+  .side-nav a::before {
+    content: counter(nav, decimal-leading-zero);
+    font-family: var(--mono);
+    font-size: 10.5px;
+    color: var(--ink-3);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .side-nav a:hover { background: var(--surface); color: var(--ink); }
+
+  .side-nav a[aria-current="true"] {
+    background: var(--surface);
+    color: var(--ink);
+    font-weight: 600;
+    box-shadow: inset 2px 0 0 var(--accent);
+  }
+
+  .side-nav a[aria-current="true"]::before { color: var(--accent); }
+
+  .side-nav .k {
+    font-family: var(--mono);
+    font-size: 10.5px;
+    color: var(--ink-3);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .side-toggle { display: none; }
+
+  /* --- por debajo de 980px la lateral se convierte en barra superior --- */
+  @media (max-width: 979px) {
+    .shell { grid-template-columns: 1fr; }
+
+    .side {
+      position: sticky;
+      top: 0;
+      z-index: 40;
+      border-right: 0;
+      border-bottom: 1px solid var(--line);
+      background: color-mix(in srgb, var(--ground) 90%, transparent);
+      backdrop-filter: blur(12px);
+    }
+
+    .side-in {
+      position: static;
+      height: auto;
+      overflow: visible;
+      padding: 0;
+      gap: 0;
+    }
+
+    .brand { display: none; }
+
+    .side-toggle {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 14px;
+      width: 100%;
+      font: inherit;
+      font-size: 13.5px;
+      font-weight: 600;
+      letter-spacing: -.01em;
+      color: var(--ink);
+      background: transparent;
+      border: 0;
+      padding: 13px 24px;
+      cursor: pointer;
+      text-align: left;
+    }
+
+    .side-toggle .chev {
+      width: 7px;
+      height: 7px;
+      flex: none;
+      border-right: 1.5px solid var(--ink-3);
+      border-bottom: 1.5px solid var(--ink-3);
+      transform: rotate(45deg);
+      transition: transform .3s var(--ease);
+    }
+
+    .side.open .side-toggle .chev { transform: rotate(-135deg); }
+
+    .side-nav { display: none; padding: 0 14px 14px; }
+    .side.open .side-nav { display: block; }
+  }
 
   /* ============ secciones ============ */
 
@@ -445,6 +448,87 @@
   .s-block { color: var(--block); }
   .s-frozen { color: var(--frozen); }
 
+  /* ============ barra de reparto ============ */
+
+  .spread { margin: 36px 0 0; }
+
+  .spread .bar {
+    display: flex;
+    gap: 3px;
+    height: 8px;
+    margin-bottom: 14px;
+  }
+
+  .spread .bar span {
+    border-radius: 999px;
+    background: currentColor;
+    transition: flex-grow .5s var(--ease), opacity .25s var(--ease);
+  }
+
+  .spread .bar span.dim { opacity: .22; }
+
+  .spread .sum {
+    margin: 0;
+    font-size: 13.5px;
+    color: var(--ink-3);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .spread .sum b { color: var(--ink); font-weight: 650; }
+
+  /* ============ marcar como resuelto ============ */
+
+  .tick {
+    position: absolute;
+    right: 30px;
+    top: 19px;
+    width: 22px;
+    height: 22px;
+    padding: 0;
+    display: grid;
+    place-items: center;
+    background: transparent;
+    border: 0;
+    cursor: pointer;
+    border-radius: 6px;
+    opacity: 0;
+    transition: opacity .25s var(--ease);
+  }
+
+  .item:hover .tick,
+  .item .tick:focus-visible,
+  .item .tick[aria-pressed="true"] { opacity: 1; }
+
+  .tick .box {
+    width: 15px;
+    height: 15px;
+    border: 1.5px solid var(--ink-3);
+    border-radius: 5px;
+    transition: background .2s var(--ease), border-color .2s var(--ease);
+  }
+
+  .tick[aria-pressed="true"] .box {
+    background: var(--go);
+    border-color: var(--go);
+  }
+
+  .tick[aria-pressed="true"] .box::after {
+    content: "";
+    display: block;
+    width: 4px;
+    height: 8px;
+    margin: 1px 0 0 4px;
+    border-right: 2px solid var(--ground);
+    border-bottom: 2px solid var(--ground);
+    transform: rotate(45deg);
+  }
+
+  .item.done > summary .name,
+  .item.done > summary .lead,
+  .item.done > summary .meta { opacity: .45; }
+
+  .item.done > summary .name { text-decoration: line-through; text-decoration-thickness: 1px; }
+
   /* ============ tablero ============ */
 
   .grp { margin-top: 34px; }
@@ -468,7 +552,7 @@
   .item > summary {
     list-style: none;
     cursor: pointer;
-    padding: 18px 30px 18px 0;
+    padding: 18px 62px 18px 0;
     position: relative;
   }
 
@@ -831,40 +915,25 @@
   footer b { color: var(--ink-2); font-weight: 600; }
 
   /* ============ movimiento ============ *
-   * Solo transform y opacity, para que lo resuelva la GPU. Los estados de
-   * partida (opacity 0) se aplican ÚNICAMENTE si el script ha arrancado
-   * —clase .anim en el root—, para que sin JS no quede nada invisible.
+   * Solo transform y opacity, para que lo resuelva la GPU. Y ninguna
+   * animación de entrada: ver la nota de abajo.
    * ------------------------------------------------------------------ */
 
-  .anim .reveal { opacity: 0; transform: translateY(14px); }
-
-  .anim .reveal.in {
-    opacity: 1;
-    transform: none;
-    transition: opacity .6s var(--ease), transform .6s var(--ease);
-    transition-delay: calc(var(--i, 0) * 55ms);
-  }
+  /* NADA de animaciones de entrada que partan de opacity 0. Si el navegador
+     no llega a ejecutarlas -- pestana en segundo plano, render suspendido,
+     ahorro de energia -- el contenido se queda invisible para siempre, y eso
+     es mucho peor que no tener el efecto. El movimiento vive donde lo
+     dispara el usuario: abrir, filtrar, marcar, pasar el raton. */
 
   @keyframes rise {
-    from { opacity: 0; transform: translateY(12px); }
+    from { opacity: 0; transform: translateY(6px); }
     to { opacity: 1; transform: none; }
   }
 
-  .anim .top .kicker,
-  .anim .top h1,
-  .anim .top .stand,
-  .anim .top .tally {
-    animation: rise .75s var(--ease) both;
-  }
-
-  .anim .top h1 { animation-delay: .07s; }
-  .anim .top .stand { animation-delay: .14s; }
-  .anim .top .tally { animation-delay: .21s; }
-
-  .anim .item[open] > .more,
-  .anim .ask[open] > .body,
-  .anim .panel[open] > .inner {
-    animation: rise .4s var(--ease) both;
+  .item[open] > .more,
+  .ask[open] > .body,
+  .panel[open] > .inner {
+    animation: rise .32s var(--ease);
   }
 
   /* Feedback táctil: el control cede al pulsarlo. */
@@ -880,11 +949,38 @@
 
   @media (prefers-reduced-motion: reduce) {
     * { transition: none !important; animation: none !important; }
-    .anim .reveal { opacity: 1; transform: none; }
   }
 </style>
 
-<header class="top">
+<div class="shell">
+<aside class="side" id="side">
+  <div class="side-in">
+    <a class="brand" href="#top">
+      <span class="bt">Mapa de agosto</span>
+      <span class="bs">7 ago &rarr; septiembre</span>
+    </a>
+    <button class="side-toggle" id="side-toggle" type="button" aria-expanded="false" aria-controls="side-nav">
+      <span id="side-here">Cómo funciona el mes</span>
+      <span class="chev"></span>
+    </button>
+    <nav class="side-nav" id="side-nav" aria-label="Índice del documento">
+      <ol>
+        <li><a href="#mes"><span>Cómo funciona el mes</span><span class="k">3</span></a></li>
+        <li><a href="#empezar"><span>Por dónde empezar</span><span class="k">5</span></a></li>
+        <li><a href="#tablero"><span>El tablero</span><span class="k">21</span></a></li>
+        <li><a href="#marta"><span>El relevo de Marta</span><span class="k">6</span></a></li>
+        <li><a href="#pruebas"><span>Las dos pruebas</span><span class="k">2</span></a></li>
+        <li><a href="#preguntas"><span>Preguntas sin respuesta</span><span class="k">8</span></a></li>
+        <li><a href="#entornos"><span>Entornos y enlaces</span><span class="k">4</span></a></li>
+        <li><a href="#choques"><span>Cuando las fuentes no coinciden</span><span class="k">7</span></a></li>
+      </ol>
+    </nav>
+  </div>
+</aside>
+
+<div class="body-col">
+
+<header class="top" id="top">
   <div class="col">
     <p class="kicker">Recap de Miguel · 7 de agosto de 2026</p>
     <h1>Mapa de agosto</h1>
@@ -899,58 +995,6 @@
     </p>
   </div>
 </header>
-
-<div class="rail" id="rail">
-  <div class="col">
-    <span class="here"><i id="rail-n">01</i><span id="rail-t">El mes</span></span>
-    <a href="#indice">Volver al índice</a>
-  </div>
-</div>
-
-<div class="index" id="indice">
-  <div class="col">
-    <div class="index-head reveal">
-      <span class="label">Índice</span>
-      <p>Ocho bloques. Los tres primeros se leen de una vez; los demás se
-        consultan el día que hagan falta.</p>
-    </div>
-
-    <ol class="toc reveal">
-      <li><a href="#mes">
-        <span><span class="t">Cómo funciona el mes</span><span class="g">Los tres acuerdos que van por delante de todo</span></span>
-        <span class="c">3 acuerdos</span>
-      </a></li>
-      <li><a href="#empezar">
-        <span><span class="t">Por dónde empezar</span><span class="g">Lo que mueve la aguja esta semana</span></span>
-        <span class="c">5 cosas</span>
-      </a></li>
-      <li><a href="#tablero">
-        <span><span class="t">El tablero</span><span class="g">Todo lo abierto, filtrable por lo que podéis hacer con ello</span></span>
-        <span class="c">21 frentes</span>
-      </a></li>
-      <li><a href="#marta">
-        <span><span class="t">El relevo de Marta</span><span class="g">En qué punto deja cada frente de diseño</span></span>
-        <span class="c">6 encargos</span>
-      </a></li>
-      <li><a href="#pruebas">
-        <span><span class="t">Las dos pruebas</span><span class="g">Los protocolos, paso a paso, para el día que toque</span></span>
-        <span class="c">2 protocolos</span>
-      </a></li>
-      <li><a href="#preguntas">
-        <span><span class="t">Preguntas sin respuesta</span><span class="g">Con el mensaje ya redactado para cada una</span></span>
-        <span class="c">8 preguntas</span>
-      </a></li>
-      <li><a href="#entornos">
-        <span><span class="t">Entornos y enlaces</span><span class="g">Para no volver a buscarlos en el correo</span></span>
-        <span class="c">4 bloques</span>
-      </a></li>
-      <li><a href="#choques">
-        <span><span class="t">Cuando las fuentes no coinciden</span><span class="g">Lo que cambió entre el email y el recap</span></span>
-        <span class="c">7 discrepancias</span>
-      </a></li>
-    </ol>
-  </div>
-</div>
 
 <main>
 
@@ -1039,6 +1083,11 @@
       <p class="lede">Veintiún frentes, agrupados por lo que podéis hacer con ellos
         y no por el orden del email. Filtra por estado, o abre cualquiera para ver
         el detalle.</p>
+
+      <div class="spread">
+        <div class="bar" id="spread-bar"></div>
+        <p class="sum" id="spread-sum"></p>
+      </div>
 
       <div class="filter" id="filter">
         <button type="button" data-state="all" aria-pressed="true">Todos <span class="n">21</span></button>
@@ -1924,70 +1973,100 @@ Gracias.</div>
   </div>
 </footer>
 
+</div>
+</div>
+
 <script>
-  /* --- entrada escalonada de cada bloque -------------------------------
-   * La clase .anim solo se pone si hay IntersectionObserver, porque es la
-   * que activa el estado de partida (opacity 0). Sin ella, o sin JS, la
-   * página se ve entera: nunca puede quedarse en blanco por la animación.
-   * -------------------------------------------------------------------- */
-  if ('IntersectionObserver' in window) {
-    document.documentElement.classList.add('anim');
+  var ETIQUETAS = {
+    go: 'se pueden avanzar ya',
+    wait: 'esperando a alguien',
+    frozen: 'congelado',
+    block: 'no se abre',
+    idle: 'sin dueño',
+    done: 'cerrado'
+  };
+  var TINTES = { go: 's-go', wait: 's-wait', frozen: 's-frozen', block: 's-block', idle: 's-frozen', done: 's-frozen' };
 
-    document.querySelectorAll('section > .col, .index > .col').forEach(function (col) {
-      Array.prototype.forEach.call(col.children, function (kid, i) {
-        kid.classList.add('reveal');
-        kid.style.setProperty('--i', i);
-      });
-    });
+  /* ---------- barra de reparto: se construye LEYENDO el tablero, para que
+       no pueda desmentir a los items que hay debajo ---------- */
+  var barra = document.getElementById('spread-bar');
+  var resumen = document.getElementById('spread-sum');
+  var grupos = document.querySelectorAll('#board .grp');
+  var reparto = [];
 
-    var shown = new IntersectionObserver(function (entries) {
-      entries.forEach(function (entry) {
-        if (!entry.isIntersecting) { return; }
-        entry.target.classList.add('in');
-        shown.unobserve(entry.target);
-      });
-    }, { rootMargin: '0px 0px -6% 0px', threshold: 0.04 });
+  grupos.forEach(function (grupo) {
+    var estado = grupo.getAttribute('data-state');
+    var cuantos = grupo.querySelectorAll('.item').length;
+    reparto.push({ estado: estado, n: cuantos });
+    var seg = document.createElement('span');
+    seg.className = TINTES[estado];
+    seg.style.flexGrow = String(cuantos);
+    seg.setAttribute('data-state', estado);
+    seg.title = cuantos + ' ' + ETIQUETAS[estado];
+    barra.appendChild(seg);
+  });
 
-    document.querySelectorAll('.reveal').forEach(function (el) { shown.observe(el); });
-
-    /* --- raíl: dice en qué bloque estás una vez pasas el índice --- */
-    var rail = document.getElementById('rail');
-    var railN = document.getElementById('rail-n');
-    var railT = document.getElementById('rail-t');
-    var indice = document.getElementById('indice');
-    var meta = {};
-
-    document.querySelectorAll('.toc a').forEach(function (link, i) {
-      meta[link.getAttribute('href').slice(1)] = {
-        n: ('0' + (i + 1)).slice(-2),
-        t: link.querySelector('.t').textContent
-      };
-    });
-
-    var spy = new IntersectionObserver(function (entries) {
-      entries.forEach(function (entry) {
-        if (!entry.isIntersecting) { return; }
-        var m = meta[entry.target.id];
-        if (!m) { return; }
-        railN.textContent = m.n;
-        railT.textContent = m.t;
-      });
-    }, { rootMargin: '-45% 0px -50% 0px' });
-
-    document.querySelectorAll('main section[id]').forEach(function (s) { spy.observe(s); });
-
-    var gate = new IntersectionObserver(function (entries) {
-      entries.forEach(function (entry) {
-        var pasado = entry.boundingClientRect.top < 0;
-        if (entry.isIntersecting) { pasado = false; }
-        rail.classList.toggle('on', pasado);
-      });
-    }, { threshold: 0 });
-
-    gate.observe(indice);
+  function pintaResumen() {
+    var hechos = document.querySelectorAll('#board .item.done').length;
+    var total = document.querySelectorAll('#board .item').length;
+    var avanzables = 0;
+    reparto.forEach(function (r) { if (r.estado === 'go') { avanzables = r.n; } });
+    resumen.innerHTML = '<b>' + avanzables + '</b> de <b>' + total +
+      '</b> se pueden avanzar ya &nbsp;·&nbsp; <b>' + hechos + '</b> marcados como resueltos';
   }
 
-  /* --- copiar borradores, con salida de emergencia si el portapapeles falla --- */
+  /* ---------- marcar un frente como resuelto, y que aguante la recarga ---------- */
+  var CLAVE = 'mapa-agosto-2026:resueltos';
+
+  function leeGuardado() {
+    try { return JSON.parse(localStorage.getItem(CLAVE)) || {}; } catch (err) { return {}; }
+  }
+
+  function guarda(estado) {
+    try { localStorage.setItem(CLAVE, JSON.stringify(estado)); } catch (err) { return; }
+  }
+
+  function idDe(texto) {
+    return texto.toLowerCase().normalize('NFD')
+      .replace(/[̀-ͯ]/g, '').replace(/[^a-z0-9]+/g, '-').slice(0, 44);
+  }
+
+  var resueltos = leeGuardado();
+
+  document.querySelectorAll('#board .item').forEach(function (item) {
+    var nombre = item.querySelector('.name');
+    if (!nombre) { return; }
+    var clave = idDe(nombre.textContent);
+    var boton = document.createElement('button');
+    boton.type = 'button';
+    boton.className = 'tick';
+    boton.title = 'Marcar como resuelto';
+    boton.setAttribute('aria-label', 'Marcar «' + nombre.textContent + '» como resuelto');
+    boton.innerHTML = '<span class="box"></span>';
+
+    function pinta(activo) {
+      boton.setAttribute('aria-pressed', activo ? 'true' : 'false');
+      item.classList.toggle('done', activo);
+    }
+
+    pinta(!!resueltos[clave]);
+
+    boton.addEventListener('click', function (ev) {
+      ev.preventDefault();
+      ev.stopPropagation();
+      var activo = boton.getAttribute('aria-pressed') !== 'true';
+      pinta(activo);
+      if (activo) { resueltos[clave] = 1; } else { delete resueltos[clave]; }
+      guarda(resueltos);
+      pintaResumen();
+    });
+
+    item.querySelector('summary').appendChild(boton);
+  });
+
+  pintaResumen();
+
+  /* ---------- copiar borradores, con salida de emergencia ---------- */
   document.querySelectorAll('.js-copy').forEach(function (btn) {
     var box = document.getElementById(btn.getAttribute('data-target'));
     if (!box) { return; }
@@ -2005,53 +2084,119 @@ Gracias.</div>
       var sel = window.getSelection();
       sel.removeAllRanges();
       sel.addRange(range);
-      try {
-        return document.execCommand('copy');
-      } catch (err) {
-        return false;
-      }
+      try { return document.execCommand('copy'); } catch (err) { return false; }
     }
 
     function fallback() {
-      if (selectAndCopy()) {
-        flash('Copiado');
-        return;
-      }
+      if (selectAndCopy()) { flash('Copiado'); return; }
       flash('Selecciónalo y copia');
     }
 
     btn.addEventListener('click', function () {
-      if (!navigator.clipboard) {
-        fallback();
-        return;
-      }
-      navigator.clipboard.writeText(box.innerText.trim()).then(function () {
-        flash('Copiado');
-      }, fallback);
+      if (!navigator.clipboard) { fallback(); return; }
+      navigator.clipboard.writeText(box.innerText.trim()).then(function () { flash('Copiado'); }, fallback);
     });
   });
 
-  /* --- filtro del tablero por estado --- */
+  /* ---------- filtro del tablero ---------- */
   var chips = document.querySelectorAll('#filter button');
-  var groups = document.querySelectorAll('#board .grp');
-  var emptyNote = document.getElementById('empty-note');
+  var vacio = document.getElementById('empty-note');
 
   chips.forEach(function (chip) {
     chip.addEventListener('click', function () {
-      var want = chip.getAttribute('data-state');
-      var shown = 0;
+      var quiere = chip.getAttribute('data-state');
+      var visibles = 0;
 
-      chips.forEach(function (other) {
-        other.setAttribute('aria-pressed', other === chip ? 'true' : 'false');
+      chips.forEach(function (otro) {
+        otro.setAttribute('aria-pressed', otro === chip ? 'true' : 'false');
       });
 
-      groups.forEach(function (grp) {
-        var match = want === 'all' ? true : grp.getAttribute('data-state') === want;
-        grp.hidden = !match;
-        if (match) { shown += 1; }
+      grupos.forEach(function (grupo) {
+        var casa = quiere === 'all' ? true : grupo.getAttribute('data-state') === quiere;
+        grupo.hidden = !casa;
+        if (casa) { visibles += 1; }
       });
 
-      emptyNote.hidden = shown > 0;
+      barra.querySelectorAll('span').forEach(function (seg) {
+        var casa = quiere === 'all' ? true : seg.getAttribute('data-state') === quiere;
+        seg.classList.toggle('dim', !casa);
+      });
+
+      vacio.hidden = visibles > 0;
     });
   });
+
+  /* ---------- un ancla que apunta a un plegable, lo ABRE ---------- */
+  function abrePorAncla() {
+    var id = location.hash.slice(1);
+    if (!id) { return; }
+    var destino = document.getElementById(id);
+    if (!destino) { return; }
+    var nodo = destino;
+    while (nodo) {
+      if (nodo.tagName === 'DETAILS') { nodo.open = true; }
+      nodo = nodo.parentElement;
+    }
+    var grupo = destino.closest ? destino.closest('.grp') : null;
+    if (grupo) { grupo.hidden = false; }
+    destino.scrollIntoView({ block: 'center' });
+  }
+
+  window.addEventListener('hashchange', abrePorAncla);
+  abrePorAncla();
+
+  /* ---------- la lateral sigue dónde estás ---------- */
+  var lateral = document.getElementById('side');
+  var alterna = document.getElementById('side-toggle');
+  var aqui = document.getElementById('side-here');
+  var enlaces = document.querySelectorAll('#side-nav a');
+
+  alterna.addEventListener('click', function () {
+    var abierto = lateral.classList.toggle('open');
+    alterna.setAttribute('aria-expanded', abierto ? 'true' : 'false');
+  });
+
+  enlaces.forEach(function (enlace) {
+    enlace.addEventListener('click', function () {
+      lateral.classList.remove('open');
+      alterna.setAttribute('aria-expanded', 'false');
+    });
+  });
+
+  /* ---------- qué bloque estoy leyendo ----------
+   * Se lee la posición en el scroll en vez de usar IntersectionObserver:
+   * con secciones de varios miles de píxeles el observador se vuelve
+   * dependiente del compositor y no hay forma de comprobarlo. Esto es
+   * determinista — dado un scroll, la sección activa siempre es la misma.
+   * --------------------------------------------------------------------- */
+  var secciones = Array.prototype.slice.call(document.querySelectorAll('main section[id]'));
+  var pendiente = false;
+
+  function marcaSeccionActiva() {
+    pendiente = false;
+    var linea = window.innerHeight * 0.32;
+    var actual = secciones[0];
+
+    secciones.forEach(function (sec) {
+      if (sec.getBoundingClientRect().top <= linea) { actual = sec; }
+    });
+
+    var destino = '#' + actual.id;
+
+    enlaces.forEach(function (enlace) {
+      var activo = enlace.getAttribute('href') === destino;
+      enlace.setAttribute('aria-current', activo ? 'true' : 'false');
+      if (activo) { aqui.textContent = enlace.querySelector('span').textContent; }
+    });
+  }
+
+  function alMoverse() {
+    if (pendiente) { return; }
+    pendiente = true;
+    setTimeout(marcaSeccionActiva, 60);
+  }
+
+  window.addEventListener('scroll', alMoverse, { passive: true });
+  window.addEventListener('resize', alMoverse);
+  marcaSeccionActiva();
 </script>
