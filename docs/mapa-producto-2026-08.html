@@ -1,0 +1,1623 @@
+<title>Mapa de agosto — trabajo en barbecho</title>
+
+<style>
+  /* ------------------------------------------------------------------ *
+   * Paleta y tipografía tomadas del Design System Smart Contact:
+   * projects/design-tokens/src/lib/styles/tokens/layers/01-primitive.css
+   * projects/design-tokens/src/lib/styles/tokens/layers/07-dark.css
+   * Nada de color inventado — todos los hex existen como token --sc-color-*.
+   * ------------------------------------------------------------------ */
+
+  :root {
+    --ground: #ffffff;
+    --surface: #f7f8fa;
+    --raised: #eceff3;
+    --line: #dadfe6;
+    --line-soft: #eceff3;
+    --ink: #181d26;
+    --ink-2: #4f5663;
+    --ink-3: #6f7784;
+    --band: #1b273d;
+    --band-ink: #eceff3;
+    --band-ink-2: #aeb6c2;
+    --accent: #1464fe;
+    --mark: #2497a8;
+    --go: #16a34a;
+    --wait: #d97706;
+    --block: #dc2626;
+    --frozen: #8f97a3;
+    --shadow: 0 1px 2px rgba(24, 29, 38, .06);
+
+    --wrap: 1160px;
+    --sans: 'Inter', system-ui, -apple-system, 'Segoe UI', sans-serif;
+    --mono: ui-monospace, SFMono-Regular, 'SF Mono', Menlo, Consolas, monospace;
+  }
+
+  @media (prefers-color-scheme: dark) {
+    :root {
+      --ground: #0b0f14;
+      --surface: #181d26;
+      --raised: #2f3642;
+      --line: #2f3642;
+      --line-soft: #181d26;
+      --ink: #f7f8fa;
+      --ink-2: #c6ccd6;
+      --ink-3: #aeb6c2;
+      --band: #131b2b;
+      --band-ink: #f7f8fa;
+      --band-ink-2: #8f97a3;
+      --accent: #4a8fff;
+      --mark: #51d5e6;
+      --go: #4ade80;
+      --wait: #fbbf24;
+      --block: #f87171;
+      --frozen: #8f97a3;
+      --shadow: 0 1px 2px rgba(0, 0, 0, .4);
+    }
+  }
+
+  :root[data-theme="dark"] {
+    --ground: #0b0f14;
+    --surface: #181d26;
+    --raised: #2f3642;
+    --line: #2f3642;
+    --line-soft: #181d26;
+    --ink: #f7f8fa;
+    --ink-2: #c6ccd6;
+    --ink-3: #aeb6c2;
+    --band: #131b2b;
+    --band-ink: #f7f8fa;
+    --band-ink-2: #8f97a3;
+    --accent: #4a8fff;
+    --mark: #51d5e6;
+    --go: #4ade80;
+    --wait: #fbbf24;
+    --block: #f87171;
+    --frozen: #8f97a3;
+    --shadow: 0 1px 2px rgba(0, 0, 0, .4);
+  }
+
+  :root[data-theme="light"] {
+    --ground: #ffffff;
+    --surface: #f7f8fa;
+    --raised: #eceff3;
+    --line: #dadfe6;
+    --line-soft: #eceff3;
+    --ink: #181d26;
+    --ink-2: #4f5663;
+    --ink-3: #6f7784;
+    --band: #1b273d;
+    --band-ink: #eceff3;
+    --band-ink-2: #aeb6c2;
+    --accent: #1464fe;
+    --mark: #2497a8;
+    --go: #16a34a;
+    --wait: #d97706;
+    --block: #dc2626;
+    --frozen: #8f97a3;
+    --shadow: 0 1px 2px rgba(24, 29, 38, .06);
+  }
+
+  * { box-sizing: border-box; }
+
+  body {
+    margin: 0;
+    background: var(--ground);
+    color: var(--ink);
+    font-family: var(--sans);
+    font-size: 15px;
+    line-height: 1.55;
+    -webkit-font-smoothing: antialiased;
+  }
+
+  .wrap {
+    max-width: var(--wrap);
+    margin-inline: auto;
+    padding-inline: 24px;
+  }
+
+  a { color: var(--accent); }
+  a:focus-visible,
+  button:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+    border-radius: 3px;
+  }
+
+  /* ---------- cabecera ---------- */
+
+  .hero {
+    background: var(--band);
+    color: var(--band-ink);
+    padding-block: 40px 34px;
+    border-bottom: 1px solid var(--line);
+  }
+
+  .hero .eyebrow {
+    font-size: 11px;
+    letter-spacing: .1em;
+    text-transform: uppercase;
+    font-weight: 600;
+    color: var(--band-ink-2);
+    margin: 0 0 14px;
+  }
+
+  .hero h1 {
+    margin: 0;
+    font-size: clamp(30px, 5vw, 44px);
+    line-height: 1.08;
+    font-weight: 650;
+    letter-spacing: -.02em;
+    text-wrap: balance;
+  }
+
+  .hero .lede {
+    margin: 14px 0 0;
+    max-width: 62ch;
+    color: var(--band-ink-2);
+    font-size: 16px;
+  }
+
+  .hero .lede strong { color: var(--band-ink); font-weight: 600; }
+
+  .counts {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px 26px;
+    margin: 26px 0 0;
+    padding: 0;
+    list-style: none;
+    font-variant-numeric: tabular-nums;
+  }
+
+  .counts li { display: flex; align-items: baseline; gap: 8px; }
+  .counts b {
+    font-size: 22px;
+    font-weight: 650;
+    color: var(--band-ink);
+    letter-spacing: -.01em;
+  }
+  .counts span { font-size: 12px; color: var(--band-ink-2); }
+
+  /* ---------- navegación ---------- */
+
+  nav.jump {
+    position: sticky;
+    top: 0;
+    z-index: 20;
+    background: var(--surface);
+    border-bottom: 1px solid var(--line);
+  }
+
+  nav.jump .wrap {
+    display: flex;
+    gap: 20px;
+    overflow-x: auto;
+    scrollbar-width: thin;
+    padding-block: 11px;
+  }
+
+  nav.jump a {
+    flex: none;
+    font-size: 12.5px;
+    font-weight: 550;
+    color: var(--ink-3);
+    text-decoration: none;
+    white-space: nowrap;
+  }
+  nav.jump a:hover { color: var(--accent); }
+
+  /* ---------- estructura de sección ---------- */
+
+  section { padding-block: 46px; border-bottom: 1px solid var(--line-soft); }
+  section:last-of-type { border-bottom: 0; }
+
+  .s-head { margin-bottom: 26px; }
+
+  .s-head .num {
+    font-family: var(--mono);
+    font-size: 11px;
+    color: var(--mark);
+    letter-spacing: .08em;
+    display: block;
+    margin-bottom: 8px;
+  }
+
+  .s-head h2 {
+    margin: 0;
+    font-size: 24px;
+    font-weight: 650;
+    letter-spacing: -.015em;
+    text-wrap: balance;
+  }
+
+  .s-head p {
+    margin: 8px 0 0;
+    max-width: 70ch;
+    color: var(--ink-2);
+  }
+
+  h3 {
+    margin: 34px 0 14px;
+    font-size: 15px;
+    font-weight: 650;
+    letter-spacing: -.005em;
+  }
+
+  /* ---------- reglas del mes ---------- */
+
+  .rules {
+    display: grid;
+    gap: 14px;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    margin: 0;
+    padding: 0;
+    list-style: none;
+  }
+
+  .rules li {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 18px 20px;
+  }
+
+  .rules b {
+    display: block;
+    font-size: 15px;
+    font-weight: 650;
+    margin-bottom: 6px;
+  }
+
+  .rules span { color: var(--ink-2); font-size: 13.5px; }
+
+  .aside-note {
+    margin: 18px 0 0;
+    padding: 12px 16px;
+    border-left: 2px solid var(--mark);
+    background: var(--surface);
+    color: var(--ink-2);
+    font-size: 13.5px;
+    border-radius: 0 6px 6px 0;
+  }
+
+  /* ---------- esta semana ---------- */
+
+  .week {
+    display: grid;
+    gap: 14px;
+    grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  }
+
+  .week article {
+    background: var(--ground);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 18px 20px 20px;
+    box-shadow: var(--shadow);
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+
+  .week .who {
+    font-size: 11px;
+    letter-spacing: .07em;
+    text-transform: uppercase;
+    font-weight: 650;
+    color: var(--ink-3);
+  }
+
+  .week h4 { margin: 0; font-size: 16px; font-weight: 650; letter-spacing: -.01em; }
+  .week p { margin: 0; color: var(--ink-2); font-size: 13.5px; }
+
+  /* ---------- tablero ---------- */
+
+  .group { margin-bottom: 34px; }
+
+  .group-head {
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+    flex-wrap: wrap;
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--line);
+    margin-bottom: 4px;
+  }
+
+  .group-head h3 { margin: 0; font-size: 15px; }
+  .group-head .count {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--ink-3);
+    font-variant-numeric: tabular-nums;
+  }
+  .group-head .gloss { font-size: 13px; color: var(--ink-3); }
+
+  .row {
+    display: grid;
+    grid-template-columns: minmax(0, 2fr) minmax(0, 3fr);
+    gap: 4px 28px;
+    padding: 16px 0;
+    border-bottom: 1px solid var(--line-soft);
+    align-items: start;
+  }
+
+  .row:last-child { border-bottom: 0; }
+
+  .row .head { display: flex; flex-direction: column; gap: 7px; }
+
+  .row .title {
+    font-weight: 600;
+    font-size: 14.5px;
+    letter-spacing: -.005em;
+  }
+
+  .row .tags { display: flex; flex-wrap: wrap; gap: 6px; align-items: center; }
+
+  .row .body { display: flex; flex-direction: column; gap: 8px; }
+  .row .body p { margin: 0; font-size: 13.5px; color: var(--ink-2); }
+  .row .body p.step { color: var(--ink); }
+
+  .row .body ul {
+    margin: 2px 0 0;
+    padding-left: 18px;
+    font-size: 13.5px;
+    color: var(--ink-2);
+  }
+  .row .body li { margin-bottom: 3px; }
+
+  .watch {
+    font-size: 12.5px;
+    color: var(--ink-2);
+    border-left: 2px solid var(--wait);
+    padding: 2px 0 2px 12px;
+  }
+  .watch.hard { border-left-color: var(--block); }
+
+  .watch b { color: var(--ink); font-weight: 600; }
+
+  @media (max-width: 720px) {
+    .row { grid-template-columns: 1fr; gap: 12px; }
+  }
+
+  /* ---------- píldoras ---------- */
+
+  .pill {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    font-size: 11px;
+    font-weight: 650;
+    letter-spacing: .04em;
+    text-transform: uppercase;
+    padding: 3px 9px;
+    border-radius: 999px;
+    border: 1px solid;
+    white-space: nowrap;
+  }
+
+  .pill::before {
+    content: "";
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    background: currentColor;
+  }
+
+  .pill.go { color: var(--go); border-color: color-mix(in srgb, var(--go) 34%, transparent); background: color-mix(in srgb, var(--go) 10%, transparent); }
+  .pill.wait { color: var(--wait); border-color: color-mix(in srgb, var(--wait) 34%, transparent); background: color-mix(in srgb, var(--wait) 10%, transparent); }
+  .pill.block { color: var(--block); border-color: color-mix(in srgb, var(--block) 34%, transparent); background: color-mix(in srgb, var(--block) 10%, transparent); }
+  .pill.frozen { color: var(--frozen); border-color: color-mix(in srgb, var(--frozen) 40%, transparent); background: color-mix(in srgb, var(--frozen) 10%, transparent); }
+
+  .jira {
+    font-family: var(--mono);
+    font-size: 11.5px;
+    font-weight: 500;
+    letter-spacing: 0;
+    text-decoration: none;
+    color: var(--ink-2);
+    background: var(--raised);
+    border: 1px solid var(--line);
+    border-radius: 4px;
+    padding: 2px 7px;
+    white-space: nowrap;
+  }
+  .jira:hover { color: var(--accent); border-color: var(--accent); }
+
+  .owner {
+    font-size: 11.5px;
+    color: var(--ink-3);
+    font-weight: 550;
+  }
+
+  code {
+    font-family: var(--mono);
+    font-size: .88em;
+    background: var(--raised);
+    border-radius: 3px;
+    padding: 1px 5px;
+  }
+
+  /* ---------- protocolos ---------- */
+
+  .proto {
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 10px;
+    padding: 24px 26px 26px;
+    margin-bottom: 20px;
+  }
+
+  .proto > h3:first-child { margin-top: 0; }
+
+  ol.steps { margin: 0; padding-left: 0; list-style: none; counter-reset: st; }
+
+  ol.steps li {
+    position: relative;
+    padding: 0 0 14px 40px;
+    counter-increment: st;
+    color: var(--ink-2);
+    font-size: 14px;
+  }
+
+  ol.steps li::before {
+    content: counter(st);
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 24px;
+    height: 24px;
+    border-radius: 50%;
+    background: var(--raised);
+    border: 1px solid var(--line);
+    color: var(--ink);
+    font-family: var(--mono);
+    font-size: 11px;
+    font-weight: 600;
+    display: grid;
+    place-items: center;
+    font-variant-numeric: tabular-nums;
+  }
+
+  ol.steps li b { color: var(--ink); font-weight: 600; }
+
+  .clock {
+    margin: 0;
+    display: grid;
+    grid-template-columns: 104px 1fr;
+    column-gap: 16px;
+  }
+
+  .clock dt {
+    font-family: var(--mono);
+    font-size: 12.5px;
+    font-weight: 600;
+    color: var(--mark);
+    padding: 9px 0;
+    border-top: 1px solid var(--line);
+    font-variant-numeric: tabular-nums;
+  }
+
+  .clock dd {
+    margin: 0;
+    padding: 9px 0;
+    border-top: 1px solid var(--line);
+    font-size: 13.5px;
+    color: var(--ink-2);
+  }
+
+  .clock dd b { color: var(--ink); font-weight: 600; }
+
+  @media (max-width: 560px) {
+    .clock { grid-template-columns: 1fr; }
+    .clock dd { border-top: 0; padding-top: 0; }
+  }
+
+  /* ---------- preguntas ---------- */
+
+  .q { border-top: 1px solid var(--line); padding: 22px 0; }
+  .q:last-of-type { border-bottom: 1px solid var(--line); }
+
+  .q-head {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: baseline;
+    gap: 8px 12px;
+    margin-bottom: 6px;
+  }
+
+  .q-head .to {
+    font-size: 11px;
+    letter-spacing: .07em;
+    text-transform: uppercase;
+    font-weight: 700;
+    color: var(--mark);
+  }
+
+  .q-head h4 { margin: 0; font-size: 15px; font-weight: 600; letter-spacing: -.005em; }
+
+  .q .why { margin: 0 0 12px; font-size: 13.5px; color: var(--ink-3); }
+
+  .draft {
+    position: relative;
+    max-width: 76ch;
+    background: var(--surface);
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 15px 17px;
+    font-size: 13.5px;
+    line-height: 1.6;
+    color: var(--ink-2);
+    white-space: pre-wrap;
+  }
+
+  .draft-bar { display: flex; justify-content: flex-start; margin-top: 8px; max-width: 76ch; }
+
+  button.copy {
+    font-family: inherit;
+    font-size: 11.5px;
+    font-weight: 600;
+    letter-spacing: .03em;
+    color: var(--ink-2);
+    background: var(--ground);
+    border: 1px solid var(--line);
+    border-radius: 6px;
+    padding: 5px 12px;
+    cursor: pointer;
+  }
+  button.copy:hover { color: var(--accent); border-color: var(--accent); }
+
+  /* ---------- enlaces ---------- */
+
+  .links { display: grid; gap: 14px; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); }
+
+  .links article {
+    border: 1px solid var(--line);
+    border-radius: 8px;
+    padding: 16px 18px;
+    background: var(--surface);
+  }
+
+  .links h4 { margin: 0 0 10px; font-size: 12px; text-transform: uppercase; letter-spacing: .07em; color: var(--ink-3); font-weight: 650; }
+  .links ul { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column; gap: 7px; }
+  .links li { font-size: 13px; }
+  .links a { font-family: var(--mono); font-size: 12px; word-break: break-all; }
+  .links em { color: var(--ink-3); font-style: normal; font-size: 12px; display: block; }
+
+  /* ---------- tabla de divergencias ---------- */
+
+  .scroller { overflow-x: auto; border: 1px solid var(--line); border-radius: 8px; }
+
+  table { border-collapse: collapse; width: 100%; min-width: 720px; font-size: 13.5px; }
+
+  th, td { text-align: left; padding: 13px 16px; border-bottom: 1px solid var(--line-soft); vertical-align: top; }
+
+  thead th {
+    background: var(--surface);
+    font-size: 11px;
+    letter-spacing: .07em;
+    text-transform: uppercase;
+    color: var(--ink-3);
+    font-weight: 650;
+    border-bottom: 1px solid var(--line);
+    white-space: nowrap;
+  }
+
+  tbody tr:last-child td { border-bottom: 0; }
+  td.subject { font-weight: 600; color: var(--ink); }
+  td.verdict { color: var(--ink); font-weight: 550; }
+  td em { font-style: normal; color: var(--ink-3); }
+
+  /* ---------- transcripción ---------- */
+
+  .gloss-list { margin: 0; display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 2px 26px; }
+
+  .gloss-list div {
+    display: flex;
+    align-items: baseline;
+    gap: 10px;
+    padding: 7px 0;
+    border-bottom: 1px solid var(--line-soft);
+    font-size: 13.5px;
+  }
+
+  .gloss-list .heard { font-family: var(--mono); font-size: 12px; color: var(--ink-3); flex: none; }
+  .gloss-list .arrow { color: var(--ink-3); flex: none; }
+  .gloss-list .read { font-weight: 600; }
+
+  .unknown { display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px; }
+  .unknown span {
+    font-family: var(--mono);
+    font-size: 12px;
+    color: var(--ink-2);
+    background: var(--surface);
+    border: 1px dashed var(--line);
+    border-radius: 6px;
+    padding: 5px 10px;
+  }
+
+  footer {
+    background: var(--surface);
+    border-top: 1px solid var(--line);
+    padding-block: 28px;
+    color: var(--ink-3);
+    font-size: 12.5px;
+  }
+
+  footer p { margin: 0 0 6px; max-width: 78ch; }
+
+  @media (prefers-reduced-motion: reduce) {
+    * { animation: none !important; transition: none !important; }
+  }
+</style>
+
+<header class="hero">
+  <div class="wrap">
+    <p class="eyebrow">Recap del viernes 7 de agosto · email «Cosas en mi ausencia»</p>
+    <h1>Mapa de agosto</h1>
+    <p class="lede">
+      Todo lo que queda en barbecho mientras Ángel está fuera, en un solo sitio.
+      Vuelve el <strong>martes 8 de septiembre</strong>. Este mapa cruza el email del
+      27 de julio con lo que se dijo en el recap del 7 de agosto — y cuando no coinciden,
+      <strong>manda el recap</strong>.
+    </p>
+    <ul class="counts">
+      <li><b>21</b> <span>frentes abiertos</span></li>
+      <li><b>21</b> <span>tarjetas SISMAC</span></li>
+      <li><b>8</b> <span>preguntas sin respuesta</span></li>
+      <li><b>7</b> <span>divergencias entre las dos fuentes</span></li>
+    </ul>
+  </div>
+</header>
+
+<nav class="jump">
+  <div class="wrap">
+    <a href="#reglas">Reglas del mes</a>
+    <a href="#semana">Esta semana</a>
+    <a href="#tablero">El tablero</a>
+    <a href="#pruebas">Protocolos de prueba</a>
+    <a href="#preguntas">Preguntas abiertas</a>
+    <a href="#entornos">Entornos</a>
+    <a href="#divergencias">Email vs. recap</a>
+    <a href="#audio">Dudas del audio</a>
+  </div>
+</nav>
+
+<main>
+
+  <!-- ============================ 1 ============================ -->
+  <section id="reglas">
+    <div class="wrap">
+      <div class="s-head">
+        <span class="num">01 — EL MARCO</span>
+        <h2>Tres reglas gobiernan el mes entero</h2>
+        <p>Si una decisión choca con alguna de estas tres, no es una decisión vuestra.</p>
+      </div>
+
+      <ul class="rules">
+        <li>
+          <b>Nada sube a producción hasta septiembre</b>
+          <span>Es la restricción de las dependencias de voz. Se valida, se documenta y se
+            deja listo — pero no se despliega.</span>
+        </li>
+        <li>
+          <b>No se abren melones nuevos</b>
+          <span>Lo planteó Rafa en el recap («no me meto en discovery sin cerrar lo
+            operativo») y Ángel lo confirmó: «yo no abriría más de momento, no hay nadie».</span>
+        </li>
+        <li>
+          <b>Lo que se salga de esta lista, se le escribe a Ángel</b>
+          <span>Textual del recap. Está fuera, no incomunicado: para lo que no encaje aquí,
+            un mensaje.</span>
+        </li>
+      </ul>
+
+      <p class="aside-note">
+        <b>Contexto de capacidad</b> — Ya se le preguntó a Eva y dijo que no van a coger
+        nada más. O sea que no hay refuerzo por ese lado: lo que se avance este mes lo
+        avanzáis vosotros.
+      </p>
+    </div>
+  </section>
+
+  <!-- ============================ 2 ============================ -->
+  <section id="semana">
+    <div class="wrap">
+      <div class="s-head">
+        <span class="num">02 — ARRANQUE</span>
+        <h2>Las cuatro cosas de esta semana</h2>
+        <p>Todo lo demás puede esperar unos días sin coste. Esto no: dos tienen a alguien
+          esperando al otro lado y dos desbloquean cadenas enteras.</p>
+      </div>
+
+      <div class="week">
+        <article>
+          <span class="who">Rafa + Mario</span>
+          <h4>Revisar el cronograma de stats</h4>
+          <p>Lo generó ChatGPT y hay que leerlo con ojo antes de reservar el día: que la
+            secuencia tenga sentido y que se pueda reproducir de verdad.</p>
+        </article>
+        <article>
+          <span class="who">Rafa + Mario</span>
+          <h4>Probar transcripción masiva</h4>
+          <p>En <code>supervisordev</code>, y sobre masiva — no sobre individual. Hay dos
+            defectos ya reportados que toca confirmar, no volver a descubrir.</p>
+        </article>
+        <article>
+          <span class="who">Rafa</span>
+          <h4>Cerrar qué tabla se usa</h4>
+          <p>SISMAC-4312 condiciona AED entero y las reglas. Marta traía novedades de lo
+            hablado con Carlos: es la conversación que desatasca lo demás.</p>
+        </article>
+        <article>
+          <span class="who">Con Bea</span>
+          <h4>Elegir el color de la botella</h4>
+          <p>Parece lo más pequeño de la lista y es el que bloquea a otro: el diseño del
+            lanyard no arranca hasta que la botella esté decidida.</p>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ 3 ============================ -->
+  <section id="tablero">
+    <div class="wrap">
+      <div class="s-head">
+        <span class="num">03 — EL TABLERO</span>
+        <h2>Los 21 frentes, ordenados por lo que podéis hacer con ellos</h2>
+        <p>No por el orden del email, sino por estado: primero lo que depende solo de
+          vosotros, al final lo que ya está cerrado. Las 21 tarjetas SISMAC están
+          repartidas entre estas filas — algunas filas agrupan varias cards hermanas.</p>
+      </div>
+
+      <!-- ---- se puede avanzar ---- -->
+      <div class="group">
+        <div class="group-head">
+          <h3><span class="pill go">Se puede avanzar ya</span></h3>
+          <span class="count">7 frentes</span>
+          <span class="gloss">nada externo lo bloquea</span>
+        </div>
+
+        <div class="row">
+          <div class="head">
+            <span class="title">Stats de grupo, canal y agente</span>
+            <div class="tags">
+              <span class="owner">Rafa + Mario</span>
+            </div>
+          </div>
+          <div class="body">
+            <p class="step">Ya está subido a producción. Toca revisar el cronograma de la
+              batería, preparar las pruebas y localizar un AED con la configuración que
+              hace falta. Si algo no se sabe configurar, lo ve postventa.</p>
+            <p class="watch hard"><b>Ojo:</b> el estado del 7 de agosto dice que las
+              pruebas <b>no</b> se pueden empezar porque Paco no ha dejado cargando las
+              tablas; en el recap se dice que la gente ya está empezando. Confírmalo antes
+              de reservar el día — es el trabajo más grande del mes.</p>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="head">
+            <span class="title">Transcripción masiva</span>
+            <div class="tags">
+              <a class="jira" href="https://jira.dvtech.io/browse/SISMAC-2858">SISMAC-2858</a>
+              <span class="owner">Rafa + Mario · APIs: Alex y Lucas</span>
+            </div>
+          </div>
+          <div class="body">
+            <p class="step">Probar en <code>supervisordev</code> y revisar que el interfaz
+              y los iconos coinciden con la solución diseñada — ya aparecieron
+              discrepancias de iconos.</p>
+            <p class="watch"><b>Está vinculado</b> con el informe de costes: de aquí salen
+              los datos que ese informe tendrá que enseñar.</p>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="head">
+            <span class="title">Componente tabla</span>
+            <div class="tags">
+              <a class="jira" href="https://jira.dvtech.io/browse/SISMAC-4312">SISMAC-4312</a>
+              <span class="owner">Rafa · con Carlos y Marta</span>
+            </div>
+          </div>
+          <div class="body">
+            <p class="step">Decidir qué tabla se usa de forma provisional hasta dar con la
+              definitiva, y comprobar si tiene algún límite para nuestros diseños. Lo que
+              se busca de ella: skeleton, agrupar filas, mover filas y columnas dinámicas.</p>
+            <p class="watch hard"><b>Esta es la que más arrastra:</b> afecta a todo lo demás
+              de AED y a las reglas. Ángel se inclinaba por tirar con lo que ya hay si cubre
+              esas posibilidades.</p>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="head">
+            <span class="title">Mejora de errores en el puesto de agente</span>
+            <div class="tags">
+              <a class="jira" href="https://jira.dvtech.io/browse/SISMAC-4292">SISMAC-4292</a>
+              <span class="owner">Rafa + Marta</span>
+            </div>
+          </div>
+          <div class="body">
+            <p class="step">Pendiente de decidir las variantes de modal. Y de ahí sale el
+              melón de los PrimeBlocks, que estudia Rafa.</p>
+            <p class="watch">Se empieza por el puesto de agente, aunque en principio sería
+              para los tres puestos.</p>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="head">
+            <span class="title">Ley SAC · MVP priorizado</span>
+            <div class="tags">
+              <a class="jira" href="https://jira.dvtech.io/browse/SISMAC-4213">SISMAC-4213</a>
+            </div>
+          </div>
+          <div class="body">
+            <p class="step">Avanzar con las cuatro piezas priorizadas:</p>
+            <ul>
+              <li>Paso a agente</li>
+              <li>Recuperación y traspaso de variables</li>
+              <li>Consentimiento</li>
+              <li>Idiomas</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="head">
+            <span class="title">Feria · material</span>
+            <div class="tags">
+              <span class="owner">Rafa / Marta · decisiones con Bea</span>
+            </div>
+          </div>
+          <div class="body">
+            <p class="step">Seis encargos con una dependencia dentro:</p>
+            <ul>
+              <li><b>Stand</b> y <b>folletos</b> — cerrar. Los archivos están para modificar.</li>
+              <li><b>Botella</b> — el color se decide con Bea.</li>
+              <li><b>Lanyard</b> — ya encontrado; el diseño arranca <b>en cuanto la botella
+                esté elegida</b>, lo coja Rafa, Marta o quien toque.</li>
+              <li><b>Bolis</b>.</li>
+              <li><b>PPT de feria</b> — recuperar los documentos de Álvaro. En el recap salió
+                como «movida importante».</li>
+            </ul>
+            <p class="watch">El <b>vídeo no entra aquí</b>: está congelado hasta septiembre,
+              más abajo.</p>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="head">
+            <span class="title">Descarga de transcripciones · abrir transcripción con grabación eliminada</span>
+            <div class="tags">
+              <a class="jira" href="https://jira.dvtech.io/browse/SISMAC-4302">SISMAC-4302</a>
+              <a class="jira" href="https://jira.dvtech.io/browse/SISMAC-4271">SISMAC-4271</a>
+            </div>
+          </div>
+          <div class="body">
+            <p class="step">El comodín del mes. Palabras de Ángel: son «las 2 siguientes a
+              coger» si os quedáis sin nada o queréis algo rápido.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ---- esperando a otros ---- -->
+      <div class="group">
+        <div class="group-head">
+          <h3><span class="pill wait">Esperando a otros</span></h3>
+          <span class="count">5 frentes</span>
+          <span class="gloss">hay un nombre concreto al otro lado</span>
+        </div>
+
+        <div class="row">
+          <div class="head">
+            <span class="title">Conversaciones por gestionar</span>
+            <div class="tags">
+              <a class="jira" href="https://jira.dvtech.io/browse/SISMAC-3780">SISMAC-3780</a>
+              <span class="owner">Miguel revisando · incidencias a Edu</span>
+            </div>
+          </div>
+          <div class="body">
+            <p class="step">Está In Progress y lo suben esta semana. Cuando esté: leerse la
+              card entera y probar a romperlo — qué pasa si el usuario hace otras cosas por
+              el medio.</p>
+            <p class="watch hard"><b>El caso que destapó la demo:</b> teniendo una llamada en
+              curso se bloquea la gestión de esa llamada, pero sí deja lanzar un WhatsApp al
+              mismo contacto. Se decidió así sobre un caso de uso que no se había planteado,
+              y en la demo además no aparecía la pastilla. Hay que confirmar si es el
+              comportamiento que se quiere.</p>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="head">
+            <span class="title">Configuración general de AED</span>
+            <div class="tags">
+              <a class="jira" href="https://jira.dvtech.io/browse/SISMAC-4074">SISMAC-4074</a>
+              <span class="owner">Eduardo (back)</span>
+            </div>
+          </div>
+          <div class="body">
+            <p class="step">Están haciendo assessment. Ya está metido en el front; engancharlo
+              con el back lo ha cogido Eduardo.</p>
+            <p class="watch">Dos cosas que hay que <b>recordarles</b>, porque se pierden
+              fácil: el permiso de gestión de conversaciones no atendidas, y el parámetro de
+              conversaciones perdidas en la configuración general.</p>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="head">
+            <span class="title">Evolutivo Nodo IA Variables</span>
+            <div class="tags">
+              <a class="jira" href="https://jira.dvtech.io/browse/SISMAC-4314">SISMAC-4314</a>
+              <span class="owner">Mila</span>
+            </div>
+          </div>
+          <div class="body">
+            <p class="step">Mila está con el assessment. Nada pendiente de nuestro lado salvo
+              que pidan que lo verifiquemos: en ese caso, leerse la card — o pasárselo a
+              Oscar si está.</p>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="head">
+            <span class="title">Abrir columnas de conversaciones en curso en detalle</span>
+            <div class="tags">
+              <a class="jira" href="https://jira.dvtech.io/browse/SISMAC-4168">SISMAC-4168</a>
+              <span class="owner">Edu</span>
+            </div>
+          </div>
+          <div class="body">
+            <p class="step">Edu está haciendo el assessment. Sin acción de nuestro lado por ahora.</p>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="head">
+            <span class="title">Demo de feria · OscAI</span>
+            <div class="tags">
+              <span class="owner">JR · interfaz: avisado Lucas</span>
+            </div>
+          </div>
+          <div class="body">
+            <p class="step">Pasado a JR. Están con dos cards, una de stats y otra de
+              inteligencia artificial. El componente React que se pasó <b>es gratuito</b>: lo
+              de pago es el despliegue, y el despliegue lo hacemos nosotros, así que no cuesta
+              dinero.</p>
+            <p class="watch">Dos preguntas abiertas: si el modal se puede agrandar o hacer
+              redimensionable (Óscar lo quería más grande), y quién está llevando la parte de
+              interfaz.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ---- congelado ---- -->
+      <div class="group">
+        <div class="group-head">
+          <h3><span class="pill frozen">Congelado hasta septiembre</span></h3>
+          <span class="count">2 frentes</span>
+          <span class="gloss">decisión ya tomada, no la re-abráis</span>
+        </div>
+
+        <div class="row">
+          <div class="head">
+            <span class="title">Conectividad</span>
+            <div class="tags">
+              <a class="jira" href="https://jira.dvtech.io/browse/SISMAC-4318">SISMAC-4318</a>
+              <span class="owner">Marta · Mario · Edu</span>
+            </div>
+          </div>
+          <div class="body">
+            <p class="step">Parado hasta septiembre <b>salvo que podáis avanzar</b>. Marta ya
+              había avanzado. Lo que queda anotado, por si os da por seguir:</p>
+            <ul>
+              <li>Revisar la tabla de errores y decidir cómo borrarlos de uno en uno.</li>
+              <li>Cambiar el literal de descarga por «descarga de informe de errores de
+                conectividad».</li>
+              <li>Categorizar amarillo y rojo con Edu — él ya incluye «posible inestabilidad»
+                como amarillo, falta fijar el literal.</li>
+              <li>Decidir qué debería descargar. De momento, todo (lo revisa Mario).</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="head">
+            <span class="title">Vídeo de feria</span>
+          </div>
+          <div class="body">
+            <p class="step">No se empieza hasta la primera semana de septiembre. Sale de la
+              lista de «cerrar».</p>
+            <p class="watch">Lo que <b>sí</b> se puede adelantar: mirar dónde encajaría la
+              parte de Ley SAC y la otra pieza, para que quien lo coja se encuentre el trabajo
+              hecho — «esto es tocar aquí y aquí».</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ---- no se abre ---- -->
+      <div class="group">
+        <div class="group-head">
+          <h3><span class="pill block">No se abre</span></h3>
+          <span class="count">1 frente · 2 cards</span>
+          <span class="gloss">el email decía lo contrario; manda el recap</span>
+        </div>
+
+        <div class="row">
+          <div class="head">
+            <span class="title">Reglas de grabación · Reglas de clasificación</span>
+            <div class="tags">
+              <a class="jira" href="https://jira.dvtech.io/browse/SISMAC-4125">SISMAC-4125</a>
+              <a class="jira" href="https://jira.dvtech.io/browse/SISMAC-4129">SISMAC-4129</a>
+            </div>
+          </div>
+          <div class="body">
+            <p class="step">El email del 27 de julio decía «hay que empezar a trabajar en
+              esto». En el recap del 7 de agosto se cerró: no se entra en discovery y
+              prospección sin cerrar antes lo operativo, y no hay nadie para cogerlo.</p>
+            <p class="watch"><b>Si alguien lo pide durante el mes</b>, no es una decisión
+              vuestra: mensaje a Ángel.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ---- sin dueño ---- -->
+      <div class="group">
+        <div class="group-head">
+          <h3><span class="pill frozen">Sin dueño ni fecha</span></h3>
+          <span class="count">3 frentes</span>
+          <span class="gloss">candidatos si sobra hueco</span>
+        </div>
+
+        <div class="row">
+          <div class="head">
+            <span class="title">Migración de la sección de agentes y grupos a Supervisor</span>
+            <div class="tags">
+              <a class="jira" href="https://jira.dvtech.io/browse/SISMAC-4060">SISMAC-4060</a>
+              <a class="jira" href="https://jira.dvtech.io/browse/SISMAC-4062">SISMAC-4062</a>
+              <a class="jira" href="https://jira.dvtech.io/browse/SISMAC-4056">SISMAC-4056</a>
+              <a class="jira" href="https://jira.dvtech.io/browse/SISMAC-4058">SISMAC-4058</a>
+            </div>
+          </div>
+          <div class="body">
+            <p class="step">Cuatro cards y una sola instrucción en el email: «hay que darle
+              una vuelta a todo esto». Sin desglosar y sin fecha.</p>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="head">
+            <span class="title">Componente barra de estados</span>
+            <div class="tags">
+              <a class="jira" href="https://jira.dvtech.io/browse/SISMAC-4320">SISMAC-4320</a>
+            </div>
+          </div>
+          <div class="body">
+            <p class="step">Card recién abierta por Ángel: una barra de estados de un agente
+              en el día actual. Sin más detalle que eso.</p>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="head">
+            <span class="title">Optimización del rendimiento</span>
+            <div class="tags">
+              <a class="jira" href="https://jira.dvtech.io/browse/SISMAC-4262">SISMAC-4262</a>
+            </div>
+          </div>
+          <div class="body">
+            <p class="step">No están haciendo nada. En el recap, la respuesta fue literalmente
+              «nada».</p>
+            <p class="watch">El propio Ángel duda de si tiene sentido mantener la card. Es una
+              pregunta para él, está abajo.</p>
+          </div>
+        </div>
+      </div>
+
+      <!-- ---- cerrado ---- -->
+      <div class="group">
+        <div class="group-head">
+          <h3><span class="pill frozen">Cerrado</span></h3>
+          <span class="count">3 frentes</span>
+          <span class="gloss">fuera del radar, aquí solo para que no se re-abran por error</span>
+        </div>
+
+        <div class="row">
+          <div class="head">
+            <span class="title">Nuevo widget y columnas de servicio</span>
+            <div class="tags">
+              <a class="jira" href="https://jira.dvtech.io/browse/SISMAC-4254">SISMAC-4254</a>
+            </div>
+          </div>
+          <div class="body">
+            <p class="step">Quedaba un tema de ceros y guiones y subirlo a producción.
+              Confirmado cerrado en el recap.</p>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="head">
+            <span class="title">Reglas de transcripción</span>
+            <div class="tags">
+              <a class="jira" href="https://jira.dvtech.io/browse/SISMAC-4123">SISMAC-4123</a>
+            </div>
+          </div>
+          <div class="body">
+            <p class="step">Ya pasado a Assessment. Nada pendiente de vuestro lado.</p>
+          </div>
+        </div>
+
+        <div class="row">
+          <div class="head">
+            <span class="title">Congestión / «Channel unavailable»</span>
+            <div class="tags">
+              <span class="owner">Edu</span>
+            </div>
+          </div>
+          <div class="body">
+            <p class="step">Hablado con Edu: o es congestión o es «Channel unavailable». Iba a
+              revisar la llamada. Dado por cerrado.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ 4 ============================ -->
+  <section id="pruebas">
+    <div class="wrap">
+      <div class="s-head">
+        <span class="num">04 — PROTOCOLOS</span>
+        <h2>Las dos pruebas que hay que preparar bien</h2>
+        <p>Abre esto el día de la prueba y no tendrás que volver al Excel ni al hilo. Los
+          pasos numerados van en orden porque el orden importa: hacerlos al revés invalida
+          el resultado.</p>
+      </div>
+
+      <div class="proto">
+        <h3>Batería de stats — grupo, canal y agente</h3>
+        <p class="why" style="margin:0 0 18px;color:var(--ink-2);font-size:13.5px;">
+          El objetivo declarado no es solo validar estos informes: es que la batería quede
+          como <b>plantilla de cómo se valida cualquier cosa de stats</b>. Merece la pena
+          hacerla bien una vez.
+        </p>
+
+        <h3>Antes de reservar el día</h3>
+        <ol class="steps">
+          <li><b>Confirmar que las tablas cargan.</b> Es el bloqueo declarado en el estado
+            del 7 de agosto. Sin datos no hay nada que cuadrar y la prueba se pierde.</li>
+          <li><b>Localizar un AED con la configuración que pide la batería</b> — tres grupos,
+            canal y chat. Si no lo hay o no sabéis dónde se configura, lo monta postventa.</li>
+          <li><b>Leer el cronograma con ojo crítico.</b> Lo generó ChatGPT a partir de la
+            configuración y del hilo de Mario. Rafa y Mario tienen que revisar que tiene
+            sentido y que es reproducible.</li>
+          <li><b>Decidir qué hacer con el «alerting esperado a cero».</b> Dos salidas válidas:
+            ajustar el puesto de agente para que sea cero, o aceptar que ese campo lleve unos
+            segundos de desviación y dejarlo escrito.</li>
+          <li><b>Decidir si «no disponible inactivo» se queda.</b> Es el estado más difícil de
+            reproducir a mano. Se puede quitar de la batería, regenerar el documento y no
+            perder el resto.</li>
+        </ol>
+
+        <h3>La ventana de prueba — una hora, de 12:00 a 13:00</h3>
+        <p class="why" style="font-size:13px;color:var(--ink-3);margin:0 0 14px;">
+          Reconstruido de lo que se explicó en el recap. El detalle exacto, campo a campo,
+          está en el Excel y en el hilo — esto es el esqueleto para saber qué vais a hacer.
+        </p>
+        <dl class="clock">
+          <dt>12:00</dt>
+          <dd><b>Mario y Rafa</b> hacen login y se conectan en los tres grupos, en canal y en
+            chat.</dd>
+          <dt>12:00 → 12:05</dt>
+          <dd>Permanecer disponibles en todos los canales, sin tocar nada.</dd>
+          <dt>12:05</dt>
+          <dd>Entra una llamada al <b>AED 1</b>. Aceptarla <b>de inmediato</b> — es lo que
+            deja el alerting cerca de cero — y mantenerla.</dd>
+          <dt>12:06</dt>
+          <dd><b>Sin finalizar la llamada</b>, aceptar un chat del <b>AED 2</b>. Aquí es donde
+            se cruzan los dos canales.</dd>
+          <dt>después</dt>
+          <dd>La secuencia de estados: pasar a <b>no disponible</b> · activar <b>no disponible
+            personalizado</b> · <b>desconectarse del grupo 3</b> · <b>desconectar el canal
+            chat manteniendo la llamada conectada</b>.</dd>
+          <dt>13:00</dt>
+          <dd>Fin de la ventana.</dd>
+        </dl>
+
+        <p class="watch" style="margin-top:16px;"><b>Parte de esto se hace desde el
+          supervisor</b>, no desde el puesto — quitar el canal chat, por ejemplo. Repasad
+          caso por caso quién ejecuta cada paso y desde dónde, antes del día.</p>
+
+        <h3>Al terminar</h3>
+        <ol class="steps">
+          <li>Cuadrar los cuatro informes fila a fila: <b>agentes / tiempos completos /
+            grupos</b>, <b>grupo</b>, <b>canal</b> y <b>grupo-canal</b>.</li>
+          <li>Lo que no cuadre, mirarlo antes de darlo por fallo: puede ser que no aplique
+            porque el agente estaba en otro grupo.</li>
+          <li>Si algo de la batería no se puede reproducir, <b>se edita</b>. El documento y el
+            hilo son vuestros para retocar — o abrid un hilo nuevo para no tocar el original.</li>
+        </ol>
+      </div>
+
+      <div class="proto">
+        <h3>Transcripción masiva — SISMAC-2858</h3>
+        <p class="why" style="margin:0 0 18px;color:var(--ink-2);font-size:13.5px;">
+          La regla que lo condiciona todo: <b>las pruebas van sobre masiva, no sobre
+          individual</b>. Si lanzas una suelta no puedes distinguir si se disparó una o
+          varias peticiones, así que un resultado raro no demuestra nada.
+        </p>
+
+        <ol class="steps">
+          <li>Entrar en <code>supervisordev.smart-contact.com</code> con credenciales de
+            desarrollo.</li>
+          <li><b>Elegir un grupo que no tenga nada</b> — ni transcripción ni análisis previos.
+            Es el paso que hace la prueba interpretable.</li>
+          <li>Acotar un <b>rango de fechas</b> concreto.</li>
+          <li><b>Comprobar que esas llamadas tienen audio y duración.</b> Sin audio no
+            transcribe, y entonces la prueba no dice nada de la funcionalidad.</li>
+          <li>Lanzar <b>primero la transcripción</b> masiva. Esperar a que termine.</li>
+          <li><b>Después</b>, lanzar el análisis.</li>
+          <li>Verificar en el detalle que aparecen las tres cosas: <b>transcripción, resumen y
+            sentimiento</b>.</li>
+          <li>Revisar que <b>el interfaz y los iconos coinciden</b> con lo que se diseñó. Ya
+            aparecieron discrepancias, así que esto no es un trámite.</li>
+        </ol>
+
+        <h3>Los tres defectos ya conocidos — confirmar, no re-descubrir</h3>
+        <ol class="steps">
+          <li>No se hacen las llamadas a las APIs, o no devuelven nada. <b>Lo revisan Alex y
+            Lucas.</b></li>
+          <li>Si la conversación no tiene audio o no se ha podido transcribir, se lanza igual
+            la petición de análisis cuando se había solicitado análisis. <b>No debería.</b></li>
+          <li>Visto en el propio recap: una conversación que dice tener análisis y luego no
+            tiene ni análisis, ni resumen, ni sentimiento.</li>
+        </ol>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ 5 ============================ -->
+  <section id="preguntas">
+    <div class="wrap">
+      <div class="s-head">
+        <span class="num">05 — LO QUE FALTA POR SABER</span>
+        <h2>Ocho preguntas, con el mensaje ya escrito</h2>
+        <p>Cada una está redactada para copiar y enviar. Están ordenadas por lo que
+          desbloquean: la primera bloquea el trabajo más grande del mes.</p>
+      </div>
+
+      <div class="q">
+        <div class="q-head">
+          <span class="to">Paco / postventa</span>
+          <h4>¿Ya están cargando las tablas de stats?</h4>
+        </div>
+        <p class="why">Bloquea la batería entera. Es la primera llamada del lunes.</p>
+        <div class="draft" id="d1">Hola Paco, antes de montar la batería de pruebas de stats necesitamos confirmar una cosa: ¿están ya cargando las tablas? En el estado del 7 de agosto figuraba que todavía no, y de eso depende que podamos empezar a cuadrar los informes. Si sigue pendiente, ¿tenéis una fecha aproximada? Gracias.</div>
+        <div class="draft-bar"><button class="copy js-copy" data-target="d1" type="button">Copiar</button></div>
+      </div>
+
+      <div class="q">
+        <div class="q-head">
+          <span class="to">Bea</span>
+          <h4>¿Qué color lleva la botella?</h4>
+        </div>
+        <p class="why">Pequeña, pero bloquea el lanyard: su diseño no arranca hasta que esto esté cerrado.</p>
+        <div class="draft" id="d2">Hola Bea, para cerrar el material de feria necesitamos elegir el color de la botella. En cuanto esté decidido arrancamos con el diseño del lanyard, que va justo detrás. ¿Lo podemos ver esta semana?</div>
+        <div class="draft-bar"><button class="copy js-copy" data-target="d2" type="button">Copiar</button></div>
+      </div>
+
+      <div class="q">
+        <div class="q-head">
+          <span class="to">Lucas</span>
+          <h4>¿El modal de la demo se puede agrandar? ¿Y quién lleva la interfaz?</h4>
+        </div>
+        <p class="why">Óscar lo quería más grande. Y no sabemos con quién hablar de la parte de interfaz.</p>
+        <div class="draft" id="d3">Hola Lucas, dos cosas sobre el componente React de la demo (el modal de assistant-ui):
+
+1. Óscar lo quiere más grande. ¿Se puede cambiar el tamaño del modal, o hacerlo redimensionable? Tal como está, para preguntas sobre informes se queda corto.
+2. ¿Quién está llevando la parte de interfaz y quién lo va a integrar?
+
+Si necesitáis algo de interfaz, decidnos y lo vemos. Gracias.</div>
+        <div class="draft-bar"><button class="copy js-copy" data-target="d3" type="button">Copiar</button></div>
+      </div>
+
+      <div class="q">
+        <div class="q-head">
+          <span class="to">Edu</span>
+          <h4>Conectividad: el literal de amarillo/rojo y qué debe descargar</h4>
+        </div>
+        <p class="why">Son las dos piezas que faltan para poder cerrar la card cuando se descongele.</p>
+        <div class="draft" id="d4">Hola Edu, para cerrar la card de conectividad nos faltan dos cosas tuyas:
+
+1. El criterio de amarillo y rojo. Tenemos apuntado que «posible inestabilidad» va en amarillo: ¿nos confirmas el literal exacto que quieres que se vea?
+2. Qué debería incluir la descarga. De momento lo llevamos con todo.
+
+Gracias.</div>
+        <div class="draft-bar"><button class="copy js-copy" data-target="d4" type="button">Copiar</button></div>
+      </div>
+
+      <div class="q">
+        <div class="q-head">
+          <span class="to">Edu / Miguel</span>
+          <h4>El bloqueo por canal en conversaciones por gestionar, ¿es correcto?</h4>
+        </div>
+        <p class="why">Salió en la demo del recap sobre un caso de uso que no se había planteado.</p>
+        <div class="draft" id="d5">Hola, una duda de SISMAC-3780. Con una llamada en curso se bloquea la gestión de esa llamada, pero sí deja lanzar un WhatsApp al mismo contacto. ¿Es el comportamiento que queréis? Lo preguntamos porque parece un caso de uso que no estaba planteado. Además, en ese estado no nos aparecía la pastilla. ¿Lo miramos juntos cuando esté subido?</div>
+        <div class="draft-bar"><button class="copy js-copy" data-target="d5" type="button">Copiar</button></div>
+      </div>
+
+      <div class="q">
+        <div class="q-head">
+          <span class="to">Carlos / Marta</span>
+          <h4>¿Qué tabla usamos de forma provisional?</h4>
+        </div>
+        <p class="why">Condiciona AED entero y las reglas. Es la decisión con más arrastre del mes.</p>
+        <div class="draft" id="d6">Hola, sobre el componente tabla (SISMAC-4312): necesitamos cerrar qué tabla usamos de forma provisional hasta dar con la definitiva, porque condiciona AED entero y también las reglas.
+
+Lo que buscamos que cubra: skeleton, agrupar filas, mover filas y columnas dinámicas. ¿Le veis algún límite para nuestros diseños?
+
+Marta, ¿nos cuentas lo que hablaste con Carlos?</div>
+        <div class="draft-bar"><button class="copy js-copy" data-target="d6" type="button">Copiar</button></div>
+      </div>
+
+      <div class="q">
+        <div class="q-head">
+          <span class="to">Álvaro</span>
+          <h4>Los documentos de feria</h4>
+        </div>
+        <p class="why">Sin la PPT no se cierran stand ni folletos.</p>
+        <div class="draft" id="d7">Hola Álvaro, ¿nos puedes pasar los documentos de feria, la PPT en concreto? Los necesitamos para cerrar el stand y los folletos antes de septiembre. Gracias.</div>
+        <div class="draft-bar"><button class="copy js-copy" data-target="d7" type="button">Copiar</button></div>
+      </div>
+
+      <div class="q">
+        <div class="q-head">
+          <span class="to">Ángel</span>
+          <h4>¿Se mantiene la card de optimización de rendimiento?</h4>
+        </div>
+        <p class="why">Él mismo lo dejó en duda. No corre prisa: puede esperar a la vuelta.</p>
+        <div class="draft" id="d8">Ángel, una sola cosa y sin prisa: la card de optimización de rendimiento (SISMAC-4262) sigue sin movimiento por su parte y tú mismo dudabas de si tiene sentido mantenerla. ¿La dejamos abierta o la cerramos? Contéstanos cuando vuelvas si prefieres.</div>
+        <div class="draft-bar"><button class="copy js-copy" data-target="d8" type="button">Copiar</button></div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ 6 ============================ -->
+  <section id="entornos">
+    <div class="wrap">
+      <div class="s-head">
+        <span class="num">06 — ACCESOS</span>
+        <h2>Entornos y enlaces, todos juntos</h2>
+        <p>Para no volver a buscarlos en el correo. Las credenciales de desarrollo no van
+          escritas aquí a propósito.</p>
+      </div>
+
+      <div class="links">
+        <article>
+          <h4>Transcripción masiva</h4>
+          <ul>
+            <li><a href="https://supervisordev.smart-contact.com/">supervisordev.smart-contact.com</a>
+              <em>Supervisor de desarrollo. Aquí van las pruebas de masiva.</em></li>
+          </ul>
+        </article>
+
+        <article>
+          <h4>Conversaciones por gestionar</h4>
+          <ul>
+            <li><a href="http://172.16.23.33:4002/">172.16.23.33:4002</a><em>Desarrollo Voice</em></li>
+            <li><a href="https://comunicatoraeddev.smart-contact.com/sismac/">comunicatoraeddev.smart-contact.com/sismac/</a><em>Desarrollo Comunicator</em></li>
+            <li><a href="https://supervisoraeddev.smart-contact.com/SISMAC-3780/">supervisoraeddev.smart-contact.com/SISMAC-3780/</a><em>Desarrollo Supervisor — la URL lleva el número de card</em></li>
+          </ul>
+        </article>
+
+        <article>
+          <h4>Material de la batería de stats</h4>
+          <ul>
+            <li><em>documento_pruebas_agentes_tiempos_completos.xlsx</em></li>
+            <li><em>Hilo de ChatGPT «análisis informes agentes» — se puede editar o duplicar</em></li>
+          </ul>
+        </article>
+
+        <article>
+          <h4>Demo de feria</h4>
+          <ul>
+            <li><a href="https://www.assistant-ui.com/examples/modal">assistant-ui.com/examples/modal</a>
+              <em>El componente React. Gratuito; lo de pago es el despliegue.</em></li>
+          </ul>
+        </article>
+
+        <article>
+          <h4>Jira</h4>
+          <ul>
+            <li><a href="https://jira.dvtech.io/browse/SISMAC-2858">jira.dvtech.io/browse/SISMAC-…</a>
+              <em>Todas las cards del tablero enlazan directas.</em></li>
+          </ul>
+        </article>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ 7 ============================ -->
+  <section id="divergencias">
+    <div class="wrap">
+      <div class="s-head">
+        <span class="num">07 — LA LETRA PEQUEÑA</span>
+        <h2>Donde el email y el recap no dicen lo mismo</h2>
+        <p>El email es del lunes 27 de julio; el recap, del viernes 7 de agosto. Cuando
+          chocan, vale el recap por ser posterior. Esta es la sección que evita trabajar
+          sobre información caducada.</p>
+      </div>
+
+      <div class="scroller">
+        <table>
+          <thead>
+            <tr>
+              <th>Tema</th>
+              <th>El email · 27 jul</th>
+              <th>El recap · 7 ago</th>
+              <th>Qué vale</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <td class="subject">Reglas de grabación y clasificación</td>
+              <td>«Hay que empezar a trabajar en esto»</td>
+              <td>«Otro melón» · «no abriría más de momento, no hay nadie»</td>
+              <td class="verdict">No se abre</td>
+            </tr>
+            <tr>
+              <td class="subject">Vídeo de feria</td>
+              <td>En la lista de «cerrar stand, folletos y vídeo»</td>
+              <td>«Quítalo. Hasta la primera semana de septiembre no se empieza»</td>
+              <td class="verdict">Fuera — salvo dejar preparado dónde encaja cada parte</td>
+            </tr>
+            <tr>
+              <td class="subject">Stats: ¿se pueden empezar las pruebas?</td>
+              <td>Estado 07/08: no, porque Paco no ha dejado cargando las tablas</td>
+              <td>«La gente ya está empezando las pruebas»</td>
+              <td class="verdict">Sin resolver — <em>preguntar antes de reservar el día</em></td>
+            </tr>
+            <tr>
+              <td class="subject">Config de AED · quién hace el back</td>
+              <td>«Tiene que hacerlo Carlos»</td>
+              <td>«Lo ha cogido Eduardo»</td>
+              <td class="verdict">Eduardo</td>
+            </tr>
+            <tr>
+              <td class="subject">Reglas de transcripción</td>
+              <td>«Subir solución final y la estimación en el COA, y luego pasar a assessment»</td>
+              <td>«Está en Assessment»</td>
+              <td class="verdict">Hecho</td>
+            </tr>
+            <tr>
+              <td class="subject">Nuevo widget y columnas</td>
+              <td>«Solucionar un tema de 0 y guiones y subir a producción»</td>
+              <td>«Esto está cerrado»</td>
+              <td class="verdict">Cerrado</td>
+            </tr>
+            <tr>
+              <td class="subject">«Marta actualizará el lunes»</td>
+              <td>Escrito el lunes 27 de julio — ese «lunes» era el 3 de agosto</td>
+              <td>Se repite el viernes 7 leyendo el mismo email</td>
+              <td class="verdict">Ese lunes ya pasó. Si sigue pendiente, es el <b>10</b> — <em>confirmar con Marta</em></td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============================ 8 ============================ -->
+  <section id="audio">
+    <div class="wrap">
+      <div class="s-head">
+        <span class="num">08 — HONESTIDAD SOBRE LA FUENTE</span>
+        <h2>Lo que el audio no deja claro</h2>
+        <p>El recap se grabó con el sistema nuevo de DeepGram que montó Pablo, y era su
+          primera prueba. Hay tramos rotos. Estas son mis lecturas — no confirmaciones —
+          para que las corrijas de un vistazo.</p>
+      </div>
+
+      <h3>Mi lectura de lo que se oye mal</h3>
+      <div class="gloss-list">
+        <div><span class="heard">aire 1 / aire 2</span><span class="arrow">→</span><span class="read">AED 1 / AED 2</span></div>
+        <div><span class="heard">Ertin / alertin</span><span class="arrow">→</span><span class="read">alerting</span></div>
+        <div><span class="heard">Lesac / Lisac</span><span class="arrow">→</span><span class="read">Ley SAC</span></div>
+        <div><span class="heard">vea / mea</span><span class="arrow">→</span><span class="read">Bea</span></div>
+        <div><span class="heard">ANGE</span><span class="arrow">→</span><span class="read">Ángel</span></div>
+        <div><span class="heard">Sysmac</span><span class="arrow">→</span><span class="read">SISMAC</span></div>
+        <div><span class="heard">el Langyar</span><span class="arrow">→</span><span class="read">lanyard</span></div>
+        <div><span class="heard">Follies</span><span class="arrow">→</span><span class="read">folletos</span></div>
+        <div><span class="heard">prem blogs</span><span class="arrow">→</span><span class="read">PrimeBlocks</span></div>
+        <div><span class="heard">barra pram ui</span><span class="arrow">→</span><span class="read">PrimeUI</span></div>
+        <div><span class="heard">el oscay</span><span class="arrow">→</span><span class="read">OscAI</span></div>
+        <div><span class="heard">no de Google ven nada</span><span class="arrow">→</span><span class="read">no devuelven nada</span></div>
+        <div><span class="heard">asesorci / a misis</span><span class="arrow">→</span><span class="read">la petición de análisis</span></div>
+      </div>
+
+      <h3>Lo que no me atrevo a interpretar</h3>
+      <p style="margin:0;color:var(--ink-2);font-size:13.5px;">
+        Prefiero un hueco a un dato inventado. Si alguno de estos tramos escondía algo
+        importante, aquí es donde hay que volver al audio:
+      </p>
+      <div class="unknown">
+        <span>«la web sapsal»</span>
+        <span>«para el presidente están fallando cosas»</span>
+        <span>«es répandos»</span>
+        <span>«Decre tú un par de días y pollas»</span>
+        <span>«igual tenemos algunos suentos… Agatha»</span>
+      </div>
+
+      <p class="aside-note" style="margin-top:24px;">
+        <b>Un sesgo que conviene tener presente:</b> el audio de Ángel salió bastante limpio y
+        el de Rafa casi entero como ruido («de la ciudad», «de la vida»). O sea que este mapa
+        recoge mucho mejor lo que dijo él que lo que dijiste tú. Si echas en falta algo
+        vuestro, probablemente sea por eso y no porque no se dijera.
+      </p>
+    </div>
+  </section>
+
+</main>
+
+<footer>
+  <div class="wrap">
+    <p><b>Fuentes:</b> email «Estado a 07/08/26» con el reenvío de «Cosas en mi ausencia»
+      (Ángel Valderrama, 27 de julio) + transcripción del recap del 7 de agosto.</p>
+    <p><b>Ventana:</b> viernes 7 de agosto → martes 8 de septiembre de 2026. Pasada esa
+      fecha, este documento caduca.</p>
+    <p>Fuente editable en el repo: <code>docs/mapa-producto-2026-08.html</code></p>
+  </div>
+</footer>
+
+<script>
+  document.querySelectorAll('.js-copy').forEach(function (btn) {
+    var box = document.getElementById(btn.getAttribute('data-target'));
+    if (!box) { return; }
+
+    var original = btn.textContent;
+
+    function flash(msg) {
+      btn.textContent = msg;
+      setTimeout(function () { btn.textContent = original; }, 2000);
+    }
+
+    // Si el portapapeles está denegado (pasa en algunos contextos), al menos
+    // dejamos el texto seleccionado para que un Cmd+C lo resuelva. Un botón
+    // que no hace nada y no lo dice es peor que no tener botón.
+    function selectAndCopy() {
+      var range = document.createRange();
+      range.selectNodeContents(box);
+      var sel = window.getSelection();
+      sel.removeAllRanges();
+      sel.addRange(range);
+      try {
+        return document.execCommand('copy');
+      } catch (err) {
+        return false;
+      }
+    }
+
+    function fallback() {
+      if (selectAndCopy()) {
+        flash('Copiado');
+        return;
+      }
+      flash('Selecciónalo y copia');
+    }
+
+    btn.addEventListener('click', function () {
+      if (!navigator.clipboard) {
+        fallback();
+        return;
+      }
+      navigator.clipboard.writeText(box.innerText.trim()).then(function () {
+        flash('Copiado');
+      }, fallback);
+    });
+  });
+</script>
