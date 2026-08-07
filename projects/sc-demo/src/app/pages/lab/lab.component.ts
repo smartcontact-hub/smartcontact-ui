@@ -48,8 +48,8 @@ export class LabComponent {
         },
         {
           label: 'Agent · dashboard del agente',
-          href: null,
-          note: 'Réplica del dashboard del agente de contact center (agent.smart-contact.com/aed). Pendiente de desplegar en Cloudflare Pages (build npm run build:agent, output dist/agent). Pásame la URL y la fijo.',
+          href: 'https://sc-agent.pages.dev',
+          note: 'Réplica del dashboard del agente de contact center (agent.smart-contact.com/aed): colores, iconos y timers medidos del sitio real.',
         },
       ],
     },
