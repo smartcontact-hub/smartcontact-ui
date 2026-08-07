@@ -46,6 +46,11 @@ export class LabComponent {
           href: 'https://sc-supervisor.pages.dev',
           note: 'La aplicación de verdad, con datos de demostración.',
         },
+        {
+          label: 'Agent · dashboard del agente',
+          href: null,
+          note: 'Réplica del dashboard del agente de contact center (agent.smart-contact.com/aed). Pendiente de desplegar en Cloudflare Pages (build npm run build:agent, output dist/agent). Pásame la URL y la fijo.',
+        },
       ],
     },
     {
