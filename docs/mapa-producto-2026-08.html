@@ -173,7 +173,10 @@
   .shell {
     display: grid;
     grid-template-columns: 268px minmax(0, 1fr);
-    align-items: start;
+    /* Sin `align-items: start`: la columna del índice tiene que estirarse
+       hasta el alto de la fila. Si no, el bloque contenedor del sticky mide
+       solo una pantalla y el índice se va con el scroll en vez de
+       acompañarlo. */
   }
 
   .side { border-right: 1px solid var(--line); }
@@ -222,7 +225,7 @@
     line-height: 1.35;
     color: var(--ink-3);
     text-decoration: none;
-    transition: background .25s var(--ease), color .25s var(--ease);
+    transition: background .25s var(--ease), color .25s var(--ease), transform .25s var(--ease);
   }
 
   .side-nav a::before {
@@ -239,8 +242,39 @@
     background: var(--surface);
     color: var(--ink);
     font-weight: 600;
-    box-shadow: inset 2px 0 0 var(--accent);
   }
+
+  /* Raíl del índice + marcador que se DESLIZA entre secciones en vez de
+     encenderse y apagarse. Si el script no corre, no hay marcador y no
+     pasa nada: el fondo del item activo ya lo señala. */
+  .side-nav { position: relative; padding-left: 10px; }
+
+  .side-nav::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    top: 4px;
+    bottom: 4px;
+    width: 2px;
+    border-radius: 2px;
+    background: var(--hair);
+  }
+
+  .side-nav .marker {
+    position: absolute;
+    left: 0;
+    top: 0;
+    width: 2px;
+    height: 0;
+    border-radius: 2px;
+    background: var(--accent);
+    opacity: 0;
+    transition: transform .45s var(--ease), height .45s var(--ease), opacity .3s var(--ease);
+  }
+
+  .side-nav .marker.on { opacity: 1; }
+
+  .side-nav a:hover { transform: translateX(2px); }
 
   .side-nav a[aria-current="true"]::before { color: var(--accent); }
 
@@ -908,6 +942,46 @@
     padding: 6px 11px;
   }
 
+
+  /* ============ micro-interacciones ============ */
+
+  html { scroll-behavior: smooth; }
+
+  .item > summary .name {
+    display: inline-block;
+    transition: transform .35s var(--ease), color .25s var(--ease);
+  }
+
+  .item > summary:hover .name { transform: translateX(4px); }
+
+  .spread .bar span { transform-origin: center; }
+  .spread .bar span:hover { transform: scaleY(1.7); }
+
+  .filter button[aria-pressed="true"] {
+    box-shadow: 0 1px 4px color-mix(in srgb, var(--ink) 24%, transparent);
+  }
+
+  @keyframes pop {
+    0% { transform: scale(1); }
+    45% { transform: scale(1.28); }
+    100% { transform: scale(1); }
+  }
+
+  .tick.just .box { animation: pop .34s var(--ease); }
+
+  /* Al llegar por un enlace cruzado, el frente se enciende un momento para
+     que se vea dónde has aterrizado. */
+  @keyframes aterriza {
+    from { background: color-mix(in srgb, var(--accent) 15%, transparent); }
+    to { background: transparent; }
+  }
+
+  .item.landed > summary { animation: aterriza 1.5s var(--ease); }
+
+  @media (prefers-reduced-motion: reduce) {
+    html { scroll-behavior: auto; }
+  }
+
   /* ============ pie ============ */
 
   footer { border-top: 1px solid var(--hair); padding-block: 40px 56px; }
@@ -964,6 +1038,7 @@
       <span class="chev"></span>
     </button>
     <nav class="side-nav" id="side-nav" aria-label="Índice del documento">
+      <span class="marker" id="marker" aria-hidden="true"></span>
       <ol>
         <li><a href="#mes"><span>Cómo funciona el mes</span><span class="k">3</span></a></li>
         <li><a href="#empezar"><span>Por dónde empezar</span><span class="k">5</span></a></li>
@@ -2056,6 +2131,10 @@ Gracias.</div>
       ev.stopPropagation();
       var activo = boton.getAttribute('aria-pressed') !== 'true';
       pinta(activo);
+      if (activo) {
+        boton.classList.add('just');
+        setTimeout(function () { boton.classList.remove('just'); }, 400);
+      }
       if (activo) { resueltos[clave] = 1; } else { delete resueltos[clave]; }
       guarda(resueltos);
       pintaResumen();
@@ -2140,6 +2219,10 @@ Gracias.</div>
     var grupo = destino.closest ? destino.closest('.grp') : null;
     if (grupo) { grupo.hidden = false; }
     destino.scrollIntoView({ block: 'center' });
+    if (destino.classList.contains('item')) {
+      destino.classList.add('landed');
+      setTimeout(function () { destino.classList.remove('landed'); }, 1600);
+    }
   }
 
   window.addEventListener('hashchange', abrePorAncla);
@@ -2170,6 +2253,7 @@ Gracias.</div>
    * determinista — dado un scroll, la sección activa siempre es la misma.
    * --------------------------------------------------------------------- */
   var secciones = Array.prototype.slice.call(document.querySelectorAll('main section[id]'));
+  var marcador = document.getElementById('marker');
   var pendiente = false;
 
   function marcaSeccionActiva() {
@@ -2186,7 +2270,12 @@ Gracias.</div>
     enlaces.forEach(function (enlace) {
       var activo = enlace.getAttribute('href') === destino;
       enlace.setAttribute('aria-current', activo ? 'true' : 'false');
-      if (activo) { aqui.textContent = enlace.querySelector('span').textContent; }
+      if (!activo) { return; }
+      aqui.textContent = enlace.querySelector('span').textContent;
+      if (!marcador) { return; }
+      marcador.style.height = enlace.offsetHeight + 'px';
+      marcador.style.transform = 'translateY(' + enlace.offsetTop + 'px)';
+      marcador.classList.add('on');
     });
   }
 
