@@ -1,0 +1,166 @@
+<div class="sum">
+  <!-- ── Columna izquierda: 360px sobre el lienzo #f4f6fc ─────────────────-->
+  <aside class="sum__side">
+    <div class="sum__bar">
+      <button class="sum__x" type="button" aria-label="Cerrar" (click)="closed.emit()">✕</button>
+      <span class="sum__ticket">#{{ ticketId() }}</span>
+      <button class="sum__export" type="button" aria-label="Exportar">
+        <img src="icons/general/descarga.svg" width="14" height="14" alt="" aria-hidden="true" />
+      </button>
+    </div>
+
+    <h2 class="sum__h2">Service</h2>
+    <div class="sum__service">
+      <span class="sum__name">{{ product() }}</span>
+      <span class="sum__price">4.5 €</span>
+    </div>
+
+    <div class="sum__period">
+      <span class="sum__periodval">1 Week</span>
+      <!-- "RECCURING" con dos C: es del original, no una errata de la réplica. -->
+      <span class="sum__toggle">
+        <button
+          type="button"
+          class="sum__tog"
+          [class.is-on]="periodMode() === 'RECCURING'"
+          (click)="periodMode.set('RECCURING')"
+        >
+          RECCURING
+        </button>
+        <button
+          type="button"
+          class="sum__tog"
+          [class.is-on]="periodMode() === 'DURATION'"
+          (click)="periodMode.set('DURATION')"
+        >
+          DURATION
+        </button>
+      </span>
+    </div>
+
+    <h2 class="sum__h2">Subscriptions</h2>
+    <div class="sum__subcard">
+      <span class="sum__subcheck" aria-hidden="true">✓</span>
+      <span class="sum__dots" aria-hidden="true"><i class="on"></i><i></i></span>
+      <span class="sum__subcol">
+        <span class="sum__sublabel">Subscribed</span>
+        <span class="sum__subdate">11 Aug 2026</span>
+      </span>
+      <span class="sum__subcol">
+        <!-- "Unsubsribed", sin la segunda c: también del original. -->
+        <span class="sum__sublabel sum__sublabel--out">Unsubsribed</span>
+        <span class="sum__subdate sum__subdate--out">11 Aug 2026</span>
+      </span>
+    </div>
+
+    <h2 class="sum__h2">Customer info</h2>
+    <dl class="sum__fields">
+      <dt>Name</dt>
+      <dd><span class="sum__ph">First name</span> <span class="sum__ph">Last name</span></dd>
+      <dt>Address</dt>
+      <dd><span class="sum__ph">ZIP code</span> <span class="sum__ph">City</span> 🇪🇸 ES</dd>
+      <dt>Contact</dt>
+      <dd><span class="sum__ph">Phone</span> +34600222333 <span class="sum__ph">Email</span></dd>
+    </dl>
+
+    <div class="sum__subsinfo">
+      <h2 class="sum__h2">Subs Info</h2>
+      <button class="sum__expand" type="button">Expand all</button>
+    </div>
+    <div class="sum__box"><span class="sum__boxk">User Agent</span>{{ userAgent }}</div>
+    <div class="sum__box"><span class="sum__boxk">IP</span>{{ ip }}</div>
+  </aside>
+
+  <!-- ── Columna derecha: tira de estado + tres bloques ───────────────────-->
+  <section class="sum__main">
+    <div class="sum__strip">
+      <span class="sum__state sum__state--out">
+        <strong>Unsubsribed</strong>
+        <span>CANCELLED</span>
+      </span>
+      <span class="sum__state sum__state--off"><i aria-hidden="true">⊖</i> Access To Service</span>
+      <span class="sum__state sum__state--off"><i aria-hidden="true">⊖</i> Download Elements</span>
+      <span class="sum__card sum__card--charges">
+        <span class="sum__cardk">Charges</span>
+        <strong class="sum__cardv">4.5 €</strong>
+        <span class="sum__cardlink">See total</span>
+      </span>
+      <span class="sum__card sum__card--refunded">
+        <span class="sum__cardk">Refunded</span>
+        <strong class="sum__cardv">0 €</strong>
+      </span>
+    </div>
+
+    <!-- MO/MT: los SMS que se le mandaron al cliente. -->
+    <button class="sum__sech" type="button" (click)="toggle('mtmo')" [attr.aria-expanded]="isOpen('mtmo')">
+      <span class="sum__ok" aria-hidden="true">✓</span>
+      <span class="sum__sectitle">MO/MT<small>Up to date</small></span>
+      <span class="sum__caret" aria-hidden="true">{{ isOpen('mtmo') ? '⌃' : '⌄' }}</span>
+    </button>
+    @if (isOpen('mtmo')) {
+      <table class="sum__table">
+        <thead>
+          <tr>
+            <th>Product</th><th>Date time</th><th>Sms content</th>
+            <th>Status</th><th>Type</th><th>Destiny</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (m of mtmo; track m.date) {
+            <tr>
+              <td>{{ product() }}</td>
+              <td>{{ m.date }}</td>
+              <td class="sum__sms">{{ m.sms }}</td>
+              <td>{{ m.status }}</td>
+              <td>{{ m.type }}</td>
+              <td>{{ m.destiny }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+
+    <button class="sum__sech" type="button" (click)="toggle('billing')" [attr.aria-expanded]="isOpen('billing')">
+      <span class="sum__ok" aria-hidden="true">✓</span>
+      <span class="sum__sectitle">Charges<small>Up to date</small></span>
+      <span class="sum__caret" aria-hidden="true">{{ isOpen('billing') ? '⌃' : '⌄' }}</span>
+    </button>
+    @if (isOpen('billing')) {
+      <div class="sum__billing">
+        @for (c of charges; track c.subscriptionId) {
+          <div class="sum__charge">
+            <span class="sum__chargedate">{{ c.date }}<br />{{ c.time }}</span>
+            <span class="sum__chargeid">
+              <span class="sum__boxk">Subscription Id</span>{{ c.subscriptionId }}
+            </span>
+            <span class="sum__chargeamt">{{ c.amount }}</span>
+            <span class="sum__chargestate">{{ c.state }}</span>
+          </div>
+        }
+      </div>
+    }
+
+    <!-- Navigation: por dónde navegó el cliente antes de suscribirse. -->
+    <button class="sum__sech" type="button" (click)="toggle('nav')" [attr.aria-expanded]="isOpen('nav')">
+      <span class="sum__ok" aria-hidden="true">✓</span>
+      <span class="sum__sectitle">Navigation<small>Up to date</small></span>
+      <span class="sum__caret" aria-hidden="true">{{ isOpen('nav') ? '⌃' : '⌄' }}</span>
+    </button>
+    @if (isOpen('nav')) {
+      <table class="sum__table">
+        <thead>
+          <tr><th>Date</th><th>Url</th><th>Type</th></tr>
+        </thead>
+        <tbody>
+          @for (n of navigation; track n.url) {
+            <tr>
+              <td>{{ n.time }}<br /><small>{{ n.date }}</small></td>
+              <td class="sum__url">{{ n.url }}</td>
+              <td>{{ n.type }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    }
+  </section>
+</div>
