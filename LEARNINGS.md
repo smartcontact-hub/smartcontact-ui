@@ -68,26 +68,24 @@
    **Corolario de emparejamiento**: fondo y texto van SIEMPRE de la misma familia. Mezclar
    uno que voltea de tema con uno que no es la forma exacta en que esto se rompe.
 
-5. **La medición contradice al fuente → antes de dudar de tu CSS, comprueba que el servidor
-   está sirviendo tu código.** Dos causas distintas, las dos vistas: (a) *(s12)* el dev server
-   sirve el DS **compilado** — cambié el `opsz` del icono, el fuente decía 14 y el navegador
-   seguía en 24; faltaba `build:icons` + **reiniciar**. (b) *(s18)* **`npm run verify`
-   reescribe `dist/` por debajo de un `ng serve` vivo** y lo deja muerto con `Cannot find
-   module '@smartcontact-hub/components'`: el server no cae, sigue sirviendo el bundle
-   ANTERIOR tan campante. Estuve tres rondas midiendo un arreglo ya escrito y viendo el valor
-   viejo, convencido de que mi selector no entraba. **Acción**: si acabas de correr `verify`
-   o de tocar el DS, mira el log del server ANTES de la siguiente medición; ante la duda,
-   reinícialo — cuesta 20 segundos y la alternativa es depurar código que no se está
-   ejecutando.
-
-6. **Mides en un dev server con HMR y el valor no cuadra → RECARGA DURA antes de acusar a tu
-   código.** El hot-reload deja vistas y `TemplateRef` del componente ANTERIOR: sus nodos
-   conservan el `_ngcontent` viejo, cuyos estilos ya se han retirado. *Evidencia (s13)*: el
-   título y el chip proyectados a la TopBar medían 32px y sin píldora; concluí "mi SCSS no
-   entra". Tras `location.reload()`: 16px y píldora correcta — el CSS siempre estuvo bien.
-   Corolario del mismo día: al sondear la URL de un `@font-face`, resuélvela contra la HOJA DE
-   ESTILOS y no contra `location.href`, o te inventas un 404 que no existe (me pasó, y casi
-   firmo "la fuente no carga" con una sonda mal construida).
+5. **La medición contradice al fuente → lo rancio es la MEDICIÓN, no tu código. Compruébalo
+   antes de tocar nada.** Cuatro causas distintas, las cuatro vistas, y todas se sienten igual
+   («mi CSS no entra»):
+   - *(s12)* el dev server sirve el DS **compilado**: cambié el `opsz` del icono, el fuente
+     decía 14 y el navegador seguía en 24 — faltaba `build:icons` + **reiniciar**.
+   - *(s18)* **`npm run verify` reescribe `dist/` por debajo de un `ng serve` vivo**: el server
+     no cae, sigue sirviendo el bundle ANTERIOR tan campante. Tres rondas midiendo un arreglo
+     ya escrito y viendo el valor viejo.
+   - *(s13)* **HMR** deja vistas y `TemplateRef` del componente anterior, con su `_ngcontent`
+     viejo y los estilos ya retirados: 32px y sin píldora; tras `location.reload()`, 16px y
+     píldora correcta — el CSS siempre estuvo bien.
+   - *(s25)* **una animación a medio terminar**: tras soltar un `cdkDrag`, medir sin esperar
+     daba 17 columnas de 18 y parecía que el reordenado PERDÍA una. Con 600ms de espera: 18 y
+     todo correcto.
+   **Acción**: antes de la siguiente medición, pregúntate qué puede estar sirviendo/pintando
+   algo viejo — build, server, HMR o animación — y neutralízalo (rebuild, reinicio, recarga
+   dura, espera de asentamiento). Cuesta segundos; la alternativa es depurar código que no se
+   está ejecutando o un DOM que aún no ha terminado de moverse.
 
 19. **Elige el validador por la PREGUNTA que tienes, y ten claro que ninguno contesta la de
    usabilidad.** No hay una escalera fija de herramientas; hay tres preguntas distintas:
@@ -152,13 +150,37 @@
    `docs:coherence` y `lint`: correr `verify` entero ahí es exactamente el desperdicio que este
    corolario nombra.
 
-8. **Vas a crear un `.md` nuevo en el repo → regístralo en `docs/DOCS-INDEX.md` en el mismo
-   commit.** `docs:guard` escanea **todos** los `.md` (docs/ recursivo + raíz) y exige mapeo por
-   basename; solo `README.md` y el propio índice están exentos. Sin registrar = `verify` rojo.
-
 9. **Confirma el verde LEYENDO el log o el run**, nunca el exit-code de un proceso en background
    (puede ser espurio). *Evidencia (s11)*: confirmé el CI con `gh run view --json conclusion`,
    no con el `EXIT=0` del watcher.
+
+6. **Tu test NUEVO se pone rojo → sospecha del test ANTES que del código.** Un test recién
+   escrito falla casi siempre porque afirma mal, no porque el código esté roto; empezar por el
+   código te lleva a "arreglar" algo sano. *Evidencia (s25), ocho veces en una sesión y cuatro
+   modos distintos*: (a) **contaba filas visibles** para probar que un filtro reduce resultados,
+   pero con paginación de 10 el número no baja aunque filtre de 60 a 12 — la señal estaba en el
+   TOTAL del pie; (b) **selector ambiguo**: `'Status'` casa también con "Sub-status" y `'Filter'`
+   con "Delete filters" (que además está deshabilitado, así que el clic esperaba 90s); (c)
+   **lectura de una sola pasada**: `allInnerTexts()`/`innerText()` no reintentan y capturaban el
+   estado ANTERIOR al repintado de Angular — con `expect(locator).toHaveText()` (que reintenta)
+   pasa; (d) **no esperar la segunda operación**: afirmé sobre un locator que ya estaba visible y
+   conté los resultados de la búsqueda anterior. **Acción**: ante un rojo en un test nuevo,
+   pregúntate primero *¿mide la magnitud correcta? ¿el selector casa solo con lo que creo? ¿la
+   aserción reintenta? ¿espera al estado FINAL?* — y solo después mira el código. El caso
+   contrario existe y también apareció: el e2e cazó que "Seleccionar todo" marcaba la fila
+   bloqueada, que sí era un fallo real; distinguirlos es justo el trabajo.
+
+8. **La primera corrección no funciona → deja de proponer la segunda y MIDE dónde nace el
+   efecto.** Encadenar arreglos a ciegas es caro y además puede empeorarlo. *Evidencia (s25),
+   el caso negativo*: la cabecera de la tabla medía 44.5 en vez de los 41.5 medidos, y probé
+   tres cosas sobre la celda del rótulo —fijar `line-height` (44.5), `font-size:0` (**49.5**,
+   peor), meter el contenido en un contenedor de bloque (44.5)— antes de medir celda por celda
+   y ver que la causa estaba **en otra celda**: el checkbox de la columna de selección, porque
+   el alto de una fila lo marca su celda más alta. *El caso positivo, el mismo día*: con el
+   reordenado por arrastre fallé UNA vez, monté un diagnóstico (¿arranca el drag? ¿cambia el
+   panel? ¿cambia la tabla?) y salió que el código estaba bien y lo que medía mal era el test.
+   **Disparador afilado**: tras el primer intento fallido, la siguiente acción es una MEDICIÓN
+   que localice la causa, no otra edición.
 
 ## Alcance y ediciones
 
@@ -240,6 +262,19 @@
     tengas accent/violet») sin leer el CSS, y --sc-text-violet sí existía. Disparador afilado:
     antes de RECOMENDAR un cambio o AFIRMAR un estado de este código, abre el fichero primero; si
     no lo has abierto, di "no lo he mirado", no lo supongas — aunque solo estés conversando.
+
+    *Corolario (s25) — **la regla estaba escrita, la había afilado yo, y volví a romperla**: el
+    diagnóstico de OTRO AGENTE también es una paráfrasis.* La extensión de Chrome informó de que
+    `sc-demo` no se podía borrar por un bug conocido de Cloudflare con «más de 100 deployments».
+    Lo repetí a Rafa como hecho, y encima construí encima una recomendación (instala Wrangler,
+    monta un script de borrado masivo). Cuando por fin corrió `wrangler pages deployment list`:
+    **~26 deployments**. El bug probablemente ni aplicaba y le mandé por un rodeo. **Por qué no
+    disparó**: el corolario anterior habla de «este código» y la fuente aquí era un servicio
+    externo relatado por un tercero, así que no me sentí aludido. **Disparador definitivo**: si
+    la afirmación no la has verificado TÚ —da igual que venga de un hand-off, de un README, de
+    Figma, de tu propio resumen o de otro agente— es una paráfrasis. Verifícala o etiquétala
+    («según la extensión, sin confirmar»); nunca la reenvíes como hecho ni construyas un plan
+    sobre ella.
 
 18. **Vas a zanjar una decisión VISUAL con un argumento —rebatiendo al usuario o discutiéndola
     contigo mismo— → constrúyela en su versión mínima y MÍRALA.** Un principio bien enunciado
