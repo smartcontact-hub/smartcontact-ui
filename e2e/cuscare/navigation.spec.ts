@@ -314,3 +314,47 @@ test.describe('panel Summary de una suscripción', () => {
     await expect(panel).toHaveCount(0);
   });
 });
+
+/**
+ * Refund y Unsubscribe apuntaban a los diálogos EQUIVOCADOS.
+ *
+ * Los colgué de "Right to be forgotten" y del de motivo de no reembolso por una
+ * suposición; el árbol de componentes de la app real tiene
+ * `app-modal-confirmation-unsubscribe` y `app-new-modal-refund`, que es otra
+ * cosa. Este test fija los destinos correctos para que no se vuelvan a cruzar.
+ */
+test.describe('destinos reales de Unsubscribe y Refund', () => {
+  test('Unsubscribe abre la confirmación con sus 5 columnas', async ({ page }) => {
+    await page.goto('/#/private/cuscare/tickets/ticket/2050567');
+    await page.getByRole('button', { name: 'Unsubscribe', exact: true }).click();
+
+    const modal = page.getByRole('dialog', { name: 'Unsubscribe' });
+    await expect(modal).toBeVisible();
+    await expect(modal.getByText('Unsubscribe the following services')).toBeVisible();
+    await expect(modal.locator('thead th')).toHaveText([
+      'Product',
+      'Keyword',
+      'Status',
+      'Price',
+      'Expired',
+    ]);
+  });
+
+  test('Refund abre el modal de reembolsos, con API y BNK por cargo', async ({ page }) => {
+    await page.goto('/#/private/cuscare/tickets/ticket/2050567');
+    await page.getByRole('button', { name: 'Refund', exact: true }).click();
+
+    const modal = page.getByRole('dialog', { name: 'Refunds' });
+    await expect(modal).toBeVisible();
+    await expect(modal.locator('.rfd__amount')).toHaveText('0.00 €');
+    // Dos vías de devolución por cada cargo: API y BNK.
+    await expect(modal.getByRole('button', { name: 'API' })).toHaveCount(2);
+    await expect(modal.getByRole('button', { name: 'BNK' })).toHaveCount(2);
+  });
+
+  test('el badge de la columna Refund también lo abre', async ({ page }) => {
+    await page.goto('/#/private/cuscare/tickets/ticket/2050567');
+    await page.getByRole('button', { name: /Reembolsos de/ }).click();
+    await expect(page.getByRole('dialog', { name: 'Refunds' })).toBeVisible();
+  });
+});

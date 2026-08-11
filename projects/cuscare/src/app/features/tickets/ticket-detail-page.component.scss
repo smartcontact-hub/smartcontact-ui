@@ -411,3 +411,10 @@
   color: inherit;
   cursor: pointer;
 }
+
+/* El badge de la columna Refund es pulsable (abre el modal de reembolsos). */
+.badge--btn {
+  border: 0;
+  font: inherit;
+  cursor: pointer;
+}
