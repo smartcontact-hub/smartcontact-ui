@@ -73,10 +73,56 @@ test('clicar el fondo cierra, clicar el diálogo no', async ({ page }) => {
   await expect(page.getByRole('dialog')).toHaveCount(0);
 });
 
-test('elegir grupo y guardar cierra el modal', async ({ page }) => {
+/**
+ * El PASO 2, que estuvo bloqueado hasta que Rafa pulsó Save él mismo.
+ *
+ * Y confirmó lo que se temía: **Save crea un ticket de verdad**. La app real
+ * saltó a `…/tickets/ticket/2051827/pre-ticket` con el ticket ya existiendo.
+ * Lo que sale NO es un formulario: es la pantalla de detalle en vacío (#0) con
+ * el modal "Search customer" encima.
+ */
+test('guardar lleva al pre-ticket con el modal "Search customer" encima', async ({ page }) => {
+  await page.goto(TICKETS);
+  await page.getByRole('button', { name: '+ New ticket' }).click();
+
+  await page.getByRole('radio').first().check();
+  await page.getByRole('button', { name: 'Save' }).click();
+
+  await expect(page).toHaveURL(/\/tickets\/ticket\/new\/pre-ticket$/);
+
+  const modal = page.getByRole('dialog', { name: 'Search customer' });
+  await expect(modal).toBeVisible();
+  await expect(page.locator('.detail__id')).toHaveText('#0');
+
+  // Los siete criterios de búsqueda del original, en su orden.
+  await expect(modal.getByLabel('Criterio de búsqueda')).toHaveValue('Msisdn');
+  await expect(modal.getByLabel('Criterio de búsqueda').locator('option')).toHaveText([
+    'Msisdn',
+    'Alias',
+    'Email',
+    'Accountid',
+    'Externalid',
+    'Operationid',
+    'Cardlast4',
+  ]);
+
+  // Cerrarlo deja el pre-ticket a la vista, no devuelve a la lista.
+  await modal.getByRole('button', { name: 'Cancel' }).click();
+  await expect(modal).toHaveCount(0);
+  await expect(page.locator('.detail__id')).toHaveText('#0');
+});
+
+test('elegir grupo y guardar cierra el SELECTOR DE GRUPO', async ({ page }) => {
   await openModal(page);
 
   await page.getByRole('radio').first().check();
   await page.getByRole('button', { name: 'Save' }).click();
-  await expect(page.getByRole('dialog')).toHaveCount(0);
+
+  // Ojo: antes esto comprobaba que no quedaba NINGÚN diálogo, y describía una
+  // réplica incompleta. Guardar cierra el selector de grupo pero abre el de
+  // "Search customer" — es el paso 2, no el final del flujo.
+  await expect(
+    page.getByRole('dialog', { name: 'Select a group for this ticket' }),
+  ).toHaveCount(0);
+  await expect(page.getByRole('dialog', { name: 'Search customer' })).toBeVisible();
 });

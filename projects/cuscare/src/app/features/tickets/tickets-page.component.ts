@@ -1,6 +1,6 @@
-import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
-import { RouterLink } from '@angular/router';
+import { Router, RouterLink } from '@angular/router';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { PopoverModule } from 'primeng/popover';
 import { SelectModule } from 'primeng/select';
@@ -295,14 +295,21 @@ export class TicketsPageComponent {
 
   /* ── Modal de nuevo ticket ──────────────────────────────────────────────
    * En la real, "+ New ticket" NO abre un formulario: abre un selector de grupo.
-   * El paso siguiente (el formulario en sí) no se capturó porque llegar a él
-   * exige pulsar Save, y eso crea un ticket REAL en su sistema. */
+   *
+   * Y pulsar "Save" ahí **crea un ticket de verdad** — por eso no se pulsó al
+   * extraer. Confirmado cuando lo hizo Rafa: la app saltó a
+   * `…/tickets/ticket/2051827/pre-ticket` con el ticket ya existiendo. Lo que
+   * sale NO es un formulario: es la pantalla de detalle en vacío con el modal
+   * "Search customer" encima. */
   protected readonly newTicketOpen = signal(false);
   protected readonly chosenGroup = signal<string | null>(null);
+  private readonly router = inject(Router);
 
   protected onGroupChosen(group: string): void {
     this.chosenGroup.set(group);
     this.newTicketOpen.set(false);
+    // El id lo asigna el backend en la real; aquí basta uno sintético.
+    void this.router.navigate(['/private/cuscare/tickets/ticket', 'new', 'pre-ticket']);
   }
 
   /* ── Estado de los filtros ──────────────────────────────────────────────

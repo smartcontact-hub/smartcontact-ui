@@ -1,30 +1,44 @@
 <div class="detail">
-  <span class="detail__kind">Unsubscription</span>
+  <!-- En pre-ticket la naturaleza de la demanda sale VACÍA (medido: el bloque
+       existe, mide 7px de alto y no lleva texto). -->
+  <span class="detail__kind">{{ isPreTicket ? '' : 'Unsubscription' }}</span>
 
   <section class="cc-card detail__card">
     <header class="detail__head">
       <span class="detail__chan" aria-hidden="true">📞</span>
-      <span class="detail__id">#{{ ticket().id }}</span>
+      <span class="detail__id">#{{ isPreTicket ? '0' : ticket().id }}</span>
       <span class="detail__ref">
         <img src="icons/actions/edit_icon.png" width="12" height="12" alt="" aria-hidden="true" />
-        900907110 - {{ ticket().group }}
+        @if (!isPreTicket) {
+          900907110 - {{ ticket().group }}
+        }
       </span>
-      <button class="statusbtn" type="button">
-        <span aria-hidden="true">🗎</span> Resolved
-      </button>
+      @if (!isPreTicket) {
+        <button class="statusbtn" type="button">
+          <span aria-hidden="true">🗎</span> Resolved
+        </button>
+      }
     </header>
 
     <div class="metabar">
       <span class="metabar__cell metabar__cell--flag"><span aria-hidden="true">⚑</span> ▾</span>
-      <span class="metabar__cell">{{ ticket().created }}:38</span>
-      <span class="metabar__cell">{{ ticket().assignedTo }}</span>
+      <span class="metabar__cell">{{ isPreTicket ? '' : ticket().created + ':38' }}</span>
+      <span class="metabar__cell">{{ isPreTicket ? '' : ticket().assignedTo }}</span>
       <span class="metabar__cell metabar__cell--counts">
         <span class="badge">0</span><span aria-hidden="true">🗒</span>
         <span class="badge">0</span><span aria-hidden="true">📎</span>
       </span>
-      <span class="metabar__cell">{{ ticket().group }}</span>
-      <span class="metabar__cell metabar__cell--wide">ITRIP,PLAYWEEZ, <span class="caret" aria-hidden="true">▾</span></span>
-      <span class="metabar__cell"><span aria-hidden="true">{{ ticket().countryFlag }}</span> {{ ticket().source }}</span>
+      <span class="metabar__cell">{{ isPreTicket ? '' : ticket().group }}</span>
+      <span class="metabar__cell metabar__cell--wide">
+        @if (!isPreTicket) {
+          ITRIP,PLAYWEEZ, <span class="caret" aria-hidden="true">▾</span>
+        }
+      </span>
+      <span class="metabar__cell">
+        @if (!isPreTicket) {
+          <span aria-hidden="true">{{ ticket().countryFlag }}</span> {{ ticket().source }}
+        }
+      </span>
       <span class="metabar__cell">---</span>
       <span class="metabar__cell">---<span class="caret" aria-hidden="true">▾</span></span>
     </div>
@@ -119,5 +133,11 @@
     @case ('files') {
       <p class="nodata">Sin ficheros adjuntos.</p>
     }
+  }
+
+  <!-- El paso 2 de "+ New ticket": el modal sale SOLO, encima de la pantalla ya
+       creada y vacía. Cerrarlo deja el pre-ticket a la vista, igual que en la real. -->
+  @if (searchCustomerOpen()) {
+    <app-search-customer-modal (cancelled)="searchCustomerOpen.set(false)" />
   }
 </div>
