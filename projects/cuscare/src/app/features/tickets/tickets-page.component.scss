@@ -73,11 +73,17 @@
   margin-left: auto;
 }
 
+/* Medido con un filtro puesto (antes no salía nunca, así que nunca se pudo
+   medir): 119.1×32, texto #dc2626 sobre borde #fca5a5, 12px, radio 6. */
 .btn--danger-ghost {
-  background: #ffffff;
-  border-color: #f0b4bc;
-  color: #d9536a;
-  font-weight: 400;
+  height: 32px;
+  padding: 0 12px;
+  background: transparent;
+  border-color: #fca5a5;
+  border-radius: 6px;
+  color: #dc2626;
+  font-size: 12px;
+  font-weight: 500;
 }
 
 .btn__caret {

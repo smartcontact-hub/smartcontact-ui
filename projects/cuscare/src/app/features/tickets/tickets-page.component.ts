@@ -7,6 +7,7 @@ import { SelectModule } from 'primeng/select';
 import { TableModule } from 'primeng/table';
 
 import { TICKETS_ALL, TICKETS_TOTAL, TicketRow } from '../../data/seed';
+import { BulkActionsComponent } from './bulk-actions.component';
 import { ColumnManagerComponent, ManagedColumn } from './column-manager.component';
 import { NewTicketModalComponent } from './new-ticket-modal.component';
 
@@ -53,6 +54,7 @@ interface Col {
     RouterLink,
     NewTicketModalComponent,
     ColumnManagerComponent,
+    BulkActionsComponent,
   ],
   templateUrl: './tickets-page.component.html',
   styleUrl: './tickets-page.component.scss',
@@ -119,7 +121,15 @@ export class TicketsPageComponent {
     { key: 'moErrorContent', header: 'MO Error Content', width: '167px', filter: 'input' },
   ];
 
-  protected readonly bulkActions = ['Assign', 'Change status', 'Unsubscribe', 'Archive'];
+  /**
+   * Las filas marcadas, en objeto (no sólo su id): el modal de confirmación de
+   * las acciones en bloque LISTA los tickets afectados en una tabla. Se busca en
+   * `all`, no en la página visible, porque la selección sobrevive al paginar.
+   */
+  protected readonly selectedRows = computed<TicketRow[]>(() => {
+    const sel = this.selectedIds();
+    return sel.size ? this.all.filter((r) => sel.has(r.id)) : [];
+  });
 
   /* ── Selección de filas ─────────────────────────────────────────────────
    * Medido en la real y NO replicado hasta ahora: la selección cambia la barra.

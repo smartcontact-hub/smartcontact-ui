@@ -226,9 +226,57 @@ const AGENTS = [
   'ES Agent - M. Angeles',
   'LATAM Agent 2 - Karen',
   'LATAM Agent 3 - Natty',
-  'Viktor Sovcik',
+  'Marek Horvat',
   'LATAM Agent 5 - Jeimy Alexandra',
   'Unassigned',
+];
+
+/**
+ * Plantilla del desplegable "Assign" (acciones en bloque).
+ *
+ * La lista real tiene **34 agentes** y desborda el panel (`scrollHeight` 1318 vs
+ * 196 visibles), así que aquí hay 34 para que el scroll se comporte igual. Los
+ * nombres son INVENTADOS; lo replicado es su FORMA, que tiene dos patrones
+ * mezclados a propósito porque así está en la real: unos llevan prefijo de
+ * equipo (`TECH - …`, `ATT - …`, `ES Admin - …`, `FR - …`) y otros son solo
+ * nombre y apellido. El rótulo del grupo está en castellano ("Agentes") dentro
+ * de una interfaz en inglés — también es del original.
+ */
+export const ASSIGNABLE_AGENTS: readonly string[] = [
+  'TECH - Agente Carrier',
+  'ATT - Monica Vidales',
+  'ES Admin - Pilar',
+  'TECH - Pablo Guillén Almarza',
+  'ATT - Amandine Guiberteau',
+  'TECH - Agente Carrier 2',
+  'TECH - Eva',
+  'Marek Horvat',
+  'Jozef Bartos',
+  'Lucia Kovacova',
+  'TECH - Agente Carrier 3',
+  'FR - Baptiste Joubert',
+  'FR - Camille Renaud',
+  'ATT - Sofia Marchetti',
+  'ES Admin - Nuria',
+  'LATAM Agent 1 - Aleja',
+  'LATAM Agent 2 - Karen',
+  'LATAM Agent 3 - Natty',
+  'LATAM Agent 5 - Jeimy Alexandra',
+  'ES Agent - M. Angeles',
+  'TECH - Soporte N2',
+  'TECH - Soporte N3',
+  'ATT - Elena Prieto',
+  'ATT - Rubén Casal',
+  'FR - Océane Lefèvre',
+  'ES Admin - Teresa',
+  'Zuzana Malikova',
+  'Ondrej Bilek',
+  'TECH - Integraciones',
+  'ATT - Beatriz Solana',
+  'FR - Mathieu Perrot',
+  'LATAM Agent 6 - Dayana',
+  'ES Agent - Cristina',
+  'TECH - Agente Carrier 4',
 ];
 const STATUSES: TicketStatus[] = ['open', 'resolved', 'pending', 'closed'];
 const CHANNELS: TicketChannel[] = ['call', 'chat', 'mail'];
