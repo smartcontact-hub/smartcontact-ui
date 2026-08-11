@@ -1,0 +1,53 @@
+<div class="shell">
+  <aside class="nav">
+    <div class="nav__brand">
+      <div class="nav__logo" aria-hidden="true">
+        <!-- Logo REAL descargado de la app (44×45, el mismo fichero que sirve). -->
+        <img src="icons/menu/logo-cuscare.png" width="44" height="45" alt="" />
+      </div>
+      <span class="nav__env">development</span>
+    </div>
+
+    <nav class="nav__body" aria-label="Principal">
+      @for (item of navItems; track item.path) {
+        <a
+          class="nav__item"
+          [class.is-active]="isActive()(item.path)"
+          [routerLink]="item.path"
+          [attr.aria-current]="isActive()(item.path) ? 'page' : null"
+        >
+          <app-nav-icon [name]="item.icon" />
+          <span class="nav__label">{{ item.label }}</span>
+        </a>
+      }
+    </nav>
+
+    <div class="nav__settings">
+      @if (settingsOpen()) {
+        <ul class="settingsmenu" role="menu">
+          @for (s of settingsItems; track s.path) {
+            <li class="settingsmenu__item" role="menuitem">{{ s.label }}</li>
+          }
+        </ul>
+      }
+      <button
+        class="nav__gear"
+        type="button"
+        (click)="settingsOpen.set(!settingsOpen())"
+        [attr.aria-expanded]="settingsOpen()"
+        aria-label="Ajustes"
+      >
+        <app-nav-icon name="gear" />
+        <span class="nav__gear-caret">{{ settingsOpen() ? '<' : '>' }}</span>
+      </button>
+    </div>
+  </aside>
+
+  <main class="content-main">
+    <router-outlet />
+  </main>
+</div>
+
+<footer class="statusbar">
+  <span class="statusbar__pill">No available</span>
+</footer>
