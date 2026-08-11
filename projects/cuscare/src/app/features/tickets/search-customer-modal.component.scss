@@ -1,0 +1,161 @@
+/* Valores MEDIDOS sobre `app-modal-re-assign-ticket` de la app real, en el
+   pre-ticket que dejó abierto Rafa (@1456×831). No se pulsó nada dentro. */
+
+.scmodal {
+  position: fixed;
+  inset: 0;
+  z-index: 1055;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(22, 22, 22, 0.494);
+  overflow-y: auto;
+}
+
+.scmodal__dialog {
+  width: 855.5px;
+  max-width: calc(100vw - 32px);
+}
+
+/* Fondo #f4f6fc —el del lienzo— y padding SÓLO lateral: el vertical lo ponen
+   la cabecera y el pie. */
+.scmodal__content {
+  padding: 0 25.0974px;
+  border: 1px solid rgba(0, 0, 0, 0.176);
+  border-radius: 12.1618px;
+  background: #f4f6fc;
+  font-family: var(--cc-font-head);
+  font-size: 11.68px;
+}
+
+.scmodal__head {
+  height: 45.3px;
+  padding: 11.68px;
+}
+
+/* 14.6/500 en gris claro, igual que el título de los modales de acciones. */
+.scmodal__title {
+  margin: 0;
+  color: #afafaf;
+  font-size: 14.6px;
+  font-weight: 500;
+}
+
+.scmodal__row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 34.8px;
+}
+
+/* Los dos desplegables son `mat-select` en la real: blancos, 249.9 de ancho y
+   con la fuente a 16px (el resto del modal va a 11.68). */
+.scselect {
+  width: 249.9px;
+  height: 34.8px;
+  padding: 0 8px;
+  border: 0.5px solid #d2d6e0;
+  border-radius: 6.8474px;
+  background: #ffffff;
+  color: #233155;
+  font-family: inherit;
+  font-size: 16px;
+}
+
+.scsearch {
+  display: flex;
+  align-items: stretch;
+  flex: 1;
+  min-width: 0;
+  height: 27.4px;
+}
+
+.scsearch__prefix {
+  display: inline-flex;
+  align-items: center;
+  padding: 0 8px;
+  border: 0.5px solid #d2d6e0;
+  border-right: 0;
+  border-radius: 9.125px 0 0 9.125px;
+  background: #eceef4;
+  color: #4f5663;
+}
+
+.scsearch__input {
+  flex: 1;
+  min-width: 0;
+  padding: 0 8.76px;
+  border: 0.5px solid #d2d6e0;
+  border-radius: 0;
+  background: #ffffff;
+  font-family: inherit;
+  font-size: 11.68px;
+  color: #233155;
+}
+
+.scsearch__input:focus {
+  outline: none;
+}
+
+/* Azul marino, y sólo redondeado por la derecha. */
+.scsearch__go {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36.1px;
+  border: 0;
+  border-radius: 0 9.125px 9.125px 0;
+  background: #233155;
+  cursor: pointer;
+}
+
+.scsearch__go img {
+  filter: invert(1);
+}
+
+/* Los dos paneles de resultados: blancos, con borde y radio 9.125. Salen
+   VACÍOS y ocupan su alto igualmente, como en la real. */
+.scmodal__card {
+  margin-top: 12px;
+  border: 1px solid rgba(0, 0, 0, 0.176);
+  border-radius: 9.125px;
+  background: #ffffff;
+}
+
+.scmodal__card--customer {
+  height: 193.9px;
+}
+
+.scmodal__card--tickets {
+  height: 204.4px;
+  padding: 0 8.76px;
+}
+
+.scmodal__foot {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 19.0092px 8.2198px 15.2132px 8.76px;
+}
+
+.scbtn {
+  height: 28.3px;
+  padding: 4.38px 8.76px;
+  border-radius: 9.125px;
+  font-family: inherit;
+  font-size: 11.68px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.scbtn--cancel {
+  border: 1px solid #8d939d;
+  background: transparent;
+  color: #8d939d;
+}
+
+.scbtn--assign {
+  border: 1px solid #11131a;
+  background: #233155;
+  color: #ffffff;
+}

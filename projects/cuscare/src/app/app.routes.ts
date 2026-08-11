@@ -31,6 +31,16 @@ export const appRoutes: Routes = [
           ),
       },
       {
+        // El paso 2 de "+ New ticket". Se comprobó que la app real navega aquí
+        // (`…/tickets/ticket/2051827/pre-ticket`) — es la MISMA pantalla de
+        // detalle, en vacío y con el modal "Search customer" encima.
+        path: 'tickets/ticket/:id/pre-ticket',
+        loadComponent: () =>
+          import('./features/tickets/ticket-detail-page.component').then(
+            (m) => m.TicketDetailPageComponent,
+          ),
+      },
+      {
         // "Search" en el nav → ruta `customer` (comprobado navegando, no supuesto).
         path: 'customer',
         loadComponent: () =>

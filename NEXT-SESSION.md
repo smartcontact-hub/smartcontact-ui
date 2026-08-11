@@ -65,13 +65,23 @@ en la real. Y la ventana de números **ya sigue a la página actual** (`1 … 4 
 antes se quedaba clavada en `1 2 3 4 5`. "Rows per page" tiene ahora las cinco opciones
 del original (10/25/50/**100/300**).
 
+### "+ New ticket" paso 2 — RESUELTO (s26)
+
+Rafa pulsó **Save** él mismo y confirmó lo que se temía: **crea un ticket de verdad**
+(la app saltó a `…/tickets/ticket/2051827/pre-ticket`). Por eso no se pulsó al extraer.
+
+Y lo que sale **no es un formulario**: es la pantalla de detalle en vacío (`#0`) con el
+modal **"Search customer"** encima. Replicado, con su ruta `…/ticket/:id/pre-ticket`.
+
 ### Lo que SIGUE pendiente
 
-- **El segundo paso de "+ New ticket".** Llegar al formulario exige pulsar **Save**, y
-  leyendo el bundle no se pudo determinar si eso crea el ticket o sólo navega
-  (`navigate(["private/cuscare/ticket"…])` aparece, pero no queda claro qué lo precede).
-  Ante la duda no se pulsó. **Se desbloquea con un pantallazo de Rafa.**
 - **Ordenación por cabecera**: no replicada.
+- **Los iconos del detalle de ticket son glifos** (📞 🗎 ⚑ …), no los SVG reales.
+- Hay **6 modales más** ya localizados en el detalle de la real y sin replicar: "Cases",
+  "Ticket Status", "Please confirm the reason why no charges have been refunded…",
+  "Are you sure you want to delete this note?", el de prioridad y el de auto-asignación
+  ("Would you like to assign this Ticket to yourself?" · Yes/No). Todos se pueden leer
+  del DOM sin ejecutar nada — el trabajo está mapeado, sólo falta hacerlo.
 
 ### Terreno de esta app (lo que más sorprende)
 
