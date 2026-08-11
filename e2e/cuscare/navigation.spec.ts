@@ -406,3 +406,30 @@ test('"Nav" abre el panel Summary por la sección Navigation', async ({ page }) 
   );
   await expect(panel.locator('.sum__url').first()).toBeVisible();
 });
+
+/**
+ * La burbuja del timeline: medida en la real, NO lleva fondo — es un contorno
+ * de 1px #cfd3de con radio 15. La réplica la pintaba con fondo gris, que la
+ * hacía parecer más pesada de lo que es. El azul de los términos destacados es
+ * #0056fe, no el azul de marca.
+ */
+test('el timeline usa contorno, no fondo, y el azul medido', async ({ page }) => {
+  await page.goto('/#/private/cuscare/tickets/ticket/2050567');
+
+  const burbuja = page.locator('.timeline__bubble').first();
+  await expect(burbuja).toBeVisible();
+
+  const estilo = await burbuja.evaluate((el) => {
+    const c = getComputedStyle(el);
+    return { bg: c.backgroundColor, bd: c.borderTopColor, rad: c.borderTopLeftRadius };
+  });
+  expect(estilo.bg).toBe('rgba(0, 0, 0, 0)');
+  expect(estilo.bd).toBe('rgb(207, 211, 222)');
+  expect(estilo.rad).toBe('15px');
+
+  const azul = await page
+    .locator('.timeline__hl')
+    .first()
+    .evaluate((el) => getComputedStyle(el).color);
+  expect(azul).toBe('rgb(0, 86, 254)');
+});

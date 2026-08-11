@@ -229,7 +229,11 @@
             <span class="timeline__bubble">
               {{ e.text }}
               @if (e.highlight) {
-                <span class="timeline__hl">{{ e.highlight }}</span>
+                <!-- Los estados van en MAYÚSCULAS en la real; los productos y
+                     acciones, tal cual. Los dos en azul #0056fe. -->
+                <span class="timeline__hl" [class.timeline__hl--upper]="e.kind === 'status'">{{
+                  e.highlight
+                }}</span>
               }
               @if (e.kind === 'call') {
                 <span class="timeline__meta">| Start time: 8/11/26, 1:19 PM</span>
