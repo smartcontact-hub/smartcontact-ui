@@ -385,3 +385,24 @@ test('Unsubscribe · Refund · Detail exigen una suscripción marcada', async ({
   await page.getByLabel('Seleccionar todas').uncheck();
   await expect(page.getByRole('button', { name: 'Refund', exact: true })).toBeDisabled();
 });
+
+/**
+ * "Nav" no abre otra cosa: abre el MISMO panel Summary, por la sección
+ * Navigation. Medido en la real comparando el bloque `used`: 67px entrando por
+ * Summary y 1153px entrando por Nav.
+ */
+test('"Nav" abre el panel Summary por la sección Navigation', async ({ page }) => {
+  await page.goto('/#/private/cuscare/tickets/ticket/2050567');
+  await page.getByRole('button', { name: /Navegación de/ }).first().click();
+
+  const panel = page.locator('.sum');
+  await expect(panel).toBeVisible();
+  // Es el mismo panel: mismo servicio y mismo precio que por Summary.
+  await expect(panel.locator('.sum__price')).toHaveText('4.5 €');
+  // Y la sección de Navigation viene abierta.
+  await expect(panel.getByRole('button', { name: /Navigation/ })).toHaveAttribute(
+    'aria-expanded',
+    'true',
+  );
+  await expect(panel.locator('.sum__url').first()).toBeVisible();
+});

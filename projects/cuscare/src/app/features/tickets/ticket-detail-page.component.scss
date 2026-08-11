@@ -418,3 +418,10 @@
   font: inherit;
   cursor: pointer;
 }
+
+/* "Nav" es un botón, no una etiqueta: abre el panel Summary por Navigation. */
+.navpill {
+  border: 0;
+  font: inherit;
+  cursor: pointer;
+}
