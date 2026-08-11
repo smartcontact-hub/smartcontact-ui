@@ -1,15 +1,21 @@
 /* Métrica MEDIDA del sitio real @1460×792 — ver scratchpad/cuscare-spec.md.
    Nada de px a ojo: cada valor de aquí sale de getBoundingClientRect. */
 
+/* La barra inferior va en el FLUJO, no fija: medido en la real
+   (`position: static`, y=795 de 833). Ponerla `fixed` la hacía flotar sobre el
+   sidebar y TAPABA el engranaje — el botón se veía pero no se podía pulsar.
+   Lo cazó Playwright ("statusbar intercepts pointer events"); a ojo, y por
+   consulta del DOM, parecía correcto. */
 :host {
-  display: block;
+  display: flex;
+  flex-direction: column;
   min-height: 100vh;
 }
 
 .shell {
+  flex: 1;
   display: flex;
-  align-items: flex-start;
-  min-height: 100vh;
+  align-items: stretch;
 }
 
 /* ── Sidebar ────────────────────────────────────────────────────────────── */
@@ -19,7 +25,9 @@
   top: 0;
   flex: none;
   width: 90.3px;
-  height: 100vh;
+  /* Alto = viewport menos la barra inferior (38px, medida): así el engranaje
+     queda POR ENCIMA de la barra y es pulsable. */
+  height: calc(100vh - 38px);
   display: flex;
   flex-direction: column;
   background: transparent;
@@ -125,29 +133,36 @@
   line-height: 1;
 }
 
-/* Submenú: se despliega hacia arriba desde el engranaje (como el real). */
+/* Submenú del engranaje. Medido en la real: 109.5×129.4, fondo #5f6776,
+   radio 9.125, items Open Sans 12.16 blancos con paso 32.7px y sangría 11px.
+   Se despliega a la DERECHA del engranaje, no encima. */
 .settingsmenu {
   position: absolute;
-  left: 0;
-  bottom: calc(100% + 4px);
+  left: 84px;
+  bottom: 0;
   margin: 0;
   padding: 0;
   list-style: none;
-  width: 112px;
-  background: #6b717d;
-  border-radius: 2px;
+  width: 109.5px;
+  background: #5f6776;
+  border-radius: 9.125px;
   overflow: hidden;
+  z-index: 20;
 }
 
 .settingsmenu__item {
-  padding: 8px 12px;
-  font-size: 11.68px;
+  display: block;
+  padding: 7.25px 11px;
+  font-family: var(--cc-font-head);
+  font-size: 12.16px;
+  line-height: 18.2px;
   color: #ffffff;
+  text-decoration: none;
   cursor: pointer;
 }
 
 .settingsmenu__item:hover {
-  background: #7c828e;
+  background: #6d7686;
 }
 
 /* ── Contenido ──────────────────────────────────────────────────────────── */
@@ -161,12 +176,10 @@
 }
 
 /* ── Barra inferior de estado ───────────────────────────────────────────── */
+/* 38px medidos. En flujo (ver nota arriba), nunca `fixed`. */
 .statusbar {
-  position: fixed;
-  left: 0;
-  right: 0;
-  bottom: 0;
-  height: 40px;
+  flex: none;
+  height: 38px;
   display: flex;
   align-items: center;
   justify-content: flex-end;

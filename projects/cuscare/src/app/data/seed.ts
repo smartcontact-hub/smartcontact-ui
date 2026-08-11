@@ -246,3 +246,84 @@ export const GROUPS_TOTALS: GroupRow = {
   smsSent: 0,
   totalActions: 0,
 };
+
+/* ── Ajustes ───────────────────────────────────────────────────────────── */
+/* Recordatorio: la app real lista NOMBRES DE EMPLEADOS reales en Users. Nada de
+   eso se copia — los de aquí son inventados, con la misma cadencia (prefijos de
+   rol/país, longitudes parecidas) para que las columnas midan igual. */
+
+export interface UserRow {
+  readonly name: string;
+  readonly role: string;
+  readonly acdGroups: string;
+}
+
+export const USERS: readonly UserRow[] = [
+  { name: 'Agent Romania 1', role: 'Agent', acdGroups: '' },
+  { name: 'Agent Romania 2', role: 'Agent', acdGroups: '' },
+  { name: 'Agent Romania 3', role: 'Supervisor', acdGroups: '' },
+  { name: 'Alba Requena', role: 'Supervisor', acdGroups: '' },
+  { name: 'Aneta Kowalczyk', role: 'Agent', acdGroups: '' },
+  { name: 'Andreu Tapies', role: 'Agent', acdGroups: '' },
+  { name: 'Asli Demir', role: 'Agent', acdGroups: '' },
+  { name: 'ATT - Elodie Marchand', role: 'Agent', acdGroups: '' },
+  { name: 'ATT - Monica Valli', role: 'Supervisor', acdGroups: '' },
+  { name: 'Beata Nowak', role: 'Agent', acdGroups: '' },
+  { name: 'Dana Stolarova', role: 'RefundsType3', acdGroups: '' },
+  { name: 'DE - Admin - Rene Wolf', role: 'Agent', acdGroups: '' },
+  { name: 'Debora Voltolina', role: 'Supervisor', acdGroups: '' },
+  { name: 'Enrico Moretti', role: 'Supervisor', acdGroups: '' },
+  { name: 'ES Admin - Conchi', role: 'RefundsType3', acdGroups: '' },
+  { name: 'ES Admin - Laura', role: 'Agent', acdGroups: '' },
+  { name: 'ES Admin - Pilar', role: 'RefundsType3', acdGroups: '' },
+  { name: 'ES Admin - Roberto', role: 'Agent', acdGroups: '' },
+  { name: 'ES Agent - Backup', role: 'Supervisor', acdGroups: '' },
+];
+
+export interface RoleRow {
+  readonly name: string;
+  readonly description: string;
+  readonly lastUpdate: string;
+  readonly permissions: string;
+}
+
+export const ROLES: readonly RoleRow[] = [
+  { name: 'Agent', description: 'Gestión de tickets asignados y contacto con cliente', lastUpdate: '02-07-2026 11:20', permissions: '18' },
+  { name: 'Supervisor', description: 'Agent + reasignación, informes y gestión de cola', lastUpdate: '02-07-2026 11:22', permissions: '27' },
+  { name: 'RefundsType1', description: 'Devoluciones hasta 10 €', lastUpdate: '14-05-2026 09:41', permissions: '20' },
+  { name: 'RefundsType2', description: 'Devoluciones hasta 50 €', lastUpdate: '14-05-2026 09:42', permissions: '21' },
+  { name: 'RefundsType3', description: 'Devoluciones sin límite + anulación de suscripción', lastUpdate: '14-05-2026 09:45', permissions: '24' },
+  { name: 'Admin', description: 'Acceso completo, incluida configuración', lastUpdate: '30-04-2026 17:03', permissions: '41' },
+  { name: 'ReadOnly', description: 'Solo consulta, sin acciones sobre el ticket', lastUpdate: '30-04-2026 17:05', permissions: '9' },
+  { name: 'QA', description: 'Consulta + tipificación para control de calidad', lastUpdate: '11-03-2026 12:18', permissions: '13' },
+  { name: 'MO Manager', description: 'Gestión de MO en error y reenvíos', lastUpdate: '11-03-2026 12:20', permissions: '15' },
+  { name: 'Billing', description: 'Consulta de cobros y conciliación', lastUpdate: '08-02-2026 08:55', permissions: '11' },
+];
+
+export interface EntityRow {
+  readonly groupName: string;
+  readonly products: string;
+  readonly rules: string;
+  readonly country: string;
+  readonly company: string;
+  readonly orderBy: string;
+}
+
+export const ENTITIES: readonly EntityRow[] = [
+  { groupName: 'ES - DOD', products: 'Playweez, itrip, Canaltv', rules: '4', country: 'Spain', company: 'Digital Virgo', orderBy: '1' },
+  { groupName: 'SK - Cuscare', products: 'Busuu, WEEZCHAT SK', rules: '2', country: 'Slovakia', company: 'Digital Virgo', orderBy: '2' },
+];
+
+export interface TemplateFolder {
+  readonly name: string;
+  readonly tags: readonly string[];
+  /** Nº de grupos extra colapsados en un chip "+N". */
+  readonly moreTags?: number;
+}
+
+export const TEMPLATE_FOLDERS: readonly TemplateFolder[] = [
+  { name: 'ES-DOD', tags: ['ES - DOD'] },
+  { name: 'SK EMAIL', tags: ['SK - Cuscare'] },
+  { name: 'Vsetky adresy', tags: ['SK - Cuscare'] },
+  { name: 'Category - ES', tags: ['ES - DOD'], moreTags: 18 },
+];

@@ -43,3 +43,8 @@ jobs:
       # `ng serve` (:4405) — ver playwright.supervisor.config.ts.
       - name: e2e supervisor (formularios + flujo de reglas)
         run: npm run e2e:supervisor
+      # Gestos de CusCare (sidebar, engranaje, pestañas) + la métrica medida del
+      # sitio original. Clics REALES: fue esta suite la que cazó que la barra
+      # inferior tapaba el engranaje — se veía, pero no se podía pulsar.
+      - name: e2e cuscare (navegación + métrica)
+        run: npm run e2e:cuscare
