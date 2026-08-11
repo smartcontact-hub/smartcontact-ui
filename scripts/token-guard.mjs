@@ -33,6 +33,21 @@ const TOKENS_DIR = 'projects/design-tokens/src/lib/styles/';
 const THEME_SMOKE = 'projects/sc-docs/src/app/pages/theme/';
 const FONT_ALLOW = new Set([]);
 
+/**
+ * Apps RÉPLICA: espejos fieles de productos externos (`agent.smart-contact.com`,
+ * `cuscare.smart-contact.com`) cuyos valores se EXTRAEN del sitio real y se copian
+ * crudos a propósito — tokenizarlas destruiría justo lo que aportan (DD-35). Quedan
+ * exentas de las reglas 5-7 (tipografía literal); el resto del guard sigue
+ * aplicándoles.
+ *
+ * Se hace EXPLÍCITO porque hasta ahora `agent` pasaba por un agujero, no por una
+ * decisión: sus estilos viven en bloques `styles:` inline de los `.ts` y el guard
+ * solo mira `.scss/.css` (23 font-size literales sin detectar). `cuscare` usa
+ * ficheros `.scss` y por eso saltó. Misma decisión de diseño, distinto resultado
+ * según dónde viviera el CSS: eso era la incoherencia, no cuscare.
+ */
+const REPLICA_APPS = ['projects/agent/', 'projects/cuscare/'];
+
 const files = execSync('git ls-files projects', { cwd: root, encoding: 'utf8' })
   .split('\n')
   .filter((f) => /\.(scss|css|html|ts)$/.test(f) && !f.endsWith('.spec.ts'));
@@ -47,6 +62,7 @@ for (const f of files) {
   const lines = readFileSync(resolve(root, f), 'utf8').split('\n');
   const inPreset = f.startsWith(PRESET_DIR);
   const inTokens = f.startsWith(TOKENS_DIR);
+  const inReplica = REPLICA_APPS.some((p) => f.startsWith(p));
   lines.forEach((line, i) => {
     const at = `${f}:${i + 1}`;
     // 1 — var(--p-*) fuera del preset (sufijo [a-z] = token real, no el
@@ -75,10 +91,11 @@ for (const f of files) {
       fail(`${at} usa un campo PrimeNG crudo → envuélvelo en su wrapper (<sc-select>…). Si no, se salta la chrome/densidad del DS.`);
       log(`      ${line.trim()}`);
     }
-    // 5 — font-size literal en SCSS.
+    // 5 — font-size literal en SCSS. (Exentas las apps réplica: ver REPLICA_APPS.)
     if (
       /\.(scss|css)$/.test(f) &&
       !inTokens &&
+      !inReplica &&
       !FONT_ALLOW.has(f) &&
       /(?<![\w-])font-size:\s*[0-9.]+(px|rem)/.test(line) &&
       !/^\s*(\/\/|\*|\/\*)/.test(line) &&
@@ -94,6 +111,7 @@ for (const f of files) {
       /\.(scss|css)$/.test(f) &&
       !inTokens &&
       !inPreset &&
+      !inReplica &&
       /(?<![\w-])font-weight:\s*\d{3}\b/.test(line) &&
       !/^\s*(\/\/|\*|\/\*)/.test(line) &&
       !/(\/\/|\/\*).*font-weight/.test(line)
@@ -106,6 +124,7 @@ for (const f of files) {
       /\.(scss|css)$/.test(f) &&
       !inTokens &&
       !inPreset &&
+      !inReplica &&
       /font-family:[^;]*\bmonospace\b/.test(line) &&
       !/var\(--sc-font-family-mono\)/.test(line) &&
       !/^\s*(\/\/|\*|\/\*)/.test(line)

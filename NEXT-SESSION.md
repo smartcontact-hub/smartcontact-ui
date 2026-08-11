@@ -27,8 +27,8 @@
 
 `sc-demo.pages.dev` (proyecto Cloudflare VIEJO) **sigue existiendo** — Rafa tiene que
 borrarlo a mano (borrado permanente: ni yo ni la extensión lo ejecutamos). No corre prisa:
-su build command `npm run build:demo` ya no existe en `main`, así que está congelado
-sirviendo una copia vieja e inofensiva.
+su build command apunta a un script que ya no existe en `main` (se renombró a
+`build:docs`), así que está congelado sirviendo una copia vieja e inofensiva.
 
 ---
 
