@@ -232,8 +232,36 @@
   padding-bottom: 14px;
 }
 
-.groups__cols {
+.groups__colwrap {
+  position: relative;
   margin-left: auto;
+}
+
+/* Panel de columnas: una casilla por columna, como el de Tickets. */
+.colspanel {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 4px);
+  z-index: 20;
+  min-width: 180px;
+  padding: 8px 0;
+  border: 1px solid #cfd3de;
+  border-radius: 9px;
+  background: #ffffff;
+  box-shadow: 0 4px 20px rgba(79, 86, 99, 0.12);
+}
+
+.colspanel__row {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 5px 12px;
+  font-size: 11.68px;
+  cursor: pointer;
+}
+
+.colspanel__row:hover {
+  background: #f4f6fc;
 }
 
 .searchbox {
@@ -251,6 +279,35 @@
 
 .searchbox__icon {
   opacity: 0.7;
+}
+
+/* El buscador ERA un <span> con texto pintado; ahora es un input de verdad. */
+.searchbox__input {
+  flex: 1;
+  min-width: 0;
+  border: 0;
+  background: transparent;
+  font-family: inherit;
+  font-size: 11.68px;
+  color: var(--cc-text);
+}
+
+.searchbox__input:focus {
+  outline: none;
+}
+
+.searchbox__input::placeholder {
+  color: #9aa1ac;
+}
+
+/* Las cabeceras ordenan: el cursor lo tiene que decir. */
+.grid th.sortable {
+  cursor: pointer;
+  user-select: none;
+}
+
+.grid th.is-sorted .th__sort {
+  background: #233155;
 }
 
 .grid {

@@ -2,6 +2,7 @@ import { ChangeDetectionStrategy, Component, computed, inject, input, signal } f
 import { ActivatedRoute } from '@angular/router';
 
 import { TICKETS } from '../../data/seed';
+import { DetailDialog, DetailDialogsComponent } from './detail-dialogs.component';
 import { SearchCustomerModalComponent } from './search-customer-modal.component';
 import { TicketStatusModalComponent } from './ticket-status-modal.component';
 
@@ -39,7 +40,7 @@ interface HistoryEvent {
 @Component({
   selector: 'app-ticket-detail-page',
   standalone: true,
-  imports: [SearchCustomerModalComponent, TicketStatusModalComponent],
+  imports: [SearchCustomerModalComponent, TicketStatusModalComponent, DetailDialogsComponent],
   templateUrl: './ticket-detail-page.component.html',
   styleUrl: './ticket-detail-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -66,6 +67,28 @@ export class TicketDetailPageComponent {
 
   /** El pill de estado abre "Ticket Status" (10 naturalezas + 2 estados). */
   protected readonly statusModalOpen = signal(false);
+
+  /* ── Controles de la barra de pestañas ──────────────────────────────────
+   * Los dos eran adorno; en la real hacen algo. El menú de "+ New" trae
+   * CUATRO entradas, leídas de su DOM sin abrirlo. */
+  protected readonly detailsOpen = signal(false);
+  protected readonly newMenuOpen = signal(false);
+  protected readonly newMenuItems = ['Email', 'Note', 'SMS', 'Attach file'];
+
+  /* ── Los cinco diálogos del detalle ─────────────────────────────────────
+   * Sus disparadores en la real: el de auto-asignación sale SOLO al abrir un
+   * ticket sin asignar (medido: abrir uno `new` lo pasa a OPEN y te lo asigna);
+   * el del CRM cuelga de la ficha de cliente de la barra de metadatos; el de
+   * borrado sale del icono de papelera de una nota. Los otros dos —"Right to
+   * be forgotten" y el de motivo de no reembolso— NO se pudo determinar desde
+   * dónde se abren sin ejecutar acciones, así que aquí cuelgan de la celda
+   * GDPR y del botón Refund respectivamente: es una suposición ANOTADA, no
+   * una medición. */
+  protected readonly dialog = signal<DetailDialog | null>(null);
+
+  protected openDialog(d: DetailDialog): void {
+    this.dialog.set(d);
+  }
 
   protected readonly ticket = computed(
     () => TICKETS.find((t) => t.id === this.id()) ?? TICKETS[1],
