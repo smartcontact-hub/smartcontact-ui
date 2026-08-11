@@ -1,29 +1,31 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
-import { ScToggleSwitchComponent } from '@smartcontact-hub/components';
-import { ScIconComponent } from '@smartcontact-hub/icons';
+import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { AgIconComponent } from '../ui/app-icon.component';
 
-import { ThemeService } from '../../theme/theme.service';
-
-/** Barra superior: logo SmartContact·Agent + toggle claro/oscuro. */
+/** Barra superior real: marca SmartContact·Agent + botones ayuda / logout. */
 @Component({
   selector: 'app-agent-header',
   standalone: true,
-  imports: [ScToggleSwitchComponent, ScIconComponent],
+  imports: [AgIconComponent],
   template: `
     <header class="hdr">
       <div class="hdr__brand">
-        <span class="hdr__logo"><sc-icon name="graphic_eq" [size]="20" /></span>
-        <span class="hdr__name"><strong>SmartContact</strong> <span class="agent-muted">Agent</span></span>
+        <span class="hdr__mark" aria-hidden="true">
+          <svg width="26" height="18" viewBox="0 0 26 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <circle cx="4" cy="4" r="3.4" fill="#8b95a1" />
+            <circle cx="13" cy="4" r="3.4" fill="#c2cad3" />
+            <circle cx="4" cy="14" r="3.4" fill="#c2cad3" />
+            <circle cx="13" cy="14" r="3.4" fill="#8b95a1" />
+            <circle cx="22" cy="9" r="3.4" fill="#dde2e8" />
+          </svg>
+        </span>
+        <span class="hdr__name"><strong>Smart</strong>Contact<span class="hdr__sub">Agent</span></span>
       </div>
-      <label class="hdr__theme">
-        <sc-icon name="dark_mode" [size]="15" />
-        <sc-toggleswitch
-          [checked]="isDark()"
-          (checkedChange)="onToggle($event)"
-          ariaLabel="Cambiar tema claro/oscuro"
-        />
-        <sc-icon name="light_mode" [size]="15" />
-      </label>
+      <div class="hdr__actions">
+        <button class="hdr__btn" type="button" aria-label="Help"><app-icon name="help" [size]="15" /></button>
+        <button class="hdr__btn hdr__btn--power" type="button" aria-label="Log out">
+          <app-icon name="power" [size]="14" />
+        </button>
+      </div>
     </header>
   `,
   styles: `
@@ -31,35 +33,54 @@ import { ThemeService } from '../../theme/theme.service';
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: var(--sc-spacing-0-75) var(--sc-spacing-1-5);
+      padding: 15px 37px;
     }
     .hdr__brand {
       display: flex;
       align-items: center;
-      gap: var(--sc-spacing-0-75);
+      gap: 10px;
     }
-    .hdr__logo {
+    .hdr__mark {
       display: inline-flex;
-      color: var(--sc-icon-accent);
     }
     .hdr__name {
-      font-size: var(--sc-font-size-300);
-      color: var(--sc-text-primary);
+      font-size: 20px;
+      font-weight: 400;
+      color: var(--ag-brand);
+      letter-spacing: 0.2px;
     }
-    .hdr__theme {
+    .hdr__name strong {
+      font-weight: 700;
+    }
+    .hdr__sub {
+      font-style: italic;
+      font-size: 12.5px;
+      color: var(--ag-muted);
+      margin-left: 4px;
+      vertical-align: 2px;
+    }
+    .hdr__actions {
+      display: inline-flex;
+      gap: 9px;
+    }
+    .hdr__btn {
       display: inline-flex;
       align-items: center;
-      gap: var(--sc-spacing-0-5);
-      color: var(--sc-text-secondary);
+      justify-content: center;
+      width: 30px;
+      height: 26px;
+      border: 1px solid var(--ag-btn-line);
+      border-radius: 6px;
+      background: transparent;
+      color: var(--ag-btn-ic);
+      cursor: pointer;
+    }
+    .hdr__btn--power {
+      color: #fff;
+      background: var(--ag-red);
+      border-color: var(--ag-red);
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AgentHeaderComponent {
-  private readonly theme = inject(ThemeService);
-  protected readonly isDark = computed(() => this.theme.effectiveMode() === 'dark');
-
-  protected onToggle(checked: boolean): void {
-    this.theme.set(checked ? 'dark' : 'light');
-  }
-}
+export class AgentHeaderComponent {}

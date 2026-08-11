@@ -1,13 +1,15 @@
 /*
- * Agent — entrypoint global de estilos. El orden importa: tokens antes que overrides.
+ * Agent — entrypoint global de estilos.
+ * Modo "cartón pluma FIEL": réplica de agent.smart-contact.com/aed/#/private con
+ * valores EXACTOS extraídos del sitio real (getComputedStyle), NO estimados. Paleta
+ * en variables --ag-* con override `.ag-light` para el modo claro (toggle luna/sol).
+ * Ver spec: scratchpad/agent-exact-spec.md.
  */
 
 /* `@use` antes que cualquier `@import`. */
 @use 'reset';
 
-/* Design tokens — 6 capas del DS por RUTA DE SOURCE (SCSS no resuelve specifiers npm),
- * igual que supervisor/sc-prototype. La capa 6 (puente PrimeNG) vive en el preset,
- * cableado vía `provideSmartContactUi()` en app.config.ts. */
+/* Design tokens del DS (inertes para el look; los consume sc-icon si aplica). */
 @import '../../../design-tokens/src/lib/styles/tokens/layers/01-primitive.css';
 @import '../../../design-tokens/src/lib/styles/tokens/layers/02-semantic.css';
 @import '../../../design-tokens/src/lib/styles/tokens/layers/03-palette.css';
@@ -17,36 +19,95 @@
 
 @import 'primeicons/primeicons.css';
 
-/*
- * Iconos del DS: Material Symbols **Outlined**, self-hospedado. Importamos el
- * `material-symbols.css` del DS (que ya sirve Outlined) en vez de replicar el
- * contrato apuntando al CDN — fuente única, sin CDN. Igual que supervisor.
- */
+/* Iconos: Material Symbols Outlined self-hospedado (para <sc-icon>). */
 @import '../../../ui-smartcontact-icons/src/lib/styles/material-symbols.css';
+
+/* ─────────────────────────────────────────────────────────────────────────
+ * Paleta REAL (valores exactos capturados). DARK (default) ↔ LIGHT (.ag-light).
+ * ───────────────────────────────────────────────────────────────────────── */
+:root {
+  --ag-canvas: #3e4246; /* fondo principal (.comunicator-dashboard) — medido */
+  --ag-list: #1f2429; /* panel de la tabla (.list) — más oscuro */
+  --ag-card: #24292f;
+  --ag-elev: #373b41; /* chip Connection / search / paneles lighter */
+  --ag-line: #2b323a;
+  --ag-line-soft: #040506; /* líneas de rejilla de tabla (casi negro) */
+  --ag-head-line: #1a1e24; /* borde inferior del thead */
+  --ag-text: #ffffff;
+  --ag-text-2: #cdd2d8;
+  --ag-muted: #9d9fa3;
+  --ag-thead: #9d9fa3;
+  --ag-row: #bcbdbf; /* filas de Grupos */
+  --ag-field: #a3a8b0; /* campos del perfil */
+  --ag-dim: #75787b; /* labels pequeños (Total Conv.) */
+  --ag-disc: #41454c; /* Disconnection */
+  --ag-ring: #1c1f27; /* aro del gauge (medido por Rafa) */
+  --ag-chip-bg: #5f6776; /* chip Support/Wait */
+  --ag-chip-text: #ffffff;
+  --ag-ch-off: #000000; /* pill de canal (negro) */
+  --ag-ch-off-ic: #9198a1;
+  --ag-ch-on: #000000;
+  --ag-ch-on-ic: #ffffff;
+  --ag-brand: #e8eaed;
+  --ag-btn-line: #3a424c;
+  --ag-btn-ic: #c7cbd1;
+  --ag-red: #e74c3c;
+  --ag-green: #2bae22;
+  --ag-status-text: #11131a;
+  --ag-font: 'Open Sans', 'Helvetica Neue', Arial, sans-serif;
+  --ag-radius: 9.125px;
+  --ag-shadow: -6.07px 7.61px 26.6px 0 #24292f;
+}
+
+:root.ag-light {
+  --ag-canvas: #f4f6fc;
+  --ag-list: #ffffff;
+  --ag-card: #ffffff;
+  --ag-elev: #eef1f5;
+  --ag-line: #e9eaf0;
+  --ag-line-soft: #e9eaf0;
+  --ag-head-line: #e9eaf0;
+  --ag-text: #233155;
+  --ag-text-2: #4a5568;
+  --ag-muted: #939598;
+  --ag-thead: #afb1b4;
+  --ag-row: #4a5568;
+  --ag-field: #5a6270;
+  --ag-dim: #9aa0a6;
+  --ag-disc: #aab0b6;
+  --ag-ring: #e0e4e9;
+  --ag-chip-bg: #cfd3de;
+  --ag-chip-text: #5f6776;
+  --ag-ch-off: #eef1f5;
+  --ag-ch-off-ic: #8a9099;
+  --ag-ch-on: #eef1f5;
+  --ag-ch-on-ic: #233155;
+  --ag-brand: #233155;
+  --ag-btn-line: #dfe3e8;
+  --ag-btn-ic: #6b7280;
+  --ag-shadow: -4px 8px 26px rgba(205, 210, 224, 0.6);
+}
 
 html,
 body {
   height: 100%;
   margin: 0;
-  font-family: var(--sc-font-family-primary, 'Inter', system-ui, sans-serif);
-  background: var(--sc-bg-default);
-  color: var(--sc-text-primary);
+  font-family: var(--ag-font);
+  background: var(--ag-canvas);
+  color: var(--ag-text);
 }
 
 /* ── Chrome compartido del dashboard (global, sin encapsular) ─────────────── */
 .agent-card {
-  background: var(--sc-bg-elevated);
-  border: 1px solid var(--sc-border-subtle);
-  border-radius: var(--sc-radius-300);
-  padding: var(--sc-spacing-1-5);
+  background: var(--ag-card);
+  border-radius: var(--ag-radius);
+  box-shadow: var(--ag-shadow);
 }
 
 .agent-muted {
-  color: var(--sc-text-secondary);
-  font-size: var(--sc-font-size-100);
+  color: var(--ag-muted);
 }
 
-/* Las tiles KPI rellenan la altura de su celda del grid. */
 .kpis > * {
   display: block;
   height: 100%;
@@ -54,4 +115,3 @@ body {
 .kpis .agent-card {
   height: 100%;
 }
-

@@ -46,6 +46,11 @@ export class LabComponent {
           href: 'https://sc-supervisor.pages.dev',
           note: 'La aplicación de verdad, con datos de demostración.',
         },
+        {
+          label: 'Agent · dashboard del agente',
+          href: 'https://sc-agent.pages.dev',
+          note: 'Réplica del dashboard del agente de contact center (agent.smart-contact.com/aed): colores, iconos y timers medidos del sitio real.',
+        },
       ],
     },
     {
