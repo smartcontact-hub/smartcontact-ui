@@ -26,10 +26,10 @@
 | **Code Connect** (piloto Figma ↔ código: qué es, requisitos de publicación, cómo quitarlo) | [`docs/code-connect.md`](./code-connect.md) | Claude + diseño + devs |
 | Cómo **consume una app externa** el DS · **el modelo** (un DS, dos profundidades: "instalar y ya el tema" vs `--sc-*` — combinable + migration-safe) · **propuesta de distribución** (GitHub Packages) | [`docs/consumer-onboarding.md`](./consumer-onboarding.md) | apps consumidoras + los 2 equipos front + Claude |
 | **Perfil público de la org** — borrador para el repo `smartcontact-hub/.github` → `profile/README.md` (lo crea Rafa en GitHub) | [`docs/org-profile.md`](./org-profile.md) | Rafa + Claude |
-| **Convergencia** DS ↔ catálogo dev (unión, naming DD-12, plan de port) | [`docs/convergence-manifesto.md`](./convergence-manifesto.md) | Claude (al portar) |
-| **Fundaciones** (Mitad A): por qué del esqueleto/arquitectura | [`docs/foundations-rationale.md`](./foundations-rationale.md) | Claude (referencia) |
-| **Plan de port** de componentes (Mitad B) | [`docs/component-port-plan.md`](./component-port-plan.md) | Claude (referencia) |
-| **Plan de convergencia** de los 4 flujos (7 olas + modelo canónico R1-R7) | [`docs/plan-convergencia-flujos.md`](./plan-convergencia-flujos.md) | Claude + Rafa |
+| **Convergencia** DS ↔ catálogo dev (unión, naming DD-12, plan de port) — *construcción CERRADA, referencia histórica* | [`docs/history/convergence-manifesto.md`](./history/convergence-manifesto.md) | Claude (al portar) |
+| **Fundaciones** (Mitad A): por qué del esqueleto/arquitectura — *construcción CERRADA, referencia histórica* | [`docs/history/foundations-rationale.md`](./history/foundations-rationale.md) | Claude (referencia) |
+| **Plan de port** de componentes (Mitad B) — *construcción CERRADA, referencia histórica* | [`docs/history/component-port-plan.md`](./history/component-port-plan.md) | Claude (referencia) |
+| **Plan de convergencia** de los 4 flujos (7 olas + modelo canónico R1-R7) — *construcción CERRADA, referencia histórica* | [`docs/history/plan-convergencia-flujos.md`](./history/plan-convergencia-flujos.md) | Claude + Rafa |
 | **Inventario de componentes** — tracklist: cada componente + wrapper/pure + los 4 gaps abiertos | [`docs/inventory.md`](./inventory.md) | Claude + diseño + Rafa |
 | **Receta para migrar una tabla** a `sc-datatable` — pasos, la piel `.list-table`, las 3 trampas medidas y las 14 tablas que quedan por dificultad | [`docs/receta-migracion-tablas.md`](./receta-migracion-tablas.md) | Claude (al migrar una tabla) |
 | **Playbook** archivar `smartcontact-ui-main` (sesión aparte) | [`docs/playbook-archivar-ui-main.md`](./playbook-archivar-ui-main.md) | Claude (en sesión sobre ese repo) |
