@@ -15,9 +15,14 @@ export default defineConfig({
    * esto NO arregla (y que se regeneraron aparte) medían entre 94.000 y 651.000.
    */
   expect: { toHaveScreenshot: { maxDiffPixels: 20 } },
-  // usage/ (captura de pantallas) y supervisor/ (suite propia) tienen su config
-  // aparte apuntando a la app correcta — esta config sirve sc-docs.
-  testIgnore: ['usage/**', 'supervisor/**'],
+  // usage/ (captura de pantallas), supervisor/ y cuscare/ (suites propias) tienen
+  // su config aparte apuntando a la app correcta — esta config sirve sc-docs.
+  //
+  // ⚠️ Añadir una carpeta bajo `e2e/` SIN excluirla aquí la mete en esta suite,
+  // que la correría contra sc-docs. Pasó al crear `e2e/cuscare/`: en local corrí
+  // `e2e:cuscare` (config propia, verde) pero no `e2e`, y el CI se puso rojo con
+  // 10 tests buscando en sc-docs elementos que solo existen en cuscare.
+  testIgnore: ['usage/**', 'supervisor/**', 'cuscare/**'],
   timeout: 60_000,
   use: {
     baseURL: 'http://localhost:4280',
