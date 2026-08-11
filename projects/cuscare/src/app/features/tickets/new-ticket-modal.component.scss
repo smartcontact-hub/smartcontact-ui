@@ -1,0 +1,155 @@
+/* Todo lo de aquí está MEDIDO en la app real @1460×792 — ver la cabecera del
+   componente para la tabla completa. */
+
+:host {
+  display: contents;
+}
+
+.modal {
+  position: fixed;
+  inset: 0;
+  z-index: 100;
+  display: flex;
+  align-items: flex-start;
+  justify-content: center;
+  background: rgba(22, 22, 22, 0.494);
+}
+
+/* El diálogo NO es blanco: usa el gris del lienzo (#f4f6fc) y dentro lleva un
+   panel blanco. Fácil de asumir mal. */
+.dialog {
+  display: flex;
+  flex-direction: column;
+  width: 1095px;
+  max-width: calc(100vw - 40px);
+  height: 617.4px;
+  max-height: calc(100vh - 60px);
+  margin-top: 20.4px;
+  padding: 29.65px;
+  border-radius: 12.16px;
+  background: var(--cc-canvas);
+  box-shadow: none;
+}
+
+/* Panel blanco interior: contiene cabecera + lista. */
+.panel {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+  background: var(--cc-card);
+  border: 1px solid #e6e9ef;
+  border-radius: 9px;
+  overflow: hidden;
+}
+
+.panel__head {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 14px 16px;
+  border-bottom: 1px solid #e6e9ef;
+}
+
+.panel__title {
+  margin: 0;
+  font-family: var(--cc-font-head);
+  font-size: 14.6px;
+  font-weight: 500;
+  color: #212529;
+}
+
+.panel__search {
+  width: 135.4px;
+  height: 22.8px;
+  padding: 0 9px;
+  border: 1px solid #cfd3de;
+  border-radius: 9px;
+  background: #ffffff;
+  font-family: var(--cc-font);
+  font-size: 11.68px;
+  color: var(--cc-text-body);
+}
+
+.panel__search::placeholder {
+  color: #9aa1ac;
+}
+
+/* ── Lista de grupos ────────────────────────────────────────────────────── */
+.grouplist {
+  flex: 1;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  overflow: auto;
+}
+
+.grouprow {
+  border-bottom: 1px solid #e6e9ef;
+}
+
+.grouprow__label {
+  display: flex;
+  align-items: center;
+  gap: 60px; /* el radio va en su propia columna, medido x=258 vs texto x=336 */
+  padding: 9px 16px 9px 30px;
+  cursor: pointer;
+}
+
+/* Radio NATIVO sin estilar: en la real `appearance: auto` y 13px. Se replica
+   tal cual — estilarlo "mejor" lo alejaría del original. */
+.grouprow__radio {
+  width: 13px;
+  height: 13px;
+  margin: 0;
+  cursor: pointer;
+}
+
+.grouprow__name {
+  font-size: 15px;
+  color: #212529;
+}
+
+.grouplist__empty {
+  padding: 18px 16px;
+  font-size: 11.68px;
+  color: var(--cc-text-body);
+}
+
+/* ── Pie ────────────────────────────────────────────────────────────────── */
+.dialog__foot {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  padding-top: 18px;
+}
+
+.btn {
+  font-family: var(--cc-font);
+  font-size: 11.68px;
+  font-weight: 400;
+  border-radius: 9.125px;
+  cursor: pointer;
+}
+
+.btn--cancel {
+  padding: 4.38px 8.76px;
+  min-width: 60px;
+  border: 1px solid #8d939d;
+  background: transparent;
+  color: #8d939d;
+}
+
+.btn--save {
+  padding: 4.57px 15.97px;
+  border: 1px solid #11131a;
+  background: #233155;
+  color: #ffffff;
+}
+
+.btn--save:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
