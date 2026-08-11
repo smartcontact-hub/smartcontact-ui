@@ -40,8 +40,12 @@
           <span aria-hidden="true">{{ ticket().countryFlag }}</span> {{ ticket().source }}
         }
       </span>
+      <!-- Celda GDPR: aquí cuelga el "Right to be forgotten" hasta saber su
+           disparador real (no se pudo determinar sin ejecutar acciones). -->
+      <button class="metabar__cell metabar__cell--btn" type="button" (click)="openDialog('forgotten')">
+        ---
+      </button>
       <!-- La última celda es la ficha del cliente y abre "Cases" (el CRM). -->
-      <span class="metabar__cell">---</span>
       <button class="metabar__cell metabar__cell--btn" type="button" (click)="openDialog('crm')">
         ---<span class="caret" aria-hidden="true">▾</span>
       </button>
@@ -50,13 +54,16 @@
     <div class="subs">
       <div class="subs__actions">
         <button class="iconbtn" type="button" aria-label="Refrescar">↻</button>
-        <!-- "Refund" lleva al diálogo de motivo de no reembolso. Es una
-             SUPOSICIÓN anotada: el componente se llama `cases-resolved` y no se
-             pudo confirmar su disparador sin ejecutar acciones sobre el ticket. -->
-        <button class="btn btn--ghost" type="button" (click)="openDialog('forgotten')">
+        <!-- REAPUNTADOS a sus componentes de verdad: mirando el árbol de la app
+             real aparecieron `app-modal-confirmation-unsubscribe` y
+             `app-new-modal-refund`. Antes colgaban de "Right to be forgotten" y
+             del diálogo de motivo de no reembolso — suposición mía, equivocada. -->
+        <button class="btn btn--ghost" type="button" (click)="unsubOpen.set(true)">
           Unsubscribe
         </button>
-        <button class="btn btn--ghost" type="button" (click)="openDialog('noRefund')">Refund</button>
+        <button class="btn btn--ghost" type="button" (click)="refundFor.set(subscriptions[0].product)">
+          Refund
+        </button>
         <button class="btn btn--ghost" type="button" (click)="detailsOpen.set(!detailsOpen())">
           Detail
         </button>
@@ -81,7 +88,21 @@
               <td>{{ s.endDate }}</td>
               <td><span class="navpill"><span aria-hidden="true">🌐</span> Nav</span></td>
               <td>{{ s.price }}</td>
-              <td>@if (s.refund) {<span class="badge">{{ s.refund }}</span>}</td>
+              <!-- El badge de reembolsos ABRE el modal de reembolsos, y es la
+                   vía de solo lectura: el botón "Refund" de la barra no hace
+                   nada si no hay una suscripción marcada (medido en la real). -->
+              <td>
+                @if (s.refund) {
+                  <button
+                    class="badge badge--btn"
+                    type="button"
+                    [attr.aria-label]="'Reembolsos de ' + s.product"
+                    (click)="refundFor.set(s.product)"
+                  >
+                    {{ s.refund }}
+                  </button>
+                }
+              </td>
               <td>{{ s.operator }}</td>
               <td>{{ s.company }}</td>
               <td>{{ s.campaign }}</td>
@@ -194,5 +215,13 @@
 
   @if (summaryFor(); as prod) {
     <app-summary-panel [ticketId]="ticket().id" [product]="prod" (closed)="summaryFor.set(null)" />
+  }
+
+  @if (unsubOpen()) {
+    <app-unsubscribe-confirm-modal [services]="unsubServices" (closed)="unsubOpen.set(false)" />
+  }
+
+  @if (refundFor(); as prod) {
+    <app-refund-modal [product]="prod" [charges]="refundCharges" (closed)="refundFor.set(null)" />
   }
 </div>

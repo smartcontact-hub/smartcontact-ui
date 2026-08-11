@@ -1,0 +1,135 @@
+/* Valores MEDIDOS @1460×792 abriendo el modal por el badge de la columna
+   Refund (solo lectura) y cerrándolo con el aspa. */
+
+.rfd {
+  position: fixed;
+  inset: 0;
+  z-index: 1150;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(22, 22, 22, 0.494);
+  overflow-y: auto;
+}
+
+.rfd__dialog {
+  width: 726.5px;
+  max-width: calc(100vw - 32px);
+}
+
+.rfd__content {
+  padding: 10.6434px 21.2868px 15.2132px 22.8198px;
+  border: 1px solid rgba(0, 0, 0, 0.176);
+  border-radius: 12.1618px;
+  background: #f4f6fc;
+  font-family: var(--cc-font-head);
+  font-size: 11.68px;
+}
+
+.rfd__head {
+  display: flex;
+  align-items: flex-start;
+  gap: 12px;
+  min-height: 53.5px;
+}
+
+.rfd__x {
+  border: 0;
+  border-radius: 4.38px;
+  background: transparent;
+  color: #333a41;
+  font-size: 12px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+/* Producto y operador en azul marino; el operador en negrita, apilados. */
+.rfd__who {
+  display: flex;
+  flex-direction: column;
+  color: #1b2f53;
+}
+
+.rfd__operator {
+  font-weight: 700;
+}
+
+.rfd__totals {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  margin-left: auto;
+  color: #1b2f53;
+}
+
+/* El total reembolsado es el número grande del modal, y va en VERDE aunque
+   valga cero. */
+.rfd__amount {
+  margin-left: 6px;
+  font-size: 24px;
+  font-weight: 700;
+  color: #3eb584;
+}
+
+.rfd__charges {
+  font-weight: 700;
+}
+
+.rfd__body {
+  padding: 11.68px;
+}
+
+/* Tabla Material sobre blanco, fila 32.7 — la misma métrica que Ajustes. */
+.rfd__table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #ffffff;
+  border-radius: 8px;
+  overflow: hidden;
+}
+
+.rfd__table th {
+  height: 32.7px;
+  padding: 0 16px 0 7.6066px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  background: #ffffff;
+  color: rgba(0, 0, 0, 0.87);
+  font-weight: 500;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.rfd__table td {
+  height: 32.7px;
+  padding: 0 16px;
+  background: #ffffff;
+  color: rgba(0, 0, 0, 0.87);
+}
+
+.rfd__count {
+  width: 40px;
+}
+
+.rfd__badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 17.5px;
+  height: 17.5px;
+  border-radius: 50%;
+  background: #bbbbbb;
+  color: #ffffff;
+}
+
+/* API y BNK: las DOS vías de devolución, un botón por cargo. */
+.rfd__way {
+  min-width: 43.9px;
+  height: 27.8px;
+  border: 1px solid #e7e7e7;
+  border-radius: 7.6066px;
+  background: #fbfbfb;
+  color: #000000;
+  font-family: inherit;
+  font-size: 11.68px;
+  cursor: pointer;
+}
