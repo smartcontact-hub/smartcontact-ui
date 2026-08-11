@@ -36,6 +36,19 @@ difiere. Asumir "misma tabla" da una réplica sutilmente falsa en 4 vistas.
 | separador | `#dadfe6` | **`rgba(0,0,0,.12)`** |
 | paginador | sí | **no** |
 
+### "+ New ticket" no lleva a un formulario
+
+El primer modal es un **selector de grupo** con Cancel/Save. Y **Save crea el ticket**:
+la app real salta a `…/tickets/ticket/2051827/pre-ticket` con el ticket ya existiendo.
+Lo que aparece entonces no es un formulario — es **esta misma pantalla de detalle en
+vacío** (`#0`, guiones, ceros) con el modal **"Search customer"** encima, que pide
+enganchar un cliente (país · criterio · término). Los siete criterios: Msisdn, Alias,
+Email, Accountid, Externalid, Operationid, Cardlast4.
+
+Esto estuvo sin replicar a propósito durante toda la construcción: pulsar Save era la
+única forma de verlo y crea un ticket real en el sistema de Rafa. Se capturó cuando lo
+pulsó él, sobre el pre-ticket que dejó abierto.
+
 ### Las 4 acciones en bloque NO son cuatro menús iguales
 
 Se extrajeron leyendo el DOM de la app real **sin ejecutar ninguna acción sobre ningún
@@ -84,10 +97,8 @@ imposible de pulsar— porque yo la había puesto `fixed` cuando en la real es `
 - **La ilustración de Search es una aproximación.** Silueta y paleta parecidas; no es
   el asset original. Los iconos del nav, los de acción y el logo SÍ son los reales
   (descargados de `assets/icons/iconos-cuscare/`).
-- **El segundo paso de "+ New ticket" sigue SIN capturar.** El modal que sale es un
-  selector de grupo con Cancel/Save; llegar al formulario exige pulsar **Save**, y no
-  se pudo determinar leyendo el bundle si eso crea un ticket de verdad o sólo navega.
-  Ante la duda no se pulsó. Para desbloquearlo hace falta un pantallazo de Rafa.
+- **Los iconos del detalle de ticket siguen siendo glifos** (📞 🗎 ⚑ 🗒 📎 ↻ ▾). Los que
+  sí son los reales son los del nav, el logo y los de acción de Templates.
 - **La ordenación de columnas no está.** Filtros, paginación, selección, gestor de
   columnas y acciones en bloque sí funcionan de verdad; ordenar por cabecera, no.
 - **La ventana del paginador con menos de 6 páginas** no se pudo observar en la real
