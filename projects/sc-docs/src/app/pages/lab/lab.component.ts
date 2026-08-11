@@ -51,6 +51,11 @@ export class LabComponent {
           href: 'https://sc-agent.pages.dev',
           note: 'Réplica del dashboard del agente de contact center (agent.smart-contact.com/aed): colores, iconos y timers medidos del sitio real.',
         },
+        {
+          label: 'CusCare · gestión de tickets',
+          href: null,
+          note: 'Réplica de la herramienta de atención al cliente (cuscare.smart-contact.com/aed): lista de tickets, detalle y dashboard, medidos del sitio real. Aún en rama feat/cuscare — pendiente de desplegar y de mergear a main.',
+        },
       ],
     },
     {
