@@ -1,0 +1,353 @@
+/* Detalle de ticket. Estructura medida del real; proporciones finas se afinan
+   contra el pantallazo en la pasada de comparación. */
+
+:host {
+  display: block;
+}
+
+.detail {
+  display: flex;
+  flex-direction: column;
+}
+
+/* Etiqueta gris sobre la tarjeta ("Unsubscription") */
+.detail__kind {
+  display: inline-flex;
+  align-items: center;
+  align-self: flex-start;
+  height: 20px;
+  padding: 0 10px;
+  margin-bottom: 8px;
+  border-radius: 4px;
+  background: #d9dce2;
+  font-size: 11.68px;
+  color: #4f5663;
+}
+
+.detail__card {
+  padding: 0;
+  overflow: hidden;
+}
+
+/* ── Cabecera ───────────────────────────────────────────────────────────── */
+.detail__head {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 12px 14px;
+}
+
+.detail__chan {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border-radius: 50%;
+  background: #2f7ff0;
+  font-size: 12px;
+}
+
+.detail__id {
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--cc-text);
+}
+
+.detail__ref {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  font-size: 11.68px;
+  color: var(--cc-text-body);
+}
+
+.statusbtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  margin-left: auto;
+  min-width: 228px;
+  height: 26px;
+  border: 0;
+  border-radius: 4px;
+  background: #24b34b;
+  color: #ffffff;
+  font: inherit;
+  font-size: 11.68px;
+  cursor: pointer;
+}
+
+/* ── Barra de metadatos ─────────────────────────────────────────────────── */
+.metabar {
+  display: flex;
+  align-items: stretch;
+  border-top: 1px solid #e6e9ef;
+  border-bottom: 1px solid #e6e9ef;
+  font-size: 11.68px;
+  color: var(--cc-text-body);
+}
+
+.metabar__cell {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 12px;
+  border-right: 1px solid #e6e9ef;
+  white-space: nowrap;
+}
+
+.metabar__cell--flag {
+  color: #2f9e5f;
+}
+
+.metabar__cell--wide {
+  flex: 1;
+  justify-content: space-between;
+  background: #d9dce2;
+}
+
+.metabar__cell--counts {
+  gap: 4px;
+}
+
+.badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 17px;
+  height: 17px;
+  padding: 0 5px;
+  border-radius: 9px;
+  background: #eef1f6;
+  font-size: 10px;
+  color: #6b7280;
+}
+
+.caret {
+  font-size: 9px;
+  opacity: 0.7;
+}
+
+/* ── Suscripciones ──────────────────────────────────────────────────────── */
+.subs {
+  padding: 12px 14px 14px;
+}
+
+.subs__actions {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  padding-bottom: 12px;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  height: 26px;
+  padding: 0 12px;
+  border-radius: 6px;
+  border: 1px solid #d7dbe3;
+  background: #ffffff;
+  color: var(--cc-text);
+  font: inherit;
+  font-size: 11.68px;
+  cursor: pointer;
+}
+
+.iconbtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 26px;
+  height: 26px;
+  border: 0;
+  border-radius: 6px;
+  background: transparent;
+  color: var(--cc-text-body);
+  font-size: 13px;
+  cursor: pointer;
+}
+
+.grid {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.grid th {
+  height: 34px;
+  padding: 8px;
+  font-family: var(--cc-font-head);
+  font-size: 11.68px;
+  font-weight: 600;
+  color: var(--cc-text);
+  text-align: left;
+  white-space: nowrap;
+}
+
+.grid td {
+  height: 34px;
+  padding: 0 8px;
+  border-top: 1px solid var(--cc-line);
+  font-size: 11.68px;
+  color: var(--cc-text-body);
+  white-space: nowrap;
+}
+
+.col-select {
+  width: 30px;
+}
+
+.navpill,
+.summarypill {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 22px;
+  padding: 0 10px;
+  border-radius: 4px;
+  background: #1c283d;
+  color: #ffffff;
+  font-size: 11px;
+}
+
+/* ── Tag + pestañas ─────────────────────────────────────────────────────── */
+.detail__tag {
+  align-self: flex-start;
+  margin: 12px 0 0;
+  padding: 3px 8px;
+  border: 1px solid #7b86f5;
+  border-radius: 3px;
+  font-size: 11.68px;
+  color: var(--cc-text-body);
+}
+
+.tabs {
+  display: flex;
+  align-items: center;
+  gap: 22px;
+  margin-top: 12px;
+  border-bottom: 1px solid #e6e9ef;
+}
+
+.tabs__tab {
+  padding: 10px 2px;
+  border: 0;
+  border-bottom: 2px solid transparent;
+  background: transparent;
+  color: var(--cc-text-body);
+  font: inherit;
+  font-size: 11.68px;
+  cursor: pointer;
+}
+
+.tabs__tab.is-active {
+  border-bottom-color: #2f7ff0;
+  color: #1c283d;
+}
+
+.tabs__details {
+  margin-left: auto;
+  font-size: 11.68px;
+  color: var(--cc-text-body);
+}
+
+.tabs__new {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  border: 0;
+  background: transparent;
+  color: #1c283d;
+  font: inherit;
+  font-size: 11.68px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+/* ── Timeline ───────────────────────────────────────────────────────────── */
+.timeline {
+  margin: 0;
+  padding: 18px 0 0;
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.timeline__row {
+  display: grid;
+  grid-template-columns: 44px 40px 1fr;
+  align-items: center;
+}
+
+.timeline__time {
+  font-size: 11.68px;
+  color: var(--cc-text-body);
+}
+
+.timeline__rail {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 100%;
+}
+
+.timeline__rail::before {
+  content: '';
+  position: absolute;
+  left: 50%;
+  top: -18px;
+  bottom: -18px;
+  width: 1px;
+  background: #d7dbe3;
+}
+
+.timeline__dot {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  font-size: 11px;
+}
+
+.timeline__dot--unsubscribe {
+  background: #fbe3e6;
+}
+
+.timeline__dot--call {
+  background: #2f7ff0;
+}
+
+.timeline__bubble {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  flex-wrap: wrap;
+  align-self: start;
+  padding: 9px 14px;
+  border-radius: 16px;
+  background: #f2f4f8;
+  font-size: 11.68px;
+  color: var(--cc-text-body);
+}
+
+.timeline__hl {
+  color: #2f7ff0;
+}
+
+.timeline__meta {
+  color: #8d939d;
+}
+
+.nodata {
+  margin: 18px 0 0;
+  font-size: 11.68px;
+  color: var(--cc-text-body);
+}

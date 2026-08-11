@@ -1,0 +1,120 @@
+<div class="detail">
+  <span class="detail__kind">Unsubscription</span>
+
+  <section class="cc-card detail__card">
+    <header class="detail__head">
+      <span class="detail__chan" aria-hidden="true">📞</span>
+      <span class="detail__id">#{{ ticket().id }}</span>
+      <span class="detail__ref"><span aria-hidden="true">✎</span> 900907110 - {{ ticket().group }}</span>
+      <button class="statusbtn" type="button">
+        <span aria-hidden="true">🗎</span> Resolved
+      </button>
+    </header>
+
+    <div class="metabar">
+      <span class="metabar__cell metabar__cell--flag"><span aria-hidden="true">⚑</span> ▾</span>
+      <span class="metabar__cell">{{ ticket().created }}:38</span>
+      <span class="metabar__cell">{{ ticket().assignedTo }}</span>
+      <span class="metabar__cell metabar__cell--counts">
+        <span class="badge">0</span><span aria-hidden="true">🗒</span>
+        <span class="badge">0</span><span aria-hidden="true">📎</span>
+      </span>
+      <span class="metabar__cell">{{ ticket().group }}</span>
+      <span class="metabar__cell metabar__cell--wide">ITRIP,PLAYWEEZ, <span class="caret" aria-hidden="true">▾</span></span>
+      <span class="metabar__cell"><span aria-hidden="true">{{ ticket().countryFlag }}</span> {{ ticket().source }}</span>
+      <span class="metabar__cell">---</span>
+      <span class="metabar__cell">---<span class="caret" aria-hidden="true">▾</span></span>
+    </div>
+
+    <div class="subs">
+      <div class="subs__actions">
+        <button class="iconbtn" type="button" aria-label="Refrescar">↻</button>
+        <button class="btn btn--ghost" type="button">Unsubscribe</button>
+        <button class="btn btn--ghost" type="button">Refund</button>
+        <button class="btn btn--ghost" type="button">Detail</button>
+      </div>
+
+      <table class="grid">
+        <thead>
+          <tr>
+            <th class="col-select"><input type="checkbox" aria-label="Seleccionar todas" /></th>
+            @for (c of subCols; track c) {
+              <th>{{ c }}</th>
+            }
+          </tr>
+        </thead>
+        <tbody>
+          @for (s of subscriptions; track s.product) {
+            <tr>
+              <td class="col-select"><input type="checkbox" [attr.aria-label]="'Seleccionar ' + s.product" /></td>
+              <td>{{ s.product }}</td>
+              <td>{{ s.status }}</td>
+              <td>{{ s.startDate }}</td>
+              <td>{{ s.endDate }}</td>
+              <td><span class="navpill"><span aria-hidden="true">🌐</span> Nav</span></td>
+              <td>{{ s.price }}</td>
+              <td>@if (s.refund) {<span class="badge">{{ s.refund }}</span>}</td>
+              <td>{{ s.operator }}</td>
+              <td>{{ s.company }}</td>
+              <td>{{ s.campaign }}</td>
+              <td>{{ s.provider }}</td>
+              <td>{{ s.ip }}</td>
+              <td><span class="summarypill">Summary</span></td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <span class="detail__tag">#{{ ticket().id }}</span>
+
+  <nav class="tabs" role="tablist">
+    <button class="tabs__tab" [class.is-active]="tab() === 'history'" (click)="tab.set('history')" role="tab" [attr.aria-selected]="tab() === 'history'" type="button">
+      History ticket
+    </button>
+    <button class="tabs__tab" [class.is-active]="tab() === 'notes'" (click)="tab.set('notes')" role="tab" [attr.aria-selected]="tab() === 'notes'" type="button">
+      Notes <span aria-hidden="true">🗒</span>
+    </button>
+    <button class="tabs__tab" [class.is-active]="tab() === 'files'" (click)="tab.set('files')" role="tab" [attr.aria-selected]="tab() === 'files'" type="button">
+      Attached files <span aria-hidden="true">📎</span>
+    </button>
+
+    <span class="tabs__details">Show details <span class="caret" aria-hidden="true">▾</span></span>
+    <button class="tabs__new" type="button"><span aria-hidden="true">＋</span> New</button>
+  </nav>
+
+  @switch (tab()) {
+    @case ('history') {
+      <ol class="timeline">
+        @for (e of history; track $index) {
+          <li class="timeline__row">
+            <span class="timeline__time">{{ e.time }}</span>
+            <span class="timeline__rail">
+              @if (e.kind !== 'status' && e.kind !== 'created') {
+                <span class="timeline__dot" [class]="'timeline__dot--' + e.kind" aria-hidden="true">
+                  {{ e.kind === 'call' ? '📞' : '🚫' }}
+                </span>
+              }
+            </span>
+            <span class="timeline__bubble">
+              {{ e.text }}
+              @if (e.highlight) {
+                <span class="timeline__hl">{{ e.highlight }}</span>
+              }
+              @if (e.kind === 'call') {
+                <span class="timeline__meta">| Start time: 8/11/26, 1:19 PM</span>
+              }
+            </span>
+          </li>
+        }
+      </ol>
+    }
+    @case ('notes') {
+      <p class="nodata">Sin notas.</p>
+    }
+    @case ('files') {
+      <p class="nodata">Sin ficheros adjuntos.</p>
+    }
+  }
+</div>
