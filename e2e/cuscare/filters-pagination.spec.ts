@@ -109,8 +109,8 @@ test.describe('paginación', () => {
     await goto(page);
     const firstIdPage1 = await bodyRows(page).first().locator('td').nth(1).innerText();
 
-    await page.getByRole('button', { name: 'Página 2' }).click();
-    await expect(page.getByRole('button', { name: 'Página 2' })).toHaveAttribute(
+    await page.getByRole('button', { name: 'Página 2', exact: true }).click();
+    await expect(page.getByRole('button', { name: 'Página 2', exact: true })).toHaveAttribute(
       'aria-current',
       'page',
     );
@@ -122,12 +122,44 @@ test.describe('paginación', () => {
   test('muestra el loader del original entre páginas', async ({ page }) => {
     await goto(page);
 
-    await page.getByRole('button', { name: 'Página 3' }).click();
+    await page.getByRole('button', { name: 'Página 3', exact: true }).click();
     // Aparece el overlay con el spinner y el mensaje del original…
     await expect(page.locator('.loadingoverlay')).toBeVisible();
     await expect(page.getByText('Loading data...')).toBeVisible();
     // …y se va solo al terminar.
     await expect(page.locator('.loadingoverlay')).toBeHidden({ timeout: 5000 });
+  });
+
+  /**
+   * La ventana de números SIGUE a la página actual. Medido en las 328 páginas de
+   * la app real (y confirmado con 11, para descartar que dependiera del total):
+   *   pág ≤ 4 → 1 2 3 4 5 … 328 · pág 5 → 1 … 4 5 6 … 328 · última → 1 … 324…328
+   * Antes se pintaba siempre `1 2 3 4 5` y no se movía: al llegar a la 5 el botón
+   * activo quedaba en el borde sin forma de avanzar salvo con las flechas.
+   */
+  test('la ventana de páginas sigue a la página actual', async ({ page }) => {
+    await goto(page);
+    const numeros = () => page.locator('.pager__btn, .pager__gap');
+
+    await expect(numeros()).toHaveText(['«', '‹', '1', '2', '3', '4', '5', '…', '328', '›', '»']);
+
+    await page.getByRole('button', { name: 'Página 5', exact: true }).click();
+    await expect(numeros()).toHaveText(['«', '‹', '1', '…', '4', '5', '6', '…', '328', '›', '»']);
+
+    await page.getByRole('button', { name: 'Última página' }).click();
+    await expect(numeros()).toHaveText([
+      '«',
+      '‹',
+      '1',
+      '…',
+      '324',
+      '325',
+      '326',
+      '327',
+      '328',
+      '›',
+      '»',
+    ]);
   });
 
   test('primera/última se deshabilitan en los extremos', async ({ page }) => {
@@ -143,13 +175,13 @@ test.describe('paginación', () => {
     await goto(page);
     await expect(page.locator('.tickets__count')).toContainText('1–10');
 
-    await page.getByRole('button', { name: 'Página 2' }).click();
+    await page.getByRole('button', { name: 'Página 2', exact: true }).click();
     await expect(page.locator('.tickets__count')).toContainText('11–20');
   });
 
   test('filtrar vuelve a la página 1', async ({ page }) => {
     await goto(page);
-    await page.getByRole('button', { name: 'Página 3' }).click();
+    await page.getByRole('button', { name: 'Página 3', exact: true }).click();
     await expect(page.locator('.tickets__count')).toContainText('21–');
 
     // Se filtra por Carrier (no por el primer input, que es Source y no

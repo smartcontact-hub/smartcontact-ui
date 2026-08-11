@@ -80,9 +80,51 @@ export class TicketsPageComponent {
     Math.max(1, Math.ceil(this.filtered().length / this.rowsPerPage())),
   );
 
-  protected readonly pageNumbers = computed(() => {
-    const n = this.pageCount();
-    return Array.from({ length: Math.min(n, 5) }, (_, i) => i + 1);
+  /**
+   * Los botones del paginador, con sus puntos suspensivos.
+   *
+   * La ventana **sigue a la página actual**; antes se pintaba siempre `1 2 3 4 5`
+   * y no se movía nunca, así que al ir a la 5 el botón activo quedaba en el
+   * borde y no había forma de avanzar salvo con las flechas.
+   *
+   * Regla MEDIDA en la app real navegando por sus 328 páginas (y confirmada con
+   * 11 páginas al subir el tamaño de página, para descartar que dependiera del
+   * total):
+   *
+   *   pág ≤ 4          → `1 2 3 4 5 … 328`
+   *   pág ≥ última-3   → `1 … 324 325 326 327 328`
+   *   en medio         → `1 … 4 5 6 … 328`   (pág 5 de 328, y pág 5 de 11)
+   *
+   * El caso de MENOS de 6 páginas no se pudo observar (su tabla nunca baja de
+   * 11 y no hay tamaño de página que lo consiga). Con la fórmula tal cual, un
+   * total de 6 pintaría `1 … 2 3 4 5 6`: unos puntos suspensivos entre dos
+   * números consecutivos. Eso se suprime a propósito —única desviación de la
+   * fórmula, y anotada— porque el seed de la réplica sí tiene 6 páginas y la
+   * alternativa es enseñar algo que parece un fallo.
+   */
+  protected readonly pageItems = computed<(number | 'gap')[]>(() => {
+    const last = this.pageCount();
+    const cur = this.page();
+    if (last <= 5) return Array.from({ length: last }, (_, i) => i + 1);
+
+    const nums =
+      cur <= 4
+        ? [1, 2, 3, 4, 5]
+        : cur >= last - 3
+          ? [last - 4, last - 3, last - 2, last - 1]
+          : [cur - 1, cur, cur + 1];
+
+    const out: (number | 'gap')[] = [];
+    if (nums[0] !== 1) out.push(1);
+    for (const n of nums) {
+      const prev = out.at(-1);
+      if (typeof prev === 'number' && n > prev + 1) out.push('gap');
+      out.push(n);
+    }
+    const prev = out.at(-1);
+    if (typeof prev === 'number' && last > prev + 1) out.push('gap');
+    if (prev !== last) out.push(last);
+    return out;
   });
 
   protected goToPage(p: number): void {

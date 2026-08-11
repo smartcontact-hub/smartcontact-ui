@@ -56,6 +56,15 @@ Change status un desplegable de dos opciones (Pending/Resolved) más un enlace "
 Unsubscribe un único radio; y **Archive no abre panel**, va directo al modal. Detalle en
 [`projects/cuscare/README.md`](projects/cuscare/README.md).
 
+### Paginador y seed — también corregidos (s26)
+
+El pie decía **"1–10 of 60 results"** con 6 páginas frente a las **328** de la real: la
+diferencia más visible de la pantalla. El seed pasa a **3280 filas generadas** (bucle en
+tiempo de ejecución, no engordan el bundle) con la fecha retrocediendo hasta 2023, como
+en la real. Y la ventana de números **ya sigue a la página actual** (`1 … 4 5 6 … 328`);
+antes se quedaba clavada en `1 2 3 4 5`. "Rows per page" tiene ahora las cinco opciones
+del original (10/25/50/**100/300**).
+
 ### Lo que SIGUE pendiente
 
 - **El segundo paso de "+ New ticket".** Llegar al formulario exige pulsar **Save**, y
