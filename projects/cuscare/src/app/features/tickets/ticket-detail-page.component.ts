@@ -3,6 +3,7 @@ import { ActivatedRoute } from '@angular/router';
 
 import { TICKETS } from '../../data/seed';
 import { SearchCustomerModalComponent } from './search-customer-modal.component';
+import { TicketStatusModalComponent } from './ticket-status-modal.component';
 
 /** Una línea de la tabla de suscripciones del detalle. */
 interface Subscription {
@@ -38,7 +39,7 @@ interface HistoryEvent {
 @Component({
   selector: 'app-ticket-detail-page',
   standalone: true,
-  imports: [SearchCustomerModalComponent],
+  imports: [SearchCustomerModalComponent, TicketStatusModalComponent],
   templateUrl: './ticket-detail-page.component.html',
   styleUrl: './ticket-detail-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -62,6 +63,9 @@ export class TicketDetailPageComponent {
   protected readonly isPreTicket = this.route.snapshot.url.some((s) => s.path === 'pre-ticket');
 
   protected readonly searchCustomerOpen = signal(this.isPreTicket);
+
+  /** El pill de estado abre "Ticket Status" (10 naturalezas + 2 estados). */
+  protected readonly statusModalOpen = signal(false);
 
   protected readonly ticket = computed(
     () => TICKETS.find((t) => t.id === this.id()) ?? TICKETS[1],
