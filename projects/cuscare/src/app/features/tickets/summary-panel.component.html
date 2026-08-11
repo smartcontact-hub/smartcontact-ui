@@ -140,8 +140,9 @@
       </div>
     }
 
-    <!-- Navigation: por dónde navegó el cliente antes de suscribirse. -->
-    <button class="sum__sech" type="button" (click)="toggle('nav')" [attr.aria-expanded]="isOpen('nav')">
+    <!-- Navigation: por dónde navegó el cliente antes de suscribirse. Es la
+         sección por la que entra el botón "Nav" de la tabla. -->
+    <button #navSection class="sum__sech" type="button" (click)="toggle('nav')" [attr.aria-expanded]="isOpen('nav')">
       <span class="sum__ok" aria-hidden="true">✓</span>
       <span class="sum__sectitle">Navigation<small>Up to date</small></span>
       <span class="sum__caret" aria-hidden="true">{{ isOpen('nav') ? '⌃' : '⌄' }}</span>

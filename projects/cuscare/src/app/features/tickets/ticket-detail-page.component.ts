@@ -161,7 +161,11 @@ export class TicketDetailPageComponent {
    */
   protected readonly summaryFor = signal<string | null>(null);
 
-  protected openSummary(product: string): void {
+  /** Por qué botón se entró: "Nav" lo abre por la sección Navigation. */
+  protected readonly summaryFocus = signal<'summary' | 'nav'>('summary');
+
+  protected openSummary(product: string, focus: 'summary' | 'nav' = 'summary'): void {
+    this.summaryFocus.set(focus);
     this.summaryFor.set(product);
   }
 
