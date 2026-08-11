@@ -94,8 +94,10 @@ export class TicketsPageComponent {
     }, 380);
   }
 
-  /** Las 18 columnas con su ancho MEDIDO y su tipo de filtro REAL. */
-  /** Catálogo COMPLETO. Lo que se pinta es `cols`, que quita las ocultas. */
+  /**
+   * Catálogo COMPLETO: las 18 columnas con su ancho MEDIDO y su tipo de filtro
+   * REAL. Lo que la tabla pinta es `cols`, que aplica orden y visibilidad.
+   */
   private readonly allCols: readonly Col[] = [
     { key: 'id', header: 'ID', width: '80px', filter: 'popover' },
     { key: 'status', header: 'Status', width: '120px', filter: 'multiselect' },
@@ -179,19 +181,41 @@ export class TicketsPageComponent {
     this.selectedIds.set(new Set());
   }
 
-  /* ── Columnas visibles ("Manage columns") ───────────────────────────────── */
+  /* ── Columnas: visibilidad y ORDEN ("Manage columns") ────────────────────
+   * El orden se guarda como lista de rótulos, no reordenando `allCols`: así el
+   * catálogo original queda intacto y "Reset to default" es volver a null. */
   private readonly hiddenColumns = signal<ReadonlySet<string>>(new Set());
+  private readonly columnOrder = signal<readonly string[] | null>(null);
   protected readonly columnsOpen = signal(false);
 
-  /** Lo que consume el panel: rótulo + si está visible. */
+  /** El catálogo en el orden vigente (el del usuario, o el de origen). */
+  private readonly orderedCols = computed<Col[]>(() => {
+    const order = this.columnOrder();
+    if (!order) return [...this.allCols];
+    const byHeader = new Map(this.allCols.map((c) => [c.header, c]));
+    const out = order.map((h) => byHeader.get(h)).filter((c): c is Col => !!c);
+    // Cinturón: si algún rótulo se cayera del orden guardado, se re-añade al
+    // final en vez de desaparecer de la tabla en silencio.
+    for (const c of this.allCols) if (!out.includes(c)) out.push(c);
+    return out;
+  });
+
+  /** Lo que consume el panel: rótulo + si está visible, ya en orden. */
   protected readonly managedColumns = computed<ManagedColumn[]>(() =>
-    this.allCols.map((c) => ({ header: c.header, visible: !this.hiddenColumns().has(c.header) })),
+    this.orderedCols().map((c) => ({
+      header: c.header,
+      visible: !this.hiddenColumns().has(c.header),
+    })),
   );
 
   /** Las columnas que la tabla pinta de verdad. */
   protected readonly cols = computed(() =>
-    this.allCols.filter((c) => !this.hiddenColumns().has(c.header)),
+    this.orderedCols().filter((c) => !this.hiddenColumns().has(c.header)),
   );
+
+  protected reorderColumns(headers: string[]): void {
+    this.columnOrder.set(headers);
+  }
 
   protected toggleColumn(header: string): void {
     this.hiddenColumns.update((prev) => {
@@ -202,14 +226,16 @@ export class TicketsPageComponent {
     });
   }
 
+  /** "Reset to default": devuelve visibilidad Y orden. */
   protected resetColumns(): void {
     this.hiddenColumns.set(new Set());
+    this.columnOrder.set(null);
   }
 
   /* ── Popover de filtro ──────────────────────────────────────────────────
    * Los tres modos del original. "All" es el que viene puesto. */
   protected readonly popModes = ['All', 'New', 'Update'] as const;
-  protected readonly mode = signal<Record<string, string>>({});
+  protected readonly mode = signal<Record<string, string | undefined>>({});
 
   protected setMode(key: string, m: string): void {
     this.mode.update((prev) => ({ ...prev, [key]: m }));
@@ -229,9 +255,9 @@ export class TicketsPageComponent {
 
   /* ── Estado de los filtros ──────────────────────────────────────────────
    * Un mapa por columna. Los múltiples guardan array; el resto, string. */
-  protected readonly multi = signal<Record<string, string[]>>({});
-  protected readonly single = signal<Record<string, string | null>>({});
-  protected readonly text = signal<Record<string, string>>({});
+  protected readonly multi = signal<Record<string, string[] | undefined>>({});
+  protected readonly single = signal<Record<string, string | null | undefined>>({});
+  protected readonly text = signal<Record<string, string | undefined>>({});
 
   /** Opciones derivadas de los datos: así nunca ofrecen algo que no existe. */
   private optionsOf(key: keyof TicketRow): { label: string; value: string }[] {
