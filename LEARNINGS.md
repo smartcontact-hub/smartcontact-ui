@@ -106,6 +106,11 @@
      todas están fuera del método. Regla: la lógica pura, unitaria; el gesto de principio a
      fin, Playwright — y una capacidad de interacción NUEVA no está hecha hasta que un clic
      REAL la ejerce.
+     *Corolario (s26) — vale igual cuando EXPLORAS, no solo cuando pruebas.* Barrí una app
+     ajena buscando tooltips disparando `mouseover`/`mouseenter` sintéticos sobre cada icono:
+     **cero resultados**, y concluí que no había. Los había — 23 en una sola pantalla — y
+     aparecieron al pasar el ratón DE VERDAD. Un descubrimiento por evento sintético que sale
+     vacío no dice "no existe", dice "mi canal no lo dispara".
    - *¿esto se ve bien?* → **screenshot a viewport real**, mirando la pantalla entera.
    - *¿alguien sabrá usarlo?* → **ninguna de las dos**. Un test solo comprueba lo que ya se
      te ocurrió afirmar; nunca te dirá que algo confunde o que una capacidad es invisible.
@@ -150,9 +155,14 @@
    `docs:coherence` y `lint`: correr `verify` entero ahí es exactamente el desperdicio que este
    corolario nombra.
 
-9. **Confirma el verde LEYENDO el log o el run**, nunca el exit-code de un proceso en background
-   (puede ser espurio). *Evidencia (s11)*: confirmé el CI con `gh run view --json conclusion`,
-   no con el `EXIT=0` del watcher.
+9. **Confirma el verde LEYENDO el log o el run**, nunca un exit-code que no sea el del comando que
+   te importa. *Evidencia (s11)*: confirmé el CI con `gh run view --json conclusion`, no con el
+   `EXIT=0` del watcher.
+   *Evidencia (s26) — **el atajo que yo mismo usaba estaba roto***: cerré media sesión con
+   `npm run verify 2>&1 | tail -3; echo "VERIFY=$?"`. Ese `$?` es el del **`tail`**, no el del
+   verify, así que decía 0 con el lint en rojo; solo lo cacé porque el `✖ 1 problem` asomó en las
+   tres líneas del `tail`. Si vas a mirar un código de salida, que sea del proceso correcto
+   (`set -o pipefail`, o redirige a fichero y mira `$?` sin tubería) — y aun así, lee el log.
 
 6. **Tu test NUEVO se pone rojo → sospecha del test ANTES que del código.** Un test recién
    escrito falla casi siempre porque afirma mal, no porque el código esté roto; empezar por el
@@ -184,11 +194,24 @@
 
 ## Alcance y ediciones
 
-10. **Un item de audit/plan redactado como "solo hay que…" o "nada usa X" → verifica su
-   precondición literal contra el código antes de ejecutarlo.** *Evidencia (s11)*: 4 de 4 items
-   del `AUDIT-2026-07` eran más grandes o falsos — "nada los lee" era falso (lo leía el plumbing
-   de load/save/duplicate), y los PrimeIcons eran PrimeIcons **de verdad**, no mapeados por
-   ningún resolver como yo había hipotetizado.
+10. **Vas a declarar algo BLOQUEADO, o a deducir un dato a ojo → comprueba primero si el sistema
+    ya te lo está sirviendo.** Lo que necesitas suele venir dentro de lo que la app ya te manda;
+    aparcarlo o transcribirlo a mano es caro y, encima, sale peor. Dos evidencias de la misma
+    sesión (s26), las dos replicando CusCare:
+    - **Lo declarado imposible ya estaba en el DOM.** Di por bloqueado el contenido de los 4
+      desplegables de acciones en bloque —"abrirlos ejecuta acciones sobre tickets reales"— y lo
+      arrastré como pendiente **una sesión entera**. Resultó que los 4 paneles y sus 4 modales
+      viven en el árbol desde que carga la página, ocultos: se midieron enteros con
+      `getComputedStyle` sin pulsar nada. La suposición no costó un minuto comprobarla y nunca la
+      comprobé.
+    - **El copy estaba en su fichero de traducciones.** Estuve transcribiendo textos de
+      pantallazos hasta que una clave sin traducir asomó en su UI y delató que hay un
+      `assets/i18n/…/en.json` con **1449 claves**. Lo transcrito tenía dos fallos que el
+      diccionario destapó: un subtítulo cortado en la preposición (`"…tickets to {{name}}"`, yo
+      lo leí sin destino elegido) y una frase mía en castellano dentro de una interfaz inglesa.
+    **Acción**: antes de aparcar algo por "no se puede ver sin efectos" o de transcribir a ojo,
+    gasta una llamada en preguntar si ya está ahí — DOM oculto, fichero de i18n, hoja de estilos,
+    lista de componentes. La versión servida por el sistema es exacta; la tuya es una copia.
 
 11. **Toda edición masiva por shell lleva su verificación de outcome PEGADA en el mismo comando.**
    *Evidencia (s11)*: un `for f in $FILES` con lista multilínea **no hizo nada** (zsh no hace
@@ -262,6 +285,12 @@
     tengas accent/violet») sin leer el CSS, y --sc-text-violet sí existía. Disparador afilado:
     antes de RECOMENDAR un cambio o AFIRMAR un estado de este código, abre el fichero primero; si
     no lo has abierto, di "no lo he mirado", no lo supongas — aunque solo estés conversando.
+
+    *Absorbe la antigua regla 10 (s11) — un item de audit/plan redactado como «solo hay que…» o
+    «nada usa X» es exactamente eso, una paráfrasis: verifica su precondición literal contra el
+    código antes de ejecutarlo.* 4 de 4 items del `AUDIT-2026-07` eran más grandes o falsos —
+    «nada los lee» era falso (lo leía el plumbing de load/save/duplicate) y los PrimeIcons eran
+    PrimeIcons de verdad, no mapeados por ningún resolver.
 
     *Corolario (s25) — **la regla estaba escrita, la había afilado yo, y volví a romperla**: el
     diagnóstico de OTRO AGENTE también es una paráfrasis.* La extensión de Chrome informó de que

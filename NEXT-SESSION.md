@@ -1,8 +1,9 @@
 # NEXT-SESSION — hand-off
 
 > Estado volátil. Se SOBREESCRIBE en cada cierre. Lo durable vive en `docs/`.
-> **Sello: 2026-08-11 (s25) — Agent, rename sc-demo→sc-docs y CusCare completo, TODO
-> mergeado en `main` y desplegado. No queda ninguna rama abierta.**
+> **Sello: 2026-08-12 (s26) — CusCare deja de ser maqueta: acciones en bloque, paso 2 de
+> New ticket, panel Summary, tooltips y avisos. 90 tests e2e. Todo en `main`, sin ramas
+> abiertas.**
 
 ## ▶️ EMPIEZA AQUÍ
 
@@ -36,13 +37,25 @@ borrado permanente no lo ejecuto yo. Dato útil: `wrangler pages deployment list
 ## 🔵 CusCare — qué está hecho y qué falta
 
 `projects/cuscare` replica `cuscare.smart-contact.com/aed`. **Las 9 vistas montadas**, con
-valores extraídos del sitio real (no estimados) y **54 tests e2e** (`npm run e2e:cuscare`,
+valores extraídos del sitio real (no estimados) y **90 tests e2e** (`npm run e2e:cuscare`,
 en CI).
 
-Funciona de verdad, no es maqueta: filtros (4 tipos distintos, con multiselect), paginación
-con su loader, selección de filas con barra dinámica, búsqueda, modal de nuevo ticket,
-gestor de columnas con reordenado por arrastre (Angular CDK) y **las 4 acciones en bloque
-con sus paneles y su modal de confirmación**.
+Funciona de verdad, no es maqueta: filtros (4 tipos, con multiselect), paginación con su
+loader y su ventana móvil sobre 3280 filas, selección de filas, búsqueda, gestor de columnas
+con arrastre (CDK), las 4 acciones en bloque con sus paneles y su modal, el paso 2 de
+"+ New ticket", el modal Ticket Status, los de baja y reembolso, el **panel Summary** (una
+vista entera), los tooltips ⓘ y los avisos de acción.
+
+### Lo que hace que ESTA réplica se sienta como la real
+
+Tres cosas que no se ven en un pantallazo y sí al usarla, todas medidas en s26:
+
+- **Los botones exigen su precondición.** Las 4 acciones en bloque sin filas marcadas y
+  Unsubscribe/Refund/Detail sin suscripción marcada están deshabilitados — en la real,
+  pulsar Refund sin marcar nada no abre NADA y parece roto.
+- **Confirmar avisa.** Toast arriba a la derecha con el texto de su diccionario.
+- **La barra inferior cambia con la pantalla**: dentro de un ticket dice "Managed ticket"
+  y se deshabilita.
 
 ### Acciones en bloque — RESUELTO (s26)
 
@@ -85,38 +98,32 @@ traducir asomando en la tabla del dashboard (`PAGES.DASHBOARD.DASHBOARD_TICKETS.
 y la errata `QEUE` en la clave de la cola. La primera es un fallo suyo; copiarlo sería
 replicar un bug, no un diseño.
 
-### Lo que SIGUE pendiente
+### Lo que SIGUE pendiente en CusCare
 
-- **Ordenación por cabecera**: no replicada.
-- **Los iconos del detalle de ticket son glifos** (📞 🗎 ⚑ …), no los SVG reales.
-- **Los disparadores de dos diálogos son SUPOSICIÓN, no medición**: "Right to be
-  forgotten" cuelga del botón Unsubscribe y el de motivo de no reembolso del botón
-  Refund. Averiguar los reales exige ejecutar acciones sobre tickets vivos.
-- ~~Nav sin comportamiento~~ **HECHO (s26)**: **Nav abre el MISMO panel Summary**, por la
-  sección Navigation. Dos botones, una sola vista (medido: el bloque `used` mide 67px
-  entrando por Summary y **1153px** entrando por Nav).
-- ~~Refund y Unsubscribe apuntan a los componentes equivocados~~ **HECHO (s26)**:
-  reapuntados a `refund-modal` y `unsubscribe-confirm-modal`, ambos medidos en la real.
-  Del de reembolsos salió un detalle que no se adivina: por cada cargo hay **DOS
-  botones, API y BNK** — las dos vías de devolución.
-- ~~Los tres botones de esa barra abren siempre~~ **HECHO (s26)**: Unsubscribe · Refund ·
-  Detail exigen suscripción marcada, como en la real (pulsar "Refund" sin marcar nada allí
-  no abre NADA — parece roto y no lo está).
-- **"Show details"** despliega un panel cuyo contenido NO se pudo observar: pulsarlo en
-  la real no cambió el texto de la página en el ticket probado. Nuestro botón alterna
-  estado y no pinta nada — deliberado, no un olvido.
-- **El pre-ticket 2051827 no se puede archivar** (Rafa lo pidió, 2026-08-11): filtrando
-  por su ID exacto en la lista da "No Data Found", y su propia pantalla no tiene ni
-  archivar ni borrar (sus iconos son editar · guardar · 3 banderas · x · buscar · notas
-  · adjunto). Es un borrador que nunca entró en la lista; el total sigue en 3280.
+- **Auditar el copy del panel Summary y del detalle** contra `PAGES.TICKET.SUMMARY` y
+  `TICKET` del diccionario. Es donde más texto inventé antes de saber que ese fichero
+  existía, así que es lo primero de mañana.
+- **"Show details"**: despliega un panel cuyo contenido no se pudo observar (pulsarlo en la
+  real no cambió nada en el ticket probado). Nuestro botón alterna estado y no pinta nada.
+- **El disparador real de "Right to be forgotten" y del diálogo de motivo de no reembolso**:
+  cuelgan de celdas de la barra de metadatos como SUPOSICIÓN anotada en el código.
+- **Ordenación por cabecera en Tickets** (la del dashboard sí ordena).
+- **Los iconos del detalle siguen siendo glifos** (📞 🗎 ⚑ …), no los SVG reales.
+- El diccionario describe funcionalidad que esta sesión NO ve y que quizá sea de otro rol:
+  acción en bloque **"Quick response"**, estados **On-hold**, substatus con comentario, y
+  entradas de nav **"Statistics"** y **"Data Analyzer"**.
 
 ### ⚠️ Abrir el detalle de un ticket CAMBIA su estado
 
-Comprobado a mi costa el 2026-08-11: al navegar a `…/tickets/ticket/336458` en la app
-real, el ticket pasó de `new` a **OPEN** y quedó anotado en su historial —
-«22:17 · Rafael Areses · Status changed to OPEN»— sin pulsar nada. **Ver ES actuar** en
-esta pantalla. Si hace falta volver a medir ahí, usar un ticket que YA esté abierto, o
-pedírselo a Rafa.
+Comprobado a mi costa el 2026-08-11: al navegar a `…/tickets/ticket/336458` en la app real,
+el ticket pasó de `new` a **OPEN** *y quedó asignado a Rafa* —«22:17 · Rafael Areses ·
+Status changed to OPEN», y el dashboard marcó "My assigned = 1"— sin pulsar nada. **Ver ES
+actuar** en esa pantalla. Para medir dentro de una ficha, usar una que YA esté `open` o
+`resolved` (comprobado: 2050567 no deja rastro), o pedírselo a Rafa.
+
+El pre-ticket **2051827** que creó Rafa probando **no se puede archivar**: filtrando por su
+ID la lista da "No Data Found" y su pantalla no tiene archivar ni borrar. Es un borrador que
+nunca entró en la lista; el total sigue en 3280.
 
 ### Terreno de esta app (lo que más sorprende)
 
@@ -135,10 +142,6 @@ test que falla si alguien lo añade.
   debe parecerse al ORIGINAL, no a nuestro DS (DD-35). Se validó las dos veces que el guard
   sigue cazando la infracción fuera de las réplicas. **Rafa lo dio por bueno**; si algún día se
   revisa, el criterio alternativo es tokenizarlas y perder fidelidad.
-- ~~Archivar a `docs/history/` los 4 docs de construcción cerrados~~ **HECHO (s25)**:
-  `convergence-manifesto`, `component-port-plan`, `foundations-rationale` y
-  `plan-convergencia-flujos` viven ya en `docs/history/`, con sus filas del índice marcadas
-  *construcción CERRADA* y los ~25 enlaces reapuntados.
 - **Publicar el Code Connect**: requiere plan Figma Organization/Enterprise +
   `FIGMA_ACCESS_TOKEN` + que exista `Show Icon` en el master de `card`.
 - **B5b · prosa i18n del constructor** — `conditionToDesc()` compone gramática española;
