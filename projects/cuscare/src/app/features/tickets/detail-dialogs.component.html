@@ -1,0 +1,135 @@
+@switch (dialog()) {
+  <!-- ── 1. Auto-asignación ────────────────────────────────────────────────
+       Sale SOLO al abrir un ticket sin asignar. Botones NATIVOS del navegador,
+       sin estilar: así está en la real. -->
+  @case ('selfAssign') {
+    <div class="dlg" (click)="onBackdrop($event)">
+      <div class="dlg__box dlg__box--plain" role="dialog" aria-modal="true">
+        <h4 class="dlg__bigtitle">Would you like to assign this Ticket to yourself?</h4>
+        <div class="dlg__plainbody">
+          <button class="nativebtn" type="button" (click)="closed.emit()">Yes</button>
+          <button class="nativebtn" type="button" (click)="closed.emit()">No</button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- ── 2. Borrado de nota ───────────────────────────────────────────────
+       Misma caja y mismos botones sin estilar que el anterior. -->
+  @case ('deleteNote') {
+    <div class="dlg" (click)="onBackdrop($event)">
+      <div class="dlg__box dlg__box--plain" role="dialog" aria-modal="true">
+        <h4 class="dlg__bigtitle">Are you sure you want to delete this note?</h4>
+        <div class="dlg__plainbody">
+          <button class="nativebtn" type="button" (click)="closed.emit()">Accept</button>
+          <button class="nativebtn" type="button" (click)="closed.emit()">Cancel</button>
+        </div>
+      </div>
+    </div>
+  }
+
+  <!-- ── 3. Ficha del CRM ─────────────────────────────────────────────────
+       Caja blanca SIN borde (la única), con ocho campos. -->
+  @case ('crm') {
+    <div class="dlg" (click)="onBackdrop($event)">
+      <div class="dlg__box dlg__box--crm" role="dialog" aria-modal="true" aria-label="Cases">
+        <header class="dlg__head">
+          <h5 class="dlg__title">Cases</h5>
+        </header>
+        <dl class="crm">
+          @for (f of crmFields; track f) {
+            <dt class="crm__k">{{ f }}</dt>
+            <dd class="crm__v">—</dd>
+          }
+        </dl>
+        <footer class="dlg__foot">
+          <button class="dlgbtn dlgbtn--ghost" type="button" (click)="closed.emit()">Close</button>
+        </footer>
+      </div>
+    </div>
+  }
+
+  <!-- ── 4. Derecho al olvido (RGPD) ──────────────────────────────────────
+       El diálogo más ancho de la app (1298.8px) y el más serio: borra al
+       cliente Y el historial del ticket. La errata "unsuscribed" es del
+       original y se deja. -->
+  @case ('forgotten') {
+    <div class="dlg" (click)="onBackdrop($event)">
+      <div
+        class="dlg__box dlg__box--forgotten"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Right to be forgotten"
+      >
+        <header class="dlg__head dlg__head--muted">
+          <h5 class="dlg__title dlg__title--muted">Right to be forgotten</h5>
+        </header>
+        <div class="forgotten">
+          <p class="forgotten__warn">
+            If you continue with the request, all customer-related information will be deleted, as
+            well as the ticket history. In addition, all products and services of the selected
+            companies will be unsuscribed.
+          </p>
+          <div class="forgotten__row">
+            <label class="forgotten__field">
+              <span>Date of order</span>
+              <input type="text" disabled />
+            </label>
+            <label class="forgotten__field">
+              <span>Msisdn</span>
+              <input type="text" disabled />
+            </label>
+            <label class="forgotten__field">
+              <span>Company</span>
+              <select disabled>
+                <option>Select company</option>
+              </select>
+            </label>
+          </div>
+        </div>
+        <footer class="dlg__foot">
+          <button class="dlgbtn dlgbtn--cancel" type="button" (click)="closed.emit()">Cancel</button>
+          <button class="dlgbtn dlgbtn--primary" type="button" (click)="closed.emit()">
+            Request
+          </button>
+        </footer>
+      </div>
+    </div>
+  }
+
+  <!-- ── 5. Motivo de no reembolso ────────────────────────────────────────
+       Tres razones en radios; la tercera es un párrafo entero. -->
+  @case ('noRefund') {
+    <div class="dlg" (click)="onBackdrop($event)">
+      <div
+        class="dlg__box dlg__box--refund"
+        role="dialog"
+        aria-modal="true"
+        aria-label="Please confirm the reason why no charges have been refunded to the customer."
+      >
+        <header class="dlg__head">
+          <h5 class="dlg__title dlg__title--wrap">
+            Please confirm the reason why no charges have been refunded to the customer.
+          </h5>
+        </header>
+        <div class="refund">
+          @for (r of refundReasons; track r) {
+            <label class="refund__opt">
+              <input
+                type="radio"
+                name="cc-refund-reason"
+                [checked]="refundReason() === r"
+                (change)="refundReason.set(r)"
+              />
+              <span>{{ r }}</span>
+            </label>
+          }
+        </div>
+        <footer class="dlg__foot">
+          <button class="dlgbtn dlgbtn--ghost" type="button" (click)="closed.emit()">Close</button>
+          <button class="dlgbtn dlgbtn--primary" type="button" (click)="closed.emit()">Save</button>
+        </footer>
+      </div>
+    </div>
+  }
+}

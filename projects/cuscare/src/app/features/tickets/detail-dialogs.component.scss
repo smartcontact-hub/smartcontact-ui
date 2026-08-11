@@ -1,0 +1,213 @@
+/* Medidos en la app real forzando su `display` desde consola (override de CSS
+   en mi sesión: sin clics, sin peticiones, sin tocar la lógica), sobre un ticket
+   que YA estaba abierto. */
+
+.dlg {
+  position: fixed;
+  inset: 0;
+  z-index: 1100;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  /* Estos cinco NO oscurecen el fondo (medido: overlay transparente), a
+     diferencia del de acciones en bloque y el de cliente. */
+  background: transparent;
+  overflow-y: auto;
+}
+
+.dlg__box {
+  font-family: var(--cc-font-head);
+  font-size: 11.68px;
+  color: #212529;
+}
+
+/* ── Familia 1: los SIN ESTILAR ─────────────────────────────────────────── */
+/* "assign to yourself" y "delete note" son pantallas a medio hacer: caja
+   blanca correcta pero botones nativos del navegador. Se replica el defecto
+   porque es lo que ve el agente. */
+.dlg__box--plain {
+  width: 500px;
+  padding: 0 25.0974px;
+  border: 1px solid rgba(0, 0, 0, 0.176);
+  border-radius: 12.1618px;
+  background: #ffffff;
+  box-shadow: 0 6px 24px rgba(31, 35, 41, 0.14);
+}
+
+.dlg__bigtitle {
+  margin: 0;
+  padding: 11.68px;
+  font-size: 23.36px;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+.dlg__plainbody {
+  display: flex;
+  gap: 12px;
+  padding: 26.28px;
+}
+
+.nativebtn {
+  min-width: 53.6px;
+  height: 31.7px;
+  padding: 1px 6px;
+  border: 2px outset #000000;
+  border-radius: 5px;
+  background: #efefef;
+  color: #000000;
+  font-family: inherit;
+  font-size: 11.68px;
+  cursor: pointer;
+}
+
+/* ── Familia 2: los estilados como el resto de la app ───────────────────── */
+.dlg__box--crm {
+  width: 500px;
+  padding: 29.6526px;
+  /* La única caja de la app SIN borde. */
+  border-radius: 12.1618px;
+  background: #ffffff;
+  box-shadow: 0 6px 24px rgba(31, 35, 41, 0.14);
+}
+
+.dlg__box--refund {
+  width: 500px;
+  padding: 23.579px 13.6948px 0 23.579px;
+  border: 1px solid rgba(0, 0, 0, 0.176);
+  border-radius: 12.1618px;
+  background: #f4f6fc;
+}
+
+.dlg__box--forgotten {
+  width: 1298.8px;
+  max-width: calc(100vw - 32px);
+  padding: 0 22.8198px;
+  border: 1px solid rgba(0, 0, 0, 0.176);
+  border-radius: 12.1618px;
+  background: #f4f6fc;
+}
+
+.dlg__head {
+  padding: 11.68px 0;
+}
+
+.dlg__head--muted {
+  height: 27.7px;
+  padding: 9.2126px 0 0;
+}
+
+.dlg__title {
+  margin: 0;
+  font-size: 14.6px;
+  font-weight: 500;
+}
+
+/* El de reembolso lleva el título a 17.52 y ocupa dos líneas. */
+.dlg__title--wrap {
+  font-size: 17.52px;
+  line-height: 1.2;
+}
+
+.dlg__title--muted {
+  color: #afafaf;
+}
+
+/* ── Ficha del CRM ──────────────────────────────────────────────────────── */
+.crm {
+  display: grid;
+  grid-template-columns: auto 1fr;
+  gap: 6px 16px;
+  margin: 0;
+}
+
+.crm__k {
+  color: #8d939d;
+}
+
+.crm__v {
+  margin: 0;
+}
+
+/* ── Derecho al olvido ──────────────────────────────────────────────────── */
+.forgotten {
+  padding: 23.579px 0 38.179px;
+}
+
+.forgotten__warn {
+  margin: 0 0 16px;
+  max-width: 900px;
+}
+
+.forgotten__row {
+  display: flex;
+  gap: 16px;
+}
+
+.forgotten__field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  min-width: 200px;
+}
+
+.forgotten__field input,
+.forgotten__field select {
+  height: 27.4px;
+  padding: 0 8px;
+  border: 0.5px solid #d2d6e0;
+  border-radius: 6.8474px;
+  background: #ffffff;
+  font-family: inherit;
+  font-size: 11.68px;
+}
+
+/* ── Motivos de no reembolso ────────────────────────────────────────────── */
+.refund {
+  padding: 11.68px;
+}
+
+.refund__opt {
+  display: flex;
+  align-items: flex-start;
+  gap: 8px;
+  margin-bottom: 10px;
+  cursor: pointer;
+}
+
+/* ── Pies ───────────────────────────────────────────────────────────────── */
+.dlg__foot {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 8.76px;
+}
+
+.dlgbtn {
+  height: 28.3px;
+  padding: 4.38px 8.76px;
+  border-radius: 9.125px;
+  font-family: inherit;
+  font-size: 11.68px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.dlgbtn--ghost {
+  height: 27.3px;
+  border: 0.5px solid #d2d6e0;
+  background: transparent;
+  color: #212529;
+}
+
+.dlgbtn--cancel {
+  border: 1px solid #8d939d;
+  background: transparent;
+  color: #8d939d;
+}
+
+.dlgbtn--primary {
+  border: 1px solid #11131a;
+  background: #233155;
+  color: #ffffff;
+}
