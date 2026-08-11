@@ -1,0 +1,221 @@
+/* Métrica MEDIDA en la app real (viewport 1460×792):
+     mat-select 238×35 · gap 11 entre ellos · input 198×27 · botón 36×27
+   Los desplegables del original son de Angular Material; aquí van como <select>
+   nativo estilado igual — funciona, y evita arrastrar Material solo por esto. */
+
+:host {
+  display: block;
+}
+
+.search {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 120px;
+}
+
+.search__row {
+  display: flex;
+  align-items: center;
+  gap: 11px;
+}
+
+.field {
+  width: 238px;
+  height: 35px;
+  padding: 0 12px;
+  border: 1px solid #d7dbe3;
+  border-radius: 6px;
+  background: #ffffff;
+  font-family: var(--cc-font);
+  font-size: 11.68px;
+  color: var(--cc-text-body);
+  cursor: pointer;
+}
+
+/* Hueco mayor antes del buscador (medido: 645+238=883 → input en 922). */
+.search__input {
+  display: inline-flex;
+  align-items: center;
+  margin-left: 28px;
+}
+
+.search__ph {
+  width: 198px;
+  height: 27px;
+  padding: 0 12px;
+  border: 1px solid #d7dbe3;
+  border-right: 0;
+  border-radius: 6px 0 0 6px;
+  background: #ffffff;
+  font-family: var(--cc-font);
+  font-size: 11.68px;
+  color: var(--cc-text-body);
+}
+
+.search__ph::placeholder {
+  color: #9aa1ac;
+}
+
+.search__btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 36px;
+  height: 27px;
+  border: 1px solid #d7dbe3;
+  border-radius: 0 6px 6px 0;
+  background: #ffffff;
+  cursor: pointer;
+}
+
+.search__btn:disabled {
+  opacity: 0.45;
+  cursor: default;
+}
+
+/* ── Ilustración (estado inicial) ──────────────────────────────────────── */
+.search__art {
+  margin-top: 60px;
+  line-height: 0;
+  max-width: 100%;
+}
+
+.search__art img {
+  max-width: 100%;
+  height: auto;
+}
+
+/* ── Cargando: mismo spinner que la tabla de Tickets ───────────────────── */
+.search__loading {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+  margin-top: 120px;
+}
+
+.spinner {
+  width: 23.36px;
+  height: 23.36px;
+  border: 2.5px solid #0d6efd;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: cc-spin 0.75s linear infinite;
+}
+
+@keyframes cc-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .spinner {
+    animation-duration: 2.4s;
+  }
+}
+
+.search__msg {
+  margin: 0;
+  font-size: 13px;
+  color: #4f5663;
+}
+
+/* ── Sin resultados ────────────────────────────────────────────────────── */
+.search__empty {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 8px;
+  margin-top: 96px;
+  text-align: center;
+}
+
+.search__emptytitle {
+  margin: 0;
+  font-family: var(--cc-font-head);
+  font-size: 15px;
+  font-weight: 600;
+  color: var(--cc-text);
+}
+
+.search__emptymsg {
+  margin: 0 0 6px;
+  font-size: 11.68px;
+  color: var(--cc-text-body);
+}
+
+/* ── Resultados ────────────────────────────────────────────────────────── */
+.search__results {
+  width: 100%;
+  margin-top: 34px;
+}
+
+.search__resultshead {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-bottom: 14px;
+}
+
+.resulttable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+/* Mismo chrome que la tabla de Tickets: es la misma app. */
+.resulttable th {
+  height: 41.5px;
+  padding: 12px 8px;
+  background: var(--cc-thead);
+  font-family: var(--cc-font-head);
+  font-size: 12px;
+  font-weight: 600;
+  color: var(--cc-text);
+  text-align: left;
+  white-space: nowrap;
+}
+
+.resulttable td {
+  height: 47.5px;
+  padding: 0 8px;
+  border-bottom: 1px solid var(--cc-line);
+  font-size: 11.68px;
+  color: var(--cc-text-body);
+  white-space: nowrap;
+}
+
+.cell-id {
+  color: var(--cc-text-body);
+  text-decoration: none;
+}
+
+.cell-id:hover {
+  text-decoration: underline;
+}
+
+.cell-country {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.flag {
+  font-size: 12px;
+  line-height: 1;
+}
+
+.btn {
+  display: inline-flex;
+  align-items: center;
+  height: 30px;
+  padding: 0 13px;
+  border-radius: 6px;
+  border: 1px solid #d7dbe3;
+  background: #ffffff;
+  color: var(--cc-text);
+  font-family: var(--cc-font-head);
+  font-size: 11.68px;
+  cursor: pointer;
+}

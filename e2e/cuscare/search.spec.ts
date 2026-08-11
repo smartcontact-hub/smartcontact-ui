@@ -1,0 +1,106 @@
+import { expect, test, type Page } from '@playwright/test';
+
+/**
+ * CusCare · Search (`/customer`) FUNCIONANDO.
+ *
+ * Existe por un fallo concreto: la pantalla se veía perfecta pero pulsar el
+ * botón no hacía NADA. Estaba maquetada, no implementada — y ni el AOT, ni el
+ * lint, ni un pantallazo lo habrían dicho. Solo conducirla lo destapa.
+ */
+
+const SEARCH = '/#/private/cuscare/customer';
+
+async function goto(page: Page) {
+  await page.goto(SEARCH);
+  await expect(page.getByLabel('Término de búsqueda')).toBeVisible();
+}
+
+test('arranca con la ilustración y sin resultados', async ({ page }) => {
+  await goto(page);
+  await expect(page.locator('.search__art img')).toBeVisible();
+  await expect(page.locator('.search__results')).toHaveCount(0);
+});
+
+test('el botón está deshabilitado hasta que hay término', async ({ page }) => {
+  await goto(page);
+  const btn = page.getByRole('button', { name: 'Buscar' });
+  await expect(btn).toBeDisabled();
+
+  await page.getByLabel('Término de búsqueda').fill('34600');
+  await expect(btn).toBeEnabled();
+});
+
+test('buscar devuelve resultados y se puede abrir uno', async ({ page }) => {
+  await goto(page);
+
+  await page.getByLabel('Término de búsqueda').fill('34600');
+  await page.getByRole('button', { name: 'Buscar' }).click();
+
+  // Pasa por el estado de carga, como el original.
+  await expect(page.locator('.search__loading')).toBeVisible();
+  await expect(page.locator('.search__results')).toBeVisible({ timeout: 5000 });
+
+  const rows = page.locator('.resulttable tbody tr');
+  expect(await rows.count()).toBeGreaterThan(0);
+
+  // Un resultado lleva a su ticket.
+  await rows.first().locator('a.cell-id').click();
+  await expect(page).toHaveURL(/tickets\/ticket\//);
+});
+
+test('un término sin coincidencias muestra el vacío explícito, no una pantalla muda', async ({
+  page,
+}) => {
+  await goto(page);
+
+  await page.getByLabel('Término de búsqueda').fill('zzzz-no-existe');
+  await page.getByRole('button', { name: 'Buscar' }).click();
+
+  await expect(page.getByText('No results')).toBeVisible({ timeout: 5000 });
+  await expect(page.locator('.resulttable')).toHaveCount(0);
+});
+
+test('el criterio cambia lo que se busca', async ({ page }) => {
+  await goto(page);
+
+  // Por Msisdn hay resultados para "34600"…
+  await page.getByLabel('Término de búsqueda').fill('34600');
+  await page.getByRole('button', { name: 'Buscar' }).click();
+  await expect(page.locator('.search__results')).toBeVisible({ timeout: 5000 });
+
+  // …y por Email, ese mismo término no da nada.
+  await page.getByLabel('Criterio de búsqueda').selectOption('Email');
+  await page.getByRole('button', { name: 'Buscar' }).click();
+  await expect(page.getByText('No results')).toBeVisible({ timeout: 5000 });
+});
+
+test('el filtro de país acota los resultados', async ({ page }) => {
+  await goto(page);
+
+  await page.getByLabel('Término de búsqueda').fill('34600');
+  await page.getByRole('button', { name: 'Buscar' }).click();
+  await expect(page.locator('.search__results')).toBeVisible({ timeout: 5000 });
+  expect(await page.locator('.resulttable tbody tr').count()).toBeGreaterThan(0);
+
+  // Los que casan con "34600" son todos de España, así que acotar a Slovakia
+  // debe dejarlo en cero. Se espera al estado FINAL, no a un locator que ya
+  // estaba visible: mi primera versión contaba los resultados VIEJOS porque no
+  // esperaba a que terminase la segunda búsqueda.
+  await page.getByLabel('País').selectOption('Slovakia');
+  await page.getByRole('button', { name: 'Buscar' }).click();
+
+  await expect(page.getByText('No results')).toBeVisible({ timeout: 5000 });
+  await expect(page.locator('.resulttable')).toHaveCount(0);
+});
+
+test('"Limpiar búsqueda" devuelve a la ilustración', async ({ page }) => {
+  await goto(page);
+
+  await page.getByLabel('Término de búsqueda').fill('34600');
+  await page.getByRole('button', { name: 'Buscar' }).click();
+  await expect(page.locator('.search__results')).toBeVisible({ timeout: 5000 });
+
+  await page.getByRole('button', { name: 'Limpiar búsqueda' }).click();
+  await expect(page.locator('.search__art img')).toBeVisible();
+  await expect(page.locator('.search__results')).toHaveCount(0);
+});
