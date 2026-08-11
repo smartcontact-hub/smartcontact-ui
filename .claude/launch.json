@@ -2,9 +2,9 @@
   "version": "0.0.1",
   "configurations": [
     {
-      "name": "sc-demo",
+      "name": "sc-docs",
       "runtimeExecutable": "npx",
-      "runtimeArgs": ["--yes", "http-server", "dist/sc-demo", "-p", "4200", "-c-1", "--silent"],
+      "runtimeArgs": ["--yes", "http-server", "dist/sc-docs", "-p", "4200", "-c-1", "--silent"],
       "port": 4200
     },
     {
@@ -14,9 +14,9 @@
       "port": 4402
     },
     {
-      "name": "sc-demo-clean",
+      "name": "sc-docs-clean",
       "runtimeExecutable": "npx",
-      "runtimeArgs": ["--yes", "http-server", "dist/sc-demo", "-p", "4201", "-c-1", "--silent"],
+      "runtimeArgs": ["--yes", "http-server", "dist/sc-docs", "-p", "4201", "-c-1", "--silent"],
       "port": 4201
     },
     {
@@ -44,9 +44,9 @@
       "port": 4408
     },
     {
-      "name": "sc-demo-dev",
+      "name": "sc-docs-dev",
       "runtimeExecutable": "npx",
-      "runtimeArgs": ["ng", "serve", "sc-demo", "--port", "4280"],
+      "runtimeArgs": ["ng", "serve", "sc-docs", "--port", "4280"],
       "port": 4280
     },
     {
