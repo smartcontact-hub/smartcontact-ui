@@ -57,6 +57,22 @@ export class AppShellComponent {
     return (itemPath: string) => path === itemPath;
   });
 
+  /**
+   * URL SIN normalizar: hace falta para saber si estamos dentro de un ticket,
+   * que es justo lo que `normalize` borra para el resaltado del nav.
+   */
+  private readonly rawPath = toSignal(
+    this.router.events.pipe(
+      filter((e): e is NavigationEnd => e instanceof NavigationEnd),
+      map((e) => e.urlAfterRedirects),
+      startWith(this.router.url),
+    ),
+    { initialValue: this.router.url },
+  );
+
+  /** Dentro del detalle de un ticket, el pill pasa a "Managed ticket". */
+  protected readonly managingTicket = computed(() => /\/tickets\/ticket\//.test(this.rawPath()));
+
   private normalize(url: string): string {
     const clean = url.split('?')[0].split('#').pop() ?? url;
     // El detalle de un ticket resalta "Tickets" en el nav.
