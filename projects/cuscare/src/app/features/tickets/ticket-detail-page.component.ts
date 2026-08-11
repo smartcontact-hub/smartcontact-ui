@@ -4,6 +4,7 @@ import { ActivatedRoute } from '@angular/router';
 import { TICKETS } from '../../data/seed';
 import { DetailDialog, DetailDialogsComponent } from './detail-dialogs.component';
 import { SearchCustomerModalComponent } from './search-customer-modal.component';
+import { SummaryPanelComponent } from './summary-panel.component';
 import { TicketStatusModalComponent } from './ticket-status-modal.component';
 
 /** Una línea de la tabla de suscripciones del detalle. */
@@ -40,7 +41,12 @@ interface HistoryEvent {
 @Component({
   selector: 'app-ticket-detail-page',
   standalone: true,
-  imports: [SearchCustomerModalComponent, TicketStatusModalComponent, DetailDialogsComponent],
+  imports: [
+    SearchCustomerModalComponent,
+    TicketStatusModalComponent,
+    DetailDialogsComponent,
+    SummaryPanelComponent,
+  ],
   templateUrl: './ticket-detail-page.component.html',
   styleUrl: './ticket-detail-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -88,6 +94,17 @@ export class TicketDetailPageComponent {
 
   protected openDialog(d: DetailDialog): void {
     this.dialog.set(d);
+  }
+
+  /**
+   * El botón "Summary" de cada suscripción. No abre un modal: abre una VISTA
+   * entera a pantalla completa, la superficie más densa de la app (y la última
+   * grande que quedaba sin replicar).
+   */
+  protected readonly summaryFor = signal<string | null>(null);
+
+  protected openSummary(product: string): void {
+    this.summaryFor.set(product);
   }
 
   protected readonly ticket = computed(

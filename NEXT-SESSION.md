@@ -80,9 +80,14 @@ modal **"Search customer"** encima. Replicado, con su ruta `…/ticket/:id/pre-t
 - **Los disparadores de dos diálogos son SUPOSICIÓN, no medición**: "Right to be
   forgotten" cuelga del botón Unsubscribe y el de motivo de no reembolso del botón
   Refund. Averiguar los reales exige ejecutar acciones sobre tickets vivos.
-- **Summary y Nav** (tabla de suscripciones) siguen sin hacer nada: se midió su caja
-  (Nav 67.9×30 radio 3.504 · Summary 70.5×26 radio 0, los dos `#233155`) pero no qué
-  abren.
+- **Nav** (columna Usage de la tabla de suscripciones) sigue sin hacer nada: caja medida
+  (67.9×30, radio 3.504, `#233155`), comportamiento no. **Summary ya está** — abría una
+  vista entera, replicada en `summary-panel.component.ts`.
+- **Refund y Unsubscribe apuntan a los componentes equivocados en la réplica.** La real
+  usa `app-new-modal-refund` (carga los pagos: "Loading payments…") y
+  `app-modal-confirmation-unsubscribe` (tabla Product · Keyword · Status · Price ·
+  Expired, diálogo de 855.5). Los nuestros abren "Right to be forgotten" y el de motivo
+  de no reembolso — hay que reapuntarlos.
 - **"Show details"** despliega un panel cuyo contenido NO se pudo observar: pulsarlo en
   la real no cambió el texto de la página en el ticket probado. Nuestro botón alterna
   estado y no pinta nada — deliberado, no un olvido.
