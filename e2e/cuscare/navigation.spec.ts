@@ -326,6 +326,9 @@ test.describe('panel Summary de una suscripción', () => {
 test.describe('destinos reales de Unsubscribe y Refund', () => {
   test('Unsubscribe abre la confirmación con sus 5 columnas', async ({ page }) => {
     await page.goto('/#/private/cuscare/tickets/ticket/2050567');
+    // Sin selección no hacen nada, igual que en la real.
+    await expect(page.getByRole('button', { name: 'Unsubscribe', exact: true })).toBeDisabled();
+    await page.getByLabel('Seleccionar playweez').check();
     await page.getByRole('button', { name: 'Unsubscribe', exact: true }).click();
 
     const modal = page.getByRole('dialog', { name: 'Unsubscribe' });
@@ -342,6 +345,7 @@ test.describe('destinos reales de Unsubscribe y Refund', () => {
 
   test('Refund abre el modal de reembolsos, con API y BNK por cargo', async ({ page }) => {
     await page.goto('/#/private/cuscare/tickets/ticket/2050567');
+    await page.getByLabel('Seleccionar playweez').check();
     await page.getByRole('button', { name: 'Refund', exact: true }).click();
 
     const modal = page.getByRole('dialog', { name: 'Refunds' });
@@ -357,4 +361,27 @@ test.describe('destinos reales de Unsubscribe y Refund', () => {
     await page.getByRole('button', { name: /Reembolsos de/ }).click();
     await expect(page.getByRole('dialog', { name: 'Refunds' })).toBeVisible();
   });
+});
+
+/**
+ * La barra de la tabla de suscripciones sigue a la selección.
+ *
+ * Se descubrió pulsando "Refund" en la app real sin marcar nada: no abría
+ * absolutamente nada, y parecía un botón roto. No lo está — es que los tres
+ * actúan sobre las filas marcadas.
+ */
+test('Unsubscribe · Refund · Detail exigen una suscripción marcada', async ({ page }) => {
+  await page.goto('/#/private/cuscare/tickets/ticket/2050567');
+
+  for (const b of ['Unsubscribe', 'Refund', 'Detail']) {
+    await expect(page.getByRole('button', { name: b, exact: true })).toBeDisabled();
+  }
+
+  await page.getByLabel('Seleccionar todas').check();
+  for (const b of ['Unsubscribe', 'Refund', 'Detail']) {
+    await expect(page.getByRole('button', { name: b, exact: true })).toBeEnabled();
+  }
+
+  await page.getByLabel('Seleccionar todas').uncheck();
+  await expect(page.getByRole('button', { name: 'Refund', exact: true })).toBeDisabled();
 });
