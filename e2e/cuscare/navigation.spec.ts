@@ -272,3 +272,45 @@ test('el menú "+ New" del detalle trae Email · Note · SMS · Attach file', as
   const menu = page.getByRole('menu');
   await expect(menu.getByRole('menuitem')).toHaveText(['Email', 'Note', 'SMS', 'Attach file']);
 });
+
+/**
+ * "Summary" NO era un pill decorativo: en la real abre una VISTA entera de dos
+ * columnas —la superficie más densa de la app— con el servicio y su precio a la
+ * izquierda y, a la derecha, los SMS enviados, los cargos y la navegación del
+ * cliente. Salió de preguntarle a la app qué hacían Summary y Nav.
+ */
+test.describe('panel Summary de una suscripción', () => {
+  test('abre la vista con sus tres bloques y las dos tarjetas de color', async ({ page }) => {
+    await page.goto('/#/private/cuscare/tickets/ticket/2050567');
+    await page.locator('.summarypill').first().click();
+
+    const panel = page.locator('.sum');
+    await expect(panel).toBeVisible();
+    await expect(panel.locator('.sum__price')).toHaveText('4.5 €');
+    // Las dos erratas del original se replican tal cual.
+    await expect(panel.getByText('RECCURING')).toBeVisible();
+    await expect(panel.getByText('Unsubsribed').first()).toBeVisible();
+
+    await expect(panel.locator('.sum__card--charges')).toContainText('Charges');
+    await expect(panel.locator('.sum__card--refunded')).toContainText('Refunded');
+    await expect(panel.getByRole('button', { name: /MO\/MT/ })).toBeVisible();
+    await expect(panel.getByRole('button', { name: /Charges/ })).toBeVisible();
+    await expect(panel.getByRole('button', { name: /Navigation/ })).toBeVisible();
+  });
+
+  test('los bloques se pliegan y el aspa cierra la vista', async ({ page }) => {
+    await page.goto('/#/private/cuscare/tickets/ticket/2050567');
+    await page.locator('.summarypill').first().click();
+
+    const panel = page.locator('.sum');
+    await expect(panel.locator('.sum__table').first()).toBeVisible();
+    await panel.getByRole('button', { name: /MO\/MT/ }).click();
+    await expect(panel.getByRole('button', { name: /MO\/MT/ })).toHaveAttribute(
+      'aria-expanded',
+      'false',
+    );
+
+    await panel.getByRole('button', { name: 'Cerrar' }).click();
+    await expect(panel).toHaveCount(0);
+  });
+});

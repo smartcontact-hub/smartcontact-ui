@@ -1,0 +1,387 @@
+/* Valores MEDIDOS en la app real @1460×792, sobre un ticket ya `Resolved`
+   (abrirlo no deja rastro) y sin pulsar nada que escriba. */
+
+.sum {
+  position: fixed;
+  inset: 0 0 38px 90.3px; /* respeta el sidebar y la barra de estado */
+  z-index: 1200;
+  display: flex;
+  background: #ffffff;
+  font-family: var(--cc-font-head);
+  font-size: 11.68px;
+}
+
+/* ── Columna izquierda ──────────────────────────────────────────────────── */
+.sum__side {
+  flex: none;
+  width: 360px;
+  padding: 54px 0 12px;
+  background: #f4f6fc;
+  overflow-y: auto;
+}
+
+.sum__bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  height: 40px;
+  padding: 8px;
+}
+
+.sum__x,
+.sum__export {
+  border: 0;
+  background: transparent;
+  font-size: 13px;
+  color: #1b2f53;
+  cursor: pointer;
+}
+
+.sum__ticket {
+  font-weight: 500;
+  color: #1b2f53;
+}
+
+/* Los títulos de sección: 14/700 en azul marino #1b2f53, no en el gris del
+   resto de la app. */
+.sum__h2 {
+  margin: 0;
+  padding: 12px;
+  font-size: 14px;
+  font-weight: 700;
+  color: #1b2f53;
+}
+
+.sum__service {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  padding: 0 12px;
+}
+
+.sum__name {
+  font-size: 21px;
+  font-weight: 700;
+  color: #1b2f53;
+}
+
+/* El precio es el número más grande del panel y va en VERDE. */
+.sum__price {
+  font-size: 24px;
+  font-weight: 700;
+  color: #3eb584;
+}
+
+.sum__period {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 12px 8px;
+}
+
+.sum__toggle {
+  display: inline-flex;
+  border-radius: 6px;
+  overflow: hidden;
+}
+
+.sum__tog {
+  border: 0;
+  padding: 4px 8px;
+  background: transparent;
+  color: #4f5663;
+  font-family: inherit;
+  font-size: 10px;
+  letter-spacing: 0.02em;
+  cursor: pointer;
+}
+
+.sum__tog.is-on {
+  background: #233155;
+  color: #ffffff;
+  border-radius: 6px;
+}
+
+/* Tarjeta de suscripción: azul muy claro #e0e6f7. */
+.sum__subcard {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  width: 308.5px;
+  height: 64px;
+  margin: 0 12px;
+  padding: 16px 24px;
+  border-radius: 8px;
+  background: #e0e6f7;
+}
+
+.sum__subcheck {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border-radius: 3px;
+  background: #1c283d;
+  color: #ffffff;
+  font-size: 10px;
+}
+
+.sum__dots i {
+  display: inline-block;
+  width: 6px;
+  height: 6px;
+  margin-right: 3px;
+  border-radius: 50%;
+  background: #b9c2d6;
+}
+
+.sum__dots i.on {
+  background: #3eb584;
+}
+
+.sum__subcol {
+  display: flex;
+  flex-direction: column;
+}
+
+.sum__sublabel {
+  color: #6b7280;
+  font-size: 10px;
+}
+
+.sum__subdate {
+  font-weight: 600;
+  color: #1b2f53;
+}
+
+.sum__sublabel--out,
+.sum__subdate--out {
+  color: #e84343;
+}
+
+.sum__fields {
+  margin: 0;
+  padding: 0 12px;
+}
+
+.sum__fields dt {
+  margin-top: 10px;
+  color: #1b2f53;
+  font-weight: 600;
+}
+
+.sum__fields dd {
+  margin: 4px 0 0;
+}
+
+/* Los rótulos de campo vacío van en rojo cursiva en la real. */
+.sum__ph {
+  color: #e84343;
+  font-style: italic;
+  margin-right: 8px;
+}
+
+.sum__subsinfo {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding-right: 12px;
+}
+
+.sum__expand {
+  height: 20px;
+  padding: 0 8px;
+  border: 1px solid #cfd3de;
+  border-radius: 6px;
+  background: #ffffff;
+  color: #1a56b0;
+  font-family: inherit;
+  font-size: 10px;
+  cursor: pointer;
+}
+
+.sum__box {
+  margin: 8px 12px 0;
+  padding: 8px;
+  border: 1px solid #cfd3de;
+  border-radius: 6px;
+  background: #ffffff;
+  word-break: break-all;
+}
+
+.sum__boxk {
+  display: block;
+  margin-bottom: 2px;
+  color: #8d939d;
+  font-size: 10px;
+}
+
+/* ── Columna derecha ────────────────────────────────────────────────────── */
+.sum__main {
+  flex: 1;
+  min-width: 0;
+  padding: 12px 24px;
+  overflow-y: auto;
+}
+
+.sum__strip {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  height: 80px;
+}
+
+.sum__state {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  color: #4f5663;
+}
+
+.sum__state--out {
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0;
+  color: #e84343;
+}
+
+.sum__state--off i {
+  color: #e84343;
+  font-size: 14px;
+}
+
+/* Las dos tarjetas de color: 148×75, verde #3eb584 y rojo #e84343. */
+.sum__card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  width: 148px;
+  height: 75px;
+  border-radius: 8px;
+  color: #ffffff;
+}
+
+.sum__card--charges {
+  background: #3eb584;
+  margin-left: auto;
+}
+
+.sum__card--refunded {
+  background: #e84343;
+}
+
+.sum__cardk {
+  font-size: 11px;
+}
+
+.sum__cardv {
+  font-size: 18px;
+  font-weight: 700;
+}
+
+.sum__cardlink {
+  font-size: 10px;
+  text-decoration: underline;
+}
+
+/* ── Bloques desplegables ───────────────────────────────────────────────── */
+.sum__sech {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: 100%;
+  padding: 12px 0;
+  border: 0;
+  background: transparent;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 700;
+  color: #1b2f53;
+  text-align: left;
+  cursor: pointer;
+}
+
+.sum__ok {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 17px;
+  height: 17px;
+  border-radius: 50%;
+  background: #3eb584;
+  color: #ffffff;
+  font-size: 10px;
+}
+
+.sum__sectitle {
+  display: flex;
+  flex-direction: column;
+  line-height: 1.15;
+}
+
+.sum__sectitle small {
+  font-size: 10px;
+  font-weight: 400;
+  color: #8d939d;
+}
+
+.sum__caret {
+  margin-left: auto;
+  color: #8d939d;
+}
+
+/* Las tablas de dentro son Material, como las de Ajustes: cabecera 32.7px
+   peso 500 y celdas de 92.7 cuando el contenido es un SMS largo. */
+.sum__table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #ffffff;
+}
+
+.sum__table th {
+  height: 32.7px;
+  padding: 0 16px 0 7.6066px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  color: rgba(0, 0, 0, 0.87);
+  font-weight: 500;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.sum__table td {
+  padding: 5.84px 7.008px 5.84px 8.176px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.06);
+  color: rgba(0, 0, 0, 0.87);
+  vertical-align: top;
+}
+
+.sum__sms,
+.sum__url {
+  max-width: 420px;
+  word-break: break-word;
+}
+
+.sum__billing {
+  padding: 4px 0;
+}
+
+.sum__charge {
+  display: flex;
+  align-items: center;
+  gap: 24px;
+  padding: 12px;
+  border: 1px solid #e5e8f0;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.sum__chargeamt {
+  margin-left: auto;
+  font-weight: 600;
+}
+
+.sum__chargestate {
+  color: #4f5663;
+}
