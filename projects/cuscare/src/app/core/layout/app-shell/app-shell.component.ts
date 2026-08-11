@@ -3,6 +3,7 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterLink, RouterOutlet } from '@angular/router';
 import { filter, map, startWith } from 'rxjs';
 
+import { ToasterComponent } from '../../../shared/toaster.component';
 import { NAV_ITEMS, SETTINGS_ITEMS } from './nav-data';
 import { NavIconComponent } from './nav-icon.component';
 
@@ -19,7 +20,7 @@ import { NavIconComponent } from './nav-icon.component';
 @Component({
   selector: 'app-shell',
   standalone: true,
-  imports: [RouterOutlet, RouterLink, NavIconComponent],
+  imports: [RouterOutlet, RouterLink, NavIconComponent, ToasterComponent],
   templateUrl: './app-shell.component.html',
   styleUrl: './app-shell.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
