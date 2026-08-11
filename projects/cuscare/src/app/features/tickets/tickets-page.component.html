@@ -1,0 +1,113 @@
+<section class="cc-card tickets">
+  <header class="tickets__head">
+    <h1 class="cc-page-title">Tickets</h1>
+    <button class="btn btn--primary" type="button">+ New ticket</button>
+  </header>
+
+  <div class="tickets__toolbar">
+    <button class="iconbtn" type="button" aria-label="Seleccionar columnas">
+      <svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true">
+        <rect x="1.5" y="2.5" width="13" height="11" rx="1.4" />
+        <path d="M6 2.5v11M10.5 2.5v11" />
+      </svg>
+    </button>
+    <span class="tickets__sep"></span>
+    @for (action of bulkActions; track action) {
+      <button class="btn btn--ghost" type="button">{{ action }} <span class="btn__caret">▾</span></button>
+    }
+    <button class="btn btn--danger-ghost tickets__clear" type="button">
+      <span aria-hidden="true">✕</span> Delete filters
+    </button>
+  </div>
+
+  <div class="tickets__tablewrap">
+    <p-table
+      [value]="rows"
+      [scrollable]="true"
+      scrollHeight="flex"
+      dataKey="id"
+      styleClass="cc-table"
+    >
+      <ng-template pTemplate="header">
+        <tr>
+          <th class="col-select"><input type="checkbox" aria-label="Seleccionar todo" /></th>
+          @for (c of cols; track $index) {
+            <th [style.width]="c.width">
+              <div class="th__inner">
+                <span class="th__label">{{ c.header }}</span>
+                <span class="th__sort" aria-hidden="true">⇅</span>
+              </div>
+            </th>
+          }
+        </tr>
+        <tr class="filterrow">
+          <th class="col-select"></th>
+          @for (c of cols; track $index) {
+            <th [style.width]="c.width">
+              @switch (c.filter) {
+                @case ('text') {
+                  <span class="filterbox"><span class="filterbox__icon" aria-hidden="true">⌕</span>Filter</span>
+                }
+                @case ('select') {
+                  <span class="filtersel">—<span class="filtersel__caret" aria-hidden="true">▾</span></span>
+                }
+              }
+            </th>
+          }
+        </tr>
+      </ng-template>
+
+      <ng-template pTemplate="body" let-row>
+        <tr class="row" [class.row--locked]="row.locked">
+          <td class="col-select">
+            @if (row.locked) {
+              <span class="lock" aria-label="Bloqueado por otro agente">🔒</span>
+            } @else {
+              <input type="checkbox" [attr.aria-label]="'Seleccionar ticket ' + row.id" />
+            }
+          </td>
+          @for (c of cols; track $index) {
+            <td [style.width]="c.width" [class.cell--dim]="row.locked">
+              @switch (c.key) {
+                @case ('id') {
+                  <a class="cell-id" [routerLink]="['/private/cuscare/tickets/ticket', row.id]">{{ row.id }}</a>
+                }
+                @case ('country') {
+                  <span class="cell-country"><span class="flag" aria-hidden="true">{{ row.countryFlag }}</span>{{ row.country }}</span>
+                }
+                @case ('products') {
+                  <span class="chips">
+                    @for (p of row.products; track p) {
+                      <span class="chip">{{ p }}</span>
+                    }
+                  </span>
+                }
+                @default {
+                  {{ value(row, c.key) }}
+                }
+              }
+            </td>
+          }
+        </tr>
+      </ng-template>
+    </p-table>
+  </div>
+
+  <footer class="tickets__foot">
+    <span class="tickets__count">1–{{ rows.length }} of {{ total }} results</span>
+    <nav class="pager" aria-label="Paginación">
+      <button class="pager__btn" type="button" aria-label="Primera página">«</button>
+      <button class="pager__btn" type="button" aria-label="Anterior">‹</button>
+      <button class="pager__btn is-current" type="button" aria-current="page">1</button>
+      <button class="pager__btn" type="button">2</button>
+      <button class="pager__btn" type="button">3</button>
+      <button class="pager__btn" type="button">4</button>
+      <button class="pager__btn" type="button">5</button>
+      <span class="pager__gap">…</span>
+      <button class="pager__btn" type="button">230</button>
+      <button class="pager__btn" type="button" aria-label="Siguiente">›</button>
+      <button class="pager__btn" type="button" aria-label="Última página">»</button>
+    </nav>
+    <span class="tickets__rpp">Rows per page <span class="rpp">10 ▾</span></span>
+  </footer>
+</section>

@@ -54,6 +54,12 @@
       "runtimeExecutable": "npx",
       "runtimeArgs": ["ng", "serve", "agent", "--port", "4290"],
       "port": 4290
+    },
+    {
+      "name": "cuscare-dev",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["ng", "serve", "cuscare", "--port", "4295"],
+      "port": 4295
     }
   ]
 }
