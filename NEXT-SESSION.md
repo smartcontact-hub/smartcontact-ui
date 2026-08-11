@@ -73,6 +73,18 @@ Rafa pulsó **Save** él mismo y confirmó lo que se temía: **crea un ticket de
 Y lo que sale **no es un formulario**: es la pantalla de detalle en vacío (`#0`) con el
 modal **"Search customer"** encima. Replicado, con su ruta `…/ticket/:id/pre-ticket`.
 
+### El diccionario de la app real es una mina (s26)
+
+`https://cuscare.smart-contact.com/aed/assets/i18n/cuscare/en.json` — **1449 claves**
+con TODOS los textos de la app, incluidos los 13 tooltips. Se acabó transcribir de
+pantallazos: para cualquier copy que falte, mirar ahí primero (hay otro en
+`i18n/core/en.json`). Los tooltips ya están en `src/app/data/tooltips.ts`.
+
+Dos cosas vistas de paso en la real y NO replicadas a propósito: una clave i18n sin
+traducir asomando en la tabla del dashboard (`PAGES.DASHBOARD.DASHBOARD_TICKETS.TABLE.NONE`)
+y la errata `QEUE` en la clave de la cola. La primera es un fallo suyo; copiarlo sería
+replicar un bug, no un diseño.
+
 ### Lo que SIGUE pendiente
 
 - **Ordenación por cabecera**: no replicada.
