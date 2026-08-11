@@ -34,16 +34,18 @@
       }
     </span>
     <span class="tickets__sep"></span>
-    <!-- Las 4 acciones en bloque están DESHABILITADAS sin selección (medido). -->
-    @for (action of bulkActions; track action) {
-      <button class="btn btn--ghost" type="button" [disabled]="!hasSelection()">
-        {{ action }}
-        <img class="caret" src="icons/general/arrow_drop_down.svg" width="14" height="14" alt="" aria-hidden="true" />
-      </button>
-    }
+    <!-- Las 4 acciones en bloque están DESHABILITADAS sin selección (medido).
+         Cada una abre algo DISTINTO, y "Archive" ni siquiera abre panel: ver el
+         cabecero de `bulk-actions.component.ts`. -->
+    <app-bulk-actions [selected]="selectedRows()" (applied)="clearSelection()" />
 
-    <!-- El lado derecho cambia según el estado: con selección salen
-         "Clear selection" y "Download (N)"; si no, "Delete filters". -->
+    <!-- El lado derecho cambia según el estado:
+           · con filas marcadas → "Clear selection" y "Download (N)"
+           · con filtros puestos → "Delete filters"
+           · sin nada de lo anterior → VACÍO
+         Lo tercero estaba mal: se pintaba "Delete filters" deshabilitado de
+         forma permanente. En la real ese botón NO existe hasta que hay un filtro
+         (medido: `.tools-container--right` se queda sin hijos). -->
     <span class="tickets__spacer"></span>
     @if (hasSelection()) {
       <button class="btn btn--ghost" type="button" (click)="clearSelection()">
@@ -54,13 +56,8 @@
         <img src="icons/general/descarga.svg" width="13" height="13" alt="" aria-hidden="true" />
         Download ({{ selectedCount() }})
       </button>
-    } @else {
-      <button
-        class="btn btn--danger-ghost"
-        type="button"
-        [disabled]="!hasFilters()"
-        (click)="clearFilters()"
-      >
+    } @else if (hasFilters()) {
+      <button class="btn btn--danger-ghost" type="button" (click)="clearFilters()">
         <img src="icons/general/x.svg" width="9" height="9" alt="" aria-hidden="true" />
         Delete filters
       </button>

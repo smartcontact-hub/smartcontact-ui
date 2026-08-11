@@ -36,6 +36,25 @@ difiere. Asumir "misma tabla" da una réplica sutilmente falsa en 4 vistas.
 | separador | `#dadfe6` | **`rgba(0,0,0,.12)`** |
 | paginador | sí | **no** |
 
+### Las 4 acciones en bloque NO son cuatro menús iguales
+
+Se extrajeron leyendo el DOM de la app real **sin ejecutar ninguna acción sobre ningún
+ticket**: los paneles y sus modales viven ocultos en el árbol desde el arranque, así
+que se pudieron medir sin pulsar nada. Cada botón abre una cosa distinta:
+
+| Botón | Qué abre |
+|---|---|
+| Assign | panel oscuro con buscador + **34 agentes** + su botón |
+| Change status | panel con un desplegable de **dos** opciones (Pending / Resolved), enlace **Spam** en rojo y "Accept" |
+| Unsubscribe | panel con **un** radio ("Unsubscribe all products") |
+| Archive | **ningún panel**: va directo al modal de confirmación |
+
+Después, los cuatro pasan por un **modal común** que lista los tickets afectados en una
+tabla Material de 8 columnas. Dos rarezas del original que se replican tal cual: los
+paneles son **oscuros** (`#5f6776`) dentro de una app clara —único sitio donde pasa—, y
+el rótulo de la lista de agentes está en castellano ("Agentes") dentro de una interfaz
+en inglés.
+
 ## Decisiones que conviene conocer antes de tocarlo
 
 - **La tabla es un `p-table` de PrimeNG a propósito.** La del sitio real también lo es
@@ -63,12 +82,17 @@ imposible de pulsar— porque yo la había puesto `fixed` cuando en la real es `
 ## Deuda conocida (anotada, no escondida)
 
 - **La ilustración de Search es una aproximación.** Silueta y paleta parecidas; no es
-  el asset original. Los iconos del nav y el logo SÍ son los reales (descargados de
-  `assets/icons/iconos-cuscare/`).
-- **Lo vivo no se replica**: paginación, filtros y ordenación son maqueta (el seed no
-  se filtra). La forma y los estados sí son fieles.
-- **Los iconos de acción son glifos Unicode** (⌕ ⇩ ✎ 🗑), no los SVG del original.
-  Bastan para la caja y la silueta; sustituirlos es trabajo mecánico pendiente.
+  el asset original. Los iconos del nav, los de acción y el logo SÍ son los reales
+  (descargados de `assets/icons/iconos-cuscare/`).
+- **El segundo paso de "+ New ticket" sigue SIN capturar.** El modal que sale es un
+  selector de grupo con Cancel/Save; llegar al formulario exige pulsar **Save**, y no
+  se pudo determinar leyendo el bundle si eso crea un ticket de verdad o sólo navega.
+  Ante la duda no se pulsó. Para desbloquearlo hace falta un pantallazo de Rafa.
+- **La ordenación de columnas no está.** Filtros, paginación, selección, gestor de
+  columnas y acciones en bloque sí funcionan de verdad; ordenar por cabecera, no.
+- **Formato de fecha**: la real pinta `17/07/2023 06:45` en la tabla y
+  `17-07-2023 06:45:09` (con segundos) en el modal de confirmación. El seed usa un
+  único formato con guiones, así que la tabla diverge en el separador.
 
 ## Datos
 
