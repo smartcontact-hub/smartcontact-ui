@@ -91,8 +91,8 @@ El mismo gate corre en CI ([.github/workflows/ci.yml](.github/workflows/ci.yml))
 - [projects/design-tokens/README.md](projects/design-tokens/README.md) — referencia técnica de tokens
 - [docs/customs-catalog.md](docs/customs-catalog.md) — divergencias conscientes vs Figma
 - [docs/migration-safety.md](docs/migration-safety.md) — patrones de cambio seguro
-- [docs/convergence-manifesto.md](docs/convergence-manifesto.md) — catálogo unión y plan de convergencia
-- [docs/foundations-rationale.md](docs/foundations-rationale.md) — racional de las fundaciones
-- [docs/component-port-plan.md](docs/component-port-plan.md) — plan del port de componentes (Mitad B)
+- [docs/history/convergence-manifesto.md](docs/history/convergence-manifesto.md) — catálogo unión y plan de convergencia
+- [docs/history/foundations-rationale.md](docs/history/foundations-rationale.md) — racional de las fundaciones
+- [docs/history/component-port-plan.md](docs/history/component-port-plan.md) — plan del port de componentes (Mitad B)
 - [docs/history/DECISIONS-LOG.md](docs/history/DECISIONS-LOG.md) — log de construcción (archivado)
 - [AGENTS.md](AGENTS.md) — convenciones para el pipeline de agente

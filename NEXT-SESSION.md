@@ -73,9 +73,10 @@ test que falla si alguien lo añade.
   debe parecerse al ORIGINAL, no a nuestro DS (DD-35). Se validó las dos veces que el guard
   sigue cazando la infracción fuera de las réplicas. **Rafa lo dio por bueno**; si algún día se
   revisa, el criterio alternativo es tokenizarlas y perder fidelidad.
-- **Archivar a `docs/history/`** los 4 docs de construcción cerrados: `convergence-manifesto`,
-  `component-port-plan`, `foundations-rationale`, `plan-convergencia-flujos`. Confirmado que
-  siguen en `docs/`. Es `git mv` + arreglar links en ~6 ficheros.
+- ~~Archivar a `docs/history/` los 4 docs de construcción cerrados~~ **HECHO (s25)**:
+  `convergence-manifesto`, `component-port-plan`, `foundations-rationale` y
+  `plan-convergencia-flujos` viven ya en `docs/history/`, con sus filas del índice marcadas
+  *construcción CERRADA* y los ~25 enlaces reapuntados.
 - **Publicar el Code Connect**: requiere plan Figma Organization/Enterprise +
   `FIGMA_ACCESS_TOKEN` + que exista `Show Icon` en el master de `card`.
 - **B5b · prosa i18n del constructor** — `conditionToDesc()` compone gramática española;
