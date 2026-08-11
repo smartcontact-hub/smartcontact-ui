@@ -52,3 +52,18 @@ export const SEARCH_EMPTY = {
     Operationid: 'Please check the operation ID entered or modify the filters.',
   } as Record<string, string>,
 } as const;
+
+/**
+ * Los avisos de las acciones en bloque, copiados literales del diccionario de
+ * la app real (`SUCCESS.BULK_ACTIONS.*`).
+ *
+ * Ojo a la incoherencia de mayúsculas: el de baja empieza en minúscula ("you
+ * have unsubscribed…") y los demás no. Es suya y se respeta — corregirla sería
+ * dejar de replicar.
+ */
+export const BULK_TOASTS = {
+  assign: (n: number) => `${n} Tickets assigned successfully`,
+  status: (n: number) => `${n} Tickets changed status successfully`,
+  unsubscribe: (n: number) => `you have unsubscribed ${n} tickets`,
+  archive: (n: number) => `You have archived ${n} tickets`,
+} as const;

@@ -172,3 +172,36 @@ test('"Delete filters" NO existe hasta que hay un filtro puesto', async ({ page 
   await page.getByRole('button', { name: /Delete filters/ }).click();
   await expect(page.getByRole('button', { name: /Delete filters/ })).toHaveCount(0);
 });
+
+/**
+ * Confirmar una acción en bloque SACA UN AVISO. Antes se cerraba el modal y no
+ * pasaba nada aparente: parecía que no había funcionado.
+ *
+ * Los textos son los del diccionario real (`SUCCESS.BULK_ACTIONS.*`), con su
+ * incoherencia de mayúsculas incluida — el de baja empieza en minúscula.
+ */
+test.describe('avisos de las acciones en bloque', () => {
+  test('archivar avisa con el texto y el verde del original', async ({ page }) => {
+    await gotoConSeleccion(page);
+    await trigger(page, 'Archive').click();
+    await page
+      .getByRole('dialog', { name: 'Archive' })
+      .getByRole('button', { name: 'Archive' })
+      .click();
+
+    const toast = page.locator('.toast');
+    await expect(toast).toHaveText('You have archived 1 tickets');
+    await expect(toast).toHaveCSS('background-color', 'rgb(22, 163, 74)');
+  });
+
+  test('la baja usa su texto en minúscula, como en el original', async ({ page }) => {
+    await gotoConSeleccion(page);
+    await trigger(page, 'Unsubscribe').click();
+    // Ojo: el PANEL y el MODAL comparten nombre accesible. Primero el botón del
+    // panel, que abre la confirmación; luego el de la confirmación.
+    await page.locator('.panel--unsub .panel__cta').click();
+    await page.locator('.cmodal__btn--confirm').click();
+
+    await expect(page.locator('.toast')).toHaveText('you have unsubscribed 1 tickets');
+  });
+});
