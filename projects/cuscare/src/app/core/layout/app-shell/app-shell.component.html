@@ -57,14 +57,18 @@
 </div>
 
 <footer class="statusbar">
+  <!-- Dentro de un ticket el pill cambia a "Managed ticket" y se DESHABILITA:
+       gestionando un ticket no puedes tocar tu disponibilidad. Medido en la
+       real (clase `status no-available disabled`). -->
   <button
     class="statusbar__pill"
-    [class.statusbar__pill--ok]="available()"
+    [class.statusbar__pill--ok]="available() && !managingTicket()"
     type="button"
+    [disabled]="managingTicket()"
     (click)="available.set(!available())"
     [attr.aria-pressed]="available()"
   >
-    {{ available() ? 'Available' : 'No available' }}
+    {{ managingTicket() ? 'Managed ticket' : available() ? 'Available' : 'No available' }}
   </button>
   <span class="statusbar__avatar" aria-hidden="true">RA</span>
 </footer>
