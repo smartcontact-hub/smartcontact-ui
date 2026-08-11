@@ -13,9 +13,9 @@
    1. Edítalo en el Kit de Figma (zona Custom)
    2. Plugin Theme Designer:  Genera tema → Push Tokens
    3. Espera ~5 min  (un robot lo aplica y lo verifica solo)
-   4. Míralo en Preview:  design-tokens-sync.sc-demo.pages.dev
+   4. Míralo en Preview:  design-tokens-sync.sc-doc.pages.dev
                       y   design-tokens-sync.sc-supervisor.pages.dev
-   5. ¿Te gusta? → pasa a producción (merge del PR) → sc-demo / sc-supervisor .pages.dev
+   5. ¿Te gusta? → pasa a producción (merge del PR) → sc-doc / sc-supervisor .pages.dev
 
    ANTES DE EMPEZAR LA SESIÓN:  doble-click en Actualizar.command  (te trae lo último del equipo)
 ```
@@ -54,7 +54,7 @@ Cambias algo en Figma, le das a un botón, y a los pocos minutos lo ves aplicado
 
 | | Producción (`main`) | Preview (tus pruebas) |
 |---|---|---|
-| **Showcase** (componentes) | `sc-demo.pages.dev` | `design-tokens-sync.sc-demo.pages.dev` |
+| **Showcase** (componentes) | `sc-doc.pages.dev` | `design-tokens-sync.sc-doc.pages.dev` |
 | **App real** (Supervisor) | `sc-supervisor.pages.dev` | `design-tokens-sync.sc-supervisor.pages.dev` |
 
 Tus cambios se miran en **Preview**. Cuando te gustan y pasan a `main`, salen en **Producción**.
@@ -110,7 +110,7 @@ Son doble-clicks en la carpeta `preview/`:
 
 | Doble-click | Qué abre |
 |---|---|
-| `preview-componentes.command` | La galería de componentes (sc-demo) |
+| `preview-componentes.command` | La galería de componentes (sc-docs) |
 | `preview-supervisor.command` | La app real (Supervisor) |
 | `Actualizar.command` | Trae lo último del equipo (no abre web) |
 

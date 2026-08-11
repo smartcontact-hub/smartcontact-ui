@@ -99,8 +99,8 @@ capas de [`@smartcontact-hub/styles`](../design-tokens/README.md). Este paquete
 
 ## Referencia viva
 
-- **Catálogo** de componentes renderizados → la app `sc-demo`
-  ([`../sc-demo/README.md`](../sc-demo/README.md)).
+- **Catálogo** de componentes renderizados → la app `sc-docs`
+  ([`../sc-docs/README.md`](../sc-docs/README.md)).
 - **Consumo canónico real** → la app `supervisor`
   ([`../supervisor/README.md`](../supervisor/README.md)), construida solo con `sc-*`.
 - **Convenciones** (naming wrapper/custom, migration-safety) → [`../../AGENTS.md`](../../AGENTS.md).

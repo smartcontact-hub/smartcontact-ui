@@ -13,7 +13,7 @@
  *     (50/100/200…) no existen en este DS — la única tabla es la 14-base
  *     v/14. Cierra el barrido de convergencia por construcción.
  *  4. Campos de formulario PrimeNG crudos (`<p-select>`…) solo vía wrapper
- *     `sc-*`. Excepción: `sc-demo/…/pages/theme` (smoke deliberado del preset
+ *     `sc-*`. Excepción: `sc-docs/…/pages/theme` (smoke deliberado del preset
  *     sobre primitivos sin wrapper).
  *  5. `font-size` literal px/rem en SCSS → token `--sc-font-size-*`
  *     (cinturón tipográfico migration-safe).
@@ -30,7 +30,7 @@ const root = resolve(import.meta.dirname, '..');
 const log = (s = '') => process.stdout.write(s + '\n');
 const PRESET_DIR = 'projects/ui-smartcontact/src/lib/theme/';
 const TOKENS_DIR = 'projects/design-tokens/src/lib/styles/';
-const THEME_SMOKE = 'projects/sc-demo/src/app/pages/theme/';
+const THEME_SMOKE = 'projects/sc-docs/src/app/pages/theme/';
 const FONT_ALLOW = new Set([]);
 
 const files = execSync('git ls-files projects', { cwd: root, encoding: 'utf8' })

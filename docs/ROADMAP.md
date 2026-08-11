@@ -53,8 +53,8 @@
 - **Disparador**: charla de alineación con el equipo. PPT vía Claude Design — master prompt redactado
   (why/what/how/when/who + concerns), con huecos `[RAFA]` de dominio: qué dice la ley SEC, diseño de
   transcripciones múltiples, quién la usa y timeline.
-- **HECHO (2026-06-23) — recorrido vivo en sc-demo `/reglas`** (decisión B sobre la PPT estática): página
-  paso a paso en `projects/sc-demo/src/app/pages/reglas/` (qué es regla vs bulk · el pivote · anatomía del
+- **HECHO (2026-06-23) — recorrido vivo en sc-docs `/reglas`** (decisión B sobre la PPT estática): página
+  paso a paso en `projects/sc-docs/src/app/pages/reglas/` (qué es regla vs bulk · el pivote · anatomía del
   modelo · el builder · la lista · **prioridad/conflictos = la complejidad** · transcripción en detalle ·
   concerns). Los snippets son **código real** (`rules.store.ts`: `scopeOverlaps` + `conflictsByRuleId` O(n²);
   `rules-page.ts`: quién gana por prioridad) y las capturas son del **Supervisor real** (`public/usage/`,
@@ -132,12 +132,12 @@
   Assistant → re-export → `verify` caza el resto → cablear lo nuevo en `sc-preset/`.
 
 ## Consolidación monorepo (DD-17, 2026-06-15) — ✅ COMPLETADA
-> El Supervisor vive en el repo; un cambio de token se refleja en `sc-demo` **y** en la app real.
+> El Supervisor vive en el repo; un cambio de token se refleja en `sc-docs` **y** en la app real.
 - **L0** deps · **L1** Supervisor en `projects/supervisor` (consume el DS local, instantáneo) ·
-  **L3** ds-docs fundido (`docs/inventory.md` + página Tipografía en sc-demo).
+  **L3** ds-docs fundido (`docs/inventory.md` + página Tipografía en sc-docs).
 - **L2 · Cloudflare Pages** ✅ — 2 proyectos servidos en raíz, preview por rama automático
   (`NODE_VERSION=22`). Verificado en vivo (raíz + F5 en ruta profunda + i18n):
-  **sc-demo** → https://sc-demo.pages.dev · **supervisor** → https://sc-supervisor.pages.dev
+  **sc-docs** → https://sc-doc.pages.dev · **supervisor** → https://sc-supervisor.pages.dev
 - **L4** ✅ — `sc-prototype` jubilado + **GitHub Pages retirado** (los supera Supervisor + Cloudflare);
   `smart-contact-platform` **archivado** (read-only; preserva audits/galerías) + **PR #51 cerrado**.
 - **Paquetes APARCADOS** — `scripts/{publish-packages,version-bump}.mjs` + `publishConfig` **intactos**.
@@ -193,7 +193,7 @@ El ente evolutivo en acción: la migración de la app real saca a la luz huecos 
   Rounded y las apps overrideaban a Outlined por CDN). Queda abierto el **peso** del icono a la par del
   peso de la tipografía (principio registrado en `.impeccable.md` → *Iconografía*) y el ajuste fino de
   ejes (weight · fill · optical size) por **lo que case con la UI de SC**, no al azar. *Validación*: la
-  suite visual-regression de sc-demo (baselines por-plataforma; en CI mandan las métricas). *Disparador*:
+  suite visual-regression de sc-docs (baselines por-plataforma; en CI mandan las métricas). *Disparador*:
   decisión de diseño antes de tocar los ejes.
 - (Menor) **Drift de tokens local↔publicado**: caracterizado por la migración como **convergencia
   intencional** (rampa zinc aditiva + px→rem que resuelve idéntico a root 16px + refactor de refs),

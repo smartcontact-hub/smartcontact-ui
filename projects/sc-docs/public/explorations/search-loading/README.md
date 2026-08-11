@@ -5,7 +5,7 @@ dos arcos girando de forma sincronizada) con el texto "Cargando resultados..." y
 un efecto shimmer, recreado en vectorial a partir de una grabación de pantalla.
 
 Copia reunida en el repo (nido temporal de exploraciones, ver la página `/lab` de
-sc-demo). Aún NO forma parte del design system.
+sc-docs). Aún NO forma parte del design system.
 
 ## Ficheros aquí
 

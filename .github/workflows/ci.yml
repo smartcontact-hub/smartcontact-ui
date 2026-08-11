@@ -1,7 +1,7 @@
 # Gate de CI — los guardarraíles del DS en verde o el cambio no entra.
 # Corre EL MISMO `npm run verify` que el gate local y el workflow tokens-sync
 # (tokens gen+parity+guard+type-parity, escala, unit, docs-guard, build, typecheck,
-# lint), más los builds de las apps (sc-demo + supervisor) y e2e smoke. Una sola
+# lint), más los builds de las apps (sc-docs + supervisor) y e2e smoke. Una sola
 # fuente de verdad del gate: si diverge, un fallo se esconde (p.ej. test:unit).
 name: ci
 
@@ -26,8 +26,8 @@ jobs:
       - run: npm ci
       - name: Gate completo (tokens + escala + unit + docs + build + typecheck + lint)
         run: npm run verify
-      - name: Build demo
-        run: npm run build:demo
+      - name: Build docs
+        run: npm run build:docs
       - name: Build supervisor (la app real, consume el DS local)
         run: npx ng build supervisor --configuration production
       - name: Build agent (consume el DS local)

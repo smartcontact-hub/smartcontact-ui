@@ -113,6 +113,6 @@ Sigue las Fases 2–5 del manifiesto (§7):
 1. **Fase 2 — primitivos**: decidir el icon-resolver (§4.2) → adoptar los 15 wrappers del catálogo de desarrollo + infra (toast/dynamic-dialog) → portar los 9 wrappers del catálogo de diseño → convergir los 5 comunes → construir `sc-datatable`.
 2. **Fase 3 — custom**: portar los 16 custom, saldando la deuda de aislamiento (§5) pieza a pieza.
 3. **Fase 4 — solapes**: ejecutar las 4 migraciones de §3.
-4. **Fase 5 — flujos/apps**: migrar Memory (y resolver `sc-bulk-transcription-modal`), migrar las apps consumidoras a paquetes versionados, usar `sc-demo` como piloto.
+4. **Fase 5 — flujos/apps**: migrar Memory (y resolver `sc-bulk-transcription-modal`), migrar las apps consumidoras a paquetes versionados, usar `sc-docs` como piloto.
 
 En todas las fases: el método de §1 por pieza, y los guardarraíles (`tokens:parity` · `tokens:guard` · `audit:theme-scale`) **siempre en verde**.

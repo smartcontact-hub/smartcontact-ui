@@ -20,7 +20,7 @@
  * Al cerrar la ventana, restaura los ficheros de token al estado committeado (deja el repo limpio).
  *
  * Uso:
- *   npm run preview:live              # demo de componentes (sc-demo)
+ *   npm run preview:live              # demo de componentes (sc-docs)
  *   npm run preview:live -- supervisor  # la app Supervisor
  */
 import { spawn, execFileSync } from 'node:child_process';
@@ -41,8 +41,8 @@ const TOKEN_FILES = [
 const GENERATORS = ['token-gen.mjs', 'token-gen-component.mjs', 'token-gen-color.mjs'];
 const POLL_MS = 12_000;
 
-const arg = (process.argv[2] || 'sc-demo').toLowerCase();
-const APP = arg === 'supervisor' ? 'supervisor' : arg === 'agent' ? 'agent' : 'sc-demo';
+const arg = (process.argv[2] || 'sc-docs').toLowerCase();
+const APP = arg === 'supervisor' ? 'supervisor' : arg === 'agent' ? 'agent' : 'sc-docs';
 
 // PID file (no-trackeado) para el ANTI-ZOMBIE: un solo preview:live a la vez.
 const PID_FILE = resolve(root, 'node_modules/.cache/preview-live.pid');

@@ -1,5 +1,5 @@
 #!/bin/zsh
-# Doble-click → preview LOCAL de la galería de componentes (sc-demo).
+# Doble-click → preview LOCAL de la galería de componentes (sc-docs).
 # Baja el último cambio de tokens de Figma, lo regenera y abre el navegador.
 # Para parar: cierra esta ventana.
 cd "$(dirname "$0")/.." || exit 1

@@ -1,4 +1,4 @@
-# sc-demo — showcase del Design System
+# sc-docs — showcase del Design System
 
 ![Angular](https://img.shields.io/badge/Angular-21-DD0031?logo=angular&logoColor=white)
 ![PrimeNG](https://img.shields.io/badge/PrimeNG-21-10B981)
@@ -28,15 +28,15 @@ por nombre. Es la prueba de que el paquete funciona consumido "desde fuera".
 Desde la raíz del workspace:
 
 ```bash
-npm start            # ng serve (build:icons + demo en local)
-npm run build:demo   # build de producción → dist/sc-demo
+npm start            # ng serve (build:icons + docs en local)
+npm run build:docs   # build de producción → dist/sc-docs
 ```
 
 ## Enlaces (Cloudflare Pages)
 
-- **Producción:** https://sc-demo.pages.dev
+- **Producción:** https://sc-doc.pages.dev
 - **Preview por rama** (cambios de Figma antes de mergear):
-  https://design-tokens-sync.sc-demo.pages.dev
+  https://design-tokens-sync.sc-doc.pages.dev
 
 > El loop Figma → preview está descrito en
 > [`../../NEXT-SESSION.md`](../../NEXT-SESSION.md) y [`../../docs/guia-tokens.md`](../../docs/guia-tokens.md).

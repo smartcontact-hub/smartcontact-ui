@@ -33,7 +33,7 @@ recorrido (tokens en 7 capas, preset modular, catálogo de customs).
 
 ```
 ┌─────────────────────────────────────────────────────────────┐
-│  Apps consumidoras (supervisor, sc-demo, …)                  │
+│  Apps consumidoras (supervisor, sc-docs, …)                  │
 │  consume → <sc-*> de @smartcontact-hub/components                │
 └─────────────────────────────────────────────────────────────┘
                             │
@@ -158,7 +158,7 @@ cambió**.
   las apps externas es revisión de código).
 - **Usar `<p-X>` directo donde existe `<sc-X>`** — si no existe, crearlo
   antes. (Excepción única y deliberada: la página de smoke del tema en
-  `sc-demo`, que prueba el preset sobre primitivos crudos.)
+  `sc-docs`, que prueba el preset sobre primitivos crudos.)
 - **CSS overrides sobre `<p-X>` desde las apps**: esos selectores se rompen
   en cualquier upgrade.
 

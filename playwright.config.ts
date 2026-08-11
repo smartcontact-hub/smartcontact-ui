@@ -16,14 +16,14 @@ export default defineConfig({
    */
   expect: { toHaveScreenshot: { maxDiffPixels: 20 } },
   // usage/ (captura de pantallas) y supervisor/ (suite propia) tienen su config
-  // aparte apuntando a la app correcta — esta config sirve sc-demo.
+  // aparte apuntando a la app correcta — esta config sirve sc-docs.
   testIgnore: ['usage/**', 'supervisor/**'],
   timeout: 60_000,
   use: {
     baseURL: 'http://localhost:4280',
   },
   webServer: {
-    command: 'npm run ng -- serve sc-demo --port 4280',
+    command: 'npm run ng -- serve sc-docs --port 4280',
     url: 'http://localhost:4280',
     reuseExistingServer: !process.env['CI'],
     timeout: 180_000,
