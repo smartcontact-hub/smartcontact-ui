@@ -1,6 +1,8 @@
-import { ChangeDetectionStrategy, Component, computed, input, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
+import { ActivatedRoute } from '@angular/router';
 
 import { TICKETS } from '../../data/seed';
+import { SearchCustomerModalComponent } from './search-customer-modal.component';
 
 /** Una línea de la tabla de suscripciones del detalle. */
 interface Subscription {
@@ -36,12 +38,30 @@ interface HistoryEvent {
 @Component({
   selector: 'app-ticket-detail-page',
   standalone: true,
+  imports: [SearchCustomerModalComponent],
   templateUrl: './ticket-detail-page.component.html',
   styleUrl: './ticket-detail-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TicketDetailPageComponent {
   readonly id = input<string>('2050567');
+
+  private readonly route = inject(ActivatedRoute);
+
+  /**
+   * **Modo pre-ticket** — lo que sale de verdad al pulsar "Save" en el selector
+   * de grupo de "+ New ticket".
+   *
+   * No es un formulario: es ESTA misma pantalla en vacío (`#0`, guiones, ceros)
+   * con el modal "Search customer" encima. El ticket ya existe antes de rellenar
+   * nada; la app real navega a `…/tickets/ticket/2051827/pre-ticket` y lo primero
+   * que pide es enganchar un cliente.
+   *
+   * Se lee de la URL porque este proyecto no usa `withComponentInputBinding`.
+   */
+  protected readonly isPreTicket = this.route.snapshot.url.some((s) => s.path === 'pre-ticket');
+
+  protected readonly searchCustomerOpen = signal(this.isPreTicket);
 
   protected readonly ticket = computed(
     () => TICKETS.find((t) => t.id === this.id()) ?? TICKETS[1],
