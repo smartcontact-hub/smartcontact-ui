@@ -35,10 +35,16 @@
   white-space: nowrap;
 }
 
+/* Azul #1a56b0 MEDIDO, no el azul marino del texto: son colores distintos y a
+   ojo se confunden. 97.9×32, radio 6, 12px/600. */
 .btn--primary {
-  background: #1c283d;
-  border-color: #1c283d;
+  height: 32px;
+  background: #1a56b0;
+  border-color: #1a56b0;
   color: #ffffff;
+  font-size: 12px;
+  font-weight: 600;
+  padding: 0 12px;
 }
 
 .btn--ghost {

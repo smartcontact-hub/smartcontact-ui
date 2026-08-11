@@ -7,6 +7,7 @@ import { SelectModule } from 'primeng/select';
 import { TableModule } from 'primeng/table';
 
 import { TICKETS_ALL, TICKETS_TOTAL, TicketRow } from '../../data/seed';
+import { NewTicketModalComponent } from './new-ticket-modal.component';
 
 /**
  * Tipo de filtro por columna. **Medido uno a uno en la app real** inspeccionando
@@ -42,7 +43,15 @@ interface Col {
 @Component({
   selector: 'app-tickets-page',
   standalone: true,
-  imports: [TableModule, MultiSelectModule, SelectModule, PopoverModule, FormsModule, RouterLink],
+  imports: [
+    TableModule,
+    MultiSelectModule,
+    SelectModule,
+    PopoverModule,
+    FormsModule,
+    RouterLink,
+    NewTicketModalComponent,
+  ],
   templateUrl: './tickets-page.component.html',
   styleUrl: './tickets-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -106,6 +115,18 @@ export class TicketsPageComponent {
   ];
 
   protected readonly bulkActions = ['Assign', 'Change status', 'Unsubscribe', 'Archive'];
+
+  /* ── Modal de nuevo ticket ──────────────────────────────────────────────
+   * En la real, "+ New ticket" NO abre un formulario: abre un selector de grupo.
+   * El paso siguiente (el formulario en sí) no se capturó porque llegar a él
+   * exige pulsar Save, y eso crea un ticket REAL en su sistema. */
+  protected readonly newTicketOpen = signal(false);
+  protected readonly chosenGroup = signal<string | null>(null);
+
+  protected onGroupChosen(group: string): void {
+    this.chosenGroup.set(group);
+    this.newTicketOpen.set(false);
+  }
 
   /* ── Estado de los filtros ──────────────────────────────────────────────
    * Un mapa por columna. Los múltiples guardan array; el resto, string. */

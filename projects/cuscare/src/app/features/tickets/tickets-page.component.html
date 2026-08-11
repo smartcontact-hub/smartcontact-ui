@@ -1,8 +1,17 @@
 <section class="cc-card tickets">
   <header class="tickets__head">
     <h1 class="cc-page-title">Tickets</h1>
-    <button class="btn btn--primary" type="button">+ New ticket</button>
+    <button class="btn btn--primary" type="button" (click)="newTicketOpen.set(true)">
+      + New ticket
+    </button>
   </header>
+
+  @if (newTicketOpen()) {
+    <app-new-ticket-modal
+      (cancelled)="newTicketOpen.set(false)"
+      (confirmed)="onGroupChosen($event)"
+    />
+  }
 
   <div class="tickets__toolbar">
     <button class="iconbtn" type="button" aria-label="Seleccionar columnas">
