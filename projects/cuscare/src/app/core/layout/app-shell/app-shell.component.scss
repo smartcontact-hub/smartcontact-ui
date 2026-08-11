@@ -182,27 +182,53 @@
 }
 
 /* ── Barra inferior de estado ───────────────────────────────────────────── */
-/* 38px medidos. En flujo (ver nota arriba), nunca `fixed`. */
+/* Barra inferior, MEDIDA: 1460×38 con fondo #2d333a. En flujo (ver nota
+   arriba), nunca `fixed`. */
 .statusbar {
   flex: none;
   height: 38px;
   display: flex;
   align-items: center;
   justify-content: flex-end;
-  gap: 12px;
-  padding: 0 40px;
-  background: #2f333c;
+  gap: 11.4px;
+  padding: 0 11.4px;
+  background: #2d333a;
 }
 
+/* Pill de estado: 178.7×27.4, radio 9.125, rojo #f75454 cuando no disponible.
+   El texto va casi NEGRO (#11131a), no blanco — lo tenía mal. */
 .statusbar__pill {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  min-width: 122px;
-  height: 22px;
-  padding: 0 14px;
-  border-radius: 4px;
-  background: #e8697a;
-  color: #ffffff;
+  width: 178.7px;
+  height: 27.4px;
+  padding: 0 7.6px;
+  border-radius: 9.125px;
+  background: #f75454;
+  color: #11131a;
+  font-family: var(--cc-font);
   font-size: 11.68px;
+  border: 0;
+  cursor: pointer;
+}
+
+/* Disponible: verde, mismo molde. */
+.statusbar__pill--ok {
+  background: #24b34b;
+  color: #ffffff;
+}
+
+/* Avatar del agente, a la derecha del pill. */
+.statusbar__avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 27.4px;
+  height: 27.4px;
+  border-radius: 50%;
+  background: #8d939d;
+  color: #ffffff;
+  font-size: 10.5px;
+  font-weight: 600;
 }

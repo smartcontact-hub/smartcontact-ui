@@ -57,5 +57,14 @@
 </div>
 
 <footer class="statusbar">
-  <span class="statusbar__pill">No available</span>
+  <button
+    class="statusbar__pill"
+    [class.statusbar__pill--ok]="available()"
+    type="button"
+    (click)="available.set(!available())"
+    [attr.aria-pressed]="available()"
+  >
+    {{ available() ? 'Available' : 'No available' }}
+  </button>
+  <span class="statusbar__avatar" aria-hidden="true">RA</span>
 </footer>
