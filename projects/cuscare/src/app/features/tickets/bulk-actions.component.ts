@@ -1,7 +1,17 @@
-import { ChangeDetectionStrategy, Component, computed, input, output, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  inject,
+  input,
+  output,
+  signal,
+} from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
 import { ASSIGNABLE_AGENTS, TicketRow } from '../../data/seed';
+import { BULK_TOASTS } from '../../data/tooltips';
+import { ToasterService } from '../../shared/toaster.component';
 
 /** Las cuatro acciones en bloque, en el orden del original. */
 export type BulkAction = 'assign' | 'status' | 'unsubscribe' | 'archive';
@@ -47,6 +57,8 @@ export type BulkAction = 'assign' | 'status' | 'unsubscribe' | 'archive';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class BulkActionsComponent {
+  private readonly toaster = inject(ToasterService);
+
   /** Filas marcadas: alimentan el contador y la tabla del modal. */
   readonly selected = input.required<readonly TicketRow[]>();
 
@@ -126,10 +138,15 @@ export class BulkActionsComponent {
 
   protected apply(): void {
     const a = this.modal();
+    const n = this.count();
     this.modal.set(null);
     this.agent.set(null);
     this.status.set(null);
-    if (a) this.applied.emit(a);
+    if (!a) return;
+    // Confirmar SACA UN AVISO: antes se cerraba el modal y no pasaba nada
+    // aparente. Los textos son los del diccionario real (SUCCESS.BULK_ACTIONS).
+    this.toaster.show(BULK_TOASTS[a === 'archive' ? 'archive' : a](n));
+    this.applied.emit(a);
   }
 
   /** Rótulos del modal, con el texto EXACTO del original. */
