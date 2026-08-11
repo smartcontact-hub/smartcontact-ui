@@ -1,0 +1,451 @@
+/* Valores MEDIDOS en la app real @1460×792 leyendo el DOM (los paneles y modales
+   viven ocultos en el árbol desde el arranque, así que se midieron sin ejecutar
+   ninguna acción sobre ningún ticket).
+
+   La sorpresa de esta pantalla: los paneles son OSCUROS (#5f6776) dentro de una
+   app clara, y el desplegable de estado que va DENTRO de un panel oscuro es
+   blanco. No es un descuido de la réplica. */
+
+:host {
+  display: contents;
+}
+
+.bulkitem {
+  position: relative;
+  display: inline-flex;
+}
+
+/* ── Disparadores ───────────────────────────────────────────────────────── */
+/* Mismos valores que `.btn--ghost` de la página: 32px, 12/500, borde #dadfe6. */
+.bulkbtn {
+  display: inline-flex;
+  align-items: center;
+  gap: 5px;
+  height: 32px;
+  padding: 0 12px;
+  border: 1px solid #dadfe6;
+  border-radius: 6px;
+  background: #ffffff;
+  color: var(--cc-text);
+  font-family: var(--cc-font-head);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+/* En la real el deshabilitado NO se atenúa: mismo color y misma opacidad.
+   Sólo cambia que no responde. Se replica igual. */
+.bulkbtn:disabled {
+  cursor: default;
+  opacity: 1;
+  color: var(--cc-text);
+}
+
+.bulkbtn__caret {
+  opacity: 0.8;
+}
+
+/* ── Panel oscuro (base común a los tres) ───────────────────────────────── */
+.panel {
+  position: absolute;
+  /* El original los coloca con Popper; el desplazamiento medido varía entre
+     -4 y -10px según el botón. Se fija uno intermedio. */
+  left: -6px;
+  top: calc(100% - 2px);
+  z-index: 1000;
+  width: 243.3px;
+  background: #5f6776;
+  border-radius: 12.1618px;
+  font-family: var(--cc-font-head);
+  font-size: 11.68px;
+  color: #ffffff;
+}
+
+/* Lo MEDIDO es el alto TOTAL de cada panel (351.3 / 139.0 / 127.0); cómo lo
+   reparte el original entre márgenes de sus envoltorios internos, no. El hueco
+   inferior se ajusta aquí para que el total cuadre con lo medido. */
+
+/* El de Assign es el único con borde y con radio 16. */
+.panel--assign {
+  padding-bottom: 8.7px;
+  border: 1px solid rgba(0, 0, 0, 0.176);
+  border-radius: 16px;
+}
+
+.panel--status {
+  padding: 0 0 20.4px 7.6066px;
+}
+
+.panel--unsub {
+  padding-bottom: 25.1px;
+}
+
+.panel__close {
+  display: flex;
+  justify-content: flex-end;
+  height: 29.2px;
+  padding: 5.84px;
+}
+
+.panel__x {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 17.5px;
+  height: 17.5px;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  cursor: pointer;
+}
+
+/* El aspa del original es blanca; el SVG del repo es oscuro → se invierte. */
+.panel__x img {
+  filter: invert(1);
+}
+
+/* ── Buscador (sólo Assign) ─────────────────────────────────────────────── */
+.panel__searchrow {
+  height: 53.2px;
+  padding: 10px;
+}
+
+.panel__searchgroup {
+  display: flex;
+  align-items: stretch;
+  width: 205.3px;
+  height: 26.6px;
+  margin: 0 8.008px 6.633px 8.016px;
+  border-radius: 7px;
+  background: #333a41;
+  overflow: hidden;
+}
+
+.panel__searchicon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 37.5px;
+  border-radius: 7px 0 0 7px;
+  background: #333a41;
+}
+
+.panel__searchicon img {
+  filter: invert(1);
+  opacity: 0.85;
+}
+
+.panel__searchinput {
+  flex: 1;
+  min-width: 0;
+  padding: 4.38px 8.76px;
+  border: 0;
+  border-radius: 0 7px 7px 0;
+  background: #333a41;
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 11.68px;
+}
+
+.panel__searchinput::placeholder {
+  color: rgba(255, 255, 255, 0.55);
+}
+
+.panel__searchinput:focus {
+  outline: none;
+}
+
+/* ── Rótulo del bloque ──────────────────────────────────────────────────── */
+.panel__title p {
+  margin: 0 0 5.84px 11.68px;
+  color: #ffffff;
+  font-size: 11.68px;
+  line-height: 17.52px;
+}
+
+/* ── Lista de agentes ───────────────────────────────────────────────────── */
+/* Fondo un punto MÁS OSCURO que el panel (#505764 vs #5f6776) y separadores
+   #333a41 — el mismo tono del buscador. */
+.panel__list {
+  max-height: 196.2px;
+  overflow-y: auto;
+  background: #505764;
+}
+
+.panel__option {
+  border-bottom: 1px solid #333a41;
+}
+
+.panel__item {
+  display: flex;
+  align-items: center;
+  min-height: 31.9px;
+  margin: 0 0 5.84px 11.68px;
+  padding: 2.92px 11.68px 2.92px 7.6066px;
+  color: #ffffff;
+  cursor: pointer;
+}
+
+/* NO medido: llegar al estado "agente elegido" en la real exigía pulsar dentro
+   del panel. Se marca de la forma más discreta posible para que el botón del
+   pie tenga sentido. */
+.panel__item.is-picked {
+  background: rgba(255, 255, 255, 0.12);
+  border-radius: 6px;
+}
+
+.panel__empty {
+  padding: 10px 11.68px;
+  color: rgba(255, 255, 255, 0.7);
+}
+
+/* ── Cuerpo de los paneles sin lista ────────────────────────────────────── */
+.panel__body {
+  position: relative;
+  width: 205.3px;
+  margin: 0 15.2109px;
+}
+
+.panel__body--unsub {
+  width: auto;
+  height: 34.7px;
+  margin: 0;
+}
+
+/* ── Desplegable de estado (claro dentro de un panel oscuro) ────────────── */
+.cselect {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 205.3px;
+  height: 27.4px;
+  padding: 1px 6px;
+  border: 0.5px solid #d2d6e0;
+  border-radius: 6.8474px;
+  background: transparent;
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 11.68px;
+  cursor: pointer;
+}
+
+.cselect__value {
+  padding-left: 13.6948px;
+}
+
+.cselect__arrow img {
+  filter: invert(1);
+  opacity: 0.9;
+}
+
+.cselect__list {
+  position: absolute;
+  left: 0;
+  top: calc(100% + 2px);
+  z-index: 10;
+  width: 205.3px;
+  border: 1px solid rgba(0, 0, 0, 0.176);
+  border-radius: 9.125px;
+  background: #ffffff;
+  overflow: hidden;
+}
+
+.cselect__option {
+  padding: 7.6066px;
+  color: #233155;
+  cursor: pointer;
+}
+
+.cselect__option:hover {
+  background: #f4f6fc;
+}
+
+/* ── Radio de Unsubscribe ───────────────────────────────────────────────── */
+.radio {
+  position: relative;
+  display: flex;
+  align-items: center;
+  height: 32.7px;
+  padding-left: 41.2158px;
+  font-size: 12.1618px;
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.radio__input {
+  position: absolute;
+  width: 0;
+  height: 0;
+  opacity: 0;
+}
+
+/* 10.6px de diámetro con borde de MEDIO píxel: se ve fino a propósito. */
+.radio__mark {
+  position: absolute;
+  left: 24px;
+  width: 10.6px;
+  height: 10.6px;
+  border: 0.5px solid #ffffff;
+  border-radius: 50%;
+}
+
+.radio__input:checked + .radio__mark::after {
+  content: '';
+  position: absolute;
+  inset: 2px;
+  border-radius: 50%;
+  background: #ffffff;
+}
+
+/* ── Pie de los paneles ─────────────────────────────────────────────────── */
+.panel__footer {
+  display: flex;
+  justify-content: flex-end;
+  align-items: center;
+  margin: 11.4026px 19.0092px 0 0;
+}
+
+.panel__footer--split {
+  justify-content: space-between;
+}
+
+/* Rojo #f75454: el MISMO del pill de estado de la barra inferior. */
+.panel__link {
+  padding-left: 7.6066px;
+  color: #f75454;
+  cursor: pointer;
+}
+
+.panel__cta {
+  height: 27.3px;
+  padding: 4.38px 8.76px;
+  border: 0.5px solid #d2d6e0;
+  border-radius: 9.125px;
+  background: transparent;
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 11.68px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.panel__cta:disabled {
+  opacity: 0.55;
+  cursor: default;
+}
+
+/* El de Unsubscribe lleva el borde BLANCO, no gris (medido). */
+.panel__cta--white {
+  min-width: 108px;
+  height: 26.6px;
+  border-color: #ffffff;
+}
+
+/* ── Modal de confirmación ──────────────────────────────────────────────── */
+.cmodal {
+  position: fixed;
+  inset: 0;
+  z-index: 1100;
+  background: rgba(22, 22, 22, 0.494);
+  overflow-y: auto;
+}
+
+.cmodal__dialog {
+  width: 855.5px;
+  max-width: calc(100vw - 32px);
+  margin: 20.44px auto;
+  border-radius: 12.1618px;
+}
+
+/* El fondo del modal NO es blanco: es #f4f6fc, el mismo del lienzo. La tabla de
+   dentro sí va sobre blanco, y ese contraste es lo que le da la forma. */
+.cmodal__content {
+  padding: 22.8198px;
+  border: 1px solid rgba(0, 0, 0, 0.176);
+  border-radius: 12.1618px;
+  background: #f4f6fc;
+  font-family: var(--cc-font-head);
+  font-size: 11.68px;
+}
+
+.cmodal__title {
+  margin: 0 0 11.68px;
+  padding-bottom: 1px;
+  border-bottom: 1px solid #cfd3de;
+  color: #afafaf;
+  font-size: 11.68px;
+}
+
+.cmodal__sub {
+  margin: 0 0 11.68px;
+  color: #11131a;
+  font-size: 11.68px;
+}
+
+.cmodal__body {
+  height: 266.9px;
+  overflow-y: auto;
+  border: 1px solid #cfd3de;
+  border-radius: 12px;
+  background: #ffffff;
+}
+
+/* Tabla MATERIAL, no la de PrimeNG de Tickets: fila 40px, cabecera peso 500 y
+   separador rgba(0,0,0,.12). Misma métrica que las tablas de Ajustes. */
+.cmodal__table {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 11.68px;
+}
+
+.cmodal__table th {
+  height: 40px;
+  padding: 0 16px 0 7.6066px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  background: #ffffff;
+  color: rgba(0, 0, 0, 0.87);
+  font-weight: 500;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.cmodal__table td {
+  height: 40.3px;
+  padding: 8.078px 16px 0 10px;
+  background: #ffffff;
+  color: rgba(0, 0, 0, 0.87);
+  vertical-align: top;
+  white-space: nowrap;
+}
+
+.cmodal__foot {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 8.76px;
+}
+
+.cmodal__btn {
+  height: 28.3px;
+  padding: 4.38px 8.76px;
+  border-radius: 9.125px;
+  font-family: inherit;
+  font-size: 11.68px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.cmodal__btn--cancel {
+  border: 1px solid #8d939d;
+  background: transparent;
+  color: #8d939d;
+}
+
+/* Azul marino #233155 con borde casi negro — no el azul de marca. */
+.cmodal__btn--confirm {
+  border: 1px solid #11131a;
+  background: #233155;
+  color: #ffffff;
+}

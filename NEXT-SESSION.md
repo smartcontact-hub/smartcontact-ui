@@ -26,10 +26,10 @@
 
 ⚠️ **`sc-demo.pages.dev` sigue existiendo** y responde 200 con contenido viejo. Es el
 proyecto Cloudflare anterior al rename; sus builds recientes fallan (su build command apunta
-a un script que ya no existe). **Borrarlo es un clic de Rafa** — ni yo ni la extensión
-ejecutamos borrados permanentes. Dato útil: `wrangler pages deployment list --project-name
-sc-demo` mostró **~26 deployments**, así que el bug de Cloudflare de «más de 100» que citó la
-extensión probablemente NO aplica: intentar borrarlo desde el dashboard debería bastar.
+a un script que ya no existe). **Borrarlo es un clic de Rafa desde el dashboard** — un
+borrado permanente no lo ejecuto yo. Dato útil: `wrangler pages deployment list
+--project-name sc-demo` mostró **~26 deployments**, así que el bug de Cloudflare de «más de
+100» que citó la extensión NO aplica y el borrado directo debería funcionar.
 
 ---
 
@@ -40,21 +40,29 @@ valores extraídos del sitio real (no estimados) y **54 tests e2e** (`npm run e2
 en CI).
 
 Funciona de verdad, no es maqueta: filtros (4 tipos distintos, con multiselect), paginación
-con su loader, selección de filas con barra dinámica, búsqueda, modal de nuevo ticket, y
-gestor de columnas con reordenado por arrastre (Angular CDK).
+con su loader, selección de filas con barra dinámica, búsqueda, modal de nuevo ticket,
+gestor de columnas con reordenado por arrastre (Angular CDK) y **las 4 acciones en bloque
+con sus paneles y su modal de confirmación**.
 
-### Lo único pendiente, y por qué está bloqueado
+### Acciones en bloque — RESUELTO (s26)
 
-**El contenido de los 4 desplegables de acciones en bloque** (Assign · Change status ·
-Unsubscribe · Archive) y **el segundo paso del modal de nuevo ticket**.
+Estaban bloqueadas porque parecía que abrirlas exigía ejecutar algo sobre tickets reales.
+No hacía falta: **los paneles y los modales viven ocultos en el árbol desde el arranque**,
+así que se leyeron del DOM sin pulsar ninguna acción. Para lo que sí requería selección se
+marcó un ticket de 2023 ya cerrado.
 
-No es dejadez: abrir esos menús exige tener filas seleccionadas, y **elegir una opción
-ejecuta la acción sobre tickets REALES** del sistema de Rafa (asignar, cambiar estado, dar de
-baja, archivar). Lo mismo con el modal: llegar al formulario exige pulsar Save, que crea un
-ticket.
+Lo que se descubrió: **no son cuatro menús iguales**. Assign trae buscador y 34 agentes;
+Change status un desplegable de dos opciones (Pending/Resolved) más un enlace "Spam";
+Unsubscribe un único radio; y **Archive no abre panel**, va directo al modal. Detalle en
+[`projects/cuscare/README.md`](projects/cuscare/README.md).
 
-**Para desbloquearlo**: que Rafa abra uno y pase un pantallazo, o dicte las opciones. Los
-botones ya están con su estado correcto (deshabilitados sin selección); solo falta el menú.
+### Lo que SIGUE pendiente
+
+- **El segundo paso de "+ New ticket".** Llegar al formulario exige pulsar **Save**, y
+  leyendo el bundle no se pudo determinar si eso crea el ticket o sólo navega
+  (`navigate(["private/cuscare/ticket"…])` aparece, pero no queda claro qué lo precede).
+  Ante la duda no se pulsó. **Se desbloquea con un pantallazo de Rafa.**
+- **Ordenación por cabecera**: no replicada.
 
 ### Terreno de esta app (lo que más sorprende)
 

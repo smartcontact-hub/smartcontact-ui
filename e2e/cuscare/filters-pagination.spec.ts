@@ -83,19 +83,23 @@ test.describe('los filtros filtran de verdad', () => {
     await expect(status.locator('.p-multiselect-chip')).toHaveCount(2);
   });
 
-  test('"Delete filters" arranca deshabilitado y limpia al usarse', async ({ page }) => {
+  test('"Delete filters" NO existe hasta que hay filtro, y al usarlo desaparece', async ({
+    page,
+  }) => {
     await goto(page);
     const clear = page.getByRole('button', { name: /Delete filters/ });
-    await expect(clear).toBeDisabled();
+    // Corregido tras medirlo en la real: no es que arranque DESHABILITADO, es
+    // que no está. `.tools-container--right` se queda literalmente sin hijos.
+    await expect(clear).toHaveCount(0);
 
     // Se filtra por Carrier (no por el primer input, que es Source y no
     // contiene "Orange": mi primera versión de este test daba 0 resultados).
     await page.getByLabel('Filtrar por Carrier').fill('Orange');
-    await expect(clear).toBeEnabled();
+    await expect(clear).toBeVisible();
     const filtered = await totalResults(page);
 
     await clear.click();
-    await expect(clear).toBeDisabled();
+    await expect(clear).toHaveCount(0);
     expect(await totalResults(page)).toBeGreaterThan(filtered);
   });
 });
