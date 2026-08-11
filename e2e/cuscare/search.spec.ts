@@ -104,3 +104,28 @@ test('"Limpiar búsqueda" devuelve a la ilustración', async ({ page }) => {
   await expect(page.locator('.search__art img')).toBeVisible();
   await expect(page.locator('.search__results')).toHaveCount(0);
 });
+
+/**
+ * El vacío del buscador NO es genérico: la app real cambia el mensaje según el
+ * criterio de búsqueda. Los textos salen de su diccionario
+ * (`SEARCH_SCC.EMPTY_STATE.DESCRIPTION_BY_TYPE.*`), no transcritos a ojo —
+ * antes esto decía una frase mía en castellano dentro de una interfaz inglesa.
+ */
+test('el mensaje de "sin resultados" cambia con el criterio', async ({ page }) => {
+  await page.goto('/#/private/cuscare/customer');
+
+  await page.getByLabel('Criterio de búsqueda').selectOption('Msisdn');
+  await page.getByLabel('Término de búsqueda').fill('000000000');
+  await page.getByRole('button', { name: 'Buscar' }).click();
+
+  await expect(page.getByText('No results found')).toBeVisible();
+  await expect(
+    page.getByText('Please check the phone number entered or modify the filters.'),
+  ).toBeVisible();
+
+  await page.getByLabel('Criterio de búsqueda').selectOption('Email');
+  await page.getByRole('button', { name: 'Buscar' }).click();
+  await expect(
+    page.getByText('Please check the email address entered or modify the filters.'),
+  ).toBeVisible();
+});
