@@ -47,11 +47,30 @@
   padding: 0 12px;
 }
 
+/* Medido: 12px/500, borde #dadfe6, 32px de alto (tenía 11.68/400). */
 .btn--ghost {
+  height: 32px;
   background: #ffffff;
-  border-color: #d7dbe3;
+  border-color: #dadfe6;
   color: var(--cc-text);
-  font-weight: 400;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 0 12px;
+}
+
+/* "Download (N)": azul de marca sobre fondo transparente (medido). */
+.btn--download {
+  height: 32px;
+  background: transparent;
+  border-color: #1a56b0;
+  color: #1a56b0;
+  font-size: 12px;
+  font-weight: 500;
+  padding: 0 12px;
+}
+
+.tickets__spacer {
+  margin-left: auto;
 }
 
 .btn--danger-ghost {
@@ -87,15 +106,12 @@
   padding-bottom: 12px;
 }
 
+/* Separador tras el selector de columnas (hueco medido ~17px vs ~8 entre acciones). */
 .tickets__sep {
   width: 1px;
   height: 20px;
   background: #e2e6ec;
-  margin: 0 2px;
-}
-
-.tickets__clear {
-  margin-left: auto;
+  margin: 0 4px;
 }
 
 /* ── Tabla ──────────────────────────────────────────────────────────────── */
@@ -331,6 +347,13 @@
 
 :host ::ng-deep .cc-table tbody tr:hover {
   background: #fafbfd;
+}
+
+/* Fila marcada: #eef1f6 (medido; en el original la clase es `row-selected`).
+   Va sobre el td porque PrimeNG pinta el fondo ahí. */
+:host ::ng-deep .cc-table tbody tr.row-selected,
+:host ::ng-deep .cc-table tbody tr.row-selected td {
+  background: #eef1f6;
 }
 
 /* Fila bloqueada por otro agente: se ve apagada (medido en la real). */

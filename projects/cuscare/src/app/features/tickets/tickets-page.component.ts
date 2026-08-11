@@ -116,6 +116,66 @@ export class TicketsPageComponent {
 
   protected readonly bulkActions = ['Assign', 'Change status', 'Unsubscribe', 'Archive'];
 
+  /* ── Selección de filas ─────────────────────────────────────────────────
+   * Medido en la real y NO replicado hasta ahora: la selección cambia la barra.
+   *   · sin filas marcadas → las 4 acciones en bloque están DESHABILITADAS
+   *   · con filas marcadas → se habilitan, y aparecen "Clear selection" y
+   *     "Download (N)" con el contador
+   *   · la fila marcada se pinta de #eef1f6 (clase `row-selected` en el original)
+   * Los botones de acción tenían el estilo mal: son 12px/500 con borde #dadfe6
+   * y 32px de alto, no 11.68/400. */
+  protected readonly selectedIds = signal<ReadonlySet<string>>(new Set());
+
+  protected readonly selectedCount = computed(() => this.selectedIds().size);
+  protected readonly hasSelection = computed(() => this.selectedCount() > 0);
+
+  /**
+   * Filas de la página que SE PUEDEN seleccionar. Las bloqueadas por otro
+   * agente quedan fuera: en su celda hay un candado, no una casilla, así que
+   * marcarlas desde la cabecera dejaba un contador que no cuadraba con lo que
+   * se ve (lo cazó el e2e: "Seleccionar todo" decía 10 y había 9 casillas).
+   */
+  private readonly selectableRows = computed(() => this.rows().filter((r) => !r.locked));
+
+  /** Todas las filas seleccionables de la página, marcadas. */
+  protected readonly allVisibleSelected = computed(() => {
+    const rows = this.selectableRows();
+    if (!rows.length) return false;
+    const sel = this.selectedIds();
+    return rows.every((r) => sel.has(r.id));
+  });
+
+  protected isSelected(id: string): boolean {
+    return this.selectedIds().has(id);
+  }
+
+  protected toggleRow(id: string): void {
+    this.selectedIds.update((prev) => {
+      const next = new Set(prev);
+      if (next.has(id)) next.delete(id);
+      else next.add(id);
+      return next;
+    });
+  }
+
+  /** El checkbox de cabecera actúa sobre la página visible, no sobre las 60. */
+  protected toggleAllVisible(): void {
+    const rows = this.selectableRows();
+    const allIn = this.allVisibleSelected();
+    this.selectedIds.update((prev) => {
+      const next = new Set(prev);
+      for (const r of rows) {
+        if (allIn) next.delete(r.id);
+        else next.add(r.id);
+      }
+      return next;
+    });
+  }
+
+  protected clearSelection(): void {
+    this.selectedIds.set(new Set());
+  }
+
   /* ── Modal de nuevo ticket ──────────────────────────────────────────────
    * En la real, "+ New ticket" NO abre un formulario: abre un selector de grupo.
    * El paso siguiente (el formulario en sí) no se capturó porque llegar a él
