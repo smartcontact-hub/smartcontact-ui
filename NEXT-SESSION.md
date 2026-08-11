@@ -1,42 +1,75 @@
 # NEXT-SESSION — hand-off
 
 > Estado volátil. Se SOBREESCRIBE en cada cierre. Lo durable vive en `docs/`.
-> **Sello: 2026-08-07 — Agent (réplica fiel) + rename sc-demo→sc-docs, ambos
-> desplegados a Cloudflare y verificados, NINGUNO mergeado a `main` todavía.**
+> **Sello: 2026-08-11 — Agent y el rename YA EN `main`. En curso: réplica de
+> CusCare, Fase 1 desplegada, parada limpia a mitad de la Fase 2.**
 
 ## ▶️ EMPIEZA AQUÍ
 
 1. Lee este fichero y luego [`LEARNINGS.md`](LEARNINGS.md).
-2. **El push a GitHub funciona con normalidad** (confirmado: 4 pushes esta sesión, sin
-   fricción). Si un hand-off viejo dice lo contrario, está desfasado — no lo asumas.
-3. **Dos ramas activas sin mergear, ambas con preview verificado** — ver abajo. Antes de
-   seguir puliendo cualquiera de las dos, decide con Rafa si toca mergear a `main`.
-4. **Si vas a tocar un fondo o un título, lee DD-33 y DD-34 antes** (`docs/DECISIONS.md`):
-   el título vive en el cuerpo, y `--sc-bg-default` es el suelo del shell, nunca una
-   superficie de contenido.
+2. **El push a GitHub funciona con normalidad.** Si un hand-off viejo dice lo contrario,
+   está desfasado — no lo asumas.
+3. **Estás a mitad de la Fase 2 de CusCare** (rama `feat/cuscare`). Todo lo hecho está
+   commiteado y pusheado; nada a medias en el árbol. Retomar por "Siguiente paso".
+4. **Si vas a tocar un fondo o un título, lee DD-33 y DD-34 antes** (`docs/DECISIONS.md`).
 5. **El puente Figma va en los dos sentidos** (`mcp__Figma__*`, file `khNq9dJKNi13pNllrqm6dx`).
    Antes de `use_figma`, carga el skill `figma-use`.
 
 ---
 
-## 🟡 DOS RAMAS SIN MERGEAR — decide antes de seguir
+## 🟢 EN PRODUCCIÓN (`main`) — los 3 sitios vivos
 
-| Rama | Qué es | Preview (verificado en el navegador) | Production branch en Cloudflare |
-|---|---|---|---|
-| `feat/agent-dashboard` | Réplica fiel del dashboard del Agent (`agent.smart-contact.com/aed`): colores/iconos/timers medidos del sitio real, no estimados | **sc-agent.pages.dev** | apunta a esta rama (no a `main`) |
-| `refactor/sc-demo-to-sc-docs` | Rename técnico completo `sc-demo`→`sc-docs` (carpeta, angular.json, scripts, CI, Playwright, docs vivos — históricos como `DECISIONS.md` intactos a propósito) | **sc-doc.pages.dev** (singular — `sc-docs.pages.dev` estaba pillado por otra cuenta, colisión global de namespace) | apunta a esta rama (no a `main`) |
+| Proyecto | URL | Estado |
+|---|---|---|
+| Showcase del DS (`sc-docs`) | **sc-doc.pages.dev** | ✅ desde `main` |
+| Supervisor (app real) | **sc-supervisor.pages.dev** | ✅ desde `main` |
+| Agent (réplica) | **sc-agent.pages.dev** | ✅ desde `main` |
 
-**Cuando Rafa apruebe cada una** (mirando el preview): mergear a `main`, y ENTONCES repuntar
-el proyecto Cloudflare correspondiente de la rama a `main` (Settings → Builds & deployments
-→ Production branch). Hasta entonces:
-- `sc-demo.pages.dev` (el proyecto Cloudflare VIEJO) sigue vivo apuntando a `main`, que
-  todavía tiene el nombre antiguo — normal, no está roto, solo pendiente del merge.
-- El link "Agent" en Recursos (Lab) solo existe en `feat/agent-dashboard` — `sc-docs` (rama
-  del rename) parte de `main`, así que no lo tiene todavía. Se junta al mergear ambas.
+`sc-demo.pages.dev` (proyecto Cloudflare VIEJO) **sigue existiendo** — Rafa tiene que
+borrarlo a mano (borrado permanente: ni yo ni la extensión lo ejecutamos). No corre prisa:
+su build command `npm run build:demo` ya no existe en `main`, así que está congelado
+sirviendo una copia vieja e inofensiva.
 
-**Gotcha ya cazado**: el builder `application` (Angular nuevo) anida el `index.html` bajo
-`dist/<app>/browser/`, NO en `dist/<app>` directo — pilló un 404 en el primer deploy del
-Agent. `sc-docs` usa el builder viejo `browser` (sin anidar), así que no le afecta.
+---
+
+## 🔵 EN CURSO — CusCare (`feat/cuscare`, sin mergear)
+
+Réplica de `cuscare.smart-contact.com/aed` en `projects/cuscare`. Preview:
+**sc-cuscare.pages.dev** (production branch = `feat/cuscare`, NO `main`). Verificado:
+hash del bundle servido == build local.
+
+**Fase 1 HECHA** — shell + 3 vistas núcleo, con valores medidos y contrastados:
+Tickets (`#/private/cuscare/tickets`), detalle (`…/tickets/ticket/:id`), Dashboard.
+Iconos y logo REALES (descargados de su `assets/`, commit `b1ececc`+).
+
+**Fase 2 — lo que queda (6 vistas).** Ya CONFIRMADO en el sitio real, no supuesto:
+- `Search` → ruta `/private/cuscare/customer`
+- `Manage MO in error` → ruta `/private/cuscare/mo-management`
+- Menú del engranaje = **Users · Roles · Groups · Templates** (confirmado abriéndolo;
+  las rutas concretas de cada uno AÚN NO se han capturado)
+
+### Siguiente paso concreto
+1. Abrir el engranaje en la real y **clicar "Users"** para capturar el patrón de ruta de
+   ajustes (el menú se cierra entre llamadas: hay que **clicar y medir en la MISMA**
+   llamada de `javascript_tool`, o se pierde).
+2. Capturar DOM+estilos de Search y MO-in-error (las dos ya vistas: Search es una pantalla
+   de búsqueda con 2 selects + input e ilustración; MO-in-error es tabla vacía con
+   filtros por columna).
+3. Construirlas y **montar la red e2e de Playwright** (`playwright.cuscare.config.ts`) —
+   Rafa lo pidió explícitamente: verificar interacción real, no aproximar.
+
+### Gotchas ya pagados en esta app (no repetirlos)
+- **El alto de una fila lo marca su celda MÁS ALTA.** La cabecera medía 44.5 en vez de
+  41.5 y la culpa era del **checkbox** de la columna de selección, no de la celda del
+  label. Costó 3 intentos fallidos tocando la celda equivocada.
+- **Los `<svg-icon>` tienen `src` a ficheros reales** en `assets/icons/iconos-cuscare/…`
+  → se descargan con `curl`, no hace falta extraerlos del bundle.
+- **El mapeo icono↔item NO va por nombre**: `customer.svg` es el de "Manage MO in error".
+  Cruzar la Y del icono con la de su etiqueta.
+- **Los iconos NO se recolorean**: el del item activo sigue gris `#8d939d`, solo cambia
+  el TEXTO. Por eso van como `<img>`, no inline con `currentColor`.
+- **El builder `application` anida el `index.html`** bajo `dist/<app>/browser/` — el
+  output dir de Cloudflare para cuscare y agent lleva `/browser`. Sin él, 404.
 
 ---
 
