@@ -14,7 +14,8 @@
         }
       </span>
       @if (!isPreTicket) {
-        <button class="statusbtn" type="button">
+        <!-- El pill NO es decorativo: abre el modal "Ticket Status". -->
+        <button class="statusbtn" type="button" (click)="statusModalOpen.set(true)">
           <span aria-hidden="true">🗎</span> Resolved
         </button>
       }
@@ -139,5 +140,9 @@
        creada y vacía. Cerrarlo deja el pre-ticket a la vista, igual que en la real. -->
   @if (searchCustomerOpen()) {
     <app-search-customer-modal (cancelled)="searchCustomerOpen.set(false)" />
+  }
+
+  @if (statusModalOpen()) {
+    <app-ticket-status-modal (closed)="statusModalOpen.set(false)" />
   }
 </div>
