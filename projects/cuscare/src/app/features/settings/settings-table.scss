@@ -1,0 +1,108 @@
+/*
+ * Chrome COMPARTIDO de las tablas de ajustes.
+ *
+ * Ojo: las vistas de ajustes NO usan la misma tabla que Tickets. Medido en la
+ * app real, Tickets es un `p-table` de PrimeNG y ajustes son tablas de **Angular
+ * Material** (`mat-mdc-table mdc-data-table__table cdk-table`) — con métrica y
+ * paleta propias:
+ *
+ *   |            | Tickets (PrimeNG) | Ajustes (Material) |
+ *   |------------|-------------------|--------------------|
+ *   | alto fila  | 47.5px            | **32.7px**         |
+ *   | fondo th   | #f7f8fa           | **blanco**         |
+ *   | peso th    | 600               | **500**            |
+ *   | color      | #4f5663           | **rgba(0,0,0,.87)**|
+ *   | separador  | #dadfe6           | **rgba(0,0,0,.12)**|
+ *   | paginador  | sí                | **no**             |
+ *
+ * Asumir "misma tabla" habría dado una réplica sutilmente falsa en 4 vistas.
+ */
+
+.settings-page {
+  display: block;
+}
+
+.settings-page__head {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 6px 0 14px;
+}
+
+.settings-page__toolbar {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding-bottom: 10px;
+}
+
+.settings-page__spacer {
+  margin-left: auto;
+}
+
+.iconbtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: 6px;
+  border: 1px solid #d7dbe3;
+  background: #ffffff;
+  color: var(--cc-text);
+  cursor: pointer;
+}
+
+/* Tabla estilo Material (valores medidos arriba). */
+.mattable {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.mattable th {
+  height: 32.7px;
+  padding: 0 16px 0 7.6px;
+  background: #ffffff;
+  font-family: var(--cc-font);
+  font-size: 11.68px;
+  font-weight: 500;
+  color: rgba(0, 0, 0, 0.87);
+  text-align: left;
+  white-space: nowrap;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+}
+
+.mattable td {
+  height: 32.7px;
+  padding: 0 7.6px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  font-size: 11.68px;
+  color: rgba(0, 0, 0, 0.87);
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+/* El checkbox nativo estira la fila (13px + margen + strut). Se neutraliza
+   igual que en Tickets — es el mismo mecanismo, ya pagado una vez. */
+.mattable .col-check {
+  width: 34px;
+}
+
+.mattable .col-check input[type='checkbox'] {
+  display: block;
+  height: 18px;
+  margin: 0;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  height: 19px;
+  padding: 0 8px;
+  border-radius: 10px;
+  background: #eef1f6;
+  color: #6b7280;
+  font-size: 10.5px;
+  white-space: nowrap;
+}

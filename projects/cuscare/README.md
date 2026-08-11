@@ -8,19 +8,33 @@ tipografía y métrica están **extraídos del sitio real** con `getComputedStyl
 estimados. La spec de medición vive en el scratchpad de la sesión que lo construyó;
 lo esencial está anotado en el propio CSS, junto a cada valor.
 
-## Estado — Fase 1 de 2
+## Estado — las 9 vistas montadas
 
-**Montadas** (las 3 vistas núcleo):
+| Vista | Ruta | Ojo |
+|---|---|---|
+| Tickets (lista) | `#/private/cuscare/tickets` | tabla PrimeNG, 18 columnas |
+| Ticket (detalle) | `#/private/cuscare/tickets/ticket/:id` | timeline + 3 pestañas |
+| Dashboard | `#/private/cuscare/dashboard` | 4 KPI + tabla Groups |
+| Search | `#/private/cuscare/**customer**` | el rótulo y la ruta NO coinciden |
+| Manage MO in error | `#/private/cuscare/mo-management` | vacía a propósito (así está la real) |
+| Users | `#/private/cuscare/settings/users` | tabla **Material** |
+| Roles | `#/private/cuscare/settings/roles` | tabla **Material** |
+| Groups | `#/private/cuscare/settings/**entities**` | el menú dice "Groups", la ruta es `entities` |
+| Templates | `#/private/cuscare/settings/templates` | lista de carpetas, NO tabla |
 
-| Vista | Ruta |
-|---|---|
-| Tickets (lista) | `#/private/cuscare/tickets` |
-| Ticket (detalle) | `#/private/cuscare/tickets/ticket/:id` |
-| Dashboard | `#/private/cuscare/dashboard` |
+### Dos tablas distintas, no una
 
-**Pendientes** (Fase 2): Search (`/customer`), Manage MO in error (`/mo-management`)
-y las 4 de administración (`/settings/{users,roles,groups,templates}`). El sidebar ya
-las enlaza.
+Tickets es un `p-table` de **PrimeNG**; las de ajustes son de **Angular Material**
+(`mat-mdc-table`). No es un descuido: la app real usa ambas librerías y su métrica
+difiere. Asumir "misma tabla" da una réplica sutilmente falsa en 4 vistas.
+
+| | Tickets (PrimeNG) | Ajustes (Material) |
+|---|---|---|
+| alto de fila | 47.5px | **32.7px** |
+| fondo cabecera | `#f7f8fa` | **blanco** |
+| peso cabecera | 600 | **500** |
+| separador | `#dadfe6` | **`rgba(0,0,0,.12)`** |
+| paginador | sí | **no** |
 
 ## Decisiones que conviene conocer antes de tocarlo
 
@@ -35,13 +49,26 @@ las enlaza.
 - **Raíz fluida `0.8vw`** (medido: 11.68px a 1460px de ancho). Toda la app escala con
   el viewport; por eso casi nada lleva `rem` a mano.
 
+## Red e2e
+
+`npm run e2e:cuscare` (Playwright, :4415, en CI). Conduce la app con **clics reales**:
+navegación del sidebar, menú del engranaje, pestañas del detalle — y fija la métrica
+medida del original (fila 47.5, cabecera 41.5, ajustes 32.7, sidebar 90.3, lienzo
+`#f4f6fc`), que es lo que se rompe en silencio al retocar CSS.
+
+Existe porque el hit-testing pilla lo que la consulta del DOM no: esta suite cazó que
+la barra inferior **tapaba el engranaje** —visible y "correcto" en el DOM, pero
+imposible de pulsar— porque yo la había puesto `fixed` cuando en la real es `static`.
+
 ## Deuda conocida (anotada, no escondida)
 
-- **Iconos del nav y logo = placeholders.** Los SVG reales viven inline en el bundle
-  de cuscare y la extracción los trunca. Los actuales igualan silueta y caja (20×24,
-  `currentColor`) para que el layout mida bien, pero el trazo no es el suyo.
+- **La ilustración de Search es una aproximación.** Silueta y paleta parecidas; no es
+  el asset original. Los iconos del nav y el logo SÍ son los reales (descargados de
+  `assets/icons/iconos-cuscare/`).
 - **Lo vivo no se replica**: paginación, filtros y ordenación son maqueta (el seed no
   se filtra). La forma y los estados sí son fieles.
+- **Los iconos de acción son glifos Unicode** (⌕ ⇩ ✎ 🗑), no los SVG del original.
+  Bastan para la caja y la silueta; sustituirlos es trabajo mecánico pendiente.
 
 ## Datos
 

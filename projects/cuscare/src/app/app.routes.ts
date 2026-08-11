@@ -30,6 +30,45 @@ export const appRoutes: Routes = [
             (m) => m.TicketDetailPageComponent,
           ),
       },
+      {
+        // "Search" en el nav → ruta `customer` (comprobado navegando, no supuesto).
+        path: 'customer',
+        loadComponent: () =>
+          import('./features/search/search-page.component').then((m) => m.SearchPageComponent),
+      },
+      {
+        path: 'mo-management',
+        loadComponent: () =>
+          import('./features/mo-management/mo-management-page.component').then(
+            (m) => m.MoManagementPageComponent,
+          ),
+      },
+      {
+        path: 'settings/users',
+        loadComponent: () =>
+          import('./features/settings/users-page.component').then((m) => m.UsersPageComponent),
+      },
+      {
+        path: 'settings/roles',
+        loadComponent: () =>
+          import('./features/settings/roles-page.component').then((m) => m.RolesPageComponent),
+      },
+      {
+        // OJO: el item del menú se llama "Groups" pero su ruta es `entities`
+        // (comprobado clicándolo en la app real — no es `settings/groups`).
+        path: 'settings/entities',
+        loadComponent: () =>
+          import('./features/settings/entities-page.component').then(
+            (m) => m.EntitiesPageComponent,
+          ),
+      },
+      {
+        path: 'settings/templates',
+        loadComponent: () =>
+          import('./features/settings/templates-page.component').then(
+            (m) => m.TemplatesPageComponent,
+          ),
+      },
     ],
   },
   { path: '', pathMatch: 'full', redirectTo: 'private/cuscare/tickets' },

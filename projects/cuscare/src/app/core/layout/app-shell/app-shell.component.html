@@ -26,7 +26,15 @@
       @if (settingsOpen()) {
         <ul class="settingsmenu" role="menu">
           @for (s of settingsItems; track s.path) {
-            <li class="settingsmenu__item" role="menuitem">{{ s.label }}</li>
+            <li role="none">
+              <a
+                class="settingsmenu__item"
+                role="menuitem"
+                [routerLink]="s.path"
+                (click)="settingsOpen.set(false)"
+                >{{ s.label }}</a
+              >
+            </li>
           }
         </ul>
       }
