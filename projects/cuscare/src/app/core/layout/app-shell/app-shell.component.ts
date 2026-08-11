@@ -31,6 +31,17 @@ export class AppShellComponent {
   protected readonly settingsItems = SETTINGS_ITEMS;
   protected readonly settingsOpen = signal(false);
 
+  /**
+   * Estado del agente en la barra inferior. En la real es `<app-agent-status>`
+   * con el pill rojo (#f75454) cuando no está disponible; aquí alterna para que
+   * se vean los dos estados sin backend.
+   *
+   * NO se replica el botón azul "SC" de abajo a la derecha: está inyectado en
+   * `<body>`, FUERA de `<app-root>` — es un overlay de terceros, no parte del
+   * producto. Es el mismo que ya se quitó del Agent.
+   */
+  protected readonly available = signal(false);
+
   /** URL actual, normalizada: `/tickets/ticket/123` cuenta como `/tickets`. */
   private readonly currentPath = toSignal(
     this.router.events.pipe(
