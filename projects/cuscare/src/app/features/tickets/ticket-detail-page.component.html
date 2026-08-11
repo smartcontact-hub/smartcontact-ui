@@ -58,13 +58,31 @@
              real aparecieron `app-modal-confirmation-unsubscribe` y
              `app-new-modal-refund`. Antes colgaban de "Right to be forgotten" y
              del diálogo de motivo de no reembolso — suposición mía, equivocada. -->
-        <button class="btn btn--ghost" type="button" (click)="unsubOpen.set(true)">
+        <!-- Los tres actúan sobre las FILAS MARCADAS y no hacen nada sin
+             selección: medido en la real, donde pulsar "Refund" sin marcar
+             nada no abría absolutamente nada. -->
+        <button
+          class="btn btn--ghost"
+          type="button"
+          [disabled]="!hasSubSelection()"
+          (click)="unsubOpen.set(true)"
+        >
           Unsubscribe
         </button>
-        <button class="btn btn--ghost" type="button" (click)="refundFor.set(subscriptions[0].product)">
+        <button
+          class="btn btn--ghost"
+          type="button"
+          [disabled]="!hasSubSelection()"
+          (click)="refundFor.set(firstSelectedSub())"
+        >
           Refund
         </button>
-        <button class="btn btn--ghost" type="button" (click)="detailsOpen.set(!detailsOpen())">
+        <button
+          class="btn btn--ghost"
+          type="button"
+          [disabled]="!hasSubSelection()"
+          (click)="detailsOpen.set(!detailsOpen())"
+        >
           Detail
         </button>
       </div>
@@ -72,7 +90,15 @@
       <table class="grid">
         <thead>
           <tr>
-            <th class="col-select"><input class="cc-check" type="checkbox" aria-label="Seleccionar todas" /></th>
+            <th class="col-select">
+              <input
+                class="cc-check"
+                type="checkbox"
+                aria-label="Seleccionar todas"
+                [checked]="allSubsSelected()"
+                (change)="toggleAllSubs()"
+              />
+            </th>
             @for (c of subCols; track c) {
               <th>{{ c }}</th>
             }
@@ -81,7 +107,15 @@
         <tbody>
           @for (s of subscriptions; track s.product) {
             <tr>
-              <td class="col-select"><input class="cc-check" type="checkbox" [attr.aria-label]="'Seleccionar ' + s.product" /></td>
+              <td class="col-select">
+                <input
+                  class="cc-check"
+                  type="checkbox"
+                  [attr.aria-label]="'Seleccionar ' + s.product"
+                  [checked]="isSubSelected(s.product)"
+                  (change)="toggleSub(s.product)"
+                />
+              </td>
               <td>{{ s.product }}</td>
               <td>{{ s.status }}</td>
               <td>{{ s.startDate }}</td>
