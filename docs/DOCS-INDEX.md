@@ -41,6 +41,7 @@
 | **Auditoría de juicio semanal** (backlog vivo autogenerado por la rutina cloud) — deuda de diseño + deriva semántica de docs que los 25 gates no ven; hallazgos con `file:line`, triaje gate-able/arréglalo/intencional. Skill: `.claude/skills/auditoria-semanal/SKILL.md` | [`docs/AUDIT-SEMANAL.md`](./AUDIT-SEMANAL.md) | Claude (rutina) + Rafa |
 | **Handoff volátil** — estado actual + próximos pasos (se SOBREESCRIBE cada cierre) | [`NEXT-SESSION.md`](../NEXT-SESSION.md) | Claude (lee PRIMERO al arrancar) |
 | **Reglas de proceso ganadas** — cómo trabajar en este repo (disparador → acción), destiladas de errores reales; se AFILA, no se acumula (tope ~20) | [`LEARNINGS.md`](../LEARNINGS.md) | Claude (lee al EMPEZAR tarea; `/reflect` lo escribe al cerrar) |
+| **Mapa de trabajo de PRODUCTO** (snapshot fechado, **caduca el 2026-09-08**) — las tarjetas SISMAC en barbecho durante la ausencia del PM: estado, bloqueos, protocolos de prueba, preguntas abiertas y divergencias entre el email y el recap. **No es material del Design System**; vive aquí porque no había ningún otro *source* de producto (regla 2). Publicado como página: https://claude.ai/code/artifact/1e3ae223-a494-48b4-b473-5bd689a00523 | [`docs/mapa-producto-2026-08.html`](./mapa-producto-2026-08.html) | Rafa + Mario + Marta |
 | Preferencias / comportamiento Claude + atajos (privado, fuera del repo) | `~/.claude/projects/.../memory/` | Solo Claude |
 
 ## Punteros (no contienen info nueva)
