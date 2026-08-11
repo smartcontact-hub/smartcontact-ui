@@ -1,56 +1,52 @@
-import { ChangeDetectionStrategy, Component, input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+
+/** Glifos del sidebar: los SVG REALES de cuscare, descargados de su `assets/`. */
+const SRC: Record<string, string> = {
+  // Ojo al mapeo: los nombres de fichero NO casan con las etiquetas. Se resolvió
+  // cruzando la Y del icono con la de su etiqueta en el sitio real, no por nombre.
+  dashboard: 'icons/menu/dashboard.svg', //            → "Dashboard"
+  tickets: 'icons/menu/tickets.svg', //                → "Tickets"
+  search: 'icons/general/search.svg', //               → "Search"
+  mo: 'icons/menu/customer.svg', //                    → "Manage MO in error" (sí, customer)
+  gear: 'icons/menu/rueda.svg', //                     → engranaje de ajustes
+};
 
 /**
- * Glifos del sidebar.
- *
- * ⚠️ PLACEHOLDER ANOTADO — el sitio real usa `<svg-icon>` con SVGs propios
- * (medidos: ~20×24, viewBox propio por icono, 4 paths cada uno) que viven INLINE
- * en su bundle: no hay petición de red que descargar, y extraerlos por
- * `getComputedStyle` los trunca. Estos de aquí igualan la SILUETA y la caja
- * (20×24, `currentColor`) para que el layout mida bien; el trazo exacto se
- * sustituye en la pasada de afinado, antes del checkpoint.
+ * Los SVG traen `fill="#8d939d"` a fuego y el sitio real **no los recolorea**:
+ * medido, el icono del item ACTIVO sigue gris y solo cambia el color del TEXTO.
+ * Por eso se sirven como `<img>` en vez de inline con `currentColor` — que es lo
+ * que haría un icono "bien hecho", pero no es lo que hace el original.
  */
 @Component({
   selector: 'app-nav-icon',
   standalone: true,
-  template: `
-    @switch (name()) {
-      @case ('dashboard') {
-        <svg viewBox="0 0 20 24" width="20" height="24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">
-          <rect x="1" y="3" width="7" height="8" rx="1.6" />
-          <rect x="1" y="13" width="7" height="8" rx="1.6" />
-          <rect x="11" y="3" width="7" height="12" rx="1.6" />
-          <rect x="11" y="17" width="7" height="4" rx="1.6" />
-        </svg>
-      }
-      @case ('tickets') {
-        <svg viewBox="0 0 20 24" width="20" height="24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">
-          <rect x="2" y="4" width="16" height="16" rx="3.4" />
-          <path d="M6 9h8M6 12.5h8M6 16h5" stroke-linecap="round" />
-        </svg>
-      }
-      @case ('search') {
-        <svg viewBox="0 0 20 24" width="20" height="24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">
-          <circle cx="9" cy="11" r="6" />
-          <path d="M13.4 15.4 18 20" stroke-linecap="round" />
-        </svg>
-      }
-      @case ('mo') {
-        <svg viewBox="0 0 20 24" width="20" height="24" fill="none" stroke="currentColor" stroke-width="1.4" aria-hidden="true">
-          <circle cx="10" cy="8.5" r="4" />
-          <path d="M3 20c0-3.6 3.1-6 7-6s7 2.4 7 6" stroke-linecap="round" />
-        </svg>
-      }
-    }
-  `,
+  template: `<img [src]="src()" [width]="size().w" [height]="size().h" alt="" aria-hidden="true" />`,
   styles: `
     :host {
       display: inline-flex;
       line-height: 0;
     }
+    img {
+      display: block;
+    }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class NavIconComponent {
-  readonly name = input.required<'dashboard' | 'tickets' | 'search' | 'mo'>();
+  readonly name = input.required<'dashboard' | 'tickets' | 'search' | 'mo' | 'gear'>();
+
+  protected readonly src = computed(() => SRC[this.name()]);
+
+  /** Dimensiones NATIVAS de cada SVG (leídas de su propio atributo, no supuestas:
+   *  el engranaje mide 22 de alto, no 24 como los del nav). */
+  protected readonly size = computed(
+    () =>
+      ({
+        dashboard: { w: 20.157, h: 24 },
+        tickets: { w: 19.16, h: 24 },
+        search: { w: 24, h: 24 },
+        mo: { w: 15.469, h: 24 },
+        gear: { w: 21.471, h: 22 },
+      })[this.name()] ?? { w: 20, h: 24 },
+  );
 }
