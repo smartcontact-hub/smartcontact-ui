@@ -80,9 +80,9 @@ modal **"Search customer"** encima. Replicado, con su ruta `…/ticket/:id/pre-t
 - **Los disparadores de dos diálogos son SUPOSICIÓN, no medición**: "Right to be
   forgotten" cuelga del botón Unsubscribe y el de motivo de no reembolso del botón
   Refund. Averiguar los reales exige ejecutar acciones sobre tickets vivos.
-- **Nav** (columna Usage de la tabla de suscripciones) sigue sin hacer nada: caja medida
-  (67.9×30, radio 3.504, `#233155`), comportamiento no. **Summary ya está** — abría una
-  vista entera, replicada en `summary-panel.component.ts`.
+- ~~Nav sin comportamiento~~ **HECHO (s26)**: **Nav abre el MISMO panel Summary**, por la
+  sección Navigation. Dos botones, una sola vista (medido: el bloque `used` mide 67px
+  entrando por Summary y **1153px** entrando por Nav).
 - ~~Refund y Unsubscribe apuntan a los componentes equivocados~~ **HECHO (s26)**:
   reapuntados a `refund-modal` y `unsubscribe-confirm-modal`, ambos medidos en la real.
   Del de reembolsos salió un detalle que no se adivina: por cada cargo hay **DOS

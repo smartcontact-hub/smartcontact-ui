@@ -1,4 +1,13 @@
-import { ChangeDetectionStrategy, Component, input, output, signal } from '@angular/core';
+import {
+  afterNextRender,
+  ChangeDetectionStrategy,
+  Component,
+  ElementRef,
+  input,
+  output,
+  signal,
+  viewChild,
+} from '@angular/core';
 
 /**
  * Panel "Summary" de una suscripción.
@@ -35,13 +44,42 @@ import { ChangeDetectionStrategy, Component, input, output, signal } from '@angu
 export class SummaryPanelComponent {
   readonly ticketId = input.required<string>();
   readonly product = input.required<string>();
+
+  /**
+   * Por dónde se entró.
+   *
+   * **"Nav" no abre otra cosa: abre ESTE MISMO panel**, pero desplegado por la
+   * sección Navigation. Comprobado midiendo el bloque `used` en la real: 67px
+   * (plegado) entrando por Summary y **1153px** entrando por Nav. Dos botones
+   * distintos, una sola vista.
+   */
+  readonly focus = input<'summary' | 'nav'>('summary');
+
   readonly closed = output<void>();
 
   /** El conmutador del periodo. "RECCURING" con dos C es del original. */
   protected readonly periodMode = signal<'RECCURING' | 'DURATION'>('RECCURING');
 
-  /** Secciones desplegables de la derecha; las tres abiertas de inicio. */
+  /**
+   * Secciones desplegables de la derecha.
+   *
+   * Entrando por "Nav" la de Navigation viene abierta sí o sí — es su razón de
+   * ser. El estado de las otras dos varió entre observaciones en la app real
+   * (parece recordar lo último que se plegó), así que se dejan abiertas: es lo
+   * que se vio la primera vez y lo que enseña más.
+   */
   protected readonly open = signal<ReadonlySet<string>>(new Set(['mtmo', 'billing', 'nav']));
+
+  /** Ancla de la sección Navigation, para traerla a la vista al entrar por Nav. */
+  private readonly navSection = viewChild<ElementRef<HTMLElement>>('navSection');
+
+  constructor() {
+    afterNextRender(() => {
+      if (this.focus() === 'nav') {
+        this.navSection()?.nativeElement.scrollIntoView({ block: 'start' });
+      }
+    });
+  }
 
   protected toggle(section: string): void {
     this.open.update((prev) => {
