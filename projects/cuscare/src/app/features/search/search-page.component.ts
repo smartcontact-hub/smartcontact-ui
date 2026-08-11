@@ -3,6 +3,7 @@ import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
 
 import { TICKETS_ALL, TicketRow } from '../../data/seed';
+import { SEARCH_EMPTY } from '../../data/tooltips';
 
 /**
  * "Search" del nav → ruta `#/private/cuscare/**customer**` (comprobado
@@ -42,6 +43,18 @@ export class SearchPageComponent {
   protected readonly searching = signal(false);
 
   protected readonly hasTerm = computed(() => this.term().trim().length > 0);
+
+  /**
+   * El vacío NO es genérico: la real cambia el mensaje según el criterio
+   * («check the phone number» / «check the email address»…). Los textos salen
+   * de su diccionario, no de mi cosecha — antes esto decía una frase mía en
+   * castellano dentro de una interfaz en inglés.
+   */
+  protected readonly emptyTitle = SEARCH_EMPTY.title;
+
+  protected readonly emptyMessage = computed(
+    () => SEARCH_EMPTY.byCriterion[this.criterion()] ?? SEARCH_EMPTY.byCriterion['Msisdn'],
+  );
 
   protected search(): void {
     const term = this.term().trim().toLowerCase();
