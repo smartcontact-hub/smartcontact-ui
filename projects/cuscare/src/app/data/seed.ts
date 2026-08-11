@@ -211,8 +211,16 @@ export const TICKETS: readonly TicketRow[] = [
   },
 ];
 
-/** Total que muestra el paginador de la real (2298 / 230 páginas de 10). */
-export const TICKETS_TOTAL = 2298;
+/**
+ * Cuántas filas se generan.
+ *
+ * **3280** porque es lo que muestra el paginador de la app real (328 páginas de
+ * 10), y con 60 filas la réplica enseñaba "1–10 of 60 results" y 6 páginas: la
+ * diferencia más visible de toda la pantalla, y además dejaba sin ejercitar la
+ * ventana del paginador (que sólo se mueve a partir de la página 5). Se generan
+ * en tiempo de ejecución con un bucle, así que no engordan el bundle.
+ */
+const ROWS = 3280;
 
 /**
  * Genera filas adicionales DETERMINISTAS para que la paginación tenga por dónde
@@ -294,7 +302,13 @@ function makeRow(i: number): TicketRow {
   const day = 1 + (i % 28);
   const hh = 8 + (i % 10);
   const mm = (i * 13) % 60;
-  const stamp = `${String(day).padStart(2, '0')}-08-2026 ${String(hh).padStart(2, '0')}:${String(mm).padStart(2, '0')}`;
+  // La fecha RETROCEDE con el índice, como en la real: sus primeras páginas son
+  // del mes en curso y la última (la 328) llega a 2023. Un mes cada 90 filas.
+  const monthsBack = Math.floor(i / 90);
+  const abs = 2026 * 12 + (8 - 1) - monthsBack; // agosto de 2026 hacia atrás
+  const year = Math.floor(abs / 12);
+  const month = (abs % 12) + 1;
+  const stamp = `${String(day).padStart(2, '0')}-${String(month).padStart(2, '0')}-${year} ${String(hh).padStart(2, '0')}:${String(mm).padStart(2, '0')}`;
   return {
     id,
     status: STATUSES[i % STATUSES.length],
@@ -317,11 +331,14 @@ function makeRow(i: number): TicketRow {
   };
 }
 
-/** Las 8 curadas + 52 generadas = 60 filas → 6 páginas de 10 para navegar. */
+/** Las 8 curadas + el resto generadas = 3280 filas → 328 páginas, como la real. */
 export const TICKETS_ALL: readonly TicketRow[] = [
   ...TICKETS,
-  ...Array.from({ length: 52 }, (_, i) => makeRow(i)),
+  ...Array.from({ length: ROWS - TICKETS.length }, (_, i) => makeRow(i)),
 ];
+
+/** Lo que enseña el pie sin filtros. Derivado, no una constante a mano. */
+export const TICKETS_TOTAL = TICKETS_ALL.length;
 
 export { PRODUCTS };
 
