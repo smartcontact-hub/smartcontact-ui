@@ -33,3 +33,22 @@ export const TOOLTIPS = {
      API/BNK cuando la devolución no se puede pedir. */
   refundNotAllowed: 'Action not allowed',
 } as const;
+
+/**
+ * El vacío del buscador, **por criterio**.
+ *
+ * La app real no enseña un mensaje genérico: cambia según por dónde busques
+ * (`SEARCH_SCC.EMPTY_STATE.DESCRIPTION_BY_TYPE.*`). Copiado literal de su
+ * diccionario, punto final incluido.
+ */
+export const SEARCH_EMPTY = {
+  title: 'No results found',
+  byCriterion: {
+    Msisdn: 'Please check the phone number entered or modify the filters.',
+    Alias: 'Please check the alias entered or modify the filters.',
+    Email: 'Please check the email address entered or modify the filters.',
+    Accountid: 'Please check the account ID entered or modify the filters.',
+    Externalid: 'Please check the external ID entered or modify the filters.',
+    Operationid: 'Please check the operation ID entered or modify the filters.',
+  } as Record<string, string>,
+} as const;

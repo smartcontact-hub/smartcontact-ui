@@ -48,9 +48,9 @@
     </div>
   } @else if (results()!.length === 0) {
     <div class="search__empty">
-      <p class="search__emptytitle">No results</p>
+      <p class="search__emptytitle">{{ emptyTitle }}</p>
       <p class="search__emptymsg">
-        No hay tickets para «{{ term() }}» en {{ criterion() }}@if (country()) { · {{ country() }} }.
+        {{ emptyMessage() }}
       </p>
       <button class="btn btn--ghost" type="button" (click)="reset()">Limpiar búsqueda</button>
     </div>

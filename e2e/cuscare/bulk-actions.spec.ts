@@ -137,8 +137,10 @@ test.describe('modal de confirmación', () => {
     await page.getByRole('button', { name: 'Accept' }).click();
 
     const modal = page.getByRole('dialog', { name: 'Change status' });
+    // Termina con el DESTINO elegido, no colgando en "to": lo delató la clave
+    // del diccionario real ("… tickets to {{name}}").
     await expect(
-      modal.getByText('You will change the status of the next 1 tickets to'),
+      modal.getByText('You will change the status of the next 1 tickets to Resolved'),
     ).toBeVisible();
   });
 
