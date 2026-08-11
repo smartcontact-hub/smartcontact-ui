@@ -18,21 +18,37 @@
       <img src="icons/general/columns-3.svg" width="16" height="16" alt="" aria-hidden="true" />
     </button>
     <span class="tickets__sep"></span>
+    <!-- Las 4 acciones en bloque están DESHABILITADAS sin selección (medido). -->
     @for (action of bulkActions; track action) {
-      <button class="btn btn--ghost" type="button">
+      <button class="btn btn--ghost" type="button" [disabled]="!hasSelection()">
         {{ action }}
         <img class="caret" src="icons/general/arrow_drop_down.svg" width="14" height="14" alt="" aria-hidden="true" />
       </button>
     }
-    <button
-      class="btn btn--danger-ghost tickets__clear"
-      type="button"
-      [disabled]="!hasFilters()"
-      (click)="clearFilters()"
-    >
-      <img src="icons/general/x.svg" width="9" height="9" alt="" aria-hidden="true" />
-      Delete filters
-    </button>
+
+    <!-- El lado derecho cambia según el estado: con selección salen
+         "Clear selection" y "Download (N)"; si no, "Delete filters". -->
+    <span class="tickets__spacer"></span>
+    @if (hasSelection()) {
+      <button class="btn btn--ghost" type="button" (click)="clearSelection()">
+        <img src="icons/general/x.svg" width="9" height="9" alt="" aria-hidden="true" />
+        Clear selection
+      </button>
+      <button class="btn btn--download" type="button">
+        <img src="icons/general/descarga.svg" width="13" height="13" alt="" aria-hidden="true" />
+        Download ({{ selectedCount() }})
+      </button>
+    } @else {
+      <button
+        class="btn btn--danger-ghost"
+        type="button"
+        [disabled]="!hasFilters()"
+        (click)="clearFilters()"
+      >
+        <img src="icons/general/x.svg" width="9" height="9" alt="" aria-hidden="true" />
+        Delete filters
+      </button>
+    }
   </div>
 
   <div class="tickets__tablewrap">
@@ -49,7 +65,15 @@
     <p-table [value]="rows()" [scrollable]="true" scrollHeight="flex" dataKey="id" styleClass="cc-table">
       <ng-template pTemplate="header">
         <tr>
-          <th class="col-select"><input class="cc-check" type="checkbox" aria-label="Seleccionar todo" /></th>
+          <th class="col-select">
+            <input
+              class="cc-check"
+              type="checkbox"
+              aria-label="Seleccionar todo"
+              [checked]="allVisibleSelected()"
+              (change)="toggleAllVisible()"
+            />
+          </th>
           @for (c of cols; track c.header) {
             <th [style.width]="c.width">
               <div class="th__inner">
@@ -132,12 +156,18 @@
       </ng-template>
 
       <ng-template pTemplate="body" let-row>
-        <tr class="row" [class.row--locked]="row.locked">
+        <tr class="row" [class.row--locked]="row.locked" [class.row-selected]="isSelected(row.id)">
           <td class="col-select">
             @if (row.locked) {
               <img src="icons/general/lock.svg" width="11" height="14" alt="Bloqueado por otro agente" />
             } @else {
-              <input class="cc-check" type="checkbox" [attr.aria-label]="'Seleccionar ticket ' + row.id" />
+              <input
+                class="cc-check"
+                type="checkbox"
+                [attr.aria-label]="'Seleccionar ticket ' + row.id"
+                [checked]="isSelected(row.id)"
+                (change)="toggleRow(row.id)"
+              />
             }
           </td>
           @for (c of cols; track c.header) {
