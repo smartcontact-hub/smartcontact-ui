@@ -77,11 +77,20 @@ modal **"Search customer"** encima. Replicado, con su ruta `…/ticket/:id/pre-t
 
 - **Ordenación por cabecera**: no replicada.
 - **Los iconos del detalle de ticket son glifos** (📞 🗎 ⚑ …), no los SVG reales.
-- Hay **6 modales más** ya localizados en el detalle de la real y sin replicar: "Cases",
-  "Ticket Status", "Please confirm the reason why no charges have been refunded…",
-  "Are you sure you want to delete this note?", el de prioridad y el de auto-asignación
-  ("Would you like to assign this Ticket to yourself?" · Yes/No). Todos se pueden leer
-  del DOM sin ejecutar nada — el trabajo está mapeado, sólo falta hacerlo.
+- Quedan **5 modales** localizados en el detalle de la real y sin replicar ("Ticket
+  Status" ya está hecho): "Cases" (CRM), "Please confirm the reason why no charges have
+  been refunded…", "Are you sure you want to delete this note?", el de prioridad
+  (Cancel/Request) y el de auto-asignación ("Would you like to assign this Ticket to
+  yourself?" · Yes/No). Su ESTRUCTURA se lee del DOM sin ejecutar nada; su MÉTRICA
+  exige abrirlos (abrir no guarda, pero ver un ticket sí tiene efecto — leer abajo).
+
+### ⚠️ Abrir el detalle de un ticket CAMBIA su estado
+
+Comprobado a mi costa el 2026-08-11: al navegar a `…/tickets/ticket/336458` en la app
+real, el ticket pasó de `new` a **OPEN** y quedó anotado en su historial —
+«22:17 · Rafael Areses · Status changed to OPEN»— sin pulsar nada. **Ver ES actuar** en
+esta pantalla. Si hace falta volver a medir ahí, usar un ticket que YA esté abierto, o
+pedírselo a Rafa.
 
 ### Terreno de esta app (lo que más sorprende)
 

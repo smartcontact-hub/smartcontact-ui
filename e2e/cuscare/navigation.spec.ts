@@ -172,3 +172,40 @@ test.describe('métrica medida del sitio real', () => {
     expect(canvasBg).toBe('rgb(244, 246, 252)');
   });
 });
+
+/**
+ * Modal "Ticket Status" — el que abre el pill de estado del detalle.
+ *
+ * Medido abriéndolo en la app real (abrir no guarda; se cerró con "Close"). Lo
+ * que fija este test es lo que no se adivina desde fuera: son DIEZ naturalezas
+ * de demanda en CASILLAS (varias a la vez), y sólo DOS estados en radios —
+ * ninguno de los que sí salen en la columna Status de la tabla.
+ */
+test.describe('modal Ticket Status', () => {
+  test('el pill de estado lo abre, con sus 10 naturalezas y 2 estados', async ({ page }) => {
+    await page.goto('/#/private/cuscare/tickets/ticket/2050567');
+    await page.locator('.statusbtn').click();
+
+    const modal = page.getByRole('dialog', { name: 'Ticket Status' });
+    await expect(modal).toBeVisible();
+    await expect(modal.getByRole('checkbox')).toHaveCount(11); // 10 + "GDPR pending"
+    await expect(modal.getByRole('radio')).toHaveCount(2);
+    await expect(modal.getByText('Unsubscription')).toBeVisible();
+    await expect(modal.getByText('Pending to define')).toBeVisible();
+    await expect(modal.getByText('GDPR pending')).toBeVisible();
+  });
+
+  test('las naturalezas son múltiples y "Close" no deja rastro', async ({ page }) => {
+    await page.goto('/#/private/cuscare/tickets/ticket/2050567');
+    await page.locator('.statusbtn').click();
+
+    const modal = page.getByRole('dialog', { name: 'Ticket Status' });
+    await modal.getByText('Refund').click();
+    await modal.getByText('Information').click();
+    // Dos a la vez: si fueran radios, la segunda apagaría la primera.
+    await expect(modal.locator('.tscheck input:checked')).toHaveCount(2);
+
+    await modal.getByRole('button', { name: 'Close' }).click();
+    await expect(modal).toHaveCount(0);
+  });
+});
