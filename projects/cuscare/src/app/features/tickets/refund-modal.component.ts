@@ -1,5 +1,7 @@
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 
+import { TOOLTIPS } from '../../data/tooltips';
+
 /**
  * Modal de reembolsos — el destino REAL del botón "Refund" y del badge de la
  * columna Refund.
@@ -62,9 +64,26 @@ import { ChangeDetectionStrategy, Component, input, output } from '@angular/core
                     <td>{{ product() }}</td>
                     <td>{{ c.date }}</td>
                     <td>{{ c.amount }}</td>
-                    <!-- Las DOS vías de devolución del original. -->
-                    <td><button class="rfd__way" type="button">API</button></td>
-                    <td><button class="rfd__way" type="button">BNK</button></td>
+                    <!-- Las DOS vías de devolución del original. Con el cargo
+                         ya no reembolsable van deshabilitadas y explican por
+                         qué: "Action not allowed" (clave
+                         MODAL_REFUND.TOOLTIP.BUTTON.REQUEST_ACTION). -->
+                    <td>
+                      <span class="rfd__waywrap">
+                        <button class="rfd__way" type="button" [disabled]="!allowed()">API</button>
+                        @if (!allowed()) {
+                          <span class="rfd__tip" role="tooltip">{{ notAllowed }}</span>
+                        }
+                      </span>
+                    </td>
+                    <td>
+                      <span class="rfd__waywrap">
+                        <button class="rfd__way" type="button" [disabled]="!allowed()">BNK</button>
+                        @if (!allowed()) {
+                          <span class="rfd__tip" role="tooltip">{{ notAllowed }}</span>
+                        }
+                      </span>
+                    </td>
                   </tr>
                 }
               </tbody>
@@ -82,7 +101,14 @@ export class RefundModalComponent {
   readonly operator = input<string>('Orange');
   readonly refunded = input<string>('0.00 €');
   readonly charges = input.required<readonly { date: string; amount: string }[]>();
+
+  /** Si la devolución se puede pedir. En falso, los botones lo explican. */
+  readonly allowed = input<boolean>(false);
+
   readonly closed = output<void>();
+
+  /** Texto literal del diccionario de la app real. */
+  protected readonly notAllowed = TOOLTIPS.refundNotAllowed;
 
   protected onBackdrop(ev: MouseEvent): void {
     if ((ev.target as HTMLElement).classList.contains('rfd')) this.closed.emit();

@@ -133,3 +133,40 @@
   font-size: 11.68px;
   cursor: pointer;
 }
+
+/* Cuando la devolución no se puede pedir, los botones lo dicen: el mismo
+   tooltip de Material que el resto (#424242, blanco, radio 4, 12/400). */
+.rfd__waywrap {
+  position: relative;
+  display: inline-flex;
+}
+
+.rfd__way:disabled {
+  opacity: 0.55;
+  cursor: not-allowed;
+}
+
+.rfd__tip {
+  position: absolute;
+  bottom: calc(100% + 6px);
+  left: 50%;
+  z-index: 60;
+  width: max-content;
+  transform: translateX(-50%);
+  padding: 6px 8px;
+  border-radius: 4px;
+  background: #424242;
+  color: #ffffff;
+  font-family: Roboto, 'Helvetica Neue', sans-serif;
+  font-size: 12px;
+  line-height: 16px;
+  letter-spacing: 0.0333333333em;
+  opacity: 0;
+  visibility: hidden;
+  pointer-events: none;
+}
+
+.rfd__waywrap:hover .rfd__tip {
+  opacity: 1;
+  visibility: visible;
+}

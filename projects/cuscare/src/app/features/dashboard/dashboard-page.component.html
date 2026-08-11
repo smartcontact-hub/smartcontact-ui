@@ -5,16 +5,16 @@
       <h2 class="kpi__title">Workload</h2>
       <div class="kpi__boxes">
         <div class="kpibox kpibox--active">
-          <span class="kpibox__label">My assigned</span>
+          <span class="kpibox__label">My assigned <app-info-tip [text]="tips.assigned" /></span>
           <span class="kpibox__row"><span class="kpibox__num">0</span><span class="kpibox__tag">MO 0</span></span>
         </div>
         <div class="kpibox">
-          <span class="kpibox__label">Team queue</span>
+          <span class="kpibox__label">Team queue <app-info-tip [text]="tips.queue" /></span>
           <span class="kpibox__num kpibox__num--lg">524</span>
         </div>
       </div>
       <footer class="kpi__foot">
-        <span>Total workload <span class="info" aria-hidden="true">ⓘ</span></span>
+        <span>Total workload <app-info-tip [text]="tips.workloadFooter" /></span>
         <strong>524</strong>
       </footer>
     </section>
@@ -38,7 +38,7 @@
             </div>
           </div>
           <footer class="kpi__foot">
-            <span>Total handled <span class="info" aria-hidden="true">ⓘ</span></span>
+            <span>Total handled <app-info-tip [text]="tips.totalManagedFooter" /></span>
             <span class="contacts__totals">In 00:00 &nbsp; Out 00:00 &nbsp; 0</span>
           </footer>
         </div>
@@ -64,11 +64,11 @@
 
     <div class="dash__side">
       <section class="cc-card kpi kpi--small">
-        <span class="kpi__smalltitle">Session <span class="info" aria-hidden="true">ⓘ</span></span>
+        <span class="kpi__smalltitle">Session <app-info-tip [text]="tips.session" /></span>
         <span class="kpi__bignum">01:53</span>
       </section>
       <section class="cc-card kpi kpi--small">
-        <span class="kpi__smalltitle">Tickets completed <span class="info" aria-hidden="true">ⓘ</span></span>
+        <span class="kpi__smalltitle">Tickets completed <app-info-tip [text]="tips.ticketsCompleted" /></span>
         <span class="kpi__bignum kpi__bignum--sm">0</span>
         <span class="kpi__arrow" aria-hidden="true">→</span>
       </section>
@@ -136,7 +136,11 @@
               [attr.aria-sort]="sortBy() === c ? (sortDir() === 'asc' ? 'ascending' : 'descending') : 'none'"
               (click)="sort(c)"
             >
-              {{ c }} <span class="th__sort" aria-hidden="true">⇅</span>
+              {{ c }}
+              @if (tipFor(c); as t) {
+                <app-info-tip [text]="t" />
+              }
+              <span class="th__sort" aria-hidden="true">⇅</span>
             </th>
           }
         </tr>

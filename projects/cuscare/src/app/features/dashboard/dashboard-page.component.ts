@@ -1,6 +1,8 @@
 import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
 
 import { GROUPS, GROUPS_TOTALS, GroupRow } from '../../data/seed';
+import { TOOLTIPS } from '../../data/tooltips';
+import { InfoTipComponent } from '../../shared/info-tip.component';
 
 /**
  * Vista Dashboard: 4 tarjetas KPI (Workload · Contacts · Session · Tickets
@@ -20,12 +22,30 @@ import { GROUPS, GROUPS_TOTALS, GroupRow } from '../../data/seed';
 @Component({
   selector: 'app-dashboard-page',
   standalone: true,
+  imports: [InfoTipComponent],
   templateUrl: './dashboard-page.component.html',
   styleUrl: './dashboard-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class DashboardPageComponent {
   protected readonly totals = GROUPS_TOTALS;
+  protected readonly tips = TOOLTIPS;
+
+  /**
+   * Qué cabeceras llevan ⓘ. NO son las nueve: en la real solo cinco tienen
+   * explicación, y las otras cuatro se entienden por su nombre.
+   */
+  private readonly colTips: Record<string, string> = {
+    'My assigned': TOOLTIPS.myAssignedCol,
+    New: TOOLTIPS.newCol,
+    Updated: TOOLTIPS.updatedCol,
+    Pending: TOOLTIPS.pendingCol,
+    'Total actions': TOOLTIPS.totalActionsCol,
+  };
+
+  protected tipFor(col: string): string | undefined {
+    return this.colTips[col];
+  }
 
   protected readonly groupCols = [
     'Group name',
