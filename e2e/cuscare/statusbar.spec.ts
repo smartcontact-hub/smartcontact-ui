@@ -53,3 +53,25 @@ test('NO se replica el widget "SC" (es de terceros, no del producto)', async ({ 
   // releer por qué se dejó fuera.
   await expect(page.getByRole('button', { name: 'SC', exact: true })).toHaveCount(0);
 });
+
+/**
+ * El pill de la barra inferior no es solo un interruptor de disponibilidad:
+ * **dentro de un ticket pasa a "Managed ticket" y se deshabilita**. Medido en
+ * la real, donde la clase cambia a `status no-available disabled`: gestionando
+ * un ticket no puedes tocar tu estado.
+ */
+test('dentro de un ticket el pill dice "Managed ticket" y no se puede pulsar', async ({ page }) => {
+  await page.goto('/#/private/cuscare/tickets');
+  const pill = page.locator('.statusbar__pill');
+  await expect(pill).toHaveText('No available');
+  await expect(pill).toBeEnabled();
+
+  await page.goto('/#/private/cuscare/tickets/ticket/2050567');
+  await expect(pill).toHaveText('Managed ticket');
+  await expect(pill).toBeDisabled();
+
+  // Y al volver a la lista recupera su estado normal.
+  await page.goto('/#/private/cuscare/tickets');
+  await expect(pill).toHaveText('No available');
+  await expect(pill).toBeEnabled();
+});
