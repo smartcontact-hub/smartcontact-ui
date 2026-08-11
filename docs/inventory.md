@@ -3,7 +3,7 @@
 > El "tracklist" del DS: cada componente, su selector, y si es **wrapper** (estiliza un
 > componente de PrimeNG) o **pure-custom** (pieza propia, cero PrimeNG). Reemplaza el tracker
 > que vivía en `ds-docs` (consolidado aquí, 2026-06-15). El catálogo **visual** vivo está en
-> `sc-demo` ([showcase en Pages/Cloudflare](README.md)); este doc es el índice **textual**,
+> `sc-docs` ([showcase en Pages/Cloudflare](README.md)); este doc es el índice **textual**,
 > findable y mantenible.
 >
 > **Fuente**: `projects/ui-smartcontact/src/lib/components/`. La tabla de abajo es **auto-generada**
@@ -13,10 +13,10 @@
 > (lo confirma Rafa). **No editar la tabla a mano** → `node scripts/component-audit.mjs --write`.
 > Manifiesto máquina: `docs/_component-status.json`.
 >
-> **¿Dónde se usa cada componente?** La galería **Uso real** en `sc-demo` (ruta `/uso`) muestra las
+> **¿Dónde se usa cada componente?** La galería **Uso real** en `sc-docs` (ruta `/uso`) muestra las
 > pantallas REALES del Supervisor donde aparece cada componente — capturas del DOM renderizado,
 > auto-generadas por `npm run usage:capture` (no se desfasan). Manifiesto:
-> `projects/sc-demo/public/usage/_usage-status.json`.
+> `projects/sc-docs/public/usage/_usage-status.json`.
 >
 > **Leyenda:** *CUSTOM* = pieza propia, cero PrimeNG · *STANDARD* = wrapper passthrough sobre PrimeNG ·
 > *EXTENDED* = wrapper con API propia (CVA, inputs, comportamiento) · *Anidados* = otros `sc-*` que

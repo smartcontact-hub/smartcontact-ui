@@ -322,7 +322,7 @@ borran.
 
 En oscuro valía `slate-900`, que es **exactamente** `--sc-bg-surface`: **1.00:1** contra la
 superficie que bordea. No era un filo discreto, era un filo que no se pintaba — y lo consumen
-**56 sitios** entre el DS, sc-demo, agent y el supervisor (cabeceras de card, pies de panel,
+**56 sitios** entre el DS, sc-docs, agent y el supervisor (cabeceras de card, pies de panel,
 separadores de la paleta de comandos, el selector de columnas). Medio tema sin ellos.
 
 | | claro | oscuro (antes) | oscuro (ahora) |

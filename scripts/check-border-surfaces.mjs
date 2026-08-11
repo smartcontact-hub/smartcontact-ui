@@ -5,7 +5,7 @@
  * Por qué existe. `--sc-border-subtle` valía `slate-900` en oscuro, que es
  * EXACTAMENTE `--sc-bg-surface`: 1.00:1 contra la superficie que bordea. No era
  * un filo discreto, era un filo que no se pintaba, y lo consumen 56 sitios entre
- * el DS, sc-demo, agent y el supervisor. Estuvo así meses y no lo cazó nada:
+ * el DS, sc-docs, agent y el supervisor. Estuvo así meses y no lo cazó nada:
  * `theme-contrast.spec.ts` mide TEXTO sobre fondo, no bordes contra su lienzo.
  *
  * Es el modo de fallo de siempre en este repo —un token que no tiene valor
