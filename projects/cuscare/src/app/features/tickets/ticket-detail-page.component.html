@@ -5,7 +5,10 @@
     <header class="detail__head">
       <span class="detail__chan" aria-hidden="true">📞</span>
       <span class="detail__id">#{{ ticket().id }}</span>
-      <span class="detail__ref"><span aria-hidden="true">✎</span> 900907110 - {{ ticket().group }}</span>
+      <span class="detail__ref">
+        <img src="icons/actions/edit_icon.png" width="12" height="12" alt="" aria-hidden="true" />
+        900907110 - {{ ticket().group }}
+      </span>
       <button class="statusbtn" type="button">
         <span aria-hidden="true">🗎</span> Resolved
       </button>

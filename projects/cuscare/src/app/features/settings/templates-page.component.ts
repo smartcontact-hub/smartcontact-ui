@@ -18,19 +18,27 @@ import { TEMPLATE_FOLDERS } from '../../data/seed';
       <header class="tpl__head">
         <h1 class="cc-page-title">Templates</h1>
         <div class="tpl__search">
-          <span class="tpl__searchbox">Search</span>
-          <button class="tpl__searchbtn" type="button" aria-label="Buscar">⌕</button>
+          <input class="tpl__searchbox" type="text" placeholder="Search" aria-label="Buscar plantillas" />
+          <button class="tpl__searchbtn" type="button" aria-label="Buscar">
+            <img src="icons/general/buscar.svg" width="14" height="14" alt="" aria-hidden="true" />
+          </button>
         </div>
         <div class="tpl__actions">
-          <button class="btn btn--dark" type="button"><span aria-hidden="true">🗀</span> Add category</button>
-          <button class="btn btn--dark" type="button"><span aria-hidden="true">🗋</span> Add template</button>
+          <button class="btn btn--dark" type="button">
+            <img src="icons/general/folder_fill.svg" width="14" height="14" alt="" aria-hidden="true" />
+            Add category
+          </button>
+          <button class="btn btn--dark" type="button">
+            <img src="icons/general/draft_fill.svg" width="14" height="14" alt="" aria-hidden="true" />
+            Add template
+          </button>
         </div>
       </header>
 
       <ul class="tpl__list" role="list">
         @for (f of folders; track f.name) {
           <li class="folder">
-            <span class="folder__icon" aria-hidden="true">🗀</span>
+            <img class="folder__icon" src="icons/general/folder.svg" width="15" height="15" alt="" aria-hidden="true" />
             <span class="folder__name">{{ f.name }}</span>
             @for (t of f.tags; track t) {
               <span class="chip">{{ t }}</span>
@@ -38,10 +46,17 @@ import { TEMPLATE_FOLDERS } from '../../data/seed';
             @if (f.moreTags) {
               <span class="chip chip--more">+{{ f.moreTags }}</span>
             }
+            <!-- Los tres de acción son PNG de 30×30 en el original (no SVG). -->
             <span class="folder__actions">
-              <button class="folder__act" type="button" aria-label="Editar">✎</button>
-              <button class="folder__act" type="button" aria-label="Duplicar">⧉</button>
-              <button class="folder__act" type="button" aria-label="Borrar">🗑</button>
+              <button class="folder__act" type="button" aria-label="Editar">
+                <img src="icons/actions/edit_icon.png" width="15" height="15" alt="" aria-hidden="true" />
+              </button>
+              <button class="folder__act" type="button" aria-label="Duplicar">
+                <img src="icons/actions/duplicate_icon.png" width="15" height="15" alt="" aria-hidden="true" />
+              </button>
+              <button class="folder__act" type="button" aria-label="Borrar">
+                <img src="icons/actions/delete_icon.png" width="15" height="15" alt="" aria-hidden="true" />
+              </button>
             </span>
           </li>
         }

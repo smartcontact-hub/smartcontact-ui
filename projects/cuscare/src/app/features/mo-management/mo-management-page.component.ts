@@ -14,8 +14,8 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
   template: `
     <section class="cc-card mo">
       <div class="mo__toolbar">
-        <button class="iconbtn" type="button" aria-label="Buscar">⌕</button>
-        <button class="iconbtn mo__spacer" type="button" aria-label="Exportar">⇩</button>
+        <button class="iconbtn" type="button" aria-label="Buscar"><img src="icons/general/buscar.svg" width="15" height="15" alt="" aria-hidden="true" /></button>
+        <button class="iconbtn mo__spacer" type="button" aria-label="Exportar"><img src="icons/general/descarga.svg" width="15" height="15" alt="" aria-hidden="true" /></button>
       </div>
 
       <table class="mo__table">
@@ -26,7 +26,9 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
                 <span class="mo__label">{{ c }}</span>
                 <span class="mo__search">
                   <span class="mo__field"></span>
-                  <button class="mo__mag" type="button" [attr.aria-label]="'Buscar en ' + c">⌕</button>
+                  <button class="mo__mag" type="button" [attr.aria-label]="'Buscar en ' + c">
+                    <img src="icons/general/buscar.svg" width="12" height="12" alt="" aria-hidden="true" />
+                  </button>
                 </span>
               </th>
             }
@@ -37,8 +39,8 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
       <p class="mo__empty">No data to show</p>
 
       <footer class="mo__foot">
-        <span>Rows per page <span class="mo__sel">10 ⌄</span></span>
-        <span>Page <span class="mo__sel">1 ⌄</span></span>
+        <span>Rows per page <span class="mo__sel">10</span></span>
+        <span>Page <span class="mo__sel">1</span></span>
         <button class="mo__pg" type="button" aria-label="Anterior">‹</button>
         <span>Page 1 of 0 total results 0</span>
         <button class="mo__pg" type="button" aria-label="Siguiente">›</button>

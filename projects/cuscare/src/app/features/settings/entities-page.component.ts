@@ -19,9 +19,9 @@ import { ENTITIES } from '../../data/seed';
       <header class="settings-page__head"><h1 class="cc-page-title">Groups</h1></header>
 
       <div class="settings-page__toolbar">
-        <button class="iconbtn" type="button" aria-label="Filtrar">⚗</button>
-        <button class="iconbtn" type="button" aria-label="Buscar">⌕</button>
-        <button class="iconbtn settings-page__spacer" type="button" aria-label="Exportar">⇩</button>
+        <button class="iconbtn" type="button" aria-label="Filtrar"><img src="icons/general/filter.svg" width="15" height="15" alt="" aria-hidden="true" /></button>
+        <button class="iconbtn" type="button" aria-label="Buscar"><img src="icons/general/buscar.svg" width="15" height="15" alt="" aria-hidden="true" /></button>
+        <button class="iconbtn settings-page__spacer" type="button" aria-label="Exportar"><img src="icons/general/descarga.svg" width="15" height="15" alt="" aria-hidden="true" /></button>
       </div>
 
       <table class="mattable">
