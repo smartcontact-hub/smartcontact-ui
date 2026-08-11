@@ -2,14 +2,8 @@
   <aside class="nav">
     <div class="nav__brand">
       <div class="nav__logo" aria-hidden="true">
-        <!-- Marca: el real sirve un PNG (logo-cuscare.png, 44×45). Réplica vectorial
-             de la silueta (4 discos) hasta sustituirlo por el asset exacto. -->
-        <svg viewBox="0 0 44 45" width="44" height="45" aria-hidden="true">
-          <circle cx="13" cy="13" r="8.5" fill="#1c283d" />
-          <circle cx="32" cy="10" r="5.5" fill="#1c283d" />
-          <circle cx="10" cy="32" r="5" fill="#4f5663" />
-          <circle cx="29" cy="30" r="7" fill="#4f5663" />
-        </svg>
+        <!-- Logo REAL descargado de la app (44×45, el mismo fichero que sirve). -->
+        <img src="icons/menu/logo-cuscare.png" width="44" height="45" alt="" />
       </div>
       <span class="nav__env">development</span>
     </div>
@@ -43,10 +37,7 @@
         [attr.aria-expanded]="settingsOpen()"
         aria-label="Ajustes"
       >
-        <svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true">
-          <circle cx="8" cy="8" r="2.4" />
-          <path d="M8 1.4v1.8M8 12.8v1.8M1.4 8h1.8M12.8 8h1.8M3.3 3.3l1.3 1.3M11.4 11.4l1.3 1.3M12.7 3.3l-1.3 1.3M4.6 11.4l-1.3 1.3" stroke-linecap="round" />
-        </svg>
+        <app-nav-icon name="gear" />
         <span class="nav__gear-caret">{{ settingsOpen() ? '<' : '>' }}</span>
       </button>
     </div>

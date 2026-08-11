@@ -102,17 +102,21 @@
   padding: 0 0 18px 10px;
 }
 
+/* Medido en la real: 66.9×27.4, borde 0.5px #8d939d, radio 9.125px,
+   padding 4.38/8.76, fondo transparente. */
 .nav__gear {
-  display: inline-flex;
+  display: flex;
   align-items: center;
-  gap: 4px;
-  padding: 5px 8px;
-  border: 1px solid #d7dbe3;
-  border-radius: 14px;
-  background: #ffffff;
-  color: #6b7280;
+  gap: 6px;
+  width: 66.9px;
+  height: 27.4px;
+  padding: 4.38px 8.76px;
+  border: 0.5px solid #8d939d;
+  border-radius: 9.125px;
+  background: transparent;
+  color: #212529;
   font: inherit;
-  font-size: 10px;
+  font-size: 11.68px;
   cursor: pointer;
 }
 
