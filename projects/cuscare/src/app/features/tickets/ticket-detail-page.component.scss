@@ -351,3 +351,63 @@
   font-size: 11.68px;
   color: var(--cc-text-body);
 }
+
+/* ── Controles que ERAN adorno ───────────────────────────────────────────
+   Rafa lo cazó: «nada es clicable en lo nuestro». En la real "Show details" y
+   "+ New" son botones, y el segundo abre un menú de cuatro entradas sobre el
+   mismo panel oscuro #5f6776 que las acciones en bloque. */
+
+.tabs__details {
+  border: 0.5px solid #cfd3de;
+  border-radius: 9.125px;
+  background: #f4f6fc;
+  color: #000000;
+  font-family: inherit;
+  font-size: 11.68px;
+  height: 20.5px;
+  padding: 0 8px;
+  cursor: pointer;
+}
+
+.tabs__newwrap {
+  position: relative;
+  display: inline-flex;
+}
+
+.newmenu {
+  position: absolute;
+  right: 0;
+  top: calc(100% + 4px);
+  z-index: 30;
+  min-width: 150px;
+  padding: 6px 0;
+  border: 1px solid rgba(0, 0, 0, 0.176);
+  border-radius: 12.1618px;
+  background: #5f6776;
+}
+
+.newmenu__item {
+  display: block;
+  width: 100%;
+  padding: 6px 14px;
+  border: 0;
+  background: transparent;
+  color: #ffffff;
+  font-family: inherit;
+  font-size: 11.68px;
+  text-align: left;
+  cursor: pointer;
+}
+
+.newmenu__item:hover {
+  background: #505764;
+}
+
+/* La celda de cliente de la barra de metadatos abre la ficha del CRM. */
+.metabar__cell--btn {
+  border: 0;
+  background: transparent;
+  font: inherit;
+  color: inherit;
+  cursor: pointer;
+}

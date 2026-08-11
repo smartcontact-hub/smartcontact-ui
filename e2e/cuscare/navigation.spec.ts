@@ -209,3 +209,66 @@ test.describe('modal Ticket Status', () => {
     await expect(modal).toHaveCount(0);
   });
 });
+
+/**
+ * Lo que Rafa cazó de un vistazo: «nada es clicable en lo nuestro».
+ *
+ * En la app real la tabla Groups del dashboard ordena por sus nueve cabeceras,
+ * el buscador filtra y el icono de la derecha abre un panel de columnas. Aquí
+ * eran adorno: el buscador era un `<span>` con el texto pintado dentro.
+ */
+test.describe('dashboard · la tabla Groups hace cosas', () => {
+  test('el buscador filtra de verdad', async ({ page }) => {
+    await page.goto('/#/private/cuscare/dashboard');
+    const filas = page.locator('.dash__groups tbody tr:not(.grid__totals)');
+    await expect(filas).toHaveCount(2);
+
+    await page.getByLabel('Search groups').fill('SK');
+    await expect(filas).toHaveCount(1);
+    await expect(filas.first()).toContainText('SK - Cuscare');
+  });
+
+  test('las cabeceras ordenan y ciclan asc → desc → sin orden', async ({ page }) => {
+    await page.goto('/#/private/cuscare/dashboard');
+    const primera = page.locator('.dash__groups tbody tr:not(.grid__totals)').first();
+    await expect(primera).toContainText('ES - DOD');
+
+    const th = page.locator('.dash__groups th.sortable', { hasText: 'Total workload' });
+    await th.click(); // asc: ES-DOD (22) sigue primero
+    await expect(th).toHaveAttribute('aria-sort', 'ascending');
+
+    await th.click(); // desc: SK sube
+    await expect(th).toHaveAttribute('aria-sort', 'descending');
+    await expect(primera).toContainText('SK - Cuscare');
+
+    await th.click(); // tercer clic: sin orden
+    await expect(th).toHaveAttribute('aria-sort', 'none');
+    await expect(primera).toContainText('ES - DOD');
+  });
+
+  test('el panel de columnas esconde una columna', async ({ page }) => {
+    await page.goto('/#/private/cuscare/dashboard');
+    const cabeceras = page.locator('.dash__groups thead th');
+    await expect(cabeceras).toHaveCount(9);
+
+    await page.getByRole('button', { name: 'Seleccionar columnas' }).click();
+    await page.getByRole('dialog', { name: 'Columnas' }).getByLabel('SMS sent').uncheck();
+    await expect(cabeceras).toHaveCount(8);
+  });
+
+  test('el pie del dashboard va en inglés, como el de Tickets', async ({ page }) => {
+    await page.goto('/#/private/cuscare/dashboard');
+    // Iba en castellano ("de 2 resultados", "Filas por página").
+    await expect(page.locator('.groups__foot')).toContainText('of 2 results');
+    await expect(page.locator('.groups__foot')).toContainText('Rows per page');
+  });
+});
+
+/** El menú de "+ New" del detalle: cuatro entradas, leídas del DOM de la real. */
+test('el menú "+ New" del detalle trae Email · Note · SMS · Attach file', async ({ page }) => {
+  await page.goto('/#/private/cuscare/tickets/ticket/2050567');
+  await page.locator('.tabs__new').click();
+
+  const menu = page.getByRole('menu');
+  await expect(menu.getByRole('menuitem')).toHaveText(['Email', 'Note', 'SMS', 'Attach file']);
+});

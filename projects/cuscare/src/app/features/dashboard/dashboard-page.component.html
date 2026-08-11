@@ -79,61 +79,103 @@
   <section class="cc-card dash__groups">
     <header class="groups__head">
       <h2 class="cc-page-title">Groups</h2>
-      <span class="searchbox"><img class="searchbox__icon" src="icons/general/buscar.svg" width="12" height="12" alt="" aria-hidden="true" />Search groups</span>
-      <button class="iconbtn groups__cols" type="button" aria-label="Seleccionar columnas">
-        <svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true">
-          <rect x="1.5" y="2.5" width="13" height="11" rx="1.4" />
-          <path d="M6 2.5v11M10.5 2.5v11" />
-        </svg>
-      </button>
+      <!-- Era un <span> decorativo: ahora busca de verdad, como en la real. -->
+      <span class="searchbox">
+        <img class="searchbox__icon" src="icons/general/buscar.svg" width="12" height="12" alt="" aria-hidden="true" />
+        <input
+          class="searchbox__input"
+          type="text"
+          placeholder="Search groups"
+          aria-label="Search groups"
+          [value]="query()"
+          (input)="query.set($any($event.target).value)"
+        />
+      </span>
+      <span class="groups__colwrap">
+        <button
+          class="iconbtn groups__cols"
+          type="button"
+          aria-label="Seleccionar columnas"
+          [attr.aria-expanded]="colsOpen()"
+          (click)="colsOpen.set(!colsOpen())"
+        >
+          <svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true">
+            <rect x="1.5" y="2.5" width="13" height="11" rx="1.4" />
+            <path d="M6 2.5v11M10.5 2.5v11" />
+          </svg>
+        </button>
+        <!-- En la real es una casilla por columna, con su rótulo de aria. -->
+        @if (colsOpen()) {
+          <div class="colspanel" role="dialog" aria-label="Columnas">
+            @for (c of groupCols; track c) {
+              <label class="colspanel__row">
+                <input
+                  class="column-checkbox"
+                  type="checkbox"
+                  [attr.aria-label]="c"
+                  [checked]="!hidden().has(c)"
+                  (change)="toggleColumn(c)"
+                />
+                <span>{{ c }}</span>
+              </label>
+            }
+          </div>
+        }
+      </span>
     </header>
 
     <table class="grid">
       <thead>
         <tr>
-          @for (c of groupCols; track c) {
-            <th>{{ c }} <span class="th__sort" aria-hidden="true">⇅</span></th>
+          <!-- Las NUEVE cabeceras ordenan (medido en la real: el clic cicla
+               ascendente → descendente → sin orden). -->
+          @for (c of visibleCols(); track c) {
+            <th
+              class="sortable"
+              [class.is-sorted]="sortBy() === c"
+              [attr.aria-sort]="sortBy() === c ? (sortDir() === 'asc' ? 'ascending' : 'descending') : 'none'"
+              (click)="sort(c)"
+            >
+              {{ c }} <span class="th__sort" aria-hidden="true">⇅</span>
+            </th>
           }
         </tr>
       </thead>
       <tbody>
-        @for (g of groups; track g.name) {
+        @for (g of rows(); track g.name) {
           <tr>
-            <td>{{ g.name }}</td>
-            <td>{{ g.myAssigned }}</td>
-            <td>{{ g.totalWorkload }}</td>
-            <td>{{ g.created }}</td>
-            <td>{{ g.updated }}</td>
-            <td>{{ g.pending }}</td>
-            <td>{{ g.emailsSent }}</td>
-            <td>{{ g.smsSent }}</td>
-            <td>{{ g.totalActions }}</td>
+            @for (c of visibleCols(); track c) {
+              <td>{{ cell(g, c) }}</td>
+            }
           </tr>
         }
         <tr class="grid__totals">
-          <td>{{ totals.name }}</td>
-          <td>{{ totals.myAssigned }}</td>
-          <td>{{ totals.totalWorkload }}</td>
-          <td>{{ totals.created }}</td>
-          <td>{{ totals.updated }}</td>
-          <td>{{ totals.pending }}</td>
-          <td>{{ totals.emailsSent }}</td>
-          <td>{{ totals.smsSent }}</td>
-          <td>{{ totals.totalActions }}</td>
+          @for (c of visibleCols(); track c) {
+            <td>{{ cell(totals, c) }}</td>
+          }
         </tr>
       </tbody>
     </table>
 
+    <!-- El pie iba en CASTELLANO ("de … resultados", "Filas por página") y la
+         app real lo tiene en inglés, igual que el de Tickets. -->
     <footer class="groups__foot">
-      <span>1–{{ groups.length }} de {{ groups.length }} resultados</span>
+      <span>1–{{ rows().length }} of {{ rows().length }} results</span>
       <nav class="pager" aria-label="Paginación">
-        <button class="pager__btn" type="button" aria-label="Primera">«</button>
-        <button class="pager__btn" type="button" aria-label="Anterior">‹</button>
+        <button class="pager__btn" type="button" aria-label="Primera página" disabled>«</button>
+        <button class="pager__btn" type="button" aria-label="Página anterior" disabled>‹</button>
         <button class="pager__btn is-current" type="button" aria-current="page">1</button>
-        <button class="pager__btn" type="button" aria-label="Siguiente">›</button>
-        <button class="pager__btn" type="button" aria-label="Última">»</button>
+        <button class="pager__btn" type="button" aria-label="Página siguiente" disabled>›</button>
+        <button class="pager__btn" type="button" aria-label="Última página" disabled>»</button>
       </nav>
-      <span>Filas por página <span class="rpp">25 ▾</span></span>
+      <span>
+        Rows per page
+        <select class="rpp" aria-label="Filas por página">
+          <option>25</option>
+          <option>50</option>
+          <option>100</option>
+        </select>
+      </span>
     </footer>
   </section>
 

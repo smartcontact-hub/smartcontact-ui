@@ -77,12 +77,12 @@ modal **"Search customer"** encima. Replicado, con su ruta `…/ticket/:id/pre-t
 
 - **Ordenación por cabecera**: no replicada.
 - **Los iconos del detalle de ticket son glifos** (📞 🗎 ⚑ …), no los SVG reales.
-- Quedan **5 modales** localizados en el detalle de la real y sin replicar ("Ticket
-  Status" ya está hecho): "Cases" (CRM), "Please confirm the reason why no charges have
-  been refunded…", "Are you sure you want to delete this note?", el de prioridad
-  (Cancel/Request) y el de auto-asignación ("Would you like to assign this Ticket to
-  yourself?" · Yes/No). Su ESTRUCTURA se lee del DOM sin ejecutar nada; su MÉTRICA
-  exige abrirlos (abrir no guarda, pero ver un ticket sí tiene efecto — leer abajo).
+- **Los disparadores de dos diálogos son SUPOSICIÓN, no medición**: "Right to be
+  forgotten" cuelga del botón Unsubscribe y el de motivo de no reembolso del botón
+  Refund. Averiguar los reales exige ejecutar acciones sobre tickets vivos.
+- **Summary y Nav** (tabla de suscripciones) siguen sin hacer nada: se midió su caja
+  (Nav 67.9×30 radio 3.504 · Summary 70.5×26 radio 0, los dos `#233155`) pero no qué
+  abren.
 
 ### ⚠️ Abrir el detalle de un ticket CAMBIA su estado
 
