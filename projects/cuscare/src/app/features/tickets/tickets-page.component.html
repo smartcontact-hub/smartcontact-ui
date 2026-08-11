@@ -29,6 +29,7 @@
           [columns]="managedColumns()"
           (toggled)="toggleColumn($event)"
           (resetRequested)="resetColumns()"
+          (reordered)="reorderColumns($event)"
         />
       }
     </span>

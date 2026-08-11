@@ -1,3 +1,10 @@
+import {
+  CdkDrag,
+  CdkDragDrop,
+  CdkDragHandle,
+  CdkDragPlaceholder,
+  CdkDropList,
+} from '@angular/cdk/drag-drop';
 import { ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 
 /** Una columna gestionable: su rótulo y si se ve. */
@@ -20,28 +27,36 @@ export interface ManagedColumn {
  * en #243452; el de las filas es 16px con radio 3. Son dos componentes
  * distintos y conviene no unificarlos "por limpieza".
  *
- * Cada fila lleva su asa de arrastre porque en el original las columnas se
- * REORDENAN (18 asas medidas). El reordenado en sí queda pendiente: aquí el asa
- * está presente y anotada, no simulada como si funcionara.
+ * Las columnas se REORDENAN arrastrando, como en el original — que usa Angular
+ * CDK (se le vio la clase `cdk-drag` en el DOM), así que aquí se usa la misma
+ * librería en vez de improvisar un arrastre a mano. El asa es el punto de
+ * agarre (`cdkDragHandle`): así la fila se arrastra sólo desde ahí y la casilla
+ * se sigue pudiendo marcar sin disparar un drag.
  */
 @Component({
   selector: 'app-column-manager',
   standalone: true,
+  imports: [CdkDropList, CdkDrag, CdkDragHandle, CdkDragPlaceholder],
   template: `
     <div class="panel" role="dialog" aria-label="Manage columns">
       <h3 class="panel__title">Manage columns</h3>
 
-      <ul class="collist" role="list">
+      <ul class="collist" role="list" cdkDropList (cdkDropListDropped)="onDrop($event)">
         @for (c of columns(); track c.header) {
-          <li class="colitem">
-            <img
-              class="colitem__drag"
-              src="icons/general/drag_indicator.svg"
-              width="12"
-              height="12"
-              alt=""
-              aria-hidden="true"
-            />
+          <li class="colitem" cdkDrag>
+            <!-- El asa va en un span, no en la img: una imagen es arrastrable
+                 de forma NATIVA y el navegador se queda el gesto antes de que
+                 el CDK lo vea, así que el reordenado no se disparaba. El
+                 atributo draggable="false" remata el apaño. -->
+            <span class="colitem__drag" cdkDragHandle aria-hidden="true">
+              <img
+                src="icons/general/drag_indicator.svg"
+                width="12"
+                height="12"
+                alt=""
+                draggable="false"
+              />
+            </span>
             <input
               class="colcheck"
               type="checkbox"
@@ -50,6 +65,9 @@ export interface ManagedColumn {
               (change)="toggled.emit(c.header)"
             />
             <span class="colitem__label">{{ c.header }}</span>
+
+            <!-- Hueco que deja la fila mientras se arrastra. -->
+            <div class="colitem__placeholder" *cdkDragPlaceholder></div>
           </li>
         }
       </ul>
@@ -66,4 +84,14 @@ export class ColumnManagerComponent {
   readonly columns = input.required<readonly ManagedColumn[]>();
   readonly toggled = output<string>();
   readonly resetRequested = output<void>();
+  /** Nuevo orden completo de rótulos tras soltar. */
+  readonly reordered = output<string[]>();
+
+  protected onDrop(event: CdkDragDrop<readonly ManagedColumn[]>): void {
+    if (event.previousIndex === event.currentIndex) return;
+    const headers = this.columns().map((c) => c.header);
+    const [moved] = headers.splice(event.previousIndex, 1);
+    headers.splice(event.currentIndex, 0, moved);
+    this.reordered.emit(headers);
+  }
 }

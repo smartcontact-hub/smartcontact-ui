@@ -47,8 +47,56 @@
 }
 
 .colitem__drag {
+  display: inline-flex;
+  align-items: center;
+  line-height: 0;
   opacity: 0.45;
   cursor: grab;
+  /* El asa es el ÚNICO punto de agarre: así marcar la casilla no dispara un
+     arrastre. `touch-action` evita que el navegador se quede el gesto en
+     táctil antes de que el CDK lo vea. */
+  touch-action: none;
+}
+
+.colitem__drag:active {
+  cursor: grabbing;
+}
+
+/* ── Arrastre (Angular CDK, la misma librería que el original) ──────────── */
+
+/* La fila que viaja con el cursor. */
+.colitem.cdk-drag-preview {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  box-sizing: border-box;
+  height: 32px;
+  padding: 6px 8px;
+  border-radius: 6px;
+  background: #ffffff;
+  box-shadow: 0 6px 18px rgba(24, 29, 38, 0.18);
+  opacity: 0.96;
+}
+
+/* El hueco que deja mientras se arrastra. */
+.colitem__placeholder {
+  height: 32px;
+  border: 1px dashed #b9c2d2;
+  border-radius: 6px;
+  background: #f4f6fc;
+}
+
+/* Las demás filas se apartan con una transición, no de golpe. */
+.cdk-drag-animating,
+.collist.cdk-drop-list-dragging .colitem:not(.cdk-drag-placeholder) {
+  transition: transform 180ms cubic-bezier(0, 0, 0.2, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cdk-drag-animating,
+  .collist.cdk-drop-list-dragging .colitem:not(.cdk-drag-placeholder) {
+    transition: none;
+  }
 }
 
 .colitem__label {

@@ -66,6 +66,70 @@ test.describe('Manage columns', () => {
     const panel = page.getByRole('dialog', { name: 'Manage columns' });
     await expect(panel.locator('.colitem__drag')).toHaveCount(18);
   });
+
+  test('arrastrar una columna reordena la TABLA, no solo el panel', async ({ page }) => {
+    await goto(page);
+
+    // Orden de partida en la tabla (se salta la columna de selección).
+    const headersAntes = await page.locator('.cc-table thead tr').first().locator('th').allInnerTexts();
+    expect(headersAntes[1].trim()).toBe('ID');
+    expect(headersAntes[2].trim()).toBe('Status');
+
+    await page.getByRole('button', { name: 'Manage columns' }).click();
+    const panel = page.getByRole('dialog', { name: 'Manage columns' });
+    const handles = panel.locator('.colitem__drag');
+
+    // Arrastre REAL por el asa: pasos intermedios para que el CDK lo registre
+    // (un solo salto no dispara el reordenado).
+    const origen = await handles.nth(0).boundingBox();
+    const destino = await handles.nth(2).boundingBox();
+    if (!origen || !destino) throw new Error('No se pudieron medir las asas');
+
+    await page.mouse.move(origen.x + origen.width / 2, origen.y + origen.height / 2);
+    await page.mouse.down();
+    await page.mouse.move(destino.x + destino.width / 2, destino.y + destino.height / 2, {
+      steps: 12,
+    });
+    await page.mouse.up();
+    // El CDK anima la vuelta: medir antes da lecturas a medias (lo aprendí
+    // diagnosticando esto — sin la espera parecía que se perdía una columna).
+    await page.waitForTimeout(600);
+
+    // La tabla refleja el nuevo orden: ID ya no es la primera.
+    const th = page.locator('.cc-table thead tr').first().locator('th');
+    await expect(th.nth(1)).not.toHaveText('ID');
+    // Y sigue habiendo 18 columnas: reordenar no pierde ninguna.
+    await expect(th).toHaveCount(headersAntes.length);
+  });
+
+  test('"Reset to default" deshace también el reordenado', async ({ page }) => {
+    await goto(page);
+    await page.getByRole('button', { name: 'Manage columns' }).click();
+    const panel = page.getByRole('dialog', { name: 'Manage columns' });
+    const handles = panel.locator('.colitem__drag');
+
+    const origen = await handles.nth(0).boundingBox();
+    const destino = await handles.nth(2).boundingBox();
+    if (!origen || !destino) throw new Error('No se pudieron medir las asas');
+
+    await page.mouse.move(origen.x + origen.width / 2, origen.y + origen.height / 2);
+    await page.mouse.down();
+    await page.mouse.move(destino.x + destino.width / 2, destino.y + destino.height / 2, {
+      steps: 12,
+    });
+    await page.mouse.up();
+    // El CDK anima la vuelta: medir antes da lecturas a medias (lo aprendí
+    // diagnosticando esto — sin la espera parecía que se perdía una columna).
+    await page.waitForTimeout(600);
+
+    await page.getByRole('button', { name: 'Reset to default' }).click();
+
+    // Aserciones que REINTENTAN: `allInnerTexts()` es una lectura única y
+    // capturaba el estado anterior al repintado de Angular.
+    const th = page.locator('.cc-table thead tr').first().locator('th');
+    await expect(th.nth(1)).toHaveText('ID');
+    await expect(th.nth(2)).toHaveText('Status');
+  });
 });
 
 test.describe('popover de filtro', () => {
