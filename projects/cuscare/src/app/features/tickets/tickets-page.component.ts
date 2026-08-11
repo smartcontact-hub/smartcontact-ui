@@ -7,6 +7,7 @@ import { SelectModule } from 'primeng/select';
 import { TableModule } from 'primeng/table';
 
 import { TICKETS_ALL, TICKETS_TOTAL, TicketRow } from '../../data/seed';
+import { ColumnManagerComponent, ManagedColumn } from './column-manager.component';
 import { NewTicketModalComponent } from './new-ticket-modal.component';
 
 /**
@@ -51,6 +52,7 @@ interface Col {
     FormsModule,
     RouterLink,
     NewTicketModalComponent,
+    ColumnManagerComponent,
   ],
   templateUrl: './tickets-page.component.html',
   styleUrl: './tickets-page.component.scss',
@@ -93,7 +95,8 @@ export class TicketsPageComponent {
   }
 
   /** Las 18 columnas con su ancho MEDIDO y su tipo de filtro REAL. */
-  protected readonly cols: readonly Col[] = [
+  /** Catálogo COMPLETO. Lo que se pinta es `cols`, que quita las ocultas. */
+  private readonly allCols: readonly Col[] = [
     { key: 'id', header: 'ID', width: '80px', filter: 'popover' },
     { key: 'status', header: 'Status', width: '120px', filter: 'multiselect' },
     { key: 'assignedTo', header: 'Assigned to', width: '186px', filter: 'popover' },
@@ -176,6 +179,42 @@ export class TicketsPageComponent {
     this.selectedIds.set(new Set());
   }
 
+  /* ── Columnas visibles ("Manage columns") ───────────────────────────────── */
+  private readonly hiddenColumns = signal<ReadonlySet<string>>(new Set());
+  protected readonly columnsOpen = signal(false);
+
+  /** Lo que consume el panel: rótulo + si está visible. */
+  protected readonly managedColumns = computed<ManagedColumn[]>(() =>
+    this.allCols.map((c) => ({ header: c.header, visible: !this.hiddenColumns().has(c.header) })),
+  );
+
+  /** Las columnas que la tabla pinta de verdad. */
+  protected readonly cols = computed(() =>
+    this.allCols.filter((c) => !this.hiddenColumns().has(c.header)),
+  );
+
+  protected toggleColumn(header: string): void {
+    this.hiddenColumns.update((prev) => {
+      const next = new Set(prev);
+      if (next.has(header)) next.delete(header);
+      else next.add(header);
+      return next;
+    });
+  }
+
+  protected resetColumns(): void {
+    this.hiddenColumns.set(new Set());
+  }
+
+  /* ── Popover de filtro ──────────────────────────────────────────────────
+   * Los tres modos del original. "All" es el que viene puesto. */
+  protected readonly popModes = ['All', 'New', 'Update'] as const;
+  protected readonly mode = signal<Record<string, string>>({});
+
+  protected setMode(key: string, m: string): void {
+    this.mode.update((prev) => ({ ...prev, [key]: m }));
+  }
+
   /* ── Modal de nuevo ticket ──────────────────────────────────────────────
    * En la real, "+ New ticket" NO abre un formulario: abre un selector de grupo.
    * El paso siguiente (el formulario en sí) no se capturó porque llegar a él
@@ -206,7 +245,7 @@ export class TicketsPageComponent {
 
   protected readonly optionsByCol = computed(() => {
     const out: Record<string, { label: string; value: string }[]> = {};
-    for (const c of this.cols) {
+    for (const c of this.allCols) {
       if (c.filter === 'multiselect' || c.filter === 'select') out[c.key] = this.optionsOf(c.key);
     }
     return out;

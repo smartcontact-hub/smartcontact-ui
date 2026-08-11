@@ -1,0 +1,116 @@
+/* Valores MEDIDOS en la app real @1460×792 — ver la cabecera del componente. */
+
+:host {
+  display: contents;
+}
+
+.panel {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  z-index: 40;
+  width: 220px;
+  max-height: 600px;
+  display: flex;
+  flex-direction: column;
+  padding: 12px;
+  border: 1px solid #dadfe6;
+  border-radius: 12px;
+  background: #ffffff;
+  box-shadow: 0 8px 24px 0 rgba(24, 29, 38, 0.12);
+}
+
+.panel__title {
+  margin: 0 0 6px;
+  padding: 0 8px;
+  font-family: var(--cc-font-head);
+  font-size: 12px;
+  font-weight: 600;
+  color: #1b273d;
+}
+
+.collist {
+  flex: 1;
+  min-height: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  overflow-y: auto;
+}
+
+.colitem {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  height: 32px;
+  padding: 6px 8px;
+}
+
+.colitem__drag {
+  opacity: 0.45;
+  cursor: grab;
+}
+
+.colitem__label {
+  font-size: 12px;
+  color: #243452;
+}
+
+/* Checkbox PROPIO de este panel: 18px, radio 5, marcado #243452. NO es el
+   `.cc-check` de la tabla (16px, radio 3) — en el original son distintos. */
+.colcheck {
+  appearance: none;
+  -webkit-appearance: none;
+  flex: none;
+  position: relative;
+  width: 18px;
+  height: 18px;
+  margin: 0;
+  border: 1.5px solid #9aa1ad;
+  border-radius: 5px;
+  background: #ffffff;
+  cursor: pointer;
+}
+
+.colcheck:checked {
+  background: #243452;
+  border-color: #243452;
+}
+
+.colcheck:checked::after {
+  content: '';
+  position: absolute;
+  left: 5px;
+  top: 1.6px;
+  width: 4.5px;
+  height: 9px;
+  border: solid #ffffff;
+  border-width: 0 1.7px 1.7px 0;
+  transform: rotate(45deg);
+}
+
+.colcheck:focus-visible {
+  outline: 2px solid #243452;
+  outline-offset: 1px;
+}
+
+.panel__foot {
+  padding-top: 8px;
+  border-top: 1px solid #eef1f6;
+}
+
+.resetbtn {
+  width: 100%;
+  height: 28px;
+  border: 1px solid #dadfe6;
+  border-radius: 6px;
+  background: #ffffff;
+  color: var(--cc-text);
+  font-family: var(--cc-font);
+  font-size: 11.68px;
+  cursor: pointer;
+}
+
+.resetbtn:hover {
+  background: #f7f8fa;
+}

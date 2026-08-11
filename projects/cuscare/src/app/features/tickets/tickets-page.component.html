@@ -14,9 +14,24 @@
   }
 
   <div class="tickets__toolbar">
-    <button class="iconbtn" type="button" aria-label="Seleccionar columnas">
-      <img src="icons/general/columns-3.svg" width="16" height="16" alt="" aria-hidden="true" />
-    </button>
+    <span class="tickets__colwrap">
+      <button
+        class="iconbtn"
+        type="button"
+        aria-label="Manage columns"
+        [attr.aria-expanded]="columnsOpen()"
+        (click)="columnsOpen.set(!columnsOpen())"
+      >
+        <img src="icons/general/columns-3.svg" width="16" height="16" alt="" aria-hidden="true" />
+      </button>
+      @if (columnsOpen()) {
+        <app-column-manager
+          [columns]="managedColumns()"
+          (toggled)="toggleColumn($event)"
+          (resetRequested)="resetColumns()"
+        />
+      }
+    </span>
     <span class="tickets__sep"></span>
     <!-- Las 4 acciones en bloque están DESHABILITADAS sin selección (medido). -->
     @for (action of bulkActions; track action) {
@@ -74,7 +89,7 @@
               (change)="toggleAllVisible()"
             />
           </th>
-          @for (c of cols; track c.header) {
+          @for (c of cols(); track c.header) {
             <th [style.width]="c.width">
               <div class="th__inner">
                 <span class="th__label">{{ c.header }}</span>
@@ -89,7 +104,7 @@
              de verdad — ver `rows()` en el componente. -->
         <tr class="filterrow">
           <th class="col-select"></th>
-          @for (c of cols; track c.header) {
+          @for (c of cols(); track c.header) {
             <th [style.width]="c.width">
               @switch (c.filter) {
                 @case ('popover') {
@@ -97,16 +112,29 @@
                     <img src="icons/general/search.svg" width="11" height="11" alt="" aria-hidden="true" />
                     Filter
                   </button>
-                  <p-popover #pop>
+                  <!-- El popover del original NO es solo un campo: trae tres
+                       modos apilados (All / New / Update) y debajo el input.
+                       Medido: botones 154.5×28, radio 6, 11px; el activo en
+                       #1b273d con texto blanco y peso 600. -->
+                  <p-popover #pop styleClass="cc-popfilter">
                     <div class="popfilter">
-                      <label class="popfilter__lbl" [attr.for]="'pf-' + c.key">{{ c.header }}</label>
+                      @for (m of popModes; track m) {
+                        <button
+                          class="popfilter__mode"
+                          type="button"
+                          [class.is-active]="(mode()[c.key] ?? 'All') === m"
+                          (click)="setMode(c.key, m)"
+                        >
+                          {{ m }}
+                        </button>
+                      }
                       <input
                         class="popfilter__input"
-                        [id]="'pf-' + c.key"
                         type="text"
-                        placeholder="Contains…"
+                        [placeholder]="c.header"
                         [value]="text()[c.key] ?? ''"
                         (input)="setText(c.key, $any($event.target).value)"
+                        [attr.aria-label]="'Filtrar por ' + c.header"
                       />
                     </div>
                   </p-popover>
@@ -170,7 +198,7 @@
               />
             }
           </td>
-          @for (c of cols; track c.header) {
+          @for (c of cols(); track c.header) {
             <td [style.width]="c.width" [class.cell--dim]="row.locked">
               @switch (c.key) {
                 @case ('id') {
@@ -197,7 +225,7 @@
 
       <ng-template pTemplate="emptymessage">
         <tr>
-          <td [attr.colspan]="cols.length + 1" class="emptyrow">No data to show</td>
+          <td [attr.colspan]="cols().length + 1" class="emptyrow">No data to show</td>
         </tr>
       </ng-template>
     </p-table>
