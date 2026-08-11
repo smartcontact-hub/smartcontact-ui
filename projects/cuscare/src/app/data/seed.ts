@@ -214,6 +214,67 @@ export const TICKETS: readonly TicketRow[] = [
 /** Total que muestra el paginador de la real (2298 / 230 páginas de 10). */
 export const TICKETS_TOTAL = 2298;
 
+/**
+ * Genera filas adicionales DETERMINISTAS para que la paginación tenga por dónde
+ * pasar. Sin `Math.random`: el mismo índice da siempre la misma fila, así los
+ * tests e2e y las capturas no bailan entre ejecuciones.
+ *
+ * Sigue siendo todo inventado — solo replica la FORMA de los datos reales.
+ */
+const AGENTS = [
+  'LATAM Agent 1 - Aleja',
+  'ES Agent - M. Angeles',
+  'LATAM Agent 2 - Karen',
+  'LATAM Agent 3 - Natty',
+  'Viktor Sovcik',
+  'LATAM Agent 5 - Jeimy Alexandra',
+  'Unassigned',
+];
+const STATUSES: TicketStatus[] = ['open', 'resolved', 'pending', 'closed'];
+const CHANNELS: TicketChannel[] = ['call', 'chat', 'mail'];
+const CARRIERS = ['Orange', 'Movistar', 'Vodafone', 'O2', 'Yoigo'];
+const PRIORITIES = ['Low', 'Medium', 'High'];
+const COUNTRIES: readonly { name: string; flag: string }[] = [
+  { name: 'Spain', flag: '🇪🇸' },
+  { name: 'Slovakia', flag: '🇸🇰' },
+];
+const GROUPS_NAMES = ['ES - DOD', 'SK - Cuscare'];
+
+function makeRow(i: number): TicketRow {
+  const id = String(2050400 - i * 7);
+  const c = COUNTRIES[i % COUNTRIES.length];
+  const day = 1 + (i % 28);
+  const hh = 8 + (i % 10);
+  const mm = (i * 13) % 60;
+  const stamp = `${String(day).padStart(2, '0')}-08-2026 ${String(hh).padStart(2, '0')}:${String(mm).padStart(2, '0')}`;
+  return {
+    id,
+    status: STATUSES[i % STATUSES.length],
+    assignedTo: AGENTS[i % AGENTS.length],
+    group: GROUPS_NAMES[i % GROUPS_NAMES.length],
+    channel: CHANNELS[i % CHANNELS.length],
+    source: `346${String(10000000 + i * 137).slice(0, 8)}`,
+    email: i % 4 === 0 ? `persona${i}@example.com` : '',
+    country: c.name,
+    countryFlag: c.flag,
+    products: [PRODUCTS[i % PRODUCTS.length], PRODUCTS[(i + 3) % PRODUCTS.length]],
+    created: stamp,
+    updated: stamp,
+    description: '-',
+    priority: PRIORITIES[i % PRIORITIES.length],
+    subStatus: '-',
+    refund: '-',
+    gdpr: '-',
+    carrier: CARRIERS[i % CARRIERS.length],
+  };
+}
+
+/** Las 8 curadas + 52 generadas = 60 filas → 6 páginas de 10 para navegar. */
+export const TICKETS_ALL: readonly TicketRow[] = [
+  ...TICKETS,
+  ...Array.from({ length: 52 }, (_, i) => makeRow(i)),
+];
+
 export { PRODUCTS };
 
 /* ── Dashboard ─────────────────────────────────────────────────────────── */

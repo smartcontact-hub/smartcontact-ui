@@ -37,7 +37,7 @@
       <table class="grid">
         <thead>
           <tr>
-            <th class="col-select"><input type="checkbox" aria-label="Seleccionar todas" /></th>
+            <th class="col-select"><input class="cc-check" type="checkbox" aria-label="Seleccionar todas" /></th>
             @for (c of subCols; track c) {
               <th>{{ c }}</th>
             }
@@ -46,7 +46,7 @@
         <tbody>
           @for (s of subscriptions; track s.product) {
             <tr>
-              <td class="col-select"><input type="checkbox" [attr.aria-label]="'Seleccionar ' + s.product" /></td>
+              <td class="col-select"><input class="cc-check" type="checkbox" [attr.aria-label]="'Seleccionar ' + s.product" /></td>
               <td>{{ s.product }}</td>
               <td>{{ s.status }}</td>
               <td>{{ s.startDate }}</td>

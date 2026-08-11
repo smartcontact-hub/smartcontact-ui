@@ -82,10 +82,16 @@ for (const f of files) {
       log(`      ${line.trim()}`);
     }
     // 4 — campo de formulario PrimeNG crudo fuera de wrappers y del smoke.
+    // Las apps RÉPLICA quedan fuera por el mismo motivo que en las reglas 5-7:
+    // el producto original usa los componentes PrimeNG CRUDOS, y envolverlos en
+    // `sc-*` les impondría la chrome de NUESTRO DS — justo lo contrario de lo
+    // que la réplica existe para mostrar. Verificado en cuscare: sus filtros son
+    // `p-multiselect`/`p-select` sin envolver.
     if (
       f.endsWith('.html') &&
       !f.includes('ui-smartcontact/src/lib/') &&
       !f.startsWith(THEME_SMOKE) &&
+      !inReplica &&
       /<p-(select|multiSelect|multiselect|datePicker|datepicker|inputNumber|inputnumber|textarea|password|autoComplete|autocomplete|treeSelect|treeselect|cascadeSelect|cascadeselect)\b/i.test(line)
     ) {
       fail(`${at} usa un campo PrimeNG crudo → envuélvelo en su wrapper (<sc-select>…). Si no, se salta la chrome/densidad del DS.`);

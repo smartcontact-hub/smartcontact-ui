@@ -23,7 +23,7 @@ import { USERS } from '../../data/seed';
       <table class="mattable">
         <thead>
           <tr>
-            <th class="col-check"><input type="checkbox" aria-label="Seleccionar todo" /></th>
+            <th class="col-check"><input class="cc-check" type="checkbox" aria-label="Seleccionar todo" /></th>
             <th>User Name</th>
             <th>Default Role</th>
             <th>Acd Groups</th>
@@ -33,7 +33,7 @@ import { USERS } from '../../data/seed';
           @for (u of users; track u.name) {
             <tr>
               <td class="col-check">
-                <input type="checkbox" [attr.aria-label]="'Seleccionar ' + u.name" />
+                <input class="cc-check" type="checkbox" [attr.aria-label]="'Seleccionar ' + u.name" />
               </td>
               <td>{{ u.name }}</td>
               <td>{{ u.role }}</td>

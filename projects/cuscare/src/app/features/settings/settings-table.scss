@@ -83,16 +83,15 @@
   text-overflow: ellipsis;
 }
 
-/* El checkbox nativo estira la fila (13px + margen + strut). Se neutraliza
-   igual que en Tickets — es el mismo mecanismo, ya pagado una vez. */
+/* El checkbox estira la fila (strut de baseline). Se neutraliza igual que en
+   Tickets — mismo mecanismo, ya pagado una vez. El aspecto lo define
+   `.cc-check` (global, auditado contra el original). */
 .mattable .col-check {
   width: 34px;
 }
 
-.mattable .col-check input[type='checkbox'] {
+.mattable .col-check .cc-check {
   display: block;
-  height: 18px;
-  margin: 0;
 }
 
 .chip {

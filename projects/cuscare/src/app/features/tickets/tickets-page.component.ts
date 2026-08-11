@@ -1,76 +1,206 @@
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
 import { RouterLink } from '@angular/router';
+import { MultiSelectModule } from 'primeng/multiselect';
+import { PopoverModule } from 'primeng/popover';
+import { SelectModule } from 'primeng/select';
 import { TableModule } from 'primeng/table';
 
-import { TICKETS, TICKETS_TOTAL, TicketRow } from '../../data/seed';
+import { TICKETS_ALL, TICKETS_TOTAL, TicketRow } from '../../data/seed';
 
-/** Definición de columna: `key` casa con el campo de `TicketRow`. */
+/**
+ * Tipo de filtro por columna. **Medido uno a uno en la app real** inspeccionando
+ * qué componente vive dentro de cada celda de la fila de filtros — no deducido
+ * del tipo de dato:
+ *
+ *   popover     → ID · Assigned to · Products · Refund   (botón "Filter")
+ *   multiselect → Status · Group                          (MÚLTIPLE)
+ *   select      → Channel · Country · Priority · Sub-status · GDPR
+ *   input       → Source · Email · Created · Updated · Description · Carrier ·
+ *                 MO Error Content
+ *
+ * Son CUATRO tipos, no dos. El placeholder de select/multiselect es "—".
+ */
+type FilterKind = 'popover' | 'multiselect' | 'select' | 'input' | 'none';
+
 interface Col {
-  readonly key: keyof TicketRow | 'select';
+  readonly key: keyof TicketRow;
   readonly header: string;
-  /** Ancho fijo medido del real; sin él la columna encoge al contenido. */
   readonly width: string;
-  /** Tipo de filtro de la fila de filtros (la real mezcla input y select). */
-  readonly filter: 'text' | 'select' | 'none';
+  readonly filter: FilterKind;
 }
 
 /**
  * Vista Tickets — la tabla principal de CusCare.
  *
  * Se construye sobre `p-table` de PrimeNG A PROPÓSITO: la tabla del sitio real ES
- * un p-table (clases `p-datatable-scrollable-table p-datatable-table` medidas en
- * vivo), así que el DOM sale idéntico en vez de aproximado. El LOOK va en CSS
- * plano con los valores extraídos, no con tokens `--sc-*` (DD-35).
- *
- * Medido del real: 19 columnas, `th` 12px/600 `#4f5663` sobre `#f7f8fa` con
- * `padding:12px 8px`, filas de 47.5px separadas por `1px #dadfe6`, scroll
- * horizontal (la tabla mide 2694px), 10 filas por página de 2298 resultados.
+ * un p-table (clases `p-datatable-*` medidas en vivo), así que el DOM sale
+ * idéntico. Los filtros usan los MISMOS componentes que el original
+ * (`p-multiSelect`, `p-select`, `p-popover`) y **filtran de verdad** — no son
+ * adornos: se ven el placeholder, el modo múltiple y el contador de resultados.
  */
 @Component({
   selector: 'app-tickets-page',
   standalone: true,
-  imports: [TableModule, RouterLink],
+  imports: [TableModule, MultiSelectModule, SelectModule, PopoverModule, FormsModule, RouterLink],
   templateUrl: './tickets-page.component.html',
   styleUrl: './tickets-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TicketsPageComponent {
-  /** `p-table` pide un array mutable; el seed es readonly, así que se copia. */
-  protected readonly rows: TicketRow[] = [...TICKETS];
+  private readonly all: TicketRow[] = [...TICKETS_ALL];
   protected readonly total = TICKETS_TOTAL;
-  protected readonly selected = signal<readonly string[]>([]);
 
-  /**
-   * Las 18 columnas del real (+ la de selección, aparte), en orden.
-   * Los anchos son los MEDIDOS en el sitio en vivo (`getBoundingClientRect` sobre
-   * cada `th`) — no estimados; sumados dan los 2694px de tabla que mide la real.
-   */
+  /* ── Paginación + carga ─────────────────────────────────────────────────
+   * El original NO cambia de página al instante: tapa el cuerpo de la tabla con
+   * un overlay blanco translúcido, un spinner azul y "Loading data..." (medido:
+   * `.table-body-loading-overlay` rgba(255,255,255,.72), spinner 23.36px con
+   * borde 2.5px #0d6efd girando en 0.75s). Se replica ese retardo a propósito:
+   * sin él, la transición del original no se ve. */
+  protected readonly page = signal(1);
+  protected readonly rowsPerPage = signal(10);
+  protected readonly loading = signal(false);
+  private loadTimer?: ReturnType<typeof setTimeout>;
+
+  /** Páginas que pinta el paginador (las que existen con los datos del mock). */
+  protected readonly pageCount = computed(() =>
+    Math.max(1, Math.ceil(this.filtered().length / this.rowsPerPage())),
+  );
+
+  protected readonly pageNumbers = computed(() => {
+    const n = this.pageCount();
+    return Array.from({ length: Math.min(n, 5) }, (_, i) => i + 1);
+  });
+
+  protected goToPage(p: number): void {
+    if (p < 1 || p > this.pageCount() || p === this.page()) return;
+    clearTimeout(this.loadTimer);
+    this.loading.set(true);
+    // 380ms: suficiente para que la transición se PERCIBA, como en el original.
+    this.loadTimer = setTimeout(() => {
+      this.page.set(p);
+      this.loading.set(false);
+    }, 380);
+  }
+
+  /** Las 18 columnas con su ancho MEDIDO y su tipo de filtro REAL. */
   protected readonly cols: readonly Col[] = [
-    { key: 'id', header: 'ID', width: '80px', filter: 'text' },
-    { key: 'status', header: 'Status', width: '120px', filter: 'select' },
-    { key: 'assignedTo', header: 'Assigned to', width: '186px', filter: 'text' },
-    { key: 'group', header: 'Group', width: '130px', filter: 'select' },
+    { key: 'id', header: 'ID', width: '80px', filter: 'popover' },
+    { key: 'status', header: 'Status', width: '120px', filter: 'multiselect' },
+    { key: 'assignedTo', header: 'Assigned to', width: '186px', filter: 'popover' },
+    { key: 'group', header: 'Group', width: '130px', filter: 'multiselect' },
     { key: 'channel', header: 'Channel', width: '110px', filter: 'select' },
-    { key: 'source', header: 'Source', width: '140px', filter: 'text' },
-    { key: 'email', header: 'Email', width: '167px', filter: 'text' },
+    { key: 'source', header: 'Source', width: '140px', filter: 'input' },
+    { key: 'email', header: 'Email', width: '167px', filter: 'input' },
     { key: 'country', header: 'Country', width: '101px', filter: 'select' },
-    { key: 'products', header: 'Products', width: '348px', filter: 'text' },
-    { key: 'created', header: 'Created', width: '167px', filter: 'none' },
-    { key: 'updated', header: 'Updated', width: '167px', filter: 'none' },
-    { key: 'description', header: 'Description', width: '250px', filter: 'none' },
+    { key: 'products', header: 'Products', width: '348px', filter: 'popover' },
+    { key: 'created', header: 'Created', width: '167px', filter: 'input' },
+    { key: 'updated', header: 'Updated', width: '167px', filter: 'input' },
+    { key: 'description', header: 'Description', width: '250px', filter: 'input' },
     { key: 'priority', header: 'Priority', width: '110px', filter: 'select' },
     { key: 'subStatus', header: 'Sub-status', width: '130px', filter: 'select' },
-    { key: 'refund', header: 'Refund', width: '130px', filter: 'text' },
+    { key: 'refund', header: 'Refund', width: '130px', filter: 'popover' },
     { key: 'gdpr', header: 'GDPR', width: '155px', filter: 'select' },
-    { key: 'carrier', header: 'Carrier', width: '150px', filter: 'none' },
-    { key: 'moErrorContent', header: 'MO Error Content', width: '167px', filter: 'none' },
+    { key: 'carrier', header: 'Carrier', width: '150px', filter: 'input' },
+    { key: 'moErrorContent', header: 'MO Error Content', width: '167px', filter: 'input' },
   ];
 
   protected readonly bulkActions = ['Assign', 'Change status', 'Unsubscribe', 'Archive'];
 
-  protected value(row: TicketRow, key: Col['key']): string {
-    if (key === 'select') return '';
-    const v = row[key as keyof TicketRow];
+  /* ── Estado de los filtros ──────────────────────────────────────────────
+   * Un mapa por columna. Los múltiples guardan array; el resto, string. */
+  protected readonly multi = signal<Record<string, string[]>>({});
+  protected readonly single = signal<Record<string, string | null>>({});
+  protected readonly text = signal<Record<string, string>>({});
+
+  /** Opciones derivadas de los datos: así nunca ofrecen algo que no existe. */
+  private optionsOf(key: keyof TicketRow): { label: string; value: string }[] {
+    const seen = new Set<string>();
+    for (const r of this.all) {
+      const v = r[key];
+      if (typeof v === 'string' && v) seen.add(v);
+    }
+    return [...seen].sort().map((v) => ({ label: v, value: v }));
+  }
+
+  protected readonly optionsByCol = computed(() => {
+    const out: Record<string, { label: string; value: string }[]> = {};
+    for (const c of this.cols) {
+      if (c.filter === 'multiselect' || c.filter === 'select') out[c.key] = this.optionsOf(c.key);
+    }
+    return out;
+  });
+
+  /** Filas tras aplicar TODOS los filtros activos (sin paginar). */
+  private readonly filtered = computed<TicketRow[]>(() => {
+    const m = this.multi();
+    const s = this.single();
+    const t = this.text();
+    return this.all.filter((row) => {
+      for (const [key, vals] of Object.entries(m)) {
+        if (vals?.length && !vals.includes(String(row[key as keyof TicketRow]))) return false;
+      }
+      for (const [key, val] of Object.entries(s)) {
+        if (val && String(row[key as keyof TicketRow]) !== val) return false;
+      }
+      for (const [key, val] of Object.entries(t)) {
+        if (!val) continue;
+        const cell = row[key as keyof TicketRow];
+        const hay = Array.isArray(cell) ? cell.join(' ') : String(cell ?? '');
+        if (!hay.toLowerCase().includes(val.toLowerCase())) return false;
+      }
+      return true;
+    });
+  });
+
+  /** La página actual de las filas filtradas: lo que se pinta. */
+  protected readonly rows = computed<TicketRow[]>(() => {
+    const start = (this.page() - 1) * this.rowsPerPage();
+    return this.filtered().slice(start, start + this.rowsPerPage());
+  });
+
+  /** Índices que muestra el pie ("11–20 of 60"). */
+  protected readonly range = computed(() => {
+    const n = this.filtered().length;
+    if (!n) return { from: 0, to: 0, of: 0 };
+    const from = (this.page() - 1) * this.rowsPerPage() + 1;
+    return { from, to: Math.min(from + this.rowsPerPage() - 1, n), of: n };
+  });
+
+  /** ¿Hay algún filtro puesto? (habilita "Delete filters"). */
+  protected readonly hasFilters = computed(
+    () =>
+      Object.values(this.multi()).some((v) => v?.length) ||
+      Object.values(this.single()).some(Boolean) ||
+      Object.values(this.text()).some(Boolean),
+  );
+
+  /* Al cambiar cualquier filtro se vuelve a la página 1: si no, se puede quedar
+     mirando una página que ya no existe en el resultado filtrado. */
+  protected setMulti(key: string, value: string[]): void {
+    this.multi.update((m) => ({ ...m, [key]: value }));
+    this.page.set(1);
+  }
+
+  protected setSingle(key: string, value: string | null): void {
+    this.single.update((s) => ({ ...s, [key]: value }));
+    this.page.set(1);
+  }
+
+  protected setText(key: string, value: string): void {
+    this.text.update((t) => ({ ...t, [key]: value }));
+    this.page.set(1);
+  }
+
+  protected clearFilters(): void {
+    this.multi.set({});
+    this.single.set({});
+    this.text.set({});
+    this.page.set(1);
+  }
+
+  protected value(row: TicketRow, key: keyof TicketRow): string {
+    const v = row[key];
     return Array.isArray(v) ? v.join(', ') : String(v ?? '');
   }
 }

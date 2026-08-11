@@ -23,7 +23,7 @@ import { ROLES } from '../../data/seed';
       <table class="mattable">
         <thead>
           <tr>
-            <th class="col-check"><input type="checkbox" aria-label="Seleccionar todo" /></th>
+            <th class="col-check"><input class="cc-check" type="checkbox" aria-label="Seleccionar todo" /></th>
             <th style="width:242px">Role Name</th>
             <th style="width:545px">Description</th>
             <th style="width:242px">Last Update</th>
@@ -34,7 +34,7 @@ import { ROLES } from '../../data/seed';
           @for (r of roles; track r.name) {
             <tr>
               <td class="col-check">
-                <input type="checkbox" [attr.aria-label]="'Seleccionar ' + r.name" />
+                <input class="cc-check" type="checkbox" [attr.aria-label]="'Seleccionar ' + r.name" />
               </td>
               <td>{{ r.name }}</td>
               <td>{{ r.description }}</td>
