@@ -30,6 +30,53 @@
 
 ---
 
+## DD-35 · 2026-08-07 — `sc-demo` → `sc-docs`; el Agent pasa de mockup idealizado a réplica fiel del producto real
+
+**Contexto** · Dos piezas independientes, misma sesión. (1) `sc-demo` nació como "un demo rápido" pero
+lleva meses siendo infraestructura viva a diario: gate de CI (`build:demo` + `audit:components` +
+`usage:check`), smoke del tema, catálogo textual (`docs/inventory.md`) y superficie de e2e — "demo" ya
+no describe lo que es. (2) `projects/agent` existía desde la Fase 3 (commit `44033ef`) como un cartón-
+pluma **idealizado desde el propio DS** (`sc-gauge`, tokens `--sc-*`, datos genéricos en español,
+"Nombre apellido"/"Nombre Grupo 1") — nunca fue una copia del producto real
+(`agent.smart-contact.com/aed`). Rafa pidió una réplica **idéntica salvo backend**, para tener una base
+real de la que tokenizar después, no una interpretación.
+
+**Decisión** · (1) Rename técnico completo `sc-demo` → `sc-docs` (carpeta, `angular.json`,
+`package.json`, CI, Playwright ×3, `scripts/*.mjs`, toda la doc viva) en rama
+`refactor/sc-demo-to-sc-docs`. URL pública: **sc-doc.pages.dev** (singular — ver Descartadas). (2)
+`projects/agent` reconstruido con CSS plano (NO tokens `--sc-*`, a propósito: fidelidad antes que
+integración) y valores **extraídos** del sitio real vía `getComputedStyle`/muestreo de píxel — colores,
+tipografía, spacing, 8 iconos SVG reales, timers vivos — en rama `feat/agent-dashboard`, desplegado en
+**sc-agent.pages.dev**.
+
+**Razón** · Para (1): un nombre que no describe el rol actual del proyecto es fricción cognitiva
+permanente, y el coste del rename (mecánico, cubierto por `verify`+`e2e`) es menor que seguir
+arrastrándolo. Para (2): la estimación desde capturas fallaba sistemáticamente — colores medidos
+directamente en el sitio real diferían 15-40% de lo estimado a ojo (p. ej. fondo `#3e4246` real vs
+`#1f2329` estimado, aro del gauge `#1c1f27` vs `#3a424c`), confirmado por Rafa comparando ambas
+pantallas lado a lado. Solo la extracción directa cierra esa brecha.
+
+**Descartadas** ·
+- **`sc-docs.pages.dev`** (plural, coherente con el nombre interno) → colisión global de namespace
+  `.pages.dev` (ya usado por otra cuenta, confirmado por Cloudflare con el sufijo aleatorio `-4a5`
+  al reservarlo). `sc-doc` (singular) estaba libre. El id interno del proyecto sigue siendo `sc-docs`
+  — mismo patrón que `agent`/`sc-agent.pages.dev`: el nombre interno y la URL pública no coinciden.
+- **Reusar el cartón-pluma idealizado de Fase 3 y solo pulir detalles** → rechazado: partía de una
+  interpretación del DS, no del producto; la tipografía sola estaba inflada 30-40% frente al sitio real.
+- **Tokens `--sc-*` en el nuevo Agent** → rechazado por ahora: mezclar tokenización con fidelidad
+  visual habría ocultado errores de extracción. La tokenización es trabajo aparte, a partir de esta
+  base ya verificada contra el sitio real.
+
+**Consecuencias** · Ninguna de las dos ramas está mergeada a `main` todavía — pendiente de que Rafa
+apruebe cada preview (ver `NEXT-SESSION.md`). Hasta el merge, el proyecto Cloudflare **viejo**
+`sc-demo.pages.dev` sigue vivo apuntando a `main` (que aún no tiene el rename) — no está roto, es el
+estado transitorio esperado. Al mergear: repuntar cada proyecto Cloudflare de su rama a `main`, y
+decidir si `sc-demo.pages.dev` se borra o se deja morir. Los históricos (`DECISIONS-LOG*.md`,
+`AUDIT-2026-07.md`) NO se reescribieron con el nuevo nombre — documentan lo que era cierto cuando se
+escribieron.
+
+---
+
 ## DD-20 · 2026-06-17 — Puente Figma→código COMPLETO: un generador por clase de valor + chivato como garantía de completitud
 
 **Contexto** · Tras DD-18 (sizing) y DD-19 (color semántico), una sesión de testing real destapó que el
