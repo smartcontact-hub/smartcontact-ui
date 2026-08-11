@@ -40,16 +40,26 @@
           <span aria-hidden="true">{{ ticket().countryFlag }}</span> {{ ticket().source }}
         }
       </span>
+      <!-- La última celda es la ficha del cliente y abre "Cases" (el CRM). -->
       <span class="metabar__cell">---</span>
-      <span class="metabar__cell">---<span class="caret" aria-hidden="true">▾</span></span>
+      <button class="metabar__cell metabar__cell--btn" type="button" (click)="openDialog('crm')">
+        ---<span class="caret" aria-hidden="true">▾</span>
+      </button>
     </div>
 
     <div class="subs">
       <div class="subs__actions">
         <button class="iconbtn" type="button" aria-label="Refrescar">↻</button>
-        <button class="btn btn--ghost" type="button">Unsubscribe</button>
-        <button class="btn btn--ghost" type="button">Refund</button>
-        <button class="btn btn--ghost" type="button">Detail</button>
+        <!-- "Refund" lleva al diálogo de motivo de no reembolso. Es una
+             SUPOSICIÓN anotada: el componente se llama `cases-resolved` y no se
+             pudo confirmar su disparador sin ejecutar acciones sobre el ticket. -->
+        <button class="btn btn--ghost" type="button" (click)="openDialog('forgotten')">
+          Unsubscribe
+        </button>
+        <button class="btn btn--ghost" type="button" (click)="openDialog('noRefund')">Refund</button>
+        <button class="btn btn--ghost" type="button" (click)="detailsOpen.set(!detailsOpen())">
+          Detail
+        </button>
       </div>
 
       <table class="grid">
@@ -98,8 +108,36 @@
       Attached files <span aria-hidden="true">📎</span>
     </button>
 
-    <span class="tabs__details">Show details <span class="caret" aria-hidden="true">▾</span></span>
-    <button class="tabs__new" type="button"><span aria-hidden="true">＋</span> New</button>
+    <button
+      class="tabs__details"
+      type="button"
+      [attr.aria-expanded]="detailsOpen()"
+      (click)="detailsOpen.set(!detailsOpen())"
+    >
+      Show details <span class="caret" aria-hidden="true">▾</span>
+    </button>
+    <!-- El menú de "+ New" tiene CUATRO entradas (medidas en la real, leídas de
+         su DOM sin abrirlo) y va sobre el mismo panel oscuro #5f6776 que las
+         acciones en bloque — no es un menú claro. -->
+    <span class="tabs__newwrap">
+      <button
+        class="tabs__new"
+        type="button"
+        [attr.aria-expanded]="newMenuOpen()"
+        (click)="newMenuOpen.set(!newMenuOpen())"
+      >
+        <span aria-hidden="true">＋</span> New
+      </button>
+      @if (newMenuOpen()) {
+        <div class="newmenu" role="menu">
+          @for (item of newMenuItems; track item) {
+            <button class="newmenu__item" type="button" role="menuitem" (click)="newMenuOpen.set(false)">
+              {{ item }}
+            </button>
+          }
+        </div>
+      }
+    </span>
   </nav>
 
   @switch (tab()) {
@@ -145,4 +183,6 @@
   @if (statusModalOpen()) {
     <app-ticket-status-modal (closed)="statusModalOpen.set(false)" />
   }
+
+  <app-detail-dialogs [dialog]="dialog()" (closed)="dialog.set(null)" />
 </div>

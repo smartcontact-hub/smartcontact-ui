@@ -124,7 +124,13 @@ for (const { ruta, nombre, altoFila } of PAGINAS) {
       };
     });
 
-    expect(medido.altoFila).toBe(altoFila);
+    // ±1px de tolerancia, y no es para callar un fallo: `plantillas` midió 55
+    // en CI el 2026-08-11 y 54 en local en la misma revisión, con la app sin
+    // tocar (el commit sólo cambiaba `projects/cuscare`). Es redondeo
+    // sub-píxel de `getBoundingClientRect`, sensible a cómo carga la fuente en
+    // el runner. La banda que este test defiende es 54 vs 63 —nueve píxeles—,
+    // así que uno de holgura no le quita poder y sí le quita un rojo falso.
+    expect(Math.abs(medido.altoFila - altoFila)).toBeLessThanOrEqual(1);
     expect(medido.paddingCelda).toBe(GRAMATICA.paddingCelda);
     expect(medido.cabecera).toEqual(GRAMATICA.cabecera);
     // `null` = esta tabla no tiene selección, que es una decisión de la
