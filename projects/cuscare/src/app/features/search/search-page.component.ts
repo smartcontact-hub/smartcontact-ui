@@ -14,8 +14,8 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
   template: `
     <div class="search">
       <div class="search__row">
-        <span class="field">Select country <span class="field__caret" aria-hidden="true">▾</span></span>
-        <span class="field">Msisdn <span class="field__caret" aria-hidden="true">▾</span></span>
+        <span class="field">Select country <img class="field__caret" src="icons/general/flecha-abajo.svg" width="11" height="11" alt="" aria-hidden="true" /></span>
+        <span class="field">Msisdn <img class="field__caret" src="icons/general/flecha-abajo.svg" width="11" height="11" alt="" aria-hidden="true" /></span>
         <span class="search__input">
           <input class="search__ph" type="text" placeholder="Search" aria-label="Buscar cliente" />
           <button class="search__btn" type="button" aria-label="Buscar">
