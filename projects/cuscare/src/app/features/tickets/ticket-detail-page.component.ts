@@ -102,6 +102,42 @@ export class TicketDetailPageComponent {
   protected readonly unsubOpen = signal(false);
   protected readonly refundFor = signal<string | null>(null);
 
+  /* ── Selección de suscripciones ─────────────────────────────────────────
+   * Los tres botones de la barra (Unsubscribe · Refund · Detail) NO actúan
+   * sobre el ticket entero: actúan sobre las filas marcadas, y sin selección
+   * no hacen nada. Se descubrió pulsando "Refund" en la real sin marcar nada y
+   * viendo que no abría absolutamente nada — parecía un botón roto. */
+  protected readonly selectedSubs = signal<ReadonlySet<string>>(new Set());
+
+  protected isSubSelected(product: string): boolean {
+    return this.selectedSubs().has(product);
+  }
+
+  protected readonly hasSubSelection = computed(() => this.selectedSubs().size > 0);
+
+  protected firstSelectedSub(): string {
+    return [...this.selectedSubs()][0] ?? this.subscriptions[0].product;
+  }
+
+  protected toggleSub(product: string): void {
+    this.selectedSubs.update((prev) => {
+      const next = new Set(prev);
+      if (next.has(product)) next.delete(product);
+      else next.add(product);
+      return next;
+    });
+  }
+
+  protected readonly allSubsSelected = computed(
+    () => this.selectedSubs().size === this.subscriptions.length,
+  );
+
+  protected toggleAllSubs(): void {
+    this.selectedSubs.set(
+      this.allSubsSelected() ? new Set() : new Set(this.subscriptions.map((s) => s.product)),
+    );
+  }
+
   /** Cargos del producto, con la forma de los reales (inventados). */
   protected readonly refundCharges = [
     { date: '05-08-2026 15:54:26', amount: '4.5 €' },

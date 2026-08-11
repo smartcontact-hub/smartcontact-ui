@@ -87,9 +87,9 @@ modal **"Search customer"** encima. Replicado, con su ruta `…/ticket/:id/pre-t
   reapuntados a `refund-modal` y `unsubscribe-confirm-modal`, ambos medidos en la real.
   Del de reembolsos salió un detalle que no se adivina: por cada cargo hay **DOS
   botones, API y BNK** — las dos vías de devolución.
-- **Ojo con los tres botones de esa barra** (Unsubscribe · Refund · Detail): en la real
-  actúan sobre las **filas de suscripción marcadas**, y no hacen nada sin selección. La
-  réplica los abre siempre; replicar esa condición está pendiente.
+- ~~Los tres botones de esa barra abren siempre~~ **HECHO (s26)**: Unsubscribe · Refund ·
+  Detail exigen suscripción marcada, como en la real (pulsar "Refund" sin marcar nada allí
+  no abre NADA — parece roto y no lo está).
 - **"Show details"** despliega un panel cuyo contenido NO se pudo observar: pulsarlo en
   la real no cambió el texto de la página en el ticket probado. Nuestro botón alterna
   estado y no pinta nada — deliberado, no un olvido.
