@@ -1,0 +1,239 @@
+<!-- Los cuatro disparadores. Sin selección van DESHABILITADOS y, ojo, en la real
+     NO se atenúan: mismo color (#4f5663) y misma opacidad (1) que habilitados.
+     Se replica tal cual aunque sea discutible: es lo que hace el original. -->
+@for (a of triggers; track a.id) {
+  <span class="bulkitem">
+    <button
+      class="bulkbtn"
+      type="button"
+      [disabled]="!enabled()"
+      [attr.aria-expanded]="open() === a.id"
+      (click)="toggle(a.id)"
+    >
+      {{ a.label }}
+      <img
+        class="bulkbtn__caret"
+        src="icons/general/arrow_drop_down.svg"
+        width="14"
+        height="14"
+        alt=""
+        aria-hidden="true"
+      />
+    </button>
+
+    <!-- ── Panel: Assign ───────────────────────────────────────────────── -->
+    @if (open() === 'assign' && a.id === 'assign') {
+      <div class="panel panel--assign" role="dialog" aria-label="Assign">
+        <div class="panel__close">
+          <button class="panel__x" type="button" aria-label="Cerrar" (click)="close()">
+            <img src="icons/general/x.svg" width="10" height="10" alt="" aria-hidden="true" />
+          </button>
+        </div>
+
+        <div class="panel__searchrow">
+          <span class="panel__searchgroup">
+            <span class="panel__searchicon">
+              <img src="icons/general/buscar.svg" width="12" height="12" alt="" aria-hidden="true" />
+            </span>
+            <input
+              class="panel__searchinput"
+              type="text"
+              placeholder="Search"
+              aria-label="Buscar agente"
+              [ngModel]="agentQuery()"
+              (ngModelChange)="agentQuery.set($event)"
+            />
+          </span>
+        </div>
+
+        <!-- "Agentes" en castellano dentro de una interfaz en inglés: del original. -->
+        <div class="panel__title"><p>Agentes</p></div>
+
+        <div class="panel__list">
+          @for (ag of agents(); track ag) {
+            <div class="panel__option">
+              <span
+                class="panel__item"
+                [class.is-picked]="agent() === ag"
+                role="button"
+                tabindex="0"
+                (click)="agent.set(ag)"
+                (keydown.enter)="agent.set(ag)"
+                (keydown.space)="agent.set(ag)"
+                >{{ ag }}</span
+              >
+            </div>
+          } @empty {
+            <div class="panel__empty">Sin agentes para «{{ agentQuery() }}»</div>
+          }
+        </div>
+
+        <div class="panel__footer">
+          <button
+            class="panel__cta"
+            type="button"
+            [disabled]="!agent()"
+            (click)="confirmFromPanel('assign')"
+          >
+            Assign
+          </button>
+        </div>
+      </div>
+    }
+
+    <!-- ── Panel: Change status ────────────────────────────────────────── -->
+    @if (open() === 'status' && a.id === 'status') {
+      <div class="panel panel--status" role="dialog" aria-label="Change status">
+        <div class="panel__close">
+          <button class="panel__x" type="button" aria-label="Cerrar" (click)="close()">
+            <img src="icons/general/x.svg" width="10" height="10" alt="" aria-hidden="true" />
+          </button>
+        </div>
+
+        <div class="panel__title"><p>Change status</p></div>
+
+        <div class="panel__body">
+          <button
+            class="cselect"
+            type="button"
+            [attr.aria-expanded]="statusListOpen()"
+            (click)="statusListOpen.set(!statusListOpen())"
+          >
+            <span class="cselect__value">{{ status() }}</span>
+            <span class="cselect__arrow">
+              <img
+                src="icons/general/flecha-abajo.svg"
+                width="10"
+                height="10"
+                alt=""
+                aria-hidden="true"
+              />
+            </span>
+          </button>
+
+          <!-- El desplegable interno es CLARO (fondo blanco) aunque el panel que lo
+               contiene sea oscuro. Sólo dos opciones. -->
+          @if (statusListOpen()) {
+            <div class="cselect__list" role="listbox">
+              @for (s of statusOptions; track s) {
+                <div
+                  class="cselect__option"
+                  role="option"
+                  tabindex="0"
+                  [attr.aria-selected]="status() === s"
+                  (click)="pickStatus(s)"
+                  (keydown.enter)="pickStatus(s)"
+                >
+                  {{ s }}
+                </div>
+              }
+            </div>
+          }
+        </div>
+
+        <div class="panel__footer panel__footer--split">
+          <span class="panel__link" role="button" tabindex="0">Spam</span>
+          <button
+            class="panel__cta"
+            type="button"
+            [disabled]="!status()"
+            (click)="confirmFromPanel('status')"
+          >
+            Accept
+          </button>
+        </div>
+      </div>
+    }
+
+    <!-- ── Panel: Unsubscribe ──────────────────────────────────────────── -->
+    @if (open() === 'unsubscribe' && a.id === 'unsubscribe') {
+      <div class="panel panel--unsub" role="dialog" aria-label="Unsubscribe">
+        <div class="panel__close">
+          <button class="panel__x" type="button" aria-label="Cerrar" (click)="close()">
+            <img src="icons/general/x.svg" width="10" height="10" alt="" aria-hidden="true" />
+          </button>
+        </div>
+
+        <div class="panel__body panel__body--unsub">
+          <label class="radio">
+            <input
+              class="radio__input"
+              type="radio"
+              name="cc-unsub"
+              [checked]="unsubAll()"
+              (change)="unsubAll.set(true)"
+            />
+            <span class="radio__mark" aria-hidden="true"></span>
+            <span class="radio__text">Unsubscribe all products</span>
+          </label>
+        </div>
+
+        <div class="panel__footer">
+          <button
+            class="panel__cta panel__cta--white"
+            type="button"
+            (click)="confirmFromPanel('unsubscribe')"
+          >
+            Unsubscribe
+          </button>
+        </div>
+      </div>
+    }
+  </span>
+}
+
+<!-- ── Modal de confirmación (común a las cuatro) ────────────────────────── -->
+@if (modal()) {
+  <div class="cmodal" (click)="onBackdrop($event)">
+    <div class="cmodal__dialog" role="dialog" aria-modal="true" [attr.aria-label]="modalTitle()">
+      <div class="cmodal__content">
+        <div class="cmodal__head">
+          <p class="cmodal__title">{{ modalTitle() }}</p>
+          <p class="cmodal__sub">{{ modalSubtitle() }}</p>
+        </div>
+
+        <!-- Tabla Material (fila 40px, cabecera peso 500, separador rgba(0,0,0,.12)):
+             es la MISMA métrica que las tablas de Ajustes, no la de Tickets. -->
+        <div class="cmodal__body">
+          <table class="cmodal__table">
+            <thead>
+              <tr>
+                <th>Id</th>
+                <th>Created at</th>
+                <th>Service</th>
+                <th>Assign</th>
+                <th>Group</th>
+                <th>Status</th>
+                <th>Channel</th>
+                <th>Description</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (r of selected(); track r.id) {
+                <tr>
+                  <td>{{ r.id }}</td>
+                  <td>{{ r.created }}</td>
+                  <td></td>
+                  <td>{{ r.assignedTo }}</td>
+                  <td>{{ r.group }}</td>
+                  <td>{{ r.status }}</td>
+                  <td>{{ r.channel }}</td>
+                  <td>{{ r.description }}</td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+
+        <div class="cmodal__foot">
+          <button class="cmodal__btn cmodal__btn--cancel" type="button" (click)="closeModal()">
+            Cancel
+          </button>
+          <button class="cmodal__btn cmodal__btn--confirm" type="button" (click)="apply()">
+            {{ modalCta() }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+}
