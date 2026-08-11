@@ -433,3 +433,60 @@ test('el timeline usa contorno, no fondo, y el azul medido', async ({ page }) =>
     .evaluate((el) => getComputedStyle(el).color);
   expect(azul).toBe('rgb(0, 86, 254)');
 });
+
+/**
+ * Los tooltips ⓘ. Rafa: «en dashboard no has pillado ninguno» — y no era uno:
+ * la app real tiene 23 iconos ⓘ solo en esa pantalla.
+ *
+ * Los textos NO se transcribieron de pantallazos: salen del diccionario que
+ * carga la propia app (`assets/i18n/cuscare/en.json`, 1449 claves), así que van
+ * exactos. Este test los fija para que nadie los "mejore" al vuelo.
+ */
+test.describe('tooltips del dashboard', () => {
+  test('las tarjetas KPI llevan su explicación', async ({ page }) => {
+    await page.goto('/#/private/cuscare/dashboard');
+
+    await expect(
+      page.getByLabel('Number of tickets assigned to you that are open or updated').first(),
+    ).toBeVisible();
+    await expect(page.getByLabel('Unassigned tickets available in your groups')).toBeVisible();
+    await expect(
+      page.getByLabel('Total number of new, updated, and open tickets, with or without assignment'),
+    ).toBeVisible();
+    await expect(page.getByLabel('Total connected time')).toBeVisible();
+  });
+
+  test('sólo CINCO de las nueve cabeceras llevan ⓘ', async ({ page }) => {
+    await page.goto('/#/private/cuscare/dashboard');
+    // Las otras cuatro se entienden por su nombre y en la real no lo llevan.
+    await expect(page.locator('.dash__groups thead app-info-tip')).toHaveCount(5);
+    await expect(page.getByLabel("Tickets with 'new' tag")).toBeVisible();
+    await expect(
+      page.getByLabel('Tickets in pending status without client or partner sub-status'),
+    ).toBeVisible();
+  });
+
+  test('el tooltip usa el estilo de Material medido, no uno inventado', async ({ page }) => {
+    await page.goto('/#/private/cuscare/dashboard');
+    const burbuja = page.locator('app-info-tip .tip__bubble').first();
+
+    const estilo = await burbuja.evaluate((el) => {
+      const c = getComputedStyle(el);
+      return { bg: c.backgroundColor, col: c.color, fs: c.fontSize, rad: c.borderTopLeftRadius };
+    });
+    expect(estilo.bg).toBe('rgb(66, 66, 66)'); // --mat-tooltip-container-color
+    expect(estilo.col).toBe('rgb(255, 255, 255)');
+    expect(estilo.fs).toBe('12px');
+    expect(estilo.rad).toBe('4px');
+  });
+});
+
+/** Y el del modal de reembolsos: por qué no se puede pedir la devolución. */
+test('los botones API/BNK explican "Action not allowed" cuando no se permite', async ({ page }) => {
+  await page.goto('/#/private/cuscare/tickets/ticket/2050567');
+  await page.getByRole('button', { name: /Reembolsos de/ }).click();
+
+  const modal = page.getByRole('dialog', { name: 'Refunds' });
+  await expect(modal.getByRole('button', { name: 'API' }).first()).toBeDisabled();
+  await expect(modal.locator('.rfd__tip').first()).toHaveText('Action not allowed');
+});
