@@ -83,6 +83,13 @@ modal **"Search customer"** encima. Replicado, con su ruta `…/ticket/:id/pre-t
 - **Summary y Nav** (tabla de suscripciones) siguen sin hacer nada: se midió su caja
   (Nav 67.9×30 radio 3.504 · Summary 70.5×26 radio 0, los dos `#233155`) pero no qué
   abren.
+- **"Show details"** despliega un panel cuyo contenido NO se pudo observar: pulsarlo en
+  la real no cambió el texto de la página en el ticket probado. Nuestro botón alterna
+  estado y no pinta nada — deliberado, no un olvido.
+- **El pre-ticket 2051827 no se puede archivar** (Rafa lo pidió, 2026-08-11): filtrando
+  por su ID exacto en la lista da "No Data Found", y su propia pantalla no tiene ni
+  archivar ni borrar (sus iconos son editar · guardar · 3 banderas · x · buscar · notas
+  · adjunto). Es un borrador que nunca entró en la lista; el total sigue en 3280.
 
 ### ⚠️ Abrir el detalle de un ticket CAMBIA su estado
 
