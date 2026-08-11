@@ -95,7 +95,7 @@ test('la selección sobrevive al cambio de página', async ({ page }) => {
   await goto(page);
 
   await rowChecks(page).first().check();
-  await page.getByRole('button', { name: 'Página 2' }).click();
+  await page.getByRole('button', { name: 'Página 2', exact: true }).click();
   await expect(page.locator('.tickets__count')).toContainText('11–20');
 
   // Sigue contando la de la página 1: se selecciona el TICKET, no la casilla.

@@ -243,21 +243,21 @@
       <button class="pager__btn" type="button" aria-label="Página anterior"
         [disabled]="page() === 1" (click)="goToPage(page() - 1)">‹</button>
 
-      @for (p of pageNumbers(); track p) {
-        <button
-          class="pager__btn"
-          type="button"
-          [class.is-current]="p === page()"
-          [attr.aria-current]="p === page() ? 'page' : null"
-          [attr.aria-label]="'Página ' + p"
-          (click)="goToPage(p)"
-        >{{ p }}</button>
-      }
-
-      @if (pageCount() > 5) {
-        <span class="pager__gap">…</span>
-        <button class="pager__btn" type="button" [attr.aria-label]="'Página ' + pageCount()"
-          [class.is-current]="page() === pageCount()" (click)="goToPage(pageCount())">{{ pageCount() }}</button>
+      <!-- La ventana SIGUE a la página actual y los "…" salen donde hay hueco:
+           `pageItems` documenta la regla medida en las 328 páginas de la real. -->
+      @for (p of pageItems(); track $index) {
+        @if (p === 'gap') {
+          <span class="pager__gap">…</span>
+        } @else {
+          <button
+            class="pager__btn"
+            type="button"
+            [class.is-current]="p === page()"
+            [attr.aria-current]="p === page() ? 'page' : null"
+            [attr.aria-label]="'Página ' + p"
+            (click)="goToPage($any(p))"
+          >{{ p }}</button>
+        }
       }
 
       <button class="pager__btn" type="button" aria-label="Página siguiente"
@@ -271,9 +271,12 @@
       <select class="rpp" aria-label="Filas por página"
         [value]="rowsPerPage()"
         (change)="rowsPerPage.set(+$any($event.target).value); goToPage(1); page.set(1)">
+        <!-- Las cinco del original (le faltaban 100 y 300). -->
         <option [value]="10">10</option>
         <option [value]="25">25</option>
         <option [value]="50">50</option>
+        <option [value]="100">100</option>
+        <option [value]="300">300</option>
       </select>
     </span>
   </footer>

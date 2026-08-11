@@ -90,6 +90,9 @@ imposible de pulsar— porque yo la había puesto `fixed` cuando en la real es `
   Ante la duda no se pulsó. Para desbloquearlo hace falta un pantallazo de Rafa.
 - **La ordenación de columnas no está.** Filtros, paginación, selección, gestor de
   columnas y acciones en bloque sí funcionan de verdad; ordenar por cabecera, no.
+- **La ventana del paginador con menos de 6 páginas** no se pudo observar en la real
+  (su tabla nunca baja de 11 páginas). Con la fórmula medida, un total de 6 pintaría
+  `1 … 2 3 4 5 6`; esos puntos entre números consecutivos se suprimen a propósito.
 - **Formato de fecha**: la real pinta `17/07/2023 06:45` en la tabla y
   `17-07-2023 06:45:09` (con segundos) en el modal de confirmación. El seed usa un
   único formato con guiones, así que la tabla diverge en el separador.
