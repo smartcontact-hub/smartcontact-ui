@@ -1,107 +1,75 @@
-import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
+import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
+
+import { TICKETS_ALL, TicketRow } from '../../data/seed';
 
 /**
  * "Search" del nav → ruta `#/private/cuscare/**customer**` (comprobado
  * navegando; el rótulo y la ruta no coinciden).
  *
- * Es una pantalla de BÚSQUEDA VACÍA: una fila centrada con dos desplegables
- * ("Select country", "Msisdn") + campo de texto con botón de lupa, y debajo una
- * ilustración grande que ocupa el resto. Sin resultados hasta buscar.
+ * Estructura MEDIDA en la app real: fila centrada con dos `mat-select` de
+ * 238×35 ("Select country" y "Msisdn"), un input `form-control` de 198×27 y un
+ * botón de 36×27 — y debajo la ilustración. Ojo: aquí los desplegables son de
+ * **Angular Material**, no PrimeNG como los filtros de Tickets. Esta app mezcla
+ * las dos librerías según la pantalla.
+ *
+ * Busca DE VERDAD contra el seed. Los resultados se muestran en una tabla que
+ * reutiliza el chrome de Tickets; el estado vacío es explícito, no una pantalla
+ * muda (que es justo lo que fallaba antes: se pulsaba y no pasaba nada).
  */
 @Component({
   selector: 'app-search-page',
   standalone: true,
-  template: `
-    <div class="search">
-      <div class="search__row">
-        <span class="field">Select country <img class="field__caret" src="icons/general/flecha-abajo.svg" width="11" height="11" alt="" aria-hidden="true" /></span>
-        <span class="field">Msisdn <img class="field__caret" src="icons/general/flecha-abajo.svg" width="11" height="11" alt="" aria-hidden="true" /></span>
-        <span class="search__input">
-          <input class="search__ph" type="text" placeholder="Search" aria-label="Buscar cliente" />
-          <button class="search__btn" type="button" aria-label="Buscar">
-            <img src="icons/general/search.svg" width="15" height="15" alt="" aria-hidden="true" />
-          </button>
-        </span>
-      </div>
-
-      <!-- Ilustración REAL de la app (media/ilustracion-customer, 903×401). -->
-      <div class="search__art">
-        <img src="images/ilustracion-customer.png" width="903" height="401" alt="" aria-hidden="true" />
-      </div>
-    </div>
-  `,
-  styles: `
-    :host {
-      display: block;
-    }
-    .search {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      padding-top: 120px;
-    }
-    .search__row {
-      display: flex;
-      align-items: center;
-      gap: 34px;
-    }
-    .field {
-      display: inline-flex;
-      align-items: center;
-      justify-content: space-between;
-      width: 242px;
-      height: 34px;
-      padding: 0 14px;
-      border: 1px solid #d7dbe3;
-      border-radius: 6px;
-      background: #ffffff;
-      font-size: 11.68px;
-      color: var(--cc-text-body);
-    }
-    .field__caret {
-      font-size: 9px;
-      opacity: 0.7;
-    }
-    .search__input {
-      display: inline-flex;
-      align-items: center;
-    }
-    .search__ph {
-      display: inline-flex;
-      align-items: center;
-      width: 232px;
-      height: 34px;
-      padding: 0 14px;
-      border: 1px solid #d7dbe3;
-      border-right: 0;
-      border-radius: 6px 0 0 6px;
-      background: #ffffff;
-      font-size: 11.68px;
-      color: #9aa1ac;
-    }
-    .search__btn {
-      display: inline-flex;
-      align-items: center;
-      justify-content: center;
-      width: 38px;
-      height: 34px;
-      border: 0;
-      border-radius: 0 6px 6px 0;
-      background: #1c283d;
-      color: #ffffff;
-      font-size: 14px;
-      cursor: pointer;
-    }
-    .search__art {
-      margin-top: 60px;
-      line-height: 0;
-      max-width: 100%;
-    }
-    .search__art img {
-      max-width: 100%;
-      height: auto;
-    }
-  `,
+  imports: [FormsModule, RouterLink],
+  templateUrl: './search-page.component.html',
+  styleUrl: './search-page.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class SearchPageComponent {}
+export class SearchPageComponent {
+  /** Países presentes en los datos (no una lista inventada aparte). */
+  protected readonly countries = ['Spain', 'Slovakia'];
+
+  /** Criterios de búsqueda; "Msisdn" es el que trae por defecto la real. */
+  protected readonly criteria = ['Msisdn', 'Email', 'Ticket ID'] as const;
+
+  protected readonly country = signal<string>('');
+  protected readonly criterion = signal<(typeof this.criteria)[number]>('Msisdn');
+  protected readonly term = signal('');
+
+  /** null = aún no se ha buscado (pantalla inicial con la ilustración). */
+  protected readonly results = signal<TicketRow[] | null>(null);
+  protected readonly searching = signal(false);
+
+  protected readonly hasTerm = computed(() => this.term().trim().length > 0);
+
+  protected search(): void {
+    const term = this.term().trim().toLowerCase();
+    if (!term) return;
+
+    // Mismo gesto que en Tickets: el original no responde al instante.
+    this.searching.set(true);
+    setTimeout(() => {
+      const country = this.country();
+      const crit = this.criterion();
+      const found = TICKETS_ALL.filter((t) => {
+        if (country && t.country !== country) return false;
+        switch (crit) {
+          case 'Email':
+            return t.email.toLowerCase().includes(term);
+          case 'Ticket ID':
+            return t.id.includes(term);
+          default:
+            return t.source.includes(term);
+        }
+      });
+      this.results.set(found);
+      this.searching.set(false);
+    }, 380);
+  }
+
+  protected reset(): void {
+    this.term.set('');
+    this.results.set(null);
+  }
+}

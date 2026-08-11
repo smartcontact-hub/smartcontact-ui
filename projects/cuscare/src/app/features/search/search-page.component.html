@@ -1,0 +1,100 @@
+<div class="search">
+  <!-- Fila de búsqueda. Métrica medida: selects 238×35 (gap 11), input 198×27,
+       botón 36×27. Los desplegables del original son mat-select. -->
+  <div class="search__row">
+    <select class="field" [ngModel]="country()" (ngModelChange)="country.set($event)" aria-label="País">
+      <option value="">Select country</option>
+      @for (c of countries; track c) {
+        <option [value]="c">{{ c }}</option>
+      }
+    </select>
+
+    <select
+      class="field"
+      [ngModel]="criterion()"
+      (ngModelChange)="criterion.set($event)"
+      aria-label="Criterio de búsqueda"
+    >
+      @for (c of criteria; track c) {
+        <option [value]="c">{{ c }}</option>
+      }
+    </select>
+
+    <span class="search__input">
+      <input
+        class="search__ph"
+        type="text"
+        placeholder="Search"
+        aria-label="Término de búsqueda"
+        [ngModel]="term()"
+        (ngModelChange)="term.set($event)"
+        (keydown.enter)="search()"
+      />
+      <button class="search__btn" type="button" aria-label="Buscar" [disabled]="!hasTerm()" (click)="search()">
+        <img src="icons/general/search.svg" width="15" height="15" alt="" aria-hidden="true" />
+      </button>
+    </span>
+  </div>
+
+  @if (searching()) {
+    <div class="search__loading">
+      <span class="spinner" role="status" aria-label="Buscando"></span>
+      <p class="search__msg">Loading data...</p>
+    </div>
+  } @else if (results() === null) {
+    <!-- Estado inicial: la ilustración REAL de la app (903×401). -->
+    <div class="search__art">
+      <img src="images/ilustracion-customer.png" width="903" height="401" alt="" aria-hidden="true" />
+    </div>
+  } @else if (results()!.length === 0) {
+    <div class="search__empty">
+      <p class="search__emptytitle">No results</p>
+      <p class="search__emptymsg">
+        No hay tickets para «{{ term() }}» en {{ criterion() }}@if (country()) { · {{ country() }} }.
+      </p>
+      <button class="btn btn--ghost" type="button" (click)="reset()">Limpiar búsqueda</button>
+    </div>
+  } @else {
+    <section class="cc-card search__results">
+      <header class="search__resultshead">
+        <h2 class="cc-page-title">{{ results()!.length }} results</h2>
+        <button class="btn btn--ghost" type="button" (click)="reset()">Limpiar búsqueda</button>
+      </header>
+
+      <table class="resulttable">
+        <thead>
+          <tr>
+            <th>ID</th>
+            <th>Status</th>
+            <th>Assigned to</th>
+            <th>Group</th>
+            <th>Channel</th>
+            <th>Source</th>
+            <th>Email</th>
+            <th>Country</th>
+            <th>Created</th>
+          </tr>
+        </thead>
+        <tbody>
+          @for (r of results(); track r.id) {
+            <tr>
+              <td>
+                <a class="cell-id" [routerLink]="['/private/cuscare/tickets/ticket', r.id]">{{ r.id }}</a>
+              </td>
+              <td>{{ r.status }}</td>
+              <td>{{ r.assignedTo }}</td>
+              <td>{{ r.group }}</td>
+              <td>{{ r.channel }}</td>
+              <td>{{ r.source }}</td>
+              <td>{{ r.email }}</td>
+              <td>
+                <span class="cell-country"><span class="flag" aria-hidden="true">{{ r.countryFlag }}</span>{{ r.country }}</span>
+              </td>
+              <td>{{ r.created }}</td>
+            </tr>
+          }
+        </tbody>
+      </table>
+    </section>
+  }
+</div>

@@ -23,9 +23,11 @@ test.describe('sidebar', () => {
   test('los 4 items navegan a su vista', async ({ page }) => {
     await goto(page, HOME);
 
-    const cases = [
+    const cases: { label: string; url: RegExp; marker?: string; field?: string }[] = [
       { label: 'Dashboard', url: /#\/private\/cuscare\/dashboard/, marker: 'Workload' },
-      { label: 'Search', url: /#\/private\/cuscare\/customer/, marker: 'Select country' },
+      // Search ya no es una maqueta: se comprueba por su campo REAL, no por el
+      // texto de un <option> (que está oculto dentro del <select>).
+      { label: 'Search', url: /#\/private\/cuscare\/customer/, field: 'Término de búsqueda' },
       { label: 'Manage MO in error', url: /#\/private\/cuscare\/mo-management/, marker: 'No data to show' },
       { label: 'Tickets', url: /#\/private\/cuscare\/tickets/, marker: 'New ticket' },
     ];
@@ -33,7 +35,11 @@ test.describe('sidebar', () => {
     for (const c of cases) {
       await page.getByRole('link', { name: c.label, exact: true }).click();
       await expect(page).toHaveURL(c.url);
-      await expect(page.getByText(c.marker, { exact: false }).first()).toBeVisible();
+      if (c.field) {
+        await expect(page.getByLabel(c.field)).toBeVisible();
+      } else {
+        await expect(page.getByText(c.marker!, { exact: false }).first()).toBeVisible();
+      }
     }
   });
 
