@@ -1,0 +1,80 @@
+/*
+ * CusCare — entrypoint global de estilos.
+ * Réplica de cuscare.smart-contact.com/aed con valores EXACTOS extraídos del sitio
+ * real (getComputedStyle), NO estimados. Spec de medición en
+ * scratchpad/cuscare-spec.md.
+ *
+ * Paleta en variables --cc-* (prefijo propio, como --ag-* en Agent): esto es un
+ * cartón pluma FIEL, no una app tokenizada. Los tokens --sc-* del DS llegan cuando
+ * se tokenice, encima de esta base ya verificada (DD-35).
+ */
+
+/* `@use` antes que cualquier `@import`. */
+@use 'reset';
+
+/* Tokens del DS: inertes para el look, pero PrimeNG los consume vía el preset. */
+@import '../../../design-tokens/src/lib/styles/tokens/layers/01-primitive.css';
+@import '../../../design-tokens/src/lib/styles/tokens/layers/02-semantic.css';
+@import '../../../design-tokens/src/lib/styles/tokens/layers/03-palette.css';
+@import '../../../design-tokens/src/lib/styles/tokens/layers/04-component.css';
+@import '../../../design-tokens/src/lib/styles/tokens/layers/05-extensions.css';
+
+@import 'primeicons/primeicons.css';
+
+/* ─────────────────────────────────────────────────────────────────────────
+ * Paleta REAL (medida a viewport 1460×792 sobre el sitio en vivo).
+ * ───────────────────────────────────────────────────────────────────────── */
+:root {
+  /* Superficies */
+  --cc-canvas: #f4f6fc; /* .content-main — el lienzo tras las tarjetas */
+  --cc-card: #ffffff; /* .tickets-container */
+  --cc-thead: #f7f8fa; /* fondo de la cabecera de tabla */
+
+  /* Texto */
+  --cc-text: #4f5663; /* títulos y cabeceras de tabla */
+  --cc-text-strong: #1c283d; /* item de nav ACTIVO */
+  --cc-text-muted: #8d939d; /* item de nav inactivo */
+  --cc-text-body: #4f5663;
+
+  /* Líneas */
+  --cc-line: #dadfe6; /* separador de filas */
+
+  /* Métrica */
+  --cc-radius-card: 12px;
+  --cc-sidebar-w: 90.3px;
+
+  /* Tipografía: la real MEZCLA las dos — Roboto de base, Open Sans en
+     títulos y tabla. Se replica tal cual, no se unifica. */
+  --cc-font: Roboto, 'Helvetica Neue', sans-serif;
+  --cc-font-head: 'Open Sans', 'Helvetica Neue', sans-serif;
+}
+
+/* Raíz FLUIDA: medido 11.68px a 1460px de ancho = 0.8vw exacto (mismo patrón
+   que el Agent). Todo lo demás cuelga de aquí, por eso la app escala entera. */
+html {
+  font-size: 0.8vw;
+}
+
+body {
+  margin: 0;
+  font-family: var(--cc-font);
+  background: var(--cc-canvas);
+  color: var(--cc-text-body);
+}
+
+/* Tarjeta blanca que envuelve cada vista (medida: radio 12, sin sombra, pad 16). */
+.cc-card {
+  background: var(--cc-card);
+  border-radius: var(--cc-radius-card);
+  box-shadow: none;
+  padding: 16px;
+}
+
+/* Título de página: Open Sans 14/600 #4f5663 (medido). */
+.cc-page-title {
+  margin: 0;
+  font-family: var(--cc-font-head);
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--cc-text);
+}

@@ -1,0 +1,185 @@
+/* Métrica MEDIDA del sitio real @1460×792 — ver scratchpad/cuscare-spec.md.
+   Nada de px a ojo: cada valor de aquí sale de getBoundingClientRect. */
+
+:host {
+  display: block;
+  min-height: 100vh;
+}
+
+.shell {
+  display: flex;
+  align-items: flex-start;
+  min-height: 100vh;
+}
+
+/* ── Sidebar ────────────────────────────────────────────────────────────── */
+/* Medido: w=90.3, x=0, transparente (el lienzo se ve a través). */
+.nav {
+  position: sticky;
+  top: 0;
+  flex: none;
+  width: 90.3px;
+  height: 100vh;
+  display: flex;
+  flex-direction: column;
+  background: transparent;
+}
+
+.nav__brand {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding-top: 5.6px; /* logo medido en y=5.6 */
+}
+
+.nav__logo {
+  width: 44px;
+  height: 45px;
+  line-height: 0;
+}
+
+/* "development": Open Sans 11.68px, negro, medido en y=50.6. */
+.nav__env {
+  margin-top: 0;
+  font-family: var(--cc-font-head);
+  font-size: 11.68px;
+  font-weight: 400;
+  line-height: 17.5px;
+  color: #000000;
+}
+
+/* Medido en la real: nav-body arranca en y=82.2 y las etiquetas caen en
+   145.2 → 227.3 → 312.9 → ~398, o sea paso ~84px. El margen de arriba y el
+   de separación están calculados para clavar esas Y, no puestos a ojo. */
+.nav__body {
+  margin-top: 35.1px;
+  display: flex;
+  flex-direction: column;
+}
+
+.nav__item {
+  position: relative;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 12px 6px 0;
+  margin-bottom: 24.5px; /* 59.5 de contenido + 24.5 = paso de 84px */
+  text-decoration: none;
+  color: var(--cc-text-muted); /* #8d939d — inactivo, medido */
+  text-align: center;
+}
+
+.nav__item:last-child {
+  margin-bottom: 0;
+}
+
+/* Activo: texto oscuro + barra vertical en el borde derecho del sidebar. */
+.nav__item.is-active {
+  color: var(--cc-text-strong); /* #1c283d — medido */
+}
+
+.nav__item.is-active::after {
+  content: '';
+  position: absolute;
+  right: -1px;
+  top: 4px;
+  bottom: 4px;
+  width: 2px;
+  background: var(--cc-text-strong);
+}
+
+.nav__label {
+  font-size: 11.68px;
+  font-weight: 400;
+  line-height: 17.5px;
+}
+
+/* ── Engranaje + submenú ────────────────────────────────────────────────── */
+.nav__settings {
+  position: relative;
+  margin-top: auto;
+  padding: 0 0 18px 10px;
+}
+
+.nav__gear {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 5px 8px;
+  border: 1px solid #d7dbe3;
+  border-radius: 14px;
+  background: #ffffff;
+  color: #6b7280;
+  font: inherit;
+  font-size: 10px;
+  cursor: pointer;
+}
+
+.nav__gear-caret {
+  font-size: 9px;
+  line-height: 1;
+}
+
+/* Submenú: se despliega hacia arriba desde el engranaje (como el real). */
+.settingsmenu {
+  position: absolute;
+  left: 0;
+  bottom: calc(100% + 4px);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  width: 112px;
+  background: #6b717d;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.settingsmenu__item {
+  padding: 8px 12px;
+  font-size: 11.68px;
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.settingsmenu__item:hover {
+  background: #7c828e;
+}
+
+/* ── Contenido ──────────────────────────────────────────────────────────── */
+/* Medido: la card arranca en x=117.3 y=20 → 117.3 - 90.3 (sidebar) = 27px de hueco. */
+.content-main {
+  flex: 1;
+  min-width: 0;
+  min-height: 100vh;
+  background: var(--cc-canvas);
+  padding: 20px 27px 20px 27px;
+}
+
+/* ── Barra inferior de estado ───────────────────────────────────────────── */
+.statusbar {
+  position: fixed;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  height: 40px;
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 12px;
+  padding: 0 40px;
+  background: #2f333c;
+}
+
+.statusbar__pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 122px;
+  height: 22px;
+  padding: 0 14px;
+  border-radius: 4px;
+  background: #e8697a;
+  color: #ffffff;
+  font-size: 11.68px;
+}

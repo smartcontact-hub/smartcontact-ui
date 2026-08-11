@@ -1,0 +1,145 @@
+<div class="dash">
+  <!-- Fila de KPIs -->
+  <div class="dash__kpis">
+    <section class="cc-card kpi kpi--workload">
+      <h2 class="kpi__title">Workload</h2>
+      <div class="kpi__boxes">
+        <div class="kpibox kpibox--active">
+          <span class="kpibox__label">My assigned</span>
+          <span class="kpibox__row"><span class="kpibox__num">0</span><span class="kpibox__tag">MO 0</span></span>
+        </div>
+        <div class="kpibox">
+          <span class="kpibox__label">Team queue</span>
+          <span class="kpibox__num kpibox__num--lg">524</span>
+        </div>
+      </div>
+      <footer class="kpi__foot">
+        <span>Total workload <span class="info" aria-hidden="true">ⓘ</span></span>
+        <strong>524</strong>
+      </footer>
+    </section>
+
+    <section class="cc-card kpi kpi--contacts">
+      <h2 class="kpi__title">Contacts</h2>
+      <div class="kpi__split">
+        <div class="contacts">
+          <span class="contacts__head"><span aria-hidden="true">📞</span> Calls</span>
+          <div class="contacts__cols">
+            <div>
+              <span class="contacts__label">Inbound</span>
+              <span class="contacts__nums">
+                <span class="contacts__num">0</span><span class="ok">Answered</span>
+                <span class="contacts__num">0</span><span class="bad">Missed</span>
+              </span>
+            </div>
+            <div>
+              <span class="contacts__label">Outbound</span>
+              <span class="contacts__num">0</span>
+            </div>
+          </div>
+          <footer class="kpi__foot">
+            <span>Total handled <span class="info" aria-hidden="true">ⓘ</span></span>
+            <span class="contacts__totals">In 00:00 &nbsp; Out 00:00 &nbsp; 0</span>
+          </footer>
+        </div>
+        <div class="channels">
+          <div class="channel">
+            <span class="channel__head"><span aria-hidden="true">✉️</span> Emails</span>
+            <span class="channel__num">0</span>
+            <span class="channel__label">Sent</span>
+          </div>
+          <div class="channel">
+            <span class="channel__head"><span aria-hidden="true">💬</span> SMS</span>
+            <span class="channel__num">0</span>
+            <span class="channel__label">Sent</span>
+          </div>
+          <div class="channel">
+            <span class="channel__head"><span aria-hidden="true">📕</span> MO</span>
+            <span class="channel__num">0</span>
+            <span class="channel__label">Resolved</span>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <div class="dash__side">
+      <section class="cc-card kpi kpi--small">
+        <span class="kpi__smalltitle">Session <span class="info" aria-hidden="true">ⓘ</span></span>
+        <span class="kpi__bignum">01:53</span>
+      </section>
+      <section class="cc-card kpi kpi--small">
+        <span class="kpi__smalltitle">Tickets completed <span class="info" aria-hidden="true">ⓘ</span></span>
+        <span class="kpi__bignum kpi__bignum--sm">0</span>
+        <span class="kpi__arrow" aria-hidden="true">→</span>
+      </section>
+    </div>
+  </div>
+
+  <!-- Groups -->
+  <section class="cc-card dash__groups">
+    <header class="groups__head">
+      <h2 class="cc-page-title">Groups</h2>
+      <span class="searchbox"><span class="searchbox__icon" aria-hidden="true">⌕</span>Search groups</span>
+      <button class="iconbtn groups__cols" type="button" aria-label="Seleccionar columnas">
+        <svg viewBox="0 0 16 16" width="13" height="13" fill="none" stroke="currentColor" stroke-width="1.3" aria-hidden="true">
+          <rect x="1.5" y="2.5" width="13" height="11" rx="1.4" />
+          <path d="M6 2.5v11M10.5 2.5v11" />
+        </svg>
+      </button>
+    </header>
+
+    <table class="grid">
+      <thead>
+        <tr>
+          @for (c of groupCols; track c) {
+            <th>{{ c }} <span class="th__sort" aria-hidden="true">⇅</span></th>
+          }
+        </tr>
+      </thead>
+      <tbody>
+        @for (g of groups; track g.name) {
+          <tr>
+            <td>{{ g.name }}</td>
+            <td>{{ g.myAssigned }}</td>
+            <td>{{ g.totalWorkload }}</td>
+            <td>{{ g.created }}</td>
+            <td>{{ g.updated }}</td>
+            <td>{{ g.pending }}</td>
+            <td>{{ g.emailsSent }}</td>
+            <td>{{ g.smsSent }}</td>
+            <td>{{ g.totalActions }}</td>
+          </tr>
+        }
+        <tr class="grid__totals">
+          <td>{{ totals.name }}</td>
+          <td>{{ totals.myAssigned }}</td>
+          <td>{{ totals.totalWorkload }}</td>
+          <td>{{ totals.created }}</td>
+          <td>{{ totals.updated }}</td>
+          <td>{{ totals.pending }}</td>
+          <td>{{ totals.emailsSent }}</td>
+          <td>{{ totals.smsSent }}</td>
+          <td>{{ totals.totalActions }}</td>
+        </tr>
+      </tbody>
+    </table>
+
+    <footer class="groups__foot">
+      <span>1–{{ groups.length }} de {{ groups.length }} resultados</span>
+      <nav class="pager" aria-label="Paginación">
+        <button class="pager__btn" type="button" aria-label="Primera">«</button>
+        <button class="pager__btn" type="button" aria-label="Anterior">‹</button>
+        <button class="pager__btn is-current" type="button" aria-current="page">1</button>
+        <button class="pager__btn" type="button" aria-label="Siguiente">›</button>
+        <button class="pager__btn" type="button" aria-label="Última">»</button>
+      </nav>
+      <span>Filas por página <span class="rpp">25 ▾</span></span>
+    </footer>
+  </section>
+
+  <!-- Tickets (vacío en la real) -->
+  <section class="cc-card dash__tickets">
+    <h2 class="cc-page-title">Tickets</h2>
+    <p class="nodata">NO DATA</p>
+  </section>
+</div>
