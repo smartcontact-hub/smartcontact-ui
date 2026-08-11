@@ -148,13 +148,22 @@ export class BulkActionsComponent {
     }
   });
 
+  /**
+   * El subtítulo del modal.
+   *
+   * Los de Assign y Change status terminan con el DESTINO elegido, no en "to"
+   * a medias. Lo delataron las claves del diccionario de la app real:
+   * `"You will assign the following {{number}} tickets to {{name}}"`. Yo había
+   * copiado el texto del DOM con el modal cerrado —sin agente elegido— y se
+   * quedaba colgando en la preposición.
+   */
   protected readonly modalSubtitle = computed(() => {
     const n = this.count();
     switch (this.modal()) {
       case 'assign':
-        return `You will assign the following ${n} tickets to`;
+        return `You will assign the following ${n} tickets to ${this.agent() ?? ''}`.trimEnd();
       case 'status':
-        return `You will change the status of the next ${n} tickets to`;
+        return `You will change the status of the next ${n} tickets to ${this.status() ?? ''}`.trimEnd();
       case 'unsubscribe':
         return `You will unsubscribe the following ${n} tickets`;
       case 'archive':
