@@ -120,7 +120,19 @@
               <td>{{ s.status }}</td>
               <td>{{ s.startDate }}</td>
               <td>{{ s.endDate }}</td>
-              <td><span class="navpill"><span aria-hidden="true">🌐</span> Nav</span></td>
+              <!-- "Nav" NO abre otra cosa: abre el MISMO panel Summary, pero
+                   por la sección Navigation (medido: el bloque mide 67px
+                   entrando por Summary y 1153px entrando por Nav). -->
+              <td>
+                <button
+                  class="navpill"
+                  type="button"
+                  [attr.aria-label]="'Navegación de ' + s.product"
+                  (click)="openSummary(s.product, 'nav')"
+                >
+                  <span aria-hidden="true">🌐</span> Nav
+                </button>
+              </td>
               <td>{{ s.price }}</td>
               <!-- El badge de reembolsos ABRE el modal de reembolsos, y es la
                    vía de solo lectura: el botón "Refund" de la barra no hace
@@ -248,7 +260,12 @@
   <app-detail-dialogs [dialog]="dialog()" (closed)="dialog.set(null)" />
 
   @if (summaryFor(); as prod) {
-    <app-summary-panel [ticketId]="ticket().id" [product]="prod" (closed)="summaryFor.set(null)" />
+    <app-summary-panel
+      [ticketId]="ticket().id"
+      [product]="prod"
+      [focus]="summaryFocus()"
+      (closed)="summaryFor.set(null)"
+    />
   }
 
   @if (unsubOpen()) {
