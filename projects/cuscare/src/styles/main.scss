@@ -78,3 +78,56 @@ body {
   font-weight: 600;
   color: var(--cc-text);
 }
+
+/* ─────────────────────────────────────────────────────────────────────────
+ * Checkbox — AUDITADO contra el original.
+ *
+ * No es un `p-checkbox` ni el del sistema: es un `<input type=checkbox>` nativo
+ * con `appearance: none` y su propia caja dibujada. Medido:
+ *   16×16 · borde 1.5px · radio 3px · fondo blanco · margen 0 4px · pointer
+ * Y un detalle fácil de pasar por alto: el de la CABECERA lleva el borde más
+ * oscuro (#4f5663) que los de fila (#9aa1ad).
+ *
+ * Va global porque lo comparten la tabla de Tickets y las de ajustes.
+ * ───────────────────────────────────────────────────────────────────────── */
+.cc-check {
+  appearance: none;
+  -webkit-appearance: none;
+  flex: none;
+  width: 16px;
+  height: 16px;
+  margin: 0 4px;
+  border: 1.5px solid #9aa1ad;
+  border-radius: 3px;
+  background: #ffffff;
+  cursor: pointer;
+  position: relative;
+}
+
+/* En la cabecera el borde es más oscuro (medido). */
+thead .cc-check {
+  border-color: var(--cc-text);
+}
+
+.cc-check:checked {
+  background: var(--cc-text-strong);
+  border-color: var(--cc-text-strong);
+}
+
+/* La marca se dibuja con dos bordes rotados: sin fuente de iconos ni SVG. */
+.cc-check:checked::after {
+  content: '';
+  position: absolute;
+  left: 4.2px;
+  top: 1.2px;
+  width: 4px;
+  height: 8px;
+  border: solid #ffffff;
+  border-width: 0 1.6px 1.6px 0;
+  transform: rotate(45deg);
+}
+
+.cc-check:focus-visible {
+  outline: 2px solid var(--cc-text-strong);
+  outline-offset: 1px;
+}

@@ -94,9 +94,59 @@
 
 /* ── Tabla ──────────────────────────────────────────────────────────────── */
 .tickets__tablewrap {
+  position: relative; /* ancla del overlay de carga */
   flex: 1;
   min-height: 0;
   overflow: auto;
+}
+
+/* ── Loader (medido del original) ───────────────────────────────────────────
+ * overlay rgba(255,255,255,.72) sobre el cuerpo · spinner 23.36px con borde
+ * 2.5px #0d6efd girando 0.75s · mensaje "Loading data..." 13px #4f5663. */
+.loadingoverlay {
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: rgba(255, 255, 255, 0.72);
+}
+
+.loadingstate {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 12px;
+}
+
+.spinner {
+  width: 23.36px;
+  height: 23.36px;
+  border: 2.5px solid #0d6efd;
+  border-right-color: transparent;
+  border-radius: 50%;
+  animation: cc-spin 0.75s linear infinite;
+}
+
+.loadingstate__msg {
+  margin: 0;
+  font-size: 13px;
+  color: #4f5663;
+}
+
+@keyframes cc-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Respeta a quien pide menos movimiento: el spinner deja de girar pero el
+   overlay sigue indicando que algo está cargando. */
+@media (prefers-reduced-motion: reduce) {
+  .spinner {
+    animation-duration: 2.4s;
+  }
 }
 
 :host ::ng-deep .cc-table table {
@@ -148,12 +198,19 @@
   font-weight: 400;
 }
 
-:host ::ng-deep .cc-table .filterbox,
-:host ::ng-deep .cc-table .filtersel {
+/* ── Filtros ────────────────────────────────────────────────────────────────
+ * Cuatro tipos, como el original. Comparten caja (alto 24, radio 4, borde
+ * #d7dbe3) para que la fila de filtros quede alineada, pero cada uno se ve por
+ * lo que ES: el múltiple muestra chips, el simple una flecha, el de texto su
+ * placeholder, y el de popover un botón "Filter". */
+:host ::ng-deep .cc-table .filterbtn,
+:host ::ng-deep .cc-table .filterinput,
+:host ::ng-deep .cc-table .cc-filter {
   display: inline-flex;
   align-items: center;
   gap: 4px;
   width: 100%;
+  min-height: 24px;
   height: 24px;
   padding: 0 7px;
   border: 1px solid #d7dbe3;
@@ -162,18 +219,91 @@
   font-family: var(--cc-font);
   font-size: 11px;
   font-weight: 400;
-  color: #9aa1ac;
-}
-
-:host ::ng-deep .cc-table .filtersel {
-  justify-content: space-between;
   color: var(--cc-text);
 }
 
-:host ::ng-deep .cc-table .filterbox__icon,
-:host ::ng-deep .cc-table .filtersel__caret {
-  font-size: 10px;
-  opacity: 0.7;
+:host ::ng-deep .cc-table .filterbtn {
+  color: #9aa1ac;
+  cursor: pointer;
+}
+
+:host ::ng-deep .cc-table .filterinput::placeholder {
+  color: #9aa1ac;
+}
+
+/* PrimeNG pinta su propia chrome dentro; se neutraliza para que mande la caja
+   de arriba y los cuatro filtros midan igual. */
+:host ::ng-deep .cc-table .cc-filter.p-multiselect,
+:host ::ng-deep .cc-table .cc-filter.p-select {
+  padding: 0 4px 0 7px;
+}
+
+:host ::ng-deep .cc-table .cc-filter .p-multiselect-label,
+:host ::ng-deep .cc-table .cc-filter .p-select-label {
+  padding: 0;
+  font-size: 11px;
+  line-height: 22px;
+  color: var(--cc-text);
+}
+
+/* Placeholder "—", medido en el original. */
+:host ::ng-deep .cc-table .cc-filter .p-multiselect-label.p-placeholder,
+:host ::ng-deep .cc-table .cc-filter .p-select-label.p-placeholder {
+  color: var(--cc-text);
+}
+
+:host ::ng-deep .cc-table .cc-filter .p-multiselect-dropdown,
+:host ::ng-deep .cc-table .cc-filter .p-select-dropdown {
+  width: 14px;
+  color: #9aa1ac;
+}
+
+/* Chips del múltiple: que se VEA que admite varios. */
+:host ::ng-deep .cc-table .cc-filter .p-multiselect-chip {
+  height: 16px;
+  padding: 0 5px;
+  border-radius: 8px;
+  background: #eef1f6;
+  color: #6b7280;
+  font-size: 9.5px;
+}
+
+/* Contenido del popover de filtro. */
+:host ::ng-deep .popfilter {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 190px;
+  padding: 4px;
+}
+
+:host ::ng-deep .popfilter__lbl {
+  font-family: var(--cc-font-head);
+  font-size: 11px;
+  color: var(--cc-text);
+}
+
+:host ::ng-deep .popfilter__input {
+  height: 26px;
+  padding: 0 8px;
+  border: 1px solid #d7dbe3;
+  border-radius: 4px;
+  font-size: 11.5px;
+}
+
+.emptyrow {
+  padding: 28px 0;
+  text-align: center;
+  color: var(--cc-text-body);
+}
+
+.caret {
+  opacity: 0.55;
+}
+
+.btn:disabled {
+  opacity: 0.45;
+  cursor: default;
 }
 
 /* Filas: 47.5px de alto, separador 1px #dadfe6, fondo transparente */
@@ -202,19 +332,17 @@
   color: #a9b0bb;
 }
 
-/* El alto de una fila lo marca su celda MÁS ALTA. El checkbox nativo (13px +
-   3px de margen + strut de baseline = 20.5) estiraba TODAS las cabeceras a 44.5
-   aunque las demás midieran 17.5 — por eso tocar la celda del label no servía.
-   Se neutraliza aquí: bloque, sin margen y con el alto de línea de las demás. */
+/* El alto de una fila lo marca su celda MÁS ALTA: el checkbox estiraba TODAS
+   las cabeceras a 44.5 aunque las demás midieran 17.5 (strut de baseline). Se
+   neutraliza poniéndolo en bloque; el tamaño (16×16) y el resto del aspecto los
+   define `.cc-check` en main.scss, auditado contra el original.
+   Ancho de columna 40px: medido. */
 .col-select {
-  width: 36px;
-  padding-left: 10px !important;
+  width: 40px;
 }
 
-:host ::ng-deep .cc-table .col-select input[type='checkbox'] {
+:host ::ng-deep .cc-table .col-select .cc-check {
   display: block;
-  height: 17.5px;
-  margin: 0;
 }
 
 .cell-id {
@@ -306,12 +434,25 @@
 }
 
 .rpp {
-  display: inline-flex;
-  align-items: center;
-  gap: 4px;
   height: 24px;
-  padding: 0 8px;
+  padding: 0 6px;
   border: 1px solid #d7dbe3;
   border-radius: 4px;
   background: #ffffff;
+  font: inherit;
+  font-size: 11.68px;
+  color: var(--cc-text-body);
+}
+
+.pager__btn:disabled {
+  opacity: 0.35;
+  cursor: default;
+}
+
+.pager__btn:disabled:hover {
+  background: transparent;
+}
+
+.tickets__filtered {
+  color: #9aa1ac;
 }

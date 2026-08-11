@@ -17,29 +17,16 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
         <span class="field">Select country <span class="field__caret" aria-hidden="true">▾</span></span>
         <span class="field">Msisdn <span class="field__caret" aria-hidden="true">▾</span></span>
         <span class="search__input">
-          <span class="search__ph">Search</span>
-          <button class="search__btn" type="button" aria-label="Buscar">⌕</button>
+          <input class="search__ph" type="text" placeholder="Search" aria-label="Buscar cliente" />
+          <button class="search__btn" type="button" aria-label="Buscar">
+            <img src="icons/general/search.svg" width="15" height="15" alt="" aria-hidden="true" />
+          </button>
         </span>
       </div>
 
-      <!-- Ilustración: el original sirve un SVG decorativo grande (pantalla,
-           lupa, nube, gráficas). Aquí va una versión reducida con la misma
-           silueta y paleta; NO es el asset original. -->
-      <div class="search__art" aria-hidden="true">
-        <svg viewBox="0 0 640 300" width="640" height="300">
-          <rect x="150" y="60" width="250" height="150" rx="8" fill="#eef1f6" />
-          <rect x="170" y="80" width="120" height="8" rx="4" fill="#dfe4ec" />
-          <rect x="170" y="98" width="90" height="8" rx="4" fill="#dfe4ec" />
-          <rect x="170" y="116" width="140" height="8" rx="4" fill="#dfe4ec" />
-          <rect x="300" y="140" width="80" height="55" rx="6" fill="#ffffff" stroke="#dfe4ec" />
-          <circle cx="120" cy="205" r="34" fill="none" stroke="#1c283d" stroke-width="4" />
-          <path d="M144 229l26 26" stroke="#1c283d" stroke-width="5" stroke-linecap="round" />
-          <ellipse cx="470" cy="120" rx="52" ry="30" fill="#eef1f6" />
-          <rect x="430" y="60" width="34" height="26" rx="5" fill="#dfe4ec" />
-          <rect x="486" y="60" width="34" height="26" rx="5" fill="#dfe4ec" />
-          <rect x="500" y="170" width="34" height="26" rx="5" fill="#dfe4ec" />
-          <path d="M410 175l60 0M410 200l40 0" stroke="#dfe4ec" stroke-width="3" stroke-dasharray="5 5" />
-        </svg>
+      <!-- Ilustración REAL de la app (media/ilustracion-customer, 903×401). -->
+      <div class="search__art">
+        <img src="images/ilustracion-customer.png" width="903" height="401" alt="" aria-hidden="true" />
       </div>
     </div>
   `,
@@ -110,7 +97,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
       line-height: 0;
       max-width: 100%;
     }
-    .search__art svg {
+    .search__art img {
       max-width: 100%;
       height: auto;
     }

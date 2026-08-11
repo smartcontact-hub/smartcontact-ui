@@ -23,6 +23,12 @@
 .nav {
   position: sticky;
   top: 0;
+  /* Por encima del contenido: el submenú del engranaje se despliega FUERA del
+     sidebar y, sin esto, la tabla lo tapa. Lo cazó Playwright
+     ("td.col-select … intercepts pointer events") — el menú se veía, pero sus
+     opciones no se podían clicar. El z-index del propio menú no basta: `sticky`
+     crea contexto de apilado, así que tiene que subir el sidebar entero. */
+  z-index: 30;
   flex: none;
   width: 90.3px;
   /* Alto = viewport menos la barra inferior (38px, medida): así el engranaje
