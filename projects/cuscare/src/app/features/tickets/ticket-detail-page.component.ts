@@ -4,8 +4,10 @@ import { ActivatedRoute } from '@angular/router';
 import { TICKETS } from '../../data/seed';
 import { DetailDialog, DetailDialogsComponent } from './detail-dialogs.component';
 import { SearchCustomerModalComponent } from './search-customer-modal.component';
+import { RefundModalComponent } from './refund-modal.component';
 import { SummaryPanelComponent } from './summary-panel.component';
 import { TicketStatusModalComponent } from './ticket-status-modal.component';
+import { UnsubscribeConfirmModalComponent } from './unsubscribe-confirm-modal.component';
 
 /** Una línea de la tabla de suscripciones del detalle. */
 interface Subscription {
@@ -46,6 +48,8 @@ interface HistoryEvent {
     TicketStatusModalComponent,
     DetailDialogsComponent,
     SummaryPanelComponent,
+    RefundModalComponent,
+    UnsubscribeConfirmModalComponent,
   ],
   templateUrl: './ticket-detail-page.component.html',
   styleUrl: './ticket-detail-page.component.scss',
@@ -82,15 +86,33 @@ export class TicketDetailPageComponent {
   protected readonly newMenuItems = ['Email', 'Note', 'SMS', 'Attach file'];
 
   /* ── Los cinco diálogos del detalle ─────────────────────────────────────
-   * Sus disparadores en la real: el de auto-asignación sale SOLO al abrir un
+   * Disparadores CONFIRMADOS: el de auto-asignación sale solo al abrir un
    * ticket sin asignar (medido: abrir uno `new` lo pasa a OPEN y te lo asigna);
    * el del CRM cuelga de la ficha de cliente de la barra de metadatos; el de
-   * borrado sale del icono de papelera de una nota. Los otros dos —"Right to
-   * be forgotten" y el de motivo de no reembolso— NO se pudo determinar desde
-   * dónde se abren sin ejecutar acciones, así que aquí cuelgan de la celda
-   * GDPR y del botón Refund respectivamente: es una suposición ANOTADA, no
-   * una medición. */
+   * borrado sale de la papelera de una nota.
+   *
+   * "Right to be forgotten" y el de motivo de no reembolso colgaban de
+   * Unsubscribe y Refund por una suposición mía que resultó FALSA: esos dos
+   * botones abren `app-modal-confirmation-unsubscribe` y `app-new-modal-refund`
+   * (ya replicados aparte). Ahora cuelgan de las dos celdas sin uso de la barra
+   * de metadatos hasta saber su disparador real. */
   protected readonly dialog = signal<DetailDialog | null>(null);
+
+  /** Los dos modales REALES de esa barra de acciones. */
+  protected readonly unsubOpen = signal(false);
+  protected readonly refundFor = signal<string | null>(null);
+
+  /** Cargos del producto, con la forma de los reales (inventados). */
+  protected readonly refundCharges = [
+    { date: '05-08-2026 15:54:26', amount: '4.5 €' },
+    { date: '29-07-2026 15:53:31', amount: '4.5 €' },
+  ];
+
+  /** Lo que lista el modal de baja: 5 columnas, no las 13 de la tabla. */
+  protected readonly unsubServices = [
+    { product: 'playweez', keyword: 'PLAYWEEZ', status: 'Cancelled', price: '4.5', expired: 'Yes' },
+    { product: 'iTrip', keyword: 'ITRIP', status: 'Expired', price: '4.5', expired: 'Yes' },
+  ];
 
   protected openDialog(d: DetailDialog): void {
     this.dialog.set(d);

@@ -1,0 +1,97 @@
+/* Mismo chrome que el modal de acciones en bloque —ancho 855.5, fondo #f4f6fc,
+   radio 12.1618— porque en la real es el mismo patrón de confirmación. */
+
+.unsub {
+  position: fixed;
+  inset: 0;
+  z-index: 1150;
+  background: rgba(22, 22, 22, 0.494);
+  overflow-y: auto;
+}
+
+.unsub__dialog {
+  width: 855.5px;
+  max-width: calc(100vw - 32px);
+  margin: 20.44px auto;
+}
+
+.unsub__content {
+  padding: 22.8198px;
+  border: 1px solid rgba(0, 0, 0, 0.176);
+  border-radius: 12.1618px;
+  background: #f4f6fc;
+  font-family: var(--cc-font-head);
+  font-size: 11.68px;
+}
+
+.unsub__title {
+  margin: 0 0 11.68px;
+  padding-bottom: 1px;
+  border-bottom: 1px solid #cfd3de;
+  color: #afafaf;
+}
+
+.unsub__sub {
+  margin: 0 0 11.68px;
+  color: #11131a;
+}
+
+.unsub__body {
+  border: 1px solid #cfd3de;
+  border-radius: 12px;
+  background: #ffffff;
+  overflow: hidden;
+}
+
+.unsub__table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.unsub__table th {
+  height: 40px;
+  padding: 0 16px 0 7.6066px;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.12);
+  background: #ffffff;
+  color: rgba(0, 0, 0, 0.87);
+  font-weight: 500;
+  text-align: left;
+  white-space: nowrap;
+}
+
+.unsub__table td {
+  height: 40.3px;
+  padding: 8.078px 16px 0 10px;
+  background: #ffffff;
+  color: rgba(0, 0, 0, 0.87);
+  vertical-align: top;
+}
+
+.unsub__foot {
+  display: flex;
+  justify-content: flex-end;
+  gap: 8px;
+  padding: 8.76px;
+}
+
+.unsub__btn {
+  height: 28.3px;
+  padding: 4.38px 8.76px;
+  border-radius: 9.125px;
+  font-family: inherit;
+  font-size: 11.68px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.unsub__btn--cancel {
+  border: 1px solid #8d939d;
+  background: transparent;
+  color: #8d939d;
+}
+
+.unsub__btn--confirm {
+  border: 1px solid #11131a;
+  background: #233155;
+  color: #ffffff;
+}
