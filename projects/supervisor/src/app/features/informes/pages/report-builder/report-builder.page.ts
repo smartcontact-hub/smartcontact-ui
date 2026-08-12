@@ -41,6 +41,18 @@ export class ReportBuilderPage {
 
   protected readonly titulo = TITULO_INFORME[this.tipo] ?? 'Informe de Servicios - Conversación';
 
+  /**
+   * "Reporte gráfico" NO es el mismo constructor con otro título: es otra ruta
+   * (`#/private/graphics`, componente `app-graphics-selection`) con otro
+   * layout. Sólo pide Entidades y Fechas — ni Columnas ni Previsualización — y
+   * dentro de Entidades hay UNA lista, no el picklist de dos. La de rangos pasa
+   * de 170 a 511 px de ancho porque ya no comparte fila con nada más.
+   */
+  protected readonly esGraficos = this.tipo === 'servicios-grafico';
+
+  /** El botón cambia de rótulo y de ancho (99.4 → 121.2 medido). */
+  protected readonly cta = this.esGraficos ? 'Crear Gráficos' : 'Crear Tabla';
+
   protected readonly rangos = RANGOS;
   protected readonly arbol = ARBOL_COLUMNAS;
   protected readonly columnas = COLUMNAS_PREVIEW;

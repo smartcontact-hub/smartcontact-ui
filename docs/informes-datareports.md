@@ -122,6 +122,28 @@ Columnas  (25 %)             │ Previsualización (75 %)
 
 Los rótulos de sección son `h3` de **16.38 px / 700 / #000**.
 
+## Pantalla C · Gráficos (`graphics`)
+
+Es lo que abre el modal al elegir **Servicios › Reporte gráfico**, y **no es el
+constructor con otro título**: es otra ruta (`#/private/graphics`, componente
+`app-graphics-selection`) con otro layout. Diferencias medidas:
+
+| | Constructor | Gráficos |
+|---|---|---|
+| Título | Informe de Servicios - Conversación | **Informe de Servicios - Gráficos** |
+| Botón | Crear Tabla (`99.4×28`) | **Crear Gráficos** (`121.2×28`, x `1330.8`) |
+| Entidades | picklist de 2 listas + 4 flechas | **una sola lista** (`app-entities-selection-listbox`), `347.5×266.9` |
+| Buscador | placeholder «Buscar» | **sin placeholder** |
+| Rangos | listbox de `170` | listbox de **`511`** (ya no comparte fila) |
+| Hora | chip `00:00 - 23:59` | **no aparece** |
+| Abajo | Columnas + Previsualización | **nada**: la pantalla acaba en Fechas (alto total `416.1`) |
+
+El calendario es idéntico (`511×262.6`), aquí a `x 914.5`.
+
+Ojo con el rótulo: la entrada del menú dice **«Reporte gráfico»**
+(`SELECTION.GRAPHIC_REPORT`) pero el título de la pantalla es **«Informe de
+Servicios - Gráficos»** (`TITLE_REPORTS.services-graphics`). No coinciden.
+
 ## Datos
 
 **El seed es 100 % inventado** (`data/reports.data.ts`). La app real muestra

@@ -190,7 +190,9 @@ export const TITULO_INFORME: Record<string, string> = {
   'servicios-tiempos': 'Informe de Servicios - Tiempos Medios',
   'servicios-nodos-ia': 'Informe de Servicios - Nodos IA',
   'servicios-tasa': 'Informe de Servicios - Tasa de abandono y atención',
-  'servicios-grafico': 'Informe de Servicios - Reporte gráfico',
+  // Ojo: la entrada del menú dice "Reporte gráfico" pero el título de la
+  // pantalla es otro (`TITLE_REPORTS.services-graphics` del diccionario real).
+  'servicios-grafico': 'Informe de Servicios - Gráficos',
   'grupos-conversacion': 'Informe de Grupos - Conversación',
   'grupos-tiempos': 'Informe de Grupos - Tiempos Medios',
   'agentes-conversacion': 'Informe de Agentes - Conversación',

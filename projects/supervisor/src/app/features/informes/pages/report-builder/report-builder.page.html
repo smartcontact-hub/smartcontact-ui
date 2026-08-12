@@ -16,13 +16,13 @@
       <span class="rb-toolbar__label">Fecha:</span>
       <span class="rb-chip">{{ rangoElegido() }}</span>
     </div>
-    <button type="button" class="rb-create" [disabled]="!elegidas().length">Crear Tabla</button>
+    <button type="button" class="rb-create" [disabled]="!elegidas().length">{{ cta }}</button>
   </div>
 
   <!-- ── Fila 1: Entidades | Fechas ──────────────────────────────────── -->
   <div class="rb-row rb-row--top">
     <!-- Entidades -->
-    <section class="rb-col rb-col--half">
+    <section class="rb-col" [class.rb-col--half]="!esGraficos" [class.rb-col--quarter]="esGraficos">
       <header class="rb-section__head">
         <h3 class="rb-section__title">Entidades</h3>
         <label class="rb-check">
@@ -38,7 +38,7 @@
             <label class="rb-search">
               <input
                 type="text"
-                placeholder="Buscar"
+                [placeholder]="esGraficos ? '' : 'Buscar'"
                 aria-label="Buscar entidades disponibles"
                 (input)="filtrar('origen', $event)"
               />
@@ -60,6 +60,7 @@
           </ul>
         </div>
 
+        @if (!esGraficos) {
         <div class="rb-transfer">
           <button type="button" aria-label="Mover todo a la derecha" (click)="transferir('todo-derecha')">
             <i class="pi pi-angle-double-right" aria-hidden="true"></i>
@@ -107,21 +108,24 @@
             }
           </ul>
         </div>
+        }
       </div>
     </section>
 
     <!-- Fechas -->
-    <section class="rb-col rb-col--half">
+    <section class="rb-col" [class.rb-col--half]="!esGraficos" [class.rb-col--rest]="esGraficos">
       <header class="rb-section__head rb-section__head--dates">
         <h3 class="rb-section__title">Fechas</h3>
-        <div class="rb-hour">
-          <span class="rb-hour__label">Hora</span>
-          <span class="rb-chip rb-chip--hour">00:00 - 23:59</span>
-        </div>
+        @if (!esGraficos) {
+          <div class="rb-hour">
+            <span class="rb-hour__label">Hora</span>
+            <span class="rb-chip rb-chip--hour">00:00 - 23:59</span>
+          </div>
+        }
       </header>
 
       <div class="rb-dates">
-        <ul class="rb-ranges">
+        <ul class="rb-ranges" [class.rb-ranges--wide]="esGraficos">
           @for (r of rangos; track r) {
             <li>
               <button
@@ -189,7 +193,9 @@
     </section>
   </div>
 
-  <!-- ── Fila 2: Columnas | Previsualización ─────────────────────────── -->
+  <!-- ── Fila 2: Columnas | Previsualización ─────────────────────────────
+       "Gráficos" no la tiene: su pantalla termina en Fechas. -->
+  @if (!esGraficos) {
   <div class="rb-row rb-row--bottom">
     <section class="rb-col rb-col--quarter">
       <header class="rb-section__head">
@@ -264,4 +270,5 @@
       </div>
     </section>
   </div>
+  }
 </div>
