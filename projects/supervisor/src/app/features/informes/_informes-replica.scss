@@ -1,0 +1,51 @@
+/*
+ * Paleta y tipografía MEDIDAS de la app de estadísticas
+ * (`statssm.smartcontact.es/SmartContactStatsFN`), la que el supervisor real
+ * embebe en un iframe bajo `#/private/stats/datareports`.
+ *
+ * Son variables SCSS, NO custom properties `--sc-*`: esto es una réplica de un
+ * producto EXTERNO al design system. Tokenizarla la haría parecerse a nosotros
+ * en vez de al original, que es justo lo contrario de para lo que sirve
+ * (mismo criterio que DD-35 para `agent` y `cuscare`).
+ *
+ * Extraído con `getComputedStyle` sobre el sitio vivo a 1460×792.
+ * Documentado en `docs/informes-datareports.md`.
+ */
+
+$fuente: Roboto, Helvetica, 'Helvetica Neue', sans-serif;
+
+$blanco: #ffffff;
+$negro: #000000;
+
+/* Texto */
+$texto: #495057; // rgb(73,80,87)  — cuerpo, celdas, cabeceras
+$texto-input: #334155; // rgb(51,65,85)  — valor dentro de inputs y selects
+$placeholder: #94a3b8; // rgb(148,163,184) — placeholder y lupa
+$icono-suave: #64748b; // rgb(100,116,139) — iconos de cabecera de diálogo
+$texto-transfer: #475569; // rgb(71,85,105) — iconos de los botones « » del picklist
+
+/* Bordes */
+$borde-control: #cbd5e1; // rgb(203,213,225) — inputs, listbox, tree
+$borde-panel: #e2e8f0; // rgb(226,232,240) — tablas, toolbars, datepicker
+$borde-tarjeta: #e9ecf1; // rgb(233,236,241) — marco de las tarjetas de la landing
+
+/* Fondos */
+$gris-cabecera: #f8f9fa; // rgb(248,249,250) — thead y toolbars
+$gris-transfer: #f1f5f9; // rgb(241,245,249) — botones de transferencia
+$seleccion: #f0fcff; // rgb(240,252,255) — item activo en listbox y tree
+$texto-seleccion: #058199; // rgb(5,129,153) — texto sobre `$seleccion`
+
+/* Marca */
+$cian: #60d3e4; // rgb(96,211,228) — chips, día activo, enlace "Limpiar"
+$marino: #1c283d; // rgb(28,40,61)  — FAB, botón primario, diálogo del selector
+
+$scrollbar: #a4a8af; // rgb(164,168,175)
+
+$sombra-control:
+  0 0 0 0 rgb(0 0 0 / 0%),
+  0 0 0 0 rgb(0 0 0 / 0%),
+  0 1px 2px 0 rgb(18 18 23 / 5%);
+
+$sombra-dialogo:
+  0 20px 25px -5px rgb(0 0 0 / 10%),
+  0 8px 10px -6px rgb(0 0 0 / 10%);

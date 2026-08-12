@@ -46,7 +46,17 @@ const FONT_ALLOW = new Set([]);
  * ficheros `.scss` y por eso saltó. Misma decisión de diseño, distinto resultado
  * según dónde viviera el CSS: eso era la incoherencia, no cuscare.
  */
-const REPLICA_APPS = ['projects/agent/', 'projects/cuscare/'];
+const REPLICA_APPS = [
+  'projects/agent/',
+  'projects/cuscare/',
+  // Informes: el supervisor real NO pinta esta pantalla — embebe en un iframe
+  // otra aplicación entera (`statssm.smartcontact.es/SmartContactStatsFN`), con
+  // su propia paleta y su propia tipografía. La réplica vive dentro de
+  // `supervisor` porque ahí es donde el usuario la ve, pero replica un producto
+  // EXTERNO al DS igual que `agent` y `cuscare`, así que se rige por el mismo
+  // criterio (DD-35). Ver `docs/informes-datareports.md`.
+  'projects/supervisor/src/app/features/informes/',
+];
 
 const files = execSync('git ls-files projects', { cwd: root, encoding: 'utf8' })
   .split('\n')

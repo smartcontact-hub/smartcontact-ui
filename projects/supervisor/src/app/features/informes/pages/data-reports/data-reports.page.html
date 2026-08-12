@@ -1,0 +1,174 @@
+<div class="dr">
+  <div class="dr__image">
+    <img src="/informes/data-reports.jpg" alt="Data Reports" />
+  </div>
+
+  <div class="dr__tables">
+    <!-- ── Informes favoritos ─────────────────────────────────────────── -->
+    <section class="dr-card">
+      <header class="dr-card__head">
+        <h3 class="dr-card__title">
+          Informes favoritos
+          <i class="pi pi-external-link" aria-hidden="true"></i>
+        </h3>
+      </header>
+
+      <div class="dr-card__table">
+        <div class="dr-table__toolbar">
+          <label class="dr-search">
+            <i class="pi pi-search" aria-hidden="true"></i>
+            <input
+              type="text"
+              placeholder="Buscar"
+              aria-label="Buscar en informes favoritos"
+              (input)="buscar('fav', $event)"
+            />
+          </label>
+          <button
+            type="button"
+            class="dr-iconbtn"
+            aria-label="Seleccionar columnas de informes favoritos"
+          >
+            <i class="pi pi-sliders-h" aria-hidden="true"></i>
+          </button>
+        </div>
+
+        <div class="dr-table__scroll">
+          <table class="dr-table dr-table--fav">
+            <thead>
+              <tr>
+                <th>Nombre del Informe</th>
+                <th>Descripción</th>
+                <th>Entidades</th>
+                <th>Rango de Fechas</th>
+                <th>Fecha de Creación</th>
+                <th>Subcategoría</th>
+                <th>Categoría</th>
+                <th class="dr-table__actions"></th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (f of favoritosVisibles(); track f.nombre) {
+                <tr>
+                  <td><div class="dr-ellipsis">{{ f.nombre }}</div></td>
+                  <td><div class="dr-ellipsis">{{ f.descripcion }}</div></td>
+                  <td>
+                    <div class="dr-chips">
+                      @for (e of f.entidades; track $index) {
+                        <span class="dr-chip">{{ e }}</span>
+                      }
+                      @if (f.ocultas) {
+                        <span class="dr-badge">+{{ f.ocultas }}</span>
+                      }
+                    </div>
+                  </td>
+                  <td><span class="dr-chip">{{ f.rango }}</span></td>
+                  <td><div class="dr-ellipsis">{{ f.creado }}</div></td>
+                  <td><div class="dr-ellipsis">{{ f.subcategoria }}</div></td>
+                  <td><div class="dr-ellipsis">{{ f.categoria }}</div></td>
+                  <td class="dr-table__actions">
+                    <button type="button" class="dr-iconbtn" aria-label="Acciones del informe">
+                      <i class="pi pi-ellipsis-v" aria-hidden="true"></i>
+                    </button>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Informes predeterminados ───────────────────────────────────── -->
+    <section class="dr-card">
+      <header class="dr-card__head">
+        <h3 class="dr-card__title">
+          Informes predeterminados
+          <i class="pi pi-external-link" aria-hidden="true"></i>
+        </h3>
+      </header>
+
+      <div class="dr-card__table">
+        <div class="dr-table__toolbar">
+          <label class="dr-search">
+            <i class="pi pi-search" aria-hidden="true"></i>
+            <input
+              type="text"
+              placeholder="Buscar"
+              aria-label="Buscar en informes predeterminados"
+              (input)="buscar('pre', $event)"
+            />
+          </label>
+          <button
+            type="button"
+            class="dr-iconbtn"
+            aria-label="Seleccionar columnas de informes predeterminados"
+          >
+            <i class="pi pi-sliders-h" aria-hidden="true"></i>
+          </button>
+        </div>
+
+        <div class="dr-table__scroll">
+          <table class="dr-table dr-table--pre">
+            <thead>
+              <tr>
+                <th>Nombre del Informe</th>
+                <th>Categoría</th>
+                <th>Subcategoría</th>
+                <th>Descripción</th>
+                <th class="dr-table__actions"></th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (p of predeterminadosVisibles(); track p.nombre) {
+                <tr>
+                  <td><div class="dr-ellipsis">{{ p.nombre }}</div></td>
+                  <td><div class="dr-ellipsis">{{ p.categoria }}</div></td>
+                  <td><div class="dr-ellipsis">{{ p.subcategoria }}</div></td>
+                  <td><div class="dr-ellipsis">{{ p.descripcion }}</div></td>
+                  <td class="dr-table__actions">
+                    <button type="button" class="dr-iconbtn" aria-label="Fijar como favorito">
+                      <i class="pi pi-flag" aria-hidden="true"></i>
+                    </button>
+                  </td>
+                </tr>
+              }
+            </tbody>
+          </table>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── Histórico (sin tabla, como en la real) ─────────────────────── -->
+    <section class="dr-card dr-card--historic">
+      <h3 class="dr-card__title">
+        Histórico
+        <i class="pi pi-external-link" aria-hidden="true"></i>
+      </h3>
+    </section>
+  </div>
+
+  <!-- ── Carril derecho: engranaje arriba, «+» abajo ──────────────────── -->
+  <div class="dr__rail">
+    <div class="dr__rail-top">
+      <button type="button" class="dr-iconbtn dr-iconbtn--cog" aria-label="Configuración">
+        <i class="pi pi-cog" aria-hidden="true"></i>
+      </button>
+    </div>
+    <button
+      type="button"
+      class="dr-fab"
+      aria-label="Nuevo informe"
+      (click)="selectorAbierto.set(true)"
+    >
+      <i class="pi pi-plus" aria-hidden="true"></i>
+    </button>
+  </div>
+
+  @if (selectorAbierto()) {
+    <sc-report-selection-dialog
+      (cerrar)="selectorAbierto.set(false)"
+      (elegir)="abrirConstructor($event)"
+    />
+  }
+</div>

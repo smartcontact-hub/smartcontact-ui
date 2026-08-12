@@ -1,0 +1,386 @@
+@use '../../informes-replica' as r;
+
+/*
+ * Landing de Informes — réplica de `statssm/#/private/initial-view`.
+ *
+ * Todos los valores están MEDIDOS sobre el sitio real a 1460×792 (ver
+ * `docs/informes-datareports.md`). No se tokenizan a propósito: es una
+ * réplica de un producto EXTERNO al DS, y sustituir sus valores por los
+ * nuestros la convertiría en otra cosa (mismo criterio que DD-35 para
+ * `agent` y `cuscare`).
+ *
+ * `vw`/`vh` del original → `cqw`/`cqh` aquí. En el original el viewport es la
+ * caja del iframe; aquí lo es el contenedor de esta página, así que la
+ * equivalencia es exacta y la réplica se adapta igual al redimensionar.
+ */
+
+:host {
+  display: block;
+  container-type: size;
+  block-size: 100%;
+  inline-size: 100%;
+  background: r.$blanco;
+  color: r.$texto;
+  font-family: r.$fuente;
+  /* .initial-view-container { font-size: .9rem } sobre root 14px */
+  font-size: 12.6px;
+}
+
+.dr {
+  display: flex;
+  align-items: center;
+  justify-content: flex-start;
+  gap: 2cqw;
+  block-size: 100%;
+  inline-size: 100%;
+  overflow: hidden;
+
+  /* .image-container: alto completo, ancho automático, padding-left 2vw */
+  &__image {
+    block-size: 100%;
+    inline-size: auto;
+    padding-inline-start: 2cqw;
+    flex: 0 0 auto;
+
+    img {
+      /* El original usa object-fit: fill sobre un JPG 1043×1580 — se estira
+       * a la altura del viewport. Se replica tal cual: cambiarlo a `contain`
+       * dejaría la ilustración con otra proporción que la real. */
+      block-size: 100%;
+      inline-size: auto;
+      aspect-ratio: 1043 / 1580;
+      object-fit: fill;
+      display: block;
+    }
+  }
+
+  /* .table-container: max-width 50vw, padding 10vh 0 */
+  &__tables {
+    block-size: 100%;
+    inline-size: 50cqw;
+    max-inline-size: 50cqw;
+    display: flex;
+    flex-direction: column;
+    padding-block: 10cqh;
+    flex: 0 1 auto;
+    min-inline-size: 0;
+  }
+
+  /* .sidepanel: 70px fijos, engranaje arriba (a media altura) y FAB abajo */
+  &__rail {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    block-size: 100%;
+    inline-size: 70px;
+    flex: 0 0 70px;
+    padding-block: 2cqh;
+    margin-inline-start: 2cqw;
+  }
+
+  &__rail-top {
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    block-size: 50%;
+  }
+}
+
+/* ── Tarjeta (Favoritos · Predeterminados · Histórico) ─────────────────── */
+
+.dr-card {
+  display: flex;
+  flex-direction: column;
+  min-block-size: 0;
+
+  + .dr-card {
+    margin-block-start: 14px;
+  }
+
+  &__head {
+    display: flex;
+    flex-direction: row;
+    align-items: center;
+    gap: 7px;
+    block-size: 38.7px;
+    flex: 0 0 38.7px;
+  }
+
+  &__title {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 0 7px;
+    font-size: 14.742px;
+    font-weight: 700;
+    color: r.$negro;
+    cursor: pointer;
+
+    .pi {
+      font-size: 14px;
+    }
+  }
+
+  /* La caja de la tabla mide 32.7vh en el original. */
+  &__table {
+    block-size: 32.7cqh;
+    max-block-size: 32.7cqh;
+    border: 1px solid r.$borde-tarjeta;
+    border-radius: 4.2px;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+  }
+
+  /* Histórico no lleva tabla: sólo el rótulo. */
+  &--historic {
+    margin-block-start: 14px;
+    block-size: 46.5px;
+    flex: 0 0 46.5px;
+    justify-content: center;
+  }
+}
+
+/* ── Barra de la tabla: buscador + selector de columnas ────────────────── */
+
+.dr-table__toolbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  block-size: 34.9px;
+  flex: 0 0 34.9px;
+  padding: 2.8px 14px;
+  background: r.$gris-cabecera;
+  color: r.$texto;
+}
+
+.dr-search {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  inline-size: 204px;
+
+  .pi {
+    position: absolute;
+    inset-inline-start: 10.5px;
+    font-size: 14px;
+    color: r.$placeholder;
+    pointer-events: none;
+  }
+
+  input {
+    inline-size: 100%;
+    block-size: 28.3px;
+    padding: 4.9px 28px;
+    font-family: inherit;
+    font-size: 14px;
+    color: r.$texto-input;
+    background: r.$blanco;
+    border: 1px solid r.$borde-control;
+    border-radius: 6px;
+    box-shadow: r.$sombra-control;
+
+    &::placeholder {
+      color: r.$placeholder;
+    }
+
+    &:focus {
+      outline: none;
+      border-color: r.$cian;
+    }
+  }
+}
+
+/* ── Tabla ─────────────────────────────────────────────────────────────── */
+
+.dr-table__scroll {
+  flex: 1;
+  min-block-size: 0;
+  overflow: auto;
+  scrollbar-width: thin;
+  scrollbar-color: r.$scrollbar transparent;
+
+  &::-webkit-scrollbar {
+    inline-size: 8px;
+    block-size: 8px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: r.$scrollbar;
+    border-radius: 15px;
+  }
+
+  &::-webkit-scrollbar-track {
+    background: transparent;
+  }
+}
+
+.dr-table {
+  border-collapse: collapse;
+  table-layout: fixed;
+  font-size: 12.6px;
+  color: r.$texto;
+
+  th {
+    position: sticky;
+    inset-block-start: 0;
+    z-index: 1;
+    background: r.$gris-cabecera;
+    color: r.$texto;
+    font-size: 12.6px;
+    font-weight: 600;
+    text-align: start;
+    padding: 7px;
+    block-size: 29.5px;
+    white-space: nowrap;
+  }
+
+  td {
+    background: r.$blanco;
+    padding: 8.4px 12.6px;
+    block-size: 43px;
+    vertical-align: middle;
+  }
+
+  /* Anchos medidos, columna a columna. */
+  &--fav {
+    inline-size: 1290.2px;
+
+    th:nth-child(1),
+    td:nth-child(1) {
+      inline-size: 177.8px;
+    }
+    th:nth-child(2),
+    td:nth-child(2) {
+      inline-size: 78.9px;
+    }
+    th:nth-child(3),
+    td:nth-child(3) {
+      inline-size: 596.4px;
+    }
+    th:nth-child(4),
+    td:nth-child(4) {
+      inline-size: 102.8px;
+    }
+    th:nth-child(5),
+    td:nth-child(5) {
+      inline-size: 123.3px;
+    }
+    th:nth-child(6),
+    td:nth-child(6) {
+      inline-size: 99.2px;
+    }
+    th:nth-child(7),
+    td:nth-child(7) {
+      inline-size: 72.7px;
+    }
+  }
+
+  &--pre {
+    inline-size: 100%;
+    min-inline-size: 688px;
+
+    th:nth-child(2),
+    td:nth-child(2),
+    th:nth-child(3),
+    td:nth-child(3) {
+      inline-size: 90px;
+    }
+  }
+
+  /* La columna de acciones queda pegada al borde derecho al hacer scroll. */
+  &__actions {
+    position: sticky;
+    inset-inline-end: -1px;
+    inline-size: 39.2px;
+    background: r.$blanco;
+    text-align: center;
+  }
+}
+
+.dr-ellipsis {
+  max-inline-size: 16cqw;
+  display: inline-block;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  vertical-align: bottom;
+}
+
+/* ── Chips de entidad y badge de resto ─────────────────────────────────── */
+
+.dr-chips {
+  display: flex;
+  align-items: center;
+  gap: 4.3px;
+  overflow: hidden;
+}
+
+.dr-chip {
+  display: inline-flex;
+  align-items: center;
+  block-size: 25.2px;
+  padding: 7px 17.5px;
+  border-radius: 16px;
+  background: r.$cian;
+  color: r.$blanco;
+  font-size: 12.6px;
+  white-space: nowrap;
+}
+
+.dr-badge {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  block-size: 25.2px;
+  min-inline-size: 25.2px;
+  padding: 0 7px;
+  border-radius: 14px;
+  background: r.$cian;
+  color: r.$blanco;
+  font-size: 10.5px;
+  font-weight: 700;
+}
+
+/* ── Botones de icono y FAB ────────────────────────────────────────────── */
+
+.dr-iconbtn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  border: 0;
+  background: none;
+  padding: 0;
+  color: r.$texto;
+  cursor: pointer;
+
+  .pi {
+    font-size: 14px;
+  }
+
+  &--cog {
+    inline-size: 70px;
+    block-size: 70px;
+    justify-content: flex-end;
+    padding: 28px;
+    color: r.$negro;
+  }
+}
+
+.dr-fab {
+  align-self: center;
+  inline-size: 42px;
+  block-size: 42px;
+  border-radius: 50%;
+  border: 1px solid r.$marino;
+  background: r.$marino;
+  color: r.$blanco;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+
+  .pi {
+    font-size: 15.75px;
+  }
+}

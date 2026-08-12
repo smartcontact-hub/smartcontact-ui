@@ -1,0 +1,45 @@
+<div class="rsd" role="dialog" aria-modal="true" aria-labelledby="rsd-title">
+  <header class="rsd__head">
+    <span class="rsd__title" id="rsd-title">Informes de Estadísticas</span>
+    <div class="rsd__actions">
+      <button type="button" class="rsd__action" aria-label="Maximizar">
+        <i class="pi pi-window-maximize" aria-hidden="true"></i>
+      </button>
+      <button type="button" class="rsd__action" aria-label="Cerrar" (click)="cerrar.emit()">
+        <i class="pi pi-times" aria-hidden="true"></i>
+      </button>
+    </div>
+  </header>
+
+  <div class="rsd__body">
+    <div class="rsd__row">
+      @for (g of filaSuperior; track g.titulo) {
+        <nav class="rsd-menu" [style.inline-size.px]="g.ancho">
+          <ul>
+            <li class="rsd-menu__label">{{ g.titulo }}</li>
+            @for (it of g.items; track it.tipo) {
+              <li class="rsd-menu__item">
+                <button type="button" (click)="elegir.emit(it.tipo)">- {{ it.etiqueta }}</button>
+              </li>
+            }
+          </ul>
+        </nav>
+      }
+    </div>
+
+    <div class="rsd__row">
+      @for (g of filaInferior; track g.titulo) {
+        <nav class="rsd-menu" [style.inline-size.px]="g.ancho">
+          <ul>
+            <li class="rsd-menu__label">{{ g.titulo }}</li>
+            @for (it of g.items; track it.tipo) {
+              <li class="rsd-menu__item">
+                <button type="button" (click)="elegir.emit(it.tipo)">- {{ it.etiqueta }}</button>
+              </li>
+            }
+          </ul>
+        </nav>
+      }
+    </div>
+  </div>
+</div>
