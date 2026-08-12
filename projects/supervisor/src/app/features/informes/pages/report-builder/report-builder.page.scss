@@ -420,6 +420,16 @@
   padding: 3.5px;
   inline-size: 170px;
   flex: 0 0 170px;
+
+  /* En "Gráficos" la lista de rangos ya no comparte fila con Columnas:
+   * pasa de 170 a 511 px medidos, con el calendario a su lado. */
+  &--wide {
+    inline-size: 511px;
+    /* Encoge si el área de contenido del supervisor es más estrecha que el
+     * iframe original (que ocupaba el viewport entero). Sin esto el
+     * calendario se corta por la derecha. */
+    flex: 0 1 511px;
+  }
   background: r.$blanco;
   border: 1px solid r.$borde-control;
   border-radius: 6px;
@@ -448,6 +458,13 @@
       color: r.$texto-seleccion;
     }
   }
+}
+
+/* Con la lista ancha el calendario NO se estira: mide 511 fijos y deja
+ * ~20 px de holgura a la derecha, como el original. */
+.rb-ranges--wide + .rb-calendar {
+  flex: 0 0 511px;
+  max-inline-size: 511px;
 }
 
 .rb-calendar {
