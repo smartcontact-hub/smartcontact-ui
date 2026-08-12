@@ -32,6 +32,7 @@
 | **Plan de convergencia** de los 4 flujos (7 olas + modelo canónico R1-R7) — *construcción CERRADA, referencia histórica* | [`docs/history/plan-convergencia-flujos.md`](./history/plan-convergencia-flujos.md) | Claude + Rafa |
 | **Inventario de componentes** — tracklist: cada componente + wrapper/pure + los 4 gaps abiertos | [`docs/inventory.md`](./inventory.md) | Claude + diseño + Rafa |
 | **Receta para migrar una tabla** a `sc-datatable` — pasos, la piel `.list-table`, las 3 trampas medidas y las 14 tablas que quedan por dificultad | [`docs/receta-migracion-tablas.md`](./receta-migracion-tablas.md) | Claude (al migrar una tabla) |
+| **Informes / Data Reports** — valores MEDIDOS de la app que el supervisor embebe en iframe (`statssm`), por qué la réplica existe (el iframe rompe la captura a Figma), la traducción `vw`→`cqw` y qué datos son inventados | [`docs/informes-datareports.md`](./informes-datareports.md) | Claude (al tocar `features/informes/`) + diseño |
 | **Playbook** archivar `smartcontact-ui-main` (sesión aparte) | [`docs/playbook-archivar-ui-main.md`](./playbook-archivar-ui-main.md) | Claude (en sesión sobre ese repo) |
 | **Log de construcción** per-lote (journal histórico CERRADO, no se re-litiga) | [`docs/history/DECISIONS-LOG.md`](./history/DECISIONS-LOG.md) (Mitad A) · [`docs/history/DECISIONS-LOG-B.md`](./history/DECISIONS-LOG-B.md) (Mitad B) | Claude (referencia histórica) |
 | **Versiones publicadas** (semver, qué cambió por release) | [`CHANGELOG.md`](../CHANGELOG.md) | todos |

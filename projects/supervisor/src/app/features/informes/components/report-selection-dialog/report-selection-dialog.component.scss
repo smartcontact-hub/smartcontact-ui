@@ -1,0 +1,130 @@
+@use '../../informes-replica' as r;
+
+/*
+ * Diálogo "Informes de Estadísticas". Valores medidos @1460×792:
+ * 642.6×429.5 anclado abajo a la derecha, radio 12, azul marino #1c283d.
+ */
+
+:host {
+  display: contents;
+}
+
+.rsd {
+  position: absolute;
+  inset-block-end: 14.5px;
+  inset-inline-end: 14px;
+  inline-size: 642.6px;
+  max-inline-size: calc(100% - 28px);
+  block-size: 429.5px;
+  max-block-size: calc(100% - 28px);
+  display: flex;
+  flex-direction: column;
+  background: r.$marino;
+  color: r.$blanco;
+  border-radius: 12px;
+  box-shadow: r.$sombra-dialogo;
+  font-family: r.$fuente;
+  font-size: 14px;
+  z-index: 10;
+
+  &__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    block-size: 70px;
+    flex: 0 0 70px;
+    padding: 17.5px;
+  }
+
+  &__title {
+    font-size: 17.5px;
+    font-weight: 700;
+    color: r.$blanco;
+  }
+
+  &__actions {
+    display: flex;
+    align-items: center;
+  }
+
+  &__action {
+    inline-size: 35px;
+    block-size: 35px;
+    border: 1px solid transparent;
+    border-radius: 50%;
+    background: none;
+    color: r.$icono-suave;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    .pi {
+      font-size: 14px;
+    }
+
+    &:hover {
+      color: r.$blanco;
+    }
+  }
+
+  &__body {
+    flex: 1;
+    min-block-size: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 21px;
+    padding: 0 17.5px 17.5px;
+    overflow: auto;
+  }
+
+  &__row {
+    display: flex;
+    gap: 14px;
+  }
+}
+
+.rsd-menu {
+  background: r.$marino;
+  border: 1px solid transparent;
+  border-radius: 6px;
+  align-self: flex-start;
+
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 3.5px;
+  }
+
+  &__label {
+    block-size: 30.5px;
+    padding: 7px 10.5px;
+    font-size: 14px;
+    font-weight: 700;
+    color: r.$blanco;
+  }
+
+  &__item {
+    block-size: 28px;
+    margin-block-start: 2px;
+
+    button {
+      inline-size: 100%;
+      block-size: 28px;
+      padding: 0 10.5px;
+      border: 0;
+      background: none;
+      color: r.$blanco;
+      font-family: inherit;
+      font-size: 14px;
+      font-weight: 400;
+      text-align: start;
+      cursor: pointer;
+      border-radius: 4px;
+
+      &:hover {
+        background: rgb(255 255 255 / 8%);
+      }
+    }
+  }
+}

@@ -20,7 +20,10 @@ export const supervisionRoutes: Routes = [
     path: 'conversaciones',
     loadChildren: () => import('../memory/memory.routes').then((m) => m.memoryRoutes),
   },
-  { path: 'informes', loadComponent: placeholder },
+  {
+    path: 'informes',
+    loadChildren: () => import('../informes/informes.routes').then((m) => m.informesRoutes),
+  },
   { path: 'analizador', loadComponent: placeholder },
   { path: 'scc', loadComponent: placeholder },
   { path: 'vui-designer', loadComponent: placeholder },

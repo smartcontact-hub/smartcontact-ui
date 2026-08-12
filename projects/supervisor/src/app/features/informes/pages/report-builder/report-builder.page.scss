@@ -1,0 +1,676 @@
+@use '../../informes-replica' as r;
+
+/*
+ * Constructor de informes — réplica de `statssm/#/private/main-menu-selection`.
+ * Valores MEDIDOS @1460×792 (ver `docs/informes-datareports.md`).
+ *
+ * Como en la landing: nada de tokens `--sc-*`. Es la copia de un producto
+ * externo al DS y sus valores se conservan crudos a propósito (DD-35).
+ */
+
+:host {
+  display: block;
+  container-type: inline-size;
+  block-size: 100%;
+  background: r.$blanco;
+  color: r.$texto;
+  font-family: r.$fuente;
+  font-size: 14px;
+}
+
+.rb {
+  display: flex;
+  flex-direction: column;
+  block-size: 100%;
+  min-block-size: 0;
+}
+
+/* ── Cabecera ──────────────────────────────────────────────────────────── */
+
+.rb-toolbar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 7px;
+  background: r.$gris-cabecera;
+  border: 1px solid r.$borde-panel;
+  color: r.$texto;
+
+  &--title {
+    block-size: 46.5px;
+    flex: 0 0 46.5px;
+  }
+
+  &--filters {
+    block-size: 44px;
+    flex: 0 0 44px;
+    border-block-start: 0;
+    border-end-start-radius: 7px;
+    border-end-end-radius: 7px;
+  }
+
+  &__title {
+    margin: 0;
+    padding-inline-start: 1px;
+    font-size: 18px;
+    font-weight: 700;
+  }
+
+  &__filters {
+    display: flex;
+    align-items: center;
+    gap: 7px;
+    flex: 1;
+    min-inline-size: 0;
+    overflow: hidden;
+  }
+
+  &__label {
+    font-size: 14px;
+    white-space: nowrap;
+  }
+}
+
+.rb-close {
+  border: 0;
+  background: none;
+  padding: 7px;
+  color: r.$texto;
+  cursor: pointer;
+
+  .pi {
+    font-size: 14px;
+  }
+}
+
+.rb-chip {
+  display: inline-flex;
+  align-items: center;
+  block-size: 25.2px;
+  padding: 7px 17.5px;
+  border-radius: 16px;
+  background: r.$cian;
+  color: r.$blanco;
+  font-size: 14px;
+  white-space: nowrap;
+
+  &--hour {
+    block-size: 30.5px;
+  }
+}
+
+.rb-create {
+  block-size: 28px;
+  padding: 7px 10.5px;
+  border: 0;
+  border-radius: 6px;
+  background: r.$marino;
+  color: r.$blanco;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  cursor: pointer;
+  white-space: nowrap;
+
+  &:disabled {
+    opacity: 0.65;
+    cursor: default;
+  }
+}
+
+/* ── Rejilla de bloques ────────────────────────────────────────────────── */
+
+.rb-row {
+  display: flex;
+  padding-inline: 14px;
+  min-block-size: 0;
+
+  &--top {
+    block-size: 332.6px;
+    flex: 0 0 332.6px;
+  }
+
+  &--bottom {
+    margin-block-start: 14px;
+    flex: 1;
+    min-block-size: 301px;
+  }
+}
+
+.rb-col {
+  padding: 7px;
+  min-inline-size: 0;
+  display: flex;
+  flex-direction: column;
+
+  &--half {
+    inline-size: 50%;
+  }
+
+  &--quarter {
+    inline-size: 25%;
+    padding-inline-end: 21px;
+  }
+
+  &--rest {
+    inline-size: 75%;
+    padding-inline-start: 21px;
+  }
+}
+
+.rb-section__head {
+  display: flex;
+  align-items: center;
+  gap: 28px;
+  block-size: 56px;
+  flex: 0 0 56px;
+
+  &--dates,
+  &--preview {
+    justify-content: space-between;
+    gap: 14px;
+  }
+
+  &-left {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+  }
+}
+
+.rb-section__title {
+  margin: 0;
+  font-size: 16.38px;
+  font-weight: 700;
+  color: r.$negro;
+  white-space: nowrap;
+}
+
+/* ── Casilla de verificación ───────────────────────────────────────────── */
+
+.rb-check {
+  display: inline-flex;
+  align-items: center;
+  gap: 3.5px;
+  cursor: pointer;
+
+  input {
+    position: absolute;
+    opacity: 0;
+    inline-size: 17.5px;
+    block-size: 17.5px;
+    margin: 0;
+  }
+
+  &__label {
+    font-size: 14px;
+    color: r.$negro;
+    white-space: nowrap;
+  }
+
+  &__box {
+    inline-size: 17.5px;
+    block-size: 17.5px;
+    flex: 0 0 17.5px;
+    border: 1px solid r.$borde-control;
+    border-radius: 4px;
+    background: r.$blanco;
+    box-shadow: r.$sombra-control;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    .pi {
+      font-size: 10px;
+      color: r.$blanco;
+      visibility: hidden;
+    }
+
+    &.is-checked {
+      background: r.$cian;
+      border-color: r.$cian;
+
+      .pi {
+        visibility: visible;
+      }
+    }
+  }
+
+  input:checked + &__box {
+    background: r.$cian;
+    border-color: r.$cian;
+  }
+
+  input:checked + &__box::after {
+    content: '';
+    inline-size: 4px;
+    block-size: 8px;
+    border: solid r.$blanco;
+    border-width: 0 2px 2px 0;
+    transform: translateY(-1px) rotate(45deg);
+  }
+}
+
+/* ── Entidades: picklist ───────────────────────────────────────────────── */
+
+.rb-picklist {
+  display: flex;
+  gap: 15.7px;
+  flex: 1;
+  min-block-size: 0;
+}
+
+.rb-listbox {
+  flex: 1;
+  min-inline-size: 0;
+  display: flex;
+  flex-direction: column;
+  background: r.$blanco;
+  border: 1px solid r.$borde-control;
+  border-radius: 6px;
+  box-shadow: r.$sombra-control;
+  overflow: hidden;
+
+  &__head {
+    block-size: 43px;
+    flex: 0 0 43px;
+    padding: 7px 14px 3.5px;
+  }
+
+  &__list {
+    list-style: none;
+    margin: 0;
+    padding: 3.5px;
+    flex: 1;
+    min-block-size: 0;
+    overflow: auto;
+    scrollbar-width: thin;
+    scrollbar-color: r.$scrollbar transparent;
+
+    li + li {
+      margin-block-start: 2px;
+    }
+
+    button {
+      inline-size: 100%;
+      block-size: 30.5px;
+      padding: 7px 10.5px;
+      border: 0;
+      border-radius: 4px;
+      background: none;
+      color: r.$texto;
+      font-family: inherit;
+      font-size: 14px;
+      text-align: start;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+      cursor: pointer;
+
+      &:hover {
+        background: r.$gris-transfer;
+      }
+
+      &.is-marked {
+        background: r.$seleccion;
+        color: r.$texto-seleccion;
+      }
+    }
+  }
+
+  &__empty {
+    padding: 7px 10.5px;
+    font-size: 14px;
+    color: r.$texto;
+  }
+}
+
+.rb-search {
+  position: relative;
+  display: block;
+
+  input {
+    inline-size: 100%;
+    block-size: 32.5px;
+    padding: 7px 35px 7px 10.5px;
+    font-family: inherit;
+    font-size: 14px;
+    color: r.$texto-input;
+    background: r.$blanco;
+    border: 1px solid r.$borde-control;
+    border-radius: 6px;
+    box-shadow: r.$sombra-control;
+
+    &::placeholder {
+      color: r.$placeholder;
+    }
+
+    &:focus {
+      outline: none;
+      border-color: r.$cian;
+    }
+  }
+
+  .pi {
+    position: absolute;
+    inset-inline-end: 10.5px;
+    inset-block-start: 50%;
+    transform: translateY(-50%);
+    font-size: 14px;
+    color: r.$texto-input;
+    pointer-events: none;
+  }
+}
+
+/* Los cuatro botones de transferencia, centrados verticalmente. */
+.rb-transfer {
+  flex: 0 0 35px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  gap: 7px;
+
+  button {
+    inline-size: 35px;
+    block-size: 32.5px;
+    padding: 7px 0;
+    border: 1px solid r.$gris-transfer;
+    border-radius: 6px;
+    background: r.$gris-transfer;
+    color: r.$texto-transfer;
+    cursor: pointer;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+
+    .pi {
+      font-size: 14px;
+    }
+
+    &:hover {
+      background: r.$borde-panel;
+    }
+  }
+}
+
+/* ── Fechas ────────────────────────────────────────────────────────────── */
+
+.rb-hour {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+
+  &__label {
+    font-size: 14px;
+    font-weight: 700;
+    color: r.$negro;
+  }
+}
+
+.rb-dates {
+  display: flex;
+  gap: 28px;
+  flex: 1;
+  min-block-size: 0;
+}
+
+.rb-ranges {
+  list-style: none;
+  margin: 0;
+  padding: 3.5px;
+  inline-size: 170px;
+  flex: 0 0 170px;
+  background: r.$blanco;
+  border: 1px solid r.$borde-control;
+  border-radius: 6px;
+  box-shadow: r.$sombra-control;
+  overflow: auto;
+
+  li + li {
+    margin-block-start: 2px;
+  }
+
+  button {
+    inline-size: 100%;
+    block-size: 34.5px;
+    padding: 7px 10.5px;
+    border: 0;
+    border-radius: 4px;
+    background: none;
+    color: r.$texto;
+    font-family: inherit;
+    font-size: 15.4px;
+    text-align: center;
+    cursor: pointer;
+
+    &.is-active {
+      background: r.$seleccion;
+      color: r.$texto-seleccion;
+    }
+  }
+}
+
+.rb-calendar {
+  flex: 1;
+  min-inline-size: 0;
+  display: flex;
+  flex-direction: column;
+  padding: 1.4px;
+  background: r.$blanco;
+  border: 1px solid r.$borde-panel;
+  border-radius: 6px;
+
+  &__head {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    block-size: 40.2px;
+    flex: 0 0 40.2px;
+    padding: 2.1px 4.2px;
+    border-block-end: 1px solid r.$borde-panel;
+    position: relative;
+  }
+
+  &__nav {
+    inline-size: 35px;
+    block-size: 35px;
+    border: 0;
+    border-radius: 50%;
+    background: none;
+    color: r.$icono-suave;
+    cursor: pointer;
+
+    &:first-of-type {
+      margin-inline-end: auto;
+      margin-inline-start: 22%;
+    }
+
+    &:last-of-type {
+      margin-inline-start: auto;
+      margin-inline-end: 22%;
+    }
+  }
+
+  &__title {
+    position: absolute;
+    inset-inline: 0;
+    display: flex;
+    justify-content: center;
+    gap: 7px;
+    font-size: 13.33px;
+    font-weight: 500;
+    color: r.$texto;
+    pointer-events: none;
+  }
+
+  &__grid {
+    inline-size: 100%;
+    border-collapse: collapse;
+    table-layout: fixed;
+
+    th {
+      block-size: 22.1px;
+      font-size: 14px;
+      font-weight: 700;
+      color: r.$texto;
+    }
+
+    td {
+      block-size: 23.8px;
+      text-align: center;
+    }
+  }
+
+  &__day {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    inline-size: 23.8px;
+    block-size: 23.8px;
+    border-radius: 50%;
+    font-size: 14px;
+    color: r.$texto;
+
+    &.is-outside {
+      color: r.$borde-control;
+    }
+
+    &.is-today {
+      background: r.$cian;
+      color: r.$blanco;
+    }
+  }
+
+  &__bar {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    block-size: 28px;
+    flex: 0 0 28px;
+    margin-block-start: auto;
+    padding: 0 3.5px;
+    border-block-start: 1px solid r.$borde-panel;
+  }
+
+  &__link {
+    border: 0;
+    background: none;
+    padding: 0 3.5px;
+    font-family: inherit;
+    font-size: 12.25px;
+    color: r.$icono-suave;
+    cursor: pointer;
+
+    &--clear {
+      color: r.$cian;
+    }
+  }
+}
+
+/* ── Columnas: árbol ───────────────────────────────────────────────────── */
+
+.rb-tree {
+  flex: 1;
+  min-block-size: 0;
+  overflow: auto;
+  padding: 0 7px;
+  background: r.$blanco;
+  border: 1px solid r.$borde-control;
+  border-radius: 6px;
+  scrollbar-width: thin;
+  scrollbar-color: r.$scrollbar transparent;
+
+  &__node {
+    display: flex;
+    align-items: center;
+    gap: 3.5px;
+    block-size: 31.5px;
+    margin-block-start: 2px;
+    padding: 3.5px 7px;
+    border-radius: 6px;
+    background: r.$seleccion;
+    font-size: 14px;
+    color: r.$texto;
+    white-space: nowrap;
+  }
+
+  &__toggle {
+    inline-size: 14px;
+    flex: 0 0 14px;
+    font-size: 12px;
+    color: r.$texto;
+  }
+
+  &__label {
+    overflow: hidden;
+    text-overflow: ellipsis;
+  }
+}
+
+/* ── Previsualización ──────────────────────────────────────────────────── */
+
+.rb-select {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 7px;
+  inline-size: 96.5px;
+  block-size: 32.5px;
+  padding: 7px 10.5px;
+  border: 1px solid r.$borde-control;
+  border-radius: 6px;
+  background: r.$blanco;
+  color: r.$texto-input;
+  font-size: 14px;
+
+  .pi {
+    font-size: 12px;
+    color: r.$texto-input;
+  }
+}
+
+.rb-preview {
+  flex: 1;
+  min-block-size: 0;
+  overflow: auto;
+  scrollbar-width: thin;
+  scrollbar-color: r.$scrollbar transparent;
+
+  &::-webkit-scrollbar {
+    inline-size: 8px;
+    block-size: 8px;
+  }
+
+  &::-webkit-scrollbar-thumb {
+    background: r.$scrollbar;
+    border-radius: 15px;
+  }
+
+  &__table {
+    border-collapse: collapse;
+    white-space: nowrap;
+
+    th {
+      position: sticky;
+      inset-block-start: 0;
+      z-index: 1;
+      block-size: 38.5px;
+      padding: 10.5px 14px;
+      background: r.$gris-cabecera;
+      color: r.$texto;
+      font-size: 14px;
+      font-weight: 600;
+      text-align: start;
+      border-block-end: 1px solid r.$borde-panel;
+    }
+
+    td {
+      block-size: 49.4px;
+      padding: 10.5px 14px;
+      background: r.$blanco;
+      color: r.$texto;
+      font-size: 14px;
+      border-block-end: 1px solid r.$borde-panel;
+    }
+  }
+}

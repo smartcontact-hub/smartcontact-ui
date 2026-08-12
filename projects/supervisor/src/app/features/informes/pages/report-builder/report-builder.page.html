@@ -1,0 +1,267 @@
+<div class="rb">
+  <!-- ── Cabecera: título + barra de filtros ─────────────────────────── -->
+  <div class="rb-toolbar rb-toolbar--title">
+    <p class="rb-toolbar__title">{{ titulo }}</p>
+    <button type="button" class="rb-close" aria-label="Cerrar informe" (click)="cerrar()">
+      <i class="pi pi-times" aria-hidden="true"></i>
+    </button>
+  </div>
+
+  <div class="rb-toolbar rb-toolbar--filters">
+    <div class="rb-toolbar__filters">
+      <span class="rb-toolbar__label">Servicios:</span>
+      @for (e of elegidas().slice(0, 4); track e) {
+        <span class="rb-chip">{{ e.split(' - ')[0] }}</span>
+      }
+      <span class="rb-toolbar__label">Fecha:</span>
+      <span class="rb-chip">{{ rangoElegido() }}</span>
+    </div>
+    <button type="button" class="rb-create" [disabled]="!elegidas().length">Crear Tabla</button>
+  </div>
+
+  <!-- ── Fila 1: Entidades | Fechas ──────────────────────────────────── -->
+  <div class="rb-row rb-row--top">
+    <!-- Entidades -->
+    <section class="rb-col rb-col--half">
+      <header class="rb-section__head">
+        <h3 class="rb-section__title">Entidades</h3>
+        <label class="rb-check">
+          <input type="checkbox" [checked]="noActivos()" (change)="noActivos.set(!noActivos())" />
+          <span class="rb-check__box" aria-hidden="true"></span>
+          <span class="rb-check__label">No activos</span>
+        </label>
+      </header>
+
+      <div class="rb-picklist">
+        <div class="rb-listbox">
+          <div class="rb-listbox__head">
+            <label class="rb-search">
+              <input
+                type="text"
+                placeholder="Buscar"
+                aria-label="Buscar entidades disponibles"
+                (input)="filtrar('origen', $event)"
+              />
+              <i class="pi pi-search" aria-hidden="true"></i>
+            </label>
+          </div>
+          <ul class="rb-listbox__list">
+            @for (e of origenVisible(); track e) {
+              <li>
+                <button
+                  type="button"
+                  [class.is-marked]="marcadasOrigen().has(e)"
+                  (click)="alternar('origen', e)"
+                >
+                  {{ e }}
+                </button>
+              </li>
+            }
+          </ul>
+        </div>
+
+        <div class="rb-transfer">
+          <button type="button" aria-label="Mover todo a la derecha" (click)="transferir('todo-derecha')">
+            <i class="pi pi-angle-double-right" aria-hidden="true"></i>
+          </button>
+          <button type="button" aria-label="Mover a la derecha" (click)="transferir('derecha')">
+            <i class="pi pi-angle-right" aria-hidden="true"></i>
+          </button>
+          <button type="button" aria-label="Mover a la izquierda" (click)="transferir('izquierda')">
+            <i class="pi pi-angle-left" aria-hidden="true"></i>
+          </button>
+          <button
+            type="button"
+            aria-label="Mover todo a la izquierda"
+            (click)="transferir('todo-izquierda')"
+          >
+            <i class="pi pi-angle-double-left" aria-hidden="true"></i>
+          </button>
+        </div>
+
+        <div class="rb-listbox">
+          <div class="rb-listbox__head">
+            <label class="rb-search">
+              <input
+                type="text"
+                placeholder="Buscar"
+                aria-label="Buscar entidades seleccionadas"
+                (input)="filtrar('destino', $event)"
+              />
+              <i class="pi pi-search" aria-hidden="true"></i>
+            </label>
+          </div>
+          <ul class="rb-listbox__list">
+            @for (e of destinoVisible(); track e) {
+              <li>
+                <button
+                  type="button"
+                  [class.is-marked]="marcadasDestino().has(e)"
+                  (click)="alternar('destino', e)"
+                >
+                  {{ e }}
+                </button>
+              </li>
+            } @empty {
+              <li class="rb-listbox__empty">No se encontraron resultados</li>
+            }
+          </ul>
+        </div>
+      </div>
+    </section>
+
+    <!-- Fechas -->
+    <section class="rb-col rb-col--half">
+      <header class="rb-section__head rb-section__head--dates">
+        <h3 class="rb-section__title">Fechas</h3>
+        <div class="rb-hour">
+          <span class="rb-hour__label">Hora</span>
+          <span class="rb-chip rb-chip--hour">00:00 - 23:59</span>
+        </div>
+      </header>
+
+      <div class="rb-dates">
+        <ul class="rb-ranges">
+          @for (r of rangos; track r) {
+            <li>
+              <button
+                type="button"
+                [class.is-active]="rangoElegido() === r"
+                (click)="rangoElegido.set(r)"
+              >
+                {{ r }}
+              </button>
+            </li>
+          }
+        </ul>
+
+        <div class="rb-calendar">
+          <div class="rb-calendar__head">
+            <button type="button" class="rb-calendar__nav" aria-label="Mes anterior">
+              <i class="pi pi-chevron-left" aria-hidden="true"></i>
+            </button>
+            <span class="rb-calendar__title">
+              <span>Agosto</span>
+              <span>2026</span>
+            </span>
+            <button type="button" class="rb-calendar__nav" aria-label="Mes siguiente">
+              <i class="pi pi-chevron-right" aria-hidden="true"></i>
+            </button>
+          </div>
+
+          <table class="rb-calendar__grid">
+            <thead>
+              <tr>
+                <th>L</th>
+                <th>M</th>
+                <th>X</th>
+                <th>J</th>
+                <th>V</th>
+                <th>S</th>
+                <th>D</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (semana of semanas; track $index) {
+                <tr>
+                  @for (celda of semana; track $index) {
+                    <td>
+                      <span
+                        class="rb-calendar__day"
+                        [class.is-outside]="celda.fuera"
+                        [class.is-today]="esHoy(celda)"
+                      >
+                        {{ celda.dia }}
+                      </span>
+                    </td>
+                  }
+                </tr>
+              }
+            </tbody>
+          </table>
+
+          <div class="rb-calendar__bar">
+            <button type="button" class="rb-calendar__link">Hoy</button>
+            <button type="button" class="rb-calendar__link rb-calendar__link--clear">Limpiar</button>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- ── Fila 2: Columnas | Previsualización ─────────────────────────── -->
+  <div class="rb-row rb-row--bottom">
+    <section class="rb-col rb-col--quarter">
+      <header class="rb-section__head">
+        <h3 class="rb-section__title">Columnas</h3>
+        <label class="rb-check">
+          <input
+            type="checkbox"
+            [checked]="todasColumnas()"
+            (change)="todasColumnas.set(!todasColumnas())"
+          />
+          <span class="rb-check__box" aria-hidden="true"></span>
+          <span class="rb-check__label">Todas las columnas</span>
+        </label>
+      </header>
+
+      <div class="rb-tree">
+        @for (n of arbol; track $index) {
+          <div class="rb-tree__node" [style.padding-inline-start.px]="n.nivel * 14">
+            @if (!n.hoja) {
+              <i class="pi pi-chevron-down rb-tree__toggle" aria-hidden="true"></i>
+            } @else {
+              <span class="rb-tree__toggle" aria-hidden="true"></span>
+            }
+            <span class="rb-check__box" [class.is-checked]="todasColumnas()" aria-hidden="true"
+              ><i class="pi pi-check" aria-hidden="true"></i
+            ></span>
+            <span class="rb-tree__label">{{ n.etiqueta }}</span>
+          </div>
+        }
+      </div>
+    </section>
+
+    <section class="rb-col rb-col--rest">
+      <header class="rb-section__head rb-section__head--preview">
+        <div class="rb-section__head-left">
+          <h3 class="rb-section__title">Previsualización</h3>
+          <span class="rb-select">
+            {{ agrupacion() }}
+            <i class="pi pi-chevron-down" aria-hidden="true"></i>
+          </span>
+        </div>
+        <label class="rb-check">
+          <input
+            type="checkbox"
+            [checked]="ocultarVacios()"
+            (change)="ocultarVacios.set(!ocultarVacios())"
+          />
+          <span class="rb-check__box" aria-hidden="true"></span>
+          <span class="rb-check__label">Ocultar datos vacíos</span>
+        </label>
+      </header>
+
+      <div class="rb-preview">
+        <table class="rb-preview__table">
+          <thead>
+            <tr>
+              @for (c of columnas; track c) {
+                <th>{{ c }}</th>
+              }
+            </tr>
+          </thead>
+          <tbody>
+            @for (f of filasPreview; track f) {
+              <tr>
+                @for (c of columnas; track c) {
+                  <td>{{ $first ? 'Servicios' : 'X' }}</td>
+                }
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </section>
+  </div>
+</div>
