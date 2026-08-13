@@ -13,6 +13,62 @@
 
 ---
 
+## 2026-08-13
+
+> Método: pasada A (deuda de código, ≤5) + pasada B (deriva de docs) + pasada C (PRs parados
+> >7d). Contra AGENTS.md/.impeccable.md/customs-catalog.md/DOCS-INDEX.md. Pasada C: `gh`/MCP
+> de GitHub confirma **0 PRs abiertos** en el repo — sin hallazgos.
+
+### Deuda de código
+
+- [ ] **P1** Los 4 componentes de referencia que `AGENTS.md:267-282` manda inspeccionar antes de
+  generar nada conviven en dos eras de API sin criterio escrito: `sc-button.component.ts:31-61`
+  (el más citado y copiado del set) sigue en `@Input()`/`@Output()` puro, mientras
+  `sc-toggleswitch.component.ts:37-40` e `sc-inputtext.component.ts` ya usan `input()`/`output()`
+  de signals — confirmado también a nivel de librería: 16 ficheros con `@Input()` vs 19 con
+  `= input(` en `projects/ui-smartcontact/src/lib/components`, sin ninguna nota en `AGENTS.md`,
+  `docs/DECISIONS.md` ni `docs/migration-safety.md` sobre cuál es la era objetivo → decidir y
+  documentar (DD-N) la era objetivo; si es signals, migrar `sc-button` primero por ser la
+  referencia más citada. [arréglalo]
+- [ ] **P1** `createFormDirtyState()` se documenta a sí mismo como "patrón único
+  plataforma-wide (admin agentes/grupos/usuarios, AED, builder de reglas)"
+  (`form-dirty-state.ts:6-9`), pero solo lo consumen las 3 páginas admin
+  (`user-form-page.component.ts`, `agent-form-page.component.ts`,
+  `group-form-page.component.ts`); las páginas AED y el rule-builder reimplementan a mano el
+  mismo par pristine/dirty con `JSON.stringify` crudo — justo el falso-sucio que
+  `stableStringify` existe para evitar — con el mismo comentario copiado ("Público para el
+  `formDirtyGuard`... confirma al salir con cambios"): `aed-agentes-page.component.ts:100,106-111`
+  (y su misma forma en `aed-grupos-page`/`aed-servicio-page`) y
+  `rule-builder-page.component.ts:198-217` con su propio `buildSnapshot()` → migrar las 4 páginas
+  restantes a `createFormDirtyState()`. [arréglalo]
+- [ ] **P1** El port presentacional `sc-bulk-transcription-modal` del DS
+  (`sc-bulk-transcription-modal.component.ts:41-51`: "recibe los contadores YA calculados...
+  Animaciones 1:1 con el molde: hero count-up, delta flotante, pulse del caption, nudge del
+  toggle") se exporta en `public-api.ts` y no lo consume nadie fuera de `sc-docs`; la app
+  (Memory) reimplementó el mismo modal desde cero con las mismas animaciones bajo otros nombres
+  (`bulk-transcription-modal.component.ts:87-93` `isPulsing`/`deltaGhost`/`isShaking`, `:302-331`
+  `firePulseAndFlash`) → adoptar `<sc-bulk-transcription-modal>` en Memory (aportando solo los
+  contadores, que es justo lo que el componente del DS espera) o, si quedó desfasado del caso
+  real, retirarlo del DS. [arréglalo]
+- [ ] **P2** Los 9 stores de `projects/supervisor/src/app/features/admin/repositories/instances/`
+  (`entidades.ts:74-95`, `agendas.ts:74-95`, y 7 más) son la misma clase boilerplate carácter a
+  carácter — `@Injectable` + `addItem`/`updateItem`/`deleteItem`/`deleteItems` como pass-through
+  1:1 a `createLocalStore` — y solo cambia el nombre del tipo → `createRepoStore<T>(opts)` en
+  `local-store.factory.ts` que devuelva directamente un `RepoStore<T>`, sin clase por entidad.
+  [arréglalo]
+
+### Deriva de docs
+
+- [ ] El comentario del CHECK E en `scripts/docs-coherence.mjs:25-27` dice que el gate "nace de
+  dos derivas reales: el README raíz decía 49 y el del paquete '~55'" citando
+  `projects/ui-smartcontact/README.md` como motivo — pero el alcance del propio check
+  (`scripts/docs-coherence.mjs:63-64`: "checks A-E siguen con el alcance de docs:guard", que no
+  escanea `projects/**`) excluye exactamente ese fichero: `projects/ui-smartcontact/README.md:25`
+  sigue en "~55 componentes" (ítem ya abierto en la sección 2026-08-04 de este doc) y CHECK E
+  nunca podrá cazarlo → matizar el comentario: el caso real que originó el gate queda fuera de su
+  alcance hasta que se amplíe como CHECK F (que sí camina `projects/**` vía `mdDeProyectos()`).
+  [arréglalo]
+
 ## 2026-08-10
 
 > Método: pasada A (deuda de código, ≤5) + pasada B (deriva de docs). Contra AGENTS.md/.impeccable.md/customs-catalog.md/DOCS-INDEX.md. La deriva de `docs/DECISIONS.md` (newest-first) ya está capturada en la sección 2026-08-04 de abajo, sin resolver — no se repite aquí.
@@ -27,7 +83,7 @@
 
 ### Deriva de docs
 
-- [ ] `README.md:19` (raíz del repo) dice "**49** wrappers/customs `sc-*`" pero `docs/inventory.md:28` (auto-generado por `component-audit`) dice "**51 componentes**" — es una SEGUNDA cifra desincronizada, distinta de la de `projects/ui-smartcontact/README.md` ya señalada en la sección 2026-08-04 (esa decía "~55") → actualizar el número en el README raíz al del manifiesto generado; refuerza el caso del guard propuesto la semana pasada (comparar la cifra citada contra `docs/_component-status.json`), que cazaría las dos instancias a la vez. [gate-able]
+- [x] ~~`README.md:19` (raíz del repo) dice "**49** wrappers/customs `sc-*`" pero `docs/inventory.md:28` (auto-generado por `component-audit`) dice "**51 componentes**"~~ — **cerrado**: `README.md:19` ya dice 51 (arreglado en `1674bf1`, "feat(gates): la doc ya no puede mentir sobre cifras..."), cuadra con `docs/inventory.md:28` y con `node scripts/component-audit.mjs check` (verificado 2026-08-13).
 - [ ] `docs/customs-catalog.md:52` documenta el primary de marca como `#344a70` ("navy-500") vía `semantic.primary.color = var(--sc-bg-primary)`, pero `--sc-bg-primary` resuelve hoy a `--sc-color-blue-700` = `#1b273d` (`02-semantic.css:22`, `01-primitive.css:24`) — el código está bien y pasa `tokens:parity` (`sc-bg-primary` es `enforce` contra `primary.color` del export en `scripts/color-map.mjs:42`), pero el hex de ejemplo del catálogo quedó desactualizado (distinto del pie de página ya señalado en la sección 2026-08-04: aquí el valor en sí es incorrecto, no solo la fecha) → actualizar el hex de la fila a `#1b273d`/blue-700. [arréglalo]
 
 ## 2026-08-04
