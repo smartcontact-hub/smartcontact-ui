@@ -145,6 +145,23 @@ for (const { path, lines } of files) {
   });
 }
 
+// ── CHECK I — DECISIONS.md promete "newest first" y tiene que cumplirlo ────────────
+// Su cabecera dice "Formato DD-N, newest first". Estuvo roto desde el 2026-06-30 —los DD-21..34
+// se anexaron ASCENDENTE al final— y estaba anotado como pendiente en DOCS-INDEX todo ese
+// tiempo, creciendo. Un doc que declara una regla y la incumple enseña que sus reglas son
+// decorativas. Los apéndices (`DD-23·b`) van pegados a su padre, no en su propio escalón.
+{
+  const dec = readFileSync(resolve(root, 'docs/DECISIONS.md'), 'utf8');
+  const nums = [...dec.matchAll(/^## DD-(\d+)/gm)].map((m) => Number(m[1]));
+  for (let i = 1; i < nums.length; i++)
+    if (nums[i] > nums[i - 1]) {
+      fail(
+        `docs/DECISIONS.md — rompe su propio "newest first": DD-${nums[i]} va DESPUÉS de DD-${nums[i - 1]}. Mueve el bloque arriba (los apéndices \`DD-N·x\` van pegados a su DD-N).`,
+      );
+      break; // uno basta: el arreglo es reordenar, no ir uno a uno
+    }
+}
+
 // ── CHECK H — un doc que declara su propia CADUCIDAD y ya venció ───────────────────
 // Los snapshots fechados envejecen sin avisar: el mapa de producto declara "caduca el
 // 2026-09-08" en DOCS-INDEX y nadie lo vigilaba. Un doc caducado es peor que ninguno — sigue

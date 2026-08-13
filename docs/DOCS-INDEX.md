@@ -39,11 +39,11 @@
 | **Mapa de trabajo de PRODUCTO** (snapshot fechado, **caduca el 2026-09-08**) — las tarjetas SISMAC en barbecho durante la ausencia del PM: estado, bloqueos, protocolos de prueba, preguntas abiertas y divergencias entre el email y el recap. **No es material del Design System**; vive aquí porque no había ningún otro *source* de producto (regla 2). Publicado como página: https://claude.ai/code/artifact/1e3ae223-a494-48b4-b473-5bd689a00523 | [`docs/mapa-producto-2026-08.html`](./mapa-producto-2026-08.html) | Rafa + Mario + Marta |
 | Preferencias / comportamiento Claude + atajos (privado, fuera del repo) | `~/.claude/projects/.../memory/` | Solo Claude |
 
-## Punteros (no contienen info nueva)
+## El fichero que se autocarga siempre
 
 | Doc | Rol |
 |---|---|
-| [`CLAUDE.md`](../CLAUDE.md) | Resumen operativo + punteros a `AGENTS.md` y al pipeline de tokens. Si hay que escribir más de un párrafo, va en uno de los sources de arriba. |
+| [`CLAUDE.md`](../CLAUDE.md) | **Se autocarga en CADA sesión** — por eso lleva, además de los punteros, las 4-5 advertencias cuya ignorancia cuesta trabajo perdido (las 9 zonas `@sc-gen` en 5 ficheros; que el CI son 8 pasos y no `verify`). Una línea cada una. Si algo necesita más de un párrafo, va a un *source* de arriba. *(Antes esta tabla se llamaba "Punteros — no contienen info nueva" y era falso: la auditoría de 2026-08 decidió describirlo como es en vez de vaciarlo, porque el sitio más leído del repo es donde mejor rinde una advertencia de una línea.)* |
 
 ---
 
@@ -83,7 +83,7 @@ Los pares que más se confunden — cada uno tiene un trabajo distinto:
 Última actualización: 2026-08-04 — nueva fila `docs/AUDIT-SEMANAL.md` (backlog vivo autogenerado por la rutina de auditoría de juicio semanal; su skill vive en `.claude/skills/auditoria-semanal/SKILL.md`, fuera del alcance de docs:guard).
 2026-07-23 — `sc-card` gana input `icon` (icono de cabecera opcional) + piloto de **Code Connect** (`card` → `sc-card`); nueva fila `docs/code-connect.md`. **Limpieza s23**: borrado `playbook-migracion-platform.md` (muerto por DD-17) + su fila; 3 `README.md` duplicados de las skills de agente (carpeta ya borrada); TRAMPAS de `NEXT-SESSION` movidas a `AGENTS.md`; `pull_request_template` apunta a `docs/DECISIONS.md`.
 2026-06-30 — sesión 7: **dirty-state compartido** (primitivo `createFormDirtyState`, Guardar por cambio neto en los 5 forms) mergeado + **auditoría de deuda por bloques** del monorepo → nuevo `docs/AUDIT-DEUDA-2026-06.md` (Tema C ya cerrado ahí). Añadida su fila arriba.
-2026-06-30 — sesión 6: **DD-27** (constructor de condiciones v2 + recorte MVP sin grabación/borradores) registrado en `DECISIONS.md`; `ROADMAP.md` §reglas marcada EJECUTADA; ningún *source* nuevo cambió de sitio (mapa intacto). Pendiente de orden: `DECISIONS.md` newest-first (DD-21..27 al final).
+2026-06-30 — sesión 6: **DD-27** (constructor de condiciones v2 + recorte MVP sin grabación/borradores) registrado en `DECISIONS.md`; `ROADMAP.md` §reglas marcada EJECUTADA; ningún *source* nuevo cambió de sitio (mapa intacto). ~~Pendiente de orden: `DECISIONS.md` newest-first~~ → **RESUELTO 2026-08-13**: reordenado (37→1, apéndices pegados a su padre) y **gateado** por `docs:coherence`, que ahora falla si un DD queda por debajo de uno más antiguo.
 2026-06-23 — `ppt-proyecto.md` consolidado y renombrado a `colaboracion.md` (lean + práctico + flujo día a día + colaboración git + nota de caducidad del token); borrado el viejo.
 2026-06-16 — W2: READMEs de paquete (`components`) y de las apps (`sc-docs`, `supervisor`) + badges + metadata npm (description/keywords/license/author) + `org-profile.md` (borrador del perfil de la org). Los README de `projects/**` no los escanea docs:guard (solo `docs/` + raíz).
 2026-06-16 — añadido `ppt-proyecto.md` (presentación de onboarding para diseño, W0).

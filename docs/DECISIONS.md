@@ -30,6 +30,42 @@
 
 ---
 
+## DD-37 · 2026-08-13 — `cuscare` es una app RÉPLICA de pleno derecho: exenta de tokenizar, gateada por fidelidad
+
+**Contexto** · `projects/cuscare` replica `cuscare.smart-contact.com/aed`, está **en producción**
+(`sc-cuscare.pages.dev`) y tiene su propia suite (`npm run e2e:cuscare`, en `ci.yml`). Pero **ningún
+DD la cubría**: la auditoría de documentación de 2026-08 midió `grep cuscare docs/DECISIONS.md` → **0**.
+DD-35 legisla las apps réplica y solo nombra a `agent`, así que el criterio que hoy rige a `cuscare`
+vivía únicamente en un comentario de `scripts/token-guard.mjs`. Una app en producción sin decisión
+escrita es una que el próximo "vamos a tokenizar todo" se lleva por delante.
+
+**Decisión** · `cuscare` se rige por el **mismo criterio que `agent`** (DD-35), y se hace explícito:
+
+- **NO se tokeniza a propósito.** Sus valores se **extraen del sitio real** (`getComputedStyle`) y se
+  copian crudos. Tokenizarla destruiría justo lo que aporta: una réplica debe parecerse al
+  **ORIGINAL**, no a nuestro DS.
+- **Exenta de las reglas 5-7 de `token-guard`** (tipografía literal), como `agent`. El resto del
+  guard **sí** se le aplica.
+- **Su gate no es la paridad de tokens, es la fidelidad**: `e2e:cuscare` conduce la app con clics
+  reales y compara métrica medida contra el sitio original.
+
+**Razón** · El valor de una réplica es que un tercero la mire y no distinga cuál es cuál. Cada token
+`--sc-*` que se le mete es una desviación del original disfrazada de mejora.
+
+**Descartadas** · *Tokenizarla como el resto* → rechazado: pierde fidelidad, que es su única razón de
+existir. *Sacarla del repo* → rechazado: consume el DS local, comparte tooling y CI, y el coste de
+tenerla dentro es una línea en `REPLICA_APPS`. *Dejar el criterio solo en el comentario del guard*
+→ rechazado, y es el motivo de este DD: un comentario en un script no es donde se busca una decisión.
+
+**Consecuencias** · La exención es explícita en `token-guard.mjs` (`REPLICA_APPS`) y ya se validó dos
+veces que el guard **sigue cazando** la misma infracción fuera de las réplicas. Nota de historia que
+conviene no repetir: `agent` pasaba por un **agujero**, no por una decisión —sus estilos viven en
+bloques `styles:` inline de los `.ts` y el guard solo miraba `.scss/.css`, así que sus 23 literales
+no se detectaban— mientras `cuscare`, que usa `.scss`, saltaba. Misma decisión de diseño, distinto
+resultado según dónde viviera el CSS. **La incoherencia era el guard, no `cuscare`.**
+
+---
+
 ## DD-36 · 2026-08-13 — Lo que NO se unifica entre los 4 flujos, y por qué (rescatado del plan de convergencia)
 
 **Contexto** · El plan de convergencia de los 4 flujos (aprobado 2026-07-18) se archivó en
@@ -132,6 +168,541 @@ era cierto cuando se escribieron.
 > todavía"* — falso desde hacía semanas, en la entrada **más nueva y más leída** del fichero. Un DD
 > describe una decisión (inmutable) y también un **estado** (perecedero): al ejecutar una decisión,
 > vuelve a su DD y cierra el estado, o el registro empieza a mentir por donde más se lee.
+
+---
+
+## DD-34 · 2026-07-22 — `--sc-bg-default` es el SUELO del shell, nunca una superficie de contenido
+
+**La pregunta era otra.** Rafa preguntó por qué en Contact Center el fondo parece gris y en el
+resto blanco. Medidas las 17 rutas en los dos temas: **no existe tal división**. El lienzo de
+página es `--sc-bg-surface` en 17 de 17. El gris que se veía era el del SHELL asomando por
+debajo de donde acababa el contenido, en tres páginas cuyo `:host` no llevaba `height: 100%`
+(452px de gris en `/reglas`, 345 en `/categorias`, y `/entidades` con el defecto **latente**).
+
+**Lo que sí destapó la medición.** El sistema tiene tres tokens de superficie y **dos valores**
+—`--sc-bg-elevated` vale lo mismo que `--sc-bg-surface` en ambos temas—, y los dos que difieren
+lo hacen por nada: `bg-default` contra `bg-surface` es **1.06:1 en claro y 1.14:1 en oscuro**.
+Lo que separa una tarjeta de su lienzo **no es el relleno** (1.00:1, son el mismo color): es su
+borde de 1px, 1.34:1 en claro y 1.39:1 en oscuro. Es el mismo modelo que la referencia (Snow UI:
+lienzo blanco, tarjeta blanca, borde al 10% del color de texto).
+
+**Decisión.** `--sc-bg-default` es el suelo sobre el que se apoya un lienzo —el fondo del shell
+detrás de sidebar y barra, y el lienzo del `settings-shell` en oscuro, donde `bg-surface` vale
+lo mismo que el índice y se fundirían—. **Dentro de `main`, una región es o el lienzo de página
+(`bg-surface`) o un bloque que se lee por su BORDE.** Se retira el único sitio que lo
+incumplía: la bandeja gris de las tres páginas AED, invisible en claro (1.06:1 sobre lienzo
+blanco) e **idéntica al lienzo** en oscuro (1.00:1). Era un resto del modelo anterior a S67-A,
+cuando el lienzo de config también era gray-50; al pasar el lienzo a blanco se quedó sin
+trabajo. Medido después: en oscuro la card **gana** separación, 1.581:1 contra el suelo frente
+a 1.063 contra la bandeja.
+
+**Lo que la decisión NO cubre, y hay que no confundir.** Siguen usando `bg-default`:
+
+- **Estados** (hover de fila, seleccionado, deshabilitado, activo). Un estado no es una
+  superficie; retirarlos borra feedback, no ruido.
+- **Huecos hundidos dentro de una tarjeta** (grupo de condiciones del constructor, cajas de
+  aviso de sistema, pie de numeración especial). En oscuro **funcionan** —card gray-900 sobre
+  hueco gray-950—; en claro miden 1.06:1 y solo se leen por su borde. Es una asimetría real con
+  su propia decisión detrás: queda **anotada, no aplanada**.
+
+**Round-trip pendiente con Figma.** Retirar la bandeja es una **divergencia** con el maestro —
+misma categoría que el tramo actual del breadcrumb (`customs-catalog §2.12`). Va al puente
+código→Figma como propuesta para Marta, no se corrige en el código.
+
+> **Corrección (S22), tras abrir la fuente.** Este párrafo describía la divergencia de oídas y
+> se equivocaba en casi todo: el nodo `1:12381` **no existe**, el maestro real es `13593:5401`
+> y ese `Main Content` **no pinta nada** (`fills: []`, radius 0) — ni gray/50 ni radius 12. Y
+> la pantalla del maestro no es Contact Center: es **`ScMemoryRuleBuilderPage`** (el constructor
+> de reglas), en la página `Flujos`.
+>
+> La divergencia **existe**, pero es más ancha y de otra naturaleza: lo que el maestro pinta en
+> gris es el **lienzo de página** (`13593:5402` → `#f7f8fa` = `slate-50` = `--sc-bg-default`),
+> con las cards blancas radius 8 encima. Medido a ambos lados, sobre la misma pantalla:
+>
+> | | lienzo | card | separación |
+> |---|---|---|---|
+> | maestro Figma | `#f7f8fa` | `#ffffff` | **1.063:1** |
+> | código tras DD-34 | `#ffffff` | `#ffffff` | **1.00:1** (lo hace el borde) |
+>
+> O sea: el maestro usa exactamente el modelo que esta DD midió y descartó. La propuesta a Marta
+> no es «quitamos una bandeja de una pantalla», es «el lienzo de página pasa de gris a blanco y
+> la separación la hace el borde» — decisión de más alcance, **pendiente de confirmar antes de
+> escribirla en Figma**.
+>
+> De paso, la fuente **respalda** el punto de abajo: los huecos hundidos SÍ están en el maestro
+> (tres `Container` `#f7f8fa` radius 6 dentro de la card blanca del Alcance). La asimetría que
+> esta DD dejó anotada es intención de diseño, no un descuido del código.
+
+---
+
+Última actualización: 2026-07-22 (**DD-34** `--sc-bg-default` es el suelo del shell, nunca una
+superficie de contenido [3 tokens de superficie y 2 valores; default↔surface = 1.06:1 claro /
+1.14:1 oscuro, o sea que lo que separa es el BORDE]; se retira la bandeja gris de Contact
+Center — divergencia a proponer en Figma; estados y huecos hundidos quedan fuera y anotados ·
+**DD-33** el título de página vuelve al CUERPO a 16px/600 sin banda [medido en Snow UI], el
+`<h1>` se destapa como `.page__heading` y el trail gana un padre para no repetir la palabra;
+las 9 páginas de repositorio no tenían `<h1>` ninguno · **DD-32** un solo acento: la familia
+`accent`/`link` +
+halo de foco se unifican con `info` bajo `sky`; repara 3.46:1 → 6.80:1 y obliga a
+`text-on-accent`/`icon-on-accent` a blanco; barrido de 38 outlines hardcodeados a
+`--sc-border-focus` · **DD-30** varias reglas activas a la vez + solape por unión [una conversación se procesa una vez, sin prioridad/conflictos], supersede el invariante «una sola activa» de DD-28; recorrido `/reglas` realineado · **DD-29** showcase «estilo Storybook» en sc-demo — motor propio, render por
+`<ng-template>`+`viewChild` [no `NgComponentOutlet`], canvas aislado + knobs en vivo + snippet + API + sidebar por
+categorías; 49/49 en formato story · **DD-28** reglas MVP: borradores fuera del todo + invariante «una sola activa»
+(radio) + fuera prioridad/conflictos en el supervisor; recorrido `/reglas` realineado · **DD-27** constructor de
+condiciones **v2** — refs tipadas dinámicas + modelo `value` + estimación de procesado [barra de proporción +
+proyección día/mes] + guía de errores + duración con presets + scope MVP [fuera grabación/borradores]; mergeado a
+main. · **DD-26** la base Variante B `conditionTree` 2 niveles + tipificación + builder progresivo · DD-25 gap footer
+sc-dialog · var-docs de color re-apuntadas en Figma).
+
+---
+
+## DD-33 · 2026-07-22 — El título de página vive en el CUERPO (revisa parte de S59)
+
+**Qué se revisa.** S59 («todo arriba») quitó de cada página su banda de título y dejó la
+identidad SOLO en el breadcrumb de la TopBar. El `<h1>` sobrevivió `visually-hidden`: existía
+para lectores de pantalla y el vidente no tenía título de página en ninguna ruta.
+
+**Lo que la medición cambió.** Se midió en vivo la referencia que eligió Rafa —Snow UI
+`/orders`, que es nuestro mismo arquetipo: barra con miga + tabla— y el título de página **no
+vive en la barra**: es un encabezado de **16px/600 en el cuerpo, sin banda**. Lo que sobraba en
+S59 era el CHROME de aquella banda (icono, borde, sombra, `position: sticky`), no el título.
+
+**Decisión.** El `<h1>` se destapa como `.page__heading` (tokens `--sc-*-subtle-1`, que valen
+exactamente 16px/600) en las 15 páginas de contenido. **No se añade encabezado**: sigue habiendo
+uno por documento, así que el conteo de `page-identity.spec.ts` no cambia — cambia su veredicto.
+Los **formularios quedan fuera**: su identidad la pinta su chrome propio (cabecera sticky /
+ficha), y un título más sería el duplicado de S59 por otra puerta.
+
+**Consecuencia obligatoria: el trail gana un padre.** Con la miga de un solo tramo, el título
+del cuerpo repetía la palabra a 95px —«Usuarios» sobre «Usuarios»—, que es literalmente el
+defecto que Rafa cazó en la sesión 17. Las diez rutas que tenían miga corta abren ahora con su
+sección (`Administración ›`, `Configuración ›`, `Conversaciones ›`); las secciones que no son
+rutas van con `link: false`. Es lo que hace la referencia (`Dashboards / Order List` arriba,
+`Order List` en el cuerpo): la barra dice DÓNDE estás, el título QUÉ miras. **Sin el padre, esta
+DD reintroduce el defecto que dice arreglar** — no se revierte una mitad sin la otra.
+
+**Hallazgo de paso.** Las NUEVE páginas de repositorio no tenían `<h1>` **ninguno** — no oculto,
+inexistente— así que su documento iba sin encabezado y `page-identity.spec.ts` no las cubría.
+Ahora lo tienen, resuelto desde `config().titleKey`, que es la misma clave que la ruta usa para
+su última miga: título y breadcrumb no pueden divergir.
+
+**Nombre `__heading` y no `__title`, a propósito.** `.page__title` sobrevive como CSS MUERTO de
+la banda de S59 en unas nueve hojas de página, con tamaños distintos entre sí (h2 en seguridad,
+h3 en el hub). Una regla encapsulada de componente le gana siempre a una global, así que reusar
+el nombre habría dado un tamaño por página sin que nada avisara. Lo vigila un test de
+uniformidad que compara los 11 valores computados y exige uno solo.
+
+**Alternativa descartada.** *Pintar el título en el shell desde el breadcrumb* (un sitio, cero
+duplicación): el título tiene que alinearse con la columna de contenido, y su ancho sale del
+arquetipo de página (`--list` 1600 / `--hub` 960 / `--reading` 832), que el shell no conoce.
+
+---
+
+## DD-32 · 2026-07-18 — Un solo acento: la familia `accent` se unifica con `info` bajo `sky`
+
+**El problema no era una decisión discutible, era una que nunca se tomó.** `--sc-text-accent`
+apuntaba a `cyan-600` desde el andamiaje inicial. No estaba en `customs-catalog.md` (el sitio
+donde viven las divergencias conscientes), no hay ninguna DD que lo justifique, y **DD-23** —
+que llevó `info` a la familia `sky` de marca — no revisó el alias. El DS acabó con **dos
+acentos conviviendo**: `--sc-bg-info` en sky con `--sc-text-info` en cyan, y el **halo** del
+foco en cyan alrededor de un **borde** de foco ya en sky.
+
+**Decisión.** Toda la familia (`text/bg/border/icon` de `accent` y `link`, más el halo de foco)
+pasa a `sky`. Detalle completo y tabla de tokens en `docs/customs-catalog.md §1.4`.
+
+**No es solo estética — repara accesibilidad.** `cyan-600` sobre blanco daba **3.46:1**, por
+debajo de AA para texto normal; `sky-600` da **6.80:1**. La contrapartida obligatoria:
+`--sc-text-on-accent` e `--sc-icon-on-accent` **pasan a blanco**, porque `slate-800` sobre
+`sky-500` cae a **2.48:1** (sobre `cyan-500` daba 5.89:1). Blanco sobre `sky-500`: 4.90:1.
+
+**Barrido asociado.** 38 declaraciones `outline: 2px solid var(--sc-color-cyan-500)` en 31
+ficheros hardcodeaban la primitiva para el anillo de foco en vez de consumir
+`--sc-border-focus`. Verificado que las 38 estaban dentro de un `:focus-visible` antes de
+migrarlas (cero falsos positivos).
+
+**Alternativa descartada.** *Cambiar solo `--sc-text-info`* (una línea): arreglaba el síntoma
+visible pero dejaba links, iconos y halo de foco en la otra familia — es decir, dejaba el
+problema de consistencia intacto y sin registrar.
+
+**Sin round-trip con Figma.** El export del Kit **no tiene concepto de `accent`** (0
+coincidencias); `info` solo existe a nivel de componente y ya resuelve a `{sky.500}`. Las
+líneas viven fuera de toda zona `@sc-gen` → el cambio sobrevive a `tokens:import` y ningún
+gate lo marca como drift. **Corolario incómodo**: por eso mismo **ningún gate los vigila**;
+`token-parity` §6 solo cruza lo que está en `scripts/color-map.mjs`.
+
+**Abierto (no bloquea):** la rampa de texto atenuado está bajo AA sobre blanco —
+`--sc-text-subtle` (slate-400) **2.04:1** y `--sc-text-secondary` (slate-500) **2.95:1**. No se
+toca aquí: `subtle` es una divergencia consciente documentada (`02-semantic.css:40-44`) y
+`secondary` está *enforced* 1:1 con el Kit por parity §6, así que subirlo es conversación de
+marca con Figma, no un cambio de código.
+
+---
+
+## DD-31 · 2026-07-17 — Icono canónico del DS = Material Symbols **Outlined**, self-hospedado (unifica demo↔apps)
+
+Cierra la mitad de «estilo» de la decisión abierta de iconografía del ROADMAP
+(*Iconos: estilo + peso*). Estado previo: drift en tres sitios — el código del DS
+servía **Rounded** self-hospedado (`@fontsource-variable/material-symbols-rounded`),
+las apps (supervisor/agent) lo overrideaban a **Outlined** por CDN con una «decisión
+de marca» documentada, y `customs-catalog.md` ya describía Outlined. sc-demo mostraba
+Rounded; las apps reales, Outlined.
+
+**Decisión:**
+- **El icono canónico del DS es Material Symbols Outlined**, servido
+  **self-hospedado** por `@smartcontact-hub/icons`
+  (`@fontsource-variable/material-symbols-outlined`, familia
+  `'Material Symbols Outlined Variable'`). Alinea código↔docs↔apps con el look que
+  las apps reales ya tenían.
+- **Las apps sueltan el CDN y su `.sc-icon` replicado.** supervisor/agent importan el
+  `material-symbols.css` del DS (fuente única) y quitan el `<link>` de Google Fonts +
+  el override; el `<sc-icon>` local del supervisor apunta a la familia self-hospedada.
+  Los codepoints son idénticos entre estilos Material → el mapa de glifos generado no
+  cambia.
+
+**Consecuencia:** sc-demo pasa a Outlined (iguala a las apps); cada app sirve el woff2
+self-hospedado (~340KB) en vez del CDN. El `font-display` del @fontsource es `swap` (el
+CDN usaba `block`): posible FOUT breve de la ligadura en carga fría — aceptable (fuente
+local, ya vigente en sc-demo).
+
+**Abierto (no bloquea):** el **peso** del icono a la par de la tipografía y el ajuste
+fino de ejes (wght/fill/opsz) sigue pendiente — la otra mitad del item de iconografía
+del ROADMAP. Y el icono de cabecera de `ScConfirmService` (API `icon?`).
+
+**Verificado:** `npm run verify` verde · AOT supervisor + agent + sc-demo · iconos
+renderizan Outlined self-hospedado (sc-demo + supervisor: familia computada + woff2 200,
+sin CDN) · CI no afectado (los snapshots de píxeles se saltan en CI,
+`components.spec.ts:25`). Baselines visuales `-darwin` locales quedan por refrescar (no
+gatean CI).
+
+---
+
+## DD-30 · 2026-07-17 — Reglas: varias activas a la vez, solape por unión (supersede el invariante de DD-28)
+
+Revierte el invariante «una sola activa» de **DD-28**. Origen: trabajo de la UI
+designer (rama `sandbox`) que levantó el límite en `RulesStore`, adoptado como
+decisión de producto tras sopesar la consecuencia (reabre el solape que DD-28
+esquivaba).
+
+**Decisión:**
+- **Varias reglas pueden estar activas a la vez.** `toggleActive` solo conmuta la
+  regla tocada; encender una no apaga a las demás. `addRule`/`updateRule` dejan de
+  forzar el patrón radio.
+- **El solape se resuelve por unión, sin prioridad ni conflictos.** Si una
+  conversación encaja en varias reglas activas, se procesa **una sola vez**
+  aplicando la unión de lo que pidan (p.ej. la suma de categorías IA a detectar).
+  Sin orden, sin «cuál gana», sin doble transcripción. Por eso NO se reintroduce la
+  maquinaria de prioridad/conflictos que DD-28 retiró.
+
+**Consecuencia (presentación, no producto):** el recorrido `/reglas` de sc-demo se
+realinea: el beat «Prioridad y conflictos» pasa de «lo simplificamos a una sola
+activa» a «siguen varias activas, pero el lío se disuelve con la regla de la
+unión». Misma moraleja, distinto mecanismo. Snippet `manyActiveAfter` con el
+`toggleActive` real.
+
+**Abierto (producto, no bloquea el mock):** el detalle fino de la unión cuando dos
+reglas piden análisis distintos (¿siempre se suman todas las categorías?, ¿algún
+tope de coste?) lo cierra el equipo cuando exista el motor real. Hoy es mock.
+
+**Verificado:** merge limpio de `sandbox` · AOT supervisor + sc-demo · typecheck (5
+apps) + lint + i18n 1:1 (en/fr/pt) · CI verde.
+
+---
+
+## DD-29 · 2026-07-01 — Showcase de componentes «estilo Storybook» en sc-demo (motor propio, sin tooling nuevo)
+
+La doc de componentes eran páginas con variantes hardcodeadas (sin canvas aislado, sin controles en vivo, sin código,
+sin tabla de API, sin sidebar/categorías). Se reconvierte a un **showcase estilo Storybook COMPLETO** — pero como
+**motor propio dentro de `sc-demo`** (Angular 21, tokens `--sc-*`, deploy Cloudflare Pages), **sin añadir Storybook ni
+tooling nuevo**.
+
+**Alternativas descartadas.** (a) *Storybook oficial*: pesado, otra build/estética, otra fuente de verdad de tokens
+— rompe consonancia y el deploy actual. (b) *`NgComponentOutlet`* para pintar el componente desde metadatos: **no
+soporta** el content-projection de `sc-select`/`sc-multiselect` (`pTemplate` vía `contentChildren`) ni el `model()`
+two-way + `cellTemplate` de `sc-datatable` sin un adaptador por componente (= el trabajo manual que se quería evitar).
+
+**Decisión — patrón `<ng-template>` por story.** El demo declara cada story como un `<ng-template>` con la API real
+del componente (type-safe, proyección y `model()` nativos); el motor lo pinta vía `viewChild` + `ngTemplateOutlet` y
+dibuja alrededor: **canvas aislado** (tema claro/oscuro/comparar local, aplicado a un wrapper, no a `documentElement`),
+**knobs en vivo** (un `signal<Args>` que muta el contexto del outlet → re-bind instantáneo, OnPush; los controles
+hacen *dogfooding* de sc-select/toggleswitch/inputtext/inputnumber), **snippet** serializado (`serialize-args`, puro) +
+copiar, y **tabla de API**. `StoryHost` es **apilado** (todas las stories a la vista, no por pestañas) a propósito:
+así los `data-testid` del Kit siguen en el DOM y los e2e de métrica los miden.
+
+**Shell + rutas.** `/components` pasa a `StorybookShell` (sidebar fija: 7 categorías + búsqueda, derivada de
+`component-catalog.ts` que evoluciona `component-pages.ts`) con las páginas como children; `/foundations`·`/uso`·
+`/reglas` y el top-nav intactos; el toggle dark global sigue. **Los 49 componentes** quedan en formato story (button
+piloto + 46 migrados por lotes + `slot`/`subsection` nuevos) → **pokédex 49/49**. Migración por subagentes paralelos
+con spec común + gate de integración (AOT + spot-check) por lote. `verify` entero verde.
+
+---
+
+## DD-28 · 2026-06-30 — Reglas MVP: borradores fuera del todo + invariante «una sola activa» + sin prioridad/conflictos
+
+> **El invariante «una sola activa» queda supersedido por DD-30** (2026-07-17): se
+> readmiten varias activas, con el solape resuelto por unión. El resto de DD-28
+> (borradores fuera, sin grabación, sin prioridad/conflictos) sigue vigente.
+
+Cierra la limpieza que **DD-27** dejó pendiente a propósito ("`isDraft`/`recording`/`'draft'` se dejan en el modelo
+para no cascadear errores antes del merge — limpieza follow-up"). Origen: feedback de Rafa — *«solo una regla puede
+estar activa; al desactivar no crea inactivas ni borradores, solo aparece como inactiva»*. El supervisor aún
+contradecía ese modelo: el listado mostraba la sección «Inactivas y borradores», el estado «Borrador sin editar»,
+duplicar→borrador no-activable y el gating del botón Activar; el store mantenía `priority` + detección de conflictos
+(vivos en código, invisibles en UI).
+
+**Decisión** (solo `features/memory`; el `draft` de admin —agents/groups/users, DD#294— es OTRO concepto, intacto):
+- **Borrador fuera del modelo**: `isDraft`/`duplicatedFromId`/`RuleStatus` eliminados de `rule.types.ts`; 2ª sección
+  del listado «Inactivas y borradores» → «Inactivas»; **duplicar crea una copia inactiva normal** (editable/activable,
+  sin estado especial); fuera el gating del botón Activar + i18n `status.draft`/`status.conflict`/`activate_draft_tooltip`/
+  `builder.{draft_banner,discard_draft,draft_ready_toast,discarded_toast}`/`order_updated`/`cols.order`/bloque `conflict.*`
+  en los 4 idiomas + el scss muerto del banner de borrador.
+- **Invariante «una sola activa»** en `RulesStore`: `toggleActive`/`addRule`/`updateRule` desactivan el resto al activar
+  una (patrón radio). El seed (`rules-mock.ts`) arranca con **1 activa + 3 inactivas** (antes 4 activas con `priority` 1..4).
+- **Prioridad y conflictos eliminados** (maquinaria de un mundo multi-activa que ya no existe, muerta en UI): fuera
+  `priority`, `conflictsByRuleId`, `isInConflict`, `getConflictingRules`, `reorderActive`, `scopeOverlaps`/`dimensionOverlaps`.
+  El alcance plano (`servicios/grupos/agentes` vía `deriveLegacyScope`) se mantiene solo para el resumen en prosa del
+  listado. Título del listado → «Regla activa» (singular).
+
+**Verificado**: AOT supervisor + sc-demo verde · typecheck (5 apps) + lint + **125 tests** + `audit:components` verde ·
+capturas reales del Supervisor (listado: 1 activa / 3 inactivas, alcance en prosa; builder editando una regla con
+estimación «6 de 34» + barra + «≈74/día»). Único ✗ de `verify`: falso-positivo **pre-existente** de `docs:coherence`
+(`AUDIT-DEUDA-2026-06.md:72` propone crear `scripts/paths.mjs`), ajeno a este cambio.
+
+**Presentación (no es DD, nota de consecuencia)**: el recorrido `/reglas` de sc-demo (material, NO producto) reescrito
+como **historia antes/después** — el giro a transcripción + 3 beats de transformación (alcance · prioridad/conflictos ·
+borradores), cada uno con Antes / Ahora / Por qué, capturas comparadas (las «antes» extraídas de git) y código
+antes/después. Skills `/impeccable`+`/minimalist-ui` aplicadas solo donde no contrastan con el DS (anti-slop, jerarquía,
+editorial; descartadas sus fuentes/colores/iconos propios). Nombres propios → genéricos. Dark-safe + AOT/typecheck/lint verde.
+
+---
+
+## DD-27 · 2026-06-30 — Constructor de condiciones v2: referencias dinámicas + estimación + scope MVP
+
+Evoluciona **DD-26** a producción real con membresía **dinámica** y recorta el scope al MVP. Mergeado a main.
+
+**El problema de DD-26**: las condiciones guardaban **snapshots de nombre** (`agentes: ['María García']`) →
+frágil (cambiar miembros de un grupo o renombrar no se reflejaba). Y dirección/duración filtraban en **dos sitios**
+(builder + "Criterios de transcripción") con un bug (dirección ×2).
+
+**Decisión**:
+- **Referencias tipadas, no nombres** (`ConditionRef`: service por nombre [sin id] / group·agent·agentGroup·
+  tipificacion·category por id) + **modelo `value`** (`any` comodín | `refs` | `enum` | `número`). Etiqueta y
+  **membresía** se resuelven EN VIVO (`ConditionResolverService` + `GroupAgentLinksStore`), no se congelan. "Todos"
+  = comodín (incluye futuros); un grupo en el campo **Agente** = `agentGroup` = "sus miembros AHORA". El árbol sigue
+  derivando `servicios/grupos/agentes` planos (`deriveLegacyScope`) → listado/`scopeOverlaps` intactos.
+- **Unifica dirección + duración como campos** del builder (cierra el abierto de DD-26) → mata el bug dirección-×2
+  por construcción. Operadores contextuales por kind (lista: es/no es · número: más de/menos de/entre).
+- **Estimación de procesado** (adaptada de la PPT del jefe, sticky): proyección día/mes desde el **ratio REAL**
+  (matched/total sobre el mock) × volumen base demo documentado (`CONVERSATIONS_PER_DAY`) → es **estimación, no dato**.
+  Barra de proporción (amplia vs quirúrgica). **Rechazado** un gráfico día/mes (2 números de escala distinta = slop).
+- **Guía de errores** (`condition-validate.core.mjs`, pura+testeada): incompleta/rango inválido = **error** (bloquean
+  guardar, revelado al **intentar guardar** — no acusa al crear); duplicado/contradicción/tautología = **aviso**
+  (elección de Rafa: "guía, bloquea solo lo roto"). Honestidad: contradicción/0-impacto se apoyan en el preview real.
+- **Scope MVP**: sin priorización ni grabación (obsoleta por ley) → **fuera reglas de grabación** (seed + creación +
+  Horario) y **borradores** (banner + flujo + toasts). Tipo por defecto = transcripción. Miembros de tipo
+  `recording`/`isDraft`/`'draft'` se dejan en el modelo para no cascadear errores antes del merge (limpieza follow-up).
+- **Arquitectura de tests**: lógica pura en `.mjs` (`condition-eval.core` [impacto+proyección], `condition-validate.core`,
+  `duration-presets.core`) + `.d.mts` + wrapper `.ts` → cubierta por `test:unit` (node:test) en el gate. **118 tests.**
+
+**Verificado**: verify entero verde (incl. `audit:components` regenerado: `sc-select` 31→33 por los presets), AOT,
+118 tests, preview en vivo (impacto 8/34 → barra 24%, contradicción, presets, MVP sin grabación/borradores, regla del
+jefe en la lista). **Slop/impeccable**: builder limpio (0 gradient-text, 0 border-left stripes, 0 glassmorphism); el
+único visual añadido (barra de proporción) es dato real, no decoración.
+
+---
+
+## DD-26 · 2026-06-30 — Constructor de condiciones de reglas (Variante B + builder progresivo)
+
+**Contexto**: el alcance de una regla de transcripción era rígido — 3 dimensiones (Servicio Y Grupo Y
+Agente), AND entre ellas / OR dentro. La charla de reglas pidió potencia booleana real (match all/any,
+mezcla AND/OR, agrupar) modelando la tipificación como entidad AND/OR, y "una sola regla activa" (esquiva
+priorización). Esto es **producto real en el supervisor (app), no material de charla** → sí es DD.
+
+**Decisión**:
+- **Modelo recursivo aditivo** `Rule.conditionTree?` (`features/memory/data/condition.types.ts`): árbol de
+  **2 niveles** (raíz → grupos → condiciones), cada nivel con `match: 'all'|'any'`. Campos: servicio /
+  grupo / agente / **tipificación** (lista, op `es`/`no es`). NO anidación libre (sería Variante C) — el
+  tope de 2 niveles cubre el caso real y mantiene la UI legible para un supervisor.
+- **Puente con el modelo plano legacy**: al guardar se deriva `servicios/grupos/agentes`
+  (`deriveLegacyScope`, unión de los `is`) para **no tocar** el listado ni `scopeOverlaps`. Es una
+  **sobre-aproximación** (los `is_not` y el OR entre grupos no caben en los 3 campos planos) → marca
+  conflictos de más, nunca de menos. Coherente con "una sola regla activa". `tipificación` no tiene
+  dimensión plana → vive solo en el árbol. Reglas antiguas reconstruyen el árbol con `deriveTreeFromLegacy`.
+- **Divulgación progresiva (lente `/impeccable`)**: con 1 grupo el builder es **plano** (un único control de
+  coincidencia, sin toggle raíz ni caja); el chrome de grupos (toggle raíz + cajas slate-50 + conectores
+  navy) solo aparece con **2+**. Al añadir el 2º grupo la raíz arranca en `any` (añadir grupo = alternativa
+  O). Quita la redundancia del doble-toggle del caso común.
+- **Quita "Atendida por"** del bloque Transcripción: era redundante con agente/grupo del builder
+  (`attendedBy` fuera del modelo, builder y store).
+
+**Verificado**: AOT + typecheck + lint + preview en vivo (plano↔agrupado, derivación legacy al editar regla
+antigua, guardar→listado, mezcla AND/OR con precedencia). Commits `d873308`/`c815c0d`.
+
+**Pendiente (decisión abierta)**: unificar **dirección + duración** como campos del builder (un solo sitio
+para filtrar, sin el bloque "Criterios de transcripción" aparte) — requiere tipos de campo enum/número y
+toca el flujo de **grabación** (dirección vive también ahí). Hoy siguen como bloque separado.
+
+---
+
+## DD-25 · 2026-06-22 — Gap del footer de sc-dialog: el wrapper proyectado es la fila flex
+
+**Contexto**: Rafa reportó los botones del footer de los dialogs "muy juntos", comparando con el ConfirmDialog
+de Figma (`323:12317`, footer/gap 7 Kit). El token `--sc-dialog-footer-gap` (10.5px, divergencia consciente
+del 7 de Figma por feedback de diseño previo) estaba aplicado a `.sc-dialog__foot`, pero su **único hijo** es
+el `<div modal-actions>` que el consumidor envuelve → el `gap` separaba el wrapper, no los botones, que
+quedaban a **0px** (medido).
+
+**Decisión**: el `[modal-actions]` **proyectado** es quien debe ser la fila flex (`display:flex` +
+`justify-content:flex-end` + `flex-wrap` + `gap`), vía `::ng-deep` (contenido proyectado bajo encapsulation
+Emulated). Un solo punto en sc-dialog arregla los **13 dialogs** del repo. Medido en sc-demo: **0px → 10.5px**.
+
+---
+
+## DD-24 · 2026-06-19 — Regla icono↔font-size: los iconos *companion* siguen el font-size
+
+**Contexto**: Estudiando el Kit (button, inputtext, iconfield) Rafa detectó incoherencia en cómo se
+dimensionan los iconos. Hallazgo: en PrimeOne/el Kit un icono junto a texto es un **glifo de fuente** →
+su tamaño ES el `font-size`. En código un icono-fuente hereda el font-size por cascada CSS; en Figma hay
+que atar la W/H del icono a la misma variable de font-size que el texto (no hay cascada). `IconField` solo
+posiciona y colorea (token oficial = solo `iconfield.icon.color`); **NO dimensiona**.
+
+**Decisión (Rafa)**: un icono **companion** (junto a texto, dentro de un control: button/input/search/
+chip/tag/select/menu…) **sigue el font-size de su componente** — `inherit`/`1em` en código; W/H atada a
+la var de font-size en Figma (md=`app/font/size`; sm/lg=`{cmp}/sm·lg/font`). `--sc-icon-size-*` (DD-13)
+queda **solo para iconos sueltos/decorativos** (ilustraciones, headers, logos), que conservan su tamaño.
+Aplicación **GLOBAL** (todos los companion) pero ejecución por pantalla con QA visual (no sed a ciegas).
+
+**Razón**: hace que icono y texto **rimen por fuente** (escalan juntos en sm/lg), no por casualidad de
+valor. Mismo principio que la paridad: una sola fuente de verdad — aquí, el font-size del componente.
+
+**Estado (2026-06-22) — EJECUTADO en el DS**: `sc-icon` gana `size="inherit"` (`font-size: 1em`); migrados los
+11 companion de la cara-A del DS (search, chip, inline-rename, delete-entity, column-selector, bulk-action-bar,
+form-section-nav, keyboard-shortcuts, sticky-form-header, command-palette, impact-preview). Dos hallazgos del
+QA visual: **(1)** cuando el icono es **hermano** del texto y no descendiente (iconfield de sc-search, head de
+command-palette) el **host** debe portar el font-size por variante para que el icono herede el correcto a sm/lg
+(si no, a sm el icono se queda en 14 con el input a 12). **(2)** los `<button>` **resetean** el font-size al
+default del UA (~13.3px) → el wrapper debe ser **transparente** (`font-size: inherit`) para que el icono rime;
+en el DS se hizo por-componente. En las **apps** el reset global ya existe
+(`supervisor/styles/_reset.scss` → `input, button, textarea, select { font: inherit }`), así que el barrido de
+la app (Bloque 3) NO necesita plumbing por-botón — es mecánico. **md no-leak** confirmado: `.p-button`/
+`.p-inputtext` a md ya llevan `--sc-font-size-200` (14), no se fuga al 1rem de PrimeNG.
+**Bloque 3 (app) — EJECUTADO (2026-06-22)**: 153 companion del supervisor pasados a `size="inherit"`. Hallazgo:
+el `<sc-icon>` del supervisor es un **wrapper propio** (`shared/components/icon`, `size: number`), NO el
+`ScIconComponent` del DS — lo cazó el build AOT; le añadí soporte `inherit` (`1em`, opsz al default, espejo
+del DS). **Standalone pinneados a propósito**: page-headings, empty-states (20/28), avatares, focal del
+player-state (24), chips de tamaño fijo, `[size]="22"`. **Controles deliberados revertidos** (no riman con
+texto): transport del reproductor (back10/play/fwd10), toolbar de conversation-filters, back del rule-builder.
+Validado: AOT + verify + render en vivo (space_dashboard→16, arrow_outward→12).
+**Pendiente**: Figma 4a (atar W/H de iconos companion a la var de font-size: huecos button-default, inputtext)
++ sync de los 3 copys de General (Recepción/Mostrar) a los nodos de texto de Figma.
+
+---
+
+## DD-23 · 2026-06-19 — Paridad de nombres token ↔ Figma (rename a los nombres del Kit)
+
+**Contexto**: Tras el re-sync de valores soft-blue↔cyan (DD-22), Rafa aclaró que el punto NO es de
+marca sino de **paridad de nombres**: no tiene sentido que un token `--sc-*` se llame distinto que su
+variable en Figma. "Si en Figma es `cyan`, en código `--sc-color-cyan`."
+
+**Decisión (Rafa)**: los nombres de familia de color del CÓDIGO adoptan los nombres del Kit/Figma:
+`soft-blue → cyan`, `electric-blue → sky`, `gray → slate` (`blue` ya coincide). El **rol de marca**
+(Soft Blue / Electric Blue / Gray) vive en la **descripción** de la variable, NO en el nombre del token.
+**SUPERSEDE** el "auto-derive soft-blue" de DD-22 (al renombrar no queda rename que derivar; el chivato
+§7 pasa a identidad trivial; `palette-map` queda identidad).
+
+**Razón**: un dev no debería traducir nombres entre Figma y código. Paridad = cero confusión y el puente
+más legible. Es el principio "el Kit es la verdad" aplicado también al NOMBRE, no solo al valor.
+
+**Consecuencia / pendiente**: refactor ANCHO (rename en primitivos, semántico, `base.ts`, SCSS de TODOS
+los componentes, apps, `palette-map.mjs`→identidad, generadores/auto-import, + re-apuntar las var-docs de
+Figma a `--sc-color-cyan-*` etc.). Es el **PRIMER gran bloque** (desbloquea var-docs limpio + Code Connect).
+Planificado en `NEXT-SESSION.md` §GRANDES BLOQUES; NO ejecutado aún (se planifica fresco). Conceptualmente
+simple pero amplio → find-replace con frontera (`--sc-color-gray-` exacto; `gray` es palabra común).
+
+**EJECUTADA 2026-06-19** (commits `89be2be` código + `4da83a6` docs): rename completo (73 ficheros, valores ya idénticos al Kit → cambio nominal), `palette-map`→identidad, alias `--sc-spacing-*` blindado 1:1, var-docs de Figma PENDIENTES de re-apuntar (necesita el bridge).
+
+---
+
+## DD-23·b · 2026-06-22 — Sync Figma: var-docs de color re-apuntadas al Kit
+
+> *Apéndice de DD-23.* Antes se titulaba "Sync Figma (DD-23)", sin número: rompía el barrido
+> `grep "^## DD-"` y no salía en ningún índice. Numerado el 2026-08-13.
+
+Las **33 variables primitivas de color** (cyan/sky/slate × 11 shades) tenían `codeSyntax` + `description` aún
+en los nombres viejos (soft-blue/electric-blue/gray) pese a que el **nombre** de la variable ya era
+cyan/sky/slate → Dev Mode mentía. Re-apuntadas en Figma vía el bridge: `codeSyntax` → `--sc-color-{cyan,sky,
+slate}-N`; descripción con el rol de marca (`(marca: Soft-Blue/Electric-Blue/Gray)`). Verificado: 0 nombres
+viejos restantes en ningún campo. **Aclaración del "530"**: solo había **33** vars a re-apuntar (las primitivas
+cyan/sky/slate × 11 con el nombre VIEJO en codeSyntax). El "530" del plan NO era un error de Figma (Figma es la
+fuente de verdad, no desvía) — era el TOTAL de vars documentadas el 2026-06-19 (154 color + 40 scale + 336
+component, ver el DD de var-docs arriba); el plan aplicó ese número-de-otra-cosa a esta tarea. Las ~497
+non-color tienen codeSyntax `--sc-cmp-*`/`--sc-scale-*`, nunca apuntaron a una paleta. Pendiente Figma: atar
+W/H de iconos companion a la var de font-size (Bloque 4a).
+
+---
+
+## DD-22 · 2026-06-19 — Fase 2.2 (galería de uso) + Fase 3 (Agent + sc-gauge) + auditoría de tokens + var-docs Figma
+
+**Contexto**: Sesión larga tras cerrar el puente (DD-21). Se atacaron Fase 2.2, Fase 3, la
+auditoría de tokens que el chivato §7 dejó pendiente, y se empezó a documentar las variables de Figma.
+
+**Decisión**:
+- **Fase 2.2 (galería de uso real)** — entregable = **página navegable en sc-demo** (`/uso`), NO doc
+  markdown (SUPERSEDE el plan). Captura Playwright del Supervisor (config aislada `:4290`) escanea el
+  DOM por componentes `sc-*` (verdad de campo) → `_usage-status.json` + PNGs; guard `usage:check` sin
+  navegador. (commit `b9f3e53`)
+- **Fase 3 (Agent)** — app nueva **`projects/agent`** (standalone) + componente DS nuevo **`sc-gauge`**
+  (anillo SVG; el único gap del recon). Dashboard oscuro montado 100% con el DS + sc-gauge. (`44033ef`)
+- **Auditoría de tokens** — todas las paletas 1:1 con el Kit salvo `soft-blue` (curado a mano, desviado)
+  y green-950 (divergencia consciente). Decisión de Rafa: **re-sync soft-blue al cyan del Kit** (adoptar
+  Kit, NO auto-derive) + el §7 lo BLOQUEA 1:1 (quitada la excepción "pendiente"). (`ea3962b`)
+- **cmp-color-rewire adelgazado** — la value-equality del `check` era CIRCULAR (HEAD ya tiene el var)
+  → retirada + herramientas de migración (report/excludes/rewire); queda SOLO el guard vivo (hex
+  hardcodeado en slot generado, por-modo). 318→137 líneas. (`08dfe46`)
+- **standard/extended** — dejado cosmético (sin cambio); override 1-línea en component-audit-map cuando se quiera.
+- **W5 (marca al Kit)** — PINTADO el antes/después (warn ámbar→amarillo, dark gris-SC→zinc) + STAR en la
+  página BACKLOG de Figma (`khNq9dJKNi13pNllrqm6dx`, frame `13268:3769`). **PENDIENTE: validación de Rafa**.
+- **var-docs Figma** — probado que el bridge ESCRIBE description + code-syntax. **530 variables
+  documentadas** (todas las de token `--sc-*` directo): 154 primitivos color (renames cyan→soft-blue,
+  slate→gray, sky→electric-blue visibles en Dev Mode), 40 radius/scale, 336 component own-token. Las
+  non-DS (1027 componentes PrimeNG no envueltos + 88 paletas Tailwind no usadas) se dejan EN BLANCO a
+  propósito (no tienen token `--sc-*`).
+
+**Razón**: cada fase del orden maestro + cerrar el desfase real que §7 cazó; documentar la fuente
+(Figma) para que la rename cyan↔soft-blue no confunda a un dev.
+
+**Consecuencia / PENDIENTE**:
+- **W5**: aplicar (base.ts warn→yellow / surface dark→zinc + quitar EXCLUDEs + regenerar) SOLO tras
+  validación de Rafa en la página backlog de Figma.
+- **var-docs (~811)**: component-sizing-alias (669 de componentes DS) + semantic (142) necesitan un
+  **script repo-mapping** que dé el token IDIOMÁTICO (sizing→`--sc-spacing-*`, semantic→`--sc-bg/text-*`),
+  NO el primitivo (puro-Figma daría `--sc-scale` y confundiría). Receta: leer kit-export +
+  sizing-map/color-map/cmp-color-map → {var Figma → token} → bulk-write vía bridge.
+- **auto-derive soft-blue**: opcional (generarlo del cyan → imposible que se desvíe; hoy §7 lo caza).
+
+---
+
+## DD-21 · 2026-06-18 — Puente PROBADO de extremo a extremo + sombras fluyen + pokédex
+
+**Contexto**: DD-20 declaró la ARQUITECTURA del puente (un generador por clase de valor). Esta
+sesión lo CIERRA y lo PRUEBA.
+
+**Decisión**:
+- **Sombras (`aura/effects`) fluyen del Kit** vía `token-gen-effects.mjs` → `--sc-cmp-*-shadow`,
+  leídas por el preset (rewire de 53 slots). El Kit es la verdad: el tinte slate de marca se retira
+  ("el Kit es el camino", Rafa). Guard `tokens:effects-rewire` impide volver a hardcodear hex.
+- **Completitud §8**: cada hoja de `semantic/common`/`app`/`effects` queda clasificada (fluye /
+  divergencia / no-consumida); una hoja NUEVA del Kit sin clasificar → ROJO.
+- **Mini-test e2e (la "puerta")**: `bridge-e2e.test.mjs` prueba en sandbox que un cambio del Kit
+  aparece en el CSS por CADA generador. Regresión para siempre → el puente está PROBADO, no solo montado.
+- **Hand-off durable**: `docs:coherence` verifica que el sello de `NEXT-SESSION` apunta a un commit real.
+- **Pokédex** (`audit:components`): clasificación dev-facing auto-generada (provenance / PrimeNG / API /
+  uso real en el Supervisor), guard anti-desfase. Base de la Fase 2.
+
+**Razón**: "nada se cae en silencio" hasta el final — toda clase de token fluye Y se verifica, y el
+hand-off no puede mentir. Verificado por Rafa a mano (cambió radius/color/tamaños en Figma → localhost).
+
+**Consecuencia**: la Fase 1 (el puente) está CERRADA. Pendiente de MARCA (no del puente): alinear las
+divergencias conscientes (warn→amarillo, dark→zinc, soft-blue↔cyan) como paso DELIBERADO (W5).
 
 ---
 
@@ -289,7 +860,10 @@ gaps del DS siguen como **locales** en el Supervisor (`shared/components`). Paqu
 borrado, Pages deshabilitado) — los supera el Supervisor + Cloudflare. `smart-contact-platform`
 **archivado** (read-only, reversible; preserva audits/galerías) + **PR #51 cerrado**. Hosting vivo en
 **Cloudflare Pages**, ambos en raíz con preview por rama automático:
-- **sc-demo** → https://sc-demo.pages.dev (showcase; hash-routing, SPA-safe sin `_redirects`).
+- **sc-docs** → https://sc-doc.pages.dev (showcase; hash-routing, SPA-safe sin `_redirects`).
+  *Renombrado por DD-35 — el proyecto era `sc-demo` y su URL `sc-demo.pages.dev`, que sigue viva
+  sirviendo contenido antiguo hasta que Rafa la borre.*
+- **agent** → https://sc-agent.pages.dev · **cuscare** → https://sc-cuscare.pages.dev (réplicas, DD-35/DD-37).
 - **supervisor** → https://sc-supervisor.pages.dev (app real; routing por path + `_redirects` SPA).
 
 ---
@@ -898,7 +1472,8 @@ migración se cerró después y `lucide-angular` salió del repo):
   circular. **Regla**: dentro de las librerías del DS, importar IconComponent por
   **ruta relativa** (`../icon/icon.component`), nunca por el barrel.
 - **Pendientes en su momento** (mayormente cerrados): entry de `<sc-icon>` en
-  customs-catalog (hecha, §2.6); self-host de la font para producción (abierto).
+  customs-catalog (hecha, §2.6); self-host de la font para producción — **CERRADO por DD-31**
+  (verificado 2026-08-13; el DS sirve Material Symbols Outlined self-hospedado).
 
 ---
 
@@ -1054,7 +1629,8 @@ futuro". Resultado: catálogo inflado con componentes sin uso real.
 **Razón**: minimizar surface area. Patrón usado solo 1 vez = vive donde se usa.
 
 **Consecuencia**: gaps documentados en `customs-catalog §5` (`sc-select-button`,
-`sc-tag`, `sc-toggle-button`) esperan trigger real, no se cocinan.
+`sc-toggle-button`) esperan trigger real, no se cocinan. *(`sc-tag` salía en esta lista y ya
+NO es un gap: existe en `components/tag/` y lo exporta el public-api — verificado 2026-08-13.)*
 
 ---
 
@@ -1121,527 +1697,3 @@ componente), nunca de capa 1 directamente (excepto raros casos donde primitive
 ES el semantic). Para espaciado, el alias de consumo es `--sc-spacing-*`
 (`02-semantic.css`); la primitiva `--sc-scale-*` queda reservada a la capa de
 tokens y al preset (vigilado por `tokens:guard`).
-
----
-
-## DD-21 · 2026-06-18 — Puente PROBADO de extremo a extremo + sombras fluyen + pokédex
-
-**Contexto**: DD-20 declaró la ARQUITECTURA del puente (un generador por clase de valor). Esta
-sesión lo CIERRA y lo PRUEBA.
-
-**Decisión**:
-- **Sombras (`aura/effects`) fluyen del Kit** vía `token-gen-effects.mjs` → `--sc-cmp-*-shadow`,
-  leídas por el preset (rewire de 53 slots). El Kit es la verdad: el tinte slate de marca se retira
-  ("el Kit es el camino", Rafa). Guard `tokens:effects-rewire` impide volver a hardcodear hex.
-- **Completitud §8**: cada hoja de `semantic/common`/`app`/`effects` queda clasificada (fluye /
-  divergencia / no-consumida); una hoja NUEVA del Kit sin clasificar → ROJO.
-- **Mini-test e2e (la "puerta")**: `bridge-e2e.test.mjs` prueba en sandbox que un cambio del Kit
-  aparece en el CSS por CADA generador. Regresión para siempre → el puente está PROBADO, no solo montado.
-- **Hand-off durable**: `docs:coherence` verifica que el sello de `NEXT-SESSION` apunta a un commit real.
-- **Pokédex** (`audit:components`): clasificación dev-facing auto-generada (provenance / PrimeNG / API /
-  uso real en el Supervisor), guard anti-desfase. Base de la Fase 2.
-
-**Razón**: "nada se cae en silencio" hasta el final — toda clase de token fluye Y se verifica, y el
-hand-off no puede mentir. Verificado por Rafa a mano (cambió radius/color/tamaños en Figma → localhost).
-
-**Consecuencia**: la Fase 1 (el puente) está CERRADA. Pendiente de MARCA (no del puente): alinear las
-divergencias conscientes (warn→amarillo, dark→zinc, soft-blue↔cyan) como paso DELIBERADO (W5).
-
----
-
-## DD-22 · 2026-06-19 — Fase 2.2 (galería de uso) + Fase 3 (Agent + sc-gauge) + auditoría de tokens + var-docs Figma
-
-**Contexto**: Sesión larga tras cerrar el puente (DD-21). Se atacaron Fase 2.2, Fase 3, la
-auditoría de tokens que el chivato §7 dejó pendiente, y se empezó a documentar las variables de Figma.
-
-**Decisión**:
-- **Fase 2.2 (galería de uso real)** — entregable = **página navegable en sc-demo** (`/uso`), NO doc
-  markdown (SUPERSEDE el plan). Captura Playwright del Supervisor (config aislada `:4290`) escanea el
-  DOM por componentes `sc-*` (verdad de campo) → `_usage-status.json` + PNGs; guard `usage:check` sin
-  navegador. (commit `b9f3e53`)
-- **Fase 3 (Agent)** — app nueva **`projects/agent`** (standalone) + componente DS nuevo **`sc-gauge`**
-  (anillo SVG; el único gap del recon). Dashboard oscuro montado 100% con el DS + sc-gauge. (`44033ef`)
-- **Auditoría de tokens** — todas las paletas 1:1 con el Kit salvo `soft-blue` (curado a mano, desviado)
-  y green-950 (divergencia consciente). Decisión de Rafa: **re-sync soft-blue al cyan del Kit** (adoptar
-  Kit, NO auto-derive) + el §7 lo BLOQUEA 1:1 (quitada la excepción "pendiente"). (`ea3962b`)
-- **cmp-color-rewire adelgazado** — la value-equality del `check` era CIRCULAR (HEAD ya tiene el var)
-  → retirada + herramientas de migración (report/excludes/rewire); queda SOLO el guard vivo (hex
-  hardcodeado en slot generado, por-modo). 318→137 líneas. (`08dfe46`)
-- **standard/extended** — dejado cosmético (sin cambio); override 1-línea en component-audit-map cuando se quiera.
-- **W5 (marca al Kit)** — PINTADO el antes/después (warn ámbar→amarillo, dark gris-SC→zinc) + STAR en la
-  página BACKLOG de Figma (`khNq9dJKNi13pNllrqm6dx`, frame `13268:3769`). **PENDIENTE: validación de Rafa**.
-- **var-docs Figma** — probado que el bridge ESCRIBE description + code-syntax. **530 variables
-  documentadas** (todas las de token `--sc-*` directo): 154 primitivos color (renames cyan→soft-blue,
-  slate→gray, sky→electric-blue visibles en Dev Mode), 40 radius/scale, 336 component own-token. Las
-  non-DS (1027 componentes PrimeNG no envueltos + 88 paletas Tailwind no usadas) se dejan EN BLANCO a
-  propósito (no tienen token `--sc-*`).
-
-**Razón**: cada fase del orden maestro + cerrar el desfase real que §7 cazó; documentar la fuente
-(Figma) para que la rename cyan↔soft-blue no confunda a un dev.
-
-**Consecuencia / PENDIENTE**:
-- **W5**: aplicar (base.ts warn→yellow / surface dark→zinc + quitar EXCLUDEs + regenerar) SOLO tras
-  validación de Rafa en la página backlog de Figma.
-- **var-docs (~811)**: component-sizing-alias (669 de componentes DS) + semantic (142) necesitan un
-  **script repo-mapping** que dé el token IDIOMÁTICO (sizing→`--sc-spacing-*`, semantic→`--sc-bg/text-*`),
-  NO el primitivo (puro-Figma daría `--sc-scale` y confundiría). Receta: leer kit-export +
-  sizing-map/color-map/cmp-color-map → {var Figma → token} → bulk-write vía bridge.
-- **auto-derive soft-blue**: opcional (generarlo del cyan → imposible que se desvíe; hoy §7 lo caza).
-
----
-
-## DD-23 · 2026-06-19 — Paridad de nombres token ↔ Figma (rename a los nombres del Kit)
-
-**Contexto**: Tras el re-sync de valores soft-blue↔cyan (DD-22), Rafa aclaró que el punto NO es de
-marca sino de **paridad de nombres**: no tiene sentido que un token `--sc-*` se llame distinto que su
-variable en Figma. "Si en Figma es `cyan`, en código `--sc-color-cyan`."
-
-**Decisión (Rafa)**: los nombres de familia de color del CÓDIGO adoptan los nombres del Kit/Figma:
-`soft-blue → cyan`, `electric-blue → sky`, `gray → slate` (`blue` ya coincide). El **rol de marca**
-(Soft Blue / Electric Blue / Gray) vive en la **descripción** de la variable, NO en el nombre del token.
-**SUPERSEDE** el "auto-derive soft-blue" de DD-22 (al renombrar no queda rename que derivar; el chivato
-§7 pasa a identidad trivial; `palette-map` queda identidad).
-
-**Razón**: un dev no debería traducir nombres entre Figma y código. Paridad = cero confusión y el puente
-más legible. Es el principio "el Kit es la verdad" aplicado también al NOMBRE, no solo al valor.
-
-**Consecuencia / pendiente**: refactor ANCHO (rename en primitivos, semántico, `base.ts`, SCSS de TODOS
-los componentes, apps, `palette-map.mjs`→identidad, generadores/auto-import, + re-apuntar las var-docs de
-Figma a `--sc-color-cyan-*` etc.). Es el **PRIMER gran bloque** (desbloquea var-docs limpio + Code Connect).
-Planificado en `NEXT-SESSION.md` §GRANDES BLOQUES; NO ejecutado aún (se planifica fresco). Conceptualmente
-simple pero amplio → find-replace con frontera (`--sc-color-gray-` exacto; `gray` es palabra común).
-
-**EJECUTADA 2026-06-19** (commits `89be2be` código + `4da83a6` docs): rename completo (73 ficheros, valores ya idénticos al Kit → cambio nominal), `palette-map`→identidad, alias `--sc-spacing-*` blindado 1:1, var-docs de Figma PENDIENTES de re-apuntar (necesita el bridge).
-
----
-
-## DD-24 · 2026-06-19 — Regla icono↔font-size: los iconos *companion* siguen el font-size
-
-**Contexto**: Estudiando el Kit (button, inputtext, iconfield) Rafa detectó incoherencia en cómo se
-dimensionan los iconos. Hallazgo: en PrimeOne/el Kit un icono junto a texto es un **glifo de fuente** →
-su tamaño ES el `font-size`. En código un icono-fuente hereda el font-size por cascada CSS; en Figma hay
-que atar la W/H del icono a la misma variable de font-size que el texto (no hay cascada). `IconField` solo
-posiciona y colorea (token oficial = solo `iconfield.icon.color`); **NO dimensiona**.
-
-**Decisión (Rafa)**: un icono **companion** (junto a texto, dentro de un control: button/input/search/
-chip/tag/select/menu…) **sigue el font-size de su componente** — `inherit`/`1em` en código; W/H atada a
-la var de font-size en Figma (md=`app/font/size`; sm/lg=`{cmp}/sm·lg/font`). `--sc-icon-size-*` (DD-13)
-queda **solo para iconos sueltos/decorativos** (ilustraciones, headers, logos), que conservan su tamaño.
-Aplicación **GLOBAL** (todos los companion) pero ejecución por pantalla con QA visual (no sed a ciegas).
-
-**Razón**: hace que icono y texto **rimen por fuente** (escalan juntos en sm/lg), no por casualidad de
-valor. Mismo principio que la paridad: una sola fuente de verdad — aquí, el font-size del componente.
-
-**Estado (2026-06-22) — EJECUTADO en el DS**: `sc-icon` gana `size="inherit"` (`font-size: 1em`); migrados los
-11 companion de la cara-A del DS (search, chip, inline-rename, delete-entity, column-selector, bulk-action-bar,
-form-section-nav, keyboard-shortcuts, sticky-form-header, command-palette, impact-preview). Dos hallazgos del
-QA visual: **(1)** cuando el icono es **hermano** del texto y no descendiente (iconfield de sc-search, head de
-command-palette) el **host** debe portar el font-size por variante para que el icono herede el correcto a sm/lg
-(si no, a sm el icono se queda en 14 con el input a 12). **(2)** los `<button>` **resetean** el font-size al
-default del UA (~13.3px) → el wrapper debe ser **transparente** (`font-size: inherit`) para que el icono rime;
-en el DS se hizo por-componente. En las **apps** el reset global ya existe
-(`supervisor/styles/_reset.scss` → `input, button, textarea, select { font: inherit }`), así que el barrido de
-la app (Bloque 3) NO necesita plumbing por-botón — es mecánico. **md no-leak** confirmado: `.p-button`/
-`.p-inputtext` a md ya llevan `--sc-font-size-200` (14), no se fuga al 1rem de PrimeNG.
-**Bloque 3 (app) — EJECUTADO (2026-06-22)**: 153 companion del supervisor pasados a `size="inherit"`. Hallazgo:
-el `<sc-icon>` del supervisor es un **wrapper propio** (`shared/components/icon`, `size: number`), NO el
-`ScIconComponent` del DS — lo cazó el build AOT; le añadí soporte `inherit` (`1em`, opsz al default, espejo
-del DS). **Standalone pinneados a propósito**: page-headings, empty-states (20/28), avatares, focal del
-player-state (24), chips de tamaño fijo, `[size]="22"`. **Controles deliberados revertidos** (no riman con
-texto): transport del reproductor (back10/play/fwd10), toolbar de conversation-filters, back del rule-builder.
-Validado: AOT + verify + render en vivo (space_dashboard→16, arrow_outward→12).
-**Pendiente**: Figma 4a (atar W/H de iconos companion a la var de font-size: huecos button-default, inputtext)
-+ sync de los 3 copys de General (Recepción/Mostrar) a los nodos de texto de Figma.
-
----
-
-## DD-25 · 2026-06-22 — Gap del footer de sc-dialog: el wrapper proyectado es la fila flex
-
-**Contexto**: Rafa reportó los botones del footer de los dialogs "muy juntos", comparando con el ConfirmDialog
-de Figma (`323:12317`, footer/gap 7 Kit). El token `--sc-dialog-footer-gap` (10.5px, divergencia consciente
-del 7 de Figma por feedback de diseño previo) estaba aplicado a `.sc-dialog__foot`, pero su **único hijo** es
-el `<div modal-actions>` que el consumidor envuelve → el `gap` separaba el wrapper, no los botones, que
-quedaban a **0px** (medido).
-
-**Decisión**: el `[modal-actions]` **proyectado** es quien debe ser la fila flex (`display:flex` +
-`justify-content:flex-end` + `flex-wrap` + `gap`), vía `::ng-deep` (contenido proyectado bajo encapsulation
-Emulated). Un solo punto en sc-dialog arregla los **13 dialogs** del repo. Medido en sc-demo: **0px → 10.5px**.
-
----
-
-## DD-26 · 2026-06-30 — Constructor de condiciones de reglas (Variante B + builder progresivo)
-
-**Contexto**: el alcance de una regla de transcripción era rígido — 3 dimensiones (Servicio Y Grupo Y
-Agente), AND entre ellas / OR dentro. La charla de reglas pidió potencia booleana real (match all/any,
-mezcla AND/OR, agrupar) modelando la tipificación como entidad AND/OR, y "una sola regla activa" (esquiva
-priorización). Esto es **producto real en el supervisor (app), no material de charla** → sí es DD.
-
-**Decisión**:
-- **Modelo recursivo aditivo** `Rule.conditionTree?` (`features/memory/data/condition.types.ts`): árbol de
-  **2 niveles** (raíz → grupos → condiciones), cada nivel con `match: 'all'|'any'`. Campos: servicio /
-  grupo / agente / **tipificación** (lista, op `es`/`no es`). NO anidación libre (sería Variante C) — el
-  tope de 2 niveles cubre el caso real y mantiene la UI legible para un supervisor.
-- **Puente con el modelo plano legacy**: al guardar se deriva `servicios/grupos/agentes`
-  (`deriveLegacyScope`, unión de los `is`) para **no tocar** el listado ni `scopeOverlaps`. Es una
-  **sobre-aproximación** (los `is_not` y el OR entre grupos no caben en los 3 campos planos) → marca
-  conflictos de más, nunca de menos. Coherente con "una sola regla activa". `tipificación` no tiene
-  dimensión plana → vive solo en el árbol. Reglas antiguas reconstruyen el árbol con `deriveTreeFromLegacy`.
-- **Divulgación progresiva (lente `/impeccable`)**: con 1 grupo el builder es **plano** (un único control de
-  coincidencia, sin toggle raíz ni caja); el chrome de grupos (toggle raíz + cajas slate-50 + conectores
-  navy) solo aparece con **2+**. Al añadir el 2º grupo la raíz arranca en `any` (añadir grupo = alternativa
-  O). Quita la redundancia del doble-toggle del caso común.
-- **Quita "Atendida por"** del bloque Transcripción: era redundante con agente/grupo del builder
-  (`attendedBy` fuera del modelo, builder y store).
-
-**Verificado**: AOT + typecheck + lint + preview en vivo (plano↔agrupado, derivación legacy al editar regla
-antigua, guardar→listado, mezcla AND/OR con precedencia). Commits `d873308`/`c815c0d`.
-
-**Pendiente (decisión abierta)**: unificar **dirección + duración** como campos del builder (un solo sitio
-para filtrar, sin el bloque "Criterios de transcripción" aparte) — requiere tipos de campo enum/número y
-toca el flujo de **grabación** (dirección vive también ahí). Hoy siguen como bloque separado.
-
----
-
-## DD-27 · 2026-06-30 — Constructor de condiciones v2: referencias dinámicas + estimación + scope MVP
-
-Evoluciona **DD-26** a producción real con membresía **dinámica** y recorta el scope al MVP. Mergeado a main.
-
-**El problema de DD-26**: las condiciones guardaban **snapshots de nombre** (`agentes: ['María García']`) →
-frágil (cambiar miembros de un grupo o renombrar no se reflejaba). Y dirección/duración filtraban en **dos sitios**
-(builder + "Criterios de transcripción") con un bug (dirección ×2).
-
-**Decisión**:
-- **Referencias tipadas, no nombres** (`ConditionRef`: service por nombre [sin id] / group·agent·agentGroup·
-  tipificacion·category por id) + **modelo `value`** (`any` comodín | `refs` | `enum` | `número`). Etiqueta y
-  **membresía** se resuelven EN VIVO (`ConditionResolverService` + `GroupAgentLinksStore`), no se congelan. "Todos"
-  = comodín (incluye futuros); un grupo en el campo **Agente** = `agentGroup` = "sus miembros AHORA". El árbol sigue
-  derivando `servicios/grupos/agentes` planos (`deriveLegacyScope`) → listado/`scopeOverlaps` intactos.
-- **Unifica dirección + duración como campos** del builder (cierra el abierto de DD-26) → mata el bug dirección-×2
-  por construcción. Operadores contextuales por kind (lista: es/no es · número: más de/menos de/entre).
-- **Estimación de procesado** (adaptada de la PPT del jefe, sticky): proyección día/mes desde el **ratio REAL**
-  (matched/total sobre el mock) × volumen base demo documentado (`CONVERSATIONS_PER_DAY`) → es **estimación, no dato**.
-  Barra de proporción (amplia vs quirúrgica). **Rechazado** un gráfico día/mes (2 números de escala distinta = slop).
-- **Guía de errores** (`condition-validate.core.mjs`, pura+testeada): incompleta/rango inválido = **error** (bloquean
-  guardar, revelado al **intentar guardar** — no acusa al crear); duplicado/contradicción/tautología = **aviso**
-  (elección de Rafa: "guía, bloquea solo lo roto"). Honestidad: contradicción/0-impacto se apoyan en el preview real.
-- **Scope MVP**: sin priorización ni grabación (obsoleta por ley) → **fuera reglas de grabación** (seed + creación +
-  Horario) y **borradores** (banner + flujo + toasts). Tipo por defecto = transcripción. Miembros de tipo
-  `recording`/`isDraft`/`'draft'` se dejan en el modelo para no cascadear errores antes del merge (limpieza follow-up).
-- **Arquitectura de tests**: lógica pura en `.mjs` (`condition-eval.core` [impacto+proyección], `condition-validate.core`,
-  `duration-presets.core`) + `.d.mts` + wrapper `.ts` → cubierta por `test:unit` (node:test) en el gate. **118 tests.**
-
-**Verificado**: verify entero verde (incl. `audit:components` regenerado: `sc-select` 31→33 por los presets), AOT,
-118 tests, preview en vivo (impacto 8/34 → barra 24%, contradicción, presets, MVP sin grabación/borradores, regla del
-jefe en la lista). **Slop/impeccable**: builder limpio (0 gradient-text, 0 border-left stripes, 0 glassmorphism); el
-único visual añadido (barra de proporción) es dato real, no decoración.
-
----
-
-## Sync Figma (DD-23) · 2026-06-22 — var-docs de color re-apuntadas al Kit
-
-Las **33 variables primitivas de color** (cyan/sky/slate × 11 shades) tenían `codeSyntax` + `description` aún
-en los nombres viejos (soft-blue/electric-blue/gray) pese a que el **nombre** de la variable ya era
-cyan/sky/slate → Dev Mode mentía. Re-apuntadas en Figma vía el bridge: `codeSyntax` → `--sc-color-{cyan,sky,
-slate}-N`; descripción con el rol de marca (`(marca: Soft-Blue/Electric-Blue/Gray)`). Verificado: 0 nombres
-viejos restantes en ningún campo. **Aclaración del "530"**: solo había **33** vars a re-apuntar (las primitivas
-cyan/sky/slate × 11 con el nombre VIEJO en codeSyntax). El "530" del plan NO era un error de Figma (Figma es la
-fuente de verdad, no desvía) — era el TOTAL de vars documentadas el 2026-06-19 (154 color + 40 scale + 336
-component, ver el DD de var-docs arriba); el plan aplicó ese número-de-otra-cosa a esta tarea. Las ~497
-non-color tienen codeSyntax `--sc-cmp-*`/`--sc-scale-*`, nunca apuntaron a una paleta. Pendiente Figma: atar
-W/H de iconos companion a la var de font-size (Bloque 4a).
-
----
-
-## DD-28 · 2026-06-30 — Reglas MVP: borradores fuera del todo + invariante «una sola activa» + sin prioridad/conflictos
-
-> **El invariante «una sola activa» queda supersedido por DD-30** (2026-07-17): se
-> readmiten varias activas, con el solape resuelto por unión. El resto de DD-28
-> (borradores fuera, sin grabación, sin prioridad/conflictos) sigue vigente.
-
-Cierra la limpieza que **DD-27** dejó pendiente a propósito ("`isDraft`/`recording`/`'draft'` se dejan en el modelo
-para no cascadear errores antes del merge — limpieza follow-up"). Origen: feedback de Rafa — *«solo una regla puede
-estar activa; al desactivar no crea inactivas ni borradores, solo aparece como inactiva»*. El supervisor aún
-contradecía ese modelo: el listado mostraba la sección «Inactivas y borradores», el estado «Borrador sin editar»,
-duplicar→borrador no-activable y el gating del botón Activar; el store mantenía `priority` + detección de conflictos
-(vivos en código, invisibles en UI).
-
-**Decisión** (solo `features/memory`; el `draft` de admin —agents/groups/users, DD#294— es OTRO concepto, intacto):
-- **Borrador fuera del modelo**: `isDraft`/`duplicatedFromId`/`RuleStatus` eliminados de `rule.types.ts`; 2ª sección
-  del listado «Inactivas y borradores» → «Inactivas»; **duplicar crea una copia inactiva normal** (editable/activable,
-  sin estado especial); fuera el gating del botón Activar + i18n `status.draft`/`status.conflict`/`activate_draft_tooltip`/
-  `builder.{draft_banner,discard_draft,draft_ready_toast,discarded_toast}`/`order_updated`/`cols.order`/bloque `conflict.*`
-  en los 4 idiomas + el scss muerto del banner de borrador.
-- **Invariante «una sola activa»** en `RulesStore`: `toggleActive`/`addRule`/`updateRule` desactivan el resto al activar
-  una (patrón radio). El seed (`rules-mock.ts`) arranca con **1 activa + 3 inactivas** (antes 4 activas con `priority` 1..4).
-- **Prioridad y conflictos eliminados** (maquinaria de un mundo multi-activa que ya no existe, muerta en UI): fuera
-  `priority`, `conflictsByRuleId`, `isInConflict`, `getConflictingRules`, `reorderActive`, `scopeOverlaps`/`dimensionOverlaps`.
-  El alcance plano (`servicios/grupos/agentes` vía `deriveLegacyScope`) se mantiene solo para el resumen en prosa del
-  listado. Título del listado → «Regla activa» (singular).
-
-**Verificado**: AOT supervisor + sc-demo verde · typecheck (5 apps) + lint + **125 tests** + `audit:components` verde ·
-capturas reales del Supervisor (listado: 1 activa / 3 inactivas, alcance en prosa; builder editando una regla con
-estimación «6 de 34» + barra + «≈74/día»). Único ✗ de `verify`: falso-positivo **pre-existente** de `docs:coherence`
-(`AUDIT-DEUDA-2026-06.md:72` propone crear `scripts/paths.mjs`), ajeno a este cambio.
-
-**Presentación (no es DD, nota de consecuencia)**: el recorrido `/reglas` de sc-demo (material, NO producto) reescrito
-como **historia antes/después** — el giro a transcripción + 3 beats de transformación (alcance · prioridad/conflictos ·
-borradores), cada uno con Antes / Ahora / Por qué, capturas comparadas (las «antes» extraídas de git) y código
-antes/después. Skills `/impeccable`+`/minimalist-ui` aplicadas solo donde no contrastan con el DS (anti-slop, jerarquía,
-editorial; descartadas sus fuentes/colores/iconos propios). Nombres propios → genéricos. Dark-safe + AOT/typecheck/lint verde.
-
-## DD-29 · 2026-07-01 — Showcase de componentes «estilo Storybook» en sc-demo (motor propio, sin tooling nuevo)
-
-La doc de componentes eran páginas con variantes hardcodeadas (sin canvas aislado, sin controles en vivo, sin código,
-sin tabla de API, sin sidebar/categorías). Se reconvierte a un **showcase estilo Storybook COMPLETO** — pero como
-**motor propio dentro de `sc-demo`** (Angular 21, tokens `--sc-*`, deploy Cloudflare Pages), **sin añadir Storybook ni
-tooling nuevo**.
-
-**Alternativas descartadas.** (a) *Storybook oficial*: pesado, otra build/estética, otra fuente de verdad de tokens
-— rompe consonancia y el deploy actual. (b) *`NgComponentOutlet`* para pintar el componente desde metadatos: **no
-soporta** el content-projection de `sc-select`/`sc-multiselect` (`pTemplate` vía `contentChildren`) ni el `model()`
-two-way + `cellTemplate` de `sc-datatable` sin un adaptador por componente (= el trabajo manual que se quería evitar).
-
-**Decisión — patrón `<ng-template>` por story.** El demo declara cada story como un `<ng-template>` con la API real
-del componente (type-safe, proyección y `model()` nativos); el motor lo pinta vía `viewChild` + `ngTemplateOutlet` y
-dibuja alrededor: **canvas aislado** (tema claro/oscuro/comparar local, aplicado a un wrapper, no a `documentElement`),
-**knobs en vivo** (un `signal<Args>` que muta el contexto del outlet → re-bind instantáneo, OnPush; los controles
-hacen *dogfooding* de sc-select/toggleswitch/inputtext/inputnumber), **snippet** serializado (`serialize-args`, puro) +
-copiar, y **tabla de API**. `StoryHost` es **apilado** (todas las stories a la vista, no por pestañas) a propósito:
-así los `data-testid` del Kit siguen en el DOM y los e2e de métrica los miden.
-
-**Shell + rutas.** `/components` pasa a `StorybookShell` (sidebar fija: 7 categorías + búsqueda, derivada de
-`component-catalog.ts` que evoluciona `component-pages.ts`) con las páginas como children; `/foundations`·`/uso`·
-`/reglas` y el top-nav intactos; el toggle dark global sigue. **Los 49 componentes** quedan en formato story (button
-piloto + 46 migrados por lotes + `slot`/`subsection` nuevos) → **pokédex 49/49**. Migración por subagentes paralelos
-con spec común + gate de integración (AOT + spot-check) por lote. `verify` entero verde.
-
-## DD-30 · 2026-07-17 — Reglas: varias activas a la vez, solape por unión (supersede el invariante de DD-28)
-
-Revierte el invariante «una sola activa» de **DD-28**. Origen: trabajo de la UI
-designer (rama `sandbox`) que levantó el límite en `RulesStore`, adoptado como
-decisión de producto tras sopesar la consecuencia (reabre el solape que DD-28
-esquivaba).
-
-**Decisión:**
-- **Varias reglas pueden estar activas a la vez.** `toggleActive` solo conmuta la
-  regla tocada; encender una no apaga a las demás. `addRule`/`updateRule` dejan de
-  forzar el patrón radio.
-- **El solape se resuelve por unión, sin prioridad ni conflictos.** Si una
-  conversación encaja en varias reglas activas, se procesa **una sola vez**
-  aplicando la unión de lo que pidan (p.ej. la suma de categorías IA a detectar).
-  Sin orden, sin «cuál gana», sin doble transcripción. Por eso NO se reintroduce la
-  maquinaria de prioridad/conflictos que DD-28 retiró.
-
-**Consecuencia (presentación, no producto):** el recorrido `/reglas` de sc-demo se
-realinea: el beat «Prioridad y conflictos» pasa de «lo simplificamos a una sola
-activa» a «siguen varias activas, pero el lío se disuelve con la regla de la
-unión». Misma moraleja, distinto mecanismo. Snippet `manyActiveAfter` con el
-`toggleActive` real.
-
-**Abierto (producto, no bloquea el mock):** el detalle fino de la unión cuando dos
-reglas piden análisis distintos (¿siempre se suman todas las categorías?, ¿algún
-tope de coste?) lo cierra el equipo cuando exista el motor real. Hoy es mock.
-
-**Verificado:** merge limpio de `sandbox` · AOT supervisor + sc-demo · typecheck (5
-apps) + lint + i18n 1:1 (en/fr/pt) · CI verde.
-
-## DD-31 · 2026-07-17 — Icono canónico del DS = Material Symbols **Outlined**, self-hospedado (unifica demo↔apps)
-
-Cierra la mitad de «estilo» de la decisión abierta de iconografía del ROADMAP
-(*Iconos: estilo + peso*). Estado previo: drift en tres sitios — el código del DS
-servía **Rounded** self-hospedado (`@fontsource-variable/material-symbols-rounded`),
-las apps (supervisor/agent) lo overrideaban a **Outlined** por CDN con una «decisión
-de marca» documentada, y `customs-catalog.md` ya describía Outlined. sc-demo mostraba
-Rounded; las apps reales, Outlined.
-
-**Decisión:**
-- **El icono canónico del DS es Material Symbols Outlined**, servido
-  **self-hospedado** por `@smartcontact-hub/icons`
-  (`@fontsource-variable/material-symbols-outlined`, familia
-  `'Material Symbols Outlined Variable'`). Alinea código↔docs↔apps con el look que
-  las apps reales ya tenían.
-- **Las apps sueltan el CDN y su `.sc-icon` replicado.** supervisor/agent importan el
-  `material-symbols.css` del DS (fuente única) y quitan el `<link>` de Google Fonts +
-  el override; el `<sc-icon>` local del supervisor apunta a la familia self-hospedada.
-  Los codepoints son idénticos entre estilos Material → el mapa de glifos generado no
-  cambia.
-
-**Consecuencia:** sc-demo pasa a Outlined (iguala a las apps); cada app sirve el woff2
-self-hospedado (~340KB) en vez del CDN. El `font-display` del @fontsource es `swap` (el
-CDN usaba `block`): posible FOUT breve de la ligadura en carga fría — aceptable (fuente
-local, ya vigente en sc-demo).
-
-**Abierto (no bloquea):** el **peso** del icono a la par de la tipografía y el ajuste
-fino de ejes (wght/fill/opsz) sigue pendiente — la otra mitad del item de iconografía
-del ROADMAP. Y el icono de cabecera de `ScConfirmService` (API `icon?`).
-
-**Verificado:** `npm run verify` verde · AOT supervisor + agent + sc-demo · iconos
-renderizan Outlined self-hospedado (sc-demo + supervisor: familia computada + woff2 200,
-sin CDN) · CI no afectado (los snapshots de píxeles se saltan en CI,
-`components.spec.ts:25`). Baselines visuales `-darwin` locales quedan por refrescar (no
-gatean CI).
-
----
-
-## DD-32 · 2026-07-18 — Un solo acento: la familia `accent` se unifica con `info` bajo `sky`
-
-**El problema no era una decisión discutible, era una que nunca se tomó.** `--sc-text-accent`
-apuntaba a `cyan-600` desde el andamiaje inicial. No estaba en `customs-catalog.md` (el sitio
-donde viven las divergencias conscientes), no hay ninguna DD que lo justifique, y **DD-23** —
-que llevó `info` a la familia `sky` de marca — no revisó el alias. El DS acabó con **dos
-acentos conviviendo**: `--sc-bg-info` en sky con `--sc-text-info` en cyan, y el **halo** del
-foco en cyan alrededor de un **borde** de foco ya en sky.
-
-**Decisión.** Toda la familia (`text/bg/border/icon` de `accent` y `link`, más el halo de foco)
-pasa a `sky`. Detalle completo y tabla de tokens en `docs/customs-catalog.md §1.4`.
-
-**No es solo estética — repara accesibilidad.** `cyan-600` sobre blanco daba **3.46:1**, por
-debajo de AA para texto normal; `sky-600` da **6.80:1**. La contrapartida obligatoria:
-`--sc-text-on-accent` e `--sc-icon-on-accent` **pasan a blanco**, porque `slate-800` sobre
-`sky-500` cae a **2.48:1** (sobre `cyan-500` daba 5.89:1). Blanco sobre `sky-500`: 4.90:1.
-
-**Barrido asociado.** 38 declaraciones `outline: 2px solid var(--sc-color-cyan-500)` en 31
-ficheros hardcodeaban la primitiva para el anillo de foco en vez de consumir
-`--sc-border-focus`. Verificado que las 38 estaban dentro de un `:focus-visible` antes de
-migrarlas (cero falsos positivos).
-
-**Alternativa descartada.** *Cambiar solo `--sc-text-info`* (una línea): arreglaba el síntoma
-visible pero dejaba links, iconos y halo de foco en la otra familia — es decir, dejaba el
-problema de consistencia intacto y sin registrar.
-
-**Sin round-trip con Figma.** El export del Kit **no tiene concepto de `accent`** (0
-coincidencias); `info` solo existe a nivel de componente y ya resuelve a `{sky.500}`. Las
-líneas viven fuera de toda zona `@sc-gen` → el cambio sobrevive a `tokens:import` y ningún
-gate lo marca como drift. **Corolario incómodo**: por eso mismo **ningún gate los vigila**;
-`token-parity` §6 solo cruza lo que está en `scripts/color-map.mjs`.
-
-**Abierto (no bloquea):** la rampa de texto atenuado está bajo AA sobre blanco —
-`--sc-text-subtle` (slate-400) **2.04:1** y `--sc-text-secondary` (slate-500) **2.95:1**. No se
-toca aquí: `subtle` es una divergencia consciente documentada (`02-semantic.css:40-44`) y
-`secondary` está *enforced* 1:1 con el Kit por parity §6, así que subirlo es conversación de
-marca con Figma, no un cambio de código.
-
----
-
-## DD-33 · 2026-07-22 — El título de página vive en el CUERPO (revisa parte de S59)
-
-**Qué se revisa.** S59 («todo arriba») quitó de cada página su banda de título y dejó la
-identidad SOLO en el breadcrumb de la TopBar. El `<h1>` sobrevivió `visually-hidden`: existía
-para lectores de pantalla y el vidente no tenía título de página en ninguna ruta.
-
-**Lo que la medición cambió.** Se midió en vivo la referencia que eligió Rafa —Snow UI
-`/orders`, que es nuestro mismo arquetipo: barra con miga + tabla— y el título de página **no
-vive en la barra**: es un encabezado de **16px/600 en el cuerpo, sin banda**. Lo que sobraba en
-S59 era el CHROME de aquella banda (icono, borde, sombra, `position: sticky`), no el título.
-
-**Decisión.** El `<h1>` se destapa como `.page__heading` (tokens `--sc-*-subtle-1`, que valen
-exactamente 16px/600) en las 15 páginas de contenido. **No se añade encabezado**: sigue habiendo
-uno por documento, así que el conteo de `page-identity.spec.ts` no cambia — cambia su veredicto.
-Los **formularios quedan fuera**: su identidad la pinta su chrome propio (cabecera sticky /
-ficha), y un título más sería el duplicado de S59 por otra puerta.
-
-**Consecuencia obligatoria: el trail gana un padre.** Con la miga de un solo tramo, el título
-del cuerpo repetía la palabra a 95px —«Usuarios» sobre «Usuarios»—, que es literalmente el
-defecto que Rafa cazó en la sesión 17. Las diez rutas que tenían miga corta abren ahora con su
-sección (`Administración ›`, `Configuración ›`, `Conversaciones ›`); las secciones que no son
-rutas van con `link: false`. Es lo que hace la referencia (`Dashboards / Order List` arriba,
-`Order List` en el cuerpo): la barra dice DÓNDE estás, el título QUÉ miras. **Sin el padre, esta
-DD reintroduce el defecto que dice arreglar** — no se revierte una mitad sin la otra.
-
-**Hallazgo de paso.** Las NUEVE páginas de repositorio no tenían `<h1>` **ninguno** — no oculto,
-inexistente— así que su documento iba sin encabezado y `page-identity.spec.ts` no las cubría.
-Ahora lo tienen, resuelto desde `config().titleKey`, que es la misma clave que la ruta usa para
-su última miga: título y breadcrumb no pueden divergir.
-
-**Nombre `__heading` y no `__title`, a propósito.** `.page__title` sobrevive como CSS MUERTO de
-la banda de S59 en unas nueve hojas de página, con tamaños distintos entre sí (h2 en seguridad,
-h3 en el hub). Una regla encapsulada de componente le gana siempre a una global, así que reusar
-el nombre habría dado un tamaño por página sin que nada avisara. Lo vigila un test de
-uniformidad que compara los 11 valores computados y exige uno solo.
-
-**Alternativa descartada.** *Pintar el título en el shell desde el breadcrumb* (un sitio, cero
-duplicación): el título tiene que alinearse con la columna de contenido, y su ancho sale del
-arquetipo de página (`--list` 1600 / `--hub` 960 / `--reading` 832), que el shell no conoce.
-
-## DD-34 · 2026-07-22 — `--sc-bg-default` es el SUELO del shell, nunca una superficie de contenido
-
-**La pregunta era otra.** Rafa preguntó por qué en Contact Center el fondo parece gris y en el
-resto blanco. Medidas las 17 rutas en los dos temas: **no existe tal división**. El lienzo de
-página es `--sc-bg-surface` en 17 de 17. El gris que se veía era el del SHELL asomando por
-debajo de donde acababa el contenido, en tres páginas cuyo `:host` no llevaba `height: 100%`
-(452px de gris en `/reglas`, 345 en `/categorias`, y `/entidades` con el defecto **latente**).
-
-**Lo que sí destapó la medición.** El sistema tiene tres tokens de superficie y **dos valores**
-—`--sc-bg-elevated` vale lo mismo que `--sc-bg-surface` en ambos temas—, y los dos que difieren
-lo hacen por nada: `bg-default` contra `bg-surface` es **1.06:1 en claro y 1.14:1 en oscuro**.
-Lo que separa una tarjeta de su lienzo **no es el relleno** (1.00:1, son el mismo color): es su
-borde de 1px, 1.34:1 en claro y 1.39:1 en oscuro. Es el mismo modelo que la referencia (Snow UI:
-lienzo blanco, tarjeta blanca, borde al 10% del color de texto).
-
-**Decisión.** `--sc-bg-default` es el suelo sobre el que se apoya un lienzo —el fondo del shell
-detrás de sidebar y barra, y el lienzo del `settings-shell` en oscuro, donde `bg-surface` vale
-lo mismo que el índice y se fundirían—. **Dentro de `main`, una región es o el lienzo de página
-(`bg-surface`) o un bloque que se lee por su BORDE.** Se retira el único sitio que lo
-incumplía: la bandeja gris de las tres páginas AED, invisible en claro (1.06:1 sobre lienzo
-blanco) e **idéntica al lienzo** en oscuro (1.00:1). Era un resto del modelo anterior a S67-A,
-cuando el lienzo de config también era gray-50; al pasar el lienzo a blanco se quedó sin
-trabajo. Medido después: en oscuro la card **gana** separación, 1.581:1 contra el suelo frente
-a 1.063 contra la bandeja.
-
-**Lo que la decisión NO cubre, y hay que no confundir.** Siguen usando `bg-default`:
-
-- **Estados** (hover de fila, seleccionado, deshabilitado, activo). Un estado no es una
-  superficie; retirarlos borra feedback, no ruido.
-- **Huecos hundidos dentro de una tarjeta** (grupo de condiciones del constructor, cajas de
-  aviso de sistema, pie de numeración especial). En oscuro **funcionan** —card gray-900 sobre
-  hueco gray-950—; en claro miden 1.06:1 y solo se leen por su borde. Es una asimetría real con
-  su propia decisión detrás: queda **anotada, no aplanada**.
-
-**Round-trip pendiente con Figma.** Retirar la bandeja es una **divergencia** con el maestro —
-misma categoría que el tramo actual del breadcrumb (`customs-catalog §2.12`). Va al puente
-código→Figma como propuesta para Marta, no se corrige en el código.
-
-> **Corrección (S22), tras abrir la fuente.** Este párrafo describía la divergencia de oídas y
-> se equivocaba en casi todo: el nodo `1:12381` **no existe**, el maestro real es `13593:5401`
-> y ese `Main Content` **no pinta nada** (`fills: []`, radius 0) — ni gray/50 ni radius 12. Y
-> la pantalla del maestro no es Contact Center: es **`ScMemoryRuleBuilderPage`** (el constructor
-> de reglas), en la página `Flujos`.
->
-> La divergencia **existe**, pero es más ancha y de otra naturaleza: lo que el maestro pinta en
-> gris es el **lienzo de página** (`13593:5402` → `#f7f8fa` = `slate-50` = `--sc-bg-default`),
-> con las cards blancas radius 8 encima. Medido a ambos lados, sobre la misma pantalla:
->
-> | | lienzo | card | separación |
-> |---|---|---|---|
-> | maestro Figma | `#f7f8fa` | `#ffffff` | **1.063:1** |
-> | código tras DD-34 | `#ffffff` | `#ffffff` | **1.00:1** (lo hace el borde) |
->
-> O sea: el maestro usa exactamente el modelo que esta DD midió y descartó. La propuesta a Marta
-> no es «quitamos una bandeja de una pantalla», es «el lienzo de página pasa de gris a blanco y
-> la separación la hace el borde» — decisión de más alcance, **pendiente de confirmar antes de
-> escribirla en Figma**.
->
-> De paso, la fuente **respalda** el punto de abajo: los huecos hundidos SÍ están en el maestro
-> (tres `Container` `#f7f8fa` radius 6 dentro de la card blanca del Alcance). La asimetría que
-> esta DD dejó anotada es intención de diseño, no un descuido del código.
-
----
-
-Última actualización: 2026-07-22 (**DD-34** `--sc-bg-default` es el suelo del shell, nunca una
-superficie de contenido [3 tokens de superficie y 2 valores; default↔surface = 1.06:1 claro /
-1.14:1 oscuro, o sea que lo que separa es el BORDE]; se retira la bandeja gris de Contact
-Center — divergencia a proponer en Figma; estados y huecos hundidos quedan fuera y anotados ·
-**DD-33** el título de página vuelve al CUERPO a 16px/600 sin banda [medido en Snow UI], el
-`<h1>` se destapa como `.page__heading` y el trail gana un padre para no repetir la palabra;
-las 9 páginas de repositorio no tenían `<h1>` ninguno · **DD-32** un solo acento: la familia
-`accent`/`link` +
-halo de foco se unifican con `info` bajo `sky`; repara 3.46:1 → 6.80:1 y obliga a
-`text-on-accent`/`icon-on-accent` a blanco; barrido de 38 outlines hardcodeados a
-`--sc-border-focus` · **DD-30** varias reglas activas a la vez + solape por unión [una conversación se procesa una vez, sin prioridad/conflictos], supersede el invariante «una sola activa» de DD-28; recorrido `/reglas` realineado · **DD-29** showcase «estilo Storybook» en sc-demo — motor propio, render por
-`<ng-template>`+`viewChild` [no `NgComponentOutlet`], canvas aislado + knobs en vivo + snippet + API + sidebar por
-categorías; 49/49 en formato story · **DD-28** reglas MVP: borradores fuera del todo + invariante «una sola activa»
-(radio) + fuera prioridad/conflictos en el supervisor; recorrido `/reglas` realineado · **DD-27** constructor de
-condiciones **v2** — refs tipadas dinámicas + modelo `value` + estimación de procesado [barra de proporción +
-proyección día/mes] + guía de errores + duración con presets + scope MVP [fuera grabación/borradores]; mergeado a
-main. · **DD-26** la base Variante B `conditionTree` 2 niveles + tipificación + builder progresivo · DD-25 gap footer
-sc-dialog · var-docs de color re-apuntadas en Figma).

@@ -84,14 +84,25 @@
 
 ## Gaps abiertos (el consumidor real los necesita; el DS aún no los cubre)
 
-Estos 4 mantienen una **copia local en el Supervisor** (`projects/supervisor/src/app/shared/components/`)
-hasta que el DS los resuelva. Detalle + disparador en [`ROADMAP.md`](ROADMAP.md):
+Quedan **2**, cada uno con su copia local en el Supervisor
+(`projects/supervisor/src/app/shared/components/`) hasta que el DS los resuelva. Detalle +
+disparador en [`ROADMAP.md`](ROADMAP.md):
 
 | Gap | Local en el Supervisor | Qué falta en el DS |
 |---|---|---|
-| Iconos Outlined | `icon` (IconComponent) | Estilo resuelto (DD-31): el DS sirve **Outlined** self-hospedado; queda converger el `IconComponent` local a `<sc-icon>` + decidir peso/ejes |
 | Avatar en px | `illustrated-avatar` | `sc-avatar` solo expone buckets, no px |
-| Tag `xs` | `label-chip` | `sc-tag` no expone tamaño `xs` |
-| Icono de confirm overridable | `confirm-host` | `ScConfirmService` hardcodea el icono de cabecera |
+| Tag `xs` | `label-chip` | `sc-tag` no expone **ningún** input de tamaño |
 
-(`group-popover` types — `GroupRef` — también local: el DS lo define pero no lo exporta.)
+### Cerrados (verificado 2026-08-13)
+
+Esta sección decía "estos 4" y **dos ya estaban resueltos sin tacharse**, más un tercer apunte
+que era falso por las dos puntas. Un gap cerrado que sigue listado no es ruido inocuo: manda a
+mantener una copia local que ya no hace falta.
+
+- ~~**Iconos Outlined**~~ — no queda ningún `IconComponent` local (`grep "class IconComponent"`
+  en el supervisor → **0**). Resuelto por DD-31.
+- ~~**Icono de confirm overridable**~~ — `sc-confirm.service.ts:31` declara
+  `readonly icon?: string` y `:68` resuelve `req.icon ?? 'exclamation-triangle'`. Es exactamente
+  el fix que el gap pedía, y el `confirm-host` local se borró.
+- ~~*"`group-popover` types — el DS lo define pero no lo exporta"*~~ — falso por partida doble:
+  la copia local se borró y `public-api.ts` **sí** lo exporta.
