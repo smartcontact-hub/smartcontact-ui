@@ -1,6 +1,6 @@
 ---
 name: auditoria-semanal
-description: Auditoría de JUICIO semanal (la corre una rutina cloud) — encuentra lo que los 25 gates de `verify` no pueden ver (deuda de diseño, deriva semántica de docs), lo triña (gate-able / arréglalo / intencional) y lo deja en `docs/AUDIT-SEMANAL.md` vía un PR. Si no hay hallazgos reales, NO abre PR. La versión de juicio, en cadencia, de `docs/AUDIT-DEUDA-2026-06.md`.
+description: Auditoría de JUICIO semanal (la corre una rutina cloud) — encuentra lo que los gates de `verify` no pueden ver (deuda de diseño, deriva semántica de docs, PRs terminados que nadie mergea), lo triña (gate-able / arréglalo / intencional) y lo deja en `docs/AUDIT-SEMANAL.md` vía un PR. Si no hay hallazgos reales, NO abre PR. La versión de juicio, en cadencia, de `docs/AUDIT-DEUDA-2026-06.md`.
 ---
 
 # /auditoria-semanal
@@ -28,7 +28,7 @@ toda la cadena `npm run verify` (25 pasos: `tokens:*`, `audit:theme-scale`,
 Si algo de eso está roto, es un fallo de CI, no un hallazgo tuyo. Tú vives en lo
 que ninguna máquina vigila.
 
-## 1. Las dos pasadas
+## 1. Las tres pasadas
 
 ### Pasada A — Deuda de diseño y consistencia de código (la lente AUDIT-DEUDA)
 Juicio puro, cero solape con `verify`. Busca lo que **multiplica esfuerzo o rompe
@@ -54,6 +54,27 @@ read-only** (sin `--write`) y compara su salida con lo que afirman los docs:
 - **Notas de índice envejecidas**: una nota que describe un estado ya superado.
 - **Afirmaciones doc-vs-código**: valores concretos de `customs-catalog.md` (warn=amber, primary=navy, info=sky…) que ya no coincidan con el preset/CSS.
 - **Parejas de duplicación sancionadas** que hayan divergido (`guia-tokens.md` ↔ `projects/design-tokens/README.md`).
+
+### Pasada C — Trabajo TERMINADO que no cruzó la última puerta
+
+Corta, mecánica, y la que más valor dio el día que se descubrió el patrón. El repo tiene 25
+gates para lo que ENTRA y **ninguno para lo que se queda fuera**: un PR abierto no molesta a
+nadie, así que se pudre en silencio. `verify` no puede vigilarlo —corre offline y determinista,
+y consultar GitHub lo volvería flaky—, pero tú sí: corres en la nube y tienes `gh`.
+
+```bash
+gh pr list --state open --json number,title,createdAt,mergeable,statusCheckRollup
+```
+
+Marca como hallazgo **todo PR abierto con más de 7 días** — uno por PR, con su edad, si es
+mergeable y si su CI está verde. El fix es siempre el mismo y es de Rafa: mergear o cerrar.
+Nada de "revisar el backlog de PRs" como hallazgo genérico: un PR, una línea, su edad.
+
+*Por qué existe esta pasada (2026-08-13)*: `docs/AUDIT-SEMANAL.md` en `main` decía "aún no ha
+corrido ninguna auditoría" mientras **esta misma rutina** llevaba dos pasadas y 14 hallazgos
+verificados esperando en el PR #22 desde hacía 9 días. Había tres PRs así — uno era un
+`npm audit fix` de 7 vulnerabilidades, otro las lecciones de una sesión que nunca llegaron a
+`LEARNINGS.md`. **La rutina se estaba quedando fuera a sí misma**, y no tenía forma de verlo.
 
 ## 2. Triaje por hallazgo — la regla de la casa
 
@@ -86,13 +107,18 @@ salvo para marcar `[x]` lo que ya se arregló. Formato de cada sección:
 ```
 ## <YYYY-MM-DD>
 
-> Método: pasada A (deuda de código, ≤5) + pasada B (deriva de docs). Contra AGENTS.md/.impeccable.md.
+> Método: pasada A (deuda de código, ≤5) + pasada B (deriva de docs) + pasada C (PRs parados >7d).
+> Contra AGENTS.md/.impeccable.md.
 
 ### Deuda de código
 - [ ] **P0/P1** <qué> (`file:line`) → <fix en una línea>. [gate-able | arréglalo]
 
 ### Deriva de docs
 - [ ] <qué afirma el doc> (`doc:line`) vs <la verdad> (`fuente:line` o el generador) → <fix>. [gate-able | arréglalo]
+
+### Trabajo sin mergear
+- [ ] PR #N «título» — abierto hace Nd, mergeable, CI verde → mergear o cerrar.
+
 ```
 
 Entrega vía PR:
