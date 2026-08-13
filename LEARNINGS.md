@@ -198,6 +198,19 @@
    contrario existe y también apareció: el e2e cazó que "Seleccionar todo" marcaba la fila
    bloqueada, que sí era un fallo real; distinguirlos es justo el trabajo.
 
+   *Corolario (s27) — un test que falla y pasa sobre el MISMO código no es "mala suerte": es un
+   test que lee sin reintentar, y su firma constante te lo está diciendo.* `component-structure`
+   tumbó el CI **3 veces en un día** sobre commits que solo tocaban `.md`, y pasaba en local —
+   siempre con la misma firma (`sc-select`: 8 esperados, 2 leídos). No era aleatorio: el helper
+   esperaba a que existiera **uno** (`.first()).toBeVisible()`) y acto seguido leía **todos** con
+   `evaluateAll`, que da una foto única sin reintento. En local la página pinta antes de que se
+   llegue a leer; en CI, cargado, no. **Acción**: si una aserción compara un CONJUNTO, espera al
+   **número** con algo que reintente (`toHaveCount`) antes de leerlo — nunca a "que haya alguno".
+   Y para saber si el arreglo va: fabrica un número inalcanzable y comprueba que **agota el
+   timeout** en vez de fallar al instante; eso prueba que el reintento está cableado, cosa que un
+   verde no prueba. *Corolario del corolario*: un flake que tumba el CI 3 de 5 veces no es
+   inocuo — es un gate que entrena a ignorar los gates (misma familia que la regla 13).
+
 8. **La primera corrección no funciona → deja de proponer la segunda y MIDE dónde nace el
    efecto.** Encadenar arreglos a ciegas es caro y además puede empeorarlo. *Evidencia (s25),
    el caso negativo*: la cabecera de la tabla medía 44.5 en vez de los 41.5 medidos, y probé
