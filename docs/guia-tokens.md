@@ -155,8 +155,8 @@ Ejemplos: `--sc-presence-available`, `--sc-priority-medium`.
 La receta concreta de un componente: "el botón primario lleva ESTE
 fondo, ESTE borde y ESTA altura".
 
-Ejemplos: `--sc-btn-primary-bg`, `--sc-modal-radius`,
-`--sc-toast-padding-x`.
+Ejemplos: `--sc-dialog-bg`, `--sc-toast-padding-x`,
+`--sc-cmp-button-contrast-background`.
 
 **Planta 5 — extensiones**
 Cosas que PrimeNG no modela porque van más allá de los componentes

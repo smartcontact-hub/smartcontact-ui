@@ -561,7 +561,7 @@ Para el caso futuro de backend real: el grace period del undo vive **server-side
 |---|---|
 | `--sc-color-navy-*` (5 steps) | Brand primary SC (vs azure Aura) — §1.1 |
 | `--sc-color-sky-*` (5 steps) | Brand info SC (vs sky Aura) — §1.2 |
-| `--sc-shadow-card-soft`, `--sc-shadow-toast-*` | Brand chrome SC — §2.x |
+| `--sc-shadow-card`, `--sc-shadow-toast-*` | Brand chrome SC — §2.x |
 | `--sc-z-{sticky-form-header,bulk-action-bar,modal-backdrop,...}` | Pool overlay SC (no en Kit Pro) — §5.8 |
 | `--sc-font-family-mono` | System mono stack (no exportado por Kit Pro) — §5.8 |
 | `--sc-toast-undo-*` | Extension pattern undo SC — §2.1 |
@@ -695,7 +695,7 @@ Componentes del Kit Figma SC que **NO** tienen wrapper todavía. Decisión consc
 
 ### 5.8 Convenciones implícitas duration + shadow (cerrado sin token)
 
-**Un audit detectó**: 50+ hits literales de `transition: X 200ms ease` (canonical) + drift menores (140/160/180/220ms) y 5 hits `box-shadow` divergentes fuera del set de tokens `--sc-shadow-*`. Tentación natural: cocinar escala `--sc-duration-*` y/o token `--sc-shadow-card-soft`.
+**Un audit detectó**: 50+ hits literales de `transition: X 200ms ease` (canonical) + drift menores (140/160/180/220ms) y 5 hits `box-shadow` divergentes fuera del set de tokens `--sc-shadow-*`. Tentación natural: cocinar escala `--sc-duration-*` y/o token `--sc-shadow-card`.
 
 **Decisión (NO crear tokens)**:
 
@@ -729,7 +729,7 @@ Motivación de la decisión, no del valor:
 **Cuándo reabrir**:
 
 - **Durations**: si diseño exporta una categoría `duration` en Figma SC Kit Pro (no existe hoy). Trigger formal Figma → token mapping mecánico.
-- **Shadows**: si el patrón `0 -4px 12px ...` aparece en 2º consumer → crear `--sc-shadow-sticky-footer-top` y mover ambos.
+- **Shadows**: si el patrón `0 -4px 12px ...` aparece en 2º consumer → crear `--sc-shadow-sm` y mover ambos.
 
 **Decisiones abiertas para diseño**:
 
