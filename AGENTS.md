@@ -313,7 +313,18 @@ this wrap-up routine **without asking permission first**:
    an alternative, sets a project-wide rule), add an entry to [`docs/DECISIONS.md`](docs/DECISIONS.md)
    in DD-N format with **WHY** and **WHAT-WAS-DISCARDED-AND-WHY**. (`DECISIONS-LOG(-B).md`
    is the historical construction journal — closed; new decisions go to `docs/DECISIONS.md`.)
-5. Reply with one or two sentences confirming what was pushed and where the trail lives.
+5. **Work that is RETIRED gets archived with a tag, never just deleted.** If the session drops
+   a branch that will not be merged, tag it first and push the tag:
+   `git tag -a archive/<nombre> <sha>` with a message saying **what it is, why it existed, and
+   why it is being retired**, then delete the branch. Deleting alone leaves the commits
+   unreachable: the local reflog prunes them in ~30-90 days, and GitHub serving them by SHA is
+   observed behaviour, not a written guarantee. A tag is a permanent ref — the work stays
+   recoverable for good (`git tag -l 'archive/*'`, then
+   `git switch -c <rama> archive/<nombre>`) without cluttering the branch list.
+   *First use (2026-08-13):* `archive/informes-datareports` — the native Informes replica,
+   built because the real screen lives in a cross-origin iframe that `html.to.design` cannot
+   capture; retired once it had served that purpose. Never merged to `main`.
+6. Reply with one or two sentences confirming what was pushed and where the trail lives.
 
 **Why this exists.** Every session must leave the repo with both the code *and* a written
 trail of how we got there, so the next session — and any future contributor — never has to
