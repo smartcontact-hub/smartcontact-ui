@@ -1,0 +1,65 @@
+# Mergea SOLO el PR de la auditoría semanal, y solo si su CI está verde.
+#
+# Por qué existe: la rutina de auditoría corre en la nube, encuentra hallazgos y los deja en un
+# PR… que se quedaba ahí. El 2026-08-13 llevaba 9 días bloqueada por su propio PR, con 14
+# hallazgos dentro, y Rafa —que trabaja solo— no tenía por qué enterarse. Una maquinaria cuya
+# salida depende de que alguien pulse un botón no está automatizada: está esperando.
+#
+# Por qué es seguro dejar que se mergee sola:
+#   1. Solo toca `docs/AUDIT-SEMANAL.md`. Si el PR cambia CUALQUIER otro fichero, este workflow
+#      se planta y lo deja para revisión humana. Es la condición dura.
+#   2. Solo corre si el CI de ese commit terminó en SUCCESS (los 8 pasos, incluidos docs:guard y
+#      docs:coherence, que son los que pueden romperse con un .md).
+#   3. Es un doc de backlog: su contenido no ejecuta nada ni entra en ningún build.
+#
+# Lo que NO hace: mergear ningún otro PR. Los demás siguen siendo decisión de Rafa, y el
+# recordatorio de los lunes se los recuerda.
+
+name: Auto-merge · auditoría semanal
+
+on:
+  workflow_run:
+    # ⚠️ Tiene que casar EXACTO con el `name:` de ci.yml, y es `ci` en minúsculas.
+    # Escribir 'CI' aquí no da error: el workflow simplemente no dispara NUNCA, en silencio.
+    workflows: ['ci']
+    types: [completed]
+
+permissions:
+  contents: write
+  pull-requests: write
+
+jobs:
+  automerge:
+    # Solo si el CI pasó. Un CI rojo NO se auto-mergea nunca.
+    if: github.event.workflow_run.conclusion == 'success'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Buscar el PR de auditoría de este commit y mergearlo si solo toca su doc
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          SHA: ${{ github.event.workflow_run.head_sha }}
+          REPO: ${{ github.repository }}
+        run: |
+          set -euo pipefail
+
+          PR=$(gh api "repos/$REPO/commits/$SHA/pulls" \
+                --jq '.[] | select(.state=="open") | .number' | head -1)
+          if [ -z "${PR:-}" ]; then
+            echo "Sin PR abierto para $SHA — nada que hacer."; exit 0
+          fi
+
+          TITULO=$(gh pr view "$PR" --repo "$REPO" --json title --jq .title)
+          case "$TITULO" in
+            "chore(audit): auditoría semanal"*) ;;
+            *) echo "PR #$PR no es de la auditoría semanal ('$TITULO') — se deja para Rafa."; exit 0 ;;
+          esac
+
+          # La condición dura: EXACTAMENTE un fichero, y es el suyo.
+          FICHEROS=$(gh pr view "$PR" --repo "$REPO" --json files --jq '.files[].path')
+          if [ "$FICHEROS" != "docs/AUDIT-SEMANAL.md" ]; then
+            echo "PR #$PR toca algo más que su doc de backlog:"; echo "$FICHEROS"
+            echo "No se auto-mergea. Revisión humana."; exit 0
+          fi
+
+          echo "PR #$PR — CI verde y solo toca docs/AUDIT-SEMANAL.md. Mergeando."
+          gh pr merge "$PR" --repo "$REPO" --squash --delete-branch
