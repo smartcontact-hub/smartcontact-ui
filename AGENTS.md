@@ -364,6 +364,16 @@ Each entry: **what bites → the rule → why**. Append here when a new one is f
   *the official MCP is down* — but `mcp__Figma__get_metadata` was reading the file fine the
   whole time. *Rule:* probe the half you actually need; never generalise one server's failure
   to the others. *Why:* they are genuinely different services — see the table below.
+- **An e2e test depends on `.sc-inputtext__msg--error` as a public contract.** *Bites:* renaming
+  or restructuring that class inside `sc-inputtext` breaks `e2e/supervisor/category-modal.spec.ts:52`
+  (verified 2026-08-13), and the failure looks like a modal bug rather than a CSS rename. *Rule:*
+  treat intra-component classes that a spec asserts on as API — grep `e2e/` for the class before
+  touching it. *Why:* rescued from the convergence plan before deleting it; it was the kind of
+  detail whose loss makes a refactor fail for no visible reason.
+- **`columns` in a datatable must be a `computed()` reading the `viewChild<TemplateRef>`.** *Bites:*
+  those refs resolve LATE; assigning `columns` eagerly can block the render until they resolve.
+  *Rule:* wrap in `computed()`. Reference implementation:
+  `projects/agent/src/app/components/call-table/call-table.component.ts`.
 - **Rasters can't be imported into Figma by code.** *Bites:* the plugin sandbox blocks
   `createImageAsync`/`fetch` to localhost, `set_image_fill` is unimplemented, and a
   hand-transcribed base64 corrupts ("Invalid base64 string"). *Rule:* leave an auto-layout

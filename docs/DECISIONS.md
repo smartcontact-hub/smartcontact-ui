@@ -30,6 +30,59 @@
 
 ---
 
+## DD-36 · 2026-08-13 — Lo que NO se unifica entre los 4 flujos, y por qué (rescatado del plan de convergencia)
+
+**Contexto** · El plan de convergencia de los 4 flujos (aprobado 2026-07-18) se archivó en
+`docs/history/` etiquetado como *"construcción CERRADA, referencia histórica"*. La auditoría de
+documentación de 2026-08 destapó que **no lo estaba**: seguía con olas abiertas, y guardaba siete
+divergencias de UX **deliberadas** con su motivo que no estaban replicadas en ningún sitio vivo.
+`customs-catalog.md` solo cubre divergencias de **token**, no de interacción, así que al borrar el
+plan se habrían perdido — y sin el motivo escrito, la próxima pasada de "uniformar" las borra
+creyendo que son descuidos.
+
+**Decisión** · Estas siete divergencias se mantienen **a propósito**. Uniformar no siempre es mejor:
+
+1. **El fondo como valor único** — mataría las tarjetas del builder y de AED. Converge una *regla
+   por arquetipo*, no un token.
+2. **La confirmación destructiva a un solo mecanismo** — poner puerta tecleada a borrar una
+   categoría es fricción sin consecuencia; quitársela a borrar un usuario es peligro sin aviso.
+   Confirmar todo igual entrena la **ceguera de confirmación**.
+3. **El empty state de contact center** — sus hojas no listan nada, son matrices de permisos. Un
+   vacío ahí no representa nada.
+4. **El rail de 235px de AED** — es navegación local legítima. Converge el chrome de alrededor, no
+   la existencia del rail.
+5. **La puerta tecleada de la re-transcripción** — no es un borrado: cuesta dinero y sobrescribe.
+   Su aviso de coste es contenido, no decoración.
+6. **La ausencia de acción primaria en transcripciones.**
+7. **`<h1>` visible en AED** — la regla a11y es *"toda página tiene un h1"*, no *"todo h1 es
+   visible"*.
+
+Y una convención que las hace legibles: cuando el mismo kebab lleva a dos sitios distintos,
+**"Eliminar…"** con puntos suspensivos si abre una puerta tecleada, **"Eliminar"** si no.
+
+**Razón** · Cada una tiene un motivo funcional verificado en su contexto, no estético. La nº2 es la
+que más se malinterpreta: la asimetría *es* la protección.
+
+**Descartadas** · *Unificar los 7 por coherencia visual* → rechazado, cada uno rompe algo concreto
+(ver motivos). *Dejarlas solo en el plan archivado* → rechazado: es exactamente lo que estuvo a punto
+de perderlas. *Meterlas en `customs-catalog.md`* → rechazado: ese doc es de divergencias de **token**
+frente a Figma; estas son de **interacción** y su hogar es este registro.
+
+**Consecuencias** · Con esto, `docs/history/plan-convergencia-flujos.md` ya se puede borrar. Dos
+datos más que viajan con él y hay que conservar:
+
+- ⚠️ **Trampa del rail de AED (conflicto C3)**, que muerde directamente a **DD-34** y al item
+  "lienzo de página gris↔blanco" que sigue esperando decisión: `settings-shell.component.scss:20-25`
+  documenta que se movió el lienzo a blanco *porque el rail gris se fundía con un lienzo gris*.
+  **Devolver el lienzo a `--sc-bg-default` re-crea ese bug** salvo que el rail cambie de token en la
+  misma edición.
+- **El "undo asimétrico en usuarios" estaba mal diagnosticado**: `undo-stack.service.ts:31` dice que
+  lo destructivo NO pasa por undo; agentes y grupos empujan undo por *bulk-edit* y usuarios no lo
+  tiene (`users.store.ts` no tiene `bulkUpdate()`). No es una asimetría de undo: **le falta una
+  funcionalidad**. Es decisión de producto → se presenta, no se decide.
+
+---
+
 ## DD-35 · 2026-08-07 — `sc-demo` → `sc-docs`; el Agent pasa de mockup idealizado a réplica fiel del producto real
 
 **Contexto** · Dos piezas independientes, misma sesión. (1) `sc-demo` nació como "un demo rápido" pero
@@ -67,13 +120,17 @@ pantallas lado a lado. Solo la extracción directa cierra esa brecha.
   visual habría ocultado errores de extracción. La tokenización es trabajo aparte, a partir de esta
   base ya verificada contra el sitio real.
 
-**Consecuencias** · Ninguna de las dos ramas está mergeada a `main` todavía — pendiente de que Rafa
-apruebe cada preview (ver `NEXT-SESSION.md`). Hasta el merge, el proyecto Cloudflare **viejo**
-`sc-demo.pages.dev` sigue vivo apuntando a `main` (que aún no tiene el rename) — no está roto, es el
-estado transitorio esperado. Al mergear: repuntar cada proyecto Cloudflare de su rama a `main`, y
-decidir si `sc-demo.pages.dev` se borra o se deja morir. Los históricos (`DECISIONS-LOG*.md`,
-`AUDIT-2026-07.md`) NO se reescribieron con el nuevo nombre — documentan lo que era cierto cuando se
-escribieron.
+**Consecuencias** · **EJECUTADA** (estado verificado 2026-08-13): `projects/sc-docs` y
+`projects/agent` están en `main` y en producción (`sc-doc.pages.dev`, `sc-agent.pages.dev`), con sus
+proyectos Cloudflare ya repuntados a `main`. Queda **una** cosa suelta: el proyecto Cloudflare viejo
+`sc-demo.pages.dev` sigue vivo sirviendo contenido antiguo y sus builds fallan — borrarlo es un clic
+de Rafa en el dashboard. Los históricos NO se reescribieron con el nuevo nombre: documentan lo que
+era cierto cuando se escribieron.
+
+> ⚠️ Hasta el 2026-08-13 este campo decía *"Ninguna de las dos ramas está mergeada a `main`
+> todavía"* — falso desde hacía semanas, en la entrada **más nueva y más leída** del fichero. Un DD
+> describe una decisión (inmutable) y también un **estado** (perecedero): al ejecutar una decisión,
+> vuelve a su DD y cierra el estado, o el registro empieza a mentir por donde más se lee.
 
 ---
 
@@ -886,12 +943,29 @@ como guarda.
 - **Componentes pure-sc SIN equivalente Figma se mantienen** con su naming
   descriptivo del dominio: `<sc-search>`, `<sc-bulk-action-bar>`,
   `<sc-empty-state>`, `<sc-form-danger-zone>`, `<sc-form-section-nav>`,
-  `<sc-confirm-host>`, `<sc-label-chip>`, `<sc-color-dot-picker>`,
+  `<sc-color-dot-picker>`,
   `<sc-inline-rename-cell>`, `<sc-group-popover>`, `<sc-column-selector>`,
   `<sc-command-palette>`, `<sc-keyboard-shortcuts>`,
   `<sc-delete-entity-dialog>`, `<sc-impact-preview-dialog>`, `<sc-page-header>`,
   `<sc-sticky-form-header>`, `<sc-section-card>`, `<sc-photo-upload>`,
-  `<sc-illustrated-avatar>`, `<sc-bulk-edit-menu>`.
+  `<sc-bulk-edit-menu>`.
+
+  > **Tres de esta lista ya NO existen** (corregido 2026-08-13; el DD los daba por vivos).
+  > `sc-confirm-host` se borró; y **`sc-label-chip` y `sc-illustrated-avatar` se RETIRARON a
+  > propósito**, con este racional — que vivía solo en el manifiesto de convergencia y se
+  > rescata aquí antes de borrarlo:
+  > - **`sc-label-chip` → variante de `sc-tag`/`sc-chip`, no componente.** `sc-tag` es el
+  >   canónico para etiquetas de **solo lectura**; `sc-chip` para las **quitables** (botón ×).
+  >   Su sistema de **8 colores categóricos + puntito** entra como *variante de estilo*; los
+  >   tokens `--sc-label-*` y el `LABEL_COLORS` que comparte con `sc-color-dot-picker` se
+  >   conservan como paleta de esa variante.
+  > - **`sc-illustrated-avatar` → fallback de `sc-avatar`, no componente.** Su comportamiento
+  >   —si no hay foto, ilustración SVG por hash del nombre (pools `illustrated`/`abstract`)—
+  >   alimenta el tipo *Image* de `sc-avatar`. La foto subida sigue ganando sobre la
+  >   ilustración, y `sc-photo-upload` se reconecta a ese fallback.
+  >
+  > El supervisor **aún conserva copias locales** de ambos: esa es la deuda que sigue abierta
+  > en `docs/inventory.md`, no un contra-ejemplo de esta decisión.
 - **CSS classes intra-componente también renombradas** para coherencia 1:1
   selector ↔ classes (`.sc-input__label` → `.sc-inputtext__label`).
 - **Class names mantenidas cuando ya eran correctas** (`InputNumberComponent`,
