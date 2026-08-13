@@ -167,20 +167,27 @@ dice qué hay dentro **[A]**.
 
 ---
 
-## 4. Gates propuestos (fase D)
+## 4. Gates — TODOS EJECUTADOS (2026-08-13)
 
-Ordenados por evidencia, no por elegancia:
+Los cinco propuestos están construidos y **validados en rojo Y en verde** con casos fabricados,
+que es la única forma de saber que un guardián muerde (`LEARNINGS` regla 2). De 2 gates de
+documentación se pasa a **8**:
 
-1. **Cifra citada vs conteo real** — ya propuesto **dos veces** por la rutina semanal con dos
-   instancias distintas (`README.md` 49, `ui-smartcontact/README.md` ~55, real 51). Compara contra
-   `docs/_component-status.json`. **Es el más justificado de todos.**
-2. **Tokens `--sc-*` citados en docs vs las 6 capas** — cubriría los 3 ejemplos de token muertos
-   del §3 y evitaría que un doc enseñe un token retirado.
-3. **Links relativos en TODOS los docs** — hoy `docs:guard` solo valida los de `DOCS-INDEX`. Los 9
-   links rotos del censo estaban fuera de su alcance **[V]**.
-4. **Caducidad declarada** — `mapa-producto-2026-08.html` caduca el 2026-09-08 y nadie lo vigila.
-5. **PRs parados** — el patrón §1.1 no lo caza ningún gate del repo. Un aviso a los N días es la
-   única red posible para "trabajo terminado que no aterriza".
+| Gate | Qué vigila | Nace de |
+|---|---|---|
+| `docs:coherence` **E** | una cifra de componentes en prosa vs `docs/_component-status.json` | 2 instancias reales cazadas por la rutina semanal en semanas distintas (49 · "~55" · real 51) |
+| `docs:coherence` **F** | un token `--sc-*` citado en la doc que no existe en `projects/**` | 3 ejemplos muertos enseñándose como vivos. Ampliado a los README de `projects/**`, que era donde vivía el que se le escapó |
+| `docs:guard` **(2)** | links relativos de **todos** los docs, no solo del índice | de los 9 rotos del censo, **ninguno** estaba en el índice |
+| `docs:coherence` **C** | citar uno de los 6 docs borrados sin nombrar `archive/docs-history` | la regla anterior se quedó vigilando un fichero inexistente al borrarlo |
+| `docs:coherence` **G** | el índice de disparadores de `LEARNINGS` cuadra con su cuerpo | el índice nuevo: desincronizado deja de ser índice y pasa a ser una mentira corta |
+| `docs:coherence` **H** | un doc que declara "caduca el YYYY-MM-DD" y ya venció | el mapa de producto caduca el 2026-09-08 y nadie lo vigilaba |
+| `docs:coherence` **D** | cada hand-off de frente lleva sello y su SHA existe | miraba solo `NEXT-SESSION.md`; al pasar ese fichero a índice se habría quedado en no-op silencioso |
+
+**PRs parados** — el patrón del §1.1 — **no** va a `verify`: esa cadena corre offline y
+determinista, y consultar GitHub la volvería flaky. Su hogar es la **pasada C** nueva de
+`.claude/skills/auditoria-semanal/SKILL.md`, que corre en la nube con `gh`: marca todo PR
+abierto con más de 7 días, uno por línea, con su edad. La ironía que lo justifica: esa misma
+rutina llevaba 9 días bloqueada por un PR sin mergear **suyo**, y no tenía forma de verlo.
 
 ---
 
