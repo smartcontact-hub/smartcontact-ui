@@ -75,7 +75,7 @@
   modelo · el builder · la lista · **prioridad/conflictos = la complejidad** · transcripción en detalle ·
   concerns). Los snippets son **código real** (`rules.store.ts`: `scopeOverlaps` + `conflictsByRuleId` O(n²);
   `rules-page.ts`: quién gana por prioridad) y las capturas son del **Supervisor real** (`public/usage/`,
-  regeneradas por `npm run usage:capture`, no se desfasan). Verificado: AOT `build:demo` + typecheck + lint +
+  regeneradas por `npm run usage:capture`, no se desfasan). Verificado: AOT `build:docs` + typecheck + lint +
   `audit:theme-scale`. La PPT-prompt queda como backup. Los 3 huecos `[RAFA]` resueltos (2026-06-23): la ley
   queda fuera de alcance; transcripciones múltiples = varios tramos por conversación, cada uno transcribible
   por separado; quién = los supervisores.

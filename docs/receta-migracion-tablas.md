@@ -219,7 +219,7 @@ tabla debe migrar?».
 | `admin/agents/agent-form-page` → `.picker-table` | Caso límite: su fila SELECCIONA al clicar, contra el modelo canónico de la Ola 6 |
 | `admin/groups/agent-channel-table` | NO migra: matriz de permisos |
 | `admin/agents/group-assignment-table` | NO migra: matriz de permisos |
-| `config/aed/aed-agentes-page` → `.comm-table` | NO migra: matriz de permisos **y** usa `<th scope="row">`, que el DS no sabe emitir (`migrate:check` lo veta) |
+| `config/aed/aed-agentes-page` → `.comm-table` | NO migra: matriz de permisos **y** usa `<th scope="row">`, que el DS no sabe emitir (`npm run audit:datatables` lo veta) |
 
 **Ya migradas (9)**: labels · plantillas · repo-list · agentes · grupos ·
 usuarios · reglas · categorías · entidades.

@@ -17,8 +17,23 @@ Figma (Smart Contact Prime UI Kit) se refleja directamente en el código y
 | `@smartcontact-hub/styles` | [`projects/design-tokens`](projects/design-tokens/README.md) | Tokens `--sc-*` (7 capas, escala 14-base en rem) + reset/globals |
 | `@smartcontact-hub/icons` | [`projects/ui-smartcontact-icons`](projects/ui-smartcontact-icons/README.md) | `<sc-icon>` + Material Symbols generados |
 | `@smartcontact-hub/components` | [`projects/ui-smartcontact`](projects/ui-smartcontact/README.md) | `provideSmartContactUi()` + preset modular (`theme/sc-preset`, cada slot → `var(--sc-*)`) + 51 wrappers/customs `sc-*` ([inventario](docs/inventory.md)) |
-| `sc-docs` _(app privada)_ | [`projects/sc-docs`](projects/sc-docs/README.md) | Showcase: fundaciones + catálogo + smoke del tema |
-| `supervisor` _(app privada)_ | [`projects/supervisor`](projects/supervisor/README.md) | App real: consumo canónico (solo `sc-*` + tokens) |
+
+Y **cuatro apps** que consumen el DS en local (por tsconfig paths → `dist/`, así que un cambio de
+token se ve al instante). Las cuatro están en producción en Cloudflare Pages:
+
+| App | Proyecto | Qué es | En producción |
+|---|---|---|---|
+| `sc-docs` | [`projects/sc-docs`](projects/sc-docs/README.md) | Showcase: fundaciones + catálogo + uso real + Lab | [sc-doc.pages.dev](https://sc-doc.pages.dev) |
+| `supervisor` | [`projects/supervisor`](projects/supervisor/README.md) | **La app real**: consumo canónico (solo `sc-*` + tokens) | [sc-supervisor.pages.dev](https://sc-supervisor.pages.dev) |
+| `agent` | [`projects/agent`](projects/agent/README.md) | **Réplica** del dashboard del agente | [sc-agent.pages.dev](https://sc-agent.pages.dev) |
+| `cuscare` | [`projects/cuscare`](projects/cuscare/README.md) | **Réplica** de la herramienta de tickets | [sc-cuscare.pages.dev](https://sc-cuscare.pages.dev) |
+
+> ⚠️ Las dos **réplicas** (`agent`, `cuscare`) **NO se tokenizan a propósito** — DD-35 y DD-37.
+> Una réplica debe parecerse al ORIGINAL, no a nuestro DS: sus valores se extraen del sitio real
+> y `token-guard` las exime de las reglas de tipografía. Su gate no es la paridad de tokens, es
+> la fidelidad medida contra el sitio original. `cuscare` tiene suite propia
+> (`npm run e2e:cuscare`, con clics reales, en CI); `agent` aún no.
+> No las "arregles" para que usen `--sc-*`.
 
 ## Construir
 
