@@ -5,6 +5,13 @@
 # fuente de verdad del gate: si diverge, un fallo se esconde (p.ej. test:unit).
 name: ci
 
+# El default de la ORG pasó a `read and write` el 2026-08-13 para que el auto-merge de la
+# auditoría pudiera mergear. Ese default es el MÁXIMO que hereda todo workflow que no declare
+# lo suyo — y este solo lee y construye. Se acota aquí para que el permiso ancho viva
+# únicamente donde hace falta (`audit-automerge.yml`) y no en toda la casa por herencia.
+permissions:
+  contents: read
+
 on:
   push:
     branches: [main]

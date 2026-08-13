@@ -101,6 +101,32 @@ for (const { path, lines } of files) {
   });
 }
 
+// ── CHECK A·b — un script citado SIN el prefijo `npm run` ──────────────────────
+// El check A solo casa la forma `npm run X`. Escribir `` `build:demo` `` a secas se le cuela,
+// y así es como sobrevivían dos nombres fósiles (`build:demo`, renombrado a `build:docs`, y
+// `migrate:check`, hoy `audit:datatables`). Yo mismo metí una claim falsa así el 2026-08-13.
+//
+// Acotado a NAMESPACES QUE EXISTEN (`build:`, `tokens:`, `audit:`…) y no a cualquier `x:y`.
+// Medido antes de elegirlo: sin acotar daba 8 avisos, 6 de ellos basura (`display:flex`,
+// `localhost:9223`, `file:line`, `probe:true`…) — 75% de ruido, que es como se enseña a
+// ignorar un guardián. Con el filtro de namespace: 0 falsos positivos.
+{
+  const namespaces = new Set(
+    Object.keys(scripts).filter((s) => s.includes(':')).map((s) => s.split(':')[0]),
+  );
+  for (const { path, lines } of files)
+    lines.forEach((line, i) => {
+      for (const m of line.matchAll(/`([a-z][a-z0-9]*:[a-z0-9:-]+)`/g)) {
+        const tok = m[1];
+        if (scripts[tok] || PROPOSED_SCRIPTS.has(tok)) continue;
+        if (!namespaces.has(tok.split(':')[0])) continue; // no parece un script de este repo
+        fail(
+          `${rel(path)}:${i + 1} — cita \`${tok}\`, que parece un script (el namespace \`${tok.split(':')[0]}:\` existe) pero no está en package.json. ¿Se renombró?`,
+        );
+      }
+    });
+}
+
 // ── CHECK B — el README nombra cada guard de la cadena verify ───────────────────
 const verifySteps = (scripts.verify || '')
   .split('&&')

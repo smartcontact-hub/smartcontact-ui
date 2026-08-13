@@ -123,7 +123,7 @@ datos más que viajan con él y hay que conservar:
 ## DD-35 · 2026-08-07 — `sc-demo` → `sc-docs`; el Agent pasa de mockup idealizado a réplica fiel del producto real
 
 **Contexto** · Dos piezas independientes, misma sesión. (1) `sc-demo` nació como "un demo rápido" pero
-lleva meses siendo infraestructura viva a diario: gate de CI (`build:demo` + `audit:components` +
+lleva meses siendo infraestructura viva a diario: gate de CI (`build:docs` + `audit:components` +
 `usage:check`), smoke del tema, catálogo textual (`docs/inventory.md`) y superficie de e2e — "demo" ya
 no describe lo que es. (2) `projects/agent` existía desde la Fase 3 (commit `44033ef`) como un cartón-
 pluma **idealizado desde el propio DS** (`sc-gauge`, tokens `--sc-*`, datos genéricos en español,
@@ -876,7 +876,7 @@ borrado, Pages deshabilitado) — los supera el Supervisor + Cloudflare. `smart-
 
 **Contexto** · El consumidor (`smart-contact-platform`) tenía su `ds-docs` desplegado que aplicaba
 tokens al instante; este repo no tenía página viva — `sc-demo` solo corría en local y CI hacía
-`build:demo` sin publicar. El usuario quería una página viva del DS, equivalente a su `ds-docs`.
+`build:docs` sin publicar. El usuario quería una página viva del DS, equivalente a su `ds-docs`.
 
 **Decisión** · Workflow `deploy-demo.yml` que construye `sc-demo` y lo despliega a **GitHub Pages**
 on-push-to-main (`base-href /smartcontact-ui/`, opt-in a Node 24 vía `FORCE_JAVASCRIPT_ACTIONS_TO_NODE24`).
