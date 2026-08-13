@@ -28,6 +28,18 @@
    de los dos podía disparar la activación nativa de un enlace. Antes de sumar una segunda
    señal, pregunta si puede fallar por la misma causa que la primera.
 
+   *Corolario (s27) — un negativo VÁLIDO también tiene ALCANCE, y su alcance es lo que mediste, no
+   lo que comparte NOMBRE con ello.* Esta vez el estímulo sí llegó y la respuesta era cierta:
+   `whoami` del MCP de Figma en la nube devolvió "connection invalidated". Lo que me inventé fue el
+   alcance: se lo conté a Rafa como «el MCP oficial está caído» y enumeré como caídas
+   `get_design_context`, `get_variable_defs` y `get_screenshot` — tools que **nunca sondeé** y que
+   estaban leyendo el fichero tan tranquilas, porque viven en OTRO servidor. «El MCP de Figma»
+   resultó ser **tres** servicios independientes debajo de un mismo nombre coloquial. No lo cacé yo:
+   lo cazó él preguntando «¿entonces los MCP de Figma funcionan?». **Acción**: al informar de un
+   fallo, nombra el sujeto EXACTO que mediste («el server de nube», no «Figma»); y si tu frase usa
+   un nombre COLECTIVO —el MCP, el build, la API, los tests, el CI— párate y enumera sus partes:
+   casi siempre caen por separado y solo comparten etiqueta.
+
 2. **Tu medición te da un POSITIVO —"encontré N defectos"— y la escribiste tú → valida el
    parser antes de creerte el hallazgo, con un valor cuya respuesta ya sabes.** La regla de
    arriba está escrita para negativos, y por eso no me protegió: yo tenía un positivo y los
@@ -256,6 +268,20 @@
     evidencia — no la decidas tú.** *Evidencia (s11)*: el estilo de icono (Outlined vs Rounded)
     tenía drift en 3 sitios y el hand-off recomendaba lo contrario que el código de las apps;
     plantearlo evitó revertir una decisión de marca ya tomada.
+
+    *Corolario (s27) — el ENCUADRE DE RIESGO es parte de la evidencia: si lo exageras, le has
+    inclinado la decisión con una premisa falsa.* Aquí cumplí la regla al pie —recomendación,
+    evidencia y `AskUserQuestion`— pero para quitarle peso a la elección escribí que borrar la rama
+    era «barata y **reversible** en las dos direcciones». Rafa lo cuestionó: «¿cómo que borrar es
+    reversible? si me acuerdo de esto dentro de un año, ¿se podría rescatar?». La respuesta honesta
+    era **no**: borrar una rama deja los commits inalcanzables, el reflog local los tritura a los
+    ~30-90 días, y que GitHub los sirva por SHA es comportamiento observado, no garantía escrita.
+    Mi frase era cierta a una semana vista y falsa al año, que es justo el horizonte que a él le
+    importaba. **Acción**: si justificas una acción destructiva con «es reversible», di el
+    **horizonte** y el **mecanismo** ("recuperable por reflog ~30 días") — y si no te gusta cómo
+    suena dicho así, hazla reversible ANTES en vez de matizar después: aquí bastó
+    `git tag -a archive/<nombre>` empujado a `origin`, que fija esos commits para siempre. Entonces
+    la palabra ya era verdad.
 
 16. **Antes de un refactor transversal, monta primero la red que lo verifica — y hazlo aunque
     parezca un rodeo.** *Evidencia (s12)*: la suite e2e del supervisor cazó dos bugs el mismo día
