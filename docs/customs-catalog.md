@@ -52,7 +52,7 @@ Sobre Figma SC: pedir el link del componente ANTES de tocar nada. Replicar 1:1 l
 | Button `severity=primary` | `#3b82f6` (azure-500) | `#344a70` (navy-500) | `semantic.primary.color = var(--sc-bg-primary)` (preset `base.ts`) |
 | Tabs `active` | azure | navy | `tabs.ts` hereda `primary.color` |
 | Select / Datepicker / Input / MultiSelect `focus border` | azure | navy | `formField.focusBorderColor = var(--sc-bg-primary)` |
-| Checkbox `checked` (bg + border) | azure | navy | `sc-checkbox.scss` checked state `--sc-bg-primary` |
+| Checkbox `checked` (bg + border) | azure | navy | `sc-checkbox.component.scss` checked state `--sc-bg-primary` |
 | Modal `header icon` | slate-700 | (puede ser primary tinted) | — |
 
 **Razón**: brand identity SC = navy oscuro, distinto del Aura primary default. Marca corporate consistente en CTAs principales.
@@ -207,7 +207,7 @@ porque al oscurecer un fondo se puede dejar texto oscuro encima; es la que cazó
 cuatro fallos de AA que llevaban ahí desde siempre: una red que solo mira un tema sugiere
 que el otro está comprobado.
 
-**Lo que queda abierto, medido y sin arreglar** (los cuatro viven en el spec, con su
+**Lo que queda abierto, medido y sin arreglar** (**uno** vive en el spec `CONOCIDOS_CLARO`, no cuatro — los otros tres se arreglaron y salieron de la lista; verificado 2026-08-13, con su
 número, no escondidos). Ninguno es CSS de página — todo lo que dependía de una hoja de
 página está cerrado:
 
@@ -341,9 +341,14 @@ texto** —10% en los dos temas— y por eso su oscuro no necesita tabla propia.
 mapea roles a primitivas POR TEMA, así que la equivalencia hay que escribirla a mano; es el
 mismo modo de fallo que dejó seis colores de texto sin valor oscuro (§1.5).
 
-**Qué lo vigila**: nada específico todavía. `theme-contrast.spec.ts` mide texto sobre fondo, no
-bordes contra su superficie. Un guardián «ningún token de borde iguala a su superficie» cerraría
-la familia entera; queda anotado, no hecho.
+**Qué lo vigila**: **`npm run audit:border-surfaces`** (`scripts/check-border-surfaces.mjs`), en
+la cadena `verify`. Comprueba que ningún `--sc-border-*` resuelve, **en su tema**, a menos de
+1.02:1 de `--sc-bg-surface` o `--sc-bg-default` — hoy, 104 pares en verde. `theme-contrast.spec.ts`
+no lo cubre: mide texto sobre fondo, no bordes contra su lienzo.
+*(Corregido el 2026-08-13. Esta sección decía «nada específico todavía… queda anotado, no hecho»
+**mientras el guardián ya existía y corría** — y es peor de lo que parece: cuando falla, el propio
+script manda leer esta sección (`check-border-surfaces.mjs:206`). El desarrollador llegaba aquí a
+que le dijeran que el gate que le acababa de fallar no estaba construido.)*
 
 ---
 
@@ -380,14 +385,14 @@ Para el caso futuro de backend real: el grace period del undo vive **server-side
 
 - **Figma**: el body es un free slot sin layout opinionado.
 - **SC**: el body es `display: flex; flex-direction: column; gap: var(--sc-spacing-1-125)` por defecto. Los hijos directos quedan apilados con gap 16px (de diseño) automático.
-- **Implementación**: `sc-modal.scss` `.sc-modal__body`.
+- **Implementación**: `sc-dialog.component.scss` `.sc-modal__body`.
 - **Para qué**: el caso 95% de uso del modal es forms verticales (2-5 inputs). Sin gap por defecto, cada consumer reinventaba un wrapper. Ahora `<sc-inputtext>`, `<sc-select>` etc. proyectados directamente quedan separados.
 
 ### 2.5 Modal `[bodyless]` mode
 
 - **Figma**: el body siempre existe.
 - **SC**: prop `[bodyless]="true"` colapsa el modal a header + footer pegados (sin body band visual). Para confirm dialogs donde la descripción cabe en subtitle.
-- **Implementación**: template de `<sc-dialog>` + scss `.sc-modal--bodyless`.
+- **Implementación**: template de `<sc-dialog>` + scss `.sc-dialog--bodyless`.
 - **Para qué**: confirm dialogs (delete, discard, leave page) son el 60% de los usos de modal.
 
 ### 2.6 `<sc-icon>` — único proveedor de iconos (Material Symbols)
@@ -504,9 +509,9 @@ Para el caso futuro de backend real: el grace period del undo vive **server-side
 - **Datepicker / Checkbox**: Figma SOLO modela densidad Normal — no hay variants Small / Large.
 - **SC añade** `sm` y `lg` por consistencia de familia con el resto. Mismo escalado proporcional. Si diseño en algún momento define densidades específicas para datepicker o checkbox, ajustar.
 - **Implementación**:
-  - Input: `sc-inputtext.scss` `--sm/--lg` con valores Figma exactos (vía tokens `--sc-spacing-*`).
+  - Input: `sc-inputtext.component.scss` `--sm/--lg` con valores Figma exactos (vía tokens `--sc-spacing-*`).
   - Select / MultiSelect: idem en `.p-select-label / .p-multiselect-label`.
-  - Datepicker: `sc-datepicker.scss` (extiende formField vía `[size]`).
+  - Datepicker: `sc-datepicker.component.scss` (extiende formField vía `[size]`).
   - Checkbox: `checkbox.scss` `&--sm / &--lg` con box de 14/21 px de diseño.
 
 ### 4.3 Form field font-size base (md) = 14 — fix fuga `1rem` de PrimeNG
@@ -514,7 +519,7 @@ Para el caso futuro de backend real: el grace period del undo vive **server-side
 - **Síntoma**: los inputs leían "enormes" (texto 16px). Raíz (verificada en `@primeuix/styles`): PrimeNG **hardcodea** `.p-inputtext { font-size: 1rem }` / `.p-select-label { font-size: 1rem }` y el export del Kit Pro **NO define un `form.field.font.size` base** (solo los sm/lg). Resultado: el md caía al `1rem` (16px) de Aura, fuera de la rampa del Kit. Prueba de la fuga: `lg` era más pequeño que `md`, absurdo.
 - **Por qué no se arregla en el preset**: `formField.fontSize` NO es un token consumido por el CSS base de PrimeNG (el `1rem` está a pelo en `.p-inputtext`/`.p-select-label`). Ponerlo en el preset sería no-op. La referencia de densidad de form confirma 14.
 - **SC fija** el base a `var(--sc-font-size-200)` (14 de diseño) en el SCSS de cada wrapper, con selector host-prefijado para ganar a `.p-*` (misma cuenta de clases): `inputtext`, `select`, `multiselect`, `datepicker`, `inputnumber`, `search`, `inputgroup`. Viaja con el componente a cualquier app.
-- **Guardarraíl**: `tokens:guard` (Dura 3) prohíbe campos PrimeNG crudos en plantillas de app (fuera de los wrappers) — si no, reintroducen el `1rem` en silencio.
+- **Guardarraíl**: `tokens:guard` (**Dura 4**) prohíbe campos PrimeNG crudos en plantillas de app (fuera de los wrappers) — si no, reintroducen el `1rem` en silencio.
 - **Inspiración**: forms de referencia de diseño (14 valores, 12 labels/helpers, semibold-14 títulos, cards flat). Adoptado **densidad + flat** (label encima, NO el inset-label de esa referencia).
 
 ### 4.4 Dialog footer gap — divergencia consciente del Figma
@@ -559,9 +564,9 @@ Para el caso futuro de backend real: el grace period del undo vive **server-side
 
 | Token | Razón |
 |---|---|
-| `--sc-color-navy-*` (5 steps) | Brand primary SC (vs azure Aura) — §1.1 |
+| `--sc-color-blue-*` (5 steps) | Brand primary SC (vs azure Aura) — §1.1 |
 | `--sc-color-sky-*` (5 steps) | Brand info SC (vs sky Aura) — §1.2 |
-| `--sc-shadow-card`, `--sc-shadow-toast-*` | Brand chrome SC — §2.x |
+| `--sc-shadow-card`, `--sc-shadow-dialog` | Brand chrome SC — §2.x |
 | `--sc-z-{sticky-form-header,bulk-action-bar,modal-backdrop,...}` | Pool overlay SC (no en Kit Pro) — §5.8 |
 | `--sc-font-family-mono` | System mono stack (no exportado por Kit Pro) — §5.8 |
 | `--sc-toast-undo-*` | Extension pattern undo SC — §2.1 |
@@ -614,15 +619,15 @@ Diseño formaliza estos en la collection "Custom" al vincular el Kit Pro con Var
 
 **Ley formal de la escala**: el nombre del token = `valor de diseño / 14` (base 14), con `.`→`-` y negativos prefijo `neg-`. Radius = escala aparte, NO 14-base. `npm run tokens:gen` deriva el set canónico `--sc-scale-*` **y `--sc-radius-*`** del export DTCG, emite los valores en **rem** (px de diseño /16, conversión centralizada) y verifica que el código cumple la ley (incluida la de nombres, que `tokens:parity` no valida); `npm run tokens:import` los reescribe in-place desde el export. Corre en `npm run verify`.
 
-**Métricas de componente = referencias, no px**: el preset modular no fija paddings/sizes con literales (`'10.5px'`) sino con `var(--sc-scale-*)` / `var(--sc-radius-*)` / `var(--sc-font-size-*)` — todas caen exactas en la escala generada del export; `base.ts` no contiene ningún hex. Así un re-export del Kit propaga a los componentes sin teclear nada. `tokens:parity` cruza valor↔valor (37 checks) y `npm run audit:theme-scale` vigila que el preset no se salga de la escala.
+**Métricas de componente = referencias, no px**: el preset modular no fija paddings/sizes con literales (`'10.5px'`) sino con `var(--sc-scale-*)` / `var(--sc-radius-*)` / `var(--sc-font-size-*)` — todas caen exactas en la escala generada del export; `base.ts` no contiene ningún hex. Así un re-export del Kit propaga a los componentes sin teclear nada. `tokens:parity` cruza valor↔valor (**53 checks**, medido 2026-08-13) y `npm run audit:theme-scale` vigila que el preset no se salga de la escala.
 
-**Color de marca vigilado**: `tokens:parity` resuelve los `--sc-*` a hex y cruza **43 colores** (light+dark) contra el export: rampa primary (color/hover/active/contrast) + surface↔gray + texto/content/formField/navigation/list/overlay. Las divergencias conscientes van allow-listadas: info=electric-blue, warn=amber, dark navy-tinted vs zinc del Kit, y unas de chrome/jerarquía fina (placeholder gray-400 / disabled gray-300 más tenues que el gray-500 plano del Kit; nav-activo gray-700; borde de input gray-200 vs Kit gray-300). Cerró el punto ciego que dejó pasar el drift de `primary-hover`.
+**Color de marca vigilado**: `tokens:parity` resuelve los `--sc-*` a hex y cruza **38 colores** (light+dark; medido 2026-08-13 — el doc decía 43) contra el export: rampa primary (color/hover/active/contrast) + surface↔gray + texto/content/formField/navigation/list/overlay. Las divergencias conscientes van allow-listadas en la lista `diverge` de `scripts/color-map.mjs` — **10 filas**, y son las de chrome/formulario/overlay: `form.field.{icon,border,placeholder,disabled}.color`, `navigation.item.icon.color`, `overlay.select.background`, `text.muted.color` y las de superficie/contraste en oscuro. *(Corregido 2026-08-13: esta frase listaba «info=electric-blue, warn=amber, nav-activo gray-700», y ninguna de las tres está en `color-map.mjs`; `navigation.item.active.background` sí existe, pero como **enforce**, no como divergencia.)* Cerró el punto ciego que dejó pasar el drift de `primary-hover`.
 
-**Rampa de texto alineada al Kit**: texto cuerpo `--sc-text-primary` gray-800→**gray-700** (export textColor), secundario `--sc-text-secondary` gray-600→**gray-500** (export textMutedColor). El Kit es más plano (2 niveles); se mantienen `subtle`/`disabled` más finos a propósito.
+**Rampa de texto alineada al Kit**: texto cuerpo `--sc-text-primary` gray-800→**gray-700** (export textColor), secundario `--sc-text-secondary` gray-600→**slate-600** (`02-semantic.css:57`; el doc decía gray-500 y se contradecía con §1.5). El Kit es más plano (2 niveles); se mantienen `subtle`/`disabled` más finos a propósito.
 
 **Borde de input — divergencia consciente**: el Kit usa gray-300 para el borde de form-field (un punto más definido que content/overlay gray-200). Se deja en `--sc-border-default` (gray-200, = content/overlay): 1 paso, imperceptible, y **sin crear token nuevo** (decisión de diseño: no mintar aliases que no estén ya en el preset/export). Allow-listado en parity.
 
-**Auditoría de componentes — métricas heredan correctamente**: una auditoría solo-lectura cruzó el **default de Aura** (lo que PrimeNG renderiza sin override) contra el **export SC Prime**, resolviendo refs `{…}` + rem + aplanando camelCase→dot. Resultado: de 976 métricas numéricas, **655 coinciden** y **0 drift accionable** en componentes no pinados — confirma con datos que SC Prime ES PrimeNG limpio en sizing, así que **heredar Aura es correcto** (no hay que pinar los 81 componentes). Única divergencia conocida: `accordionHeaderFocusRingOffset` (Aura -1 inset vs SC 2; accordion no usado → no se pina, allow-list). Caveat: ~320 claves del export sin equivalente en Aura (SC-specific o naming divergente) no se cruzan — sin default Aura que filtre, bajo riesgo; reconciliar naming es follow-up. La marca (color) ya la cubre parity (43 enforce).
+**Auditoría de componentes — métricas heredan correctamente**: una auditoría solo-lectura cruzó el **default de Aura** (lo que PrimeNG renderiza sin override) contra el **export SC Prime**, resolviendo refs `{…}` + rem + aplanando camelCase→dot. Resultado: de 976 métricas numéricas, **655 coinciden** y **0 drift accionable** en componentes no pinados — confirma con datos que SC Prime ES PrimeNG limpio en sizing, así que **heredar Aura es correcto** (no hay que pinar los 81 componentes). Única divergencia conocida: `accordionHeaderFocusRingOffset` (Aura -1 inset vs SC 2; accordion no usado → no se pina, allow-list). Caveat: ~320 claves del export sin equivalente en Aura (SC-specific o naming divergente) no se cruzan — sin default Aura que filtre, bajo riesgo; reconciliar naming es follow-up. La marca (color) ya la cubre parity (**38** enforce).
 
 **Reconciliación pendiente**: `scale.1-25` (17.5) y `scale.2-5` (35) figuran arriba como Kit Pro Variables, pero el export actual puede no traerlos (`tokens:parity` los lista como code-only). Al próximo re-export del Kit: o diseño los añade, o se marcan SC-custom explícito.
 
@@ -648,11 +653,16 @@ Componentes del Kit Figma SC que **NO** tienen wrapper todavía. Decisión consc
 - **Estado**: sin uso hoy. Caso típico: filtros segmented horizontal ("Todos / Activos / Archivados"), choice radio visual.
 - **Cuándo crear**: primer filtro segmented real en una app consumidora.
 
-### 5.3 `sc-tag` — gap (Figma `❖ Tag` node 6738:55116)
+### 5.3 `sc-tag` — ~~gap~~ **YA EXISTE** (Figma `❖ Tag` node 6738:55116)
+
+> ✅ **Construido y publicado** (verificado 2026-08-13): `projects/ui-smartcontact/src/lib/components/tag/`,
+> exportado en `public-api.ts`, clasificado EXTENDED en `docs/inventory.md`. Esta sección lo daba
+> por gap y por eso decía «sería un componente nuevo» — se conserva por su spec de Figma y por la
+> distinción con `sc-chip`, que sigue siendo válida.
 
 - **Figma SC**: 4 variants `Basic / Severity (Primary/Secondary/Success/Info/Warn/Danger/Contrast) / Pill / Icon`. NO removible, fondo lleno de color (vs `❖ Chip` que es outline + removible).
 - **PrimeNG**: `<p-tag>`.
-- **Relación con sc-label-chip**: NO confundir. `sc-label-chip` cumple el rol del **Chip** Figma (outline, removible, categórico). `sc-tag` sería un componente nuevo para etiquetar contenido (estado de un ticket, severity de una alerta) — semántica distinta.
+- **Relación con `sc-chip`**: NO confundir. `sc-chip` es lo removible (outline + botón ×); `sc-tag` es la etiqueta de solo lectura (estado de un ticket, severity). *(Antes decía `sc-label-chip`, retirado — su racional está en DD-8.)*
 - **Cuándo crear**: primer caso de tag visual (severity de algo, estado lleno color).
 
 ### 5.5 `sc-search` — componente nuevo (Figma `❖ Search` node 11861:55210)
@@ -691,7 +701,7 @@ Componentes del Kit Figma SC que **NO** tienen wrapper todavía. Decisión consc
   - `sc-toggleswitch`: era CSS sobre `<input type="checkbox">`; ahora wrapper de `<p-toggleswitch>`. Misma API pública, los 21 consumers no se enteraron.
   - `sc-bulk-edit-menu`: internamente usa `<sc-select>` × 2 (era `<select>` HTML nativo).
 - **Declines documentados**: `inline-rename-cell` y `label-chip` evaluados — declinados con justificación. El `<sc-inputtext>` rompería la metáfora "flat cell" de rename-cell; el modelo `LabelColor` de label-chip no encaja con `<p-tag>` ni `<p-chip>`.
-- **Política**: prioridad clara — **minimizar custom sobre PrimeNG**. Antes de cualquier nuevo pure-sc, las 4 preguntas del checklist §0 son obligatorias.
+- **Política**: prioridad clara — **minimizar custom sobre PrimeNG**. Antes de cualquier nuevo pure-sc, las 4 preguntas del checklist §«Checklist anti-divergencia» son obligatorias.
 
 ### 5.8 Convenciones implícitas duration + shadow (cerrado sin token)
 
@@ -821,7 +831,7 @@ Los tokens **brand-visible** (paletas, spacing, radius, scale, surface, shadows 
 **Mapping final 3 wrappers PrimeNG ↔ Kit Pro**:
 
 - `<sc-dialog>` → `<p-dialog>` → Kit Pro `❖ Dialog` (`6738:50209`) ✅
-- `<sc-confirm-host>` → `<p-confirmdialog>` → Kit Pro `❖ ConfirmDialog` (`6738:50207`) ✅
+- `<sc-confirmdialog>` → `<p-confirmdialog>` → Kit Pro `❖ ConfirmDialog` (`6738:50207`) ✅
 - **gap reservado** → `<p-confirmpopup>` → Kit Pro `❖ ConfirmPopup` (`6738:50208`) — sin trigger consumer real, common-in-SaaS reservado.
 
 ### 5.11 `--sc-bg-canvas` — gap de token semántico de lienzo (deuda)
@@ -870,12 +880,12 @@ Los tokens **brand-visible** (paletas, spacing, radius, scale, surface, shadows 
 
 ## 7. Tipografía — punteros
 
-El **cinturón tipográfico** está cerrado (tokenización de 367 literales `font-size` → `--sc-font-size-*`, cobertura 48%→100% accionable; guard "Dura 4" bloquea `font-size` literal nuevo, 0 excepciones; el hero 88px pasó a `--sc-font-size-900`). NO es divergencia de marca, así que su contenido vive en sus hogares canónicos:
+El **cinturón tipográfico** está cerrado (tokenización de 367 literales `font-size` → `--sc-font-size-*`, cobertura 48%→100% accionable; guard **"Dura 5"** bloquea `font-size` literal nuevo, sin excepciones de token — pero las apps RÉPLICA (`agent`, `cuscare`) están exentas de las reglas 5-7 por DD-35/DD-37; el hero 88px pasó a `--sc-font-size-900`). NO es divergencia de marca, así que su contenido vive en sus hogares canónicos:
 
 - **Racional / blindaje** (por qué un update de PrimeNG no borra los tipos: viven en `--sc-*` + el bridge del preset, no en PrimeNG; único riesgo = slot `--p-*` renombrado → drift detectable por `npm run tokens:type-parity`; **NO** vincular `--sc-font-*` a la escala PrimeNG) → `migration-safety.md` + DD-11 en `DECISIONS.md`.
 - **Escala tipográfica** (redonda 12/14/16/18/20/24/32, desacoplada de `--sc-scale`, rem root-16, line-heights por regla, 2 pesos, naming de text styles = tokens de código) → **DD-13** en `DECISIONS.md`. Es la decisión que circula por el mecanismo de DD-11.
 - **Rampa de CONTENIDO (h1–h4, body-1/2/3, subtitle, caption) = divergencia consciente**: PrimeNG no tiene tipografía de contenido (solo `form.field` para inputs; el resto hereda del root del `<html>` — issue PrimeUIX #192 abierto). Es hueco upstream, **no deuda del DS** → la aporta el sistema, con naming de **barra** (`typography/heading/h1`, `typography/body/body-1`) en la capa expuesta, separado de los tokens atados a `form.field` (que sí espejan PrimeNG). Regla de naming **por capa**: la capa **expuesta** (App, lo que el componente consume → `--app-font-size`) usa barra/jerarquía espejo del dot-path de PrimeNG; el **primitivo de escala** va plano (`typography/font-size/14`, nombre=valor, interno). Evidencia y validación contra PrimeNG → DD-13 (Anexo "Validación contra PrimeNG").
-- **Tooling** → `npm run tokens:type-parity` (read-only) + `npm run tokens:guard` (Dura 4), ambos dentro de `npm run verify`.
+- **Tooling** → `npm run tokens:type-parity` (read-only) + `npm run tokens:guard` (**Dura 5**), ambos dentro de `npm run verify`.
 
 **Line-heights**: decididos en DD-13 (por regla) e implementados con la escala redonda.
 
@@ -902,5 +912,5 @@ Recomendación:
 
 ---
 
-Última actualización: 2026-06-14 (adaptación al repo unificado: rutas, export DTCG,
+Última actualización: 2026-08-13 (auditoría de documentación; antes decía 2026-06-14 con contenido fechado hasta julio) (adaptación al repo unificado: rutas, export DTCG,
 preset modular, escala en rem, focus-ring 2px reconciliado al Kit).
