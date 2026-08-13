@@ -7,6 +7,26 @@
 
 ## En curso
 
+### Tokenizar los text styles del Figma (raíz común de 4 "fallos" de componente)
+- **Qué**: en la validación web↔Figma de s24 (Jira **SISMAC-4074**), Select, MultiSelect, Chip y
+  Toast fallaban por lo MISMO: **los estilos de texto de Figma no están tokenizados como `--sc-*`**,
+  así que el navegador aplica sus defaults. Se manifiesta distinto por componente —
+  Select/MultiSelect en tamaño de fuente (opciones a 16 en vez de 14); Chip/Toast en line-height
+  (Chip 35 vs 31, Toast 62 vs 72 + el margen del botón ×) — pero **es un solo arreglo, no cuatro
+  tickets**. Enlaza con el aparcado *"`line-height` sin unidad: sin token destino en el Kit"*,
+  que es exactamente el token que falta.
+- **Procedencia**: medido en la sesión 24 (2026-08-07); entregable en Figma, página `Feedback`,
+  sección `14015-179` (file `khNq9dJKNi13pNllrqm6dx`). **Rescatado aquí el 2026-08-13** al mergear
+  el PR #23: vivía solo en un hand-off volátil y no estaba en ningún doc durable.
+  ⚠️ No re-medido desde entonces — trátalo como pista verificable, no como estado actual.
+- **Disparador**: al abordar la deuda de tipografía del Kit, o si vuelve a reportarse cualquiera
+  de esos 4 componentes.
+- **Validación**: los text styles del Kit exportan `font-size`/`line-height` como tokens; tras
+  `tokens:import`, los 4 componentes miden en web lo mismo que su nodo de Figma.
+- **Ojo al medir**: varias "diferencias" de aquella validación resultaron ser **el mismo
+  componente en otro estado** (placeholder vs elegido, `showClear` on/off, ancho fluido vs 216
+  fijo), no defectos. Iguala el estado antes de marcar nada.
+
 ### Round-trip del focus ring → Figma
 - **Qué**: el focus ring (electric-blue 2px) ya se escribió en Figma (2026-06-14, ver Figma
   change-log en `guia-tokens.md`). Falta cerrar el round-trip.

@@ -142,9 +142,15 @@
 ## Gates y push
 
 7. **Vas a `git push` → corre lo que corre el CI, y el CI NO es `npm run verify`.** `verify` es
-   **uno de los cinco pasos** de `ci.yml`; los otros cuatro son `build:docs`, el build AOT de
-   supervisor y de agent, `e2e` y `e2e:supervisor`. Abre `ci.yml` y córrelos; es enumerable, no
-   hay que adivinarlo.
+   **uno de los OCHO pasos** de `ci.yml` (medido 2026-08-13): `verify`, `build:docs`, los builds
+   AOT de **supervisor, agent y cuscare**, `e2e`, `e2e:supervisor` y `e2e:cuscare`. Abre `ci.yml`
+   y córrelos; es enumerable, no hay que adivinarlo.
+   *Y esta regla se saltó a sí misma*: hasta hoy decía "cinco pasos" y enumeraba cuatro que eran
+   cinco, omitiendo los dos de `cuscare` — o sea que la regla escrita para que no te saltes un
+   paso del CI te mandaba saltarte exactamente los dos más nuevos. La lección de fondo: **una
+   enumeración copiada a prosa caduca en cuanto alguien añade un paso; si el fichero fuente es
+   enumerable, ábrelo tú aunque la prosa parezca completa** — y quien añada un paso a `ci.yml`
+   tiene que actualizar esta línea (o mejor, gatearlo).
    *Evidencia (s11)*: racionalicé un subset y pusheé; el verify completo cazó luego el desfase
    de `audit:components` (`sc-button` 9→12) que el subset se habría comido. Fix: `node
    scripts/component-audit.mjs --write` + commitea `docs/inventory.md` + `_component-status.json`.
