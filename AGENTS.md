@@ -329,8 +329,13 @@ Each entry: **what bites → the rule → why**. Append here when a new one is f
 
 - **Wrong Figma bridge.** *Bites:* reaching for `mcp__ClaudeTalkToFigma__*` (channel-based,
   not running) gives endless "Not connected". *Rule:* the live write-bridge is
-  **`mcp__figma__*`** (Figma Console MCP, WebSocket on `localhost:9223`) — see *Figma MCP
+  **`mcp__figma-console__*`** (Figma Console MCP, WebSocket on `localhost:9223`) — see *Figma MCP
   Bridge* below. *Why:* two sessions lost asking for a "channel" that does not exist in this setup.
+- **"The Figma MCP" is three servers, and they fail independently.** *Bites:* on 2026-08-13
+  `whoami` on the cloud server returned "connection invalidated", and that was reported as
+  *the official MCP is down* — but `mcp__Figma__get_metadata` was reading the file fine the
+  whole time. *Rule:* probe the half you actually need; never generalise one server's failure
+  to the others. *Why:* they are genuinely different services — see the table below.
 - **Rasters can't be imported into Figma by code.** *Bites:* the plugin sandbox blocks
   `createImageAsync`/`fetch` to localhost, `set_image_fill` is unimplemented, and a
   hand-transcribed base64 corrupts ("Invalid base64 string"). *Rule:* leave an auto-layout
@@ -438,22 +443,34 @@ Each entry: **what bites → the rule → why**. Append here when a new one is f
 
 ## Figma MCP Bridge (recorded)
 
-The Figma source-of-truth file is **"Smart-Contact Prime"** (file key
-`khNq9dJKNi13pNllrqm6dx`). To read/write it from an agent:
+The Figma source-of-truth file is **"Smart-Contact Design System"** (file key
+`khNq9dJKNi13pNllrqm6dx`; it used to be called *"Smart-Contact Prime"* — same key).
 
-- **Prefer the OFFICIAL Figma MCP** (tools under the long `mcp__acb3d14c-…__*` id):
-  `get_metadata` / `get_design_context` / `get_screenshot` to read, `use_figma` to write.
-  **Verified working in s22** — it reads and writes this file key without a local plugin.
-  Before EVERY `use_figma` call, load the `figma-use` skill and pass `skillNames`.
-- **Fallback: `mcp__figma__*`** — the *Figma Console MCP* "Desktop Bridge" plugin (compact panel,
-  `</>` icon, green **"MCP ready"**). WebSocket on `localhost:9223`, no channel needed.
-  Key tools: `figma_get_status` (health, pass `probe:true`), `figma_execute` (runs JS with the
-  `figma` global), `figma_capture_screenshot`. Needs Figma Desktop open with the plugin running,
-  so it is **not** available in headless/cron runs.
+**There is no single "Figma MCP". There are three servers, and each one can be down on its
+own** — check the one you need before concluding anything (state verified 2026-08-13):
+
+| Server | What it talks to | Gives you | Needs |
+|---|---|---|---|
+| `mcp__figma-console__*` | Desktop Bridge plugin, WebSocket `localhost:9223` | Everything: read **and write** (`figma_execute` runs JS with the `figma` global), screenshots, variables, comments | Figma Desktop open with the plugin running |
+| `mcp__Figma__*` | The Figma **desktop app** | Read only: `get_metadata`, `get_design_context`, `get_screenshot`, `get_variable_defs` | Figma Desktop open |
+| `mcp__acb3d14c-…__*` / `plugin:figma:figma` | `https://mcp.figma.com/mcp` (**cloud**) | `use_figma` (write), **remote library search** (`get_libraries`, `search_design_system`), Code Connect, FigJam diagrams | OAuth, and it is the **only one that works headless/cron** |
+
+- **Default to `mcp__figma-console__*`.** It covers read and write on any Figma plan, and it is
+  the one that is reliably up. `figma_get_status` with `probe:true` is the health check.
+- **The cloud server is worth having for two things only:** searching *remote/published*
+  libraries (icons that are not local, e.g. `more_vert`), and any run without Figma Desktop
+  open. Before EVERY `use_figma` call, load the `figma-use` skill and pass `skillNames`.
+- **The cloud server is registered TWICE, independently**: as a claude.ai connector
+  (`mcp__acb3d14c-…__*`, reconnected from claude.ai connector settings) and as a Claude Code
+  plugin (`plugin:figma:figma`, authenticated with `/mcp` in an interactive terminal).
+  **Authenticating one does NOT authenticate the other** — measured 2026-08-13: the terminal
+  plugin went to `✔ connected · 32 tools` while the app session's `whoami` still returned
+  "connection invalidated".
 - **Do NOT use `mcp__ClaudeTalkToFigma__*`** — a different, channel-based plugin that is not running.
 - **`get_metadata` with no `nodeId` only lists the pages Figma has LOADED** (in s22: just
-  `🖼 Cover`). That is not "the file has one page" — switch pages with
-  `await figma.setCurrentPageAsync(page)` inside `use_figma` to enumerate the real 100+.
+  `🖼 Cover`). That is not "the file has one page" — the file has **111 pages** (counted
+  2026-08-13). To enumerate them all without switching page, run
+  `await figma.loadAllPagesAsync()` then read `figma.root.children` inside `figma_execute`.
 - **Node ids in docs go stale — resolve them before building on them.** DD-34 cited
   `Main Content 1:12381`; that node does not exist. Verify with `get_metadata` first.
 - **Reconnect:** if the MCP server restarts, the panel still shows "MCP ready" but the socket is
