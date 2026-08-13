@@ -75,7 +75,7 @@
 
 ### Deuda de código
 
-- [ ] **P1** `sc-illustrated-avatar` local del supervisor duplica un componente que el propio DS ya retiró y consolidó en `sc-avatar` (`projects/supervisor/src/app/shared/components/illustrated-avatar/illustrated-avatar.component.ts:44`, vs `projects/ui-smartcontact/src/lib/core/avatar-illustration.ts:1-5` que documenta la migración + `sc-avatar.component.ts:51` que ya expone `illustrationName`/`illustrationPool`/`illustrationBase`) → reemplazar `<sc-illustrated-avatar>` por `<sc-avatar [illustrationName]>` en los 9 ficheros que aún lo usan (`user-form-page`, `agent-form-page`, `agents-list-page`, `group-form-page`, `groups-list-page`, `agent-channel-table`, `group-assignment-table`, `top-bar`) y borrar el componente local. [arréglalo]
+- [x] ~~**P1** `sc-illustrated-avatar` local del supervisor duplica un componente que el propio DS ya retiró y consolidó en `sc-avatar`~~ → **reclasificado 2026-08-13, no es deuda**: `.impeccable.md:75-76` y `docs/inventory.md:93` (actualizados ese mismo día) documentan que es uno de los **2 gaps abiertos** del DS — `sc-avatar` solo expone buckets de tamaño (`illustrationName`/`illustrationPool`/`illustrationBase`), no **píxeles exactos**, que es justo lo que `illustrated-avatar` necesita. El hallazgo original no distinguió "expone el mismo contenido" de "expone el mismo control de tamaño". Es override **intencional** hasta que el DS resuelva el gap de tamaño; no reemplazar sin eso. [intencional]
 - [ ] **P1** `AgentChannelTableComponent` y `GroupAssignmentTableComponent` se documentan a sí mismos como "contraparte simétrica" (comentario en `group-assignment-table.component.ts:25`) pero divergen en UX (selección múltiple + bulk pause/unassign vs picker simple) sobre el mismo modelo `GroupAgentLink[]`, y comparten un helper `canonicalize()` copiado verbatim (`agent-channel-table.component.ts:269` = `group-assignment-table.component.ts:168`, idéntico carácter a carácter) → extraer un editor compartido de links agente↔canal/grupo (o al menos mover `canonicalize()` a un util común) y decidir una única UX para añadir/quitar un link. [arréglalo]
 - [ ] **P1** El patrón "form panel de alta/edición" se reimplementa 5 veces (signal por campo, sync `initial`→signals, autofocus vía `ViewChild`+`queueMicrotask`, `onSave` create-vs-update) con **dos criterios distintos** de nombre-duplicado sin documentar: `existingNames`/`.some()` en `label-form-panel.component.ts:56,127` y `template-form-panel.component.ts:40` vs `store.isNameTaken()` en `category-form-modal.component.ts:155` y `entity-form-modal.component.ts:122` — mientras `repo-form-panel.component.ts:46` ya es genérico (`RepoFormPanelComponent<T>`, sirve 7 tipos de entidad) y no se reusa → generalizar `RepoFormPanelComponent` (o extraer el estado a un helper compartido) y unificar el criterio de nombre-duplicado. [arréglalo]
 - [ ] **P2** `ClipboardService` del supervisor es una copia carácter-a-carácter de `ScClipboardService` del DS (`projects/supervisor/src/app/core/services/clipboard.service.ts:12` vs `projects/ui-smartcontact/src/lib/core/services/sc-clipboard.service.ts:14`) y no la inyecta nadie (0 usos fuera de su propio fichero y del barrel `core/services/index.ts:4`) → borrar el fichero y su export; usar `ScClipboardService` del DS si hace falta. [gate-able — un guard que barra exports sin ningún import en el resto del árbol (dead-export sweep) habría cazado esto solo]
@@ -127,14 +127,13 @@
 
 ### Deriva de docs
 
-- [ ] `docs/DECISIONS.md:9` promete "Formato DD-N, newest first", pero
-  DD-21..DD-34 (`docs/DECISIONS.md:1005` a `:1444`) se anexaron en orden
-  ASCENDENTE al final, tras DD-1 (`docs/DECISIONS.md:978`), en vez de subir al
-  principio del bloque — rompe la promesa para toda la cola. Ya señalado como
-  pendiente en `docs/DOCS-INDEX.md:88` desde 2026-06-30 (entonces "DD-21..27 al
-  final") y ha seguido creciendo sin corregirse (ahora DD-21..34) → mover
-  DD-21..DD-34 justo debajo del DD más reciente para que el fichero completo
-  sea newest-first real. [arréglalo]
+- [x] ~~`docs/DECISIONS.md:9` promete "Formato DD-N, newest first", pero
+  DD-21..DD-34 se anexaron en orden ASCENDENTE al final~~ — **cerrado**: el
+  fichero se reordenó 37→1 el 2026-08-13 (commit `7fff4e7`, "docs: arregla los
+  estados falsos de DECISIONS..."), verificado con
+  `grep -n '^## DD-' docs/DECISIONS.md` (DD-37 primero, DD-1 último) y ahora
+  gateado por CHECK I de `docs:coherence` (falla si un DD queda por debajo de
+  uno más antiguo).
 - [ ] `docs/customs-catalog.md:905` dice "Última actualización: 2026-06-14",
   pero el cuerpo tiene secciones fechadas hasta el 2026-07-22 (§1.9,
   `docs/customs-catalog.md:321`) — el pie lleva más de un mes de contenido
