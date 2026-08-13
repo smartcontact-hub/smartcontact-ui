@@ -145,6 +145,26 @@ for (const { path, lines } of files) {
   });
 }
 
+// ── CHECK G — el índice de disparadores de LEARNINGS cuadra con su cuerpo ──────────
+// El índice existe para poder escanear las reglas sin leer 5.700 palabras. Si se desincroniza
+// —una regla nueva sin fila, o una fila que apunta a una regla fundida— deja de ser un índice y
+// pasa a ser una mentira corta, que es peor. Los números son identificadores citados desde
+// código (`e2e/supervisor/conversations-row-gesture.spec.ts` cita "LEARNINGS #1"): no se
+// renumeran, así que comparar los conjuntos es exacto.
+{
+  const learnings = readFileSync(resolve(root, 'LEARNINGS.md'), 'utf8');
+  const cuerpo = new Set([...learnings.matchAll(/^(\d+)\. \*\*/gm)].map((m) => m[1]));
+  const indice = new Set([...learnings.matchAll(/^\| \*\*(\d+)\*\* \|/gm)].map((m) => m[1]));
+  for (const n of cuerpo)
+    if (!indice.has(n))
+      fail(`LEARNINGS.md — la regla ${n} existe pero NO está en el índice de disparadores.`);
+  for (const n of indice)
+    if (!cuerpo.has(n))
+      fail(
+        `LEARNINGS.md — el índice lista la regla ${n}, que ya no existe en el cuerpo (¿fundida en otra?). Quita su fila.`,
+      );
+}
+
 // ── CHECK E — una CIFRA de componentes citada en prosa ≠ el manifiesto generado ────
 // Nace de dos instancias reales cazadas por la auditoría semanal en semanas distintas:
 // `README.md` decía 49 y `projects/ui-smartcontact/README.md` decía "~55" mientras

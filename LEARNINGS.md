@@ -9,9 +9,46 @@
 > lección solapa con otra, funde ambas en la más fuerte. Un fichero largo no se lee, y uno
 > que no se lee no mejora nada.
 >
+> **El tope cuenta REGLAS, no entradas numeradas** (aprendido el 2026-08-13): el fichero
+> respetaba "20 entradas" mientras escondía **15 corolarios con disparador y acción propios**
+> — 35 reglas reales y 5.206 palabras, con `CLAUDE.md` afirmando que "es corto a propósito".
+> El crecimiento se había desviado al interior de las entradas, blanqueado por la instrucción
+> "funde en la más fuerte". Al contar, cuenta también los corolarios.
+>
+> **Los números son IDENTIFICADORES, no un orden**: hay código y docs que citan reglas por
+> número (`e2e/supervisor/conversations-row-gesture.spec.ts` cita "LEARNINGS #1"). Por eso la
+> numeración no es secuencial y **al fundir dos reglas el número de la absorbida desaparece,
+> el de la superviviente NO se toca**. Nunca renumeres.
+>
 > Ámbito: reglas de proceso **del repo**, versionadas y visibles para todo el mundo. Los
 > hechos del proyecto (arquitectura, decisiones, estado) NO van aquí: van a `docs/` y a
 > `NEXT-SESSION.md`.
+
+## Índice de disparadores — escanea esto, baja solo a la que te aplique
+
+Las 16 reglas caben aquí. La evidencia de cada una está abajo, y es larga **a propósito**: es
+lo que hace que te la creas cuando te toca. Lee el índice siempre; el cuerpo, cuando dispare.
+
+| # | Si estás a punto de… | → |
+|---|---|---|
+| **1** | concluir que algo NO funciona desde una herramienta | demuestra que tu estímulo LLEGÓ, y no extiendas el negativo más allá de lo que mediste |
+| **2** | creerte un hallazgo (o un verde) de una sonda **tuya** | valida el instrumento con un caso conocido; pruébalo en todos sus ejes; y si da verde, mira algo que tú no escribiste |
+| **4** | arreglar un valor sustituyéndolo por otro token | mide el token de DESTINO antes (fondo y texto, misma familia) |
+| **5** | dudar entre tu código y tu medición | lo rancio es la medición: build, server, HMR, animación… o atribución (stash-y-reproduce) |
+| **6** | mirar el código porque un test NUEVO falla | sospecha del test primero: ¿mide la magnitud? ¿el selector casa? ¿reintenta? ¿espera al estado final? |
+| **7** | hacer `git push` | corre los **8 pasos** de `ci.yml`, una vez, sobre el árbol final — y confirma el verde LEYENDO el log |
+| **8** | proponer una segunda corrección tras fallar la primera | para: la siguiente acción es una MEDICIÓN que localice la causa |
+| **10** | declarar algo bloqueado, o deducir un dato a ojo | comprueba si el sistema ya te lo sirve (DOM oculto, i18n, hoja de estilos) |
+| **11** | lanzar una edición masiva por shell | pega la verificación de outcome en el MISMO comando (zsh no hace word-splitting) |
+| **12** | dar una cifra de un grep, o ejecutar un `sed` | pregúntate qué casa cada match; si hay un ejecutor que sabe el número, el número es el suyo |
+| **14** | responder a un "hazlo todo" | haz lo verificable de punta a punta, aparca lo demás DOCUMENTADO, y dilo |
+| **15** | decidir algo de marca/producto | preséntalo con recomendación y evidencia — y no exageres el encuadre de riesgo |
+| **16** | empezar un refactor transversal | monta antes la red que lo verifica, aunque parezca rodeo |
+| **17** | construir sobre una descripción que no verificaste tú | es una paráfrasis: vuelve a la fuente (da igual si viene de un hand-off, Figma, un README u otro agente) |
+| **18** | zanjar una decisión VISUAL discutiendo | constrúyela en su versión mínima y MÍRALA |
+| **19** | elegir cómo validar algo | por la PREGUNTA: gesto→Playwright · aspecto→captura · ¿sabrán usarlo?→recorrido cognitivo |
+
+---
 
 ## Verificación (lo que más caro me ha salido)
 
@@ -65,10 +102,30 @@
    devolvía negro donde esperaba blanco). Solo sirvió porque miré su línea antes que las demás.
    Si el control no pasa, la medición entera queda invalidada aunque el resto parezca sensato.
 
-3. **Vas a atribuir un warning/error a tu cambio (o a "ya estaba") → pruébalo con
-   stash-y-reproduce.** Cuesta ~2 llamadas y convierte "creo" en "comprobado". *Evidencia
-   (s11)*: el warning de presupuesto SÍ era mío (lo arreglé borrando CSS muerto en vez de
-   recortar diseño); los errores de View Transitions NO lo eran (mismos errores sin mi cambio).
+   *Absorbe la antigua regla 13 (s18) — si el instrumento que construyes es un COMPROBADOR
+   (guardián, red, gate), enumera las DIMENSIONES sobre las que varía y pruébalo en cada una,
+   no solo en la que tenías en la cabeza.* Escribí un guardián de "build rancio" y lo validé en
+   el eje rancio↔fresco, muy satisfactorio; no lo validé en claro↔oscuro, donde leía siempre el
+   valor claro y acusaba de rancio a un build recién hecho — **17 tests rojos en CI**. **Un
+   guardián con falsos positivos es peor que ninguno: enseña a ignorarlo.** Y al probarlo contra
+   un artefacto "viejo", comprueba que **sigue siendo viejo** (reusé un `dist/` que se había
+   regenerado: el verde no probaba nada). Fabricar el caso malo a mano cuesta 30 segundos y no
+   caduca. *Confirmado el 2026-08-13 en los 5 gates de docs nuevos*: cada uno probado en rojo con
+   un caso malo fabricado Y en verde con el bueno, y ahí se vio que el de tokens marcaba familias
+   y retirados — falsos positivos que lo habrían convertido en ruido.
+
+   *Absorbe la antigua regla 20 (s16) — el caso opuesto: tu comprobación da VERDE → pregúntate
+   si mide algo que tú NO escribiste.* Cuando el arreglo y la lista de comprobación salen de la
+   misma cabeza, el verde es circular. Migrando labels a `sc-datatable` medí alto de fila,
+   paddings, tipografía y colores: **"DIFERENCIAS: ninguna"**. La captura, acto seguido, enseñaba
+   dos defectos que mi lista no podía ver porque yo no los había pensado —la banda de `caption`
+   que PrimeNG pinta siempre, y un `table-layout: fixed` global de hace meses—, los dos venidos
+   de cosas que yo no escribí. **Acción**: cierra con una observación que NO dependa de tu
+   inventario (la pantalla entera, o un control que no has tocado). *Y su gemela (s18)*: **el
+   filtro que pusiste para quitar ruido es el que esconde el caso más común** — mi red de
+   contraste solo miraba elementos con fondo propio y dio 34/34 verde; el texto vive en `<span>`
+   sin fondo, y al quitar el filtro salieron **seis defectos reales**, uno a 1.30:1. Si una red
+   tuya se pone verde a la primera, enumera en voz alta qué está EXCLUYENDO.
 
 4. **Vas a arreglar un valor sustituyéndolo por otro token → MIDE el token de destino antes.**
    Un arreglo que apunta a algo que tampoco cumple no es un arreglo, es mover el fallo de
@@ -98,6 +155,14 @@
    algo viejo — build, server, HMR o animación — y neutralízalo (rebuild, reinicio, recarga
    dura, espera de asentamiento). Cuesta segundos; la alternativa es depurar código que no se
    está ejecutando o un DOM que aún no ha terminado de moverse.
+
+   *Absorbe la antigua regla 3 (s11) — la variante de ATRIBUCIÓN: «¿este warning es mío o ya
+   estaba?» se contesta con **stash-y-reproduce**, no opinando.* Es el mismo gesto —neutraliza
+   la variable antes de creerte la señal—, aplicado al origen en vez de a la frescura. Cuesta
+   ~2 llamadas y convierte "creo" en "comprobado": el warning de presupuesto SÍ era mío; los
+   errores de View Transitions NO (salían igual sin mi cambio). *Y otra vez el 2026-08-13*: tres
+   e2e en rojo tras mergear 3 PRs; reproducidos en el commit ANTERIOR, dos salían igual → no
+   eran míos. Sin eso habría "arreglado" código sano o, peor, culpado a mi propio cambio.
 
 19. **Elige el validador por la PREGUNTA que tienes, y ten claro que ninguno contesta la de
    usabilidad.** No hay una escalera fija de herramientas; hay tres preguntas distintas:
@@ -173,13 +238,13 @@
    `docs:coherence` y `lint`: correr `verify` entero ahí es exactamente el desperdicio que este
    corolario nombra.
 
-9. **Confirma el verde LEYENDO el log o el run**, nunca un exit-code que no sea el del comando que
-   te importa. *Evidencia (s11)*: confirmé el CI con `gh run view --json conclusion`, no con el
-   `EXIT=0` del watcher.
-   *Evidencia (s26) — **el atajo que yo mismo usaba estaba roto***: cerré media sesión con
-   `npm run verify 2>&1 | tail -3; echo "VERIFY=$?"`. Ese `$?` es el del **`tail`**, no el del
-   verify, así que decía 0 con el lint en rojo; solo lo cacé porque el `✖ 1 problem` asomó en las
-   tres líneas del `tail`. Si vas a mirar un código de salida, que sea del proceso correcto
+   *Absorbe la antigua regla 9 — cómo se confirma ese verde: **LEYENDO el log o el run**, nunca
+   un exit-code que no sea el del comando que te importa.* Correr la cadena no sirve de nada si
+   luego te crees un código de salida ajeno. *Evidencia (s11)*: confirmé el CI con
+   `gh run view --json conclusion`, no con el `EXIT=0` del watcher. *Evidencia (s26) — el atajo
+   que yo mismo usaba estaba roto*: `npm run verify 2>&1 | tail -3; echo "VERIFY=$?"` devuelve el
+   `$?` del **`tail`**, así que decía 0 con el lint en rojo; solo lo cacé porque el `✖ 1 problem`
+   asomó en las tres líneas. Si miras un exit-code, que sea el del proceso correcto
    (`set -o pipefail`, o redirige a fichero y mira `$?` sin tubería) — y aun así, lee el log.
 
 6. **Tu test NUEVO se pone rojo → sospecha del test ANTES que del código.** Un test recién
@@ -261,20 +326,6 @@
       `severity` de un `<sc-message>`, que no tiene `variant`. Un `sed` por fichero entero
       pilla homónimos: acota el reemplazo a su ETIQUETA y verifica, por cada match, a qué
       etiqueta pertenece.
-
-13. **Construyes un comprobador (guardián, red, sonda) → enumera las DIMENSIONES sobre las que
-    varía y pruébalo en cada una, no solo en la que tenías en la cabeza.** Probar un checker
-    en un eje y darlo por bueno es el mismo agujero que él existe para tapar.
-    *Evidencia (s18), y duele porque es dentro del arreglo*: escribí un guardián de "build
-    rancio" y lo validé en el eje **rancio↔fresco** —rojo contra un build viejo, verde contra
-    uno nuevo, muy satisfactorio—. No lo validé en el eje **claro↔oscuro**: leía siempre el
-    valor claro del token, así que en tema oscuro comparaba slate-600 contra el slate-500 que
-    el navegador computa CORRECTAMENTE, y acusaba de rancio a un build recién hecho. 17 tests
-    rojos en CI. Un guardián con falsos positivos es peor que ninguno: enseña a ignorarlo.
-    **Corolario**: y cuando lo pruebes contra un artefacto "viejo", **comprueba que sigue
-    siendo viejo**. Reusé `dist/supervisor/browser` como build rancio sin mirar que se había
-    regenerado entretanto; el verde que obtuve no probaba nada. Fabricar el caso malo a mano
-    (copiar y rebobinar el valor) cuesta 30 segundos y no caduca.
 
 ## Entrega
 
@@ -379,25 +430,3 @@
     **una captura**: puesto el título, «Usuarios» encima de «Usuarios» se ve en un segundo y no
     hay nada que sopesar. La versión mínima ya construida es más barata que la deliberación —
     móntala y mírala **antes** de escribir el tercer argumento, no después.
-
-20. **Tu comprobación da VERDE → pregúntate si mide algo que tú no escribiste.** Cuando el
-    arreglo y la lista de comprobación salen de la misma cabeza, el verde es circular: mides
-    justo las propiedades que te propusiste reproducir, y por eso coinciden. *Evidencia (s16)*:
-    al migrar labels a `sc-datatable` medí alto de fila, paddings, tipografía y colores contra
-    la tabla original — **"DIFERENCIAS: ninguna"**. La captura, hecha a continuación, enseñaba
-    dos defectos que mi lista no podía ver porque yo no los había pensado: una franja vacía
-    sobre la cabecera (PrimeNG pinta siempre la banda de `caption`) y las columnas recolocadas
-    ~290px (`main.scss` fuerza `table-layout: fixed` en `table.table` y la tabla del DS es
-    `auto`). Las dos venían de cosas que yo no había escrito: una del componente de terceros y
-    otra de una regla global de hace meses. **Acción**: cierra siempre con una observación que
-    no dependa de tu inventario — la pantalla entera, o comparar contra un control que no has
-    tocado (aquí, una tabla sin migrar; fue lo que confirmó que en oscuro el defecto era
-    preexistente y no mío).
-
-    *Corolario (s18) — el filtro que pusiste para quitar ruido es el que esconde el caso más
-    común.* Mi red de contraste solo miraba elementos **con fondo propio**, porque parecía lo
-    razonable para no medir basura. Dio **34/34 verde**. Pero el texto casi siempre vive en un
-    `<span>` sin fondo dentro de un contenedor que sí lo tiene: al quitar ese filtro
-    aparecieron **seis defectos reales**, uno de ellos a 1.30:1. **Disparador**: cuando una red
-    tuya se pone verde a la primera, enumera en voz alta qué está EXCLUYENDO y pregúntate si
-    el caso típico cae dentro de la exclusión.

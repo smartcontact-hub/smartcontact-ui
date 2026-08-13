@@ -4,6 +4,15 @@
 > arquitecto-DS + senior-lead, contra `CLAUDE.md`/`AGENTS.md`. 99 hallazgos
 > brutos → síntesis priorizada. Backlog vivo: marca `[x]` lo cerrado.
 >
+> **Es el único snapshot FECHADO de deuda** (consolidación 2026-08-13). El backlog *vivo* lo
+> genera la rutina semanal en [`AUDIT-SEMANAL.md`](./AUDIT-SEMANAL.md); lo que se prioriza se
+> mueve a [`ROADMAP.md`](./ROADMAP.md). Se absorbió aquí `AUDIT-2026-07.md`, que se auto-declaraba
+> referencia de este ("§5 · referenciada, NO arreglada aquí"), daba por siguiente una fase que
+> DD-29 ya cerró, y abría con un baseline de "16 guardarraíles" cuando son 25. Los tres arreglos
+> que sí aportaba están **ejecutados y vivos en el código**, que es donde se comprueban:
+> `i18n:check` en `verify`, el matching con y sin guiones de `component-audit.mjs`, y la
+> allowlist `PROPOSED_SCRIPTS` de `docs-coherence.mjs`.
+>
 > **Objetivo guía:** reducir deuda de diseño, consistencia entre flujos,
 > claridad y simpleza. No es una lista de nitpicks — es lo que de verdad
 > multiplica esfuerzo o rompe consistencia.
@@ -56,7 +65,9 @@
 - [x] ~~dirty-state divergente admin vs AED~~ → unificado (primitivo) / AED ya correcto.
 - [x] ~~User sin `crossTab`/`conflictWarning`~~ → verificado 2026-07-18: `user-form-page` ya los tiene.
 - [ ] `isNameTaken` duplicado (`categories.store:50` ↔ `entities.store:69`).
-- [ ] `PERMISSION_MATRIX_KEYS` duplicado (agent-form ↔ aed-agentes) → `admin/data/permission-matrix.ts`.
+- [x] ~~`PERMISSION_MATRIX_KEYS` duplicado (agent-form ↔ aed-agentes)~~ → ya solo hay **una**
+  definición (`agent-form-page.component.ts:82`); el resto son usos en ese mismo fichero.
+  *Verificado 2026-08-13.*
 - [ ] **[quick]** handlers legacy `onLabelAdd`/`onLanguageAdd` vivos en paralelo (`agent-form:766+`) → borrar.
 - [ ] `toggleChannel` con cascade-clamping acoplado (`group-form:372`) → `GroupChannelCascadeService`.
 - [ ] tri-state toggle sin compartir (agent ↔ group) → `TriStateToggleUtil`.
@@ -68,7 +79,7 @@
 ### P1 — Agent / Scripts / i18n
 - [x] ~~PROFILE duplicado (`profile-card` + `agent-footer`)~~ → eliminado (verificado 2026-07-18).
 - [x] ~~seed `"Nombre Grupo 1"` ×4~~ → 0 ocurrencias (verificado 2026-07-18).
-- [x] **[quick]** i18n: ~35 claves `memory.rules.builder.*` faltan en en/fr/pt → sincronizar + **`i18n:check` en verify** — *RESUELTO 2026-07-01:* 37 claves traducidas (es ↔ en/fr/pt a 1:1, 1277 c/u) + `i18n:check` permanente en `verify`. Ver [`AUDIT-2026-07.md`](./AUDIT-2026-07.md) §3.
+- [x] **[quick]** i18n: ~35 claves `memory.rules.builder.*` faltan en en/fr/pt → sincronizar + **`i18n:check` en verify** — *RESUELTO 2026-07-01:* 37 claves traducidas (es ↔ en/fr/pt a 1:1, 1277 c/u) + `i18n:check` permanente en `verify`. (`scripts/i18n-check.mjs`, hoy en la cadena `verify`).
 - [ ] `EXPORT_PATH` ×7 + cadena de 5 generadores en `package.json:29` → `scripts/paths.mjs` + meta-generador.
 
 ## 3. Secuencia recomendada
