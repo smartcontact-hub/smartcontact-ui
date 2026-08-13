@@ -6,9 +6,16 @@
 > en [`customs-catalog.md`](./customs-catalog.md). Reglas de blindaje en
 > [`migration-safety.md`](./migration-safety.md).
 >
-> Formato DD-N, newest first. Cada entry usa esta plantilla (el campo **Descartadas** es
-> obligatorio — el valor de este log es saber *qué se probó y por qué se rechazó*, no solo
-> qué se eligió):
+> Formato DD-N, **newest first** (lo vigila `docs:coherence`; hasta el 2026-08-13 lo prometía y
+> no lo cumplía). Plantilla:
+>
+> **`Descartadas` es obligatorio SI hubo alternativas que se consideraron y se rechazaron** —
+> que es donde está el valor de este log: saber *qué se probó y por qué no*. No lo es cuando la
+> entrada registra un hecho o un bugfix sin bifurcación real; escribir "ninguna" es ruido.
+> *(Corregido el 2026-08-13: la cabecera lo declaraba obligatorio SIEMPRE y **28 de los 38 DDs no
+> lo tienen** — contado. Una regla que incumple el 74% de los casos no es una regla, es una
+> aspiración que enseña que la plantilla es opcional. Se ajusta la regla a lo que de verdad
+> aporta, en vez de fingir que 28 entradas están mal.)*
 >
 > ```
 > ## DD-N · YYYY-MM-DD — Título
