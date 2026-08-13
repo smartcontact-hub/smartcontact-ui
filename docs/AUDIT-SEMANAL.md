@@ -30,17 +30,19 @@
   `docs/DECISIONS.md` ni `docs/migration-safety.md` sobre cuál es la era objetivo → decidir y
   documentar (DD-N) la era objetivo; si es signals, migrar `sc-button` primero por ser la
   referencia más citada. [arréglalo]
-- [ ] **P1** `createFormDirtyState()` se documenta a sí mismo como "patrón único
-  plataforma-wide (admin agentes/grupos/usuarios, AED, builder de reglas)"
-  (`form-dirty-state.ts:6-9`), pero solo lo consumen las 3 páginas admin
-  (`user-form-page.component.ts`, `agent-form-page.component.ts`,
-  `group-form-page.component.ts`); las páginas AED y el rule-builder reimplementan a mano el
-  mismo par pristine/dirty con `JSON.stringify` crudo — justo el falso-sucio que
-  `stableStringify` existe para evitar — con el mismo comentario copiado ("Público para el
-  `formDirtyGuard`... confirma al salir con cambios"): `aed-agentes-page.component.ts:100,106-111`
-  (y su misma forma en `aed-grupos-page`/`aed-servicio-page`) y
-  `rule-builder-page.component.ts:198-217` con su propio `buildSnapshot()` → migrar las 4 páginas
-  restantes a `createFormDirtyState()`. [arréglalo]
+- [x] ~~**P1** `createFormDirtyState()` se documenta como "patrón único plataforma-wide" pero solo
+  lo usaban las 3 páginas admin; AED y el rule-builder reimplementaban el par pristine/dirty con
+  `JSON.stringify` crudo.~~ **HECHO 2026-08-13**, con un matiz que el hallazgo no veía: las 3
+  páginas de AED usan `pristine` **también para restaurar** el formulario al descartar
+  (`form.set(structuredClone(pristine()))`), y `createFormDirtyState` guarda el pristine
+  *serializado* — migrarlas enteras habría roto "descartar cambios". Así que se partió en dos:
+  el **rule-builder** migra completo (su pristine solo comparaba) y las **3 de AED** conservan su
+  signal y comparten solo la comparación, vía `stableStringify` ya re-exportado.
+  Lo que se arregla de verdad no es la duplicación, es un defecto: con `JSON.stringify` crudo
+  `{x:1,y:2}` y `{y:2,x:1}` salen **distintos** → falso SUCIO (Guardar se activa sin tocar nada),
+  y dos `Set` distintos salen **iguales** → falso LIMPIO (un cambio real se pierde). Verificado en
+  consola antes de tocar nada. Gate: `e2e:supervisor` 125/125 + AOT + typecheck + lint.
+
 - [ ] **P1** El port presentacional `sc-bulk-transcription-modal` del DS
   (`sc-bulk-transcription-modal.component.ts:41-51`: "recibe los contadores YA calculados...
   Animaciones 1:1 con el molde: hero count-up, delta flotante, pulse del caption, nudge del

@@ -46,6 +46,7 @@ import type { Rule, RuleType } from '../../data/rule.types';
 import { CategoriesStore } from '../../state/categories.store';
 import { ConversationsStore } from '../../state/conversations.store';
 import { RulesStore } from '../../state/rules.store';
+import { createFormDirtyState } from '../../../../shared/utils/form-dirty-state';
 
 /**
  * Constructor de reglas Memory (tipos transcription/classification — DD-27
@@ -195,26 +196,32 @@ export class RuleBuilderPageComponent implements DirtyAware {
     return n.toLocaleString('es-ES');
   }
 
-  /** JSON snapshot of every editable field — feeds the unsaved-changes guard. */
-  private buildSnapshot(): string {
-    return JSON.stringify({
-      name: this.name(),
-      description: this.description(),
-      active: this.active(),
-      conditionTree: this.conditionTree(),
-      aiAnalysis: this.aiAnalysis(),
-      categorias: this.categorias(),
-    });
-  }
+  /**
+   * Estado editable que vigila el guard de cambios sin guardar. Antes esto era un
+   * `buildSnapshot()` con `JSON.stringify` crudo + su propio `signal<string>` de pristine —
+   * una tercera copia del mismo patrón. Ahora usa el compartido (2026-08-13), que además
+   * compara con `stableStringify`: con JSON crudo, reordenar las claves del objeto marcaba
+   * el formulario como SUCIO sin que el usuario tocara nada.
+   *
+   * Aquí la migración es completa porque su pristine solo se usaba para COMPARAR. Las páginas
+   * de AED lo usan además para RESTAURAR el formulario al descartar, así que allí se conserva
+   * su `signal<FormState>` y solo se comparte la función de comparación.
+   */
+  private readonly dirtyState = createFormDirtyState(() => ({
+    name: this.name(),
+    description: this.description(),
+    active: this.active(),
+    conditionTree: this.conditionTree(),
+    aiAnalysis: this.aiAnalysis(),
+    categorias: this.categorias(),
+  }));
 
-  /** Original (saved/initial) state — `formDirty` compares against this. */
-  private readonly pristine = signal('');
   /**
    * Public for `formDirtyGuard` (canDeactivate): the rule-builder is the only
    * editor that previously lost edits silently on navigation. Now it confirms
    * with the shared discard dialog, like the admin forms and AED config.
    */
-  readonly formDirty = computed(() => this.buildSnapshot() !== this.pristine());
+  readonly formDirty = this.dirtyState.dirty;
 
   constructor() {
     effect(() => {
@@ -249,7 +256,7 @@ export class RuleBuilderPageComponent implements DirtyAware {
       }
       // New rule: capture the baseline AFTER the preselección — so arriving from
       // the cross-link doesn't mark the fresh form as dirty.
-      this.pristine.set(untracked(() => this.buildSnapshot()));
+      untracked(() => this.dirtyState.markPristine());
     });
 
     // Compara el estimado mensual con el de antes para saber si el último
@@ -289,7 +296,7 @@ export class RuleBuilderPageComponent implements DirtyAware {
     this.aiAnalysis.set(rule.aiAnalysis ?? false);
     this.categorias.set(rule.categorias ?? []);
     // Loaded values are the clean baseline for the unsaved-changes guard.
-    this.pristine.set(untracked(() => this.buildSnapshot()));
+    untracked(() => this.dirtyState.markPristine());
   }
 
   /*
@@ -347,7 +354,7 @@ export class RuleBuilderPageComponent implements DirtyAware {
       });
     }
     // Just saved → the current form IS the clean state; don't prompt on the way out.
-    this.pristine.set(this.buildSnapshot());
+    this.dirtyState.markPristine();
     this.router.navigate(['/conversaciones/reglas']);
   }
 

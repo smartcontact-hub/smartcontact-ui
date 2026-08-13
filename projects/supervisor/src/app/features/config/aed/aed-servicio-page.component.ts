@@ -28,6 +28,7 @@ import {
   ScSelectComponent as SelectComponent,
   ScToggleSwitchComponent as ToggleSwitchComponent,
 } from '@smartcontact-hub/components';
+import { stableStringify } from '../../../shared/utils/form-dirty-state';
 
 interface VisibilidadEstados {
   postConversando: boolean;
@@ -165,7 +166,7 @@ export class AedServicioPageComponent implements OnDestroy, DirtyAware {
   protected readonly draft = signal('');
 
   protected readonly dirty = computed(
-    () => JSON.stringify(this.form()) !== JSON.stringify(this.pristine()),
+    () => stableStringify(this.form()) !== stableStringify(this.pristine()),
   );
   protected readonly canSave = computed(() => this.dirty() && !this.saving());
   /** Público para el `formDirtyGuard` (canDeactivate) — confirma al salir con cambios. */

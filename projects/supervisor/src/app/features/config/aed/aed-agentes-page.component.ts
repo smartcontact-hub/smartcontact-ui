@@ -23,6 +23,7 @@ import {
   ScInputTextComponent as InputTextComponent,
   ScToggleSwitchComponent as ToggleSwitchComponent,
 } from '@smartcontact-hub/components';
+import { stableStringify } from '../../../shared/utils/form-dirty-state';
 
 type ComunicacionKey =
   | 'fijos'
@@ -104,7 +105,7 @@ export class AedAgentesPageComponent implements OnDestroy, DirtyAware {
   /** Dirty real = el form difiere del original guardado (deshacer cambios →
    * no deja guardar). */
   protected readonly dirty = computed(
-    () => JSON.stringify(this.form()) !== JSON.stringify(this.pristine()),
+    () => stableStringify(this.form()) !== stableStringify(this.pristine()),
   );
   protected readonly canSave = computed(() => this.dirty() && !this.saving());
   /** Público para el `formDirtyGuard` (canDeactivate) — confirma al salir con cambios. */
