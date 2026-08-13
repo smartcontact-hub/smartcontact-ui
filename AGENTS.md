@@ -307,8 +307,14 @@ this wrap-up routine **without asking permission first**:
    Conventional-Commits message summarising what landed (exclude `.claude`:
    `git add -A ':!.claude'`).
 2. `git push` to `origin main`, and confirm CI is green (the gate — see Mandatory Workflow).
-3. **Rewrite** `NEXT-SESSION.md` (it is the *volatile* hand-off — it gets overwritten,
-   not appended): current state + the ordered next steps + the doc index pointer.
+3. **Rewrite the hand-off of YOUR frente — `docs/handoff/<frente>.md` — and ONLY that file.**
+   It is volatile: it gets overwritten, not appended (current state + ordered next steps + its
+   own `HEAD <sha>` seal). **Never touch another frente's hand-off**, and leave
+   `NEXT-SESSION.md` alone unless a frente is born or retired (it is just the index).
+   *Why one file per frente:* the user keeps several sessions open on this repo at once. One
+   shared file means whoever closes second overwrites the other's hand-off — the old protocol
+   literally instructed it. Separate files cannot clobber each other and git merges them without
+   a conflict, so this holds without anyone having to remember it.
 4. If the session locked in a **load-bearing decision** (changes architecture, discards
    an alternative, sets a project-wide rule), add an entry to [`docs/DECISIONS.md`](docs/DECISIONS.md)
    in DD-N format with **WHY** and **WHAT-WAS-DISCARDED-AND-WHY**. (`DECISIONS-LOG(-B).md`
