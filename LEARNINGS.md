@@ -257,6 +257,26 @@
     tenía drift en 3 sitios y el hand-off recomendaba lo contrario que el código de las apps;
     plantearlo evitó revertir una decisión de marca ya tomada.
 
+    *Corolario (s27) — la decisión se cuela DENTRO de un script, y ahí no se siente como
+    "presentar" nada.* Enlazando los 12 puntos de presencia de «Agentes» a variables, mi tabla de
+    mapeo tenía tres filas: `green→available` y `red→unavailable` salían del sistema, pero
+    **`amber→unavailable` me la inventé yo** — no existe variable de "ausente", así que colapsé un
+    tercer estado. La ejecuté (3 puntos que el diseño pintaba ámbar ahora se ven rojos) y **solo
+    después** se la planteé a Rafa como decisión suya. **Por qué no disparó**: la regla dice
+    *preséntala*, que suena a acto de conversación, y yo estaba escribiendo código — ningún momento
+    se sintió como "presentar". La remató la racionalización *"es reversible, lo marco luego"*;
+    pero un cambio en un fichero de diseño COMPARTIDO no es gratis: lo ve más gente y revertirlo es
+    una segunda mutación que hay que acordarse de hacer.
+    **Disparador afilado**: en una edición por lotes, toda fila del mapeo que **no puedas derivar
+    de la fuente** —te la has inventado— es una decisión, no una conversión: pregunta ANTES de
+    ejecutar, y ejecuta el resto. El delator lo tuve delante y lo ignoré: si te descubres añadiendo
+    un contador para una fila concreta (el mío se llamaba `ambarQuePasaARojo`), esa fila es la
+    decisión y el contador es tu propia cabeza avisándote.
+
+    *Y pesa más aquí que en el código*: una mutación de Figma aterriza FUERA del repo — sin diff,
+    sin CI, sin `verify`. Ninguno de los 25 gates puede verla, así que en este carril la regla de
+    proceso es el único control que existe.
+
 16. **Antes de un refactor transversal, monta primero la red que lo verifica — y hazlo aunque
     parezca un rodeo.** *Evidencia (s12)*: la suite e2e del supervisor cazó dos bugs el mismo día
     que nació: uno preexistente (desplegables tapados por el dock) y una regresión mía (kebab que
