@@ -119,6 +119,92 @@ for (const { path, lines } of files) {
   });
 }
 
+// ── CHECK E — una CIFRA de componentes citada en prosa ≠ el manifiesto generado ────
+// Nace de dos instancias reales cazadas por la auditoría semanal en semanas distintas:
+// `README.md` decía 49 y `projects/ui-smartcontact/README.md` decía "~55" mientras
+// `component-audit` contaba 51. Una cifra a mano en prosa caduca en cuanto entra un
+// componente, y NADA la vigilaba: `docs:guard` valida forma y el check A de aquí solo
+// mira comandos. La fuente de verdad es `docs/_component-status.json`, que regenera
+// `npm run audit:components` dentro de `verify`.
+//
+// EXENTOS y por qué (no es pereza, es que su cifra es correcta EN SU CONTEXTO):
+//   - CHANGELOG.md — congelado: documenta lo que había DENTRO de una versión publicada.
+//   - los AUDIT-* — su trabajo es justamente CITAR la cifra equivocada como hallazgo.
+const STATUS_PATH = resolve(root, 'docs/_component-status.json');
+if (existsSync(STATUS_PATH)) {
+  const real = Number(
+    (JSON.parse(readFileSync(STATUS_PATH, 'utf8')).summary || '').match(/^(\d+)\s+componentes/)?.[1],
+  );
+  const EXENTOS = /^(CHANGELOG\.md|docs\/AUDIT-)/;
+  if (real) {
+    for (const { path, lines } of files) {
+      if (EXENTOS.test(rel(path))) continue;
+      lines.forEach((line, i) => {
+        // "51 componentes `sc-*`" / "49 wrappers/customs `sc-*`" / "~55 componentes `sc-*`"
+        for (const m of line.matchAll(
+          /(~?)(\d{2,3})\s+(?:componentes|components|wrappers\/customs|wrappers)\s+`?sc-/gi,
+        )) {
+          const citada = Number(m[2]);
+          if (citada !== real)
+            fail(
+              `${rel(path)}:${i + 1} — cita ${m[1]}${citada} componentes \`sc-*\`, pero el manifiesto generado (docs/_component-status.json) dice ${real}. Actualiza la cifra, o quítala y enlaza a docs/inventory.md.`,
+            );
+        }
+      });
+    }
+  }
+}
+
+// ── CHECK F — un token `--sc-*` citado en docs que NO existe en el código ─────────
+// La auditoría de 2026-08 encontró 3 ejemplos muertos enseñándose como vivos
+// (`--sc-btn-primary-bg`, retirado en S34; `--sc-modal-radius`; `--sc-text-on-danger`).
+// Un doc que enseña un token inexistente es peor que uno incompleto: se copia.
+// Se ignoran los patrones (`--sc-spacing-*`) y las plantillas (`--sc-cmp-<x>-<y>`).
+const tokensDefinidos = new Set();
+{
+  const walkCss = (dir) => {
+    for (const e of readdirSync(dir, { withFileTypes: true })) {
+      if (['node_modules', 'dist', '.git', '.angular'].includes(e.name)) continue;
+      const p = resolve(dir, e.name);
+      if (e.isDirectory()) walkCss(p);
+      else if (/\.(css|scss|ts)$/.test(e.name))
+        for (const m of readFileSync(p, 'utf8').matchAll(/(--sc-[a-z0-9-]+)\s*:/gi))
+          tokensDefinidos.add(m[1]);
+    }
+  };
+  walkCss(resolve(root, 'projects'));
+}
+// Tokens que la doc nombra A PROPÓSITO sin que existan: los 8-point retirados, que se citan
+// justamente para prohibirlos ("no los reintroduzcas, `tokens:guard` los bloquea").
+const RETIRADOS_A_PROPOSITO = new Set([
+  '--sc-spacing-50', '--sc-spacing-100', '--sc-spacing-200', '--sc-space-1', '--sc-space-2',
+  // GAP documentado a propósito: `customs-catalog.md` §5.11 lo describe como deuda, un token
+  // semántico de lienzo que AÚN NO existe. Mismo patrón que PROPOSED_SCRIPTS: cuando se cree,
+  // `tokensDefinidos` lo cubre solo → quítalo de aquí.
+  '--sc-bg-canvas',
+]);
+if (tokensDefinidos.size > 100) {
+  // guard de cordura: si el barrido no encontró tokens, es que falló — no acuses a la doc
+  const familias = [...tokensDefinidos];
+  for (const { path, lines } of files) {
+    if (/^docs\/AUDIT-/.test(rel(path))) continue; // reportan tokens muertos como hallazgo
+    lines.forEach((line, i) => {
+      for (const m of line.matchAll(/`(--sc-[a-z0-9-]+)`/gi)) {
+        const tk = m[1];
+        // `--sc-color-gray-` (acabado en guion) es un PATRÓN de búsqueda en prosa, no un token.
+        if (tk.includes('*') || tk.includes('<') || tk.endsWith('-')) continue;
+        if (tokensDefinidos.has(tk) || RETIRADOS_A_PROPOSITO.has(tk)) continue;
+        // Una FAMILIA (`--sc-scale`, `--sc-color-cyan`) es prefijo de tokens reales
+        // (`--sc-scale-1`, `--sc-color-cyan-600`): es prosa sobre el conjunto, no un ejemplo muerto.
+        if (familias.some((d) => d.startsWith(tk))) continue;
+        fail(
+          `${rel(path)}:${i + 1} — enseña el token \`${tk}\`, que no está definido en ningún \`projects/**\`. O se retiró, o está mal escrito: un ejemplo muerto en la doc se copia.`,
+        );
+      }
+    });
+  }
+}
+
 // ── CHECK D — el sello del hand-off no apunta a un commit fantasma (LOCAL-only) ──
 // El doc anti-pérdida-de-contexto se desfasó EN SILENCIO una vez (sello a un commit ya superado).
 // Esta red NO exige sello==HEAD (mid-sesión el sello lagea a propósito hasta el cierre); solo que
