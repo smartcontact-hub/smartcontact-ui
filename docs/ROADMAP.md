@@ -27,14 +27,11 @@
   componente en otro estado** (placeholder vs elegido, `showClear` on/off, ancho fluido vs 216
   fijo), no defectos. Iguala el estado antes de marcar nada.
 
-### Round-trip del focus ring → Figma
-- **Qué**: el focus ring (electric-blue 2px) ya se escribió en Figma (2026-06-14, ver Figma
-  change-log en `guia-tokens.md`). Falta cerrar el round-trip.
-- **Disparador**: ahora.
-- **Validación**: re-exportar el tema desde el plugin → reemplazar `kit-export-dtcg.json` →
-  `npm run tokens:import` + `npm run verify` verde → quitar la fila `['both','focus.ring',…]`
-  de la lista DIVERGE en `scripts/token-parity.mjs` (ya no diverge) + actualizar
-  `customs-catalog.md` (deja de ser divergencia de marca, está en el Kit).
+> ✅ **CERRADO el round-trip del focus ring** (verificado 2026-08-13). Su propio criterio de
+> cierre ya se cumplía desde el 14-jun y nadie lo tachó: la fila `focus.ring` **no está** en la
+> lista DIVERGE (0 ocurrencias en `color-map.mjs` y `token-parity.mjs`) y `customs-catalog.md:60`
+> lo da por *"RECONCILIADO al Kit — ya no es divergencia"*. Era el **primer** item del ROADMAP,
+> o sea lo primero que leía cualquiera al abrirlo: dos meses mandando a hacer trabajo hecho.
 
 ### Round-trip DD-24 (icono↔font-size) → Figma + cabos (2026-06-22)
 - **Qué**: DD-24 EJECUTADA en código (DS + app: `sc-icon` gana `inherit`; los companion heredan el font-size
@@ -224,12 +221,8 @@ El ente evolutivo en acción: la migración de la app real saca a la luz huecos 
   *Decisión DS (no de la migración)*: ¿son **necesidades legítimas** → el DS añade esos tamaños en una
   versión nueva; o son **drift de la app** → la app converge a los buckets (con visto bueno de diseño)?
   *Disparador*: decidir add-vs-converge. La migración los deja **locales** mientras tanto (cero regresión).
-- **`ScConfirmService` no expone el icono de cabecera** — `ScConfirmRequest`
-  (`confirmdialog/sc-confirm.service.ts:6-25`) no tiene campo `icon`; `request()` hardcodea
-  `resolveScComponentIconClass('exclamation-triangle')` (`:61`). Un consumidor con otro glifo de
-  cabecera (la app local usa `pi pi-exclamation-triangle`) **no puede conservarlo** sin forkear → al
-  adoptar el servicio se traga el cambio a Material Outlined. Es **parte de la decisión de iconos**
-  (diferida). *Fix*: permitir `icon?: string` opcional en `ScConfirmRequest` (default = el resolver
-  actual). *Disparador*: cuando se decida la cabecera de confirm (bundleado con la decisión de iconos).
-  La migración deja **confirm-host local** mientras tanto (cero regresión). *Validación*: un consumer
-  puede pasar `icon` y conservar su glifo; default sin cambios; `verify` verde.
+- ✅ **CERRADO — `ScConfirmService` ya expone el icono de cabecera** (verificado 2026-08-13).
+  Se implementó exactamente el fix que este item pedía, y nadie lo tachó:
+  `confirmdialog/sc-confirm.service.ts:31` declara `readonly icon?: string` y `:68` resuelve
+  `req.icon ?? 'exclamation-triangle'` — opcional, con el default de siempre. Un consumidor ya
+  puede conservar su glifo sin forkear.
