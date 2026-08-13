@@ -69,7 +69,12 @@ const normalize = (html: string): string =>
     .replace(/\s+/g, ' ')
     .trim();
 
-const structureOf = async (page: Page, route: string, tag: string): Promise<string[]> => {
+const structureOf = async (
+  page: Page,
+  route: string,
+  tag: string,
+  esperados?: number,
+): Promise<string[]> => {
   await page.goto(`/#/components/${route}`);
   // Best-effort: acotada y sin `throw`. La espera es de conveniencia; la
   // aserción de verdad es la de abajo. Sin acotar tumba el build sin que falle
@@ -78,6 +83,38 @@ const structureOf = async (page: Page, route: string, tag: string): Promise<stri
   // Que exista al menos uno: si la ruta del demo cambia de nombre, este test
   // debe fallar en vez de fijar un baseline vacío y dar verde para siempre.
   await expect(page.locator(tag).first()).toBeVisible();
+
+  // ⚠️ ESPERAR AL NÚMERO, no a "que haya alguno". `evaluateAll` lee en UNA sola
+  // pasada y NO reintenta: si la página aún está pintando instancias, se lleva
+  // las que haya en ese instante. Ese era el flake que tumbó el CI 3 veces el
+  // 2026-08-13 sobre commits que solo tocaban `.md`, siempre con la misma firma
+  // (`sc-select`: 8 esperados, 2 leídos) — y que en local pasaba en verde porque
+  // la página pinta antes de que se llegue a leer. `toHaveCount` SÍ reintenta,
+  // así que convierte la carrera en una espera determinista.
+  // Si el número no llega, el fallo sigue siendo legítimo: o el demo perdió una
+  // instancia (regresión real) o tarda más de la cuenta. El mensaje lo dice.
+  if (esperados !== undefined) {
+    await expect(
+      page.locator(tag),
+      `${tag}: el demo debería renderizar ${esperados} instancias. Si de verdad cambiaron, ` +
+        'regenera el baseline con SC_UPDATE_STRUCTURE=1; si no, es que la página no terminó de pintar.',
+      // 15s y no los 5 por defecto: la máquina del CI va cargada y este test corre detrás de
+      // otros 60. El coste solo se paga cuando de verdad falla; el caso bueno resuelve al
+      // primer reintento.
+    ).toHaveCount(esperados, { timeout: 15_000 });
+  } else {
+    // Sin baseline (primera generación) no hay número que esperar: se exige que
+    // el conteo se estabilice entre dos muestras antes de fijarlo, para no
+    // congelar un baseline a medio pintar y heredar el flake para siempre.
+    let previo = -1;
+    for (let i = 0; i < 10; i++) {
+      const n = await page.locator(tag).count();
+      if (n === previo && n > 0) break;
+      previo = n;
+      await page.waitForTimeout(200);
+    }
+  }
+
   const raw = await page.locator(tag).evaluateAll((els) => els.map((el) => el.outerHTML));
   return raw.map(normalize);
 };
@@ -86,9 +123,16 @@ test.describe('estructura de los componentes del DS', () => {
   // Un solo test que recorre todos: así el baseline se escribe de una vez y no
   // queda a medias si un componente falla por el camino.
   test('el HTML renderizado coincide con el baseline', async ({ page }) => {
+    // El baseline se lee ANTES de recorrer: su nº de instancias por componente es
+    // lo que `structureOf` espera antes de leer el DOM (ver el comentario de allí).
+    const previo: Record<string, string[]> | null =
+      existsSync(BASELINE) && !UPDATING
+        ? (JSON.parse(readFileSync(BASELINE, 'utf8')) as Record<string, string[]>)
+        : null;
+
     const actual: Record<string, string[]> = {};
     for (const { route, tag } of COMPONENTS) {
-      actual[tag] = await structureOf(page, route, tag);
+      actual[tag] = await structureOf(page, route, tag, previo?.[tag]?.length);
     }
 
     // Un baseline ausente NO se regenera solo en CI: si alguien lo borra, la
@@ -110,7 +154,7 @@ test.describe('estructura de los componentes del DS', () => {
       return;
     }
 
-    const expected = JSON.parse(readFileSync(BASELINE, 'utf8')) as Record<string, string[]>;
+    const expected = previo ?? (JSON.parse(readFileSync(BASELINE, 'utf8')) as Record<string, string[]>);
 
     // Se compara componente a componente para que el fallo diga CUÁL se movió,
     // en vez de escupir un diff de miles de líneas de todo el DS junto.
