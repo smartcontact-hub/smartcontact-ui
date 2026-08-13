@@ -3,7 +3,7 @@
 > El "tracklist" del DS: cada componente, su selector, y si es **wrapper** (estiliza un
 > componente de PrimeNG) o **pure-custom** (pieza propia, cero PrimeNG). Reemplaza el tracker
 > que vivía en `ds-docs` (consolidado aquí, 2026-06-15). El catálogo **visual** vivo está en
-> `sc-docs` ([showcase en Pages/Cloudflare](README.md)); este doc es el índice **textual**,
+> `sc-docs` ([showcase en sc-doc.pages.dev](https://sc-doc.pages.dev)); este doc es el índice **textual**,
 > findable y mantenible.
 >
 > **Fuente**: `projects/ui-smartcontact/src/lib/components/`. La tabla de abajo es **auto-generada**
