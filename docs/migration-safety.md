@@ -239,4 +239,3 @@ o revisión manual.
 - [`DECISIONS.md`](DECISIONS.md) — decisiones DD-* (DD-11 mecanismo tipográfico · DD-13 escala tipográfica).
 - [`../projects/design-tokens/README.md`](../projects/design-tokens/README.md) — tooling de tokens.
 - [`guia-tokens.md`](guia-tokens.md) — guía del sistema de tokens (diseño).
-- [`component-port-plan.md`](component-port-plan.md) — plan del port de componentes.

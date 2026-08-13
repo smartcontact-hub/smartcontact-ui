@@ -118,6 +118,11 @@ raíz común de 4 "fallos" de componente), que vivía solo en el hand-off del PR
 
 **DELETE** — nada los carga, o su fase está cerrada y su contenido replicado.
 
+> Los 6 de `docs/history/` se borraron el 2026-08-13 y quedan **consultables para siempre** en el
+> tag **`archive/docs-history`** (empujado a `origin`), con el porqué en su mensaje:
+> `git show archive/docs-history:docs/history/<fichero>`. Lo que seguía vivo se rescató ANTES
+> (§2). El resto de DELETE de esta tabla se recuperan por historia de git.
+
 | Doc | Por qué |
 |---|---|
 | `.agents/skills/{component-generator,token-inspector,primeng-wrapper}` (775) | Nada los carga **[V]**; contenido duplicado de `AGENTS.md`; citan una skill inexistente (`smartcontact-i18n`) **[A]** |

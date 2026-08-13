@@ -328,7 +328,7 @@ this wrap-up routine **without asking permission first**:
    a conflict, so this holds without anyone having to remember it.
 4. If the session locked in a **load-bearing decision** (changes architecture, discards
    an alternative, sets a project-wide rule), add an entry to [`docs/DECISIONS.md`](docs/DECISIONS.md)
-   in DD-N format with **WHY** and **WHAT-WAS-DISCARDED-AND-WHY**. (`DECISIONS-LOG(-B).md`
+   in DD-N format with **WHY** and **WHAT-WAS-DISCARDED-AND-WHY**. (The old build journals (`DECISIONS-LOG(-B).md`
    is the historical construction journal — closed; new decisions go to `docs/DECISIONS.md`.)
 5. **Work that is RETIRED gets archived with a tag, never just deleted.** If the session drops
    a branch that will not be merged, tag it first and push the tag:

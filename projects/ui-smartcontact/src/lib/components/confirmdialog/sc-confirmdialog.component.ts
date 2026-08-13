@@ -9,7 +9,7 @@ import { ConfirmDialog } from 'primeng/confirmdialog';
  * `await confirm(): Promise<boolean>`.
  *
  * Nombre DD-12 (pegado): envuelve 1:1 un componente PrimeNG. El origen lo
- * llamaba `sc-confirm-host`; el racional del rename está en DECISIONS-LOG-B.
+ * llamaba `sc-confirm-host`; el racional del rename está en el tag `archive/docs-history`.
  */
 @Component({
     selector: 'sc-confirmdialog',
