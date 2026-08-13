@@ -6,7 +6,7 @@
 
 Este documento captura las reglas, riesgos y pro tips para que **upgrades de
 PrimeNG, re-sync con el Kit de Figma o cambios internos** no rompan el camino
-recorrido (tokens en 7 capas, preset modular, catálogo de customs).
+recorrido (tokens en 6 capas (numeradas 01→07; la 06 era el puente PrimeNG y se retiró — DD-1), preset modular, catálogo de customs).
 
 ---
 
@@ -25,7 +25,7 @@ recorrido (tokens en 7 capas, preset modular, catálogo de customs).
 3. **`customs-catalog.md` registra TODA divergencia** — cualquier override
    del preset base debe tener entry. Sin entry no es divergencia permitida —
    es deuda invisible. Las divergencias de color/métrica además constan en la
-   lista DIVERGE de `scripts/token-parity.mjs` (verificación en CI).
+   listas `DIVERGE` de **`scripts/color-map.mjs`** (color) y `DIVERGE_SIZING` de **`scripts/sizing-map.mjs`** (métrica); `token-parity.mjs` solo las importa (verificación en CI).
 
 ---
 

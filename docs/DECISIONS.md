@@ -120,10 +120,16 @@ datos más que viajan con él y hay que conservar:
   documenta que se movió el lienzo a blanco *porque el rail gris se fundía con un lienzo gris*.
   **Devolver el lienzo a `--sc-bg-default` re-crea ese bug** salvo que el rail cambie de token en la
   misma edición.
-- **El "undo asimétrico en usuarios" estaba mal diagnosticado**: `undo-stack.service.ts:31` dice que
-  lo destructivo NO pasa por undo; agentes y grupos empujan undo por *bulk-edit* y usuarios no lo
-  tiene (`users.store.ts` no tiene `bulkUpdate()`). No es una asimetría de undo: **le falta una
-  funcionalidad**. Es decisión de producto → se presenta, no se decide.
+- ~~**El "undo asimétrico en usuarios" estaba mal diagnosticado**~~ → **CERRADO, y el rescate
+  estaba rancio.** El plan archivado decía que `users.store.ts` no tenía `bulkUpdate()` y que
+  faltaba una funcionalidad que presentar a producto. **Existe desde el 2026-07-18**
+  (`users.store.ts:62`, commit `094f0f4` «usuarios recupera la edición masiva que le faltaba»), y
+  sí pasa por undo (`users-list-page.component.ts:403,407`).
+  ⚠️ *Este párrafo se escribió el 2026-08-13 copiando el plan sin verificarlo, y corregido el
+  mismo día al auditar. Es exactamente `LEARNINGS` **#17** —toda descripción heredada es una
+  paráfrasis— incumplida en el acto de rescatarla: al mover una claim de un doc archivado al
+  registro VIVO de decisiones se le da un ascenso de credibilidad, así que ahí hay que verificar
+  más, no menos.*
 
 ---
 
@@ -254,7 +260,7 @@ halo de foco se unifican con `info` bajo `sky`; repara 3.46:1 → 6.80:1 y oblig
 `text-on-accent`/`icon-on-accent` a blanco; barrido de 38 outlines hardcodeados a
 `--sc-border-focus` · **DD-30** varias reglas activas a la vez + solape por unión [una conversación se procesa una vez, sin prioridad/conflictos], supersede el invariante «una sola activa» de DD-28; recorrido `/reglas` realineado · **DD-29** showcase «estilo Storybook» en sc-demo — motor propio, render por
 `<ng-template>`+`viewChild` [no `NgComponentOutlet`], canvas aislado + knobs en vivo + snippet + API + sidebar por
-categorías; 49/49 en formato story · **DD-28** reglas MVP: borradores fuera del todo + invariante «una sola activa»
+categorías; 51/51 en formato story · **DD-28** reglas MVP: borradores fuera del todo + invariante «una sola activa»
 (radio) + fuera prioridad/conflictos en el supervisor; recorrido `/reglas` realineado · **DD-27** constructor de
 condiciones **v2** — refs tipadas dinámicas + modelo `value` + estimación de procesado [barra de proporción +
 proyección día/mes] + guía de errores + duración con presets + scope MVP [fuera grabación/borradores]; mergeado a
@@ -338,7 +344,7 @@ gate lo marca como drift. **Corolario incómodo**: por eso mismo **ningún gate 
 `token-parity` §6 solo cruza lo que está en `scripts/color-map.mjs`.
 
 **Abierto (no bloquea):** la rampa de texto atenuado está bajo AA sobre blanco —
-`--sc-text-subtle` (slate-400) **2.04:1** y `--sc-text-secondary` (slate-500) **2.95:1**. No se
+~~`--sc-text-subtle` (slate-400) **2.04:1** y `--sc-text-secondary` (slate-500) **2.95:1**~~ → **CERRADO el 2026-07-19 sin pasar por Figma**: los dos son hoy `slate-600` (`02-semantic.css:57,84`) y cumplen AA; `secondary` además dejó de ser `enforce` y es `diverge` en `color-map.mjs:88`. Lo de abajo describe el estado anterior. No se
 toca aquí: `subtle` es una divergencia consciente documentada (`02-semantic.css:40-44`) y
 `secondary` está *enforced* 1:1 con el Kit por parity §6, así que subirlo es conversación de
 marca con Figma, no un cambio de código.
@@ -373,7 +379,7 @@ local, ya vigente en sc-demo).
 
 **Abierto (no bloquea):** el **peso** del icono a la par de la tipografía y el ajuste
 fino de ejes (wght/fill/opsz) sigue pendiente — la otra mitad del item de iconografía
-del ROADMAP. Y el icono de cabecera de `ScConfirmService` (API `icon?`).
+del ROADMAP. ~~Y el icono de cabecera de `ScConfirmService` (API `icon?`).~~ → **HECHO**: `sc-confirm.service.ts:31` lo declara y `:68` resuelve `req.icon ?? 'exclamation-triangle'` (verificado 2026-08-13).
 
 **Verificado:** `npm run verify` verde · AOT supervisor + agent + sc-demo · iconos
 renderizan Outlined self-hospedado (sc-demo + supervisor: familia computada + woff2 200,
@@ -437,7 +443,7 @@ así los `data-testid` del Kit siguen en el DOM y los e2e de métrica los miden.
 
 **Shell + rutas.** `/components` pasa a `StorybookShell` (sidebar fija: 7 categorías + búsqueda, derivada de
 `component-catalog.ts` que evoluciona `component-pages.ts`) con las páginas como children; `/foundations`·`/uso`·
-`/reglas` y el top-nav intactos; el toggle dark global sigue. **Los 49 componentes** quedan en formato story (button
+`/reglas` y el top-nav intactos; el toggle dark global sigue. **Los 51 componentes** (eran 49 al escribirlo) quedan en formato story (button
 piloto + 46 migrados por lotes + `slot`/`subsection` nuevos) → **pokédex 49/49**. Migración por subagentes paralelos
 con spec común + gate de integración (AOT + spot-check) por lote. `verify` entero verde.
 
@@ -593,7 +599,7 @@ en el DS se hizo por-componente. En las **apps** el reset global ya existe
 la app (Bloque 3) NO necesita plumbing por-botón — es mecánico. **md no-leak** confirmado: `.p-button`/
 `.p-inputtext` a md ya llevan `--sc-font-size-200` (14), no se fuga al 1rem de PrimeNG.
 **Bloque 3 (app) — EJECUTADO (2026-06-22)**: 153 companion del supervisor pasados a `size="inherit"`. Hallazgo:
-el `<sc-icon>` del supervisor es un **wrapper propio** (`shared/components/icon`, `size: number`), NO el
+~~el `<sc-icon>` del supervisor es un **wrapper propio**~~ → **YA NO** (verificado 2026-08-13: ese directorio no existe; los usos los sirve el `ScIconComponent` del DS vía `@smartcontact-hub/icons`). Decía que NO era el
 `ScIconComponent` del DS — lo cazó el build AOT; le añadí soporte `inherit` (`1em`, opsz al default, espejo
 del DS). **Standalone pinneados a propósito**: page-headings, empty-states (20/28), avatares, focal del
 player-state (24), chips de tamaño fijo, `[size]="22"`. **Controles deliberados revertidos** (no riman con
