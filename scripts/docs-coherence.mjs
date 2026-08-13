@@ -28,6 +28,13 @@
  *   F. Un token `--sc-*` citado en la doc DEBE existir en `projects/**`. Un ejemplo muerto no
  *      confunde: se copia. Alcance ampliado a los README de `projects/**`, porque el primer
  *      token muerto que se le escapó vivía justo en el "canónico técnico" de tokens.
+ *   G. El índice de disparadores de `LEARNINGS.md` cuadra 1:1 con sus reglas numeradas.
+ *   H. Un doc que declara "caduca el YYYY-MM-DD" y ya venció → hay que decidir, no ignorarlo.
+ *   I. `DECISIONS.md` cumple el "newest first" que promete su propia cabecera.
+ *   J. "el CI son N pasos" cuadra con los pasos con `name:` de `ci.yml`. Esa cifra vive en 5
+ *      sitios y ya caducó una vez (decía 5 cuando eran 8).
+ *   A·b. Un script citado sin `npm run`, en backticks — acotado a namespaces que existen para
+ *      no generar ruido (medido: sin acotar, 75% falsos positivos).
  *
  * Uso:  node scripts/docs-coherence.mjs   (parte de `npm run verify`)
  */
@@ -169,6 +176,33 @@ for (const { path, lines } of files) {
           `${rel(path)}:${i + 1} — cita \`${doc}\`, que se BORRÓ el 2026-08-13. Vive en el tag \`archive/docs-history\`; nómbralo en el doc para que el lector pueda encontrarlo.`,
         );
   });
+}
+
+// ── CHECK J — "el CI son N pasos" tiene que cuadrar con ci.yml ─────────────────────
+// Esa cifra está repetida en CINCO sitios (CLAUDE.md, LEARNINGS ×2, DOCS-INDEX, el hand-off) y
+// es la que manda correr la cadena entera antes de pushear. Ya caducó una vez: decía "cinco
+// pasos" cuando eran ocho, o sea que la regla escrita para no saltarte un paso del CI te
+// mandaba saltarte los dos más nuevos. Quien añada un paso a `ci.yml` verá esto en rojo.
+{
+  const ci = readFileSync(resolve(root, '.github/workflows/ci.yml'), 'utf8');
+  const pasos = (ci.match(/^ {6}- name:/gm) || []).length;
+  const CIFRAS = { 1: 'un', 2: 'dos', 3: 'tres', 4: 'cuatro', 5: 'cinco', 6: 'seis', 7: 'siete', 8: 'ocho', 9: 'nueve', 10: 'diez' };
+  for (const { path, lines } of files) {
+    // Los AUDIT-* citan la cifra EQUIVOCADA como hallazgo ("decía 5 cuando son 8"): es su
+    // trabajo. Misma exención que el CHECK E, por el mismo motivo.
+    if (/^docs\/AUDIT-/.test(rel(path))) continue;
+    lines.forEach((line, i) => {
+      for (const m of line.matchAll(/(\d+|un|dos|tres|cuatro|cinco|seis|siete|ocho|nueve|diez)\s+pasos\b/gi)) {
+        const tok = m[1].toLowerCase();
+        const n = /^\d+$/.test(tok) ? Number(tok) : Number(Object.keys(CIFRAS).find((k) => CIFRAS[k] === tok));
+        if (!n || n === pasos) continue;
+        if (!/ci\.yml|del CI|el CI/i.test(line)) continue; // solo cuando habla del CI
+        fail(
+          `${rel(path)}:${i + 1} — dice "${m[0]}" del CI, pero \`ci.yml\` tiene ${pasos} pasos con nombre. Actualiza la cifra (o el workflow).`,
+        );
+      }
+    });
+  }
 }
 
 // ── CHECK I — DECISIONS.md promete "newest first" y tiene que cumplirlo ────────────
