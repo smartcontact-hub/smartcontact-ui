@@ -45,7 +45,7 @@ projects/design-tokens/
 > `projects/ui-smartcontact/src/lib/theme/sc-preset/` — one file per
 > component (`button.ts`, `dialog.ts`, `datatable.ts`, …) plus the shared
 > base. The preset `definePreset(Aura, …)`s our overrides and is registered
-> through the provider (`provideSmartContactUI`). Every preset slot resolves
+> through the provider (`provideSmartContactUi`). Every preset slot resolves
 > to a `var(--sc-*)` reference — PrimeNG components consume Smart Contact
 > brand, and the source of truth stays in these layers.
 
@@ -151,15 +151,21 @@ Kit's variables change; then run the parity check and reconcile.
 
 The metric scale is a **single 14-based ramp**. Every `--sc-scale-{m}` token
 represents exactly `m × 14px` of design space — but is **emitted in rem**:
-the single generator (`scripts/token-gen.mjs`) writes
-`design px / 16` as the rem value, with the design px kept in a comment:
+`scripts/token-gen.mjs` writes `design px / 16` as the rem value, with the
+design px kept in a comment:
 
 ```css
 --sc-scale-0-375: 0.328125rem; /* 5.25px */
 --sc-scale-1: 0.875rem;        /* 14px — the base (Kit root font) */
 --sc-scale-1-125: 0.984375rem; /* 15.75px */
---sc-scale-12-5: 9.578125rem;  /* 153.25px → check the generated block */
+--sc-scale-12-5: 10.9375rem;   /* 175px = 12.5 × 14 */
 ```
+
+> The last line used to read `9.578125rem; /* 153.25px */`, which **broke the
+> v/14 law stated twelve lines below** (12.5 × 14 = 175, not 153.25) in the very
+> document that defines it. Corrected 2026-08-13 against
+> `01-primitive.css:341`. If a value here disagrees with the generated block,
+> **the generated block wins** — it comes from the Kit export; this file is prose.
 
 **Why rem, not px**: the px→rem conversion is centralized in one point (the
 generator), the tokens respect the user's browser font-zoom setting
@@ -204,32 +210,51 @@ map onto those steps for call sites that prefer the numeric convention.
 
 ## Generated blocks and the Figma→code bridge
 
-Three regions of `01-primitive.css` are **generated** from
-`kit-export-dtcg.json` and marked with comment fences — never edit them
-by hand:
+**Nine regions across FIVE layer files** are generated from
+`kit-export-dtcg.json` and marked with comment fences — never edit any of them
+by hand (measured 2026-08-13; this section used to say "three regions of
+`01-primitive.css`" and "the single generator", which is how someone ends up
+hand-editing a generated block in `02`/`04`/`05`/`07` and losing the work on
+the next import):
 
-- `/* @sc-gen:scale … */` … `/* @sc-gen:scale:end */` — the `--sc-scale-*` ramp.
-- `/* @sc-gen:radius … */` … `/* @sc-gen:radius:end */` — the `--sc-radius-*` steps.
-- `/* @sc-gen:palette … */` … `/* @sc-gen:palette:end */` — color families
-  the preset references that the curated layer doesn't cover.
+| Layer file | Generated regions |
+|---|---|
+| `01-primitive.css` | `@sc-gen:scale` · `@sc-gen:radius` · `@sc-gen:palette` |
+| `02-semantic.css` | `@sc-gen:semantic-color-light` |
+| `04-component.css` | `@sc-gen:cmp-sizing` · `@sc-gen:cmp-color-light` |
+| `05-extensions.css` | `@sc-gen:effects` |
+| `07-dark.css` | `@sc-gen:semantic-color-dark` · `@sc-gen:cmp-color-dark` |
 
-The single generator is `scripts/token-gen.mjs`:
+**Five generators**, chained by `npm run tokens:import`: `token-gen.mjs`
+(primitives) → `token-gen-component.mjs` (sizing, DD-18) →
+`token-gen-color.mjs` (semantic color, DD-19) → `token-gen-cmp-color.mjs`
+(component color, DD-20) → `token-gen-effects.mjs` (effects).
+
+The primitive generator, `scripts/token-gen.mjs`:
 
 - **`npm run tokens:gen`** — check mode: derives the canonical token set
   from the export (names by the v/14 law, values in rem) and verifies
   `01-primitive.css` matches — **including the naming law, which parity
   doesn't check** (parity only compares values).
-- **`npm run tokens:import`** (= `tokens:gen --write`) — rewrites the
-  generated blocks **in place**, between the markers, straight from the
-  export. This is the one manual seam automated: a Figma metric change →
-  re-export `kit-export-dtcg.json` → `tokens:import` → the cascade
-  propagates everywhere automatically. The cascade reaches **components
-  too**: the preset references these tokens (`paddingX:
-  var(--sc-scale-0-75)`), **never raw px** — every pinned component metric
-  follows the generated primitives with no hand-editing. **Scoped on
-  purpose**: only the marked regions are touched — curated colors, brand,
-  aliases and comments stay hand-authored (brand colors are a documented
-  decision, guarded by parity, not auto-imported). Verified idempotent.
+- **`npm run tokens:import`** — runs the **five** generators in order and
+  rewrites the nine blocks **in place**, between the markers, straight from the
+  export. This is the manual seam automated: a Figma change → re-export
+  `kit-export-dtcg.json` → `tokens:import` → the cascade propagates. It reaches
+  **components too**: the preset references these tokens
+  (`paddingX: var(--sc-scale-0-75)`), **never raw px** — every pinned component
+  metric follows the generated primitives with no hand-editing.
+  **Scoped on purpose**: only the marked regions are touched; aliases, comments
+  and hand-curated declarations *outside* the fences stay authored. Idempotent.
+
+> ⚠️ **Brand colour IS auto-imported** — corrected 2026-08-13. This section used
+> to say brand colours were "a documented decision … not auto-imported", and
+> `guia-tokens.md` repeated it to the design side. That stopped being true with
+> **DD-19 / DD-20**: `token-gen-color.mjs` rewrites the semantic colour blocks in
+> `02` and `07`, and `token-gen-cmp-color.mjs` the component colour blocks in
+> `04` and `07` (read it in each generator's header). What *does* stay
+> hand-curated is whatever sits **outside** the fences plus the **conscious
+> divergences** — the `DIVERGE` list in `scripts/color-map.mjs` — and those are
+> exactly what `tokens:parity` turns red so a human decides.
 
 Two more checks complete the belt:
 
@@ -289,5 +314,5 @@ token falls back to Aura defaults in dark mode.
   or shade (`deep`, `available`, `paused`).
 
 Examples: `--sc-color-blue-700`, `--sc-bg-primary-hover`,
-`--sc-text-on-danger`, `--sc-radius-full`, `--sc-z-modal`,
+`--sc-text-on-error`, `--sc-radius-full`, `--sc-z-modal`,
 `--sc-presence-available-deep`.

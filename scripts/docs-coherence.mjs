@@ -13,8 +13,8 @@
  *   B. El README nombra CADA guard de la cadena `verify` (tokens:* / audit:* / test:unit /
  *      docs:*): es la fuente única de la composición del gate; si se añade un paso y no se
  *      documenta, falla.
- *   C. Tokens muertos: AGENTS.md no cita skills inexistentes; ningún doc sitúa DECISIONS-LOG.md
- *      en la "raíz" (vive en docs/history/).
+ *   C. Referencias muertas: AGENTS.md no cita skills inexistentes; ningún doc cita uno de los 6
+ *      docs de construcción borrados el 2026-08-13 sin nombrar el tag `archive/docs-history`.
  *   D. (LOCAL-only) Cada hand-off de `docs/handoff/` LLEVA sello `HEAD `<sha>`` y ese commit
  *      EXISTE en git → un hand-off no puede mentir sobre su propio estado ni quedarse sin fechar.
  *      NO exige sello==HEAD (eso lagearía a propósito mid-sesión); solo que el SHA sea real.
@@ -22,6 +22,12 @@
  *      Ojo al historial: antes miraba SOLO `NEXT-SESSION.md`, y cuando ese fichero pasó a ser el
  *      índice de frentes (sin sello) la comprobación se quedó en no-op silencioso durante un
  *      commit. Si vuelves a mover dónde vive el sello, mueve también este filtro.
+ *   E. Una CIFRA de componentes citada en prosa debe cuadrar con `docs/_component-status.json`
+ *      (el manifiesto que regenera `audit:components`). Nace de dos derivas reales: el README
+ *      raíz decía 49 y el del paquete "~55" mientras el conteo era 51.
+ *   F. Un token `--sc-*` citado en la doc DEBE existir en `projects/**`. Un ejemplo muerto no
+ *      confunde: se copia. Alcance ampliado a los README de `projects/**`, porque el primer
+ *      token muerto que se le escapó vivía justo en el "canónico técnico" de tokens.
  *
  * Uso:  node scripts/docs-coherence.mjs   (parte de `npm run verify`)
  */
@@ -51,6 +57,26 @@ function mdFiles() {
     }
   };
   walk(resolve(root, 'docs'));
+  return out;
+}
+
+// Los README de `projects/**` quedan FUERA del conjunto de arriba (checks A-E siguen con el
+// alcance de docs:guard, que no los escanea). Pero el CHECK F —tokens muertos— sí tiene que
+// verlos: el propio `projects/design-tokens/README.md`, que el índice declara "canónico
+// técnico", enseñaba `--sc-text-on-danger`, que no existe (el DS lo llama `-on-error`), y el
+// gate recién estrenado no lo cazó por este agujero. Un guardián con un punto ciego en el doc
+// más técnico del repo no sirve de mucho.
+function mdDeProyectos() {
+  const out = [];
+  const walk = (dir) => {
+    for (const e of readdirSync(dir, { withFileTypes: true })) {
+      if (['node_modules', 'dist', '.angular'].includes(e.name)) continue;
+      const p = resolve(dir, e.name);
+      if (e.isDirectory()) walk(p);
+      else if (e.name.endsWith('.md')) out.push(p);
+    }
+  };
+  walk(resolve(root, 'projects'));
   return out;
 }
 
@@ -186,7 +212,11 @@ const RETIRADOS_A_PROPOSITO = new Set([
 if (tokensDefinidos.size > 100) {
   // guard de cordura: si el barrido no encontró tokens, es que falló — no acuses a la doc
   const familias = [...tokensDefinidos];
-  for (const { path, lines } of files) {
+  const conProyectos = [
+    ...files,
+    ...mdDeProyectos().map((f) => ({ path: f, lines: readFileSync(f, 'utf8').split('\n') })),
+  ];
+  for (const { path, lines } of conProyectos) {
     if (/^docs\/AUDIT-/.test(rel(path))) continue; // reportan tokens muertos como hallazgo
     lines.forEach((line, i) => {
       for (const m of line.matchAll(/`(--sc-[a-z0-9-]+)`/gi)) {
