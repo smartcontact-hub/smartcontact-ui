@@ -2,7 +2,7 @@
 
 > **Volátil.** Lo reescribe la sesión que trabaja ESTE frente, y **solo este fichero**.
 > No toques los hand-offs de otros frentes. Lo durable vive en `docs/`.
-> **Sello: 2026-08-13 (s27) — HEAD `eec61d8`.**
+> **Sello: 2026-08-13 (s27) — HEAD `3706504`.**
 
 Sesión corta de mantenimiento: se diagnosticaron los MCP de Figma, se archivó la réplica de
 Informes y se afiló la doc. Sin trabajo a medias.
