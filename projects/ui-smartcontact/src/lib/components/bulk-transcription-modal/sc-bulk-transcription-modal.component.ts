@@ -47,7 +47,8 @@ export type ScBulkTranscriptionModalSurface = 'default' | 'dark' | 'green';
  *
  * Animaciones 1:1 con el molde: hero count-up (bump), delta flotante (+/-),
  * pulse del caption y nudge del toggle deshabilitado. Tokens traducidos al
- * sistema base-14 del mirror (scale-sweep documentado en el DECISIONS-LOG).
+ * sistema base-14 del mirror (scale-sweep documentado en el journal de construcción,
+ * hoy en el tag `archive/docs-history`).
  */
 @Component({
   selector: 'sc-bulk-transcription-modal',

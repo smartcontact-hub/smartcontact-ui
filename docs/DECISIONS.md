@@ -68,7 +68,8 @@ que más se malinterpreta: la asimetría *es* la protección.
 de perderlas. *Meterlas en `customs-catalog.md`* → rechazado: ese doc es de divergencias de **token**
 frente a Figma; estas son de **interacción** y su hogar es este registro.
 
-**Consecuencias** · Con esto, `docs/history/plan-convergencia-flujos.md` ya se puede borrar. Dos
+**Consecuencias** · Con esto se borró `docs/history/` entero (consultable en el tag
+`archive/docs-history`). Dos
 datos más que viajan con él y hay que conservar:
 
 - ⚠️ **Trampa del rail de AED (conflicto C3)**, que muerde directamente a **DD-34** y al item

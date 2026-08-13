@@ -96,11 +96,28 @@ if (agents) {
         fail(`AGENTS.md:${i + 1} — cita la skill inexistente \`${dead}\` (las reales: ${SKILLS.join(', ') || '—'})`);
   });
 }
-for (const { path, lines } of files)
+// Docs BORRADOS que la prosa no puede volver a citar como si existieran (2026-08-13, auditoría
+// de documentación): `docs/history/` entero se archivó en el tag `archive/docs-history`. Antes
+// esta regla vigilaba que nadie situara DECISIONS-LOG.md "en la raíz"; ya no vive en ningún
+// sitio, así que ahora vigila la clase entera. Se permite nombrarlos SI la línea cita el tag
+// (es la forma correcta de referirse a ellos).
+const DOCS_BORRADOS = [
+  'DECISIONS-LOG.md', 'DECISIONS-LOG-B.md', 'convergence-manifesto.md',
+  'foundations-rationale.md', 'component-port-plan.md', 'plan-convergencia-flujos.md',
+];
+for (const { path, lines } of files) {
+  // Un doc que EXPLICA el archivo (la auditoría, el índice) nombra el tag en alguna parte:
+  // con eso el lector sabe dónde buscarlos y la cita es correcta. Se exime el fichero entero,
+  // no línea a línea, porque si no una tabla de "qué se borró" sería imposible de escribir.
+  if (lines.some((l) => l.includes('archive/docs-history'))) continue;
   lines.forEach((line, i) => {
-    if (/DECISIONS-LOG\.md[^\n]{0,40}?ra[íi]z/i.test(line))
-      fail(`${rel(path)}:${i + 1} — sitúa DECISIONS-LOG.md en la "raíz"; vive en docs/history/`);
+    for (const doc of DOCS_BORRADOS)
+      if (line.includes(doc))
+        fail(
+          `${rel(path)}:${i + 1} — cita \`${doc}\`, que se BORRÓ el 2026-08-13. Vive en el tag \`archive/docs-history\`; nómbralo en el doc para que el lector pueda encontrarlo.`,
+        );
   });
+}
 
 // ── CHECK D — el sello del hand-off no apunta a un commit fantasma (LOCAL-only) ──
 // El doc anti-pérdida-de-contexto se desfasó EN SILENCIO una vez (sello a un commit ya superado).

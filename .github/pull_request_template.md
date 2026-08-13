@@ -9,7 +9,7 @@
 - [ ] Tokens: solo `--sc-*` (nunca `--p-*` fuera del preset); escala 14-base (sin 8-point, sin `calc` a mano)
 - [ ] Si añadí/cambié un componente: demo en `sc-docs` + export en `public-api.ts`
 - [ ] Si es un cambio consumible del paquete: bump de versión (`npm run version:bump`) + nota en `CHANGELOG.md`
-- [ ] `docs/DECISIONS.md` actualizado (DD-N) si hubo decisión — `DECISIONS-LOG(-B)` está CERRADO
+- [ ] `docs/DECISIONS.md` actualizado (DD-N) si hubo decisión
 
 ## Notas
 

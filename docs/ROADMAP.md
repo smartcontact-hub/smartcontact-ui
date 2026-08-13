@@ -182,10 +182,11 @@
   único" (eso es lo MENOS mantenible); es mantener "una fuente por tema" sano.
 - **Disparador**: revisión periódica, o cuando el nº de docs crezca notablemente.
 - **Candidatos**:
-  - ✅ **HECHO (2026-06-14)**: los 2 `DECISIONS-LOG` (journals de construcción cerrados) archivados
-    a `docs/history/`; `docs:guard` ahora escanea `docs/` recursivo (vigila también el archivo).
-  - ⏳ `foundations-rationale.md` + `component-port-plan.md` = ambos racional de construcción →
-    evaluar fusión (pendiente).
+  - ✅ **CERRADO (2026-08-13)**: la auditoría de documentación
+    ([`AUDIT-DOCS-2026-08.md`](./AUDIT-DOCS-2026-08.md)) superó este item. No se fusionó nada:
+    los 6 docs de construcción se **borraron** (2.194 líneas) tras rescatar lo que seguía vivo a
+    DD-36 y DD-8. Consultables en el tag `archive/docs-history`. Motivo: 13 de las 19 claims
+    rotas del repo vivían ahí.
 - **Validación**: `docs:guard` verde (todo mapeado, links resuelven) + DOCS-INDEX actualizado +
   fronteras siguen sin solapar.
 
