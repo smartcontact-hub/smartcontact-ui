@@ -555,13 +555,47 @@ El token del plugin necesita scope `repo` sobre la org `smartcontact-hub`.
 base + cualquier familia primitiva que un color del Kit referencie y la capa curada no
 cubra — p.ej. `yellow` de la severidad warn, ver commit 6e3addd). Por tanto:
 
-- Cambias **espaciado / escala / radios** en el plugin → **automático** (regenera
-  + verifica + PR verde).
-- Cambias **color / semántica de marca** → el export (fuente de verdad) se
-  actualiza, pero esas capas (`02-semantic` / `03-palette` / `04-component`) están
-  **curadas a mano**: `tokens:parity` detecta el drift, el PR va **rojo** con el
-  token exacto, y un dev lo aplica a la capa curada. (Por diseño — ver §"Fuente de
-  verdad de valores" en `foundations-rationale.md`.)
+- Cambias **espaciado / escala / radios** en el plugin → **automático**
+  (`token-gen` regenera `@sc-gen:scale|radius|palette` en `01-primitive.css`).
+- Cambias **color / semántica de marca** → **también es automático desde DD-19/DD-20**
+  (corregido 2026-08-13; esta guía decía lo contrario). `token-gen-color` reescribe
+  `@sc-gen:semantic-color-light` (02) y `@sc-gen:semantic-color-dark` (07);
+  `token-gen-cmp-color` reescribe `@sc-gen:cmp-color-light` (04) y
+  `@sc-gen:cmp-color-dark` (07). Lo que **sí** queda curado a mano es lo que está
+  **fuera** de esas zonas y las **divergencias conscientes** (la lista `DIVERGE` de
+  `color-map.mjs`): eso es lo que `tokens:parity` pone en rojo para que un dev decida.
+
+> ⚠️ **Nueve zonas `@sc-gen` en CINCO ficheros** — `01-primitive` (scale · radius ·
+> palette), `02-semantic` (semantic-color-light), `04-component` (cmp-sizing ·
+> cmp-color-light), `05-extensions` (effects) y `07-dark` (semantic-color-dark ·
+> cmp-color-dark). **Ninguna se edita a mano**: `npm run tokens:import` encadena
+> **5 generadores** y las reescribe todas.
+
+### 2.ter. Aplicar un tema que llega de fuera (las dos rutas)
+
+Absorbido de la antigua skill `sync-theme` (2026-08-13), que no la cargaba ningún
+runner. El contrato que hay que preservar en las dos rutas: **cada slot del preset
+resuelve a `var(--sc-*)`**, la escala en rem es central, y el preset no lleva `px`.
+
+**Ruta A — re-export del Kit (el flujo normal)**
+
+1. Guarda el DTCG nuevo encima de
+   `projects/design-tokens/scripts/kit-export-dtcg.json`.
+2. `npm run tokens:import` — reescribe las 9 zonas `@sc-gen` (valores en rem, el px de
+   diseño queda en el comentario). Nunca las edites a mano.
+3. `npm run tokens:parity` — si un token curado o un slot del preset ahora diverge, o
+   lo arreglas o lo registras como divergencia consciente
+   (`docs/customs-catalog.md` + la lista `DIVERGE` de `scripts/token-parity.mjs`).
+4. `npm run verify`, y si cambió algo visual, `npm run e2e`.
+
+**Ruta B — llegan ficheros de preset (handoff de laboratorio/diseño)**
+
+1. Mira el estado del repo (`git status --short`) y lee origen y destino antes de
+   editar: preserva lo que no venga en el handoff.
+2. Funde los cambios de token de componente **por módulo**, quirúrgicamente.
+3. Re-tokeniza cada métrica que entre: si el px de diseño (rem entrante × 14) casa con
+   un `--sc-scale-*`, usa el token; no dejes literales.
+4. Misma verificación que la ruta A.
 
 ### 3. Los 5 niveles de customización (de menos a más invasivo)
 
