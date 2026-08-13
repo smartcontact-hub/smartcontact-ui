@@ -309,6 +309,12 @@ lo que hace que te la creas cuando te toca. Lee el índice siempre; el cuerpo, c
     gasta una llamada en preguntar si ya está ahí — DOM oculto, fichero de i18n, hoja de estilos,
     lista de componentes. La versión servida por el sistema es exacta; la tuya es una copia.
 
+    *Absorbe el "Meta (proceso)" que vivía dentro de DD-13 (movido aquí el 2026-08-13; era una
+    regla de proceso viviendo en el registro de decisiones).* Ante un **"¿por qué el pipeline no
+    trae X?"**, lee la doc del tool y **grepea `DECISIONS.md` ANTES de hipotetizar**: la respuesta
+    a por qué PrimeNG no traía la tipografía —es document-level— **ya estaba escrita en la propia
+    DD** que se estaba leyendo. Teorizar cuesta más que buscar, y encima sale mal.
+
 11. **Toda edición masiva por shell lleva su verificación de outcome PEGADA en el mismo comando.**
    *Evidencia (s11)*: un `for f in $FILES` con lista multilínea **no hizo nada** (zsh no hace
    word-splitting como bash); lo cazó el `grep "pi pi-" || echo ninguno` del final. Sin él habría

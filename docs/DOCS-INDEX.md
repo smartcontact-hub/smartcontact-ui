@@ -52,6 +52,12 @@
 Los pares que más se confunden — cada uno tiene un trabajo distinto:
 
 - **`AGENTS.md` (cómo trabajar)** ≠ **`.impeccable.md` (qué no romper)** ≠ **`CLAUDE.md` (punteros)**.
+  *Sobre el solape `AGENTS` ↔ `LEARNINGS` (2026-08-13)*: hay **8 pares** donde el mismo hecho
+  aparece en los dos, y **se conservan a propósito** — se leen en momentos distintos: `AGENTS` se
+  CONSULTA ("¿qué trampas tiene este repo?") y `LEARNINGS` se LEE al empezar ("¿cómo trabajo?").
+  Borrar un lado empeora ese momento de lectura. El coste real no es la redundancia, es que si el
+  hecho cambia haya que tocarlo en dos sitios y uno se pudra: por eso cada trampa de `AGENTS`
+  lleva ahora un puntero `↔ LEARNINGS #N` a su regla. **Si editas una, sigue la flecha.**
 - **`docs/DECISIONS.md` (por qué — decisiones grandes con alternativas)** ≠ **`customs-catalog.md`
   (qué diverge de Figma)** ≠ **`migration-safety.md` (reglas de blindaje)**.
   *(Los journals `DECISIONS-LOG(-B).md` y los planes de construcción se borraron el 2026-08-13:

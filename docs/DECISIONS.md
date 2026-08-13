@@ -1153,6 +1153,12 @@ verificación empírica.
   **px → rem** se ejecutó (ver addendum final) y hoy alcanza también a la escala
   de espaciado (decisión "rem centralizado", DD-10).
 
+> **A partir de aquí es HISTORIA DE EJECUCIÓN, no decisión.** La decisión de DD-13 termina
+> arriba; lo que sigue son los addendums del piloto —ya ejecutado— con sus valores medidos. Se
+> conservan porque esos números son la fuente de la escala canónica, pero **si vienes a saber qué
+> se decidió, ya puedes parar**. (Señalizado el 2026-08-13: DD-13 son 293 líneas, 17% del
+> fichero, contra una mediana de 38 — el bulto está aquí abajo.)
+
 **Addendum — Piloto del pipeline EJECUTADO + modelo corregido (verificado contra
 doc oficial).**
 
@@ -1199,10 +1205,8 @@ El gate se ejecutó de verdad: export del duplicado por el Theme Designer → PR
    - **NO re-apuntar la colección App → primitivos Custom esperando rem** (eso
      rompió el rem en el duplicado: en el original App apunta a `scale/*` nativo).
      Si se toca App, asumir que su tipografía es document-level de todos modos.
-6. **Meta (proceso):** la respuesta (PrimeNG = tipografía document-level) **ya
-   estaba en esta DD**. El error fue teorizar sin verificar contra (a) la doc
-   oficial del tool y (b) las propias DD. **Protocolo ante "¿por qué el pipeline
-   no trae X?": leer la doc del tool + grep en DECISIONS ANTES de hipotetizar.**
+6. *(El "Meta (proceso)" que había aquí se movió a `LEARNINGS.md` **#10** el 2026-08-13: era
+   una regla de proceso, no una decisión, y duplicaba la que ya vivía allí.)*
 
 **Addendum final — Naming STEP cerrado + escala canónica + código ejecutado (todo
 verificado contra los Figma reales).**
