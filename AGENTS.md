@@ -364,6 +364,7 @@ Each entry: **what bites → the rule → why**. Append here when a new one is f
   *the official MCP is down* — but `mcp__Figma__get_metadata` was reading the file fine the
   whole time. *Rule:* probe the half you actually need; never generalise one server's failure
   to the others. *Why:* they are genuinely different services — see the table below.
+  ↔ *La regla de proceso, con su evidencia: `LEARNINGS.md` **#1** (corolario s27).*
 - **An e2e test depends on `.sc-inputtext__msg--error` as a public contract.** *Bites:* renaming
   or restructuring that class inside `sc-inputtext` breaks `e2e/supervisor/category-modal.spec.ts:52`
   (verified 2026-08-13), and the failure looks like a modal bug rather than a CSS rename. *Rule:*
@@ -429,9 +430,11 @@ Each entry: **what bites → the rule → why**. Append here when a new one is f
 - **Geometría ≠ color.** `main.bottom - page.bottom` dice cuántos px quedan bajo el
   contenido, NO de qué color son (si el `:host` de la página se estira, los pinta él).
   Para «¿qué ve el usuario ahí?»: `elementFromPoint` + subir al primer ancestro con alfa 1.
+  ↔ `LEARNINGS.md` **#2** (corolario A).*
 - **`color-mix` computa a `color(srgb …)`, no a `rgb()`.** Cualquier parser de `rgb()`/hex
   devuelve basura ahí. Que convierta el navegador (1px en canvas + `getImageData`), y valida
   el control: `ctx.fillStyle = 'var(--x)'` NO resuelve la variable (se queda en negro).
+  ↔ `LEARNINGS.md` **#2** (+ corolario B).*
 - **Una regla encapsulada de componente le gana a una global.** Antes de bautizar una clase
   compartida, `grep` el nombre en los `.scss` de componente (hubo `.page__title` muerto en
   ~9 hojas con tamaños distintos).
@@ -439,14 +442,14 @@ Each entry: **what bites → the rule → why**. Append here when a new one is f
   mientras el contenido llegue abajo: mira la regla, no fíes en «se ve bien».
 - **Las baselines visuales de `npm run e2e` se saltan en CI** (`if (process.env['CI']) return`).
   En local pueden llevar tiempo en rojo por entorno; stash-y-reproduce antes de culpar tu
-  cambio, y no las uses como red si no las has regenerado.
+  cambio, y no las uses como red si no las has regenerado. ↔ `LEARNINGS.md` **#5**.*
 - **La paleta `--sc-color-*` NO se remapea en oscuro** (cero definiciones en `07-dark.css`).
   Usarla en un `background`/`color` de página es escribir un valor fijo → ilegible en un tema.
 - **Un token de FONDO no es de texto, ni al revés.** `--sc-bg-primary` como `color:` → 3.39:1;
   `--sc-text-info` como `background:` → 3.15. Cuelan en claro y rompen en oscuro.
 - **`npm run verify` reescribe `dist/` bajo un `ng serve` vivo** y lo deja con `Cannot find
   module '@smartcontact-hub/components'`; el server sigue sirviendo el bundle ANTERIOR. Tras un
-  `verify`, reinicia el dev server antes de volver a medir.
+  `verify`, reinicia el dev server antes de volver a medir. ↔ `LEARNINGS.md` **#5**.*
 - **Los iconos Material son LIGATURAS** (llegan al DOM como texto): umbral de contraste 1.4.11
   (3:1), no 4.5. Y salen en `innerText` aunque estén bien pintados → para comprobar que la
   fuente cargó, mira la imagen, no el texto.
@@ -455,7 +458,7 @@ Each entry: **what bites → the rule → why**. Append here when a new one is f
   fuente + chunks perezosos.
 - **`table-layout`:** `main.scss` fuerza `fixed` en `table.table`; `sc-datatable` es `auto` →
   columnas recolocadas al migrar (la piel `.list-table` lo corrige). Y **PrimeNG pinta SIEMPRE
-  la banda de `caption`** → franja vacía sobre la cabecera.
+  la banda de `caption`** → franja vacía sobre la cabecera. ↔ `LEARNINGS.md` **#2**.*
 - **Los `<td>` los pinta el DS**: reglas encapsuladas de página a `.table__td-*` dejan de
   aplicar; usa un `cellTemplate` con su `<span>`. **La casilla de PrimeNG mide 17,5px** (nativa
   15,75): con `table-layout: auto` ensancha la columna 2px.
@@ -469,13 +472,13 @@ Each entry: **what bites → the rule → why**. Append here when a new one is f
   `document.fonts.load(...)` antes de medir/capturar.
 - **El dev server sirve el DS COMPILADO**: tocar `projects/ui-smartcontact*/src` no se ve hasta
   `build:components` + **reiniciar** (una recarga dura no basta). **`export-clean` se salta con
-  `CI=1`.**
+  `CI=1`.** ↔ `LEARNINGS.md` **#5**.*
 - **Sin backticks en mensajes de commit**; usa `-F -` con heredoc. **Nada de `page.reload()`**
   en journeys de memory (stores en RAM).
 - **`npm run e2e` pisa `public/usage/*.png`** y `usage:capture` reescribe `_usage-raw.json`:
   para capturar, script aislado con la API de Playwright.
 - **Añadir o quitar un `<sc-*>` desfasa `audit:components`** → `node
-  scripts/component-audit.mjs --write` + commitea `docs/inventory.md` y `docs/_component-status.json`.
+  scripts/component-audit.mjs --write` + commitea `docs/inventory.md` y `docs/_component-status.json`. ↔ `LEARNINGS.md` **#7**.*
 
 ---
 
