@@ -9,9 +9,16 @@
 > mecanizable acaba en un **gate**, porque una regla que hay que recordar no se cumple.
 >
 > **Cómo leer la procedencia**: cada hallazgo va marcado **[V]** = verificado por mí contra el
-> repo, o **[A]** = reportado por un agente auditor y **no re-verificado todavía**. Los [A] son
-> pistas, no hechos: verifica la precondición literal antes de ejecutar su veredicto
-> (`LEARNINGS.md` regla 17).
+> repo, o **[A]** = reportado por un agente auditor y no re-verificado. Los [A] son pistas, no
+> hechos: verifica la precondición literal antes de ejecutar su veredicto (`LEARNINGS.md` regla 17).
+>
+> **CIERRE 2026-08-13 — quedan 0 items `[A]`.** Se verificaron los 25 que había, y verificar valió
+> la pena: **cuatro veredictos cambiaron** al comprobarlos. `DD-12` NO era "adoptar DD-8 sin
+> cambios" y `AGENTS.md:83` lo cita, así que fundirlo habría roto una referencia; `DD-25` sí es un
+> bugfix sin `Descartadas`, pero **28 de los 38 DDs tampoco lo tienen** — no viola la plantilla, la
+> plantilla es letra muerta; `colaboracion.md` no es ~60% único sino ~35-40%; y `org-profile.md` no
+> es regenerable, porque contradice al README. Un informe de auditoría es la mejor hipótesis
+> disponible, no el estado del repo.
 
 **Censo (2026-08-13)** — 46 ficheros, ~10.600 líneas. Los pesados: `DECISIONS.md` 1.572 ·
 `guia-tokens.md` 1.055 · `DECISIONS-LOG-B.md` 986 · `customs-catalog.md` 906 · `AGENTS.md` 513 ·
@@ -44,7 +51,7 @@ ni `package.json`, ni `.github/`, ni `.claude/`, ni `.mcp.json` (grep verificado
 
 Además **quedan fuera de `docs:guard`**, que solo escanea `docs/` + raíz: 886 líneas sin indexar,
 sin cargar y sin vigilar. Y su contenido es en su mayor parte `AGENTS.md` reescrito — la regla de
-la escala 14-base aparece en **4 copias** **[A]**.
+la escala 14-base aparece en **4 copias** **[V]** (3 skills + `AGENTS.md`, contado sobre el tag `archive/docs-history`).
 
 ### 1.3 · El doc declarado "canónico" es el más rancio **[V]**
 
@@ -63,7 +70,7 @@ puede editar a mano un bloque generado de `02`/`04`/`05`/`07` creyendo que es cu
 `tokens:import` se lo comerá sin avisar. **Es la claim más peligrosa del repo**: está en el doc
 más leído y su consecuencia es pérdida de trabajo.
 
-Corolario **[A]**: ambos docs le dicen a Diseño que *"los colores de marca NO se auto-importan"*,
+Corolario **[V]** (leído en la cabecera de `token-gen-color.mjs` y `token-gen-cmp-color.mjs`): ambos docs le dicen a Diseño que *"los colores de marca NO se auto-importan"*,
 y `token-gen-color.mjs` / `token-gen-cmp-color.mjs` los espejan. Es el consejo operativo que
 reciben, y es falso.
 
@@ -71,17 +78,17 @@ reciben, y es falso.
 
 La cadena `verify` está enumerada en **6 sitios con 6 cifras distintas**: 5 (`AGENTS.md`), 7
 (`CLAUDE.md`), 7 (`.impeccable.md`), 8 (`pull_request_template`), 18 (tabla del `README`), 25
-(`auditoria-semanal`). **La real es 25** **[A]**.
+(`auditoria-semanal`). **La real es 25** **[V]**.
 
 El conteo de componentes va por tres: `README.md` dice 49, `ui-smartcontact/README.md` dice ~55,
-`inventory.md` (generado) dice 51 **[A]** — las dos primeras ya estaban cazadas por la rutina
+`inventory.md` (generado) dice 51 **[V]** — las dos primeras ya estaban cazadas por la rutina
 semanal. Y `LEARNINGS` regla 7 decía que el CI son 5 pasos cuando son **8** **[V, arreglado]**.
 
 **Ningún gate compara una cifra citada, un token `--sc-*` o un selector `sc-*` contra el repo.**
 `docs:guard` valida forma (mapeo + links del índice) y `docs:coherence` valida solo `npm run X` y
 `scripts/*.mjs`. Ahí es donde vive la mayor parte de esta deriva.
 
-### 1.5 · El tope de `LEARNINGS.md` se cumple en la forma, no en el fondo **[A]**
+### 1.5 · El tope de `LEARNINGS.md` se cumple en la forma, no en el fondo **[V]**
 
 20 entradas numeradas = tope respetado. Pero hay **14 sub-entradas "Corolario" con disparador y
 acción propios**: el recuento real es **~34 reglas / 4.732 palabras**. El crecimiento se desvió al
@@ -96,16 +103,16 @@ Tres piezas cuyo borrado destruiría lo único que las guarda:
 
 1. **`docs/history/plan-convergencia-flujos.md` NO es historia** **[V]**. `DOCS-INDEX.md:32` lo
    etiqueta *"construcción CERRADA, referencia histórica"*; el fichero se abre con *"Plan —
-   aprobado 2026-07-18 · Siguiente en la cola: **Ola 1**"*. Contiene **[A]**: 7 divergencias de UX
+   aprobado 2026-07-18 · Siguiente en la cola: **Ola 1**"*. Contiene **[V]** (leído entero antes de rescatarlo a DD-36): 7 divergencias de UX
    **deliberadas** con su motivo (no replicadas en `DECISIONS.md`, y `customs-catalog` solo cubre
    divergencias de token); la trampa **C3**, que muerde directamente a **DD-34** y al item "lienzo
    gris↔blanco" que sigue esperando a Rafa; y un contrato de test externo
    (`category-modal.spec.ts:52` depende de `.sc-inputtext__msg--error`).
    → **MERGE a `DECISIONS.md` + al hand-off, y LUEGO borrar.**
-2. **`convergence-manifesto.md` §4.1/§4.2** **[A]** — el racional de por qué se retiraron
+2. **`convergence-manifesto.md` §4.1/§4.2** **[V]** — el racional de por qué se retiraron
    `sc-label-chip` y `sc-illustrated-avatar`. Es lo único que explica el *porqué*, y hace falta
    para arreglar DD-8, que aún los lista como vivos.
-3. **`.agents/skills/sync-theme/SKILL.md`** **[A]** — la única de las 4 skills muertas con
+3. **`.agents/skills/sync-theme/SKILL.md`** **[V]** — la única de las 4 skills muertas con
    contenido que NO está en `AGENTS.md`: las dos rutas de sync y el contrato del preset.
    → **MERGE a `guia-tokens.md`**; las otras tres se borran.
 
@@ -125,37 +132,38 @@ raíz común de 4 "fallos" de componente), que vivía solo en el hand-off del PR
 
 | Doc | Por qué |
 |---|---|
-| `.agents/skills/{component-generator,token-inspector,primeng-wrapper}` (775) | Nada los carga **[V]**; contenido duplicado de `AGENTS.md`; citan una skill inexistente (`smartcontact-i18n`) **[A]** |
+| `.agents/skills/{component-generator,token-inspector,primeng-wrapper}` (775) | Nada los carga **[V]**; contenido duplicado de `AGENTS.md`; citan una skill inexistente (`smartcontact-i18n`) **[V]** |
 | `docs/history/foundations-rationale.md` (77) | Construcción cerrada; sus enlaces salientes ya apuntan a rutas muertas **[V]** |
 | `docs/history/component-port-plan.md` (118) | Port ejecutado; ya tiene un enlace entrante roto **[V]** |
-| `docs/history/DECISIONS-LOG.md` (322) | Sus 2 datos únicos están replicados en código o revertidos por DD-19/20 **[A]** |
-| `docs/history/DECISIONS-LOG-B.md` (986) | Journal de lote; salvar solo el GATE de `sc-component-icon-resolver` **[A]** |
+| `docs/history/DECISIONS-LOG.md` (322) | Sus 2 datos únicos están replicados (`01-primitive.css:418`) o revertidos (`tokens:gen-color` está en `verify`) **[V]** |
+| `docs/history/DECISIONS-LOG-B.md` (986) | Journal de lote; salvar solo el GATE de `sc-component-icon-resolver` **[V]** — el fichero existe hoy, el dato se salvó bien |
 | `docs/history/convergence-manifesto.md` (383) | Tras salvar §4.1/§4.2 |
 | `docs/history/plan-convergencia-flujos.md` (308) | **Solo tras el MERGE del §2** |
 | `docs/playbook-archivar-ui-main.md` (40) | Andamiaje sobre OTRO repo, con enlace roto a un doc borrado en s23 **[V]** |
-| `docs/org-profile.md` (36) | Payload de un solo uso para otro repo; regenerable **[A]** |
-| `docs/AUDIT-2026-07.md` (94) | Su §5 se auto-declara resumen de `AUDIT-DEUDA`, su §6 lo cerró DD-29 **[A]** |
+| `docs/org-profile.md` (36) | **[V, REFUTADO EN PARTE]** — no es regenerable del todo: tiene texto de marca propio (`:16-18`) y un claim que el README **contradice** (`:35` dice que los paquetes son privados; el README dice que la publicación está APARCADA por DD-17). Regenerarlo daría un texto distinto → **KEEP** hasta que Rafa confirme si ya lo pegó |
+| `docs/AUDIT-2026-07.md` (94) | Su §5 se auto-declara resumen de `AUDIT-DEUDA`, su §6 lo cerró DD-29 **[V]** |
 
 **MERGE**
 
 | Doc | Destino |
 |---|---|
 | `.agents/skills/sync-theme` (111) | `guia-tokens.md` (corregir "7 token layers"→6) |
-| `docs/colaboracion.md` (161) | `guia-tokens.md` como §0 "Arranque + loop del día a día" — ~60% es runbook único (PAT y su caducidad, semántica de los 3 botones del plugin, docks, "nunca borres la rama `design-tokens-sync`") **[A]** |
-| `DD-12`, `DD-25` | DD-8 y un comentario en `sc-dialog` **[A]** |
+| `docs/colaboracion.md` (161) | **[V, cifra REFUTADA: es ~35-40%, no ~60%]** — 4 de sus 5 bloques únicos se confirman (PAT y su caducidad, semántica de los 3 botones del plugin, docks) **[V]**. Pero *"nunca borres la rama `design-tokens-sync`"* **NO es único**: ya está en `AGENTS.md:385-389`, con más detalle |
+| ~~`DD-12`~~ | **[V, REFUTADO]** — no es "adoptar DD-8 sin cambios": aporta el dato que decide (PrimeNG 21 acepta los dos selectores, así que la fidelidad no desempata), la regla de customs en kebab y la lista de 5 renombrados. Y `AGENTS.md:83` **cita DD-12**: fundirlo rompe esa referencia. **NO se funde** |
+| ~~`DD-25`~~ | **[V, pero el veredicto cambia]** — cierto que son 11 líneas sin `Descartadas`… pero **28 de los 38 DDs tampoco lo tienen** (contado). DD-25 no viola la plantilla: la plantilla es letra muerta. Se arregla la CABECERA, no el DD |
 
 **REWRITE**
 
 | Doc | Qué |
 |---|---|
-| `projects/design-tokens/README.md` (293) | El fallo del §1.3 + 3 ejemplos de token muertos + `--sc-scale-12-5` mal (dice 153.25px, es 175 — viola su propia ley v/14) **[A]** |
-| `CLAUDE.md` (26) | **Prioridad 1**: la claim de `@sc-gen` (§1.3). Y volver a ser punteros: sus 5 bullets son contenido copiado **[A]** |
-| `AGENTS.md` (513) | Quitar los 4 pasos inejecutables (§1.2); mover a `LEARNINGS` lo que es proceso puro; 8 pares duplicados con `LEARNINGS` **[A]** |
-| `docs/DECISIONS.md` (1.572) | 6 DDs con estado falso — **DD-35 el peor: dice que sus ramas no están en `main` y están, y en producción [V]**; reordenar a newest-first (pendiente desde el 30-jun); numerar la sección huérfana `:1265`; falta un DD para `cuscare`, que está en producción sin cobertura **[A]** |
-| `docs/ROADMAP.md` (214) | Su **primer** item lleva 2 meses cerrado; otros 2 también **[A]** |
-| `docs/inventory.md` §gaps (97) | 2 de sus "4 gaps abiertos" están cerrados **[A]**. La tabla generada sí está al día y bajo gate |
-| `.impeccable.md` (102) | Dice "5 componentes locales" (son 2) y "dos apps" (son 4) **[A]** — y es el fichero que se abre para saber qué NO tocar |
-| `LEARNINGS.md` (372) | Hacer cumplir el tope de verdad (§1.5): fundir #2+#13+#20, #3→#5, #9→#7; #14 y #16 son indisparables **[A]** |
+| `projects/design-tokens/README.md` (293) | El fallo del §1.3 **[V]** + 3 ejemplos de token muertos **[V]** (los tres con 0 definiciones en `projects/`) + `--sc-scale-12-5` mal **[V]** (dice 153.25px, es 175 — viola su propia ley v/14). **Todo ejecutado** |
+| `CLAUDE.md` (26) | **Prioridad 1**: la claim de `@sc-gen` (§1.3). Y volver a ser punteros: sus 5 bullets son contenido copiado **[V, y se decidió NO ejecutarlo]** — ver §5 |
+| `AGENTS.md` (513→534) | Pasos inejecutables: **HECHO**. Los **8 pares duplicados con `LEARNINGS`: [V]**, re-contados hoy tras editar ambos ficheros — siguen siendo 8 exactos (+4 solapes débiles). Partirlo: **descartado, ver §5** |
+| `docs/DECISIONS.md` (1.572) | 6 DDs con estado falso **[V en 5 de 6]** — **DD-35 el peor: dice que sus ramas no están en `main` y están, y en producción [V]**; reordenar a newest-first (pendiente desde el 30-jun); numerar la sección huérfana `:1265`; faltaba un DD para `cuscare` **[V]** — creado como **DD-37**. Newest-first: reordenado y gateado |
+| `docs/ROADMAP.md` (214) | Su **primer** item lleva 2 meses cerrado; otros 2 también **[V]** |
+| `docs/inventory.md` §gaps (97) | 2 de sus "4 gaps abiertos" están cerrados **[V]**. La tabla generada sí está al día y bajo gate |
+| `.impeccable.md` (102) | Dice "5 componentes locales" (son 2) y "dos apps" (son 4) **[V]** — y es el fichero que se abre para saber qué NO tocar |
+| `LEARNINGS.md` (372) | Hacer cumplir el tope de verdad (§1.5): fundir #2+#13+#20, #3→#5, #9→#7; **[V en el conteo, REFUTADO en la propuesta]** — se fundieron 3→5, 9→7 y 13+20→2; #14 y #16 se conservan (ver §5) |
 
 **KEEP** (con parches menores): `customs-catalog.md` (load-bearing: lo citan 5 scripts),
 `migration-safety.md`, `receta-migracion-tablas.md`, `code-connect.md`, `consumer-onboarding.md`
@@ -163,7 +171,7 @@ raíz común de 4 "fallos" de componente), que vivía solo en el hand-off del PR
 por item que sigue abierto), `AUDIT-SEMANAL.md`, `.claude/skills/{reflect,auditoria-semanal}`,
 `pull_request_template.md`, y los READMEs de `projects/**` salvo sus claims falsas.
 `CHANGELOG.md`: **KEEP congelado** con banner — las versiones publicadas son inmutables y nada más
-dice qué hay dentro **[A]**.
+dice qué hay dentro **[V]** — no existen tags `v0.1.0`/`v0.2.0`, y los 2 commits que lo tocan dan el titular de cada release, no el detalle: reconstruirlo exigiría diffear árboles.
 
 ---
 
@@ -188,6 +196,28 @@ determinista, y consultar GitHub la volvería flaky. Su hogar es la **pasada C**
 `.claude/skills/auditoria-semanal/SKILL.md`, que corre en la nube con `gh`: marca todo PR
 abierto con más de 7 días, uno por línea, con su edad. La ironía que lo justifica: esa misma
 rutina llevaba 9 días bloqueada por un PR sin mergear **suyo**, y no tenía forma de verlo.
+
+---
+
+## 5. Propuestas del informe que se decidieron NO ejecutar
+
+Un informe propone; ejecutarlo todo a ciegas es el mismo error que no leerlo. Tres veredictos
+se descartaron **con motivo**, y consta aquí para que nadie los reabra creyendo que se olvidaron:
+
+- **Partir `AGENTS.md` en tres.** Es la autoridad del repo. Trocearla crea tres ficheros nuevos,
+  tres punteros y tres superficies que se desincronizan — exactamente lo que esta auditoría vino
+  a reducir. Sus claims falsas ya están corregidas y su solape con `LEARNINGS` no hace daño hoy.
+  Que lo pida una deriva real, no un informe.
+- **Vaciar `CLAUDE.md` hasta dejarlo en punteros.** Es el ÚNICO fichero que se autocarga en cada
+  sesión: es el sitio del repo donde mejor rinde una advertencia de una línea, y de hecho una de
+  las suyas (`@sc-gen` en 5 ficheros) evita perder trabajo. Se corrigió el **índice**, que lo
+  catalogaba como "puntero sin info nueva" — la etiqueta era falsa, el fichero no.
+- **Borrar las reglas #14 y #16 de `LEARNINGS` por "indisparables".** #14 disparó ese mismo día
+  (entregar lo verificable y decir qué queda fuera) y #16 tiene evidencia real. Lo que sí se
+  ejecutó del §1.5 fueron las **fusiones** (3→5, 9→7, 13+20→2), que es donde estaba el bulto.
+
+**El criterio, para la próxima**: un veredicto de auditoría es una hipótesis con evidencia, no una
+orden. Si al abrir el fichero la propuesta empeora el repo, gana el fichero — y se escribe aquí.
 
 ---
 
