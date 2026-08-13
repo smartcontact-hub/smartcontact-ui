@@ -15,9 +15,13 @@
  *      documenta, falla.
  *   C. Tokens muertos: AGENTS.md no cita skills inexistentes; ningún doc sitúa DECISIONS-LOG.md
  *      en la "raíz" (vive en docs/history/).
- *   D. (LOCAL-only) El sello `HEAD `<sha>`` de NEXT-SESSION apunta a un commit que EXISTE en git
- *      → el hand-off no puede mentir sobre su propio estado. NO exige sello==HEAD (eso lagearía
- *      a propósito mid-sesión); solo que el SHA citado sea real. Se salta en CI (clone shallow).
+ *   D. (LOCAL-only) Cada hand-off de `docs/handoff/` LLEVA sello `HEAD `<sha>`` y ese commit
+ *      EXISTE en git → un hand-off no puede mentir sobre su propio estado ni quedarse sin fechar.
+ *      NO exige sello==HEAD (eso lagearía a propósito mid-sesión); solo que el SHA sea real.
+ *      Se salta en CI (clone shallow → `git cat-file` daría falso positivo).
+ *      Ojo al historial: antes miraba SOLO `NEXT-SESSION.md`, y cuando ese fichero pasó a ser el
+ *      índice de frentes (sin sello) la comprobación se quedó en no-op silencioso durante un
+ *      commit. Si vuelves a mover dónde vive el sello, mueve también este filtro.
  *
  * Uso:  node scripts/docs-coherence.mjs   (parte de `npm run verify`)
  */
@@ -104,21 +108,33 @@ for (const { path, lines } of files)
 // el SHA EXISTA. Se salta en CI: el clone suele ser shallow → `git cat-file` daría falso positivo
 // con un sello viejo. Es la red para el HUMANO que retoma la sesión en local, su contexto natural.
 if (!process.env.CI) {
-  const handoff = files.find((f) => rel(f.path) === 'NEXT-SESSION.md');
-  if (handoff) {
+  // El sello vive en el hand-off de CADA FRENTE (`docs/handoff/*.md`); `NEXT-SESSION.md` pasó a ser
+  // solo el índice y ya no lleva sello. Si esta red siguiera mirando únicamente ahí, habría vuelto
+  // a ser un no-op silencioso — que es exactamente el fallo que vino a tapar.
+  const handoffs = files.filter((f) => rel(f.path).startsWith('docs/handoff/'));
+  if (handoffs.length === 0)
+    fail('docs/handoff/ no contiene ningún hand-off; cada frente abierto necesita el suyo (ver NEXT-SESSION.md).');
+
+  const conIndice = [...handoffs, ...files.filter((f) => rel(f.path) === 'NEXT-SESSION.md')];
+  for (const h of conIndice) {
+    const esHandoff = rel(h.path).startsWith('docs/handoff/');
     const seen = new Set();
-    handoff.lines.forEach((line, i) => {
+    let sellado = false;
+    h.lines.forEach((line, i) => {
       for (const m of line.matchAll(/HEAD `([0-9a-f]{7,40})`/g)) {
+        sellado = true;
         const sha = m[1];
         if (seen.has(sha)) continue;
         seen.add(sha);
         try {
           execFileSync('git', ['cat-file', '-e', sha], { cwd: root, stdio: 'ignore' });
         } catch {
-          fail(`NEXT-SESSION.md:${i + 1} — el sello \`HEAD ${sha}\` no existe en git (¿fabricado/tecleado mal?). El hand-off no puede apuntar a un commit fantasma.`);
+          fail(`${rel(h.path)}:${i + 1} — el sello \`HEAD ${sha}\` no existe en git (¿fabricado/tecleado mal?). Un hand-off no puede apuntar a un commit fantasma.`);
         }
       }
     });
+    if (esHandoff && !sellado)
+      fail(`${rel(h.path)} — hand-off SIN sello. Añade \`HEAD \`<sha>\`\` en su cabecera: sin él nadie sabe a qué estado del repo describe.`);
   }
 }
 
