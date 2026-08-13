@@ -137,14 +137,25 @@ Examples:
 
 Agents MUST follow this order:
 
-1. Run `token-inspector`
-2. Run `component-generator`
-3. If needed → run `primeng-wrapper`
-4. If you touched tokens/theme → run `sync-theme`
-5. Document the change in `docs/` and map it in `docs/DOCS-INDEX.md` (enforced by `docs:guard`)
-6. Run verification: `npm run verify`
+1. **Inspect before generating** — read the existing token layers and a reference
+   component before writing anything (see *Core Principles §2* and *Token Strategy*).
+2. **Reuse before creating** — a PrimeNG wrapper if the Kit has the component, a custom
+   only when it does not (see *Component Strategy*).
+3. If you touched tokens/theme → follow [`docs/guia-tokens.md`](docs/guia-tokens.md)
+   §2.bis / §2.ter (the two sync paths).
+4. Document the change in `docs/` and map it in `docs/DOCS-INDEX.md` (enforced by `docs:guard`).
+5. Run verification: `npm run verify` — and before pushing, the **8 steps of `ci.yml`**.
 
 Do not skip steps.
+
+> **Historia, para que no se repita**: hasta el 2026-08-13 estos pasos decían "Run
+> `token-inspector` / `component-generator` / `primeng-wrapper` / `sync-theme`" — cuatro
+> pasos **obligatorios e inejecutables**. Vivían en `.agents/skills/` (886 líneas) y no
+> los cargaba nada: ni `package.json`, ni `.github/`, ni `.claude/`, ni un `.mcp.json`
+> (grep verificado, salida vacía). Su contenido era en su mayor parte esta misma guía
+> reescrita, así que se borraron; lo único que no estaba en ningún otro sitio —las dos
+> rutas de sync— se movió a `guia-tokens.md`. **Si vuelves a escribir un paso
+> obligatorio, comprueba que algo lo ejecuta.**
 
 ### Verification tooling (mandatory)
 Before considering any token/theme/component change done, run:
