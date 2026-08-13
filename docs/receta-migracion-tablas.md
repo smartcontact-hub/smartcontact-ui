@@ -226,7 +226,7 @@ usuarios · reglas · categorías · entidades.
 
 ## Pendiente conocido (no lo arregla esta receta)
 
-En tema oscuro el separador de filas da **1.00:1 — invisible** en las ocho
+En tema oscuro el separador de filas da ~~**1.00:1 — invisible**~~ → **ARREGLADO**: `07-dark.css:406` da hoy 1.126:1, y `npm run audit:border-surfaces` lo vigila para que no vuelva en las ocho
 tablas de lista, migradas y sin migrar por igual (`border-subtle` sobre
 `bg-surface`, que en oscuro son el mismo color). Es un rezagado de la Ola 3.
 Arreglarlo solo en las migradas las separaría del resto: va en un cambio propio

@@ -44,7 +44,9 @@ projects/design-tokens/
 > preset** in `@smartcontact-hub/components`:
 > `projects/ui-smartcontact/src/lib/theme/sc-preset/` — one file per
 > component (`button.ts`, `dialog.ts`, `datatable.ts`, …) plus the shared
-> base. The preset `definePreset(Aura, …)`s our overrides and is registered
+> base. The preset is a **standalone** object — **not** `definePreset(Aura, …)`; verified
+> 2026-08-13, `definePreset` has 0 occurrences under `projects/` and `sc-preset/base.ts` imports
+> nothing from Aura. That matters: **what we don't declare does NOT inherit from Aura.** It is registered
 > through the provider (`provideSmartContactUi`). Every preset slot resolves
 > to a `var(--sc-*)` reference — PrimeNG components consume Smart Contact
 > brand, and the source of truth stays in these layers.

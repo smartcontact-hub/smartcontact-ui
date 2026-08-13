@@ -400,6 +400,17 @@ lo que hace que te la creas cuando te toca. Lee el índice siempre; el cuerpo, c
     (web vs Figma, vacío vs elegido). Corolario barato: si al final lo mides —como hice con el Toast
     tras la pregunta—, casi siempre confirma la pista, pero ahora es medido, no heredado.
 
+    *Corolario (s27) — **RESCATAR una claim de un doc archivado al doc VIVO es donde MÁS hay que
+    verificar, y es donde menos lo hice.*** Al borrar `docs/history/` salvé a `DECISIONS.md` un
+    párrafo del plan de convergencia que decía «a usuarios le falta `bulkUpdate()`, es decisión de
+    producto → preséntala». Existía desde hacía un mes (`users.store.ts:62`, commit `094f0f4`) y
+    pasaba por undo. Lo escribí en un **DD nuevo** sin abrir el fichero. **Por qué duele más que
+    una paráfrasis normal**: mover algo de un archivo muerto al registro vivo le da un **ascenso de
+    credibilidad** — mañana nadie lo leerá como «esto venía de un plan viejo», lo leerá como una
+    decisión firmada. **Disparador**: cuando copies una frase de un doc que estás archivando o
+    borrando, verifica CADA claim comprobable antes de darle sitio en el destino; el motivo por el
+    que archivas ese doc (está rancio) aplica a lo que te llevas de él.
+
     *Absorbe la antigua regla 10 (s11) — un item de audit/plan redactado como «solo hay que…» o
     «nada usa X» es exactamente eso, una paráfrasis: verifica su precondición literal contra el
     código antes de ejecutarlo.* 4 de 4 items del `AUDIT-2026-07` eran más grandes o falsos —

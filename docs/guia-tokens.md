@@ -215,9 +215,12 @@ El flujo cuando cambia una métrica en Figma es:
 **Las métricas viajan automáticas** — primitivos (escala/radio) Y el
 **sizing de componente** (radio/padding/fontSize, vía `--sc-cmp-*`,
 DD-18): un cambio en Figma se ve en vivo sin tocar código. **Los
-colores de marca NO se auto-importan** — son una decisión documentada
-que se edita a mano en la capa curada (y parity vigila que coincidan
-con el export).
+colores de marca SÍ se auto-importan** desde DD-19/DD-20 —
+`token-gen-color.mjs` escribe `--sc-bg-primary` y compañía dentro de la
+zona generada de `02-semantic.css`—. Lo que sí se cura a mano es el hex
+**primitivo** (`--sc-color-blue-700`) y las divergencias conscientes de
+`color-map.mjs`. *(Corregido 2026-08-13: este párrafo decía lo contrario y
+se contradecía con §2.bis del propio documento.)*
 
 ### Un detalle que verás en el código: los valores van en rem
 
@@ -474,7 +477,7 @@ identidad Smart Contact (calm · dense · operational) — formas suaves sin ser
 infantiles, type ramp limpia, transiciones discretas. Lara o
 Material habrían pedido más fight para encajar.
 
-Nuestro preset hace `definePreset(Aura, { ... overrides })`:
+Nuestro preset **NO** hace `definePreset(Aura, …)` — es un objeto **autónomo** (verificado 2026-08-13: `definePreset` tiene 0 apariciones en `projects/`, y `sc-preset/base.ts` no importa nada de Aura). Consecuencia práctica, y no es menor: **lo que no declaramos NO hereda de Aura**, así que una mejora de Aura no llega sola y un slot sin mapear no cae a un default suyo:
 arranca de Aura y reemplaza solo los valores que queremos pisar.
 Lo que no overrideamos, **hereda de Aura** automáticamente.
 Cuando Aura saca una versión nueva, recibimos las mejoras
@@ -585,7 +588,7 @@ resuelve a `var(--sc-*)`**, la escala en rem es central, y el preset no lleva `p
    diseño queda en el comentario). Nunca las edites a mano.
 3. `npm run tokens:parity` — si un token curado o un slot del preset ahora diverge, o
    lo arreglas o lo registras como divergencia consciente
-   (`docs/customs-catalog.md` + la lista `DIVERGE` de `scripts/token-parity.mjs`).
+   (`docs/customs-catalog.md` + la lista `DIVERGE` de `scripts/color-map.mjs` (`token-parity.mjs` solo la importa)).
 4. `npm run verify`, y si cambió algo visual, `npm run e2e`.
 
 **Ruta B — llegan ficheros de preset (handoff de laboratorio/diseño)**
@@ -782,7 +785,7 @@ PrimeNG publica versiones siguiendo SemVer:
 
 1. **Lectura del changelog** completo de la versión.
 2. **Branch dedicada** (`chore/primeng-22`).
-3. `npm update primeng @primeng/themes` en esa branch.
+3. `npm update primeng @primeuix/themes` en esa branch. *(El paquete es `@primeuix/themes`; `@primeng/themes` no existe en este proyecto.)*
 4. **Lista de gaps**: tokens renombrados, componentes deprecados,
    props cambiadas. Resolver uno a uno.
 5. **Visual smoke test** en deploy preview: navegar por las
