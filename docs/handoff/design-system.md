@@ -2,12 +2,15 @@
 
 > **Volátil.** Lo reescribe la sesión que trabaja ESTE frente, y **solo este fichero**.
 > No toques los hand-offs de otros frentes. Lo durable vive en `docs/`.
-> **Sello: 2026-08-14 (s28) — HEAD `ba87b0c`.**
+> **Sello: 2026-08-14 (s28) — HEAD `9d49613`.**
 
 Sesión de una pieza: se cerró **la sección más reciente de la auditoría semanal** —los 4
 hallazgos que quedaban del 2026-08-13— y, de camino, dos ítems que colgaban de secciones
-anteriores. Gateado con los **8 pasos del CI corridos en local sobre el árbol final**. Sin
-trabajo a medias, sin ramas abiertas, sin PRs.
+anteriores. El lote de código pasó los **8 pasos del CI corridos en local sobre el árbol final**
+(los 2 rojos de siempre, `sc-card` y `sc-message`, re-confirmados ajenos por stash-y-reproduce);
+los dos commits posteriores son solo `.md` + un docstring, gateados con el subconjunto que les
+aplica. **El CI remoto confirmó los tres pushes en verde.** Sin trabajo a medias, sin ramas
+abiertas, sin PRs.
 
 ## ✅ Lo que cambió
 
