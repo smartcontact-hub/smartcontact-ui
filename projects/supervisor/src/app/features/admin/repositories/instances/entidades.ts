@@ -1,8 +1,8 @@
-import { ChangeDetectionStrategy, Component, inject, Injectable } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 
-import { createLocalStore, LocalStore } from '@core/services/local-store.factory';
+import { createRepoStore } from '@core/services/local-store.factory';
 import { RepoListPageComponent } from '../components/repo-list-page.component';
-import { RepoColumnDef, RepoFieldDef, RepoPageConfig, RepoStore } from '../components/repo-types';
+import { RepoColumnDef, RepoFieldDef, RepoPageConfig } from '../components/repo-types';
 
 export interface Entidad {
   readonly id: number;
@@ -71,28 +71,12 @@ const SEED: readonly Entidad[] = [
   },
 ];
 
-@Injectable({ providedIn: 'root' })
-export class EntidadesStore implements RepoStore<Entidad> {
-  private readonly store: LocalStore<Entidad> = createLocalStore<Entidad>({
-    storageKey: 'sc-entidades-repo',
-    versionKey: 'sc-entidades-repo-v',
-    currentVersion: 1,
-    defaults: SEED,
-  });
-  readonly items = this.store.items;
-  addItem(data: Omit<Entidad, 'id'>): Entidad {
-    return this.store.addItem(data);
-  }
-  updateItem(id: number, updates: Partial<Entidad>): void {
-    this.store.updateItem(id, updates);
-  }
-  deleteItem(id: number): void {
-    this.store.deleteItem(id);
-  }
-  deleteItems(ids: readonly number[]): void {
-    this.store.deleteItems(ids);
-  }
-}
+export const EntidadesStore = createRepoStore<Entidad>('EntidadesStore', {
+  storageKey: 'sc-entidades-repo',
+  versionKey: 'sc-entidades-repo-v',
+  currentVersion: 1,
+  defaults: SEED,
+});
 
 const COLUMNS: readonly RepoColumnDef<Entidad>[] = [
   {

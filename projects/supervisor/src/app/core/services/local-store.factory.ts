@@ -1,4 +1,4 @@
-import { signal, Signal } from '@angular/core';
+import { InjectionToken, signal, Signal } from '@angular/core';
 
 export interface LocalStoreConfig<T> {
   /** localStorage key for the items themselves. */
@@ -124,4 +124,30 @@ export function createLocalStore<T extends { id: number }>(
       commit(updater(itemsSignal()));
     },
   };
+}
+
+/**
+ * Un repositorio del panel de administración, listo para `inject()`.
+ *
+ * Los 9 repos (`agendas`, `entidades`, `horarios`, `variables`…) no hacían otra
+ * cosa que envolver `createLocalStore` en una clase `@Injectable` cuyos cuatro
+ * métodos eran pass-through 1:1 — 22 líneas idénticas carácter a carácter salvo
+ * el nombre del tipo. Y no hacía falta ninguna: el `LocalStore<T>` que devuelve
+ * el factory YA cumple `RepoStore<T>`, que es un subconjunto suyo (`RepoStore`
+ * no expone `getItem`/`setItems`).
+ *
+ * Devuelve un `InjectionToken` en vez de un objeto suelto para conservar EXACTO
+ * lo que había: singleton perezoso —el `localStorage` se lee en la primera
+ * inyección, no al importar el módulo, que es lo que pasaría con un `const`
+ * inicializado arriba— y `inject(XStore)` sin tocar una sola línea en los
+ * consumidores.
+ */
+export function createRepoStore<T extends { id: number }>(
+  nombre: string,
+  config: LocalStoreConfig<T>,
+): InjectionToken<LocalStore<T>> {
+  return new InjectionToken<LocalStore<T>>(nombre, {
+    providedIn: 'root',
+    factory: () => createLocalStore<T>(config),
+  });
 }

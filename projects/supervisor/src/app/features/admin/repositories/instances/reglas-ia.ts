@@ -1,8 +1,8 @@
-import { ChangeDetectionStrategy, Component, inject, Injectable } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 
-import { createLocalStore, LocalStore } from '@core/services/local-store.factory';
+import { createRepoStore } from '@core/services/local-store.factory';
 import { RepoListPageComponent } from '../components/repo-list-page.component';
-import { RepoColumnDef, RepoFieldDef, RepoPageConfig, RepoStore } from '../components/repo-types';
+import { RepoColumnDef, RepoFieldDef, RepoPageConfig } from '../components/repo-types';
 
 export interface ReglaIA {
   readonly id: number;
@@ -80,28 +80,12 @@ const SEED: readonly ReglaIA[] = [
   },
 ];
 
-@Injectable({ providedIn: 'root' })
-export class ReglasIAStore implements RepoStore<ReglaIA> {
-  private readonly store: LocalStore<ReglaIA> = createLocalStore<ReglaIA>({
-    storageKey: 'sc-reglas-ia-repo',
-    versionKey: 'sc-reglas-ia-repo-v',
-    currentVersion: 1,
-    defaults: SEED,
-  });
-  readonly items = this.store.items;
-  addItem(data: Omit<ReglaIA, 'id'>): ReglaIA {
-    return this.store.addItem(data);
-  }
-  updateItem(id: number, updates: Partial<ReglaIA>): void {
-    this.store.updateItem(id, updates);
-  }
-  deleteItem(id: number): void {
-    this.store.deleteItem(id);
-  }
-  deleteItems(ids: readonly number[]): void {
-    this.store.deleteItems(ids);
-  }
-}
+export const ReglasIAStore = createRepoStore<ReglaIA>('ReglasIAStore', {
+  storageKey: 'sc-reglas-ia-repo',
+  versionKey: 'sc-reglas-ia-repo-v',
+  currentVersion: 1,
+  defaults: SEED,
+});
 
 const COLUMNS: readonly RepoColumnDef<ReglaIA>[] = [
   {
