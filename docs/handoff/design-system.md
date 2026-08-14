@@ -2,7 +2,7 @@
 
 > **Volátil.** Lo reescribe la sesión que trabaja ESTE frente, y **solo este fichero**.
 > No toques los hand-offs de otros frentes. Lo durable vive en `docs/`.
-> **Sello: 2026-08-14 (s28) — HEAD `9d49613`.**
+> **Sello: 2026-08-14 (s28) — HEAD `ab5a667`.**
 
 Sesión de una pieza: se cerró **la sección más reciente de la auditoría semanal** —los 4
 hallazgos que quedaban del 2026-08-13— y, de camino, dos ítems que colgaban de secciones
