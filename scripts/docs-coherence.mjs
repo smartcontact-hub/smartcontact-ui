@@ -271,14 +271,25 @@ for (const { path, lines } of files) {
 // EXENTOS y por qué (no es pereza, es que su cifra es correcta EN SU CONTEXTO):
 //   - CHANGELOG.md — congelado: documenta lo que había DENTRO de una versión publicada.
 //   - los AUDIT-* — su trabajo es justamente CITAR la cifra equivocada como hallazgo.
+//
+// ALCANCE: docs/ + raíz **y los README de `projects/**`**, igual que el CHECK F. Hasta el
+// 2026-08-14 este check se quedaba en el alcance de `docs:guard`, que NO entra en `projects/**`
+// — o sea que de las dos derivas que lo motivaron (arriba) solo podía ver una, y la otra
+// (`projects/ui-smartcontact/README.md`, "~55") siguió ahí ocho semanas más, abierta en la
+// auditoría semanal, mientras el comentario de este bloque la citaba como caso resuelto. Un
+// guardián que nombra un caso que no cubre miente dos veces: sobre el repo y sobre sí mismo.
 const STATUS_PATH = resolve(root, 'docs/_component-status.json');
 if (existsSync(STATUS_PATH)) {
   const real = Number(
     (JSON.parse(readFileSync(STATUS_PATH, 'utf8')).summary || '').match(/^(\d+)\s+componentes/)?.[1],
   );
   const EXENTOS = /^(CHANGELOG\.md|docs\/AUDIT-)/;
+  const filesE = [
+    ...files,
+    ...mdDeProyectos().map((f) => ({ path: f, lines: readFileSync(f, 'utf8').split('\n') })),
+  ];
   if (real) {
-    for (const { path, lines } of files) {
+    for (const { path, lines } of filesE) {
       if (EXENTOS.test(rel(path))) continue;
       lines.forEach((line, i) => {
         // "51 componentes `sc-*`" / "49 wrappers/customs `sc-*`" / "~55 componentes `sc-*`"
