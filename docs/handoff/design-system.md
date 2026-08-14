@@ -23,6 +23,10 @@ trabajo a medias, sin ramas abiertas, sin PRs.
   **comentarios**. `component-audit` subió `sc-button` de 15 a 16 inputs solo porque su docstring
   nuevo menciona `input()`; y CHECK E de `docs:coherence` ahora entra en `projects/**`, donde
   llevaba desde el 4 de agosto una cifra falsa que por alcance no podía ver.
+- **`sc-bulk-transcription-modal` queda como está, y el ítem cerrado como [intencional]**: no se
+  adopta en Memory (sería regresión) y **no se retira**, porque está en el Kit — es el único
+  componente custom que `kit-export-dtcg.json` modela con tokens propios. Que ninguna app lo use
+  significa que **la app se adelantó al Kit**, y eso se habla en Figma, no en el código.
 
 ## ▶︎ SIGUIENTE — sin preguntar
 
@@ -36,9 +40,13 @@ trabajo a medias, sin ramas abiertas, sin PRs.
    de la clase y un párrafo de docstring; y `shared/utils/is-typing-target.ts` es **idéntico**
    (`diff` vacío) al del DS con 0 usos. `icon-size.ts` sí tiene un consumidor
    (`label-chip.component.ts`): ahí es importar de `@smartcontact-hub/icons`, no borrar.
-3. **La deuda de código de [`AUDIT-DEUDA-2026-06.md`](../AUDIT-DEUDA-2026-06.md)**. El P0 sigue
+3. **La rama `aura/custom` del Kit no la vigila nadie** (hallazgo nuevo de s28, `[gate-able]`):
+   ningún coverage-map la clasifica, así que no se genera su familia `--sc-cmp-*` y, si el Kit
+   añade otro custom, no salta nada. Es el mismo agujero que `tokens:parity` ya cubre para
+   `semantic/common`, `app` y `effects`.
+4. **La deuda de código de [`AUDIT-DEUDA-2026-06.md`](../AUDIT-DEUDA-2026-06.md)**. El P0 sigue
    siendo `field-pattern ×5`.
-4. **Los cabos de DD-24** (round-trip de iconos a Figma) en [`ROADMAP.md`](../ROADMAP.md).
+5. **Los cabos de DD-24** (round-trip de iconos a Figma) en [`ROADMAP.md`](../ROADMAP.md).
 
 ## ⏸️ ESPERANDO A RAFA — NO preguntar
 
@@ -46,7 +54,6 @@ trabajo a medias, sin ramas abiertas, sin PRs.
 |---|---|
 | **Borrar el proyecto Cloudflare `sc-demo`** | Vivo sirviendo contenido viejo; un borrado permanente no lo ejecuto yo |
 | **Retirar `sc-page-header`** | Sin consumidores salvo su demo |
-| **Retirar `sc-bulk-transcription-modal` del DS** | *Nuevo (s28).* Misma clase que la fila de arriba: 0 consumidores fuera de su demo. Y **adoptarlo en Memory está descartado con evidencia** — el port se congeló en junio y la app siguió (badges, franja de error, estado de carga, shell en `<sc-dialog>`); el aviso está en su propio docstring |
 | **Lienzo de página gris↔blanco** | Figma `13920:4298`. ⚠️ Antes de tocarlo lee la **trampa C3 de DD-36**: devolverlo a `--sc-bg-default` re-crea un bug documentado del rail de AED |
 | **Tramo actual del breadcrumb** | Figma `13890:157`. Lo mira **Marta** |
 | **Publicar Code Connect** | Requiere plan Figma Organization/Enterprise |

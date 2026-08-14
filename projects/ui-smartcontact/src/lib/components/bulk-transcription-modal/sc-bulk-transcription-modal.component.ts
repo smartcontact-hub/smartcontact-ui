@@ -63,6 +63,13 @@ export type ScBulkTranscriptionModalSurface = 'default' | 'dark' | 'green';
  *   · shell delegado en `<sc-dialog>` — este renderiza su propio `role="dialog"`.
  * Convergerlos es rehacer el port contra la app viva, no un swap. Mientras eso
  * no pase, su único consumidor es la demo de `sc-docs`.
+ *
+ * **Y tampoco se retira, aunque no lo consuma ninguna app.** Está en el KIT:
+ * `kit-export-dtcg.json` lo modela con tokens propios (borde, header,
+ * subheader, título, footer) bajo `aura/custom`, cuya única otra rama es
+ * `typography` — o sea que es **el único componente custom que el Kit modela**.
+ * Que la app no lo use no es que sobre: es que la app se adelantó al Kit.
+ * Triado como **intencional** el 2026-08-14; no lo levantes otra vez como deuda.
  */
 @Component({
   selector: 'sc-bulk-transcription-modal',
