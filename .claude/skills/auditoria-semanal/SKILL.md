@@ -89,7 +89,7 @@ automatizar debe ser un gate, no documentación"*. Así que cada hallazgo se cla
 
 - **Todo hallazgo cita `file:line`.** Sin ubicación concreta, no es un hallazgo — es una opinión. No la escribas. (Espíritu de `reflect`: "no concrete moment → no claim".)
 - **Si una pasada no encuentra nada real, escribe "sin hallazgos".** Inventar para llenar está **prohibido**.
-- **Nada de lo que ya cubren los 25 gates ni los `e2e:*`** (§0).
+- **Nada de lo que ya cubren los 26 gates ni los `e2e:*`** (§0).
 - **Semana sin hallazgos en ninguna pasada → NO abres PR.** Cero ruido.
 
 **Seguridad de CI (CRÍTICO — `docs/AUDIT-SEMANAL.md` lo escanea `docs:coherence` en cada `verify`, para siempre):**

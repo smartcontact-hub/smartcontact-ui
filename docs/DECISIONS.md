@@ -37,6 +37,70 @@
 
 ---
 
+## DD-38 · 2026-08-14 — La era objetivo de la API es **señales**; `@Input()/@Output()` queda congelado con trinquete
+
+**Contexto** · Dos formas de declarar la API conviven en el repo sin criterio escrito en ningún
+sitio (`AGENTS.md`, este doc, `migration-safety.md`) — lo levantó la rutina semanal del 2026-08-13
+como P1. Medido hoy sobre los **204 `.component.ts`** de `projects/`: **76 en señales, 17 en
+decoradores**, el resto sin API propia. Los 17 se reparten así: **16 en la librería del DS** y
+**1 en el paquete de iconos** (`sc-icon`). Las **apps están ya al 100% en señales** — el único
+`@Input()` que aparecía en el supervisor es un **comentario** de `sidebar-nav-item.component.ts`
+que explica por qué NO lo usa. O sea que esto no es una migración pendiente del producto: es
+deuda de la librería, y solo de ella.
+
+Lo que lo hace urgente no es la estética: `AGENTS.md` → *Reference Components* manda inspeccionar
+**4 referencias antes de generar nada**, y estaban repartidas entre las dos eras — `sc-button`
+(decoradores, **100 usos** en plantillas: 61 supervisor, 35 sc-docs, 4 DS) frente a
+`sc-toggleswitch` e `sc-inputtext` (señales); la cuarta, `sc-dynamic-dialog`, es un servicio y no
+tiene API de inputs. El patrón que copia un agente dependía de **cuál abriera primero**.
+
+**Decisión** ·
+
+- **La era objetivo es señales**: `input()` / `input.required()` / `model()` / `output()`,
+  `viewChild()/contentChild()`, y estado derivado en `computed()` — no en getters.
+- **`@Input()/@Output()` queda CONGELADO**: no se estrena en nada nuevo, y a un componente de los
+  16 que quedan **no se le añade un input más** — si necesita API nueva, primero se migra entero.
+- **Migración por lotes**, empezando por `sc-button` (hecho aquí) por ser la referencia más citada.
+- **La migración no renombra nada.** El contrato de plantilla es idéntico en las dos eras
+  (`[label]="x"`, `(clicked)`); lo único que cambia es la lectura interna (`this.label()`), que es
+  privada del componente. Verificado: **cero** accesos programáticos (`ViewChild` sobre
+  `ScButtonComponent`) en todo el repo.
+- **Lo gatea `audit:api-era`** (gate 26 de `verify`), que es un **trinquete**: la lista de
+  pendientes solo puede menguar.
+
+**Razón** · La migración es mecánica y está medida: de los 17 componentes legacy, **0 usan
+`@Input() set`** (setters, que es el caso que obliga a rediseñar), **1** tiene `ngOnChanges`
+(`sc-bulk-transcription-modal`) y **0** implementan `ControlValueAccessor`. No hay ningún caso
+donde los decoradores hagan algo que las señales no hagan: Angular 21, API estable. Y el lado
+caro —las apps— ya está hecho, así que el trabajo restante es finito y acotado a la librería.
+
+La dirección no es una preferencia nueva: `AUDIT-DEUDA-2026-06.md` ya la enunciaba
+("16 wrappers legacy → migrar a `input()/output()/model()`"), pero vivía en un informe de deuda,
+que es un sitio donde se lee un plan, no donde se busca una regla.
+
+**Descartadas** · *Dejar convivir las dos eras y documentarlo* → rechazado: el problema no es la
+convivencia, es que la referencia más copiada del set enseña la era vieja, así que se reproduce
+sola. *Migrar los 17 de golpe* → rechazado: solo `sc-button` tiene 100 usos y `sc-icon` está en
+todas las pantallas; por lotes con AOT + `e2e` por lote (regla 16 de `LEARNINGS`). *Escribirlo
+solo en `AGENTS.md`* → rechazado, y es el motivo de que aquí haya un gate: la prosa no impide el
+fichero número 18, y esta clase de deriva ya se coló una vez. *Aprovechar para renombrar la API*
+(`clicked` → `onClick`) → rechazado: convertiría una migración invisible en una rotura de 100
+llamadas.
+
+**Consecuencias** · `sc-button` pasa a ser la referencia de la era objetivo: 15 `input()`, 1
+`output()`, getters → `computed()`, booleanos con `booleanAttribute` como ya hacían 48
+declaraciones del DS. Efecto lateral querido: `<sc-button disabled>` **sin binding** ahora sí
+deshabilita — antes el atributo pelado entraba como `''` y no hacía nada; medido, **0 usos** con
+esa forma, así que no rompe a nadie.
+
+Quedan **16 en el trinquete** (`LEGACY_PENDIENTES` en `scripts/audit-api-era.mjs`). Al migrar uno
+hay que **borrarlo de la lista**: el guard también se pone rojo si un componente ya migrado sigue
+ahí, porque una lista con nombres muertos deja de decir la verdad sobre lo que falta. Probado en
+rojo en sus cuatro direcciones (legacy nuevo fuera de la lista · migrado que sigue dentro · nombre
+inexistente · fichero que mezcla las dos eras) y en verde sobre el árbol limpio.
+
+---
+
 ## DD-37 · 2026-08-13 — `cuscare` es una app RÉPLICA de pleno derecho: exenta de tokenizar, gateada por fidelidad
 
 **Contexto** · `projects/cuscare` replica `cuscare.smart-contact.com/aed`, está **en producción**

@@ -278,6 +278,18 @@ These define:
 - state handling
 - wrapper patterns
 
+**API era — signals, always (DD-38).** Declare inputs with `input()` /
+`input.required()` / `model()`, outputs with `output()`, queries with
+`viewChild()/contentChild()`, and derived state with `computed()` — never a
+getter. Booleans take `{ transform: booleanAttribute }`. `@Input()/@Output()`
+is frozen: 16 library components still use it and they are the *only* ones
+allowed to, tracked in `LEGACY_PENDIENTES` (`scripts/audit-api-era.mjs`). That
+list only shrinks — `npm run audit:api-era` fails if anything new declares the
+old API, and also if a migrated component is left on the list. Until
+2026-08-14 the references above straddled both eras, so the pattern an agent
+copied depended on which file it opened first; `sc-button` is now the canonical
+example of the target era.
+
 While a reference is not yet ported, derive patterns from this file, the
 token layers, and the preset.
 
@@ -291,6 +303,7 @@ token layers, and the preset.
 ❌ `calc(var(--token)/16*1rem)` conversions (tokens are already rem)  
 ❌ 8-point names (`--sc-space-*`, `--sc-spacing-200`)  
 ❌ `--p-*` outside the preset  
+❌ `@Input()/@Output()` in anything new (signals era — DD-38)  
 ❌ Ignoring reference components  
 ❌ Duplicating logic  
 ❌ Breaking PrimeNG behavior  

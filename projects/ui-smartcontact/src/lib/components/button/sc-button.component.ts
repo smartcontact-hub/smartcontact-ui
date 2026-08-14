@@ -1,9 +1,10 @@
 import {
+    booleanAttribute,
     ChangeDetectionStrategy,
     Component,
-    EventEmitter,
-    Input,
-    Output
+    computed,
+    input,
+    output
 } from '@angular/core';
 import { ButtonModule } from 'primeng/button';
 
@@ -20,6 +21,16 @@ import {
 type PrimeButtonSeverity = 'primary' | 'secondary' | 'success' | 'info' | 'warn' | 'danger' | 'contrast';
 type PrimeButtonSize = 'small' | 'large' | undefined;
 
+/**
+ * Wrapper de `<p-button>` y **componente de referencia de la era de señales**
+ * (DD-38): `AGENTS.md` manda inspeccionarlo antes de generar nada, así que lo
+ * que declara aquí se copia. API pública `input()/output()`, booleanos con
+ * `booleanAttribute` y estado derivado en `computed()`, nunca en getters.
+ *
+ * El contrato de plantilla no cambió al migrar: `[label]="x"` y `(clicked)`
+ * se escriben igual en las dos eras. Lo que cambia es solo la lectura interna
+ * (`this.label()`), que es privada del componente.
+ */
 @Component({
     selector: 'sc-button',
     standalone: true,
@@ -28,109 +39,101 @@ type PrimeButtonSize = 'small' | 'large' | undefined;
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ScButtonComponent {
-    @Input() label = '';
+    readonly label = input('');
 
-    @Input() variant: ScButtonVariant = 'primary';
+    readonly variant = input<ScButtonVariant>('primary');
 
-    @Input() appearance: ScButtonAppearance = 'filled';
+    readonly appearance = input<ScButtonAppearance>('filled');
 
-    @Input() size: ScButtonSize = 'md';
+    readonly size = input<ScButtonSize>('md');
 
-    @Input() disabled = false;
+    readonly disabled = input(false, { transform: booleanAttribute });
 
-    @Input() loading = false;
+    readonly loading = input(false, { transform: booleanAttribute });
 
-    @Input() fullWidth = false;
+    readonly fullWidth = input(false, { transform: booleanAttribute });
 
-    @Input() type: ScButtonType = 'button';
+    readonly type = input<ScButtonType>('button');
 
-    @Input() icon: string | null = null;
+    readonly icon = input<string | null>(null);
 
-    @Input() iconPosition: ScButtonIconPosition = 'left';
+    readonly iconPosition = input<ScButtonIconPosition>('left');
 
-    @Input() iconSize: ScButtonIconSize | null = null;
+    readonly iconSize = input<ScButtonIconSize | null>(null);
 
-    @Input() iconFilled = false;
+    readonly iconFilled = input(false, { transform: booleanAttribute });
 
-    @Input() iconAriaLabel: string | null = null;
+    readonly iconAriaLabel = input<string | null>(null);
 
-    @Input() ariaLabel: string | null = null;
+    readonly ariaLabel = input<string | null>(null);
 
-    @Input() rounded = false;
+    readonly rounded = input(false, { transform: booleanAttribute });
 
-    @Output() clicked = new EventEmitter<MouseEvent>();
+    readonly clicked = output<MouseEvent>();
 
-    protected get isInteractionDisabled(): boolean {
-        return this.disabled || this.loading;
-    }
+    protected readonly isInteractionDisabled = computed(() => this.disabled() || this.loading());
 
-    protected get buttonSeverity(): PrimeButtonSeverity {
-        return this.variant;
-    }
+    protected readonly buttonSeverity = computed<PrimeButtonSeverity>(() => this.variant());
 
-    protected get buttonSize(): PrimeButtonSize {
-        if (this.size === 'sm') {
+    protected readonly buttonSize = computed<PrimeButtonSize>(() => {
+        const size = this.size();
+
+        if (size === 'sm') {
             return 'small';
         }
 
-        if (this.size === 'lg') {
+        if (size === 'lg') {
             return 'large';
         }
 
         return undefined;
-    }
+    });
 
-    protected get outlined(): boolean {
-        return this.appearance === 'outlined';
-    }
+    protected readonly outlined = computed(() => this.appearance() === 'outlined');
 
-    protected get text(): boolean {
-        return this.appearance === 'text';
-    }
+    protected readonly text = computed(() => this.appearance() === 'text');
 
-    protected get link(): boolean {
-        return this.appearance === 'link';
-    }
+    protected readonly link = computed(() => this.appearance() === 'link');
 
-    protected get buttonIcon(): string | undefined {
-        return resolveScComponentIconClass(this.icon, {
-            filled: this.iconFilled,
-            size: this.iconSize
-        });
-    }
+    protected readonly buttonIcon = computed(() =>
+        resolveScComponentIconClass(this.icon(), {
+            filled: this.iconFilled(),
+            size: this.iconSize()
+        })
+    );
 
-    protected get buttonAriaLabel(): string | undefined {
-        const ariaLabel = this.ariaLabel?.trim();
+    protected readonly iconAccessibleLabel = computed<string | null>(
+        () => this.iconAriaLabel()?.trim() || null
+    );
+
+    protected readonly buttonAriaLabel = computed<string | undefined>(() => {
+        const ariaLabel = this.ariaLabel()?.trim();
 
         if (ariaLabel) {
             return ariaLabel;
         }
 
-        if (!this.label.trim()) {
-            return this.iconAccessibleLabel ?? undefined;
+        if (!this.label().trim()) {
+            return this.iconAccessibleLabel() ?? undefined;
         }
 
         return undefined;
-    }
+    });
 
-    protected get iconAccessibleLabel(): string | null {
-        return this.iconAriaLabel?.trim() || null;
-    }
+    protected readonly iconAriaHidden = computed<'true' | null>(() =>
+        this.iconAccessibleLabel() ? null : 'true'
+    );
 
-    protected get iconAriaHidden(): 'true' | null {
-        return this.iconAccessibleLabel ? null : 'true';
-    }
-
-    protected get iconRole(): 'img' | null {
-        return this.iconAccessibleLabel ? 'img' : null;
-    }
+    protected readonly iconRole = computed<'img' | null>(() =>
+        this.iconAccessibleLabel() ? 'img' : null
+    );
 
     protected buttonIconClass(iconClass: string, buttonIcon: string): string {
         return [iconClass, buttonIcon].filter(Boolean).join(' ');
     }
 
     protected onClick(event: MouseEvent): void {
-        if (this.isInteractionDisabled) {
+        if (this.isInteractionDisabled()) {
             event.preventDefault();
             event.stopPropagation();
             return;
