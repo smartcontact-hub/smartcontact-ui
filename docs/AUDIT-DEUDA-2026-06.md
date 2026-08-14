@@ -8,7 +8,7 @@
 > genera la rutina semanal en [`AUDIT-SEMANAL.md`](./AUDIT-SEMANAL.md); lo que se prioriza se
 > mueve a [`ROADMAP.md`](./ROADMAP.md). Se absorbió aquí `AUDIT-2026-07.md`, que se auto-declaraba
 > referencia de este ("§5 · referenciada, NO arreglada aquí"), daba por siguiente una fase que
-> DD-29 ya cerró, y abría con un baseline de "16 guardarraíles" cuando son 25. Los tres arreglos
+> DD-29 ya cerró, y abría con un baseline de "16 guardarraíles" cuando son 26. Los tres arreglos
 > que sí aportaba están **ejecutados y vivos en el código**, que es donde se comprueban:
 > `i18n:check` en `verify`, el matching con y sin guiones de `component-audit.mjs`, y la
 > allowlist `PROPOSED_SCRIPTS` de `docs-coherence.mjs`.
@@ -19,9 +19,17 @@
 
 ## 1. Temas transversales (atacar aquí primero)
 
-- **A. Dos eras de API conviviendo** — 16 wrappers DS usan `@Input/@Output`
+- [x] **A. Dos eras de API conviviendo** — 16 wrappers DS usan `@Input/@Output`
   (legacy) vs 31 con `input()/output()/model()` (signals); en `agent-app` solo
   2 de 8 con signals. Sin criterio escrito. Es la inconsistencia más visible.
+  → **DECIDIDO 2026-08-14 (DD-38)**: la era objetivo es señales, `sc-button`
+  migrado como referencia, y lo sostiene un trinquete en `verify`
+  (`npm run audit:api-era`) que impide estrenar decoradores y obliga a que la
+  lista de pendientes solo mengüe. El lado de las **apps ya está al 100%**
+  (medido 2026-08-14: 0 ficheros con decoradores en supervisor/agent/cuscare/
+  sc-docs), así que lo que queda —**16 componentes**, `sc-icon` incluido— es
+  todo de la librería y va por lotes. La *decisión* está cerrada; la
+  *migración* sigue viva abajo.
 - **B. El field-pattern copy-pasteado ×5** *(la deuda más cara)* —
   `inputtext/select/multiselect/datepicker/inputnumber` duplican palabra por
   palabra template, CVA, host class-binding, 9 computeds, tipos `size`, ID-gen.
@@ -52,6 +60,9 @@
 
 ### P1 — DS components
 - [ ] 16 wrappers legacy → migrar a `input()/output()/model()` (por lotes, AOT por lote).
+  Criterio y trinquete: **DD-38**. Hecho `sc-button`; los 16 que quedan son los de
+  `LEGACY_PENDIENTES` en `scripts/audit-api-era.mjs` (y ahí `sc-icon`, que este informe no
+  contaba porque vive en el paquete de iconos).
 - [ ] `radiobutton`/`textarea` legacy + sin field-pattern.
 - [ ] host class-binding duplicado ×5 → directiva `scFieldHost`.
 - [ ] `hasPrimitiveOptions` duplicado + comentario word-for-word → `scHasPrimitiveOptions()`.
