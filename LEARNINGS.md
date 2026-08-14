@@ -34,7 +34,7 @@ lo que hace que te la creas cuando te toca. Lee el índice siempre; el cuerpo, c
 | **1** | concluir que algo NO funciona desde una herramienta | demuestra que tu estímulo LLEGÓ, y no extiendas el negativo más allá de lo que mediste |
 | **2** | creerte un hallazgo (o un verde) de una sonda **tuya** | valida el instrumento con un caso conocido; pruébalo en todos sus ejes; y si da verde, mira algo que tú no escribiste |
 | **4** | arreglar un valor sustituyéndolo por otro token | mide el token de DESTINO antes (fondo y texto, misma familia) |
-| **5** | dudar entre tu código y tu medición | lo rancio es la medición: build, server, HMR, animación… o atribución (stash-y-reproduce) |
+| **5** | dudar entre tu código y tu medición | lo rancio es la medición: build, server, HMR, animación, **el repo bajo tus pies**… o atribución (stash-y-reproduce) |
 | **6** | mirar el código porque un test NUEVO falla | sospecha del test primero: ¿mide la magnitud? ¿el selector casa? ¿reintenta? ¿espera al estado final? |
 | **7** | hacer `git push` | corre los **8 pasos** de `ci.yml`, una vez, sobre el árbol final — y confirma el verde LEYENDO el log |
 | **8** | proponer una segunda corrección tras fallar la primera | para: la siguiente acción es una MEDICIÓN que localice la causa |
@@ -151,10 +151,19 @@ lo que hace que te la creas cuando te toca. Lee el índice siempre; el cuerpo, c
    - *(s25)* **una animación a medio terminar**: tras soltar un `cdkDrag`, medir sin esperar
      daba 17 columnas de 18 y parecía que el reordenado PERDÍA una. Con 600ms de espera: 18 y
      todo correcto.
+   - *(s28)* **el propio repo, si la sesión es larga**: arranqué leyendo `LEARNINGS.md` y a las
+     dos horas Rafa commiteó encima (`b5c790b`, un modo nuevo de la regla 12). O sea que estuve
+     el resto de la sesión trabajando contra una versión del fichero de reglas que ya no era la
+     última, y **no me enteré hasta el `git push`**, por el rango que imprimió. Da igual que el
+     fichero sea de proceso, un hand-off o un `.md` de contrato: lo leíste una vez y lo tratas
+     como fijo. Esta vez no costó nada —el cambio era de un tema que no toqué—, que es suerte,
+     no método.
    **Acción**: antes de la siguiente medición, pregúntate qué puede estar sirviendo/pintando
    algo viejo — build, server, HMR o animación — y neutralízalo (rebuild, reinicio, recarga
    dura, espera de asentamiento). Cuesta segundos; la alternativa es depurar código que no se
-   está ejecutando o un DOM que aún no ha terminado de moverse.
+   está ejecutando o un DOM que aún no ha terminado de moverse. Y para la quinta, la variante
+   barata: **anota el SHA al arrancar y, antes de commitear, `git log <sha>..HEAD -- CLAUDE.md
+   AGENTS.md LEARNINGS.md docs/handoff/` — si sale algo, reléelo antes de cerrar.**
 
    *Absorbe la antigua regla 3 (s11) — la variante de ATRIBUCIÓN: «¿este warning es mío o ya
    estaba?» se contesta con **stash-y-reproduce**, no opinando.* Es el mismo gesto —neutraliza
@@ -323,7 +332,13 @@ lo que hace que te la creas cuando te toca. Lee el índice siempre; el cuerpo, c
 12. **Tu comando alcanza más de lo que crees — al CONTAR, al REEMPLAZAR y al IMPRIMIR. Antes de
     dar una cifra, ejecutar un `sed` o volcar un fichero, pregúntate qué entra en el resultado.**
     - *Contando de más (s11)*: dije "111 usos de `p-button`" y lo escribí en el hand-off; los
-      `<p-button>` reales eran **50** — el resto, etiquetas de cierre y clases CSS.
+      `<p-button>` reales eran **50** — el resto, etiquetas de cierre y clases CSS. *Y su forma
+      recurrente (s28), que en este repo ya ha picado a TRES scripts: los **comentarios** entran
+      en el conteo.* `component-audit` subió `sc-button` de 15 a 16 inputs porque su docstring
+      nuevo menciona `input()` — un número falso, y encima dentro de un manifiesto generado, que
+      es donde nadie lo va a dudar. `audit-primeng-coupling` tenía el mismo agujero (arreglado en
+      s20). **Si tu regex mira un fichero de código, quítale los comentarios antes de contar o
+      clasificar**; un docstring habla de la API, no la declara.
     - *Contando de menos (s18)*: `grep 'test('` me dio 39 tests en el supervisor; el runner
       dice **108**. Mis tests viven dentro de bucles `for`, así que el grep cuenta
       DECLARACIONES y el runner cuenta INSTANCIAS. **Cuando exista un ejecutor que sepa el

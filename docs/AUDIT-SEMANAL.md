@@ -63,18 +63,33 @@
   `firePulseAndFlash`) → adoptar `<sc-bulk-transcription-modal>` en Memory (aportando solo los
   contadores, que es justo lo que el componente del DS espera) o, si quedó desfasado del caso
   real, retirarlo del DS. [arréglalo]
-  **TRIADO 2026-08-14 — la rama "adoptar" queda DESCARTADA con evidencia; la rama "retirar" pasa
-  a ESPERANDO A RAFA.** Comparados los dos fichero a fichero, ya **no son el mismo modal**: el
-  port del DS se quedó en la v26 de junio (`git log`: última edición funcional el 2026-06-13) y
-  el de la app siguió con el redesign S58. La app tiene y el port NO: **badges iconográficos**
-  include/warn/exclude en el hero —que sustituyeron al texto denso (`heroHint`) que el port sigue
-  pintando—, **franja de error** `role="alert"`, **estado de carga** en el botón de procesar, y
-  el shell delegado en `<sc-dialog>` (el port renderiza su propio `role="dialog"`). Adoptarlo tal
-  cual sería una regresión visible en producción, no una consolidación. Se deja **avisado en el
-  docstring del componente del DS** para que el próximo que lea este hallazgo no lo ejecute a
-  ciegas. Retirarlo del DS es la recomendación —0 consumidores fuera de su demo—, pero es la
-  **misma clase de decisión que `sc-page-header`**, que ya está aparcada esperando a Rafa: se
-  aparca con ella, no se ejecuta por libre.
+  **RESUELTO 2026-08-14 — ninguna de las dos ramas: es [intencional].** Las dos se descartaron
+  con medición, y en este orden:
+  · **Adoptarlo en Memory, NO**: comparados fichero a fichero, ya no son el mismo modal. El port
+    se quedó en la v26 de junio (`git log`: última edición funcional el 2026-06-13) y la app
+    siguió con el redesign S58. La app tiene y el port no: **badges iconográficos**
+    include/warn/exclude en el hero —que sustituyeron al texto denso (`heroHint`) que el port
+    sigue pintando—, **franja de error** `role="alert"`, **estado de carga** en el botón de
+    procesar, y el shell delegado en `<sc-dialog>` (el port renderiza su propio `role="dialog"`).
+    Adoptarlo sería una regresión visible en producción, no una consolidación.
+  · **Retirarlo del DS, TAMPOCO** — y esto es lo que el hallazgo no podía ver, porque solo miró
+    consumidores: **el modal está en el Kit**. `kit-export-dtcg.json` lo modela con tokens
+    propios (borde, header, subheader, título, footer) bajo `aura/custom`, cuya única otra rama
+    es `typography`: es decir, es **el único componente custom que el Kit modela**. Retirar su
+    implementación dejaría sin implementar la única pieza custom del sistema de diseño. Que "no
+    lo use nadie" no significa que sobre — significa que **la app se adelantó al Kit**, que es
+    otra conversación (y es de Rafa y Marta, en Figma, no del código).
+  Se cierra como **[intencional]**, mismo criterio con el que se reclasificó `sc-illustrated-avatar`
+  el 2026-08-13, y queda avisado en el docstring del propio componente para que la próxima
+  pasada no lo vuelva a levantar. **Sin DD**: es un triaje, no una decisión de arquitectura
+  nueva — el criterio ("el DS implementa el Kit, no la app") ya vive en el diseño del repo.
+
+  **Hallazgo NUEVO que salió tirando de este hilo** (más pequeño, pero real y verificable): la
+  rama `aura/custom` del export del Kit **no la clasifica ningún coverage-map**, así que ni se
+  genera su familia `--sc-cmp-*` ni salta nada si el Kit añade mañana otro custom; y la SCSS del
+  componente tira de tokens semánticos (`--sc-text-secondary`, `--sc-spacing-*`) en vez de los de
+  su propia familia. Es la clase de agujero que `tokens:parity` ya cubre para `semantic/common`,
+  `app` y `effects`. [gate-able]
 - [x] ~~**P2** Los 9 stores de `projects/supervisor/src/app/features/admin/repositories/instances/`
   (`entidades.ts:74-95`, `agendas.ts:74-95`, y 7 más) son la misma clase boilerplate carácter a
   carácter — `@Injectable` + `addItem`/`updateItem`/`deleteItem`/`deleteItems` como pass-through
