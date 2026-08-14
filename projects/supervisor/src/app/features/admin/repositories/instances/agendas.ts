@@ -1,8 +1,8 @@
-import { ChangeDetectionStrategy, Component, inject, Injectable } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 
-import { createLocalStore, LocalStore } from '@core/services/local-store.factory';
+import { createRepoStore } from '@core/services/local-store.factory';
 import { RepoListPageComponent } from '../components/repo-list-page.component';
-import { RepoColumnDef, RepoFieldDef, RepoPageConfig, RepoStore } from '../components/repo-types';
+import { RepoColumnDef, RepoFieldDef, RepoPageConfig } from '../components/repo-types';
 
 export interface Agenda {
   readonly id: number;
@@ -71,28 +71,12 @@ const SEED: readonly Agenda[] = [
   },
 ];
 
-@Injectable({ providedIn: 'root' })
-export class AgendasStore implements RepoStore<Agenda> {
-  private readonly store: LocalStore<Agenda> = createLocalStore<Agenda>({
-    storageKey: 'sc-agendas-repo',
-    versionKey: 'sc-agendas-repo-v',
-    currentVersion: 1,
-    defaults: SEED,
-  });
-  readonly items = this.store.items;
-  addItem(data: Omit<Agenda, 'id'>): Agenda {
-    return this.store.addItem(data);
-  }
-  updateItem(id: number, updates: Partial<Agenda>): void {
-    this.store.updateItem(id, updates);
-  }
-  deleteItem(id: number): void {
-    this.store.deleteItem(id);
-  }
-  deleteItems(ids: readonly number[]): void {
-    this.store.deleteItems(ids);
-  }
-}
+export const AgendasStore = createRepoStore<Agenda>('AgendasStore', {
+  storageKey: 'sc-agendas-repo',
+  versionKey: 'sc-agendas-repo-v',
+  currentVersion: 1,
+  defaults: SEED,
+});
 
 const COLUMNS: readonly RepoColumnDef<Agenda>[] = [
   {

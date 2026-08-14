@@ -1,8 +1,8 @@
-import { ChangeDetectionStrategy, Component, inject, Injectable } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 
-import { createLocalStore, LocalStore } from '@core/services/local-store.factory';
+import { createRepoStore } from '@core/services/local-store.factory';
 import { RepoListPageComponent } from '../components/repo-list-page.component';
-import { RepoColumnDef, RepoFieldDef, RepoPageConfig, RepoStore } from '../components/repo-types';
+import { RepoColumnDef, RepoFieldDef, RepoPageConfig } from '../components/repo-types';
 
 export interface EntidadIA {
   readonly id: number;
@@ -72,28 +72,12 @@ const SEED: readonly EntidadIA[] = [
   },
 ];
 
-@Injectable({ providedIn: 'root' })
-export class EntidadesIAStore implements RepoStore<EntidadIA> {
-  private readonly store: LocalStore<EntidadIA> = createLocalStore<EntidadIA>({
-    storageKey: 'sc-entidades-ia-repo',
-    versionKey: 'sc-entidades-ia-repo-v',
-    currentVersion: 1,
-    defaults: SEED,
-  });
-  readonly items = this.store.items;
-  addItem(data: Omit<EntidadIA, 'id'>): EntidadIA {
-    return this.store.addItem(data);
-  }
-  updateItem(id: number, updates: Partial<EntidadIA>): void {
-    this.store.updateItem(id, updates);
-  }
-  deleteItem(id: number): void {
-    this.store.deleteItem(id);
-  }
-  deleteItems(ids: readonly number[]): void {
-    this.store.deleteItems(ids);
-  }
-}
+export const EntidadesIAStore = createRepoStore<EntidadIA>('EntidadesIAStore', {
+  storageKey: 'sc-entidades-ia-repo',
+  versionKey: 'sc-entidades-ia-repo-v',
+  currentVersion: 1,
+  defaults: SEED,
+});
 
 const COLUMNS: readonly RepoColumnDef<EntidadIA>[] = [
   {

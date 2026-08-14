@@ -1,8 +1,8 @@
-import { ChangeDetectionStrategy, Component, inject, Injectable } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 
-import { createLocalStore, LocalStore } from '@core/services/local-store.factory';
+import { createRepoStore } from '@core/services/local-store.factory';
 import { RepoListPageComponent } from '../components/repo-list-page.component';
-import { RepoColumnDef, RepoFieldDef, RepoPageConfig, RepoStore } from '../components/repo-types';
+import { RepoColumnDef, RepoFieldDef, RepoPageConfig } from '../components/repo-types';
 
 export interface Horario {
   readonly id: number;
@@ -80,28 +80,12 @@ const SEED: readonly Horario[] = [
   },
 ];
 
-@Injectable({ providedIn: 'root' })
-export class HorariosStore implements RepoStore<Horario> {
-  private readonly store: LocalStore<Horario> = createLocalStore<Horario>({
-    storageKey: 'sc-horarios-repo',
-    versionKey: 'sc-horarios-repo-v',
-    currentVersion: 1,
-    defaults: SEED,
-  });
-  readonly items = this.store.items;
-  addItem(data: Omit<Horario, 'id'>): Horario {
-    return this.store.addItem(data);
-  }
-  updateItem(id: number, updates: Partial<Horario>): void {
-    this.store.updateItem(id, updates);
-  }
-  deleteItem(id: number): void {
-    this.store.deleteItem(id);
-  }
-  deleteItems(ids: readonly number[]): void {
-    this.store.deleteItems(ids);
-  }
-}
+export const HorariosStore = createRepoStore<Horario>('HorariosStore', {
+  storageKey: 'sc-horarios-repo',
+  versionKey: 'sc-horarios-repo-v',
+  currentVersion: 1,
+  defaults: SEED,
+});
 
 const COLUMNS: readonly RepoColumnDef<Horario>[] = [
   {
