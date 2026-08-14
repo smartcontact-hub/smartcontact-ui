@@ -41,7 +41,7 @@ lo que hace que te la creas cuando te toca. Lee el índice siempre; el cuerpo, c
 | **10** | declarar algo bloqueado, o deducir un dato a ojo | comprueba si el sistema ya te lo sirve (DOM oculto, i18n, hoja de estilos) |
 | **11** | lanzar una edición masiva por shell | pega la verificación de outcome en el MISMO comando (zsh no hace word-splitting) |
 | **12** | dar una cifra de un grep, ejecutar un `sed`, **o volcar un fichero de config** | pregúntate qué entra en el resultado; si hay un ejecutor que sabe el número, el número es el suyo; y **proyecta o enmascara antes de imprimir un `env`** |
-| **14** | responder a un "hazlo todo" | haz lo verificable de punta a punta, aparca lo demás DOCUMENTADO, y dilo |
+| **14** | responder a un "hazlo todo", o escribir "esperando a X" | haz lo verificable de punta a punta y aparca lo demás DOCUMENTADO — pero por no poder verificarlo, **nunca por parecido con otro aparcado** |
 | **15** | decidir algo de marca/producto | preséntalo con recomendación y evidencia — y no exageres el encuadre de riesgo |
 | **16** | empezar un refactor transversal | monta antes la red que lo verifica, aunque parezca rodeo |
 | **17** | construir sobre una descripción que no verificaste tú | es una paráfrasis: vuelve a la fuente (da igual si viene de un hand-off, Figma, un README u otro agente) |
@@ -364,6 +364,18 @@ lo que hace que te la creas cuando te toca. Lee el índice siempre; el cuerpo, c
     aparca lo demás DOCUMENTADO, y dilo explícitamente.** No lo pintes como "todo hecho".
     *Evidencia (s11)*: cerré lo acotado del Bloque 3 y dejé por escrito por qué `sc-button`
     (piloto hecho, resto por lotes), `sc-datatable`, Bloque 4 y 2b no entraban.
+
+    *Afilado (s28) — aparca por FALTA DE VERIFICABILIDAD, nunca por PARECIDO con otro item ya
+    aparcado.* Mandé "retirar `sc-bulk-transcription-modal`" a la lista de ESPERANDO A RAFA
+    razonando que era «la misma clase de decisión que `sc-page-header`», que ya estaba ahí. El
+    parecido era real y la conclusión, falsa: al investigarlo de verdad el componente **está en
+    el Kit** (único bajo `aura/custom` de `kit-export-dtcg.json`), así que no había nada que
+    decidir — ni se adopta ni se retira. La evidencia estaba a un grep y no lo hice **porque el
+    precedente me dio permiso para dejar de investigar**. Eso es lo caro: un aparcado no es una
+    conclusión, es la ausencia de una, y encima devuelve trabajo a quien te lo dio. **Acción**:
+    antes de escribir "esperando a X" o "bloqueado", gasta UNA sonda más en la evidencia que
+    decidiría; y si aparcas, que sea porque no puedes verificarlo o porque la decisión es suya
+    de verdad (marca, producto, borrado irreversible), no porque se parezca a algo aparcado.
 
 15. **Si una decisión es de marca/producto (no técnica), preséntala con recomendación y
     evidencia — no la decidas tú.** *Evidencia (s11)*: el estilo de icono (Outlined vs Rounded)
