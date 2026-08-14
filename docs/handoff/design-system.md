@@ -2,20 +2,43 @@
 
 > **Volátil.** Lo reescribe la sesión que trabaja ESTE frente, y **solo este fichero**.
 > No toques los hand-offs de otros frentes. Lo durable vive en `docs/`.
-> **Sello: 2026-08-13 (s27) — HEAD `a3d076f`.**
+> **Sello: 2026-08-14 (s28) — HEAD `ba87b0c`.**
 
-Sesión larga. Se diagnosticaron los MCP de Figma, se desatascaron 3 PRs parados y se hizo la
-**auditoría completa de documentación**. Sin trabajo a medias, sin ramas abiertas, sin PRs.
+Sesión de una pieza: se cerró **la sección más reciente de la auditoría semanal** —los 4
+hallazgos que quedaban del 2026-08-13— y, de camino, dos ítems que colgaban de secciones
+anteriores. Gateado con los **8 pasos del CI corridos en local sobre el árbol final**. Sin
+trabajo a medias, sin ramas abiertas, sin PRs.
+
+## ✅ Lo que cambió
+
+- **DD-38 — la era objetivo de la API es señales**, y ya no es una preferencia: la sostiene un
+  **trinquete en `verify`** (`npm run audit:api-era`, el gate nº 26). Nada nuevo puede estrenar
+  `@Input()/@Output()`, y la lista de los que aún los usan **solo puede menguar**.
+- **`sc-button` migrado** (15 `input()` + 1 `output()`, getters → `computed()`). Era el que más
+  se copia —100 usos— y el que hacía que "mira la referencia" significara dos cosas distintas
+  según qué fichero abrieras.
+- **9 stores de ceremonia → `createRepoStore`** en el supervisor: **−144 líneas** y
+  `inject(XStore)` intacto en todos los consumidores.
+- **Dos guardianes tenían el mismo punto ciego, y ya no**: contaban lo que aparece en los
+  **comentarios**. `component-audit` subió `sc-button` de 15 a 16 inputs solo porque su docstring
+  nuevo menciona `input()`; y CHECK E de `docs:coherence` ahora entra en `projects/**`, donde
+  llevaba desde el 4 de agosto una cifra falsa que por alcance no podía ver.
 
 ## ▶︎ SIGUIENTE — sin preguntar
 
-1. **Los 3 hallazgos abiertos de la rutina semanal** en
-   [`AUDIT-SEMANAL.md`](../AUDIT-SEMANAL.md) — el P1 de las dos eras de API es el más gordo y
-   **necesita un DD antes de tocar código** (decidir si signals es la era objetivo afecta a los
-   51 componentes; `sc-button` sigue en `@Input()` siendo la referencia más citada).
-2. **La deuda de código de [`AUDIT-DEUDA-2026-06.md`](../AUDIT-DEUDA-2026-06.md)** — 16 items,
-   verificados uno a uno como vigentes. El P0 es `field-pattern ×5`.
-3. **Los cabos de DD-24** (round-trip de iconos a Figma) en [`ROADMAP.md`](../ROADMAP.md).
+1. **Los 16 del trinquete de DD-38**, por lotes (`LEGACY_PENDIENTES` en
+   `scripts/audit-api-era.mjs`). El de más impacto es **`sc-icon`**: está en todas las pantallas.
+   Receta y criterio, en DD-38; al migrar uno, **bórralo de la lista** (el guard lo exige).
+2. **Los hallazgos viejos de [`AUDIT-SEMANAL.md`](../AUDIT-SEMANAL.md)** (secciones 2026-08-10 y
+   2026-08-04). Dos son borrado de código muerto y su precondición **ya está verificada**
+   (2026-08-14): `ClipboardService` del supervisor tiene 0 consumidores —solo su fichero y el
+   barrel `core/services/index.ts:4`— y difiere del `ScClipboardService` del DS solo en el nombre
+   de la clase y un párrafo de docstring; y `shared/utils/is-typing-target.ts` es **idéntico**
+   (`diff` vacío) al del DS con 0 usos. `icon-size.ts` sí tiene un consumidor
+   (`label-chip.component.ts`): ahí es importar de `@smartcontact-hub/icons`, no borrar.
+3. **La deuda de código de [`AUDIT-DEUDA-2026-06.md`](../AUDIT-DEUDA-2026-06.md)**. El P0 sigue
+   siendo `field-pattern ×5`.
+4. **Los cabos de DD-24** (round-trip de iconos a Figma) en [`ROADMAP.md`](../ROADMAP.md).
 
 ## ⏸️ ESPERANDO A RAFA — NO preguntar
 
@@ -23,6 +46,7 @@ Sesión larga. Se diagnosticaron los MCP de Figma, se desatascaron 3 PRs parados
 |---|---|
 | **Borrar el proyecto Cloudflare `sc-demo`** | Vivo sirviendo contenido viejo; un borrado permanente no lo ejecuto yo |
 | **Retirar `sc-page-header`** | Sin consumidores salvo su demo |
+| **Retirar `sc-bulk-transcription-modal` del DS** | *Nuevo (s28).* Misma clase que la fila de arriba: 0 consumidores fuera de su demo. Y **adoptarlo en Memory está descartado con evidencia** — el port se congeló en junio y la app siguió (badges, franja de error, estado de carga, shell en `<sc-dialog>`); el aviso está en su propio docstring |
 | **Lienzo de página gris↔blanco** | Figma `13920:4298`. ⚠️ Antes de tocarlo lee la **trampa C3 de DD-36**: devolverlo a `--sc-bg-default` re-crea un bug documentado del rail de AED |
 | **Tramo actual del breadcrumb** | Figma `13890:157`. Lo mira **Marta** |
 | **Publicar Code Connect** | Requiere plan Figma Organization/Enterprise |
@@ -42,41 +66,28 @@ Tabla completa en [`AGENTS.md`](../../AGENTS.md) → *Figma MCP Bridge*.
 Fichero: **"Smart-Contact Design System"** (`khNq9dJKNi13pNllrqm6dx`) — 111 páginas, 2.509
 variables, 30 comentarios activos.
 
-## 🧹 Lo que hizo la auditoría (informe: [`AUDIT-DOCS-2026-08.md`](../AUDIT-DOCS-2026-08.md))
-
-| | Antes | Ahora |
-|---|---|---|
-| Ficheros `.md` | 46 | **37** |
-| Enlaces rotos | 9 | **0** |
-| Gates de documentación | 2 | **10** |
-| Claims sin verificar en el informe | 25 | **0** |
-
-- **Borradas ~3.100 líneas**: las 4 skills de `.agents/skills/` (que nada cargaba pese a que
-  `AGENTS.md` ordenaba correrlas), `docs/history/` entero, `AUDIT-2026-07` y un playbook fósil.
-  Archivadas en los tags **`archive/docs-history`** y **`archive/informes-datareports`**
-  (`git show <tag>:<ruta>`).
-- **Verificadas las 4.600 líneas de referencia** que nadie había contrastado: **74 claims falsas
-  de ~500**. Las dos peores: `guia-tokens` decía que el preset hace `definePreset(Aura, …)` —no
-  lo hace, así que **lo no declarado NO hereda de Aura**— y `customs-catalog` §1.9 daba por no
-  construido un guardián que existe, corre, y **al fallar te manda leer esa misma sección**.
-- **`LEARNINGS`**: 20 → 16 reglas + **índice de disparadores**. Los números son identificadores
-  citados desde código: **nunca renumeres**.
-- **La rutina semanal ya aterriza sola** — su PR se auto-mergea (CI verde + solo su doc).
-
 ## ⚠️ Trampas de este frente
 
 - **Dos e2e fallan SIEMPRE en local (macOS) y no son tuyos**: los screenshots de `sc-card` y
-  `sc-message` (`components.spec.ts:116` y `:162`). Reproducidos en commits anteriores a
-  cualquier cambio; en CI pasan.
-- **El CI son 8 pasos, no `verify`** — enumerados en `ci.yml`, y ahora gateados (CHECK J).
+  `sc-message` (`components.spec.ts:116` y `:162`). **Re-confirmado el 2026-08-14 por
+  stash-y-reproduce**: en HEAD limpio fallan los mismos dos, con el mismo error. En CI pasan.
+  El de `sc-card` no es sutil —espera una página de 1049px y recibe 1453— así que no lo leas
+  como una regresión de métrica.
+- **El CI son 8 pasos, no `verify`** — enumerados en `ci.yml`, y gateados (CHECK J).
+- **`npm run verify` son 26 gates desde s28.** Si añades uno, la cifra vive en 4 sitios y
+  **ninguno la gatea**: `CLAUDE.md`, `docs/DOCS-INDEX.md`, `docs/AUDIT-SEMANAL.md` y el
+  `SKILL.md` de la rutina. Lo que sí falla solo es el README, que debe **nombrar** el guard nuevo.
 - **`npm run e2e` pisa los PNG de `public/usage/`**. Gatea lo visual con `ng build` AOT.
 - **Los permisos de Actions se capan desde la ORG**: cambiar solo el repo no sirve; el ajuste se
   queda en `read` sin avisar. Hay que ponerlo en `write` en los dos niveles.
+- **Al escribir un docstring, cuidado con lo que MENCIONAS.** Los scripts que cuentan API
+  (`component-audit`) ya ignoran comentarios desde s28, pero la lección de fondo aplica a
+  cualquier contador nuevo: si tu regex mira el fichero entero, cuenta también lo que se está
+  explicando.
 
-## 🕳️ Lo que la auditoría dejó fuera, y por qué
+## 🕳️ Lo que esta sesión dejó fuera, y por qué
 
-- **Partir `AGENTS.md` / vaciar `CLAUDE.md`** → descartado con motivo, ver §5 del informe.
-- **`DECISIONS.md` sigue en ~1.700 líneas.** `DD-13` solo son 296 (17%), casi todo addendums de
-  un piloto ejecutado; están señalizados con un corte que dice dónde acaba la decisión.
-- **Los contadores copiados a prosa siguen sin red** salvo el de componentes (CHECK E). Es la
-  clase que produjo la mayoría de las 74 claims falsas.
+- **Los 16 componentes del trinquete siguen en decoradores.** Se migró solo `sc-button`, que es
+  lo que pedía el hallazgo (la referencia). El resto es trabajo por lotes, con su gate ya puesto.
+- **No se ha tocado `AUDIT-DEUDA-2026-06`** más allá de marcar el tema A como decidido.
+- **`DECISIONS.md` sigue creciendo** (~1.780 líneas con DD-38). Sigue sin doler lo bastante.
