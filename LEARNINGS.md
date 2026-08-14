@@ -40,7 +40,7 @@ lo que hace que te la creas cuando te toca. Lee el índice siempre; el cuerpo, c
 | **8** | proponer una segunda corrección tras fallar la primera | para: la siguiente acción es una MEDICIÓN que localice la causa |
 | **10** | declarar algo bloqueado, o deducir un dato a ojo | comprueba si el sistema ya te lo sirve (DOM oculto, i18n, hoja de estilos) |
 | **11** | lanzar una edición masiva por shell | pega la verificación de outcome en el MISMO comando (zsh no hace word-splitting) |
-| **12** | dar una cifra de un grep, o ejecutar un `sed` | pregúntate qué casa cada match; si hay un ejecutor que sabe el número, el número es el suyo |
+| **12** | dar una cifra de un grep, ejecutar un `sed`, **o volcar un fichero de config** | pregúntate qué entra en el resultado; si hay un ejecutor que sabe el número, el número es el suyo; y **proyecta o enmascara antes de imprimir un `env`** |
 | **14** | responder a un "hazlo todo" | haz lo verificable de punta a punta, aparca lo demás DOCUMENTADO, y dilo |
 | **15** | decidir algo de marca/producto | preséntalo con recomendación y evidencia — y no exageres el encuadre de riesgo |
 | **16** | empezar un refactor transversal | monta antes la red que lo verifica, aunque parezca rodeo |
@@ -320,8 +320,8 @@ lo que hace que te la creas cuando te toca. Lee el índice siempre; el cuerpo, c
    word-splitting como bash); lo cazó el `grep "pi pi-" || echo ninguno` del final. Sin él habría
    commiteado una migración de 12 iconos inexistente. En zsh, enumera los ficheros explícitamente.
 
-12. **Tu patrón casa algo distinto de lo que crees — al CONTAR y al REEMPLAZAR. Antes de dar
-    una cifra o de ejecutar un `sed`, pregúntate qué está casando cada match.**
+12. **Tu comando alcanza más de lo que crees — al CONTAR, al REEMPLAZAR y al IMPRIMIR. Antes de
+    dar una cifra, ejecutar un `sed` o volcar un fichero, pregúntate qué entra en el resultado.**
     - *Contando de más (s11)*: dije "111 usos de `p-button`" y lo escribí en el hand-off; los
       `<p-button>` reales eran **50** — el resto, etiquetas de cierre y clases CSS.
     - *Contando de menos (s18)*: `grep 'test('` me dio 39 tests en el supervisor; el runner
@@ -332,6 +332,16 @@ lo que hace que te la creas cuando te toca. Lee el índice siempre; el cuerpo, c
       `severity` de un `<sc-message>`, que no tiene `variant`. Un `sed` por fichero entero
       pilla homónimos: acota el reemplazo a su ETIQUETA y verifica, por cada match, a qué
       etiqueta pertenece.
+    - *Imprimiendo de más (s27) — y esta cuesta rotar una credencial*: para ver qué servidores
+      MCP había configurados volqué el bloque entero de `~/.claude.json` con un `JSON.stringify`,
+      y dentro venía el `env` con el **token personal de Figma en claro**. Salió impreso completo
+      en el transcript. Lo detecté al verlo ya escrito, que es tarde: un secreto impreso una vez
+      deja de ser secreto, y el arreglo no es borrar el mensaje, es **rotar el token**.
+      **Acción**: antes de volcar cualquier fichero de configuración (`~/.claude.json`,
+      `.env`, `settings.json`, la salida de un `docker inspect`…), **proyecta solo los campos que
+      necesitas** o enmascara los sospechosos (`token`, `key`, `secret`, `password`, `env`) —
+      `Object.keys()` en vez de `JSON.stringify()`, o un `.slice(0,7)+'…'`. Filtrar cuesta una
+      línea; rotar cuesta entrar en dos servicios y reconfigurar el cliente.
 
 ## Entrega
 
