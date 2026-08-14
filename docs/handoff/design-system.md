@@ -43,13 +43,24 @@ abiertas, sin PRs.
    de la clase y un párrafo de docstring; y `shared/utils/is-typing-target.ts` es **idéntico**
    (`diff` vacío) al del DS con 0 usos. `icon-size.ts` sí tiene un consumidor
    (`label-chip.component.ts`): ahí es importar de `@smartcontact-hub/icons`, no borrar.
-3. **La rama `aura/custom` del Kit no la vigila nadie** (hallazgo nuevo de s28, `[gate-able]`):
+3. **`npm audit fix` — y NO es lo que decía esta ficha.** Medido el 2026-08-14: **30**
+   vulnerabilidades (**0 críticas**, 24 altas, 4 moderadas, 2 bajas), no las "35 con 1 crítica"
+   que este hand-off arrastraba, y **29 de las 30 tienen arreglo NO-breaking** (ninguna marcada
+   `isSemVerMajor`) — o sea que lo de "pide cambio de major" también era falso. Por eso sale de
+   ESPERANDO A RAFA: es trabajo normal, verificable con la cadena de 8 pasos. Las 24 altas son
+   en realidad **tres cosas**: un XSS de i18n en `@angular/compiler` propagado a 11 paquetes de
+   Angular (Angular instalado: 21.2.17), `xlsx`, y 12 de cadena de build (vite, postcss, undici,
+   piscina…) que no viajan al bundle que sirve Cloudflare. **La única sin arreglo publicado es
+   `xlsx`** (prototype pollution de SheetJS) y **su vía es PARSEAR** un fichero: nuestro
+   `xlsx-export.service.ts` solo escribe (`aoa_to_sheet`/`book_new`/`writeFile`) — cero
+   `XLSX.read` en todo el repo, verificado. Sí viaja al navegador, en su chunk diferido.
+4. **La rama `aura/custom` del Kit no la vigila nadie** (hallazgo nuevo de s28, `[gate-able]`):
    ningún coverage-map la clasifica, así que no se genera su familia `--sc-cmp-*` y, si el Kit
    añade otro custom, no salta nada. Es el mismo agujero que `tokens:parity` ya cubre para
    `semantic/common`, `app` y `effects`.
-4. **La deuda de código de [`AUDIT-DEUDA-2026-06.md`](../AUDIT-DEUDA-2026-06.md)**. El P0 sigue
+5. **La deuda de código de [`AUDIT-DEUDA-2026-06.md`](../AUDIT-DEUDA-2026-06.md)**. El P0 sigue
    siendo `field-pattern ×5`.
-5. **Los cabos de DD-24** (round-trip de iconos a Figma) en [`ROADMAP.md`](../ROADMAP.md).
+6. **Los cabos de DD-24** (round-trip de iconos a Figma) en [`ROADMAP.md`](../ROADMAP.md).
 
 ## ⏸️ ESPERANDO A RAFA — NO preguntar
 
@@ -61,7 +72,6 @@ abiertas, sin PRs.
 | **Tramo actual del breadcrumb** | Figma `13890:157`. Lo mira **Marta** |
 | **Publicar Code Connect** | Requiere plan Figma Organization/Enterprise |
 | **B5b · prosa i18n del constructor** | Necesita ICU MessageFormat. **NECESITA DISEÑO** |
-| **35 vulnerabilidades** (1 crítica, 26 altas) | El `npm audit fix` mergeado cerró 7; el resto pide cambio de major |
 | **`org-profile.md`** | ¿Lo llegaste a pegar en el repo `.github` de la org? Si sí, se borra |
 
 ## 🔌 Figma — tres servers, y caen por separado
