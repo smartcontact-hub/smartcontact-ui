@@ -19,10 +19,12 @@ formularios, command-palette…).
 - **`provideSmartContactUi(options?)`** — la única frontera de tema. Envuelve
   `providePrimeNG` + registra el preset `--sc-*`. Una línea en `app.config.ts` y
   la app queda tematizada con la marca.
-- **`scPreset`** (export `default`) — el preset modular `definePreset(Aura, …)`,
-  un archivo por componente, cada slot → `var(--sc-*)`. Exportado por si necesitas
-  componerlo o inspeccionarlo.
-- **~55 componentes `sc-*`** — wrappers de PrimeNG pegados a la marca (`sc-button`,
+- **`scPreset`** (export `default`) — el preset modular, un archivo por componente,
+  cada slot → `var(--sc-*)`. Exportado por si necesitas componerlo o inspeccionarlo.
+  **No es un `definePreset(Aura, …)`**: es un objeto autónomo (verificado — `definePreset`
+  tiene 0 apariciones en `projects/`), así que **lo que no declaramos NO hereda de Aura**.
+  El detalle y sus consecuencias, en [`docs/guia-tokens.md`](../../docs/guia-tokens.md).
+- **51 componentes `sc-*`** — wrappers de PrimeNG pegados a la marca (`sc-button`,
   `sc-datatable`, `sc-dialog`, `sc-select`, `sc-inputtext`, `sc-multiselect`…) +
   custom de dominio (`sc-empty-state`, `sc-page-header`, `sc-command-palette`,
   `sc-bulk-action-bar`, `sc-keyboard-shortcuts`…). Lista completa y estable en
