@@ -43,8 +43,19 @@ function blob(dir) {
   return out;
 }
 
+/* Los comentarios NO son código. Se quitan antes de contar/clasificar: un docstring que
+ * MENCIONA `input()` o `ControlValueAccessor` no es un input ni un CVA. Cazado el 2026-08-14
+ * migrando `sc-button` a señales (DD-38): añadir al docstring la frase "API pública
+ * `input()/output()`" subió su cuenta de 15 a **16 inputs** en el manifiesto generado, sin que
+ * el componente hubiera cambiado de superficie. Y la convención nueva empuja justo a escribir
+ * eso en los docstrings, así que el falso positivo iba a repetirse. Mismo gesto que en
+ * `audit-primeng-coupling.mjs` y `audit-api-era.mjs`. */
+export const sinComentarios = (ts) =>
+  ts.replace(/\/\*[\s\S]*?\*\//g, '').replace(/(^|\s)\/\/.*$/gm, '$1');
+
 /** Analiza un componente. PURA respecto a los textos pasados → testeable. */
-export function analyzeComponent({ name, tsText, htmlText, pagesText, supervisorBlob }) {
+export function analyzeComponent({ name, tsText: tsRaw, htmlText, pagesText, supervisorBlob }) {
+  const tsText = sinComentarios(tsRaw);
   const selector = (tsText.match(/selector:\s*['"]([^'"]+)['"]/) || [])[1] || `sc-${name}`;
   // primeng base: imports `from 'primeng/<x>'` con x ∉ utilidades.
   const primeng = [...tsText.matchAll(/from\s+['"]primeng\/([a-z0-9-]+)['"]/g)].map((m) => m[1]).filter((x) => !PRIMENG_UTIL.has(x));

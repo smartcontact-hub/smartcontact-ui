@@ -55,6 +55,37 @@ test('anidados excluyen sc-icon y el propio selector; cuenta usos en Supervisor'
   assert.equal(r.hasDemo, false);
 });
 
+// Los comentarios no cuentan como código. El caso real (2026-08-14): el docstring de
+// `sc-button` pasó a explicar su "API pública `input()/output()`" al migrarlo a señales y su
+// cuenta subió de 15 a 16 inputs sin haber cambiado la superficie del componente.
+test('un `input()` MENCIONADO en un comentario no suma a la cuenta', () => {
+  const conComentario = analyzeComponent({
+    name: 'button',
+    tsText: "/** API pública `input()/output()`. */\nselector: 'sc-button',\nreadonly a = input('');",
+    htmlText: '',
+    ...base,
+  });
+  const sinComentario = analyzeComponent({
+    name: 'button',
+    tsText: "selector: 'sc-button',\nreadonly a = input('');",
+    htmlText: '',
+    ...base,
+  });
+  assert.equal(conComentario.inputs, 1);
+  assert.equal(conComentario.inputs, sinComentario.inputs);
+  assert.deepEqual(conComentario.api, ['a']);
+});
+
+test('un comentario que nombra ControlValueAccessor no marca el componente como CVA', () => {
+  const r = analyzeComponent({
+    name: 'button',
+    tsText: "// no implementa ControlValueAccessor a propósito\nselector: 'sc-button',",
+    htmlText: '',
+    ...base,
+  });
+  assert.equal(r.cva, false);
+});
+
 test('hasDemo detecta la página por path', () => {
   const r = analyzeComponent({ name: 'button', tsText: "selector: 'sc-button',", htmlText: '', pagesText: "{ path: 'button' }", supervisorBlob: '' });
   assert.equal(r.hasDemo, true);
