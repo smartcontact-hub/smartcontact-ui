@@ -54,7 +54,7 @@
   y dos `Set` distintos salen **iguales** → falso LIMPIO (un cambio real se pierde). Verificado en
   consola antes de tocar nada. Gate: `e2e:supervisor` 125/125 + AOT + typecheck + lint.
 
-- [ ] **P1** El port presentacional `sc-bulk-transcription-modal` del DS
+- [x] ~~**P1** El port presentacional `sc-bulk-transcription-modal` del DS
   (`sc-bulk-transcription-modal.component.ts:41-51`: "recibe los contadores YA calculados...
   Animaciones 1:1 con el molde: hero count-up, delta flotante, pulse del caption, nudge del
   toggle") se exporta en `public-api.ts` y no lo consume nadie fuera de `sc-docs`; la app
@@ -62,7 +62,7 @@
   (`bulk-transcription-modal.component.ts:87-93` `isPulsing`/`deltaGhost`/`isShaking`, `:302-331`
   `firePulseAndFlash`) → adoptar `<sc-bulk-transcription-modal>` en Memory (aportando solo los
   contadores, que es justo lo que el componente del DS espera) o, si quedó desfasado del caso
-  real, retirarlo del DS. [arréglalo]
+  real, retirarlo del DS.~~
   **RESUELTO 2026-08-14 — ninguna de las dos ramas: es [intencional].** Las dos se descartaron
   con medición, y en este orden:
   · **Adoptarlo en Memory, NO**: comparados fichero a fichero, ya no son el mismo modal. El port
