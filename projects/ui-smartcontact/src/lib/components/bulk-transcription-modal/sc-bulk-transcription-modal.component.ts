@@ -49,6 +49,20 @@ export type ScBulkTranscriptionModalSurface = 'default' | 'dark' | 'green';
  * pulse del caption y nudge del toggle deshabilitado. Tokens traducidos al
  * sistema base-14 del mirror (scale-sweep documentado en el journal de construcción,
  * hoy en el tag `archive/docs-history`).
+ *
+ * ⚠️ **NO lo adoptes en Memory sin rehacerlo antes.** La rutina semanal
+ * (2026-08-13) propuso sustituir con este el modal propio del supervisor
+ * (`sc-memory-bulk-transcription-modal`) por ser "el mismo con otros nombres".
+ * Comparados fichero a fichero el 2026-08-14, **ya no lo son**: este port quedó
+ * congelado en la v26 de junio y el de la app siguió (redesign S58), así que
+ * adoptarlo tal cual sería una REGRESIÓN visible. Lo que tiene la app y aquí no:
+ *   · **badges iconográficos** include/warn/exclude en el hero, que sustituyeron
+ *     al texto denso que aquí se sigue pintando (`heroHint`);
+ *   · **franja de error** `role="alert"` recuperable;
+ *   · **estado de carga** en el botón de procesar;
+ *   · shell delegado en `<sc-dialog>` — este renderiza su propio `role="dialog"`.
+ * Convergerlos es rehacer el port contra la app viva, no un swap. Mientras eso
+ * no pase, su único consumidor es la demo de `sc-docs`.
  */
 @Component({
   selector: 'sc-bulk-transcription-modal',

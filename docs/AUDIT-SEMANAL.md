@@ -2,7 +2,7 @@
 
 > **Autogenerado** por la rutina cloud "Auditoría semanal"
 > (`.claude/skills/auditoria-semanal/SKILL.md`). Es la versión de **juicio**, en
-> cadencia, de `AUDIT-DEUDA-2026-06.md`: caza lo que los 25 gates de `verify` no
+> cadencia, de `AUDIT-DEUDA-2026-06.md`: caza lo que los 26 gates de `verify` no
 > pueden ver (deuda de diseño + deriva semántica de docs). Cada run añade una
 > sección fechada **arriba**; `[x]` = cerrado. Semana sin hallazgos reales → no
 > hay sección nueva (la rutina no abre PR).
@@ -21,7 +21,7 @@
 
 ### Deuda de código
 
-- [ ] **P1** Los 4 componentes de referencia que `AGENTS.md:267-282` manda inspeccionar antes de
+- [x] ~~**P1** Los 4 componentes de referencia que `AGENTS.md:267-282` manda inspeccionar antes de
   generar nada conviven en dos eras de API sin criterio escrito: `sc-button.component.ts:31-61`
   (el más citado y copiado del set) sigue en `@Input()`/`@Output()` puro, mientras
   `sc-toggleswitch.component.ts:37-40` e `sc-inputtext.component.ts` ya usan `input()`/`output()`
@@ -29,7 +29,18 @@
   `= input(` en `projects/ui-smartcontact/src/lib/components`, sin ninguna nota en `AGENTS.md`,
   `docs/DECISIONS.md` ni `docs/migration-safety.md` sobre cuál es la era objetivo → decidir y
   documentar (DD-N) la era objetivo; si es signals, migrar `sc-button` primero por ser la
-  referencia más citada. [arréglalo]
+  referencia más citada.~~ **HECHO 2026-08-14** — **DD-38**: la era objetivo es señales,
+  `sc-button` migrado (15 `input()` + 1 `output()`, getters → `computed()`), nota de era en
+  `AGENTS.md` → *Reference Components* + anti-patrón, y **gate nuevo `audit:api-era`** (el 26 de
+  `verify`) que es un trinquete: la lista de pendientes solo mengua, y también se pone rojo si
+  dejas dentro uno ya migrado. Tres matices que el hallazgo no veía, todos medidos: (a) el
+  **19** era un `grep '= input('` literal — con `input.required(` y `model()` la librería estaba
+  en **34 señales / 16 decoradores**, o sea que la era mayoritaria ya era señales por más de 2:1;
+  (b) **las apps ya están al 100%** — el único `@Input()` del supervisor es un *comentario* de
+  `sidebar-nav-item.component.ts` que explica por qué NO lo usa, así que la deuda es solo de la
+  librería; (c) el guard cazó un decimoséptimo que el grep del hallazgo no miraba, **`sc-icon`**
+  del paquete de iconos. Lo que hace la migración barata: de los 17, **0** usan `@Input() set` y
+  **0** son CVA. Quedan 16 en el trinquete, por lotes.
 - [x] ~~**P1** `createFormDirtyState()` se documenta como "patrón único plataforma-wide" pero solo
   lo usaban las 3 páginas admin; AED y el rule-builder reimplementaban el par pristine/dirty con
   `JSON.stringify` crudo.~~ **HECHO 2026-08-13**, con un matiz que el hallazgo no veía: las 3
@@ -52,24 +63,50 @@
   `firePulseAndFlash`) → adoptar `<sc-bulk-transcription-modal>` en Memory (aportando solo los
   contadores, que es justo lo que el componente del DS espera) o, si quedó desfasado del caso
   real, retirarlo del DS. [arréglalo]
-- [ ] **P2** Los 9 stores de `projects/supervisor/src/app/features/admin/repositories/instances/`
+  **TRIADO 2026-08-14 — la rama "adoptar" queda DESCARTADA con evidencia; la rama "retirar" pasa
+  a ESPERANDO A RAFA.** Comparados los dos fichero a fichero, ya **no son el mismo modal**: el
+  port del DS se quedó en la v26 de junio (`git log`: última edición funcional el 2026-06-13) y
+  el de la app siguió con el redesign S58. La app tiene y el port NO: **badges iconográficos**
+  include/warn/exclude en el hero —que sustituyeron al texto denso (`heroHint`) que el port sigue
+  pintando—, **franja de error** `role="alert"`, **estado de carga** en el botón de procesar, y
+  el shell delegado en `<sc-dialog>` (el port renderiza su propio `role="dialog"`). Adoptarlo tal
+  cual sería una regresión visible en producción, no una consolidación. Se deja **avisado en el
+  docstring del componente del DS** para que el próximo que lea este hallazgo no lo ejecute a
+  ciegas. Retirarlo del DS es la recomendación —0 consumidores fuera de su demo—, pero es la
+  **misma clase de decisión que `sc-page-header`**, que ya está aparcada esperando a Rafa: se
+  aparca con ella, no se ejecuta por libre.
+- [x] ~~**P2** Los 9 stores de `projects/supervisor/src/app/features/admin/repositories/instances/`
   (`entidades.ts:74-95`, `agendas.ts:74-95`, y 7 más) son la misma clase boilerplate carácter a
   carácter — `@Injectable` + `addItem`/`updateItem`/`deleteItem`/`deleteItems` como pass-through
   1:1 a `createLocalStore` — y solo cambia el nombre del tipo → `createRepoStore<T>(opts)` en
-  `local-store.factory.ts` que devuelva directamente un `RepoStore<T>`, sin clase por entidad.
-  [arréglalo]
+  `local-store.factory.ts` que devuelva directamente un `RepoStore<T>`, sin clase por entidad.~~
+  **HECHO 2026-08-14**: `createRepoStore<T>(nombre, config)` en `local-store.factory.ts`; las 9
+  clases pasan a una constante de 6 líneas (**−144 líneas netas**). Devuelve un `InjectionToken`
+  con factory `providedIn: 'root'`, no un objeto suelto, y eso es lo que hace que el cambio sea
+  de verdad no-invasivo: conserva el singleton **perezoso** (el `localStorage` se lee en la
+  primera inyección, no al importar el módulo) y **`inject(XStore)` no cambia en ningún
+  consumidor** — ni en las 9 páginas ni en `agent-form-page.component.ts:154`. Lo que permitió
+  borrar la clase entera: el `LocalStore<T>` que ya devolvía el factory **cumple `RepoStore<T>`**,
+  que es un subconjunto suyo. Verificado: 9 claves de `localStorage` distintas y preservadas una a
+  una (un error ahí habría vaciado un repositorio), 0 usos de esos símbolos en posición de tipo o
+  en `providers:`, typecheck + AOT del supervisor + `e2e:supervisor`.
 
 ### Deriva de docs
 
-- [ ] El comentario del CHECK E en `scripts/docs-coherence.mjs:25-27` dice que el gate "nace de
+- [x] ~~El comentario del CHECK E en `scripts/docs-coherence.mjs:25-27` dice que el gate "nace de
   dos derivas reales: el README raíz decía 49 y el del paquete '~55'" citando
   `projects/ui-smartcontact/README.md` como motivo — pero el alcance del propio check
   (`scripts/docs-coherence.mjs:63-64`: "checks A-E siguen con el alcance de docs:guard", que no
   escanea `projects/**`) excluye exactamente ese fichero: `projects/ui-smartcontact/README.md:25`
   sigue en "~55 componentes" (ítem ya abierto en la sección 2026-08-04 de este doc) y CHECK E
   nunca podrá cazarlo → matizar el comentario: el caso real que originó el gate queda fuera de su
-  alcance hasta que se amplíe como CHECK F (que sí camina `projects/**` vía `mdDeProyectos()`).
-  [arréglalo]
+  alcance hasta que se amplíe como CHECK F (que sí camina `projects/**` vía `mdDeProyectos()`).~~
+  **HECHO 2026-08-14, pero al revés**: en vez de matizar el comentario para que dijera la verdad
+  sobre un agujero, se tapó el agujero — **CHECK E ya camina `projects/**`** vía `mdDeProyectos()`,
+  igual que CHECK F. Nada más ampliarlo se puso rojo él solo con el caso real que llevaba abierto
+  desde el 2026-08-04 (`projects/ui-smartcontact/README.md:25`, "~55" contra 51), que es la mejor
+  validación posible de un guardián: no hizo falta fabricarle un caso malo. Cerrado también, por
+  tanto, el ítem gemelo de la sección 2026-08-04.
 
 ## 2026-08-10
 
@@ -141,13 +178,20 @@
   `docs/customs-catalog.md:321`) — el pie lleva más de un mes de contenido
   nuevo sin tocarse → actualizar la fecha al último cambio real, o quitar el
   pie fijo y remitir a las fechas inline de cada sección. [arréglalo]
-- [ ] `projects/ui-smartcontact/README.md:25` afirma "~55 componentes
+- [x] ~~`projects/ui-smartcontact/README.md:25` afirma "~55 componentes
   `sc-*`"; el conteo real (`docs/inventory.md:28`, mantenido al día por
   `npm run audit:components` dentro de `verify`) da 51. Fuera del alcance de
   `docs:guard`, que no escanea `projects/**` (nota en
   `docs/DOCS-INDEX.md:90`) → cambiar la cifra a 51 (o a "más de 50" para no
   requerir mantenimiento exacto); un guard nuevo que compare la cifra citada
   en los README de paquete contra el conteo real de componentes cerraría esta
-  clase de deriva para siempre. [gate-able]
+  clase de deriva para siempre.~~ **HECHO 2026-08-14**: cifra a **51** y, como
+  pedía el `[gate-able]`, **la clase entera queda cerrada** — CHECK E de
+  `docs:coherence` ahora escanea también los `.md` de `projects/**`, así que
+  la próxima cifra a mano que se desfase falla en su propio commit. De paso,
+  ese mismo README repetía la claim que la auditoría de agosto ya había
+  desmentido en `guia-tokens` (que el preset hace `definePreset(Aura, …)`,
+  cuando `definePreset` tiene **0 apariciones** en `projects/`): corregida
+  ahí también.
 
 <!-- Las secciones fechadas se insertan aquí, la más nueva primero. -->
