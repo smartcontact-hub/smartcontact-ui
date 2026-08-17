@@ -13,6 +13,60 @@
 
 ---
 
+## 2026-08-17
+
+> Método: pasada A (deuda de código, ≤5) + pasada B (deriva de docs) + pasada C (PRs parados
+> >7d). Contra AGENTS.md/.impeccable.md/customs-catalog.md/DOCS-INDEX.md. Pasada C: MCP de
+> GitHub confirma **0 PRs abiertos** — sin hallazgos. Pasada B: verificados a mano contra el
+> código conteo de componentes (51), hex de marca (`sky-500`/`amber-500`), el par 104 de
+> `audit:border-surfaces`, los 2 gaps abiertos de `.impeccable.md`/`inventory.md`, las 16 reglas
+> de `LEARNINGS.md`, los 8 pasos con nombre de `ci.yml` y el orden de `DECISIONS.md` — todo
+> cuadra con el código, **sin hallazgos**. Al verificar sí salió un ítem del backlog de abajo
+> (2026-08-04) que ya estaba resuelto sin marcar — cerrado en esta pasada, ver más abajo.
+
+### Deuda de código
+
+- [ ] **P1** El wiring de `TopBarSlotService` (viewChild del `TemplateRef` + `afterNextRender` +
+  `setActions` + limpieza) se repite carácter a carácter en **16 páginas** —
+  `projects/supervisor/src/app/features/admin/users/pages/users-list-page.component.ts:93-101`
+  y, con el mismo cuerpo, `agents-list-page.component.ts:121-129`,
+  `repo-list-page.component.ts:75-83`, `labels-page.component.ts:80-88`,
+  `templates-page.component.ts:69-77`, `groups-list-page.component.ts:110-118`,
+  `entities-page.component.ts:68-76`, más las 6 páginas de alta/edición y `categories-page`/
+  `rules-page`/`rule-builder-page` — y la limpieza sale en **dos idiomas** sin criterio escrito:
+  `destroyRef.onDestroy(() => this.topBarSlot.clearActions())` inline en las list-pages
+  (`users-list-page.component.ts:100`) vs `ngOnDestroy(): void { …; this.topBarSlot.clearActions(); }`
+  explícito en las páginas de alta/edición (`agent-form-page.component.ts:677`); el propio
+  docstring del servicio (`top-bar-slot.service.ts:19-20`: "la página registra en
+  `ngOnInit`/`afterNextRender` y limpia en `ngOnDestroy`") solo documenta uno de los dos →
+  extraer un helper (`useTopbarActions(tplRef)`) que encapsule el wiring + un único idioma de
+  limpieza, y hacer que las 16 páginas lo consuman. [arréglalo]
+- [ ] **P2** `isNameTaken()` está duplicado carácter a carácter entre los dos stores de Memory:
+  `categories.store.ts:50-54` (`this._categories().some(c => c.id !== exceptId && c.name...)`) y
+  `entities.store.ts:69-73` (idéntico salvo el nombre del signal). Es distinto del hallazgo ya
+  trackeado sobre "criterio de nombre-duplicado inconsistente en los form panels" (ese mira el
+  lado consumidor; este es la implementación clonada en los stores) → extraer un
+  `isNameTaken<T extends { id: string; name: string }>(list, name, exceptId?)` genérico y hacer
+  que ambos stores lo consuman. [arréglalo]
+- [ ] **P2** `onSearchKey()` (vaciar el buscador con Escape, o `blur()` si ya está vacío) se
+  repite en 6 list-pages admin con una variante que diverge en forma sin motivo documentado:
+  guard clause `if (event.key !== 'Escape') return;` en
+  `users-list-page.component.ts:569-575`, `agents-list-page.component.ts:746-752`,
+  `repo-list-page.component.ts:355-361`, `templates-page.component.ts:355-361`,
+  `groups-list-page.component.ts:674-680`, frente al mismo cuerpo anidado en
+  `if (event.key === 'Escape') { … }` en `labels-page.component.ts:331-338` → mover a un util/
+  directiva de búsqueda compartido que las 6 páginas consuman igual. [arréglalo]
+
+### Deriva de docs
+
+sin hallazgos.
+
+### Trabajo sin mergear
+
+sin hallazgos.
+
+---
+
 ## 2026-08-13
 
 > Método: pasada A (deuda de código, ≤5) + pasada B (deriva de docs) + pasada C (PRs parados
@@ -188,11 +242,14 @@
   `grep -n '^## DD-' docs/DECISIONS.md` (DD-37 primero, DD-1 último) y ahora
   gateado por CHECK I de `docs:coherence` (falla si un DD queda por debajo de
   uno más antiguo).
-- [ ] `docs/customs-catalog.md:905` dice "Última actualización: 2026-06-14",
+- [x] ~~`docs/customs-catalog.md:905` dice "Última actualización: 2026-06-14",
   pero el cuerpo tiene secciones fechadas hasta el 2026-07-22 (§1.9,
   `docs/customs-catalog.md:321`) — el pie lleva más de un mes de contenido
   nuevo sin tocarse → actualizar la fecha al último cambio real, o quitar el
-  pie fijo y remitir a las fechas inline de cada sección. [arréglalo]
+  pie fijo y remitir a las fechas inline de cada sección. [arréglalo]~~
+  **CERRADO, verificado 2026-08-17**: el pie (hoy `docs/customs-catalog.md:917`)
+  dice "Última actualización: 2026-08-13 (auditoría de documentación; antes decía
+  2026-06-14...)" — ya se corrigió en una sesión intermedia sin marcar la casilla.
 - [x] ~~`projects/ui-smartcontact/README.md:25` afirma "~55 componentes
   `sc-*`"; el conteo real (`docs/inventory.md:28`, mantenido al día por
   `npm run audit:components` dentro de `verify`) da 51. Fuera del alcance de
