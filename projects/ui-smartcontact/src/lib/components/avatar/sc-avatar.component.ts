@@ -1,5 +1,5 @@
 import { NgTemplateOutlet } from '@angular/common';
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 import { AvatarModule } from 'primeng/avatar';
 import { OverlayBadgeModule } from 'primeng/overlaybadge';
 
@@ -27,50 +27,56 @@ type PrimeBadgeSeverity = 'secondary' | 'info' | 'success' | 'warn' | 'danger' |
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ScAvatarComponent {
-    @Input() label: string | null = null;
+    readonly label = input<string | null>(null);
 
-    @Input() icon: string | null = null;
+    readonly icon = input<string | null>(null);
 
-    @Input() image: string | null = null;
+    readonly image = input<string | null>(null);
 
-    @Input() size: ScAvatarSize = 'normal';
+    readonly size = input<ScAvatarSize>('normal');
 
-    @Input() shape: ScAvatarShape = 'circle';
+    readonly shape = input<ScAvatarShape>('circle');
 
-    @Input() ariaLabel: string | null = null;
+    readonly ariaLabel = input<string | null>(null);
 
     /** Badge superpuesto (spec Figma Avatar+Badge). `null` = sin badge. */
-    @Input() badge: string | number | null = null;
+    readonly badge = input<string | number | null>(null);
 
-    @Input() badgeVariant: ScSeverity = 'danger';
+    readonly badgeVariant = input<ScSeverity>('danger');
 
     /**
      * Nombre para el fallback de ilustración (§4.2). Cuando `image` es null y
      * esto está informado, el avatar pinta el SVG hasheado del pool elegido.
      */
-    @Input() illustrationName: string | null = null;
+    readonly illustrationName = input<string | null>(null);
 
-    @Input() illustrationPool: AvatarIllustrationPool = 'illustrated';
+    readonly illustrationPool = input<AvatarIllustrationPool>('illustrated');
 
     /** Base de los assets de ilustración (el consumidor los sirve). */
-    @Input() illustrationBase = 'assets/avatars';
+    readonly illustrationBase = input('assets/avatars');
 
-    @Output() imageError = new EventEmitter<unknown>();
+    readonly imageError = output<unknown>();
 
-    protected get avatarIcon(): string | undefined {
-        return resolveScComponentIconClass(this.icon);
-    }
+    protected readonly avatarIcon = computed<string | undefined>(() =>
+        resolveScComponentIconClass(this.icon())
+    );
 
     /** Image src efectiva: la foto si existe, si no el fallback de ilustración. */
-    protected get resolvedImage(): string | null {
-        if (this.image) {
-            return this.image;
+    protected readonly resolvedImage = computed<string | null>(() => {
+        const image = this.image();
+
+        if (image) {
+            return image;
         }
-        if (this.illustrationName) {
-            return buildIllustrationSrc(this.illustrationName, this.illustrationPool, this.illustrationBase);
+
+        const illustrationName = this.illustrationName();
+
+        if (illustrationName) {
+            return buildIllustrationSrc(illustrationName, this.illustrationPool(), this.illustrationBase());
         }
+
         return null;
-    }
+    });
 
     /**
      * Accessible name efectivo. Cuando se pinta la ILUSTRACIÓN (sin foto) y el
@@ -79,29 +85,39 @@ export class ScAvatarComponent {
      * Sin esto, el `<img>` del p-avatar (que no lleva `alt`, solo
      * `[attr.aria-label]="ariaLabel"`) quedaría sin nombre accesible.
      */
-    protected get resolvedAriaLabel(): string | null {
-        if (this.ariaLabel) {
-            return this.ariaLabel;
+    protected readonly resolvedAriaLabel = computed<string | null>(() => {
+        const ariaLabel = this.ariaLabel();
+
+        if (ariaLabel) {
+            return ariaLabel;
         }
-        if (!this.image && this.illustrationName) {
-            return this.illustrationName;
+
+        const illustrationName = this.illustrationName();
+
+        if (!this.image() && illustrationName) {
+            return illustrationName;
         }
+
         return null;
-    }
+    });
 
-    protected get badgeValue(): string {
-        return this.badge == null ? '' : String(this.badge);
-    }
+    protected readonly badgeValue = computed<string>(() => {
+        const badge = this.badge();
 
-    protected get badgeSeverity(): PrimeBadgeSeverity {
-        if (this.badgeVariant === 'primary') {
+        return badge == null ? '' : String(badge);
+    });
+
+    protected readonly badgeSeverity = computed<PrimeBadgeSeverity>(() => {
+        const badgeVariant = this.badgeVariant();
+
+        if (badgeVariant === 'primary') {
             return undefined;
         }
 
-        if (this.badgeVariant === 'warning') {
+        if (badgeVariant === 'warning') {
             return 'warn';
         }
 
-        return this.badgeVariant;
-    }
+        return badgeVariant;
+    });
 }

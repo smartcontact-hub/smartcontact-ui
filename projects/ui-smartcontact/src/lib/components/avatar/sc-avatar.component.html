@@ -1,5 +1,5 @@
-@if (badge !== null) {
-    <p-overlaybadge [value]="badgeValue" [severity]="badgeSeverity">
+@if (badge() !== null) {
+    <p-overlaybadge [value]="badgeValue()" [severity]="badgeSeverity()">
         <ng-container *ngTemplateOutlet="avatar" />
     </p-overlaybadge>
 } @else {
@@ -8,12 +8,12 @@
 
 <ng-template #avatar>
     <p-avatar
-        [label]="label || undefined"
-        [icon]="avatarIcon"
-        [image]="resolvedImage || undefined"
-        [size]="size"
-        [shape]="shape"
-        [ariaLabel]="resolvedAriaLabel || undefined"
+        [label]="label() || undefined"
+        [icon]="avatarIcon()"
+        [image]="resolvedImage() || undefined"
+        [size]="size()"
+        [shape]="shape()"
+        [ariaLabel]="resolvedAriaLabel() || undefined"
         (onImageError)="imageError.emit($event)">
         <ng-content></ng-content>
     </p-avatar>

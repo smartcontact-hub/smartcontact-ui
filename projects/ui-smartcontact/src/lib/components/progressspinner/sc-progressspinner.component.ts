@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { ProgressSpinnerModule } from 'primeng/progressspinner';
 
 @Component({
@@ -9,11 +9,11 @@ import { ProgressSpinnerModule } from 'primeng/progressspinner';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ScProgressSpinnerComponent {
-    @Input() strokeWidth = '2';
+    readonly strokeWidth = input('2');
 
-    @Input() fill = 'transparent';
+    readonly fill = input('transparent');
 
-    @Input() animationDuration = '2s';
+    readonly animationDuration = input('2s');
 
-    @Input() ariaLabel = 'Cargando';
+    readonly ariaLabel = input('Cargando');
 }

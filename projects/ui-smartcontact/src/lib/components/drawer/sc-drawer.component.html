@@ -1,13 +1,13 @@
 <p-drawer
-    [visible]="visible"
-    [header]="header || undefined"
-    [position]="position"
-    [modal]="modal"
-    [dismissible]="dismissible"
-    [closeOnEscape]="closeOnEscape"
-    [showCloseIcon]="showCloseIcon"
-    [fullScreen]="fullScreen"
-    (visibleChange)="onVisibleChange($event)"
+    [visible]="visible()"
+    [header]="header() || undefined"
+    [position]="position()"
+    [modal]="modal()"
+    [dismissible]="dismissible()"
+    [closeOnEscape]="closeOnEscape()"
+    [showCloseIcon]="showCloseIcon()"
+    [fullScreen]="fullScreen()"
+    (visibleChange)="visible.set($event ?? false)"
     (onShow)="shown.emit($event)"
     (onHide)="hidden.emit($event)">
     <ng-content></ng-content>

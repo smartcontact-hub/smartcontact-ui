@@ -90,3 +90,37 @@ test('hasDemo detecta la página por path', () => {
   const r = analyzeComponent({ name: 'button', tsText: "selector: 'sc-button',", htmlText: '', pagesText: "{ path: 'button' }", supervisorBlob: '' });
   assert.equal(r.hasDemo, true);
 });
+
+/* `model()` — la migración a señales de DD-38 destapó dos huecos a la vez. El manifiesto
+ * contaba `input()` y `@Input()` pero NO `model()`, así que al pasar `sc-drawer` y `sc-panel`
+ * a doble binding nativo bajaron de 8→7 y 4→3 inputs y `sc-panel` se reclasificó de EXTENDED
+ * a STANDARD sin haber perdido un solo miembro público. Y no era solo cosa de esa migración:
+ * `datatable` y `datepicker` ya usaban `model()` y llevaban tiempo subreportados (24→25, 17→19).
+ * Estos dos tests fijan las dos mitades para que no vuelva a colarse. */
+
+test('`model()` cuenta como input — y con 4 llega a EXTENDED', () => {
+  const r = analyzeComponent({
+    name: 'panel',
+    tsText:
+      "from 'primeng/panel';\nselector: 'sc-panel',\n" +
+      'readonly a = input(1); readonly b = input(2); readonly c = input(3); readonly collapsed = model(false);',
+    htmlText: '<p-panel></p-panel>',
+    ...base,
+  });
+  assert.equal(r.inputs, 4, 'un model() es un input: si no se cuenta, la clasificación cambia sola');
+  assert.equal(r.kind, 'EXTENDED');
+});
+
+test('`model()` publica también su `xChange`, aunque nadie lo escriba', () => {
+  const r = analyzeComponent({
+    name: 'drawer',
+    tsText: "from 'primeng/drawer';\nselector: 'sc-drawer',\nreadonly visible = model(false);",
+    htmlText: '<p-drawer></p-drawer>',
+    ...base,
+  });
+  assert.ok(r.api.includes('visible'), 'el model en sí');
+  assert.ok(
+    r.api.includes('visibleChange'),
+    'la mitad implícita del doble binding: un consumidor puede engancharse a ella, así que es API',
+  );
+});

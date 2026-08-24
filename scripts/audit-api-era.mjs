@@ -51,22 +51,6 @@ const sh = (cmd) => {
  * componente nuevo la necesita, lo que está mal es el componente.
  */
 export const LEGACY_PENDIENTES = [
-  'sc-avatar',
-  'sc-badge',
-  'sc-bulk-transcription-modal',
-  'sc-card',
-  'sc-chip',
-  'sc-drawer',
-  'sc-icon',
-  'sc-message',
-  'sc-panel',
-  'sc-progressbar',
-  'sc-progressspinner',
-  'sc-radiobutton',
-  'sc-skeleton',
-  'sc-tag',
-  'sc-textarea',
-  'sc-toast',
 ];
 
 /* Los comentarios NO son declaraciones. Mismo gesto que en

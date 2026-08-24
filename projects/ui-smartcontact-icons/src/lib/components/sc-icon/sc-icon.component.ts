@@ -1,5 +1,5 @@
 import { NgClass } from '@angular/common';
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { booleanAttribute, ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 
 import {
     resolveScIconGlyph,
@@ -19,7 +19,7 @@ import {
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ScIconComponent {
-    @Input() name: ScIconName | string | null = null;
+    readonly name = input<ScIconName | string | null>(null);
 
     /**
      * Tamaño tokenizado ('sm'|'md'|'lg'), numérico en px (px de diseño del
@@ -33,48 +33,47 @@ export class ScIconComponent {
      * dentro de un control (button/input/search/chip/tag/menu…); el size
      * pinneado queda como escape hatch e iconos sueltos/decorativos.
      */
-    @Input() size: ScIconSize | number | 'inherit' = 'md';
+    readonly size = input<ScIconSize | number | 'inherit'>('md');
 
-    @Input() filled = false;
+    readonly filled = input(false, { transform: booleanAttribute });
 
-    @Input() weight: ScIconWeight = 400;
+    readonly weight = input<ScIconWeight>(400);
 
-    @Input() grade: ScIconGrade = 0;
+    readonly grade = input<ScIconGrade>(0);
 
-    @Input() opticalSize: ScIconOpticalSize = 24;
+    readonly opticalSize = input<ScIconOpticalSize>(24);
 
-    @Input() ariaLabel: string | null = null;
+    readonly ariaLabel = input<string | null>(null);
 
     /** Gira el glifo en bucle (spinner). Respeta prefers-reduced-motion. */
-    @Input() spin = false;
+    readonly spin = input(false, { transform: booleanAttribute });
 
-    protected get numericSize(): number | null {
-        return typeof this.size === 'number' ? this.size : null;
-    }
+    protected readonly numericSize = computed<number | null>(() => {
+        const size = this.size();
 
-    protected get glyph(): string {
-        return resolveScIconGlyph(this.name);
-    }
+        return typeof size === 'number' ? size : null;
+    });
 
-    protected get ariaHidden(): 'true' | null {
-        return this.ariaLabel ? null : 'true';
-    }
+    protected readonly glyph = computed(() => resolveScIconGlyph(this.name()));
 
-    protected get iconRole(): 'img' | null {
-        return this.ariaLabel ? 'img' : null;
-    }
+    protected readonly ariaHidden = computed<'true' | null>(() => (this.ariaLabel() ? null : 'true'));
 
-    protected get iconClasses(): Record<string, boolean> {
+    protected readonly iconRole = computed<'img' | null>(() => (this.ariaLabel() ? 'img' : null));
+
+    protected readonly iconClasses = computed<Record<string, boolean>>(() => {
+        const size = this.size();
+        const grade = this.grade();
+
         return {
-            'sc-icon--sm': this.size === 'sm',
-            'sc-icon--md': this.size === 'md',
-            'sc-icon--lg': this.size === 'lg',
-            'sc-icon--inherit': this.size === 'inherit',
-            'sc-icon--spin': this.spin,
-            'sc-icon--filled': this.filled,
-            [`sc-icon--weight-${this.weight}`]: true,
-            [`sc-icon--grade-${this.grade < 0 ? 'negative-25' : this.grade}`]: true,
-            [`sc-icon--optical-${this.opticalSize}`]: true
+            'sc-icon--sm': size === 'sm',
+            'sc-icon--md': size === 'md',
+            'sc-icon--lg': size === 'lg',
+            'sc-icon--inherit': size === 'inherit',
+            'sc-icon--spin': this.spin(),
+            'sc-icon--filled': this.filled(),
+            [`sc-icon--weight-${this.weight()}`]: true,
+            [`sc-icon--grade-${grade < 0 ? 'negative-25' : grade}`]: true,
+            [`sc-icon--optical-${this.opticalSize()}`]: true
         };
-    }
+    });
 }

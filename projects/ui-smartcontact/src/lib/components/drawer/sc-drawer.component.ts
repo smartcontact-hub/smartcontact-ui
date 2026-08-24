@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import { booleanAttribute, ChangeDetectionStrategy, Component, input, model, output } from '@angular/core';
 import { DrawerModule } from 'primeng/drawer';
 
 import { ScOverlayPosition } from '../../core/types/theme-component.types';
@@ -11,30 +11,29 @@ import { ScOverlayPosition } from '../../core/types/theme-component.types';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ScDrawerComponent {
-    @Input() visible = false;
+    /**
+     * `model()` sustituye al trío `@Input() visible` + `@Output() visibleChange`
+     * + `onVisibleChange()`, que existía solo para escribir el input desde
+     * dentro y re-emitirlo. Un `model` hace las tres cosas, y de paso quita un
+     * método que asignaba a un `@Input` — algo que la era de señales prohíbe.
+     */
+    readonly visible = model(false);
 
-    @Input() header: string | null = null;
+    readonly header = input<string | null>(null);
 
-    @Input() position: ScOverlayPosition = 'left';
+    readonly position = input<ScOverlayPosition>('left');
 
-    @Input() modal = true;
+    readonly modal = input(true, { transform: booleanAttribute });
 
-    @Input() dismissible = true;
+    readonly dismissible = input(true, { transform: booleanAttribute });
 
-    @Input() closeOnEscape = true;
+    readonly closeOnEscape = input(true, { transform: booleanAttribute });
 
-    @Input() showCloseIcon = true;
+    readonly showCloseIcon = input(true, { transform: booleanAttribute });
 
-    @Input() fullScreen = false;
+    readonly fullScreen = input(false, { transform: booleanAttribute });
 
-    @Output() visibleChange = new EventEmitter<boolean>();
+    readonly shown = output<unknown>();
 
-    @Output() shown = new EventEmitter<unknown>();
-
-    @Output() hidden = new EventEmitter<unknown>();
-
-    protected onVisibleChange(visible: boolean): void {
-        this.visible = visible;
-        this.visibleChange.emit(visible);
-    }
+    readonly hidden = output<unknown>();
 }
