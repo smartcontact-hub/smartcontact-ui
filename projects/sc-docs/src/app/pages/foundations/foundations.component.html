@@ -22,15 +22,58 @@
 </table>
 
 <h2>Color primitivo</h2>
+<p class="swatch-hint">Pasa por encima de un color para ver su token, su hex y su HSL. Cada línea se copia al pulsarla.</p>
 @for (family of colorFamilies; track family.token) {
   <div class="swatch-row">
     <span class="swatch-row__name">{{ family.name }}</span>
     @for (step of family.steps; track step) {
-      <span
-        class="swatch"
-        [style.background]="'var(--sc-color-' + family.token + '-' + step + ')'"
-        [title]="'--sc-color-' + family.token + '-' + step"
-      ></span>
+      @let datos = info(family.token, step);
+      <span class="swatch-wrap">
+        <button
+          type="button"
+          class="swatch"
+          [style.background]="'var(' + datos.token + ')'"
+          [attr.aria-label]="datos.token + ', ' + datos.hex + '. Pulsa para copiar el hex.'"
+          (click)="copiar(datos.hex, datos.token + '|hex', $event)"
+        ></button>
+        <span class="swatch-card" role="presentation">
+          <button
+            type="button"
+            class="swatch-card__row swatch-card__row--token"
+            (click)="copiar(datos.token, datos.token + '|token', $event)"
+          >
+            <span class="swatch-card__value">{{ datos.token }}</span>
+            <sc-icon
+              [name]="copiado() === datos.token + '|token' ? 'check' : 'content_copy'"
+              [size]="12"
+            />
+          </button>
+          <button
+            type="button"
+            class="swatch-card__row"
+            (click)="copiar(datos.hex, datos.token + '|hex', $event)"
+          >
+            <span class="swatch-card__label">HEX</span>
+            <span class="swatch-card__value">{{ datos.hex }}</span>
+            <sc-icon
+              [name]="copiado() === datos.token + '|hex' ? 'check' : 'content_copy'"
+              [size]="12"
+            />
+          </button>
+          <button
+            type="button"
+            class="swatch-card__row"
+            (click)="copiar(datos.hsl, datos.token + '|hsl', $event)"
+          >
+            <span class="swatch-card__label">HSL</span>
+            <span class="swatch-card__value">{{ datos.hsl }}</span>
+            <sc-icon
+              [name]="copiado() === datos.token + '|hsl' ? 'check' : 'content_copy'"
+              [size]="12"
+            />
+          </button>
+        </span>
+      </span>
     }
   </div>
 }
