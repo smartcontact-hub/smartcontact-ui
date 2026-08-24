@@ -243,6 +243,17 @@ lo que hace que te la creas cuando te toca. Lee el índice siempre; el cuerpo, c
    artefacto estaba mal nombrado. **Y el carril rápido que acababa de construir agrava esto**:
    itera con él, pero antes de pushear corre la suite entera — el fallo estaba justo en la
    parte que el carril no cubría.
+   *Evidencia (s29) — SEGUNDA vez, disfrazada de "es solo un token".* Cambié un line-height del
+   preset, corrí `verify` (26 gates, verde) y pusheé: los tokens tienen sus propios gates, ¿qué más
+   va a hacer falta? El `e2e`, que `verify` NO incluye — un token mueve la GEOMETRÍA renderizada, y
+   el alto que el textarea autoResize se graba a sí mismo vive en el `outerHTML` que fija
+   `component-structure`: CI rojo en **DOS push seguidos**, verify verde en ambos, y el rojo pasó
+   inadvertido porque tampoco leí el run (la otra mitad de esta regla). Racionalización a desarmar:
+   **"es solo un token/CSS" NO es "verify basta"** — cualquier cambio visual o de token puede mover
+   un baseline de `e2e`; tras uno, corre `npm run e2e:structure` (barato) antes de pushear, y la
+   cadena entera una vez antes del push que shippea. **No hay atajo de un comando** que corra los 8
+   pasos del CI (medido s29: no existe `preflight` ni hook de pre-push) — mientras no lo haya, el
+   ensamblaje manual de `ci.yml` es tuyo, y es exactamente lo que se cae bajo prisa.
 
    *Corolario (s21), y es de COSTE, no de cobertura: la cadena entera SÍ, pero UNA sola vez por
    tarea.* Esta regla dice qué correr y no dice cuántas veces, así que la cumplí commit a
