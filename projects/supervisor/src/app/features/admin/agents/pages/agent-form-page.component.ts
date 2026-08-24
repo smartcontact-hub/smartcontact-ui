@@ -817,15 +817,6 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     this.form.update((f) => ({ ...f, photo }));
   }
 
-  protected onLanguageAdd(event: Event): void {
-    const select = event.target as HTMLSelectElement;
-    const lang = select.value;
-    select.value = '';
-    if (!lang) return;
-    this.form.update((f) =>
-      f.languages.includes(lang) ? f : { ...f, languages: [...f.languages, lang] },
-    );
-  }
 
   /**
    * Adapter `<sc-select>` para el patrón action-add de idiomas. El select
@@ -860,18 +851,6 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     this.labelPickValue.set(null);
   }
 
-  protected onLabelAdd(event: Event): void {
-    const select = event.target as HTMLSelectElement;
-    const id = Number(select.value);
-    select.value = '';
-    if (!id) return;
-    this.form.update((f) => {
-      if (f.labelIds.has(id)) return f;
-      const next = new Set(f.labelIds);
-      next.add(id);
-      return { ...f, labelIds: next };
-    });
-  }
 
   protected onLabelRemove(id: number): void {
     this.form.update((f) => {
