@@ -1,5 +1,7 @@
 import { defineConfig } from '@playwright/test';
 
+import { reuseOnlyOwnServer } from './scripts/playwright-reuse-guard.mjs';
+
 /**
  * Config del e2e de COMPORTAMIENTO del Supervisor. Aislada de las otras dos a
  * propósito:
@@ -40,7 +42,9 @@ export default defineConfig({
     : {
         command: 'npm run ng -- serve supervisor --port 4405',
         url: 'http://localhost:4405',
-        reuseExistingServer: !process.env['CI'],
+        // Reutiliza SOLO si el server del puerto es de este árbol; si es de otra
+        // sesión, para en vez de medir su código (ver el guardián).
+        reuseExistingServer: reuseOnlyOwnServer(4405),
         timeout: 180_000,
       },
 });

@@ -1,5 +1,7 @@
 import { defineConfig } from '@playwright/test';
 
+import { reuseOnlyOwnServer } from './scripts/playwright-reuse-guard.mjs';
+
 /**
  * Config AISLADA para la captura de la galería de uso (Fase 2.2). Separada de
  * `playwright.config.ts` a propósito: aquella sirve sc-docs (:4280) y de ella
@@ -25,7 +27,9 @@ export default defineConfig({
   webServer: {
     command: 'npm run ng -- serve supervisor --port 4290',
     url: 'http://localhost:4290',
-    reuseExistingServer: !process.env['CI'],
+    // Reutiliza SOLO si el server del puerto es de este árbol; si es de otra
+    // sesión, para en vez de medir su código (ver el guardián).
+    reuseExistingServer: reuseOnlyOwnServer(4290),
     timeout: 180_000,
   },
 });
