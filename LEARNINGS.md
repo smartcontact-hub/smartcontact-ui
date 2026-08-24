@@ -31,11 +31,11 @@ lo que hace que te la creas cuando te toca. Lee el índice siempre; el cuerpo, c
 
 | # | Si estás a punto de… | → |
 |---|---|---|
-| **1** | concluir que algo NO funciona desde una herramienta | demuestra que tu estímulo LLEGÓ, y no extiendas el negativo más allá de lo que mediste |
-| **2** | creerte un hallazgo (o un verde) de una sonda **tuya** | valida el instrumento con un caso conocido; pruébalo en todos sus ejes; y si da verde, mira algo que tú no escribiste |
+| **1** | concluir que algo NO funciona, **o que ya lo arreglaste tocando una opción** | demuestra que tu estímulo —o tu opción— LLEGÓ, y no extiendas el negativo más allá de lo que mediste |
+| **2** | creerte un hallazgo (o un verde) de una sonda **tuya** | valida el instrumento con un caso conocido; pruébalo en todos sus ejes; y valida también el CANAL — rojo y verde pueden venir de otro sitio, y un filtro mudo se lee como "no ha pasado nada" |
 | **4** | arreglar un valor sustituyéndolo por otro token | mide el token de DESTINO antes (fondo y texto, misma familia) |
-| **5** | dudar entre tu código y tu medición | lo rancio es la medición: build, server, HMR, animación, **el repo bajo tus pies**, **o mediste OTRA instancia (un deploy)**… o atribución |
-| **6** | creerte un test NUEVO — se ponga rojo **o pase a la primera** | sospecha del test primero: ¿mide la magnitud? ¿el selector casa? ¿reintenta? ¿espera al estado final? |
+| **5** | dudar entre tu código y tu medición | lo rancio es la medición: build, server, HMR, animación, **el repo bajo tus pies**, **otra instancia (un deploy)**, la máquina ahogada… o atribución. Y si el test miraba un TRANSITORIO, la carga es el disparador, no la causa |
+| **6** | creerte un test NUEVO — se ponga rojo **o pase a la primera** | sospecha del test primero: ¿mide la magnitud? ¿el selector casa? ¿reintenta? ¿espera al estado final? Y para probar el arreglo de una CARRERA, hazla determinista en vez de correrla con carga |
 | **7** | hacer `git push` | corre los **8 pasos** de `ci.yml`, una vez, sobre el árbol final — y confirma el verde LEYENDO el log |
 | **8** | proponer una segunda corrección tras fallar la primera | para: la siguiente acción es una MEDICIÓN que localice la causa |
 | **10** | declarar algo bloqueado, o deducir un dato a ojo | comprueba si el sistema ya te lo sirve (DOM oculto, i18n, hoja de estilos) |
@@ -52,8 +52,8 @@ lo que hace que te la creas cuando te toca. Lee el índice siempre; el cuerpo, c
 
 ## Verificación (lo que más caro me ha salido)
 
-1. **Vas a concluir "X no funciona" a partir de una interacción por herramienta → primero
-   demuestra que tu estímulo LLEGÓ.** Un negativo salido de un canal sin validar no es
+1. **Vas a concluir "X no funciona" a partir de una interacción por herramienta —o "X ya está
+   arreglado" tras tocar una opción— → primero demuestra que tu estímulo LLEGÓ.** Un negativo salido de un canal sin validar no es
    evidencia. *Evidencia (s11)*: afirmé —subrayando "reproducible"— que las filas de
    `sc-datatable` no se activaban con Enter; la acción `key` del navegador entrega los eventos
    con `key`/`code` **vacíos**, y sin un clic previo en la página ni llegan. Tuve que
@@ -64,6 +64,26 @@ lo que hace que te la creas cuando te toca. Lee el índice siempre; el cuerpo, c
    confirmar aquel negativo porque un `dispatchEvent` sintético también "fallaba" — pero ninguno
    de los dos podía disparar la activación nativa de un enlace. Antes de sumar una segunda
    señal, pregunta si puede fallar por la misma causa que la primera.
+
+   *Corolario (s32) — el mismo agujero AL REVÉS, y por eso el disparador ya no dice solo "no
+   funciona": vas a dar por ARREGLADO algo cambiando una OPCIÓN —config, flag, env, setting—,
+   así que demuestra que la opción LLEGÓ, no que está escrita.* Puse
+   `reducedMotion: 'reduce'` en el `use` de `playwright.cuscare.config.ts` para matar la
+   animación que dejaba los overlays de PrimeNG sin estabilizarse bajo carga. **No llegaba**: en
+   Playwright 1.60 el runner ya no reenvía esa opción en primer nivel (va dentro de
+   `contextOptions`). El fichero decía lo correcto, la página recibía `no-preference` y el test
+   seguía cayendo 3 de 15. Y no saltó nada: TypeScript sí lo marca, pero `npm run typecheck` no
+   entra en los configs de la raíz y `eslint` no reporta errores de tipo — un arreglo que no
+   arregla nada y que ningún gate desmiente. Solo se cayó porque tenía un ROJO DE PARTIDA
+   reproducido (2 de 5 bajo carga) contra el que comparar; con la máquina tranquila habría visto
+   verde y lo habría dado por bueno. **Y lo peor no fue el error: había escrito el resultado
+   ("con esta línea, 0 de 15") en el comentario del propio arreglo ANTES de medirlo** — prosa con
+   forma de evidencia, en el sitio donde nadie la va a dudar. **Acción**: (a) una opción de
+   configuración es un estímulo — pregúntale al SISTEMA por su efecto (`matchMedia`,
+   `getComputedStyle`, un log del runtime), nunca al fichero; (b) si esa pregunta cabe en una
+   aserción, hazla un TEST y no un comentario (`e2e/cuscare/harness.spec.ts` existe justo por
+   esto, y se probó en rojo con la opción mal escrita); (c) no escribas una cifra antes de
+   medirla, tampoco dentro de un comentario.
 
    *Corolario (s27) — un negativo VÁLIDO también tiene ALCANCE, y su alcance es lo que mediste, no
    lo que comparte NOMBRE con ello.* Esta vez el estímulo sí llegó y la respuesta era cierta:
@@ -104,12 +124,29 @@ lo que hace que te la creas cuando te toca. Lee el índice siempre; el cuerpo, c
    un valor conocido… y el control falló (`ctx.fillStyle = 'var(--x)'` no resuelve la variable:
    devolvía negro donde esperaba blanco). Solo sirvió porque miré su línea antes que las demás.
    Si el control no pasa, la medición entera queda invalidada aunque el resto parezca sensato.
-   *Y su reverso (s30): cuando validas un gate EXIGIENDO un rojo, el rojo también puede ser
-   ajeno.* Corrí mis dos gates nuevos contra un build sin arreglar esperando verlos fallar, y vi
-   "3 failed" — pero eran tres `ERR_CONNECTION_REFUSED`: el servidor había muerto. "Falla" no es
-   "falla por MI aserción". Léelo hasta el mensaje, y si no coincide con lo que mediste, el
-   control no ha ocurrido: repítelo (revertí el componente, reconstruí y volví a correr — ahí sí,
-   `Expected 0 / Received 3` y `↓ x3` fuera de la lista, los valores exactos medidos).
+   *Y su reverso, en los DOS sentidos: el resultado de tu control —rojo o verde— puede venir de
+   otro sitio.* **El rojo ajeno (s30)**: corrí mis dos gates nuevos contra un build sin arreglar
+   esperando verlos fallar, y vi "3 failed" — pero eran tres `ERR_CONNECTION_REFUSED`: el servidor
+   había muerto. "Falla" no es "falla por MI aserción". Léelo hasta el mensaje, y si no coincide
+   con lo que mediste, el control no ha ocurrido: repítelo (revertí el componente, reconstruí y
+   volví a correr — ahí sí, `Expected 0 / Received 3` y `↓ x3` fuera de la lista).
+   **El verde ajeno (s31), que es el peligroso porque no te obliga a mirar**: rompí `goToPage()`
+   a propósito para ver mis dos tests en rojo y salieron **verdes**. No era que el test fuera
+   flojo — Playwright, con `reuseExistingServer: !CI`, encontró el puerto 4415 contestando y se
+   enganchó al `ng serve` de **OTRO worktree** (`exciting-tesla-f1e6de`, otra sesión viva): medí
+   su código, no el mío. La pista estaba impresa en mi propio log —`[WebServer] TS2307: Cannot
+   find module '@smartcontact-hub/components'`, MI server sin compilar mientras los tests pasaban
+   tan contentos— y no la leí; me salvó que el resultado fuera IMPOSIBLE (un componente roto
+   pasando), o sea suerte, no método. **Acción**: si el canal es un puerto compartido, antes de la
+   PRIMERA medición pregunta quién contesta —`lsof -nP -iTCP:<puerto> -sTCP:LISTEN` y `lsof -a -p
+   <pid> -d cwd` te dice de qué worktree es— y en un worktree corre con `CI=1`, que pone
+   `reuseExistingServer: false`: petar ruidosamente por puerto ocupado es infinitamente mejor que
+   un verde de otro. Mismo agujero en el canal de AVISO: armé un monitor del CI con
+   `select(.headSha=="…" or .headSha|startswith("fe804c9"))` —en `jq` el `|` dentro del `select`
+   se come la precedencia— y no casó nunca; 40 minutos de silencio que le vendí a Rafa como "te
+   aviso cuando termine" mientras el run llevaba 13 en VERDE. **Un filtro que no emite nada se
+   lee igual que "no ha pasado nada": córrelo UNA vez contra un caso que sabes presente y mira
+   que imprime la fila, antes de armarlo.**
 
    *Absorbe la antigua regla 13 (s18) — si el instrumento que construyes es un COMPROBADOR
    (guardián, red, gate), enumera las DIMENSIONES sobre las que varía y pruébalo en cada una,
@@ -181,6 +218,17 @@ lo que hace que te la creas cuando te toca. Lee el índice siempre; el cuerpo, c
      lo mismo (load average 51,88 → 34 `ERR_CONNECTION_REFUSED`, ni un assert de producto).
      **Un rojo intermitente en un gate que ya pasó pregunta primero por la CARGA, no por el
      código**: `ps`/`lsof`, mata lo tuyo, y repite antes de leer una línea de fuente.
+   - *(s31)* **…y volver a verde con la máquina limpia NO cierra el caso.** El bullet de arriba
+     es este mismo test de paginación: s30 lo diagnosticó como CPU ahogada, lo vio 90/90 con la
+     máquina limpia y ahí lo dejó. **Volvió**, y costó una tarea entera. Porque la carga era el
+     DISPARADOR, no la causa: la aserción miraba un overlay que vive **380 ms** exactos
+     (`setTimeout` en el componente) y perdía la carrera cuando el primer sondeo llegaba tarde;
+     con la máquina cargada llega tarde más a menudo, nada más. **Acción**: tras culpar a la
+     carga, mira QUÉ afirmaba el test que se cayó. Si afirmaba sobre algo TRANSITORIO, la carga
+     explica el *cuándo* y no el *porqué* — arregla la aserción para que no dependa del reloj
+     (instala un `MutationObserver` ANTES del estímulo y afirma sobre lo que anotó, como
+     `watchTransient()` en `e2e/cuscare/helpers.ts`) o el rojo vuelve con la siguiente máquina
+     ocupada. Subir el timeout no vale: el problema es llegar tarde, no esperar poco.
    **Acción**: antes de la siguiente medición, pregúntate qué puede estar sirviendo/pintando
    algo viejo —build, server, HMR, animación— **o una instancia que no es tu build (un deploy)**,
    **o si la máquina está ahogada por lo que tú mismo dejaste corriendo**,
@@ -358,6 +406,17 @@ lo que hace que te la creas cuando te toca. Lee el índice siempre; el cuerpo, c
    cuando el test afirma que algo NO pasa, la espera no puede ser un timeout — espera a que el
    estímulo esté CONFIRMADO (instrumenta el evento) y afirma después**; si no, estás midiendo tu
    propia lentitud, no el producto.
+
+   *Y para PROBAR que arreglaste una carrera (s31): si no consigues reproducirla, no la persigas
+   — cambia el experimento hasta hacerla determinista.* Arreglado el test del loader, quise
+   demostrarlo con carga artificial: 20 procesos `yes` en 10 núcleos (load average 37) y la
+   versión VIEJA pasó 15/15. La carga sube la probabilidad, no la garantiza, así que ese verde no
+   demostraba nada en ninguna de las dos direcciones. Lo que sí lo demostró fue **encoger la
+   ventana en vez de ahogar la máquina**: bajé el `setTimeout` del componente de 380 ms a 20, con
+   lo que "el sondeo llega tarde" pasa de probable a seguro — la vieja falló **5/5** con el mismo
+   `element(s) not found` que reportaba el usuario y la nueva pasó **5/5**. **Acción**: para una
+   aserción sensible al tiempo, el control no es correrla muchas veces con la máquina ocupada,
+   es llevar la variable temporal a un extremo donde el resultado sea forzoso.
 
 8. **La primera corrección no funciona → deja de proponer la segunda y MIDE dónde nace el
    efecto.** Encadenar arreglos a ciegas es caro y además puede empeorarlo. *Evidencia (s25),
