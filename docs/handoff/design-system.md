@@ -2,7 +2,56 @@
 
 > **Volátil.** Lo reescribe la sesión que trabaja ESTE frente, y **solo este fichero**.
 > No toques los hand-offs de otros frentes. Lo durable vive en `docs/`.
-> **Sello: 2026-08-24 — sesión de CONSOLIDACIÓN. Describe el merge de dos estados que hasta hoy vivían separados: HEAD `97f34e1` (s30+s31: navbar de sc-docs · teclado del palette · DD-40 primary dark · red de contraste ampliada · sync del Kit del 24-ago · `SC_DOCS_URL` · el guardián de reutilización del dev server) **más el rescate de s33**, HEAD `a275686` (el TypeScript de la raíz y de `e2e/` entra en `typecheck`), que llevaba 6 commits terminados y varados fuera de `main`. Contenido previo: HEAD `59a5c73` (s29).**
+> **Sello: 2026-08-25 — sesión de CONSOLIDACIÓN (cierre). HEAD `1fb7d5f` (el audit de acoplamiento a PrimeNG pasa a mirar tres caras) sobre HEAD `9e3f0bd` (Angular 22 + PrimeNG 22 + los builders a `@angular/build`). Antes, en esta misma sesión y ya en `main`: `3b65f07` (duplicación del supervisor), `bee2acc` (retirada de `sc-page-header` + deriva de docs), `0ef136c` (**trinquete DD-38 a CERO**), `1698f47` (red de contraste de severidades), `edfb2ec` (código muerto), `4417bb8` (`text.muted.color` a enforce + el warn unificado) y `2b694b4` (rescate de s33). Contenido previo: HEAD `97f34e1`.**
+
+## ✅ s34 · Se cerró la deuda abierta, y el salto a Angular 22 destapó una clase de fallo nueva
+
+**Diez bloques, todos en `main`.** El trinquete de DD-38 quedó **a CERO** (93 componentes en
+señales, 0 en decoradores), el `warn` volvió a la familia del Kit (**DD-41**), `text.muted.color`
+pasó a `enforce`, se retiraron 3 ficheros muertos y `sc-page-header`, y el wiring de
+`TopBarSlotService` —el patrón más repetido del repo, 17 páginas en dos idiomas— quedó en un solo
+`useTopbarActions()`.
+
+**Angular 22 · TypeScript 6 · PrimeNG 22 · `@primeuix/themes` 3** (**DD-42**), con
+`@angular-devkit/build-angular` **fuera**: los 7 proyectos en `@angular/build`. Vulnerabilidades
+**7 → 1**; el salto por sí solo no cerraba ninguna —lo que las cerró fue migrar los builders—.
+
+### Lo que hay que saber de esa migración
+
+Está entero en [`migration-safety.md`](../migration-safety.md), que dejó de proyectar lo que
+«debería» pasar en un major y pasa a contar lo medido. El resumen:
+
+- **La capa aguantó**: **0 líneas** de tokens `--sc-*` y **6 líneas en un fichero** del preset.
+  Las 36 clases internas de PrimeNG de las que dependemos **siguen existiendo las 36**.
+- **Lo que rompió fue lo que se salta la capa**, y las tres veces **en silencio**:
+  `styleClass` retirado de `p-table`/`p-select`/`p-multiselect` (42 tests de CusCare de golpe);
+  un `closest('p-tablecheckbox')` en `sc-datatable` que dejó muerta la selección por rango con
+  Mayús; y un localizador de test contra otra grafía.
+- **Dos de las tres las introdujo nuestro propio renombrado**, no el proveedor: PrimeNG declara
+  las dos grafías (`selector: "p-table-checkbox, p-tablecheckbox"`) justamente para no romper a
+  nadie.
+- **Y sus 8 tests unitarios siguieron verdes** porque usaban un doble que decía «sí» a cualquier
+  selector. Medían su propio stub.
+
+`audit:primeng-coupling` pasa a tener **tres secciones** (clases · nombres de elemento · entradas
+inertes), las tres probadas **en rojo con los fallos reales** antes de darlas por buenas. La
+primera versión de la sección B los dejaba pasar a los dos: *un gate que no se pone rojo con el
+fallo que lo motivó no es un gate.*
+
+### Aparcado a propósito
+
+**El P0 del field-pattern** (los 5 CVA a mano). Angular 22 gradúa **Signal Forms** a API pública y
+es justo lo que los sustituye: refactorizarlos ahora sería trabajo tirado. No es que no se pudiera;
+es que hacerlo hoy sale más caro que esperar.
+
+### La trampa que costó más tiempo que cualquier bug
+
+Lancé **la cadena entera dos veces** sin darme cuenta, y las dos suites del supervisor se pisaron
+sobre el mismo dev server. Resultado: la tabla del supervisor salía vacía y la suite iba camino de
+**dos horas**. Con una sola cadena y la máquina libre: **127/127 en 1,8 minutos**. Si una suite que
+conduce la app real da rojos absurdos, **cuenta los procesos antes de leer el código**.
+
+---
 
 ## ✅ s31 (b) · Sync del Kit tras un mes parado, y qué dice Figma del primario oscuro
 
@@ -275,80 +324,64 @@ color breadcrumb). Mensaje de diseño enviado. Editar Figma **no mueve la web**.
 
 ## ▶︎ SIGUIENTE — sin preguntar
 
-0. **Re-exportar desde el Theme Designer, y luego cerrar `text.muted.color`.** Medido el
-   2026-08-24 comparando el **fichero** de Figma contra `kit-export-dtcg.json`: de **164 valores
-   semánticos, 160 idénticos**; divergen **4, con 2 causas raíz**, y las dos van en la misma
-   dirección — son arreglos de contraste que el fichero YA tiene y el export no. El export está
-   **desfasado** (lo generó el plugin `primeui-figma-plugin-v4` el **2026-07-22**), no roto.
-   - `text/muted/color` (claro): fichero `slate/600` `#6f7784` · export `surface/500` `#8f97a3`.
-     Arrastra `list/option/group/color` y `navigation/submenu/label/color`, que le alias.
-     **Su condición de reversión escrita en `color-map.mjs` ("revertir cuando el Kit suba el
-     suyo") ya se cumple** — el Kit lo subió al MISMO valor que pusimos a mano. No se puede pasar
-     a `enforce` hasta re-exportar: `tokens:parity` compara contra el export, así que hacerlo
-     antes lo deja rojo. Anotado en la propia fila (`c7e9ea0`).
-   - `primary/contrast/color` (oscuro): fichero **`#ffffff`** · export `#18181b`. Ese export es
-     el origen del "seguimos al Kit" que llevaba el `07-dark.css` y de que el par quedara en
-     3,01:1. **NO revierte DD-40**: su decisión se apoya en que con texto blanco no existen hover
-     ni active legales en esa rampa, y eso es independiente de lo que diga el Kit.
-   - **El eslabón que falta**: `tokens:parity` compara *export ↔ CSS*. **Nadie compara
-     *fichero ↔ export***, y por ahí se coló esto. No puede ser un gate de CI (necesita el bridge
-     de Figma abierto), así que de momento es procedimiento manual — mismo caso que el Check D de
-     `docs:coherence`, que también es LOCAL-only y por el mismo motivo.
-   - **Cómo repetir la medición sin tropezar**: resuelve a **RGBA final los DOS lados** antes de
-     comparar. La primera pasada dio **15 divergencias falsas** por dos motivos tontos: leer los
-     colores de Figma sin el canal alfa (`#00000000` vs `#000000`) y comparar un alias contra un
-     valor ya resuelto (`slate/0` vs `#ffffff`). Y ojo con el JSON del export: **las claves raíz
-     llevan las barras dentro** (`d['aura/semantic/dark']['primary']`, no `d['aura']['semantic']`).
-1. **Los 16 del trinquete de DD-38**, por lotes (`LEGACY_PENDIENTES` en
-   `scripts/audit-api-era.mjs`). El de más impacto es **`sc-icon`**: está en todas las pantallas.
-   Receta y criterio, en DD-38; al migrar uno, **bórralo de la lista** (el guard lo exige).
-2. **Los hallazgos viejos de [`AUDIT-SEMANAL.md`](../AUDIT-SEMANAL.md)** (secciones 2026-08-10 y
-   2026-08-04). Dos son borrado de código muerto y su precondición **ya está verificada**
-   (2026-08-14): `ClipboardService` del supervisor tiene 0 consumidores —solo su fichero y el
-   barrel `core/services/index.ts:4`— y difiere del `ScClipboardService` del DS solo en el nombre
-   de la clase y un párrafo de docstring; y `shared/utils/is-typing-target.ts` es **idéntico**
-   (`diff` vacío) al del DS con 0 usos. `icon-size.ts` sí tiene un consumidor
-   (`label-chip.component.ts`): ahí es importar de `@smartcontact-hub/icons`, no borrar.
-3. **`npm audit fix` — y NO es lo que decía esta ficha.** Medido el 2026-08-14: **30**
-   vulnerabilidades (**0 críticas**, 24 altas, 4 moderadas, 2 bajas), no las "35 con 1 crítica"
-   que este hand-off arrastraba, y **29 de las 30 tienen arreglo NO-breaking** (ninguna marcada
-   `isSemVerMajor`) — o sea que lo de "pide cambio de major" también era falso. Por eso sale de
-   ESPERANDO A RAFA: es trabajo normal, verificable con la cadena de 8 pasos. Las 24 altas son
-   en realidad **tres cosas**: un XSS de i18n en `@angular/compiler` propagado a 11 paquetes de
-   Angular (Angular instalado: 21.2.17), `xlsx`, y 12 de cadena de build (vite, postcss, undici,
-   piscina…) que no viajan al bundle que sirve Cloudflare. **La única sin arreglo publicado es
-   `xlsx`** (prototype pollution de SheetJS) y **su vía es PARSEAR** un fichero: nuestro
-   `xlsx-export.service.ts` solo escribe (`aoa_to_sheet`/`book_new`/`writeFile`) — cero
-   `XLSX.read` en todo el repo, verificado. Sí viaja al navegador, en su chunk diferido.
-4. **La rama `aura/custom` del Kit no la vigila nadie** (hallazgo nuevo de s28, `[gate-able]`):
-   ningún coverage-map la clasifica, así que no se genera su familia `--sc-cmp-*` y, si el Kit
-   añade otro custom, no salta nada. Es el mismo agujero que `tokens:parity` ya cubre para
-   `semantic/common`, `app` y `effects`.
-5. **La deuda de código de [`AUDIT-DEUDA-2026-06.md`](../AUDIT-DEUDA-2026-06.md)**. El P0 sigue
-   siendo `field-pattern ×5`.
-6. **Los cabos de DD-24** (round-trip de iconos a Figma) en [`ROADMAP.md`](../ROADMAP.md).
+> Los puntos 0 a 3 que llevaba esta ficha (re-exportar y cerrar `text.muted.color` · los 16 del
+> trinquete · los hallazgos viejos del audit semanal · `npm audit`) están **HECHOS** en s34. Lo que
+> sigue es lo que queda de verdad.
+
+1. **El P0 del field-pattern ×5** (`sc-inputtext` · `sc-select` · `sc-multiselect` ·
+   `sc-datepicker` · `sc-inputnumber`, 962 líneas duplicadas), **con Signal Forms de Angular 22**.
+   Ya no es «extraer un CVA a mano»: la API que lo sustituye entró en el framework con este salto.
+   Empieza por leer qué cubre Signal Forms antes de diseñar la extracción — el plan viejo
+   (`scCreateControlValueAccessor()`) puede haber quedado obsoleto entero.
+2. **La rama `aura/custom` del Kit no la vigila nadie** (`[gate-able]`): ningún coverage-map la
+   clasifica, así que no se genera su familia `--sc-cmp-*` y, si el Kit añade otro custom, no
+   salta nada. Mismo agujero que `tokens:parity` ya cubre para `semantic/common`, `app` y
+   `effects`.
+3. **El eslabón que sigue faltando: nadie compara *fichero de Figma ↔ export*.** `tokens:parity`
+   compara *export ↔ CSS*. Por ese hueco se coló el desfase de julio. No puede ser gate de CI
+   (necesita el bridge abierto), así que es procedimiento manual — mismo caso que el Check D de
+   `docs:coherence`.
+   ⚠️ **Cómo repetirlo sin tropezar**: resuelve a RGBA final **los dos lados** antes de comparar.
+   La primera pasada dio **15 divergencias falsas** por leer los colores de Figma sin canal alfa
+   (`#00000000` vs `#000000`) y por comparar un alias contra un valor ya resuelto. Y en el JSON del
+   export **las claves raíz llevan las barras dentro** (`d['aura/semantic/dark']['primary']`).
+4. **El 1:1 web↔Figma de chip · tag · toast** — sigue **bloqueado por herramienta**, no por
+   decisión. Ver la sección de Figma más abajo.
+5. **La deuda de código de [`AUDIT-DEUDA-2026-06.md`](../AUDIT-DEUDA-2026-06.md)** que quede tras
+   s34, y **los cabos de DD-24** (round-trip de iconos) en [`ROADMAP.md`](../ROADMAP.md).
 
 ## ⏸️ ESPERANDO A RAFA — NO preguntar
 
+> Auditada fila a fila el 2026-08-25. Las que ya no procedían salieron; las que quedan llevan **su
+> verificación de esa fecha**, no la razón heredada.
+
 | Qué | Estado |
 |---|---|
-| **Un primary dark conforme, pero desde el KIT** | ⚠️ Ya NO es el 3,01:1: eso lo resolvió **DD-40** en s31 subiendo la rampa un paso (5,05 / 8,03 / 11,89) y **divergiendo** del Kit, y con ello `theme-contrast.spec.ts` pudo ampliarse a `body`. Lo que queda en manos de Rafa es pedirle al Kit su primary dark conforme —luminancia relativa entre **0,136 y 0,183**, al centro de la banda—; el día que llegue, esto se revierte devolviendo tres filas de `color-map.mjs` a `enforce` |
-| **Borrar el proyecto Cloudflare `sc-demo`** | Vivo sirviendo contenido viejo; un borrado permanente no lo ejecuto yo |
-| **Retirar `sc-page-header`** | Sin consumidores salvo su demo |
-| **Lienzo de página gris↔blanco** | Figma `13920:4298`. ⚠️ Antes de tocarlo lee la **trampa C3 de DD-36**: devolverlo a `--sc-bg-default` re-crea un bug documentado del rail de AED |
-| **Tramo actual del breadcrumb** | Figma `13890:157`. Lo mira **Marta** |
-| **Publicar Code Connect** | Requiere plan Figma Organization/Enterprise |
-| **B5b · prosa i18n del constructor** | Necesita ICU MessageFormat. **NECESITA DISEÑO** |
-| **`org-profile.md`** | ¿Lo llegaste a pegar en el repo `.github` de la org? Si sí, se borra |
+| **Borrar el proyecto Cloudflare `sc-demo`** | `sc-demo.pages.dev` → **HTTP 200** (re-medido 2026-08-25): sigue vivo sirviendo contenido viejo. Un borrado permanente no lo ejecuto yo |
+| **`org-profile.md`** | `smartcontact-hub/.github` → `profile/README.md` → **HTTP 404** (re-medido 2026-08-25): no está pegado. El borrador sigue en `docs/org-profile.md` |
+| **Un primary dark conforme, pero desde el KIT** | Ya NO es el 3,01:1 — lo resolvió **DD-40** subiendo la rampa un paso y **divergiendo** del Kit. Lo que queda es pedirle al Kit su primary dark conforme (luminancia relativa entre **0,136 y 0,183**, al centro de la banda); el día que llegue, se revierte devolviendo tres filas de `color-map.mjs` a `enforce` |
+| **Lienzo de página gris↔blanco** | Figma `13920:4298`. ⚠️ Bloqueo REAL, releído en DD-36: devolverlo a `--sc-bg-default` **re-crea** el bug documentado del rail de AED, salvo que el rail cambie de token **en la misma edición**. O sea que no es un cambio de una línea: son dos decisiones a la vez |
+| **Tramo actual del breadcrumb** | Figma `13890:157`. ⚠️ **La descripción anterior confundía el asunto.** No es cuestión de tamaño ni de que web y Figma difieran: hoy **los dos son uniformes y coinciden**. Lo aparcado es la PROPUESTA de ese nodo —último tramo en color pleno `#4F5663` (slate-700), padres en `#8F97A3` (slate-500)— que **no ha adoptado ninguno de los dos lados**. El propio nodo lo dice: *«el componente maestro sigue uniforme hasta que el diseño lo incorpore»*. En código sería una línea (`breadcrumb.ts` pinta `item.color = {text.muted.color}` para todos), pero es decisión de diseño |
+| **El botón de crear cambia de ancho entre listas** | **Hallazgo nuevo, medido 2026-08-25**: 122 · 131 · 137 · 141 · 142 px en labels · grupos · agentes · usuarios · plantillas. Vive en la barra superior, que **permanece en pantalla**, así que el salto se ve al navegar. Existía una regla con un suelo de 144 px puesta a conciencia (S34), pero apuntaba a `.page-header__actions`, que **ya no existía antes de esta sesión**: llevaba tiempo siendo letra muerta y se ha retirado. Reponer el suelo es decisión visual, no limpieza — por eso no lo he hecho por mi cuenta |
+| **B5b · prosa i18n del constructor** | Necesita ICU MessageFormat **y diseño**. Sigue aparcada |
 
 ## 🔌 Figma — tres servers, y caen por separado
 
 Tabla completa en [`AGENTS.md`](../../AGENTS.md) → *Figma MCP Bridge*.
 
-- **`mcp__figma-console__*`** (bridge `:9223`, 118 tools) — el de diario, lee **y escribe**.
-- **`mcp__Figma__*`** — app de escritorio, solo lectura. Sobrevive a que la nube caiga.
-- **Nube** (`plugin:figma:figma`, 32 tools) — solo aporta librerías remotas y funcionar sin
-  Figma Desktop. Autenticado en terminal; el conector de claude.ai sigue invalidado en la app.
+- **`mcp__figma-console__*`** (Figma Desktop Bridge, `:9223`) — el de diario, lee **y escribe**.
+- **`mcp__Figma__*`** — app de escritorio, **solo lectura** (6 tools). Sobrevive a que la nube caiga.
+- **Nube** (`plugin:figma:figma`) — solo aporta librerías remotas y funcionar sin Figma Desktop.
+
+⚠️ **Medido el 2026-08-25, y es la razón de que el 1:1 siga sin hacerse.** Que el panel del
+Desktop Bridge diga *«Connected to 1 AI app»* **no significa que esta sesión lo tenga**: los
+servidores MCP se enganchan al ARRANCAR la sesión, así que reconectar el bridge a mitad no añade
+sus herramientas a una sesión ya abierta. Comprobado por búsqueda directa de nombre, no deducido:
+en s34 solo existían dos prefijos —`mcp__Figma__*` (lectura, y **funcionó**: con él se leyó el
+nodo `13890:157` del breadcrumb) y `mcp__ClaudeTalkToFigma__*`, que es el que **está vetado**—.
+
+→ Si necesitas ESCRIBIR en Figma: **abre sesión nueva** con el bridge ya conectado. No hay forma
+de arreglarlo desde dentro de una sesión en curso.
 
 Fichero: **"Smart-Contact Design System"** (`khNq9dJKNi13pNllrqm6dx`) — 111 páginas, 2.509
 variables, 30 comentarios activos.

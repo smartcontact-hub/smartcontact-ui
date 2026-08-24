@@ -188,7 +188,7 @@ import { ScIconComponent } from '@smartcontact-hub/icons';
 
 ## 5. Gotchas (descubiertos dogfoodeando el Supervisor)
 
-- **Componentes i18n-key-driven.** Varios (`sc-page-header`, `sc-empty-state`,
+- **Componentes i18n-key-driven.** Varios (`sc-empty-state`,
   `sc-section-card`/`sc-subsection`/`sc-slot`…) reciben **claves** (`titleKey`,
   `bodyKey`), no texto: las resuelve `@ngx-translate`. Registra tu diccionario, o las
   claves se renderizan tal cual (fallback de ngx-translate). Los componentes con copy

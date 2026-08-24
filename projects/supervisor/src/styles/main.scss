@@ -168,24 +168,6 @@ table.table {
 }
 
 /*
- * Width-stable primary action inside `<sc-page-header>`. Each list page
- * has a different create-button label ("Nuevo agente" 149 · "Nuevo
- * usuario" 153 · "Nuevo grupo" 142 · "Nueva label" 134 — measured S34).
- * Without a floor, the button visibly resizes when the user navigates
- * between list pages, which reads as the chrome shifting under them.
- * A 144 px floor with centred content keeps the geometry stable while
- * still letting longer locales grow.
- *
- * Lives in main.scss (unscoped) because Angular ViewEncapsulation can't
- * reach `<button class="p-button">` — PrimeNG renders it outside the
- * sc-page-header component's view scope.
- */
-.page-header__actions p-button > .p-button {
-  min-width: 144px;
-  justify-content: center;
-}
-
-/*
  * Button line-height (Figma button: `leading-normal`). Sin esto los `.p-button`
  * heredan el `line-height: 1.5` del reset (`_reset.scss`) → la altura se infla
  * (~35px el small). Con `normal` + el sizing `button.sm` del preset, el
@@ -583,10 +565,15 @@ table.table {
 /* Memory · MockSampleSwitcher popover (S39 prototype switcher).
  *
  * `<p-popover>` con appendTo:body monta fuera del scope component → reglas
- * en main.scss (unscoped). El trigger vive dentro de `<sc-page-header>`
- * que es `position: sticky; z-index: 1030`, y el pool de overlays PrimeNG
- * arranca en ~1000 — el panel quedaba por debajo del header al
- * re-scrollear arriba. `!important` necesario:
+ * en main.scss (unscoped). El panel quedaba por debajo del chrome superior al
+ * re-scrollear arriba, porque el pool de overlays de PrimeNG arranca en ~1000.
+ * `!important` necesario:
+ *
+ * ⚠️ La razón original citaba `<sc-page-header>` (`position: sticky;
+ * z-index: 1030`) como el contenedor que lo tapaba. Ese componente se retiró
+ * el 2026-08-25 y hoy no hay ningún `position: sticky` en el layout, así que
+ * esa mitad de la explicación ya no describe nada. Lo que SÍ sigue siendo
+ * cierto —y lo que sostiene los dos `!important`— es lo de abajo.
  *   - z-index: PrimeNG asigna z-index inline al overlay; sin `!important`
  *     el token --sc-z-popover (1080) no llega a aplicarse.
  *   - padding: el theme aplica padding default sobre `.p-popover-content`
