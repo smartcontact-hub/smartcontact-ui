@@ -99,9 +99,33 @@
     transition: opacity var(--sc-transition-fast) var(--sc-easing-default);
   }
 
+  /*
+   * The chevron is NOT decorative: swapping `chevron-right` for
+   * `chevron-down` is the only signal that an item has children and
+   * whether it is open (`.nav-item--expanded` styles nothing). That puts
+   * it under WCAG 1.4.11 at 3:1, not under the decorative exemption.
+   *
+   * It sat at 0.3 and failed in BOTH themes: a white alpha lightens in
+   * step with whatever is behind it, so the darker dark ground doesn't
+   * rescue it. No gate saw it — the sidebar is a sibling of `<main>` and
+   * `theme-contrast.spec.ts` only walks `main#main-content`.
+   *
+   * Measured on the real app in the state the user sees it — the sidebar
+   * starts collapsed and opens on hover, so the binding row is a HOVERED
+   * one, whose `rgb(255 255 255 / 0.05)` background lifts the ground:
+   *
+   *            light (blue-700)   dark (blue-900)
+   *   0.3          2.57 ✗             2.71 ✗
+   *   0.4          3.42 ✓             3.80 ✓
+   *
+   * The floor is alpha 0.338, and light is the binding theme. 0.35 would
+   * clear 3:1 by 0.13 — keep the margin. Don't raise it either: the alpha
+   * ramp encodes hierarchy (chevron 0.4 < icon 0.5 < label 0.6 < hover
+   * 0.9 < active 1) and 0.45+ makes the chevron as loud as its icon.
+   */
   &__chevron {
     flex-shrink: 0;
-    color: rgb(255 255 255 / 0.3);
+    color: rgb(255 255 255 / 0.4);
     opacity: var(--sidebar-label-opacity, 1);
     transition: opacity var(--sc-transition-fast) var(--sc-easing-default);
   }
