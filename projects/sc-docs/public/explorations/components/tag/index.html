@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tag — Smart Contact DS preview</title>
+<link rel="stylesheet" href="/tokens/index.css">
+<style>
+  body { margin:0; padding:28px; font-family:var(--sc-font-family-primary); background:var(--sc-color-slate-100); color:var(--sc-text-primary); }
+  h1 { font-size:var(--sc-font-size-450,20px); margin:0 0 4px; }
+  p.sub { color:var(--sc-text-secondary); font-size:var(--sc-font-size-100); margin:0 0 20px; }
+  .panels { display:flex; gap:20px; flex-wrap:wrap; }
+  .panel { flex:1; min-width:280px; padding:20px; border-radius:12px; background:var(--sc-bg-default); border:1px solid var(--sc-border-default); }
+  .panel h2 { font-size:var(--sc-font-size-100); text-transform:uppercase; letter-spacing:.04em; color:var(--sc-text-secondary); margin:0 0 16px; }
+  .row { display:flex; gap:8px; flex-wrap:wrap; align-items:center; }
+
+  /* Tag — 1:1 con el master (12/18, radio 6, padding 3.5/7) */
+  .tag {
+    display:inline-flex; align-items:center; gap:var(--sc-scale-0-25,3.5px);
+    padding:var(--sc-scale-0-25,3.5px) var(--sc-scale-0-5,7px);
+    border-radius:var(--sc-radius-md,6px);
+    font-size:var(--sc-font-size-100); line-height:var(--sc-line-height-100);
+    font-weight:var(--sc-font-weight-medium);
+  }
+  .tag.rounded { border-radius:999px; }
+  .tag--primary   { background:var(--sc-color-blue-100);  color:var(--sc-color-blue-900); }
+  .tag--secondary { background:var(--sc-color-slate-100); color:var(--sc-color-slate-600); }
+  .tag--success   { background:var(--sc-color-green-100); color:var(--sc-color-green-700); }
+  .tag--info      { background:var(--sc-color-sky-100);   color:var(--sc-color-sky-800); }
+  .tag--warn      { background:var(--sc-color-amber-100); color:var(--sc-color-amber-700); }
+  .tag--danger    { background:var(--sc-color-red-100);   color:var(--sc-color-red-700); }
+  .tag--contrast  { background:var(--sc-color-slate-900); color:var(--sc-color-slate-0); }
+</style>
+</head>
+<body>
+  <h1>Tag</h1>
+  <p class="sub">Preview con tokens reales del DS. Fuente: master <code>tag</code> (373:13337). Severidades + variante rounded.</p>
+  <div class="panels">
+    <div class="panel">
+      <h2>Light</h2>
+      <div class="row" style="margin-bottom:14px">
+        <span class="tag tag--primary">Primary</span>
+        <span class="tag tag--secondary">Secondary</span>
+        <span class="tag tag--success">Success</span>
+        <span class="tag tag--info">Info</span>
+        <span class="tag tag--warn">Warn</span>
+        <span class="tag tag--danger">Danger</span>
+        <span class="tag tag--contrast">Contrast</span>
+      </div>
+      <div class="row">
+        <span class="tag tag--success"><span>★</span>Con icono</span>
+        <span class="tag tag--primary rounded">Rounded</span>
+      </div>
+    </div>
+    <div class="panel sc-dark">
+      <h2>Dark</h2>
+      <div class="row">
+        <span class="tag tag--primary">Primary</span>
+        <span class="tag tag--secondary">Secondary</span>
+        <span class="tag tag--success">Success</span>
+        <span class="tag tag--info">Info</span>
+        <span class="tag tag--warn">Warn</span>
+        <span class="tag tag--danger">Danger</span>
+        <span class="tag tag--contrast">Contrast</span>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

@@ -1,0 +1,38 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Breadcrumb — Smart Contact DS preview</title>
+<link rel="stylesheet" href="/tokens/index.css">
+<style>
+  body { margin:0; padding:28px; font-family:var(--sc-font-family-primary); background:var(--sc-color-slate-100); color:var(--sc-text-primary); }
+  h1 { font-size:var(--sc-font-size-450,20px); margin:0 0 4px; }
+  p.sub { color:var(--sc-text-secondary); font-size:var(--sc-font-size-100); margin:0 0 20px; }
+  .panels { display:flex; gap:20px; flex-wrap:wrap; }
+  .panel { flex:1; min-width:280px; padding:20px; border-radius:12px; background:var(--sc-bg-default); border:1px solid var(--sc-border-default); }
+  .panel h2 { font-size:var(--sc-font-size-100); text-transform:uppercase; letter-spacing:.04em; color:var(--sc-text-secondary); margin:0 0 16px; }
+
+  /* Breadcrumb — texto 14, color slate-600 (verificado), separador */
+  .bc { display:flex; align-items:center; gap:var(--sc-scale-0-5,7px); font-size:var(--sc-font-size-200); line-height:var(--sc-line-height-200); }
+  .bc a { color:var(--sc-color-slate-600); text-decoration:none; }
+  .bc a:hover { color:var(--sc-color-slate-700); }
+  .bc .sep { color:var(--sc-color-slate-400); }
+  .bc .current { color:var(--sc-color-slate-700); font-weight:var(--sc-font-weight-medium); }
+</style>
+</head>
+<body>
+  <h1>Breadcrumb</h1>
+  <p class="sub">Preview con tokens reales. Fuente: master <code>breadcrumb</code> (185:6637). Texto 14, color <code>slate/600</code>.</p>
+  <div class="panels">
+    <div class="panel">
+      <h2>Light</h2>
+      <nav class="bc"><a>Home</a><span class="sep">›</span><a>Products</a><span class="sep">›</span><a>Electronics</a><span class="sep">›</span><span class="current">Laptops</span></nav>
+    </div>
+    <div class="panel sc-dark">
+      <h2>Dark</h2>
+      <nav class="bc"><a>Home</a><span class="sep">›</span><a>Products</a><span class="sep">›</span><a>Electronics</a><span class="sep">›</span><span class="current">Laptops</span></nav>
+    </div>
+  </div>
+</body>
+</html>
