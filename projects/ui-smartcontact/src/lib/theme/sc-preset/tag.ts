@@ -19,7 +19,7 @@ import type { TagDesignTokens } from '@primeuix/themes/types/tag';
                 background: "#0ea5e929"
             },
             warn: {
-                color: "{orange.300}",
+                color: "var(--sc-cmp-tag-warn-color)",
                 background: "var(--sc-cmp-tag-warn-background)"
             },
             danger: {
@@ -49,8 +49,8 @@ import type { TagDesignTokens } from '@primeuix/themes/types/tag';
                 background: "var(--sc-cmp-tag-info-background)"
             },
             warn: {
-                color: "{orange.700}",
-                background: "{orange.100}"
+                color: "var(--sc-cmp-tag-warn-color)",
+                background: "var(--sc-cmp-tag-warn-background)"
             },
             danger: {
                 color: "var(--sc-cmp-tag-danger-color)",

@@ -332,19 +332,29 @@ import type { ButtonDesignTokens } from '@primeuix/themes/types/button';
                     hoverBorderColor: "{sky.600}",
                     activeBorderColor: "{sky.700}"
                 },
+                /* AA · 2026-08-24 — mismo arreglo que `danger` de abajo y por el
+                 * mismo motivo, pero aquí ni siquiera hace falta divergir: el
+                 * warn sólido medía **1.92:1** con su texto blanco y el propio
+                 * Kit dice `{yellow.700}` para este slot (4.92 ✓). La rampa se
+                 * desplaza de 500/600/700 a 700/800/900 para conservar el
+                 * recorrido reposo → hover → pulsado.
+                 *
+                 * Se llama `orange` porque así llama PrimeNG al slot; `base.ts`
+                 * lo remapea a la familia yellow, que es lo que el Theme
+                 * Designer trajo el 24-ago. */
                 warn: {
                     color: "#ffffffff",
                     focusRing: {
-                        color: "{orange.500}"
+                        color: "{orange.700}"
                     },
-                    background: "{orange.500}",
+                    background: "{orange.700}",
                     hoverColor: "#ffffffff",
                     activeColor: "#ffffffff",
-                    borderColor: "{orange.500}",
-                    hoverBackground: "{orange.600}",
-                    activeBackground: "{orange.700}",
-                    hoverBorderColor: "{orange.600}",
-                    activeBorderColor: "{orange.700}"
+                    borderColor: "{orange.700}",
+                    hoverBackground: "{orange.800}",
+                    activeBackground: "{orange.900}",
+                    hoverBorderColor: "{orange.800}",
+                    activeBorderColor: "{orange.900}"
                 },
                 /* AA · 2026-07-19 — el botón `danger` sólido subía a 3.76:1 con
                  * su texto blanco: era uno de los dos últimos fallos de

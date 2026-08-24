@@ -50,30 +50,19 @@ export const EXCLUDE = new Set([
   'dark:message.info.border.color',
   'dark:toast.info.border.color',
 
-  // ── warn → amber, NO yellow (toast/message). `base.ts` remapea `yellow→amber`
-  //    (warn de marca = amber #f59e0b, más cálido que el yellow #eab308 del Kit). Estos
-  //    slots se renderizan por `{yellow.*}` → amber; el Kit los espejaría a yellow y
-  //    rompería la marca. Se preservan a mano (los fondos/bordes literales yellow SÍ se
-  //    generan). El guard `cmp-color-rewire` vela que no se hardcodee un hex en un slot generado.
-  'dark:toast.warn.color',
-  'dark:toast.warn.close.button.focus.ring.color',
-  'light:toast.warn.color',
-  'light:toast.warn.border.color',
-  'light:toast.warn.close.button.focus.ring.color',
-  'light:toast.warn.close.button.hover.background',
-  'dark:message.warn.color',
-  'dark:message.warn.simple.color',
-  'dark:message.warn.outlined.color',
-  'dark:message.warn.outlined.border.color',
-  'dark:message.warn.close.button.focus.ring.color',
-  'light:message.warn.color',
-  'light:message.warn.simple.color',
-  'light:message.warn.outlined.color',
-  'light:message.warn.outlined.border.color',
-  'light:message.warn.border.color',
-  'light:message.warn.close.button.focus.ring.color',
-  'light:message.warn.close.button.hover.background',
-
+  // ── warn: YA NO SE EXCLUYE (2026-08-24) ──────────────────────────────────────
+  //    Aquí vivían ~30 slots de warn apartados de la generación por una sola razón:
+  //    `base.ts` remapeaba `orange`/`yellow` → amber, porque el warn de marca era el
+  //    amber #f59e0b, más cálido que el yellow #eab308 del Kit.
+  //
+  //    El sync del Theme Designer del 24-ago trajo el Kit a yellow y Rafa decidió
+  //    seguirlo, así que la divergencia se RETIRÓ (`customs-catalog` §1.3) y con ella
+  //    su motivo para estar fuera. El warn vuelve a espejar el export entero.
+  //
+  //    Y no era gratis tenerlo a mano: al generarse del Kit, los valores que entran son
+  //    los suyos —`{yellow.700}` para el texto y el fondo sólido—, que es justamente el
+  //    paso que CUMPLE AA. Los que había a mano no: el badge warn medía 1.92:1 con su
+  //    texto blanco y nadie lo veía porque ninguna red miraba las severidades.
   // ── dark contrast/secondary → surface de MARCA (gris frío SC), NO zinc (toast/message).
   //    El preset usa `{surface.*}` y `base.ts` mapea surface→gray (gris navy de marca); el
   //    Kit, en dark, usa zinc neutro. Espejarlos forkearía el sistema de surface (un zinc
@@ -102,11 +91,11 @@ export const EXCLUDE = new Set([
   'dark:message.secondary.close.button.focus.ring.color',
   'dark:message.secondary.close.button.hover.background',
 
-  // ══ RESTO DE COMPONENTES (rewire Fase 1.1, tanda 2) — mismas 2 familias de marca ══
+  // ══ RESTO DE COMPONENTES (rewire Fase 1.1, tanda 2) — ya solo 1 familia de marca ══
   //    Las refs SEMÁNTICAS ({primary/text/form/content}.*) ya las salta isSemanticRef (regla,
   //    no lista). Aquí solo quedan las 2 divergencias de MARCA que el Kit no puede inferir:
   //    · superficie oscura = gris SC (base.ts surface→gray) en vez de zinc del Kit → W5.
-  //    · warn = amber (base.ts orange/yellow→amber) en vez de orange/yellow del Kit.
+  //    (la de warn se retiró el 2026-08-24 — ver la nota de arriba.)
   //    Divergencias de marca excluidas a mano de la generación (no se repuntan).
   'dark:autocomplete.chip.focus.background',
   'dark:autocomplete.dropdown.color',
@@ -115,13 +104,9 @@ export const EXCLUDE = new Set([
   'dark:autocomplete.dropdown.active.color',
   'dark:autocomplete.dropdown.hover.background',
   'dark:autocomplete.dropdown.active.background',
-  'dark:badge.warn.color',
-  'dark:badge.warn.background',
   'dark:badge.contrast.color',
   'dark:badge.secondary.color',
   'dark:badge.secondary.background',
-  'light:badge.warn.background',
-  'dark:button.text.warn.color',
   'dark:button.text.plain.hover.background',
   'dark:button.text.plain.active.background',
   'dark:button.text.contrast.hover.background',
@@ -129,8 +114,6 @@ export const EXCLUDE = new Set([
   'dark:button.text.secondary.color',
   'dark:button.text.secondary.hover.background',
   'dark:button.text.secondary.active.background',
-  'dark:button.outlined.warn.color',
-  'dark:button.outlined.warn.border.color',
   'dark:button.outlined.plain.border.color',
   'dark:button.outlined.plain.hover.background',
   'dark:button.outlined.plain.active.background',
@@ -139,13 +122,6 @@ export const EXCLUDE = new Set([
   'dark:button.outlined.contrast.active.background',
   'dark:button.outlined.secondary.color',
   'dark:button.outlined.secondary.border.color',
-  'light:button.text.warn.color',
-  'light:button.text.warn.hover.background',
-  'light:button.text.warn.active.background',
-  'light:button.outlined.warn.color',
-  'light:button.outlined.warn.border.color',
-  'light:button.outlined.warn.hover.background',
-  'light:button.outlined.warn.active.background',
   'dark:carousel.indicator.background',
   'dark:carousel.indicator.hover.background',
   'dark:datatable.row.striped.background',
@@ -168,12 +144,9 @@ export const EXCLUDE = new Set([
   'dark:listbox.option.striped.background',
   'dark:scrollpanel.bar.background',
   'dark:slider.handle.content.background',
-  'dark:tag.warn.color',
   'dark:tag.contrast.color',
   'dark:tag.secondary.color',
   'dark:tag.secondary.background',
-  'light:tag.warn.color',
-  'light:tag.warn.background',
   'dark:togglebutton.icon.color',
   'dark:togglebutton.icon.hover.color',
   'dark:togglebutton.content.checked.background',

@@ -131,20 +131,10 @@ export const forceDarkTheme = async (page: Page): Promise<void> => {
   });
 };
 
-/**
- * Mata animaciones y view-transitions. Sin esto, los overlays de PrimeNG (select,
- * menú, diálogo) entran animados y Playwright los rechaza por "element is not
- * stable" — un falso fallo del arnés, no de la app.
- */
-export const disableAnimations = async (page: Page): Promise<void> => {
-  await page.addInitScript(() => {
-    const style = document.createElement('style');
-    style.textContent = `*,*::before,*::after{animation-duration:0s!important;animation-delay:0s!important;transition-duration:0s!important;transition-delay:0s!important;}
-::view-transition-group(*),::view-transition-old(*),::view-transition-new(*){animation:none!important;}`;
-    document.addEventListener('DOMContentLoaded', () => document.head.append(style));
-    queueMicrotask(() => document.head?.append(style));
-  });
-};
+/* `disableAnimations` vive en `../shared/deterministic` desde el 2026-08-24: la
+ * necesitan las DOS redes que miden, y por motivos distintos (aquí, estabilidad de
+ * los overlays; allí, que un toast no se mida a mitad de transición). */
+export { disableAnimations } from '../shared/deterministic';
 
 /** Navega a una ruta del Supervisor y espera a que la página esté montada. */
 export const goto = async (page: Page, route: string): Promise<void> => {

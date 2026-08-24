@@ -34,8 +34,8 @@ import type { BadgeDesignTokens } from '@primeuix/themes/types/badge';
                 background: "var(--sc-cmp-badge-info-background)"
             },
             warn: {
-                color: "{surface.950}",
-                background: "{orange.400}"
+                color: "var(--sc-cmp-badge-warn-color)",
+                background: "var(--sc-cmp-badge-warn-background)"
             },
             danger: {
                 color: "var(--sc-cmp-badge-danger-color)",
@@ -65,7 +65,7 @@ import type { BadgeDesignTokens } from '@primeuix/themes/types/badge';
             },
             warn: {
                 color: "var(--sc-cmp-badge-warn-color)",
-                background: "{orange.500}"
+                background: "var(--sc-cmp-badge-warn-background)"
             },
             danger: {
                 color: "var(--sc-cmp-badge-danger-color)",
