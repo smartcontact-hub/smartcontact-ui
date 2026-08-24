@@ -2,10 +2,10 @@
 
 > **Volátil.** Lo reescribe la sesión que trabaja ESTE frente, y **solo este fichero**.
 > No toques los hand-offs de otros frentes. Lo durable vive en `docs/`.
-> **Sello: 2026-08-12 (s26) — HEAD `3891327`.**
+> **Sello: 2026-08-24 (s32) — HEAD `f4dd1ce` (el motion de los overlays, apagado en el origen). Contenido previo: `a999a85` (s31).**
 
 `projects/cuscare` replica `cuscare.smart-contact.com/aed`. **Las 9 vistas montadas**, con
-valores extraídos del sitio real (no estimados) y **90 tests e2e** (`npm run e2e:cuscare`, en CI).
+valores extraídos del sitio real (no estimados) y **91 tests e2e** (`npm run e2e:cuscare`, en CI).
 
 Funciona de verdad, no es maqueta: filtros, paginación sobre 3280 filas, selección de filas,
 gestor de columnas con arrastre, las 4 acciones en bloque con sus paneles y su modal, el paso 2
@@ -43,6 +43,27 @@ Por orden. Todo esto se coge y se hace.
 - **No replicar sus bugs**: la clave i18n sin traducir de la tabla del dashboard
   (`PAGES.DASHBOARD.DASHBOARD_TICKETS.TABLE.NONE`) y la errata `QEUE` se dejaron fuera a
   propósito.
+- **Los dos loaders de la app duran 380 ms y NO se miran en la pantalla.** Paginar
+  (`tickets-page.component.ts`) y buscar (`search-page.component.ts`) encienden y apagan su
+  overlay con un `setTimeout(…, 380)`. Un `expect(locator).toBeVisible()` justo tras el clic es
+  una CARRERA: si el primer sondeo cae pasados los 380 ms, el nodo ya no existe y Playwright
+  reintenta 10 s en vano acusando `element(s) not found` — como si el loader no se hubiera
+  pintado nunca. Se afirman con `watchTransient()` (`e2e/cuscare/helpers.ts`), que instala un
+  `MutationObserver` ANTES de la acción y anota la aparición cuando ocurre. **Si añades otro
+  estado transitorio, úsalo; no subas el timeout** (el problema es llegar tarde, no esperar
+  poco).
+- **El motion de los overlays está APAGADO, y tiene que seguir apagado.** Los overlays de
+  PrimeNG 21 entran escalando (el host `<p-motion>`, de ~0.93 a 1), y como
+  `getBoundingClientRect()` arrastra el transform del ancestro, la caja de cada `<li>` cambia
+  frame a frame aunque el `<li>` no se mueva. Playwright exige la misma caja en dos frames
+  seguidos para clicar, y la cola de esa curva es asintótica: a 454 ms el transform seguía en
+  `matrix(0.999992, …)`. Con la máquina cargada pasa de los 90 s del timeout. Se apaga con
+  `contextOptions: { reducedMotion: 'reduce' }` en `playwright.cuscare.config.ts`, que hace que
+  `@primeuix/motion` (`safe: true` por defecto) se salte la animación entera. **Ojo: va DENTRO
+  de `contextOptions`; suelto en `use` no llega** —Playwright 1.60 ya no lo reenvía como opción
+  de primer nivel— y ningún gate del repo lo desmiente, porque `npm run typecheck` no entra en
+  los configs de la raíz. De ahí `e2e/cuscare/harness.spec.ts`: comprueba el estado EN LA
+  PÁGINA. Si se cae, el arreglo es la config, no los otros 90 tests.
 - **Mezcla PrimeNG y Angular Material según la pantalla**, con métrica distinta (fila 47.5 vs
   32.7px); los rótulos **no predicen las rutas** ("Groups" → `/settings/entities`); y el botón
   azul "SC" de abajo a la derecha **es de terceros** — hay un test que falla si alguien lo añade.

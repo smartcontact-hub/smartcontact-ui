@@ -30,11 +30,13 @@
           <div class="palette__group">
             <div class="palette__group-title">{{ group.category }}</div>
             @for (cmd of group.items; track cmd.id) {
+              <!-- `mousemove` y NO `mouseenter`: ver `onItemHover` en el .ts. -->
               <button
+                #itemEl
                 type="button"
                 class="palette__item"
                 [class.palette__item--active]="highlighted() === indexOf(cmd)"
-                (mouseenter)="onItemHover(cmd)"
+                (mousemove)="onItemHover(cmd)"
                 (click)="run(cmd)"
               >
                 @if (cmd.icon; as ic) {

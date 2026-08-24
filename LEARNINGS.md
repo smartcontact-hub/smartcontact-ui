@@ -35,7 +35,7 @@ lo que hace que te la creas cuando te toca. Lee el índice siempre; el cuerpo, c
 | **2** | creerte un hallazgo (o un verde) de una sonda **tuya** | valida el instrumento con un caso conocido; pruébalo en todos sus ejes; y si da verde, mira algo que tú no escribiste |
 | **4** | arreglar un valor sustituyéndolo por otro token | mide el token de DESTINO antes (fondo y texto, misma familia) |
 | **5** | dudar entre tu código y tu medición | lo rancio es la medición: build, server, HMR, animación, **el repo bajo tus pies**, **o mediste OTRA instancia (un deploy)**… o atribución |
-| **6** | mirar el código porque un test NUEVO falla | sospecha del test primero: ¿mide la magnitud? ¿el selector casa? ¿reintenta? ¿espera al estado final? |
+| **6** | creerte un test NUEVO — se ponga rojo **o pase a la primera** | sospecha del test primero: ¿mide la magnitud? ¿el selector casa? ¿reintenta? ¿espera al estado final? |
 | **7** | hacer `git push` | corre los **8 pasos** de `ci.yml`, una vez, sobre el árbol final — y confirma el verde LEYENDO el log |
 | **8** | proponer una segunda corrección tras fallar la primera | para: la siguiente acción es una MEDICIÓN que localice la causa |
 | **10** | declarar algo bloqueado, o deducir un dato a ojo | comprueba si el sistema ya te lo sirve (DOM oculto, i18n, hoja de estilos) |
@@ -104,6 +104,12 @@ lo que hace que te la creas cuando te toca. Lee el índice siempre; el cuerpo, c
    un valor conocido… y el control falló (`ctx.fillStyle = 'var(--x)'` no resuelve la variable:
    devolvía negro donde esperaba blanco). Solo sirvió porque miré su línea antes que las demás.
    Si el control no pasa, la medición entera queda invalidada aunque el resto parezca sensato.
+   *Y su reverso (s30): cuando validas un gate EXIGIENDO un rojo, el rojo también puede ser
+   ajeno.* Corrí mis dos gates nuevos contra un build sin arreglar esperando verlos fallar, y vi
+   "3 failed" — pero eran tres `ERR_CONNECTION_REFUSED`: el servidor había muerto. "Falla" no es
+   "falla por MI aserción". Léelo hasta el mensaje, y si no coincide con lo que mediste, el
+   control no ha ocurrido: repítelo (revertí el componente, reconstruí y volví a correr — ahí sí,
+   `Expected 0 / Received 3` y `↓ x3` fuera de la lista, los valores exactos medidos).
 
    *Absorbe la antigua regla 13 (s18) — si el instrumento que construyes es un COMPROBADOR
    (guardián, red, gate), enumera las DIMENSIONES sobre las que varía y pruébalo en cada una,
@@ -167,8 +173,17 @@ lo que hace que te la creas cuando te toca. Lee el índice siempre; el cuerpo, c
      opciones 14, breadcrumb `slate/600`). Casi edito el preset para "arreglar" bugs inexistentes
      en lo nuestro; lo paró Rafa («confirma el 21 de NUESTRO build, no lo fíes del de producción»).
      Un sitio desplegado es una COPIA de tu fuente que puede haber divergido.
+   - *(s30)* **la MÁQUINA, ahogada por procesos huérfanos TUYOS.** `e2e:cuscare` se puso rojo dos
+     veces seguidas en un test de paginación; me puse a mirar si lo había roto yo. No: había
+     dejado vivos un `ng serve` y un `chrome-headless-shell` **al 125% de CPU** de una vuelta
+     anterior, y el test espera un overlay que dura **380 ms**. Con la máquina limpia: 90/90 y la
+     suite de 4,3 min a 2,0. El mismo día, otra sesión perdió una vuelta entera de dos suites por
+     lo mismo (load average 51,88 → 34 `ERR_CONNECTION_REFUSED`, ni un assert de producto).
+     **Un rojo intermitente en un gate que ya pasó pregunta primero por la CARGA, no por el
+     código**: `ps`/`lsof`, mata lo tuyo, y repite antes de leer una línea de fuente.
    **Acción**: antes de la siguiente medición, pregúntate qué puede estar sirviendo/pintando
    algo viejo —build, server, HMR, animación— **o una instancia que no es tu build (un deploy)**,
+   **o si la máquina está ahogada por lo que tú mismo dejaste corriendo**,
    y neutralízalo (rebuild, reinicio, recarga dura, espera); si el objetivo es TU artefacto, mídelo a ÉL. Cuesta segundos; la alternativa es depurar código que no se
    está ejecutando o un DOM que aún no ha terminado de moverse. Y para la quinta, la variante
    barata: **anota el SHA al arrancar y, antes de commitear, `git log <sha>..HEAD -- CLAUDE.md
@@ -228,12 +243,11 @@ lo que hace que te la creas cuando te toca. Lee el índice siempre; el cuerpo, c
    **uno de los OCHO pasos** de `ci.yml` (medido 2026-08-13): `verify`, `build:docs`, los builds
    AOT de **supervisor, agent y cuscare**, `e2e`, `e2e:supervisor` y `e2e:cuscare`. Abre `ci.yml`
    y córrelos; es enumerable, no hay que adivinarlo.
-   *Y esta regla se saltó a sí misma*: hasta hoy decía "cinco pasos" y enumeraba cuatro que eran
-   cinco, omitiendo los dos de `cuscare` — o sea que la regla escrita para que no te saltes un
-   paso del CI te mandaba saltarte exactamente los dos más nuevos. La lección de fondo: **una
-   enumeración copiada a prosa caduca en cuanto alguien añade un paso; si el fichero fuente es
-   enumerable, ábrelo tú aunque la prosa parezca completa** — y quien añada un paso a `ci.yml`
-   tiene que actualizar esta línea (o mejor, gatearlo).
+   *Y esta regla se saltó a sí misma*: contaba cinco cuando el CI ya tenía ocho pasos, o sea que la
+   regla escrita para que no te saltes un paso te mandaba saltarte los dos más nuevos. **Una
+   enumeración copiada a prosa caduca en cuanto alguien añade un paso** (es la regla 17 aplicada a
+   una fuente del propio repo). Eso ya no depende de que alguien se acuerde: `ci-preflight-parity`
+   lo gatea desde `69f0951`.
    *Evidencia (s11)*: racionalicé un subset y pusheé; el verify completo cazó luego el desfase
    de `audit:components` (`sc-button` 9→12) que el subset se habría comido. Fix: `node
    scripts/component-audit.mjs --write` + commitea `docs/inventory.md` + `_component-status.json`.
@@ -251,9 +265,19 @@ lo que hace que te la creas cuando te toca. Lee el índice siempre; el cuerpo, c
    inadvertido porque tampoco leí el run (la otra mitad de esta regla). Racionalización a desarmar:
    **"es solo un token/CSS" NO es "verify basta"** — cualquier cambio visual o de token puede mover
    un baseline de `e2e`; tras uno, corre `npm run e2e:structure` (barato) antes de pushear, y la
-   cadena entera una vez antes del push que shippea. **No hay atajo de un comando** que corra los 8
-   pasos del CI (medido s29: no existe `preflight` ni hook de pre-push) — mientras no lo haya, el
-   ensamblaje manual de `ci.yml` es tuyo, y es exactamente lo que se cae bajo prisa.
+   cadena entera una vez antes del push que shippea. **Ese atajo de un comando ya existe**: `npm run
+   preflight` (creado en `69f0951` cerrando s29, cuando esta regla aún decía que no lo había), con un
+   gate anti-drift que lo mantiene cuadrado con `ci.yml`. Corre ESE, una vez, sobre el árbol final —
+   el ensamblaje manual de `ci.yml` es justo lo que se cae bajo prisa.
+
+   *Corolario (s30) — si has AÑADIDO un test, un gate en verde NO prueba que lo haya ejecutado.*
+   Metí dos gates en `components.spec.ts` y `preflight` dio `EXIT=0` **sin correr ninguno**: su
+   anti-drift permite sustituciones locales y una cambiaba `npm run e2e` por `e2e:structure`, o sea
+   **1 test en vez de 68**. Lo cacé porque fui a mirar en qué paso del CI vivían mis tests, no
+   porque el gate avisara — un gate agregado puede correr un SUBCONJUNTO de lo que su nombre
+   promete. **Acción**: tras escribir un test, `npx playwright test --list | grep <tu test>` con la
+   config del gate que vas a creer, o abre la sustitución (`LOCAL_SUBSTITUTIONS` en
+   `scripts/ci-preflight-parity.mjs`). *(Ese hueco se cerró en `649240d`; la lección no.)*
 
    *Corolario (s21), y es de COSTE, no de cobertura: la cadena entera SÍ, pero UNA sola vez por
    tarea.* Esta regla dice qué correr y no dice cuántas veces, así que la cumplí commit a
@@ -273,12 +297,31 @@ lo que hace que te la creas cuando te toca. Lee el índice siempre; el cuerpo, c
    `gh run view --json conclusion`, no con el `EXIT=0` del watcher. *Evidencia (s26) — el atajo
    que yo mismo usaba estaba roto*: `npm run verify 2>&1 | tail -3; echo "VERIFY=$?"` devuelve el
    `$?` del **`tail`**, así que decía 0 con el lint en rojo; solo lo cacé porque el `✖ 1 problem`
-   asomó en las tres líneas. Si miras un exit-code, que sea el del proceso correcto
-   (`set -o pipefail`, o redirige a fichero y mira `$?` sin tubería) — y aun así, lee el log.
+   asomó en las tres líneas. *Y la regla, así escrita, NO me protegió (s30): nombraba el TUBO
+   cuando el problema es la FORMA.* Corrí `npm run preflight > log 2>&1; echo "EXIT=$?" >> log`
+   —sin tubería, cumpliendo la letra— y el `EXIT=1` del fichero era correcto; lo que dijo «exit
+   code 0», **tres veces seguidas**, fue la NOTIFICACIÓN de la tarea en segundo plano, porque el
+   harness informa del exit del comando **compuesto** y el último era mi propio `echo`. Encima se
+   lo conté a Rafa como un fallo del notificador: decía la verdad sobre lo que le di. **No es el
+   `| tail`: es que CUALQUIER cosa que pongas detrás —`echo`, `tee`, `sed`— pasa a ser el exit que
+   se reporta.** Si envuelves algo cuyo verde te importa, deja el proceso de verdad al final (o
+   `exit $?` explícito) — y aun así, lee el log.
 
-6. **Tu test NUEVO se pone rojo → sospecha del test ANTES que del código.** Un test recién
-   escrito falla casi siempre porque afirma mal, no porque el código esté roto; empezar por el
-   código te lleva a "arreglar" algo sano. *Evidencia (s25), ocho veces en una sesión y cuatro
+   *Corolario (s30) — «este fallo no es mío» es una CLAIM, y se mide como cualquier otra.* Un test
+   de `sc-command-palette` se puso rojo y lo descarté en voz alta —«otra página, otro componente,
+   no lo toca nada de lo mío»— razonando sobre qué ficheros había editado. Era mío: la cabecera de
+   sc-docs adelgazó **1px**, la lista se desplazó, y como el palette resaltaba el ítem bajo el
+   cursor (Playwright deja el ratón donde hizo clic) bajo el puntero caía otro. Lo zanjó `git
+   stash` + correr ESE test contra `HEAD` limpio: **dos minutos**, y lo hice DESPUÉS de afirmar lo
+   contrario. **Acción**: antes de decir que un rojo es ajeno, córrelo en `HEAD` sin tus cambios.
+   Y calcula el radio bien: tocar el SHELL compartido (cabecera, layout) mueve la geometría de
+   TODA página, así que no es «los ficheros que edité» sino «todo lo que dependa de dónde caen las
+   cosas» — ese 1px puso rojas las **39** baselines `fullPage` y un test de teclado.
+
+6. **Tu test NUEVO se pone rojo → sospecha del test ANTES que del código. Y si pasa a la
+   primera, sospecha igual.** Un test recién escrito falla casi siempre porque afirma mal, no
+   porque el código esté roto; empezar por el código te lleva a "arreglar" algo sano. El verde
+   es la mitad que no duele y por eso se cuela. *Evidencia (s25), ocho veces en una sesión y cuatro
    modos distintos*: (a) **contaba filas visibles** para probar que un filtro reduce resultados,
    pero con paginación de 10 el número no baja aunque filtre de 60 a 12 — la señal estaba en el
    TOTAL del pie; (b) **selector ambiguo**: `'Status'` casa también con "Sub-status" y `'Filter'`
@@ -304,6 +347,17 @@ lo que hace que te la creas cuando te toca. Lee el índice siempre; el cuerpo, c
    timeout** en vez de fallar al instante; eso prueba que el reintento está cableado, cosa que un
    verde no prueba. *Corolario del corolario*: un flake que tumba el CI 3 de 5 veces no es
    inocuo — es un gate que entrena a ignorar los gates (misma familia que la regla 13).
+
+   *Y en s30 la MISMA lectura de una pasada me dio un VERDE FALSO — por eso el disparador de esta
+   regla ya no dice solo "se pone rojo".* Escribí el gate del command palette con
+   `page.evaluate(...)` leyendo la clase activa justo después de la tecla: `evaluate` no reintenta,
+   así que leía ANTES de que Angular pintara y **pasaba en verde contra el componente roto**. Solo
+   salió porque corrí el control esperando rojo. Y a la hora siguiente repetí el mismo gesto en el
+   segundo test (`s.idx` = 0 tras `↓ x1`). El arreglo es el de arriba: esperar con algo que
+   reintente (`toHaveClass`, `toHaveCount`, `expect.poll`) y solo entonces leer. **Acción nueva:
+   cuando el test afirma que algo NO pasa, la espera no puede ser un timeout — espera a que el
+   estímulo esté CONFIRMADO (instrumenta el evento) y afirma después**; si no, estás midiendo tu
+   propia lentitud, no el producto.
 
 8. **La primera corrección no funciona → deja de proponer la segunda y MIDE dónde nace el
    efecto.** Encadenar arreglos a ciegas es caro y además puede empeorarlo. *Evidencia (s25),
