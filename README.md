@@ -51,6 +51,7 @@ npm run export:all     # tarballs npm en dist/archives/
 npm run verify         # todos los checks estáticos (~40s)
 npm run e2e            # smoke en navegador (Playwright)
 npm run e2e:contrast   # carril rápido para cambios de COLOR (~80s)
+npm run preflight      # TODO lo que corre el CI (los 8 pasos), antes de pushear
 ```
 
 > **Regla de la casa**: una comprobación que no está en una cadena automática no
@@ -58,6 +59,17 @@ npm run e2e:contrast   # carril rápido para cambios de COLOR (~80s)
 > recordar se pierde. Todo check nuevo entra en `verify` (o en un `e2e:*`), no
 > como comando suelto. `e2e:contrast` es la excepción legítima: no añade
 > comprobaciones, es un ATAJO a un subconjunto de las que ya corren en CI.
+
+> **Antes de pushear, `npm run preflight`**: encadena los OCHO pasos de `ci.yml`
+> (verify + build de docs + AOT de supervisor/agent/cuscare + los e2e) en un solo
+> comando, para que "verde en local" signifique "verde en CI". Nace de que `verify`
+> por sí solo NO corre el `e2e`: en s29 un cambio de `line-height` pasó los 26 gates y
+> aun así tumbó el CI (movió un baseline de `component-structure`). Un test
+> (`scripts/ci-preflight-parity.mjs`, dentro de `test:unit`) se pone rojo si `preflight`
+> y `ci.yml` se desincronizan, así que no se pudre cuando alguien añade un paso al CI.
+> El smoke completo (`npm run e2e`) se sustituye en local por `e2e:structure`: sus
+> screenshots de componente fallan siempre en macOS y su cobertura visual la dan los
+> builds AOT que preflight ya corre.
 
 > **Si tocas un token de color, `e2e:contrast` es el bucle corto**: reconstruye
 > tokens y corre solo contraste (los dos temas) + anillo de foco, sin la suite

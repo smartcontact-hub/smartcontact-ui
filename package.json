@@ -53,6 +53,7 @@
     "e2e:supervisor": "playwright test -c playwright.supervisor.config.ts",
     "e2e:cuscare": "playwright test -c playwright.cuscare.config.ts",
     "e2e:contrast": "npm run build:design-tokens && playwright test -c playwright.supervisor.config.ts theme-contrast focus-ring",
+    "preflight": "npm run verify && npm run build:docs && npx ng build supervisor --configuration production && npx ng build agent --configuration production && npx ng build cuscare --configuration production && npx playwright install chromium && npm run e2e:structure && npm run e2e:supervisor && npm run e2e:cuscare",
     "watch": "ng build --watch --configuration development",
     "test": "ng test",
     "test:unit": "node --test scripts/__tests__/*.test.mjs",
