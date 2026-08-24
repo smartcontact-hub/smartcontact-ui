@@ -137,9 +137,35 @@ export const forceDarkTheme = async (page: Page): Promise<void> => {
 export { disableAnimations } from '../shared/deterministic';
 
 /** Navega a una ruta del Supervisor y espera a que la página esté montada. */
+/** Punto inerte de la barra superior: ni tapa contenido ni deja una fila en hover. */
+const PUNTERO_NEUTRO = { x: 720, y: 8 };
+
 export const goto = async (page: Page, route: string): Promise<void> => {
   await page.goto(`/${route.replace(/^\//, '')}`);
   await expect(page.locator('main#main-content')).toBeVisible();
+
+  /* Saca el puntero de la barra lateral.
+   *
+   * ⚠️ **Por qué, y por qué muerde solo a veces.** El ratón de Playwright arranca
+   * en (0,0), que en esta app cae sobre `<sc-sidebar>`. La barra está colapsada y
+   * **se expande al hover**, en `position: fixed`, **superponiéndose al contenido**
+   * — eso es diseño, no un bug (`sidebar.component.scss:10-12`). Con el puntero
+   * ahí aparcado, `elementFromPoint` sobre la casilla de la primera columna
+   * devuelve `span.nav-item__label`, y Playwright se niega a clicar: «subtree
+   * intercepts pointer events». Reintenta hasta agotar los 90 s.
+   *
+   * Un usuario nunca hace eso: para clicar en la tabla, mueve el ratón hasta la
+   * tabla, y al salir de la barra esta se colapsa. El test estaba clicando desde
+   * una postura imposible.
+   *
+   * **Se coló porque en local pasaba y en CI no** (2026-08-25: 127/127 en local,
+   * 5 rojos en CI, los 5 clics sobre casillas). No es carga ni flakiness: es una
+   * carrera latente que el runner lento destapa. Medido con `elementFromPoint`
+   * en los dos puntos, no deducido.
+   *
+   * Va aquí y no en cada test para que ninguno nuevo herede la trampa. Si algún
+   * test necesita la barra expandida, que la hoveree él después de `goto`. */
+  await page.mouse.move(PUNTERO_NEUTRO.x, PUNTERO_NEUTRO.y);
 };
 
 /**
