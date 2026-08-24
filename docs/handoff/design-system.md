@@ -2,34 +2,60 @@
 
 > **Volátil.** Lo reescribe la sesión que trabaja ESTE frente, y **solo este fichero**.
 > No toques los hand-offs de otros frentes. Lo durable vive en `docs/`.
-> **Sello: 2026-08-14 (s28) — HEAD `ab5a667`.**
+> **Sello: 2026-08-24 (s29) — HEAD `8db0a8a` (casar preset + unificación, DD-39). Contenido previo: `ab5a667`.**
 
-Sesión de una pieza: se cerró **la sección más reciente de la auditoría semanal** —los 4
-hallazgos que quedaban del 2026-08-13— y, de camino, dos ítems que colgaban de secciones
-anteriores. El lote de código pasó los **8 pasos del CI corridos en local sobre el árbol final**
-(los 2 rojos de siempre, `sc-card` y `sc-message`, re-confirmados ajenos por stash-y-reproduce);
-los dos commits posteriores son solo `.md` + un docstring, gateados con el subconjunto que les
-aplica. **El CI remoto confirmó los tres pushes en verde.** Sin trabajo a medias, sin ramas
-abiertas, sin PRs.
+Sesión de dos mitades. **(1) Figma:** se revisaron 6 componentes + Table cruzando el master
+contra la **web en vivo** (chrome-devtools) y se **tokenizó** tamaño y line-height del texto de
+componente. **(2) Código (nuestro repo):** medido que **nuestro sc-docs ya casaba** con Figma casi
+entero —lo desviado era producción (Carlos)—; se **casó lo que faltaba** en el preset (`css.ts` +
+`extend.ts`) con la **unificación de line-height** (md 21→20), **verificado en sc-docs con build**.
+Los **SIGUIENTE de código** de más abajo siguen intactos.
 
-## ✅ Lo que cambió
+## ✅ Código (nuestro repo — casar sc-docs/prototipos con Figma)
 
-- **DD-38 — la era objetivo de la API es señales**, y ya no es una preferencia: la sostiene un
-  **trinquete en `verify`** (`npm run audit:api-era`, el gate nº 26). Nada nuevo puede estrenar
-  `@Input()/@Output()`, y la lista de los que aún los usan **solo puede menguar**.
-- **`sc-button` migrado** (15 `input()` + 1 `output()`, getters → `computed()`). Era el que más
-  se copia —100 usos— y el que hacía que "mira la referencia" significara dos cosas distintas
-  según qué fichero abrieras.
-- **9 stores de ceremonia → `createRepoStore`** en el supervisor: **−144 líneas** y
-  `inject(XStore)` intacto en todos los consumidores.
-- **Dos guardianes tenían el mismo punto ciego, y ya no**: contaban lo que aparece en los
-  **comentarios**. `component-audit` subió `sc-button` de 15 a 16 inputs solo porque su docstring
-  nuevo menciona `input()`; y CHECK E de `docs:coherence` ahora entra en `projects/**`, donde
-  llevaba desde el 4 de agosto una cifra falsa que por alcance no podía ver.
-- **`sc-bulk-transcription-modal` queda como está, y el ítem cerrado como [intencional]**: no se
-  adopta en Memory (sería regresión) y **no se retira**, porque está en el Kit — es el único
-  componente custom que `kit-export-dtcg.json` modela con tokens propios. Que ninguna app lo use
-  significa que **la app se adelantó al Kit**, y eso se habla en Figma, no en el código.
+Medido que **nuestro sc-docs ya casaba** casi entero (chip 14/20/34, opciones 14/20, breadcrumb 14 +
+`slate/600`); lo desviado era **producción (Carlos)**. Lo que faltaba, hecho en el preset y
+**verificado en sc-docs con build**:
+
+- **`css.ts`** — chip, toast-summary, select/multiselect/listbox-option, breadcrumb, context-menu →
+  tipografía **md (14/20)**; tag, toast-detail → **sm (12/18)**. Ahora **explícito**, no depende del
+  `line-height` del body de cada app (así los **prototipos** —body 1.5— también casan).
+- **`extend.ts`** — **unificación**: `app.typography.md.lineHeight` `scale-1-5` (21) →
+  `line-height-200` (20). Medido: control de alto 37 a 36 (icon-only más cuadrado), **sin romper
+  geometría**. Verificado: botón 36/20, tag 25, chip 34.
+
+## ✅ Figma (master `khNq9dJKNi13pNllrqm6dx`)
+
+Todo **migration-safe**: atado a tokens que **ya existían**, sin tocar su valor → cero efecto colateral.
+
+- **Tamaño → `primitive/typography/font/size/200` (14):** `breadcrumb-item`, `contextmenu-item`,
+  `select-option`, `multiselect-option`, `listbox-option` (**23 nodos**). Estaban a 14 pero **a
+  pelo**; ahora vinculados. **Sin cambio visual.**
+- **Line-height → rampa normal** (`line/height/200`=20 para 14px, `line/height/100`=18 para 12px):
+  **chip 31→34, toast 62→68, tag 22→25** (**30 nodos**). Antes AUTO/libre.
+- **Badge EXCLUIDO con motivo:** alto **FIJO** (18/21/25/28) y tamaños fuera de rampa
+  (8.75/10.5/12.25) → el line-height no le afecta y no hay token que le pegue. Tocarlo sería
+  inventar tokens.
+- **Decisión — "line-height normal en todo", NO un set compact.** Se sopesó y **descartó** una
+  rampa de line-height ceñido; los hug (chip/toast/tag) tiran de la rampa normal. *(Candidata a
+  DD si se quiere formalizar; hoy solo aquí.)*
+
+**Hallazgos de la revisión web↔Figma** (por si se retoma):
+
+- **Select/MultiSelect:** el **valor** ya es 14 (correcto); el bug está en las **opciones del
+  desplegable** (16, deben 14). El "16→14" que se arrastraba era medir el **contenedor**, no el
+  texto — falso positivo de sesiones pasadas.
+- **Breadcrumb:** 16→14 **y** color `#8F97A3` → `slate/600` (`breadcrumb/item/color`).
+- **Context-menu:** 16→14 (color `slate/700`, correcto).
+- **Chip/Toast/Tag:** line-height (hug); la web va a 1.5.
+
+**Pendiente de Carlos (dev, NO nuestro):** consumir estos tokens en código (tamaño, line-height,
+color breadcrumb). Mensaje de diseño enviado. Editar Figma **no mueve la web**.
+
+**Nota (20-vs-21):** en NUESTRO código ya **unificado a 20** (`extend.ts`, esta sesión). En producción
+(Carlos) sigue el legacy hasta que consuma los tokens.
+
+**Table:** endosada como **buena base** (mensaje ligero), sin push a reconstruir sobre PrimeNG.
 
 ## ▶︎ SIGUIENTE — sin preguntar
 
@@ -107,7 +133,11 @@ variables, 30 comentarios activos.
 
 ## 🕳️ Lo que esta sesión dejó fuera, y por qué
 
-- **Los 16 componentes del trinquete siguen en decoradores.** Se migró solo `sc-button`, que es
-  lo que pedía el hallazgo (la referencia). El resto es trabajo por lotes, con su gate ya puesto.
-- **No se ha tocado `AUDIT-DEUDA-2026-06`** más allá de marcar el tema A como decidido.
-- **`DECISIONS.md` sigue creciendo** (~1.780 líneas con DD-38). Sigue sin doler lo bastante.
+- **La web no cambia hasta que Carlos consuma los tokens.** Lo nuestro (Figma) está hecho; el
+  loop se cierra en su repo. Editar Figma no mueve producción — pieza-verde ≠ loop-funciona.
+- **Badge sin tocar** (alto fijo, tamaños fuera de rampa): decisión, no olvido.
+- **El desajuste 20-vs-21 de la escala** queda como deuda de foundations, sin abrir.
+- **Sin DD formalizado** de "normal en todo / tokenizar texto de componente": está en este
+  hand-off; se sube a `DECISIONS.md` solo si Rafa lo pide.
+- **La `[intencional]` de `sc-bulk-transcription-modal` y todo lo de código (s28)** siguen igual:
+  esta sesión no tocó el repo, sus SIGUIENTE están intactos.
