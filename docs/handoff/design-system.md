@@ -2,7 +2,7 @@
 
 > **Volátil.** Lo reescribe la sesión que trabaja ESTE frente, y **solo este fichero**.
 > No toques los hand-offs de otros frentes. Lo durable vive en `docs/`.
-> **Sello: 2026-08-24 (s29) — HEAD `76d221c` (A casar preset · C Code Connect · B previews). Contenido previo: `ab5a667`.**
+> **Sello: 2026-08-24 (s29) — HEAD `59a5c73` (A casar preset · C Code Connect · B previews · fix baseline e2e). Contenido previo: `ab5a667`.**
 
 Sesión de dos mitades. **(1) Figma:** se revisaron 6 componentes + Table cruzando el master
 contra la **web en vivo** (chrome-devtools) y se **tokenizó** tamaño y line-height del texto de
@@ -22,7 +22,8 @@ Medido que **nuestro sc-docs ya casaba** casi entero (chip 14/20/34, opciones 14
   `line-height` del body de cada app (así los **prototipos** —body 1.5— también casan).
 - **`extend.ts`** — **unificación**: `app.typography.md.lineHeight` `scale-1-5` (21) →
   `line-height-200` (20). Medido: control de alto 37 a 36 (icon-only más cuadrado), **sin romper
-  geometría**. Verificado: botón 36/20, tag 25, chip 34.
+  geometría**. Verificado: botón 36/20, tag 25, chip 34. Efecto colateral esperado: movió el alto
+  inline del textarea autoResize (77→74) → regenerado el baseline de estructura (`59a5c73`).
 - **Code Connect (C):** 6 componentes mapeados en `code-connect/*.figma.ts` (formato v2
   templates de `@figma/code-connect` 2.0), **publicados en Figma dev mode**. Context-menu
   excluido: no existe wrapper en el DS.
@@ -126,6 +127,13 @@ variables, 30 comentarios activos.
   El de `sc-card` no es sutil —espera una página de 1049px y recibe 1453— así que no lo leas
   como una regresión de métrica.
 - **El CI son 8 pasos, no `verify`** — enumerados en `ci.yml`, y gateados (CHECK J).
+- **`npm run verify` (26 gates) NO corre el `e2e smoke`.** El `component-structure.spec` (baseline
+  del `outerHTML` de cada componente) es un paso aparte de CI, y el textarea autoResize graba su
+  alto calculado en un `style` inline que vive en ese `outerHTML`. Un cambio de token/visual puede
+  pasar los 26 gates y aun así romper el baseline en CI: en s29, `line-height` md 21→20 movió ese
+  alto (77→74) y tumbó el CI en dos push seguidos mientras el verify local iba verde. **Tras tocar
+  tokens o algo visual, corre `npm run e2e:structure` antes de pushear** (`:update` si el cambio es
+  deliberado, y revisa el diff del JSON).
 - **`npm run verify` son 26 gates desde s28.** Si añades uno, la cifra vive en 4 sitios y
   **ninguno la gatea**: `CLAUDE.md`, `docs/DOCS-INDEX.md`, `docs/AUDIT-SEMANAL.md` y el
   `SKILL.md` de la rutina. Lo que sí falla solo es el README, que debe **nombrar** el guard nuevo.
