@@ -1,0 +1,52 @@
+/* Type-check del TypeScript que vive FUERA de `projects/`: los configs de la raíz
+ * y el arnés de e2e.
+ *
+ * Por qué existe: `npm run typecheck` entraba solo en los `tsconfig` de las apps y
+ * las libs, y NINGUNO de ellos incluye la raíz (todos arrancan en `src/`). Así que
+ * estos ficheros no los type-checkeaba nadie, y `eslint` tampoco los cubre porque
+ * no reporta errores de tipo.
+ *
+ * Lo que se coló por ese hueco (2026-08-24, s32): `reducedMotion: 'reduce'` suelto
+ * en el `use` de `playwright.cuscare.config.ts`. Es un error de tipo real —en
+ * Playwright 1.60 la opción va dentro de `contextOptions`, y `tsc` lo marca— pero
+ * pasó el `verify` entero y dejó la suite de CusCare inestable bajo carga sin que
+ * nada se pusiera rojo: un arreglo que no arreglaba nada y que ningún gate
+ * desmentía.
+ *
+ * El `include` va por PATRÓN y no por lista a propósito: un `.ts` nuevo en la raíz
+ * o en `e2e/` entra solo en el gate, sin que nadie tenga que acordarse de añadirlo
+ * aquí.
+ *
+ * `allowJs`/`checkJs` son por `eslint.config.js`, que ya declaraba `// @ts-check`
+ * en su primera línea — una directiva que no hacía NADA porque el fichero no
+ * estaba en ningún programa de TypeScript.
+ *
+ * `types: ["node"]` porque los configs leen `process.env`; sin acotarlo TS carga
+ * los ~25 `@types/*` que el repo arrastra por transitividad.
+ *
+ * FUERA a propósito (medido, no supuesto):
+ *  - `code-connect/**.figma.ts` — no son código, son PLANTILLAS que evalúa el CLI
+ *    de Code Connect: importan un módulo `figma` virtual y llaman a globales
+ *    `_fcc_renderHtmlAttribute`/`_fcc_renderHtmlValue` que el parser INYECTA y que
+ *    no declara ningún `.d.ts` del paquete. Incluirlos = 17 errores de un gate
+ *    nacido rojo. Su gate es `npm run figma:connect:parse`, y `eslint.config.js`
+ *    ya los ignora por esta misma razón.
+ *  - `scripts/**.mjs` — JS sin anotar: con `checkJs` son 392 errores (casi todos
+ *    TS7006/TS7023, "implicitly has an any type"). Anotarlos es otra tarea, no un
+ *    efecto colateral de esta. Hoy los cubren sus propios tests
+ *    (`npm run test:unit`) y `eslint`.
+ */
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    /* Explícito para que el fichero sea válido POR SÍ SOLO — misma lección que la
+     * nota de `sourceMap` en `projects/ui-smartcontact/tsconfig.lib.json`: una
+     * config que solo funciona por la puerta bendecida del script le explota en la
+     * cara a quien corra `npx tsc -p …` a mano. */
+    "noEmit": true,
+    "allowJs": true,
+    "checkJs": true,
+    "types": ["node"]
+  },
+  "include": ["*.ts", "*.js", "e2e/**/*.ts"]
+}
