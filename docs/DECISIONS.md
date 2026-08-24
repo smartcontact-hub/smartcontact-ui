@@ -37,6 +37,100 @@
 
 ---
 
+## DD-42 · 2026-08-25 — Angular 22 + PrimeNG 22, y los builders a `@angular/build`
+
+**Contexto** · El repo iba por Angular 21.2 / PrimeNG 21.1. La justificación que llevaba el plan
+para subir era de seguridad: 7 vulnerabilidades, 6 de ellas colapsando en `@angular-devkit/build-angular`.
+**Esa justificación resultó falsa al medirla**: el salto de Angular por sí solo dejó el contador en
+**8**, no en 0 — `build-angular@22` arrastra la misma cadena de webpack (`less`, `image-size`,
+`sockjs`, `uuid`, `webpack-dev-server`). Y `npm audit fix` proponía como "arreglo" un downgrade a
+la era de Angular 10.
+
+Segundo hecho medido: **Angular y PrimeNG no son separables**. `primeng@21` fija
+`@angular/core ^21.0.7` en sus peers, así que "solo la familia Angular" no era una opción
+disponible. La decisión se retomó con esa premisa corregida.
+
+**Decisión** ·
+
+- Angular **22.1.3** · TypeScript **6.0.3** · PrimeNG **22.1.0** · `@primeuix/themes` **3.0.0** ·
+  angular-eslint 22.1.0.
+- **`@angular-devkit/build-angular` eliminado del repo.** Los 7 proyectos pasan a `@angular/build`
+  (esbuild/Vite), que es el builder soportado en v22.
+- `@types/node` pasa a ser **dependencia declarada**. Angular 21 lo arrastraba de forma
+  transitiva y v22 ya no; el gate de tipos de la raíz (`tsconfig.harness.json`) depende de él.
+- `xlsx` (alta, sin arreglo publicado) **se acepta con evidencia, no se migra**: su vector es
+  *parsear*, y `xlsx-export.service.ts` solo escribe (`aoa_to_sheet`/`book_new`/`writeFile`).
+  **Cero `XLSX.read` en el repo** — ese grep es el criterio de revisión si algún día cambia.
+
+**Razón** · Migrar los builders es lo que de verdad cerró el problema: **8 → 1 vulnerabilidad**.
+Toda la cadena de webpack desaparece del árbol porque `@angular/build` no la usa. El salto de
+versión por sí solo no cerró ninguna.
+
+**Descartadas** ·
+
+- *Subir solo Angular y dejar PrimeNG en 21* — imposible: el peer de `primeng@21` lo impide.
+- *Quedarse en 21* — se llegó a recomendar cuando la justificación de seguridad se cayó. Rafa
+  decidió seguir ("actualiza bien") con la razón real escrita: **estar al día**, no la seguridad.
+- *Migrar `xlsx` a otra librería* — coste alto para un riesgo que el uso real no toca. Se prefiere
+  la evidencia y el criterio de revisión.
+
+**Consecuencias** ·
+
+- **El bundle de sc-docs sube de 938 kB a 2,23 MB** (transferido 186 → 378 kB), y el presupuesto
+  se sube a 2,3 MB / 2,6 MB. La causa está aislada por experimento: **no son los 54 imports**
+  reapuntados, es **un único fichero eager** (`app.config.ts`) que, al importar el paquete en vez
+  del fuente, sube el FESM entero (812 kB) a `main`. Revirtiendo solo ese fichero el bundle baja a
+  861 kB.
+  La elección fue **quedarse con la frontera de paquete correcta** —es lo que hacen las otras tres
+  apps y lo que TypeScript 6 exige— y pagar los 192 kB en una herramienta interna, con el número
+  medido escrito aquí para que no sea un presupuesto subido en silencio.
+- **TypeScript 6 destapó una violación de frontera preexistente**: `sc-docs` importaba el DS por
+  ruta relativa a su *fuente* en **54 ficheros**. Reapuntados al alias `@smartcontact-hub/components`.
+- Deuda que el salto **aparca a propósito**: el P0 del field-pattern (los 5 CVA a mano). Angular 22
+  gradúa **Signal Forms** a API pública y es justo lo que los sustituye; refactorizarlos ahora sería
+  trabajo tirado.
+- Lo aprendido en la migración —qué aguantó, qué se rompió en silencio y qué gate lo vigila ahora—
+  está en [`migration-safety.md`](./migration-safety.md).
+
+---
+
+## DD-41 · 2026-08-25 — El `warn` vuelve a la familia del Kit (yellow), con un paso de corrección por contraste
+
+**Contexto** · El sync del Theme Designer del 24-ago movió el `warn` de la capa generada de
+`orange`/`amber` a **`yellow`**, pero solo esa capa. Quedaron **tres verdades conviviendo**: la
+generada en yellow, el preset remapeando `orange → amber` y `yellow → amber`, y los semánticos y
+customs escritos a mano en amber. Efecto visible medido: **el tag warn salía amber en claro y
+yellow en oscuro**, y el botón ya no casaba con el chrome del toast.
+
+**Decisión** · **Manda el Theme Designer** (decisión de Rafa). Todo el `warn` pasa a la familia
+`yellow`: el remap del preset (`base.ts`), los semánticos (`--sc-text-warning`, `--sc-bg-warning`,
+`--sc-border-warning`, `--sc-icon-warning`), los customs del toast y la rampa sólida del botón.
+**`customs-catalog.md §1.3` («Warn → amber, no orange») se retira**: ya no es divergencia.
+
+**Razón** · El Kit es la fuente, y el export nuevo lo dice. Corroborado **fuera del export**, en el
+fichero de Figma: el nodo `393:42378` da `toast/warn/color = #a16207`, que es `yellow-700`.
+
+**Un paso NO se copia literal, y hay precedente escrito para eso** · `--sc-icon-warning` baja a
+**`yellow-700`**, no a `yellow-600`: medido, `yellow-600` sobre blanco da **2,94:1** y no cumple el
+3:1 de WCAG 1.4.11 para objetos gráficos (su consumidor es `sc-gauge`). Es la misma regla que ya
+estaba escrita en `02-semantic.css:94` para success y warning. Por lo mismo suben
+`--sc-toast-success-icon-bg` (green-500 → 600) y `--sc-toast-secondary-icon-bg` (slate-500 → 600).
+
+**Consecuencias** ·
+
+- Se destapó que **el gate de contraste no veía las severidades**: recorría el supervisor, donde no
+  se renderiza ningún botón `severity="warn"`. Por eso un par a **2,15:1** llevaba meses sin que
+  saltara nada. Se añade `e2e/severities-contrast.spec.ts` sobre la galería de sc-docs, y con él
+  aparecieron 2 hallazgos más que estaban tapados.
+- Ese gate nuevo salió **inestable** (2 verdes / 1 rojo con el mismo árbol) porque medía toasts a
+  medio animar. Se estabilizó con `disableAnimations`, y **estabilizarlo fue lo que destapó los 2
+  hallazgos**: un test intermitente no es un test que a veces falla, es un test que a veces miente.
+- ~30 exclusiones rancias de `warn` en `scripts/cmp-color-map.mjs` retiradas: eran las que dejaban
+  el botón warn fuera de todo control (llegó a bajar a 1,92:1 durante el propio cambio, y lo cazó
+  el gate recién escrito).
+
+---
+
 ## DD-40 · 2026-08-24 — El primary dark sube un paso y DIVERGE del Kit: su rampa no admite texto legible
 
 **Contexto** · `--sc-text-on-primary` sobre `--sc-bg-primary` en `.sc-dark` medía **3,01:1**, bajo
@@ -1480,7 +1574,16 @@ unión de ambos catálogos) había que cerrar UN naming para que todo el equipo
 **Dato que decide** (verificado): PrimeNG 21 acepta los DOS selectores
 (`p-toggleswitch` **y** `p-toggle-switch` son ambos oficiales; idem multiselect/
 inputnumber/inputgroup/radiobutton/progressbar) → la fidelidad a PrimeNG **no
-desempata**. Pero los componentes del **Kit Pro/Figma se nombran pegado en
+desempata**.
+
+> **Nota de 2026-08-25, al subir a PrimeNG 22 — la decisión aguanta, y por poco.**
+> PrimeNG 22 sigue aceptando las dos formas de ESTA decisión (`p-toggleswitch` y
+> `p-toggle-switch`), así que el naming pegado que se eligió aquí no se ha roto. Lo
+> que sí desapareció es una TERCERA forma que este DD no contemplaba: el **camelCase**
+> (`p-multiSelect`, `p-tableCheckbox`, `p-sortIcon`). En v22 esos selectores ya no
+> existen y el build se cae con `NG8001`. En el repo solo quedaba uno
+> (`<p-multiSelect>` en cuscare) precisamente porque este DD había empujado todo lo
+> demás al pegado — o sea que la decisión pagó su coste el día del salto. Pero los componentes del **Kit Pro/Figma se nombran pegado en
 minúsculas** (`❖ inputtext`, `❖ toggleswitch`, `❖ multiselect`). Como los
 componentes se construyen **leyendo el Figma**, el pegado hace Figma→código 1:1
 sin traducción; el kebab mete una traducción permanente.
