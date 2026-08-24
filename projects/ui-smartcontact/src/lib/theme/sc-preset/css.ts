@@ -20,7 +20,14 @@ const mdTypographySelectors = [
     ".p-autocomplete .p-autocomplete-input-multiple",
     ".p-autocomplete .p-autocomplete-input-chip input",
     ".p-terminal .p-terminal-prompt-value",
-    ".p-component.p-togglebutton"
+    ".p-component.p-togglebutton",
+    ".p-chip",
+    ".p-toast-summary",
+    ".p-select-option",
+    ".p-multiselect-option",
+    ".p-listbox-option",
+    ".p-breadcrumb-item-label",
+    ".p-contextmenu-item-label"
 ] as const;
 
 const smTypographySelectors = [
@@ -33,7 +40,9 @@ const smTypographySelectors = [
     ".p-cascadeselect.p-cascadeselect-sm .p-cascadeselect-label",
     ".p-autocomplete:has(.p-inputtext-sm) .p-autocomplete-input-multiple",
     ".p-autocomplete:has(.p-inputtext-sm) .p-autocomplete-input-chip input",
-    ".p-component.p-togglebutton-sm"
+    ".p-component.p-togglebutton-sm",
+    ".p-tag",
+    ".p-toast-detail"
 ] as const;
 
 const lgTypographySelectors = [

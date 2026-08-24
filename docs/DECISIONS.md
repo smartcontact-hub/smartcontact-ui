@@ -37,6 +37,43 @@
 
 ---
 
+## DD-39 · 2026-08-24 — Tipografía de componente explícita en `css.ts` + line-height md unificado a 20
+
+**Contexto** · chip/toast/tag/opciones/breadcrumb/context-menu no estaban en los selectores de
+tipografía de `css.ts` — heredaban font-size y line-height del `body` de cada app. Funcionaba en
+sc-docs (body a `--sc-line-height-200` = 20) pero NO en los prototipos (supervisor/agent/cuscare,
+`reset.scss` a 1.5): allí el chip salía a 21. Además el texto de 12px heredaba el 20 absoluto del
+body (suelto; debía 18), y coexistían dos line-heights de 14px: 20 (rampa) y 21 (control, vía
+`app.typography.md` = `scale-1-5`). Medido en sc-docs con chrome-devtools.
+
+**Decisión** ·
+1. Los componentes que muestran/abrazan texto declaran su tipografía **explícita** en `css.ts`
+   (md 14/20, sm 12/18), sin depender del `body` del app consumidor.
+2. **Unificación**: `app.typography.md.lineHeight` de `scale-1-5` (21) → `line-height-200` (20).
+   Todo 14px a 20, 12px a 18 (`line-height-100`).
+3. **Badge fuera**: alto fijo y tamaños fuera de rampa (8.75/10.5/12.25) — el line-height no le
+   afecta y no hay token que le pegue.
+
+**Razón** · que los componentes rendericen igual —y como Figma— en TODAS las apps, no según el body
+de cada una. El 21 era load-bearing para la geometría icon-only; medido que 20 baja el control de
+alto 37 a 36 (icon-only más cuadrado) sin romperla. `type-parity` sigue 15/15 1:1 con el export.
+
+**Descartadas** ·
+- **Set "compact" de line-height ceñido** (rampa paralela ~1.2 para UI): añade un segundo sistema a
+  esparcir por cada hug (tag, badge…) y una decisión "¿normal o compact?" en cada uso. Una sola
+  rampa normal es más mantenible.
+- **Dejar la herencia del body**: frágil (depende del `reset.scss` de cada app) y ya rompía en los
+  prototipos.
+- **Aceptar el 1px** (Figma 20 vs código 21): la unificación es barata y segura (medido) y deja el
+  sistema sin el desajuste latente.
+
+**Consecuencias** · migration-safe (tokens que ya existían, sin cambiar valor). Verificado en
+sc-docs: botón 36/20, tag 25, chip 34, opciones 14/20, breadcrumb 14 + slate/600. Los prototipos
+heredan la corrección al reconstruir. Producción (ui.smart-contact, Carlos) sigue su camino hasta
+consumir los tokens.
+
+---
+
 ## DD-38 · 2026-08-14 — La era objetivo de la API es **señales**; `@Input()/@Output()` queda congelado con trinquete
 
 **Contexto** · Dos formas de declarar la API conviven en el repo sin criterio escrito en ningún
