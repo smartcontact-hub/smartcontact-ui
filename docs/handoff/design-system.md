@@ -2,7 +2,41 @@
 
 > **Volátil.** Lo reescribe la sesión que trabaja ESTE frente, y **solo este fichero**.
 > No toques los hand-offs de otros frentes. Lo durable vive en `docs/`.
-> **Sello: 2026-08-24 (s29) — HEAD `59a5c73` (A casar preset · C Code Connect · B previews · fix baseline e2e). Contenido previo: `ab5a667`.**
+> **Sello: 2026-08-24 (s30) — HEAD `649240d` (hover del command palette · scroll de flechas · preflight ≡ CI). Contenido previo: `59a5c73` (s29).**
+
+## ✅ s30 — `sc-command-palette` (teclado) + el alcance real de `preflight`
+
+Dos defectos de teclado en `sc-command-palette`, los dos **medidos antes de tocar nada** y
+arreglados con su gate (`87abad5`):
+
+1. **El resaltado inicial dependía de dónde hubiera quedado el ratón.** Con `(mouseenter)`, abrir el
+   overlay bajo un puntero PARADO disparaba el hover: con el cursor sobre el ítem 3, el activo al
+   abrir era «Usuarios» y ↓+Enter ejecutaba «Crear grupo». Como la paleta se abre sobre todo por ⌘K,
+   la primera flecha partía de un sitio que el usuario no eligió. **El mecanismo, medido:** al
+   aparecer un elemento bajo un puntero quieto el navegador dispara `mouseover` y `mouseenter` pero
+   **NO** `mousemove` ni `pointermove` → basta `(mouseenter)` → `(mousemove)`, sin flag de estado.
+2. **Las flechas movían el resaltado pero no la vista.** Con la ventana a 1280x400, `scrollTop` se
+   quedaba en 0 las cinco pulsaciones y desde la tercera el activo caía **3, 78 y 112 px** por debajo
+   del borde visible → ↓+Enter ejecutaba un comando invisible. Añadido
+   `scrollIntoView({block:'nearest'})`, **casando el índice por `id`**: `highlighted` indexa
+   `filtered()` y el DOM se pinta desde `grouped()`, así que con categorías intercaladas los dos
+   órdenes dejarían de coincidir (ningún consumidor de hoy intercala — trampa latente, anotada).
+
+Los **dos gates nuevos** (`components.spec.ts`) están validados en los DOS sentidos: rojos contra el
+componente sin arreglar, con los valores exactos medidos. El primero, en su primera versión, pasaba
+**en verde contra el código roto** porque leía el resaltado antes de que llegara el evento; ahora
+espera a confirmar que el `mouseover` llegó y solo entonces afirma.
+
+**Y de ahí salió lo otro (`649240d`): `preflight` no corría `components.spec.ts`.** Su sustitución
+local cambiaba `npm run e2e` por `e2e:structure` — **1 test en vez de 68**, dejando los 56 de
+`components.spec.ts` fuera del gate de pre-push. El motivo escrito (los screenshots de `sc-card` y
+`sc-message` fallan siempre en macOS) resultó ser sorteable: son `screenshotBaseline()`, que hace
+**no-op con `CI=1`**. Hoy la sustitución es `npm run e2e` → `CI=1 npm run e2e`, y el test del gate
+lleva el caso inverso para que la vuelta atrás salte.
+
+---
+
+## s29 (previo) — Figma + casar preset
 
 Sesión de dos mitades. **(1) Figma:** se revisaron 6 componentes + Table cruzando el master
 contra la **web en vivo** (chrome-devtools) y se **tokenizó** tamaño y line-height del texto de
@@ -121,23 +155,29 @@ variables, 30 comentarios activos.
 
 ## ⚠️ Trampas de este frente
 
-- **Dos e2e fallan SIEMPRE en local (macOS) y no son tuyos**: los screenshots de `sc-card` y
-  `sc-message` (`components.spec.ts:116` y `:162`). **Re-confirmado el 2026-08-14 por
-  stash-y-reproduce**: en HEAD limpio fallan los mismos dos, con el mismo error. En CI pasan.
-  El de `sc-card` no es sutil —espera una página de 1049px y recibe 1453— así que no lo leas
-  como una regresión de métrica.
+- **Los dos e2e que "fallan siempre en macOS" se desactivan con `CI=1`**: los screenshots de
+  `sc-card` y `sc-message` (`components.spec.ts`) son llamadas a `screenshotBaseline()`, que
+  **hace no-op cuando `CI` está puesta**. Medido el 2026-08-24: `CI=1 npm run e2e` → **68/68 en
+  verde** en este Mac, dos veces. O sea que el smoke completo SÍ es corrible en local; lo que no
+  lo es son sus baselines por plataforma. Sin `CI=1` siguen rojos y **no son tuyos** (el de
+  `sc-card` espera una página de 1049px y recibe 1453 — no lo leas como regresión de métrica).
 - **El CI son 8 pasos, no `verify`** — enumerados en `ci.yml`, y gateados (CHECK J).
 - **`npm run verify` (26 gates) NO corre el `e2e smoke`.** El `component-structure.spec` (baseline
   del `outerHTML` de cada componente) es un paso aparte de CI, y el textarea autoResize graba su
   alto calculado en un `style` inline que vive en ese `outerHTML`. Un cambio de token/visual puede
   pasar los 26 gates y aun así romper el baseline en CI: en s29, `line-height` md 21→20 movió ese
-  alto (77→74) y tumbó el CI en dos push seguidos mientras el verify local iba verde. **Tras tocar
-  tokens o algo visual, corre `npm run e2e:structure` antes de pushear** (`:update` si el cambio es
-  deliberado, y revisa el diff del JSON).
+  alto (77→74) y tumbó el CI en dos push seguidos mientras el verify local iba verde. **Quien lo
+  cubre es `npm run preflight`**, que desde s30 corre el smoke ENTERO (`CI=1 npm run e2e`, 68
+  tests) y no un subconjunto. `npm run e2e:structure` sigue valiendo como bucle corto mientras
+  iteras (`:update` si el cambio es deliberado, y revisa el diff del JSON), pero el gate de
+  pre-push es preflight.
 - **`npm run verify` son 26 gates desde s28.** Si añades uno, la cifra vive en 4 sitios y
   **ninguno la gatea**: `CLAUDE.md`, `docs/DOCS-INDEX.md`, `docs/AUDIT-SEMANAL.md` y el
   `SKILL.md` de la rutina. Lo que sí falla solo es el README, que debe **nombrar** el guard nuevo.
-- **`npm run e2e` pisa los PNG de `public/usage/`**. Gatea lo visual con `ng build` AOT.
+- **`npm run e2e` ya NO pisa los PNG de `public/usage/`**: `playwright.config.ts` tiene
+  `testIgnore: ['usage/**', ...]`. Comprobado el 2026-08-24 tras dos smokes completos —
+  `public/usage/*.png` y `_usage-raw.json` intactos. (La captura de uso se corre a propósito, con
+  su config aparte.) Lo visual se sigue gateando con `ng build` AOT.
 - **Los permisos de Actions se capan desde la ORG**: cambiar solo el repo no sirve; el ajuste se
   queda en `read` sin avisar. Hay que ponerlo en `write` en los dos niveles.
 - **Al escribir un docstring, cuidado con lo que MENCIONAS.** Los scripts que cuentan API
@@ -154,4 +194,11 @@ variables, 30 comentarios activos.
 - **Sin DD formalizado** de "normal en todo / tokenizar texto de componente": está en este
   hand-off; se sube a `DECISIONS.md` solo si Rafa lo pide.
 - **La `[intencional]` de `sc-bulk-transcription-modal` y todo lo de código (s28)** siguen igual:
-  esta sesión no tocó el repo, sus SIGUIENTE están intactos.
+  los SIGUIENTE de arriba están intactos — s30 no los tocó.
+- **s30 · el desajuste `filtered()` vs `grouped()` del palette queda ANOTADO, no arreglado.** Si un
+  consumidor publicara sus comandos con las categorías intercaladas, las flechas navegarían en un
+  orden distinto del que se ve. Ninguno de los dos consumidores de hoy intercala, y arreglarlo es
+  otra tarea: el `scrollIntoView` de esta sesión ya casa por `id` y no depende de ello.
+- **s30 · sin DD.** Ni el cambio de hover ni el del scroll son decisiones de arquitectura: la razón
+  vive en el docstring de `onItemHover`/`scrollHighlightedIntoView` y en los dos gates, que es donde
+  se lee cuando hace falta.
