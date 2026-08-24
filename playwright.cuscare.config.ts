@@ -1,5 +1,7 @@
 import { defineConfig } from '@playwright/test';
 
+import { reuseOnlyOwnServer } from './scripts/playwright-reuse-guard.mjs';
+
 /**
  * Config del e2e de COMPORTAMIENTO de CusCare. Aislada de las otras tres, con el
  * mismo patrón que `playwright.supervisor.config.ts`:
@@ -91,7 +93,9 @@ export default defineConfig({
     : {
         command: 'npm run ng -- serve cuscare --port 4415',
         url: 'http://localhost:4415',
-        reuseExistingServer: !process.env['CI'],
+        // Reutiliza SOLO si el server del puerto es de este árbol; si es de otra
+        // sesión, para en vez de medir su código (ver el guardián).
+        reuseExistingServer: reuseOnlyOwnServer(4415),
         timeout: 180_000,
       },
 });
