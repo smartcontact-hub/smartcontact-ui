@@ -1,7 +1,6 @@
 export { BreadcrumbService } from './breadcrumb.service';
 export type { BreadcrumbItem, BreadcrumbCrumb, BreadcrumbDecl } from './breadcrumb.service';
 
-export { ClipboardService } from './clipboard.service';
 
 export { XlsxExportService } from './xlsx-export.service';
 export type { XlsxExportOptions } from './xlsx-export.service';
