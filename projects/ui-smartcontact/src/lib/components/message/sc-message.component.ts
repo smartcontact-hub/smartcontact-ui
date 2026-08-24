@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import { booleanAttribute, ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 import { MessageModule } from 'primeng/message';
 
 import { resolveScComponentIconClass } from '../../core/icons/sc-component-icon-resolver';
@@ -15,49 +15,53 @@ type PrimeMessageSize = 'small' | 'large' | undefined;
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ScMessageComponent {
-    @Input() text: string | null = null;
+    readonly text = input<string | null>(null);
 
-    @Input() severity: ScSeverity = 'info';
+    readonly severity = input<ScSeverity>('info');
 
-    @Input() closable = false;
+    readonly closable = input(false, { transform: booleanAttribute });
 
-    @Input() icon: string | null = null;
+    readonly icon = input<string | null>(null);
 
-    @Input() size: ScComponentSize = 'md';
+    readonly size = input<ScComponentSize>('md');
 
-    @Input() variant: 'simple' | 'outlined' | 'text' = 'simple';
+    readonly variant = input<'simple' | 'outlined' | 'text'>('simple');
 
-    @Output() closed = new EventEmitter<unknown>();
+    readonly closed = output<unknown>();
 
-    protected get messageSeverity(): PrimeMessageSeverity {
-        if (this.severity === 'primary') {
+    protected readonly messageSeverity = computed<PrimeMessageSeverity>(() => {
+        const severity = this.severity();
+
+        if (severity === 'primary') {
             return undefined;
         }
 
-        if (this.severity === 'warning') {
+        if (severity === 'warning') {
             return 'warn';
         }
 
-        if (this.severity === 'danger') {
+        if (severity === 'danger') {
             return 'error';
         }
 
-        return this.severity;
-    }
+        return severity;
+    });
 
-    protected get messageSize(): PrimeMessageSize {
-        if (this.size === 'sm') {
+    protected readonly messageSize = computed<PrimeMessageSize>(() => {
+        const size = this.size();
+
+        if (size === 'sm') {
             return 'small';
         }
 
-        if (this.size === 'lg') {
+        if (size === 'lg') {
             return 'large';
         }
 
         return undefined;
-    }
+    });
 
-    protected get messageIcon(): string | undefined {
-        return resolveScComponentIconClass(this.icon);
-    }
+    protected readonly messageIcon = computed<string | undefined>(() =>
+        resolveScComponentIconClass(this.icon())
+    );
 }

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import { booleanAttribute, ChangeDetectionStrategy, Component, computed, input, model, output } from '@angular/core';
 import { TextareaModule } from 'primeng/textarea';
 
 import { ScComponentSize, ScInputVariant } from '../../core/types/theme-component.types';
@@ -13,51 +13,61 @@ type PrimeTextareaSize = 'small' | 'large' | undefined;
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ScTextareaComponent {
-    @Input() value = '';
+    /**
+     * `model()` sustituye a `@Input() value` + `@Output() valueChange`, que era
+     * un doble binding escrito a mano: `onInput()` asignaba al `@Input` y luego
+     * emitía. El handler se queda —hace falta para sacar el valor del evento
+     * DOM— pero ahora hace `set()` en vez de asignar.
+     *
+     * Esto NO es un `ControlValueAccessor`: el componente no lo implementa, así
+     * que la regla 6 de `migration-safety.md` (el `untracked()` sin efectos) no
+     * aplica aquí. Los campos que SÍ llevan CVA son los cinco del field-pattern.
+     */
+    readonly value = model('');
 
-    @Input() placeholder = '';
+    readonly placeholder = input('');
 
-    @Input() rows = 3;
+    readonly rows = input(3);
 
-    @Input() cols: number | null = null;
+    readonly cols = input<number | null>(null);
 
-    @Input() inputId: string | null = null;
+    readonly inputId = input<string | null>(null);
 
-    @Input() name: string | null = null;
+    readonly name = input<string | null>(null);
 
-    @Input() disabled = false;
+    readonly disabled = input(false, { transform: booleanAttribute });
 
-    @Input() readonly = false;
+    readonly readonly = input(false, { transform: booleanAttribute });
 
-    @Input() invalid = false;
+    readonly invalid = input(false, { transform: booleanAttribute });
 
-    @Input() fluid = false;
+    readonly fluid = input(false, { transform: booleanAttribute });
 
-    @Input() autoResize = false;
+    readonly autoResize = input(false, { transform: booleanAttribute });
 
-    @Input() size: ScComponentSize = 'md';
+    readonly size = input<ScComponentSize>('md');
 
-    @Input() variant: ScInputVariant = 'outlined';
+    readonly variant = input<ScInputVariant>('outlined');
 
-    @Output() valueChange = new EventEmitter<string>();
+    readonly resized = output<unknown>();
 
-    @Output() resized = new EventEmitter<unknown>();
+    protected readonly textareaSize = computed<PrimeTextareaSize>(() => {
+        const size = this.size();
 
-    protected get textareaSize(): PrimeTextareaSize {
-        if (this.size === 'sm') {
+        if (size === 'sm') {
             return 'small';
         }
 
-        if (this.size === 'lg') {
+        if (size === 'lg') {
             return 'large';
         }
 
         return undefined;
-    }
+    });
 
     protected onInput(event: Event): void {
         const textarea = event.target as HTMLTextAreaElement;
-        this.value = textarea.value;
-        this.valueChange.emit(textarea.value);
+
+        this.value.set(textarea.value);
     }
 }

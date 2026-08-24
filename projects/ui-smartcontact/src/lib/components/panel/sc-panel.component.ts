@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import { booleanAttribute, ChangeDetectionStrategy, Component, input, model, output } from '@angular/core';
 import { PanelModule } from 'primeng/panel';
 
 @Component({
@@ -9,17 +9,21 @@ import { PanelModule } from 'primeng/panel';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ScPanelComponent {
-    @Input() header: string | null = null;
+    readonly header = input<string | null>(null);
 
-    @Input() toggleable = false;
+    readonly toggleable = input(false, { transform: booleanAttribute });
 
-    @Input() collapsed = false;
+    /**
+     * `model()` y no `input()` + `output()` a mano: el par `collapsed` /
+     * `collapsedChange` ES un doble binding, y en la era de señales eso se
+     * declara una sola vez. El contrato de plantilla no cambia — `[collapsed]`
+     * a secas y `[(collapsed)]` siguen escribiéndose igual.
+     */
+    readonly collapsed = model(false);
 
-    @Input() showHeader = true;
+    readonly showHeader = input(true, { transform: booleanAttribute });
 
-    @Output() collapsedChange = new EventEmitter<boolean>();
+    readonly beforeToggle = output<unknown>();
 
-    @Output() beforeToggle = new EventEmitter<unknown>();
-
-    @Output() afterToggle = new EventEmitter<unknown>();
+    readonly afterToggle = output<unknown>();
 }

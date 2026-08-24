@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { booleanAttribute, ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { ProgressBarModule } from 'primeng/progressbar';
 
 import { ScProgressBarMode } from '../../core/types/theme-component.types';
@@ -11,11 +11,11 @@ import { ScProgressBarMode } from '../../core/types/theme-component.types';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ScProgressBarComponent {
-    @Input() value: number | null = null;
+    readonly value = input<number | null>(null);
 
-    @Input() showValue = true;
+    readonly showValue = input(true, { transform: booleanAttribute });
 
-    @Input() unit = '%';
+    readonly unit = input('%');
 
-    @Input() mode: ScProgressBarMode = 'determinate';
+    readonly mode = input<ScProgressBarMode>('determinate');
 }

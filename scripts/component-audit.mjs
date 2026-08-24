@@ -61,7 +61,23 @@ export function analyzeComponent({ name, tsText: tsRaw, htmlText, pagesText, sup
   const primeng = [...tsText.matchAll(/from\s+['"]primeng\/([a-z0-9-]+)['"]/g)].map((m) => m[1]).filter((x) => !PRIMENG_UTIL.has(x));
   const provenance = primeng.length ? 'WRAPPER' : 'CUSTOM';
   const cva = /ControlValueAccessor|NG_VALUE_ACCESSOR/.test(tsText);
-  const inputs = (tsText.match(/(?:^|[^.\w])input\s*[<(]/g) || []).length + (tsText.match(/@Input\(/g) || []).length;
+  /* `model()` cuenta como input, y esto NO es un detalle de conteo.
+   *
+   * Un `model()` ES un input (más su `xChange`), pero el patrón `model\s*[<(]`
+   * no lo casaba y la migración a señales de DD-38 lo destapó: al pasar
+   * `sc-drawer` y `sc-panel` de `@Input()` + `@Output()` a `model()`, el
+   * manifiesto los bajó de 8→7 y 4→3 inputs y RECLASIFICÓ `sc-panel` de
+   * EXTENDED a STANDARD — sin que su superficie pública hubiera cambiado ni un
+   * miembro. La heurística de sub-clasificación mira `inputs >= 4`, así que un
+   * conteo corto no es cosmético: cambia la etiqueta del componente.
+   *
+   * Medido el 2026-08-24. Mismo espíritu que el despojado de comentarios de
+   * arriba: el manifiesto tiene que contar lo que el componente EXPONE, no lo
+   * que se parezca a la sintaxis de ayer. */
+  const inputs =
+    (tsText.match(/(?:^|[^.\w])input\s*[<(]/g) || []).length +
+    (tsText.match(/(?:^|[^.\w])model\s*[<(]/g) || []).length +
+    (tsText.match(/@Input\(/g) || []).length;
 
   /* Los NOMBRES de la API pública, no solo cuántos hay.
    *
@@ -76,6 +92,11 @@ export function analyzeComponent({ name, tsText: tsRaw, htmlText, pagesText, sup
   const nombresApi = [
     ...new Set([
       ...[...tsText.matchAll(/readonly\s+(\w+)\s*=\s*(?:input|model|output)\s*[<(]/g)].map((m) => m[1]),
+      /* El `xChange` de cada `model()` es API PÚBLICA aunque no se escriba: es
+       * la mitad del doble binding y un consumidor puede engancharse a él. Sin
+       * esto, cambiar un `@Output() xChange` por un `model()` borraba `xChange`
+       * del manifiesto y el diff parecía una retirada de API que no existió. */
+      ...[...tsText.matchAll(/readonly\s+(\w+)\s*=\s*model\s*[<(]/g)].map((m) => `${m[1]}Change`),
       ...[...tsText.matchAll(/@(?:Input|Output)\(\)\s*(?:readonly\s+)?(\w+)/g)].map((m) => m[1]),
     ]),
   ].sort();

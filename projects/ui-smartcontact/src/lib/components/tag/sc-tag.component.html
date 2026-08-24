@@ -1,10 +1,10 @@
-@if (variant === 'label') {
-    <span class="sc-tag__label" [style]="labelVars">
+@if (variant() === 'label') {
+    <span class="sc-tag__label" [style]="labelVars()">
         <span class="sc-tag__dot" aria-hidden="true"></span>
-        <span class="sc-tag__text">{{ tagValue }}</span>
+        <span class="sc-tag__text">{{ tagValue() }}</span>
     </span>
 } @else {
-    <p-tag [value]="tagValue" [severity]="tagSeverity" [icon]="tagIcon" [rounded]="rounded">
+    <p-tag [value]="tagValue()" [severity]="tagSeverity()" [icon]="tagIcon()" [rounded]="rounded()">
         <ng-content></ng-content>
     </p-tag>
 }

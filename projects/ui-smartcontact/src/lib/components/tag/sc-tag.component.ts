@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { booleanAttribute, ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { TagModule } from 'primeng/tag';
 
 import { resolveScComponentIconClass } from '../../core/icons/sc-component-icon-resolver';
@@ -16,52 +16,53 @@ type PrimeTagSeverity = 'secondary' | 'success' | 'info' | 'warn' | 'danger' | '
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ScTagComponent {
-    @Input() value: string | null = null;
+    readonly value = input<string | null>(null);
 
-    @Input() severity: ScSeverity = 'primary';
+    readonly severity = input<ScSeverity>('primary');
 
-    @Input() icon: string | null = null;
+    readonly icon = input<string | null>(null);
 
-    @Input() rounded = false;
+    readonly rounded = input(false, { transform: booleanAttribute });
 
     /**
      * Variante categórica (§4.1): etiqueta de solo lectura con punto + 8 colores
      * del DS. Default `'default'` = wrapper `<p-tag>` semántico (intacto). Hereda
      * el comportamiento read-only del retirado `sc-label-chip`.
      */
-    @Input() variant: 'default' | 'label' = 'default';
+    readonly variant = input<'default' | 'label'>('default');
 
     /** Color categórico cuando `variant='label'`. */
-    @Input() labelColor: LabelColor = 'gray';
+    readonly labelColor = input<LabelColor>('gray');
 
     /** CSS custom props del color de la etiqueta (consumidas por el SCSS). */
-    protected get labelVars(): Record<string, string> {
-        const c = this.labelColor;
+    protected readonly labelVars = computed<Record<string, string>>(() => {
+        const c = this.labelColor();
+
         return {
             '--label-bg': `var(--sc-label-${c}-bg)`,
             '--label-text': `var(--sc-label-${c}-text)`,
             '--label-border': `var(--sc-label-${c}-border)`,
             '--label-dot': `var(--sc-label-${c}-dot)`
         };
-    }
+    });
 
-    protected get tagValue(): string | undefined {
-        return this.value ?? undefined;
-    }
+    protected readonly tagValue = computed<string | undefined>(() => this.value() ?? undefined);
 
-    protected get tagSeverity(): PrimeTagSeverity {
-        if (this.severity === 'primary') {
+    protected readonly tagSeverity = computed<PrimeTagSeverity>(() => {
+        const severity = this.severity();
+
+        if (severity === 'primary') {
             return undefined;
         }
 
-        if (this.severity === 'warning') {
+        if (severity === 'warning') {
             return 'warn';
         }
 
-        return this.severity;
-    }
+        return severity;
+    });
 
-    protected get tagIcon(): string | undefined {
-        return resolveScComponentIconClass(this.icon);
-    }
+    protected readonly tagIcon = computed<string | undefined>(() =>
+        resolveScComponentIconClass(this.icon())
+    );
 }

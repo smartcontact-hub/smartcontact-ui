@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, input } from '@angular/core';
 import { SkeletonModule } from 'primeng/skeleton';
 
 import { ScSkeletonAnimation, ScSkeletonShape } from '../../core/types/theme-component.types';
@@ -11,15 +11,15 @@ import { ScSkeletonAnimation, ScSkeletonShape } from '../../core/types/theme-com
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ScSkeletonComponent {
-    @Input() shape: ScSkeletonShape = 'rectangle';
+    readonly shape = input<ScSkeletonShape>('rectangle');
 
-    @Input() animation: ScSkeletonAnimation = 'wave';
+    readonly animation = input<ScSkeletonAnimation>('wave');
 
-    @Input() size: string | null = null;
+    readonly size = input<string | null>(null);
 
-    @Input() width = '100%';
+    readonly width = input('100%');
 
-    @Input() height = '1rem';
+    readonly height = input('1rem');
 
-    @Input() borderRadius: string | null = null;
+    readonly borderRadius = input<string | null>(null);
 }

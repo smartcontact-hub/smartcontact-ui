@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import { booleanAttribute, ChangeDetectionStrategy, Component, input, output } from '@angular/core';
 import { ToastModule } from 'primeng/toast';
 
 import { ScToastMessage } from './sc-toast.service';
@@ -25,19 +25,19 @@ export type ScToastCloseEvent = {
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ScToastComponent {
-    @Input() key: string | null = null;
+    readonly key = input<string | null>(null);
 
-    @Input() position: ScToastPosition = 'bottom-right';
+    readonly position = input<ScToastPosition>('bottom-right');
 
-    @Input() baseZIndex = 5000;
+    readonly baseZIndex = input(5000);
 
-    @Input() life = 3000;
+    readonly life = input(3000);
 
-    @Input() preventDuplicates = false;
+    readonly preventDuplicates = input(false, { transform: booleanAttribute });
 
-    @Input() preventOpenDuplicates = false;
+    readonly preventOpenDuplicates = input(false, { transform: booleanAttribute });
 
-    @Output() closed = new EventEmitter<ScToastCloseEvent>();
+    readonly closed = output<ScToastCloseEvent>();
 
     protected onClose(event: unknown): void {
         this.closed.emit(event as ScToastCloseEvent);

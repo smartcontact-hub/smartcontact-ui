@@ -1,14 +1,14 @@
 import { NgClass } from '@angular/common';
 import {
   ChangeDetectionStrategy,
-  ChangeDetectorRef,
   Component,
-  EventEmitter,
+  computed,
   inject,
-  Input,
-  OnChanges,
+  input,
+  linkedSignal,
   OnDestroy,
-  Output,
+  output,
+  signal,
 } from '@angular/core';
 import { TranslatePipe, TranslateService } from '@ngx-translate/core';
 import { Subscription } from 'rxjs';
@@ -76,70 +76,92 @@ export type ScBulkTranscriptionModalSurface = 'default' | 'dark' | 'green';
   standalone: true,
   imports: [NgClass, TranslatePipe, ScButtonComponent, ScToggleSwitchComponent],
   templateUrl: './sc-bulk-transcription-modal.component.html',
-  styleUrls: ['./sc-bulk-transcription-modal.component.scss'],
+  styleUrl: './sc-bulk-transcription-modal.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class ScBulkTranscriptionModalComponent implements OnChanges, OnDestroy {
-  private readonly changeDetectorRef = inject(ChangeDetectorRef);
-
+export class ScBulkTranscriptionModalComponent implements OnDestroy {
   private readonly translateService = inject(TranslateService);
+
+  /**
+   * Tic de idioma. NO es decorativo y es la trampa de migrar a señales un
+   * componente traducido: `TranslateService.instant()` NO es una señal, así que
+   * un `computed()` que la llame se cachea con el idioma que hubiera al primer
+   * cálculo y NO se recalcula al cambiarlo. Antes eso lo tapaba el
+   * `markForCheck()` del `onLangChange` —con getters, cada CD re-evaluaba—, pero
+   * un `computed` no se re-evalúa porque el componente se re-pinte.
+   *
+   * Este contador sube en cada `onLangChange` y TODO computed que traduzca lo
+   * lee, así que la dependencia queda declarada y el idioma vuelve a propagarse.
+   */
+  private readonly lang = signal(0);
+
+  private readonly translationChangeSubscription: Subscription;
 
   constructor() {
     this.registerTranslations();
     this.translationChangeSubscription = this.translateService.onLangChange.subscribe(() => {
-      this.changeDetectorRef.markForCheck();
+      this.lang.update((n) => n + 1);
     });
   }
 
-  @Input() selectedCount = 0;
+  readonly selectedCount = input(0);
 
-  @Input() transcriptionCount = 0;
+  readonly transcriptionCount = input(0);
 
-  @Input() analysisCount = 0;
+  readonly analysisCount = input(0);
 
-  @Input() newCallsCount: number | null = null;
+  readonly newCallsCount = input<number | null>(null);
 
-  @Input() transcribedCallsPendingAnalysisCount: number | null = null;
+  readonly transcribedCallsPendingAnalysisCount = input<number | null>(null);
 
-  @Input() chatsPendingAnalysisCount: number | null = null;
+  readonly chatsPendingAnalysisCount = input<number | null>(null);
 
-  @Input() alreadyProcessedCount = 0;
+  readonly alreadyProcessedCount = input(0);
 
-  @Input() readyToTranscribeIds: string[] = [];
+  readonly readyToTranscribeIds = input<string[]>([]);
 
-  @Input() readyToAnalyzeIds: string[] = [];
+  readonly readyToAnalyzeIds = input<string[]>([]);
 
-  @Input() multiSegmentCallsCount = 0;
+  readonly multiSegmentCallsCount = input(0);
 
-  @Input() partialSegmentConversationsCount = 0;
+  readonly partialSegmentConversationsCount = input(0);
 
-  @Input() excludedInProgressCount = 0;
+  readonly excludedInProgressCount = input(0);
 
-  @Input() surface: ScBulkTranscriptionModalSurface = 'default';
+  readonly surface = input<ScBulkTranscriptionModalSurface>('default');
 
-  @Input() styleClass = '';
+  readonly styleClass = input('');
 
-  @Input() closeRequested: (() => void) | null = null;
+  readonly closeRequested = input<(() => void) | null>(null);
 
-  @Input() processRequested: ((result: ScBulkTranscriptionModalResult) => void) | null = null;
+  readonly processRequested = input<((result: ScBulkTranscriptionModalResult) => void) | null>(null);
 
-  @Output() closed = new EventEmitter<void>();
+  readonly closed = output<void>();
 
-  @Output() processed = new EventEmitter<ScBulkTranscriptionModalResult>();
+  readonly processed = output<ScBulkTranscriptionModalResult>();
 
-  includeAnalysis = false;
+  /**
+   * `linkedSignal` sustituye al trío `ngOnChanges` + `analysisTouched` +
+   * `countersSignature`, que implementaba a mano exactamente su semántica:
+   * "vuelve al valor inicial cuando cambian los contadores; si no, respeta lo
+   * que tocó el usuario". Es la misma regla, declarada en vez de reconstruida.
+   *
+   * La firma sigue siendo la fuente porque cubre TODO lo que mira
+   * `initialIncludeAnalysis` — si se recorta, se pierde la rama de "los inputs
+   * cambiaron pero el usuario no ha tocado nada".
+   */
+  readonly includeAnalysis = linkedSignal<string, boolean>({
+    source: () => this.countersSignature(),
+    computation: () => this.initialIncludeAnalysis(),
+  });
 
-  heroBump = false;
+  protected readonly heroBump = signal(false);
 
-  analysisPulse = false;
+  protected readonly analysisPulse = signal(false);
 
-  analysisNudge = false;
+  protected readonly analysisNudge = signal(false);
 
-  deltaFlash: { delta: number; key: number } | null = null;
-
-  private analysisTouched = false;
-
-  private countersSignature = '';
+  protected readonly deltaFlash = signal<{ delta: number; key: number } | null>(null);
 
   private selectionEffectStartTimeout: ReturnType<typeof globalThis.setTimeout> | null = null;
 
@@ -151,127 +173,152 @@ export class ScBulkTranscriptionModalComponent implements OnChanges, OnDestroy {
 
   private analysisNudgeEndTimeout: ReturnType<typeof globalThis.setTimeout> | null = null;
 
-  private readonly translationChangeSubscription: Subscription;
-
-  ngOnChanges(): void {
-    const nextCountersSignature = this.getCountersSignature();
-
-    if (this.countersSignature !== nextCountersSignature) {
-      this.countersSignature = nextCountersSignature;
-      this.analysisTouched = false;
-      this.includeAnalysis = this.initialIncludeAnalysis;
-      return;
-    }
-
-    if (!this.analysisTouched) {
-      this.includeAnalysis = this.initialIncludeAnalysis;
-    }
-  }
-
   ngOnDestroy(): void {
     this.clearSelectionEffectTimers();
     this.clearAnalysisNudgeTimers();
     this.translationChangeSubscription.unsubscribe();
   }
 
-  get subtitle(): string {
-    return this.translateCount('selectedConversations', this.displaySelectedCount);
-  }
+  // ── derivadas privadas (contadores) ────────────────────────────────────────
 
-  get analysisDisabled(): boolean {
-    return !this.canAnalyze;
-  }
+  private readonly pendingTranscriptionCount = computed(
+    () => this.newCallsCount() ?? this.transcriptionCount(),
+  );
 
-  get analysisChecked(): boolean {
-    return this.analysisDisabled ? false : this.includeAnalysis;
-  }
+  private readonly pendingCallAnalysisCount = computed(() => {
+    const transcribed = this.transcribedCallsPendingAnalysisCount();
 
-  get heroCount(): number {
-    return this.analysisChecked
-      ? this.pendingTranscriptionCount + this.pendingAnalysisBaseCount
-      : this.pendingTranscriptionCount;
-  }
+    if (transcribed !== null) {
+      return transcribed;
+    }
 
-  get canSubmit(): boolean {
-    return this.heroCount > 0;
-  }
+    if (this.chatsPendingAnalysisCount() !== null) {
+      return 0;
+    }
 
-  get analysisCaption(): string {
-    if (this.analysisDisabled) {
+    return this.analysisCount();
+  });
+
+  private readonly pendingChatAnalysisCount = computed(() => this.chatsPendingAnalysisCount() ?? 0);
+
+  private readonly pendingAnalysisBaseCount = computed(
+    () => this.pendingCallAnalysisCount() + this.pendingChatAnalysisCount(),
+  );
+
+  private readonly analysisCandidateCount = computed(
+    () => this.pendingTranscriptionCount() + this.pendingAnalysisBaseCount(),
+  );
+
+  private readonly canAnalyze = computed(() => this.analysisCandidateCount() > 0);
+
+  private readonly initialIncludeAnalysis = computed(
+    () => this.pendingTranscriptionCount() === 0 && this.pendingAnalysisBaseCount() > 0,
+  );
+
+  private readonly countersSignature = computed(() =>
+    [
+      this.selectedCount(),
+      this.pendingTranscriptionCount(),
+      this.pendingCallAnalysisCount(),
+      this.pendingChatAnalysisCount(),
+      this.alreadyProcessedCount(),
+    ].join('|'),
+  );
+
+  // ── derivadas de plantilla ─────────────────────────────────────────────────
+
+  readonly analysisDisabled = computed(() => !this.canAnalyze());
+
+  readonly analysisChecked = computed(() =>
+    this.analysisDisabled() ? false : this.includeAnalysis(),
+  );
+
+  readonly heroCount = computed(() =>
+    this.analysisChecked()
+      ? this.pendingTranscriptionCount() + this.pendingAnalysisBaseCount()
+      : this.pendingTranscriptionCount(),
+  );
+
+  readonly canSubmit = computed(() => this.heroCount() > 0);
+
+  readonly displaySelectedCount = computed(() => {
+    const selected = this.selectedCount();
+
+    if (selected > 0) {
+      return selected;
+    }
+
+    return (
+      this.pendingTranscriptionCount() + this.pendingAnalysisBaseCount() + this.alreadyProcessedCount()
+    );
+  });
+
+  readonly subtitle = computed(() =>
+    this.translateCount('selectedConversations', this.displaySelectedCount()),
+  );
+
+  readonly analysisCaption = computed(() => {
+    if (this.analysisDisabled()) {
       return this.translate('allProcessed');
     }
 
-    return this.translateCount('analysisCandidates', this.analysisCandidateCount);
-  }
+    return this.translateCount('analysisCandidates', this.analysisCandidateCount());
+  });
 
-  get heroCostLabel(): string {
-    return this.canSubmit ? this.translate('generatesCost') : this.translate('allProcessed');
-  }
+  readonly heroCostLabel = computed(() =>
+    this.canSubmit() ? this.translate('generatesCost') : this.translate('allProcessed'),
+  );
 
-  get displaySelectedCount(): number {
-    if (this.selectedCount > 0) {
-      return this.selectedCount;
-    }
+  readonly analysisCaptionClasses = computed<Record<string, boolean>>(() => ({
+    'sc-bulk-modal__caption--on': this.analysisChecked(),
+    'sc-bulk-modal__caption--pulse': this.analysisPulse(),
+    'sc-bulk-modal__caption--disabled': this.analysisDisabled(),
+  }));
 
-    return this.pendingTranscriptionCount + this.pendingAnalysisBaseCount + this.alreadyProcessedCount;
-  }
+  readonly analysisSectionClasses = computed<Record<string, boolean>>(() => ({
+    'sc-bulk-modal__analysis--disabled': this.analysisDisabled(),
+    'sc-bulk-modal__analysis--nudge': this.analysisNudge(),
+  }));
 
-  get analysisCaptionClasses(): Record<string, boolean> {
-    return {
-      'sc-bulk-modal__caption--on': this.analysisChecked,
-      'sc-bulk-modal__caption--pulse': this.analysisPulse,
-      'sc-bulk-modal__caption--disabled': this.analysisDisabled,
-    };
-  }
+  readonly heroNumberClasses = computed<Record<string, boolean>>(() => ({
+    'sc-bulk-modal__hero-number--bump': this.heroBump(),
+  }));
 
-  get analysisSectionClasses(): Record<string, boolean> {
-    return {
-      'sc-bulk-modal__analysis--disabled': this.analysisDisabled,
-      'sc-bulk-modal__analysis--nudge': this.analysisNudge,
-    };
-  }
+  readonly costClasses = computed<Record<string, boolean>>(() => ({
+    'sc-bulk-modal__cost--muted': !this.canSubmit(),
+  }));
 
-  get heroNumberClasses(): Record<string, boolean> {
-    return {
-      'sc-bulk-modal__hero-number--bump': this.heroBump,
-    };
-  }
-
-  get costClasses(): Record<string, boolean> {
-    return {
-      'sc-bulk-modal__cost--muted': !this.canSubmit,
-    };
-  }
-
-  get modalClasses(): Record<string, boolean> {
+  readonly modalClasses = computed<Record<string, boolean>>(() => {
+    const surface = this.surface();
     const classes: Record<string, boolean> = {
-      'sc-bulk-modal--dark': this.surface === 'dark',
-      'sc-bulk-modal--green': this.surface === 'green',
+      'sc-bulk-modal--dark': surface === 'dark',
+      'sc-bulk-modal--green': surface === 'green',
     };
 
-    for (const className of this.styleClass.split(/\s+/).filter(Boolean)) {
+    for (const className of this.styleClass().split(/\s+/).filter(Boolean)) {
       classes[className] = true;
     }
 
     return classes;
-  }
+  });
 
-  get heroHint(): string {
+  readonly heroHint = computed(() => {
     const includeHints: string[] = [];
     const excludeHints: string[] = [];
+    const multiSegment = this.multiSegmentCallsCount();
+    const partialSegment = this.partialSegmentConversationsCount();
+    const excludedInProgress = this.excludedInProgressCount();
 
-    if (!this.analysisChecked && this.multiSegmentCallsCount > 0) {
-      includeHints.push(this.translateCount('multiSegmentCalls', this.multiSegmentCallsCount));
+    if (!this.analysisChecked() && multiSegment > 0) {
+      includeHints.push(this.translateCount('multiSegmentCalls', multiSegment));
     }
 
-    if (this.partialSegmentConversationsCount > 0) {
-      includeHints.push(
-        this.translateCount('partialSegmentConversations', this.partialSegmentConversationsCount),
-      );
+    if (partialSegment > 0) {
+      includeHints.push(this.translateCount('partialSegmentConversations', partialSegment));
     }
 
-    if (this.excludedInProgressCount > 0) {
-      excludeHints.push(this.translateCount('inProgress', this.excludedInProgressCount));
+    if (excludedInProgress > 0) {
+      excludeHints.push(this.translateCount('inProgress', excludedInProgress));
     }
 
     const chunks: string[] = [];
@@ -285,131 +332,100 @@ export class ScBulkTranscriptionModalComponent implements OnChanges, OnDestroy {
     }
 
     return chunks.join(' ');
-  }
+  });
 
-  get alreadyProcessedLabel(): string {
-    if (this.alreadyProcessedCount === 0) {
+  readonly alreadyProcessedLabel = computed(() => {
+    const already = this.alreadyProcessedCount();
+
+    if (already === 0) {
       return '';
     }
 
-    return this.translateCount('alreadyProcessed', this.alreadyProcessedCount);
-  }
+    return this.translateCount('alreadyProcessed', already);
+  });
+
+  // ── acciones ───────────────────────────────────────────────────────────────
 
   onAnalysisChange(checked: boolean): void {
-    if (this.analysisDisabled) {
-      this.includeAnalysis = false;
+    if (this.analysisDisabled()) {
+      this.includeAnalysis.set(false);
       this.triggerAnalysisNudge();
       return;
     }
 
-    const previousHeroCount = this.heroCount;
-    this.analysisTouched = true;
-    this.includeAnalysis = checked;
-    this.triggerSelectionEffects(this.heroCount - previousHeroCount);
+    const previousHeroCount = this.heroCount();
+
+    this.includeAnalysis.set(checked);
+    this.triggerSelectionEffects(this.heroCount() - previousHeroCount);
   }
 
   onAnalysisAttempt(): void {
-    if (this.analysisDisabled) {
+    if (this.analysisDisabled()) {
       this.triggerAnalysisNudge();
     }
   }
 
   close(): void {
     this.closed.emit();
-    this.closeRequested?.();
+    this.closeRequested()?.();
   }
 
   process(): void {
-    if (!this.canSubmit) {
+    if (!this.canSubmit()) {
       return;
     }
 
-    const transcriptionIds = [...this.readyToTranscribeIds];
-    const analysisIds = this.analysisChecked
-      ? [...new Set([...this.readyToAnalyzeIds, ...this.readyToTranscribeIds])]
+    const transcriptionIds = [...this.readyToTranscribeIds()];
+    const analysisIds = this.analysisChecked()
+      ? [...new Set([...this.readyToAnalyzeIds(), ...this.readyToTranscribeIds()])]
       : [];
     const eligibleIds = [...new Set([...transcriptionIds, ...analysisIds])];
 
     const result: ScBulkTranscriptionModalResult = {
-      includeAnalysis: this.analysisChecked,
-      heroCount: this.heroCount,
-      selectedCount: this.displaySelectedCount,
-      transcriptionCount: this.pendingTranscriptionCount,
-      analysisCount: this.pendingAnalysisBaseCount,
-      transcribedCallsPendingAnalysisCount: this.pendingCallAnalysisCount,
-      chatsPendingAnalysisCount: this.pendingChatAnalysisCount,
+      includeAnalysis: this.analysisChecked(),
+      heroCount: this.heroCount(),
+      selectedCount: this.displaySelectedCount(),
+      transcriptionCount: this.pendingTranscriptionCount(),
+      analysisCount: this.pendingAnalysisBaseCount(),
+      transcribedCallsPendingAnalysisCount: this.pendingCallAnalysisCount(),
+      chatsPendingAnalysisCount: this.pendingChatAnalysisCount(),
       eligibleIds,
       transcriptionIds,
       analysisIds,
     };
 
     this.processed.emit(result);
-    this.processRequested?.(result);
+    this.processRequested()?.(result);
   }
 
-  private get initialIncludeAnalysis(): boolean {
-    return this.pendingTranscriptionCount === 0 && this.pendingAnalysisBaseCount > 0;
-  }
-
-  private get pendingTranscriptionCount(): number {
-    return this.newCallsCount ?? this.transcriptionCount;
-  }
-
-  private get pendingCallAnalysisCount(): number {
-    if (this.transcribedCallsPendingAnalysisCount !== null) {
-      return this.transcribedCallsPendingAnalysisCount;
-    }
-
-    if (this.chatsPendingAnalysisCount !== null) {
-      return 0;
-    }
-
-    return this.analysisCount;
-  }
-
-  private get pendingChatAnalysisCount(): number {
-    return this.chatsPendingAnalysisCount ?? 0;
-  }
-
-  private get pendingAnalysisBaseCount(): number {
-    return this.pendingCallAnalysisCount + this.pendingChatAnalysisCount;
-  }
-
-  private get analysisCandidateCount(): number {
-    return this.pendingTranscriptionCount + this.pendingAnalysisBaseCount;
-  }
-
-  private get canAnalyze(): boolean {
-    return this.analysisCandidateCount > 0;
-  }
+  // ── efectos de animación ───────────────────────────────────────────────────
+  //
+  // Los `markForCheck()` que había aquí desaparecen: escribir una señal ya
+  // notifica a OnPush. Los temporizadores se quedan — son la animación, no
+  // estado derivado.
 
   private triggerSelectionEffects(delta: number): void {
     this.clearSelectionEffectTimers();
-    this.heroBump = false;
-    this.analysisPulse = false;
-    this.deltaFlash = null;
-    this.changeDetectorRef.markForCheck();
+    this.heroBump.set(false);
+    this.analysisPulse.set(false);
+    this.deltaFlash.set(null);
 
     this.selectionEffectStartTimeout = globalThis.setTimeout(() => {
-      this.heroBump = true;
-      this.analysisPulse = true;
+      this.heroBump.set(true);
+      this.analysisPulse.set(true);
 
       if (delta !== 0) {
-        this.deltaFlash = { delta, key: this.nextDeltaKey() };
+        this.deltaFlash.set({ delta, key: this.nextDeltaKey() });
       }
 
-      this.changeDetectorRef.markForCheck();
-
       this.selectionEffectEndTimeout = globalThis.setTimeout(() => {
-        this.heroBump = false;
-        this.analysisPulse = false;
-        this.changeDetectorRef.markForCheck();
+        this.heroBump.set(false);
+        this.analysisPulse.set(false);
       }, 360);
 
       if (delta !== 0) {
         this.deltaFlashEndTimeout = globalThis.setTimeout(() => {
-          this.deltaFlash = null;
-          this.changeDetectorRef.markForCheck();
+          this.deltaFlash.set(null);
         }, 760);
       }
     });
@@ -417,16 +433,13 @@ export class ScBulkTranscriptionModalComponent implements OnChanges, OnDestroy {
 
   private triggerAnalysisNudge(): void {
     this.clearAnalysisNudgeTimers();
-    this.analysisNudge = false;
-    this.changeDetectorRef.markForCheck();
+    this.analysisNudge.set(false);
 
     this.analysisNudgeStartTimeout = globalThis.setTimeout(() => {
-      this.analysisNudge = true;
-      this.changeDetectorRef.markForCheck();
+      this.analysisNudge.set(true);
 
       this.analysisNudgeEndTimeout = globalThis.setTimeout(() => {
-        this.analysisNudge = false;
-        this.changeDetectorRef.markForCheck();
+        this.analysisNudge.set(false);
       }, 300);
     });
   }
@@ -436,6 +449,7 @@ export class ScBulkTranscriptionModalComponent implements OnChanges, OnDestroy {
   /** Clave incremental para re-disparar la animación del delta (sin Date.now). */
   private nextDeltaKey(): number {
     this.deltaKeyCounter += 1;
+
     return this.deltaKeyCounter;
   }
 
@@ -470,7 +484,10 @@ export class ScBulkTranscriptionModalComponent implements OnChanges, OnDestroy {
     }
   }
 
+  /** Lee `lang()` a propósito: es lo que ata los computed traducidos al idioma. */
   private translate(key: string, params?: Record<string, string | number>): string {
+    this.lang();
+
     const value = this.translateService.instant(
       `${SC_BULK_TRANSCRIPTION_MODAL_TRANSLATION_KEY}.${key}`,
       params,
@@ -481,15 +498,5 @@ export class ScBulkTranscriptionModalComponent implements OnChanges, OnDestroy {
 
   private translateCount(key: string, count: number): string {
     return this.translate(`${key}.${count === 1 ? 'one' : 'other'}`, { count });
-  }
-
-  private getCountersSignature(): string {
-    return [
-      this.selectedCount,
-      this.pendingTranscriptionCount,
-      this.pendingCallAnalysisCount,
-      this.pendingChatAnalysisCount,
-      this.alreadyProcessedCount,
-    ].join('|');
   }
 }

@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, Input } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
 import { BadgeModule } from 'primeng/badge';
 
 import { ScBadgeSize, ScBadgeVariant } from '../../core/types/badge.types';
@@ -14,45 +14,51 @@ type PrimeBadgeSize = 'small' | 'large' | 'xlarge' | undefined;
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ScBadgeComponent {
-    @Input() label: string | number = '';
+    readonly label = input<string | number>('');
 
-    @Input() variant: ScBadgeVariant = 'primary';
+    readonly variant = input<ScBadgeVariant>('primary');
 
-    @Input() size: ScBadgeSize = 'md';
+    readonly size = input<ScBadgeSize>('md');
 
-    protected get badgeSeverity(): PrimeBadgeSeverity {
-        if (this.variant === 'primary') {
+    protected readonly badgeSeverity = computed<PrimeBadgeSeverity>(() => {
+        const variant = this.variant();
+
+        if (variant === 'primary') {
             return undefined;
         }
 
-        if (this.variant === 'warning') {
+        if (variant === 'warning') {
             return 'warn';
         }
 
-        return this.variant;
-    }
+        return variant;
+    });
 
-    protected get badgeSize(): PrimeBadgeSize {
-        if (this.size === 'sm') {
+    protected readonly badgeSize = computed<PrimeBadgeSize>(() => {
+        const size = this.size();
+
+        if (size === 'sm') {
             return 'small';
         }
 
-        if (this.size === 'lg') {
+        if (size === 'lg') {
             return 'large';
         }
 
-        if (this.size === 'xl') {
+        if (size === 'xl') {
             return 'xlarge';
         }
 
         return undefined;
-    }
+    });
 
-    protected get badgeValue(): string | null {
-        if (this.label === null || this.label === undefined) {
+    protected readonly badgeValue = computed<string | null>(() => {
+        const label = this.label();
+
+        if (label === null || label === undefined) {
             return null;
         }
 
-        return String(this.label);
-    }
+        return String(label);
+    });
 }

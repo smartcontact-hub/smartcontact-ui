@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, input, model, output } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { RadioButtonModule } from 'primeng/radiobutton';
 
@@ -14,42 +14,46 @@ type PrimeRadioButtonSize = 'small' | 'large' | undefined;
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ScRadioButtonComponent {
-    @Input() value: unknown = null;
+    readonly value = input<unknown>(null);
 
-    @Input() modelValue: unknown = null;
+    /**
+     * `model()` sustituye a `@Input() modelValue` + `@Output() modelValueChange`
+     * + `onModelValueChange()`. Ese método existía solo para escribir el input
+     * desde dentro y re-emitirlo, que es exactamente lo que un `model` hace
+     * solo — y de paso desaparece una asignación a un `@Input`, prohibida en la
+     * era de señales.
+     *
+     * OJO: esto NO es un `ControlValueAccessor`. El componente no implementa
+     * CVA; el `[ngModel]` de la plantilla es del `<p-radio-button>` interno. Por
+     * eso no aplica aquí la regla 6 de `migration-safety.md`.
+     */
+    readonly modelValue = model<unknown>(null);
 
-    @Input() inputId: string | null = null;
+    readonly inputId = input<string | null>(null);
 
-    @Input() name: string | null = null;
+    readonly name = input<string | null>(null);
 
-    @Input() ariaLabel: string | null = null;
+    readonly ariaLabel = input<string | null>(null);
 
-    @Input() size: ScComponentSize = 'md';
+    readonly size = input<ScComponentSize>('md');
 
-    @Input() variant: ScInputVariant = 'outlined';
+    readonly variant = input<ScInputVariant>('outlined');
 
-    @Output() modelValueChange = new EventEmitter<unknown>();
+    readonly clicked = output<unknown>();
 
-    @Output() clicked = new EventEmitter<unknown>();
+    protected readonly radioName = computed<string>(() => this.name() ?? '');
 
-    protected get radioName(): string {
-        return this.name ?? '';
-    }
+    protected readonly radioSize = computed<PrimeRadioButtonSize>(() => {
+        const size = this.size();
 
-    protected get radioSize(): PrimeRadioButtonSize {
-        if (this.size === 'sm') {
+        if (size === 'sm') {
             return 'small';
         }
 
-        if (this.size === 'lg') {
+        if (size === 'lg') {
             return 'large';
         }
 
         return undefined;
-    }
-
-    protected onModelValueChange(value: unknown): void {
-        this.modelValue = value;
-        this.modelValueChange.emit(value);
-    }
+    });
 }

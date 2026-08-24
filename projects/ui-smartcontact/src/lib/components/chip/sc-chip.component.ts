@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, EventEmitter, Input, Output } from '@angular/core';
+import { booleanAttribute, ChangeDetectionStrategy, Component, computed, input, output } from '@angular/core';
 import { ChipModule } from 'primeng/chip';
 
 import { ScIconComponent } from '@smartcontact-hub/icons';
@@ -15,51 +15,52 @@ import { LabelColor } from '../../core/types/label.types';
     changeDetection: ChangeDetectionStrategy.OnPush
 })
 export class ScChipComponent {
-    @Input() label: string | null = null;
+    readonly label = input<string | null>(null);
 
-    @Input() icon: string | null = null;
+    readonly icon = input<string | null>(null);
 
-    @Input() image: string | null = null;
+    readonly image = input<string | null>(null);
 
-    @Input() alt: string | null = null;
+    readonly alt = input<string | null>(null);
 
-    @Input() removable = false;
+    readonly removable = input(false, { transform: booleanAttribute });
 
-    @Input() disabled = false;
+    readonly disabled = input(false, { transform: booleanAttribute });
 
     /**
      * Variante categórica (§4.1): etiqueta con punto + 8 colores del DS. Default
      * `'default'` = wrapper `<p-chip>` (intacto). Es la cara REMOVIBLE del
      * retirado `sc-label-chip` (la read-only vive en `sc-tag variant="label"`).
      */
-    @Input() variant: 'default' | 'label' = 'default';
+    readonly variant = input<'default' | 'label'>('default');
 
     /** Color categórico cuando `variant='label'`. */
-    @Input() labelColor: LabelColor = 'gray';
+    readonly labelColor = input<LabelColor>('gray');
 
     /** Aria-label del botón de quitar (variante label). El consumidor lo traduce. */
-    @Input() removeAriaLabel = 'Remove';
+    readonly removeAriaLabel = input('Remove');
 
-    @Output() removed = new EventEmitter<unknown>();
+    readonly removed = output<unknown>();
 
-    @Output() imageError = new EventEmitter<unknown>();
+    readonly imageError = output<unknown>();
 
     protected readonly closeIcon = 'close';
 
-    protected get chipIcon(): string | undefined {
-        return resolveScComponentIconClass(this.icon);
-    }
+    protected readonly chipIcon = computed<string | undefined>(() =>
+        resolveScComponentIconClass(this.icon())
+    );
 
     /** CSS custom props del color de la etiqueta (consumidas por el SCSS). */
-    protected get labelVars(): Record<string, string> {
-        const c = this.labelColor;
+    protected readonly labelVars = computed<Record<string, string>>(() => {
+        const c = this.labelColor();
+
         return {
             '--label-bg': `var(--sc-label-${c}-bg)`,
             '--label-text': `var(--sc-label-${c}-text)`,
             '--label-border': `var(--sc-label-${c}-border)`,
             '--label-dot': `var(--sc-label-${c}-dot)`
         };
-    }
+    });
 
     protected onLabelRemove(event: MouseEvent): void {
         event.stopPropagation();

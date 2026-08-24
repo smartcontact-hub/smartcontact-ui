@@ -1,9 +1,9 @@
 <p-panel
-    [header]="header || undefined"
-    [toggleable]="toggleable"
-    [collapsed]="collapsed"
-    [showHeader]="showHeader"
-    (collapsedChange)="collapsedChange.emit($event)"
+    [header]="header() || undefined"
+    [toggleable]="toggleable()"
+    [collapsed]="collapsed()"
+    [showHeader]="showHeader()"
+    (collapsedChange)="collapsed.set($event ?? false)"
     (onBeforeToggle)="beforeToggle.emit($event)"
     (onAfterToggle)="afterToggle.emit($event)">
     <ng-content></ng-content>
