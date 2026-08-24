@@ -24,7 +24,7 @@ formularios, command-palette…).
   **No es un `definePreset(Aura, …)`**: es un objeto autónomo (verificado — `definePreset`
   tiene 0 apariciones en `projects/`), así que **lo que no declaramos NO hereda de Aura**.
   El detalle y sus consecuencias, en [`docs/guia-tokens.md`](../../docs/guia-tokens.md).
-- **51 componentes `sc-*`** — wrappers de PrimeNG pegados a la marca (`sc-button`,
+- **50 componentes `sc-*`** — wrappers de PrimeNG pegados a la marca (`sc-button`,
   `sc-datatable`, `sc-dialog`, `sc-select`, `sc-inputtext`, `sc-multiselect`…) +
   custom de dominio (`sc-empty-state`, `sc-page-header`, `sc-command-palette`,
   `sc-bulk-action-bar`, `sc-keyboard-shortcuts`…). Lista completa y estable en

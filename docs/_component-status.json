@@ -1,6 +1,6 @@
 {
   "generated": "component-audit.mjs",
-  "summary": "51 componentes · 16 custom · 12 standard · 23 extended · 34 usados en Supervisor.",
+  "summary": "50 componentes · 15 custom · 12 standard · 23 extended · 33 usados en Supervisor.",
   "components": [
     {
       "name": "avatar",
@@ -288,7 +288,7 @@
       "kind": "EXTENDED",
       "primengBase": "primeng/table",
       "cva": false,
-      "inputs": 24,
+      "inputs": 25,
       "api": [
         "columns",
         "dataKey",
@@ -312,6 +312,7 @@
         "scrollable",
         "selectAllAriaLabel",
         "selection",
+        "selectionChange",
         "selectionMode",
         "showGridlines",
         "size",
@@ -334,10 +335,11 @@
       "kind": "EXTENDED",
       "primengBase": "primeng/datepicker",
       "cva": true,
-      "inputs": 17,
+      "inputs": 19,
       "api": [
         "dateFormat",
         "disabled",
+        "disabledChange",
         "error",
         "helperText",
         "inline",
@@ -354,6 +356,7 @@
         "showIcon",
         "size",
         "value",
+        "valueChange",
         "view"
       ],
       "nested": [
@@ -390,7 +393,7 @@
       "kind": "EXTENDED",
       "primengBase": "primeng/dialog",
       "cva": false,
-      "inputs": 12,
+      "inputs": 13,
       "api": [
         "bodyless",
         "cancelled",
@@ -407,6 +410,7 @@
         "shown",
         "subtitle",
         "visible",
+        "visibleChange",
         "width"
       ],
       "nested": [],
@@ -622,9 +626,10 @@
       "kind": "EXTENDED",
       "primengBase": "primeng/inputtext",
       "cva": true,
-      "inputs": 13,
+      "inputs": 15,
       "api": [
         "disabled",
+        "disabledChange",
         "error",
         "helperText",
         "inputId",
@@ -638,7 +643,8 @@
         "size",
         "step",
         "suffix",
-        "value"
+        "value",
+        "valueChange"
       ],
       "nested": [
         "sc-field-label",
@@ -654,12 +660,13 @@
       "kind": "EXTENDED",
       "primengBase": "primeng/inputtext",
       "cva": true,
-      "inputs": 18,
+      "inputs": 20,
       "api": [
         "ariaLabel",
         "autocomplete",
         "blurred",
         "disabled",
+        "disabledChange",
         "error",
         "filled",
         "fluid",
@@ -677,7 +684,8 @@
         "required",
         "size",
         "type",
-        "value"
+        "value",
+        "valueChange"
       ],
       "nested": [
         "sc-field-label",
@@ -729,9 +737,10 @@
       "kind": "EXTENDED",
       "primengBase": "primeng/multiselect",
       "cva": true,
-      "inputs": 23,
+      "inputs": 25,
       "api": [
         "disabled",
+        "disabledChange",
         "display",
         "emptyFilterMessage",
         "emptyMessage",
@@ -755,7 +764,8 @@
         "showClear",
         "showToggleAll",
         "size",
-        "value"
+        "value",
+        "valueChange"
       ],
       "nested": [
         "sc-field-label",
@@ -763,23 +773,6 @@
       ],
       "hasDemo": true,
       "usedInSupervisor": 10
-    },
-    {
-      "name": "page-header",
-      "selector": "sc-page-header",
-      "provenance": "CUSTOM",
-      "kind": "CUSTOM",
-      "primengBase": "—",
-      "cva": false,
-      "inputs": 3,
-      "api": [
-        "entityKey",
-        "icon",
-        "subtitleKey"
-      ],
-      "nested": [],
-      "hasDemo": true,
-      "usedInSupervisor": 1
     },
     {
       "name": "panel",
@@ -889,11 +882,12 @@
       "kind": "EXTENDED",
       "primengBase": "primeng/iconfield, primeng/inputicon, primeng/inputtext",
       "cva": true,
-      "inputs": 9,
+      "inputs": 11,
       "api": [
         "autoFocus",
         "clearAriaLabel",
         "disabled",
+        "disabledChange",
         "filled",
         "inputId",
         "keydown",
@@ -902,7 +896,8 @@
         "shortcutHint",
         "showClear",
         "size",
-        "value"
+        "value",
+        "valueChange"
       ],
       "nested": [],
       "hasDemo": true,
@@ -935,11 +930,12 @@
       "kind": "EXTENDED",
       "primengBase": "primeng/select",
       "cva": true,
-      "inputs": 22,
+      "inputs": 24,
       "api": [
         "appendTo",
         "blurred",
         "disabled",
+        "disabledChange",
         "emptyFilterMessage",
         "emptyMessage",
         "error",
@@ -962,7 +958,8 @@
         "required",
         "showClear",
         "size",
-        "value"
+        "value",
+        "valueChange"
       ],
       "nested": [
         "sc-field-label",

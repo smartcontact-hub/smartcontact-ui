@@ -72,7 +72,6 @@ const CATEGORY: Record<string, ComponentCategory> = {
   divider: 'Layout',
   formdangerzone: 'Layout',
   formsectionnav: 'Layout',
-  pageheader: 'Layout',
   panel: 'Layout',
   sectioncard: 'Layout',
   slot: 'Layout',

@@ -49,7 +49,7 @@ Sobre Figma SC: pedir el link del componente ANTES de tocar nada. Replicar 1:1 l
 
 | Componente | Figma | SC | Mapping en código |
 |------------|-------|-----|-------------------|
-| Button `severity=primary` | `#3b82f6` (azure-500) | `#344a70` (navy-500) | `semantic.primary.color = var(--sc-bg-primary)` (preset `base.ts`) |
+| Button `severity=primary` | `#3b82f6` (azure-500) | **`--sc-bg-primary`** = `blue-700` (`#1b273d`) | `semantic.primary.color = var(--sc-bg-primary)` (preset `base.ts`) |
 | Tabs `active` | azure | navy | `tabs.ts` hereda `primary.color` |
 | Select / Datepicker / Input / MultiSelect `focus border` | azure | navy | `formField.focusBorderColor = var(--sc-bg-primary)` |
 | Checkbox `checked` (bg + border) | azure | navy | `sc-checkbox.component.scss` checked state `--sc-bg-primary` |
@@ -487,7 +487,7 @@ Para el caso futuro de backend real: el grace period del undo vive **server-side
 
 - **Figma**: `❖ IftaLabel` (node `7462:106725`) — *In-Field Top Aligned*: el label se fija arriba-dentro del campo y el valor baja. El Kit lo usa en los selects/inputs de config Grupos. Distinto de `❖ FloatLabel` (`7421:322901`, el label flota al focus).
 - **SC**: input opt-in **`[iftaLabel]`** en `<sc-select>`, `<sc-inputtext>` y `<sc-multiselect>`. Cuando está activo, el label-encima se oculta y se renderiza dentro del `.sc-*__field` (relative), con el valor empujado hacia abajo.
-- **Tokens** (del export; decimales = px de diseño exactos): `iftalabel/input/padding/top 21` · `/bottom 7` · label `iftalabel/font/size 10.5` · `/weight 400` · color `iftalabel/color #8f97a3` (`--sc-text-subtle`) en `(x 10.5, top 7)`.
+- **Tokens** (del export; decimales = px de diseño exactos): `iftalabel/input/padding/top 21` · `/bottom 7` · label `iftalabel/font/size 10.5` · `/weight 400` · color **`--sc-text-subtle`** en `(x 10.5, top 7)`.
 - **Opt-in**: `default false`; los campos con label-encima del resto de la app no cambian. **Sin tokens nuevos.** En uso: selects/inputs de config Grupos + "Tipo de descuelgue" de General.
 - **Pendiente**: extender a `<sc-inputnumber>` cuando un diseño lo pida.
 - **`<sc-multiselect>` options primitivas**: el wrapper soporta `options: string[]` directos (`hasPrimitiveOptions` + `resolvedOptionLabel/Value`, portado de `<sc-select>`) — arregló los multiselect de Grupos que renderizaban vacíos.
@@ -943,5 +943,15 @@ Recomendación:
 
 ---
 
-Última actualización: 2026-08-13 (auditoría de documentación; antes decía 2026-06-14 con contenido fechado hasta julio) (adaptación al repo unificado: rutas, export DTCG,
-preset modular, escala en rem, focus-ring 2px reconciliado al Kit).
+Última actualización: 2026-08-24 (sesión de consolidación: §1.3 retirada — el warn sigue al
+Theme Designer; §1.1 y §2.9 dejan de citar hexes fijos y remiten al token).
+
+> **Los hexes fijos se van a propósito.** Dos de las tres correcciones de esta pasada eran el
+> MISMO fallo: un valor escrito a mano que se quedó atrás cuando el token cambió. §1.1 decía
+> `#344a70` (blue-500) cuando `--sc-bg-primary` resuelve a blue-700 `#1b273d`, y §2.9 decía
+> `#8f97a3` (slate-500), el valor PREVIO al cambio de contraste AA del 2026-07-19 — el que
+> ordena el propio §1.7 de este documento. Citar el nombre del token en vez del hex no es
+> pereza: es lo único que no se desincroniza.
+
+(Adaptación al repo unificado: rutas, export DTCG, preset modular, escala en rem, focus-ring 2px
+reconciliado al Kit.)

@@ -29,7 +29,7 @@ sin hallazgos.
 
 ### Deriva de docs
 
-- [ ] `docs/customs-catalog.md:459` (§2.9 IftaLabel) cita el color del label como
+- [x] `docs/customs-catalog.md:459` (§2.9 IftaLabel) cita el color del label como
   `iftalabel/color #8f97a3`, atado explícitamente a `--sc-text-subtle`, pero ese token resuelve
   hoy a `--sc-color-slate-600` = `#6f7784` (`02-semantic.css:84` → `01-primitive.css:58`);
   `#8f97a3` es slate-500 (`01-primitive.css:57`), el valor previo al cambio de contraste AA del
@@ -37,6 +37,11 @@ sin hallazgos.
   documento marca la última actualización en 2026-08-13 — posterior al cambio real — así que
   esta fila quedó fuera de ese barrido → corregir el hex a `#6f7784`, o mejor, quitar el hex fijo
   y remitir solo al nombre del token para que no vuelva a desincronizarse. [arréglalo]
+  **CERRADO 2026-08-24** por la segunda vía, la de quitar el hex. Y al ir a arreglarlo apareció
+  el MISMO fallo una fila más arriba: §1.1 citaba el primary como `#344a70` (blue-500) cuando
+  `--sc-bg-primary` resuelve a blue-700 `#1b273d`. Los dos se cierran igual —remitiendo al
+  nombre del token— y el pie del catálogo lo deja escrito como criterio, porque el patrón se
+  va a repetir mientras queden hexes a mano en ese documento.
 
 ### Trabajo sin mergear
 
