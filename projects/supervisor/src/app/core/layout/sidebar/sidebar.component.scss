@@ -162,7 +162,14 @@
     font-weight: var(--sc-font-weight-semibold);
     letter-spacing: 0.15em;
     text-transform: uppercase;
-    color: rgb(255 255 255 / 0.3);
+    /* 0.5, no 0.3: esto es TEXTO de 12 px, así que su umbral es 4,5:1 y no el
+     * 3:1 de los chevrones. A 0.3 medía 2,67:1 en los dos temas. El suelo para
+     * 4,5 es alpha 0.475 (manda el tema claro, cuya sidebar es el navy más
+     * claro); 0.5 da 4,84 en claro y 5,35 en oscuro. Sí, eso lo acerca al
+     * volumen de los iconos: es el mismo intercambio que ya se aceptó en
+     * `--sc-text-subtle` (customs-catalog §1.7) — AA por delante de la
+     * jerarquía. */
+    color: rgb(255 255 255 / 0.5);
     opacity: 0;
     transition: opacity var(--sc-transition-fast) var(--sc-easing-default);
     white-space: nowrap;
@@ -240,7 +247,10 @@
     padding: var(--sc-spacing-0-5) var(--sc-spacing-0-875) var(--sc-spacing-0-5)
       var(--sidebar-pad-l-0, var(--sc-spacing-0-875));
     font-size: var(--sc-font-size-100);
-    color: rgb(255 255 255 / 0.4);
+    /* 0.5 por la misma razón que `&__section-title`: su etiqueta es texto de
+     * 12 px y a 0.4 se quedaba en 3,62 (claro) / 3,83 (oscuro), bajo el 4,5 que
+     * pide 1.4.3. El estado hover ya iba sobrado (0.85). */
+    color: rgb(255 255 255 / 0.5);
     background: transparent;
     border: 0;
     border-radius: var(--sc-radius-100);
