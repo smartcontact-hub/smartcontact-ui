@@ -109,6 +109,11 @@
                 "glob": "**/*",
                 "input": "projects/sc-docs/public",
                 "output": "/"
+              },
+              {
+                "glob": "**/*.css",
+                "input": "projects/design-tokens/src/lib/styles",
+                "output": "/tokens"
               }
             ],
             "styles": [

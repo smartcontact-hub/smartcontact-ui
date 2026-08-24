@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Chip — Smart Contact DS preview</title>
+<!-- Opción 3: tokens reales del DS servidos por el build (angular.json → /tokens). Cero drift. -->
+<link rel="stylesheet" href="/tokens/index.css">
+<style>
+  body {
+    margin: 0;
+    padding: 28px;
+    font-family: var(--sc-font-family-primary);
+    background: var(--sc-color-slate-100);
+    color: var(--sc-text-primary);
+  }
+  h1 { font-size: var(--sc-font-size-450, 20px); margin: 0 0 4px; }
+  p.sub { color: var(--sc-text-secondary); font-size: var(--sc-font-size-100); margin: 0 0 20px; }
+  .panels { display: flex; gap: 20px; flex-wrap: wrap; }
+  .panel {
+    flex: 1; min-width: 260px; padding: 20px;
+    border-radius: 12px;
+    background: var(--sc-bg-default);
+    border: 1px solid var(--sc-border-default);
+  }
+  .panel h2 {
+    font-size: var(--sc-font-size-100); text-transform: uppercase; letter-spacing: .04em;
+    color: var(--sc-text-secondary); margin: 0 0 16px;
+  }
+  .row { display: flex; gap: 10px; flex-wrap: wrap; align-items: center; margin-bottom: 14px; }
+  .row:last-child { margin-bottom: 0; }
+  .lbl { font-size: var(--sc-font-size-100); color: var(--sc-text-subtle); width: 84px; }
+
+  /* Chip — 1:1 con el master de Figma / preset sc-chip */
+  .chip {
+    display: inline-flex; align-items: center;
+    gap: var(--sc-scale-0-5);
+    padding: var(--sc-scale-0-5) var(--sc-scale-0-75);
+    border-radius: var(--sc-scale-1-143);
+    background: var(--sc-color-slate-100);
+    color: var(--sc-color-slate-800);
+    font-size: var(--sc-font-size-200);
+    line-height: var(--sc-line-height-200);
+    font-weight: var(--sc-font-weight-regular);
+  }
+  .chip .ico {
+    width: var(--sc-scale-1, 14px); height: var(--sc-scale-1, 14px);
+    display: inline-flex; align-items: center; justify-content: center;
+  }
+  .chip .img {
+    width: var(--sc-scale-2, 28px); height: var(--sc-scale-2, 28px);
+    border-radius: 50%; object-fit: cover; margin-left: calc(-1 * var(--sc-scale-0-5));
+  }
+  .chip .rm { cursor: pointer; opacity: .65; display: inline-flex; }
+  .chip.focus { outline: var(--sc-focus-ring-width, 2px) solid var(--sc-border-focus); outline-offset: 1px; }
+  /* Dark: el chip swapea a surface.800 / surface.0, igual que el colorScheme del preset */
+  .sc-dark .chip { background: var(--sc-color-slate-800); color: var(--sc-color-slate-0); }
+</style>
+</head>
+<body>
+  <h1>Chip</h1>
+  <p class="sub">Preview con tokens reales del DS. Fuente: master <code>chip</code> (334:13139).</p>
+
+  <div class="panels">
+    <div class="panel">
+      <h2>Light</h2>
+      <div class="row"><span class="lbl">Default</span><span class="chip"><span>Action</span></span></div>
+      <div class="row"><span class="lbl">Icon</span><span class="chip"><span class="ico">★</span><span>Action</span></span></div>
+      <div class="row"><span class="lbl">Image</span><span class="chip"><img class="img" alt="" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='28' height='28'><rect width='28' height='28' fill='%23c6ccd6'/></svg>"><span>Action</span></span></div>
+      <div class="row"><span class="lbl">Removable</span><span class="chip"><span>Action</span><span class="rm">✕</span></span></div>
+      <div class="row"><span class="lbl">Focus</span><span class="chip focus"><span>Action</span><span class="rm">✕</span></span></div>
+    </div>
+
+    <div class="panel sc-dark">
+      <h2>Dark</h2>
+      <div class="row"><span class="lbl">Default</span><span class="chip"><span>Action</span></span></div>
+      <div class="row"><span class="lbl">Icon</span><span class="chip"><span class="ico">★</span><span>Action</span></span></div>
+      <div class="row"><span class="lbl">Image</span><span class="chip"><img class="img" alt="" src="data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='28' height='28'><rect width='28' height='28' fill='%234f5663'/></svg>"><span>Action</span></span></div>
+      <div class="row"><span class="lbl">Removable</span><span class="chip"><span>Action</span><span class="rm">✕</span></span></div>
+      <div class="row"><span class="lbl">Focus</span><span class="chip focus"><span>Action</span><span class="rm">✕</span></span></div>
+    </div>
+  </div>
+</body>
+</html>
