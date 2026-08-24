@@ -1,5 +1,7 @@
 import { expect, test, type Page } from '@playwright/test';
 
+import { watchTransient } from './helpers';
+
 /**
  * CusCare · Search (`/customer`) FUNCIONANDO.
  *
@@ -34,10 +36,15 @@ test('buscar devuelve resultados y se puede abrir uno', async ({ page }) => {
   await goto(page);
 
   await page.getByLabel('Término de búsqueda').fill('34600');
+  const loader = await watchTransient(page, '.search__loading');
   await page.getByRole('button', { name: 'Buscar' }).click();
 
-  // Pasa por el estado de carga, como el original.
-  await expect(page.locator('.search__loading')).toBeVisible();
+  // Pasa por el estado de carga, como el original. Dura 380 ms, así que se
+  // comprueba con el vigía y no mirando la pantalla: el mismo `toBeVisible()`
+  // sobre este transitorio ya daba rojos intermitentes en el test de
+  // paginación con la máquina cargada (el porqué, en `watchTransient`).
+  await expect.poll(async () => (await loader()).seen, { timeout: 5_000 }).toBe(true);
+  expect((await loader()).text).toContain('Loading data...');
   await expect(page.locator('.search__results')).toBeVisible({ timeout: 5000 });
 
   const rows = page.locator('.resulttable tbody tr');
