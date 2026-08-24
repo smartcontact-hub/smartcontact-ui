@@ -105,8 +105,29 @@ sobre los hex de `01-primitive.css` (instrumento validado antes con casos conoci
   y entre ellos dos que se veían a diario: la **barra de navegación de sc-docs** (3,01→5,05 en
   todos sus enlaces) y el **skip-link** del supervisor, que es el control pensado precisamente
   para quien navega con teclado o lector de pantalla.
-- **Pendiente**: pedir al Kit el primary dark conforme. Mientras no llegue, el dark no recibe
-  color de Figma.
+- **Pendiente**: ver la actualización de abajo — la petición al Kit cambia de forma.
+
+**Actualización (mismo día, tras el sync del export del 24-ago)** · Rafa señaló un nodo del
+master (`14393:3775`) y ahí estaba el dato que faltaba: **Figma ya decidió texto BLANCO** en el
+primario oscuro. El export del 24-ago lo confirma — `primary.contrast.color` dark pasa de
+`#18181b` a `#ffffff`, en base, hover y active — **y deja los fondos como estaban**
+(`blue-400/300/200`, que ACLARAN al interactuar). Medido, eso da base 5,62 ✓ pero hover **3,35 ✗**
+y active **2,11 ✗**: pasaría de UN estado incumpliendo a DOS.
+
+Y lo más importante, porque **corrige lo que esta misma DD daba por bueno arriba**: la salida NO
+es pedirle al Kit un azul mejor. La banda de luminancia donde el relleno cumple los dos criterios
+con texto blanco va de 0,136 a 0,183, o sea **1,25:1 de ancho de punta a punta**; tres estados
+repartidos ahí salen a 1,12:1 unos de otros, que es invisible. **No existe ningún azul que
+arregle esto** — se puede tener texto blanco, o un hover que se note, no las dos cosas. Con texto
+oscuro el suelo está en 0,230 y no hay techo: la banda mide **3,76:1** y los tres pasos salen a
+1,94:1. Por eso B no era un puente a la espera de un color mejor: es la única estructura donde
+caben tres estados visibles.
+
+Lo que SÍ puede hacer diseño, si el blanco les importa (y es legítimo, es el idioma del tema
+claro): **sacar el hover y el active del relleno** — un borde, un anillo, una elevación. Entonces
+el relleno se queda quieto en `blue-400` con blanco a 5,62 y la interacción la cuenta otra cosa.
+Es una decisión de diseño, no un problema de paleta. Hasta que se tome, la fila sigue en
+`diverge` y el repo mantiene el texto oscuro.
 
 ---
 
