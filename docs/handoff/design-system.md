@@ -2,7 +2,36 @@
 
 > **Volátil.** Lo reescribe la sesión que trabaja ESTE frente, y **solo este fichero**.
 > No toques los hand-offs de otros frentes. Lo durable vive en `docs/`.
-> **Sello: 2026-08-24 (s31) — HEAD `6eb5e11` (DD-40 primary dark · red de contraste ampliada · swatches de sc-docs), encima de s30 `974c827`. Contenido previo: `59a5c73` (s29).**
+> **Sello: 2026-08-24 (s31) — HEAD `9106852` (DD-40 primary dark · red de contraste ampliada · swatches de sc-docs · sync del Kit del 24-ago), encima de s30 `974c827`. Contenido previo: `59a5c73` (s29).**
+## ✅ s31 (b) · Sync del Kit tras un mes parado, y qué dice Figma del primario oscuro
+
+**El puente llevaba muerto desde el 22 de julio** (último PR de sync: #17). Causa: el token de
+GitHub del plugin caducó. Rafa pasó el export a mano (`design-tokens24Aug.json`) y entró por el
+pipeline normal.
+
+**Lo que trae**: la familia `warn` pasa de `orange-*` a `yellow-*` en los dos temas — 14 líneas en
+`04-component.css` y 30 en `07-dark.css`, resolviendo contra primitivas que ya existían. Es **W5
+aterrizando**. Cumple AA antes y después: claro 5,58→4,92, oscuro 6,92→11,06. Visualmente se nota
+(naranja vivo → mostaza). **El `tag` warn se queda ÁMBAR** porque está en el EXCLUDE de
+`cmp-color-map.mjs` (divergencia a mano, customs-catalog §1.3) → **coherencia botón/tag a revisar
+con diseño**, no la resolvió esta sesión.
+
+**Y el dato que faltaba para cerrar DD-40**: el export trae `primary.contrast.color` dark a
+**#ffffff**. O sea, Figma decidió texto BLANCO — y dejó los fondos aclarando. Eso da base 5,62 ✓,
+hover 3,35 ✗, active 2,11 ✗. **No se adoptó**, y la razón está medida en la actualización de
+DD-40: con texto blanco la banda válida mide 1,25:1 de ancho y no caben tres estados que se
+distingan (con texto oscuro mide 3,76:1). **Ningún azul arregla eso.** La pelota está en diseño:
+o el hover/active dejan de expresarse con el relleno, o el primario oscuro se queda con texto
+oscuro. Mientras tanto la fila sigue en `diverge`.
+
+**Nota de infra**: `playwright.config.ts` gana `SC_DOCS_URL` — era el único de los tres configs
+sin escape por env, y con dos worktrees de agente vivos moría con «Port 4280 is already in use».
+⚠️ Pero **no apuntes el `component-structure` a un build de producción**: su baseline guarda
+`outerHTML` y Angular escribe `<!--container-->` en dev y `<!---->` en prod → 16 filas en rojo que
+no son una regresión. Está avisado en el propio config.
+
+---
+
 ## ✅ s31 · Accesibilidad: el primary dark y el agujero de la red de contraste
 
 **DD-40** — el par `--sc-text-on-primary`/`--sc-bg-primary` en `.sc-dark` medía **3,01:1**.
