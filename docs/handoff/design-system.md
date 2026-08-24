@@ -2,7 +2,7 @@
 
 > **Volátil.** Lo reescribe la sesión que trabaja ESTE frente, y **solo este fichero**.
 > No toques los hand-offs de otros frentes. Lo durable vive en `docs/`.
-> **Sello: 2026-08-24 (s30+s31) — HEAD `PENDIENTE` (navbar de sc-docs · teclado del palette · DD-40 primary dark · red de contraste ampliada · sync del Kit del 24-ago · el desfase export↔fichero de Figma). Contenido previo: `59a5c73` (s29).**
+> **Sello: 2026-08-24 (s30+s31) — HEAD `afc53cc` (navbar de sc-docs · teclado del palette · DD-40 primary dark · red de contraste ampliada · sync del Kit del 24-ago · el desfase export↔fichero de Figma). Contenido previo: `59a5c73` (s29).**
 ## ✅ s31 (b) · Sync del Kit tras un mes parado, y qué dice Figma del primario oscuro
 
 **El puente llevaba muerto desde el 22 de julio** (último PR de sync: #17). Causa: el token de
