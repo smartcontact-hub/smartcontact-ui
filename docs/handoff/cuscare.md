@@ -2,7 +2,7 @@
 
 > **Volátil.** Lo reescribe la sesión que trabaja ESTE frente, y **solo este fichero**.
 > No toques los hand-offs de otros frentes. Lo durable vive en `docs/`.
-> **Sello: 2026-08-12 (s26) — HEAD `3891327`.**
+> **Sello: 2026-08-24 (s31) — HEAD `a999a85` (los loaders de 380 ms, observados en vez de perseguidos). Contenido previo: `3891327` (s26).**
 
 `projects/cuscare` replica `cuscare.smart-contact.com/aed`. **Las 9 vistas montadas**, con
 valores extraídos del sitio real (no estimados) y **90 tests e2e** (`npm run e2e:cuscare`, en CI).
@@ -43,6 +43,15 @@ Por orden. Todo esto se coge y se hace.
 - **No replicar sus bugs**: la clave i18n sin traducir de la tabla del dashboard
   (`PAGES.DASHBOARD.DASHBOARD_TICKETS.TABLE.NONE`) y la errata `QEUE` se dejaron fuera a
   propósito.
+- **Los dos loaders de la app duran 380 ms y NO se miran en la pantalla.** Paginar
+  (`tickets-page.component.ts`) y buscar (`search-page.component.ts`) encienden y apagan su
+  overlay con un `setTimeout(…, 380)`. Un `expect(locator).toBeVisible()` justo tras el clic es
+  una CARRERA: si el primer sondeo cae pasados los 380 ms, el nodo ya no existe y Playwright
+  reintenta 10 s en vano acusando `element(s) not found` — como si el loader no se hubiera
+  pintado nunca. Se afirman con `watchTransient()` (`e2e/cuscare/helpers.ts`), que instala un
+  `MutationObserver` ANTES de la acción y anota la aparición cuando ocurre. **Si añades otro
+  estado transitorio, úsalo; no subas el timeout** (el problema es llegar tarde, no esperar
+  poco).
 - **Mezcla PrimeNG y Angular Material según la pantalla**, con métrica distinta (fila 47.5 vs
   32.7px); los rótulos **no predicen las rutas** ("Groups" → `/settings/entities`); y el botón
   azul "SC" de abajo a la derecha **es de terceros** — hay un test que falla si alguien lo añade.
