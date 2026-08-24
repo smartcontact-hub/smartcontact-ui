@@ -104,12 +104,12 @@ import type { ToastDesignTokens } from '@primeuix/themes/types/toast';
                 blur: "0.714286rem"
             },
             warn: {
-                color: "{yellow.500}",
+                color: "var(--sc-cmp-toast-warn-color)",
                 background: "var(--sc-cmp-toast-warn-background)",
                 borderColor: "var(--sc-cmp-toast-warn-border-color)",
                 closeButton: {
                     focusRing: {
-                        color: "{yellow.500}"
+                        color: "var(--sc-cmp-toast-warn-close-button-focus-ring-color)"
                     },
                     hoverBackground: "var(--sc-cmp-toast-warn-close-button-hover-background)"
                 },
@@ -181,14 +181,14 @@ import type { ToastDesignTokens } from '@primeuix/themes/types/toast';
                 blur: "0.107143rem"
             },
             warn: {
-                color: "{yellow.600}",
+                color: "var(--sc-cmp-toast-warn-color)",
                 background: "var(--sc-cmp-toast-warn-background)",
-                borderColor: "{yellow.200}",
+                borderColor: "var(--sc-cmp-toast-warn-border-color)",
                 closeButton: {
                     focusRing: {
-                        color: "{yellow.600}"
+                        color: "var(--sc-cmp-toast-warn-close-button-focus-ring-color)"
                     },
-                    hoverBackground: "{yellow.100}"
+                    hoverBackground: "var(--sc-cmp-toast-warn-close-button-hover-background)"
                 },
                 detailColor: "var(--sc-cmp-toast-warn-detail-color)"
             },
