@@ -34,7 +34,7 @@ lo que hace que te la creas cuando te toca. Lee el índice siempre; el cuerpo, c
 | **1** | concluir que algo NO funciona desde una herramienta | demuestra que tu estímulo LLEGÓ, y no extiendas el negativo más allá de lo que mediste |
 | **2** | creerte un hallazgo (o un verde) de una sonda **tuya** | valida el instrumento con un caso conocido; pruébalo en todos sus ejes; y si da verde, mira algo que tú no escribiste |
 | **4** | arreglar un valor sustituyéndolo por otro token | mide el token de DESTINO antes (fondo y texto, misma familia) |
-| **5** | dudar entre tu código y tu medición | lo rancio es la medición: build, server, HMR, animación, **el repo bajo tus pies**… o atribución (stash-y-reproduce) |
+| **5** | dudar entre tu código y tu medición | lo rancio es la medición: build, server, HMR, animación, **el repo bajo tus pies**, **o mediste OTRA instancia (un deploy)**… o atribución |
 | **6** | mirar el código porque un test NUEVO falla | sospecha del test primero: ¿mide la magnitud? ¿el selector casa? ¿reintenta? ¿espera al estado final? |
 | **7** | hacer `git push` | corre los **8 pasos** de `ci.yml`, una vez, sobre el árbol final — y confirma el verde LEYENDO el log |
 | **8** | proponer una segunda corrección tras fallar la primera | para: la siguiente acción es una MEDICIÓN que localice la causa |
@@ -95,7 +95,10 @@ lo que hace que te la creas cuando te toca. Lee el índice siempre; el cuerpo, c
    pantalla es **blanca** (el `:host` de esa página sí se estira y la pinta él). Estuve a punto
    de decírselo a Rafa como hallazgo. El número bueno salió de preguntar por el PÍXEL
    (`elementFromPoint` + subir al primer ancestro con alfa 1): **4 rutas de 34, no 9**. Antes de
-   correr la sonda, di en voz alta qué magnitud devuelve y si es la de la pregunta.
+   correr la sonda, di en voz alta qué magnitud devuelve y si es la de la pregunta. *Y el ELEMENTO,
+   no solo la magnitud (s29)*: medí el VALOR del select (`.p-select-label`=14) cuando el bug vivía
+   en las OPCIONES (`.p-select-option`=16), y antes el CONTENEDOR heredado (16) en vez del texto
+   hoja — el mismo error dos veces, con flip-flop de veredicto. Mide el nodo EXACTO del que habla la claim.
 
    *Corolario B (s21) — un control que no LEES no es un control.* En la sonda siguiente sí puse
    un valor conocido… y el control falló (`ctx.fillStyle = 'var(--x)'` no resuelve la variable:
@@ -158,9 +161,15 @@ lo que hace que te la creas cuando te toca. Lee el índice siempre; el cuerpo, c
      fichero sea de proceso, un hand-off o un `.md` de contrato: lo leíste una vez y lo tratas
      como fijo. Esta vez no costó nada —el cambio era de un tema que no toqué—, que es suerte,
      no método.
+   - *(s29)* **mediste OTRA instancia, no tu build.** Validé Select/MultiSelect/Breadcrumb
+     contra `ui.smart-contact.com` (el deploy de Carlos) y di por bug de NUESTRO DS lo que solo
+     pasaba en producción; al medir por fin NUESTRO sc-docs ya casaba con Figma (chip 14/20/34,
+     opciones 14, breadcrumb `slate/600`). Casi edito el preset para "arreglar" bugs inexistentes
+     en lo nuestro; lo paró Rafa («confirma el 21 de NUESTRO build, no lo fíes del de producción»).
+     Un sitio desplegado es una COPIA de tu fuente que puede haber divergido.
    **Acción**: antes de la siguiente medición, pregúntate qué puede estar sirviendo/pintando
-   algo viejo — build, server, HMR o animación — y neutralízalo (rebuild, reinicio, recarga
-   dura, espera de asentamiento). Cuesta segundos; la alternativa es depurar código que no se
+   algo viejo —build, server, HMR, animación— **o una instancia que no es tu build (un deploy)**,
+   y neutralízalo (rebuild, reinicio, recarga dura, espera); si el objetivo es TU artefacto, mídelo a ÉL. Cuesta segundos; la alternativa es depurar código que no se
    está ejecutando o un DOM que aún no ha terminado de moverse. Y para la quinta, la variante
    barata: **anota el SHA al arrancar y, antes de commitear, `git log <sha>..HEAD -- CLAUDE.md
    AGENTS.md LEARNINGS.md docs/handoff/` — si sale algo, reléelo antes de cerrar.**
@@ -338,7 +347,9 @@ lo que hace que te la creas cuando te toca. Lee el índice siempre; el cuerpo, c
       nuevo menciona `input()` — un número falso, y encima dentro de un manifiesto generado, que
       es donde nadie lo va a dudar. `audit-primeng-coupling` tenía el mismo agujero (arreglado en
       s20). **Si tu regex mira un fichero de código, quítale los comentarios antes de contar o
-      clasificar**; un docstring habla de la API, no la declara.
+      clasificar**; un docstring habla de la API, no la declara. *Y los GATES lo leen igual (s29)*:
+      un «1px» en un comentario de `extend.ts` tumbó `audit:theme-scale` (prohíbe px en el preset);
+      no escribas «Npx» ni en un comentario de un fichero gateado.
     - *Contando de menos (s18)*: `grep 'test('` me dio 39 tests en el supervisor; el runner
       dice **108**. Mis tests viven dentro de bucles `for`, así que el grep cuenta
       DECLARACIONES y el runner cuenta INSTANCIAS. **Cuando exista un ejecutor que sepa el
