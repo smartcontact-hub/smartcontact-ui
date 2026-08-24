@@ -2,7 +2,52 @@
 
 > **Volátil.** Lo reescribe la sesión que trabaja ESTE frente, y **solo este fichero**.
 > No toques los hand-offs de otros frentes. Lo durable vive en `docs/`.
-> **Sello: 2026-08-24 (s30) — HEAD `974c827` (navbar de sc-docs · teclado del palette · contraste del chevron, las tres mergeadas). Contenido previo: `59a5c73` (s29).**
+> **Sello: 2026-08-24 (s33) — HEAD `a275686` (el TypeScript de la raíz entra en `typecheck`). Contenido previo: `974c827` (s30).**
+
+## ✅ s33 — el TypeScript de la raíz y de `e2e/` entra en `typecheck` (`a275686`)
+
+**Ningún `tsconfig` del repo incluía la raíz.** Los de apps y libs arrancan todos en
+`projects/*/src`, así que **33 ficheros no los type-checkeaba nadie**: los cuatro
+`playwright*.config.ts`, `eslint.config.js` y los 28 de `e2e/`. Y `eslint` no tapa ese hueco
+porque no reporta errores de tipo.
+
+Por ahí pasó en s32 un `reducedMotion: 'reduce'` suelto en el `use` de
+`playwright.cuscare.config.ts` —en Playwright 1.60 va dentro de `contextOptions`—: error de tipo
+real, `verify` entero en verde y la suite de CusCare inestable bajo carga. El caso concreto ya lo
+cubría `e2e/cuscare/harness.spec.ts` (comprueba el estado EN LA PÁGINA); lo que quedaba abierto
+era la clase.
+
+- **`tsconfig.harness.json`** (nuevo), encadenado en el script `typecheck` → entra en `verify` y
+  en el CI. **No añade eslabón a la cadena**: extiende un gate que ya estaba, así que `verify`
+  siguen siendo **26 gates** y las 4 cifras sin gatear (`CLAUDE.md`, `DOCS-INDEX`,
+  `AUDIT-SEMANAL`, `SKILL.md` de la rutina) **no se tocan**.
+- **Nace en verde, medido ANTES de escribirlo**: 0 errores sobre los 33 ficheros tal cual estaban.
+- **`include` por PATRÓN** (`*.ts`, `*.js`, `e2e/**/*.ts`): un `.ts` nuevo en la raíz o en `e2e/`
+  entra solo, sin que nadie se acuerde.
+- **`allowJs`/`checkJs`** por `eslint.config.js`: su `// @ts-check` de la primera línea **no hacía
+  nada**, porque el fichero no estaba en ningún programa de TypeScript.
+- **Validado en ROJO en sus tres ejes**, no solo en verde: con el bug histórico reinsertado,
+  `npm run typecheck` sale con **exit 2** y `TS2769 «'reducedMotion' does not exist in type
+  'UseOptions<…>'»`; con un error de tipo en `eslint.config.js`, `TS2339`; con otro en
+  `e2e/smoke.spec.ts`, `TS2322`.
+- **`scripts/__tests__/typecheck-coverage.test.mjs`** (nuevo, 7 casos dentro de `test:unit`) protege
+  la **clase**, no la instancia: recorre el repo y falla si aparece un `.ts` que no mira ningún
+  tsconfig. El patrón cubre ficheros nuevos en sitios conocidos; el test cubre un **directorio
+  nuevo de primer nivel** (`tools/`, `bench/`), que es exactamente cómo nació el hueco. Su verde
+  **no es vacuo**, comprobado: quitando `e2e/**/*.ts` del `include`, señala los 28 huérfanos.
+
+**Fuera a propósito, con la cifra medida antes de decidirlo:**
+
+| Qué | Errores con `tsc` | Por qué queda fuera |
+|---|---|---|
+| `code-connect/**.figma.ts` | **17** | No son código: son PLANTILLAS que evalúa el CLI de Code Connect (módulo `figma` virtual + globales `_fcc_*` que inyecta el parser y no declara ningún `.d.ts`). Su gate es `npm run figma:connect:parse` —verificado en verde tras el cambio— y `eslint.config.js` ya los ignoraba por lo mismo |
+| `scripts/**/*.mjs` | **392** con `checkJs` | JS sin anotar (casi todo TS7006, "implicitly any"). Anotarlos es otra tarea, no un efecto colateral de esta; hoy los cubren `test:unit` y `eslint` |
+
+**Doc corregida donde afirmaba lo contrario** (quedaba falsa al aterrizar esto): la fila «Tipos +
+lint» del README —que estaba **vacía**—, el comentario del propio `playwright.cuscare.config.ts`,
+la trampa de `docs/handoff/cuscare.md` y el corolario s32 de `LEARNINGS.md`.
+
+---
 
 ## ✅ s30 — tres cosas, el mismo día, ya en `main`
 
@@ -233,8 +278,12 @@ variables, 30 comentarios activos.
   cualquier contador nuevo: si tu regex mira el fichero entero, cuenta también lo que se está
   explicando.
 
-## 🕳️ Lo que esta sesión dejó fuera, y por qué
+## 🕳️ Lo que se dejó fuera, y por qué (por sesión)
 
+- **s33 · anotar los `scripts/**/*.mjs`** (392 errores con `checkJs`) y **type-checkear
+  `code-connect/`** (17): las dos salen del gate nuevo con su motivo escrito, en la tabla de
+  arriba. La primera es trabajo real si algún día se quiere; la segunda no es type-checkeable con
+  `tsc` a secas y ya tiene su gate.
 - **La web no cambia hasta que Carlos consuma los tokens.** Lo nuestro (Figma) está hecho; el
   loop se cierra en su repo. Editar Figma no mueve producción — pieza-verde ≠ loop-funciona.
 - **Badge sin tocar** (alto fijo, tamaños fuera de rampa): decisión, no olvido.
