@@ -2,7 +2,7 @@
 
 > **Volátil.** Lo reescribe la sesión que trabaja ESTE frente, y **solo este fichero**.
 > No toques los hand-offs de otros frentes. Lo durable vive en `docs/`.
-> **Sello: 2026-08-24 (s30) — HEAD `974c827` (navbar de sc-docs · teclado del palette · contraste del chevron, las tres mergeadas). Contenido previo: `59a5c73` (s29).**
+> **Sello: 2026-08-24 (s30) — HEAD `c7e9ea0` (navbar · teclado del palette · contraste del chevron · el desfase export↔fichero de Figma). Contenido previo: `59a5c73` (s29).**
 
 ## ✅ s30 — tres cosas, el mismo día, ya en `main`
 
@@ -147,6 +147,30 @@ color breadcrumb). Mensaje de diseño enviado. Editar Figma **no mueve la web**.
 
 ## ▶︎ SIGUIENTE — sin preguntar
 
+0. **Re-exportar desde el Theme Designer, y luego cerrar `text.muted.color`.** Medido el
+   2026-08-24 comparando el **fichero** de Figma contra `kit-export-dtcg.json`: de **164 valores
+   semánticos, 160 idénticos**; divergen **4, con 2 causas raíz**, y las dos van en la misma
+   dirección — son arreglos de contraste que el fichero YA tiene y el export no. El export está
+   **desfasado** (lo generó el plugin `primeui-figma-plugin-v4` el **2026-07-22**), no roto.
+   - `text/muted/color` (claro): fichero `slate/600` `#6f7784` · export `surface/500` `#8f97a3`.
+     Arrastra `list/option/group/color` y `navigation/submenu/label/color`, que le alias.
+     **Su condición de reversión escrita en `color-map.mjs` ("revertir cuando el Kit suba el
+     suyo") ya se cumple** — el Kit lo subió al MISMO valor que pusimos a mano. No se puede pasar
+     a `enforce` hasta re-exportar: `tokens:parity` compara contra el export, así que hacerlo
+     antes lo deja rojo. Anotado en la propia fila (`c7e9ea0`).
+   - `primary/contrast/color` (oscuro): fichero **`#ffffff`** · export `#18181b`. Ese export es
+     el origen del "seguimos al Kit" que llevaba el `07-dark.css` y de que el par quedara en
+     3,01:1. **NO revierte DD-40**: su decisión se apoya en que con texto blanco no existen hover
+     ni active legales en esa rampa, y eso es independiente de lo que diga el Kit.
+   - **El eslabón que falta**: `tokens:parity` compara *export ↔ CSS*. **Nadie compara
+     *fichero ↔ export***, y por ahí se coló esto. No puede ser un gate de CI (necesita el bridge
+     de Figma abierto), así que de momento es procedimiento manual — mismo caso que el Check D de
+     `docs:coherence`, que también es LOCAL-only y por el mismo motivo.
+   - **Cómo repetir la medición sin tropezar**: resuelve a **RGBA final los DOS lados** antes de
+     comparar. La primera pasada dio **15 divergencias falsas** por dos motivos tontos: leer los
+     colores de Figma sin el canal alfa (`#00000000` vs `#000000`) y comparar un alias contra un
+     valor ya resuelto (`slate/0` vs `#ffffff`). Y ojo con el JSON del export: **las claves raíz
+     llevan las barras dentro** (`d['aura/semantic/dark']['primary']`, no `d['aura']['semantic']`).
 1. **Los 16 del trinquete de DD-38**, por lotes (`LEGACY_PENDIENTES` en
    `scripts/audit-api-era.mjs`). El de más impacto es **`sc-icon`**: está en todas las pantallas.
    Receta y criterio, en DD-38; al migrar uno, **bórralo de la lista** (el guard lo exige).
