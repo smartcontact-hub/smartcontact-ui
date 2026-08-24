@@ -8,9 +8,17 @@
  * Mapa de familias (verificado por valor contra el export del Kit):
  *   sky    → --sc-color-sky-*  (el Kit ya trae sky = electric blue)
  *   slate  → --sc-color-slate-*           (gris de marca SC)
- *   orange → --sc-color-amber-*          (warn de marca = amber; la familia
+ *   orange → --sc-color-yellow-*         (warn = lo que diga el Theme Designer, y
+ *            desde el export del 24-ago dice YELLOW. La familia
  *            --sc-color-orange-* de la paleta de labels no pasa por aquí)
- *   yellow → --sc-color-amber-*          (ídem: severities warn de toast/message)
+ *   yellow → --sc-color-yellow-*         (ídem: severities warn de toast/message)
+ *
+ *   Las DOS apuntan a yellow a propósito. El Kit habla de warn en slots que
+ *   PrimeNG llama unas veces `orange` y otras `yellow`; si solo se remapeara una,
+ *   el tag saldría de un color en claro y de otro en oscuro — que es exactamente
+ *   lo que pasaba antes de esto (medido el 2026-08-24). Y no basta con BORRAR el
+ *   remap: `tag.ts` y `button.ts` referencian `{orange.N}`, así que sin fila se
+ *   irían al naranja real de la paleta de labels.
  *   zinc   → --sc-color-zinc-*           (surface dark del Kit, bloque generado)
  *
  * Solo se declaran las familias primitivas que el preset referencia: los
@@ -29,11 +37,15 @@ const families = {
   blue: 'blue',
   slate: 'slate',
   zinc: 'zinc',
+  // `amber` ya no lo referencia nada nuestro (0 `{amber.N}` en el repo tras mover
+  // warn a yellow), pero se queda: esto alimenta el bloque `primitive` del preset y
+  // Aura puede resolver `{amber.N}` por dentro. Borrarlo ahorra una rampa de
+  // custom properties y arriesga un slot de PrimeNG que no podemos enumerar.
   amber: 'amber',
   green: 'green',
   purple: 'purple',
-  orange: 'amber',
-  yellow: 'amber',
+  orange: 'yellow',
+  yellow: 'yellow',
 } as const;
 
 const STEPS = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950] as const;

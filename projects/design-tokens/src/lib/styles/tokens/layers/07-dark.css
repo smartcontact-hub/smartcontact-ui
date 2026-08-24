@@ -33,7 +33,7 @@
    *   violet        2.38 ✗              violet-400  6.21 ✓
    *   danger        3.50 ✗              red-400     6.11 ✓
    *   success       5.13 ✓ (ya pasaba)  green-600   5.13 ✓
-   *   warning       5.30 ✓ (ya pasaba)  amber-600   5.30 ✓
+   *   warning       5.30 ✓ (ya pasaba)  yellow-600  6.54 ✓
    *
    * success y warning se declaran aquí porque su valor CLARO subió al 700
    * para cumplir AA sobre blanco; sin este bloque, el 700 se colaría en
@@ -42,7 +42,7 @@
   --sc-text-accent: var(--sc-color-sky-400);
   --sc-text-link: var(--sc-color-sky-400);
   --sc-text-success: var(--sc-color-green-600);
-  --sc-text-warning: var(--sc-color-amber-600);
+  --sc-text-warning: var(--sc-color-yellow-600);
   --sc-text-danger: var(--sc-color-red-400);
   --sc-text-violet: var(--sc-color-violet-400);
   /* En dark el botón primary es navy CLARO → el texto encima va OSCURO
@@ -350,7 +350,7 @@
    * token form lets a future color-scale tweak propagate here for
    * free. */
   --sc-bg-success-subtle: color-mix(in srgb, var(--sc-color-green-800) 18%, transparent);
-  --sc-bg-warning-subtle: color-mix(in srgb, var(--sc-color-amber-800) 18%, transparent);
+  --sc-bg-warning-subtle: color-mix(in srgb, var(--sc-color-yellow-800) 18%, transparent);
   --sc-bg-danger-subtle: color-mix(in srgb, var(--sc-color-red-900) 22%, transparent);
   --sc-bg-danger-subtle-hover: color-mix(in srgb, var(--sc-color-red-900) 32%, transparent);
   --sc-bg-danger-subtle-active: color-mix(in srgb, var(--sc-color-red-900) 42%, transparent);
@@ -466,7 +466,7 @@
   --sc-toast-close: var(--sc-color-slate-200);
   --sc-toast-success-bg: color-mix(in srgb, var(--sc-color-green-900) 40%, transparent);
   --sc-toast-info-bg: color-mix(in srgb, var(--sc-color-sky-800) 40%, transparent);
-  --sc-toast-warn-bg: color-mix(in srgb, var(--sc-color-amber-800) 40%, transparent);
+  --sc-toast-warn-bg: color-mix(in srgb, var(--sc-color-yellow-800) 40%, transparent);
   --sc-toast-error-bg: color-mix(in srgb, var(--sc-color-red-900) 40%, transparent);
   --sc-toast-violet-bg: color-mix(in srgb, var(--sc-color-violet-800) 40%, transparent);
 
