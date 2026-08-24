@@ -11,12 +11,18 @@ la usa el e2e de Playwright.
 
 ## Qué hay
 
+Cuatro secciones en el top-nav; **Fundamentos** agrupa la materia prima del sistema
+(antes eran tres destinos planos). Las rutas viejas redirigen, no se han roto.
+
 | Ruta | Contenido |
 |---|---|
-| `/foundations` | Escala, color, radios, sombras |
-| `/foundations-type` | Tipografía |
-| `/theme` | El tema aplicado (light / dark) |
+| `/fundamentos/escala-color` | Escala 14-base y color primitivo |
+| `/fundamentos/tipografia` | Tipografía: 8 tamaños + 7 line-heights |
+| `/fundamentos/tema` | El tema aplicado a primitivos PrimeNG (light / dark) |
 | `/components` | Un page por componente del catálogo (`@smartcontact-hub/components`) |
+| `/uso` | Capturas de pantallas reales que consumen el DS |
+| `/reglas` | Recorrido del sistema de reglas (material de presentación) |
+| `/lab` | Enlaces de trabajo y exploraciones aún fuera del DS |
 
 ## Cómo consume el DS
 

@@ -1,17 +1,18 @@
 <header class="demo-header">
-  <span class="demo-header__brand">Smart Contact Design Engineering</span>
-  <nav class="demo-header__nav">
-    <a routerLink="/foundations" routerLinkActive="is-active">Fundaciones</a>
-    <a routerLink="/foundations-type" routerLinkActive="is-active">Tipografía</a>
-    <a routerLink="/theme" routerLinkActive="is-active">Tema PrimeNG</a>
+  <a class="demo-header__brand" routerLink="/fundamentos">Smart Contact Design Engineering</a>
+
+  <nav class="demo-header__nav" aria-label="Secciones">
+    <a routerLink="/fundamentos" routerLinkActive="is-active">Fundamentos</a>
     <a routerLink="/components" routerLinkActive="is-active">Componentes</a>
     <a routerLink="/uso" routerLinkActive="is-active">Uso real</a>
-    <a routerLink="/reglas" routerLinkActive="is-active">Sistema de reglas</a>
-    <a routerLink="/lab" routerLinkActive="is-active">Lab</a>
+    <a routerLink="/reglas" routerLinkActive="is-active">Reglas</a>
   </nav>
-  <button type="button" class="demo-header__dark-toggle" (click)="toggleDark()">
-    Claro / oscuro
-  </button>
+
+  <!-- Cluster de herramientas: NO son documentación, por eso van separadas de la nav. -->
+  <div class="demo-header__tools">
+    <a class="demo-header__tool" routerLink="/lab" routerLinkActive="is-active">Lab</a>
+    <button type="button" class="demo-header__tool" (click)="toggleDark()">Claro / oscuro</button>
+  </div>
 </header>
 
 <main class="demo-main">

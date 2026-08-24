@@ -5,7 +5,20 @@ const angular = require('angular-eslint');
 
 module.exports = tseslint.config(
   {
-    ignores: ['dist/', 'node_modules/', '.angular/', 'playwright-report/', 'test-results/', 'code-connect/'],
+    // Los patrones de flat-config SIN `**/` están anclados a la raíz del repo: `dist/`
+    // tapaba SOLO el dist de arriba. Los worktrees de agente (`.claude/worktrees/<x>/`)
+    // construyen su propio `dist/` y eslint entraba a lintar los `.d.ts` GENERADOS de
+    // ng-packagr → `npm run preflight` en rojo por código que nadie escribió. Medido el
+    // 2026-08-24: 3 errores en `dist/ui-smartcontact-icons/types/*.d.ts` de un worktree.
+    ignores: [
+      '**/dist/',
+      '.claude/',
+      'node_modules/',
+      '.angular/',
+      'playwright-report/',
+      'test-results/',
+      'code-connect/',
+    ],
   },
   {
     files: ['**/*.ts'],

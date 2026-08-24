@@ -544,7 +544,10 @@ así los `data-testid` del Kit siguen en el DOM y los e2e de métrica los miden.
 
 **Shell + rutas.** `/components` pasa a `StorybookShell` (sidebar fija: 7 categorías + búsqueda, derivada de
 `component-catalog.ts` que evoluciona `component-pages.ts`) con las páginas como children; `/foundations`·`/uso`·
-`/reglas` y el top-nav intactos; el toggle dark global sigue. **Los 51 componentes** (eran 49 al escribirlo) quedan en formato story (button
+`/reglas` y el top-nav intactos; el toggle dark global sigue. *(El top-nav dejó de estar intacto el
+2026-08-24: `/foundations`, `/foundations-type` y `/theme` se agruparon bajo `/fundamentos/*` para
+bajar la barra de 7 destinos planos a 4 secciones. Las rutas viejas redirigen —con test en
+`e2e/smoke.spec.ts`— así que nada de lo de arriba se rompió.)* **Los 51 componentes** (eran 49 al escribirlo) quedan en formato story (button
 piloto + 46 migrados por lotes + `slot`/`subsection` nuevos) → **pokédex 49/49**. Migración por subagentes paralelos
 con spec común + gate de integración (AOT + spot-check) por lote. `verify` entero verde.
 
