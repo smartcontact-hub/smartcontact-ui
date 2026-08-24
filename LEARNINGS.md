@@ -36,7 +36,7 @@ lo que hace que te la creas cuando te toca. Lee el índice siempre; el cuerpo, c
 | **4** | arreglar un valor sustituyéndolo por otro token | mide el token de DESTINO antes (fondo y texto, misma familia) |
 | **5** | dudar entre tu código y tu medición | lo rancio es la medición: build, server, HMR, animación, **el repo bajo tus pies**, **otra instancia (un deploy)**, la máquina ahogada… o atribución. Y si el test miraba un TRANSITORIO, la carga es el disparador, no la causa |
 | **6** | creerte un test NUEVO — se ponga rojo **o pase a la primera** | sospecha del test primero: ¿mide la magnitud? ¿el selector casa? ¿reintenta? ¿espera al estado final? Y para probar el arreglo de una CARRERA, hazla determinista en vez de correrla con carga |
-| **7** | hacer `git push` | corre los **8 pasos** de `ci.yml`, una vez, sobre el árbol final — y confirma el verde LEYENDO el log |
+| **7** | hacer `git push`, **o lanzar la cadena de 8 pasos** | córrela UNA vez y sobre el árbol final — y "final" es que ya **no vas a escribir nada más**, ni un `.md`. Confirma el verde LEYENDO el log |
 | **8** | proponer una segunda corrección tras fallar la primera | para: la siguiente acción es una MEDICIÓN que localice la causa |
 | **10** | declarar algo bloqueado, o deducir un dato a ojo | comprueba si el sistema ya te lo sirve (DOM oculto, i18n, hoja de estilos) |
 | **11** | lanzar una edición masiva por shell | pega la verificación de outcome en el MISMO comando (zsh no hace word-splitting) |
@@ -300,9 +300,9 @@ lo que hace que te la creas cuando te toca. Lee el índice siempre; el cuerpo, c
    enumeración copiada a prosa caduca en cuanto alguien añade un paso** (es la regla 17 aplicada a
    una fuente del propio repo). Eso ya no depende de que alguien se acuerde: `ci-preflight-parity`
    lo gatea desde `69f0951`.
-   *Evidencia (s11)*: racionalicé un subset y pusheé; el verify completo cazó luego el desfase
-   de `audit:components` (`sc-button` 9→12) que el subset se habría comido. Fix: `node
-   scripts/component-audit.mjs --write` + commitea `docs/inventory.md` + `_component-status.json`.
+   *Evidencia (s11), ya mecanizada por `preflight*`*: un subset se comió el desfase de
+   `audit:components`. Si te salta, el arreglo es `node scripts/component-audit.mjs --write` +
+   commitear `docs/inventory.md` y `_component-status.json`.
    *Evidencia (s18) — **la regla existía, la cumplí al pie de la letra y aun así pusheé rojo***:
    corrí `verify` ENTERO (verde, 40s) y me salté `e2e:supervisor`, que es donde vivía mi
    cambio. CI rojo en 17 tests. La regla decía "verify entero" y yo leí eso como "todo"; el
@@ -321,6 +321,17 @@ lo que hace que te la creas cuando te toca. Lee el índice siempre; el cuerpo, c
    preflight` (creado en `69f0951` cerrando s29, cuando esta regla aún decía que no lo había), con un
    gate anti-drift que lo mantiene cuadrado con `ci.yml`. Corre ESE, una vez, sobre el árbol final —
    el ensamblaje manual de `ci.yml` es justo lo que se cae bajo prisa.
+   *Evidencia (s33) — **tercera vez, y esta no fue correr de MENOS sino en el MOMENTO equivocado**.*
+   Corrí la cadena entera, sin subsets… sobre un árbol que aún no era el final: la lancé y **seguí
+   escribiendo** (un test nuevo, una línea de `NEXT-SESSION.md`, un sello de hand-off mal
+   formateado que `docs:coherence` tumbó en el paso 1). Tres rondas de ~30 min tiradas, y ninguna
+   medía el árbol que iba a pushear. La racionalización exacta a desarmar: **"lo dejo corriendo
+   como señal temprana mientras termino esto pequeño"** — no existe el "esto pequeño"; un `.md`
+   basta para invalidarla, porque `verify` lee documentación. **Acción**: antes de lanzar la
+   cadena, (a) `git status` limpio y commiteado, (b) los gates BARATOS que tarden segundos
+   —`docs:guard`, `docs:coherence`, `typecheck`— pasados ya, y (c) `git fetch` para saber si
+   `main` se movió (aquí se movió TRES veces con sesiones en paralelo). Si aún estás escribiendo,
+   todavía no toca lanzarla.
 
    *Corolario (s30) — si has AÑADIDO un test, un gate en verde NO prueba que lo haya ejecutado.*
    Metí dos gates en `components.spec.ts` y `preflight` dio `EXIT=0` **sin correr ninguno**: su
