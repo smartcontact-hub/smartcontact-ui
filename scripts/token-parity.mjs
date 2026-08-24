@@ -361,11 +361,18 @@ const A11Y_GATED = [
  * un par no puede cumplir hoy, va a A11Y_KNOWN con su razón y su dueño — no a
  * una lista que solo susurra. */
 const A11Y_INFO = [];
-// Sub-AA CONOCIDOS y aceptados (pre-existentes — revisión de marca en W5). Se informan
-// con ⚠, NO fallan. Quitar de aquí cuando W5 decida el fix.
-const A11Y_KNOWN = new Map([
-  ['dark|sc-text-on-primary|sc-bg-primary', 'primary dark (gray-900 sobre blue-400) ~3:1; ni gray-900 ni blanco llegan a AA sobre blue-400 — pide cambiar el color del primary dark (W5)'],
-]);
+// Sub-AA CONOCIDOS y aceptados. Se informan con ⚠, NO fallan.
+//
+// VACÍO desde 2026-08-24 (DD-40), y merece la pena leer cómo se vació: aquí vivió
+// durante meses `dark|sc-text-on-primary|sc-bg-primary` a 3,01:1, con una razón que
+// afirmaba que «ni gray-900 ni blanco llegan a AA sobre blue-400». El blanco sí
+// llegaba (5,62). Nadie volvió a medirlo porque la entrada ya explicaba por qué no
+// se podía arreglar — una excusa escrita se lee como un hecho comprobado.
+//
+// Así que si vas a añadir una fila: la razón se MIDE en el momento de escribirla, y
+// el que la lea dentro de seis meses debería poder reproducir el número desde la
+// propia frase. Y si no puedes reproducirlo, vuelve a medir antes de creértelo.
+const A11Y_KNOWN = new Map([]);
 let a11yOk = 0;
 for (const mode of ['light', 'dark']) {
   for (const [fg, bg] of A11Y_GATED) {
