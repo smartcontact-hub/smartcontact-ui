@@ -26,7 +26,7 @@ formularios, command-palette…).
   El detalle y sus consecuencias, en [`docs/guia-tokens.md`](../../docs/guia-tokens.md).
 - **50 componentes `sc-*`** — wrappers de PrimeNG pegados a la marca (`sc-button`,
   `sc-datatable`, `sc-dialog`, `sc-select`, `sc-inputtext`, `sc-multiselect`…) +
-  custom de dominio (`sc-empty-state`, `sc-page-header`, `sc-command-palette`,
+  custom de dominio (`sc-empty-state`, `sc-command-palette`,
   `sc-bulk-action-bar`, `sc-keyboard-shortcuts`…). Lista completa y estable en
   [`src/public-api.ts`](src/public-api.ts).
 - **Servicios** — `ScToastService`, `sc-confirm.service` (`ScConfirmRequest`),
