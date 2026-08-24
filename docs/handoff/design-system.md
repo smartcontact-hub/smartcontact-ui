@@ -2,7 +2,51 @@
 
 > **Volátil.** Lo reescribe la sesión que trabaja ESTE frente, y **solo este fichero**.
 > No toques los hand-offs de otros frentes. Lo durable vive en `docs/`.
-> **Sello: 2026-08-24 (s30) — HEAD `c7e9ea0` (navbar · teclado del palette · contraste del chevron · el desfase export↔fichero de Figma). Contenido previo: `59a5c73` (s29).**
+> **Sello: 2026-08-24 (s31) — HEAD `6eb5e11` (DD-40 primary dark · red de contraste ampliada · swatches de sc-docs), encima de s30 `974c827`. Contenido previo: `59a5c73` (s29).**
+## ✅ s31 · Accesibilidad: el primary dark y el agujero de la red de contraste
+
+**DD-40** — el par `--sc-text-on-primary`/`--sc-bg-primary` en `.sc-dark` medía **3,01:1**.
+Llevaba desde junio aparcado en `A11Y_KNOWN` con una razón **falsa**: decía que «ni gray-900 ni
+blanco llegan a AA sobre blue-400», y el blanco sí llega (5,62). Lo que de verdad lo bloqueaba no
+era la base sino la rampa: con blanco no hay hover ni active legales (aclarar sale de la banda,
+oscurecer hunde el relleno bajo el 3:1 de 1.4.11). Única salida: **subir la rampa un paso**
+(`blue-300/200/100`, texto sin tocar) → **5,05 / 8,03 / 11,89** en los dos criterios.
+
+- Las tres filas `primary.*` de dark pasan a **`diverge`** en `color-map.mjs`. Como eran lo único
+  que el dark recibía del Kit, **la zona `@sc-gen:semantic-color-dark` queda VACÍA** y el dark
+  pasa a estar 100% curado a mano. La cabecera de la zona lo dice, para que se lea como dato.
+- **`A11Y_KNOWN` queda vacío**; §6b va de 21/22 a **22/22**.
+- Arregla de rebote la **barra de sc-docs en oscuro** (la que se veía negra sobre oscuro) y el
+  **skip-link** del supervisor.
+
+**La red de contraste miraba solo la vista enrutada.** `theme-contrast.spec.ts` recorría
+`main#main-content`, y el skip-link, la `sc-sidebar` y la `sc-top-bar` son **hermanos** de
+`<main>`: el marco de la app no lo miraba nadie, en ningún tema. Raíz ampliada a `body`. Salieron
+tres defectos más, arreglados: `sidebar__section-title` y `sidebar__decisions-label` (TEXTO de
+12 px → umbral 4,5, alpha a `0.5`), el `mock-sample-switcher` (pastilla ámbar clara sin variante
+oscura) y antes los chevrones (`0.3`→`0.4`, commit `b3a0fdf`).
+
+**Segundo fallo de la red, del signo contrario**: su filtro de visibilidad hacía
+`cs.opacity === '0'` mirando solo al elemento, y `opacity` no se hereda como valor computado —
+un span dentro de un ancestro a 0 se colaba como visible. Ahora sube por la cadena. Y como eso
+dejaba sin medir la sidebar (invisible en reposo), se añade **un test por tema que la despliega y
+mide con hover**, que es medio punto peor que el reposo. 125 → **127** tests.
+
+**sc-docs · swatches de fundaciones**: hover/foco abre una tarjeta con token, hex y HSL, y cada
+línea se copia (vía `ScClipboardService`). Los tres valores salen de `getComputedStyle`, no de
+una tabla a mano.
+
+⚠️ **Trampa que costó cinco rondas**: `ng serve` sirvió CSS **viejo** mientras el fuente,
+`dist/design-tokens` y `ng build` estaban los tres correctos. Los e2e daban rojos
+irreproducibles. **Para medir color/contraste, sirve el build estático y apunta con
+`SC_SUPERVISOR_URL`** — ahí pasó de 5 fallos fantasma a **53 verdes**.
+
+**Pendiente (no bloquea)**: pedirle al Kit un primary dark conforme — luminancia relativa entre
+**0,136 y 0,183**, apuntando al centro de la banda y no al canto. Es la salida durable; el día
+que llegue, esto se revierte devolviendo tres filas a `enforce`.
+
+---
+
 
 ## ✅ s30 — tres cosas, el mismo día, ya en `main`
 
@@ -76,10 +120,12 @@ claro **2,57 → 3,42**, oscuro **2,71 → 3,80**. Alpha 0.3 → 0.4.
 `<main>` y `theme-contrast.spec.ts` solo recorre `main#main-content`; y `tokens:parity` no ve un
 literal que no pasa por ninguna variable.
 
-⚠️ **Esto NO cierra el contraste.** Lo que disparó la investigación —el par
-`--sc-bg-primary`/`--sc-text-on-primary` a **3,01:1** en oscuro, que es el contraste primario del
-preset (`base.ts`) y por tanto **el botón primario de toda la plataforma**— sigue abierto: es
-decisión de marca y `07-dark.css` es zona `@sc-gen`. Ver *SIGUIENTE*.
+⚠️ **Esto no cerraba el contraste** — lo que disparó la investigación era el par
+`--sc-bg-primary`/`--sc-text-on-primary` a **3,01:1** en oscuro, el contraste primario del preset
+(`base.ts`) y por tanto el botón primario de toda la plataforma. **Cerrado en s31** (arriba,
+DD-40): la razón de marca que lo bloqueaba resultó apoyarse en un dato falso, y `07-dark.css`
+resultó ser zona `@sc-gen` **solo para los tres `--sc-bg-primary*`** — el token de texto ya vivía
+fuera. Se resolvió divergiendo esas tres filas en `color-map.mjs`, no editando la zona.
 
 ---
 
@@ -246,6 +292,11 @@ variables, 30 comentarios activos.
 - **`npm run verify` son 26 gates desde s28.** Si añades uno, la cifra vive en 4 sitios y
   **ninguno la gatea**: `CLAUDE.md`, `docs/DOCS-INDEX.md`, `docs/AUDIT-SEMANAL.md` y el
   `SKILL.md` de la rutina. Lo que sí falla solo es el README, que debe **nombrar** el guard nuevo.
+- **Para MEDIR color o contraste, no uses `ng serve`** (s31): sirvió `blue-400` durante cinco
+  rondas de e2e con el fuente y el bundle construido diciendo `blue-300`. Construye y sirve el
+  estático (`ng build supervisor` → `http-server dist/supervisor/browser --proxy` para el
+  fallback SPA) y apunta `SC_SUPERVISOR_URL` ahí. Si una medición contradice al fuente, la
+  primera hipótesis es el build viejo.
 - **`npm run e2e` ya NO pisa los PNG de `public/usage/`**: `playwright.config.ts` tiene
   `testIgnore: ['usage/**', ...]`. Comprobado el 2026-08-24 tras dos smokes completos —
   `public/usage/*.png` y `_usage-raw.json` intactos. (La captura de uso se corre a propósito, con

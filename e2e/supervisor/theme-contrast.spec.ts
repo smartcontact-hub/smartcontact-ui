@@ -171,15 +171,39 @@ const medir = (umbral: number) => {
     for (const c of cadena) acc = sobre(c, acc);
     return acc;
   };
+  /** ¿Lo ve el usuario? Mira TODA la cadena, no solo el elemento (ver el
+   *  comentario del bucle). `display:none` ya lo filtra el rect a cero. */
+  const invisiblePorCadena = (el: Element): boolean => {
+    for (let n: Element | null = el; n; n = n.parentElement) {
+      const cs = getComputedStyle(n);
+      if (cs.visibility === 'hidden' || cs.opacity === '0') return true;
+    }
+    return false;
+  };
 
   const claras: string[] = [];
   const ilegibles: string[] = [];
 
-  for (const el of document.querySelectorAll('main#main-content *')) {
+  /* LA RAÍZ ES `body`, Y ESO ES EL ARREGLO DE UN AGUJERO, no una ampliación
+   * cosmética. Durante meses fue `main#main-content`, que es SOLO la vista
+   * enrutada: en `app-shell.component.html` el skip-link, la `sc-sidebar` y la
+   * `sc-top-bar` son HERMANOS de `<main>`, así que el marco de la aplicación no
+   * lo miraba nadie, en ningún tema. Por ahí pasaron tres defectos a la vez —
+   * el CTA primario del top-bar y el skip-link (3,01:1) y los chevrones de la
+   * sidebar (2,57:1) — con la lista de perdonados de oscuro VACÍA y la suite en
+   * verde, que es la peor combinación posible: parecía comprobado. */
+  for (const el of document.querySelectorAll('body *')) {
     const r = el.getBoundingClientRect();
     if (r.width === 0 || r.height === 0) continue; // no pinta nada
     const cs = getComputedStyle(el);
-    if (cs.visibility === 'hidden' || cs.opacity === '0') continue;
+    /* `opacity` NO se hereda como valor computado: se aplica al componer. Un
+     * `span` dentro de un ancestro a `opacity: 0` computa `1` y, mirando solo al
+     * elemento, se cuela como visible. Pasa de verdad: la sidebar colapsada pone
+     * `--sidebar-label-opacity: 0` en `sc-icon.nav-item__chevron`, y su `span`
+     * interior se medía como si se viera. Ese era el fallo del signo CONTRARIO
+     * al de la raíz — falsos positivos — y los dos juntos son cómo una red pasa
+     * de herramienta a ruido. Hay que subir por la cadena. */
+    if (invisiblePorCadena(el)) continue;
     const id = `${el.tagName.toLowerCase()}.${(el.className || '').toString().slice(0, 44)}`;
 
     // --- Pregunta 1: superficies. Solo elementos con fondo PROPIO y tamaño.
@@ -273,5 +297,39 @@ for (const { nombre, aplicar, claseRaiz } of TEMAS) {
         expect(reales, `texto bajo AA en tema ${nombre}:\n${reales.join('\n')}`).toEqual([]);
       });
     }
+
+    /* LA SIDEBAR DESPLEGADA, UNA VEZ POR TEMA — no por ruta, porque es la misma
+     * en las 17.
+     *
+     * Existe porque arreglar el filtro de opacidad ABRIÓ un hueco al cerrar el
+     * otro: en reposo la sidebar está colapsada (`--sidebar-label-opacity: 0`),
+     * así que ahora sus etiquetas y chevrones se saltan con razón — no se ven.
+     * Pero es que se ven en cuanto pasas el ratón, y ahí es donde estaban los
+     * 2,57:1 de los chevrones. Sin este test, la corrección del filtro habría
+     * dejado la navegación entera sin medir y nadie se habría enterado.
+     *
+     * Y se mide CON HOVER puesto a propósito: la fila bajo el puntero se aclara
+     * con su propio `rgb(255 255 255 / 0.05)`, que es medio punto de contraste
+     * menos. El caso vinculante es ese, no el reposo. */
+    test(`la sidebar desplegada se lee`, async ({ page }) => {
+      await goto(page, RUTAS[0]);
+      await asegurarTema(page, claseRaiz);
+      await asegurarBuildFresco(page);
+      await page.locator('aside').first().hover();
+      await expect
+        .poll(() =>
+          page.evaluate(
+            () => getComputedStyle(document.querySelector('.nav-item__label')!).opacity,
+          ),
+        )
+        .toBe('1');
+      const { ilegibles } = await page.evaluate(medir, L_CLARO);
+      const conocidos = claseRaiz ? [] : CONOCIDOS_CLARO;
+      const reales = ilegibles.filter((l) => !conocidos.some((c) => l.includes(c)));
+      expect(
+        reales,
+        `texto bajo AA en la sidebar desplegada (tema ${nombre}):\n${reales.join('\n')}`,
+      ).toEqual([]);
+    });
   });
 }

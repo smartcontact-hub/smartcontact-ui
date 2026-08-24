@@ -70,15 +70,18 @@ export const COLOR = [
   { mode: 'light', exp: 'overlay.popover.background', token: 'sc-bg-surface', kind: 'enforce' },
   { mode: 'light', exp: 'overlay.popover.border.color', token: 'sc-border-default', kind: 'enforce' },
 
-  // ── primary de marca (dark) ───────────────────────────────────────────────────
-  //    Lo ÚNICO 1:1 con el Kit en dark; el resto del dark es divergencia consciente.
-  { mode: 'dark', exp: 'primary.color', token: 'sc-bg-primary', kind: 'enforce' },
-  { mode: 'dark', exp: 'primary.hover.color', token: 'sc-bg-primary-hover', kind: 'enforce' },
-  { mode: 'dark', exp: 'primary.active.color', token: 'sc-bg-primary-active', kind: 'enforce' },
+  // ── primary de marca (dark) — DIVERGE desde 2026-08-24 (DD-40) ────────────────
+  //    Era lo único 1:1 con el Kit en dark. Ya no: su rampa (blue-400/300/200) no
+  //    admite ningún texto legible en la BASE. Ver la razón larga en las filas de
+  //    abajo; con esto, el dark deja de recibir color del Kit por completo, y esa
+  //    pérdida se revierte el día que el Kit suba su primary dark.
 
   // ── DIVERGENCIAS CONSCIENTES (opt-in) ─────────────────────────────────────────
   //    El generador NO las escribe; parity las informa (no fallan). Para divergir un
   //    color a propósito: mover su fila enforce a aquí (kind:'diverge', token:null, reason).
+  { mode: 'dark', exp: 'primary.color', token: null, kind: 'diverge', reason: 'primary dark blue-300 vs blue-400 del Kit: sobre blue-400 NINGÚN texto oscuro llega a AA (el negro puro topa en 3,74) y el blanco, que sí llega (5,62), deja la rampa sin hover ni active legales — aclarar sale de su ventana, oscurecer hunde el relleno bajo el 3:1 de 1.4.11. Un paso más claro cumple los dos criterios en los tres estados. DD-40. Revertir cuando el Kit suba su primary dark.' },
+  { mode: 'dark', exp: 'primary.hover.color', token: null, kind: 'diverge', reason: 'blue-200 vs blue-300 del Kit — se mueve con la base (misma razón que primary.color). DD-40.' },
+  { mode: 'dark', exp: 'primary.active.color', token: null, kind: 'diverge', reason: 'blue-100 vs blue-200 del Kit — se mueve con la base (misma razón que primary.color). DD-40.' },
   { mode: 'dark', exp: 'surface.*', token: null, kind: 'diverge', reason: 'gray-* navy-tinted (el Kit usa zinc en dark) — paleta de marca SC' },
   { mode: 'dark', exp: 'primary.contrast.color', token: null, kind: 'diverge', reason: 'texto sobre primario dark = gray-900 navy-tinted vs zinc-900 del Kit (misma divergencia que surface.*)' },
   { mode: 'light', exp: 'form.field.border.color', token: null, kind: 'diverge', reason: 'borde de input gray-200 (=content/overlay) vs Kit surface-300 — 1 paso, jerarquía propia' },
