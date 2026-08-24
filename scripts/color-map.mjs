@@ -56,10 +56,10 @@ export const COLOR = [
   { mode: 'light', exp: 'form.field.hover.border.color', token: 'sc-border-strong', kind: 'enforce' },
   { mode: 'light', exp: 'form.field.disabled.background', token: 'sc-bg-disabled', kind: 'enforce' },
   { mode: 'light', exp: 'form.field.invalid.border.color', token: 'sc-border-error', kind: 'enforce' },
-  { mode: 'light', exp: 'form.field.icon.color', token: null, kind: 'diverge', reason: 'icono de campo slate-600 vs Kit gray-400: el del Kit da 2.04:1 sobre blanco y un icono necesita 3:1 (WCAG 1.4.11). slate-500 tampoco llega (2.95). Mismo movimiento y mismo motivo que text.muted.color. Revertir cuando el Kit suba el suyo.' },
+  { mode: 'light', exp: 'form.field.icon.color', token: null, kind: 'diverge', reason: 'icono de campo slate-600 vs Kit surface-400: el del Kit da 2.04:1 sobre blanco y un icono necesita 3:1 (WCAG 1.4.11). slate-500 tampoco llega (2.95). Mismo movimiento y mismo motivo que text.muted.color — que YA revirtió: el sync del 2026-08-24 trajo el Kit a slate-600 y esa fila volvió a enforce. O sea que esta condición no es teórica, dispara. Revertir cuando el Kit suba también el suyo (hoy sigue en surface-400, verificado contra el export del 24-ago).' },
   // ── navigation (light) ────────────────────────────────────────────────────────
   { mode: 'light', exp: 'navigation.item.color', token: 'sc-text-primary', kind: 'enforce' },
-  { mode: 'light', exp: 'navigation.item.icon.color', token: null, kind: 'diverge', reason: 'icono de navegación slate-600 vs Kit gray-400: mismo token y mismo motivo que form.field.icon.color — 2.04:1, por debajo del 3:1 de 1.4.11.' },
+  { mode: 'light', exp: 'navigation.item.icon.color', token: null, kind: 'diverge', reason: 'icono de navegación slate-600 vs Kit surface-400: mismo token y mismo motivo que form.field.icon.color — 2.04:1, por debajo del 3:1 de 1.4.11.' },
   { mode: 'light', exp: 'navigation.item.active.background', token: 'sc-bg-secondary-hover', kind: 'enforce' },
   // ── list (light) ──────────────────────────────────────────────────────────────
   { mode: 'light', exp: 'list.option.color', token: 'sc-text-primary', kind: 'enforce' },
@@ -88,7 +88,12 @@ export const COLOR = [
   { mode: 'light', exp: 'form.field.placeholder.color', token: null, kind: 'diverge', reason: 'placeholder gray-400 vs Kit surface-500 — un punto más tenue' },
   { mode: 'light', exp: 'form.field.disabled.color', token: null, kind: 'diverge', reason: 'disabled gray-300 vs Kit surface-500 — más tenue a propósito' },
   { mode: 'light', exp: 'overlay.select.background', token: null, kind: 'diverge', reason: '--sc-bg-elevated (elevación propia) vs Kit surface-0' },
-  { mode: 'light', exp: 'text.muted.color', token: null, kind: 'diverge', reason: 'texto secundario slate-600 vs Kit surface-500: el del Kit da 2.95:1 sobre blanco, bajo AA en sus 178 usos. Mismo movimiento que accent en customs-catalog §1.4 (cyan-600 3.46 → sky-600). Revertir cuando el Kit suba el suyo. ⚠️ CONDICIÓN YA CUMPLIDA, medida el 2026-08-24: en el FICHERO de Figma esta variable resuelve a slate/600 (#6f7784), el mismo valor que pusimos a mano. Lo que sigue diciendo surface-500 es el EXPORT (kit-export-dtcg.json, generado el 2026-07-22 por el plugin del Theme Designer), y parity compara contra el export. Es decir: no se puede pasar a enforce hasta que alguien vuelva a exportar desde el Theme Designer — hacerlo antes deja parity en rojo. Ver el hand-off de design-system, sección del desfase export↔fichero.' },
+  // `text.muted.color` FUE divergencia de marca desde julio (el Kit daba surface-500 = 2.95:1 sobre
+  // blanco, bajo AA en sus 178 usos) y volvió a enforce el 2026-08-24: el sync del Theme Designer
+  // (`e3f84f1`) trajo el export diciendo `{slate.600}`, o sea el MISMO valor que habíamos puesto a
+  // mano. La condición de reversión escrita entonces —«revertir cuando el Kit suba el suyo»— se
+  // cumplió sola. Sus dos aliases (`list.option.group.color`, `navigation.submenu.label.color`) la siguen.
+  { mode: 'light', exp: 'text.muted.color', token: 'sc-text-secondary', kind: 'enforce' },
   { mode: 'dark', exp: 'overlay/content/form.field', token: null, kind: 'diverge', reason: 'resuelven vía capa 7 (.sc-dark, navy-tinted) — no se cruzan contra el zinc del Kit' },
 ];
 

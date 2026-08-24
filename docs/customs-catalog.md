@@ -76,17 +76,48 @@ Sobre Figma SC: pedir el link del componente ANTES de tocar nada. Replicar 1:1 l
 
 ---
 
-### 1.3 Warn → amber (no orange)
+### 1.3 Warn → yellow · 2026-08-24 — RETIRADA
 
-| Componente | Figma | SC | Mapping |
-|------------|-------|-----|---------|
-| Button `severity=warn` | orange-500 (`#f97316`) | amber-500 (`#f59e0b`) | `primitive.orange → amber` (preset `base.ts`) |
-| Toast `severity=warn` | (mapeado a primitive orange) | amber | `--sc-toast-warn-* = var(--sc-color-amber-*)` |
-| Message / Notification warn chrome | orange | amber | (idem) |
+> **Esto ya NO es una divergencia: es la retirada de una que el Kit resolvió solo.**
 
-**Razón**: el amber es coherente con el warn semantic establecido en Message + Toast desde antes del audit. El orange de Aura quedaría demasiado naranja-saturado para el resto del UI SC. Se mantiene amber.
+Durante meses el warn de marca fue **amber** contra el **orange** del Kit. El sync del Theme
+Designer del 24-ago (`e3f84f1`) trajo el Kit a **yellow**, y la decisión fue seguirlo. Ya no hay
+nada que divergir.
 
-**Nota**: `--sc-color-orange-*` sigue existiendo como primitive — es la paleta del label palette (`--sc-label-orange-*`). NO se toca; los labels siguen usando orange real. El override solo afecta el slot `primitive.orange` que el button de PrimeNG consume para warn.
+| Componente | Kit (export 24-ago) | SC | Dónde |
+|------------|--------------------|-----|-------|
+| Button `severity=warn` | `{yellow.700}` | idem | zona `@sc-gen` de `04-component.css` — la escribe el generador |
+| Toast `severity=warn` | `warn.color {yellow.700}` · `background #fefce8f2` · `border {yellow.200}` | idem | `--sc-toast-warn-*` |
+| Semánticos `--sc-*-warning` | (el Kit no declara rampa semántica de warning: es nuestra) | familia yellow | `02-semantic.css` · `07-dark.css` |
+| Slot `primitive.orange` y `primitive.yellow` | — | los dos → `--sc-color-yellow-*` | preset `base.ts` |
+
+**Por qué las DOS familias apuntan a yellow**: el Kit habla de warn en slots que PrimeNG llama
+unas veces `orange` y otras `yellow`. Con solo una remapeada, el tag salía amber en claro y yellow
+en oscuro — medido el 24-ago, antes de esto. Y **borrar** el remap tampoco vale: `tag.ts` y
+`button.ts` referencian `{orange.N}` y se irían al naranja real de los labels.
+
+**Dos pasos NO se copian literales del Kit, y los dos por contraste medido:**
+
+- `--sc-icon-warning` → **yellow-700**, no yellow-600. El 600 da **2.94:1** sobre blanco y su
+  consumidor real es el trazo de `sc-gauge`: elemento gráfico, listón 3:1 (WCAG 1.4.11). El 700
+  da 4.92. Es el mismo criterio que ya aplicaba `text-warning` — cuando el paso del Kit no
+  cumple, se sube uno.
+- `--sc-toast-warn-icon-bg` → **yellow-700**, no yellow-500. Aquí el cuadro de icono es un
+  **custom nuestro que el Kit no tiene** (su toast es fondo pálido + glifo oscuro, sin pastilla),
+  y lleva glifo **blanco** encima. yellow-500 daría 1.92:1. El 700 es, además, el paso que el
+  propio Kit declara legible para warn (`toast.warn.color`).
+
+**Lo que salió a la luz al medir esto** (anterior al sync, no causado por él): de los cinco
+cuadros de icono del toast, **tres no llegaban al 3:1 con su glifo blanco** — success `green-500`
+2.28, warn `amber-500` 2.15, secondary `slate-500` 2.95. Los tres se mueven al paso que el Kit
+declara legible para su severidad (`green-600` 3.30 · `yellow-700` 4.92 · `slate-600` 4.52).
+Error (3.76) y violet (4.23) ya cumplían y **no se tocan**: mover un color que pasa sería un
+cambio gratuito. Los pasos difieren entre sí porque los tonos tienen luminancias distintas — la
+coherencia aquí es "todos superan 3:1", no "todos en el mismo escalón".
+
+**Nota**: `--sc-color-amber-*` sigue existiendo como primitiva — es la paleta de labels de AED
+(`--sc-label-amber-*`), que **no pasa por el remap** y conserva su amber. Igual que
+`--sc-color-orange-*`.
 
 ---
 

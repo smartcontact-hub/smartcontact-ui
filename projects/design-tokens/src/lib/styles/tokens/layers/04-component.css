@@ -19,7 +19,7 @@
   /* Button tokens (`--sc-btn-*`) removed S34 — `.btn` global utility was
    * deprecated and 39 usages migrated to `<p-button>`. PrimeNG button
    * tokens (`--p-button-*`) consume severity tokens directly via
-   * `sc-preset.ts` (primary navy, info electric-blue, warn amber). The
+   * `sc-preset.ts` (primary navy, info electric-blue, warn yellow). The
    * button override in sc-preset.ts sets paddingX/paddingY/borderRadius/gap
    * 1:1 with Figma SC PrimeUI Kit Pro (`button/padding/*`). */
 
@@ -131,7 +131,7 @@
   --sc-toast-success-bg: color-mix(in srgb, var(--sc-color-green-50) 95%, transparent);
   --sc-toast-success-border: var(--sc-color-green-200);
   --sc-toast-success-icon: var(--sc-color-green-600);
-  --sc-toast-success-icon-bg: var(--sc-color-green-500);
+  --sc-toast-success-icon-bg: var(--sc-color-green-600);
 
   /* Info — Figma `#eff6fff2` bg (blue-50 95%), `#bfdbfe` border (blue-200 ≈ azure), `#2563eb` icon */
   --sc-toast-info-bg: color-mix(in srgb, var(--sc-color-azure-50) 95%, transparent);
@@ -142,10 +142,10 @@
   ); /* SC override: icon-square uses electric-blue per brand */
 
   /* Warn — Figma `#fefce8f2` bg (yellow-50 95%), `#fef08a` border (yellow-200), `#ca8a04` icon */
-  --sc-toast-warn-bg: color-mix(in srgb, var(--sc-color-amber-50) 95%, transparent);
-  --sc-toast-warn-border: var(--sc-color-amber-200);
-  --sc-toast-warn-icon: var(--sc-color-amber-600);
-  --sc-toast-warn-icon-bg: var(--sc-color-amber-500);
+  --sc-toast-warn-bg: color-mix(in srgb, var(--sc-color-yellow-50) 95%, transparent);
+  --sc-toast-warn-border: var(--sc-color-yellow-200);
+  --sc-toast-warn-icon: var(--sc-color-yellow-700);
+  --sc-toast-warn-icon-bg: var(--sc-color-yellow-700);
 
   /* Error — Figma `#fef2f2f2` bg (red-50 95%), `#fecaca` border (red-200), `#dc2626` icon */
   --sc-toast-error-bg: color-mix(in srgb, var(--sc-color-red-50) 95%, transparent);
@@ -157,7 +157,7 @@
   --sc-toast-secondary-bg: var(--sc-color-slate-100); /* slate-100 */
   --sc-toast-secondary-border: var(--sc-color-slate-200); /* slate-200 */
   --sc-toast-secondary-icon: var(--sc-color-slate-600); /* slate-600 */
-  --sc-toast-secondary-icon-bg: var(--sc-color-slate-500);
+  --sc-toast-secondary-icon-bg: var(--sc-color-slate-600);
 
   /* Violet — SC EXTENSION (NO existe en Figma). Reservado para
    * "neutral notice" tipo "Borrador creado / renombrado" — más suave
