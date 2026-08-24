@@ -8,6 +8,7 @@ import {
   inject,
   signal,
   viewChild,
+  viewChildren,
 } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { ScIconComponent } from '@smartcontact-hub/icons';
@@ -52,6 +53,7 @@ export class ScCommandPaletteComponent {
   protected readonly highlighted = signal(0);
 
   private readonly searchInput = viewChild<ElementRef<HTMLInputElement>>('searchInput');
+  private readonly itemEls = viewChildren<ElementRef<HTMLButtonElement>>('itemEl');
 
   protected readonly filtered = computed<readonly ScPaletteCommand[]>(() => {
     const q = this.query().toLowerCase().trim();
@@ -141,6 +143,24 @@ export class ScCommandPaletteComponent {
     return this.filtered().findIndex((c) => c.id === cmd.id);
   }
 
+  /**
+   * Resaltado por ratón. Lo dispara `(mousemove)` y **no** `(mouseenter)`, a
+   * propósito: el hover solo cuenta cuando el ratón se MUEVE de verdad.
+   *
+   * Con `mouseenter`, abrir la paleta debajo de un puntero parado movía el
+   * resaltado al ítem que cayera bajo el cursor, sin que el usuario tocara
+   * nada — y la paleta se abre sobre todo por atajo de teclado, así que la
+   * primera flecha partía de un sitio que él no eligió. Medido el 2026-08-24
+   * en `/#/components/commandpalette` (1280x720): al aparecer el overlay bajo
+   * un puntero quieto el navegador dispara `mouseover` + `mouseenter` pero
+   * **no** `mousemove` ni `pointermove`, así que este cambio deja el resaltado
+   * donde lo puso el `effect` de apertura (índice 0) y el hover sigue
+   * funcionando en cuanto el ratón se mueve. Es lo que hacen cmdk/VS Code.
+   *
+   * Corolario que también arregla: con la lista scrolleada por teclado
+   * (`.palette__body` tiene `overflow-y:auto`), los ítems que pasaban bajo un
+   * cursor parado robaban el resaltado a las flechas.
+   */
   protected onItemHover(cmd: ScPaletteCommand): void {
     const idx = this.indexOf(cmd);
     if (idx >= 0) this.highlighted.set(idx);
@@ -159,6 +179,35 @@ export class ScCommandPaletteComponent {
     const len = this.filtered().length;
     if (len === 0) return;
     this.highlighted.update((i) => (i + delta + len) % len);
+    this.scrollHighlightedIntoView();
+  }
+
+  /**
+   * Las flechas tienen que ARRASTRAR la vista, no solo el resaltado.
+   *
+   * `.palette__body` es `overflow-y:auto` dentro de un panel `max-height:70vh`, y
+   * en supervisor la lista sale del árbol de navegación entera, así que no cabe.
+   * Medido el 2026-08-24 con la ventana a 1280x400: sin esto `scrollTop` se
+   * quedaba en 0 las cinco pulsaciones y a partir de la tercera el ítem activo
+   * caía 3, 78 y 112 px por DEBAJO del borde visible — o sea que ↓ + Enter
+   * ejecutaba un comando que el usuario no llegaba a ver.
+   *
+   * `block:'nearest'` mueve lo mínimo (y no arrastra la página cuando la paleta
+   * ya se ve entera), que es lo que se espera navegando una lista.
+   *
+   * ⚠️ El índice se traduce a propósito. `highlighted` indexa `filtered()`, pero
+   * el DOM se pinta desde `grouped()`: si un consumidor publicase sus comandos
+   * con las categorías INTERCALADAS (A, B, A), los dos órdenes dejarían de
+   * coincidir e indexar los elementos a pelo scrollearía al ítem equivocado. Por
+   * eso se casa por `id`. (Ninguno de los dos consumidores de hoy intercala.)
+   */
+  private scrollHighlightedIntoView(): void {
+    const cmd = this.filtered()[this.highlighted()];
+    if (!cmd) return;
+    const domIndex = this.grouped()
+      .flatMap((g) => g.items)
+      .findIndex((c) => c.id === cmd.id);
+    this.itemEls()[domIndex]?.nativeElement.scrollIntoView({ block: 'nearest' });
   }
 
   private runHighlighted(): void {

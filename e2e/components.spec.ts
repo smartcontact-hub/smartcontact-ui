@@ -925,15 +925,18 @@ test.describe('sc-command-palette', () => {
 
     /* Abre con TECLADO y con el ratón aparcado fuera, a propósito.
      *
-     * El palette resalta el ítem bajo el cursor —`(mouseenter)` → `onItemHover`— y
-     * Playwright deja el ratón donde hizo clic, así que al abrirse el overlay DEBAJO del
-     * puntero el resaltado salta al ítem que caiga ahí. Medido el 2026-08-24: abriendo con
-     * `.click()` el activo al abrir era «Usuarios» (índice 3) y ↓ ejecutaba «Crear grupo»;
-     * con el ratón fuera es «Dashboard» (0) y ↓ da «Grupos», que es lo que este test mide.
+     * Esto empezó siendo una tirita: el palette resaltaba el ítem bajo el cursor con
+     * `(mouseenter)`, Playwright deja el ratón donde hizo clic, y al abrirse el overlay
+     * DEBAJO del puntero el resaltado saltaba a ese ítem. Medido el 2026-08-24: con
+     * `.click()` el activo al abrir era «Usuarios» (3) y ↓ ejecutaba «Crear grupo». O sea
+     * que el `.click()` ataba esta aserción de TECLADO a la geometría de la página, y bastó
+     * con que la cabecera de sc-docs adelgazara 1px para volverla roja.
      *
-     * O sea que el `.click()` ataba esta aserción de TECLADO a la geometría de la página:
-     * bastó con que la cabecera de sc-docs adelgazara 1px para volverlo rojo. `focus()` +
-     * Enter dispara el mismo handler del botón (es un `<button>`), sin mover el puntero. */
+     * La CAUSA ya está arreglada en el componente (`(mouseenter)` → `(mousemove)`; el gate
+     * es el test de aquí abajo), así que hoy el `.click()` también daría verde. Se abre por
+     * teclado igual: una aserción de teclado se prueba con el teclado, y así este test mide
+     * el modelo de teclado y no el sitio donde quedó el ratón. `focus()` + Enter dispara el
+     * mismo handler del botón (es un `<button>`), sin mover el puntero. */
     await page.mouse.move(0, 0);
     await page.getByTestId('open-palette').focus();
     await page.keyboard.press('Enter');
@@ -961,6 +964,130 @@ test.describe('sc-command-palette', () => {
     await expect(palette).toBeHidden();
 
     await screenshotBaseline(page, 'commandpalette');
+  });
+
+  /* El resaltado inicial NO puede depender de dónde quedó el ratón.
+   *
+   * La paleta se abre sobre todo por atajo (⌘K), y el puntero se queda donde
+   * estuviera. Con `(mouseenter)` el navegador disparaba el hover al aparecer el
+   * overlay bajo un cursor QUIETO —`mouseover`+`mouseenter` sí, `mousemove` no— y
+   * el resaltado saltaba a ese ítem: medido el 2026-08-24, con el puntero sobre el
+   * ítem 3 el activo al abrir era «Usuarios» en vez de «Dashboard», así que la
+   * primera flecha partía de un sitio que el usuario no eligió.
+   *
+   * ⚠️ Este test NO puede leer el resaltado y ya: la primera versión lo hacía y
+   * pasaba en VERDE contra el componente sin arreglar, porque leía antes de que el
+   * evento llegara. Por eso espera primero a que el `mouseover` bajo el puntero
+   * parado esté CONFIRMADO —el estímulo llegó— y solo entonces exige que el activo
+   * siga siendo el ítem 0. Con esa espera, contra `(mouseenter)` se pone rojo. */
+  test('el ratón parado sobre la lista NO roba el resaltado inicial', async ({ page }) => {
+    await gotoPage(page, 'commandpalette');
+    const palette = page.locator('.palette[role="dialog"]');
+    const items = palette.locator('.palette__item');
+    const activeIndex = () =>
+      page.evaluate(() =>
+        Array.from(document.querySelectorAll('.palette__item')).findIndex((el) =>
+          el.classList.contains('palette__item--active'),
+        ),
+      );
+    const openByKeyboard = async () => {
+      await page.getByTestId('open-palette').focus();
+      await page.keyboard.press('Enter');
+      await expect(palette).toBeVisible();
+    };
+
+    /* Abre con el ratón fuera para medir DÓNDE cae cada ítem, y ciérrala. */
+    await page.mouse.move(0, 0);
+    await openByKeyboard();
+    const boxes = await items.evaluateAll((els) =>
+      els.map((el) => {
+        const r = el.getBoundingClientRect();
+        return { x: Math.round(r.x + r.width / 2), y: Math.round(r.y + r.height / 2) };
+      }),
+    );
+    expect(await activeIndex()).toBe(0);
+    await page.keyboard.press('Escape');
+    await expect(palette).toBeHidden();
+
+    /* Aparca el puntero donde caerá el ítem 3 e instrumenta el `mouseover`. */
+    await page.mouse.move(boxes[3].x, boxes[3].y);
+    await page.evaluate(() => {
+      (window as unknown as { __hovered: boolean }).__hovered = false;
+      document.addEventListener(
+        'mouseover',
+        (e) => {
+          if ((e.target as HTMLElement).closest?.('.palette__item')) {
+            (window as unknown as { __hovered: boolean }).__hovered = true;
+          }
+        },
+        true,
+      );
+    });
+
+    /* Reabre por teclado, sin mover el ratón ni un píxel. */
+    await openByKeyboard();
+
+    /* El estímulo LLEGÓ (si esto no se cumple, el test no está midiendo nada)… */
+    await expect
+      .poll(() => page.evaluate(() => (window as unknown as { __hovered: boolean }).__hovered), {
+        timeout: 5_000,
+      })
+      .toBe(true);
+    /* …y aun así el resaltado sigue donde lo dejó la apertura. */
+    expect(await activeIndex()).toBe(0);
+
+    /* Y el hover sigue vivo: en cuanto el ratón se MUEVE de verdad, manda él. */
+    await page.mouse.move(boxes[1].x, boxes[1].y, { steps: 8 });
+    await expect(items.nth(1)).toHaveClass(/palette__item--active/);
+    await page.keyboard.press('Enter');
+    await expect(page.getByTestId('palette-last-run')).toHaveText('Ejecutado: Grupos');
+  });
+
+  /* Las flechas arrastran la VISTA, no solo el resaltado.
+   *
+   * `.palette__body` scrollea (`overflow-y:auto` bajo un panel `max-height:70vh`) y
+   * en supervisor la lista es el árbol de navegación entero. Medido el 2026-08-24
+   * con la ventana a 1280x400: sin `scrollIntoView`, `scrollTop` se quedaba en 0 las
+   * cinco pulsaciones y a partir de la tercera el activo caía 3, 78 y 112 px por
+   * debajo del borde visible, así que ↓ + Enter ejecutaba algo invisible.
+   *
+   * La ventana baja es el instrumento: si con ella la lista NO scrollease, este test
+   * no mediría nada — por eso lo primero que hace es exigir que scrollee. */
+  test('las flechas arrastran la vista: el resaltado no se sale de la lista', async ({ page }) => {
+    await page.setViewportSize({ width: 1280, height: 400 });
+    await gotoPage(page, 'commandpalette');
+    const palette = page.locator('.palette[role="dialog"]');
+
+    const state = () =>
+      page.evaluate(() => {
+        const body = document.querySelector('.palette__body') as HTMLElement;
+        const items = Array.from(document.querySelectorAll('.palette__item')) as HTMLElement[];
+        const idx = items.findIndex((el) => el.classList.contains('palette__item--active'));
+        const b = body.getBoundingClientRect();
+        const a = items[idx]?.getBoundingClientRect();
+        return {
+          idx,
+          scrollable: body.scrollHeight > body.clientHeight + 1,
+          inView: a ? a.top >= b.top - 1 && a.bottom <= b.bottom + 1 : false,
+        };
+      });
+
+    await page.mouse.move(5, 5);
+    await page.getByTestId('open-palette').focus();
+    await page.keyboard.press('Enter');
+    await expect(palette).toBeVisible();
+    expect((await state()).scrollable, 'la ventana baja debe forzar scroll en la lista').toBe(true);
+
+    const items = palette.locator('.palette__item');
+    for (let i = 1; i <= 5; i++) {
+      await page.keyboard.press('ArrowDown');
+      /* Espera RETENTANTE al resaltado antes de medir: leer la geometría a pelo
+       * justo después de la tecla lo pilla antes de que Angular pinte la clase, y
+       * eso ya dio un verde falso en la primera versión del test de arriba. */
+      await expect(items.nth(i)).toHaveClass(/palette__item--active/);
+      const s = await state();
+      expect(s.inView, `tras ↓ x${i} el ítem ${i} debe seguir DENTRO de la lista`).toBe(true);
+    }
   });
 });
 
