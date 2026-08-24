@@ -251,9 +251,12 @@ lo que hace que te la creas cuando te toca. Lee el índice siempre; el cuerpo, c
    inadvertido porque tampoco leí el run (la otra mitad de esta regla). Racionalización a desarmar:
    **"es solo un token/CSS" NO es "verify basta"** — cualquier cambio visual o de token puede mover
    un baseline de `e2e`; tras uno, corre `npm run e2e:structure` (barato) antes de pushear, y la
-   cadena entera una vez antes del push que shippea. **No hay atajo de un comando** que corra los 8
-   pasos del CI (medido s29: no existe `preflight` ni hook de pre-push) — mientras no lo haya, el
-   ensamblaje manual de `ci.yml` es tuyo, y es exactamente lo que se cae bajo prisa.
+   cadena entera una vez antes del push que shippea. **Ese atajo de un comando ya existe**: `npm run
+   preflight` (creado en `69f0951` cerrando s29, cuando esta regla aún decía que no lo había), con un
+   gate anti-drift que lo mantiene cuadrado con `ci.yml`. Corre ESE, una vez, sobre el árbol final —
+   el ensamblaje manual de `ci.yml` es justo lo que se cae bajo prisa. *(s30: preflight corría un
+   subconjunto del smoke —1 test de 68, dejando fuera todo `components.spec.ts`—; hoy corre
+   `CI=1 npm run e2e` entero.)*
 
    *Corolario (s21), y es de COSTE, no de cobertura: la cadena entera SÍ, pero UNA sola vez por
    tarea.* Esta regla dice qué correr y no dice cuántas veces, así que la cumplí commit a
