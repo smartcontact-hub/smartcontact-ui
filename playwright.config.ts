@@ -1,5 +1,7 @@
 import { defineConfig } from '@playwright/test';
 
+import { reuseOnlyOwnServer } from './scripts/playwright-reuse-guard.mjs';
+
 export default defineConfig({
   testDir: 'e2e',
   /* Tolerancia de las baselines visuales (`components.spec.ts`).
@@ -30,7 +32,9 @@ export default defineConfig({
   webServer: {
     command: 'npm run ng -- serve sc-docs --port 4280',
     url: 'http://localhost:4280',
-    reuseExistingServer: !process.env['CI'],
+    // Reutiliza SOLO si el server del puerto es de este árbol; si es de otra
+    // sesión, para en vez de medir su código (ver el guardián).
+    reuseExistingServer: reuseOnlyOwnServer(4280),
     timeout: 180_000,
   },
 });

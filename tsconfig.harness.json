@@ -35,6 +35,15 @@
  *    TS7006/TS7023, "implicitly has an any type"). Anotarlos es otra tarea, no un
  *    efecto colateral de esta. Hoy los cubren sus propios tests
  *    (`npm run test:unit`) y `eslint`.
+ *
+ * ⚠️ PERO "fuera del `include`" no es "fuera del programa": un script que uno de
+ * estos configs IMPORTA entra igual, porque sus tipos son parte de los del config.
+ * Pasó el mismo día: `playwright.config.ts` empezó a importar
+ * `scripts/playwright-reuse-guard.mjs` y salieron 3 errores (TS7006 ×2 + TS2339 en
+ * el `catch`, que TS tipa como `unknown`). Se arreglaron con JSDoc en el script, que
+ * es lo correcto: si un config type-checkeado depende de él, su firma importa. Si
+ * añades un import así y no quieres anotarlo, el sitio de la decisión es este
+ * fichero — no un `@ts-nocheck` a escondidas en el script.
  */
 {
   "extends": "./tsconfig.json",

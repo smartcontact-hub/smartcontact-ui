@@ -141,9 +141,11 @@ lo que hace que te la creas cuando te toca. Lee el índice siempre; el cuerpo, c
    tan contentos— y no la leí; me salvó que el resultado fuera IMPOSIBLE (un componente roto
    pasando), o sea suerte, no método. **Acción**: si el canal es un puerto compartido, antes de la
    PRIMERA medición pregunta quién contesta —`lsof -nP -iTCP:<puerto> -sTCP:LISTEN` y `lsof -a -p
-   <pid> -d cwd` te dice de qué worktree es— y en un worktree corre con `CI=1`, que pone
-   `reuseExistingServer: false`: petar ruidosamente por puerto ocupado es infinitamente mejor que
-   un verde de otro. Mismo agujero en el canal de AVISO: armé un monitor del CI con
+   <pid> -d cwd` te dice de qué worktree es—: petar ruidosamente por puerto ocupado es
+   infinitamente mejor que un verde de otro. **En los cuatro configs de Playwright esto ya lo
+   vigila una máquina** (`scripts/playwright-reuse-guard.mjs`): reutiliza el server del puerto
+   solo si nació en TU directorio, y si es de otro árbol para nombrando los dos. Lo de arriba
+   sigue valiendo para cualquier otro canal compartido que no tenga guardián. Mismo agujero en el canal de AVISO: armé un monitor del CI con
    `select(.headSha=="…" or .headSha|startswith("fe804c9"))` —en `jq` el `|` dentro del `select`
    se come la precedencia— y no casó nunca; 40 minutos de silencio que le vendí a Rafa como "te
    aviso cuando termine" mientras el run llevaba 13 en VERDE. **Un filtro que no emite nada se

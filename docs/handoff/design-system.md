@@ -2,7 +2,8 @@
 
 > **Volátil.** Lo reescribe la sesión que trabaja ESTE frente, y **solo este fichero**.
 > No toques los hand-offs de otros frentes. Lo durable vive en `docs/`.
-> **Sello: 2026-08-24 — HEAD `a275686` (s33: el TypeScript de la raíz entra en `typecheck`) sobre HEAD `6eb5e11` (s31: DD-40 primary dark · red de contraste ampliada · swatches de sc-docs). Las dos son de ESTE frente y aterrizaron el mismo día sin pisarse (una toca color y a11y, la otra el tooling de tipos); encima de s30 `974c827`, contenido previo `59a5c73` (s29).**
+> **Sello: 2026-08-24 — HEAD `a275686` (s33: el TypeScript de la raíz y de `e2e/` entra en `typecheck`) sobre HEAD `242598d` (s30+s31: navbar de sc-docs · teclado del palette · DD-40 primary dark · red de contraste ampliada · desfase export↔Figma · el guardián de reutilización del dev server). Contenido previo: `59a5c73` (s29).**
+
 
 ## ✅ s33 — el TypeScript de la raíz y de `e2e/` entra en `typecheck` (`a275686`)
 
@@ -42,6 +43,14 @@ era la clase.
 |---|---|---|
 | `code-connect/**.figma.ts` | **17** | No son código: son PLANTILLAS que evalúa el CLI de Code Connect (módulo `figma` virtual + globales `_fcc_*` que inyecta el parser y no declara ningún `.d.ts`). Su gate es `npm run figma:connect:parse` —verificado en verde tras el cambio— y `eslint.config.js` ya los ignoraba por lo mismo |
 | `scripts/**/*.mjs` | **392** con `checkJs` | JS sin anotar (casi todo TS7006, "implicitly any"). Anotarlos es otra tarea, no un efecto colateral de esta; hoy los cubren `test:unit` y `eslint` |
+
+⚠️ **"Fuera del `include`" no es "fuera del programa", y se vio el mismo día.** El guardián de
+reutilización del dev server (`scripts/playwright-reuse-guard.mjs`, de s31) lo IMPORTA
+`playwright.config.ts` — y con eso entra en el gate de tipos aunque `scripts/` esté fuera del
+`include`: 3 errores (TS7006 ×2 y un TS2339 en el `catch`, que TypeScript tipa como `unknown`).
+Se arreglaron con **JSDoc en el script**, que es lo correcto: si un config type-checkeado depende
+de él, su firma es parte del contrato. Si mañana añades un import así y no quieres anotarlo, la
+decisión se toma en `tsconfig.harness.json`, no con un `@ts-nocheck` a escondidas.
 
 **Doc corregida donde afirmaba lo contrario** (quedaba falsa al aterrizar esto): la fila «Tipos +
 lint» del README —que estaba **vacía**—, el comentario del propio `playwright.cuscare.config.ts`,
@@ -239,6 +248,30 @@ color breadcrumb). Mensaje de diseño enviado. Editar Figma **no mueve la web**.
 
 ## ▶︎ SIGUIENTE — sin preguntar
 
+0. **Re-exportar desde el Theme Designer, y luego cerrar `text.muted.color`.** Medido el
+   2026-08-24 comparando el **fichero** de Figma contra `kit-export-dtcg.json`: de **164 valores
+   semánticos, 160 idénticos**; divergen **4, con 2 causas raíz**, y las dos van en la misma
+   dirección — son arreglos de contraste que el fichero YA tiene y el export no. El export está
+   **desfasado** (lo generó el plugin `primeui-figma-plugin-v4` el **2026-07-22**), no roto.
+   - `text/muted/color` (claro): fichero `slate/600` `#6f7784` · export `surface/500` `#8f97a3`.
+     Arrastra `list/option/group/color` y `navigation/submenu/label/color`, que le alias.
+     **Su condición de reversión escrita en `color-map.mjs` ("revertir cuando el Kit suba el
+     suyo") ya se cumple** — el Kit lo subió al MISMO valor que pusimos a mano. No se puede pasar
+     a `enforce` hasta re-exportar: `tokens:parity` compara contra el export, así que hacerlo
+     antes lo deja rojo. Anotado en la propia fila (`c7e9ea0`).
+   - `primary/contrast/color` (oscuro): fichero **`#ffffff`** · export `#18181b`. Ese export es
+     el origen del "seguimos al Kit" que llevaba el `07-dark.css` y de que el par quedara en
+     3,01:1. **NO revierte DD-40**: su decisión se apoya en que con texto blanco no existen hover
+     ni active legales en esa rampa, y eso es independiente de lo que diga el Kit.
+   - **El eslabón que falta**: `tokens:parity` compara *export ↔ CSS*. **Nadie compara
+     *fichero ↔ export***, y por ahí se coló esto. No puede ser un gate de CI (necesita el bridge
+     de Figma abierto), así que de momento es procedimiento manual — mismo caso que el Check D de
+     `docs:coherence`, que también es LOCAL-only y por el mismo motivo.
+   - **Cómo repetir la medición sin tropezar**: resuelve a **RGBA final los DOS lados** antes de
+     comparar. La primera pasada dio **15 divergencias falsas** por dos motivos tontos: leer los
+     colores de Figma sin el canal alfa (`#00000000` vs `#000000`) y comparar un alias contra un
+     valor ya resuelto (`slate/0` vs `#ffffff`). Y ojo con el JSON del export: **las claves raíz
+     llevan las barras dentro** (`d['aura/semantic/dark']['primary']`, no `d['aura']['semantic']`).
 1. **Los 16 del trinquete de DD-38**, por lotes (`LEGACY_PENDIENTES` en
    `scripts/audit-api-era.mjs`). El de más impacto es **`sc-icon`**: está en todas las pantallas.
    Receta y criterio, en DD-38; al migrar uno, **bórralo de la lista** (el guard lo exige).
