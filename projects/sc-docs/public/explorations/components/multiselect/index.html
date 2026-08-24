@@ -1,0 +1,44 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>MultiSelect — Smart Contact DS preview</title>
+<link rel="stylesheet" href="/tokens/index.css">
+<style>
+  body { margin:0; padding:28px; font-family:var(--sc-font-family-primary); background:var(--sc-color-slate-100); color:var(--sc-text-primary); }
+  h1 { font-size:var(--sc-font-size-450,20px); margin:0 0 4px; }
+  p.sub { color:var(--sc-text-secondary); font-size:var(--sc-font-size-100); margin:0 0 20px; }
+  .panels { display:flex; gap:20px; flex-wrap:wrap; }
+  .panel { flex:1; min-width:280px; padding:20px; border-radius:12px; background:var(--sc-bg-default); border:1px solid var(--sc-border-default); }
+  .panel h2 { font-size:var(--sc-font-size-100); text-transform:uppercase; letter-spacing:.04em; color:var(--sc-text-secondary); margin:0 0 16px; }
+  .lbl { font-size:var(--sc-font-size-100); color:var(--sc-text-subtle); margin:0 0 6px; }
+  .stack > * + * { margin-top:16px; }
+
+  .ms { display:flex; align-items:center; justify-content:space-between; gap:8px; width:260px; padding:var(--sc-scale-0-5,7px) var(--sc-scale-0-75,10.5px); border:1px solid var(--sc-border-default); border-radius:var(--sc-radius-md,6px); background:var(--sc-bg-default); font-size:var(--sc-font-size-200); line-height:var(--sc-line-height-200); }
+  .ms .arrow { color:var(--sc-text-subtle); font-size:12px; }
+  .ms .chips { display:flex; gap:6px; flex-wrap:wrap; }
+  .ms.placeholder .val { color:var(--sc-text-subtle); }
+  /* chip interno (reusa el estilo del chip) */
+  .chip { display:inline-flex; align-items:center; gap:var(--sc-scale-0-5,7px); padding:2px var(--sc-scale-0-5,7px); border-radius:var(--sc-scale-1-143,16px); background:var(--sc-color-slate-100); color:var(--sc-color-slate-800); font-size:var(--sc-font-size-200); line-height:var(--sc-line-height-200); }
+  .sc-dark .chip { background:var(--sc-color-slate-800); color:var(--sc-color-slate-0); }
+  .chip .rm { opacity:.65; }
+</style>
+</head>
+<body>
+  <h1>MultiSelect</h1>
+  <p class="sub">Preview con tokens reales. Fuente: master <code>multiselect</code> (171:6457). Con chips y placeholder.</p>
+  <div class="panels">
+    <div class="panel stack">
+      <h2>Light</h2>
+      <div><div class="lbl">Con selección (chips)</div><div class="ms"><div class="chips"><span class="chip">Email<span class="rm">✕</span></span><span class="chip">Chat<span class="rm">✕</span></span></div><span class="arrow">▾</span></div></div>
+      <div><div class="lbl">Placeholder</div><div class="ms placeholder"><span class="val">Select channels</span><span class="arrow">▾</span></div></div>
+    </div>
+    <div class="panel sc-dark stack">
+      <h2>Dark</h2>
+      <div><div class="lbl">Con selección (chips)</div><div class="ms"><div class="chips"><span class="chip">Email<span class="rm">✕</span></span><span class="chip">Chat<span class="rm">✕</span></span></div><span class="arrow">▾</span></div></div>
+      <div><div class="lbl">Placeholder</div><div class="ms placeholder"><span class="val">Select channels</span><span class="arrow">▾</span></div></div>
+    </div>
+  </div>
+</body>
+</html>

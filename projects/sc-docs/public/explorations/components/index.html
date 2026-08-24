@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Componentes — previews con tokens del DS</title>
+<link rel="stylesheet" href="/tokens/index.css">
+<style>
+  body { margin:0; padding:40px 28px; font-family:var(--sc-font-family-primary); background:var(--sc-color-slate-100); color:var(--sc-text-primary); }
+  h1 { font-size:var(--sc-font-size-500,24px); margin:0 0 4px; }
+  p.sub { color:var(--sc-text-secondary); font-size:var(--sc-font-size-200); margin:0 0 28px; max-width:640px; }
+  .grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(200px,1fr)); gap:16px; max-width:820px; }
+  a.card { display:block; padding:20px; border-radius:12px; background:var(--sc-bg-default); border:1px solid var(--sc-border-default); text-decoration:none; color:var(--sc-text-primary); transition:border-color .15s; }
+  a.card:hover { border-color:var(--sc-border-focus); }
+  a.card .name { font-size:var(--sc-font-size-300); font-weight:var(--sc-font-weight-semibold); }
+  a.card .node { font-size:var(--sc-font-size-100); color:var(--sc-text-subtle); margin-top:4px; }
+</style>
+</head>
+<body>
+  <h1>Componentes · previews</h1>
+  <p class="sub">Referencia estática, HTML nativo, consumiendo los tokens reales del DS (<code>/tokens</code>). Light + dark + estados, 1:1 con los masters de Figma.</p>
+  <div class="grid">
+    <a class="card" href="./chip/"><div class="name">Chip</div><div class="node">334:13139</div></a>
+    <a class="card" href="./tag/"><div class="name">Tag</div><div class="node">373:13337</div></a>
+    <a class="card" href="./toast/"><div class="name">Toast</div><div class="node">393:42317</div></a>
+    <a class="card" href="./select/"><div class="name">Select</div><div class="node">156:5882</div></a>
+    <a class="card" href="./multiselect/"><div class="name">MultiSelect</div><div class="node">171:6457</div></a>
+    <a class="card" href="./breadcrumb/"><div class="name">Breadcrumb</div><div class="node">185:6637</div></a>
+  </div>
+</body>
+</html>

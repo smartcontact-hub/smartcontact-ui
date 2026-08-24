@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Toast — Smart Contact DS preview</title>
+<link rel="stylesheet" href="/tokens/index.css">
+<style>
+  body { margin:0; padding:28px; font-family:var(--sc-font-family-primary); background:var(--sc-color-slate-100); color:var(--sc-text-primary); }
+  h1 { font-size:var(--sc-font-size-450,20px); margin:0 0 4px; }
+  p.sub { color:var(--sc-text-secondary); font-size:var(--sc-font-size-100); margin:0 0 20px; }
+  .panels { display:flex; gap:20px; flex-wrap:wrap; }
+  .panel { flex:1; min-width:300px; padding:20px; border-radius:12px; background:var(--sc-bg-default); border:1px solid var(--sc-border-default); }
+  .panel h2 { font-size:var(--sc-font-size-100); text-transform:uppercase; letter-spacing:.04em; color:var(--sc-text-secondary); margin:0 0 16px; }
+  .stack > * + * { margin-top:12px; }
+
+  /* Toast — summary 14, detail 12; tinte por severidad */
+  .toast { display:flex; align-items:flex-start; gap:var(--sc-scale-0-75,10.5px); padding:var(--sc-scale-0-75,10.5px) var(--sc-scale-1,14px); border-radius:var(--sc-radius-md,6px); }
+  .toast .ic { flex:0 0 auto; font-size:16px; line-height:1; margin-top:1px; }
+  .toast .body { flex:1; }
+  .toast .summary { font-size:var(--sc-font-size-200); line-height:var(--sc-line-height-200); font-weight:var(--sc-font-weight-semibold); }
+  .toast .detail { font-size:var(--sc-font-size-100); line-height:var(--sc-line-height-100); color:var(--sc-text-secondary); margin-top:2px; }
+  .toast .x { opacity:.6; }
+  .toast--success { background:var(--sc-color-green-100); } .toast--success .ic, .toast--success .summary { color:var(--sc-color-green-700); }
+  .toast--info    { background:var(--sc-color-sky-100); }   .toast--info .ic, .toast--info .summary { color:var(--sc-color-sky-800); }
+  .toast--warn    { background:var(--sc-color-amber-100); } .toast--warn .ic, .toast--warn .summary { color:var(--sc-color-amber-700); }
+  .toast--danger  { background:var(--sc-color-red-100); }   .toast--danger .ic, .toast--danger .summary { color:var(--sc-color-red-700); }
+</style>
+</head>
+<body>
+  <h1>Toast</h1>
+  <p class="sub">Preview con tokens reales. Fuente: master <code>toast</code> (393:42317). Summary 14 · detail 12 · severidades.</p>
+  <div class="panels">
+    <div class="panel stack">
+      <h2>Light</h2>
+      <div class="toast toast--success"><span class="ic">✔</span><div class="body"><div class="summary">Success</div><div class="detail">Message Content</div></div><span class="x">✕</span></div>
+      <div class="toast toast--info"><span class="ic">ⓘ</span><div class="body"><div class="summary">Info</div><div class="detail">Message Content</div></div><span class="x">✕</span></div>
+      <div class="toast toast--warn"><span class="ic">⚠</span><div class="body"><div class="summary">Warn</div><div class="detail">Message Content</div></div><span class="x">✕</span></div>
+      <div class="toast toast--danger"><span class="ic">✕</span><div class="body"><div class="summary">Danger</div><div class="detail">Message Content</div></div><span class="x">✕</span></div>
+    </div>
+    <div class="panel sc-dark stack">
+      <h2>Dark</h2>
+      <div class="toast toast--success"><span class="ic">✔</span><div class="body"><div class="summary">Success</div><div class="detail">Message Content</div></div><span class="x">✕</span></div>
+      <div class="toast toast--info"><span class="ic">ⓘ</span><div class="body"><div class="summary">Info</div><div class="detail">Message Content</div></div><span class="x">✕</span></div>
+      <div class="toast toast--danger"><span class="ic">✕</span><div class="body"><div class="summary">Danger</div><div class="detail">Message Content</div></div><span class="x">✕</span></div>
+    </div>
+  </div>
+</body>
+</html>
