@@ -13,6 +13,37 @@
 
 ---
 
+## 2026-08-24
+
+> Método: pasada A (deuda de código, ≤5) + pasada B (deriva de docs) + pasada C (PRs parados
+> >7d). Contra AGENTS.md/.impeccable.md/customs-catalog.md/DOCS-INDEX.md. Pasada C: MCP de
+> GitHub confirma **0 PRs abiertos** — sin hallazgos. Pasada A: sin hallazgos nuevos (revisado
+> RxJS vs signals — los 3 `.subscribe()` del supervisor son legítimos, sin alternativa signal —,
+> `audit:api-era` en 77 señales/16 decoradores sin regresión, CVA de los wrappers de formulario,
+> `canonicalize()` más allá del ya trackeado, y los stores de `repositories/instances/`; todo
+> limpio o ya cubierto por el backlog abierto de sesiones previas).
+
+### Deuda de código
+
+sin hallazgos.
+
+### Deriva de docs
+
+- [ ] `docs/customs-catalog.md:459` (§2.9 IftaLabel) cita el color del label como
+  `iftalabel/color #8f97a3`, atado explícitamente a `--sc-text-subtle`, pero ese token resuelve
+  hoy a `--sc-color-slate-600` = `#6f7784` (`02-semantic.css:84` → `01-primitive.css:58`);
+  `#8f97a3` es slate-500 (`01-primitive.css:57`), el valor previo al cambio de contraste AA del
+  2026-07-19 (el propio §1.7 de este catálogo, "AA por delante de la jerarquía"). El pie del
+  documento marca la última actualización en 2026-08-13 — posterior al cambio real — así que
+  esta fila quedó fuera de ese barrido → corregir el hex a `#6f7784`, o mejor, quitar el hex fijo
+  y remitir solo al nombre del token para que no vuelva a desincronizarse. [arréglalo]
+
+### Trabajo sin mergear
+
+sin hallazgos.
+
+---
+
 ## 2026-08-17
 
 > Método: pasada A (deuda de código, ≤5) + pasada B (deriva de docs) + pasada C (PRs parados
