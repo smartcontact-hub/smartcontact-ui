@@ -67,6 +67,9 @@ export function reuseOnlyOwnServer(port) {
  * Se distinguen los dos casos a propósito: "nadie escucha" es inocuo, pero
  * "no puedo saberlo" con algo escuchando NO lo es, y colapsarlos devolvería el
  * agujero que este fichero existe para tapar.
+ *
+ * @param {number} port
+ * @returns {number | null | undefined}
  */
 function listenerPid(port) {
   try {
@@ -77,12 +80,17 @@ function listenerPid(port) {
     return out ? Number(out.split('\n')[0]) : null;
   } catch (err) {
     // `lsof -t` sale con 1 cuando no hay ninguna coincidencia: eso es "nadie".
-    if (err && err.code === 'ENOENT') return undefined;
+    if (err && /** @type {NodeJS.ErrnoException} */ (err).code === 'ENOENT') return undefined;
     return null;
   }
 }
 
-/** Directorio en el que arrancó ese proceso, o `undefined` si no se puede leer. */
+/**
+ * Directorio en el que arrancó ese proceso, o `undefined` si no se puede leer.
+ *
+ * @param {number} pid
+ * @returns {string | undefined}
+ */
 function processCwd(pid) {
   try {
     const out = execFileSync('lsof', ['-a', '-p', String(pid), '-d', 'cwd', '-Fn'], {

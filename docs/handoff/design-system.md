@@ -2,7 +2,8 @@
 
 > **Volátil.** Lo reescribe la sesión que trabaja ESTE frente, y **solo este fichero**.
 > No toques los hand-offs de otros frentes. Lo durable vive en `docs/`.
-> **Sello: 2026-08-24 (s30+s31) — HEAD `afc53cc` (navbar de sc-docs · teclado del palette · DD-40 primary dark · red de contraste ampliada · sync del Kit del 24-ago · el desfase export↔fichero de Figma). Contenido previo: `59a5c73` (s29).**
+> **Sello: 2026-08-24 — sesión de CONSOLIDACIÓN. Describe el merge de dos estados que hasta hoy vivían separados: HEAD `97f34e1` (s30+s31: navbar de sc-docs · teclado del palette · DD-40 primary dark · red de contraste ampliada · sync del Kit del 24-ago · `SC_DOCS_URL` · el guardián de reutilización del dev server) **más el rescate de s33**, HEAD `a275686` (el TypeScript de la raíz y de `e2e/` entra en `typecheck`), que llevaba 6 commits terminados y varados fuera de `main`. Contenido previo: HEAD `59a5c73` (s29).**
+
 ## ✅ s31 (b) · Sync del Kit tras un mes parado, y qué dice Figma del primario oscuro
 
 **El puente llevaba muerto desde el 22 de julio** (último PR de sync: #17). Causa: el token de
@@ -29,6 +30,58 @@ sin escape por env, y con dos worktrees de agente vivos moría con «Port 4280 i
 ⚠️ Pero **no apuntes el `component-structure` a un build de producción**: su baseline guarda
 `outerHTML` y Angular escribe `<!--container-->` en dev y `<!---->` en prod → 16 filas en rojo que
 no son una regresión. Está avisado en el propio config.
+
+
+## ✅ s33 — el TypeScript de la raíz y de `e2e/` entra en `typecheck` (`a275686`)
+
+**Ningún `tsconfig` del repo incluía la raíz.** Los de apps y libs arrancan todos en
+`projects/*/src`, así que **33 ficheros no los type-checkeaba nadie**: los cuatro
+`playwright*.config.ts`, `eslint.config.js` y los 28 de `e2e/`. Y `eslint` no tapa ese hueco
+porque no reporta errores de tipo.
+
+Por ahí pasó en s32 un `reducedMotion: 'reduce'` suelto en el `use` de
+`playwright.cuscare.config.ts` —en Playwright 1.60 va dentro de `contextOptions`—: error de tipo
+real, `verify` entero en verde y la suite de CusCare inestable bajo carga. El caso concreto ya lo
+cubría `e2e/cuscare/harness.spec.ts` (comprueba el estado EN LA PÁGINA); lo que quedaba abierto
+era la clase.
+
+- **`tsconfig.harness.json`** (nuevo), encadenado en el script `typecheck` → entra en `verify` y
+  en el CI. **No añade eslabón a la cadena**: extiende un gate que ya estaba, así que `verify`
+  siguen siendo **26 gates** y las 4 cifras sin gatear (`CLAUDE.md`, `DOCS-INDEX`,
+  `AUDIT-SEMANAL`, `SKILL.md` de la rutina) **no se tocan**.
+- **Nace en verde, medido ANTES de escribirlo**: 0 errores sobre los 33 ficheros tal cual estaban.
+- **`include` por PATRÓN** (`*.ts`, `*.js`, `e2e/**/*.ts`): un `.ts` nuevo en la raíz o en `e2e/`
+  entra solo, sin que nadie se acuerde.
+- **`allowJs`/`checkJs`** por `eslint.config.js`: su `// @ts-check` de la primera línea **no hacía
+  nada**, porque el fichero no estaba en ningún programa de TypeScript.
+- **Validado en ROJO en sus tres ejes**, no solo en verde: con el bug histórico reinsertado,
+  `npm run typecheck` sale con **exit 2** y `TS2769 «'reducedMotion' does not exist in type
+  'UseOptions<…>'»`; con un error de tipo en `eslint.config.js`, `TS2339`; con otro en
+  `e2e/smoke.spec.ts`, `TS2322`.
+- **`scripts/__tests__/typecheck-coverage.test.mjs`** (nuevo, 7 casos dentro de `test:unit`) protege
+  la **clase**, no la instancia: recorre el repo y falla si aparece un `.ts` que no mira ningún
+  tsconfig. El patrón cubre ficheros nuevos en sitios conocidos; el test cubre un **directorio
+  nuevo de primer nivel** (`tools/`, `bench/`), que es exactamente cómo nació el hueco. Su verde
+  **no es vacuo**, comprobado: quitando `e2e/**/*.ts` del `include`, señala los 28 huérfanos.
+
+**Fuera a propósito, con la cifra medida antes de decidirlo:**
+
+| Qué | Errores con `tsc` | Por qué queda fuera |
+|---|---|---|
+| `code-connect/**.figma.ts` | **17** | No son código: son PLANTILLAS que evalúa el CLI de Code Connect (módulo `figma` virtual + globales `_fcc_*` que inyecta el parser y no declara ningún `.d.ts`). Su gate es `npm run figma:connect:parse` —verificado en verde tras el cambio— y `eslint.config.js` ya los ignoraba por lo mismo |
+| `scripts/**/*.mjs` | **392** con `checkJs` | JS sin anotar (casi todo TS7006, "implicitly any"). Anotarlos es otra tarea, no un efecto colateral de esta; hoy los cubren `test:unit` y `eslint` |
+
+⚠️ **"Fuera del `include`" no es "fuera del programa", y se vio el mismo día.** El guardián de
+reutilización del dev server (`scripts/playwright-reuse-guard.mjs`, de s31) lo IMPORTA
+`playwright.config.ts` — y con eso entra en el gate de tipos aunque `scripts/` esté fuera del
+`include`: 3 errores (TS7006 ×2 y un TS2339 en el `catch`, que TypeScript tipa como `unknown`).
+Se arreglaron con **JSDoc en el script**, que es lo correcto: si un config type-checkeado depende
+de él, su firma es parte del contrato. Si mañana añades un import así y no quieres anotarlo, la
+decisión se toma en `tsconfig.harness.json`, no con un `@ts-nocheck` a escondidas.
+
+**Doc corregida donde afirmaba lo contrario** (quedaba falsa al aterrizar esto): la fila «Tipos +
+lint» del README —que estaba **vacía**—, el comentario del propio `playwright.cuscare.config.ts`,
+la trampa de `docs/handoff/cuscare.md` y el corolario s32 de `LEARNINGS.md`.
 
 ---
 
@@ -279,7 +332,7 @@ color breadcrumb). Mensaje de diseño enviado. Editar Figma **no mueve la web**.
 
 | Qué | Estado |
 |---|---|
-| **El par primario en oscuro: 3,01:1** | `--sc-bg-primary`/`--sc-text-on-primary` no llega a 4.5:1 (AA texto normal) ni a 3:1. Es el `contrastColor` del preset (`base.ts`) → **el botón primario de toda la plataforma**, más `sc-empty-state`, `sc-form-section-nav`, el app-shell y los toasts del supervisor. Cualquier arreglo mueve la marca en oscuro y sale del **Kit**, no del CSS (`07-dark.css` es `@sc-gen`). Mientras siga así, ampliar la raíz de `theme-contrast.spec.ts` dejaría la suite roja |
+| **Un primary dark conforme, pero desde el KIT** | ⚠️ Ya NO es el 3,01:1: eso lo resolvió **DD-40** en s31 subiendo la rampa un paso (5,05 / 8,03 / 11,89) y **divergiendo** del Kit, y con ello `theme-contrast.spec.ts` pudo ampliarse a `body`. Lo que queda en manos de Rafa es pedirle al Kit su primary dark conforme —luminancia relativa entre **0,136 y 0,183**, al centro de la banda—; el día que llegue, esto se revierte devolviendo tres filas de `color-map.mjs` a `enforce` |
 | **Borrar el proyecto Cloudflare `sc-demo`** | Vivo sirviendo contenido viejo; un borrado permanente no lo ejecuto yo |
 | **Retirar `sc-page-header`** | Sin consumidores salvo su demo |
 | **Lienzo de página gris↔blanco** | Figma `13920:4298`. ⚠️ Antes de tocarlo lee la **trampa C3 de DD-36**: devolverlo a `--sc-bg-default` re-crea un bug documentado del rail de AED |
@@ -337,8 +390,12 @@ variables, 30 comentarios activos.
   cualquier contador nuevo: si tu regex mira el fichero entero, cuenta también lo que se está
   explicando.
 
-## 🕳️ Lo que esta sesión dejó fuera, y por qué
+## 🕳️ Lo que se dejó fuera, y por qué (por sesión)
 
+- **s33 · anotar los `scripts/**/*.mjs`** (392 errores con `checkJs`) y **type-checkear
+  `code-connect/`** (17): las dos salen del gate nuevo con su motivo escrito, en la tabla de
+  arriba. La primera es trabajo real si algún día se quiere; la segunda no es type-checkeable con
+  `tsc` a secas y ya tiene su gate.
 - **La web no cambia hasta que Carlos consuma los tokens.** Lo nuestro (Figma) está hecho; el
   loop se cierra en su repo. Editar Figma no mueve producción — pieza-verde ≠ loop-funciona.
 - **Badge sin tocar** (alto fijo, tamaños fuera de rampa): decisión, no olvido.
