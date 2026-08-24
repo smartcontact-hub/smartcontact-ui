@@ -43,39 +43,68 @@ export interface LocalStore<T extends { id: number }> {
  * `@Injectable({ providedIn: 'root' })` service that exposes domain-specific
  * names (`labels`, `addLabel`, …).
  */
+/** La mitad de persistencia de un store: leer y escribir con versión. */
+export interface VersionedStorage<T> {
+  /** Lee lo persistido, o los `defaults` si no hay nada válido. */
+  read(): readonly T[];
+  /** Persiste la lista y sella la versión. */
+  write(items: readonly T[]): void;
+}
+
+/**
+ * Persistencia versionada en `localStorage`, SIN exigir `id: number`.
+ *
+ * Es la mitad de abajo de `createLocalStore`, extraída el 2026-08-24 porque
+ * estaba **reimplementada palabra por palabra** en `group-agent-links.store`.
+ * Y no por descuido: ese store guarda enlaces con clave compuesta
+ * (`groupId` + `agentId`), no un `id: number`, así que no podía usar
+ * `createLocalStore` y copió su parte de storage.
+ *
+ * Separarlas arregla justo eso — la restricción `id: number` la necesita la
+ * mitad de ARRIBA (altas, patch por id, borrado), no la de guardar. Cualquier
+ * store con otra forma de clave puede persistir igual sin duplicar el manejo
+ * de versión, el `try/catch` del JSON corrupto ni la guarda de SSR.
+ */
+export function createVersionedStorage<T>(config: LocalStoreConfig<T>): VersionedStorage<T> {
+  const { storageKey, versionKey, currentVersion, defaults } = config;
+
+  return {
+    read(): readonly T[] {
+      if (typeof localStorage === 'undefined') return defaults;
+      try {
+        const version = localStorage.getItem(versionKey);
+        if (version && Number(version) >= currentVersion) {
+          const raw = localStorage.getItem(storageKey);
+          if (raw) return JSON.parse(raw) as T[];
+        } else {
+          localStorage.removeItem(storageKey);
+          localStorage.setItem(versionKey, String(currentVersion));
+        }
+      } catch {
+        // corrupted JSON or storage disabled — fall through to defaults
+      }
+      return defaults;
+    },
+
+    write(items: readonly T[]): void {
+      if (typeof localStorage === 'undefined') return;
+      try {
+        localStorage.setItem(storageKey, JSON.stringify(items));
+        localStorage.setItem(versionKey, String(currentVersion));
+      } catch {
+        // Quota exceeded or storage disabled — keep in-memory state, drop on reload.
+      }
+    },
+  };
+}
+
 export function createLocalStore<T extends { id: number }>(
   config: LocalStoreConfig<T>,
 ): LocalStore<T> {
-  const { storageKey, versionKey, currentVersion, defaults } = config;
+  const storage = createVersionedStorage<T>(config);
+  const writeToStorage = (items: readonly T[]): void => storage.write(items);
 
-  function readFromStorage(): readonly T[] {
-    if (typeof localStorage === 'undefined') return defaults;
-    try {
-      const version = localStorage.getItem(versionKey);
-      if (version && Number(version) >= currentVersion) {
-        const raw = localStorage.getItem(storageKey);
-        if (raw) return JSON.parse(raw) as T[];
-      } else {
-        localStorage.removeItem(storageKey);
-        localStorage.setItem(versionKey, String(currentVersion));
-      }
-    } catch {
-      // corrupted JSON or storage disabled — fall through to defaults
-    }
-    return defaults;
-  }
-
-  function writeToStorage(items: readonly T[]): void {
-    if (typeof localStorage === 'undefined') return;
-    try {
-      localStorage.setItem(storageKey, JSON.stringify(items));
-      localStorage.setItem(versionKey, String(currentVersion));
-    } catch {
-      // Quota exceeded or storage disabled — keep in-memory state, drop on reload.
-    }
-  }
-
-  const itemsSignal = signal<readonly T[]>(readFromStorage());
+  const itemsSignal = signal<readonly T[]>(storage.read());
 
   function commit(next: readonly T[]): void {
     itemsSignal.set(next);

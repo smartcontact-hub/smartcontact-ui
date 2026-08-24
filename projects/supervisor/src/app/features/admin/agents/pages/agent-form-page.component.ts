@@ -1,5 +1,4 @@
 import {
-  afterNextRender,
   ChangeDetectionStrategy,
   Component,
   computed,
@@ -19,9 +18,9 @@ import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 
 import { DirtyAware } from '@core/guards';
+import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
 import { CrossTabLockService } from '@core/services';
 import { ScConfirmService } from '@smartcontact-hub/components';
-import { TopBarSlotService } from '@core/layout/top-bar/top-bar-slot.service';
 import { EMAIL_RE, PIN_RE } from '@core/utils/validators';
 import { TOAST_LIFE } from '@core/utils/toast-life';
 import { IllustratedAvatarComponent, LabelChipComponent } from '@shared/components';
@@ -38,6 +37,7 @@ import {
   ScToggleSwitchComponent as ToggleSwitchComponent,
   ScCheckboxComponent as CheckboxComponent,
   type TriState,
+  triStateOf,
 } from '@smartcontact-hub/components';
 import { LabelsStore } from '@features/admin/labels/state/labels.store';
 import { GroupsStore } from '@features/admin/groups/state/groups.store';
@@ -153,7 +153,6 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   private readonly templatesStore = inject(TemplatesStore);
   private readonly agendasStore = inject(AgendasStore);
   private readonly confirmHost = inject(ScConfirmService);
-  private readonly topBarSlot = inject(TopBarSlotService);
 
   /** Guardar/Cancelar proyectados a la TopBar (modelo "todo arriba" S59):
    * fuera la banda sticky-form-header; identidad → breadcrumb + campos del
@@ -161,10 +160,7 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   private readonly topbarActions = viewChild<TemplateRef<unknown>>('topbarActions');
 
   constructor() {
-    afterNextRender(() => {
-      const tpl = this.topbarActions();
-      if (tpl) this.topBarSlot.setActions(tpl);
-    });
+    useTopbarActions(this.topbarActions);
   }
 
   protected readonly mailIcon = 'mail';
@@ -340,12 +336,9 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
    * currently-visible (filtered) templates. */
   protected readonly filteredTemplatesState = computed<TriState>(() => {
     const visible = this.filteredTemplates();
-    if (visible.length === 0) return 'none';
     const ids = this.form().templateIds;
-    const selected = visible.filter((t) => ids.has(t.id)).length;
-    if (selected === 0) return 'none';
-    if (selected === visible.length) return 'all';
-    return 'some';
+
+    return triStateOf(visible.filter((t) => ids.has(t.id)).length, visible.length);
   });
 
   protected toggleTemplate(id: number): void {
@@ -428,12 +421,11 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
 
   protected readonly columnState = computed<Record<DestinoCol, TriState>>(() => {
     const p = this.form().permissions;
-    const tally = (col: DestinoCol): TriState => {
-      const checked = this.destinoKeys.filter((k) => p[PERMISSION_MATRIX_KEYS[k][col]]).length;
-      if (checked === 0) return 'none';
-      if (checked === this.destinoKeys.length) return 'all';
-      return 'some';
-    };
+    const tally = (col: DestinoCol): TriState =>
+      triStateOf(
+        this.destinoKeys.filter((k) => p[PERMISSION_MATRIX_KEYS[k][col]]).length,
+        this.destinoKeys.length,
+      );
     return { llamada: tally('llamada'), transferencia: tally('transferencia') };
   });
 
@@ -674,7 +666,6 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.releaseLock?.();
     this.releaseLock = null;
-    this.topBarSlot.clearActions();
   }
 
   @HostListener('window:beforeunload', ['$event'])

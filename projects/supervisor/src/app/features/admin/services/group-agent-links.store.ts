@@ -2,6 +2,7 @@ import { computed, Injectable, signal, Signal } from '@angular/core';
 
 import { GROUP_AGENT_LINKS_SEED } from './group-agent-links.seed';
 import { Channel, GroupAgentLink } from './group-agent-links.types';
+import { createVersionedStorage } from '@core/services/local-store.factory';
 
 const STORAGE_KEY = 'sc-group-agent-links';
 const VERSION_KEY = 'sc-group-agent-links-v';
@@ -25,7 +26,17 @@ const CURRENT_VERSION = 1;
  */
 @Injectable({ providedIn: 'root' })
 export class GroupAgentLinksStore {
-  private readonly state = signal<readonly GroupAgentLink[]>(this.readFromStorage());
+  /** Persistencia versionada compartida con `createLocalStore`. Este store no puede
+   *  usar la factoría entera porque su clave es compuesta (`groupId` + `agentId`),
+   *  no un `id: number` — pero SÍ puede compartir la mitad de guardar. */
+  private readonly storage = createVersionedStorage<GroupAgentLink>({
+    storageKey: STORAGE_KEY,
+    versionKey: VERSION_KEY,
+    currentVersion: CURRENT_VERSION,
+    defaults: GROUP_AGENT_LINKS_SEED,
+  });
+
+  private readonly state = signal<readonly GroupAgentLink[]>(this.storage.read());
 
   /** Read-only signal of every link in the system. */
   readonly links: Signal<readonly GroupAgentLink[]> = this.state.asReadonly();
@@ -146,33 +157,8 @@ export class GroupAgentLinksStore {
 
   private commit(next: readonly GroupAgentLink[]): void {
     this.state.set(next);
-    this.writeToStorage(next);
+    this.storage.write(next);
   }
 
-  private readFromStorage(): readonly GroupAgentLink[] {
-    if (typeof localStorage === 'undefined') return GROUP_AGENT_LINKS_SEED;
-    try {
-      const version = localStorage.getItem(VERSION_KEY);
-      if (version && Number(version) >= CURRENT_VERSION) {
-        const raw = localStorage.getItem(STORAGE_KEY);
-        if (raw) return JSON.parse(raw) as GroupAgentLink[];
-      } else {
-        localStorage.removeItem(STORAGE_KEY);
-        localStorage.setItem(VERSION_KEY, String(CURRENT_VERSION));
-      }
-    } catch {
-      // corrupted JSON or storage disabled — fall through to defaults
-    }
-    return GROUP_AGENT_LINKS_SEED;
-  }
 
-  private writeToStorage(items: readonly GroupAgentLink[]): void {
-    if (typeof localStorage === 'undefined') return;
-    try {
-      localStorage.setItem(STORAGE_KEY, JSON.stringify(items));
-      localStorage.setItem(VERSION_KEY, String(CURRENT_VERSION));
-    } catch {
-      // quota exceeded or storage disabled — keep in-memory state
-    }
-  }
 }

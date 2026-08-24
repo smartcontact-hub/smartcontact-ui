@@ -2,6 +2,7 @@ import { computed, Injectable, signal } from '@angular/core';
 
 import { MOCK_CATEGORIES } from '../data/categories-mock';
 import type { Category } from '../data/category.types';
+import { isNameTaken } from '@core/utils/store-helpers';
 
 /**
  * Signal store de categorías IA Memory.
@@ -48,9 +49,7 @@ export class CategoriesStore {
   }
 
   isNameTaken(name: string, exceptId?: string): boolean {
-    const lower = name.trim().toLowerCase();
-    if (!lower) return false;
-    return this._categories().some((c) => c.id !== exceptId && c.name.toLowerCase() === lower);
+    return isNameTaken(this._categories(), name, exceptId);
   }
 
   duplicateCategory(id: string): Category | null {

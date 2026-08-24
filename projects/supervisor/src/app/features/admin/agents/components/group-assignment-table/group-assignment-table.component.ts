@@ -6,7 +6,11 @@ import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ScToggleSwitchComponent as ToggleSwitchComponent } from '@smartcontact-hub/components';
 
 import { CHANNEL_LABEL_KEYS, GroupChannel } from '@features/admin/groups/data/groups-data';
-import { Channel, GroupAgentLink } from '@features/admin/services/group-agent-links.types';
+import {
+  canonicalizeChannels,
+  Channel,
+  GroupAgentLink,
+} from '@features/admin/services/group-agent-links.types';
 
 /** Lightweight group reference accepted by this table. */
 export interface AgentGroupAssignmentRef {
@@ -127,7 +131,7 @@ export class GroupAssignmentTableComponent {
         const has = l.channels.includes(channel);
         const channels = has
           ? l.channels.filter((c) => c !== channel)
-          : this.canonicalize([...l.channels, channel]);
+          : canonicalizeChannels([...l.channels, channel]);
         return { ...l, channels };
       }),
     );
@@ -165,9 +169,4 @@ export class GroupAssignmentTableComponent {
 
   // -- helpers --
 
-  private canonicalize(channels: readonly Channel[]): readonly Channel[] {
-    const set = new Set(channels);
-    const order: readonly Channel[] = ['phone', 'chat', 'email'];
-    return order.filter((c) => set.has(c));
-  }
 }

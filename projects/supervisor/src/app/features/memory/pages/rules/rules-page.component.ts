@@ -1,11 +1,9 @@
 import { map, startWith } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
 import {
-  afterNextRender,
   ChangeDetectionStrategy,
   Component,
   computed,
-  DestroyRef,
   inject,
   signal,
   type TemplateRef,
@@ -30,8 +28,8 @@ import {
   type ScDatatableRowKeyEvent,
   type ScRowStyleClassFn,
 } from '@smartcontact-hub/components';
-import { TopBarSlotService } from '@core/layout/top-bar/top-bar-slot.service';
 import { TOAST_LIFE } from '@core/utils/toast-life';
+import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
 
 import { ConditionResolverService } from '../../data/condition-resolver.service';
 import { describeConditionTree } from '../../data/condition.types';
@@ -68,18 +66,12 @@ export class RulesPageComponent {
   private readonly messages = inject(MessageService);
   private readonly translate = inject(TranslateService);
   private readonly router = inject(Router);
-  private readonly topBarSlot = inject(TopBarSlotService);
-  private readonly destroyRef = inject(DestroyRef);
 
   /** CTA + menú "nueva regla" proyectados a la TopBar (modelo "todo arriba" S59). */
   private readonly topbarActions = viewChild<TemplateRef<unknown>>('topbarActions');
 
   constructor() {
-    afterNextRender(() => {
-      const tpl = this.topbarActions();
-      if (tpl) this.topBarSlot.setActions(tpl);
-    });
-    this.destroyRef.onDestroy(() => this.topBarSlot.clearActions());
+    useTopbarActions(this.topbarActions);
   }
 
   protected readonly activeRules = this.rulesStore.activeRules;

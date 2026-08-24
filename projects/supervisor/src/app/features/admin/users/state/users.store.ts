@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 
 import { createLocalStore, LocalStore } from '@core/services';
 import { User, USERS_SEED, type UserType } from '../data/users-data';
+import { bulkUpdatePatch } from '@core/utils/store-helpers';
 
 /** Campos que admiten edición masiva. Ver `bulkUpdate`. */
 export type UserBulkField = 'type' | 'status';
@@ -60,15 +61,10 @@ export class UsersStore {
    * ofrecer pisar a diez usuarios con el mismo email.
    */
   bulkUpdate(ids: readonly number[], field: UserBulkField, value: unknown): void {
-    if (ids.length === 0) return;
-    const idSet = new Set(ids);
-    for (const user of this.users()) {
-      if (!idSet.has(user.id)) continue;
-      const patch: Partial<User> =
-        field === 'type'
-          ? { type: value as UserType }
-          : { status: value as User['status'] };
-      this.store.updateItem(user.id, patch);
-    }
+    bulkUpdatePatch(this.store, this.users(), ids, () =>
+      field === 'type'
+        ? { type: value as UserType }
+        : { status: value as User['status'] },
+    );
   }
 }

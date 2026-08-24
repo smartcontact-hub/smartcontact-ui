@@ -7,11 +7,16 @@ import { IllustratedAvatarComponent } from '@shared/components';
 import {
   ScToggleSwitchComponent as ToggleSwitchComponent,
   TriState,
+  triStateOf,
   ScCheckboxComponent as CheckboxComponent,
 } from '@smartcontact-hub/components';
 
 import { CHANNEL_LABEL_KEYS, GroupChannel } from '@features/admin/groups/data/groups-data';
-import { Channel, GroupAgentLink } from '@features/admin/services/group-agent-links.types';
+import {
+  canonicalizeChannels,
+  Channel,
+  GroupAgentLink,
+} from '@features/admin/services/group-agent-links.types';
 
 /** Lightweight agent reference accepted by the table. */
 export interface AgentChannelTableAgent {
@@ -141,15 +146,9 @@ export class AgentChannelTableComponent {
 
   protected readonly allVisibleSelected = computed<TriState>(() => {
     const visible = this.visibleIds();
-    if (visible.length === 0) return 'none';
     const sel = this.selectedIds();
-    let some = false;
-    let all = true;
-    for (const id of visible) {
-      if (sel.has(id)) some = true;
-      else all = false;
-    }
-    return all ? 'all' : some ? 'some' : 'none';
+
+    return triStateOf(visible.filter((id) => sel.has(id)).length, visible.length);
   });
 
   protected hasChannel(link: GroupAgentLink, channel: Channel): boolean {
@@ -182,7 +181,7 @@ export class AgentChannelTableComponent {
         if (l.agentId !== agentId) return l;
         const has = l.channels.includes(channel);
         const channels = has ? l.channels.filter((c) => c !== channel) : [...l.channels, channel];
-        return { ...l, channels: this.canonicalize(channels) };
+        return { ...l, channels: canonicalizeChannels(channels) };
       }),
     );
   }
@@ -266,9 +265,4 @@ export class AgentChannelTableComponent {
   // -- helpers -------------------------------------------------------
 
   /** Keep a stable channel order so toggling does not visually reshuffle. */
-  private canonicalize(channels: readonly Channel[]): readonly Channel[] {
-    const set = new Set(channels);
-    const order: readonly Channel[] = ['phone', 'chat', 'email'];
-    return order.filter((c) => set.has(c));
-  }
 }

@@ -1,11 +1,9 @@
 import { map, startWith } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
 import {
-  afterNextRender,
   ChangeDetectionStrategy,
   Component,
   computed,
-  DestroyRef,
   inject,
   signal,
   type TemplateRef,
@@ -19,8 +17,7 @@ import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 
 import { UndoStackService, XlsxExportService } from '@core/services';
-import { TopBarSlotService } from '@core/layout/top-bar/top-bar-slot.service';
-import { SelectionState } from '@core/utils/selection-state';
+import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
 import { TOAST_LIFE } from '@core/utils/toast-life';
 import { IllustratedAvatarComponent } from '@shared/components';
 import {
@@ -102,19 +99,13 @@ export class GroupsListPageComponent {
   private readonly translate = inject(TranslateService);
   private readonly router = inject(Router);
   private readonly undoStack = inject(UndoStackService);
-  private readonly topBarSlot = inject(TopBarSlotService);
-  private readonly destroyRef = inject(DestroyRef);
 
   /** CTA proyectado a la TopBar (modelo "todo arriba" S59): la banda de
    * page-header desaparece; identidad → breadcrumb, acción → barra. */
   private readonly topbarActions = viewChild<TemplateRef<unknown>>('topbarActions');
 
   constructor() {
-    afterNextRender(() => {
-      const tpl = this.topbarActions();
-      if (tpl) this.topBarSlot.setActions(tpl);
-    });
-    this.destroyRef.onDestroy(() => this.topBarSlot.clearActions());
+    useTopbarActions(this.topbarActions);
   }
 
   /** Derived count of agents assigned to a group. */
@@ -141,8 +132,16 @@ export class GroupsListPageComponent {
   protected readonly sortField = signal<SortField | null>(null);
   protected readonly sortDir = signal<'asc' | 'desc'>('asc');
   /** See `agents-list-page` for the rationale behind the delegate pattern. */
-  private readonly selection = new SelectionState<{ readonly id: number }>(() => this.sorted());
-  protected readonly selectedIds = this.selection.ids;
+  /* Fuente de verdad de la selección. `sc-datatable` habla de FILAS y la página
+   * de ids, así que `onSelectionChange` traduce entre los dos.
+   *
+   * Aquí vivía un `SelectionState`, retirado el 2026-08-24: de sus nueve
+   * miembros esta página usaba DOS (`ids` y `clear`). Lo único que aportaba de
+   * más —`allSelected` y `toggleAll` sobre la lista visible— lo sirven
+   * `p-tableHeaderCheckbox` y `p-tableCheckbox` desde la migración a
+   * `sc-datatable`, con la misma semántica (la de cabecera marca lo FILTRADO,
+   * no todo). Mismo movimiento que ya habían hecho agents, labels y repos. */
+  protected readonly selectedIds = signal<ReadonlySet<number>>(new Set());
   /** Fila a la que apunta el kebab compartido. Ver `menuItems`. */
   protected readonly menuTargetGroup = signal<Group | null>(null);
   protected readonly deleteTarget = signal<readonly Group[] | null>(null);
@@ -474,7 +473,7 @@ export class GroupsListPageComponent {
    * semántica de antes (la de cabecera marca lo FILTRADO, no todo). */
 
   protected clearSelection(): void {
-    this.selection.clear();
+    this.selectedIds.set(new Set());
   }
 
   protected onCreateClick(): void {

@@ -19,6 +19,7 @@ import { ScDialogComponent as DialogComponent } from '@smartcontact-hub/componen
 import type { Conversation, Recording, TranscriptionLine } from '../../data/conversation.types';
 import { DownloadModalComponent } from '../download-modal/download-modal.component';
 import { MultiRecordingPlayerComponent } from '../multi-recording-player/multi-recording-player.component';
+import { formatTime, parseDurationSeconds } from '@shared/utils/audio';
 
 /**
  * Modal por conversación · Memory iter 5.
@@ -440,23 +441,7 @@ export class ConversationPlayerModalComponent {
   }
 }
 
-function parseDurationSeconds(dur?: string): number {
-  if (!dur) return 0;
-  const parts = dur.split(':').map((p) => parseInt(p, 10));
-  if (parts.length === 2) return parts[0] * 60 + parts[1];
-  if (parts.length === 3) return parts[0] * 3600 + parts[1] * 60 + parts[2];
-  return 0;
-}
 
-function formatTime(s: number): string {
-  const mm = Math.floor(s / 60)
-    .toString()
-    .padStart(2, '0');
-  const ss = Math.floor(s % 60)
-    .toString()
-    .padStart(2, '0');
-  return `${mm}:${ss}`;
-}
 
 function hashString(s: string): number {
   let h = 0;
