@@ -24,7 +24,7 @@ antes de construir encima.
 | Frente | Hand-off | Última sesión |
 |---|---|---|
 | **CusCare** — réplica de la herramienta de tickets | [`docs/handoff/cuscare.md`](docs/handoff/cuscare.md) | 2026-08-12 (s26) |
-| **Design System + herramienta** — tokens, componentes, Figma, tooling | [`docs/handoff/design-system.md`](docs/handoff/design-system.md) | 2026-08-13 (s27) |
+| **Design System + herramienta** — tokens, componentes, Figma, tooling | [`docs/handoff/design-system.md`](docs/handoff/design-system.md) | 2026-08-24 (s33) |
 
 **Al cerrar, reescribe SOLO el fichero de tu frente.** Si abres una línea de trabajo nueva, crea
 su fichero, añade su fila aquí y nómbralo en la fila de `DOCS-INDEX`.
