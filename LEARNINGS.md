@@ -73,9 +73,11 @@ lo que hace que te la creas cuando te toca. Lee el índice siempre; el cuerpo, c
    Playwright 1.60 el runner ya no reenvía esa opción en primer nivel (va dentro de
    `contextOptions`). El fichero decía lo correcto, la página recibía `no-preference` y el test
    seguía cayendo 3 de 15. Y no saltó nada: TypeScript sí lo marca, pero `npm run typecheck` no
-   entra en los configs de la raíz y `eslint` no reporta errores de tipo — un arreglo que no
-   arregla nada y que ningún gate desmiente. Solo se cayó porque tenía un ROJO DE PARTIDA
-   reproducido (2 de 5 bajo carga) contra el que comparar; con la máquina tranquila habría visto
+   entraba en los configs de la raíz y `eslint` no reporta errores de tipo — un arreglo que no
+   arregla nada y que ningún gate desmiente. (Ese hueco concreto ya está tapado:
+   `tsconfig.harness.json` mete la raíz y `e2e/` en el `typecheck`. La regla NO depende de eso:
+   un gate de tipos dice que la opción existe donde la escribes, no que llegue.) Solo se cayó
+   porque tenía un ROJO DE PARTIDA reproducido (2 de 5 bajo carga) contra el que comparar; con la máquina tranquila habría visto
    verde y lo habría dado por bueno. **Y lo peor no fue el error: había escrito el resultado
    ("con esta línea, 0 de 15") en el comentario del propio arreglo ANTES de medirlo** — prosa con
    forma de evidencia, en el sitio donde nadie la va a dudar. **Acción**: (a) una opción de

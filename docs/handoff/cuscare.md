@@ -61,9 +61,11 @@ Por orden. Todo esto se coge y se hace.
   `contextOptions: { reducedMotion: 'reduce' }` en `playwright.cuscare.config.ts`, que hace que
   `@primeuix/motion` (`safe: true` por defecto) se salte la animación entera. **Ojo: va DENTRO
   de `contextOptions`; suelto en `use` no llega** —Playwright 1.60 ya no lo reenvía como opción
-  de primer nivel— y ningún gate del repo lo desmiente, porque `npm run typecheck` no entra en
-  los configs de la raíz. De ahí `e2e/cuscare/harness.spec.ts`: comprueba el estado EN LA
-  PÁGINA. Si se cae, el arreglo es la config, no los otros 90 tests.
+  de primer nivel—. Escribirlo suelto ya lo para `npm run typecheck` (2026-08-24: los configs de
+  la raíz entran por `tsconfig.harness.json`); antes no lo desmentía ningún gate. Los dos frenos
+  hacen falta: `tsc` dice que la opción existe donde la pones, y `e2e/cuscare/harness.spec.ts`
+  comprueba que el navegador de verdad está en `reduce`. Si ese test se cae, el arreglo es la
+  config, no los otros 90 tests.
 - **Mezcla PrimeNG y Angular Material según la pantalla**, con métrica distinta (fila 47.5 vs
   32.7px); los rótulos **no predicen las rutas** ("Groups" → `/settings/entities`); y el botón
   azul "SC" de abajo a la derecha **es de terceros** — hay un test que falla si alguien lo añade.

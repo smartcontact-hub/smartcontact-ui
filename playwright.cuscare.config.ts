@@ -76,12 +76,16 @@ export default defineConfig({
     // `_combinedContextOptions` en `playwright/lib/index.js`, que enumera
     // `colorScheme`, `viewport`, etc. una por una y de `reducedMotion` no tiene
     // rastro — lo único que sobrevive es el `...contextOptions` que va delante.
-    // Escrito suelto se cuela: TypeScript sí lo marca, pero ningún gate del repo
-    // type-checkea los configs de la raíz (`npm run typecheck` solo entra en los
-    // `tsconfig` de apps y libs) y `eslint` no reporta errores de tipo. Lo escribí
-    // así primero y el test siguió cayendo 3 de 15 con la página en
-    // `no-preference`: un arreglo que no arregla nada y que ningún gate desmiente.
-    // Por eso el interruptor se comprueba EN LA PÁGINA y no releyendo esta config:
+    // Escrito suelto YA NO se cuela: desde s32 este fichero entra en
+    // `npm run typecheck` por `tsconfig.harness.json`, y `tsc` lo para con
+    // «'reducedMotion' does not exist in type 'UseOptions<…>'» (TS2769). Cuando lo
+    // escribí así no lo paraba nada —el `typecheck` solo entraba en los `tsconfig`
+    // de apps y libs, y `eslint` no reporta errores de tipo—, así que el test
+    // siguió cayendo 3 de 15 con la página en `no-preference` y el `verify` entero
+    // en verde: un arreglo que no arreglaba nada y que ningún gate desmentía.
+    // El tipo y el test son cosas distintas y hacen falta los dos: `tsc` garantiza
+    // que la opción EXISTE donde la pones, no que llegue al navegador. Eso último
+    // se comprueba EN LA PÁGINA, no releyendo esta config:
     // `e2e/cuscare/harness.spec.ts`.
     contextOptions: { reducedMotion: 'reduce' },
     trace: 'retain-on-failure',
