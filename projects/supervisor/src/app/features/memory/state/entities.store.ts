@@ -2,6 +2,7 @@ import { computed, Injectable, signal } from '@angular/core';
 
 import { MOCK_ENTITIES } from '../data/entities-mock';
 import type { Entity } from '../data/entity.types';
+import { isNameTaken } from '@core/utils/store-helpers';
 
 /**
  * Signal store de entidades Memory.
@@ -67,8 +68,6 @@ export class EntitiesStore {
    * concreto para validar edits sin chocar consigo mismo).
    */
   isNameTaken(name: string, exceptId?: string): boolean {
-    const lower = name.trim().toLowerCase();
-    if (!lower) return false;
-    return this._entities().some((e) => e.id !== exceptId && e.name.toLowerCase() === lower);
+    return isNameTaken(this._entities(), name, exceptId);
   }
 }

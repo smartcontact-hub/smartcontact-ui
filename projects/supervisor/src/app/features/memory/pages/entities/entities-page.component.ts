@@ -1,9 +1,7 @@
 import {
-  afterNextRender,
   ChangeDetectionStrategy,
   Component,
   computed,
-  DestroyRef,
   inject,
   signal,
   type TemplateRef,
@@ -26,8 +24,8 @@ import {
   type ScDatatableRowKeyEvent,
   type ScRowStyleClassFn,
 } from '@smartcontact-hub/components';
-import { TopBarSlotService } from '@core/layout/top-bar/top-bar-slot.service';
 import { TOAST_LIFE } from '@core/utils/toast-life';
+import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
 
 import { EntityFormModalComponent } from '../../components/entity-form-modal/entity-form-modal.component';
 import type { Entity } from '../../data/entity.types';
@@ -61,18 +59,12 @@ export class EntitiesPageComponent {
   private readonly confirm = inject(ScConfirmService);
   private readonly messages = inject(MessageService);
   private readonly translate = inject(TranslateService);
-  private readonly topBarSlot = inject(TopBarSlotService);
-  private readonly destroyRef = inject(DestroyRef);
 
   /** CTA proyectado a la TopBar (modelo "todo arriba" S59). */
   private readonly topbarActions = viewChild<TemplateRef<unknown>>('topbarActions');
 
   constructor() {
-    afterNextRender(() => {
-      const tpl = this.topbarActions();
-      if (tpl) this.topBarSlot.setActions(tpl);
-    });
-    this.destroyRef.onDestroy(() => this.topBarSlot.clearActions());
+    useTopbarActions(this.topbarActions);
   }
 
   protected readonly userEntities = this.entitiesStore.userEntities;

@@ -11,6 +11,31 @@ import {
 } from '@angular/core';
 
 export type TriState = 'none' | 'some' | 'all';
+
+/**
+ * La regla de tres estados, en un sitio: dados cuántos hay marcados de cuántos
+ * en total, ¿`none`, `some` o `all`?
+ *
+ * Estaba reescrita a mano en tres sitios del supervisor —la lista de plantillas
+ * de un agente, la matriz de permisos y la cabecera de la tabla de canales—,
+ * cada una con su forma (dos con `filter().length`, otra con un bucle de dos
+ * banderas) pero exactamente la misma regla. Vive en el DS, junto al tipo,
+ * porque quien pinta un `sc-checkbox` en tri-estado necesita las dos cosas.
+ *
+ * `0 de 0` es `none` y no `all`, que es lo que hacían las tres: una lista vacía
+ * no está "toda seleccionada". El orden de las guardas es lo que lo garantiza.
+ */
+export function triStateOf(selected: number, total: number): TriState {
+    if (selected === 0) {
+        return 'none';
+    }
+
+    if (selected === total) {
+        return 'all';
+    }
+
+    return 'some';
+}
 export type ScCheckboxSize = 'sm' | 'md' | 'lg';
 
 let triStateIdCounter = 0;

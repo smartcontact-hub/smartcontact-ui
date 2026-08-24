@@ -1,9 +1,7 @@
 import {
-  afterNextRender,
   ChangeDetectionStrategy,
   Component,
   computed,
-  DestroyRef,
   effect,
   inject,
   signal,
@@ -19,8 +17,8 @@ import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 
 import { TOAST_LIFE } from '@core/utils/toast-life';
+import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
 import { DirtyAware } from '@core/guards';
-import { TopBarSlotService } from '@core/layout/top-bar/top-bar-slot.service';
 
 import { ScInputTextComponent as InputTextComponent } from '@smartcontact-hub/components';
 import { ScMultiSelectComponent as MultiSelectComponent } from '@smartcontact-hub/components';
@@ -91,8 +89,6 @@ export class RuleBuilderPageComponent implements DirtyAware {
   private readonly translate = inject(TranslateService);
   private readonly resolver = inject(ConditionResolverService);
   private readonly conversations = inject(ConversationsStore);
-  private readonly topBarSlot = inject(TopBarSlotService);
-  private readonly destroyRef = inject(DestroyRef);
 
   /** Acciones primarias (Cancelar / Crear) proyectadas a la TopBar — suben del
    *  dock inferior, que desaparece: guardar deja de vivir lejos de la
@@ -278,13 +274,7 @@ export class RuleBuilderPageComponent implements DirtyAware {
     // breadcrumb declarado en `memory.routes.ts` (Ola 1), como en los tres
     // formularios hermanos de admin — antes esta página se lo saltaba
     // proyectando su propia cabecera al lead.
-    afterNextRender(() => {
-      const actions = this.topbarActions();
-      if (actions) this.topBarSlot.setActions(actions);
-    });
-    this.destroyRef.onDestroy(() => {
-      this.topBarSlot.clearActions();
-    });
+    useTopbarActions(this.topbarActions);
   }
 
   private loadFromRule(rule: Rule): void {

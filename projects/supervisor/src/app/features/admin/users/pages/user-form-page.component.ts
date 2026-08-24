@@ -1,5 +1,4 @@
 import {
-  afterNextRender,
   ChangeDetectionStrategy,
   Component,
   computed,
@@ -18,8 +17,8 @@ import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 
 import { DirtyAware } from '@core/guards';
+import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
 import { CrossTabLockService } from '@core/services';
-import { TopBarSlotService } from '@core/layout/top-bar/top-bar-slot.service';
 import { EMAIL_RE } from '@core/utils/validators';
 import { TOAST_LIFE } from '@core/utils/toast-life';
 import { IllustratedAvatarComponent } from '@shared/components';
@@ -91,7 +90,6 @@ export class UserFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   private readonly messages = inject(MessageService);
   private readonly translate = inject(TranslateService);
   private readonly crossTab = inject(CrossTabLockService);
-  private readonly topBarSlot = inject(TopBarSlotService);
 
   /** Guardar/Cancelar proyectados a la TopBar (modelo "todo arriba" S59):
    * fuera la banda sticky-form-header; identidad → breadcrumb + campos del
@@ -99,10 +97,7 @@ export class UserFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   private readonly topbarActions = viewChild<TemplateRef<unknown>>('topbarActions');
 
   constructor() {
-    afterNextRender(() => {
-      const tpl = this.topbarActions();
-      if (tpl) this.topBarSlot.setActions(tpl);
-    });
+    useTopbarActions(this.topbarActions);
   }
 
   protected readonly userTypes = USER_TYPES;
@@ -322,7 +317,6 @@ export class UserFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   ngOnDestroy(): void {
     this.releaseLock?.();
     this.releaseLock = null;
-    this.topBarSlot.clearActions();
   }
 
   @HostListener('window:beforeunload', ['$event'])

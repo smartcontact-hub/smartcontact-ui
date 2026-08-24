@@ -1,11 +1,9 @@
 import { map, startWith } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
 import {
-  afterNextRender,
   ChangeDetectionStrategy,
   Component,
   computed,
-  DestroyRef,
   inject,
   signal,
   type TemplateRef,
@@ -19,7 +17,7 @@ import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 
 import { UndoStackService, XlsxExportService } from '@core/services';
-import { TopBarSlotService } from '@core/layout/top-bar/top-bar-slot.service';
+import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
 import { TOAST_LIFE } from '@core/utils/toast-life';
 import { IllustratedAvatarComponent } from '@shared/components';
 import {
@@ -113,19 +111,13 @@ export class AgentsListPageComponent {
   private readonly translate = inject(TranslateService);
   private readonly router = inject(Router);
   private readonly undoStack = inject(UndoStackService);
-  private readonly topBarSlot = inject(TopBarSlotService);
-  private readonly destroyRef = inject(DestroyRef);
 
   /** CTA "Nuevo agente" proyectado a la TopBar (modelo "todo arriba" S59):
    * la banda de page-header desaparece; identidad → breadcrumb, acción → barra. */
   private readonly topbarActions = viewChild<TemplateRef<unknown>>('topbarActions');
 
   constructor() {
-    afterNextRender(() => {
-      const tpl = this.topbarActions();
-      if (tpl) this.topBarSlot.setActions(tpl);
-    });
-    this.destroyRef.onDestroy(() => this.topBarSlot.clearActions());
+    useTopbarActions(this.topbarActions);
   }
 
   /** Derived: union of every active-link channel for the given agent. */

@@ -35,3 +35,23 @@ export interface GroupAgentLink {
   /** False = paused (config preserved, agent does not receive contacts in this group). */
   readonly active: boolean;
 }
+
+/**
+ * Deja una lista de canales en su forma canónica: sin repetidos y siempre en el
+ * mismo orden (`phone` → `chat` → `email`).
+ *
+ * Estaba duplicada palabra por palabra en `group-assignment-table` y
+ * `agent-channel-table`, las dos tablas que editan estos enlaces desde los dos
+ * lados (desde el agente y desde el grupo). Vive aquí, con el tipo `Channel`,
+ * porque el ORDEN es parte del contrato del dato: dos listas con los mismos
+ * canales tienen que serializarse igual, o comparar enlaces da falsos cambios.
+ *
+ * **Solo se unifica el helper.** Esas dos tablas también divergen en su UX, y
+ * eso no se toca: es decisión de producto, no una limpieza.
+ */
+export function canonicalizeChannels(channels: readonly Channel[]): readonly Channel[] {
+  const set = new Set(channels);
+  const order: readonly Channel[] = ['phone', 'chat', 'email'];
+
+  return order.filter((c) => set.has(c));
+}

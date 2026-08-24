@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 
 import { createLocalStore, LocalStore } from '@core/services';
 import { Group, GROUPS_SEED, GroupChannel, GroupPriority } from '../data/groups-data';
+import { bulkUpdatePatch } from '@core/utils/store-helpers';
 
 /** Fields exposed to bulk edit on the Groups list. */
 export type GroupBulkField = 'priority' | 'strategy' | 'channels';
@@ -46,10 +47,7 @@ export class GroupsStore {
   }
 
   bulkUpdate(ids: readonly number[], field: GroupBulkField, value: unknown): void {
-    if (ids.length === 0) return;
-    const idSet = new Set(ids);
-    for (const group of this.groups()) {
-      if (!idSet.has(group.id)) continue;
+    bulkUpdatePatch(this.store, this.groups(), ids, () => {
       let patch: Partial<Group>;
       switch (field) {
         case 'priority':
@@ -62,9 +60,10 @@ export class GroupsStore {
           patch = { channels: value as readonly GroupChannel[] };
           break;
         default:
-          continue;
+          return null;
       }
-      this.store.updateItem(group.id, patch);
-    }
+
+      return patch;
+    });
   }
 }

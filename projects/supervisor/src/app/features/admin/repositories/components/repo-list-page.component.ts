@@ -1,9 +1,7 @@
 import {
-  afterNextRender,
   ChangeDetectionStrategy,
   Component,
   computed,
-  DestroyRef,
   inject,
   input,
   signal,
@@ -19,8 +17,8 @@ import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 
 import { ClickOutsideDirective } from '@core/directives/click-outside.directive';
+import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
 import { XlsxExportService } from '@core/services/xlsx-export.service';
-import { TopBarSlotService } from '@core/layout/top-bar/top-bar-slot.service';
 import { TOAST_LIFE } from '@core/utils/toast-life';
 import { ScBulkActionBarComponent as BulkActionBarComponent } from '@smartcontact-hub/components';
 import { ScDeleteEntityDialogComponent as DeleteEntityDialogComponent } from '@smartcontact-hub/components';
@@ -65,8 +63,6 @@ export class RepoListPageComponent<T extends RepoEntity> {
   private readonly messages = inject(MessageService);
   private readonly translate = inject(TranslateService);
   private readonly xlsx = inject(XlsxExportService);
-  private readonly topBarSlot = inject(TopBarSlotService);
-  private readonly destroyRef = inject(DestroyRef);
 
   readonly config = input.required<RepoPageConfig<T>>();
   readonly store = input.required<RepoStore<T>>();
@@ -75,11 +71,7 @@ export class RepoListPageComponent<T extends RepoEntity> {
   private readonly topbarActions = viewChild<TemplateRef<unknown>>('topbarActions');
 
   constructor() {
-    afterNextRender(() => {
-      const tpl = this.topbarActions();
-      if (tpl) this.topBarSlot.setActions(tpl);
-    });
-    this.destroyRef.onDestroy(() => this.topBarSlot.clearActions());
+    useTopbarActions(this.topbarActions);
   }
 
   protected readonly plusIcon = 'add';

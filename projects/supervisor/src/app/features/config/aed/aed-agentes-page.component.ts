@@ -1,9 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  OnDestroy,
   TemplateRef,
-  afterNextRender,
   computed,
   inject,
   signal,
@@ -13,7 +11,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
 
 import { DirtyAware } from '@core/guards';
-import { TopBarSlotService } from '@core/layout/top-bar/top-bar-slot.service';
+import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
 import { TOAST_LIFE } from '@core/utils/toast-life';
 
 import {
@@ -91,10 +89,9 @@ const DEFAULT_FORM: FormState = {
   styleUrls: ['./aed-defaults-page.component.scss', './aed-agentes-page.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AedAgentesPageComponent implements OnDestroy, DirtyAware {
+export class AedAgentesPageComponent implements DirtyAware {
   private readonly messages = inject(MessageService);
   private readonly translate = inject(TranslateService);
-  private readonly topBarSlot = inject(TopBarSlotService);
 
   protected readonly comunicacionKeys = COMUNICACION_KEYS;
 
@@ -114,15 +111,9 @@ export class AedAgentesPageComponent implements OnDestroy, DirtyAware {
   private readonly topbarActions = viewChild<TemplateRef<unknown>>('topbarActions');
 
   constructor() {
-    afterNextRender(() => {
-      const tpl = this.topbarActions();
-      if (tpl) this.topBarSlot.setActions(tpl);
-    });
+    useTopbarActions(this.topbarActions);
   }
 
-  ngOnDestroy(): void {
-    this.topBarSlot.clearActions();
-  }
 
   protected setPermiso(row: ComunicacionKey, col: PermisoCol, value: boolean): void {
     this.form.update((f) => ({

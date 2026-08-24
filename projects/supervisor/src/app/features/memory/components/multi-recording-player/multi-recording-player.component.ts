@@ -4,6 +4,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 
 import type { Recording } from '../../data/conversation.types';
+import { formatTime, parseDurationSeconds } from '@shared/utils/audio';
 
 /**
  * MultiRecordingPlayer · superficie única audio multi-leg (S46 §10 #2).
@@ -56,7 +57,7 @@ export class MultiRecordingPlayerComponent {
   protected readonly checkIcon = 'check';
 
   protected readonly durations = computed(() =>
-    this.recordings().map((r) => parseDurationSec(r.duration)),
+    this.recordings().map((r) => parseDurationSeconds(r.duration)),
   );
 
   protected readonly total = computed(() => {
@@ -156,18 +157,4 @@ export class MultiRecordingPlayerComponent {
   }
 }
 
-function parseDurationSec(d: string): number {
-  const parts = d.split(':').map((p) => parseInt(p, 10));
-  if (parts.length === 2) return parts[0] * 60 + parts[1];
-  if (parts.length === 3) return parts[0] * 3600 + parts[1] * 60 + parts[2];
-  return 0;
-}
 
-function formatTime(s: number): string {
-  const safe = Math.max(0, Math.floor(s));
-  const m = Math.floor(safe / 60)
-    .toString()
-    .padStart(2, '0');
-  const sec = (safe % 60).toString().padStart(2, '0');
-  return `${m}:${sec}`;
-}

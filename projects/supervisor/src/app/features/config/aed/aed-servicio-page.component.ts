@@ -1,9 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
-  OnDestroy,
   TemplateRef,
-  afterNextRender,
   computed,
   inject,
   signal,
@@ -13,7 +11,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
 
 import { DirtyAware } from '@core/guards';
-import { TopBarSlotService } from '@core/layout/top-bar/top-bar-slot.service';
+import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
 import { TOAST_LIFE } from '@core/utils/toast-life';
 
 import {
@@ -144,10 +142,9 @@ const NOTIF_EVENTOS: readonly (keyof NotifEventos)[] = ['inicio', 'fin', 'result
   styleUrls: ['./aed-defaults-page.component.scss', './aed-servicio-page.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
-export class AedServicioPageComponent implements OnDestroy, DirtyAware {
+export class AedServicioPageComponent implements DirtyAware {
   private readonly messages = inject(MessageService);
   private readonly translate = inject(TranslateService);
-  private readonly topBarSlot = inject(TopBarSlotService);
   protected readonly addIcon = 'add';
 
   protected readonly descuelgueOptions = DESCUELGUE_OPTIONS;
@@ -176,15 +173,9 @@ export class AedServicioPageComponent implements OnDestroy, DirtyAware {
   private readonly topbarActions = viewChild<TemplateRef<unknown>>('topbarActions');
 
   constructor() {
-    afterNextRender(() => {
-      const tpl = this.topbarActions();
-      if (tpl) this.topBarSlot.setActions(tpl);
-    });
+    useTopbarActions(this.topbarActions);
   }
 
-  ngOnDestroy(): void {
-    this.topBarSlot.clearActions();
-  }
 
   /* ---------- Estados de agentes ---------- */
 

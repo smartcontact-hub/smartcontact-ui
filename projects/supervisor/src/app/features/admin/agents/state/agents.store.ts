@@ -2,6 +2,7 @@ import { computed, Injectable } from '@angular/core';
 
 import { createLocalStore, LocalStore } from '@core/services';
 import { Agent, AGENTS_SEED, AgentType, PresenceStatus } from '../data/agents-data';
+import { bulkUpdatePatch } from '@core/utils/store-helpers';
 
 /** Fields exposed to bulk edit (subset that is safe to set across many rows). */
 export type AgentBulkField = 'status' | 'presenceStatus' | 'agentType' | 'recording';
@@ -67,10 +68,7 @@ export class AgentsStore {
    * bar's "Editar" menu — mirrors the React prototype's `bulkUpdate(ids, field, value)`.
    */
   bulkUpdate(ids: readonly number[], field: AgentBulkField, value: unknown): void {
-    if (ids.length === 0) return;
-    const idSet = new Set(ids);
-    for (const agent of this.agents()) {
-      if (!idSet.has(agent.id)) continue;
+    bulkUpdatePatch(this.store, this.agents(), ids, (agent) => {
       let patch: Partial<Agent>;
       switch (field) {
         case 'status':
@@ -86,10 +84,11 @@ export class AgentsStore {
           patch = { permissions: { ...agent.permissions, recording: !!value } };
           break;
         default:
-          continue;
+          return null;
       }
-      this.store.updateItem(agent.id, patch);
-    }
+
+      return patch;
+    });
   }
 
   /** Strip a list of label ids from every agent that references them. */
