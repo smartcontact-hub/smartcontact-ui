@@ -6,7 +6,7 @@ import {
   viewChild,
 } from '@angular/core';
 
-import { ScProgressBarComponent } from '../../../../../../ui-smartcontact/src/public-api';
+import { ScProgressBarComponent } from '@smartcontact-hub/components';
 import { StoryContext, StoryDef, StoryHostComponent, StoryMeta } from '../../../storybook';
 
 const MODES_SNIPPET = `<sc-progressbar [value]="40" />

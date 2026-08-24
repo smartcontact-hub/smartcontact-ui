@@ -9,7 +9,7 @@ import {
 import {
   ScGaugeComponent,
   type ScGaugeSegment,
-} from '../../../../../../ui-smartcontact/src/public-api';
+} from '@smartcontact-hub/components';
 import { StoryContext, StoryDef, StoryHostComponent, StoryMeta } from '../../../storybook';
 
 const KPIS_SNIPPET = `<sc-gauge

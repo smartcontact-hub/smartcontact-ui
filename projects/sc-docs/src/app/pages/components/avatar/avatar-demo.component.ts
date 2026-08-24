@@ -9,7 +9,7 @@ import {
 import {
   ScAvatarComponent,
   ScAvatarGroupComponent,
-} from '../../../../../../ui-smartcontact/src/public-api';
+} from '@smartcontact-hub/components';
 import { StoryContext, StoryDef, StoryHostComponent, StoryMeta } from '../../../storybook';
 
 const TYPES_SNIPPET = `<sc-avatar label="SC" />

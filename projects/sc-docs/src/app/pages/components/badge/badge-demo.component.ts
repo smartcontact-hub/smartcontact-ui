@@ -6,7 +6,7 @@ import {
   viewChild,
 } from '@angular/core';
 
-import { ScBadgeComponent } from '../../../../../../ui-smartcontact/src/public-api';
+import { ScBadgeComponent } from '@smartcontact-hub/components';
 import { StoryContext, StoryDef, StoryHostComponent, StoryMeta } from '../../../storybook';
 
 const VARIANTS_SNIPPET = `<sc-badge label="3" />

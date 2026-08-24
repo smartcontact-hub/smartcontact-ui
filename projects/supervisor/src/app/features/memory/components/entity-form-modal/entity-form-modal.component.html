@@ -49,10 +49,10 @@
           optionValue="value"
           [disabled]="isEditMode()"
         >
-          <ng-template let-opt pTemplate="selectedItem">
+          <ng-template let-opt #selectedItem>
             {{ opt.labelKey | translate }}
           </ng-template>
-          <ng-template let-opt pTemplate="item">
+          <ng-template let-opt #item>
             {{ opt.labelKey | translate }}
           </ng-template>
         </sc-select>

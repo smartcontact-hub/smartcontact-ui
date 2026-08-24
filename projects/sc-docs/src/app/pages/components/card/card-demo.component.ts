@@ -6,7 +6,7 @@ import {
   viewChild,
 } from '@angular/core';
 
-import { ScCardComponent } from '../../../../../../ui-smartcontact/src/public-api';
+import { ScCardComponent } from '@smartcontact-hub/components';
 import { StoryContext, StoryDef, StoryHostComponent, StoryMeta } from '../../../storybook';
 
 const BASIC_SNIPPET = `<sc-card header="Título de card" subheader="Subtítulo">

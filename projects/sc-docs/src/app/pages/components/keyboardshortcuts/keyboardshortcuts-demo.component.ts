@@ -10,7 +10,7 @@ import {
 import {
   ScKeyboardShortcutsComponent,
   ScKeyboardShortcutsService,
-} from '../../../../../../ui-smartcontact/src/public-api';
+} from '@smartcontact-hub/components';
 import { StoryContext, StoryDef, StoryHostComponent, StoryMeta } from '../../../storybook';
 
 /** Demo de `sc-keyboard-shortcuts` en formato story (motor «Storybook-like»). */

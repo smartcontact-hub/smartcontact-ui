@@ -8,7 +8,7 @@ import {
 import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
 import { InputTextModule } from 'primeng/inputtext';
 
-import { ScInputGroupComponent } from '../../../../../../ui-smartcontact/src/public-api';
+import { ScInputGroupComponent } from '@smartcontact-hub/components';
 import { StoryContext, StoryDef, StoryHostComponent, StoryMeta } from '../../../storybook';
 
 const ADDONS_SNIPPET = `<sc-inputgroup>

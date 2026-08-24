@@ -13,7 +13,7 @@ import { disableAnimations, forceLightTheme, goto } from './helpers';
  *   shift+click en la casilla → rango · Enter → abre · Espacio → selecciona
  *
  * MIGRACIÓN a `sc-datatable`: los SELECTORES cambian porque el `<td>` y la
- * casilla los pinta ahora el DS (`.sc-datatable__check`, `p-tablecheckbox`, y la
+ * casilla los pinta ahora el DS (`.sc-datatable__check`, `p-table-checkbox`, y la
  * fila seleccionada lleva `.p-datatable-row-selected`), pero las AFIRMACIONES
  * son las mismas — reescribir un test para que "case con el markup" es cómo se
  * debilita sin querer. Un cambio real y consciente: el objetivo del toggle es la
@@ -37,7 +37,7 @@ test.beforeEach(async ({ page }) => {
 const TABLE = '[data-testid="conversations-table"]';
 const ROW = `${TABLE} .p-datatable-tbody > tr`;
 const CHECK_CELL = '.sc-datatable__check';
-const CHECKBOX = 'p-tablecheckbox';
+const CHECKBOX = 'p-table-checkbox';
 /* La fila seleccionada se reconoce por `is-selected`, que la pinta
  * `[rowStyleClass]` leyendo el `Set` de selección de la página —la fuente de
  * verdad, la que usa la barra masiva—. NO por `.p-datatable-row-selected` de

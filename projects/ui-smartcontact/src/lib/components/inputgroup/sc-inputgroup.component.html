@@ -1,3 +1,4 @@
-<p-inputgroup [styleClass]="innerClass()">
+<!-- PrimeNG 22 retiró `styleClass` de `p-inputgroup`: la clase va al host. -->
+<p-inputgroup [class]="innerClass()">
   <ng-content />
 </p-inputgroup>

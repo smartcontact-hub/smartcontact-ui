@@ -71,11 +71,11 @@
             [value]="cond.field"
             (valueChange)="setField(group.id, cond.id, $event)"
           >
-            <ng-template let-opt pTemplate="selectedItem">
+            <ng-template let-opt #selectedItem>
               <sc-icon class="cond-row__field-ic" [name]="opt.icon" size="inherit" />
               {{ opt.label }}
             </ng-template>
-            <ng-template let-opt pTemplate="item">
+            <ng-template let-opt #item>
               <sc-icon class="cond-row__field-ic" [name]="opt.icon" size="inherit" />
               {{ opt.label }}
             </ng-template>

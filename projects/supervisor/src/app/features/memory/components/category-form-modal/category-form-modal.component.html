@@ -164,7 +164,7 @@
               [showClear]="false"
               [appendTo]="'body'"
             >
-              <ng-template let-rule pTemplate="item">
+              <ng-template let-rule #item>
                 <div class="category-form__link-option">
                   <sc-icon [name]="fileTextIcon" size="inherit" />
                   <div>
@@ -173,7 +173,7 @@
                   </div>
                 </div>
               </ng-template>
-              <ng-template pTemplate="empty">
+              <ng-template #empty>
                 <span class="category-form__link-option-hint">
                   {{ 'memory.categories.linking.no_available_rules' | translate }}
                 </span>
@@ -259,7 +259,7 @@
               [showClear]="false"
               [appendTo]="'body'"
             >
-              <ng-template let-rule pTemplate="item">
+              <ng-template let-rule #item>
                 <div class="category-form__link-option">
                   <sc-icon [name]="fileTextIcon" size="inherit" />
                   <div>
@@ -268,7 +268,7 @@
                   </div>
                 </div>
               </ng-template>
-              <ng-template pTemplate="empty">
+              <ng-template #empty>
                 <span class="category-form__link-option-hint">
                   {{ 'memory.categories.linking.no_available_rules' | translate }}
                 </span>

@@ -6,7 +6,7 @@ import {
   viewChild,
 } from '@angular/core';
 
-import { ScMessageComponent } from '../../../../../../ui-smartcontact/src/public-api';
+import { ScMessageComponent } from '@smartcontact-hub/components';
 import { StoryContext, StoryDef, StoryHostComponent, StoryMeta } from '../../../storybook';
 
 const SEVERITIES_SNIPPET = `<sc-message text="Mensaje informativo." />

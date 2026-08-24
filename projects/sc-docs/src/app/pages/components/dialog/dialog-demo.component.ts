@@ -13,7 +13,7 @@ import {
   ScButtonComponent,
   ScDialogComponent,
   ScDynamicDialogService,
-} from '../../../../../../ui-smartcontact/src/public-api';
+} from '@smartcontact-hub/components';
 import { StoryContext, StoryDef, StoryHostComponent, StoryMeta } from '../../../storybook';
 import { DynamicContentComponent } from './dynamic-content.component';
 

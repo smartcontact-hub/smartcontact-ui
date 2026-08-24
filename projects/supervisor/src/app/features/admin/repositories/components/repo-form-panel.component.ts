@@ -13,7 +13,6 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { PrimeTemplate } from 'primeng/api';
 
 import {
   ScInputTextComponent as InputTextComponent,
@@ -35,7 +34,6 @@ export type RepoFormSubmission = Readonly<Record<string, string>>;
     FormsModule,
     IconComponent,
     InputTextComponent,
-    PrimeTemplate,
     SelectComponent,
     TranslateModule,
   ],

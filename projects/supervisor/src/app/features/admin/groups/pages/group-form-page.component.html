@@ -129,10 +129,10 @@
                   [value]="form().priority"
                   (valueChange)="onPriorityValueChange($event)"
                 >
-                  <ng-template pTemplate="item" let-p>
+                  <ng-template #item let-p>
                     {{ priorityKeys[p] | translate }}
                   </ng-template>
-                  <ng-template pTemplate="selectedItem" let-p>
+                  <ng-template #selectedItem let-p>
                     {{ priorityKeys[p] | translate }}
                   </ng-template>
                 </sc-select>

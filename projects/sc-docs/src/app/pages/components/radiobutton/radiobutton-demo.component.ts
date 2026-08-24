@@ -7,7 +7,7 @@ import {
   viewChild,
 } from '@angular/core';
 
-import { ScRadioButtonComponent } from '../../../../../../ui-smartcontact/src/public-api';
+import { ScRadioButtonComponent } from '@smartcontact-hub/components';
 import { StoryContext, StoryDef, StoryHostComponent, StoryMeta } from '../../../storybook';
 
 const GROUP_SNIPPET = `<sc-radiobutton value="a" [modelValue]="selected()" (modelValueChange)="selected.set($any($event))" inputId="opt-a" name="demo" />

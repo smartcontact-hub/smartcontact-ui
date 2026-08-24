@@ -14,7 +14,7 @@
     [rounded]="rounded()"
     (onClick)="onClick($event)">
     @if (buttonIcon(); as resolvedButtonIcon) {
-        <ng-template pTemplate="icon" let-iconClass="class">
+        <ng-template #icon let-iconClass="class">
             <span
                 [class]="buttonIconClass(iconClass, resolvedButtonIcon)"
                 [attr.aria-hidden]="iconAriaHidden()"

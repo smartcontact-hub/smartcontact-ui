@@ -13,7 +13,7 @@ import {
 import { Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { MessageService, PrimeTemplate } from 'primeng/api';
+import { MessageService } from 'primeng/api';
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 
@@ -127,7 +127,6 @@ interface FormState {
     InputTextComponent,
     LabelChipComponent,
     PhotoUploadComponent,
-    PrimeTemplate,
     SearchComponent,
     SectionCardComponent,
     SelectComponent,
@@ -216,12 +215,13 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   protected readonly maxChatsOptions: readonly number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
   protected readonly agentTypes = AGENT_TYPES;
   /* Widening intencional a `Record<string, string>` para que los templates
-   * que reciben `let-t` desde `pTemplate` (tipo `any` por design de PrimeNG)
-   * puedan indexar sin error TS7053. El lookup sigue siendo seguro: las
+   * que reciben `let-t` desde el `<ng-template #item>` proyectado (tipo `any`
+   * por diseño de PrimeNG) puedan indexar sin TS7053. El lookup sigue siendo
+   * seguro: las
    * keys vienen siempre de `agentTypes` (AgentType union). */
   protected readonly typeLabelKeys: Readonly<Record<string, string>> = AGENT_TYPE_LABEL_KEYS;
   /* Widening intencional — ver typeLabelKeys arriba. Mismo razonamiento:
-   * el `let-p` del pTemplate viene como `any` y necesitamos indexar con
+   * el `let-p` de la plantilla proyectada viene como `any` y hay que indexar con
    * cualquier string. Seguro: las keys vienen de presenceStates. */
   protected readonly presenceKeys: Readonly<Record<string, string>> = PRESENCE_LABEL_KEYS;
   protected readonly availableExtensions = AVAILABLE_EXTENSIONS;
@@ -687,7 +687,7 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
 
   /**
    * Adapter para `<sc-select>` con primitive `AgentType[]` options + label
-   * via `pTemplate` (content projection a `<p-select>` nativo PrimeNG).
+   * via `<ng-template #item>` (proyectado al `<p-select>` de PrimeNG).
    * Valida que el value emitido sea un AgentType conocido antes de actualizar.
    */
   protected onAgentTypeValueChange(value: unknown): void {

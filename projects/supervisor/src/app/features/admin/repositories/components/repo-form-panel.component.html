@@ -43,10 +43,10 @@
             (valueChange)="onSelectValueChange(field.key, $event)"
             (keydown)="onKey($event)"
           >
-            <ng-template pTemplate="item" let-opt>
+            <ng-template #item let-opt>
               {{ opt.labelKey | translate }}
             </ng-template>
-            <ng-template pTemplate="selectedItem" let-opt>
+            <ng-template #selectedItem let-opt>
               {{ opt.labelKey | translate }}
             </ng-template>
           </sc-select>

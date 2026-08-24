@@ -11,7 +11,7 @@ import {
   BulkEditCommit,
   BulkEditFieldOption,
   ScBulkEditMenuComponent,
-} from '../../../../../../ui-smartcontact/src/public-api';
+} from '@smartcontact-hub/components';
 import { StoryContext, StoryDef, StoryHostComponent, StoryMeta } from '../../../storybook';
 
 const INLINE_SNIPPET = `<sc-bulk-edit-menu [fields]="fields" (commit)="onCommit($event)" />`;

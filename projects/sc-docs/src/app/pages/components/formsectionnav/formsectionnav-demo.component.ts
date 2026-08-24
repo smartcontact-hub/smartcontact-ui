@@ -10,7 +10,7 @@ import {
 import {
   FormNavSection,
   ScFormSectionNavComponent,
-} from '../../../../../../ui-smartcontact/src/public-api';
+} from '@smartcontact-hub/components';
 import { StoryContext, StoryDef, StoryHostComponent, StoryMeta } from '../../../storybook';
 
 const DEFAULT_SNIPPET = `<sc-form-section-nav

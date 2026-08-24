@@ -136,10 +136,10 @@
                   [value]="form().type"
                   (valueChange)="onTypeValueChange($event)"
                 >
-                  <ng-template pTemplate="item" let-t>
+                  <ng-template #item let-t>
                     {{ typeLabelKeys[t] | translate }}
                   </ng-template>
-                  <ng-template pTemplate="selectedItem" let-t>
+                  <ng-template #selectedItem let-t>
                     {{ typeLabelKeys[t] | translate }}
                   </ng-template>
                 </sc-select>

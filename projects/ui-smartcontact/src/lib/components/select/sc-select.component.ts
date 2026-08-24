@@ -4,7 +4,8 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
-  contentChildren,
+  contentChild,
+  type TemplateRef,
   forwardRef,
   inject,
   Injector,
@@ -15,7 +16,6 @@ import {
   ViewEncapsulation,
 } from '@angular/core';
 import { FormsModule, ControlValueAccessor, NG_VALUE_ACCESSOR, NgControl } from '@angular/forms';
-import { PrimeTemplate } from 'primeng/api';
 import { ScFieldLabelComponent } from '../field/sc-field-label.component';
 import { ScFieldMsgComponent } from '../field/sc-field-msg.component';
 import { SelectModule } from 'primeng/select';
@@ -41,7 +41,7 @@ let scSelectIdCounter = 0;
 @Component({
   selector: 'sc-select',
   standalone: true,
-  imports: [SelectModule, FormsModule, PrimeTemplate, NgTemplateOutlet, ScFieldLabelComponent, ScFieldMsgComponent],
+  imports: [SelectModule, FormsModule, NgTemplateOutlet, ScFieldLabelComponent, ScFieldMsgComponent],
   templateUrl: './sc-select.component.html',
   styleUrl: './sc-select.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -122,24 +122,43 @@ export class ScSelectComponent implements ControlValueAccessor {
   readonly focused = output<FocusEvent>();
   readonly blurred = output<FocusEvent>();
 
-  // ─── Content-projected pTemplate slots ─────────────────────────────
+  // ─── Slots proyectados por el consumer ─────────────────────────────
   /**
-   * Captura los `<ng-template pTemplate="...">` que el consumer escribe
-   * dentro de `<sc-select>` (sintaxis idéntica a `<p-select>` nativo).
-   * El HTML del componente itera estos y los re-proyecta hacia el p-select
-   * interno via `[pTemplate]` + `ngTemplateOutlet`, porque el ContentChildren
-   * del p-select NO ve los templates a través de doble content projection
-   * (limitación conocida de Angular query origin).
+   * Captura los `<ng-template #item>` que el consumer escribe dentro de
+   * `<sc-select>` (sintaxis idéntica a `<p-select>` nativo) y los re-emite en
+   * el HTML hacia el p-select interno, porque su propia consulta NO ve los
+   * templates a través de doble content projection (limitación de Angular
+   * query origin) — el wrapper tiene que hacer de puente.
+   *
+   * ⚠️ **Esto se captura por NOMBRE DE REFERENCIA desde PrimeNG 22, y antes se
+   * hacía con `contentChildren(PrimeTemplate)` + un `[pTemplate]` DINÁMICO.**
+   * En v22 `p-select` dejó de tener el `ContentChildren(PrimeTemplate)` de
+   * respaldo: resuelve cada slot con `contentChild('item')`, o sea por nombre
+   * ESTÁTICO. Un nombre dinámico ya no lo encuentra nadie, así que el puente
+   * viejo quedó mudo — renderizaba sin error y sin template.
+   *
+   * Por eso cada slot se declara explícito aquí y en el HTML: es el precio de
+   * que el nombre tenga que ser estático. Añadir uno nuevo son dos líneas.
    *
    * Uso típico (consumer):
    * ```html
    * <sc-select [options]="agentTypes" [value]="form().type">
-   *   <ng-template pTemplate="item" let-t>{{ keys[t] | translate }}</ng-template>
-   *   <ng-template pTemplate="selectedItem" let-t>{{ keys[t] | translate }}</ng-template>
+   *   <ng-template #item let-t>{{ keys[t] | translate }}</ng-template>
+   *   <ng-template #selectedItem let-t>{{ keys[t] | translate }}</ng-template>
    * </sc-select>
    * ```
    */
-  protected readonly projectedTemplates = contentChildren(PrimeTemplate);
+  protected readonly itemTpl = contentChild<TemplateRef<unknown>>('item');
+
+  protected readonly selectedItemTpl = contentChild<TemplateRef<unknown>>('selectedItem');
+
+  protected readonly headerTpl = contentChild<TemplateRef<unknown>>('header');
+
+  protected readonly footerTpl = contentChild<TemplateRef<unknown>>('footer');
+
+  protected readonly emptyTpl = contentChild<TemplateRef<unknown>>('empty');
+
+  protected readonly groupTpl = contentChild<TemplateRef<unknown>>('group');
 
   // ─── Derived ───────────────────────────────────────────────────────
   protected readonly resolvedId = computed(

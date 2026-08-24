@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
 import { DynamicDialogRef } from 'primeng/dynamicdialog';
 
-import { ScButtonComponent } from '../../../../../../ui-smartcontact/src/public-api';
+import { ScButtonComponent } from '@smartcontact-hub/components';
 
 /**
  * Contenido arbitrario abierto al vuelo por ScDynamicDialogService. Se cierra

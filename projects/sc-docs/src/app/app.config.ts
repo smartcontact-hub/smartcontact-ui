@@ -3,7 +3,7 @@ import { provideAnimationsAsync } from '@angular/platform-browser/animations/asy
 import { provideRouter, withHashLocation } from '@angular/router';
 import { provideTranslateService } from '@ngx-translate/core';
 
-import { provideSmartContactUi } from '../../../ui-smartcontact/src/public-api';
+import { provideSmartContactUi } from '@smartcontact-hub/components';
 import { routes } from './app.routes';
 
 export const appConfig: ApplicationConfig = {

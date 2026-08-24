@@ -12,7 +12,7 @@ import {
   ScCommandPaletteComponent,
   ScCommandPaletteService,
   ScPaletteCommand,
-} from '../../../../../../ui-smartcontact/src/public-api';
+} from '@smartcontact-hub/components';
 import { StoryContext, StoryDef, StoryHostComponent, StoryMeta } from '../../../storybook';
 
 /** Demo de `sc-command-palette` en formato story (motor «Storybook-like»). */

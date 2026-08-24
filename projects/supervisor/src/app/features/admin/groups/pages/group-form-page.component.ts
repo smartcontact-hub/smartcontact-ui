@@ -33,7 +33,6 @@ import {
   ScSelectComponent as SelectComponent,
   ScToggleSwitchComponent as ToggleSwitchComponent,
 } from '@smartcontact-hub/components';
-import { PrimeTemplate } from 'primeng/api';
 import {
   CHANNEL_LABEL_KEYS,
   CHAT_STRATEGIES,
@@ -80,7 +79,6 @@ interface FormState {
     InputTextComponent,
     InputNumberComponent,
     DialogComponent,
-    PrimeTemplate,
     SectionCardComponent,
     SelectComponent,
     ToggleSwitchComponent,
@@ -111,7 +109,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
 
   protected readonly priorities = GROUP_PRIORITIES;
   /* Widening intencional a `Record<string, string>` para que el `let-p`
-   * que llega desde `pTemplate` (tipo `any` por design de PrimeNG) pueda
+   * que llega desde el `<ng-template #item>` proyectado (`any` por diseño) pueda
    * indexar sin TS7053. Seguro: las keys vienen siempre de `priorities`
    * (GroupPriority union). Mismo patrón que agent-form-page. */
   protected readonly priorityKeys: Readonly<Record<string, string>> = PRIORITY_LABEL_KEYS;

@@ -1,10 +1,14 @@
+<!-- PrimeNG 22 retiró el input `text`: el contenido va proyectado. Se emite antes
+     del `ng-content` para que `[text]` y el contenido convivan como antes. -->
 <p-message
-    [text]="text() || undefined"
     [severity]="messageSeverity()"
     [closable]="closable()"
     [icon]="messageIcon()"
     [size]="messageSize()"
     [variant]="variant()"
     (onClose)="closed.emit($event)">
+    @if (text()) {
+        {{ text() }}
+    }
     <ng-content></ng-content>
 </p-message>

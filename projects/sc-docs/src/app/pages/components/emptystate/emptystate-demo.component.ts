@@ -6,7 +6,7 @@ import {
   viewChild,
 } from '@angular/core';
 
-import { ScEmptyStateComponent } from '../../../../../../ui-smartcontact/src/public-api';
+import { ScEmptyStateComponent } from '@smartcontact-hub/components';
 import { StoryContext, StoryDef, StoryHostComponent, StoryMeta } from '../../../storybook';
 
 const PLAIN_SNIPPET = `<sc-empty-state

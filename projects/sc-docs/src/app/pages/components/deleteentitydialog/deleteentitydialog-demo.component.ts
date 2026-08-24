@@ -10,7 +10,7 @@ import {
 import {
   DeletableEntity,
   ScDeleteEntityDialogComponent,
-} from '../../../../../../ui-smartcontact/src/public-api';
+} from '@smartcontact-hub/components';
 import { StoryContext, StoryDef, StoryHostComponent, StoryMeta } from '../../../storybook';
 
 /** Demo de `sc-delete-entity-dialog` en formato story (motor «Storybook-like»). */

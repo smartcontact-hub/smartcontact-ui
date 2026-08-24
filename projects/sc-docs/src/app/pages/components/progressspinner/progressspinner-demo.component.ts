@@ -6,7 +6,7 @@ import {
   viewChild,
 } from '@angular/core';
 
-import { ScProgressSpinnerComponent } from '../../../../../../ui-smartcontact/src/public-api';
+import { ScProgressSpinnerComponent } from '@smartcontact-hub/components';
 import { StoryContext, StoryDef, StoryHostComponent, StoryMeta } from '../../../storybook';
 
 const DEFAULT_SNIPPET = `<sc-progressspinner />`;

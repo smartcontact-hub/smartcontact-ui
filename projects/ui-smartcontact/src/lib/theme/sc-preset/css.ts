@@ -70,7 +70,11 @@ const typographyRule = (
     line-height: ${token(dt, lineHeightToken, lineHeightFallback)};
 }`;
 
-const presetCss = ({ dt }: StyleOptions) => `
+/* `@primeuix/themes` 3 cambió `ExtendedCSS` a `(options?: StyleOptions) => string`:
+ * el argumento pasó a ser OPCIONAL. La firma se relaja igual para casar con el tipo;
+ * en la práctica PrimeUIX siempre lo pasa, y si no lo hiciera reventaría al usar `dt`,
+ * que es lo correcto — mejor un fallo ruidoso que un CSS silenciosamente vacío. */
+const presetCss = ({ dt }: StyleOptions = {} as StyleOptions) => `
 ${typographyRule(
     mdTypographySelectors,
     dt,

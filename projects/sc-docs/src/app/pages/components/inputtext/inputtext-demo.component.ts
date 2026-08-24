@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
-import { ScInputTextComponent } from '../../../../../../ui-smartcontact/src/public-api';
+import { ScInputTextComponent } from '@smartcontact-hub/components';
 import { StoryContext, StoryDef, StoryHostComponent, StoryMeta } from '../../../storybook';
 
 const BASIC_SNIPPET = `<sc-inputtext label="Nombre" placeholder="Escribe…" [(value)]="name" />`;

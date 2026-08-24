@@ -7,7 +7,7 @@ import {
   viewChild,
 } from '@angular/core';
 
-import { ScDatepickerComponent } from '../../../../../../ui-smartcontact/src/public-api';
+import { ScDatepickerComponent } from '@smartcontact-hub/components';
 import { StoryContext, StoryDef, StoryHostComponent, StoryMeta } from '../../../storybook';
 
 const ESTADOS_SNIPPET = `<sc-datepicker label="Fecha de inicio" />

@@ -2,7 +2,7 @@ import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/cor
 
 import { ScIconComponent } from '@smartcontact-hub/icons';
 
-import { ScClipboardService } from '../../../../../ui-smartcontact/src/public-api';
+import { ScClipboardService } from '@smartcontact-hub/components';
 
 interface ScaleStep {
   token: string;

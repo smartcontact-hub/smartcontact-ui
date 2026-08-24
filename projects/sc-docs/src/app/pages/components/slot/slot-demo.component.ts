@@ -1,6 +1,6 @@
 import { ChangeDetectionStrategy, Component, TemplateRef, computed, viewChild } from '@angular/core';
 
-import { ScSlotComponent, ScSubsectionComponent } from '../../../../../../ui-smartcontact/src/public-api';
+import { ScSlotComponent, ScSubsectionComponent } from '@smartcontact-hub/components';
 import { StoryContext, StoryDef, StoryHostComponent, StoryMeta } from '../../../storybook';
 
 const CONTEXT_SNIPPET = `<sc-subsection titleKey="Identidad">

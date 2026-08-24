@@ -6,9 +6,8 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
-import { PrimeTemplate } from 'primeng/api';
 
-import { ScSelectComponent } from '../../../../../../ui-smartcontact/src/public-api';
+import { ScSelectComponent } from '@smartcontact-hub/components';
 import { StoryContext, StoryDef, StoryHostComponent, StoryMeta } from '../../../storybook';
 
 const OBJETOS_SNIPPET = `<sc-select
@@ -29,7 +28,7 @@ const ESTADOS_SNIPPET = `<sc-select label="Con clear + filtro" [options]="groups
 /** Demo de `sc-select` en formato story (motor «Storybook-like»). */
 @Component({
   selector: 'app-select-demo',
-  imports: [ScSelectComponent, PrimeTemplate, StoryHostComponent],
+  imports: [ScSelectComponent, StoryHostComponent],
   templateUrl: './select-demo.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })

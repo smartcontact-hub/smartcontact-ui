@@ -7,7 +7,7 @@ import {
   viewChild,
 } from '@angular/core';
 
-import { ScFormDangerZoneComponent } from '../../../../../../ui-smartcontact/src/public-api';
+import { ScFormDangerZoneComponent } from '@smartcontact-hub/components';
 import { StoryContext, StoryDef, StoryHostComponent, StoryMeta } from '../../../storybook';
 
 const BASIC_SNIPPET = `<sc-form-danger-zone

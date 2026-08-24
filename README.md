@@ -1,8 +1,8 @@
 # Smart Contact UI — Design System
 
-![Angular](https://img.shields.io/badge/Angular-21-DD0031?logo=angular&logoColor=white)
-![PrimeNG](https://img.shields.io/badge/PrimeNG-21-10B981)
-![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6?logo=typescript&logoColor=white)
+![Angular](https://img.shields.io/badge/Angular-22-DD0031?logo=angular&logoColor=white)
+![PrimeNG](https://img.shields.io/badge/PrimeNG-22-10B981)
+![TypeScript](https://img.shields.io/badge/TypeScript-6.0-3178C6?logo=typescript&logoColor=white)
 ![Packages](https://img.shields.io/badge/packages-3-blue)
 ![License](https://img.shields.io/badge/license-Proprietary-lightgrey)
 
@@ -95,7 +95,7 @@ npm run preflight      # TODO lo que corre el CI (los 8 pasos), antes de pushear
 | i18n | `npm run i18n:check` | Paridad de **claves** entre los locales del Supervisor (`es` canónico ↔ `en`/`fr`/`pt`): ni claves sin traducir ni huérfanas, para que la UI no muestre la clave cruda. No juzga la calidad de la traducción (`scripts/i18n-check.mjs`) | ✅ |
 | Tests unitarios | `npm run test:unit` | Suites de los generadores/scripts (`scripts/__tests__/*.test.mjs`) | ✅ |
 | Docs | `npm run docs:guard` · `docs:coherence` | Todo `.md` mapeado en `DOCS-INDEX` + links resuelven · la doc cuadra con el repo (comandos/scripts existen, cadena `verify` documentada, sin tokens muertos) | ✅ |
-| Tests unitarios del DS | `npm run test:components` | `TestBed` sobre vitest (Angular 21). Cubre los CASOS LÍMITE que la e2e no alcanza sin montar una página entera: `field` inexistente en `[visibleColumns]`, array vacío, `colspan` con columnas ocultas | ✅ |
+| Tests unitarios del DS | `npm run test:components` | `TestBed` sobre vitest (Angular 22). Cubre los CASOS LÍMITE que la e2e no alcanza sin montar una página entera: `field` inexistente en `[visibleColumns]`, array vacío, `colspan` con columnas ocultas | ✅ |
 | Acoplamiento a PrimeNG | `npm run audit:primeng-coupling` | Las clases `.p-*` que nuestro SCSS usa **no son API pública**: una subida de versión puede renombrarlas y las pantallas revierten sin que falle ningún test de comportamiento. Comprueba que las 36 siguen existiendo en `node_modules/primeng` y que el número no crece (trinquete, no meta: el objetivo es BAJARLO) | ✅ |
 | Tablas del DS | `npm run audit:datatables` | Invariantes de toda página con `<sc-datatable>`: la piel `list-table`, columnas en `computed` (en un campo los `cellTemplate` se quedan en `undefined`), plantillas fuera del componente, `<th scope="row">` que el DS no sabe emitir, columna de acciones con nombre accesible, cabeceras que reaccionan al cambio de idioma, y que su ruta esté en el guardián de la gramática | ✅ |
 | Tipos + lint | `npm run typecheck` · `npm run lint` | `tsc` sobre las 2 libs, las 4 apps **y el arnés de la raíz** (`tsconfig.harness.json`: 33 ficheros que hasta s32 no miraba NADIE — los 4 `playwright*.config.ts`, `eslint.config.js` y los 28 de `e2e/`; los `tsconfig` de apps y libs arrancan todos en `src/`). Por ese hueco pasó un `reducedMotion` suelto en `use` en vez de dentro de `contextOptions`: error de tipo real, `verify` entero en verde y la suite de CusCare inestable bajo carga. `code-connect/` queda fuera a propósito (son plantillas del CLI de Code Connect, no código; su gate es `figma:connect:parse`) | ✅ |

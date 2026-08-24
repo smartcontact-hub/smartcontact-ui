@@ -9,7 +9,7 @@ import {
 import {
   ColumnDef,
   ScColumnSelectorComponent,
-} from '../../../../../../ui-smartcontact/src/public-api';
+} from '@smartcontact-hub/components';
 import { StoryContext, StoryDef, StoryHostComponent, StoryMeta } from '../../../storybook';
 
 /** Demo de `sc-column-selector` en formato story (motor «Storybook-like»). */

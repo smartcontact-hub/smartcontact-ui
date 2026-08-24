@@ -8,7 +8,7 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
-import { ScSearchComponent } from '../../../../../../ui-smartcontact/src/public-api';
+import { ScSearchComponent } from '@smartcontact-hub/components';
 import { StoryContext, StoryDef, StoryHostComponent, StoryMeta } from '../../../storybook';
 
 const BASIC_SNIPPET = `<sc-search placeholder="Buscar agentes…" [(ngModel)]="term" />`;

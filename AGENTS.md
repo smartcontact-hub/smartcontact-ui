@@ -1,7 +1,7 @@
 # SmartContact UI - Agents
 
 ## Purpose
-This project is a design system built with Angular 21, PrimeNG 21, standalone components, and CSS design tokens.
+This project is a design system built with Angular 22, PrimeNG 22, standalone components, and CSS design tokens.
 
 Before making version-sensitive changes, verify the real baseline in:
 - `package.json`

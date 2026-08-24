@@ -25,15 +25,15 @@
   (onLazyLoad)="lazyLoad.emit($event)"
   (onFilter)="filterChange.emit($event)"
 >
-  <ng-template pTemplate="caption">
+  <ng-template #caption>
     <ng-content select="[scTableCaption]" />
   </ng-template>
 
-  <ng-template pTemplate="header">
+  <ng-template #header>
     <tr>
       @if (selectionMode() === 'multiple') {
         <th class="sc-datatable__check" scope="col">
-          <p-tableHeaderCheckbox [ariaLabel]="selectAllAriaLabel()" />
+          <p-table-header-checkbox [ariaLabel]="selectAllAriaLabel()" />
         </th>
       }
       @for (col of visibleCols(); track col.field) {
@@ -45,7 +45,7 @@
             [style.text-align]="col.align ?? null"
             [attr.aria-label]="col.headerAriaLabel ?? null"
           >
-            {{ col.header }}<p-sortIcon [field]="col.field" />
+            {{ col.header }}<p-sort-icon [field]="col.field" />
           </th>
         } @else {
           <th
@@ -61,7 +61,7 @@
     </tr>
   </ng-template>
 
-  <ng-template pTemplate="body" let-row let-rowIndex="rowIndex">
+  <ng-template #body let-row let-rowIndex="rowIndex">
     <tr
       [pSelectableRow]="row"
       [pSelectableRowDisabled]="rowSelectDisabled()"
@@ -83,7 +83,11 @@
           (mousedown)="onCheckMousedown($event, rowIndex)"
           (click)="$event.stopPropagation()"
         >
-          <p-tableCheckbox [value]="row" [ariaLabel]="rowSelectionAriaLabel()?.(row, rowIndex)" />
+          <p-table-checkbox
+            class="sc-datatable__check-box"
+            [value]="row"
+            [ariaLabel]="rowSelectionAriaLabel()?.(row, rowIndex)"
+          />
         </td>
       }
       @for (col of visibleCols(); track col.field) {
@@ -106,7 +110,7 @@
     </tr>
   </ng-template>
 
-  <ng-template pTemplate="emptymessage">
+  <ng-template #emptymessage>
     <tr>
       <td [attr.colspan]="colspan()">
         <ng-content select="[scTableEmpty]" />

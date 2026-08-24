@@ -11,7 +11,7 @@ import {
   ImpactBadge,
   ImpactItem,
   ScImpactPreviewDialogComponent,
-} from '../../../../../../ui-smartcontact/src/public-api';
+} from '@smartcontact-hub/components';
 import { StoryContext, StoryDef, StoryHostComponent, StoryMeta } from '../../../storybook';
 
 /** Demo de `sc-impact-preview-dialog` en formato story (motor «Storybook-like»). */

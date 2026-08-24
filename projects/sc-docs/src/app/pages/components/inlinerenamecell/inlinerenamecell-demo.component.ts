@@ -7,7 +7,7 @@ import {
   viewChild,
 } from '@angular/core';
 
-import { ScInlineRenameCellComponent } from '../../../../../../ui-smartcontact/src/public-api';
+import { ScInlineRenameCellComponent } from '@smartcontact-hub/components';
 import { StoryContext, StoryDef, StoryHostComponent, StoryMeta } from '../../../storybook';
 
 const DEMO_SNIPPET = `@if (editing()) {

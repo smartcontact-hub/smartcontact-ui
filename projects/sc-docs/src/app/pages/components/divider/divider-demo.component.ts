@@ -6,7 +6,7 @@ import {
   viewChild,
 } from '@angular/core';
 
-import { ScDividerComponent } from '../../../../../../ui-smartcontact/src/public-api';
+import { ScDividerComponent } from '@smartcontact-hub/components';
 import { StoryContext, StoryDef, StoryHostComponent, StoryMeta } from '../../../storybook';
 
 const HORIZONTAL_SNIPPET = `Texto antes del separador.

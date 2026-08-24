@@ -168,10 +168,10 @@
                   [value]="form().extension"
                   (valueChange)="onExtensionValueChange($event)"
                 >
-                  <ng-template pTemplate="item" let-ext>
+                  <ng-template #item let-ext>
                     {{ ext.number }} ({{ 'agents.ext.' + ext.type | translate }})
                   </ng-template>
-                  <ng-template pTemplate="selectedItem" let-ext>
+                  <ng-template #selectedItem let-ext>
                     {{ ext.number }} ({{ 'agents.ext.' + ext.type | translate }})
                   </ng-template>
                 </sc-select>
@@ -187,10 +187,10 @@
                   [value]="form().agentType"
                   (valueChange)="onAgentTypeValueChange($event)"
                 >
-                  <ng-template pTemplate="item" let-t>
+                  <ng-template #item let-t>
                     {{ typeLabelKeys[t] | translate }}
                   </ng-template>
-                  <ng-template pTemplate="selectedItem" let-t>
+                  <ng-template #selectedItem let-t>
                     {{ typeLabelKeys[t] | translate }}
                   </ng-template>
                 </sc-select>
@@ -229,10 +229,10 @@
                 [value]="form().presenceStatus"
                 (valueChange)="onPresenceValueChange($event)"
               >
-                <ng-template pTemplate="item" let-p>
+                <ng-template #item let-p>
                   {{ presenceKeys[p] | translate }}
                 </ng-template>
-                <ng-template pTemplate="selectedItem" let-p>
+                <ng-template #selectedItem let-p>
                   {{ presenceKeys[p] | translate }}
                 </ng-template>
               </sc-select>
@@ -466,7 +466,7 @@
                         [value]="labelPickValue()"
                         (valueChange)="onLabelValueAdd($event)"
                       >
-                        <ng-template pTemplate="item" let-l>{{ l.name }}</ng-template>
+                        <ng-template #item let-l>{{ l.name }}</ng-template>
                       </sc-select>
                     }
                     <div class="label-chips">

@@ -1,6 +1,6 @@
 # @smartcontact-hub/icons
 
-![Angular](https://img.shields.io/badge/Angular-21-DD0031?logo=angular&logoColor=white)
+![Angular](https://img.shields.io/badge/Angular-22-DD0031?logo=angular&logoColor=white)
 ![Material Symbols](https://img.shields.io/badge/Material%20Symbols-Rounded-4285F4?logo=google&logoColor=white)
 ![License](https://img.shields.io/badge/license-Proprietary-lightgrey)
 

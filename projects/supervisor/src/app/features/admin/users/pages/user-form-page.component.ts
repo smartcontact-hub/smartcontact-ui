@@ -33,7 +33,6 @@ import {
   ScSelectComponent as SelectComponent,
   ScToggleSwitchComponent as ToggleSwitchComponent,
 } from '@smartcontact-hub/components';
-import { PrimeTemplate } from 'primeng/api';
 import { AVAILABLE_GROUPS_REF } from '@shared/data/groups-ref';
 import {
   AVAILABLE_SERVICES,
@@ -73,7 +72,6 @@ interface FormState {
     IllustratedAvatarComponent,
     InputTextComponent,
     PhotoUploadComponent,
-    PrimeTemplate,
     SectionCardComponent,
     SelectComponent,
     ToggleSwitchComponent,
@@ -102,7 +100,7 @@ export class UserFormPageComponent implements DirtyAware, OnInit, OnDestroy {
 
   protected readonly userTypes = USER_TYPES;
   /* Widening intencional a `Record<string, string>` para que el `let-t`
-   * que llega desde `pTemplate` (tipo `any` por design de PrimeNG) pueda
+   * que llega desde el `<ng-template #item>` proyectado (`any` por diseño) pueda
    * indexar sin TS7053. Seguro: las keys vienen siempre de `userTypes`
    * (UserType union). Mismo patrón que agent-form-page. */
   protected readonly typeLabelKeys: Readonly<Record<string, string>> = USER_TYPE_LABEL_KEYS;

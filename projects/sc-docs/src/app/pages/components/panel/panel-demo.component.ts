@@ -6,7 +6,7 @@ import {
   viewChild,
 } from '@angular/core';
 
-import { ScPanelComponent } from '../../../../../../ui-smartcontact/src/public-api';
+import { ScPanelComponent } from '@smartcontact-hub/components';
 import { StoryContext, StoryDef, StoryHostComponent, StoryMeta } from '../../../storybook';
 
 const BASIC_SNIPPET = `<sc-panel header="Panel básico">
