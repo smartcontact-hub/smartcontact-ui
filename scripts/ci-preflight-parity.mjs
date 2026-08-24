@@ -20,13 +20,19 @@ import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 import { join, dirname } from 'node:path';
 
-// CI → local. El smoke completo (`npm run e2e`) incluye specs de screenshot de
-// componente que FALLAN SIEMPRE en macOS (sc-card/sc-message) y un usage-capture que
-// pisa `public/usage/*.png`; su cobertura visual la da en local el build AOT (que
-// preflight sí corre). `component-structure` —lo que se escapó en s29— sí corre limpio,
-// y es justo lo que ejecuta `e2e:structure`.
+// CI → local. El smoke completo se corre ENTERO en local, solo que anteponiendo `CI=1`
+// —que es la variable que el runner ya tiene puesta—, así que no es otro comando: es el
+// mismo con el entorno del CI.
+//
+// Antes aquí ponía `npm run e2e:structure`, o sea UN test en vez de los 68 del smoke, y
+// eso dejaba fuera del gate de pre-push los 56 de `components.spec.ts`: un gate nuevo
+// añadido ahí pasaba preflight sin ejecutarse ni una vez. El motivo escrito era que los
+// screenshots de componente (sc-card/sc-message) fallan siempre en macOS, pero esos son
+// llamadas a `screenshotBaseline()`, que hace no-op justo con `CI=1`. Medido el
+// 2026-08-24 en macOS: `CI=1 npm run e2e` → 68/68 en verde, y `public/usage/*.png` sin
+// tocar (el `usage-capture` que las pisaba está en `testIgnore` desde entonces).
 export const LOCAL_SUBSTITUTIONS = {
-  'npm run e2e': 'npm run e2e:structure',
+  'npm run e2e': 'CI=1 npm run e2e',
 };
 
 const INFRA = [/^npm ci\b/, /^npx playwright install\b/];

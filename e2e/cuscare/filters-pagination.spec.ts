@@ -1,5 +1,7 @@
 import { expect, test, type Page } from '@playwright/test';
 
+import { watchTransient } from './helpers';
+
 /**
  * CusCare · filtros y paginación FUNCIONANDO.
  *
@@ -119,15 +121,34 @@ test.describe('paginación', () => {
     expect(firstIdPage2).not.toBe(firstIdPage1);
   });
 
+  /**
+   * El loader dura 380 ms: se comprueba con el vigía, no mirando la pantalla.
+   *
+   * La versión anterior hacía `expect(page.locator('.loadingoverlay')).toBeVisible()`
+   * justo tras el clic y era una CARRERA — rojo intermitente con la máquina
+   * cargada, verde con la máquina limpia. El porqué, la medición y por qué subir
+   * el timeout no arregla nada están en `watchTransient` (`./helpers`).
+   */
   test('muestra el loader del original entre páginas', async ({ page }) => {
     await goto(page);
+    const loader = await watchTransient(page, '.loadingoverlay');
 
     await page.getByRole('button', { name: 'Página 3', exact: true }).click();
-    // Aparece el overlay con el spinner y el mensaje del original…
-    await expect(page.locator('.loadingoverlay')).toBeVisible();
-    await expect(page.getByText('Loading data...')).toBeVisible();
-    // …y se va solo al terminar.
-    await expect(page.locator('.loadingoverlay')).toBeHidden({ timeout: 5000 });
+
+    // El overlay del original ENTRÓ, y entró con su spinner y su mensaje.
+    await expect.poll(async () => (await loader()).seen, { timeout: 5_000 }).toBe(true);
+    const seen = await loader();
+    expect(seen.text).toContain('Loading data...');
+    expect(seen.classes).toContain('spinner');
+
+    // …y se va solo al terminar, dejando la tabla en la página 3. Se afirma con
+    // `toHaveCount(0)` y no con `toBeHidden`, que también pasa si el overlay no
+    // hubiera existido NUNCA: aquí lo que se quiere decir es que se FUE.
+    await expect(page.locator('.loadingoverlay')).toHaveCount(0);
+    await expect(page.getByRole('button', { name: 'Página 3', exact: true })).toHaveAttribute(
+      'aria-current',
+      'page',
+    );
   });
 
   /**
