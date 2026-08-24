@@ -1,22 +1,10 @@
+/* La página vive DENTRO del shell de Fundamentos: el marco y el padding superior los
+ * pone el shell. Aquí sólo queda la medida de lectura (720px), alineada a la izquierda
+ * con la fila de pestañas — centrarla la descuadraba respecto al resto de la sección. */
 :host {
   display: block;
   max-width: 720px;
-  margin: 0 auto;
-  padding: var(--sc-spacing-2-25) var(--sc-spacing-2-25) var(--sc-spacing-5);
-}
-
-.back {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--sc-spacing-0-25);
-  font-size: var(--sc-font-size-100);
-  color: var(--sc-text-subtle);
-  text-decoration: none;
-  margin-bottom: var(--sc-spacing-1-5);
-
-  &:hover {
-    color: var(--sc-text-primary);
-  }
+  padding-bottom: var(--sc-spacing-5);
 }
 
 .hero {

@@ -1,5 +1,4 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
 
 import { ScIconComponent } from '@smartcontact-hub/icons';
 
@@ -32,13 +31,12 @@ const rem = (px: number): string => `${+(px / 16).toFixed(4)}`;
 @Component({
   selector: 'app-foundations-type',
   standalone: true,
-  imports: [RouterLink, ScIconComponent],
+  imports: [ScIconComponent],
   templateUrl: './foundations-type.component.html',
   styleUrl: './foundations-type.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FoundationsTypeComponent {
-  protected readonly arrowLeftIcon = 'arrow_back';
   protected readonly typeIcon = 'text_fields';
 
   /** Font-size: 8 tamaños redondos, step-named, en rem. */

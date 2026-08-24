@@ -50,6 +50,19 @@ const gotoPage = async (page: Page, path: string) => {
  */
 const screenshotBaseline = async (page: Page, name: string) => {
   if (process.env['CI']) return;
+  /* La sidebar del shell es su PROPIO contenedor con scroll (`.sb-shell__side`:
+   * `overflow:auto` + `max-height`), y a lo largo del test acaba desplazada —o no—
+   * según si algo llevó el enlace activo a la vista. En una captura `fullPage` eso
+   * mueve la columna entera: medido el 2026-08-24, `sc-multiselect` alternaba entre
+   * verde y **exactamente 4912 px** de diff, siempre el mismo número, o sea dos
+   * estados deterministas, no ruido. Se fija el scroll a 0 para capturar siempre el
+   * mismo, sin tocar el producto. */
+  await page
+    .locator('.sb-shell__side')
+    .evaluate((el) => {
+      el.scrollTop = 0;
+    })
+    .catch(() => undefined);
   await expect(page).toHaveScreenshot(`${name}.png`, { fullPage: true, animations: 'disabled' });
 };
 
@@ -910,8 +923,20 @@ test.describe('sc-command-palette', () => {
     const palette = page.locator('.palette[role="dialog"]');
     await expect(palette).toBeHidden();
 
-    // abre vía open() del servicio (botón demo)
-    await page.getByTestId('open-palette').click();
+    /* Abre con TECLADO y con el ratón aparcado fuera, a propósito.
+     *
+     * El palette resalta el ítem bajo el cursor —`(mouseenter)` → `onItemHover`— y
+     * Playwright deja el ratón donde hizo clic, así que al abrirse el overlay DEBAJO del
+     * puntero el resaltado salta al ítem que caiga ahí. Medido el 2026-08-24: abriendo con
+     * `.click()` el activo al abrir era «Usuarios» (índice 3) y ↓ ejecutaba «Crear grupo»;
+     * con el ratón fuera es «Dashboard» (0) y ↓ da «Grupos», que es lo que este test mide.
+     *
+     * O sea que el `.click()` ataba esta aserción de TECLADO a la geometría de la página:
+     * bastó con que la cabecera de sc-docs adelgazara 1px para volverlo rojo. `focus()` +
+     * Enter dispara el mismo handler del botón (es un `<button>`), sin mover el puntero. */
+    await page.mouse.move(0, 0);
+    await page.getByTestId('open-palette').focus();
+    await page.keyboard.press('Enter');
     await expect(palette).toBeVisible();
 
     // data-driven: 6 comandos provistos por el consumidor, agrupados en 2
