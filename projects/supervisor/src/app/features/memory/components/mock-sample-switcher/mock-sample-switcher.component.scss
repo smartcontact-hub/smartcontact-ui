@@ -161,3 +161,51 @@
   color: var(--sc-text-subtle);
   line-height: 1.4;
 }
+
+/* ════════════════════════════════════════════════════════════════════
+ * TEMA OSCURO — la mitad que faltaba.
+ *
+ * El tratamiento de arriba está construido con `amber-100/200` + `white`:
+ * es una pastilla CLARA, y en oscuro se quedaba como una isla de luz sobre
+ * el lienzo (L=0.93 en el trigger, L=0.81 en el chip). Es exactamente el
+ * defecto que `theme-contrast.spec.ts` fue escrito para cazar, solo que
+ * vivía en el top-bar, fuera de su alcance hasta hoy.
+ *
+ * No cambia el lenguaje, lo espeja: sigue siendo ámbar sobre ámbar,
+ * discontinuo, "afford-but-warning" y no urgente. Lo que cambia es de qué
+ * lado de la rampa se coge cada pieza.
+ *
+ * Medido contra el `--sc-bg-surface` del top-bar (slate-900):
+ *   relleno amber-950   L=0.020  (el chequeo de superficies pide < 0.5)
+ *   borde   amber-600   5,30:1 vs el lienzo · 4,70:1 vs su propio relleno
+ *   texto   amber-200  12,03:1  ·  chip amber-100 sobre amber-800  6,37:1
+ *
+ * El borde importa más de lo que parece: con un relleno tan oscuro, es él
+ * quien le da silueta al control (1.4.11), no el fondo.
+ * ════════════════════════════════════════════════════════════════════ */
+:host-context(.sc-dark) {
+  .mock-sample-switcher__trigger {
+    border-color: var(--sc-color-amber-600);
+    background: var(--sc-color-amber-950);
+    color: var(--sc-color-amber-200);
+
+    &:hover {
+      border-color: var(--sc-color-amber-500);
+      background: var(--sc-color-amber-900);
+    }
+  }
+
+  .mock-sample-switcher__chip {
+    background: var(--sc-color-amber-800);
+    color: var(--sc-color-amber-100);
+  }
+
+  .mock-sample-switcher__icon,
+  .mock-sample-switcher__label-prefix {
+    color: var(--sc-color-amber-200);
+  }
+
+  .mock-sample-switcher__current {
+    color: var(--sc-color-amber-100);
+  }
+}

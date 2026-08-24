@@ -45,11 +45,17 @@
   --sc-text-warning: var(--sc-color-amber-600);
   --sc-text-danger: var(--sc-color-red-400);
   --sc-text-violet: var(--sc-color-violet-400);
-  /* En dark el botón primary es navy CLARO (blue-400) → el texto encima va
-   * OSCURO (export.dark primaryContrastColor #181d26=gray-900; seguimos al Kit).
-   * ⚠ a11y: gray-900 sobre blue-400 = ~3:1 (bajo AA); blanco tampoco llega. El fix
-   * pide cambiar el color del primary dark — decisión de marca (W5). Lo vigila
-   * tokens:parity §6b (allowlist A11Y_KNOWN). */
+  /* En dark el botón primary es navy CLARO → el texto encima va OSCURO
+   * (export.dark primaryContrastColor #181d26=gray-900; seguimos al Kit en el
+   * texto, que sigue siendo `diverge` solo por el tinte navy vs su zinc).
+   *
+   * Aquí vivió durante meses una frase FALSA que bloqueó el arreglo: decía que
+   * «ni gray-900 ni blanco llegan a AA sobre blue-400». La primera mitad es
+   * cierta y va más lejos de lo que decía (ningún texto oscuro llega: el negro
+   * puro topa en 3,74). La segunda es falsa: el blanco da 5,62 y cumple. Lo que
+   * de verdad impedía usarlo era el hover/active, no la base — el razonamiento
+   * completo está donde ahora se decide, junto a `--sc-bg-primary` (DD-40).
+   * Medido, no deducido: si vuelves a tocar este par, mídelo tú también. */
   --sc-text-on-primary: var(--sc-color-slate-900);
   --sc-text-on-secondary: var(--sc-color-slate-50);
   --sc-text-on-accent: var(--sc-color-slate-950);
@@ -62,15 +68,41 @@
   --sc-bg-subtle-active: var(--sc-color-blue-700);
   --sc-bg-disabled: var(--sc-color-slate-800);
 
-  /* Primary (brand) dark — base/hover/active 1:1 con el Kit → zona generada.
-   * El Kit aclara (blue-400/300/200) vs nuestro blue-500 anterior → más contraste. */
+  /* Primary (brand) dark — DIVERGENCIA CONSCIENTE, un paso más claro que el Kit.
+   * Escrito A MANO (la zona generada de abajo quedó vacía por esto). DD-40.
+   *
+   * El Kit exporta blue-400/300/200 y sobre su BASE no se puede leer nada: con
+   * `slate-900` da 3,01:1, y no es cuestión de oscurecer más el texto — sobre
+   * blue-400 el NEGRO PURO topa en 3,74. El blanco sí llega (5,62), pero entonces
+   * no hay hover ni active posibles: aclarar sale de la ventana en la que el
+   * blanco cumple, y oscurecer mete el relleno por debajo del 3:1 que 1.4.11 pide
+   * contra el lienzo. Con la rampa del Kit, el par no tiene solución.
+   *
+   * Subiendo un paso, con el mismo `--sc-text-on-primary` oscuro, cumplen los dos
+   * criterios los tres estados — y de paso suben los usos de `--sc-bg-primary`
+   * que no son relleno (borde, caret, accent-color, focusBorderColor), que
+   * estaban en la raya de 1.4.11:
+   *
+   *              texto    relleno vs superficie
+   *   base       5,05         5,05     (era 3,01 / 3,01)
+   *   hover      8,03         8,03
+   *   active    11,89        11,89
+   *
+   * Se revierte a `enforce` en scripts/color-map.mjs el día que el Kit suba su
+   * primary dark. Lo durable es pedírselo al Kit; esto es el puente hasta que
+   * llegue. */
+  --sc-bg-primary: var(--sc-color-blue-300);
+  --sc-bg-primary-hover: var(--sc-color-blue-200);
+  --sc-bg-primary-active: var(--sc-color-blue-100);
+
   /* @sc-gen:semantic-color-dark — bloque GENERADO desde kit-export-dtcg.json por
    * `npm run tokens:import` (token-gen-color.mjs). NO editar a mano.
-   * Color de marca 1:1 con el export en dark (hoy solo el primary; el resto del dark
-   * es divergencia consciente y vive FUERA de la zona). */
-  --sc-bg-primary: var(--sc-color-blue-400);
-  --sc-bg-primary-hover: var(--sc-color-blue-300);
-  --sc-bg-primary-active: var(--sc-color-blue-200);
+   * HOY ESTÁ VACÍA A PROPÓSITO, y eso es un dato, no un descuido: el primary era lo
+   * único que el dark recibía del Kit, y desde DD-40 diverge por contraste. El dark
+   * es, por tanto, 100% curado a mano. La zona se queda porque el día que el Kit suba
+   * su primary dark basta con devolver esas filas a `enforce` en color-map.mjs y el
+   * puente vuelve a escribir aquí. */
+
   /* @sc-gen:semantic-color-dark:end */
 
   /* @sc-gen:cmp-color-dark — bloque GENERADO desde kit-export-dtcg.json por
