@@ -297,8 +297,26 @@ lo que hace que te la creas cuando te toca. Lee el índice siempre; el cuerpo, c
    `gh run view --json conclusion`, no con el `EXIT=0` del watcher. *Evidencia (s26) — el atajo
    que yo mismo usaba estaba roto*: `npm run verify 2>&1 | tail -3; echo "VERIFY=$?"` devuelve el
    `$?` del **`tail`**, así que decía 0 con el lint en rojo; solo lo cacé porque el `✖ 1 problem`
-   asomó en las tres líneas. Si miras un exit-code, que sea el del proceso correcto
-   (`set -o pipefail`, o redirige a fichero y mira `$?` sin tubería) — y aun así, lee el log.
+   asomó en las tres líneas. *Y la regla, así escrita, NO me protegió (s30): nombraba el TUBO
+   cuando el problema es la FORMA.* Corrí `npm run preflight > log 2>&1; echo "EXIT=$?" >> log`
+   —sin tubería, cumpliendo la letra— y el `EXIT=1` del fichero era correcto; lo que dijo «exit
+   code 0», **tres veces seguidas**, fue la NOTIFICACIÓN de la tarea en segundo plano, porque el
+   harness informa del exit del comando **compuesto** y el último era mi propio `echo`. Encima se
+   lo conté a Rafa como un fallo del notificador: decía la verdad sobre lo que le di. **No es el
+   `| tail`: es que CUALQUIER cosa que pongas detrás —`echo`, `tee`, `sed`— pasa a ser el exit que
+   se reporta.** Si envuelves algo cuyo verde te importa, deja el proceso de verdad al final (o
+   `exit $?` explícito) — y aun así, lee el log.
+
+   *Corolario (s30) — «este fallo no es mío» es una CLAIM, y se mide como cualquier otra.* Un test
+   de `sc-command-palette` se puso rojo y lo descarté en voz alta —«otra página, otro componente,
+   no lo toca nada de lo mío»— razonando sobre qué ficheros había editado. Era mío: la cabecera de
+   sc-docs adelgazó **1px**, la lista se desplazó, y como el palette resaltaba el ítem bajo el
+   cursor (Playwright deja el ratón donde hizo clic) bajo el puntero caía otro. Lo zanjó `git
+   stash` + correr ESE test contra `HEAD` limpio: **dos minutos**, y lo hice DESPUÉS de afirmar lo
+   contrario. **Acción**: antes de decir que un rojo es ajeno, córrelo en `HEAD` sin tus cambios.
+   Y calcula el radio bien: tocar el SHELL compartido (cabecera, layout) mueve la geometría de
+   TODA página, así que no es «los ficheros que edité» sino «todo lo que dependa de dónde caen las
+   cosas» — ese 1px puso rojas las **39** baselines `fullPage` y un test de teclado.
 
 6. **Tu test NUEVO se pone rojo → sospecha del test ANTES que del código. Y si pasa a la
    primera, sospecha igual.** Un test recién escrito falla casi siempre porque afirma mal, no
