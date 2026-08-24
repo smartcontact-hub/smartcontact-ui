@@ -37,6 +37,79 @@
 
 ---
 
+## DD-40 · 2026-08-24 — El primary dark sube un paso y DIVERGE del Kit: su rampa no admite texto legible
+
+**Contexto** · `--sc-text-on-primary` sobre `--sc-bg-primary` en `.sc-dark` medía **3,01:1**, bajo
+el AA de 4,5. No era un hallazgo nuevo: estaba en `A11Y_KNOWN` de `token-parity.mjs`, comentado en
+`07-dark.css` y anotado en DD-19, aparcado como "revisión de marca (W5)" desde junio. Lo que lo
+desbloquea es que **la razón por la que se aparcó era falsa**. Las tres notas decían que «ni
+gray-900 ni blanco llegan a AA sobre blue-400». Medido: el **blanco sí llega (5,62:1)**. La otra
+mitad sí era cierta, y más de lo que decía — sobre `blue-400` **ni el negro puro llega** (topa en
+**3,74**), así que ningún texto oscuro puede cumplir ahí.
+
+Con eso sobre la mesa, el problema real no es la base sino la **rampa entera**. El relleno en
+reposo necesita dos cosas a la vez: ≥3:1 contra el lienzo (1.4.11, o el control pierde su silueta)
+y ≥4,5:1 con su texto (1.4.3). Traducido a luminancia relativa sobre `slate-900`, el blanco solo
+cumple en la banda **L ∈ [0,136 · 0,183]**, y de los seis azules de la rampa **solo `blue-400`
+cae dentro** — y cae en el canto inferior (su 3,01 contra la superficie supera el mínimo por ocho
+milésimas). Consecuencia: con texto blanco **no existe hover ni active legales**; aclarar sale de
+la banda (`blue-300` con blanco = 3,35) y oscurecer hunde el relleno (`blue-500` vs superficie =
+1,90). La opción del blanco no es peor: es que **no se puede terminar**.
+
+**Decisión** ·
+
+- El primary dark **sube un paso**: `--sc-bg-primary` `blue-400`→**`blue-300`**, hover
+  `blue-300`→**`blue-200`**, active `blue-200`→**`blue-100`**. `--sc-text-on-primary` **no se
+  toca** (sigue `slate-900`).
+- Las tres filas `primary.*` de `mode:'dark'` pasan de `enforce` a **`diverge`** en
+  `scripts/color-map.mjs`, con su razón medida y su condición de reversión. Es el mismo mecanismo
+  y el mismo motivo que las tres divergencias que ya había por contraste (`text.muted.color`,
+  `form.field.icon.color`, `navigation.item.icon.color`).
+- **`A11Y_KNOWN` queda VACÍO** en `token-parity.mjs`: el par pasa a gatearse de verdad. §6b va a
+  **22/22**.
+- La zona generada `@sc-gen:semantic-color-dark` **queda vacía a propósito**, y su cabecera lo
+  dice: el primary era lo único que el dark recibía del Kit, así que **el dark pasa a estar 100%
+  curado a mano**. Es la factura de esta decisión y hay que verla escrita, no descubrirla.
+
+**Razón** · Es la única combinación que cumple los dos criterios en los tres estados —
+5,05 / 8,03 / 11,89, tanto de texto como de relleno contra la superficie. Además arregla de paso
+los usos donde `--sc-bg-primary` **no es un relleno** sino borde, `caret-color`, `accent-color` o
+el `focusBorderColor` del preset: estaban en 3,01 contra la superficie, justo en la raya de
+1.4.11, y suben a 5,05. Medido por tres caminos que no comparten modo de fallo: aritmética WCAG
+sobre los hex de `01-primitive.css` (instrumento validado antes con casos conocidos), el propio
+`tokens:parity`, y `getComputedStyle` sobre el botón real de `sc-docs` compilado, incluido un
+**hover real** para leer el estado hover (5,05 medido, no deducido).
+
+**Descartadas** ·
+- **Texto blanco sobre la rampa del Kit** (base `blue-400` intacta, 1:1 con el export). Pone la
+  base en 5,62 y el gate en verde, pero **empeora dos de los tres estados**: hover 5,05→3,35 y
+  active 8,03→2,11, porque el `contrastColor` del preset es **uno solo** para los tres — medido
+  con hover real: `--p-button-primary-hover-color` y `-active-color` resuelven ambos a
+  `--sc-text-on-primary`. Un arreglo que el indicador aplaude y el usuario sufre.
+- **Blanco + invertir la rampa a 400/500/600.** Los tres textos cumplen (5,62 / 8,90 / 12,44),
+  pero el relleno cae a **1,90 y 1,36** contra la superficie: el botón se funde con la tarjeta
+  justo al interactuar con él.
+- **Oscurecer más el texto** (`slate-950`, negro puro). Imposible por definición: 3,42 y 3,74.
+- **Tocar `kit-export-dtcg.json` a mano** para que el puente lo generase. Falsifica la fuente y lo
+  pisa el siguiente export real; además `tokens:export-clean` lo bloquea en local a propósito.
+- **Pedirle al Kit un azul nuevo** en la banda L ∈ [0,136 · 0,183], apuntando a su centro en vez
+  de al canto. **No descartada: es la salida durable**, pero necesita a Figma y a marca. Esta
+  decisión es el puente hasta que llegue, y por eso se revierte sola devolviendo tres filas a
+  `enforce`.
+
+**Consecuencias** ·
+- El botón primario en oscuro **se ve más pálido** en toda la plataforma, y en `active`
+  (`blue-100`) casi pierde el azul. Es el coste aceptado.
+- Arregla de golpe **17 consumidores** de `--sc-text-on-primary` (12 en el supervisor, 2 en el DS,
+  2 en sc-docs, más el `contrastColor` del preset del que hereda todo botón primario de PrimeNG),
+  y entre ellos dos que se veían a diario: la **barra de navegación de sc-docs** (3,01→5,05 en
+  todos sus enlaces) y el **skip-link** del supervisor, que es el control pensado precisamente
+  para quien navega con teclado o lector de pantalla.
+- **Pendiente**: pedir al Kit el primary dark conforme. Mientras no llegue, el dark no recibe
+  color de Figma.
+
+---
+
 ## DD-39 · 2026-08-24 — Tipografía de componente explícita en `css.ts` + line-height md unificado a 20
 
 **Contexto** · chip/toast/tag/opciones/breadcrumb/context-menu no estaban en los selectores de

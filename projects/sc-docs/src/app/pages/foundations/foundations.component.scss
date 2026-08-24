@@ -41,9 +41,104 @@ h2 {
   }
 }
 
+.swatch-hint {
+  color: var(--sc-text-secondary);
+  font-size: var(--sc-font-size-100);
+  margin-block: var(--sc-spacing-0-5) var(--sc-spacing-1);
+}
+
+/* El envoltorio es quien tiene el hover: así la tarjeta puede solaparse con el
+ * swatch sin hueco por el que se pierda el puntero al ir hacia ella. */
+.swatch-wrap {
+  position: relative;
+  display: inline-flex;
+}
+
 .swatch {
   width: var(--sc-spacing-2);
   height: var(--sc-spacing-2);
   border-radius: var(--sc-radius-sm);
   border: 1px solid var(--sc-border-default);
+  padding: 0;
+  cursor: pointer;
+
+  &:focus-visible {
+    outline: 2px solid var(--sc-border-focus);
+    outline-offset: 2px;
+  }
+}
+
+.swatch-card {
+  position: absolute;
+  bottom: calc(100% + var(--sc-spacing-0-25));
+  left: 50%;
+  transform: translateX(-50%);
+  z-index: var(--sc-z-popover);
+  display: none;
+  flex-direction: column;
+  min-width: var(--sc-spacing-12-5);
+  padding: var(--sc-spacing-0-25);
+  background: var(--sc-bg-elevated);
+  border: 1px solid var(--sc-border-default);
+  border-radius: var(--sc-radius-md);
+  box-shadow: var(--sc-shadow-popover);
+
+  /* Puente invisible hasta el swatch: sin él, el hueco de 3,5 px cierra la
+   * tarjeta justo cuando vas a pulsar una línea. */
+  &::after {
+    content: '';
+    position: absolute;
+    top: 100%;
+    left: 0;
+    right: 0;
+    height: var(--sc-spacing-0-5);
+  }
+
+  .swatch-wrap:hover &,
+  .swatch-wrap:focus-within & {
+    display: flex;
+  }
+
+  &__row {
+    display: flex;
+    align-items: center;
+    gap: var(--sc-spacing-0-5);
+    width: 100%;
+    padding: var(--sc-spacing-0-25) var(--sc-spacing-0-5);
+    background: transparent;
+    border: 0;
+    border-radius: var(--sc-radius-sm);
+    font-family: var(--sc-font-family-mono);
+    font-size: var(--sc-font-size-50);
+    color: var(--sc-text-primary);
+    white-space: nowrap;
+    cursor: pointer;
+
+    &:hover {
+      background: var(--sc-bg-secondary-hover);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--sc-border-focus);
+      outline-offset: -2px;
+    }
+
+    /* El token es el valor que de verdad se debería consumir, así que abre la
+     * tarjeta y va en su propia línea, con el hex y el HSL debajo. */
+    &--token {
+      border-bottom: 1px solid var(--sc-border-default);
+      border-radius: var(--sc-radius-sm) var(--sc-radius-sm) 0 0;
+      margin-bottom: var(--sc-spacing-0-25);
+      padding-bottom: var(--sc-spacing-0-5);
+    }
+  }
+
+  &__label {
+    color: var(--sc-text-subtle);
+    letter-spacing: 0.06em;
+  }
+
+  &__value {
+    margin-right: auto;
+  }
 }
