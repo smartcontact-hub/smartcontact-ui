@@ -34,9 +34,9 @@
   /* Chip — 1:1 con el master de Figma / preset sc-chip */
   .chip {
     display: inline-flex; align-items: center;
-    gap: var(--sc-scale-0-5);
-    padding: var(--sc-scale-0-5) var(--sc-scale-0-75);
-    border-radius: var(--sc-scale-1-143);
+    gap: var(--sc-spacing-0-5);
+    padding: var(--sc-spacing-0-5) var(--sc-spacing-0-75);
+    border-radius: var(--sc-spacing-1-143);
     background: var(--sc-color-slate-100);
     color: var(--sc-color-slate-800);
     font-size: var(--sc-font-size-200);
@@ -44,12 +44,12 @@
     font-weight: var(--sc-font-weight-regular);
   }
   .chip .ico {
-    width: var(--sc-scale-1, 14px); height: var(--sc-scale-1, 14px);
+    width: var(--sc-spacing-1, 14px); height: var(--sc-spacing-1, 14px);
     display: inline-flex; align-items: center; justify-content: center;
   }
   .chip .img {
-    width: var(--sc-scale-2, 28px); height: var(--sc-scale-2, 28px);
-    border-radius: 50%; object-fit: cover; margin-left: calc(-1 * var(--sc-scale-0-5));
+    width: var(--sc-spacing-2, 28px); height: var(--sc-spacing-2, 28px);
+    border-radius: 50%; object-fit: cover; margin-left: calc(-1 * var(--sc-spacing-0-5));
   }
   .chip .rm { cursor: pointer; opacity: .65; display: inline-flex; }
   .chip.focus { outline: var(--sc-focus-ring-width, 2px) solid var(--sc-border-focus); outline-offset: 1px; }
