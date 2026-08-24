@@ -2,7 +2,7 @@
 
 > **Volátil.** Lo reescribe la sesión que trabaja ESTE frente, y **solo este fichero**.
 > No toques los hand-offs de otros frentes. Lo durable vive en `docs/`.
-> **Sello: 2026-08-24 (s29) — HEAD `8db0a8a` (casar preset + unificación, DD-39). Contenido previo: `ab5a667`.**
+> **Sello: 2026-08-24 (s29) — HEAD `76d221c` (A casar preset · C Code Connect · B previews). Contenido previo: `ab5a667`.**
 
 Sesión de dos mitades. **(1) Figma:** se revisaron 6 componentes + Table cruzando el master
 contra la **web en vivo** (chrome-devtools) y se **tokenizó** tamaño y line-height del texto de
@@ -23,6 +23,12 @@ Medido que **nuestro sc-docs ya casaba** casi entero (chip 14/20/34, opciones 14
 - **`extend.ts`** — **unificación**: `app.typography.md.lineHeight` `scale-1-5` (21) →
   `line-height-200` (20). Medido: control de alto 37 a 36 (icon-only más cuadrado), **sin romper
   geometría**. Verificado: botón 36/20, tag 25, chip 34.
+- **Code Connect (C):** 6 componentes mapeados en `code-connect/*.figma.ts` (formato v2
+  templates de `@figma/code-connect` 2.0), **publicados en Figma dev mode**. Context-menu
+  excluido: no existe wrapper en el DS.
+- **Previews (B):** referencias estáticas HTML nativas en `sc-docs/public/explorations/components/`
+  que consumen los `--sc-*` reales vía `/tokens` (assets en `angular.json`, opción 3, cero drift).
+  Light+dark+estados, 6 componentes + índice. Verificadas por pantalla.
 
 ## ✅ Figma (master `khNq9dJKNi13pNllrqm6dx`)
 
