@@ -31,7 +31,7 @@ lo que hace que te la creas cuando te toca. Lee el índice siempre; el cuerpo, c
 
 | # | Si estás a punto de… | → |
 |---|---|---|
-| **1** | concluir que algo NO funciona desde una herramienta | demuestra que tu estímulo LLEGÓ, y no extiendas el negativo más allá de lo que mediste |
+| **1** | concluir que algo NO funciona, **o que ya lo arreglaste tocando una opción** | demuestra que tu estímulo —o tu opción— LLEGÓ, y no extiendas el negativo más allá de lo que mediste |
 | **2** | creerte un hallazgo (o un verde) de una sonda **tuya** | valida el instrumento con un caso conocido; pruébalo en todos sus ejes; y si da verde, mira algo que tú no escribiste |
 | **4** | arreglar un valor sustituyéndolo por otro token | mide el token de DESTINO antes (fondo y texto, misma familia) |
 | **5** | dudar entre tu código y tu medición | lo rancio es la medición: build, server, HMR, animación, **el repo bajo tus pies**, **o mediste OTRA instancia (un deploy)**… o atribución |
@@ -52,8 +52,8 @@ lo que hace que te la creas cuando te toca. Lee el índice siempre; el cuerpo, c
 
 ## Verificación (lo que más caro me ha salido)
 
-1. **Vas a concluir "X no funciona" a partir de una interacción por herramienta → primero
-   demuestra que tu estímulo LLEGÓ.** Un negativo salido de un canal sin validar no es
+1. **Vas a concluir "X no funciona" a partir de una interacción por herramienta —o "X ya está
+   arreglado" tras tocar una opción— → primero demuestra que tu estímulo LLEGÓ.** Un negativo salido de un canal sin validar no es
    evidencia. *Evidencia (s11)*: afirmé —subrayando "reproducible"— que las filas de
    `sc-datatable` no se activaban con Enter; la acción `key` del navegador entrega los eventos
    con `key`/`code` **vacíos**, y sin un clic previo en la página ni llegan. Tuve que
@@ -64,6 +64,26 @@ lo que hace que te la creas cuando te toca. Lee el índice siempre; el cuerpo, c
    confirmar aquel negativo porque un `dispatchEvent` sintético también "fallaba" — pero ninguno
    de los dos podía disparar la activación nativa de un enlace. Antes de sumar una segunda
    señal, pregunta si puede fallar por la misma causa que la primera.
+
+   *Corolario (s32) — el mismo agujero AL REVÉS, y por eso el disparador ya no dice solo "no
+   funciona": vas a dar por ARREGLADO algo cambiando una OPCIÓN —config, flag, env, setting—,
+   así que demuestra que la opción LLEGÓ, no que está escrita.* Puse
+   `reducedMotion: 'reduce'` en el `use` de `playwright.cuscare.config.ts` para matar la
+   animación que dejaba los overlays de PrimeNG sin estabilizarse bajo carga. **No llegaba**: en
+   Playwright 1.60 el runner ya no reenvía esa opción en primer nivel (va dentro de
+   `contextOptions`). El fichero decía lo correcto, la página recibía `no-preference` y el test
+   seguía cayendo 3 de 15. Y no saltó nada: TypeScript sí lo marca, pero `npm run typecheck` no
+   entra en los configs de la raíz y `eslint` no reporta errores de tipo — un arreglo que no
+   arregla nada y que ningún gate desmiente. Solo se cayó porque tenía un ROJO DE PARTIDA
+   reproducido (2 de 5 bajo carga) contra el que comparar; con la máquina tranquila habría visto
+   verde y lo habría dado por bueno. **Y lo peor no fue el error: había escrito el resultado
+   ("con esta línea, 0 de 15") en el comentario del propio arreglo ANTES de medirlo** — prosa con
+   forma de evidencia, en el sitio donde nadie la va a dudar. **Acción**: (a) una opción de
+   configuración es un estímulo — pregúntale al SISTEMA por su efecto (`matchMedia`,
+   `getComputedStyle`, un log del runtime), nunca al fichero; (b) si esa pregunta cabe en una
+   aserción, hazla un TEST y no un comentario (`e2e/cuscare/harness.spec.ts` existe justo por
+   esto, y se probó en rojo con la opción mal escrita); (c) no escribas una cifra antes de
+   medirla, tampoco dentro de un comentario.
 
    *Corolario (s27) — un negativo VÁLIDO también tiene ALCANCE, y su alcance es lo que mediste, no
    lo que comparte NOMBRE con ello.* Esta vez el estímulo sí llegó y la respuesta era cierta:
