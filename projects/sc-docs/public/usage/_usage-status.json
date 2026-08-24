@@ -1,9 +1,9 @@
 {
   "generated": "usage-status.mjs",
-  "capturedAt": "2026-06-21",
+  "capturedAt": "2026-08-24",
   "viewport": "1440x900",
   "theme": "light",
-  "dsSelectors": 51,
+  "dsSelectors": 50,
   "screens": [
     {
       "id": "admin-agendas",
@@ -13,8 +13,12 @@
         "admin-agendas.png"
       ],
       "ds": [
+        "sc-breadcrumb",
         "sc-bulk-action-bar",
+        "sc-button",
         "sc-command-palette",
+        "sc-confirmdialog",
+        "sc-datatable",
         "sc-delete-entity-dialog",
         "sc-dialog",
         "sc-keyboard-shortcuts",
@@ -26,21 +30,22 @@
       "route": "admin/agentes",
       "label": "Agentes · listado",
       "shots": [
-        "admin-agentes.png",
-        "admin-agentes-seleccion.png"
+        "admin-agentes.png"
       ],
       "ds": [
+        "sc-breadcrumb",
         "sc-bulk-action-bar",
-        "sc-bulk-edit-menu",
+        "sc-button",
         "sc-column-selector",
         "sc-command-palette",
+        "sc-confirmdialog",
+        "sc-datatable",
         "sc-delete-entity-dialog",
         "sc-dialog",
         "sc-group-popover",
         "sc-impact-preview-dialog",
         "sc-keyboard-shortcuts",
-        "sc-search",
-        "sc-select"
+        "sc-search"
       ]
     },
     {
@@ -52,9 +57,13 @@
         "admin-grupos-cmdk.png"
       ],
       "ds": [
+        "sc-breadcrumb",
         "sc-bulk-action-bar",
+        "sc-button",
         "sc-column-selector",
         "sc-command-palette",
+        "sc-confirmdialog",
+        "sc-datatable",
         "sc-delete-entity-dialog",
         "sc-dialog",
         "sc-impact-preview-dialog",
@@ -71,10 +80,15 @@
         "admin-labels-crear.png"
       ],
       "ds": [
+        "sc-breadcrumb",
         "sc-bulk-action-bar",
+        "sc-button",
         "sc-color-dot-picker",
         "sc-command-palette",
+        "sc-confirmdialog",
+        "sc-datatable",
         "sc-dialog",
+        "sc-field-label",
         "sc-inputtext",
         "sc-keyboard-shortcuts",
         "sc-search"
@@ -88,8 +102,12 @@
         "admin-plantillas.png"
       ],
       "ds": [
+        "sc-breadcrumb",
         "sc-bulk-action-bar",
+        "sc-button",
         "sc-command-palette",
+        "sc-confirmdialog",
+        "sc-datatable",
         "sc-delete-entity-dialog",
         "sc-dialog",
         "sc-keyboard-shortcuts",
@@ -104,9 +122,10 @@
         "admin-repositorios.png"
       ],
       "ds": [
+        "sc-breadcrumb",
         "sc-command-palette",
-        "sc-keyboard-shortcuts",
-        "sc-page-header"
+        "sc-confirmdialog",
+        "sc-keyboard-shortcuts"
       ]
     },
     {
@@ -114,16 +133,19 @@
       "route": "admin/usuarios",
       "label": "Usuarios · listado",
       "shots": [
-        "admin-usuarios.png",
-        "admin-usuarios-seleccion.png",
-        "admin-usuarios-borrar.png"
+        "admin-usuarios.png"
       ],
       "ds": [
+        "sc-breadcrumb",
         "sc-bulk-action-bar",
+        "sc-button",
         "sc-column-selector",
         "sc-command-palette",
+        "sc-confirmdialog",
+        "sc-datatable",
         "sc-delete-entity-dialog",
         "sc-dialog",
+        "sc-impact-preview-dialog",
         "sc-keyboard-shortcuts",
         "sc-search"
       ]
@@ -136,9 +158,13 @@
         "admin-usuarios-crear.png"
       ],
       "ds": [
+        "sc-breadcrumb",
+        "sc-button",
         "sc-command-palette",
+        "sc-confirmdialog",
         "sc-delete-entity-dialog",
         "sc-dialog",
+        "sc-field-label",
         "sc-form-section-nav",
         "sc-inputtext",
         "sc-keyboard-shortcuts",
@@ -156,8 +182,11 @@
         "config-aed-agentes.png"
       ],
       "ds": [
+        "sc-breadcrumb",
+        "sc-button",
         "sc-checkbox",
         "sc-command-palette",
+        "sc-confirmdialog",
         "sc-divider",
         "sc-inputtext",
         "sc-keyboard-shortcuts",
@@ -172,7 +201,10 @@
         "config-aed-grupos.png"
       ],
       "ds": [
+        "sc-breadcrumb",
+        "sc-button",
         "sc-command-palette",
+        "sc-confirmdialog",
         "sc-inputtext",
         "sc-keyboard-shortcuts",
         "sc-multiselect",
@@ -188,10 +220,12 @@
         "config-aed-servicio.png"
       ],
       "ds": [
+        "sc-breadcrumb",
         "sc-button",
         "sc-checkbox",
         "sc-chip",
         "sc-command-palette",
+        "sc-confirmdialog",
         "sc-dialog",
         "sc-divider",
         "sc-inputnumber",
@@ -210,7 +244,9 @@
         "config-seguridad.png"
       ],
       "ds": [
+        "sc-breadcrumb",
         "sc-command-palette",
+        "sc-confirmdialog",
         "sc-keyboard-shortcuts"
       ]
     },
@@ -222,7 +258,10 @@
         "config-sistema.png"
       ],
       "ds": [
+        "sc-breadcrumb",
+        "sc-button",
         "sc-command-palette",
+        "sc-confirmdialog",
         "sc-keyboard-shortcuts",
         "sc-toggleswitch"
       ]
@@ -235,9 +274,14 @@
         "conversaciones.png"
       ],
       "ds": [
+        "sc-breadcrumb",
+        "sc-bulk-action-bar",
         "sc-command-palette",
+        "sc-confirmdialog",
+        "sc-datatable",
         "sc-datepicker",
         "sc-dialog",
+        "sc-field-label",
         "sc-inputtext",
         "sc-keyboard-shortcuts",
         "sc-multiselect"
@@ -251,7 +295,11 @@
         "conversaciones-categorias.png"
       ],
       "ds": [
+        "sc-breadcrumb",
+        "sc-button",
         "sc-command-palette",
+        "sc-confirmdialog",
+        "sc-datatable",
         "sc-dialog",
         "sc-keyboard-shortcuts"
       ]
@@ -264,7 +312,11 @@
         "conversaciones-entidades.png"
       ],
       "ds": [
+        "sc-breadcrumb",
+        "sc-button",
         "sc-command-palette",
+        "sc-confirmdialog",
+        "sc-datatable",
         "sc-dialog",
         "sc-keyboard-shortcuts"
       ]
@@ -277,23 +329,31 @@
         "conversaciones-reglas.png"
       ],
       "ds": [
+        "sc-breadcrumb",
+        "sc-button",
         "sc-command-palette",
+        "sc-confirmdialog",
+        "sc-datatable",
         "sc-keyboard-shortcuts"
       ]
     },
     {
       "id": "conversaciones-reglas-nueva",
-      "route": "conversaciones/reglas/nueva",
-      "label": "Reglas · nueva",
+      "route": "conversaciones/reglas/1",
+      "label": "Reglas · constructor",
       "shots": [
         "conversaciones-reglas-nueva.png"
       ],
       "ds": [
+        "sc-breadcrumb",
+        "sc-button",
         "sc-command-palette",
+        "sc-confirmdialog",
+        "sc-field-label",
         "sc-inputtext",
         "sc-keyboard-shortcuts",
-        "sc-multiselect",
         "sc-select",
+        "sc-textarea",
         "sc-toggleswitch"
       ]
     }
@@ -305,13 +365,8 @@
       "admin-grupos",
       "admin-labels",
       "admin-plantillas",
-      "admin-usuarios"
-    ],
-    "sc-bulk-edit-menu": [
-      "admin-agentes"
-    ],
-    "sc-button": [
-      "config-aed-servicio"
+      "admin-usuarios",
+      "conversaciones"
     ],
     "sc-checkbox": [
       "config-aed-agentes",
@@ -327,6 +382,18 @@
       "admin-agentes",
       "admin-grupos",
       "admin-usuarios"
+    ],
+    "sc-datatable": [
+      "admin-agendas",
+      "admin-agentes",
+      "admin-grupos",
+      "admin-labels",
+      "admin-plantillas",
+      "admin-usuarios",
+      "conversaciones",
+      "conversaciones-categorias",
+      "conversaciones-entidades",
+      "conversaciones-reglas"
     ],
     "sc-datepicker": [
       "conversaciones"
@@ -356,6 +423,12 @@
       "config-aed-agentes",
       "config-aed-servicio"
     ],
+    "sc-field-label": [
+      "admin-labels",
+      "admin-usuarios-crear",
+      "conversaciones",
+      "conversaciones-reglas-nueva"
+    ],
     "sc-form-section-nav": [
       "admin-usuarios-crear"
     ],
@@ -364,7 +437,8 @@
     ],
     "sc-impact-preview-dialog": [
       "admin-agentes",
-      "admin-grupos"
+      "admin-grupos",
+      "admin-usuarios"
     ],
     "sc-inputnumber": [
       "config-aed-servicio"
@@ -380,11 +454,7 @@
     ],
     "sc-multiselect": [
       "config-aed-grupos",
-      "conversaciones",
-      "conversaciones-reglas-nueva"
-    ],
-    "sc-page-header": [
-      "admin-repositorios"
+      "conversaciones"
     ],
     "sc-photo-upload": [
       "admin-usuarios-crear"
@@ -404,10 +474,12 @@
       "admin-usuarios-crear"
     ],
     "sc-select": [
-      "admin-agentes",
       "admin-usuarios-crear",
       "config-aed-grupos",
       "config-aed-servicio",
+      "conversaciones-reglas-nueva"
+    ],
+    "sc-textarea": [
       "conversaciones-reglas-nueva"
     ],
     "sc-toggleswitch": [
@@ -420,21 +492,16 @@
     ]
   },
   "global": [
+    "sc-breadcrumb",
+    "sc-button",
     "sc-command-palette",
+    "sc-confirmdialog",
     "sc-keyboard-shortcuts"
   ],
   "gated": [
     {
-      "selector": "sc-breadcrumb",
-      "usedInSupervisor": 1
-    },
-    {
-      "selector": "sc-confirmdialog",
-      "usedInSupervisor": 1
-    },
-    {
-      "selector": "sc-datatable",
-      "usedInSupervisor": 21
+      "selector": "sc-bulk-edit-menu",
+      "usedInSupervisor": 3
     },
     {
       "selector": "sc-empty-state",
@@ -451,10 +518,6 @@
     {
       "selector": "sc-sticky-form-header",
       "usedInSupervisor": 3
-    },
-    {
-      "selector": "sc-textarea",
-      "usedInSupervisor": 1
     }
   ]
 }

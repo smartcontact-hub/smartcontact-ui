@@ -16,7 +16,7 @@ Figma (Smart Contact Prime UI Kit) se refleja directamente en el código y
 |---|---|---|
 | `@smartcontact-hub/styles` | [`projects/design-tokens`](projects/design-tokens/README.md) | Tokens `--sc-*` (7 capas, escala 14-base en rem) + reset/globals |
 | `@smartcontact-hub/icons` | [`projects/ui-smartcontact-icons`](projects/ui-smartcontact-icons/README.md) | `<sc-icon>` + Material Symbols generados |
-| `@smartcontact-hub/components` | [`projects/ui-smartcontact`](projects/ui-smartcontact/README.md) | `provideSmartContactUi()` + preset modular (`theme/sc-preset`, cada slot → `var(--sc-*)`) + 51 wrappers/customs `sc-*` ([inventario](docs/inventory.md)) |
+| `@smartcontact-hub/components` | [`projects/ui-smartcontact`](projects/ui-smartcontact/README.md) | `provideSmartContactUi()` + preset modular (`theme/sc-preset`, cada slot → `var(--sc-*)`) + 50 wrappers/customs `sc-*` ([inventario](docs/inventory.md)) |
 
 Y **cuatro apps** que consumen el DS en local (por tsconfig paths → `dist/`, así que un cambio de
 token se ve al instante). Las cuatro están en producción en Cloudflare Pages:

@@ -66,7 +66,9 @@
   --sc-dialog-title: var(
     --sc-color-slate-800
   ); /* Figma `dialog/color: #334155` (slate-700) — but darker for AED */
-  --sc-dialog-title-font-size: 17.5px; /* Figma `dialog/title/font/size: 17.5` raw */
+  --sc-dialog-title-font-size: var(--sc-font-size-400); /* 18 — el Kit lo modela como
+     `dialog.title.font.size = {primitive.typography.font.size.400}`; el 17.5 de Figma es el
+     valor RAW de su rampa fraccionaria, y nuestra rampa de tipografía ya redondea (DD-13). */
   --sc-dialog-title-font-weight: 600; /* Figma `dialog/title/font/weight: 600` (semibold) */
   --sc-dialog-subtitle: var(--sc-color-slate-600);
   --sc-dialog-close-fg: var(--sc-color-slate-700);
@@ -103,9 +105,11 @@
   ); /* Figma `toast/<sev>/detail/color: #334155` (slate-700) */
   --sc-toast-close: var(--sc-color-slate-800);
   --sc-toast-icon-fg: var(--sc-color-slate-0); /* white glyph inside icon square */
-  --sc-toast-summary-font-size: 14px; /* Figma `toast/summary/font/size: 14` */
+  --sc-toast-summary-font-size: var(--sc-font-size-200); /* 14 — `toast.summary.font.size =
+     {primitive.typography.font.size.200}`. Mismo valor, ahora por token. */
   --sc-toast-summary-font-weight: 500; /* Figma `toast/summary/font/weight: 500` */
-  --sc-toast-detail-font-size: 12.25px; /* Figma `toast/detail/font/size: 12.25` (raw) */
+  --sc-toast-detail-font-size: var(--sc-font-size-100); /* 12 — `toast.detail.font.size =
+     {primitive.typography.font.size.100}`. El 12.25 era el raw fraccionario. */
   --sc-toast-detail-font-weight: 500; /* Figma `toast/detail/font/weight: 500` */
 
   /* Shared geometry — Figma values */
