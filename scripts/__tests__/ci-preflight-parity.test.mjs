@@ -59,10 +59,18 @@ test('DRIFT inverso: preflight corre algo que el CI no → lo caza (extra)', () 
   assert.deepEqual(extra, ['npm run e2e:orphan']);
 });
 
-test('la sustitución local vale: CI `npm run e2e` ≡ preflight `npm run e2e:structure`', () => {
+test('la sustitución local vale: CI `npm run e2e` ≡ preflight `CI=1 npm run e2e`', () => {
   const yml = '      - run: npm run verify\n      - run: npm run e2e';
-  const { ok, missing, extra } = checkParity(yml, 'npm run verify && npm run e2e:structure');
+  const { ok, missing, extra } = checkParity(yml, 'npm run verify && CI=1 npm run e2e');
   assert.deepEqual(missing, []);
   assert.deepEqual(extra, []);
   assert.ok(ok);
+});
+
+test('y NO vale correr un subconjunto: `e2e:structure` ya no cuela como el smoke', () => {
+  const yml = '      - run: npm run verify\n      - run: npm run e2e';
+  const { ok, missing, extra } = checkParity(yml, 'npm run verify && npm run e2e:structure');
+  assert.equal(ok, false);
+  assert.deepEqual(missing, ['CI=1 npm run e2e']);
+  assert.deepEqual(extra, ['npm run e2e:structure']);
 });

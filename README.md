@@ -67,9 +67,10 @@ npm run preflight      # TODO lo que corre el CI (los 8 pasos), antes de pushear
 > aun así tumbó el CI (movió un baseline de `component-structure`). Un test
 > (`scripts/ci-preflight-parity.mjs`, dentro de `test:unit`) se pone rojo si `preflight`
 > y `ci.yml` se desincronizan, así que no se pudre cuando alguien añade un paso al CI.
-> El smoke completo (`npm run e2e`) se sustituye en local por `e2e:structure`: sus
-> screenshots de componente fallan siempre en macOS y su cobertura visual la dan los
-> builds AOT que preflight ya corre.
+> El smoke completo se corre ENTERO, solo que como `CI=1 npm run e2e`: esa variable —la
+> que el runner ya tiene puesta— hace no-op los `screenshotBaseline()`, que son los que
+> fallan siempre en macOS. Antes se sustituía por `e2e:structure`, o sea UN test en vez
+> de 68, y eso dejaba fuera del pre-push los 56 de `components.spec.ts`.
 
 > **Si tocas un token de color, `e2e:contrast` es el bucle corto**: reconstruye
 > tokens y corre solo contraste (los dos temas) + anillo de foco, sin la suite
