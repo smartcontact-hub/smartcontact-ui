@@ -54,7 +54,7 @@ recorrido (tokens en 6 capas (numeradas 01→07; la 06 era el puente PrimeNG y s
                             │
                             ▼
 ┌─────────────────────────────────────────────────────────────┐
-│  PrimeNG 21 (runtime de temas PrimeUIX)                      │
+│  PrimeNG 22 (runtime de temas PrimeUIX)                      │
 │  Espera tokens --p-* — los recibe del preset                 │
 └─────────────────────────────────────────────────────────────┘
 ```
@@ -172,12 +172,20 @@ cambió**.
 3. ¿La lógica existe pero quieres otro render? → headless/`[unstyled]`.
 4. ¿No lo tiene? → custom, documentado en `customs-catalog.md` con su porqué.
 
-### 2. Aprovecha `pTemplate`
+### 2. Aprovecha los slots de plantilla (`#nombre`)
 PrimeNG expone slots de templating en casi todo. Los wrappers de campo
 (`<sc-select>`, `<sc-multiselect>`, `<sc-datepicker>`) re-proyectan estos
 templates. Para `options: string[]` los wrappers soportan opciones
 primitivas (resolución automática de `optionLabel`/`optionValue`) — no
 fuerces una clave `label` en opciones string.
+
+⚠️ **En PrimeNG 22 el slot se nombra `<ng-template #item>`, no
+`pTemplate="item"`.** El cambio no es cosmético: v22 los resuelve por
+`contentChild(<nombre>)`, o sea por un nombre de referencia **estático**. Un
+puente que re-emita plantillas con `[pTemplate]` calculado en tiempo de
+ejecución deja de funcionar, y lo hace **sin lanzar ningún error** — el
+componente renderiza, simplemente sin tu plantilla. Le pasó a `<sc-select>` en
+la migración; ver el docstring de `sc-select.component.ts`.
 
 ### 3. Aprovecha `pt` (passthrough)
 Para inyectar attributes/classes en subnodos sin custom CSS:
@@ -220,13 +228,174 @@ o revisión manual.
 
 ---
 
+## Lo que aprendimos migrando de verdad — PrimeNG 21 → 22
+
+> Hasta el 2026-08-25 este documento decía qué **debería** pasar en un major.
+> Ese día pasó. Esto es lo medido, incluido lo que salió distinto de lo previsto.
+> Se escribe aquí porque la plataforma tendrá que hacer este mismo camino, y
+> conviene que llegue sabiendo dónde duele de verdad.
+
+### El resultado en cuatro números
+
+| Qué | Cuánto hubo que tocar |
+|---|---|
+| **Tokens `--sc-*`** (las 6 capas) | **0 líneas** |
+| **Preset** (el único sitio que puede tocar `--p-*`) | **6 líneas, en 1 fichero** |
+| Wrappers del DS (`projects/ui-smartcontact`) | 242 líneas |
+| Las 4 apps que consumen el DS | 237 líneas — y de esas, **111 no eran de PrimeNG** (una violación de frontera que TypeScript 6 destapó) y 61 eran un renombrado mecánico de plantillas |
+
+Un salto de versión mayor del proveedor de componentes **no movió ni un token**.
+Ese es el resultado que contesta la pregunta de si el mapeo de tokens vale la
+pena: es el seguro más barato del repo, porque su prima se paga una vez y no
+vuelve a cobrarse en cada subida.
+
+Y el reparto de las otras líneas dice lo mismo por el otro lado: el golpe cayó
+**dentro** de los wrappers, que es exactamente para lo que están. Las apps no se
+enteraron salvo en un renombrado mecánico.
+
+### Lo que aguantó, y por qué
+
+- **Las 36 clases internas de PrimeNG de las que dependemos desde nuestro SCSS
+  siguen existiendo las 36.** `audit:primeng-coupling` pasó sin un solo rojo.
+  Era el riesgo que este documento marcaba como el más caro, y no se materializó.
+- **PrimeNG puso red donde pudo.** Renombró sus elementos a kebab
+  (`p-tableCheckbox` → `p-table-checkbox`) pero declara **las dos grafías**:
+  `selector: "p-table-checkbox, p-tablecheckbox"`. Quien no tocara nada, no se
+  rompía.
+- **El preset absorbió el cambio de motor de temas** (`@primeuix/themes` 2 → 3)
+  en una línea. Sin la regla de que solo el preset toca `--p-*`, ese cambio se
+  habría repartido por todo el repo.
+
+### Lo que se rompió — y por qué ninguno fue culpa de PrimeNG
+
+Siete arreglos. Seis eran API de PrimeNG y se vieron enseguida: el compilador
+o los tests los cantaron. Los dos que importan son los que **no cantó nadie**:
+
+0. **Los filtros y la tabla de CusCare, 42 tests en rojo a la vez.** PrimeNG 22
+   **retiró la entrada `styleClass`** de `p-table`, `p-select` y `p-multiselect`
+   — pero **no** de `p-menu`, `p-popover`, `p-button` ni `p-dialog`. La retirada
+   es **por componente**, así que preguntarse «¿existe `styleClass` en PrimeNG?»
+   da la respuesta equivocada. Y como se escribe como atributo **estático**
+   (`styleClass="cc-table"`), Angular **no lo considera un error**: se queda en
+   el DOM como atributo suelto, la clase nunca llega, y todo el CSS que colgaba
+   de ella deja de aplicar. Con `[styleClass]="expr"` sí habría fallado la
+   compilación — o sea que **la forma que menos parece un binding es justo la
+   que rompe en silencio**.
+1. **`sc-datatable`, selección por rango con Mayús.** El código preguntaba
+   `closest('p-tablecheckbox')` para saber si el gesto había empezado sobre la
+   casilla. La migración pasó la plantilla a `<p-table-checkbox>`. El tag
+   renderizado cambió, el `closest` empezó a devolver `null` **siempre**, el
+   guard cortaba en su primera línea y el gesto quedó muerto. Sin error en
+   consola, sin nada roto en pantalla.
+2. **Los filtros de CusCare, en su test.** Mismo patrón: la plantilla pasó a
+   `<p-multi-select>` y el test seguía buscando `p-multiselect`.
+
+Los dos últimos **los introdujo nuestro propio renombrado, no el proveedor**:
+PrimeNG aceptaba las dos grafías precisamente para que esto no ocurriera. Lo que
+rompió fue que **nuestro código dependía en secreto del tag que nuestra propia
+plantilla escribe**, y esos dos ficheros no se leen juntos jamás.
+
+El primero sí fue un cambio real del proveedor — y el más caro de los tres, 42
+tests de golpe. Lo que tienen en común es el modo de fallo, no la culpa: **algo
+dejó de casar y nadie lanzó un error**.
+
+Y hay una tercera, la más incómoda: **los 8 tests unitarios de ese gesto
+siguieron verdes**. Usaban un doble que decía «sí» a cualquier selector
+(`{ closest: () => ({}) }`), así que medían su propio stub, no el código. Con un
+elemento de verdad, 4 de ellos se ponen rojos — comprobado reintroduciendo el
+bug a propósito.
+
+> **La regla que deja: un doble no debe responder que sí a la pregunta que el
+> código está haciendo.** Si lo hace, el test se está midiendo a sí mismo.
+
+### La frontera que hay que respetar, en una frase
+
+`--sc-*` y `<sc-*>` protegen de los cambios del proveedor **mientras no se
+alargue la mano por debajo**. Los dos fallos silenciosos de este major están,
+los dos, en sitios donde el código sí alargaba la mano: un `closest()` contra un
+tag de PrimeNG y un localizador de test contra otro.
+
+Cuando un gesto es **nuestro** (un guard, un ancla de selección, un test),
+ánclalo en algo **nuestro** — una clase que ponga nuestra plantilla — y no en el
+nombre que renderiza el proveedor. `sc-datatable` ahora usa
+`.sc-datatable__check-box`, puesta por nosotros: un renombrado ajeno ya no puede
+apagar ese gesto en silencio.
+
+### Lo que ahora vigila la máquina
+
+`audit:primeng-coupling` (dentro de `npm run verify`) pasó a tener dos secciones:
+
+- **A · clases `.p-*`** — que PrimeNG no borre bajo nuestros pies ninguna de las
+  36 de las que dependemos, y que el número no crezca (tope 36).
+- **B · nombres de elemento** — que una consulta desde código (`closest`,
+  `querySelector`, el `locator` de Playwright) use **exactamente** la grafía que
+  escriben nuestras plantillas, y que **no convivan dos grafías del mismo
+  elemento** en el repo.
+- **C · entradas inertes** — que ningún atributo que escribimos sobre un `p-*`
+  haya dejado de ser una entrada de ese componente. Se lee la metadata
+  **compilada** del PrimeNG instalado, que es la única fuente que no se puede
+  quedar desfasada respecto al paquete que hay en disco.
+
+Las tres secciones se probaron **en rojo con los fallos reales de este día**
+antes de darlas por buenas, y en verde con los casos legítimos (`p-popover` sí
+acepta `styleClass`, y no debe dar rojo). La primera versión de la B los dejaba
+pasar a los dos: **un gate que no se pone rojo con el fallo que lo motivó no es
+un gate, y solo se sabe probándolo.**
+
+La C, además, nació mirando solo `styleClass` —el caso medido— y generalizarla a
+*todas* las entradas destapó otra en el acto: `<p-message text="…">`, que v22
+también retiró. **Un gate que solo mira el caso que ya conoces solo caza el
+pasado.**
+
+### Contrapesos honestos — lo que esto NO demuestra
+
+- **La capa de abstracción no evitó los cambios de API: los contuvo.** Son cosas
+  distintas. Hubo que reescribir el puente de plantillas de `<sc-select>` entero.
+  Lo que compró la capa es que se reescribió **una vez**, y no en los 9 sitios
+  que proyectan plantillas.
+- **La capa no es gratis, y en este salto fue la parte más cara** (242 líneas,
+  más que las 4 apps juntas). El trato es ese: pagas concentrado en un sitio en
+  vez de repartido por todos. Sale a cuenta cuando hay varias apps —que es
+  nuestro caso—, no necesariamente cuando hay una.
+- **36 clases internas de PrimeNG en nuestro CSS siguen siendo deuda real.**
+  Aguantaron este major; no hay ninguna promesa de que aguanten el siguiente. El
+  tope solo impide que crezcan.
+- **Y la arquitectura no cazó los dos bugs: los cazó una suite corriendo.** Uno
+  de ellos, además, ni siquiera llegó a verse hasta arreglar otro fallo distinto
+  que lo tapaba. La lección de proceso pesa aquí tanto como la de diseño.
+- **El renombrado cosmético fue el que rompió.** PrimeNG no lo exigía. Si algo
+  no hace falta cambiarlo en una migración, no lo cambies: cada línea tocada es
+  una superficie donde algo puede depender de ti sin que lo sepas.
+
+### Para la próxima migración (aquí o en la plataforma)
+
+1. **Antes de empezar**, ten un gate que sepa decir de qué internos del
+   proveedor dependes. Sin eso, «funciona» solo significa «no he mirado».
+2. **Cambia lo que el proveedor exige, y nada más.** Lo cosmético lo pagas.
+3. **Después de cada renombrado**, busca quién consultaba ese nombre desde
+   JavaScript y desde los tests. Es un `grep`, y es donde vivió el fallo
+   silencioso de este major.
+4. **Desconfía de los atributos estáticos.** Un binding que desaparece
+   (`[algo]="x"`) lo caza el compilador; un atributo (`algo="x"`) no. Es
+   exactamente al revés de lo que la intuición dice.
+5. **Desconfía de los verdes de los tests que usan dobles.** Comprueba que el
+   test se pone rojo con el fallo puesto, sobre todo si el doble simula justo
+   la pregunta que hace el código.
+6. **Corre la suite entera una sola vez y sin tocar el árbol.** Dos suites a la
+   vez sobre el mismo servidor dan rojos falsos, y perseguirlos cuesta más que
+   la migración.
+
+---
+
 ## Riesgos vivos
 
 - **Bajo**: drift Figma ↔ código fuera de los streams vigilados → mitigado
   por parity en CI + auditorías periódicas. Patches de PrimeNG (21.x → 21.y)
   → el preset protege.
-- **Medio**: major de PrimeNG (21 → 22) → audit de `--p-*` + APIs envueltas +
-  diff visual. Kit de Figma major → merge manual con decisión por entry.
+- **Medio**: major de PrimeNG → audit de `--p-*` + APIs envueltas + diff
+  visual. Kit de Figma major → merge manual con decisión por entry.
+  *(El 21 → 22 ya se hizo el 2026-08-25 y está medido abajo: el coste real no
+  estuvo donde este documento lo esperaba.)*
 - **Alto (no debería pasar con las reglas)**: consumidor tocando `--p-*` o
   `<p-X>` directo · customs sin entry en el catalog. El guard y la revisión
   de código lo previenen.
