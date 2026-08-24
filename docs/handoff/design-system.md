@@ -2,7 +2,7 @@
 
 > **Volátil.** Lo reescribe la sesión que trabaja ESTE frente, y **solo este fichero**.
 > No toques los hand-offs de otros frentes. Lo durable vive en `docs/`.
-> **Sello: 2026-08-24 (s31) — HEAD `6eb5e11` (DD-40 primary dark · red de contraste ampliada · swatches de sc-docs), encima de s30 `974c827`. Contenido previo: `59a5c73` (s29).**
+> **Sello: 2026-08-24 (s30+s31) — HEAD `e3f70b7` (navbar de sc-docs · teclado del palette · DD-40 primary dark · red de contraste ampliada · el desfase export↔fichero de Figma). Contenido previo: `59a5c73` (s29).**
 ## ✅ s31 · Accesibilidad: el primary dark y el agujero de la red de contraste
 
 **DD-40** — el par `--sc-text-on-primary`/`--sc-bg-primary` en `.sc-dark` medía **3,01:1**.
