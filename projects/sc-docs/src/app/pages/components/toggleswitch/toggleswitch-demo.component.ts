@@ -7,7 +7,7 @@ import {
   viewChild,
 } from '@angular/core';
 
-import { ScToggleSwitchComponent } from '../../../../../../ui-smartcontact/src/public-api';
+import { ScToggleSwitchComponent } from '@smartcontact-hub/components';
 import { StoryContext, StoryDef, StoryHostComponent, StoryMeta } from '../../../storybook';
 
 const STATES_SNIPPET = `<sc-toggleswitch [checked]="a()" (checkedChange)="a.set($event)" ariaLabel="Activar" />

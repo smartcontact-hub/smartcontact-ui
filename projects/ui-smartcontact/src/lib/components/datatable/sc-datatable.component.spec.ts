@@ -139,10 +139,26 @@ describe('sc-datatable · selección de rango con ancla', () => {
    * anterior llamaba a un handler de click que en navegador ni se disparaba —
    * lo destapó Playwright): (1) `mousedown` sobre la casilla captura el
    * `shiftKey`; (2) p-table togglea la fila y emite la selección nueva por
-   * `onSelectionChange`, que es donde se aplica el rango. El `target` con
-   * `closest` finge que el gesto empezó sobre la casilla (el guard lo exige). */
+   * `onSelectionChange`, que es donde se aplica el rango.
+   *
+   * ⚠️ El `target` es un elemento de VERDAD, con la misma clase que pone la
+   * plantilla. Antes era `{ closest: () => ({}) }` —un doble que decía «sí» a
+   * cualquier selector—, y eso dejaba los 8 tests ciegos justo a lo único que
+   * el guard comprueba: que el selector case con el DOM. PrimeNG 22 renombró
+   * `p-tablecheckbox` a `p-table-checkbox`, el guard empezó a cortar siempre y
+   * estos tests siguieron verdes con la selección por rango muerta.
+   *
+   * Regla que deja: un doble no debe responder que sí a la pregunta que el
+   * código está haciendo. Si lo hace, el test mide su propio stub. */
+  const casilla = () => {
+    const td = document.createElement('td');
+    const box = document.createElement('p-table-checkbox');
+    box.className = 'sc-datatable__check-box';
+    td.appendChild(box);
+    return box;
+  };
   const md = (c: Interno, shift: boolean, index: number) =>
-    c.onCheckMousedown({ shiftKey: shift, target: { closest: () => ({}) } } as unknown as MouseEvent, index);
+    c.onCheckMousedown({ shiftKey: shift, target: casilla() } as unknown as MouseEvent, index);
   const ids = (c: Interno) => {
     const s = c.selection();
     const arr = Array.isArray(s) ? (s as Fila[]) : s ? [s as Fila] : [];
@@ -217,13 +233,15 @@ describe('sc-datatable · selección de rango con ancla', () => {
   });
 
   it('un mousedown en el HUECO de la celda no deja un shift pendiente', () => {
-    /* El guard `closest('p-tablecheckbox')` evita que un shift sobre el padding
-     * contamine el siguiente cambio (p. ej. el de la casilla de cabecera). */
+    /* El guard `closest('.sc-datatable__check-box')` evita que un shift sobre el
+     * padding contamine el siguiente cambio (p. ej. el de la casilla de
+     * cabecera). El `target` es el `td` PELADO: mismo DOM, pero el gesto no
+     * empezó sobre la casilla. */
     const c = tabla();
     md(c, false, 1);
     c.onSelectionChange([FILAS[1]!]); // ancla=1
     c.onCheckMousedown(
-      { shiftKey: true, target: { closest: () => null } } as unknown as MouseEvent,
+      { shiftKey: true, target: document.createElement('td') } as unknown as MouseEvent,
       4,
     );
     c.onSelectionChange([FILAS[1]!, FILAS[4]!]); // cambio ajeno, sin rango

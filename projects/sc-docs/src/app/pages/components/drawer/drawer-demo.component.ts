@@ -7,7 +7,7 @@ import {
   viewChild,
 } from '@angular/core';
 
-import { ScButtonComponent, ScDrawerComponent } from '../../../../../../ui-smartcontact/src/public-api';
+import { ScButtonComponent, ScDrawerComponent } from '@smartcontact-hub/components';
 import { StoryContext, StoryDef, StoryHostComponent, StoryMeta } from '../../../storybook';
 
 /** Demo de `sc-drawer` en formato story (motor «Storybook-like»). */

@@ -12,7 +12,7 @@ import {
   ScButtonComponent,
   ScToastComponent,
   ScToastService,
-} from '../../../../../../ui-smartcontact/src/public-api';
+} from '@smartcontact-hub/components';
 import { StoryContext, StoryDef, StoryHostComponent, StoryMeta } from '../../../storybook';
 
 const TRIGGERS_SNIPPET = `<sc-toast />

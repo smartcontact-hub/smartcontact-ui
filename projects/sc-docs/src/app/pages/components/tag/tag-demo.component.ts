@@ -6,7 +6,7 @@ import {
   viewChild,
 } from '@angular/core';
 
-import { ScTagComponent } from '../../../../../../ui-smartcontact/src/public-api';
+import { ScTagComponent } from '@smartcontact-hub/components';
 import { StoryContext, StoryDef, StoryHostComponent, StoryMeta } from '../../../storybook';
 
 const SEVERITIES_SNIPPET = `<sc-tag value="Primary" />

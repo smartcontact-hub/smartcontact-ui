@@ -7,7 +7,7 @@ import {
   viewChild,
 } from '@angular/core';
 
-import { ScCheckboxComponent } from '../../../../../../ui-smartcontact/src/public-api';
+import { ScCheckboxComponent } from '@smartcontact-hub/components';
 import { StoryContext, StoryDef, StoryHostComponent, StoryMeta } from '../../../storybook';
 
 const TRISTATE_SNIPPET = `<sc-checkbox [state]="headerState()" (cycle)="onHeaderCycle($event)" ariaLabel="Seleccionar todo" />

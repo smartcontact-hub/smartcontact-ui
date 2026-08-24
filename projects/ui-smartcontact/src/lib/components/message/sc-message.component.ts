@@ -4,7 +4,9 @@ import { MessageModule } from 'primeng/message';
 import { resolveScComponentIconClass } from '../../core/icons/sc-component-icon-resolver';
 import { ScComponentSize, ScSeverity } from '../../core/types/theme-component.types';
 
-type PrimeMessageSeverity = 'secondary' | 'success' | 'info' | 'warn' | 'error' | 'contrast' | undefined;
+/* Sin `undefined` desde PrimeNG 22: allí `severity` es obligatorio (`input('info')`).
+ * Antes, `undefined` significaba "sin modificador de severidad" y `primary` caía ahí. */
+type PrimeMessageSeverity = 'secondary' | 'success' | 'info' | 'warn' | 'error' | 'contrast';
 type PrimeMessageSize = 'small' | 'large' | undefined;
 
 @Component({
@@ -32,8 +34,14 @@ export class ScMessageComponent {
     protected readonly messageSeverity = computed<PrimeMessageSeverity>(() => {
         const severity = this.severity();
 
+        /* `primary` NO es una severidad de mensaje en PrimeNG y nunca lo fue: antes caía
+         * en `undefined` y renderizaba el mensaje base, sin modificador. Desde v22
+         * `severity` es obligatorio, así que se mapea al neutro más cercano.
+         * Verificado el 2026-08-24: NADIE pasa `severity="primary"` a `<sc-message>` en
+         * todo el repo, así que esto no cambia ningún píxel hoy — es solo cerrar el
+         * hueco del tipo. */
         if (severity === 'primary') {
-            return undefined;
+            return 'secondary';
         }
 
         if (severity === 'warning') {

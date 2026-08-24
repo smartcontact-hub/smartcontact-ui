@@ -6,7 +6,7 @@ import {
   viewChild,
 } from '@angular/core';
 
-import { ScSkeletonComponent } from '../../../../../../ui-smartcontact/src/public-api';
+import { ScSkeletonComponent } from '@smartcontact-hub/components';
 import { StoryContext, StoryDef, StoryHostComponent, StoryMeta } from '../../../storybook';
 
 const SHAPES_SNIPPET = `<sc-skeleton />

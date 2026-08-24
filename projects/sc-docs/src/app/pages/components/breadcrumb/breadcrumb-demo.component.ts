@@ -1,7 +1,7 @@
 import { ChangeDetectionStrategy, Component, TemplateRef, computed, viewChild } from '@angular/core';
 import type { MenuItem } from 'primeng/api';
 
-import { ScBreadcrumbComponent } from '../../../../../../ui-smartcontact/src/public-api';
+import { ScBreadcrumbComponent } from '@smartcontact-hub/components';
 import { StoryContext, StoryDef, StoryHostComponent, StoryMeta } from '../../../storybook';
 
 const BASIC_SNIPPET = `<sc-breadcrumb

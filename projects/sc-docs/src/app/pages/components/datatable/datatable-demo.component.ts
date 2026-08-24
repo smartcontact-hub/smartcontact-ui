@@ -8,7 +8,7 @@ import {
   ScDatatableComponent,
   ScDatatableRowEvent,
   ScRowStyleClassFn,
-} from '../../../../../../ui-smartcontact/src/public-api';
+} from '@smartcontact-hub/components';
 import { StoryContext, StoryDef, StoryHostComponent, StoryMeta } from '../../../storybook';
 
 interface Agent {

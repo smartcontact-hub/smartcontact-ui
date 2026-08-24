@@ -21,14 +21,14 @@
 
 <ng-template #objetos>
   <sc-select
-    label="Prioridad (objetos + pTemplate)"
+    label="Prioridad (objetos + template proyectado)"
     [options]="objOptions"
     optionLabel="name"
     optionValue="id"
     placeholder="Elige prioridad"
     data-testid="sc-select-tmpl"
   >
-    <ng-template pTemplate="item" let-opt>★ {{ opt.name }}</ng-template>
+    <ng-template #item let-opt>★ {{ opt.name }}</ng-template>
   </sc-select>
 </ng-template>
 

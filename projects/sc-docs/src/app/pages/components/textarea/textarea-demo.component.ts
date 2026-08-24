@@ -6,7 +6,7 @@ import {
   viewChild,
 } from '@angular/core';
 
-import { ScTextareaComponent } from '../../../../../../ui-smartcontact/src/public-api';
+import { ScTextareaComponent } from '@smartcontact-hub/components';
 import { StoryContext, StoryDef, StoryHostComponent, StoryMeta } from '../../../storybook';
 
 const STATES_SNIPPET = `<sc-textarea placeholder="Auto-resize" [autoResize]="true" />

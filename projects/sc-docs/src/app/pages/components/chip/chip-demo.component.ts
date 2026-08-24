@@ -7,7 +7,7 @@ import {
   viewChild,
 } from '@angular/core';
 
-import { ScChipComponent } from '../../../../../../ui-smartcontact/src/public-api';
+import { ScChipComponent } from '@smartcontact-hub/components';
 import { StoryContext, StoryDef, StoryHostComponent, StoryMeta } from '../../../storybook';
 
 const BASE_SNIPPET = `<sc-chip label="Etiqueta" />

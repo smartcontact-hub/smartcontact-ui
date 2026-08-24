@@ -46,13 +46,13 @@ test.describe('sc-datatable · gestos de fila', () => {
     await expect(selected).toHaveText('0');
 
     // 2. Click en la casilla → selecciona y el contador de aperturas NO se mueve.
-    await dt.locator('tbody tr').nth(1).locator('p-tablecheckbox').click();
+    await dt.locator('tbody tr').nth(1).locator('p-table-checkbox').click();
     await expect(selected).toHaveText('1');
     await expect(openCount).toHaveText('1');
 
     // 3. Y una segunda casilla tampoco abre: si el gesto estuviera mal
     //    repartido, marcar 3 filas abriría 3 veces el detalle.
-    await dt.locator('tbody tr').nth(2).locator('p-tablecheckbox').click();
+    await dt.locator('tbody tr').nth(2).locator('p-table-checkbox').click();
     await expect(selected).toHaveText('2');
     await expect(openCount).toHaveText('1');
   });

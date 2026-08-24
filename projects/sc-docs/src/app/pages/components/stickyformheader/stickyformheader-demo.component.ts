@@ -7,7 +7,7 @@ import {
   viewChild,
 } from '@angular/core';
 
-import { ScStickyFormHeaderComponent } from '../../../../../../ui-smartcontact/src/public-api';
+import { ScStickyFormHeaderComponent } from '@smartcontact-hub/components';
 import { StoryContext, StoryDef, StoryHostComponent, StoryMeta } from '../../../storybook';
 
 const EDIT_SNIPPET = `<sc-sticky-form-header

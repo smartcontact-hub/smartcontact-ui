@@ -1,8 +1,8 @@
 # @smartcontact-hub/components
 
-![Angular](https://img.shields.io/badge/Angular-21-DD0031?logo=angular&logoColor=white)
-![PrimeNG](https://img.shields.io/badge/PrimeNG-21-10B981)
-![TypeScript](https://img.shields.io/badge/TypeScript-5.9-3178C6?logo=typescript&logoColor=white)
+![Angular](https://img.shields.io/badge/Angular-22-DD0031?logo=angular&logoColor=white)
+![PrimeNG](https://img.shields.io/badge/PrimeNG-22-10B981)
+![TypeScript](https://img.shields.io/badge/TypeScript-6.0-3178C6?logo=typescript&logoColor=white)
 ![License](https://img.shields.io/badge/license-Proprietary-lightgrey)
 
 Componentes Angular del Design System Smart Contact: el **preset modular** de

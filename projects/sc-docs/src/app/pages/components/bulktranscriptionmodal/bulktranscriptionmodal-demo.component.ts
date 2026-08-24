@@ -10,7 +10,7 @@ import {
 import {
   ScBulkTranscriptionModalComponent,
   ScBulkTranscriptionModalResult,
-} from '../../../../../../ui-smartcontact/src/public-api';
+} from '@smartcontact-hub/components';
 import { StoryContext, StoryDef, StoryHostComponent, StoryMeta } from '../../../storybook';
 
 const HYBRID_SNIPPET = `@if (open()) {

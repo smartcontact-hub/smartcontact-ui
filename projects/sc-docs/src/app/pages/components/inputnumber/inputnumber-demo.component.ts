@@ -6,7 +6,7 @@ import {
   viewChild,
 } from '@angular/core';
 
-import { ScInputNumberComponent } from '../../../../../../ui-smartcontact/src/public-api';
+import { ScInputNumberComponent } from '@smartcontact-hub/components';
 import { StoryContext, StoryDef, StoryHostComponent, StoryMeta } from '../../../storybook';
 
 const STATES_SNIPPET = `<sc-inputnumber label="Cantidad" placeholder="0" />

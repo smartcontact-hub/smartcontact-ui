@@ -10,7 +10,7 @@ import {
 import {
   BulkActionEntityLabels,
   ScBulkActionBarComponent,
-} from '../../../../../../ui-smartcontact/src/public-api';
+} from '@smartcontact-hub/components';
 import { StoryContext, StoryDef, StoryHostComponent, StoryMeta } from '../../../storybook';
 
 const SELECTION_SNIPPET = `<button type="button" (click)="count.set(3)">Seleccionar 3</button>

@@ -6,7 +6,7 @@ import {
   viewChild,
 } from '@angular/core';
 
-import { ScButtonComponent } from '../../../../../../ui-smartcontact/src/public-api';
+import { ScButtonComponent } from '@smartcontact-hub/components';
 import { StoryContext, StoryDef, StoryHostComponent, StoryMeta } from '../../../storybook';
 
 const VARIANTS_SNIPPET = `<sc-button label="Primario" />

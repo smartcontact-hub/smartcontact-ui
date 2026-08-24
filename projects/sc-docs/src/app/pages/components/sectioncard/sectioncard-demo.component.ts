@@ -10,7 +10,7 @@ import {
   ScSectionCardComponent,
   ScSlotComponent,
   ScSubsectionComponent,
-} from '../../../../../../ui-smartcontact/src/public-api';
+} from '@smartcontact-hub/components';
 import { StoryContext, StoryDef, StoryHostComponent, StoryMeta } from '../../../storybook';
 
 const NESTED_SNIPPET = `<sc-section-card titleKey="Configuración del agente" icon="settings">

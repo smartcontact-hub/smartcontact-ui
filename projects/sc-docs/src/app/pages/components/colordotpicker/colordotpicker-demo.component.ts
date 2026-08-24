@@ -11,7 +11,7 @@ import {
   ColorDotOption,
   LABEL_COLORS,
   ScColorDotPickerComponent,
-} from '../../../../../../ui-smartcontact/src/public-api';
+} from '@smartcontact-hub/components';
 import { StoryContext, StoryDef, StoryHostComponent, StoryMeta } from '../../../storybook';
 
 const BASIC_SNIPPET = `<sc-color-dot-picker [options]="options" [(value)]="value" />`;

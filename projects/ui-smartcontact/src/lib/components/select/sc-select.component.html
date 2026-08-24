@@ -38,16 +38,41 @@
   >
     <!--
     Re-proyección de templates: el consumer escribe
-    `<ng-template pTemplate="item" let-option>` dentro de `<sc-select>`
+    `<ng-template #item let-option>` dentro de `<sc-select>`
     (sintaxis idéntica a `<p-select>` nativo). El sc-select los captura
-    via `@ContentChildren(PrimeTemplate)` y los re-emite aquí con
-    `[pTemplate]` y `ngTemplateOutlet`, porque el ContentChildren del
+    via `contentChild(<nombre>)` y los re-emite aquí, porque la consulta del
     p-select NO ve los templates a través de doble content projection
-    (limitación de Angular query origin).
+    (limitación de Angular query origin). Desde PrimeNG 22 el nombre tiene que
+    ser ESTÁTICO — ver la nota larga en el .ts.
   -->
-    @for (entry of projectedTemplates(); track entry.name) {
-      <ng-template [pTemplate]="entry.name ?? ''" let-data>
-        <ng-container *ngTemplateOutlet="entry.template; context: { $implicit: data }" />
+    @if (itemTpl(); as tpl) {
+      <ng-template #item let-data>
+        <ng-container *ngTemplateOutlet="tpl; context: { $implicit: data }" />
+      </ng-template>
+    }
+    @if (selectedItemTpl(); as tpl) {
+      <ng-template #selectedItem let-data>
+        <ng-container *ngTemplateOutlet="tpl; context: { $implicit: data }" />
+      </ng-template>
+    }
+    @if (headerTpl(); as tpl) {
+      <ng-template #header>
+        <ng-container *ngTemplateOutlet="tpl" />
+      </ng-template>
+    }
+    @if (footerTpl(); as tpl) {
+      <ng-template #footer>
+        <ng-container *ngTemplateOutlet="tpl" />
+      </ng-template>
+    }
+    @if (emptyTpl(); as tpl) {
+      <ng-template #empty>
+        <ng-container *ngTemplateOutlet="tpl" />
+      </ng-template>
+    }
+    @if (groupTpl(); as tpl) {
+      <ng-template #group let-data>
+        <ng-container *ngTemplateOutlet="tpl; context: { $implicit: data }" />
       </ng-template>
     }
   </p-select>

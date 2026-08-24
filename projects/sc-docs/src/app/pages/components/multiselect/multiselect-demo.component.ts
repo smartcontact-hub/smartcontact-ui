@@ -7,7 +7,7 @@ import {
   viewChild,
 } from '@angular/core';
 
-import { ScMultiSelectComponent } from '../../../../../../ui-smartcontact/src/public-api';
+import { ScMultiSelectComponent } from '@smartcontact-hub/components';
 import { StoryContext, StoryDef, StoryHostComponent, StoryMeta } from '../../../storybook';
 
 const ESTADOS_SNIPPET = `<sc-multiselect label="Con chips" [options]="groups" display="chip" />

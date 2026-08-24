@@ -6,7 +6,7 @@ import {
   viewChild,
 } from '@angular/core';
 
-import { ScGroupPopoverComponent } from '../../../../../../ui-smartcontact/src/public-api';
+import { ScGroupPopoverComponent } from '@smartcontact-hub/components';
 import { StoryContext, StoryDef, StoryHostComponent, StoryMeta } from '../../../storybook';
 
 const OVERFLOW_SNIPPET = `<sc-group-popover [groups]="few" />

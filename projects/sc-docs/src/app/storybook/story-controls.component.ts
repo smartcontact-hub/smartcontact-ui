@@ -5,7 +5,7 @@ import {
   ScInputTextComponent,
   ScSelectComponent,
   ScToggleSwitchComponent,
-} from '../../../../ui-smartcontact/src/public-api';
+} from '@smartcontact-hub/components';
 import { ArgType, ScArgs } from './story.types';
 
 /**

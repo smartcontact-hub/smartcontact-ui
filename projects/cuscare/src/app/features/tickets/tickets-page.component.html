@@ -75,8 +75,8 @@
         </div>
       </div>
     }
-    <p-table [value]="rows()" [scrollable]="true" scrollHeight="flex" dataKey="id" styleClass="cc-table">
-      <ng-template pTemplate="header">
+    <p-table [value]="rows()" [scrollable]="true" scrollHeight="flex" dataKey="id" class="cc-table">
+      <ng-template #header>
         <tr>
           <th class="col-select">
             <input
@@ -138,8 +138,8 @@
                   </p-popover>
                 }
                 @case ('multiselect') {
-                  <p-multiSelect
-                    styleClass="cc-filter"
+                  <p-multiselect
+                    class="cc-filter"
                     [options]="optionsByCol()[c.key]"
                     [ngModel]="multi()[c.key] ?? []"
                     (ngModelChange)="setMulti(c.key, $event)"
@@ -154,7 +154,7 @@
                 }
                 @case ('select') {
                   <p-select
-                    styleClass="cc-filter"
+                    class="cc-filter"
                     [options]="optionsByCol()[c.key]"
                     [ngModel]="single()[c.key] ?? null"
                     (ngModelChange)="setSingle(c.key, $event)"
@@ -181,7 +181,7 @@
         </tr>
       </ng-template>
 
-      <ng-template pTemplate="body" let-row>
+      <ng-template #body let-row>
         <tr class="row" [class.row--locked]="row.locked" [class.row-selected]="isSelected(row.id)">
           <td class="col-select">
             @if (row.locked) {
@@ -221,7 +221,7 @@
         </tr>
       </ng-template>
 
-      <ng-template pTemplate="emptymessage">
+      <ng-template #emptymessage>
         <tr>
           <td [attr.colspan]="cols().length + 1" class="emptyrow">No data to show</td>
         </tr>

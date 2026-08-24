@@ -1143,7 +1143,7 @@ test.describe('sc-datatable', () => {
     await expect(dt.locator('tbody tr').first().locator('td').nth(1)).toHaveText('Diego Romero');
 
     // selección múltiple por checkbox de fila → two-way (selectionChange).
-    await dt.locator('tbody tr').first().locator('p-tablecheckbox').click();
+    await dt.locator('tbody tr').first().locator('p-table-checkbox').click();
     await expect(page.getByTestId('dt-selected')).toHaveText('Seleccionados: 1');
 
     // slot [scTableEmpty]: al vaciar, p-table pinta la fila vacía proyectada.

@@ -270,10 +270,29 @@ export class ScDatatableComponent<T = unknown> {
    * casilla: un `mousedown` en el hueco de la celda no va a togglear nada, y
    * dejar ahí un shift pendiente contaminaría el siguiente cambio (p. ej. el de
    * la casilla de cabecera).
+   *
+   * El ancla es `.sc-datatable__check-box` —una clase NUESTRA, puesta en la
+   * plantilla— y no el nombre del elemento que renderiza PrimeNG.
+   *
+   * ⚠️ **Por qué, medido el 2026-08-25 en la migración a v22.** Antes esto era
+   * `closest('p-tablecheckbox')`. En la migración la plantilla pasó a escribir
+   * `<p-table-checkbox>` (kebab), así que el tag RENDERIZADO cambió, `closest`
+   * pasó a devolver `null` siempre, el guard cortaba en su primera línea y la
+   * selección por rango con Mayús quedó MUERTA sin lanzar un solo error.
+   *
+   * Y el detalle que lo vuelve instructivo: PrimeNG NO nos rompió. Declara
+   * `selector: "p-table-checkbox, p-tablecheckbox"` —acepta los dos nombres a
+   * propósito, para que una subida no rompa a nadie—. Lo que rompió fue que
+   * NUESTRO JavaScript dependía en secreto del tag que NUESTRA plantilla
+   * escribe, y esos dos ficheros no se leen juntos nunca.
+   *
+   * De ahí el gancho propio: la plantilla y el guard comparten ahora un
+   * contrato que sí es nuestro, y `audit:primeng-coupling` vigila que no
+   * vuelvan a desincronizarse.
    */
   protected onCheckMousedown(event: MouseEvent, index: number): void {
     if (this.selectionMode() !== 'multiple') return;
-    if (!(event.target as HTMLElement | null)?.closest('p-tablecheckbox')) return;
+    if (!(event.target as HTMLElement | null)?.closest('.sc-datatable__check-box')) return;
     this.shiftAlPulsar = event.shiftKey;
     this.indicePendiente = index;
   }

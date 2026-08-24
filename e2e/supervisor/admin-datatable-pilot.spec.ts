@@ -55,11 +55,11 @@ test('la casilla selecciona y saca la barra de acciones masivas', async ({ page 
 
   await expect(bulkBar).toBeHidden();
 
-  await table.locator('.p-datatable-tbody > tr').first().locator('p-tablecheckbox').click();
+  await table.locator('.p-datatable-tbody > tr').first().locator('p-table-checkbox').click();
   await expect(bulkBar).toBeVisible();
   await expect(bulkBar).toContainText('1');
 
-  await table.locator('.p-datatable-tbody > tr').nth(1).locator('p-tablecheckbox').click();
+  await table.locator('.p-datatable-tbody > tr').nth(1).locator('p-table-checkbox').click();
   await expect(bulkBar).toContainText('2');
 });
 
@@ -72,7 +72,7 @@ test('la casilla de cabecera marca todo lo FILTRADO, no todo', async ({ page }) 
   await page.locator('sc-search input').fill('orange');
   await expect(rows).toHaveCount(2);
 
-  await table.locator('.p-datatable-thead p-tableheadercheckbox').click();
+  await table.locator('.p-datatable-thead p-table-header-checkbox').click();
   await expect(page.locator('sc-bulk-action-bar')).toContainText('2');
   expect(total).toBeGreaterThan(2);
 });
@@ -153,7 +153,7 @@ test.describe('plantillas', () => {
     const table = page.locator(TPL_TABLE);
     const rows = table.locator('.p-datatable-tbody > tr');
 
-    await rows.first().locator('p-tablecheckbox').click();
+    await rows.first().locator('p-table-checkbox').click();
     await expect(page.locator('sc-bulk-action-bar')).toContainText('1');
 
     // Cambiar de pestaña limpia la selección: lo seleccionado ya no está

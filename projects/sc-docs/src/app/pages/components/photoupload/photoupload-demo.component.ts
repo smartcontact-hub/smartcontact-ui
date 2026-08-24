@@ -7,7 +7,7 @@ import {
   viewChild,
 } from '@angular/core';
 
-import { ScPhotoUploadComponent } from '../../../../../../ui-smartcontact/src/public-api';
+import { ScPhotoUploadComponent } from '@smartcontact-hub/components';
 import { StoryContext, StoryDef, StoryHostComponent, StoryMeta } from '../../../storybook';
 
 const SIZES_SNIPPET = `<sc-photo-upload

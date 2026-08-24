@@ -1,7 +1,7 @@
 # sc-docs — showcase del Design System
 
-![Angular](https://img.shields.io/badge/Angular-21-DD0031?logo=angular&logoColor=white)
-![PrimeNG](https://img.shields.io/badge/PrimeNG-21-10B981)
+![Angular](https://img.shields.io/badge/Angular-22-DD0031?logo=angular&logoColor=white)
+![PrimeNG](https://img.shields.io/badge/PrimeNG-22-10B981)
 ![App](https://img.shields.io/badge/app-privada%20(no%20se%20publica)-lightgrey)
 
 App de referencia del DS Smart Contact: el **catálogo vivo**. No es un paquete (no
