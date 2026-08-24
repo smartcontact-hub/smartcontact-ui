@@ -25,12 +25,33 @@ export default defineConfig({
   testIgnore: ['usage/**', 'supervisor/**', 'cuscare/**'],
   timeout: 60_000,
   use: {
-    baseURL: 'http://localhost:4280',
+    baseURL: process.env['SC_DOCS_URL'] ?? 'http://localhost:4280',
   },
-  webServer: {
-    command: 'npm run ng -- serve sc-docs --port 4280',
-    url: 'http://localhost:4280',
-    reuseExistingServer: !process.env['CI'],
-    timeout: 180_000,
-  },
+  /* `SC_DOCS_URL` apunta la suite a un servidor YA levantado y se salta el
+   * `webServer` entero — el mismo escape que ya tenían `SC_SUPERVISOR_URL` y
+   * `SC_CUSCARE_URL`. Esta config era la única de las tres sin él, y se notaba:
+   * el puerto está FIJO, así que con dos worktrees de agente vivos a la vez el
+   * segundo se encuentra el 4280 ocupado y, con `CI=1`, muere con
+   * "Port 4280 is already in use" sin haber corrido un solo test. (Sin `CI`
+   * es peor: `reuseExistingServer` lo engancha al server del OTRO worktree y
+   * mide su código, en verde.)
+   *
+   * Y hay una segunda razón, más útil que la de los puertos: para MEDIR color
+   * o valores computados, un `ng serve` puede servir CSS viejo aunque el
+   * fuente y el bundle estén bien. Con esto se apunta a un build estático
+   * (`ng build sc-docs` → `http-server dist/sc-docs`) y se acabó la duda.
+   *
+   * ⚠️ PERO no apuntes el `component-structure` a un build de PRODUCCIÓN: su
+   * baseline guarda `outerHTML`, y Angular escribe los nodos-comentario como
+   * `<!--container-->` en desarrollo y `<!---->` en producción. Salen 16 filas
+   * en rojo que no son una regresión, solo otra configuración de build. Para
+   * ese test, `ng serve … --port <libre>` y `SC_DOCS_URL` a ese puerto. */
+  webServer: process.env['SC_DOCS_URL']
+    ? undefined
+    : {
+        command: 'npm run ng -- serve sc-docs --port 4280',
+        url: 'http://localhost:4280',
+        reuseExistingServer: !process.env['CI'],
+        timeout: 180_000,
+      },
 });
