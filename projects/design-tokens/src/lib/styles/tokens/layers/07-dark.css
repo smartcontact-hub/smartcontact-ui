@@ -63,6 +63,10 @@
   /* ---------- Semantic · Background ---------- */
   --sc-bg-default: var(--sc-color-slate-950);
   --sc-bg-surface: var(--sc-color-slate-900);
+  /* El lienzo (ver la explicación larga en `02-semantic.css`): en oscuro coincide
+   * con `--sc-bg-default` —el "suelo" gray-950—, y en claro NO. Por eso es un
+   * token propio y no un alias: la asimetría es justo su razón de existir. */
+  --sc-bg-canvas: var(--sc-color-slate-950);
   --sc-bg-subtle: var(--sc-color-blue-900);
   --sc-bg-subtle-hover: var(--sc-color-blue-800);
   --sc-bg-subtle-active: var(--sc-color-blue-700);

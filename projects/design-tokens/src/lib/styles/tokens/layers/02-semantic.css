@@ -122,6 +122,30 @@
 
   /* ---------- Background ---------- */
   --sc-bg-default: var(--sc-color-slate-50);
+  /* EL LIENZO DE LA PÁGINA — el suelo sobre el que se apoya todo.
+   *
+   * Existe porque NINGUNO de los dos que ya había sirve, y no por poco: lo que
+   * hace falta es el CRUCE de ambos (medido 2026-08-25).
+   *
+   *                    claro              oscuro
+   *   --sc-bg-surface  slate-0  ✔        slate-900  ✘ (es la tarjeta, no el suelo)
+   *   --sc-bg-default  slate-50 ✘        slate-950  ✔
+   *   --sc-bg-canvas   slate-0  ✔        slate-950  ✔
+   *
+   * Y `--sc-bg-default` NO se puede reutilizar cambiándole el valor claro: hoy
+   * hace DOS trabajos a la vez —el suelo y el relleno gris de los campos
+   * (`filledBackground` del preset, inputtext, select, multiselect, search)—, así
+   * que ponerlo blanco dejaría todos los campos rellenos invisibles sobre blanco.
+   * 32 ficheros lo usan, y no todos quieren decir lo mismo.
+   *
+   * El Kit tampoco lo modela: su `content.background` es blanco/slate-900, o sea
+   * el mismo cruce que `--sc-bg-surface`. No hay nada que adoptar; hay que
+   * nombrarlo aquí.
+   *
+   * Esto sustituye al `:host-context(.sc-dark)` que el shell de configuración se
+   * escribía a mano, y cuyo comentario decía literalmente: «no hay un token único
+   * blanco en light / gray-950 en dark; override por tema». Ya lo hay. */
+  --sc-bg-canvas: var(--sc-color-slate-0);
   /* Elevated surface (popovers, dropdowns) — currently same as surface
    * because the light theme stays flat; the alias exists so consumers
    * that *semantically* want "elevated" don't reach for raw `#fff`. */

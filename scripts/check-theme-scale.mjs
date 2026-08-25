@@ -76,10 +76,24 @@ for (const file of styleFiles) {
 const pxValuePattern = /-?\d*\.?\d+px\b/g;
 const presetPxValues = [];
 
+/* Fuera los COMENTARIOS antes de buscar. Un `16px` mencionado para explicar POR
+ * QUÉ un token vale lo que vale no es un px en el preset: es la razón de que no
+ * lo sea. Contarlo obliga a escribir peor los comentarios —o a no escribirlos—
+ * para que pase un gate, que es exactamente al revés de lo que queremos.
+ *
+ * Medido el 2026-08-25: al documentar en `breadcrumb.ts` que la miga heredaba
+ * 16px y por eso se tokeniza a 14, este gate se puso rojo señalando MI COMENTARIO
+ * como el px prohibido. Mismo agujero que ya se tapó en `audit-primeng-coupling`
+ * (contaba las `.p-*` de los comentarios) y misma decisión: se arregla el gate.
+ * Un gate que mide mal enseña a ignorarlo. */
+const sinComentarios = (js) =>
+    js.replace(/\/\*[\s\S]*?\*\//g, '').replace(/(^|[^:])\/\/.*$/gm, '$1');
+
 for (const file of presetComponentFiles) {
-    const content = read(file);
+    const content = sinComentarios(read(file));
     let match;
 
+    pxValuePattern.lastIndex = 0;
     while ((match = pxValuePattern.exec(content))) {
         presetPxValues.push(`${toRelative(file)} -> ${match[0]}`);
     }
