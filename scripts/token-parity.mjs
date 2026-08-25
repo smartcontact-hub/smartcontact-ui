@@ -449,7 +449,7 @@ const census = [
   ['aura/semantic/common', 'cubierto', '§8 (censo + primary value-check)'],
   ['aura/app', 'cubierto', '§8 (no-consumido, documentado)'],
   ['aura/effects', 'cubierto', '§8 (foco=outline + sombras GENERADAS y leídas por el preset)'],
-  ['aura/custom', 'inverso', 'code→Figma (round-trip)'],
+  ['aura/custom', 'cubierto', '§8 (completitud) + code→Figma (round-trip)'],
 ];
 for (const [g, status, by] of census) log(`  ${g.padEnd(24)} ${String(kit.groups[g]?.size ?? 0).padStart(4)} leaves · ${status.padEnd(9)} · ${by}`);
 
@@ -459,8 +459,8 @@ for (const [g, status, by] of census) log(`  ${g.padEnd(24)} ${String(kit.groups
 // cuela en silencio. + value-check fuerte de la rampa `primary` (lo único que el DS consume
 // 1:1 aquí). El resto: ref que fluye (§1·2·7), cableado en base.ts, divergencia documentada o
 // no-consumido — ver notas del mapa. Sombras: divergencia/hardcoded, decisión en NEXT-SESSION.
-log('\n=== 8. COBERTURA · semantic/common · app · effects (completitud) ===');
-for (const g of ['aura/semantic/common', 'aura/app', 'aura/effects']) {
+log('\n=== 8. COBERTURA · semantic/common · app · effects · custom (completitud) ===');
+for (const g of ['aura/semantic/common', 'aura/app', 'aura/effects', 'aura/custom']) {
   const paths = [...(kit.groups[g]?.keys() ?? [])];
   const { byKind, unmatched } = classify(g, paths);
   const kinds = Object.entries(byKind).map(([k, arr]) => `${k}:${arr.length}`).join(' · ');

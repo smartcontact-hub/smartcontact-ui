@@ -31,6 +31,42 @@ test('app · todo app.* → not-consumed', () => {
   assert.equal(byKind['not-consumed'].length, 2);
 });
 
+test('custom · CARA VERDE · las cinco familias caen donde se midió que caen', () => {
+  const paths = [
+    'primitive.typography.font.size.200',
+    'primitive.typography.line.height.300',
+    'primitive.typography.font.weight.semibold',
+    'semantic.text.accent',
+    'semantic.presence.talking',
+    'component.bulktranscriptionmodal.warn.color',
+    'component.dialog.icon.color',
+  ];
+  const { unmatched, byKind } = classify('aura/custom', paths);
+  assert.deepEqual(unmatched, []);
+  // la tipografía FLUYE (es la fuente de --sc-font-size/-line-height/-weight)
+  assert.equal(byKind['flows'].length, 3);
+  // accent (sky por contraste) · presence (otra taxonomía) · icono del diálogo (atenuado)
+  assert.equal(byKind['divergence'].length, 3);
+  // el modal no tiene familia --sc-cmp-* propia: consume la capa semántica
+  assert.equal(byKind['not-consumed'].length, 1);
+});
+
+test('custom · CARA ROJA · un custom NUEVO del Kit → unmatched (era el agujero)', () => {
+  // Esto es exactamente lo que se escapaba: `aura/custom` salía en el censo de §7b
+  // pero NO entraba en el gate de completitud de §8, así que el Kit podía añadir
+  // un custom y no se ponía nada en rojo.
+  const { unmatched } = classify('aura/custom', ['semantic.brandnuevo.color']);
+  assert.deepEqual(unmatched, ['semantic.brandnuevo.color']);
+});
+
+test('custom · la tipografía NO se confunde con otra rama del mismo prefijo', () => {
+  // `primitive.typography.*` tiene tres buckets distintos (size · line.height ·
+  // weight). Si alguno se escribiera con un regex demasiado laxo, una hoja de otra
+  // sub-rama caería en el bucket equivocado y el censo mentiría en silencio.
+  const { unmatched } = classify('aura/custom', ['primitive.typography.letter.spacing.100']);
+  assert.deepEqual(unmatched, ['primitive.typography.letter.spacing.100']);
+});
+
 test('estructura · cada bucket es {RegExp test, string kind, string note}; primary tiene 11 pasos', () => {
   for (const b of BUCKETS) {
     assert.ok(b.test instanceof RegExp, `bucket de ${b.group} sin RegExp`);
