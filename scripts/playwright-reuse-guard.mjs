@@ -37,6 +37,8 @@ export function reuseOnlyOwnServer(port) {
   // ocupado peta en vez de colarse.
   if (process.env['CI']) return false;
 
+  otraCadenaViva(port);
+
   const pid = listenerPid(port);
   if (pid === null) return true; // nadie escucha → Playwright arrancará el suyo
 
@@ -102,4 +104,100 @@ function processCwd(pid) {
   } catch {
     return undefined;
   }
+}
+
+/**
+ * ¿HAY OTRA CADENA DE TESTS CORRIENDO AHORA MISMO, DEL MISMO ÁRBOL?
+ *
+ * El chequeo de arriba acota la reutilización a los servidores de TU directorio.
+ * Eso deja pasar el caso peor: **dos cadenas tuyas a la vez**. Las dos nacen en
+ * el mismo `cwd`, así que el guardián las bendice, comparten el mismo `ng serve`
+ * y se pisan — una siembra datos mientras la otra los lee, una limpia el
+ * `localStorage` a mitad del test de la otra.
+ *
+ * Medido el 2026-08-25 (s34): lancé la cadena DOS veces sin darme cuenta (una
+ * antes de compactar el contexto y otra después). Las dos suites del supervisor
+ * corrieron contra el mismo servidor: la tabla salía VACÍA, los primeros tests
+ * caían con timeouts de 90 s y la suite iba camino de **dos horas**. Con una sola
+ * cadena y la máquina libre: **127/127 en 1,8 minutos**. Estuve a punto de
+ * atribuirlo al código —el rastro apuntaba a un `sc-datatable` que renderizaba
+ * sin filas— y de "arreglar" algo que no estaba roto.
+ *
+ * Es la regla 7 de `LEARNINGS.md` ("córrela UNA vez") convertida en máquina,
+ * porque esa regla la tenía escrita y la incumplí igual: el disparador que falta
+ * en la cabeza es justo el que aquí sobra, **acordarte de que ya la lanzaste**.
+ * Tras una compactación o un relevo de sesión, no te acuerdas.
+ *
+ * Escape: `SC_ALLOW_PARALLEL_SUITES=1` para el caso legítimo de querer dos suites
+ * distintas a la vez. Explícito, no por descuido.
+ *
+ * @param {number} port puerto de la suite que intenta arrancar (solo para el mensaje).
+ */
+function otraCadenaViva(port) {
+  if (process.env['SC_ALLOW_PARALLEL_SUITES'] === '1') return;
+
+  const ajenos = pidsDePlaywright().filter((pid) => !nuestros().has(pid));
+  if (ajenos.length === 0) return;
+
+  throw new Error(
+    [
+      `[playwright] Ya hay OTRA ejecución de Playwright viva (pid ${ajenos.join(', ')}).`,
+      `  Esta suite (puerto ${port}) compartiría servidor con ella y las dos se pisarían:`,
+      '  datos sembrados por una, leídos por la otra; sesión limpiada a mitad de un test.',
+      '',
+      '  El síntoma NO parece de concurrencia: tablas vacías, timeouts largos y una suite',
+      '  que tarda 40× lo normal. Se lee como un bug del producto, y no lo es.',
+      '',
+      '  Salidas:',
+      '    · Espera a que termine la otra (o mátala) y relanza — es lo normal.',
+      '    · Si de verdad quieres dos suites distintas a la vez: SC_ALLOW_PARALLEL_SUITES=1',
+    ].join('\n'),
+  );
+}
+
+/**
+ * PIDs de procesos `playwright test` vivos.
+ *
+ * @returns {number[]}
+ */
+function pidsDePlaywright() {
+  try {
+    const out = execFileSync('pgrep', ['-f', 'playwright test'], {
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'ignore'],
+    }).trim();
+    return out ? out.split('\n').map(Number).filter((n) => Number.isInteger(n)) : [];
+  } catch {
+    // `pgrep` sale con 1 si no hay coincidencias, y con ENOENT si no existe.
+    // En los dos casos: no podemos afirmar que haya otra cadena → no bloquees.
+    return [];
+  }
+}
+
+/**
+ * Nuestro propio proceso y toda su cadena de padres. El proceso que ejecuta este
+ * fichero ES un `playwright test`, así que sin esto el guardián se denunciaría a
+ * sí mismo — el modo de fallo clásico de un chequeo que se busca en su propia
+ * lista.
+ *
+ * @returns {Set<number>}
+ */
+function nuestros() {
+  const set = new Set();
+  let pid = process.pid;
+  for (let i = 0; i < 12 && pid > 1; i++) {
+    set.add(pid);
+    try {
+      const out = execFileSync('ps', ['-o', 'ppid=', '-p', String(pid)], {
+        encoding: 'utf8',
+        stdio: ['ignore', 'pipe', 'ignore'],
+      }).trim();
+      const ppid = Number(out);
+      if (!Number.isInteger(ppid) || ppid <= 1) break;
+      pid = ppid;
+    } catch {
+      break;
+    }
+  }
+  return set;
 }

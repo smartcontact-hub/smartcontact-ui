@@ -2,7 +2,7 @@
 
 > **Volátil.** Lo reescribe la sesión que trabaja ESTE frente, y **solo este fichero**.
 > No toques los hand-offs de otros frentes. Lo durable vive en `docs/`.
-> **Sello: 2026-08-25 — sesión de CONSOLIDACIÓN (cierre). HEAD `b5b07a5`, **CI verde, los 8 pasos**. Los dos últimos commits son los que el verde LOCAL no cazó y conviene leer: `b5b07a5` (el puntero de Playwright sale de la barra lateral) y `25cedef` (el lockfile vuelve a estar en sync — `npm ci` es el paso 1 del CI y `preflight` NO lo corre). Antes: `1fb7d5f` (el audit de acoplamiento a PrimeNG pasa a mirar tres caras) sobre HEAD `9e3f0bd` (Angular 22 + PrimeNG 22 + los builders a `@angular/build`). Antes, en esta misma sesión y ya en `main`: `3b65f07` (duplicación del supervisor), `bee2acc` (retirada de `sc-page-header` + deriva de docs), `0ef136c` (**trinquete DD-38 a CERO**), `1698f47` (red de contraste de severidades), `edfb2ec` (código muerto), `4417bb8` (`text.muted.color` a enforce + el warn unificado) y `2b694b4` (rescate de s33). Contenido previo: HEAD `97f34e1`.**
+> **Sello: 2026-08-25 — sesión de CONSOLIDACIÓN (cierre). HEAD `f78977c`, **CI verde, los 8 pasos**. Cierra con `aura/custom` dentro del gate de completitud del Kit. Antes, `b5b07a5`. Los dos últimos commits son los que el verde LOCAL no cazó y conviene leer: `b5b07a5` (el puntero de Playwright sale de la barra lateral) y `25cedef` (el lockfile vuelve a estar en sync — `npm ci` es el paso 1 del CI y `preflight` NO lo corre). Antes: `1fb7d5f` (el audit de acoplamiento a PrimeNG pasa a mirar tres caras) sobre HEAD `9e3f0bd` (Angular 22 + PrimeNG 22 + los builders a `@angular/build`). Antes, en esta misma sesión y ya en `main`: `3b65f07` (duplicación del supervisor), `bee2acc` (retirada de `sc-page-header` + deriva de docs), `0ef136c` (**trinquete DD-38 a CERO**), `1698f47` (red de contraste de severidades), `edfb2ec` (código muerto), `4417bb8` (`text.muted.color` a enforce + el warn unificado) y `2b694b4` (rescate de s33). Contenido previo: HEAD `97f34e1`.**
 
 ## ✅ s34 · Se cerró la deuda abierta, y el salto a Angular 22 destapó una clase de fallo nueva
 
@@ -409,6 +409,11 @@ variables, 30 comentarios activos.
     (opcionales de wasm que macOS no instala y Linux sí espera). Lo que funciona es regenerar
     limpio — **pero eso hace derivar versiones**, incluida la FUENTE DE ICONOS del DS. Mira el
     diff de directas después y verifícalas, no las des por buenas.
+  - ⚙️ **Y el caso peor de todos ya lo para una máquina**: lanzar la cadena DOS veces. Las dos
+    nacen en el mismo `cwd`, comparten `ng serve` y se pisan — la tabla del supervisor salía
+    VACÍA y la suite iba camino de dos horas (con una sola: 127/127 en 1,8 min). Desde s34,
+    `playwright-reuse-guard.mjs` para la suite si detecta otra ejecución de Playwright viva.
+    Escape explícito si de verdad quieres dos: `SC_ALLOW_PARALLEL_SUITES=1`.
   - **El ratón de Playwright arranca en (0,0), encima de `<sc-sidebar>`.** La barra se expande al
     hover y **se superpone al contenido** (diseño, `sidebar.component.scss:10-12`), así que la
     primera columna de las tablas queda debajo y el clic no entra: *«subtree intercepts pointer
