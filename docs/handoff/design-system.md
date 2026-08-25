@@ -2,7 +2,7 @@
 
 > **Volátil.** Lo reescribe la sesión que trabaja ESTE frente, y **solo este fichero**.
 > No toques los hand-offs de otros frentes. Lo durable vive en `docs/`.
-> **Sello: 2026-08-25 — sesión de CONSOLIDACIÓN (cierre). HEAD `1fb7d5f` (el audit de acoplamiento a PrimeNG pasa a mirar tres caras) sobre HEAD `9e3f0bd` (Angular 22 + PrimeNG 22 + los builders a `@angular/build`). Antes, en esta misma sesión y ya en `main`: `3b65f07` (duplicación del supervisor), `bee2acc` (retirada de `sc-page-header` + deriva de docs), `0ef136c` (**trinquete DD-38 a CERO**), `1698f47` (red de contraste de severidades), `edfb2ec` (código muerto), `4417bb8` (`text.muted.color` a enforce + el warn unificado) y `2b694b4` (rescate de s33). Contenido previo: HEAD `97f34e1`.**
+> **Sello: 2026-08-25 — sesión de CONSOLIDACIÓN (cierre). HEAD `b5b07a5`, **CI verde los 12 pasos**. Los dos últimos commits son los que el verde LOCAL no cazó y conviene leer: `b5b07a5` (el puntero de Playwright sale de la barra lateral) y `25cedef` (el lockfile vuelve a estar en sync — `npm ci` es el paso 1 del CI y `preflight` NO lo corre). Antes: `1fb7d5f` (el audit de acoplamiento a PrimeNG pasa a mirar tres caras) sobre HEAD `9e3f0bd` (Angular 22 + PrimeNG 22 + los builders a `@angular/build`). Antes, en esta misma sesión y ya en `main`: `3b65f07` (duplicación del supervisor), `bee2acc` (retirada de `sc-page-header` + deriva de docs), `0ef136c` (**trinquete DD-38 a CERO**), `1698f47` (red de contraste de severidades), `edfb2ec` (código muerto), `4417bb8` (`text.muted.color` a enforce + el warn unificado) y `2b694b4` (rescate de s33). Contenido previo: HEAD `97f34e1`.**
 
 ## ✅ s34 · Se cerró la deuda abierta, y el salto a Angular 22 destapó una clase de fallo nueva
 
@@ -387,6 +387,24 @@ Fichero: **"Smart-Contact Design System"** (`khNq9dJKNi13pNllrqm6dx`) — 111 p�
 variables, 30 comentarios activos.
 
 ## ⚠️ Trampas de este frente
+
+- 🪤 **El verde LOCAL no cubre los dos primeros metros del CI**, y en s34 mordió dos veces:
+  - **`npm ci` es el paso 1 del CI y `preflight` NO lo corre.** Un lockfile desincronizado da
+    preflight entero en verde y CI muerto antes de instalar nada. Si tocas `package.json` o el
+    lock, corre **`npm ci --dry-run`** (exit 0 = en sync) antes de pushear. Y no lo arregles con
+    `npm install <paquete>` puntuales: cada uno vuelve a descuadrar la familia `@emnapi/*`
+    (opcionales de wasm que macOS no instala y Linux sí espera). Lo que funciona es regenerar
+    limpio — **pero eso hace derivar versiones**, incluida la FUENTE DE ICONOS del DS. Mira el
+    diff de directas después y verifícalas, no las des por buenas.
+  - **El ratón de Playwright arranca en (0,0), encima de `<sc-sidebar>`.** La barra se expande al
+    hover y **se superpone al contenido** (diseño, `sidebar.component.scss:10-12`), así que la
+    primera columna de las tablas queda debajo y el clic no entra: *«subtree intercepts pointer
+    events»*, 169 reintentos hasta agotar los 90 s. En local pasaba por suerte de timing; el
+    runner lento lo destapa. Ya lo cubre `goto()` en `e2e/supervisor/helpers.ts`, que lleva el
+    puntero a un punto inerte de la barra superior. **Si lo ves otra vez, no lo tapes con
+    `{ force: true }`**: eso se salta el hit-testing y cambia un rojo verdadero por un verde falso.
+
+
 
 - **Los dos e2e que "fallan siempre en macOS" se desactivan con `CI=1`**: los screenshots de
   `sc-card` y `sc-message` (`components.spec.ts`) son llamadas a `screenshotBaseline()`, que
