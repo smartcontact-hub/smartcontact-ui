@@ -333,10 +333,23 @@ color breadcrumb). Mensaje de diseño enviado. Editar Figma **no mueve la web**.
    Ya no es «extraer un CVA a mano»: la API que lo sustituye entró en el framework con este salto.
    Empieza por leer qué cubre Signal Forms antes de diseñar la extracción — el plan viejo
    (`scCreateControlValueAccessor()`) puede haber quedado obsoleto entero.
-2. **La rama `aura/custom` del Kit no la vigila nadie** (`[gate-able]`): ningún coverage-map la
-   clasifica, así que no se genera su familia `--sc-cmp-*` y, si el Kit añade otro custom, no
-   salta nada. Mismo agujero que `tokens:parity` ya cubre para `semantic/common`, `app` y
-   `effects`.
+2. ~~**La rama `aura/custom` del Kit no la vigila nadie**~~ → **HECHO**, y la descripción que
+   llevaba esta ficha era imprecisa: `aura/custom` **sí** salía en el censo de §7b (visible), lo
+   que le faltaba era entrar en el **gate de completitud de §8**. Ahora entra, con sus 52 hojas
+   clasificadas midiendo el consumo real:
+   - **19 `flows`** — `primitive.typography.*` es la FUENTE de `--sc-font-size-*`,
+     `--sc-line-height-*` y `--sc-font-weight-*` (`01-primitive.css:258-291`), verificado por valor.
+   - **7 `divergence`** — `text.accent` (Kit violet, DS sky-600 por contraste) · las 5 de
+     `presence` (**taxonomías distintas**: el Kit trae available/unavailable/administrative/
+     talking/wrap-up y el DS available/paused/training/offline, con hexes curados a AA) ·
+     `dialog.icon.color` (el Kit lo quiere a color de texto pleno, el DS atenuado).
+   - **26 `not-consumed`** — todas las de `bulktranscriptionmodal`: **no existe ninguna
+     `--sc-cmp-bulktranscriptionmodal-*`**; ese componente se estiliza con 36 tokens semánticos
+     directos. Elección válida, pero ahora el censo lo dice en voz alta en vez de aparentar que
+     fluye.
+
+   Cubierto por 3 tests en `scripts/__tests__/coverage-map.test.mjs`, uno de ellos la **cara
+   roja** (un custom nuevo del Kit → `unmatched`), que es justo lo que se escapaba.
 3. **El eslabón que sigue faltando: nadie compara *fichero de Figma ↔ export*.** `tokens:parity`
    compara *export ↔ CSS*. Por ese hueco se coló el desfase de julio. No puede ser gate de CI
    (necesita el bridge abierto), así que es procedimiento manual — mismo caso que el Check D de

@@ -49,6 +49,45 @@ export const BUCKETS = [
   // el preset (var(--sc-cmp-*-shadow)) → fluyen del Kit. Puente completo (Etapa 1 emite, Etapa 2
   // repunta); el guard tokens:effects-rewire impide que vuelva a colarse un hex hardcoded.
   { group: 'aura/effects', test: /\.shadow$/, kind: 'shadow', note: 'sombra de elevación — GENERADA a --sc-cmp-*-shadow y LEÍDA por el preset → fluye del Kit (guard: tokens:effects-rewire)' },
+
+  // ── aura/custom ─────────────────────────────────────────────────────────────
+  // La rama del Kit donde viven los tokens que NO son de Aura: nuestra tipografía,
+  // los estados de presencia, el accent y los customs de marca. Estaba en el censo
+  // de §7b (visible) pero FUERA del gate de completitud de §8, así que una hoja
+  // nueva del Kit aquí no ponía nada en rojo. Cada bucket de abajo se escribió
+  // MIDIENDO su consumo real en el código, no por el nombre de la hoja.
+  //
+  // Las 19 de tipografía son la FUENTE de la escala: `dtcg-export.mjs:79` las saca
+  // de `custom.typography` y alimentan `--sc-font-size-*`, `--sc-line-height-*` y
+  // `--sc-font-weight-*` en `01-primitive.css:258-291`. Verificado por valor
+  // (12·14·16·18·20·24·32·48 y 18·20·24·28·36·40·58; pesos 400/500/600/700).
+  { group: 'aura/custom', test: /^primitive\.typography\.font\.size\./, kind: 'flows', note: 'fuente de --sc-font-size-* (01-primitive.css:258+) — valores 1:1' },
+  { group: 'aura/custom', test: /^primitive\.typography\.line\.height\./, kind: 'flows', note: 'fuente de --sc-line-height-* (01-primitive.css:274+) — valores 1:1' },
+  { group: 'aura/custom', test: /^primitive\.typography\.font\.weight\./, kind: 'flows', note: 'fuente de --sc-font-weight-* (01-primitive.css:288-291) — valores 1:1' },
+
+  // El Kit pide violet; el DS usa sky por CONTRASTE, y está razonado en el sitio
+  // (02-semantic.css:101-106: cyan-600 daba 3,46 y sky-600 da 6,80). Misma clase de
+  // divergencia que focus.ring.color: la decide la accesibilidad, no la marca.
+  { group: 'aura/custom', test: /^semantic\.text\.accent$/, kind: 'divergence', note: 'Kit {violet.400} · DS --sc-text-accent = sky-600 por contraste (02-semantic.css:101-106)' },
+
+  // Presencia: el DS TIENE sus tokens (--sc-presence-*, 03-palette.css:83-88) pero
+  // ni los valores ni los NOMBRES coinciden — el Kit trae available/unavailable/
+  // administrative/talking/wrap-up y el DS available/paused/training/offline, con
+  // hexes curados a mano y calibrados a AA sobre --sc-bg-surface. No es un desfase
+  // que se arregle sincronizando: son dos taxonomías distintas del mismo concepto.
+  { group: 'aura/custom', test: /^semantic\.presence\./, kind: 'divergence', note: 'taxonomía y valores distintos: Kit available/unavailable/administrative/talking/wrap-up vs DS --sc-presence-available/paused/training/offline (03-palette.css:83-88), curados a AA' },
+
+  // 26 hojas para el modal de transcripción masiva y NADIE las lee: no existe
+  // ninguna `--sc-cmp-bulktranscriptionmodal-*` en las capas. El componente se
+  // estiliza con 36 tokens semánticos/primitivos directos. Es una elección válida
+  // —consumir la capa semántica en vez de tener familia propia— pero conviene que
+  // el censo lo diga en voz alta en vez de que parezca que fluye.
+  { group: 'aura/custom', test: /^component\.bulktranscriptionmodal\./, kind: 'not-consumed', note: 'sin familia --sc-cmp-bulktranscriptionmodal-*: el componente consume 36 tokens semánticos directos' },
+
+  // El Kit quiere el icono del diálogo al color de texto pleno ({overlay.modal.color}
+  // → {text.color}); el DS lo quiere ATENUADO (--sc-dialog-head-icon-fg = slate-500,
+  // 04-component.css:64, zona escrita a mano). Divergencia de intención visual.
+  { group: 'aura/custom', test: /^component\.dialog\.icon\.color$/, kind: 'divergence', note: 'Kit {overlay.modal.color}={text.color} · DS --sc-dialog-head-icon-fg = slate-500 (icono atenuado, 04-component.css:64)' },
 ];
 
 /**
