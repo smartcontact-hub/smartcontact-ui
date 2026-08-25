@@ -32,11 +32,11 @@ lo que hace que te la creas cuando te toca. Lee el índice siempre; el cuerpo, c
 | # | Si estás a punto de… | → |
 |---|---|---|
 | **1** | concluir que algo NO funciona, **o que ya lo arreglaste tocando una opción** | demuestra que tu estímulo —o tu opción— LLEGÓ, y no extiendas el negativo más allá de lo que mediste |
-| **2** | creerte un hallazgo (o un verde) de una sonda **tuya** | valida el instrumento con un caso conocido; pruébalo en todos sus ejes; y valida también el CANAL — rojo y verde pueden venir de otro sitio, y un filtro mudo se lee como "no ha pasado nada" |
+| **2** | creerte un hallazgo (o un verde) de una sonda **tuya**, incluido un TEST | valida el instrumento con un caso conocido; pruébalo en todos sus ejes; valida el CANAL (rojo y verde pueden venir de otro sitio); y mira si tu **doble contesta la pregunta que hace el código** — si lo hace, el test se mide a sí mismo |
 | **4** | arreglar un valor sustituyéndolo por otro token | mide el token de DESTINO antes (fondo y texto, misma familia) |
 | **5** | dudar entre tu código y tu medición | lo rancio es la medición: build, server, HMR, animación, **el repo bajo tus pies**, **otra instancia (un deploy)**, la máquina ahogada… o atribución. Y si el test miraba un TRANSITORIO, la carga es el disparador, no la causa |
 | **6** | creerte un test NUEVO — se ponga rojo **o pase a la primera** | sospecha del test primero: ¿mide la magnitud? ¿el selector casa? ¿reintenta? ¿espera al estado final? Y para probar el arreglo de una CARRERA, hazla determinista en vez de correrla con carga |
-| **7** | hacer `git push`, **o lanzar la cadena de 8 pasos** | córrela UNA vez y sobre el árbol final — y "final" es que ya **no vas a escribir nada más**, ni un `.md`. Confirma el verde LEYENDO el log |
+| **7** | hacer `git push`, **o lanzar la cadena de 8 pasos** | `preflight` UNA vez y sobre el árbol final —"final" = ya no vas a escribir nada más, ni un `.md`—, **+ `npm ci --dry-run` si tocaste el lock** (preflight NO corre `npm ci`, que es el paso 1 del CI). Confirma el verde LEYENDO el log, no un exit-code |
 | **8** | proponer una segunda corrección tras fallar la primera | para: la siguiente acción es una MEDICIÓN que localice la causa |
 | **10** | declarar algo bloqueado, o deducir un dato a ojo | comprueba si el sistema ya te lo sirve (DOM oculto, i18n, hoja de estilos) |
 | **11** | lanzar una edición masiva por shell | pega la verificación de outcome en el MISMO comando (zsh no hace word-splitting) |
@@ -121,6 +121,20 @@ lo que hace que te la creas cuando te toca. Lee el índice siempre; el cuerpo, c
    no solo la magnitud (s29)*: medí el VALOR del select (`.p-select-label`=14) cuando el bug vivía
    en las OPCIONES (`.p-select-option`=16), y antes el CONTENEDOR heredado (16) en vez del texto
    hoja — el mismo error dos veces, con flip-flop de veredicto. Mide el nodo EXACTO del que habla la claim.
+
+   *Corolario C (s34) — el caso más silencioso: **el doble contesta la pregunta que hace el
+   código**.* `sc-datatable` decide si un `mousedown` empezó sobre la casilla con
+   `closest(<selector>)`. Sus 8 tests unitarios pasaban `target: { closest: () => ({}) }` — un
+   doble que dice que sí a CUALQUIER selector. O sea que anulaban lo ÚNICO que el guard
+   comprueba. Cuando una migración cambió el tag renderizado, el gesto quedó muerto y **los 8
+   siguieron verdes**, durante commits. Con un elemento de DOM real, 4 se ponen rojos con el bug
+   puesto (comprobado reintroduciéndolo). **Disparador**: un comportamiento se rompe y sus tests
+   no se enteran → mira si algún doble está respondiendo la pregunta del código, no aislando
+   dependencias. Un doble está para lo que NO pruebas; si contesta lo que sí pruebas, el test
+   mide su propio stub. **Y la versión general, que vale para gates**: antes de fiarte de un
+   verde, ponle el fallo delante y comprueba que enrojece. En esta misma sesión la primera
+   versión de un gate nuevo dejó pasar los dos bugs para los que la escribí — solo se supo
+   probándola. Un gate que no se pone rojo con el fallo que lo motivó no es un gate.
 
    *Corolario B (s21) — un control que no LEES no es un control.* En la sonda siguiente sí puse
    un valor conocido… y el control falló (`ctx.fillStyle = 'var(--x)'` no resuelve la variable:
@@ -309,18 +323,11 @@ lo que hace que te la creas cuando te toca. Lee el índice siempre; el cuerpo, c
    artefacto estaba mal nombrado. **Y el carril rápido que acababa de construir agrava esto**:
    itera con él, pero antes de pushear corre la suite entera — el fallo estaba justo en la
    parte que el carril no cubría.
-   *Evidencia (s29) — SEGUNDA vez, disfrazada de "es solo un token".* Cambié un line-height del
-   preset, corrí `verify` (26 gates, verde) y pusheé: los tokens tienen sus propios gates, ¿qué más
-   va a hacer falta? El `e2e`, que `verify` NO incluye — un token mueve la GEOMETRÍA renderizada, y
-   el alto que el textarea autoResize se graba a sí mismo vive en el `outerHTML` que fija
-   `component-structure`: CI rojo en **DOS push seguidos**, verify verde en ambos, y el rojo pasó
-   inadvertido porque tampoco leí el run (la otra mitad de esta regla). Racionalización a desarmar:
-   **"es solo un token/CSS" NO es "verify basta"** — cualquier cambio visual o de token puede mover
-   un baseline de `e2e`; tras uno, corre `npm run e2e:structure` (barato) antes de pushear, y la
-   cadena entera una vez antes del push que shippea. **Ese atajo de un comando ya existe**: `npm run
-   preflight` (creado en `69f0951` cerrando s29, cuando esta regla aún decía que no lo había), con un
-   gate anti-drift que lo mantiene cuadrado con `ci.yml`. Corre ESE, una vez, sobre el árbol final —
-   el ensamblaje manual de `ci.yml` es justo lo que se cae bajo prisa.
+   *Evidencia (s29) — SEGUNDA vez, disfrazada de "es solo un token".* Racionalización a desarmar:
+   **"es solo un token/CSS" NO es "verify basta"**. `verify` no incluye `e2e`, y un token mueve la
+   GEOMETRÍA renderizada, que es lo que fija `component-structure` → CI rojo en DOS push seguidos
+   con verify verde en ambos. Corre `npm run preflight` (existe desde `69f0951`, con anti-drift
+   contra `ci.yml`), una vez, sobre el árbol final.
    *Evidencia (s33) — **tercera vez, y esta no fue correr de MENOS sino en el MOMENTO equivocado**.*
    Corrí la cadena entera, sin subsets… sobre un árbol que aún no era el final: la lancé y **seguí
    escribiendo** (un test nuevo, una línea de `NEXT-SESSION.md`, un sello de hand-off mal
@@ -333,6 +340,19 @@ lo que hace que te la creas cuando te toca. Lee el índice siempre; el cuerpo, c
    `main` se movió (aquí se movió TRES veces con sesiones en paralelo). Si aún estás escribiendo,
    todavía no toca lanzarla.
 
+   *Evidencia (s34) — CUARTA vez, y el modo es NUEVO: no corrí de menos ni a destiempo, sino que
+   **el artefacto que esta regla me manda correr no cubre el primer paso del CI**.* `preflight` son
+   los 8 pasos **menos `npm ci`**. El lockfile había quedado desincronizado por instalaciones
+   incrementales durante una subida de versión, y el resultado fue: `preflight` ENTERO en verde
+   (31 gates + 5 builds + 3 suites, ~25 min) y el CI **muerto antes de instalar nada**. El verde más
+   caro de la sesión midió un árbol que en CI ni llegaba a compilar. **Acción**: si tocaste
+   `package.json` o `package-lock.json`, `npm ci --dry-run` (exit 0 = en sync) antes de pushear —
+   cuesta segundos y es el único proxy fiel de ese paso. Y la lección general por encima del caso:
+   **"corrí el gate agregado" no es "corrí lo que corre el CI"; abre su definición y compara.**
+   *Y en la misma sesión rompí la otra mitad de esta regla, la de siempre*: corrí
+   `docs:coherence`, **imprimí su exit 1**, y commiteé igual. No es que no lo corriera: es que
+   miré el número sin leerlo. Un gate que ejecutas y no lees es un gate que no has ejecutado.
+
    *Corolario (s30) — si has AÑADIDO un test, un gate en verde NO prueba que lo haya ejecutado.*
    Metí dos gates en `components.spec.ts` y `preflight` dio `EXIT=0` **sin correr ninguno**: su
    anti-drift permite sustituciones locales y una cambiaba `npm run e2e` por `e2e:structure`, o sea
@@ -342,14 +362,19 @@ lo que hace que te la creas cuando te toca. Lee el índice siempre; el cuerpo, c
    config del gate que vas a creer, o abre la sustitución (`LOCAL_SUBSTITUTIONS` en
    `scripts/ci-preflight-parity.mjs`). *(Ese hueco se cerró en `649240d`; la lección no.)*
 
-   *Corolario (s21), y es de COSTE, no de cobertura: la cadena entera SÍ, pero UNA sola vez por
-   tarea.* Esta regla dice qué correr y no dice cuántas veces, así que la cumplí commit a
-   commit: **4 rondas de `verify`, 3 de `e2e:supervisor`, 2 de `e2e` y 2 de los tres builds AOT**
-   para una sola tarea, más la espera del CI en 5 pushes. Cada `verify` reconstruye el DS entero
-   y cada `e2e:supervisor` son 125 tests: eso fue el grueso del tiempo de la tarea, y Rafa lo
-   preguntó. **Acción**: commitea las veces que la historia merezca —los commits separados son
-   los que hacen revertible una pieza sin las otras— pero **agrupa el PUSH**, y corre la cadena
-   completa una vez, sobre el árbol final. Mientras iteras, el subconjunto que toca tu cambio.
+   *Corolario (s21+s34), y es de COSTE, no de cobertura: la cadena entera SÍ, pero UNA sola vez por
+   tarea.* ⚙️ **Esta mitad ya la vigila una máquina** desde s34: `playwright-reuse-guard.mjs` para
+   la suite si detecta otra ejecución de Playwright viva, porque el caso peor no es correr de más
+   sino **dos cadenas TUYAS a la vez** — nacen en el mismo `cwd`, comparten `ng serve` y se pisan.
+   Medido: la suite del supervisor iba camino de **dos horas** con la tabla saliendo vacía; con una
+   sola cadena, **127/127 en 1,8 min**. El síntoma no parece de concurrencia, parece un bug del
+   producto, y estuve a punto de "arreglar" algo que no estaba roto. La racionalización que lo
+   permite es no acordarte de que ya la lanzaste — **tras una compactación o un relevo de sesión,
+   no te acuerdas**, y por eso tenía que ser un gate y no una nota.
+   *(Contexto original s21:)* sin el "cuántas veces", cumplí la regla commit a commit: 4 rondas de
+   `verify` + 3 de `e2e:supervisor` para UNA tarea — el grueso del tiempo, y Rafa lo preguntó.
+   **Acción**: commitea las veces que la historia merezca, pero **agrupa el PUSH** y corre la
+   cadena una sola vez sobre el árbol final; mientras iteras, el subconjunto que toca tu cambio.
    Y para un cambio que solo toca `.md`, lo único que puede romperse es `docs:guard`,
    `docs:coherence` y `lint`: correr `verify` entero ahí es exactamente el desperdicio que este
    corolario nombra.
