@@ -168,6 +168,46 @@ table.table {
 }
 
 /*
+ * El botón de acción de la TopBar: HUG con mínimo y máximo.
+ *
+ * Decisión de Rafa (2026-08-25): que no cambie de anchura porque sí — que crezca
+ * con su texto, pero acotado. Ni ancho fijo (desperdicia sitio y corta locales
+ * largos) ni libre (salta al navegar).
+ *
+ * El problema medido: la barra superior NO desaparece al cambiar de lista, así
+ * que el botón salta a la vista. Anchos reales el 2026-08-25:
+ *   Nueva label 122 · Nuevo grupo 131 · Nuevo agente 137 · Nuevo usuario 141 ·
+ *   Nueva plantilla 142
+ *
+ * `min-width: 144px` queda por ENCIMA del más ancho de hoy (142), así que los
+ * cinco aterrizan en el mismo sitio y el salto desaparece. Un texto más largo
+ * —otro idioma, una entidad nueva— crece por su cuenta hasta el tope.
+ *
+ * `max-width: 288px` (2× el mínimo) con 861px de hueco libre medidos entre la
+ * miga y las acciones: sobra sitio, así que el tope no está para caber, está para
+ * que una etiqueta patológica no convierta el botón en una frase.
+ *
+ * ⚠️ Vive en `main.scss` (sin scope) porque el botón se PROYECTA en la TopBar
+ * desde la página: el `_ngcontent` de la TopBar no lo alcanza. Y el gancho es
+ * `.top-bar__actions` —clase NUESTRA— a propósito, no `.p-button`: un renombrado
+ * del proveedor no puede volver a apagar esto en silencio (ver la migración a
+ * PrimeNG 22 en `docs/migration-safety.md`).
+ *
+ * Hoy esa zona lleva EXACTAMENTE un botón por página (medido: las páginas sin
+ * acción no la renderizan). Si algún día lleva dos, revisa si los dos quieren
+ * suelo — un botón de solo icono no lo quiere.
+ *
+ * (Sustituye a una regla anterior con la misma intención que apuntaba a
+ * `.page-header__actions`, un contenedor que dejó de existir: llevaba tiempo
+ * siendo letra muerta y el salto había vuelto sin que nadie lo notara.)
+ */
+.top-bar__actions button {
+  min-width: 144px;
+  max-width: 288px;
+  justify-content: center;
+}
+
+/*
  * Button line-height (Figma button: `leading-normal`). Sin esto los `.p-button`
  * heredan el `line-height: 1.5` del reset (`_reset.scss`) → la altura se infla
  * (~35px el small). Con `normal` + el sizing `button.sm` del preset, el

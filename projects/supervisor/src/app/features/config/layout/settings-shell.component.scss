@@ -13,17 +13,15 @@
    * BLANCO. El índice es un panel gray/50 (`--sc-bg-secondary-subtle`) → al ir
    * la página en blanco, el índice resalta solo (gris sobre blanco); la card de
    * contenido es blanca (surface) con borde + sombra para separarse del lienzo.
-   * S67-A: antes el lienzo era gray/50 y el índice (también gray/50) se fundía. */
-  background: var(--sc-bg-surface);
-}
-
-/* Dark: los tokens son asimétricos — en light el índice (gray-50) resalta sobre
- * lienzo blanco; en dark el índice es gray-900 (superficie elevada) y resalta
- * sobre el "suelo" gray-950. `--sc-bg-surface` vale gray-900 en dark (= el índice
- * → se fundirían), así que el lienzo baja a `--sc-bg-default` (gray-950). No hay
- * un token único "blanco en light / gray-950 en dark"; override por tema. */
-:host-context(.sc-dark) {
-  background: var(--sc-bg-default);
+   * S67-A: antes el lienzo era gray/50 y el índice (también gray/50) se fundía.
+   *
+   * UN solo token para los dos temas desde el 2026-08-25. Aquí había
+   * `--sc-bg-surface` + un `:host-context(.sc-dark)` que lo bajaba a
+   * `--sc-bg-default`, y su comentario decía: «no hay un token único blanco en
+   * light / gray-950 en dark; override por tema». Ya lo hay —`--sc-bg-canvas`—,
+   * así que el override sobra: el valor pintado NO cambia en ninguno de los dos
+   * temas, solo desaparece el apaño. */
+  background: var(--sc-bg-canvas);
 }
 
 .settings-shell {
