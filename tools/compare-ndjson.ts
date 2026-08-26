@@ -29,9 +29,7 @@ interface Node {
 
 const GEOMETRIC = ['fontSize', 'lineHeight', 'letterSpacing'] as const;
 
-async function load(
-  file: string
-): Promise<{
+async function load(file: string): Promise<{
   header: { manifest: RunManifest; width: number };
   nodes: Map<string, Node>;
 }> {

@@ -37,14 +37,53 @@ Bloques DIRTY: ninguno.
    y el Comunicador escala constante en vw a 1280 / 1456 / 1920. Ver
    `scope-vw-conversion.md` y `projects/agent/docs/escala.md`.
 
-## Bloqueo abierto — necesita algo tuyo
+## Bloqueo abierto — ACCESO al original
 
-**ACCESO al original.** La superficie a medir (`#/private`) está tras login y no introduzco
-credenciales. Sin eso no arrancan la Fase 1 (breakpoints reales del original) ni la Fase 5
-(curvas fluidas), y con ellas se queda sin cerrar el hueco de la altura de fila de la tabla
-(2.535 / 2.885 / 3.804 vw a 1280 / 1456 / 1920, ver `scope-vw-conversion.md`).
+La superficie a medir (`#/private`) está tras login. **Playwright arranca con un navegador
+limpio**: los estáticos del original son públicos (por eso la Fase 0 salió), la app no.
 
-Lo que desbloquea: te logueas una vez y guardamos el `storageState` de Playwright.
+### Lo que YA se descartó midiendo
+
+**Medir a través del Chrome de Rafa, sin credenciales.** Se probó y da igual de bien salvo
+en una cosa:
+
+- **El DPR no importa.** A ancho idéntico (1460), su Chrome a DPR 2 contra Playwright a
+  DPR 1 difieren como mucho **0.01 px** — un orden de magnitud por debajo del umbral de
+  ruido. La regla «DPR = 1» del arnés se puede relajar aquí, y está medido, no supuesto.
+- **La barra de scroll da 0** en su Chrome (macOS, overlay), igual que en Playwright con
+  `--hide-scrollbars`. Hay paridad.
+- **Pero la ventana no se deja redimensionar.** `resize_window` responde «ok» y el viewport
+  se queda clavado (1460, luego 1442), y su pantalla mide 1470: **1920 es imposible**.
+
+Conclusión: su Chrome sirve para medir a UN ancho (~1442-1460), y ahí no hace falta
+sesión. **No sirve para el barrido 320→1920**, que es justo lo que piden las Fases 1 y 5.
+
+### Lo que hace falta
+
+Una sesión guardada, y se genera SIN que ninguna credencial pase por el agente:
+
+```bash
+export PATH=/usr/local/bin:$PATH
+npm run parity:login          # abre una ventana, te logueas TÚ, guarda .auth/original.json
+```
+
+`.auth/` está en `.gitignore`. El fichero es una sesión viva: no se comitea y caduca.
+
+### ⚠️ Antes de lanzarlo, el riesgo real
+
+Eso abre una **SEGUNDA sesión de agente** con el mismo usuario. La app lleva un
+`app_opened_in_another_tab` en `localStorage`, así que detecta sesiones concurrentes, y una
+sesión de agente es **telefonía en vivo**. Puede echar a la sesión real de Rafa o, peor,
+quedar registrada como agente disponible y que le enruten una conversación de verdad.
+
+Mitigaciones a decidir antes de medir:
+
+1. Usar un **usuario de pruebas distinto** al que Rafa tiene abierto, si existe.
+2. O medir con la sesión de Rafa **cerrada**, en un rato en que no esté trabajando.
+3. Y en cualquier caso, poner el agente en un estado **no disponible** antes de barrer.
+
+Las actuaciones de la matriz de estados son de solo lectura (abrir pestañas del
+Comunicador), pero el simple hecho de estar logueado ya cuenta como presencia.
 
 ## Harness — verificado
 

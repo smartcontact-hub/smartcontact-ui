@@ -52,3 +52,6 @@ Thumbs.db
 # Output del Theme Designer (plugin primeui-figma-plugin-v4): preset PrimeNG que NO
 # usamos (generamos el nuestro desde el DTCG). El workflow tokens-sync lo descarta.
 .theme-designer/
+
+# Sesiones de Playwright para medir el original: son credenciales vivas.
+.auth/

@@ -20,10 +20,12 @@ interface Args {
   height: number;
   state: string;
   url: string;
+  storageState: string | undefined;
 }
 
 function parseArgs(): Args {
   const a = process.argv.slice(2);
+  const args = a;
   const get = (k: string, d?: string): string => {
     const i = a.indexOf(`--${k}`);
     if (i === -1 || !a[i + 1]) {
@@ -46,6 +48,12 @@ function parseArgs(): Args {
     height: Number(get('height', '900')),
     state: get('state', 'default'),
     url: get('url', defaultUrl),
+    storageState:
+      args.indexOf('--storage') === -1
+        ? side === 'original'
+          ? '.auth/original.json'
+          : undefined
+        : get('storage', ''),
   };
 }
 
@@ -95,7 +103,17 @@ if (actuation === undefined) {
   );
 }
 
-const session = await openSession('chromium', args.width, args.height);
+/*
+ * Para medir el ORIGINAL hace falta una sesion: la superficie util esta tras login. Se
+ * genera con 'node tools/save-storage-state.ts' y NUNCA se comitea.
+ */
+const session = await openSession(
+  'chromium',
+  args.width,
+  args.height,
+  undefined,
+  args.storageState
+);
 await session.page.goto(args.url, { waitUntil: 'load' });
 await settle(session.page);
 /*
