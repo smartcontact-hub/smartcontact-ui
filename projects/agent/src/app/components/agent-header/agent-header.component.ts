@@ -9,20 +9,17 @@ import { AgIconComponent } from '../ui/app-icon.component';
   template: `
     <header class="hdr">
       <div class="hdr__brand">
-        <span class="hdr__mark" aria-hidden="true">
-          <svg width="26" height="18" viewBox="0 0 26 18" fill="none" xmlns="http://www.w3.org/2000/svg">
-            <circle cx="4" cy="4" r="3.4" fill="#8b95a1" />
-            <circle cx="13" cy="4" r="3.4" fill="#c2cad3" />
-            <circle cx="4" cy="14" r="3.4" fill="#c2cad3" />
-            <circle cx="13" cy="14" r="3.4" fill="#8b95a1" />
-            <circle cx="22" cy="9" r="3.4" fill="#dde2e8" />
-          </svg>
-        </span>
-        <span class="hdr__name"><strong>Smart</strong>Contact<span class="hdr__sub">Agent</span></span>
+        <img class="hdr__logo" src="icons/logo.svg" alt="SmartContact Agent" />
       </div>
       <div class="hdr__actions">
-        <button class="hdr__btn" type="button" aria-label="Help"><app-icon name="help" [size]="15" /></button>
-        <button class="hdr__btn hdr__btn--power" type="button" aria-label="Log out">
+        <button class="hdr__btn" type="button" aria-label="Help">
+          <app-icon name="help" [size]="15" />
+        </button>
+        <button
+          class="hdr__btn hdr__btn--power"
+          type="button"
+          aria-label="Log out"
+        >
           <app-icon name="power" [size]="14" />
         </button>
       </div>
@@ -38,26 +35,12 @@ import { AgIconComponent } from '../ui/app-icon.component';
     .hdr__brand {
       display: flex;
       align-items: center;
-      gap: 10px;
     }
-    .hdr__mark {
-      display: inline-flex;
-    }
-    .hdr__name {
-      font-size: 20px;
-      font-weight: 400;
-      color: var(--ag-brand);
-      letter-spacing: 0.2px;
-    }
-    .hdr__name strong {
-      font-weight: 700;
-    }
-    .hdr__sub {
-      font-style: italic;
-      font-size: 12.5px;
-      color: var(--ag-muted);
-      margin-left: 4px;
-      vertical-align: 2px;
+    /* Logo oficial: 239 x 42 en el fichero, servido a escala (ratio 5.69:1). */
+    .hdr__logo {
+      display: block;
+      width: 193px;
+      height: 34px;
     }
     .hdr__actions {
       display: inline-flex;

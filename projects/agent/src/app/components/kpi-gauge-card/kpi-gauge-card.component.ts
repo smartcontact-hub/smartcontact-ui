@@ -12,7 +12,14 @@ import { AgIconComponent } from '../ui/app-icon.component';
     <div class="agent-card gauge">
       <div class="gauge__ring">
         <svg viewBox="0 0 120 120" width="84" height="84" aria-hidden="true">
-          <circle class="gauge__track" cx="60" cy="60" r="53" fill="none" stroke-width="5" />
+          <circle
+            class="gauge__track"
+            cx="60"
+            cy="60"
+            r="53"
+            fill="none"
+            stroke-width="5"
+          />
         </svg>
         <div class="gauge__center">
           <div class="gauge__num">{{ kpis.total }}</div>
@@ -22,11 +29,15 @@ import { AgIconComponent } from '../ui/app-icon.component';
       <div class="gauge__metrics">
         <div class="metric">
           <span class="metric__val">{{ kpis.art }}</span>
-          <span class="metric__label"><app-icon name="clock" [size]="10" /> ART</span>
+          <span class="metric__label"
+            ><app-icon name="clock" [size]="10" /> ART</span
+          >
         </div>
         <div class="metric">
           <span class="metric__val">{{ kpis.act }}</span>
-          <span class="metric__label"><app-icon name="clock" [size]="10" /> ACT</span>
+          <span class="metric__label"
+            ><app-icon name="clock" [size]="10" /> ACT</span
+          >
         </div>
       </div>
     </div>

@@ -3,7 +3,10 @@
   flex-direction: column;
   /* Diseño de referencia 1456px escalado al ancho real (fluido, como la web). */
   width: 1456px;
-  min-height: calc(100vh / var(--ag-zoom, 1));
+  /* ALTO FIJO, no min-height: en el real la página no scrollea — el panel de la
+     tabla tiene alto de viewport y el scroll vive dentro del cuerpo de la tabla,
+     con el footer de estado siempre visible. */
+  height: calc(100vh / var(--ag-zoom, 1));
   zoom: var(--ag-zoom, 1);
   background: var(--ag-canvas);
   overflow-x: hidden;
@@ -26,7 +29,10 @@
   margin: 26px 37px 37px;
   flex: 1;
   min-height: 0;
-  overflow: auto;
+  /* El panel recorta; quien scrollea es el cuerpo de la tabla (ver call-table). */
+  overflow: hidden;
+  display: flex;
+  flex-direction: column;
   background: var(--ag-list);
   border-radius: 9.125px;
 }

@@ -16,9 +16,13 @@ import { AgIconComponent } from '../ui/app-icon.component';
         <div class="agent-muted time__label">Active work time</div>
       </div>
       <div class="time__side">
-        <div class="time__conn"><app-icon name="clock" [size]="12" /> <span>Connection: {{ kpis.connectedAt }}</span></div>
+        <div class="time__conn">
+          <app-icon name="clock" [size]="12" />
+          <span>Connection: {{ kpis.connectedAt }}</span>
+        </div>
         <div class="time__disc">
-          <app-icon name="clock" [size]="12" /> <span>Disconnection: {{ kpis.disconnectedAt }}</span>
+          <app-icon name="clock" [size]="12" />
+          <span>Disconnection: {{ kpis.disconnectedAt }}</span>
         </div>
       </div>
     </div>

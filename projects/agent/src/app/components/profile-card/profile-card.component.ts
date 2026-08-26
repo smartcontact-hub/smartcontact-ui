@@ -11,14 +11,25 @@ import { AgThemeService } from '../../theme/ag-theme.service';
   imports: [ScIconComponent],
   template: `
     <div class="agent-card profile">
-      <div class="profile__avatar" aria-hidden="true">{{ profile.avatarLetter }}</div>
+      <div class="profile__avatar" aria-hidden="true">
+        {{ profile.avatarLetter }}
+      </div>
       <div class="profile__info">
         <div class="profile__name">{{ profile.name }}</div>
         <div class="profile__field"><span>PIN:</span> {{ profile.pin }}</div>
-        <div class="profile__field"><span>Extension:</span> {{ profile.ext }}</div>
+        <div class="profile__field">
+          <span>Extension:</span> {{ profile.ext }}
+        </div>
         <div class="profile__field">
           <span>Type of ext.:</span>
-          <img class="profile__globe" src="icons/globe.svg" width="13" height="13" alt="" aria-hidden="true" />
+          <img
+            class="profile__globe"
+            src="icons/globe.svg"
+            width="13"
+            height="13"
+            alt=""
+            aria-hidden="true"
+          />
         </div>
       </div>
       <button

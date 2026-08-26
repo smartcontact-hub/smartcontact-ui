@@ -1,4 +1,11 @@
-import { computed, effect, inject, Injectable, signal, DOCUMENT } from '@angular/core';
+import {
+  computed,
+  effect,
+  inject,
+  Injectable,
+  signal,
+  DOCUMENT,
+} from '@angular/core';
 
 export type ThemeMode = 'light' | 'dark' | 'system';
 
@@ -6,9 +13,9 @@ const STORAGE_KEY = 'sc-agent-theme';
 const DARK_CLASS = 'sc-dark';
 
 /**
- * Tema del Agent. Copia del de supervisor pero con **default `dark`** (el Agent es
- * oscuro de fábrica; el toggle del header puede pasarlo a claro). Aplica `.sc-dark`
- * en `<html>` — mismo selector que el preset PrimeNG (`darkModeSelector`), así que
+ * Tema del Agent. Copia del de supervisor pero con **default 'dark'** (el Agent es
+ * oscuro de fábrica; el toggle del header puede pasarlo a claro). Aplica '.sc-dark'
+ * en '<html>' — mismo selector que el preset PrimeNG ('darkModeSelector'), así que
  * el flip invierte todos los componentes sin más. Persiste en localStorage.
  */
 @Injectable({ providedIn: 'root' })
@@ -41,9 +48,13 @@ export class ThemeService {
       }
     });
 
-    const mql = this.doc.defaultView?.matchMedia?.('(prefers-color-scheme: dark)');
+    const mql = this.doc.defaultView?.matchMedia?.(
+      '(prefers-color-scheme: dark)'
+    );
     if (mql) {
-      mql.addEventListener('change', (e) => this.systemPref.set(e.matches ? 'dark' : 'light'));
+      mql.addEventListener('change', (e) =>
+        this.systemPref.set(e.matches ? 'dark' : 'light')
+      );
     }
   }
 
@@ -67,6 +78,9 @@ export class ThemeService {
   }
 
   private readSystemPref(): 'light' | 'dark' {
-    return this.doc.defaultView?.matchMedia?.('(prefers-color-scheme: dark)').matches ? 'dark' : 'light';
+    return this.doc.defaultView?.matchMedia?.('(prefers-color-scheme: dark)')
+      .matches
+      ? 'dark'
+      : 'light';
   }
 }
