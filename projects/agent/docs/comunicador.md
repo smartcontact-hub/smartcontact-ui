@@ -296,6 +296,44 @@ propagación del clic.
 
 (el original tiene además `#8d939d` para caducada y `#7f70f7` para escucha)
 
+### La ventana de Tipificación
+
+Es **la misma en sus dos entradas** —tras colgar una llamada y desde el icono de
+tipificar de un chat—; lo único que cambia es que en el chat los tres niveles vienen
+ocultos. Relativo al borde superior del panel:
+
+| Pieza | top | left | tamaño |
+|---|---|---|---|
+| `.header-typification` | 0 | 0 | 250.28 × 44.73, `#333a41`, radio 25.79 |
+| `.title` | 11.88 | centrado | alto 20.49, 13.66 Semibold |
+| `.textArea` | 54.74 | 21.98 | 205.54 × 184.29 |
+| botón Guardar | 251.55 | 22.75 | 204.01 × 40.18 |
+
+El área de comentario va sobre `#1f2429` con borde `0.052vw #11131a` y radio 12.13. El
+botón es transparente con borde blanco y radio 12.13; se apaga a `#5f5f5f` cuando no hay
+nada que guardar, se cubre de `#9fa2a6` al pasar por encima y se invierte a blanco sobre
+negro al pulsarlo.
+
+### Grupos asignados: la MISMA fila en el KPI y en Perfil
+
+El interruptor es el componente `app-switch`, compartido:
+
+| | valor |
+|---|---|
+| pista | 20.47 × 10.61, radio 25.79, `#4F5256` → `#0056fe` al encender |
+| pulsador | 10.61 circular blanco con borde de 1px, recorre 9.86 |
+| transición | 0.4s |
+| apagado (`:disabled`) | `opacity: 0.3` |
+
+La fila mide 17.06 de alto con paso de **40.58**, y va: interruptor, `margin-right`
+11.37, nombre (Roboto 11.37, elipsis, `margin-right` 7.59) y los canales a la derecha.
+
+**Canales**: caja de 50.73 × 15.17 sobre `#1f2429` con radio 6.07 y padding lateral
+8.54; tres iconos de 7.58 —teléfono, chat y correo— repartidos con `space-between`. El
+canal que el agente no atiende baja a `opacity: 0.3`; **no cambia de color**.
+
+En Perfil todo el bloque ocupa 202.95 arrancando a 20.38 del borde del panel.
+
 ### Cabecera de la conversación abierta
 
 Los dos botones de la derecha son ese mismo componente en su versión grande: **18.96
