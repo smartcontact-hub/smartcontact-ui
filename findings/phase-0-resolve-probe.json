@@ -1,0 +1,78 @@
+{
+  "manifest": {
+    "playwrightVersion": "1.62.1",
+    "browserName": "chromium",
+    "browserVersion": "151.0.7922.34",
+    "os": "darwin 25.5.0 arm64",
+    "node": "v25.2.1",
+    "timestamp": "2026-08-26T15:12:34.710Z",
+    "replicaSha": "c496f6aa407fcabaa51dfce037563ca80399de97",
+    "harness": {
+      "deviceScaleFactor": 1,
+      "reducedMotion": "reduce",
+      "colorScheme": "light",
+      "locale": "es-ES",
+      "timezoneId": "Europe/Madrid",
+      "hideScrollbars": true,
+      "blockedHosts": [
+        "google-analytics.com",
+        "googletagmanager.com",
+        "doubleclick.net",
+        "facebook.net",
+        "hotjar.com",
+        "segment.io",
+        "sentry.io"
+      ]
+    }
+  },
+  "available": {
+    "400 Open Sans": true,
+    "600 Open Sans": true,
+    "400 Open Sans Semibold": false,
+    "600 Open Sans Semibold": false,
+    "400 Open Sans Bold": false,
+    "600 Open Sans Bold": false,
+    "400 Open Sans Light": false,
+    "600 Open Sans Light": false,
+    "400 Roboto": false,
+    "600 Roboto": false,
+    "400 Roboto Medium": false,
+    "600 Roboto Medium": false,
+    "400 Inter": false,
+    "600 Inter": false
+  },
+  "rows": [
+    {
+      "declared": "Open Sans",
+      "resolvedStack": "\"Open Sans\", \"Helvetica Neue\", Arial, sans-serif",
+      "weight": "400",
+      "count": 203
+    },
+    {
+      "declared": "Material Symbols Outlined Variable",
+      "resolvedStack": "\"Material Symbols Outlined Variable\"",
+      "weight": "400",
+      "count": 2
+    },
+    {
+      "declared": "Open Sans",
+      "resolvedStack": "\"Open Sans\", \"Helvetica Neue\", Arial, sans-serif",
+      "weight": "600",
+      "count": 2
+    },
+    {
+      "declared": "Open Sans",
+      "resolvedStack": "\"Open Sans\", \"Helvetica Neue\", Arial, sans-serif",
+      "weight": "700",
+      "count": 2
+    }
+  ],
+  "unavailable": [
+    {
+      "declared": "Material Symbols Outlined Variable",
+      "resolvedStack": "\"Material Symbols Outlined Variable\"",
+      "weight": "400",
+      "count": 2
+    }
+  ]
+}

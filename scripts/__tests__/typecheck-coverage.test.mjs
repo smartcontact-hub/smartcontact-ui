@@ -126,7 +126,16 @@ test('`eslint.config.js` entra: su `// @ts-check` solo vale dentro de un program
 });
 
 test('DRIFT: un directorio NUEVO de primer nivel con TypeScript → lo caza', () => {
-  assert.deepEqual(noCubiertos(['tools/build-algo.ts'], harness.include), ['tools/build-algo.ts']);
+  /* La ruta es FICTICIA a propósito: este test comprueba el matcher, no el disco (de eso
+   * se encarga el test de arriba, que sí barre el repo). El centinela era
+   * `tools/build-algo.ts` hasta que `tools/` pasó a existir de verdad —el arnés de
+   * paridad medida— y entró en el `include`; entonces dejó de ser un ejemplo de ruta NO
+   * cubierta y el auto-test se volvía verde por el motivo equivocado. Si algún día
+   * `arnes-nuevo/` también existe, muévelo otra vez: lo que se prueba es que un
+   * directorio de primer nivel FUERA del `include` se caza, no este nombre. */
+  assert.deepEqual(noCubiertos(['arnes-nuevo/build.ts'], harness.include), [
+    'arnes-nuevo/build.ts',
+  ]);
 });
 
 test('DRIFT: sacar el arnés del script `typecheck` → lo caza', () => {
