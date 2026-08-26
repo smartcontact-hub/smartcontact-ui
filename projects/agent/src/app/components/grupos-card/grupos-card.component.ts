@@ -1,4 +1,5 @@
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, inject } from '@angular/core';
+import { AgentStateService } from '../../agent-state.service';
 import { AgIconComponent } from '../ui/app-icon.component';
 
 import { GRUPOS, type Grupo } from '../../data/seed';
@@ -174,24 +175,15 @@ import { GRUPOS, type Grupo } from '../../data/seed';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class GruposCardComponent {
+  private readonly state = inject(AgentStateService);
   protected readonly grupos = GRUPOS;
 
-  /** Grupos apagados a mano en esta sesión. */
-  private readonly off = signal<ReadonlySet<string>>(new Set());
-
+  /* Delegado al servicio: el mismo interruptor sale aquí y en el otro sitio. */
   protected isOn(g: Grupo): boolean {
-    return g.on && !this.off().has(g.name);
+    return this.state.grupoActivo(g);
   }
 
   protected toggle(g: Grupo): void {
-    this.off.update((s) => {
-      const next = new Set(s);
-      if (next.has(g.name)) {
-        next.delete(g.name);
-      } else {
-        next.add(g.name);
-      }
-      return next;
-    });
+    this.state.toggleGrupo(g);
   }
 }
