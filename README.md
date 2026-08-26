@@ -1,4 +1,4 @@
-# Smart Contact UI — Design System
+# Smart Contact Design System
 
 ![Angular](https://img.shields.io/badge/Angular-22-DD0031?logo=angular&logoColor=white)
 ![PrimeNG](https://img.shields.io/badge/PrimeNG-22-10B981)
@@ -6,118 +6,136 @@
 ![Packages](https://img.shields.io/badge/packages-3-blue)
 ![License](https://img.shields.io/badge/license-Proprietary-lightgrey)
 
-Design System de Smart Contact, consolidado en el monorepo (consumo LOCAL; publicación a GitHub Packages **aparcada** — ver AGENTS.md / DD-17). Lo que se diseña en
-Figma (Smart Contact Prime UI Kit) se refleja directamente en el código y
-**cada valor es trazable al export del Kit y verificable por máquina**.
+Lo que se diseña en Figma (el archivo **Smart Contact Design System**) se refleja en el
+código, y **cada valor es trazable al export del Kit y verificable por máquina**.
+
+### Cómo se consume el DS hoy
+
+Las apps de este repo **importan el DS directamente desde `dist/`**, por rutas de
+`tsconfig`. No se instala como paquete de npm: no hay `npm install @smartcontact-hub/...`
+en ningún sitio.
+
+En la práctica eso significa que **editas un token y lo ves al instante** en las cuatro
+apps, sin publicar nada ni subir una versión.
+
+Los tres paquetes se pueden empaquetar (`npm run export:all` deja los tarballs en
+`dist/archives/`), pero **publicarlos en GitHub Packages está aparcado a propósito**: con
+un solo repo y un consumidor, el ciclo publicar-versionar-instalar cuesta más de lo que
+aporta. La decisión y su porqué están en [DD-17](docs/DECISIONS.md).
 
 ## Paquetes
 
 | Paquete | Proyecto | Contenido |
 |---|---|---|
-| `@smartcontact-hub/styles` | [`projects/design-tokens`](projects/design-tokens/README.md) | Tokens `--sc-*` (7 capas, escala 14-base en rem) + reset/globals |
-| `@smartcontact-hub/icons` | [`projects/ui-smartcontact-icons`](projects/ui-smartcontact-icons/README.md) | `<sc-icon>` + Material Symbols generados |
-| `@smartcontact-hub/components` | [`projects/ui-smartcontact`](projects/ui-smartcontact/README.md) | `provideSmartContactUi()` + preset modular (`theme/sc-preset`, cada slot → `var(--sc-*)`) + 50 wrappers/customs `sc-*` ([inventario](docs/inventory.md)) |
+| `@smartcontact-hub/styles` | [`projects/design-tokens`](projects/design-tokens/README.md) | Tokens `--sc-*` (7 capas, escala 14-base en rem) más reset y globals |
+| `@smartcontact-hub/icons` | [`projects/ui-smartcontact-icons`](projects/ui-smartcontact-icons/README.md) | `<sc-icon>` y los Material Symbols generados |
+| `@smartcontact-hub/components` | [`projects/ui-smartcontact`](projects/ui-smartcontact/README.md) | `provideSmartContactUi()`, el preset modular (`theme/sc-preset`, cada slot a `var(--sc-*)`) y 50 componentes `sc-*` ([inventario](docs/inventory.md)) |
 
-Y **cuatro apps** que consumen el DS en local (por tsconfig paths → `dist/`, así que un cambio de
-token se ve al instante). Las cuatro están en producción en Cloudflare Pages:
+Y **cuatro apps** que lo consumen, las cuatro en producción en Cloudflare Pages:
 
 | App | Proyecto | Qué es | En producción |
 |---|---|---|---|
-| `sc-docs` | [`projects/sc-docs`](projects/sc-docs/README.md) | Showcase: fundaciones + catálogo + uso real + Lab | [sc-doc.pages.dev](https://sc-doc.pages.dev) |
-| `supervisor` | [`projects/supervisor`](projects/supervisor/README.md) | **La app real**: consumo canónico (solo `sc-*` + tokens) | [sc-supervisor.pages.dev](https://sc-supervisor.pages.dev) |
+| `sc-docs` | [`projects/sc-docs`](projects/sc-docs/README.md) | Showcase: fundaciones, catálogo, uso real y Lab | [sc-doc.pages.dev](https://sc-doc.pages.dev) |
+| `supervisor` | [`projects/supervisor`](projects/supervisor/README.md) | **La app real**. Consumo canónico: solo `sc-*` y tokens | [sc-supervisor.pages.dev](https://sc-supervisor.pages.dev) |
 | `agent` | [`projects/agent`](projects/agent/README.md) | **Réplica** del dashboard del agente | [sc-agent.pages.dev](https://sc-agent.pages.dev) |
 | `cuscare` | [`projects/cuscare`](projects/cuscare/README.md) | **Réplica** de la herramienta de tickets | [sc-cuscare.pages.dev](https://sc-cuscare.pages.dev) |
 
-> ⚠️ Las dos **réplicas** (`agent`, `cuscare`) **NO se tokenizan a propósito** — DD-35 y DD-37.
-> Una réplica debe parecerse al ORIGINAL, no a nuestro DS: sus valores se extraen del sitio real
-> y `token-guard` las exime de las reglas de tipografía. Su gate no es la paridad de tokens, es
-> la fidelidad medida contra el sitio original. `cuscare` tiene suite propia
-> (`npm run e2e:cuscare`, con clics reales, en CI); `agent` aún no.
-> No las "arregles" para que usen `--sc-*`.
+> ⚠️ **Las dos réplicas (`agent`, `cuscare`) no se tokenizan, y es a propósito** (DD-35 y
+> DD-37). Una réplica tiene que parecerse al ORIGINAL, no a nuestro DS: sus valores se
+> extraen del sitio real y `token-guard` las exime de las reglas de tipografía. Su gate no
+> es la paridad de tokens, es la fidelidad medida contra el sitio original. **No las
+> "arregles" para que usen `--sc-*`.**
+>
+> `cuscare` tiene suite propia en CI (`npm run e2e:cuscare`, con clics reales). `agent`
+> tiene su propio arnés de medición en [`tools/`](tools/README.md).
 
 ## Construir
 
 ```bash
 npm ci
-npm run build          # design-tokens + icons + components → dist/
-npm run build:docs     # docs producción
+npm run build          # design-tokens + icons + components a dist/
+npm run build:docs     # docs de producción
 npm start              # docs en local (ng serve)
 npm run export:all     # tarballs npm en dist/archives/
 ```
 
-## Verificar (guardarraíles)
+## Verificar
 
 ```bash
 npm run verify         # todos los checks estáticos (~40s)
 npm run e2e            # smoke en navegador (Playwright)
 npm run e2e:contrast   # carril rápido para cambios de COLOR (~80s)
-npm run preflight      # TODO lo que corre el CI (los 8 pasos), antes de pushear
+npm run preflight      # los 8 pasos del CI, antes de pushear
 ```
 
-> **Regla de la casa**: una comprobación que no está en una cadena automática no
-> es una comprobación, es documentación — y la documentación que hay que
-> recordar se pierde. Todo check nuevo entra en `verify` (o en un `e2e:*`), no
-> como comando suelto. `e2e:contrast` es la excepción legítima: no añade
-> comprobaciones, es un ATAJO a un subconjunto de las que ya corren en CI.
+**Regla de la casa**: una comprobación que no está en una cadena automática no es una
+comprobación, es documentación, y la documentación que hay que recordar se pierde. Todo
+check nuevo entra en `verify` o en un `e2e:*`, nunca como comando suelto.
 
-> **Antes de pushear, `npm run preflight`**: encadena los OCHO pasos de `ci.yml`
-> (verify + build de docs + AOT de supervisor/agent/cuscare + los e2e) en un solo
-> comando, para que "verde en local" signifique "verde en CI". Nace de que `verify`
-> por sí solo NO corre el `e2e`: en s29 un cambio de `line-height` pasó los 26 gates y
-> aun así tumbó el CI (movió un baseline de `component-structure`). Un test
-> (`scripts/ci-preflight-parity.mjs`, dentro de `test:unit`) se pone rojo si `preflight`
-> y `ci.yml` se desincronizan, así que no se pudre cuando alguien añade un paso al CI.
-> El smoke completo se corre ENTERO, solo que como `CI=1 npm run e2e`: esa variable —la
-> que el runner ya tiene puesta— hace no-op los `screenshotBaseline()`, que son los que
-> fallan siempre en macOS. Antes se sustituía por `e2e:structure`, o sea UN test en vez
-> de 68, y eso dejaba fuera del pre-push los 56 de `components.spec.ts`.
+`e2e:contrast` es la excepción legítima: no añade comprobaciones, es un atajo a un
+subconjunto de las que ya corren en CI.
 
-> **Si tocas un token de color, `e2e:contrast` es el bucle corto**: reconstruye
-> tokens y corre solo contraste (los dos temas) + anillo de foco, sin la suite
-> entera. Lleva dentro un **guardián de build rancio**: si el dev server está
-> sirviendo un bundle anterior a tu edición —pasa tras un `verify`, que
-> reescribe `dist/` por debajo del `ng serve`— la prueba lo dice en vez de
-> devolverte números viejos. Ver `asegurarBuildFresco` en `e2e/supervisor/helpers.ts`.
+### Antes de pushear, `preflight`
 
-| Guardarraíl | Comando | Qué garantiza | Estado |
-|---|---|---|---|
-| Generadores | `npm run tokens:gen` · `tokens:gen-component` · `tokens:gen-color` · `tokens:gen-cmp-color` · `tokens:gen-effects` | Los bloques `@sc-gen` (primitivos v/14 en rem, sizing, color semántico, **color de componente** y **sombras** `aura/effects`) reproducen el export del Kit | ✅ |
-| Paridad | `npm run tokens:parity` | Escala/radios completos + 53 valores de sizing del preset + colores de marca 1:1 con el export + **completitud** (§8: cada hoja de `semantic/common`·`app`·`effects` clasificada en `coverage-map.mjs` + rampa `primary`=`blue` 1:1; una hoja nueva del Kit sin clasificar → rojo) — divergencias conscientes listadas | ✅ |
-| Guard | `npm run tokens:guard` | `--p-*` solo en el preset · componentes con alias `--sc-spacing-*` · sin escala 8-point · campos PrimeNG solo vía wrapper · font-size solo por token | ✅ |
-| Export limpio | `npm run tokens:export-clean` | En LOCAL, `kit-export-dtcg.json` coincide con HEAD (caza el export sucio que deja un `preview:live` zombie; se salta en CI, donde el sync lo aplica sobre main a propósito) | ✅ |
-| Repunte de color | `npm run tokens:cmp-rewire` | Cada `colorScheme` repuntado a `var(--sc-cmp-*)` es value-equal vs HEAD (no-op demostrable) y no deja hex hardcodeado para un slot que sí generamos | ✅ |
-| Repunte de sombras | `npm run tokens:effects-rewire` | Ningún preset deja un `shadow:` con hex hardcodeado para un slot que generamos (`@sc-gen:effects`) → la sombra se lee de `var(--sc-cmp-*-shadow)` y fluye del Kit | ✅ |
-| Tipografía | `npm run tokens:type-parity` | **Paridad** de tipografía: cada `font-size` Y `line-height` del Kit tiene su `--sc-font-size-*`/`--sc-line-height-*` 1:1 por valor (un cambio de tipografía de Figma no se escapa). El `font-size` literal lo bloquea `tokens:guard` | ✅ |
-| Escala del preset | `npm run audit:theme-scale` | Cero `px` en el preset · sin `css:` por-componente · sin hack de `html{font-size}` | ✅ |
-| Bordes vs lienzo | `npm run audit:border-surfaces` | Ningún `--sc-border-*` resuelve, **en su tema**, a menos de 1.02:1 de `--sc-bg-surface` o `--sc-bg-default`. Nace de `--sc-border-subtle`, que valía `slate-900` en oscuro (= la superficie que bordeaba, 1.00:1) y dejó 56 filos sin pintar durante meses sin que nada lo cazara: `theme-contrast` mide texto sobre fondo, no bordes contra su lienzo. Las exenciones son **condicionales** — valen solo mientras el token no lo lea nadie, y el guardián comprueba esa condición (`scripts/check-border-surfaces.mjs`) | ✅ |
-| Audit de componentes | `npm run audit:components` | La pokédex (`docs/inventory.md` + `_component-status.json`) está al día con el código: provenance/PrimeNG-base/API/anidados/demo/uso-en-Supervisor derivados; falla si la tabla se desfasa (cobertura demo se informa) | ✅ |
-| Era de la API | `npm run audit:api-era` | La era objetivo es **señales** (DD-38): nada nuevo puede estrenar `@Input()/@Output()`. Trinquete de 16 componentes de la librería que aún los usan (`LEGACY_PENDIENTES`, `scripts/audit-api-era.mjs`): la lista solo mengua, así que también se pone rojo si dejas dentro uno ya migrado, o si un fichero mezcla las dos eras | ✅ |
-| i18n | `npm run i18n:check` | Paridad de **claves** entre los locales del Supervisor (`es` canónico ↔ `en`/`fr`/`pt`): ni claves sin traducir ni huérfanas, para que la UI no muestre la clave cruda. No juzga la calidad de la traducción (`scripts/i18n-check.mjs`) | ✅ |
-| Tests unitarios | `npm run test:unit` | Suites de los generadores/scripts (`scripts/__tests__/*.test.mjs`) | ✅ |
-| Docs | `npm run docs:guard` · `docs:coherence` | Todo `.md` mapeado en `DOCS-INDEX` + links resuelven · la doc cuadra con el repo (comandos/scripts existen, cadena `verify` documentada, sin tokens muertos) | ✅ |
-| Tests unitarios del DS | `npm run test:components` | `TestBed` sobre vitest (Angular 22). Cubre los CASOS LÍMITE que la e2e no alcanza sin montar una página entera: `field` inexistente en `[visibleColumns]`, array vacío, `colspan` con columnas ocultas | ✅ |
-| Acoplamiento a PrimeNG | `npm run audit:primeng-coupling` | Las clases `.p-*` que nuestro SCSS usa **no son API pública**: una subida de versión puede renombrarlas y las pantallas revierten sin que falle ningún test de comportamiento. Comprueba que las 36 siguen existiendo en `node_modules/primeng` y que el número no crece (trinquete, no meta: el objetivo es BAJARLO) | ✅ |
-| Tablas del DS | `npm run audit:datatables` | Invariantes de toda página con `<sc-datatable>`: la piel `list-table`, columnas en `computed` (en un campo los `cellTemplate` se quedan en `undefined`), plantillas fuera del componente, `<th scope="row">` que el DS no sabe emitir, columna de acciones con nombre accesible, cabeceras que reaccionan al cambio de idioma, y que su ruta esté en el guardián de la gramática | ✅ |
-| Tipos + lint | `npm run typecheck` · `npm run lint` | `tsc` sobre las 2 libs, las 4 apps **y el arnés de la raíz** (`tsconfig.harness.json`: 33 ficheros que hasta s32 no miraba NADIE — los 4 `playwright*.config.ts`, `eslint.config.js` y los 28 de `e2e/`; los `tsconfig` de apps y libs arrancan todos en `src/`). Por ese hueco pasó un `reducedMotion` suelto en `use` en vez de dentro de `contextOptions`: error de tipo real, `verify` entero en verde y la suite de CusCare inestable bajo carga. `code-connect/` queda fuera a propósito (son plantillas del CLI de Code Connect, no código; su gate es `figma:connect:parse`) | ✅ |
-| e2e smoke | `npm run e2e` | La demo levanta y el botón/form field renderizan la métrica del Kit medida en navegador (10.5/7, radio 6, font 14) | ✅ |
+Encadena los ocho pasos de `ci.yml` en un solo comando, para que "verde en local" signifique
+"verde en CI". Existe porque `verify` por sí solo **no corre el `e2e`**: un cambio de
+`line-height` pasó los gates estáticos y aun así tumbó el CI al mover un baseline de
+`component-structure`.
+
+Que no se pudra cuando alguien añada un paso al CI lo garantiza un test
+(`scripts/ci-preflight-parity.mjs`, dentro de `test:unit`): se pone rojo si `preflight` y
+`ci.yml` se desincronizan.
+
+> **Y después de pushear, lee el CI.** `gh run list --branch main --workflow ci --limit 1`.
+> Un preflight verde no es un CI verde: el paso `npm ci` resuelve dependencias contra el
+> registro y en la plataforma del runner, así que puede caerse con tu árbol local intacto.
+> `npm run guard:lockfile` cubre la parte comprobable; el resto solo lo sabe el CI.
+
+### Los guardarraíles
+
+El detalle de por qué existe cada uno vive en la cabecera de su propio script. Aquí solo
+qué garantiza.
+
+| Guardarraíl | Comando | Qué garantiza |
+|---|---|---|
+| Generadores | `tokens:gen` · `tokens:gen-component` · `tokens:gen-color` · `tokens:gen-cmp-color` · `tokens:gen-effects` | Los bloques `@sc-gen` reproducen el export del Kit |
+| Paridad | `tokens:parity` | Escala, radios, sizing y colores de marca 1:1 con el export, y completitud: una hoja nueva del Kit sin clasificar pone rojo |
+| Guard | `tokens:guard` | `--p-*` solo en el preset · componentes con alias `--sc-spacing-*` · sin escala 8-point · campos PrimeNG solo vía wrapper · font-size solo por token |
+| Export limpio | `tokens:export-clean` | En local, `kit-export-dtcg.json` coincide con HEAD (caza el export sucio que deja un `preview:live` zombie) |
+| Repunte de color | `tokens:cmp-rewire` | Cada `colorScheme` repuntado a `var(--sc-cmp-*)` es un no-op demostrable, sin hex sueltos |
+| Repunte de sombras | `tokens:effects-rewire` | Ningún preset deja un `shadow:` con hex para un slot que generamos |
+| Tipografía | `tokens:type-parity` | Cada `font-size` y `line-height` del Kit tiene su token 1:1 por valor |
+| Escala del preset | `audit:theme-scale` | Cero `px` en el preset, sin `css:` por componente, sin hack de `html{font-size}` |
+| Bordes vs lienzo | `audit:border-surfaces` | Ningún `--sc-border-*` queda a menos de 1.02:1 de su superficie **en su tema** |
+| Audit de componentes | `audit:components` | La pokédex (`docs/inventory.md`) está al día con el código |
+| Era de la API | `audit:api-era` | Nada nuevo estrena `@Input()/@Output()` (DD-38). Trinquete de 16 componentes que solo puede menguar |
+| i18n | `i18n:check` | Paridad de claves entre los locales del Supervisor (`es` canónico contra `en`/`fr`/`pt`) |
+| Tests unitarios | `test:unit` | Suites de los generadores y scripts |
+| Docs | `docs:guard` · `docs:coherence` | Todo `.md` mapeado en `DOCS-INDEX` y sus links resuelven; la doc cuadra con el repo |
+| Tests del DS | `test:components` | `TestBed` sobre vitest, para los casos límite que la e2e no alcanza |
+| Acoplamiento a PrimeNG | `audit:primeng-coupling` | Las 36 clases `.p-*` que usamos siguen existiendo, y el número no crece |
+| Tablas del DS | `audit:datatables` | Invariantes de toda página con `<sc-datatable>` |
+| Backticks | `guard:backticks` | Ningún backtick suelto dentro de un `template:` o `styles:`, que rompe el build con un error que no los menciona |
+| Lockfile | `guard:lockfile` | El lock cuadra con `package.json` **en la plataforma del runner**, no solo en la tuya |
+| Tipos y lint | `typecheck` · `lint` | `tsc` sobre las 2 libs, las 4 apps y el arnés de la raíz |
+| e2e smoke | `e2e` | La demo levanta y el botón y el form field renderizan la métrica del Kit medida en navegador |
 
 El mismo gate corre en CI ([.github/workflows/ci.yml](.github/workflows/ci.yml)).
 
-## Flujo Figma → código
+## Flujo Figma a código
 
-1. El Kit se re-exporta (DTCG) → se versiona en
+1. El Kit se re-exporta en DTCG y se versiona en
    `projects/design-tokens/scripts/kit-export-dtcg.json`.
-2. `npm run tokens:import` regenera las zonas `@sc-gen:*` de
-   `01-primitive.css` (escala/radios/paleta complementaria). La cascada
-   (aliases → semántica → preset) propaga sola.
-3. `npm run verify` confirma paridad. Si algo diverge, o se corrige o se
-   documenta como divergencia consciente — nunca se deja en silencio.
+2. `npm run tokens:import` regenera las zonas `@sc-gen:*`. La cascada (aliases, semántica,
+   preset) propaga sola.
+3. `npm run verify` confirma la paridad. Si algo diverge, o se corrige o se documenta como
+   divergencia consciente. Nunca se deja en silencio.
 
 ## Documentación
 
-- [docs/DECISIONS.md](docs/DECISIONS.md) — decisiones de arquitectura (DD-*)
-- [docs/guia-tokens.md](docs/guia-tokens.md) — guía del sistema de tokens (diseño)
-- [projects/design-tokens/README.md](projects/design-tokens/README.md) — referencia técnica de tokens
-- [docs/customs-catalog.md](docs/customs-catalog.md) — divergencias conscientes vs Figma
-- [docs/migration-safety.md](docs/migration-safety.md) — patrones de cambio seguro
-- [AGENTS.md](AGENTS.md) — convenciones para el pipeline de agente
+- [docs/DECISIONS.md](docs/DECISIONS.md), decisiones de arquitectura (DD-*)
+- [docs/guia-tokens.md](docs/guia-tokens.md), guía del sistema de tokens
+- [projects/design-tokens/README.md](projects/design-tokens/README.md), referencia técnica de tokens
+- [docs/customs-catalog.md](docs/customs-catalog.md), divergencias conscientes con Figma
+- [docs/migration-safety.md](docs/migration-safety.md), patrones de cambio seguro
+- [AGENTS.md](AGENTS.md), convenciones para el pipeline de agente

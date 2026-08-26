@@ -349,6 +349,21 @@ lo que hace que te la creas cuando te toca. Lee el índice siempre; el cuerpo, c
    `package.json` o `package-lock.json`, `npm ci --dry-run` (exit 0 = en sync) antes de pushear —
    cuesta segundos y es el único proxy fiel de ese paso. Y la lección general por encima del caso:
    **"corrí el gate agregado" no es "corrí lo que corre el CI"; abre su definición y compara.**
+
+   *Actualización (s35) — **hice EXACTAMENTE lo que este párrafo manda y aun así pusheé rojo SEIS
+   veces seguidas**.* `npm ci --dry-run` decía «up to date» en macOS mientras el runner de Linux
+   moría en su primera línea con `Missing: @emnapi/runtime`. Dos motivos, y los dos hay que saberlos:
+   **(a) el dry-run es CIEGO A LA PLATAFORMA** — npm resuelve las dependencias opcionales según
+   dónde estés, así que hay que pasarle `--os=linux --cpu=x64`; **(b) las `peerDependencies` con
+   rango flotante se resuelven contra el REGISTRO**, o sea que un lock válido hoy caduca en cuanto
+   se publica un parche, sin que nada local cambie. Para (b) **no hay proxy: el oráculo es el CI**.
+   ⚙️ (a) ya lo vigila `scripts/lockfile-guard.mjs`, y `npm ci` dejó de estar en `INFRA` para
+   entrar en `LOCAL_SUBSTITUTIONS`, así que el gate de paridad vuelve a cubrir el primer paso.
+   **Pero lo peor no fue el lock: fue que en seis pushes no abrí el CI ni una vez** y escribí
+   «preflight verde» en cada mensaje. Esta regla dice «confirma el verde LEYENDO el log» y yo leía
+   **mi** log. Concreción que faltaba: **el log que cuenta es el del CI** —
+   `gh run list --branch main --workflow ci --limit 1` y, si está rojo, `gh run view --log-failed`.
+   Un push sin esa lectura no está terminado.
    *Y en la misma sesión rompí la otra mitad de esta regla, la de siempre*: corrí
    `docs:coherence`, **imprimí su exit 1**, y commiteé igual. No es que no lo corriera: es que
    miré el número sin leerlo. Un gate que ejecutas y no lees es un gate que no has ejecutado.

@@ -277,7 +277,12 @@ const KEYS = [
       gap: 0.068682vw;
       width: 100%;
       height: 3.021979vw;
-      padding: 0.583792vw 1.744506vw 0.583792vw 0.755495vw;
+      /*
+       * Padding del original (0.521 / 1.563 / 0.677vw). El que había era mayor y, con el
+       * line-height 1.3 que hereda del shell, las DOS líneas —nombre y número— sumaban
+       * 27.6 en una caja de 26.5: se recortaban y se leían encima la una de la otra.
+       */
+      padding: 0.521978vw 1.563187vw 0.521978vw 0.677198vw;
       border: 0;
       border-bottom: 0.038462vw solid #000;
       background: transparent;
@@ -289,6 +294,7 @@ const KEYS = [
        * se replica la primera — la que cuadra con la caja.
        */
       font-size: 0.728022vw;
+      line-height: 1.2;
       opacity: 0.75;
       text-align: left;
       cursor: pointer;
