@@ -136,7 +136,30 @@ function processCwd(pid) {
 function otraCadenaViva(port) {
   if (process.env['SC_ALLOW_PARALLEL_SUITES'] === '1') return;
 
-  const ajenos = pidsDePlaywright().filter((pid) => !nuestros().has(pid));
+  /*
+   * Playwright evalúa el config UNA VEZ POR WORKER, y en los primeros segundos varios
+   * arrancan a la vez: cada uno ve a sus hermanos por `pgrep` y los denuncia como "otra
+   * ejecución". Medido el 2026-08-26: con `--workers=4` morían 8 de 13 tests por esto, y
+   * el mensaje culpaba a una concurrencia que no existía.
+   *
+   * La pregunta que este guardián responde —¿hay OTRA cadena viva?— se contesta una sola
+   * vez, al arrancar la ejecución. En los workers, Playwright define `TEST_WORKER_INDEX`;
+   * ahí ya está contestada.
+   */
+  if (process.env['TEST_WORKER_INDEX'] !== undefined) return;
+
+  /*
+   * Los workers de UNA misma ejecución son HERMANOS, no antepasados, así que
+   * `nuestros()` —que sube por los padres— no los reconoce y cada worker denuncia a los
+   * demás. Medido el 2026-08-26: con `--workers=4`, 7 de 23 tests morían aquí, y el
+   * mensaje decía "otra ejecución" cuando era la misma. Por eso además del linaje se
+   * mira el GRUPO DE PROCESO: los hermanos lo comparten, otra cadena no.
+   */
+  const propios = nuestros();
+  const miGrupo = grupoDe(process.pid);
+  const ajenos = pidsDePlaywright().filter(
+    (pid) => !propios.has(pid) && !(miGrupo !== undefined && grupoDe(pid) === miGrupo),
+  );
   if (ajenos.length === 0) return;
 
   throw new Error(
@@ -153,6 +176,26 @@ function otraCadenaViva(port) {
       '    · Si de verdad quieres dos suites distintas a la vez: SC_ALLOW_PARALLEL_SUITES=1',
     ].join('\n'),
   );
+}
+
+/**
+ * Grupo de proceso de un PID, o `undefined` si no se puede leer. Los workers de una misma
+ * ejecución de Playwright lo comparten; una cadena distinta, no.
+ *
+ * @param {number} pid
+ * @returns {number | undefined}
+ */
+function grupoDe(pid) {
+  try {
+    const out = execFileSync('ps', ['-o', 'pgid=', '-p', String(pid)], {
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'ignore'],
+    }).trim();
+    const pgid = Number(out);
+    return Number.isInteger(pgid) ? pgid : undefined;
+  } catch {
+    return undefined;
+  }
 }
 
 /**

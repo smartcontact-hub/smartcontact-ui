@@ -24,7 +24,12 @@ export default defineConfig({
   testDir: 'e2e/supervisor',
   timeout: 90_000,
   expect: { timeout: 10_000 },
-  // Serial: los journeys comparten el mismo dev server y algunos siembran datos.
+  /*
+   * Serial, y ahora con número detrás: los journeys comparten dev server y algunos
+   * siembran datos, pero además el paralelismo aquí sale PEOR. Medido el 2026-08-26 con
+   * el guardián ya arreglado: 127/127 en 226s con 4 workers contra ~190s en serie. La app
+   * es pesada y cuatro navegadores ahogan al `ng serve`. En `cuscare` sí compensa.
+   */
   workers: 1,
   reporter: process.env['CI'] ? 'list' : 'line',
   use: {
