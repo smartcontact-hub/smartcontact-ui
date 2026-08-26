@@ -869,7 +869,9 @@ export const KPIS = {
   connectedAt: '9:45 am',
   disconnectedAt: '10:36 am',
   statusTime: '00:04:18',
+  /* El total sale de CALLS; se deja aquí por compatibilidad con quien lea KPIS. */
   total: 0,
-  art: '-',
-  act: '-',
+  /* Medidos en el original: sus TMR y TMC. */
+  art: '00:11',
+  act: '02:08',
 } as const;

@@ -69,6 +69,7 @@
   --ag-radius: 0.626717vw;
   --ag-shadow: -0.416896vw 0.522665vw 1.826923vw 0 #24292f;
   --ag-conn-shadow: #2a2f34; /* --modeWidgetsConnectionShadow */
+  --ag-search-bg: #000000; /* el buscador de Grupos asignados va sobre NEGRO */
   --ag-card-border: transparent; /* --modeWidgetsBorder: en oscuro no hay */
   --ag-logo-filter: none;
 }
@@ -109,7 +110,10 @@
   --ag-status-text: #ffffff; /* --modeTableBodyWaitingOverText */
   --ag-shadow: -0.274725vw 0.549451vw 1.785714vw #f2f3fa; /* --modeShadow */
   --ag-conn-shadow: transparent; /* --modeWidgetsConnectionShadow: transparent */
-  --ag-card-border: #cfd3de; /* --modeWidgetsBorder */
+  --ag-search-bg: #eeeeee; /* --modeWidgetsNodeSearch */
+  /* Su --modeWidgetsBorder existe pero NO se ve en la tarjeta: el contraste lo da
+   * el blanco sobre #f4f6fc, no un trazo. */
+  --ag-card-border: transparent;
   /*
    * El logo es blanco: sobre fondo claro desaparece. El original sirve dos ficheros; aquí
    * se invierte el que hay, que da el mismo azul oscuro de la marca sin añadir un asset.
