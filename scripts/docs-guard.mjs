@@ -37,6 +37,9 @@ const all = [
   ...mdBasenames(resolve(root, 'docs')), // incluye docs/history/
   ...readdirSync(root).filter((f) => f.endsWith('.md')),
 ];
+// `projects/<app>/docs/` NO entra aquí: son cuadernos de una app concreta, no docs de
+// tema del repo, y exigir una fila por fichero convertiría el índice en un changelog.
+// El DOCS-INDEX mapea la CARPETA; los links de dentro sí se comprueban abajo (3).
 // Match con FRONTERA (no substring): 'INDEX.md' NO debe colar por estar dentro de 'DOCS-INDEX.md'.
 const esc = (s) => s.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 for (const base of new Set(all)) {
@@ -63,8 +66,17 @@ function mdPaths(dir, out = []) {
   }
   return out;
 }
+// Cuadernos por app: `projects/<app>/docs/`. Se les aplica (3) —links— pero no (1).
+function appDocDirs() {
+  const base = resolve(root, 'projects');
+  if (!existsSync(base)) return [];
+  return readdirSync(base, { withFileTypes: true })
+    .filter((e) => e.isDirectory() && existsSync(resolve(base, e.name, 'docs')))
+    .map((e) => resolve(base, e.name, 'docs'));
+}
 const todos = [
   ...mdPaths(resolve(root, 'docs')),
+  ...appDocDirs().flatMap((d) => mdPaths(d)),
   ...readdirSync(root)
     .filter((f) => f.endsWith('.md'))
     .map((f) => resolve(root, f)),

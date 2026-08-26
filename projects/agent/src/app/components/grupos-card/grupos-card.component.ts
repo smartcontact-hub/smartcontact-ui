@@ -14,19 +14,23 @@ import { GRUPOS } from '../../data/seed';
         <span class="grupos__title">Assigned groups</span>
         <label class="grupos__search">
           <app-icon name="search" [size]="12" />
-          <input type="text" placeholder="Search..." aria-label="Search groups" />
+          <input
+            type="text"
+            placeholder="Search..."
+            aria-label="Search groups"
+          />
         </label>
       </div>
       <ul class="grupos__list" role="list">
         @for (g of grupos; track $index) {
-          <li class="grupos__row">
-            <span class="grupos__name">{{ g.name }}</span>
-            <span class="grupos__ch" aria-hidden="true">
-              <app-icon name="phone" [size]="12" />
-              <app-icon name="chat" [size]="13" />
-              <app-icon name="mail" [size]="12" />
-            </span>
-          </li>
+        <li class="grupos__row">
+          <span class="grupos__name">{{ g.name }}</span>
+          <span class="grupos__ch" aria-hidden="true">
+            <app-icon name="phone" [size]="12" />
+            <app-icon name="chat" [size]="13" />
+            <app-icon name="mail" [size]="12" />
+          </span>
+        </li>
         }
       </ul>
     </div>

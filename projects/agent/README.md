@@ -1,9 +1,12 @@
 # Agent (contact center)
 
-App nueva del producto **Agent** — dashboard del agente de contact center. Esqueleto
-ESTRUCTURAL montado reusando el Design System (Fase 3): tiles KPI, `sc-gauge`,
-`sc-datatable`, grupos con toggles, perfil y footer. Datos **seed** (sin backend),
-**oscuro por defecto** (toggle claro/oscuro en el header).
+App del producto **Agent** — réplica del dashboard del agente de contact center: tiles KPI,
+`sc-gauge`, tabla de Historial/Pendientes, grupos con toggles, perfil y footer. Datos
+**seed** (sin backend), **oscuro por defecto** (toggle claro/oscuro en el header).
+
+> 📓 **[`docs/`](./docs/README.md) — el cuaderno de la réplica.** Ábrelo ANTES de tocar
+> nada: la escala (`px = vw × 14.56`), qué codifica cada icono, los estados del Comunicador
+> y cómo volver a medir contra la app real. Está para que una sesión nueva no empiece de cero.
 
 ## Local
 - Preview con tokens en vivo: doble-click `preview/preview-agent.command` (o `npm run preview:live -- agent`).
@@ -20,5 +23,6 @@ Crear un proyecto Pages nuevo apuntando a este repo con:
 ## Estructura
 - `src/app/app.component.*` — shell (grid: header / KPIs / tabla / footer).
 - `src/app/components/*` — un componente por región del dashboard.
-- `src/app/data/seed.ts` — datos de ejemplo.
+- `src/app/data/seed.ts` — datos, extraídos del entorno de desarrollo real.
+- `public/icons/` — SVG originales de la app real (historial + comunicador).
 - `src/app/theme/theme.service.ts` — toggle de tema (default dark).
