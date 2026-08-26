@@ -1,7 +1,6 @@
 # Escala — `sc-agent` mide en `vw`, como la app real
 
-> **La regla, desde 2026-08-26**: la app real mide **todo** en `vw`, y `sc-agent`
-> **también**. Un valor del real se copia **tal cual**. No hay conversión.
+> **La regla, desde 2026-08-26**: la app real mide **todo** en `vw`, y `sc-agent` > **también**. Un valor del real se copia **tal cual**. No hay conversión.
 >
 > **Esto cambió.** Hasta esa fecha la réplica estaba congelada en px con referencia 1456
 > (`px = vw × 14.56`). Si lees un `px` en un componente de `sc-agent`, o es una de las 16
@@ -104,8 +103,31 @@ La altura de fila de la tabla **no es una función pura de vw**: medida a 1280 /
 `font-size` dan un vw constante), así que la altura la manda el contenido o el reparto
 vertical, no la declaración.
 
-No está aislado y **no se ha tocado a ciegas**. Candidatos: los atributos `width`/`height`
-del `<img>` del icono de dirección, que son atributos HTML y ningún codemod los alcanza, y
-los componentes del DS que miden en `rem` y no escalan aquí (el `rem` de esta réplica sí
-vale 16 px). Cerrarlo pide descubrimiento de breakpoints y reconstrucción de curvas contra
-el original, y eso está bloqueado por el login. Ver `findings/STATUS.md`.
+**Causa encontrada** leyendo su CSS: el original **no dimensiona esa tabla en `vw`, sino en
+`vh`**, y además escalona por anchura.
+
+```css
+.historic-container {
+  height: 64.034vh;
+} /* por defecto      */
+@media (max-width: 1680px) {
+  … {
+    height: 69.37vh;
+  }
+} /* sube             */
+@media (max-width: 1366px) {
+  … {
+    height: 58.825vh;
+  }
+} /* y luego baja     */
+```
+
+Ni siquiera es monótono. La réplica pone `height: 100%` y deja repartir al flex, así que al
+variar la anchura manteniendo el alto en 900 el ratio en vw se movía. Es un modelo vertical
+distinto, no un fallo de la conversión.
+
+Y no es un caso aislado: el original usa **`vh` en 320 sitios** (154 `height`, y hasta 15
+`font-size` y 9 `border-radius`) contra 2 en la réplica.
+
+**No se ha tocado**, porque comprobar que esos tres valores cuadran exige medir el original
+en vivo. Está descrito con su coste en `findings/phase-8-new-behaviours.md`; decide Rafa.

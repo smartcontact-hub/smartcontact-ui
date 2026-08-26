@@ -1,0 +1,295 @@
+{
+  "phase": "phase-1-breakpoints",
+  "method": "declarado (leido del CSS del bundle), no barrido",
+  "origin": "https://comunicatoraeddev.smart-contact.com/sismac/",
+  "caveat": "No cubre breakpoints aplicados desde JavaScript (matchMedia, ResizeObserver). Eso exige barrer la app en vivo, y esta tras el login.",
+  "original": {
+    "mediaQueries": 22,
+    "widthEdges": [
+      {
+        "raw": "575.98px",
+        "px": 575.98,
+        "feature": "max-width",
+        "count": 5
+      },
+      {
+        "raw": "576px",
+        "px": 576,
+        "feature": "min-width",
+        "count": 11
+      },
+      {
+        "raw": "767.98px",
+        "px": 767.98,
+        "feature": "max-width",
+        "count": 5
+      },
+      {
+        "raw": "768px",
+        "px": 768,
+        "feature": "min-width",
+        "count": 8
+      },
+      {
+        "raw": "991.98px",
+        "px": 991.98,
+        "feature": "max-width",
+        "count": 5
+      },
+      {
+        "raw": "992px",
+        "px": 992,
+        "feature": "min-width",
+        "count": 9
+      },
+      {
+        "raw": "1199.98px",
+        "px": 1199.98,
+        "feature": "max-width",
+        "count": 5
+      },
+      {
+        "raw": "1200px",
+        "px": 1200,
+        "feature": "min-width",
+        "count": 21
+      },
+      {
+        "raw": "1366px",
+        "px": 1366,
+        "feature": "max-width",
+        "count": 7
+      },
+      {
+        "raw": "1399.98px",
+        "px": 1399.98,
+        "feature": "max-width",
+        "count": 5
+      },
+      {
+        "raw": "1400px",
+        "px": 1400,
+        "feature": "min-width",
+        "count": 8
+      },
+      {
+        "raw": "1680px",
+        "px": 1680,
+        "feature": "max-width",
+        "count": 3
+      }
+    ],
+    "queries": [
+      {
+        "raw": "@media (prefers-reduced-motion:reduce)",
+        "sources": [
+          "styles-URLSNTJV.css"
+        ],
+        "count": 26
+      },
+      {
+        "raw": "@media (min-width:1200px)",
+        "sources": [
+          "styles-URLSNTJV.css"
+        ],
+        "count": 21
+      },
+      {
+        "raw": "@media (min-width:576px)",
+        "sources": [
+          "styles-URLSNTJV.css",
+          "chunk-FMULS6RI.js"
+        ],
+        "count": 11
+      },
+      {
+        "raw": "@media (min-width:992px)",
+        "sources": [
+          "styles-URLSNTJV.css"
+        ],
+        "count": 9
+      },
+      {
+        "raw": "@media (min-width:768px)",
+        "sources": [
+          "styles-URLSNTJV.css"
+        ],
+        "count": 8
+      },
+      {
+        "raw": "@media (min-width:1400px)",
+        "sources": [
+          "styles-URLSNTJV.css"
+        ],
+        "count": 8
+      },
+      {
+        "raw": "@media (max-width:1366px)",
+        "sources": [
+          "chunk-LDNW3333.js",
+          "chunk-RBZTQGX6.js"
+        ],
+        "count": 7
+      },
+      {
+        "raw": "@media (max-width:575.98px)",
+        "sources": [
+          "styles-URLSNTJV.css"
+        ],
+        "count": 4
+      },
+      {
+        "raw": "@media (max-width:767.98px)",
+        "sources": [
+          "styles-URLSNTJV.css"
+        ],
+        "count": 4
+      },
+      {
+        "raw": "@media (max-width:991.98px)",
+        "sources": [
+          "styles-URLSNTJV.css"
+        ],
+        "count": 4
+      },
+      {
+        "raw": "@media (max-width:1199.98px)",
+        "sources": [
+          "styles-URLSNTJV.css"
+        ],
+        "count": 4
+      },
+      {
+        "raw": "@media (max-width:1399.98px)",
+        "sources": [
+          "styles-URLSNTJV.css"
+        ],
+        "count": 4
+      },
+      {
+        "raw": "@media (max-width:1680px)",
+        "sources": [
+          "chunk-RBZTQGX6.js"
+        ],
+        "count": 3
+      },
+      {
+        "raw": "@media print",
+        "sources": [
+          "styles-URLSNTJV.css"
+        ],
+        "count": 2
+      },
+      {
+        "raw": "@media (prefers-reduced-motion:no-preference)",
+        "sources": [
+          "styles-URLSNTJV.css"
+        ],
+        "count": 1
+      },
+      {
+        "raw": "@media (max-width:575.98px) and (prefers-reduced-motion:reduce)",
+        "sources": [
+          "styles-URLSNTJV.css"
+        ],
+        "count": 1
+      },
+      {
+        "raw": "@media (max-width:767.98px) and (prefers-reduced-motion:reduce)",
+        "sources": [
+          "styles-URLSNTJV.css"
+        ],
+        "count": 1
+      },
+      {
+        "raw": "@media (max-width:991.98px) and (prefers-reduced-motion:reduce)",
+        "sources": [
+          "styles-URLSNTJV.css"
+        ],
+        "count": 1
+      },
+      {
+        "raw": "@media (max-width:1199.98px) and (prefers-reduced-motion:reduce)",
+        "sources": [
+          "styles-URLSNTJV.css"
+        ],
+        "count": 1
+      },
+      {
+        "raw": "@media (max-width:1399.98px) and (prefers-reduced-motion:reduce)",
+        "sources": [
+          "styles-URLSNTJV.css"
+        ],
+        "count": 1
+      },
+      {
+        "raw": "@media (min-height:176px) and (max-height:900px)",
+        "sources": [
+          "chunk-RBZTQGX6.js"
+        ],
+        "count": 1
+      },
+      {
+        "raw": "@media (min-height:176px) and (max-height:860px)",
+        "sources": [
+          "chunk-RBZTQGX6.js"
+        ],
+        "count": 1
+      }
+    ]
+  },
+  "replica": {
+    "mediaQueries": 2,
+    "widthEdges": [
+      {
+        "raw": "75rem",
+        "px": 1200,
+        "feature": "max-width",
+        "count": 1
+      }
+    ],
+    "queries": [
+      {
+        "raw": "@media (max-width:75rem)",
+        "sources": [
+          "projects/agent/src/app/app.component.scss"
+        ],
+        "count": 1
+      },
+      {
+        "raw": "@media (prefers-reduced-motion:reduce)",
+        "sources": [
+          "projects/agent/src/styles/_reset.scss"
+        ],
+        "count": 1
+      }
+    ]
+  },
+  "measurementWidths": [
+    320,
+    575,
+    576,
+    577,
+    767,
+    768,
+    769,
+    991,
+    992,
+    993,
+    1199,
+    1200,
+    1201,
+    1365,
+    1366,
+    1367,
+    1399,
+    1400,
+    1401,
+    1440,
+    1456,
+    1679,
+    1680,
+    1681,
+    1920
+  ]
+}
