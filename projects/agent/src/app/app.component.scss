@@ -21,8 +21,13 @@
 
 .kpis {
   display: grid;
-  grid-template-columns: 1.9fr 1.05fr 1.3fr 1.1fr 1.45fr;
-  gap: 1.923077vw;
+  /*
+   * Anchos MEDIDOS de las cinco tarjetas del original (a 1456): 367.83 · 166.85 · 254.07 ·
+   * 219.94 · 261.65, con un hueco uniforme de 28.27. La de estado era la que iba muy
+   * ancha, y por eso su bola quedaba lejos del número.
+   */
+  grid-template-columns: 367.83fr 166.85fr 254.07fr 219.94fr 261.65fr;
+  gap: 1.941621vw; /* 28.27 medido */
   /*
    * Medido en el original: la tarjeta KPI arranca a 61.15 del borde y entre cabecera y
    * KPIs hay 15.18. La réplica los tenía a 78, o sea 16.85 más abajo.
@@ -36,7 +41,8 @@
 
 /* La tabla va en su panel .list (#1f2429), más oscuro que el fondo (#3e4246). */
 .tablewrap {
-  margin: 1.785715vw 2.541209vw 2.541209vw;
+  /* En el original la tabla acaba a 5.83 de la barra de estado, no a 37. */
+  margin: 1.785715vw 2.541209vw 0.400412vw;
   flex: 1;
   min-height: 0;
   /* El panel recorta; quien scrollea es el cuerpo de la tabla (ver call-table). */
