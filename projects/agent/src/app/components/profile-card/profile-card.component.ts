@@ -86,6 +86,15 @@ import { AgThemeService } from '../../theme/ag-theme.service';
       gap: 0.274726vw;
       white-space: nowrap;
     }
+    /*
+     * Los atributos width/height del <img> NO son CSS: se quedan en px y ningun
+     * codemod de hojas de estilo los alcanza. Se dejan como fallback y manda la CSS.
+     */
+    .profile__globe {
+      /* 13px a 1456 */
+      width: 0.892858vw;
+      height: 0.892858vw;
+    }
     .profile__theme {
       position: absolute;
       right: 0.961539vw;

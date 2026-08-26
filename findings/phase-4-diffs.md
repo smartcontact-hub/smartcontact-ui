@@ -35,23 +35,27 @@ widget salía perfecto mientras el dashboard estaba mal.
 
 ## Abiertas — nombradas, medidas, sin aplicar
 
-| propiedad                                  | original                                                        | réplica                               | delta                         | ámbito              | sev.      | causa                         |
-| ------------------------------------------ | --------------------------------------------------------------- | ------------------------------------- | ----------------------------- | ------------------- | --------- | ----------------------------- |
-| alto del contenedor de tabla _(declarado)_ | `64.034vh`, escalonado a `69.37vh` (≤1680) y `58.825vh` (≤1366) | `flex: 1` sobre `100vh`               | fracción de pantalla distinta | ≠ la ventana medida | **BLOQ.** | **#1** escalones + **#8**     |
-| breakpoints _(declarado)_                  | **1366** (×7), **1680** (×3)                                    | ninguno                               | comportamiento ausente        | esos anchos         | **BLOQ.** | **#1**                        |
-| eje vertical _(declarado)_                 | `vh` en **320** sitios                                          | 2                                     | modelo distinto               | vertical            | **BLOQ.** | **#8**                        |
-| `sc-icon` _(medido)_                       | iconos en vw                                                    | **14 px fijos** a 1280/1456/1920      | deriva 0.365vw (5.3px a 1456) | todo el rango       | MENOR     | **#6** unidades               |
-| foco _(declarado)_                         | `:focus` (2 reglas), **0** `:focus-visible`                     | `:focus-visible`                      | estado distinto               | teclado             | MENOR     | **#10** divergencia de estado |
-| `font-size` 11.70 _(declarado)_            | nunca lo declara; su base es `0.8vw` = 11.65                    | 11.70, **18 usos**                    | 0.05px                        | global              | **RUIDO** | **#6** redondeo mío           |
-| 5 tamaños grandes de KPI _(declarado)_     | no aparecen en su CSS                                           | 31.90 / 26.40 / 26.00 / 21.30 / 20.50 | **sin verificar**             | tarjetas KPI        | ?         | sin aislar                    |
+| propiedad                                  | original                                                        | réplica                               | delta                          | ámbito              | sev.      | causa                         |
+| ------------------------------------------ | --------------------------------------------------------------- | ------------------------------------- | ------------------------------ | ------------------- | --------- | ----------------------------- |
+| alto del contenedor de tabla _(declarado)_ | `64.034vh`, escalonado a `69.37vh` (≤1680) y `58.825vh` (≤1366) | `flex: 1` sobre `100vh`               | fracción de pantalla distinta  | ≠ la ventana medida | **BLOQ.** | **#1** escalones + **#8**     |
+| breakpoints _(declarado)_                  | **1366** (×7), **1680** (×3)                                    | ninguno                               | comportamiento ausente         | esos anchos         | **BLOQ.** | **#1**                        |
+| eje vertical _(declarado)_                 | `vh` en **320** sitios                                          | 2                                     | modelo distinto                | vertical            | **BLOQ.** | **#8**                        |
+| `sc-icon` _(medido)_                       | iconos en vw                                                    | **fijo** a 1280/1456/1920             | deriva 0.365vw (5.31px a 1456) | todo el rango       | MENOR     | **#6** unidades               |
+| foco _(declarado)_                         | `:focus` (2 reglas), **0** `:focus-visible`                     | `:focus-visible`                      | estado distinto                | teclado             | MENOR     | **#10** divergencia de estado |
+| `font-size` 11.70 _(declarado)_            | nunca lo declara; su base es `0.8vw` = 11.65                    | 11.70, **18 usos**                    | 0.05px                         | global              | **RUIDO** | **#6** redondeo mío           |
+| 5 tamaños grandes de KPI _(declarado)_     | no aparecen en su CSS                                           | 31.90 / 26.40 / 26.00 / 21.30 / 20.50 | **sin verificar**              | tarjetas KPI        | ?         | sin aislar                    |
 
 ### Por qué no se aplican
 
 - Las tres primeras y `sc-icon` **cambiarían la maquetación en anchos que no puedo medir
   contra el original**. Aplicarlas a ciegas es justo lo que el encargo prohíbe. Están
   descritas con coste en `phase-8-new-behaviours.md`; decide Rafa.
-- `sc-icon` además es **código compartido**: tocarlo marcaría DIRTY a todo bloque que lo
-  consuma, y esa regresión hay que poder verificarla.
+- `sc-icon` además es **código compartido**, y el atajo se probó y falló. El DS ofrece
+  `size="inherit"` (DD-24), pero **no es sustituto del `[size]` numérico**: el numérico fija
+  la CAJA dejando el glifo a su tamaño de clase (a 1456: caja 14, `font-size` 16), mientras
+  que `inherit` deja que el glifo defina la caja. Cambiarlo metió **4 bloqueantes a 1456**;
+  ajustar el `font-size` al valor medido metió **14**. Revertido. Cerrarlo de verdad pide
+  tocar el DS, y eso marca DIRTY a todo bloque que lo consuma.
 - El foco es una **divergencia deliberada**: `:focus-visible` no molesta al ratón y el
   original no tiene aro de foco. Queda anotada, no corregida.
 - El 11.70 es **RUIDO** por la tolerancia (&lt;0.25px), y el ruido no se toca.

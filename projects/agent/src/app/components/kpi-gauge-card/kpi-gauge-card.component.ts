@@ -51,6 +51,11 @@ import { AgIconComponent } from '../ui/app-icon.component';
       height: 100%;
       padding: 0.824176vw 1.098902vw;
     }
+    /* 84px a 1456; los atributos del <svg> no los alcanza el codemod, la CSS si. */
+    .gauge__ring svg {
+      width: 5.769231vw;
+      height: 5.769231vw;
+    }
     .gauge__ring {
       position: relative;
       display: inline-flex;
