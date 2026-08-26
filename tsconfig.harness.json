@@ -53,9 +53,12 @@
      * config que solo funciona por la puerta bendecida del script le explota en la
      * cara a quien corra `npx tsc -p …` a mano. */
     "noEmit": true,
+    /* Las herramientas de `tools/` las ejecuta Node 25 leyendo TypeScript directo, y
+     * ahí los imports LLEVAN la extensión `.ts` real. */
+    "allowImportingTsExtensions": true,
     "allowJs": true,
     "checkJs": true,
     "types": ["node"]
   },
-  "include": ["*.ts", "*.js", "e2e/**/*.ts"]
+  "include": ["*.ts", "*.js", "e2e/**/*.ts", "tools/**/*.ts"]
 }
