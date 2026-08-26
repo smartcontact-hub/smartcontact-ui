@@ -18,6 +18,12 @@ module.exports = tseslint.config(
       'playwright-report/',
       'test-results/',
       'code-connect/',
+      /* Bundle del original cacheado para el censo de paridad (`.cache/`) y sesiones
+       * guardadas (`.auth/`): no es código nuestro. Sin esto, eslint intenta linterar el
+       * JS de la app real y reporta 6 errores por reglas que solo existen en SU
+       * configuración. */
+      '.cache/',
+      '.auth/',
     ],
   },
   {
