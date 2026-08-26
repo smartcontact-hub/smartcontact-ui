@@ -66,8 +66,16 @@ import { AgIconComponent } from '../ui/app-icon.component';
       color: var(--ag-text);
       white-space: nowrap;
       /* "Degradado" real: sombra interior inferior. */
-      box-shadow: inset 0 -0.521979vw 0.521979vw 0 #2a2f34;
-    }
+      /* --modeWidgetsConnectionShadow: en claro el original la apaga (transparent). */
+      box-shadow: inset 0 -0.521979vw 0.521979vw 0 var(--ag-conn-shadow);
+      /*
+     * LLENA el contenedor. En el original el chip es un <li> que ocupa el ancho entero de
+     * su .extras (164.95 de 164.95), o sea que su borde derecho coincide con el final de
+     * la línea de Desconexión. Medido en vivo el 2026-08-26.
+     */
+    width: 100%;
+    box-sizing: border-box;
+  }
     /* Disconnection: texto muted #41454c, sin chip. */
     .time__disc {
       display: inline-flex;

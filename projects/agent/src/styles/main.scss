@@ -37,7 +37,8 @@
  * ───────────────────────────────────────────────────────────────────────── */
 :root {
   --ag-canvas: #3e4246; /* fondo principal (.comunicator-dashboard) — medido */
-  --ag-list: #1f2429; /* panel de la tabla (.list) — más oscuro */
+  --ag-list: #1f2429; /* --modeTableHeadBackground: la cabecera de la tabla */
+  --ag-body: #24292f; /* --modeTableBodyBackground: el CUERPO, más claro que la cabecera */
   --ag-card: #24292f;
   --ag-elev: #373b41; /* chip Connection / search / paneles lighter */
   --ag-line: #2b323a;
@@ -67,35 +68,53 @@
   --ag-font: "Open Sans", "Helvetica Neue", Arial, sans-serif;
   --ag-radius: 0.626717vw;
   --ag-shadow: -0.416896vw 0.522665vw 1.826923vw 0 #24292f;
+  --ag-conn-shadow: #2a2f34; /* --modeWidgetsConnectionShadow */
+  --ag-card-border: transparent; /* --modeWidgetsBorder: en oscuro no hay */
+  --ag-logo-filter: none;
 }
 
 :root.ag-light {
-  --ag-canvas: #f4f6fc;
-  --ag-list: #ffffff;
-  --ag-card: #ffffff;
-  --ag-elev: #eef1f5;
-  --ag-line: #e9eaf0;
-  --ag-line-soft: #e9eaf0;
-  --ag-head-line: #e9eaf0;
-  --ag-text: #233155;
-  --ag-text-2: #4a5568;
-  --ag-muted: #939598;
-  --ag-thead: #afb1b4;
-  --ag-row: #4a5568;
-  --ag-field: #5a6270;
-  --ag-dim: #9aa0a6;
-  --ag-disc: #aab0b6;
-  --ag-ring: #e0e4e9;
-  --ag-chip-bg: #cfd3de;
-  --ag-chip-text: #5f6776;
-  --ag-ch-off: #eef1f5;
-  --ag-ch-off-ic: #8a9099;
-  --ag-ch-on: #eef1f5;
-  --ag-ch-on-ic: #233155;
-  --ag-brand: #233155;
-  --ag-btn-line: #dfe3e8;
-  --ag-btn-ic: #6b7280;
-  --ag-shadow: -0.274725vw 0.549451vw 1.785714vw rgba(205, 210, 224, 0.6);
+  /*
+   * Tema claro del ORIGINAL, leído de sus variables `--mode*` (48 en total) en
+   * `chunk-RBZTQGX6.js`. No es una interpretación: cada línea dice de qué variable suya
+   * sale. Medido el 2026-08-26.
+   */
+  --ag-canvas: #f4f6fc; /* --modeBackground */
+  --ag-list: #ffffff; /* --modeTableHeadBackground */
+  --ag-body: #ffffff; /* --modeTableBodyBackground */
+  --ag-card: #ffffff; /* --modeWidgetsBackground */
+  --ag-elev: #e9ebf0; /* --modeWidgetsConnection */
+  --ag-line: #e9eaf0; /* --modeTableBodyBorder */
+  --ag-line-soft: #e9eaf0; /* --modeTableBodyBorder */
+  --ag-head-line: #e9eaf0; /* --modeTableHeadBorder */
+  --ag-text: #233155; /* --modeText */
+  --ag-text-2: #5f6776; /* --modeTableBodyText */
+  --ag-muted: #939598; /* --modeWidgetsText */
+  --ag-thead: #afb1b4; /* --modeTableHeadText */
+  --ag-row: #808386; /* --modeWidgetsNodeText */
+  --ag-field: #a3a8b0; /* --modeWidgetsProfileType */
+  --ag-dim: #7f8285; /* --modeWidgetsGraphText */
+  --ag-disc: #c3c6cc; /* --modeWidgetsDisabled */
+  --ag-ring: #f0f1f5; /* --modeWidgetsGraphBackground */
+  --ag-chip-bg: #cfd3de; /* --modeTableBodyWaitingBackground */
+  --ag-chip-text: #5f6776; /* --modeTableBodyWaitingText */
+  --ag-ch-off: #a3a8b0; /* --modeWidgetsNodeBackground */
+  --ag-ch-off-ic: #ffffff; /* --modeWidgetsNodeIcon */
+  --ag-ch-on: #a3a8b0; /* --modeWidgetsNodeBackground */
+  --ag-ch-on-ic: #ffffff; /* --modeWidgetsNodeIcon */
+  --ag-brand: #233155; /* --modeText */
+  --ag-btn-line: #cfd3de; /* --modeWidgetsBorder */
+  --ag-btn-ic: #000000; /* --modeButtonsHelp */
+  --ag-red: #f75454; /* --modeButtonsLogout */
+  --ag-status-text: #ffffff; /* --modeTableBodyWaitingOverText */
+  --ag-shadow: -0.274725vw 0.549451vw 1.785714vw #f2f3fa; /* --modeShadow */
+  --ag-conn-shadow: transparent; /* --modeWidgetsConnectionShadow: transparent */
+  --ag-card-border: #cfd3de; /* --modeWidgetsBorder */
+  /*
+   * El logo es blanco: sobre fondo claro desaparece. El original sirve dos ficheros; aquí
+   * se invierte el que hay, que da el mismo azul oscuro de la marca sin añadir un asset.
+   */
+  --ag-logo-filter: invert(1) brightness(0.35);
 }
 
 html,
@@ -112,6 +131,8 @@ body {
   background: var(--ag-card);
   border-radius: var(--ag-radius);
   box-shadow: var(--ag-shadow);
+  /* En claro el original le pone borde (--modeWidgetsBorder); en oscuro no hay. */
+  border: 0.068681vw solid var(--ag-card-border);
 }
 
 .agent-muted {
