@@ -37,6 +37,7 @@
     "ng": "ng",
     "parity:diff": "node tools/compare-ndjson.ts",
     "parity:fonts": "node tools/fetch-original-fonts.ts",
+    "parity:login": "node tools/save-storage-state.ts",
     "parity:metrics": "node tools/phase2-metrics.ts",
     "parity:phase0": "node tools/phase0-fonts.ts",
     "parity:probe": "node tools/phase0-resolve-probe.ts",

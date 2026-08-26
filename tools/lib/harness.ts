@@ -67,7 +67,9 @@ export async function openSession(
   engine: EngineName = 'chromium',
   width = 1440,
   height = 900,
-  harness: HarnessSettings = DEFAULT_HARNESS
+  harness: HarnessSettings = DEFAULT_HARNESS,
+  /** Sesion guardada con 'tools/save-storage-state.ts'; solo hace falta para el original. */
+  storageState?: string | undefined
 ): Promise<HarnessSession> {
   const launcher =
     engine === 'chromium' ? chromium : engine === 'firefox' ? firefox : webkit;
@@ -77,6 +79,7 @@ export async function openSession(
       : [];
   const browser = await launcher.launch({ args });
   const context = await browser.newContext({
+    ...(storageState ? { storageState } : {}),
     viewport: { width, height },
     deviceScaleFactor: harness.deviceScaleFactor,
     reducedMotion: harness.reducedMotion,
