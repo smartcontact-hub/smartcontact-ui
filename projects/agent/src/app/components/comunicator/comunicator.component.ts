@@ -84,10 +84,21 @@ interface ComAction {
           <app-historic-list />
           } @else if (tab() === null) {
           <app-settings />
-          } @else if (tab() === 'chat') { @if (openChat(); as c) {
+          } @else if (tab() === 'chat') { @if (typifyingChat(); as t) {
+          <!--
+            Tipificar desde el listado abre LA MISMA ventana que tras colgar, pero sin
+            los tres niveles: en el original vienen ocultos para las conversaciones de
+            chat. Al guardar, esa conversación sale de postconversando.
+          -->
+          <app-typification [showLevels]="false" (saved)="finishTypifying(t)" />
+          } @else if (openChat(); as c) {
           <app-chat-conversation [chat]="c" (closed)="openChat.set(null)" />
           } @else {
-          <app-chat-list (opened)="openChat.set($event)" />
+          <app-chat-list
+            [typified]="typifiedChats()"
+            (opened)="openChat.set($event)"
+            (typifyRequested)="typifyingChat.set($event)"
+          />
           } } @else {
           <!--
             La cabecera de sección es DE CADA SECCIÓN, no del widget: medido en el real,
@@ -579,6 +590,21 @@ export class ComunicatorComponent {
 
   /** Conversación abierta dentro de Mensajes; null = listado. */
   protected readonly openChat = signal<ChatRow | null>(null);
+
+  /** Conversación cuya ventana de Tipificación está abierta; null = ninguna. */
+  protected readonly typifyingChat = signal<ChatRow | null>(null);
+
+  /** Conversaciones ya tipificadas: salen de postconversando y pierden la barra. */
+  protected readonly typifiedChats = signal<ReadonlySet<number>>(new Set());
+
+  /**
+   * Guardar la tipificación cierra la ventana y devuelve al listado, que es lo que hace
+   * el original: la conversación deja de reclamar nada y el agente queda libre.
+   */
+  protected finishTypifying(c: ChatRow): void {
+    this.typifiedChats.update((s) => new Set(s).add(c.id));
+    this.typifyingChat.set(null);
+  }
 
   protected readonly lostCalls = 0;
   protected readonly unread = 0;

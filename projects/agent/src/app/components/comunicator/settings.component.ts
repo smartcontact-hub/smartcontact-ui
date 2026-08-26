@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
-import { GRUPOS, PROFILE } from '../../data/seed';
+import { GRUPOS, PROFILE, type Grupo } from '../../data/seed';
 
 /**
  * Sección «Configuración» — la que abre el engranaje de la cabecera del Comunicador.
@@ -85,8 +85,30 @@ import { GRUPOS, PROFILE } from '../../data/seed';
           <div class="prof__groups">
             @for (g of grupos; track g.name) {
             <div class="prof__group">
-              <span class="prof__toggle" [class.on]="g.on"></span>
+              <label class="switch">
+                <input
+                  type="checkbox"
+                  [attr.aria-label]="'Atender ' + g.name"
+                  [checked]="isOn(g)"
+                  (change)="toggleGroup(g)"
+                />
+                <span class="switch__slider"></span>
+              </label>
               <span class="prof__gname">{{ g.name }}</span>
+              <span class="chans">
+                <span
+                  class="chans__ic chans__ic--call"
+                  [class.off]="!g.channels.calls"
+                ></span>
+                <span
+                  class="chans__ic chans__ic--chat"
+                  [class.off]="!g.channels.chats"
+                ></span>
+                <span
+                  class="chans__ic chans__ic--mail"
+                  [class.off]="!g.channels.emails"
+                ></span>
+              </span>
             </div>
             }
           </div>
@@ -96,24 +118,34 @@ import { GRUPOS, PROFILE } from '../../data/seed';
           <section class="pref__block">
             <h3>Aviso de conversación asignada</h3>
             <div class="pref__row">
-              <span class="pref__bell"></span>
-              <span class="pref__slider">
-                <span class="pref__track"></span>
-                <span class="pref__fill" style="width: 92%"></span>
-                <span class="pref__knob" style="left: 92%"></span>
-              </span>
+              <span class="pref__bell" [class.mute]="assigned() === 0"></span>
+              <input
+                class="pref__slider"
+                type="range"
+                min="0"
+                max="100"
+                aria-label="Volumen del aviso de conversación asignada"
+                [style.--v.%]="assigned()"
+                [value]="assigned()"
+                (input)="assigned.set(+$any($event.target).value)"
+              />
             </div>
           </section>
 
           <section class="pref__block">
             <h3>Aviso de conversaciones en espera</h3>
             <div class="pref__row">
-              <span class="pref__bell"></span>
-              <span class="pref__slider">
-                <span class="pref__track"></span>
-                <span class="pref__fill" style="width: 2%"></span>
-                <span class="pref__knob" style="left: 2%"></span>
-              </span>
+              <span class="pref__bell" [class.mute]="waiting() === 0"></span>
+              <input
+                class="pref__slider"
+                type="range"
+                min="0"
+                max="100"
+                aria-label="Volumen del aviso de conversaciones en espera"
+                [style.--v.%]="waiting()"
+                [value]="waiting()"
+                (input)="waiting.set(+$any($event.target).value)"
+              />
             </div>
             <label class="pref__check">
               <input type="checkbox" checked />
@@ -241,8 +273,9 @@ import { GRUPOS, PROFILE } from '../../data/seed';
     }
 
     /* ── Perfil ─────────────────────────────────────────────────────────── */
+    /* El bloque de Perfil ocupa 202.95 arrancando a 20.38, como en el original. */
     .prof {
-      padding: 17.5px 20.4px 0;
+      padding: 17.5px 26.95px 0 20.38px;
       font-size: 12.13px;
     }
     .prof__row {
@@ -334,43 +367,112 @@ import { GRUPOS, PROFILE } from '../../data/seed';
     .prof__groups {
       margin-top: 14.3px;
     }
+    /* .serviceGroupsList — 202.95 de ancho con paso de 40.58 entre filas. */
     .prof__group {
       display: flex;
       align-items: center;
-      gap: 10px;
-      height: 30px;
-      font-size: 11.65px;
+      height: 17.06px;
+      margin-bottom: 23.52px;
     }
-    /* Interruptor del grupo, como el de la tarjeta «Grupos asignados». */
-    .prof__toggle {
+    /*
+     * app-switch — EL MISMO que el KPI «Grupos asignados» de la cabecera: 20.47 x 10.61,
+     * pista #4F5256 que pasa a #0056fe, y un pulsador blanco de 10.61 con borde de 1px
+     * que recorre 9.86.
+     */
+    .switch {
       position: relative;
       flex: none;
-      width: 24px;
-      height: 13px;
-      border-radius: 7px;
-      background: #5f6776;
+      display: inline-block;
+      width: 20.47px;
+      height: 10.61px;
+      margin-right: 11.37px;
     }
-    .prof__toggle.on {
-      background: #3e7fff;
+    .switch input {
+      width: 0;
+      height: 0;
+      opacity: 0;
     }
-    .prof__toggle::after {
+    .switch__slider {
+      position: absolute;
+      inset: 0;
+      border-radius: 25.79px;
+      background-color: #4f5256;
+      cursor: pointer;
+      transition: background-color 0.4s;
+    }
+    .switch__slider::before {
       content: '';
       position: absolute;
-      top: 1.5px;
-      left: 1.5px;
-      width: 10px;
-      height: 10px;
+      width: 10.61px;
+      height: 10.61px;
+      border: 1px solid #4f5256;
       border-radius: 50%;
-      background: #fff;
-      transition: left 0.15s ease;
+      background-color: #fff;
+      box-sizing: border-box;
+      transition: transform 0.4s;
     }
-    .prof__toggle.on::after {
-      left: 12.5px;
+    .switch input:checked + .switch__slider {
+      background-color: #0056fe;
+    }
+    .switch input:checked + .switch__slider::before {
+      border-color: #0056fe;
+      transform: translateX(9.86px);
+    }
+    .switch input:focus-visible + .switch__slider {
+      outline: 2px solid #fff;
+      outline-offset: 2px;
     }
     .prof__gname {
+      flex: 1;
+      min-width: 0;
       overflow: hidden;
       white-space: nowrap;
       text-overflow: ellipsis;
+      margin-right: 7.59px;
+      color: #fff;
+      font-family: Roboto, var(--ag-font);
+      font-size: 11.37px;
+    }
+    /* .channels — 50.73 x 15.17 sobre #1f2429, radio 6.07, tres iconos de 7.58. */
+    .chans {
+      flex: none;
+      align-self: flex-start;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      width: 50.73px;
+      height: 15.17px;
+      padding: 0 8.54px;
+      border-radius: 6.07px;
+      background: #1f2429;
+      box-sizing: border-box;
+    }
+    .chans__ic {
+      width: 7.58px;
+      height: 7.58px;
+      background-color: #fff;
+      -webkit-mask-repeat: no-repeat;
+      -webkit-mask-position: center;
+      -webkit-mask-size: contain;
+      mask-repeat: no-repeat;
+      mask-position: center;
+      mask-size: contain;
+    }
+    /* Los canales que el agente no atiende bajan a 0.3, no cambian de color. */
+    .chans__ic.off {
+      opacity: 0.3;
+    }
+    .chans__ic--call {
+      -webkit-mask-image: url('/icons/grupos/telefono-actived.svg');
+      mask-image: url('/icons/grupos/telefono-actived.svg');
+    }
+    .chans__ic--chat {
+      -webkit-mask-image: url('/icons/grupos/chat-actived.svg');
+      mask-image: url('/icons/grupos/chat-actived.svg');
+    }
+    .chans__ic--mail {
+      -webkit-mask-image: url('/icons/grupos/mail.svg');
+      mask-image: url('/icons/grupos/mail.svg');
     }
 
     /* ── Preferencias ───────────────────────────────────────────────────── */
@@ -403,35 +505,65 @@ import { GRUPOS, PROFILE } from '../../data/seed';
       -webkit-mask: url('/icons/dialpad/campana.svg') no-repeat center / contain;
       mask: url('/icons/dialpad/campana.svg') no-repeat center / contain;
     }
-    /* Control de volumen: pista #5f6776 de 5.3 y pulsador blanco de 12.6. */
+    /*
+     * Control de volumen REAL, no una maqueta: pista de 5.3 en #5f6776, parte recorrida
+     * en blanco y pulsador de 12.6. Va sobre un input[type=range] para que se pueda
+     * arrastrar y para que funcione con teclado; el relleno lo pinta '--v'.
+     */
     .pref__slider {
-      position: relative;
       flex: 1;
       height: 12.6px;
+      margin: 0;
+      padding: 0;
+      background: transparent;
+      cursor: pointer;
+      appearance: none;
+      -webkit-appearance: none;
     }
-    .pref__track,
-    .pref__fill {
-      position: absolute;
-      top: 3.6px;
-      left: 0;
+    .pref__slider::-webkit-slider-runnable-track {
+      height: 5.3px;
+      margin-top: 3.65px;
+      border-radius: 3px;
+      background: linear-gradient(
+        to right,
+        #fff 0 var(--v, 0%),
+        #5f6776 var(--v, 0%) 100%
+      );
+    }
+    .pref__slider::-moz-range-track {
       height: 5.3px;
       border-radius: 3px;
-    }
-    .pref__track {
-      width: 100%;
       background: #5f6776;
     }
-    .pref__fill {
+    .pref__slider::-moz-range-progress {
+      height: 5.3px;
+      border-radius: 3px;
       background: #fff;
     }
-    .pref__knob {
-      position: absolute;
-      top: 0;
+    .pref__slider::-webkit-slider-thumb {
       width: 12.6px;
       height: 12.6px;
-      margin-left: -6.3px;
+      margin-top: -3.65px;
+      border: 0;
       border-radius: 50%;
       background: #fff;
+      appearance: none;
+      -webkit-appearance: none;
+    }
+    .pref__slider::-moz-range-thumb {
+      width: 12.6px;
+      height: 12.6px;
+      border: 0;
+      border-radius: 50%;
+      background: #fff;
+    }
+    .pref__slider:focus-visible {
+      outline: 2px solid #fff;
+      outline-offset: 4px;
+    }
+    /* Con el volumen a cero, la campana se apaga. */
+    .pref__bell.mute {
+      opacity: 0.3;
     }
     .pref__check {
       display: flex;
@@ -488,4 +620,27 @@ export class SettingsComponent {
   protected readonly grupos = GRUPOS;
   protected readonly tabs = ['Perfil', 'Preferencias'] as const;
   protected readonly tab = signal<string>('Perfil');
+
+  /** Volumen de cada aviso, 0-100; los dos sliders se mueven de verdad. */
+  protected readonly assigned = signal(92);
+  protected readonly waiting = signal(2);
+
+  /** Grupos apagados a mano en esta sesión. */
+  private readonly off = signal<ReadonlySet<string>>(new Set());
+
+  protected isOn(g: Grupo): boolean {
+    return g.on && !this.off().has(g.name);
+  }
+
+  protected toggleGroup(g: Grupo): void {
+    this.off.update((s) => {
+      const next = new Set(s);
+      if (next.has(g.name)) {
+        next.delete(g.name);
+      } else {
+        next.add(g.name);
+      }
+      return next;
+    });
+  }
 }

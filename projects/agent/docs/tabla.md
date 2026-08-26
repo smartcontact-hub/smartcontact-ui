@@ -74,3 +74,22 @@ es otro o si el atributo se está ignorando en silencio.
 Extraídos del DOM del entorno de desarrollo: 19 filas de Historial y 17 de Pendientes, con
 sus grupos, nodos y tiempos reales. Si hay que refrescarlos, el método está en
 [`README.md`](./README.md).
+
+## Orden de «Pendientes» y filas ya gestionadas
+
+Portado de `applyLostEventsSort()` del Agent real. La tabla se ordena por **bloque
+funcional** y, dentro del bloque, de más reciente a más antigua:
+
+| bloque | estado |
+|---|---|
+| 0 | `pending` |
+| 1 | `in_management` |
+| 2 | `managed` |
+
+Para las gestionadas la fecha que cuenta **no es la de la conversación sino la de
+gestión** (`managed_at`), así que la que se acaba de cerrar baja hasta justo encima de la
+primera ya gestionada. Ese es el efecto que se ve: lo hecho queda separado de lo que
+queda por hacer, sin reordenar el resto.
+
+Y la fila entera se atenúa: `tr.lost-managed { opacity: 0.55 }`. Encima de eso, el rótulo
+«Gestionada» lleva su propio `opacity: 0.72` en gris; el de «En gestión» va en blanco.

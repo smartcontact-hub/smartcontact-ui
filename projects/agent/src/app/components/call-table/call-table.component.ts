@@ -120,8 +120,8 @@ type Tab = 'historial' | 'pendientes';
           </tr>
         </thead>
         <tbody>
-          @for (r of pending; track r.id) {
-          <tr>
+          @for (r of pendingView(); track r.id) {
+          <tr [class.managed]="stateOf(r) === 'managed'">
             <td class="col-dir" [class.st-lost]="r.outcome === 'lost'">
               <img
                 class="dir"
@@ -148,7 +148,10 @@ type Tab = 'historial' | 'pendientes';
                 Gestionar
               </button>
               } @else {
-              <span class="state">
+              <span
+                class="state"
+                [class.state--managed]="stateOf(r) === 'managed'"
+              >
                 <sc-icon
                   [name]="stateOf(r) === 'managed' ? 'check' : 'autorenew'"
                   [size]="12"
@@ -315,12 +318,24 @@ type Tab = 'historial' | 'pendientes';
      * Estado ya gestionado / en gestión: en el real es un p-button secundario de
      * tipo texto — gris #9d9fa3, sin fondo, con icono (check / autorenew).
      */
+    /*
+     * 'tr.lost-managed' del original: la fila entera baja a 0.55 cuando ya se gestionó.
+     * Es lo que separa de un vistazo lo hecho de lo que queda por hacer.
+     */
+    tbody tr.managed {
+      opacity: 0.55;
+    }
     .state {
       display: inline-flex;
       align-items: center;
       gap: 5px;
-      color: var(--ag-thead);
+      color: #fff;
       font-size: 11.7px;
+    }
+    /* '.lost-status-button.managed' — gris al 72 %, encima del 55 % de la fila. */
+    .state--managed {
+      color: var(--ag-thead);
+      opacity: 0.72;
     }
 
     /* Botón «Gestionar» de Pendientes: primario del DS (#0058ff) en el real. */
@@ -375,6 +390,37 @@ export class CallTableComponent {
       ).length
     )
   );
+
+  /**
+   * Orden de la tabla, portado de 'applyLostEventsSort()' del Agent real: primero por
+   * BLOQUE —pendiente, en gestión, gestionada— y dentro de cada bloque de más reciente
+   * a más antigua. Para las gestionadas la fecha que cuenta es la de gestión, así que
+   * la que se acaba de cerrar baja hasta justo encima de la primera ya gestionada, y
+   * el bloque de lo hecho queda separado del que queda por hacer.
+   */
+  protected readonly pendingView = computed(() => {
+    const done = this.state.managed();
+    const block = (r: PendingRow): number => {
+      const st = this.stateOf(r);
+      return st === 'pending' ? 0 : st === 'in_management' ? 1 : 2;
+    };
+    // Cuanto mas tarde se gestionó, mas arriba dentro del bloque de gestionadas.
+    const managedRank = (r: PendingRow): number => {
+      const i = done.indexOf(r.id);
+      return i === -1 ? Number.MAX_SAFE_INTEGER : done.length - 1 - i;
+    };
+    return [...this.pending]
+      .map((r, i) => ({ r, i }))
+      .sort((a, b) => {
+        const d = block(a.r) - block(b.r);
+        if (d !== 0) {
+          return d;
+        }
+        const m = managedRank(a.r) - managedRank(b.r);
+        return m !== 0 ? m : a.i - b.i;
+      })
+      .map((x) => x.r);
+  });
 
   /** Estado efectivo de la fila: el del seed, salvo que el flujo lo haya movido. */
   protected stateOf(r: PendingRow): PendingRow['state'] {

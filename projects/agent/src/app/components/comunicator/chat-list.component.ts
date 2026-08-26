@@ -1,6 +1,7 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  input,
   output,
   signal,
 } from '@angular/core';
@@ -56,7 +57,7 @@ import { CHATS, type ChatRow } from '../../data/seed';
                 class="msg__typify"
                 type="button"
                 aria-label="Tipificar conversación"
-                (click)="typify(c.id, $event)"
+                (click)="askTypify(c, $event)"
               ></button>
               }
             </span>
@@ -282,8 +283,11 @@ export class ChatListComponent {
   readonly opened = output<ChatRow>();
   protected readonly selected = signal<number | null>(null);
 
-  /** Conversaciones ya tipificadas en esta sesión: dejan de pedirlo. */
-  private readonly typified = signal<ReadonlySet<number>>(new Set());
+  /** Ids ya tipificados; los decide el Comunicador y los baja por entrada. */
+  readonly typified = input<ReadonlySet<number>>(new Set());
+
+  /** Petición de abrir la ventana de Tipificación para esa conversación. */
+  readonly typifyRequested = output<ChatRow>();
 
   /**
    * El original solo ofrece tipificar cuando la conversación es con un CLIENTE y ha
@@ -317,8 +321,8 @@ export class ChatListComponent {
    * conversación deja de estar en postconversando y la barra turquesa desaparece, que
    * es lo que libera al agente para volver a ponerse disponible.
    */
-  protected typify(id: number, ev: Event): void {
+  protected askTypify(c: ChatRow, ev: Event): void {
     ev.stopPropagation();
-    this.typified.update((s) => new Set(s).add(id));
+    this.typifyRequested.emit(c);
   }
 }

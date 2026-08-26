@@ -32,6 +32,15 @@ export interface Grupo {
   readonly on: boolean;
   /** Número del nodo; el dialpad lo muestra bajo el nombre. */
   readonly id: string;
+  /**
+   * Canales que el agente atiende en ese grupo. En el original se pintan como tres
+   * iconos —teléfono, chat y correo— y los que no atiende bajan a 'opacity: 0.3'.
+   */
+  readonly channels: {
+    readonly calls: boolean;
+    readonly chats: boolean;
+    readonly emails: boolean;
+  };
 }
 
 export const CALLS: readonly CallRow[] = [
@@ -827,9 +836,24 @@ export const CHATS: readonly ChatRow[] = [
 ];
 
 export const GRUPOS: readonly Grupo[] = [
-  { name: 'Nodo AED 2', id: '910220135', on: true },
-  { name: 'Grupo 3', id: '910220134', on: true },
-  { name: 'Nodo AED 1', id: '910220134', on: true },
+  {
+    name: 'Nodo AED 2',
+    id: '910220135',
+    on: true,
+    channels: { calls: true, chats: true, emails: true },
+  },
+  {
+    name: 'Grupo 3',
+    id: '910220134',
+    on: true,
+    channels: { calls: true, chats: true, emails: false },
+  },
+  {
+    name: 'Nodo AED 1',
+    id: '910220134',
+    on: true,
+    channels: { calls: true, chats: true, emails: false },
+  },
 ];
 
 export const PROFILE = {
