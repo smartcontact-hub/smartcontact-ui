@@ -23,103 +23,116 @@ import { GRUPOS, PROFILE } from '../../data/seed';
           <span class="set__help"></span>
         </div>
         <!--
-          Misma barra que en Agentes: dos mitades de 99.5 a 9.86 sobre una linea de 1px
-          con la pildora blanca de 37.9 x 3.8 deslizandose.
+          Misma barra que en Agentes pero a lo ancho del panel: dos mitades de 122.24 a
+          9.86 sobre una linea de 1.11 con la pildora blanca de 37.92 x 3.78. El texto
+          NO va centrado: Perfil alinea a la izquierda con 17.47 de sangria y
+          Preferencias a la derecha con la misma; la pildora se pega a cada extremo
+          (18.96 del borde del panel, medido en el original).
         -->
         <div class="set__tabbar">
           <div class="set__tabs" role="tablist">
             @for (t of tabs; track t) {
-              <button
-                type="button"
-                role="tab"
-                [class.on]="tab() === t"
-                [attr.aria-selected]="tab() === t"
-                (click)="tab.set(t)"
-              >
-                {{ t }}
-              </button>
+            <button
+              type="button"
+              role="tab"
+              [class.on]="tab() === t"
+              [attr.aria-selected]="tab() === t"
+              (click)="tab.set(t)"
+            >
+              {{ t }}
+            </button>
             }
           </div>
           <div class="set__rail">
-            <span class="set__pill" [style.left.px]="tab() === 'Perfil' ? 0 : 99.5"></span>
+            <span
+              class="set__pill"
+              [style.left.px]="tab() === 'Perfil' ? 16.05 : 190.5"
+            ></span>
           </div>
         </div>
       </div>
 
       <div class="set__body">
         @if (tab() === 'Perfil') {
-          <div class="prof">
-            <div class="prof__row">
-              <div class="prof__avatar">{{ profile.avatarLetter }}</div>
-              <div class="prof__info">
-                <div class="prof__name">{{ profile.name }}</div>
-                <div><span class="prof__k">PIN:</span> {{ profile.pin }}</div>
-                <div><span class="prof__k">Extensión:</span> {{ profile.ext }}</div>
-                <div class="prof__type">
-                  <span class="prof__k">Tipo ext.:</span> <span class="prof__globe"></span>
-                </div>
+        <div class="prof">
+          <div class="prof__row">
+            <div class="prof__avatar">{{ profile.avatarLetter }}</div>
+            <div class="prof__info">
+              <div class="prof__name">{{ profile.name }}</div>
+              <div><span class="prof__k">PIN:</span> {{ profile.pin }}</div>
+              <div>
+                <span class="prof__k">Extensión:</span> {{ profile.ext }}
+              </div>
+              <div class="prof__type">
+                <span class="prof__k">Tipo ext.:</span>
+                <span class="prof__globe"></span>
               </div>
             </div>
-
-            <div class="prof__groups-head">
-              <span class="prof__groups-name">Grupos asignados</span>
-              <label class="prof__search">
-                <span class="prof__lupa"></span>
-                <input type="search" placeholder="Buscar..." aria-label="Buscar grupo" />
-              </label>
-            </div>
-
-            <div class="prof__groups">
-              @for (g of grupos; track g.name) {
-                <div class="prof__group">
-                  <span class="prof__toggle" [class.on]="g.on"></span>
-                  <span class="prof__gname">{{ g.name }}</span>
-                </div>
-              }
-            </div>
           </div>
+
+          <div class="prof__groups-head">
+            <span class="prof__groups-name">Grupos asignados</span>
+            <label class="prof__search">
+              <span class="prof__lupa"></span>
+              <input
+                type="search"
+                placeholder="Buscar..."
+                aria-label="Buscar grupo"
+              />
+            </label>
+          </div>
+
+          <div class="prof__groups">
+            @for (g of grupos; track g.name) {
+            <div class="prof__group">
+              <span class="prof__toggle" [class.on]="g.on"></span>
+              <span class="prof__gname">{{ g.name }}</span>
+            </div>
+            }
+          </div>
+        </div>
         } @else {
-          <div class="pref">
-            <section class="pref__block">
-              <h3>Aviso de conversación asignada</h3>
-              <div class="pref__row">
-                <span class="pref__bell"></span>
-                <span class="pref__slider">
-                  <span class="pref__track"></span>
-                  <span class="pref__fill" style="width: 92%"></span>
-                  <span class="pref__knob" style="left: 92%"></span>
-                </span>
-              </div>
-            </section>
+        <div class="pref">
+          <section class="pref__block">
+            <h3>Aviso de conversación asignada</h3>
+            <div class="pref__row">
+              <span class="pref__bell"></span>
+              <span class="pref__slider">
+                <span class="pref__track"></span>
+                <span class="pref__fill" style="width: 92%"></span>
+                <span class="pref__knob" style="left: 92%"></span>
+              </span>
+            </div>
+          </section>
 
-            <section class="pref__block">
-              <h3>Aviso de conversaciones en espera</h3>
-              <div class="pref__row">
-                <span class="pref__bell"></span>
-                <span class="pref__slider">
-                  <span class="pref__track"></span>
-                  <span class="pref__fill" style="width: 2%"></span>
-                  <span class="pref__knob" style="left: 2%"></span>
-                </span>
-              </div>
-              <label class="pref__check">
-                <input type="checkbox" checked />
-                <span>Con conversación en curso</span>
-              </label>
-            </section>
+          <section class="pref__block">
+            <h3>Aviso de conversaciones en espera</h3>
+            <div class="pref__row">
+              <span class="pref__bell"></span>
+              <span class="pref__slider">
+                <span class="pref__track"></span>
+                <span class="pref__fill" style="width: 2%"></span>
+                <span class="pref__knob" style="left: 2%"></span>
+              </span>
+            </div>
+            <label class="pref__check">
+              <input type="checkbox" checked />
+              <span>Con conversación en curso</span>
+            </label>
+          </section>
 
-            <section class="pref__block">
-              <h3>Login y Logout</h3>
-              <label class="pref__check pref__check--left">
-                <input type="checkbox" />
-                <span>En el Login - Estado disponible</span>
-              </label>
-              <label class="pref__check pref__check--left">
-                <input type="checkbox" />
-                <span>En el Logout - Cerrar sesión al salir</span>
-              </label>
-            </section>
-          </div>
+          <section class="pref__block">
+            <h3>Login y Logout</h3>
+            <label class="pref__check pref__check--left">
+              <input type="checkbox" />
+              <span>En el Login - Estado disponible</span>
+            </label>
+            <label class="pref__check pref__check--left">
+              <input type="checkbox" />
+              <span>En el Logout - Cerrar sesión al salir</span>
+            </label>
+          </section>
+        </div>
         }
       </div>
 
@@ -161,49 +174,62 @@ import { GRUPOS, PROFILE } from '../../data/seed';
     .set__help {
       width: 31.3px;
     }
+    /* .header-message-toggle — ocupa el ancho del panel, no los 204.9 de Agentes. */
     .set__tabbar {
-      width: 204.9px;
-      margin: 20.5px auto 0;
+      width: 244.47px;
+      margin-left: 2.91px;
     }
+    /* Las mitades miden 30.33 de alto y el texto se apoya abajo. */
     .set__tabs {
       display: flex;
-      height: 14.8px;
+      height: 30.33px;
     }
     .set__tabs button {
-      width: 99.5px;
+      display: flex;
+      align-items: flex-end;
+      width: 122.24px;
       padding: 0;
       border: 0;
       background: none;
       color: #5f6776;
-      font-family: inherit;
+      font-family: 'Open Sans Semibold', var(--ag-font);
+      font-weight: 600;
       font-size: 9.86px;
       cursor: pointer;
     }
+    .set__tabs button:first-child {
+      justify-content: flex-start;
+      padding-left: 17.47px;
+    }
+    .set__tabs button:last-child {
+      justify-content: flex-end;
+      padding-right: 17.47px;
+    }
     .set__tabs button.on {
       color: #fff;
-      font-weight: 600;
     }
     .set__rail {
       position: relative;
-      height: 3.8px;
-      margin-top: 10px;
+      height: 24.3px;
     }
+    /* .toggleBarLine — hr de 1.11 en #5f6776 al 25%. */
     .set__rail::before {
       content: '';
       position: absolute;
-      top: 1.4px;
-      left: 2.9px;
-      width: 193.3px;
-      height: 1px;
-      background: #fff;
-      opacity: 0.35;
+      top: 11.65px;
+      left: 20.37px;
+      width: 203.72px;
+      height: 1.11px;
+      background: #5f6776;
+      opacity: 0.25;
     }
+    /* Aqui la pildora monta 9.96 sobre la barra (0.95rem), no los 0.93rem de Agentes. */
     .set__pill {
       position: absolute;
-      top: 0;
-      width: 37.9px;
-      height: 3.8px;
-      border-radius: 3.37px;
+      top: 9.96px;
+      width: 37.92px;
+      height: 3.78px;
+      border-radius: 3.03px;
       background: #fff;
       transition: left 0.18s ease;
     }
@@ -255,12 +281,14 @@ import { GRUPOS, PROFILE } from '../../data/seed';
       align-items: center;
       gap: 5px;
     }
+    /*
+     * El globo es BICOLOR (disco #bfc5d3 y meridianos #1f2429): con una mascara se
+     * aplana a un disco blanco. Va como imagen, con sus propios colores, a 16.38.
+     */
     .prof__globe {
-      width: 12px;
-      height: 12px;
-      background-color: #fff;
-      -webkit-mask: url('/icons/globe.svg') no-repeat center / contain;
-      mask: url('/icons/globe.svg') no-repeat center / contain;
+      width: 16.38px;
+      height: 16.38px;
+      background: url('/icons/globe.svg') no-repeat center / contain;
     }
     /* .serviceGroups-header — 26.5, titulo en #a3a8b0 y buscador de 94.7. */
     .prof__groups-head {

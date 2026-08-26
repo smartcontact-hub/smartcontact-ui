@@ -14,55 +14,66 @@ import { CALLS, type CallRow } from '../../data/seed';
   standalone: true,
   template: `
     <div class="recents">
-      <div class="recents__title"><span class="recents__text">Histórico</span></div>
+      <div class="recents__title">
+        <span class="recents__text">Histórico</span>
+      </div>
 
       <div class="recents__cards">
         @for (r of calls; track r.id) {
-          <div class="slot">
-            <article class="card" [class.open]="open() === r.id">
-              <div class="card__status" [class.busy]="r.outcome === 'lost'"></div>
+        <div class="slot">
+          <article class="card" [class.open]="open() === r.id">
+            <div class="card__status" [class.busy]="r.outcome === 'lost'"></div>
 
-              <span class="card__icon">
-                <img [src]="iconFor(r)" [alt]="altFor(r)" width="20.5" height="11.4" />
-              </span>
+            <span class="card__icon">
+              <img
+                [src]="iconFor(r)"
+                [alt]="altFor(r)"
+                width="20.5"
+                height="11.4"
+              />
+            </span>
 
-              <span class="card__origin">{{ r.number }}</span>
-              <span class="card__date">{{ r.date }}</span>
-              <span class="card__group">{{ r.group }}</span>
+            <span class="card__origin">{{ r.number }}</span>
+            <span class="card__date">{{ r.date }}</span>
+            <span class="card__group">{{ r.group }}</span>
 
-              <button
-                class="card__toggle"
-                type="button"
-                [attr.aria-expanded]="open() === r.id"
-                [attr.aria-label]="open() === r.id ? 'Ocultar detalle' : 'Ver detalle'"
-                (click)="toggle(r.id)"
-              >
-                <span class="card__chevron"></span>
-              </button>
-            </article>
+            <button
+              class="card__toggle"
+              type="button"
+              [attr.aria-expanded]="open() === r.id"
+              [attr.aria-label]="
+                open() === r.id ? 'Ocultar detalle' : 'Ver detalle'
+              "
+              (click)="toggle(r.id)"
+            >
+              <span class="card__chevron"></span>
+            </button>
+          </article>
 
-            @if (open() === r.id) {
-              <div class="extra">
-                @if (r.destination !== '-') {
-                  <div class="extra__line">
-                    <span class="extra__label">Destino:</span>
-                    <span class="extra__value">{{ r.destination }}</span>
-                  </div>
-                }
-                <div class="extra__line">
-                  <span class="extra__label">Atención:</span>
-                  <span class="extra__value">{{ r.support }}</span>
-                  <span class="extra__label">Espera:</span>
-                  <span class="extra__chip">{{ r.wait }}</span>
-                </div>
-                <div class="extra__line">
-                  <span class="extra__label">Tipificación:</span>
-                  <span class="extra__level">{{ r.categorization === '-' ? 'N1' : 'N1' }}</span>
-                  <span class="extra__value">{{ r.categorization }}</span>
-                </div>
-              </div>
+          @if (open() === r.id) {
+          <div class="extra">
+            @if (r.destination !== '-') {
+            <div class="extra__line">
+              <span class="extra__label">Destino:</span>
+              <span class="extra__value">{{ r.destination }}</span>
+            </div>
             }
+            <div class="extra__line">
+              <span class="extra__label">Atención:</span>
+              <span class="extra__value">{{ r.support }}</span>
+              <span class="extra__label">Espera:</span>
+              <span class="extra__chip">{{ r.wait }}</span>
+            </div>
+            <div class="extra__line">
+              <span class="extra__label">Tipificación:</span>
+              <span class="extra__level">{{
+                r.categorization === '-' ? 'N1' : 'N1'
+              }}</span>
+              <span class="extra__value">{{ r.categorization }}</span>
+            </div>
           </div>
+          }
+        </div>
         }
       </div>
     </div>
@@ -243,12 +254,14 @@ export class HistoricListComponent {
       r.outcome === 'transferred' && r.channel === 'chat'
         ? 'negro'
         : r.outcome === 'attended'
-          ? 'verde'
-          : 'rojo';
+        ? 'verde'
+        : 'rojo';
     return `icons/historial/${folder}/${color}_${dir}.svg`;
   }
 
   protected altFor(r: CallRow): string {
-    return r.direction === 'in' ? 'Conversación entrante' : 'Conversación saliente';
+    return r.direction === 'in'
+      ? 'Conversación entrante'
+      : 'Conversación saliente';
   }
 }

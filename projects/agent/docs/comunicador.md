@@ -239,7 +239,82 @@ El alto de la cabecera lo pone CADA sección, no el widget:
 | Agentes | 140.2 | título + pestañas «Agentes / Grupos» |
 | Histórico | 33.6 | solo título |
 
-El título va siempre a 10.6px del borde del panel.
+El título va siempre a 10.63px del borde del panel, y el hueco entre bloques de la
+cabecera es 17.47 (título→buscador) y 18.2 (buscador→pestañas).
+
+**Buscador de cabecera** (`.buscador`): 204.89 × 26.54 sobre `#1f2429`, radio **7.59**
+—no es una píldora—, con la lupa de 12.12 a 11.88 del borde y el texto a 32.78.
+
+### Barra de pestañas «Agentes / Grupos» y «Perfil / Preferencias»
+
+⚠️ **El texto de las pestañas NO va centrado.** La primera mitad alinea a la IZQUIERDA y
+la segunda a la DERECHA, y la píldora blanca se pega al extremo que le toca. Centrarlas
+es lo que hace que la barra «se vea rara» aunque la píldora salte la distancia correcta.
+
+Ambas comparten tipografía —«Open Sans Semibold» a 9.86, inactiva `#5f6776` y activa
+`#ffffff`, sin cambio de grosor— y la misma píldora de **37.92 × 3.78, radio 3.03**,
+montada sobre una línea de 1.11 en `#5f6776` al **25 %** (no una línea blanca).
+
+Todo relativo al borde izquierdo del widget (escala 1456):
+
+| | Agentes | Configuración |
+|---|---|---|
+| caja del toggle | left 22.70, ancho 204.89 | left 0, ancho 250.28 |
+| mitades | 99.54 cada una, alto 14.78 | 122.24 cada una, alto 30.33 |
+| sangría del texto | `ms-1` / `me-1` = 2.91 | 2.91 + 17.47 de padding |
+| línea | left 28.51, ancho 193.26 | left 23.28, ancho 203.72 |
+| píldora, 1.ª pestaña | left 26.23 | left 18.96 |
+| píldora, 2.ª pestaña | left 189.05 | left 193.41 |
+| píldora sobre la barra | +10.83 (`0.93rem`) | +9.96 (`0.95rem`) |
+
+Recuerda que ahí `1rem = 0.8vw`, no 16px (ver [escala.md](escala.md)).
+
+### Tipificar desde el listado de Mensajes
+
+`.subcontainerIconMessagePrivate` vive dentro de `.message-info-group`, pegado a la
+derecha, y **nace oculto** (`display: none`): aparece al pasar por encima de la TARJETA y
+vira a azul al pasar por encima de ÉL.
+
+| | valor |
+|---|---|
+| botón | 15.93 cuadrado, radio 4.37, fondo `#ffffff` |
+| glifo | 6.83 cuadrado, `#262c32` |
+| hover del botón | fondo `#0056fe`, glifo `#ffffff` |
+| contenedor | `min-height` 16.69, padding `0 13.66 0 7.59`, `position: relative` |
+| texto del nodo | tope 151.7 con elipsis, para no chocar con el botón |
+
+Tipificar **no abre la conversación**: es la otra acción de la tarjeta, y hay que parar la
+propagación del clic.
+
+**Qué dice la barra lateral** (7.59 de ancho, `min-height` 69.5):
+
+| color | significado |
+|---|---|
+| `#f75454` | la conversación fue abandonada |
+| `#166f8d` | postconversando: acabada y a la espera de tipificar |
+| sin color | acabada con normalidad |
+
+(el original tiene además `#8d939d` para caducada y `#7f70f7` para escucha)
+
+### Cabecera de la conversación abierta
+
+Los dos botones de la derecha son ese mismo componente en su versión grande: **18.96
+cuadrado, radio 4.37**, separados 6.83, con el bloque a 12.74 del borde derecho. El glifo
+mide 8.34 × 9.10.
+
+| estado | transferir | cerrar |
+|---|---|---|
+| viva | `#ffffff` + glifo `#262c32` | `#f75454` + aspa blanca |
+| hover | `#0056fe` + glifo blanco | igual |
+| apagado | `#8d939d` | `#824549` + aspa `#8d939d` |
+
+Se apagan en cuanto la conversación deja de estar viva.
+
+### El globo de «Tipo ext.» no admite máscara
+
+`globe.svg` es **bicolor** (disco `#bfc5d3` con los meridianos en `#1f2429`). Pintado con
+`-webkit-mask` se aplana a un disco blanco sólido. Va como `background-image`, con sus
+propios colores, a 16.38 cuadrado.
 
 ### Medidas verificadas del dialpad en reposo
 
