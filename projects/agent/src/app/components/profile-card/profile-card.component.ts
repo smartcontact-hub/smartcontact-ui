@@ -32,14 +32,23 @@ import { AgThemeService } from '../../theme/ag-theme.service';
           />
         </div>
       </div>
+      <!--
+        Toggle de tema en su estado ACTIVO, tal como lo pinta el original (tokens
+        --modeWidgetsProfileModeActive/…Icon del bundle, chunk-RBZTQGX6):
+          · dark  -> círculo #2450d9 (azul) con la luna en blanco,
+          · light -> círculo #f6c85d (ámbar) con el sol en #654803.
+        Antes iba en gris apagado (--ag-elev) con la luna azulada, que no era ninguno
+        de los dos estados reales.
+      -->
       <button
         class="profile__theme"
         type="button"
         (click)="toggle()"
-        [style.color]="dark() ? '#7db3ff' : '#f5a623'"
+        [style.background]="dark() ? '#2450d9' : '#f6c85d'"
+        [style.color]="dark() ? '#ffffff' : '#654803'"
         aria-label="Toggle theme"
       >
-        <sc-icon [name]="dark() ? 'dark_mode' : 'light_mode'" [size]="14" />
+        <sc-icon [name]="dark() ? 'dark_mode' : 'light_mode'" [size]="12" />
       </button>
     </div>
   `,
@@ -95,15 +104,15 @@ import { AgThemeService } from '../../theme/ag-theme.service';
       width: 0.892858vw;
       height: 0.892858vw;
     }
+    /* Círculo de 22px y a 13px de cada borde en el original (medido: 1.356vw · 0.8015vw). */
     .profile__theme {
       position: absolute;
-      right: 0.961539vw;
-      bottom: 0.961539vw;
-      width: 1.785715vw;
-      height: 1.785715vw;
+      right: 0.8015vw;
+      bottom: 0.8015vw;
+      width: 1.356vw;
+      height: 1.356vw;
       border-radius: 50%;
       border: none;
-      background: var(--ag-elev);
       display: inline-flex;
       align-items: center;
       justify-content: center;

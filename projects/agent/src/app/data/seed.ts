@@ -857,7 +857,10 @@ export const GRUPOS: readonly Grupo[] = [
 ];
 
 export const PROFILE = {
-  name: 'Rafael',
+  // El agente es «Rafael_3AED», el mismo nombre con que firma la tabla («Gestionada
+  // por») y aparece como destino en el Historial. El perfil lo abreviaba a «Rafael» y
+  // quedaba incoherente consigo mismo; el original lo muestra entero.
+  name: 'Rafael_3AED',
   pin: '694124',
   ext: '113',
   extType: 'language', // Material Symbol: globo (Type of ext.)
