@@ -27,7 +27,22 @@ export default defineConfig({
   testDir: 'e2e/cuscare',
   timeout: 90_000,
   expect: { timeout: 10_000 },
-  workers: 1,
+  /*
+   * En PARALELO. Estuvo en 1 sin motivo escrito, y resultó ser lastre: el que rompía la
+   * concurrencia era `playwright-reuse-guard`, que se evalúa una vez por worker y hacía
+   * que cada uno denunciara a sus hermanos como "otra ejecución". Arreglado eso, medido el
+   * 2026-08-26: 91/91 en 93s contra 122s en serie. Con 8 no baja de 93 (el cuello es el
+   * dev server), así que 4.
+   *
+   * OJO: en `supervisor` NO se hace lo mismo. Ahí se midió PEOR (226s contra ~190s) y
+   * además sus journeys siembran datos. Ver su config.
+   *
+   * En CI se deja SIN fijar (Playwright elige por núcleos): el runner tiene menos CPU que
+   * este portátil y clavar 4 lo oversuscribiría. La medición de arriba es local; ahí el
+   * `4` da el mejor tiempo. CusCare no siembra datos (pinta de `seed.ts`), así que el
+   * paralelo es seguro en los dos sitios.
+   */
+  workers: process.env['CI'] ? undefined : 4,
   reporter: process.env['CI'] ? 'list' : 'line',
   use: {
     baseURL: process.env['SC_CUSCARE_URL'] ?? 'http://localhost:4415',

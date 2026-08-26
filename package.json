@@ -50,6 +50,7 @@
     "parity:px-to-vw": "node tools/px-to-vw.ts",
     "parity:states": "node tools/phase1_5-states.ts",
     "preflight": "npm run guard:lockfile && npm run verify && npm run build:docs && npx ng build supervisor --configuration production && npx ng build agent --configuration production && npx ng build cuscare --configuration production && npx playwright install chromium && CI=1 npm run e2e && npm run e2e:supervisor && npm run e2e:cuscare",
+    "preflight:fast": "node scripts/preflight-fast.mjs",
     "preflight:scope": "node scripts/preflight-scope.mjs",
     "preview:check": "node scripts/preview-check.mjs",
     "preview:live": "node scripts/preview-live.mjs",
