@@ -9,13 +9,12 @@ import { AgentStateService } from '../../agent-state.service';
 import { PENDING, type PendingRow } from '../../data/seed';
 
 /**
- * Sección «Finalizar gestión» — el último paso del flujo (Figma '283:3186').
+ * Sección «Finalizar gestión» — el último paso del flujo (lost-conversations-management).
  *
- * ⚠️ Las medidas NO salen del entorno de desarrollo: allí el panel está maquetado al
- * 75 % por una conversión px→vw contra 1920 cuando el Figma está a 1440. Aquí se usan
- * las del DISEÑO ('px de Figma / 14.4' → vw, y luego 'x 14.56' a la escala de sc-agent),
- * que además caen sobre los valores canónicos del resto del Comunicador.
- * Ver 'projects/agent/docs/comunicador.md'.
+ * Las medidas salen del CSS del BUNDLE de la app real (chunk-RBZTQGX6), que es lo que
+ * de verdad se renderiza: el chip .pending-summary es full-container (width 100%) con el
+ * texto centrado, la fila "Seleccionar todas" y su separador solo aparecen con mas de una
+ * conversacion, y las casillas nacen sin marcar. Ver projects/agent/docs/comunicador.md.
  */
 @Component({
   selector: 'app-finalize-management',
@@ -112,59 +111,65 @@ import { PENDING, type PendingRow } from '../../data/seed';
       flex-direction: column;
       padding: 1.229396vw 0.865385vw 0 1.318682vw;
     }
-    /* .pending-summary — 1.806vw de alto, radio 1.389vw, fondo #24292f. */
+    /*
+     * .pending-summary del FIGMA (node 47:27651, medidas /14.4): FULL CONTAINER (width
+     * 100%), alto 1.806vw (26px), radio 0.903vw (pill), padding 0.278/0.556vw, fondo
+     * #24292f. El contenido va centrado.
+     */
     .fin__chip {
       display: flex;
       align-items: center;
-      gap: 0.274726vw;
-      align-self: flex-start;
-      height: 1.806319vw;
+      justify-content: center;
+      gap: 0.277778vw;
+      width: 100%;
+      height: 1.805556vw;
       margin-bottom: 1.25vw;
-      padding: 0.274726vw 0.556319vw;
-      border-radius: 1.387363vw;
+      padding: 0.277778vw 0.555556vw;
+      border-radius: 0.902778vw;
       background: #24292f;
       font-size: 0.803572vw;
       white-space: nowrap;
       box-sizing: border-box;
     }
     .fin__warn {
-      width: 0.940935vw;
-      height: 0.940935vw;
+      width: 1.25vw;
+      height: 1.25vw;
       flex: none;
       background-color: #ffc107;
       -webkit-mask: url('/icons/dialpad/warning.svg') no-repeat center / contain;
       mask: url('/icons/dialpad/warning.svg') no-repeat center / contain;
     }
-    /* .management-option — gap 0.486vw, texto 0.8vw. */
+    /* .management-option del bundle: gap 0.365vw, texto 0.6vw, margen inferior 1vw. */
     .fin__row {
       display: flex;
       align-items: center;
-      gap: 0.487638vw;
-      margin-bottom: 1.332418vw;
-      font-size: 0.803572vw;
-      line-height: 0.975275vw;
+      gap: 0.365vw;
+      margin-bottom: 1vw;
+      font-size: 0.6vw;
+      line-height: 0.729vw;
       cursor: pointer;
     }
     .fin__row span {
+      flex: 1 1 auto;
+      min-width: 0;
       overflow: hidden;
       white-space: nowrap;
       text-overflow: ellipsis;
     }
-    /*
-     * Casillas: el Figma las dibuja BLANCAS con la marca oscura, no en el azul del
-     * Design System. Se replica el diseño.
-     */
+    /* Casillas blancas con la marca oscura, como el original (sc-checkbox size sm). */
     .fin__row input {
       flex: none;
-      width: 1.085165vw;
-      height: 1.085165vw;
+      width: 0.833vw;
+      height: 0.833vw;
       margin: 0;
       accent-color: #fff;
       cursor: pointer;
     }
+    /* .management-separator del bundle: 0.026vw en #c6ccd6, margen 0.417 arriba 0.625 abajo. */
     .fin__sep {
-      height: 0.034341vw;
-      margin: 0 0 0.831044vw;
+      width: 100%;
+      height: 0.026vw;
+      margin: 0.417vw 0 0.625vw;
       background: #c6ccd6;
     }
     .fin__list {
@@ -222,10 +227,11 @@ export class FinalizeManagementComponent {
     () => this.rows().length > 0 && this.picked().length === this.rows().length
   );
 
-  constructor() {
-    // Igual que el Figma: al abrirse, llegan todas marcadas.
-    queueMicrotask(() => this.picked.set(this.rows().map((r) => r.id)));
-  }
+  /*
+   * Al abrirse, las casillas van SIN marcar, como el original: el agente elige cuales
+   * finaliza (con "Seleccionar todas" para marcarlas de golpe). Antes se premarcaban, y
+   * por eso no cuadraba 1:1 con la captura del real.
+   */
 
   protected toggle(id: number): void {
     this.picked.update((p) =>
