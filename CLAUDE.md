@@ -19,7 +19,7 @@ Resumen operativo:
   se consume el alias `--sc-spacing-*`. Nada de `calc(...)` manual ni px a pelo.
 - **Naming**: wrappers PrimeNG pegado (`sc-inputtext`); custom en kebab
   (`sc-empty-state`).
-- **Antes de dar nada por bueno**: `npm run verify` (26 gates encadenados) y, si
+- **Antes de dar nada por bueno**: `npm run verify` (27 gates encadenados) y, si
   tocaste algo visual, `npm run e2e`. **Antes de pushear no basta `verify`**: el CI
   son 8 pasos — ábrelos en `.github/workflows/ci.yml`, están enumerados.
 - ⚠️ **Los bloques `@sc-gen:*` son GENERADOS y viven en CINCO ficheros**, no solo en
