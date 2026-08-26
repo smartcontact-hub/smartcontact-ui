@@ -48,50 +48,50 @@ import { AgThemeService } from '../../theme/ag-theme.service';
       position: relative;
       display: flex;
       align-items: center;
-      gap: 14px;
+      gap: 0.961539vw;
       height: 100%;
-      padding: 18px 16px;
+      padding: 1.236264vw 1.098902vw;
     }
     /* Avatar: 84×84px, radio 9.26px, "R" a 26.4px (exacto). */
     .profile__avatar {
       flex: none;
-      width: 84px;
-      height: 84px;
-      border-radius: 9.26px;
+      width: 5.769231vw;
+      height: 5.769231vw;
+      border-radius: 0.63599vw;
       background: var(--ag-red);
       color: #fff;
       display: flex;
       align-items: center;
       justify-content: center;
-      font-size: 26.4px;
+      font-size: 1.813187vw;
       font-weight: 400;
     }
     .profile__info {
       display: flex;
       flex-direction: column;
-      gap: 2px;
+      gap: 0.137363vw;
     }
     .profile__name {
-      font-size: 15.2px;
+      font-size: 1.043957vw;
       font-weight: 400;
       color: var(--ag-text);
-      margin-bottom: 3px;
+      margin-bottom: 0.206044vw;
     }
     .profile__field {
-      font-size: 11.7px;
+      font-size: 0.803572vw;
       font-weight: 400;
       color: var(--ag-field);
       display: flex;
       align-items: center;
-      gap: 4px;
+      gap: 0.274726vw;
       white-space: nowrap;
     }
     .profile__theme {
       position: absolute;
-      right: 14px;
-      bottom: 14px;
-      width: 26px;
-      height: 26px;
+      right: 0.961539vw;
+      bottom: 0.961539vw;
+      width: 1.785715vw;
+      height: 1.785715vw;
       border-radius: 50%;
       border: none;
       background: var(--ag-elev);

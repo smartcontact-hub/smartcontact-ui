@@ -196,23 +196,23 @@ type Tab = 'historial' | 'pendientes';
     .tabs {
       display: flex;
       align-items: stretch;
-      gap: 24px;
-      height: 33.2px;
-      padding: 0 15.2px;
+      gap: 1.648352vw;
+      height: 2.28022vw;
+      padding: 0 1.043957vw;
       background: var(--ag-list);
-      border-bottom: 0.5px solid var(--ag-head-line);
+      border-bottom: 0.034341vw solid var(--ag-head-line);
     }
     .tabs button {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
+      gap: 0.412088vw;
       padding: 0;
       border: 0;
-      border-bottom: 2px solid transparent;
+      border-bottom: 0.137363vw solid transparent;
       background: none;
       color: var(--ag-thead);
       font-family: inherit;
-      font-size: 10.6px;
+      font-size: 0.728022vw;
       font-weight: 600;
       cursor: pointer;
     }
@@ -239,33 +239,33 @@ type Tab = 'historial' | 'pendientes';
       background: #ef4444;
       color: #fff;
       font-weight: 700;
-      min-width: 15.25px;
-      width: 15.25px;
-      height: 15.25px;
+      min-width: 1.047391vw;
+      width: 1.047391vw;
+      height: 1.047391vw;
       padding: 0;
       border-radius: 50%;
-      font-size: 7.6px;
-      line-height: 15.25px;
+      font-size: 0.521979vw;
+      line-height: 1.047391vw;
     }
 
     .tbl {
       width: 100%;
       border-collapse: collapse;
-      font-size: 11.7px;
+      font-size: 0.803572vw;
     }
     thead th {
-      height: 34px;
+      height: 2.335165vw;
       text-align: left;
       font-weight: 400;
       color: var(--ag-thead);
-      padding: 0 14.25px;
+      padding: 0 0.978709vw;
       border-bottom: 1px solid var(--ag-head-line);
       white-space: nowrap;
     }
     tbody td {
-      height: 42px;
+      height: 2.884616vw;
       color: var(--ag-text);
-      padding: 0 14.25px;
+      padding: 0 0.978709vw;
       border-bottom: 1px solid var(--ag-line-soft);
       vertical-align: middle;
       white-space: nowrap;
@@ -280,15 +280,15 @@ type Tab = 'historial' | 'pendientes';
      * para no meter una celda extra en la rejilla.
      */
     .col-dir {
-      width: 45.5px;
+      width: 3.125vw;
       padding: 0;
       text-align: center;
     }
     tbody .col-dir.st-lost {
-      box-shadow: inset 3.8px 0 0 0 #f75454;
+      box-shadow: inset 0.26099vw 0 0 0 #f75454;
     }
     tbody .col-dir.st-expired {
-      box-shadow: inset 3.8px 0 0 0 #8d939d;
+      box-shadow: inset 0.26099vw 0 0 0 #8d939d;
     }
     .col-com {
       width: 32%;
@@ -305,8 +305,8 @@ type Tab = 'historial' | 'pendientes';
      */
     .dir {
       display: inline-block;
-      width: 22.93px;
-      height: 11.46px;
+      width: 1.574863vw;
+      height: 0.787088vw;
       vertical-align: middle;
     }
     /* El estado 'expired' en el real pinta el SVG de #8d939d; aquí se aproxima con filtro. */
@@ -328,9 +328,9 @@ type Tab = 'historial' | 'pendientes';
     .state {
       display: inline-flex;
       align-items: center;
-      gap: 5px;
+      gap: 0.343407vw;
       color: #fff;
-      font-size: 11.7px;
+      font-size: 0.803572vw;
     }
     /* '.lost-status-button.managed' — gris al 72 %, encima del 55 % de la fila. */
     .state--managed {
@@ -340,25 +340,25 @@ type Tab = 'historial' | 'pendientes';
 
     /* Botón «Gestionar» de Pendientes: primario del DS (#0058ff) en el real. */
     .manage {
-      padding: 4px 10px;
+      padding: 0.274726vw 0.686814vw;
       border: 1px solid #0058ff;
-      border-radius: 4.37px;
+      border-radius: 0.300138vw;
       background: #0058ff;
       color: #fff;
       font-family: inherit;
-      font-size: 10.2px;
+      font-size: 0.70055vw;
       cursor: pointer;
     }
 
     /* Support/Wait: 1er tiempo plano + 2º como chip #5f6776 (rojo si supera umbral). */
     .sw__a {
       font-variant-numeric: tabular-nums;
-      margin-right: 8px;
+      margin-right: 0.549451vw;
     }
     .sw__b {
       display: inline-block;
-      padding: 1px 3.07px;
-      border-radius: 5.26px;
+      padding: 0.068682vw 0.210852vw;
+      border-radius: 0.361264vw;
       background: var(--ag-chip-bg);
       color: var(--ag-chip-text);
       font-variant-numeric: tabular-nums;

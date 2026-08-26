@@ -108,23 +108,23 @@ import type { ChatRow } from '../../data/seed';
       flex-direction: column;
       height: 100%;
       color: #fff;
-      font-size: 11.65px;
+      font-size: 0.800138vw;
     }
 
     /* .header-message-private — 44 sobre #333a41. */
     .conv__head {
       position: relative;
       flex: none;
-      height: 44px;
+      height: 3.021979vw;
       background: #333a41;
-      border-radius: 28.73px 28.73px 0 0;
+      border-radius: 1.973215vw 1.973215vw 0 0;
     }
     .conv__back {
       position: absolute;
-      top: 13px;
-      left: 23.3px;
-      width: 11.4px;
-      height: 17.5px;
+      top: 0.892858vw;
+      left: 1.600275vw;
+      width: 0.782968vw;
+      height: 1.201924vw;
       padding: 0;
       border: 0;
       background-color: #fff;
@@ -134,17 +134,17 @@ import type { ChatRow } from '../../data/seed';
     }
     .conv__name {
       position: absolute;
-      top: 14.9px;
-      left: 46px;
-      width: 90px;
+      top: 1.023352vw;
+      left: 3.159341vw;
+      width: 6.181319vw;
       overflow: hidden;
       white-space: nowrap;
       text-overflow: ellipsis;
     }
     .conv__time {
       position: absolute;
-      top: 15.6px;
-      left: 144.4px;
+      top: 1.071429vw;
+      left: 9.917583vw;
     }
     /*
      * .subcontainerIconMessagePrivate de la cabecera: 18.96 cuadrado, radio 4.37, fondo
@@ -154,12 +154,12 @@ import type { ChatRow } from '../../data/seed';
      */
     .conv__act {
       position: absolute;
-      top: 14.9px;
-      width: 18.96px;
-      height: 18.96px;
+      top: 1.023352vw;
+      width: 1.302198vw;
+      height: 1.302198vw;
       padding: 0;
       border: 0;
-      border-radius: 4.37px;
+      border-radius: 0.300138vw;
       background: #fff;
       cursor: pointer;
     }
@@ -168,8 +168,8 @@ import type { ChatRow } from '../../data/seed';
       position: absolute;
       top: 50%;
       left: 50%;
-      width: 8.34px;
-      height: 9.1px;
+      width: 0.572803vw;
+      height: 0.625vw;
       transform: translate(-50%, -50%);
       background-color: #262c32;
       -webkit-mask: var(--g) no-repeat center / contain;
@@ -182,11 +182,11 @@ import type { ChatRow } from '../../data/seed';
       background-color: #fff;
     }
     .conv__act--transfer {
-      left: 192.81px;
+      left: 13.242446vw;
       --g: url('/icons/dialpad/transferencia-chat.svg');
     }
     .conv__act--cancel {
-      left: 218.6px;
+      left: 15.013737vw;
       background: #f75454;
       --g: url('/icons/dialpad/cancelar.svg');
     }
@@ -210,13 +210,13 @@ import type { ChatRow } from '../../data/seed';
       flex: 1;
       min-height: 0;
       overflow-y: auto;
-      padding: 20.3px 11.9px 13.2px;
+      padding: 1.394231vw 0.817308vw 0.906594vw;
       background: #2d333a;
     }
     .line {
       display: flex;
       justify-content: flex-start;
-      margin-bottom: 7.6px;
+      margin-bottom: 0.521979vw;
     }
     .line--send {
       justify-content: flex-end;
@@ -224,59 +224,59 @@ import type { ChatRow } from '../../data/seed';
     /* .server — texto gris centrado, sin burbuja. */
     .line--server {
       justify-content: center;
-      margin-bottom: 11.4px;
-      padding: 0 2px;
+      margin-bottom: 0.782968vw;
+      padding: 0 0.137363vw;
       color: #aaaaaa;
       text-align: center;
     }
     /* .msg — radio 5.92 con la esquina inferior del lado propio a cero. */
     .bubble {
       position: relative;
-      max-width: 149.2px;
-      padding: 3.41px 8.44px 18.59px;
-      border-radius: 5.92px 5.92px 5.92px 0;
+      max-width: 10.247253vw;
+      padding: 0.234204vw 0.579671vw 1.276786vw;
+      border-radius: 0.406594vw 0.406594vw 0.406594vw 0;
       background: #1c1c1c;
       color: #fff;
       line-height: 1.35;
     }
     .bubble--send {
-      border-radius: 5.92px 5.92px 0 5.92px;
+      border-radius: 0.406594vw 0.406594vw 0 0.406594vw;
       background: #2179ed;
     }
     .bubble__time {
       position: absolute;
-      right: 8.44px;
-      bottom: 4px;
-      font-size: 10.1px;
+      right: 0.579671vw;
+      bottom: 0.274726vw;
+      font-size: 0.693682vw;
       opacity: 0.85;
     }
 
     /* .footer-container-message-private — 122.2 sobre #333a41. */
     .conv__foot {
       flex: none;
-      height: 122.2px;
-      padding-top: 11.4px;
+      height: 8.392858vw;
+      padding-top: 0.782968vw;
       background: #333a41;
       box-sizing: border-box;
     }
     .conv__tools {
       position: relative;
-      height: 19px;
-      padding: 0 9.73px;
+      height: 1.304946vw;
+      padding: 0 0.66827vw;
     }
     /* Iconos de 19 con radio 4.87: gris cuando estan deshabilitados. */
     .tool {
       position: absolute;
       top: 0;
       display: block;
-      width: 19px;
-      height: 19px;
-      border-radius: 4.87px;
+      width: 1.304946vw;
+      height: 1.304946vw;
+      border-radius: 0.334479vw;
     }
     .tool::after {
       content: '';
       position: absolute;
-      inset: 4px;
+      inset: 0.274726vw;
       background-color: #fff;
       -webkit-mask: var(--g) no-repeat center / contain;
       mask: var(--g) no-repeat center / contain;
@@ -285,13 +285,13 @@ import type { ChatRow } from '../../data/seed';
       background: #8d939d;
     }
     .tool--off:nth-of-type(1) {
-      left: 8.7px;
+      left: 0.597528vw;
     }
     .tool--off:nth-of-type(2) {
-      left: 34.5px;
+      left: 2.369506vw;
     }
     .tool--on {
-      left: 222.6px;
+      left: 15.288462vw;
       background: #fff;
     }
     .tool--on::after {
@@ -301,20 +301,20 @@ import type { ChatRow } from '../../data/seed';
     .conv__send {
       display: flex;
       align-items: flex-start;
-      gap: 8.3px;
-      margin-top: 14.4px;
-      padding: 0 11.3px;
+      gap: 0.570055vw;
+      margin-top: 0.989011vw;
+      padding: 0 0.776099vw;
     }
     .conv__send textarea {
-      width: 187.3px;
-      height: 44.9px;
-      padding: 8.45px 8.45px 7.61px;
+      width: 12.864011vw;
+      height: 3.083792vw;
+      padding: 0.580358vw 0.580358vw 0.522665vw;
       border: 0;
-      border-radius: 10.14px;
+      border-radius: 0.696429vw;
       background: #1f2429;
       color: #fff;
       font-family: inherit;
-      font-size: 11.65px;
+      font-size: 0.800138vw;
       resize: none;
       outline: none;
       box-sizing: border-box;
@@ -322,11 +322,11 @@ import type { ChatRow } from '../../data/seed';
     .conv__go {
       position: relative;
       flex: none;
-      width: 32px;
-      height: 32px;
-      margin-top: 6.4px;
+      width: 2.197803vw;
+      height: 2.197803vw;
+      margin-top: 0.439561vw;
       border: 0;
-      border-radius: 10.14px;
+      border-radius: 0.696429vw;
       background: #2179ed;
       cursor: pointer;
     }
@@ -337,7 +337,7 @@ import type { ChatRow } from '../../data/seed';
     .conv__go::after {
       content: '';
       position: absolute;
-      inset: 6.6px;
+      inset: 0.453297vw;
       background-color: #fff;
       -webkit-mask: url('/icons/dialpad/avion_envio.svg') no-repeat center / contain;
       mask: url('/icons/dialpad/avion_envio.svg') no-repeat center / contain;

@@ -4,8 +4,8 @@ import { CALLS, type CallRow } from '../../data/seed';
 /**
  * Sección «Histórico» del Comunicador — la lista de conversaciones recientes.
  *
- * Todas las posiciones están medidas en vivo sobre el widget real y expresadas a la
- * escala de sc-agent ('px = vw x 14.56', ver 'projects/agent/docs/escala.md'). La
+ * Todas las posiciones están medidas en vivo sobre el widget real y expresadas en vw,
+ * como el original (ver 'projects/agent/docs/escala.md'). La
  * tarjeta se posiciona en absoluto porque el original coloca sus cuatro piezas en
  * coordenadas fijas, no en un flujo.
  */
@@ -88,32 +88,32 @@ import { CALLS, type CallRow } from '../../data/seed';
       flex-direction: column;
       height: 100%;
       color: #fff;
-      font-size: 11.65px;
+      font-size: 0.800138vw;
     }
     .recents__title {
       flex: none;
-      height: 20.5px;
-      margin-top: 10.6px;
+      height: 1.407968vw;
+      margin-top: 0.728022vw;
       text-align: center;
     }
     .recents__text {
       font-family: 'Open Sans Semibold', var(--ag-font);
       font-weight: 600;
-      font-size: 13.66px;
-      line-height: 20.5px;
+      font-size: 0.938187vw;
+      line-height: 1.407968vw;
     }
     .recents__cards {
       flex: 1;
       min-height: 0;
-      margin-top: 17.9px;
+      margin-top: 1.229396vw;
       overflow-y: auto;
     }
 
     /* .card-recents — 250.3 x 63.4 sobre #2d333a, separador negro de 0.56. */
     .card {
       position: relative;
-      height: 63.4px;
-      border-bottom: 0.56px solid #000;
+      height: 4.354396vw;
+      border-bottom: 0.038462vw solid #000;
       background: #2d333a;
     }
     /* El original resalta la tarjeta entera al pasar por encima. */
@@ -124,7 +124,7 @@ import { CALLS, type CallRow } from '../../data/seed';
     .card__status {
       position: absolute;
       inset: 0 auto 0 0;
-      width: 7.6px;
+      width: 0.521979vw;
     }
     .card__status.busy {
       background: #f75454;
@@ -132,8 +132,8 @@ import { CALLS, type CallRow } from '../../data/seed';
     /* .event-type — el icono a 16.7 / 13.3, 20.5 x 11.4. */
     .card__icon {
       position: absolute;
-      top: 13.3px;
-      left: 16.7px;
+      top: 0.913462vw;
+      left: 1.146979vw;
       display: block;
     }
     /* .origin / .date / .service-group — coordenadas del original. */
@@ -146,19 +146,19 @@ import { CALLS, type CallRow } from '../../data/seed';
       text-overflow: ellipsis;
     }
     .card__origin {
-      top: 9.1px;
-      left: 49.3px;
-      width: 129.3px;
+      top: 0.625vw;
+      left: 3.38599vw;
+      width: 8.880495vw;
     }
     .card__date {
-      top: 9.1px;
-      left: 178.6px;
-      width: 55.4px;
+      top: 0.625vw;
+      left: 12.266484vw;
+      width: 3.804946vw;
     }
     .card__group {
-      top: 36px;
-      left: 49.3px;
-      width: 120px;
+      top: 2.472528vw;
+      left: 3.38599vw;
+      width: 8.241759vw;
     }
     /*
      * .extra-info / .show-extra-info — la píldora del chevron va pegada abajo, centrada
@@ -173,11 +173,11 @@ import { CALLS, type CallRow } from '../../data/seed';
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 136.5px;
-      height: 9.9px;
+      width: 9.375vw;
+      height: 0.679946vw;
       padding: 0;
       border: 0;
-      border-radius: 7.6px 7.6px 0.76px 0;
+      border-radius: 0.521979vw 0.521979vw 0.052198vw 0;
       background: #000;
       visibility: hidden;
       cursor: pointer;
@@ -187,8 +187,8 @@ import { CALLS, type CallRow } from '../../data/seed';
       visibility: visible;
     }
     .card__chevron {
-      width: 6.8px;
-      height: 9.9px;
+      width: 0.467033vw;
+      height: 0.679946vw;
       background-color: #fff;
       -webkit-mask: url('/icons/comunicator/flecha_2.svg') no-repeat center / contain;
       mask: url('/icons/comunicator/flecha_2.svg') no-repeat center / contain;
@@ -199,36 +199,36 @@ import { CALLS, type CallRow } from '../../data/seed';
 
     /* .extra-info-container — 88.5 de alto sobre #1f2429, padding 12.67 17.75. */
     .extra {
-      padding: 12.67px 17.75px;
+      padding: 0.870193vw 1.219094vw;
       background: #1f2429;
     }
     .extra__line {
       display: flex;
       align-items: center;
-      height: 17.5px;
-      margin-bottom: 15.6px;
+      height: 1.201924vw;
+      margin-bottom: 1.071429vw;
     }
     .extra__line:last-child {
       margin-bottom: 0;
     }
     .extra__label {
-      padding-right: 8.45px;
+      padding-right: 0.580358vw;
       color: #afb1b4;
     }
     .extra__value {
-      padding-right: 8.45px;
+      padding-right: 0.580358vw;
       color: #fff;
     }
     /* La espera va en chip #5f6776, radio 6.76. */
     .extra__chip {
-      padding: 0 4.22px;
-      border-radius: 6.76px;
+      padding: 0 0.289836vw;
+      border-radius: 0.464286vw;
       background: #5f6776;
       color: #fff;
     }
     /* El nivel de tipificación va en azul. */
     .extra__level {
-      padding-right: 8.45px;
+      padding-right: 0.580358vw;
       color: #3e7fff;
     }
   `,

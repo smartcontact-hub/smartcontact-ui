@@ -47,9 +47,9 @@ import { AgIconComponent } from '../ui/app-icon.component';
       display: flex;
       align-items: center;
       justify-content: center;
-      gap: 22px;
+      gap: 1.51099vw;
       height: 100%;
-      padding: 12px 16px;
+      padding: 0.824176vw 1.098902vw;
     }
     .gauge__ring {
       position: relative;
@@ -66,30 +66,30 @@ import { AgIconComponent } from '../ui/app-icon.component';
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 2px;
+      gap: 0.137363vw;
     }
     .gauge__num {
-      font-size: 21.3px;
+      font-size: 1.462913vw;
       font-weight: 400;
       color: var(--ag-text);
       line-height: 1;
     }
     .gauge__sub {
-      font-size: 9.1px;
+      font-size: 0.625vw;
       color: var(--ag-dim);
     }
     .gauge__metrics {
       display: flex;
       flex-direction: column;
-      gap: 13px;
+      gap: 0.892858vw;
     }
     .metric {
       display: flex;
       flex-direction: column;
-      gap: 2px;
+      gap: 0.137363vw;
     }
     .metric__val {
-      font-size: 11.7px;
+      font-size: 0.803572vw;
       font-weight: 400;
       color: var(--ag-text);
       line-height: 1;
@@ -97,8 +97,8 @@ import { AgIconComponent } from '../ui/app-icon.component';
     .metric__label {
       display: inline-flex;
       align-items: center;
-      gap: 4px;
-      font-size: 9.1px;
+      gap: 0.274726vw;
+      font-size: 0.625vw;
       color: var(--ag-muted);
     }
   `,

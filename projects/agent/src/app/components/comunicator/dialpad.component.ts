@@ -28,7 +28,8 @@ const KEYS = [
  *
  * En el real, '.container-call' alterna dos cuerpos según 'callInProgress': '.dialpad'
  * (esto) y '.current-call'. Aquí está montado el primero: teclado, selector de nodo y
- * el botón de llamar. Medidas del real convertidas con 'px = vw x 14.56'
+ * el botón de llamar. Medidas del real copiadas TAL CUAL en vw (ver docs/escala.md;
+ * los comentarios dan el px equivalente a 1456, que es como se midieron)
  * (ver 'projects/agent/docs/escala.md').
  *
  * Cuando el agente no puede llamar, el real atenúa teclado y selector al 30 % y los
@@ -144,7 +145,7 @@ const KEYS = [
 
     /* .dialpad .keypad — margin 3.438 1.823 2.396 1.875vw */
     .keypad {
-      margin: 50.1px 26.5px 34.9px 27.3px;
+      margin: 3.440935vw 1.820055vw 2.396979vw 1.875vw;
     }
     /* Estado que no permite llamar: el real lo atenúa y lo deja inerte. */
     .keypad.blocked,
@@ -159,9 +160,9 @@ const KEYS = [
       flex-direction: row;
       align-items: center;
       justify-content: space-between;
-      width: 197.2px;
-      height: 34.1px;
-      border-bottom: 0.76px solid rgba(255, 255, 255, 0.5);
+      width: 13.543957vw;
+      height: 2.342033vw;
+      border-bottom: 0.052198vw solid rgba(255, 255, 255, 0.5);
     }
     .display__spacer {
       width: 20%;
@@ -171,17 +172,17 @@ const KEYS = [
       align-items: center;
       justify-content: center;
       width: 80%;
-      height: 20.5px;
+      height: 1.407968vw;
     }
     .display__num input {
-      width: 176.4px;
+      width: 12.115385vw;
       border: none;
       outline: none;
       background: none;
       color: #fff;
       /* El número usa Roboto en el real, no Open Sans. */
       font-family: 'Roboto', var(--ag-font);
-      font-size: 20.5px;
+      font-size: 1.407968vw;
       text-align: center;
     }
     .display__del {
@@ -196,8 +197,8 @@ const KEYS = [
     }
     .display__del::after {
       content: '';
-      width: 16.7px;
-      height: 10.6px;
+      width: 1.146979vw;
+      height: 0.728022vw;
       background-color: #fff;
       -webkit-mask: url('/icons/dialpad/borrar.svg') no-repeat center / contain;
       mask: url('/icons/dialpad/borrar.svg') no-repeat center / contain;
@@ -210,9 +211,9 @@ const KEYS = [
       flex-wrap: wrap;
       align-items: center;
       justify-content: space-between;
-      width: 163px;
-      margin-top: 34.1px;
-      margin-left: 15.9px;
+      width: 11.195055vw;
+      margin-top: 2.342033vw;
+      margin-left: 1.092033vw;
       user-select: none;
     }
     /* .keys — 2.813vw, radio 1.146vw */
@@ -220,10 +221,10 @@ const KEYS = [
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 41px;
-      height: 41px;
+      width: 2.815935vw;
+      height: 2.815935vw;
       border: 0;
-      border-radius: 16.7px;
+      border-radius: 1.146979vw;
       background: transparent;
       cursor: pointer;
     }
@@ -241,7 +242,7 @@ const KEYS = [
     .key__n {
       color: #fff;
       font-family: var(--ag-font);
-      font-size: 18.2px;
+      font-size: 1.25vw;
     }
 
     /* .service-group — margin 2.344 1.823 0 1.875vw */
@@ -250,7 +251,7 @@ const KEYS = [
       display: flex;
       align-items: center;
       justify-content: center;
-      margin: 34.1px 26.5px 0 27.3px;
+      margin: 2.342033vw 1.820055vw 0 1.875vw;
     }
     /*
      * .containerButtonSelect — el desplegable sube desde el botón: mismo ancho
@@ -258,13 +259,13 @@ const KEYS = [
      */
     .group__list {
       position: absolute;
-      bottom: calc(100% + 6.3px);
-      width: 123.6px;
-      max-height: 199.4px;
+      bottom: calc(100% + 0.432693vw);
+      width: 8.489011vw;
+      max-height: 13.695055vw;
       overflow-y: auto;
-      border-radius: 13.5px;
+      border-radius: 0.927198vw;
       background: #1f2429;
-      box-shadow: 2.3px 2.3px 0.76px rgba(0, 0, 0, 0.18);
+      box-shadow: 0.157968vw 0.157968vw 0.052198vw rgba(0, 0, 0, 0.18);
       z-index: 2;
     }
     /* .service-group-info — 44px de alto, dos líneas, opacidad 0.75. */
@@ -273,12 +274,12 @@ const KEYS = [
       flex-direction: column;
       justify-content: center;
       align-items: flex-start;
-      gap: 1px;
+      gap: 0.068682vw;
       width: 100%;
-      height: 44px;
-      padding: 8.5px 25.4px 8.5px 11px;
+      height: 3.021979vw;
+      padding: 0.583792vw 1.744506vw 0.583792vw 0.755495vw;
       border: 0;
-      border-bottom: 0.56px solid #000;
+      border-bottom: 0.038462vw solid #000;
       background: transparent;
       color: #fff;
       font-family: var(--ag-font);
@@ -287,7 +288,7 @@ const KEYS = [
        * segunda: el texto se sale de la caja. Es un fallo suyo, no un diseño, así que
        * se replica la primera — la que cuadra con la caja.
        */
-      font-size: 10.6px;
+      font-size: 0.728022vw;
       opacity: 0.75;
       text-align: left;
       cursor: pointer;
@@ -312,16 +313,16 @@ const KEYS = [
      * «Finalizar» del Figma de SISMAC-3780: el patrón de control del dialpad.
      */
     .group__btn {
-      width: 123.6px;
-      height: 27.3px;
-      padding-left: 7.4px;
-      border: 0.76px solid #fff;
-      border-radius: 9.1px;
+      width: 8.489011vw;
+      height: 1.875vw;
+      padding-left: 0.508242vw;
+      border: 0.052198vw solid #fff;
+      border-radius: 0.625vw;
       /* background-COLOR, no el atajo: el atajo resetea la flecha de background-image. */
       background-color: transparent;
       color: #fff;
       font-family: var(--ag-font);
-      font-size: 11.7px;
+      font-size: 0.803572vw;
       text-align: left;
       overflow: hidden;
       white-space: nowrap;
@@ -341,7 +342,7 @@ const KEYS = [
       background-image: var(--arrow);
       background-repeat: no-repeat;
       background-position: 90% 50%;
-      background-size: 7.6px 7.6px;
+      background-size: 0.521979vw 0.521979vw;
       --arrow: url('/icons/comunicator/flecha_2.svg');
     }
     .group__btn.open {
@@ -355,7 +356,7 @@ const KEYS = [
       align-items: center;
       justify-content: center;
       width: 100%;
-      height: 82.2px;
+      height: 5.645605vw;
       flex: none;
     }
     /* .btn-call — 11.146 x 2.76vw, radio 0.833vw */
@@ -363,17 +364,17 @@ const KEYS = [
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 162.3px;
-      height: 40.2px;
+      width: 11.146979vw;
+      height: 2.76099vw;
       border: none;
-      border-radius: 12.1px;
+      border-radius: 0.831044vw;
       outline: none;
       cursor: pointer;
     }
     .btn-call::after {
       content: '';
-      width: 18.2px;
-      height: 18.2px;
+      width: 1.25vw;
+      height: 1.25vw;
       background-color: #fff;
       -webkit-mask: url('/icons/dialpad/telefono_pequeno_blanco.svg') no-repeat center / contain;
       mask: url('/icons/dialpad/telefono_pequeno_blanco.svg') no-repeat center / contain;
@@ -389,8 +390,8 @@ const KEYS = [
       background: #f43434;
     }
     .btn-call.hangup::after {
-      width: 25.8px;
-      height: 25.8px;
+      width: 1.771979vw;
+      height: 1.771979vw;
       -webkit-mask-image: url('/icons/dialpad/colgar-grande-blanco.svg');
       mask-image: url('/icons/dialpad/colgar-grande-blanco.svg');
     }
@@ -399,7 +400,7 @@ const KEYS = [
     }
     .btn-call:disabled {
       background: transparent;
-      border: 0.76px solid #85898d;
+      border: 0.052198vw solid #85898d;
       cursor: default;
     }
     .btn-call:disabled::after {
@@ -410,12 +411,12 @@ const KEYS = [
     .security {
       width: 90%;
       margin: 0;
-      padding: 6.1px 16.7px;
-      border-radius: 9.1px;
+      padding: 0.418957vw 1.146979vw;
+      border-radius: 0.625vw;
       background-color: #762727;
       color: #fff;
       font-family: var(--ag-font);
-      font-size: 9.1px;
+      font-size: 0.625vw;
       font-weight: 700;
       text-align: center;
     }

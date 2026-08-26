@@ -57,7 +57,7 @@ import { AgentStateService } from '../../agent-state.service';
       display: flex;
       flex-direction: column;
       height: 100%;
-      border-radius: 25.79px 25.79px 0 0;
+      border-radius: 1.771292vw 1.771292vw 0 0;
       background: #2d333a;
       color: #fff;
       overflow: hidden;
@@ -68,37 +68,37 @@ import { AgentStateService } from '../../agent-state.service';
       display: flex;
       align-items: center;
       justify-content: center;
-      height: 44.73px;
-      border-bottom: 0.76px solid rgba(0, 0, 0, 0.397);
+      height: 3.072116vw;
+      border-bottom: 0.052198vw solid rgba(0, 0, 0, 0.397);
       background: #333a41;
     }
     .typ__title {
-      height: 20.49px;
+      height: 1.407281vw;
       font-family: 'Open Sans Semibold', var(--ag-font);
       font-weight: 600;
-      font-size: 13.66px;
-      line-height: 20.49px;
+      font-size: 0.938187vw;
+      line-height: 1.407281vw;
     }
     /* Los tres niveles solo salen en la tipificación de llamada. */
     .typ__levels {
       flex: none;
       display: flex;
       flex-direction: column;
-      gap: 8px;
-      margin: 10.01px 22.76px 0 21.98px;
+      gap: 0.549451vw;
+      margin: 0.6875vw 1.563187vw 0 1.509616vw;
     }
     /* .boton — 14.115 x 1.875vw, radio 0.729vw, blanco con texto negro. */
     .typ__level {
       display: flex;
       align-items: center;
-      height: 27.3px;
-      padding: 0 10.6px;
-      border: 0.76px solid #fff;
-      border-radius: 10.62px;
+      height: 1.875vw;
+      padding: 0 0.728022vw;
+      border: 0.052198vw solid #fff;
+      border-radius: 0.729396vw;
       background: #fff;
       color: #000;
       font-family: var(--ag-font);
-      font-size: 11.65px;
+      font-size: 0.800138vw;
       text-align: left;
       cursor: pointer;
     }
@@ -116,15 +116,15 @@ import { AgentStateService } from '../../agent-state.service';
     /* .textArea — 205.54 x 184.29 sobre #1f2429, borde #11131a, radio 0.833vw. */
     .typ__text {
       flex: none;
-      height: 184.29px;
-      margin: 10.01px 22.76px 0 21.98px;
-      padding: 1.8px 7.5px;
-      border: 0.76px solid #11131a;
-      border-radius: 12.13px;
+      height: 12.657281vw;
+      margin: 0.6875vw 1.563187vw 0 1.509616vw;
+      padding: 0.123627vw 0.51511vw;
+      border: 0.052198vw solid #11131a;
+      border-radius: 0.833105vw;
       background: #1f2429;
       color: #fff;
       font-family: var(--ag-font);
-      font-size: 11.65px;
+      font-size: 0.800138vw;
       resize: none;
       outline: none;
       box-sizing: border-box;
@@ -139,14 +139,14 @@ import { AgentStateService } from '../../agent-state.service';
      */
     .typ__save {
       flex: none;
-      height: 40.18px;
-      margin: 12.52px 23.52px 0 22.75px;
-      border: 0.76px solid #fff;
-      border-radius: 12.13px;
+      height: 2.759616vw;
+      margin: 0.859891vw 1.615385vw 0 1.5625vw;
+      border: 0.052198vw solid #fff;
+      border-radius: 0.833105vw;
       background-color: transparent;
       color: #fff;
       font-family: var(--ag-font);
-      font-size: 11.65px;
+      font-size: 0.800138vw;
       cursor: pointer;
     }
     .typ__save:hover {

@@ -3,8 +3,8 @@
 Original: `https://comunicatoraeddev.smart-contact.com/sismac/` (superficie a medir:
 `#/private`, tras login)
 Réplica: `projects/agent` servida en `http://127.0.0.1:8792/`
-Stack de la réplica: Angular 20 standalone, CSS por componente en `styles:` con px
-literales a escala 1456.
+Stack de la réplica: Angular 20 standalone, CSS por componente en `styles:` en **`vw`**,
+igual que el original (era px a escala 1456 hasta el 2026-08-26).
 
 Herramientas en `./tools/`, ejecutables con `node tools/<script>.ts` (Node 25 lee TS
 directo). Node de nvm (v20) NO vale: `export PATH=/usr/local/bin:$PATH`.
@@ -24,24 +24,27 @@ directo). Node de nvm (v20) NO vale: `export PATH=/usr/local/bin:$PATH`.
 | 7 · Verificación            | por bloque | no iniciada  | —                                                        |
 | 8 · Comportamientos nuevos  | global     | no iniciada  | —                                                        |
 
-Bloques DIRTY: ninguno (no se ha aplicado ningún cambio).
+Bloques DIRTY: ninguno.
 
-## Bloqueos abiertos — los tres necesitan decisión tuya
+## Decidido y aplicado (2026-08-26)
 
-1. **GATE 0 · Pipeline de fuentes.** El original sirve Open Sans **estático** en 8
-   familias separadas más Roboto estático; la réplica sirve Open Sans **variable** en una
-   sola familia y **no sirve Roboto**. Además el bit `USE_TYPO_METRICS` difiere
-   (original `false`, réplica `true`). Opciones A/B/C en `phase-0-verdict.md`.
+1. **GATE 0 · Fuentes → opción A.** Los ficheros del original se sirven desde el repo con
+   los mismos nombres de familia. Paridad de métricas **exacta**, incluido
+   `USE_TYPO_METRICS`. Ver `phase-0-verdict.md` y `projects/agent/public/fonts/LICENSE.md`.
 
-2. **ACCESO.** La superficie medible del original está tras login. No introduzco
-   credenciales. Hace falta un `storageState` de Playwright generado por ti, o acotar el
-   alcance.
+2. **ALCANCE → como el original.** La réplica vuelve a **`vw`**: 640 valores en 16
+   ficheros. A 1456 el render es idéntico (**0 bloqueantes y 0 menores en los 9 estados**)
+   y el Comunicador escala constante en vw a 1280 / 1456 / 1920. Ver
+   `scope-vw-conversion.md` y `projects/agent/docs/escala.md`.
 
-3. **ALCANCE RESPONSIVE.** El encargo pide todo el rango 320→1920. La réplica está
-   congelada a px con referencia **1456** por decisión ya documentada
-   (`projects/agent/docs/escala.md`). Tal cual, las Fases 1 y 5 darían BLOQUEANTE en todo
-   ancho distinto de 1456 por diseño. Elegir: rango responsive (volver a vw) o mantener px
-   (conjunto de medición = 1456).
+## Bloqueo abierto — necesita algo tuyo
+
+**ACCESO al original.** La superficie a medir (`#/private`) está tras login y no introduzco
+credenciales. Sin eso no arrancan la Fase 1 (breakpoints reales del original) ni la Fase 5
+(curvas fluidas), y con ellas se queda sin cerrar el hueco de la altura de fila de la tabla
+(2.535 / 2.885 / 3.804 vw a 1280 / 1456 / 1920, ver `scope-vw-conversion.md`).
+
+Lo que desbloquea: te logueas una vez y guardamos el `storageState` de Playwright.
 
 ## Harness — verificado
 

@@ -82,17 +82,17 @@ import { CHATS, type ChatRow } from '../../data/seed';
     /* .header-message — 93.8 de alto. */
     .chats__head {
       flex: none;
-      height: 93.8px;
-      padding-top: 10.6px;
+      height: 6.442308vw;
+      padding-top: 0.728022vw;
       box-sizing: border-box;
     }
     /* .header-message-subheader — 20.5, titulo 13.66 Semibold centrado. */
     .chats__title {
-      height: 20.5px;
+      height: 1.407968vw;
       font-family: 'Open Sans Semibold', var(--ag-font);
       font-weight: 600;
-      font-size: 13.66px;
-      line-height: 20.5px;
+      font-size: 0.938187vw;
+      line-height: 1.407968vw;
       text-align: center;
     }
     /* .buscador — 204.89 x 26.54 a 22.7, radio 7.59, con la lupa de 12.12 a 11.88. */
@@ -100,15 +100,15 @@ import { CHATS, type ChatRow } from '../../data/seed';
       position: relative;
       display: flex;
       align-items: center;
-      width: 204.89px;
-      height: 26.54px;
-      margin: 17.9px 0 0 22.7px;
+      width: 14.072116vw;
+      height: 1.822803vw;
+      margin: 1.229396vw 0 0 1.559066vw;
     }
     .chats__lupa {
       position: absolute;
-      left: 11.88px;
-      width: 12.12px;
-      height: 12.12px;
+      left: 0.815935vw;
+      width: 0.832418vw;
+      height: 0.832418vw;
       background-color: var(--ag-muted);
       -webkit-mask: url('/icons/dialpad/lupa.svg') no-repeat center / contain;
       mask: url('/icons/dialpad/lupa.svg') no-repeat center / contain;
@@ -117,13 +117,13 @@ import { CHATS, type ChatRow } from '../../data/seed';
     .chats__search input {
       width: 100%;
       height: 100%;
-      padding: 0 11.88px 0 32.78px;
+      padding: 0 0.815935vw 0 2.251374vw;
       border: 0;
-      border-radius: 7.59px;
+      border-radius: 0.521292vw;
       background: #1f2429;
       color: #fff;
       font-family: inherit;
-      font-size: 11.65px;
+      font-size: 0.800138vw;
       outline: none;
       box-sizing: border-box;
     }
@@ -137,11 +137,11 @@ import { CHATS, type ChatRow } from '../../data/seed';
     .msg {
       position: relative;
       display: block;
-      width: 250.3px;
-      height: 88.9px;
+      width: 17.190935vw;
+      height: 6.10577vw;
       padding: 0;
       border: 0;
-      border-bottom: 0.56px solid #000;
+      border-bottom: 0.038462vw solid #000;
       background: #2d333a;
       text-align: left;
       cursor: pointer;
@@ -153,7 +153,7 @@ import { CHATS, type ChatRow } from '../../data/seed';
     .msg__status {
       position: absolute;
       inset: 0 auto 0 0;
-      width: 7.6px;
+      width: 0.521979vw;
     }
     /* Colores del original: rojo sin leer, teal a la espera de tipificar, gris caducada. */
     .msg__status.busy {
@@ -168,41 +168,41 @@ import { CHATS, type ChatRow } from '../../data/seed';
     /* .avatar-content — 28.1 cuadrado, radio 10.14, a 19.7 / 15.2. */
     .msg__avatar {
       position: absolute;
-      top: 15.2px;
-      left: 19.7px;
+      top: 1.043957vw;
+      left: 1.353022vw;
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 28.1px;
-      height: 28.1px;
-      border-radius: 10.14px;
+      width: 1.929946vw;
+      height: 1.929946vw;
+      border-radius: 0.696429vw;
       color: #fff;
-      font-size: 10.24px;
+      font-size: 0.703297vw;
     }
     /* .message-info — a 47.8, 182 de ancho. */
     .msg__info {
       position: absolute;
-      top: 7.6px;
-      left: 47.8px;
-      width: 182px;
+      top: 0.521979vw;
+      left: 3.282968vw;
+      width: 12.5vw;
     }
     .msg__row {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 6px;
-      height: 16.7px;
-      padding-left: 9.1px;
+      gap: 0.412088vw;
+      height: 1.146979vw;
+      padding-left: 0.625vw;
     }
     .msg__name {
       overflow: hidden;
       white-space: nowrap;
       text-overflow: ellipsis;
-      font-size: 11.37px;
+      font-size: 0.780907vw;
     }
     .msg__time {
       flex: none;
-      font-size: 10.63px;
+      font-size: 0.730083vw;
     }
     /*
      * .message-info-group — contenedor relativo de 16.69 minimo con padding 0 13.66 0 7.59.
@@ -212,18 +212,18 @@ import { CHATS, type ChatRow } from '../../data/seed';
       position: relative;
       display: flex;
       align-items: center;
-      min-height: 16.69px;
-      padding: 0 13.66px 0 7.59px;
+      min-height: 1.146292vw;
+      padding: 0 0.938187vw 0 0.521292vw;
     }
     /* .text-group — tope de 151.7 y elipsis, para no chocar con el boton. */
     .msg__gtext {
-      max-width: 151.7px;
+      max-width: 10.418957vw;
       overflow: hidden;
       white-space: nowrap;
       text-overflow: ellipsis;
       color: #73abf4;
-      font-size: 11.37px;
-      line-height: 17.1px;
+      font-size: 0.780907vw;
+      line-height: 1.174451vw;
     }
     /*
      * .subcontainerIconMessagePrivate — 15.93 cuadrado, radio 4.37, fondo blanco con el
@@ -237,10 +237,10 @@ import { CHATS, type ChatRow } from '../../data/seed';
       display: none;
       padding: 0;
       border: 0;
-      width: 15.93px;
-      height: 15.93px;
-      margin-top: 0.73px;
-      border-radius: 4.37px;
+      width: 1.094094vw;
+      height: 1.094094vw;
+      margin-top: 0.050138vw;
+      border-radius: 0.300138vw;
       background: #fff;
       cursor: pointer;
     }
@@ -252,8 +252,8 @@ import { CHATS, type ChatRow } from '../../data/seed';
       position: absolute;
       top: 50%;
       left: 50%;
-      width: 6.83px;
-      height: 6.83px;
+      width: 0.469094vw;
+      height: 0.469094vw;
       transform: translate(-50%, -50%);
       background-color: #262c32;
       -webkit-mask: url('/icons/dialpad/tipificar.svg') no-repeat center / contain;
@@ -270,9 +270,9 @@ import { CHATS, type ChatRow } from '../../data/seed';
       -webkit-line-clamp: 2;
       -webkit-box-orient: vertical;
       overflow: hidden;
-      padding-left: 9.1px;
+      padding-left: 0.625vw;
       color: var(--ag-text-2);
-      font-size: 11.37px;
+      font-size: 0.780907vw;
       line-height: 1.4;
     }
   `,

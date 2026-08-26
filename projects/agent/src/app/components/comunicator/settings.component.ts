@@ -181,87 +181,87 @@ import { GRUPOS, PROFILE, type Grupo } from '../../data/seed';
     .set {
       display: flex;
       flex-direction: column;
-      height: 433px;
-      border-radius: 28.73px;
+      height: 29.739011vw;
+      border-radius: 1.973215vw;
       background: #2d333a;
       color: #fff;
       overflow: hidden;
     }
     .set__head {
       flex: none;
-      height: 99.6px;
+      height: 6.84066vw;
       background: #333a41;
-      border-radius: 28.73px 28.73px 0 0;
+      border-radius: 1.973215vw 1.973215vw 0 0;
     }
     .set__title {
       display: flex;
       align-items: center;
       justify-content: center;
-      height: 30.3px;
-      padding-left: 12.98px;
+      height: 2.081044vw;
+      padding-left: 0.891484vw;
       font-family: 'Open Sans Semibold', var(--ag-font);
       font-weight: 600;
-      font-size: 13.66px;
+      font-size: 0.938187vw;
     }
     .set__help {
-      width: 31.3px;
+      width: 2.149726vw;
     }
     /* .header-message-toggle — ocupa el ancho del panel, no los 204.9 de Agentes. */
     .set__tabbar {
-      width: 244.47px;
-      margin-left: 2.91px;
+      width: 16.790522vw;
+      margin-left: 0.199863vw;
     }
     /* Las mitades miden 30.33 de alto y el texto se apoya abajo. */
     .set__tabs {
       display: flex;
-      height: 30.33px;
+      height: 2.083105vw;
     }
     .set__tabs button {
       display: flex;
       align-items: flex-end;
-      width: 122.24px;
+      width: 8.395605vw;
       padding: 0;
       border: 0;
       background: none;
       color: #5f6776;
       font-family: 'Open Sans Semibold', var(--ag-font);
       font-weight: 600;
-      font-size: 9.86px;
+      font-size: 0.677198vw;
       cursor: pointer;
     }
     .set__tabs button:first-child {
       justify-content: flex-start;
-      padding-left: 17.47px;
+      padding-left: 1.199863vw;
     }
     .set__tabs button:last-child {
       justify-content: flex-end;
-      padding-right: 17.47px;
+      padding-right: 1.199863vw;
     }
     .set__tabs button.on {
       color: #fff;
     }
     .set__rail {
       position: relative;
-      height: 24.3px;
+      height: 1.668957vw;
     }
     /* .toggleBarLine — hr de 1.11 en #5f6776 al 25%. */
     .set__rail::before {
       content: '';
       position: absolute;
-      top: 11.65px;
-      left: 20.37px;
-      width: 203.72px;
-      height: 1.11px;
+      top: 0.800138vw;
+      left: 1.399039vw;
+      width: 13.991759vw;
+      height: 0.076237vw;
       background: #5f6776;
       opacity: 0.25;
     }
     /* Aqui la pildora monta 9.96 sobre la barra (0.95rem), no los 0.93rem de Agentes. */
     .set__pill {
       position: absolute;
-      top: 9.96px;
-      width: 37.92px;
-      height: 3.78px;
-      border-radius: 3.03px;
+      top: 0.684066vw;
+      width: 2.604396vw;
+      height: 0.259616vw;
+      border-radius: 0.208105vw;
       background: #fff;
       transition: left 0.18s ease;
     }
@@ -275,13 +275,13 @@ import { GRUPOS, PROFILE, type Grupo } from '../../data/seed';
     /* ── Perfil ─────────────────────────────────────────────────────────── */
     /* El bloque de Perfil ocupa 202.95 arrancando a 20.38, como en el original. */
     .prof {
-      padding: 17.5px 26.95px 0 20.38px;
-      font-size: 12.13px;
+      padding: 1.201924vw 1.850962vw 0 1.399726vw;
+      font-size: 0.833105vw;
     }
     .prof__row {
       display: flex;
-      gap: 11.6px;
-      height: 70.4px;
+      gap: 0.796704vw;
+      height: 4.835165vw;
     }
     /* ngx-avatar — 60.9 cuadrado. */
     .prof__avatar {
@@ -289,16 +289,16 @@ import { GRUPOS, PROFILE, type Grupo } from '../../data/seed';
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 60.9px;
-      height: 60.7px;
-      border-radius: 12px;
+      width: 4.182693vw;
+      height: 4.168957vw;
+      border-radius: 0.824176vw;
       background: var(--ag-red);
-      font-size: 26px;
+      font-size: 1.785715vw;
       font-weight: 600;
     }
     .prof__info > div {
-      height: 17.5px;
-      line-height: 17.5px;
+      height: 1.201924vw;
+      line-height: 1.201924vw;
       overflow: hidden;
       white-space: nowrap;
       text-overflow: ellipsis;
@@ -312,15 +312,15 @@ import { GRUPOS, PROFILE, type Grupo } from '../../data/seed';
     .prof__type {
       display: flex;
       align-items: center;
-      gap: 5px;
+      gap: 0.343407vw;
     }
     /*
      * El globo es BICOLOR (disco #bfc5d3 y meridianos #1f2429): con una mascara se
      * aplana a un disco blanco. Va como imagen, con sus propios colores, a 16.38.
      */
     .prof__globe {
-      width: 16.38px;
-      height: 16.38px;
+      width: 1.125vw;
+      height: 1.125vw;
       background: url('/icons/globe.svg') no-repeat center / contain;
     }
     /* .serviceGroups-header — 26.5, titulo en #a3a8b0 y buscador de 94.7. */
@@ -328,25 +328,25 @@ import { GRUPOS, PROFILE, type Grupo } from '../../data/seed';
       display: flex;
       align-items: center;
       justify-content: space-between;
-      height: 26.5px;
-      margin-top: 11.7px;
+      height: 1.820055vw;
+      margin-top: 0.803572vw;
       color: #a3a8b0;
     }
     .prof__groups-name {
-      font-size: 11.65px;
+      font-size: 0.800138vw;
     }
     .prof__search {
       position: relative;
       display: flex;
       align-items: center;
-      width: 94.7px;
-      height: 26.5px;
+      width: 6.504121vw;
+      height: 1.820055vw;
     }
     .prof__lupa {
       position: absolute;
-      left: 9px;
-      width: 11px;
-      height: 11px;
+      left: 0.618132vw;
+      width: 0.755495vw;
+      height: 0.755495vw;
       background-color: var(--ag-muted);
       -webkit-mask: url('/icons/dialpad/lupa.svg') no-repeat center / contain;
       mask: url('/icons/dialpad/lupa.svg') no-repeat center / contain;
@@ -355,24 +355,24 @@ import { GRUPOS, PROFILE, type Grupo } from '../../data/seed';
     .prof__search input {
       width: 100%;
       height: 100%;
-      padding: 0 8px 0 26px;
+      padding: 0 0.549451vw 0 1.785715vw;
       border: 0;
-      border-radius: 8.45px;
+      border-radius: 0.580358vw;
       background: #1f2429;
       color: #fff;
       font-family: inherit;
-      font-size: 11.65px;
+      font-size: 0.800138vw;
       outline: none;
     }
     .prof__groups {
-      margin-top: 14.3px;
+      margin-top: 0.982143vw;
     }
     /* .serviceGroupsList — 202.95 de ancho con paso de 40.58 entre filas. */
     .prof__group {
       display: flex;
       align-items: center;
-      height: 17.06px;
-      margin-bottom: 23.52px;
+      height: 1.171704vw;
+      margin-bottom: 1.615385vw;
     }
     /*
      * app-switch — EL MISMO que el KPI «Grupos asignados» de la cabecera: 20.47 x 10.61,
@@ -383,9 +383,9 @@ import { GRUPOS, PROFILE, type Grupo } from '../../data/seed';
       position: relative;
       flex: none;
       display: inline-block;
-      width: 20.47px;
-      height: 10.61px;
-      margin-right: 11.37px;
+      width: 1.405907vw;
+      height: 0.728709vw;
+      margin-right: 0.780907vw;
     }
     .switch input {
       width: 0;
@@ -395,7 +395,7 @@ import { GRUPOS, PROFILE, type Grupo } from '../../data/seed';
     .switch__slider {
       position: absolute;
       inset: 0;
-      border-radius: 25.79px;
+      border-radius: 1.771292vw;
       background-color: #4f5256;
       cursor: pointer;
       transition: background-color 0.4s;
@@ -403,8 +403,8 @@ import { GRUPOS, PROFILE, type Grupo } from '../../data/seed';
     .switch__slider::before {
       content: '';
       position: absolute;
-      width: 10.61px;
-      height: 10.61px;
+      width: 0.728709vw;
+      height: 0.728709vw;
       border: 1px solid #4f5256;
       border-radius: 50%;
       background-color: #fff;
@@ -416,7 +416,7 @@ import { GRUPOS, PROFILE, type Grupo } from '../../data/seed';
     }
     .switch input:checked + .switch__slider::before {
       border-color: #0056fe;
-      transform: translateX(9.86px);
+      transform: translateX(0.677198vw);
     }
     .switch input:focus-visible + .switch__slider {
       outline: 2px solid #fff;
@@ -428,10 +428,10 @@ import { GRUPOS, PROFILE, type Grupo } from '../../data/seed';
       overflow: hidden;
       white-space: nowrap;
       text-overflow: ellipsis;
-      margin-right: 7.59px;
+      margin-right: 0.521292vw;
       color: #fff;
       font-family: Roboto, var(--ag-font);
-      font-size: 11.37px;
+      font-size: 0.780907vw;
     }
     /* .channels — 50.73 x 15.17 sobre #1f2429, radio 6.07, tres iconos de 7.58. */
     .chans {
@@ -440,16 +440,16 @@ import { GRUPOS, PROFILE, type Grupo } from '../../data/seed';
       display: flex;
       justify-content: space-between;
       align-items: center;
-      width: 50.73px;
-      height: 15.17px;
-      padding: 0 8.54px;
-      border-radius: 6.07px;
+      width: 3.484204vw;
+      height: 1.041896vw;
+      padding: 0 0.586539vw;
+      border-radius: 0.416896vw;
       background: #1f2429;
       box-sizing: border-box;
     }
     .chans__ic {
-      width: 7.58px;
-      height: 7.58px;
+      width: 0.520605vw;
+      height: 0.520605vw;
       background-color: #fff;
       -webkit-mask-repeat: no-repeat;
       -webkit-mask-position: center;
@@ -477,30 +477,30 @@ import { GRUPOS, PROFILE, type Grupo } from '../../data/seed';
 
     /* ── Preferencias ───────────────────────────────────────────────────── */
     .pref {
-      padding: 17.5px 20.4px 0;
-      font-size: 11.37px;
+      padding: 1.201924vw 1.401099vw 0;
+      font-size: 0.780907vw;
     }
     .pref__block {
-      margin-bottom: 6px;
+      margin-bottom: 0.412088vw;
     }
     /* .title — 29.8 de alto, 12.13. */
     .pref__block h3 {
-      height: 29.8px;
+      height: 2.046704vw;
       margin: 0;
-      font-size: 12.13px;
+      font-size: 0.833105vw;
       font-weight: 400;
-      line-height: 29.8px;
+      line-height: 2.046704vw;
     }
     .pref__row {
       display: flex;
       align-items: center;
-      gap: 10px;
-      height: 30.6px;
+      gap: 0.686814vw;
+      height: 2.101649vw;
     }
     .pref__bell {
       flex: none;
-      width: 15.2px;
-      height: 15.2px;
+      width: 1.043957vw;
+      height: 1.043957vw;
       background-color: #fff;
       -webkit-mask: url('/icons/dialpad/campana.svg') no-repeat center / contain;
       mask: url('/icons/dialpad/campana.svg') no-repeat center / contain;
@@ -512,7 +512,7 @@ import { GRUPOS, PROFILE, type Grupo } from '../../data/seed';
      */
     .pref__slider {
       flex: 1;
-      height: 12.6px;
+      height: 0.865385vw;
       margin: 0;
       padding: 0;
       background: transparent;
@@ -521,9 +521,9 @@ import { GRUPOS, PROFILE, type Grupo } from '../../data/seed';
       -webkit-appearance: none;
     }
     .pref__slider::-webkit-slider-runnable-track {
-      height: 5.3px;
-      margin-top: 3.65px;
-      border-radius: 3px;
+      height: 0.364011vw;
+      margin-top: 0.250687vw;
+      border-radius: 0.206044vw;
       background: linear-gradient(
         to right,
         #fff 0 var(--v, 0%),
@@ -531,19 +531,19 @@ import { GRUPOS, PROFILE, type Grupo } from '../../data/seed';
       );
     }
     .pref__slider::-moz-range-track {
-      height: 5.3px;
-      border-radius: 3px;
+      height: 0.364011vw;
+      border-radius: 0.206044vw;
       background: #5f6776;
     }
     .pref__slider::-moz-range-progress {
-      height: 5.3px;
-      border-radius: 3px;
+      height: 0.364011vw;
+      border-radius: 0.206044vw;
       background: #fff;
     }
     .pref__slider::-webkit-slider-thumb {
-      width: 12.6px;
-      height: 12.6px;
-      margin-top: -3.65px;
+      width: 0.865385vw;
+      height: 0.865385vw;
+      margin-top: -0.250687vw;
       border: 0;
       border-radius: 50%;
       background: #fff;
@@ -551,8 +551,8 @@ import { GRUPOS, PROFILE, type Grupo } from '../../data/seed';
       -webkit-appearance: none;
     }
     .pref__slider::-moz-range-thumb {
-      width: 12.6px;
-      height: 12.6px;
+      width: 0.865385vw;
+      height: 0.865385vw;
       border: 0;
       border-radius: 50%;
       background: #fff;
@@ -568,9 +568,9 @@ import { GRUPOS, PROFILE, type Grupo } from '../../data/seed';
     .pref__check {
       display: flex;
       align-items: center;
-      gap: 8px;
-      height: 23.3px;
-      padding-left: 29.1px;
+      gap: 0.549451vw;
+      height: 1.600275vw;
+      padding-left: 1.998627vw;
       cursor: pointer;
     }
     .pref__check--left {
@@ -578,8 +578,8 @@ import { GRUPOS, PROFILE, type Grupo } from '../../data/seed';
     }
     .pref__check input {
       flex: none;
-      width: 15.2px;
-      height: 15.2px;
+      width: 1.043957vw;
+      height: 1.043957vw;
       margin: 0;
       accent-color: #fff;
       cursor: pointer;
@@ -591,22 +591,22 @@ import { GRUPOS, PROFILE, type Grupo } from '../../data/seed';
       display: flex;
       align-items: flex-start;
       justify-content: center;
-      width: 244.5px;
-      height: 64.9px;
-      margin-left: 2.9px;
-      padding-top: 17.4px;
+      width: 16.792583vw;
+      height: 4.457418vw;
+      margin-left: 0.199176vw;
+      padding-top: 1.195055vw;
       background: #333a41;
     }
     .set__close {
-      width: 209.5px;
-      height: 26.5px;
+      width: 14.388737vw;
+      height: 1.820055vw;
       border: 0;
-      border-radius: 8.45px;
+      border-radius: 0.580358vw;
       background: #f75454;
       color: #fff;
       font-family: 'Open Sans Semibold', var(--ag-font);
       font-weight: 600;
-      font-size: 13.66px;
+      font-size: 0.938187vw;
       cursor: pointer;
     }
     .set__close:hover {

@@ -10,11 +10,25 @@
 
 ## Índice
 
-| Cuaderno | Qué contiene |
-|---|---|
-| [`escala.md`](./escala.md) | **Léelo primero.** La conversión `px = vw × 14.56` y por qué. Sin esto, cualquier medida que copies del real sale mal. |
-| [`tabla.md`](./tabla.md) | Historial y Pendientes: la matriz de iconos, la barra de estado, los 3 estados de gestión. |
-| [`comunicador.md`](./comunicador.md) | El widget flotante: carcasa, navbar, dialpad y sus estados. |
+| Cuaderno                             | Qué contiene                                                                                                                                                                      |
+| ------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [`escala.md`](./escala.md)           | **Léelo primero.** `sc-agent` mide en **`vw`**, igual que el real: los valores se copian tal cual. Trae la trampa del truncado de Chromium y las 16 excepciones que siguen en px. |
+| [`tabla.md`](./tabla.md)             | Historial y Pendientes: la matriz de iconos, la barra de estado, los 3 estados de gestión.                                                                                        |
+| [`comunicador.md`](./comunicador.md) | El widget flotante: carcasa, navbar, dialpad y sus estados.                                                                                                                       |
+
+## Lo que cambió el 2026-08-26 — léelo antes de copiar nada viejo
+
+Dos decisiones tomadas con medida delante, no por gusto:
+
+1. **Las fuentes se sirven desde el repo.** El original no pide pesos con `font-weight`:
+   los pide por **nombre de familia** (`'Open Sans Semibold'`), porque sirve una cara
+   estática por peso. Con la Open Sans variable de Google esas familias no existían y
+   `Roboto` se pintaba con Open Sans. Ver
+   [`public/fonts/LICENSE.md`](../public/fonts/LICENSE.md) y
+   `findings/phase-0-verdict.md`.
+2. **La réplica volvió a `vw`.** Estaba congelada en px a 1456, lo cual solo era cierto a 1456. Ver [`escala.md`](./escala.md).
+
+Si encuentras una nota que hable de «medidas convertidas a px con ×14.56», es de antes.
 
 ## El método (vale para cualquier pieza nueva)
 
@@ -31,7 +45,7 @@ el DOM a ojo.
    (33 en total la última vez).
 2. Las plantillas están como `// angular:jit:template:<ruta>` seguido de
    `var x_component_default = \`…\``; los estilos, como
-   `var x_component_default2 = '/* … */'`.
+`var x_component_default2 = '/_ … _/'`.
 3. Los SVG se descargan por URL, tanto `media/<nombre>-<hash>.svg` como
    `assets/icons/…`. 112 disponibles.
 4. Para lo que solo se ve en vivo (estados, clases condicionales, colores computados),

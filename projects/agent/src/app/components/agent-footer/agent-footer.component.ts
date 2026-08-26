@@ -119,31 +119,31 @@ import { GRUPOS } from '../../data/seed';
       display: flex;
       align-items: center;
       justify-content: flex-end;
-      gap: 12px;
-      height: 38px;
-      padding: 0 22px;
+      gap: 0.824176vw;
+      height: 2.609891vw;
+      padding: 0 1.51099vw;
       background: #2d333a;
     }
     .footer__right {
       display: flex;
       align-items: center;
-      gap: 12px;
+      gap: 0.824176vw;
     }
     /* Botón de estado: 179px, verde (Available) / rojo (ocupado). */
     .footer__status {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 179px;
-      height: 27px;
+      width: 12.293957vw;
+      height: 1.854396vw;
       background: var(--ag-green);
       color: var(--ag-status-text);
       font: inherit;
-      font-size: 11.7px;
+      font-size: 0.803572vw;
       font-weight: 400;
       padding: 0;
       border: none;
-      border-radius: 9.1px;
+      border-radius: 0.625vw;
       cursor: pointer;
     }
     .footer__status--busy {
@@ -159,20 +159,20 @@ import { GRUPOS } from '../../data/seed';
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 27px;
-      height: 27px;
+      width: 1.854396vw;
+      height: 1.854396vw;
       border-radius: 50%;
-      font-size: 11px;
+      font-size: 0.755495vw;
       font-weight: 700;
       color: #fff;
       background: var(--ag-red);
     }
     .footer__badge {
       position: absolute;
-      right: -3px;
-      bottom: -3px;
-      width: 13px;
-      height: 13px;
+      right: -0.206044vw;
+      bottom: -0.206044vw;
+      width: 0.892858vw;
+      height: 0.892858vw;
       border-radius: 50%;
       background: #2d333a;
       display: inline-flex;
@@ -192,9 +192,9 @@ import { GRUPOS } from '../../data/seed';
      */
     .statusmenu {
       position: fixed;
-      right: 22px;
-      bottom: 45.5px;
-      width: 265px;
+      right: 1.51099vw;
+      bottom: 3.125vw;
+      width: 18.20055vw;
       /*
        * ALTO POR CONTENIDO, no fijo: en el original el panel mide 386.8 con
        * «Administrativo» colapsado y 476.1 desplegado, y SIEMPRE queda anclado abajo
@@ -204,17 +204,17 @@ import { GRUPOS } from '../../data/seed';
        * Nunca mas alto que el Comunicador NI que el hueco disponible: si el contenido
        * no cabe, scrollea la lista en vez de recortarse por abajo.
        */
-      max-height: min(506.7px, calc(100vh - 91px));
+      max-height: min(34.800825vw, calc(100vh - 6.25vw));
       display: flex;
       flex-direction: column;
       overflow: hidden;
       background: #333a41;
-      border-radius: 23.65px;
-      box-shadow: 0 -8px 30px rgba(0, 0, 0, 0.4);
+      border-radius: 1.624314vw;
+      box-shadow: 0 -0.549451vw 2.06044vw rgba(0, 0, 0, 0.4);
     }
     /* Con el Comunicador abierto se aparta a su izquierda: 291.1 medido en el real. */
     .statusmenu.aside {
-      right: 291.1px;
+      right: 19.993132vw;
     }
     /* .status-head — 45.5px de alto en el real. */
     .statusmenu__head {
@@ -223,20 +223,20 @@ import { GRUPOS } from '../../data/seed';
       display: flex;
       align-items: center;
       justify-content: center;
-      height: 45.5px;
+      height: 3.125vw;
     }
     .statusmenu__title {
-      font-size: 13.66px;
+      font-size: 0.938187vw;
       font-weight: 600;
       color: var(--ag-text);
     }
     /* .status-close — 7.6 x 17.5, a 238.5 del borde izquierdo del panel. */
     .statusmenu__x {
       position: absolute;
-      top: 14px;
-      right: 19.5px;
-      width: 9px;
-      height: 9px;
+      top: 0.961539vw;
+      right: 1.339286vw;
+      width: 0.618132vw;
+      height: 0.618132vw;
       background: transparent;
       border: none;
       cursor: pointer;
@@ -246,10 +246,10 @@ import { GRUPOS } from '../../data/seed';
     .statusmenu__x::after {
       content: '';
       position: absolute;
-      top: 4px;
+      top: 0.274726vw;
       left: 0;
-      width: 9px;
-      height: 1px;
+      width: 0.618132vw;
+      height: 0.068682vw;
       background: #fff;
     }
     .statusmenu__x::before {
@@ -265,19 +265,19 @@ import { GRUPOS } from '../../data/seed';
       overflow: auto;
       margin: 0;
       padding: 0;
-      border-radius: 0 0 25.36px 25.36px;
+      border-radius: 0 0 1.741759vw 1.741759vw;
       list-style: none;
     }
     /* .state — 37.9 de alto, padding 0 12.98, fondo #2d333a. */
     .statusmenu__opt {
       display: flex;
       align-items: center;
-      gap: 12.2px;
-      min-height: 37.9px;
-      padding: 0 12.98px;
+      gap: 0.837913vw;
+      min-height: 2.603022vw;
+      padding: 0 0.891484vw;
       background: #2d333a;
       color: #fff;
-      font-size: 11.65px;
+      font-size: 0.800138vw;
       cursor: pointer;
     }
     .statusmenu__opt:hover {
@@ -291,14 +291,14 @@ import { GRUPOS } from '../../data/seed';
       flex-direction: column;
       align-items: stretch;
       gap: 0;
-      border-radius: 0 0 25.36px 25.36px;
+      border-radius: 0 0 1.741759vw 1.741759vw;
       cursor: default;
     }
     .admin__head {
       display: flex;
       align-items: center;
-      gap: 12.2px;
-      height: 26.5px;
+      gap: 0.837913vw;
+      height: 1.820055vw;
     }
     .admin__head .statusmenu__label {
       flex: none;
@@ -311,9 +311,9 @@ import { GRUPOS } from '../../data/seed';
     }
     .admin__lupa {
       position: absolute;
-      left: 7.1px;
-      width: 12.1px;
-      height: 12.1px;
+      left: 0.487638vw;
+      width: 0.831044vw;
+      height: 0.831044vw;
       background-color: #fff;
       -webkit-mask: url('/icons/dialpad/lupa.svg') no-repeat center / contain;
       mask: url('/icons/dialpad/lupa.svg') no-repeat center / contain;
@@ -321,25 +321,25 @@ import { GRUPOS } from '../../data/seed';
     }
     /* input.buscadorInterno — 91 x 18.2, #1f2429, radio 3.38. */
     .admin__search input {
-      width: 91px;
-      height: 18.2px;
-      padding: 1px 4.22px 1px 25px;
+      width: 6.25vw;
+      height: 1.25vw;
+      padding: 0.068682vw 0.289836vw 0.068682vw 1.717033vw;
       border: 0;
-      border-radius: 3.38px;
+      border-radius: 0.232143vw;
       background: #1f2429;
       color: #fff;
       font-family: inherit;
-      font-size: 11.65px;
+      font-size: 0.800138vw;
       outline: none;
     }
     .admin__toggle {
-      width: 12px;
-      height: 12px;
-      margin-left: 8px;
+      width: 0.824176vw;
+      height: 0.824176vw;
+      margin-left: 0.549451vw;
       border: 0;
       background-color: #fff;
-      -webkit-mask: url('/icons/comunicator/flecha_1.svg') no-repeat center / 8px;
-      mask: url('/icons/comunicator/flecha_1.svg') no-repeat center / 8px;
+      -webkit-mask: url('/icons/comunicator/flecha_1.svg') no-repeat center / 0.549451vw;
+      mask: url('/icons/comunicator/flecha_1.svg') no-repeat center / 0.549451vw;
       cursor: pointer;
     }
     .statusmenu__admin.open .admin__toggle {
@@ -348,24 +348,24 @@ import { GRUPOS } from '../../data/seed';
     }
     /* «Seleccione grupo» — gris #63666a, sangrado a 27.88. */
     .admin__hint {
-      padding: 0 0 4.22px 27.88px;
+      padding: 0 0 0.289836vw 1.914836vw;
       color: #63666a;
-      font-size: 11.65px;
+      font-size: 0.800138vw;
     }
     .admin__groups {
       display: flex;
       flex-direction: column;
-      border-radius: 8px;
+      border-radius: 0.549451vw;
       background: #262c33;
       overflow: hidden;
     }
     .admin__group {
-      padding: 6px 12px 6px 27.88px;
+      padding: 0.412088vw 0.824176vw 0.412088vw 1.914836vw;
       border: 0;
       background: transparent;
       color: #8d939d;
       font-family: inherit;
-      font-size: 11.65px;
+      font-size: 0.800138vw;
       text-align: left;
       cursor: pointer;
     }
@@ -375,8 +375,8 @@ import { GRUPOS } from '../../data/seed';
     }
     .dot {
       flex: none;
-      width: 10px;
-      height: 10px;
+      width: 0.686814vw;
+      height: 0.686814vw;
       border-radius: 50%;
       background: var(--ag-red);
     }
