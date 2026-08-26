@@ -54,23 +54,31 @@ import { AgIconComponent } from '../ui/app-icon.component';
       display: inline-flex;
       gap: 0.618132vw;
     }
+    /*
+     * Medido en el original (.help y .logout): cada botón es CUADRADO de 18.96, radio 5.3,
+     * con borde de 0.55px y el glifo a 9.86. Antes estaban a 21.84 x 29.12 (que era el
+     * ancho del CONTENEDOR, no del botón) y por eso salían rectangulares.
+     */
     .hdr__btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      /* Medido en el original: cada botón 21.84 x 29.12, con el glifo a 9.86. */
-      width: 1.5vw;
-      height: 2vw;
-      border: 1px solid var(--ag-btn-line);
-      border-radius: 0.412088vw;
+      width: 1.302vw;
+      height: 1.302vw;
+      border: 0.038462vw solid var(--ag-btn-line);
+      border-radius: 0.363736vw;
       background: transparent;
       color: var(--ag-btn-ic);
       cursor: pointer;
     }
+    /*
+     * El power es el rojo de LOGOUT (--modeButtonsLogout = #f75454), NO el del avatar
+     * (--ag-red = #e74c3c). Son dos rojos distintos en el original y estaban conflados.
+     */
     .hdr__btn--power {
       color: #fff;
-      background: var(--ag-red);
-      border-color: var(--ag-red);
+      background: var(--ag-logout);
+      border-color: var(--ag-logout);
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
