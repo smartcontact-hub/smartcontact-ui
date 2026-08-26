@@ -60,8 +60,10 @@
   --ag-ch-on: #000000;
   --ag-ch-on-ic: #ffffff;
   --ag-brand: #e8eaed;
-  --ag-btn-line: #3a424c;
-  --ag-btn-ic: #c7cbd1;
+  /* Cabecera: el help va con borde e icono BLANCOS sobre transparente (medido). */
+  --ag-btn-line: rgba(255, 255, 255, 0.85);
+  --ag-btn-ic: #ffffff;
+  --ag-logout: #f75454; /* --modeButtonsLogout: el rojo de LOGOUT, distinto del avatar */
   --ag-red: #e74c3c;
   --ag-green: #2bae22;
   --ag-status-text: #11131a;
@@ -106,6 +108,7 @@
   --ag-brand: #233155; /* --modeText */
   --ag-btn-line: #cfd3de; /* --modeWidgetsBorder */
   --ag-btn-ic: #000000; /* --modeButtonsHelp */
+  --ag-logout: #f75454; /* --modeButtonsLogout */
   --ag-red: #f75454; /* --modeButtonsLogout */
   --ag-status-text: #ffffff; /* --modeTableBodyWaitingOverText */
   --ag-shadow: -0.274725vw 0.549451vw 1.785714vw #f2f3fa; /* --modeShadow */
