@@ -13,14 +13,14 @@ import { AgIconComponent } from '../ui/app-icon.component';
       </div>
       <div class="hdr__actions">
         <button class="hdr__btn" type="button" aria-label="Help">
-          <app-icon name="help" [size]="15" />
+          <app-icon name="help" [size]="9.86" />
         </button>
         <button
           class="hdr__btn hdr__btn--power"
           type="button"
           aria-label="Log out"
         >
-          <app-icon name="power" [size]="14" />
+          <app-icon name="power" [size]="9.86" />
         </button>
       </div>
     </header>
@@ -30,7 +30,14 @@ import { AgIconComponent } from '../ui/app-icon.component';
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 1.03022vw 2.541209vw;
+      /*
+       * Medido en el original: su fila de cabecera (.main) mide 29.12 de alto con 16.85
+       * por encima, y de ahí a los KPIs hay 15.18. La réplica la tenía al doble de alta,
+       * y por eso todo el bloque bajaba.
+       */
+      height: 2vw;
+      padding: 1.157005vw 2.541209vw 0;
+      box-sizing: content-box;
     }
     .hdr__brand {
       display: flex;
@@ -39,8 +46,9 @@ import { AgIconComponent } from '../ui/app-icon.component';
     /* Logo oficial: 239 x 42 en el fichero, servido a escala (ratio 5.69:1). */
     .hdr__logo {
       display: block;
-      width: 13.255495vw;
-      height: 2.335165vw;
+      filter: var(--ag-logo-filter);
+      width: 11.353vw;
+      height: 2vw;
     }
     .hdr__actions {
       display: inline-flex;
@@ -50,8 +58,9 @@ import { AgIconComponent } from '../ui/app-icon.component';
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 2.06044vw;
-      height: 1.785715vw;
+      /* Medido en el original: cada botón 21.84 x 29.12, con el glifo a 9.86. */
+      width: 1.5vw;
+      height: 2vw;
       border: 1px solid var(--ag-btn-line);
       border-radius: 0.412088vw;
       background: transparent;

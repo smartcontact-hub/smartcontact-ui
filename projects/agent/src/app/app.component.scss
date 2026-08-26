@@ -23,7 +23,11 @@
   display: grid;
   grid-template-columns: 1.9fr 1.05fr 1.3fr 1.1fr 1.45fr;
   gap: 1.923077vw;
-  padding: 0.961539vw 2.541209vw 0;
+  /*
+   * Medido en el original: la tarjeta KPI arranca a 61.15 del borde y entre cabecera y
+   * KPIs hay 15.18. La réplica los tenía a 78, o sea 16.85 más abajo.
+   */
+  padding: 1.042582vw 2.541209vw 0;
 }
 /* Los items del grid deben poder encogerse por debajo de su min-content. */
 .kpis > * {

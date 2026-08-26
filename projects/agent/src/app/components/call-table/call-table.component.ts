@@ -191,6 +191,15 @@ type Tab = 'historial' | 'pendientes';
       z-index: 1;
       background: var(--ag-list);
     }
+    /*
+     * La tabla NO es monocroma en el original: la cabecera va sobre
+     * --modeTableHeadBackground (#1f2429) y el CUERPO sobre --modeTableBodyBackground
+     * (#24292f), que es más claro. Aquí las filas no tenían fondo propio y heredaban el
+     * del panel, así que todo salía del mismo color.
+     */
+    tbody td {
+      background: var(--ag-body);
+    }
 
     /* Barra de pestañas: 37px de alto en el real a 1623 → 33.2px a la escala de sc-agent. */
     .tabs {
