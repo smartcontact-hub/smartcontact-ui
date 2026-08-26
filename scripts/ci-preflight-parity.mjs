@@ -13,8 +13,14 @@
 // Sustituciones LOCALES documentadas: algún paso del CI no es corrible tal cual en un
 // portátil y se mapea a su equivalente local. Hoy solo una (ver LOCAL_SUBSTITUTIONS).
 //
-// Infra que NO se replica en local: `npm ci` (instala en limpio) y `npx playwright
-// install` (descarga navegadores) — se filtran de los dos lados.
+// Infra que NO se replica en local: `npx playwright install` (descarga navegadores) — se
+// filtra de los dos lados.
+//
+// `npm ci` YA NO está en esa lista. Lo estuvo, y salió caro: es el PRIMER paso del CI y
+// preflight no lo miraba, así que el 2026-08-26 se colaron SEIS pushes con el CI en rojo en
+// su primera línea mientras preflight salía verde. Hoy tiene equivalente local
+// (`guard:lockfile`, que valida el lock contra las plataformas del runner), así que entra
+// por la puerta de las sustituciones, que es donde se ve.
 
 import { readFileSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
@@ -33,9 +39,15 @@ import { join, dirname } from 'node:path';
 // tocar (el `usage-capture` que las pisaba está en `testIgnore` desde entonces).
 export const LOCAL_SUBSTITUTIONS = {
   'npm run e2e': 'CI=1 npm run e2e',
+  // No se puede instalar en limpio en cada push, pero SÍ se puede comprobar lo que hace
+  // fallar a `npm ci`: que el lock no cuadre con package.json. Y hay que comprobarlo contra
+  // la plataforma del RUNNER, no solo contra la tuya — npm resuelve las dependencias
+  // opcionales según dónde estés, y por eso el `npm ci --dry-run` a secas daba verde en
+  // macOS con el CI en rojo en Linux.
+  'npm ci': 'npm run guard:lockfile',
 };
 
-const INFRA = [/^npm ci\b/, /^npx playwright install\b/];
+const INFRA = [/^npx playwright install\b/];
 const isInfra = (cmd) => INFRA.some((re) => re.test(cmd));
 const norm = (cmd) => cmd.trim().replace(/\s+/g, ' ');
 

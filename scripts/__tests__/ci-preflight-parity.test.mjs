@@ -40,7 +40,10 @@ test('extractCiCommands: parsea block scalar `|` y descarta infra', () => {
   assert.ok(cmds.includes('npx ng build supervisor --configuration production'));
   assert.ok(cmds.includes('npm run e2e'), 'el comando del block scalar sí entra');
   assert.ok(cmds.includes('npm run e2e:cuscare'));
-  assert.ok(!cmds.includes('npm ci'), 'npm ci es infra, no cuenta');
+  // `npm ci` YA cuenta: dejó de ser infra irreplicable el 2026-08-26, cuando se vio que
+  // preflight no miraba el primer paso del CI y se colaron seis pushes en rojo. Ahora entra
+  // como comando y LOCAL_SUBSTITUTIONS lo mapea a `guard:lockfile`.
+  assert.ok(cmds.includes('npm ci'), 'npm ci cuenta y se sustituye por su equivalente local');
   assert.ok(!cmds.some((c) => c.startsWith('npx playwright install')), 'el install es infra');
   assert.ok(!cmds.some((c) => c.startsWith('#')), 'un comentario no es un comando');
 });
