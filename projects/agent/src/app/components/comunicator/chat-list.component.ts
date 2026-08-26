@@ -1,4 +1,9 @@
-import { ChangeDetectionStrategy, Component, output, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  output,
+  signal,
+} from '@angular/core';
 import { CHATS, type ChatRow } from '../../data/seed';
 
 /**
@@ -17,24 +22,47 @@ import { CHATS, type ChatRow } from '../../data/seed';
         <div class="chats__title">Mensajes</div>
         <label class="chats__search">
           <span class="chats__lupa"></span>
-          <input type="search" placeholder="Buscar..." aria-label="Buscar conversación" />
+          <input
+            type="search"
+            placeholder="Buscar..."
+            aria-label="Buscar conversación"
+          />
         </label>
       </div>
 
       <div class="chats__list">
         @for (c of chats; track c.id) {
-          <button class="msg" type="button" (click)="opened.emit(c)">
-            <span class="msg__status" [class.unread]="c.unread > 0"></span>
-            <span class="msg__avatar" [style.background]="c.color">{{ c.initial }}</span>
-            <span class="msg__info">
-              <span class="msg__row">
-                <span class="msg__name">{{ c.name }}</span>
-                <span class="msg__time">{{ c.time }}</span>
-              </span>
-              <span class="msg__group">{{ c.group }}</span>
-              <span class="msg__preview">{{ c.preview }}</span>
+        <div
+          class="msg"
+          role="button"
+          tabindex="0"
+          (click)="opened.emit(c)"
+          (keydown.enter)="opened.emit(c)"
+          (keydown.space)="opened.emit(c)"
+        >
+          <span class="msg__status" [class]="statusFor(c)"></span>
+          <span class="msg__avatar" [style.background]="c.color">{{
+            c.initial
+          }}</span>
+          <span class="msg__info">
+            <span class="msg__row">
+              <span class="msg__name">{{ c.name }}</span>
+              <span class="msg__time">{{ c.time }}</span>
             </span>
-          </button>
+            <span class="msg__group">
+              <span class="msg__gtext">{{ c.group }}</span>
+              @if (needsTypifying(c)) {
+              <button
+                class="msg__typify"
+                type="button"
+                aria-label="Tipificar conversación"
+                (click)="typify(c.id, $event)"
+              ></button>
+              }
+            </span>
+            <span class="msg__preview">{{ c.preview }}</span>
+          </span>
+        </div>
         }
       </div>
     </div>
@@ -66,20 +94,20 @@ import { CHATS, type ChatRow } from '../../data/seed';
       line-height: 20.5px;
       text-align: center;
     }
-    /* .header-message-subheader-input — 204.9 x 26.5 a 22.7, radio 8.45. */
+    /* .buscador — 204.89 x 26.54 a 22.7, radio 7.59, con la lupa de 12.12 a 11.88. */
     .chats__search {
       position: relative;
       display: flex;
       align-items: center;
-      width: 204.9px;
-      height: 26.5px;
+      width: 204.89px;
+      height: 26.54px;
       margin: 17.9px 0 0 22.7px;
     }
     .chats__lupa {
       position: absolute;
-      left: 10px;
-      width: 11px;
-      height: 11px;
+      left: 11.88px;
+      width: 12.12px;
+      height: 12.12px;
       background-color: var(--ag-muted);
       -webkit-mask: url('/icons/dialpad/lupa.svg') no-repeat center / contain;
       mask: url('/icons/dialpad/lupa.svg') no-repeat center / contain;
@@ -88,14 +116,15 @@ import { CHATS, type ChatRow } from '../../data/seed';
     .chats__search input {
       width: 100%;
       height: 100%;
-      padding: 0 10px 0 29px;
+      padding: 0 11.88px 0 32.78px;
       border: 0;
-      border-radius: 8.45px;
+      border-radius: 7.59px;
       background: #1f2429;
       color: #fff;
       font-family: inherit;
       font-size: 11.65px;
       outline: none;
+      box-sizing: border-box;
     }
 
     .chats__list {
@@ -125,8 +154,15 @@ import { CHATS, type ChatRow } from '../../data/seed';
       inset: 0 auto 0 0;
       width: 7.6px;
     }
-    .msg__status.unread {
+    /* Colores del original: rojo sin leer, teal a la espera de tipificar, gris caducada. */
+    .msg__status.busy {
       background: #f75454;
+    }
+    .msg__status.postchat {
+      background: #166f8d;
+    }
+    .msg__status.expired {
+      background: #8d939d;
     }
     /* .avatar-content — 28.1 cuadrado, radio 10.14, a 19.7 / 15.2. */
     .msg__avatar {
@@ -167,17 +203,66 @@ import { CHATS, type ChatRow } from '../../data/seed';
       flex: none;
       font-size: 10.63px;
     }
-    /* .text-group — el nodo va en azul claro. */
+    /*
+     * .message-info-group — contenedor relativo de 16.69 minimo con padding 0 13.66 0 7.59.
+     * Aloja el nodo (en azul claro) y, pegado a la derecha, el boton de tipificar.
+     */
     .msg__group {
-      display: block;
-      height: 17.1px;
-      padding-left: 7.5px;
+      position: relative;
+      display: flex;
+      align-items: center;
+      min-height: 16.69px;
+      padding: 0 13.66px 0 7.59px;
+    }
+    /* .text-group — tope de 151.7 y elipsis, para no chocar con el boton. */
+    .msg__gtext {
+      max-width: 151.7px;
       overflow: hidden;
       white-space: nowrap;
       text-overflow: ellipsis;
       color: #73abf4;
       font-size: 11.37px;
       line-height: 17.1px;
+    }
+    /*
+     * .subcontainerIconMessagePrivate — 15.93 cuadrado, radio 4.37, fondo blanco con el
+     * glifo en #262c32. Nace OCULTO y solo aparece al pasar por encima de la tarjeta;
+     * al pasar por el propio boton, el fondo vira a azul y el glifo a blanco.
+     */
+    .msg__typify {
+      position: absolute;
+      top: 0;
+      right: 0;
+      display: none;
+      padding: 0;
+      border: 0;
+      width: 15.93px;
+      height: 15.93px;
+      margin-top: 0.73px;
+      border-radius: 4.37px;
+      background: #fff;
+      cursor: pointer;
+    }
+    .msg:hover .msg__typify {
+      display: block;
+    }
+    .msg__typify::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 6.83px;
+      height: 6.83px;
+      transform: translate(-50%, -50%);
+      background-color: #262c32;
+      -webkit-mask: url('/icons/dialpad/tipificar.svg') no-repeat center / contain;
+      mask: url('/icons/dialpad/tipificar.svg') no-repeat center / contain;
+    }
+    .msg__typify:hover {
+      background: #0056fe;
+    }
+    .msg__typify:hover::after {
+      background-color: #fff;
     }
     .msg__preview {
       display: -webkit-box;
@@ -196,4 +281,44 @@ export class ChatListComponent {
   protected readonly chats = CHATS;
   readonly opened = output<ChatRow>();
   protected readonly selected = signal<number | null>(null);
+
+  /** Conversaciones ya tipificadas en esta sesión: dejan de pedirlo. */
+  private readonly typified = signal<ReadonlySet<number>>(new Set());
+
+  /**
+   * El original solo ofrece tipificar cuando la conversación es con un CLIENTE y ha
+   * quedado en postconversando. Entre agentes no hay nada que tipificar, y mientras
+   * sigue viva la tipificación llega al cerrarla.
+   */
+  protected needsTypifying(c: ChatRow): boolean {
+    return (
+      c.kind === 'client' &&
+      c.state === 'postchat' &&
+      !this.typified().has(c.id)
+    );
+  }
+
+  /**
+   * La barra lateral dice en qué quedó la conversación: roja si la abandonaron,
+   * turquesa mientras falta tipificar y sin color si acabó con normalidad.
+   */
+  protected statusFor(c: ChatRow): string {
+    if (c.state === 'abandoned') {
+      return 'msg__status busy';
+    }
+    if (this.needsTypifying(c)) {
+      return 'msg__status postchat';
+    }
+    return 'msg__status';
+  }
+
+  /**
+   * Tipificar NO abre la conversación: es la otra acción de la tarjeta. Al hacerlo, la
+   * conversación deja de estar en postconversando y la barra turquesa desaparece, que
+   * es lo que libera al agente para volver a ponerse disponible.
+   */
+  protected typify(id: number, ev: Event): void {
+    ev.stopPropagation();
+    this.typified.update((s) => new Set(s).add(id));
+  }
 }

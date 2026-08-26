@@ -1,4 +1,11 @@
-import { ChangeDetectionStrategy, Component, input, output, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  computed,
+  input,
+  output,
+  signal,
+} from '@angular/core';
 import type { ChatRow } from '../../data/seed';
 
 /**
@@ -17,33 +24,62 @@ import type { ChatRow } from '../../data/seed';
   template: `
     <div class="conv">
       <div class="conv__head">
-        <button class="conv__back" type="button" aria-label="Volver" (click)="closed.emit()"></button>
+        <button
+          class="conv__back"
+          type="button"
+          aria-label="Volver"
+          (click)="closed.emit()"
+        ></button>
         <span class="conv__name">{{ chat().name }}</span>
         <span class="conv__time">{{ chat().time }}</span>
-        <span class="conv__act conv__act--transfer" aria-hidden="true"></span>
-        <span class="conv__act conv__act--cancel" aria-hidden="true"></span>
+        <button
+          class="conv__act conv__act--transfer"
+          type="button"
+          aria-label="Transferir conversación"
+          [class.off]="!live()"
+          [disabled]="!live()"
+        ></button>
+        <button
+          class="conv__act conv__act--cancel"
+          type="button"
+          aria-label="Cerrar conversación"
+          [class.off]="!live()"
+          [disabled]="!live()"
+        ></button>
       </div>
 
       <div class="conv__body">
-        @for (m of chat().thread; track $index) {
-          @if (m.from === 'server') {
-            <div class="line line--server"><span>{{ m.text }}</span></div>
-          } @else {
-            <div class="line" [class.line--send]="m.from === 'send'">
-              <span class="bubble" [class.bubble--send]="m.from === 'send'">
-                {{ m.text }}
-                <span class="bubble__time">{{ m.time }}</span>
-              </span>
-            </div>
-          }
-        }
+        @for (m of chat().thread; track $index) { @if (m.from === 'server') {
+        <div class="line line--server">
+          <span>{{ m.text }}</span>
+        </div>
+        } @else {
+        <div class="line" [class.line--send]="m.from === 'send'">
+          <span class="bubble" [class.bubble--send]="m.from === 'send'">
+            {{ m.text }}
+            <span class="bubble__time">{{ m.time }}</span>
+          </span>
+        </div>
+        } }
       </div>
 
       <div class="conv__foot">
         <div class="conv__tools">
-          <span class="tool tool--off" aria-hidden="true" style="--g: url('/icons/dialpad/adjuntar.svg')"></span>
-          <span class="tool tool--off" aria-hidden="true" style="--g: url('/icons/dialpad/plantilla.svg')"></span>
-          <span class="tool tool--on" aria-hidden="true" style="--g: url('/icons/dialpad/tipificar.svg')"></span>
+          <span
+            class="tool tool--off"
+            aria-hidden="true"
+            style="--g: url('/icons/dialpad/adjuntar.svg')"
+          ></span>
+          <span
+            class="tool tool--off"
+            aria-hidden="true"
+            style="--g: url('/icons/dialpad/plantilla.svg')"
+          ></span>
+          <span
+            class="tool tool--on"
+            aria-hidden="true"
+            style="--g: url('/icons/dialpad/tipificar.svg')"
+          ></span>
         </div>
         <div class="conv__send">
           <textarea
@@ -52,7 +88,12 @@ import type { ChatRow } from '../../data/seed';
             [value]="draft()"
             (input)="draft.set($any($event.target).value)"
           ></textarea>
-          <button class="conv__go" type="button" aria-label="Enviar" [disabled]="!draft().trim()"></button>
+          <button
+            class="conv__go"
+            type="button"
+            aria-label="Enviar"
+            [disabled]="!draft().trim()"
+          ></button>
         </div>
       </div>
     </div>
@@ -105,21 +146,63 @@ import type { ChatRow } from '../../data/seed';
       top: 15.6px;
       left: 144.4px;
     }
-    /* Los dos botones de accion: 19 cuadrado, radio 4.87. */
+    /*
+     * .subcontainerIconMessagePrivate de la cabecera: 18.96 cuadrado, radio 4.37, fondo
+     * blanco y glifo oscuro; al pasar por encima vira a azul con el glifo en blanco.
+     * Cuando la conversación ya no está viva, el original los apaga: transferir a
+     * #8d939d y cerrar a #824549 con el aspa en gris.
+     */
     .conv__act {
       position: absolute;
       top: 14.9px;
-      width: 19px;
-      height: 19px;
-      border-radius: 4.87px;
+      width: 18.96px;
+      height: 18.96px;
+      padding: 0;
+      border: 0;
+      border-radius: 4.37px;
+      background: #fff;
+      cursor: pointer;
+    }
+    .conv__act::after {
+      content: '';
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      width: 8.34px;
+      height: 9.1px;
+      transform: translate(-50%, -50%);
+      background-color: #262c32;
+      -webkit-mask: var(--g) no-repeat center / contain;
+      mask: var(--g) no-repeat center / contain;
+    }
+    .conv__act:not(.off):hover {
+      background: #0056fe;
+    }
+    .conv__act:not(.off):hover::after {
+      background-color: #fff;
     }
     .conv__act--transfer {
-      left: 192.8px;
-      background: #8d939d;
+      left: 192.81px;
+      --g: url('/icons/dialpad/transferencia-chat.svg');
     }
     .conv__act--cancel {
       left: 218.6px;
+      background: #f75454;
+      --g: url('/icons/dialpad/cancelar.svg');
+    }
+    .conv__act--cancel::after {
+      background-color: #fff;
+    }
+    .conv__act--transfer.off {
+      background: #8d939d;
+      cursor: not-allowed;
+    }
+    .conv__act--cancel.off {
       background: #824549;
+      cursor: not-allowed;
+    }
+    .conv__act--cancel.off::after {
+      background-color: #8d939d;
     }
 
     /* .body-container-message-private — #2d333a. */
@@ -269,4 +352,7 @@ export class ChatConversationComponent {
   readonly chat = input.required<ChatRow>();
   readonly closed = output<void>();
   protected readonly draft = signal('');
+
+  /** Transferir y cerrar solo tienen sentido con la conversación viva. */
+  protected readonly live = computed(() => this.chat().state === 'open');
 }

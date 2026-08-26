@@ -128,8 +128,11 @@ interface ComAction {
             </label>
             } @if (tab() === 'agents') {
             <!--
-              .internal-toggle — dos mitades de 99.5 a 9.86 sobre una linea de 1px, con
-              una pildora blanca de 37.9 x 3.8 que se desliza al cambiar de pestaña.
+              .internal-toggle — dos mitades de 99.54 a 9.86 sobre una linea de 1.11, con
+              una pildora blanca de 37.92 x 3.78 que se desliza al cambiar de pestaña.
+              OJO: el texto NO va centrado. La primera mitad alinea a la IZQUIERDA y la
+              segunda a la DERECHA, y la pildora se pega al extremo que le toca; medido
+              en el original (Agentes a 3.53 del borde del toggle, Grupos a 166.35).
             -->
             <div class="tabbar">
               <div class="tabbar__tabs" role="tablist">
@@ -148,7 +151,7 @@ interface ComAction {
               <div class="tabbar__rail">
                 <span
                   class="tabbar__pill"
-                  [style.left.px]="agentTab() === 'Agentes' ? 0 : 99.5"
+                  [style.left.px]="agentTab() === 'Agentes' ? 0.63 : 163.45"
                 ></span>
               </div>
             </div>
@@ -293,47 +296,52 @@ interface ComAction {
       flex-direction: column;
       align-items: center;
       height: 33.6px;
-      padding: 10.6px 22.7px 0;
+      padding: 10.63px 22.7px 0;
       border-bottom: 0.75px solid rgba(0, 0, 0, 0.397);
       background: #333a41;
       box-sizing: border-box;
     }
     .com__head.tall {
       height: 93.8px;
-      gap: 17.4px;
+      gap: 17.47px;
     }
     /* Agentes es mas alta: titulo + buscador + pestañas. */
     .com__head.taller {
-      height: 140.2px;
-      gap: 17.4px;
+      height: 140.18px;
+      gap: 17.47px;
     }
-    /* .header-message-subheader-input — 26.5px de alto. */
+    /* .buscador — 204.89 x 26.54 sobre #1f2429 con radio 7.59, no una pildora. */
     .com__search {
+      position: relative;
       display: flex;
       align-items: center;
-      gap: 6px;
       width: 100%;
-      height: 26.5px;
-      padding: 0 10px;
-      border-radius: 13.25px;
-      background: #24292f;
+      height: 26.54px;
+      border-radius: 7.59px;
+      background: #1f2429;
     }
+    /* .icon-search — 12.12 cuadrado a 11.88 del borde. */
     .com__search-ic {
-      width: 9.1px;
-      height: 9.1px;
-      flex: none;
+      position: absolute;
+      left: 11.88px;
+      width: 12.12px;
+      height: 12.12px;
       background-color: var(--ag-muted);
       -webkit-mask: url('/icons/dialpad/lupa.svg') no-repeat center / contain;
       mask: url('/icons/dialpad/lupa.svg') no-repeat center / contain;
+      pointer-events: none;
     }
     .com__search input {
       width: 100%;
+      height: 100%;
+      padding: 0 11.88px 0 32.78px;
       border: 0;
       outline: none;
       background: none;
       color: #fff;
       font-family: inherit;
-      font-size: 11.7px;
+      font-size: 11.65px;
+      box-sizing: border-box;
     }
     /* .internal-title — el titulo comparte fila con refrescar y filtrar. */
     .com__title {
@@ -362,48 +370,63 @@ interface ComAction {
 
     /* Barra de pestañas del original: mitades + linea + pildora deslizante. */
     .tabbar {
-      width: 204.9px;
+      width: 204.89px;
+      /* El hueco buscador-pestañas es 18.2, algo mayor que el gap de la cabecera. */
+      margin-top: 0.73px;
     }
     .tabbar__tabs {
       display: flex;
-      height: 14.8px;
+      height: 14.78px;
+      margin: 0 2.91px;
     }
+    /* Las dos mitades comparten tipografia; solo cambia el color. */
     .tabbar__tabs button {
-      width: 99.5px;
+      display: flex;
+      align-items: flex-end;
+      width: 99.54px;
       padding: 0;
       border: 0;
       background: none;
       color: #5f6776;
-      font-family: inherit;
+      font-family: 'Open Sans Semibold', var(--ag-font);
+      font-weight: 600;
       font-size: 9.86px;
       cursor: pointer;
     }
+    /* La primera alinea a la izquierda; la segunda, a la derecha. */
+    .tabbar__tabs button:first-child {
+      justify-content: flex-start;
+    }
+    .tabbar__tabs button:last-child {
+      justify-content: flex-end;
+    }
     .tabbar__tabs button.on {
       color: #fff;
-      font-weight: 600;
     }
     .tabbar__rail {
       position: relative;
-      height: 3.8px;
-      margin-top: 10px;
+      width: 199.07px;
+      height: 24.3px;
+      margin-left: 2.91px;
     }
+    /* .toggleBarLine — hr de 1.11 en #5f6776 al 25%, no una linea blanca. */
     .tabbar__rail::before {
       content: '';
       position: absolute;
-      top: 1.4px;
-      left: 2.9px;
-      width: 193.3px;
-      height: 1px;
-      background: #fff;
-      opacity: 0.35;
+      top: 11.65px;
+      left: 2.91px;
+      width: 193.26px;
+      height: 1.11px;
+      background: #5f6776;
+      opacity: 0.25;
     }
-    /* .toggleSelected — 37.9 x 3.8, radio 3.37. */
+    /* .toggleSelected — 37.92 x 3.78, radio 3.03, montada sobre la linea. */
     .tabbar__pill {
       position: absolute;
-      top: 0;
-      width: 37.9px;
-      height: 3.8px;
-      border-radius: 3.37px;
+      top: 10.83px;
+      width: 37.92px;
+      height: 3.78px;
+      border-radius: 3.03px;
       background: #fff;
       transition: left 0.18s ease;
     }

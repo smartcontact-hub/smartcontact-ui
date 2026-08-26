@@ -8,12 +8,7 @@ import {
 import { ScBadgeComponent } from '@smartcontact-hub/components';
 import { ScIconComponent } from '@smartcontact-hub/icons';
 import { AgentStateService } from '../../agent-state.service';
-import {
-  CALLS,
-  PENDING,
-  type CallRow,
-  type PendingRow,
-} from '../../data/seed';
+import { CALLS, PENDING, type CallRow, type PendingRow } from '../../data/seed';
 
 type Tab = 'historial' | 'pendientes';
 
@@ -148,21 +143,21 @@ type Tab = 'historial' | 'pendientes';
               }}</span>
             </td>
             <td>
-                @if (stateOf(r) === 'pending') {
-                <button class="manage" type="button" (click)="manage(r)">
-                  Gestionar
-                </button>
-                } @else {
-                <span class="state">
-                  <sc-icon
-                    [name]="stateOf(r) === 'managed' ? 'check' : 'autorenew'"
-                    [size]="12"
-                  />
-                  {{ stateOf(r) === 'managed' ? 'Gestionada' : 'En gestión' }}
-                </span>
-                }
-              </td>
-              <td class="muted col-com">{{ managedByOf(r) }}</td>
+              @if (stateOf(r) === 'pending') {
+              <button class="manage" type="button" (click)="manage(r)">
+                Gestionar
+              </button>
+              } @else {
+              <span class="state">
+                <sc-icon
+                  [name]="stateOf(r) === 'managed' ? 'check' : 'autorenew'"
+                  [size]="12"
+                />
+                {{ stateOf(r) === 'managed' ? 'Gestionada' : 'En gestión' }}
+              </span>
+              }
+            </td>
+            <td class="muted col-com">{{ managedByOf(r) }}</td>
           </tr>
           }
         </tbody>

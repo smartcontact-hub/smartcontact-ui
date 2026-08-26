@@ -654,7 +654,13 @@ export interface ChatMsg {
   readonly time?: string;
 }
 
-/** Conversación del listado de Mensajes del Comunicador. */
+/**
+ * Conversación del listado de Mensajes del Comunicador.
+ *
+ * 'kind' y 'state' gobiernan el icono de tipificar: el original solo lo ofrece cuando
+ * la conversación es con un CLIENTE y ha quedado en postconversando. Entre agentes no
+ * hay nada que tipificar, y mientras sigue viva tampoco.
+ */
 export interface ChatRow {
   readonly id: number;
   readonly name: string;
@@ -664,6 +670,16 @@ export interface ChatRow {
   readonly time: string;
   readonly preview: string;
   readonly unread: number;
+  /** Con quién se habla: 'client' se tipifica, 'agent' no. */
+  readonly kind: 'client' | 'agent';
+  /**
+   * Vida de la conversación, que es lo que pinta la barra lateral de la tarjeta:
+   *   'open'       en curso, sin barra;
+   *   'ended'      acabada con normalidad, sin barra;
+   *   'abandoned'  el cliente colgó, barra roja;
+   *   'postchat'   acabada y a la espera de tipificar, barra turquesa.
+   */
+  readonly state: 'open' | 'ended' | 'abandoned' | 'postchat';
   readonly thread: readonly ChatMsg[];
 }
 
@@ -678,7 +694,9 @@ export const CHATS: readonly ChatRow[] = [
     time: '8min',
     preview: 'Tú: Hola! Bienvenido al grupo 1',
     unread: 0,
-  
+    kind: 'client',
+    state: 'postchat',
+
     thread: [
       { from: 'server', text: 'Estás conectado con Prueba' },
       { from: 'send', text: 'Hola! Bienvenido al grupo 1', time: '15:41' },
@@ -692,16 +710,35 @@ export const CHATS: readonly ChatRow[] = [
     color: '#3e7fff',
     group: 'Nodo AED 2',
     time: '14min',
-    preview: 'Buenas, sigo sin poder acceder con mi PIN. Me dice que ha caducado.',
+    preview:
+      'Buenas, sigo sin poder acceder con mi PIN. Me dice que ha caducado.',
     unread: 2,
-  
+    kind: 'agent',
+    state: 'open',
+
     thread: [
       { from: 'server', text: 'Estás conectado con Marta Ruiz' },
-      { from: 'received', text: 'Buenas, sigo sin poder acceder con mi PIN. Me dice que ha caducado.', time: '16:02' },
-      { from: 'send', text: 'Hola Marta, soy Rafael del equipo de soporte. Ahora mismo lo reviso.', time: '16:03' },
-      { from: 'send', text: '¿Me confirmas la extensión desde la que entras?', time: '16:03' },
+      {
+        from: 'received',
+        text: 'Buenas, sigo sin poder acceder con mi PIN. Me dice que ha caducado.',
+        time: '16:02',
+      },
+      {
+        from: 'send',
+        text: 'Hola Marta, soy Rafael del equipo de soporte. Ahora mismo lo reviso.',
+        time: '16:03',
+      },
+      {
+        from: 'send',
+        text: '¿Me confirmas la extensión desde la que entras?',
+        time: '16:03',
+      },
       { from: 'received', text: 'La 113.', time: '16:04' },
-      { from: 'send', text: 'Perfecto. Te he generado un PIN nuevo, te llega al correo en un par de minutos.', time: '16:05' },
+      {
+        from: 'send',
+        text: 'Perfecto. Te he generado un PIN nuevo, te llega al correo en un par de minutos.',
+        time: '16:05',
+      },
       { from: 'received', text: 'Genial, muchas gracias.', time: '16:06' },
     ],
   },
@@ -712,14 +749,30 @@ export const CHATS: readonly ChatRow[] = [
     color: '#2bae22',
     group: 'Grupo 3',
     time: '32min',
-    preview: 'Tú: Le he pasado la incidencia al equipo. En cuanto tenga respuesta le aviso.',
+    preview:
+      'Tú: Le he pasado la incidencia al equipo. En cuanto tenga respuesta le aviso.',
     unread: 0,
-  
+    kind: 'client',
+    state: 'postchat',
+
     thread: [
       { from: 'server', text: 'Estás conectado con 676653912' },
-      { from: 'received', text: 'Llamé esta mañana y se me cortó la llamada.', time: '15:12' },
-      { from: 'send', text: 'Lo siento. Veo la incidencia registrada, la he escalado al equipo técnico.', time: '15:14' },
-      { from: 'send', text: 'Le he pasado la incidencia al equipo. En cuanto tenga respuesta le aviso.', time: '15:15' },
+      {
+        from: 'received',
+        text: 'Llamé esta mañana y se me cortó la llamada.',
+        time: '15:12',
+      },
+      {
+        from: 'send',
+        text: 'Lo siento. Veo la incidencia registrada, la he escalado al equipo técnico.',
+        time: '15:14',
+      },
+      {
+        from: 'send',
+        text: 'Le he pasado la incidencia al equipo. En cuanto tenga respuesta le aviso.',
+        time: '15:15',
+      },
+      { from: 'server', text: 'La conversación ha finalizado' },
     ],
   },
   {
@@ -731,11 +784,21 @@ export const CHATS: readonly ChatRow[] = [
     time: '1h',
     preview: '¿Puede confirmarme el número de pedido? Es el 4471-B.',
     unread: 1,
-  
+    kind: 'client',
+    state: 'open',
+
     thread: [
       { from: 'server', text: 'Estás conectado con Javier Soler' },
-      { from: 'send', text: 'Buenos días Javier, ¿en qué puedo ayudarle?', time: '14:38' },
-      { from: 'received', text: '¿Puede confirmarme el número de pedido? Es el 4471-B.', time: '14:40' },
+      {
+        from: 'send',
+        text: 'Buenos días Javier, ¿en qué puedo ayudarle?',
+        time: '14:38',
+      },
+      {
+        from: 'received',
+        text: '¿Puede confirmarme el número de pedido? Es el 4471-B.',
+        time: '14:40',
+      },
     ],
   },
   {
@@ -747,12 +810,18 @@ export const CHATS: readonly ChatRow[] = [
     time: '2h',
     preview: 'Tú: Perfecto, queda resuelto. Gracias por su paciencia.',
     unread: 0,
-  
+    kind: 'client',
+    state: 'abandoned',
+
     thread: [
       { from: 'server', text: 'Estás conectado con Ana Pérez' },
       { from: 'received', text: 'Ya me funciona, gracias.', time: '13:20' },
-      { from: 'send', text: 'Perfecto, queda resuelto. Gracias por su paciencia.', time: '13:21' },
-      { from: 'server', text: 'La conversación ha caducado por inactividad' },
+      {
+        from: 'send',
+        text: 'Perfecto, queda resuelto. Gracias por su paciencia.',
+        time: '13:21',
+      },
+      { from: 'server', text: 'El cliente ha abandonado la conversación' },
     ],
   },
 ];
