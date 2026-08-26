@@ -393,6 +393,16 @@ lo que hace que te la creas cuando te toca. Lee el índice siempre; el cuerpo, c
    Y para un cambio que solo toca `.md`, lo único que puede romperse es `docs:guard`,
    `docs:coherence` y `lint`: correr `verify` entero ahí es exactamente el desperdicio que este
    corolario nombra.
+   *Reincidencia (s35), y esta la sufrió Rafa en directo: corrí `preflight` **TRECE** veces en una
+   sesión* — una por cada retoque visual que él pedía a ojo. La regla estaba escrita y la incumplí
+   igual. Dos racionalizaciones a desarmar, las dos mías: **(a) "cada petición suya es una tarea
+   nueva, así que toca preflight"** — no: si los cambios se acumulan en el árbol, es UN push, y
+   preflight se corre UNA vez antes de ESE push, no antes de cada commit intermedio; **(b) "por si
+   acaso lo corro entero"** para un cambio confinado a `projects/agent`, cuando NINGUNA suite e2e
+   toca esa app. ⚙️ Herramientas que ya existen para no repetirlo, úsalas por defecto:
+   `npm run preflight:scope` (mira qué tocaste y propone el carril; exige la cadena entera solo si
+   rozas código compartido) y `npm run preflight:fast` (mismos gates, ~2× por servir el build
+   estático). La velocidad es un requisito de Rafa, no un lujo: correr de más es romperlo.
 
    *Absorbe la antigua regla 9 — cómo se confirma ese verde: **LEYENDO el log o el run**, nunca
    un exit-code que no sea el del comando que te importa.* Correr la cadena no sirve de nada si
