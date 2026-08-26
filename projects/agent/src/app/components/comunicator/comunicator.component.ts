@@ -13,7 +13,7 @@ import { FinalizeManagementComponent } from './finalize-management.component';
 import { SettingsComponent } from './settings.component';
 import { ChatListComponent } from './chat-list.component';
 import { ChatConversationComponent } from './chat-conversation.component';
-import type { ChatRow } from '../../data/seed';
+import { CHATS, type ChatRow } from '../../data/seed';
 
 /** Pestañas del Comunicador. 'contacts' no sale con todos los permisos. */
 type ComTab = 'call' | 'chat' | 'agents' | 'contacts' | 'history';
@@ -571,6 +571,20 @@ export class ComunicatorComponent {
         this.tab.set(forced as ComTab);
         this.state.forcedTab.set(null);
       }
+    });
+
+    // Clic en una pastilla del carrusel del footer: salta a Mensajes con esa conversación.
+    effect(() => {
+      const id = this.state.requestedChat();
+      if (id == null) {
+        return;
+      }
+      const chat = CHATS.find((c) => c.id === id) ?? null;
+      if (chat) {
+        this.tab.set('chat');
+        this.openChat.set(chat);
+      }
+      this.state.requestedChat.set(null);
     });
   }
 

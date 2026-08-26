@@ -97,11 +97,16 @@ import { CHATS, GRUPOS, type ChatRow } from '../../data/seed';
       -->
       <div class="footer__tasks">
         @for (t of tasks; track t.id) {
-        <div class="task" [class.task--post]="t.state === 'postchat'">
+        <button
+          class="task"
+          type="button"
+          [class.task--post]="t.state === 'postchat'"
+          (click)="state.openConversation(t.id)"
+        >
           <span class="task__type" [style.--g]="channelIcon(t)"></span>
           <span class="task__name">{{ t.name }}</span>
           <span class="task__time">{{ t.time }}</span>
-        </div>
+        </button>
         }
       </div>
 
@@ -161,10 +166,14 @@ import { CHATS, GRUPOS, type ChatRow } from '../../data/seed';
       align-items: center;
       flex: none;
       height: 1.854396vw;
+      padding: 0;
       border: 0.038462vw solid #11131a;
       border-radius: 0.6vw;
       background: #5f6776;
       color: #fff;
+      font: inherit;
+      -webkit-appearance: none;
+      appearance: none;
       cursor: pointer;
       white-space: nowrap;
     }
