@@ -110,6 +110,23 @@ export class AgentStateService {
     this.comunicatorOpen.update((v) => !v);
   }
 
+  /**
+   * Conversación que el carrusel del footer pide abrir. Vive aquí porque el chip está en
+   * el footer y la conversación se pinta en el Comunicador: son dos componentes hermanos.
+   * El Comunicador la consume (abre Mensajes con esa conversación) y la vuelve a 'null'.
+   */
+  readonly requestedChat = signal<number | null>(null);
+
+  /**
+   * Clic en una pastilla del carrusel de conversaciones en curso: abre el Comunicador y
+   * pide esa conversación, igual que en el real, donde la barra inferior es un atajo a la
+   * conversación que ya tienes en juego.
+   */
+  openConversation(id: number): void {
+    this.comunicatorOpen.set(true);
+    this.requestedChat.set(id);
+  }
+
   // ── Flujo de gestión de conversaciones perdidas ──────────────────────────────
 
   readonly step = signal<ManageStep>('idle');
