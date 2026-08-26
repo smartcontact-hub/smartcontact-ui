@@ -1,4 +1,10 @@
-import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
+import {
+  ChangeDetectionStrategy,
+  Component,
+  signal,
+  inject,
+} from '@angular/core';
+import { AgentStateService } from '../../agent-state.service';
 import { GRUPOS, PROFILE, type Grupo } from '../../data/seed';
 
 /**
@@ -616,6 +622,7 @@ import { GRUPOS, PROFILE, type Grupo } from '../../data/seed';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class SettingsComponent {
+  private readonly state = inject(AgentStateService);
   protected readonly profile = PROFILE;
   protected readonly grupos = GRUPOS;
   protected readonly tabs = ['Perfil', 'Preferencias'] as const;
@@ -625,22 +632,12 @@ export class SettingsComponent {
   protected readonly assigned = signal(92);
   protected readonly waiting = signal(2);
 
-  /** Grupos apagados a mano en esta sesión. */
-  private readonly off = signal<ReadonlySet<string>>(new Set());
-
+  /* Delegado al servicio: el mismo interruptor sale aquí y en el otro sitio. */
   protected isOn(g: Grupo): boolean {
-    return g.on && !this.off().has(g.name);
+    return this.state.grupoActivo(g);
   }
 
   protected toggleGroup(g: Grupo): void {
-    this.off.update((s) => {
-      const next = new Set(s);
-      if (next.has(g.name)) {
-        next.delete(g.name);
-      } else {
-        next.add(g.name);
-      }
-      return next;
-    });
+    this.state.toggleGrupo(g);
   }
 }

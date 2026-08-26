@@ -1,4 +1,5 @@
 import { Injectable, computed, signal } from '@angular/core';
+import type { Grupo } from './data/seed';
 
 /**
  * Estados del agente en el Agent real ('AgentStatusAED'). Los códigos son los suyos,
@@ -56,6 +57,29 @@ export interface StatusOpt {
  */
 @Injectable({ providedIn: 'root' })
 export class AgentStateService {
+  /*
+   * Grupos que el agente ha apagado a mano. Vive AQUÍ y no en cada componente porque el
+   * mismo interruptor sale en DOS sitios —el KPI «Grupos asignados» y el Perfil del
+   * Comunicador— y son el mismo grupo: apagarlo en uno tiene que verse en el otro.
+   */
+  private readonly gruposOff = signal<ReadonlySet<string>>(new Set());
+
+  grupoActivo(g: Grupo): boolean {
+    return g.on && !this.gruposOff().has(g.name);
+  }
+
+  toggleGrupo(g: Grupo): void {
+    this.gruposOff.update((prev) => {
+      const next = new Set(prev);
+      if (next.has(g.name)) {
+        next.delete(g.name);
+      } else {
+        next.add(g.name);
+      }
+      return next;
+    });
+  }
+
   /** Los NUEVE estados del desplegable real, en su orden y con su código. */
   readonly options: readonly StatusOpt[] = [
     { label: 'Disponible', code: AGENT_STATUS.ACTIVO },
