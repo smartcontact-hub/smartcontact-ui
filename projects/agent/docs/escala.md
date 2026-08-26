@@ -96,38 +96,61 @@ Verificado con dos medidas independientes:
 | Texto base (`* { font-size: 0.8vw }`)               | 0.8 × 14.56 = 11.65 px   |
 | Barra inferior (`.shortcut-bar`, `height: 2.604vw`) | 2.604 × 14.56 = 37.92 px |
 
-## Un hueco conocido, sin resolver
+## ⚠️ Y el lienzo con `zoom` ya no está — mira que no vuelva
 
-La altura de fila de la tabla **no es una función pura de vw**: medida a 1280 / 1456 /
-1920 da **2.535 / 2.885 / 3.804 vw**. Las celdas sí escalan (padding, `line-height` y
-`font-size` dan un vw constante), así que la altura la manda el contenido o el reparto
-vertical, no la declaración.
+El shell tenía `width: 1456px` + `zoom: innerWidth/1456`: un diseño congelado que se
+escalaba entero. Con medidas en **px** eso escalaba **una vez** y salía bien; con medidas
+en **vw** escalaba **dos**. Medido a 1280 / 1456 / 1920, el botón de estado daba
+20.86 / 27 / 46.94 px donde su vw pide 23.74 / 27 / 35.60.
 
-**Causa encontrada** leyendo su CSS: el original **no dimensiona esa tabla en `vw`, sino en
-`vh`**, y además escalona por anchura.
+**A 1456 el `zoom` vale 1 y el fallo es invisible.** Verificar a un solo ancho no lo caza.
+Lo que lo cazó fue comparar la réplica **consigo misma a tres anchos**: si algo es fluido
+de verdad, mide los mismos vw en cualquier ventana.
+
+```bash
+export PATH=/usr/local/bin:$PATH
+npm run parity:constancy      # falla si alguna pieza no mantiene su vw
+```
+
+El Comunicador se libró por estar **fuera** del shell — por eso el widget salía perfecto
+mientras el dashboard estaba mal.
+
+## Lo que hoy NO mantiene vw constante, y por qué está bien
+
+| pieza        | 1280     | 1456     | 1920     | veredicto                          |
+| ------------ | -------- | -------- | -------- | ---------------------------------- |
+| `.shell`     | 900px    | 900px    | 900px    | correcto: es `100vh`               |
+| `.tablewrap` | 632px    | 601px    | 506px    | correcto: es lo que queda del alto |
+| `sc-icon`    | **14px** | **14px** | **14px** | **fijo** — deriva 0.365vw          |
+
+Las dos primeras dependen del **alto** de ventana, no del ancho: al medir con el alto fijo
+en 900 su ratio en vw tiene que moverse. No es un defecto.
+
+`sc-icon` sí lo es: su tamaño entra por un input en px y el `rem` de esta réplica vale
+16 px, así que no escala. Es **código compartido del DS**, así que tocarlo marca DIRTY a
+todo lo que lo consuma. Anotado en `findings/phase-4-diffs.md`, no corregido.
+
+## Cómo dimensiona el original en vertical, que es distinto
+
+Usa **`vh` en 320 sitios** contra 2 en la réplica (154 `height`, y hasta 15 `font-size` y 9
+`border-radius`). Su contenedor de tabla va en vh y **escalona por anchura**:
 
 ```css
 .historic-container {
   height: 64.034vh;
-} /* por defecto      */
+} /* por defecto  */
 @media (max-width: 1680px) {
   … {
     height: 69.37vh;
   }
-} /* sube             */
+} /* sube         */
 @media (max-width: 1366px) {
   … {
     height: 58.825vh;
   }
-} /* y luego baja     */
+} /* y luego baja */
 ```
 
-Ni siquiera es monótono. La réplica pone `height: 100%` y deja repartir al flex, así que al
-variar la anchura manteniendo el alto en 900 el ratio en vw se movía. Es un modelo vertical
-distinto, no un fallo de la conversión.
-
-Y no es un caso aislado: el original usa **`vh` en 320 sitios** (154 `height`, y hasta 15
-`font-size` y 9 `border-radius`) contra 2 en la réplica.
-
-**No se ha tocado**, porque comprobar que esos tres valores cuadran exige medir el original
-en vivo. Está descrito con su coste en `findings/phase-8-new-behaviours.md`; decide Rafa.
+Ni siquiera es monótono. **No se ha replicado**: comprobar que esos tres valores cuadran
+exige medir el original en vivo. Está descrito con su coste en
+`findings/phase-8-new-behaviours.md`.

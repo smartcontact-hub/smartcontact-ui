@@ -1,0 +1,378 @@
+{
+  "phase": "phase-1_5-states",
+  "discovery": {
+    "method": "selectores del CSS del original que llevan estado Y tocan una propiedad medida",
+    "note": "Los estados de RUTA (secciones del Comunicador) no salen de aqui: no son pseudoclases, son componentes distintos. Estan en la matriz por conocimiento del producto.",
+    "byState": {
+      "hover": {
+        "rules": 51,
+        "sample": ".pretty.p-has-hover input:hover~.state:not(.p-is-hover)"
+      },
+      "focus": {
+        "rules": 2,
+        "sample": ".form-floating>textarea:focus~label::after,.form-floating>textarea:not(:placeholder-shown)~label::after"
+      },
+      "focus-visible": {
+        "rules": 0,
+        "sample": ""
+      },
+      "focus-within": {
+        "rules": 1,
+        "sample": ".visually-hidden,.visually-hidden-focusable:not(:focus):not(:focus-within)"
+      },
+      "active": {
+        "rules": 0,
+        "sample": ""
+      },
+      "disabled": {
+        "rules": 1,
+        "sample": ".buttonEnviar:disabled"
+      },
+      "checked": {
+        "rules": 6,
+        "sample": ".pretty.p-toggle input:checked~.state.p-on"
+      },
+      "aria-expanded": {
+        "rules": 0,
+        "sample": ""
+      },
+      "data-state": {
+        "rules": 0,
+        "sample": ""
+      },
+      "open": {
+        "rules": 28,
+        "sample": ".collapse:not(.show)"
+      },
+      "has": {
+        "rules": 0,
+        "sample": ""
+      }
+    }
+  },
+  "matrix": [
+    {
+      "id": "default",
+      "rootSelector": ":root",
+      "actuation": [],
+      "teardown": "recarga completa de la pagina",
+      "reproducible": true,
+      "changesMeasurements": true,
+      "nodes": 442,
+      "notes": ""
+    },
+    {
+      "id": "comunicator-call",
+      "rootSelector": "app-root",
+      "actuation": [
+        "document.querySelector('.footer__av')?.click();"
+      ],
+      "teardown": "recarga completa de la pagina",
+      "reproducible": true,
+      "changesMeasurements": true,
+      "nodes": 491,
+      "notes": ""
+    },
+    {
+      "id": "comunicator-chat",
+      "rootSelector": "app-root",
+      "actuation": [
+        "document.querySelector('.footer__av')?.click();",
+        "document.querySelectorAll('.com__tab')[1]?.click();"
+      ],
+      "teardown": "recarga completa de la pagina",
+      "reproducible": true,
+      "changesMeasurements": true,
+      "nodes": 511,
+      "notes": ""
+    },
+    {
+      "id": "comunicator-agents",
+      "rootSelector": "app-root",
+      "actuation": [
+        "document.querySelector('.footer__av')?.click();",
+        "document.querySelectorAll('.com__tab')[2]?.click();"
+      ],
+      "teardown": "recarga completa de la pagina",
+      "reproducible": true,
+      "changesMeasurements": true,
+      "nodes": 468,
+      "notes": ""
+    },
+    {
+      "id": "comunicator-history",
+      "rootSelector": "app-root",
+      "actuation": [
+        "document.querySelector('.footer__av')?.click();",
+        "document.querySelectorAll('.com__tab')[3]?.click();"
+      ],
+      "teardown": "recarga completa de la pagina",
+      "reproducible": true,
+      "changesMeasurements": true,
+      "nodes": 648,
+      "notes": ""
+    },
+    {
+      "id": "settings",
+      "rootSelector": "app-root",
+      "actuation": [
+        "document.querySelector('.footer__av')?.click();",
+        "document.querySelector('.com__icon--set')?.click();"
+      ],
+      "teardown": "recarga completa de la pagina",
+      "reproducible": true,
+      "changesMeasurements": true,
+      "nodes": 510,
+      "notes": ""
+    },
+    {
+      "id": "settings-prefs",
+      "rootSelector": "app-root",
+      "actuation": [
+        "document.querySelector('.footer__av')?.click();",
+        "document.querySelector('.com__icon--set')?.click();",
+        "document.querySelectorAll('.set__tabs button')[1]?.click();"
+      ],
+      "teardown": "recarga completa de la pagina",
+      "reproducible": true,
+      "changesMeasurements": true,
+      "nodes": 490,
+      "notes": ""
+    },
+    {
+      "id": "states",
+      "rootSelector": "app-root",
+      "actuation": [
+        "document.querySelector('.footer__status')?.click();"
+      ],
+      "teardown": "recarga completa de la pagina",
+      "reproducible": true,
+      "changesMeasurements": true,
+      "nodes": 484,
+      "notes": ""
+    },
+    {
+      "id": "pendientes",
+      "rootSelector": "app-root",
+      "actuation": [
+        "[...document.querySelectorAll('button,[role=tab]')]\n       .find((b) => /Pendientes/.test(b.textContent ?? ''))?.click();"
+      ],
+      "teardown": "recarga completa de la pagina",
+      "reproducible": true,
+      "changesMeasurements": true,
+      "nodes": 447,
+      "notes": ""
+    },
+    {
+      "id": "chat-open",
+      "rootSelector": "app-root",
+      "actuation": [
+        "document.querySelector('.footer__av')?.click();",
+        "document.querySelectorAll('.com__tab')[1]?.click();",
+        "document.querySelector('.msg')?.click();"
+      ],
+      "teardown": "recarga completa de la pagina",
+      "reproducible": true,
+      "changesMeasurements": true,
+      "nodes": 477,
+      "notes": ""
+    },
+    {
+      "id": "chat-typify",
+      "rootSelector": "app-root",
+      "actuation": [
+        "document.querySelector('.footer__av')?.click();",
+        "document.querySelectorAll('.com__tab')[1]?.click();",
+        "document.querySelector('.msg__typify')?.click();"
+      ],
+      "teardown": "recarga completa de la pagina",
+      "reproducible": true,
+      "changesMeasurements": true,
+      "nodes": 459,
+      "notes": ""
+    },
+    {
+      "id": "states-admin",
+      "rootSelector": "app-root",
+      "actuation": [
+        "document.querySelector('.footer__status')?.click();",
+        "document.querySelector('.admin__toggle')?.click();"
+      ],
+      "teardown": "recarga completa de la pagina",
+      "reproducible": true,
+      "changesMeasurements": true,
+      "nodes": 479,
+      "notes": ""
+    }
+  ],
+  "discardedCount": 1,
+  "duplicateCount": 0,
+  "flakyCount": 0,
+  "all": [
+    {
+      "id": "default",
+      "rootSelector": ":root",
+      "actuation": [],
+      "teardown": "recarga completa de la pagina",
+      "reproducible": true,
+      "changesMeasurements": true,
+      "nodes": 442,
+      "notes": ""
+    },
+    {
+      "id": "comunicator-call",
+      "rootSelector": "app-root",
+      "actuation": [
+        "document.querySelector('.footer__av')?.click();"
+      ],
+      "teardown": "recarga completa de la pagina",
+      "reproducible": true,
+      "changesMeasurements": true,
+      "nodes": 491,
+      "notes": ""
+    },
+    {
+      "id": "comunicator-chat",
+      "rootSelector": "app-root",
+      "actuation": [
+        "document.querySelector('.footer__av')?.click();",
+        "document.querySelectorAll('.com__tab')[1]?.click();"
+      ],
+      "teardown": "recarga completa de la pagina",
+      "reproducible": true,
+      "changesMeasurements": true,
+      "nodes": 511,
+      "notes": ""
+    },
+    {
+      "id": "comunicator-agents",
+      "rootSelector": "app-root",
+      "actuation": [
+        "document.querySelector('.footer__av')?.click();",
+        "document.querySelectorAll('.com__tab')[2]?.click();"
+      ],
+      "teardown": "recarga completa de la pagina",
+      "reproducible": true,
+      "changesMeasurements": true,
+      "nodes": 468,
+      "notes": ""
+    },
+    {
+      "id": "comunicator-history",
+      "rootSelector": "app-root",
+      "actuation": [
+        "document.querySelector('.footer__av')?.click();",
+        "document.querySelectorAll('.com__tab')[3]?.click();"
+      ],
+      "teardown": "recarga completa de la pagina",
+      "reproducible": true,
+      "changesMeasurements": true,
+      "nodes": 648,
+      "notes": ""
+    },
+    {
+      "id": "settings",
+      "rootSelector": "app-root",
+      "actuation": [
+        "document.querySelector('.footer__av')?.click();",
+        "document.querySelector('.com__icon--set')?.click();"
+      ],
+      "teardown": "recarga completa de la pagina",
+      "reproducible": true,
+      "changesMeasurements": true,
+      "nodes": 510,
+      "notes": ""
+    },
+    {
+      "id": "settings-prefs",
+      "rootSelector": "app-root",
+      "actuation": [
+        "document.querySelector('.footer__av')?.click();",
+        "document.querySelector('.com__icon--set')?.click();",
+        "document.querySelectorAll('.set__tabs button')[1]?.click();"
+      ],
+      "teardown": "recarga completa de la pagina",
+      "reproducible": true,
+      "changesMeasurements": true,
+      "nodes": 490,
+      "notes": ""
+    },
+    {
+      "id": "states",
+      "rootSelector": "app-root",
+      "actuation": [
+        "document.querySelector('.footer__status')?.click();"
+      ],
+      "teardown": "recarga completa de la pagina",
+      "reproducible": true,
+      "changesMeasurements": true,
+      "nodes": 484,
+      "notes": ""
+    },
+    {
+      "id": "pendientes",
+      "rootSelector": "app-root",
+      "actuation": [
+        "[...document.querySelectorAll('button,[role=tab]')]\n       .find((b) => /Pendientes/.test(b.textContent ?? ''))?.click();"
+      ],
+      "teardown": "recarga completa de la pagina",
+      "reproducible": true,
+      "changesMeasurements": true,
+      "nodes": 447,
+      "notes": ""
+    },
+    {
+      "id": "chat-open",
+      "rootSelector": "app-root",
+      "actuation": [
+        "document.querySelector('.footer__av')?.click();",
+        "document.querySelectorAll('.com__tab')[1]?.click();",
+        "document.querySelector('.msg')?.click();"
+      ],
+      "teardown": "recarga completa de la pagina",
+      "reproducible": true,
+      "changesMeasurements": true,
+      "nodes": 477,
+      "notes": ""
+    },
+    {
+      "id": "chat-typify",
+      "rootSelector": "app-root",
+      "actuation": [
+        "document.querySelector('.footer__av')?.click();",
+        "document.querySelectorAll('.com__tab')[1]?.click();",
+        "document.querySelector('.msg__typify')?.click();"
+      ],
+      "teardown": "recarga completa de la pagina",
+      "reproducible": true,
+      "changesMeasurements": true,
+      "nodes": 459,
+      "notes": ""
+    },
+    {
+      "id": "states-admin",
+      "rootSelector": "app-root",
+      "actuation": [
+        "document.querySelector('.footer__status')?.click();",
+        "document.querySelector('.admin__toggle')?.click();"
+      ],
+      "teardown": "recarga completa de la pagina",
+      "reproducible": true,
+      "changesMeasurements": true,
+      "nodes": 479,
+      "notes": ""
+    },
+    {
+      "id": "dark",
+      "rootSelector": "app-root",
+      "actuation": [
+        "document.documentElement.classList.remove('ag-light');"
+      ],
+      "teardown": "recarga completa de la pagina",
+      "reproducible": true,
+      "changesMeasurements": false,
+      "nodes": 442,
+      "notes": "DESCARTADO: no cambia ninguna medida respecto a default."
+    }
+  ]
+}
