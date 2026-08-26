@@ -190,19 +190,37 @@ import { ChangeDetectionStrategy, Component, input } from '@angular/core';
     </svg>
     } }
   `,
+  /*
+   * El tamano entra en px (referencia 1456) pero se PINTA en vw, para que el icono escale
+   * como el resto. Va por el host y no por los atributos del <svg> porque los atributos
+   * `width`/`height` no son CSS: ningun codemod de hojas de estilo los alcanza, y por eso
+   * este componente se quedo fijo cuando todo lo demas paso a vw.
+   */
+  host: {
+    '[style.width]': 'vw()',
+    '[style.height]': 'vw()',
+  },
   styles: `
     :host {
       display: inline-flex;
       align-items: center;
       line-height: 0;
     }
+    /* La CSS gana a los atributos de presentacion del SVG. */
     svg {
       display: block;
+      width: 100%;
+      height: 100%;
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AgIconComponent {
   readonly name = input.required<string>();
+  /** En px a 1456 de ancho, que es como se midieron. Se convierte a vw al pintar. */
   readonly size = input(16);
+
+  protected vw(): string {
+    return `${(this.size() / 14.56).toFixed(6)}vw`;
+  }
 }

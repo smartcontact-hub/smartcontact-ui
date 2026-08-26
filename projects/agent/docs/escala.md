@@ -115,20 +115,44 @@ npm run parity:constancy      # falla si alguna pieza no mantiene su vw
 El Comunicador se libró por estar **fuera** del shell — por eso el widget salía perfecto
 mientras el dashboard estaba mal.
 
-## Lo que hoy NO mantiene vw constante, y por qué está bien
+## Lo que hoy NO mantiene vw constante
 
-| pieza        | 1280     | 1456     | 1920     | veredicto                          |
-| ------------ | -------- | -------- | -------- | ---------------------------------- |
-| `.shell`     | 900px    | 900px    | 900px    | correcto: es `100vh`               |
-| `.tablewrap` | 632px    | 601px    | 506px    | correcto: es lo que queda del alto |
-| `sc-icon`    | **14px** | **14px** | **14px** | **fijo** — deriva 0.365vw          |
+Comprobado con `npm run parity:constancy`, que recorre el DOM entero a 1280 / 1456 / 1920
+**dos veces**: a alto fijo y a ratio de pantalla constante. Esa segunda pasada es la que
+importa — a alto fijo, lo que va en `100vh` o en `flex` cambia de ratio en vw sin estar
+roto, y saldría como falso positivo.
 
-Las dos primeras dependen del **alto** de ventana, no del ancho: al medir con el alto fijo
-en 900 su ratio en vw tiene que moverse. No es un defecto.
+| pieza                                                   | deriva a ratio constante | veredicto               |
+| ------------------------------------------------------- | ------------------------ | ----------------------- |
+| `sc-icon` (2 usos)                                      | **0.365vw** = 5.31px     | **fijo de verdad**      |
+| `.grupos__head`, `input`, `.tablewrap`, `button.manage` | ≤ 0.053vw = 0.76px       | caja de línea, subpíxel |
 
-`sc-icon` sí lo es: su tamaño entra por un input en px y el `rem` de esta réplica vale
-16 px, así que no escala. Es **código compartido del DS**, así que tocarlo marca DIRTY a
-todo lo que lo consuma. Anotado en `findings/phase-4-diffs.md`, no corregido.
+De **131 nodos no constantes con 31.85px de deriva** a **26 con 5.31px**, y lo que queda
+está aislado en un sitio.
+
+### Lo que sí se arregló, y por qué el codemod no llegaba solo
+
+Todo eran **tamaños fuera del CSS**, que ninguna herramienta que lea hojas de estilo puede
+alcanzar:
+
+| dónde              | qué era                                    | ahora                               |
+| ------------------ | ------------------------------------------ | ----------------------------------- |
+| `app-icon`         | `[attr.width]`/`[attr.height]` del `<svg>` | el host se dimensiona en vw         |
+| medidor de las KPI | `<svg width="84" height="84">`             | CSS en vw (la CSS gana al atributo) |
+| globo del perfil   | `<img width="13" height="13">`             | CSS en vw                           |
+
+Si algo vuelve a salir fijo, mira ahí antes que en el CSS.
+
+### `sc-icon`: intento medido y descartado
+
+El DS ofrece `size="inherit"` (DD-24), que parecía la vía para hacerlo fluido sin tocar
+código compartido. **No lo es, y se midió**: el `[size]` numérico fija la **caja** y deja el
+glifo a su tamaño de clase —a 1456, caja 14 con `font-size` 16—, mientras que `inherit` deja
+que el glifo defina la caja. Son modos distintos. Cambiarlo metió 4 bloqueantes a 1456;
+ajustar el `font-size` al medido metió 14. Revertido.
+
+Queda como deuda anotada en `findings/phase-4-diffs.md`. Cerrarlo pide tocar el DS, y eso
+marca DIRTY a todo lo que lo consuma.
 
 ## Cómo dimensiona el original en vertical, que es distinto
 
