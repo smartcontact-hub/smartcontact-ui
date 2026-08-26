@@ -8,25 +8,25 @@ minificar). Es DECLARADO, no computado.
 
 ## Tabla del censo
 
-| capacidad | original | réplica |
-|---|---|---|
-| Equilibrado de líneas (`balance` / `pretty`) | — | — |
-| Recorte del interlineado (`text-box-trim` / `leading-trim`) | — | — |
-| Consultas de contenedor (`@container`) | — | — |
-| Unidades de contenedor (`cqw` / `cqi` / `cqh`) | — | — |
-| Tamaño óptico (`font-optical-sizing`) | — | — |
-| Ejes variables (`font-variation-settings`) | — | — |
-| Cifras tabulares (`font-variant-numeric`) | — | 2 |
-| Tipografía fluida acotada (`clamp()`) | — | — |
-| Acotado con `min()` / `max()` | 2 | 1 |
-| Transiciones de vista | — | — |
-| Animación dirigida por scroll | — | — |
-| Selector `:has()` | — | — |
-| `aspect-ratio` ⚠️ | 5 | — |
-| `subgrid` | — | — |
-| Alto de viewport (`vh`) para dimensionar | 320 | 2 |
-| Viewport dinámico (`dvh` / `svh` / `lvh`) | — | — |
-| `!important` (indicador de caos, no una capacidad) | 2071 | 4 |
+| capacidad                                                   | original | réplica |
+| ----------------------------------------------------------- | -------- | ------- |
+| Equilibrado de líneas (`balance` / `pretty`)                | —        | —       |
+| Recorte del interlineado (`text-box-trim` / `leading-trim`) | —        | —       |
+| Consultas de contenedor (`@container`)                      | —        | —       |
+| Unidades de contenedor (`cqw` / `cqi` / `cqh`)              | —        | —       |
+| Tamaño óptico (`font-optical-sizing`)                       | —        | —       |
+| Ejes variables (`font-variation-settings`)                  | —        | —       |
+| Cifras tabulares (`font-variant-numeric`)                   | —        | 2       |
+| Tipografía fluida acotada (`clamp()`)                       | —        | —       |
+| Acotado con `min()` / `max()`                               | 2        | 1       |
+| Transiciones de vista                                       | —        | —       |
+| Animación dirigida por scroll                               | —        | —       |
+| Selector `:has()`                                           | —        | —       |
+| `aspect-ratio` ⚠️                                           | 5        | —       |
+| `subgrid`                                                   | —        | —       |
+| Alto de viewport (`vh`) para dimensionar                    | 320      | 2       |
+| Viewport dinámico (`dvh` / `svh` / `lvh`)                   | —        | —       |
+| `!important` (indicador de caos, no una capacidad)          | 2071     | 4       |
 
 ## El modelo VERTICAL del original es `vh`, y la réplica no lo tiene
 
@@ -34,13 +34,13 @@ minificar). Es DECLARADO, no computado.
 aislado: es cómo compone el eje vertical.
 
 | propiedad dimensionada con `vh` | usos |
-|---|---|
-| `height` | 154 |
-| `max-height` | 20 |
-| `margin` (+ `-top`, `-bottom`) | 38 |
-| `padding` (+ `-top`, `-bottom`) | 35 |
-| `font-size` | 15 |
-| `border-radius` | 9 |
+| ------------------------------- | ---- |
+| `height`                        | 154  |
+| `max-height`                    | 20   |
+| `margin` (+ `-top`, `-bottom`)  | 38   |
+| `padding` (+ `-top`, `-bottom`) | 35   |
+| `font-size`                     | 15   |
+| `border-radius`                 | 9    |
 
 Los dos últimos son caos-fiel de manual: un tamaño de letra y un radio que dependen del
 ALTO de la ventana. Se documentan, no se arreglan.
@@ -49,11 +49,11 @@ ALTO de la ventana. Se documentan, no se arreglan.
 
 El contenedor de la tabla, `.historic-container`, va en `vh` **y escalona por anchura**:
 
-| ancho | alto declarado |
-|---|---|
-| por defecto (>1680) | `64.034vh` |
-| ≤ 1680 | `69.37vh` |
-| ≤ 1366 | `58.825vh` |
+| ancho               | alto declarado |
+| ------------------- | -------------- |
+| por defecto (>1680) | `64.034vh`     |
+| ≤ 1680              | `69.37vh`      |
+| ≤ 1366              | `58.825vh`     |
 
 Fíjate en que **no es monótono**: sube a 69.37 y luego baja a 58.825. Es una tabla
 ajustada a mano, no una escala.
@@ -90,4 +90,3 @@ intento futuro de reordenar su cascada se va a topar con esto.
 ```css
 p: 0; left: 0; width: 100%; height: 100%; } .ratio-1x1 { --bs-aspect-ratio:100%; } .ratio-4x3 { --bs-aspect-ratio:75%; }
 ```
-

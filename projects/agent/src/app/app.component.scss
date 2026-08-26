@@ -1,13 +1,19 @@
 .shell {
   display: flex;
   flex-direction: column;
-  /* Diseño de referencia 1456px escalado al ancho real (fluido, como la web). */
-  width: 1456px;
-  /* ALTO FIJO, no min-height: en el real la página no scrollea — el panel de la
-     tabla tiene alto de viewport y el scroll vive dentro del cuerpo de la tabla,
-     con el footer de estado siempre visible. */
-  height: calc(100vh / var(--ag-zoom, 1));
-  zoom: var(--ag-zoom, 1);
+  /*
+   * SIN lienzo fijo y SIN zoom. Antes esto era `width: 1456px` + `zoom: innerWidth/1456`,
+   * que escalaba un diseño congelado. Con las medidas ya en vw eso las escalaba DOS veces:
+   * medido a 1280/1456/1920, el botón de estado daba 20.86 / 27 / 46.94 cuando su vw pide
+   * 23.74 / 27 / 35.60. A 1456 el zoom vale 1 y el fallo es invisible — por eso no lo cazó
+   * la verificación a un solo ancho.
+   *
+   * ALTO FIJO, no min-height: en el real la página no scrollea — el panel de la tabla
+   * tiene alto de viewport y el scroll vive dentro del cuerpo de la tabla, con el footer
+   * de estado siempre visible.
+   */
+  width: 100%;
+  height: 100vh;
   background: var(--ag-canvas);
   overflow-x: hidden;
   line-height: 1.3;
@@ -16,8 +22,8 @@
 .kpis {
   display: grid;
   grid-template-columns: 1.9fr 1.05fr 1.3fr 1.1fr 1.45fr;
-  gap: 28px;
-  padding: 14px 37px 0;
+  gap: 1.923077vw;
+  padding: 0.961539vw 2.541209vw 0;
 }
 /* Los items del grid deben poder encogerse por debajo de su min-content. */
 .kpis > * {
@@ -26,7 +32,7 @@
 
 /* La tabla va en su panel .list (#1f2429), más oscuro que el fondo (#3e4246). */
 .tablewrap {
-  margin: 26px 37px 37px;
+  margin: 1.785715vw 2.541209vw 2.541209vw;
   flex: 1;
   min-height: 0;
   /* El panel recorta; quien scrollea es el cuerpo de la tabla (ver call-table). */
@@ -34,7 +40,7 @@
   display: flex;
   flex-direction: column;
   background: var(--ag-list);
-  border-radius: 9.125px;
+  border-radius: 0.626718vw;
 }
 
 @media (max-width: 75rem) {

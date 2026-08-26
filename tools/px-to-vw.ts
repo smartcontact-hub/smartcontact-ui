@@ -34,6 +34,9 @@ const PER_VW = REFERENCE_WIDTH / 100; // 14.56
 
 const TARGETS = [
   'projects/agent/src/app/**/*.ts',
+  // Los .scss de componente entraron tarde: 'app.component.scss' se quedo fuera de la
+  // primera pasada, y ahi vivia el lienzo fijo de 1456px.
+  'projects/agent/src/app/**/*.scss',
   'projects/agent/src/styles/*.scss',
 ];
 
