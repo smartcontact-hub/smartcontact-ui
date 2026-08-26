@@ -92,19 +92,15 @@ import { CHATS, GRUPOS, type ChatRow } from '../../data/seed';
 
       <!--
         Carrusel de conversaciones EN CURSO, a la izquierda de la barra (app-shortcut-bar
-        del original). Cada chip: icono de canal, nombre y hora; la hora se tine de teal
-        cuando la conversacion esta en postconversando, como el .task-time-typification.
+        del original). Cada chip: icono de canal, nombre y hora. En postconversando, TODA
+        la pill vira a teal; las demas quedan en gris.
       -->
       <div class="footer__tasks">
         @for (t of tasks; track t.id) {
-        <div class="task">
+        <div class="task" [class.task--post]="t.state === 'postchat'">
           <span class="task__type" [style.--g]="channelIcon(t)"></span>
           <span class="task__name">{{ t.name }}</span>
-          <span
-            class="task__time"
-            [class.task__time--post]="t.state === 'postchat'"
-            >{{ t.time }}</span
-          >
+          <span class="task__time">{{ t.time }}</span>
         </div>
         }
       </div>
@@ -172,6 +168,14 @@ import { CHATS, GRUPOS, type ChatRow } from '../../data/seed';
       cursor: pointer;
       white-space: nowrap;
     }
+    /*
+     * Postconversando: TODA la pill vira a teal (#166f8d), no solo el segmento de la hora.
+     * El azul era raro justo porque tenia solo un trozo tenido.
+     */
+    .task--post {
+      background: #166f8d;
+      border-color: #166f8d;
+    }
     /* .task-type: icono de canal blanco, 1.081 x 0.781, con margen lateral 0.421. */
     .task__type {
       flex: none;
@@ -193,16 +197,11 @@ import { CHATS, GRUPOS, type ChatRow } from '../../data/seed';
       overflow: hidden;
       text-overflow: ellipsis;
     }
-    /* .task-time: en postconversando vira a teal #166f8d con la esquina derecha redonda. */
+    /* .task-time: parte de la pill; en postconversando hereda el teal del contenedor. */
     .task__time {
       padding: 0 0.26vw;
       font-family: 'Open Sans Semibold', var(--ag-font);
       font-size: 0.781vw;
-    }
-    .task__time--post {
-      background: #166f8d;
-      color: #000;
-      border-radius: 0 0.5vw 0.5vw 0;
     }
     .footer__right {
       display: flex;
