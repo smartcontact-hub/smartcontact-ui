@@ -6,7 +6,7 @@ import {
 } from '@angular/core';
 import { ScIconComponent } from '@smartcontact-hub/icons';
 import { AgentStateService, type StatusOpt } from '../../agent-state.service';
-import { GRUPOS } from '../../data/seed';
+import { CHATS, GRUPOS, type ChatRow } from '../../data/seed';
 
 /**
  * Footer: barra rectangular (#2d333a) con estado + avatar.
@@ -89,6 +89,26 @@ import { GRUPOS } from '../../data/seed';
         </ul>
       </div>
       }
+
+      <!--
+        Carrusel de conversaciones EN CURSO, a la izquierda de la barra (app-shortcut-bar
+        del original). Cada chip: icono de canal, nombre y hora; la hora se tine de teal
+        cuando la conversacion esta en postconversando, como el .task-time-typification.
+      -->
+      <div class="footer__tasks">
+        @for (t of tasks; track t.id) {
+        <div class="task">
+          <span class="task__type" [style.--g]="channelIcon(t)"></span>
+          <span class="task__name">{{ t.name }}</span>
+          <span
+            class="task__time"
+            [class.task__time--post]="t.state === 'postchat'"
+            >{{ t.time }}</span
+          >
+        </div>
+        }
+      </div>
+
       <div class="footer__right">
         <button
           class="footer__status"
@@ -123,6 +143,66 @@ import { GRUPOS } from '../../data/seed';
       height: 2.609891vw;
       padding: 0 1.51099vw;
       background: #2d333a;
+    }
+    /* Carrusel de tareas: ocupa el hueco de la izquierda y empuja el estado a la derecha. */
+    .footer__tasks {
+      flex: 1;
+      min-width: 0;
+      display: flex;
+      align-items: center;
+      gap: 0.549451vw;
+      height: 100%;
+      margin-right: auto;
+      overflow-x: auto;
+      scrollbar-width: none;
+    }
+    .footer__tasks::-webkit-scrollbar {
+      display: none;
+    }
+    /* .task del original: 0.6vw de radio, fondo #5f6776, borde #11131a. */
+    .task {
+      display: flex;
+      align-items: center;
+      flex: none;
+      height: 1.854396vw;
+      border: 0.038462vw solid #11131a;
+      border-radius: 0.6vw;
+      background: #5f6776;
+      color: #fff;
+      cursor: pointer;
+      white-space: nowrap;
+    }
+    /* .task-type: icono de canal blanco, 1.081 x 0.781, con margen lateral 0.421. */
+    .task__type {
+      flex: none;
+      width: 1.081vw;
+      height: 0.781vw;
+      margin: 0 0.421vw;
+      background-color: #fff;
+      -webkit-mask: var(--g) no-repeat center / contain;
+      mask: var(--g) no-repeat center / contain;
+    }
+    /* .task-description: nombre con bordes negros a los lados, tope 7.3 y elipsis. */
+    .task__name {
+      max-width: 7.3vw;
+      padding: 0 0.26vw;
+      border-left: 0.038462vw solid #000;
+      border-right: 0.038462vw solid #000;
+      font-family: 'Open Sans Semibold', var(--ag-font);
+      font-size: 0.781vw;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    /* .task-time: en postconversando vira a teal #166f8d con la esquina derecha redonda. */
+    .task__time {
+      padding: 0 0.26vw;
+      font-family: 'Open Sans Semibold', var(--ag-font);
+      font-size: 0.781vw;
+    }
+    .task__time--post {
+      background: #166f8d;
+      color: #000;
+      border-radius: 0 0.5vw 0.5vw 0;
     }
     .footer__right {
       display: flex;
@@ -387,6 +467,20 @@ import { GRUPOS } from '../../data/seed';
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AgentFooterComponent {
+  /*
+   * Conversaciones EN CURSO que se muestran como chips en la barra. El original pinta las
+   * tareas activas del agente; aqui salen las de CHATS que siguen en juego (open o
+   * postconversando), que es lo que el carrusel muestra.
+   */
+  protected readonly tasks = CHATS.filter(
+    (c) => c.state === 'open' || c.state === 'postchat'
+  );
+
+  /* Todas las tareas de CHATS son de chat; si algún día hay llamadas, aquí se ramifica. */
+  protected channelIcon(_c: ChatRow): string {
+    return `url('/icons/grupos/chat-actived.svg')`;
+  }
+
   protected readonly open = signal(false);
   protected readonly state = inject(AgentStateService);
   protected readonly options = this.state.options;
