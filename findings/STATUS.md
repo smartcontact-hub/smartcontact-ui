@@ -37,6 +37,21 @@ Bloques DIRTY: ninguno.
    y el Comunicador escala constante en vw a 1280 / 1456 / 1920. Ver
    `scope-vw-conversion.md` y `projects/agent/docs/escala.md`.
 
+## Qué falta de la Fase 3, y por qué
+
+El censo **DECLARADO** está hecho (`phase-3-inventory.md`, `phase-3-chaos-log.md`): 4306
+declaraciones del original sacadas de su bundle sin minificar, cerrando el grafo de chunks
+(37 ficheros), sin pasar por el login.
+
+Los otros dos entregables de la fase **no se pueden hacer sin la app en vivo**:
+
+- **Censo COMPUTADO.** Lo declarado no es lo que se pinta: el `* { font-size: 0.8vw }`
+  global del original alcanza a los hijos de texto y gana sobre la herencia, así que un
+  `font-size` declarado en un contenedor puede no llegar nunca a su texto.
+- **Lista de nodos sin casar.** Exige recorrer los dos DOM y emparejar por clave
+  estructural. La herramienta está lista (`tools/compare-ndjson.ts`); falta el lado
+  original.
+
 ## Bloqueo abierto — ACCESO al original
 
 La superficie a medir (`#/private`) está tras login. **Playwright arranca con un navegador
