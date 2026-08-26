@@ -49,15 +49,21 @@ import type { ChatRow } from '../../data/seed';
       </div>
 
       <div class="conv__body">
-        @for (m of chat().thread; track $index) { @if (m.from === 'server') {
+        @for (m of thread(); track $index) { @if (m.from === 'server') {
         <div class="line line--server">
           <span>{{ m.text }}</span>
         </div>
         } @else {
         <div class="line" [class.line--send]="m.from === 'send'">
-          <span class="bubble" [class.bubble--send]="m.from === 'send'">
+          <span
+            class="bubble"
+            [class.bubble--send]="m.from === 'send'"
+            [class.bubble--grouped]="!m.showTime"
+          >
             {{ m.text }}
+            @if (m.showTime) {
             <span class="bubble__time">{{ m.time }}</span>
+            }
           </span>
         </div>
         } }
@@ -250,6 +256,13 @@ import type { ChatRow } from '../../data/seed';
       font-size: 0.693682vw;
       opacity: 0.85;
     }
+    /*
+     * Mensaje anidado: cuando NO es el último de su tanda no lleva hora, así que la
+     * burbuja no reserva el hueco inferior y queda compacta (el padding baja al de arriba).
+     */
+    .bubble--grouped {
+      padding-bottom: 0.234204vw;
+    }
 
     /* .footer-container-message-private — 122.2 sobre #333a41. */
     .conv__foot {
@@ -355,4 +368,19 @@ export class ChatConversationComponent {
 
   /** Transferir y cerrar solo tienen sentido con la conversación viva. */
   protected readonly live = computed(() => this.chat().state === 'open');
+
+  /*
+   * Hilo con anidamiento: la hora se pinta SOLO en el último mensaje de cada tanda del
+   * mismo emisor, como el original. Un mensaje la muestra si es el último del hilo o si
+   * el siguiente cambia de emisor; los de 'server' nunca llevan hora.
+   */
+  protected readonly thread = computed(() => {
+    const msgs = this.chat().thread;
+    return msgs.map((m, i) => ({
+      ...m,
+      showTime:
+        m.from !== 'server' &&
+        (i === msgs.length - 1 || msgs[i + 1].from !== m.from),
+    }));
+  });
 }
