@@ -45,7 +45,7 @@ el DOM a ojo.
    (33 en total la última vez).
 2. Las plantillas están como `// angular:jit:template:<ruta>` seguido de
    `var x_component_default = \`…\``; los estilos, como
-`var x_component_default2 = '/_ … _/'`.
+`var x*component_default2 = '/* … \_/'`.
 3. Los SVG se descargan por URL, tanto `media/<nombre>-<hash>.svg` como
    `assets/icons/…`. 112 disponibles.
 4. Para lo que solo se ve en vivo (estados, clases condicionales, colores computados),
