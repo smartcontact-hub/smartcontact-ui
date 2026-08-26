@@ -519,6 +519,12 @@ lo que hace que te la creas cuando te toca. Lee el índice siempre; el cuerpo, c
 
 12. **Tu comando alcanza más de lo que crees — al CONTAR, al REEMPLAZAR y al IMPRIMIR. Antes de
     dar una cifra, ejecutar un `sed` o volcar un fichero, pregúntate qué entra en el resultado.**
+    - *Comparando contra la base equivocada (s35)*: `git diff main...rama` usa la **base de
+      fusión**, no `main` de hoy. Con una PR de hace dos días eso me enseñó un cambio de
+      `orange` a `yellow` que **ya estaba aplicado**, y estuve a punto de mergear algo que
+      habría **borrado 432 ficheros** de trabajo posterior. Lo destapó rebasar (git dijo
+      *previously applied*) y comparar el md5 del fichero fuente. Para «qué cambiaría de
+      verdad si mergeo esto», **dos puntos**, no tres.
     - *Contando de más (s11)*: dije "111 usos de `p-button`" y lo escribí en el hand-off; los
       `<p-button>` reales eran **50** — el resto, etiquetas de cierre y clases CSS. *Y su forma
       recurrente (s28), que en este repo ya ha picado a TRES scripts: los **comentarios** entran

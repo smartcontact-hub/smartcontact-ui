@@ -3,7 +3,7 @@
 > **Volátil.** Lo reescribe la sesión que trabaja ESTE frente, y **solo este fichero**.
 > No toques los hand-offs de otros frentes. Lo durable vive en `docs/` y en
 > `projects/agent/docs/`.
-> **Sello: 2026-08-26 (s34) — HEAD `f503923`. Preflight verde, todo pusheado a `main`.**
+> **Sello: 2026-08-26 (s35) — HEAD `020928a`. Preflight verde, CI verde LEÍDO, todo en `main`.**
 
 ## Qué es este frente
 
@@ -31,10 +31,22 @@ Lo aplicado y verificado hasta hoy: las fuentes del original self-hospedadas, la
 
 ## ▶︎ SIGUIENTE — sin preguntar
 
-1. **Nada que no dependa del original.** El trabajo alcanzable sin sesión está hecho. Si
-   aparece tiempo, lo único útil es ensanchar el barrido de `parity:constancy` a los 25
-   anchos que salen de `findings/phase-1-breakpoints.json` en vez de a 3 — es más de lo
-   mismo, no descubre categorías nuevas.
+1. **Seguir puliendo contra el original, que es lo que Rafa va pidiendo a ojo.** El método
+   que funciona: él señala algo, se MIDE en su Chrome (sesión abierta, `tab` del original),
+   y se aplica el número. Lo hecho el 26-ago está abajo; lo que quede pendiente saldrá de
+   él, no de una lista.
+2. Del protocolo de fases, nada alcanzable sin sesión. Si aparece tiempo, lo único útil es
+   ensanchar `parity:constancy` a los 25 anchos de `findings/phase-1-breakpoints.json` en
+   vez de a 3, pero es más de lo mismo: no descubre categorías nuevas.
+
+### Lo que se ajustó el 26-ago (todo medido, no a ojo)
+
+Chip de Conexión llenando su contenedor · tema claro con sus 48 variables `--mode*` reales ·
+iconos de cabecera 15 → 9.86 · cabecera a la mitad de alta (KPI a 61.13 contra sus 61.15) ·
+tabla bicolor (cabecera `#1f2429`, cuerpo `#24292f`) · medidor rojo/verde con datos reales,
+colores muestreados de su `<canvas>` · interruptores y buscador negro en Grupos · las cinco
+tarjetas a su ancho medido · tabla pegada al pie (5.83 de la barra) · desplegable de grupos
+sin recortes.
 
 ## ⏸️ ESPERANDO A RAFA — no preguntar, no hacer
 
@@ -55,6 +67,12 @@ Tres decisiones suyas, todas escritas con su coste:
 
 - **Backticks dentro de `styles:`** rompen el build y el error **no los menciona**. Me ha
   pasado dos veces en esta sesión. Guardián: `npm run guard:backticks`, ya dentro de `verify`.
+- **Tras pushear, LEE el CI**: `gh run list --branch main --workflow ci --limit 1`. El 26-ago
+  se colaron SEIS pushes en rojo mientras yo escribía «preflight verde» en cada mensaje. El
+  lock puede desincronizarse solo (peers con rango flotante) y `preflight` no corre `npm ci`.
+- **Un `git diff` de TRES puntos compara contra la base de fusión, no contra `main` de hoy.**
+  Con eso di por buena una PR que en realidad ya estaba aplicada y que, mergeada, habría
+  borrado 432 ficheros. Para «qué cambiaría si la mergeo», dos puntos.
 - **`export PATH=/usr/local/bin:$PATH`** siempre. El node de nvm (v20) rompe el repo.
 - **Verificar a un solo ancho no vale.** Así se me coló el doble escalado del `zoom`: a
   1456 valía 1 y el fallo era invisible. Comprueba siempre con `parity:constancy`.
