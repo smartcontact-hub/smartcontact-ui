@@ -32,49 +32,49 @@ import { AgIconComponent } from '../ui/app-icon.component';
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 14px;
+      gap: 0.961539vw;
       height: 100%;
-      padding: 13px 16px;
+      padding: 0.892858vw 1.098902vw;
     }
     .time__value {
-      font-size: 31.9px;
+      font-size: 2.190935vw;
       font-weight: 400;
       line-height: 0.914;
       color: var(--ag-text);
-      letter-spacing: 0.29px;
+      letter-spacing: 0.019918vw;
     }
     .time__label {
-      font-size: 11.7px;
-      margin-top: 7px;
+      font-size: 0.803572vw;
+      margin-top: 0.48077vw;
     }
     .time__side {
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 0.412088vw;
       align-items: flex-start;
-      min-width: 150px;
+      min-width: 10.302198vw;
     }
     /* Connection: chip lighter #373b41, radio 9.1px, padding 6/9px (exacto). */
     .time__conn {
       display: inline-flex;
       align-items: center;
-      gap: 7px;
+      gap: 0.48077vw;
       background: var(--ag-elev);
-      border-radius: 9.1px;
-      padding: 6px 9px;
-      font-size: 11.7px;
+      border-radius: 0.625vw;
+      padding: 0.412088vw 0.618132vw;
+      font-size: 0.803572vw;
       color: var(--ag-text);
       white-space: nowrap;
       /* "Degradado" real: sombra interior inferior. */
-      box-shadow: inset 0 -7.6px 7.6px 0 #2a2f34;
+      box-shadow: inset 0 -0.521979vw 0.521979vw 0 #2a2f34;
     }
     /* Disconnection: texto muted #41454c, sin chip. */
     .time__disc {
       display: inline-flex;
       align-items: center;
-      gap: 7px;
-      padding: 0 9px;
-      font-size: 11.7px;
+      gap: 0.48077vw;
+      padding: 0 0.618132vw;
+      font-size: 0.803572vw;
       color: var(--ag-disc);
       white-space: nowrap;
     }

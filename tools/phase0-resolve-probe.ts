@@ -26,7 +26,7 @@ const session = await openSession('chromium', 1456, 900);
 await session.page.goto(REPLICA, { waitUntil: 'load' });
 await settle(session.page);
 
-const result = await session.page.evaluate((families: string[]) => {
+const result = await session.page.evaluate(async (families: string[]) => {
   /*
    * OJO: 'document.fonts.check()' NO sirve para esto. Devuelve true en cuanto ALGUNA
    * fuente puede pintar esos caracteres, aunque la familia pedida no exista, asi que
@@ -34,6 +34,20 @@ const result = await session.page.evaluate((families: string[]) => {
    * familia sobre tres bases genericas; si el ancho no cambia respecto a NINGUNA base,
    * la familia no esta resolviendo y el texto lo pinta el fallback.
    */
+  /*
+   * Antes de medir hay que PEDIR las caras: con 'font-display: swap' el navegador no
+   * descarga una familia que ningun elemento usa, y entonces la sonda la daria por
+   * ausente aunque este declarada y servida. 'load()' resuelve con la lista vacia si la
+   * familia no existe, asi que pedirla no falsea el resultado.
+   */
+  await Promise.all(
+    families.flatMap((f) => [
+      document.fonts.load(`400 14px "${f}"`).catch(() => []),
+      document.fonts.load(`600 14px "${f}"`).catch(() => []),
+    ])
+  );
+  await document.fonts.ready;
+
   const BASES = ['monospace', 'serif', 'sans-serif'];
   const SAMPLE = 'mmmmmmmmmmlliWWWWWWWWWW0123456789';
   const canvas = document.createElement('canvas');

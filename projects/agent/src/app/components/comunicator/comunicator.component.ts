@@ -30,7 +30,8 @@ interface ComAction {
 /**
  * Widget flotante del Comunicador — carcasa + navbar.
  *
- * Medidas convertidas del real a la escala de sc-agent ('px = vw x 14.56', ver
+ * Medidas del real copiadas TAL CUAL en vw; los comentarios dan el px equivalente a
+ * 1456, que es el ancho al que se midieron (ver
  * 'projects/agent/docs/escala.md'). Los iconos son los SVG originales, con sus tres
  * estados (normal / hover / actived), servidos como 'background-image' igual que el real.
  *
@@ -128,7 +129,7 @@ interface ComAction {
             </div>
 
             @if (tab() === 'chat' || tab() === 'agents') {
-            <!-- .header-message-subheader-input — 26.5px de alto, a 48.6 del panel. -->
+            <!-- .header-message-subheader-input — 1.820055vw de alto, a 48.6 del panel. -->
             <label class="com__search">
               <span class="com__search-ic"></span>
               <input
@@ -210,12 +211,12 @@ interface ComAction {
     /* Widget: 17.188 x 34.792vw -> 250.3 x 506.7px. Anclado abajo a la derecha. */
     .com {
       position: fixed;
-      right: 16.2px;
-      bottom: 45.5px;
-      width: 250.3px;
-      height: 506.7px;
-      border-radius: 23.67px;
-      box-shadow: -15.2px 12.7px 21.1px -10.1px rgba(0, 0, 0, 0.5);
+      right: 1.112638vw;
+      bottom: 3.125vw;
+      width: 17.190935vw;
+      height: 34.800825vw;
+      border-radius: 1.625687vw;
+      box-shadow: -1.043957vw 0.872253vw 1.449176vw -0.693682vw rgba(0, 0, 0, 0.5);
       font-family: var(--ag-font);
       z-index: 40;
     }
@@ -224,8 +225,8 @@ interface ComAction {
     .com__plate {
       position: absolute;
       inset: 0 0 auto 0;
-      height: 487.7px;
-      border-radius: 28.75px;
+      height: 33.49588vw;
+      border-radius: 1.974588vw;
       background: #1f2429;
     }
     /*
@@ -250,17 +251,17 @@ interface ComAction {
     }
     .com__icon::after {
       content: '';
-      width: 9.1px;
-      height: 9.1px;
+      width: 0.625vw;
+      height: 0.625vw;
       background-color: #fff;
       -webkit-mask: var(--glyph) no-repeat center / contain;
       mask: var(--glyph) no-repeat center / contain;
     }
     .com__icon--min {
       top: 0;
-      left: 101.1px;
-      width: 48px;
-      height: 19px;
+      left: 6.943682vw;
+      width: 3.296704vw;
+      height: 1.304946vw;
       --glyph: url('/icons/comunicator/flecha_2.svg');
     }
     /*
@@ -270,9 +271,9 @@ interface ComAction {
     .com__icon--set {
       top: 0;
       right: 0;
-      width: 62.6px;
-      height: 19px;
-      border-radius: 0 27.58px 0 0;
+      width: 4.299451vw;
+      height: 1.304946vw;
+      border-radius: 0 1.894231vw 0 0;
       --glyph: url('/icons/comunicator/engranaje.svg');
     }
     .com__icon--set.actived {
@@ -284,15 +285,15 @@ interface ComAction {
     .com__icon:focus-visible {
       outline: 2px solid #fff;
       outline-offset: 2px;
-      border-radius: 4px;
+      border-radius: 0.274726vw;
     }
 
     /* Panel de la sección activa. */
     .com__body {
       position: absolute;
-      inset: 19px 0 auto 0;
-      height: 482.6px;
-      border-radius: 28.75px;
+      inset: 1.304946vw 0 auto 0;
+      height: 33.145605vw;
+      border-radius: 1.974588vw;
       background: #333a41;
       color: #fff;
       overflow: hidden;
@@ -306,20 +307,20 @@ interface ComAction {
       display: flex;
       flex-direction: column;
       align-items: center;
-      height: 33.6px;
-      padding: 10.63px 22.7px 0;
-      border-bottom: 0.75px solid rgba(0, 0, 0, 0.397);
+      height: 2.307693vw;
+      padding: 0.730083vw 1.559066vw 0;
+      border-bottom: 0.051511vw solid rgba(0, 0, 0, 0.397);
       background: #333a41;
       box-sizing: border-box;
     }
     .com__head.tall {
-      height: 93.8px;
-      gap: 17.47px;
+      height: 6.442308vw;
+      gap: 1.199863vw;
     }
     /* Agentes es mas alta: titulo + buscador + pestañas. */
     .com__head.taller {
-      height: 140.18px;
-      gap: 17.47px;
+      height: 9.627748vw;
+      gap: 1.199863vw;
     }
     /* .buscador — 204.89 x 26.54 sobre #1f2429 con radio 7.59, no una pildora. */
     .com__search {
@@ -327,16 +328,16 @@ interface ComAction {
       display: flex;
       align-items: center;
       width: 100%;
-      height: 26.54px;
-      border-radius: 7.59px;
+      height: 1.822803vw;
+      border-radius: 0.521292vw;
       background: #1f2429;
     }
     /* .icon-search — 12.12 cuadrado a 11.88 del borde. */
     .com__search-ic {
       position: absolute;
-      left: 11.88px;
-      width: 12.12px;
-      height: 12.12px;
+      left: 0.815935vw;
+      width: 0.832418vw;
+      height: 0.832418vw;
       background-color: var(--ag-muted);
       -webkit-mask: url('/icons/dialpad/lupa.svg') no-repeat center / contain;
       mask: url('/icons/dialpad/lupa.svg') no-repeat center / contain;
@@ -345,13 +346,13 @@ interface ComAction {
     .com__search input {
       width: 100%;
       height: 100%;
-      padding: 0 11.88px 0 32.78px;
+      padding: 0 0.815935vw 0 2.251374vw;
       border: 0;
       outline: none;
       background: none;
       color: #fff;
       font-family: inherit;
-      font-size: 11.65px;
+      font-size: 0.800138vw;
       box-sizing: border-box;
     }
     /* .internal-title — el titulo comparte fila con refrescar y filtrar. */
@@ -360,9 +361,9 @@ interface ComAction {
     }
     .com__hicon {
       position: absolute;
-      top: 2px;
-      width: 10.2px;
-      height: 16px;
+      top: 0.137363vw;
+      width: 0.70055vw;
+      height: 1.098902vw;
       padding: 0;
       border: 0;
       background-color: #fff;
@@ -381,27 +382,27 @@ interface ComAction {
 
     /* Barra de pestañas del original: mitades + linea + pildora deslizante. */
     .tabbar {
-      width: 204.89px;
+      width: 14.072116vw;
       /* El hueco buscador-pestañas es 18.2, algo mayor que el gap de la cabecera. */
-      margin-top: 0.73px;
+      margin-top: 0.050138vw;
     }
     .tabbar__tabs {
       display: flex;
-      height: 14.78px;
-      margin: 0 2.91px;
+      height: 1.01511vw;
+      margin: 0 0.199863vw;
     }
     /* Las dos mitades comparten tipografia; solo cambia el color. */
     .tabbar__tabs button {
       display: flex;
       align-items: flex-end;
-      width: 99.54px;
+      width: 6.836539vw;
       padding: 0;
       border: 0;
       background: none;
       color: #5f6776;
       font-family: 'Open Sans Semibold', var(--ag-font);
       font-weight: 600;
-      font-size: 9.86px;
+      font-size: 0.677198vw;
       cursor: pointer;
     }
     /* La primera alinea a la izquierda; la segunda, a la derecha. */
@@ -416,28 +417,28 @@ interface ComAction {
     }
     .tabbar__rail {
       position: relative;
-      width: 199.07px;
-      height: 24.3px;
-      margin-left: 2.91px;
+      width: 13.672391vw;
+      height: 1.668957vw;
+      margin-left: 0.199863vw;
     }
     /* .toggleBarLine — hr de 1.11 en #5f6776 al 25%, no una linea blanca. */
     .tabbar__rail::before {
       content: '';
       position: absolute;
-      top: 11.65px;
-      left: 2.91px;
-      width: 193.26px;
-      height: 1.11px;
+      top: 0.800138vw;
+      left: 0.199863vw;
+      width: 13.273352vw;
+      height: 0.076237vw;
       background: #5f6776;
       opacity: 0.25;
     }
     /* .toggleSelected — 37.92 x 3.78, radio 3.03, montada sobre la linea. */
     .tabbar__pill {
       position: absolute;
-      top: 10.83px;
-      width: 37.92px;
-      height: 3.78px;
-      border-radius: 3.03px;
+      top: 0.743819vw;
+      width: 2.604396vw;
+      height: 0.259616vw;
+      border-radius: 0.208105vw;
       background: #fff;
       transition: left 0.18s ease;
     }
@@ -445,7 +446,7 @@ interface ComAction {
     .com__title {
       width: 100%;
       text-align: center;
-      font-size: 13.66px;
+      font-size: 0.938187vw;
       font-weight: 600;
     }
     /*
@@ -454,8 +455,8 @@ interface ComAction {
      */
     .com__content {
       /* El contenido arranca 1.4px por debajo del panel, medido en el real. */
-      padding-top: 1.4px;
-      height: 430.8px;
+      padding-top: 0.096154vw;
+      height: 29.587913vw;
       box-sizing: content-box;
     }
     /*
@@ -464,9 +465,9 @@ interface ComAction {
      */
     .com__empty {
       margin: 0;
-      padding: 24px 22.7px;
+      padding: 1.648352vw 1.559066vw;
       color: var(--ag-muted);
-      font-size: 11.7px;
+      font-size: 0.803572vw;
       text-align: center;
     }
 
@@ -474,26 +475,26 @@ interface ComAction {
     .com__nav {
       position: absolute;
       inset: auto 0 0 0;
-      height: 56.9px;
+      height: 3.907968vw;
       display: flex;
       flex-direction: row;
       align-items: center;
       justify-content: space-evenly;
-      border-radius: 23.67px;
+      border-radius: 1.625687vw;
       background: #1f2429;
     }
     .com__tab {
       position: relative;
-      width: 18.2px;
-      height: 18.2px;
+      width: 1.25vw;
+      height: 1.25vw;
       padding: 0;
       border: 0;
       cursor: pointer;
       background: var(--icon) no-repeat center / 100% 100%;
     }
     .com__tab.wide {
-      width: 23.5px;
-      height: 18.1px;
+      width: 1.614011vw;
+      height: 1.243132vw;
     }
     .com__tab:hover:not(.actived) {
       background-image: var(--icon-hover);
@@ -524,21 +525,21 @@ interface ComAction {
       display: flex;
       align-items: center;
       justify-content: center;
-      width: 19px;
-      height: 19px;
+      width: 1.304946vw;
+      height: 1.304946vw;
       border-radius: 50%;
       background: #f75454;
       color: #fff;
-      font-size: 10px;
+      font-size: 0.686814vw;
       font-weight: 600;
     }
     .com__lost {
-      right: -10.8px;
-      bottom: 5.8px;
+      right: -0.741759vw;
+      bottom: 0.398352vw;
     }
     .com__unread {
-      right: -8px;
-      bottom: 8px;
+      right: -0.549451vw;
+      bottom: 0.549451vw;
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,

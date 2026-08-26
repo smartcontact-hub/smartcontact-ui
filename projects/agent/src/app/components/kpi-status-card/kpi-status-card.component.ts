@@ -21,27 +21,27 @@ import { AgTimersService } from '../../ag-timers.service';
       flex-direction: column;
       justify-content: center;
       height: 100%;
-      padding: 13px 18px;
+      padding: 0.892858vw 1.236264vw;
     }
     .status__dot {
       position: absolute;
-      top: 16px;
-      right: 16px;
-      width: 11px;
-      height: 11px;
+      top: 1.098902vw;
+      right: 1.098902vw;
+      width: 0.755495vw;
+      height: 0.755495vw;
       border-radius: 50%;
       background: var(--ag-green);
     }
     .status__value {
-      font-size: 31.9px;
+      font-size: 2.190935vw;
       font-weight: 400;
       line-height: 0.914;
       color: var(--ag-text);
-      letter-spacing: 0.29px;
+      letter-spacing: 0.019918vw;
     }
     .status__label {
-      font-size: 11.7px;
-      margin-top: 7px;
+      font-size: 0.803572vw;
+      margin-top: 0.48077vw;
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,

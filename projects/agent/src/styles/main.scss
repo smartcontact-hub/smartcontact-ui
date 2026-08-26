@@ -7,20 +7,30 @@
  */
 
 /* `@use` antes que cualquier `@import`. */
-@use 'reset';
+@use "reset";
+
+/*
+ * Fuentes de la app REAL, self-hospedadas (Fase 0, opción A).
+ * El original NO pide pesos con `font-weight`: los pide por NOMBRE DE FAMILIA
+ * (`'Open Sans Semibold'`, `'Roboto Medium'`), porque sirve una cara estática por peso.
+ * Con Open Sans variable de Google esas familias NO existían y el navegador caía a un
+ * fallback: `Roboto` se pintaba con Open Sans, y el bit USE_TYPO_METRICS ni siquiera
+ * coincidía. Fichero GENERADO por `tools/fetch-original-fonts.ts`.
+ */
+@import "fonts-original";
 
 /* Design tokens del DS (inertes para el look; los consume sc-icon si aplica). */
-@import '../../../design-tokens/src/lib/styles/tokens/layers/01-primitive.css';
-@import '../../../design-tokens/src/lib/styles/tokens/layers/02-semantic.css';
-@import '../../../design-tokens/src/lib/styles/tokens/layers/03-palette.css';
-@import '../../../design-tokens/src/lib/styles/tokens/layers/04-component.css';
-@import '../../../design-tokens/src/lib/styles/tokens/layers/05-extensions.css';
-@import '../../../design-tokens/src/lib/styles/tokens/layers/07-dark.css';
+@import "../../../design-tokens/src/lib/styles/tokens/layers/01-primitive.css";
+@import "../../../design-tokens/src/lib/styles/tokens/layers/02-semantic.css";
+@import "../../../design-tokens/src/lib/styles/tokens/layers/03-palette.css";
+@import "../../../design-tokens/src/lib/styles/tokens/layers/04-component.css";
+@import "../../../design-tokens/src/lib/styles/tokens/layers/05-extensions.css";
+@import "../../../design-tokens/src/lib/styles/tokens/layers/07-dark.css";
 
-@import 'primeicons/primeicons.css';
+@import "primeicons/primeicons.css";
 
 /* Iconos: Material Symbols Outlined self-hospedado (para <sc-icon>). */
-@import '../../../ui-smartcontact-icons/src/lib/styles/material-symbols.css';
+@import "../../../ui-smartcontact-icons/src/lib/styles/material-symbols.css";
 
 /* ─────────────────────────────────────────────────────────────────────────
  * Paleta REAL (valores exactos capturados). DARK (default) ↔ LIGHT (.ag-light).
@@ -54,9 +64,9 @@
   --ag-red: #e74c3c;
   --ag-green: #2bae22;
   --ag-status-text: #11131a;
-  --ag-font: 'Open Sans', 'Helvetica Neue', Arial, sans-serif;
-  --ag-radius: 9.125px;
-  --ag-shadow: -6.07px 7.61px 26.6px 0 #24292f;
+  --ag-font: "Open Sans", "Helvetica Neue", Arial, sans-serif;
+  --ag-radius: 0.626717vw;
+  --ag-shadow: -0.416896vw 0.522665vw 1.826923vw 0 #24292f;
 }
 
 :root.ag-light {
@@ -85,7 +95,7 @@
   --ag-brand: #233155;
   --ag-btn-line: #dfe3e8;
   --ag-btn-ic: #6b7280;
-  --ag-shadow: -4px 8px 26px rgba(205, 210, 224, 0.6);
+  --ag-shadow: -0.274725vw 0.549451vw 1.785714vw rgba(205, 210, 224, 0.6);
 }
 
 html,

@@ -1,55 +1,111 @@
-# Escala — `px = vw × 14.56`
+# Escala — `sc-agent` mide en `vw`, como la app real
 
-> **La regla**: la app real mide **todo** en `vw`; `sc-agent` mide todo en `px`. Para pasar
-> un valor del real a la réplica, **multiplica por 14.56**. Al revés, divide.
+> **La regla, desde 2026-08-26**: la app real mide **todo** en `vw`, y `sc-agent`
+> **también**. Un valor del real se copia **tal cual**. No hay conversión.
+>
+> **Esto cambió.** Hasta esa fecha la réplica estaba congelada en px con referencia 1456
+> (`px = vw × 14.56`). Si lees un `px` en un componente de `sc-agent`, o es una de las 16
+> excepciones de abajo, o es código que se quedó fuera de la migración: mídelo.
 
-## Por qué 14.56
+## Qué pasó y por qué
 
-`sc-agent` es la app real **renderizada a 1456 px de ancho de ventana**, congelada en px.
-La shell del dashboard mide literalmente `width: 1456px`.
+La réplica se construyó midiendo la app real a 1456 px de ancho y congelando cada medida
+en px. Eso es **exacto a 1456 y falso en cualquier otro ancho**: el original es fluido y
+la réplica no lo era. Con una decisión de alcance explícita —replicar el comportamiento
+del original en todo el rango— se revirtió con
+[`tools/px-to-vw.ts`](../../../tools/px-to-vw.ts): **640 valores en 16 ficheros**.
 
-Un `vw` es el 1 % del ancho de ventana → a 1456 px, `1vw = 14.56px`.
+La conversión es la inversa exacta de la calibración con la que se tomaron las medidas
+(`vw = px ÷ 14.56`), así que a 1456 el render tiene que ser idéntico. **Se verificó
+midiendo**, no suponiendo: volcado completo del DOM antes y después en los 9 estados
+guionizados, casado por clave estructural.
 
-Verificado con **dos medidas independientes**, no con una:
+|                   | resultado                             |
+| ----------------- | ------------------------------------- |
+| BLOQUEANTE (>1px) | **0** en los 9 estados                |
+| MENOR (0.25–1px)  | **0** en los 9 estados                |
+| ruido (<0.25px)   | ~2 700–3 900 comparaciones por estado |
 
-| Valor en el real | Cálculo | En `sc-agent` |
-|---|---|---|
-| Texto base (`* { font-size: 0.8vw }`) | 0.8 × 14.56 = 11.65 | `11.7px` ✅ |
-| Barra inferior (`.shortcut-bar`, `height: 2.604vw`) | 2.604 × 14.56 = 37.92 | `38px` ✅ |
+Y el Comunicador ahora **escala exacto**: 17.191vw × 34.80vw a 1280, 1456 y 1920.
 
-## La trampa: el `rem` del real TAMBIÉN es fluido
+## ⚠️ Chromium TRUNCA, no redondea — redondea hacia arriba al convertir
+
+Esta es la trampa que costó tres rondas. Chromium resuelve la longitud y luego la trunca a
+**LayoutUnit (1/64 px)**.
+
+```
+42px  ->  toFixed:  2.884615vw  ->  41.999993px  ->  trunca  ->  41.984375px   ✗
+42px  ->  ceil:     2.884616vw  ->  42.000008px  ->  trunca  ->  42px          ✓
+```
+
+Con `toFixed` cada fila de la tabla perdía 0.02 px, el error **se acumulaba** fila a fila
+hasta 0.34 px al final, y de rebote la caja de línea de 19 textos caía de 16 a 15 px al
+aterrizar en otra fase subpixel. Parecían tres problemas distintos y eran **el mismo**.
+
+Aumentar decimales **no lo arregla** (con 6 salían 100 menores en vez de 93): lo que hay
+que hacer es caer siempre por encima. Por eso `toVw()` usa `Math.ceil` a la millonésima;
+el exceso es de 1.5 × 10⁻⁵ px.
+
+## Lo que sigue en px, a propósito (16 valores)
+
+| qué                                              | por qué                                                                                                                                                   |
+| ------------------------------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| `outline` y `outline-offset` de los aros de foco | no vienen del original, los añadí por accesibilidad, y un aro de foco no debe encoger con la ventana                                                      |
+| el `1px` exacto **de un borde**                  | una línea de un píxel de dispositivo es una decisión de píxel. El propio original lo hace así: el pulsador del interruptor va `border: 1px solid #4F5256` |
+
+Las líneas que el original **sí** escala las declara en vw (`0.052vw`) y aquí valen
+0.76 px: **esas se convirtieron**.
+
+⚠️ La regla se acotó a **bordes** después de medir. Al principio conservaba cualquier
+`1px`, y eso dejaba en px el `padding: 1px` vertical del chip de espera… que el original
+no declara así (el suyo es `padding: 0.15625vw 0.2604166667vw`). Ese `1px` era invención
+mía, no una medida.
+
+## La trampa del `rem` del real (sigue vigente)
 
 En la app real hay una regla global:
 
 ```css
 * {
-  font-family: 'Open Sans';
+  font-family: "Open Sans";
   font-size: 0.8vw;
   letter-spacing: 0.01979vw;
 }
 ```
 
-Como el selector `*` alcanza también a `<html>`, **el `rem` de esa app vale `0.8vw`**, no
-16 px. Consecuencias que cuestan tiempo si no lo sabes:
+Como `*` alcanza también a `<html>`, **el `rem` de esa app vale `0.8vw`**, no 16 px:
 
-- Los componentes del Design System (que miden en `rem`) **sí escalan** con la ventana en
-  esa app. No hay desajuste de unidades entre el DS y el Comunicador.
-- Una regla de componente como `.management-option { font-size: 0.6vw }` **no llega a sus
-  hijos de texto**: el `*` los alcanza directamente con 0.8vw y gana por orden de cascada
-  sobre la herencia. Es decir, hay texto que sale al tamaño correcto *por accidente*
-  mientras su contenedor está mal medido.
+- Los componentes de su Design System (que miden en `rem`) **sí escalan** con la ventana.
+- Una regla como `.management-option { font-size: 0.6vw }` **no llega a sus hijos de
+  texto**: el `*` los alcanza directamente con 0.8vw y gana por cascada sobre la herencia.
+  Hay texto que sale bien _por accidente_ mientras su contenedor está mal medido.
 
 Si mides un valor computado en la app real y no cuadra con su CSS, sospecha del `*` antes
 que de tu medición.
 
-## Referencias rápidas ya convertidas
+## Para medir: `px = vw × 14.56` sigue sirviendo de puente
 
-| Pieza | Real | `sc-agent` |
-|---|---|---|
-| Widget del Comunicador | `17.188 × 34.792vw` | `250.3 × 506.6px` |
-| Radio del widget | `1.458vw` | `21.2px` |
-| Cabecera de panel (alto) | `2.306vw` | `33.6px` |
-| Título de cabecera | `0.938vw` Open Sans Semibold | `13.66px` |
-| Texto base | `0.8vw` | `11.7px` |
-| Icono de fila de tabla | `1.575 × 0.787vw` | `22.93 × 11.46px` |
-| Alto de fila de tabla | `2.72vw` | `39.6px` |
+La calibración no desaparece, cambia de papel. Ya no es cómo se escribe el CSS, es cómo se
+lee una medida: cuando midas en vivo con el DevTools o con
+[`tools/phase2-metrics.ts`](../../../tools/phase2-metrics.ts) **a 1456 px de ancho**,
+divide el px medido por 14.56 para obtener el vw que hay que escribir.
+
+Verificado con dos medidas independientes:
+
+| Valor en el real                                    | a 1456                   |
+| --------------------------------------------------- | ------------------------ |
+| Texto base (`* { font-size: 0.8vw }`)               | 0.8 × 14.56 = 11.65 px   |
+| Barra inferior (`.shortcut-bar`, `height: 2.604vw`) | 2.604 × 14.56 = 37.92 px |
+
+## Un hueco conocido, sin resolver
+
+La altura de fila de la tabla **no es una función pura de vw**: medida a 1280 / 1456 /
+1920 da **2.535 / 2.885 / 3.804 vw**. Las celdas sí escalan (padding, `line-height` y
+`font-size` dan un vw constante), así que la altura la manda el contenido o el reparto
+vertical, no la declaración.
+
+No está aislado y **no se ha tocado a ciegas**. Candidatos: los atributos `width`/`height`
+del `<img>` del icono de dirección, que son atributos HTML y ningún codemod los alcanza, y
+los componentes del DS que miden en `rem` y no escalan aquí (el `rem` de esta réplica sí
+vale 16 px). Cerrarlo pide descubrimiento de breakpoints y reconstrucción de curvas contra
+el original, y eso está bloqueado por el login. Ver `findings/STATUS.md`.

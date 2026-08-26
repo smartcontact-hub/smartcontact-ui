@@ -11,10 +11,10 @@ del grupo que introduce la card [SISMAC-3780](https://jira.dvtech.io/browse/SISM
 Lo más fácil de hacer mal. El real **no** gira una flecha genérica: elige entre una matriz
 de ficheros distintos, y el color codifica el resultado de la conversación.
 
-|  | entrante ↙ | saliente ↗ |
-|---|---|---|
-| **verde** — atendida | `verde_entrante.svg` | `verde_saliente.svg` |
-| **rojo** — perdida / abandonada | `rojo_entrante.svg` | `rojo_saliente.svg` |
+|                                         | entrante ↙           | saliente ↗           |
+| --------------------------------------- | -------------------- | -------------------- |
+| **verde** — atendida                    | `verde_entrante.svg` | `verde_saliente.svg` |
+| **rojo** — perdida / abandonada         | `rojo_entrante.svg`  | `rojo_saliente.svg`  |
 | **negro** — transferida (**solo chat**) | `negro_entrante.svg` | `negro_saliente.svg` |
 
 …por canal: `telefono/`, `chat/`, `mail/` (mail **no** tiene negro), más
@@ -40,11 +40,11 @@ meter una celda extra en la rejilla.
 
 El backend devuelve `management_status`, y la columna «Estado» cambia entera:
 
-| Estado | Qué se pinta | Icono | «Gestionada por» |
-|---|---|---|---|
-| `pending` | Botón primario **«Gestionar»** (`#0058ff`) | — | `-` |
-| `in_management` | Texto **«En gestión»** | `autorenew` | el agente que la tiene |
-| `managed` | Texto **«Gestionada»** | `check` | el agente que la gestionó |
+| Estado          | Qué se pinta                               | Icono       | «Gestionada por»          |
+| --------------- | ------------------------------------------ | ----------- | ------------------------- |
+| `pending`       | Botón primario **«Gestionar»** (`#0058ff`) | —           | `-`                       |
+| `in_management` | Texto **«En gestión»**                     | `autorenew` | el agente que la tiene    |
+| `managed`       | Texto **«Gestionada»**                     | `check`     | el agente que la gestionó |
 
 Los dos últimos son un `p-button` secundario de tipo texto en el real: gris `#9d9fa3`, sin
 fondo.
@@ -80,11 +80,11 @@ sus grupos, nodos y tiempos reales. Si hay que refrescarlos, el método está en
 Portado de `applyLostEventsSort()` del Agent real. La tabla se ordena por **bloque
 funcional** y, dentro del bloque, de más reciente a más antigua:
 
-| bloque | estado |
-|---|---|
-| 0 | `pending` |
-| 1 | `in_management` |
-| 2 | `managed` |
+| bloque | estado          |
+| ------ | --------------- |
+| 0      | `pending`       |
+| 1      | `in_management` |
+| 2      | `managed`       |
 
 Para las gestionadas la fecha que cuenta **no es la de la conversación sino la de
 gestión** (`managed_at`), así que la que se acaba de cerrar baja hasta justo encima de la

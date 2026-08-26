@@ -39,18 +39,18 @@ import { GRUPOS } from '../../data/seed';
     .grupos {
       display: flex;
       flex-direction: column;
-      gap: 8px;
+      gap: 0.549451vw;
       height: 100%;
-      padding: 12px 14px;
+      padding: 0.824176vw 0.961539vw;
     }
     .grupos__head {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 10px;
+      gap: 0.686814vw;
     }
     .grupos__title {
-      font-size: 11.7px;
+      font-size: 0.803572vw;
       font-weight: 400;
       color: var(--ag-text);
       white-space: nowrap;
@@ -58,12 +58,12 @@ import { GRUPOS } from '../../data/seed';
     .grupos__search {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
+      gap: 0.412088vw;
       background: var(--ag-elev);
-      border-radius: 7px;
-      padding: 4px 8px;
+      border-radius: 0.48077vw;
+      padding: 0.274726vw 0.549451vw;
       color: var(--ag-muted);
-      max-width: 150px;
+      max-width: 10.302198vw;
     }
     .grupos__search input {
       background: transparent;
@@ -71,14 +71,14 @@ import { GRUPOS } from '../../data/seed';
       outline: none;
       color: var(--ag-text);
       font: inherit;
-      font-size: 11.7px;
+      font-size: 0.803572vw;
       width: 100%;
       min-width: 0;
     }
     .grupos__list {
       display: flex;
       flex-direction: column;
-      gap: 6px;
+      gap: 0.412088vw;
       margin: 0;
       padding: 0;
       overflow: auto;
@@ -87,8 +87,8 @@ import { GRUPOS } from '../../data/seed';
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 8px;
-      font-size: 11.7px;
+      gap: 0.549451vw;
+      font-size: 0.803572vw;
       color: var(--ag-row);
     }
     .grupos__name {
@@ -102,12 +102,12 @@ import { GRUPOS } from '../../data/seed';
     .grupos__ch {
       display: inline-flex;
       align-items: center;
-      gap: 6px;
+      gap: 0.412088vw;
       flex: none;
       background: var(--ag-ch-off);
       color: var(--ag-ch-on-ic);
-      border-radius: 6px;
-      padding: 2px 5px;
+      border-radius: 0.412088vw;
+      padding: 0.137363vw 0.343407vw;
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,

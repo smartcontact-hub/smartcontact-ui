@@ -8,13 +8,10 @@
     <meta name="description" content="SmartContact — Agent (contact center)" />
     <link rel="icon" type="image/svg+xml" href="favicon.svg" />
 
-    <!-- Fuentes de marca: Inter (primaria) + Open Sans (captions). Igual que supervisor. -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Open+Sans:wght@300;400;600;700&display=swap"
-    />
+    <!-- Open Sans y Roboto NO vienen de Google: se sirven self-hospedadas desde
+         /fonts, con los MISMOS ficheros y nombres de familia que la app real
+         (ver styles/_fonts-original.css). La variable de Google no puede
+         reproducir su render: el original usa caras estáticas, una por peso. -->
     <!-- Material Symbols (Outlined): ya NO por CDN — el DS lo sirve self-hospedado
          (@fontsource), importado en main.scss. Fuente única. -->
   </head>

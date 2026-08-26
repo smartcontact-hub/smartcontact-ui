@@ -1,7 +1,23 @@
 # FASE 0 — FORENSE DE FUENTES · VEREDICTO
 
-**Estado del gate: NO SUPERADO.** Hay dos desajustes de pipeline de fuentes. Nada aguas
-abajo puede medirse hasta que se resuelvan o los aceptes por escrito.
+**Estado del gate: SUPERADO** (2026-08-26, opción **A**, decidida por Rafa).
+
+Los dos bloqueantes de abajo están **cerrados**: los ficheros de fuente del original se
+sirven ahora desde el repo (`projects/agent/public/fonts/`, traídos con
+`node tools/fetch-original-fonts.ts`) con los **mismos nombres de familia**. Comprobación
+después del cambio:
+
+|                    | original                                                             | réplica      |
+| ------------------ | -------------------------------------------------------------------- | ------------ |
+| Open Sans Regular  | estática, `USE_TYPO_METRICS=false`, typo 1567/−492/132, win 2189/600 | **idéntica** |
+| Open Sans Semibold | estática, typo 1567/−492/132, win 2189/600                           | **idéntica** |
+| Roboto Regular     | estática, typo 1536/−512/102, win 1946/512                           | **idéntica** |
+
+Y la sonda de resolución da positivo en las 12 familias que el original usa. `Inter` da
+negativo, que es correcto: se quitó porque la app de agente no la usa en ningún sitio —y
+sirve de control de que la sonda no dice que sí a todo.
+
+El diagnóstico original se conserva abajo tal cual, porque es el que justifica la decisión.
 
 Artefactos: `phase-0-fonts.json` (17 caras declaradas y 41 ficheros abiertos en el
 original; 69 caras y 21 ficheros en la réplica) y `phase-0-resolve-probe.json`.

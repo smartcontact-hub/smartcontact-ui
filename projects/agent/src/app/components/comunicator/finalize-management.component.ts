@@ -96,13 +96,13 @@ import { PENDING, type PendingRow } from '../../data/seed';
       display: flex;
       align-items: center;
       justify-content: center;
-      height: 44.8px;
-      border-bottom: 0.76px solid rgba(0, 0, 0, 0.397);
+      height: 3.076924vw;
+      border-bottom: 0.052198vw solid rgba(0, 0, 0, 0.397);
     }
     .fin__title {
       font-family: 'Open Sans Semibold', var(--ag-font);
       font-weight: 600;
-      font-size: 13.66px;
+      font-size: 0.938187vw;
     }
     /* .container-body — padding 1.231 0.868 0 1.32vw. */
     .fin__body {
@@ -110,26 +110,26 @@ import { PENDING, type PendingRow } from '../../data/seed';
       min-height: 0;
       display: flex;
       flex-direction: column;
-      padding: 17.9px 12.6px 0 19.2px;
+      padding: 1.229396vw 0.865385vw 0 1.318682vw;
     }
     /* .pending-summary — 1.806vw de alto, radio 1.389vw, fondo #24292f. */
     .fin__chip {
       display: flex;
       align-items: center;
-      gap: 4px;
+      gap: 0.274726vw;
       align-self: flex-start;
-      height: 26.3px;
-      margin-bottom: 18.2px;
-      padding: 4px 8.1px;
-      border-radius: 20.2px;
+      height: 1.806319vw;
+      margin-bottom: 1.25vw;
+      padding: 0.274726vw 0.556319vw;
+      border-radius: 1.387363vw;
       background: #24292f;
-      font-size: 11.7px;
+      font-size: 0.803572vw;
       white-space: nowrap;
       box-sizing: border-box;
     }
     .fin__warn {
-      width: 13.7px;
-      height: 13.7px;
+      width: 0.940935vw;
+      height: 0.940935vw;
       flex: none;
       background-color: #ffc107;
       -webkit-mask: url('/icons/dialpad/warning.svg') no-repeat center / contain;
@@ -139,10 +139,10 @@ import { PENDING, type PendingRow } from '../../data/seed';
     .fin__row {
       display: flex;
       align-items: center;
-      gap: 7.1px;
-      margin-bottom: 19.4px;
-      font-size: 11.7px;
-      line-height: 14.2px;
+      gap: 0.487638vw;
+      margin-bottom: 1.332418vw;
+      font-size: 0.803572vw;
+      line-height: 0.975275vw;
       cursor: pointer;
     }
     .fin__row span {
@@ -156,15 +156,15 @@ import { PENDING, type PendingRow } from '../../data/seed';
      */
     .fin__row input {
       flex: none;
-      width: 15.8px;
-      height: 15.8px;
+      width: 1.085165vw;
+      height: 1.085165vw;
       margin: 0;
       accent-color: #fff;
       cursor: pointer;
     }
     .fin__sep {
-      height: 0.5px;
-      margin: 0 0 12.1px;
+      height: 0.034341vw;
+      margin: 0 0 0.831044vw;
       background: #c6ccd6;
     }
     .fin__list {
@@ -175,25 +175,25 @@ import { PENDING, type PendingRow } from '../../data/seed';
     .fin__empty {
       margin: 0;
       color: var(--ag-text-2);
-      font-size: 11.7px;
+      font-size: 0.803572vw;
     }
     .fin__foot {
       flex: none;
       display: flex;
       align-items: center;
       justify-content: center;
-      height: 82.2px;
+      height: 5.645605vw;
     }
     /* Botón del Figma: 8.49 x 1.875vw, borde blanco, radio 0.625vw, texto 0.8vw. */
     .fin__btn {
-      width: 123.6px;
-      height: 27.3px;
-      border: 0.76px solid #fff;
-      border-radius: 9.1px;
+      width: 8.489011vw;
+      height: 1.875vw;
+      border: 0.052198vw solid #fff;
+      border-radius: 0.625vw;
       background-color: transparent;
       color: #fff;
       font-family: var(--ag-font);
-      font-size: 11.7px;
+      font-size: 0.803572vw;
       cursor: pointer;
     }
     .fin__btn:disabled {

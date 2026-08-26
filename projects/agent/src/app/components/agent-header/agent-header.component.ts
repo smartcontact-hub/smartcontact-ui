@@ -30,7 +30,7 @@ import { AgIconComponent } from '../ui/app-icon.component';
       display: flex;
       align-items: center;
       justify-content: space-between;
-      padding: 15px 37px;
+      padding: 1.03022vw 2.541209vw;
     }
     .hdr__brand {
       display: flex;
@@ -39,21 +39,21 @@ import { AgIconComponent } from '../ui/app-icon.component';
     /* Logo oficial: 239 x 42 en el fichero, servido a escala (ratio 5.69:1). */
     .hdr__logo {
       display: block;
-      width: 193px;
-      height: 34px;
+      width: 13.255495vw;
+      height: 2.335165vw;
     }
     .hdr__actions {
       display: inline-flex;
-      gap: 9px;
+      gap: 0.618132vw;
     }
     .hdr__btn {
       display: inline-flex;
       align-items: center;
       justify-content: center;
-      width: 30px;
-      height: 26px;
+      width: 2.06044vw;
+      height: 1.785715vw;
       border: 1px solid var(--ag-btn-line);
-      border-radius: 6px;
+      border-radius: 0.412088vw;
       background: transparent;
       color: var(--ag-btn-ic);
       cursor: pointer;

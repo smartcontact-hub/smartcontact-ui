@@ -39,13 +39,13 @@ La pestaña `contacts` es **condicional**: en el entorno de desarrollo la navbar
 Cada icono es un **SVG de fondo con tres estados**: normal, `:hover:not(.actived)` y
 `.actived`. Están en `public/icons/comunicator/`:
 
-| Pestaña | Ficheros | Tamaño |
-|---|---|---|
-| call | `telefono{,-hover,-actived}.svg` | `1.25vw` |
-| chat | `chat{,-hover,-actived}.svg` | `1.25vw` |
-| agents | `agentes{,-hover,-actived}.svg` | `1.25vw` |
-| contacts | `agenda{,-hover,-actived}.svg` | `1.25vw` |
-| history | `historial{,-hover,-actived}.svg` | `1.615 × 1.24vw` (más ancho) |
+| Pestaña  | Ficheros                          | Tamaño                       |
+| -------- | --------------------------------- | ---------------------------- |
+| call     | `telefono{,-hover,-actived}.svg`  | `1.25vw`                     |
+| chat     | `chat{,-hover,-actived}.svg`      | `1.25vw`                     |
+| agents   | `agentes{,-hover,-actived}.svg`   | `1.25vw`                     |
+| contacts | `agenda{,-hover,-actived}.svg`    | `1.25vw`                     |
+| history  | `historial{,-hover,-actived}.svg` | `1.615 × 1.24vw` (más ancho) |
 
 Encima se superponen dos avisos: `.unread-messages` (mensajes de chat sin leer) y
 `.lost-call`, un círculo `#f75454` de `1.302vw` con el número de perdidas.
@@ -56,7 +56,9 @@ Detalle que solo se ve en vivo y que **enlaza la navbar con el selector de estad
 avatar**:
 
 ```css
-.makecall-allowedstatus .footer-comunicator { background-color: #762727; }
+.makecall-allowedstatus .footer-comunicator {
+  background-color: #762727;
+}
 /* …y además anula los :hover, que vuelven al icono base */
 ```
 
@@ -104,15 +106,15 @@ Y las secciones hermanas que viven en el mismo hueco (`CallsSections`): `phone`,
 
 ### El panel de Estados — medidas verificadas
 
-| Pieza | Real | Réplica |
-|---|---|---|
-| Panel desplegado | 265 × 476.1, radio 23.65, `#333a41` | 265.7 × 477.2 |
-| Panel colapsado | 265 × **386.8** | 387.6 |
-| `.status-head` «Estados» | 45.5, texto 13.66 regular | 45.6 |
-| `.state` (fila) | 37.9, padding `0 12.98`, `#2d333a` | 38.0 |
-| Punto | 11.6 a 11.6 del borde; etiqueta a 35.8 | ✓ |
-| «Administrativo» desplegado | 127.2, radio inferior 25.36 | 127.6 |
-| Buscador | 91 × 18.2, `#1f2429`, radio 3.38 | 91.3 × 18.3 |
+| Pieza                       | Real                                   | Réplica       |
+| --------------------------- | -------------------------------------- | ------------- |
+| Panel desplegado            | 265 × 476.1, radio 23.65, `#333a41`    | 265.7 × 477.2 |
+| Panel colapsado             | 265 × **386.8**                        | 387.6         |
+| `.status-head` «Estados»    | 45.5, texto 13.66 regular              | 45.6          |
+| `.state` (fila)             | 37.9, padding `0 12.98`, `#2d333a`     | 38.0          |
+| Punto                       | 11.6 a 11.6 del borde; etiqueta a 35.8 | ✓             |
+| «Administrativo» desplegado | 127.2, radio inferior 25.36            | 127.6         |
+| Buscador                    | 91 × 18.2, `#1f2429`, radio 3.38       | 91.3 × 18.3   |
 
 ⚠️ **El alto del panel lo pone el contenido, no es fijo**: 386.8 con «Administrativo»
 colapsado y 476.1 desplegado, siempre anclado abajo a la altura del Comunicador. Fijarlo
@@ -141,30 +143,30 @@ se espera encontrarlo si no hay widget del que apartarse.
 
 ### Mensajes — medidas verificadas
 
-| Pieza | Real | Réplica |
-|---|---|---|
-| `.header-message` | 93.8 (título + buscador) | ✓ |
-| Buscador | 204.9 × 26.5 a `69 / 22.7`, `#1f2429`, radio 8.45 | ✓ |
-| `.message` (tarjeta) | 250.3 × **88.9**, `#2d333a` | ✓ |
-| `.status` | barra de 7.6 (marca no leídos) | ✓ |
-| `.avatar-content` | 28.1 × 28.1 a `15.2 / 19.7`, radio **10.14** | ✓ |
-| Nombre / hora | 11.37 / **10.63** | ✓ |
-| Grupo | 11.37 en **azul `#73abf4`** | ✓ |
+| Pieza                | Real                                              | Réplica |
+| -------------------- | ------------------------------------------------- | ------- |
+| `.header-message`    | 93.8 (título + buscador)                          | ✓       |
+| Buscador             | 204.9 × 26.5 a `69 / 22.7`, `#1f2429`, radio 8.45 | ✓       |
+| `.message` (tarjeta) | 250.3 × **88.9**, `#2d333a`                       | ✓       |
+| `.status`            | barra de 7.6 (marca no leídos)                    | ✓       |
+| `.avatar-content`    | 28.1 × 28.1 a `15.2 / 19.7`, radio **10.14**      | ✓       |
+| Nombre / hora        | 11.37 / **10.63**                                 | ✓       |
+| Grupo                | 11.37 en **azul `#73abf4`**                       | ✓       |
 
 ### El chat por dentro — medidas verificadas
 
 Al pulsar una fila de Mensajes se abre `app-chats-conversation` (457 de alto):
 
-| Pieza | Real | Réplica |
-|---|---|---|
-| `.header-message-private` | 250.3 × **44**, `#333a41`, radio superior 28.73 | 44 ✓ |
-| Flecha atrás / nombre / hora | `23.3` / `46` / `144.4` | ✓ |
-| Dos acciones | 19 × 19 radio 4.87 — gris `#8d939d` y `#824549` | ✓ |
-| `.body-container-message-private` | `#2d333a` | ✓ |
-| `.footer-container-message-private` | 250.3 × **122.2**, `#333a41` | 122.2 ✓ |
-| Iconos del pie | 19 × 19 radio 4.87 a `8.7` / `34.5` / `222.6` | ✓ |
-| `textarea.sendMessage` | **187.3 × 44.9** a `11.3`, `#1f2429`, radio 10.14 | exacto |
-| `.buttonEnviar` | **32 × 32** a `206.9`, radio 10.14 | exacto |
+| Pieza                               | Real                                              | Réplica |
+| ----------------------------------- | ------------------------------------------------- | ------- |
+| `.header-message-private`           | 250.3 × **44**, `#333a41`, radio superior 28.73   | 44 ✓    |
+| Flecha atrás / nombre / hora        | `23.3` / `46` / `144.4`                           | ✓       |
+| Dos acciones                        | 19 × 19 radio 4.87 — gris `#8d939d` y `#824549`   | ✓       |
+| `.body-container-message-private`   | `#2d333a`                                         | ✓       |
+| `.footer-container-message-private` | 250.3 × **122.2**, `#333a41`                      | 122.2 ✓ |
+| Iconos del pie                      | 19 × 19 radio 4.87 a `8.7` / `34.5` / `222.6`     | ✓       |
+| `textarea.sendMessage`              | **187.3 × 44.9** a `11.3`, `#1f2429`, radio 10.14 | exacto  |
+| `.buttonEnviar`                     | **32 × 32** a `206.9`, radio 10.14                | exacto  |
 
 **Colores de burbuja** (del CSS del real): enviada **`#2179ED`**, recibida **`#1C1C1C`**,
 avisos del sistema **`#AAAAAA`** centrados y sin burbuja. El radio es `5.92` con la
@@ -173,14 +175,14 @@ derecha (de ahí el `padding-bottom` de 18.59).
 
 ### Configuración (lo que abre el engranaje) — verificado
 
-| Pieza | Real | Réplica |
-|---|---|---|
-| `app-settings` | top 20.5, 250.3 × 433, `#2d333a`, radio 28.73 | 20.4 · exacto |
-| `.header-settings` | 99.6, `#333a41`, radio superior 28.73 | 99.6 |
-| Título «Configuración» | 13.66 Semibold, sangrado 12.98 | ✓ |
-| Pestañas | Perfil / Preferencias, 30.3 | ✓ |
-| `.body-settings` | 268.4 | ✓ |
-| `.closeSession` | 209.5 × 26.5 a top 405.9, `#f75454`, radio 8.45 | exacto |
+| Pieza                  | Real                                            | Réplica       |
+| ---------------------- | ----------------------------------------------- | ------------- |
+| `app-settings`         | top 20.5, 250.3 × 433, `#2d333a`, radio 28.73   | 20.4 · exacto |
+| `.header-settings`     | 99.6, `#333a41`, radio superior 28.73           | 99.6          |
+| Título «Configuración» | 13.66 Semibold, sangrado 12.98                  | ✓             |
+| Pestañas               | Perfil / Preferencias, 30.3                     | ✓             |
+| `.body-settings`       | 268.4                                           | ✓             |
+| `.closeSession`        | 209.5 × 26.5 a top 405.9, `#f75454`, radio 8.45 | exacto        |
 
 **Perfil**: avatar de **60.9** a `137.5 / 20.4`, datos a `81.3` en 12.13 (nombre, PIN,
 Extensión, Tipo ext.), y el bloque «Grupos asignados» — cabecera de 26.5 en `#a3a8b0` con
@@ -207,17 +209,17 @@ del fichero en vez del renderizado lo deja un 30 % más grande.
 
 ### Histórico — medidas verificadas
 
-| Pieza | Real | Réplica |
-|---|---|---|
-| `.title` | top 31.1, alto 20.5, texto 13.66 Semibold | 31.0 ✓ |
-| `.card-container` | top 69 | 69.4 ✓ |
-| `.card-recents` | 246.8 × 63.4, fondo `#2d333a` | 246.8 × 63.4 ✓ |
-| `.status` (barra) | 7.6 de ancho, `#f75454` si perdida | ✓ |
-| `.event-type` (icono) | 20.5 × 11.4 a `13.3 / 16.7` | 0.0 |
-| `.origin` | `9.1 / 49.3` | 0.0 |
-| `.date` | `9.1 / 178.6` | 0.0 |
-| `.service-group` | `36 / 49.3` | 0.0 |
-| `.extra-info-container` | 88.5 sobre `#1f2429`, padding `12.67 17.75` | ✓ |
+| Pieza                   | Real                                        | Réplica        |
+| ----------------------- | ------------------------------------------- | -------------- |
+| `.title`                | top 31.1, alto 20.5, texto 13.66 Semibold   | 31.0 ✓         |
+| `.card-container`       | top 69                                      | 69.4 ✓         |
+| `.card-recents`         | 246.8 × 63.4, fondo `#2d333a`               | 246.8 × 63.4 ✓ |
+| `.status` (barra)       | 7.6 de ancho, `#f75454` si perdida          | ✓              |
+| `.event-type` (icono)   | 20.5 × 11.4 a `13.3 / 16.7`                 | 0.0            |
+| `.origin`               | `9.1 / 49.3`                                | 0.0            |
+| `.date`                 | `9.1 / 178.6`                               | 0.0            |
+| `.service-group`        | `36 / 49.3`                                 | 0.0            |
+| `.extra-info-container` | 88.5 sobre `#1f2429`, padding `12.67 17.75` | ✓              |
 
 **El chevron NACE OCULTO.** `visibility: hidden`, y solo pasa a `visible` cuando el ratón
 entra en la tarjeta —que además se resalta a `#1f2429`—. La píldora es negra pura
@@ -232,12 +234,12 @@ etiquetas en `#afb1b4`. El resalte que deja pulsar aparece al pasar por encima.
 
 El alto de la cabecera lo pone CADA sección, no el widget:
 
-| Sección | Cabecera | Contenido |
-|---|---|---|
-| Teléfono | — | el dialpad arranca pegado al borde |
-| Mensajes | 93.8 | título + buscador de 26.5 |
-| Agentes | 140.2 | título + pestañas «Agentes / Grupos» |
-| Histórico | 33.6 | solo título |
+| Sección   | Cabecera | Contenido                            |
+| --------- | -------- | ------------------------------------ |
+| Teléfono  | —        | el dialpad arranca pegado al borde   |
+| Mensajes  | 93.8     | título + buscador de 26.5            |
+| Agentes   | 140.2    | título + pestañas «Agentes / Grupos» |
+| Histórico | 33.6     | solo título                          |
 
 El título va siempre a 10.63px del borde del panel, y el hueco entre bloques de la
 cabecera es 17.47 (título→buscador) y 18.2 (buscador→pestañas).
@@ -257,15 +259,15 @@ montada sobre una línea de 1.11 en `#5f6776` al **25 %** (no una línea blanca)
 
 Todo relativo al borde izquierdo del widget (escala 1456):
 
-| | Agentes | Configuración |
-|---|---|---|
-| caja del toggle | left 22.70, ancho 204.89 | left 0, ancho 250.28 |
-| mitades | 99.54 cada una, alto 14.78 | 122.24 cada una, alto 30.33 |
-| sangría del texto | `ms-1` / `me-1` = 2.91 | 2.91 + 17.47 de padding |
-| línea | left 28.51, ancho 193.26 | left 23.28, ancho 203.72 |
-| píldora, 1.ª pestaña | left 26.23 | left 18.96 |
-| píldora, 2.ª pestaña | left 189.05 | left 193.41 |
-| píldora sobre la barra | +10.83 (`0.93rem`) | +9.96 (`0.95rem`) |
+|                        | Agentes                    | Configuración               |
+| ---------------------- | -------------------------- | --------------------------- |
+| caja del toggle        | left 22.70, ancho 204.89   | left 0, ancho 250.28        |
+| mitades                | 99.54 cada una, alto 14.78 | 122.24 cada una, alto 30.33 |
+| sangría del texto      | `ms-1` / `me-1` = 2.91     | 2.91 + 17.47 de padding     |
+| línea                  | left 28.51, ancho 193.26   | left 23.28, ancho 203.72    |
+| píldora, 1.ª pestaña   | left 26.23                 | left 18.96                  |
+| píldora, 2.ª pestaña   | left 189.05                | left 193.41                 |
+| píldora sobre la barra | +10.83 (`0.93rem`)         | +9.96 (`0.95rem`)           |
 
 Recuerda que ahí `1rem = 0.8vw`, no 16px (ver [escala.md](escala.md)).
 
@@ -275,24 +277,24 @@ Recuerda que ahí `1rem = 0.8vw`, no 16px (ver [escala.md](escala.md)).
 derecha, y **nace oculto** (`display: none`): aparece al pasar por encima de la TARJETA y
 vira a azul al pasar por encima de ÉL.
 
-| | valor |
-|---|---|
-| botón | 15.93 cuadrado, radio 4.37, fondo `#ffffff` |
-| glifo | 6.83 cuadrado, `#262c32` |
-| hover del botón | fondo `#0056fe`, glifo `#ffffff` |
-| contenedor | `min-height` 16.69, padding `0 13.66 0 7.59`, `position: relative` |
-| texto del nodo | tope 151.7 con elipsis, para no chocar con el botón |
+|                 | valor                                                              |
+| --------------- | ------------------------------------------------------------------ |
+| botón           | 15.93 cuadrado, radio 4.37, fondo `#ffffff`                        |
+| glifo           | 6.83 cuadrado, `#262c32`                                           |
+| hover del botón | fondo `#0056fe`, glifo `#ffffff`                                   |
+| contenedor      | `min-height` 16.69, padding `0 13.66 0 7.59`, `position: relative` |
+| texto del nodo  | tope 151.7 con elipsis, para no chocar con el botón                |
 
 Tipificar **no abre la conversación**: es la otra acción de la tarjeta, y hay que parar la
 propagación del clic.
 
 **Qué dice la barra lateral** (7.59 de ancho, `min-height` 69.5):
 
-| color | significado |
-|---|---|
-| `#f75454` | la conversación fue abandonada |
+| color     | significado                                         |
+| --------- | --------------------------------------------------- |
+| `#f75454` | la conversación fue abandonada                      |
 | `#166f8d` | postconversando: acabada y a la espera de tipificar |
-| sin color | acabada con normalidad |
+| sin color | acabada con normalidad                              |
 
 (el original tiene además `#8d939d` para caducada y `#7f70f7` para escucha)
 
@@ -302,12 +304,12 @@ Es **la misma en sus dos entradas** —tras colgar una llamada y desde el icono 
 tipificar de un chat—; lo único que cambia es que en el chat los tres niveles vienen
 ocultos. Relativo al borde superior del panel:
 
-| Pieza | top | left | tamaño |
-|---|---|---|---|
-| `.header-typification` | 0 | 0 | 250.28 × 44.73, `#333a41`, radio 25.79 |
-| `.title` | 11.88 | centrado | alto 20.49, 13.66 Semibold |
-| `.textArea` | 54.74 | 21.98 | 205.54 × 184.29 |
-| botón Guardar | 251.55 | 22.75 | 204.01 × 40.18 |
+| Pieza                  | top    | left     | tamaño                                 |
+| ---------------------- | ------ | -------- | -------------------------------------- |
+| `.header-typification` | 0      | 0        | 250.28 × 44.73, `#333a41`, radio 25.79 |
+| `.title`               | 11.88  | centrado | alto 20.49, 13.66 Semibold             |
+| `.textArea`            | 54.74  | 21.98    | 205.54 × 184.29                        |
+| botón Guardar          | 251.55 | 22.75    | 204.01 × 40.18                         |
 
 El área de comentario va sobre `#1f2429` con borde `0.052vw #11131a` y radio 12.13. El
 botón es transparente con borde blanco y radio 12.13; se apaga a `#5f5f5f` cuando no hay
@@ -318,12 +320,12 @@ negro al pulsarlo.
 
 El interruptor es el componente `app-switch`, compartido:
 
-| | valor |
-|---|---|
-| pista | 20.47 × 10.61, radio 25.79, `#4F5256` → `#0056fe` al encender |
-| pulsador | 10.61 circular blanco con borde de 1px, recorre 9.86 |
-| transición | 0.4s |
-| apagado (`:disabled`) | `opacity: 0.3` |
+|                       | valor                                                         |
+| --------------------- | ------------------------------------------------------------- |
+| pista                 | 20.47 × 10.61, radio 25.79, `#4F5256` → `#0056fe` al encender |
+| pulsador              | 10.61 circular blanco con borde de 1px, recorre 9.86          |
+| transición            | 0.4s                                                          |
+| apagado (`:disabled`) | `opacity: 0.3`                                                |
 
 La fila mide 17.06 de alto con paso de **40.58**, y va: interruptor, `margin-right`
 11.37, nombre (Roboto 11.37, elipsis, `margin-right` 7.59) y los canales a la derecha.
@@ -340,11 +342,11 @@ Los dos botones de la derecha son ese mismo componente en su versión grande: **
 cuadrado, radio 4.37**, separados 6.83, con el bloque a 12.74 del borde derecho. El glifo
 mide 8.34 × 9.10.
 
-| estado | transferir | cerrar |
-|---|---|---|
-| viva | `#ffffff` + glifo `#262c32` | `#f75454` + aspa blanca |
-| hover | `#0056fe` + glifo blanco | igual |
-| apagado | `#8d939d` | `#824549` + aspa `#8d939d` |
+| estado  | transferir                  | cerrar                     |
+| ------- | --------------------------- | -------------------------- |
+| viva    | `#ffffff` + glifo `#262c32` | `#f75454` + aspa blanca    |
+| hover   | `#0056fe` + glifo blanco    | igual                      |
+| apagado | `#8d939d`                   | `#824549` + aspa `#8d939d` |
 
 Se apagan en cuanto la conversación deja de estar viva.
 
@@ -359,15 +361,15 @@ propios colores, a 16.38 cuadrado.
 Tomadas **en vivo** sobre el widget real y relativas a su borde superior (escala 1456).
 La réplica cuadra con ellas dentro de 0,1 px:
 
-| Pieza | top | left | tamaño |
-|---|---|---|---|
-| `.container-call` | 20.4 | 0 | 250.3 × 430.8 |
-| `.display` | 70.5 | 27.3 | 197.2 × 34.1 |
-| `.keys-container` | 138.8 | 43.2 | 163.1 × 163.8 (teclas de 41 × 41, radio 16.7) |
-| `.buttonGroup` (nodo) | 337.5 | 63.7 | 123.6 × 27.3 |
-| `.footer-call` | 369.1 | 0 | 250.3 × 82.2 |
-| `.btn-call` | — | — | 162.3 × 40.2, radio 12.1 |
-| `.footer-comunicator` | 449.8 | 0 | 250.3 × 56.9 |
+| Pieza                 | top   | left | tamaño                                        |
+| --------------------- | ----- | ---- | --------------------------------------------- |
+| `.container-call`     | 20.4  | 0    | 250.3 × 430.8                                 |
+| `.display`            | 70.5  | 27.3 | 197.2 × 34.1                                  |
+| `.keys-container`     | 138.8 | 43.2 | 163.1 × 163.8 (teclas de 41 × 41, radio 16.7) |
+| `.buttonGroup` (nodo) | 337.5 | 63.7 | 123.6 × 27.3                                  |
+| `.footer-call`        | 369.1 | 0    | 250.3 × 82.2                                  |
+| `.btn-call`           | —     | —    | 162.3 × 40.2, radio 12.1                      |
+| `.footer-comunicator` | 449.8 | 0    | 250.3 × 56.9                                  |
 
 ⚠️ **La pestaña de teléfono NO tiene cabecera de sección.** El dialpad arranca pegado al
 borde del panel; la cabecera con título es del chat y de las demás secciones. Montarla a
