@@ -22,11 +22,12 @@
     [attr.max]="max() ?? null"
     [attr.step]="step()"
     [attr.aria-invalid]="isInvalid() ? true : null"
-    [attr.aria-describedby]="footerText() ? resolvedId() + '-msg' : null"
+    [attr.aria-describedby]="footerText() ? msgId() : null"
     [attr.aria-required]="required() ? true : null"
     [value]="displayValue()"
     (input)="onInput($event)"
-    (blur)="onBlur()"
+    (focus)="onFocus($event)"
+    (blur)="onBlur($event)"
   />
 
   @if (hasSuffix()) {
@@ -39,6 +40,6 @@
     block="sc-inputnumber"
     [text]="footerText()"
     [isError]="!!error()"
-    [msgId]="resolvedId() + '-msg'"
+    [msgId]="msgId()"
   />
 }

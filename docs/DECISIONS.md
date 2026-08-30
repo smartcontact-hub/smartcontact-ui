@@ -37,6 +37,58 @@
 
 ---
 
+## DD-44 · 2026-08-30 — El `ControlValueAccessor` de los 6 campos se BORRA; el field-pattern se comparte por factories
+
+**Contexto** · Los seis campos del DS (`sc-inputtext`, `sc-select`, `sc-multiselect`,
+`sc-datepicker`, `sc-inputnumber`, `sc-search`) llevaban cada uno ~28 líneas de un
+`ControlValueAccessor` idéntico (provider `NG_VALUE_ACCESSOR`, `_onChange`/`_onTouched`/
+`_ngControl`, `writeValue`/`registerOn*`/`setDisabledState`) para dar soporte a
+`[(ngModel)]` y Reactive Forms. Era el ítem **P0** de `AUDIT-DEUDA-2026-06.md` (el
+field-pattern ×5), y **DD-42** lo aparcó a propósito al saltar a Angular 22, apuntando a
+que Signal Forms —graduada a API pública en ese salto— sería su sustituto.
+
+**Decisión** · **Se borra el CVA entero de los seis**, no se sustituye por otro. El valor
+sigue por `[(value)]` (`value = model<T>()`), que es como lo consumen TODAS las apps. La
+lógica que el field-pattern sí compartía se extrae a `components/field/sc-field.ts` como
+funciones factory: `createScFieldState` (id/msgId/isInvalid/footerText),
+`createScPanelSizing` (pSize/panelStyleClass) y `createScOptionState` (los computeds de
+opciones de select/multiselect). `disabled` pasa de `model()` a `input()`.
+
+**Razón** · Medido el 2026-08-30, no lo ejercía **nada** dentro del repo:
+- `ReactiveFormsModule`/`FormBuilder`/`FormGroup`/`FormControl`: **0 ficheros** en `projects/`.
+- De 145 instancias de los cinco tags en plantillas de app, **0** con `ngModel`/`formControl`;
+  74 con `[(value)]`. El único `[(ngModel)]` sobre un CVA del DS era la demo de `sc-search`,
+  migrado a `[(value)]` en el mismo cambio.
+- Los paquetes `@smartcontact-hub/*` están aparcados (DD-17): las apps consumen el DS in-repo,
+  así que no hay consumidor externo que pudiera depender del CVA.
+
+Sustituir 6 CVA a mano por 1 CVA a mano (el plan viejo `scCreateControlValueAccessor()`)
+habría sido trabajo tirado: la vía de Angular 22 es Signal Forms, y su directiva `FormField`
+detecta el `value = model()` de forma **estructural**, sin `implements`. El día que aparezca
+el primer consumidor de forms real, `implements FormValueControl` es una línea por componente.
+
+**Descartadas** ·
+· *`implements FormValueControl<T>` ahora* — barato en apariencia (el `value=model()` ya
+  cumple), pero `FormUiControl.min` se tipa `InputSignal<number>` y el `min = input<number>()`
+  de `sc-inputnumber` es `number|undefined`: obligaría a contorsionar la API pública de
+  inputnumber para satisfacer una interfaz que hoy no ejercita nadie. La compatibilidad es
+  estructural igualmente; no se pierde nada esperando.
+· *Conservar el CVA como compat declarada* — mantendría ~140 líneas que ningún test ni
+  consumidor recorre, y una superficie de API que promete algo (Reactive Forms) que el repo no
+  usa. Deuda que se lee como función.
+
+**Consecuencias** · ~265 líneas netas fuera de los seis componentes (`+207/−472`), factory
+compartida de ~105. Cierra el P0 de `AUDIT-DEUDA-2026-06.md`. Se aprovechó para **reconciliar
+estado**: `invalid` explícito pasa de estar solo en inputtext a los cinco (antes `[invalid]`
+sobre un `sc-select` no hacía nada — bug latente), y `focused`/`blurred` a los tres que
+faltaban. Se congelan como divergencias de capacidad: readonly/filled/iftaLabel donde no
+existen, el clamp de min/max de inputnumber, el puente contentChild de select.
+`migration-safety.md` §6 pasa a histórico. **Condición de reentrada**: el primer consumidor de
+forms real → `implements FormValueControl` (1 línea/componente). **Roce conocido**: el
+`min/max` de inputnumber no casa el tipo de `FormUiControl` sin tocar su API.
+
+---
+
 ## DD-43 · 2026-08-30 — NO se extrae una «base común admin»: la duplicación que el audit veía no existe
 
 **Contexto** · `AUDIT-DEUDA-2026-06.md` abre con *"CRUD / listas / selección reinventados por

@@ -3,26 +3,28 @@ import {
   booleanAttribute,
   ChangeDetectionStrategy,
   Component,
-  computed,
   contentChild,
   type TemplateRef,
-  forwardRef,
-  inject,
-  Injector,
   input,
   model,
   output,
-  untracked,
   ViewEncapsulation,
 } from '@angular/core';
-import { FormsModule, ControlValueAccessor, NG_VALUE_ACCESSOR, NgControl } from '@angular/forms';
+// `FormsModule` sigue haciendo falta: la plantilla usa `[ngModel]` como puente
+// INTERNO hacia `<p-select>` (no es el CVA exterior, que se retiró).
+import { FormsModule } from '@angular/forms';
 import { ScFieldLabelComponent } from '../field/sc-field-label.component';
 import { ScFieldMsgComponent } from '../field/sc-field-msg.component';
 import { SelectModule } from 'primeng/select';
+import {
+  createScFieldState,
+  createScOptionState,
+  createScPanelSizing,
+  type ScFieldSize,
+} from '../field/sc-field';
 
-export type ScSelectSize = 'sm' | 'md' | 'lg';
-
-let scSelectIdCounter = 0;
+/** @deprecated Usa `ScFieldSize`. Alias conservado por compatibilidad de imports. */
+export type ScSelectSize = ScFieldSize;
 
 /**
  * Smart Contact select / dropdown. Wraps PrimeNG `<p-select>` with the
@@ -46,13 +48,6 @@ let scSelectIdCounter = 0;
   styleUrl: './sc-select.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
-  providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => ScSelectComponent),
-      multi: true,
-    },
-  ],
   host: {
     class: 'sc-select',
     '[class.sc-select--sm]': "size() === 'sm'",
@@ -63,15 +58,17 @@ let scSelectIdCounter = 0;
     '[class.sc-select--ifta]': 'iftaLabel()',
   },
 })
-export class ScSelectComponent implements ControlValueAccessor {
+export class ScSelectComponent {
   // ─── Chrome (mirrors sc-inputtext) ─────────────────────────────────────
-  readonly size = input<ScSelectSize>('md');
+  readonly size = input<ScFieldSize>('md');
   readonly label = input<string>();
   readonly required = input(false, { transform: booleanAttribute });
   readonly helperText = input<string>();
   readonly error = input<string>();
+  /** Estado inválido explícito. Se combina con `error` (paridad con sc-inputtext). */
+  readonly invalid = input(false, { transform: booleanAttribute });
   readonly placeholder = input<string>('');
-  readonly disabled = model<boolean>(false);
+  readonly disabled = input(false, { transform: booleanAttribute });
   /** Solo lectura (paridad con sc-inputtext / catálogo de desarrollo). */
   readonly readonly = input(false, { transform: booleanAttribute });
   readonly inputId = input<string>();
@@ -160,86 +157,34 @@ export class ScSelectComponent implements ControlValueAccessor {
 
   protected readonly groupTpl = contentChild<TemplateRef<unknown>>('group');
 
-  // ─── Derived ───────────────────────────────────────────────────────
-  protected readonly resolvedId = computed(
-    () => this.inputId() ?? `sc-select-${++scSelectIdCounter}`,
-  );
-
-  protected readonly isInvalid = computed(() => {
-    if (this.error()) return true;
-    const ctrl = this._ngControl?.control;
-    return !!ctrl && ctrl.invalid && (ctrl.touched || ctrl.dirty);
+  // ─── Estado del field-pattern (compartido) ─────────────────────────
+  private readonly field = createScFieldState('sc-select', {
+    inputId: this.inputId,
+    error: this.error,
+    helperText: this.helperText,
+    invalid: this.invalid,
   });
+  protected readonly resolvedId = this.field.resolvedId;
+  protected readonly msgId = this.field.msgId;
+  protected readonly isInvalid = this.field.isInvalid;
+  protected readonly footerText = this.field.footerText;
 
-  protected readonly footerText = computed(() => this.error() || this.helperText() || '');
+  private readonly panel = createScPanelSizing('sc-select', this.size);
+  protected readonly pSize = this.panel.pSize;
+  protected readonly panelStyleClass = this.panel.panelStyleClass;
 
-  /** Map our sm/md/lg to PrimeNG's small/large (md = no size attr). */
-  protected readonly pSize = computed<'small' | 'large' | undefined>(() => {
-    const s = this.size();
-    return s === 'sm' ? 'small' : s === 'lg' ? 'large' : undefined;
+  private readonly optionState = createScOptionState({
+    options: this.options,
+    optionLabel: this.optionLabel,
+    optionValue: this.optionValue,
   });
-
-  /** Clase propagada al overlay panel (`<body>`) para que los items
-   *  hereden el size. Ver `packages/design-system/styles/_sc-overlay-sizes.scss`. */
-  protected readonly panelStyleClass = computed(() => {
-    const s = this.size();
-    return s === 'sm' ? 'sc-select-panel--sm' : s === 'lg' ? 'sc-select-panel--lg' : '';
-  });
-
-  /** PrimeNG's `[options]` is typed `any[]` (mutable); cast our readonly array. */
-  protected readonly optionsMutable = computed(() => this.options() as unknown[]);
-
-  /**
-   * `true` cuando `options` es un array de primitives (string/number/boolean).
-   * En ese caso PrimeNG espera que NO se le pase `optionLabel`/`optionValue` —
-   * si los pasamos con un string array, intenta resolver `.label` en cada
-   * string y todas las opciones renderizan vacías (bug visible en grupos:
-   * tipoVoz, prioridad, estrategia con string[] mostraban "empty empty…").
-   */
-  protected readonly hasPrimitiveOptions = computed(() => {
-    const opts = this.options();
-    return opts.length > 0 && opts.every((o) => o === null || typeof o !== 'object');
-  });
-
-  protected readonly resolvedOptionLabel = computed(() =>
-    this.hasPrimitiveOptions() ? undefined : this.optionLabel(),
-  );
-
-  protected readonly resolvedOptionValue = computed(() =>
-    this.hasPrimitiveOptions() ? undefined : this.optionValue(),
-  );
-
-  // ─── ControlValueAccessor ──────────────────────────────────────────
-  private _onChange: (v: unknown) => void = () => {};
-  private _onTouched: () => void = () => {};
-  private readonly _injector = inject(Injector);
-  private get _ngControl(): NgControl | null {
-    try {
-      return this._injector.get(NgControl, null, { self: true, optional: true });
-    } catch {
-      return null;
-    }
-  }
-
-  writeValue(v: unknown): void {
-    /* `untracked` aísla la escritura del signal de cualquier reactive
-     * context (signal forms futuro, effect en consumer). Defensa Angular
-     * docs para CVA + signals. */
-    untracked(() => this.value.set(v));
-  }
-  registerOnChange(fn: (v: unknown) => void): void {
-    this._onChange = fn;
-  }
-  registerOnTouched(fn: () => void): void {
-    this._onTouched = fn;
-  }
-  setDisabledState(state: boolean): void {
-    this.disabled.set(state);
-  }
+  protected readonly optionsMutable = this.optionState.optionsMutable;
+  protected readonly hasPrimitiveOptions = this.optionState.hasPrimitiveOptions;
+  protected readonly resolvedOptionLabel = this.optionState.resolvedOptionLabel;
+  protected readonly resolvedOptionValue = this.optionState.resolvedOptionValue;
 
   protected onModelChange(v: unknown): void {
     this.value.set(v);
-    this._onChange(v);
   }
 
   protected onFocus(event: Event): void {
@@ -248,7 +193,6 @@ export class ScSelectComponent implements ControlValueAccessor {
   }
 
   protected onBlur(event: Event): void {
-    this._onTouched();
     this.blurred.emit(event as FocusEvent);
   }
 }

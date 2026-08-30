@@ -43,7 +43,7 @@ export class InputTextDemoComponent {
     tag: 'sc-inputtext',
     title: 'InputText',
     description:
-      'Input de texto sobre `pInputText` con la chrome del field-pattern (label + requerido + helper/error). Pareja con `[(ngModel)]`, `[formControl]` y `[(value)]` (signals). Para input + addon ver `sc-inputgroup`.',
+      'Input de texto sobre `pInputText` con la chrome del field-pattern (label + requerido + helper/error). Se consume con `[(value)]` (signals). Para input + addon ver `sc-inputgroup`.',
     argTypes: [
       { name: 'label', control: { kind: 'text' } },
       { name: 'value', control: { kind: 'text' } },
