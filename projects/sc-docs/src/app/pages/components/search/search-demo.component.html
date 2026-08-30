@@ -15,7 +15,7 @@
 
 <ng-template #basic>
   <div class="col">
-    <sc-search placeholder="Buscar agentes…" [(ngModel)]="term" data-testid="sc-search" />
+    <sc-search placeholder="Buscar agentes…" [(value)]="term" data-testid="sc-search" />
     <p>Término: «{{ term() }}»</p>
   </div>
 </ng-template>

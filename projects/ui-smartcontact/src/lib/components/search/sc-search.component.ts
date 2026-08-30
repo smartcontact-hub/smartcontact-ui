@@ -2,27 +2,22 @@ import {
   booleanAttribute,
   ChangeDetectionStrategy,
   Component,
-  computed,
   ElementRef,
-  forwardRef,
   input,
   model,
   output,
-  untracked,
   viewChild,
   ViewEncapsulation,
 } from '@angular/core';
-import { ControlValueAccessor, FormsModule, NG_VALUE_ACCESSOR } from '@angular/forms';
 import { IconFieldModule } from 'primeng/iconfield';
 import { InputIconModule } from 'primeng/inputicon';
 import { InputTextModule } from 'primeng/inputtext';
 
-
 import { ScIconComponent } from '@smartcontact-hub/icons';
+import { createScFieldState, type ScFieldSize } from '../field/sc-field';
 
-export type ScSearchSize = 'sm' | 'md' | 'lg';
-
-let scSearchIdCounter = 0;
+/** @deprecated Usa `ScFieldSize`. Alias conservado por compatibilidad de imports. */
+export type ScSearchSize = ScFieldSize;
 
 /**
  * Smart Contact search input. Compone `<p-iconfield>` + `<p-inputicon>` +
@@ -37,24 +32,18 @@ let scSearchIdCounter = 0;
  * + pickers (agendas, plantillas dentro de agent-form). 7 consumers reales
  * que antes copiaban la chrome `.page__search-*` en 6 SCSS distintos.
  *
- * Pairs con `[(value)]` signals, `[(ngModel)]`, y Reactive Forms via
- * ControlValueAccessor.
+ * Se consume con `[(value)]` (signals). El CVA que daba soporte a
+ * ngModel/Reactive Forms se retiró (DD, 2026-08-30): no lo usaba ningún
+ * consumidor —los 9 de AED pasan `[(value)]`—.
  */
 @Component({
   selector: 'sc-search',
   standalone: true,
-  imports: [IconFieldModule, InputIconModule, InputTextModule, ScIconComponent, FormsModule],
+  imports: [IconFieldModule, InputIconModule, InputTextModule, ScIconComponent],
   templateUrl: './sc-search.component.html',
   styleUrl: './sc-search.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
-  providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => ScSearchComponent),
-      multi: true,
-    },
-  ],
   host: {
     class: 'sc-search',
     '[class.sc-search--sm]': "size() === 'sm'",
@@ -63,11 +52,11 @@ let scSearchIdCounter = 0;
     '[class.sc-search--filled]': 'filled()',
   },
 })
-export class ScSearchComponent implements ControlValueAccessor {
+export class ScSearchComponent {
   // ─── Chrome inputs ─────────────────────────────────────────────────
-  readonly size = input<ScSearchSize>('md');
+  readonly size = input<ScFieldSize>('md');
   readonly placeholder = input<string>('');
-  readonly disabled = model<boolean>(false);
+  readonly disabled = input(false, { transform: booleanAttribute });
   readonly inputId = input<string>();
   readonly name = input<string>();
   readonly autoFocus = input(false, { transform: booleanAttribute });
@@ -102,9 +91,8 @@ export class ScSearchComponent implements ControlValueAccessor {
   // ─── Derived / internal ────────────────────────────────────────────
   protected readonly searchIcon = 'search';
   protected readonly clearIcon = 'close';
-  protected readonly resolvedId = computed(
-    () => this.inputId() ?? `sc-search-${++scSearchIdCounter}`,
-  );
+  private readonly field = createScFieldState('sc-search', { inputId: this.inputId });
+  protected readonly resolvedId = this.field.resolvedId;
 
   private readonly inputEl = viewChild<ElementRef<HTMLInputElement>>('input');
 
@@ -113,37 +101,12 @@ export class ScSearchComponent implements ControlValueAccessor {
     this.inputEl()?.nativeElement.focus();
   }
 
-  // ─── ControlValueAccessor ──────────────────────────────────────────
-  private _onChange: (v: string) => void = () => {};
-  private _onTouched: () => void = () => {};
-
-  writeValue(v: string | null | undefined): void {
-    /* `untracked` aísla la escritura del signal (defensa CVA + signals). */
-    untracked(() => this.value.set(v ?? ''));
-  }
-  registerOnChange(fn: (v: string) => void): void {
-    this._onChange = fn;
-  }
-  registerOnTouched(fn: () => void): void {
-    this._onTouched = fn;
-  }
-  setDisabledState(state: boolean): void {
-    this.disabled.set(state);
-  }
-
   protected onInput(event: Event): void {
-    const next = (event.target as HTMLInputElement).value;
-    this.value.set(next);
-    this._onChange(next);
-  }
-
-  protected onBlur(): void {
-    this._onTouched();
+    this.value.set((event.target as HTMLInputElement).value);
   }
 
   protected onClear(): void {
     this.value.set('');
-    this._onChange('');
     this.inputEl()?.nativeElement.focus();
   }
 

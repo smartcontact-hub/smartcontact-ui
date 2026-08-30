@@ -2,24 +2,22 @@ import {
   booleanAttribute,
   ChangeDetectionStrategy,
   Component,
-  computed,
-  forwardRef,
-  inject,
-  Injector,
   input,
   model,
-  untracked,
+  output,
   ViewEncapsulation,
 } from '@angular/core';
-import { FormsModule, ControlValueAccessor, NG_VALUE_ACCESSOR, NgControl } from '@angular/forms';
+// `FormsModule` sigue haciendo falta: la plantilla usa `[ngModel]` como puente
+// INTERNO hacia `<p-datepicker>` (no es el CVA exterior, que se retiró).
+import { FormsModule } from '@angular/forms';
 import { DatePickerModule } from 'primeng/datepicker';
 import { ScFieldLabelComponent } from '../field/sc-field-label.component';
 import { ScFieldMsgComponent } from '../field/sc-field-msg.component';
+import { createScFieldState, createScPanelSizing, type ScFieldSize } from '../field/sc-field';
 
-export type ScDatepickerSize = 'sm' | 'md' | 'lg';
+/** @deprecated Usa `ScFieldSize`. Alias conservado por compatibilidad de imports. */
+export type ScDatepickerSize = ScFieldSize;
 export type ScDatepickerView = 'date' | 'month' | 'year';
-
-let scDatepickerIdCounter = 0;
 
 /**
  * Smart Contact date picker. Wraps PrimeNG `<p-datepicker>` with the
@@ -46,13 +44,6 @@ let scDatepickerIdCounter = 0;
   styleUrl: './sc-datepicker.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
-  providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => ScDatepickerComponent),
-      multi: true,
-    },
-  ],
   host: {
     class: 'sc-datepicker',
     '[class.sc-datepicker--sm]': "size() === 'sm'",
@@ -62,15 +53,17 @@ let scDatepickerIdCounter = 0;
     '[class.sc-datepicker--inline]': 'inline()',
   },
 })
-export class ScDatepickerComponent implements ControlValueAccessor {
+export class ScDatepickerComponent {
   // ─── Chrome ────────────────────────────────────────────────────────
-  readonly size = input<ScDatepickerSize>('md');
+  readonly size = input<ScFieldSize>('md');
   readonly label = input<string>();
   readonly required = input(false, { transform: booleanAttribute });
   readonly helperText = input<string>();
   readonly error = input<string>();
+  /** Estado inválido explícito. Se combina con `error` (paridad con sc-inputtext). */
+  readonly invalid = input(false, { transform: booleanAttribute });
   readonly placeholder = input<string>('dd/mm/aaaa');
-  readonly disabled = model<boolean>(false);
+  readonly disabled = input(false, { transform: booleanAttribute });
   readonly inputId = input<string>();
   readonly name = input<string>();
 
@@ -97,70 +90,35 @@ export class ScDatepickerComponent implements ControlValueAccessor {
   // ─── Two-way value binding ─────────────────────────────────────────
   readonly value = model<Date | null>(null);
 
-  // ─── Derived ───────────────────────────────────────────────────────
-  protected readonly resolvedId = computed(
-    () => this.inputId() ?? `sc-datepicker-${++scDatepickerIdCounter}`,
-  );
+  // ─── Outputs (paridad con sc-inputtext / sc-select) ────────────────
+  readonly focused = output<FocusEvent>();
+  readonly blurred = output<FocusEvent>();
 
-  protected readonly isInvalid = computed(() => {
-    if (this.error()) return true;
-    const ctrl = this._ngControl?.control;
-    return !!ctrl && ctrl.invalid && (ctrl.touched || ctrl.dirty);
+  // ─── Estado del field-pattern (compartido) ─────────────────────────
+  private readonly field = createScFieldState('sc-datepicker', {
+    inputId: this.inputId,
+    error: this.error,
+    helperText: this.helperText,
+    invalid: this.invalid,
   });
+  protected readonly resolvedId = this.field.resolvedId;
+  protected readonly msgId = this.field.msgId;
+  protected readonly isInvalid = this.field.isInvalid;
+  protected readonly footerText = this.field.footerText;
 
-  protected readonly footerText = computed(() => this.error() || this.helperText() || '');
-
-  /** sm/md/lg → PrimeNG small/large (md = no attr). */
-  protected readonly pSize = computed<'small' | 'large' | undefined>(() => {
-    const s = this.size();
-    return s === 'sm' ? 'small' : s === 'lg' ? 'large' : undefined;
-  });
-
-  /** Clase propagada al overlay panel para que los items hereden el size.
-   *  Ver `packages/design-system/styles/_sc-overlay-sizes.scss`. */
-  protected readonly panelStyleClass = computed(() => {
-    const s = this.size();
-    return s === 'sm' ? 'sc-datepicker-panel--sm' : s === 'lg' ? 'sc-datepicker-panel--lg' : '';
-  });
-
-  // ─── ControlValueAccessor ──────────────────────────────────────────
-  private _onChange: (v: Date | null) => void = () => {};
-  private _onTouched: () => void = () => {};
-  private readonly _injector = inject(Injector);
-  private get _ngControl(): NgControl | null {
-    try {
-      return this._injector.get(NgControl, null, { self: true, optional: true });
-    } catch {
-      return null;
-    }
-  }
-
-  writeValue(v: Date | string | null | undefined): void {
-    /* `untracked` aísla la escritura del signal (defensa CVA + signals). */
-    untracked(() => {
-      if (v === null || v === undefined || v === '') {
-        this.value.set(null);
-        return;
-      }
-      this.value.set(v instanceof Date ? v : new Date(v));
-    });
-  }
-  registerOnChange(fn: (v: Date | null) => void): void {
-    this._onChange = fn;
-  }
-  registerOnTouched(fn: () => void): void {
-    this._onTouched = fn;
-  }
-  setDisabledState(state: boolean): void {
-    this.disabled.set(state);
-  }
+  private readonly panel = createScPanelSizing('sc-datepicker', this.size);
+  protected readonly pSize = this.panel.pSize;
+  protected readonly panelStyleClass = this.panel.panelStyleClass;
 
   protected onModelChange(v: Date | null): void {
     this.value.set(v);
-    this._onChange(v);
   }
 
-  protected onBlur(): void {
-    this._onTouched();
+  protected onFocus(event: Event): void {
+    this.focused.emit(event as FocusEvent);
+  }
+
+  protected onBlur(event: Event): void {
+    this.blurred.emit(event as FocusEvent);
   }
 }

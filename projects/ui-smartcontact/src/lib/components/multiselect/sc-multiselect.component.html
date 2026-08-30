@@ -30,9 +30,10 @@
     [panelStyleClass]="panelStyleClass()"
     [ngModel]="value()"
     (ngModelChange)="onModelChange($event)"
-    (onBlur)="onBlur()"
+    (onFocus)="onFocus($event)"
+    (onBlur)="onBlur($event)"
     [attr.name]="name() ?? null"
-    [attr.aria-describedby]="footerText() ? resolvedId() + '-msg' : null"
+    [attr.aria-describedby]="footerText() ? msgId() : null"
     [attr.aria-required]="required() ? true : null"
     [attr.aria-invalid]="isInvalid() ? true : null"
   />
@@ -52,6 +53,6 @@
     block="sc-multiselect"
     [text]="footerText()"
     [isError]="!!error()"
-    [msgId]="resolvedId() + '-msg'"
+    [msgId]="msgId()"
   />
 }

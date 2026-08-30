@@ -6,12 +6,11 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
-import { FormsModule } from '@angular/forms';
 
 import { ScSearchComponent } from '@smartcontact-hub/components';
 import { StoryContext, StoryDef, StoryHostComponent, StoryMeta } from '../../../storybook';
 
-const BASIC_SNIPPET = `<sc-search placeholder="Buscar agentes…" [(ngModel)]="term" />`;
+const BASIC_SNIPPET = `<sc-search placeholder="Buscar agentes…" [(value)]="term" />`;
 
 const VARIANTS_SNIPPET = `<sc-search placeholder="Con atajo" shortcutHint="⌘K" />
 <sc-search placeholder="Small" size="sm" />
@@ -21,7 +20,7 @@ const VARIANTS_SNIPPET = `<sc-search placeholder="Con atajo" shortcutHint="⌘K"
 /** Demo de `sc-search` en formato story (motor «Storybook-like»). */
 @Component({
   selector: 'app-search-demo',
-  imports: [ScSearchComponent, FormsModule, StoryHostComponent],
+  imports: [ScSearchComponent, StoryHostComponent],
   templateUrl: './search-demo.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -36,7 +35,7 @@ export class SearchDemoComponent {
     tag: 'sc-search',
     title: 'Search',
     description:
-      'Input de búsqueda: icono overlay + botón clear (×) opcional + pista de atajo (⌘K / /) cuando está vacío y sin foco. Pareja con `[(value)]`, `[(ngModel)]` y Reactive Forms.',
+      'Input de búsqueda: icono overlay + botón clear (×) opcional + pista de atajo (⌘K / /) cuando está vacío y sin foco. Se consume con `[(value)]` (signals).',
     argTypes: [
       { name: 'value', control: { kind: 'text' } },
       { name: 'placeholder', control: { kind: 'text' } },

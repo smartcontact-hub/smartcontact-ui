@@ -30,7 +30,7 @@ export class InputNumberDemoComponent {
     tag: 'sc-inputnumber',
     title: 'InputNumber',
     description:
-      'Input numérico sobre `<input type="number">` nativo con la chrome del field-pattern (label + requerido + helper/error + suffix). Emite `number | null`. Pareja con `[(value)]`, `[(ngModel)]` y Reactive Forms.',
+      'Input numérico sobre `<input type="number">` nativo con la chrome del field-pattern (label + requerido + helper/error + suffix). Emite `number | null`. Se consume con `[(value)]` (signals).',
     argTypes: [
       { name: 'label', control: { kind: 'text' } },
       { name: 'value', control: { kind: 'number' } },
