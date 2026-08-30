@@ -196,6 +196,11 @@ que Figma muestra. A partir de él:
   escala, radios, tamaños de componente (paddings sm/lg, anchos de
   botón icon-only...) y **colores de marca** (claro y oscuro)
   contra el export. Si algo no cuadra, falla.
+  ⚠️ Pero compara **export ↔ código**, NO el **fichero de Figma vivo ↔ export**.
+  Ese segundo cruce —el que dice si el export se ha quedado viejo, como pasó en
+  julio— es MANUAL (necesita el puente de Figma abierto): `scripts/figma-parity.mjs`,
+  con el paso a paso técnico en `projects/design-tokens/README.md` → *Figma-live
+  parity*. Última pasada 2026-08-31: **406/406, cero deriva**.
 - **`npm run tokens:type-parity`** vigila lo mismo pero para la
   tipografía (que va en su propia escala — ver más abajo).
 - **`npm run tokens:guard`** y **`npm run audit:theme-scale`** son
