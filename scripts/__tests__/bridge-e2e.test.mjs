@@ -129,3 +129,32 @@ test('PUERTA · color de componente (ref primitiva → {red.700}) fluye a 04-com
     assert.equal(count(layer(sb.layers, '04-component.css'), 'sc-color-red-700'), base + 1);
   } finally { sb.cleanup(); }
 });
+
+/*
+ * PUERTA · el VERIFICADOR mira el mismo export que los GENERADORES.
+ *
+ * Las cinco puertas de arriba prueban que un cambio del Kit fluye al CSS. Esta prueba lo
+ * complementario y no menos importante: que `token-parity.mjs` —el gate que dice si CSS y
+ * export casan— resuelve el export por la MISMA constante que ellos, `scripts/paths.mjs`.
+ *
+ * Hasta el 2026-08-30 no lo hacía: hardcodeaba la ruta e ignoraba `SC_KIT_EXPORT`. Medido con
+ * control negativo ese día — con el export mutado en sandbox, la versión vieja salía 0
+ * («PARIDAD OK») y la nueva sale 1. Es un verde falso silencioso: apuntas la cadena a otro
+ * export, generas desde él, y el verificador te aprueba comparando contra el de siempre.
+ */
+test('PUERTA · token-parity respeta SC_KIT_EXPORT (verificador y generadores, el mismo fichero)', () => {
+  const sb = sandbox((kit) => { kit['aura/primitive'].scale['4'].$value = 999; });
+  try {
+    // Solo el export se desvía; las capas son las reales → la paridad DEBE romperse.
+    const env = { ...process.env, SC_KIT_EXPORT: sb.env.SC_KIT_EXPORT };
+    let exit = 0, out = '';
+    try {
+      out = execFileSync('node', [resolve(root, 'scripts', 'token-parity.mjs')], { env, cwd: root, encoding: 'utf8' });
+    } catch (e) {
+      exit = e.status;
+      out = String(e.stdout ?? '');
+    }
+    assert.equal(exit, 1, 'token-parity no vio el export mutado: el override no le llegó');
+    assert.match(out, /scale\.4=999/, 'el gap reportado no es el del export mutado');
+  } finally { sb.cleanup(); }
+});

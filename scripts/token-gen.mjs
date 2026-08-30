@@ -38,16 +38,8 @@ import { loadKitExport } from './dtcg-export.mjs';
 import { scaleSuffix, toRem, dropAlpha } from './token-naming.mjs';
 import { rewriteRegion } from './marker-rewrite.mjs';
 import { GENERATED as GENERATED_COLORS } from './color-map.mjs';
+import { EXPORT_PATH, LAYERS_DIR } from './paths.mjs';
 
-const root = resolve(import.meta.dirname, '..');
-// Rutas con override por env (SC_KIT_EXPORT / SC_LAYERS_DIR) para el mini-test e2e en sandbox;
-// sin las env, las reales. Así el e2e prueba el flujo sin tocar el export ni las capas reales.
-const EXPORT_PATH = process.env.SC_KIT_EXPORT
-  ? resolve(process.env.SC_KIT_EXPORT)
-  : resolve(root, 'projects/design-tokens/scripts/kit-export-dtcg.json');
-const LAYERS_DIR = process.env.SC_LAYERS_DIR
-  ? resolve(process.env.SC_LAYERS_DIR)
-  : resolve(root, 'projects/design-tokens/src/lib/styles/tokens/layers');
 const PRIMITIVE_CSS = resolve(LAYERS_DIR, '01-primitive.css');
 
 const emit = process.argv.includes('--emit');

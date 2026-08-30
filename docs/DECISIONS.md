@@ -37,6 +37,63 @@
 
 ---
 
+## DD-43 · 2026-08-30 — NO se extrae una «base común admin»: la duplicación que el audit veía no existe
+
+**Contexto** · `AUDIT-DEUDA-2026-06.md` abre con *"CRUD / listas / selección reinventados por
+feature"* (tema **D**) y su §3 pone como paso 3 de la secuencia recomendada una **base común
+admin** (`BaseCrudStore<T>` / `FilteredSortedTable`). Lleva desde junio como uno de los ítems
+grandes de deuda, y todo plan que abre ese doc se lo encuentra por delante.
+
+**Decisión** · **No se construye.** El tema D se cierra como *resuelto por otro camino*, y la §3
+deja de recomendarlo. Lo que sí sale de ahí son tres arreglos pequeños, tratados por separado
+(dos ya cerrados el 2026-08-30: `isNameTaken` y `hashName`; el tercero, `toggleChannel`, va a
+`ROADMAP.md` con disparador).
+
+**Razón** · Medido contra el código del 2026-08-30, no contra la descripción de junio:
+
+1. **La duplicación no es verbatim.** Normalizando el nombre de la entidad
+   (`agent`→`X` vs `group`→`X`) y comparando `agents-list-page.component.ts` (775 líneas) con
+   `groups-list-page.component.ts` (708), quedan **595 líneas divergentes**: ~77% del fichero no
+   coincide ni después de borrar la diferencia tonta. Lo que sí se repite verbatim entre las
+   cinco list-pages son *one-liners* — `const ids = this.selectedIds();`, `life: TOAST_LIFE.success,`,
+   un `onSelectionChange` de **3 líneas** —. Eso no se extrae: se escribe.
+2. **La base que pedía el ítem ya existe, en cuatro capas y adoptada al 100%**:
+   `core/services/local-store.factory.ts` (`createLocalStore`, 182 líneas — los stores de admin
+   que lo consumen son wrappers de 36 a 106) · `shared/utils/form-dirty-state.ts` +
+   `CrossTabLockService`, cableados igual en los 3 formularios · los componentes del DS que
+   absorben la lista (`sc-datatable`, `sc-bulk-action-bar`, `sc-column-selector`,
+   `sc-delete-entity-dialog`…) · y
+   `repo-list-page.component.ts`, **un** componente config-driven que sirve **9 rutas** de
+   repositorios. `BaseCrudStore<T>` no está por construir: se llama `createLocalStore`.
+3. **`FilteredSortedTable` no se puede construir sin romper una divergencia deliberada.**
+   `users-list-page.component.ts:157-166` explica por escrito que su `sorted` es
+   `[...this.filtered()]` a secas porque el orden lo resuelve `p-table` client-side y la copia
+   existe solo para que no ordene el array del store in-place. Agents y groups sí llevan
+   comparador. Una tabla común obligaría a las tres a compartir estrategia de orden — justo lo
+   que se decidió distinto a propósito.
+4. **El repo ya rechazó una abstracción de esta familia, y lo dejó escrito.** El
+   `SelectionState` compartido se **retiró** de agents/groups/users/labels/repos el 2026-08-24:
+   *"de sus nueve miembros esta página usaba DOS"* (`groups-list-page.component.ts:138`).
+   Construir ahora una base mayor sería repetir el error del que se volvió hace seis días.
+
+**Descartadas** ·
+· *Extraer `BaseCrudStore<T>` + `FilteredSortedTable`* (lo que pedía el audit) — mataría ~3
+líneas por página y añadiría una capa que las tres estrategias de orden no comparten. Coste real
+> beneficio real.
+· *Extraer solo `FilteredSortedTable`, dejando los stores* — mismo choque del punto 3, y encima
+parte el patrón en dos mitades con dueños distintos.
+· *Dejar el ítem abierto "por si acaso"* — es lo que ha pasado dos meses. Un backlog que
+recomienda trabajo que no se debe hacer cuesta lo mismo que uno que esconde trabajo pendiente:
+en ambos casos deja de decir la verdad (precedente: el focus ring, `ROADMAP.md:31-34`).
+
+**Consecuencias** · El tema D y la §3·3 del audit quedan cerrados con esta referencia. Sigue
+vigente **DD-4** (regla 2+ consumidores) como criterio: se consolida duplicación genuina —
+`hashName` verbatim entre DS y supervisor lo era y se unificó el mismo día—, no parecido
+estructural. Si algún día tres list-pages convergen de verdad en su estrategia de orden, esto se
+revisa; el disparador es ese, no el número de páginas.
+
+---
+
 ## DD-42 · 2026-08-25 — Angular 22 + PrimeNG 22, y los builders a `@angular/build`
 
 **Contexto** · El repo iba por Angular 21.2 / PrimeNG 21.1. La justificación que llevaba el plan

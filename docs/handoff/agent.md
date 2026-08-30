@@ -3,7 +3,10 @@
 > **Volátil.** Lo reescribe la sesión que trabaja ESTE frente, y **solo este fichero**.
 > No toques los hand-offs de otros frentes. Lo durable vive en `docs/` y en
 > `projects/agent/docs/`.
-> **Sello: 2026-08-26 (s35) — HEAD `020928a`. Preflight verde, CI verde LEÍDO, todo en `main`.**
+> **Sello: 2026-08-30 (s36) — HEAD `e5fe874`. CI verde LEÍDO (run del 27-ago), todo en `main`.**
+>
+> ⚠️ Este fichero estuvo sellado en `020928a` mientras entraban **12 commits más** (7 tocando
+> `projects/agent`). Si vuelve a pasar, la lista de abajo es la que miente primero.
 
 ## Qué es este frente
 
@@ -48,15 +51,57 @@ colores muestreados de su `<canvas>` · interruptores y buscador negro en Grupos
 tarjetas a su ancho medido · tabla pegada al pie (5.83 de la barra) · desplegable de grupos
 sin recortes.
 
+### Lo que entró DESPUÉS del sello anterior (26 y 27-ago) — 7 commits
+
+Estaba en `main` y no en esta ficha; recuperado de los mensajes de commit el 2026-08-30.
+
+1. **Los interruptores de grupo son UNO** (`3878dc2`) — el mismo grupo salía con interruptor en
+   el KPI «Grupos asignados» y en el Perfil, **cada uno con su propio signal**: apagarlo en un
+   sitio no se veía en el otro. El estado sube a `AgentStateService`. Verificado en los dos
+   sentidos, no solo que compila.
+2. **Los dos icon-buttons de la cabecera** (`469eb46`) — eran rectangulares (21.84×29.12) por
+   copiar el ancho del contenedor; el original los tiene **cuadrados 18.96, radio 5.3**. El `?`
+   gana borde e icono blancos. Y aparece un hallazgo que se queda: **el original tiene DOS
+   rojos** — avatar `#e74c3c` y logout `#f75454` — de donde nace el token **`--ag-logout`**.
+3. **Carrusel de conversaciones en la barra inferior** (`e14562e`) — *"la única pieza estructural
+   que le faltaba al dashboard"*. Portado el `.task` del bundle: chip `#5f6776`, radio 0.6vw,
+   borde `#11131a`, elipsis a 7.3vw, y la hora en teal `#166f8d` cuando está en postconversando.
+   Se alimenta de los chats `open`/`postchat`.
+4. **Finalizar gestión 1:1 con el Figma** (`eb02099`, node `47:27651`) — el chip «N conversaciones
+   pendientes» pasa a **full container** (26px alto, warning 18px); «Seleccionar todas» y su
+   separador **solo con más de una**; las casillas **nacen sin marcar** (antes se premarcaban). Y
+   corrección al punto 3: el teal tiñe **toda** la pill, no solo la hora — era *"el azul raro en
+   un trozo"*.
+5. **Clic en pastilla del carrusel → abre esa conversación en Mensajes** (`08bbcde`) — footer y
+   Comunicador son hermanos, así que el enlace va por `AgentStateService.requestedChat`, que el
+   Comunicador consume con un `effect` y devuelve a `null` (**mismo patrón que `forcedTab`**). La
+   pastilla pasa de `<div>` a `<button>`. El panel Finalizar gestión **no** navega: ahí el clic
+   marca la casilla.
+6. **Perfil «Rafael_3AED» + toggle de tema fiel** (`476a9fd`) — el nombre era «Rafael» pero la
+   tabla lo firma `Rafael_3AED`: incoherente consigo mismo. El toggle iba en gris apagado con
+   luna azulada, **que no es ninguno de los dos estados reales**; ahora pinta el estado ACTIVO:
+   dark = círculo `#2450d9` con luna blanca, light = `#f6c85d` con sol `#654803`. Círculo
+   remedido a 22px (1.356vw) a 13px del borde (0.8015vw).
+7. **Anidamiento de mensajes en el chat** (`32dc18e`) — con varios mensajes seguidos del mismo
+   emisor, **la hora se pinta solo en el último de la tanda**; los de `server` nunca la llevan.
+
+Y dos cosas de fuera del frente que le afectan: **`preflight:fast`** (`04d3464`, mismos gates en
+la mitad de tiempo — esta ficha asumía los ~8,5 min del `preflight` completo) y el **fix de
+despliegue** (`e5fe874`, Node fijado a 22.23.2 para Cloudflare Pages, que llevaba roto desde
+Angular 22 — y `sc-agent.pages.dev` es la URL de este frente).
+
 ## ⏸️ ESPERANDO A RAFA — no preguntar, no hacer
 
 Tres decisiones suyas, todas escritas con su coste:
 
-1. **La sesión para medir el original.** `npm run parity:login` abre una ventana, se
-   loguea él, y guarda `.auth/original.json` (gitignored). **Antes hay que decidir el
-   riesgo**: eso abre una SEGUNDA sesión de agente del mismo usuario, y eso es telefonía
-   en vivo — puede echar a la suya o quedar como agente disponible y que le enruten una
-   conversación real. Opciones en `findings/STATUS.md`.
+1. ~~**La sesión para medir el original**~~ → **DECIDIDO POR RAFA el 2026-08-30: SÍ se hace**,
+   en una ventana que elija él. El riesgo no cambia y se asume con protocolo: `npm run
+   parity:login` abre una SEGUNDA sesión de agente del mismo usuario, y eso es telefonía en vivo
+   — puede echar a la suya o dejarle como agente disponible y que le enruten una conversación
+   real. **Protocolo acordado**: (a) la ventana la marca él, idealmente fuera de su horario de
+   agente; (b) se loguea él y la sesión queda en `.auth/original.json` (gitignored); (c) se mide
+   rápido y se cierra al terminar; (d) si interfiere con su sesión real, se aborta. Opciones y
+   detalle en `findings/STATUS.md`.
 2. **Los breakpoints 1366 y 1680 y el eje vertical en `vh`** (320 usos en el original
    contra 2 aquí). Descrito con coste en `findings/phase-8-new-behaviours.md`. No se toca
    sin poder verificarlo contra el original.

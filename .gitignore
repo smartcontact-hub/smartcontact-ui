@@ -58,3 +58,8 @@ Thumbs.db
 
 # Bundle del original cacheado para el censo de la Fase 3.
 .cache/
+
+# Capturas de trabajo de las comparaciones visuales (web ↔ Figma ↔ referencias).
+# Son material de una sesión, no entregable: pesan MB y no aportan histórico.
+# `/tmp` de arriba no las cubre — el nombre empieza por punto.
+/.tmp-captures/

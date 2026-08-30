@@ -95,7 +95,8 @@ const scripts = pkg.scripts || {};
 // "propone crear …"), no como ficheros existentes. El checker no distingue propuesta de
 // afirmación, así que se exoneran aquí (mismo patrón que DEMO_EXEMPT/NESTED_IGNORE). Cuando
 // el script se cree, `existsSync` lo cubre → quítalo de esta lista.
-const PROPOSED_SCRIPTS = new Set(['scripts/paths.mjs']);
+// Vacía desde el 2026-08-30: `scripts/paths.mjs` era el único inquilino y ya existe.
+const PROPOSED_SCRIPTS = new Set([]);
 
 // ── CHECK A — refs a comandos/scripts que deben existir ────────────────────────
 for (const { path, lines } of files) {

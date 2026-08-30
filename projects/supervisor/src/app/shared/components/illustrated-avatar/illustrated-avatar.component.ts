@@ -1,6 +1,10 @@
 import { ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import {
+  type AvatarIllustrationPool,
+  buildIllustrationSrc,
+} from '@smartcontact-hub/components';
 
-export type IllustratedAvatarPool = 'illustrated' | 'abstract';
+export type IllustratedAvatarPool = AvatarIllustrationPool;
 
 /**
  * Two pools live under `src/assets/avatars/`:
@@ -17,10 +21,18 @@ export type IllustratedAvatarPool = 'illustrated' | 'abstract';
  * `abstract-NN.svg` (abstract). The active pool is picked via the
  * `[pool]` input.
  */
-const POOLS = {
-  illustrated: { count: 24, dir: 'illustrated', prefix: 'avatar' },
-  abstract: { count: 3, dir: 'abstract', prefix: 'abstract' },
-} as const satisfies Record<IllustratedAvatarPool, { count: number; dir: string; prefix: string }>;
+/**
+ * El catálogo de pools y el hash que reparte los nombres viven en el DS
+ * (`buildIllustrationSrc`, misma fuente que `sc-avatar` y `sc-photo-upload`).
+ * Aquí había una copia verbatim de ambos: mismo DJB2, mismos 24/3 ficheros.
+ * Al ser DOS implementaciones del mismo reparto, el día que el DS sumara un
+ * avatar 25 esta pantalla habría seguido repartiendo entre 24 — el mismo
+ * nombre con cara distinta según el componente. (Unificado 2026-08-30.)
+ *
+ * Lo único que no se hereda es la BASE: aquí es absoluta (`/assets/avatars`)
+ * y el DS la deja relativa por defecto, así que se pasa explícita.
+ */
+const ILLUSTRATION_BASE = '/assets/avatars';
 
 /**
  * Circular avatar that renders one of N illustrations hashed
@@ -55,23 +67,11 @@ export class IllustratedAvatarComponent {
    *  and other functional entities. */
   readonly pool = input<IllustratedAvatarPool>('illustrated');
 
-  protected readonly illustrationSrc = computed(() => {
-    const cfg = POOLS[this.pool()];
-    const idx = hashName(this.name(), cfg.count);
-    return `/assets/avatars/${cfg.dir}/${cfg.prefix}-${String(idx).padStart(2, '0')}.svg`;
-  });
+  protected readonly illustrationSrc = computed(() =>
+    buildIllustrationSrc(this.name(), this.pool(), ILLUSTRATION_BASE),
+  );
 
   protected readonly photoSrc = computed(() => this.photo() ?? null);
 
   protected readonly sizePx = computed(() => `${this.size()}px`);
-}
-
-/** Stable, well-distributed hash → bucket in [0, modulo). */
-function hashName(name: string, modulo: number): number {
-  let hash = 5381;
-  const trimmed = name.trim();
-  for (let i = 0; i < trimmed.length; i++) {
-    hash = ((hash << 5) + hash + trimmed.charCodeAt(i)) | 0;
-  }
-  return Math.abs(hash) % modulo;
 }
