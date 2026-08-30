@@ -106,7 +106,7 @@ Tres piezas cuyo borrado destruiría lo único que las guarda:
    aprobado 2026-07-18 · Siguiente en la cola: **Ola 1**"*. Contiene **[V]** (leído entero antes de rescatarlo a DD-36): 7 divergencias de UX
    **deliberadas** con su motivo (no replicadas en `DECISIONS.md`, y `customs-catalog` solo cubre
    divergencias de token); la trampa **C3**, que muerde directamente a **DD-34** y al item "lienzo
-   gris↔blanco" que sigue esperando a Rafa; y un contrato de test externo
+   gris↔blanco" (RESUELTO en DD-45: a blanco, 2026-08-31); y un contrato de test externo
    (`category-modal.spec.ts:52` depende de `.sc-inputtext__msg--error`).
    → **MERGE a `DECISIONS.md` + al hand-off, y LUEGO borrar.**
 2. **`convergence-manifesto.md` §4.1/§4.2** **[V]** — el racional de por qué se retiraron

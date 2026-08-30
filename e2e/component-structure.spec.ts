@@ -46,6 +46,12 @@ const COMPONENTS = [
   { route: 'inputnumber', tag: 'sc-inputnumber' },
   { route: 'textarea', tag: 'sc-textarea' },
   { route: 'checkbox', tag: 'sc-checkbox' },
+  // Breadcrumb: su demo pinta 3 historias (5 tramos + sin-home + solo-raíz). Lo
+  // capturamos para CONGELAR el "aquí estás" — el último tramo lleva `labelStyle`
+  // inline (color pleno + peso medio) que PrimeNG bindea al `<span>` del label.
+  // Si una regresión lo quita, o PrimeNG deja de pintarlo, el `outerHTML` cambia
+  // y este gate lo caza. Es la garantía de que el nivel activo no puede fallar.
+  { route: 'breadcrumb', tag: 'sc-breadcrumb' },
 ] as const;
 
 /**

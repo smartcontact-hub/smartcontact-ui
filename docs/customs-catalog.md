@@ -510,13 +510,14 @@ Para el caso futuro de backend real: el grace period del undo vive **server-side
 - **Chips editables**: estados custom como **chips removibles con ×** (re-añadibles), **separados visualmente** de los tags fijos para que se lea la diferencia "sistémico vs editable".
 - **Por qué aquí**: es reasignación de severidad/visual en UI de config (no componente nuevo del DS), pero al introducir un tratamiento de color propio (granate) DD-7 pide registrarlo.
 
-### 2.12 Breadcrumb — el tramo ACTUAL más oscuro (estado que el maestro de Figma no modela)
+### 2.12 Breadcrumb — el tramo ACTUAL en color pleno + peso medio (folded al maestro 2026-08-31)
 
 - **Estado**: `<sc-breadcrumb>` (wrapper fino de `<p-breadcrumb>`, del `❖ Breadcrumb` del Kit, node `185:6637`). El aspecto base sale del preset ya tokenizado, 1:1 con Figma.
-- **La divergencia**: el DS marca el **último tramo (la página actual) un pelín más oscuro** —`--sc-text-primary`, **mismo peso**, solo color—; los tramos padre van en gris muted. PrimeNG pinta todos los tramos iguales, y el **componente maestro de Figma también va uniforme**. Esto es un "aquí estás" que **la guía UX pide** (*"la página actual debe indicarse; no todos los enlaces igual"*) y que las **referencias limpias lo hacen** (medido en Snow UI: padre negro al 64%, actual al 100%, mismo peso).
-- **Cómo, sin acoplamiento**: el componente añade `labelStyle` (estilo EN LÍNEA) al último item del modelo → gana al color del preset sin una regla CSS, sin `::ng-deep` y **sin tocar internos `.p-*`** (el `audit:primeng-coupling` sigue en 36).
-- **NO es el título de página**: el breadcrumb hace wayfinding; el título de pantalla, cuando haga falta, es cosa aparte (ver el modelo de Snow UI: un `<h2>` modesto en el cuerpo en dashboards, nada en el feed). Esto **revierte** el "breadcrumb-en-negrita-como-título" del S59, que mezclaba dos trabajos.
-- **Cómo se cierra la divergencia**: llevado a Figma como **ejemplo del comportamiento** — frame `Current state · propuesta` (node `13890:157`) en la página `❖ Breadcrumb`, debajo de los Examples, SIN tocar el componente maestro. Es la primera escritura código→Figma del puente (sesión 20). Cuando el diseño incorpore el estado "actual" al maestro, esto deja de ser divergencia y pasa a ser 1:1.
+- **El tratamiento**: el DS marca el **último tramo (la página actual) en `--sc-text-primary` Y `--sc-font-weight-medium`**; los tramos padre van en gris muted, peso normal. PrimeNG pinta todos los tramos iguales (solo pone `aria-current`, invisible), y esto es el "aquí estás" que **la guía UX pide**. **Por qué color + PESO y no solo color** (2026-08-31): el color solo era un único paso de la rampa (slate-700 actual vs slate-600 padres) → demasiado sutil de un vistazo; el peso no se escapa. Decisión de Rafa: *"no puede fallar en algo tan básico, no habrá que adivinar"*.
+- **Cómo, sin acoplamiento**: el componente añade `labelStyle` (estilo EN LÍNEA) al último item del modelo → gana al color del preset sin una regla CSS, sin `::ng-deep` y **sin tocar internos `.p-*`** (el `audit:primeng-coupling` sigue en 36). Verificado en la fuente de PrimeNG (`primeng-breadcrumb.mjs`) que la plantilla bindea `[style]="menuitem.labelStyle"` sobre el `<span>` del label, así que el estilo entra de verdad.
+- **Gate (no puede regresar en silencio)**: `sc-breadcrumb` está en `e2e/component-structure` — su `outerHTML` renderizado queda CONGELADO en el baseline, incluido el `style` del tramo actual. Si una regresión lo quita, o PrimeNG deja de pintarlo, el snapshot cambia y el gate lo caza. Es la garantía mecánica del "aquí estás".
+- **NO es el título de página**: el breadcrumb hace wayfinding; el título de pantalla, cuando haga falta, es cosa aparte. Esto **revierte** el "breadcrumb-en-negrita-como-título" del S59, que mezclaba dos trabajos.
+- **Ya NO es divergencia**: el tratamiento del tramo actual se **lleva al componente maestro de Figma** (2026-08-31, decisión de Rafa: *"Figma le seguirá"*). Antes vivía solo como frame-ejemplo `Current state · propuesta` (node `13890:157`) junto al maestro; al incorporarlo al maestro pasa a ser 1:1 código↔Figma.
 
 ---
 
@@ -865,10 +866,16 @@ Los tokens **brand-visible** (paletas, spacing, radius, scale, surface, shadows 
 - `<sc-confirmdialog>` → `<p-confirmdialog>` → Kit Pro `❖ ConfirmDialog` (`6738:50207`) ✅
 - **gap reservado** → `<p-confirmpopup>` → Kit Pro `❖ ConfirmPopup` (`6738:50208`) — sin trigger consumer real, common-in-SaaS reservado.
 
-### 5.11 `--sc-bg-canvas` — gap de token semántico de lienzo (deuda)
+### 5.11 `--sc-bg-canvas` — el token semántico de lienzo (RESUELTO, DD-45)
 
-- **Gap**: no existe un token semántico único para el **lienzo de página** (blanco en light / gray-950 en dark). Hoy la jerarquía de color de config (§6) resuelve el lienzo con un override por tema en el shell: `:host` = `--sc-bg-surface` (blanco light) y `:host-context(.sc-dark)` = `--sc-bg-default` (gray-950 dark) — `.sc-dark` es el darkModeSelector por defecto de `provideSmartContactUi`.
-- **Por qué es gap**: el workaround funciona pero acopla la jerarquía de color a dos tokens distintos según tema en vez de a un único `--sc-bg-canvas` semántico.
+> **RESUELTO (2026-08-31, DD-45).** El token `--sc-bg-canvas` existe desde el 2026-08-25 (blanco en
+> light / gray-950 en dark, definido en `02-semantic.css`) y **el shell del supervisor
+> (`app-shell.component.scss`) ya lo consume como suelo** — un único token, sin override por tema. Lo de
+> abajo describe el estado ANTERIOR (cuando el lienzo se resolvía con `--sc-bg-surface`/`--sc-bg-default`
+> por tema); se conserva como historia del porqué.
+
+- **El gap (histórico)**: no existía un token semántico único para el **lienzo de página** (blanco en light / gray-950 en dark). La jerarquía de color de config (§6) resolvía el lienzo con un override por tema en el shell: `:host` = `--sc-bg-surface` (blanco light) y `:host-context(.sc-dark)` = `--sc-bg-default` (gray-950 dark) — `.sc-dark` es el darkModeSelector por defecto de `provideSmartContactUi`.
+- **Por qué era gap**: el workaround funcionaba pero acoplaba la jerarquía de color a dos tokens distintos según tema en vez de a un único `--sc-bg-canvas` semántico.
 - **Fix limpio**: cuando diseño añada la variable a la collection Custom de Figma, promover vía el import de Variables. Hoy 1 solo consumidor (config) → prematuro mintarlo.
 
 ---
@@ -897,7 +904,7 @@ Los tokens **brand-visible** (paletas, spacing, radius, scale, surface, shadows 
 
 | Superficie | Selector | Light | Dark | Forma |
 |---|---|---|---|---|
-| **Lienzo de página** | shell `:host` / `:host-context(.sc-dark)` | `--sc-bg-surface` (blanco) | `--sc-bg-default` (gray-950) | — (deuda `--sc-bg-canvas` §5.11) |
+| **Lienzo de página** | shell (`app-shell`) | `--sc-bg-canvas` (blanco) | `--sc-bg-canvas` (gray-950) | DD-45 · un solo token, sin override por tema |
 | **Bandeja** (contenedor interior gris) | `.page__inner` | `--sc-bg-default` (gray-50) | gray-950 | radius 12 · padding 16 · gap 28 |
 | **Cards de sección** | `.settings-card` | surface (blanco) | surface | radius 8 · padding 16 · borde sutil · **sin sombra** |
 | **Índice** (rail de navegación) | `.settings-sidebar` | gray-50 | gray-50/dark | radius 12 · alineado arriba |
