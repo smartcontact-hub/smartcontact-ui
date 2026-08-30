@@ -152,12 +152,20 @@ test.describe('detalle de ticket', () => {
     const head = page.locator('.detail__card').first();
     await expect(head.locator('img[src*="icons/ticket/"]').first()).toBeVisible();
 
-    // Ninguna imagen del detalle puede quedarse sin cargar.
-    const rotas = await page.locator('.detail img').evaluateAll((imgs) =>
-      imgs.filter((i) => !(i as HTMLImageElement).complete || (i as HTMLImageElement).naturalWidth === 0)
-        .map((i) => i.getAttribute('src')),
-    );
-    expect(rotas).toEqual([]);
+    // Ninguna imagen del detalle puede quedarse sin cargar. `expect.poll` REINTENTA:
+    // en CI (frío, sin caché) un <img> puede no haber terminado de cargar cuando se
+    // lee, y el read de UNA sola pasada daba `naturalWidth === 0` → falso rojo. Flake
+    // medido el 2026-08-31 (verde en local, rojo en CI); es la regla de "esperar al
+    // estado, no leerlo de una pasada" aplicada a la carga de imágenes.
+    await expect
+      .poll(() =>
+        page.locator('.detail img').evaluateAll((imgs) =>
+          imgs
+            .filter((i) => !(i as HTMLImageElement).complete || (i as HTMLImageElement).naturalWidth === 0)
+            .map((i) => i.getAttribute('src')),
+        ),
+      )
+      .toEqual([]);
 
     // Y no quedan glifos de icono en el detalle.
     const texto = await page.locator('.detail').innerText();
