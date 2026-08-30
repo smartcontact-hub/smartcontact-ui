@@ -390,3 +390,35 @@
 .sum__chargestate {
   color: #4f5663;
 }
+
+/* Iconos del original en lugar de glifos: ver la nota en el detalle de ticket. */
+.ccicon,
+.sum__ok,
+.sum__caret,
+.sum__subcheck,
+.sum__flag {
+  display: inline-block;
+  vertical-align: middle;
+  flex: none;
+}
+
+/* ── Iconos de SÍMBOLO (Material) ───────────────────────────────────────────
+   Cuatro de los SVG del original vienen con `fill="none"` en la raíz: no pintan
+   nada por sí solos, el color se lo pone quien los usa. El original los inyecta
+   EN LÍNEA (`<svg-icon>`), y así su CSS los alcanza.
+   Servidos con <img> salen INVISIBLES (documento aparte), y como MÁSCARA CSS
+   tampoco valen: una máscara usa el canal alfa, y con `fill="none"` no hay
+   píxeles opacos que enmascarar. Las dos vías se probaron y se midieron.
+   Por eso estos cuatro van en línea en la plantilla, con su `d` tal cual y
+   `fill="currentColor"`. Los que traen color propio (banderas, iconos de
+   ticket, dashboard) siguen con <img>: ahí inline no aporta nada. */
+.sum__off {
+  color: #e84343;
+  flex: none;
+}
+
+.sum__subcheck svg,
+.sum__ok svg,
+.sum__caret {
+  flex: none;
+}

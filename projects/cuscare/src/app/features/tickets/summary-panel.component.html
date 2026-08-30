@@ -2,7 +2,7 @@
   <!-- ── Columna izquierda: 360px sobre el lienzo #f4f6fc ─────────────────-->
   <aside class="sum__side">
     <div class="sum__bar">
-      <button class="sum__x" type="button" aria-label="Close" (click)="closed.emit()">✕</button>
+      <button class="sum__x" type="button" aria-label="Close" (click)="closed.emit()"><img src="icons/general/x.svg" width="11" height="11" alt="" aria-hidden="true" /></button>
       <span class="sum__ticket">#{{ ticketId() }}</span>
       <button class="sum__export" type="button" aria-label="Export">
         <img src="icons/general/descarga.svg" width="14" height="14" alt="" aria-hidden="true" />
@@ -40,7 +40,7 @@
 
     <h2 class="sum__h2">Subscriptions</h2>
     <div class="sum__subcard">
-      <span class="sum__subcheck" aria-hidden="true">✓</span>
+      <span class="sum__subcheck" aria-hidden="true"><svg width="12" height="12" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M400-304 240-464l56-56 104 104 264-264 56 56-320 320Z" /></svg></span>
       <span class="sum__dots" aria-hidden="true"><i class="on"></i><i></i></span>
       <span class="sum__subcol">
         <span class="sum__sublabel">Subscribed</span>
@@ -58,7 +58,7 @@
       <dt>Name</dt>
       <dd><span class="sum__ph">First name</span> <span class="sum__ph">Last name</span></dd>
       <dt>Address</dt>
-      <dd><span class="sum__ph">ZIP code</span> <span class="sum__ph">City</span> 🇪🇸 ES</dd>
+      <dd><span class="sum__ph">ZIP code</span> <span class="sum__ph">City</span> <img class="sum__flag" src="icons/flags/es.svg" width="16" height="12" alt="" aria-hidden="true" /> ES</dd>
       <dt>Contact</dt>
       <dd><span class="sum__ph">Phone</span> +34600222333 <span class="sum__ph">Email</span></dd>
     </dl>
@@ -78,8 +78,8 @@
         <strong>Unsubsribed</strong>
         <span>CANCELLED</span>
       </span>
-      <span class="sum__state sum__state--off"><i aria-hidden="true">⊖</i> Access to service</span>
-      <span class="sum__state sum__state--off"><i aria-hidden="true">⊖</i> Download elements</span>
+      <span class="sum__state sum__state--off"><svg class="sum__off" width="13" height="13" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M280-440h400v-80H280v80ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z" /></svg> Access to service</span>
+      <span class="sum__state sum__state--off"><svg class="sum__off" width="13" height="13" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="M280-440h400v-80H280v80ZM480-80q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z" /></svg> Download elements</span>
       <span class="sum__card sum__card--charges">
         <span class="sum__cardk">Charges</span>
         <strong class="sum__cardv">4.5 €</strong>
@@ -93,9 +93,9 @@
 
     <!-- MO/MT: los SMS que se le mandaron al cliente. -->
     <button class="sum__sech" type="button" (click)="toggle('mtmo')" [attr.aria-expanded]="isOpen('mtmo')">
-      <span class="sum__ok" aria-hidden="true">✓</span>
+      <span class="sum__ok" aria-hidden="true"><svg width="14" height="14" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="m424-296 282-282-56-56-226 226-114-114-56 56 170 170Zm56 216q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z" /></svg></span>
       <span class="sum__sectitle">MO/MT<small>Up to date</small></span>
-      <span class="sum__caret" aria-hidden="true">{{ isOpen('mtmo') ? '⌃' : '⌄' }}</span>
+      <svg class="sum__caret" width="14" height="14" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path [attr.d]="isOpen('mtmo') ? 'M480-528 296-344l-56-56 240-240 240 240-56 56-184-184Z' : 'M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z'" /></svg>
     </button>
     @if (isOpen('mtmo')) {
       <table class="sum__table">
@@ -121,9 +121,9 @@
     }
 
     <button class="sum__sech" type="button" (click)="toggle('billing')" [attr.aria-expanded]="isOpen('billing')">
-      <span class="sum__ok" aria-hidden="true">✓</span>
+      <span class="sum__ok" aria-hidden="true"><svg width="14" height="14" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="m424-296 282-282-56-56-226 226-114-114-56 56 170 170Zm56 216q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z" /></svg></span>
       <span class="sum__sectitle">Charges<small>Up to date</small></span>
-      <span class="sum__caret" aria-hidden="true">{{ isOpen('billing') ? '⌃' : '⌄' }}</span>
+      <svg class="sum__caret" width="14" height="14" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path [attr.d]="isOpen('billing') ? 'M480-528 296-344l-56-56 240-240 240 240-56 56-184-184Z' : 'M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z'" /></svg>
     </button>
     @if (isOpen('billing')) {
       <div class="sum__billing">
@@ -143,9 +143,9 @@
     <!-- Navigation: por dónde navegó el cliente antes de suscribirse. Es la
          sección por la que entra el botón "Nav" de la tabla. -->
     <button #navSection class="sum__sech" type="button" (click)="toggle('nav')" [attr.aria-expanded]="isOpen('nav')">
-      <span class="sum__ok" aria-hidden="true">✓</span>
+      <span class="sum__ok" aria-hidden="true"><svg width="14" height="14" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path d="m424-296 282-282-56-56-226 226-114-114-56 56 170 170Zm56 216q-83 0-156-31.5T197-197q-54-54-85.5-127T80-480q0-83 31.5-156T197-763q54-54 127-85.5T480-880q83 0 156 31.5T763-763q54 54 85.5 127T880-480q0 83-31.5 156T763-197q-54 54-127 85.5T480-80Z" /></svg></span>
       <span class="sum__sectitle">Navigation<small>Up to date</small></span>
-      <span class="sum__caret" aria-hidden="true">{{ isOpen('nav') ? '⌃' : '⌄' }}</span>
+      <svg class="sum__caret" width="14" height="14" viewBox="0 -960 960 960" fill="currentColor" aria-hidden="true"><path [attr.d]="isOpen('nav') ? 'M480-528 296-344l-56-56 240-240 240 240-56 56-184-184Z' : 'M480-344 240-584l56-56 184 184 184-184 56 56-240 240Z'" /></svg>
     </button>
     @if (isOpen('nav')) {
       <table class="sum__table">

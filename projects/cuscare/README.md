@@ -97,13 +97,24 @@ imposible de pulsar— porque yo la había puesto `fixed` cuando en la real es `
 - **La ilustración de Search es una aproximación.** Silueta y paleta parecidas; no es
   el asset original. Los iconos del nav, los de acción y el logo SÍ son los reales
   (descargados de `assets/icons/iconos-cuscare/`).
-- **Los iconos del detalle de ticket siguen siendo glifos** (📞 🗎 ⚑ 🗒 📎 ↻ ▾). Los que
-  sí son los reales son los del nav, el logo y los de acción de Templates.
-- **La ordenación de columnas no está.** Filtros, paginación, selección, gestor de
-  columnas y acciones en bloque sí funcionan de verdad; ordenar por cabecera, no.
+- ~~**Los iconos del detalle de ticket siguen siendo glifos**~~ → **HECHO (2026-08-30)**:
+  son los SVG que sirve la app real, descargados de `assets/icons/iconos-cuscare/`
+  (comprobando bytes mágicos: su servidor devuelve el `index.html` con 200 a cualquier
+  ruta). La bandera de prioridad cambia con el ticket, que es lo que hace el color.
+  **Cuatro no se pueden servir con `<img>`**: los símbolos Material (`check_small`,
+  `circles/*`, `arrows/*`) traen `fill="none"` y su color lo pone quien los usa —
+  el original los inyecta en línea. Con `<img>` salen invisibles y como máscara CSS
+  tampoco (una máscara necesita píxeles opacos). Esos cuatro van en línea en la
+  plantilla; el resto, `<img>`. Sigue fuera: la ilustración de Search.
+- ~~**La ordenación de columnas no está**~~ → **HECHO (2026-08-30)**: ordenan las
+  **siete** cabeceras que ordenan en el original (ID, Status, Assigned to, Group,
+  Created, Updated, Priority) con su ciclo asc → desc → sin orden y vuelta a la
+  página 1. Ordena las 3280 filas, no las diez de la página.
 - **La ventana del paginador con menos de 6 páginas** no se pudo observar en la real
   (su tabla nunca baja de 11 páginas). Con la fórmula medida, un total de 6 pintaría
   `1 … 2 3 4 5 6`; esos puntos entre números consecutivos se suprimen a propósito.
+- **Las banderas de país son las reales, pero solo hay dos** (`es`, `sk`), que son los
+  países del seed. Si se añade otro, hay que bajar su SVG a `public/icons/flags/`.
 - **Formato de fecha**: la real pinta `17/07/2023 06:45` en la tabla y
   `17-07-2023 06:45:09` (con segundos) en el modal de confirmación. El seed usa un
   único formato con guiones, así que la tabla diverge en el separador.

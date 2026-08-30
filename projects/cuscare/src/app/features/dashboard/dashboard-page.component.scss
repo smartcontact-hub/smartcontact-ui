@@ -412,3 +412,10 @@
   font-size: 11.68px;
   color: var(--cc-text-body);
 }
+
+/* Iconos del original (dashboard-icons) en lugar de glifos de sistema. */
+.ccicon {
+  display: inline-block;
+  vertical-align: middle;
+  flex: none;
+}

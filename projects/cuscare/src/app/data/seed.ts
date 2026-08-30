@@ -20,6 +20,13 @@ export interface TicketRow {
   readonly email: string;
   readonly country: string;
   readonly countryFlag: string;
+  /**
+   * Fichero de bandera del original (`assets/icons/flags/{iso}.svg`), que es lo
+   * que pinta él. El emoji de arriba se queda para los sitios donde no hay hueco
+   * para una imagen, pero la interfaz usa el SVG: un emoji lo dibuja el sistema
+   * operativo y cambia de forma según el equipo, así que no es replicable.
+   */
+  readonly countryFlagSrc: string;
   readonly products: readonly string[];
   readonly created: string;
   readonly updated: string;
@@ -58,6 +65,7 @@ export const TICKETS: readonly TicketRow[] = [
     email: '',
     country: 'Spain',
     countryFlag: '🇪🇸',
+    countryFlagSrc: 'icons/flags/es.svg',
     products: ['Playweez', 'Canaltv'],
     created: '11-08-2026 09:14',
     updated: '11-08-2026 09:20',
@@ -79,6 +87,7 @@ export const TICKETS: readonly TicketRow[] = [
     email: '',
     country: 'Spain',
     countryFlag: '🇪🇸',
+    countryFlagSrc: 'icons/flags/es.svg',
     products: ['Playweez', 'itrip'],
     created: '11-08-2026 08:02',
     updated: '11-08-2026 08:41',
@@ -99,6 +108,7 @@ export const TICKETS: readonly TicketRow[] = [
     email: '',
     country: 'Spain',
     countryFlag: '🇪🇸',
+    countryFlagSrc: 'icons/flags/es.svg',
     products: ['Canaltv', 'UnlimitedVideos'],
     created: '10-08-2026 17:35',
     updated: '10-08-2026 17:52',
@@ -119,6 +129,7 @@ export const TICKETS: readonly TicketRow[] = [
     email: '',
     country: 'Spain',
     countryFlag: '🇪🇸',
+    countryFlagSrc: 'icons/flags/es.svg',
     products: ['UnlimitedVideos', 'Trendly_ES_Orange_W'],
     created: '10-08-2026 16:10',
     updated: '10-08-2026 16:44',
@@ -139,6 +150,7 @@ export const TICKETS: readonly TicketRow[] = [
     email: '',
     country: 'Spain',
     countryFlag: '🇪🇸',
+    countryFlagSrc: 'icons/flags/es.svg',
     products: ['itrip', 'Clicnscore', 'TopmusicTv', 'Canaltv'],
     created: '10-08-2026 12:22',
     updated: '10-08-2026 13:01',
@@ -159,6 +171,7 @@ export const TICKETS: readonly TicketRow[] = [
     email: '',
     country: 'Spain',
     countryFlag: '🇪🇸',
+    countryFlagSrc: 'icons/flags/es.svg',
     products: ['Clicnscore', 'Playweez'],
     created: '09-08-2026 19:03',
     updated: '09-08-2026 19:18',
@@ -179,6 +192,7 @@ export const TICKETS: readonly TicketRow[] = [
     email: '',
     country: 'Spain',
     countryFlag: '🇪🇸',
+    countryFlagSrc: 'icons/flags/es.svg',
     products: ['fuzeforge_spain_orange_mo', 'itrip'],
     created: '09-08-2026 11:47',
     updated: '09-08-2026 12:05',
@@ -199,6 +213,7 @@ export const TICKETS: readonly TicketRow[] = [
     email: 'persona.ejemplo@example.com',
     country: 'Spain',
     countryFlag: '🇪🇸',
+    countryFlagSrc: 'icons/flags/es.svg',
     products: ['Trendly'],
     created: '08-08-2026 15:29',
     updated: '08-08-2026 16:02',
@@ -290,9 +305,9 @@ const STATUSES: TicketStatus[] = ['open', 'resolved', 'pending', 'closed'];
 const CHANNELS: TicketChannel[] = ['call', 'chat', 'mail'];
 const CARRIERS = ['Orange', 'Movistar', 'Vodafone', 'O2', 'Yoigo'];
 const PRIORITIES = ['Low', 'Medium', 'High'];
-const COUNTRIES: readonly { name: string; flag: string }[] = [
-  { name: 'Spain', flag: '🇪🇸' },
-  { name: 'Slovakia', flag: '🇸🇰' },
+const COUNTRIES: readonly { name: string; flag: string; src: string }[] = [
+  { name: 'Spain', flag: '🇪🇸', src: 'icons/flags/es.svg' },
+  { name: 'Slovakia', flag: '🇸🇰', src: 'icons/flags/sk.svg' },
 ];
 const GROUPS_NAMES = ['ES - DOD', 'SK - Cuscare'];
 
@@ -319,6 +334,7 @@ function makeRow(i: number): TicketRow {
     email: i % 4 === 0 ? `persona${i}@example.com` : '',
     country: c.name,
     countryFlag: c.flag,
+    countryFlagSrc: c.src,
     products: [PRODUCTS[i % PRODUCTS.length], PRODUCTS[(i + 3) % PRODUCTS.length]],
     created: stamp,
     updated: stamp,

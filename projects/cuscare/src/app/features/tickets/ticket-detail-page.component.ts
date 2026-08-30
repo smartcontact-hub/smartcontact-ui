@@ -1,7 +1,8 @@
-import { ChangeDetectionStrategy, Component, computed, inject, input, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
 import { ActivatedRoute } from '@angular/router';
 
-import { TICKETS } from '../../data/seed';
+import { TICKETS, TICKETS_ALL } from '../../data/seed';
 import { DetailDialog, DetailDialogsComponent } from './detail-dialogs.component';
 import { SearchCustomerModalComponent } from './search-customer-modal.component';
 import { RefundModalComponent } from './refund-modal.component';
@@ -30,6 +31,8 @@ interface HistoryEvent {
   readonly kind: 'status' | 'unsubscribe' | 'call' | 'created';
   readonly text: string;
   readonly highlight?: string;
+  /** Cuerpo del evento: lo que despliega "Show details". Ver `history`. */
+  readonly detail?: string;
 }
 
 /**
@@ -56,9 +59,26 @@ interface HistoryEvent {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class TicketDetailPageComponent {
-  readonly id = input<string>('2050567');
-
   private readonly route = inject(ActivatedRoute);
+
+  /**
+   * El id del ticket, leído de la URL.
+   *
+   * Antes era un `input()` con `'2050567'` por defecto y **nadie lo enlazaba**
+   * —este proyecto no usa `withComponentInputBinding`—, así que la pantalla
+   * enseñaba SIEMPRE ese ticket: entrabas por la fila 2050617 y leías los datos
+   * de otro. No se veía porque el único test que abría el detalle usaba
+   * justamente el 2050567.
+   *
+   * Va por el OBSERVABLE del `paramMap`, no por `snapshot`: al ir de un ticket a
+   * otro el router REUTILIZA este componente —misma ruta, distinto parámetro—,
+   * así que un snapshot leído en el constructor se queda con el primer id que se
+   * abrió. Medido: con snapshot, el segundo ticket que abres enseña el primero.
+   */
+  private readonly params = toSignal(this.route.paramMap, {
+    initialValue: this.route.snapshot.paramMap,
+  });
+  protected readonly id = computed(() => this.params().get('id') ?? '2050567');
 
   /**
    * **Modo pre-ticket** — lo que sale de verdad al pulsar "Save" en el selector
@@ -80,8 +100,18 @@ export class TicketDetailPageComponent {
 
   /* ── Controles de la barra de pestañas ──────────────────────────────────
    * Los dos eran adorno; en la real hacen algo. El menú de "+ New" trae
-   * CUATRO entradas, leídas de su DOM sin abrirlo. */
-  protected readonly detailsOpen = signal(false);
+   * CUATRO entradas, leídas de su DOM sin abrirlo.
+   *
+   * `historyDetails` es "Show details", debajo del historial: en la real llama a
+   * `showDetailsHistory()`, que pone `showBody` en CADA grupo de fecha y CADA
+   * evento — o sea, despliega el cuerpo de todo el timeline de una vez. Por eso
+   * al pulsarlo en un ticket cuyos eventos no tienen cuerpo no se ve nada
+   * cambiar, que es lo que pasó al probarlo en la app real.
+   *
+   * `subsDetailOpen` es el botón "Detail" de la barra de suscripciones. Eran la
+   * MISMA señal y se pisaban: pulsar uno movía al otro. */
+  protected readonly historyDetails = signal(false);
+  protected readonly subsDetailOpen = signal(false);
   protected readonly newMenuOpen = signal(false);
   protected readonly newMenuItems = ['Email', 'Note', 'SMS', 'Attach file'];
 
@@ -169,9 +199,24 @@ export class TicketDetailPageComponent {
     this.summaryFor.set(product);
   }
 
+  /** La tabla enlaza las 3280 filas, así que se busca en todas, no en las 8 curadas. */
   protected readonly ticket = computed(
-    () => TICKETS.find((t) => t.id === this.id()) ?? TICKETS[1],
+    () => TICKETS_ALL.find((t) => t.id === this.id()) ?? TICKETS[1],
   );
+
+  /**
+   * Bandera de prioridad. El original sirve tres ficheros —verde, amarilla y
+   * roja— y ninguno genérico, así que el color ES el dato: pintar siempre la
+   * verde diría «prioridad baja» en un ticket alto.
+   */
+  protected readonly priorityFlag = computed(() => {
+    const byPriority: Record<string, string> = {
+      Low: 'bandera-verde',
+      Medium: 'bandera-amarilla',
+      High: 'bandera-roja',
+    };
+    return `icons/ticket/${byPriority[this.ticket().priority] ?? 'bandera-verde'}.svg`;
+  });
 
   protected readonly tab = signal<'history' | 'notes' | 'files'>('history');
 
@@ -220,11 +265,46 @@ export class TicketDetailPageComponent {
     },
   ];
 
+  /**
+   * El timeline. `detail` es el CUERPO del evento, lo que despliega
+   * "Show details" — en la real es el cuerpo del correo, el del error MO o el
+   * detalle de la acción. Aquí, como todo el seed de esta réplica, el contenido
+   * está inventado y no lleva datos de nadie: lo que se replica es la forma.
+   */
   protected readonly history: readonly HistoryEvent[] = [
-    { time: '13:21', kind: 'status', text: 'ES Agent - M. Angeles Status changed to', highlight: 'RESOLVED' },
-    { time: '13:20', kind: 'unsubscribe', text: 'ES Agent - M. Angeles has unsubscribe the product', highlight: 'iTrip' },
-    { time: '13:20', kind: 'unsubscribe', text: 'ES Agent - M. Angeles has unsubscribe the product', highlight: 'playweez' },
-    { time: '13:19', kind: 'call', text: 'ES Agent - M. Angeles has answered an incoming call' },
-    { time: '13:19', kind: 'created', text: 'ES Agent - M. Angeles created ticket from', highlight: 'call' },
+    {
+      time: '13:21',
+      kind: 'status',
+      text: 'ES Agent - M. Angeles Status changed to',
+      highlight: 'RESOLVED',
+      detail: 'Previous status: OPEN · Sub-status: — · Nature of demand: Unsubscription',
+    },
+    {
+      time: '13:20',
+      kind: 'unsubscribe',
+      text: 'ES Agent - M. Angeles has unsubscribe the product',
+      highlight: 'iTrip',
+      detail: 'Subscription id 9004471 · Unsubscription source: agent · Result: OK',
+    },
+    {
+      time: '13:20',
+      kind: 'unsubscribe',
+      text: 'ES Agent - M. Angeles has unsubscribe the product',
+      highlight: 'playweez',
+      detail: 'Subscription id 9004470 · Unsubscription source: agent · Result: OK',
+    },
+    {
+      time: '13:19',
+      kind: 'call',
+      text: 'ES Agent - M. Angeles has answered an incoming call',
+      detail: 'Duration 00:04:12 · Queue: ES Support · Recording available',
+    },
+    {
+      time: '13:19',
+      kind: 'created',
+      text: 'ES Agent - M. Angeles created ticket from',
+      highlight: 'call',
+      detail: 'Channel: call · Source: +34600222333 · Group: ES Support',
+    },
   ];
 }
