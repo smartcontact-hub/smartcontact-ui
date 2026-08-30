@@ -207,18 +207,24 @@ propio (debe tener API) o sobrescribir tokens (eso va por el preset).
 
 Si las 4 son "no", probablemente NO necesitas la divergencia.
 
-### 6. CVA wrappers con signals: `untracked()` SIN side-effects
+### 6. ~~CVA wrappers con signals~~ → HISTÓRICO: el CVA se retiró (DD-43, 2026-08-30)
 
-```typescript
-// ✅ BIEN — solo el signal CVA:
-writeValue(v: string | null | undefined): void {
-  untracked(() => this.value.set(v ?? ''));
-  // Side-effects (si los hubiera) van FUERA, sin untracked.
-}
-```
+Los seis campos del DS (inputtext, select, multiselect, datepicker, inputnumber,
+search) daban soporte a `[(ngModel)]`/Reactive Forms con un `ControlValueAccessor`.
+**Ese CVA se borró**: no lo ejercía ni un consumidor en todo el repo (0 Reactive
+Forms, 0 `ngModel` externo; las apps usan `[(value)]`), y Angular 22 gradúa Signal
+Forms —que detecta el `value = model()` de forma estructural— como su sustituto. El
+día que aparezca el primer consumidor de forms real, `implements FormValueControl` es
+una línea por componente; el `value = model()` ya cumple el contrato.
 
-El bloque `untracked` escribe SOLO el signal de valor del CVA; side-effects
-dentro quedarían silenciados para los effects que los observan.
+La guía vieja (el `untracked()` sin side-effects dentro de `writeValue`) ya no aplica
+porque `writeValue` no existe. Se conserva aquí como nota histórica: si algún día se
+reintroduce un CVA, esa era la trampa —`untracked` escribe SOLO el signal, un
+side-effect dentro queda silenciado para los effects que lo observan—.
+
+El estado que el field-pattern SÍ comparte (id, msgId, invalid, footer, sizing de
+panel, opciones) vive hoy en `components/field/sc-field.ts` como funciones factory,
+no en cada componente.
 
 ### 7. Refactor de wrappers: audit de CSS overrides en consumidores
 Si un refactor cambia el DOM interno de un wrapper, los consumidores pueden

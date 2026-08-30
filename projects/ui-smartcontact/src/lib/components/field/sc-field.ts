@@ -27,9 +27,10 @@ let scFieldIdSeq = 0;
 interface ScFieldStateInputs {
   /** El `inputId` explícito del consumidor, si lo hay. */
   readonly inputId: Signal<string | undefined>;
-  readonly error: Signal<string | undefined>;
-  readonly helperText: Signal<string | undefined>;
-  /** Estado inválido explícito. Los campos que no lo exponen pasan `undefined`. */
+  /** Los campos sin `error`/`helperText`/`invalid` (p.ej. `sc-search`) los omiten. */
+  readonly error?: Signal<string | undefined>;
+  readonly helperText?: Signal<string | undefined>;
+  /** Estado inválido explícito. Los campos que no lo exponen lo omiten. */
   readonly invalid?: Signal<boolean>;
 }
 
@@ -44,8 +45,8 @@ export function createScFieldState(block: string, inputs: ScFieldStateInputs) {
   const seq = ++scFieldIdSeq;
   const resolvedId = computed(() => inputs.inputId() ?? `${block}-${seq}`);
   const msgId = computed(() => `${resolvedId()}-msg`);
-  const isInvalid = computed(() => (inputs.invalid?.() ?? false) || !!inputs.error());
-  const footerText = computed(() => inputs.error() || inputs.helperText() || '');
+  const isInvalid = computed(() => (inputs.invalid?.() ?? false) || !!inputs.error?.());
+  const footerText = computed(() => inputs.error?.() || inputs.helperText?.() || '');
   return { resolvedId, msgId, isInvalid, footerText };
 }
 
