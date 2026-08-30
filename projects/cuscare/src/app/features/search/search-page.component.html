@@ -88,7 +88,7 @@
               <td>{{ r.source }}</td>
               <td>{{ r.email }}</td>
               <td>
-                <span class="cell-country"><span class="flag" aria-hidden="true">{{ r.countryFlag }}</span>{{ r.country }}</span>
+                <span class="cell-country"><img class="flag" [src]="r.countryFlagSrc" width="16" height="12" alt="" aria-hidden="true" />{{ r.country }}</span>
               </td>
               <td>{{ r.created }}</td>
             </tr>

@@ -229,7 +229,7 @@
                   <a class="cell-id" [routerLink]="['/private/cuscare/tickets/ticket', row.id]">{{ row.id }}</a>
                 }
                 @case ('country') {
-                  <span class="cell-country"><span class="flag" aria-hidden="true">{{ row.countryFlag }}</span>{{ row.country }}</span>
+                  <span class="cell-country"><img class="flag" [src]="row.countryFlagSrc" width="16" height="12" alt="" aria-hidden="true" />{{ row.country }}</span>
                 }
                 @case ('products') {
                   <span class="chips">

@@ -438,3 +438,27 @@
   font: inherit;
   cursor: pointer;
 }
+
+/* ── Iconos del original ────────────────────────────────────────────────────
+   Los glifos (📞 🗎 ⚑ 🗒 📎 ↻ 🌐) se sustituyeron por los SVG que sirve la app
+   real. `ccicon` solo los alinea con el texto: NO se recolorean, porque sus
+   ficheros traen el color a fuego (`fill="#8d939d"`) y el original tampoco los
+   tiñe — el mismo motivo por el que `nav-icon` usa <img> y no SVG inline. */
+.ccicon {
+  display: inline-block;
+  vertical-align: middle;
+  flex: none;
+}
+
+/* El cuerpo del evento, que despliega "Show details" — en la real es el cuerpo
+   del correo o el detalle de la acción.
+   `flex-basis: 100%` porque la burbuja es un `inline-flex` con `flex-wrap`: sin
+   ocupar la fila entera, el cuerpo se pega detrás del texto del evento en vez de
+   caer debajo, y deja de leerse como el detalle de ESE evento. */
+.timeline__body {
+  flex-basis: 100%;
+  margin-top: 4px;
+  color: #6b7280;
+  font-size: 11px;
+  line-height: 1.45;
+}

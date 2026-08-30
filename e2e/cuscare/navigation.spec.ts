@@ -137,6 +137,93 @@ test.describe('detalle de ticket', () => {
     await expect(page).toHaveURL(/tickets\/ticket\/2050567/);
     await expect(page.getByText('#2050567').first()).toBeVisible();
   });
+
+  /*
+   * Los iconos eran glifos del sistema (📞 🗎 ⚑ 🗒 📎 ↻ 🌐): los dibuja el equipo
+   * de cada uno, así que ni son los del producto ni se ven igual en dos sitios.
+   * Ahora son los SVG que sirve la app real. Se afirma que CARGAN (un <img> roto
+   * no se distingue de uno bien puesto en una captura) y que la bandera de
+   * prioridad depende del ticket: pintar siempre la verde diría «prioridad baja»
+   * en uno alto.
+   */
+  test('la cabecera usa los SVG del original, no glifos', async ({ page }) => {
+    await goto(page, '/#/private/cuscare/tickets/ticket/2050567');
+
+    const head = page.locator('.detail__card').first();
+    await expect(head.locator('img[src*="icons/ticket/"]').first()).toBeVisible();
+
+    // Ninguna imagen del detalle puede quedarse sin cargar.
+    const rotas = await page.locator('.detail img').evaluateAll((imgs) =>
+      imgs.filter((i) => !(i as HTMLImageElement).complete || (i as HTMLImageElement).naturalWidth === 0)
+        .map((i) => i.getAttribute('src')),
+    );
+    expect(rotas).toEqual([]);
+
+    // Y no quedan glifos de icono en el detalle.
+    const texto = await page.locator('.detail').innerText();
+    expect(texto).not.toMatch(/[📞🗎⚑🗒📎↻🌐🚫]/u);
+  });
+
+  /*
+   * Este test cazó algo más gordo que la bandera: el detalle enseñaba SIEMPRE el
+   * ticket 2050567 fuera cual fuera la URL. El `id` era un `input()` con valor por
+   * defecto y nadie lo enlazaba (el proyecto no usa `withComponentInputBinding`).
+   * No se notaba porque el único test que abría el detalle usaba justo ese id.
+   * Por eso aquí se afirman las dos cosas: qué ticket se abre y qué bandera pinta.
+   */
+  test('cada ticket abre el SUYO, con la bandera de su prioridad', async ({ page }) => {
+    const casos = [
+      { id: '2050567', flag: /bandera-verde/ }, // Low
+      { id: '2050617', flag: /bandera-amarilla/ }, // Medium
+      { id: '2050547', flag: /bandera-roja/ }, // High
+    ];
+    for (const c of casos) {
+      await goto(page, `/#/private/cuscare/tickets/ticket/${c.id}`);
+      await expect(page.locator('.detail__id')).toHaveText(`#${c.id}`);
+      await expect(page.locator('.metabar__cell--flag img').first()).toHaveAttribute(
+        'src',
+        c.flag,
+      );
+    }
+  });
+
+  /*
+   * "Show details" era un botón que alternaba una señal que no leía nadie. En la
+   * real (`showDetailsHistory()`) pone `showBody` en CADA evento del historial,
+   * o sea despliega el cuerpo de todos a la vez. Y compartía señal con el botón
+   * "Detail" de la barra de suscripciones: pulsar uno movía al otro.
+   */
+  test('"Show details" despliega el cuerpo de TODOS los eventos', async ({ page }) => {
+    await goto(page, '/#/private/cuscare/tickets/ticket/2050567');
+
+    const boton = page.getByRole('button', { name: 'Show details' });
+    await expect(boton).toHaveAttribute('aria-expanded', 'false');
+    await expect(page.locator('.timeline__body')).toHaveCount(0);
+
+    await boton.click();
+    await expect(boton).toHaveAttribute('aria-expanded', 'true');
+    await expect(page.locator('.timeline__body')).toHaveCount(5); // los cinco, no uno
+
+    await boton.click();
+    await expect(page.locator('.timeline__body')).toHaveCount(0);
+  });
+
+  test('"Show details" y el "Detail" de suscripciones ya no se pisan', async ({ page }) => {
+    await goto(page, '/#/private/cuscare/tickets/ticket/2050567');
+
+    // "Detail" exige una suscripción marcada; se marca la primera.
+    await page.locator('.subs .cc-check').nth(1).check();
+    const detail = page.getByRole('button', { name: 'Detail', exact: true });
+    await detail.click();
+    await expect(detail).toHaveAttribute('aria-pressed', 'true');
+
+    // …y el historial sigue plegado: son dos controles distintos.
+    await expect(page.getByRole('button', { name: 'Show details' })).toHaveAttribute(
+      'aria-expanded',
+      'false',
+    );
+    await expect(page.locator('.timeline__body')).toHaveCount(0);
+  });
 });
 
 test.describe('métrica medida del sitio real', () => {
