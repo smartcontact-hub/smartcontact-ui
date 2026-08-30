@@ -15,15 +15,15 @@ import { ROLES } from '../../data/seed';
       <header class="settings-page__head"><h1 class="cc-page-title">Roles</h1></header>
 
       <div class="settings-page__toolbar">
-        <button class="iconbtn" type="button" aria-label="Filtrar"><img src="icons/general/filter.svg" width="15" height="15" alt="" aria-hidden="true" /></button>
-        <button class="iconbtn" type="button" aria-label="Buscar"><img src="icons/general/buscar.svg" width="15" height="15" alt="" aria-hidden="true" /></button>
-        <button class="iconbtn settings-page__spacer" type="button" aria-label="Exportar"><img src="icons/general/descarga.svg" width="15" height="15" alt="" aria-hidden="true" /></button>
+        <button class="iconbtn" type="button" aria-label="Filter"><img src="icons/general/filter.svg" width="15" height="15" alt="" aria-hidden="true" /></button>
+        <button class="iconbtn" type="button" aria-label="Search"><img src="icons/general/buscar.svg" width="15" height="15" alt="" aria-hidden="true" /></button>
+        <button class="iconbtn settings-page__spacer" type="button" aria-label="Export"><img src="icons/general/descarga.svg" width="15" height="15" alt="" aria-hidden="true" /></button>
       </div>
 
       <table class="mattable">
         <thead>
           <tr>
-            <th class="col-check"><input class="cc-check" type="checkbox" aria-label="Seleccionar todo" /></th>
+            <th class="col-check"><input class="cc-check" type="checkbox" aria-label="Select all" /></th>
             <th style="width:242px">Role Name</th>
             <th style="width:545px">Description</th>
             <th style="width:242px">Last Update</th>
@@ -34,7 +34,7 @@ import { ROLES } from '../../data/seed';
           @for (r of roles; track r.name) {
             <tr>
               <td class="col-check">
-                <input class="cc-check" type="checkbox" [attr.aria-label]="'Seleccionar ' + r.name" />
+                <input class="cc-check" type="checkbox" [attr.aria-label]="'Select ' + r.name" />
               </td>
               <td>{{ r.name }}</td>
               <td>{{ r.description }}</td>

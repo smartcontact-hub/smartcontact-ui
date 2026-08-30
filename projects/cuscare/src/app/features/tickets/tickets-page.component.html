@@ -70,7 +70,7 @@
     @if (loading()) {
       <div class="loadingoverlay">
         <div class="loadingstate">
-          <span class="spinner" role="status" aria-label="Cargando"></span>
+          <span class="spinner" role="status" aria-label="Loading"></span>
           <p class="loadingstate__msg">Loading data...</p>
         </div>
       </div>
@@ -82,16 +82,42 @@
             <input
               class="cc-check"
               type="checkbox"
-              aria-label="Seleccionar todo"
+              aria-label="Select all"
               [checked]="allVisibleSelected()"
               (change)="toggleAllVisible()"
             />
           </th>
+          <!-- Solo las SIETE ordenables reaccionan al clic; las demás son th mudos,
+               igual que en el original. El icono es el suyo: dos triángulos
+               apagados cuando no ordena, y uno lleno según el sentido. -->
           @for (c of cols(); track c.header) {
-            <th [style.width]="c.width">
+            <th
+              [style.width]="c.width"
+              [class.is-sortable]="c.sortable"
+              [class.is-sorted]="sortKey() === c.key"
+              [attr.aria-sort]="ariaSort(c)"
+              (click)="cycleSort(c)"
+            >
               <div class="th__inner">
                 <span class="th__label">{{ c.header }}</span>
-                <img class="th__sort" src="icons/general/drag_indicator.svg" width="11" height="11" alt="" aria-hidden="true" />
+                @if (c.sortable) {
+                  <span class="th__sort" aria-hidden="true">
+                    @if (sortKey() === c.key && sortDir() === 'asc') {
+                      <svg viewBox="0 0 16 16" width="11" height="11">
+                        <path d="M8 3l4 6H4l4-6z" fill="currentColor" />
+                      </svg>
+                    } @else if (sortKey() === c.key) {
+                      <svg viewBox="0 0 16 16" width="11" height="11">
+                        <path d="M8 13l-4-6h8l-4 6z" fill="currentColor" />
+                      </svg>
+                    } @else {
+                      <svg viewBox="0 0 16 16" width="11" height="11">
+                        <path d="M8 3l3 5H5l3-5z" fill="currentColor" opacity="0.4" />
+                        <path d="M8 13l3-5H5l3 5z" fill="currentColor" opacity="0.4" />
+                      </svg>
+                    }
+                  </span>
+                }
               </div>
             </th>
           }
@@ -132,7 +158,7 @@
                         [placeholder]="c.header"
                         [value]="text()[c.key] ?? ''"
                         (input)="setText(c.key, $any($event.target).value)"
-                        [attr.aria-label]="'Filtrar por ' + c.header"
+                        [attr.aria-label]="'Filter by ' + c.header"
                       />
                     </div>
                   </p-popover>
@@ -149,7 +175,7 @@
                     display="chip"
                     [showClear]="true"
                     [filter]="false"
-                    [attr.aria-label]="'Filtrar por ' + c.header"
+                    [attr.aria-label]="'Filter by ' + c.header"
                   />
                 }
                 @case ('select') {
@@ -162,7 +188,7 @@
                     optionValue="value"
                     placeholder="—"
                     [showClear]="true"
-                    [attr.aria-label]="'Filtrar por ' + c.header"
+                    [attr.aria-label]="'Filter by ' + c.header"
                   />
                 }
                 @case ('input') {
@@ -172,7 +198,7 @@
                     [placeholder]="c.header"
                     [value]="text()[c.key] ?? ''"
                     (input)="setText(c.key, $any($event.target).value)"
-                    [attr.aria-label]="'Filtrar por ' + c.header"
+                    [attr.aria-label]="'Filter by ' + c.header"
                   />
                 }
               }
@@ -185,12 +211,12 @@
         <tr class="row" [class.row--locked]="row.locked" [class.row-selected]="isSelected(row.id)">
           <td class="col-select">
             @if (row.locked) {
-              <img src="icons/general/lock.svg" width="11" height="14" alt="Bloqueado por otro agente" />
+              <img src="icons/general/lock.svg" width="11" height="14" alt="Ticket blocked" />
             } @else {
               <input
                 class="cc-check"
                 type="checkbox"
-                [attr.aria-label]="'Seleccionar ticket ' + row.id"
+                [attr.aria-label]="'Select ticket ' + row.id"
                 [checked]="isSelected(row.id)"
                 (change)="toggleRow(row.id)"
               />
@@ -237,10 +263,10 @@
       }
     </span>
 
-    <nav class="pager" aria-label="Paginación">
-      <button class="pager__btn" type="button" aria-label="Primera página"
+    <nav class="pager" aria-label="Pagination">
+      <button class="pager__btn" type="button" aria-label="First page"
         [disabled]="page() === 1" (click)="goToPage(1)">«</button>
-      <button class="pager__btn" type="button" aria-label="Página anterior"
+      <button class="pager__btn" type="button" aria-label="Previous page"
         [disabled]="page() === 1" (click)="goToPage(page() - 1)">‹</button>
 
       <!-- La ventana SIGUE a la página actual y los "…" salen donde hay hueco:
@@ -254,21 +280,21 @@
             type="button"
             [class.is-current]="p === page()"
             [attr.aria-current]="p === page() ? 'page' : null"
-            [attr.aria-label]="'Página ' + p"
+            [attr.aria-label]="'Page ' + p"
             (click)="goToPage($any(p))"
           >{{ p }}</button>
         }
       }
 
-      <button class="pager__btn" type="button" aria-label="Página siguiente"
+      <button class="pager__btn" type="button" aria-label="Next page"
         [disabled]="page() === pageCount()" (click)="goToPage(page() + 1)">›</button>
-      <button class="pager__btn" type="button" aria-label="Última página"
+      <button class="pager__btn" type="button" aria-label="Last page"
         [disabled]="page() === pageCount()" (click)="goToPage(pageCount())">»</button>
     </nav>
 
     <span class="tickets__rpp">
       Rows per page
-      <select class="rpp" aria-label="Filas por página"
+      <select class="rpp" aria-label="Rows per page"
         [value]="rowsPerPage()"
         (change)="rowsPerPage.set(+$any($event.target).value); goToPage(1); page.set(1)">
         <!-- Las cinco del original (le faltaban 100 y 300). -->

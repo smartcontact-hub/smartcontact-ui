@@ -14,8 +14,8 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
   template: `
     <section class="cc-card mo">
       <div class="mo__toolbar">
-        <button class="iconbtn" type="button" aria-label="Buscar"><img src="icons/general/buscar.svg" width="15" height="15" alt="" aria-hidden="true" /></button>
-        <button class="iconbtn mo__spacer" type="button" aria-label="Exportar"><img src="icons/general/descarga.svg" width="15" height="15" alt="" aria-hidden="true" /></button>
+        <button class="iconbtn" type="button" aria-label="Search"><img src="icons/general/buscar.svg" width="15" height="15" alt="" aria-hidden="true" /></button>
+        <button class="iconbtn mo__spacer" type="button" aria-label="Export"><img src="icons/general/descarga.svg" width="15" height="15" alt="" aria-hidden="true" /></button>
       </div>
 
       <table class="mo__table">
@@ -26,7 +26,7 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
                 <span class="mo__label">{{ c }}</span>
                 <span class="mo__search">
                   <span class="mo__field"></span>
-                  <button class="mo__mag" type="button" [attr.aria-label]="'Buscar en ' + c">
+                  <button class="mo__mag" type="button" [attr.aria-label]="'Search in ' + c">
                     <img src="icons/general/buscar.svg" width="12" height="12" alt="" aria-hidden="true" />
                   </button>
                 </span>
@@ -41,9 +41,9 @@ import { ChangeDetectionStrategy, Component } from '@angular/core';
       <footer class="mo__foot">
         <span>Rows per page <span class="mo__sel">10</span></span>
         <span>Page <span class="mo__sel">1</span></span>
-        <button class="mo__pg" type="button" aria-label="Anterior">‹</button>
+        <button class="mo__pg" type="button" aria-label="Previous">‹</button>
         <span>Page 1 of 0 total results 0</span>
-        <button class="mo__pg" type="button" aria-label="Siguiente">›</button>
+        <button class="mo__pg" type="button" aria-label="Next">›</button>
       </footer>
     </section>
   `,

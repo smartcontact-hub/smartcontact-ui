@@ -95,8 +95,8 @@ test('guardar lleva al pre-ticket con el modal "Search customer" encima', async 
   await expect(page.locator('.detail__id')).toHaveText('#0');
 
   // Los siete criterios de búsqueda del original, en su orden.
-  await expect(modal.getByLabel('Criterio de búsqueda')).toHaveValue('Msisdn');
-  await expect(modal.getByLabel('Criterio de búsqueda').locator('option')).toHaveText([
+  await expect(modal.getByLabel('Search criteria')).toHaveValue('Msisdn');
+  await expect(modal.getByLabel('Search criteria').locator('option')).toHaveText([
     'Msisdn',
     'Alias',
     'Email',

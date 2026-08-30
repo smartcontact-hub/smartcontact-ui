@@ -85,6 +85,10 @@
   overflow: hidden;
 }
 
+/* Las mayúsculas las pone el CSS, no el texto — como en el original
+   (`.header-services-subscribe-type span { text-transform: uppercase }`, con el
+   texto en «Reccuring»/«Duration» desde su diccionario). Se pinta igual y el
+   texto vuelve a ser el suyo: un lector de pantalla ya no deletrea. */
 .sum__tog {
   border: 0;
   padding: 4px 8px;
@@ -93,6 +97,7 @@
   font-family: inherit;
   font-size: 10px;
   letter-spacing: 0.02em;
+  text-transform: uppercase;
   cursor: pointer;
 }
 

@@ -2,7 +2,7 @@
   <!-- Fila de búsqueda. Métrica medida: selects 238×35 (gap 11), input 198×27,
        botón 36×27. Los desplegables del original son mat-select. -->
   <div class="search__row">
-    <select class="field" [ngModel]="country()" (ngModelChange)="country.set($event)" aria-label="País">
+    <select class="field" [ngModel]="country()" (ngModelChange)="country.set($event)" aria-label="Country">
       <option value="">Select country</option>
       @for (c of countries; track c) {
         <option [value]="c">{{ c }}</option>
@@ -13,7 +13,7 @@
       class="field"
       [ngModel]="criterion()"
       (ngModelChange)="criterion.set($event)"
-      aria-label="Criterio de búsqueda"
+      aria-label="Search criteria"
     >
       @for (c of criteria; track c) {
         <option [value]="c">{{ c }}</option>
@@ -25,12 +25,12 @@
         class="search__ph"
         type="text"
         placeholder="Search"
-        aria-label="Término de búsqueda"
+        aria-label="Search term"
         [ngModel]="term()"
         (ngModelChange)="term.set($event)"
         (keydown.enter)="search()"
       />
-      <button class="search__btn" type="button" aria-label="Buscar" [disabled]="!hasTerm()" (click)="search()">
+      <button class="search__btn" type="button" aria-label="Search" [disabled]="!hasTerm()" (click)="search()">
         <img src="icons/general/search.svg" width="15" height="15" alt="" aria-hidden="true" />
       </button>
     </span>
@@ -38,7 +38,7 @@
 
   @if (searching()) {
     <div class="search__loading">
-      <span class="spinner" role="status" aria-label="Buscando"></span>
+      <span class="spinner" role="status" aria-label="Searching"></span>
       <p class="search__msg">Loading data...</p>
     </div>
   } @else if (results() === null) {

@@ -2,9 +2,9 @@
   <!-- ── Columna izquierda: 360px sobre el lienzo #f4f6fc ─────────────────-->
   <aside class="sum__side">
     <div class="sum__bar">
-      <button class="sum__x" type="button" aria-label="Cerrar" (click)="closed.emit()">✕</button>
+      <button class="sum__x" type="button" aria-label="Close" (click)="closed.emit()">✕</button>
       <span class="sum__ticket">#{{ ticketId() }}</span>
-      <button class="sum__export" type="button" aria-label="Exportar">
+      <button class="sum__export" type="button" aria-label="Export">
         <img src="icons/general/descarga.svg" width="14" height="14" alt="" aria-hidden="true" />
       </button>
     </div>
@@ -25,7 +25,7 @@
           [class.is-on]="periodMode() === 'RECCURING'"
           (click)="periodMode.set('RECCURING')"
         >
-          RECCURING
+          Reccuring
         </button>
         <button
           type="button"
@@ -33,7 +33,7 @@
           [class.is-on]="periodMode() === 'DURATION'"
           (click)="periodMode.set('DURATION')"
         >
-          DURATION
+          Duration
         </button>
       </span>
     </div>
@@ -78,8 +78,8 @@
         <strong>Unsubsribed</strong>
         <span>CANCELLED</span>
       </span>
-      <span class="sum__state sum__state--off"><i aria-hidden="true">⊖</i> Access To Service</span>
-      <span class="sum__state sum__state--off"><i aria-hidden="true">⊖</i> Download Elements</span>
+      <span class="sum__state sum__state--off"><i aria-hidden="true">⊖</i> Access to service</span>
+      <span class="sum__state sum__state--off"><i aria-hidden="true">⊖</i> Download elements</span>
       <span class="sum__card sum__card--charges">
         <span class="sum__cardk">Charges</span>
         <strong class="sum__cardv">4.5 €</strong>

@@ -33,13 +33,13 @@ import { FormsModule } from '@angular/forms';
           <div class="scmodal__body">
             <div class="scmodal__row">
               <!-- Un solo país: el de la entidad del ticket (medido). -->
-              <select class="scselect" aria-label="País" [(ngModel)]="country">
+              <select class="scselect" aria-label="Country" [(ngModel)]="country">
                 @for (c of countries; track c) {
                   <option [value]="c">{{ c }}</option>
                 }
               </select>
 
-              <select class="scselect" aria-label="Criterio de búsqueda" [(ngModel)]="criterion">
+              <select class="scselect" aria-label="Search criteria" [(ngModel)]="criterion">
                 @for (c of criteria; track c) {
                   <option [value]="c">{{ c }}</option>
                 }
@@ -51,11 +51,11 @@ import { FormsModule } from '@angular/forms';
                   class="scsearch__input"
                   type="text"
                   placeholder="Search"
-                  aria-label="Buscar cliente"
+                  aria-label="Search customer"
                   [ngModel]="term()"
                   (ngModelChange)="term.set($event)"
                 />
-                <button class="scsearch__go" type="button" aria-label="Buscar">
+                <button class="scsearch__go" type="button" aria-label="Search">
                   <img
                     src="icons/general/buscar.svg"
                     width="13"

@@ -8,7 +8,7 @@
       <span class="nav__env">development</span>
     </div>
 
-    <nav class="nav__body" aria-label="Principal">
+    <nav class="nav__body" aria-label="Main">
       @for (item of navItems; track item.path) {
         <a
           class="nav__item"
@@ -43,7 +43,7 @@
         type="button"
         (click)="settingsOpen.set(!settingsOpen())"
         [attr.aria-expanded]="settingsOpen()"
-        aria-label="Ajustes"
+        aria-label="Settings"
       >
         <app-nav-icon name="gear" />
         <span class="nav__gear-caret">{{ settingsOpen() ? '<' : '>' }}</span>

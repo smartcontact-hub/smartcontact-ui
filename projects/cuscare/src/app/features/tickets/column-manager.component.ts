@@ -61,7 +61,7 @@ export interface ManagedColumn {
               class="colcheck"
               type="checkbox"
               [checked]="c.visible"
-              [attr.aria-label]="'Mostrar columna ' + c.header"
+              [attr.aria-label]="'Show column ' + c.header"
               (change)="toggled.emit(c.header)"
             />
             <span class="colitem__label">{{ c.header }}</span>

@@ -30,7 +30,7 @@ import { TOOLTIPS } from '../../data/tooltips';
       <div class="rfd__dialog" role="dialog" aria-modal="true" aria-label="Refunds">
         <div class="rfd__content">
           <header class="rfd__head">
-            <button class="rfd__x" type="button" aria-label="Cerrar" (click)="closed.emit()">
+            <button class="rfd__x" type="button" aria-label="Close" (click)="closed.emit()">
               ✕
             </button>
             <span class="rfd__who">

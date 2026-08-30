@@ -213,10 +213,22 @@
 }
 
 :host ::ng-deep .cc-table .th__sort {
+  display: inline-flex;
   margin-left: 4px;
   font-size: 9px;
   line-height: 1;
   color: #a9b0bb;
+}
+
+/* Solo las siete ordenables se ofrecen al clic; el resto no cambia de aspecto,
+   así el usuario ve DÓNDE puede ordenar antes de pulsar. */
+:host ::ng-deep .cc-table th.is-sortable {
+  cursor: pointer;
+  user-select: none;
+}
+
+:host ::ng-deep .cc-table th.is-sorted .th__sort {
+  color: #4f5663;
 }
 
 /* Fila de filtros: misma banda gris, controles pequeños */
