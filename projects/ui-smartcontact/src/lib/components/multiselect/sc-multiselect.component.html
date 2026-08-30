@@ -30,6 +30,8 @@
     [panelStyleClass]="panelStyleClass()"
     [ngModel]="value()"
     (ngModelChange)="onModelChange($event)"
+    (onFocus)="onFocus($event)"
+    (onBlur)="onBlur($event)"
     [attr.name]="name() ?? null"
     [attr.aria-describedby]="footerText() ? msgId() : null"
     [attr.aria-required]="required() ? true : null"
