@@ -3,22 +3,17 @@ import {
   ChangeDetectionStrategy,
   Component,
   computed,
-  forwardRef,
-  inject,
-  Injector,
   input,
   model,
-  untracked,
   ViewEncapsulation,
 } from '@angular/core';
-import { ControlValueAccessor, NG_VALUE_ACCESSOR, NgControl } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
 import { ScFieldLabelComponent } from '../field/sc-field-label.component';
 import { ScFieldMsgComponent } from '../field/sc-field-msg.component';
+import { createScFieldState, type ScFieldSize } from '../field/sc-field';
 
-export type ScInputNumberSize = 'sm' | 'md' | 'lg';
-
-let scInputNumberIdCounter = 0;
+/** @deprecated Usa `ScFieldSize`. Alias conservado por compatibilidad de imports. */
+export type ScInputNumberSize = ScFieldSize;
 
 /**
  * Smart Contact numeric input. Wraps a native `<input type="number">`
@@ -26,9 +21,9 @@ let scInputNumberIdCounter = 0;
  * + error + optional suffix unit). Mirrors `sc-inputtext` shape so the
  * two read as a family.
  *
- * Emits `number | null` (null when the field is empty). Pairs with
- * `[(value)]` signals, `[(ngModel)]`, and Reactive Forms via
- * ControlValueAccessor.
+ * Emits `number | null` (null when the field is empty). Se consume con
+ * `[(value)]` (signals). El CVA que daba soporte a ngModel/Reactive Forms se
+ * retiró (DD, 2026-08-30): no lo usaba ningún consumidor.
  *
  * Chose native input over `p-inputNumber` because AED's 8 current
  * usages are all integer counters with `min` only — no formatting,
@@ -44,13 +39,6 @@ let scInputNumberIdCounter = 0;
   styleUrl: './sc-inputnumber.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
-  providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => ScInputNumberComponent),
-      multi: true,
-    },
-  ],
   host: {
     class: 'sc-inputnumber',
     '[class.sc-inputnumber--sm]': "size() === 'sm'",
@@ -61,15 +49,15 @@ let scInputNumberIdCounter = 0;
     '[style.--sc-inputnumber-suffix-pad]': 'suffixPad()',
   },
 })
-export class ScInputNumberComponent implements ControlValueAccessor {
+export class ScInputNumberComponent {
   // ─── Chrome inputs (mirror sc-inputtext) ───────────────────────────────
-  readonly size = input<ScInputNumberSize>('md');
+  readonly size = input<ScFieldSize>('md');
   readonly label = input<string>();
   readonly required = input(false, { transform: booleanAttribute });
   readonly helperText = input<string>();
   readonly error = input<string>();
   readonly placeholder = input<string>();
-  readonly disabled = model<boolean>(false);
+  readonly disabled = input(false, { transform: booleanAttribute });
   readonly readonly = input(false, { transform: booleanAttribute });
   readonly inputId = input<string>();
   readonly name = input<string>();
@@ -86,9 +74,16 @@ export class ScInputNumberComponent implements ControlValueAccessor {
   readonly value = model<number | null>(null);
 
   // ─── Derived ───────────────────────────────────────────────────────
-  protected readonly resolvedId = computed(
-    () => this.inputId() ?? `sc-inputnumber-${++scInputNumberIdCounter}`,
-  );
+  // ─── Estado del field-pattern (compartido) ─────────────────────────
+  private readonly field = createScFieldState('sc-inputnumber', {
+    inputId: this.inputId,
+    error: this.error,
+    helperText: this.helperText,
+  });
+  protected readonly resolvedId = this.field.resolvedId;
+  protected readonly msgId = this.field.msgId;
+  protected readonly isInvalid = this.field.isInvalid;
+  protected readonly footerText = this.field.footerText;
 
   protected readonly hasSuffix = computed(() => !!this.suffix());
 
@@ -105,64 +100,20 @@ export class ScInputNumberComponent implements ControlValueAccessor {
     return `${em.toFixed(2)}em`;
   });
 
-  protected readonly isInvalid = computed(() => {
-    if (this.error()) return true;
-    const ctrl = this._ngControl?.control;
-    return !!ctrl && ctrl.invalid && (ctrl.touched || ctrl.dirty);
-  });
-
-  protected readonly footerText = computed(() => this.error() || this.helperText() || '');
-
   /** The string we hand to the native input — `''` for null. */
   protected readonly displayValue = computed(() => {
     const v = this.value();
     return v === null || v === undefined ? '' : String(v);
   });
 
-  // ─── ControlValueAccessor plumbing ─────────────────────────────────
-  private _onChange: (v: number | null) => void = () => {};
-  private _onTouched: () => void = () => {};
-  private readonly _injector = inject(Injector);
-  private get _ngControl(): NgControl | null {
-    try {
-      return this._injector.get(NgControl, null, { self: true, optional: true });
-    } catch {
-      return null;
-    }
-  }
-
-  writeValue(v: number | string | null | undefined): void {
-    /* `untracked` aísla la escritura del signal (defensa CVA + signals). */
-    untracked(() => {
-      if (v === null || v === undefined || v === '') {
-        this.value.set(null);
-        return;
-      }
-      const n = typeof v === 'number' ? v : Number(v);
-      this.value.set(Number.isFinite(n) ? n : null);
-    });
-  }
-  registerOnChange(fn: (v: number | null) => void): void {
-    this._onChange = fn;
-  }
-  registerOnTouched(fn: () => void): void {
-    this._onTouched = fn;
-  }
-  setDisabledState(state: boolean): void {
-    this.disabled.set(state);
-  }
-
   protected onInput(event: Event): void {
     const raw = (event.target as HTMLInputElement).value;
     if (raw === '') {
       this.value.set(null);
-      this._onChange(null);
       return;
     }
     const n = Number(raw);
-    const next = Number.isFinite(n) ? n : null;
-    this.value.set(next);
-    this._onChange(next);
+    this.value.set(Number.isFinite(n) ? n : null);
   }
 
   /**
@@ -182,8 +133,6 @@ export class ScInputNumberComponent implements ControlValueAccessor {
    * 5, y no queremos corregirle a mitad del número.
    */
   protected onBlur(): void {
-    this._onTouched();
-
     const current = this.value();
     if (current === null) return;
 
@@ -193,9 +142,6 @@ export class ScInputNumberComponent implements ControlValueAccessor {
     if (min !== undefined && next < min) next = min;
     if (max !== undefined && next > max) next = max;
 
-    if (next !== current) {
-      this.value.set(next);
-      this._onChange(next);
-    }
+    if (next !== current) this.value.set(next);
   }
 }
