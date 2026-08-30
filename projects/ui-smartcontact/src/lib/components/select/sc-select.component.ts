@@ -65,6 +65,8 @@ export class ScSelectComponent {
   readonly required = input(false, { transform: booleanAttribute });
   readonly helperText = input<string>();
   readonly error = input<string>();
+  /** Estado inválido explícito. Se combina con `error` (paridad con sc-inputtext). */
+  readonly invalid = input(false, { transform: booleanAttribute });
   readonly placeholder = input<string>('');
   readonly disabled = input(false, { transform: booleanAttribute });
   /** Solo lectura (paridad con sc-inputtext / catálogo de desarrollo). */
@@ -160,6 +162,7 @@ export class ScSelectComponent {
     inputId: this.inputId,
     error: this.error,
     helperText: this.helperText,
+    invalid: this.invalid,
   });
   protected readonly resolvedId = this.field.resolvedId;
   protected readonly msgId = this.field.msgId;

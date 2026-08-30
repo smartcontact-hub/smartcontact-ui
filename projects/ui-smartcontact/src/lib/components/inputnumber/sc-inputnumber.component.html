@@ -26,7 +26,8 @@
     [attr.aria-required]="required() ? true : null"
     [value]="displayValue()"
     (input)="onInput($event)"
-    (blur)="onBlur()"
+    (focus)="onFocus($event)"
+    (blur)="onBlur($event)"
   />
 
   @if (hasSuffix()) {

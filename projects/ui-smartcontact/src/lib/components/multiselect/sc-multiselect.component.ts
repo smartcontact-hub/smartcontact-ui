@@ -4,6 +4,7 @@ import {
   Component,
   input,
   model,
+  output,
   ViewEncapsulation,
 } from '@angular/core';
 // `FormsModule` sigue haciendo falta: la plantilla usa `[ngModel]` como puente
@@ -61,6 +62,8 @@ export class ScMultiSelectComponent {
   readonly required = input(false, { transform: booleanAttribute });
   readonly helperText = input<string>();
   readonly error = input<string>();
+  /** Estado inválido explícito. Se combina con `error` (paridad con sc-inputtext). */
+  readonly invalid = input(false, { transform: booleanAttribute });
   readonly placeholder = input<string>('');
   readonly disabled = input(false, { transform: booleanAttribute });
   readonly inputId = input<string>();
@@ -101,11 +104,16 @@ export class ScMultiSelectComponent {
   /** Array of selected values (id-only if `optionValue` set, else whole objects). */
   readonly value = model<unknown[]>([]);
 
+  // ─── Outputs (paridad con sc-inputtext / sc-select) ────────────────
+  readonly focused = output<FocusEvent>();
+  readonly blurred = output<FocusEvent>();
+
   // ─── Estado del field-pattern (compartido) ─────────────────────────
   private readonly field = createScFieldState('sc-multiselect', {
     inputId: this.inputId,
     error: this.error,
     helperText: this.helperText,
+    invalid: this.invalid,
   });
   protected readonly resolvedId = this.field.resolvedId;
   protected readonly msgId = this.field.msgId;
@@ -128,5 +136,16 @@ export class ScMultiSelectComponent {
 
   protected onModelChange(v: unknown[]): void {
     this.value.set(v ?? []);
+  }
+
+  // p-multiselect envuelve el foco en `{ originalEvent }`, a diferencia de
+  // p-select/p-datepicker que reenvían el Event directo. Se desenvuelve para
+  // que `focused`/`blurred` emitan el mismo tipo que los demás campos.
+  protected onFocus(event: { originalEvent: Event }): void {
+    this.focused.emit(event.originalEvent as FocusEvent);
+  }
+
+  protected onBlur(event: { originalEvent: Event }): void {
+    this.blurred.emit(event.originalEvent as FocusEvent);
   }
 }

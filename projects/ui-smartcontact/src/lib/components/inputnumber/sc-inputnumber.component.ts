@@ -5,6 +5,7 @@ import {
   computed,
   input,
   model,
+  output,
   ViewEncapsulation,
 } from '@angular/core';
 import { InputTextModule } from 'primeng/inputtext';
@@ -56,6 +57,8 @@ export class ScInputNumberComponent {
   readonly required = input(false, { transform: booleanAttribute });
   readonly helperText = input<string>();
   readonly error = input<string>();
+  /** Estado inválido explícito. Se combina con `error` (paridad con sc-inputtext). */
+  readonly invalid = input(false, { transform: booleanAttribute });
   readonly placeholder = input<string>();
   readonly disabled = input(false, { transform: booleanAttribute });
   readonly readonly = input(false, { transform: booleanAttribute });
@@ -73,12 +76,17 @@ export class ScInputNumberComponent {
   /** Current value. `null` when the field is empty. */
   readonly value = model<number | null>(null);
 
+  // ─── Outputs (paridad con sc-inputtext) ────────────────────────────
+  readonly focused = output<FocusEvent>();
+  readonly blurred = output<FocusEvent>();
+
   // ─── Derived ───────────────────────────────────────────────────────
   // ─── Estado del field-pattern (compartido) ─────────────────────────
   private readonly field = createScFieldState('sc-inputnumber', {
     inputId: this.inputId,
     error: this.error,
     helperText: this.helperText,
+    invalid: this.invalid,
   });
   protected readonly resolvedId = this.field.resolvedId;
   protected readonly msgId = this.field.msgId;
@@ -132,16 +140,20 @@ export class ScInputNumberComponent {
    * pelea con el usuario — para llegar a 50 con `max` 40 hay que pasar por el
    * 5, y no queremos corregirle a mitad del número.
    */
-  protected onBlur(): void {
+  protected onFocus(event: FocusEvent): void {
+    this.focused.emit(event);
+  }
+
+  protected onBlur(event: FocusEvent): void {
     const current = this.value();
-    if (current === null) return;
-
-    const min = this.min();
-    const max = this.max();
-    let next = current;
-    if (min !== undefined && next < min) next = min;
-    if (max !== undefined && next > max) next = max;
-
-    if (next !== current) this.value.set(next);
+    if (current !== null) {
+      const min = this.min();
+      const max = this.max();
+      let next = current;
+      if (min !== undefined && next < min) next = min;
+      if (max !== undefined && next > max) next = max;
+      if (next !== current) this.value.set(next);
+    }
+    this.blurred.emit(event);
   }
 }

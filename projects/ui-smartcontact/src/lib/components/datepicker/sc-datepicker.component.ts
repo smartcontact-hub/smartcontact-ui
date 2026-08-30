@@ -4,6 +4,7 @@ import {
   Component,
   input,
   model,
+  output,
   ViewEncapsulation,
 } from '@angular/core';
 // `FormsModule` sigue haciendo falta: la plantilla usa `[ngModel]` como puente
@@ -59,6 +60,8 @@ export class ScDatepickerComponent {
   readonly required = input(false, { transform: booleanAttribute });
   readonly helperText = input<string>();
   readonly error = input<string>();
+  /** Estado inválido explícito. Se combina con `error` (paridad con sc-inputtext). */
+  readonly invalid = input(false, { transform: booleanAttribute });
   readonly placeholder = input<string>('dd/mm/aaaa');
   readonly disabled = input(false, { transform: booleanAttribute });
   readonly inputId = input<string>();
@@ -87,11 +90,16 @@ export class ScDatepickerComponent {
   // ─── Two-way value binding ─────────────────────────────────────────
   readonly value = model<Date | null>(null);
 
+  // ─── Outputs (paridad con sc-inputtext / sc-select) ────────────────
+  readonly focused = output<FocusEvent>();
+  readonly blurred = output<FocusEvent>();
+
   // ─── Estado del field-pattern (compartido) ─────────────────────────
   private readonly field = createScFieldState('sc-datepicker', {
     inputId: this.inputId,
     error: this.error,
     helperText: this.helperText,
+    invalid: this.invalid,
   });
   protected readonly resolvedId = this.field.resolvedId;
   protected readonly msgId = this.field.msgId;
@@ -104,5 +112,13 @@ export class ScDatepickerComponent {
 
   protected onModelChange(v: Date | null): void {
     this.value.set(v);
+  }
+
+  protected onFocus(event: Event): void {
+    this.focused.emit(event as FocusEvent);
+  }
+
+  protected onBlur(event: Event): void {
+    this.blurred.emit(event as FocusEvent);
   }
 }
