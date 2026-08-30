@@ -24,7 +24,11 @@ import { ChangeDetectionStrategy, Component, output, signal } from '@angular/cor
         <div class="tsmodal__content">
           <header class="tsmodal__head">
             <h4 class="tsmodal__title">Ticket Status</h4>
-            <button class="tsmodal__x" type="button" aria-label="Cerrar" (click)="closed.emit()">
+            <!-- «Close dialog», no «Close»: este modal tiene ADEMÁS un botón de
+                 producto llamado Close (cerrar el ticket). Con el mismo nombre,
+                 quien navega por voz o lector de pantalla oye dos «Close» y no
+                 sabe cuál cierra qué. -->
+            <button class="tsmodal__x" type="button" aria-label="Close dialog" (click)="closed.emit()">
               ×
             </button>
           </header>

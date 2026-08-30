@@ -27,7 +27,7 @@ test.describe('sidebar', () => {
       { label: 'Dashboard', url: /#\/private\/cuscare\/dashboard/, marker: 'Workload' },
       // Search ya no es una maqueta: se comprueba por su campo REAL, no por el
       // texto de un <option> (que está oculto dentro del <select>).
-      { label: 'Search', url: /#\/private\/cuscare\/customer/, field: 'Término de búsqueda' },
+      { label: 'Search', url: /#\/private\/cuscare\/customer/, field: 'Search term' },
       { label: 'Manage MO in error', url: /#\/private\/cuscare\/mo-management/, marker: 'No data to show' },
       { label: 'Tickets', url: /#\/private\/cuscare\/tickets/, marker: 'New ticket' },
     ];
@@ -121,10 +121,10 @@ test.describe('detalle de ticket', () => {
 
     await page.getByRole('tab', { name: /Notes/ }).click();
     await expect(page.locator('.timeline__row')).toHaveCount(0);
-    await expect(page.getByText('Sin notas.')).toBeVisible();
+    await expect(page.getByText('No Data Found').first()).toBeVisible();
 
     await page.getByRole('tab', { name: /Attached files/ }).click();
-    await expect(page.getByText('Sin ficheros adjuntos.')).toBeVisible();
+    await expect(page.getByText('No Data Found').first()).toBeVisible();
 
     await page.getByRole('tab', { name: /History ticket/ }).click();
     await expect(page.locator('.timeline__row')).toHaveCount(5);
@@ -205,7 +205,10 @@ test.describe('modal Ticket Status', () => {
     // Dos a la vez: si fueran radios, la segunda apagaría la primera.
     await expect(modal.locator('.tscheck input:checked')).toHaveCount(2);
 
-    await modal.getByRole('button', { name: 'Close' }).click();
+    // `exact` porque el modal tiene DOS controles con «Close» en su nombre: el de
+    // producto (este, que cierra el ticket) y el aspa, que es «Close dialog». Sin
+    // `exact`, el nombre casa por subcadena y el localizador es ambiguo.
+    await modal.getByRole('button', { name: 'Close', exact: true }).click();
     await expect(modal).toHaveCount(0);
   });
 });
@@ -251,8 +254,8 @@ test.describe('dashboard · la tabla Groups hace cosas', () => {
     const cabeceras = page.locator('.dash__groups thead th');
     await expect(cabeceras).toHaveCount(9);
 
-    await page.getByRole('button', { name: 'Seleccionar columnas' }).click();
-    await page.getByRole('dialog', { name: 'Columnas' }).getByLabel('SMS sent').uncheck();
+    await page.getByRole('button', { name: 'Select columns' }).click();
+    await page.getByRole('dialog', { name: 'Columns' }).getByLabel('SMS sent').uncheck();
     await expect(cabeceras).toHaveCount(8);
   });
 
@@ -310,7 +313,7 @@ test.describe('panel Summary de una suscripción', () => {
       'false',
     );
 
-    await panel.getByRole('button', { name: 'Cerrar' }).click();
+    await panel.getByRole('button', { name: 'Close' }).click();
     await expect(panel).toHaveCount(0);
   });
 });
@@ -328,7 +331,7 @@ test.describe('destinos reales de Unsubscribe y Refund', () => {
     await page.goto('/#/private/cuscare/tickets/ticket/2050567');
     // Sin selección no hacen nada, igual que en la real.
     await expect(page.getByRole('button', { name: 'Unsubscribe', exact: true })).toBeDisabled();
-    await page.getByLabel('Seleccionar playweez').check();
+    await page.getByLabel('Select playweez').check();
     await page.getByRole('button', { name: 'Unsubscribe', exact: true }).click();
 
     const modal = page.getByRole('dialog', { name: 'Unsubscribe' });
@@ -345,7 +348,7 @@ test.describe('destinos reales de Unsubscribe y Refund', () => {
 
   test('Refund abre el modal de reembolsos, con API y BNK por cargo', async ({ page }) => {
     await page.goto('/#/private/cuscare/tickets/ticket/2050567');
-    await page.getByLabel('Seleccionar playweez').check();
+    await page.getByLabel('Select playweez').check();
     await page.getByRole('button', { name: 'Refund', exact: true }).click();
 
     const modal = page.getByRole('dialog', { name: 'Refunds' });
@@ -358,7 +361,7 @@ test.describe('destinos reales de Unsubscribe y Refund', () => {
 
   test('el badge de la columna Refund también lo abre', async ({ page }) => {
     await page.goto('/#/private/cuscare/tickets/ticket/2050567');
-    await page.getByRole('button', { name: /Reembolsos de/ }).click();
+    await page.getByRole('button', { name: /Refunds for/ }).click();
     await expect(page.getByRole('dialog', { name: 'Refunds' })).toBeVisible();
   });
 });
@@ -377,12 +380,12 @@ test('Unsubscribe · Refund · Detail exigen una suscripción marcada', async ({
     await expect(page.getByRole('button', { name: b, exact: true })).toBeDisabled();
   }
 
-  await page.getByLabel('Seleccionar todas').check();
+  await page.getByLabel('Select all').check();
   for (const b of ['Unsubscribe', 'Refund', 'Detail']) {
     await expect(page.getByRole('button', { name: b, exact: true })).toBeEnabled();
   }
 
-  await page.getByLabel('Seleccionar todas').uncheck();
+  await page.getByLabel('Select all').uncheck();
   await expect(page.getByRole('button', { name: 'Refund', exact: true })).toBeDisabled();
 });
 
@@ -393,7 +396,7 @@ test('Unsubscribe · Refund · Detail exigen una suscripción marcada', async ({
  */
 test('"Nav" abre el panel Summary por la sección Navigation', async ({ page }) => {
   await page.goto('/#/private/cuscare/tickets/ticket/2050567');
-  await page.getByRole('button', { name: /Navegación de/ }).first().click();
+  await page.getByRole('button', { name: /Navigation for/ }).first().click();
 
   const panel = page.locator('.sum');
   await expect(panel).toBeVisible();
@@ -484,7 +487,7 @@ test.describe('tooltips del dashboard', () => {
 /** Y el del modal de reembolsos: por qué no se puede pedir la devolución. */
 test('los botones API/BNK explican "Action not allowed" cuando no se permite', async ({ page }) => {
   await page.goto('/#/private/cuscare/tickets/ticket/2050567');
-  await page.getByRole('button', { name: /Reembolsos de/ }).click();
+  await page.getByRole('button', { name: /Refunds for/ }).click();
 
   const modal = page.getByRole('dialog', { name: 'Refunds' });
   await expect(modal.getByRole('button', { name: 'API' }).first()).toBeDisabled();

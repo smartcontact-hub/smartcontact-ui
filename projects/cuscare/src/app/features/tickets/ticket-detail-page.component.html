@@ -53,7 +53,7 @@
 
     <div class="subs">
       <div class="subs__actions">
-        <button class="iconbtn" type="button" aria-label="Refrescar">↻</button>
+        <button class="iconbtn" type="button" aria-label="Refresh">↻</button>
         <!-- REAPUNTADOS a sus componentes de verdad: mirando el árbol de la app
              real aparecieron `app-modal-confirmation-unsubscribe` y
              `app-new-modal-refund`. Antes colgaban de "Right to be forgotten" y
@@ -94,7 +94,7 @@
               <input
                 class="cc-check"
                 type="checkbox"
-                aria-label="Seleccionar todas"
+                aria-label="Select all"
                 [checked]="allSubsSelected()"
                 (change)="toggleAllSubs()"
               />
@@ -111,7 +111,7 @@
                 <input
                   class="cc-check"
                   type="checkbox"
-                  [attr.aria-label]="'Seleccionar ' + s.product"
+                  [attr.aria-label]="'Select ' + s.product"
                   [checked]="isSubSelected(s.product)"
                   (change)="toggleSub(s.product)"
                 />
@@ -127,7 +127,7 @@
                 <button
                   class="navpill"
                   type="button"
-                  [attr.aria-label]="'Navegación de ' + s.product"
+                  [attr.aria-label]="'Navigation for ' + s.product"
                   (click)="openSummary(s.product, 'nav')"
                 >
                   <span aria-hidden="true">🌐</span> Nav
@@ -142,7 +142,7 @@
                   <button
                     class="badge badge--btn"
                     type="button"
-                    [attr.aria-label]="'Reembolsos de ' + s.product"
+                    [attr.aria-label]="'Refunds for ' + s.product"
                     (click)="refundFor.set(s.product)"
                   >
                     {{ s.refund }}
@@ -244,10 +244,10 @@
       </ol>
     }
     @case ('notes') {
-      <p class="nodata">Sin notas.</p>
+      <p class="nodata">No Data Found</p>
     }
     @case ('files') {
-      <p class="nodata">Sin ficheros adjuntos.</p>
+      <p class="nodata">No Data Found</p>
     }
   }
 

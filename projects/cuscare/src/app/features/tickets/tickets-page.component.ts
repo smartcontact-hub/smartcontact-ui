@@ -31,7 +31,12 @@ interface Col {
   readonly header: string;
   readonly width: string;
   readonly filter: FilterKind;
+  /** Solo SIETE de las 18 ordenan, como en el original (ver `allCols`). */
+  readonly sortable?: true;
 }
+
+/** Sentido de ordenación; `null` = sin ordenar (el tercer estado del ciclo). */
+type SortDir = 'asc' | 'desc';
 
 /**
  * Vista Tickets — la tabla principal de CusCare.
@@ -141,21 +146,27 @@ export class TicketsPageComponent {
   /**
    * Catálogo COMPLETO: las 18 columnas con su ancho MEDIDO y su tipo de filtro
    * REAL. Lo que la tabla pinta es `cols`, que aplica orden y visibilidad.
+   *
+   * `sortable` en SIETE, las mismas del original y ni una más — leídas de su
+   * bundle (`sortable: true` aparece 7 veces, 0 con `false`): id · status ·
+   * userassign (aquí `assignedTo`) · group · createdAt (`created`) · updatedAt
+   * (`updated`) · priority. Que las otras once NO ordenen es parte de la
+   * réplica, no un descuido.
    */
   private readonly allCols: readonly Col[] = [
-    { key: 'id', header: 'ID', width: '80px', filter: 'popover' },
-    { key: 'status', header: 'Status', width: '120px', filter: 'multiselect' },
-    { key: 'assignedTo', header: 'Assigned to', width: '186px', filter: 'popover' },
-    { key: 'group', header: 'Group', width: '130px', filter: 'multiselect' },
+    { key: 'id', header: 'ID', width: '80px', filter: 'popover', sortable: true },
+    { key: 'status', header: 'Status', width: '120px', filter: 'multiselect', sortable: true },
+    { key: 'assignedTo', header: 'Assigned to', width: '186px', filter: 'popover', sortable: true },
+    { key: 'group', header: 'Group', width: '130px', filter: 'multiselect', sortable: true },
     { key: 'channel', header: 'Channel', width: '110px', filter: 'select' },
     { key: 'source', header: 'Source', width: '140px', filter: 'input' },
     { key: 'email', header: 'Email', width: '167px', filter: 'input' },
     { key: 'country', header: 'Country', width: '101px', filter: 'select' },
     { key: 'products', header: 'Products', width: '348px', filter: 'popover' },
-    { key: 'created', header: 'Created', width: '167px', filter: 'input' },
-    { key: 'updated', header: 'Updated', width: '167px', filter: 'input' },
+    { key: 'created', header: 'Created', width: '167px', filter: 'input', sortable: true },
+    { key: 'updated', header: 'Updated', width: '167px', filter: 'input', sortable: true },
     { key: 'description', header: 'Description', width: '250px', filter: 'input' },
-    { key: 'priority', header: 'Priority', width: '110px', filter: 'select' },
+    { key: 'priority', header: 'Priority', width: '110px', filter: 'select', sortable: true },
     { key: 'subStatus', header: 'Sub-status', width: '130px', filter: 'select' },
     { key: 'refund', header: 'Refund', width: '130px', filter: 'popover' },
     { key: 'gdpr', header: 'GDPR', width: '155px', filter: 'select' },
@@ -358,10 +369,83 @@ export class TicketsPageComponent {
     });
   });
 
+  /* ── Ordenación por cabecera ─────────────────────────────────────────────
+   * El original ordena en SERVIDOR (su tabla emite `sortChanged` y el padre
+   * repite la consulta con `_order`). Aquí los 3280 registros están en memoria,
+   * así que la ordenación se hace ENTRE `filtered()` y `rows()`: el orden no
+   * cambia cuántas filas hay, así que ni `pageCount` ni el contador se enteran.
+   *
+   * NO se usa `pSortableColumn` de PrimeNG: `<p-table [value]="rows()">` recibe
+   * solo las 10 filas de la página, así que su orden nativo ordenaría la página
+   * visible en vez de las 3280 — parecería funcionar y estaría mal.
+   *
+   * El ciclo es el del original (`cycleColumnSort`): none → asc → desc → none,
+   * una sola columna ordenada a la vez, y vuelta a la página 1. */
+  protected readonly sortKey = signal<keyof TicketRow | null>(null);
+  protected readonly sortDir = signal<SortDir>('asc');
+
+  protected cycleSort(col: Col): void {
+    if (!col.sortable) return;
+    if (this.sortKey() !== col.key) {
+      this.sortKey.set(col.key);
+      this.sortDir.set('asc');
+    } else if (this.sortDir() === 'asc') {
+      this.sortDir.set('desc');
+    } else {
+      this.sortKey.set(null); // tercer estado: se deshace la ordenación
+    }
+    this.page.set(1);
+  }
+
+  /** `aria-sort` de la cabecera: lo que anuncia un lector de pantalla. */
+  protected ariaSort(col: Col): 'ascending' | 'descending' | 'none' | null {
+    if (!col.sortable) return null;
+    if (this.sortKey() !== col.key) return 'none';
+    return this.sortDir() === 'asc' ? 'ascending' : 'descending';
+  }
+
+  /**
+   * Valor por el que se compara cada columna. Sin esto, tres de las siete
+   * ordenarían mal aunque «pareciera» que ordenan:
+   *   · `id` es texto pero numera: «10» va después de «9», no antes.
+   *   · las fechas son `dd-MM-yyyy HH:mm`; alfabéticamente, todos los días 11
+   *     quedan juntos sin importar el mes.
+   *   · `priority` tiene un orden propio (Low < Medium < High), no el del
+   *     alfabeto, que lo dejaría High < Low < Medium.
+   */
+  private sortValue(row: TicketRow, key: keyof TicketRow): number | string {
+    const raw = row[key];
+    if (key === 'id') return Number(raw);
+    if (key === 'created' || key === 'updated') {
+      const m = /^(\d{2})-(\d{2})-(\d{4})[ T](\d{2}):(\d{2})$/.exec(String(raw));
+      return m ? Date.UTC(+m[3], +m[2] - 1, +m[1], +m[4], +m[5]) : 0;
+    }
+    if (key === 'priority') {
+      const rank: Record<string, number> = { Low: 1, Medium: 2, High: 3 };
+      return rank[String(raw)] ?? 0;
+    }
+    return Array.isArray(raw) ? raw.join(' ') : String(raw ?? '');
+  }
+
+  /** Filtradas y, si hay columna elegida, ordenadas. */
+  private readonly sorted = computed<TicketRow[]>(() => {
+    const key = this.sortKey();
+    const base = this.filtered();
+    if (!key) return base;
+    const dir = this.sortDir() === 'asc' ? 1 : -1;
+    // Copia: `filtered()` puede devolver el array de origen y `sort` ordena in place.
+    return [...base].sort((a, b) => {
+      const va = this.sortValue(a, key);
+      const vb = this.sortValue(b, key);
+      if (typeof va === 'number' && typeof vb === 'number') return (va - vb) * dir;
+      return String(va).localeCompare(String(vb)) * dir;
+    });
+  });
+
   /** La página actual de las filas filtradas: lo que se pinta. */
   protected readonly rows = computed<TicketRow[]>(() => {
     const start = (this.page() - 1) * this.rowsPerPage();
-    return this.filtered().slice(start, start + this.rowsPerPage());
+    return this.sorted().slice(start, start + this.rowsPerPage());
   });
 
   /** Índices que muestra el pie ("11–20 of 60"). */

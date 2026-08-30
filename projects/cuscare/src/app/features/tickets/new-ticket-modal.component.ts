@@ -36,13 +36,13 @@ import { ENTITIES } from '../../data/seed';
               class="panel__search"
               type="text"
               placeholder="Search..."
-              aria-label="Buscar grupo"
+              aria-label="Search group"
               [ngModel]="query()"
               (ngModelChange)="query.set($event)"
             />
           </header>
 
-          <ul class="grouplist" role="radiogroup" aria-label="Grupos">
+          <ul class="grouplist" role="radiogroup" aria-label="Groups">
             @for (g of visible(); track g.groupName) {
               <li class="grouprow">
                 <label class="grouprow__label">

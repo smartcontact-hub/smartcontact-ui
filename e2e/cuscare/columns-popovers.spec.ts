@@ -38,7 +38,7 @@ test.describe('Manage columns', () => {
     await expect(page.getByRole('columnheader', { name: 'Carrier', exact: true })).toBeVisible();
 
     await page.getByRole('button', { name: 'Manage columns' }).click();
-    await page.getByLabel('Mostrar columna Carrier').uncheck();
+    await page.getByLabel('Show column Carrier').uncheck();
 
     await expect(page.getByRole('columnheader', { name: 'Carrier', exact: true })).toHaveCount(0);
     // Las demás siguen.
@@ -49,8 +49,8 @@ test.describe('Manage columns', () => {
     await goto(page);
 
     await page.getByRole('button', { name: 'Manage columns' }).click();
-    await page.getByLabel('Mostrar columna Carrier').uncheck();
-    await page.getByLabel('Mostrar columna Email').uncheck();
+    await page.getByLabel('Show column Carrier').uncheck();
+    await page.getByLabel('Show column Email').uncheck();
     await expect(page.getByRole('columnheader', { name: 'Carrier', exact: true })).toHaveCount(0);
 
     await page.getByRole('button', { name: 'Reset to default' }).click();
@@ -144,7 +144,7 @@ test.describe('popover de filtro', () => {
     await expect(pop.getByRole('button')).toHaveCount(3);
     await expect(pop.getByRole('button', { name: 'All' })).toHaveClass(/is-active/);
     await expect(pop.getByRole('button', { name: 'New' })).not.toHaveClass(/is-active/);
-    await expect(pop.getByLabel('Filtrar por ID')).toBeVisible();
+    await expect(pop.getByLabel('Filter by ID')).toBeVisible();
   });
 
   test('cambiar de modo mueve el resaltado', async ({ page }) => {
@@ -163,7 +163,7 @@ test.describe('popover de filtro', () => {
     const antes = await page.locator('.tickets__count').innerText();
 
     await page.getByRole('button', { name: 'Filter', exact: true }).first().click();
-    await page.locator('.popfilter').getByLabel('Filtrar por ID').fill('2050');
+    await page.locator('.popfilter').getByLabel('Filter by ID').fill('2050');
 
     await expect(page.locator('.tickets__count')).not.toHaveText(antes);
     await expect(page.getByRole('button', { name: /Delete filters/ })).toBeEnabled();

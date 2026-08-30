@@ -71,10 +71,10 @@ test('el checkbox de cabecera marca y desmarca la página visible', async ({ pag
   await goto(page);
 
   const total = await rowChecks(page).count();
-  await page.getByLabel('Seleccionar todo').check();
+  await page.getByLabel('Select all').check();
   await expect(page.getByRole('button', { name: `Download (${total})` })).toBeVisible();
 
-  await page.getByLabel('Seleccionar todo').uncheck();
+  await page.getByLabel('Select all').uncheck();
   await expect(page.getByRole('button', { name: /Download/ })).toHaveCount(0);
 });
 
@@ -95,7 +95,7 @@ test('la selección sobrevive al cambio de página', async ({ page }) => {
   await goto(page);
 
   await rowChecks(page).first().check();
-  await page.getByRole('button', { name: 'Página 2', exact: true }).click();
+  await page.getByRole('button', { name: 'Page 2', exact: true }).click();
   await expect(page.locator('.tickets__count')).toContainText('11–20');
 
   // Sigue contando la de la página 1: se selecciona el TICKET, no la casilla.
