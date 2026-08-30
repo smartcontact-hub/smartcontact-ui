@@ -673,6 +673,19 @@ lo que hace que te la creas cuando te toca. Lee el índice siempre; el cuerpo, c
     («según la extensión, sin confirmar»); nunca la reenvíes como hecho ni construyas un plan
     sobre ella.
 
+    *Corolario (s36) — cuando la fuente no solo describe sino que AVISA («⚠️ cómo repetirlo sin
+    tropezar: X»), ese aviso es depuración ya pagada: aplícalo en el intento #1, no lo
+    redescubras chocando.* El hand-off del DS decía verbatim «resuelve a RGBA final LOS DOS LADOS
+    antes de comparar; la primera pasada dio 15 falsos por comparar un alias contra un valor
+    resuelto». Lo leí, lo **cité**, y aun así corrí la primera paridad Figma↔export con solo el
+    lado de Figma resuelto: **154 divergencias falsas** (`{SURFACE.0}` vs `#FFFFFF`…), justo la
+    trampa avisada, a lo grande. La reconocí en un paso, pero ya había pagado el rodeo. **Por qué
+    no disparó**: la regla trata el texto heredado como algo que *verificar*, y un aviso no se
+    verifica, se *ejecuta* — leerlo se siente como cumplir. **Disparador**: si el doc te da una
+    mitigación concreta para la tarea que tienes entre manos, cabléala en tu primer comando; un
+    aviso leído-pero-no-aplicado es un aviso desperdiciado. (Lo mecánico de este caso ya está en
+    un gate: `scripts/figma-parity.mjs` resuelve ambos lados solo.)
+
 18. **Vas a zanjar una decisión VISUAL con un argumento —rebatiendo al usuario o discutiéndola
     contigo mismo— → constrúyela en su versión mínima y MÍRALA.** Un principio bien enunciado
     suena a autoridad y no lo es: puede estar protegiendo algo que en el código ya no existe.
