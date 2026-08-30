@@ -2,24 +2,26 @@ import {
   booleanAttribute,
   ChangeDetectionStrategy,
   Component,
-  computed,
-  forwardRef,
-  inject,
-  Injector,
   input,
   model,
-  untracked,
   ViewEncapsulation,
 } from '@angular/core';
-import { FormsModule, ControlValueAccessor, NG_VALUE_ACCESSOR, NgControl } from '@angular/forms';
+// `FormsModule` sigue haciendo falta: la plantilla usa `[ngModel]` como puente
+// INTERNO hacia `<p-multiselect>` (no es el CVA exterior, que se retiró).
+import { FormsModule } from '@angular/forms';
 import { MultiSelectModule } from 'primeng/multiselect';
 import { ScFieldLabelComponent } from '../field/sc-field-label.component';
 import { ScFieldMsgComponent } from '../field/sc-field-msg.component';
+import {
+  createScFieldState,
+  createScOptionState,
+  createScPanelSizing,
+  type ScFieldSize,
+} from '../field/sc-field';
 
-export type ScMultiSelectSize = 'sm' | 'md' | 'lg';
+/** @deprecated Usa `ScFieldSize`. Alias conservado por compatibilidad de imports. */
+export type ScMultiSelectSize = ScFieldSize;
 export type ScMultiSelectDisplay = 'chip' | 'comma';
-
-let scMultiSelectIdCounter = 0;
 
 /**
  * Smart Contact multi-select. Wraps PrimeNG `<p-multiselect>` with the
@@ -42,13 +44,6 @@ let scMultiSelectIdCounter = 0;
   styleUrl: './sc-multiselect.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
-  providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => ScMultiSelectComponent),
-      multi: true,
-    },
-  ],
   host: {
     class: 'sc-multiselect',
     '[class.sc-multiselect--sm]': "size() === 'sm'",
@@ -59,15 +54,15 @@ let scMultiSelectIdCounter = 0;
     '[class.sc-multiselect--ifta]': 'iftaLabel()',
   },
 })
-export class ScMultiSelectComponent implements ControlValueAccessor {
+export class ScMultiSelectComponent {
   // ─── Chrome (mirrors sc-select) ─────────────────────────────────────
-  readonly size = input<ScMultiSelectSize>('md');
+  readonly size = input<ScFieldSize>('md');
   readonly label = input<string>();
   readonly required = input(false, { transform: booleanAttribute });
   readonly helperText = input<string>();
   readonly error = input<string>();
   readonly placeholder = input<string>('');
-  readonly disabled = model<boolean>(false);
+  readonly disabled = input(false, { transform: booleanAttribute });
   readonly inputId = input<string>();
   readonly name = input<string>();
 
@@ -106,87 +101,32 @@ export class ScMultiSelectComponent implements ControlValueAccessor {
   /** Array of selected values (id-only if `optionValue` set, else whole objects). */
   readonly value = model<unknown[]>([]);
 
-  // ─── Derived ───────────────────────────────────────────────────────
-  protected readonly resolvedId = computed(
-    () => this.inputId() ?? `sc-multiselect-${++scMultiSelectIdCounter}`,
-  );
-
-  protected readonly isInvalid = computed(() => {
-    if (this.error()) return true;
-    const ctrl = this._ngControl?.control;
-    return !!ctrl && ctrl.invalid && (ctrl.touched || ctrl.dirty);
+  // ─── Estado del field-pattern (compartido) ─────────────────────────
+  private readonly field = createScFieldState('sc-multiselect', {
+    inputId: this.inputId,
+    error: this.error,
+    helperText: this.helperText,
   });
+  protected readonly resolvedId = this.field.resolvedId;
+  protected readonly msgId = this.field.msgId;
+  protected readonly isInvalid = this.field.isInvalid;
+  protected readonly footerText = this.field.footerText;
 
-  protected readonly footerText = computed(() => this.error() || this.helperText() || '');
+  private readonly panel = createScPanelSizing('sc-multiselect', this.size);
+  protected readonly pSize = this.panel.pSize;
+  protected readonly panelStyleClass = this.panel.panelStyleClass;
 
-  protected readonly pSize = computed<'small' | 'large' | undefined>(() => {
-    const s = this.size();
-    return s === 'sm' ? 'small' : s === 'lg' ? 'large' : undefined;
+  private readonly optionState = createScOptionState({
+    options: this.options,
+    optionLabel: this.optionLabel,
+    optionValue: this.optionValue,
   });
-
-  /** PrimeNG `[size]` no propaga al overlay (solo afecta al trigger). Para
-   *  que los items del dropdown también respeten la variante size, pasamos
-   *  una clase al panel (`<p-multiselect>` la aplica al overlay raíz). El
-   *  SCSS hookea esa clase para ajustar padding/font de los items. */
-  protected readonly panelStyleClass = computed(() => {
-    const s = this.size();
-    return s === 'sm' ? 'sc-multiselect-panel--sm' : s === 'lg' ? 'sc-multiselect-panel--lg' : '';
-  });
-
-  protected readonly optionsMutable = computed(() => this.options() as unknown[]);
-
-  /**
-   * Si las options son primitivas (string[] / number[]), `optionLabel='label'`
-   * intentaría resolver `.label` en cada string → todas renderizan vacías (bug
-   * visible en grupos config: voz/prioridad/estrategia/tipoCola con string[]
-   * mostraban "empty empty…"). Mismo patrón que `sc-select`: con primitivos,
-   * pasar `undefined` a PrimeNG para que renderice el valor directamente.
-   */
-  protected readonly hasPrimitiveOptions = computed(() => {
-    const opts = this.options();
-    return opts.length > 0 && opts.every((o) => o === null || typeof o !== 'object');
-  });
-
-  protected readonly resolvedOptionLabel = computed(() =>
-    this.hasPrimitiveOptions() ? undefined : this.optionLabel(),
-  );
-
-  protected readonly resolvedOptionValue = computed(() =>
-    this.hasPrimitiveOptions() ? undefined : this.optionValue(),
-  );
-
-  // ─── ControlValueAccessor ──────────────────────────────────────────
-  private _onChange: (v: unknown[]) => void = () => {};
-  private _onTouched: () => void = () => {};
-  private readonly _injector = inject(Injector);
-  private get _ngControl(): NgControl | null {
-    try {
-      return this._injector.get(NgControl, null, { self: true, optional: true });
-    } catch {
-      return null;
-    }
-  }
-
-  writeValue(v: unknown[] | null | undefined): void {
-    /* `untracked` aísla la escritura del signal (defensa CVA + signals). */
-    untracked(() => this.value.set(Array.isArray(v) ? v : []));
-  }
-  registerOnChange(fn: (v: unknown[]) => void): void {
-    this._onChange = fn;
-  }
-  registerOnTouched(fn: () => void): void {
-    this._onTouched = fn;
-  }
-  setDisabledState(state: boolean): void {
-    this.disabled.set(state);
-  }
+  protected readonly optionsMutable = this.optionState.optionsMutable;
+  protected readonly hasPrimitiveOptions = this.optionState.hasPrimitiveOptions;
+  protected readonly resolvedOptionLabel = this.optionState.resolvedOptionLabel;
+  protected readonly resolvedOptionValue = this.optionState.resolvedOptionValue;
 
   protected onModelChange(v: unknown[]): void {
     this.value.set(v ?? []);
-    this._onChange(v ?? []);
-  }
-
-  protected onBlur(): void {
-    this._onTouched();
   }
 }
