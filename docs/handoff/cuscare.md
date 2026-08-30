@@ -2,7 +2,7 @@
 
 > **Volátil.** Lo reescribe la sesión que trabaja ESTE frente, y **solo este fichero**.
 > No toques los hand-offs de otros frentes. Lo durable vive en `docs/`.
-> **Sello: 2026-08-30 (s36) — HEAD `304948c`. Las 4 tareas del hand-off anterior, HECHAS. 100 tests e2e verdes, `preflight:fast` leído.**
+> **Sello: 2026-08-30 (s36) — HEAD `f40d861`. Las 4 tareas del hand-off anterior, HECHAS. 100 tests e2e verdes, `preflight:fast` leído.**
 
 `projects/cuscare` replica `cuscare.smart-contact.com/aed`. **Las 9 vistas montadas**, con
 valores extraídos del sitio real (no estimados) y **100 tests e2e** (`npm run e2e:cuscare`, en CI).
