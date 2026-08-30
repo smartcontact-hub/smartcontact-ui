@@ -35,10 +35,12 @@
   aparecen en un grep son menciones **dentro de comentarios** (`sc-drawer`,
   `sc-radiobutton`, `sc-textarea`, `sidebar-nav-item`), y el gate las descarta
   antes de contar. Decisión y migración, ambas cerradas.
-- **B. El field-pattern copy-pasteado ×5** *(la deuda más cara)* —
-  `inputtext/select/multiselect/datepicker/inputnumber` duplican palabra por
-  palabra template, CVA, host class-binding, 9 computeds, tipos `size`, ID-gen.
-  Un cambio de validación o ARIA exige tocar 5 ficheros. **P0.**
+- [x] **B. El field-pattern copy-pasteado ×5** *(la deuda más cara)* — duplicaban
+  template, CVA, host class-binding, 9 computeds, tipos `size`, ID-gen.
+  → **CERRADO 2026-08-30 ([DD-44](./DECISIONS.md))**. El CVA se BORRÓ en los seis (no lo
+  ejercía nada: 0 Reactive Forms, 0 ngModel externo) y la lógica compartida vive en
+  `components/field/sc-field.ts` como factories. El plan viejo (`scCreateControlValueAccessor`)
+  era trabajo tirado: la vía de Angular 22 es Signal Forms. ~265 líneas netas fuera. Ver §2.
 - [x] **C. Dirty-state sin patrón único** — *RESUELTO 2026-06-30:* primitivo
   compartido `createFormDirtyState` (snapshot estable que maneja Sets) cableado
   en agentes/grupos/usuarios + rule-builder; AED ya era correcto. Guardar
@@ -72,21 +74,28 @@
   · `EXPORT_PATH` → ver la fila de *Agent/Scripts/i18n*, cerrada el mismo día.
 - **F. Tokens / valores fuera de escala** — `font-size` en px (viola AGENTS.md),
   `0.142857rem` magic, desincronización TS↔CSS de icon-size, hardcodes px.
-- **G. iftaLabel + ARIA inconsistentes** en la familia field (sin política
-  documentada).
+- [x] **G. iftaLabel + ARIA inconsistentes** en la familia field →
+  **CERRADO 2026-08-30 con [DD-44](./DECISIONS.md)**: el ARIA lo alimenta ahora la factory
+  compartida (`createScFieldState` → `isInvalid`/`msgId`), que es donde nacía el drift, y el
+  `invalid` explícito se igualó a los cinco. `iftaLabel` se conserva en 3 de 5 como divergencia
+  de capacidad deliberada (los otros dos no lo llevan en Figma).
 
 ## 2. Top por severidad (file + fix)
 
-### P0 — duplicación del field-pattern (1 causa, 3 hallazgos)
+### P0 — duplicación del field-pattern → ✅ CERRADO 2026-08-30 ([DD-44](./DECISIONS.md))
 
-> ⚠️ **Las referencias `file:line` de las tres filas siguientes están RANCIAS** (medido
-> 2026-08-30: el CVA vive hoy en `sc-inputtext:125-152`, `sc-select:212-238`,
-> `sc-multiselect:158-182`, `sc-datepicker:126-156`, `sc-inputnumber:122-153`). Y el **plan**
-> que proponen quedó obsoleto con Angular 22: ver `docs/handoff/design-system.md` →
-> *SIGUIENTE·1*. Se reescriben al ejecutar el P0, no antes.
-- [ ] Template field duplicado ×5 → extraer `sc-field-wrapper` (label+required+slot+footer).
-- [ ] CVA idéntico ×5 (`sc-inputtext:123`, `sc-select:191`, `sc-multiselect:187`, `sc-datepicker:124`, `sc-inputnumber:156`) → `scCreateControlValueAccessor()`.
-- [ ] 9 computeds idénticos (`sc-select:142-189` ↔ `sc-multiselect:107-153`) → `scCreateFieldComputeds(inputs)`.
+Ejecutado en su totalidad. Lo que de verdad se hizo, distinto del plan de junio:
+- [x] ~~CVA idéntico ×5 → `scCreateControlValueAccessor()`~~ → **BORRADO** en los seis
+  (`sc-search` incluido, que el audit no contaba). Ningún consumidor lo usaba; sustituirlo por
+  otro CVA era trabajo tirado (Angular 22 → Signal Forms, compat estructural vía `value=model()`).
+- [x] ~~9 computeds idénticos select↔multiselect → `scCreateFieldComputeds`~~ → extraídos a
+  `createScOptionState` (opciones, incl. `hasPrimitiveOptions`) + `createScPanelSizing` + el
+  `createScFieldState` común. Una sola copia del fix «empty empty…» con `string[]`.
+- [~] ~~Template field ×5 → `sc-field-wrapper`~~ → **NO se hizo, con motivo**: las plantillas
+  restantes divergen estructuralmente (datepicker sin `__field`, ifta en 3/5, select con 6
+  puentes contentChild dentro), así que un wrapper habría metido re-parenting condicional y
+  churn del baseline por ahorrar ~20 líneas cortas ya vigiladas por `component-structure.spec`.
+  El label+msg que SÍ se compartía se extrajo en B2 (`sc-field-label`/`sc-field-msg`).
 
 ### P1 — DS components
 - [x] ~~16 wrappers legacy → migrar a `input()/output()/model()`~~ → **TERMINADO**
