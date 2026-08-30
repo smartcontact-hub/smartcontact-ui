@@ -149,6 +149,57 @@ deterministically — it is the full audit:
 Re-export from Figma and overwrite `kit-export-dtcg.json` whenever the
 Kit's variables change; then run the parity check and reconcile.
 
+### Figma-live parity — the link `tokens:parity` can't see
+
+`tokens:parity` compares the **export ↔ CSS**. It cannot tell you whether the
+**export itself** is stale — i.e. whether the live Figma file has drifted from
+`kit-export-dtcg.json`. That is exactly how July-2026's drift slipped in: the
+sync plugin hadn't run in a month and nothing measured the gap. Closing it is a
+**manual procedure** (it needs the Figma Desktop Bridge open, so it can't gate
+CI — same category as the Check D of `docs:coherence`).
+
+Two steps:
+
+1. With the Desktop Bridge connected, dump the live variables to JSON via
+   `figma_execute`. Two snippets — one per collection — each returning
+   `{ name → hex }` resolved through aliases. Primitives:
+
+   ```js
+   const cols = await figma.variables.getLocalVariableCollectionsAsync();
+   const prim = cols.find(c => c.name === 'Primitive');
+   const modeId = prim.modes[0].modeId;
+   const toHex = c => { const h=x=>Math.round(x*255).toString(16).padStart(2,'0');
+     return ('#'+h(c.r)+h(c.g)+h(c.b)+(c.a<1?h(c.a):'')).toUpperCase(); };
+   const out = {};
+   for (const id of prim.variableIds) {
+     const v = await figma.variables.getVariableByIdAsync(id);
+     if (!v || v.resolvedType !== 'COLOR') continue;
+     let val = v.valuesByMode[modeId], g=0;
+     while (val && val.type === 'VARIABLE_ALIAS' && g++<10) {
+       const a = await figma.variables.getVariableByIdAsync(val.id);
+       val = a && a.valuesByMode[Object.keys(a.valuesByMode)[0]];
+     }
+     if (val && 'r' in val) out[v.name] = toHex(val);
+   }
+   return { values: out };
+   ```
+
+   The `Semantic Color Scheme` collection is the same but with two modes
+   (`Light`/`Dark`); emit `{ name: { light, dark } }`. Assemble the two into
+   `.cache/figma-live.json` (gitignored) as
+   `{ "primitive": {…}, "semantic": {…} }`.
+
+2. `node scripts/figma-parity.mjs .cache/figma-live.json`
+
+⚠️ **The trap (measured 2026-08-30):** resolve **both sides** to final RGBA
+first. The export stores semantics as **aliases** (`{primary.700}`,
+`{surface.0}`), not hex, and the `primary.*` ramp lives in
+`aura/semantic/common` (aliasing `{blue.N}`), not in `aura/primitive`. Compare
+Figma's hex against the raw alias and you get ~154 false positives. The script
+does it right — resolution order `semantic/{mode} → semantic/common → primitive`,
+alpha normalised. Last run **2026-08-31: 406/406 match, 0 drift** (242
+primitives + 164 semantic light+dark). The export (24-Aug) was fresh.
+
 ## The scale — formal definition
 
 The metric scale is a **single 14-based ramp**. Every `--sc-scale-{m}` token
