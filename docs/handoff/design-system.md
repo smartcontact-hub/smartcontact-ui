@@ -2,7 +2,11 @@
 
 > **Volátil.** Lo reescribe la sesión que trabaja ESTE frente, y **solo este fichero**.
 > No toques los hand-offs de otros frentes. Lo durable vive en `docs/`.
-> **Sello: 2026-08-25 — sesión de CONSOLIDACIÓN (cierre). HEAD `f78977c`, **CI verde, los 8 pasos**. Cierra con `aura/custom` dentro del gate de completitud del Kit. Antes, `b5b07a5`. Los dos últimos commits son los que el verde LOCAL no cazó y conviene leer: `b5b07a5` (el puntero de Playwright sale de la barra lateral) y `25cedef` (el lockfile vuelve a estar en sync — `npm ci` es el paso 1 del CI y `preflight` NO lo corre). Antes: `1fb7d5f` (el audit de acoplamiento a PrimeNG pasa a mirar tres caras) sobre HEAD `9e3f0bd` (Angular 22 + PrimeNG 22 + los builders a `@angular/build`). Antes, en esta misma sesión y ya en `main`: `3b65f07` (duplicación del supervisor), `bee2acc` (retirada de `sc-page-header` + deriva de docs), `0ef136c` (**trinquete DD-38 a CERO**), `1698f47` (red de contraste de severidades), `edfb2ec` (código muerto), `4417bb8` (`text.muted.color` a enforce + el warn unificado) y `2b694b4` (rescate de s33). Contenido previo: HEAD `97f34e1`.**
+> **Sello: 2026-08-30 (s36) — HEAD `5f11fc5`. Cierra el P0 del field-pattern (DD-44): CVA
+> borrado de los 6 campos, field-pattern por factories. `preflight:fast` leído en verde.
+> Contenido previo: HEAD `f78977c` (consolidación 2026-08-25, CI verde, los 8 pasos).**
+>
+> Sello histórico (2026-08-25): HEAD `f78977c`, **CI verde, los 8 pasos**. Cierra con `aura/custom` dentro del gate de completitud del Kit. Antes, `b5b07a5`. Los dos últimos commits son los que el verde LOCAL no cazó y conviene leer: `b5b07a5` (el puntero de Playwright sale de la barra lateral) y `25cedef` (el lockfile vuelve a estar en sync — `npm ci` es el paso 1 del CI y `preflight` NO lo corre). Antes: `1fb7d5f` (el audit de acoplamiento a PrimeNG pasa a mirar tres caras) sobre HEAD `9e3f0bd` (Angular 22 + PrimeNG 22 + los builders a `@angular/build`). Antes, en esta misma sesión y ya en `main`: `3b65f07` (duplicación del supervisor), `bee2acc` (retirada de `sc-page-header` + deriva de docs), `0ef136c` (**trinquete DD-38 a CERO**), `1698f47` (red de contraste de severidades), `edfb2ec` (código muerto), `4417bb8` (`text.muted.color` a enforce + el warn unificado) y `2b694b4` (rescate de s33). Contenido previo: HEAD `97f34e1`.**
 
 ## ✅ s34 · Se cerró la deuda abierta, y el salto a Angular 22 destapó una clase de fallo nueva
 
@@ -328,11 +332,17 @@ color breadcrumb). Mensaje de diseño enviado. Editar Figma **no mueve la web**.
 > trinquete · los hallazgos viejos del audit semanal · `npm audit`) están **HECHOS** en s34. Lo que
 > sigue es lo que queda de verdad.
 
-1. **El P0 del field-pattern ×5** (`sc-inputtext` · `sc-select` · `sc-multiselect` ·
-   `sc-datepicker` · `sc-inputnumber`, 962 líneas duplicadas), **con Signal Forms de Angular 22**.
-   Ya no es «extraer un CVA a mano»: la API que lo sustituye entró en el framework con este salto.
-   Empieza por leer qué cubre Signal Forms antes de diseñar la extracción — el plan viejo
-   (`scCreateControlValueAccessor()`) puede haber quedado obsoleto entero.
+1. ~~**El P0 del field-pattern ×5**~~ → **HECHO 2026-08-30 ([DD-44](../DECISIONS.md))**. No fue
+   «extraer un CVA a mano»: se **BORRÓ** el ControlValueAccessor de los SEIS campos (los 5 +
+   `sc-search`), porque no lo ejercía nada (0 Reactive Forms, 0 ngModel externo; las apps usan
+   `[(value)]`), y Angular 22 → Signal Forms es su sustituto estructural. La lógica compartida
+   vive en `components/field/sc-field.ts` (3 factories). Reconciliado el estado: `invalid` a los
+   5, `focused`/`blurred` a los 3. ~265 líneas netas fuera. Cada paso verificado contra el
+   baseline de estructura (`ng serve`, no AOT: el `dist` emite `<!---->` donde `ng serve` emite
+   `<!--container-->` y confunde) + comportamiento + e2e:supervisor. **Sigue abierto** solo lo
+   que se dejó FUERA con motivo: `radiobutton`/`textarea` sin field-pattern (no son CVA, escrito
+   a propósito), y el `scFieldHost` para el host class-binding (indirection por ~6 líneas — no
+   compensa).
 2. ~~**La rama `aura/custom` del Kit no la vigila nadie**~~ → **HECHO**, y la descripción que
    llevaba esta ficha era imprecisa: `aura/custom` **sí** salía en el censo de §7b (visible), lo
    que le faltaba era entrar en el **gate de completitud de §8**. Ahora entra, con sus 52 hojas
