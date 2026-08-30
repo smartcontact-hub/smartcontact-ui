@@ -55,8 +55,9 @@ export class TopBarComponent {
   protected readonly trail = this.breadcrumbs.trail;
 
   /** El trail como modelo de `sc-breadcrumb` (puente Figma→código). El tramo con
-   *  `path` navega; el último no lo lleva. Se pinta idéntico a Figma —tramos
-   *  uniformes muted—: sin el retoque local de "último tramo en negrita". */
+   *  `path` navega; el último no. El "aquí estás" (tramo actual en color pleno +
+   *  peso medio) lo añade `sc-breadcrumb` por dentro (su `renderModel`), así que
+   *  aquí NO hace falta tocar nada. */
   protected readonly crumbModel = computed<MenuItem[]>(() =>
     this.trail().map((crumb) => ({
       label: crumb.label,

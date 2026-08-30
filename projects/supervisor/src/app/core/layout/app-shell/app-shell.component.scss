@@ -17,7 +17,16 @@
   height: 100dvh;
   width: 100vw;
   overflow: hidden;
-  background: var(--sc-bg-default);
+  /* Lienzo BLANCO en toda la app (2026-08-31). Antes iba `--sc-bg-default`
+   * (gray/50): con Configuración ya en blanco desde S67 (`settings-shell` usa
+   * `--sc-bg-canvas`), media app en gris y media en blanco se veía a medias.
+   * Un token único —`--sc-bg-canvas`: blanco en light, gray-950 en dark— unifica
+   * el suelo; las tarjetas se separan por su BORDE, que ya lo llevan
+   * (`_sc-list-table`, `_forms`). DD-36/C3: ir a blanco es la dirección SEGURA
+   * para el rail de AED (el bug era rail gris sobre lienzo gris; el blanco los
+   * separa). Los campos rellenos siguen en `--sc-bg-default` gris —otro trabajo
+   * del mismo token—, no se tocan. */
+  background: var(--sc-bg-canvas);
 
   &__main {
     height: 100%;

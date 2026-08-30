@@ -47,26 +47,37 @@ export class ScBreadcrumbComponent {
 
   /**
    * El modelo que se pinta de verdad: `model()` pero con el ÚLTIMO tramo marcado
-   * como la página ACTUAL, un pelín más oscuro (mismo peso, solo color) — el
-   * "aquí estás" que PrimeNG no hace (pinta todos los tramos iguales) y que la
-   * guía UX pide y las referencias limpias (Snow UI) tienen: el actual en color
-   * pleno, los padres en gris muted.
+   * como la página ACTUAL, en color pleno Y peso medio — el "aquí estás" que
+   * PrimeNG no hace (pinta todos los tramos iguales) y que la guía UX pide.
+   * El COLOR solo (slate-700 actual vs slate-600 padres) es un único paso de la
+   * rampa: demasiado sutil de un vistazo (medido 2026-08-31). El PESO no se
+   * escapa, así que el actual lleva los dos: `--sc-text-primary` + peso medio;
+   * los padres, gris muted en peso normal.
    *
    * Se hace con `labelStyle` (estilo en LÍNEA sobre la etiqueta): gana al color
    * del preset sin una regla CSS, sin `::ng-deep` y sin tocar internos `.p-*` —
-   * cero acoplamiento nuevo.
+   * cero acoplamiento nuevo. PrimeNG bindea `[style]="menuitem.labelStyle"` sobre
+   * el `<span>` del label (verificado en `primeng-breadcrumb.mjs`), así que el
+   * estilo entra de verdad; el gate `e2e/component-structure` lo congela.
    *
-   * DIVERGENCIA CONSCIENTE del componente MAESTRO de Figma, que va uniforme
-   * (`customs-catalog` §breadcrumb): es una mejora propuesta. Hay un ejemplo del
-   * comportamiento en el propio Figma (sección aparte, sin tocar el maestro);
-   * cuando el diseño lo incorpore, esto deja de ser divergencia.
+   * Al MAESTRO de Figma (2026-08-31, decisión de Rafa: "no puede fallar en algo
+   * tan básico, y Figma le seguirá"): el tratamiento del tramo actual se lleva al
+   * componente maestro para que deje de ser divergencia y quede 1:1.
    */
   protected readonly renderModel = computed<MenuItem[]>(() => {
     const items = this.model();
     if (items.length === 0) return items;
     const ultimo = items.length - 1;
     return items.map((item, i) =>
-      i === ultimo ? { ...item, labelStyle: { color: 'var(--sc-text-primary)' } } : item,
+      i === ultimo
+        ? {
+            ...item,
+            labelStyle: {
+              color: 'var(--sc-text-primary)',
+              fontWeight: 'var(--sc-font-weight-medium)',
+            },
+          }
+        : item,
     );
   });
 }

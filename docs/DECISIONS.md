@@ -37,6 +37,41 @@
 
 ---
 
+## DD-45 · 2026-08-31 — El lienzo de la app pasa a BLANCO (`--sc-bg-canvas`); cierra el item pendiente de DD-34/DD-36
+
+**Contexto** · El "lienzo de página gris↔blanco" llevaba meses esperando decisión (lo nombran
+DD-34, DD-36/C3 y `AUDIT-DOCS-2026-08`). Configuración ya se había movido a blanco en S67
+(`settings-shell` usa `--sc-bg-canvas`), así que media app iba en blanco y media en gris
+(`--sc-bg-default` = slate-50 = `#f7f8fa`, casi-blanco). La incoherencia era el defecto real.
+
+**Decisión** · El shell del supervisor pinta el suelo con **`--sc-bg-canvas`** (blanco en light,
+gray-950 en dark) en vez de `--sc-bg-default`. Un solo cambio: `app-shell.component.scss:20`. Las
+tarjetas se separan por su BORDE, que ya existe (`_sc-list-table`, `_forms`: `1px --sc-border-default`) —
+verificado midiendo el render (suelo `rgb(255,255,255)`, card con borde `1px #dadfe6`). El relleno gris
+de los campos de formulario sigue en `--sc-bg-default` (otro trabajo del mismo token), intacto.
+
+**Razón** · Consistencia (termina lo que Configuración empezó) + dirección limpia/actual
+(Linear/Stripe/Notion: blanco con bordes, no gris con tarjetas flotando). Decisión de Rafa
+(2026-08-31), con las dos fotos A/B delante.
+
+**El cabo de DD-36/C3** · La trampa documentada era *rail gris sobre lienzo gris*; ir a BLANCO es la
+dirección SEGURA (el blanco separa el rail). NO hace falta tocar el token del rail — al revés que
+"volver a gris", que sí lo exigiría.
+
+**Alcance** · Solo **supervisor** (donde vive el prototipo de Rafa y el rail de AED). `agent` y
+`cuscare` son réplicas de sus propios originales; no se tocan sin decisión aparte.
+
+**Figma** · La propuesta ya estaba dibujada como A/B (`node 13920:4298`, page `Flujos`); esta decisión
+la vuelve canónica. La deuda `--sc-bg-canvas` de `customs-catalog §5.11` deja de estar diferida para el
+suelo del shell: ya lo consume.
+
+**Descartadas** · *Seguir en gris* → la incoherencia con Configuración es el defecto. *Cambiar el VALOR
+de `--sc-bg-default` a blanco* → rechazado: hace doble trabajo (suelo + relleno de campos, 32 ficheros);
+dejaría los campos rellenos invisibles sobre blanco. Por eso se apunta a `--sc-bg-canvas`, no se retoca
+`--sc-bg-default`.
+
+---
+
 ## DD-44 · 2026-08-30 — El `ControlValueAccessor` de los 6 campos se BORRA; el field-pattern se comparte por factories
 
 **Contexto** · Los seis campos del DS (`sc-inputtext`, `sc-select`, `sc-multiselect`,
@@ -514,10 +549,11 @@ frente a Figma; estas son de **interacción** y su hogar es este registro.
 datos más que viajan con él y hay que conservar:
 
 - ⚠️ **Trampa del rail de AED (conflicto C3)**, que muerde directamente a **DD-34** y al item
-  "lienzo de página gris↔blanco" que sigue esperando decisión: `settings-shell.component.scss:20-25`
-  documenta que se movió el lienzo a blanco *porque el rail gris se fundía con un lienzo gris*.
-  **Devolver el lienzo a `--sc-bg-default` re-crea ese bug** salvo que el rail cambie de token en la
-  misma edición.
+  "lienzo de página gris↔blanco" **(RESUELTO en DD-45: a blanco, 2026-08-31)**:
+  `settings-shell.component.scss:20-25` documenta que se movió el lienzo a blanco *porque el rail gris
+  se fundía con un lienzo gris*. **Devolver el lienzo a `--sc-bg-default` re-crea ese bug** salvo que el
+  rail cambie de token en la misma edición — por eso DD-45 va a BLANCO (`--sc-bg-canvas`), la dirección
+  segura, y no al revés.
 - ~~**El "undo asimétrico en usuarios" estaba mal diagnosticado**~~ → **CERRADO, y el rescate
   estaba rancio.** El plan archivado decía que `users.store.ts` no tenía `bulkUpdate()` y que
   faltaba una funcionalidad que presentar a producto. **Existe desde el 2026-07-18**
