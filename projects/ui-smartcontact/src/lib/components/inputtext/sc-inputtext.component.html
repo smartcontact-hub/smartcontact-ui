@@ -23,7 +23,7 @@
     [attr.inputmode]="inputmode() ?? null"
     [attr.aria-invalid]="isInvalid() ? true : null"
     [attr.aria-label]="ariaLabel() ?? null"
-    [attr.aria-describedby]="footerText() ? resolvedId() + '-msg' : null"
+    [attr.aria-describedby]="footerText() ? msgId() : null"
     [attr.aria-required]="required() ? true : null"
     [value]="value()"
     (input)="onInput($event)"
@@ -46,6 +46,6 @@
     block="sc-inputtext"
     [text]="footerText()"
     [isError]="!!error()"
-    [msgId]="resolvedId() + '-msg'"
+    [msgId]="msgId()"
   />
 }

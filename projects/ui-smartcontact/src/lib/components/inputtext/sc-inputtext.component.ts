@@ -2,40 +2,36 @@ import {
   booleanAttribute,
   ChangeDetectionStrategy,
   Component,
-  computed,
-  forwardRef,
-  inject,
-  Injector,
   input,
   model,
   output,
-  untracked,
   ViewEncapsulation,
 } from '@angular/core';
-import { ControlValueAccessor, NG_VALUE_ACCESSOR, NgControl } from '@angular/forms';
 import { InputTextModule } from 'primeng/inputtext';
 import { ScFieldLabelComponent } from '../field/sc-field-label.component';
 import { ScFieldMsgComponent } from '../field/sc-field-msg.component';
+import { createScFieldState, type ScFieldSize } from '../field/sc-field';
 
-export type ScInputSize = 'sm' | 'md' | 'lg';
+/** @deprecated Usa `ScFieldSize`. Alias conservado por compatibilidad de imports. */
+export type ScInputSize = ScFieldSize;
 
 export type ScInputType = 'text' | 'email' | 'password' | 'tel' | 'url' | 'search';
-
-let scInputIdCounter = 0;
 
 /**
  * Smart Contact text input. Wraps PrimeNG's `pInputText` directive with the
  * SCDS field-pattern chrome (label + required mark + helper + error).
  *
- * Pairs con FormsModule (`[(ngModel)]`), Reactive Forms (`[formControl]`)
- * y signals (`[(value)]`) indistintamente — todos empujan al mismo valor
- * interno via `ControlValueAccessor`. Para casos input + addon (icono,
- * botón, prefix/suffix) ver `<sc-inputgroup>`.
+ * Enlaza con signals (`[(value)]`), que es como lo consumen todas las apps. El
+ * `ControlValueAccessor` que daba soporte a `[(ngModel)]`/Reactive Forms se
+ * retiró (DD, 2026-08-30): no lo ejercía ni un consumidor en todo el repo, y
+ * Angular 22 gradúa Signal Forms —que detecta el `value = model()` de este
+ * componente de forma estructural— como la vía de sustitución. Para input +
+ * addon (icono, botón, prefix/suffix) ver `<sc-inputgroup>`.
  *
- * Fusión Mitad B (lote 3): conserva la chrome+CVA del catálogo de diseño y
- * suma del catálogo de desarrollo `fluid` (ancho completo), `invalid`
- * explícito y los outputs `focused`/`blurred`. La variante `filled` cubre el
- * `variant: 'filled'` del molde (sin duplicar input).
+ * Fusión Mitad B (lote 3): conserva la chrome del catálogo de diseño y suma del
+ * catálogo de desarrollo `fluid` (ancho completo), `invalid` explícito y los
+ * outputs `focused`/`blurred`. La variante `filled` cubre el `variant: 'filled'`
+ * del molde (sin duplicar input).
  */
 @Component({
   selector: 'sc-inputtext',
@@ -45,13 +41,6 @@ let scInputIdCounter = 0;
   styleUrl: './sc-inputtext.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   encapsulation: ViewEncapsulation.None,
-  providers: [
-    {
-      provide: NG_VALUE_ACCESSOR,
-      useExisting: forwardRef(() => ScInputTextComponent),
-      multi: true,
-    },
-  ],
   host: {
     class: 'sc-inputtext',
     '[class.sc-inputtext--sm]': "size() === 'sm'",
@@ -62,15 +51,14 @@ let scInputIdCounter = 0;
     '[class.sc-inputtext--ifta]': 'iftaLabel()',
   },
 })
-export class ScInputTextComponent implements ControlValueAccessor {
+export class ScInputTextComponent {
   // ─── Inputs ────────────────────────────────────────────────────────
-  readonly size = input<ScInputSize>('md');
+  readonly size = input<ScFieldSize>('md');
   readonly label = input<string>();
   readonly required = input(false, { transform: booleanAttribute });
   readonly helperText = input<string>();
   readonly error = input<string>();
-  /** Estado inválido explícito (del catálogo de desarrollo). Se combina con
-   * `error` y el estado touched+invalid del ControlValueAccessor. */
+  /** Estado inválido explícito (del catálogo de desarrollo). Se combina con `error`. */
   readonly invalid = input(false, { transform: booleanAttribute });
   /** Ancho completo (del catálogo de desarrollo): el campo ocupa el 100 %. */
   readonly fluid = input(false, { transform: booleanAttribute });
@@ -80,7 +68,7 @@ export class ScInputTextComponent implements ControlValueAccessor {
 
   readonly type = input<ScInputType>('text');
   readonly placeholder = input<string>();
-  readonly disabled = model<boolean>(false);
+  readonly disabled = input(false, { transform: booleanAttribute });
   readonly readonly = input(false, { transform: booleanAttribute });
   readonly inputId = input<string>();
   readonly name = input<string>();
@@ -107,54 +95,20 @@ export class ScInputTextComponent implements ControlValueAccessor {
   readonly focused = output<FocusEvent>();
   readonly blurred = output<FocusEvent>();
 
-  // ─── Internal ──────────────────────────────────────────────────────
-  protected readonly resolvedId = computed(
-    () => this.inputId() ?? `sc-inputtext-${++scInputIdCounter}`,
-  );
-
-  /** Whether `<input>` is in invalid state — `[invalid]`/`[error]` first, then ControlValueAccessor's touched+invalid. */
-  protected readonly isInvalid = computed(() => {
-    if (this.invalid() || this.error()) return true;
-    const ctrl = this._ngControl?.control;
-    return !!ctrl && ctrl.invalid && (ctrl.touched || ctrl.dirty);
+  // ─── Estado del field-pattern (compartido) ─────────────────────────
+  private readonly field = createScFieldState('sc-inputtext', {
+    inputId: this.inputId,
+    error: this.error,
+    helperText: this.helperText,
+    invalid: this.invalid,
   });
-
-  /** Text under the input: error wins over helperText. */
-  protected readonly footerText = computed(() => this.error() || this.helperText() || '');
-
-  // ControlValueAccessor support — backs `[(ngModel)]` and Reactive Forms.
-  private _onChange: (v: string) => void = () => {};
-  private _onTouched: () => void = () => {};
-  private readonly _injector = inject(Injector);
-  private get _ngControl(): NgControl | null {
-    try {
-      return this._injector.get(NgControl, null, { self: true, optional: true });
-    } catch {
-      return null;
-    }
-  }
-
-  writeValue(v: string | null | undefined): void {
-    /* `untracked` aísla la escritura del signal de cualquier reactive
-     * context que pudiera invocar writeValue (e.g. signal forms futuro,
-     * effect en consumer). Defensa recomendada por Angular docs para
-     * CVA + signals — sin coste runtime cuando se llama imperativamente. */
-    untracked(() => this.value.set(v ?? ''));
-  }
-  registerOnChange(fn: (v: string) => void): void {
-    this._onChange = fn;
-  }
-  registerOnTouched(fn: () => void): void {
-    this._onTouched = fn;
-  }
-  setDisabledState(state: boolean): void {
-    this.disabled.set(state);
-  }
+  protected readonly resolvedId = this.field.resolvedId;
+  protected readonly msgId = this.field.msgId;
+  protected readonly isInvalid = this.field.isInvalid;
+  protected readonly footerText = this.field.footerText;
 
   protected onInput(event: Event): void {
-    const next = (event.target as HTMLInputElement).value;
-    this.value.set(next);
-    this._onChange(next);
+    this.value.set((event.target as HTMLInputElement).value);
   }
 
   protected onFocus(event: FocusEvent): void {
@@ -162,7 +116,6 @@ export class ScInputTextComponent implements ControlValueAccessor {
   }
 
   protected onBlur(event: FocusEvent): void {
-    this._onTouched();
     this.blurred.emit(event);
   }
 }
