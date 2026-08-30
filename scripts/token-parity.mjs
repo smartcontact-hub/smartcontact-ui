@@ -29,10 +29,9 @@ import { SIZING, GROUPS, DIVERGE_SIZING } from './sizing-map.mjs';
 import { ENFORCE as COLOR_ENFORCE, DIVERGE as COLOR_DIVERGE } from './color-map.mjs';
 import { PRIMITIVE_SOURCE, PRIMITIVE_DIVERGE, primitiveDrift } from './palette-map.mjs';
 import { classify, PRIMARY_STEPS } from './coverage-map.mjs';
+import { EXPORT_PATH, LAYERS_DIR as LAYERS } from './paths.mjs';
 
 const root = resolve(import.meta.dirname, '..');
-const EXPORT_PATH = resolve(root, 'projects/design-tokens/scripts/kit-export-dtcg.json');
-const LAYERS = 'projects/design-tokens/src/lib/styles/tokens/layers';
 const PRESET_DIR = resolve(root, 'projects/ui-smartcontact/src/lib/theme/sc-preset');
 
 let problems = 0;
@@ -46,7 +45,7 @@ const kit = loadKitExport(EXPORT_PATH);
 const prim = kit.groups['aura/primitive'];
 
 // ── Capas CSS: declaraciones por modo ────────────────────────────────────────
-const cssOf = (f) => readFileSync(resolve(root, LAYERS, f), 'utf8');
+const cssOf = (f) => readFileSync(resolve(LAYERS, f), 'utf8');
 const primCssText = cssOf('01-primitive.css');
 function declMap(src) {
   const map = new Map();

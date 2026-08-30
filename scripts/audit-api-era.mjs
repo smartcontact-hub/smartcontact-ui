@@ -45,10 +45,15 @@ const sh = (cmd) => {
 
 /**
  * Los ÚNICOS componentes a los que se les tolera `@Input()/@Output()`, por el
- * nombre de su fichero (sin `.component.ts`). Son los que quedaban vivos el
- * 2026-08-14, todos en la librería del DS. Migran por lotes (DD-38) y cada uno
- * que migre sale de aquí. **No se añade nada a esta lista jamás**: si un
- * componente nuevo la necesita, lo que está mal es el componente.
+ * nombre de su fichero (sin `.component.ts`). **Hoy está VACÍA, y ese es el
+ * final feliz**: los 16 que quedaban vivos el 2026-08-14 —`sc-icon` incluido—
+ * están todos migrados a `input()/output()/model()` (verificado 2026-08-30:
+ * cero decoradores declarados en `projects/`; los cuatro `@Input()` que quedan
+ * son menciones dentro de comentarios, y el limpiador de abajo los descarta).
+ *
+ * Vacía, el trinquete deja de tolerar excepciones: cualquier decorador nuevo
+ * en cualquier componente sale ROJO. **No se añade nada a esta lista jamás**:
+ * si un componente nuevo la necesita, lo que está mal es el componente.
  */
 export const LEGACY_PENDIENTES = [
 ];

@@ -33,6 +33,28 @@
 > lo da por *"RECONCILIADO al Kit — ya no es divergencia"*. Era el **primer** item del ROADMAP,
 > o sea lo primero que leía cualquiera al abrirlo: dos meses mandando a hacer trabajo hecho.
 
+### Dos repeticiones de app que sobreviven al cierre del audit de deuda (2026-08-30)
+
+> Vienen de `AUDIT-DEUDA-2026-06.md`, que ese día se puso al día fila a fila. Las demás de su
+> familia se cerraron (estaban hechas) o se descartaron con motivo (**DD-43**: no se construye
+> una base común admin). Estas dos siguen vivas, son pequeñas, y **ninguna es urgente**: se
+> anotan aquí para que no vuelvan a ocupar el hueco de "deuda grande" que no son.
+
+- **`toggleChannel` con cascade-clamping, ×3** — `group-form-page.component.ts:408`,
+  `group-assignment-table.component.ts:127`, `agent-channel-table.component.ts:178`.
+  *Matiz medido*: **no es duplicación de código**, es lógica de dominio (qué canales se apagan en
+  cascada) pegada a tres vistas. Extraerla a un servicio se paga en **testabilidad**, no en DRY —
+  y por eso no entra por la regla de DD-4.
+  · *Disparador*: la próxima vez que haya que **cambiar la regla de cascada**. Tocar tres sitios
+  para un cambio de dominio es la señal, no el conteo.
+  · *Validación*: `npm run e2e:supervisor` (los journeys de formulario de grupo y agente cubren
+  los tres puntos de entrada) + el comportamiento de cascada idéntico antes y después.
+- **`onSearchKey()` ×6 list-pages, en dos formas divergentes** — surfaceado por la auditoría
+  semanal (2026-08-17). Lo que molesta no es la repetición sino que **no se comporten igual**.
+  · *Disparador*: al tocar el buscador de cualquier list-page — se unifica hacia la forma buena
+  ahí mismo, no en una pasada dedicada.
+  · *Validación*: mismo gesto (teclear, Escape, borrar) con el mismo resultado en las seis.
+
 ### Round-trip DD-24 (icono↔font-size) → Figma + cabos (2026-06-22)
 - **Qué**: DD-24 EJECUTADA en código (DS + app: `sc-icon` gana `inherit`; los companion heredan el font-size
   del texto). Faltan los cabos de Figma + dos revisiones.
