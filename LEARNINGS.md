@@ -430,6 +430,17 @@ lo que hace que te la creas cuando te toca. Lee el índice siempre; el cuerpo, c
    `| tail`: es que CUALQUIER cosa que pongas detrás —`echo`, `tee`, `sed`— pasa a ser el exit que
    se reporta.** Si envuelves algo cuyo verde te importa, deja el proceso de verdad al final (o
    `exit $?` explícito) — y aun así, lee el log.
+   *Reincidencia (s-2026-08-31), DOS veces con la regla escrita delante — o sea que NO falla por
+   vaga, falla por no dispararse al ESCRIBIR el comando.* Volví a colgar `echo "LANE_EXIT=$?"` de
+   un `( … && … )` en segundo plano (el harness reportó **exit 0**, el del `echo`, con `verify`
+   ROJO debajo), y `gh run watch --exit-status` lo enmascaré igual con un `echo` detrás; una
+   tercera vez, `gh run watch "$RID"` con `$RID` de DOS ids pegados petó con exit 1 y casi lo
+   vendí como «CI en rojo». Las tres me salvó `gh run list --json conclusion`, que leí por
+   costumbre y contradecía al wrapper. **Concreción definitiva, para no repetirlo una cuarta:**
+   (a) para el CI, el wrapper/watcher NO tiene voto — el veredicto es SIEMPRE
+   `gh run list --branch main --workflow ci --json headSha,conclusion` (y `--log-failed` si rojo);
+   (b) NUNCA cuelgues un `echo`/`tee` de una tarea de fondo cuyo exit te importe; (c) valida que
+   una variable de id lleva UN solo valor antes de pasarla a `gh run watch`.
 
    *Corolario (s30) — «este fallo no es mío» es una CLAIM, y se mide como cualquier otra.* Un test
    de `sc-command-palette` se puso rojo y lo descarté en voz alta —«otra página, otro componente,
