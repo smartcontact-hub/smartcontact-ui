@@ -59,5 +59,6 @@ export const routes: Routes = [
   { path: 'foundations-type', pathMatch: 'full', redirectTo: 'fundamentos/tipografia' },
   { path: 'theme', pathMatch: 'full', redirectTo: 'fundamentos/tema' },
 
-  { path: '', pathMatch: 'full', redirectTo: 'fundamentos' },
+  // Componentes es el protagonista de la doc: es la portada.
+  { path: '', pathMatch: 'full', redirectTo: 'components' },
 ];

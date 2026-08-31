@@ -21,12 +21,22 @@ body {
   font-weight: var(--sc-font-weight-regular);
 }
 
-/* El showcase de componentes (shell con sidebar) necesita más ancho que las páginas de
-   prosa; sólo se ensancha cuando `.demo-main` contiene el shell (no afecta a /foundations).
-   `!important` para ganar a la regla base `.demo-main` (encapsulada en app.component → más
-   específica); este override de layout puntual es deliberado. */
-.demo-main:has(app-storybook-shell) {
-  max-width: 82rem !important;
+/* Jerarquía de títulos de la DOC (no del DS): el look "Constellation" quiere un título de
+   página grande y confiado (32px en el original). Lo damos con los TOKENS de display del
+   propio DS —`--sc-font-size-display-1` = 32px—, así la doc bebe del mismo sitio que todo
+   lo demás y el DS y sus componentes NO se tocan. Es fallback: las páginas con su propia
+   regla de h1 (índice, component-page) la fijan explícitas. */
+.demo-main h1 {
+  /* `!important` a propósito: cada página de sección (foundations, uso, reglas, tema)
+     trae su propio `h1` scoped (`h1[_ngcontent]`, misma especificidad que este + inyectado
+     después → ganaría). Para propagar el título de display a TODAS desde un solo sitio, sin
+     editar cinco ficheros ni arriesgar olvidar uno, este global tiene que ganar. Es el shell
+     de la DOC, no el DS. */
+  font-size: var(--sc-font-size-display-1) !important;
+  line-height: var(--sc-line-height-display-1) !important;
+  font-weight: var(--sc-font-weight-bold) !important;
+  letter-spacing: -0.01em;
+  color: var(--sc-text-primary);
 }
 
 /* ─────────── Story de gestos de `sc-datatable` (B4) ───────────

@@ -1,20 +1,55 @@
-<header class="demo-header">
-  <a class="demo-header__brand" routerLink="/fundamentos">Smart Contact Design Engineering</a>
+<div class="demo-shell">
+  <aside class="demo-sidebar">
+    <a class="demo-sidebar__brand" routerLink="/components">
+      <span class="demo-sidebar__mark" aria-hidden="true"></span>
+      <span class="demo-sidebar__brand-text">
+        <span class="demo-sidebar__brand-name">Smart Contact</span>
+        <span class="demo-sidebar__brand-sub">Design Engineering</span>
+      </span>
+    </a>
 
-  <nav class="demo-header__nav" aria-label="Secciones">
-    <a routerLink="/fundamentos" routerLinkActive="is-active">Fundamentos</a>
-    <a routerLink="/components" routerLinkActive="is-active">Componentes</a>
-    <a routerLink="/uso" routerLinkActive="is-active">Uso real</a>
-    <a routerLink="/reglas" routerLinkActive="is-active">Reglas</a>
-  </nav>
+    <button type="button" class="demo-sidebar__search" (click)="palette.open()">
+      <span class="demo-sidebar__search-label">Buscar…</span>
+      <kbd class="demo-sidebar__kbd">⌘K</kbd>
+    </button>
 
-  <!-- Cluster de herramientas: NO son documentación, por eso van separadas de la nav. -->
-  <div class="demo-header__tools">
-    <a class="demo-header__tool" routerLink="/lab" routerLinkActive="is-active">Lab</a>
-    <button type="button" class="demo-header__tool" (click)="toggleDark()">Claro / oscuro</button>
-  </div>
-</header>
+    <nav class="demo-sidebar__nav" aria-label="Secciones">
+      <a routerLink="/fundamentos" routerLinkActive="is-active">Fundamentos</a>
 
-<main class="demo-main">
-  <router-outlet />
-</main>
+      <a class="demo-sidebar__lead" routerLink="/components" routerLinkActive="is-active">
+        <span>Componentes</span>
+        <span class="demo-sidebar__count">{{ total }}</span>
+      </a>
+      @if (onComponents()) {
+        <div class="demo-sidebar__sub">
+          @for (group of groups; track group.category) {
+            <p class="demo-sidebar__group">{{ group.category }}</p>
+            @for (e of group.items; track e.path) {
+              <a
+                class="demo-sidebar__sublink"
+                [routerLink]="['/components', e.path]"
+                routerLinkActive="is-active"
+                >{{ e.label }}</a
+              >
+            }
+          }
+        </div>
+      }
+
+      <a routerLink="/uso" routerLinkActive="is-active">Uso real</a>
+      <a routerLink="/reglas" routerLinkActive="is-active">Reglas</a>
+    </nav>
+
+    <!-- Cluster de herramientas: NO son documentación, por eso van separadas de la nav. -->
+    <div class="demo-sidebar__tools">
+      <a class="demo-sidebar__tool" routerLink="/lab" routerLinkActive="is-active">Lab</a>
+      <button type="button" class="demo-sidebar__tool" (click)="toggleDark()">Claro / oscuro</button>
+    </div>
+  </aside>
+
+  <main class="demo-main">
+    <router-outlet />
+  </main>
+</div>
+
+<sc-command-palette />

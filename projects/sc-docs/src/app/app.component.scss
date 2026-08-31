@@ -1,113 +1,309 @@
-.demo-header {
+/*
+ * Shell de sc-docs, lenguaje visual inspirado en el DS "Constellation" de Digital Virgo
+ * (sidebar clara + lienzo aireado + sombras suaves en capas + acento de marca), pero con
+ * TOKENS --sc-* propios: el acento es `--sc-color-sky-500` (azul eléctrico SC), NO el rosa
+ * de DV, y las sombras salen de `--sc-shadow-*` (color slate, focus ring sky). Solo tomamos
+ * estructura y ritmo, no su identidad. Medido del original 2026-08-31: canvas #f7f8fa
+ * (= nuestro slate-50), sidebar blanca 248px, título 32px (= --sc-font-size-display-1),
+ * nav activa en tinte + acento + peso, radios 8/12, chips pill.
+ */
+.demo-shell {
   display: flex;
-  align-items: center;
-  gap: var(--sc-spacing-1-75);
-  padding: var(--sc-spacing-0-75) var(--sc-spacing-1-5);
-  background: var(--sc-bg-primary);
-  color: var(--sc-text-on-primary);
+  align-items: stretch;
+  min-height: 100vh;
+}
+
+.demo-sidebar {
+  flex: 0 0 15rem;
+  width: 15rem;
+  box-sizing: border-box;
+  position: sticky;
+  top: 0;
+  align-self: flex-start;
+  height: 100vh;
+  overflow-y: auto;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--sc-spacing-1-25) var(--sc-spacing-0-875);
+  background: var(--sc-bg-surface);
+  border-right: 1px solid var(--sc-border-default);
 
   &__brand {
-    color: inherit;
+    display: flex;
+    align-items: center;
+    gap: var(--sc-spacing-0-625);
+    padding: var(--sc-spacing-0-25) var(--sc-spacing-0-5);
+    margin-bottom: var(--sc-spacing-0-75);
+    color: var(--sc-text-primary);
     text-decoration: none;
+  }
+
+  &__mark {
+    position: relative;
+    flex: none;
+    width: 28px;
+    height: 28px;
+    border-radius: var(--sc-radius-200);
+    background: var(--sc-bg-primary);
+    box-shadow: var(--sc-shadow-sm);
+
+    &::after {
+      content: '';
+      position: absolute;
+      inset: 0;
+      margin: auto;
+      width: 11px;
+      height: 11px;
+      border-radius: 50%;
+      background: var(--sc-color-sky-500);
+    }
+  }
+
+  &__brand-text {
+    display: flex;
+    flex-direction: column;
+    line-height: 1.15;
+    min-width: 0;
+  }
+
+  &__brand-name {
+    font-size: var(--sc-font-size-100);
     font-weight: var(--sc-font-weight-semibold);
-    white-space: nowrap;
+  }
+
+  &__brand-sub {
+    font-size: var(--sc-font-size-50);
+    color: var(--sc-text-secondary);
+  }
+
+  /* Disparador del ⌘K: campo falso (abre la paleta al click). */
+  &__search {
+    display: flex;
+    align-items: center;
+    gap: var(--sc-spacing-0-5);
+    margin-bottom: var(--sc-spacing-0-875);
+    padding: var(--sc-spacing-0-5) var(--sc-spacing-0-625);
+    border: 1px solid var(--sc-border-default);
+    border-radius: var(--sc-radius-200);
+    background: var(--sc-bg-default);
+    color: var(--sc-text-secondary);
+    font: inherit;
+    font-size: var(--sc-font-size-100);
+    text-align: left;
+    cursor: pointer;
+    box-shadow: var(--sc-shadow-xs);
+    transition:
+      border-color 120ms ease-out,
+      box-shadow 120ms ease-out;
+
+    &:hover {
+      border-color: var(--sc-border-strong);
+      box-shadow: var(--sc-shadow-sm);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--sc-color-sky-500);
+      outline-offset: 1px;
+    }
+  }
+
+  &__search-label {
+    flex: 1;
+  }
+
+  &__kbd {
+    flex: none;
+    padding: 1px var(--sc-spacing-0-375);
+    border: 1px solid var(--sc-border-default);
+    border-radius: var(--sc-radius-100);
+    background: var(--sc-bg-surface);
+    color: var(--sc-text-secondary);
+    font-family: var(--sc-font-family-primary);
+    font-size: var(--sc-font-size-50);
+    line-height: 1.4;
   }
 
   &__nav {
     display: flex;
-    gap: var(--sc-spacing-0-25);
-    /* En pantallas estrechas la nav se desliza en lugar de romper la barra. */
-    min-width: 0;
-    overflow-x: auto;
-    scrollbar-width: none;
-
-    &::-webkit-scrollbar {
-      display: none;
-    }
-
-    a {
-      padding: var(--sc-spacing-0-25) var(--sc-spacing-0-625);
-      border-radius: var(--sc-radius-full);
-      color: inherit;
-      text-decoration: none;
-      white-space: nowrap;
-      transition: background-color 120ms ease-out;
-
-      &:hover {
-        background: rgb(255 255 255 / 0.08);
-      }
-
-      /* Activa = pastilla, no subrayado: se lee de un vistazo con cuatro destinos.
-       * El estado inactivo NO se atenúa con opacity. Medido en oscuro: el par
-       * --sc-bg-primary / --sc-text-on-primary da 3.01:1 tal cual, y el 0.72 que había
-       * antes lo hundía a 2.29:1. Lo que distingue a la activa es la pastilla + el peso.
-       * (El 3.01:1 del par es deuda del DS —afecta a TODO lo que pinta texto sobre
-       * primary en oscuro, empezando por el botón primario— y no se arregla aquí:
-       * 07-dark.css es zona @sc-gen.) */
-      &.is-active {
-        background: rgb(255 255 255 / 0.14);
-        font-weight: var(--sc-font-weight-semibold);
-      }
-
-      &:focus-visible {
-        outline: 2px solid currentcolor;
-        outline-offset: 2px;
-      }
-    }
+    flex-direction: column;
+    gap: 2px;
   }
 
   &__tools {
+    margin-top: auto;
+    padding-top: var(--sc-spacing-0-75);
+    border-top: 1px solid var(--sc-border-default);
     display: flex;
-    align-items: center;
-    gap: var(--sc-spacing-0-25);
-    margin-left: auto;
+    flex-direction: column;
+    gap: 2px;
   }
 
+  /* Ítems de nav de sección + herramientas: pastilla al activar / hover. */
+  &__nav > a,
   &__tool {
-    display: inline-flex;
+    display: flex;
     align-items: center;
-    justify-content: center;
-    gap: var(--sc-spacing-0-25);
-    padding: var(--sc-spacing-0-25) var(--sc-spacing-0-625);
+    gap: var(--sc-spacing-0-5);
+    padding: var(--sc-spacing-0-5) var(--sc-spacing-0-625);
     border: 0;
-    border-radius: var(--sc-radius-full);
+    border-radius: var(--sc-radius-200);
     background: transparent;
-    color: inherit;
+    color: var(--sc-text-secondary);
+    font: inherit;
+    font-size: var(--sc-font-size-100);
+    text-align: left;
     text-decoration: none;
     white-space: nowrap;
-    font: inherit;
     cursor: pointer;
-    transition: background-color 120ms ease-out;
+    transition:
+      background-color 120ms ease-out,
+      color 120ms ease-out;
 
     &:hover {
-      background: rgb(255 255 255 / 0.14);
+      background: var(--sc-bg-subtle);
+      color: var(--sc-text-primary);
     }
 
     &.is-active {
-      background: rgb(255 255 255 / 0.14);
+      background: var(--sc-bg-subtle);
+      color: var(--sc-color-sky-600);
+      font-weight: var(--sc-font-weight-semibold);
     }
 
     &:focus-visible {
-      outline: 2px solid currentcolor;
-      outline-offset: 2px;
+      outline: 2px solid var(--sc-color-sky-500);
+      outline-offset: 1px;
+    }
+  }
+
+  /* Componentes es el protagonista: badge con el total + peso algo mayor. */
+  &__lead {
+    justify-content: space-between;
+    font-weight: var(--sc-font-weight-medium);
+  }
+
+  &__count {
+    flex: none;
+    min-width: 1.4rem;
+    padding: 0 var(--sc-spacing-0-375);
+    border-radius: var(--sc-radius-full);
+    background: var(--sc-bg-subtle);
+    color: var(--sc-color-sky-600);
+    font-size: var(--sc-font-size-50);
+    font-weight: var(--sc-font-weight-semibold);
+    text-align: center;
+    line-height: 1.5rem;
+  }
+
+  /* Lista de componentes anidada bajo "Componentes" cuando la sección está activa. */
+  &__sub {
+    display: flex;
+    flex-direction: column;
+    gap: 1px;
+    margin: var(--sc-spacing-0-25) 0 var(--sc-spacing-0-5);
+    padding-left: var(--sc-spacing-0-75);
+    border-left: 1px solid var(--sc-border-default);
+  }
+
+  &__group {
+    margin: var(--sc-spacing-0-625) 0 var(--sc-spacing-0-125);
+    padding-left: var(--sc-spacing-0-625);
+    font-size: var(--sc-font-size-25, 0.6875rem);
+    font-weight: var(--sc-font-weight-bold);
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    color: var(--sc-text-secondary);
+
+    &:first-child {
+      margin-top: 0;
+    }
+  }
+
+  &__sublink {
+    padding: var(--sc-spacing-0-25) var(--sc-spacing-0-625);
+    border-radius: var(--sc-radius-200);
+    color: var(--sc-text-secondary);
+    font-size: var(--sc-font-size-100);
+    text-decoration: none;
+    transition:
+      background-color 120ms ease-out,
+      color 120ms ease-out;
+
+    &:hover {
+      background: var(--sc-bg-subtle);
+      color: var(--sc-text-primary);
     }
 
-  }
+    &.is-active {
+      background: var(--sc-bg-subtle);
+      color: var(--sc-color-sky-600);
+      font-weight: var(--sc-font-weight-semibold);
+    }
 
-  @media (max-width: 60rem) {
-    gap: var(--sc-spacing-0-75);
-    padding-inline: var(--sc-spacing-0-75);
-  }
-
-  @media (max-width: 44rem) {
-    &__brand {
-      display: none;
+    &:focus-visible {
+      outline: 2px solid var(--sc-color-sky-500);
+      outline-offset: 1px;
     }
   }
 }
 
 .demo-main {
-  max-width: 60rem;
-  margin: 0 auto;
-  padding: var(--sc-spacing-1-5);
+  flex: 1;
+  min-width: 0;
+  padding: var(--sc-spacing-2) var(--sc-spacing-2-5);
+}
+
+/* En estrecho la sidebar se colapsa a barra superior (nav deslizante). La lista de
+   componentes anidada se oculta ahí: en móvil se navega por el ⌘K o el índice. */
+@media (max-width: 52rem) {
+  .demo-shell {
+    flex-direction: column;
+  }
+
+  .demo-sidebar {
+    flex: none;
+    width: 100%;
+    height: auto;
+    position: static;
+    flex-direction: row;
+    align-items: center;
+    gap: var(--sc-spacing-0-25);
+    padding: var(--sc-spacing-0-5) var(--sc-spacing-0-75);
+    border-right: 0;
+    border-bottom: 1px solid var(--sc-border-default);
+
+    &__brand {
+      margin-bottom: 0;
+    }
+
+    &__brand-sub,
+    &__search,
+    &__sub {
+      display: none;
+    }
+
+    &__nav {
+      flex-direction: row;
+      align-items: center;
+      overflow-x: auto;
+      scrollbar-width: none;
+
+      &::-webkit-scrollbar {
+        display: none;
+      }
+    }
+
+    &__tools {
+      margin-top: 0;
+      margin-left: auto;
+      padding-top: 0;
+      border-top: 0;
+      flex-direction: row;
+    }
+  }
+
+  .demo-main {
+    padding: var(--sc-spacing-1-5) var(--sc-spacing-1);
+  }
 }
