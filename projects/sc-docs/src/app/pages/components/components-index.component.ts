@@ -15,14 +15,28 @@ import { COMPONENT_CATALOG, groupCatalog } from './component-catalog';
   selector: 'app-components-index',
   imports: [RouterLink],
   template: `
-    <p class="eyebrow">Sistema de diseño</p>
-    <h1>Componentes</h1>
-    <p class="lead">
-      {{ total }} wrappers <code>sc-*</code> de
-      <code>&#64;smartcontact-hub/components</code>, en {{ groups.length }} familias. Para qué
-      sirve cada uno de un vistazo; entra en cualquiera para ver sus variantes, estados y
-      código, en claro y oscuro.
-    </p>
+    <header class="hero">
+      <img
+        class="hero__img"
+        src="/hero/components.jpg"
+        width="1600"
+        height="1067"
+        alt=""
+        aria-hidden="true"
+        fetchpriority="high"
+      />
+      <div class="hero__scrim" aria-hidden="true"></div>
+      <div class="hero__content">
+        <p class="eyebrow">Sistema de diseño</p>
+        <h1>Componentes</h1>
+        <p class="lead">
+          {{ total }} wrappers <code>sc-*</code> de
+          <code>&#64;smartcontact-hub/components</code>, en {{ groups.length }} familias. Para qué
+          sirve cada uno de un vistazo; entra en cualquiera para ver sus variantes, estados y
+          código, en claro y oscuro.
+        </p>
+      </div>
+    </header>
 
     @for (group of groups; track group.category) {
       <section class="fam">
@@ -46,6 +60,64 @@ import { COMPONENT_CATALOG, groupCatalog } from './component-catalog';
     }
   `,
   styles: `
+    /* Portada: la primera parte (título + intro) va sobre una foto abstracta clara. La imagen
+       lleva width/height y va en object-fit:cover → ratio bloqueado, responsive y sin salto de
+       layout (el propio patrón que gatea audit:screen-hygiene). */
+    .hero {
+      position: relative;
+      overflow: hidden;
+      border-radius: 16px;
+      margin-bottom: var(--sc-spacing-2-25);
+      background: var(--sc-bg-subtle);
+    }
+
+    .hero__img,
+    .hero__scrim {
+      position: absolute;
+      inset: 0;
+    }
+
+    .hero__img {
+      width: 100%;
+      height: 100%;
+      object-fit: cover;
+    }
+
+    /* Lavado del lado del texto. Claro: blanco, para que el texto oscuro despegue de la foto.
+       Oscuro: la foto se atenúa y el lavado es oscuro, para que el texto claro siga legible
+       (si no, texto claro sobre foto blanca = ilegible). */
+    .hero__scrim {
+      background: linear-gradient(
+        90deg,
+        rgba(255, 255, 255, 0.72) 0%,
+        rgba(255, 255, 255, 0.3) 48%,
+        rgba(255, 255, 255, 0) 80%
+      );
+    }
+
+    :host-context(.sc-dark) .hero__img {
+      filter: brightness(0.32) saturate(0.9);
+    }
+
+    :host-context(.sc-dark) .hero__scrim {
+      background: linear-gradient(
+        90deg,
+        rgba(11, 15, 20, 0.82) 0%,
+        rgba(11, 15, 20, 0.5) 50%,
+        rgba(11, 15, 20, 0.15) 85%
+      );
+    }
+
+    .hero__content {
+      position: relative;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      min-height: 240px;
+      max-width: 62ch;
+      padding: var(--sc-spacing-2-5) var(--sc-spacing-2-75);
+    }
+
     .eyebrow {
       margin: 0 0 var(--sc-spacing-0-5);
       font-size: var(--sc-font-size-50);
