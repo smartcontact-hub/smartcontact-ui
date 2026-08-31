@@ -36,7 +36,7 @@ lo que hace que te la creas cuando te toca. Lee el índice siempre; el cuerpo, c
 | **4** | arreglar un valor sustituyéndolo por otro token | mide el token de DESTINO antes (fondo y texto, misma familia) |
 | **5** | dudar entre tu código y tu medición | lo rancio es la medición: build, server, HMR, animación, **el repo bajo tus pies**, **otra instancia (un deploy)**, la máquina ahogada… o atribución. Y si el test miraba un TRANSITORIO, la carga es el disparador, no la causa |
 | **6** | creerte un test NUEVO — se ponga rojo **o pase a la primera** | sospecha del test primero: ¿mide la magnitud? ¿el selector casa? ¿reintenta? ¿espera al estado final? Y para probar el arreglo de una CARRERA, hazla determinista en vez de correrla con carga |
-| **7** | hacer `git push`, **o lanzar la cadena de 8 pasos** | `preflight` UNA vez y sobre el árbol final —"final" = ya no vas a escribir nada más, ni un `.md`—, **+ `npm ci --dry-run` si tocaste el lock** (preflight NO corre `npm ci`, que es el paso 1 del CI). Confirma el verde LEYENDO el log, no un exit-code |
+| **7** | hacer `git push`, **o lanzar la cadena de 8 pasos** | `preflight` (o `:fast`/`:scope`) UNA vez sobre el árbol final —"final" = ya no vas a escribir nada más, ni un `.md`—; **`verify` NO es ese gate: se salta el `e2e smoke` y los builds AOT de las apps**. **+ `npm ci --dry-run` si tocaste el lock**. Confirma el verde LEYENDO el log del CI, no un exit-code |
 | **8** | proponer una segunda corrección tras fallar la primera | para: la siguiente acción es una MEDICIÓN que localice la causa |
 | **10** | declarar algo bloqueado, o deducir un dato a ojo | comprueba si el sistema ya te lo sirve (DOM oculto, i18n, hoja de estilos) |
 | **11** | lanzar una edición masiva por shell | pega la verificación de outcome en el MISMO comando (zsh no hace word-splitting) |
@@ -323,11 +323,16 @@ lo que hace que te la creas cuando te toca. Lee el índice siempre; el cuerpo, c
    artefacto estaba mal nombrado. **Y el carril rápido que acababa de construir agrava esto**:
    itera con él, pero antes de pushear corre la suite entera — el fallo estaba justo en la
    parte que el carril no cubría.
-   *Evidencia (s29) — SEGUNDA vez, disfrazada de "es solo un token".* Racionalización a desarmar:
-   **"es solo un token/CSS" NO es "verify basta"**. `verify` no incluye `e2e`, y un token mueve la
-   GEOMETRÍA renderizada, que es lo que fija `component-structure` → CI rojo en DOS push seguidos
-   con verify verde en ambos. Corre `npm run preflight` (existe desde `69f0951`, con anti-drift
-   contra `ci.yml`), una vez, sobre el árbol final.
+   *Evidencia (s29+s38) — SEGUNDA y (otra vez) enésima, disfrazada de "es solo un token" / "es solo
+   un cambio de rutas".* Racionalización a desarmar: **"es solo un token/CSS/una ruta/un `.md`" NO es
+   "verify basta"**. `verify` no incluye `e2e` (ni el `e2e smoke`), así que rompe lo que el suite
+   cubre y verify no: un token mueve la GEOMETRÍA que fija `component-structure` (s29, CI rojo en DOS
+   push); cambiar un redirect deja obsoleto un **test EXISTENTE que codificaba el contrato VIEJO**
+   (s38: moví `/theme`→`/tema` y `smoke.spec.ts` seguía esperando `/fundamentos/tema`). Matiz nuevo
+   de s38: **verificar EN VIVO tu comportamiento nuevo NO caza esto**, porque el test que rompe no
+   prueba tu feature, prueba el contrato que acabas de invalidar; solo re-correr el suite (preflight,
+   que incluye `e2e smoke`) lo ve. Corre `npm run preflight` (o `:fast`/`:scope`), una vez, sobre el
+   árbol final. `verify` es para iterar, **nunca** el gate de pre-push.
    *Evidencia (s33) — **tercera vez, y esta no fue correr de MENOS sino en el MOMENTO equivocado**.*
    Corrí la cadena entera, sin subsets… sobre un árbol que aún no era el final: la lancé y **seguí
    escribiendo** (un test nuevo, una línea de `NEXT-SESSION.md`, un sello de hand-off mal
