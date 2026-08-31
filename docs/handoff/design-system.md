@@ -2,11 +2,35 @@
 
 > **Volátil.** Lo reescribe la sesión que trabaja ESTE frente, y **solo este fichero**.
 > No toques los hand-offs de otros frentes. Lo durable vive en `docs/`.
-> **Sello: 2026-08-31 (s38 cont. II) — código en `main` hasta `593e21a`, CI verde, los 4 deploys de
-> Cloudflare en verde. En este tramo: la sección de Componentes pasó a ACORDEÓN + portada con
-> DESCRIPCIÓN por card, y el claro/oscuro es un TOGGLE sol/luna animado con FUNDIDO premium (View
-> Transitions). Antes en el mismo día: arreglo del DEPLOY (build:docs + output dir de Cloudflare) y de
-> un LOCK roto (`@emnapi/runtime`). Ver bloques ✅ abajo. Contenido previo: HEAD `a38b623` (Figma+doc).**
+> **Sello: 2026-08-31 (s38 cont. III): esta actualización del hand-off aporta SOLO una verificación,
+> cero cambios de código. Medido sobre `05f3ace` (origin/main al verificar), CI verde (run
+> `33395393021`, los 5 jobs): el drift de «N pasos» de `docs:coherence` ya estaba resuelto y los audit
+> PRs limpios (ver el primer bloque ✅). Después, otras sesiones avanzaron `main` (traspaso, demo de
+> Patrones do/don't, a11y) sin tocar `ci.yml` ni los docs del drift, así que la conclusión sigue en
+> pie. Tramo anterior de ESTE frente (HEAD `593e21a`): Componentes → ACORDEÓN + portada con descripción
+> por card, TOGGLE de tema sol/luna con fundido premium (View Transitions), y arreglo del DEPLOY y de un
+> LOCK roto (`@emnapi/runtime`). Antes: HEAD `a38b623` (Figma+doc).**
+
+## ✅ s38 (cont. III) · Verificación (sin código): drift de «N pasos» resuelto + audit PRs limpios
+
+Llegó un encargo diciendo que `docs:coherence` fallaba en `main` porque `8266d94` («paraleliza el
+gate», 5 jobs) subió el conteo de pasos con `name:` de `ci.yml` de 8 a 11, y los docs seguían
+diciendo «8 pasos». **Ya estaba resuelto, y de otra forma:** no se movieron los docs a 11, se arregló
+`ci.yml`: `28e97ed` (restaura la paridad `preflight ≡ ci.yml`) + `05f3ace` («el build del DS de los jobs e2e no cuenta
+como paso», le quita el `name:`) → conteo de vuelta a **8**, con lo que los docs (8 pasos = `verify` +
+`build:docs` + 3 builds de app + 3 e2e) siguen correctos. ⚠️ Poner «11» HABRÍA ROTO el gate: Check J
+de `docs-coherence.mjs` cuenta los pasos con `name:` de `ci.yml`, que son 8.
+
+**Medido (HEAD = origin/main = `05f3ace`):** `node scripts/docs-coherence.mjs` → verde; `ci.yml` = 8
+pasos con `name:`; el run de CI `33395393021` cerró con los 5 jobs en verde (incl. `verify`, que
+contiene `docs:coherence`). Ningún `.md` describe el CI como «un solo job en serie».
+
+**Audit PRs verificados limpios (no reintrodujeron el drift):** #29/#30 (hoy) y #21-#27 (semanales
+previos), todos ancestros del `main` verde. #22/#24/#25/#26/#27 → solo `docs/AUDIT-SEMANAL.md` (exento
+de Check J). #21 → además `DOCS-INDEX.md`, pero solo una fila nueva + la nota de fecha; la línea «8
+pasos» (`DOCS-INDEX.md:47`) quedó intacta y hoy es correcta. #30 → 7 ficheros, ninguno con la cifra
+(`CLAUDE.md`/`README.md`/`LEARNINGS.md` intactos). La skill de la auditoría lleva «blindaje anti-CI»
+por diseño (commit de #21): su doc de salida no cita pasos/comandos inexistentes.
 
 ## ✅ s38 (cont. II) · UX de la sección Componentes + toggle de tema
 
