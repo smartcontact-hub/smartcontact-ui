@@ -140,7 +140,7 @@ al cerrarlo.
 > el usuario final, cuál es "la de verdad" y cuáles son réplicas, y de qué
 > herramienta (y de quién) es el original que replican.
 
-### 5.2 · El dominio y la empresa _(en curso)_
+### 5.2 · El dominio y la empresa _(cerrado)_
 > Qué es "smart-contact" / dvtech y tu rol dentro. Y un glosario de una línea por
 > término que un forastero no entendería: **SISMAC**, **Ley SAC**, **AED**,
 > "transcripción vs grabación", el pivote de reglas…
@@ -154,23 +154,25 @@ al cerrarlo.
   2025, con adaptación a lo largo de 2026. Es la que **empuja requisitos de
   producto** (de ahí el foco en transcripción/calidad). _(Identificada buscando;
   confirma que es esta y su alcance exacto para vosotros.)_
-- _Pendiente:_ qué es smart-contact / dvtech y tu rol · **AED** · "transcripción
-  vs grabación" · el pivote de reglas.
+- **AED** — el **nuevo contact center**, la evolución de un **ACD** (Automatic
+  Call Distribution / distribución automática de llamadas).
+- _No se documenta (decisión de Rafa, 2026-08-31):_ qué es smart-contact / dvtech
+  (no se define) · "transcripción vs grabación" · el pivote de reglas.
 
 ### 5.3 · Cómo entran y salen los requisitos _(pendiente)_
 > El circuito real: quién decide qué se hace (PM), por dónde entra el trabajo
 > (Jira / email / recap), quién valida, cómo se prioriza, y en qué cadencia
 > esperan cosas de ti.
 
-### 5.4 · Quién es quién _(en curso)_
+### 5.4 · Quién es quién _(cerrado)_
 > Nombre, rol y para qué acudir a cada uno: producto, backend, diseño, feria.
 > (Sueltos hoy, sin rol confirmado: VAP, Lucas, Alex, Eduardo, Mila, Bea, Edu.)
 
 - **Marta Recio** — **diseño**. Entra a todo con normalidad como parte de su
   trabajo (GitHub Maintain + Figma + Theme Designer, ver §2); su acceso se mantiene
   como está, sin cambios.
-- _Pendiente:_ producto (PM), backend (VAP, Lucas, Alex, Eduardo, Mila), feria
-  (Bea, Edu).
+- _No se documenta (decisión de Rafa, 2026-08-31):_ el resto del equipo (producto,
+  backend, feria). El relevo previsto ya los conoce a todos.
 
 ### 5.5 · Decisiones y criterios no escritos _(pendiente)_
 > Lo decidido "sobre la marcha" que no llegó a un DD, y los criterios que aplicas
