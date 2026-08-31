@@ -8,6 +8,12 @@
       "port": 4200
     },
     {
+      "name": "sc-docs-browser",
+      "runtimeExecutable": "npx",
+      "runtimeArgs": ["--yes", "http-server", "dist/sc-docs/browser", "-p", "4203", "-c-1", "--silent"],
+      "port": 4203
+    },
+    {
       "name": "supervisor-static",
       "runtimeExecutable": "npx",
       "runtimeArgs": ["--yes", "http-server", "dist/supervisor/browser", "-p", "4402", "-c-1", "--silent"],

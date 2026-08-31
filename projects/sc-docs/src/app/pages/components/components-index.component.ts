@@ -17,13 +17,21 @@ import { COMPONENT_CATALOG, groupCatalog } from './component-catalog';
   template: `
     <header class="hero">
       <img
-        class="hero__img"
+        class="hero__img hero__img--light"
         src="/hero/components.jpg"
         width="1600"
         height="1067"
         alt=""
         aria-hidden="true"
         fetchpriority="high"
+      />
+      <img
+        class="hero__img hero__img--dark"
+        src="/hero/components-dark.jpg"
+        width="1600"
+        height="1067"
+        alt=""
+        aria-hidden="true"
       />
       <div class="hero__scrim" aria-hidden="true"></div>
       <div class="hero__content">
@@ -81,6 +89,19 @@ import { COMPONENT_CATALOG, groupCatalog } from './component-catalog';
       width: 100%;
       height: 100%;
       object-fit: cover;
+      /* Cross-fade al cambiar de tema (ver reglas :host-context(.sc-dark) abajo). */
+      transition: opacity 480ms ease;
+    }
+
+    /* Claro: se ve la foto clara; la oscura está apilada debajo, invisible. */
+    .hero__img--dark {
+      opacity: 0;
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      .hero__img {
+        transition: none;
+      }
     }
 
     /* Lavado del lado del texto. Claro: blanco, para que el texto oscuro despegue de la foto.
@@ -95,8 +116,13 @@ import { COMPONENT_CATALOG, groupCatalog } from './component-catalog';
       );
     }
 
-    :host-context(.sc-dark) .hero__img {
-      filter: brightness(0.32) saturate(0.9);
+    /* Oscuro: se cruza a la foto oscura propia (no la clara oscurecida a la fuerza). */
+    :host-context(.sc-dark) .hero__img--light {
+      opacity: 0;
+    }
+
+    :host-context(.sc-dark) .hero__img--dark {
+      opacity: 1;
     }
 
     :host-context(.sc-dark) .hero__scrim {
