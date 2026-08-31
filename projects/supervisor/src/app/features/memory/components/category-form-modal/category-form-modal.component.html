@@ -192,7 +192,7 @@
             </p>
           } @else {
             <p class="category-form__link-status category-form__link-status--muted">
-              <span aria-hidden="true">⏸️</span>
+              <sc-icon [name]="pausedIcon" [size]="14" />
               {{
                 'memory.categories.linking.all_inactive_n_rules'
                   | translate: { count: linkedRules().length }
