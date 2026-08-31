@@ -75,6 +75,28 @@
   lo que NO expone es grade/optical explícitos. Ambos soportan `inherit` pero divergen en el opsz de
   `inherit` (local 14 vs DS 24). *Disparador*: al unificar iconografía (plan F5, 2026-07-18: converger a 14).
 
+### Cerrar formalmente el protocolo de medición del frente Agent (opción B, sin decidir)
+- **Qué**: el protocolo de 9 fases de paridad pixel a pixel de `projects/agent` (ver
+  `findings/STATUS.md` y `docs/handoff/agent.md`) tiene **5 fases cerradas** (fuentes,
+  breakpoints, estados, curvas, comportamientos) y **4 parciales** (censo, causas,
+  aplicación, verificación). Lo que falta de esas 4 solo se puede medir con la app real en
+  una sesión en vivo que arriesga colisionar con soporte telefónico real, así que el frente
+  ya no las persigue como lista de fases: pule puntualmente cuando algo no cuadra. Pendiente
+  de decidir: declarar el protocolo **cerrado tal cual está** (reconociendo que esas 4 fases
+  no se van a completar del todo) en vez de dejarlo con 4 filas "parcial" indefinidamente.
+- **Procedencia**: surgido del estudio de salud del proyecto (sesión s38, 2026-08-31); no es
+  medición nueva, es una relectura de `findings/STATUS.md` (26-ago) contra
+  `docs/handoff/agent.md` (31-ago, más reciente y más avanzado).
+- **Alternativas sobre la mesa (ninguna decidida)**: **(A)** dejarlo como está, pulido
+  continuo sin fecha de cierre; **(B)** cerrar el protocolo formalmente, aceptando que llegó
+  hasta donde podía sin asumir el riesgo; **(C)** ir a por lo que falta asumiendo ese riesgo
+  con las mitigaciones que ya deja escritas `findings/STATUS.md` (usuario de pruebas propio,
+  medir con la sesión de Rafa cerrada, agente en "no disponible" antes de barrer).
+- **Disparador**: decisión de Rafa.
+- **Validación**: si se elige B, actualizar `findings/STATUS.md` (las 4 filas "parcial" pasan
+  a un estado explícito de "cerrado sin completar, riesgo asumido") y la tabla "Dónde está la
+  cosa" de `docs/handoff/agent.md`.
+
 ## Producto · Sistema de reglas — pivote a transcripción (charla con el equipo)
 
 > **✅ EJECUTADO (DD-26 → DD-27, 2026-06-30, en main).** El constructor de condiciones está **construido y
