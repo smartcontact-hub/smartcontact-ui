@@ -30,13 +30,14 @@ interface Node {
 const GEOMETRIC = ['fontSize', 'lineHeight', 'letterSpacing'] as const;
 
 async function load(file: string): Promise<{
-  header: { manifest: RunManifest; width: number };
+  header: { manifest?: RunManifest; width?: number; innerWidth?: number };
   nodes: Map<string, Node>;
 }> {
   const lines = (await readFile(file, 'utf8')).trim().split('\n');
   const header = JSON.parse(lines[0] as string) as {
-    manifest: RunManifest;
-    width: number;
+    manifest?: RunManifest;
+    width?: number;
+    innerWidth?: number;
   };
   const nodes = new Map<string, Node>();
   for (const line of lines.slice(1)) {
@@ -58,13 +59,39 @@ const scale = scaleArg === -1 ? 1 : Number(process.argv[scaleArg + 1]);
 const a = await load(fileA);
 const b = await load(fileB);
 
-const drift = manifestDrift(a.header.manifest, b.header.manifest);
-if (drift.length) {
-  console.error('MANIFIESTOS DISTINTOS — estos artefactos no son comparables:');
-  for (const d of drift) {
-    console.error(`  ${d}`);
+/*
+ * Un lado puede ser un VOLCADO DE CONSOLA (el snippet del censo del original en el
+ * navegador real), que NO lleva `harness` porque no corre en el arnés de Playwright. Ahí
+ * el guard estricto no aplica: las medidas son px CSS, comparables entre navegadores AL
+ * MISMO ANCHO. Se avisa de la limitación y se sigue; el único invariante duro es el ancho,
+ * porque el producto escala con el viewport (un `12px` fijo y un `0.8vw` coinciden a 1456
+ * y divergen en el resto — eso un censo a un solo ancho NO lo distingue).
+ */
+const widthOf = (h: typeof a.header): number | undefined => h.width ?? h.innerWidth;
+const isConsoleDump = (h: typeof a.header): boolean => !h.manifest?.harness;
+if (isConsoleDump(a.header) || isConsoleDump(b.header)) {
+  const wa = widthOf(a.header);
+  const wb = widthOf(b.header);
+  if (wa != null && wb != null && wa !== wb && scale === 1) {
+    console.error(
+      `ANCHOS DISTINTOS (${wa} vs ${wb}) y el producto escala con el viewport: ` +
+        `mide ambos lados al MISMO ancho, o pasa \`--scale ${wa}/${wb}\`.`
+    );
+    process.exit(2);
   }
-  process.exit(2);
+  console.error('⚠ Comparación cross-arnés (un lado es volcado de consola del navegador real).');
+  console.error('  Guard de manifiesto relajado: se comparan px CSS al mismo ancho.');
+  console.error('  OJO: a UN solo ancho no se distingue px/vw/rem que coincidan a ese ancho;');
+  console.error('  para eso hace falta el control de dos anchos (razón medidas == razón anchos).');
+} else {
+  const drift = manifestDrift(a.header.manifest as RunManifest, b.header.manifest as RunManifest);
+  if (drift.length) {
+    console.error('MANIFIESTOS DISTINTOS — estos artefactos no son comparables:');
+    for (const d of drift) {
+      console.error(`  ${d}`);
+    }
+    process.exit(2);
+  }
 }
 
 const px = (v: string): number => Number.parseFloat(v);
@@ -83,8 +110,13 @@ for (const [key, na] of a.nodes) {
     continue;
   }
 
-  // Familia y peso: cualquier diferencia es BLOQUEANTE, sin tolerancia.
-  if (na.fontFamily !== nb.fontFamily || na.fontWeight !== nb.fontWeight) {
+  // Familia y peso: cualquier diferencia es BLOQUEANTE, sin tolerancia. Se compara la
+  // familia PRIMARIA (la primera del stack, la que de verdad pinta): un lado puede declarar
+  // solo `Open Sans` y el otro `Open Sans, Helvetica Neue, Arial` — misma fuente renderizada,
+  // distinta cadena; eso no es un swap de fuente y no debe salir como bloqueante.
+  const primaryFamily = (ff: string): string =>
+    (ff.split(',')[0] ?? '').trim().replace(/^["']|["']$/g, '').toLowerCase();
+  if (primaryFamily(na.fontFamily) !== primaryFamily(nb.fontFamily) || na.fontWeight !== nb.fontWeight) {
     familyMismatch.push({
       key,
       prop: 'fontFamily/Weight',
