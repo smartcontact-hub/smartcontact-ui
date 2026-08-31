@@ -1,4 +1,4 @@
-# Continuidad — qué pasa si Rafa no está, y qué necesita quien tome el relevo
+# Traspaso — qué pasa si Rafa no está, y qué necesita quien tome el relevo
 
 > Este es el ÚNICO documento que inventaría las dependencias de UNA sola
 > persona: los accesos, cuentas y servicios externos que hoy dependen de Rafa,
