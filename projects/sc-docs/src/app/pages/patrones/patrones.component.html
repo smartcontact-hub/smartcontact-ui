@@ -33,24 +33,44 @@
   }
 </ul>
 
-<!-- Dogfood del patrón nº 2: la propia página pinta un sc-skeleton con la forma de una fila
-     de lista (avatar + dos líneas), que es lo que se ve mientras cargan los datos reales. -->
-<section class="demo" aria-label="Ejemplo de estado de carga">
-  <h2 class="demo__title">Estado de carga, en vivo</h2>
+<!-- Do/don't EN VIVO del patrón nº 2, el único principio donde un visual enseña más que el
+     texto: a la izquierda el esqueleto (dogfood real de sc-skeleton), a la derecha el spinner
+     centrado que no reserva estructura. Los demás principios son conceptuales: se quedan en
+     texto a propósito (meterles un mock-up sería el ruido que esta misma barra combate). -->
+<section class="demo" aria-label="Estado de carga: esqueleto frente a spinner">
+  <h2 class="demo__title">Estado de carga: el contraste, en vivo</h2>
   <p class="demo__lead">
-    Esto es <code>sc-skeleton</code> con la silueta de una fila: reserva el hueco exacto del dato
-    que va a llegar, así al cargar no salta nada.
+    A la izquierda, <code>sc-skeleton</code> con la silueta de la fila: reserva el hueco exacto,
+    así al cargar no salta nada. A la derecha, el spinner centrado: no reserva estructura, y el
+    layout salta cuando por fin llegan los datos.
   </p>
-  <div class="demo__stage">
-    @for (row of [0, 1, 2]; track row) {
-      <div class="demo-row">
-        <sc-skeleton shape="circle" width="2.5rem" height="2.5rem" />
-        <div class="demo-row__lines">
-          <sc-skeleton width="40%" height="0.75rem" />
-          <sc-skeleton width="70%" height="0.75rem" />
-        </div>
+  <div class="demo__pair">
+    <div class="demo__col">
+      <p class="demo__label demo__label--do">
+        <sc-icon class="pt__mark pt__mark--do" name="check" [size]="16" aria-hidden="true" />
+        <span>Esqueleto con la forma del contenido</span>
+      </p>
+      <div class="demo__stage">
+        @for (row of [0, 1, 2]; track row) {
+          <div class="demo-row">
+            <sc-skeleton shape="circle" width="2.5rem" height="2.5rem" />
+            <div class="demo-row__lines">
+              <sc-skeleton width="40%" height="0.75rem" />
+              <sc-skeleton width="70%" height="0.75rem" />
+            </div>
+          </div>
+        }
       </div>
-    }
+    </div>
+    <div class="demo__col">
+      <p class="demo__label demo__label--dont">
+        <sc-icon class="pt__mark pt__mark--dont" name="close" [size]="16" aria-hidden="true" />
+        <span>Spinner centrado (no reserva el hueco)</span>
+      </p>
+      <div class="demo__stage demo__stage--spinner">
+        <sc-icon name="progress_activity" [spin]="true" [size]="28" aria-hidden="true" />
+      </div>
+    </div>
   </div>
 </section>
 

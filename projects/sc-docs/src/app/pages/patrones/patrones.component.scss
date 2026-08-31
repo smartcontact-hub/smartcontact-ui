@@ -160,7 +160,34 @@ code {
     color: var(--sc-text-subtle);
   }
 
+  &__pair {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: var(--sc-spacing-1-25);
+  }
+
+  &__col {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sc-spacing-0-75);
+    min-width: 0;
+  }
+
+  &__label {
+    display: flex;
+    align-items: center;
+    gap: var(--sc-spacing-0-5);
+    margin: 0;
+    font-size: var(--sc-font-size-100);
+    font-weight: var(--sc-font-weight-semibold);
+    color: var(--sc-text-secondary);
+  }
+
   &__stage {
+    /* Alto compartido para que las dos columnas del do/don't queden a la par (el skeleton
+       de 3 filas mide ~11.5rem; el stretch del grid no propaga a un hijo flex, así que se
+       iguala por min-height). */
+    min-height: 11.5rem;
     display: flex;
     flex-direction: column;
     gap: var(--sc-spacing-1);
@@ -168,6 +195,19 @@ code {
     border-radius: var(--sc-radius-md);
     background: var(--sc-bg-surface);
     border: 1px solid var(--sc-border-subtle);
+
+    &--spinner {
+      align-items: center;
+      justify-content: center;
+      color: var(--sc-text-subtle);
+    }
+  }
+}
+
+/* Una sola columna cuando no caben las dos (móvil). */
+@media (max-width: 34rem) {
+  .demo__pair {
+    grid-template-columns: 1fr;
   }
 }
 
