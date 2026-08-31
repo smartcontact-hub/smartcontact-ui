@@ -9,11 +9,11 @@ Before making version-sensitive changes, verify the real baseline in:
 - `angular.json`
 
 Current workspace baseline:
-- Angular `21.x`
-- PrimeNG `21.x`
-- `@primeuix/themes` `2.x`
-- `ng-packagr` `21.x`
-- TypeScript `5.9.x`
+- Angular `22.x`
+- PrimeNG `22.x`
+- `@primeuix/themes` `3.x`
+- `ng-packagr` `22.x`
+- TypeScript `6.0.x`
 
 Agents must generate code that is:
 - consistent with existing components

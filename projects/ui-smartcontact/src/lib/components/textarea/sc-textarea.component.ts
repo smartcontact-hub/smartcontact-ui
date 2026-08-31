@@ -21,7 +21,8 @@ export class ScTextareaComponent {
      *
      * Esto NO es un `ControlValueAccessor`: el componente no lo implementa, así
      * que la regla 6 de `migration-safety.md` (el `untracked()` sin efectos) no
-     * aplica aquí. Los campos que SÍ llevan CVA son los cinco del field-pattern.
+     * aplica aquí. Los seis componentes del field-pattern tampoco lo llevan ya
+     * (retirado por DD-44, 2026-08-30) — nadie en el DS implementa CVA hoy.
      */
     readonly value = model('');
 

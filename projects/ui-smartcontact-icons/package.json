@@ -20,8 +20,8 @@
     "directory": "projects/ui-smartcontact-icons"
   },
   "peerDependencies": {
-    "@angular/common": "^21.0.0",
-    "@angular/core": "^21.0.0"
+    "@angular/common": "^22.0.0",
+    "@angular/core": "^22.0.0"
   },
   "dependencies": {
     "@fontsource-variable/material-symbols-rounded": "^5.2.45",
