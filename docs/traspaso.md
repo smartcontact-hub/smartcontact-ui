@@ -31,8 +31,9 @@
 - **Solo lo de nivel ADMIN.** Marta (rol **Maintain**, ver §2) ya puede mergear a
   `main` y gestionar el día a día del repo, así que el proyecto **ya no se
   congela**. Pero Maintain no llega a ajustes, secretos, colaboradores ni
-  visibilidad: eso sigue solo en Rafa. Sin un segundo **admin**, una emergencia de
-  ese nivel espera a Rafa.
+  visibilidad: eso sigue solo en Rafa. **No habrá un segundo admin: decisión
+  consciente de Rafa (2026-08-31).** Una emergencia de nivel admin (rotar accesos,
+  cambiar ajustes) espera a Rafa, y ese riesgo se asume a sabiendas.
 - **El loop de diseño SÍ está cubierto:** Marta tiene el fichero de Figma y el
   plugin Theme Designer, así que puede cambiar tokens desde diseño sin Rafa.
 - **El resto de llaves no se comparte a propósito** (privacidad, decisión de Rafa
