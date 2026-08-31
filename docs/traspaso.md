@@ -62,6 +62,15 @@ credenciales aquí**, solo dónde viven.
 > config de Cloudflare, anótalo aquí como tarea: hoy ambos existen en un solo
 > sitio, bajo una sola cuenta.
 
+**Visibilidad del repo: PÚBLICO, a propósito** (decidido por Rafa, 2026-08-31).
+Es el producto de la propia empresa, sin datos de clientes externos ni interno
+sensible; y en público el CI de GitHub Actions es gratis e ilimitado (en privado
+se pagarían minutos). Lo único que sería peligroso en un repo público es un
+**secreto committeado**, y un escaneo del 2026-08-31 salió limpio (0 claves
+privadas, 0 PATs, 0 credenciales literales; `.auth/` en `.gitignore`). Al ser
+público, no metas NUNCA un token/clave en un commit: viven en variables de
+entorno o en el gestor de contraseñas.
+
 ---
 
 ## 3. Puesta en marcha de una máquina nueva (checklist para un sucesor)
