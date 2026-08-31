@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, computed, inject } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { filter, map, startWith } from 'rxjs/operators';
@@ -9,7 +9,7 @@ import {
   ScPaletteCommand,
 } from '@smartcontact-hub/components';
 
-import { COMPONENT_CATALOG, groupCatalog } from './pages/components/component-catalog';
+import { COMPONENT_CATALOG, groupCatalog, type ComponentCategory } from './pages/components/component-catalog';
 
 /**
  * Shell de sc-docs: UNA sidebar (secciones + lista de componentes cuando estás en
@@ -48,8 +48,29 @@ export class AppComponent {
     { initialValue: this.router.url },
   );
 
-  /** ¿La ruta activa está dentro de Componentes? Expande la lista en la sidebar. */
+  /** ¿La ruta activa está dentro de Componentes? Muestra la lista en la sidebar. */
   protected readonly onComponents = computed(() => this.url().startsWith('/components'));
+
+  /**
+   * Acordeón de la sidebar: UNA familia abierta a la vez (single-open). Antes se
+   * desplegaban las 7 familias con sus 49 componentes de golpe y «Uso real / Reglas /
+   * Lab» quedaban enterrados debajo, ilocalizables. Ahora la lista es corta: cabeceras
+   * de familia + los ítems de la que está abierta. Sigue a la ruta activa (abrir un
+   * componente abre SU familia y colapsa las demás) y el usuario puede plegar/desplegar
+   * cualquiera. En la portada de Componentes (sin componente activo) todas colapsadas.
+   */
+  protected readonly openGroup = signal<ComponentCategory | null>(this.categoryForUrl(this.router.url));
+
+  /** Familia del componente en esa URL, o null si no es la página de un componente. */
+  private categoryForUrl(url: string): ComponentCategory | null {
+    const m = /^\/components\/([^/?#]+)/.exec(url);
+    if (!m) return null;
+    return COMPONENT_CATALOG.find((c) => c.path === m[1])?.category ?? null;
+  }
+
+  protected toggleGroup(cat: ComponentCategory): void {
+    this.openGroup.update((cur) => (cur === cat ? null : cat));
+  }
 
   constructor() {
     const sections: ScPaletteCommand[] = [
@@ -73,7 +94,12 @@ export class AppComponent {
     // por la URL / un enlace dejaba el overlay abierto sobre la pantalla nueva. Sin
     // `takeUntilDestroyed`: `app.component` es la raíz, no se destruye nunca.
     this.router.events.subscribe((e) => {
-      if (e instanceof NavigationEnd) this.palette.close();
+      if (e instanceof NavigationEnd) {
+        this.palette.close();
+        // El acordeón sigue a la ruta: abre la familia del componente al que llegas
+        // (por ⌘K, enlace o URL) y colapsa el resto; en la portada, todas colapsadas.
+        this.openGroup.set(this.categoryForUrl(this.router.url));
+      }
     });
   }
 
