@@ -2,9 +2,39 @@
 
 > **Volátil.** Lo reescribe la sesión que trabaja ESTE frente, y **solo este fichero**.
 > No toques los hand-offs de otros frentes. Lo durable vive en `docs/`.
-> **Sello: 2026-08-31 (s38) — HEAD `a38b623`. Solo Figma + doc (sin código); CI no corrió, nada
-> que romper. Ver bloque ✅ s37 (el ítem pendiente de Figma se cerró en s38, nota dentro del bloque).
-> Contenido previo: HEAD `ce92b18` (s37, restyle sc-docs + lienzo blanco + breadcrumb).**
+> **Sello: 2026-08-31 (s38 cont.) — código en `main` hasta `6a04dcc`, CI verde. Arreglado el DEPLOY
+> de sc-docs (llevaba SEMANAS en `Failure` en Cloudflare) y «Tema PrimeNG» democido de pestaña de
+> Fundamentos a verificación en Lab. Ver bloque ✅ DEPLOY, justo abajo. Contenido previo: HEAD
+> `a38b623` (s38, Figma + doc).**
+
+## ✅ s38 (cont.) · Deploy de sc-docs arreglado + «Tema PrimeNG» movido a Lab
+
+**El deploy de sc-docs llevaba SEMANAS fallando en Cloudflare (todos los commits en `Failure`).**
+Dos capas en serie:
+
+1. **Build (`0f88492`).** `build:docs` arrancaba con `build:icons` en vez de `npm run build`, así
+   que NO construía `dist/ui-smartcontact` (los componentes). En local colaba porque `dist/` ya
+   estaba poblado de builds anteriores; en el checkout LIMPIO de Cloudflare, `ng build sc-docs` no
+   resolvía `@smartcontact-hub/components` y el build moría (reproducido en frío: `rm -rf dist &&
+   npm run build:docs` → «Could not resolve», exit 1). Alineado con `build:supervisor`/`:agent`/
+   `:cuscare`, que sí arrancan con `npm run build` (por eso ELLAS desplegaban bien).
+2. **Directorio de salida (dashboard, lo cambió Rafa).** Con el build ya en verde (`da576e6` pasó
+   a `Active`), Cloudflare publicaba `dist/sc-docs` en vez de `dist/sc-docs/browser` → raíz 404,
+   app escondida bajo `/browser/`. Cambiado el «Build output directory» del proyecto sc-doc a
+   `dist/sc-docs/browser`. Verificado vivo: `sc-doc.pages.dev/` → 200 con `main-THA4YP7N.js`.
+
+**⚠️ Terreno durable (config INVISIBLE al grep: vive en el dashboard de Cloudflare, no en el repo).**
+Cada app en Pages tiene **Build output directory = `dist/<app>/browser`** y build command que arranca
+con `npm run build`. sc-docs estuvo roto en AMBOS ejes hasta aquí. sc-docs usa **hash routing**
+(`withHashLocation`), así que NO necesita `_redirects` de SPA. Cero referencias a `/browser/` en
+docs/README. Cuenta account `b8361bb4…`, proyecto `sc-doc`.
+
+**«Tema PrimeNG» → Lab (`da576e6` + `6a04dcc`).** Era un smoke test del preset y ya no justificaba
+pestaña de primer nivel (cada componente `sc-*` ya demuestra el tema). Fundamentos baja a 2 pestañas;
+la página vive en `/tema` (redirects desde `/fundamentos/tema` y `/theme` legacy), enlazada y
+explicada en llano desde **Lab → «Verificación del tema»**. `smoke.spec.ts` codificaba el redirect
+viejo `/theme`→`/fundamentos/tema` → actualizado en `6a04dcc` (por eso `da576e6` enrojeció el CI un
+rato; lección afilada en LEARNINGS #7: `verify` no corre `e2e smoke`, usa `preflight`).
 
 ## ✅ s37 · Restyle de sc-docs (Constellation), lienzo blanco (DD-45) y breadcrumb con "aquí estás"
 
