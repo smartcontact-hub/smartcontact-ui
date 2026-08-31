@@ -285,8 +285,9 @@ table.table {
 
     h3 {
       margin: 0;
-      font-size: var(--sc-font-size-200);
-      font-weight: var(--sc-font-weight-medium);
+      font-size: var(--sc-font-size-subtitle-2);
+      line-height: var(--sc-line-height-subtitle-2);
+      font-weight: var(--sc-font-weight-subtitle-2);
       color: var(--sc-text-primary);
     }
   }
@@ -378,8 +379,9 @@ table.table {
 
     h3 {
       margin: 0;
-      font-size: var(--sc-font-size-200);
-      font-weight: var(--sc-font-weight-medium);
+      font-size: var(--sc-font-size-subtitle-2);
+      line-height: var(--sc-line-height-subtitle-2);
+      font-weight: var(--sc-font-weight-subtitle-2);
       color: var(--sc-text-primary);
     }
   }
@@ -637,8 +639,9 @@ table.table {
 
     h3 {
       margin: 0 0 4px 0;
-      font-size: var(--sc-font-size-200);
-      font-weight: var(--sc-font-weight-semibold);
+      font-size: var(--sc-font-size-subtitle-2);
+      line-height: var(--sc-line-height-subtitle-2);
+      font-weight: var(--sc-font-weight-subtitle-2);
       color: var(--sc-text-primary);
     }
   }
