@@ -23,7 +23,12 @@
 
 .sb-canvas__themes {
   display: inline-flex;
-  gap: var(--sc-spacing-0-25);
+  align-items: center;
+  gap: var(--sc-spacing-0-5);
+}
+
+.sb-seg--compare svg {
+  flex: none;
 }
 
 .sb-seg {

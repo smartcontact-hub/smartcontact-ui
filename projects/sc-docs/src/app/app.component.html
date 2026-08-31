@@ -70,10 +70,11 @@
       <a routerLink="/reglas" routerLinkActive="is-active">Reglas</a>
     </nav>
 
-    <!-- Cluster de herramientas: NO son documentación, por eso van separadas de la nav. -->
+    <!-- Cluster de herramientas: NO son documentación, por eso van separadas de la nav.
+         Lab a la izquierda, el interruptor de tema (icono, no texto) a la derecha. -->
     <div class="demo-sidebar__tools">
       <a class="demo-sidebar__tool" routerLink="/lab" routerLinkActive="is-active">Lab</a>
-      <button type="button" class="demo-sidebar__tool" (click)="toggleDark()">Claro / oscuro</button>
+      <app-theme-toggle [dark]="isDark()" (toggled)="toggleDark()" />
     </div>
   </aside>
 

@@ -10,6 +10,7 @@ import {
 } from '@smartcontact-hub/components';
 
 import { COMPONENT_CATALOG, groupCatalog, type ComponentCategory } from './pages/components/component-catalog';
+import { ThemeToggleComponent } from './shared/theme-toggle.component';
 
 /**
  * Shell de sc-docs: UNA sidebar (secciones + lista de componentes cuando estás en
@@ -26,7 +27,7 @@ import { COMPONENT_CATALOG, groupCatalog, type ComponentCategory } from './pages
  */
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, ScCommandPaletteComponent],
+  imports: [RouterOutlet, RouterLink, RouterLinkActive, ScCommandPaletteComponent, ThemeToggleComponent],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -103,8 +104,22 @@ export class AppComponent {
     });
   }
 
+  /** Tema global de la doc: refleja el estado para que el toggle pinte sol/luna. */
+  protected readonly isDark = signal(false);
+
   protected toggleDark(): void {
-    document.documentElement.classList.toggle('sc-dark');
+    const apply = (): void => {
+      this.isDark.set(document.documentElement.classList.toggle('sc-dark'));
+    };
+    // Crossfade premium de TODA la página con la View Transitions API (ver styles.scss).
+    // Fallback instantáneo si el navegador no la soporta o el usuario pide menos movimiento.
+    const doc = document as Document & { startViewTransition?: (cb: () => void) => unknown };
+    const reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    if (typeof doc.startViewTransition === 'function' && !reduce) {
+      doc.startViewTransition(apply);
+    } else {
+      apply();
+    }
   }
 
   private go(url: string): void {
