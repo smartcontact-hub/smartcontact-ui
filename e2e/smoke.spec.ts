@@ -65,7 +65,10 @@ test('las rutas planas de antes de agrupar siguen llevando a su sitio', async ({
   const compat: ReadonlyArray<readonly [string, string]> = [
     ['/#/foundations', '#/fundamentos/escala-color'],
     ['/#/foundations-type', '#/fundamentos/tipografia'],
-    ['/#/theme', '#/fundamentos/tema'],
+    // `tema` salió de Fundamentos (pasó a verificación en Lab): el `/theme` legacy y el
+    // `/fundamentos/tema` de cuando era pestaña aterrizan ahora en la ruta propia `/tema`.
+    ['/#/theme', '#/tema'],
+    ['/#/fundamentos/tema', '#/tema'],
   ];
   for (const [viejo, destino] of compat) {
     await page.goto(viejo);
