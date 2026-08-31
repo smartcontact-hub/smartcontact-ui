@@ -189,6 +189,9 @@
             ],
             "tsConfig": "projects/supervisor/tsconfig.app.json",
             "inlineStyleLanguage": "scss",
+            "allowedCommonJsDependencies": [
+              "exceljs"
+            ],
             "assets": [
               {
                 "glob": "**/*",
