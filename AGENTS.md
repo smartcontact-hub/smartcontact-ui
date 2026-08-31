@@ -133,6 +133,37 @@ Examples:
 
 ---
 
+## UX de pantalla (al construir pantallas de app)
+
+Aplica al construir **pantallas** de las apps que consumen el DS (supervisor/agent/cuscare),
+no a la librería. Dos de estas reglas ya son infraestructura del sistema (aquí solo se recuerda
+"úsalo"); las demás no viven en ningún componente. Versión navegable, con ejemplo vivo:
+**Fundamentos → Patrones** en `sc-docs` (`projects/sc-docs/src/app/pages/patrones/`).
+
+1. **Color funcional.** Todo color sale de un token `--sc-*` (§Token Strategy) y significa
+   estado, jerarquía o feedback. Cero hex a mano, cero color decorativo. Nunca uses un
+   `--sc-color-*` de paleta como `background`/`color` de página: no voltea en oscuro y queda
+   ilegible (↔ `LEARNINGS.md` #2).
+2. **Estados de carga.** Cuando una pantalla espera datos, pinta `sc-skeleton` con la FORMA del
+   contenido (filas, tarjetas) y reserva su hueco. Nunca un spinner centrado ni inyectar datos
+   que recolocan la página (layout shift). El componente ya existe (demo en `/components/skeleton`).
+3. **Copy sin relleno.** Un título que se explica solo NO lleva un subtítulo explicándolo. Un
+   lead o descripción solo donde aporta algo no obvio (un catálogo, una regla no evidente). Si al
+   quitar el texto no se pierde nada, quítalo.
+4. **Iconografía consistente.** Una sola librería, siempre vía `<sc-icon>` (Material Symbols).
+   Nunca emojis en la interfaz ni un segundo juego de iconos.
+5. **Densidad y jerarquía.** Layout compacto. Acciones secundarias en un kebab/overflow, métricas
+   alineadas, chips a icono cuando el color ya comunica el estado. No repitas en cada vista los
+   KPIs que ya están en el dashboard, y fuera las tarjetas sin dato ni acción.
+6. **Accesibilidad (barra mínima, no opcional).** Contraste ≥ 4.5:1 en texto y ≥ 3:1 en texto
+   grande e iconos (↔ `LEARNINGS.md` #2). Todo control alcanzable por teclado, con foco visible y
+   etiqueta (`aria-label`/`<label>`). No comuniques un estado solo con color.
+7. **Estabilidad visual.** Anima solo `transform`/`opacity` (nunca `top`/`left`/`width`/`height`).
+   Imágenes con `width`+`height` o `aspect-ratio`. Banners y toasts en un hueco reservado, no
+   insertados encima del contenido al cargar.
+
+---
+
 ## Mandatory Workflow
 
 Agents MUST follow this order:

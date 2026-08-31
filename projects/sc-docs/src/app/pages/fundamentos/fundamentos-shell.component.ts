@@ -34,5 +34,6 @@ export class FundamentosShellComponent {
   protected readonly tabs: readonly FundamentosTab[] = [
     { path: 'escala-color', label: 'Escala y color' },
     { path: 'tipografia', label: 'Tipografía' },
+    { path: 'patrones', label: 'Patrones' },
   ];
 }

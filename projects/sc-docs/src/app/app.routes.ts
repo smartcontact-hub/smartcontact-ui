@@ -22,6 +22,11 @@ export const routes: Routes = [
             (m) => m.FoundationsTypeComponent,
           ),
       },
+      {
+        path: 'patrones',
+        loadComponent: () =>
+          import('./pages/patrones/patrones.component').then((m) => m.PatronesComponent),
+      },
       { path: '', pathMatch: 'full', redirectTo: 'escala-color' },
     ],
   },
