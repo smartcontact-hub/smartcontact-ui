@@ -25,10 +25,14 @@ de la doc. Qué entró (`280bae1` + `2c558d9`):
 tramo en `--sc-text-primary` + `--sc-font-weight-medium`; **gate** en `e2e/component-structure`
 congela su `outerHTML`, no puede regresar en silencio. Aplicado al maestro de Figma (`185:6637`).
 
-**⏳ ESPERANDO SESIÓN NUEVA (bridge muerto):** dejar UN ejemplo con el tramo activo en la página
-`❖ Breadcrumb` de Figma. El bridge de esta sesión quedó en el puerto de reserva (9224) y el plugin
-no engancha; maté el server viejo de 9223, así que una **sesión nueva** cogerá 9223 y conecta a la
-primera. Es 1 minuto de cosmética; el maestro ya lleva B.
+**✅ Hecho (sesión nueva, bridge enganchó a la primera en 9223):** ejemplo del tramo actual en
+Figma, fichero "Smart-Contact Design System" (`khNq9dJKNi13pNllrqm6dx`), página `❖ Breadcrumb`
+(`6738:52933`), frame **"Breadcrumb, tramo actual"** (node `14558:514`, en x:650 y:977), con una
+instancia del maestro (`14558:516`) y etiqueta mínima "Tramo actual" (`14558:515`). El maestro
+`185:6637` no se tocó, ya llevaba B (color + peso) heredado por la instancia. De paso se borró
+el mockup viejo de sesión 20 en esa misma página (`13890:157`, "Current state (propuesta)": texto
+suelto sin instancia real, no aplicaba el peso Medio) — a petición de Rafa, sustituido por el
+ejemplo de arriba.
 >
 > Sello histórico (2026-08-25): HEAD `f78977c`, **CI verde, los 8 pasos**. Cierra con `aura/custom` dentro del gate de completitud del Kit. Antes, `b5b07a5`. Los dos últimos commits son los que el verde LOCAL no cazó y conviene leer: `b5b07a5` (el puntero de Playwright sale de la barra lateral) y `25cedef` (el lockfile vuelve a estar en sync — `npm ci` es el paso 1 del CI y `preflight` NO lo corre). Antes: `1fb7d5f` (el audit de acoplamiento a PrimeNG pasa a mirar tres caras) sobre HEAD `9e3f0bd` (Angular 22 + PrimeNG 22 + los builders a `@angular/build`). Antes, en esta misma sesión y ya en `main`: `3b65f07` (duplicación del supervisor), `bee2acc` (retirada de `sc-page-header` + deriva de docs), `0ef136c` (**trinquete DD-38 a CERO**), `1698f47` (red de contraste de severidades), `edfb2ec` (código muerto), `4417bb8` (`text.muted.color` a enforce + el warn unificado) y `2b694b4` (rescate de s33). Contenido previo: HEAD `97f34e1`.**
 
