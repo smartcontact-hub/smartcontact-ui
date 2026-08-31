@@ -1,22 +1,22 @@
 # Gate de CI — los guardarraíles del DS en verde o el cambio no entra.
-# Corre EL MISMO `npm run verify` que el gate local y el workflow tokens-sync
-# (tokens gen+parity+guard+type-parity, escala, unit, docs-guard/coherence, build,
-# typecheck, lint), más los builds de las 4 apps y las 3 suites e2e.
+# Corre EL MISMO conjunto de comandos que el script `preflight` (package.json) y que
+# el gate local: verify (tokens gen+parity+guard+type-parity, escala, unit, docs, build,
+# typecheck, lint), los builds de las 4 apps, y las 3 suites e2e. La paridad
+# preflight ≡ ci.yml la EXIGE un test unitario (`ci-preflight-parity`): si divergen,
+# "preflight verde en local" deja de significar "el CI pasará".
 #
-# ESTRUCTURA: jobs EN PARALELO (antes era un solo job en serie de ~14 min). Cada
-# job arranca en su propio runner (checkout + node + npm ci), así que el reloj
-# total es el del job MÁS LENTO, no la suma. En repo público los runners son
-# gratis e ilimitados. Misma cobertura y mismas puertas que antes: no se salta
-# nada, solo corre a la vez.
+# ESTRUCTURA: jobs EN PARALELO (antes un solo job en serie de ~14 min). Cada job
+# arranca en su propio runner; el reloj total es el del job MÁS LENTO, no la suma.
+# En repo público los runners son gratis. El conjunto de comandos (unión de todos
+# los jobs) es el MISMO que el de preflight: no se salta nada, solo corre a la vez.
 #
-# Coste del paralelismo: el DS (`npm run build`) se reconstruye en cada job que lo
-# necesita (builds y e2e consumen el DS desde `dist/`) en vez de una sola vez. Es
-# tiempo de runner gratis. Si algún día molesta, la vía es construir el DS una vez
-# y compartirlo con `actions/upload-artifact` + `download-artifact`.
+# Los jobs de e2e reconstruyen el DS con `npm run build` porque cada runner arranca
+# con `dist/` vacío y las apps consumen el DS desde `dist/`. En preflight ese build
+# lo hace `verify` (su primer paso), así que el gate de paridad lo trata como setup,
+# no como un paso propio (ver SETUP en ci-preflight-parity.mjs).
 #
-# El auto-merge de la auditoría (`audit-automerge.yml`) depende del WORKFLOW `ci`
-# en conjunto (`workflow_run` + conclusion success), no de un job concreto: sigue
-# funcionando mientras todos los jobs pasen y el workflow se llame `ci`.
+# El auto-merge de la auditoría (`audit-automerge.yml`) depende del WORKFLOW `ci` en
+# conjunto (workflow_run + conclusion success), no de un job concreto → sigue bien.
 name: ci
 
 # El default de la ORG pasó a `read and write` el 2026-08-13 para que el auto-merge de la
@@ -52,13 +52,6 @@ jobs:
   build:
     runs-on: ubuntu-latest
     if: github.event_name != 'pull_request' || github.head_ref != 'design-tokens-sync'
-    name: build (${{ matrix.app }})
-    strategy:
-      # Un build que falla no cancela a los otros tres — así se ve de un vistazo
-      # cuáles apps rompen, no solo la primera.
-      fail-fast: false
-      matrix:
-        app: [docs, supervisor, agent, cuscare]
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
@@ -66,10 +59,16 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - name: Build ${{ matrix.app }} (producción, consume el DS local)
-        # build:<app> arranca con `npm run build` (construye el DS a dist/) y luego
-        # `ng build <app> --configuration production`.
-        run: npm run build:${{ matrix.app }}
+      # build:docs construye el DS (npm run build) + sc-docs; luego las 3 apps
+      # consumen el DS de dist/. Mismas cadenas que preflight, para la paridad.
+      - name: Build docs (construye el DS + sc-docs)
+        run: npm run build:docs
+      - name: Build supervisor (la app real, consume el DS local)
+        run: npx ng build supervisor --configuration production
+      - name: Build agent (consume el DS local)
+        run: npx ng build agent --configuration production
+      - name: Build cuscare (consume el DS local)
+        run: npx ng build cuscare --configuration production
 
   e2e-smoke:
     runs-on: ubuntu-latest
