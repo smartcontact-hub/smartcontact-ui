@@ -22,10 +22,6 @@ export const routes: Routes = [
             (m) => m.FoundationsTypeComponent,
           ),
       },
-      {
-        path: 'tema',
-        loadComponent: () => import('./pages/theme/theme.component').then((m) => m.ThemeComponent),
-      },
       { path: '', pathMatch: 'full', redirectTo: 'escala-color' },
     ],
   },
@@ -53,11 +49,19 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/lab/lab.component').then((m) => m.LabComponent),
   },
 
+  {
+    // Smoke test del preset (primitivos PrimeNG estilados solo por tokens). Fue pestaña de
+    // Fundamentos; ahora es verificación, enlazada desde Lab. Sigue accesible por URL.
+    path: 'tema',
+    loadComponent: () => import('./pages/theme/theme.component').then((m) => m.ThemeComponent),
+  },
+
   // Compatibilidad: las rutas planas de antes de agrupar Fundamentos. Se quedan para que
   // no muera ningún enlace ya repartido (docs, marcadores, previews por rama).
   { path: 'foundations', pathMatch: 'full', redirectTo: 'fundamentos/escala-color' },
   { path: 'foundations-type', pathMatch: 'full', redirectTo: 'fundamentos/tipografia' },
-  { path: 'theme', pathMatch: 'full', redirectTo: 'fundamentos/tema' },
+  { path: 'theme', pathMatch: 'full', redirectTo: 'tema' },
+  { path: 'fundamentos/tema', pathMatch: 'full', redirectTo: 'tema' },
 
   // Componentes es el protagonista de la doc: es la portada.
   { path: '', pathMatch: 'full', redirectTo: 'components' },

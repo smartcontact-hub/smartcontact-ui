@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
+import { RouterLink } from '@angular/router';
 
 /** Un enlace del directorio. `href: null` = lo tenemos pendiente de pegar
  *  (p. ej. el Kit de Figma, cuya URL no vive en el repo). */
@@ -27,6 +28,7 @@ interface DemoLinkGroup {
  */
 @Component({
   selector: 'app-lab',
+  imports: [RouterLink],
   templateUrl: './lab.component.html',
   styleUrl: './lab.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

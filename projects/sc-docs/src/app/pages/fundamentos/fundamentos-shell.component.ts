@@ -10,10 +10,11 @@ interface FundamentosTab {
 /**
  * Shell de la sección «Fundamentos»: fila de pestañas + `<router-outlet>`.
  *
- * Existe para dar JERARQUÍA al top-nav. Escala/color, tipografía y el smoke del tema son
- * la misma cosa —la materia prima del sistema— y gastaban tres huecos de primer nivel de
- * siete; agrupadas, la barra baja a cuatro destinos. Las páginas hijas no cambian: solo
- * se re-parentan bajo `/fundamentos/*`, con redirects desde las rutas viejas.
+ * Existe para dar JERARQUÍA al top-nav. Escala/color y tipografía son la materia prima
+ * del sistema; agrupadas bajo Fundamentos, la barra de primer nivel queda más corta. El
+ * smoke del preset («Tema PrimeNG») fue la tercera pestaña, pero ahora que cada componente
+ * `sc-*` ya demuestra el tema no gana un hueco de sección: se movió a Lab (verificación),
+ * accesible en `/tema` con redirect desde `/fundamentos/tema`.
  */
 @Component({
   selector: 'app-fundamentos-shell',
@@ -33,6 +34,5 @@ export class FundamentosShellComponent {
   protected readonly tabs: readonly FundamentosTab[] = [
     { path: 'escala-color', label: 'Escala y color' },
     { path: 'tipografia', label: 'Tipografía' },
-    { path: 'tema', label: 'Tema PrimeNG' },
   ];
 }
