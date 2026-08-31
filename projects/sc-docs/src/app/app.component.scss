@@ -40,24 +40,21 @@
   }
 
   &__mark {
-    position: relative;
     flex: none;
-    width: 28px;
-    height: 28px;
-    border-radius: var(--sc-radius-200);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
     background: var(--sc-bg-primary);
+    color: var(--sc-color-slate-0);
     box-shadow: var(--sc-shadow-sm);
+  }
 
-    &::after {
-      content: '';
-      position: absolute;
-      inset: 0;
-      margin: auto;
-      width: 11px;
-      height: 11px;
-      border-radius: 50%;
-      background: var(--sc-color-sky-500);
-    }
+  &__logo {
+    width: 17px;
+    height: auto;
   }
 
   &__brand-text {
