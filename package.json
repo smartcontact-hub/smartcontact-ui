@@ -2,6 +2,9 @@
   "name": "smartcontact-ui",
   "version": "0.2.0",
   "private": true,
+  "engines": {
+    "node": "^22.22.3 || ^24.15.0 || >=26.0.0"
+  },
   "scripts": {
     "audit:api-era": "node scripts/audit-api-era.mjs",
     "audit:border-surfaces": "node scripts/check-border-surfaces.mjs",
