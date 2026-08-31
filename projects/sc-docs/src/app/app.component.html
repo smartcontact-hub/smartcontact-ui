@@ -32,14 +32,35 @@
       @if (onComponents()) {
         <div class="demo-sidebar__sub">
           @for (group of groups; track group.category) {
-            <p class="demo-sidebar__group">{{ group.category }}</p>
-            @for (e of group.items; track e.path) {
-              <a
-                class="demo-sidebar__sublink"
-                [routerLink]="['/components', e.path]"
-                routerLinkActive="is-active"
-                >{{ e.label }}</a
-              >
+            <button
+              type="button"
+              class="demo-sidebar__group"
+              [class.is-open]="openGroup() === group.category"
+              [attr.aria-expanded]="openGroup() === group.category"
+              (click)="toggleGroup(group.category)"
+            >
+              <svg class="demo-sidebar__chevron" viewBox="0 0 16 16" width="12" height="12" aria-hidden="true">
+                <path
+                  d="M6 4l4 4-4 4"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="1.6"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                />
+              </svg>
+              <span class="demo-sidebar__group-name">{{ group.category }}</span>
+              <span class="demo-sidebar__group-count">{{ group.items.length }}</span>
+            </button>
+            @if (openGroup() === group.category) {
+              @for (e of group.items; track e.path) {
+                <a
+                  class="demo-sidebar__sublink"
+                  [routerLink]="['/components', e.path]"
+                  routerLinkActive="is-active"
+                  >{{ e.label }}</a
+                >
+              }
             }
           }
         </div>

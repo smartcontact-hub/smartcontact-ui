@@ -193,33 +193,79 @@
     line-height: 1.5rem;
   }
 
-  /* Lista de componentes anidada bajo "Componentes" cuando la sección está activa. */
+  /* Lista de componentes anidada bajo "Componentes" cuando la sección está activa:
+     acordeón single-open (cabeceras de familia + los ítems de la abierta). */
   &__sub {
     display: flex;
     flex-direction: column;
     gap: 1px;
     margin: var(--sc-spacing-0-25) 0 var(--sc-spacing-0-5);
-    padding-left: var(--sc-spacing-0-75);
-    border-left: 1px solid var(--sc-border-default);
   }
 
+  /* Cabecera de familia: botón que pliega/despliega su grupo. */
   &__group {
-    margin: var(--sc-spacing-0-625) 0 var(--sc-spacing-0-125);
-    padding-left: var(--sc-spacing-0-625);
+    display: flex;
+    align-items: center;
+    gap: var(--sc-spacing-0-375);
+    width: 100%;
+    margin: 1px 0;
+    padding: var(--sc-spacing-0-375) var(--sc-spacing-0-5);
+    border: 0;
+    border-radius: var(--sc-radius-200);
+    background: transparent;
+    color: var(--sc-text-secondary);
+    font: inherit;
     font-size: var(--sc-font-size-25, 0.6875rem);
     font-weight: var(--sc-font-weight-bold);
     letter-spacing: 0.06em;
     text-transform: uppercase;
-    color: var(--sc-text-secondary);
+    text-align: left;
+    cursor: pointer;
+    transition:
+      background-color 120ms ease-out,
+      color 120ms ease-out;
 
-    &:first-child {
-      margin-top: 0;
+    &:hover {
+      background: var(--sc-bg-subtle);
+      color: var(--sc-text-primary);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--sc-color-sky-500);
+      outline-offset: 1px;
+    }
+
+    &.is-open {
+      color: var(--sc-text-primary);
+    }
+
+    &.is-open .demo-sidebar__chevron {
+      transform: rotate(90deg);
     }
   }
 
+  &__chevron {
+    flex: none;
+    color: var(--sc-text-secondary);
+    transition: transform 120ms ease-out;
+  }
+
+  &__group-name {
+    flex: 1;
+  }
+
+  &__group-count {
+    flex: none;
+    letter-spacing: 0;
+    font-weight: var(--sc-font-weight-semibold);
+    color: var(--sc-text-secondary);
+  }
+
   &__sublink {
+    margin-left: var(--sc-spacing-1-25);
     padding: var(--sc-spacing-0-25) var(--sc-spacing-0-625);
-    border-radius: var(--sc-radius-200);
+    border-left: 1px solid var(--sc-border-default);
+    border-radius: 0 var(--sc-radius-200) var(--sc-radius-200) 0;
     color: var(--sc-text-secondary);
     font-size: var(--sc-font-size-100);
     text-decoration: none;
