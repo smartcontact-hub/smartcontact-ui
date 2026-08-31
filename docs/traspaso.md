@@ -51,7 +51,7 @@ credenciales aquí**, solo dónde viven.
 
 | Servicio | Para qué | Config en el repo | Dueño | ¿Quién más tiene acceso? | Dónde vive la credencial | Recuperación (email/2FA) |
 | --- | --- | --- | --- | --- | --- | --- |
-| **GitHub org `smartcontact-hub`** | Repo, CI (Actions), paquetes | `.github/workflows/` | Rafa | Marta Recio (`martarecioa`), acceso al repo EN PROCESO (2026-08-31) | Privadas: gestor personal de Rafa, no en el repo | _(rellenar)_ |
+| **GitHub org `smartcontact-hub`** | Repo, CI (Actions), paquetes | `.github/workflows/` | Rafa | Marta Recio (`martarecioa`): rol **Maintain** (2026-08-31). Otro colaborador directo: `arebury` _(confirmar: ¿cuenta personal de Rafa?)_ | Privadas: gestor personal de Rafa, no en el repo | _(rellenar)_ |
 | **Cloudflare Pages** (cuenta `b8361bb4…`) | Deploy de las 4 apps (`sc-doc`, `sc-supervisor`, `sc-agent`, `sc-cuscare`), preview por rama | No en el repo: la config vive en el dashboard (build cmd + `Build output directory = dist/<app>/browser`) | Rafa _(confirmar)_ | _(rellenar)_ | _(gestor de contraseñas)_ | _(rellenar)_ |
 | **Figma: fichero del DS** (`khNq9dJKNi13pNllrqm6dx`) | Source of truth del diseño; origen del export de tokens | `figma.config.json`, `code-connect/` | Rafa _(confirmar)_ | Marta (diseño) _(confirmar nivel)_ | _(cuenta Figma)_ | _(rellenar)_ |
 | **Plugin Theme Designer** (token que empuja a `design-tokens-sync`) | Loop Figma to código: empuja el export DTCG | Rama `design-tokens-sync` (NO borrar); `tokens-sync.yml` | Rafa _(confirmar)_ | _(rellenar)_ | _(token GitHub del plugin, en la máquina)_ | _(rellenar)_ |
