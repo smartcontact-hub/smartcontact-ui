@@ -2,8 +2,9 @@
 
 > **Volátil.** Lo reescribe la sesión que trabaja ESTE frente, y **solo este fichero**.
 > No toques los hand-offs de otros frentes. Lo durable vive en `docs/`.
-> **Sello: 2026-08-31 (s37) — HEAD `ce92b18`. CI verde, todo en `main`. Ver bloque ✅ s37.
-> Contenido previo: HEAD `5f11fc5` (s36, cierre P0 del field-pattern DD-44).**
+> **Sello: 2026-08-31 (s38) — HEAD `a38b623`. Solo Figma + doc (sin código); CI no corrió, nada
+> que romper. Ver bloque ✅ s37 (el ítem pendiente de Figma se cerró en s38, nota dentro del bloque).
+> Contenido previo: HEAD `ce92b18` (s37, restyle sc-docs + lienzo blanco + breadcrumb).**
 
 ## ✅ s37 · Restyle de sc-docs (Constellation), lienzo blanco (DD-45) y breadcrumb con "aquí estás"
 
