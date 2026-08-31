@@ -1,8 +1,9 @@
 /* Estilos compartidos de las páginas de componentes de la demo. */
 h1 {
-  font-size: var(--sc-font-size-h1);
-  line-height: var(--sc-line-height-h1);
-  font-weight: var(--sc-font-weight-h1);
+  font-size: var(--sc-font-size-display-1);
+  line-height: var(--sc-line-height-display-1);
+  font-weight: var(--sc-font-weight-bold);
+  letter-spacing: -0.01em;
 }
 
 h2 {
