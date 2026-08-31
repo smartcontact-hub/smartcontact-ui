@@ -140,19 +140,37 @@ al cerrarlo.
 > el usuario final, cuál es "la de verdad" y cuáles son réplicas, y de qué
 > herramienta (y de quién) es el original que replican.
 
-### 5.2 · El dominio y la empresa _(pendiente)_
+### 5.2 · El dominio y la empresa _(en curso)_
 > Qué es "smart-contact" / dvtech y tu rol dentro. Y un glosario de una línea por
 > término que un forastero no entendería: **SISMAC**, **Ley SAC**, **AED**,
 > "transcripción vs grabación", el pivote de reglas…
+
+- **SISMAC** — el **proyecto de Jira** del equipo (donde viven los tickets
+  `SISMAC-XXXX`). Es el sistema de gestión del trabajo, no un producto.
+- **Ley SAC** — Ley 10/2025 de **Servicios de Atención a la Clientela** (España),
+  la primera que regula la atención al cliente / call centers. Exige **atención
+  humana** (no solo bots/IA), tiempos de respuesta (del orden del 95% de llamadas
+  en menos de 3 min) y resolver quejas en pocos días. En vigor desde finales de
+  2025, con adaptación a lo largo de 2026. Es la que **empuja requisitos de
+  producto** (de ahí el foco en transcripción/calidad). _(Identificada buscando;
+  confirma que es esta y su alcance exacto para vosotros.)_
+- _Pendiente:_ qué es smart-contact / dvtech y tu rol · **AED** · "transcripción
+  vs grabación" · el pivote de reglas.
 
 ### 5.3 · Cómo entran y salen los requisitos _(pendiente)_
 > El circuito real: quién decide qué se hace (PM), por dónde entra el trabajo
 > (Jira / email / recap), quién valida, cómo se prioriza, y en qué cadencia
 > esperan cosas de ti.
 
-### 5.4 · Quién es quién _(pendiente)_
+### 5.4 · Quién es quién _(en curso)_
 > Nombre, rol y para qué acudir a cada uno: producto, backend, diseño, feria.
 > (Sueltos hoy, sin rol confirmado: VAP, Lucas, Alex, Eduardo, Mila, Bea, Edu.)
+
+- **Marta Recio** — **diseño**. Entra a todo con normalidad como parte de su
+  trabajo (GitHub Maintain + Figma + Theme Designer, ver §2); su acceso se mantiene
+  como está, sin cambios.
+- _Pendiente:_ producto (PM), backend (VAP, Lucas, Alex, Eduardo, Mila), feria
+  (Bea, Edu).
 
 ### 5.5 · Decisiones y criterios no escritos _(pendiente)_
 > Lo decidido "sobre la marcha" que no llegó a un DD, y los criterios que aplicas
