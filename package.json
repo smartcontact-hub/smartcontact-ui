@@ -14,7 +14,7 @@
     "build:components": "npm run build:icons && ng build ui-smartcontact",
     "build:cuscare": "npm run build && ng build cuscare --configuration production",
     "build:design-tokens": "ng build design-tokens",
-    "build:docs": "npm run build:icons && ng build sc-docs --configuration production --output-path dist/sc-docs",
+    "build:docs": "npm run build && ng build sc-docs --configuration production --output-path dist/sc-docs",
     "build:icons": "npm run generate:icons && ng build ui-smartcontact-icons",
     "build:supervisor": "npm run build && ng build supervisor --configuration production",
     "docs:coherence": "node scripts/docs-coherence.mjs",
