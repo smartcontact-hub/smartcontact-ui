@@ -97,11 +97,11 @@
     "@ngx-translate/core": "^17.0.0",
     "@ngx-translate/http-loader": "^17.0.0",
     "@primeuix/themes": "^3.0.0",
+    "exceljs": "^4.4.0",
     "primeicons": "^7.0.0",
     "primeng": "^22.1.0",
     "rxjs": "~7.8.1",
     "tslib": "^2.4.0",
-    "xlsx": "^0.18.5",
     "zone.js": "~0.16.2"
   },
   "devDependencies": {
@@ -126,5 +126,10 @@
     "typescript": "~6.0.3",
     "typescript-eslint": "^8.40.0",
     "vitest": "^4.1.10"
+  },
+  "overrides": {
+    "exceljs": {
+      "uuid": "^11.1.1"
+    }
   }
 }
