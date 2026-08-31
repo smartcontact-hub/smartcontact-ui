@@ -28,18 +28,22 @@
 
 **Lo que se para en cuanto se necesita a una persona:**
 
-- **Nadie puede mergear a `main` ni administrar el repo** sin acceso de admin a la
-  org `smartcontact-hub`. Sin eso, el proyecto se congela en su último commit:
-  sigue vivo, pero no puede avanzar.
-- **El loop de diseño (Figma to tokens to código) muere.** Necesita el fichero de
-  Figma, el plugin Theme Designer con su token, y arrancar desde la máquina de
-  Rafa. Sin eso, los tokens no se pueden cambiar desde diseño.
-- **Nadie triará los tickets de Jira (SISMAC)** ni tendrá el contexto de producto
-  y negocio, que hoy vive sobre todo en la cabeza de Rafa (ver §5).
+- **Solo lo de nivel ADMIN.** Marta (rol **Maintain**, ver §2) ya puede mergear a
+  `main` y gestionar el día a día del repo, así que el proyecto **ya no se
+  congela**. Pero Maintain no llega a ajustes, secretos, colaboradores ni
+  visibilidad: eso sigue solo en Rafa. Sin un segundo **admin**, una emergencia de
+  ese nivel espera a Rafa.
+- **El loop de diseño SÍ está cubierto:** Marta tiene el fichero de Figma y el
+  plugin Theme Designer, así que puede cambiar tokens desde diseño sin Rafa.
+- **El resto de llaves no se comparte a propósito** (privacidad, decisión de Rafa
+  2026-08-31): Cloudflare (los 4 deploys) y Jira quedan a nombre de Rafa.
+- **El contexto de producto y negocio** (triaje de Jira, el porqué de las cosas)
+  vive sobre todo en la cabeza de Rafa (ver §5). Acceso no es conocimiento.
 
-**Traducción en una frase:** los sitios no se caen solos, pero el proyecto deja
-de poder **evolucionar** el día que hace falta alguien con las llaves, y esas
-llaves hoy las tiene una sola persona.
+**Traducción en una frase:** el peor riesgo, que el proyecto se congele porque
+solo una persona puede mover el repo, **ya está mitigado** con el Maintain de
+Marta; lo que queda es el nivel admin sin relevo y el conocimiento de producto
+sin externalizar.
 
 ---
 
@@ -53,10 +57,17 @@ credenciales aquí**, solo dónde viven.
 | --- | --- | --- | --- | --- | --- | --- |
 | **GitHub org `smartcontact-hub`** | Repo, CI (Actions), paquetes | `.github/workflows/` | Rafa | Marta Recio (`martarecioa`): rol **Maintain** (2026-08-31). Otro colaborador directo: `arebury` _(confirmar: ¿cuenta personal de Rafa?)_ | Privadas: gestor personal de Rafa, no en el repo | _(rellenar)_ |
 | **Cloudflare Pages** (cuenta `b8361bb4…`) | Deploy de las 4 apps (`sc-doc`, `sc-supervisor`, `sc-agent`, `sc-cuscare`), preview por rama | No en el repo: la config vive en el dashboard (build cmd + `Build output directory = dist/<app>/browser`) | Rafa _(confirmar)_ | _(rellenar)_ | _(gestor de contraseñas)_ | _(rellenar)_ |
-| **Figma: fichero del DS** (`khNq9dJKNi13pNllrqm6dx`) | Source of truth del diseño; origen del export de tokens | `figma.config.json`, `code-connect/` | Rafa _(confirmar)_ | Marta (diseño) _(confirmar nivel)_ | _(cuenta Figma)_ | _(rellenar)_ |
-| **Plugin Theme Designer** (token que empuja a `design-tokens-sync`) | Loop Figma to código: empuja el export DTCG | Rama `design-tokens-sync` (NO borrar); `tokens-sync.yml` | Rafa _(confirmar)_ | _(rellenar)_ | _(token GitHub del plugin, en la máquina)_ | _(rellenar)_ |
+| **Figma: fichero del DS** (`khNq9dJKNi13pNllrqm6dx`) | Source of truth del diseño; origen del export de tokens | `figma.config.json`, `code-connect/` | Rafa | Marta (diseño): con acceso (2026-08-31) | _(cuenta Figma)_ | _(rellenar)_ |
+| **Plugin Theme Designer** (token que empuja a `design-tokens-sync`) | Loop Figma to código: empuja el export DTCG | Rama `design-tokens-sync` (NO borrar); `tokens-sync.yml` | Rafa | Marta: con acceso (2026-08-31) | _(token GitHub del plugin, en la máquina)_ | _(rellenar)_ |
 | **Jira `jira.dvtech.io`** (proyecto SISMAC) | Tickets y contexto de producto (org externa: dvtech) | Referencias en `docs/` y commits | _(rellenar)_ | VAP, Lucas (backend) _(confirmar)_ | _(cuenta dvtech)_ | _(rellenar)_ |
 | **GitHub Packages** (`npm.pkg.github.com`) | Publicar los 3 paquetes del DS. **DORMIDO** (DD-17: las apps consumen el DS local) | `.npmrc` (usa `GITHUB_TOKEN` del entorno) | Rafa _(confirmar)_ | _(rellenar)_ | _(token en variable de entorno)_ | n/a mientras esté dormido |
+
+**Política de co-acceso (decisión de Rafa, 2026-08-31):** Marta tiene GitHub
+(Maintain) + Figma + Theme Designer, que cubre el desarrollo y el loop de diseño.
+El resto (Cloudflare, Jira, gestor de credenciales) **no se comparte a propósito,
+por privacidad.** El hueco que eso deja para la continuidad es el **nivel admin**:
+hoy no hay un segundo admin del repo ni de Cloudflare. Es una elección consciente,
+anotada aquí para que no se lea como un olvido.
 
 > Si algún día quieres una copia de seguridad viva del fichero de Figma o de la
 > config de Cloudflare, anótalo aquí como tarea: hoy ambos existen en un solo
