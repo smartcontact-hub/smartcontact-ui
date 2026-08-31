@@ -361,13 +361,19 @@ lo que hace que te la creas cuando te toca. Lee el índice siempre; el cuerpo, c
    **(a) el dry-run es CIEGO A LA PLATAFORMA** — npm resuelve las dependencias opcionales según
    dónde estés, así que hay que pasarle `--os=linux --cpu=x64`; **(b) las `peerDependencies` con
    rango flotante se resuelven contra el REGISTRO**, o sea que un lock válido hoy caduca en cuanto
-   se publica un parche, sin que nada local cambie. Para (b) **no hay proxy: el oráculo es el CI**.
+   se publica un parche, sin que nada local cambie. **Afinado (s38): SÍ hay proxy, y es el npm del CI,
+   que tienes en nvm.** Con el default (node 25 / npm 11) `guard:lockfile` y `npm ci --dry-run` dan
+   VERDE FALSO (npm 11 se queda en `@emnapi/runtime@1.11.2`; el npm 10 del CI exige la 1.11.3 del
+   registro). Regenera y verifica el lock con `~/.nvm/versions/node/v22.23.2/bin/npm` —el EXACTO del
+   runner— y ahí sí reproduce «Missing». El oráculo es el CI, pero su npm lo corres en local.
    ⚙️ (a) ya lo vigila `scripts/lockfile-guard.mjs`, y `npm ci` dejó de estar en `INFRA` para
    entrar en `LOCAL_SUBSTITUTIONS`, así que el gate de paridad vuelve a cubrir el primer paso.
    **Pero lo peor no fue el lock: fue que en seis pushes no abrí el CI ni una vez** y escribí
    «preflight verde» en cada mensaje. Esta regla dice «confirma el verde LEYENDO el log» y yo leía
    **mi** log. Concreción que faltaba: **el log que cuenta es el del CI** —
    `gh run list --branch main --workflow ci --limit 1` y, si está rojo, `gh run view --log-failed`.
+   **El `--workflow ci` NO es opcional (s38): sin él, `--limit 1` te devuelve el run de «Auto-merge
+   auditoría» (workflow_run, `skipped`) y cantas verde mientras el `ci` de verdad está en rojo.**
    Un push sin esa lectura no está terminado.
    *Y en la misma sesión rompí la otra mitad de esta regla, la de siempre*: corrí
    `docs:coherence`, **imprimí su exit 1**, y commiteé igual. No es que no lo corriera: es que

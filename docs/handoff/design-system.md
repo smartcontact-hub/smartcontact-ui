@@ -2,10 +2,37 @@
 
 > **Volátil.** Lo reescribe la sesión que trabaja ESTE frente, y **solo este fichero**.
 > No toques los hand-offs de otros frentes. Lo durable vive en `docs/`.
-> **Sello: 2026-08-31 (s38 cont.) — código en `main` hasta `6a04dcc`, CI verde. Arreglado el DEPLOY
-> de sc-docs (llevaba SEMANAS en `Failure` en Cloudflare) y «Tema PrimeNG» democido de pestaña de
-> Fundamentos a verificación en Lab. Ver bloque ✅ DEPLOY, justo abajo. Contenido previo: HEAD
-> `a38b623` (s38, Figma + doc).**
+> **Sello: 2026-08-31 (s38 cont. II) — código en `main` hasta `593e21a`, CI verde, los 4 deploys de
+> Cloudflare en verde. En este tramo: la sección de Componentes pasó a ACORDEÓN + portada con
+> DESCRIPCIÓN por card, y el claro/oscuro es un TOGGLE sol/luna animado con FUNDIDO premium (View
+> Transitions). Antes en el mismo día: arreglo del DEPLOY (build:docs + output dir de Cloudflare) y de
+> un LOCK roto (`@emnapi/runtime`). Ver bloques ✅ abajo. Contenido previo: HEAD `a38b623` (Figma+doc).**
+
+## ✅ s38 (cont. II) · UX de la sección Componentes + toggle de tema
+
+**Sidebar de Componentes → acordeón** (`d0c755a`). Antes se desplegaban las 7 familias con sus 49
+ítems de golpe y «Uso real / Reglas / Lab» quedaban enterrados (ilocalizables). Ahora: cabeceras de
+familia con chevron + contador, **una abierta a la vez** (single-open que sigue a la ruta activa).
+Estado en `app.component` (`openGroup` signal).
+
+**Portada de Componentes → tarjetas con propósito** (`341334f`). Cada componente es una card con
+nombre + una línea de para qué sirve; las 49 descripciones en un mapa `BLURB` del `component-catalog`
+(fuente única, junto a la categoría). Es el valor que la sidebar no da.
+
+**Claro/oscuro → toggle sol/luna + fundido premium** (`b205c83`). Componente reutilizable
+`app-theme-toggle` (recibe `dark`, emite `toggled` — NO `toggle`, colisiona con el evento DOM; el
+icono morfa sol↔luna). En el sidebar (tema global) y en cada story-canvas (tema local, con «Comparar»
+aparte). El fundido usa la **View Transitions API**: una transición CSS NO anima el cambio porque los
+colores salen de `var(--sc-*)` (medido: el fondo SALTA); la VT funde sobre una instantánea de píxeles.
+`toggleDark` la invoca con fallback instantáneo (sin soporte / reduced-motion). El smoke del modo
+oscuro espera a `.sc-dark` porque la VT aplica el DOM de forma DIFERIDA.
+
+**⚠️ Trampa de lock, recurrente (s35 + s38):** `@napi-rs/wasm-runtime` pide `@emnapi/runtime` con rango
+FLOTANTE; el **npm 10 del CI (node 22)** lo resuelve a la última publicada (1.11.3) y la exige en el
+lock, pero **npm 11 (node 25, mi máquina) da VERDE FALSO** — se queda en 1.11.2, igual que
+`guard:lockfile` y `npm ci --dry-run` locales. **El oráculo del lock es el npm del CI**: regenerar/
+verificar con `~/.nvm/versions/node/v22.23.2/bin/npm` (el EXACTO del CI). Fix en `6c8cc80` (el de
+`99c5c46`, solo `engines`, no bastó).
 
 ## ✅ s38 (cont.) · Deploy de sc-docs arreglado + «Tema PrimeNG» movido a Lab
 
