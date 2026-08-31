@@ -25,7 +25,7 @@
 
 ### Deuda de código
 
-- [ ] **P1** `projects/ui-smartcontact/package.json:24,27,30` fija las `peerDependencies` en
+- [x] ~~**P1** `projects/ui-smartcontact/package.json:24,27,30` fija las `peerDependencies` en
       Angular `^21.0.0` / `@primeuix/themes ^2.0.0` / `primeng ^21.0.0`, pero **DD-42**
       (`docs/DECISIONS.md:184`, 2026-08-25) subió el workspace raíz a Angular 22.1.3 /
       `@primeuix/themes` 3.0.0 / PrimeNG 22.1.0 (`package.json:90,99,101`) hace 6 días y el
@@ -34,18 +34,22 @@
       compatibilidad con Angular 21 mientras el código ya asume comportamiento de v22 (los
       selectores kebab-case y los slots `#x` que trajo DD-42) → subir los tres rangos a
       `^22.0.0` en el mismo commit que reactive `publish:packages`, o dejar la deuda anotada a
-      propósito en DD-42. [arréglalo]
-- [ ] **P2** `projects/ui-smartcontact/src/lib/components/textarea/sc-textarea.component.ts:24`
+      propósito en DD-42.~~ **HECHO 2026-08-31** — `@angular/common`/`core`/`forms` a `^22.0.0`,
+      `@primeuix/themes` a `^3.0.0`, `primeng` a `^22.0.0`. Mismo hallazgo, mismo día, en
+      `projects/ui-smartcontact-icons/package.json` (`@angular/common`/`core` en `^21.0.0`) —
+      no citado en el hallazgo original porque el grep de la auditoría solo miró el paquete de
+      componentes; alineado también.
+- [x] ~~**P2** `projects/ui-smartcontact/src/lib/components/textarea/sc-textarea.component.ts:24`
       afirma "Los campos que SÍ llevan CVA son los cinco del field-pattern" — falso desde
       **DD-44** (`docs/DECISIONS.md:75`, 2026-08-30), que retiró el `ControlValueAccessor` de
       los 6 componentes del field-pattern (inputtext, select, multiselect, datepicker,
       inputnumber, search). El propio refactor sí actualizó la referencia gemela en
       `sc-inputtext.component.ts:25-26` ("se retiró") pero dejó esta cross-reference de
-      textarea sin tocar → corregir el comentario. [arréglalo]
+      textarea sin tocar → corregir el comentario.~~ **HECHO 2026-08-31**.
 
 ### Deriva de docs
 
-- [ ] `AGENTS.md:11-16` ("Current workspace baseline": Angular 21.x / PrimeNG 21.x /
+- [x] ~~`AGENTS.md:11-16` ("Current workspace baseline": Angular 21.x / PrimeNG 21.x /
       `@primeuix/themes` 2.x / ng-packagr 21.x / TypeScript 5.9.x) y `.impeccable.md:106`
       ("Angular 21 standalone + PrimeNG 21 + `@primeuix/themes` 2 + ng-packagr") citan una
       línea base que **DD-42** (`docs/DECISIONS.md:184`, 2026-08-25) dejó atrás hace 6 días: la
@@ -54,7 +58,9 @@
       documento que todo agente lee PRIMERO (`docs/DOCS-INDEX.md:19`) y el que manda "verificar
       el baseline real" en estos mismos tres ficheros (`AGENTS.md:6-9`) — quien se fíe del
       bloque en vez de mirar `package.json` arranca de un número con 6 días de retraso →
-      actualizar los dos bloques a las cifras de DD-42. [arréglalo]
+      actualizar los dos bloques a las cifras de DD-42.~~ **HECHO 2026-08-31** — los dos
+      bloques a Angular 22.x / PrimeNG 22.x / `@primeuix/themes` 3.x / ng-packagr 22.x /
+      TypeScript 6.0.x.
 
 ### Trabajo sin mergear
 
