@@ -132,8 +132,10 @@
     padding-top: var(--sc-spacing-0-75);
     border-top: 1px solid var(--sc-border-default);
     display: flex;
-    flex-direction: column;
-    gap: 2px;
+    flex-direction: row;
+    align-items: center;
+    justify-content: space-between;
+    gap: var(--sc-spacing-0-5);
   }
 
   /* Ítems de nav de sección + herramientas: pastilla al activar / hover. */

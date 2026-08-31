@@ -91,3 +91,23 @@ body {
     font-weight: var(--sc-font-weight-medium);
   }
 }
+
+/* ── Transición premium al cambiar de tema ──
+   La View Transitions API funde TODA la página de un tema al otro en un crossfade suave.
+   Es la herramienta correcta aquí: una transición CSS normal NO anima el cambio, porque los
+   colores vienen de variables `--sc-*` y el navegador no interpola un `background-color`
+   derivado de `var()` cuando la variable cambia (salta). El crossfade opera sobre una
+   instantánea de píxeles, así que da igual de dónde salga el color. Sin soporte de la API o
+   con `prefers-reduced-motion`, el cambio es instantáneo (lo decide `toggleDark`). */
+::view-transition-old(root),
+::view-transition-new(root) {
+  animation-duration: 340ms;
+  animation-timing-function: cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  ::view-transition-old(root),
+  ::view-transition-new(root) {
+    animation: none;
+  }
+}

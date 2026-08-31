@@ -51,7 +51,11 @@ test('el form field hereda padding y radio del Kit', async ({ page }) => {
 test('el modo oscuro flipa los tokens bajo .sc-dark', async ({ page }) => {
   await page.goto('/#/fundamentos/escala-color');
   const before = await page.evaluate(() => getComputedStyle(document.body).backgroundColor);
-  await page.getByRole('button', { name: 'Claro / oscuro' }).click();
+  // El interruptor de tema es ahora un toggle con icono (role=switch), no un botón de texto.
+  await page.getByRole('switch', { name: /tema/i }).click();
+  // El cambio usa la View Transitions API (crossfade), que aplica el DOM de forma DIFERIDA:
+  // hay que esperar a que `.sc-dark` entre antes de leer el color, o se lee el valor viejo.
+  await expect(page.locator('html')).toHaveClass(/sc-dark/);
   const after = await page.evaluate(() => getComputedStyle(document.body).backgroundColor);
   expect(after).not.toBe(before);
 });
@@ -87,4 +91,15 @@ test('el top-nav se queda en cuatro secciones', async ({ page }) => {
   await page.goto('/#/fundamentos/escala-color');
   const nav = page.getByRole('navigation', { name: 'Secciones' });
   await expect(nav.getByRole('link')).toHaveCount(4);
+});
+
+/**
+ * Patrones de pantalla es la tercera pestaña de Fundamentos (no una quinta sección del
+ * top-nav, a propósito): la barra de calidad de UI vive donde se lee, no como enlace suelto.
+ */
+test('la pestaña Patrones de Fundamentos levanta y dogfoodea el skeleton', async ({ page }) => {
+  await page.goto('/#/fundamentos/patrones');
+  await expect(page.getByRole('heading', { name: 'Patrones de pantalla', level: 1 })).toBeVisible();
+  // El ejemplo vivo del patrón de carga pinta al menos un sc-skeleton real.
+  await expect(page.locator('sc-skeleton').first()).toBeVisible();
 });
