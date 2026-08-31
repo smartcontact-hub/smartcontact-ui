@@ -80,8 +80,9 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - name: Build DS (la smoke levanta `ng serve sc-docs`, que lo consume de dist/)
-        run: npm run build
+      # Build del DS (setup, no un paso de cabecera): la smoke levanta
+      # `ng serve sc-docs`, que lo consume de dist/.
+      - run: npm run build
       - name: e2e smoke (sc-docs)
         run: |
           npx playwright install --with-deps chromium
@@ -97,8 +98,8 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - name: Build DS (la app lo consume desde dist/)
-        run: npm run build
+      # Build del DS (setup, no un paso de cabecera): la app lo consume de dist/.
+      - run: npm run build
       # Comportamiento de la app real: formularios (rellenar → validar → guardar)
       # y el flujo de reglas de punta a punta. Playwright levanta su propio
       # `ng serve` (:4405) — ver playwright.supervisor.config.ts.
@@ -117,8 +118,8 @@ jobs:
           node-version: 22
           cache: npm
       - run: npm ci
-      - name: Build DS (la app lo consume desde dist/)
-        run: npm run build
+      # Build del DS (setup, no un paso de cabecera): la app lo consume de dist/.
+      - run: npm run build
       # Gestos de CusCare (sidebar, engranaje, pestañas) + la métrica medida del
       # sitio original. Clics REALES: fue esta suite la que cazó que la barra
       # inferior tapaba el engranaje — se veía, pero no se podía pulsar.
