@@ -123,23 +123,47 @@ operar el loop de tokens. Para **consumir el DS desde otra app**:
 
 ---
 
-## 5. Lo que hoy solo vive en la cabeza de Rafa (a externalizar poco a poco)
+## 5. Conocimiento que hoy solo tiene Rafa (rellenar poco a poco)
 
-Esto no está en ningún doc y es lo que más pesa en el bus factor. No hace falta
-resolverlo de golpe; conviene ir vaciándolo aquí o en el doc que corresponda:
+Es lo que más pesa en el bus factor: **acceso no es saber conducir.** No es un doc
+para hacer de golpe; es un ESQUELETO para vaciar en ratos de 10 min. Cada bloque
+lleva una pregunta guía; escribe debajo cuando puedas y quita su `_(pendiente)_`
+al cerrarlo.
 
-- **Contexto de producto y negocio**: qué problema resuelve cada app en el mundo
-  real, prioridades, qué es demo y qué es de verdad.
-- **La relación con dvtech / Jira (SISMAC)**: quién es quién, qué se espera, cómo
-  entran los requisitos. Contactos de backend hoy sueltos: VAP, Lucas _(confirmar
-  rol y forma de contacto)_.
-- **Decisiones no escritas**: cosas que se decidieron "sobre la marcha" y no
-  llegaron a un DD.
-- **El roadmap real vs. el documentado**: qué viene después de verdad.
+> **Atajo para 5.1–5.4:** el mapa de producto de agosto (retirado del repo, pero
+> vivo en su [página publicada](https://claude.ai/code/artifact/1e3ae223-a494-48b4-b473-5bd689a00523))
+> ya tiene mucho de esto. Destila lo **durable**, no lo de aquel mes concreto.
+
+### 5.1 · Qué es cada app en el mundo real _(pendiente)_
+> `supervisor`, `agent`, `cuscare`, `sc-docs`: qué problema resuelve cada una para
+> el usuario final, cuál es "la de verdad" y cuáles son réplicas, y de qué
+> herramienta (y de quién) es el original que replican.
+
+### 5.2 · El dominio y la empresa _(pendiente)_
+> Qué es "smart-contact" / dvtech y tu rol dentro. Y un glosario de una línea por
+> término que un forastero no entendería: **SISMAC**, **Ley SAC**, **AED**,
+> "transcripción vs grabación", el pivote de reglas…
+
+### 5.3 · Cómo entran y salen los requisitos _(pendiente)_
+> El circuito real: quién decide qué se hace (PM), por dónde entra el trabajo
+> (Jira / email / recap), quién valida, cómo se prioriza, y en qué cadencia
+> esperan cosas de ti.
+
+### 5.4 · Quién es quién _(pendiente)_
+> Nombre, rol y para qué acudir a cada uno: producto, backend, diseño, feria.
+> (Sueltos hoy, sin rol confirmado: VAP, Lucas, Alex, Eduardo, Mila, Bea, Edu.)
+
+### 5.5 · Decisiones y criterios no escritos _(pendiente)_
+> Lo decidido "sobre la marcha" que no llegó a un DD, y los criterios que aplicas
+> sin pensar (qué se toca y qué no, qué se prioriza). Si alguno merece rango de
+> decisión, muévelo a `DECISIONS.md` como DD.
+
+### 5.6 · El roadmap real _(pendiente)_
+> Qué viene de verdad después, más allá de lo que digan los docs. Qué está en
+> barbecho y por qué.
 
 > ⚠️ Nombres y roles son lo más volátil de este doc: confírmalos antes de que
-> alguien actúe sobre ellos. (Regla del repo: un hand-off es una pista, no un
-> hecho.)
+> alguien actúe sobre ellos. (Regla del repo: un hand-off es una pista, no un hecho.)
 
 ---
 
