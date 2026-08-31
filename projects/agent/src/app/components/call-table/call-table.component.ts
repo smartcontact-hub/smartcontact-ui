@@ -275,6 +275,11 @@ type Tab = 'historial' | 'pendientes';
       height: 2.884616vw;
       color: var(--ag-text);
       padding: 0 0.978709vw;
+      /* Interlineado 1.5 (unitless, escala con la fuente vw). El original mide 17.475px a
+       * 1456 (ratio 1.5 sobre 11.65); sin esto la celda heredaba ~1.3 (15.21px). Medido en
+       * el censo del DEV acotado al comunicador (2026-08-31): era el único gap real de las
+       * filas — el tamaño de fuente ya casaba. */
+      line-height: 1.5;
       border-bottom: 1px solid var(--ag-line-soft);
       vertical-align: middle;
       white-space: nowrap;
