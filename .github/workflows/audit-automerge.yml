@@ -8,8 +8,8 @@
 # Por qué es seguro dejar que se mergee sola:
 #   1. Solo toca `docs/AUDIT-SEMANAL.md`. Si el PR cambia CUALQUIER otro fichero, este workflow
 #      se planta y lo deja para revisión humana. Es la condición dura.
-#   2. Solo corre si el CI de ese commit terminó en SUCCESS (los 8 pasos, incluidos docs:guard y
-#      docs:coherence, que son los que pueden romperse con un .md).
+#   2. Solo corre si el CI de ese commit terminó en SUCCESS (TODOS sus jobs; docs:guard y
+#      docs:coherence viven dentro del job `verify`, y son los que pueden romperse con un .md).
 #   3. Es un doc de backlog: su contenido no ejecuta nada ni entra en ningún build.
 #
 # Lo que NO hace: mergear ningún otro PR. Los demás siguen siendo decisión de Rafa, y el
