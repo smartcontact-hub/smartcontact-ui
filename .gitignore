@@ -49,6 +49,11 @@ Thumbs.db
 # npm registry auth (publish) — never commit tokens
 .npmrc
 
+# Variables de entorno con secretos — nunca al repo (es público)
+.env
+.env.local
+.env.*.local
+
 # Output del Theme Designer (plugin primeui-figma-plugin-v4): preset PrimeNG que NO
 # usamos (generamos el nuestro desde el DTCG). El workflow tokens-sync lo descarta.
 .theme-designer/
