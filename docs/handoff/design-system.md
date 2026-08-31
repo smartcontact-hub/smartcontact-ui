@@ -2,9 +2,33 @@
 
 > **Volátil.** Lo reescribe la sesión que trabaja ESTE frente, y **solo este fichero**.
 > No toques los hand-offs de otros frentes. Lo durable vive en `docs/`.
-> **Sello: 2026-08-30 (s36) — HEAD `5f11fc5`. Cierra el P0 del field-pattern (DD-44): CVA
-> borrado de los 6 campos, field-pattern por factories. `preflight:fast` leído en verde.
-> Contenido previo: HEAD `f78977c` (consolidación 2026-08-25, CI verde, los 8 pasos).**
+> **Sello: 2026-08-31 (s37) — HEAD `ce92b18`. CI verde, todo en `main`. Ver bloque ✅ s37.
+> Contenido previo: HEAD `5f11fc5` (s36, cierre P0 del field-pattern DD-44).**
+
+## ✅ s37 · Restyle de sc-docs (Constellation), lienzo blanco (DD-45) y breadcrumb con "aquí estás"
+
+**sc-docs re-vestido con el lenguaje del DS "Constellation" de Digital Virgo, con tokens `--sc-*`
+propios (acento sky, NO su rosa).** El DS y sus componentes **NO se tocaron** — solo el envoltorio
+de la doc. Qué entró (`280bae1` + `2c558d9`):
+- **Una sola sidebar** (secciones + lista de componentes anidada bajo Componentes; antes eran dos
+  navegaciones). `storybook-shell` queda como frontera lazy sin sidebar. Componentes es la portada.
+- **Buscador ⌘K** reusando el propio `sc-command-palette` del DS (dogfooding): montado en el shell,
+  se le publican secciones + los 49 componentes. La demo del palette provee su servicio **scoped**
+  para no chocar con el global. Se cierra en cualquier navegación.
+- **Sombras `--sc-shadow-*`** en tarjetas, tipografía de display vía `--sc-font-size-display-1`
+  (token, no px a pelo — la doc bebe del mismo sitio), **logo SC** real en círculo navy.
+
+**Lienzo BLANCO (DD-45):** `app-shell` del supervisor de `--sc-bg-default` (gris) a `--sc-bg-canvas`
+(blanco), cerrando el item pendiente de DD-34/DD-36 (`fa4382a`). Los campos rellenos siguen grises.
+
+**Breadcrumb — tramo actual (elegido por Rafa: B, color + peso):** `sc-breadcrumb` marca el último
+tramo en `--sc-text-primary` + `--sc-font-weight-medium`; **gate** en `e2e/component-structure`
+congela su `outerHTML`, no puede regresar en silencio. Aplicado al maestro de Figma (`185:6637`).
+
+**⏳ ESPERANDO SESIÓN NUEVA (bridge muerto):** dejar UN ejemplo con el tramo activo en la página
+`❖ Breadcrumb` de Figma. El bridge de esta sesión quedó en el puerto de reserva (9224) y el plugin
+no engancha; maté el server viejo de 9223, así que una **sesión nueva** cogerá 9223 y conecta a la
+primera. Es 1 minuto de cosmética; el maestro ya lleva B.
 >
 > Sello histórico (2026-08-25): HEAD `f78977c`, **CI verde, los 8 pasos**. Cierra con `aura/custom` dentro del gate de completitud del Kit. Antes, `b5b07a5`. Los dos últimos commits son los que el verde LOCAL no cazó y conviene leer: `b5b07a5` (el puntero de Playwright sale de la barra lateral) y `25cedef` (el lockfile vuelve a estar en sync — `npm ci` es el paso 1 del CI y `preflight` NO lo corre). Antes: `1fb7d5f` (el audit de acoplamiento a PrimeNG pasa a mirar tres caras) sobre HEAD `9e3f0bd` (Angular 22 + PrimeNG 22 + los builders a `@angular/build`). Antes, en esta misma sesión y ya en `main`: `3b65f07` (duplicación del supervisor), `bee2acc` (retirada de `sc-page-header` + deriva de docs), `0ef136c` (**trinquete DD-38 a CERO**), `1698f47` (red de contraste de severidades), `edfb2ec` (código muerto), `4417bb8` (`text.muted.color` a enforce + el warn unificado) y `2b694b4` (rescate de s33). Contenido previo: HEAD `97f34e1`.**
 
