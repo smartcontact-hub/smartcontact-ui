@@ -3,10 +3,33 @@
 > **Volátil.** Lo reescribe la sesión que trabaja ESTE frente, y **solo este fichero**.
 > No toques los hand-offs de otros frentes. Lo durable vive en `docs/` y en
 > `projects/agent/docs/`.
-> **Sello: 2026-08-30 (s36) — HEAD `e5fe874`. CI verde LEÍDO (run del 27-ago), todo en `main`.**
+> **Sello: 2026-08-31 (s37) — HEAD `ce92b18`. CI verde, todo en `main`.**
 >
 > ⚠️ Este fichero estuvo sellado en `020928a` mientras entraban **12 commits más** (7 tocando
 > `projects/agent`). Si vuelve a pasar, la lista de abajo es la que miente primero.
+
+## ✅ s37 · El censo del original SE HIZO (sin login arriesgado), y salió fino
+
+**El "Bloqueado → login" ya NO aplica.** Se midió el original SIN segunda sesión de telefonía:
+Rafa + la otra sesión de Claude (Claude-in-Chrome) corrieron el snippet de solo lectura
+(`tools/original-census/snippet.js`) en su navegador, **acotado al overlay del comunicador**
+(`.comunicator-shortcut`), a `innerWidth` 1456. Los ndjson del DEV viven en `.cache/census-dev/`
+(gitignored). Objetivo confirmado por Rafa: **el DEV** (`comunicatoraeddev/sismac`), no producción.
+
+**Resultado del diff limpio (`history`, con filas reales):** los **tamaños de fuente YA casaban**
+(11.65 vs 11.7px = redondeo). El ÚNICO gap real era el **interlineado de las filas del histórico**:
+original 17.475px (ratio 1.5), la copia heredaba ~1.3 (15.21px). Arreglado en `ce92b18`:
+`call-table` `tbody td { line-height: 1.5 }` (unitless, escala con la fuente vw). El gap "1px más
+pequeño" que se vio ANTES de acotar era artefacto del dashboard de detrás — no era real.
+
+**Tooling:** `tools/compare-ndjson.ts` ahora acepta el volcado de consola (sin `harness`) sin
+crashear: relaja el guard de manifiesto avisando, exige mismo ancho, y compara la familia de fuente
+por la PRIMARIA del stack (`a58832e`). Antes petaba con el censo del navegador real.
+
+**Aparcado (opcional, no bloquea):** `agents`/`chat` salieron VACÍOS en el DEV (58/39 nodos = solo
+chrome, que sí casa). Rafa abrió un chat al final; si se quiere apurar, la otra sesión re-mide chat
+con la conversación y una llamada real, y se cruza. El **control de dos anchos** (para el punto ciego
+px-vs-vw a un solo ancho) queda guardado para el día que aparezca deriva a otro ancho.
 
 ## Qué es este frente
 
@@ -27,7 +50,7 @@ de verdad; este de aquí es el resumen y lo que toca hacer.
 | Fases parciales   | **3** censo · **4** causas · **6** aplicación · **7** verificación                         |
 | A 1456, 9 estados | **0 bloqueantes · 0 menores** contra la línea base                                         |
 | Fluidez           | peor deriva **0.365vw** (5.31px), aislada en `sc-icon`                                     |
-| Bloqueado         | todo lo que exige medir el ORIGINAL en vivo → **login**                                    |
+| Bloqueado         | **censo HECHO** (s37): fuentes casan, interlineado corregido (`ce92b18`)                                    |
 
 Lo aplicado y verificado hasta hoy: las fuentes del original self-hospedadas, la vuelta a
 `vw`, fuera el lienzo con `zoom`, y los tamaños que vivían fuera del CSS.
