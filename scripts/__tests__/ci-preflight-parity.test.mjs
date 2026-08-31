@@ -62,6 +62,31 @@ test("extractCiCommands: parsea block scalar `|` y descarta infra", () => {
   );
 });
 
+test("extractCiCommands descarta `npm run build` (setup del DS) pero NO `build:docs`", () => {
+  const yml = [
+    "      - run: npm ci",
+    "      - name: Build DS",
+    "        run: npm run build",
+    "      - run: npm run e2e:supervisor",
+  ].join("\n");
+  const cmds = extractCiCommands(yml);
+  // `npm run build` construye el DS; en preflight lo hace `verify`, así que aquí es
+  // setup, no un paso a replicar. Los jobs de e2e en paralelo lo rehacen y no debe
+  // romper la paridad.
+  assert.ok(
+    !cmds.includes("npm run build"),
+    "`npm run build` es setup, no un gate"
+  );
+  assert.ok(cmds.includes("npm run e2e:supervisor"));
+  // pero `build:docs` SÍ es un gate propio (build de sc-docs): NO se filtra.
+  assert.ok(
+    extractCiCommands("      - run: npm run build:docs").includes(
+      "npm run build:docs"
+    ),
+    "build:docs no es setup, es un paso real"
+  );
+});
+
 test("DRIFT: un paso NUEVO en el CI que preflight no corre → lo caza (missing)", () => {
   const yml = "      - run: npm run verify\n      - run: npm run e2e:newapp";
   const { ok, missing } = checkParity(yml, "npm run verify");

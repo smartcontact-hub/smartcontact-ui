@@ -49,6 +49,17 @@ export const LOCAL_SUBSTITUTIONS = {
 
 const INFRA = [/^npx playwright install\b/];
 const isInfra = (cmd) => INFRA.some((re) => re.test(cmd));
+
+// SETUP: preparar el terreno, no un gate propio. `npm run build` construye el DS a
+// `dist/`, que las apps y las suites e2e consumen. En preflight ese build lo hace
+// `verify` (su primer paso real), así que NO aparece como comando suelto; en el
+// ci.yml paralelo cada job de e2e lo rehace porque su runner arranca con `dist/`
+// vacío. No es un paso que preflight se salte: es plumbing que hacen los dos lados,
+// solo que preflight lo lleva DENTRO de verify. Se filtra igual en ambos.
+const SETUP = [/^npm run build$/];
+const isSetup = (cmd) => SETUP.some((re) => re.test(cmd));
+
+const isIgnored = (cmd) => isInfra(cmd) || isSetup(cmd);
 const norm = (cmd) => cmd.trim().replace(/\s+/g, ' ');
 
 // Extrae los comandos `run:` de un workflow de GitHub Actions (inline y block scalar `|`).
@@ -72,7 +83,7 @@ export function extractCiCommands(ymlText) {
       cmds.push(norm(inline));
     }
   }
-  return cmds.filter((c) => c && !isInfra(c));
+  return cmds.filter((c) => c && !isIgnored(c));
 }
 
 // Extrae los comandos que encadena el script `preflight` (separados por `&&`).
@@ -80,7 +91,7 @@ export function extractPreflightCommands(preflightScript) {
   return preflightScript
     .split('&&')
     .map(norm)
-    .filter((c) => c && !isInfra(c));
+    .filter((c) => c && !isIgnored(c));
 }
 
 // Lo que preflight DEBERÍA correr = los pasos del CI con la sustitución local aplicada.
