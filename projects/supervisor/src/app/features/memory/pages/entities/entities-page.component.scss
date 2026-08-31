@@ -45,8 +45,9 @@
       align-items: center;
       gap: var(--sc-spacing-0-5);
       margin: 0 0 4px 0;
-      font-size: var(--sc-font-size-300);
-      font-weight: var(--sc-font-weight-semibold);
+      font-size: var(--sc-font-size-subtitle-1);
+      line-height: var(--sc-line-height-subtitle-1);
+      font-weight: var(--sc-font-weight-subtitle-1);
       color: var(--sc-text-primary);
 
       sc-icon {
