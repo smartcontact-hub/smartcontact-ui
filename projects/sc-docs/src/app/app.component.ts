@@ -67,6 +67,14 @@ export class AppComponent {
       action: () => this.go(`/components/${c.path}`),
     }));
     this.palette.setCommands([...sections, ...comps]);
+
+    // Cierra el ⌘K en CUALQUIER navegación, no solo al navegar desde el propio palette
+    // (que ya llama a `close()` en `go()`). Sin esto, abrir el ⌘K y luego cambiar de página
+    // por la URL / un enlace dejaba el overlay abierto sobre la pantalla nueva. Sin
+    // `takeUntilDestroyed`: `app.component` es la raíz, no se destruye nunca.
+    this.router.events.subscribe((e) => {
+      if (e instanceof NavigationEnd) this.palette.close();
+    });
   }
 
   protected toggleDark(): void {

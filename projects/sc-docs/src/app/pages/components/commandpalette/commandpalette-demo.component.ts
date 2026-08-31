@@ -21,6 +21,11 @@ import { StoryContext, StoryDef, StoryHostComponent, StoryMeta } from '../../../
   imports: [ScCommandPaletteComponent, StoryHostComponent],
   templateUrl: './commandpalette-demo.component.html',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  // El shell (`app.component`) ya monta un `<sc-command-palette>` global sobre el servicio
+  // ROOT. Esta demo monta OTRO para el playground, así que se le da su PROPIA instancia del
+  // servicio (scoped): su palette y sus comandos quedan aislados del global y no hay dos
+  // renderers sobre el mismo estado ni comandos pisados. El botón de la demo abre solo el suyo.
+  providers: [ScCommandPaletteService],
 })
 export class CommandPaletteDemoComponent {
   protected readonly palette = inject(ScCommandPaletteService);
