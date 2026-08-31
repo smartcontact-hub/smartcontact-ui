@@ -133,6 +133,7 @@ export class CategoryFormModalComponent {
   protected readonly layoutTemplateIcon = 'dashboard';
   protected readonly alertIcon = 'warning';
   protected readonly checkIcon = 'check';
+  protected readonly pausedIcon = 'pause_circle';
   protected readonly infoIcon = 'info';
   protected readonly fileTextIcon = 'description';
   protected readonly plusIcon = 'add';

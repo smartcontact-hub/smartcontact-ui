@@ -88,10 +88,8 @@ export const EMOJI_PENDIENTES = {
   // sustituir por flag SVG (el seed de cuscare ya trae `src: 'icons/flags/*.svg'`).
   'projects/cuscare/src/app/data/seed.ts': 20,
   'projects/supervisor/src/app/features/config/pages/sistema-page.component.ts': 8,
-  // Emoji decorativo suelto (candidatos a limpiar cuando se apliquen los patrones a la app):
-  // ⚠️ en una descripción de demo · ⏸️ como icono en un modal (debería ser <sc-icon>).
-  'projects/sc-docs/src/app/pages/components/stickyformheader/stickyformheader-demo.component.ts': 1,
-  'projects/supervisor/src/app/features/memory/components/category-form-modal/category-form-modal.component.html': 1,
+  // (Los 2 emoji decorativos que había —⚠️ en un demo y ⏸️ en un modal— ya se
+  //  sustituyeron por <sc-icon> / se quitaron; por eso el trinquete bajó a 2 ficheros.)
 };
 
 /** TRINQUETE de imágenes sin dimensiones (fichero → nº). Solo mengua. */

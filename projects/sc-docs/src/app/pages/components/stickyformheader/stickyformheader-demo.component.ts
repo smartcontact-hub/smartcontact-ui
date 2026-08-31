@@ -52,7 +52,7 @@ export class StickyFormHeaderDemoComponent {
     tag: 'sc-sticky-form-header',
     title: 'StickyFormHeader',
     description:
-      '⚠️ Deprecated / retenido (rollback DD#65): ya no lo usa ningún form (los 3 shells migraron a «todo arriba»). Se conserva como red de seguridad. Header sticky de Create/Edit: eyebrow + nombre editable inline + Guardar.',
+      'Deprecated / retenido (rollback DD#65): ya no lo usa ningún form (los 3 shells migraron a «todo arriba»). Se conserva como red de seguridad. Header sticky de Create/Edit: eyebrow + nombre editable inline + Guardar.',
     argTypes: [
       { name: 'mode', control: { kind: 'select', options: ['create', 'edit'] } },
       { name: 'entityKey', control: { kind: 'text' } },
