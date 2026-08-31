@@ -56,11 +56,11 @@ credenciales aquí**, solo dónde viven.
 
 | Servicio | Para qué | Config en el repo | Dueño | ¿Quién más tiene acceso? | Dónde vive la credencial | Recuperación (email/2FA) |
 | --- | --- | --- | --- | --- | --- | --- |
-| **GitHub org `smartcontact-hub`** | Repo, CI (Actions), paquetes | `.github/workflows/` | Rafa | Marta Recio (`martarecioa`): rol **Maintain** (2026-08-31). Otro colaborador directo: `arebury` _(confirmar: ¿cuenta personal de Rafa?)_ | Privadas: gestor personal de Rafa, no en el repo | _(rellenar)_ |
-| **Cloudflare Pages** (cuenta `b8361bb4…`) | Deploy de las 4 apps (`sc-doc`, `sc-supervisor`, `sc-agent`, `sc-cuscare`), preview por rama | No en el repo: la config vive en el dashboard (build cmd + `Build output directory = dist/<app>/browser`) | Rafa _(confirmar)_ | _(rellenar)_ | _(gestor de contraseñas)_ | _(rellenar)_ |
-| **Figma: fichero del DS** (`khNq9dJKNi13pNllrqm6dx`) | Source of truth del diseño; origen del export de tokens | `figma.config.json`, `code-connect/` | Rafa | Marta (diseño): con acceso (2026-08-31) | _(cuenta Figma)_ | _(rellenar)_ |
-| **Plugin Theme Designer** (token que empuja a `design-tokens-sync`) | Loop Figma to código: empuja el export DTCG | Rama `design-tokens-sync` (NO borrar); `tokens-sync.yml` | Rafa | Marta: con acceso (2026-08-31) | _(token GitHub del plugin, en la máquina)_ | _(rellenar)_ |
-| **Jira `jira.dvtech.io`** (proyecto SISMAC) | Tickets y contexto de producto (org externa: dvtech) | Referencias en `docs/` y commits | _(rellenar)_ | VAP, Lucas (backend) _(confirmar)_ | _(cuenta dvtech)_ | _(rellenar)_ |
+| **GitHub org `smartcontact-hub`** | Repo, CI (Actions), paquetes | `.github/workflows/` | Rafa | Marta Recio (`martarecioa`): rol **Maintain** (2026-08-31). Otro colaborador directo: `arebury` _(confirmar: ¿cuenta personal de Rafa?)_ | Privadas: gestor personal de Rafa, no en el repo | Gestor de Rafa (email + 2FA) |
+| **Cloudflare Pages** (cuenta `b8361bb4…`) | Deploy de las 4 apps (`sc-doc`, `sc-supervisor`, `sc-agent`, `sc-cuscare`), preview por rama | No en el repo: la config vive en el dashboard (build cmd + `Build output directory = dist/<app>/browser`) | Rafa _(confirmar)_ | _(rellenar)_ | _(gestor de contraseñas)_ | Gestor de Rafa (email + 2FA) |
+| **Figma: fichero del DS** (`khNq9dJKNi13pNllrqm6dx`) | Source of truth del diseño; origen del export de tokens | `figma.config.json`, `code-connect/` | Rafa | Marta (diseño): con acceso (2026-08-31) | _(cuenta Figma)_ | Gestor de Rafa |
+| **Plugin Theme Designer** (token que empuja a `design-tokens-sync`) | Loop Figma to código: empuja el export DTCG | Rama `design-tokens-sync` (NO borrar); `tokens-sync.yml` | Rafa | Marta: con acceso (2026-08-31) | _(token GitHub del plugin, en la máquina)_ | Gestor de Rafa (token en su máquina) |
+| **Jira `jira.dvtech.io`** (proyecto SISMAC) | Tickets y contexto de producto (org externa: dvtech) | Referencias en `docs/` y commits | _(rellenar)_ | VAP, Lucas (backend) _(confirmar)_ | _(cuenta dvtech)_ | Vía dvtech (cuenta de empresa) |
 | **GitHub Packages** (`npm.pkg.github.com`) | Publicar los 3 paquetes del DS. **DORMIDO** (DD-17: las apps consumen el DS local) | `.npmrc` (usa `GITHUB_TOKEN` del entorno) | Rafa _(confirmar)_ | _(rellenar)_ | _(token en variable de entorno)_ | n/a mientras esté dormido |
 
 **Política de co-acceso (decisión de Rafa, 2026-08-31):** Marta tiene GitHub
@@ -69,6 +69,14 @@ El resto (Cloudflare, Jira, gestor de credenciales) **no se comparte a propósit
 por privacidad.** El hueco que eso deja para la continuidad es el **nivel admin**:
 hoy no hay un segundo admin del repo ni de Cloudflare. Es una elección consciente,
 anotada aquí para que no se lea como un olvido.
+
+**Recuperación (2026-08-31):** los VALORES (email de recuperación, 2FA) **no se
+escriben aquí**, que el repo es público y un vector de recuperación expuesto es un
+riesgo. Solo se apunta DÓNDE se recupera: las cuentas propias de Rafa (GitHub,
+Cloudflare, Figma, Theme Designer) desde su gestor de contraseñas; Jira desde
+dvtech. **Límite honesto asumido:** si el gestor de Rafa es inaccesible y él no
+está, no hay plan B para sus cuentas propias. Es el precio de no compartir por
+privacidad, y se acepta a conciencia.
 
 > Si algún día quieres una copia de seguridad viva del fichero de Figma o de la
 > config de Cloudflare, anótalo aquí como tarea: hoy ambos existen en un solo
