@@ -6,9 +6,10 @@ import { COMPONENT_CATALOG, groupCatalog } from './component-catalog';
 /**
  * Portada de la sección Componentes.
  *
- * NO repite la lista completa: eso ya lo hace la sidebar, y tenerlo dos veces era la
- * tercera copia de la misma navegación en la misma pantalla. Aquí va lo que la sidebar
- * no dice — cuántos hay, en qué familias y de dónde salen — y un salto por familia.
+ * Cada componente es una tarjeta con su nombre y UNA línea de para qué sirve (el `blurb`
+ * del catálogo), agrupadas por familia. La descripción es lo que la sidebar no da: deja
+ * escanear el catálogo entero sin abrir 49 páginas, y desde cada card se profundiza. La
+ * lista plana de navegación sigue viviendo en la sidebar; aquí el valor es el propósito.
  */
 @Component({
   selector: 'app-components-index',
@@ -18,21 +19,31 @@ import { COMPONENT_CATALOG, groupCatalog } from './component-catalog';
     <h1>Componentes</h1>
     <p class="lead">
       {{ total }} wrappers <code>sc-*</code> de
-      <code>&#64;smartcontact-hub/components</code>, en {{ groups.length }} familias. Cada
-      página renderiza sus variantes y estados sobre el lienzo aislado, en claro y oscuro.
-      <strong>La lista completa está en la barra lateral</strong>; abajo, un salto por familia.
+      <code>&#64;smartcontact-hub/components</code>, en {{ groups.length }} familias. Para qué
+      sirve cada uno de un vistazo; entra en cualquiera para ver sus variantes, estados y
+      código, en claro y oscuro.
     </p>
 
-    <ul class="families">
-      @for (group of groups; track group.category) {
-        <li>
-          <a [routerLink]="['/components', group.items[0].path]">
-            <span class="families__name">{{ group.category }}</span>
-            <span class="families__count">{{ group.items.length }}</span>
-          </a>
-        </li>
-      }
-    </ul>
+    @for (group of groups; track group.category) {
+      <section class="fam">
+        <h2 class="fam__title">
+          {{ group.category }}
+          <span class="fam__count">{{ group.items.length }}</span>
+        </h2>
+        <ul class="cards">
+          @for (e of group.items; track e.path) {
+            <li>
+              <a class="card" [routerLink]="['/components', e.path]">
+                <span class="card__name">{{ e.label }}</span>
+                @if (e.blurb) {
+                  <span class="card__blurb">{{ e.blurb }}</span>
+                }
+              </a>
+            </li>
+          }
+        </ul>
+      </section>
+    }
   `,
   styles: `
     .eyebrow {
@@ -54,31 +65,56 @@ import { COMPONENT_CATALOG, groupCatalog } from './component-catalog';
     }
 
     .lead {
-      max-width: 60ch;
+      max-width: 68ch;
+      margin: 0;
       font-size: var(--sc-font-size-300);
       line-height: var(--sc-line-height-300);
       color: var(--sc-text-secondary);
     }
 
-    .families {
-      display: grid;
-      grid-template-columns: repeat(auto-fill, minmax(11rem, 1fr));
+    /* Familia: encabezado + rejilla de componentes. Ritmo por separación, no por caja. */
+    .fam {
+      margin-top: var(--sc-spacing-2-25);
+    }
+
+    .fam__title {
+      display: flex;
+      align-items: baseline;
       gap: var(--sc-spacing-0-5);
-      margin-top: var(--sc-spacing-1-75);
+      margin: 0 0 var(--sc-spacing-0-875);
+      font-size: var(--sc-font-size-100);
+      font-weight: var(--sc-font-weight-bold);
+      letter-spacing: 0.06em;
+      text-transform: uppercase;
+      color: var(--sc-text-secondary);
+    }
+
+    .fam__count {
+      font-size: var(--sc-font-size-50);
+      font-weight: var(--sc-font-weight-semibold);
+      color: var(--sc-text-subtle);
+      font-variant-numeric: tabular-nums;
+    }
+
+    .cards {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(15.5rem, 1fr));
+      gap: var(--sc-spacing-0-75);
+      margin: 0;
       padding: 0;
       list-style: none;
     }
 
-    .families a {
+    .card {
       display: flex;
-      align-items: center;
-      justify-content: space-between;
-      gap: var(--sc-spacing-0-5);
-      padding: var(--sc-spacing-1) var(--sc-spacing-1-125);
+      flex-direction: column;
+      gap: var(--sc-spacing-0-375);
+      height: 100%;
+      box-sizing: border-box;
+      padding: var(--sc-spacing-0-875) var(--sc-spacing-1);
       border: 1px solid var(--sc-border-default);
       border-radius: 12px;
       background: var(--sc-bg-surface);
-      color: var(--sc-text-primary);
       text-decoration: none;
       box-shadow: var(--sc-shadow-card);
       transition:
@@ -87,30 +123,27 @@ import { COMPONENT_CATALOG, groupCatalog } from './component-catalog';
         border-color 140ms ease-out;
     }
 
-    .families a:hover {
+    .card:hover {
       border-color: var(--sc-border-strong);
       box-shadow: var(--sc-shadow-dropdown);
       transform: translateY(-2px);
     }
 
-    .families a:focus-visible {
+    .card:focus-visible {
       outline: 2px solid var(--sc-color-sky-500);
       outline-offset: 2px;
     }
 
-    .families a:focus-visible {
-      outline: 2px solid var(--sc-color-sky-500);
-      outline-offset: 1px;
-    }
-
-    .families__name {
+    .card__name {
+      font-size: var(--sc-font-size-200);
       font-weight: var(--sc-font-weight-semibold);
+      color: var(--sc-text-primary);
     }
 
-    .families__count {
-      color: var(--sc-text-subtle);
+    .card__blurb {
       font-size: var(--sc-font-size-100);
-      font-variant-numeric: tabular-nums;
+      line-height: 1.45;
+      color: var(--sc-text-secondary);
     }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
