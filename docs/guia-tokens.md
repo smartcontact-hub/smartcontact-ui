@@ -1006,6 +1006,7 @@ momento.
 | **rem** | La unidad en que se emiten escala y radios (px de diseño ÷ 16). Mismo render por defecto que el px, pero respeta el zoom de fuente del usuario. |
 | **Fallback** | Cuando una variable tiene un valor de respaldo por si no existe: `var(--sc-x, #ccc)`. **No queremos fallbacks hex** — significa que falta declarar el token. |
 | **Dark mode** | El tema oscuro. Funciona porque el archivo `07-dark.css` re-declara las plantas 2/3/4 con valores oscuros bajo la clase `.sc-dark` — la misma que el provider usa por defecto como `darkModeSelector`. |
+| **Iconos** | Un único proveedor: `<sc-icon>` sobre la font variable **Material Symbols Outlined** (`@smartcontact-hub/icons`), no SVG. Nada de emojis ni un segundo set. Detalle y API en [`customs-catalog.md`](./customs-catalog.md) §2.6. |
 
 ---
 
