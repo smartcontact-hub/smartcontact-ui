@@ -708,6 +708,16 @@ lo que hace que te la creas cuando te toca. Lee el índice siempre; el cuerpo, c
     aviso leído-pero-no-aplicado es un aviso desperdiciado. (Lo mecánico de este caso ya está en
     un gate: `scripts/figma-parity.mjs` resuelve ambos lados solo.)
 
+    *Corolario (s39) — un check/estado de CI (o un log, o un dashboard) atado a un commit VIEJO es
+    un snapshot histórico, no el estado de hoy.* Reporté a Rafa «existe un proyecto Cloudflare
+    `sc-demo`» leyendo su check en ROJO sobre el último commit (de la semana pasada) de
+    `design-tokens-sync`; Rafa ya lo había borrado — el check era el fantasma de cuando existía.
+    **Por qué no disparó**: el disparador de arriba lista FUENTES (hand-off, README, Figma, otro
+    agente) pero no la dimensión TEMPORAL, y una señal de máquina (verde/rojo) se *siente*
+    verificada aunque describa un estado caducado. **Disparador**: antes de afirmar que algo
+    existe/pasa a partir de un check/log/dashboard, mira su FECHA; si es anterior a un cambio
+    relevante, confírmalo contra el estado vivo, no lo reenvíes como hecho de hoy.
+
 18. **Vas a zanjar una decisión VISUAL con un argumento —rebatiendo al usuario o discutiéndola
     contigo mismo— → constrúyela en su versión mínima y MÍRALA.** Un principio bien enunciado
     suena a autoridad y no lo es: puede estar protegiendo algo que en el código ya no existe.
