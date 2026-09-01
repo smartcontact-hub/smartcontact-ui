@@ -3,8 +3,8 @@
 > **Volátil.** Lo reescribe la sesión que trabaja ESTE frente, y **solo este fichero**.
 > No toques los hand-offs de otros frentes.
 > **Sello: 2026-09-01 — HEAD `0b1d210`. CI verde (run 33526420436, 5/5), todo en `main`.**
-> **Vivo en `agent-mini.pages.dev`, verificado sirviendo `0b1d210`** (el bundle lleva
-> «Estados», «Mensajes», «Seleccione grupo»).
+> **Vivo en `agent-mini.pages.dev`, producción por `main`** (repuntado 2026-09-01,
+> verificado sirviendo `e3874c3`; el bundle lleva «Estados», «Mensajes», «Seleccione grupo»).
 >
 > ⚠️ Un hand-off es una **pista, no un hecho**. Confirma antes de construir encima.
 
@@ -66,13 +66,13 @@ overlay. Son fieles «de sensación», no verificadas al píxel.
 
 ## ⏸️ ESPERANDO A RAFA — no preguntar, no hacer (dashboard-only)
 
-1. **CRÍTICO · Repuntar el proyecto Cloudflare `agent-mini` a `main`.** La config que pasó Rafa
-   lo tenía en la rama **`worktree-agent-mini`**, y esa rama la **borró GitHub al mergear** (ya no
-   existe en origin). Es EXACTAMENTE la trampa de `feat/cuscare` (ver `NEXT-SESSION.md`): la URL
-   sigue sirviendo el ÚLTIMO build (ahora `0b1d210`, correcto) pero **dejará de reconstruirse** en
-   los próximos push a `main`, y no se nota hasta que echas de menos un cambio. Arreglo: en el
-   dashboard, «Production branch» → `main`. (Verificable por API con el token de wrangler; ver
-   la memoria `deploy-cloudflare-pages-config`.)
+1. ~~**CRÍTICO · Repuntar Cloudflare `agent-mini` a `main`**~~ → **HECHO (2026-09-01)**.
+   Confirmado que estaba en `worktree-agent-mini` (el último build de producción salía de esa
+   rama borrada, `0b1d210`) — era la trampa de `feat/cuscare`. La extensión de Claude cambió
+   «Production branch» → `main` en el dashboard y relanzó producción desde `main` (`e3874c3`,
+   `success`, 55s); `agent-mini.pages.dev` verificado sirviendo el dialpad. «Preview branch» y
+   «Automatic deployments» sin tocar. **Pendiente de token wrangler vivo** si algún día hay que
+   tocarlo por API (el guardado estaba expirado en esta sesión).
 2. **Nombre del proyecto.** Los otros 4 siguen convención `sc-*` (`sc-agent`, `sc-cuscare`…);
    este es `agent-mini.pages.dev`. Si Rafa quiere coherencia → renombrar a `sc-agent-mini`.
 3. **Superficies solo-vivo, para pasar de doc-based a medido:** vista EN LLAMADA (cronómetro,
