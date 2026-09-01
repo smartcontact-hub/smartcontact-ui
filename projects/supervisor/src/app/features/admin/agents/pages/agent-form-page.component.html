@@ -47,7 +47,7 @@
             [size]="40"
           />
           <div class="ficha__body">
-            <span class="ficha__name">
+            <span class="ficha__name" [title]="form().name">
               {{ form().name || ('agents.entity_singular' | translate) }}
             </span>
             <span class="pill pill--presence pill--presence-{{ form().presenceStatus }}">

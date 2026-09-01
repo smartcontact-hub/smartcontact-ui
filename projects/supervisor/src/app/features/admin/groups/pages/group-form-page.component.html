@@ -45,7 +45,7 @@
             [size]="40"
           />
           <div class="ficha__body">
-            <span class="ficha__name">{{ form().name }}</span>
+            <span class="ficha__name" [title]="form().name">{{ form().name }}</span>
             @if (form().strategy) {
               <span class="pill">{{ form().strategy }}</span>
             }

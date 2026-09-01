@@ -116,7 +116,7 @@
 <!-- Texto plano, pero con `<span>` propio: el `<td>` lo pinta ahora el DS y una
      regla encapsulada de esta página no lo alcanzaría (trampa 3 de la receta). -->
 <ng-template #emailTpl let-user>
-  <span class="table__td-text">{{ user.email }}</span>
+  <span class="table__td-text" [title]="user.email">{{ user.email }}</span>
 </ng-template>
 
 <ng-template #identifierTpl let-user>
