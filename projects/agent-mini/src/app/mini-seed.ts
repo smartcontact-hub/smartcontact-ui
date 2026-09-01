@@ -63,3 +63,149 @@ export const SERVICES: readonly ServiceGroup[] = [
   { name: 'Ventas', number: '3001' },
   { name: 'Atención cliente', number: '3002' },
 ];
+
+/* ------------------------------------------------------------------ *
+ *  Mensajes (pestaña Chat)                                            *
+ * ------------------------------------------------------------------ */
+
+/** Autor de una burbuja: yo (agente), el contacto, o un aviso del sistema. */
+export type BubbleFrom = 'me' | 'them' | 'system';
+
+export interface Bubble {
+  readonly from: BubbleFrom;
+  readonly text: string;
+  /** Hora dentro de la burbuja (no en los avisos de sistema). */
+  readonly time?: string;
+}
+
+export type MessageChannel = 'chat' | 'whatsapp' | 'mail';
+
+export interface MessageRow {
+  readonly id: number;
+  /** Remitente (el contacto). */
+  readonly name: string;
+  /** Nodo/cola por la que entra; se pinta en azul (#73abf4). */
+  readonly group: string;
+  readonly time: string;
+  /** Última línea, como vista previa en la tarjeta. */
+  readonly preview: string;
+  readonly unread: boolean;
+  readonly channel: MessageChannel;
+  readonly bubbles: readonly Bubble[];
+}
+
+/**
+ * Conversaciones FALSAS para la pestaña Mensajes. En el entorno real la lista sale
+ * VACIA (lo verificado en la extraccion: `.body-message` sin hijos); estas de ejemplo
+ * existen para que la replica no se vea hueca, igual que Historial y Agenda. Ni un
+ * dato real. Colores de burbuja del CSS del original (comunicador.md).
+ */
+export const MESSAGES: readonly MessageRow[] = [
+  {
+    id: 1, name: 'Cliente web', group: 'Chat AED', time: '14:12', unread: true, channel: 'chat',
+    preview: '¿Me podéis confirmar el estado del pedido?',
+    bubbles: [
+      { from: 'system', text: 'Conversación asignada a Nodo AED 1' },
+      { from: 'them', text: 'Hola, buenas tardes', time: '14:08' },
+      { from: 'them', text: '¿Me podéis confirmar el estado del pedido?', time: '14:09' },
+      { from: 'me', text: 'Hola, ahora mismo lo reviso', time: '14:10' },
+    ],
+  },
+  {
+    id: 2, name: '676 653 912', group: 'WhatsApp', time: '13:47', unread: true, channel: 'whatsapp',
+    preview: 'Perfecto, muchas gracias',
+    bubbles: [
+      { from: 'them', text: 'Necesito cambiar la cita del martes', time: '13:40' },
+      { from: 'me', text: 'Claro, ¿para qué día la movemos?', time: '13:42' },
+      { from: 'them', text: 'El jueves por la mañana si puede ser', time: '13:44' },
+      { from: 'me', text: 'Hecho, cita movida al jueves a las 10:00', time: '13:46' },
+      { from: 'them', text: 'Perfecto, muchas gracias', time: '13:47' },
+    ],
+  },
+  {
+    id: 3, name: 'Elena Vidal', group: 'Ventas', time: '12:31', unread: false, channel: 'chat',
+    preview: 'Vale, me lo pienso y os digo',
+    bubbles: [
+      { from: 'them', text: 'Quería información sobre la tarifa nueva', time: '12:20' },
+      { from: 'me', text: 'Te paso el detalle por correo ahora mismo', time: '12:25' },
+      { from: 'them', text: 'Vale, me lo pienso y os digo', time: '12:31' },
+    ],
+  },
+  {
+    id: 4, name: 'soporte@correo', group: 'Mail AED', time: '11:05', unread: false, channel: 'mail',
+    preview: 'Adjunto la factura rectificada.',
+    bubbles: [
+      { from: 'them', text: 'Buenos días, adjunto la factura rectificada.', time: '11:05' },
+      { from: 'me', text: 'Recibida, la tramito hoy mismo', time: '11:18' },
+    ],
+  },
+  {
+    id: 5, name: 'Hugo Marín', group: 'Nodo AED 2', time: '10:22', unread: false, channel: 'chat',
+    preview: 'Gracias por la ayuda',
+    bubbles: [
+      { from: 'them', text: 'Ya me funciona, era el navegador', time: '10:20' },
+      { from: 'them', text: 'Gracias por la ayuda', time: '10:22' },
+      { from: 'system', text: 'Conversación finalizada' },
+    ],
+  },
+  {
+    id: 6, name: '612 345 678', group: 'Soporte', time: '09:48', unread: false, channel: 'whatsapp',
+    preview: 'Os escribo si vuelve a pasar',
+    bubbles: [
+      { from: 'them', text: 'La app se cierra sola al abrir', time: '09:30' },
+      { from: 'me', text: '¿Podrías probar a reinstalarla?', time: '09:35' },
+      { from: 'them', text: 'Listo, ya no se cierra', time: '09:46' },
+      { from: 'them', text: 'Os escribo si vuelve a pasar', time: '09:48' },
+    ],
+  },
+];
+
+/* ------------------------------------------------------------------ *
+ *  Agentes y grupos (pestaña Agentes)                                 *
+ * ------------------------------------------------------------------ */
+
+/** Presencia del agente: pinta el punto (verde / gris / ambar). */
+export type AgentPresence = 'connected' | 'disconnected' | 'paused';
+
+export interface AgentRow {
+  readonly id: number;
+  readonly name: string;
+  readonly presence: AgentPresence;
+  /** Canales que atiende; el que no, baja a opacity 0.3 (no cambia de color). */
+  readonly phone: boolean;
+  readonly chat: boolean;
+  readonly mail: boolean;
+}
+
+/**
+ * Roster FALSO para la pestaña Agentes. En la extraccion del mini esta pestaña SI sale
+ * poblada (a diferencia del entorno de `agent`), con punto de estado, nombre y los tres
+ * canales. Nombres INVENTADOS: los reales de la captura no entran en un repo publico.
+ */
+export const AGENTS: readonly AgentRow[] = [
+  { id: 1, name: 'Lucía Prieto', presence: 'connected', phone: true, chat: true, mail: false },
+  { id: 2, name: 'Marcos Gil', presence: 'paused', phone: true, chat: false, mail: false },
+  { id: 3, name: 'Nuria Blanco', presence: 'connected', phone: true, chat: true, mail: true },
+  { id: 4, name: 'Pablo Ferrer', presence: 'disconnected', phone: true, chat: false, mail: false },
+  { id: 5, name: 'Rosa Campos', presence: 'connected', phone: false, chat: true, mail: true },
+  { id: 6, name: 'Sergio Ibáñez', presence: 'disconnected', phone: true, chat: true, mail: false },
+  { id: 7, name: 'Teresa Molina', presence: 'paused', phone: true, chat: false, mail: true },
+  { id: 8, name: 'Víctor Rey', presence: 'connected', phone: true, chat: true, mail: true },
+];
+
+export interface GroupRow {
+  readonly id: number;
+  readonly name: string;
+  /** Agentes conectados / total en el grupo. */
+  readonly online: number;
+  readonly total: number;
+}
+
+/** Grupos FALSOS para la sub-pestaña Grupos. */
+export const GROUPS: readonly GroupRow[] = [
+  { id: 1, name: 'Nodo AED 1', online: 4, total: 6 },
+  { id: 2, name: 'Nodo AED 2', online: 2, total: 4 },
+  { id: 3, name: 'Soporte Talco', online: 1, total: 3 },
+  { id: 4, name: 'Ventas', online: 3, total: 5 },
+  { id: 5, name: 'Atención cliente', online: 5, total: 8 },
+];
