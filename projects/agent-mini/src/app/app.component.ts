@@ -6,6 +6,8 @@ import {
   signal,
 } from '@angular/core';
 import { MiniStateService } from './mini-state.service';
+import { HistoryComponent } from './history.component';
+import { AgendaComponent } from './agenda.component';
 
 type Tab = 'call' | 'chat' | 'agents' | 'contacts' | 'history';
 
@@ -29,6 +31,7 @@ interface NavAction {
 @Component({
   selector: 'app-root',
   standalone: true,
+  imports: [HistoryComponent, AgendaComponent],
   template: `
     <div class="app" [class.cant-call]="!state.canCall()">
       <!-- Cuerpo: la sección activa -->
@@ -75,11 +78,26 @@ interface NavAction {
             </button>
           </div>
         </div>
+        } @else if (tab() === 'history') {
+        <div class="section">
+          <div class="sec-head"><div class="sec-title">Historial</div></div>
+          <mini-history class="fill" (dial)="onDial($event)" />
+        </div>
+        } @else if (tab() === 'contacts') {
+        <div class="section">
+          <div class="sec-head">
+            <div class="sec-title">Agenda</div>
+            <label class="search"
+              ><input type="search" placeholder="Buscar..." aria-label="Buscar"
+            /></label>
+          </div>
+          <mini-agenda class="fill" (dial)="onDial($event)" />
+        </div>
         } @else {
         <div class="section">
           <div class="sec-head" [class.tall]="tab() === 'agents'">
             <div class="sec-title">{{ sectionTitle() }}</div>
-            @if (tab() === 'chat' || tab() === 'agents' || tab() === 'contacts') {
+            @if (tab() === 'chat' || tab() === 'agents') {
             <label class="search"
               ><input type="search" placeholder="Buscar..." aria-label="Buscar"
             /></label>
@@ -148,6 +166,7 @@ interface NavAction {
 
     /* Secciones no-call: cabecera + estado vacío (chat/agentes/agenda/historial). */
     .section { display: flex; flex-direction: column; width: 100%; height: 100%; }
+    .fill { flex: 1; min-height: 0; }
     .sec-head {
       display: flex;
       flex-direction: column;
@@ -429,5 +448,11 @@ export class AppComponent {
       default:
         return '';
     }
+  }
+
+  /** Marca un numero desde Historial/Agenda: lo carga en el dialpad y va a Telefono. */
+  protected onDial(number: string): void {
+    this.state.phoneNumber.set(number.replace(/[^0-9*#+]/g, ''));
+    this.tab.set('call');
   }
 }
