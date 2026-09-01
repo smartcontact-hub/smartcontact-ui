@@ -26,13 +26,14 @@ antes de construir encima.
 | **Agent** — réplica medida del Comunicador (SISMAC-3780)              | [`docs/handoff/agent.md`](docs/handoff/agent.md)                 | 2026-08-31 (s37) |
 | **CusCare** — réplica de la herramienta de tickets                    | [`docs/handoff/cuscare.md`](docs/handoff/cuscare.md)             | 2026-08-31 (s37) |
 | **Design System + herramienta** — tokens, componentes, Figma, tooling | [`docs/handoff/design-system.md`](docs/handoff/design-system.md) | 2026-08-31 (s38) |
+| **Agent Mini** — dialpad standalone (réplica del mini aed)            | [`docs/handoff/agent-mini.md`](docs/handoff/agent-mini.md)       | 2026-09-01       |
 
 **Al cerrar, reescribe SOLO el fichero de tu frente.** Si abres una línea de trabajo nueva, crea
 su fichero, añade su fila aquí y nómbralo en la fila de `DOCS-INDEX`.
 
 ---
 
-## 🟢 EN PRODUCCIÓN — 4 sitios, todos desde `main`
+## 🟢 EN PRODUCCIÓN — 5 sitios (4 desde `main`; `agent-mini` pendiente de repuntar, ver ⚠️)
 
 | Proyecto     | URL                         | Qué es                                 |
 | ------------ | --------------------------- | -------------------------------------- |
@@ -40,11 +41,18 @@ su fichero, añade su fila aquí y nómbralo en la fila de `DOCS-INDEX`.
 | `supervisor` | **sc-supervisor.pages.dev** | La app real, con datos de demostración |
 | `agent`      | **sc-agent.pages.dev**      | Réplica del dashboard del agente       |
 | `cuscare`    | **sc-cuscare.pages.dev**    | Réplica de la herramienta de tickets   |
+| `agent-mini` | **agent-mini.pages.dev** ⚠️ | Réplica del dialpad mini (standalone)  |
 
-⚠️ Cloudflare da preview por rama en los 4. **Si apuntas un proyecto a una rama, NO la borres al
+⚠️ Cloudflare da preview por rama en los 5. **Si apuntas un proyecto a una rama, NO la borres al
 mergear sin repuntarlo a `main` antes** — pasó con `feat/cuscare`: al borrarla, `sc-cuscare` quedó
 apuntando a una rama fantasma y dejó de reconstruirse, y la URL seguía sirviendo el último build,
 así que no se nota hasta que echas en falta un cambio.
+
+⚠️ **`agent-mini` está HOY en esa trampa.** Su proyecto Cloudflare apuntaba a la rama
+`worktree-agent-mini`, que GitHub borró al mergear (PR #31/#32). La URL sirve el último build
+(`0b1d210`, correcto) pero dejará de reconstruirse. **Falta que Rafa lo repunte a `main` en el
+dashboard** (y, si quiere, lo renombre `sc-agent-mini` para casar con el resto). Detalle en
+[`docs/handoff/agent-mini.md`](docs/handoff/agent-mini.md).
 
 ---
 
