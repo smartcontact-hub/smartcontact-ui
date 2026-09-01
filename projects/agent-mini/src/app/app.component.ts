@@ -76,7 +76,22 @@ interface NavAction {
           </div>
         </div>
         } @else {
-        <p class="empty">Sin contenido</p>
+        <div class="section">
+          <div class="sec-head" [class.tall]="tab() === 'agents'">
+            <div class="sec-title">{{ sectionTitle() }}</div>
+            @if (tab() === 'chat' || tab() === 'agents' || tab() === 'contacts') {
+            <label class="search"
+              ><input type="search" placeholder="Buscar..." aria-label="Buscar"
+            /></label>
+            } @if (tab() === 'agents') {
+            <div class="subtabs">
+              <button type="button" class="on">Agentes</button
+              ><button type="button">Grupos</button>
+            </div>
+            }
+          </div>
+          <p class="empty">{{ emptyMsg() }}</p>
+        </div>
         }
       </div>
 
@@ -130,6 +145,56 @@ interface NavAction {
     /* Cuerpo — ocupa lo que queda entre navbar y barra de estado. */
     .body { position: relative; flex: 1; min-height: 0; display: flex; }
     .empty { margin: auto; color: #9d9fa3; font-size: 2vh; }
+
+    /* Secciones no-call: cabecera + estado vacío (chat/agentes/agenda/historial). */
+    .section { display: flex; flex-direction: column; width: 100%; height: 100%; }
+    .sec-head {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 2.2vh 3.4vw 0;
+      border-bottom: 0.0975274725vh solid rgba(0, 0, 0, 0.4);
+      gap: 1.6vh;
+    }
+    .sec-title {
+      font-family: 'Open Sans Semibold', 'Open Sans', sans-serif;
+      font-weight: 600;
+      font-size: 2.05vh;
+    }
+    .search {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      height: 3.6vh;
+      background: #1f2429;
+      border-radius: 1.8vw;
+    }
+    .search input {
+      width: 100%;
+      height: 100%;
+      padding: 0 3vw;
+      border: 0;
+      outline: none;
+      background: none;
+      color: #fff;
+      font-family: inherit;
+      font-size: 1.8vh;
+    }
+    .subtabs { display: flex; width: 100%; border-bottom: 1px solid rgba(95, 103, 118, 0.25); }
+    .subtabs button {
+      flex: 1;
+      padding: 0 0 0.8vh;
+      background: none;
+      border: 0;
+      color: #5f6776;
+      cursor: pointer;
+      font-family: 'Open Sans Semibold', 'Open Sans', sans-serif;
+      font-weight: 600;
+      font-size: 1.75vh;
+    }
+    .subtabs button:first-child { text-align: left; }
+    .subtabs button:last-child { text-align: right; }
+    .subtabs button.on { color: #fff; }
 
     .dialpad { display: flex; flex-direction: column; width: 100%; }
 
@@ -335,4 +400,34 @@ export class AppComponent {
   protected readonly canMakeCall = computed(
     () => this.state.canCall() && this.state.phoneNumber().length > 0
   );
+
+  protected sectionTitle(): string {
+    switch (this.tab()) {
+      case 'chat':
+        return 'Mensajes';
+      case 'agents':
+        return 'Agentes';
+      case 'contacts':
+        return 'Agenda';
+      case 'history':
+        return 'Historial';
+      default:
+        return 'Teléfono';
+    }
+  }
+
+  protected emptyMsg(): string {
+    switch (this.tab()) {
+      case 'chat':
+        return 'No hay conversaciones';
+      case 'agents':
+        return 'No hay agentes';
+      case 'contacts':
+        return 'No hay contactos';
+      case 'history':
+        return 'No hay registros';
+      default:
+        return '';
+    }
+  }
 }
