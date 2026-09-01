@@ -6,7 +6,7 @@ import { CONTACTS, type ContactRow } from './mini-seed';
  * marca el numero en el dialpad. Datos FALSOS (mini-seed): el repo es publico.
  */
 @Component({
-  selector: 'mini-agenda',
+  selector: 'app-agenda',
   standalone: true,
   template: `
     <div class="list">
@@ -17,7 +17,7 @@ import { CONTACTS, type ContactRow } from './mini-seed';
           <span class="name">{{ c.name }}</span>
           <span class="sub">{{ c.company || c.phone }}</span>
         </span>
-        <span class="dial-ic"><img src="icons/dialpad/telefono_pequeno_blanco.svg" alt="Llamar" /></span>
+        <span class="dial-ic"><img src="icons/dialpad/telefono_pequeno_blanco.svg" alt="Llamar" width="15" height="15" /></span>
       </button>
       }
     </div>
