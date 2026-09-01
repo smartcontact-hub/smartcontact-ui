@@ -1,0 +1,43 @@
+#!/usr/bin/env bash
+#
+# pre-push — corre el gate ANTES de que nada salga del portátil.
+#
+# Por qué existe: la regla 7 de LEARNINGS ("antes de `git push`, `preflight` sobre el árbol
+# final") es la que más se ha quebrado, y siempre por lo mismo — se lee al empezar la tarea y
+# el disparador salta horas después, cuando ya hay prisa y "cuatro gates verdes" parecen
+# suficientes. Una regla que depende de acordarse en el momento exacto no se cumple sola; una
+# que ejecuta el ordenador, sí. Es la doctrina del propio repo: lo mecanizable va a un gate,
+# no a un párrafo (README, «Regla de la casa»).
+#
+# Corre `preflight:scope`, que mira QUÉ tocaste y ajusta la cadena — y que imprime siempre lo
+# que deja fuera, así que el verde nunca es mudo.
+#
+# Salida de emergencia:  SKIP_PREFLIGHT=1 git push
+# Úsala sabiendo que te saltas el gate; queda dicho en pantalla.
+
+set -euo pipefail
+
+if [ "${SKIP_PREFLIGHT:-0}" = "1" ]; then
+  printf '\n\033[33m⚠ preflight SALTADO (SKIP_PREFLIGHT=1). El CI es ahora tu única red.\033[0m\n\n'
+  exit 0
+fi
+
+# nvm si está: este repo pide Node 22 y un git hook no hereda el shell interactivo
+# (ver LEARNINGS, «tres node y un PATH que se mueve»).
+export NVM_DIR="${NVM_DIR:-$HOME/.nvm}"
+if [ -s "$NVM_DIR/nvm.sh" ]; then
+  # shellcheck disable=SC1091
+  . "$NVM_DIR/nvm.sh" >/dev/null 2>&1 || true
+  nvm use >/dev/null 2>&1 || true
+fi
+
+printf '\n\033[1m▶ pre-push: gate antes de subir\033[0m  (SKIP_PREFLIGHT=1 para saltarlo)\n\n'
+
+if npm run preflight:scope --silent -- --run; then
+  printf '\n\033[32m✓ gate en verde — subiendo\033[0m\n\n'
+  exit 0
+fi
+
+printf '\n\033[31m✗ el gate ha fallado: el push se queda aquí.\033[0m\n'
+printf '  Arréglalo y repite, o SKIP_PREFLIGHT=1 git push si sabes lo que haces.\n\n'
+exit 1

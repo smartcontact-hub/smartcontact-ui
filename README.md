@@ -93,6 +93,12 @@ Que no se pudra cuando alguien añada un paso al CI lo garantiza un test
 (`scripts/ci-preflight-parity.mjs`, dentro de `test:unit`): se pone rojo si `preflight` y
 `ci.yml` se desincronizan.
 
+Y para que no dependa de acordarse, **un hook lo corre solo**: `.githooks/pre-push` lanza
+`preflight:scope` antes de cada `git push` y aborta si algo falla. Se activa una vez con
+`npm run hooks:install`. La salida de emergencia es `SKIP_PREFLIGHT=1 git push`, y avisa por
+pantalla de que te la has saltado. Existe porque esta regla era la más incumplida del repo:
+se lee al empezar la tarea y el disparador salta horas después.
+
 > **Y después de pushear, lee el CI.** `gh run list --branch main --workflow ci --limit 1`.
 > Un preflight verde no es un CI verde: el paso `npm ci` resuelve dependencias contra el
 > registro y en la plataforma del runner, así que puede caerse con tu árbol local intacto.
