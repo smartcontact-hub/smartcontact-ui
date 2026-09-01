@@ -1,30 +1,28 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
 
-/** Un enlace del directorio. `href: null` = lo tenemos pendiente de pegar
- *  (p. ej. el Kit de Figma, cuya URL no vive en el repo). */
+/** Un enlace del directorio. `href: null` = pendiente de pegar la URL.
+ *  `route` = navega dentro de este mismo sitio (no lleva `meta` de dominio). */
 interface DemoLink {
   readonly label: string;
   readonly href: string | null;
+  readonly route?: string;
+  readonly meta?: string;
   readonly note: string;
 }
 
 interface DemoLinkGroup {
   readonly title: string;
+  /** Dominio compartido por todo el grupo, para no repetirlo en cada tarjeta. */
+  readonly meta?: string;
   readonly links: readonly DemoLink[];
 }
 
 /**
- * Lab · Banco de trabajo. Reúne dos cosas que, si no, se pierden:
- *
- * 1. **Enlaces** — todo lo desplegado (showcase + app real), el repositorio y
- *    el Kit, en un solo sitio para no memorizar URLs. Cada uno verificado vivo
- *    (200) el 2026-07-21 antes de fijarlo aquí; los `href` son data-driven para
- *    que añadir o corregir uno sea una línea, no una edición de plantilla.
- * 2. **Exploraciones** — prototipos de diseño que AÚN NO forman parte del
- *    sistema, guardados in-repo bajo `public/explorations/` (no enlazamos a
- *    repos externos, que son frágiles). Llevar cada uno a un patrón real del DS
- *    es trabajo aparte.
+ * Lab · Enlaces de uso diario (todo lo desplegado, el repo, el Kit) y prototipos que
+ * aún no forman parte del sistema, guardados in-repo bajo `public/explorations/`
+ * (no enlazamos a sitios externos, que son frágiles). Cada enlace, verificado vivo el
+ * 2026-09-01 antes de fijarlo aquí.
  */
 @Component({
   selector: 'app-lab',
@@ -36,46 +34,54 @@ interface DemoLinkGroup {
 export class LabComponent {
   protected readonly linkGroups: readonly DemoLinkGroup[] = [
     {
-      title: 'En producción (rama main)',
+      title: 'En producción',
       links: [
         {
           label: 'Showcase del Design System',
           href: 'https://sc-doc.pages.dev',
-          note: 'Este mismo sitio: fundaciones, componentes, tema y uso real.',
+          meta: 'sc-doc.pages.dev',
+          note: 'Este sitio: fundaciones, componentes, tema y uso real.',
         },
         {
           label: 'Supervisor · la app real',
           href: 'https://sc-supervisor.pages.dev',
-          note: 'La aplicación de verdad, con datos de demostración.',
+          meta: 'sc-supervisor.pages.dev',
+          note: 'La app de verdad, con datos de demostración.',
         },
         {
           label: 'Agent · dashboard del agente',
           href: 'https://sc-agent.pages.dev',
-          note: 'Réplica del dashboard del agente de contact center (agent.smart-contact.com/aed): colores, iconos y timers medidos del sitio real.',
+          meta: 'sc-agent.pages.dev',
+          note: 'Réplica del dashboard del agente de contact center (agent.smart-contact.com/aed), medida sobre el sitio real: colores, iconos y tiempos.',
         },
         {
           label: 'CusCare · gestión de tickets',
-          href: null,
-          note: 'Réplica de la herramienta de atención al cliente (cuscare.smart-contact.com/aed): lista de tickets, detalle y dashboard, medidos del sitio real. Aún en rama feat/cuscare — pendiente de desplegar y de mergear a main.',
+          href: 'https://sc-cuscare.pages.dev',
+          meta: 'sc-cuscare.pages.dev',
+          note: 'Réplica de la herramienta de tickets (cuscare.smart-contact.com/aed), medida sobre el sitio real: lista, ficha y panel.',
         },
       ],
     },
     {
-      title: 'Atajos dentro del Supervisor',
+      title: 'Atajos del Supervisor',
+      meta: 'sc-supervisor.pages.dev',
       links: [
         {
           label: 'Sistema de reglas (en vivo)',
           href: 'https://sc-supervisor.pages.dev/conversaciones/reglas',
+          meta: '/conversaciones/reglas',
           note: 'El motor de reglas funcionando dentro de la app.',
         },
         {
           label: 'Conversaciones',
           href: 'https://sc-supervisor.pages.dev/conversaciones',
+          meta: '/conversaciones',
           note: 'Bandeja y transcripciones.',
         },
         {
           label: 'Administración',
           href: 'https://sc-supervisor.pages.dev/admin/usuarios',
+          meta: '/admin/usuarios',
           note: 'Usuarios, grupos, agentes, etiquetas, plantillas…',
         },
       ],
@@ -86,19 +92,22 @@ export class LabComponent {
         {
           label: 'Repositorio en GitHub',
           href: 'https://github.com/smartcontact-hub/smartcontact-ui',
+          meta: 'github.com/smartcontact-hub/smartcontact-ui',
           note: 'Todo el código del sistema.',
         },
         {
           label: 'Kit en Figma',
+          href: 'https://www.figma.com/design/khNq9dJKNi13pNllrqm6dx/Smart-Contact-Design-System',
+          meta: 'figma.com/…/Smart-Contact-Design-System',
+          note: 'El origen de los tokens y componentes.',
+        },
+        {
+          label: 'Verificación del tema',
           href: null,
-          note: 'El origen de los tokens. Pásame la URL y la fijo aquí.',
+          route: '/tema',
+          note: 'Comprueba que los componentes de PrimeNG heredan los tokens del sistema.',
         },
       ],
     },
   ];
-
-  /** URL sin el `https://` para mostrarla más corta y legible. */
-  protected display(href: string): string {
-    return href.replace(/^https?:\/\//, '');
-  }
 }
