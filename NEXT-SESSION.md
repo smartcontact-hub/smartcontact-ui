@@ -33,7 +33,7 @@ su fichero, añade su fila aquí y nómbralo en la fila de `DOCS-INDEX`.
 
 ---
 
-## 🟢 EN PRODUCCIÓN — 5 sitios (4 desde `main`; `agent-mini` pendiente de repuntar, ver ⚠️)
+## 🟢 EN PRODUCCIÓN — 5 sitios, todos desde `main`
 
 | Proyecto     | URL                         | Qué es                                 |
 | ------------ | --------------------------- | -------------------------------------- |
@@ -41,18 +41,14 @@ su fichero, añade su fila aquí y nómbralo en la fila de `DOCS-INDEX`.
 | `supervisor` | **sc-supervisor.pages.dev** | La app real, con datos de demostración |
 | `agent`      | **sc-agent.pages.dev**      | Réplica del dashboard del agente       |
 | `cuscare`    | **sc-cuscare.pages.dev**    | Réplica de la herramienta de tickets   |
-| `agent-mini` | **agent-mini.pages.dev** ⚠️ | Réplica del dialpad mini (standalone)  |
+| `agent-mini` | **agent-mini.pages.dev**    | Réplica del dialpad mini (standalone)  |
 
 ⚠️ Cloudflare da preview por rama en los 5. **Si apuntas un proyecto a una rama, NO la borres al
-mergear sin repuntarlo a `main` antes** — pasó con `feat/cuscare`: al borrarla, `sc-cuscare` quedó
-apuntando a una rama fantasma y dejó de reconstruirse, y la URL seguía sirviendo el último build,
-así que no se nota hasta que echas en falta un cambio.
-
-⚠️ **`agent-mini` está HOY en esa trampa.** Su proyecto Cloudflare apuntaba a la rama
-`worktree-agent-mini`, que GitHub borró al mergear (PR #31/#32). La URL sirve el último build
-(`0b1d210`, correcto) pero dejará de reconstruirse. **Falta que Rafa lo repunte a `main` en el
-dashboard** (y, si quiere, lo renombre `sc-agent-mini` para casar con el resto). Detalle en
-[`docs/handoff/agent-mini.md`](docs/handoff/agent-mini.md).
+mergear sin repuntarlo a `main` antes** — pasó con `feat/cuscare` y volvió a pasar con `agent-mini`
+(estaba clavado en `worktree-agent-mini`, que GitHub borró al mergear; repuntado a `main` el
+2026-09-01). La URL sigue sirviendo el último build aunque la rama desaparezca, así que **no se
+nota hasta que echas en falta un cambio**. Nota: `agent-mini.pages.dev` no lleva prefijo `sc-`
+como el resto; renombrarlo a `sc-agent-mini` cambiaría la URL (y el enlace en sc-docs), pendiente si Rafa lo quiere.
 
 ---
 
