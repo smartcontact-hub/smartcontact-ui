@@ -88,6 +88,20 @@ export const BUCKETS = [
   // → {text.color}); el DS lo quiere ATENUADO (--sc-dialog-head-icon-fg = slate-500,
   // 04-component.css:64, zona escrita a mano). Divergencia de intención visual.
   { group: 'aura/custom', test: /^component\.dialog\.icon\.color$/, kind: 'divergence', note: 'Kit {overlay.modal.color}={text.color} · DS --sc-dialog-head-icon-fg = slate-500 (icono atenuado, 04-component.css:64)' },
+
+  // Las 6 de `app.typography` son el CONTRATO de tipografía que el tema lleva al extend y que
+  // el preset consume: `sc-preset/extend.ts` declara app.typography.{sm,md,lg}.{fontSize,
+  // lineHeight} → var(--sc-font-size-*) / var(--sc-line-height-*). Vivían en la colección App
+  // del Kit, que el plugin NO exporta, y por eso no llegaban; ahora viajan en `custom` → extend.
+  // VALUE-CHECK en §8: el PASO al que apunta el Kit (font.size.200 · line.height.200 …) debe ser
+  // el mismo que usa extend.ts, o el contrato se desfasa MUDO (fue el bug de md=21 vs 20). El
+  // valor de cada paso ya lo cubre el bucket `flows` de primitive.typography.
+  { group: 'aura/custom', test: /^app\.typography\.(sm|md|lg)\.(fontSize|lineHeight)$/, kind: 'value-check', note: 'contrato de tipografía del extend — el paso del Kit debe coincidir con sc-preset/extend.ts (value-check §8)' },
+
+  // 26 hojas del modal custom y NADIE las lee: no existe ninguna `--sc-cmp-custommodal-*` en las
+  // capas (mismo caso y misma decisión que bulktranscriptionmodal). El componente se estiliza con
+  // tokens semánticos directos. Se declara para que el censo lo diga en voz alta, no para taparlo.
+  { group: 'aura/custom', test: /^component\.custommodal\./, kind: 'not-consumed', note: 'sin familia --sc-cmp-custommodal-*: consume tokens semánticos directos (igual que bulktranscriptionmodal)' },
 ];
 
 /**
@@ -115,3 +129,18 @@ export function classify(group, paths) {
 
 /** Pasos de la rampa primary a value-checkear (primary.N = blue.N = --sc-color-blue-N). */
 export const PRIMARY_STEPS = [50, 100, 200, 300, 400, 500, 600, 700, 800, 900, 950];
+
+/**
+ * CONTRATO de tipografía `app.*` del extend (§8 value-check).
+ * El Kit apunta cada talla a un PASO primitivo; `sc-preset/extend.ts` tiene que apuntar al MISMO
+ * paso vía `var(--sc-*)`. Si Figma remapea una talla y el preset no lo recoge, el contrato se
+ * rompe en silencio y los componentes heredan del documento (el bug de chip/tag/toast).
+ */
+export const APP_TYPOGRAPHY_CONTRACT = [
+  { size: 'sm', prop: 'fontSize', kitFamily: 'font.size', cssVar: 'sc-font-size' },
+  { size: 'sm', prop: 'lineHeight', kitFamily: 'line.height', cssVar: 'sc-line-height' },
+  { size: 'md', prop: 'fontSize', kitFamily: 'font.size', cssVar: 'sc-font-size' },
+  { size: 'md', prop: 'lineHeight', kitFamily: 'line.height', cssVar: 'sc-line-height' },
+  { size: 'lg', prop: 'fontSize', kitFamily: 'font.size', cssVar: 'sc-font-size' },
+  { size: 'lg', prop: 'lineHeight', kitFamily: 'line.height', cssVar: 'sc-line-height' },
+];
