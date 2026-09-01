@@ -37,7 +37,37 @@ interface NavAction {
     <div class="app" [class.cant-call]="!state.canCall()">
       <!-- Cuerpo: la sección activa -->
       <div class="body">
-        @if (tab() === 'call') {
+        @if (tab() === 'call') { @if (inCall()) {
+        <div class="incall">
+          <div class="ic-info">
+            <span class="ic-num">{{ state.phoneNumber() }}</span>
+            <span class="ic-timer">{{ timerText() }}</span>
+            <span class="ic-grp">{{ held() ? 'En espera' : selectedService().name }}</span>
+          </div>
+          <div class="ic-actions">
+            <button class="ic-ctl" type="button" [class.on]="muted()" (click)="muted.set(!muted())">
+              <span class="ic-ic mute"></span><span class="ic-lbl">Silencio</span>
+            </button>
+            <button class="ic-ctl" type="button" [class.on]="held()" (click)="held.set(!held())">
+              <span class="ic-ic hold"></span><span class="ic-lbl">Espera</span>
+            </button>
+            <button class="ic-ctl" type="button">
+              <span class="ic-ic keypad"></span><span class="ic-lbl">Teclado</span>
+            </button>
+            <button class="ic-ctl" type="button">
+              <span class="ic-ic transfer"></span><span class="ic-lbl">Transferir</span>
+            </button>
+            <button class="ic-ctl" type="button">
+              <span class="ic-ic typify"></span><span class="ic-lbl">Tipificar</span>
+            </button>
+          </div>
+          <div class="call">
+            <button class="btn-call hangup" type="button" (click)="hangup()" aria-label="Colgar">
+              <img src="icons/dialpad/colgar-grande-blanco.svg" alt="" />
+            </button>
+          </div>
+        </div>
+        } @else {
         <div class="dialpad">
           <div class="keypad">
             <div class="display">
@@ -92,12 +122,14 @@ interface NavAction {
               type="button"
               [class.makecall]="canMakeCall()"
               [disabled]="!canMakeCall()"
+              (click)="startCall()"
               aria-label="Llamar"
             >
               <img src="icons/dialpad/telefono_pequeno_blanco.svg" alt="" />
             </button>
           </div>
         </div>
+        }
         } @else if (tab() === 'history') {
         <div class="section">
           <div class="sec-head"><div class="sec-title">Historial</div></div>
@@ -385,6 +417,53 @@ interface NavAction {
     .btn-call.makecall { background: #69c663; border-color: transparent; cursor: pointer; }
     .btn-call.makecall img { opacity: 1; }
     .btn-call.makecall:hover { background: #2bae22; }
+    /* Boton colgar (rojo). */
+    .btn-call.hangup { background: #f75454; border-color: transparent; cursor: pointer; }
+    .btn-call.hangup img { opacity: 1; width: 9.656vw; height: 3.31593vh; }
+    .btn-call.hangup:hover { background: #f43434; }
+
+    /* Vista en llamada. */
+    .incall { display: flex; flex-direction: column; width: 100%; height: 100%; align-items: center; }
+    .ic-info { display: flex; flex-direction: column; align-items: center; gap: 1vh; margin-top: 10vh; }
+    .ic-num { font-family: 'Roboto', sans-serif; font-size: 3.2vh; color: #fff; }
+    .ic-timer { font-family: 'Roboto', sans-serif; font-size: 2.2vh; color: #cdd2d8; }
+    .ic-grp { font-size: 1.7vh; color: #9d9fa3; }
+    .ic-actions {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      justify-items: center;
+      gap: 3.2vh 2vw;
+      margin-top: auto;
+      margin-bottom: 3.5vh;
+      width: 74vw;
+    }
+    .ic-ctl {
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      gap: 0.8vh;
+      width: 16vw;
+      background: none;
+      border: 0;
+      color: #cdd2d8;
+      cursor: pointer;
+      font-family: 'Open Sans', sans-serif;
+      font-size: 1.4vh;
+    }
+    .ic-ic {
+      width: 6vw;
+      height: 6vw;
+      background-color: #cdd2d8;
+      -webkit-mask: var(--m) no-repeat center / contain;
+      mask: var(--m) no-repeat center / contain;
+    }
+    .ic-ctl.on { color: #69c663; }
+    .ic-ctl.on .ic-ic { background-color: #69c663; }
+    .ic-ic.mute { --m: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M12 14a3 3 0 0 0 3-3V6a3 3 0 0 0-6 0v5a3 3 0 0 0 3 3zm5-3a5 5 0 0 1-10 0H5a7 7 0 0 0 6 6.92V21h2v-3.08A7 7 0 0 0 19 11h-2z'/></svg>"); }
+    .ic-ic.hold { --m: url('/icons/dialpad/pausa.svg'); }
+    .ic-ic.keypad { --m: url('/icons/dialpad/keypad.svg'); }
+    .ic-ic.transfer { --m: url('/icons/dialpad/transferencia.svg'); }
+    .ic-ic.typify { --m: url('/icons/dialpad/tipificacion.svg'); }
 
     /* Navbar (footer-comunicator). */
     .nav {
@@ -535,5 +614,38 @@ export class AppComponent {
   protected onDial(number: string): void {
     this.state.phoneNumber.set(number.replace(/[^0-9*#+]/g, ''));
     this.tab.set('call');
+  }
+
+  // Vista EN LLAMADA (doc-based: el estado real no estaba en la extraccion).
+  protected readonly inCall = signal(false);
+  protected readonly muted = signal(false);
+  protected readonly held = signal(false);
+  private readonly seconds = signal(0);
+  private timer: ReturnType<typeof setInterval> | null = null;
+
+  protected readonly timerText = computed(() => {
+    const s = this.seconds();
+    const mm = Math.floor(s / 60).toString().padStart(2, '0');
+    const ss = (s % 60).toString().padStart(2, '0');
+    return mm + ':' + ss;
+  });
+
+  protected startCall(): void {
+    if (!this.canMakeCall()) {
+      return;
+    }
+    this.inCall.set(true);
+    this.muted.set(false);
+    this.held.set(false);
+    this.seconds.set(0);
+    this.timer = setInterval(() => this.seconds.update((s) => s + 1), 1000);
+  }
+
+  protected hangup(): void {
+    if (this.timer) {
+      clearInterval(this.timer);
+      this.timer = null;
+    }
+    this.inCall.set(false);
   }
 }
