@@ -24,6 +24,14 @@ module.exports = tseslint.config(
        * configuración. */
       '.cache/',
       '.auth/',
+      // `public/` son ASSETS que se sirven tal cual, no plantillas de Angular. El bloque
+      // de abajo que captura todos los .html les aplicaba el parser de plantillas, que trata
+      // la llave como interpolación y revienta con el CSS embebido: Unexpected character
+      // "EOF". Los 8 HTML de `explorations/` que ya había pasaban de milagro (menos CSS), no
+      // por estar bien encajados. Medido el 2026-09-01 con `interno/validar/index.html`.
+      // (Comentario de línea a propósito: el patrón glob lleva una secuencia que cerraría
+      // un comentario de bloque antes de tiempo.)
+      'projects/*/public/',
     ],
   },
   {
