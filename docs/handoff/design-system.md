@@ -3,57 +3,69 @@
 > **Volátil.** Lo reescribe la sesión que trabaja ESTE frente, y **solo este fichero**.
 > No toques los hand-offs de otros frentes. Lo durable vive en `docs/`.
 > **Sello: 2026-09-01 (s39): HEAD `2ad8b77`.** Guía de validación visual en `/validar` (enlazada
-> desde el Lab, con clave) + **hook `pre-push`** que corre el gate solo. Gate verde leído del log
-> (305 tests) y CI verde (run `33542225223`). Tramo anterior de ESTE frente: `3b90fd7` (sc-demo
-> borrado de Cloudflare + afila LEARNINGS #7).
+> desde el Lab) + **hook `pre-push`** que corre el gate solo. Gate verde leído del log (305 tests) y
+> CI verde (run `33542225223`). Tramo anterior de ESTE frente: `3b90fd7` (sc-demo borrado de
+> Cloudflare + afila LEARNINGS #7).
 
 ## ✅ s39 · Guía de validación en sc-docs + el gate deja de depender de la memoria
 
-**Qué hay nuevo, en dos líneas:** una guía en `/#/validar` que enseña a medir un componente en el
-navegador (las 7 dimensiones + si bebe de variables), enlazada desde el **Lab → «Código y diseño»** y
-con clave de cortesía `HalaMadrid123!`. Y un **hook `pre-push`** (`.githooks/pre-push`, se activa con
-`npm run hooks:install`) que lanza `preflight:scope` antes de cada push y aborta si falla.
+**Qué hay nuevo:** una guía en `/#/validar` que explica cómo medir un componente en el navegador
+(las 7 dimensiones —tamaño, tipografía, fondo, borde, esquinas, espaciados, sombra— y si el valor
+viene de una variable o está escrito a mano). Está enlazada desde el **Lab → «Código y diseño»**,
+escrita para perfiles que no leen código, y todas sus cifras están medidas en producción, no
+deducidas. Lleva una clave de cortesía (en el componente) para que no se abra por accidente.
 
-⚠️ **La clave NO es seguridad y está comprobado**: `grep HalaMadrid123 dist/` la encuentra en texto
-plano en el bundle. Evita abrirla por accidente, nada más. Dicho en el componente y en la ruta.
+⚠️ **Esa clave no es una medida de seguridad, y conviene no presentarla como tal**: es una app
+estática y el bundle viaja al cliente, así que el valor es legible desde el navegador. Sirve para
+evitar aperturas accidentales. Queda dicho también en el componente y en la ruta.
 
-### El camino largo que NO hay que repetir
-Se intentó proteger la guía con **Cloudflare Access** y no se puede: sc-docs enruta por hash
-(`withHashLocation()`, `app.config.ts:24`) y el `#…` **no viaja al servidor**, así que Access solo
-podría cubrir el sitio entero. Se sacó a una página real en `public/interno/` para poder filtrarla…
-y entonces apareció el bloqueo de verdad: **Access exige zona activa propia**, y `pages.dev` es de
-Cloudflare. Sin dominio corporativo (que no depende de nosotros) no hay vía. Se revirtió a la SPA.
-**Conclusión para el futuro: para proteger de verdad una ruta de sc-docs hace falta dominio propio +
-custom domain + Access + un Bulk Redirect que cierre `pages.dev`. Para una guía sin datos, no compensa.**
+### El camino que NO hay que repetir
+Se evaluó proteger la guía con **Cloudflare Access** y no es viable con el montaje actual:
+sc-docs enruta por hash (`withHashLocation()`, `app.config.ts:24`) y el fragmento `#…` **no viaja al
+servidor**, con lo que Access solo podría cubrir el sitio entero. Se probó sacarla a una página real
+bajo `public/` para poder filtrarla por ruta, y ahí apareció el límite de fondo: **Access exige una
+zona activa propia** y `pages.dev` pertenece a Cloudflare. Se revirtió a la SPA.
+
+**Para futuras decisiones:** proteger de verdad una ruta de sc-docs pide dominio propio + custom
+domain + Access + un Bulk Redirect que cierre el `pages.dev`. Es una decisión de infraestructura,
+no de front, y solo compensa si el contenido lo justifica.
 
 ### El hook, y por qué existe
-LEARNINGS **#7** («preflight antes de push») llevaba **tres afilados** (`3b90fd7`, `720bf6e`,
-`3fcfa8b`) y se seguía incumpliendo: se lee al empezar y el disparador salta horas después. No era la
-redacción, era depender de la memoria. **El hook lo atrapó tres veces el mismo día**: 51 violaciones de
-tokens, un `eslint.config.js` roto, y 2 violaciones más al restaurar el componente. Las tres las había
-dado yo por buenas.
+LEARNINGS **#7** («preflight antes de push») acumulaba **tres afilados** (`3b90fd7`, `720bf6e`,
+`3fcfa8b`) y seguía incumpliéndose. El diagnóstico no es la redacción: la regla se lee al empezar la
+tarea y su disparador salta horas después, cuando ya no se está pensando en ella. Una regla que
+depende de recordarla en el momento exacto no se cumple sola.
 
-⚠️ **Trampa medida (nueva, vale para cualquier gate):** `npm run preflight | tail -40` devuelve el
-código de salida del **`tail`**, no del gate → salió `exit 0` con 51 violaciones dentro. Y
-`npm run lint | tail && echo OK` imprimió «OK» con el fichero de config roto. **Para decidir, redirige
-a fichero y lee `$?`; el `tail` es para leer, nunca para dictaminar.** El hook no pipea, a propósito.
+`.githooks/pre-push` lanza `preflight:scope` antes de cada push y aborta si falla. Se activa con
+`npm run hooks:install`; la salida de emergencia es `SKIP_PREFLIGHT=1 git push`, y avisa por pantalla.
+**El mismo día de montarlo detuvo tres cosas** que ya se habían dado por buenas: 51 violaciones de
+tokens, un `eslint.config.js` que no parseaba, y 2 violaciones más al restaurar un componente.
 
-### Cosas que se tocaron de paso
-- `eslint.config.js`: `projects/*/public/` fuera del lint. Aplicaba el parser de plantillas Angular a
-  assets estáticos y reventaba con el CSS embebido. Los 8 HTML de `explorations/` pasaban de milagro.
-- ⚠️ Al documentarlo, `'**/*.html'` dentro de un comentario `/* */` **cierra el comentario** y rompió
-  el fichero. Comentario de línea en su lugar.
+⚠️ **Trampa medida, aplicable a cualquier gate:** `npm run preflight | tail -40` devuelve el código de
+salida del **`tail`**, no del gate → salió `exit 0` con 51 violaciones dentro. Igual con
+`npm run lint | tail && echo OK`, que imprimió «OK» con el fichero de configuración roto. **Para
+dictaminar, redirige a fichero y lee `$?`; el `tail` es solo para leer.** El hook no usa tubería, a
+propósito.
+
+### Cambios de paso
+- `eslint.config.js`: `projects/*/public/` fuera del lint. Aplicaba el parser de plantillas de Angular
+  a assets estáticos y fallaba con el CSS embebido; los 8 HTML de `explorations/` pasaban por llevar
+  menos CSS, no por estar bien encajados.
+- ⚠️ Al documentarlo, un patrón glob con `*/` dentro de un comentario de bloque **lo cierra antes de
+  tiempo** y rompió el fichero. Comentario de línea en su lugar.
 
 ## 🔜 Siguiente en este frente
-1. **Figma, cable cruzado (pendiente de OK de Rafa):** `tag/font/size` apunta a
-   `app/typography/sm/lineHeight` (18) en vez de a `primitive/typography/font/size/100` (12). El
-   tamaño de letra del Tag bebe del alto de línea. En agosto ese nodo medía 12, se cruzó después.
-2. **Lo de Carlos (SISMAC-4074), ya medido y en el board de Figma `14595:4049`** (página Feedback):
-   faltan 4 selectores en su bloque de tipografía → `.p-tag` y `.p-toast-detail` a talla sm (12/18),
-   `.p-select-option` y `.p-multiselect-option` a md (14/20). Lo demás ya cuadra: chip 20/34, cajas de
-   select y multiselect 20, título de toast 20, breadcrumb 14 + #6F7784.
-3. **Cloudflare:** se activó «Restrict previews» en sc-doc y Rafa pidió revertirlo todo (y cancelar
-   Zero Trust) desde otra sesión. **Si un preview pide login, es esto.**
+1. **Figma — revisar un enlace de variable (pendiente de decisión):** `tag/font/size` apunta a
+   `app/typography/sm/lineHeight` (18) en lugar de a `primitive/typography/font/size/100` (12), con lo
+   que el tamaño de letra del Tag toma el valor del alto de línea. Medido el 2026-09-01; en agosto ese
+   mismo nodo daba 12.
+2. **Validación de producción (SISMAC-4074), medida y volcada en el board de Figma `14595:4049`**
+   (página Feedback): faltan cuatro selectores en el bloque de tipografía del consumidor →
+   `.p-tag` y `.p-toast-detail` a talla sm (12/18), `.p-select-option` y `.p-multiselect-option` a md
+   (14/20). El resto ya cuadra: chip 20/34, cajas de select y multiselect 20, título de toast 20,
+   breadcrumb 14 + #6F7784.
+3. **Cloudflare:** se activó temporalmente «Restrict previews» en el proyecto de la doc durante la
+   evaluación de Access y se ha pedido revertirlo. **Si algún preview pide login, viene de ahí.**
 
 ## ✅ s38 (cont. III) · Verificación (sin código): drift de «N pasos» resuelto + audit PRs limpios
 
