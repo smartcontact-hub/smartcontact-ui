@@ -63,7 +63,7 @@ interface NavAction {
           </div>
           <div class="call">
             <button class="btn-call hangup" type="button" (click)="hangup()" aria-label="Colgar">
-              <img src="icons/dialpad/colgar-grande-blanco.svg" alt="" />
+              <img src="icons/dialpad/colgar-grande-blanco.svg" alt="" width="24" height="9" />
             </button>
           </div>
         </div>
@@ -74,7 +74,7 @@ interface NavAction {
               <span class="flags"></span>
               <span class="num">{{ state.phoneNumber() }}</span>
               <button class="del" type="button" aria-label="Borrar" (click)="state.del()">
-                <img src="icons/dialpad/borrar.svg" alt="" />
+                <img src="icons/dialpad/borrar.svg" alt="" width="24" height="17" />
               </button>
             </div>
             <div class="keys">
@@ -109,6 +109,8 @@ interface NavAction {
                 class="svc-arrow"
                 src="icons/comunicator/flecha_1.svg"
                 alt=""
+                width="14"
+                height="8"
               />
             </button>
           </div>
@@ -123,7 +125,7 @@ interface NavAction {
               (click)="startCall()"
               aria-label="Llamar"
             >
-              <img src="icons/dialpad/telefono_pequeno_blanco.svg" alt="" />
+              <img src="icons/dialpad/telefono_pequeno_blanco.svg" alt="" width="15" height="15" />
             </button>
           </div>
         </div>
@@ -131,7 +133,7 @@ interface NavAction {
         } @else if (tab() === 'history') {
         <div class="section">
           <div class="sec-head"><div class="sec-title">Historial</div></div>
-          <mini-history class="fill" (dial)="onDial($event)" />
+          <app-history class="fill" (dial)="onDial($event)" />
         </div>
         } @else if (tab() === 'contacts') {
         <div class="section">
@@ -141,7 +143,7 @@ interface NavAction {
               ><input type="search" placeholder="Buscar..." aria-label="Buscar"
             /></label>
           </div>
-          <mini-agenda class="fill" (dial)="onDial($event)" />
+          <app-agenda class="fill" (dial)="onDial($event)" />
         </div>
         } @else {
         <div class="section">

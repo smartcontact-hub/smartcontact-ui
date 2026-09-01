@@ -8,7 +8,7 @@ import { CALLS, type CallRow } from './mini-seed';
  * reutilizados de agent/public/icons/historial. Datos FALSOS (mini-seed).
  */
 @Component({
-  selector: 'mini-history',
+  selector: 'app-history',
   standalone: true,
   template: `
     <div class="list">
@@ -16,7 +16,7 @@ import { CALLS, type CallRow } from './mini-seed';
       <div class="row">
         <article class="card" [class.open]="open() === r.id" (click)="toggle(r.id)">
           <span class="status" [class.lost]="r.outcome === 'lost'"></span>
-          <img class="ic" [src]="iconFor(r)" [alt]="altFor(r)" />
+          <img class="ic" [src]="iconFor(r)" [alt]="altFor(r)" width="24" height="11" />
           <span class="main">
             <span class="num">{{ r.number }}</span>
             <span class="grp">{{ r.group }}</span>
@@ -29,7 +29,7 @@ import { CALLS, type CallRow } from './mini-seed';
               aria-label="Llamar"
               (click)="onDial($event, r.number)"
             >
-              <img src="icons/dialpad/telefono_pequeno_blanco.svg" alt="" />
+              <img src="icons/dialpad/telefono_pequeno_blanco.svg" alt="" width="15" height="15" />
             </button>
           </span>
         </article>
