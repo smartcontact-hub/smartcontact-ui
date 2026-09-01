@@ -49,3 +49,17 @@ export const CONTACTS: readonly ContactRow[] = [
   { id: 7, name: 'Gema Torres', phone: '677889900' },
   { id: 8, name: 'Hugo Marín', phone: '611223344', company: 'Umbrella' },
 ];
+
+export interface ServiceGroup {
+  readonly name: string;
+  readonly number: string;
+}
+
+/** Grupos de servicio FALSOS para el dropup del dialpad. */
+export const SERVICES: readonly ServiceGroup[] = [
+  { name: 'Soporte Talco', number: '1001' },
+  { name: 'Nodo AED 1', number: '2001' },
+  { name: 'Nodo AED 2', number: '2002' },
+  { name: 'Ventas', number: '3001' },
+  { name: 'Atención cliente', number: '3002' },
+];
