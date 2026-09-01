@@ -34,6 +34,11 @@ export interface StatusOpt {
   readonly code: number;
   /** Clase de color de la píldora de estado (agent-status.component.scss del real). */
   readonly cls: 'available' | 'no-available' | 'administrative';
+  /**
+   * Solo 'Administrativo' se despliega en el panel, con buscador y lista «Seleccione
+   * grupo» (ver comunicador.md §«El panel de Estados»). El resto son filas planas.
+   */
+  readonly expandable?: boolean;
 }
 
 /**
@@ -52,7 +57,7 @@ export class MiniStateService {
     { label: 'Comida', code: AGENT_STATUS.ADMINISTRATIVO, cls: 'administrative' },
     { label: 'curso', code: AGENT_STATUS.ADMINISTRATIVO, cls: 'administrative' },
     { label: 'WC', code: AGENT_STATUS.ADMINISTRATIVO, cls: 'administrative' },
-    { label: 'Administrativo', code: AGENT_STATUS.ADMINISTRATIVO, cls: 'administrative' },
+    { label: 'Administrativo', code: AGENT_STATUS.ADMINISTRATIVO, cls: 'administrative', expandable: true },
   ];
 
   readonly status = signal<StatusOpt>(this.options[0]);
@@ -66,10 +71,9 @@ export class MiniStateService {
   /** Número marcado en el dialpad. */
   readonly phoneNumber = signal('');
 
-  /** Clic en la barra de estado: cicla al siguiente (como SC Agent). */
-  cycleStatus(): void {
-    const i = this.options.indexOf(this.status());
-    this.status.set(this.options[(i + 1) % this.options.length]);
+  /** Fija el estado desde el panel de Estados (el desplegable de la barra inferior). */
+  setStatus(opt: StatusOpt): void {
+    this.status.set(opt);
   }
 
   press(key: string): void {

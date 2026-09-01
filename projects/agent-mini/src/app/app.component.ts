@@ -5,9 +5,11 @@ import {
   inject,
   signal,
 } from '@angular/core';
-import { MiniStateService } from './mini-state.service';
+import { MiniStateService, type StatusOpt } from './mini-state.service';
 import { HistoryComponent } from './history.component';
 import { AgendaComponent } from './agenda.component';
+import { MessagesComponent } from './messages.component';
+import { AgentsComponent } from './agents.component';
 import { SERVICES, type ServiceGroup } from './mini-seed';
 
 type Tab = 'call' | 'chat' | 'agents' | 'contacts' | 'history';
@@ -32,7 +34,7 @@ interface NavAction {
 @Component({
   selector: 'app-root',
   standalone: true,
-  imports: [HistoryComponent, AgendaComponent],
+  imports: [HistoryComponent, AgendaComponent, MessagesComponent, AgentsComponent],
   template: `
     <div class="app" [class.cant-call]="!state.canCall()">
       <!-- Cuerpo: la sección activa -->
@@ -145,23 +147,10 @@ interface NavAction {
           </div>
           <app-agenda class="fill" (dial)="onDial($event)" />
         </div>
+        } @else if (tab() === 'chat') {
+        <app-messages class="panel" />
         } @else {
-        <div class="section">
-          <div class="sec-head" [class.tall]="tab() === 'agents'">
-            <div class="sec-title">{{ sectionTitle() }}</div>
-            @if (tab() === 'chat' || tab() === 'agents') {
-            <label class="search"
-              ><input type="search" placeholder="Buscar..." aria-label="Buscar"
-            /></label>
-            } @if (tab() === 'agents') {
-            <div class="subtabs">
-              <button type="button" class="on">Agentes</button
-              ><button type="button">Grupos</button>
-            </div>
-            }
-          </div>
-          <p class="empty">{{ emptyMsg() }}</p>
-        </div>
+        <app-agents class="panel" />
         }
       </div>
 
@@ -189,19 +178,70 @@ interface NavAction {
         <button
           type="button"
           [class]="'status ' + state.status().cls"
-          [attr.aria-label]="'Estado: ' + state.status().label + ' (clic para cambiar)'"
-          (click)="state.cycleStatus()"
+          [attr.aria-label]="'Estado: ' + state.status().label + ' (clic para elegir estado)'"
+          aria-haspopup="true"
+          [attr.aria-expanded]="statusOpen()"
+          (click)="openStatus()"
         >
           <span class="label">{{ state.status().label }}</span>
         </button>
         <div class="agent-info" title="Ajustes"><span class="avatar">SC</span></div>
       </div>
+
+      <!-- Panel de Estados (el desplegable de la barra inferior). Sube como hoja desde
+           abajo; el original lo ancla a la izquierda del widget, aquí a pantalla completa. -->
+      @if (statusOpen()) {
+      <div class="states-scrim" (click)="closeStatus()"></div>
+      <div class="states" role="dialog" aria-label="Estados">
+        <div class="states-head">Estados</div>
+        <div class="states-list">
+          @for (o of state.options; track o.label) { @if (o.expandable) {
+          <button
+            type="button"
+            class="state expandable"
+            [class.current]="o === state.status()"
+            [class.open]="admExpanded()"
+            (click)="toggleAdm()"
+          >
+            <span class="st-dot" [class.green]="o.cls === 'available'"></span>
+            <span class="st-label">{{ o.label }}</span>
+            <span class="st-caret"></span>
+          </button>
+          @if (admExpanded()) {
+          <div class="adm">
+            <label class="adm-search"
+              ><span class="lupa"></span
+              ><input type="search" placeholder="Buscar..." aria-label="Buscar grupo"
+            /></label>
+            <div class="adm-hint">Seleccione grupo</div>
+            @for (g of services; track g.number) {
+            <button type="button" class="adm-item" (click)="pickStatus(o)">
+              <span class="adm-name">{{ g.name }}</span>
+              <span class="adm-num">{{ g.number }}</span>
+            </button>
+            }
+          </div>
+          } } @else {
+          <button
+            type="button"
+            class="state"
+            [class.current]="o === state.status()"
+            (click)="pickStatus(o)"
+          >
+            <span class="st-dot" [class.green]="o.cls === 'available'"></span>
+            <span class="st-label">{{ o.label }}</span>
+          </button>
+          } }
+        </div>
+      </div>
+      }
     </div>
   `,
   styles: `
     :host { display: block; }
 
     .app {
+      position: relative;
       width: 100vw;
       height: 100vh;
       display: flex;
@@ -214,7 +254,7 @@ interface NavAction {
 
     /* Cuerpo — ocupa lo que queda entre navbar y barra de estado. */
     .body { position: relative; flex: 1; min-height: 0; display: flex; }
-    .empty { margin: auto; color: #9d9fa3; font-size: 2vh; }
+    .panel { flex: 1; min-width: 0; min-height: 0; }
 
     /* Secciones no-call: cabecera + estado vacío (chat/agentes/agenda/historial). */
     .section { display: flex; flex-direction: column; width: 100%; height: 100%; }
@@ -251,22 +291,6 @@ interface NavAction {
       font-family: inherit;
       font-size: 1.8vh;
     }
-    .subtabs { display: flex; width: 100%; border-bottom: 1px solid rgba(95, 103, 118, 0.25); }
-    .subtabs button {
-      flex: 1;
-      padding: 0 0 0.8vh;
-      background: none;
-      border: 0;
-      color: #5f6776;
-      cursor: pointer;
-      font-family: 'Open Sans Semibold', 'Open Sans', sans-serif;
-      font-weight: 600;
-      font-size: 1.75vh;
-    }
-    .subtabs button:first-child { text-align: left; }
-    .subtabs button:last-child { text-align: right; }
-    .subtabs button.on { color: #fff; }
-
     .dialpad { position: relative; display: flex; flex-direction: column; width: 100%; height: 100%; }
 
     .keypad {
@@ -546,6 +570,118 @@ interface NavAction {
       font-weight: 600;
       font-size: 1.5vh;
     }
+
+    /* ---- Panel de Estados (desplegable de la barra inferior) ---- */
+    .states-scrim { position: absolute; inset: 0; background: rgba(0, 0, 0, 0.5); z-index: 5; }
+    .states {
+      position: absolute;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 6;
+      max-height: 82vh;
+      display: flex;
+      flex-direction: column;
+      background: #333a41;
+      border-radius: 6.6vw 6.6vw 0 0;
+      box-shadow: 0 -1vh 3vh rgba(0, 0, 0, 0.5);
+      overflow: hidden;
+    }
+    .states-head {
+      flex: 0 0 auto;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      height: 5.4vh;
+      font-family: 'Open Sans', sans-serif;
+      font-size: 1.9vh;
+      color: #fff;
+      border-bottom: 0.0975274725vh solid rgba(0, 0, 0, 0.35);
+    }
+    .states-list { overflow-y: auto; min-height: 0; }
+    .state {
+      display: flex;
+      align-items: center;
+      width: 100%;
+      height: 4.62vh;
+      padding: 0 3.68vw;
+      background: #2d333a;
+      border: 0;
+      border-bottom: 1px solid #262c32;
+      color: #fff;
+      cursor: pointer;
+      text-align: left;
+    }
+    .state:hover { background: #1f2429; }
+    .st-dot {
+      width: 1.13vh;
+      height: 1.13vh;
+      flex: 0 0 auto;
+      margin-right: 2.85vw;
+      border-radius: 50%;
+      background: transparent;
+    }
+    .st-dot.green { background: #69c663; }
+    .st-label {
+      flex: 1;
+      font-family: 'Open Sans', sans-serif;
+      font-size: 1.75vh;
+    }
+    .state.current .st-label { font-family: 'Open Sans Semibold', 'Open Sans', sans-serif; font-weight: 600; }
+    .st-caret {
+      width: 2.6vw;
+      height: 1.4vh;
+      flex: 0 0 auto;
+      background-color: #9d9fa3;
+      -webkit-mask: var(--c) no-repeat center / contain;
+      mask: var(--c) no-repeat center / contain;
+      --c: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M7 10l5 5 5-5z'/></svg>");
+      transition: transform 0.15s ease;
+    }
+    .state.open .st-caret { transform: rotate(180deg); }
+
+    /* Administrativo desplegado: buscador + «Seleccione grupo» + lista. */
+    .adm { background: #2d333a; border-bottom: 1px solid #262c32; padding: 0 3.68vw 1.4vh; }
+    .adm-search {
+      display: flex;
+      align-items: center;
+      gap: 2vw;
+      height: 3vh;
+      margin: 0.6vh 0 1vh;
+      padding: 0 2.6vw;
+      background: #1f2429;
+      border-radius: 1vw;
+    }
+    .adm-search .lupa {
+      width: 3vw;
+      height: 1.5vh;
+      flex: 0 0 auto;
+      background-color: #9d9fa3;
+      -webkit-mask: var(--lupa) no-repeat center / contain;
+      mask: var(--lupa) no-repeat center / contain;
+      --lupa: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'><path d='M15.5 14h-.79l-.28-.27a6.5 6.5 0 1 0-.7.7l.27.28v.79l5 4.99L20.49 19l-4.99-5zm-6 0A4.5 4.5 0 1 1 14 9.5 4.5 4.5 0 0 1 9.5 14z'/></svg>");
+    }
+    .adm-search input { flex: 1; height: 100%; border: 0; outline: none; background: none; color: #fff; font-family: inherit; font-size: 1.5vh; }
+    .adm-hint { color: #63666a; font-size: 1.45vh; margin-bottom: 0.6vh; }
+    .adm-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      padding: 1vh 0;
+      background: none;
+      border: 0;
+      border-bottom: 1px solid #262c32;
+      color: #fff;
+      cursor: pointer;
+      opacity: 0.85;
+      font-family: 'Roboto', sans-serif;
+      font-size: 1.6vh;
+      text-align: left;
+    }
+    .adm-item:last-child { border-bottom: 0; }
+    .adm-item:hover { opacity: 1; }
+    .adm-num { color: #9d9fa3; font-size: 1.4vh; }
   `,
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
@@ -587,34 +723,23 @@ export class AppComponent {
     () => this.state.canCall() && this.state.phoneNumber().length > 0
   );
 
-  protected sectionTitle(): string {
-    switch (this.tab()) {
-      case 'chat':
-        return 'Mensajes';
-      case 'agents':
-        return 'Agentes';
-      case 'contacts':
-        return 'Agenda';
-      case 'history':
-        return 'Historial';
-      default:
-        return 'Teléfono';
-    }
-  }
+  // Panel de Estados (el desplegable de la barra de estado inferior).
+  protected readonly statusOpen = signal(false);
+  protected readonly admExpanded = signal(false);
 
-  protected emptyMsg(): string {
-    switch (this.tab()) {
-      case 'chat':
-        return 'No hay conversaciones';
-      case 'agents':
-        return 'No hay agentes';
-      case 'contacts':
-        return 'No hay contactos';
-      case 'history':
-        return 'No hay registros';
-      default:
-        return '';
-    }
+  protected openStatus(): void {
+    this.admExpanded.set(false);
+    this.statusOpen.set(true);
+  }
+  protected closeStatus(): void {
+    this.statusOpen.set(false);
+  }
+  protected toggleAdm(): void {
+    this.admExpanded.update((v) => !v);
+  }
+  protected pickStatus(o: StatusOpt): void {
+    this.state.setStatus(o);
+    this.closeStatus();
   }
 
   /** Marca un numero desde Historial/Agenda: lo carga en el dialpad y va a Telefono. */
