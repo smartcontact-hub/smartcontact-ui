@@ -1,0 +1,256 @@
+@if (!unlocked()) {
+  <section class="gate" aria-labelledby="gate-title">
+    <h1 id="gate-title" class="gate__title">Guía interna</h1>
+    <p class="gate__lead">Escribe la clave para ver la guía de validación.</p>
+    <form class="gate__form" (ngSubmit)="submit()">
+      <label class="gate__label" for="clave">Clave</label>
+      <input
+        id="clave"
+        class="gate__input"
+        type="password"
+        autocomplete="off"
+        [ngModel]="attempt()"
+        (ngModelChange)="attempt.set($event)"
+        name="clave"
+      />
+      <button class="gate__btn" type="submit">Entrar</button>
+    </form>
+    @if (failed()) {
+      <p class="gate__error" role="alert">Esa no es. Prueba otra vez.</p>
+    }
+  </section>
+} @else {
+  <article class="guide">
+    <header class="guide__head">
+      <p class="eyebrow">Guía interna</p>
+      <h1>Validar un componente entero</h1>
+      <p class="lead">
+        Todo lo que se puede comprobar de un componente en la web: <strong>medidas, color,
+        borde, esquinas, espaciados, sombra y tipografía</strong>. Y lo que más importa en un
+        design system: si está usando las variables o va por libre.
+      </p>
+    </header>
+
+    <p class="calm">
+      <strong>No puedes romper nada.</strong> Todo lo que hagas en el inspector pasa solo en tu
+      ordenador y desaparece al recargar. Nadie más lo ve.
+    </p>
+
+    <!-- ── las siete ── -->
+    <section aria-labelledby="siete-title">
+      <h2 id="siete-title" class="section-title">Las siete cosas que se validan</h2>
+      <p class="section-lead">Si compruebas estas siete, el componente está validado.</p>
+      <ol class="checks">
+        @for (c of checks; track c.n) {
+          <li class="check">
+            <span class="check__n">{{ c.n }}</span>
+            <span class="check__body">
+              <span class="check__title">{{ c.title }}</span>
+              <span class="check__note">{{ c.note }}</span>
+            </span>
+            <code class="check__css">{{ c.css }}</code>
+          </li>
+        }
+      </ol>
+    </section>
+
+    <!-- ── traducción ── -->
+    <section aria-labelledby="trad-title">
+      <h2 id="trad-title" class="section-title">Cómo se dice cada cosa en cada sitio</h2>
+      <p class="section-lead">
+        Tú lo llamas de una manera en Figma y el navegador lo llama de otra. Es lo único que hay
+        que aprenderse.
+      </p>
+      <div class="table" role="table">
+        <div class="table__row table__row--head" role="row">
+          <span role="columnheader">En Figma</span>
+          <span role="columnheader">En el navegador</span>
+          <span role="columnheader">Ejemplo real</span>
+        </div>
+        @for (m of mappings; track m.figma) {
+          <div class="table__row" role="row">
+            <span class="table__figma" role="cell">{{ m.figma }}</span>
+            <code class="table__css" role="cell">{{ m.css }}</code>
+            <code class="table__ex" role="cell">{{ m.example }}</code>
+          </div>
+        }
+      </div>
+    </section>
+
+    <!-- ── pasos ── -->
+    <section aria-labelledby="pasos-title">
+      <h2 id="pasos-title" class="section-title">Abrirlo, en cuatro pasos</h2>
+      <ol class="steps">
+        <li>
+          <strong>Clic derecho sobre el componente.</strong> Sobre la letra, no sobre el marco
+          (luego verás por qué). Si tu ratón no tiene botón derecho: dos dedos en el trackpad.
+        </li>
+        <li><strong>Elige «Inspeccionar»</strong>, la última opción del menú.</li>
+        <li>
+          <strong>Pincha la pestaña «Computed».</strong> Significa «calculado»: son los números
+          finales, ya con todas las cuentas hechas. Es lo que de verdad se ve en pantalla.
+        </li>
+        <li>
+          <strong>Lee las siete cosas.</strong> Arriba, el dibujo de cajas con el tamaño. Debajo,
+          la lista con todo lo demás. Usa el buscador (<em>Filter</em>) y escribe
+          <code>border</code>, <code>padding</code> o <code>font</code> para no perderte.
+        </li>
+      </ol>
+    </section>
+
+    <!-- ── traducciones numéricas ── -->
+    <section aria-labelledby="conv-title">
+      <h2 id="conv-title" class="section-title">Los tres números que hay que traducir</h2>
+      <p class="section-lead">El navegador escribe algunas cosas distinto a Figma. Son solo tres.</p>
+      <div class="convs">
+        <div class="conv">
+          <p class="conv__k">Color</p>
+          <p class="conv__b">rgb → hex</p>
+          <p class="conv__d">
+            Figma dice #ECEFF3 y el navegador rgb(236, 239, 243). Es el mismo color.
+          </p>
+          <p class="conv__eg">Mayúsculas + clic en el cuadradito y cambia a hex</p>
+        </div>
+        <div class="conv">
+          <p class="conv__k">Medidas</p>
+          <p class="conv__b">rem → px</p>
+          <p class="conv__d">A veces verás 0.375rem en vez de 6px. Multiplica por 16.</p>
+          <p class="conv__eg">0.375 × 16 = 6px · 1rem = 16px</p>
+        </div>
+        <div class="conv">
+          <p class="conv__k">Color</p>
+          <p class="conv__b">el «ff» del final</p>
+          <p class="conv__d">
+            Si ves #c6ccd6<strong>ff</strong>, esas dos últimas letras son la opacidad.
+          </p>
+          <p class="conv__eg">#c6ccd6ff = #C6CCD6</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── variables ── -->
+    <section aria-labelledby="vars-title">
+      <h2 id="vars-title" class="section-title">Lo más importante: ¿usa la variable?</h2>
+      <p class="section-lead">
+        No basta con que el número esté bien: tiene que venir del token. Vuelve a la pestaña
+        <strong>Styles</strong> (la de al lado de Computed): ahí no ves el resultado, ves de dónde
+        sale.
+      </p>
+      <div class="verdicts">
+        <div class="verdict verdict--ok">
+          <p class="verdict__l">Bien · bebe de la variable</p>
+          <code>background → apunta a --p-chip-background</code>
+          <p class="verdict__d">Cuando cambies ese color en Figma, esto cambiará solo.</p>
+        </div>
+        <div class="verdict verdict--bad">
+          <p class="verdict__l">Mal · escrito a mano</p>
+          <code>background → #ECEFF3 escrito a mano</code>
+          <p class="verdict__d">
+            El color puede ser el correcto hoy, pero está clavado. El día que lo cambies en Figma,
+            aquí seguirá el viejo.
+          </p>
+        </div>
+      </div>
+      <p class="note">
+        Un componente puede tener <strong>el valor correcto y estar mal montado</strong>. Si ves
+        colores o medidas a pelo en vez de <code>var(--p-…)</code>, es un fallo que reportar aunque
+        hoy se vea bien.
+      </p>
+    </section>
+
+    <!-- ── ejemplo ── -->
+    <section aria-labelledby="ej-title">
+      <h2 id="ej-title" class="section-title">Un ejemplo entero, resuelto</h2>
+      <p class="section-lead">El Chip de producción, validado en sus siete puntos.</p>
+      <div class="example">
+        @for (row of chipExample; track row.label) {
+          <div class="example__row">
+            <span class="example__l">{{ row.label }}</span>
+            <code class="example__v">{{ row.value }}</code>
+          </div>
+        }
+      </div>
+      <p class="note">
+        Un componente sano se ve así: los siete valores cuadran <strong>y</strong> vienen de
+        variables.
+      </p>
+    </section>
+
+    <!-- ── trampa ── -->
+    <section aria-labelledby="trampa-title">
+      <h2 id="trampa-title" class="section-title">La trampa: la caja y el texto de dentro</h2>
+      <p class="section-lead">
+        Muchos componentes son una caja con texto dentro, y cada parte mide distinto. Si señalas el
+        marco del Select verás 16px; si señalas la palabra, 14px. El número bueno es el del texto.
+      </p>
+      <p class="note">
+        <strong>Pincha siempre sobre la letra</strong>, no sobre el marco. Si dudas, mira en la
+        mitad izquierda del panel qué línea está resaltada en azul: esa es la que estás midiendo.
+      </p>
+    </section>
+
+    <!-- ── catálogo ── -->
+    <section aria-labelledby="cat-title">
+      <h2 id="cat-title" class="section-title">Nombres reales, y qué miden hoy</h2>
+      <p class="section-lead">Comprobados uno a uno en producción el 1 de septiembre de 2026.</p>
+      <div class="table" role="table">
+        <div class="table__row table__row--head" role="row">
+          <span role="columnheader">Componente</span>
+          <span role="columnheader">Se llama</span>
+          <span role="columnheader">Hoy</span>
+        </div>
+        @for (p of pieces; track p.selector) {
+          <div class="table__row" role="row">
+            <span class="table__figma" role="cell">{{ p.name }}</span>
+            <code class="table__css" role="cell">{{ p.selector }}</code>
+            <code
+              class="table__ex"
+              role="cell"
+              [class.is-ok]="p.ok === true"
+              [class.is-bad]="p.ok === false"
+              >{{ p.today }}</code
+            >
+          </div>
+        }
+      </div>
+      <p class="note">
+        Los que aparecen al abrir algo (opciones de desplegable, Toast) hay que abrirlos primero y
+        entonces señalarlos.
+      </p>
+    </section>
+
+    <!-- ── moverse ── -->
+    <section aria-labelledby="mov-title">
+      <h2 id="mov-title" class="section-title">Moverte entre componentes</h2>
+      <ul class="moves">
+        <li>
+          <strong>Con la flechita, sin cerrar nada.</strong> Pincha la flecha de arriba a la
+          izquierda del panel y señala cualquier cosa de la página: los valores cambian solos.
+        </li>
+        <li>
+          <strong>Cambiando de página.</strong> El panel se queda abierto al navegar por el menú.
+          Vas a Tag, mides; vas a Chip, mides.
+        </li>
+      </ul>
+    </section>
+
+    <!-- ── atajo ── -->
+    <section aria-labelledby="atajo-title">
+      <h2 id="atajo-title" class="section-title">Si quieres ir más rápido</h2>
+      <p class="section-lead">
+        Señala primero el componente (clic derecho → Inspeccionar). Luego ve a la pestaña
+        <strong>Console</strong>, pega esto y Enter. <code>$0</code> significa «el que acabo de
+        señalar».
+      </p>
+      <pre class="snippet"><code>{{ snippet }}</code></pre>
+      <p class="note">Saca una tabla con las siete cosas a la vez.</p>
+    </section>
+
+    <footer class="guide__foot">
+      <p>
+        Todas las cifras están medidas en ui.smart-contact.com el 1 de septiembre de 2026, no
+        deducidas.
+      </p>
+    </footer>
+  </article>
+}

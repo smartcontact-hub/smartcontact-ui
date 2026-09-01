@@ -113,6 +113,12 @@ export class LabComponent {
           route: '/tema',
           note: 'Comprueba que los componentes de PrimeNG heredan los tokens del sistema.',
         },
+        {
+          label: 'Cómo validar un componente',
+          href: null,
+          route: '/validar',
+          note: 'Guía para medir en el navegador el tamaño, la tipografía, el color, el borde y los espaciados de cualquier componente, y ver si bebe de las variables. Pide clave.',
+        },
       ],
     },
   ];
