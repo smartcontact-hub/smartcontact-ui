@@ -248,11 +248,14 @@
    * fallback hardcoded. No mapea a fuente custom — system mono stack. */
   --sc-font-family-mono: ui-monospace, 'SF Mono', 'Menlo', 'Consolas', 'Liberation Mono', monospace;
 
-  /* Font-size — DD-13: rampa redonda en rem (root 16), DESACOPLADA de
-   * `--sc-scale`. Espejo de los primitivos `typography/font/size` del Kit
-   * (8 tamaños canónicos: 12·14·16·18·20·24·32·48). Naming step SCDS
-   * preservado (public API). Steps fuera del set canónico → snapeados al
-   * más cercano; colapsar los redundantes = limpieza posterior (fuera fase). */
+  /* Tipografía — DD-13: rampas redondas en rem (root 16), DESACOPLADAS de `--sc-scale`.
+   * Espejo de los primitivos `typography/*` del Kit (font-size 12·14·16·18·20·24·32·48 ·
+   * line-height 18·20·24·28·36·40·58 · pesos 400-700). El naming por step es API pública,
+   * así que los pasos que el Kit no trae se SNAPEAN al vecino en vez de desaparecer.
+   * El contenido lo escribe `token-gen.mjs`; el mapa de snaps vive allí. */
+  /* @sc-gen:typography — bloque GENERADO desde kit-export-dtcg.json por `npm run tokens:import`.
+   * NO editar a mano. font-size · line-height · font-weight. Los pasos que el Kit NO
+   * trae (snaps del DS, DD-13) se derivan del vecino: el mapa vive en token-gen.mjs. */
   --sc-font-size-50: calc(12 / 16 * 1rem); /* 12 (era 10.5 → sube a 12) */
   --sc-font-size-75: calc(12 / 16 * 1rem); /* 12 (snap → -100) */
   --sc-font-size-100: calc(12 / 16 * 1rem); /* 12 */
@@ -267,9 +270,6 @@
   --sc-font-size-800: calc(48 / 16 * 1rem); /* 48 (era 56) */
   --sc-font-size-900: calc(48 / 16 * 1rem); /* 48 (snap 64; era 70) */
 
-  /* Line-height — DD-13: redondo en rem, DESACOPLADO de `--sc-scale`.
-   * Espejo de `typography/line/height` del Kit (18·20·24·28·36·40·58) +
-   * emparejamiento font↔LH de los text styles. Naming step preservado. */
   --sc-line-height-50: calc(18 / 16 * 1rem); /* 18 */
   --sc-line-height-100: calc(18 / 16 * 1rem); /* 18 (caption 12) */
   --sc-line-height-200: calc(20 / 16 * 1rem); /* 20 (body 14) */
@@ -284,11 +284,11 @@
   --sc-line-height-800: calc(58 / 16 * 1rem); /* 58 (display-1 48) */
   --sc-line-height-900: calc(58 / 16 * 1rem); /* 58 */
 
-  /* Font weights */
   --sc-font-weight-regular: 400;
   --sc-font-weight-medium: 500;
   --sc-font-weight-semibold: 600;
   --sc-font-weight-bold: 700;
+  /* @sc-gen:typography:end */
 
   /* ---------- Scale (Kit Pro `aura/primitive.scale`) ----------
    * Escala PRIMITIVE ÚNICA base 14 (PrimeOne 4.0). Naming 1:1 con Figma
