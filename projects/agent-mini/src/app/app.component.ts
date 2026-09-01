@@ -8,6 +8,7 @@ import {
 import { MiniStateService } from './mini-state.service';
 import { HistoryComponent } from './history.component';
 import { AgendaComponent } from './agenda.component';
+import { SERVICES, type ServiceGroup } from './mini-seed';
 
 type Tab = 'call' | 'chat' | 'agents' | 'contacts' | 'history';
 
@@ -59,9 +60,28 @@ interface NavAction {
 
           <!-- Selector de servicio (dropup del real; nombre cortado a 12) -->
           <div class="service">
-            <button class="svc" type="button" disabled>
-              <span class="svc-name">Soporte Tal</span>
-              <img class="svc-arrow" src="icons/comunicator/flecha_1.svg" alt="" />
+            @if (svcOpen()) {
+            <div class="svc-menu">
+              @for (s of services; track s.number) {
+              <button
+                class="svc-item"
+                type="button"
+                [class.on]="s.number === selectedService().number"
+                (click)="selectService(s)"
+              >
+                <span class="svc-item-name">{{ s.name }}</span>
+                <span class="svc-item-num">{{ s.number }}</span>
+              </button>
+              }
+            </div>
+            }
+            <button class="svc" [class.open]="svcOpen()" type="button" (click)="toggleSvc()">
+              <span class="svc-name">{{ svcSlice(selectedService().name) }}</span>
+              <img
+                class="svc-arrow"
+                src="icons/comunicator/flecha_1.svg"
+                alt=""
+              />
             </button>
           </div>
 
@@ -286,8 +306,8 @@ interface NavAction {
 
     .spacer { flex: 1; }
 
-    /* Pastilla de servicio. */
-    .service { display: flex; justify-content: center; }
+    /* Pastilla de servicio + dropup. */
+    .service { display: flex; justify-content: center; position: relative; }
     .svc {
       display: inline-flex;
       align-items: center;
@@ -297,12 +317,55 @@ interface NavAction {
       padding: 0.9vh 2vw 0.9vh 3.4vw;
       background: transparent;
       color: #fff;
+      cursor: pointer;
       font-family: 'Roboto', sans-serif;
       font-size: 2.1vh;
       white-space: nowrap;
     }
+    /* Al abrir se invierte: fondo blanco, texto oscuro, flecha negra (como el real). */
+    .svc.open { background: #fff; color: #333a41; }
     .svc-name { overflow: hidden; text-overflow: ellipsis; max-width: 40vw; }
-    .svc-arrow { width: 3.4vw; height: 1.6vh; object-fit: contain; filter: invert(1); }
+    .svc-arrow {
+      width: 3.4vw;
+      height: 1.6vh;
+      object-fit: contain;
+      filter: invert(1);
+      transition: transform 0.15s ease;
+    }
+    .svc.open .svc-arrow { filter: none; transform: rotate(180deg); }
+    /* Desplegable que SUBE desde la pastilla: fondo #1f2429, filas nombre + numero. */
+    .svc-menu {
+      position: absolute;
+      left: 50%;
+      bottom: calc(100% + 1vh);
+      transform: translateX(-50%);
+      width: 62vw;
+      max-height: 26vh;
+      overflow-y: auto;
+      background: #1f2429;
+      border-radius: 2.4vw;
+      box-shadow: 0 0.6vh 2vh rgba(0, 0, 0, 0.4);
+    }
+    .svc-item {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      width: 100%;
+      padding: 1.4vh 3.4vw;
+      background: none;
+      border: 0;
+      border-bottom: 1px solid #000;
+      color: #fff;
+      cursor: pointer;
+      opacity: 0.75;
+      font-family: 'Roboto', sans-serif;
+      font-size: 1.9vh;
+      text-align: left;
+    }
+    .svc-item:last-child { border-bottom: 0; }
+    .svc-item.on,
+    .svc-item:hover { opacity: 1; }
+    .svc-item-num { color: #9d9fa3; font-size: 1.6vh; }
 
     /* Botón llamar. */
     .call { display: flex; justify-content: center; margin: 2vh 0 2.4vh; }
@@ -414,6 +477,24 @@ export class AppComponent {
     { tab: 'contacts', label: 'Agenda', icon: 'agenda' },
     { tab: 'history', label: 'Historial', icon: 'historial', wide: true },
   ];
+
+  // Selector de servicio (dropup).
+  protected readonly services = SERVICES;
+  protected readonly selectedService = signal<ServiceGroup>(SERVICES[0]);
+  protected readonly svcOpen = signal(false);
+
+  protected toggleSvc(): void {
+    if (this.services.length > 1) {
+      this.svcOpen.update((v) => !v);
+    }
+  }
+  protected selectService(s: ServiceGroup): void {
+    this.selectedService.set(s);
+    this.svcOpen.set(false);
+  }
+  protected svcSlice(name: string): string {
+    return name.length > 12 ? name.slice(0, 12) + '…' : name;
+  }
 
   /** Verde solo si el estado permite llamar Y hay número marcado. */
   protected readonly canMakeCall = computed(
