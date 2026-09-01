@@ -81,7 +81,10 @@ ${typographyRule(
     "app.typography.md.font.size",
     "app.typography.md.line.height",
     fromDesignPx(14),
-    fromDesignPx(21)
+    /* 20, no 21: DD-39 unificó el line-height md. El fallback solo entra si la variable
+     * no resuelve, y hasta ahora contradecía al token — habría reintroducido justo el
+     * 21 que costó semanas cazar. */
+    fromDesignPx(20)
 )}
 
 ${typographyRule(

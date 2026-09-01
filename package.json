@@ -87,7 +87,8 @@
     "version:bump": "node scripts/version-bump.mjs",
     "watch": "ng build --watch --configuration development",
     "build:agent-mini": "ng build agent-mini --configuration production",
-    "serve:agent-mini": "ng serve agent-mini --port 4291"
+    "serve:agent-mini": "ng serve agent-mini --port 4291",
+    "emit:consumer-typography": "node scripts/emit-consumer-typography.mjs"
   },
   "dependencies": {
     "@angular/animations": "^22.1.3",
