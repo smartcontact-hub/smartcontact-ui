@@ -558,7 +558,7 @@ el handoff. El loop:
 El token del plugin necesita scope `repo` sobre la org `smartcontact-hub`.
 
 **Qué fluye solo vs qué no** (importante, sin magia de más). El generador
-(`scripts/token-gen.mjs`) solo regenera **3 zonas**: escala 14-base
+(`scripts/token-gen.mjs`) solo regenera **4 zonas**: tipografía, escala 14-base
 (`--sc-scale-*`), radios y la zona de paleta auto-importada (`@sc-gen:palette`: `zinc`
 base + cualquier familia primitiva que un color del Kit referencie y la capa curada no
 cubra — p.ej. `yellow` de la severidad warn, ver commit 6e3addd). Por tanto:
@@ -573,7 +573,7 @@ cubra — p.ej. `yellow` de la severidad warn, ver commit 6e3addd). Por tanto:
   **fuera** de esas zonas y las **divergencias conscientes** (la lista `DIVERGE` de
   `color-map.mjs`): eso es lo que `tokens:parity` pone en rojo para que un dev decida.
 
-> ⚠️ **Nueve zonas `@sc-gen` en CINCO ficheros** — `01-primitive` (scale · radius ·
+> ⚠️ **Diez zonas `@sc-gen` en CINCO ficheros** — `01-primitive` (typography · scale · radius ·
 > palette), `02-semantic` (semantic-color-light), `04-component` (cmp-sizing ·
 > cmp-color-light), `05-extensions` (effects) y `07-dark` (semantic-color-dark ·
 > cmp-color-dark). **Ninguna se edita a mano**: `npm run tokens:import` encadena
@@ -589,7 +589,7 @@ resuelve a `var(--sc-*)`**, la escala en rem es central, y el preset no lleva `p
 
 1. Guarda el DTCG nuevo encima de
    `projects/design-tokens/scripts/kit-export-dtcg.json`.
-2. `npm run tokens:import` — reescribe las 9 zonas `@sc-gen` (valores en rem, el px de
+2. `npm run tokens:import` — reescribe las 10 zonas `@sc-gen` (valores en rem, el px de
    diseño queda en el comentario). Nunca las edites a mano.
 3. `npm run tokens:parity` — si un token curado o un slot del preset ahora diverge, o
    lo arreglas o lo registras como divergencia consciente
