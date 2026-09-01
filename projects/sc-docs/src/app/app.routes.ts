@@ -55,6 +55,15 @@ export const routes: Routes = [
   },
 
   {
+    // Guía interna de validación visual (no enlazada desde la navegación: se llega por URL).
+    // La clave del componente solo evita encontrarla navegando; NO es seguridad — esto es una
+    // app estática y el bundle viaja al cliente.
+    path: 'validar',
+    loadComponent: () =>
+      import('./pages/validar/validar.component').then((m) => m.ValidarComponent),
+  },
+
+  {
     // Smoke test del preset (primitivos PrimeNG estilados solo por tokens). Fue pestaña de
     // Fundamentos; ahora es verificación, enlazada desde Lab. Sigue accesible por URL.
     path: 'tema',
