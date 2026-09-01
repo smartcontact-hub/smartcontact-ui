@@ -38,6 +38,7 @@
     "generate:icons": "npm --prefix projects/ui-smartcontact-icons run icons:build",
     "guard:backticks": "node tools/check-backticks.ts",
     "guard:lockfile": "node scripts/lockfile-guard.mjs",
+    "hooks:install": "git config core.hooksPath .githooks",
     "i18n:check": "node scripts/i18n-check.mjs",
     "lint": "eslint .",
     "ng": "ng",

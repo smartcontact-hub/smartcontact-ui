@@ -1,0 +1,1644 @@
+<!doctype html>
+<html lang="es">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<meta name="robots" content="noindex, nofollow">
+<title>Validar un componente · Smart Contact</title>
+<!--
+  Guía interna de validación visual.
+
+  Vive FUERA de la SPA a propósito: sc-docs enruta por hash (`withHashLocation`), y el
+  fragmento `#…` no viaja al servidor, así que Cloudflare Access no puede proteger una
+  ruta de la SPA — solo el sitio entero. Como página real bajo /interno/ sí es
+  protegible por Access, que es la única barrera de verdad en un sitio estático.
+
+  Autónoma por diseño: los tokens van embebidos en vez de enlazar el CSS del sitio,
+  cuyo nombre lleva hash y cambia en cada build (el enlace se rompería en silencio).
+  Regenerar con el script del commit si cambian los valores del sistema.
+
+  Cifras medidas en ui.smart-contact.com el 2026-09-01.
+-->
+<style>
+:root {
+  --sc-bg-accent: var(--sc-color-sky-500);
+  --sc-bg-accent-active: var(--sc-color-sky-700);
+  --sc-bg-accent-hover: var(--sc-color-sky-600);
+  --sc-bg-canvas: var(--sc-color-slate-0);
+  --sc-bg-danger: var(--sc-color-red-600);
+  --sc-bg-danger-active: var(--sc-color-red-800);
+  --sc-bg-danger-hover: var(--sc-color-red-700);
+  --sc-bg-danger-subtle: var(--sc-color-red-50);
+  --sc-bg-danger-subtle-active: var(--sc-color-red-200);
+  --sc-bg-danger-subtle-hover: var(--sc-color-red-100);
+  --sc-bg-default: var(--sc-color-slate-50);
+  --sc-bg-disabled: var(--sc-color-slate-200);
+  --sc-bg-elevated: var(--sc-bg-surface);
+  --sc-bg-hover: var(--sc-bg-secondary-hover);
+  --sc-bg-info: var(--sc-color-sky-500);
+  --sc-bg-info-active: var(--sc-color-sky-700);
+  --sc-bg-info-hover: var(--sc-color-sky-600);
+  --sc-bg-info-subtle: var(--sc-color-sky-50);
+  --sc-bg-overlay-transparent: #ffffff00;
+  --sc-bg-primary: var(--sc-color-blue-700);
+  --sc-bg-primary-active: var(--sc-color-blue-800);
+  --sc-bg-primary-hover: var(--sc-color-blue-600);
+  --sc-bg-primary-subtle: var(--sc-color-blue-50);
+  --sc-bg-primary-subtle-active: var(--sc-color-blue-200);
+  --sc-bg-primary-subtle-hover: var(--sc-color-blue-100);
+  --sc-bg-secondary: var(--sc-color-slate-600);
+  --sc-bg-secondary-active: var(--sc-color-slate-200);
+  --sc-bg-secondary-hover: var(--sc-color-slate-100);
+  --sc-bg-secondary-subtle: var(--sc-color-slate-50);
+  --sc-bg-selected: var(--sc-bg-primary-subtle);
+  --sc-bg-subtle: var(--sc-color-blue-50);
+  --sc-bg-subtle-active: var(--sc-color-blue-200);
+  --sc-bg-subtle-hover: var(--sc-color-blue-100);
+  --sc-bg-success: var(--sc-color-green-600);
+  --sc-bg-success-subtle: var(--sc-color-green-50);
+  --sc-bg-surface: var(--sc-color-slate-0);
+  --sc-bg-violet: var(--sc-color-violet-500);
+  --sc-bg-violet-active: var(--sc-color-violet-700);
+  --sc-bg-violet-hover: var(--sc-color-violet-600);
+  --sc-bg-violet-subtle: var(--sc-color-violet-50);
+  --sc-bg-violet-subtle-active: var(--sc-color-violet-200);
+  --sc-bg-violet-subtle-hover: var(--sc-color-violet-100);
+  --sc-bg-warning: var(--sc-color-yellow-500);
+  --sc-bg-warning-subtle: var(--sc-color-yellow-50);
+  --sc-border-accent: var(--sc-color-sky-500);
+  --sc-border-accent-active: var(--sc-color-sky-700);
+  --sc-border-accent-hover: var(--sc-color-sky-600);
+  --sc-border-danger: var(--sc-color-red-600);
+  --sc-border-danger-active: var(--sc-color-red-800);
+  --sc-border-danger-hover: var(--sc-color-red-700);
+  --sc-border-default: var(--sc-color-slate-200);
+  --sc-border-disabled: var(--sc-color-slate-100);
+  --sc-border-error: var(--sc-color-red-400);
+  --sc-border-focus: var(--sc-color-sky-500);
+  --sc-border-info: var(--sc-color-sky-500);
+  --sc-border-info-subtle: var(--sc-color-sky-200);
+  --sc-border-primary: var(--sc-color-blue-700);
+  --sc-border-primary-active: var(--sc-color-blue-800);
+  --sc-border-primary-hover: var(--sc-color-blue-600);
+  --sc-border-secondary: var(--sc-color-blue-200);
+  --sc-border-secondary-active: var(--sc-color-blue-400);
+  --sc-border-secondary-hover: var(--sc-color-blue-300);
+  --sc-border-strong: var(--sc-color-slate-400);
+  --sc-border-subtle: var(--sc-color-slate-100);
+  --sc-border-success: var(--sc-color-green-600);
+  --sc-border-success-subtle: var(--sc-color-green-200);
+  --sc-border-violet: var(--sc-color-violet-500);
+  --sc-border-violet-subtle: var(--sc-color-violet-200);
+  --sc-border-warning: var(--sc-color-yellow-500);
+  --sc-border-warning-subtle: var(--sc-color-yellow-200);
+  --sc-bulk-action-bar-height: 56px;
+  --sc-cmp-autocomplete-chip-focus-background: var(--sc-color-slate-200);
+  --sc-cmp-autocomplete-chip-focus-color: var(--sc-color-slate-800);
+  --sc-cmp-autocomplete-dropdown-active-background: var(--sc-color-slate-300);
+  --sc-cmp-autocomplete-dropdown-active-color: var(--sc-color-slate-800);
+  --sc-cmp-autocomplete-dropdown-background: var(--sc-color-slate-100);
+  --sc-cmp-autocomplete-dropdown-color: var(--sc-color-slate-600);
+  --sc-cmp-autocomplete-dropdown-hover-background: var(--sc-color-slate-200);
+  --sc-cmp-autocomplete-dropdown-hover-color: var(--sc-color-slate-700);
+  --sc-cmp-autocomplete-overlay-shadow: 0 2px 4px -2px #0000001a, 0 4px 6px -1px #0000001a;
+  --sc-cmp-autocomplete-shadow: 0 1px 2px 0 #1212170d;
+  --sc-cmp-badge-contrast-background: var(--sc-color-slate-950);
+  --sc-cmp-badge-contrast-color: var(--sc-color-slate-0);
+  --sc-cmp-badge-danger-background: var(--sc-color-red-500);
+  --sc-cmp-badge-danger-color: var(--sc-color-slate-0);
+  --sc-cmp-badge-info-background: var(--sc-color-sky-500);
+  --sc-cmp-badge-info-color: var(--sc-color-slate-0);
+  --sc-cmp-badge-secondary-background: var(--sc-color-slate-100);
+  --sc-cmp-badge-secondary-color: var(--sc-color-slate-600);
+  --sc-cmp-badge-success-background: var(--sc-color-green-500);
+  --sc-cmp-badge-success-color: var(--sc-color-slate-0);
+  --sc-cmp-badge-warn-background: var(--sc-color-yellow-700);
+  --sc-cmp-badge-warn-color: var(--sc-color-slate-0);
+  --sc-cmp-button-border-radius: .375rem;
+  --sc-cmp-button-contrast-active-background: var(--sc-color-slate-800);
+  --sc-cmp-button-contrast-active-border-color: var(--sc-color-slate-800);
+  --sc-cmp-button-contrast-active-color: var(--sc-color-slate-0);
+  --sc-cmp-button-contrast-background: var(--sc-color-slate-950);
+  --sc-cmp-button-contrast-border-color: var(--sc-color-slate-950);
+  --sc-cmp-button-contrast-color: var(--sc-color-slate-0);
+  --sc-cmp-button-contrast-focus-ring-color: var(--sc-color-slate-950);
+  --sc-cmp-button-contrast-hover-background: var(--sc-color-slate-900);
+  --sc-cmp-button-contrast-hover-border-color: var(--sc-color-slate-900);
+  --sc-cmp-button-contrast-hover-color: var(--sc-color-slate-0);
+  --sc-cmp-button-danger-active-background: var(--sc-color-red-700);
+  --sc-cmp-button-danger-active-border-color: var(--sc-color-red-700);
+  --sc-cmp-button-danger-active-color: var(--sc-color-slate-0);
+  --sc-cmp-button-danger-background: var(--sc-color-red-500);
+  --sc-cmp-button-danger-border-color: var(--sc-color-red-500);
+  --sc-cmp-button-danger-color: var(--sc-color-slate-0);
+  --sc-cmp-button-danger-focus-ring-color: var(--sc-color-red-500);
+  --sc-cmp-button-danger-hover-background: var(--sc-color-red-600);
+  --sc-cmp-button-danger-hover-border-color: var(--sc-color-red-600);
+  --sc-cmp-button-danger-hover-color: var(--sc-color-slate-0);
+  --sc-cmp-button-gap: .4375rem;
+  --sc-cmp-button-help-active-background: var(--sc-color-purple-700);
+  --sc-cmp-button-help-active-border-color: var(--sc-color-purple-700);
+  --sc-cmp-button-help-active-color: var(--sc-color-slate-0);
+  --sc-cmp-button-help-background: var(--sc-color-purple-500);
+  --sc-cmp-button-help-border-color: var(--sc-color-purple-500);
+  --sc-cmp-button-help-color: var(--sc-color-slate-0);
+  --sc-cmp-button-help-focus-ring-color: var(--sc-color-purple-500);
+  --sc-cmp-button-help-hover-background: var(--sc-color-purple-600);
+  --sc-cmp-button-help-hover-border-color: var(--sc-color-purple-600);
+  --sc-cmp-button-help-hover-color: var(--sc-color-slate-0);
+  --sc-cmp-button-icon-only-width: 2.1875rem;
+  --sc-cmp-button-info-active-background: var(--sc-color-sky-700);
+  --sc-cmp-button-info-active-border-color: var(--sc-color-sky-700);
+  --sc-cmp-button-info-active-color: var(--sc-color-slate-0);
+  --sc-cmp-button-info-background: var(--sc-color-sky-500);
+  --sc-cmp-button-info-border-color: var(--sc-color-sky-500);
+  --sc-cmp-button-info-color: var(--sc-color-slate-0);
+  --sc-cmp-button-info-focus-ring-color: var(--sc-color-sky-500);
+  --sc-cmp-button-info-hover-background: var(--sc-color-sky-600);
+  --sc-cmp-button-info-hover-border-color: var(--sc-color-sky-600);
+  --sc-cmp-button-info-hover-color: var(--sc-color-slate-0);
+  --sc-cmp-button-lg-font-size: 1rem;
+  --sc-cmp-button-lg-icon-only-width: 2.625rem;
+  --sc-cmp-button-lg-padding-x: .765625rem;
+  --sc-cmp-button-lg-padding-y: .546875rem;
+  --sc-cmp-button-outlined-contrast-active-background: var(--sc-color-slate-100);
+  --sc-cmp-button-outlined-contrast-border-color: var(--sc-color-slate-700);
+  --sc-cmp-button-outlined-contrast-color: var(--sc-color-slate-950);
+  --sc-cmp-button-outlined-contrast-hover-background: var(--sc-color-slate-50);
+  --sc-cmp-button-outlined-danger-active-background: var(--sc-color-red-100);
+  --sc-cmp-button-outlined-danger-border-color: var(--sc-color-red-200);
+  --sc-cmp-button-outlined-danger-color: var(--sc-color-red-500);
+  --sc-cmp-button-outlined-danger-hover-background: var(--sc-color-red-50);
+  --sc-cmp-button-outlined-help-active-background: var(--sc-color-purple-100);
+  --sc-cmp-button-outlined-help-border-color: var(--sc-color-purple-200);
+  --sc-cmp-button-outlined-help-color: var(--sc-color-purple-500);
+  --sc-cmp-button-outlined-help-hover-background: var(--sc-color-purple-50);
+  --sc-cmp-button-outlined-info-active-background: var(--sc-color-sky-100);
+  --sc-cmp-button-outlined-info-border-color: var(--sc-color-sky-200);
+  --sc-cmp-button-outlined-info-color: var(--sc-color-sky-500);
+  --sc-cmp-button-outlined-info-hover-background: var(--sc-color-sky-50);
+  --sc-cmp-button-outlined-plain-active-background: var(--sc-color-slate-100);
+  --sc-cmp-button-outlined-plain-border-color: var(--sc-color-slate-200);
+  --sc-cmp-button-outlined-plain-color: var(--sc-color-slate-700);
+  --sc-cmp-button-outlined-plain-hover-background: var(--sc-color-slate-50);
+  --sc-cmp-button-outlined-secondary-active-background: var(--sc-color-slate-100);
+  --sc-cmp-button-outlined-secondary-border-color: var(--sc-color-slate-200);
+  --sc-cmp-button-outlined-secondary-hover-background: var(--sc-color-slate-50);
+  --sc-cmp-button-outlined-success-active-background: var(--sc-color-green-100);
+  --sc-cmp-button-outlined-success-border-color: var(--sc-color-green-200);
+  --sc-cmp-button-outlined-success-color: var(--sc-color-green-500);
+  --sc-cmp-button-outlined-success-hover-background: var(--sc-color-green-50);
+  --sc-cmp-button-outlined-warn-active-background: var(--sc-color-yellow-100);
+  --sc-cmp-button-outlined-warn-border-color: var(--sc-color-yellow-200);
+  --sc-cmp-button-outlined-warn-color: var(--sc-color-yellow-700);
+  --sc-cmp-button-outlined-warn-hover-background: var(--sc-color-yellow-50);
+  --sc-cmp-button-padding-x: .65625rem;
+  --sc-cmp-button-padding-y: .4375rem;
+  --sc-cmp-button-raised-shadow: 0 1px 5px 0 #0000001f, 0 2px 2px 0 #00000024, 0 3px 1px -2px #00000033;
+  --sc-cmp-button-rounded-border-radius: 1.75rem;
+  --sc-cmp-button-secondary-active-background: var(--sc-color-slate-300);
+  --sc-cmp-button-secondary-active-border-color: var(--sc-color-slate-300);
+  --sc-cmp-button-secondary-active-color: var(--sc-color-slate-800);
+  --sc-cmp-button-secondary-background: var(--sc-color-slate-100);
+  --sc-cmp-button-secondary-border-color: var(--sc-color-slate-100);
+  --sc-cmp-button-secondary-color: var(--sc-color-slate-600);
+  --sc-cmp-button-secondary-focus-ring-color: var(--sc-color-slate-600);
+  --sc-cmp-button-secondary-hover-background: var(--sc-color-slate-200);
+  --sc-cmp-button-secondary-hover-border-color: var(--sc-color-slate-200);
+  --sc-cmp-button-secondary-hover-color: var(--sc-color-slate-700);
+  --sc-cmp-button-sm-font-size: .75rem;
+  --sc-cmp-button-sm-icon-only-width: 1.75rem;
+  --sc-cmp-button-sm-padding-x: .546875rem;
+  --sc-cmp-button-sm-padding-y: .328125rem;
+  --sc-cmp-button-success-active-background: var(--sc-color-green-700);
+  --sc-cmp-button-success-active-border-color: var(--sc-color-green-700);
+  --sc-cmp-button-success-active-color: var(--sc-color-slate-0);
+  --sc-cmp-button-success-background: var(--sc-color-green-500);
+  --sc-cmp-button-success-border-color: var(--sc-color-green-500);
+  --sc-cmp-button-success-color: var(--sc-color-slate-0);
+  --sc-cmp-button-success-focus-ring-color: var(--sc-color-green-500);
+  --sc-cmp-button-success-hover-background: var(--sc-color-green-600);
+  --sc-cmp-button-success-hover-border-color: var(--sc-color-green-600);
+  --sc-cmp-button-success-hover-color: var(--sc-color-slate-0);
+  --sc-cmp-button-text-contrast-active-background: var(--sc-color-slate-100);
+  --sc-cmp-button-text-contrast-color: var(--sc-color-slate-950);
+  --sc-cmp-button-text-contrast-hover-background: var(--sc-color-slate-50);
+  --sc-cmp-button-text-danger-active-background: var(--sc-color-red-100);
+  --sc-cmp-button-text-danger-color: var(--sc-color-red-500);
+  --sc-cmp-button-text-danger-hover-background: var(--sc-color-red-50);
+  --sc-cmp-button-text-help-active-background: var(--sc-color-purple-100);
+  --sc-cmp-button-text-help-color: var(--sc-color-purple-500);
+  --sc-cmp-button-text-help-hover-background: var(--sc-color-purple-50);
+  --sc-cmp-button-text-info-active-background: var(--sc-color-sky-100);
+  --sc-cmp-button-text-info-color: var(--sc-color-sky-500);
+  --sc-cmp-button-text-info-hover-background: var(--sc-color-sky-50);
+  --sc-cmp-button-text-plain-active-background: var(--sc-color-slate-100);
+  --sc-cmp-button-text-plain-color: var(--sc-color-slate-700);
+  --sc-cmp-button-text-plain-hover-background: var(--sc-color-slate-50);
+  --sc-cmp-button-text-secondary-active-background: var(--sc-color-slate-100);
+  --sc-cmp-button-text-secondary-color: var(--sc-color-slate-500);
+  --sc-cmp-button-text-secondary-hover-background: var(--sc-color-slate-50);
+  --sc-cmp-button-text-success-active-background: var(--sc-color-green-100);
+  --sc-cmp-button-text-success-color: var(--sc-color-green-500);
+  --sc-cmp-button-text-success-hover-background: var(--sc-color-green-50);
+  --sc-cmp-button-text-warn-active-background: var(--sc-color-yellow-100);
+  --sc-cmp-button-text-warn-color: var(--sc-color-yellow-700);
+  --sc-cmp-button-text-warn-hover-background: var(--sc-color-yellow-50);
+  --sc-cmp-button-warn-active-background: var(--sc-color-yellow-900);
+  --sc-cmp-button-warn-active-border-color: var(--sc-color-yellow-900);
+  --sc-cmp-button-warn-active-color: var(--sc-color-slate-0);
+  --sc-cmp-button-warn-background: var(--sc-color-yellow-700);
+  --sc-cmp-button-warn-border-color: var(--sc-color-yellow-700);
+  --sc-cmp-button-warn-color: var(--sc-color-slate-0);
+  --sc-cmp-button-warn-focus-ring-color: var(--sc-color-yellow-700);
+  --sc-cmp-button-warn-hover-background: var(--sc-color-yellow-800);
+  --sc-cmp-button-warn-hover-border-color: var(--sc-color-yellow-800);
+  --sc-cmp-button-warn-hover-color: var(--sc-color-slate-0);
+  --sc-cmp-card-shadow: 0 1px 2px -1px #0000001a, 0 1px 3px 0 #0000001a;
+  --sc-cmp-carousel-indicator-background: var(--sc-color-slate-200);
+  --sc-cmp-carousel-indicator-hover-background: var(--sc-color-slate-300);
+  --sc-cmp-cascadeselect-overlay-shadow: 0 2px 4px -2px #0000001a, 0 4px 6px -1px #0000001a;
+  --sc-cmp-cascadeselect-shadow: 0 1px 2px 0 #1212170d;
+  --sc-cmp-checkbox-shadow: 0 1px 2px 0 #1212170d;
+  --sc-cmp-chip-background: var(--sc-color-slate-100);
+  --sc-cmp-chip-color: var(--sc-color-slate-800);
+  --sc-cmp-chip-icon-color: var(--sc-color-slate-800);
+  --sc-cmp-chip-remove-icon-color: var(--sc-color-slate-800);
+  --sc-cmp-colorpicker-handle-color: var(--sc-color-slate-0);
+  --sc-cmp-colorpicker-panel-background: var(--sc-color-slate-800);
+  --sc-cmp-colorpicker-panel-border-color: var(--sc-color-slate-900);
+  --sc-cmp-colorpicker-panel-shadow: 0 2px 4px -2px #0000001a, 0 4px 6px -1px #0000001a;
+  --sc-cmp-confirmpopup-shadow: 0 2px 4px -2px #0000001a, 0 4px 6px -1px #0000001a;
+  --sc-cmp-contextmenu-shadow: 0 2px 4px -2px #0000001a, 0 4px 6px -1px #0000001a;
+  --sc-cmp-datatable-filter-overlay-popover-shadow: 0 2px 4px -2px #0000001a, 0 4px 6px -1px #0000001a;
+  --sc-cmp-datatable-filter-overlay-select-shadow: 0 2px 4px -2px #0000001a, 0 4px 6px -1px #0000001a;
+  --sc-cmp-datatable-row-striped-background: var(--sc-color-slate-50);
+  --sc-cmp-datepicker-dropdown-active-background: var(--sc-color-slate-300);
+  --sc-cmp-datepicker-dropdown-active-color: var(--sc-color-slate-800);
+  --sc-cmp-datepicker-dropdown-background: var(--sc-color-slate-100);
+  --sc-cmp-datepicker-dropdown-color: var(--sc-color-slate-600);
+  --sc-cmp-datepicker-dropdown-hover-background: var(--sc-color-slate-200);
+  --sc-cmp-datepicker-dropdown-hover-color: var(--sc-color-slate-700);
+  --sc-cmp-datepicker-panel-shadow: 0 2px 4px -2px #0000001a, 0 4px 6px -1px #0000001a;
+  --sc-cmp-datepicker-today-background: var(--sc-color-slate-200);
+  --sc-cmp-datepicker-today-color: var(--sc-color-slate-900);
+  --sc-cmp-dialog-shadow: 0 8px 10px -6px #0000001a, 0 20px 25px -5px #0000001a;
+  --sc-cmp-divider-horizontal-content-padding-x: .4375rem;
+  --sc-cmp-divider-horizontal-content-padding-y: 0;
+  --sc-cmp-divider-horizontal-margin-x: 0;
+  --sc-cmp-divider-horizontal-margin-y: .875rem;
+  --sc-cmp-divider-vertical-content-padding-x: 0;
+  --sc-cmp-divider-vertical-content-padding-y: .4375rem;
+  --sc-cmp-divider-vertical-margin-x: .875rem;
+  --sc-cmp-divider-vertical-margin-y: 0;
+  --sc-cmp-drawer-shadow: 0 8px 10px -6px #0000001a, 0 20px 25px -5px #0000001a;
+  --sc-cmp-editor-overlay-shadow: 0 2px 4px -2px #0000001a, 0 4px 6px -1px #0000001a;
+  --sc-cmp-form-field-border-radius: .375rem;
+  --sc-cmp-form-field-lg-font-size: 1rem;
+  --sc-cmp-form-field-lg-padding-x: .765625rem;
+  --sc-cmp-form-field-lg-padding-y: .546875rem;
+  --sc-cmp-form-field-padding-x: .65625rem;
+  --sc-cmp-form-field-padding-y: .4375rem;
+  --sc-cmp-form-field-shadow: 0 1px 2px 0 #1212170d;
+  --sc-cmp-form-field-sm-font-size: .75rem;
+  --sc-cmp-form-field-sm-padding-x: .546875rem;
+  --sc-cmp-form-field-sm-padding-y: .328125rem;
+  --sc-cmp-galleria-indicator-button-background: var(--sc-color-slate-200);
+  --sc-cmp-galleria-indicator-button-hover-background: var(--sc-color-slate-300);
+  --sc-cmp-galleria-thumbnail-nav-button-color: var(--sc-color-slate-600);
+  --sc-cmp-galleria-thumbnail-nav-button-hover-background: var(--sc-color-slate-100);
+  --sc-cmp-galleria-thumbnail-nav-button-hover-color: var(--sc-color-slate-700);
+  --sc-cmp-icon-size: .875rem;
+  --sc-cmp-inputnumber-button-active-background: var(--sc-color-slate-200);
+  --sc-cmp-inputnumber-button-active-color: var(--sc-color-slate-600);
+  --sc-cmp-inputnumber-button-background: transparent;
+  --sc-cmp-inputnumber-button-color: var(--sc-color-slate-400);
+  --sc-cmp-inputnumber-button-hover-background: var(--sc-color-slate-100);
+  --sc-cmp-inputnumber-button-hover-color: var(--sc-color-slate-500);
+  --sc-cmp-inputtext-shadow: 0 1px 2px 0 #1212170d;
+  --sc-cmp-listbox-option-striped-background: var(--sc-color-slate-50);
+  --sc-cmp-listbox-shadow: 0 1px 2px 0 #1212170d;
+  --sc-cmp-megamenu-overlay-shadow: 0 2px 4px -2px #0000001a, 0 4px 6px -1px #0000001a;
+  --sc-cmp-menu-shadow: 0 2px 4px -2px #0000001a, 0 4px 6px -1px #0000001a;
+  --sc-cmp-menubar-submenu-shadow: 0 2px 4px -2px #0000001a, 0 4px 6px -1px #0000001a;
+  --sc-cmp-message-contrast-background: var(--sc-color-slate-900);
+  --sc-cmp-message-contrast-border-color: var(--sc-color-slate-950);
+  --sc-cmp-message-contrast-close-button-focus-ring-color: var(--sc-color-slate-50);
+  --sc-cmp-message-contrast-close-button-hover-background: var(--sc-color-slate-800);
+  --sc-cmp-message-contrast-color: var(--sc-color-slate-50);
+  --sc-cmp-message-contrast-outlined-border-color: var(--sc-color-slate-950);
+  --sc-cmp-message-contrast-outlined-color: var(--sc-color-slate-950);
+  --sc-cmp-message-contrast-shadow: 0 4px 8px 0 #0000010a;
+  --sc-cmp-message-contrast-simple-color: var(--sc-color-slate-950);
+  --sc-cmp-message-error-background: color-mix(in srgb, var(--sc-color-red-50) 95%, transparent);
+  --sc-cmp-message-error-border-color: var(--sc-color-red-200);
+  --sc-cmp-message-error-close-button-focus-ring-color: var(--sc-color-red-600);
+  --sc-cmp-message-error-close-button-hover-background: var(--sc-color-red-100);
+  --sc-cmp-message-error-color: var(--sc-color-red-600);
+  --sc-cmp-message-error-outlined-border-color: var(--sc-color-red-600);
+  --sc-cmp-message-error-outlined-color: var(--sc-color-red-600);
+  --sc-cmp-message-error-shadow: 0 4px 8px 0 #0a03030a;
+  --sc-cmp-message-error-simple-color: var(--sc-color-red-600);
+  --sc-cmp-message-info-background: color-mix(in srgb, var(--sc-color-sky-50) 95%, transparent);
+  --sc-cmp-message-info-border-color: var(--sc-color-sky-200);
+  --sc-cmp-message-info-close-button-focus-ring-color: var(--sc-color-sky-600);
+  --sc-cmp-message-info-close-button-hover-background: var(--sc-color-sky-100);
+  --sc-cmp-message-info-color: var(--sc-color-sky-600);
+  --sc-cmp-message-info-outlined-border-color: var(--sc-color-sky-600);
+  --sc-cmp-message-info-outlined-color: var(--sc-color-sky-600);
+  --sc-cmp-message-info-shadow: 0 4px 8px 0 #02050a0a;
+  --sc-cmp-message-info-simple-color: var(--sc-color-sky-600);
+  --sc-cmp-message-secondary-background: var(--sc-color-slate-100);
+  --sc-cmp-message-secondary-border-color: var(--sc-color-slate-200);
+  --sc-cmp-message-secondary-close-button-focus-ring-color: var(--sc-color-slate-600);
+  --sc-cmp-message-secondary-close-button-hover-background: var(--sc-color-slate-200);
+  --sc-cmp-message-secondary-color: var(--sc-color-slate-600);
+  --sc-cmp-message-secondary-outlined-border-color: var(--sc-color-slate-500);
+  --sc-cmp-message-secondary-outlined-color: var(--sc-color-slate-500);
+  --sc-cmp-message-secondary-shadow: 0 4px 8px 0 #0405060a;
+  --sc-cmp-message-secondary-simple-color: var(--sc-color-slate-500);
+  --sc-cmp-message-success-background: color-mix(in srgb, var(--sc-color-green-50) 95%, transparent);
+  --sc-cmp-message-success-border-color: var(--sc-color-green-200);
+  --sc-cmp-message-success-close-button-focus-ring-color: var(--sc-color-green-600);
+  --sc-cmp-message-success-close-button-hover-background: var(--sc-color-green-100);
+  --sc-cmp-message-success-color: var(--sc-color-green-600);
+  --sc-cmp-message-success-outlined-border-color: var(--sc-color-green-600);
+  --sc-cmp-message-success-outlined-color: var(--sc-color-green-600);
+  --sc-cmp-message-success-shadow: 0 4px 8px 0 #0108040a;
+  --sc-cmp-message-success-simple-color: var(--sc-color-green-600);
+  --sc-cmp-message-warn-background: color-mix(in srgb, var(--sc-color-yellow-50) 95%, transparent);
+  --sc-cmp-message-warn-border-color: var(--sc-color-yellow-200);
+  --sc-cmp-message-warn-close-button-focus-ring-color: var(--sc-color-yellow-700);
+  --sc-cmp-message-warn-close-button-hover-background: var(--sc-color-yellow-100);
+  --sc-cmp-message-warn-color: var(--sc-color-yellow-700);
+  --sc-cmp-message-warn-outlined-border-color: var(--sc-color-yellow-700);
+  --sc-cmp-message-warn-outlined-color: var(--sc-color-yellow-700);
+  --sc-cmp-message-warn-shadow: 0 4px 8px 0 #0907000a;
+  --sc-cmp-message-warn-simple-color: var(--sc-color-yellow-700);
+  --sc-cmp-multiselect-overlay-shadow: 0 2px 4px -2px #0000001a, 0 4px 6px -1px #0000001a;
+  --sc-cmp-multiselect-shadow: 0 1px 2px 0 #1212170d;
+  --sc-cmp-overlay-modal-border-radius: .75rem;
+  --sc-cmp-overlay-modal-padding: 1.09375rem;
+  --sc-cmp-overlay-modal-shadow: 0 8px 10px -6px #0000001a, 0 20px 25px -5px #0000001a;
+  --sc-cmp-overlay-navigation-shadow: 0 2px 4px -2px #0000001a, 0 4px 6px -1px #0000001a;
+  --sc-cmp-overlay-popover-border-radius: .375rem;
+  --sc-cmp-overlay-popover-padding: .65625rem;
+  --sc-cmp-overlay-popover-shadow: 0 2px 4px -2px #0000001a, 0 4px 6px -1px #0000001a;
+  --sc-cmp-overlay-select-border-radius: .375rem;
+  --sc-cmp-overlay-select-shadow: 0 2px 4px -2px #0000001a, 0 4px 6px -1px #0000001a;
+  --sc-cmp-password-overlay-shadow: 0 2px 4px -2px #0000001a, 0 4px 6px -1px #0000001a;
+  --sc-cmp-password-strength-medium-background: var(--sc-color-amber-500);
+  --sc-cmp-password-strength-strong-background: var(--sc-color-green-500);
+  --sc-cmp-password-strength-weak-background: var(--sc-color-red-500);
+  --sc-cmp-popover-shadow: 0 2px 4px -2px #0000001a, 0 4px 6px -1px #0000001a;
+  --sc-cmp-progressspinner-color-four: var(--sc-color-yellow-500);
+  --sc-cmp-progressspinner-color-one: var(--sc-color-red-500);
+  --sc-cmp-progressspinner-color-three: var(--sc-color-green-500);
+  --sc-cmp-progressspinner-color-two: var(--sc-color-blue-500);
+  --sc-cmp-radiobutton-shadow: 0 1px 2px 0 #1212170d;
+  --sc-cmp-scrollpanel-bar-background: var(--sc-color-slate-100);
+  --sc-cmp-select-overlay-shadow: 0 2px 4px -2px #0000001a, 0 4px 6px -1px #0000001a;
+  --sc-cmp-select-shadow: 0 1px 2px 0 #1212170d;
+  --sc-cmp-skeleton-background: var(--sc-color-slate-200);
+  --sc-cmp-slider-handle-content-background: var(--sc-color-slate-0);
+  --sc-cmp-slider-handle-content-shadow: 0 1px 1px 0 #00000024, 0 1px 0 0 #00000014;
+  --sc-cmp-splitbutton-raised-shadow: 0 1px 5px 0 #0000001f, 0 2px 2px 0 #00000024, 0 3px 1px -2px #00000033;
+  --sc-cmp-stepper-step-number-shadow: 0 1px 1px 0 #0000001f, 0 1px 0 0 #0000000f;
+  --sc-cmp-tabs-nav-button-shadow: 0 0 10px 50px #ffffff99;
+  --sc-cmp-tabs-tab-gap: .4375rem;
+  --sc-cmp-tabs-tab-padding-x: .984375rem;
+  --sc-cmp-tabs-tab-padding-y: .875rem;
+  --sc-cmp-tabs-tabpanel-padding-bottom: .984375rem;
+  --sc-cmp-tabs-tabpanel-padding-left: .984375rem;
+  --sc-cmp-tabs-tabpanel-padding-right: .984375rem;
+  --sc-cmp-tabs-tabpanel-padding-top: .765625rem;
+  --sc-cmp-tabview-nav-button-shadow: 0 0 10px 50px #ffffff99;
+  --sc-cmp-tag-contrast-background: var(--sc-color-slate-950);
+  --sc-cmp-tag-contrast-color: var(--sc-color-slate-0);
+  --sc-cmp-tag-danger-background: var(--sc-color-red-100);
+  --sc-cmp-tag-danger-color: var(--sc-color-red-700);
+  --sc-cmp-tag-info-background: var(--sc-color-sky-100);
+  --sc-cmp-tag-info-color: var(--sc-color-sky-700);
+  --sc-cmp-tag-secondary-background: var(--sc-color-slate-100);
+  --sc-cmp-tag-secondary-color: var(--sc-color-slate-600);
+  --sc-cmp-tag-success-background: var(--sc-color-green-100);
+  --sc-cmp-tag-success-color: var(--sc-color-green-700);
+  --sc-cmp-tag-warn-background: var(--sc-color-yellow-100);
+  --sc-cmp-tag-warn-color: var(--sc-color-yellow-700);
+  --sc-cmp-textarea-shadow: 0 1px 2px 0 #1212170d;
+  --sc-cmp-tieredmenu-shadow: 0 2px 4px -2px #0000001a, 0 4px 6px -1px #0000001a;
+  --sc-cmp-timeline-event-marker-content-inset-shadow: 0 1px 1px 0 #0000001f, 0 1px 0 0 #0000000f;
+  --sc-cmp-toast-contrast-background: var(--sc-color-slate-900);
+  --sc-cmp-toast-contrast-border-color: var(--sc-color-slate-950);
+  --sc-cmp-toast-contrast-close-button-focus-ring-color: var(--sc-color-slate-50);
+  --sc-cmp-toast-contrast-close-button-hover-background: var(--sc-color-slate-800);
+  --sc-cmp-toast-contrast-color: var(--sc-color-slate-50);
+  --sc-cmp-toast-contrast-detail-color: var(--sc-color-slate-0);
+  --sc-cmp-toast-contrast-shadow: 0 4px 8px 0 #0000010a;
+  --sc-cmp-toast-error-background: color-mix(in srgb, var(--sc-color-red-50) 95%, transparent);
+  --sc-cmp-toast-error-border-color: var(--sc-color-red-200);
+  --sc-cmp-toast-error-close-button-focus-ring-color: var(--sc-color-red-600);
+  --sc-cmp-toast-error-close-button-hover-background: var(--sc-color-red-100);
+  --sc-cmp-toast-error-color: var(--sc-color-red-600);
+  --sc-cmp-toast-error-detail-color: var(--sc-color-slate-700);
+  --sc-cmp-toast-error-shadow: 0 4px 8px 0 #0a03030a;
+  --sc-cmp-toast-info-background: color-mix(in srgb, var(--sc-color-sky-50) 95%, transparent);
+  --sc-cmp-toast-info-border-color: var(--sc-color-sky-200);
+  --sc-cmp-toast-info-close-button-focus-ring-color: var(--sc-color-sky-600);
+  --sc-cmp-toast-info-close-button-hover-background: var(--sc-color-sky-100);
+  --sc-cmp-toast-info-color: var(--sc-color-sky-600);
+  --sc-cmp-toast-info-detail-color: var(--sc-color-slate-700);
+  --sc-cmp-toast-info-shadow: 0 4px 8px 0 #02050a0a;
+  --sc-cmp-toast-secondary-background: var(--sc-color-slate-100);
+  --sc-cmp-toast-secondary-border-color: var(--sc-color-slate-200);
+  --sc-cmp-toast-secondary-close-button-focus-ring-color: var(--sc-color-slate-600);
+  --sc-cmp-toast-secondary-close-button-hover-background: var(--sc-color-slate-200);
+  --sc-cmp-toast-secondary-color: var(--sc-color-slate-600);
+  --sc-cmp-toast-secondary-detail-color: var(--sc-color-slate-700);
+  --sc-cmp-toast-secondary-shadow: 0 4px 8px 0 #0405060a;
+  --sc-cmp-toast-success-background: color-mix(in srgb, var(--sc-color-green-50) 95%, transparent);
+  --sc-cmp-toast-success-border-color: var(--sc-color-green-200);
+  --sc-cmp-toast-success-close-button-focus-ring-color: var(--sc-color-green-600);
+  --sc-cmp-toast-success-close-button-hover-background: var(--sc-color-green-100);
+  --sc-cmp-toast-success-color: var(--sc-color-green-600);
+  --sc-cmp-toast-success-detail-color: var(--sc-color-slate-700);
+  --sc-cmp-toast-success-shadow: 0 4px 8px 0 #0108040a;
+  --sc-cmp-toast-warn-background: color-mix(in srgb, var(--sc-color-yellow-50) 95%, transparent);
+  --sc-cmp-toast-warn-border-color: var(--sc-color-yellow-200);
+  --sc-cmp-toast-warn-close-button-focus-ring-color: var(--sc-color-yellow-700);
+  --sc-cmp-toast-warn-close-button-hover-background: var(--sc-color-yellow-100);
+  --sc-cmp-toast-warn-color: var(--sc-color-yellow-700);
+  --sc-cmp-toast-warn-detail-color: var(--sc-color-slate-700);
+  --sc-cmp-toast-warn-shadow: 0 4px 8px 0 #0907000a;
+  --sc-cmp-togglebutton-background: var(--sc-color-slate-100);
+  --sc-cmp-togglebutton-border-color: var(--sc-color-slate-100);
+  --sc-cmp-togglebutton-checked-background: var(--sc-color-slate-100);
+  --sc-cmp-togglebutton-checked-border-color: var(--sc-color-slate-100);
+  --sc-cmp-togglebutton-checked-color: var(--sc-color-slate-900);
+  --sc-cmp-togglebutton-color: var(--sc-color-slate-500);
+  --sc-cmp-togglebutton-content-checked-background: var(--sc-color-slate-0);
+  --sc-cmp-togglebutton-content-checked-shadow: 0 1px 2px 0 #0000000a, 0 1px 2px 0 #00000005;
+  --sc-cmp-togglebutton-hover-background: var(--sc-color-slate-100);
+  --sc-cmp-togglebutton-hover-color: var(--sc-color-slate-700);
+  --sc-cmp-togglebutton-icon-checked-color: var(--sc-color-slate-900);
+  --sc-cmp-togglebutton-icon-color: var(--sc-color-slate-500);
+  --sc-cmp-togglebutton-icon-hover-color: var(--sc-color-slate-700);
+  --sc-cmp-toggleswitch-background: var(--sc-color-slate-300);
+  --sc-cmp-toggleswitch-gap: .21875rem;
+  --sc-cmp-toggleswitch-handle-background: var(--sc-color-slate-0);
+  --sc-cmp-toggleswitch-handle-border-radius: .4375rem;
+  --sc-cmp-toggleswitch-handle-checked-background: var(--sc-color-slate-0);
+  --sc-cmp-toggleswitch-handle-checked-hover-background: var(--sc-color-slate-0);
+  --sc-cmp-toggleswitch-handle-hover-background: var(--sc-color-slate-0);
+  --sc-cmp-toggleswitch-handle-size: .875rem;
+  --sc-cmp-toggleswitch-height: 1.3125rem;
+  --sc-cmp-toggleswitch-hover-background: var(--sc-color-slate-400);
+  --sc-cmp-toggleswitch-shadow: 0 1px 2px 0 #1212170d;
+  --sc-cmp-toggleswitch-width: 2.1875rem;
+  --sc-cmp-tooltip-background: var(--sc-color-slate-700);
+  --sc-cmp-tooltip-color: var(--sc-color-slate-0);
+  --sc-cmp-tooltip-gutter: .21875rem;
+  --sc-cmp-tooltip-max-width: 10.9375rem;
+  --sc-cmp-tooltip-padding-x: .65625rem;
+  --sc-cmp-tooltip-padding-y: .4375rem;
+  --sc-cmp-tooltip-shadow: 0 2px 4px -2px #0000001a, 0 4px 6px -1px #0000001a;
+  --sc-cmp-treeselect-overlay-shadow: 0 2px 4px -2px #0000001a, 0 4px 6px -1px #0000001a;
+  --sc-cmp-treeselect-shadow: 0 1px 2px 0 #1212170d;
+  --sc-color-amber-100: #fef3c7;
+  --sc-color-amber-200: #fde68a;
+  --sc-color-amber-300: #fcd34d;
+  --sc-color-amber-400: #fbbf24;
+  --sc-color-amber-50: #fffbeb;
+  --sc-color-amber-500: #f59e0b;
+  --sc-color-amber-600: #d97706;
+  --sc-color-amber-700: #b45309;
+  --sc-color-amber-800: #92400e;
+  --sc-color-amber-900: #78350f;
+  --sc-color-amber-950: #451a03;
+  --sc-color-azure-100: #dbeafe;
+  --sc-color-azure-200: #bfdbfe;
+  --sc-color-azure-300: #93c5fd;
+  --sc-color-azure-400: #60a5fa;
+  --sc-color-azure-50: #eff6ff;
+  --sc-color-azure-500: #3b82f6;
+  --sc-color-azure-600: #2563eb;
+  --sc-color-azure-700: #1d4ed8;
+  --sc-color-azure-800: #1e40af;
+  --sc-color-azure-900: #1e3a8a;
+  --sc-color-azure-950: #172554;
+  --sc-color-blue-100: #d2d9e3;
+  --sc-color-blue-200: #a6b4c7;
+  --sc-color-blue-300: #798eab;
+  --sc-color-blue-400: #4d6990;
+  --sc-color-blue-50: #edf0f5;
+  --sc-color-blue-500: #344a70;
+  --sc-color-blue-600: #243452;
+  --sc-color-blue-700: #1b273d;
+  --sc-color-blue-800: #131b2b;
+  --sc-color-blue-900: #0b1019;
+  --sc-color-blue-950: #05080d;
+  --sc-color-cyan-100: #d2f5f9;
+  --sc-color-cyan-200: #a8eef5;
+  --sc-color-cyan-300: #7be1ef;
+  --sc-color-cyan-400: #51d5e6;
+  --sc-color-cyan-50: #eefbfc;
+  --sc-color-cyan-500: #24c6db;
+  --sc-color-cyan-600: #2497a8;
+  --sc-color-cyan-700: #21717d;
+  --sc-color-cyan-800: #1d5058;
+  --sc-color-cyan-900: #16363b;
+  --sc-color-cyan-950: #0d1a1c;
+  --sc-color-emerald-100: #d1fae5;
+  --sc-color-emerald-200: #a7f3d0;
+  --sc-color-emerald-300: #6ee7b7;
+  --sc-color-emerald-400: #34d399;
+  --sc-color-emerald-50: #ecfdf5;
+  --sc-color-emerald-500: #10b981;
+  --sc-color-emerald-600: #059669;
+  --sc-color-emerald-700: #047857;
+  --sc-color-emerald-800: #065f46;
+  --sc-color-emerald-900: #064e3b;
+  --sc-color-emerald-950: #022c22;
+  --sc-color-green-100: #dcfce7;
+  --sc-color-green-200: #bbf7d0;
+  --sc-color-green-300: #86efac;
+  --sc-color-green-400: #4ade80;
+  --sc-color-green-50: #f0fdf4;
+  --sc-color-green-500: #22c55e;
+  --sc-color-green-600: #16a34a;
+  --sc-color-green-700: #15803d;
+  --sc-color-green-800: #166534;
+  --sc-color-green-900: #14532d;
+  --sc-color-green-950: #0a2916;
+  --sc-color-orange-100: #ffedd5;
+  --sc-color-orange-200: #fed7aa;
+  --sc-color-orange-300: #fdba74;
+  --sc-color-orange-400: #fb923c;
+  --sc-color-orange-50: #fff7ed;
+  --sc-color-orange-500: #f97316;
+  --sc-color-orange-600: #ea580c;
+  --sc-color-orange-700: #c2410c;
+  --sc-color-orange-800: #9a3412;
+  --sc-color-orange-900: #7c2d12;
+  --sc-color-orange-950: #431407;
+  --sc-color-purple-100: #f3e8ff;
+  --sc-color-purple-200: #e9d5ff;
+  --sc-color-purple-300: #d8b4fe;
+  --sc-color-purple-400: #c084fc;
+  --sc-color-purple-50: #faf5ff;
+  --sc-color-purple-500: #a855f7;
+  --sc-color-purple-600: #9333ea;
+  --sc-color-purple-700: #7e22ce;
+  --sc-color-purple-800: #6b21a8;
+  --sc-color-purple-900: #581c87;
+  --sc-color-purple-950: #3b0764;
+  --sc-color-red-100: #fee2e2;
+  --sc-color-red-200: #fecaca;
+  --sc-color-red-300: #fca5a5;
+  --sc-color-red-400: #f87171;
+  --sc-color-red-50: #fef2f2;
+  --sc-color-red-500: #ef4444;
+  --sc-color-red-600: #dc2626;
+  --sc-color-red-700: #b91c1c;
+  --sc-color-red-800: #991b1b;
+  --sc-color-red-900: #7f1d1d;
+  --sc-color-red-950: #450a0a;
+  --sc-color-sky-100: #d5e6ff;
+  --sc-color-sky-200: #abceff;
+  --sc-color-sky-300: #7db3ff;
+  --sc-color-sky-400: #4a8fff;
+  --sc-color-sky-50: #eef4ff;
+  --sc-color-sky-500: #1464fe;
+  --sc-color-sky-600: #0d4fd4;
+  --sc-color-sky-700: #0a3ba0;
+  --sc-color-sky-800: #07296e;
+  --sc-color-sky-900: #041840;
+  --sc-color-sky-950: #020c21;
+  --sc-color-slate-0: #ffffff;
+  --sc-color-slate-100: #eceff3;
+  --sc-color-slate-200: #dadfe6;
+  --sc-color-slate-300: #c6ccd6;
+  --sc-color-slate-400: #aeb6c2;
+  --sc-color-slate-50: #f7f8fa;
+  --sc-color-slate-500: #8f97a3;
+  --sc-color-slate-600: #6f7784;
+  --sc-color-slate-700: #4f5663;
+  --sc-color-slate-800: #2f3642;
+  --sc-color-slate-900: #181d26;
+  --sc-color-slate-950: #0b0f14;
+  --sc-color-teal-100: #ccfbf1;
+  --sc-color-teal-200: #99f6e4;
+  --sc-color-teal-300: #5eead4;
+  --sc-color-teal-400: #2dd4bf;
+  --sc-color-teal-50: #f0fdfa;
+  --sc-color-teal-500: #14b8a6;
+  --sc-color-teal-600: #0d9488;
+  --sc-color-teal-700: #0f766e;
+  --sc-color-teal-800: #115e59;
+  --sc-color-teal-900: #134e4a;
+  --sc-color-teal-950: #042f2e;
+  --sc-color-violet-100: #ede9fe;
+  --sc-color-violet-200: #ddd6fe;
+  --sc-color-violet-300: #c4b5fd;
+  --sc-color-violet-400: #a78bfa;
+  --sc-color-violet-50: #f5f3ff;
+  --sc-color-violet-500: #8b5cf6;
+  --sc-color-violet-600: #7c3aed;
+  --sc-color-violet-700: #6d28d9;
+  --sc-color-violet-800: #5b21b6;
+  --sc-color-violet-900: #4c1d95;
+  --sc-color-violet-950: #2e1065;
+  --sc-color-yellow-100: #fef9c3;
+  --sc-color-yellow-200: #fef08a;
+  --sc-color-yellow-300: #fde047;
+  --sc-color-yellow-400: #facc15;
+  --sc-color-yellow-50: #fefce8;
+  --sc-color-yellow-500: #eab308;
+  --sc-color-yellow-600: #ca8a04;
+  --sc-color-yellow-700: #a16207;
+  --sc-color-yellow-800: #854d0e;
+  --sc-color-yellow-900: #713f12;
+  --sc-color-yellow-950: #422006;
+  --sc-color-zinc-100: #f4f4f5;
+  --sc-color-zinc-200: #e4e4e7;
+  --sc-color-zinc-300: #d4d4d8;
+  --sc-color-zinc-400: #a1a1aa;
+  --sc-color-zinc-50: #fafafa;
+  --sc-color-zinc-500: #71717a;
+  --sc-color-zinc-600: #52525b;
+  --sc-color-zinc-700: #3f3f46;
+  --sc-color-zinc-800: #27272a;
+  --sc-color-zinc-900: #18181b;
+  --sc-color-zinc-950: #09090b;
+  --sc-dialog-bg: var(--sc-color-slate-0);
+  --sc-dialog-border: var( --sc-color-slate-200 );
+  --sc-dialog-close-bg-hover: var(--sc-color-slate-100);
+  --sc-dialog-close-fg: var(--sc-color-slate-700);
+  --sc-dialog-divider: var(--sc-color-slate-200);
+  --sc-dialog-footer-gap: var( --sc-spacing-0-75 );
+  --sc-dialog-head-icon-fg: var(--sc-color-slate-500);
+  --sc-dialog-head-icon-size: var(--sc-scale-2);
+  --sc-dialog-header-gap: var(--sc-scale-0-5);
+  --sc-dialog-padding: var(--sc-scale-1-25);
+  --sc-dialog-padding-x: var(--sc-dialog-padding);
+  --sc-dialog-padding-y: var(--sc-dialog-padding);
+  --sc-dialog-radius: var(--sc-radius-400);
+  --sc-dialog-shadow: 0 8px 10px -6px rgba(0, 0, 0, .1), 0 20px 25px -5px rgba(0, 0, 0, .1);
+  --sc-dialog-subtitle: var(--sc-color-slate-600);
+  --sc-dialog-title: var( --sc-color-slate-800 );
+  --sc-dialog-title-font-size: var(--sc-font-size-400);
+  --sc-dialog-title-font-weight: 600;
+  --sc-easing-default: cubic-bezier(.4, 0, .2, 1);
+  --sc-focus-ring-width: 2px;
+  --sc-font-family-body-1: var(--sc-font-family-primary);
+  --sc-font-family-body-2: var(--sc-font-family-primary);
+  --sc-font-family-body-3: var(--sc-font-family-primary);
+  --sc-font-family-caption: var(--sc-font-family-secondary);
+  --sc-font-family-display-1: var(--sc-font-family-primary);
+  --sc-font-family-h1: var(--sc-font-family-primary);
+  --sc-font-family-h2: var(--sc-font-family-primary);
+  --sc-font-family-h3: var(--sc-font-family-primary);
+  --sc-font-family-h4: var(--sc-font-family-primary);
+  --sc-font-family-mono: ui-monospace, "SF Mono", "Menlo", "Consolas", "Liberation Mono", monospace;
+  --sc-font-family-primary: "Inter", system-ui, -apple-system, sans-serif;
+  --sc-font-family-secondary: "Open Sans", sans-serif;
+  --sc-font-family-subtitle-1: var(--sc-font-family-primary);
+  --sc-font-family-subtitle-2: var(--sc-font-family-primary);
+  --sc-font-size-100: .75rem;
+  --sc-font-size-200: .875rem;
+  --sc-font-size-300: 1rem;
+  --sc-font-size-400: 1.125rem;
+  --sc-font-size-450: 1.25rem;
+  --sc-font-size-50: .75rem;
+  --sc-font-size-500: 1.5rem;
+  --sc-font-size-600: 1.5rem;
+  --sc-font-size-650: 2rem;
+  --sc-font-size-700: 2rem;
+  --sc-font-size-75: .75rem;
+  --sc-font-size-800: 3rem;
+  --sc-font-size-900: 3rem;
+  --sc-font-size-body-1: var(--sc-font-size-300);
+  --sc-font-size-body-2: var(--sc-font-size-200);
+  --sc-font-size-body-3: var(--sc-font-size-200);
+  --sc-font-size-caption: var(--sc-font-size-100);
+  --sc-font-size-caption-bold: var(--sc-font-size-100);
+  --sc-font-size-display-1: var(--sc-font-size-700);
+  --sc-font-size-h1: var(--sc-font-size-650);
+  --sc-font-size-h2: var(--sc-font-size-500);
+  --sc-font-size-h3: var(--sc-font-size-450);
+  --sc-font-size-h4: var(--sc-font-size-400);
+  --sc-font-size-subtitle-1: var(--sc-font-size-300);
+  --sc-font-size-subtitle-2: var(--sc-font-size-200);
+  --sc-font-weight-body-1: var(--sc-font-weight-regular);
+  --sc-font-weight-body-2: var(--sc-font-weight-regular);
+  --sc-font-weight-body-3: var(--sc-font-weight-semibold);
+  --sc-font-weight-bold: 700;
+  --sc-font-weight-caption: var(--sc-font-weight-regular);
+  --sc-font-weight-caption-bold: var(--sc-font-weight-semibold);
+  --sc-font-weight-display-1: var(--sc-font-weight-regular);
+  --sc-font-weight-h1: var(--sc-font-weight-semibold);
+  --sc-font-weight-h2: var(--sc-font-weight-semibold);
+  --sc-font-weight-h3: var(--sc-font-weight-semibold);
+  --sc-font-weight-h4: var(--sc-font-weight-semibold);
+  --sc-font-weight-medium: 500;
+  --sc-font-weight-regular: 400;
+  --sc-font-weight-semibold: 600;
+  --sc-font-weight-subtitle-1: var(--sc-font-weight-semibold);
+  --sc-font-weight-subtitle-2: var(--sc-font-weight-semibold);
+  --sc-form-anchor-offset: 80px;
+  --sc-icon-accent: var(--sc-color-sky-600);
+  --sc-icon-disabled: var(--sc-color-slate-300);
+  --sc-icon-error: var(--sc-color-red-600);
+  --sc-icon-info: var(--sc-icon-accent);
+  --sc-icon-inverse: var(--sc-color-slate-0);
+  --sc-icon-link: var(--sc-color-sky-600);
+  --sc-icon-on-accent: var(--sc-color-slate-0);
+  --sc-icon-on-danger: var(--sc-color-slate-0);
+  --sc-icon-on-info: var(--sc-icon-on-accent);
+  --sc-icon-on-primary: var(--sc-color-slate-0);
+  --sc-icon-on-secondary: var(--sc-color-slate-800);
+  --sc-icon-on-success: var(--sc-color-slate-0);
+  --sc-icon-on-violet: var(--sc-color-violet-50);
+  --sc-icon-on-warning: var(--sc-color-slate-800);
+  --sc-icon-primary: var(--sc-color-slate-800);
+  --sc-icon-secondary: var(--sc-color-slate-600);
+  --sc-icon-size: .875rem;
+  --sc-icon-size-2xl: 1.25rem;
+  --sc-icon-size-3xl: 1.75rem;
+  --sc-icon-size-default: .875rem;
+  --sc-icon-size-lg: 1rem;
+  --sc-icon-size-md: .75rem;
+  --sc-icon-size-sm: .625rem;
+  --sc-icon-size-xl: 1.125rem;
+  --sc-icon-size-xs: .5rem;
+  --sc-icon-subtle: var(--sc-color-slate-600);
+  --sc-icon-success: var(--sc-color-green-600);
+  --sc-icon-violet: var(--sc-color-violet-500);
+  --sc-icon-warning: var(--sc-color-yellow-700);
+  --sc-label-amber-bg: var(--sc-color-amber-50);
+  --sc-label-amber-border: var(--sc-color-amber-200);
+  --sc-label-amber-dot: var(--sc-color-amber-500);
+  --sc-label-amber-text: var(--sc-color-amber-700);
+  --sc-label-blue-bg: var(--sc-color-azure-50);
+  --sc-label-blue-border: var(--sc-color-azure-200);
+  --sc-label-blue-dot: var(--sc-color-azure-500);
+  --sc-label-blue-text: var(--sc-color-azure-700);
+  --sc-label-gray-bg: var(--sc-color-slate-100);
+  --sc-label-gray-border: var(--sc-color-slate-300);
+  --sc-label-gray-dot: var(--sc-color-slate-500);
+  --sc-label-gray-text: var(--sc-color-slate-700);
+  --sc-label-green-bg: var(--sc-color-emerald-50);
+  --sc-label-green-border: var(--sc-color-emerald-200);
+  --sc-label-green-dot: var(--sc-color-emerald-500);
+  --sc-label-green-text: var(--sc-color-emerald-700);
+  --sc-label-orange-bg: var(--sc-color-orange-50);
+  --sc-label-orange-border: var(--sc-color-orange-200);
+  --sc-label-orange-dot: var(--sc-color-orange-500);
+  --sc-label-orange-text: var(--sc-color-orange-700);
+  --sc-label-purple-bg: var(--sc-color-purple-50);
+  --sc-label-purple-border: var(--sc-color-purple-200);
+  --sc-label-purple-dot: var(--sc-color-purple-500);
+  --sc-label-purple-text: var(--sc-color-purple-700);
+  --sc-label-red-bg: var(--sc-color-red-50);
+  --sc-label-red-border: var(--sc-color-red-200);
+  --sc-label-red-dot: var(--sc-color-red-500);
+  --sc-label-red-text: var(--sc-color-red-700);
+  --sc-label-teal-bg: var(--sc-color-teal-50);
+  --sc-label-teal-border: var(--sc-color-teal-200);
+  --sc-label-teal-dot: var(--sc-color-teal-500);
+  --sc-label-teal-text: var(--sc-color-teal-700);
+  --sc-line-height-100: 1.125rem;
+  --sc-line-height-200: 1.25rem;
+  --sc-line-height-220: 1.25rem;
+  --sc-line-height-300: 1.5rem;
+  --sc-line-height-400: 1.5rem;
+  --sc-line-height-450: 1.75rem;
+  --sc-line-height-50: 1.125rem;
+  --sc-line-height-500: 2.25rem;
+  --sc-line-height-600: 2.25rem;
+  --sc-line-height-650: 2.5rem;
+  --sc-line-height-700: 2.5rem;
+  --sc-line-height-800: 3.625rem;
+  --sc-line-height-900: 3.625rem;
+  --sc-line-height-body-1: var(--sc-line-height-300);
+  --sc-line-height-body-2: var(--sc-line-height-220);
+  --sc-line-height-body-3: var(--sc-line-height-220);
+  --sc-line-height-caption: var(--sc-line-height-100);
+  --sc-line-height-display-1: var(--sc-line-height-700);
+  --sc-line-height-h1: var(--sc-line-height-650);
+  --sc-line-height-h2: var(--sc-line-height-500);
+  --sc-line-height-h3: var(--sc-line-height-450);
+  --sc-line-height-h4: var(--sc-line-height-400);
+  --sc-line-height-subtitle-1: var(--sc-line-height-300);
+  --sc-line-height-subtitle-2: var(--sc-line-height-220);
+  --sc-presence-available: #1a8a4a;
+  --sc-presence-available-deep: #1a6a3a;
+  --sc-presence-offline: var(--sc-text-subtle);
+  --sc-presence-paused: #b07e1a;
+  --sc-presence-training: #b91c4b;
+  --sc-priority-high: var(--sc-text-danger);
+  --sc-priority-medium: #c47a00;
+  --sc-radius-0: var(--sc-radius-none);
+  --sc-radius-100: var(--sc-radius-sm);
+  --sc-radius-200: var(--sc-radius-md);
+  --sc-radius-2xl: 1rem;
+  --sc-radius-300: var(--sc-radius-lg);
+  --sc-radius-400: var(--sc-radius-xl);
+  --sc-radius-50: var(--sc-radius-xs);
+  --sc-radius-500: var(--sc-radius-2xl);
+  --sc-radius-full: 9999px;
+  --sc-radius-lg: .5rem;
+  --sc-radius-md: .375rem;
+  --sc-radius-none: 0;
+  --sc-radius-sm: .25rem;
+  --sc-radius-xl: .75rem;
+  --sc-radius-xs: .125rem;
+  --sc-row-hover-bg: var(--sc-bg-secondary-hover);
+  --sc-scale-0: 0;
+  --sc-scale-0-125: .109375rem;
+  --sc-scale-0-25: .21875rem;
+  --sc-scale-0-375: .328125rem;
+  --sc-scale-0-5: .4375rem;
+  --sc-scale-0-625: .546875rem;
+  --sc-scale-0-75: .65625rem;
+  --sc-scale-0-875: .765625rem;
+  --sc-scale-1: .875rem;
+  --sc-scale-1-125: .984375rem;
+  --sc-scale-1-143: 1rem;
+  --sc-scale-1-25: 1.09375rem;
+  --sc-scale-1-5: 1.3125rem;
+  --sc-scale-1-625: 1.421875rem;
+  --sc-scale-1-75: 1.53125rem;
+  --sc-scale-12-5: 10.9375rem;
+  --sc-scale-18: 15.75rem;
+  --sc-scale-2: 1.75rem;
+  --sc-scale-2-25: 1.96875rem;
+  --sc-scale-2-5: 2.1875rem;
+  --sc-scale-2-75: 2.40625rem;
+  --sc-scale-25: 21.875rem;
+  --sc-scale-3: 2.625rem;
+  --sc-scale-4: 3.5rem;
+  --sc-scale-5: 4.375rem;
+  --sc-scale-neg-0-25: -.21875rem;
+  --sc-scale-neg-0-375: -.328125rem;
+  --sc-scale-neg-0-5: -.4375rem;
+  --sc-scale-neg-0-625: -.546875rem;
+  --sc-scale-neg-0-75: -.65625rem;
+  --sc-scale-neg-0-875: -.765625rem;
+  --sc-scale-neg-1: -.875rem;
+  --sc-scale-neg-1-125: -.984375rem;
+  --sc-scale-neg-1-25: -1.09375rem;
+  --sc-scale-neg-1-5: -1.3125rem;
+  --sc-shadow-100: var(--sc-shadow-xs);
+  --sc-shadow-card: 0 1px 2px 0 rgb(var(--sc-shadow-color-rgb) / .04), 0 1px 3px 0 rgb(var(--sc-shadow-color-rgb) / .06);
+  --sc-shadow-color-rgb: 15 23 42;
+  --sc-shadow-dialog: 0 20px 25px -5px rgb(var(--sc-shadow-color-rgb) / .12), 0 8px 10px -6px rgb(var(--sc-shadow-color-rgb) / .1);
+  --sc-shadow-dropdown: 0 4px 6px -1px rgb(var(--sc-shadow-color-rgb) / .08), 0 2px 4px -2px rgb(var(--sc-shadow-color-rgb) / .06);
+  --sc-shadow-focus-ring: 0 0 0 3px rgb(var(--sc-shadow-focus-ring-rgb) / .35);
+  --sc-shadow-focus-ring-rgb: 20 100 254;
+  --sc-shadow-popover: 0 10px 15px -3px rgb(var(--sc-shadow-color-rgb) / .1), 0 4px 6px -4px rgb(var(--sc-shadow-color-rgb) / .08);
+  --sc-shadow-sm: 0 1px 2px 0 rgb(var(--sc-shadow-color-rgb) / .05), 0 1px 3px 0 rgb(var(--sc-shadow-color-rgb) / .06);
+  --sc-shadow-xs: 0 1px 2px 0 rgb(var(--sc-shadow-color-rgb) / .04);
+  --sc-sidebar-bg: var(--sc-color-blue-700);
+  --sc-sidebar-width: var(--sc-sidebar-width-collapsed);
+  --sc-sidebar-width-collapsed: 64px;
+  --sc-sidebar-width-expanded: 240px;
+  --sc-spacing-0: var(--sc-scale-0);
+  --sc-spacing-0-125: var(--sc-scale-0-125);
+  --sc-spacing-0-25: var(--sc-scale-0-25);
+  --sc-spacing-0-375: var(--sc-scale-0-375);
+  --sc-spacing-0-5: var(--sc-scale-0-5);
+  --sc-spacing-0-625: var(--sc-scale-0-625);
+  --sc-spacing-0-75: var(--sc-scale-0-75);
+  --sc-spacing-0-875: var(--sc-scale-0-875);
+  --sc-spacing-1: var(--sc-scale-1);
+  --sc-spacing-1-125: var(--sc-scale-1-125);
+  --sc-spacing-1-143: var(--sc-scale-1-143);
+  --sc-spacing-1-25: var(--sc-scale-1-25);
+  --sc-spacing-1-5: var(--sc-scale-1-5);
+  --sc-spacing-1-625: var(--sc-scale-1-625);
+  --sc-spacing-1-75: var(--sc-scale-1-75);
+  --sc-spacing-12-5: var(--sc-scale-12-5);
+  --sc-spacing-18: var(--sc-scale-18);
+  --sc-spacing-2: var(--sc-scale-2);
+  --sc-spacing-2-25: var(--sc-scale-2-25);
+  --sc-spacing-2-5: var(--sc-scale-2-5);
+  --sc-spacing-2-75: var(--sc-scale-2-75);
+  --sc-spacing-25: var(--sc-scale-25);
+  --sc-spacing-3: var(--sc-scale-3);
+  --sc-spacing-4: var(--sc-scale-4);
+  --sc-spacing-5: var(--sc-scale-5);
+  --sc-spacing-neg-0-25: var(--sc-scale-neg-0-25);
+  --sc-spacing-neg-0-375: var(--sc-scale-neg-0-375);
+  --sc-spacing-neg-0-5: var(--sc-scale-neg-0-5);
+  --sc-spacing-neg-0-625: var(--sc-scale-neg-0-625);
+  --sc-spacing-neg-0-75: var(--sc-scale-neg-0-75);
+  --sc-spacing-neg-0-875: var(--sc-scale-neg-0-875);
+  --sc-spacing-neg-1: var(--sc-scale-neg-1);
+  --sc-spacing-neg-1-125: var(--sc-scale-neg-1-125);
+  --sc-spacing-neg-1-25: var(--sc-scale-neg-1-25);
+  --sc-spacing-neg-1-5: var(--sc-scale-neg-1-5);
+  --sc-text-accent: var(--sc-color-sky-600);
+  --sc-text-danger: var(--sc-color-red-600);
+  --sc-text-disabled: var(--sc-color-slate-300);
+  --sc-text-info: var(--sc-text-accent);
+  --sc-text-inverse: var(--sc-color-slate-0);
+  --sc-text-link: var(--sc-color-sky-600);
+  --sc-text-on-accent: var(--sc-color-slate-0);
+  --sc-text-on-error: var(--sc-color-slate-0);
+  --sc-text-on-info: var(--sc-color-slate-0);
+  --sc-text-on-primary: var(--sc-color-slate-0);
+  --sc-text-on-secondary: var(--sc-color-slate-800);
+  --sc-text-on-success: var(--sc-color-slate-0);
+  --sc-text-on-violet: var(--sc-color-slate-0);
+  --sc-text-on-warning: var(--sc-color-slate-0);
+  --sc-text-primary: var(--sc-color-slate-700);
+  --sc-text-secondary: var(--sc-color-slate-600);
+  --sc-text-subtle: var(--sc-color-slate-600);
+  --sc-text-success: var(--sc-color-green-700);
+  --sc-text-violet: var(--sc-color-violet-700);
+  --sc-text-warning: var(--sc-color-yellow-700);
+  --sc-toast-backdrop-blur: 1.5px;
+  --sc-toast-close: var(--sc-color-slate-800);
+  --sc-toast-close-button-height: var(--sc-scale-1-75);
+  --sc-toast-close-button-radius: var(--sc-scale-0-875);
+  --sc-toast-close-button-width: var(--sc-scale-1-75);
+  --sc-toast-close-icon-size: var(--sc-scale-1);
+  --sc-toast-detail-font-size: var(--sc-font-size-100);
+  --sc-toast-detail-font-weight: 500;
+  --sc-toast-error-bg: color-mix(in srgb, var(--sc-color-red-50) 95%, transparent);
+  --sc-toast-error-border: var(--sc-color-red-200);
+  --sc-toast-error-icon: var(--sc-color-red-600);
+  --sc-toast-error-icon-bg: var(--sc-color-red-500);
+  --sc-toast-gap-actions: var(--sc-scale-0-5);
+  --sc-toast-gap-content: var(--sc-scale-0-5);
+  --sc-toast-gap-text: var(--sc-scale-0-5);
+  --sc-toast-icon-fg: var(--sc-color-slate-0);
+  --sc-toast-icon-radius: var(--sc-radius-200);
+  --sc-toast-icon-size: var(--sc-scale-1-125);
+  --sc-toast-info-bg: color-mix(in srgb, var(--sc-color-azure-50) 95%, transparent);
+  --sc-toast-info-border: var(--sc-color-azure-200);
+  --sc-toast-info-icon: var(--sc-color-azure-600);
+  --sc-toast-info-icon-bg: var( --sc-color-sky-500 );
+  --sc-toast-message: var( --sc-color-slate-700 );
+  --sc-toast-padding-x: var(--sc-scale-0-75);
+  --sc-toast-padding-y: var(--sc-scale-0-75);
+  --sc-toast-radius: var(--sc-radius-200);
+  --sc-toast-secondary-bg: var(--sc-color-slate-100);
+  --sc-toast-secondary-border: var(--sc-color-slate-200);
+  --sc-toast-secondary-icon: var(--sc-color-slate-600);
+  --sc-toast-secondary-icon-bg: var(--sc-color-slate-600);
+  --sc-toast-shadow: 0 4px 8px 0 rgba(1, 4, 8, .04);
+  --sc-toast-success-bg: color-mix(in srgb, var(--sc-color-green-50) 95%, transparent);
+  --sc-toast-success-border: var(--sc-color-green-200);
+  --sc-toast-success-icon: var(--sc-color-green-600);
+  --sc-toast-success-icon-bg: var(--sc-color-green-600);
+  --sc-toast-summary-font-size: var(--sc-font-size-200);
+  --sc-toast-summary-font-weight: 500;
+  --sc-toast-title: var(--sc-color-slate-800);
+  --sc-toast-violet-bg: color-mix(in srgb, var(--sc-color-violet-50) 95%, transparent);
+  --sc-toast-violet-border: var(--sc-color-violet-200);
+  --sc-toast-violet-icon: var(--sc-color-violet-600);
+  --sc-toast-violet-icon-bg: var(--sc-color-violet-500);
+  --sc-toast-warn-bg: color-mix(in srgb, var(--sc-color-yellow-50) 95%, transparent);
+  --sc-toast-warn-border: var(--sc-color-yellow-200);
+  --sc-toast-warn-icon: var(--sc-color-yellow-700);
+  --sc-toast-warn-icon-bg: var(--sc-color-yellow-700);
+  --sc-toast-width: var(--sc-scale-25);
+  --sc-topbar-height: 56px;
+  --sc-transition-base: .2s;
+  --sc-transition-fast: .12s;
+  --sc-transition-slow: .3s;
+  --sc-z-base: 0;
+  --sc-z-bulk-action-bar: 1050;
+  --sc-z-dropdown: 1000;
+  --sc-z-fixed: 1040;
+  --sc-z-modal: 1070;
+  --sc-z-modal-backdrop: 1060;
+  --sc-z-popover: 1080;
+  --sc-z-sidebar: 1055;
+  --sc-z-sticky: 1020;
+  --sc-z-sticky-form-header: 1030;
+  --sc-z-toast: 1100;
+  --sc-z-tooltip: 1090;
+}
+
+*, *::before, *::after { box-sizing: border-box; }
+
+body {
+  margin: 0;
+  padding: var(--sc-spacing-3) var(--sc-spacing-2) var(--sc-spacing-4);
+  background: var(--sc-bg-default);
+  color: var(--sc-text-primary);
+  font-family: var(--sc-font-family-primary);
+  font-size: var(--sc-font-size-200);
+  line-height: var(--sc-line-height-200);
+  -webkit-font-smoothing: antialiased;
+}
+
+.guide { margin: 0 auto; }
+
+/* ---------- guía ---------- */
+.guide {
+  --measure: 68ch;
+  max-width: 76rem;
+}
+
+.guide > * + * {
+  margin-top: var(--sc-spacing-3);
+}
+
+.eyebrow {
+  margin: 0 0 var(--sc-spacing-0-5);
+  font-size: var(--sc-font-size-caption);
+  line-height: var(--sc-line-height-caption);
+  font-weight: var(--sc-font-weight-semibold);
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--sc-text-subtle);
+}
+
+.guide__head h1 {
+  margin: 0;
+  max-width: var(--measure);
+  /* mismo rol de título de página que el resto de la doc (`.demo-main h1` en
+     styles.scss): display-1, no la primitiva 800. Aquí explícito porque esta
+     página vive fuera del shell de la SPA y no hereda esa regla global. */
+  font-size: var(--sc-font-size-display-1);
+  line-height: var(--sc-line-height-display-1);
+  font-weight: var(--sc-font-weight-bold);
+  letter-spacing: -0.01em;
+}
+
+.lead {
+  margin: var(--sc-spacing-1) 0 0;
+  max-width: var(--measure);
+  font-size: var(--sc-font-size-300);
+  line-height: var(--sc-line-height-300);
+  color: var(--sc-text-secondary);
+}
+
+.calm {
+  margin: 0;
+  max-width: var(--measure);
+  padding: var(--sc-spacing-1) var(--sc-spacing-1-25);
+  border-radius: var(--sc-radius-md);
+  background: var(--sc-bg-subtle);
+  font-size: var(--sc-font-size-200);
+  line-height: var(--sc-line-height-200);
+  color: var(--sc-text-secondary);
+}
+
+.section-title {
+  margin: 0;
+  font-size: var(--sc-font-size-600);
+  line-height: var(--sc-line-height-600);
+  font-weight: var(--sc-font-weight-bold);
+  letter-spacing: -0.01em;
+}
+
+.section-lead {
+  margin: var(--sc-spacing-0-5) 0 var(--sc-spacing-1-5);
+  max-width: var(--measure);
+  font-size: var(--sc-font-size-200);
+  line-height: var(--sc-line-height-200);
+  color: var(--sc-text-secondary);
+}
+
+.note {
+  margin: var(--sc-spacing-1) 0 0;
+  max-width: var(--measure);
+  font-size: var(--sc-font-size-100);
+  line-height: var(--sc-line-height-100);
+  color: var(--sc-text-subtle);
+}
+
+/* ---------- las siete ---------- */
+.checks {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  border: 1px solid var(--sc-border-subtle);
+  border-radius: var(--sc-radius-lg);
+  overflow: hidden;
+  background: var(--sc-bg-surface);
+}
+
+.check {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  gap: var(--sc-spacing-1);
+  align-items: baseline;
+  padding: var(--sc-spacing-1) var(--sc-spacing-1-25);
+  border-bottom: 1px solid var(--sc-border-subtle);
+}
+
+.check:last-child {
+  border-bottom: none;
+}
+
+.check__n {
+  font-family: var(--sc-font-family-mono);
+  font-size: var(--sc-font-size-100);
+  line-height: var(--sc-line-height-100);
+  color: var(--sc-text-subtle);
+  font-weight: var(--sc-font-weight-semibold);
+}
+
+.check__title {
+  display: block;
+  font-size: var(--sc-font-size-200);
+  line-height: var(--sc-line-height-200);
+  font-weight: var(--sc-font-weight-semibold);
+}
+
+.check__note {
+  display: block;
+  font-size: var(--sc-font-size-100);
+  line-height: var(--sc-line-height-100);
+  color: var(--sc-text-secondary);
+}
+
+.check__css {
+  font-family: var(--sc-font-family-mono);
+  font-size: var(--sc-font-size-100);
+  line-height: var(--sc-line-height-100);
+  color: var(--sc-text-subtle);
+  white-space: nowrap;
+}
+
+/* ---------- tablas ---------- */
+.table {
+  border: 1px solid var(--sc-border-subtle);
+  border-radius: var(--sc-radius-lg);
+  overflow: hidden;
+  background: var(--sc-bg-surface);
+}
+
+.table__row {
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: var(--sc-spacing-1);
+  align-items: center;
+  padding: var(--sc-spacing-0-75) var(--sc-spacing-1-25);
+  border-bottom: 1px solid var(--sc-border-subtle);
+}
+
+.table__row:last-child {
+  border-bottom: none;
+}
+
+.table__row--head {
+  background: var(--sc-bg-subtle);
+  font-family: var(--sc-font-family-mono);
+  font-size: var(--sc-font-size-caption);
+  line-height: var(--sc-line-height-caption);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--sc-text-subtle);
+}
+
+.table__figma {
+  font-size: var(--sc-font-size-200);
+  line-height: var(--sc-line-height-200);
+  font-weight: var(--sc-font-weight-semibold);
+}
+
+.table__css,
+.table__ex {
+  font-family: var(--sc-font-family-mono);
+  font-size: var(--sc-font-size-100);
+  line-height: var(--sc-line-height-100);
+}
+
+.table__css {
+  color: var(--sc-text-link);
+}
+
+.table__ex {
+  color: var(--sc-text-subtle);
+}
+
+.table__ex.is-ok {
+  color: var(--sc-text-success);
+  font-weight: var(--sc-font-weight-semibold);
+}
+
+.table__ex.is-bad {
+  color: var(--sc-text-danger);
+  font-weight: var(--sc-font-weight-semibold);
+}
+
+@media (max-width: 40rem) {
+  .table__row {
+    grid-template-columns: 1fr;
+    gap: var(--sc-spacing-0-25);
+  }
+
+  .table__row--head {
+    display: none;
+  }
+}
+
+/* ---------- pasos y listas ---------- */
+.steps,
+.moves {
+  margin: 0;
+  padding-left: var(--sc-spacing-1-5);
+  max-width: var(--measure);
+}
+
+.steps > li,
+.moves > li {
+  margin-bottom: var(--sc-spacing-1);
+  font-size: var(--sc-font-size-200);
+  line-height: var(--sc-line-height-200);
+  color: var(--sc-text-secondary);
+}
+
+.steps > li:last-child,
+.moves > li:last-child {
+  margin-bottom: 0;
+}
+
+.steps strong,
+.moves strong {
+  color: var(--sc-text-primary);
+}
+
+/* ---------- conversiones ---------- */
+.convs {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(15rem, 1fr));
+  gap: var(--sc-spacing-1);
+}
+
+.conv {
+  padding: var(--sc-spacing-1-25);
+  border: 1px solid var(--sc-border-subtle);
+  border-radius: var(--sc-radius-lg);
+  background: var(--sc-bg-surface);
+}
+
+.conv__k {
+  margin: 0 0 var(--sc-spacing-0-5);
+  font-family: var(--sc-font-family-mono);
+  font-size: var(--sc-font-size-caption);
+  line-height: var(--sc-line-height-caption);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--sc-text-subtle);
+}
+
+.conv__b {
+  margin: 0 0 var(--sc-spacing-0-5);
+  font-size: var(--sc-font-size-200);
+  line-height: var(--sc-line-height-200);
+  font-weight: var(--sc-font-weight-semibold);
+}
+
+.conv__d {
+  margin: 0;
+  font-size: var(--sc-font-size-100);
+  line-height: var(--sc-line-height-100);
+  color: var(--sc-text-secondary);
+}
+
+.conv__eg {
+  margin: var(--sc-spacing-0-75) 0 0;
+  padding: var(--sc-spacing-0-5) var(--sc-spacing-0-75);
+  border-radius: var(--sc-radius-md);
+  background: var(--sc-bg-subtle);
+  font-family: var(--sc-font-family-mono);
+  font-size: var(--sc-font-size-100);
+  line-height: var(--sc-line-height-100);
+  color: var(--sc-text-secondary);
+}
+
+/* ---------- veredictos ---------- */
+.verdicts {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(18rem, 1fr));
+  gap: var(--sc-spacing-1);
+}
+
+.verdict {
+  padding: var(--sc-spacing-1-25);
+  border-radius: var(--sc-radius-lg);
+  border: 1px solid var(--sc-border-subtle);
+  background: var(--sc-bg-surface);
+}
+
+.verdict code {
+  display: block;
+  margin: var(--sc-spacing-0-5) 0;
+  font-family: var(--sc-font-family-mono);
+  font-size: var(--sc-font-size-100);
+  line-height: var(--sc-line-height-100);
+  color: var(--sc-text-primary);
+}
+
+.verdict__l {
+  margin: 0;
+  font-family: var(--sc-font-family-mono);
+  font-size: var(--sc-font-size-caption);
+  line-height: var(--sc-line-height-caption);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  font-weight: var(--sc-font-weight-semibold);
+}
+
+.verdict--ok .verdict__l {
+  color: var(--sc-text-success);
+}
+
+.verdict--bad .verdict__l {
+  color: var(--sc-text-danger);
+}
+
+.verdict__d {
+  margin: 0;
+  font-size: var(--sc-font-size-100);
+  line-height: var(--sc-line-height-100);
+  color: var(--sc-text-secondary);
+}
+
+/* ---------- ejemplo ---------- */
+.example {
+  border: 1px solid var(--sc-border-subtle);
+  border-radius: var(--sc-radius-lg);
+  overflow: hidden;
+  background: var(--sc-bg-surface);
+}
+
+.example__row {
+  display: grid;
+  grid-template-columns: 12rem 1fr;
+  gap: var(--sc-spacing-1);
+  align-items: center;
+  padding: var(--sc-spacing-0-75) var(--sc-spacing-1-25);
+  border-bottom: 1px solid var(--sc-border-subtle);
+}
+
+.example__row:last-child {
+  border-bottom: none;
+}
+
+.example__l {
+  font-size: var(--sc-font-size-100);
+  line-height: var(--sc-line-height-100);
+  color: var(--sc-text-subtle);
+}
+
+.example__v {
+  font-family: var(--sc-font-family-mono);
+  font-size: var(--sc-font-size-100);
+  line-height: var(--sc-line-height-100);
+  color: var(--sc-text-primary);
+}
+
+@media (max-width: 40rem) {
+  .example__row {
+    grid-template-columns: 1fr;
+    gap: var(--sc-spacing-0-25);
+  }
+}
+
+/* ---------- snippet ---------- */
+.snippet {
+  margin: 0;
+  padding: var(--sc-spacing-1-25);
+  border: 1px solid var(--sc-border-subtle);
+  border-radius: var(--sc-radius-lg);
+  background: var(--sc-bg-subtle);
+  overflow-x: auto;
+}
+
+.snippet code {
+  font-family: var(--sc-font-family-mono);
+  font-size: var(--sc-font-size-100);
+  line-height: var(--sc-line-height-300);
+  color: var(--sc-text-primary);
+  white-space: pre;
+}
+
+/* ---------- pie ---------- */
+.guide__foot p {
+  margin: 0;
+  max-width: var(--measure);
+  padding-top: var(--sc-spacing-1-5);
+  border-top: 1px solid var(--sc-border-subtle);
+  font-size: var(--sc-font-size-100);
+  line-height: var(--sc-line-height-100);
+  color: var(--sc-text-subtle);
+}
+
+</style>
+</head>
+<body>
+<article class="guide">
+    <header class="guide__head">
+      <p class="eyebrow">Guía interna</p>
+      <h1>Validar un componente entero</h1>
+      <p class="lead">
+        Todo lo que se puede comprobar de un componente en la web: <strong>medidas, color,
+        borde, esquinas, espaciados, sombra y tipografía</strong>. Y lo que más importa en un
+        design system: si está usando las variables o va por libre.
+      </p>
+    </header>
+
+    <p class="calm">
+      <strong>No puedes romper nada.</strong> Todo lo que hagas en el inspector pasa solo en tu
+      ordenador y desaparece al recargar. Nadie más lo ve.
+    </p>
+
+    <!-- ── las siete ── -->
+    <section aria-labelledby="siete-title">
+      <h2 id="siete-title" class="section-title">Las siete cosas que se validan</h2>
+      <p class="section-lead">Si compruebas estas siete, el componente está validado.</p>
+      <ol class="checks">
+        <li class="check"><span class="check__n">1</span><span class="check__body"><span class="check__title">Tamaño</span><span class="check__note">Cuánto ocupa la caja: ancho y alto.</span></span><code class="check__css">el dibujo de cajas</code></li><li class="check"><span class="check__n">2</span><span class="check__body"><span class="check__title">Tipografía</span><span class="check__note">Fuente, tamaño, alto de línea, grosor y color.</span></span><code class="check__css">font-* · line-height</code></li><li class="check"><span class="check__n">3</span><span class="check__body"><span class="check__title">Fondo</span><span class="check__note">El color de relleno de la caja.</span></span><code class="check__css">background-color</code></li><li class="check"><span class="check__n">4</span><span class="check__body"><span class="check__title">Borde</span><span class="check__note">Grosor y color del contorno.</span></span><code class="check__css">border</code></li><li class="check"><span class="check__n">5</span><span class="check__body"><span class="check__title">Esquinas</span><span class="check__note">Cuánto se redondean.</span></span><code class="check__css">border-radius</code></li><li class="check"><span class="check__n">6</span><span class="check__body"><span class="check__title">Espaciados</span><span class="check__note">El aire de dentro y la separación entre piezas.</span></span><code class="check__css">padding · gap</code></li><li class="check"><span class="check__n">7</span><span class="check__body"><span class="check__title">Sombra</span><span class="check__note">Si la lleva y de qué intensidad.</span></span><code class="check__css">box-shadow</code></li>      </ol>
+    </section>
+
+    <!-- ── traducción ── -->
+    <section aria-labelledby="trad-title">
+      <h2 id="trad-title" class="section-title">Cómo se dice cada cosa en cada sitio</h2>
+      <p class="section-lead">
+        Tú lo llamas de una manera en Figma y el navegador lo llama de otra. Es lo único que hay
+        que aprenderse.
+      </p>
+      <div class="table" role="table">
+        <div class="table__row table__row--head" role="row">
+          <span role="columnheader">En Figma</span>
+          <span role="columnheader">En el navegador</span>
+          <span role="columnheader">Ejemplo real</span>
+        </div>
+        <div class="table__row" role="row"><span class="table__figma" role="cell">Fill</span><code class="table__css" role="cell">background-color</code><code class="table__ex" role="cell">#ECEFF3</code></div><div class="table__row" role="row"><span class="table__figma" role="cell">Stroke</span><code class="table__css" role="cell">border</code><code class="table__ex" role="cell">1px solid #C6CCD6</code></div><div class="table__row" role="row"><span class="table__figma" role="cell">Corner radius</span><code class="table__css" role="cell">border-radius</code><code class="table__ex" role="cell">6px</code></div><div class="table__row" role="row"><span class="table__figma" role="cell">Auto layout · padding</span><code class="table__css" role="cell">padding</code><code class="table__ex" role="cell">7px 10.5px</code></div><div class="table__row" role="row"><span class="table__figma" role="cell">Auto layout · gap</span><code class="table__css" role="cell">gap</code><code class="table__ex" role="cell">7px</code></div><div class="table__row" role="row"><span class="table__figma" role="cell">Auto layout · dirección</span><code class="table__css" role="cell">flex-direction</code><code class="table__ex" role="cell">row = horizontal</code></div><div class="table__row" role="row"><span class="table__figma" role="cell">Effects · drop shadow</span><code class="table__css" role="cell">box-shadow</code><code class="table__ex" role="cell">0 1px 2px rgba(…)</code></div><div class="table__row" role="row"><span class="table__figma" role="cell">Text · size</span><code class="table__css" role="cell">font-size</code><code class="table__ex" role="cell">14px</code></div><div class="table__row" role="row"><span class="table__figma" role="cell">Text · line height</span><code class="table__css" role="cell">line-height</code><code class="table__ex" role="cell">20px</code></div><div class="table__row" role="row"><span class="table__figma" role="cell">Text · weight</span><code class="table__css" role="cell">font-weight</code><code class="table__ex" role="cell">400 = Regular</code></div><div class="table__row" role="row"><span class="table__figma" role="cell">Una variable</span><code class="table__css" role="cell">var(--p-…)</code><code class="table__ex" role="cell">var(--p-chip-background)</code></div>      </div>
+    </section>
+
+    <!-- ── pasos ── -->
+    <section aria-labelledby="pasos-title">
+      <h2 id="pasos-title" class="section-title">Abrirlo, en cuatro pasos</h2>
+      <ol class="steps">
+        <li>
+          <strong>Clic derecho sobre el componente.</strong> Sobre la letra, no sobre el marco
+          (luego verás por qué). Si tu ratón no tiene botón derecho: dos dedos en el trackpad.
+        </li>
+        <li><strong>Elige «Inspeccionar»</strong>, la última opción del menú.</li>
+        <li>
+          <strong>Pincha la pestaña «Computed».</strong> Significa «calculado»: son los números
+          finales, ya con todas las cuentas hechas. Es lo que de verdad se ve en pantalla.
+        </li>
+        <li>
+          <strong>Lee las siete cosas.</strong> Arriba, el dibujo de cajas con el tamaño. Debajo,
+          la lista con todo lo demás. Usa el buscador (<em>Filter</em>) y escribe
+          <code>border</code>, <code>padding</code> o <code>font</code> para no perderte.
+        </li>
+      </ol>
+    </section>
+
+    <!-- ── traducciones numéricas ── -->
+    <section aria-labelledby="conv-title">
+      <h2 id="conv-title" class="section-title">Los tres números que hay que traducir</h2>
+      <p class="section-lead">El navegador escribe algunas cosas distinto a Figma. Son solo tres.</p>
+      <div class="convs">
+        <div class="conv">
+          <p class="conv__k">Color</p>
+          <p class="conv__b">rgb → hex</p>
+          <p class="conv__d">
+            Figma dice #ECEFF3 y el navegador rgb(236, 239, 243). Es el mismo color.
+          </p>
+          <p class="conv__eg">Mayúsculas + clic en el cuadradito y cambia a hex</p>
+        </div>
+        <div class="conv">
+          <p class="conv__k">Medidas</p>
+          <p class="conv__b">rem → px</p>
+          <p class="conv__d">A veces verás 0.375rem en vez de 6px. Multiplica por 16.</p>
+          <p class="conv__eg">0.375 × 16 = 6px · 1rem = 16px</p>
+        </div>
+        <div class="conv">
+          <p class="conv__k">Color</p>
+          <p class="conv__b">el «ff» del final</p>
+          <p class="conv__d">
+            Si ves #c6ccd6<strong>ff</strong>, esas dos últimas letras son la opacidad.
+          </p>
+          <p class="conv__eg">#c6ccd6ff = #C6CCD6</p>
+        </div>
+      </div>
+    </section>
+
+    <!-- ── variables ── -->
+    <section aria-labelledby="vars-title">
+      <h2 id="vars-title" class="section-title">Lo más importante: ¿usa la variable?</h2>
+      <p class="section-lead">
+        No basta con que el número esté bien: tiene que venir del token. Vuelve a la pestaña
+        <strong>Styles</strong> (la de al lado de Computed): ahí no ves el resultado, ves de dónde
+        sale.
+      </p>
+      <div class="verdicts">
+        <div class="verdict verdict--ok">
+          <p class="verdict__l">Bien · bebe de la variable</p>
+          <code>background: var(--p-chip-background)</code>
+          <p class="verdict__d">Cuando cambies ese color en Figma, esto cambiará solo.</p>
+        </div>
+        <div class="verdict verdict--bad">
+          <p class="verdict__l">Mal · escrito a mano</p>
+          <code>background: #ECEFF3</code>
+          <p class="verdict__d">
+            El color puede ser el correcto hoy, pero está clavado. El día que lo cambies en Figma,
+            aquí seguirá el viejo.
+          </p>
+        </div>
+      </div>
+      <p class="note">
+        Un componente puede tener <strong>el valor correcto y estar mal montado</strong>. Si ves
+        colores o medidas a pelo en vez de <code>var(--p-…)</code>, es un fallo que reportar aunque
+        hoy se vea bien.
+      </p>
+    </section>
+
+    <!-- ── ejemplo ── -->
+    <section aria-labelledby="ej-title">
+      <h2 id="ej-title" class="section-title">Un ejemplo entero, resuelto</h2>
+      <p class="section-lead">El Chip de producción, validado en sus siete puntos.</p>
+      <div class="example">
+        <div class="example__row"><span class="example__l">1 · Tamaño</span><code class="example__v">112 × 34</code></div><div class="example__row"><span class="example__l">2 · Tipografía</span><code class="example__v">Inter · 14px · 20px · 400 · #2F3642</code></div><div class="example__row"><span class="example__l">3 · Fondo</span><code class="example__v">#ECEFF3</code></div><div class="example__row"><span class="example__l">4 · Borde</span><code class="example__v">sin borde</code></div><div class="example__row"><span class="example__l">5 · Esquinas</span><code class="example__v">16px</code></div><div class="example__row"><span class="example__l">6 · Espaciados</span><code class="example__v">padding 7px 10.5px · gap 7px</code></div><div class="example__row"><span class="example__l">7 · Sombra</span><code class="example__v">sin sombra</code></div><div class="example__row"><span class="example__l">¿Usa variables?</span><code class="example__v">fondo, color, esquinas y gap → sí</code></div>      </div>
+      <p class="note">
+        Un componente sano se ve así: los siete valores cuadran <strong>y</strong> vienen de
+        variables.
+      </p>
+    </section>
+
+    <!-- ── trampa ── -->
+    <section aria-labelledby="trampa-title">
+      <h2 id="trampa-title" class="section-title">La trampa: la caja y el texto de dentro</h2>
+      <p class="section-lead">
+        Muchos componentes son una caja con texto dentro, y cada parte mide distinto. Si señalas el
+        marco del Select verás 16px; si señalas la palabra, 14px. El número bueno es el del texto.
+      </p>
+      <p class="note">
+        <strong>Pincha siempre sobre la letra</strong>, no sobre el marco. Si dudas, mira en la
+        mitad izquierda del panel qué línea está resaltada en azul: esa es la que estás midiendo.
+      </p>
+    </section>
+
+    <!-- ── catálogo ── -->
+    <section aria-labelledby="cat-title">
+      <h2 id="cat-title" class="section-title">Nombres reales, y qué miden hoy</h2>
+      <p class="section-lead">Comprobados uno a uno en producción el 1 de septiembre de 2026.</p>
+      <div class="table" role="table">
+        <div class="table__row table__row--head" role="row">
+          <span role="columnheader">Componente</span>
+          <span role="columnheader">Se llama</span>
+          <span role="columnheader">Hoy</span>
+        </div>
+        <div class="table__row" role="row"><span class="table__figma" role="cell">Chip</span><code class="table__css" role="cell">.p-chip</code><code class="table__ex is-ok" role="cell">14 / 20</code></div><div class="table__row" role="row"><span class="table__figma" role="cell">Tag</span><code class="table__css" role="cell">.p-tag</code><code class="table__ex is-bad" role="cell">12 / 24</code></div><div class="table__row" role="row"><span class="table__figma" role="cell">Botón</span><code class="table__css" role="cell">.p-button</code><code class="table__ex is-ok" role="cell">14 / 20</code></div><div class="table__row" role="row"><span class="table__figma" role="cell">Input</span><code class="table__css" role="cell">.p-inputtext</code><code class="table__ex is-ok" role="cell">14 / 20</code></div><div class="table__row" role="row"><span class="table__figma" role="cell">Select · texto</span><code class="table__css" role="cell">.p-select-label</code><code class="table__ex is-ok" role="cell">14 / 20</code></div><div class="table__row" role="row"><span class="table__figma" role="cell">MultiSelect · texto</span><code class="table__css" role="cell">.p-multiselect-label</code><code class="table__ex is-ok" role="cell">14 / 20</code></div><div class="table__row" role="row"><span class="table__figma" role="cell">Breadcrumb · texto</span><code class="table__css" role="cell">.p-breadcrumb-item-link</code><code class="table__ex is-ok" role="cell">14 / 14</code></div><div class="table__row" role="row"><span class="table__figma" role="cell">Toast · título</span><code class="table__css" role="cell">.p-toast-summary</code><code class="table__ex is-ok" role="cell">14 / 20</code></div><div class="table__row" role="row"><span class="table__figma" role="cell">Toast · detalle</span><code class="table__css" role="cell">.p-toast-detail</code><code class="table__ex is-bad" role="cell">12 / 20</code></div><div class="table__row" role="row"><span class="table__figma" role="cell">Avatar</span><code class="table__css" role="cell">.p-avatar</code><code class="table__ex" role="cell">28 × 28</code></div><div class="table__row" role="row"><span class="table__figma" role="cell">Badge</span><code class="table__css" role="cell">.p-badge</code><code class="table__ex" role="cell">8.75 / 24</code></div><div class="table__row" role="row"><span class="table__figma" role="cell">Tabla</span><code class="table__css" role="cell">.p-datatable</code><code class="table__ex" role="cell">16 / 24</code></div>      </div>
+      <p class="note">
+        Los que aparecen al abrir algo (opciones de desplegable, Toast) hay que abrirlos primero y
+        entonces señalarlos.
+      </p>
+    </section>
+
+    <!-- ── moverse ── -->
+    <section aria-labelledby="mov-title">
+      <h2 id="mov-title" class="section-title">Moverte entre componentes</h2>
+      <ul class="moves">
+        <li>
+          <strong>Con la flechita, sin cerrar nada.</strong> Pincha la flecha de arriba a la
+          izquierda del panel y señala cualquier cosa de la página: los valores cambian solos.
+        </li>
+        <li>
+          <strong>Cambiando de página.</strong> El panel se queda abierto al navegar por el menú.
+          Vas a Tag, mides; vas a Chip, mides.
+        </li>
+      </ul>
+    </section>
+
+    <!-- ── atajo ── -->
+    <section aria-labelledby="atajo-title">
+      <h2 id="atajo-title" class="section-title">Si quieres ir más rápido</h2>
+      <p class="section-lead">
+        Señala primero el componente (clic derecho → Inspeccionar). Luego ve a la pestaña
+        <strong>Console</strong>, pega esto y Enter. <code>$0</code> significa «el que acabo de
+        señalar».
+      </p>
+      <pre class="snippet"><code>const s = getComputedStyle($0), r = $0.getBoundingClientRect();
+console.table({
+  tamano: Math.round(r.width) + &#x27; x &#x27; + Math.round(r.height),
+  letra: s.fontSize, altoLinea: s.lineHeight, grosor: s.fontWeight,
+  colorTexto: s.color, fondo: s.backgroundColor,
+  borde: s.border, esquinas: s.borderRadius,
+  padding: s.padding, gap: s.gap, sombra: s.boxShadow
+})</code></pre>
+      <p class="note">Saca una tabla con las siete cosas a la vez.</p>
+    </section>
+
+    <footer class="guide__foot">
+      <p>
+        Todas las cifras están medidas en ui.smart-contact.com el 1 de septiembre de 2026, no
+        deducidas.
+      </p>
+    </footer>
+  </article>
+</body>
+</html>
