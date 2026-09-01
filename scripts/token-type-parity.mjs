@@ -37,7 +37,7 @@ export function exportTypography(kit) {
   const out = [];
   if (!custom) return out;
   for (const { ns, prefix } of KINDS) {
-    const re = new RegExp(`^typography\\.${ns.replace('.', '\\.')}\\.(\\w+)$`);
+    const re = new RegExp(`^(?:primitive\\.)?typography\\.${ns.replace('.', '\\.')}\\.(\\w+)$`);
     for (const [p, leaf] of custom) {
       const m = p.match(re);
       if (m) out.push({ kind: ns, step: m[1], token: prefix + m[1], exp: kit.resolve(leaf.$value) });
@@ -81,6 +81,15 @@ if (import.meta.url === `file://${process.argv[1]}`) {
     .map((l) => readFileSync(resolve(LAYERS, `${l}.css`), 'utf8'))
     .join('\n');
   const list = exportTypography(kit);
+  // Un gate que compara CERO cosas no está vigilando: es verde por vacío, no por sano.
+  // Pasó de verdad — el Kit renombró las hojas a `primitive.typography.*`, el regex dejó de
+  // casar y esto dijo "0/0 · al día" durante semanas. Si no hay hojas, es un fallo del puente.
+  if (list.length === 0) {
+    console.error('✗ type-parity: 0 hojas de tipografía en el export → el gate no está midiendo nada.');
+    console.error('  Casi seguro el Kit renombró la rama (¿`typography.*` → `primitive.typography.*`?).');
+    console.error('  Revisa KINDS/regex en exportTypography() — NO lo des por verde.');
+    process.exit(1);
+  }
   const drift = typographyDrift(list, (t) => codePx(css, t));
 
   log('\n=== tokens:type-parity · font-size + line-height (export ↔ código, 1:1 por valor) ===');
