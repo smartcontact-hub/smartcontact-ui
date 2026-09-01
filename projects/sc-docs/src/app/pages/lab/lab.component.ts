@@ -55,6 +55,12 @@ export class LabComponent {
           note: 'Réplica del dashboard del agente de contact center (agent.smart-contact.com/aed), medida sobre el sitio real: colores, iconos y tiempos.',
         },
         {
+          label: 'Agent Mini · dialpad suelto',
+          href: 'https://agent-mini.pages.dev',
+          meta: 'agent-mini.pages.dev',
+          note: 'El Comunicador de SmartContact como producto suelto a pantalla completa (comunicatormini.smart-contact.com/aed): dialpad, navbar y barra de estado. Primo de Agent, sin el dashboard.',
+        },
+        {
           label: 'CusCare · gestión de tickets',
           href: 'https://sc-cuscare.pages.dev',
           meta: 'sc-cuscare.pages.dev',
