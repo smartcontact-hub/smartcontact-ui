@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { classify, BUCKETS, PRIMARY_STEPS } from '../coverage-map.mjs';
+import { classify, BUCKETS, PRIMARY_STEPS, APP_TYPOGRAPHY_CONTRACT } from '../coverage-map.mjs';
 
 // Test de DOBLE CARA del censo de cobertura (§8). La garantía: toda hoja del grupo cae en un
 // bucket; una hoja NUEVA del Kit sin bucket → unmatched (ROJO en parity).
@@ -74,4 +74,40 @@ test('estructura · cada bucket es {RegExp test, string kind, string note}; prim
     assert.equal(typeof b.note, 'string');
   }
   assert.equal(PRIMARY_STEPS.length, 11);
+});
+
+// ── contrato de tipografía del extend (app.typography.*) ─────────────────────
+// Vivían en la colección App del Kit (que el plugin no exporta) y ahora viajan en `custom`.
+// Son las que el preset consume vía sc-preset/extend.ts, así que van a value-check, no a
+// not-consumed: el §8 comprueba que Kit y extend.ts apuntan al MISMO paso.
+
+test('custom · las 6 de app.typography → value-check (contrato del extend)', () => {
+  const paths = APP_TYPOGRAPHY_CONTRACT.map((c) => `app.typography.${c.size}.${c.prop}`);
+  const { unmatched, byKind } = classify('aura/custom', paths);
+  assert.deepEqual(unmatched, []);
+  assert.equal(byKind['value-check'].length, 6);
+});
+
+test('custom · custommodal → not-consumed (sin familia --sc-cmp-*, como bulktranscriptionmodal)', () => {
+  const { unmatched, byKind } = classify('aura/custom', [
+    'component.custommodal.background',
+    'component.custommodal.footer.padding.left',
+  ]);
+  assert.deepEqual(unmatched, []);
+  assert.equal(byKind['not-consumed'].length, 2);
+});
+
+test('CARA ROJA · una talla NUEVA de app.typography sigue sin clasificar', () => {
+  const { unmatched } = classify('aura/custom', ['app.typography.xl.lineHeight']);
+  assert.deepEqual(unmatched, ['app.typography.xl.lineHeight']);
+});
+
+test('el contrato cubre las 3 tallas x 2 propiedades, sin duplicados', () => {
+  assert.equal(APP_TYPOGRAPHY_CONTRACT.length, 6);
+  const keys = APP_TYPOGRAPHY_CONTRACT.map((c) => `${c.size}.${c.prop}`);
+  assert.equal(new Set(keys).size, 6);
+  for (const c of APP_TYPOGRAPHY_CONTRACT) {
+    assert.match(c.cssVar, /^sc-(font-size|line-height)$/);
+    assert.match(c.kitFamily, /^(font|line)\.(size|height)$/);
+  }
 });

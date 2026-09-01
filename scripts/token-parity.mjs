@@ -28,7 +28,7 @@ import { loadKitExport } from './dtcg-export.mjs';
 import { SIZING, GROUPS, DIVERGE_SIZING } from './sizing-map.mjs';
 import { ENFORCE as COLOR_ENFORCE, DIVERGE as COLOR_DIVERGE } from './color-map.mjs';
 import { PRIMITIVE_SOURCE, PRIMITIVE_DIVERGE, primitiveDrift } from './palette-map.mjs';
-import { classify, PRIMARY_STEPS } from './coverage-map.mjs';
+import { classify, PRIMARY_STEPS, APP_TYPOGRAPHY_CONTRACT } from './coverage-map.mjs';
 import { EXPORT_PATH, LAYERS_DIR as LAYERS } from './paths.mjs';
 
 const root = resolve(import.meta.dirname, '..');
@@ -482,6 +482,28 @@ for (const step of PRIMARY_STEPS) {
 }
 log(`  ✓ ${primaryOk}/${PRIMARY_STEPS.length} primary.N = --sc-color-blue-N (1:1 por valor)`);
 log('  (sombras de effects → GENERADAS a --sc-cmp-*-shadow [@sc-gen:effects] y LEÍDAS por el preset; guard: tokens:effects-rewire)');
+
+// Value-check del CONTRATO de tipografía del extend: para cada talla, el PASO al que apunta el
+// Kit (app.typography.md.lineHeight → {primitive.typography.line.height.200}) tiene que ser el
+// mismo que usa `sc-preset/extend.ts` (var(--sc-line-height-200)). Caza el desfase MUDO que dejó
+// chip/tag/toast heredando del documento: el Kit remapea una talla y el preset se queda atrás.
+const extendSrc = readFileSync(resolve(PRESET_DIR, 'extend.ts'), 'utf8');
+const appTypoBlock = extendSrc.slice(extendSrc.indexOf('typography:'), extendSrc.indexOf('toggleswitch:'));
+let contractOk = 0;
+for (const { size, prop, kitFamily, cssVar } of APP_TYPOGRAPHY_CONTRACT) {
+  const leaf = kit.groups['aura/custom']?.get(`app.typography.${size}.${prop}`);
+  if (!leaf) { log(`  ? app.typography.${size}.${prop}: no está en el export`); continue; }
+  const kitStep = String(leaf.$value).match(new RegExp(`${kitFamily.replace('.', '\\.')}\\.(\\d+)`))?.[1];
+  const sizeBlock = appTypoBlock.slice(appTypoBlock.indexOf(`${size}: {`));
+  const cssProp = prop === 'fontSize' ? 'fontSize' : 'lineHeight';
+  const codeStep = sizeBlock.slice(sizeBlock.indexOf(cssProp)).match(new RegExp(`var\\(--${cssVar}-(\\d+)\\)`))?.[1];
+  if (!kitStep) fail(`[contrato] app.typography.${size}.${prop}: el export no apunta a un paso de ${kitFamily} (valor: ${leaf.$value})`);
+  else if (!codeStep) fail(`[contrato] app.typography.${size}.${prop}: extend.ts no usa var(--${cssVar}-N)`);
+  else if (kitStep !== codeStep)
+    fail(`[contrato] app.typography.${size}.${prop}: Kit apunta a ${kitFamily}.${kitStep} pero extend.ts usa --${cssVar}-${codeStep} → el contrato del extend se desfasó`);
+  else contractOk++;
+}
+log(`  \u2713 ${contractOk}/${APP_TYPOGRAPHY_CONTRACT.length} app.typography.* = mismo paso en Kit y en sc-preset/extend.ts`);
 
 // ── Resumen ──────────────────────────────────────────────────────────────────
 log('\n' + '─'.repeat(60));
