@@ -212,9 +212,104 @@ function renderPalette() {
 }
 
 // ─────────────────────────────────────────────────────────────────────────────
+// TIPOGRAFÍA — font-size · line-height · font-weight
+// ─────────────────────────────────────────────────────────────────────────────
+// Era la ÚNICA familia a mano de las diez: el Kit la traía, el generador no la
+// escribía y solo la vigilaba `tokens:type-parity` … que estuvo CIEGO semanas
+// (regex desfasado). Justo ahí se escondió el drift del line-height md (21 vs 20).
+// Generarla la pone al nivel de scale/radius/palette: cambias la letra en Figma,
+// pusheas y llega sola.
+//
+// Dos orígenes, y la diferencia importa:
+//   · del KIT  → 19 hojas (8 font-size · 7 line-height · 4 weights), valor 1:1.
+//   · SNAPS SC → pasos que el Kit NO tiene y el DS sí, que se PEGAN al vecino del
+//     Kit (DD-13). No son inventados: hoy ya valen exactamente eso, y el mapa de
+//     abajo lo deja explícito y testeable en vez de repetido a mano en el CSS.
+
+/** Paso extra del DS → paso del Kit del que copia el valor, + la nota que iba en el CSS. */
+export const FONT_SIZE_SNAPS = {
+  50: { from: 100, note: 'era 10.5 → sube a 12' },
+  75: { from: 100, note: 'snap → -100' },
+  600: { from: 500, note: 'snap 28' },
+  700: { from: 650, note: 'snap 36' },
+  900: { from: 800, note: 'snap 64; era 70' },
+};
+export const LINE_HEIGHT_SNAPS = {
+  50: { from: 100, note: '' },
+  220: { from: 200, note: 'body-2/3' },
+  400: { from: 300, note: 'h4 18' },
+  600: { from: 500, note: '' },
+  700: { from: 650, note: '' },
+  900: { from: 800, note: '' },
+};
+/** Rol de cada paso del Kit, para que el comentario siga diciendo para qué es. */
+const TYPE_NOTES = {
+  'font-size': { 450: 'era 21', 800: 'era 56' },
+  'line-height': { 100: 'caption 12', 200: 'body 14', 300: 'body-1 16', 450: 'h3 20', 500: 'h2 24', 650: 'h1 32', 800: 'display-1 48' },
+};
+
+/** Hojas de tipografía del export → Map(paso → px). Tolera el prefijo `primitive.`. */
+function kitTypography(ns) {
+  const custom = kit.groups['aura/custom'];
+  const re = new RegExp(`^(?:primitive\\.)?typography\\.${ns.replace(/\./g, '\\.')}\\.(\\w+)$`);
+  const out = new Map();
+  if (!custom) return out;
+  for (const [path, leaf] of custom) {
+    const m = path.match(re);
+    if (m) out.set(m[1], kit.resolve(leaf.$value));
+  }
+  return out;
+}
+
+function renderTypography() {
+  const out = [];
+  const emitRamp = (ns, cssName, snaps) => {
+    const kitSteps = kitTypography(ns);
+    if (kitSteps.size === 0) {
+      log(`✗ token-gen: 0 hojas de typography.${ns} en el export — ¿renombró el Kit la rama?`);
+      process.exit(2);
+    }
+    // pasos del Kit + snaps, ordenados por número para que la rampa se lea seguida
+    const all = [...[...kitSteps.keys()].map(Number), ...Object.keys(snaps).map(Number)].sort((a, b) => a - b);
+    for (const step of all) {
+      const snap = snaps[step];
+      const px = snap ? kitSteps.get(String(snap.from)) : kitSteps.get(String(step));
+      if (px == null) {
+        // Un snap que apunta a un paso que el Kit ya no trae NO puede desaparecer callando:
+        // el token seguiría existiendo en las capas y nadie sabría que quedó huérfano.
+        log(`✗ token-gen: --sc-${cssName}-${step} no resuelve` +
+            (snap ? ` (snap → ${ns}.${snap.from}, que el Kit ya no trae)` : ` (${ns}.${step} no está en el export)`));
+        process.exit(2);
+      }
+      const notes = [String(px)];
+      const extra = snap ? snap.note : (TYPE_NOTES[cssName]?.[step] ?? '');
+      if (extra) notes.push(`(${extra})`);
+      out.push(`  --sc-${cssName}-${step}: calc(${px} / 16 * 1rem); /* ${notes.join(' ')} */`);
+    }
+    out.push('');
+  };
+  emitRamp('font.size', 'font-size', FONT_SIZE_SNAPS);
+  emitRamp('line.height', 'line-height', LINE_HEIGHT_SNAPS);
+  const weights = kitTypography('font.weight');
+  for (const name of ['regular', 'medium', 'semibold', 'bold']) {
+    const v = weights.get(name);
+    if (v != null) out.push(`  --sc-font-weight-${name}: ${v};`);
+  }
+  return out.join('\n');
+}
+
+// ─────────────────────────────────────────────────────────────────────────────
 // EMIT / WRITE / CHECK
 // ─────────────────────────────────────────────────────────────────────────────
 const ZONES = [
+  {
+    tag: 'typography',
+    header:
+      '/* @sc-gen:typography — bloque GENERADO desde kit-export-dtcg.json por `npm run tokens:import`.\n' +
+      '   * NO editar a mano. font-size · line-height · font-weight. Los pasos que el Kit NO\n' +
+      '   * trae (snaps del DS, DD-13) se derivan del vecino: el mapa vive en token-gen.mjs. */',
+    render: renderTypography,
+  },
   {
     tag: 'scale',
     header:
@@ -262,7 +357,7 @@ if (write) {
     txt = next;
   }
   writeFileSync(PRIMITIVE_CSS, txt);
-  log('✓ Bloques scale/radius/palette reescritos desde el export. La cascada propaga.');
+  log('✓ Bloques typography/scale/radius/palette reescritos desde el export. La cascada propaga.');
   process.exit(0);
 }
 
