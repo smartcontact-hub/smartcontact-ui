@@ -26,6 +26,7 @@
  */
 import { execSync } from 'node:child_process';
 import { readdirSync, readFileSync, statSync } from 'node:fs';
+import { join } from 'node:path';
 
 const log = (s = '') => process.stdout.write(s + '\n');
 const sh = (cmd) => {
@@ -72,13 +73,38 @@ const usados = [
   ),
 ].sort();
 
-/* Un grep POR CLASE en vez de cargar PrimeNG en memoria: `execSync` trae un
- * búfer de 1 MB por defecto y su bundle lo desborda de largo — la primera
- * versión reportaba «no encuentro PrimeNG» cuando lo que pasaba es que no
- * cabía. Un mensaje de error que miente sobre su propia causa es peor que un
- * fallo. */
-const existeEnPrimeng = (clase) =>
-  sh(`grep -rlF '${clase}' node_modules/primeng/fesm2022/ 2>/dev/null | head -1`).trim().length > 0;
+/* El bundle de PrimeNG se lee UNA vez con readFileSync y se busca en memoria.
+ *
+ * La versión anterior lanzaba un `grep` por clase (36 barridos) para no "cargar PrimeNG en
+ * memoria": el miedo venía de que `execSync` trae un búfer de 1 MB y el bundle lo desborda,
+ * lo que hacía reportar «no encuentro PrimeNG» cuando en realidad no cabía. Pero ese límite
+ * es de execSync, no de leer ficheros: son 283 ficheros y 5,5 MB, que readFileSync se come
+ * sin despeinarse. Medido: 3.163 ms → ~20 ms, y de paso deja de depender de que exista `grep`.
+ *
+ * (Probado también `grep -f -` en una sola pasada: 10,5 s. Peor, porque los 36 greps con
+ *  `-l | head -1` cortocircuitan al primer acierto y ese no puede.) */
+const leerBundle = () => {
+  const raiz = 'node_modules/primeng/fesm2022';
+  const trozos = [];
+  const walk = (dir) => {
+    let entradas;
+    try {
+      entradas = readdirSync(dir);
+    } catch {
+      return;
+    }
+    for (const e of entradas) {
+      const f = join(dir, e);
+      if (statSync(f).isDirectory()) walk(f);
+      else if (f.endsWith('.mjs')) trozos.push(readFileSync(f, 'utf8'));
+    }
+  };
+  walk(raiz);
+  return trozos;
+};
+
+const bundle = leerBundle();
+const existeEnPrimeng = (clase) => bundle.some((t) => t.includes(clase));
 
 if (!existeEnPrimeng('p-button')) {
   log('✗ audit:primeng-coupling: no encuentro el código de PrimeNG en node_modules — ¿falta `npm ci`?');
