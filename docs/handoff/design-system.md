@@ -2,14 +2,58 @@
 
 > **Volátil.** Lo reescribe la sesión que trabaja ESTE frente, y **solo este fichero**.
 > No toques los hand-offs de otros frentes. Lo durable vive en `docs/`.
-> **Sello: 2026-08-31 (s38 cont. III): esta actualización del hand-off aporta SOLO una verificación,
-> cero cambios de código. Medido sobre `05f3ace` (origin/main al verificar), CI verde (run
-> `33395393021`, los 5 jobs): el drift de «N pasos» de `docs:coherence` ya estaba resuelto y los audit
-> PRs limpios (ver el primer bloque ✅). Después, otras sesiones avanzaron `main` (traspaso, demo de
-> Patrones do/don't, a11y) sin tocar `ci.yml` ni los docs del drift, así que la conclusión sigue en
-> pie. Tramo anterior de ESTE frente (HEAD `593e21a`): Componentes → ACORDEÓN + portada con descripción
-> por card, TOGGLE de tema sol/luna con fundido premium (View Transitions), y arreglo del DEPLOY y de un
-> LOCK roto (`@emnapi/runtime`). Antes: HEAD `a38b623` (Figma+doc).**
+> **Sello: 2026-09-01 (s39): HEAD `2ad8b77`.** Guía de validación visual en `/validar` (enlazada
+> desde el Lab, con clave) + **hook `pre-push`** que corre el gate solo. Gate verde leído del log
+> (305 tests) y CI verde (run `33542225223`). Tramo anterior de ESTE frente: `3b90fd7` (sc-demo
+> borrado de Cloudflare + afila LEARNINGS #7).
+
+## ✅ s39 · Guía de validación en sc-docs + el gate deja de depender de la memoria
+
+**Qué hay nuevo, en dos líneas:** una guía en `/#/validar` que enseña a medir un componente en el
+navegador (las 7 dimensiones + si bebe de variables), enlazada desde el **Lab → «Código y diseño»** y
+con clave de cortesía `HalaMadrid123!`. Y un **hook `pre-push`** (`.githooks/pre-push`, se activa con
+`npm run hooks:install`) que lanza `preflight:scope` antes de cada push y aborta si falla.
+
+⚠️ **La clave NO es seguridad y está comprobado**: `grep HalaMadrid123 dist/` la encuentra en texto
+plano en el bundle. Evita abrirla por accidente, nada más. Dicho en el componente y en la ruta.
+
+### El camino largo que NO hay que repetir
+Se intentó proteger la guía con **Cloudflare Access** y no se puede: sc-docs enruta por hash
+(`withHashLocation()`, `app.config.ts:24`) y el `#…` **no viaja al servidor**, así que Access solo
+podría cubrir el sitio entero. Se sacó a una página real en `public/interno/` para poder filtrarla…
+y entonces apareció el bloqueo de verdad: **Access exige zona activa propia**, y `pages.dev` es de
+Cloudflare. Sin dominio corporativo (que no depende de nosotros) no hay vía. Se revirtió a la SPA.
+**Conclusión para el futuro: para proteger de verdad una ruta de sc-docs hace falta dominio propio +
+custom domain + Access + un Bulk Redirect que cierre `pages.dev`. Para una guía sin datos, no compensa.**
+
+### El hook, y por qué existe
+LEARNINGS **#7** («preflight antes de push») llevaba **tres afilados** (`3b90fd7`, `720bf6e`,
+`3fcfa8b`) y se seguía incumpliendo: se lee al empezar y el disparador salta horas después. No era la
+redacción, era depender de la memoria. **El hook lo atrapó tres veces el mismo día**: 51 violaciones de
+tokens, un `eslint.config.js` roto, y 2 violaciones más al restaurar el componente. Las tres las había
+dado yo por buenas.
+
+⚠️ **Trampa medida (nueva, vale para cualquier gate):** `npm run preflight | tail -40` devuelve el
+código de salida del **`tail`**, no del gate → salió `exit 0` con 51 violaciones dentro. Y
+`npm run lint | tail && echo OK` imprimió «OK» con el fichero de config roto. **Para decidir, redirige
+a fichero y lee `$?`; el `tail` es para leer, nunca para dictaminar.** El hook no pipea, a propósito.
+
+### Cosas que se tocaron de paso
+- `eslint.config.js`: `projects/*/public/` fuera del lint. Aplicaba el parser de plantillas Angular a
+  assets estáticos y reventaba con el CSS embebido. Los 8 HTML de `explorations/` pasaban de milagro.
+- ⚠️ Al documentarlo, `'**/*.html'` dentro de un comentario `/* */` **cierra el comentario** y rompió
+  el fichero. Comentario de línea en su lugar.
+
+## 🔜 Siguiente en este frente
+1. **Figma, cable cruzado (pendiente de OK de Rafa):** `tag/font/size` apunta a
+   `app/typography/sm/lineHeight` (18) en vez de a `primitive/typography/font/size/100` (12). El
+   tamaño de letra del Tag bebe del alto de línea. En agosto ese nodo medía 12, se cruzó después.
+2. **Lo de Carlos (SISMAC-4074), ya medido y en el board de Figma `14595:4049`** (página Feedback):
+   faltan 4 selectores en su bloque de tipografía → `.p-tag` y `.p-toast-detail` a talla sm (12/18),
+   `.p-select-option` y `.p-multiselect-option` a md (14/20). Lo demás ya cuadra: chip 20/34, cajas de
+   select y multiselect 20, título de toast 20, breadcrumb 14 + #6F7784.
+3. **Cloudflare:** se activó «Restrict previews» en sc-doc y Rafa pidió revertirlo todo (y cancelar
+   Zero Trust) desde otra sesión. **Si un preview pide login, es esto.**
 
 ## ✅ s38 (cont. III) · Verificación (sin código): drift de «N pasos» resuelto + audit PRs limpios
 
