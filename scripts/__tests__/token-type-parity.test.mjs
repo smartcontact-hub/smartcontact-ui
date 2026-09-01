@@ -1,6 +1,6 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { typographyDrift, codePx } from '../token-type-parity.mjs';
+import { typographyDrift, codePx, exportTypography } from '../token-type-parity.mjs';
 
 // Test de DOBLE CARA del gate de tipografía. Fixtures: [{ token, exp(px) }] + un resolvedor token→px.
 
@@ -31,4 +31,27 @@ test('codePx resuelve calc(N/16*1rem), rem y px', () => {
   assert.equal(codePx('--sc-c: 24px;', 'sc-c'), 24);
   assert.equal(codePx('--sc-d: 18;', 'sc-d'), 18); // line-height unitless
   assert.equal(codePx('whatever', 'sc-missing'), undefined);
+});
+
+// ── el gate no debe quedarse CIEGO cuando el Kit renombra la rama ────────────
+// Pasó: las hojas pasaron de `typography.*` a `primitive.typography.*`, el regex dejó de casar
+// y el gate dijo "0/0 · al día" durante semanas. Verde por vacío, no por sano.
+
+const kitCon = (paths) => ({ groups: { 'aura/custom': new Map(paths.map((p) => [p, { $value: 20 }])) },
+                             resolve: (v) => v });
+
+test('lee las hojas con el prefijo NUEVO del Kit (primitive.typography.*)', () => {
+  const out = exportTypography(kitCon(['primitive.typography.line.height.200']));
+  assert.equal(out.length, 1);
+  assert.equal(out[0].token, 'sc-line-height-200');
+});
+
+test('sigue leyendo el prefijo ANTIGUO (typography.*), por compatibilidad', () => {
+  const out = exportTypography(kitCon(['typography.line.height.200']));
+  assert.equal(out.length, 1);
+  assert.equal(out[0].token, 'sc-line-height-200');
+});
+
+test('CARA ROJA · si el Kit renombra a algo que no reconoce → 0 hojas (lo caza el guard anti-cero)', () => {
+  assert.equal(exportTypography(kitCon(['foo.typography.line.height.200'])).length, 0);
 });
