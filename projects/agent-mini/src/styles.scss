@@ -1,5 +1,38 @@
-/* Agent Mini — estilos globales. Ventana completa, oscuro (#333A41 como el cuerpo del
-   Comunicador). Fuentes: Roboto (número) y Open Sans (resto), como la app real. */
+/* Agent Mini - estilos globales. Ventana completa, oscuro (#333A41).
+ *
+ * Fuentes self-hospedadas de la app real: mismos ficheros y mismos NOMBRES DE FAMILIA
+ * que sirve comunicatormini (el original pide el peso por nombre de familia,
+ * 'Open Sans Semibold', no con font-weight). Ficheros servidos desde /fonts, que se
+ * reutilizan de agent/public via el `assets` de angular.json. */
+@font-face {
+  font-family: 'Roboto';
+  src: url('/fonts/roboto/Roboto-Regular.woff2') format('woff2');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Open Sans';
+  src: url('/fonts/open-sans/Regular/OpenSans-Regular.woff') format('woff');
+  font-weight: normal;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Open Sans Semibold';
+  src: url('/fonts/open-sans/Semibold/OpenSans-Semibold.woff') format('woff');
+  font-weight: 600;
+  font-style: normal;
+  font-display: swap;
+}
+@font-face {
+  font-family: 'Open Sans Bold';
+  src: url('/fonts/open-sans/Bold/OpenSans-Bold.woff') format('woff');
+  font-weight: bold;
+  font-style: normal;
+  font-display: swap;
+}
+
 * {
   box-sizing: border-box;
   margin: 0;
@@ -14,6 +47,6 @@ body {
 body {
   background: #333a41;
   color: #fff;
-  font-family: 'Roboto', 'Open Sans', 'Helvetica Neue', Arial, sans-serif;
+  font-family: 'Open Sans', 'Helvetica Neue', Arial, sans-serif;
   overflow: hidden;
 }

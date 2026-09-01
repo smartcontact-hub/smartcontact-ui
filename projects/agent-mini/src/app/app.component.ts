@@ -198,7 +198,7 @@ interface NavAction {
     .key:hover { background-color: #1f2429; }
     .key:active { background-color: #fff; }
     .key:active .n { color: #000; }
-    .n { font-size: 2.34066vh; color: #fff; line-height: 1; }
+    .n { font-family: 'Roboto', sans-serif; font-size: 2.34066vh; color: #fff; line-height: 1; }
 
     .spacer { flex: 1; }
 
@@ -288,7 +288,7 @@ interface NavAction {
       overflow: hidden;
     }
     .status .label {
-      font-family: 'Open Sans', sans-serif;
+      font-family: 'Open Sans Semibold', 'Open Sans', sans-serif;
       font-weight: 600;
       font-size: 1.4629120879vh;
       letter-spacing: 0.4px;
@@ -309,8 +309,8 @@ interface NavAction {
       display: flex;
       align-items: center;
       justify-content: center;
-      font-family: 'Open Sans', sans-serif;
-      font-weight: 700;
+      font-family: 'Open Sans Semibold', 'Open Sans', sans-serif;
+      font-weight: 600;
       font-size: 1.5vh;
     }
   `,
