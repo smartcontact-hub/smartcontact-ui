@@ -1,0 +1,19 @@
+/* Agent Mini — estilos globales. Ventana completa, oscuro (#333A41 como el cuerpo del
+   Comunicador). Fuentes: Roboto (número) y Open Sans (resto), como la app real. */
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+html,
+body {
+  height: 100%;
+}
+
+body {
+  background: #333a41;
+  color: #fff;
+  font-family: 'Roboto', 'Open Sans', 'Helvetica Neue', Arial, sans-serif;
+  overflow: hidden;
+}
