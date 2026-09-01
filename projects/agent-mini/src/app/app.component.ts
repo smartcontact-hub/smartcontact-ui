@@ -185,7 +185,7 @@ interface NavAction {
         >
           <span class="label">{{ state.status().label }}</span>
         </button>
-        <div class="agent-info" title="Ajustes"><span class="avatar">SC</span></div>
+        <div class="agent-info"><span class="avatar">SC</span></div>
       </div>
 
       <!-- Panel de Estados (el desplegable de la barra inferior). Sube como hoja desde
@@ -556,7 +556,8 @@ interface NavAction {
     .status.no-available { background: #f75454; }
     .status.no-available:hover { background: #f98686; }
     .status.administrative { background: #930f0f; color: #fff; }
-    .agent-info { display: flex; align-items: center; cursor: pointer; }
+    /* El avatar es indicador de presencia, no botón: el mini (aed) no tiene Ajustes. */
+    .agent-info { display: flex; align-items: center; }
     .avatar {
       width: 3.9vh;
       height: 3.9vh;
