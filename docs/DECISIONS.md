@@ -37,6 +37,53 @@
 
 ---
 
+## DD-46 · 2026-09-01 — La tipografía también se GENERA; el fallback md baja a 20 y el bloque `css` se entrega al consumidor
+
+**Contexto.** De las diez familias de tokens, nueve se regeneraban solas desde el export y
+la tipografía era la única a mano. DD-13 estableció (y sigue siendo cierto) que *PrimeNG*
+no modela la tipografía y que la letra se aplica a nivel documento; de ahí se derivó, sin
+decisión explícita, que nuestras capas `--sc-font-size-*` / `--sc-line-height-*` también se
+escribieran a mano. Son dos cosas distintas, y confundirlas costó caro: el Kit SÍ trae
+`primitive.typography.*`, así que se podía generar desde el primer día.
+
+El precio se cobró esta semana. El drift del line-height md (21 vs 20) vivió semanas en
+producción, y el único gate que vigilaba la tipografía —`tokens:type-parity`— llevaba ciego
+otro tanto: el Kit renombró las hojas a `primitive.typography.*`, el regex dejó de casar,
+y el gate imprimía «✓ 0/0 · al día». Verde por VACÍO. La única familia a mano era también
+la única con un vigilante que podía quedarse mudo sin que nadie lo notara.
+
+**Decisión.**
+1. Nueva zona `@sc-gen:typography` en `01-primitive.css`. Diez zonas en cinco ficheros.
+   Los pasos que el Kit no trae (snaps del DS; el naming por step es API pública) se derivan
+   del vecino, con el mapa explícito y testeado en `token-gen.mjs` en vez de repetido en CSS.
+2. `type-parity` deja de ser el vigilante y pasa a ser un no-op demostrable, como
+   `tokens:cmp-rewire` con el color. Menos aparato y más garantía a la vez.
+3. El fallback del line-height md pasa de 21 a **20**. Solo entra si la variable no resuelve,
+   pero contradecía al token desde DD-39 y era el escenario exacto que reintroducía el bug.
+4. El bloque de tipografía se puede **emitir para el consumidor** del tema
+   (`npm run emit:consumer-typography`), leyéndolo de `sc-preset/css.ts` para que no se
+   pueda desincronizar. PrimeNG no modela `line-height` por componente y el plugin no
+   generará nunca esa regla: sin ella, quien instale el tema tiene los valores pero no los
+   aplica — que es justo lo que dejó chip/tag/toast/opciones heredando el 1.5 del documento.
+
+**Descartadas.**
+- *Dejar la tipografía a mano y confiar en el gate.* Es lo que había, y falló por partida
+  doble: el gate se quedó mudo y el drift entró igual.
+- *Mantener el fallback en 21 «por compatibilidad».* Un fallback que contradice al token no
+  es compatibilidad, es una trampa esperando a que la variable no resuelva.
+- *Duplicar la lista de selectores en un CSS estático para el consumidor.* Se desincroniza
+  el día que añadamos un componente. Se lee de `css.ts` o no se hace.
+
+**Consecuencias.**
+- Cambiar la letra en Figma llega al código sin manos, como el radius. Verificado: subiendo
+  line-height 200 de 20 a 22, el código lo recoge y el snap 220 lo sigue solo.
+- Un snap cuyo paso del Kit desaparezca ya NO se omite en silencio: el generador para.
+- Queda un modo de fallo cerrado a conciencia: cualquier gate que pueda medir CERO cosas
+  debe ponerse rojo, no verde. `type-parity` ya lo hace.
+- Pendiente, del lado del consumidor: los cuatro selectores que aún le faltan a producción
+  (`.p-tag`, `.p-toast-detail`, `.p-select-option`, `.p-multiselect-option`) los cubre la
+  hoja emitida; falta acordar la entrega con su equipo.
+
 ## DD-45 · 2026-08-31 — El lienzo de la app pasa a BLANCO (`--sc-bg-canvas`); cierra el item pendiente de DD-34/DD-36
 
 **Contexto** · El "lienzo de página gris↔blanco" llevaba meses esperando decisión (lo nombran
