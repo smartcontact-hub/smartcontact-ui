@@ -86,8 +86,6 @@ interface NavAction {
             </div>
           </div>
 
-          <div class="spacer"></div>
-
           <!-- Selector de servicio (dropup del real; nombre cortado a 12) -->
           <div class="service">
             @if (svcOpen()) {
@@ -267,7 +265,7 @@ interface NavAction {
     .subtabs button:last-child { text-align: right; }
     .subtabs button.on { color: #fff; }
 
-    .dialpad { display: flex; flex-direction: column; width: 100%; }
+    .dialpad { position: relative; display: flex; flex-direction: column; width: 100%; height: 100%; }
 
     .keypad {
       display: flex;
@@ -336,10 +334,15 @@ interface NavAction {
     .key:active .n { color: #000; }
     .n { font-family: 'Roboto', sans-serif; font-size: 2.34066vh; color: #fff; line-height: 1; }
 
-    .spacer { flex: 1; }
-
-    /* Pastilla de servicio + dropup. */
-    .service { display: flex; justify-content: center; position: relative; }
+    /* Pastilla de servicio + dropup. Posicion real: top 58.698vh (medido en el censo). */
+    .service {
+      position: absolute;
+      left: 0;
+      right: 0;
+      top: 58.698vh;
+      display: flex;
+      justify-content: center;
+    }
     .svc {
       display: inline-flex;
       align-items: center;
@@ -399,8 +402,10 @@ interface NavAction {
     .svc-item:hover { opacity: 1; }
     .svc-item-num { color: #9d9fa3; font-size: 1.6vh; }
 
-    /* Botón llamar. */
-    .call { display: flex; justify-content: center; margin: 2vh 0 2.4vh; }
+    /* Botón llamar. En el dialpad va absoluto (top 64vh, como el real); en la vista
+       en llamada va en flujo al fondo de la columna. */
+    .call { display: flex; justify-content: center; margin: 0 0 2.4vh; }
+    .dialpad .call { position: absolute; left: 0; right: 0; top: 64vh; margin: 0; }
     .btn-call {
       display: flex;
       align-items: center;
