@@ -289,6 +289,26 @@
   }
 }
 
+/* Viewports estrechos (≤640px): la barra es una fila flex pensada para
+ * escritorio; sin regla de wrap, la miga, los botones proyectados y el
+ * avatar se solapan (fallo de reflow WCAG 1.4.10, medido a 320px — el
+ * texto "No hay cambios que guardar" se montaba sobre "Cancelar"). Dejamos
+ * que la fila envuelva y que slot/acciones no se anclen a la derecha, para
+ * que nada colisione. Un layout móvil completo de este shell de admin es
+ * una decisión de producto aparte; esto solo evita la colisión. */
+@media (max-width: 640px) {
+  .top-bar {
+    flex-wrap: wrap;
+    row-gap: var(--sc-spacing-0-5);
+  }
+
+  .top-bar__slot,
+  .top-bar__actions {
+    margin-left: 0;
+    flex-wrap: wrap;
+  }
+}
+
 @keyframes top-bar__menu-in {
   from {
     opacity: 0;

@@ -45,7 +45,7 @@
             [size]="40"
           />
           <div class="ficha__body">
-            <span class="ficha__name">{{ form().name }}</span>
+            <span class="ficha__name" [title]="form().name">{{ form().name }}</span>
             <span class="pill">{{ typeLabelKeys[form().type] | translate }}</span>
             @if (form().email) {
               <span class="ficha__ext">{{ form().email }}</span>

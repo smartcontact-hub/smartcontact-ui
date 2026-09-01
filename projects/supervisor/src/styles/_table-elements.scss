@@ -281,3 +281,20 @@
     }
   }
 }
+
+/* ------------------------------------------------------------------ *
+ * table__td-text — celda de texto de una línea.
+ *
+ * `table.table` es `table-layout: fixed`, así que un valor largo (un
+ * email de 28+ caracteres) desborda su celda e invade la columna de al
+ * lado (medido en /admin/usuarios: el email se pegaba al identificador).
+ * Se recorta al ancho de la celda con puntos suspensivos; la plantilla
+ * añade `[title]` en los valores que deben seguir siendo recuperables
+ * (email), según la regla de truncado: esconder, no perder.
+ * ------------------------------------------------------------------ */
+.table__td-text {
+  display: block;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}

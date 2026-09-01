@@ -207,6 +207,17 @@ table.table {
   justify-content: center;
 }
 
+/* En móvil el suelo de 144px (anti-salto de escritorio) fuerza el solape: el
+ * botón no cabe junto a la miga y el avatar. A ≤640px se suelta para que la
+ * barra pueda reflowar sin colisión (ver top-bar.component.scss). El botón se
+ * proyecta desde la página, por eso su override vive aquí (global), no en el
+ * scope del top-bar. */
+@media (max-width: 640px) {
+  .top-bar__actions button {
+    min-width: 0;
+  }
+}
+
 /*
  * Button line-height (Figma button: `leading-normal`). Sin esto los `.p-button`
  * heredan el `line-height: 1.5` del reset (`_reset.scss`) → la altura se infla
