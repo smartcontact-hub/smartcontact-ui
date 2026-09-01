@@ -492,7 +492,7 @@ color breadcrumb). Mensaje de diseño enviado. Editar Figma **no mueve la web**.
 
 | Qué | Estado |
 |---|---|
-| **Borrar el proyecto Cloudflare `sc-demo`** | `sc-demo.pages.dev` → **HTTP 200** (re-medido 2026-08-25): sigue vivo sirviendo contenido viejo. Un borrado permanente no lo ejecuto yo |
+| ~~**Borrar el proyecto Cloudflare `sc-demo`**~~ → **HECHO por Rafa (2026-09-01)** | Proyecto borrado de Cloudflare. Su check «Cloudflare Pages: sc-demo» todavía sale en rojo en el último commit de `design-tokens-sync`: es un snapshot HISTÓRICO de cuando existía (no vuelve a correr sobre un commit viejo), se limpiará solo en el próximo push del bot de tokens. |
 | **`org-profile.md`** | `smartcontact-hub/.github` → `profile/README.md` → **HTTP 404** (re-medido 2026-08-25): no está pegado. El borrador sigue en `docs/org-profile.md` |
 | **Un primary dark conforme, pero desde el KIT** | Ya NO es el 3,01:1 — lo resolvió **DD-40** subiendo la rampa un paso y **divergiendo** del Kit. Lo que queda es pedirle al Kit su primary dark conforme (luminancia relativa entre **0,136 y 0,183**, al centro de la banda); el día que llegue, se revierte devolviendo tres filas de `color-map.mjs` a `enforce` |
 | **Lienzo de página gris↔blanco** | Figma `13920:4298`. **DESBLOQUEADO** por `bcab818` (2026-08-25): nace `--sc-bg-canvas` (blanco en claro / slate-950 en oscuro), el token que faltaba, SIN tocar `--sc-bg-default` (que hace doble trabajo: suelo + relleno de campos, 32 ficheros). El bug del rail de AED que describía DD-36 ya no aplica. Lo que queda es SOLO la decisión de diseño: ¿el lienzo de contenido pasa a blanco? El token para hacerlo limpio ya está; el valor pintado hoy no ha cambiado |
