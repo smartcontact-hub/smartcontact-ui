@@ -31,7 +31,7 @@ lo que hace que te la creas cuando te toca. Lee el índice siempre; el cuerpo, c
 
 | # | Si estás a punto de… | → |
 |---|---|---|
-| **1** | concluir que algo NO funciona, **o que ya lo arreglaste tocando una opción** | demuestra que tu estímulo —o tu opción— LLEGÓ, y no extiendas el negativo más allá de lo que mediste |
+| **1** | concluir que algo NO funciona, **o que ya lo arreglaste tocando una opción** | demuestra que tu estímulo —o tu opción— LLEGÓ **y que es el que el sistema produce de verdad, no uno que inyectaste tú**; no extiendas el negativo más allá de lo que mediste |
 | **2** | creerte un hallazgo (o un verde) de una sonda **tuya**, incluido un TEST | valida el instrumento con un caso conocido; pruébalo en todos sus ejes; valida el CANAL (rojo y verde pueden venir de otro sitio); y mira si tu **doble contesta la pregunta que hace el código** — si lo hace, el test se mide a sí mismo |
 | **4** | arreglar un valor sustituyéndolo por otro token | mide el token de DESTINO antes (fondo y texto, misma familia) |
 | **5** | dudar entre tu código y tu medición | lo rancio es la medición: build, server, HMR, animación, **el repo bajo tus pies**, **otra instancia (un deploy)**, la máquina ahogada… o atribución. Y si el test miraba un TRANSITORIO, la carga es el disparador, no la causa |
@@ -40,7 +40,7 @@ lo que hace que te la creas cuando te toca. Lee el índice siempre; el cuerpo, c
 | **8** | proponer una segunda corrección tras fallar la primera | para: la siguiente acción es una MEDICIÓN que localice la causa |
 | **10** | declarar algo bloqueado, o deducir un dato a ojo | comprueba si el sistema ya te lo sirve (DOM oculto, i18n, hoja de estilos) |
 | **11** | lanzar una edición masiva por shell | pega la verificación de outcome en el MISMO comando (zsh no hace word-splitting) |
-| **12** | dar una cifra de un grep, ejecutar un `sed`, **o volcar un fichero de config** | pregúntate qué entra en el resultado; si hay un ejecutor que sabe el número, el número es el suyo; y **proyecta o enmascara antes de imprimir un `env`** |
+| **12** | dar una cifra de un grep **o de un `querySelectorAll`**, ejecutar un `sed`, **o volcar un fichero de config** | pregúntate qué entra en el resultado; si hay un ejecutor que sabe el número, el número es el suyo; y **proyecta o enmascara antes de imprimir un `env`** |
 | **14** | responder a un "hazlo todo", o escribir "esperando a X" | haz lo verificable de punta a punta y aparca lo demás DOCUMENTADO — pero por no poder verificarlo, **nunca por parecido con otro aparcado** |
 | **15** | decidir algo de marca/producto | preséntalo con recomendación y evidencia — y no exageres el encuadre de riesgo |
 | **16** | empezar un refactor transversal | monta antes la red que lo verifica, aunque parezca rodeo |
@@ -59,6 +59,19 @@ lo que hace que te la creas cuando te toca. Lee el índice siempre; el cuerpo, c
    con `key`/`code` **vacíos**, y sin un clic previo en la página ni llegan. Tuve que
    retractarme. Instrumenta con un `addEventListener` de una línea; si no puedes probarlo, el
    veredicto es **"sin verificar"**, nunca "roto".
+
+   *Corolario (s31)*: **y no basta con que tu estímulo llegue: tiene que ser el que el sistema
+   produce de verdad.** Si la causa la inyectas tú, lo que pruebas es «SI pasara X, rompería»,
+   no «X pasa» — y la que hay que medir es X. Vi `font.weight.regular: "400px"` en el export del
+   tema, inyecté `600px` en el `:root` del deploy del dev, vi caer el peso de 600 a 400 y lo
+   declaré un fallo que le iba a romper la app; casi va a Jira. Falso: PrimeNG normaliza la
+   unidad y la variable nunca llega con `px`. Y **el dato que lo desmentía ya estaba en mi propia
+   conversación** — dos horas antes había medido `--p-typography-font-weight-semibold: 600` en
+   esa misma web. Comprobarlo eran 30 segundos (todos los exports traen el `px` desde el primero
+   y la web siempre mostró el valor limpio → algo lo limpia). **Disparador**: tu evidencia sale
+   de algo que inyectaste, mockeaste o forzaste tú. **Acción**: mide que la condición ocurre en
+   el sistema real, y relee antes tus propias mediciones de la sesión; si una ya lo desmiente, te
+   ahorras la prueba entera.
 
    *Corolario (s11)*: **dos validadores que comparten el modo de fallo no se corroboran.** Creí
    confirmar aquel negativo porque un `dispatchEvent` sintético también "fallaba" — pero ninguno
@@ -567,6 +580,16 @@ lo que hace que te la creas cuando te toca. Lee el índice siempre; el cuerpo, c
       clasificar**; un docstring habla de la API, no la declara. *Y los GATES lo leen igual (s29)*:
       un «1px» en un comentario de `extend.ts` tumbó `audit:theme-scale` (prohíbe px en el preset);
       no escribas «Npx» ni en un comentario de un fichero gateado.
+    - *Contando de más, pero en el DOM (s31)*: la regla decía «grep» y por eso no disparó con un
+      `querySelectorAll`. Di «probado sobre 2.820 elementos» de un `[class*="p-"]`, que caza
+      cualquier clase que **contenga** `p-` (incluida `app-header` de la propia app). Iba camino
+      de un comentario de Jira. El número honesto era **271 componentes** (`.p-component`), y sus
+      piezas internas eran 3.460. **Un selector CSS es un grep sobre el DOM: `[class*=…]` es un
+      comodín por los dos lados.** Antes de dar una cifra del navegador, pregunta qué entra:
+      `.p-component` cuenta componentes, `[class*="p-"]` cuenta ruido, y las **piezas internas**
+      de un componente no son componentes. Y en un showcase el mismo componente aparece decenas
+      de veces (41 botones en la página de Button), así que «N elementos» no significa «N cosas
+      distintas»: si el número va a un mensaje, di **qué** cuenta o no lo des.
     - *Contando de menos (s18)*: `grep 'test('` me dio 39 tests en el supervisor; el runner
       dice **108**. Mis tests viven dentro de bucles `for`, así que el grep cuenta
       DECLARACIONES y el runner cuenta INSTANCIAS. **Cuando exista un ejecutor que sepa el
