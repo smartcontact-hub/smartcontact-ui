@@ -16,6 +16,13 @@ interface Mapping {
   readonly example: string;
 }
 
+/** Fila de la tabla de tamaño: qué es en Figma, qué es en el navegador y cómo distinguirlo. */
+interface Sizing {
+  readonly figma: string;
+  readonly css: string;
+  readonly how: string;
+}
+
 /** Componente del catálogo, con lo que mide hoy en producción. */
 interface Piece {
   readonly name: string;
@@ -71,19 +78,68 @@ export class ValidarComponent {
     { figma: 'Una variable', css: 'var(--p-…)', example: '--p-chip-background' },
   ];
 
+  protected readonly sizing: readonly Sizing[] = [
+    {
+      figma: 'W · H con un número',
+      css: 'width · height',
+      how: 'El valor sale en píxeles y no cambia aunque cambie el contenido.',
+    },
+    {
+      figma: 'Hug contents',
+      css: 'width: auto · fit-content',
+      how: 'La caja mide lo que mide su contenido. Si alargas el texto, crece.',
+    },
+    {
+      figma: 'Fill container',
+      css: 'flex: 1 · width: 100%',
+      how: 'La caja ocupa todo el hueco del padre. Si estrechas la ventana, encoge con ella.',
+    },
+    {
+      figma: 'Min width / Min height',
+      css: 'min-width · min-height',
+      how: 'Suelo: por debajo de ese valor ya no encoge, aunque quepa.',
+    },
+    {
+      figma: 'Max width / Max height',
+      css: 'max-width · max-height',
+      how: 'Techo: por encima de ese valor ya no crece, y el contenido se parte o se recorta.',
+    },
+    {
+      figma: 'Auto layout horizontal',
+      css: 'display: flex · flex-direction: row',
+      how: 'Las piezas se ponen en fila.',
+    },
+    {
+      figma: 'Auto layout vertical',
+      css: 'display: flex · flex-direction: column',
+      how: 'Las piezas se apilan.',
+    },
+    {
+      figma: 'Espacio entre elementos',
+      css: 'justify-content: space-between',
+      how: 'El hueco se reparte entre las piezas, no lo fija un gap.',
+    },
+    {
+      figma: 'Alineación vertical al centro',
+      css: 'align-items: center',
+      how: 'Las piezas quedan centradas respecto a la más alta.',
+    },
+  ];
+
   protected readonly pieces: readonly Piece[] = [
     { name: 'Chip', selector: '.p-chip', today: '14 / 20', ok: true },
-    { name: 'Tag', selector: '.p-tag', today: '12 / 24', ok: false },
+    { name: 'Tag', selector: '.p-tag', today: '12 / 18', ok: true },
     { name: 'Botón', selector: '.p-button', today: '14 / 20', ok: true },
     { name: 'Input', selector: '.p-inputtext', today: '14 / 20', ok: true },
     { name: 'Select · texto', selector: '.p-select-label', today: '14 / 20', ok: true },
     { name: 'MultiSelect · texto', selector: '.p-multiselect-label', today: '14 / 20', ok: true },
-    { name: 'Breadcrumb · texto', selector: '.p-breadcrumb-item-link', today: '14 / 14', ok: true },
+    { name: 'Breadcrumb · texto', selector: '.p-breadcrumb-item-label', today: '14 / 20', ok: true },
     { name: 'Toast · título', selector: '.p-toast-summary', today: '14 / 20', ok: true },
-    { name: 'Toast · detalle', selector: '.p-toast-detail', today: '12 / 20', ok: false },
+    { name: 'Toast · detalle', selector: '.p-toast-detail', today: '12 / 18', ok: true },
     { name: 'Avatar', selector: '.p-avatar', today: '28 × 28', ok: null },
     { name: 'Badge', selector: '.p-badge', today: '8.75 / 24', ok: null },
-    { name: 'Tabla', selector: '.p-datatable', today: '16 / 24', ok: null },
+    { name: 'Tabla · cabecera', selector: '.p-datatable-sortable-column', today: '16 / 20', ok: true },
+    { name: 'Card · título', selector: '.p-card-title', today: '18 / 24', ok: true },
   ];
 
   protected readonly chipExample: readonly { readonly label: string; readonly value: string }[] = [
@@ -104,7 +160,11 @@ export class ValidarComponent {
     '  letra: s.fontSize, altoLinea: s.lineHeight, grosor: s.fontWeight,',
     '  colorTexto: s.color, fondo: s.backgroundColor,',
     '  borde: s.border, esquinas: s.borderRadius,',
-    '  padding: s.padding, gap: s.gap, sombra: s.boxShadow',
+    '  padding: s.padding, gap: s.gap, sombra: s.boxShadow,',
+    '  ancho: s.width, alto: s.height,',
+    '  anchoMin: s.minWidth, anchoMax: s.maxWidth,',
+    '  altoMin: s.minHeight, altoMax: s.maxHeight,',
+    "  autolayout: s.display + ' ' + s.flexDirection + ' ' + s.alignItems",
     '})',
   ].join('\n');
 

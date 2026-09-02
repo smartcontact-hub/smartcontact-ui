@@ -77,6 +77,34 @@
       </div>
     </section>
 
+    <section aria-labelledby="tam-title">
+      <h2 id="tam-title" class="section-title">El tamaño: alto, ancho y cómo se comporta</h2>
+      <p class="section-lead">
+        Un número de ancho no dice lo mismo que «Hug» o «Fill». Lo que hay que comprobar no es
+        solo cuánto mide, sino <strong>por qué mide eso</strong>: si el tamaño está escrito, si lo
+        decide el contenido o si lo decide el hueco disponible.
+      </p>
+      <div class="table" role="table">
+        <div class="table__row table__row--head" role="row">
+          <span role="columnheader">En Figma</span>
+          <span role="columnheader">En el navegador</span>
+          <span role="columnheader">Cómo lo distingues</span>
+        </div>
+        @for (z of sizing; track z.figma) {
+          <div class="table__row" role="row">
+            <span class="table__figma" role="cell">{{ z.figma }}</span>
+            <code class="table__css" role="cell">{{ z.css }}</code>
+            <span class="table__ex" role="cell">{{ z.how }}</span>
+          </div>
+        }
+      </div>
+      <p class="section-lead">
+        La prueba que lo resuelve sin mirar código: <strong>estrecha la ventana</strong>. Si la
+        pieza encoge, es Fill. Si no se mueve, es un tamaño fijo. Y si deja de encoger a mitad de
+        camino, ahí tienes un <code>min-width</code>.
+      </p>
+    </section>
+
     <!-- ── pasos ── -->
     <section aria-labelledby="pasos-title">
       <h2 id="pasos-title" class="section-title">Abrirlo, en cuatro pasos</h2>
