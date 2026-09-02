@@ -162,13 +162,21 @@ propósito.
    `node_modules`. No es urgente y **no se ha mencionado fuera**.
 6. **Cloudflare:** se activó temporalmente «Restrict previews» en el proyecto de la doc durante la
    evaluación de Access y se ha pedido revertirlo. **Si algún preview pide login, viene de ahí.**
-7. **Los hooks de sesión (`compact-card`, `stop-guard`) solo se han ejercitado con JSON fabricado
-   por stdin, no en una compactación ni un cierre reales** (DD-47). Los dos fallan ABIERTOS, así
-   que el riesgo es que no avisen, no que estorben. La primera sesión que compacte o cierre tras
-   un push es su primera prueba de verdad: si `compact-card` no imprime nada al compactar, mira
-   `.git/sc-hooks/` y el `reason` que le llega. `stop-guard` ya dio un aviso correcto-pero-molesto
-   tras un push ABORTADO (no distingue el push que el `pre-push` cortó); se aceptó a propósito,
-   cuesta un `ci:verdict`, y arreglarlo pide parsear los `tool_result` del transcript.
+7. **`compact-card` VERIFICADO en sesiones reales el 2026-09-02, en tres tramos** (antes decía
+   aquí que solo se había probado con JSON fabricado; ya no es cierto). (a) El harness lo invoca
+   de verdad: `.git/sc-hooks/` acumula **11 ficheros con UUID de sesión reales** escritos entre
+   las 09:09 y las 18:00, o sea que el ramal de arranque corre solo en cada sesión de este repo.
+   (b) El ramal de compactación, con el sha de arranque REAL de otra sesión (`7d343a9`) y deriva
+   REAL en `origin/main`, imprimió el aviso correcto y **filtró bien**: nombró `2a6bc9c` (toca el
+   hand-off) y descartó los otros tres commits, que no tocan guía. (c) La salida de un hook de
+   `SessionStart` **llega al contexto del modelo**: con un hook temporal en `settings.local.json`
+   (ignorado por git), una sesión `claude -p` real devolvió el marcador literal. Lo único no
+   probado en vivo es que el harness mande `reason:"compact"` en una compactación de verdad; está
+   documentado y el matcher ya lo cubre. Si algún día no imprime, mira `.git/sc-hooks/` y el
+   `reason` que llega. `stop-guard` sigue sin probarse en un cierre ajeno: dio un aviso
+   correcto-pero-molesto tras un push ABORTADO (no distingue el que el `pre-push` cortó), se
+   aceptó a propósito porque cuesta un `ci:verdict`, y arreglarlo pide parsear los `tool_result`.
+   Los dos fallan ABIERTOS: el riesgo es que no avisen, no que estorben.
 8. **Memoria podada de 65 a 40 ficheros**; los 25 retirados están en
    `~/.claude/projects/-Users-rafareses-dev-smartcontact-ui/memory-archive-2026-09-02/`, no
    borrados. Si echas en falta un hecho del proyecto, míralo ahí antes de reescribirlo.
