@@ -21,7 +21,7 @@ import { estadoPreflight } from '../preflight-mark.mjs';
 
 export const BYPASS = /#\s*sc:ok\b/;
 
-const GATES = /^(npm run (?:-[-a-z]+ )*(verify|preflight(:fast|:scope)?|e2e(:[a-z-]+)?|test:[a-z-]+|lint|typecheck|docs:[a-z-]+|audit:[a-z-]+|tokens:[a-z-]+|guard:[a-z-]+|ci:verdict)|npx playwright test|gh run (watch|view))\b/;
+const GATES = /^(npm run (?:-[-a-z]+ )*(verify|preflight(:fast|:scope)?|e2e(:[a-z-]+)?|test:[a-z-]+|lint|typecheck|docs:[a-z-]+|audit:[a-z-]+|tokens:[a-z-]+|guard:[a-z-]+|ci:verdict)|npx playwright test|node --test|gh run (watch|view))\b/;
 
 /** Quita los CUERPOS de heredoc (`<<'EOF' … EOF`): son datos, no comandos. El segundo falso
  *  positivo del hook fue un script Python embebido que decía `npm run lint` en una línea. */

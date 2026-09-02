@@ -30,7 +30,7 @@
 | **6** | creerte un test NUEVO — se ponga rojo **o pase a la primera** | sospecha del test primero: ¿mide la magnitud? ¿el selector casa? ¿reintenta? ¿espera al estado final? Y para probar el arreglo de una CARRERA, hazla determinista en vez de correrla con carga |
 | **7** | hacer `git push`, **o lanzar la cadena de 8 pasos** | `preflight` (o `:fast`/`:scope`) UNA vez sobre el árbol final —"final" = ya no vas a escribir nada más, ni un `.md`—; **`verify` NO es ese gate: se salta el `e2e smoke` y los builds AOT de las apps**. **+ `guard:lockfile` si tocaste el lock**. Confirma el verde LEYENDO el CI: `npm run ci:verdict` |
 | **8** | proponer una segunda corrección tras fallar la primera | para: la siguiente acción es una MEDICIÓN que localice la causa |
-| **10** | declarar algo bloqueado, o deducir un dato a ojo | comprueba si el sistema ya te lo sirve (DOM oculto, i18n, hoja de estilos) |
+| **10** | declarar algo bloqueado, deducir un dato a ojo, **o diseñar un mecanismo nuevo** | comprueba qué te sirve ya el sistema (DOM oculto, i18n, hoja de estilos) y **qué lo vigila ya** (`.githooks/`, `.claude/settings.json`, `scripts/`) |
 | **11** | lanzar una edición masiva por shell | pega la verificación de outcome en el MISMO comando (zsh no hace word-splitting) |
 | **12** | dar una cifra de un grep **o de un `querySelectorAll`**, ejecutar un `sed`, **o volcar un fichero de config** | pregúntate qué entra en el resultado; si hay un ejecutor que sabe el número, el número es el suyo; y **proyecta o enmascara antes de imprimir un `env`** |
 | **14** | responder a un "hazlo todo", o escribir "esperando a X" | haz lo verificable de punta a punta y aparca lo demás DOCUMENTADO — pero por no poder verificarlo, **nunca por parecido con otro aparcado** |
@@ -124,12 +124,15 @@
 
 ## Alcance y ediciones
 
-10. **Vas a declarar algo BLOQUEADO o a deducir un dato a ojo → gasta una llamada en ver si el
-    sistema ya te lo sirve.** DOM oculto (los overlays viven en el árbol desde la carga), ficheros
-    `i18n`, hoja de estilos, lista de componentes. Y ante "¿por qué el pipeline no trae X?", grepea
-    `docs/DECISIONS.md` antes de hipotetizar. La versión servida es exacta; la tuya es una copia.
-    Evidencia: s26 cuatro modales "imposibles" medidos enteros sin pulsar nada, y 1.449 claves de
-    `en.json` que corrigieron dos transcripciones a ojo · DD-13 ya explicaba la tipografía.
+10. **Vas a declarar algo BLOQUEADO, a deducir un dato a ojo, o a DISEÑAR un mecanismo nuevo →
+    gasta una llamada en ver qué te sirve ya el sistema.** DOM oculto (los overlays viven en el
+    árbol desde la carga), ficheros `i18n`, hoja de estilos, `docs/DECISIONS.md` antes de
+    hipotetizar. Y si lo que vas a montar es un GUARDIÁN, la pregunta es "¿qué vigila esto hoy?":
+    `.githooks/`, `.claude/settings.json`, `scripts/`, `package.json`. Un diagnóstico que enumera
+    los ficheros que se LEEN y no los mecanismos que se EJECUTAN mide media realidad.
+    Evidencia: s26 cuatro modales "imposibles" medidos sin pulsar nada, y 1.449 claves de `en.json`
+    · s41 propuse un hook de pre-push con `.githooks/pre-push` ya existiendo desde s39: lo descubrí
+    cuando mi propio push repitió 10 min de cadena y agotó el timeout.
 
 11. **Toda edición masiva por shell lleva su verificación de outcome PEGADA en el mismo comando.**
     ⚙️ El hook deniega `for f in $VAR` (zsh no parte por palabras: el bucle corre una vez).

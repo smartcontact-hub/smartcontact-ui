@@ -35,6 +35,7 @@ test('#7 exit enmascarado: algo detrás del gate → deny; gate al final o pipef
   deny('npm run docs:coherence | tail -2', verde, /exit/);
   deny('npm run -s ci:verdict main; echo "(exit $?)"', verde, /exit/); // con flags: se coló en s41 hasta que lo usé yo
   deny('npm run --silent docs:guard 2>&1 | tail -1', verde, /exit/);
+  deny('node --test scripts/__tests__/x.test.mjs | grep pass', verde, /exit/); // el runner enmascara igual (s41)
   allow('npm run verify');
   allow('npm run verify 2>&1 > /tmp/log');
   allow('git status && npm run docs:guard && npm run docs:coherence');
