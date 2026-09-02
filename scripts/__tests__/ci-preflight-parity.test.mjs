@@ -145,3 +145,12 @@ test("el repo REAL: preflight:fast corre lo mismo que ci.yml", () => {
     "preflight:fast se saltó un paso que el CI sí corre"
   );
 });
+
+test('la marca de preflight (solo local) no cuenta como paso extra, pero otro paso local sí', () => {
+  const base = realPkg.scripts.preflight;
+  assert.ok(checkParity(realYml, base).ok);
+  const conMarcaDoble = base + ' && node scripts/preflight-mark.mjs preflight:fast';
+  assert.ok(checkParity(realYml, conMarcaDoble).ok, 'preflight-mark no es un gate: se filtra');
+  const conGateLocal = base + ' && npm run typecheck';
+  assert.deepEqual(checkParity(realYml, conGateLocal).extra, ['npm run typecheck'], 'un gate local de más sí es drift');
+});

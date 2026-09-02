@@ -50,6 +50,14 @@ export const LOCAL_SUBSTITUTIONS = {
 const INFRA = [/^npx playwright install\b/];
 const isInfra = (cmd) => INFRA.some((re) => re.test(cmd));
 
+// SOLO LOCAL, y no es un gate: el último paso de `preflight` escribe la marca `.preflight-ok`
+// (`scripts/preflight-mark.mjs`) que el hook de push exige. El CI no la necesita (él ES el
+// oráculo). Se filtra del lado de preflight igual que la infra del lado del CI. Si alguien cuela
+// aquí un paso que SÍ verifica algo, deja de haber paridad de verdad: por eso la lista es de un
+// elemento y está justificada.
+const LOCAL_ONLY = [/^node scripts\/preflight-mark\.mjs\b/];
+const isLocalOnly = (cmd) => LOCAL_ONLY.some((re) => re.test(cmd));
+
 // SETUP: preparar el terreno, no un gate propio. `npm run build` construye el DS a
 // `dist/`, que las apps y las suites e2e consumen. En preflight ese build lo hace
 // `verify` (su primer paso real), así que NO aparece como comando suelto; en el
@@ -91,7 +99,7 @@ export function extractPreflightCommands(preflightScript) {
   return preflightScript
     .split('&&')
     .map(norm)
-    .filter((c) => c && !isIgnored(c));
+    .filter((c) => c && !isIgnored(c) && !isLocalOnly(c));
 }
 
 // Lo que preflight DEBERÍA correr = los pasos del CI con la sustitución local aplicada.

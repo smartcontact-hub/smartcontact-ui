@@ -68,3 +68,6 @@ Thumbs.db
 # Son material de una sesión, no entregable: pesan MB y no aportan histórico.
 # `/tmp` de arriba no las cubre — el nombre empieza por punto.
 /.tmp-captures/
+
+# Marca de "preflight en verde sobre este árbol" (scripts/preflight-mark.mjs); la lee el hook al pushear.
+.preflight-ok

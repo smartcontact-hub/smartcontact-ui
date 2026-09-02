@@ -74,6 +74,7 @@ try {
   });
   paso("npm run e2e:cuscare", { SC_CUSCARE_URL: "http://localhost:4515" });
 
+  paso("node scripts/preflight-mark.mjs preflight:fast");
   console.log(
     "\n\x1b[32m✓ preflight:fast en verde — mismos gates, sin el ng serve.\x1b[0m"
   );

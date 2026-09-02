@@ -29,6 +29,9 @@
  *      confunde: se copia. Alcance ampliado a los README de `projects/**`, porque el primer
  *      token muerto que se le escapó vivía justo en el "canónico técnico" de tokens.
  *   G. El índice de disparadores de `LEARNINGS.md` cuadra 1:1 con sus reglas numeradas.
+ *   K. `LEARNINGS.md` conserva su FORMA (`scripts/learnings-shape.mjs`): ≤200 líneas, ≤20 reglas,
+ *      ≤12 líneas por regla con su `Evidencia:`, y sin sub-entradas `*Corolario*`. El tope fue prosa
+ *      50 commits y el fichero se multiplicó por seis; ahora falla aquí.
  *   H. Un doc que declara "caduca el YYYY-MM-DD" y ya venció → hay que decidir, no ignorarlo.
  *   I. `DECISIONS.md` cumple el "newest first" que promete su propia cabecera.
  *   J. "el CI son N pasos" cuadra con los pasos con `name:` de `ci.yml`. Esa cifra vive en 5
@@ -41,6 +44,7 @@
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { resolve } from 'node:path';
+import { revisarLearnings } from './learnings-shape.mjs';
 
 const root = resolve(import.meta.dirname, '..');
 const rel = (p) => p.replace(`${root}/`, '');
@@ -259,6 +263,14 @@ for (const { path, lines } of files) {
       fail(
         `LEARNINGS.md — el índice lista la regla ${n}, que ya no existe en el cuerpo (¿fundida en otra?). Quita su fila.`,
       );
+}
+
+// ── CHECK K — LEARNINGS conserva su forma (tope de reglas y de líneas, sin sub-entradas) ──
+// El check G garantiza que índice y cuerpo cuadran; este garantiza que el cuerpo no crece por
+// dentro. Los límites y los motivos viven en `scripts/learnings-shape.mjs` (con sus tests rojos).
+{
+  const learnings = readFileSync(resolve(root, 'LEARNINGS.md'), 'utf8');
+  for (const p of revisarLearnings(learnings)) fail(`LEARNINGS.md — ${p}`);
 }
 
 // ── CHECK E — una CIFRA de componentes citada en prosa ≠ el manifiesto generado ────
