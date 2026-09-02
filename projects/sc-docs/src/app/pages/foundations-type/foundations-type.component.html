@@ -4,12 +4,26 @@
     <p class="hero__eyebrow">Fundamentos</p>
     <h1 class="hero__title">Tipografía</h1>
     <p class="hero__lead">
-      Escala <strong>redonda</strong> en <strong>rem</strong> (root 16),
-      <strong>step-named</strong> (mismo idioma que el Kit Pro y los devs) y
-      <strong>desacoplada</strong> de la escala de espaciado. 8 tamaños + 7 line-heights.
+      Escala <strong>redonda</strong> en <strong>rem</strong> sobre root <strong>16</strong>
+      (<code>font-size-300</code> = 16px = 1rem exacto), <strong>step-named</strong> (mismo idioma
+      que el Kit Pro y los devs) y <strong>desacoplada</strong> de la escala de espaciado.
+      8 tamaños + 7 line-heights.
     </p>
   </div>
 </header>
+
+<!-- El 14 contra el 16: la confusión que más se repite al leer esta página. La rampa se autora en
+     px de diseño y se compila a rem sobre root 16; el 14 que se ve por todo el sistema es la base
+     de ESPACIADO y el cuerpo por defecto, no el root. -->
+<p class="note">
+  <strong>El 14 y el 16 no son lo mismo.</strong> El DS no pisa el root del navegador
+  (<code>html</code> se queda en <code>100%</code>), así que <code>1rem</code> = 16px y la rampa
+  cae en píxeles redondos. El <strong>14</strong> que se ve por todo el sistema es el otro eje: es
+  la base de la <a routerLink="/fundamentos/escala-color">escala de espaciado</a>
+  (<code>--sc-scale-1</code> = 14px, el sufijo es el multiplicador) y el tamaño del
+  <strong>cuerpo</strong> por defecto (<code>font-size-200</code>). Bajar el root a 14 encogería
+  los dos ejes a la vez.
+</p>
 
 <!-- Escala de tamaños: la muestra usa el token real (var) → refleja producción -->
 <ul class="scale">
@@ -25,13 +39,26 @@
 </ul>
 
 <!-- Line-heights -->
-<section class="lh">
-  <h2 class="lh__title">Line-heights</h2>
-  <ul class="lh__list">
+<section class="ramp">
+  <h2 class="ramp__title">Line-heights</h2>
+  <ul class="ramp__list">
     @for (l of lineHeights; track l.step) {
-      <li class="lh__row">
-        <code class="lh__token">line-height-{{ l.step }}</code>
-        <span class="lh__val">{{ l.px }}px · {{ l.rem }}rem</span>
+      <li class="ramp__row">
+        <code class="ramp__token">line-height-{{ l.step }}</code>
+        <span class="ramp__val">{{ l.px }}px · {{ l.rem }}rem</span>
+      </li>
+    }
+  </ul>
+</section>
+
+<!-- Pesos: los CUATRO que el sistema declara y usa hoy (medido en los estilos del DS) -->
+<section class="ramp">
+  <h2 class="ramp__title">Pesos</h2>
+  <ul class="ramp__list">
+    @for (w of weights; track w.name) {
+      <li class="ramp__row">
+        <code class="ramp__token">font-weight-{{ w.key }}</code>
+        <span class="ramp__val" [style.font-weight]="w.value">{{ w.name }} · {{ w.value }}</span>
       </li>
     }
   </ul>
@@ -40,7 +67,7 @@
 <p class="foot">
   Naming por <strong>step</strong> (100…800), no por valor: el nombre no miente si el valor cambia,
   y Figma, código y los devs hablan el mismo idioma. En <strong>rem</strong> para que la letra
-  escale con el tamaño base del navegador (accesibilidad). <strong>Desacoplada</strong> de
-  <code>--sc-scale</code>: tipografía y espaciado son ejes independientes. Dos pesos: Regular y
-  Semibold.
+  escale con el tamaño base del navegador (accesibilidad). En CSS hay además
+  <code>font-size-50/75/600/700/900</code>: son <strong>snaps</strong>, pasos que el Kit no trae y
+  que se pegan al vecino para que el naming por step no deje huecos.
 </p>

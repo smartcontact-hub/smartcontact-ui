@@ -58,6 +58,30 @@ code {
   color: var(--sc-text-primary);
 }
 
+/* ── Nota del 14 contra el 16 ──
+ * Vive pegada al hero a propósito: la duda ("¿el root no era 14?") aparece leyendo la primera
+ * frase, así que la respuesta tiene que estar antes de la rampa, no en el pie. */
+.note {
+  margin: 0 0 var(--sc-spacing-2);
+  padding: var(--sc-spacing-0-875) var(--sc-spacing-1-125);
+  border-left: 2px solid var(--sc-border-strong);
+  border-radius: 0 var(--sc-radius-md) var(--sc-radius-md) 0;
+  background: var(--sc-bg-subtle);
+  font-size: var(--sc-font-size-100);
+  line-height: 1.6;
+  color: var(--sc-text-secondary);
+
+  strong {
+    color: var(--sc-text-primary);
+  }
+
+  a {
+    color: var(--sc-text-link);
+    text-decoration: underline;
+    text-underline-offset: 2px;
+  }
+}
+
 /* ── Escala de tamaños ── */
 .scale {
   list-style: none;
@@ -111,12 +135,16 @@ code {
   }
 }
 
-/* ── Line-heights ── */
-.lh {
+/* ── Rampas en tarjeta (line-heights, pesos): un solo cartón para las dos ── */
+.ramp {
   border: 1px solid var(--sc-border-subtle);
   border-radius: var(--sc-radius-lg);
   background: var(--sc-bg-subtle);
   padding: var(--sc-spacing-1-125) var(--sc-spacing-1-25);
+
+  & + & {
+    margin-top: var(--sc-spacing-1);
+  }
 
   &__title {
     margin: 0 0 var(--sc-spacing-0-75);
@@ -130,7 +158,9 @@ code {
     margin: 0;
     padding: 0;
     display: grid;
-    grid-template-columns: repeat(auto-fill, minmax(150px, 1fr));
+    /* 240px = 2 columnas en la medida de lectura (720px). Con 150 (4 col) o 170 (3 col) el
+     * token y su valor no caben en una línea y las filas parten en desordenado. */
+    grid-template-columns: repeat(auto-fill, minmax(240px, 1fr));
     gap: var(--sc-spacing-0-5) var(--sc-spacing-1);
   }
 
@@ -147,6 +177,7 @@ code {
     color: var(--sc-text-secondary);
     font-family: var(--sc-font-family-mono);
     font-size: var(--sc-font-size-100);
+    white-space: nowrap;
   }
 
   &__val {
