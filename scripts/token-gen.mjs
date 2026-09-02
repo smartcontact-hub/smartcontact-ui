@@ -221,18 +221,29 @@ function renderPalette() {
 // pusheas y llega sola.
 //
 // Dos orígenes, y la diferencia importa:
-//   · del KIT  → 19 hojas (8 font-size · 7 line-height · 4 weights), valor 1:1.
+//   · del KIT  → 21 hojas (9 font-size · 8 line-height · 4 weights), valor 1:1. Eran 19 hasta
+//     que el rebase de text styles del 2026-09-02 publicó el paso 900 (64 / 78).
 //   · SNAPS SC → pasos que el Kit NO tiene y el DS sí, que se PEGAN al vecino del
 //     Kit (DD-13). No son inventados: hoy ya valen exactamente eso, y el mapa de
 //     abajo lo deja explícito y testeable en vez de repetido a mano en el CSS.
 
-/** Paso extra del DS → paso del Kit del que copia el valor, + la nota que iba en el CSS. */
+/**
+ * Paso extra del DS → paso del Kit del que copia el valor, + la nota que iba en el CSS.
+ *
+ * ⚠️ Un snap SOLO cubre un paso que el Kit NO trae. En cuanto Figma lo publica hay que
+ * JUBILARLO de este mapa, o el generador seguirá escribiendo el valor del vecino y el paso
+ * saldrá DOS veces en el CSS (una por la lista del Kit y otra por la de snaps). Pasó el
+ * 2026-09-02 con el 900: Figma creó font.size.900 = 64 y line.height.900 = 78, el snap seguía
+ * copiando del 800 (48 / 58), `tokens:type-parity` cantó DRIFT y el origen no se veía desde el
+ * error. Lo vigila `emitRamp` (falla ruidoso) y el test "ningún snap pisa un paso que el Kit ya
+ * define" de `__tests__/token-gen-typography.test.mjs`.
+ */
 export const FONT_SIZE_SNAPS = {
   50: { from: 100, note: 'era 10.5 → sube a 12' },
   75: { from: 100, note: 'snap → -100' },
   600: { from: 500, note: 'snap 28' },
   700: { from: 650, note: 'snap 36' },
-  900: { from: 800, note: 'snap 64; era 70' },
+  // 900 JUBILADO el 2026-09-02: el Kit ya publica font.size.900 = 64 (antes se snapeaba a 48).
 };
 export const LINE_HEIGHT_SNAPS = {
   50: { from: 100, note: '' },
@@ -240,7 +251,7 @@ export const LINE_HEIGHT_SNAPS = {
   400: { from: 300, note: 'h4 18' },
   600: { from: 500, note: '' },
   700: { from: 650, note: '' },
-  900: { from: 800, note: '' },
+  // 900 JUBILADO el 2026-09-02: el Kit ya publica line.height.900 = 78 (antes se snapeaba a 58).
 };
 /** Rol de cada paso del Kit, para que el comentario siga diciendo para qué es. */
 const TYPE_NOTES = {
@@ -273,7 +284,18 @@ function renderTypography() {
     const all = [...[...kitSteps.keys()].map(Number), ...Object.keys(snaps).map(Number)].sort((a, b) => a - b);
     for (const step of all) {
       const snap = snaps[step];
-      const px = snap ? kitSteps.get(String(snap.from)) : kitSteps.get(String(step));
+      // El Kit MANDA. Si un paso está en el mapa de snaps Y el Kit ya lo trae, el snap está sin
+      // jubilar: sin este corte el generador escribiría el valor del vecino y la línea saldría
+      // DOS veces. El síntoma aguas abajo (`tokens:type-parity` → DRIFT) no señala aquí, así que
+      // el error tiene que dar la instrucción.
+      const propio = kitSteps.get(String(step));
+      if (snap && propio != null) {
+        log(`✗ token-gen: --sc-${cssName}-${step} está en el mapa de SNAPS pero el Kit YA lo trae ` +
+            `(${propio}px). Un snap solo cubre un paso que el Kit no tiene: JUBÍLALO (quítalo del ` +
+            `mapa de snaps de ${ns} en token-gen.mjs).`);
+        process.exit(2);
+      }
+      const px = snap ? kitSteps.get(String(snap.from)) : propio;
       if (px == null) {
         // Un snap que apunta a un paso que el Kit ya no trae NO puede desaparecer callando:
         // el token seguiría existiendo en las capas y nadie sabría que quedó huérfano.
