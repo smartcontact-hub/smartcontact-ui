@@ -2,10 +2,53 @@
 
 > **Volátil.** Lo reescribe la sesión que trabaja ESTE frente, y **solo este fichero**.
 > No toques los hand-offs de otros frentes. Lo durable vive en `docs/`.
-> **Sello: 2026-09-01 (s39): HEAD `2ad8b77`.** Guía de validación visual en `/validar` (enlazada
-> desde el Lab) + **hook `pre-push`** que corre el gate solo. Gate verde leído del log (305 tests) y
-> CI verde (run `33542225223`). Tramo anterior de ESTE frente: `3b90fd7` (sc-demo borrado de
-> Cloudflare + afila LEARNINGS #7).
+> **Sello: 2026-09-02 (s40): HEAD `fe0a442`.** Tipografía cerrada de punta a punta: 12 estilos de
+> texto atados a variable, 5 tallas en el puente (`sm`→`xxl`), y el diagnóstico completo de
+> SISMAC-4074 con el CSS que lo resuelve. Gate verde leído del log (78 e2e) y CI verde en los dos
+> commits. Doc nuevo: [`docs/tipografia.md`](../tipografia.md). Tramo anterior de ESTE frente:
+> `2ad8b77` (guía de validación + hook pre-push).
+
+## ✅ s40 · Tipografía end-to-end y SISMAC-4074 resuelto
+
+**En Figma.** Los estilos de texto pasaron de 11 sueltos a **12 en carpetas** (Display, Heading,
+Body, Caption), con los valores literales de SnowUI y atados a variable en las cuatro propiedades:
+familia, tamaño, peso e interlineado. Los **761 textos** del DS siguieron a sus 5 componentes padre,
+sin tocar ninguno a mano. 11 variables nuevas en `Custom`: la familia Inter, cuatro estilos de
+fuente (STRING, que es lo que Figma necesita para atar el peso de un estilo), el paso 900 (64/78) y
+las parejas `xl` y `xxl`.
+
+**El mapa del tema quedó en cinco tallas**, `sm md lg xl xxl`. Antes eran tres y dos huecos: los
+títulos de card, dialog y modal (18) y los de drawer y overlay (20) no tenían pareja publicada, así
+que un dev no tenía forma de saber qué interlineado les tocaba.
+
+**El diagnóstico de SISMAC-4074, medido componente a componente** en el deploy del dev. La causa
+raíz no es el export: **PrimeNG no modela `lineHeight` en ninguno de los 85 componentes**, así que
+el valor llega y no hay nada que lo aplique. Y no eran cuatro selectores como decía el hand-off
+anterior, eran **seis**: tag, detalle del toast, breadcrumb, context menu, y opciones de select y
+multiselect.
+
+**El entregable**: `sc-typography.css`, 7 reglas. Barrido sobre `.p-component` en vez de lista, y
+las variantes de tamaño por patrón, así que cubre los componentes de hoy y los futuros sin volver a
+tocarlo. Probado en 8 páginas del showcase con todas las variantes: cero recortes, cero
+solapamientos.
+
+### Dos falsos positivos que casi llegan a Jira
+- **El `"400px"` de los grosores no rompe nada.** El export los declara con unidad desde el primer
+  zip que conservamos, y aun así la variable llega limpia: **PrimeNG normaliza la unidad**. Se llegó
+  a preparar una corrección de cuatro líneas y se retiró tras medirlo.
+- **El respaldo desactualizado de `md` (21px) tampoco.** Nunca entra, porque la variable sí resuelve.
+
+Los dos se afirmaron antes de medirlos. De ahí salen los afilados de LEARNINGS **#1** (el estímulo
+tiene que ser el que el sistema produce, no uno que inyectaste tú) y **#12** (un selector CSS es un
+grep sobre el DOM: `[class*="p-"]` daba 2.820 «elementos», los componentes reales eran 271).
+
+### Terreno que conviene no volver a descubrir
+`ui.smart-contact.com` es **el deploy del dev**, no nuestro sc-docs. Su CSS de tipografía sale del
+bloque `css:` del preset, o sea es nuestro, en una versión anterior. Y la familia no viaja por el
+tema: **0 componentes del export la declaran**. En su web el `:root` sí usa nuestro
+`--sc-font-family-primary`, pero el `body` usa un token propio suyo que nosotros no publicamos, con
+respaldo a Arial. O sea que el resultado (Inter) es correcto, pero **no llega solo por nuestro
+canal**. Todo eso, con su método, en [`docs/tipografia.md`](../tipografia.md).
 
 ## ✅ s39 · Guía de validación en sc-docs + el gate deja de depender de la memoria
 
@@ -55,16 +98,20 @@ propósito.
   tiempo** y rompió el fichero. Comentario de línea en su lugar.
 
 ## 🔜 Siguiente en este frente
-1. **Figma — revisar un enlace de variable (pendiente de decisión):** `tag/font/size` apunta a
-   `app/typography/sm/lineHeight` (18) en lugar de a `primitive/typography/font/size/100` (12), con lo
-   que el tamaño de letra del Tag toma el valor del alto de línea. Medido el 2026-09-01; en agosto ese
-   mismo nodo daba 12.
-2. **Validación de producción (SISMAC-4074), medida y volcada en el board de Figma `14595:4049`**
-   (página Feedback): faltan cuatro selectores en el bloque de tipografía del consumidor →
-   `.p-tag` y `.p-toast-detail` a talla sm (12/18), `.p-select-option` y `.p-multiselect-option` a md
-   (14/20). El resto ya cuadra: chip 20/34, cajas de select y multiselect 20, título de toast 20,
-   breadcrumb 14 + #6F7784.
-3. **Cloudflare:** se activó temporalmente «Restrict previews» en el proyecto de la doc durante la
+1. **Esperando a Carlos:** tiene el CSS y el tema. Si lo instala, los seis componentes cuadran. Si
+   dice que algo le descuadra, el plan B es la lista de selectores, que va en el propio comentario.
+2. **El paso 24/36 es el único fuera de curva** (ratio 1,50 en un título, debería rondar 1,30 →
+   24/32). No lo usa ningún componente, solo el estilo `Heading/h2`, así que cambiarlo es un valor y
+   cero efectos colaterales. **Decisión de Rafa, no ejecutar sin él.**
+3. **Verificar `xl` y `xxl` contra un export real.** Se crearon después del último export, así que
+   el nombre CSS que generarán sigue la regla medida pero **no se ha visto**. Los respaldos del
+   fichero lo cubren mientras tanto.
+4. **Listbox sin medir**: no tiene página en el showcase del dev. Queda declarado como tal en el
+   comentario, no como correcto.
+5. **Deuda propia detectada:** los `exports` de `@smartcontact/styles` y `@smartcontact/icons` no
+   publican `styles/index.css`, así que un consumidor externo tiene que importar por ruta directa a
+   `node_modules`. No es urgente y **no se ha mencionado fuera**.
+6. **Cloudflare:** se activó temporalmente «Restrict previews» en el proyecto de la doc durante la
    evaluación de Access y se ha pedido revertirlo. **Si algún preview pide login, viene de ahí.**
 
 ## ✅ s38 (cont. III) · Verificación (sin código): drift de «N pasos» resuelto + audit PRs limpios

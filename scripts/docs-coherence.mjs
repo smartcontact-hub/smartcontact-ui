@@ -335,6 +335,12 @@ const RETIRADOS_A_PROPOSITO = new Set([
   // semántico de lienzo que AÚN NO existe. Mismo patrón que PROPOSED_SCRIPTS: cuando se cree,
   // `tokensDefinidos` lo cubre solo → quítalo de aquí.
   '--sc-bg-canvas',
+  // Token DEL CONSUMIDOR, no nuestro: `docs/tipografia.md` lo documenta justamente para avisar
+  // de que su `body` NO usa nuestro `--sc-font-family-primary` sino uno propio suyo, así que
+  // cambiar nuestra familia no garantiza que la suya cambie. El gate no distingue "token ajeno
+  // que documento" de "token nuestro que cité mal" — y hace bien en preguntar: lo cazó el
+  // 2026-09-02 cuando yo había escrito que la familia les llegaba por nuestro paquete.
+  '--sc-font-family-base',
 ]);
 if (tokensDefinidos.size > 100) {
   // guard de cordura: si el barrido no encontró tokens, es que falló — no acuses a la doc

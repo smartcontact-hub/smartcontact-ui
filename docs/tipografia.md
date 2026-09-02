@@ -24,7 +24,7 @@ además en el export del tema cuántos componentes declaran cada propiedad.
 
 | Propiedad | La declara el tema | Quién la aplica de verdad | ¿Llega sola? |
 | --- | --- | --- | --- |
-| `fontFamily` | **0 componentes** | `body { font-family: var(--sc-font-family-base) }` y los componentes con `font-family: inherit` | sí, por el canal `--sc-*` |
+| `fontFamily` | **0 componentes** | el `body` del consumidor, y los componentes con `font-family: inherit` | sí, pero ojo con el canal (ver abajo) |
 | `fontSize` | 21 componentes | el propio tema | sí |
 | `fontWeight` | 27 componentes | el propio tema | sí |
 | `lineHeight` | **0 componentes** | **nadie** | **NO** |
@@ -33,16 +33,21 @@ además en el export del tema cuántos componentes declaran cada propiedad.
 **Método**: `grep -rl "<prop>" ts/ | grep -v extend.ts | wc -l` sobre el export descomprimido,
 más `getComputedStyle` en la web para confirmar el valor aplicado.
 
-El origen del canal `--sc-*` está confirmado por las dos vías: en el DOM la regla es
-`body { font-family: var(--sc-font-family-base, Arial, sans-serif) }`, y el README del lab
-declara el import que la trae:
+**Cuidado con el canal de la familia, que es el punto donde es fácil equivocarse.** En el DOM del
+consumidor conviven dos declaraciones:
 
-```scss
-@import '../node_modules/@smartcontact/styles/styles/index.css';
+```css
+:root { font-family: var(--sc-font-family-primary); }              /* nuestro */
+body  { font-family: var(--sc-font-family-base, Arial, sans-serif); }  /* suyo */
 ```
 
-Es decir, **la familia les llega por nuestro paquete `@smartcontact/styles`, no por el tema**.
-Son dos canales distintos que hay que mantener separados en la cabeza.
+`--sc-font-family-primary` es nuestro y sale de `01-primitive.css`. **`--sc-font-family-base` no
+existe en ningún `projects/**` de este repo**: es un token del consumidor. El resultado computado
+es Inter y es correcto, pero la cadena pasa por un token suyo, así que **cambiar nuestra familia no
+garantiza que su `body` cambie**.
+
+Lo cazó `verify` al escribir este documento: el gate de coherencia doc-repo comprobó que el token
+citado no existía en el código. Es exactamente para lo que está.
 
 ### La causa raíz del interlineado
 
