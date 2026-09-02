@@ -2,7 +2,12 @@
 
 > **Volátil.** Lo reescribe la sesión que trabaja ESTE frente, y **solo este fichero**.
 > No toques los hand-offs de otros frentes. Lo durable vive en `docs/`.
-> **Sello: 2026-09-02 (s41): HEAD `8e36ba7` (el padre; este cambio es el commit siguiente en `git log`, un solo commit atómico).** La guía de proceso pasa al PUNTO DE DECISIÓN (DD-47): hooks versionados en `.claude/settings.json` → `scripts/hooks/`, tarjeta en `CLAUDE.md`, `LEARNINGS.md` de 760 a 178 líneas con el check K que impide que vuelva a crecer, `/reflect` enruta. Tramo anterior de ESTE frente: `fe0a442` (s40, tipografía).
+> **Sello: 2026-09-02 (s41): HEAD `7d343a9`, CI VERDE leído en los tres commits** (`f116bbd`,
+> `718d149`, `7d343a9`; 5 jobs cada uno). La guía de proceso pasa al PUNTO DE DECISIÓN (DD-47):
+> hooks versionados en `.claude/settings.json` → `scripts/hooks/`, tarjeta en `CLAUDE.md`,
+> `LEARNINGS.md` de 760 a 178 líneas con el check K que impide que vuelva a crecer, `/reflect`
+> enruta. El cambio salió en UN commit atómico; los otros dos son correcciones del propio guard
+> cazadas usándolo. Tramo anterior de ESTE frente: `fe0a442` (s40, tipografía).
 >
 > Sello anterior (s40): HEAD `fe0a442`. Tipografía cerrada de punta a punta: 12 estilos de
 > texto atados a variable, 5 tallas en el puente (`sm`→`xxl`), y el diagnóstico completo de
@@ -34,16 +39,23 @@ en el momento de escribir el comando, y el único enforcement (gates) corría en
 - `/reflect` enruta hook → gate → tarjeta → regla → memoria; memoria solo terreno (65 → 40
   ficheros, los 25 duplicados en `memory-archive-2026-09-02/` fuera del repo).
 
-**Cómo se probó**: el hook denegó sus dos primeros comandos legítimos (prosa con "git push" en un
-`printf`; heredoc con `npm run lint`): los dos son tests ahora. 213/213 unitarios, 14 checks de doc
-verdes, y la cadena entera antes del push.
+**Cómo se probó, y el guard cazándose a sí mismo CUATRO veces.** Dos falsos positivos: prosa con
+"git push" dentro de un `printf`, y un heredoc de Python que contenía `npm run lint`. Se arreglaron
+segmentando por comando y descartando los cuerpos de heredoc. Dos aciertos contra su propio autor:
+`npm run -s ci:verdict …; echo` (los flags entre `run` y el script se colaban, `718d149`) y
+`node --test … | tail` (el runner enmascara el exit igual que `npm run`, `7d343a9`). Los cuatro
+son casos rojos del test. Cadena completa antes de cada push: 213/213 unitarios, 14 checks de doc,
+e2e 78 + 127 + 100.
 
 `.githooks/pre-push` (s39) sigue ahí y ahora honra la marca: si el árbol ya pasó un carril, sube
-sin repetir la cadena (antes repetía 10 min en cada push; así "colgó" el primer push de s41).
+sin repetir la cadena. Antes la repetía en CADA push, y así "colgó" el primero de s41 (10 min
+sobre un árbol recién verificado). Es la evidencia que afiló `LEARNINGS #10`: en el diagnóstico
+enumeré los ficheros que se LEEN y no los mecanismos que se EJECUTAN, y este hook ya existía.
 
-⚠️ **Cómo repetirlo sin tropezar**: el hook exige la marca sobre el árbol FINAL; commitea TODO
-(hand-off incluido) y luego `npm run preflight:scope --run`, no al revés. El sello del hand-off
-apunta al padre por eso mismo (un segundo commit "de sello" invalidaría la marca).
+⚠️ **Cómo repetirlo sin tropezar**: el hook exige la marca sobre el árbol FINAL. Commitea TODO
+(hand-off incluido) y CORRE LA CADENA DESPUÉS, nunca al revés; un commit posterior invalida la
+marca y el push se queda fuera. Para un cambio solo de `.md`, `preflight:scope --run` elige el
+carril corto (verify + build:docs + e2e smoke) y deja la marca igual.
 
 ## ✅ s40 · Tipografía end-to-end y SISMAC-4074 resuelto
 
@@ -150,6 +162,16 @@ propósito.
    `node_modules`. No es urgente y **no se ha mencionado fuera**.
 6. **Cloudflare:** se activó temporalmente «Restrict previews» en el proyecto de la doc durante la
    evaluación de Access y se ha pedido revertirlo. **Si algún preview pide login, viene de ahí.**
+7. **Los hooks de sesión (`compact-card`, `stop-guard`) solo se han ejercitado con JSON fabricado
+   por stdin, no en una compactación ni un cierre reales** (DD-47). Los dos fallan ABIERTOS, así
+   que el riesgo es que no avisen, no que estorben. La primera sesión que compacte o cierre tras
+   un push es su primera prueba de verdad: si `compact-card` no imprime nada al compactar, mira
+   `.git/sc-hooks/` y el `reason` que le llega. `stop-guard` ya dio un aviso correcto-pero-molesto
+   tras un push ABORTADO (no distingue el push que el `pre-push` cortó); se aceptó a propósito,
+   cuesta un `ci:verdict`, y arreglarlo pide parsear los `tool_result` del transcript.
+8. **Memoria podada de 65 a 40 ficheros**; los 25 retirados están en
+   `~/.claude/projects/-Users-rafareses-dev-smartcontact-ui/memory-archive-2026-09-02/`, no
+   borrados. Si echas en falta un hecho del proyecto, míralo ahí antes de reescribirlo.
 
 ## ✅ s38 (cont. III) · Verificación (sin código): drift de «N pasos» resuelto + audit PRs limpios
 
