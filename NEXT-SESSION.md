@@ -6,8 +6,9 @@
 
 ## ▶️ EMPIEZA AQUÍ
 
-1. Mira la tabla de frentes, **abre el del trabajo que vas a hacer** y luego lee
-   [`LEARNINGS.md`](LEARNINGS.md).
+1. Mira la tabla de frentes, **abre el del trabajo que vas a hacer** y luego el **índice** de
+   [`LEARNINGS.md`](LEARNINGS.md) (la tabla; el cuerpo de una regla, cuando te aplique). La
+   tarjeta de punto de decisión ya la llevas en `CLAUDE.md`.
 2. **Coge lo primero de su sección "SIGUIENTE" y hazlo.** No preguntes qué hacer: está ordenado
    y todo lo que hay ahí se ejecuta sin permiso.
 3. Lo de **"ESPERANDO A RAFA" no se pregunta**. Está aparcado a propósito; solo se toca si él lo saca.

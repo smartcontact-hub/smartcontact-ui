@@ -10,7 +10,8 @@
 # no a un párrafo (README, «Regla de la casa»).
 #
 # Corre `preflight:scope`, que mira QUÉ tocaste y ajusta la cadena — y que imprime siempre lo
-# que deja fuera, así que el verde nunca es mudo.
+# que deja fuera, así que el verde nunca es mudo. Si el árbol ya lleva la marca de un carril en
+# verde (`scripts/preflight-mark.mjs --check`), sube sin repetirla.
 #
 # Salida de emergencia:  SKIP_PREFLIGHT=1 git push
 # Úsala sabiendo que te saltas el gate; queda dicho en pantalla.
@@ -32,6 +33,13 @@ if [ -s "$NVM_DIR/nvm.sh" ]; then
 fi
 
 printf '\n\033[1m▶ pre-push: gate antes de subir\033[0m  (SKIP_PREFLIGHT=1 para saltarlo)\n\n'
+
+# Si ESTE árbol ya pasó un carril (marca `.preflight-ok`, tree id == HEAD), no se repite la
+# cadena: el verde ya está medido y repetirlo son 10-25 min de nada (2026-09-02, DD-47).
+if node scripts/preflight-mark.mjs --check; then
+  printf '\033[32m✓ árbol ya verificado — subiendo sin repetir la cadena\033[0m\n\n'
+  exit 0
+fi
 
 if npm run preflight:scope --silent -- --run; then
   printf '\n\033[32m✓ gate en verde — subiendo\033[0m\n\n'

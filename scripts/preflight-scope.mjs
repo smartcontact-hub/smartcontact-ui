@@ -149,4 +149,7 @@ if (process.argv.includes("--run")) {
     console.log(`\n▶ ${p}`);
     execSync(p, { stdio: "inherit" });
   }
+  // Carril acotado en verde: marca el árbol para el hook de push (LEARNINGS #7). La marca dice
+  // QUÉ carril pasó; lo que se saltó quedó impreso arriba.
+  execSync("node scripts/preflight-mark.mjs preflight:scope", { stdio: "inherit" });
 }

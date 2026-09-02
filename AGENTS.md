@@ -196,6 +196,7 @@ Before considering any token/theme/component change done, run:
 - `npm run tokens:type-parity` — typography parity
 - `npm run audit:theme-scale` — zero `px` in the preset, central `css.ts`
 - `npm run verify` — runs the full guardrail chain (canonical list: the table in README.md); also includes test:unit, docs:guard, docs:coherence, build, typecheck, lint
+- `npm run preflight:scope --run` before a push (it picks the lane and writes the `.preflight-ok` mark the push hook requires), then `npm run ci:verdict` after it. The hooks in `.claude/settings.json` (`scripts/hooks/`) enforce this and deny the exact commands LEARNINGS #7, #11 and #12 were written about; `# sc:ok` on a command is the explicit exit, and you say so in the message.
 
 ---
 
@@ -359,8 +360,9 @@ When the user signals the end of a session — **"cerramos"**, **"lo dejamos"**,
 this wrap-up routine **without asking permission first**:
 
 1. `git status` → if there are uncommitted changes, commit them per lote with a
-   Conventional-Commits message summarising what landed (exclude `.claude`:
-   `git add -A ':!.claude'`).
+   Conventional-Commits message summarising what landed (`git add -A`: `.claude/worktrees` and
+   `settings.local.json` are already ignored; `.claude/settings.json` and `.claude/skills` ARE
+   versioned, they carry the hooks and skills everyone runs).
 2. `git push` to `origin main`, and confirm CI is green (the gate — see Mandatory Workflow).
 3. **Rewrite the hand-off of YOUR frente — `docs/handoff/<frente>.md` — and ONLY that file.**
    It is volatile: it gets overwritten, not appended (current state + ordered next steps + its

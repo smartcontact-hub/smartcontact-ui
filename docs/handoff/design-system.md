@@ -2,11 +2,48 @@
 
 > **Volátil.** Lo reescribe la sesión que trabaja ESTE frente, y **solo este fichero**.
 > No toques los hand-offs de otros frentes. Lo durable vive en `docs/`.
-> **Sello: 2026-09-02 (s40): HEAD `fe0a442`.** Tipografía cerrada de punta a punta: 12 estilos de
+> **Sello: 2026-09-02 (s41): HEAD `8e36ba7` (el padre; este cambio es el commit siguiente en `git log`, un solo commit atómico).** La guía de proceso pasa al PUNTO DE DECISIÓN (DD-47): hooks versionados en `.claude/settings.json` → `scripts/hooks/`, tarjeta en `CLAUDE.md`, `LEARNINGS.md` de 760 a 178 líneas con el check K que impide que vuelva a crecer, `/reflect` enruta. Tramo anterior de ESTE frente: `fe0a442` (s40, tipografía).
+>
+> Sello anterior (s40): HEAD `fe0a442`. Tipografía cerrada de punta a punta: 12 estilos de
 > texto atados a variable, 5 tallas en el puente (`sm`→`xxl`), y el diagnóstico completo de
 > SISMAC-4074 con el CSS que lo resuelve. Gate verde leído del log (78 e2e) y CI verde en los dos
 > commits. Doc nuevo: [`docs/tipografia.md`](../tipografia.md). Tramo anterior de ESTE frente:
 > `2ad8b77` (guía de validación + hook pre-push).
+
+## ✅ s41 · La guía se sirve en el punto de decisión (DD-47)
+
+**Diagnóstico medido**: `LEARNINGS.md` había pasado de 1.765 a 10.757 palabras en 46 días con el
+tope "~20" escrito en su cabecera; 16 reglas escondían 43 sub-entradas; la regla más larga (#7,
+2.180 palabras) era la más rota (≥8 reincidencias con la prosa delante); en una sesión con 6
+compactaciones se releyó entera 5 veces. La causa no era "mucho texto": nada presentaba la regla
+en el momento de escribir el comando, y el único enforcement (gates) corría en el push.
+
+**Lo que hay ahora, todo en un commit**:
+- `.claude/settings.json` (versionado) → `scripts/hooks/bash-guard.mjs` deniega, con la regla
+  como motivo: push sin marca `.preflight-ok` sobre ESTE árbol, `echo $?`/tubo detrás de un gate,
+  volcado de configs con credenciales, `git diff main...rama`, `for f in $VAR`. `stop-guard.mjs`
+  bloquea el cierre una vez si hubo push sin `npm run ci:verdict`. `compact-card.mjs` avisa al
+  compactar si la guía cambió en `origin/main`. Salida explícita: `# sc:ok`, dicho en el mensaje.
+  Cada patrón con caso rojo y verde (`scripts/__tests__/bash-guard.test.mjs`).
+- `scripts/preflight-mark.mjs`: `preflight`, `preflight:fast` y `preflight:scope --run` dejan la
+  marca (tree id del working tree; solo vale si ese tree es HEAD). `ci-preflight-parity` la filtra.
+- Tarjeta de 7 preguntas en `CLAUDE.md` (viaja en cada turno, sobrevive a la compactación).
+- `LEARNINGS.md` recortado a 16 reglas de ≤12 líneas con UNA `Evidencia:`; la historia entera en
+  el tag `archive/learnings-2026-09-02` y en `git log -S`. Check K (`scripts/learnings-shape.mjs`)
+  impide que vuelva a crecer por dentro.
+- `/reflect` enruta hook → gate → tarjeta → regla → memoria; memoria solo terreno (65 → 40
+  ficheros, los 25 duplicados en `memory-archive-2026-09-02/` fuera del repo).
+
+**Cómo se probó**: el hook denegó sus dos primeros comandos legítimos (prosa con "git push" en un
+`printf`; heredoc con `npm run lint`): los dos son tests ahora. 213/213 unitarios, 14 checks de doc
+verdes, y la cadena entera antes del push.
+
+`.githooks/pre-push` (s39) sigue ahí y ahora honra la marca: si el árbol ya pasó un carril, sube
+sin repetir la cadena (antes repetía 10 min en cada push; así "colgó" el primer push de s41).
+
+⚠️ **Cómo repetirlo sin tropezar**: el hook exige la marca sobre el árbol FINAL; commitea TODO
+(hand-off incluido) y luego `npm run preflight:scope --run`, no al revés. El sello del hand-off
+apunta al padre por eso mismo (un segundo commit "de sello" invalidaría la marca).
 
 ## ✅ s40 · Tipografía end-to-end y SISMAC-4074 resuelto
 

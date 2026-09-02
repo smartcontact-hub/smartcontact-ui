@@ -37,6 +37,62 @@
 
 ---
 
+## DD-47 · 2026-09-02 — La guía de proceso se sirve en el PUNTO DE DECISIÓN: hooks + tarjeta + gate de forma, y la prosa deja de crecer
+
+**Contexto.** `LEARNINGS.md` pasó de 1.765 a 10.757 palabras en 46 días (50 commits) con el tope
+"~20 reglas" escrito en su cabecera y `CLAUDE.md` afirmando "es corto a propósito". El audit de
+2026-08-13 ya lo había diagnosticado y el fichero se duplicó después. Medido: 16 reglas numeradas
+escondían 43 sub-entradas (37 reglas reales); el 69 % eran "afirmé sin medir"; la regla más larga
+(#7, 2.180 palabras) era la más rota (≥8 reincidencias documentadas con la prosa delante). En una
+sesión larga con 6 compactaciones el fichero se releyó ENTERO 5 veces (~70k tokens) y aun así
+las reglas no dispararon. Causa estructural: la guía se leía una vez en t=0 y nada la presentaba
+en t=decisión; el único enforcement (los gates) corría en el push, después de decidir. Y `/reflect`
+inflaba por diseño: "make the rule more specific" ante una reincidencia, tope que solo contaba
+cabeceras, gate en tercer lugar, y la misma lección escrita también en memoria (39 `feedback`).
+
+**Decisión.** Tres capas por mecanismo, no por fichero:
+1. **Imponer** (t=decisión): `.claude/settings.json` versionado → `scripts/hooks/`. `PreToolUse`
+   sobre Bash deniega, con la regla como motivo, los comandos exactos de las reincidencias: push
+   sin marca `.preflight-ok` sobre ESTE árbol (`scripts/preflight-mark.mjs`, tree id del working
+   tree = HEAD), `echo $?`/tubo detrás de un gate, volcado de configs con credenciales, `git diff
+   main...rama`, `for f in $VAR`. `Stop` bloquea una vez si hubo push sin leer el CI
+   (`npm run ci:verdict`). `SessionStart(compact)` avisa si la guía cambió en `origin/main`.
+   Salida explícita `# sc:ok`, dicha en el mensaje. Cada patrón nace con su caso rojo y verde.
+2. **Decidir** (cada turno): tarjeta de 7 preguntas en `CLAUDE.md` (lo único que viaja en todos
+   los turnos y sobrevive a la compactación); cada pregunta cita su regla. No crece.
+3. **Aprender** (cierre): `LEARNINGS.md` = índice + 16 reglas de ≤12 líneas con UNA `Evidencia:`;
+   la historia vive en git (`archive/learnings-2026-09-02`, `git log -S`). La forma la impone el
+   check K de `docs:coherence` (`scripts/learnings-shape.mjs`). `/reflect` enruta hook → gate →
+   tarjeta → regla → memoria, y memoria solo guarda terreno (`project`/`reference`/`user`).
+
+**Lo que ya existía y cómo encaja.** `.githooks/pre-push` (s39, `2ad8b77`) ya corría
+`preflight:scope --run` en cada push. No lo vi en la fase de medición (LEARNINGS #10: el sistema
+ya lo servía) y lo descubrí cuando el primer push de este cambio repitió 10 minutos de cadena
+sobre un árbol recién verificado y agotó el timeout. Los dos hooks comparten la marca: el de git
+la mira primero (`preflight-mark.mjs --check`) y solo corre la cadena si falta; el de Claude
+deniega el push antes si no cuadra. `SKIP_PREFLIGHT=1` sigue siendo la salida del de git;
+`# sc:ok`, la del de Claude.
+
+**Sostenedores intactos.** Formato disparador → acción; IDs estables (los 16 se conservan; las
+citas `LEARNINGS #1/#2/#5/#7/#10/#17` resuelven); separación LEARNINGS/docs/memoria/NEXT-SESSION
+(reparada: memoria deja de guardar proceso); versionado (`.claude/settings.json`, `scripts/hooks/`
+y el tag están en git); todo pasa los gates (ahora 14 checks de doc: 2 + 12).
+
+**Descartadas.**
+- *Vía A, solo recortar + gate K + tarjeta, sin hooks.* Adelgaza lo que se lee en t=0, que los
+  datos dicen que no es donde fallan las reglas (#7 era la mejor conocida y la más rota).
+- *Avisos suaves en el hook.* `PreToolUse` no tiene "aviso": solo permitir o denegar. Un aviso que
+  Claude no ve no es un aviso; la denegación con razón y salida explícita cuesta una llamada.
+- *Reinyectar la tarjeta al compactar.* Innecesario: `CLAUDE.md` va en el system prompt de cada
+  turno. El hook de compactación solo lleva lo que cambia con el tiempo (sha de arranque, marca).
+- *Renumerar o fundir reglas.* No ahorra nada que no ahorre cortar el cuerpo, y rompe citas.
+
+**Evidencia de que funciona (mismo día).** El hook de push denegó su primer comando en el primer
+minuto: un `printf` con "git push" en prosa. Segundo falso positivo: un heredoc con `npm run
+lint`. Los dos se convirtieron en tests (segmentación por comando, heredocs excluidos). Un
+guardián con falsos positivos enseña a ignorarlo (LEARNINGS #2): por eso los patrones son
+estrechos y probados.
+
 ## DD-46 · 2026-09-01 — La tipografía también se GENERA; el fallback md baja a 20 y el bloque `css` se entrega al consumidor
 
 **Contexto.** De las diez familias de tokens, nueve se regeneraban solas desde el export y

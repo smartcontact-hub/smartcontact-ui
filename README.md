@@ -94,8 +94,12 @@ Que no se pudra cuando alguien añada un paso al CI lo garantiza un test
 `ci.yml` se desincronizan.
 
 Y para que no dependa de acordarse, **un hook lo corre solo**: `.githooks/pre-push` lanza
-`preflight:scope` antes de cada `git push` y aborta si algo falla. Se activa una vez con
-`npm run hooks:install`. La salida de emergencia es `SKIP_PREFLIGHT=1 git push`, y avisa por
+`preflight:scope` antes de cada `git push` y aborta si algo falla; si el árbol ya lleva la marca
+`.preflight-ok` de un carril en verde (la escribe `scripts/preflight-mark.mjs` al final de
+`preflight`, `preflight:fast` y `preflight:scope --run`), sube sin repetir la cadena. Se activa
+una vez con `npm run hooks:install`. Y el hook de Claude (`.claude/settings.json` →
+`scripts/hooks/bash-guard.mjs`) deniega el `git push` antes de llegar aquí si la marca no cuadra
+con el árbol, junto con los otros comandos que LEARNINGS #7, #11 y #12 prohíben. La salida de emergencia es `SKIP_PREFLIGHT=1 git push`, y avisa por
 pantalla de que te la has saltado. Existe porque esta regla era la más incumplida del repo:
 se lee al empezar la tarea y el disparador salta horas después.
 
