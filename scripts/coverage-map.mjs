@@ -57,7 +57,8 @@ export const BUCKETS = [
   // nueva del Kit aquí no ponía nada en rojo. Cada bucket de abajo se escribió
   // MIDIENDO su consumo real en el código, no por el nombre de la hoja.
   //
-  // Las 19 de tipografía son la FUENTE de la escala: `dtcg-export.mjs:79` las saca
+  // Las 21 de tipografía (eran 19 hasta que el rebase del 2026-09-02 añadió el paso 900 =
+  // 64/78) son la FUENTE de la escala: `dtcg-export.mjs:79` las saca
   // de `custom.typography` y alimentan `--sc-font-size-*`, `--sc-line-height-*` y
   // `--sc-font-weight-*` en `01-primitive.css:258-291`. Verificado por valor
   // (12·14·16·18·20·24·32·48 y 18·20·24·28·36·40·58; pesos 400/500/600/700).
@@ -97,6 +98,25 @@ export const BUCKETS = [
   // el mismo que usa extend.ts, o el contrato se desfasa MUDO (fue el bug de md=21 vs 20). El
   // valor de cada paso ya lo cubre el bucket `flows` de primitive.typography.
   { group: 'aura/custom', test: /^app\.typography\.(sm|md|lg)\.(fontSize|lineHeight)$/, kind: 'value-check', note: 'contrato de tipografía del extend — el paso del Kit debe coincidir con sc-preset/extend.ts (value-check §8)' },
+
+  // Llegaron con el rebase de los text styles del 2026-09-02 (Display a 64, h1 a 48) y
+  // pusieron 9 hojas en rojo de golpe. Clasificadas MIDIENDO su consumo, no por el nombre:
+  //
+  // `font.style.*` (4 cadenas: "Regular" · "Medium" · "Semi Bold" · "Bold") es la cara FIGMA
+  // del peso: para atar el `fontStyle` de un text style, Figma exige una variable de TEXTO con
+  // el nombre de la cara. CSS no consume nombres de cara — el peso viaja como NÚMERO por
+  // `font.weight.*`, que ya cae en el bucket `flows` de arriba. No hay valor que checkear aquí.
+  { group: 'aura/custom', test: /^primitive\.typography\.font\.style\./, kind: 'not-consumed', note: 'nombre de cara para atar fontStyle en Figma; en CSS el peso va como número (font.weight.* → flows)' },
+  // `font.family.inter` = "Inter", UNA cara. El DS declara la PILA completa
+  // (`--sc-font-family-primary: 'Inter', system-ui, -apple-system, sans-serif`): los fallbacks
+  // no son expresables como variable de Figma, así que el valor DIVERGE a propósito.
+  { group: 'aura/custom', test: /^primitive\.typography\.font\.family\./, kind: 'divergence', note: 'Kit = una cara ("Inter"); el DS declara la pila --sc-font-family-primary con fallbacks, que Figma no modela' },
+  // `app.typography.{xl,xxl}` NO están en el contrato: `sc-preset/extend.ts` declara sm/md/lg y
+  // nada más (es el tier de control de PrimeNG). Medido el 2026-09-02 sobre el fichero del DS
+  // con el bridge — 110 páginas, 137.386 nodos — CERO consumidores: ni un nodo ni un text style
+  // atado a ellas. Si algún día el preset las declara, se mueven al bucket `value-check` de
+  // arriba y se añaden a APP_TYPOGRAPHY_CONTRACT; hasta entonces declararlas consumidas mentiría.
+  { group: 'aura/custom', test: /^app\.typography\.(xl|xxl)\.(fontSize|lineHeight)$/, kind: 'not-consumed', note: 'tier xl/xxl solo en Figma: extend.ts declara sm/md/lg y 0 consumidores medidos en el fichero (2026-09-02)' },
 
   // 26 hojas del modal custom y NADIE las lee: no existe ninguna `--sc-cmp-custommodal-*` en las
   // capas (mismo caso y misma decisión que bulktranscriptionmodal). El componente se estiliza con
