@@ -23,7 +23,7 @@ body {
 
 /* Jerarquía de títulos de la DOC (no del DS): el look "Constellation" quiere un título de
    página grande y confiado (32px en el original). Lo damos con los TOKENS de display del
-   propio DS —`--sc-font-size-display-1` = 32px—, así la doc bebe del mismo sitio que todo
+   propio DS —`--sc-font-size-650` = 32px—, así la doc bebe del mismo sitio que todo
    lo demás y el DS y sus componentes NO se tocan. Es fallback: las páginas con su propia
    regla de h1 (índice, component-page) la fijan explícitas. */
 .demo-main h1 {
@@ -32,8 +32,11 @@ body {
      después → ganaría). Para propagar el título de display a TODAS desde un solo sitio, sin
      editar cinco ficheros ni arriesgar olvidar uno, este global tiene que ganar. Es el shell
      de la DOC, no el DS. */
-  font-size: var(--sc-font-size-display-1) !important;
-  line-height: var(--sc-line-height-display-1) !important;
+  /* 650 = 32px: el look de la DOC quiere 32 y, tras repuntar la rampa semántica a Figma
+     (DD-48), ningún ROL cae ahí (display-1 = 64, h1 = 48). La doc nombra el PASO que quiere
+     en vez de seguir tomando prestado un rol cuyo significado ha cambiado. */
+  font-size: var(--sc-font-size-650) !important;
+  line-height: var(--sc-line-height-650) !important;
   font-weight: var(--sc-font-weight-bold) !important;
   letter-spacing: -0.01em;
   color: var(--sc-text-primary);

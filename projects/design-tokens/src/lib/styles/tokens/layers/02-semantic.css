@@ -287,15 +287,30 @@
    * Each role bundles three tokens (size, line-height, weight). Roles
    * `display-1` through `body-3` use the primary family (Inter);
    * `caption` and `caption-bold` use the secondary family (Open Sans).
-   * Values track the Smart Contact Figma spec (DD#36).
+   *
+   * FIGMA MANDA (DD-48, 2026-09-03). Cada rol apunta al MISMO paso al que apunta su text
+   * style en el Kit; medido en vivo con el bridge, no deducido. Si un text style se remapea
+   * en Figma, esta tabla se mueve detrás: no se negocia por comodidad del consumidor.
+   *   Display/display-*  → font/size/900 (64) · line/height/900 (78)
+   *   Heading/h1-*       → font/size/800 (48) · line/height/800 (58)
+   *   Heading/h2-*       → font/size/500 (24) · line/height/500 (36)
+   *   Heading/h3-*       → font/size/400 (18) · line/height/300 (24)
+   *   Body/body-*        → font/size/200 (14) · line/height/200 (20)
+   *   Caption/caption-*  → font/size/100 (12) · line/height/100 (18)
+   *
+   * `h4`, `subtitle-1`, `subtitle-2` y `body-1` NO tienen text style en Figma: son roles del
+   * código que se quedan como estaban. `h4` coincide ahora con `h3` (18/24) porque la escalera
+   * de Figma tiene TRES niveles de heading, no cuatro; se deja como alias redundante en vez de
+   * inventarle un tamaño que el Kit no respalda (misma doctrina que subtitle-2 = subtitle-3 en
+   * DD-13). El consumidor que quiera un tamaño intermedio nombra el paso, no el rol.
    */
 
   /* Sizes */
-  --sc-font-size-display-1: var(--sc-font-size-700);
-  --sc-font-size-h1: var(--sc-font-size-650);
+  --sc-font-size-display-1: var(--sc-font-size-900);
+  --sc-font-size-h1: var(--sc-font-size-800);
   --sc-font-size-h2: var(--sc-font-size-500);
-  --sc-font-size-h3: var(--sc-font-size-450);
-  --sc-font-size-h4: var(--sc-font-size-400);
+  --sc-font-size-h3: var(--sc-font-size-400);
+  --sc-font-size-h4: var(--sc-font-size-400); /* = h3: Figma no tiene h4 */
   --sc-font-size-subtitle-1: var(--sc-font-size-300);
   --sc-font-size-subtitle-2: var(--sc-font-size-200);
   --sc-font-size-body-1: var(--sc-font-size-300);
@@ -305,10 +320,10 @@
   --sc-font-size-caption-bold: var(--sc-font-size-100);
 
   /* Line heights */
-  --sc-line-height-display-1: var(--sc-line-height-700);
-  --sc-line-height-h1: var(--sc-line-height-650);
+  --sc-line-height-display-1: var(--sc-line-height-900);
+  --sc-line-height-h1: var(--sc-line-height-800);
   --sc-line-height-h2: var(--sc-line-height-500);
-  --sc-line-height-h3: var(--sc-line-height-450);
+  --sc-line-height-h3: var(--sc-line-height-300);
   --sc-line-height-h4: var(--sc-line-height-400);
   --sc-line-height-subtitle-1: var(--sc-line-height-300);
   --sc-line-height-subtitle-2: var(--sc-line-height-220);
