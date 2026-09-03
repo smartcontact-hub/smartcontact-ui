@@ -37,6 +37,79 @@
 
 ---
 
+## DD-48 · 2026-09-03 — En las escalas MANDA FIGMA: la rampa semántica se repunta a los text styles, y la letra gana un chivato Figma-vivo
+
+**Contexto** · Una duda de copy en la página de tipografía de `sc-docs` («el root creo que es
+14») destapó que **Figma iba por delante del código en 11 variables** de tipografía sin que
+ningún gate lo dijera. Al rebasar los text styles del Kit (2026-09-02: `Display` a 64/78, `h1`
+a 48/58) nacieron `font/size/900`, `line/height/900` y el tier `app/typography/xl|xxl`, y la
+rampa SEMÁNTICA del código se quedó apuntando al mundo anterior. Medido en vivo con el bridge:
+
+| Rol del código | Apuntaba a | Su text style en Figma | Δ |
+|---|---|---|---|
+| `display-1` | 700 = 32/40 | `Display/display-*` 64/78 | la mitad |
+| `h1` | 650 = 32/40 | `Heading/h1-*` 48/58 | −16 / −18 |
+| `h2` | 500 = 24/36 | `Heading/h2-*` 24/36 | casaba |
+| `h3` | 450 = 20/28 | `Heading/h3-*` 18/24 | +2 / +4 |
+
+**Dato que decide** · El root NO era la discusión: son 16 y siempre lo fueron (`html` a `100%`,
+medido en el build; el 14 que confunde es la base de la escala de ESPACIADO, `--sc-scale-1`, y
+el cuerpo por defecto). Lo que sí divergía era la rampa semántica, y la divergencia no la vio
+nadie porque **`tokens:type-parity` va export → código**: lo que existe en Figma y nunca llegó
+al export le es invisible *por construcción*. Decía «15/15 · al día» con verdad, contestando a
+una pregunta más estrecha de la que se le estaba leyendo.
+
+**Decisión** (de Rafa, 2026-09-03: *«voto por seguir las escalas de Figma, y aceptarlas como
+impepinables a menos que lo diga yo»*):
+
+1. **Figma manda en las escalas.** Cada rol de `02-semantic.css` apunta al MISMO paso al que
+   apunta su text style en el Kit. Si un text style se remapea, la tabla se mueve detrás. No se
+   negocia por comodidad del consumidor.
+2. **`h4` se queda donde estaba** (18/24) y coincide con `h3`. La escalera de Figma tiene TRES
+   niveles de heading, no cuatro; se deja como alias redundante en vez de inventarle un tamaño
+   que el Kit no respalda. Misma doctrina que `subtitle-2 = subtitle-3` en DD-13.
+3. **El consumidor que quiera otro tamaño NOMBRA EL PASO, no el rol.** `sc-docs` quiere títulos
+   de 32 (su look «Constellation») y tras el repunte ningún rol cae en 32, así que sus seis
+   consumos pasan a `--sc-font-size-650`. Es más honesto que lo que hacía: tomar prestado
+   `display-1` porque casualmente valía 32.
+4. **`figma-parity.mjs` cubre también la LETRA**, y de paso comprueba que cada variable de
+   tipografía vale lo mismo en TODOS los modos.
+
+**Razón** · Un design system con dos fuentes de verdad no tiene ninguna. Si el Kit es la fuente,
+la divergencia se arregla en el código, no al revés — y cuando el código tenga razón (a11y,
+contraste), eso es una DIVERGENCIA declarada y vigilada, como las de color, no un empate mudo.
+La regla 3 protege lo que el repunte deja al aire: los roles son la voz de Figma, y una app que
+necesite otra cosa lo dice nombrando el paso, donde se ve, en vez de doblar el significado de un
+rol compartido.
+
+**Descartadas** ·
+- **Que Figma bajara a los valores del código** → invierte la dirección del sistema; el Kit es
+  lo que ve el diseñador y lo que exporta el Theme Designer.
+- **Inventar un rol nuevo a 32 para que `sc-docs` siguiera con un rol** → un rol semántico que
+  existe solo porque un consumidor quería un tamaño es exactamente cómo se pudre una rampa.
+- **Mover la tipografía de Figma a una colección de UN modo** (lo estructuralmente limpio, ya
+  que la letra no cambia con el tema) → la colección `Custom` está PUBLICADA y sus 69 variables
+  incluyen 33 de color, 12 de las cuales sí difieren de verdad entre Light y Dark. Mover
+  variables entre colecciones en Figma es borrar y recrear: rompe todos los bindings de los
+  consumidores. Coste alto, beneficio solo de higiene → se deja y **se vigila** (punto 4).
+- **Un gate de CI para la paridad Figma-vivo** → necesita el bridge abierto. Sigue siendo
+  procedimiento manual, como el resto de `figma-parity.mjs`.
+
+**Consecuencias** ·
+- `display-1` se queda **sin consumidores** y `h1` con uno que es solo fallback. Es el estado
+  honesto: la rampa semántica era aspiracional desde DD-13 («la adoptan las apps consumidoras →
+  hueco a cubrir»), y hoy `sc-docs` es cromo de documentación, no tipografía de producto. La
+  rampa ya dice la verdad y espera consumidores reales.
+- Un cambio visible en app: el `h3` de `repositorios-hub-page` (Supervisor) pasa de 20 a 18. Es
+  el único consumo de la rampa fuera de `sc-docs`, y va detrás de Figma por la regla 1.
+- `npm run figma:parity <volcado>` comprueba ahora color + letra + invariancia por modo. Primera
+  corrida completa el 2026-09-03: **36/36 en valor y 36/36 en modos**.
+- El bug que motivó el punto 4 era real y llevaba semanas: `app/typography/xl|xxl` tenían alias
+  en Light y un **0 crudo** en Dark, cuatro de treinta y seis. Arreglado el 2026-09-03 igualando
+  el alias; lo que faltaba no era el arreglo, era algo que lo mirara.
+
+---
+
 ## DD-47 · 2026-09-02 — La guía de proceso se sirve en el PUNTO DE DECISIÓN: hooks + tarjeta + gate de forma, y la prosa deja de crecer
 
 **Contexto.** `LEARNINGS.md` pasó de 1.765 a 10.757 palabras en 46 días (50 commits) con el tope

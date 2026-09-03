@@ -79,6 +79,7 @@
     "tokens:guard": "node scripts/token-guard.mjs",
     "tokens:import": "node scripts/token-gen.mjs --write && node scripts/token-gen-component.mjs --write && node scripts/token-gen-color.mjs --write && node scripts/token-gen-cmp-color.mjs --write && node scripts/token-gen-effects.mjs --write",
     "tokens:parity": "node scripts/token-parity.mjs",
+    "figma:parity": "node scripts/figma-parity.mjs",
     "tokens:report": "node scripts/token-report.mjs",
     "tokens:type-parity": "node scripts/token-type-parity.mjs",
     "typecheck": "tsc --noEmit --sourceMap -p projects/ui-smartcontact/tsconfig.lib.json && tsc --noEmit --sourceMap -p projects/ui-smartcontact-icons/tsconfig.lib.json && tsc --noEmit -p projects/sc-docs/tsconfig.app.json && tsc --noEmit -p projects/supervisor/tsconfig.app.json && tsc --noEmit -p projects/agent/tsconfig.app.json && tsc --noEmit -p projects/cuscare/tsconfig.app.json && tsc --noEmit -p tsconfig.harness.json",

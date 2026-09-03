@@ -1,6 +1,6 @@
 h1 {
-  font-size: var(--sc-font-size-h1);
-  line-height: var(--sc-line-height-h1);
+  font-size: var(--sc-font-size-650); /* 32px — el look de la DOC; tras DD-48 ningún rol cae en 32 (h1 = 48) */
+  line-height: var(--sc-line-height-650);
   font-weight: var(--sc-font-weight-h1);
 }
 

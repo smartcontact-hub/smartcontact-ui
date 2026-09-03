@@ -185,11 +185,40 @@ Two steps:
    ```
 
    The `Semantic Color Scheme` collection is the same but with two modes
-   (`Light`/`Dark`); emit `{ name: { light, dark } }`. Assemble the two into
-   `.cache/figma-live.json` (gitignored) as
-   `{ "primitive": {…}, "semantic": {…} }`.
+   (`Light`/`Dark`); emit `{ name: { light, dark } }`.
 
-2. `node scripts/figma-parity.mjs .cache/figma-live.json`
+   **Typography** (added 2026-09-03) comes from the `Custom` collection and is dumped
+   **per mode**, because the same dump answers two questions: whether the value matches the
+   export, and whether it is the same in every mode (it always must be — the letter does not
+   change with the theme, and four variables silently held a raw `0` in `Dark` for weeks):
+
+   ```js
+   const col = (await figma.variables.getLocalVariableCollectionsAsync())
+     .find(c => c.name === 'Custom');
+   const modes = col.modes.map(m => ({ id: m.modeId, name: m.name }));
+   const deref = async (raw, g = 0) => {
+     while (raw && raw.type === 'VARIABLE_ALIAS' && g++ < 10) {
+       const a = await figma.variables.getVariableByIdAsync(raw.id);
+       raw = a && a.valuesByMode[Object.keys(a.valuesByMode)[0]];
+     }
+     return raw;
+   };
+   const out = {};
+   for (const id of col.variableIds) {
+     const v = await figma.variables.getVariableByIdAsync(id);
+     if (!v || !/typography/.test(v.name)) continue;
+     const perMode = {};
+     for (const m of modes) perMode[m.name] = await deref(v.valuesByMode[m.id]);
+     out[v.name] = perMode;
+   }
+   return { typography: out };
+   ```
+
+   Assemble the three into `.cache/figma-live.json` (gitignored) as
+   `{ "primitive": {…}, "semantic": {…}, "typography": {…} }`. Any block may be omitted;
+   the script says out loud which checks it could not run.
+
+2. `npm run figma:parity .cache/figma-live.json`
 
 ⚠️ **The trap (measured 2026-08-30):** resolve **both sides** to final RGBA
 first. The export stores semantics as **aliases** (`{primary.700}`,
@@ -199,6 +228,14 @@ Figma's hex against the raw alias and you get ~154 false positives. The script
 does it right — resolution order `semantic/{mode} → semantic/common → primitive`,
 alpha normalised. Last run **2026-08-31: 406/406 match, 0 drift** (242
 primitives + 164 semantic light+dark). The export (24-Aug) was fresh.
+
+⚠️ **Why typography was added (measured 2026-09-03).** `tokens:type-parity` walks
+export → code, so anything that exists in Figma and never reached the export is invisible
+to it *by construction*. Eleven typography variables sat in that blind spot: `font/size/900`
+(64), `line/height/900` (78), the `app/typography/xl|xxl` tier, the family and the four
+`font/style` strings. The gate said `15/15 · al día` the whole time, truthfully — it was
+answering a narrower question than anyone was reading it for. Typography run 2026-09-03,
+after the sync landed: **36/36 match, 36/36 mode-invariant**.
 
 ## The scale — formal definition
 
