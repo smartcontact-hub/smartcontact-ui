@@ -475,3 +475,276 @@
   line-height: var(--sc-line-height-100);
   color: var(--sc-text-subtle);
 }
+
+/* ============================================================================
+ * Simulación del inspector del navegador.
+ *
+ * Réplica deliberada de Chrome DevTools, con SUS colores y no los del DS: la
+ * guía sirve para reconocer una herramienta ajena, así que parecerse a ella
+ * vale más aquí que ser coherente con nuestra paleta.
+ * ==========================================================================*/
+
+.paso {
+  display: grid;
+  grid-template-columns: 2rem 1fr;
+  gap: 0 1rem;
+  margin-top: 2rem;
+}
+
+.paso__n {
+  width: 2rem;
+  height: 2rem;
+  border-radius: 50%;
+  background: var(--sc-color-primary-600, #2563eb);
+  color: #fff;
+  display: grid;
+  place-items: center;
+  font-size: 0.9375rem;
+  font-weight: 600;
+}
+
+.paso__t {
+  margin: 0.25rem 0 0.375rem;
+  font-size: 1rem;
+  font-weight: 600;
+  color: var(--sc-text-color, #131b2b);
+}
+
+.paso__d {
+  margin: 0 0 0.875rem;
+  color: var(--sc-text-muted-color, #6f7784);
+  line-height: var(--sc-line-height-200, 1.25rem);
+}
+
+.paso__pie {
+  margin: 0.75rem 0 0;
+  font-size: 0.8125rem;
+  line-height: 1.125rem;
+  color: var(--sc-text-muted-color, #6f7784);
+}
+
+.sim {
+  border: 1px solid #cdcdcd;
+  border-radius: 6px;
+  overflow: hidden;
+  background: #fff;
+  font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+  font-size: 0.75rem;
+  color: #3c4043;
+}
+
+/* ── paso 1: menú contextual ───────────────────────────────────────────── */
+.sim--menu {
+  display: flex;
+  align-items: flex-start;
+  gap: 0;
+  padding: 1.25rem;
+  background: #f8f9fb;
+  font-family: inherit;
+}
+
+.sim__pieza {
+  padding: 0.5rem 1rem 0 0;
+}
+
+.chip-demo {
+  display: inline-block;
+  padding: 3.5px 7px;
+  border-radius: 6px;
+  background: #dcfce7;
+  color: #15803d;
+  font: 700 12px/18px Inter, system-ui, sans-serif;
+}
+
+.menu-ctx {
+  min-width: 12.5rem;
+  background: #fff;
+  border: 1px solid #d4d4d8;
+  border-radius: 6px;
+  padding: 0.25rem 0;
+  box-shadow: 0 6px 16px rgb(0 0 0 / 12%);
+  font: 400 13px/1 -apple-system, system-ui, sans-serif;
+  color: #202124;
+}
+
+.menu-ctx__i {
+  padding: 0.4375rem 0.875rem;
+}
+
+.menu-ctx__i--on {
+  background: #1a73e8;
+  color: #fff;
+  font-weight: 500;
+}
+
+.menu-ctx__sep {
+  height: 1px;
+  background: #e4e4e7;
+  margin: 0.25rem 0;
+}
+
+/* ── paso 2: ventana del inspector ─────────────────────────────────────── */
+.dt__tabs {
+  display: flex;
+  gap: 0;
+  background: #f3f3f3;
+  border-bottom: 1px solid #cdcdcd;
+  padding: 0 0.25rem;
+}
+
+.dt__tab {
+  padding: 0.4375rem 0.6875rem;
+  font-size: 0.6875rem;
+  color: #5f6368;
+  border-bottom: 2px solid transparent;
+}
+
+.dt__tab--on {
+  color: #1a73e8;
+  border-bottom-color: #1a73e8;
+  background: #fff;
+}
+
+.dt__cols {
+  display: grid;
+  grid-template-columns: 1.6fr 1fr;
+}
+
+.dt__dom {
+  padding: 0.625rem 0.75rem;
+  border-right: 1px solid #e8eaed;
+  overflow-x: auto;
+}
+
+.cod {
+  white-space: nowrap;
+  line-height: 1.4;
+  padding: 0.0625rem 0.25rem;
+  border-radius: 2px;
+}
+
+.cod--in { padding-left: 1.25rem; }
+.cod--in2 { padding-left: 2.375rem; }
+
+.cod--sel {
+  background: #e8f0fe;
+  box-shadow: inset 2px 0 0 #1a73e8;
+}
+
+.cod i { color: #881280; font-style: normal; }
+.cod b { color: #994500; font-weight: 400; }
+.cod u { color: #1a1aa6; text-decoration: none; }
+
+.dt__side { padding: 0; }
+
+.dt__stabs {
+  display: flex;
+  border-bottom: 1px solid #e8eaed;
+  padding: 0 0.25rem;
+}
+
+.dt__stab {
+  padding: 0.375rem 0.5rem;
+  font-size: 0.6875rem;
+  color: #5f6368;
+  border-bottom: 2px solid transparent;
+}
+
+.dt__stab--on {
+  color: #1a73e8;
+  border-bottom-color: #1a73e8;
+  font-weight: 500;
+}
+
+.dt__hint {
+  padding: 1.25rem 0.75rem;
+  color: #9aa0a6;
+  font-size: 0.6875rem;
+  text-align: center;
+}
+
+/* ── paso 3: el dibujo de cajas ────────────────────────────────────────── */
+.bm {
+  padding: 1.25rem;
+  background: #fff;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
+
+.bm__cap {
+  font-size: 0.625rem;
+  color: #3c4043;
+  padding: 0.1875rem 0 0 0.375rem;
+  align-self: flex-start;
+}
+
+.bm__l {
+  position: relative;
+  border: 1px solid #d4d4d8;
+  padding: 1.125rem 2.25rem;
+  text-align: center;
+}
+
+.bm__l--m { background: #f9cc9d; }
+.bm__l--b { background: #fdd663; }
+.bm__l--p { background: #c3d08b; }
+
+.bm__c {
+  background: #9ab7d3;
+  padding: 0.625rem 1.5rem;
+  font-size: 0.6875rem;
+  color: #202124;
+  border: 1px solid #d4d4d8;
+}
+
+.bm__v {
+  position: absolute;
+  font-size: 0.625rem;
+  color: #3c4043;
+}
+
+.bm__v--t { top: 0.25rem; left: 50%; transform: translateX(-50%); }
+.bm__v--bo { bottom: 0.25rem; left: 50%; transform: translateX(-50%); }
+.bm__v--l { left: 0.5rem; top: 50%; transform: translateY(-50%); }
+.bm__v--r { right: 0.5rem; top: 50%; transform: translateY(-50%); }
+
+/* ── paso 4: lista de propiedades ──────────────────────────────────────── */
+.dt--solo { border: 0; }
+
+.dt__filter {
+  padding: 0.4375rem 0.625rem;
+  border-bottom: 1px solid #e8eaed;
+  background: #f8f9fa;
+}
+
+.dt__filterbox {
+  display: inline-block;
+  min-width: 9rem;
+  padding: 0.25rem 0.5rem;
+  background: #fff;
+  border: 1px solid #1a73e8;
+  border-radius: 3px;
+  font-size: 0.6875rem;
+}
+
+.props { padding: 0.375rem 0; }
+
+.prop {
+  display: flex;
+  gap: 0.5rem;
+  padding: 0.1875rem 0.75rem;
+}
+
+.prop--hi { background: #fef7e0; }
+
+.prop__k { color: #881280; min-width: 8rem; }
+.prop__v { color: #1a1aa6; }
+
+@media (max-width: 40rem) {
+  .paso { grid-template-columns: 1.5rem 1fr; gap: 0 0.625rem; }
+  .paso__n { width: 1.5rem; height: 1.5rem; font-size: 0.8125rem; }
+  .dt__cols { grid-template-columns: 1fr; }
+  .dt__dom { border-right: 0; border-bottom: 1px solid #e8eaed; }
+  .sim--menu { flex-direction: column; gap: 0.75rem; }
+}
