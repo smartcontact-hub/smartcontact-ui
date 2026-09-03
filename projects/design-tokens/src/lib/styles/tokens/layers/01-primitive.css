@@ -268,7 +268,7 @@
   --sc-font-size-650: calc(32 / 16 * 1rem); /* 32 */
   --sc-font-size-700: calc(32 / 16 * 1rem); /* 32 (snap 36) */
   --sc-font-size-800: calc(48 / 16 * 1rem); /* 48 (era 56) */
-  --sc-font-size-900: calc(48 / 16 * 1rem); /* 48 (snap 64; era 70) */
+  --sc-font-size-900: calc(64 / 16 * 1rem); /* 64 */
 
   --sc-line-height-50: calc(18 / 16 * 1rem); /* 18 */
   --sc-line-height-100: calc(18 / 16 * 1rem); /* 18 (caption 12) */
@@ -282,7 +282,7 @@
   --sc-line-height-650: calc(40 / 16 * 1rem); /* 40 (h1 32) */
   --sc-line-height-700: calc(40 / 16 * 1rem); /* 40 */
   --sc-line-height-800: calc(58 / 16 * 1rem); /* 58 (display-1 48) */
-  --sc-line-height-900: calc(58 / 16 * 1rem); /* 58 */
+  --sc-line-height-900: calc(78 / 16 * 1rem); /* 78 */
 
   --sc-font-weight-regular: 400;
   --sc-font-weight-medium: 500;
