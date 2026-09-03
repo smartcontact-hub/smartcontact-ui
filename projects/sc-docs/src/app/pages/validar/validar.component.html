@@ -107,23 +107,149 @@
 
     <!-- ── pasos ── -->
     <section aria-labelledby="pasos-title">
-      <h2 id="pasos-title" class="section-title">Abrirlo, en cuatro pasos</h2>
-      <ol class="steps">
-        <li>
-          <strong>Clic derecho sobre el componente.</strong> Sobre la letra, no sobre el marco
-          (luego verás por qué). Si tu ratón no tiene botón derecho: dos dedos en el trackpad.
-        </li>
-        <li><strong>Elige «Inspeccionar»</strong>, la última opción del menú.</li>
-        <li>
-          <strong>Pincha la pestaña «Computed».</strong> Significa «calculado»: son los números
-          finales, ya con todas las cuentas hechas. Es lo que de verdad se ve en pantalla.
-        </li>
-        <li>
-          <strong>Lee las siete cosas.</strong> Arriba, el dibujo de cajas con el tamaño. Debajo,
-          la lista con todo lo demás. Usa el buscador (<em>Filter</em>) y escribe
-          <code>border</code>, <code>padding</code> o <code>font</code> para no perderte.
-        </li>
-      </ol>
+      <h2 id="pasos-title" class="section-title">Abrirlo, paso a paso</h2>
+      <p class="section-lead">
+        Cuatro pasos, y debajo de cada uno lo que vas a ver en pantalla. No hace falta entender el
+        código: solo saber dónde mirar.
+      </p>
+
+      <!-- PASO 1 -->
+      <div class="paso">
+        <div class="paso__n">1</div>
+        <div class="paso__cuerpo">
+          <h3 class="paso__t">Clic derecho encima del componente</h3>
+          <p class="paso__d">
+            Sobre la letra, no sobre el marco. Si tu ratón no tiene botón derecho, dos dedos en el
+            trackpad. Se abre un menú y lo que buscas es la última opción.
+          </p>
+          <div class="sim sim--menu" aria-hidden="true">
+            <div class="sim__pieza">
+              <span class="chip-demo">Activo</span>
+            </div>
+            <div class="menu-ctx">
+              <div class="menu-ctx__i">Retroceder</div>
+              <div class="menu-ctx__i">Recargar</div>
+              <div class="menu-ctx__sep"></div>
+              <div class="menu-ctx__i">Guardar como…</div>
+              <div class="menu-ctx__i">Imprimir…</div>
+              <div class="menu-ctx__sep"></div>
+              <div class="menu-ctx__i menu-ctx__i--on">Inspeccionar</div>
+            </div>
+          </div>
+          <p class="paso__pie">Es siempre la última. En algunos navegadores pone «Inspeccionar elemento».</p>
+        </div>
+      </div>
+
+      <!-- PASO 2 -->
+      <div class="paso">
+        <div class="paso__n">2</div>
+        <div class="paso__cuerpo">
+          <h3 class="paso__t">Se abre el inspector</h3>
+          <p class="paso__d">
+            Aparece un panel, normalmente a la derecha o abajo. Da igual lo que ponga: solo te
+            interesan dos pestañas de la fila de arriba.
+          </p>
+          <div class="sim" aria-hidden="true">
+            <div class="dt">
+              <div class="dt__tabs">
+                <span class="dt__tab dt__tab--on">Elements</span>
+                <span class="dt__tab">Console</span>
+                <span class="dt__tab">Sources</span>
+                <span class="dt__tab">Network</span>
+                <span class="dt__tab">Performance</span>
+              </div>
+              <div class="dt__cols">
+                <div class="dt__dom">
+                  <div class="cod">&lt;<i>div</i> <b>class</b>=<u>"p-card"</u>&gt;</div>
+                  <div class="cod cod--in">&lt;<i>div</i> <b>class</b>=<u>"p-card-body"</u>&gt;</div>
+                  <div class="cod cod--in2 cod--sel">&lt;<i>span</i> <b>class</b>=<u>"p-tag"</u>&gt;Activo&lt;/<i>span</i>&gt;</div>
+                  <div class="cod cod--in">&lt;/<i>div</i>&gt;</div>
+                  <div class="cod">&lt;/<i>div</i>&gt;</div>
+                </div>
+                <div class="dt__side">
+                  <div class="dt__stabs">
+                    <span class="dt__stab">Styles</span>
+                    <span class="dt__stab dt__stab--on">Computed</span>
+                  </div>
+                  <div class="dt__hint">Aquí van los números finales</div>
+                </div>
+              </div>
+            </div>
+          </div>
+          <p class="paso__pie">
+            La línea azul de la izquierda es el trozo que has seleccionado. Si pinchas otra línea,
+            los números de la derecha cambian.
+          </p>
+        </div>
+      </div>
+
+      <!-- PASO 3 -->
+      <div class="paso">
+        <div class="paso__n">3</div>
+        <div class="paso__cuerpo">
+          <h3 class="paso__t">Pincha «Computed»</h3>
+          <p class="paso__d">
+            Significa «calculado»: los números finales, con todas las cuentas hechas. Es lo que de
+            verdad se ve en pantalla. Lo primero que sale es el dibujo de cajas.
+          </p>
+          <div class="sim" aria-hidden="true">
+            <div class="bm">
+              <div class="bm__cap">margin</div>
+              <div class="bm__l bm__l--m">
+                <span class="bm__v bm__v--t">-</span>
+                <div class="bm__cap bm__cap--b">border</div>
+                <div class="bm__l bm__l--b">
+                  <span class="bm__v bm__v--t">1</span>
+                  <div class="bm__cap bm__cap--p">padding</div>
+                  <div class="bm__l bm__l--p">
+                    <span class="bm__v bm__v--t">3.5</span>
+                    <span class="bm__v bm__v--l">7</span>
+                    <div class="bm__c">54 × 25</div>
+                    <span class="bm__v bm__v--r">7</span>
+                    <span class="bm__v bm__v--bo">3.5</span>
+                  </div>
+                  <span class="bm__v bm__v--bo">1</span>
+                </div>
+                <span class="bm__v bm__v--bo">-</span>
+              </div>
+            </div>
+          </div>
+          <p class="paso__pie">
+            De fuera adentro: <b>margin</b> es el aire de fuera, <b>border</b> el marco,
+            <b>padding</b> el aire de dentro, y el azul es el contenido. El
+            <b>54 × 25</b> del centro es lo que mide el texto; los <b>25</b> del alto total salen
+            de sumar 18 de texto más 3,5 arriba y 3,5 abajo.
+          </p>
+        </div>
+      </div>
+
+      <!-- PASO 4 -->
+      <div class="paso">
+        <div class="paso__n">4</div>
+        <div class="paso__cuerpo">
+          <h3 class="paso__t">Busca lo que quieras comprobar</h3>
+          <p class="paso__d">
+            Debajo del dibujo hay una lista larguísima. No la leas entera: usa el buscador y
+            escribe lo que buscas.
+          </p>
+          <div class="sim" aria-hidden="true">
+            <div class="dt dt--solo">
+              <div class="dt__filter"><span class="dt__filterbox">font</span></div>
+              <div class="props">
+                <div class="prop"><span class="prop__k">font-family</span><span class="prop__v">Inter</span></div>
+                <div class="prop"><span class="prop__k">font-size</span><span class="prop__v">12px</span></div>
+                <div class="prop"><span class="prop__k">font-weight</span><span class="prop__v">700</span></div>
+                <div class="prop prop--hi"><span class="prop__k">line-height</span><span class="prop__v">18px</span></div>
+              </div>
+            </div>
+          </div>
+          <p class="paso__pie">
+            Escribe <code>font</code> para la letra, <code>padding</code> para el aire,
+            <code>border</code> para el marco o <code>background</code> para el fondo. Y ya tienes
+            el número para comparar con Figma.
+          </p>
+        </div>
+      </div>
     </section>
 
     <!-- ── traducciones numéricas ── -->
