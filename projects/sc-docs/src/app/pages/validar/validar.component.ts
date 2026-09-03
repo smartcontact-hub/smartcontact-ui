@@ -1,6 +1,8 @@
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 
+import { ValidarPracticaComponent } from './practica.component';
+
 /** Una de las siete comprobaciones del recorrido. */
 interface Check {
   readonly n: string;
@@ -41,7 +43,7 @@ interface Piece {
  */
 @Component({
   selector: 'app-validar',
-  imports: [FormsModule],
+  imports: [FormsModule, ValidarPracticaComponent],
   templateUrl: './validar.component.html',
   styleUrl: './validar.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

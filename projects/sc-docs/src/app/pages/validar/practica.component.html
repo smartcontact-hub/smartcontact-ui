@@ -1,0 +1,87 @@
+<h2 id="practica-title" class="titulo">Practícalo aquí</h2>
+<p class="lead">
+  Este chip es de verdad y está vivo. Dale a una misión y el panel de la derecha se comporta como
+  el inspector: los números <strong>no están escritos</strong>, se leen del chip en el momento. Si
+  algo cambia en el sistema, cambian solos.
+</p>
+
+<div class="marco">
+  <!-- la página de mentira, con el componente real dentro -->
+  <div class="pagina">
+    <span class="pagina__et">La página</span>
+    <span #chip class="chip">
+      <span class="chip__punto" aria-hidden="true"></span>
+      Activo
+    </span>
+  </div>
+
+  <!-- el inspector de mentira, con lecturas REALES -->
+  <div class="dt">
+    <div class="dt__tabs" aria-hidden="true">
+      <span class="dt__tab">Styles</span>
+      <span class="dt__tab dt__tab--on">Computed</span>
+    </div>
+
+    @if (misionActiva(); as activa) {
+      <div class="dt__filter">
+        <span class="dt__filterbox">{{ misionFiltro(activa) }}</span>
+      </div>
+      <div class="props">
+        @for (l of lecturas(); track l.k) {
+          <div class="prop">
+            <span class="prop__k">{{ l.k }}</span>
+            <span class="prop__v">{{ l.v }}</span>
+            @if (l.juzga) {
+              @if (l.token) {
+                <span class="origen origen--var">{{ l.token }}</span>
+              } @else {
+                <span class="origen origen--pelo">a pelo</span>
+              }
+            } @else {
+              <span class="origen origen--na">—</span>
+            }
+          </div>
+        }
+      </div>
+      <p class="pista">{{ misionPista(activa) }}</p>
+    } @else {
+      <p class="dt__hint">Elige una misión. Aquí saldrá lo que verías en «Computed».</p>
+    }
+  </div>
+</div>
+
+<!-- las siete misiones -->
+<div class="misiones">
+  @for (m of misiones; track m.id) {
+    <button
+      type="button"
+      class="mision"
+      [class.mision--on]="misionActiva() === m.id"
+      [class.mision--hecha]="hechas().has(m.id)"
+      [attr.aria-pressed]="misionActiva() === m.id"
+      (click)="inspeccionar(m)"
+    >
+      <span class="mision__n" aria-hidden="true">{{ hechas().has(m.id) ? '✓' : m.n }}</span>
+      <span class="mision__t">{{ m.titulo }}</span>
+      <span class="mision__f">{{ m.filtro }}</span>
+    </button>
+  }
+</div>
+
+<div class="pie">
+  <p class="marcador" aria-live="polite">
+    <strong>{{ progreso() }} de 7</strong> comprobadas.
+    @if (progreso() === 7) {
+      <span class="ok">Ya sabes validar un componente entero.</span>
+    }
+  </p>
+  @if (progreso() > 0) {
+    <button type="button" class="reset" (click)="reiniciar()">Empezar de nuevo</button>
+  }
+</div>
+
+<p class="nota">
+  La columna de la derecha es lo que de verdad importa: dice si el valor sale de una variable del
+  sistema o está escrito a mano. Hay <strong>una escrita a mano a propósito</strong>, para que veas
+  cómo se ve el problema cuando aparece de verdad.
+</p>
