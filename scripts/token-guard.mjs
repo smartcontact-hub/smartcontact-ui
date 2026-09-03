@@ -48,6 +48,25 @@ const FONT_ALLOW = new Set([]);
  */
 const REPLICA_APPS = ['projects/agent/', 'projects/agent-mini/', 'projects/cuscare/'];
 
+/**
+ * EXENCIÓN CONDICIONADA, por LÍNEA — la forma estrecha de `REPLICA_APPS`.
+ *
+ * Mismo motivo que las apps réplica (el valor se copia crudo del producto real y tokenizarlo
+ * destruiría justo lo que aporta), pero aquí la réplica no es una app entera: son los trozos de
+ * `sc-docs` que DIBUJAN el inspector del navegador para enseñar a usarlo. El inspector de Chrome
+ * escribe a 11px y 10px, tamaños que la escala del DS no tiene ni debe tener; subirlos al 12 del
+ * token haría el dibujo menos parecido a lo que la persona va a ver en pantalla.
+ *
+ * No es un allowlist de ficheros A PROPÓSITO: eso es como se pudre un guardián (silencias un
+ * fichero entero y el defecto se cuela por la puerta de al lado). La exención es por LÍNEA y hay
+ * que ESCRIBIRLA, así que una tipografía nueva sin marcar sigue saliendo en rojo aunque viva en
+ * el mismo fichero. Y la marca dice el porqué en el sitio donde se lee.
+ *
+ * Solo exime las reglas 5-7 (tipografía literal). El resto del guard sigue aplicando.
+ */
+const REPLICA_LINEA = 'sc-replica-navegador';
+const esReplicaDeLinea = (line) => line.includes(REPLICA_LINEA);
+
 const files = execSync('git ls-files projects', { cwd: root, encoding: 'utf8' })
   .split('\n')
   .filter((f) => /\.(scss|css|html|ts)$/.test(f) && !f.endsWith('.spec.ts'));
@@ -103,6 +122,7 @@ for (const f of files) {
       !inTokens &&
       !inReplica &&
       !FONT_ALLOW.has(f) &&
+      !esReplicaDeLinea(line) &&
       /(?<![\w-])font-size:\s*[0-9.]+(px|rem)/.test(line) &&
       !/^\s*(\/\/|\*|\/\*)/.test(line) &&
       !/(\/\/|\/\*).*font-size/.test(line)
@@ -118,6 +138,7 @@ for (const f of files) {
       !inTokens &&
       !inPreset &&
       !inReplica &&
+      !esReplicaDeLinea(line) &&
       /(?<![\w-])font-weight:\s*\d{3}\b/.test(line) &&
       !/^\s*(\/\/|\*|\/\*)/.test(line) &&
       !/(\/\/|\/\*).*font-weight/.test(line)
@@ -131,6 +152,7 @@ for (const f of files) {
       !inTokens &&
       !inPreset &&
       !inReplica &&
+      !esReplicaDeLinea(line) &&
       /font-family:[^;]*\bmonospace\b/.test(line) &&
       !/var\(--sc-font-family-mono\)/.test(line) &&
       !/^\s*(\/\/|\*|\/\*)/.test(line)
