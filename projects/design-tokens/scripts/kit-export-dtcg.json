@@ -6390,6 +6390,34 @@
             "800": {
               "$type": "number",
               "$value": 48
+            },
+            "900": {
+              "$type": "number",
+              "$value": 64
+            }
+          },
+          "family": {
+            "inter": {
+              "$type": "string",
+              "$value": "Inter"
+            }
+          },
+          "style": {
+            "regular": {
+              "$type": "string",
+              "$value": "Regular"
+            },
+            "medium": {
+              "$type": "string",
+              "$value": "Medium"
+            },
+            "semibold": {
+              "$type": "string",
+              "$value": "Semi Bold"
+            },
+            "bold": {
+              "$type": "string",
+              "$value": "Bold"
             }
           }
         },
@@ -6422,6 +6450,10 @@
             "800": {
               "$type": "number",
               "$value": 58
+            },
+            "900": {
+              "$type": "number",
+              "$value": 78
             }
           }
         }
@@ -6629,6 +6661,26 @@
           "lineHeight": {
             "$type": "number",
             "$value": "{primitive.typography.line.height.300}"
+          }
+        },
+        "xl": {
+          "fontSize": {
+            "$type": "number",
+            "$value": "{primitive.typography.font.size.400}"
+          },
+          "lineHeight": {
+            "$type": "number",
+            "$value": "{primitive.typography.line.height.300}"
+          }
+        },
+        "xxl": {
+          "fontSize": {
+            "$type": "number",
+            "$value": "{primitive.typography.font.size.450}"
+          },
+          "lineHeight": {
+            "$type": "number",
+            "$value": "{primitive.typography.line.height.450}"
           }
         }
       }
@@ -14687,7 +14739,7 @@
       "padding": {
         "y": {
           "$type": "number",
-          "$value": "{scale.0-25}"
+          "$value": "{scale.0-125}"
         },
         "x": {
           "$type": "number",
