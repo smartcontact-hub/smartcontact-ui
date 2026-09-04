@@ -1,0 +1,375 @@
+/* Mapa de conexión de variables. Todo el color y el espaciado sale de `--sc-*`;
+   nada de literales, que es justo lo que esta página va a auditar. */
+:host {
+  display: block;
+  max-width: 78rem;
+}
+
+/* ── Cabecera ─────────────────────────────────────────────────────── */
+.cx-head {
+  margin-bottom: var(--sc-spacing-2);
+}
+
+h1 {
+  font-size: var(--sc-font-size-650);
+  line-height: var(--sc-line-height-650);
+  font-weight: var(--sc-font-weight-h1);
+  margin: 0 0 var(--sc-spacing-0-75);
+}
+
+.cx-intro {
+  color: var(--sc-text-secondary);
+  max-width: 46rem;
+  margin: 0 0 var(--sc-spacing-0-75);
+}
+
+.cx-meta {
+  font-size: var(--sc-font-size-body-3);
+  color: var(--sc-text-subtle);
+  margin: var(--sc-spacing-1) 0 0;
+
+  a {
+    color: var(--sc-text-link);
+  }
+}
+
+code {
+  font-family: var(--sc-font-family-mono);
+  font-size: 0.9em;
+}
+
+.cx-error {
+  color: var(--sc-text-danger);
+}
+
+.cx-cargando {
+  color: var(--sc-text-subtle);
+}
+
+/* ── Bloques ──────────────────────────────────────────────────────── */
+.cx-bloque {
+  padding-top: var(--sc-spacing-2);
+  margin-top: var(--sc-spacing-2);
+  border-top: 1px solid var(--sc-border-subtle);
+
+  h2 {
+    font-size: var(--sc-font-size-h4);
+    line-height: var(--sc-line-height-h4);
+    font-weight: var(--sc-font-weight-h4);
+    margin: 0 0 var(--sc-spacing-0-5);
+  }
+}
+
+.cx-lead {
+  color: var(--sc-text-secondary);
+  max-width: 46rem;
+  margin: 0 0 var(--sc-spacing-1-25);
+}
+
+.cx-n {
+  font-size: var(--sc-font-size-body-3);
+  font-weight: var(--sc-font-weight-regular);
+  color: var(--sc-text-subtle);
+  margin-left: var(--sc-spacing-0-25);
+}
+
+/* Título solo para lectores de pantalla. */
+.cx-sr {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+/* ── La etiqueta del veredicto, igual en la leyenda y en la tabla ──── */
+.cx-pill {
+  display: inline-block;
+  padding: var(--sc-spacing-0-125) var(--sc-spacing-0-5);
+  border-radius: var(--sc-radius-full);
+  font-size: var(--sc-font-size-caption);
+  line-height: var(--sc-line-height-caption);
+  white-space: nowrap;
+
+  &--ok {
+    background: var(--sc-bg-success-subtle);
+    color: var(--sc-text-success);
+  }
+  &--aviso {
+    background: var(--sc-bg-warning-subtle);
+    color: var(--sc-text-warning);
+  }
+  &--malo {
+    background: var(--sc-bg-danger-subtle);
+    color: var(--sc-text-danger);
+  }
+  &--neutro {
+    background: var(--sc-bg-subtle);
+    color: var(--sc-text-secondary);
+  }
+}
+
+/* ── Leyenda: definición y recuento en la misma línea ──────────────── */
+.cx-leyenda {
+  display: grid;
+  gap: var(--sc-spacing-0-75);
+  margin: 0;
+  max-width: 52rem;
+}
+
+.cx-leyenda__item {
+  /* En estrecho, la etiqueta encima de su explicación; a partir de 40rem, en dos columnas.
+     Una rejilla de columna FIJA desbordaba la página por 26px a 280px de ancho. */
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: var(--sc-spacing-0-25);
+  align-items: baseline;
+
+  dt {
+    display: flex;
+    align-items: baseline;
+    gap: var(--sc-spacing-0-5);
+  }
+
+  dd {
+    margin: 0;
+    color: var(--sc-text-secondary);
+  }
+
+  @media (min-width: 40rem) {
+    grid-template-columns: 12rem 1fr;
+    gap: var(--sc-spacing-1);
+  }
+}
+
+.cx-leyenda__n {
+  font-variant-numeric: tabular-nums;
+  font-size: var(--sc-font-size-body-3);
+  color: var(--sc-text-subtle);
+}
+
+/* ── Tablas ───────────────────────────────────────────────────────── */
+.cx-tabla {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: var(--sc-font-size-body-3);
+
+  th,
+  td {
+    text-align: left;
+    padding: var(--sc-spacing-0-5) var(--sc-spacing-0-75);
+    border-bottom: 1px solid var(--sc-border-subtle);
+    vertical-align: top;
+  }
+
+  thead th {
+    font-weight: var(--sc-font-weight-semibold);
+    color: var(--sc-text-subtle);
+    font-size: var(--sc-font-size-caption);
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    border-bottom-color: var(--sc-border-default);
+  }
+}
+
+.cx-num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+
+  &--alerta {
+    color: var(--sc-text-danger);
+    font-weight: var(--sc-font-weight-semibold);
+  }
+}
+
+.cx-fila-comp.is-open > * {
+  background: var(--sc-bg-subtle);
+}
+
+/* El nombre del componente ES el disparador: sin botón dentro de botón. */
+.cx-abrir {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-375);
+  width: 100%;
+  padding: 0;
+  border: 0;
+  background: transparent;
+  color: var(--sc-text-primary);
+  font: inherit;
+  font-weight: var(--sc-font-weight-medium);
+  cursor: pointer;
+  text-align: left;
+
+  &:hover {
+    color: var(--sc-text-link);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--sc-border-focus);
+    outline-offset: 2px;
+    border-radius: var(--sc-radius-100);
+  }
+}
+
+.cx-chevron {
+  display: inline-block;
+  color: var(--sc-text-subtle);
+  transition: transform 120ms ease;
+
+  .is-open & {
+    transform: rotate(90deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .cx-chevron {
+    transition: none;
+  }
+}
+
+/* ── Detalle desplegado ───────────────────────────────────────────── */
+.cx-detalle > td {
+  background: var(--sc-bg-subtle);
+  padding: var(--sc-spacing-1);
+}
+
+/* Las tablas son anchas: que scrollen ELLAS, nunca el cuerpo de la página.
+   Un `td` con overflow no sirve de contenedor de scroll (es display: table-cell),
+   así que hace falta un div de verdad alrededor de cada tabla. */
+.cx-scroll {
+  overflow-x: auto;
+}
+
+.cx-filtros {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sc-spacing-0-375);
+  margin-bottom: var(--sc-spacing-0-75);
+}
+
+.cx-filtros__et {
+  font-size: var(--sc-font-size-caption);
+  color: var(--sc-text-subtle);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.cx-chip {
+  padding: var(--sc-spacing-0-125) var(--sc-spacing-0-5);
+  border: 1px solid var(--sc-border-default);
+  border-radius: var(--sc-radius-full);
+  background: var(--sc-bg-surface);
+  color: var(--sc-text-secondary);
+  font: inherit;
+  font-size: var(--sc-font-size-caption);
+  cursor: pointer;
+
+  &.is-active {
+    background: var(--sc-bg-selected);
+    border-color: var(--sc-border-focus);
+    color: var(--sc-text-link);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--sc-border-focus);
+    outline-offset: 2px;
+  }
+}
+
+.cx-tabla--vars {
+  background: var(--sc-bg-surface);
+
+  th,
+  td {
+    border-bottom-color: var(--sc-border-subtle);
+  }
+
+  tbody th {
+    font-weight: var(--sc-font-weight-regular);
+  }
+}
+
+/* La nota va pegada a su fila: sin borde entre las dos. */
+.cx-tabla--vars tbody tr:has(+ .cx-nota) > * {
+  border-bottom: 0;
+}
+
+.cx-nota td {
+  color: var(--sc-text-secondary);
+  font-size: var(--sc-font-size-caption);
+  line-height: var(--sc-line-height-body-3);
+  padding-top: 0;
+}
+
+.cx-nota__et {
+  display: inline-block;
+  color: var(--sc-text-subtle);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  margin-right: var(--sc-spacing-0-25);
+
+  &:not(:first-child) {
+    margin-left: var(--sc-spacing-0-75);
+  }
+}
+
+.cx-vacio {
+  color: var(--sc-text-subtle);
+}
+
+/* ── Listas de accionables ────────────────────────────────────────── */
+.cx-lista {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  display: grid;
+  gap: var(--sc-spacing-1);
+  max-width: 52rem;
+
+  > li {
+    display: grid;
+    gap: var(--sc-spacing-0-125);
+    padding-left: var(--sc-spacing-0-75);
+    border-left: 2px solid var(--sc-border-default);
+  }
+
+  p {
+    margin: 0;
+  }
+
+  /* Un nombre de variable con barras no rompe solo, y estiraba la página 81px a
+     280 de ancho. Aquí sí puede partirse: el que lo lee no lo copia a mano. */
+  code {
+    overflow-wrap: anywhere;
+  }
+}
+
+.cx-lista__t {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: var(--sc-spacing-0-5);
+}
+
+.cx-lista__d {
+  color: var(--sc-text-secondary);
+  font-size: var(--sc-font-size-body-3);
+}
+
+.cx-lista__m {
+  color: var(--sc-text-subtle);
+  font-size: var(--sc-font-size-caption);
+}
+
+.cx-lista--simple > li {
+  color: var(--sc-text-secondary);
+  border-left-color: var(--sc-border-subtle);
+}
+
+/* Separa los veredictos del cruce de los que solo pone una revisión. */
+.cx-lead--sep {
+  margin-top: var(--sc-spacing-1-5);
+}

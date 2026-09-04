@@ -114,6 +114,12 @@ export class LabComponent {
           note: 'Comprueba que los componentes de PrimeNG heredan los tokens del sistema.',
         },
         {
+          label: 'Conexión de variables',
+          href: null,
+          route: '/conexion',
+          note: 'Para cada variable de los 18 componentes del showcase, si la usa una capa de Figma y si el CSS de PrimeNG la lee. Es lo que hay que abrir al empezar una card.',
+        },
+        {
           label: 'Cómo validar un componente',
           href: null,
           route: '/validar',
