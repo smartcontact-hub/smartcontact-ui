@@ -25,7 +25,7 @@ exporta igual. **«Se ve bien» es el síntoma de este defecto, no su ausencia**
 
 ---
 
-## Los nueve veredictos
+## Los once veredictos
 
 Seis salen solos de cruzar las dos preguntas:
 
@@ -36,10 +36,10 @@ Seis salen solos de cruzar las dos preguntas:
 | **espejismo** | sí | no | Se ve bien en el Kit y no llega a la pantalla |
 | **muerta** | no | no | Nadie la usa. Ocupa sitio en el modelo |
 | **solo web** | — | sí | El tema lo publica y Figma no lo modela: sombras, estilos de línea, duraciones, paleta cruda |
-| **solo Figma** | sí | — | Auxiliar de dibujo, sin token detrás |
+| **solo Figma** | sí | — | El Kit dibuja algo sin token detrás: o es un auxiliar que no tiene que viajar, o una divergencia que NO PUEDE viajar |
 
-Los otros tres **no los ve el cruce**, porque hace falta abrir el nodo o el CSS. Solo los pone una
-revisión a mano, y son los que más cuestan de encontrar:
+Los otros cinco **no los ve el cruce**, porque hace falta abrir el nodo o el CSS. Solo los pone una
+revisión a mano, y son los que más cuestan de encontrar. Dos abren un caso y tres lo cierran:
 
 - **mal apuntada** — sí está atada, pero **a la variable equivocada**: la del estado vecino, la de
   otro componente, o una de la librería remota. El cruce la da por buena porque hay enlace. Es el
@@ -49,6 +49,11 @@ revisión a mano, y son los que más cuestan de encontrar:
   para lo mismo y el del tema no manda.
 - **conectada por el primitivo** — dos variables con nombres distintos apuntan al mismo primitivo,
   así que hoy coinciden. No está roto; el riesgo es que se mueva una y no la otra.
+- **viaja por `--sc-*`** — PrimeNG no lo lee, y es correcto: son extensiones nuestras (`presence`,
+  `text/accent`) que llegan por el otro canal del modelo, no por el tema.
+- **no es un hallazgo** — parecía un fallo y al abrir el nodo no lo era. Se anota **con el motivo**
+  para que nadie lo vuelva a investigar; un mapa que solo guarda los aciertos hace repetir el
+  trabajo descartado.
 
 ---
 
@@ -89,6 +94,30 @@ Rafa abriendo el nodo.
 3. **¿Existe la variable a la que atar?** Si no existe es hueco del modelo. Y si el valor difiere a
    propósito, tampoco es fallo.
 4. **¿El CSS del proveedor lee ese token?** Sin esto se ata algo que no viaja.
+
+---
+
+## Cuál de los dos lados manda
+
+Encontrar una diferencia no dice quién tiene razón. Antes de anotar «esto está mal» hay que decidir
+**qué lado es el correcto**, y eso se mide, no se opina. La pregunta se contesta en este orden:
+
+1. **¿Existe el canal en el CSS del proveedor?** Si PrimeNG no tiene token para eso, el Kit puede
+   dibujar lo que quiera: no va a viajar. Manda la web por construcción.
+2. **¿Qué valor publica el tema, medido en el deploy?** El tema se genera desde las VARIABLES, así
+   que si la variable es correcta el valor llega bien aunque ninguna capa la use.
+3. **Solo entonces**, ¿qué dibuja el Kit? Si difiere, la divergencia es del dibujo.
+
+**El patrón que sale casi siempre**: el valor llega bien a producción y **lo que va por detrás es
+el dibujo**. Eso no rompe la web; engaña a quien lee el Kit, que ve un color que el producto no
+pinta nunca. Es deuda de Figma, no de código, y no corre la misma prisa.
+
+**El caso que lo enseña mejor** (medido el 2026-09-04): en `button-small`, 143 de 311 variantes
+pintan el icono derecho con la variable gris de la librería externa. Parecía un fallo de conexión.
+Pero medido en el deploy, **42 de 42 iconos de botón toman el color de su botón, sin una sola
+excepción, y no existe ninguna regla CSS que dé color propio a `.p-button-icon`**. PrimeNG no tiene
+canal para eso: el Kit está dibujando algo que no puede ocurrir. La web no está mal, el Kit pide un
+imposible.
 
 ---
 
@@ -142,7 +171,7 @@ arrastra tres cosas más: el README tiene que nombrarlo, el test de paridad
 
 ---
 
-## Estado del 2026-09-03
+## Estado del 2026-09-04
 
 816 filas, 18 componentes, medidas contra el Kit de Figma y el CSS que sirve
 `ui.smart-contact.com`.
@@ -150,22 +179,81 @@ arrastra tres cosas más: el README tiene que nombrarlo, el test de paridad
 | Veredicto | Nº |
 |---|---|
 | conectada | 636 |
-| Figma no la usa | 88 |
+| Figma no la usa | 87 |
 | solo web | 79 |
 | espejismo | 3 |
 | muerta | 3 |
-| solo Figma | 2 |
-| mal apuntada | 2 |
-| muerta en el tema | 2 |
-| conectada por el primitivo | 1 |
+| solo Figma | 3 |
+| conectada por el primitivo | 2 |
+| muerta en el tema | 1 |
+| viaja por `--sc-*` | 1 |
+| no es un hallazgo | 1 |
 
-De las 88 «Figma no la usa»: 34 son el anillo de foco (no atables), 41 llevan `FALTA DIBUJARLO` (el
+De las 87 «Figma no la usa»: 34 son el anillo de foco (no atables), 41 llevan `FALTA DIBUJARLO` (el
 Kit no dibuja esa variante o ese estado) y el resto se cerraron abriendo el nodo.
 
 **12 variables atadas** en la primera pasada, ninguna con cambio visual, y **9 de ellas estaban mal
-apuntadas**, no sueltas. **8 filas esperan decisión** porque atarlas cambiaría el dibujo, o porque
-hay dos modelos para lo mismo. El detalle de cada una, con su capa y su selector, está en la página
-y en el CSV.
+apuntadas**, no sueltas.
+
+**Las 8 que quedaban pendientes se cerraron el 2026-09-04**, y el resultado dice más del método que
+de los componentes:
+
+- **Tres eran falsas alarmas.** Las tres capas remotas del InputText resultaron ser una instancia
+  de OTRA librería posada en la página (su padre es la página, no el component set). `presence` y
+  `text/accent` no están muertos: viajan por `--sc-*` y los consume el Supervisor.
+  `app/typography` está conectado desde `sc-preset/extend.ts` y consumido en `sc-preset/css.ts`.
+- **Las otras cinco son deuda de DIBUJO, no de conexión.** En las cinco el valor llega bien a
+  producción. Lo que va por detrás es el Kit: los iconos del toggle del DataTable y 143 iconos
+  derechos de `button-small` pintan con la variable de la librería externa, y dos variantes del
+  toggle cogen el fondo de `treetable`. Ninguna rompe la web.
+- **Una salió del repo entera**: el modal a medida, que necesita un cambio en el código del
+  consumidor. Está abajo.
+
+No queda ninguna fila «pendiente». Lo que sigue abierto lleva su accionable y su porqué, en la
+página y en el CSV.
+
+---
+
+## Peticiones abiertas al consumidor
+
+Algunos hallazgos no se arreglan aquí: el eslabón que falla es el código del consumidor. Se anotan
+en el mapa con el accionable `PETICIÓN AL CONSUMIDOR` y el texto completo vive aquí, para que no
+haya que reconstruirlo cada vez que se retoma.
+
+### El modal a medida lee su propio canal, no el tema
+
+**Medido** con el modal ABIERTO en su página: el tema publica **27 tokens**
+`--p-component-custommodal-*` y **no se usa ninguno**. El componente se pinta con **53 variables**
+`--sc-custom-modal-*` de su paquete de estilos, que no existen en este repo.
+
+**Por qué importa**: hay dos modelos para el mismo componente y el del tema está muerto. Si diseño
+cambia el modal en Figma y se manda un tema nuevo, **no cambia nada**, y no salta ningún aviso: el
+modal se sigue viendo bien, con los valores de antes. Es el caso del Tag al revés: allí había
+valores a mano donde tocaba una variable; aquí hay un modelo entero que nadie lee.
+
+**Lo que se pide**: que las reglas del componente lean el token del tema en vez de la variable
+propia. En la práctica es cambiar el nombre de la variable en su hoja de estilos:
+
+```css
+/* antes */
+.custom-modal__header { background: var(--sc-custom-modal-header-bg); }
+
+/* después */
+.custom-modal__header { background: var(--p-component-custommodal-header-background); }
+```
+
+**Lo que hay que preguntarles antes de que toquen nada**:
+
+1. ¿Las 53 `--sc-custom-modal-*` las usa algo más aparte del modal?
+2. Son 53 contra 27: ¿las 26 que sobran son composiciones, o al tema le falta modelo?
+3. ¿Prefieren que el cambio se prepare desde aquí como PR contra su repo?
+
+**Lo que NO se pide**: tocar Figma ni el tema. Ese lado ya está bien; falta el último eslabón, que
+es suyo.
+
+**Por qué no se borra el grupo de Figma**: la colección está publicada, y antes de quitar 27
+variables habría que barrer el fichero entero buscando consumidores. Ruido inofensivo mientras
+tanto.
 
 ---
 

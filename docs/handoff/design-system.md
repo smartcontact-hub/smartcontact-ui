@@ -56,14 +56,42 @@ puro → página + CSV → guard):
 **Nueve veredictos, no seis**: a los del cruce se suman los tres que solo ve una revisión a mano
 («mal apuntada», «muerta en el tema», «conectada por el primitivo»).
 
+### Segunda tanda (2026-09-04): las 8 pendientes cerradas — SIN PUSHEAR
+
+En `feat/conexion-variables-hallazgos`, commit `e9ea139`, `verify` verde, **local**. Rafa estaba
+limpiando ramas y pidió no subir todavía. El push y el PR esperan su señal.
+
+**Tres de las ocho eran falsas alarmas**, las tres por contar una diferencia sin abrir el nodo:
+- InputText: las 27 vinculaciones remotas cuelgan de `IconText` (`13282:10564`), instancia de OTRA
+  librería **posada en la página** — su padre es la página, no el component set.
+- `presence/*` y `text/accent` no están muertos: viajan por `--sc-*`. `presence` lo consume el
+  Supervisor, `text-accent` sc-docs.
+- `app/typography` está conectado: `sc-preset/extend.ts` lo DEFINE desde `--sc-*` y
+  `sc-preset/css.ts` lo CONSUME. Ninguna capa tiene que usarlo.
+
+**Las otras cinco son deuda de DIBUJO, no de conexión.** En las cinco el valor llega bien a
+producción. El caso que lo demuestra, medido en su deploy: **42 de 42 iconos de botón toman el
+color de su botón, y NO existe regla CSS que dé color propio a `.p-button-icon`**. PrimeNG no tiene
+canal. Las 143 variantes de `button-small` con el icono derecho en el gris de la librería dibujan
+algo que no puede ocurrir. Del DataTable sale un dato más fino que el anterior: los 8 iconos del
+toggle son remotos en TODAS las variantes, no solo en hover.
+
+**Lo que ganó el método**: la sección «Cuál de los dos lados manda» (encontrar una diferencia no
+dice quién tiene razón; se contesta en tres pasos, empezando por si el canal existe siquiera) y
+«Peticiones abiertas al consumidor», donde vive entera la del modal. Y dos veredictos más, hasta
+once: `viaja por --sc-*` y `no es un hallazgo` — **un mapa que solo guarda los aciertos hace
+repetir el trabajo descartado**, y hoy tres de ocho fueron descartes.
+
 **Lo siguiente, por orden**:
-1. Las **8 filas que esperan decisión** (en la página y en el CSV, con su capa y su selector). Las
-   gordas: los 144 iconos derechos de `button-small` apuntando a la variable remota de la
-   librería, y los 27 tokens del modal a medida que el tema publica y su componente no lee.
-2. El comprobador del zip del plugin, todavía sin escribir: ningún token a `0`, la base de los rem
+1. **Subir `feat/conexion-variables-hallazgos`** cuando Rafa lo diga: preflight, PR, CI leído.
+2. **La petición al consumidor** sobre el modal a medida, redactada en
+   [`docs/conexion-variables.md`](../conexion-variables.md) §«Peticiones abiertas al consumidor».
+   Hay que decidir quién se la manda y por qué canal. **No se ha mandado a nadie.**
+3. El comprobador del zip del plugin, todavía sin escribir: ningún token a `0`, la base de los rem
    y el diff contra el zip anterior. Manual y con argumento, **no entra en `verify`**.
-3. `variables:check` entra en `verify` cuando el mapa esté cerrado. Arrastra README, el test de
+4. `variables:check` entra en `verify` cuando el mapa se dé por cerrado. Arrastra README, el test de
    paridad preflight ≡ `ci.yml` y el hook de pre-push.
+5. La deuda de dibujo de las cinco abiertas es de Figma y **no corre prisa**: no rompe producción.
 
 **Aviso de terreno**: esta sesión y la de s42 corrieron **en el mismo working tree** y se pisaron.
 El reflog lo data: un cherry-pick de DD-48 sobre la rama ajena y un reset 30 segundos después, más

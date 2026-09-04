@@ -9,17 +9,18 @@
   "porVeredicto": {
     "conectada": 636,
     "espejismo": 3,
-    "Figma no la usa": 88,
+    "Figma no la usa": 87,
     "solo web": 79,
-    "solo Figma": 2,
+    "solo Figma": 3,
     "muerta": 3,
-    "mal apuntada": 2,
-    "muerta en el tema": 2,
-    "conectada por el primitivo": 1
+    "no es un hallazgo": 1,
+    "muerta en el tema": 1,
+    "viaja por --sc-*": 1,
+    "conectada por el primitivo": 2
   },
   "revisadas": 109,
   "atadas": 12,
-  "pendientes": 8,
+  "pendientes": 0,
   "faltaDibujarlo": 41,
   "filas": [
     {
@@ -5980,11 +5981,11 @@
       "leeWeb": "sí",
       "veredicto": "Figma no la usa",
       "bloque": "rowToggleButton",
-      "capa": "icono del toggle, 8 capas",
+      "capa": "chevron_forward / keyboard_arrow_down: los 8 iconos del set 7215:12137, en TODAS las variantes",
       "selector": ".p-datatable-row-toggle-button:hover",
-      "accionable": "PENDIENTE DE DECISIÓN",
-      "motivo": "el icono usa la variable REMOTA «Icon» (#8f97a3) de la librería, no la del DS (#4f5663); atarlo cambia el color",
-      "revisado": "2026-09-03"
+      "accionable": "FIGMA (el valor ya viaja bien)",
+      "motivo": "MANDA LA WEB. El tema publica --p-datatable-row-toggle-button-color #6f7784 y -hover-color #4f5663, medidos en su deploy, y esos valores salen de la variable del DS, así que llegan a producción correctos. Lo que diverge es el DIBUJO: los 8 iconos del componente usan la variable REMOTA de la librería (#8f97a3), un gris que el producto no va a pintar nunca. Riesgo: quien lea el Kit ve un color que no existe en la aplicación.",
+      "revisado": "2026-09-04"
     },
     {
       "componente": "datatable",
@@ -5994,11 +5995,11 @@
       "leeWeb": "sí",
       "veredicto": "Figma no la usa",
       "bloque": "rowToggleButton",
-      "capa": "fondo del toggle, 2 variantes Selected+Hover",
+      "capa": "fondo de las 2 variantes State=Hover + Selected=True (set 7215:12137)",
       "selector": ".p-datatable-row-selected .p-datatable-row-toggle-button:hover",
-      "accionable": "PENDIENTE DE DECISIÓN",
-      "motivo": "usa treetable/row/selected/background (#edf0f5), de OTRO componente; la del DS vale #ffffff, así que cambia el dibujo",
-      "revisado": "2026-09-03"
+      "accionable": "FIGMA (el valor ya viaja bien)",
+      "motivo": "MANDA LA WEB. El tema publica -selected-hover-background #ffffff, medido en su deploy. En Figma esas 2 variantes pintan el fondo con treetable/row/selected/background (#edf0f5), que es la variable de OTRO componente. El valor correcto viaja igual; el dibujo enseña un gris que producción no pinta.",
+      "revisado": "2026-09-04"
     },
     {
       "componente": "datatable",
@@ -6008,11 +6009,11 @@
       "leeWeb": "sí",
       "veredicto": "Figma no la usa",
       "bloque": "rowToggleButton",
-      "capa": "icono del toggle, variantes Selected",
+      "capa": "icono de las 2 variantes State=Hover + Selected=True (set 7215:12137)",
       "selector": ".p-datatable-row-selected .p-datatable-row-toggle-button:hover",
-      "accionable": "PENDIENTE DE DECISIÓN",
-      "motivo": "idem; la del DS vale #1b273d",
-      "revisado": "2026-09-03"
+      "accionable": "FIGMA (el valor ya viaja bien)",
+      "motivo": "MANDA LA WEB. El tema publica -selected-hover-color #1b273d, medido en su deploy. El icono de esas variantes usa la variable remota de la librería, igual que los otros seis. Mismo caso que hover/color.",
+      "revisado": "2026-09-04"
     },
     {
       "componente": "datatable",
@@ -11354,13 +11355,13 @@
       "token": "-",
       "usaFigma": "sí",
       "leeWeb": "sí",
-      "veredicto": "mal apuntada",
+      "veredicto": "solo Figma",
       "bloque": "root",
-      "capa": "144 capas de 311 variantes con dos iconos; ej. 7593:168731",
-      "selector": ".p-button-icon (hereda el color del botón)",
-      "accionable": "PENDIENTE DE DECISIÓN",
-      "motivo": "el icono derecho usa la variable REMOTA «Icon» de la librería (#8f97a3) en vez del color del botón (#6f7784 en secondary). En button y button-large la MISMA variante lo hace bien, y el icono izquierdo del mismo botón también. Cambia el dibujo: pasa del gris de librería al color del botón",
-      "revisado": "2026-09-03"
+      "capa": "143 de las 311 variantes con dos iconos de button-small (medido 2026-09-04); ej. 7593:168731",
+      "selector": ".p-button-icon (hereda `color` del botón; NINGUNA regla le da color propio)",
+      "accionable": "FIGMA (no puede viajar)",
+      "motivo": "MANDA LA WEB, y el dibujo de Figma pide algo IMPOSIBLE. Medido en su deploy: 42 de 42 iconos de botón toman exactamente el color de su botón, cero excepciones, y no existe ninguna regla CSS que dé color propio a .p-button-icon. O sea que PrimeNG NO TIENE canal para un color de icono distinto del botón: pase lo que pase en Figma, eso no llega. En el Kit, 143 de 311 variantes de button-small pintan el icono DERECHO con la variable remota de la librería (#8f97a3); las otras 168, y las 311 de button y button-large, y el icono IZQUIERDO de todas, usan la del DS. Divergencia solo de Figma: no rompe producción, engaña a quien lee el Kit.",
+      "revisado": "2026-09-04"
     },
     {
       "componente": "inputtext",
@@ -11368,13 +11369,13 @@
       "token": "-",
       "usaFigma": "sí",
       "leeWeb": "-",
-      "veredicto": "mal apuntada",
+      "veredicto": "no es un hallazgo",
       "bloque": "?",
-      "capa": "3 capas",
+      "capa": "IconText (13282:10564), instancia suelta CON LA PÁGINA COMO PADRE",
       "selector": "-",
-      "accionable": "PENDIENTE DE ANÁLISIS",
-      "motivo": "usan las remotas White/100% y Black/100% de la librería en vez de variables del DS; sin analizar todavía",
-      "revisado": "2026-09-03"
+      "accionable": "no",
+      "motivo": "DESCARTADO al abrir el nodo (2026-09-04). Las 27 vinculaciones remotas cuelgan todas de un mismo nodo, IconText, que es una instancia de un componente de OTRA librería posada directamente en la página: su padre es la página, no el component set del InputText. No es parte del componente y no controlamos sus variables. Lo único discutible es si esa instancia debe seguir ahí, y eso es orden, no conexión.",
+      "revisado": "2026-09-04"
     },
     {
       "componente": "(fuera de componente)",
@@ -11386,23 +11387,23 @@
       "bloque": "custommodal",
       "capa": "existe en Figma, fuera de un componente",
       "selector": "ninguno",
-      "accionable": "PENDIENTE DE DECISIÓN",
-      "motivo": "medido con el modal ABIERTO en su página: 0 de 27 usados. Su componente lee 53 variables --sc-custom-modal-* del paquete de estilos, no del tema. El modelo está duplicado en dos canales y el del tema está muerto",
-      "revisado": "2026-09-03"
+      "accionable": "PETICIÓN AL CONSUMIDOR",
+      "motivo": "Medido con el modal ABIERTO en su página: 0 de 27 tokens usados. Su componente se pinta con 53 variables --sc-custom-modal-* de SU paquete de estilos, que no existen en nuestro repo. El modelo está duplicado en dos canales y el del tema está muerto: cambiar el modal desde Figma hoy no hace nada. La petición entera, con el mapeo y las tres preguntas que hay que hacerles antes de que toquen nada, está en docs/conexion-variables.md, sección «Peticiones abiertas al consumidor». No se borra el grupo de Figma: la colección está publicada y habría que barrer el fichero entero buscando consumidores.",
+      "revisado": "2026-09-04"
     },
     {
       "componente": "(fuera de componente)",
       "variable": "semantic/presence/* (5) y text/accent",
       "token": "--p-presence-*, --p-text-accent",
       "usaFigma": "sí",
-      "leeWeb": "NO",
-      "veredicto": "muerta en el tema",
+      "leeWeb": "NO, y es correcto",
+      "veredicto": "viaja por --sc-*",
       "bloque": "semantic",
       "capa": "existe en Figma, fuera de un componente",
-      "selector": "ninguno",
-      "accionable": "PENDIENTE DE ANÁLISIS",
-      "motivo": "publicados por el tema y sin ningún uso en su CSS; son extensiones nuestras",
-      "revisado": "2026-09-03"
+      "selector": "ninguno en PrimeNG; sí en nuestro código",
+      "accionable": "no",
+      "motivo": "DESCARTADO al medirlo (2026-09-04). NO están muertos: viajan por el canal --sc-*, que es la segunda profundidad del modelo. --sc-presence-* lo consume el Supervisor (agent-form-page y _forms.scss) y --sc-text-accent lo consume sc-docs (storybook y la página de reglas). PrimeNG no los lee porque no tiene el concepto de presencia: son extensiones nuestras, y están donde tienen que estar.",
+      "revisado": "2026-09-04"
     },
     {
       "componente": "(fuera de componente)",
@@ -11423,14 +11424,14 @@
       "variable": "app/typography/* (10, colección Custom)",
       "token": "--p-app-typography-*",
       "usaFigma": "casi no",
-      "leeWeb": "sí",
-      "veredicto": "Figma no la usa",
+      "leeWeb": "sí, por nuestro bloque del preset",
+      "veredicto": "conectada por el primitivo",
       "bloque": "app",
       "capa": "solo sm/lineHeight, en 17 capas; las otras 9 a cero",
-      "selector": "nuestro sc-typography.css",
-      "accionable": "PENDIENTE DE ANÁLISIS",
-      "motivo": "el puente nuevo lo publica el tema y lo lee nuestro bloque CSS; el dibujo usa la colección App, que apunta al mismo primitivo. Dos nombres para lo mismo: uno dibuja y otro viaja",
-      "revisado": "2026-09-03"
+      "selector": "sc-preset/css.ts, líneas 81-103",
+      "accionable": "no",
+      "motivo": "DESCARTADO al medirlo (2026-09-04). Está conectado: sc-preset/extend.ts DEFINE app.typography.{sm,md,lg}.{fontSize,lineHeight} como alias de --sc-font-size-{100,200,300} y --sc-line-height-{100,200,300}, y sc-preset/css.ts los CONSUME. No hace falta que ninguna capa de Figma los use: nacen del canal --sc-*. Es el mismo caso que app/font/size: dos nombres sobre un primitivo. Riesgo de deriva si se mueve uno y no el otro, no un fallo.",
+      "revisado": "2026-09-04"
     },
     {
       "componente": "(fuera de componente)",

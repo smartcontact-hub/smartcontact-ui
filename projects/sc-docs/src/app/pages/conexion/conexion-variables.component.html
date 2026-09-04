@@ -182,20 +182,28 @@
   </section>
 
   <!-- ── Lo que espera una decisión ──────────────────────────────────────────── -->
-  <section class="cx-bloque" aria-labelledby="cx-pendientes">
-    <h2 id="cx-pendientes">Esperando decisión <span class="cx-n">{{ pendientes().length }}</span></h2>
+  <section class="cx-bloque" aria-labelledby="cx-abiertas">
+    <h2 id="cx-abiertas">Lo que queda abierto <span class="cx-n">{{ abiertas().length }}</span></h2>
     <p class="cx-lead">
-      Atarlas cambiaría el dibujo, o hay dos modelos para lo mismo. Eso es decisión de diseño, no
-      de mantenimiento: se anota y se para.
+      Esto es un mapa, no una lista de arreglos: aquí no se toca nada, se dice <strong>qué lado
+      manda</strong> y por qué. En todos estos casos el valor llega bien a producción, porque el
+      tema se genera desde las variables; lo que diverge es el dibujo del Kit, que enseña algo que
+      el producto no pinta. Lo que pide un cambio en el código del consumidor va con su petición
+      entera en
+      <a href="https://github.com/smartcontact-hub/smartcontact-ui/blob/main/docs/conexion-variables.md" target="_blank" rel="noopener">el método</a>.
     </p>
     <ul class="cx-lista">
-      @for (f of pendientes(); track f.componente + f.variable) {
+      @for (f of abiertas(); track f.componente + f.variable) {
         <li>
           <p class="cx-lista__t">
             <strong>{{ f.componente }}</strong> · <code>{{ f.variable }}</code>
             <span class="cx-pill cx-pill--aviso">{{ f.accionable }}</span>
           </p>
           <p class="cx-lista__d">{{ f.motivo }}</p>
+          <p class="cx-lista__m">
+            @if (f.capa) { {{ f.capa }} }
+            @if (f.selector) { · <code>{{ f.selector }}</code> }
+          </p>
         </li>
       }
     </ul>
