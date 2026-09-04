@@ -38,7 +38,7 @@ Resumen operativo:
   [AGENTS.md](AGENTS.md) §«UX de pantalla» (color funcional, `sc-skeleton` en carga, copy sin
   relleno, `sc-icon` sin emojis, contraste, sin saltos). Navegable: `sc-docs` → Fundamentos →
   Patrones.
-- **Antes de dar nada por bueno**: `npm run verify` (28 gates encadenados) y, si
+- **Antes de dar nada por bueno**: `npm run verify` (29 gates encadenados) y, si
   tocaste algo visual, `npm run e2e`. **Antes de pushear no basta `verify`**: el CI
   son 8 pasos, enumerados en `.github/workflows/ci.yml`; `npm run preflight:scope -- --run` elige
   el carril y deja la marca que el hook de push exige (el `--` es obligatorio: sin él npm se
