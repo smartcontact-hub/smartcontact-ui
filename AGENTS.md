@@ -196,7 +196,7 @@ Before considering any token/theme/component change done, run:
 - `npm run tokens:type-parity` — typography parity
 - `npm run audit:theme-scale` — zero `px` in the preset, central `css.ts`
 - `npm run verify` — runs the full guardrail chain (canonical list: the table in README.md); also includes test:unit, docs:guard, docs:coherence, build, typecheck, lint
-- `npm run preflight:scope --run` before a push (it picks the lane and writes the `.preflight-ok` mark the push hook requires), then `npm run ci:verdict` after it. The hooks in `.claude/settings.json` (`scripts/hooks/`) enforce this and deny the exact commands LEARNINGS #7, #11 and #12 were written about; `# sc:ok` on a command is the explicit exit, and you say so in the message.
+- `npm run preflight:scope -- --run` before a push (it picks the lane and writes the `.preflight-ok` mark the push hook requires; the `--` is required, without it npm swallows the flag and the script only PRINTS the lane), then `npm run ci:verdict` after it. The hooks in `.claude/settings.json` (`scripts/hooks/`) enforce this and deny the exact commands LEARNINGS #7, #11 and #12 were written about; `# sc:ok` on a command is the explicit exit, and you say so in the message.
 
 ---
 

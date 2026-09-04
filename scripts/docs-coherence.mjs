@@ -393,6 +393,11 @@ if (!process.env.CI) {
   // El sello vive en el hand-off de CADA FRENTE (`docs/handoff/*.md`); `NEXT-SESSION.md` pasó a ser
   // solo el índice y ya no lleva sello. Si esta red siguiera mirando únicamente ahí, habría vuelto
   // a ser un no-op silencioso — que es exactamente el fallo que vino a tapar.
+  //
+  // Desde el 2026-09-04 el sello NO vive en la cabecera del hand-off sino DEBAJO DE CADA TRAMO
+  // (una cabecera con estado es lo que se peleaba cuando dos sesiones cerraban a la vez). Este
+  // check no se entera porque ya escaneaba el fichero ENTERO, no la cabecera: solo hubo que
+  // corregir el texto del fallo, que mandaba a un sitio que ya no es.
   const handoffs = files.filter((f) => rel(f.path).startsWith('docs/handoff/'));
   if (handoffs.length === 0)
     fail('docs/handoff/ no contiene ningún hand-off; cada frente abierto necesita el suyo (ver NEXT-SESSION.md).');
@@ -416,7 +421,7 @@ if (!process.env.CI) {
       }
     });
     if (esHandoff && !sellado)
-      fail(`${rel(h.path)} — hand-off SIN sello. Añade \`HEAD \`<sha>\`\` en su cabecera: sin él nadie sabe a qué estado del repo describe.`);
+      fail(`${rel(h.path)} — hand-off SIN sello. Añade una línea \`**Sello:** … HEAD \`<sha>\`\` debajo del título de tu tramo: sin él nadie sabe a qué estado del repo describe.`);
   }
 }
 

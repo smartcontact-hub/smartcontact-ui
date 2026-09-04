@@ -111,7 +111,8 @@ export function evaluar(cmd, ctx = {}) {
         decision: 'deny',
         reason:
           `LEARNINGS #7 — no se pushea sin preflight en verde sobre ESTE árbol: ${st.motivo}. ` +
-          'Haz: (1) commitea todo, (2) `npm run preflight:scope --run` (o `preflight` / `preflight:fast`) UNA vez, ' +
+          'Haz: (1) commitea todo, (2) `npm run preflight:scope -- --run` (o `preflight` / `preflight:fast`) UNA vez ' +
+          '(el `--` es obligatorio: sin él npm se come el flag y el script solo imprime el plan), ' +
           '(3) vuelve a pushear. Si Rafa te ha dicho explícitamente que pushees sin cadena, añade `# sc:ok` al comando y díselo en el mensaje.',
       };
   }
