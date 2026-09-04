@@ -2,21 +2,34 @@
 
 > **Volátil.** Lo reescribe la sesión que trabaja ESTE frente, y **solo este fichero**.
 > No toques los hand-offs de otros frentes. Lo durable vive en `docs/`.
-> **Sello: 2026-09-04 (s43): HEAD `1779914`, CI VERDE leído en los dos PR** (`9036856` del #35 y
-> `1779914` del #37, 5 jobs cada uno). El mapa de conexión de variables Figma → tema → navegador,
-> cerrado: **816 filas, 18 componentes, CERO pendientes**, vivo en `sc-doc.pages.dev/#/conexion`.
-> Dos hallazgos, y el segundo cambia cómo se lee el primero. Uno: el defecto dominante no son las
-> variables sueltas sino las **mal apuntadas** (9 de las 12 atadas). Dos: lo que queda **no es
-> deuda de conexión sino de DIBUJO**, porque el tema se genera desde las variables y el valor
-> llega bien a producción; el que va por detrás es el Kit. Tramo anterior de ESTE frente:
-> `7bb9aab` (s42, tipografía).
+> **Sello: 2026-09-04 (s44): HEAD `59de16e`.** Carril `preflight:scope` VERDE sobre el árbol
+> final (`verify` 57 pasos, `build:docs`, build de producción y `CI=1 e2e` **78/78**); el veredicto de CI de este HEAD se lee con
+> `npm run ci:verdict` tras el push. El simulador de `/validar` era una demostración disfrazada de
+> práctica: enseñaba el token en verde antes de que nadie juzgara nada. Ahora se juega (tapar el
+> origen, juzgar el bloque, señalar el culpable), en tres rondas, y al cerrar una se desbloquea la
+> prueba del algodón. Midiéndolo salieron **siete defectos** que no se veían leyendo, uno de ellos
+> en el código que ya estaba en `main`.
+>
+> ⚠️ **Esta sesión y la de s43 corrieron A LA VEZ y las dos se llamaron «s43».** La del mapa de
+> conexión (#35) llegó antes a `main` y se quedó el número; esta se renumeró a s44 al rebasar. Su
+> sección sigue debajo, intacta. Si abres dos sesiones sobre ESTE frente, mira `git log
+> origin/main` antes de elegir número: el hand-off es un fichero, y el segundo en llegar rebasa.
+>
+> Tramo anterior de ESTE frente: `9036856` (s43, el mapa de conexión de variables) y `7bb9aab`
+> (s42, Figma por delante en 11 variables).
+>
+> Sello anterior (s43): HEAD `9036856`, CI VERDE leído (5 jobs). El mapa de conexión de
+> variables Figma → tema → navegador: 816 filas, 18 componentes, y el hallazgo de que el defecto
+> dominante no son las variables sueltas sino las **mal apuntadas** (9 de 12 atadas sin cambio
+> visual). Sección abajo, con sus tres siguientes. Escrito por la sesión paralela; sello añadido
+> aquí para que la cabecera no se quede corta respecto al cuerpo.
 >
 > Sello anterior (s42): HEAD `7bb9aab`, CI VERDE leído en `516b911`, `6678a5b` y `7bb9aab`
 > (5 jobs cada uno). Figma iba por delante del código en 11 variables de tipografía y ningún gate
-> lo decía: el `Display` de 64/78 llevaba días sin llegar. Cerrado de punta a punta — el paso 900
+> lo decía: el `Display` de 64/78 llevaba días sin llegar. Cerrado de punta a punta: el paso 900
 > en `main`, la rampa semántica repuntada a los text styles (DD-48), el agujero del gate tapado
 > con `npm run figma:parity`, y un bug real de Figma (4 variables a 0 en modo oscuro) arreglado.
-> Tramo anterior de ESTE frente: `7d343a9` (s41, la guía en el punto de decisión).
+> Tramo anterior: `7d343a9` (s41, la guía en el punto de decisión).
 >
 > Sello anterior (s41): HEAD `7d343a9`, CI VERDE en los tres commits (`f116bbd`, `718d149`,
 > `7d343a9`). La guía de proceso pasa al PUNTO DE DECISIÓN (DD-47): hooks versionados en
@@ -29,6 +42,99 @@
 > commits. Doc nuevo: [`docs/tipografia.md`](../tipografia.md). Tramo anterior de ESTE frente:
 > `2ad8b77` (guía de validación + hook pre-push).
 
+## ✅ s44 · El simulador de `/validar` se juega, y el veredicto lo pone quien practica
+
+**El diagnóstico, en una frase**: «Practícalo aquí» no era una simulación, era una demostración.
+Dabas a una misión y el panel ya traía el token en verde, así que **la única pregunta que la guía
+existe para enseñar («¿esto sale de una variable?») se contestaba sola**. Se leía; no se practicaba.
+
+**Lo que hay ahora** (todo en `projects/sc-docs/src/app/pages/validar/practica.component.*`):
+
+- **Bucle de juzgar y localizar.** El origen sale tapado con `?`. Se pregunta por el bloque
+  entero y, si dices que hay algo a pelo, **hay que señalarlo**. 21 comprobaciones, 5 con defecto.
+- **Tres rondas** con escenas vivas: chip (1 defecto), botón (2) y un aviso con **caja y texto
+  dentro**. Esa tercera practica la trampa que la guía cuenta en «La caja y el texto de dentro» y
+  que el simulador no ejercitaba: la tipografía se juzga sobre el TEXTO, y si tienes seleccionada
+  la caja el panel te lo dice en vez de dejarte fallar.
+- **El buscador es un `input` de verdad** sobre el catálogo entero de 24 propiedades, como el
+  «Computed» real. El término de cada dimensión pasó a ser SUGERENCIA (placeholder y tarjeta), no
+  filtro: `font` esconde `line-height` y `color`, que son parte de lo que hay que juzgar.
+- **La prueba del algodón**, desbloqueada al cerrar una ronda: cambia el tema SOLO en la escena
+  (`.sc-dark` sobre el lienzo, sin tocar el de la página) y enseña qué color se mueve.
+- **Marcador con racha e informe final** con lo que se escapó.
+
+Se mantiene lo que sostenía la versión anterior: **ningún número está escrito**. Todo sale de
+`getComputedStyle` sobre elementos vivos y el origen se resuelve contra los `--sc-*` del documento.
+
+### Los siete defectos que solo aparecieron al EJECUTARLO
+
+Ninguno se veía leyendo el código. El primero estaba en `main` desde s42.
+
+1. **El defecto plantado del borde era un token.** El `#c6ccd6` del chip es `--sc-text-disabled`
+   **y** `--sc-color-slate-300`: solo «funcionaba» por no estar esos dos en la lista de candidatos.
+   Un roce en esa lista y el juego habría dado por buena una respuesta mala. Los cinco valores
+   plantados de hoy están comprobados contra los **1013 `--sc-*`** del sistema: cero coincidencias.
+2. **El oráculo nombraba tokens desorientadores por empate de valor**: el relleno de 14px salía
+   como `--sc-font-size-200` (empata con `--sc-spacing-1`) y el texto blanco de un botón como
+   `--sc-bg-surface` (empata con `--sc-text-on-accent`). Verdad, pero desorientadora en algo que
+   enseña. Ahora se guardan TODOS los tokens que valen ese valor y se elige por familia según la
+   propiedad.
+3. **Volver a una comprobación ya cerrada enseñaba la pregunta de la anterior.**
+4. **Señalar solo valía el primer culpable.** Con los cuatro paddings a pelo, acertar
+   `padding-left` contaba como fallo.
+5. **La prueba del algodón llamaba «no se movió» a una tipografía bien tokenizada.** El tema solo
+   mueve COLORES: `--sc-font-size-200` vale 14px en claro y en oscuro. Ahora solo juzga colores y
+   lo explica en el propio panel.
+6. **Leer a media transición miente.** El fundido de 200ms de la escena devolvía el color de
+   SALIDA, no el de llegada. Se apaga mientras se mide (`aplicarOscuro()`).
+7. **El ancho se medía en su hueco real**, y un padre estrecho deja un Hug en su `min-content`:
+   parecía fijo. Medido con el hueco a 30px, el chip crecía 4px (una palabra) y el botón, cero,
+   siendo los dos Hug. Ahora se mide en un banco ancho y distingue las **cuatro** formas que
+   nombra la guía: Hug, Fill, techo (`max-width`) y ancho clavado.
+
+**Contraste**: en oscuro había texto del TEMA sobre fondos claros CLAVADOS del panel (el cartón
+imita a Chrome), o sea casi invisible. Corregido: cero elementos por debajo de 4.5 en oscuro. En
+claro quedan cuatro a 4.25, que son `--sc-text-subtle` sobre `--sc-bg-default`; **es la pareja de
+tokens del DS**, medida igual en `.section-lead` y `.note` de la propia guía, sin tocar.
+
+### Trampas medidas hoy, en orden de lo que más cuesta
+
+- **La pestaña oculta del navegador falsea las medidas visuales.** El panel del previsualizador
+  estaba oculto y con eso: el layout colapsa (`.pagina` medía 30px de ancho), los temporizadores se
+  estrangulan a ~600ms, `requestAnimationFrame` no dispara y **las transiciones no avanzan nunca**,
+  así que `getComputedStyle` devuelve el valor de salida para siempre. Perseguí un fondo blanco en
+  modo oscuro que no existía. Antes de creerte una medida visual: `document.hidden` y
+  `resize_window` a un tamaño real.
+- **Un `ng build` a la vez que el `ng serve` del mismo árbol se pisan en `dist/`.** El servidor
+  quedó sirviendo un bundle roto sin decírmelo (el error vive en su log, no en la página). Es el
+  mismo choque que el hand-off de s42 apuntó entre DOS sesiones; también pasa con UNA sola.
+- **`ng.getComponent(el)` es la forma rápida de auditar un componente entero.** En build de dev,
+  `window.ng` da la instancia y `ng.applyChanges(c)` fuerza el repintado sin esperar a nada. Sacó
+  la tabla de verdad de las 21 comprobaciones en UNA llamada; conducir el DOM a clics tardó 39
+  minutos y se contaminó dos veces.
+- **NO hay prettier en este repo** (solo `eslint .` y `.editorconfig`). Un `npx prettier --write`
+  se trae la configuración por defecto: aplastó la indentación de los `@if` de la plantilla y
+  troceó el `.ts` a 80 columnas cuando aquí se escribe hasta 125-341. Hubo que rehacerlo a mano.
+- **Restaurar desde una copia vieja tira el trabajo posterior.** Para probar si un rojo de e2e era
+  anterior, copié los tres ficheros al scratchpad, hice `git checkout --` y los devolví: la copia
+  era de ANTES del último pulido y se perdió sin avisar. Si vas a hacer ese experimento, refresca
+  la copia justo antes.
+- **`npm run e2e` en local no es el gate de CI, y un `ng serve` viejo lo enrojece.** Sus 37
+  baselines de captura están saltadas cuando `CI` está puesto (son por plataforma) y en este
+  entorno mueren con `screencast.hideOverlays: Target page... closed`. Con `CI=1` la suite tarda
+  **4,2 minutos** en vez de 39. Pero el dato que cuesta: contra un `ng serve` que llevaba horas
+  vivo salía **1 rojo** (`sc-inputgroup`, esperando `getByTestId('ig-input')`), y llegué a
+  confirmarlo con el árbol en `main` para descartar que fuera mío. Lo era del SERVIDOR: ese mismo
+  proceso ya había escupido `Cannot find module '@smartcontact-hub/components'` al pisarse con un
+  `ng build` mío. Levantado de cero, **78/78**. Antes de dar por «anterior» un rojo de e2e, tira el
+  servidor y repite: reproducirlo en `main` demuestra que no es tu código, NO que sea del código.
+
+### Lo que NO se tocó, a propósito
+
+- Los defectos plantados viven en el `.scss` con su comentario: si alguien los «limpia»
+  tokenizándolos, el simulador pierde lo único que de verdad enseña. Está dicho en el fichero.
+- El cartón del inspector sigue con los colores de Chrome (11px, morado/azul), amparado por la
+  exención por LÍNEA `sc-replica-navegador` de `token-guard`. Las líneas nuevas la llevan escrita.
 ## ✅ s43 · Mapa de conexión de variables Figma → tema → navegador
 
 **Qué contesta**: para cada variable de los 18 componentes que publica el showcase del consumidor,
