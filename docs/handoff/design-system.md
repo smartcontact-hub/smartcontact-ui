@@ -2,15 +2,23 @@
 
 > **Volátil.** Lo reescribe la sesión que trabaja ESTE frente, y **solo este fichero**.
 > No toques los hand-offs de otros frentes. Lo durable vive en `docs/`.
-> **Sello: 2026-09-04 (s44): HEAD `59de16e`, CI VERDE leído en `0d1ee36`** (5 jobs; ese commit
-> contiene este HEAD, PR #36). Antes del push, carril `preflight:scope` verde sobre el árbol final:
-> `verify` 57 pasos, `build:docs`, build de producción y `CI=1 e2e` **78/78**.
+> **Sello: 2026-09-04 (s44): HEAD `abe2077`.** Carril `preflight` COMPLETO en verde sobre el
+> árbol final: `verify` (57 pasos), los 4 builds y las tres suites e2e (**78 + 127 + 100**). CI
+> verde leído con `npm run ci:verdict` en los HEAD previos al último rebase (`0d1ee36`, `b40cba2`);
+> el del HEAD actual se lee igual, en el PR #36.
 >
 > El simulador de `/validar` era una demostración disfrazada de práctica: enseñaba el token en
 > verde antes de que nadie juzgara nada. Ahora se juega (tapar el origen, juzgar el bloque,
-> señalar el culpable), en tres rondas, y al cerrar una se desbloquea la
-> prueba del algodón. Midiéndolo salieron **siete defectos** que no se veían leyendo, uno de ellos
-> en el código que ya estaba en `main`.
+> señalar el culpable), en tres rondas, y al cerrar una se desbloquea la prueba del algodón.
+> Midiéndolo salieron **siete defectos** que no se veían leyendo, uno de ellos en el código que
+> ya estaba en `main`.
+>
+> Y un octavo, de proceso: **`npm run preflight:scope --run` no corría nada** (npm se come el
+> flag), y estaba escrito así en los 8 sitios que lo documentan, incluido el mensaje con el que
+> el propio guard te deniega el push. Corregido a `-- --run`.
+>
+> Tramo anterior de ESTE frente: `9036856` (s43, el mapa de conexión de variables) y `7bb9aab`
+> (s42, Figma por delante en 11 variables).
 >
 > ⚠️ **Esta sesión y la de s43 corrieron A LA VEZ y las dos se llamaron «s43».** La del mapa de
 > conexión (#35) llegó antes a `main` y se quedó el número; esta se renumeró a s44 al rebasar. Su
