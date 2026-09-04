@@ -20,9 +20,14 @@
 
 ## ✅ 2026-09-04 · El simulador de `/validar` se juega, y el veredicto lo pone quien practica
 
-**Sello:** HEAD `abe2077`. Carril `preflight` COMPLETO en verde sobre el árbol final: `verify`
-(57 pasos), los 4 builds y las tres suites e2e (**78 + 127 + 100**). CI verde leído con
-`npm run ci:verdict` en `0d1ee36` y `b40cba2`; el del HEAD actual, en el PR #36.
+**Sello:** HEAD `1bd2f8f`, en el [PR #36](https://github.com/smartcontact-hub/smartcontact-ui/pull/36).
+Carril `preflight` COMPLETO en verde sobre el árbol final: `verify` (57 pasos), los 4 builds y las
+tres suites e2e (**78 + 127 + 100**). CI verde leído con `npm run ci:verdict` en tres HEAD de esta
+rama (`0d1ee36`, `b40cba2`, `6676f60`).
+
+⚠️ Un sello con SHA **caduca al rebasar**, y esta rama rebasó tres veces en un día porque `main`
+se movió debajo. Si el SHA no existe, mira el PR: el número no cambia. Sellar por PR y no por
+commit es el siguiente paso obvio de esto, y está sin hacer.
 
 **El diagnóstico, en una frase**: «Practícalo aquí» no era una simulación, era una demostración.
 Dabas a una misión y el panel ya traía el token en verde, así que **la única pregunta que la guía
@@ -129,8 +134,14 @@ tokens del DS**, medida igual en `.section-lead` y `.note` de la propia guía, s
   exención por LÍNEA `sc-replica-navegador` de `token-guard`. Las líneas nuevas la llevan escrita.
 ## ✅ s43 · Mapa de conexión de variables Figma → tema → navegador
 
-**Sello:** 2026-09-04, HEAD `9036856`, CI VERDE leído (5 jobs). Escrito por la sesión paralela
-a la del simulador; las dos se llamaron «s43» y esta se quedó el número por llegar antes.
+**Sello:** 2026-09-04, HEAD `1779914`, CI VERDE leído en los dos PR (`9036856` del #35 y
+`1779914` del #37, 5 jobs cada uno). El mapa queda **cerrado**: 816 filas, 18 componentes, CERO
+pendientes, vivo en `sc-doc.pages.dev/#/conexion`. Dos hallazgos, y el segundo cambia cómo se lee
+el primero. Uno: el defecto dominante no son las variables sueltas sino las **mal apuntadas** (9
+de las 12 atadas). Dos: lo que queda **no es deuda de conexión sino de DIBUJO**, porque el tema
+se genera desde las variables y el valor llega bien a producción; el que va por detrás es el Kit.
+Escrito por la sesión paralela a la del simulador; las dos se llamaron «s43» y esta se quedó el
+número por llegar antes.
 
 **Qué contesta**: para cada variable de los 18 componentes que publica el showcase del consumidor,
 si está enganchada en Figma **y** si el CSS de PrimeNG la lee. Nace del caso del Tag, donde había
