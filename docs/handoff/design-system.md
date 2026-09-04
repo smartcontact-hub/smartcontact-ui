@@ -14,13 +14,11 @@
 > dos se llamaron «s43» y hubo que renumerar una al rebasar. La fecha no necesita que nadie se
 > coordine. Los `sNN` de los tramos viejos se quedan como están: los nombran commits y
 > `docs/DECISIONS.md`, y reescribirlos solo desincronizaría el doc de su propia historia.
->
-> ⏳ **Sin cerrar**: [PR #36](https://github.com/smartcontact-hub/smartcontact-ui/pull/36),
-> el simulador jugable. CI verde, pendiente de mergear.
 
 ## ✅ 2026-09-04 · El simulador de `/validar` se juega, y el veredicto lo pone quien practica
 
-**Sello:** HEAD `1bd2f8f`, en el [PR #36](https://github.com/smartcontact-hub/smartcontact-ui/pull/36).
+**Sello:** en `main` desde `aff232d` ([PR #36](https://github.com/smartcontact-hub/smartcontact-ui/pull/36)),
+CI verde y **servido en `sc-doc.pages.dev/#/validar`**, comprobado ahí a clics.
 Carril `preflight` COMPLETO en verde sobre el árbol final: `verify` entero, los 4 builds y las
 tres suites e2e (**78 + 127 + 100**). CI verde leído con `npm run ci:verdict` en tres HEAD de esta
 rama (`0d1ee36`, `b40cba2`, `6676f60`).
