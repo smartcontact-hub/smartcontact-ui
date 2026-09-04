@@ -17,9 +17,12 @@
 
 ## ✅ 2026-09-05 · El botón del supervisor medía 33 y el input 36, y no era cosa de tokens
 
-**Sello:** pendiente de veredicto de CI (se anota abajo al leerlo con `npm run ci:verdict`).
-Local, sobre el árbol final: `npm run verify` VERDE (exit 0, los 29 gates) y
-`npm run e2e:supervisor` VERDE (**127 passed**, exit 0, cero marcas de fallo en el log).
+**Sello:** HEAD `b383696`, en el [PR #40](https://github.com/smartcontact-hub/smartcontact-ui/pull/40).
+**CI VERDE**, leído con `npm run ci:verdict` sobre ese mismo HEAD: los cinco jobs en
+`success` (`verify`, `build`, `e2e-smoke`, `e2e-cuscare`, `e2e-supervisor`).
+Carril `preflight:scope` COMPLETO en verde sobre el árbol final: `guard:lockfile`, `verify`
+(29 gates), `build:docs`, el build de producción del supervisor, **e2e sc-docs 78 passed** y
+**e2e supervisor 127 passed**.
 
 **El diagnóstico, en una frase**: el supervisor sí lee los componentes y sí lee los tokens; lo
 que pasaba es que una regla suya SIN CAPA le ganaba al tema por reglamento del cascade.
