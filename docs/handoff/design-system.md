@@ -2,57 +2,27 @@
 
 > **Volátil.** Lo reescribe la sesión que trabaja ESTE frente, y **solo este fichero**.
 > No toques los hand-offs de otros frentes. Lo durable vive en `docs/`.
-> **Sello: 2026-09-04 (s44): HEAD `abe2077`.** Carril `preflight` COMPLETO en verde sobre el
-> árbol final: `verify` (57 pasos), los 4 builds y las tres suites e2e (**78 + 127 + 100**). CI
-> verde leído con `npm run ci:verdict` en los HEAD previos al último rebase (`0d1ee36`, `b40cba2`);
-> el del HEAD actual se lee igual, en el PR #36.
 >
-> El simulador de `/validar` era una demostración disfrazada de práctica: enseñaba el token en
-> verde antes de que nadie juzgara nada. Ahora se juega (tapar el origen, juzgar el bloque,
-> señalar el culpable), en tres rondas, y al cerrar una se desbloquea la prueba del algodón.
-> Midiéndolo salieron **siete defectos** que no se veían leyendo, uno de ellos en el código que
-> ya estaba en `main`.
+> **El sello vive en CADA TRAMO, debajo de su título. El de más arriba es el vigente.**
+> Aquí no se copia: esta cabecera no tiene estado, así que dos sesiones a la vez no se pisan
+> en ella. Antes sí lo tenía (un bloque con el sello vigente más cuatro «Sello anterior» que
+> repetían el resumen de su sección) y era justo lo que se peleaba en cada fusión: el 2026-09-04
+> se coló un párrafo DUPLICADO al resolver un conflicto, y nadie lo vio.
 >
-> Y un octavo, de proceso: **`npm run preflight:scope --run` no corría nada** (npm se come el
-> flag), y estaba escrito así en los 8 sitios que lo documentan, incluido el mensaje con el que
-> el propio guard te deniega el push. Corregido a `-- --run`.
+> **Cómo se nombra un tramo**: `## ✅ <fecha ISO> · <lo que pasó>`. Sin contador `sNN`, que era
+> un entero global que dos sesiones en paralelo no pueden incrementar a la vez: el 2026-09-04 las
+> dos se llamaron «s43» y hubo que renumerar una al rebasar. La fecha no necesita que nadie se
+> coordine. Los `sNN` de los tramos viejos se quedan como están: los nombran commits y
+> `docs/DECISIONS.md`, y reescribirlos solo desincronizaría el doc de su propia historia.
 >
-> Tramo anterior de ESTE frente: `9036856` (s43, el mapa de conexión de variables) y `7bb9aab`
-> (s42, Figma por delante en 11 variables).
->
-> ⚠️ **Esta sesión y la de s43 corrieron A LA VEZ y las dos se llamaron «s43».** La del mapa de
-> conexión (#35) llegó antes a `main` y se quedó el número; esta se renumeró a s44 al rebasar. Su
-> sección sigue debajo, intacta. Si abres dos sesiones sobre ESTE frente, mira `git log
-> origin/main` antes de elegir número: el hand-off es un fichero, y el segundo en llegar rebasa.
->
-> Tramo anterior de ESTE frente: `9036856` (s43, el mapa de conexión de variables) y `7bb9aab`
-> (s42, Figma por delante en 11 variables).
->
-> Sello anterior (s43): HEAD `9036856`, CI VERDE leído (5 jobs). El mapa de conexión de
-> variables Figma → tema → navegador: 816 filas, 18 componentes, y el hallazgo de que el defecto
-> dominante no son las variables sueltas sino las **mal apuntadas** (9 de 12 atadas sin cambio
-> visual). Sección abajo, con sus tres siguientes. Escrito por la sesión paralela; sello añadido
-> aquí para que la cabecera no se quede corta respecto al cuerpo.
->
-> Sello anterior (s42): HEAD `7bb9aab`, CI VERDE leído en `516b911`, `6678a5b` y `7bb9aab`
-> (5 jobs cada uno). Figma iba por delante del código en 11 variables de tipografía y ningún gate
-> lo decía: el `Display` de 64/78 llevaba días sin llegar. Cerrado de punta a punta: el paso 900
-> en `main`, la rampa semántica repuntada a los text styles (DD-48), el agujero del gate tapado
-> con `npm run figma:parity`, y un bug real de Figma (4 variables a 0 en modo oscuro) arreglado.
-> Tramo anterior: `7d343a9` (s41, la guía en el punto de decisión).
->
-> Sello anterior (s41): HEAD `7d343a9`, CI VERDE en los tres commits (`f116bbd`, `718d149`,
-> `7d343a9`). La guía de proceso pasa al PUNTO DE DECISIÓN (DD-47): hooks versionados en
-> `.claude/settings.json` → `scripts/hooks/`, tarjeta en `CLAUDE.md`, `LEARNINGS.md` de 760 a 178
-> líneas con el check K, `/reflect` enruta. Tramo anterior: `fe0a442` (s40, tipografía).
->
-> Sello anterior (s40): HEAD `fe0a442`. Tipografía cerrada de punta a punta: 12 estilos de
-> texto atados a variable, 5 tallas en el puente (`sm`→`xxl`), y el diagnóstico completo de
-> SISMAC-4074 con el CSS que lo resuelve. Gate verde leído del log (78 e2e) y CI verde en los dos
-> commits. Doc nuevo: [`docs/tipografia.md`](../tipografia.md). Tramo anterior de ESTE frente:
-> `2ad8b77` (guía de validación + hook pre-push).
+> ⏳ **Sin cerrar**: [PR #36](https://github.com/smartcontact-hub/smartcontact-ui/pull/36),
+> el simulador jugable. CI verde, pendiente de mergear.
 
-## ✅ s44 · El simulador de `/validar` se juega, y el veredicto lo pone quien practica
+## ✅ 2026-09-04 · El simulador de `/validar` se juega, y el veredicto lo pone quien practica
+
+**Sello:** HEAD `abe2077`. Carril `preflight` COMPLETO en verde sobre el árbol final: `verify`
+(57 pasos), los 4 builds y las tres suites e2e (**78 + 127 + 100**). CI verde leído con
+`npm run ci:verdict` en `0d1ee36` y `b40cba2`; el del HEAD actual, en el PR #36.
 
 **El diagnóstico, en una frase**: «Practícalo aquí» no era una simulación, era una demostración.
 Dabas a una misión y el panel ya traía el token en verde, así que **la única pregunta que la guía
@@ -159,6 +129,9 @@ tokens del DS**, medida igual en `.section-lead` y `.note` de la propia guía, s
   exención por LÍNEA `sc-replica-navegador` de `token-guard`. Las líneas nuevas la llevan escrita.
 ## ✅ s43 · Mapa de conexión de variables Figma → tema → navegador
 
+**Sello:** 2026-09-04, HEAD `9036856`, CI VERDE leído (5 jobs). Escrito por la sesión paralela
+a la del simulador; las dos se llamaron «s43» y esta se quedó el número por llegar antes.
+
 **Qué contesta**: para cada variable de los 18 componentes que publica el showcase del consumidor,
 si está enganchada en Figma **y** si el CSS de PrimeNG la lee. Nace del caso del Tag, donde había
 valores escritos a mano que se veían idénticos a los atados.
@@ -240,6 +213,9 @@ dos cambios de rama a media compilación (que tiró un build de cuscare por falt
 
 ## ✅ s42 · Figma iba por delante en 11 variables, y el gate no podía verlo
 
+**Sello:** 2026-09-03, HEAD `7bb9aab`, CI VERDE leído en `516b911`, `6678a5b` y `7bb9aab`
+(5 jobs cada uno).
+
 **El disparador fue una duda de copy**: «la página de tipografía dice root 16, ¿no era 14?». El
 root ES 16 (`html` a `100%`, medido en el build); el 14 que confunde es la base de la escala de
 ESPACIADO (`--sc-scale-1`) y el cuerpo por defecto. Pero tirando del hilo salió lo de verdad.
@@ -301,6 +277,9 @@ snippet en el README de design-tokens. Corrido contra el fichero del DS con el b
 
 ## ✅ s41 · La guía se sirve en el punto de decisión (DD-47)
 
+**Sello:** 2026-09-02, HEAD `7d343a9`, CI VERDE en los tres commits (`f116bbd`, `718d149`,
+`7d343a9`).
+
 **Diagnóstico medido**: `LEARNINGS.md` había pasado de 1.765 a 10.757 palabras en 46 días con el
 tope "~20" escrito en su cabecera; 16 reglas escondían 43 sub-entradas; la regla más larga (#7,
 2.180 palabras) era la más rota (≥8 reincidencias con la prosa delante); en una sesión con 6
@@ -342,6 +321,9 @@ marca y el push se queda fuera. Para un cambio solo de `.md`, `preflight:scope -
 carril corto (verify + build:docs + e2e smoke) y deja la marca igual.
 
 ## ✅ s40 · Tipografía end-to-end y SISMAC-4074 resuelto
+
+**Sello:** 2026-09-02, HEAD `fe0a442`. Gate verde leído del log (78 e2e) y CI verde en los dos
+commits. Doc nuevo: [`docs/tipografia.md`](../tipografia.md).
 
 **En Figma.** Los estilos de texto pasaron de 11 sueltos a **12 en carpetas** (Display, Heading,
 Body, Caption), con los valores literales de SnowUI y atados a variable en las cuatro propiedades:
