@@ -20,6 +20,50 @@
 > commits. Doc nuevo: [`docs/tipografia.md`](../tipografia.md). Tramo anterior de ESTE frente:
 > `2ad8b77` (guía de validación + hook pre-push).
 
+## ✅ s43 · Mapa de conexión de variables Figma → tema → navegador
+
+**Qué contesta**: para cada variable de los 18 componentes que publica el showcase del consumidor,
+si está enganchada en Figma **y** si el CSS de PrimeNG la lee. Nace del caso del Tag, donde había
+valores escritos a mano que se veían idénticos a los atados.
+
+**Medido el 2026-09-03** contra el Kit y el CSS que sirve `ui.smart-contact.com`: 816 filas, 18
+componentes. 636 conectadas, 88 «Figma no la usa» (34 son el anillo de foco, no atables, y 41
+llevan `FALTA DIBUJARLO`), 79 solo web, y 11 que piden mirar algo. **12 variables atadas sin
+cambio visual, 9 de ellas MAL APUNTADAS** (a la variable del estado vecino, de otro componente o
+de la librería remota), no sueltas: ese es el defecto dominante, y el cruce no lo ve solo, porque
+sí hay enlace.
+
+**Lo que quedó** (mismo reparto que la galería de uso: captura manual → crudo versionado → script
+puro → página + CSV → guard):
+
+- `projects/sc-docs/public/variables/_variables-raw.json` — lo medido. Solo lo toca la sesión de
+  medición, que necesita el puente de Figma y el navegador.
+- [`scripts/variables-map.mjs`](../../scripts/variables-map.mjs) — `npm run variables:map` deriva,
+  `npm run variables:check` es el guard.
+- [`docs/conexion-variables.csv`](../conexion-variables.csv) y `_variables-status.json`, los dos de
+  la MISMA ejecución, así que no pueden divergir.
+- [`docs/conexion-variables.md`](../conexion-variables.md) — el método: las dos sondas, sus trampas
+  medidas (el grosor de borde vive en los cuatro lados, no en `strokeWeight`; un valor con `var()`
+  no aparece al enumerar propiedades) y los cuatro filtros. Fila nueva en `DOCS-INDEX`.
+- Página `/#/conexion`, colgada del Lab. Verificada VIVA en el preview de rama, no solo en local.
+
+**Nueve veredictos, no seis**: a los del cruce se suman los tres que solo ve una revisión a mano
+(«mal apuntada», «muerta en el tema», «conectada por el primitivo»).
+
+**Lo siguiente, por orden**:
+1. Las **8 filas que esperan decisión** (en la página y en el CSV, con su capa y su selector). Las
+   gordas: los 144 iconos derechos de `button-small` apuntando a la variable remota de la
+   librería, y los 27 tokens del modal a medida que el tema publica y su componente no lee.
+2. El comprobador del zip del plugin, todavía sin escribir: ningún token a `0`, la base de los rem
+   y el diff contra el zip anterior. Manual y con argumento, **no entra en `verify`**.
+3. `variables:check` entra en `verify` cuando el mapa esté cerrado. Arrastra README, el test de
+   paridad preflight ≡ `ci.yml` y el hook de pre-push.
+
+**Aviso de terreno**: esta sesión y la de s42 corrieron **en el mismo working tree** y se pisaron.
+El reflog lo data: un cherry-pick de DD-48 sobre la rama ajena y un reset 30 segundos después, más
+dos cambios de rama a media compilación (que tiró un build de cuscare por falta de
+`@smartcontact-hub/icons`, y a la segunda pasó). No se perdió nada, pero **un worktree por tarea**.
+
 ## ✅ s42 · Figma iba por delante en 11 variables, y el gate no podía verlo
 
 **El disparador fue una duda de copy**: «la página de tipografía dice root 16, ¿no era 14?». El

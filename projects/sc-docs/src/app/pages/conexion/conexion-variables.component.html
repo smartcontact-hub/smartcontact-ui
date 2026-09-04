@@ -1,0 +1,226 @@
+<header class="cx-head">
+  <h1>Conexión de variables</h1>
+  <p class="cx-intro">
+    Una variable de Figma solo llega a la pantalla si la cadena entera está enganchada:
+    <strong>la capa</strong> tiene que usar la variable, <strong>el tema</strong> tiene que
+    publicar el token y <strong>el CSS de PrimeNG</strong> tiene que leerlo. Si un eslabón falla,
+    el componente sigue viéndose bien: por eso hay que medirlo, no mirarlo.
+  </p>
+  <p class="cx-intro">
+    Aquí está el estado de cada variable de los 18 componentes que publica el showcase del
+    consumidor. Se anotan <strong>variables y estados, nunca valores</strong>: un valor caduca al
+    siguiente export, el estado de conexión no.
+  </p>
+
+  @if (status(); as m) {
+    <p class="cx-meta">
+      {{ m.total }} filas · {{ m.componentes }} componentes · medido el {{ m.medidoEl }} sobre el
+      Kit de Figma y <code>{{ m.fuente.web }}</code> ·
+      <a href="https://github.com/smartcontact-hub/smartcontact-ui/blob/main/docs/conexion-variables.csv" target="_blank" rel="noopener">
+        el mismo dato en CSV
+      </a>
+    </p>
+  }
+</header>
+
+@if (error()) {
+  <p class="cx-error">
+    No se pudo cargar <code>/variables/_variables-status.json</code>. Se regenera con
+    <code>npm run variables:map</code>.
+  </p>
+} @else if (!status()) {
+  <p class="cx-cargando">Cargando el mapa…</p>
+} @else {
+  <!-- ── La leyenda ES el resumen: define el veredicto y da su recuento ───────── -->
+  <section class="cx-bloque" aria-labelledby="cx-veredictos">
+    <h2 id="cx-veredictos">Qué significa cada veredicto</h2>
+    <p class="cx-lead">
+      Seis salen solos de cruzar las dos preguntas: ¿la usa una capa de Figma? ¿la lee el CSS de
+      PrimeNG?
+    </p>
+    <dl class="cx-leyenda">
+      @for (v of delCruce; track v.nombre) {
+        <div class="cx-leyenda__item">
+          <dt>
+            <span class="cx-pill" [class]="'cx-pill--' + v.tono">{{ v.nombre }}</span>
+            <span class="cx-leyenda__n">{{ cuenta()[v.nombre] ?? 0 }}</span>
+          </dt>
+          <dd>{{ v.que }}</dd>
+        </div>
+      }
+    </dl>
+
+    <p class="cx-lead cx-lead--sep">
+      Los otros tres no los ve el cruce. Hace falta abrir el nodo o el CSS, y por eso solo los
+      pone una revisión a mano.
+    </p>
+    <dl class="cx-leyenda">
+      @for (v of deRevision; track v.nombre) {
+        <div class="cx-leyenda__item">
+          <dt>
+            <span class="cx-pill" [class]="'cx-pill--' + v.tono">{{ v.nombre }}</span>
+            <span class="cx-leyenda__n">{{ cuenta()[v.nombre] ?? 0 }}</span>
+          </dt>
+          <dd>{{ v.que }}</dd>
+        </div>
+      }
+    </dl>
+  </section>
+
+  <!-- ── El resumen por componente, y el detalle al abrirlo ──────────────────── -->
+  <section class="cx-bloque" aria-labelledby="cx-componentes">
+    <h2 id="cx-componentes">Componente a componente</h2>
+    <p class="cx-lead">
+      Abre uno para ver sus variables una a una. Es lo que hay que mirar al empezar una card:
+      qué está enganchado, qué no, y dónde.
+    </p>
+
+    <div class="cx-scroll">
+    <table class="cx-tabla cx-tabla--resumen">
+      <caption class="cx-sr">Estado de conexión por componente</caption>
+      <thead>
+        <tr>
+          <th scope="col">Componente</th>
+          <th scope="col" class="cx-num">Filas</th>
+          <th scope="col" class="cx-num">Conectadas</th>
+          <th scope="col" class="cx-num">A mirar</th>
+          <th scope="col" class="cx-num">Revisadas a mano</th>
+        </tr>
+      </thead>
+      <tbody>
+        @for (r of resumen(); track r.componente) {
+          <tr class="cx-fila-comp" [class.is-open]="abierto() === r.componente">
+            <th scope="row">
+              <button type="button" class="cx-abrir" (click)="abrir(r.componente)"
+                      [attr.aria-expanded]="abierto() === r.componente">
+                <span class="cx-chevron" aria-hidden="true">›</span>{{ r.componente }}
+              </button>
+            </th>
+            <td class="cx-num">{{ r.total }}</td>
+            <td class="cx-num">{{ r.conectada }}</td>
+            <td class="cx-num" [class.cx-num--alerta]="r.problema > 0">{{ r.problema }}</td>
+            <td class="cx-num">{{ r.revisadas }}</td>
+          </tr>
+
+          @if (abierto() === r.componente) {
+            <tr class="cx-detalle">
+              <td colspan="5">
+                <div class="cx-filtros">
+                  <span class="cx-filtros__et">Filtrar:</span>
+                  @for (v of veredictos; track v.nombre) {
+                    <button type="button" class="cx-chip" [class.is-active]="filtro() === v.nombre"
+                            (click)="filtrar(v.nombre)">{{ v.nombre }}</button>
+                  }
+                </div>
+
+                <div class="cx-scroll">
+                <table class="cx-tabla cx-tabla--vars">
+                  <thead>
+                    <tr>
+                      <th scope="col">Variable en Figma</th>
+                      <th scope="col">Token del tema</th>
+                      <th scope="col">¿La usa una capa?</th>
+                      <th scope="col">¿La lee PrimeNG?</th>
+                      <th scope="col">Veredicto</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (f of filasAbiertas(); track f.variable + f.token) {
+                      <tr>
+                        <th scope="row"><code>{{ f.variable || '—' }}</code></th>
+                        <td><code>{{ f.token || '—' }}</code></td>
+                        <td>{{ f.usaFigma || '—' }}</td>
+                        <td>{{ f.leeWeb || '—' }}</td>
+                        <td>
+                          <span class="cx-pill" [class]="'cx-pill--' + tono(f.veredicto)">{{ f.veredicto }}</span>
+                        </td>
+                      </tr>
+                      @if (f.motivo) {
+                        <tr class="cx-nota">
+                          <td colspan="5">
+                            @if (f.capa) { <span class="cx-nota__et">Capa</span> {{ f.capa }} }
+                            @if (f.selector) { <span class="cx-nota__et">CSS</span> <code>{{ f.selector }}</code> }
+                            <span class="cx-nota__et">Por qué</span> {{ f.motivo }}
+                          </td>
+                        </tr>
+                      }
+                    } @empty {
+                      <tr><td colspan="5" class="cx-vacio">Ninguna fila con ese veredicto.</td></tr>
+                    }
+                  </tbody>
+                </table>
+                </div>
+              </td>
+            </tr>
+          }
+        }
+      </tbody>
+    </table>
+    </div>
+  </section>
+
+  <!-- ── Lo que se ató, con su prueba ────────────────────────────────────────── -->
+  <section class="cx-bloque" aria-labelledby="cx-atadas">
+    <h2 id="cx-atadas">Lo que se ató <span class="cx-n">{{ atadas().length }}</span></h2>
+    <p class="cx-lead">
+      Solo se ata cuando la variable ya existe, el CSS la lee y el valor no cambia: no mueve un
+      píxel. Casi todas estaban <strong>mal apuntadas</strong>, no sueltas: señalaban a la
+      variable del estado vecino o a la de otro componente.
+    </p>
+    <ul class="cx-lista">
+      @for (f of atadas(); track f.componente + f.variable) {
+        <li>
+          <p class="cx-lista__t"><strong>{{ f.componente }}</strong> · <code>{{ f.variable }}</code></p>
+          <p class="cx-lista__d">{{ f.motivo }}</p>
+          <p class="cx-lista__m">
+            @if (f.capa) { {{ f.capa }} · }
+            @if (f.selector) { <code>{{ f.selector }}</code> }
+          </p>
+        </li>
+      }
+    </ul>
+  </section>
+
+  <!-- ── Lo que espera una decisión ──────────────────────────────────────────── -->
+  <section class="cx-bloque" aria-labelledby="cx-pendientes">
+    <h2 id="cx-pendientes">Esperando decisión <span class="cx-n">{{ pendientes().length }}</span></h2>
+    <p class="cx-lead">
+      Atarlas cambiaría el dibujo, o hay dos modelos para lo mismo. Eso es decisión de diseño, no
+      de mantenimiento: se anota y se para.
+    </p>
+    <ul class="cx-lista">
+      @for (f of pendientes(); track f.componente + f.variable) {
+        <li>
+          <p class="cx-lista__t">
+            <strong>{{ f.componente }}</strong> · <code>{{ f.variable }}</code>
+            <span class="cx-pill cx-pill--aviso">{{ f.accionable }}</span>
+          </p>
+          <p class="cx-lista__d">{{ f.motivo }}</p>
+        </li>
+      }
+    </ul>
+  </section>
+
+  <!-- ── Lo que NO se puede atar, para que nadie lo intente otra vez ─────────── -->
+  <section class="cx-bloque" aria-labelledby="cx-nunca">
+    <h2 id="cx-nunca">Lo que no se ata</h2>
+    <ul class="cx-lista cx-lista--simple">
+      <li>
+        <strong>El anillo de foco.</strong> Esa capa dibuja el hueco más el anillo, que es la suma
+        de dos tokens, y Figma no suma. Son 34 filas y ninguna es un fallo.
+      </li>
+      <li>
+        <strong>Lo que Figma no dibuja.</strong> Sombras, estilos de línea, duraciones y estados
+        que el Kit no representa. El valor viaja igual.
+      </li>
+      <li>
+        <strong>Lo que viene igual del PrimeOne.</strong> Sin decisión explícita no se toca: no es
+        deuda nuestra.
+      </li>
+      <li>
+        <strong>Los valores.</strong> Ni el 3 del anillo, ni el 1 de los bordes, ni el relleno del
+        Chip. Esto es un mapa de conexión, no un cambio de diseño.
+      </li>
+    </ul>
+  </section>
+}

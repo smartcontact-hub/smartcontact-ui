@@ -64,6 +64,17 @@ export const routes: Routes = [
   },
 
   {
+    // Mapa de conexión de variables Figma → tema → navegador. Pinta un artefacto GENERADO
+    // (`public/variables/_variables-status.json`), igual que la galería de uso real.
+    // Enlazada desde el Lab, porque es herramienta de mantenimiento, no documentación.
+    path: 'conexion',
+    loadComponent: () =>
+      import('./pages/conexion/conexion-variables.component').then(
+        (m) => m.ConexionVariablesComponent,
+      ),
+  },
+
+  {
     // Smoke test del preset (primitivos PrimeNG estilados solo por tokens). Fue pestaña de
     // Fundamentos; ahora es verificación, enlazada desde Lab. Sigue accesible por URL.
     path: 'tema',
