@@ -2,18 +2,84 @@
 
 > **Volátil.** Lo reescribe la sesión que trabaja ESTE frente, y **solo este fichero**.
 > No toques los hand-offs de otros frentes. Lo durable vive en `docs/`.
-> **Sello: 2026-09-02 (s41): HEAD `7d343a9`, CI VERDE leído en los tres commits** (`f116bbd`,
-> `718d149`, `7d343a9`; 5 jobs cada uno). La guía de proceso pasa al PUNTO DE DECISIÓN (DD-47):
-> hooks versionados en `.claude/settings.json` → `scripts/hooks/`, tarjeta en `CLAUDE.md`,
-> `LEARNINGS.md` de 760 a 178 líneas con el check K que impide que vuelva a crecer, `/reflect`
-> enruta. El cambio salió en UN commit atómico; los otros dos son correcciones del propio guard
-> cazadas usándolo. Tramo anterior de ESTE frente: `fe0a442` (s40, tipografía).
+> **Sello: 2026-09-03 (s42): HEAD `7bb9aab`, CI VERDE leído en `516b911`, `6678a5b` y `7bb9aab`**
+> (5 jobs cada uno). Figma iba por delante del código en 11 variables de tipografía y ningún gate
+> lo decía: el `Display` de 64/78 llevaba días sin llegar. Cerrado de punta a punta — el paso 900
+> en `main`, la rampa semántica repuntada a los text styles (DD-48), el agujero del gate tapado
+> con `npm run figma:parity`, y un bug real de Figma (4 variables a 0 en modo oscuro) arreglado.
+> Tramo anterior de ESTE frente: `7d343a9` (s41, la guía en el punto de decisión).
+>
+> Sello anterior (s41): HEAD `7d343a9`, CI VERDE en los tres commits (`f116bbd`, `718d149`,
+> `7d343a9`). La guía de proceso pasa al PUNTO DE DECISIÓN (DD-47): hooks versionados en
+> `.claude/settings.json` → `scripts/hooks/`, tarjeta en `CLAUDE.md`, `LEARNINGS.md` de 760 a 178
+> líneas con el check K, `/reflect` enruta. Tramo anterior: `fe0a442` (s40, tipografía).
 >
 > Sello anterior (s40): HEAD `fe0a442`. Tipografía cerrada de punta a punta: 12 estilos de
 > texto atados a variable, 5 tallas en el puente (`sm`→`xxl`), y el diagnóstico completo de
 > SISMAC-4074 con el CSS que lo resuelve. Gate verde leído del log (78 e2e) y CI verde en los dos
 > commits. Doc nuevo: [`docs/tipografia.md`](../tipografia.md). Tramo anterior de ESTE frente:
 > `2ad8b77` (guía de validación + hook pre-push).
+
+## ✅ s42 · Figma iba por delante en 11 variables, y el gate no podía verlo
+
+**El disparador fue una duda de copy**: «la página de tipografía dice root 16, ¿no era 14?». El
+root ES 16 (`html` a `100%`, medido en el build); el 14 que confunde es la base de la escala de
+ESPACIADO (`--sc-scale-1`) y el cuerpo por defecto. Pero tirando del hilo salió lo de verdad.
+
+**El hallazgo**: al rebasar los text styles del Kit (`Display` a 64/78, `h1` a 48/58) nacieron en
+Figma 11 variables que nunca llegaron al export, y **`tokens:type-parity` decía «15/15 · al día»
+con verdad**: va export → código, así que lo que está en Figma y no llegó al export le es
+invisible POR CONSTRUCCIÓN. Contestaba una pregunta más estrecha de la que se le leía.
+
+**Lo que quedó (en orden de aterrizaje)**:
+- `65c3fa9` — la página de tipografía deja de invitar al error del root, y corrige dos cosas que
+  decía mal: «dos pesos» cuando el sistema declara y usa CUATRO (medido: regular 16 usos, medium
+  119, semibold 120, bold 28), y los snaps que estaban en el CSS sin aparecer en la doc.
+- **Figma** — `app/typography/xl|xxl` tenían alias en Light y un **0 CRUDO** en Dark, 4 de 36,
+  durante semanas. Igualadas al alias de Light. Escaneo previo: 110 páginas, 137.386 nodos, CERO
+  consumidores, así que era una mina sin pisar. No se borran: la colección está publicada.
+- `f18c676` — las 9 hojas del rebase clasificadas en `coverage-map.mjs` midiendo su consumo, no
+  por el nombre. El guard «una talla NUEVA de `app.typography` va en rojo» NO se aflojó: su
+  ejemplo era `xl`, que ya existe, y ahora apunta a `xxxl`.
+- `c4925ba` — el snap `900` jubilado. Escribía 48 en vez de 64 Y emitía la línea DOS VECES (el
+  paso salía en la lista del Kit y en la de snaps, que no deduplica). `emitRamp` ahora corta
+  ruidoso con la instrucción dentro del mensaje.
+- `6678a5b` (PR #34) — `--sc-font-size-900` = 64 y `--sc-line-height-900` = 78 en `main`.
+- `7bb9aab` (DD-48) — **manda Figma en las escalas** (decisión de Rafa). `display-1` 32→64, `h1`
+  32→48, `h3` 20→18. Regla nueva: *el consumidor que quiere otro tamaño nombra el PASO, no el
+  rol* — sc-docs quiere 32 y ningún rol cae ya ahí, así que sus seis consumos pasan a
+  `--sc-font-size-650`. Efecto en producto: UN sitio (`repositorios-hub-page`, h3 20→18).
+- `9f37566` + `516b911` — la guía de `/validar`: los cuatro pasos llevan una SIMULACIÓN en HTML
+  de lo que aparece en pantalla, y entra **«Practícalo aquí»**, un inspector de mentira que lee
+  valores de VERDAD del chip real con `getComputedStyle` y dice de dónde sale cada uno. El borde
+  del chip va sin token A PROPÓSITO: sin un caso real de «esto no usa la variable», la misión 4
+  no enseñaría nada.
+
+**El agujero, tapado**: `figma-parity.mjs` ya no es solo color. Cubre la letra Y comprueba que
+cada variable de tipografía valga lo mismo en TODOS los modos. `npm run figma:parity <volcado>`,
+snippet en el README de design-tokens. Corrido contra el fichero del DS con el bridge:
+**36/36 en valor y 36/36 en modos**. Sigue siendo manual: necesita el bridge, no puede ser gate.
+
+### ⚠️ Trampas medidas hoy, en orden de lo que más cuesta
+
+- **Dos sesiones en un worktree comparten `dist/` Y la rama.** Tres preflights murieron con
+  `Cannot find module '@smartcontact-hub/icons'` / `components`, que engaña porque parece una
+  dependencia rota: era la otra sesión reescribiendo `dist/` a la vez (verificado por `ps`: su
+  `ng build` borró `dist/ui-smartcontact-icons/package.json` entre dos lecturas mías). Peor: esa
+  sesión se llevó el checkout a una rama nueva y **leí su `git log` creyendo que era `main`** —
+  parecía que me habían borrado el commit. Antes de leer historia o cherry-pickear:
+  `git rev-parse --abbrev-ref HEAD`. **Desde el 2026-09-03 se trabaja en worktree propio.**
+- **Mergear un PR cuenta como PUSHEAR**: hay que leer `npm run ci:verdict` igual. Me lo cazó el
+  stop-hook después de mergear el #34 y darlo por hecho.
+- **`ci` se SALTA a propósito en `design-tokens-sync`** (está escrito en `ci.yml`): el gate real
+  de ese PR es `tokens-sync`. Un `action_required` ahí no es el bloqueo que parece.
+- **Pushear «Tokens» sin cambios = commit VACÍO = el workflow NO dispara** (su filtro es
+  `paths: [kit-export-dtcg.json]`). Y **«Push Theme» mete 170 ficheros de `.theme-designer/`** en
+  la rama saltándose el `.gitignore` (empuja por API, no con git). El sync los borra al
+  auto-curarse, pero solo si VUELVE A CORRER: si el push de tokens iba vacío, se quedan y el PR
+  se los lleva a `main`. Relanzar `tokens-sync` es la cura.
+- **Un snap no se jubila solo.** Quedan 9 vivos (font-size 50·75·600·700, line-height
+  50·220·400·600·700). Cuando Figma publique uno, el generador ahora lo dice.
 
 ## ✅ s41 · La guía se sirve en el punto de decisión (DD-47)
 
@@ -613,6 +679,23 @@ color breadcrumb). Mensaje de diseño enviado. Editar Figma **no mueve la web**.
 > Los puntos 0 a 3 que llevaba esta ficha (re-exportar y cerrar `text.muted.color` · los 16 del
 > trinquete · los hallazgos viejos del audit semanal · `npm audit`) están **HECHOS** en s34. Lo que
 > sigue es lo que queda de verdad.
+
+**Lo que dejó s42, medido y sin hacer:**
+
+- **Las descripciones de los text styles de Figma están corridas un peldaño.** Se escribieron
+  cuando `h1` era la cima y no se movieron al meter `Display` encima: `Heading/h1-semibold` dice
+  *«el texto más grande… uno por pantalla, no más»* (ya no lo es, Display es 64 y reclama lo
+  mismo); `Heading/h2-regular` lleva una descripción de BODY (*«el texto de leer, párrafos»*) en
+  un heading de 24; `Display/display-regular` una de SUBTÍTULO; y `h1-regular` y `h3-regular` la
+  tienen vacía. Es texto, no estructura: se arregla en Figma en cinco minutos.
+- **El tier `app/typography/xl|xxl` existe en Figma y no lo consume nadie** (medido: 0 nodos, 0
+  text styles). Está clasificado como `not-consumed` en `coverage-map.mjs`. Si algún día se
+  quiere de verdad, va a `sc-preset/extend.ts` + `APP_TYPOGRAPHY_CONTRACT` y sube al bucket
+  `value-check`; hasta entonces declararlo consumido sería mentir.
+- **`--sc-font-size-caption-bold` está declarado y tiene 0 usos.**
+- **`display-1` se quedó sin consumidores y `h1` con uno que es solo fallback.** Es el estado
+  honesto tras DD-48 (la rampa era aspiracional desde DD-13), no una regresión: la rampa ya dice
+  la verdad y espera consumidores de PRODUCTO. Si el Supervisor adopta la rampa, es ahí.
 
 1. ~~**El P0 del field-pattern ×5**~~ → **HECHO 2026-08-30 ([DD-44](../DECISIONS.md))**. No fue
    «extraer un CVA a mano»: se **BORRÓ** el ControlValueAccessor de los SEIS campos (los 5 +
