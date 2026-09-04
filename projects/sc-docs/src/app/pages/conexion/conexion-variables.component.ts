@@ -64,7 +64,7 @@ const VEREDICTOS: readonly { nombre: string; tono: string; que: string; aMano?: 
   {
     nombre: 'solo Figma',
     tono: 'neutro',
-    que: 'Auxiliar de dibujo, sin token detrás. No tiene que viajar.',
+    que: 'El Kit dibuja algo que no tiene token detrás. O es un auxiliar de dibujo y no hace falta que viaje, o es una divergencia que NO PUEDE viajar: no rompe producción, pero engaña a quien lee el Kit.',
   },
   {
     nombre: 'mal apuntada',
@@ -83,6 +83,18 @@ const VEREDICTOS: readonly { nombre: string; tono: string; que: string; aMano?: 
     tono: 'aviso',
     aMano: true,
     que: 'Dos variables con nombres distintos apuntan al mismo primitivo, así que hoy coinciden. No está roto, pero si se mueve una y no la otra, el dibujo y la web divergen.',
+  },
+  {
+    nombre: 'viaja por --sc-*',
+    tono: 'ok',
+    aMano: true,
+    que: 'PrimeNG no lo lee, y es correcto: son extensiones nuestras que llegan por el canal --sc-*, la segunda profundidad del modelo.',
+  },
+  {
+    nombre: 'no es un hallazgo',
+    tono: 'ok',
+    aMano: true,
+    que: 'Parecía un fallo y al abrir el nodo no lo era. Se anota para que nadie lo vuelva a investigar.',
   },
 ];
 
@@ -156,8 +168,11 @@ export class ConexionVariablesComponent {
   protected readonly atadas = computed(() =>
     (this.status()?.filas ?? []).filter((f) => f.accionable === 'HECHO'),
   );
-  protected readonly pendientes = computed(() =>
-    (this.status()?.filas ?? []).filter((f) => f.accionable.startsWith('PENDIENTE')),
+  /** Lo que queda abierto: todo accionable que no sea «no» ni «HECHO». */
+  protected readonly abiertas = computed(() =>
+    (this.status()?.filas ?? []).filter(
+      (f) => f.accionable && f.accionable !== 'no' && f.accionable !== 'HECHO',
+    ),
   );
 
   constructor() {
