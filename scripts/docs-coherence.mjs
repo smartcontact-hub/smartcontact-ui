@@ -143,7 +143,11 @@ for (const { path, lines } of files) {
 const verifySteps = (scripts.verify || '')
   .split('&&')
   .map((s) => s.trim().replace(/^npm run /, ''))
-  .filter((s) => /^(tokens|audit|test|docs|i18n):/.test(s)); // los guards específicos (no build/typecheck/lint genéricos)
+  // Los guards específicos, no los pasos genéricos (build/typecheck/lint). `usage:` y
+  // `variables:` entraron el 2026-09-04: los dos son «captura manual → derivado versionado →
+  // guard», y `usage:check` llevaba meses en la cadena SIN estar en el README, que es
+  // exactamente lo que este check existe para impedir. El hueco no era el README, era el filtro.
+  .filter((s) => /^(tokens|audit|test|docs|i18n|usage|variables):/.test(s));
 const readme = readFileSync(resolve(root, 'README.md'), 'utf8');
 for (const step of verifySteps)
   if (!readme.includes(step))

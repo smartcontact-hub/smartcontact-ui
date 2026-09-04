@@ -87,22 +87,23 @@ dice quién tiene razón; se contesta en tres pasos, empezando por si el canal e
 once: `viaja por --sc-*` y `no es un hallazgo` — **un mapa que solo guarda los aciertos hace
 repetir el trabajo descartado**, y hoy tres de ocho fueron descartes.
 
-**Lo siguiente, por orden**. Nada de esto bloquea a nadie: el mapa está cerrado y vivo.
+**El frente queda CERRADO.** El mapa está medido, vivo en producción y **gateado**: desde el
+2026-09-04 `variables:check` corre dentro de `verify`, así que un commit que deje los derivados
+viejos se pone rojo solo. No hay nada a medias esperando a nadie.
 
-1. **La petición al consumidor** sobre el modal a medida. Redactada entera en
-   [`docs/conexion-variables.md`](../conexion-variables.md) §«Peticiones abiertas al consumidor»,
-   con el mapeo y las tres preguntas previas. **No se ha mandado a nadie**: falta decidir quién la
-   manda y por qué canal. Es lo único que depende de otro equipo.
-2. **El comprobador del zip del plugin**, todavía sin escribir: ningún token a `0`, la base de los
-   rem y el diff contra el zip anterior. Manual y con argumento, **no entra en `verify`**. Las tres
-   comprobaciones nacen de fallos reales de esta semana y están descritas en el doc.
-3. **`variables:check` entra en `verify`** cuando se dé el mapa por cerrado del todo. Arrastra tres
-   cosas: el README tiene que nombrarlo, el test de paridad preflight ≡ `ci.yml`, y el hook de
-   pre-push. A partir de ahí, cualquier commit que deje los derivados viejos se pone rojo.
-4. **La deuda de dibujo de las cinco abiertas es de Figma y no corre prisa.** No rompe producción:
+**Lo que queda son notas, no tareas.** Ninguna bloquea:
+
+1. **La petición al consumidor** sobre el modal a medida, en
+   [`docs/conexion-variables.md`](../conexion-variables.md) §«Peticiones abiertas al consumidor».
+   **Decidido el 2026-09-04: se queda anotada y ya.** Está redactada por si se retoma; nadie la
+   espera.
+2. **El comprobador del zip del plugin**, sin escribir: ningún token a `0`, la base de los rem y el
+   diff contra el zip anterior. Manual y con argumento, **no va en `verify`**. Las tres
+   comprobaciones nacen de fallos reales y están descritas en el doc.
+3. **La deuda de dibujo de las cinco abiertas es de Figma y no corre prisa.** No rompe producción:
    el valor llega bien. Lo que cuesta es que quien lee el Kit ve un color que el producto no pinta.
-   La de `button-small` ni siquiera se puede arreglar de verdad, porque PrimeNG no tiene canal.
-5. **Extender el mapa más allá de los 18 del showcase** cuando una card toque otra página del Kit.
+   La de `button-small` ni siquiera se puede arreglar, porque PrimeNG no tiene canal.
+4. **Extender el mapa más allá de los 18 del showcase** cuando una card toque otra página del Kit.
    El método y la sonda ya están; es repetir la pasada, no inventar nada.
 
 **Aviso de terreno**: esta sesión y la de s42 corrieron **en el mismo working tree** y se pisaron.
