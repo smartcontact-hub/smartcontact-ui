@@ -40,8 +40,9 @@ Resumen operativo:
   Patrones.
 - **Antes de dar nada por bueno**: `npm run verify` (28 gates encadenados) y, si
   tocaste algo visual, `npm run e2e`. **Antes de pushear no basta `verify`**: el CI
-  son 8 pasos, enumerados en `.github/workflows/ci.yml`; `npm run preflight:scope --run` elige
-  el carril y deja la marca que el hook de push exige.
+  son 8 pasos, enumerados en `.github/workflows/ci.yml`; `npm run preflight:scope -- --run` elige
+  el carril y deja la marca que el hook de push exige (el `--` es obligatorio: sin él npm se
+  come el flag, el script solo IMPRIME el plan y no deja marca).
 - ⚠️ **Los bloques `@sc-gen:*` son GENERADOS y viven en CINCO ficheros**, no solo en
   `01-primitive.css`: `01-primitive` (typography · scale · radius · palette), `02-semantic`
   (semantic-color-light), `04-component` (cmp-sizing · cmp-color-light),

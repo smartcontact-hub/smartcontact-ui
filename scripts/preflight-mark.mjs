@@ -5,7 +5,7 @@
  * Es la mitad mecánica de LEARNINGS #7: `preflight` UNA vez sobre el árbol FINAL, y solo
  * entonces `git push`. Antes eso era prosa (2.180 palabras, ≥8 reincidencias documentadas);
  * ahora es un fichero que escribe el último paso de `preflight` / `preflight:fast` /
- * `preflight:scope --run`, y que lee el hook de `git push` (`scripts/hooks/bash-guard.mjs`).
+ * `preflight:scope -- --run`, y que lee el hook de `git push` (`scripts/hooks/bash-guard.mjs`).
  *
  * Qué identifica el árbol: el TREE ID del working tree (`git write-tree` sobre un índice
  * temporal con `git add -A`). Es el mismo id que tendrá el commit si commiteas exactamente

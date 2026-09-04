@@ -207,7 +207,7 @@ cabeceras, gate en tercer lugar, y la misma lección escrita también en memoria
    tarjeta → regla → memoria, y memoria solo guarda terreno (`project`/`reference`/`user`).
 
 **Lo que ya existía y cómo encaja.** `.githooks/pre-push` (s39, `2ad8b77`) ya corría
-`preflight:scope --run` en cada push. No lo vi en la fase de medición (LEARNINGS #10: el sistema
+`preflight:scope -- --run` en cada push. No lo vi en la fase de medición (LEARNINGS #10: el sistema
 ya lo servía) y lo descubrí cuando el primer push de este cambio repitió 10 minutos de cadena
 sobre un árbol recién verificado y agotó el timeout. Los dos hooks comparten la marca: el de git
 la mira primero (`preflight-mark.mjs --check`) y solo corre la cadena si falta; el de Claude

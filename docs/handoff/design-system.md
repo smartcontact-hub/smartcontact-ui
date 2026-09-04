@@ -107,6 +107,18 @@ tokens del DS**, medida igual en `.section-lead` y `.note` de la propia guía, s
   así que `getComputedStyle` devuelve el valor de salida para siempre. Perseguí un fondo blanco en
   modo oscuro que no existía. Antes de creerte una medida visual: `document.hidden` y
   `resize_window` a un tamaño real.
+- **`npm run preflight:scope --run` NO corría nada, y estaba escrito así en 8 sitios.** npm se
+  come el `--run` antes de que llegue al script, que lo busca en `process.argv`
+  (`preflight-scope.mjs:147`). Medido: **6 segundos, 0 pasos ejecutados, sin marca `.preflight-ok`**;
+  solo imprime el plan. Lo corrí dos veces creyendo que había pasado la cadena. La forma buena es
+  `npm run preflight:scope -- --run`, y así lo hacía ya `.githooks/pre-push:44`: la AUTOMATIZACIÓN
+  estaba bien y lo roto era la instrucción, incluido el mensaje con el que el propio guard te
+  deniega el push (te mandaba a un comando que no hace nada, o sea a un bucle). Corregidos los 8:
+  `CLAUDE.md`, `AGENTS.md`, `README.md`, `bash-guard.mjs`, `preflight-mark.mjs`, `DECISIONS.md` y
+  dos del tramo s41 de este hand-off.
+  **El agujero de gate**: `docs:coherence` comprueba que el SCRIPT exista, y `preflight:scope`
+  existe; un flag que npm se traga le es invisible. Candidato a check nuevo: en la doc, un
+  `npm run <script> --<flag>` sin `--` es siempre un error.
 - **Un `ng build` a la vez que el `ng serve` del mismo árbol se pisan en `dist/`.** El servidor
   quedó sirviendo un bundle roto sin decírmelo (el error vive en su log, no en la página). Es el
   mismo choque que el hand-off de s42 apuntó entre DOS sesiones; también pasa con UNA sola.
@@ -294,7 +306,7 @@ en el momento de escribir el comando, y el único enforcement (gates) corría en
   bloquea el cierre una vez si hubo push sin `npm run ci:verdict`. `compact-card.mjs` avisa al
   compactar si la guía cambió en `origin/main`. Salida explícita: `# sc:ok`, dicho en el mensaje.
   Cada patrón con caso rojo y verde (`scripts/__tests__/bash-guard.test.mjs`).
-- `scripts/preflight-mark.mjs`: `preflight`, `preflight:fast` y `preflight:scope --run` dejan la
+- `scripts/preflight-mark.mjs`: `preflight`, `preflight:fast` y `preflight:scope -- --run` dejan la
   marca (tree id del working tree; solo vale si ese tree es HEAD). `ci-preflight-parity` la filtra.
 - Tarjeta de 7 preguntas en `CLAUDE.md` (viaja en cada turno, sobrevive a la compactación).
 - `LEARNINGS.md` recortado a 16 reglas de ≤12 líneas con UNA `Evidencia:`; la historia entera en
@@ -318,7 +330,7 @@ enumeré los ficheros que se LEEN y no los mecanismos que se EJECUTAN, y este ho
 
 ⚠️ **Cómo repetirlo sin tropezar**: el hook exige la marca sobre el árbol FINAL. Commitea TODO
 (hand-off incluido) y CORRE LA CADENA DESPUÉS, nunca al revés; un commit posterior invalida la
-marca y el push se queda fuera. Para un cambio solo de `.md`, `preflight:scope --run` elige el
+marca y el push se queda fuera. Para un cambio solo de `.md`, `preflight:scope -- --run` elige el
 carril corto (verify + build:docs + e2e smoke) y deja la marca igual.
 
 ## ✅ s40 · Tipografía end-to-end y SISMAC-4074 resuelto

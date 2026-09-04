@@ -34,11 +34,21 @@ antes de construir encima.
 | --------------------------------------------------------------------- | ---------------------------------------------------------------- | ---------------- |
 | **Agent** — réplica medida del Comunicador (SISMAC-3780)              | [`docs/handoff/agent.md`](docs/handoff/agent.md)                 | 2026-08-31 (s37) |
 | **CusCare** — réplica de la herramienta de tickets                    | [`docs/handoff/cuscare.md`](docs/handoff/cuscare.md)             | 2026-08-31 (s37) |
-| **Design System + herramienta** — tokens, componentes, Figma, tooling | [`docs/handoff/design-system.md`](docs/handoff/design-system.md) | 2026-09-04 (s43) |
+| **Design System + herramienta** — tokens, componentes, Figma, tooling | [`docs/handoff/design-system.md`](docs/handoff/design-system.md) | 2026-09-04 (s44) |
 | **Agent Mini** — dialpad standalone (réplica del mini aed)            | [`docs/handoff/agent-mini.md`](docs/handoff/agent-mini.md)       | 2026-09-01       |
 
 **Al cerrar, reescribe SOLO el fichero de tu frente.** Si abres una línea de trabajo nueva, crea
 su fichero, añade su fila aquí y nómbralo en la fila de `DOCS-INDEX`.
+
+### ⏳ Abierto ahora mismo (mira esto ANTES de empezar)
+
+| Qué | Dónde | Estado |
+| --- | ----- | ------ |
+| El simulador de `/validar`, jugable | [PR #36](https://github.com/smartcontact-hub/smartcontact-ui/pull/36) | CI verde, **sin mergear** |
+
+Un PR verde sin mergear no es trabajo entregado: `sc-doc.pages.dev` sirve `main`, así que hasta
+que entre no existe para nadie. Si sigue abierto, mergéalo (y lee `npm run ci:verdict` después,
+que mergear cuenta como pushear). Cuando esta tabla se quede vacía, bórrala.
 
 ---
 
