@@ -130,6 +130,51 @@ tokens del DS**, medida igual en `.section-lead` y `.note` de la propia guía, s
   tokenizándolos, el simulador pierde lo único que de verdad enseña. Está dicho en el fichero.
 - El cartón del inspector sigue con los colores de Chrome (11px, morado/azul), amparado por la
   exención por LÍNEA `sc-replica-navegador` de `token-guard`. Las líneas nuevas la llevan escrita.
+## ✅ 2026-09-05 · Segunda pasada del mapa: dos defectos en 18 componentes
+
+**Sello:** en la rama `feat/segunda-pasada-conexion`. Solo doc y una línea de la página; sin tocar
+Figma, porque los accionables cambian el dibujo y eso lo decide Rafa.
+
+**La pregunta que faltaba.** El mapa marcaba 92 variables como «no la usa ninguna capa», y esa
+marca no se puede dar por buena sola: puede significar que **no hay dónde atarla** o que **hay una
+capa a mano** que debería usarla. Se contesta al revés: en vez de mirar la variable, mirar qué
+capas llevan un valor escrito a mano en una propiedad para la que SÍ existe variable.
+
+**La sonda necesitó tres filtros, los tres nacidos de falsos positivos propios**, y sin ellos
+miente a lo grande:
+1. Excluir el marco del propio component set (andamiaje de Figma).
+2. Comprobar que la variable existe. El Tag tiene 29 grosores a mano y **no existe
+   `tag/border/width`**: hueco del modelo de PrimeNG, no despiste.
+3. Comprobar que la capa PINTA. El Button dio 732 capas con relleno crudo y **ninguna pinta**:
+   516 tienen ancho cero. Sin esto, el componente más grande sale como el más roto.
+
+**Resultado: dos defectos de 18.** El resto es hueco del modelo, anillo de foco, capas que no
+pintan o componentes anidados. Detalle completo en
+[`docs/conexion-variables.md`](../conexion-variables.md) §«Segunda pasada».
+
+- **InputText, tipografía sin conectar.** 660 capas de texto: las 108 atadas van a la librería
+  REMOTA, no al DS; las 552 restantes, a mano. Ninguna usa estilo de texto (comprobado, era la
+  primera sospecha de falso positivo). Y dentro del mismo componente hay TRES situaciones: hay
+  variable y no se usa (sm y lg), la variable vive en otro sitio del que crees (el tamaño normal
+  lo gobierna `app/typography/md/fontSize` porque PrimeNG **no modela** un font-size de raíz
+  para `inputtext`, y el 14 llega porque nuestro bloque global pisa su `1rem`), y no existe el
+  modelo (Label y Helper Text no son de PrimeNG).
+- **Menu, el popup no sigue el oscuro.** `Menu=False` y `Menu=True` de `menu-popup` llevan el
+  fondo blanco a mano mientras el resto usa `menu/background`. En claro no se nota (esa variable
+  resuelve a blanco); en oscuro el tema manda `surface.900` y estas dos se quedan blancas. Atarlas
+  no cambia el claro y arregla el oscuro.
+
+**Lo mejor conectado**: Select y MultiSelect, con 7.982 y 8.234 enlaces al DS y **cero remotos**.
+
+**Y del lado del consumidor, medido con la VPN puesta**: **cero overrides y cero valores de diseño
+a mano** en sus 21 rutas. Validado con un control, que es lo que faltaba antes: la misma sonda
+encuentra 1.450 declaraciones en las hojas del tema y ninguna en las suyas. Esto **corrige** una
+medida anterior que decía «el Tag tiene 13 overrides»: aquellas reglas LEEN el token, no lo pisan.
+
+**Aviso de terreno, otra vez.** Esta sesión perdió sus ediciones sin commitear cuando otra cambió
+de rama en el mismo working tree. No se perdió nada porque la otra sesión las rescató en
+`68c5af1`, pero **un worktree por tarea** sigue sin cumplirse y ya ha costado dos sustos.
+
 ## ✅ s43 · Mapa de conexión de variables Figma → tema → navegador
 
 **Sello:** 2026-09-04, HEAD `1779914`, CI VERDE leído en los dos PR (`9036856` del #35 y

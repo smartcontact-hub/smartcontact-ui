@@ -42,9 +42,10 @@ Los otros cinco **no los ve el cruce**, porque hace falta abrir el nodo o el CSS
 revisión a mano, y son los que más cuestan de encontrar. Dos abren un caso y tres lo cierran:
 
 - **mal apuntada** — sí está atada, pero **a la variable equivocada**: la del estado vecino, la de
-  otro componente, o una de la librería remota. El cruce la da por buena porque hay enlace. Es el
-  defecto dominante: 9 de las 12 correcciones de la primera pasada eran de este tipo, no variables
-  sueltas.
+  otro componente, o una de la librería remota. El cruce la da por buena porque hay enlace, así que
+  solo se ve abriendo el nodo. De las 12 correcciones de la primera pasada, **5 eran de este tipo y
+  7 eran variables sueltas**; contadas por CAPAS sale casi mitad y mitad (44 y 48), porque una sola
+  mal apuntada arrastraba 27 capas del maestro del Menu.
 - **muerta en el tema** — el tema publica el token y el componente lee otro canal. Hay dos modelos
   para lo mismo y el del tema no manda.
 - **conectada por el primitivo** — dos variables con nombres distintos apuntan al mismo primitivo,
@@ -200,8 +201,10 @@ suelto al CI, entonces sí entran en juego el test de paridad
 De las 87 «Figma no la usa»: 34 son el anillo de foco (no atables), 41 llevan `FALTA DIBUJARLO` (el
 Kit no dibuja esa variante o ese estado) y el resto se cerraron abriendo el nodo.
 
-**12 variables atadas** en la primera pasada, ninguna con cambio visual, y **9 de ellas estaban mal
-apuntadas**, no sueltas.
+**12 variables atadas** en la primera pasada, unas 92 capas en total. **5 estaban mal apuntadas y 7
+sueltas**; por capas sale casi mitad y mitad (44 y 48), porque una sola mal apuntada arrastraba las
+27 del maestro del Menu. Ninguna cambió el dibujo salvo `checkbox/focus/border/color`, donde 15
+capas corrigieron un gris, autorizado en su momento.
 
 **Las 8 que quedaban pendientes se cerraron el 2026-09-04**, y el resultado dice más del método que
 de los componentes:
@@ -222,6 +225,137 @@ página y en el CSV.
 
 ---
 
+## Segunda pasada: ¿está bien tachado?
+
+El mapa marca 92 variables como «no la usa ninguna capa». Esa marca no se puede dar por buena sola:
+puede significar que **no hay dónde atarla** (correcto) o que **hay una capa pintada a mano** que
+debería estar usándola (defecto). La pregunta se contesta al revés que la primera pasada: en vez de
+mirar la variable, se mira **qué capas llevan un valor escrito a mano** en una propiedad para la
+que SÍ existe variable.
+
+**Los tres filtros de esta sonda**, los tres nacidos de falsos positivos propios:
+
+1. **Excluir el marco del propio component set.** Es andamiaje de Figma, no el componente.
+2. **Comprobar que la variable existe.** El Tag tiene 29 capas con grosor de borde a mano y
+   **no existe `tag/border/width`**: hueco del modelo de PrimeNG, no despiste.
+3. **Comprobar que la capa PINTA algo.** El Button dio 732 capas de texto con relleno crudo y
+   **ninguna pinta**: 516 tienen ancho cero. Sin este filtro, el componente más grande del Kit
+   sale como el más roto.
+
+### Resultado del 2026-09-05, los 18 componentes
+
+| Componente | Estado | Detalle |
+|---|---|---|
+| Tag, InputNumber, Checkbox, RadioButton | **limpios** | Cero capas a mano donde exista variable |
+| Badge | **bien tachado** | Sus 56 radios crudos son variantes `Circle=True`: 10,5 / 15,75 / 21, la mitad del alto de cada talla. Un radio por tamaño y una sola variable: no hay dónde atarlos |
+| Avatar | **bien tachado** | Idéntico: 14 / 21 / 28 son la mitad de sus tres tallas |
+| Button | **bien tachado** | 732 capas con relleno crudo y **cero pintan** (516 con ancho 0). Sus enlaces de color: 5.050 al DS, 143 remotos (los iconos de `button-small` ya documentados) |
+| **InputText** | **DEFECTO CONFIRMADO** | Ver abajo |
+| Select, MultiSelect | **bien tachados** | Los mejor conectados del Kit: 7.982 y 8.234 enlaces al DS y **cero remotos**. La mitad de sus huecos no separa nada (253 y 263 en capas con menos de dos hijos) y el resto vive en el envoltorio del formulario, que PrimeNG no modela |
+| Toast, ToggleSwitch | **bien tachados** | Sus grosores a 1 están en capas sin variable: no existe `toast/close/button/border/width` ni `toggleswitch/handle/border/width`. Los grosores a 3 son el anillo de foco |
+| Chip, Dialog, Breadcrumb, ContextMenu | **bien tachados** | Ninguno tiene `border/width` en su modelo. Los chevrons crudos del ContextMenu son el ENVOLTORIO del icono, blanco sobre blanco: el vector de dentro **sí está atado**, en los cuatro estados. Los huecos del Breadcrumb vuelven a salir nulos, confirmando el falso positivo de la primera pasada |
+| DataTable | **bien tachado** | Sus candidatos son en su mayoría componentes ANIDADOS (checkbox, radiobutton, rating dentro de las celdas), que pertenecen a otro componente y no son fallo suyo |
+| **Menu** | **DEFECTO CONFIRMADO** | Ver abajo |
+
+**Balance: dos defectos en 18 componentes.** Todo lo demás es hueco del modelo, anillo de foco,
+capas que no pintan o componentes anidados. El problema no estaba repartido.
+
+### El segundo defecto: el popup del Menu no sigue el modo oscuro
+
+`menu/background` **existe y la usan** las otras variantes (`Type=Basic` y los frames `menu`). Pero
+los dos componentes de `menu-popup`, `Menu=False` (`2355:48562`) y `Menu=True` (`2360:44447`),
+llevan el fondo **blanco escrito a mano**.
+
+Hoy no se nota: `menu/background` resuelve a `{content.background}` → `{surface.0}`, que es blanco.
+**En oscuro sí se nota**, porque el tema manda `{surface.900}`: las capas atadas se oscurecen y
+estas dos se quedan blancas.
+
+*Accionable*: atarlas a `menu/background`. **No cambia el dibujo en claro** y arregla el oscuro. Es
+de los seguros, como las 12 de la primera pasada.
+
+### El defecto confirmado: la tipografía del InputText no está conectada
+
+Medido capa a capa en sus dos component sets, 660 capas de texto:
+
+| Capa | Atadas | ¿A qué? | Sueltas | Tamaños sueltos |
+|---|---|---|---|---|
+| Placeholder | 51 | variable **remota** de la librería | 228 | 11,5 · 13,25 · 15 · 16,75 |
+| Text | 9 | remota | 36 | 13,25 · 15 · 16,75 |
+| Label | 48 | remota | 48 | 15 |
+| Helper Text | 0 | — | 240 | 13 |
+
+Tres hechos, los tres medidos:
+
+1. **Ninguna apunta a una variable del DS.** Las atadas van a la librería externa.
+2. **Ninguna usa un estilo de texto.** Cero de 660, comprobado porque era la primera sospecha de
+   falso positivo.
+3. **Los tamaños están fuera de la escala.** 11,5 · 13 · 13,25 · 15 · 16,75, contra una escala de
+   12 / 14 / 16. Y el componente solo modela dos tallas de letra,
+   `inputtext/sm/font/size` y `inputtext/lg/font/size`, que el tema publica como 12 y 16.
+
+**Consecuencia práctica**: cambiar el tamaño de letra del InputText en las variables del DS no
+mueve el dibujo, porque no lo lee nadie. Es el caso del Tag otra vez, en tipografía.
+
+#### Qué lado manda, aplicando DD-49
+
+**Manda la web.** El canal existe, funciona y llega; los números del Kit no alcanzan nada. Medido
+en su deploy: el campo normal pinta **14px**, el pequeño **12** y el grande **16**, con la raíz a 16.
+
+Y dentro del mismo componente hay **tres situaciones distintas**, que piden tres cosas distintas:
+
+**1. Small y Large: hay variable y no se usa.** `inputtext/sm/font/size` y `inputtext/lg/font/size`
+existen, el tema las publica como `0.75rem` y `1rem`, y el navegador pinta 12 y 16. El Kit dibuja
+13,25 y 16,75, atado a la librería REMOTA. *Accionable*: repuntar a las variables del DS. **Cambia
+el dibujo** (13,25 → 12 y 16,75 → 16), así que es decisión de diseño, no mantenimiento.
+
+**2. Normal: no hay variable de `inputtext`, y no puede haberla.** PrimeNG **no modela** un
+font-size de raíz para este componente: `--p-inputtext-font-size` sale «sin definir» en su deploy,
+y la hoja de PrimeNG dice `.p-inputtext { font-size: 1rem }`, o sea 16. El 14 que ves llega porque
+**nuestro bloque global lo pisa**:
+
+```css
+.p-component.p-inputtext { font-size: var(--p-app-typography-md-font-size, 0.875rem) }
+```
+
+Así que la variable que de verdad gobierna el tamaño normal es `app/typography/md/fontSize`, no una
+de `inputtext`. El Kit dibuja 15. *Accionable*: atar a esa, sabiendo que cambia 15 → 14.
+
+**3. Label y Helper Text: no hay token y no lo va a haber.** PrimeNG no los modela dentro de
+`inputtext` porque no son suyos, son marcado de la app. En su deploy las etiquetas pintan a 12.
+El Kit dibuja 15 y 13. *Accionable*: ninguno del lado de la conexión. Si se quiere gobernar el
+texto de los formularios desde el DS hace falta **crear** ese modelo, y eso es una decisión de
+diseño, no un arreglo.
+
+**El patrón que enseña este componente**: «no está conectado» puede significar tres cosas muy
+distintas (hay variable y no se usa, la variable vive en otro sitio del que crees, o no existe el
+modelo), y las tres piden respuestas distintas. Contarlas juntas no sirve para nada.
+
+---
+
+### Select y MultiSelect: el componente está bien, lo suelto es el envoltorio
+
+Medidos el 2026-09-05. **Son los dos mejor conectados del Kit**: 7.982 y 8.234 enlaces de color a
+variables del DS y **cero enlaces remotos**, al contrario que InputText o Button.
+
+Sus candidatos se caen casi todos al aplicar los filtros:
+
+- **La mitad de los huecos no separa nada.** 253 en Select y 263 en MultiSelect están en capas con
+  menos de dos hijos visibles. Es la trampa del Breadcrumb, ahora automatizada en la sonda.
+- **Lo que queda son 12 y 14 en `Helper Text` y `Action`**, y un hueco de 7 en el envoltorio. Y
+  **no existe variable para nada de eso**: las únicas de tipografía son `sm/font/size` y
+  `lg/font/size`, y de separación solo `list/gap` (MultiSelect además tiene `option/gap`). No hay
+  `select/gap`, ni tamaño de letra del texto de ayuda, ni de la acción.
+
+Es el mismo patrón que la parte 3 del InputText: **lo que está suelto es el envoltorio del campo de
+formulario** (etiqueta, texto de ayuda, la separación entre ellos), que PrimeNG no modela porque no
+es suyo. No hay nada que conectar sin crear antes el modelo.
+
+*Sin verificar*: que las 228 capas con hueco 7 sean efectivamente las variantes del envoltorio. El
+nombre y la estructura lo sugieren, pero el puente de Figma se cayó antes de poder abrir una. No
+cambia el veredicto, porque la variable no existe en ninguno de los dos casos.
+
+---
+
 ## Peticiones abiertas al consumidor
 
 Algunos hallazgos no se arreglan aquí: el eslabón que falla es el código del consumidor. Se anotan
@@ -234,9 +368,11 @@ haya que reconstruirlo cada vez que se retoma.
 
 ### El modal a medida lee su propio canal, no el tema
 
-**Medido** con el modal ABIERTO en su página: el tema publica **27 tokens**
-`--p-component-custommodal-*` y **no se usa ninguno**. El componente se pinta con **53 variables**
-`--sc-custom-modal-*` de su paquete de estilos, que no existen en este repo.
+**Medido dos veces con el modal ABIERTO en su página** (2026-09-03 y 2026-09-04): el tema publica
+**26 tokens** `--p-component-custommodal-*` y **no los lee nadie, cero de 26**. El componente se
+pinta por su propio canal, `--sc-custom-modal-*`, que no existe en este repo: en las hojas
+cargadas se leen 8 de esas variables y solo 4 están definidas ahí, así que el resto llega por
+respaldo o por una hoja que no se carga en esa ruta.
 
 **Por qué importa**: hay dos modelos para el mismo componente y el del tema está muerto. Si diseño
 cambia el modal en Figma y se manda un tema nuevo, **no cambia nada**, y no salta ningún aviso: el
@@ -285,5 +421,15 @@ Las tres son comprobables por script y **ese script todavía no está escrito**.
 al preparar el envío. No entra en `verify`: es manual y con argumento.
 
 **Después de que lo instalen**, dos sondas sobre su deploy: si alguna regla suya redeclara un token
-`--p-<componente>-*` (hoy solo el Tag, con 13), y el control de siempre. Si la sonda no encuentra
-el Tag, la sonda está mal.
+`--p-<componente>-*`, y el control de siempre. Si la sonda no encuentra el Tag, la sonda está mal.
+
+**Resultado del 2026-09-05, sobre las 21 rutas de su showcase: CERO overrides y CERO valores de
+diseño a mano.** Ninguna hoja suya redeclara un token del tema, y ninguna regla suya sobre una
+clase `.p-*` fija un color, un tamaño o un radio con un literal. Lo único que tocan a mano son
+propiedades de maquetación (`min-width: 0`, `padding: 0`, `overflow: hidden`), que no son tokens.
+
+Este resultado corrige una medida anterior mía que decía «el Tag tiene 13 overrides». Era falsa:
+esas reglas **leen** `var(--p-tag-icon-size)`, no lo redeclaran. La sonda de entonces contaba
+menciones y no distinguía declarar de consumir. La de ahora lo separa, y se valida con un control:
+sobre las hojas del tema encuentra 1.450 declaraciones, y sobre las suyas, ninguna. **Sin ese
+control, un cero no vale nada.**
