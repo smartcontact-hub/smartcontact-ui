@@ -2,11 +2,14 @@
 
 > **Volátil.** Lo reescribe la sesión que trabaja ESTE frente, y **solo este fichero**.
 > No toques los hand-offs de otros frentes. Lo durable vive en `docs/`.
-> **Sello: 2026-09-04 (s43): HEAD `9036856`, CI VERDE leído** (5 jobs). El mapa de conexión de
-> variables Figma → tema → navegador: 816 filas, 18 componentes, y el hallazgo de que el defecto
-> dominante no son las variables sueltas sino las **mal apuntadas** (9 de 12 atadas sin cambio
-> visual). Sección abajo, con sus tres siguientes. Escrito por la sesión paralela; sello añadido
-> aquí para que la cabecera no se quede corta respecto al cuerpo.
+> **Sello: 2026-09-04 (s43): HEAD `1779914`, CI VERDE leído en los dos PR** (`9036856` del #35 y
+> `1779914` del #37, 5 jobs cada uno). El mapa de conexión de variables Figma → tema → navegador,
+> cerrado: **816 filas, 18 componentes, CERO pendientes**, vivo en `sc-doc.pages.dev/#/conexion`.
+> Dos hallazgos, y el segundo cambia cómo se lee el primero. Uno: el defecto dominante no son las
+> variables sueltas sino las **mal apuntadas** (9 de las 12 atadas). Dos: lo que queda **no es
+> deuda de conexión sino de DIBUJO**, porque el tema se genera desde las variables y el valor
+> llega bien a producción; el que va por detrás es el Kit. Tramo anterior de ESTE frente:
+> `7bb9aab` (s42, tipografía).
 >
 > Sello anterior (s42): HEAD `7bb9aab`, CI VERDE leído en `516b911`, `6678a5b` y `7bb9aab`
 > (5 jobs cada uno). Figma iba por delante del código en 11 variables de tipografía y ningún gate
@@ -56,10 +59,12 @@ puro → página + CSV → guard):
 **Nueve veredictos, no seis**: a los del cruce se suman los tres que solo ve una revisión a mano
 («mal apuntada», «muerta en el tema», «conectada por el primitivo»).
 
-### Segunda tanda (2026-09-04): las 8 pendientes cerradas — SIN PUSHEAR
+### Segunda tanda (2026-09-04): las 8 pendientes cerradas
 
-En `feat/conexion-variables-hallazgos`, commit `e9ea139`, `verify` verde, **local**. Rafa estaba
-limpiando ramas y pidió no subir todavía. El push y el PR esperan su señal.
+En [PR #37](https://github.com/smartcontact-hub/smartcontact-ui/pull/37), mergeado como `1779914`.
+Carril acotado de `preflight:scope` en verde (78 e2e) y **CI verde leído** sobre `319159c`: los
+dos que el carril se salta en local, `e2e-supervisor` y `e2e-cuscare`, pasaron en el CI, que era
+lo que había que ver.
 
 **Tres de las ocho eran falsas alarmas**, las tres por contar una diferencia sin abrir el nodo:
 - InputText: las 27 vinculaciones remotas cuelgan de `IconText` (`13282:10564`), instancia de OTRA
@@ -82,16 +87,23 @@ dice quién tiene razón; se contesta en tres pasos, empezando por si el canal e
 once: `viaja por --sc-*` y `no es un hallazgo` — **un mapa que solo guarda los aciertos hace
 repetir el trabajo descartado**, y hoy tres de ocho fueron descartes.
 
-**Lo siguiente, por orden**:
-1. **Subir `feat/conexion-variables-hallazgos`** cuando Rafa lo diga: preflight, PR, CI leído.
-2. **La petición al consumidor** sobre el modal a medida, redactada en
-   [`docs/conexion-variables.md`](../conexion-variables.md) §«Peticiones abiertas al consumidor».
-   Hay que decidir quién se la manda y por qué canal. **No se ha mandado a nadie.**
-3. El comprobador del zip del plugin, todavía sin escribir: ningún token a `0`, la base de los rem
-   y el diff contra el zip anterior. Manual y con argumento, **no entra en `verify`**.
-4. `variables:check` entra en `verify` cuando el mapa se dé por cerrado. Arrastra README, el test de
-   paridad preflight ≡ `ci.yml` y el hook de pre-push.
-5. La deuda de dibujo de las cinco abiertas es de Figma y **no corre prisa**: no rompe producción.
+**Lo siguiente, por orden**. Nada de esto bloquea a nadie: el mapa está cerrado y vivo.
+
+1. **La petición al consumidor** sobre el modal a medida. Redactada entera en
+   [`docs/conexion-variables.md`](../conexion-variables.md) §«Peticiones abiertas al consumidor»,
+   con el mapeo y las tres preguntas previas. **No se ha mandado a nadie**: falta decidir quién la
+   manda y por qué canal. Es lo único que depende de otro equipo.
+2. **El comprobador del zip del plugin**, todavía sin escribir: ningún token a `0`, la base de los
+   rem y el diff contra el zip anterior. Manual y con argumento, **no entra en `verify`**. Las tres
+   comprobaciones nacen de fallos reales de esta semana y están descritas en el doc.
+3. **`variables:check` entra en `verify`** cuando se dé el mapa por cerrado del todo. Arrastra tres
+   cosas: el README tiene que nombrarlo, el test de paridad preflight ≡ `ci.yml`, y el hook de
+   pre-push. A partir de ahí, cualquier commit que deje los derivados viejos se pone rojo.
+4. **La deuda de dibujo de las cinco abiertas es de Figma y no corre prisa.** No rompe producción:
+   el valor llega bien. Lo que cuesta es que quien lee el Kit ve un color que el producto no pinta.
+   La de `button-small` ni siquiera se puede arreglar de verdad, porque PrimeNG no tiene canal.
+5. **Extender el mapa más allá de los 18 del showcase** cuando una card toque otra página del Kit.
+   El método y la sonda ya están; es repetir la pasada, no inventar nada.
 
 **Aviso de terreno**: esta sesión y la de s42 corrieron **en el mismo working tree** y se pisaron.
 El reflog lo data: un cherry-pick de DD-48 sobre la rama ajena y un reset 30 segundos después, más

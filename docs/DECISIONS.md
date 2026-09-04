@@ -37,6 +37,74 @@
 
 ---
 
+## DD-49 · 2026-09-04 — Ante una diferencia Figma↔web, primero se pregunta QUÉ LADO MANDA; y el que no tiene canal no manda nunca
+
+**Contexto** · El mapa de conexión de variables (816 filas, 18 componentes, medido contra el Kit y
+el CSS que sirve `ui.smart-contact.com`) dejó 8 filas donde el dibujo del Kit y el tema no decían
+lo mismo. El instinto, y lo que yo propuse, fue tratarlas como una lista de arreglos: «¿lo
+corrijo?». Rafa lo paró: *«no lo corrijas, primero analiza si la web o figma debe ser la correcta.
+Estamos viendo diferencias, en conexión y tal para que el tema las lea, nada mas»*.
+
+**Dato que decide** · Al reencuadrar la pregunta apareció lo que la versión «¿lo arreglo?»
+escondía. En `button-small`, 143 de 311 variantes pintan el icono DERECHO con la variable gris de
+la librería externa; parecía un fallo de conexión de manual. Medido en su deploy: **42 de 42
+iconos de botón toman exactamente el color de su botón, cero excepciones, y no existe ninguna
+regla CSS que dé color propio a `.p-button-icon`**. PrimeNG **no tiene canal** para eso. El Kit
+está dibujando algo que no puede ocurrir: no había nada que conectar.
+
+Y el patrón se repitió en las cinco filas abiertas: **el valor llega bien a producción en todas**,
+porque el tema se genera desde las VARIABLES y no desde las capas. Lo que va por detrás es el
+dibujo. Tres de las ocho, además, ni siquiera eran hallazgos.
+
+**Decisión** ·
+
+1. **Encontrar una diferencia no dice quién tiene razón.** Antes de anotar «esto está mal» se
+   decide qué lado es el correcto, y se decide midiendo, en este orden:
+   1. **¿Existe el canal en el CSS del proveedor?** Si PrimeNG no tiene token para eso, manda la
+      web por construcción y el Kit está pidiendo un imposible.
+   2. **¿Qué valor publica el tema, medido en el deploy?** Si la variable es correcta, el valor
+      llega aunque ninguna capa la use.
+   3. **Solo entonces, ¿qué dibuja el Kit?** Si difiere, la divergencia es del dibujo.
+2. **Deuda de dibujo y deuda de conexión no son lo mismo y no corren la misma prisa.** La de
+   dibujo no rompe producción; engaña a quien lee el Kit. Se anota, no se prioriza como un fallo.
+3. **Los descartes se anotan con su motivo.** Veredicto propio (`no es un hallazgo`) en el mapa.
+4. **Esto ACOTA DD-48, no lo contradice.** DD-48 dice que Figma manda **en las escalas**, y sigue
+   siendo así: es sobre a qué paso apunta cada rol. Aquí se decide otra cosa, sobre qué lado tiene
+   razón cuando dibujo y tema difieren. Leer DD-48 como «Figma manda siempre» lleva a atar cosas
+   que no pueden viajar.
+
+**Razón** · La regla vieja implícita («si difieren, arréglalo en Figma») presupone que la
+diferencia siempre significa un fallo de conexión. Medido, casi nunca lo es: de 8 casos, 3 no eran
+hallazgos y los 5 restantes eran dibujo. Actuar sobre esa presuposición gasta trabajo en cambios
+visibles que no arreglan nada, y peor, **hace tocar el Kit sin necesidad**. El punto 3 es la parte
+que más rinde: hoy tres de ocho fueron descartes, y **un mapa que solo guarda los aciertos hace
+repetir el trabajo tirado**.
+
+**Descartadas** ·
+- **Corregir el Kit para que case con el tema, sin preguntar** → es lo que iba a hacer. Habría
+  cambiado 143 iconos para alinear el dibujo con un color que PrimeNG ya pinta solo, sin arreglar
+  nada, y tocando un fichero publicado.
+- **Tratar «el tema no lo lee» como sinónimo de roto** → falso en dos direcciones. `presence/*` y
+  `text/accent` no los lee PrimeNG y están bien: viajan por `--sc-*`, la segunda profundidad del
+  modelo. Y `app/typography` está conectado desde el preset sin que ninguna capa lo use.
+- **Borrar los 27 tokens muertos del modal a medida de la colección de Figma** → la colección está
+  publicada y habría que barrer el fichero entero buscando consumidores antes. Ruido inofensivo
+  mientras tanto; lo que falta es el último eslabón, y es del consumidor.
+- **Meter esta regla en `AGENTS.md`** → el método tiene su propio canónico registrado en
+  `DOCS-INDEX`: [`docs/conexion-variables.md`](./conexion-variables.md). Aquí va la decisión y el
+  porqué; allí, cómo se ejecuta.
+
+**Consecuencias** ·
+- El mapa queda con **cero filas pendientes** y once veredictos en vez de nueve: entran
+  `viaja por --sc-*` y `no es un hallazgo`.
+- Las cinco abiertas llevan accionable `FIGMA` o `PETICIÓN AL CONSUMIDOR`, ninguna `arreglar ya`.
+- Sale una petición fuera del repo: el modal a medida usa 0 de sus 27 tokens del tema y se pinta
+  con 53 variables propias del consumidor. Redactada, **sin mandar**.
+- Del DataTable sale un dato más fino que el que había: los 8 iconos del toggle usan la variable
+  remota en TODAS las variantes, no solo en hover.
+
+---
+
 ## DD-48 · 2026-09-03 — En las escalas MANDA FIGMA: la rampa semántica se repunta a los text styles, y la letra gana un chivato Figma-vivo
 
 **Contexto** · Una duda de copy en la página de tipografía de `sc-docs` («el root creo que es
