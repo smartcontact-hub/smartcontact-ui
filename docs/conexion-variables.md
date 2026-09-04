@@ -10,6 +10,26 @@ card, y la rutina con la que se lee un tema nuevo.
 
 ---
 
+## La foto en cifras (2026-09-05)
+
+La pregunta de negocio es una: **si cambio algo en mi Figma y les paso el tema, ¿les funciona?**
+
+| | Cifra | Qué significa |
+|---|---|---|
+| **De tu Figma a su web** | **723 de 731 = 99%** | De tus variables, casi todas llegan. Las 8 que no: 2 auxiliares de dibujo, 3 que no usa nadie, 3 detalles del anillo de foco y del alto del Avatar |
+| **De su web a tu Figma** | **723 de 802 = 90%** | Su CSS lee 802 valores y 723 salen de una variable tuya. Los **79 restantes no los puedes tocar** porque tu Kit no los modela: **45 sombras, 15 duraciones, 13 estilos de línea**, 6 sueltos |
+| **Tu dibujo** | **639 de 731 = 87%** | Las otras 92 **viajan igual**: el tema se hace desde las variables, no desde los dibujos. El valor llega bien; lo que puede enseñar otra cosa es el Kit |
+| **Lo que ellos fuerzan a mano** | **0 de 21 rutas** | Cero overrides y cero valores de diseño escritos a mano. Su parte está limpia |
+| **Defectos reales** | **2 de 18 componentes** | InputText (tipografía) y Menu (popup en oscuro). Ver «Segunda pasada» |
+
+**La excepción que rompe la promesa**: el modal a medida. El tema le manda 26 valores y **no lee
+ninguno**. Es el único sitio donde puedes cambiar Figma, mandar tema, y que no pase nada.
+
+**En una frase**: de lo que hoy se puede gobernar desde Figma funciona el 99%; lo que no se
+controla no está roto, es que **no está modelado**, y son sobre todo sombras y animaciones.
+
+---
+
 ## Por qué hace falta
 
 La cadena tiene cuatro eslabones y **se rompe en silencio**:
