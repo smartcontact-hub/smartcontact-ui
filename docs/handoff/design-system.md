@@ -2,7 +2,13 @@
 
 > **Volátil.** Lo reescribe la sesión que trabaja ESTE frente, y **solo este fichero**.
 > No toques los hand-offs de otros frentes. Lo durable vive en `docs/`.
-> **Sello: 2026-09-03 (s42): HEAD `7bb9aab`, CI VERDE leído en `516b911`, `6678a5b` y `7bb9aab`**
+> **Sello: 2026-09-04 (s43): HEAD `9036856`, CI VERDE leído** (5 jobs). El mapa de conexión de
+> variables Figma → tema → navegador: 816 filas, 18 componentes, y el hallazgo de que el defecto
+> dominante no son las variables sueltas sino las **mal apuntadas** (9 de 12 atadas sin cambio
+> visual). Sección abajo, con sus tres siguientes. Escrito por la sesión paralela; sello añadido
+> aquí para que la cabecera no se quede corta respecto al cuerpo.
+>
+> Sello anterior (s42): HEAD `7bb9aab`, CI VERDE leído en `516b911`, `6678a5b` y `7bb9aab`
 > (5 jobs cada uno). Figma iba por delante del código en 11 variables de tipografía y ningún gate
 > lo decía: el `Display` de 64/78 llevaba días sin llegar. Cerrado de punta a punta — el paso 900
 > en `main`, la rampa semántica repuntada a los text styles (DD-48), el agujero del gate tapado

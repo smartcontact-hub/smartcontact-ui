@@ -14,6 +14,14 @@
 3. Lo de **"ESPERANDO A RAFA" no se pregunta**. Está aparcado a propósito; solo se toca si él lo saca.
 4. Si tocas un fondo o un título → `docs/DECISIONS.md` DD-33 y DD-34. Si tocas una app RÉPLICA
    (`agent`, `cuscare`) → **DD-35**: no se tokenizan a propósito.
+5. **Trabaja en TU worktree** (`EnterWorktree name:<tarea>`), no en el árbol principal. Norma de
+   Rafa del 2026-09-03, después de que dos sesiones se pisaran el mismo día: el árbol compartido
+   comparte `dist/` **y la rama checkouteada**, así que los builds se corrompen entre sí (el
+   síntoma engaña: `Cannot find module '@smartcontact-hub/icons'`, que parece una dependencia
+   rota) y el checkout se mueve bajo tus pies mientras lees el `git log`. Lo cuentan las dos
+   sesiones desde su lado en `docs/handoff/design-system.md` (s42 y s43).
+   ⚠️ El worktree **no** aísla el puerto del e2e smoke (:4280, el único sin override): si otra
+   sesión está en preflight, toca esperar.
 
 ⚠️ Un hand-off es una **pista, no un hecho**: lleva la fecha de cuando se midió. Confírmalo
 antes de construir encima.
@@ -26,7 +34,7 @@ antes de construir encima.
 | --------------------------------------------------------------------- | ---------------------------------------------------------------- | ---------------- |
 | **Agent** — réplica medida del Comunicador (SISMAC-3780)              | [`docs/handoff/agent.md`](docs/handoff/agent.md)                 | 2026-08-31 (s37) |
 | **CusCare** — réplica de la herramienta de tickets                    | [`docs/handoff/cuscare.md`](docs/handoff/cuscare.md)             | 2026-08-31 (s37) |
-| **Design System + herramienta** — tokens, componentes, Figma, tooling | [`docs/handoff/design-system.md`](docs/handoff/design-system.md) | 2026-09-02 (s40) |
+| **Design System + herramienta** — tokens, componentes, Figma, tooling | [`docs/handoff/design-system.md`](docs/handoff/design-system.md) | 2026-09-04 (s43) |
 | **Agent Mini** — dialpad standalone (réplica del mini aed)            | [`docs/handoff/agent-mini.md`](docs/handoff/agent-mini.md)       | 2026-09-01       |
 
 **Al cerrar, reescribe SOLO el fichero de tu frente.** Si abres una línea de trabajo nueva, crea
