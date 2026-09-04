@@ -166,11 +166,16 @@ committeado difiere**: es el guard.
 **La medición sí es manual**, porque necesita el puente de Figma y el navegador del consumidor.
 Solo ella toca el crudo. Ningún script del repo lo reescribe.
 
-**El guard todavía NO está en `npm run verify`.** Entra cuando el mapa esté cerrado, porque a
-partir de ese momento cualquier commit que lo deje viejo se pone rojo. Añadir un paso a `verify`
-arrastra tres cosas más: el README tiene que nombrarlo, el test de paridad
-[`scripts/ci-preflight-parity.mjs`](../scripts/ci-preflight-parity.mjs) exige que el preflight y
-`ci.yml` no diverjan, y el hook de pre-push lo ejecuta.
+**El guard está en `npm run verify` desde el 2026-09-04**, una vez cerrado el mapa. A partir de
+ahí, cualquier commit que deje los derivados viejos se pone rojo. Entrar en la cadena arrastró dos
+cosas: el README lo nombra en su tabla de guards, y el filtro del CHECK B de `docs:coherence` pasó
+a vigilar los namespaces `usage:` y `variables:`, que antes no miraba. Ese hueco no era teórico:
+`usage:check` llevaba meses en `verify` sin estar documentado, que es justo lo que ese check
+existe para impedir.
+
+No hizo falta tocar `ci.yml`, porque `verify` es un solo paso allí. Si algún día se añade un paso
+suelto al CI, entonces sí entran en juego el test de paridad
+[`scripts/ci-preflight-parity.mjs`](../scripts/ci-preflight-parity.mjs) y el hook de pre-push.
 
 ---
 
@@ -222,6 +227,10 @@ página y en el CSV.
 Algunos hallazgos no se arreglan aquí: el eslabón que falla es el código del consumidor. Se anotan
 en el mapa con el accionable `PETICIÓN AL CONSUMIDOR` y el texto completo vive aquí, para que no
 haya que reconstruirlo cada vez que se retoma.
+
+> **Esto es una NOTA, no una tarea abierta** (decidido por Rafa el 2026-09-04). Queda escrito por
+> si algún día se retoma; nadie lo está esperando y no bloquea nada. Si alguien decide mandarlo,
+> el texto ya está listo.
 
 ### El modal a medida lee su propio canal, no el tema
 
