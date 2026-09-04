@@ -1,13 +1,38 @@
 /* Simulador de la guía de validación.
  *
- * No sigue el lenguaje visual del DS a propósito: imita el NAVEGADOR, que es lo que la
- * persona va a tener delante. Los colores del panel son los de Chrome (clave morada,
- * valor azul, pestaña activa azul), igual que las simulaciones de los pasos de la guía.
- * Ese cartón está duplicado desde `validar.component.scss` porque la encapsulación de
- * Angular no lo cruza entre componentes; el motivo de la separación está en el .ts. */
+ * El cartón del inspector (`.dt*`, `.prop*`) no sigue el lenguaje visual del DS A PROPÓSITO:
+ * imita el NAVEGADOR, que es lo que la persona va a tener delante. Los colores son los de
+ * Chrome (clave morada, valor azul, pestaña activa azul), igual que las simulaciones de los
+ * pasos de la guía. Está duplicado desde `validar.component.scss` porque la encapsulación de
+ * Angular no lo cruza entre componentes; el motivo de la separación está en el .ts.
+ *
+ * ── LOS DEFECTOS PLANTADOS ──
+ * Las tres escenas beben de tokens MENOS en los sitios marcados «a pelo, a propósito»: sin un
+ * caso real de «esto no usa la variable», el ejercicio no enseñaría nada. Los valores están
+ * ELEGIDOS, no puestos a ojo: el simulador decide «¿sale de una variable?» comparando el valor
+ * computado contra los `--sc-*` resueltos, así que un valor a pelo que coincidiera con el de un
+ * token se daría por bueno y el juego marcaría mal una respuesta correcta. Los cinco de aquí
+ * (#cdd4e0, #f2f5fb, 5px, 9px/13px y el 19.6px de un line-height 1.4) se comprobaron contra los
+ * 1013 `--sc-*` del sistema el 2026-09-04: cero coincidencias.
+ * Si algún día alguien los tokeniza para dejar esto limpio, el simulador pierde lo único que de
+ * verdad importa de la guía. */
 
 :host {
   display: block;
+}
+
+/* Un anillo de foco para todo lo pulsable: esto se recorre entero con el teclado. */
+.rd,
+.pieza,
+.algodon,
+.mision,
+.trampa__b,
+.reset,
+.dt__clear {
+  &:focus-visible {
+    outline: 2px solid var(--sc-color-sky-500);
+    outline-offset: 2px;
+  }
 }
 
 .titulo {
@@ -24,23 +49,203 @@
   color: var(--sc-text-secondary);
 }
 
+/* ── selector de ronda ── */
+.rondas {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(10rem, 1fr));
+  gap: var(--sc-spacing-0-5);
+  margin-top: var(--sc-spacing-1);
+}
+
+.rd {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 0.125rem;
+  padding: var(--sc-spacing-0-5) var(--sc-spacing-0-75);
+  border: 1px solid var(--sc-border-subtle);
+  border-radius: var(--sc-radius-md);
+  background: var(--sc-bg-surface);
+  cursor: pointer;
+  text-align: left;
+
+  &:hover {
+    border-color: var(--sc-border-strong);
+  }
+}
+
+.rd--on {
+  border-color: #1a73e8;
+  box-shadow: inset 0 0 0 1px #1a73e8;
+}
+
+.rd__n {
+  font-size: var(--sc-font-size-100);
+  color: var(--sc-text-subtle);
+}
+
+.rd__t {
+  font-size: var(--sc-font-size-200);
+  font-weight: var(--sc-font-weight-semibold);
+  color: var(--sc-text-primary);
+}
+
+.rd__p {
+  display: flex;
+  gap: 2px;
+  margin-top: 0.25rem;
+}
+
+.rd__pip {
+  width: 0.5rem;
+  height: 0.25rem;
+  border-radius: 999px;
+  background: var(--sc-bg-subtle);
+}
+
+.rd__pip--on {
+  background: #137333;
+}
+
+.rondas__sub {
+  margin: var(--sc-spacing-0-5) 0 0;
+  font-size: var(--sc-font-size-100);
+  color: var(--sc-text-subtle);
+}
+
 .marco {
   display: grid;
   grid-template-columns: minmax(0, 1fr) minmax(0, 1.15fr);
   gap: var(--sc-spacing-1);
-  margin-top: var(--sc-spacing-1);
+  margin-top: var(--sc-spacing-0-75);
+}
+
+/* ── el lienzo: barra de herramientas + página de mentira ── */
+.lienzo {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-5);
+}
+
+.lienzo__bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--sc-spacing-0-5);
+}
+
+.piezas {
+  display: flex;
+  gap: 0.25rem;
+}
+
+.pieza {
+  display: flex;
+  align-items: baseline;
+  gap: 0.375rem;
+  padding: 0.1875rem var(--sc-spacing-0-5);
+  border: 1px solid var(--sc-border-subtle);
+  border-radius: var(--sc-radius-sm);
+  background: var(--sc-bg-surface);
+  cursor: pointer;
+
+  &:disabled {
+    cursor: default;
+  }
+
+  &:not(:disabled):hover {
+    border-color: var(--sc-border-strong);
+  }
+}
+
+.pieza--on {
+  border-color: #1a73e8;
+  background: #e8f0fe;
+
+  /* el fondo de la pastilla activa está clavado, así que su texto también */
+  .pieza__n,
+  .pieza__s {
+    color: #1a56b8;
+  }
+}
+
+.pieza__n {
+  font-size: var(--sc-font-size-100);
+  color: var(--sc-text-primary);
+}
+
+.pieza__s {
+  font-family: var(--sc-font-family-mono);
+  font-size: 0.625rem; /* sc-replica-navegador: el inspector de Chrome escribe a este tamaño */
+  color: var(--sc-text-subtle);
+}
+
+.algodon {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.1875rem var(--sc-spacing-0-5);
+  border: 1px solid var(--sc-border-subtle);
+  border-radius: var(--sc-radius-sm);
+  background: var(--sc-bg-surface);
+  color: var(--sc-text-primary);
+  cursor: pointer;
+  font-size: var(--sc-font-size-100);
+
+  /* Bloqueado pero LEGIBLE: este botón explica algo que hay que poder leer antes de tenerlo.
+     Con `--sc-text-disabled` daba 1.6 de contraste y era casi invisible; el borde discontinuo
+     dice «todavía no» sin apagar el texto. */
+  &:disabled {
+    border-style: dashed;
+    background: var(--sc-bg-subtle);
+    color: var(--sc-text-primary);
+    cursor: not-allowed;
+  }
+
+  &:not(:disabled):hover {
+    border-color: var(--sc-border-strong);
+  }
+}
+
+.algodon--on {
+  border-color: #1a73e8;
+  background: #e8f0fe;
+  color: #1a56b8;
+}
+
+.algodon__i {
+  width: 0.875rem;
+  height: 0.875rem;
 }
 
 /* ── la página de mentira ── */
 .pagina {
   position: relative;
+  /* crece hasta la altura del panel: si no, la página de mentira queda como un recorte
+     pequeño al lado de un inspector el doble de alto */
+  flex: 1;
   display: flex;
   align-items: center;
   justify-content: center;
-  min-height: 8rem;
+  min-height: 9rem;
+  padding: var(--sc-spacing-1-5) var(--sc-spacing-1);
   border: 1px solid var(--sc-border-subtle);
   border-radius: var(--sc-radius-lg);
   background: var(--sc-bg-surface);
+  transition: background-color 200ms ease-out;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pagina {
+    transition-duration: 1ms;
+  }
+}
+
+/* Mientras se mide, nada se funde: ver `aplicarOscuro()` en el .ts. */
+.pagina.sin-fundido,
+.sin-fundido * {
+  transition: none !important;
 }
 
 .pagina__et {
@@ -51,16 +256,13 @@
   color: var(--sc-text-subtle);
 }
 
-/* El chip que se inspecciona. TODO sale de tokens MENOS el color del borde, que va a pelo
- * A PROPÓSITO: sin un caso real de «esto no usa la variable», la misión 4 no enseñaría
- * nada. Si algún día alguien lo tokeniza para dejarlo limpio, el simulador pierde lo único
- * que de verdad importa de la guía. */
+/* ── ronda 1: el chip ── */
 .chip {
   display: inline-flex;
   align-items: center;
   gap: var(--sc-spacing-0-5);
   padding: var(--sc-spacing-0-5) var(--sc-spacing-0-75);
-  border: 1px solid #c6ccd6; /* ← a pelo, a propósito (misión 4) */
+  border: 1px solid #cdd4e0; /* ← a pelo, a propósito (borde) */
   border-radius: var(--sc-radius-full);
   background: var(--sc-bg-subtle);
   color: var(--sc-text-primary);
@@ -77,11 +279,66 @@
   background: #2e7d55;
 }
 
+/* ── ronda 2: el botón ── */
+.boton {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-5);
+  padding: 9px 13px; /* ← a pelo, a propósito (espaciados): la escala da 7 · 10.5 · 14 */
+  border: 1px solid var(--sc-border-accent);
+  border-radius: 5px; /* ← a pelo, a propósito (esquinas): la escala da 4 · 6 · 8 */
+  background: var(--sc-bg-accent);
+  color: var(--sc-text-on-accent);
+  box-shadow: var(--sc-shadow-xs);
+  font-family: var(--sc-font-family-primary);
+  font-size: var(--sc-font-size-200);
+  line-height: var(--sc-line-height-200);
+  font-weight: var(--sc-font-weight-medium);
+}
+
+.boton__i {
+  width: 0.875rem;
+  height: 0.875rem;
+}
+
+/* ── ronda 3: el aviso (caja + texto dentro) ── */
+.aviso {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sc-spacing-0-75);
+  max-width: 20rem;
+  padding: var(--sc-spacing-1);
+  border: 1px solid var(--sc-border-info-subtle);
+  border-radius: var(--sc-radius-md);
+  background: #f2f5fb; /* ← a pelo, a propósito (fondo): se parece a --sc-bg-info-subtle, pero no lo es */
+  box-shadow: var(--sc-shadow-card);
+}
+
+.aviso__ico {
+  flex: 0 0 auto;
+  display: inline-flex;
+  color: var(--sc-bg-accent);
+
+  svg {
+    width: 1rem;
+    height: 1rem;
+  }
+}
+
+.aviso__t {
+  margin: 0;
+  color: var(--sc-text-primary);
+  font-family: var(--sc-font-family-primary);
+  font-size: var(--sc-font-size-200);
+  line-height: 1.4; /* ← a pelo, a propósito (tipografía): sale 19.6px donde el token da 20 */
+  font-weight: var(--sc-font-weight-regular);
+}
+
 /* ── el panel de mentira ── */
 .dt {
   display: flex;
   flex-direction: column;
-  min-height: 8rem;
+  min-height: 9rem;
   border: 1px solid #d0d3d7;
   border-radius: var(--sc-radius-md);
   background: #fff;
@@ -110,20 +367,49 @@
 }
 
 .dt__filter {
+  position: relative;
   padding: 0.4375rem 0.625rem;
   border-bottom: 1px solid #e8eaed;
   background: #f8f9fa;
 }
 
-.dt__filterbox {
-  display: inline-block;
-  min-width: 9rem;
-  padding: 0.25rem 0.5rem;
-  border: 1px solid #1a73e8;
+.dt__input {
+  width: 100%;
+  padding: 0.25rem 1.5rem 0.25rem 0.5rem;
+  border: 1px solid #bdc1c6;
   border-radius: 3px;
   background: #fff;
-  font-size: 0.6875rem; /* sc-replica-navegador: el inspector de Chrome escribe a este tamaño */
   color: #202124;
+  font-family: inherit;
+  font-size: 0.6875rem; /* sc-replica-navegador: el inspector de Chrome escribe a este tamaño */
+
+  &:focus {
+    border-color: #1a73e8;
+    outline: none;
+    box-shadow: 0 0 0 1px #1a73e8;
+  }
+
+  &::placeholder {
+    color: #9aa0a6;
+  }
+}
+
+.dt__clear {
+  position: absolute;
+  top: 50%;
+  right: 0.875rem;
+  display: inline-flex;
+  padding: 0;
+  border: 0;
+  background: none;
+  color: #5f6368;
+  cursor: pointer;
+  transform: translateY(-50%);
+
+  svg {
+    width: 0.75rem;
+    height: 0.75rem;
+  }
 }
 
 .dt__hint {
@@ -134,8 +420,11 @@
   text-align: center;
 }
 
+/* Como el «Computed» de verdad: una lista larga que se acota escribiendo, no un resumen. */
 .props {
+  max-height: 15rem;
   padding: 0.375rem 0;
+  overflow-y: auto;
 }
 
 .prop {
@@ -143,8 +432,29 @@
   gap: 0.5rem;
   align-items: baseline;
   justify-content: space-between;
+  width: 100%;
   padding: 0.1875rem 0.75rem;
+  border: 0;
+  background: none;
+  font-family: inherit;
   font-size: 0.6875rem; /* sc-replica-navegador: el inspector de Chrome escribe a este tamaño */
+  text-align: left;
+}
+
+/* En la fase de señalar, cada fila juzgable es un botón: hay que acertar cuál falla. */
+.prop--pick {
+  border-radius: 3px;
+  cursor: pointer;
+
+  &:hover,
+  &:focus-visible {
+    background: #e8f0fe;
+    outline: none;
+  }
+}
+
+.prop--culpable {
+  background: #fce8e6;
 }
 
 .prop__k {
@@ -159,6 +469,10 @@
   color: #1a1aa6;
   text-overflow: ellipsis;
   white-space: nowrap;
+}
+
+.prop__v--osc {
+  color: #6f7784;
 }
 
 .origen {
@@ -184,8 +498,121 @@
   color: #9aa0a6;
 }
 
+/* El veredicto tapado: se ve que HAY una respuesta, pero no cuál. */
+.origen--oculto {
+  min-width: 1.25rem;
+  background: #f1f3f4;
+  color: #80868b;
+  text-align: center;
+}
+
+.origen--pick {
+  background: #e8f0fe;
+  color: #1a56b8;
+}
+
+/* ── la pregunta ── */
+.q {
+  margin-top: auto;
+  padding: var(--sc-spacing-0-5) 0.75rem var(--sc-spacing-0-75);
+  border-top: 1px solid #e8eaed;
+  background: #f8f9fa;
+  font-family: var(--sc-font-family-primary);
+}
+
+.q__t {
+  margin: 0 0 var(--sc-spacing-0-5);
+  font-size: var(--sc-font-size-200);
+  font-weight: var(--sc-font-weight-semibold);
+  color: #202124; /* del navegador, no del tema: el fondo de este bloque es claro y clavado */
+}
+
+.q--pick .q__t {
+  margin: 0;
+  font-weight: var(--sc-font-weight-regular);
+  color: #1a56b8;
+}
+
+.q__ops {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--sc-spacing-0-5);
+}
+
+.q__op {
+  flex: 1 1 8rem;
+  padding: var(--sc-spacing-0-5) var(--sc-spacing-0-75);
+  border: 1px solid #bdc1c6;
+  border-radius: var(--sc-radius-sm);
+  background: #fff;
+  color: #202124; /* del navegador, no del tema: va sobre el blanco clavado del panel */
+  cursor: pointer;
+  font-family: inherit;
+  font-size: var(--sc-font-size-100);
+
+  &:hover,
+  &:focus-visible {
+    border-color: #1a73e8;
+    background: #e8f0fe;
+    color: #1a56b8;
+    outline: none;
+  }
+}
+
+/* ── el veredicto ── */
+.ver {
+  margin-top: auto;
+  padding: var(--sc-spacing-0-5) 0.75rem;
+  border-top: 1px solid #e8eaed;
+  background: #e6f4ea;
+  font-family: var(--sc-font-family-primary);
+}
+
+.ver--mal {
+  background: #fce8e6;
+}
+
+.ver__t {
+  display: flex;
+  align-items: center;
+  gap: 0.375rem;
+  margin: 0;
+  font-size: var(--sc-font-size-200);
+  font-weight: var(--sc-font-weight-semibold);
+  color: #137333;
+}
+
+.ver--mal .ver__t {
+  color: #c5221f;
+}
+
+.ver__i {
+  width: 0.875rem;
+  height: 0.875rem;
+}
+
+.ver__d {
+  margin: 0.125rem 0 0;
+  font-size: var(--sc-font-size-100);
+  line-height: 1.5;
+  color: #1e3a29;
+}
+
+.ver--mal .ver__d {
+  color: #5c1d1a;
+}
+
+.pista--algodon {
+  background: #e8f0fe;
+  color: #1a3a6b;
+
+  code {
+    font-family: var(--sc-font-family-mono);
+  }
+}
+
 .pista {
-  margin: auto 0 0;
+  margin: 0;
   padding: 0.5rem 0.75rem;
   border-top: 1px solid #e8eaed;
   background: #fef7e0;
@@ -195,7 +622,40 @@
   color: #5f4b1f;
 }
 
-/* ── las siete misiones ── */
+/* ── la trampa de la ronda 3 ── */
+.trampa {
+  margin: auto;
+  padding: var(--sc-spacing-1);
+  font-family: var(--sc-font-family-primary);
+  text-align: center;
+}
+
+.trampa__t {
+  margin: 0;
+  font-size: var(--sc-font-size-200);
+  font-weight: var(--sc-font-weight-semibold);
+  color: #202124; /* del navegador: vive dentro del panel blanco */
+}
+
+.trampa__d {
+  margin: 0.25rem 0 var(--sc-spacing-0-75);
+  font-size: var(--sc-font-size-100);
+  line-height: 1.5;
+  color: #5f6368; /* del navegador: vive dentro del panel blanco */
+}
+
+.trampa__b {
+  padding: var(--sc-spacing-0-5) var(--sc-spacing-0-75);
+  border: 1px solid #1a73e8;
+  border-radius: var(--sc-radius-sm);
+  background: #e8f0fe;
+  color: #1a56b8;
+  cursor: pointer;
+  font-family: var(--sc-font-family-primary);
+  font-size: var(--sc-font-size-100);
+}
+
+/* ── las siete comprobaciones ── */
 .misiones {
   display: grid;
   grid-template-columns: repeat(auto-fill, minmax(9.5rem, 1fr));
@@ -241,6 +701,11 @@
   font-size: var(--sc-font-size-100);
   font-weight: var(--sc-font-weight-semibold);
   color: var(--sc-text-secondary);
+
+  svg {
+    width: 0.6875rem;
+    height: 0.6875rem;
+  }
 }
 
 .mision__t {
@@ -266,17 +731,31 @@
 }
 
 .marcador {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: baseline;
+  gap: 0.375rem;
   margin: 0;
   color: var(--sc-text-secondary);
 }
 
-.ok {
-  margin-left: 0.375rem;
+.marcador__pct,
+.racha,
+.marcador__tot {
+  padding: 0 0.375rem;
+  border-radius: 999px;
+  background: var(--sc-bg-subtle);
+  color: var(--sc-text-secondary);
+}
+
+.racha {
+  background: #e6f4ea;
   color: #137333;
   font-weight: var(--sc-font-weight-semibold);
 }
 
 .reset {
+  flex: 0 0 auto;
   padding: 0;
   border: 0;
   background: none;
@@ -285,6 +764,35 @@
   font: inherit;
   text-decoration: underline;
   text-underline-offset: 2px;
+}
+
+/* ── informes ── */
+.informe {
+  margin-top: var(--sc-spacing-0-75);
+  padding: var(--sc-spacing-0-75) var(--sc-spacing-1);
+  border: 1px solid var(--sc-border-info-subtle);
+  border-radius: var(--sc-radius-md);
+  background: var(--sc-bg-info-subtle);
+}
+
+.informe--fin {
+  border-color: var(--sc-border-success-subtle);
+  background: var(--sc-bg-success-subtle);
+}
+
+.informe__r {
+  margin: 0;
+  font-size: var(--sc-font-size-300);
+  font-weight: var(--sc-font-weight-semibold);
+  color: var(--sc-text-primary);
+}
+
+.informe__d,
+.informe__l {
+  margin: 0.25rem 0 0;
+  font-size: var(--sc-font-size-100);
+  line-height: 1.55;
+  color: var(--sc-text-secondary);
 }
 
 .nota {
@@ -297,5 +805,9 @@
 @media (max-width: 45rem) {
   .marco {
     grid-template-columns: minmax(0, 1fr);
+  }
+
+  .prop__k {
+    min-width: 6rem;
   }
 }

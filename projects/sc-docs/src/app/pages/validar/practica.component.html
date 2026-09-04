@@ -1,87 +1,343 @@
 <h2 id="practica-title" class="titulo">Practícalo aquí</h2>
 <p class="lead">
-  Este chip es de verdad y está vivo. Dale a una misión y el panel de la derecha se comporta como
-  el inspector: los números <strong>no están escritos</strong>, se leen del chip en el momento. Si
-  algo cambia en el sistema, cambian solos.
+  Tres rondas, siete comprobaciones cada una. Los elementos de la izquierda son de verdad y están
+  vivos: los números <strong>no están escritos</strong>, se leen en el momento. Lo que cambia
+  respecto a la guía es que aquí <strong>juzgas tú</strong>: el panel no te dice de dónde sale cada
+  valor hasta que te has mojado.
 </p>
 
+<!-- ── las tres rondas ── -->
+<div class="rondas" role="group" aria-label="Rondas">
+  @for (r of rondas; track r.id; let i = $index) {
+    <button
+      type="button"
+      class="rd"
+      [class.rd--on]="rondaIdx() === i"
+      [attr.aria-pressed]="rondaIdx() === i"
+      (click)="irARonda(i)"
+    >
+      <span class="rd__n">Ronda {{ r.n }}</span>
+      <span class="rd__t">{{ r.titulo }}</span>
+      <span class="rd__p" aria-hidden="true">
+        @for (d of dims; track d.id) {
+          <span class="rd__pip" [class.rd__pip--on]="estaHecha(r.id, d.id)"></span>
+        }
+      </span>
+    </button>
+  }
+</div>
+<p class="rondas__sub">{{ ronda().sub }}</p>
+
 <div class="marco">
-  <!-- la página de mentira, con el componente real dentro -->
-  <div class="pagina">
-    <span class="pagina__et">La página</span>
-    <span #chip class="chip">
-      <span class="chip__punto" aria-hidden="true"></span>
-      Activo
-    </span>
+  <!-- ── la página de mentira, con elementos reales dentro ── -->
+  <div class="lienzo">
+    <div class="lienzo__bar">
+      <div class="piezas" role="group" aria-label="Elemento inspeccionado">
+        @for (p of ronda().partes; track p.id) {
+          <button
+            type="button"
+            class="pieza"
+            [class.pieza--on]="parteActiva() === p.id"
+            [attr.aria-pressed]="parteActiva() === p.id"
+            [disabled]="ronda().partes.length === 1"
+            (click)="seleccionar(p)"
+          >
+            <span class="pieza__n">{{ p.nombre }}</span>
+            <code class="pieza__s">{{ p.selector }}</code>
+          </button>
+        }
+      </div>
+
+      <button
+        type="button"
+        class="algodon"
+        [class.algodon--on]="oscuro()"
+        [disabled]="!rondaCerrada()"
+        [attr.title]="
+          rondaCerrada()
+            ? 'Cambia el tema solo en esta página de mentira'
+            : 'Se desbloquea al terminar las siete de esta ronda'
+        "
+        (click)="algodon()"
+      >
+        <svg
+          class="algodon__i"
+          viewBox="0 0 24 24"
+          fill="none"
+          stroke="currentColor"
+          stroke-width="2"
+          stroke-linecap="round"
+          aria-hidden="true"
+        >
+          @if (oscuro()) {
+            <circle cx="12" cy="12" r="4.2" />
+            <path
+              d="M12 2.5v2.2M12 19.3v2.2M4.4 4.4l1.6 1.6M18 18l1.6 1.6M2.5 12h2.2M19.3 12h2.2M4.4 19.6l1.6-1.6M18 6l1.6-1.6"
+            />
+          } @else {
+            <path d="M20.5 13.2A8.2 8.2 0 1 1 10.8 3.5 6.4 6.4 0 0 0 20.5 13.2Z" stroke-linejoin="round" />
+          }
+        </svg>
+        {{ oscuro() ? 'Volver a claro' : 'La prueba del algodón' }}
+      </button>
+    </div>
+
+    <div #escena class="pagina">
+      <span class="pagina__et">La página</span>
+
+      @switch (ronda().id) {
+        @case ('chip') {
+          <span data-parte="chip" class="chip">
+            <span class="chip__punto" aria-hidden="true"></span>
+            Activo
+          </span>
+        }
+        @case ('boton') {
+          <span data-parte="boton" class="boton">
+            <svg
+              class="boton__i"
+              viewBox="0 0 24 24"
+              fill="none"
+              stroke="currentColor"
+              stroke-width="2"
+              stroke-linecap="round"
+              stroke-linejoin="round"
+              aria-hidden="true"
+            >
+              <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2Z" />
+              <path d="M17 21v-8H7v8M7 3v5h8" />
+            </svg>
+            Guardar
+          </span>
+        }
+        @case ('aviso') {
+          <div data-parte="caja" class="aviso">
+            <span class="aviso__ico" aria-hidden="true">
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round">
+                <circle cx="12" cy="12" r="9" />
+                <path d="M12 8h.01M12 11.5v5" />
+              </svg>
+            </span>
+            <p data-parte="texto" class="aviso__t">La grabación se guarda durante 30 días.</p>
+          </div>
+        }
+      }
+    </div>
   </div>
 
-  <!-- el inspector de mentira, con lecturas REALES -->
+  <!-- ── el inspector de mentira, con lecturas REALES ── -->
   <div class="dt">
     <div class="dt__tabs" aria-hidden="true">
       <span class="dt__tab">Styles</span>
       <span class="dt__tab dt__tab--on">Computed</span>
     </div>
 
-    @if (misionActiva(); as activa) {
-      <div class="dt__filter">
-        <span class="dt__filterbox">{{ misionFiltro(activa) }}</span>
-      </div>
+    <div class="dt__filter">
+      <input
+        #buscador
+        type="text"
+        class="dt__input"
+        [placeholder]="sugerencia()"
+        aria-label="Filtrar propiedades, como en Computed"
+        [value]="filtro()"
+        (input)="escribir($any($event.target).value)"
+      />
+      @if (filtro()) {
+        <button type="button" class="dt__clear" aria-label="Vaciar el filtro" (click)="escribir('')">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" aria-hidden="true">
+            <path d="M6 6l12 12M18 6L6 18" />
+          </svg>
+        </button>
+      }
+    </div>
+
+    @if (desalineado()) {
+      @if (parteEsperada(); as pe) {
+        <div class="trampa">
+          <p class="trampa__t">Estás mirando {{ parte().nombre }}.</p>
+          <p class="trampa__d">
+            Esta comprobación se hace sobre <strong>{{ pe.nombre }}</strong>. Es la trampa de
+            siempre: si señalas el marco lees un número, y si señalas la palabra lees otro.
+          </p>
+          <button type="button" class="trampa__b" (click)="seleccionar(pe)">
+            Seleccionar {{ pe.nombre }}
+          </button>
+        </div>
+      }
+    } @else {
       <div class="props">
-        @for (l of lecturas(); track l.k) {
-          <div class="prop">
-            <span class="prop__k">{{ l.k }}</span>
-            <span class="prop__v">{{ l.v }}</span>
-            @if (l.juzga) {
-              @if (l.token) {
-                <span class="origen origen--var">{{ l.token }}</span>
+        @for (f of visibles(); track f.k) {
+          @if (fase() === 'localizando' && f.juzga) {
+            <button type="button" class="prop prop--pick" (click)="senalar(f)">
+              <span class="prop__k">{{ f.k }}</span>
+              <span class="prop__v">{{ f.v }}</span>
+              <span class="origen origen--pick">señalar</span>
+            </button>
+          } @else {
+            <div
+              class="prop"
+              [class.prop--culpable]="fase() === 'resuelta' && f.juzga && !f.token"
+            >
+              <span class="prop__k">{{ f.k }}</span>
+              <span class="prop__v">{{ f.v }}</span>
+              @if (oscuro() && f.vOscuro) {
+                <span class="prop__v prop__v--osc">{{ f.vOscuro }}</span>
+                @if (f.juzga && esColor(f.v)) {
+                  <span
+                    class="origen"
+                    [class.origen--var]="f.v !== f.vOscuro"
+                    [class.origen--pelo]="f.v === f.vOscuro"
+                  >
+                    {{ f.v === f.vOscuro ? 'no se movió' : 'cambió' }}
+                  </span>
+                } @else {
+                  <span class="origen origen--na">—</span>
+                }
+              } @else if (fase() !== 'resuelta') {
+                <span class="origen origen--oculto">{{ f.juzga ? '?' : '—' }}</span>
+              } @else if (!f.juzga) {
+                <span class="origen origen--na">—</span>
+              } @else if (f.token) {
+                <span class="origen origen--var">{{ f.token }}</span>
               } @else {
                 <span class="origen origen--pelo">a pelo</span>
               }
-            } @else {
-              <span class="origen origen--na">—</span>
-            }
-          </div>
+            </div>
+          }
+        }
+        @if (!visibles().length) {
+          <p class="dt__hint">Nada casa con «{{ filtro() }}». Prueba con menos letras.</p>
         }
       </div>
-      <p class="pista">{{ misionPista(activa) }}</p>
-    } @else {
-      <p class="dt__hint">Elige una misión. Aquí saldrá lo que verías en «Computed».</p>
+
+      @if (pregunta(); as p) {
+        @switch (fase()) {
+          @case ('preguntando') {
+            <div class="q">
+              <p class="q__t">{{ p.enunciado }}</p>
+              <div class="q__ops">
+                <button type="button" class="q__op" (click)="responder(0)">{{ p.opciones[0] }}</button>
+                <button type="button" class="q__op" (click)="responder(1)">{{ p.opciones[1] }}</button>
+              </div>
+            </div>
+          }
+          @case ('localizando') {
+            <div class="q q--pick">
+              <p class="q__t">Bien visto. Ahora señala cuál: pincha su fila.</p>
+            </div>
+          }
+          @case ('resuelta') {
+            <div class="ver" [class.ver--mal]="fallo()" aria-live="polite">
+              <p class="ver__t">
+                <svg
+                  class="ver__i"
+                  viewBox="0 0 24 24"
+                  fill="none"
+                  stroke="currentColor"
+                  stroke-width="2.6"
+                  stroke-linecap="round"
+                  stroke-linejoin="round"
+                  aria-hidden="true"
+                >
+                  @if (fallo()) {
+                    <path d="M6 6l12 12M18 6L6 18" />
+                  } @else {
+                    <path d="M4 12.5l5.5 5.5L20 7" />
+                  }
+                </svg>
+                {{ fallo() ? 'No era eso' : 'Bien' }}
+              </p>
+              <p class="ver__d">{{ p.porque }}</p>
+            </div>
+          }
+        }
+      }
+
+      @if (oscuro()) {
+        <p class="pista pista--algodon">
+          La prueba solo juzga <strong>colores</strong>: son lo único que mueve el tema. Una medida
+          como <code>font-size</code> vale lo mismo en claro y en oscuro, salga de donde salga, así
+          que aquí no dice nada y se queda con una raya.
+        </p>
+      } @else if (fase() === 'resuelta') {
+        @if (dimActiva(); as d) {
+          <p class="pista">{{ pistaDe(d) }}</p>
+        }
+      }
     }
   </div>
 </div>
 
-<!-- las siete misiones -->
+<!-- ── las siete comprobaciones ── -->
 <div class="misiones">
-  @for (m of misiones; track m.id) {
+  @for (d of dims; track d.id) {
     <button
       type="button"
       class="mision"
-      [class.mision--on]="misionActiva() === m.id"
-      [class.mision--hecha]="hechas().has(m.id)"
-      [attr.aria-pressed]="misionActiva() === m.id"
-      (click)="inspeccionar(m)"
+      [class.mision--on]="dimActiva() === d.id"
+      [class.mision--hecha]="estaHecha(ronda().id, d.id)"
+      [attr.aria-pressed]="dimActiva() === d.id"
+      (click)="abrir(d)"
     >
-      <span class="mision__n" aria-hidden="true">{{ hechas().has(m.id) ? '✓' : m.n }}</span>
-      <span class="mision__t">{{ m.titulo }}</span>
-      <span class="mision__f">{{ m.filtro }}</span>
+      <span class="mision__n" aria-hidden="true">
+        @if (estaHecha(ronda().id, d.id)) {
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M4 12.5l5.5 5.5L20 7" />
+          </svg>
+        } @else {
+          {{ d.n }}
+        }
+      </span>
+      <span class="mision__t">{{ d.titulo }}</span>
+      <span class="mision__f">{{ d.filtro }}</span>
     </button>
   }
 </div>
 
+<!-- ── marcador ── -->
 <div class="pie">
   <p class="marcador" aria-live="polite">
-    <strong>{{ progreso() }} de 7</strong> comprobadas.
-    @if (progreso() === 7) {
-      <span class="ok">Ya sabes validar un componente entero.</span>
+    <strong>{{ puntuacion().aciertos }} de {{ puntuacion().hechas }}</strong> aciertos
+    @if (puntuacion().hechas) {
+      <span class="marcador__pct">{{ puntuacion().pct }}%</span>
     }
+    @if (racha() >= 2) {
+      <span class="racha">racha de {{ racha() }}</span>
+    }
+    <span class="marcador__tot">{{ puntuacion().hechas }} de {{ totalPreguntas() }} comprobadas</span>
   </p>
-  @if (progreso() > 0) {
+  @if (puntuacion().hechas > 0) {
     <button type="button" class="reset" (click)="reiniciar()">Empezar de nuevo</button>
   }
 </div>
 
+<!-- ── informes ── -->
+@if (terminado()) {
+  <div class="informe informe--fin">
+    <p class="informe__r">{{ rango() }}</p>
+    <p class="informe__d">
+      {{ aciertos() }} de {{ totalPreguntas() }} a la primera, con una racha máxima de
+      {{ mejorRacha() }}.
+    </p>
+    @if (escapadas().length) {
+      <p class="informe__l">Se te escaparon: {{ escapadas().join(' · ') }}. Vuelve a esas.</p>
+    } @else {
+      <p class="informe__l">Ni una fallada. Ya sabes validar un componente entero.</p>
+    }
+  </div>
+} @else if (rondaCerrada()) {
+  <div class="informe">
+    <p class="informe__r">Ronda {{ ronda().n }} cerrada</p>
+    <p class="informe__d">
+      Ya tienes desbloqueada <strong>la prueba del algodón</strong>: dale al interruptor de arriba
+      y mira qué colores se mueven al cambiar el tema. El que sale de una variable cambia; el que
+      está escrito a mano se queda donde estaba.
+    </p>
+  </div>
+}
+
 <p class="nota">
   La columna de la derecha es lo que de verdad importa: dice si el valor sale de una variable del
-  sistema o está escrito a mano. Hay <strong>una escrita a mano a propósito</strong>, para que veas
-  cómo se ve el problema cuando aparece de verdad.
+  sistema o está escrito a mano. Cada ronda esconde alguno a pelo <strong>a propósito</strong>, con
+  valores elegidos para que no coincidan con ningún token: así el veredicto no puede engañarte.
 </p>
