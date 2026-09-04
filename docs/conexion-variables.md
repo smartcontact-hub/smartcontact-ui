@@ -99,6 +99,9 @@ Rafa abriendo el nodo.
 
 ## Cuál de los dos lados manda
 
+> La decisión y sus alternativas descartadas viven en
+> [`docs/DECISIONS.md`](./DECISIONS.md) → **DD-49**. Aquí va cómo se ejecuta.
+
 Encontrar una diferencia no dice quién tiene razón. Antes de anotar «esto está mal» hay que decidir
 **qué lado es el correcto**, y eso se mide, no se opina. La pregunta se contesta en este orden:
 
