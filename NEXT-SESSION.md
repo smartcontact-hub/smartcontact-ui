@@ -47,10 +47,7 @@ antes de construir encima.
 **Al cerrar, reescribe SOLO el fichero de tu frente.** Si abres una línea de trabajo nueva, crea
 su fichero, añade su fila aquí y nómbralo en la fila de `DOCS-INDEX`.
 
-### ⏳ Abierto ahora mismo (mira esto ANTES de empezar)
-
-| Qué | Dónde | Estado |
-| --- | ----- | ------ |
+--- | ----- | ------ |
 | El simulador de `/validar`, jugable | [PR #36](https://github.com/smartcontact-hub/smartcontact-ui/pull/36) | CI verde, **sin mergear** |
 
 Un PR verde sin mergear no es trabajo entregado: `sc-doc.pages.dev` sirve `main`, así que hasta
