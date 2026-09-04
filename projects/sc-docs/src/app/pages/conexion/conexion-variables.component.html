@@ -164,8 +164,9 @@
     <h2 id="cx-atadas">Lo que se ató <span class="cx-n">{{ atadas().length }}</span></h2>
     <p class="cx-lead">
       Solo se ata cuando la variable ya existe, el CSS la lee y el valor no cambia: no mueve un
-      píxel. Casi todas estaban <strong>mal apuntadas</strong>, no sueltas: señalaban a la
-      variable del estado vecino o a la de otro componente.
+      píxel, con una excepción anotada abajo. Cinco de las doce estaban
+      <strong>mal apuntadas</strong> y no sueltas: señalaban a la variable del estado vecino o a la
+      de otro componente, así que el cruce las daba por buenas y solo se vieron abriendo el nodo.
     </p>
     <ul class="cx-lista">
       @for (f of atadas(); track f.componente + f.variable) {
