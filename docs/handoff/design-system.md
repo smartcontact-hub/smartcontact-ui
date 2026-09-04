@@ -15,6 +15,83 @@
 > coordine. Los `sNN` de los tramos viejos se quedan como están: los nombran commits y
 > `docs/DECISIONS.md`, y reescribirlos solo desincronizaría el doc de su propia historia.
 
+## ✅ 2026-09-05 · El botón del supervisor medía 33 y el input 36, y no era cosa de tokens
+
+**Sello:** pendiente de veredicto de CI (se anota abajo al leerlo con `npm run ci:verdict`).
+Local, sobre el árbol final: `npm run verify` VERDE (exit 0, los 29 gates) y
+`npm run e2e:supervisor` VERDE (**127 passed**, exit 0, cero marcas de fallo en el log).
+
+**El diagnóstico, en una frase**: el supervisor sí lee los componentes y sí lee los tokens; lo
+que pasaba es que una regla suya SIN CAPA le ganaba al tema por reglamento del cascade.
+
+### Lo medido, no lo supuesto
+
+En `/config/aed/servicio`, con el mismo `padding` (7/10.5px), el mismo `font-size` (14px) y el
+mismo borde, el botón salía a **33px** y el input a **36px**. La única diferencia era el
+`line-height`: `normal` en el botón, `20px` en el input.
+
+Enumerando las reglas que le llegaban al botón salieron cuatro, y la ganadora era la del propio
+supervisor:
+
+| Regla | Capa | Qué decía |
+| --- | --- | --- |
+| `.p-component.p-button` (preset del DS) | `@layer primeng` | `var(--p-app-typography-md-line-height)` = 20px |
+| `.p-button` (app, `main.scss`) | **sin capa** | `normal` |
+
+CSS sin capa gana SIEMPRE a CSS en capa, sin mirar la especificidad. Por eso empujar tokens no
+podía arreglarlo: no había token que empujar, había una regla que no escuchaba.
+
+El parche llevaba su propio motivo escrito («no es token de botón en el preset»), y ese motivo
+había caducado: DD-39 unificó el line-height md y el preset ya lo publica.
+
+### Quién arbitró el `sm`
+
+El comentario del parche defendía 27.5px citando un nodo de Figma (Kit Pro 7593:168546). Eso es
+la medida de un nodo, no un token. Lo que dicen los tokens del Kit
+(`projects/design-tokens/scripts/kit-export-dtcg.json`) es que **no existe** altura ni
+line-height de botón, y que:
+
+```
+common.button.padding.x/y     → {form.field.padding.x/y}
+common.button.sm.padding.x/y  → {form.field.sm.padding.x/y}
+```
+
+Alias por REFERENCIA. El Kit modela el botón y el campo como la misma caja. Así que el `sm` a
+30.5px es lo que piden los tokens, aunque contradiga aquella nota.
+
+### Antes y después, en las tres pantallas del hub
+
+| Pantalla | Botón md | Botón sm | Campos |
+| --- | --- | --- | --- |
+| `aed/servicio` | 33 → **36** | 27 → **30.5** | 36 (x4) y 50 (x1), sin cambio |
+| `aed/agentes` | 33 → **36** | no hay | 36 (x2), sin cambio |
+| `aed/grupos` | 33 → **36** | no hay | 50 (x8), sin cambio |
+
+El campo a 50px NO es este bug: es la variante IFTA (etiqueta dentro, 21px de padding arriba),
+y es deliberada.
+
+Barrido de regresión, porque el parche era app-wide: todos los `.p-button` visibles quedan a 36
+(md) en `/admin/usuarios`, `/admin/agentes`, `/admin/grupos`, `/admin/plantillas`,
+`/admin/labels`, `/config/sistema` y `/config/seguridad`. Las filas de tabla siguen a 53.5px
+(los kebab de fila no son `.p-button`). No hay ningún `.p-button` escrito a mano en plantillas,
+así que nada se queda heredando el `line-height: 1.5` del reset, que era el miedo original.
+
+### Lo que queda abierto (medido aquí, sin tocar)
+
+El supervisor tiene **65 reglas sin capa** que caen sobre selectores de PrimeNG, y **24 pisan una
+propiedad que el tema también publica**. La mayoría parecen deliberadas (micro-interacciones de
+DD#21, piel de severidad del toast, tamaño de los paneles de select). El botón era distinto
+porque peleaba contra una regla de TAMAÑO de la que el Kit ya es dueño. Repasar las otras 23 una
+a una pide criterio caso por caso, y es otro trabajo.
+
+Contexto que lo explica: reglas globales `.p-*` por app son **supervisor 44, cuscare 5, agent 0,
+sc-docs 0, agent-mini 0** (fuente; en runtime el supervisor expande a 65 por el anidamiento).
+El supervisor es el único con una capa de override real encima del DS, y por eso es el único
+donde el DS se ve distinto de lo que publica.
+
+⚠️ Aviso caducado detectado de paso, sin arreglar: `NEXT-SESSION.md` dice que `:4280` es «el
+único sin override», pero `playwright.config.ts` ya tiene `SC_DOCS_URL`.
+
 ## ✅ 2026-09-04 · El simulador de `/validar` se juega, y el veredicto lo pone quien practica
 
 **Sello:** en `main` desde `aff232d` ([PR #36](https://github.com/smartcontact-hub/smartcontact-ui/pull/36)),

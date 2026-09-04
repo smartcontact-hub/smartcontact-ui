@@ -219,18 +219,20 @@ table.table {
 }
 
 /*
- * Button line-height (Figma button: `leading-normal`). Sin esto los `.p-button`
- * heredan el `line-height: 1.5` del reset (`_reset.scss`) → la altura se infla
- * (~35px el small). Con `normal` + el sizing `button.sm` del preset, el
- * button-small cae a ~27.5px (1:1 Kit Pro node 7593:168546). Unlayered para
- * ganar a PrimeNG (@layer primeng). App-wide: corrige TODOS los botones.
+ * AQUÍ HABÍA un `.p-button { line-height: normal }` sin capa. Se puso cuando el
+ * line-height de botón NO existía en el preset y los `.p-button` heredaban el
+ * `1.5` del reset. Ya no aplica: DD-39 unificó el line-height md y el preset lo
+ * publica en `.p-component.p-button` (`app.typography.md.line.height`).
+ *
+ * Al ser SIN CAPA le ganaba a ese preset (`@layer primeng`) por reglamento, no
+ * por especificidad, así que el botón se quedaba en `normal` y medía 33px
+ * mientras el input medía 36px con el mismo padding, el mismo font-size y el
+ * mismo borde. Empujar tokens no podía arreglarlo: no había token que empujar.
+ *
+ * Lo arbitra el Kit: `common.button.padding.x/y` son alias por REFERENCIA de
+ * `form.field.padding.x/y` (y lo mismo en sm/lg). El Kit modela el botón y el
+ * campo como la misma caja, así que alinean a 36px. No lo vuelvas a poner.
  */
-/* Button line-height: los `.p-button` heredaban `line-height: 1.5` del reset →
- * altura inflada. `normal` (no es token de botón en el preset) lo corrige. El
- * font + padding de sm/lg los pone el preset (`button.root.sm/lg`, 1:1 Kit Pro). */
-.p-button {
-  line-height: normal;
-}
 
 /*
  * Global button micro-interactions (DD#21).
