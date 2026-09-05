@@ -8,7 +8,7 @@
     (scClickOutside)="closeCreatePanel()"
     [scClickOutsideEnabled]="creating()"
   >
-    <sc-button type="button" variant="primary" (clicked)="onCreateClick()">
+    <sc-button size="sm" type="button" variant="primary" (clicked)="onCreateClick()">
       <sc-icon [name]="plusIcon" size="inherit" />
       <span>{{ 'labels.create_button' | translate }}</span>
     </sc-button>
