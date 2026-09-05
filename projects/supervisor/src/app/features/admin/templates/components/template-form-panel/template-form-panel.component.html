@@ -50,15 +50,7 @@
     <label class="panel__label" for="template-body">
       {{ 'templates.form.body' | translate }}
     </label>
-    <textarea
-      id="template-body"
-      class="panel__textarea"
-      rows="3"
-      [value]="body()"
-      [placeholder]="'templates.form.body_placeholder' | translate"
-      (input)="onBodyInput($any($event.target).value)"
-      (keydown)="onKey($event)"
-    ></textarea>
+    <sc-textarea inputId="template-body" [rows]="3" fluid [value]="body()" [placeholder]="'templates.form.body_placeholder' | translate" (valueChange)="onBodyInput($event)" (keydown)="onKey($event)" />
     <p class="panel__hint">
       {{ 'templates.form.variables_hint' | translate }}
     </p>

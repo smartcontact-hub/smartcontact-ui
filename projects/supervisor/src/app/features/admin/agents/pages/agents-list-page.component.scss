@@ -161,21 +161,6 @@
     box-shadow: 0 0 0 2px transparent;
   }
 
-  &__select {
-    appearance: none;
-    background: transparent;
-    border: 0;
-    padding: 0 var(--sc-spacing-0-875) 0 0;
-    margin: 0;
-    font: inherit;
-    color: var(--sc-text-secondary);
-    cursor: pointer;
-    outline: none;
-    /* Reserve enough width for the longest option label so the cell never
-     * shifts when presence changes. */
-    min-width: 96px;
-  }
-
   &[data-presence='disponible'] .presence-edit__dot {
     background: var(--sc-label-green-dot);
     box-shadow: 0 0 0 3px var(--sc-label-green-bg);

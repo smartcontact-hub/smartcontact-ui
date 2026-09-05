@@ -102,21 +102,9 @@
           } @else {
             <div class="cond-row__value cond-row__num">
               @if (cond.operator === 'between') {
-                <input
-                  type="number"
-                  min="0"
-                  aria-label="Duración mínima"
-                  [value]="numAmount(cond)"
-                  (input)="setAmount(group.id, cond.id, $any($event.target).value, 1)"
-                />
+                <sc-inputnumber size="sm" [min]="0" [placeholder]="'Duración mínima'" [value]="numAmount(cond)" (valueChange)="setAmount(group.id, cond.id, $event ?? 0, 1)" />
                 <span class="cond-row__num-sep">y</span>
-                <input
-                  type="number"
-                  min="0"
-                  aria-label="Duración máxima"
-                  [value]="numAmount2(cond)"
-                  (input)="setAmount(group.id, cond.id, $any($event.target).value, 2)"
-                />
+                <sc-inputnumber size="sm" [min]="0" [placeholder]="'Duración máxima'" [value]="numAmount2(cond)" (valueChange)="setAmount(group.id, cond.id, $event ?? 0, 2)" />
                 <sc-select
                   appendTo="body"
                   class="cond-row__num-unit"
@@ -139,13 +127,7 @@
                   (valueChange)="setDurationPreset(group.id, cond.id, $event)"
                 />
                 @if (isCustomDur(cond)) {
-                  <input
-                    type="number"
-                    min="0"
-                    aria-label="Duración"
-                    [value]="numAmount(cond)"
-                    (input)="setAmount(group.id, cond.id, $any($event.target).value, 1)"
-                  />
+                  <sc-inputnumber size="sm" [min]="0" [placeholder]="'Duración'" [value]="numAmount(cond)" (valueChange)="setAmount(group.id, cond.id, $event ?? 0, 1)" />
                   <sc-select
                     appendTo="body"
                     class="cond-row__num-unit"

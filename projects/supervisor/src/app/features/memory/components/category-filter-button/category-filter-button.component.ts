@@ -1,4 +1,5 @@
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
+import { ScCheckboxComponent as CheckboxComponent } from '@smartcontact-hub/components';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 import { ChangeDetectionStrategy, Component, computed, input, model } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
@@ -20,7 +21,7 @@ import { PopoverModule } from 'primeng/popover';
  */
 @Component({
   selector: 'sc-memory-category-filter-button',
-  imports: [ButtonComponent, IconComponent, PopoverModule, TranslateModule],
+  imports: [CheckboxComponent, ButtonComponent, IconComponent, PopoverModule, TranslateModule],
   templateUrl: './category-filter-button.component.html',
   styleUrl: './category-filter-button.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

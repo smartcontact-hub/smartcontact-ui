@@ -14,6 +14,7 @@ import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
+import { ScTextareaComponent as TextareaComponent } from '@smartcontact-hub/components';
 import { ScInputTextComponent as InputTextComponent } from '@smartcontact-hub/components';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 import { Template, TemplateType } from '../../data/templates-data';
@@ -33,7 +34,7 @@ export interface TemplateFormSubmission {
  */
 @Component({
   selector: 'sc-template-form-panel',
-  imports: [ButtonComponent, FormsModule, IconComponent, InputTextComponent, TranslateModule],
+  imports: [TextareaComponent, ButtonComponent, FormsModule, IconComponent, InputTextComponent, TranslateModule],
   templateUrl: './template-form-panel.component.html',
   styleUrl: './template-form-panel.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

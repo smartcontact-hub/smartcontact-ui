@@ -147,17 +147,7 @@
       (click)="$event.stopPropagation()"
     >
       <span class="presence-edit__dot" aria-hidden="true"></span>
-      <select
-        class="presence-edit__select"
-        (change)="onPresenceChange(agent, $event)"
-        [attr.aria-label]="'Cambiar presencia de ' + agent.name"
-      >
-        @for (p of presenceStates; track p) {
-          <option [value]="p" [attr.selected]="p === presence ? '' : null">
-            {{ presenceKeys[p] | translate }}
-          </option>
-        }
-      </select>
+      <sc-select class="presence-edit__select" size="sm" appendTo="body" [options]="presenceOptions()" optionLabel="label" optionValue="value" [value]="presence" (valueChange)="onPresenceChange(agent, $any($event))" />
     </span>
   } @else {
     <span class="cell cell--empty">—</span>

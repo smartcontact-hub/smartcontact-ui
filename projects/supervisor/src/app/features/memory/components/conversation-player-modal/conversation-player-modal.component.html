@@ -162,16 +162,7 @@
                   ) | translate
                 }}
               </span>
-              <div class="player-transcript__search">
-                <sc-icon class="player-transcript__search-icon" [name]="searchIcon" size="inherit" />
-                <input
-                  type="search"
-                  [value]="searchTerm()"
-                  (input)="onSearchInput($event)"
-                  [placeholder]="'memory.player.transcript.search_placeholder' | translate"
-                  [attr.aria-label]="'memory.player.transcript.search_aria' | translate"
-                />
-              </div>
+              <sc-search class="player-transcript__search" size="sm" [value]="searchTerm()" (valueChange)="searchTerm.set($event)" [placeholder]="'memory.player.transcript.search_placeholder' | translate" />
             </div>
 
             <div class="player-transcript__lines">

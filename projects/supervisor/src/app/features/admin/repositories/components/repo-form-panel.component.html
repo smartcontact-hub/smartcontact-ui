@@ -24,15 +24,7 @@
 
       @switch (field.type) {
         @case ('textarea') {
-          <textarea
-            [id]="'repo-field-' + field.key"
-            class="panel__textarea"
-            rows="3"
-            [value]="values()[field.key]"
-            [placeholder]="field.placeholderKey ? (field.placeholderKey | translate) : ''"
-            (input)="onChange(field.key, $any($event.target).value)"
-            (keydown)="onKey($event, false)"
-          ></textarea>
+          <sc-textarea [inputId]="'repo-field-' + field.key" [rows]="3" fluid [value]="values()[field.key]" [placeholder]="field.placeholderKey ? (field.placeholderKey | translate) : ''" (valueChange)="onChange(field.key, $event)" (keydown)="onKey($event, false)" />
         }
         @case ('select') {
           <sc-select

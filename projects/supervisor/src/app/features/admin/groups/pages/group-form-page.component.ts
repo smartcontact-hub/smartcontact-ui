@@ -13,6 +13,7 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
+import { ScCheckboxComponent as CheckboxComponent } from '@smartcontact-hub/components';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 
 import { DirtyAware } from '@core/guards';
@@ -69,6 +70,7 @@ interface FormState {
 @Component({
   selector: 'sc-group-form-page',
   imports: [
+    CheckboxComponent,
     AgentChannelTableComponent,
     ButtonComponent,
     DeleteEntityDialogComponent,

@@ -43,30 +43,6 @@
     color: var(--sc-text-secondary);
   }
 
-  &__textarea {
-    width: 100%;
-    min-height: 56px;
-    padding: var(--sc-spacing-0-875);
-    border: 1px solid var(--sc-border-default);
-    border-radius: var(--sc-radius-300);
-    background: var(--sc-bg-surface);
-    color: var(--sc-text-primary);
-    font-size: var(--sc-font-size-200);
-    line-height: 1.45;
-    resize: vertical;
-    font-family: inherit;
-
-    &:focus {
-      outline: none;
-      border-color: var(--sc-bg-primary);
-      box-shadow: 0 0 0 3px rgb(var(--sc-shadow-color-rgb) / 0.08);
-    }
-
-    &::placeholder {
-      color: var(--sc-text-secondary);
-    }
-  }
-
   &__select {
     width: 100%;
   }
@@ -104,22 +80,6 @@
     gap: var(--sc-spacing-0-5);
   }
 
-  &__list-input {
-    flex: 1;
-    padding: var(--sc-spacing-0-5) var(--sc-spacing-0-75);
-    border: 1px solid var(--sc-border-default);
-    border-radius: var(--sc-radius-200);
-    background: var(--sc-bg-surface);
-    color: var(--sc-text-primary);
-    font-size: var(--sc-font-size-200);
-
-    &:focus {
-      outline: none;
-      border-color: var(--sc-bg-primary);
-      box-shadow: 0 0 0 3px rgb(var(--sc-shadow-color-rgb) / 0.08);
-    }
-  }
-
   &__synonyms-block {
     display: flex;
     flex-direction: column;
@@ -133,26 +93,6 @@
     color: var(--sc-text-primary);
   }
 
-  &__synonyms-input {
-    padding: var(--sc-spacing-0-5) var(--sc-spacing-0-75);
-    border: 1px solid var(--sc-border-default);
-    border-radius: var(--sc-radius-200);
-    background: var(--sc-bg-surface);
-    color: var(--sc-text-primary);
-    font-size: var(--sc-font-size-100);
-    margin-right: 36px; /* alinea con input value (28px button + 8px gap) */
-
-    &:focus {
-      outline: none;
-      border-color: var(--sc-bg-primary);
-      box-shadow: 0 0 0 3px rgb(var(--sc-shadow-color-rgb) / 0.08);
-    }
-
-    &::placeholder {
-      color: var(--sc-text-secondary);
-    }
-  }
-
   &__list-empty {
     margin: 0;
     text-align: center;
@@ -162,4 +102,9 @@
     padding: var(--sc-spacing-0-875) 0;
   }
 
+}
+
+/* El valor de lista es `sc-inputtext` del DS; aquí solo que ocupe la fila. */
+.entity-form__list-input {
+  flex: 1;
 }

@@ -26,14 +26,7 @@
         {{ 'memory.entities.form.description_label' | translate }}
         <span class="entity-form__optional"> ({{ 'common.optional' | translate }}) </span>
       </label>
-      <textarea
-        id="entity-description"
-        class="entity-form__textarea"
-        rows="2"
-        [placeholder]="'memory.entities.form.description_placeholder' | translate"
-        [value]="description()"
-        (input)="setDescription($any($event.target).value)"
-      ></textarea>
+      <sc-textarea inputId="entity-description" [rows]="2" fluid [placeholder]="'memory.entities.form.description_placeholder' | translate" [value]="description()" (valueChange)="setDescription($event)" />
     </div>
 
     <div class="entity-form__row entity-form__row--double">
@@ -89,13 +82,7 @@
           @for (draft of listValues(); track $index) {
             <div class="entity-form__list-value-card">
               <div class="entity-form__list-value-row">
-                <input
-                  type="text"
-                  class="entity-form__list-input"
-                  [placeholder]="'memory.entities.form.list_value_placeholder' | translate"
-                  [value]="draft.value"
-                  (input)="updateListValueText($index, $any($event.target).value)"
-                />
+                <sc-inputtext class="entity-form__list-input" fluid [placeholder]="'memory.entities.form.list_value_placeholder' | translate" [value]="draft.value" (valueChange)="updateListValueText($index, $event)" />
                 <sc-button variant="secondary" appearance="text" size="sm" [icon]="trashIcon" [ariaLabel]="'memory.entities.form.list_remove' | translate" (clicked)="removeListValue($index)" />
               </div>
 
@@ -104,14 +91,7 @@
                   <label class="entity-form__synonyms-label" [attr.for]="'syn-input-' + $index">
                     {{ 'memory.entities.form.synonyms_label' | translate }}
                   </label>
-                  <input
-                    type="text"
-                    [id]="'syn-input-' + $index"
-                    class="entity-form__synonyms-input"
-                    [placeholder]="'memory.entities.form.synonyms_placeholder' | translate"
-                    [value]="draft.synonymsCsv"
-                    (input)="updateListValueSynonyms($index, $any($event.target).value)"
-                  />
+                  <sc-inputtext [inputId]="'syn-input-' + $index" fluid [placeholder]="'memory.entities.form.synonyms_placeholder' | translate" [value]="draft.synonymsCsv" (valueChange)="updateListValueSynonyms($index, $event)" />
                 </div>
               } @else {
                 <sc-button variant="secondary" appearance="link" size="sm" [label]="'memory.entities.form.add_synonyms' | translate" (clicked)="toggleListValueSynonyms($index)" />

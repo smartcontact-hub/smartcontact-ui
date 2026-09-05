@@ -266,40 +266,6 @@
   width: 100%;
   max-width: 260px;
 
-  input {
-    width: 100%;
-    height: 32px;
-    padding: 0 12px 0 28px;
-    border: 1px solid var(--sc-color-slate-300);
-    border-radius: var(--sc-radius-full);
-    background: var(--sc-bg-surface);
-    color: var(--sc-color-slate-900);
-    font-size: var(--sc-font-size-200);
-    transition:
-      border-color 200ms ease-out,
-      box-shadow 200ms ease-out;
-
-    &::placeholder {
-      color: var(--sc-color-slate-500);
-    }
-    &:hover {
-      border-color: var(--sc-color-slate-400);
-    }
-    &:focus {
-      outline: none;
-      border-color: var(--sc-bg-primary);
-      box-shadow: 0 0 0 3px rgb(var(--sc-shadow-focus-ring-rgb) / 0.25);
-    }
-  }
-}
-
-.player-transcript__search-icon {
-  position: absolute;
-  left: 10px;
-  top: 50%;
-  transform: translateY(-50%);
-  pointer-events: none;
-  color: var(--sc-color-slate-500);
 }
 
 .player-transcript__lines {

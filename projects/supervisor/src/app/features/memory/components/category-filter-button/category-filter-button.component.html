@@ -35,10 +35,7 @@
         </p>
       } @else {
         @for (cat of available(); track cat) {
-          <label class="category-filter-row" [class.category-filter-row--selected]="isChecked(cat)">
-            <input type="checkbox" [checked]="isChecked(cat)" (change)="toggle(cat)" />
-            <span>{{ cat }}</span>
-          </label>
+          <sc-checkbox class="category-filter-row" [class.category-filter-row--selected]="isChecked(cat)" [state]="(isChecked(cat)) ? 'all' : 'none'" (cycle)="toggle(cat)">{{ cat }}</sc-checkbox>
         }
       }
     </div>

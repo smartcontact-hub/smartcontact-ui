@@ -365,14 +365,6 @@ table.table {
     font-size: var(--sc-font-size-200);
     color: var(--sc-text-primary);
 
-    input[type='checkbox'] {
-      width: 14px;
-      height: 14px;
-      accent-color: var(--sc-bg-primary);
-      cursor: pointer;
-      flex-shrink: 0;
-    }
-
     &:hover span {
       color: var(--sc-text-primary);
     }
@@ -433,13 +425,6 @@ table.table {
       background: var(--sc-bg-primary-subtle);
     }
 
-    input[type='checkbox'] {
-      width: 14px;
-      height: 14px;
-      accent-color: var(--sc-bg-primary);
-      cursor: pointer;
-      flex-shrink: 0;
-    }
   }
 
   .category-filter-panel__foot {

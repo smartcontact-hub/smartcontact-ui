@@ -12,6 +12,7 @@ import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
+import { ScInputNumberComponent as InputNumberComponent } from '@smartcontact-hub/components';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 import { ScSelectComponent as SelectComponent } from '@smartcontact-hub/components';
 
@@ -52,6 +53,7 @@ import { RuleConditionValuePickerComponent } from '../rule-condition-value-picke
 @Component({
   selector: 'sc-rule-condition-builder',
   imports: [
+    InputNumberComponent,
     ButtonComponent,
     FormsModule,
     IconComponent,
@@ -236,7 +238,7 @@ export class RuleConditionBuilderComponent {
   protected setEnum(groupId: string, condId: string, val: unknown): void {
     this.patchCondition(groupId, condId, (c) => ({ ...c, value: { mode: 'enum', value: String(val) } }));
   }
-  protected setAmount(groupId: string, condId: string, raw: string, which: 1 | 2): void {
+  protected setAmount(groupId: string, condId: string, raw: string | number, which: 1 | 2): void {
     const n = Math.max(0, Number(raw) || 0);
     this.patchCondition(groupId, condId, (c) => {
       if (c.value.mode !== 'number') return c;

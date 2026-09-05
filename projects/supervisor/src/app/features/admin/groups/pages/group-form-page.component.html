@@ -162,14 +162,7 @@
           >
             <div class="channel-grid">
               @for (channel of channels; track channel) {
-                <label class="checkbox-row">
-                  <input
-                    type="checkbox"
-                    [checked]="hasChannel(channel)"
-                    (change)="toggleChannel(channel)"
-                  />
-                  <span>{{ channelKeys[channel] | translate }}</span>
-                </label>
+                <sc-checkbox class="checkbox-row" [state]="(hasChannel(channel)) ? 'all' : 'none'" (cycle)="toggleChannel(channel)">{{ channelKeys[channel] | translate }}</sc-checkbox>
               }
             </div>
             <!-- Aquí vivía un `<span class="field__error">` que jamás se

@@ -19,56 +19,6 @@
     align-items: center;
   }
 
-  &__query-icon {
-    position: absolute;
-    left: var(--sc-spacing-0-875);
-    color: var(--sc-text-subtle);
-    pointer-events: none;
-  }
-
-  &__query-input {
-    width: 100%;
-    padding: var(--sc-spacing-0-5) var(--sc-spacing-0-875) var(--sc-spacing-0-5)
-      calc(var(--sc-spacing-0-875) + 18px + var(--sc-spacing-0-5));
-    height: 32px;
-    font-size: var(--sc-font-size-200);
-    color: var(--sc-text-primary);
-    background: var(--sc-bg-surface);
-    border: 1px solid var(--sc-border-default);
-    border-radius: var(--sc-radius-100);
-    transition: border-color var(--sc-transition-fast) var(--sc-easing-default);
-
-    &::placeholder {
-      color: var(--sc-text-subtle);
-    }
-    &:hover {
-      border-color: var(--sc-border-strong);
-    }
-    &:focus {
-      outline: none;
-      border-color: var(--sc-color-blue-500);
-    }
-  }
-
-  &__query-clear {
-    position: absolute;
-    right: var(--sc-spacing-0-5);
-    background: transparent;
-    border: 0;
-    border-radius: var(--sc-radius-100);
-    padding: var(--sc-spacing-0-25);
-    color: var(--sc-text-subtle);
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    &:hover {
-      color: var(--sc-text-primary);
-      background: var(--sc-bg-hover);
-    }
-  }
-
   // ---- suggestion strip ("añadir al grupo: chip chip chip") ----
   &__suggest {
     display: flex;

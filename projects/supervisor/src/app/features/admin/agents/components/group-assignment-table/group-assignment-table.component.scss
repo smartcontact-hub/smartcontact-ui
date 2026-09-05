@@ -54,55 +54,6 @@
     align-items: center;
   }
 
-  &__picker-icon {
-    position: absolute;
-    left: var(--sc-spacing-0-875);
-    color: var(--sc-text-subtle);
-    pointer-events: none;
-  }
-
-  &__picker-input {
-    width: 100%;
-    /* 28px = --sc-spacing-2 (scale-2). Figma 28,5 → snap a 28. */
-    height: var(--sc-spacing-2);
-    padding: var(--sc-spacing-0-5) var(--sc-spacing-0-875) var(--sc-spacing-0-5)
-      calc(var(--sc-spacing-0-875) + 18px + var(--sc-spacing-0-5));
-    font-size: var(--sc-font-size-200);
-    color: var(--sc-text-primary);
-    background: var(--sc-bg-surface);
-    border: 1px solid var(--sc-border-default);
-    border-radius: var(--sc-radius-100);
-    transition: border-color var(--sc-transition-fast) var(--sc-easing-default);
-
-    &::placeholder {
-      color: var(--sc-text-subtle);
-    }
-    &:hover {
-      border-color: var(--sc-border-strong);
-    }
-    &:focus {
-      outline: none;
-      border-color: var(--sc-color-blue-500);
-    }
-  }
-
-  &__picker-clear {
-    position: absolute;
-    right: var(--sc-spacing-0-5);
-    background: transparent;
-    border: 0;
-    border-radius: var(--sc-radius-100);
-    padding: var(--sc-spacing-0-25);
-    color: var(--sc-text-subtle);
-    cursor: pointer;
-    display: inline-flex;
-
-    &:hover {
-      color: var(--sc-text-primary);
-      background: var(--sc-bg-hover);
-    }
-  }
-
   &__picker-menu {
     position: absolute;
     top: calc(100% + 4px);
