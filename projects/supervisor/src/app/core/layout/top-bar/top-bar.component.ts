@@ -19,6 +19,7 @@ import { TopBarSlotService } from './top-bar-slot.service';
 // paquete, cuya visibilidad la posee `ScKeyboardShortcutsService` publicado.
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ScBreadcrumbComponent, ScKeyboardShortcutsService } from '@smartcontact-hub/components';
+import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 
 import { IllustratedAvatarComponent } from '@shared/components';
 
@@ -34,6 +35,7 @@ import { IllustratedAvatarComponent } from '@shared/components';
 @Component({
   selector: 'sc-top-bar',
   imports: [
+    ButtonComponent,
     ClickOutsideDirective,
     IconComponent,
     IllustratedAvatarComponent,

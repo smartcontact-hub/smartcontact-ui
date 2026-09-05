@@ -3,6 +3,7 @@ import { TranslateModule } from '@ngx-translate/core';
 
 import { IllustratedAvatarComponent } from '@shared/components';
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
+import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 import { ScToggleSwitchComponent as ToggleSwitchComponent } from '@smartcontact-hub/components';
 
 import { CHANNEL_LABEL_KEYS, GroupChannel } from '@features/admin/groups/data/groups-data';
@@ -48,7 +49,7 @@ interface VisibleRow {
 @Component({
   selector: 'sc-group-assignment-table',
   standalone: true,
-  imports: [IconComponent, IllustratedAvatarComponent, ToggleSwitchComponent, TranslateModule],
+  imports: [ButtonComponent, IconComponent, IllustratedAvatarComponent, ToggleSwitchComponent, TranslateModule],
   templateUrl: './group-assignment-table.component.html',
   styleUrl: './group-assignment-table.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

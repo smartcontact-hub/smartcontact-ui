@@ -338,29 +338,6 @@
     text-align: center;
   }
 
-  /* Papelera = icon-button secundario (Figma: button 35×31, bg gris-100). */
-  &__remove {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 35px;
-    height: var(--sc-spacing-2-25);
-    background: var(--sc-bg-secondary-hover);
-    border: 0;
-    border-radius: var(--sc-radius-md);
-    color: var(--sc-text-secondary);
-    cursor: pointer;
-
-    &:hover {
-      color: var(--sc-text-danger);
-      background: var(--sc-border-subtle);
-    }
-    &:focus-visible {
-      outline: 2px solid var(--sc-border-focus);
-      outline-offset: 2px;
-    }
-  }
-
   @media (prefers-reduced-motion: reduce) {
     &__row,
     &__chip {

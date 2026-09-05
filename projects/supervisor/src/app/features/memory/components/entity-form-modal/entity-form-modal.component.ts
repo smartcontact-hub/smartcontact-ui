@@ -10,7 +10,6 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
-import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 
 import { ScInputTextComponent as InputTextComponent } from '@smartcontact-hub/components';
@@ -57,7 +56,6 @@ interface ListValueDraft {
   imports: [
     ButtonComponent,
     FormsModule,
-    IconComponent,
     InputTextComponent,
     DialogComponent,
     SelectComponent,

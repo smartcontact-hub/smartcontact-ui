@@ -75,10 +75,7 @@
            apartado del índice → fuera del scan primario, difícil de pulsar
            sin querer. Reemplaza la banda danger-zone del cuerpo (S59). -->
       @if (mode() === 'edit') {
-        <button type="button" class="ipanel__delete" (click)="requestDelete()">
-          <sc-icon [name]="trashIcon" size="inherit" />
-          <span>{{ 'common.delete' | translate }}</span>
-        </button>
+        <sc-button class="ipanel__delete" variant="danger" appearance="text" size="sm" [icon]="trashIcon" [label]="'common.delete' | translate" (clicked)="requestDelete()" />|<sc-button class="ipanel__delete" variant="danger" appearance="text" size="sm" [icon]="trashIcon" [label]="'common.delete' | translate" (clicked)="requestDelete()" />
       }
     </aside>
 
@@ -304,14 +301,7 @@
                 <span class="perm-toggle-row__label">
                   {{ 'agents.form.permissions.manage_devices' | translate }}
                 </span>
-                <button
-                  type="button"
-                  class="perm-toggle-row__info"
-                  [title]="'agents.form.permissions.manage_devices_hint' | translate"
-                  [attr.aria-label]="'agents.form.permissions.manage_devices_hint' | translate"
-                >
-                  <sc-icon [name]="infoIcon" size="inherit" />
-                </button>
+                <sc-button variant="secondary" appearance="text" size="sm" [icon]="infoIcon" [ariaLabel]="'agents.form.permissions.manage_devices_hint' | translate" [title]="'agents.form.permissions.manage_devices_hint' | translate" />
               </div>
               <sc-toggleswitch
                 [checked]="form().permissions.manageDevices"
@@ -325,14 +315,7 @@
                 <span class="perm-toggle-row__label">
                   {{ 'agents.form.permissions.self_activate' | translate }}
                 </span>
-                <button
-                  type="button"
-                  class="perm-toggle-row__info"
-                  [title]="'agents.form.permissions.self_activate_hint' | translate"
-                  [attr.aria-label]="'agents.form.permissions.self_activate_hint' | translate"
-                >
-                  <sc-icon [name]="infoIcon" size="inherit" />
-                </button>
+                <sc-button variant="secondary" appearance="text" size="sm" [icon]="infoIcon" [ariaLabel]="'agents.form.permissions.self_activate_hint' | translate" [title]="'agents.form.permissions.self_activate_hint' | translate" />
               </div>
               <sc-toggleswitch
                 [checked]="form().permissions.selfActivate"
@@ -770,16 +753,7 @@
                     <span class="perm-toggle-row__label">
                       {{ 'agents.form.advanced.comportamiento.random_order' | translate }}
                     </span>
-                    <button
-                      type="button"
-                      class="perm-toggle-row__info"
-                      [attr.aria-label]="
-                        'agents.form.advanced.comportamiento.random_order_hint' | translate
-                      "
-                      [title]="'agents.form.advanced.comportamiento.random_order_hint' | translate"
-                    >
-                      <sc-icon [name]="infoIcon" size="inherit" />
-                    </button>
+                    <sc-button variant="secondary" appearance="text" size="sm" [icon]="infoIcon" [ariaLabel]="'agents.form.advanced.comportamiento.random_order_hint' | translate" [title]="'agents.form.advanced.comportamiento.random_order_hint' | translate" />
                   </div>
                   <sc-toggleswitch
                     [checked]="form().randomOrder"
@@ -818,18 +792,7 @@
                     <span class="perm-toggle-row__label">
                       {{ 'agents.form.advanced.integracion.dispositivos_externos' | translate }}
                     </span>
-                    <button
-                      type="button"
-                      class="perm-toggle-row__info"
-                      [attr.aria-label]="
-                        'agents.form.advanced.integracion.dispositivos_externos_hint' | translate
-                      "
-                      [title]="
-                        'agents.form.advanced.integracion.dispositivos_externos_hint' | translate
-                      "
-                    >
-                      <sc-icon [name]="infoIcon" size="inherit" />
-                    </button>
+                    <sc-button variant="secondary" appearance="text" size="sm" [icon]="infoIcon" [ariaLabel]="'agents.form.advanced.integracion.dispositivos_externos_hint' | translate" [title]="'agents.form.advanced.integracion.dispositivos_externos_hint' | translate" />
                   </div>
                   <sc-toggleswitch
                     [checked]="form().permissions.externalDevices"
@@ -895,16 +858,7 @@
                     <span class="perm-toggle-row__label">
                       {{ 'agents.form.advanced.sesion.login_ext_override' | translate }}
                     </span>
-                    <button
-                      type="button"
-                      class="perm-toggle-row__info"
-                      [attr.aria-label]="
-                        'agents.form.advanced.sesion.login_ext_override_hint' | translate
-                      "
-                      [title]="'agents.form.advanced.sesion.login_ext_override_hint' | translate"
-                    >
-                      <sc-icon [name]="infoIcon" size="inherit" />
-                    </button>
+                    <sc-button variant="secondary" appearance="text" size="sm" [icon]="infoIcon" [ariaLabel]="'agents.form.advanced.sesion.login_ext_override_hint' | translate" [title]="'agents.form.advanced.sesion.login_ext_override_hint' | translate" />
                   </div>
                   <sc-toggleswitch
                     [checked]="form().loginExtOverride"

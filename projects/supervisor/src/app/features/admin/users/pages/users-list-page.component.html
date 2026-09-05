@@ -36,15 +36,7 @@
         (keydown)="onSearchKey($event)"
       />
       <span class="sc-action-divider" aria-hidden="true"></span>
-      <button
-        type="button"
-        class="sc-icon-btn"
-        (click)="onExport()"
-        [attr.aria-label]="'labels.export_button' | translate"
-        [attr.title]="'labels.export_button' | translate"
-      >
-        <sc-icon [name]="downloadIcon" size="inherit" />
-      </button>
+      <sc-button variant="secondary" appearance="outlined" [icon]="downloadIcon" [ariaLabel]="'labels.export_button' | translate" [attr.title]="'labels.export_button' | translate" (clicked)="onExport()" />
     </div>
 
     @if (users().length === 0) {
@@ -137,14 +129,7 @@
      (solo lo hace la celda de la casilla), así que sin él abrir el kebab
      dispararía además `rowClick` y navegaría al detalle. -->
 <ng-template #actionsTpl let-user>
-  <button
-    type="button"
-    class="rules-kebab-btn"
-    [attr.aria-label]="'labels.row_menu' | translate"
-    (click)="setMenuTarget(user); rowMenu.toggle($event); $event.stopPropagation()"
-  >
-    <sc-icon [name]="moreIcon" size="inherit" />
-  </button>
+  <sc-button class="rules-kebab-btn" variant="secondary" appearance="text" size="sm" [icon]="moreIcon" [ariaLabel]="'labels.row_menu' | translate" (clicked)="setMenuTarget(user); rowMenu.toggle($event); $event.stopPropagation()" />
 </ng-template>
 
 <!-- Kebab ÚNICO y compartido por toda la tabla (antes: un panel HTML por fila

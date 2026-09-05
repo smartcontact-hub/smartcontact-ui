@@ -334,29 +334,6 @@
     color: var(--sc-text-primary);
   }
 
-  &__info {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 18px;
-    height: 18px;
-    padding: 0;
-    border: 0;
-    background: transparent;
-    color: var(--sc-icon-subtle);
-    border-radius: var(--sc-radius-full);
-    cursor: help;
-    transition: color var(--sc-transition-fast) var(--sc-easing-default);
-
-    &:hover {
-      color: var(--sc-text-secondary);
-    }
-
-    &:focus-visible {
-      outline: 2px solid var(--sc-border-focus);
-      outline-offset: 2px;
-    }
-  }
 }
 
 /* `.perm-matrix` moved to `src/styles/_forms.scss` (audit #1 of DD#54).

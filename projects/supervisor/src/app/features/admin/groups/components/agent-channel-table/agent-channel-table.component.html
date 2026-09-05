@@ -139,16 +139,7 @@
               />
             </td>
             <td class="actbl__td-actions">
-              <button
-                type="button"
-                class="actbl__remove"
-                (click)="removeRow(row.agent.id)"
-                [attr.aria-label]="
-                  'groups.form.assigned.remove_aria' | translate: { name: row.agent.name }
-                "
-              >
-                <sc-icon [name]="trashIcon" size="inherit" />
-              </button>
+              <sc-button variant="secondary" appearance="text" size="sm" [icon]="trashIcon" [ariaLabel]="'groups.form.assigned.remove_aria' | translate: { name: row.agent.name }" (clicked)="removeRow(row.agent.id)" />
             </td>
           </tr>
         }

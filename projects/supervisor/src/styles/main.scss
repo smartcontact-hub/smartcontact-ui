@@ -273,7 +273,6 @@ table.table {
  */
 .p-button,
 .empty-state__cta,
-.sc-toast__action,
 .rename__btn,
 .profile-tabs__tab {
   transition:
@@ -325,26 +324,6 @@ table.table {
       line-height: var(--sc-line-height-subtitle-2);
       font-weight: var(--sc-font-weight-subtitle-2);
       color: var(--sc-text-primary);
-    }
-  }
-
-  .type-filter-panel__reset {
-    background: transparent;
-    border: 0;
-    padding: 4px 8px;
-    border-radius: var(--sc-radius-100);
-    color: var(--sc-text-link);
-    font-size: var(--sc-font-size-50);
-    font-weight: var(--sc-font-weight-medium);
-    cursor: pointer;
-    transition: background-color 200ms ease-out;
-
-    &:hover {
-      background: var(--sc-bg-primary-subtle);
-    }
-    &:focus-visible {
-      outline: 2px solid var(--sc-border-focus);
-      outline-offset: 1px;
     }
   }
 
@@ -422,22 +401,6 @@ table.table {
     }
   }
 
-  .category-filter-panel__clear {
-    background: transparent;
-    border: 0;
-    padding: 4px 8px;
-    border-radius: var(--sc-radius-100);
-    color: var(--sc-text-link);
-    font-size: var(--sc-font-size-50);
-    font-weight: var(--sc-font-weight-medium);
-    cursor: pointer;
-    transition: background-color 200ms ease-out;
-
-    &:hover {
-      background: var(--sc-bg-primary-subtle);
-    }
-  }
-
   .category-filter-panel__body {
     max-height: 240px;
     overflow-y: auto;
@@ -484,21 +447,6 @@ table.table {
     padding: var(--sc-spacing-0-875) var(--sc-spacing-1-125);
   }
 
-  .category-filter-panel__toggle-all {
-    width: 100%;
-    padding: var(--sc-spacing-0-5);
-    border: 0;
-    background: transparent;
-    border-radius: var(--sc-radius-100);
-    font-size: var(--sc-font-size-200);
-    color: var(--sc-text-primary);
-    cursor: pointer;
-    transition: background-color 200ms ease-out;
-
-    &:hover {
-      background: var(--sc-bg-elevated);
-    }
-  }
 }
 
 /* Memory · Status pills compartidas (rules + categories).
@@ -621,33 +569,6 @@ table.table {
   white-space: nowrap;
 }
 
-/* Kebab button compartido (rules + categories + entities + memoryviews
- * futuras). Mismo origen — promovido a global en iter 11a.
- */
-.rules-kebab-btn {
-  width: 28px;
-  height: 28px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border: 0;
-  border-radius: var(--sc-radius-100);
-  background: transparent;
-  color: var(--sc-text-secondary);
-  cursor: pointer;
-  transition: background-color 200ms ease-out;
-
-  &:hover {
-    background: var(--sc-bg-elevated);
-    color: var(--sc-text-primary);
-  }
-
-  &:focus-visible {
-    outline: 2px solid var(--sc-border-focus);
-    outline-offset: 2px;
-  }
-}
-
 /* Memory · MockSampleSwitcher popover (S39 prototype switcher).
  *
  * `<p-popover>` con appendTo:body monta fuera del scope component → reglas
@@ -757,7 +678,6 @@ table.table {
 @media (prefers-reduced-motion: reduce) {
   .p-button,
   .empty-state__cta,
-  .sc-toast__action,
   .rename__btn,
   .profile-tabs__tab {
     transition: none;

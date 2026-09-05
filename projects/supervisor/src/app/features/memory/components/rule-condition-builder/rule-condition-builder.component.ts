@@ -12,6 +12,7 @@ import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
 
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
+import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 import { ScSelectComponent as SelectComponent } from '@smartcontact-hub/components';
 
 import { validateConditionTree } from '../../data/condition-validate';
@@ -51,6 +52,7 @@ import { RuleConditionValuePickerComponent } from '../rule-condition-value-picke
 @Component({
   selector: 'sc-rule-condition-builder',
   imports: [
+    ButtonComponent,
     FormsModule,
     IconComponent,
     NgTemplateOutlet,

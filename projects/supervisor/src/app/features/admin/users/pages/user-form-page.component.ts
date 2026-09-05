@@ -13,7 +13,6 @@ import {
 import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
-import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 
 import { DirtyAware } from '@core/guards';
@@ -68,7 +67,6 @@ interface FormState {
     ButtonComponent,
     DeleteEntityDialogComponent,
     FormSectionNavComponent,
-    IconComponent,
     IllustratedAvatarComponent,
     InputTextComponent,
     PhotoUploadComponent,

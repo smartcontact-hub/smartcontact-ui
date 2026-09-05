@@ -26,9 +26,7 @@
   <div class="type-filter-panel">
     <header class="type-filter-panel__head">
       <h3>{{ 'memory.type_filter.panel_title' | translate }}</h3>
-      <button type="button" class="type-filter-panel__reset" (click)="resetPopoverFilters()">
-        {{ 'memory.type_filter.reset' | translate }}
-      </button>
+      <sc-button variant="primary" appearance="link" size="sm" [label]="'memory.type_filter.reset' | translate" (clicked)="resetPopoverFilters()" />
     </header>
 
     <div class="type-filter-panel__body">

@@ -1,4 +1,5 @@
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
+import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 import { ChangeDetectionStrategy, Component, computed, inject, input, output } from '@angular/core';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
@@ -31,7 +32,7 @@ import { formatTime, parseDurationSeconds } from '@shared/utils/audio';
  */
 @Component({
   selector: 'sc-memory-multi-recording-player',
-  imports: [IconComponent, TranslateModule],
+  imports: [ButtonComponent, IconComponent, TranslateModule],
   templateUrl: './multi-recording-player.component.html',
   styleUrl: './multi-recording-player.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

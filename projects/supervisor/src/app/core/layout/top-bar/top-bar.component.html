@@ -79,15 +79,7 @@
               {{ userPhone }}
             </span>
           </div>
-          <button
-            type="button"
-            class="top-bar__menu-shortcut"
-            (click)="openShortcuts()"
-            [attr.aria-label]="'topbar.keyboard_shortcuts' | translate"
-            [attr.title]="'topbar.keyboard_shortcuts' | translate"
-          >
-            <sc-icon name="keyboard" size="inherit" />
-          </button>
+          <sc-button class="top-bar__menu-shortcut" variant="secondary" appearance="text" size="sm" icon="keyboard" [ariaLabel]="'topbar.keyboard_shortcuts' | translate" [attr.title]="'topbar.keyboard_shortcuts' | translate" (clicked)="openShortcuts()" />
         </div>
         <div class="top-bar__menu-actions">
           <button type="button" class="top-bar__menu-item" role="menuitem">

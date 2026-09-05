@@ -67,10 +67,7 @@
       <!-- Zona de peligro: Eliminar al fondo del panel, enlace discreto y
            apartado del índice → fuera del scan primario (S59). -->
       @if (mode() === 'edit') {
-        <button type="button" class="ipanel__delete" (click)="requestDelete()">
-          <sc-icon [name]="trashIcon" size="inherit" />
-          <span>{{ 'common.delete' | translate }}</span>
-        </button>
+        <sc-button class="ipanel__delete" variant="danger" appearance="text" size="sm" [icon]="trashIcon" [label]="'common.delete' | translate" (clicked)="requestDelete()" />|<sc-button class="ipanel__delete" variant="danger" appearance="text" size="sm" [icon]="trashIcon" [label]="'common.delete' | translate" (clicked)="requestDelete()" />
       }
     </aside>
     <div class="page__form">

@@ -116,16 +116,7 @@
               />
             </td>
             <td class="gatbl__td-actions">
-              <button
-                type="button"
-                class="gatbl__remove"
-                (click)="removeRow(row.group.id)"
-                [attr.aria-label]="
-                  'agents.form.assigned.remove_aria' | translate: { name: row.group.name }
-                "
-              >
-                <sc-icon [name]="trashIcon" size="inherit" />
-              </button>
+              <sc-button variant="secondary" appearance="text" size="sm" [icon]="trashIcon" [ariaLabel]="'agents.form.assigned.remove_aria' | translate: { name: row.group.name }" (clicked)="removeRow(row.group.id)" />
             </td>
           </tr>
         }

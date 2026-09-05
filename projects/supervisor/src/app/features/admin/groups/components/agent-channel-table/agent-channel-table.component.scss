@@ -313,27 +313,6 @@
     }
   }
 
-  &__remove {
-    background: transparent;
-    border: 0;
-    border-radius: var(--sc-radius-100);
-    padding: var(--sc-spacing-0-25);
-    color: var(--sc-text-subtle);
-    cursor: pointer;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-
-    &:hover {
-      color: var(--sc-text-danger);
-      background: var(--sc-bg-hover);
-    }
-    &:focus-visible {
-      outline: 2px solid var(--sc-border-focus);
-      outline-offset: 2px;
-    }
-  }
-
   &__no-results {
     padding: var(--sc-spacing-1-125);
     text-align: center;
