@@ -398,37 +398,13 @@
   }
 }
 
+/* Eliminar (rail del formulario): es un `sc-button` del DS; aquí solo vive su
+ * SITIO en el rail — al fondo y a la derecha. Nada de tamaño ni color. */
 .ipanel__delete {
   margin-top: auto;
   align-self: flex-end;
-  display: inline-flex;
-  align-items: center;
-  gap: var(--sc-spacing-0-5);
-  padding: var(--sc-spacing-0-5) var(--sc-spacing-0-75);
-  border: 0;
-  background: transparent;
-  color: var(--sc-text-danger);
-  font-size: var(--sc-font-size-100);
-  font-weight: var(--sc-font-weight-medium);
-  border-radius: var(--sc-radius-100);
-  cursor: pointer;
-  transition: background var(--sc-transition-fast) var(--sc-easing-default);
 
-  > sc-icon {
-    flex: 0 0 auto;
-  }
-
-  &:hover {
-    background: color-mix(in oklch, var(--sc-color-red-500) 10%, transparent);
-  }
-
-  &:focus-visible {
-    outline: 2px solid var(--sc-border-focus);
-    outline-offset: 2px;
-  }
-
-  /* En móvil el rail es estático (sin altura extra) — no hay hueco que
-   * empujar, así que el enlace simplemente sigue al índice. */
+  /* En móvil el rail es estático: el enlace simplemente sigue al índice. */
   @media (max-width: 1024px) {
     margin-top: var(--sc-spacing-1);
   }

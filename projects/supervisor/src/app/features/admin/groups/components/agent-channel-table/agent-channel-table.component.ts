@@ -1,6 +1,7 @@
 import { ChangeDetectionStrategy, Component, computed, input, output, signal } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
+import { ScSearchComponent as SearchComponent } from '@smartcontact-hub/components';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 
 import { IllustratedAvatarComponent } from '@shared/components';
@@ -56,6 +57,7 @@ interface VisibleRow {
   selector: 'sc-agent-channel-table',
   standalone: true,
   imports: [
+    SearchComponent,
     ButtonComponent,
     IconComponent,
     IllustratedAvatarComponent,
@@ -241,8 +243,8 @@ export class AgentChannelTableComponent {
 
   // -- query input ---------------------------------------------------
 
-  protected onQueryInput(event: Event): void {
-    this.query.set((event.target as HTMLInputElement).value);
+  protected onQueryChange(value: string): void {
+    this.query.set(value);
   }
 
   protected clearQuery(): void {

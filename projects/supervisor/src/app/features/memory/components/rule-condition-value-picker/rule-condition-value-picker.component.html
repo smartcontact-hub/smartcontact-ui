@@ -31,22 +31,12 @@
 
   @if (open()) {
     <div class="vpick__panel" [class.vpick__panel--up]="openUp()">
-      <div class="vpick__search">
-        <sc-icon [name]="searchIcon" [size]="15" />
-        <input
-          type="text"
-          [ngModel]="search()"
-          (ngModelChange)="search.set($event)"
-          [placeholder]="'memory.rules.builder.cond.search' | translate"
-        />
-      </div>
+      <sc-search class="vpick__search" size="sm" [value]="search()" (valueChange)="search.set($event)" [placeholder]="'memory.rules.builder.cond.search' | translate" />
 
       @if (isAny()) {
         <div class="vpick__any-row">
           <span>{{ 'memory.rules.builder.cond.pick_all_row' | translate }}</span>
-          <button type="button" class="vpick__link" (click)="clearAny()">
-            {{ 'memory.rules.builder.cond.pick_manual' | translate }}
-          </button>
+          <sc-button variant="primary" appearance="link" size="sm" [label]="'memory.rules.builder.cond.pick_manual' | translate" (clicked)="clearAny()" />
         </div>
       } @else {
         <div class="vpick__list">
@@ -154,10 +144,7 @@
           }
         </div>
 
-        <button type="button" class="vpick__selectall" (click)="selectAll()">
-          <sc-icon [name]="checkIcon" [size]="14" />
-          {{ 'memory.rules.builder.cond.select_all' | translate }}
-        </button>
+        <sc-button class="vpick__selectall" variant="primary" appearance="text" size="sm" fullWidth [icon]="checkIcon" [label]="'memory.rules.builder.cond.select_all' | translate" (clicked)="selectAll()" />
       }
     </div>
   }

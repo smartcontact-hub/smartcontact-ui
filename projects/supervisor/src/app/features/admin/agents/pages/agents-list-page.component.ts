@@ -14,6 +14,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService, type MenuItem } from 'primeng/api';
 import { MenuModule } from 'primeng/menu';
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
+import { ScSelectComponent as SelectComponent } from '@smartcontact-hub/components';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 
 import { UndoStackService, XlsxExportService } from '@core/services';
@@ -82,6 +83,7 @@ const PRESENCE_STATES: readonly PresenceStatus[] = [
 @Component({
   selector: 'sc-agents-list-page',
   imports: [
+    SelectComponent,
     BulkActionBarComponent,
     BulkEditMenuComponent,
     ButtonComponent,
@@ -159,6 +161,10 @@ export class AgentsListPageComponent {
   protected readonly typeKeys = AGENT_TYPE_LABEL_KEYS;
   protected readonly presenceKeys = PRESENCE_LABEL_KEYS;
   protected readonly presenceStates = PRESENCE_STATES;
+  /** Opciones del selector de presencia: etiqueta traducida + valor, para `sc-select`. */
+  protected readonly presenceOptions = computed(() =>
+    this.presenceStates.map((p) => ({ label: this.translate.instant(this.presenceKeys[p]), value: p })),
+  );
   protected readonly agents = this.agentsStore.agents;
 
   protected readonly searchQuery = signal('');
@@ -626,8 +632,7 @@ export class AgentsListPageComponent {
     this.renamingId.set(null);
   }
 
-  protected onPresenceChange(agent: Agent, event: Event): void {
-    const value = (event.target as HTMLSelectElement).value as PresenceStatus;
+  protected onPresenceChange(agent: Agent, value: PresenceStatus): void {
     const previous = agent.presenceStatus ?? 'disponible';
     if (value === previous) return;
     this.agentsStore.updatePresence(agent.id, value);

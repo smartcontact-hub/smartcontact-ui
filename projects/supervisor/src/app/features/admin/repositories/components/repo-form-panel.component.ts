@@ -15,6 +15,8 @@ import { FormsModule } from '@angular/forms';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 import {
+  ScTextareaComponent as TextareaComponent,
+  ScButtonComponent as ButtonComponent,
   ScInputTextComponent as InputTextComponent,
   ScSelectComponent as SelectComponent,
 } from '@smartcontact-hub/components';
@@ -31,6 +33,8 @@ export type RepoFormSubmission = Readonly<Record<string, string>>;
 @Component({
   selector: 'sc-repo-form-panel',
   imports: [
+    TextareaComponent,
+    ButtonComponent,
     FormsModule,
     IconComponent,
     InputTextComponent,

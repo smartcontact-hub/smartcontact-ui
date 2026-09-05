@@ -11,6 +11,7 @@ import {
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
+import { ScSearchComponent as SearchComponent } from '@smartcontact-hub/components';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 
 import { TOAST_LIFE } from '@core/utils/toast-life';
@@ -60,6 +61,7 @@ import { formatTime, parseDurationSeconds } from '@shared/utils/audio';
 @Component({
   selector: 'sc-memory-conversation-player-modal',
   imports: [
+    SearchComponent,
     ButtonComponent,
     IconComponent,
     DialogComponent,
@@ -302,10 +304,6 @@ export class ConversationPlayerModalComponent {
     this.isPlaying.set(false);
     this.currentTime.set(0);
     this.selectedRecordingId.set(id);
-  }
-
-  protected onSearchInput(event: Event): void {
-    this.searchTerm.set((event.target as HTMLInputElement).value);
   }
 
   protected onClose(): void {

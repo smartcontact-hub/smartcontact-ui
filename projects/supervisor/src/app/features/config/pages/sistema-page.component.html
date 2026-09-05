@@ -133,20 +133,7 @@
               {{ 'config.seguridad.policies.min_length_hint' | translate }}
             </p>
           </div>
-          <select class="policy-row__select">
-            <option>
-              {{ 'config.seguridad.policies.min_length_options.chars_8' | translate }}
-            </option>
-            <option>
-              {{ 'config.seguridad.policies.min_length_options.chars_10' | translate }}
-            </option>
-            <option>
-              {{ 'config.seguridad.policies.min_length_options.chars_12' | translate }}
-            </option>
-            <option>
-              {{ 'config.seguridad.policies.min_length_options.chars_16' | translate }}
-            </option>
-          </select>
+          <sc-select class="policy-row__select" size="sm" [options]="minLengthOptions()" optionLabel="label" optionValue="value" [value]="minLength()" (valueChange)="minLength.set($any($event))" />
         </div>
 
         <div class="policy-row policy-row--bordered">
@@ -158,18 +145,7 @@
               {{ 'config.seguridad.policies.expiration_hint' | translate }}
             </p>
           </div>
-          <select class="policy-row__select">
-            <option>{{ 'config.seguridad.policies.expiration_options.never' | translate }}</option>
-            <option>
-              {{ 'config.seguridad.policies.expiration_options.days_30' | translate }}
-            </option>
-            <option>
-              {{ 'config.seguridad.policies.expiration_options.days_60' | translate }}
-            </option>
-            <option>
-              {{ 'config.seguridad.policies.expiration_options.days_90' | translate }}
-            </option>
-          </select>
+          <sc-select class="policy-row__select" size="sm" [options]="expirationOptions()" optionLabel="label" optionValue="value" [value]="expiration()" (valueChange)="expiration.set($any($event))" />
         </div>
 
         <div class="policy-row policy-row--bordered">
@@ -228,36 +204,11 @@
             <p>{{ 'config.seguridad.regen.use_case' | translate }}</p>
           </div>
 
-          <div class="search">
-            <sc-icon [name]="searchIcon" size="inherit" class="search__icon" />
-            <input
-              type="text"
-              class="search__input"
-              [placeholder]="'config.seguridad.regen.search_placeholder' | translate"
-              [value]="searchQuery()"
-              (input)="searchQuery.set($any($event.target).value)"
-              (keydown)="onSearchKey($event)"
-            />
-            @if (searchQuery()) {
-              <button
-                type="button"
-                class="search__clear"
-                (click)="searchQuery.set('')"
-                [attr.aria-label]="'labels.clear_search' | translate"
-              >
-                <sc-icon [name]="closeIcon" size="inherit" />
-              </button>
-            }
-          </div>
+          <sc-search class="search" [placeholder]="'config.seguridad.regen.search_placeholder' | translate" [value]="searchQuery()" (valueChange)="searchQuery.set($event)" (keydown)="onSearchKey($event)" [clearAriaLabel]="'labels.clear_search' | translate" />
 
           <div class="agent-list">
             <div class="agent-list__head">
-              <input
-                type="checkbox"
-                [checked]="allFilteredSelected()"
-                (change)="toggleAll()"
-                [attr.aria-label]="'labels.select_all' | translate"
-              />
+              <sc-checkbox [state]="allFilteredSelected() ? 'all' : selectedIds().size > 0 ? 'some' : 'none'" (cycle)="toggleAll()" [ariaLabel]="'labels.select_all' | translate" />
               <span>
                 @if (selectedIds().size > 0) {
                   {{
@@ -289,13 +240,7 @@
                   [class.agent-row--selected]="selectedIds().has(agent.id)"
                   (click)="toggleOne(agent.id)"
                 >
-                  <input
-                    type="checkbox"
-                    [checked]="selectedIds().has(agent.id)"
-                    (click)="$event.stopPropagation()"
-                    (change)="toggleOne(agent.id)"
-                    [attr.aria-label]="agent.name"
-                  />
+                  <sc-checkbox [state]="(selectedIds().has(agent.id)) ? 'all' : 'none'" (cycle)="toggleOne(agent.id)" [ariaLabel]="agent.name" (click)="$event.stopPropagation()" />
                   <span class="agent-row__code">{{ agent.code }}</span>
                   <span class="agent-row__name">{{ agent.name }}</span>
                   <span class="agent-row__ext">ext. {{ agent.extension }}</span>
@@ -319,18 +264,7 @@
                 }}
               </p>
               <div class="confirm__row">
-                <input
-                  type="text"
-                  class="confirm__input"
-                  [placeholder]="
-                    'config.seguridad.regen.confirm_placeholder'
-                      | translate: { confirm: confirmPhraseToken }
-                  "
-                  [value]="confirmText()"
-                  (input)="onConfirmInput($any($event.target).value)"
-                  autocomplete="off"
-                  spellcheck="false"
-                />
+                <sc-inputtext class="confirm__input" fluid [placeholder]="'config.seguridad.regen.confirm_placeholder' | translate: { confirm: confirmPhraseToken }" [value]="confirmText()" (valueChange)="onConfirmInput($event)" autocomplete="off" />
                 <sc-button
                   type="button"
                   variant="danger"

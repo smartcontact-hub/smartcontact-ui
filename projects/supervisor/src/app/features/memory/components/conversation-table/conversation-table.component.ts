@@ -15,10 +15,10 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import type { MenuItem } from 'primeng/api';
 import { MenuModule } from 'primeng/menu';
 
-import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import {
   type ScColumnCellContext,
   type ScColumnDef,
+  ScButtonComponent as ButtonComponent,
   ScDatatableComponent as DatatableComponent,
   type ScDatatableRowEvent,
   type ScDatatableRowKeyEvent,
@@ -86,7 +86,7 @@ function primaryActionFor(conv: Conversation): ConversationContextAction | null 
  */
 @Component({
   selector: 'sc-memory-conversation-table',
-  imports: [DatatableComponent, IconComponent, MenuModule, TranslateModule, MemoryStatusIconComponent],
+  imports: [ButtonComponent, DatatableComponent, MenuModule, TranslateModule, MemoryStatusIconComponent],
   templateUrl: './conversation-table.component.html',
   styleUrl: './conversation-table.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

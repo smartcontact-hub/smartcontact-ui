@@ -111,14 +111,7 @@
      DS y sin él abrir el kebab dispararía además el `rowClick`. -->
 <ng-template #actionsTpl let-conv>
   @if (rowHasActions(conv)) {
-    <button
-      type="button"
-      class="rules-kebab-btn"
-      [attr.aria-label]="'memory.conversations.cols.more' | translate"
-      (click)="setMenuTarget(conv); rowMenu.toggle($event); $event.stopPropagation()"
-    >
-      <sc-icon [name]="moreIcon" size="inherit" />
-    </button>
+    <sc-button class="rules-kebab-btn" variant="secondary" appearance="text" size="sm" [icon]="moreIcon" [ariaLabel]="'memory.conversations.cols.more' | translate" (clicked)="setMenuTarget(conv); rowMenu.toggle($event); $event.stopPropagation()" />
   }
 </ng-template>
 

@@ -273,37 +273,6 @@
   }
 }
 
-/*
- * `.grid`, `.field`, `.checkbox-grid`, `.checkbox-row`, `.language-chips`,
- * `.label-chips` are now defined in `src/styles/_forms.scss` (DD#53)
- * and applied globally — no need to redeclare them here.
- */
-
-.language-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--sc-spacing-0-75);
-  padding: var(--sc-spacing-0-5) var(--sc-spacing-1);
-  border: 1px solid var(--sc-border-default);
-  background: var(--sc-bg-elevated);
-  font-size: var(--sc-font-size-100);
-  color: var(--sc-text-primary);
-
-  &__remove {
-    border: 0;
-    background: transparent;
-    color: var(--sc-text-subtle);
-    font-size: var(--sc-font-size-300);
-    line-height: 1;
-    cursor: pointer;
-    padding: 0;
-
-    &:hover {
-      color: var(--sc-text-primary);
-    }
-  }
-}
-
 /* Permission toggle row — label + inline (i) tooltip + toggle.
  * Same pattern as `/admin/aed/agentes` switch-field, but the hint is
  * accessed through the info icon's tooltip rather than as a sub-text
@@ -334,39 +303,6 @@
     color: var(--sc-text-primary);
   }
 
-  &__info {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 18px;
-    height: 18px;
-    padding: 0;
-    border: 0;
-    background: transparent;
-    color: var(--sc-icon-subtle);
-    border-radius: var(--sc-radius-full);
-    cursor: help;
-    transition: color var(--sc-transition-fast) var(--sc-easing-default);
-
-    &:hover {
-      color: var(--sc-text-secondary);
-    }
-
-    &:focus-visible {
-      outline: 2px solid var(--sc-border-focus);
-      outline-offset: 2px;
-    }
-  }
-}
-
-/* `.perm-matrix` moved to `src/styles/_forms.scss` (audit #1 of DD#54).
- * Visual order in the column-toggle (label → checkbox) is preserved by
- * DOM order; the shared block stays unopinionated about it. */
-
-input[type='checkbox'] {
-  accent-color: var(--sc-bg-primary);
-  cursor: pointer;
-  vertical-align: middle;
 }
 
 /*
@@ -599,10 +535,6 @@ input[type='checkbox'] {
     }
   }
 
-  &__check {
-    flex: 0 0 auto;
-  }
-
   &__row-icon {
     flex: 0 0 auto;
     color: var(--sc-icon-subtle);
@@ -637,39 +569,6 @@ input[type='checkbox'] {
   display: flex;
   flex-wrap: wrap;
   gap: var(--sc-spacing-0-5);
-}
-
-.picker-chip {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--sc-spacing-0-5);
-  padding: 4px var(--sc-spacing-0-875);
-  border: 1px solid var(--sc-border-default);
-  border-radius: var(--sc-radius-full);
-  background: var(--sc-bg-surface);
-  font-size: var(--sc-font-size-75);
-  color: var(--sc-text-secondary);
-
-  &__remove {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 16px;
-    height: 16px;
-    border: 0;
-    padding: 0;
-    background: transparent;
-    color: var(--sc-icon-subtle);
-    cursor: pointer;
-    border-radius: var(--sc-radius-full);
-    font-size: var(--sc-font-size-100);
-    line-height: 1;
-    transition: color var(--sc-transition-fast) var(--sc-easing-default);
-
-    &:hover {
-      color: var(--sc-text-secondary);
-    }
-  }
 }
 
 .tabs {

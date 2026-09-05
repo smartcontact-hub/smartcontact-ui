@@ -14,6 +14,7 @@ import { RouterLink } from '@angular/router';
 import { TooltipModule } from 'primeng/tooltip';
 
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
+import { ScTextareaComponent as TextareaComponent } from '@smartcontact-hub/components';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 import { ScInputTextComponent as InputTextComponent } from '@smartcontact-hub/components';
 import { ScDialogComponent as DialogComponent } from '@smartcontact-hub/components';
@@ -103,6 +104,7 @@ const CATEGORY_TEMPLATES: readonly CategoryTemplate[] = [
 @Component({
   selector: 'sc-memory-category-form-modal',
   imports: [
+    TextareaComponent,
     ButtonComponent,
     FormsModule,
     IconComponent,

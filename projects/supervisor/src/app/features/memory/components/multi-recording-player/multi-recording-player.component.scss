@@ -29,56 +29,6 @@
     gap: var(--sc-spacing-1-125);
   }
 
-  &__btn {
-    flex: 0 0 auto;
-    width: 36px;
-    height: 36px;
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    padding: 0;
-    border: 0;
-    border-radius: var(--sc-radius-full);
-    background: transparent;
-    color: var(--sc-text-secondary);
-    cursor: pointer;
-    transition:
-      background var(--sc-transition-fast) var(--sc-easing-default),
-      color var(--sc-transition-fast) var(--sc-easing-default);
-
-    &:hover:not(:disabled) {
-      background: var(--sc-bg-secondary-hover);
-      color: var(--sc-text-primary);
-    }
-
-    &:focus-visible {
-      outline: 2px solid var(--sc-border-focus);
-      outline-offset: 2px;
-    }
-
-    &:disabled {
-      cursor: not-allowed;
-      opacity: 0.4;
-    }
-
-    &--primary {
-      width: 40px;
-      height: 40px;
-      background: var(--sc-bg-primary);
-      color: var(--sc-text-on-primary);
-      box-shadow: var(--sc-shadow-sm);
-
-      &:hover:not(:disabled) {
-        background: var(--sc-bg-primary-hover);
-        color: var(--sc-text-on-primary);
-      }
-
-      &:active:not(:disabled) {
-        transform: scale(0.97);
-      }
-    }
-  }
-
   &__time {
     margin-left: auto;
     font-family: var(--sc-font-family-mono);

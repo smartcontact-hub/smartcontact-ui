@@ -24,15 +24,7 @@
 
       @switch (field.type) {
         @case ('textarea') {
-          <textarea
-            [id]="'repo-field-' + field.key"
-            class="panel__textarea"
-            rows="3"
-            [value]="values()[field.key]"
-            [placeholder]="field.placeholderKey ? (field.placeholderKey | translate) : ''"
-            (input)="onChange(field.key, $any($event.target).value)"
-            (keydown)="onKey($event, false)"
-          ></textarea>
+          <sc-textarea [inputId]="'repo-field-' + field.key" [rows]="3" fluid [value]="values()[field.key]" [placeholder]="field.placeholderKey ? (field.placeholderKey | translate) : ''" (valueChange)="onChange(field.key, $event)" (keydown)="onKey($event, false)" />
         }
         @case ('select') {
           <sc-select
@@ -76,11 +68,7 @@
   </div>
 
   <div class="panel__actions">
-    <button type="button" class="panel__btn panel__btn--ghost" (click)="cancelled.emit()">
-      {{ 'common.cancel' | translate }}
-    </button>
-    <button type="button" class="panel__btn panel__btn--primary" (click)="onSave()">
-      {{ (initial() ? 'common.save' : 'common.create') | translate }}
-    </button>
+    <sc-button variant="secondary" appearance="outlined" [label]="'common.cancel' | translate" (clicked)="cancelled.emit()" />
+    <sc-button variant="primary" [label]="(initial() ? 'common.save' : 'common.create') | translate" (clicked)="onSave()" />
   </div>
 </div>

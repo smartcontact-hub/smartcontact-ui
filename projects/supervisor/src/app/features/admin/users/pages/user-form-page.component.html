@@ -65,10 +65,7 @@
       <!-- Zona de peligro: Eliminar al fondo del panel, enlace discreto y
            apartado del índice → fuera del scan primario (S59). -->
       @if (mode() === 'edit') {
-        <button type="button" class="ipanel__delete" (click)="requestDelete()">
-          <sc-icon [name]="trashIcon" size="inherit" />
-          <span>{{ 'common.delete' | translate }}</span>
-        </button>
+        <sc-button class="ipanel__delete" variant="danger" appearance="text" size="sm" [icon]="trashIcon" [label]="'common.delete' | translate" (clicked)="requestDelete()" />|<sc-button class="ipanel__delete" variant="danger" appearance="text" size="sm" [icon]="trashIcon" [label]="'common.delete' | translate" (clicked)="requestDelete()" />
       }
     </aside>
 
@@ -173,14 +170,7 @@
           >
             <div class="checkbox-grid">
               @for (def of sectionDefs; track def.key) {
-                <label class="checkbox-row" [class.checkbox-row--child]="!!def.parent">
-                  <input
-                    type="checkbox"
-                    [checked]="form().sections[def.key]"
-                    (change)="toggleSection(def.key)"
-                  />
-                  <span>{{ def.labelKey | translate }}</span>
-                </label>
+                <sc-checkbox class="checkbox-row" [class.checkbox-row--child]="!!def.parent" [state]="(form().sections[def.key]) ? 'all' : 'none'" (cycle)="toggleSection(def.key)">{{ def.labelKey | translate }}</sc-checkbox>
               }
             </div>
           </sc-section-card>
@@ -194,14 +184,7 @@
           >
             <div class="checkbox-grid">
               @for (def of permissionDefs; track def.key) {
-                <label class="checkbox-row">
-                  <input
-                    type="checkbox"
-                    [checked]="form().permissions[def.key]"
-                    (change)="togglePermission(def.key)"
-                  />
-                  <span>{{ def.labelKey | translate }}</span>
-                </label>
+                <sc-checkbox class="checkbox-row" [state]="(form().permissions[def.key]) ? 'all' : 'none'" (cycle)="togglePermission(def.key)">{{ def.labelKey | translate }}</sc-checkbox>
               }
             </div>
           </sc-section-card>
@@ -216,14 +199,7 @@
           >
             <div class="checkbox-grid checkbox-grid--services">
               @for (service of availableServices; track service) {
-                <label class="checkbox-row">
-                  <input
-                    type="checkbox"
-                    [checked]="hasService(service)"
-                    (change)="toggleService(service)"
-                  />
-                  <span>{{ service }}</span>
-                </label>
+                <sc-checkbox class="checkbox-row" [state]="(hasService(service)) ? 'all' : 'none'" (cycle)="toggleService(service)">{{ service }}</sc-checkbox>
               }
             </div>
           </sc-section-card>

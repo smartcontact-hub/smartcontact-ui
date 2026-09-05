@@ -4,6 +4,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
 import { ToastModule } from 'primeng/toast';
 import {
+  ScButtonComponent as ButtonComponent,
   SC_KEYBOARD_SHORTCUTS_DEFAULT_GROUPS,
   ScCommandPaletteComponent,
   ScCommandPaletteService,
@@ -44,6 +45,7 @@ const APP_SHORTCUT_GROUP: ScShortcutGroup = {
 @Component({
   selector: 'sc-root',
   imports: [
+    ButtonComponent,
     ScCommandPaletteComponent,
     ScConfirmDialogComponent,
     IconComponent,

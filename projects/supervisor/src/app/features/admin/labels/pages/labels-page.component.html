@@ -127,14 +127,7 @@
 </ng-template>
 
 <ng-template #actionsTpl let-label>
-  <button
-    type="button"
-    class="rules-kebab-btn"
-    [attr.aria-label]="'labels.row_menu' | translate"
-    (click)="setMenuTarget(label); rowMenu.toggle($event); $event.stopPropagation()"
-  >
-    <sc-icon [name]="moreIcon" size="inherit" />
-  </button>
+  <sc-button class="rules-kebab-btn" variant="secondary" appearance="text" size="sm" [icon]="moreIcon" [ariaLabel]="'labels.row_menu' | translate" (clicked)="setMenuTarget(label); rowMenu.toggle($event); $event.stopPropagation()" />
 </ng-template>
 
 <!-- Kebab ÚNICO y compartido por toda la tabla (antes: un panel HTML por fila

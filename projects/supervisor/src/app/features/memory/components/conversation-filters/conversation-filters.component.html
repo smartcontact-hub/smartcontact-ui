@@ -110,15 +110,7 @@
           <span class="memory-conversation-filters__results-time">{{ lastSearchLabel() }}</span>
         }
       </span>
-      <button
-        type="button"
-        class="sc-icon-btn"
-        (click)="onReset()"
-        [attr.aria-label]="'memory.conversations.filters.reset' | translate"
-        [attr.title]="'memory.conversations.filters.reset' | translate"
-      >
-        <sc-icon [name]="resetIcon" size="inherit" />
-      </button>
+      <sc-button variant="secondary" appearance="outlined" [icon]="resetIcon" [ariaLabel]="'memory.conversations.filters.reset' | translate" [attr.title]="'memory.conversations.filters.reset' | translate" (clicked)="onReset()" />
     </div>
   </div>
 </div>

@@ -1,37 +1,11 @@
 <section class="multi-rec" [attr.aria-label]="'memory.player.multi.aria_player' | translate">
   <!-- Row 1 · transport + cumulative time of the active leg -->
   <div class="multi-rec__transport">
-    <button
-      type="button"
-      class="multi-rec__btn"
-      [disabled]="!playerEnabled()"
-      [attr.aria-label]="'memory.player.audio.back10' | translate"
-      (click)="onBack10()"
-    >
-      <sc-icon [name]="back10Icon" [size]="16" />
-    </button>
+    <sc-button variant="secondary" appearance="text" rounded [icon]="back10Icon" [ariaLabel]="'memory.player.audio.back10' | translate" [disabled]="!playerEnabled()" (clicked)="onBack10()" />
 
-    <button
-      type="button"
-      class="multi-rec__btn multi-rec__btn--primary"
-      [disabled]="!playerEnabled()"
-      [attr.aria-label]="
-        (isPlaying() ? 'memory.player.audio.pause' : 'memory.player.audio.play') | translate
-      "
-      (click)="onTogglePlay()"
-    >
-      <sc-icon [name]="isPlaying() ? pauseIcon : playIcon" [size]="18" />
-    </button>
+    <sc-button variant="primary" rounded [icon]="isPlaying() ? pauseIcon : playIcon" [ariaLabel]="(isPlaying() ? 'memory.player.audio.pause' : 'memory.player.audio.play') | translate" [disabled]="!playerEnabled()" (clicked)="onTogglePlay()" />
 
-    <button
-      type="button"
-      class="multi-rec__btn"
-      [disabled]="!playerEnabled()"
-      [attr.aria-label]="'memory.player.audio.fwd10' | translate"
-      (click)="onFwd10()"
-    >
-      <sc-icon [name]="fwd10Icon" [size]="16" />
-    </button>
+    <sc-button variant="secondary" appearance="text" rounded [icon]="fwd10Icon" [ariaLabel]="'memory.player.audio.fwd10' | translate" [disabled]="!playerEnabled()" (clicked)="onFwd10()" />
 
     <span class="multi-rec__time tabular-nums">
       {{ currentTimeLabel() }} / {{ totalDurationLabel() }}

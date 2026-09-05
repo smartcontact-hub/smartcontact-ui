@@ -10,6 +10,10 @@ import {
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
+import { ScSelectComponent as SelectComponent } from '@smartcontact-hub/components';
+import { ScInputTextComponent as InputTextComponent } from '@smartcontact-hub/components';
+import { ScSearchComponent as SearchComponent } from '@smartcontact-hub/components';
+import { ScCheckboxComponent as CheckboxComponent } from '@smartcontact-hub/components';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 
 import {
@@ -85,6 +89,10 @@ const APP_DATA_PREFIX = 'sc-';
 @Component({
   selector: 'sc-sistema-page',
   imports: [
+    SelectComponent,
+    InputTextComponent,
+    SearchComponent,
+    CheckboxComponent,
     ButtonComponent,
     IconComponent,
     NumeracionEspecialSectionComponent,
@@ -142,6 +150,21 @@ export class SistemaPageComponent {
   protected readonly searchQuery = signal('');
   protected readonly selectedIds = signal<ReadonlySet<number>>(new Set());
   protected readonly confirmText = signal('');
+  /** Políticas de contraseña (maqueta): opciones traducidas para `sc-select`. */
+  protected readonly minLength = signal('chars_8');
+  protected readonly minLengthOptions = computed(() =>
+    ['chars_8', 'chars_10', 'chars_12', 'chars_16'].map((k) => ({
+      label: this.translate.instant('config.seguridad.policies.min_length_options.' + k),
+      value: k,
+    })),
+  );
+  protected readonly expiration = signal('never');
+  protected readonly expirationOptions = computed(() =>
+    ['never', 'days_30', 'days_60', 'days_90'].map((k) => ({
+      label: this.translate.instant('config.seguridad.policies.expiration_options.' + k),
+      value: k,
+    })),
+  );
   protected readonly processing = signal(false);
   protected readonly result = signal<RegenerationResult | null>(null);
 

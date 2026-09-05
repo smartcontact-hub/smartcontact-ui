@@ -92,12 +92,6 @@
   }
 }
 
-input[type='checkbox'] {
-  accent-color: var(--sc-bg-primary);
-  cursor: pointer;
-  vertical-align: middle;
-}
-
 /* Foto + nombre re-homed al cuerpo (experiment S59 "todo arriba"): misma
  * fila que en agent-form-page — foto a la izquierda, nombre ocupando el resto. */
 .form-identity {

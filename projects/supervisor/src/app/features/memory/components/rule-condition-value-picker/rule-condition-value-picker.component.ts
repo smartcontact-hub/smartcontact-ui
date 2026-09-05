@@ -1,4 +1,6 @@
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
+import { ScSearchComponent as SearchComponent } from '@smartcontact-hub/components';
+import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -47,7 +49,7 @@ export function refKey(ref: ConditionRef): string {
  */
 @Component({
   selector: 'sc-rule-condition-value-picker',
-  imports: [FormsModule, IconComponent, TranslateModule],
+  imports: [SearchComponent, ButtonComponent, FormsModule, IconComponent, TranslateModule],
   templateUrl: './rule-condition-value-picker.component.html',
   styleUrl: './rule-condition-value-picker.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

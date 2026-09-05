@@ -13,10 +13,7 @@
     @if (!isEditMode()) {
       <!-- Botón "Plantillas" solo en modo Create -->
       <div class="category-form__templates-cta">
-        <button type="button" class="category-form__templates-btn" (click)="openTemplatesDialog()">
-          <sc-icon [name]="layoutTemplateIcon" size="inherit" />
-          {{ 'memory.categories.form.templates_open' | translate }}
-        </button>
+        <sc-button variant="primary" appearance="outlined" size="sm" [icon]="layoutTemplateIcon" [label]="'memory.categories.form.templates_open' | translate" (clicked)="openTemplatesDialog()" />
         <span class="category-form__templates-hint">
           {{ 'memory.categories.form.templates_hint' | translate }}
         </span>
@@ -39,14 +36,7 @@
         {{ 'memory.categories.form.description_label' | translate }}
         <span class="category-form__required">*</span>
       </label>
-      <textarea
-        id="cat-description"
-        class="category-form__textarea"
-        rows="3"
-        [placeholder]="'memory.categories.form.description_placeholder' | translate"
-        [value]="description()"
-        (input)="setDescription($any($event.target).value)"
-      ></textarea>
+      <sc-textarea inputId="cat-description" [rows]="3" fluid [placeholder]="'memory.categories.form.description_placeholder' | translate" [value]="description()" (valueChange)="setDescription($event)" />
       <p class="category-form__hint">
         {{ 'memory.categories.form.description_hint' | translate }}
       </p>
@@ -86,16 +76,7 @@
 
         <div class="category-form__link-head">
           <h3>{{ 'memory.categories.linking.title' | translate }}</h3>
-          <button
-            type="button"
-            class="category-form__link-info"
-            [pTooltip]="'memory.categories.linking.tooltip' | translate"
-            tooltipPosition="right"
-            tabindex="0"
-            [attr.aria-label]="'memory.categories.linking.tooltip' | translate"
-          >
-            <sc-icon [name]="infoIcon" size="inherit" />
-          </button>
+          <sc-button variant="secondary" appearance="text" size="sm" [icon]="infoIcon" [ariaLabel]="'memory.categories.linking.tooltip' | translate" [pTooltip]="'memory.categories.linking.tooltip' | translate" tooltipPosition="right" tabindex="0" />
         </div>
 
         @if (linkedRules().length === 0 && !hasAnyRules()) {
@@ -232,16 +213,7 @@
                     </span>
                   </div>
                 </a>
-                <button
-                  type="button"
-                  class="category-form__link-unlink"
-                  (click)="onUnlinkRule(rule.id)"
-                  [attr.aria-label]="
-                    'memory.categories.linking.unlink_aria' | translate: { name: rule.name }
-                  "
-                >
-                  <sc-icon [name]="xIcon" size="inherit" />
-                </button>
+                <sc-button variant="secondary" appearance="text" size="sm" [icon]="xIcon" [ariaLabel]="'memory.categories.linking.unlink_aria' | translate: { name: rule.name }" (clicked)="onUnlinkRule(rule.id)" />
               </li>
             }
           </ul>

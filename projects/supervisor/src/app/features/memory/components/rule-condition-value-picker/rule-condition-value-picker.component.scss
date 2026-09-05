@@ -114,29 +114,6 @@
     bottom: calc(100% + 4px);
   }
 
-  &__search {
-    display: flex;
-    align-items: center;
-    gap: var(--sc-spacing-0-5);
-    padding: var(--sc-spacing-0-5) var(--sc-spacing-0-75);
-    border-bottom: 1px solid var(--sc-border-default);
-    color: var(--sc-text-secondary);
-
-    input {
-      flex: 1;
-      border: 0;
-      background: transparent;
-      outline: none;
-      font: inherit;
-      font-size: var(--sc-font-size-200);
-      color: var(--sc-text-primary);
-
-      &::placeholder {
-        color: var(--sc-text-secondary);
-      }
-    }
-  }
-
   &__list {
     overflow-y: auto;
     padding: var(--sc-spacing-0-25);
@@ -292,39 +269,17 @@
     color: var(--sc-text-secondary);
   }
 
-  &__link {
-    align-self: flex-start;
-    border: 0;
-    background: transparent;
-    color: var(--sc-color-sky-500);
-    font: inherit;
-    font-size: var(--sc-font-size-100);
-    font-weight: var(--sc-font-weight-medium);
-    cursor: pointer;
-    padding: 0;
+}
 
-    &:hover {
-      text-decoration: underline;
-    }
-  }
+/* «Seleccionar todo» es un `sc-button` del DS a lo ancho; el pie lleva la línea. */
+.vpick__selectall {
+  display: block;
+  border-top: 1px solid var(--sc-border-default);
+}
 
-  &__selectall {
-    display: flex;
-    align-items: center;
-    gap: var(--sc-spacing-0-5);
-    width: 100%;
-    padding: var(--sc-spacing-0-625) var(--sc-spacing-0-875);
-    border: 0;
-    border-top: 1px solid var(--sc-border-default);
-    background: transparent;
-    color: var(--sc-color-sky-500);
-    font: inherit;
-    font-size: var(--sc-font-size-100);
-    font-weight: var(--sc-font-weight-medium);
-    cursor: pointer;
-
-    &:hover {
-      background: var(--sc-color-slate-50);
-    }
-  }
+/* El buscador del panel es `sc-search` del DS; el panel pone la línea de abajo. */
+.vpick__search {
+  display: block;
+  padding: var(--sc-spacing-0-5) var(--sc-spacing-0-75);
+  border-bottom: 1px solid var(--sc-border-default);
 }

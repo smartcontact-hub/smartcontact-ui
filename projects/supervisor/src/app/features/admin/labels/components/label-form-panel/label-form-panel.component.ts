@@ -16,6 +16,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ScInputTextComponent as InputTextComponent } from '@smartcontact-hub/components';
+import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 import {
   ColorDotOption,
   ScColorDotPickerComponent as ColorDotPickerComponent,
@@ -38,6 +39,7 @@ export interface LabelFormSubmission {
 @Component({
   selector: 'sc-label-form-panel',
   imports: [
+    ButtonComponent,
     ColorDotPickerComponent,
     FormsModule,
     IconComponent,
