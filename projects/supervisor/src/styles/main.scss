@@ -198,13 +198,25 @@ table.table {
  * acción no la renderizan). Si algún día lleva dos, revisa si los dos quieren
  * suelo — un botón de solo icono no lo quiere.
  *
+ * 144 → 128 el 2026-09-05, al pasar el CTA a `size="sm"` (que es lo que instancia el
+ * Figma del Supervisor, nodo 2286:5355). Los anchos naturales se volvieron a medir con
+ * la talla nueva: Nueva label 106 · Nuevo grupo 113 · Nuevo agente 118 · Nuevo usuario
+ * 121 · Nueva plantilla 123. El 144 venía de la talla md y a sm dejaba el botón hueco:
+ * 128 queda por encima del más ancho de hoy y baja el aire sobrante de 38px a 6.
+ *
+ * ⚠️ FIGMA NO TIENE ESTE SUELO: dibuja los botones ajustados al texto (66.5 «Guardar»,
+ * 128.5 «Descartar cambios»). La divergencia es deliberada y no la arbitra el Kit,
+ * porque el problema que resuelve no cabe en una pantalla: es el SALTO del botón al
+ * navegar entre listas, que solo se ve en secuencia. Si algún día se prefiere el hug
+ * puro, esto se borra entero y se acepta un salto de ~17px en el borde izquierdo.
+ *
  * (Sustituye a una regla anterior con la misma intención que apuntaba a
  * `.page-header__actions`, un contenedor que dejó de existir: llevaba tiempo
  * siendo letra muerta y el salto había vuelto sin que nadie lo notara.)
  */
 .top-bar__actions button {
-  min-width: 144px;
-  max-width: 288px;
+  min-width: 128px;
+  max-width: 256px;
   justify-content: center;
 }
 
@@ -232,7 +244,15 @@ table.table {
  *
  * Lo arbitra el Kit: `common.button.padding.x/y` son alias por REFERENCIA de
  * `form.field.padding.x/y` (y lo mismo en sm/lg). El Kit modela el botón y el
- * campo como la misma caja, así que alinean a 36px. No lo vuelvas a poner.
+ * campo como la misma caja EN EL PADDING. No lo vuelvas a poner.
+ *
+ * ⚠️ Corregido el 2026-09-05 (DD-51): el párrafo de arriba cerraba diciendo «así que
+ * alinean a 36px», y eso era falso en su mitad más importante. El Kit iguala el padding,
+ * NO el interlineado: el texto del botón va en `AUTO` en sus maestros, así que el maestro
+ * mide 33 y el campo 34. Aquel `line-height: normal` estaba produciendo justo los 33 del
+ * diseño; se retiró por un motivo equivocado y el arreglo bueno acabó donde debía, en el
+ * tema. Sigue sin haber que ponerlo aquí, pero por la razón contraria: ahora el tema ya
+ * da `normal` a los controles, y repetirlo en la app sería pisar por pisar.
  */
 
 /*
