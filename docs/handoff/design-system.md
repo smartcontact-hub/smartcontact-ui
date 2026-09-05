@@ -212,8 +212,12 @@ tokens del DS**, medida igual en `.section-lead` y `.note` de la propia guía, s
   exención por LÍNEA `sc-replica-navegador` de `token-guard`. Las líneas nuevas la llevan escrita.
 ## ✅ 2026-09-05 · Segunda pasada del mapa: dos defectos en 18 componentes
 
-**Sello:** en la rama `feat/segunda-pasada-conexion`. Solo doc y una línea de la página; sin tocar
-Figma, porque los accionables cambian el dibujo y eso lo decide Rafa.
+**Sello:** en `main` desde `c19ec21`, en TRES PRs con CI verde leído en cada uno:
+[#39](https://github.com/smartcontact-hub/smartcontact-ui/pull/39) (la segunda pasada),
+[#41](https://github.com/smartcontact-hub/smartcontact-ui/pull/41) (la comparativa en cifras) y
+[#42](https://github.com/smartcontact-hub/smartcontact-ui/pull/42) (los hallazgos al mapa, y la
+corrección de abajo). Solo doc y una línea de la página; **sin tocar Figma**, porque los dos
+accionables cambian el dibujo y eso lo decide Rafa.
 
 **La pregunta que faltaba.** El mapa marcaba 92 variables como «no la usa ninguna capa», y esa
 marca no se puede dar por buena sola: puede significar que **no hay dónde atarla** o que **hay una
@@ -255,9 +259,17 @@ a mano** en sus 21 rutas. Validado con un control, que es lo que faltaba antes: 
 encuentra 1.450 declaraciones en las hojas del tema y ninguna en las suyas. Esto **corrige** una
 medida anterior que decía «el Tag tiene 13 overrides»: aquellas reglas LEEN el token, no lo pisan.
 
-**Aviso de terreno, otra vez.** Esta sesión perdió sus ediciones sin commitear cuando otra cambió
-de rama en el mismo working tree. No se perdió nada porque la otra sesión las rescató en
-`68c5af1`, pero **un worktree por tarea** sigue sin cumplirse y ya ha costado dos sustos.
+**Aviso de terreno: el árbol compartido costó tiempo TRES veces.** (1) Esta sesión perdió sus
+ediciones sin commitear cuando otra cambió de rama en el mismo working tree; no se perdió nada
+porque la otra las rescató en `68c5af1`. (2) El puente de Figma se cayó dos veces porque otra
+instancia ocupaba el puerto 9223. (3) Al final, el `typecheck` se puso rojo por trabajo a medias
+ajeno (el juego de `/validar` sin sus cuatro `nivel-*`), y hubo que **verificar en un worktree
+desacoplado** para aislarse. **Un worktree por tarea** sigue sin cumplirse.
+
+⚠️ **Arruga del guard, medida hoy**: dentro de un worktree DESACOPLADO (`git worktree add --detach`),
+`npm run ci:verdict` resuelve la rama como «HEAD» y responde «sin runs», aunque el CI esté
+corriendo. Hay que leerlo por el PR (`gh pr checks <n>`). Irónico, porque el worktree es justo lo
+que la norma pide.
 
 ## ✅ s43 · Mapa de conexión de variables Figma → tema → navegador
 
