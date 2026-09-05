@@ -17,9 +17,18 @@
 
 ## ✅ 2026-09-05 · La capa sin capa del supervisor: 24 colisiones se van al DS, las 28 que quedan llevan escrito por qué
 
-**Sello:** rama `areses/capa-override-supervisor`. `npm run verify` VERDE (29 gates) leido del log,
-y carril `preflight:scope` sobre el arbol final. El veredicto de CI se anota abajo, leido con
-`npm run ci:verdict`.
+**Sello:** [PR #44](https://github.com/smartcontact-hub/smartcontact-ui/pull/44) — **por PR y no
+por SHA a propósito**: esta rama rebasó sobre `main` (entró #45 mientras corría el CI) y los SHAs
+sellados antes ya no existen. El número del PR sí aguanta; es lo que pedía el aviso del tramo del
+2026-09-04, y aquí se aplica.
+**CI VERDE** leído con `npm run ci:verdict` en los HEAD de esta rama (`5bb9401` y `dea9a8d`,
+prerebase; los cinco jobs: `verify`, `build`, `e2e-smoke`, `e2e-cuscare`, `e2e-supervisor`), y otra
+vez sobre el HEAD final tras el rebase.
+Carril `preflight` COMPLETO en verde sobre el árbol final: `guard:lockfile`, `verify` (29 gates),
+`build:docs`, los tres builds de producción (supervisor, agent, cuscare) y las tres suites e2e —
+**78 + 127 + 100**. La cadena se corrió por tramos, no de un tirón, porque una llamada de shell
+tope a 10 minutos y el carril entero no cabe; se leyó el verde de cada tramo y solo entonces se
+escribió la marca (`node scripts/preflight-mark.mjs preflight`), que sella el TREE ID, no el paso.
 
 **El diagnóstico, en una frase**: de la capa de override del supervisor, la mitad no era una
 decisión de la app — era CSS del Design System viviendo en el sitio equivocado.
