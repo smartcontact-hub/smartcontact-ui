@@ -159,7 +159,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 61
+      "usedInSupervisor": 125
     },
     {
       "name": "card",
@@ -196,7 +196,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 16
+      "usedInSupervisor": 41
     },
     {
       "name": "chip",
@@ -221,7 +221,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 1
+      "usedInSupervisor": 5
     },
     {
       "name": "color-dot-picker",
@@ -655,7 +655,7 @@
         "sc-field-msg"
       ],
       "hasDemo": true,
-      "usedInSupervisor": 4
+      "usedInSupervisor": 7
     },
     {
       "name": "inputtext",
@@ -695,7 +695,7 @@
         "sc-field-msg"
       ],
       "hasDemo": true,
-      "usedInSupervisor": 29
+      "usedInSupervisor": 33
     },
     {
       "name": "keyboard-shortcuts",
@@ -905,7 +905,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 8
+      "usedInSupervisor": 14
     },
     {
       "name": "section-card",
@@ -970,7 +970,7 @@
         "sc-field-msg"
       ],
       "hasDemo": true,
-      "usedInSupervisor": 33
+      "usedInSupervisor": 36
     },
     {
       "name": "skeleton",
@@ -1094,7 +1094,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 1
+      "usedInSupervisor": 5
     },
     {
       "name": "toast",
