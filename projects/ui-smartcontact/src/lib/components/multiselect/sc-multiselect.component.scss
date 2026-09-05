@@ -104,11 +104,60 @@
   font-size: var(--sc-font-size-300);
 }
 
-/* Overlay panel size: PrimeNG renderea el panel en <body>, fuera del
- * scope encapsulado del componente. Los styles del panel viven en el
- * partial global `packages/design-system/styles/_sc-overlay-sizes.scss`
- * (importado desde main.scss del consumer). Aquí solo declaramos la
- * clase que el template aplica al panel via `panelStyleClass`. */
+/* ─── Overlay panel sizes ─────────────────────────────────────────────
+ * PrimeNG renderea el panel en <body>, fuera del scope encapsulado del
+ * componente. Como este componente usa ViewEncapsulation.None sus reglas ya
+ * son globales, así que el panel se estila desde aquí — igual que en
+ * `sc-select.component.scss`.
+ *
+ * Hasta el 2026-09-05 esto vivía en `_sc-overlay-sizes.scss`, un partial
+ * global del SUPERVISOR, con los px a pelo (5.25/8.75, 8.75/12.25). Estaba
+ * mal por dos motivos: la clase la emite ESTE componente
+ * (`createScPanelSizing`), así que el resto de consumidores (sc-docs, agent,
+ * cuscare) aplicaban `sc-multiselect-panel--sm` y no la estilaba nadie; y una
+ * regla de app SIN CAPA por encima del preset es una tercera capa que gana por
+ * reglamento del cascade, no porque nadie lo decidiera.
+ *
+ * ⚠️ Sin capa a propósito (el preset está en `@layer primeng`, y sin capa gana
+ * siempre). Esta es la opinión del componente sobre su propio preset.
+ *
+ * ⚠️ El Kit NO modela panel por tamaño: `multiselect.sm/lg.font.size` y
+ * `.padding.x/y` describen el TRIGGER, y `list.option.padding.x/y` es un valor
+ * único. La rampa del panel es decisión del DS, no un token; los valores sí
+ * salen de la escala v/14.
+ *
+ * ⚠️ La opción NO lleva `font-size` (solo el filtro). Es lo que ya hacía el
+ * partial del supervisor y se conserva tal cual para no cambiar el aspecto en
+ * esta retirada: medido el 2026-09-05 en `/conversaciones`, una opción de
+ * panel `sm` pinta a 16px mientras su filtro pinta a 12. Es una asimetría
+ * real contra `sc-select` (que sí lo baja) y está sin decidir. */
+.sc-multiselect-panel--sm {
+  .p-multiselect-header,
+  .p-multiselect-list,
+  .p-multiselect-option,
+  .p-multiselect-filter {
+    padding: var(--sc-spacing-0-375) var(--sc-spacing-0-625);
+  }
+
+  /* El buscador del header hereda chrome md por defecto y se ve desmesurado
+   * contra un trigger sm (S49 bug 5). */
+  .p-multiselect-filter {
+    font-size: var(--sc-font-size-100);
+  }
+}
+
+.sc-multiselect-panel--lg {
+  .p-multiselect-header,
+  .p-multiselect-list,
+  .p-multiselect-option,
+  .p-multiselect-filter {
+    padding: var(--sc-spacing-0-625) var(--sc-spacing-0-875);
+  }
+
+  .p-multiselect-filter {
+    font-size: var(--sc-font-size-300);
+  }
+}
 
 /* ────────────────────────────────────────────────────────────────────
  * Filled variant — Figma `Filled=True` node 6220:7054.

@@ -21,6 +21,14 @@
  * `-tbody`), así que el número de clases internas distintas no crece (lo
  * vigila `audit:primeng-coupling`). No añadas una nueva aquí sin mirar ese
  * tope.
+ *
+ * ⚠️ PISA AL TEMA, Y A PROPÓSITO. Global = SIN CAPA, y el preset va en
+ * `@layer primeng`: sin capa gana SIEMPRE, sin mirar especificidad. Los ocho
+ * bloques que colisionan con algo que el tema también publica (padding de
+ * celda, fondos de fila; medido 2026-09-05 en `/conversaciones`) ganan por
+ * reglamento del cascade, no por ser más específicos. Consecuencia práctica:
+ * ningún token del preset puede mover estos fondos ni estos paddings — se
+ * mueven aquí.
  * ------------------------------------------------------------------ */
 
 sc-datatable.list-table.memory-conversations {

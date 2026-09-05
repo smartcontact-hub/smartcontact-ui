@@ -54,7 +54,12 @@ export function createScFieldState(block: string, inputs: ScFieldStateInputs) {
  * Traducción de `sm/md/lg` al `size` de PrimeNG y a la clase del panel overlay.
  * La comparten los tres que abren panel: select, multiselect y datepicker.
  * `block` es el BEM del componente (`sc-select`), así que la clase sale
- * `sc-select-panel--sm`, tal cual la espera `_sc-overlay-sizes.scss`.
+ * `sc-select-panel--sm`, tal cual la espera el SCSS de ese mismo componente
+ * (`sc-select` / `sc-multiselect` / `sc-datepicker`, sección «Overlay panel
+ * sizes»). Los tres usan `ViewEncapsulation.None`, así que sus reglas alcanzan
+ * al panel aunque PrimeNG lo monte en <body>. Hasta el 2026-09-05 esos estilos
+ * vivían en un partial global del supervisor y el resto de consumidores
+ * aplicaba la clase sin que nadie la estilara.
  */
 export function createScPanelSizing(block: string, size: Signal<ScFieldSize>) {
   const pSize = computed<'small' | 'large' | undefined>(() => {

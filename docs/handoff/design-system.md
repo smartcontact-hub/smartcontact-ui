@@ -15,6 +15,163 @@
 > coordine. Los `sNN` de los tramos viejos se quedan como están: los nombran commits y
 > `docs/DECISIONS.md`, y reescribirlos solo desincronizaría el doc de su propia historia.
 
+## ✅ 2026-09-05 · La capa sin capa del supervisor: 24 colisiones se van al DS, las 28 que quedan llevan escrito por qué
+
+**Sello:** [PR #44](https://github.com/smartcontact-hub/smartcontact-ui/pull/44) — **por PR y no
+por SHA a propósito**: esta rama rebasó sobre `main` (entró #45 mientras corría el CI) y los SHAs
+sellados antes ya no existen. El número del PR sí aguanta; es lo que pedía el aviso del tramo del
+2026-09-04, y aquí se aplica.
+**CI VERDE** leído con `npm run ci:verdict` en los HEAD de esta rama (`5bb9401` y `dea9a8d`,
+prerebase; los cinco jobs: `verify`, `build`, `e2e-smoke`, `e2e-cuscare`, `e2e-supervisor`), y otra
+vez sobre el HEAD final tras el rebase.
+Carril `preflight` COMPLETO en verde sobre el árbol final: `guard:lockfile`, `verify` (29 gates),
+`build:docs`, los tres builds de producción (supervisor, agent, cuscare) y las tres suites e2e —
+**78 + 127 + 100**. La cadena se corrió por tramos, no de un tirón, porque una llamada de shell
+tope a 10 minutos y el carril entero no cabe; se leyó el verde de cada tramo y solo entonces se
+escribió la marca (`node scripts/preflight-mark.mjs preflight`), que sella el TREE ID, no el paso.
+
+**El diagnóstico, en una frase**: de la capa de override del supervisor, la mitad no era una
+decisión de la app — era CSS del Design System viviendo en el sitio equivocado.
+
+### Lo primero: la cifra de partida era otra (LEARNINGS #12)
+
+El hand-off anterior dejó «65 reglas sin capa, 24 pisan al tema, queda 1 arreglada → 23». Reproduje
+la medición y **el 23 sale exacto en `/config/aed/servicio`, y solo ahí**. El motivo es que PrimeNG
+inyecta la hoja de cada componente la primera vez que ese componente se renderiza: en esa ruta no
+hay tabla, ni menú, ni multiselect, así que sus reglas de tema no están cargadas y no pueden
+colisionar con nada. Barriendo 8 rutas, la cifra real es **67**.
+
+| Recuento | En una ruta | Barriendo 8 rutas |
+| --- | --- | --- |
+| Colisiones totales | 23 | **67** |
+| …del supervisor (`styles.css`) | 13 | **52** |
+| …de componentes del propio DS | 10 | **15** |
+
+Y el segundo matiz: **no todo lo «sin capa» es de la app**. De las 67, quince salen de
+`sc-select` / `sc-multiselect` / `sc-datepicker`, que usan `ViewEncapsulation.None` y por tanto
+también quedan fuera de `@layer primeng`. Eso no es deuda: es la capa de opinión del componente
+sobre su propio preset, que es como debe ser. La deuda eran las 52 del consumidor.
+
+### La sonda, y cómo sé que mide
+
+Recorre `document.styleSheets` llevando la CAPA en la mano (`CSSLayerBlockRule`, y `layerName` en
+los `@import`), parte las listas de selectores, separa pseudo-elemento y pseudo-clases de ESTADO, y
+cruza cada regla sin capa contra las reglas en capa que comparten propiedad y compuesto clave.
+
+⚠️ **Dos trampas, las dos me mordieron:**
+1. Una `CSSStyleRule` moderna **también** expone `.cssRules` (vacío). Un
+   `if (r.cssRules) { recurse; continue }` se salta TODAS las reglas de estilo. Hay que comprobar
+   `CSSStyleRule` PRIMERO.
+2. Si el compuesto clave del selector no lleva clase `.p-*` (`.p-datatable-tbody > tr > td`), un
+   cruce que exija `.p-*` en la clave lo descarta entero. Se me perdieron los 8 bloques de tabla
+   hasta que pasé a cruzar por TOKENS del compuesto clave (clase, elemento, atributo).
+
+**Red-check**: repuse el `.p-button { line-height: normal }` que retiró `cf7abab`, sin capa. La
+sonda pasó de 23 a 24 y nombró el hallazgo nuevo (`.p-button` contra `.p-component.p-button
+@primeng`, propiedad `line-height`); el botón medido pasó de **36px a 33px**, y al quitarlo volvió a
+36 y a 23. El instrumento enrojece con el fallo que lo motiva.
+
+### La tría, con el porqué de cada veredicto
+
+**PARCHE CADUCADO — retirado (6 colisiones, y desaparecen del todo)**
+`.sc-select-panel--sm/--lg` con `padding` en px a pelo, en `_sc-overlay-sizes.scss`. El DS ya
+publicaba el mismo bloque tokenizado en `sc-select.component.scss`, y **cuál de los dos ganaba lo
+decidía el orden del `<head>`**: medido, ganaba el del DS (posición 30 contra la 2 de `styles.css`).
+O sea que la copia de la app llevaba tiempo siendo letra muerta. `--sc-spacing-0-375` mide 5.25px y
+`--sc-spacing-0-625` mide 8.75px en este build: exactamente los números que estaban escritos a mano.
+
+**ES DEL SISTEMA — promovido al DS (18 colisiones cambian de dueño)**
+El resto de `_sc-overlay-sizes.scss`: `font-size` de los paneles de select, y los bloques enteros de
+`.sc-multiselect-panel--sm/--lg` y `.sc-datepicker-panel--sm/--lg`. La clase la emite el DS
+(`createScPanelSizing`), así que el consumidor solo aportaba los estilos — y el resto de apps
+aplicaba la clase sin que nadie la estilara. El partial se borra entero.
+
+Lo que dice el Kit, que es quien arbitra tamaño: **no modela panel por tamaño**.
+`list.option.padding.x/y` es un valor único, `select.sm/lg.font.size` describe el TRIGGER, y
+`datepicker.date.width/height` es `{scale.2}` (28px) **sin variante sm/lg** — la rampa 24.5/31.5
+llegó citando dos nodos de Figma, y un nodo no gana a un token (mismo patrón que el `line-height`
+del botón). Se conserva porque esta pasada retira acoplamiento y no rediseña, pero queda escrito al
+lado de la regla que el Kit dice otra cosa.
+
+**DELIBERADA — se queda, con el motivo escrito (28 colisiones, 23 bloques)**
+
+| Dónde | Qué pisa | Por qué se queda |
+| --- | --- | --- |
+| `main.scss` · micro-interacciones DD#21 | `transition` y `cursor` de `.p-button` | El tema decide cómo se VE un botón; la app, cómo responde al dedo. No hay token de micro-interacción |
+| `main.scss` · `.rules-menu-item--danger` | `color` y `background` del item de menú | Marca la acción IRREVERSIBLE: semántica de la app. Todo por tokens, nada inventado |
+| `main.scss` · popover del switcher | `padding` de `.p-popover-content` | El panel lleva su propio chrome |
+| `_sc-datatable-list.scss` (8) | padding de celda, fondos y bordes de fila | La gramática de tabla-lista: 54px de fila, cabecera silenciosa (S59) |
+| `_memory-conversation-table.scss` (7) | padding y fondos de fila | Los cuatro estados de transcripción, semántica de Memory |
+
+Las cinco llevan ahora un bloque `⚠️ PISA AL TEMA, Y A PROPÓSITO` que explica la mecánica y la
+consecuencia práctica: **ningún token del preset puede mover lo que se declare ahí**.
+
+⚠️ Corregí de paso un motivo que no se sostenía: el `!important` del padding del popover se
+justificaba por «specificity equiparable», y la especificidad ahí no decide nada (sin capa gana
+igual). Puede llevar tiempo sin hacer nada. Lo dejé, con eso escrito, porque quitarlo hay que medirlo
+con el popover abierto y ese switcher solo sale con el prototipo de muestras.
+
+### Antes y después, medido en runtime
+
+Los paneles `sm` de `/conversaciones` (abiertos a clic, no simulados), antes y después:
+
+| | Antes | Después |
+| --- | --- | --- |
+| opción del multiselect | 5.25px 8.75px · 16px | **igual** |
+| cabecera / lista / filtro | 5.25px 8.75px | **igual** |
+| filtro (font) | 12px | **igual** |
+| día del datepicker | 24.5 × 24.5 · 12px | **igual** |
+
+Barrido de regresión sobre 6 rutas (`/conversaciones`, `/config/aed/servicio`, `/admin/usuarios`,
+`/conversaciones/entidades`, `/config/aed/grupos`, `/admin/usuarios/crear`) comparando altura de
+botón, botón sm, campo, fila y cabecera de tabla, padding de celda y cabecera, y color del item de
+menú: **ninguna diferencia**. Los botones siguen a 36 (md) y 30.5 (sm).
+
+Y la sonda, tras el cambio: 67 → **61**, con el supervisor de 52 a **28** y ni una regla de panel.
+
+### El gate
+
+Va en `audit:primeng-coupling` como **sección D**, no en un script nuevo: ese audit ya vigila esta
+misma familia de fragilidad y ya está dentro de `verify` y de `ci.yml`, así que no toca la cadena ni
+arrastra la paridad preflight≡ci.yml ni el conteo de pasos de la doc.
+
+Cuenta bloques de regla cuyo selector menciona `.p-*` dentro del grafo `@use`/`@import` que cuelga de
+la hoja global que `angular.json` declara por app. Tope: **supervisor 26, resto 0**. El SCSS de
+componente del DS queda fuera a propósito. **Red-check hecho**: con el `.p-button { line-height:
+normal }` puesto, el gate sale rojo (27 contra 26) nombrando el fichero; sin él, verde.
+
+Es estático, así que sabe que la regla pisa al tema pero no qué propiedad concreta gana: eso sigue
+siendo trabajo de la sonda de runtime, y la receta está aquí arriba.
+
+### Efecto secundario que hubo que arreglar
+
+`tokens:guard` lista ficheros con `git ls-files` (el ÍNDICE) y los lee sin comprobar que existan:
+con el partial borrado y aún sin `git add`, `verify` moría con un ENOENT crudo de Node a mitad de la
+cadena, sin decir qué gate era. Ahora filtra por `existsSync`.
+
+⚠️ Y el aviso de siempre, que volvió a pasar: la notificación de la tarea en background dijo **exit
+code 0** cuando el `VERIFY_EXIT` real del log era **1**. El verde se confirma LEYENDO el log.
+
+### Lo que queda abierto (medido aquí, sin tocar)
+
+- **Meter el CSS de app en un `@layer`.** Arreglaría el reglamento del cascade de golpe, pero cambia
+  quién gana en las 28 colisiones restantes a la vez. Es un cambio de comportamiento global, no un
+  refactor: pide una sesión que pueda medir las 28.
+- **La opción del multiselect `sm` pinta a 16px y su filtro a 12.** `sc-select` sí baja la opción;
+  `sc-multiselect` no. Asimetría real, conservada tal cual para no mezclar rediseño con retirada.
+- **La rampa de tamaño del panel no existe en el Kit.** Si alguien quiere zanjarlo, el Kit dice un
+  solo tamaño de día (28px) y un solo padding de opción.
+- El aviso caducado de `NEXT-SESSION.md` sobre `:4280` («el único sin override») sigue ahí; lo
+  detectó el tramo anterior y sigue sin arreglar.
+
+### Nota de terreno
+
+`preview_start` arranca el servidor en el **directorio de lanzamiento de la sesión**, no en el
+worktree al que te muevas con `EnterWorktree`. Moverme a un worktree bien nombrado dejó el `ng serve`
+apuntando al viejo, sin `dist/`, y el síntoma fue `Cannot find module '@smartcontact-hub/icons'` —
+que parece una dependencia rota. Se ve en `preview_list`, campo `cwd`. Y `ng serve` **no vigila
+`dist/`**: tras un `npm run build` del DS hay que reiniciar el servidor, recargar no basta.
+
 ## ✅ 2026-09-05 · La guía de `/validar` se juega: «Detective de píxeles», cinco casos, y el simulador pasa a ser el cuarto
 
 **Sello:** sobre `409248a` (origin/main, PR #43), rama `feat/validar-juego`. El PR se abre al cerrar este
@@ -111,6 +268,7 @@ paso natural y está sin hacer.
   medida.
 - **La respuesta al equipo de Voz** está diagnosticada y argumentada (memoria
   `consumer-freezes-design-minimums`), pero el correo no está escrito.
+
 
 ## ✅ 2026-09-05 · El botón del supervisor medía 33 y el input 36, y no era cosa de tokens
 
