@@ -1,0 +1,118 @@
+<div class="pasos" aria-label="Progreso del caso">
+  @for (m of misiones; track m.id; let i = $index) {
+    <button
+      type="button"
+      class="paso"
+      [class.paso--on]="motor.idx() === i"
+      [class.paso--bien]="motor.hecha(i) === true"
+      [class.paso--mal]="motor.hecha(i) === false"
+      [attr.aria-current]="motor.idx() === i ? 'step' : null"
+      [attr.aria-label]="'Misión ' + (i + 1)"
+      (click)="motor.ir(i); elegida.set(null)"
+    ></button>
+  }
+</div>
+
+@if (mision(); as m) {
+  <article class="mision" [attr.data-m]="m.id">
+    <p class="mision__n">Misión {{ motor.idx() + 1 }} de {{ motor.total }}</p>
+    <h2 class="mision__t">{{ m.titulo }}</h2>
+    <p class="mision__d" [innerHTML]="m.texto"></p>
+
+    <div class="escena">
+      @switch (m.id) {
+        @case ('cero') {
+          <div class="dt">
+            <div class="dt__tabs">
+              <span class="dt__tab">Elements</span>
+              <span class="dt__tab dt-tab--on">Console</span>
+            </div>
+            <div class="consola">
+              <span class="consola__p" aria-hidden="true">&gt;</span>
+              <span class="consola__cursor" aria-hidden="true"></span>
+            </div>
+          </div>
+          <div class="opciones">
+            @for (o of m.opciones; track o.label; let i = $index) {
+              <button type="button" [class]="'opcion ' + clase(i)" (click)="elegir(i)" [disabled]="motor.contestada()">
+                <code>{{ o.label }}</code>
+              </button>
+            }
+          </div>
+        }
+
+        @case ('flechas') {
+          <div class="dt">
+            <div class="dt__tabs">
+              <span class="dt__tab dt-tab--on">Styles</span>
+              <span class="dt__tab">Computed</span>
+            </div>
+            <div class="styles">
+              <span class="styles__sel">.settings-card {{ '{' }}</span>
+              <div class="styles__linea">
+                <span class="styles__k">min-width</span>:
+                <span
+                  class="styles__v"
+                  role="spinbutton"
+                  tabindex="0"
+                  [class.styles__v--meta]="valor() === meta"
+                  [attr.aria-valuenow]="valor()"
+                  [attr.aria-valuetext]="valor() + ' píxeles'"
+                  aria-label="Valor de min-width: usa las flechas arriba y abajo"
+                  (keydown)="tecla($event)"
+                >{{ valor() }}px</span>;
+              </div>
+              <span class="styles__sel">{{ '}' }}</span>
+            </div>
+          </div>
+          <p class="meta" aria-live="polite">
+            Meta: <strong>{{ meta }}px</strong> · ahora <strong>{{ valor() }}px</strong>
+            @if (pulsaciones() >= 6 && !motor.contestada()) {
+              <span class="meta__pista">Pista: con Shift va de diez en diez.</span>
+            }
+          </p>
+          @if (!motor.contestada()) {
+            <button type="button" class="rendirse" (click)="rendirse()">No me sale, enséñame</button>
+          }
+        }
+
+        @default {
+          <div class="opciones">
+            @for (o of m.opciones; track o.label; let i = $index) {
+              <button type="button" [class]="'opcion ' + clase(i)" (click)="elegir(i)" [disabled]="motor.contestada()">
+                <span class="opcion__k" aria-hidden="true">{{ i + 1 }}</span>
+                {{ o.label }}
+              </button>
+            }
+          </div>
+        }
+      }
+    </div>
+
+    @if (motor.contestada()) {
+      <div class="veredicto" [class.es-mal]="!motor.estado()" aria-live="polite">
+        <span class="veredicto__i">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            @if (motor.estado()) {
+              <path d="M4 12.5l5.5 5.5L20 7" />
+            } @else {
+              <path d="M6 6l12 12M18 6L6 18" />
+            }
+          </svg>
+        </span>
+        <p class="veredicto__t">{{ motor.estado() ? 'Eso es' : 'No era eso' }}</p>
+        <p class="veredicto__d" [innerHTML]="elegidaOpcion()?.porque ?? porqueFlechas()"></p>
+      </div>
+      <div class="pie">
+        @if (!motor.esUltima()) {
+          <button type="button" class="siguiente" (click)="siguiente()">
+            Siguiente
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7" /></svg>
+          </button>
+        } @else if (motor.terminado()) {
+          <button type="button" class="repetir" (click)="repetir()">Repetir el caso</button>
+        }
+      </div>
+    }
+  </article>
+}

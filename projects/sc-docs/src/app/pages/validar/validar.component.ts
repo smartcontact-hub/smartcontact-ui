@@ -1,7 +1,8 @@
 import { ChangeDetectionStrategy, Component, signal } from '@angular/core';
 import { FormsModule } from '@angular/forms';
+import { RouterLink } from '@angular/router';
 
-import { ValidarPracticaComponent } from './practica.component';
+import { VALIDAR_KEY, desbloquear, estaDesbloqueado } from './validar-gate';
 
 /** Una de las siete comprobaciones del recorrido. */
 interface Check {
@@ -43,16 +44,13 @@ interface Piece {
  */
 @Component({
   selector: 'app-validar',
-  imports: [FormsModule, ValidarPracticaComponent],
+  imports: [FormsModule, RouterLink],
   templateUrl: './validar.component.html',
   styleUrl: './validar.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ValidarComponent {
-  private static readonly KEY = 'HalaMadrid123!';
-  private static readonly STORAGE = 'sc-validar-ok';
-
-  protected readonly unlocked = signal(this.wasUnlocked());
+  protected readonly unlocked = signal(estaDesbloqueado());
   protected readonly attempt = signal('');
   protected readonly failed = signal(false);
 
@@ -128,6 +126,21 @@ export class ValidarComponent {
     },
   ];
 
+  /** El auto-layout de Figma frente a CSS, con el truco que evita la confusión de cada fila. */
+  protected readonly autolayout: readonly Sizing[] = [
+    { figma: 'Hug contents', css: '(no escribas nada) · fit-content', how: 'Abrazar el contenido es el estado natural. Si no dices nada, hace Hug.' },
+    { figma: 'Fill container', css: '1fr (en rejilla) · flex: 1 (en fila)', how: '«Llévate lo que sobre». fr es fracción: 1fr 2fr reparte en un tercio y dos tercios.' },
+    { figma: 'Fixed (W con un número)', css: 'width: 881px', how: 'Si ves un número en px, es fixed. Da igual lo que haya alrededor.' },
+    { figma: 'Min width', css: 'min-width · el primer valor de minmax(a, b)', how: 'Un suelo. Va en el ELEMENTO, no en el contenedor.' },
+    { figma: 'Max width', css: 'max-width · el segundo valor de minmax(a, b)', how: 'Un techo. Si a = b, es un Fixed disfrazado.' },
+    { figma: 'Gap', css: 'gap', how: 'Mismo nombre, mismo concepto. La etiqueta «grid» lo pinta a rayas.' },
+    { figma: 'Wrap', css: 'flex-wrap: wrap', how: 'Si no lo pones, la fila no salta de línea nunca.' },
+    { figma: 'Alineación vertical (arriba / centro / abajo)', css: 'align-items: start · center · end', how: 'Vertical mientras la fila sea horizontal. Puede estirar (stretch = Fill).' },
+    { figma: 'Alineación horizontal (izq / centro / der)', css: 'justify-content: start · center · end', how: 'Viene de «justificar» un texto. Nunca estira, solo empuja.' },
+    { figma: 'Space between', css: 'justify-content: space-between', how: 'Separa las piezas a los extremos. Sin tope de ancho, a 1920 las aleja 900px.' },
+    { figma: 'Centrar el bloque en su hueco', css: 'margin-inline: auto (con max-width)', how: 'Lo que reparte el sobrante a los dos lados en vez de dejarlo todo a la derecha.' },
+  ];
+
   protected readonly pieces: readonly Piece[] = [
     { name: 'Chip', selector: '.p-chip', today: '14 / 20', ok: true },
     { name: 'Tag', selector: '.p-tag', today: '12 / 18', ok: true },
@@ -171,24 +184,12 @@ export class ValidarComponent {
   ].join('\n');
 
   protected submit(): void {
-    if (this.attempt() === ValidarComponent.KEY) {
+    if (this.attempt() === VALIDAR_KEY) {
       this.unlocked.set(true);
       this.failed.set(false);
-      try {
-        sessionStorage.setItem(ValidarComponent.STORAGE, '1');
-      } catch {
-        /* modo privado o almacenamiento bloqueado: se pedirá otra vez, sin más */
-      }
+      desbloquear();
       return;
     }
     this.failed.set(true);
-  }
-
-  private wasUnlocked(): boolean {
-    try {
-      return sessionStorage.getItem(ValidarComponent.STORAGE) === '1';
-    } catch {
-      return false;
-    }
   }
 }

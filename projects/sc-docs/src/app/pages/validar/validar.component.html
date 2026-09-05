@@ -400,11 +400,156 @@
       <p class="note">Saca una tabla con las siete cosas a la vez.</p>
     </section>
 
-    <!-- ── simulador: practicarlo sin salir de aquí ──
-         En su propio componente: el presupuesto de estilos de Angular es POR componente y
-         esta guía ya rozaba el techo. El porqué, en `practica.component.ts`. -->
-    <section aria-labelledby="practica-title">
-      <app-validar-practica />
+    <!-- ── un caso real: el ancho congelado (Contact Center del Supervisor, 2026-09-05) ── -->
+    <section aria-labelledby="resp-title" id="responsive">
+      <h2 id="resp-title" class="section-title">Un caso real: el ancho congelado</h2>
+      <p class="section-lead">
+        La pantalla Contact Center del Supervisor se veía bien a 1366, dejaba <strong>un tercio de la
+        pantalla vacío</strong> a 1920 y hacía scroll horizontal por debajo de 1280. Medido el 5 de
+        septiembre de 2026 en su entorno de desarrollo, con el inspector delante. Así se encontró el
+        motivo, en cuatro pasos que sirven para cualquier pantalla.
+      </p>
+      <ul class="moves">
+        <li>
+          <strong>1. Estrecha la ventana y busca lo que NO cambia.</strong> Pasa el ratón por las
+          líneas del árbol de Elements y lee el primer número de la etiqueta (es ancho × alto, como una
+          foto de 30 × 20). Todo lo que cambia está cumpliendo. Lo que se queda clavado es la
+          <strong>víctima</strong>. Aquí: <code>section.settings-card</code>, siempre 881.
+        </li>
+        <li>
+          <strong>2. Sube un escalón.</strong> El ancho de una pieza casi nunca lo decide ella: lo
+          decide quien la contiene. En la barra de migas del pie del panel, el padre es el de justo a
+          la izquierda: <code>div.content-grid</code>. Ese es el <strong>culpable</strong>, aunque él
+          se adapte perfectamente: lo que hace mal es la orden que le da a su hijo.
+        </li>
+        <li>
+          <strong>3. Lee la orden en Styles.</strong> Con el culpable seleccionado, la lista de la
+          derecha dice quién escribió cada instrucción. La que reparte las columnas es
+          <code>grid-template-columns</code>.
+        </li>
+        <li>
+          <strong>4. Cámbialo ahí mismo y mira.</strong> Doble clic sobre el valor, escribes otro,
+          Enter. La página responde al momento. Recargar (<code>Cmd + R</code>) lo deshace todo:
+          nada de lo que tocas en el panel es real.
+        </li>
+      </ul>
+      <pre class="snippet"><code>.content-grid {{ '{' }}
+  grid-template-columns: 14.6875rem minmax(55.0625rem, 55.0625rem);
+{{ '}' }}                         └─ 235 ─┘ └─ 881 como mínimo Y como máximo ─┘</code></pre>
+      <div class="verdicts">
+        <div class="verdict verdict--bad">
+          <p class="verdict__l">Lo que se implementó</p>
+          <code>minmax(881px, 881px)</code>
+          <p class="verdict__d">
+            Mínimo y máximo iguales: la tarjeta ni crece ni encoge. A 1920 sobran 668px a la derecha;
+            por debajo de 1280, scroll horizontal. Con zoom al 150% en un 1920 (1280 de ventana) queda
+            justo al límite; al 175% ya se rompe.
+          </p>
+        </div>
+        <div class="verdict verdict--ok">
+          <p class="verdict__l">Lo que pedía el diseño</p>
+          <code>minmax(500px, 1fr) · max-width: 1200px · margin-inline: auto</code>
+          <p class="verdict__d">
+            Un suelo por elemento y el resto fluido, con tope y centrado. Probado en su propia página:
+            ningún elemento se sale entre 1400 y 800 de ancho.
+          </p>
+        </div>
+      </div>
+      <pre class="snippet"><code>Lo suyo, a 1920 (el bloque pegado a la izquierda):
+|<------------------------ 1784: el marco ------------------------>|
+|<-235->|<28>|<---------- 881 ---------->|<------ 640 vacíos ------>|
+
+Lo nuestro, a 1920 (tope de 1200 y centrado):
+|<------------------------ 1856: el marco ------------------------>|
+|<- 328 ->|<-235->|<28>|<---------- 881 ---------->|<- 328 ->|</code></pre>
+      <p class="note">
+        La frase que resume el caso: <strong>un mínimo es un suelo, no una medida.</strong> El mínimo
+        va en el elemento (<code>min-width</code>); el tope va en el contenedor
+        (<code>max-width</code>). Aquí se cogió el ancho medido de la maqueta y se clavó como mínimo y
+        máximo de la columna entera. Y ojo al argumento: su propio requisito decía «el contenido podrá
+        ocupar un espacio mayor», y esa línea es justo lo que lo impide.
+      </p>
+    </section>
+
+    <!-- ── el auto-layout en los dos idiomas ── -->
+    <section aria-labelledby="al-title">
+      <h2 id="al-title" class="section-title">El auto-layout, en los dos idiomas</h2>
+      <p class="section-lead">
+        La tabla que hay que tener a mano cuando se lee una regla de tamaño o de alineación. Dos
+        preguntas distintas: <strong>Hug / Fill</strong> es <em>cuánto mide</em>; la
+        <strong>alineación</strong> es <em>dónde se coloca</em>.
+      </p>
+      <div class="table" role="table">
+        <div class="table__row table__row--head" role="row">
+          <span role="columnheader">En Figma</span>
+          <span role="columnheader">En el navegador</span>
+          <span role="columnheader">Truco</span>
+        </div>
+        @for (z of autolayout; track z.figma) {
+          <div class="table__row" role="row">
+            <span class="table__figma" role="cell">{{ z.figma }}</span>
+            <code class="table__css" role="cell">{{ z.css }}</code>
+            <span class="table__ex" role="cell">{{ z.how }}</span>
+          </div>
+        }
+      </div>
+      <p class="note">
+        <strong>La excepción que confunde:</strong> en el eje vertical, <code>align-items</code> sí
+        decide tamaño, porque por defecto vale <code>stretch</code> (Fill): al quitarlo, la pieza
+        bajita se estira hasta igualar a la más alta. <code>justify-content</code> nunca estira, solo
+        empuja. Y <code>align</code> = vertical solo mientras la fila sea horizontal: si el
+        auto-layout es vertical, se intercambian. No lo memorices: desmarca la casilla y mira hacia
+        dónde se mueve.
+      </p>
+    </section>
+
+    <!-- ── trucos ── -->
+    <section aria-labelledby="trucos-title">
+      <h2 id="trucos-title" class="section-title">Seis trucos del inspector</h2>
+      <ul class="moves">
+        <li>
+          <strong>Styles, no Computed.</strong> Styles dice quién escribió cada regla y deja
+          cambiarla. Computed solo da el número final. Y si un valor está en rem, al pasar el ratón
+          ya te lo enseña en px.
+        </li>
+        <li>
+          <strong>Escribe en px para probar.</strong> <code>minmax(500px, 1fr)</code> vale igual que
+          en rem; CSS mezcla sin problema. Si necesitas convertir, divide entre 16. Tus devs escriben
+          rem porque crece con la letra del navegador y porque la escala del sistema está en rem.
+        </li>
+        <li>
+          <strong>Flechas sobre un número.</strong> Clic en el valor y ↑ / ↓ lo mueven de uno en
+          uno; con Shift, de diez en diez. Encuentras el número bueno mirando, no calculando.
+        </li>
+        <li>
+          <strong>Desmarca la casilla.</strong> Cada regla de Styles tiene una casilla a la
+          izquierda: apagarla enseña qué hace sin borrarla.
+        </li>
+        <li>
+          <strong>Cmd + Shift + M para probar otro monitor.</strong> Aparecen dos cajitas, ancho y
+          alto: escribes 1920, 1366 o 1280 y la página se comporta como en ese monitor. Y con el
+          panel abierto, al estrechar la ventana Chrome pinta su ancho arriba a la derecha.
+        </li>
+        <li>
+          <strong><code>$0</code> en Console es «lo que tengo seleccionado».</strong>
+          <code>$0.getBoundingClientRect().width</code> da el ancho sin saber cómo se llama la pieza.
+          Y la etiqueta gris <code>grid</code> junto a una línea pinta las columnas y la separación.
+        </li>
+      </ul>
+    </section>
+
+    <!-- ── el juego ── -->
+    <section aria-labelledby="juego-title" class="jugar">
+      <h2 id="juego-title" class="section-title">Practícalo jugando</h2>
+      <p class="section-lead">
+        <strong>Detective de píxeles</strong>: cinco casos, del clic derecho al ancho congelado, con el
+        simulador de tokens dentro (el que antes vivía al pie de esta guía). No puedes romper nada y
+        el progreso se guarda solo.
+      </p>
+      <a class="jugar__btn" routerLink="juego">
+        Abrir el juego
+        <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7" /></svg>
+      </a>
     </section>
 
     <footer class="guide__foot">

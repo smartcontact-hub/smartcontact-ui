@@ -1,0 +1,191 @@
+<section class="juego" [class.juego--caso]="caso()">
+  <!-- ── HUD ── -->
+  <header class="hud">
+    <div class="hud__l">
+      @if (caso()) {
+        <button type="button" class="hud__volver" (click)="volver()">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            <path d="M15 5l-7 7 7 7" />
+          </svg>
+          Mapa
+        </button>
+      }
+      <p class="hud__t">
+        <span class="hud__lupa" aria-hidden="true">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round">
+            <circle cx="10.5" cy="10.5" r="6.5" />
+            <path d="M15.5 15.5 21 21" />
+          </svg>
+        </span>
+        Detective de píxeles
+        @if (casoActual(); as c) {
+          <span class="hud__caso">· Caso {{ c.n }} · {{ c.titulo }}</span>
+        }
+      </p>
+    </div>
+    <div class="hud__r">
+      <span class="hud__puntos" [attr.title]="'Aciertos en total'">
+        <b>{{ marcadorVivo() }}</b><span class="hud__de">/{{ totalMisiones() }}</span>
+      </span>
+      @if (racha() >= 2) {
+        <span class="hud__racha">racha ×{{ racha() }}</span>
+      }
+      <a class="hud__guia" routerLink="/validar">Guía</a>
+    </div>
+  </header>
+
+  <!-- ── aviso flotante ── -->
+  @if (aviso(); as a) {
+    <div class="toast" [class.toast--mal]="!a.ok" role="status" aria-live="polite">{{ a.texto }}</div>
+  }
+
+  <!-- ── confeti ── -->
+  @if (celebra()) {
+    <div class="confeti" aria-hidden="true">
+      @for (i of piezas; track i) {
+        <i [style.--i]="i"></i>
+      }
+    </div>
+  }
+
+  @if (!caso()) {
+    <!-- ── portada ── -->
+    <div class="portada">
+      <p class="portada__eyebrow">Un juego para aprender a leer el inspector del navegador</p>
+      <h1 class="portada__t">Cinco casos.<br />Cero código.</h1>
+      <p class="portada__d">
+        En cada caso hay algo que no cuadra en una página, y tu trabajo es encontrar
+        <strong>quién lo decide y por qué</strong>. No hace falta saber programar: hace falta saber
+        mirar, y eso se entrena.
+      </p>
+      <p class="portada__calm">
+        No puedes romper nada. Todo pasa en tu pantalla, y el progreso se guarda solo.
+      </p>
+    </div>
+
+    <!-- ── diploma ── -->
+    @if (todoHecho()) {
+      <div class="diploma">
+        <p class="diploma__eyebrow">Caso cerrado, los cinco</p>
+        <p class="diploma__r">{{ rango() }}</p>
+        <p class="diploma__d">
+          <strong>{{ totalAciertos() }} de {{ totalMisiones() }}</strong> a la primera, con una racha
+          máxima de <strong>{{ mejorRacha() }}</strong>.
+          @if (totalAciertos() < totalMisiones()) {
+            Los casos con menos estrellas son los que conviene repetir.
+          } @else {
+            Ni una fallada. Ya lees el inspector como quien lee un plano.
+          }
+        </p>
+        <a class="diploma__chuleta" routerLink="/validar" fragment="responsive">Ver la chuleta</a>
+      </div>
+    }
+
+    <!-- ── mapa ── -->
+    <ol class="mapa">
+      @for (c of casos; track c.id) {
+        <li>
+          <button
+            type="button"
+            class="caso"
+            [class.caso--hecho]="resultadoDe(c.id)"
+            (click)="abrir(c.id)"
+          >
+            <span class="caso__n">{{ c.n }}</span>
+            <span class="caso__cuerpo">
+              <span class="caso__t">{{ c.titulo }}</span>
+              <span class="caso__s">{{ c.sub }}</span>
+            </span>
+            <span class="caso__pie">
+              @if (resultadoDe(c.id); as r) {
+                <span class="estrellas" [attr.aria-label]="estrellas(r) + ' de 3 estrellas'">
+                  @for (k of [1, 2, 3]; track k) {
+                    <svg class="estrella" [class.estrella--on]="k <= estrellas(r)" viewBox="0 0 24 24" aria-hidden="true">
+                      <path d="M12 2.8l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.7l-5.9 3.1 1.2-6.5L2.5 9.7l6.6-.9z" />
+                    </svg>
+                  }
+                </span>
+                <span class="caso__r">{{ r.aciertos }} de {{ r.total }}</span>
+              } @else {
+                <span class="caso__r">{{ c.misiones }} misiones</span>
+              }
+              <span class="caso__ir" aria-hidden="true">
+                {{ resultadoDe(c.id) ? 'Repetir' : 'Jugar' }}
+                <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M9 5l7 7-7 7" />
+                </svg>
+              </span>
+            </span>
+          </button>
+        </li>
+      }
+    </ol>
+
+    @if (hayProgreso()) {
+      <div class="pie-mapa">
+        <p class="pie-mapa__t">
+          Mejor racha: <strong>{{ mejorRacha() }}</strong>
+          @if (hechos() && !todoHecho()) {
+            · {{ hechos() }} de {{ casos.length }} casos cerrados
+          }
+        </p>
+        <button type="button" class="pie-mapa__reset" (click)="reiniciarTodo()">Borrar el progreso</button>
+      </div>
+    }
+  } @else {
+    <!-- ── un caso ── -->
+    <div class="escena" [class.escena--doc]="caso() === 'puntos'">
+      @switch (caso()) {
+        @case ('inspector') {
+          <app-nivel-inspector (tiro)="tiro($event)" (cerrado)="cerrar('inspector', $event)" />
+        }
+        @case ('ancho') {
+          <app-nivel-ancho (tiro)="tiro($event)" (cerrado)="cerrar('ancho', $event)" />
+        }
+        @case ('idiomas') {
+          <app-nivel-idiomas (tiro)="tiro($event)" (cerrado)="cerrar('idiomas', $event)" />
+        }
+        @case ('puntos') {
+          <app-validar-practica (tiro)="tiro($event)" (cerrado)="cerrar('puntos', $event)" />
+        }
+        @case ('trucos') {
+          <app-nivel-trucos (tiro)="tiro($event)" (cerrado)="cerrar('trucos', $event)" />
+        }
+      }
+    </div>
+
+    @if (cierre(); as r) {
+      <div class="cierre" role="status" aria-live="polite">
+        <span class="estrellas estrellas--grande" [attr.aria-label]="estrellas(r) + ' de 3 estrellas'">
+          @for (k of [1, 2, 3]; track k) {
+            <svg class="estrella" [class.estrella--on]="k <= estrellas(r)" [style.--k]="k" viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M12 2.8l2.9 6 6.6.9-4.8 4.6 1.2 6.5L12 17.7l-5.9 3.1 1.2-6.5L2.5 9.7l6.6-.9z" />
+            </svg>
+          }
+        </span>
+        <p class="cierre__t">Caso cerrado</p>
+        <p class="cierre__d">
+          <strong>{{ r.aciertos }} de {{ r.total }}</strong> a la primera.
+          @if (r.aciertos === r.total) {
+            Impecable.
+          } @else if (r.aciertos >= r.total * 0.7) {
+            Buen ojo. Repite el caso cuando quieras para redondearlo.
+          } @else {
+            Las explicaciones de cada misión están arriba: vale más releerlas que repetir a ciegas.
+          }
+        </p>
+        <div class="cierre__acciones">
+          @if (siguienteCaso(); as s) {
+            <button type="button" class="cierre__siguiente" (click)="abrir(s.id)">
+              Siguiente caso: {{ s.titulo }}
+              <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+                <path d="M9 5l7 7-7 7" />
+              </svg>
+            </button>
+          }
+          <button type="button" class="cierre__volver" (click)="volver()">Volver al mapa</button>
+        </div>
+      </div>
+    }
+  }
+</section>
