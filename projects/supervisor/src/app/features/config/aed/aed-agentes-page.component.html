@@ -1,6 +1,7 @@
 <ng-template #topbarActions>
   @if (dirty()) {
     <sc-button
+      size="sm"
       variant="secondary"
       appearance="outlined"
       [label]="'common.discard_changes' | translate"
@@ -8,6 +9,7 @@
     />
   }
   <sc-button
+    size="sm"
     variant="primary"
     [disabled]="!canSave()"
     [loading]="saving()"
