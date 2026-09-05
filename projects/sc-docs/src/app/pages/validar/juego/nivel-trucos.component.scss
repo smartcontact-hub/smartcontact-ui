@@ -1,0 +1,229 @@
+@use 'juego-base' as *;
+
+/* Caso 5 · Trucos del oficio. Look propio del juego: ver `_juego-base.scss`. */
+
+:host {
+  display: block;
+}
+
+.pasos {
+  display: flex;
+  gap: 0.375rem;
+  margin-bottom: 1.25rem;
+}
+
+.paso {
+  width: 2rem;
+  height: 0.375rem;
+  border: 0;
+  border-radius: 999px;
+  background: rgba($texto, 0.15);
+  cursor: pointer;
+
+  &--on {
+    background: $ambar;
+  }
+
+  &--bien {
+    background: $verde;
+  }
+
+  &--mal {
+    background: $rojo;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $ambar;
+    outline-offset: 2px;
+  }
+}
+
+.mision {
+  @extend %mision;
+}
+
+.mision__n {
+  @extend %mision-n;
+}
+
+.mision__t {
+  @extend %mision-t;
+}
+
+.mision__d {
+  @extend %mision-d;
+}
+
+.escena {
+  margin-top: 1.25rem;
+}
+
+.dt {
+  @extend %nav;
+  box-shadow: none;
+}
+
+.dt__tabs {
+  @extend %dt-tabs;
+}
+
+.dt__tab {
+  @extend %dt-tab;
+  cursor: default;
+}
+
+/* la consola vacía con su cursor */
+.consola {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  min-height: 3.5rem;
+  padding: 0.75rem;
+  font-family: var(--sc-font-family-mono);
+  font-size: 12px; /* sc-replica-navegador: la consola de Chrome */
+}
+
+.consola__p {
+  color: $nav-activo;
+}
+
+.consola__cursor {
+  width: 1px;
+  height: 1rem;
+  background: $nav-texto;
+  animation: parpadeo 1s steps(2) infinite;
+  @include sin-movimiento {
+    animation: none;
+  }
+}
+
+@keyframes parpadeo {
+  to {
+    opacity: 0;
+  }
+}
+
+/* Styles con el valor editable por teclado */
+.styles {
+  padding: 0.75rem;
+  font-family: var(--sc-font-family-mono);
+  font-size: 12px; /* sc-replica-navegador: Styles de Chrome */
+  line-height: 1.8;
+  color: $nav-texto;
+}
+
+.styles__sel {
+  display: block;
+}
+
+.styles__linea {
+  padding-left: 1.25rem;
+}
+
+.styles__k {
+  color: $nav-clave;
+}
+
+.styles__v {
+  display: inline-block;
+  min-width: 3.5rem;
+  padding: 0 0.25rem;
+  border-radius: 0.2rem;
+  color: $nav-valor;
+  cursor: text;
+  transition: background 120ms ease;
+
+  &:hover {
+    background: $nav-gris;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $nav-activo;
+    outline-offset: 0;
+    background: #fff;
+  }
+
+  &--meta {
+    background: rgba($verde, 0.25);
+    animation: pop 320ms ease-out;
+    @include sin-movimiento {
+      animation: none;
+    }
+  }
+}
+
+.meta {
+  margin: 0.75rem 0 0;
+  font-size: var(--sc-font-size-200);
+  color: $texto-2;
+  font-variant-numeric: tabular-nums;
+
+  strong {
+    color: $texto;
+  }
+}
+
+.meta__pista {
+  display: block;
+  margin-top: 0.25rem;
+  color: $ambar-2;
+}
+
+.rendirse {
+  @include boton-juego(false);
+  margin-top: 0.75rem;
+}
+
+.opciones {
+  @extend %opciones;
+}
+
+.opcion {
+  @extend %opcion;
+}
+
+.opcion__k {
+  display: inline-flex;
+  width: 1.5rem;
+  height: 1.5rem;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.375rem;
+  background: rgba($texto, 0.1);
+  font-size: var(--sc-font-size-100);
+  font-weight: var(--sc-font-weight-bold);
+}
+
+.veredicto {
+  @extend %veredicto;
+}
+
+.veredicto__i {
+  @extend %veredicto-i;
+}
+
+.veredicto__t {
+  @extend %veredicto-t;
+}
+
+.veredicto__d {
+  @extend %veredicto-d;
+}
+
+.pie {
+  @extend %pie;
+}
+
+.siguiente {
+  @include boton-juego(true);
+
+  svg {
+    width: 1rem;
+    height: 1rem;
+  }
+}
+
+.repetir {
+  @include boton-juego(false);
+}
