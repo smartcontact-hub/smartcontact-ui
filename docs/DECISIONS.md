@@ -37,6 +37,53 @@
 
 ---
 
+## DD-51 · 2026-09-05 — El interlineado de los CONTROLES vuelve a la métrica de la fuente; la rampa se queda solo donde el Kit la ata
+
+**Contexto** · Rafa, mirando el Supervisor contra su Figma: *«los botones siguen igual de tamaño
+no lo ves? esto no puede pasar en nuestra plataforma, hay algo que está sobreescribiendo mal, o en
+la sc-docs está mal partiendo del ds»*. No era el consumidor: **sc-docs, que es el DS puro, salía
+igual de desviado**. Medido en el deploy y contra los maestros del Kit con el Desktop Bridge.
+
+**Dato que decide** · El padding, el `font-size` y el borde casaban EXACTOS con Figma en los tres
+tamaños. Todo el sobrante era el `line-height`, y el reparto no era uniforme:
+
+| Maestro del Kit | line-height en Figma | lo que ponía el tema |
+| --- | --- | --- |
+| button md/sm/lg, inputtext, select (trigger y opción) | `AUTO` (17 / 15 / 19 en Inter) | rampa 20 / 18 / 24 |
+| chip | atado a 20 | 20 ✔ |
+| tag | atado a 18 | 18 ✔ |
+| toast summary / detail | atado a 20 / 18 | 20 / 18 ✔ |
+
+O sea: el Kit **sí** arbitra el interlineado de las etiquetas, y **no** el de los controles — ahí
+dibuja lo que da la fuente. El tema aplicaba la rampa a los dos grupos por igual, y de ahí los
+3px de más en md y sm y los 5 de lg. Alturas: botón md 36 contra 33, sm 30.5 contra 27.5, lg 43.5
+contra 38.5, campo 36 contra 34. El icon-only lo confirma por partida doble: Figma lo dibuja
+35×33, 28×27.5 y 42×38.5, o sea **tampoco cuadrado**, y con el arreglo el código cae en esas
+mismas cifras.
+
+**Decisión** · `css.ts` parte su regla en dos familias. Los CONTROLES reciben el `font-size` del
+Kit y `line-height: normal`; las ETIQUETAS (chip, tag, toast, breadcrumb, context-menu) siguen
+leyendo `app.typography.*.line-height`. El token de `extend.ts` no cambia de valor: cambia de
+clientela.
+
+**Por qué `normal` y no quitar la regla** · Quitarla dejaría a los controles heredando el
+`line-height` del body de cada app (1.5 en el supervisor, o sea 21px a 14): peor que la rampa, y
+justo lo que DD-39 vino a evitar. `normal` desacopla igual del body y además es exactamente lo que
+significa el `AUTO` de Figma. Esto **acota DD-39**, no lo revierte: el 20 sigue siendo el
+interlineado md del sistema, y lo siguen leyendo el cuerpo y las etiquetas.
+
+**Consecuencias medidas** · Botón md 33, sm 27.5, icon-only 35×33 y 28×27.5, chip 34 y tag 25 sin
+moverse. La fila de tabla-lista del supervisor pasa de 56 a 53 porque su contenido más alto es el
+kebab (`list-table-grammar` actualizado). Dos flecos quedan ANOTADOS y sin tocar, porque no son
+interlineado: el botón lg sale 39.5 contra los 38.5 de Figma (Inter da 19.5 a 16px y el Kit
+redondea a 19), y el `tag` mide 25 contra 21.5 por su `padding` vertical (3.5 contra 1.75).
+
+**Lo que retira este DD** · El `.p-button { line-height: normal }` que el consumidor tenía y que
+`cf7abab` (PR #40) quitó estaba produciendo los 33px del diseño. Se retiró con el argumento de que
+el Kit modela botón y campo como la misma caja: cierto para el padding, pero el Kit no modela el
+interlineado del botón, así que aquel parche compensaba esta desviación real. El arreglo bueno era
+este, y vive en el tema, no en la app.
+
 ## DD-50 · 2026-09-05 — El estilo del overlay de un wrapper vive en SU componente del DS, y el CSS de app sin capa sobre `.p-*` pasa a trinquete
 
 **Contexto** · `cf7abab` retiró un `.p-button { line-height: normal }` del supervisor y el botón
@@ -664,6 +711,13 @@ Es una decisión de diseño, no un problema de paleta. Hasta que se tome, la fil
 ---
 
 ## DD-39 · 2026-08-24 — Tipografía de componente explícita en `css.ts` + line-height md unificado a 20
+
+> **Acotado por DD-51 (2026-09-05).** El punto 1 sigue en pie entero: los componentes declaran su
+> tipografía explícita y no heredan del `body`. Lo que cambió es el REPARTO del interlineado. Este
+> DD lo aplicó por igual a etiquetas y a controles, y medido después contra los maestros del Kit,
+> el Kit solo ata el interlineado de las etiquetas: en botón, campo, select y opciones su texto va
+> en `AUTO`. Por eso los controles pasaron a `normal` y salían 3px por encima del diseño. El 20 del
+> punto 2 no se toca: lo siguen leyendo el cuerpo y las etiquetas.
 
 **Contexto** · chip/toast/tag/opciones/breadcrumb/context-menu no estaban en los selectores de
 tipografía de `css.ts` — heredaban font-size y line-height del `body` de cada app. Funcionaba en
