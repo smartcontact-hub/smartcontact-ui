@@ -75,10 +75,7 @@
            apartado del índice → fuera del scan primario, difícil de pulsar
            sin querer. Reemplaza la banda danger-zone del cuerpo (S59). -->
       @if (mode() === 'edit') {
-        <button type="button" class="ipanel__delete" (click)="requestDelete()">
-          <sc-icon [name]="trashIcon" size="inherit" />
-          <span>{{ 'common.delete' | translate }}</span>
-        </button>
+        <sc-button class="ipanel__delete" variant="danger" appearance="text" size="sm" [icon]="trashIcon" [label]="'common.delete' | translate" (clicked)="requestDelete()" />|<sc-button class="ipanel__delete" variant="danger" appearance="text" size="sm" [icon]="trashIcon" [label]="'common.delete' | translate" (clicked)="requestDelete()" />
       }
     </aside>
 
@@ -304,14 +301,7 @@
                 <span class="perm-toggle-row__label">
                   {{ 'agents.form.permissions.manage_devices' | translate }}
                 </span>
-                <button
-                  type="button"
-                  class="perm-toggle-row__info"
-                  [title]="'agents.form.permissions.manage_devices_hint' | translate"
-                  [attr.aria-label]="'agents.form.permissions.manage_devices_hint' | translate"
-                >
-                  <sc-icon [name]="infoIcon" size="inherit" />
-                </button>
+                <sc-button variant="secondary" appearance="text" size="sm" [icon]="infoIcon" [ariaLabel]="'agents.form.permissions.manage_devices_hint' | translate" [title]="'agents.form.permissions.manage_devices_hint' | translate" />
               </div>
               <sc-toggleswitch
                 [checked]="form().permissions.manageDevices"
@@ -325,14 +315,7 @@
                 <span class="perm-toggle-row__label">
                   {{ 'agents.form.permissions.self_activate' | translate }}
                 </span>
-                <button
-                  type="button"
-                  class="perm-toggle-row__info"
-                  [title]="'agents.form.permissions.self_activate_hint' | translate"
-                  [attr.aria-label]="'agents.form.permissions.self_activate_hint' | translate"
-                >
-                  <sc-icon [name]="infoIcon" size="inherit" />
-                </button>
+                <sc-button variant="secondary" appearance="text" size="sm" [icon]="infoIcon" [ariaLabel]="'agents.form.permissions.self_activate_hint' | translate" [title]="'agents.form.permissions.self_activate_hint' | translate" />
               </div>
               <sc-toggleswitch
                 [checked]="form().permissions.selfActivate"
@@ -382,28 +365,10 @@
                       {{ 'agents.form.permissions.row_' + row | translate }}
                     </th>
                     <td class="perm-matrix__cell">
-                      <input
-                        type="checkbox"
-                        [checked]="matrixValue(row, 'llamada')"
-                        (change)="toggleMatrix(row, 'llamada')"
-                        [attr.aria-label]="
-                          ('agents.form.permissions.row_' + row | translate) +
-                          ' — ' +
-                          ('agents.form.permissions.col_llamada' | translate)
-                        "
-                      />
+                      <sc-checkbox [state]="(matrixValue(row, 'llamada')) ? 'all' : 'none'" (cycle)="toggleMatrix(row, 'llamada')" [ariaLabel]="('agents.form.permissions.row_' + row | translate) + ' — ' + ('agents.form.permissions.col_llamada' | translate)" />
                     </td>
                     <td class="perm-matrix__cell">
-                      <input
-                        type="checkbox"
-                        [checked]="matrixValue(row, 'transferencia')"
-                        (change)="toggleMatrix(row, 'transferencia')"
-                        [attr.aria-label]="
-                          ('agents.form.permissions.row_' + row | translate) +
-                          ' — ' +
-                          ('agents.form.permissions.col_transferencia' | translate)
-                        "
-                      />
+                      <sc-checkbox [state]="(matrixValue(row, 'transferencia')) ? 'all' : 'none'" (cycle)="toggleMatrix(row, 'transferencia')" [ariaLabel]="('agents.form.permissions.row_' + row | translate) + ' — ' + ('agents.form.permissions.col_transferencia' | translate)" />
                     </td>
                   </tr>
                 }
@@ -542,15 +507,7 @@
                           (keydown.space)="toggleSchedule(sched.id); $event.preventDefault()"
                           tabindex="0"
                         >
-                          <input
-                            type="checkbox"
-                            class="picker-list__check"
-                            [checked]="form().scheduleIds.has(sched.id)"
-                            (click)="$event.stopPropagation()"
-                            (change)="toggleSchedule(sched.id)"
-                            [attr.aria-label]="sched.name"
-                            tabindex="-1"
-                          />
+                          <sc-checkbox [state]="(form().scheduleIds.has(sched.id)) ? 'all' : 'none'" (cycle)="toggleSchedule(sched.id)" [ariaLabel]="sched.name" (click)="$event.stopPropagation()" />
                           <sc-icon [name]="phoneIcon" size="inherit" class="picker-list__row-icon" />
                           <span class="picker-list__row-label">{{ sched.name }}</span>
                           @if (sched.numbers) {
@@ -563,17 +520,7 @@
                   @if (assignedSchedules().length > 0) {
                     <div class="picker-chips">
                       @for (a of assignedSchedules(); track a.id) {
-                        <span class="picker-chip">
-                          {{ a.name }}
-                          <button
-                            type="button"
-                            class="picker-chip__remove"
-                            (click)="removeSchedule(a.id)"
-                            [attr.aria-label]="'common.remove' | translate: { name: a.name }"
-                          >
-                            ×
-                          </button>
-                        </span>
+                        <sc-chip [label]="a.name" removable [removeAriaLabel]="'common.remove' | translate: { name: a.name }" (removed)="removeSchedule(a.id)" />
                       }
                     </div>
                   }
@@ -680,13 +627,7 @@
                               (click)="toggleTemplate(tpl.id)"
                             >
                               <td class="picker-table__td-check">
-                                <input
-                                  type="checkbox"
-                                  [checked]="form().templateIds.has(tpl.id)"
-                                  (click)="$event.stopPropagation()"
-                                  (change)="toggleTemplate(tpl.id)"
-                                  [attr.aria-label]="tpl.title"
-                                />
+                                <sc-checkbox [state]="(form().templateIds.has(tpl.id)) ? 'all' : 'none'" (cycle)="toggleTemplate(tpl.id)" [ariaLabel]="tpl.title" (click)="$event.stopPropagation()" />
                               </td>
                               <td class="picker-table__td-title">{{ tpl.title }}</td>
                               <td class="picker-table__td-preview" [title]="tpl.body">
@@ -770,16 +711,7 @@
                     <span class="perm-toggle-row__label">
                       {{ 'agents.form.advanced.comportamiento.random_order' | translate }}
                     </span>
-                    <button
-                      type="button"
-                      class="perm-toggle-row__info"
-                      [attr.aria-label]="
-                        'agents.form.advanced.comportamiento.random_order_hint' | translate
-                      "
-                      [title]="'agents.form.advanced.comportamiento.random_order_hint' | translate"
-                    >
-                      <sc-icon [name]="infoIcon" size="inherit" />
-                    </button>
+                    <sc-button variant="secondary" appearance="text" size="sm" [icon]="infoIcon" [ariaLabel]="'agents.form.advanced.comportamiento.random_order_hint' | translate" [title]="'agents.form.advanced.comportamiento.random_order_hint' | translate" />
                   </div>
                   <sc-toggleswitch
                     [checked]="form().randomOrder"
@@ -818,18 +750,7 @@
                     <span class="perm-toggle-row__label">
                       {{ 'agents.form.advanced.integracion.dispositivos_externos' | translate }}
                     </span>
-                    <button
-                      type="button"
-                      class="perm-toggle-row__info"
-                      [attr.aria-label]="
-                        'agents.form.advanced.integracion.dispositivos_externos_hint' | translate
-                      "
-                      [title]="
-                        'agents.form.advanced.integracion.dispositivos_externos_hint' | translate
-                      "
-                    >
-                      <sc-icon [name]="infoIcon" size="inherit" />
-                    </button>
+                    <sc-button variant="secondary" appearance="text" size="sm" [icon]="infoIcon" [ariaLabel]="'agents.form.advanced.integracion.dispositivos_externos_hint' | translate" [title]="'agents.form.advanced.integracion.dispositivos_externos_hint' | translate" />
                   </div>
                   <sc-toggleswitch
                     [checked]="form().permissions.externalDevices"
@@ -864,17 +785,7 @@
                   />
                   <div class="language-chips">
                     @for (lang of form().languages; track lang) {
-                      <span class="language-chip">
-                        {{ lang }}
-                        <button
-                          type="button"
-                          class="language-chip__remove"
-                          (click)="onLanguageRemove(lang)"
-                          [attr.aria-label]="'common.languages.remove' | translate: { lang }"
-                        >
-                          ×
-                        </button>
-                      </span>
+                      <sc-chip [label]="lang" removable [removeAriaLabel]="'common.languages.remove' | translate: { lang }" (removed)="onLanguageRemove(lang)" />
                     }
                   </div>
                 </div>
@@ -895,16 +806,7 @@
                     <span class="perm-toggle-row__label">
                       {{ 'agents.form.advanced.sesion.login_ext_override' | translate }}
                     </span>
-                    <button
-                      type="button"
-                      class="perm-toggle-row__info"
-                      [attr.aria-label]="
-                        'agents.form.advanced.sesion.login_ext_override_hint' | translate
-                      "
-                      [title]="'agents.form.advanced.sesion.login_ext_override_hint' | translate"
-                    >
-                      <sc-icon [name]="infoIcon" size="inherit" />
-                    </button>
+                    <sc-button variant="secondary" appearance="text" size="sm" [icon]="infoIcon" [ariaLabel]="'agents.form.advanced.sesion.login_ext_override_hint' | translate" [title]="'agents.form.advanced.sesion.login_ext_override_hint' | translate" />
                   </div>
                   <sc-toggleswitch
                     [checked]="form().loginExtOverride"

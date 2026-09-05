@@ -151,46 +151,6 @@
 }
 
 /* ------------------------------------------------------------------ *
- * sc-icon-btn — icon-only button (export, column selector, etc).
- *
- * Square, ghost, 32px. Lives next to ghost buttons in the toolbar
- * but trades the text label for a tooltip. Saves ~70px and lets the
- * primary action breathe.
- * ------------------------------------------------------------------ */
-.sc-icon-btn {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 32px;
-  height: 32px;
-  color: var(--sc-icon-subtle);
-  background: transparent;
-  border: 1px solid var(--sc-border-default);
-  border-radius: var(--sc-radius-100);
-  cursor: pointer;
-  transition:
-    background var(--sc-transition-fast) var(--sc-easing-default),
-    color var(--sc-transition-fast) var(--sc-easing-default),
-    border-color var(--sc-transition-fast) var(--sc-easing-default);
-
-  &:hover {
-    background: var(--sc-bg-default);
-    color: var(--sc-text-secondary);
-    border-color: var(--sc-color-slate-300);
-  }
-
-  &:focus-visible {
-    outline: 2px solid var(--sc-border-focus);
-    outline-offset: 2px;
-  }
-
-  &:disabled {
-    opacity: 0.5;
-    cursor: not-allowed;
-  }
-}
-
-/* ------------------------------------------------------------------ *
  * Row + context menu — separator and destructive variant.
  *
  * Both `.row-menu__panel` (the inline ⋮ menu per row) and

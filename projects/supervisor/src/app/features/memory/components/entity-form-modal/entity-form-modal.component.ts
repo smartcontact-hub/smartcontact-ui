@@ -10,7 +10,7 @@ import {
 } from '@angular/core';
 import { FormsModule } from '@angular/forms';
 import { TranslateModule } from '@ngx-translate/core';
-import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
+import { ScTextareaComponent as TextareaComponent } from '@smartcontact-hub/components';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 
 import { ScInputTextComponent as InputTextComponent } from '@smartcontact-hub/components';
@@ -55,9 +55,9 @@ interface ListValueDraft {
 @Component({
   selector: 'sc-memory-entity-form-modal',
   imports: [
+    TextareaComponent,
     ButtonComponent,
     FormsModule,
-    IconComponent,
     InputTextComponent,
     DialogComponent,
     SelectComponent,

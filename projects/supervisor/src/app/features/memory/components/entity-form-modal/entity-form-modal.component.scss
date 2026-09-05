@@ -43,30 +43,6 @@
     color: var(--sc-text-secondary);
   }
 
-  &__textarea {
-    width: 100%;
-    min-height: 56px;
-    padding: var(--sc-spacing-0-875);
-    border: 1px solid var(--sc-border-default);
-    border-radius: var(--sc-radius-300);
-    background: var(--sc-bg-surface);
-    color: var(--sc-text-primary);
-    font-size: var(--sc-font-size-200);
-    line-height: 1.45;
-    resize: vertical;
-    font-family: inherit;
-
-    &:focus {
-      outline: none;
-      border-color: var(--sc-bg-primary);
-      box-shadow: 0 0 0 3px rgb(var(--sc-shadow-color-rgb) / 0.08);
-    }
-
-    &::placeholder {
-      color: var(--sc-text-secondary);
-    }
-  }
-
   &__select {
     width: 100%;
   }
@@ -104,60 +80,6 @@
     gap: var(--sc-spacing-0-5);
   }
 
-  &__list-input {
-    flex: 1;
-    padding: var(--sc-spacing-0-5) var(--sc-spacing-0-75);
-    border: 1px solid var(--sc-border-default);
-    border-radius: var(--sc-radius-200);
-    background: var(--sc-bg-surface);
-    color: var(--sc-text-primary);
-    font-size: var(--sc-font-size-200);
-
-    &:focus {
-      outline: none;
-      border-color: var(--sc-bg-primary);
-      box-shadow: 0 0 0 3px rgb(var(--sc-shadow-color-rgb) / 0.08);
-    }
-  }
-
-  &__list-remove {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 28px;
-    height: 28px;
-    border: 0;
-    border-radius: var(--sc-radius-200);
-    background: transparent;
-    color: var(--sc-text-secondary);
-    cursor: pointer;
-    transition: background-color 200ms ease-out;
-    flex-shrink: 0;
-
-    &:hover {
-      background: var(--sc-color-red-100);
-      color: var(--sc-color-red-700);
-    }
-  }
-
-  &__synonyms-trigger {
-    align-self: flex-start;
-    margin-left: var(--sc-spacing-0-5);
-    padding: 0;
-    border: 0;
-    background: transparent;
-    color: var(--sc-text-secondary);
-    font-size: var(--sc-font-size-50);
-    cursor: pointer;
-    text-decoration: underline dotted;
-    text-underline-offset: 2px;
-    transition: color 200ms ease-out;
-
-    &:hover {
-      color: var(--sc-text-primary);
-    }
-  }
-
   &__synonyms-block {
     display: flex;
     flex-direction: column;
@@ -171,26 +93,6 @@
     color: var(--sc-text-primary);
   }
 
-  &__synonyms-input {
-    padding: var(--sc-spacing-0-5) var(--sc-spacing-0-75);
-    border: 1px solid var(--sc-border-default);
-    border-radius: var(--sc-radius-200);
-    background: var(--sc-bg-surface);
-    color: var(--sc-text-primary);
-    font-size: var(--sc-font-size-100);
-    margin-right: 36px; /* alinea con input value (28px button + 8px gap) */
-
-    &:focus {
-      outline: none;
-      border-color: var(--sc-bg-primary);
-      box-shadow: 0 0 0 3px rgb(var(--sc-shadow-color-rgb) / 0.08);
-    }
-
-    &::placeholder {
-      color: var(--sc-text-secondary);
-    }
-  }
-
   &__list-empty {
     margin: 0;
     text-align: center;
@@ -200,25 +102,9 @@
     padding: var(--sc-spacing-0-875) 0;
   }
 
-  &__list-add {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--sc-spacing-0-25);
-    padding: var(--sc-spacing-0-5) var(--sc-spacing-0-75);
-    border: 1px dashed var(--sc-border-default);
-    border-radius: var(--sc-radius-200);
-    background: transparent;
-    color: var(--sc-text-link);
-    font-size: var(--sc-font-size-100);
-    font-weight: var(--sc-font-weight-medium);
-    cursor: pointer;
-    transition:
-      background-color 200ms ease-out,
-      border-color 200ms ease-out;
+}
 
-    &:hover {
-      background: var(--sc-bg-primary-subtle);
-      border-color: var(--sc-bg-primary);
-    }
-  }
+/* El valor de lista es `sc-inputtext` del DS; aquí solo que ocupe la fila. */
+.entity-form__list-input {
+  flex: 1;
 }

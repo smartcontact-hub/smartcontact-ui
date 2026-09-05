@@ -6,7 +6,7 @@
  * igual, y está medido:
  *
  *              preset sc-datatable   .table del supervisor
- *   alto fila       42px                  54px
+ *   alto fila       42px                  54px (56 desde el kebab del DS, 2026-09-05)
  *   cabecera        14px / 600            12px / 500
  *   color cab.      #4f5663               #8f97a3  (text-secondary)
  *   borde fila      border-default        border-subtle
@@ -74,7 +74,8 @@ sc-datatable.list-table {
     text-align: left;
   }
 
-  /* Cuerpo: el mismo padding generoso que daba las filas de 54px. */
+  /* Cuerpo: el mismo padding generoso que daba las filas de 54px (hoy 56: el
+   * kebab es un `sc-button` sm del DS, 30.5px, y la fila lo sigue). */
   .p-datatable-tbody > tr > td {
     padding: var(--sc-spacing-0-875);
 

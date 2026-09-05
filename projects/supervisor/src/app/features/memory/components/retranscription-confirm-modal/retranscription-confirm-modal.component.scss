@@ -74,45 +74,4 @@
     color: var(--sc-text-primary);
   }
 
-  &__gate-input {
-    /* SC input baseline (mismo height/padding que sc-inputtext) */
-    height: 36px;
-    padding: 0 var(--sc-spacing-0-875);
-    font-family: var(--sc-font-family-mono);
-    font-size: var(--sc-font-size-body-2);
-    letter-spacing: 0.05em;
-    background: var(--sc-bg-surface);
-    border: 1px solid var(--sc-border-default);
-    border-radius: var(--sc-radius-200);
-    color: var(--sc-text-primary);
-    outline: none;
-    transition:
-      border-color 140ms ease,
-      background 140ms ease;
-
-    &::placeholder {
-      letter-spacing: 0.05em;
-      color: var(--sc-text-subtle);
-    }
-
-    /* Era el único foco de la app que no era un `outline`: borde + halo, los
-     * dos en paleta cruda. El halo (`blue-100`) es claro y no voltea, así que
-     * en oscuro dejaba un cerco blanco alrededor del campo. Pasa al anillo de
-     * la casa; el `color-mix` sobre el token de foco da un halo que sigue al
-     * tema en vez de ignorarlo. */
-    &:focus-visible {
-      border-color: var(--sc-border-focus);
-      box-shadow: 0 0 0 3px color-mix(in srgb, var(--sc-border-focus) 25%, transparent);
-    }
-
-    &.is-invalid {
-      border-color: var(--sc-border-error);
-      background: var(--sc-bg-danger-subtle);
-    }
-
-    &.is-valid {
-      border-color: var(--sc-color-green-500);
-      background: var(--sc-bg-success-subtle);
-    }
-  }
 }

@@ -107,91 +107,11 @@
     color: var(--sc-toast-message);
   }
 
-  &__action {
-    flex: 0 0 auto;
-    align-self: flex-start;
-    /* 6px Y off-scale spacing (4 → 8 has no in-between step) — kept raw. */
-    padding: var(--sc-spacing-0-5) var(--sc-spacing-0-875);
-    border: 1px solid var(--sc-border-default);
-    border-radius: var(--sc-radius-200);
-    background: var(--sc-bg-surface);
-    color: var(--sc-toast-title);
-    font-family: var(--sc-font-family-primary);
-    font-size: var(--sc-font-size-100);
-    font-weight: var(--sc-font-weight-medium);
-    line-height: 1;
-    cursor: pointer;
-    /* Scale 1.04 grows the chip ~1px each side — enough to feel reactive
-     * without shifting layout (transforms don't trigger CLS). */
-    transform-origin: center;
-    transition:
-      background var(--sc-transition-fast, 120ms) ease,
-      transform var(--sc-transition-fast, 120ms) ease;
-
-    &:hover {
-      background: var(--sc-bg-subtle);
-      transform: scale(1.04);
-    }
-    &:active {
-      transform: scale(0.98);
-    }
-    &:focus-visible {
-      outline: 2px solid var(--sc-border-focus);
-      outline-offset: 2px;
-    }
-  }
-
-  /* Solid variant: action button reads as the dominant CTA when the
-   * toast carries a high-stakes message (e.g. "Cambios sin guardar —
-   * Reanudar"). Trigger with `data-action="solid"` on the toast root,
-   * or `.sc-toast__action--solid` on the button. */
-  &[data-action='solid'] &__action,
-  &__action--solid {
-    background: var(--sc-bg-primary);
-    border-color: var(--sc-bg-primary);
-    color: var(--sc-text-on-primary);
-
-    &:hover {
-      background: var(--sc-bg-primary-hover);
-      border-color: var(--sc-bg-primary-hover);
-    }
-  }
-
-  &__close {
-    /* Figma `toast/close/button/width|height: 24.5`,
-     * `toast/close/button/border/radius: 12.25` (= circular). */
-    flex: 0 0 auto;
-    align-self: flex-start;
-    margin-left: 4px;
-    width: var(--sc-toast-close-button-width);
-    height: var(--sc-toast-close-button-height);
-    padding: 0;
-    border: 0;
-    background: transparent;
-    color: var(--sc-toast-close);
-    cursor: pointer;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    border-radius: var(--sc-toast-close-button-radius);
-
-    &:hover {
-      background: rgb(0 0 0 / 0.06);
-    }
-    &:focus-visible {
-      outline: 2px solid var(--sc-border-focus);
-      outline-offset: 2px;
-    }
-  }
 }
 
-@media (prefers-reduced-motion: reduce) {
-  .sc-toast__action {
-    transition: background var(--sc-transition-fast, 120ms) ease;
-
-    &:hover,
-    &:active {
-      transform: none;
-    }
-  }
+/* Deshacer y cerrar son `sc-button` del DS; el toast solo decide dónde caen. */
+.sc-toast__action,
+.sc-toast__close {
+  flex: 0 0 auto;
+  align-self: flex-start;
 }

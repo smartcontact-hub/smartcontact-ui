@@ -70,28 +70,15 @@
 @import 'primeicons/primeicons.css';
 
 /*
- * Iconos del DS: Material Symbols **Outlined**, self-hospedado. Antes replicábamos
- * el contrato `.sc-icon` apuntando al CDN Outlined (porque el DS servía Rounded);
- * ahora el DS publica Outlined, así que importamos su `material-symbols.css`
- * directamente — fuente única, sin CDN. Los codepoints son idénticos entre estilos.
+ * Iconos del DS: Material Symbols **Outlined**, self-hospedado, y el CATÁLOGO de
+ * glifos (`.sc-icon-font--NAME::before`) del paquete de iconos, igual que sc-docs.
+ * Antes solo entraba la fuente y la app declaraba a mano ocho glifos «para los
+ * menús de PrimeNG». Ese atajo caducó el 2026-09-05: `sc-button [icon]` (los
+ * kebab, exportar, quitar, info…) pinta el icono por esa misma clase, y con la
+ * lista a mano doce botones salían VACÍOS sin que nada avisara. El catálogo
+ * entero son 33 KB gzip; un botón sin icono no tiene precio que lo compense.
  */
-@import '../../../ui-smartcontact-icons/src/lib/styles/material-symbols.css';
-
-/*
- * Iconos de los menús de PrimeNG. `MenuItem.icon` es una CLASE CSS, no un
- * componente, así que ahí no cabe `<sc-icon>`: usamos la convención
- * `.sc-icon-font--NAME` del DS (el base `.sc-icon-font::before` ya trae la
- * familia Material del import de arriba; aquí solo el glifo). Declaramos SOLO
- * los que usamos — el catálogo generado del DS son miles de reglas y sobra.
- */
-.sc-icon-font--edit::before { content: 'edit'; }
-.sc-icon-font--content_copy::before { content: 'content_copy'; }
-.sc-icon-font--delete::before { content: 'delete'; }
-.sc-icon-font--pause::before { content: 'pause'; }
-.sc-icon-font--play_arrow::before { content: 'play_arrow'; }
-.sc-icon-font--description::before { content: 'description'; }
-.sc-icon-font--auto_awesome::before { content: 'auto_awesome'; }
-.sc-icon-font--warning::before { content: 'warning'; }
+@import '../../../ui-smartcontact-icons/src/lib/styles/index.css';
 
 html,
 body {
@@ -273,7 +260,6 @@ table.table {
  */
 .p-button,
 .empty-state__cta,
-.sc-toast__action,
 .rename__btn,
 .profile-tabs__tab {
   transition:
@@ -328,26 +314,6 @@ table.table {
     }
   }
 
-  .type-filter-panel__reset {
-    background: transparent;
-    border: 0;
-    padding: 4px 8px;
-    border-radius: var(--sc-radius-100);
-    color: var(--sc-text-link);
-    font-size: var(--sc-font-size-50);
-    font-weight: var(--sc-font-weight-medium);
-    cursor: pointer;
-    transition: background-color 200ms ease-out;
-
-    &:hover {
-      background: var(--sc-bg-primary-subtle);
-    }
-    &:focus-visible {
-      outline: 2px solid var(--sc-border-focus);
-      outline-offset: 1px;
-    }
-  }
-
   .type-filter-panel__body {
     max-height: 420px;
     overflow-y: auto;
@@ -386,14 +352,6 @@ table.table {
     font-size: var(--sc-font-size-200);
     color: var(--sc-text-primary);
 
-    input[type='checkbox'] {
-      width: 14px;
-      height: 14px;
-      accent-color: var(--sc-bg-primary);
-      cursor: pointer;
-      flex-shrink: 0;
-    }
-
     &:hover span {
       color: var(--sc-text-primary);
     }
@@ -419,22 +377,6 @@ table.table {
       line-height: var(--sc-line-height-subtitle-2);
       font-weight: var(--sc-font-weight-subtitle-2);
       color: var(--sc-text-primary);
-    }
-  }
-
-  .category-filter-panel__clear {
-    background: transparent;
-    border: 0;
-    padding: 4px 8px;
-    border-radius: var(--sc-radius-100);
-    color: var(--sc-text-link);
-    font-size: var(--sc-font-size-50);
-    font-weight: var(--sc-font-weight-medium);
-    cursor: pointer;
-    transition: background-color 200ms ease-out;
-
-    &:hover {
-      background: var(--sc-bg-primary-subtle);
     }
   }
 
@@ -470,13 +412,6 @@ table.table {
       background: var(--sc-bg-primary-subtle);
     }
 
-    input[type='checkbox'] {
-      width: 14px;
-      height: 14px;
-      accent-color: var(--sc-bg-primary);
-      cursor: pointer;
-      flex-shrink: 0;
-    }
   }
 
   .category-filter-panel__foot {
@@ -484,21 +419,6 @@ table.table {
     padding: var(--sc-spacing-0-875) var(--sc-spacing-1-125);
   }
 
-  .category-filter-panel__toggle-all {
-    width: 100%;
-    padding: var(--sc-spacing-0-5);
-    border: 0;
-    background: transparent;
-    border-radius: var(--sc-radius-100);
-    font-size: var(--sc-font-size-200);
-    color: var(--sc-text-primary);
-    cursor: pointer;
-    transition: background-color 200ms ease-out;
-
-    &:hover {
-      background: var(--sc-bg-elevated);
-    }
-  }
 }
 
 /* Memory · Status pills compartidas (rules + categories).
@@ -621,33 +541,6 @@ table.table {
   white-space: nowrap;
 }
 
-/* Kebab button compartido (rules + categories + entities + memoryviews
- * futuras). Mismo origen — promovido a global en iter 11a.
- */
-.rules-kebab-btn {
-  width: 28px;
-  height: 28px;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  border: 0;
-  border-radius: var(--sc-radius-100);
-  background: transparent;
-  color: var(--sc-text-secondary);
-  cursor: pointer;
-  transition: background-color 200ms ease-out;
-
-  &:hover {
-    background: var(--sc-bg-elevated);
-    color: var(--sc-text-primary);
-  }
-
-  &:focus-visible {
-    outline: 2px solid var(--sc-border-focus);
-    outline-offset: 2px;
-  }
-}
-
 /* Memory · MockSampleSwitcher popover (S39 prototype switcher).
  *
  * `<p-popover>` con appendTo:body monta fuera del scope component → reglas
@@ -757,7 +650,6 @@ table.table {
 @media (prefers-reduced-motion: reduce) {
   .p-button,
   .empty-state__cta,
-  .sc-toast__action,
   .rename__btn,
   .profile-tabs__tab {
     transition: none;
@@ -766,4 +658,13 @@ table.table {
       transform: none;
     }
   }
+}
+
+/* Kebab de fila: es un `sc-button` del DS. El host de un custom element es
+ * `inline` por defecto, y dentro de una celda eso abre una caja de línea con
+ * hueco de descendente bajo el botón (la fila crecía 3px de más). Solo se
+ * fija cómo se asienta en la celda; el tamaño lo pone el DS. */
+.rules-kebab-btn {
+  display: inline-flex;
+  vertical-align: middle;
 }

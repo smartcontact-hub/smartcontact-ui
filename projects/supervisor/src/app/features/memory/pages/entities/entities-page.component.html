@@ -115,14 +115,7 @@
 </ng-template>
 
 <ng-template #actionsTpl let-entity>
-  <button
-    type="button"
-    class="rules-kebab-btn"
-    [attr.aria-label]="'memory.entities.cols.more' | translate"
-    (click)="$event.stopPropagation(); setMenuTarget(entity); kebabMenu.toggle($event)"
-  >
-    <sc-icon [name]="kebabIcon" size="inherit" />
-  </button>
+  <sc-button class="rules-kebab-btn" variant="secondary" appearance="text" size="sm" [icon]="kebabIcon" [ariaLabel]="'memory.entities.cols.more' | translate" (clicked)="$event.stopPropagation(); setMenuTarget(entity); kebabMenu.toggle($event)" />
 </ng-template>
 
 <!-- Menú kebab ÚNICO y compartido (antes 1 <p-menu> por fila): su modelo es un

@@ -28,18 +28,7 @@
         <span class="retrans-confirm__gate-token">{{ gateToken() }}</span>
         {{ 'memory.player.retranscribe.type_to_confirm_post' | translate }}
       </label>
-      <input
-        id="retrans-confirm-input"
-        type="text"
-        class="retrans-confirm__gate-input"
-        [class.is-invalid]="confirmText().length > 0 && !isValid()"
-        [class.is-valid]="isValid()"
-        [placeholder]="gateToken()"
-        autocomplete="off"
-        spellcheck="false"
-        [ngModel]="confirmText()"
-        (ngModelChange)="confirmText.set($event)"
-      />
+      <sc-inputtext inputId="retrans-confirm-input" fluid [invalid]="confirmText().length > 0 && !isValid()" [placeholder]="gateToken()" autocomplete="off" [value]="confirmText()" (valueChange)="confirmText.set($event)" />
     </div>
   </div>
 

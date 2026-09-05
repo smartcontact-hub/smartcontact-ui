@@ -60,10 +60,6 @@
     color: var(--sc-text-secondary);
   }
 
-  &__empty .add-btn {
-    margin-left: auto;
-  }
-
   &__summary {
     display: flex;
     align-items: flex-start;
@@ -136,22 +132,6 @@
     align-items: center;
     gap: var(--sc-spacing-0-25);
 
-    input[type='number'] {
-      width: 60px;
-      min-width: 0;
-      padding: var(--sc-spacing-0-25) var(--sc-spacing-0-5);
-      border: 1px solid var(--sc-border-default);
-      border-radius: var(--sc-radius-200);
-      background: var(--sc-bg-surface);
-      color: var(--sc-text-primary);
-      font: inherit;
-      font-size: var(--sc-font-size-200);
-
-      &:focus {
-        outline: none;
-        border-color: var(--sc-bg-primary);
-      }
-    }
   }
 
   &__num-sep {
@@ -169,32 +149,6 @@
     min-width: 0;
   }
 
-  &__remove {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 28px;
-    height: 28px;
-    border: 0;
-    border-radius: var(--sc-radius-200);
-    background: transparent;
-    color: var(--sc-text-secondary);
-    font-size: var(--sc-font-size-200);
-    cursor: pointer;
-    transition:
-      background-color 150ms ease,
-      color 150ms ease;
-
-    &:hover {
-      background: var(--sc-color-red-50);
-      color: var(--sc-color-red-600);
-    }
-
-    &:focus-visible {
-      outline: 2px solid var(--sc-border-focus);
-      outline-offset: 1px;
-    }
-  }
 }
 
 /* ─── Segmented control (todas / cualquiera) ─── */
@@ -278,33 +232,6 @@
     color: var(--sc-text-secondary);
   }
 
-  &__remove {
-    display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    width: 26px;
-    height: 26px;
-    margin-left: auto;
-    border: 0;
-    border-radius: var(--sc-radius-200);
-    background: transparent;
-    color: var(--sc-text-secondary);
-    font-size: var(--sc-font-size-200);
-    cursor: pointer;
-    transition:
-      background-color 150ms ease,
-      color 150ms ease;
-
-    &:hover {
-      background: var(--sc-color-red-50);
-      color: var(--sc-color-red-600);
-    }
-
-    &:focus-visible {
-      outline: 2px solid var(--sc-border-focus);
-      outline-offset: 1px;
-    }
-  }
 }
 
 /* ─── Conectores Y/O clicables ─── */
@@ -343,77 +270,6 @@
     font-weight: var(--sc-font-weight-bold);
     letter-spacing: 0.04em;
     line-height: 1.4;
-  }
-}
-
-/* ─── Añadir condición · text-button de acento con "+" (patrón del Figma) ───
- * Deja de ser una caja dashed: la acción de añadir no compite con los controles
- * de la fila, solo se ofrece. */
-
-.add-btn {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--sc-spacing-0-375);
-  align-self: flex-start;
-  padding: var(--sc-spacing-0-375) var(--sc-spacing-0-5);
-  margin-left: calc(-1 * var(--sc-spacing-0-5));
-  border: 0;
-  border-radius: var(--sc-radius-100);
-  background: transparent;
-  color: var(--sc-color-sky-600);
-  font-family: inherit;
-  font-size: var(--sc-font-size-200);
-  font-weight: var(--sc-font-weight-medium);
-  cursor: pointer;
-  transition:
-    background-color 150ms ease,
-    color 150ms ease;
-
-  &:hover {
-    background: var(--sc-bg-info-subtle);
-  }
-
-  &:focus-visible {
-    outline: 2px solid var(--sc-border-focus);
-    outline-offset: 2px;
-  }
-
-  &--sm {
-    margin-top: var(--sc-spacing-0-25);
-    font-size: var(--sc-font-size-100);
-  }
-}
-
-:host-context(.sc-dark) .add-btn {
-  color: var(--sc-color-sky-400);
-}
-
-/* ─── Añadir grupo (acción secundaria, menor jerarquía) ─── */
-
-.add-group {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--sc-spacing-0-25);
-  align-self: flex-start;
-  margin-top: var(--sc-spacing-0-25);
-  padding: var(--sc-spacing-0-25) var(--sc-spacing-0-5);
-  border: 0;
-  border-radius: var(--sc-radius-200);
-  background: transparent;
-  color: var(--sc-text-secondary);
-  font-family: inherit;
-  font-size: var(--sc-font-size-100);
-  font-weight: var(--sc-font-weight-medium);
-  cursor: pointer;
-  transition: color 150ms ease;
-
-  &:hover {
-    color: var(--sc-bg-primary);
-  }
-
-  &:focus-visible {
-    outline: 2px solid var(--sc-border-focus);
-    outline-offset: 2px;
   }
 }
 
@@ -462,4 +318,9 @@
       grid-column: 1 / -1;
     }
   }
+}
+
+/* Quitar condición: `sc-button` del DS; solo su sitio (a la derecha de la fila). */
+.cond-row__remove {
+  margin-left: auto;
 }

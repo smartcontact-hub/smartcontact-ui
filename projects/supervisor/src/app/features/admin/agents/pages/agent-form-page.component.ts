@@ -15,6 +15,7 @@ import { ActivatedRoute, Router } from '@angular/router';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
+import { ScChipComponent as ChipComponent } from '@smartcontact-hub/components';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 
 import { DirtyAware } from '@core/guards';
@@ -118,6 +119,7 @@ interface FormState {
 @Component({
   selector: 'sc-agent-form-page',
   imports: [
+    ChipComponent,
     ButtonComponent,
     DeleteEntityDialogComponent,
     FormSectionNavComponent,

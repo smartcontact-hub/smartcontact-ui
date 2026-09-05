@@ -183,21 +183,6 @@
     color: var(--sc-text-subtle);
   }
 
-  &__select {
-    padding: var(--sc-spacing-0-5) var(--sc-spacing-0-875);
-    font-family: inherit;
-    font-size: var(--sc-font-size-200);
-    color: var(--sc-text-primary);
-    background: var(--sc-bg-surface);
-    border: 1px solid var(--sc-border-default);
-    border-radius: var(--sc-radius-100);
-    cursor: pointer;
-    outline: none;
-
-    &:focus {
-      border-color: var(--sc-color-blue-500);
-    }
-  }
 }
 
 /* ---------- Regeneración masiva (ex-Seguridad) ---------- */
@@ -297,56 +282,6 @@
     font-size: var(--sc-font-size-100);
     line-height: var(--sc-line-height-200);
     color: var(--sc-text-secondary);
-  }
-}
-
-.search {
-  position: relative;
-  margin-bottom: var(--sc-spacing-0-875);
-
-  &__icon {
-    position: absolute;
-    left: var(--sc-spacing-0-875);
-    top: 50%;
-    transform: translateY(-50%);
-    color: var(--sc-icon-subtle);
-    pointer-events: none;
-  }
-
-  &__input {
-    width: 100%;
-    padding: var(--sc-spacing-0-5) var(--sc-spacing-1-125) var(--sc-spacing-0-5)
-      var(--sc-spacing-2-75);
-    font-size: var(--sc-font-size-200);
-    color: var(--sc-text-primary);
-    background: var(--sc-bg-surface);
-    border: 1px solid var(--sc-border-default);
-    border-radius: var(--sc-radius-100);
-    outline: none;
-
-    &::placeholder {
-      color: var(--sc-text-subtle);
-    }
-
-    &:focus {
-      border-color: var(--sc-color-blue-500);
-    }
-  }
-
-  &__clear {
-    position: absolute;
-    right: var(--sc-spacing-0-5);
-    top: 50%;
-    transform: translateY(-50%);
-    background: transparent;
-    border: 0;
-    color: var(--sc-icon-subtle);
-    cursor: pointer;
-    padding: var(--sc-spacing-0-25);
-
-    &:hover {
-      color: var(--sc-text-secondary);
-    }
   }
 }
 
@@ -465,21 +400,6 @@
     gap: var(--sc-spacing-0-875);
   }
 
-  &__input {
-    flex: 1;
-    padding: var(--sc-spacing-0-5) var(--sc-spacing-0-875);
-    font-family: inherit;
-    font-size: var(--sc-font-size-200);
-    color: var(--sc-text-primary);
-    background: var(--sc-bg-surface);
-    border: 1px solid var(--sc-border-default);
-    border-radius: var(--sc-radius-100);
-    outline: none;
-
-    &:focus {
-      border-color: var(--sc-color-red-400);
-    }
-  }
 }
 
 .result {
@@ -499,10 +419,6 @@
     gap: var(--sc-spacing-0-5);
   }
 
-  &__check {
-    color: var(--sc-icon-success);
-  }
-
   &__count {
     font-size: var(--sc-font-size-200);
     font-weight: var(--sc-font-weight-medium);
@@ -516,16 +432,16 @@
   }
 }
 
-input[type='checkbox'] {
-  accent-color: var(--sc-bg-primary);
-  cursor: pointer;
-  vertical-align: middle;
-}
-
 @media (max-width: 640px) {
   .theme-row,
   .data-row {
     flex-direction: column;
     align-items: flex-start;
   }
+}
+
+/* El buscador es `sc-search` del DS; aquí solo el hueco que deja debajo. */
+.search {
+  display: block;
+  margin-bottom: var(--sc-spacing-0-875);
 }

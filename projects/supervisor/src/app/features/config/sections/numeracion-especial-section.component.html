@@ -11,27 +11,7 @@
       <p>{{ 'config.aed.info' | translate }}</p>
     </div>
 
-    <div class="search">
-      <sc-icon [name]="searchIcon" size="inherit" class="search__icon" />
-      <input
-        type="text"
-        class="search__input"
-        [placeholder]="'config.aed.search_placeholder' | translate"
-        [value]="searchQuery()"
-        (input)="searchQuery.set($any($event.target).value)"
-        (keydown)="onSearchKey($event)"
-      />
-      @if (searchQuery()) {
-        <button
-          type="button"
-          class="search__clear"
-          (click)="searchQuery.set('')"
-          [attr.aria-label]="'labels.clear_search' | translate"
-        >
-          <sc-icon [name]="closeIcon" size="inherit" />
-        </button>
-      }
-    </div>
+    <sc-search class="search" [placeholder]="'config.aed.search_placeholder' | translate" [value]="searchQuery()" (valueChange)="searchQuery.set($event)" (keydown)="onSearchKey($event)" [clearAriaLabel]="'labels.clear_search' | translate" />
 
     <div class="country-list">
       @if (filtered().length === 0) {
@@ -46,14 +26,7 @@
             [class.country-row--selected]="isSelected(country.code)"
             (click)="toggle(country.code)"
           >
-            <input
-              type="checkbox"
-              class="country-row__check"
-              [checked]="isSelected(country.code)"
-              (click)="$event.stopPropagation()"
-              (change)="toggle(country.code)"
-              [attr.aria-label]="country.name"
-            />
+            <sc-checkbox [state]="(isSelected(country.code)) ? 'all' : 'none'" (cycle)="toggle(country.code)" [ariaLabel]="country.name" (click)="$event.stopPropagation()" />
             <span class="country-row__flag" aria-hidden="true">{{ country.flag }}</span>
             <span class="country-row__name">{{ country.name }}</span>
             <span class="country-row__code">{{ country.code }}</span>
@@ -78,19 +51,7 @@
         <span class="chips__label">{{ 'config.aed.selected_chips' | translate }}</span>
         <div class="chips__list">
           @for (country of selectedCountries(); track country.code) {
-            <span class="chip">
-              <span class="chip__flag" aria-hidden="true">{{ country.flag }}</span>
-              <span class="chip__name">{{ country.name }}</span>
-              <span class="chip__prefix">{{ country.prefix }}</span>
-              <button
-                type="button"
-                class="chip__remove"
-                (click)="remove(country.code)"
-                [attr.aria-label]="'common.delete' | translate"
-              >
-                <sc-icon [name]="closeIcon" size="inherit" />
-              </button>
-            </span>
+            <sc-chip [label]="country.flag + ' ' + country.name + ' ' + country.prefix" removable [removeAriaLabel]="'common.delete' | translate" (removed)="remove(country.code)" />
           }
         </div>
       </div>

@@ -8,10 +8,7 @@
         <p class="cond-builder__empty-title">{{ 'memory.rules.builder.cond.empty_title' | translate }}</p>
         <p class="cond-builder__empty-body">{{ 'memory.rules.builder.cond.empty_body' | translate }}</p>
       </div>
-      <button type="button" class="add-btn" (click)="addGroup()">
-        <sc-icon [name]="addIcon" size="inherit" />
-        {{ 'memory.rules.builder.cond.add_condition' | translate }}
-      </button>
+      <sc-button variant="primary" appearance="text" size="sm" [icon]="addIcon" [label]="'memory.rules.builder.cond.add_condition' | translate" (clicked)="addGroup()" />
     </div>
   } @else if (tree.groups.length === 1) {
     <ng-container *ngTemplateOutlet="rows; context: { $implicit: tree.groups[0], flat: true }" />
@@ -26,14 +23,7 @@
       <section class="group">
         <header class="group__head">
           <span class="group__num">{{ 'memory.rules.builder.cond.group_n' | translate: { n: gi + 1 } }}</span>
-          <button
-            type="button"
-            class="group__remove"
-            (click)="removeGroup(group.id)"
-            [attr.aria-label]="'memory.rules.builder.cond.remove_group' | translate"
-          >
-            <sc-icon [name]="closeIcon" size="inherit" />
-          </button>
+          <sc-button class="group__remove" variant="secondary" appearance="text" size="sm" [icon]="closeIcon" [ariaLabel]="'memory.rules.builder.cond.remove_group' | translate" (clicked)="removeGroup(group.id)" />
         </header>
 
         <ng-container *ngTemplateOutlet="rows; context: { $implicit: group, flat: false }" />
@@ -42,10 +32,7 @@
   }
 
   @if (tree.groups.length >= 1) {
-    <button type="button" class="add-group" (click)="addGroup()">
-      <sc-icon [name]="addIcon" size="inherit" />
-      {{ 'memory.rules.builder.cond.add_group' | translate }}
-    </button>
+    <sc-button variant="secondary" appearance="text" size="sm" [icon]="addIcon" [label]="'memory.rules.builder.cond.add_group' | translate" (clicked)="addGroup()" />
   }
 
 </div>
@@ -115,21 +102,9 @@
           } @else {
             <div class="cond-row__value cond-row__num">
               @if (cond.operator === 'between') {
-                <input
-                  type="number"
-                  min="0"
-                  aria-label="Duración mínima"
-                  [value]="numAmount(cond)"
-                  (input)="setAmount(group.id, cond.id, $any($event.target).value, 1)"
-                />
+                <sc-inputnumber size="sm" [min]="0" [placeholder]="'Duración mínima'" [value]="numAmount(cond)" (valueChange)="setAmount(group.id, cond.id, $event ?? 0, 1)" />
                 <span class="cond-row__num-sep">y</span>
-                <input
-                  type="number"
-                  min="0"
-                  aria-label="Duración máxima"
-                  [value]="numAmount2(cond)"
-                  (input)="setAmount(group.id, cond.id, $any($event.target).value, 2)"
-                />
+                <sc-inputnumber size="sm" [min]="0" [placeholder]="'Duración máxima'" [value]="numAmount2(cond)" (valueChange)="setAmount(group.id, cond.id, $event ?? 0, 2)" />
                 <sc-select
                   appendTo="body"
                   class="cond-row__num-unit"
@@ -152,13 +127,7 @@
                   (valueChange)="setDurationPreset(group.id, cond.id, $event)"
                 />
                 @if (isCustomDur(cond)) {
-                  <input
-                    type="number"
-                    min="0"
-                    aria-label="Duración"
-                    [value]="numAmount(cond)"
-                    (input)="setAmount(group.id, cond.id, $any($event.target).value, 1)"
-                  />
+                  <sc-inputnumber size="sm" [min]="0" [placeholder]="'Duración'" [value]="numAmount(cond)" (valueChange)="setAmount(group.id, cond.id, $event ?? 0, 1)" />
                   <sc-select
                     appendTo="body"
                     class="cond-row__num-unit"
@@ -174,14 +143,7 @@
             </div>
           }
 
-          <button
-            type="button"
-            class="cond-row__remove"
-            (click)="removeCondition(group.id, cond.id)"
-            [attr.aria-label]="'memory.rules.builder.cond.remove_condition' | translate"
-          >
-            <sc-icon [name]="closeIcon" size="inherit" />
-          </button>
+          <sc-button class="cond-row__remove" variant="secondary" appearance="text" size="sm" [icon]="closeIcon" [ariaLabel]="'memory.rules.builder.cond.remove_condition' | translate" (clicked)="removeCondition(group.id, cond.id)" />
         </div>
 
         @if (issuesForCond(cond.id).length) {
@@ -201,9 +163,6 @@
       </div>
     }
 
-    <button type="button" class="add-btn add-btn--sm" (click)="addCondition(group.id)">
-      <sc-icon [name]="addIcon" size="inherit" />
-      {{ 'memory.rules.builder.cond.add_condition' | translate }}
-    </button>
+    <sc-button variant="primary" appearance="text" size="sm" [icon]="addIcon" [label]="'memory.rules.builder.cond.add_condition' | translate" (clicked)="addCondition(group.id)" />
   </div>
 </ng-template>
