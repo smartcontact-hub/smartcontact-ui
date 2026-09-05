@@ -8,11 +8,25 @@
 @use 'forms';
 @use 'table-elements';
 
-/* SCDS overlay sizes — partial global porque PrimeNG renderea overlays
- * en <body>, fuera del scope encapsulado de los wrappers SCDS. Aplica a
- * multi-select / select / datepicker panels cuando el wrapper propaga
- * size=sm|lg via `panelStyleClass`. Patrón análogo a `_sc-toast.scss`. */
-@use 'sc-overlay-sizes';
+/* AQUÍ HABÍA un `@use 'sc-overlay-sizes'`: los tamaños sm/lg de los paneles de
+ * select / multiselect / datepicker, en un partial global de ESTA app. Se fue
+ * al DS el 2026-09-05, a los tres componentes que emiten la clase
+ * (`createScPanelSizing` en `sc-field.ts` la pone via `panelStyleClass`).
+ *
+ * Por qué se fue, y por qué no vuelve:
+ *   · La clase es del DS. Aquí solo llegaban los estilos, así que sc-docs,
+ *     agent y cuscare aplicaban `sc-*-panel--sm` y no la estilaba nadie.
+ *   · El bloque de `select` estaba DUPLICADO: `sc-select.component.scss` ya
+ *     publicaba el mismo padding tokenizado, y cuál de los dos ganaba lo
+ *     decidía el orden de inserción de las hojas (medido: ganaba el del DS,
+ *     por ir después). Nadie había decidido eso.
+ *   · Los valores iban en px a pelo (5.25, 8.75, 12.25, 24.5, 31.5) contra la
+ *     norma del repo. Los cinco tienen token exacto en la escala v/14.
+ *   · Y siendo CSS de app SIN CAPA sobre selectores `.p-*`, ganaba al preset
+ *     (`@layer primeng`) por reglamento del cascade, no por especificidad: la
+ *     misma mecánica que dejó el botón en 33px hasta `cf7abab`.
+ *
+ * Si vuelve a hacer falta tocar un panel, se toca en el componente del DS. */
 @use 'sc-animations';
 
 /* SCDS list-table chrome — partial global unscoped. Promovido S55 cuando
@@ -236,6 +250,15 @@ table.table {
 
 /*
  * Global button micro-interactions (DD#21).
+ *
+ * ⚠️ PISA AL TEMA, Y A PROPÓSITO. Esta regla va SIN CAPA y el preset del DS va
+ * en `@layer primeng`; en CSS lo sin-capa gana siempre a lo en-capa, sin mirar
+ * especificidad. Lo que pisa es la `transition` que el tema publica para
+ * `.p-button` (y el `cursor` de `:disabled`). Se quiere así: el tema decide
+ * cómo SE VE un botón, esta app decide cómo RESPONDE al dedo, y eso último es
+ * suyo (DD#21) — no hay token de micro-interacción en el Kit que arbitre.
+ * No confundir con el caso del `line-height` (retirado en `cf7abab`): aquel
+ * peleaba contra una MEDIDA de la que el Kit ya era dueño, y por eso se fue.
  *
  * Hover/focus changes use a short transition so the state feels alive but
  * not draggy. Press (`:active`) snaps with `scale(0.98)` and zero
@@ -553,7 +576,15 @@ table.table {
  *
  * Va aquí y no en un SCSS de componente porque el `<p-menu>` monta con
  * `appendTo="body"`, fuera del scope encapsulado de la página. PrimeNG deja la
- * clase en el `<li>`, así que se baja al enlace y a su icono. */
+ * clase en el `<li>`, así que se baja al enlace y a su icono.
+ *
+ * ⚠️ PISA AL TEMA, Y A PROPÓSITO: sin capa, así que gana al preset
+ * (`@layer primeng`) por reglamento del cascade, no por especificidad. Pisa el
+ * `color` de `.p-menu-item-link`/`.p-menu-item-icon` y el `background` del
+ * hover. Se quiere: el tema pinta el menú neutro y esto marca la acción
+ * IRREVERSIBLE, que es semántica de la app, no del sistema. Los tres valores
+ * salen de tokens (`--sc-text-danger`, `--sc-bg-danger-subtle`), así que no hay
+ * medida inventada contra la que el Kit pueda arbitrar. */
 .rules-menu-item--danger {
   .p-menu-item-link {
     color: var(--sc-text-danger);
@@ -633,6 +664,17 @@ table.table {
  *     el token --sc-z-popover (1080) no llega a aplicarse.
  *   - padding: el theme aplica padding default sobre `.p-popover-content`
  *     con specificity equiparable; sin `!important` la regla local cede.
+ *
+ * ⚠️ El motivo escrito para el `padding` NO se sostiene (2026-09-05). Dice
+ * «specificity equiparable», pero la especificidad aquí no decide nada: esta
+ * regla va SIN CAPA y el padding del tema en `@layer primeng`, y sin capa gana
+ * SIEMPRE, con cualquier especificidad. O sea que ese `!important` puede llevar
+ * tiempo sin hacer nada. Se DEJA porque quitarlo hay que medirlo con el
+ * popover abierto —el switcher solo aparece con el prototipo de muestras— y
+ * esta pasada retira acoplamiento, no toca lo que no puede ver. Lo que sí es
+ * deliberado es la regla: este panel lleva su propio chrome, no el del tema.
+ * (El `!important` del `z-index` es otra cosa y sí está justificado: PrimeNG
+ * asigna el z-index INLINE al overlay, y contra un inline la capa da igual.)
  */
 .mock-sample-switcher__popover {
   z-index: var(--sc-z-popover) !important;

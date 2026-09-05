@@ -236,10 +236,14 @@
 El ente evolutivo en acción: la migración de la app real saca a la luz huecos del paquete publicado.
 
 - **Publicar los partials SCSS** — `@smartcontact-hub/styles` solo ships **CSS compilado**; la app
-  consume 3 partials vía `@use` (`sc-overlay-sizes`, `sc-animations`, `sc-list-table`) que el
+  consume 2 partials vía `@use` (`sc-animations`, `sc-list-table`) que el
   paquete NO publica → el consumidor tiene que mantenerlos locales. *Fix*: exportar también los
   partials SCSS (o documentar que se quedan locales). *Disparador*: ahora (bloquea el "borrar copia
   local" total).
+  <br>El tercero, `sc-overlay-sizes`, ya no existe: el 2026-09-05 se fue a los componentes del DS
+  que emiten la clase del panel (`sc-select` / `sc-multiselect` / `sc-datepicker`), que usan
+  `ViewEncapsulation.None` y por tanto alcanzan al overlay. Es el camino que este hueco pedía —
+  cuando el estilo es del componente, no hace falta publicar partial ninguno.
 - **Entrada del paquete `styles`: orquestador-only + `exports` no expone el CSS** — `styles/index.css`
   es un **orquestador** que mete tokens **+ `base/reset.css` + `base/globals.css`** (no hay entrada
   "solo tokens"). Y el `exports` del package.json solo declara `.` (→ el `.mjs`) y `./package.json`

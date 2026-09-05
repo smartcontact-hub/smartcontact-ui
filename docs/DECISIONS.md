@@ -37,6 +37,56 @@
 
 ---
 
+## DD-50 · 2026-09-05 — El estilo del overlay de un wrapper vive en SU componente del DS, y el CSS de app sin capa sobre `.p-*` pasa a trinquete
+
+**Contexto** · `cf7abab` retiró un `.p-button { line-height: normal }` del supervisor y el botón
+pasó de 33px a 36. La causa no era un token: era que una hoja global de app va SIN CAPA y el preset
+va en `@layer primeng`, y en CSS lo sin-capa gana SIEMPRE a lo en-capa, sin mirar especificidad.
+Quedaba por repasar el resto de esa capa. Recorriendo `document.styleSheets` y separando por
+`CSSLayerBlockRule` sobre 8 rutas del supervisor salieron **67 colisiones** (regla sin capa que pisa
+una propiedad que el tema también publica para un selector solapado): **52 del supervisor** y 15 de
+componentes del propio DS.
+
+**Decisión** · Dos cosas.
+1. **Los estilos del panel overlay de un wrapper del DS viven en el SCSS de ese componente**, no en
+   un partial global del consumidor. Se retira `projects/supervisor/src/styles/_sc-overlay-sizes.scss`
+   y sus bloques van a `sc-select`, `sc-multiselect` y `sc-datepicker`.
+2. **El CSS de app sin capa sobre selectores `.p-*` pasa a tener tope por app**, vigilado en
+   `audit:primeng-coupling` (sección D). Hoy: supervisor 26, el resto 0.
+
+**Razón** · La clase que estiliza el panel (`sc-select-panel--sm`…) la EMITE el componente del DS
+(`createScPanelSizing` en `sc-field.ts`, vía `panelStyleClass`), así que tenerla estilada solo en un
+consumidor deja al resto aplicando una clase que no estiliza nadie — verificado: `sc-multiselect` y
+`sc-datepicker` no tenían esos bloques en el DS. Además el bloque de `select` estaba DUPLICADO en los
+dos sitios con el mismo valor, uno tokenizado y otro en px a pelo, y **cuál ganaba lo decidía el
+orden de inserción de las hojas** (medido: ganaba el del DS, por ir en posición 30 del `<head>`
+contra la 2 del `styles.css`). Nadie había decidido eso. Los cinco px literales del partial
+(5.25 / 8.75 / 12.25 / 24.5 / 31.5) tienen token exacto en la escala v/14, medido en runtime.
+
+**Descartadas** ·
+- *Llevarlo al preset (`sc-preset/`)* — no cabe: `sc-*-panel--sm` es una clase inventada por el DS,
+  no un `--p-*`; el preset no tiene forma de expresarla.
+- *Envolver el CSS de app en un `@layer`* — arreglaría el reglamento del cascade de golpe, pero
+  cambia quién gana en las 52 colisiones a la vez, incluidas las deliberadas. Es un cambio de
+  comportamiento global disfrazado de refactor; queda para una sesión que pueda medirlo entero.
+- *Retirar también la rampa sm/lg del panel* — el Kit NO la modela (`list.option.padding.x/y` es un
+  valor único, y `datepicker.date.width/height` es `{scale.2}` = 28px sin variante), así que la rampa
+  es una decisión del DS por encima del Kit. Pero quitarla cambia pantallas vivas: es rediseño, no
+  retirada de acoplamiento. Se conserva, con el silencio del Kit escrito al lado.
+- *Un gate nuevo, propio* — la sección D cabe en `audit:primeng-coupling`, que ya vigila la misma
+  familia de fragilidad y ya está en `verify` y en `ci.yml`; un script nuevo habría arrastrado la
+  paridad preflight≡ci.yml y el conteo de pasos en la doc sin comprar nada.
+
+**Consecuencias** · El supervisor baja de 52 colisiones a **28**, todas deliberadas y todas con un
+comentario que dice que pisan al tema a propósito (micro-interacciones DD#21, item destructivo del
+menú, popover del switcher, y las dos pieles de tabla). Cero cambio visual: las medidas de los
+paneles `sm` y la huella de 6 rutas (altura de botón, campo y fila, padding de celda y cabecera)
+salen idénticas antes y después. sc-docs, agent y cuscare ganan el tamaño de panel que ya pedían con
+la clase. El tope de la sección D solo se sube escribiendo en el commit a cuál de los tres cubos
+pertenece la regla nueva: deliberada, parche caducado o del sistema.
+
+---
+
 ## DD-49 · 2026-09-04 — Ante una diferencia Figma↔web, primero se pregunta QUÉ LADO MANDA; y el que no tiene canal no manda nunca
 
 **Contexto** · El mapa de conexión de variables (816 filas, 18 componentes, medido contra el Kit y

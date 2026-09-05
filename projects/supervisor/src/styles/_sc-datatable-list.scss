@@ -26,6 +26,16 @@
  * `sc-datatable`, así que llevan SU `_ngcontent`: una regla encapsulada
  * en la página no los alcanza nunca.
  *
+ * ⚠️ PISA AL TEMA, Y A PROPÓSITO. Al ser global va SIN CAPA, y el preset del DS
+ * va en `@layer primeng`: en CSS lo sin-capa gana SIEMPRE a lo en-capa, sin
+ * mirar especificidad. O sea que esta piel no gana por ser más específica —
+ * gana por reglamento del cascade. Es justo lo que la tabla de arriba pide, y
+ * por eso está bien; pero significa que empujar un token del preset NO puede
+ * cambiar nada de lo que se declare aquí. Si un día una de estas medidas hay
+ * que moverla, se mueve en este fichero, no en el preset.
+ * Ocho reglas de aquí pisan una propiedad que el tema también publica (medido
+ * 2026-09-05 en `/admin/usuarios` y `/conversaciones/entidades`).
+ *
  * Al migrar una tabla nueva: `<sc-datatable class="list-table">` y borra
  * su bloque `.table` local. Esto sustituye ~90 líneas por página.
  * ------------------------------------------------------------------ */

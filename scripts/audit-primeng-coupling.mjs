@@ -344,8 +344,144 @@ for (const { tag, entrada, f, linea } of inertes) {
   log(`       ${f}:${linea}`);
 }
 
+/* ══════════════════════════════════════════════════════════════════════════
+ * SECCIÓN D · la TERCERA CAPA: CSS de app, sin capa, sobre selectores `.p-*`
+ * ══════════════════════════════════════════════════════════════════════════
+ *
+ * Las tres secciones de arriba vigilan que el PROVEEDOR no nos rompa. Esta
+ * vigila lo contrario: que nosotros no nos rompamos el tema a nosotros mismos.
+ *
+ * LA MECÁNICA, medida el 2026-09-05. El preset del DS vive en `@layer primeng`.
+ * Una hoja global de app va SIN CAPA. Y en CSS lo que va sin capa gana SIEMPRE
+ * a lo que va en capa, **sin mirar especificidad**. O sea que una regla de tres
+ * palabras en `main.scss` le gana a un selector del tema por largo que sea, y
+ * ningún token puede alcanzarla: no hay token que empujar, hay una regla que no
+ * escucha.
+ *
+ * LO QUE COSTÓ. Hasta `cf7abab` el supervisor traía un `.p-button {
+ * line-height: normal }` así. El botón medía 33px y el input 36 con el mismo
+ * padding, el mismo font-size y el mismo borde. Se persiguió como un problema
+ * de tokens durante bastante rato; no lo era.
+ *
+ * QUÉ CUENTA ESTE TOPE. Bloques de regla cuyo selector menciona una clase
+ * `.p-*`, dentro del grafo de `@use`/`@import` que cuelga de la hoja GLOBAL que
+ * `angular.json` declara para cada app. No entra el SCSS de componente del DS
+ * (`projects/ui-smartcontact`): ahí la falta de capa es la arquitectura — es la
+ * opinión del componente sobre su propio preset, y es donde ESTO debe vivir.
+ *
+ * QUÉ HACER SI SE PONE ROJO. Antes de subir el número, contesta a cuál de los
+ * tres cubos pertenece la regla nueva:
+ *   · DELIBERADA — la app quiere divergir del tema (micro-interacción, color
+ *     semántico propio, piel de una tabla concreta). Se queda, con un comentario
+ *     que DIGA que pisa al tema a propósito, y aquí se sube el tope.
+ *   · PARCHE CADUCADO — se puso cuando el DS no cubría eso y hoy sí. Se retira.
+ *   · ES DEL SISTEMA — estás arreglando algo que es del DS desde fuera. Va al
+ *     componente del DS o al preset, no aquí.
+ * Y si la duda es de TAMAÑO, arbitra el Kit
+ * (`projects/design-tokens/scripts/kit-export-dtcg.json`), no un nodo de Figma.
+ *
+ * ESTO NO LO VE TODO, a propósito: es estático, así que sabe que la regla pisa
+ * al tema pero no QUÉ propiedad concreta acaba ganando. Eso se mide en runtime
+ * recorriendo `document.styleSheets` y separando por `CSSLayerBlockRule`
+ * (receta en el hand-off del 2026-09-05). ⚠️ Al escribir esa sonda: una regla de
+ * estilo moderna TAMBIÉN expone `.cssRules` (vacío), así que un
+ * `if (r.cssRules) { recurse; continue }` se salta todas las reglas de estilo.
+ * Comprueba `CSSStyleRule` PRIMERO. */
+
+/* Tope POR APP. Es un trinquete, no una meta. Baja el número si retiras;
+ * súbelo solo con el cubo escrito en el commit. */
+const TOPE_SIN_CAPA = { supervisor: 26, agent: 0, cuscare: 0, 'sc-docs': 0, 'agent-mini': 0 };
+
+const bloquesConP = (scss) => {
+  const s = sinComentarios(scss);
+  let n = 0;
+  let ini = 0;
+  for (let i = 0; i < s.length; i++) {
+    const ch = s[i];
+    if (ch !== '{' && ch !== '}' && ch !== ';') continue;
+    if (ch === '{' && /\.p-[a-z]/.test(s.slice(ini, i))) n++;
+    ini = i + 1;
+  }
+  return n;
+};
+
+/* El grafo de la hoja global: `@use 'reset'` → `styles/_reset.scss`. Solo SCSS
+ * local — un `@import` a node_modules o a un `.css` de tokens no es nuestro. */
+const resolverScss = (desde, spec) => {
+  const partes = spec.split('/');
+  const nombre = partes.pop();
+  const sub = partes.length ? `${partes.join('/')}/` : '';
+  const base = desde.slice(0, desde.lastIndexOf('/'));
+  for (const cand of [`${base}/${sub}_${nombre}.scss`, `${base}/${sub}${nombre}.scss`]) {
+    try {
+      statSync(cand);
+      return cand;
+    } catch {
+      /* no es ese */
+    }
+  }
+  return null;
+};
+
+const grafoScss = (entrada, vistos = new Set()) => {
+  if (vistos.has(entrada)) return vistos;
+  vistos.add(entrada);
+  let txt;
+  try {
+    txt = readFileSync(entrada, 'utf8');
+  } catch {
+    return vistos;
+  }
+  for (const [, spec] of sinComentarios(txt).matchAll(/@(?:use|import)\s+['"]([^'"]+)['"]/g)) {
+    if (spec.endsWith('.css') || spec.startsWith('~')) continue;
+    const f = resolverScss(entrada, spec);
+    if (f) grafoScss(f, vistos);
+  }
+  return vistos;
+};
+
+let angular;
+try {
+  angular = JSON.parse(readFileSync('angular.json', 'utf8'));
+} catch {
+  angular = { projects: {} };
+}
+
+const capasDeApp = [];
+for (const [app, cfg] of Object.entries(angular.projects ?? {})) {
+  for (const entrada of cfg.architect?.build?.options?.styles ?? []) {
+    if (typeof entrada !== 'string' || !entrada.endsWith('.scss')) continue;
+    let total = 0;
+    const detalle = [];
+    for (const f of grafoScss(entrada)) {
+      const n = bloquesConP(readFileSync(f, 'utf8'));
+      if (n) detalle.push(`${f}: ${n}`);
+      total += n;
+    }
+    capasDeApp.push({ app, total, detalle });
+  }
+}
+
+const crecidas = capasDeApp.filter(({ app, total }) => total > (TOPE_SIN_CAPA[app] ?? 0));
+
+log(
+  `\naudit:primeng-coupling — CSS de app SIN CAPA sobre \`.p-*\`: ${capasDeApp
+    .map(({ app, total }) => `${app} ${total}`)
+    .join(', ')}\n`,
+);
+
+for (const { app, total, detalle } of crecidas) {
+  const tope = TOPE_SIN_CAPA[app] ?? 0;
+  log(`  ✗ ${app}: ${total} bloque(s) sin capa sobre \`.p-*\`, contra un tope de ${tope}.`);
+  log('     Sin capa gana SIEMPRE a `@layer primeng`, sin mirar especificidad,');
+  log('     así que ningún token del preset puede alcanzar lo que declares ahí.');
+  for (const d of detalle) log(`       ${d}`);
+  log('     → Tría la regla nueva: ¿deliberada (coméntalo y sube el tope aquí),');
+  log('       parche caducado (retírala) o del sistema (llévala al DS)?');
+}
+
 const problemasB =
-  desajustes.length + alVacio.length + grafiasDobles.length + inertes.length;
+  desajustes.length + alVacio.length + grafiasDobles.length + inertes.length + crecidas.length;
 if (problemasB) {
   log('\n  → Arréglalo igualando la grafía, y si el gesto es NUESTRO (un guard, un');
   log('    ancla de selección) deja de depender del tag del proveedor: pon una');
@@ -356,7 +492,7 @@ if (problemasB) {
 const problemas = huerfanos.length + (usados.length > TOPE ? 1 : 0) + problemasB;
 if (problemas === 0) {
   log(
-    `✓ audit:primeng-coupling OK — las ${usados.length} clases siguen existiendo, el acoplamiento no crece (tope ${TOPE}), los ${consultados.size} elementos consultados casan con lo que escribimos, y ninguna entrada quedó inerte.`,
+    `✓ audit:primeng-coupling OK — las ${usados.length} clases siguen existiendo, el acoplamiento no crece (tope ${TOPE}), los ${consultados.size} elementos consultados casan con lo que escribimos, ninguna entrada quedó inerte, y ninguna app crece su CSS sin capa sobre \`.p-*\`.`,
   );
   process.exit(0);
 }
