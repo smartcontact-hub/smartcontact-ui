@@ -232,8 +232,12 @@ miente a lo grande:
 pintan o componentes anidados. Detalle completo en
 [`docs/conexion-variables.md`](../conexion-variables.md) §«Segunda pasada».
 
-- **InputText, tipografía sin conectar.** 660 capas de texto: las 108 atadas van a la librería
-  REMOTA, no al DS; las 552 restantes, a mano. Ninguna usa estilo de texto (comprobado, era la
+- **InputText, tipografía a medio conectar.** 660 capas de texto: **108 atadas, todas a variables
+  del DS** (cero remotas) y **552 sueltas**, con tamaños fuera de escala. `Label` está a medias:
+  48 atadas y 48 sueltas con el mismo valor. ⚠️ **Corregido el 2026-09-05**: la primera versión
+  decía que las 108 iban a la librería remota, y era FALSO. La sonda leía `boundVariables` por
+  acceso directo en vez de enumerando, y devolvía enlaces sin resolver que interpreté como
+  remotos. Detalle en el doc. Ninguna usa estilo de texto (comprobado, era la
   primera sospecha de falso positivo). Y dentro del mismo componente hay TRES situaciones: hay
   variable y no se usa (sm y lg), la variable vive en otro sitio del que crees (el tamaño normal
   lo gobierna `app/typography/md/fontSize` porque PrimeNG **no modela** un font-size de raíz

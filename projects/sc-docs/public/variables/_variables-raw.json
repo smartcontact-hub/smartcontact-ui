@@ -2373,6 +2373,30 @@
       "accionable": "no",
       "motivo": "idem",
       "revisado": "2026-09-03"
+    },
+    "menu|background": {
+      "bloque": "root",
+      "capa de Figma": "Menu=False (2355:48562) y Menu=True (2360:44447), los dos de menu-popup",
+      "selector CSS": ".p-menu { background }",
+      "accionable": "FIGMA (seguro, no cambia el claro)",
+      "motivo": "DEFECTO. La variable existe y la usan las otras variantes (Type=Basic y los frames menu), pero los dos componentes de menu-popup llevan el fondo BLANCO escrito a mano. En claro no se nota, porque menu/background resuelve a {content.background} → {surface.0}, que es blanco. En OSCURO el tema manda {surface.900}: las capas atadas se oscurecen y estas dos se quedan blancas. Atarlas no cambia el claro y arregla el oscuro.",
+      "revisado": "2026-09-05"
+    },
+    "inputtext|sm/font/size": {
+      "bloque": "sm",
+      "capa de Figma": "solo 4 capas de texto la usan (Placeholder y Text de esa talla)",
+      "selector CSS": ".p-inputtext-sm { font-size }",
+      "accionable": "no",
+      "motivo": "Bien atada donde se usa: pinta 12, que es justo lo que publica el tema. El problema del componente no es esta variable, son las 552 capas de texto SUELTAS que tiene al lado. Ver el hallazgo de tipografía del InputText.",
+      "revisado": "2026-09-05"
+    },
+    "inputtext|lg/font/size": {
+      "bloque": "lg",
+      "capa de Figma": "solo 4 capas de texto la usan (Placeholder y Text de esa talla)",
+      "selector CSS": ".p-inputtext-lg { font-size }",
+      "accionable": "no",
+      "motivo": "Bien atada donde se usa: pinta 16, que es justo lo que publica el tema. El problema del componente no es esta variable, son las 552 capas de texto SUELTAS que tiene al lado. Ver el hallazgo de tipografía del InputText.",
+      "revisado": "2026-09-05"
     }
   },
   "hallazgos": [
@@ -2473,6 +2497,20 @@
       "accionable": "no",
       "motivo": "normal: PrimeNG publica todas las rampas de color y un tema solo gasta las suyas. Son ~199 de los 244 tokens semánticos sin uso",
       "revisado": "2026-09-03"
+    },
+    {
+      "Componente": "inputtext",
+      "Variable en Figma": "(hallazgo) tipografía: 552 de 660 capas de texto sueltas",
+      "Token en el tema": "--p-inputtext-sm-font-size, --p-inputtext-lg-font-size",
+      "La usa una capa de Figma": "a medias",
+      "La lee el CSS de PrimeNG": "sí, las dos tallas",
+      "Veredicto": "Figma no la usa",
+      "bloque": "tipografía",
+      "capa de Figma": "Helper Text 240, Placeholder 228, Label 48, Text 36",
+      "selector CSS": ".p-inputtext { font-size }, y el normal por nuestro bloque global",
+      "accionable": "PENDIENTE DE DECISIÓN",
+      "motivo": "Medido el 2026-09-05. De 660 capas de texto, 108 atadas (TODAS a variables del DS, cero remotas) y 552 sueltas con tamaños fuera de escala: 11,5 · 13 · 13,25 · 15 · 16,75, contra 12/14/16. Label está a medias, 48 atadas y 48 sueltas CON EL MISMO VALOR, que es un despiste local. Tres situaciones distintas dentro del componente: (1) sm y lg tienen variable y solo la usan 4 capas cada una; (2) el tamaño NORMAL no tiene variable de inputtext y no puede tenerla, porque PrimeNG no modela un font-size de raíz: lo gobierna app/typography/md/fontSize a través de nuestro bloque global, que pisa el 1rem de PrimeNG; (3) Label y Helper Text no son de PrimeNG, son marcado de la app, así que no hay token y habría que crear el modelo. Detalle en docs/conexion-variables.md §Segunda pasada.",
+      "revisado": "2026-09-05"
     }
   ]
 }

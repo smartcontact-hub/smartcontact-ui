@@ -92,6 +92,11 @@ Recorrer variantes y capas leyendo `boundVariables`, y también los `boundVariab
   era falso: estaban las 22.
 - **`findOne` esconde el defecto.** En un botón con dos iconos, el primero estaba bien atado y el
   segundo no. Buscar todas las coincidencias, siempre.
+- **`boundVariables` se lee ENUMERANDO, no por acceso directo.** `bv.fontSize` devolvió enlaces que
+  luego no resolvían contra `getLocalVariablesAsync()`, y los di por REMOTOS. Con
+  `Object.keys(bv)` salen los mismos nodos con su variable local bien resuelta. Esto produjo una
+  afirmación falsa publicada («la tipografía del InputText va a la librería externa»); ver la
+  corrección en §«Segunda pasada».
 
 ### Lado código, sobre el deploy del consumidor
 
@@ -202,13 +207,13 @@ suelto al CI, entonces sí entran en juego el test de paridad
 
 ## Estado del 2026-09-04
 
-816 filas, 18 componentes, medidas contra el Kit de Figma y el CSS que sirve
+817 filas, 18 componentes, medidas contra el Kit de Figma y el CSS que sirve
 `ui.smart-contact.com`.
 
 | Veredicto | Nº |
 |---|---|
 | conectada | 636 |
-| Figma no la usa | 87 |
+| Figma no la usa | 88 |
 | solo web | 79 |
 | espejismo | 3 |
 | muerta | 3 |
@@ -297,21 +302,37 @@ de los seguros, como las 12 de la primera pasada.
 
 Medido capa a capa en sus dos component sets, 660 capas de texto:
 
-| Capa | Atadas | ¿A qué? | Sueltas | Tamaños sueltos |
-|---|---|---|---|---|
-| Placeholder | 51 | variable **remota** de la librería | 228 | 11,5 · 13,25 · 15 · 16,75 |
-| Text | 9 | remota | 36 | 13,25 · 15 · 16,75 |
-| Label | 48 | remota | 48 | 15 |
-| Helper Text | 0 | — | 240 | 13 |
+De sus **660 capas de texto**: **108 atadas, todas a variables del DS**, y **552 sueltas**.
+
+| Atadas a | Nº |
+|---|---|
+| `iftalabel/font/size` | 48 |
+| `scale/1` | 20 |
+| `form/field/sm/font/size` · `form/field/lg/font/size` | 16 + 16 |
+| `inputtext/sm/font/size` · `inputtext/lg/font/size` | 4 + 4 |
+
+| Sueltas | Nº | Tamaños |
+|---|---|---|
+| Helper Text | 240 | 13 |
+| Placeholder | 228 | 11,5 · 13,25 · 15 · 16,75 |
+| Label | 48 | 15 |
+| Text | 36 | 13,25 · 15 · 16,75 |
 
 Tres hechos, los tres medidos:
 
-1. **Ninguna apunta a una variable del DS.** Las atadas van a la librería externa.
-2. **Ninguna usa un estilo de texto.** Cero de 660, comprobado porque era la primera sospecha de
+1. **Lo que está atado, está bien atado**: cero variables remotas, y las que usan
+   `inputtext/sm|lg/font/size` pintan **12 y 16**, que es exactamente lo que publica el tema.
+2. **Lo suelto está fuera de la escala**: 11,5 · 13 · 13,25 · 15 · 16,75, contra 12 / 14 / 16.
+   Y `Label` está a medias, 48 atadas y 48 sueltas con el mismo valor.
+3. **Ninguna usa un estilo de texto.** Cero de 660, comprobado porque era la primera sospecha de
    falso positivo.
-3. **Los tamaños están fuera de la escala.** 11,5 · 13 · 13,25 · 15 · 16,75, contra una escala de
-   12 / 14 / 16. Y el componente solo modela dos tallas de letra,
-   `inputtext/sm/font/size` y `inputtext/lg/font/size`, que el tema publica como 12 y 16.
+
+> **Corregido el 2026-09-05.** La primera versión de esta sección decía que las 108 atadas iban a
+> la **librería remota** y que «ninguna apunta a una variable del DS». **Era falso**, y el fallo
+> estaba en la sonda: leía `boundVariables` por acceso directo (`bv.fontSize`) en vez de
+> enumerando sus claves, y devolvía el enlace sin resolver el nombre, que yo interpreté como
+> remoto. **Enumerar con `Object.keys(bv)` es lo único que reproduce.** Trampa nueva para la lista
+> de §«Cómo se mide».
 
 **Consecuencia práctica**: cambiar el tamaño de letra del InputText en las variables del DS no
 mueve el dibujo, porque no lo lee nadie. Es el caso del Tag otra vez, en tipografía.
