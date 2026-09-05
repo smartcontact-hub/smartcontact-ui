@@ -47,12 +47,12 @@ antes de construir encima.
 **Al cerrar, reescribe SOLO el fichero de tu frente.** Si abres una línea de trabajo nueva, crea
 su fichero, añade su fila aquí y nómbralo en la fila de `DOCS-INDEX`.
 
---- | ----- | ------ |
-| El simulador de `/validar`, jugable | [PR #36](https://github.com/smartcontact-hub/smartcontact-ui/pull/36) | CI verde, **sin mergear** |
-
-Un PR verde sin mergear no es trabajo entregado: `sc-doc.pages.dev` sirve `main`, así que hasta
-que entre no existe para nadie. Si sigue abierto, mergéalo (y lee `npm run ci:verdict` después,
-que mergear cuenta como pushear). Cuando esta tabla se quede vacía, bórrala.
+La tabla de «trabajo terminado que no aterriza» se fue el 2026-09-05, que era lo que ella misma
+pedía al quedarse vacía: el PR #36 lleva mergeado desde el 2026-09-04 y `gh pr list --state open`
+sale sin nada. La regla que la justificaba **no** se va con ella, así que queda dicha aquí: un PR
+verde sin mergear no es trabajo entregado — los cinco sitios sirven `main`, así que hasta que entre
+no existe para nadie. Si te encuentras uno abierto, mergéalo y lee `npm run ci:verdict` después,
+que mergear cuenta como pushear.
 
 ---
 
