@@ -22,7 +22,7 @@
  *
  * Uso:  node scripts/token-guard.mjs   (CI/pre-commit; sale ≠0 si hay violación)
  */
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 import { execSync } from 'node:child_process';
 import { resolve } from 'node:path';
 
@@ -67,9 +67,16 @@ const REPLICA_APPS = ['projects/agent/', 'projects/agent-mini/', 'projects/cusca
 const REPLICA_LINEA = 'sc-replica-navegador';
 const esReplicaDeLinea = (line) => line.includes(REPLICA_LINEA);
 
+/* `git ls-files` lee el ÍNDICE, no el disco: un fichero borrado y todavía sin
+ * `git add` sigue listado. Sin el `existsSync` el guard moría con un ENOENT
+ * crudo a mitad de `verify` —pila de Node, sin decir qué gate ni por qué—, y el
+ * borrado era del todo legítimo (pasó el 2026-09-05 al retirar
+ * `_sc-overlay-sizes.scss`). Lo que el guard vigila es lo que hay escrito; un
+ * fichero que ya no existe no tiene nada que vigilar. */
 const files = execSync('git ls-files projects', { cwd: root, encoding: 'utf8' })
   .split('\n')
-  .filter((f) => /\.(scss|css|html|ts)$/.test(f) && !f.endsWith('.spec.ts'));
+  .filter((f) => /\.(scss|css|html|ts)$/.test(f) && !f.endsWith('.spec.ts'))
+  .filter((f) => existsSync(resolve(root, f)));
 
 let problems = 0;
 const fail = (s) => {

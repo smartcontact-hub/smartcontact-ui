@@ -103,3 +103,57 @@
 .sc-datepicker--disabled .sc-datepicker__label {
   color: var(--sc-text-disabled);
 }
+
+/* ─── Overlay panel sizes ─────────────────────────────────────────────
+ * El panel se renderiza en <body>, fuera del scope del componente. Como este
+ * usa ViewEncapsulation.None sus reglas ya son globales, así que el panel se
+ * estila desde aquí — igual que en `sc-select` y `sc-multiselect`.
+ *
+ * Hasta el 2026-09-05 esto vivía en `_sc-overlay-sizes.scss`, un partial global
+ * del SUPERVISOR: la clase la emite ESTE componente (`createScPanelSizing`),
+ * así que en el resto de consumidores `sc-datepicker-panel--sm` no la estilaba
+ * nadie, y en el supervisor era una capa de app SIN CAPA por encima del preset.
+ *
+ * ⚠️ Sin capa a propósito (el preset está en `@layer primeng`, y sin capa gana
+ * siempre, sin mirar especificidad). Esta es la opinión del componente sobre
+ * su propio preset.
+ *
+ * ⚠️ El Kit dice UN tamaño de día, no una rampa: `datepicker.date.width` y
+ * `.height` son `{scale.2}` (28px) y no tienen variante sm/lg. Los 24.5/31.5
+ * de aquí son una decisión del DS por encima del Kit — llegaron citando dos
+ * nodos de Figma (7154:137768 y 7154:138077), y un nodo no gana a un token
+ * (precedente: el `line-height` del botón, 2026-09-05). Se conservan porque
+ * esta pasada retira acoplamiento, no rediseña; si alguien los discute, la
+ * respuesta del Kit es 28px para los tres tamaños.
+ * Los valores van por la escala v/14 (1.75 × 14 = 24.5; 2.25 × 14 = 31.5). */
+.sc-datepicker-panel--sm {
+  .p-datepicker-header,
+  .p-datepicker-day,
+  .p-datepicker-month,
+  .p-datepicker-year,
+  .p-datepicker-day-view,
+  .p-datepicker-weekday {
+    font-size: var(--sc-font-size-100);
+  }
+
+  .p-datepicker-day {
+    width: var(--sc-spacing-1-75);
+    height: var(--sc-spacing-1-75);
+  }
+}
+
+.sc-datepicker-panel--lg {
+  .p-datepicker-header,
+  .p-datepicker-day,
+  .p-datepicker-month,
+  .p-datepicker-year,
+  .p-datepicker-day-view,
+  .p-datepicker-weekday {
+    font-size: var(--sc-font-size-300);
+  }
+
+  .p-datepicker-day {
+    width: var(--sc-spacing-2-25);
+    height: var(--sc-spacing-2-25);
+  }
+}

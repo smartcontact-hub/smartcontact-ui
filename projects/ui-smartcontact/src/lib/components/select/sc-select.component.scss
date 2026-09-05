@@ -179,17 +179,30 @@
  * Como este componente usa ViewEncapsulation.None, sus reglas son globales:
  * la clase `sc-select-panel--sm/--lg` (propagada via [panelStyleClass])
  * estila el overlay con la misma escala que el trigger sm/lg.
- * Valores 1:1 con el Kit (S30 audit) — tokenizados a la escala v/14. */
+ *
+ * ⚠️ SIN CAPA, y a propósito: el preset del DS vive en `@layer primeng`, y en
+ * CSS lo que va sin capa gana SIEMPRE a lo que va en capa, sin mirar
+ * especificidad. Esta es la capa de opinión del componente sobre su propio
+ * preset, que es justo lo que se quiere. Lo que NO se quiere es que un
+ * CONSUMIDOR abra una tercera capa encima: hasta el 2026-09-05 el supervisor
+ * traía en `_sc-overlay-sizes.scss` una copia de este bloque con los px a pelo
+ * (5.25/8.75), y ganaba o perdía según el orden de inserción de las hojas — no
+ * según nada que nadie hubiera decidido. Se retiró; esto es la fuente única.
+ *
+ * El `font-size` venía de esa copia del supervisor y entra aquí con ella: sin
+ * él, un panel `sm` pinta las opciones a la medida `md`.
+ *
+ * ⚠️ El Kit NO modela panel por tamaño. Publica `list.option.padding.x/y` con
+ * un valor único (`{scale.0-75}` / `{scale.0-5}`) y `select.sm/lg.font.size`
+ * solo para el TRIGGER. Esta rampa es una decisión del DS por encima del Kit,
+ * no un token: si algún día se discute, el Kit dice un tamaño. Los valores sí
+ * salen de la escala v/14 (`--sc-spacing-*`), nunca px a pelo. */
 .sc-select-panel--sm {
   .p-select-header,
   .p-select-list,
   .p-select-option,
-  .p-select-option,
-  .p-select-header,
   .p-select-filter {
     padding: var(--sc-spacing-0-375) var(--sc-spacing-0-625);
-  }
-  .p-select-filter {
     font-size: var(--sc-font-size-100);
   }
 }
@@ -198,12 +211,8 @@
   .p-select-header,
   .p-select-list,
   .p-select-option,
-  .p-select-option,
-  .p-select-header,
   .p-select-filter {
     padding: var(--sc-spacing-0-625) var(--sc-spacing-0-875);
-  }
-  .p-select-filter {
     font-size: var(--sc-font-size-300);
   }
 }
