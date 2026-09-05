@@ -17,9 +17,18 @@
 
 ## ✅ 2026-09-05 · El supervisor bebe del DS tal cual: 64 botones y 51 controles a mano pasan a componentes
 
-**Sello:** PR pendiente de abrir (esta rama: `areses/sc-supervisor-button-sizes-58ed5c`).
-Carril `preflight:scope` sobre el árbol final y `npm run ci:verdict` tras el push: ver el
-cierre de este tramo, más abajo.
+**Sello:** [PR #47](https://github.com/smartcontact-hub/smartcontact-ui/pull/47) — por PR y no
+por SHA, como el tramo anterior (esta rama rebasó sobre `main` al entrar #46). El número se
+escribió ANTES de abrir el PR (el siguiente libre en la API era el 47), porque la marca de
+preflight sella el árbol entero y un sello escrito después habría invalidado la marca.
+**Carril `preflight` COMPLETO en verde sobre el árbol final**, por tramos como el 2026-09-05
+anterior (una llamada tope a 10 min): `guard:lockfile` · `verify` (34 gates lanzados, lint
+limpio; `audit:components` pidió regenerar el inventario y se regeneró) · `build:docs` · los tres
+builds de producción (supervisor, agent, cuscare; el único aviso es la deprecación de Sass del
+`agent`, previa) · e2e **78 + 127 + 100** sobre estáticos servidos con `scripts/spa-server.mjs`
+(:4280 propio de sc-docs, :4507 supervisor, :4517 cuscare). La marca se escribió con
+`node scripts/preflight-mark.mjs preflight` al acabar. El veredicto del CI se lee con
+`npm run ci:verdict` tras el push: ver el final de este tramo.
 
 **La pregunta de Rafa**: «¿por qué el supervisor tiene tamaños de botón tan raros? ¿no bebe del
 DS o se sobreescriben?». Medido en el deploy (`main`, tras #40 y #44): los `sc-button` SÍ beben
@@ -77,7 +86,11 @@ DS los incorpora; no se han inventado variantes.
 
 - `ng build supervisor --configuration production`: verde y sin avisos (cinco iteraciones; las
   tres primeras cazaron un `[icon]="keyboard"` mal ligado, un import que faltaba y un chip roto).
-- e2e supervisor contra el estático (`scripts/spa-server.mjs` en :4507): ver cierre.
+- e2e supervisor contra el estático (`scripts/spa-server.mjs` en :4507): la primera pasada dio
+  **120/127**, y los 7 rojos eran la fila de tabla-lista (54 → 56, arriba); con el 56 escrito y
+  el host asentado, **127/127**. Y ese 56 no lo di por bueno hasta medirlo con Playwright (no con
+  el panel del navegador, que no carga la fuente de iconos y engaña: ver
+  `browser-pane-narrow-viewport-lies` en memoria).
 - Medido con sonda en 9 rutas: todo `sc-button` a 36 (md) o 30.5 (sm); ningún botón de acción
   fuera del DS. Capturas en el hilo de la sesión.
 
