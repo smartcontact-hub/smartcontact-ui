@@ -1,0 +1,444 @@
+@use 'juego-base' as *;
+
+/* Caso 1 · Abrir el inspector. Look propio del juego: ver `_juego-base.scss`. */
+
+:host {
+  display: block;
+}
+
+/* ── progreso ── */
+.pasos {
+  display: flex;
+  gap: 0.375rem;
+  margin-bottom: 1.25rem;
+}
+
+.paso {
+  width: 2rem;
+  height: 0.375rem;
+  border: 0;
+  border-radius: 999px;
+  background: rgba($texto, 0.15);
+  cursor: pointer;
+  transition: background 160ms ease;
+
+  &--on {
+    background: $ambar;
+  }
+
+  &--bien {
+    background: $verde;
+  }
+
+  &--mal {
+    background: $rojo;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $ambar;
+    outline-offset: 2px;
+  }
+}
+
+/* ── misión ── */
+.mision {
+  @extend %mision;
+}
+
+.mision__n {
+  @extend %mision-n;
+}
+
+.mision__t {
+  @extend %mision-t;
+}
+
+.mision__d {
+  @extend %mision-d;
+}
+
+.escena {
+  margin-top: 1.25rem;
+}
+
+/* ── el navegador de mentira ── */
+.nav {
+  @extend %nav;
+}
+
+.nav__barra {
+  @extend %nav-barra;
+}
+
+.nav__puntos {
+  @extend %nav-puntos;
+}
+
+.nav__url {
+  @extend %nav-url;
+}
+
+.nav__cuerpo {
+  position: relative;
+  min-height: 11rem;
+  padding: 1.5rem;
+}
+
+.nav__cuerpo--azul {
+  display: grid;
+  place-items: center;
+  background: $nav-sel;
+}
+
+/* zonas pulsables de la misión «dónde» */
+.zona {
+  position: relative;
+  display: block;
+  border: 2px dashed transparent;
+  border-radius: 0.5rem;
+  font: inherit;
+  color: $nav-texto;
+  cursor: pointer;
+  transition:
+    border-color 140ms ease,
+    background 140ms ease;
+
+  &:hover {
+    border-color: $nav-activo;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $nav-activo;
+    outline-offset: 2px;
+  }
+
+  &.es-bien {
+    border-style: solid;
+    border-color: $verde;
+    background: rgba($verde, 0.12);
+  }
+
+  &.es-mal {
+    border-style: solid;
+    border-color: $rojo;
+    background: rgba($rojo, 0.1);
+    animation: sacudir 420ms ease;
+    @include sin-movimiento {
+      animation: none;
+    }
+  }
+}
+
+.zona--pagina {
+  width: 100%;
+  min-height: 12rem;
+  padding: 1.5rem;
+  background: $nav-gris;
+  text-align: left;
+  box-sizing: border-box;
+
+  &[aria-disabled='true'],
+  &[aria-disabled='true'] .zona--tarjeta {
+    cursor: default;
+  }
+}
+
+.zona--tarjeta {
+  width: min(100%, 22rem);
+  margin: 1rem auto 0;
+  padding: 1.75rem 1.25rem 1.25rem;
+  background: $nav-fondo;
+  box-shadow: 0 1px 3px rgba(#000, 0.12);
+}
+
+.zona__et {
+  position: absolute;
+  top: 0.375rem;
+  left: 0.625rem;
+  font-size: var(--sc-font-size-50);
+  color: $nav-texto-2;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.375rem;
+  padding: 0.25rem 0.75rem;
+  font: inherit;
+  border: 2px solid transparent;
+  border-radius: 999px;
+  background: #e6f4ea;
+  color: #137333;
+  font-size: var(--sc-font-size-200);
+  font-weight: var(--sc-font-weight-medium);
+  cursor: pointer;
+
+  &:hover {
+    border-color: $nav-activo;
+  }
+
+  &.es-bien {
+    border-color: $verde;
+    box-shadow: 0 0 0 0.25rem rgba($verde, 0.3);
+  }
+
+  &.es-mal {
+    border-color: $rojo;
+  }
+}
+
+.chip--quieto {
+  cursor: default;
+
+  &:hover {
+    border-color: transparent;
+  }
+}
+
+.chip__punto {
+  width: 0.5rem;
+  height: 0.5rem;
+  border-radius: 50%;
+  background: currentColor;
+}
+
+/* menú contextual */
+.menu {
+  position: absolute;
+  top: 3.25rem;
+  left: 7rem;
+  list-style: none;
+  margin: 0;
+  padding: 0.25rem;
+  min-width: 13rem;
+  border-radius: 0.5rem;
+  background: $nav-fondo;
+  border: 1px solid $nav-borde;
+  box-shadow: 0 8px 24px rgba(#000, 0.18);
+  animation: aparecer 180ms ease-out;
+  @include sin-movimiento {
+    animation: none;
+  }
+}
+
+.menu__i {
+  display: block;
+  width: 100%;
+  padding: 0.375rem 0.75rem;
+  border: 0;
+  border-radius: 0.25rem;
+  background: none;
+  color: $nav-texto;
+  font: inherit;
+  font-size: 13px; /* sc-replica-navegador: el menú contextual de Chrome */
+  text-align: left;
+  cursor: pointer;
+
+  &:hover:not(:disabled) {
+    background: $nav-gris;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $nav-activo;
+    outline-offset: -2px;
+  }
+
+  &.es-bien {
+    background: rgba($verde, 0.18);
+  }
+
+  &.es-mal {
+    background: rgba($rojo, 0.15);
+    animation: sacudir 420ms ease;
+    @include sin-movimiento {
+      animation: none;
+    }
+  }
+}
+
+.menu__sep {
+  height: 1px;
+  margin: 0.25rem 0.5rem;
+  background: $nav-borde;
+}
+
+/* inspector de mentira */
+.dt {
+  @extend %nav;
+  box-shadow: none;
+}
+
+.dt__tabs {
+  @extend %dt-tabs;
+  flex-wrap: wrap;
+}
+
+.dt__tab {
+  @extend %dt-tab;
+
+  &.es-bien {
+    color: $nav-activo;
+    border-bottom-color: $nav-activo;
+    background: rgba($verde, 0.14);
+  }
+
+  &.es-mal {
+    background: rgba($rojo, 0.14);
+    animation: sacudir 420ms ease;
+    @include sin-movimiento {
+      animation: none;
+    }
+  }
+}
+
+.dt__tab--mas {
+  opacity: 0.55;
+  cursor: default;
+}
+
+.dt__cuerpo {
+  min-height: 7rem;
+  padding: 0.75rem;
+}
+
+.dt__vacio,
+.dt__pie {
+  margin: 0;
+  color: $nav-texto-2;
+  font-size: var(--sc-font-size-100);
+}
+
+.dt__pie {
+  margin-top: 0.5rem;
+}
+
+.cod {
+  @extend %cod;
+  cursor: default;
+
+  &:hover {
+    background: none;
+  }
+}
+
+.cod--in {
+  padding-left: 1.5rem;
+}
+
+.cod--sel {
+  background: $nav-sel;
+}
+
+.regla {
+  @extend %regla;
+}
+
+.cmp {
+  display: flex;
+  justify-content: space-between;
+  gap: 1rem;
+  padding: 0.125rem 0.25rem;
+  font-family: var(--sc-font-family-mono);
+  font-size: 12px; /* sc-replica-navegador: Computed de Chrome */
+  color: $nav-texto;
+
+  span:first-child {
+    color: $nav-clave;
+  }
+}
+
+/* etiqueta de medida */
+.etiqueta {
+  @extend %etiqueta;
+  padding: 0.5rem 0.75rem;
+  font-size: 14px; /* sc-replica-navegador: el tooltip de Chrome, ampliado para pulsarlo */
+}
+
+.etiqueta__n {
+  padding: 0.125rem 0.5rem;
+  border: 2px solid transparent;
+  border-radius: 0.25rem;
+  background: rgba(#fff, 0.1);
+  color: #fff;
+  font: inherit;
+  cursor: pointer;
+
+  &:hover:not(:disabled) {
+    border-color: $ambar;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $ambar;
+    outline-offset: 2px;
+  }
+
+  &.es-bien {
+    border-color: $verde;
+    background: rgba($verde, 0.3);
+  }
+
+  &.es-mal {
+    border-color: $rojo;
+    background: rgba($rojo, 0.3);
+    animation: sacudir 420ms ease;
+    @include sin-movimiento {
+      animation: none;
+    }
+  }
+}
+
+/* lista de opciones (misión «deshacer») */
+.opciones {
+  @extend %opciones;
+}
+
+.opcion {
+  @extend %opcion;
+}
+
+.opcion__k {
+  display: inline-flex;
+  width: 1.5rem;
+  height: 1.5rem;
+  flex: 0 0 auto;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.375rem;
+  background: rgba($texto, 0.1);
+  font-size: var(--sc-font-size-100);
+  font-weight: var(--sc-font-weight-bold);
+}
+
+/* ── veredicto ── */
+.veredicto {
+  @extend %veredicto;
+}
+
+.veredicto__i {
+  @extend %veredicto-i;
+}
+
+.veredicto__t {
+  @extend %veredicto-t;
+}
+
+.veredicto__d {
+  @extend %veredicto-d;
+}
+
+.pie {
+  @extend %pie;
+}
+
+.siguiente {
+  @include boton-juego(true);
+
+  svg {
+    width: 1rem;
+    height: 1rem;
+  }
+}
+
+.repetir {
+  @include boton-juego(false);
+}

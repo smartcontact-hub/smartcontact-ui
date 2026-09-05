@@ -1,0 +1,528 @@
+@use 'juego-base' as *;
+
+/* El shell del juego. El porqué del look propio, en `_juego-base.scss`. */
+
+:host {
+  display: block;
+}
+
+.juego {
+  position: relative;
+  margin: -1rem -0.5rem 0;
+  padding: 1.25rem 1.5rem 3rem;
+  border-radius: 1.25rem;
+  background:
+    radial-gradient(60rem 30rem at 85% -10%, rgba($ambar, 0.16), transparent 60%),
+    radial-gradient(40rem 24rem at -10% 110%, rgba($azul, 0.14), transparent 60%),
+    $fondo;
+  color: $texto;
+  overflow: hidden;
+  min-height: 70vh;
+}
+
+/* ── HUD ── */
+.hud {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.75rem 1rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid $borde;
+}
+
+.hud__l,
+.hud__r {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+  min-width: 0;
+}
+
+.hud__volver {
+  @include boton-juego(false);
+  padding: 0.375rem 0.75rem 0.375rem 0.5rem;
+
+  svg {
+    width: 1rem;
+    height: 1rem;
+  }
+}
+
+.hud__t {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin: 0;
+  font-size: var(--sc-font-size-200);
+  font-weight: var(--sc-font-weight-bold);
+  white-space: nowrap;
+}
+
+.hud__lupa {
+  display: inline-flex;
+  width: 1.75rem;
+  height: 1.75rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.5rem;
+  background: $ambar;
+  color: $fondo;
+
+  svg {
+    width: 1rem;
+    height: 1rem;
+  }
+}
+
+.hud__caso {
+  color: $texto-2;
+  font-weight: var(--sc-font-weight-regular);
+}
+
+.hud__puntos {
+  font-size: var(--sc-font-size-300);
+  font-weight: var(--sc-font-weight-bold);
+  font-variant-numeric: tabular-nums;
+}
+
+.hud__de {
+  color: $texto-2;
+  font-size: var(--sc-font-size-100);
+  font-weight: var(--sc-font-weight-regular);
+}
+
+.hud__racha {
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+  background: rgba($ambar, 0.18);
+  color: $ambar-2;
+  font-size: var(--sc-font-size-100);
+  font-weight: var(--sc-font-weight-semibold);
+  animation: latir 900ms ease-out;
+  @include sin-movimiento {
+    animation: none;
+  }
+}
+
+.hud__guia {
+  color: $texto-2;
+  font-size: var(--sc-font-size-100);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+
+  &:hover {
+    color: $texto;
+  }
+}
+
+/* ── aviso flotante ── */
+.toast {
+  position: fixed;
+  left: 50%;
+  bottom: 1.5rem;
+  z-index: 5;
+  transform: translateX(-50%);
+  padding: 0.625rem 1.125rem;
+  border-radius: 999px;
+  background: $verde;
+  color: $fondo;
+  font-size: var(--sc-font-size-200);
+  font-weight: var(--sc-font-weight-bold);
+  box-shadow: 0 10px 30px rgba(#000, 0.35);
+  animation: aparecer 200ms ease-out;
+  @include sin-movimiento {
+    animation: none;
+  }
+}
+
+.toast--mal {
+  background: $rojo;
+}
+
+/* ── confeti ── */
+.confeti {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+  overflow: hidden;
+
+  i {
+    --x: calc((var(--i) * 37) % 100 * 1%);
+    --d: calc(1400ms + (var(--i) * 53) % 900 * 1ms);
+    --r: calc((var(--i) * 71) % 360 * 1deg);
+    position: absolute;
+    top: -1rem;
+    left: var(--x);
+    width: 0.5rem;
+    height: 0.8rem;
+    border-radius: 0.125rem;
+    background: $ambar;
+    animation: caer var(--d) ease-in forwards;
+
+    &:nth-child(3n) {
+      background: $verde;
+    }
+
+    &:nth-child(3n + 1) {
+      background: $azul;
+    }
+
+    &:nth-child(4n) {
+      background: $rojo;
+    }
+  }
+
+  @include sin-movimiento {
+    display: none;
+  }
+}
+
+@keyframes caer {
+  to {
+    transform: translateY(80vh) rotate(var(--r));
+    opacity: 0;
+  }
+}
+
+/* ── portada ── */
+.portada {
+  max-width: 40rem;
+  padding: 2.5rem 0 1.5rem;
+}
+
+.portada__eyebrow {
+  margin: 0;
+  font-size: var(--sc-font-size-100);
+  font-weight: var(--sc-font-weight-semibold);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: $ambar;
+}
+
+.portada__t {
+  margin: 0.5rem 0 0;
+  font-size: var(--sc-font-size-650);
+  line-height: 1.05;
+  font-weight: var(--sc-font-weight-bold);
+  letter-spacing: -0.02em;
+  color: $texto;
+}
+
+.portada__d {
+  margin: 1rem 0 0;
+  font-size: var(--sc-font-size-300);
+  line-height: 1.55;
+  color: $texto-2;
+
+  strong {
+    color: $texto;
+  }
+}
+
+.portada__calm {
+  margin: 0.75rem 0 0;
+  font-size: var(--sc-font-size-200);
+  color: $texto-2;
+}
+
+/* ── diploma ── */
+.diploma {
+  margin: 0.5rem 0 1.5rem;
+  padding: 1.25rem 1.5rem;
+  border-radius: 1rem;
+  border: 1px solid rgba($ambar, 0.5);
+  background: linear-gradient(135deg, rgba($ambar, 0.18), rgba($ambar, 0.04));
+  animation: aparecer 300ms ease-out;
+  @include sin-movimiento {
+    animation: none;
+  }
+}
+
+.diploma__eyebrow {
+  @extend %mision-n;
+}
+
+.diploma__r {
+  margin: 0.25rem 0 0;
+  font-size: var(--sc-font-size-500);
+  font-weight: var(--sc-font-weight-bold);
+  color: $texto;
+}
+
+.diploma__d {
+  margin: 0.5rem 0 0;
+  font-size: var(--sc-font-size-200);
+  line-height: 1.55;
+  color: $texto-2;
+
+  strong {
+    color: $texto;
+  }
+}
+
+.diploma__chuleta {
+  @include boton-juego(true);
+  margin-top: 1rem;
+  text-decoration: none;
+}
+
+/* ── mapa ── */
+.mapa {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: grid;
+  gap: 0.75rem;
+  counter-reset: caso;
+}
+
+.caso {
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 1rem;
+  width: 100%;
+  padding: 1rem 1.25rem;
+  border: 1px solid $borde;
+  border-radius: 1rem;
+  background: $fondo-2;
+  color: $texto;
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+  transition:
+    transform 160ms ease,
+    border-color 160ms ease;
+
+  &:hover {
+    transform: translateY(-2px);
+    border-color: $ambar;
+
+    .caso__ir {
+      color: $ambar;
+    }
+  }
+
+  &:focus-visible {
+    outline: 2px solid $ambar;
+    outline-offset: 2px;
+  }
+
+  @include sin-movimiento {
+    transition: none;
+  }
+}
+
+.caso--hecho .caso__n {
+  background: rgba($verde, 0.2);
+  color: $verde;
+}
+
+.caso__n {
+  display: inline-flex;
+  width: 2.5rem;
+  height: 2.5rem;
+  align-items: center;
+  justify-content: center;
+  border-radius: 0.75rem;
+  background: rgba($ambar, 0.18);
+  color: $ambar-2;
+  font-size: var(--sc-font-size-300);
+  font-weight: var(--sc-font-weight-bold);
+}
+
+.caso__cuerpo {
+  display: grid;
+  gap: 0.125rem;
+  min-width: 0;
+}
+
+.caso__t {
+  font-size: var(--sc-font-size-300);
+  font-weight: var(--sc-font-weight-bold);
+}
+
+.caso__s {
+  font-size: var(--sc-font-size-200);
+  line-height: 1.45;
+  color: $texto-2;
+}
+
+.caso__pie {
+  display: grid;
+  justify-items: end;
+  gap: 0.25rem;
+  white-space: nowrap;
+}
+
+.caso__r {
+  font-size: var(--sc-font-size-100);
+  color: $texto-2;
+}
+
+.caso__ir {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: var(--sc-font-size-100);
+  font-weight: var(--sc-font-weight-semibold);
+  color: $texto-2;
+  transition: color 160ms ease;
+
+  svg {
+    width: 0.875rem;
+    height: 0.875rem;
+  }
+}
+
+.estrellas {
+  display: inline-flex;
+  gap: 0.125rem;
+}
+
+.estrella {
+  width: 1rem;
+  height: 1rem;
+  fill: rgba($texto, 0.15);
+
+  &--on {
+    fill: $ambar;
+  }
+}
+
+.estrellas--grande .estrella {
+  width: 2rem;
+  height: 2rem;
+
+  &--on {
+    animation: pop 420ms ease-out both;
+    animation-delay: calc(var(--k) * 140ms);
+    @include sin-movimiento {
+      animation: none;
+    }
+  }
+}
+
+.pie-mapa {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
+  gap: 0.5rem 1rem;
+  margin-top: 1.25rem;
+}
+
+.pie-mapa__t {
+  margin: 0;
+  font-size: var(--sc-font-size-200);
+  color: $texto-2;
+
+  strong {
+    color: $texto;
+  }
+}
+
+.pie-mapa__reset {
+  border: 0;
+  background: none;
+  color: $texto-2;
+  font: inherit;
+  font-size: var(--sc-font-size-100);
+  text-decoration: underline;
+  text-underline-offset: 0.2em;
+  cursor: pointer;
+
+  &:hover {
+    color: $rojo;
+  }
+
+  &:focus-visible {
+    outline: 2px solid $ambar;
+    outline-offset: 2px;
+  }
+}
+
+/* ── un caso abierto ── */
+.escena {
+  padding-top: 1.25rem;
+}
+
+/* El caso 4 es el simulador de la guía y bebe de los tokens del DS, así que se le da el lienzo
+ * de la documentación (sigue al tema claro/oscuro de la página) en vez del azul del juego. */
+.escena--doc {
+  margin-top: 1.25rem;
+  padding: 1.25rem 1.5rem 1.5rem;
+  border-radius: 1rem;
+  background: var(--sc-bg-default);
+  color: var(--sc-text-primary);
+}
+
+/* ── caso cerrado ── */
+.cierre {
+  margin-top: 1.5rem;
+  padding: 1.5rem;
+  border-radius: 1rem;
+  border: 1px solid rgba($verde, 0.5);
+  background: rgba($verde, 0.08);
+  text-align: center;
+  animation: aparecer 300ms ease-out;
+  @include sin-movimiento {
+    animation: none;
+  }
+}
+
+.cierre__t {
+  margin: 0.5rem 0 0;
+  font-size: var(--sc-font-size-400);
+  font-weight: var(--sc-font-weight-bold);
+}
+
+.cierre__d {
+  margin: 0.375rem auto 0;
+  max-width: 34rem;
+  font-size: var(--sc-font-size-200);
+  line-height: 1.55;
+  color: $texto-2;
+
+  strong {
+    color: $texto;
+  }
+}
+
+.cierre__acciones {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0.75rem;
+  margin-top: 1.25rem;
+}
+
+.cierre__siguiente {
+  @include boton-juego(true);
+
+  svg {
+    width: 1rem;
+    height: 1rem;
+  }
+}
+
+.cierre__volver {
+  @include boton-juego(false);
+}
+
+@media (max-width: 640px) {
+  .juego {
+    margin: 0;
+    padding: 1rem;
+  }
+
+  .caso {
+    grid-template-columns: auto 1fr;
+  }
+
+  .caso__pie {
+    grid-column: 1 / -1;
+    justify-items: start;
+  }
+}

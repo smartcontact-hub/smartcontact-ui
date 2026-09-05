@@ -748,3 +748,39 @@
   .dt__dom { border-right: 0; border-bottom: 1px solid #e8eaed; }
   .sim--menu { flex-direction: column; gap: 0.75rem; }
 }
+
+/* ---------- el juego ---------- */
+.jugar {
+  padding: var(--sc-spacing-1-5);
+  border-radius: var(--sc-radius-lg);
+  border: 1px solid var(--sc-border-default);
+  background: var(--sc-bg-subtle);
+}
+
+.jugar__btn {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-5);
+  margin-top: var(--sc-spacing-0-75);
+  padding: var(--sc-spacing-0-625) var(--sc-spacing-1-25);
+  border-radius: var(--sc-radius-full);
+  background: var(--sc-bg-primary);
+  color: var(--sc-text-on-primary);
+  font-size: var(--sc-font-size-200);
+  font-weight: var(--sc-font-weight-semibold);
+  text-decoration: none;
+
+  svg {
+    width: 1rem;
+    height: 1rem;
+  }
+
+  &:hover {
+    background: var(--sc-bg-primary-hover);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--sc-border-focus);
+    outline-offset: 2px;
+  }
+}

@@ -6,9 +6,12 @@ import {
   afterNextRender,
   computed,
   inject,
+  output,
   signal,
   viewChild,
 } from '@angular/core';
+
+import { Resultado } from './juego/juego.types';
 
 /** Las siete dimensiones que la guía enseña a validar. */
 type DimId =
@@ -131,6 +134,14 @@ interface Candidato {
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class ValidarPracticaComponent {
+  /**
+   * Lo que el juego («Detective de píxeles», caso 4) necesita saber de aquí: cada respuesta, para
+   * la racha y el aviso, y el cierre de las 21 con el marcador. Este componente nació como sección
+   * de la guía y se movió al juego el 2026-09-05; sus lecturas siguen siendo REALES.
+   */
+  readonly tiro = output<boolean>();
+  readonly cerrado = output<Resultado>();
+
   private readonly inyector = inject(Injector);
   private readonly escena = viewChild<ElementRef<HTMLElement>>('escena');
   private readonly buscador =
@@ -561,6 +572,10 @@ export class ValidarPracticaComponent {
     this.resueltas.update((m) => new Map(m).set(`${r.id}/${d}`, bien));
     this.fallo.set(!bien);
     this.fase.set('resuelta');
+    this.tiro.emit(bien);
+    if (this.terminado()) {
+      this.cerrado.emit({ aciertos: this.aciertos(), total: this.totalPreguntas() });
+    }
     if (bien) {
       this.racha.update((n) => n + 1);
       this.mejorRacha.update((m) => Math.max(m, this.racha()));

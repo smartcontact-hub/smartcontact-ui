@@ -62,6 +62,15 @@ export const routes: Routes = [
     loadComponent: () =>
       import('./pages/validar/validar.component').then((m) => m.ValidarComponent),
   },
+  {
+    // El juego de la guía («Detective de píxeles»): la guía enseña a mirar, esto obliga a
+    // practicarlo. Ruta propia porque es una pantalla entera con su estado, no una sección al pie
+    // de un texto largo. Comparte la puerta con la guía (`validar-gate.ts`): si no está
+    // desbloqueada, el propio componente te devuelve a `/validar`.
+    path: 'validar/juego',
+    loadComponent: () =>
+      import('./pages/validar/juego/juego.component').then((m) => m.JuegoComponent),
+  },
 
   {
     // Mapa de conexión de variables Figma → tema → navegador. Pinta un artefacto GENERADO

@@ -15,6 +15,103 @@
 > coordine. Los `sNN` de los tramos viejos se quedan como están: los nombran commits y
 > `docs/DECISIONS.md`, y reescribirlos solo desincronizaría el doc de su propia historia.
 
+## ✅ 2026-09-05 · La guía de `/validar` se juega: «Detective de píxeles», cinco casos, y el simulador pasa a ser el cuarto
+
+**Sello:** sobre `409248a` (origin/main, PR #43), rama `feat/validar-juego`. El PR se abre al cerrar este
+tramo; su CI se lee con `npm run ci:verdict` y el número se anota aquí al fundir.
+
+**De dónde sale.** Sesión con Rafa delante, inspeccionando la pantalla Contact Center del Supervisor
+(`supervisoraeddev/SISMAC-4074/#/private/contact-center`) paso a paso, porque «no funciona el
+responsive» y había que decirle algo al equipo de Voz. **Lo medido:** su `.content-grid` lleva
+`grid-template-columns: 14.6875rem minmax(55.0625rem, 55.0625rem)`, o sea la tarjeta clavada a
+881 como mínimo Y máximo, sin `margin-inline: auto` y con filas `nowrap`. Barrido simulando el ancho
+del workspace (fiel: esa pantalla no tiene media queries): a 1920 sobran 668px a la derecha, a
+1280 quedan 28, por debajo de 1280 scroll horizontal. Nuestra referencia
+(`sc-supervisor.pages.dev/config/aed/servicio`) da **el mismo 881 a ≥1280** y por debajo encoge
+hasta 217 sin desbordar; a 1920 reparte 328/328 porque capa a 1200 y centra. Cambiando en SU build
+esa línea a `minmax(31.25rem, 1fr)` y barriendo de 1400 a 800: cero elementos desbordan. El tope
+de 1200 es decisión nuestra (Figma dibuja el área a 1200), así que el «sobra sitio a 1920» no es
+solo suyo; el anclaje a la izquierda y el congelado sí. El argumento que se lleva al correo es su
+propio requisito: «el contenido podrá ocupar un espacio mayor», que `minmax(x, x)` impide.
+Todo esto está ahora en la guía (`/validar`, sección «Un caso real: el ancho congelado») y en el
+Caso 2 del juego, calculado, no capturado.
+
+**Lo que hay ahora** (`projects/sc-docs/src/app/pages/validar/`):
+
+- **Ruta `/validar/juego`** (`juego/juego.component.*`): portada, mapa de cinco casos, HUD con
+  marcador vivo y racha, aviso flotante por respuesta, confeti y estrellas al cerrar un caso,
+  diploma con rango al cerrar los cinco. Progreso en `localStorage` (`sc-detective-v1`), con
+  «Borrar el progreso». Comparte la puerta con la guía (`validar-gate.ts`): sin clave, devuelve a
+  `/validar`.
+- **Casos 1, 2, 3 y 5 nuevos**, uno por componente (`nivel-inspector`, `nivel-ancho`,
+  `nivel-idiomas`, `nivel-trucos`), seis misiones cada uno, motor común en `juego.types.ts` (una
+  respuesta por misión, el porqué va por OPCIÓN, no por misión). El Caso 2 pinta la ventana con
+  cajas absolutas en % del ancho del deslizador y las MISMAS cuentas que el navegador (sidebar 80 +
+  padding 28 + rail 235 + gap 28 + tarjeta); el árbol de Elements enseña los anchos vivos y la
+  víctima es la que no cambia. El Caso 3 empareja Figma ↔ CSS y deshace en vivo las dos confusiones
+  medidas hoy (alineación ≠ tamaño, salvo `align-items` en vertical; `1fr` es fracción del
+  sobrante). El Caso 5 hace practicar las flechas del teclado sobre un valor, de verdad (escucha
+  `keydown` y con Shift salta de diez).
+- **El simulador de tokens es el Caso 4** (`practica.component.*`), sin tocar su mecánica: solo
+  gana dos `output()` (`tiro`, `cerrado`) y deja de estar embebido al pie de la guía. Se
+  conserva porque sus lecturas son reales y costó siete defectos afinarlo (tramo del 2026-09-04).
+- **La guía** gana tres secciones (el caso real con los dos dibujos de la balda, la tabla del
+  auto-layout en los dos idiomas con un truco por fila, seis trucos del inspector) y un CTA al
+  juego. Sin CSS nuevo salvo el CTA: reutiliza `.table`, `.moves`, `.verdicts`, `.snippet`.
+
+**Decisiones de esta sesión (no son DD, son de la doc):**
+
+- **El juego NO sigue el lenguaje visual del DS**, a propósito y por decisión de Rafa: es una
+  pantalla de práctica que imita el navegador y pide un tono más jugable que el de la doc. Lo que sí
+  conserva es la tipografía por tokens, que es lo único que `token-guard` exige fuera del preset
+  (reglas 5-7); los tamaños de Chrome (11/12/13px) van marcados con `sc-replica-navegador` línea a
+  línea. El porqué está escrito en `_juego-base.scss`.
+- **Un componente por caso** por el presupuesto `anyComponentStyle` (14 kB aviso / 18 kB error,
+  POR componente): el look común vive en el partial `_juego-base.scss` y se duplica compilado. Build
+  de producción sin ningún aviso de presupuesto; el chunk `juego-component` pesa 180 kB (32 kB
+  transferidos) y va lazy.
+- **Cero emojis en plantillas** (`audit:screen-hygiene` es un trinquete que solo mengua): iconos en
+  SVG inline.
+
+**Medido al EJECUTARLO, en el build de producción servido desde `dist/`:** casos 1, 2 y 3 jugados a
+clics en el panel del navegador (5/6, 6/6, 6/6; la simulación del Caso 2 reproduce los números
+reales: 1784/881/640 a 1920, scroll a 1100, 1521 con `1fr`); casos 4 y 5 y el diploma con
+Playwright headless (21/21 comprobaciones cerradas, flechas 500→560 por teclado, diploma
+«Aprendiz con buen ojo» 27/45, `localStorage` con los cinco). Cero errores de consola. El
+guion está en el scratchpad de la sesión, no en el repo: un e2e de verdad del juego es el siguiente
+paso natural y está sin hacer.
+
+### Trampas medidas hoy
+
+- **Con el panel del navegador OCULTO el juego se congela**, no solo las medidas. Angular 22 va sin
+  zone: el repintado se programa con temporizadores, y una pestaña de fondo los estrangula (a 1/s, y
+  a 1/min pasados cinco minutos). Un guion de 21 clics que tardaría 3 s se quedó en 16/21 a los 45 s,
+  y en el Chrome real, con la pestaña detrás, el renderer dio «frozen». La salida fue **Playwright
+  headless contra el mismo `dist/`**, que no se estrangula; es la misma trampa que apuntó el tramo
+  del simulador, con número y con herramienta.
+- **Una llave `{` o `}` suelta en una plantilla rompe el build con NG5002** «Unclosed block» y
+  mensajes engañosos varias líneas más abajo. Pasa en los `<pre>` que pintan CSS: hay que escribir
+  `{{ '{' }}` y `{{ '}' }}`. Un comprobador propio dio falsos positivos con `{{ '}' }}`; el que
+  vale es el build.
+- **`token-guard` lee `git ls-files`** (`token-guard.mjs:68`): un fichero NUEVO sin `git add` no
+  se escanea y el guard sale verde igual. `git add -A` antes de fiarse del verde. (Leído en el
+  código, no medido con un rojo.)
+- **El hook de Bash deniega `gate | tail -N`** (LEARNINGS #7): el gate tiene que ir como ÚLTIMO
+  comando de la llamada y su log se lee entero.
+- **`[class]="'x ' + f()"` junto a un `class="x"` estático**: el enlazado pisa al estático, así que
+  la clase base desaparece si la expresión no la repite. Se dejó solo el enlazado, con la base dentro
+  de la expresión.
+
+### Lo que queda abierto (medido aquí, sin tocar)
+
+- **E2E del juego en `e2e/`**: el guion headless de hoy es el borrador; falta subirlo a la suite
+  con su `SC_DOCS_URL` y sus esperas.
+- **Contraste del juego en la paleta propia**: no se ha medido contra 4.5:1 como sí se hizo con el
+  simulador. Los textos secundarios (`#aab4d6` sobre `#12172a`) están por encima a ojo; falta la
+  medida.
+- **La respuesta al equipo de Voz** está diagnosticada y argumentada (memoria
+  `consumer-freezes-design-minimums`), pero el correo no está escrito.
+
 ## ✅ 2026-09-05 · El botón del supervisor medía 33 y el input 36, y no era cosa de tokens
 
 **Sello:** HEAD `b383696`, en el [PR #40](https://github.com/smartcontact-hub/smartcontact-ui/pull/40).

@@ -1,0 +1,215 @@
+<div class="pasos" aria-label="Progreso del caso">
+  @for (m of misiones; track m.id; let i = $index) {
+    <button
+      type="button"
+      class="paso"
+      [class.paso--on]="motor.idx() === i"
+      [class.paso--bien]="motor.hecha(i) === true"
+      [class.paso--mal]="motor.hecha(i) === false"
+      [attr.aria-current]="motor.idx() === i ? 'step' : null"
+      [attr.aria-label]="'Misión ' + (i + 1)"
+      (click)="ir(i)"
+    ></button>
+  }
+</div>
+
+@if (mision(); as m) {
+  <article class="mision" [attr.data-m]="m.id">
+    <p class="mision__n">Misión {{ motor.idx() + 1 }} de {{ motor.total }}</p>
+    <h2 class="mision__t">{{ m.titulo }}</h2>
+    <p class="mision__d" [innerHTML]="m.texto"></p>
+
+    <!-- ── la ventana de mentira, calculada ── -->
+    <div class="banco">
+      <div class="deslizador">
+        <label class="deslizador__l" for="vp">Ancho de la ventana</label>
+        <input
+          id="vp"
+          class="deslizador__r"
+          type="range"
+          min="1024"
+          max="1920"
+          step="4"
+          [value]="vp()"
+          (input)="mover($any($event.target).valueAsNumber)"
+        />
+        <span class="deslizador__v" aria-live="polite">{{ vp() }} <span class="deslizador__x">× 792</span></span>
+      </div>
+
+      <div class="ventana" [class.ventana--desborda]="l().desborda > 0">
+        @for (c of cajas(); track c.id) {
+          <div
+            [class]="'caja caja--' + c.id"
+            [class.caja--hl]="hover() === c.id"
+            [style.left.%]="c.left"
+            [style.width.%]="c.width"
+          >
+            @if (c.id === 'card') {
+              <span class="caja__lineas"><i></i><i></i><i></i><i></i></span>
+            }
+            @if (c.id === 'nav') {
+              <span class="caja__lineas caja__lineas--cortas"><i></i><i></i><i></i></span>
+            }
+            @if (c.id === 'hueco' && motor.idx() >= 4) {
+              <span class="caja__et">{{ l().hueco }} vacíos</span>
+            }
+          </div>
+        }
+        @if (hover(); as h) {
+          <span class="tooltip" [style.left.%]="cajas()[0].width + 2">
+            <b>{{ h }}</b> {{ anchos()[h] }} × {{ altoDe(h) }}
+          </span>
+        }
+        @if (l().desborda > 0) {
+          <span class="scroll" aria-label="Scroll horizontal">
+            <i></i>
+            <span>scroll horizontal · se sale {{ l().desborda }}</span>
+          </span>
+        }
+      </div>
+
+      <!-- ── el panel: árbol + migas + Styles ── -->
+      <div class="dt">
+        <div class="dt__tabs"><span class="dt__tab dt-tab--on">Elements</span><span class="dt__tab">Console</span></div>
+        <div class="dt__cols">
+          <div class="arbol">
+            @for (p of piezas; track p.id; let i = $index) {
+              <button
+                type="button"
+                [class]="'cod ' + (m.id === 'victima' ? clase(i) : '')"
+                [class.cod--sel]="hover() === p.id"
+                [style.padding-left.rem]="0.5 + p.sangria * 0.9"
+                (mouseenter)="hover.set(p.id)"
+                (mouseleave)="hover.set(null)"
+                (focus)="hover.set(p.id)"
+                (blur)="hover.set(null)"
+                (click)="m.id === 'victima' ? elegir(i) : null"
+                [disabled]="m.id === 'victima' && (motor.contestada() || !tocado())"
+              >
+                &lt;<i>{{ etiqueta(p) }}</i> <b>class</b>=<u>"{{ claseDe(p) }}"</u>&gt;
+                <span class="cod__medida">{{ anchos()[p.id] }} × {{ p.alto }}</span>
+              </button>
+            }
+          </div>
+          @if (motor.idx() >= 2) {
+            <pre class="regla">.content-grid {{ '{' }}
+  <i>display</i>: <u>grid</u>;
+  <i>grid-template-columns</i>: <u>14.6875rem <mark>{{ reglaCss() }}</mark></u>;
+  <i>align-items</i>: <u>start</u>;
+  <i>gap</i>: <u>1.75rem</u>;
+{{ '}' }}</pre>
+          }
+        </div>
+        <div class="migas" aria-label="Camino hasta la pieza seleccionada">
+          @for (g of migas; track g; let i = $index) {
+            @if (i > 0) {
+              <span class="migas__sep" aria-hidden="true">›</span>
+            }
+            <button
+              type="button"
+              [class]="'miga ' + (m.id === 'culpable' ? clase(i) : '')"
+              [class.miga--on]="g === 'section.settings-card' && m.id !== 'culpable'"
+              (click)="m.id === 'culpable' ? elegir(i) : null"
+              [disabled]="m.id !== 'culpable' || motor.contestada()"
+            >
+              {{ g }}
+            </button>
+          }
+        </div>
+      </div>
+    </div>
+
+    <!-- ── lo que se contesta en cada misión ── -->
+    @switch (m.id) {
+      @case ('victima') {
+        @if (!tocado()) {
+          <p class="pista">Mueve primero el deslizador. Sin ver qué cambia, no se puede saber qué no cambia.</p>
+        } @else if (!motor.contestada()) {
+          <p class="pista">Ahora pincha en el árbol la línea que no ha cambiado de número.</p>
+        }
+      }
+      @case ('culpable') {
+        @if (!motor.contestada()) {
+          <p class="pista">Pincha en la barra de migas de abajo del panel.</p>
+        }
+      }
+      @case ('leer') {
+        <div class="opciones">
+          @for (o of m.opciones; track o.label; let i = $index) {
+            <button type="button" [class]="'opcion ' + clase(i)" (click)="elegir(i)" [disabled]="motor.contestada()">
+              <span class="opcion__k" aria-hidden="true">{{ i + 1 }}</span>
+              {{ o.label }}
+            </button>
+          }
+        </div>
+      }
+      @case ('arreglar') {
+        <div class="chips">
+          @for (r of reglas; track r.id) {
+            <button type="button" [class]="'chip ' + claseRegla(r.id)" (click)="previsualizar(r.id)" [disabled]="motor.contestada()">
+              <code>{{ r.css }}</code>
+              <span class="chip__n">{{ r.nota }}</span>
+            </button>
+          }
+        </div>
+        @if (!motor.contestada()) {
+          <div class="pie pie--izq">
+            <button type="button" class="siguiente" (click)="confirmarRegla()">Me quedo con esta</button>
+          </div>
+        }
+      }
+      @case ('hueco') {
+        <div class="opciones">
+          @for (o of m.opciones; track o.label; let i = $index) {
+            <button type="button" [class]="'opcion ' + clase(i)" (click)="elegir(i)" [disabled]="motor.contestada()">
+              <span class="opcion__k" aria-hidden="true">{{ i + 1 }}</span>
+              {{ o.label }}
+            </button>
+          }
+        </div>
+        @if (motor.contestada()) {
+          <label class="casilla">
+            <input type="checkbox" [checked]="centrado()" (change)="alternarCentrado()" />
+            <span>Centrar el bloque: <code>max-width: 1200px; margin-inline: auto</code></span>
+          </label>
+        }
+      }
+      @case ('zoom') {
+        <div class="opciones">
+          @for (o of m.opciones; track o.label; let i = $index) {
+            <button type="button" [class]="'opcion ' + clase(i)" (click)="elegir(i)" [disabled]="motor.contestada()">
+              <span class="opcion__k" aria-hidden="true">{{ i + 1 }}</span>
+              {{ o.label }}
+            </button>
+          }
+        </div>
+      }
+    }
+
+    @if (elegidaOpcion(); as o) {
+      <div class="veredicto" [class.es-mal]="!o.ok" aria-live="polite">
+        <span class="veredicto__i">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            @if (o.ok) {
+              <path d="M4 12.5l5.5 5.5L20 7" />
+            } @else {
+              <path d="M6 6l12 12M18 6L6 18" />
+            }
+          </svg>
+        </span>
+        <p class="veredicto__t">{{ o.ok ? 'Eso es' : 'No era eso' }}</p>
+        <p class="veredicto__d">{{ o.porque }}</p>
+      </div>
+      <div class="pie">
+        @if (!motor.esUltima()) {
+          <button type="button" class="siguiente" (click)="siguiente()">
+            Siguiente
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7" /></svg>
+          </button>
+        } @else if (motor.terminado()) {
+          <button type="button" class="repetir" (click)="repetir()">Repetir el caso</button>
+        }
+      </div>
+    }
+  </article>
+}

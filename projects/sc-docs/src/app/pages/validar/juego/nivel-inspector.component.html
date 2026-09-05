@@ -1,0 +1,162 @@
+<div class="pasos" aria-label="Progreso del caso">
+  @for (m of misiones; track m.id; let i = $index) {
+    <button
+      type="button"
+      class="paso"
+      [class.paso--on]="motor.idx() === i"
+      [class.paso--bien]="motor.hecha(i) === true"
+      [class.paso--mal]="motor.hecha(i) === false"
+      [attr.aria-current]="motor.idx() === i ? 'step' : null"
+      [attr.aria-label]="'Misión ' + (i + 1)"
+      (click)="motor.ir(i); elegida.set(null)"
+    ></button>
+  }
+</div>
+
+@if (mision(); as m) {
+  <article class="mision" [attr.data-m]="m.id">
+    <p class="mision__n">Misión {{ motor.idx() + 1 }} de {{ motor.total }}</p>
+    <h2 class="mision__t">{{ m.titulo }}</h2>
+    <p class="mision__d" [innerHTML]="m.texto"></p>
+
+    <!-- ── la escena de cada misión: se responde pinchando en ella ── -->
+    <div class="escena">
+      @switch (m.id) {
+        @case ('donde') {
+          <div class="nav">
+            <div class="nav__barra"><span class="nav__puntos"><i></i><i></i><i></i></span><span class="nav__url">ui.smart-contact.com/components/chip</span></div>
+            <div [class]="'zona zona--pagina ' + clase(0)" role="button" tabindex="0" [attr.aria-disabled]="motor.contestada()" aria-label="El fondo de la página" (click)="elegir(0)" (keydown.enter)="elegir(0)">
+              <span class="zona__et">la página</span>
+              <div [class]="'zona zona--tarjeta ' + clase(1)" role="button" tabindex="0" [attr.aria-disabled]="motor.contestada()" aria-label="El marco de la tarjeta" (click)="$event.stopPropagation(); elegir(1)" (keydown.enter)="$event.stopPropagation(); elegir(1)">
+                <span class="zona__et">la tarjeta</span>
+                <button type="button" [class]="'chip ' + clase(2)" [disabled]="motor.contestada()" aria-label="La palabra Activo" (click)="$event.stopPropagation(); elegir(2)">
+                  <i class="chip__punto"></i>Activo
+                </button>
+              </div>
+            </div>
+          </div>
+        }
+
+        @case ('menu') {
+          <div class="nav nav--menu">
+            <div class="nav__barra"><span class="nav__puntos"><i></i><i></i><i></i></span><span class="nav__url">ui.smart-contact.com/components/chip</span></div>
+            <div class="nav__cuerpo">
+              <span class="chip chip--quieto"><i class="chip__punto"></i>Activo</span>
+              <ul class="menu" role="list">
+                @for (o of m.opciones; track o.label; let i = $index) {
+                  @if (i === 2) {
+                    <li class="menu__sep" aria-hidden="true"></li>
+                  }
+                  <li>
+                    <button type="button" [class]="'menu__i ' + clase(i)" (click)="elegir(i)" [disabled]="motor.contestada()">{{ o.label }}</button>
+                  </li>
+                }
+              </ul>
+            </div>
+          </div>
+        }
+
+        @case ('pestana') {
+          <div class="dt">
+            <div class="dt__tabs">
+              @for (o of m.opciones; track o.label; let i = $index) {
+                <button type="button" [class]="'dt__tab ' + clase(i)" [class.dt-tab--on]="motor.contestada() && i === correcta()" (click)="elegir(i)" [disabled]="motor.contestada()">{{ o.label }}</button>
+              }
+              <span class="dt__tab dt__tab--mas" aria-hidden="true">Memory</span>
+              <span class="dt__tab dt__tab--mas" aria-hidden="true">Application</span>
+            </div>
+            <div class="dt__cuerpo">
+              @if (motor.contestada() && elegidaOpcion()?.ok) {
+                <div class="cod">&lt;<i>div</i> <b>class</b>=<u>"p-card"</u>&gt;</div>
+                <div class="cod cod--in cod--sel">&lt;<i>span</i> <b>class</b>=<u>"p-chip"</u>&gt;Activo&lt;/<i>span</i>&gt;</div>
+                <div class="cod">&lt;/<i>div</i>&gt;</div>
+              } @else {
+                <p class="dt__vacio">Aquí saldrá el código de la página cuando elijas la pestaña.</p>
+              }
+            </div>
+          </div>
+        }
+
+        @case ('etiqueta') {
+          <div class="nav nav--etiqueta">
+            <div class="nav__barra"><span class="nav__puntos"><i></i><i></i><i></i></span><span class="nav__url">supervisor.smart-contact.com/#/contact-center</span></div>
+            <div class="nav__cuerpo nav__cuerpo--azul">
+              <span class="etiqueta">
+                <b>div.content-grid</b>
+                <button type="button" [class]="'etiqueta__n ' + clase(0)" (click)="elegir(0)" [disabled]="motor.contestada()">1320.5</button>
+                <span aria-hidden="true">×</span>
+                <button type="button" [class]="'etiqueta__n ' + clase(1)" (click)="elegir(1)" [disabled]="motor.contestada()">1280</button>
+              </span>
+            </div>
+          </div>
+        }
+
+        @case ('quien') {
+          <div class="dt dt--lado">
+            <div class="dt__tabs">
+              @for (o of m.opciones; track o.label; let i = $index) {
+                <button type="button" [class]="'dt__tab ' + clase(i)" (click)="elegir(i)" [disabled]="motor.contestada()">{{ o.label }}</button>
+              }
+              <span class="dt__tab dt__tab--mas" aria-hidden="true">Layout</span>
+              <span class="dt__tab dt__tab--mas" aria-hidden="true">Event Listeners</span>
+            </div>
+            <div class="dt__cuerpo">
+              @if (motor.contestada() && elegidaOpcion()?.ok) {
+                <pre class="regla">.content-grid {{ '{' }}
+  <i>display</i>: <u>grid</u>;
+  <i>grid-template-columns</i>: <u><mark>14.6875rem minmax(55.0625rem, 55.0625rem)</mark></u>;
+  <i>gap</i>: <u>1.75rem</u>;
+{{ '}' }}</pre>
+                <p class="dt__pie">Quién lo escribió, y editable con doble clic.</p>
+              } @else if (motor.contestada()) {
+                <div class="cmp"><span>grid-template-columns</span><span>235px 881px</span></div>
+                <div class="cmp"><span>gap</span><span>28px</span></div>
+                <p class="dt__pie">Solo el número final. Ni quién lo puso, ni cómo cambiarlo.</p>
+              } @else {
+                <p class="dt__vacio">Elige una pestaña y mira qué enseña.</p>
+              }
+            </div>
+          </div>
+        }
+
+        @case ('deshacer') {
+          <div class="opciones">
+            @for (o of m.opciones; track o.label; let i = $index) {
+              <button type="button" [class]="'opcion ' + clase(i)" (click)="elegir(i)" [disabled]="motor.contestada()">
+                <span class="opcion__k" aria-hidden="true">{{ i + 1 }}</span>
+                {{ o.label }}
+              </button>
+            }
+          </div>
+        }
+      }
+    </div>
+
+    <!-- ── el veredicto y el porqué ── -->
+    @if (elegidaOpcion(); as o) {
+      <div class="veredicto" [class.es-mal]="!o.ok" aria-live="polite">
+        <span class="veredicto__i">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            @if (o.ok) {
+              <path d="M4 12.5l5.5 5.5L20 7" />
+            } @else {
+              <path d="M6 6l12 12M18 6L6 18" />
+            }
+          </svg>
+        </span>
+        <p class="veredicto__t">{{ o.ok ? 'Eso es' : 'No era eso' }}</p>
+        <p class="veredicto__d">{{ o.porque }}</p>
+      </div>
+      <div class="pie">
+        @if (!motor.esUltima()) {
+          <button type="button" class="siguiente" (click)="siguiente()">
+            Siguiente
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7" /></svg>
+          </button>
+        } @else if (motor.terminado()) {
+          <button type="button" class="repetir" (click)="repetir()">Repetir el caso</button>
+        }
+      </div>
+    }
+  </article>
+}

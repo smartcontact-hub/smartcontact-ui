@@ -1,0 +1,181 @@
+<div class="pasos" aria-label="Progreso del caso">
+  @for (m of misiones; track m.id; let i = $index) {
+    <button
+      type="button"
+      class="paso"
+      [class.paso--on]="motor.idx() === i"
+      [class.paso--bien]="motor.hecha(i) === true"
+      [class.paso--mal]="motor.hecha(i) === false"
+      [attr.aria-current]="motor.idx() === i ? 'step' : null"
+      [attr.aria-label]="'Misión ' + (i + 1)"
+      (click)="ir(i)"
+    ></button>
+  }
+</div>
+
+@if (mision(); as m) {
+  <article class="mision" [attr.data-m]="m.id">
+    <p class="mision__n">Misión {{ motor.idx() + 1 }} de {{ motor.total }}</p>
+    <h2 class="mision__t">{{ m.titulo }}</h2>
+    <p class="mision__d" [innerHTML]="m.texto"></p>
+
+    <div class="escena">
+      @switch (m.id) {
+        @case ('parejas') {
+          <div class="tablero">
+            <div class="lado">
+              <p class="lado__t">En Figma</p>
+              @for (p of parejas; track p.figma; let i = $index) {
+                <button
+                  type="button"
+                  class="carta"
+                  [class.carta--sel]="selFigma() === i"
+                  [class.carta--hecha]="emparejadas().has(i)"
+                  [class.carta--mal]="estaFallida(0, i)"
+                  [disabled]="emparejadas().has(i) || motor.contestada()"
+                  (click)="elegirFigma(i)"
+                >
+                  {{ p.figma }}
+                </button>
+              }
+            </div>
+            <div class="lado">
+              <p class="lado__t">En el navegador</p>
+              @for (j of baraja; track j) {
+                <button
+                  type="button"
+                  class="carta carta--css"
+                  [class.carta--hecha]="emparejadas().has(j)"
+                  [class.carta--mal]="estaFallida(1, j)"
+                  [class.carta--espera]="selFigma() !== null && !emparejadas().has(j)"
+                  [disabled]="emparejadas().has(j) || motor.contestada()"
+                  (click)="elegirCss(j)"
+                >
+                  <code>{{ parejas[j].css }}</code>
+                </button>
+              }
+            </div>
+          </div>
+          <p class="marcador" aria-live="polite">
+            {{ parejasHechas() }} de {{ parejas.length }} emparejadas
+            @if (errores()) {
+              · <span class="marcador__err">{{ errores() }} fallo{{ errores() === 1 ? '' : 's' }}</span>
+            }
+            @if (selFigma() === null && !motor.contestada()) {
+              <span class="marcador__pista">Pincha primero una tarjeta de Figma.</span>
+            } @else if (!motor.contestada()) {
+              <span class="marcador__pista">Ahora su pareja, a la derecha.</span>
+            }
+          </p>
+          @if (motor.contestada()) {
+            <dl class="chuleta">
+              @for (p of parejas; track p.figma) {
+                <div class="chuleta__f">
+                  <dt>{{ p.figma }} <span aria-hidden="true">→</span> <code>{{ p.css }}</code></dt>
+                  <dd>{{ p.truco }}</dd>
+                </div>
+              }
+            </dl>
+          }
+        }
+
+        @case ('eje') {
+          <div class="demo">
+            <div class="fila" [class.fila--start]="alineadoArriba()">
+              <div class="fila__menu"><i></i><i></i><i></i></div>
+              <div class="fila__card"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+            </div>
+            <label class="casilla">
+              <input type="checkbox" [checked]="alineadoArriba()" (change)="alternarEje()" />
+              <code>align-items: start;</code>
+            </label>
+          </div>
+          @if (!tocadoEje()) {
+            <p class="pista">Desmarca la casilla antes de contestar: la respuesta se ve, no se adivina.</p>
+          } @else {
+            <div class="opciones">
+              @for (o of m.opciones; track o.label; let i = $index) {
+                <button type="button" [class]="'opcion ' + clase(i)" (click)="elegir(i)" [disabled]="motor.contestada()">
+                  <span class="opcion__k" aria-hidden="true">{{ i + 1 }}</span>
+                  {{ o.label }}
+                </button>
+              }
+            </div>
+          }
+        }
+
+        @case ('fill') {
+          <div class="demo">
+            <div class="fila">
+              <div class="fila__menu"><i></i><i></i><i></i></div>
+              <div class="fila__card"><i></i><i></i><i></i><i></i><i></i><i></i></div>
+            </div>
+          </div>
+          <div class="opciones">
+            @for (o of m.opciones; track o.label; let i = $index) {
+              <button type="button" [class]="'opcion ' + clase(i)" (click)="elegir(i)" [disabled]="motor.contestada()">
+                <span class="opcion__k" aria-hidden="true">{{ i + 1 }}</span>
+                {{ o.label }}
+              </button>
+            }
+          </div>
+        }
+
+        @case ('tarta') {
+          <div class="barra" [class.barra--reparte]="motor.contestada()" aria-hidden="true">
+            <span class="barra__fijo" style="width: 17.8%">menú 235</span>
+            <span class="barra__fijo barra__fijo--sep" style="width: 2.1%"></span>
+            <span class="barra__fr barra__fr--1">1fr</span>
+            <span class="barra__fr barra__fr--2">2fr</span>
+          </div>
+          <p class="barra__pie">1321 de marco · 263 fijos · <strong>1058 sobrantes</strong> a repartir</p>
+          <div class="opciones">
+            @for (o of m.opciones; track o.label; let i = $index) {
+              <button type="button" [class]="'opcion ' + clase(i)" (click)="elegir(i)" [disabled]="motor.contestada()">
+                <span class="opcion__k" aria-hidden="true">{{ i + 1 }}</span>
+                {{ o.label }}
+              </button>
+            }
+          </div>
+        }
+
+        @default {
+          <div class="opciones">
+            @for (o of m.opciones; track o.label; let i = $index) {
+              <button type="button" [class]="'opcion ' + clase(i)" (click)="elegir(i)" [disabled]="motor.contestada()">
+                <span class="opcion__k" aria-hidden="true">{{ i + 1 }}</span>
+                {{ o.label }}
+              </button>
+            }
+          </div>
+        }
+      }
+    </div>
+
+    @if (motor.contestada()) {
+      <div class="veredicto" [class.es-mal]="!motor.estado()" aria-live="polite">
+        <span class="veredicto__i">
+          <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">
+            @if (motor.estado()) {
+              <path d="M4 12.5l5.5 5.5L20 7" />
+            } @else {
+              <path d="M6 6l12 12M18 6L6 18" />
+            }
+          </svg>
+        </span>
+        <p class="veredicto__t">{{ motor.estado() ? 'Eso es' : 'No era eso' }}</p>
+        <p class="veredicto__d">{{ elegidaOpcion()?.porque ?? porqueParejas() }}</p>
+      </div>
+      <div class="pie">
+        @if (!motor.esUltima()) {
+          <button type="button" class="siguiente" (click)="siguiente()">
+            Siguiente
+            <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M9 5l7 7-7 7" /></svg>
+          </button>
+        } @else if (motor.terminado()) {
+          <button type="button" class="repetir" (click)="repetir()">Repetir el caso</button>
+        }
+      </div>
+    }
+  </article>
+}
