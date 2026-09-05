@@ -15,6 +15,37 @@
 > coordine. Los `sNN` de los tramos viejos se quedan como están: los nombran commits y
 > `docs/DECISIONS.md`, y reescribirlos solo desincronizaría el doc de su propia historia.
 
+## ✅ 2026-09-05 · El CTA de la barra pasa a la talla que su propio Figma instancia
+
+**Sello:** PR pendiente (rama `areses/supervisor-cta-sm`, encadenada sobre la del interlineado).
+
+Lo pidió Rafa junto con el interlineado («adelante a 1 y 2»), y sale del MISMO nodo que él mandó:
+`2286:5355` del Figma del Supervisor instancia **`button-small`** para «Guardar» y «Descartar
+cambios», y la app los pintaba en `md`. Los **23** `sc-button` que se proyectan a la TopBar pasan a
+`size="sm"`: de 36px a **27.5**, que es la medida del maestro (y solo cae ahí porque el
+interlineado ya está arreglado; con la rampa habría dado 30.5).
+
+### El ancho, que es donde NO seguí a Figma
+
+Figma dibuja esos botones ajustados al texto (66.5 «Guardar», 128.5 «Descartar cambios»), sin
+suelo. La app tiene uno desde hace tiempo, con una medición detrás: sin él **el CTA salta al
+navegar entre listas**, porque cada etiqueta mide distinto. Ese problema **no cabe en una pantalla
+de diseño**: solo existe en secuencia, así que el Kit no puede arbitrarlo y Figma tampoco.
+
+Lo que sí estaba mal era el número: **144 se calculó para la talla md**. Remedidos los anchos
+naturales con `sm` — Nueva label 106 · Nuevo grupo 113 · Nuevo agente 118 · Nuevo usuario 121 ·
+Nueva plantilla 123 — el suelo baja a **128** (y el techo de 288 a 256). Sigue igualando los cinco,
+y el aire sobrante cae de 38px a 6. Medido después: los cuatro CTA a 27.5×128 con el borde derecho
+clavado en 1366, o sea sin salto. Queda escrito en `main.scss` que Figma no tiene este suelo y qué
+hay que borrar si algún día se prefiere el hug puro.
+
+### Un comentario que mentía, corregido de paso
+
+`main.scss` explicaba la retirada del `line-height: normal` del PR #40 diciendo que «el Kit modela
+el botón y el campo como la misma caja, así que alinean a 36px». El Kit iguala el **padding**, no
+el interlineado: el maestro del botón mide 33 y el del campo 34. Ese comentario habría vuelto a
+mandar a la próxima sesión por el camino equivocado.
+
 ## ✅ 2026-09-05 · Los controles recuperan el interlineado del Kit: el botón deja de medir 3px de más que el diseño
 
 **Sello:** [PR #48](https://github.com/smartcontact-hub/smartcontact-ui/pull/48) — el número se
