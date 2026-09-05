@@ -17,7 +17,11 @@
 
 ## ✅ 2026-09-05 · El CTA de la barra pasa a la talla que su propio Figma instancia
 
-**Sello:** PR pendiente (rama `areses/supervisor-cta-sm`, encadenada sobre la del interlineado).
+**Sello:** [PR #49](https://github.com/smartcontact-hub/smartcontact-ui/pull/49) — el número se
+escribe antes de abrirlo, como el tramo anterior, porque la marca de preflight sella el árbol.
+**Carril `preflight` COMPLETO en verde sobre el árbol final**, ya rebasado sobre `main` con el
+interlineado dentro (#48 fundido): `guard:lockfile` · `verify` · `build:docs` · los tres builds de
+producción · e2e **78 + 127 + 100**. Veredicto del CI con `npm run ci:verdict` tras el push.
 
 Lo pidió Rafa junto con el interlineado («adelante a 1 y 2»), y sale del MISMO nodo que él mandó:
 `2286:5355` del Figma del Supervisor instancia **`button-small`** para «Guardar» y «Descartar
