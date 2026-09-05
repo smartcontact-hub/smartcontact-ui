@@ -15,6 +15,72 @@
 > coordine. Los `sNN` de los tramos viejos se quedan como están: los nombran commits y
 > `docs/DECISIONS.md`, y reescribirlos solo desincronizaría el doc de su propia historia.
 
+## ✅ 2026-09-05 · El supervisor bebe del DS tal cual: 64 botones y 51 controles a mano pasan a componentes
+
+**Sello:** PR pendiente de abrir (esta rama: `areses/sc-supervisor-button-sizes-58ed5c`).
+Carril `preflight:scope` sobre el árbol final y `npm run ci:verdict` tras el push: ver el
+cierre de este tramo, más abajo.
+
+**La pregunta de Rafa**: «¿por qué el supervisor tiene tamaños de botón tan raros? ¿no bebe del
+DS o se sobreescriben?». Medido en el deploy (`main`, tras #40 y #44): los `sc-button` SÍ beben
+del tema (36 md / 30.5 sm, y el export del Theme Designer del 5-sep dice lo mismo que el repo
+para el botón). Lo raro eran los OTROS: **113 `<button>` a mano frente a 61 `sc-button`**, cada
+uno con su padding y su alto (24, 25, 28, 32, 34, 37px), más buscadores, casillas, textareas,
+selects y chips pintados a mano. Rafa: «que la plataforma beba de nuestros componentes tal cual,
+adaptados al div pero no arbitrariamente; nada de añadir variantes al DS».
+
+### Lo que cambió (dos commits, uno por tanda)
+
+| Tanda | Qué | Cuántos | A qué |
+| --- | --- | --- | --- |
+| 1 | kebab de fila, exportar, pies de panel, eliminar, añadir, quitar, info, transporte del reproductor, acciones del toast | 64 (`<button>` 113 → 44; `sc-button` 61 → 125) | `sc-button` con el tamaño del vecino: `sm` en filas y paneles, `md` junto a campos; icon-only por `[icon]` |
+| 2 | buscadores con lupa y aspa | 6 | `sc-search` |
+| 2 | casillas (`input[type=checkbox]`) | 27 | `sc-checkbox` (`[state]` + `(cycle)`; el «todos» de Sistema usa `some`) |
+| 2 | textareas | 4 | `sc-textarea` |
+| 2 | selects nativos | 3 | `sc-select` (Sistema: opciones traducidas en el TS; presencia de agentes: `presenceOptions()`) |
+| 2 | chips | 3 + `sc-label-chip` | `sc-chip`; `sc-label-chip` queda como fachada fina sobre `sc-chip variant="label"` (pierde su `xs`, que el DS no modela) |
+| 2 | inputs de texto y número | 5 + 3 | `sc-inputtext` / `sc-inputnumber` |
+
+El CSS visual de cada uno se ha ido (padding, alto, color, borde, hover); **solo queda su sitio**:
+`margin`, `align-self`, `flex: 1`, la línea del panel. Cada resto lleva un comentario que dice
+que el tamaño lo pone el DS.
+
+### Dos cosas que solo se vieron midiendo
+
+1. **Los icon-only salían VACÍOS.** `sc-button [icon]` pinta el glifo por la clase
+   `.sc-icon-font--NAME::before`, y el supervisor solo importaba la FUENTE más ocho glifos a mano
+   («el catálogo generado sobra»). Doce botones sin icono y nada avisaba. Ahora importa el
+   `index.css` del paquete de iconos como sc-docs: +33 KB gzip (styles 41.8 KB).
+2. **La fila de tabla-lista pasa de 54 a 56.** El kebab era un botón de 28px; el `sc-button`
+   icon-only `sm` mide 30.5, y la fila la fija su contenido más alto: 30.5 + 12.25×2 + 1 = 56.
+   No se recortó el botón para conservar el 54 (sería volver a lo de antes). El e2e
+   `list-table-grammar` y el comentario de `_sc-datatable-list.scss` dicen 56 y por qué. Y el
+   host `sc-button` es `inline` por defecto: en una celda abría 3px de descendente; el
+   `.rules-kebab-btn` del supervisor solo lo asienta (`inline-flex; vertical-align: middle`).
+
+### Lo que queda a mano, y por qué (medido en 9 rutas del build de producción)
+
+No son botones de acción: son **otros componentes que el DS no tiene**. Decisión de Rafa si el
+DS los incorpora; no se han inventado variantes.
+
+| Qué | Dónde | Falta en el DS |
+| --- | --- | --- |
+| pestañas (`tabs__tab`, `player-tabs__btn`) | plantillas, ficha de agente, reproductor | tabs |
+| control segmentado (`theme-toggle__option`, `panel__type`) | Sistema, panel de plantilla | selectbutton |
+| disparadores de filtro con popover (`type-filter-trigger`, `category-filter-trigger`, `memory-failed-chip`) | conversaciones | chip-filtro / trigger |
+| toggle-chip con casilla oculta (`gatbl__chip`, `actbl__chip`) | asignación agente↔grupo | toggle-chip |
+| barras de progreso arrastrables (`player-audio__scrub`, `multi-rec__scrub`) | reproductor | slider |
+| filas y cabeceras clicables (`nav-item`, `country-row`, `agent-row`, `accordion__head`, `sub-section__head`, `hub-item`, opciones de picker) | varias | son filas, no botones |
+| `memory-status-button` (25px, ×34 por página) | celdas de conversaciones | indicador de estado clicable |
+
+### Verificación
+
+- `ng build supervisor --configuration production`: verde y sin avisos (cinco iteraciones; las
+  tres primeras cazaron un `[icon]="keyboard"` mal ligado, un import que faltaba y un chip roto).
+- e2e supervisor contra el estático (`scripts/spa-server.mjs` en :4507): ver cierre.
+- Medido con sonda en 9 rutas: todo `sc-button` a 36 (md) o 30.5 (sm); ningún botón de acción
+  fuera del DS. Capturas en el hilo de la sesión.
+
 ## ✅ 2026-09-05 · La capa sin capa del supervisor: 24 colisiones se van al DS, las 28 que quedan llevan escrito por qué
 
 **Sello:** [PR #44](https://github.com/smartcontact-hub/smartcontact-ui/pull/44) — **por PR y no

@@ -35,25 +35,30 @@ test.beforeEach(async ({ page }) => {
  * alto de la fila (agentes y grupos llevan avatar, que mide más que una línea
  * de texto). Lo que sí tiene que ser idéntico es el resto — paddings,
  * tipografía de cabecera, bordes y el reparto de columnas.
+ *
+ * 54 → 56 el 2026-09-05: el kebab de fila pasó de un <button> a mano de 28px a
+ * `sc-button` icon-only `sm` del DS (30.5px). La fila la fija su contenido más
+ * alto, y ese es el kebab: 30.5 + 12.25×2 de padding + 1 de borde = 56. No se
+ * recortó el botón para conservar el 54: la app bebe del DS tal cual.
  */
 const PAGINAS = [
-  { ruta: 'admin/labels', nombre: 'labels', altoFila: 54 },
-  { ruta: 'admin/plantillas', nombre: 'plantillas', altoFila: 54 },
-  { ruta: 'admin/usuarios', nombre: 'usuarios', altoFila: 54 },
+  { ruta: 'admin/labels', nombre: 'labels', altoFila: 56 },
+  { ruta: 'admin/plantillas', nombre: 'plantillas', altoFila: 56 },
+  { ruta: 'admin/usuarios', nombre: 'usuarios', altoFila: 56 },
   { ruta: 'admin/agentes', nombre: 'agentes', altoFila: 63 },
   { ruta: 'admin/grupos', nombre: 'grupos', altoFila: 63 },
   // El trío de memory, migrado el 2026-07-19. Entraron aquí en el MISMO
   // commit que la migración, y eso no es formalismo: sin esta línea el spec
   // pasaba en verde sin visitar la página, y el "108/108" que traían los
   // informes de migración no probaba nada sobre lo migrado.
-  { ruta: 'conversaciones/reglas', nombre: 'reglas', altoFila: 54 },
-  { ruta: 'conversaciones/categorias', nombre: 'categorias', altoFila: 54 },
-  { ruta: 'conversaciones/entidades', nombre: 'entidades', altoFila: 54 },
+  { ruta: 'conversaciones/reglas', nombre: 'reglas', altoFila: 56 },
+  { ruta: 'conversaciones/categorias', nombre: 'categorias', altoFila: 56 },
+  { ruta: 'conversaciones/entidades', nombre: 'entidades', altoFila: 56 },
   /* Una de las NUEVE páginas de repositorios, que comparten `repo-list-page`.
    * No estaba ninguna: `audit:datatables` lo destapó al no encontrar su ruta.
    * Con una basta —las nueve son el mismo componente— pero sin ninguna, la
    * tabla más reutilizada de la app era la única sin vigilar. */
-  { ruta: 'admin/agendas', nombre: 'agendas', altoFila: 54 },
+  { ruta: 'admin/agendas', nombre: 'agendas', altoFila: 56 },
 ] as const;
 
 /** Las tablas cuya fila ABRE algo tienen que anunciarlo con el cursor. */

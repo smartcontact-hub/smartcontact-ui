@@ -70,28 +70,15 @@
 @import 'primeicons/primeicons.css';
 
 /*
- * Iconos del DS: Material Symbols **Outlined**, self-hospedado. Antes replicábamos
- * el contrato `.sc-icon` apuntando al CDN Outlined (porque el DS servía Rounded);
- * ahora el DS publica Outlined, así que importamos su `material-symbols.css`
- * directamente — fuente única, sin CDN. Los codepoints son idénticos entre estilos.
+ * Iconos del DS: Material Symbols **Outlined**, self-hospedado, y el CATÁLOGO de
+ * glifos (`.sc-icon-font--NAME::before`) del paquete de iconos, igual que sc-docs.
+ * Antes solo entraba la fuente y la app declaraba a mano ocho glifos «para los
+ * menús de PrimeNG». Ese atajo caducó el 2026-09-05: `sc-button [icon]` (los
+ * kebab, exportar, quitar, info…) pinta el icono por esa misma clase, y con la
+ * lista a mano doce botones salían VACÍOS sin que nada avisara. El catálogo
+ * entero son 33 KB gzip; un botón sin icono no tiene precio que lo compense.
  */
-@import '../../../ui-smartcontact-icons/src/lib/styles/material-symbols.css';
-
-/*
- * Iconos de los menús de PrimeNG. `MenuItem.icon` es una CLASE CSS, no un
- * componente, así que ahí no cabe `<sc-icon>`: usamos la convención
- * `.sc-icon-font--NAME` del DS (el base `.sc-icon-font::before` ya trae la
- * familia Material del import de arriba; aquí solo el glifo). Declaramos SOLO
- * los que usamos — el catálogo generado del DS son miles de reglas y sobra.
- */
-.sc-icon-font--edit::before { content: 'edit'; }
-.sc-icon-font--content_copy::before { content: 'content_copy'; }
-.sc-icon-font--delete::before { content: 'delete'; }
-.sc-icon-font--pause::before { content: 'pause'; }
-.sc-icon-font--play_arrow::before { content: 'play_arrow'; }
-.sc-icon-font--description::before { content: 'description'; }
-.sc-icon-font--auto_awesome::before { content: 'auto_awesome'; }
-.sc-icon-font--warning::before { content: 'warning'; }
+@import '../../../ui-smartcontact-icons/src/lib/styles/index.css';
 
 html,
 body {
@@ -671,4 +658,13 @@ table.table {
       transform: none;
     }
   }
+}
+
+/* Kebab de fila: es un `sc-button` del DS. El host de un custom element es
+ * `inline` por defecto, y dentro de una celda eso abre una caja de línea con
+ * hueco de descendente bajo el botón (la fila crecía 3px de más). Solo se
+ * fija cómo se asienta en la celda; el tamaño lo pone el DS. */
+.rules-kebab-btn {
+  display: inline-flex;
+  vertical-align: middle;
 }
