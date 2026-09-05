@@ -15,6 +15,12 @@
  * misma cobertura que nuestras apps, y no puede desincronizarse: si mañana añadimos un
  * selector al preset, el emitido lo trae solo.
  *
+ * DOS FAMILIAS (DD-51, 2026-09-05). El preset dejó de dar el mismo line-height a todo:
+ * los CONTROLES llevan `normal` (el `AUTO` de sus maestros en el Kit) y las ETIQUETAS
+ * siguen leyendo `--p-app-typography-*-line-height`, que es lo que el Kit sí les ata.
+ * El consumidor tiene que recibir ese mismo reparto o sus botones volverán a salir 3px
+ * más altos que el diseño, que es justo el bug que originó todo esto.
+ *
  * USO
  *   node scripts/emit-consumer-typography.mjs            # a stdout
  *   node scripts/emit-consumer-typography.mjs --out f.css
@@ -48,16 +54,28 @@ function selectorsOf(name) {
 const rem = (px) => `${px / 16}rem`;
 
 const SIZES = [
-  { key: 'md', list: 'mdTypographySelectors', fs: 14, lh: 20 },
-  { key: 'sm', list: 'smTypographySelectors', fs: 12, lh: 18 },
-  { key: 'lg', list: 'lgTypographySelectors', fs: 16, lh: 24 },
+  { key: 'md', control: 'mdControlSelectors', ramp: 'mdRampSelectors', fs: 14, lh: 20 },
+  { key: 'sm', control: 'smControlSelectors', ramp: 'smRampSelectors', fs: 12, lh: 18 },
+  // lg no tiene familia de etiqueta: chip, tag y toast no existen en talla lg.
+  { key: 'lg', control: 'lgControlSelectors', ramp: null, fs: 16, lh: 24 },
 ];
 
-const bloques = SIZES.map(({ key, list, fs, lh }) => {
-  const sel = selectorsOf(list).join(',\n');
-  return `/* ${key} — ${fs}/${lh} */\n${sel} {\n` +
-    `  font-size: var(--p-app-typography-${key}-font-size, ${rem(fs)});\n` +
-    `  line-height: var(--p-app-typography-${key}-line-height, ${rem(lh)});\n}`;
+const bloques = SIZES.flatMap(({ key, control, ramp, fs, lh }) => {
+  const salida = [
+    `/* ${key} · controles — letra ${fs}, interlineado de la fuente (el AUTO del Kit) */\n` +
+      `${selectorsOf(control).join(',\n')} {\n` +
+      `  font-size: var(--p-app-typography-${key}-font-size, ${rem(fs)});\n` +
+      `  line-height: normal;\n}`,
+  ];
+  if (ramp) {
+    salida.push(
+      `/* ${key} · etiquetas — ${fs}/${lh}, los dos atados en el Kit */\n` +
+        `${selectorsOf(ramp).join(',\n')} {\n` +
+        `  font-size: var(--p-app-typography-${key}-font-size, ${rem(fs)});\n` +
+        `  line-height: var(--p-app-typography-${key}-line-height, ${rem(lh)});\n}`
+    );
+  }
+  return salida;
 });
 
 const salida = `/* Tipografía de componente — generado desde el Design System.
@@ -68,6 +86,11 @@ const salida = `/* Tipografía de componente — generado desde el Design System
  * Cárgala DESPUÉS del tema. Los valores salen de las variables del propio tema
  * (--p-app-typography-*), así que cambiar la tipografía en Figma y reinstalar el tema
  * se refleja aquí sin tocar nada: los fallbacks solo entran si la variable no resuelve.
+ *
+ * Los CONTROLES (botón, campo, select, opciones) llevan \`line-height: normal\` a propósito:
+ * en el Kit su texto va en AUTO, o sea la métrica de la fuente. Darles el interlineado de
+ * la rampa los hace 3px más altos que el diseño. Las ETIQUETAS (chip, tag, toast) sí lo
+ * llevan atado en el Kit, y por eso ahí se lee la variable.
  *
  * NO editar a mano: se regenera con \`npm run emit:consumer-typography\`.
  */

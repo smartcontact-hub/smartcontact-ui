@@ -15,6 +15,88 @@
 > coordine. Los `sNN` de los tramos viejos se quedan como están: los nombran commits y
 > `docs/DECISIONS.md`, y reescribirlos solo desincronizaría el doc de su propia historia.
 
+## ✅ 2026-09-05 · Los controles recuperan el interlineado del Kit: el botón deja de medir 3px de más que el diseño
+
+**Sello:** [PR #48](https://github.com/smartcontact-hub/smartcontact-ui/pull/48) — el número se
+escribe ANTES de abrirlo (el siguiente libre en la API era el 48) porque la marca de preflight
+sella el árbol entero: un sello escrito después la invalidaría.
+**Carril `preflight` COMPLETO en verde sobre el árbol final**, por tramos: `guard:lockfile` ·
+`verify` (34 gates lanzados, lint limpio) · `build:docs` · los tres builds de producción · e2e
+**78 + 127 + 100** sobre estáticos servidos con `scripts/spa-server.mjs`. Veredicto del CI leído
+con `npm run ci:verdict` tras el push.
+
+**Cómo empezó**: Rafa, tras fundir el PR #47, miró el Supervisor contra su Figma y dijo *«los
+botones siguen igual de tamaño no lo ves? esto no puede pasar en nuestra plataforma, hay algo que
+está sobreescribiendo mal, o en la sc-docs está mal partiendo del ds»*. Las dos hipótesis eran
+razonables y las dos eran falsas. **El desviado era el tema.**
+
+### El diagnóstico, medido en tres sitios
+
+Con el Desktop Bridge sobre los maestros del Kit, y con sonda en el deploy de sc-docs (el DS
+PURO, sin consumidor de por medio, que es lo que descarta al Supervisor):
+
+| | Figma | código (antes) | de dónde salía |
+| --- | --- | --- | --- |
+| botón md | 33 | 36 | texto 17 contra 20 |
+| botón sm | 27.5 | 30.5 | texto 15 contra 18 |
+| botón lg | 38.5 | 43.5 | texto 19 contra 24 |
+| campo md | 34 | 36 | ídem |
+| icon-only md / sm | 35×33 / 28×27.5 | 35×36 / 28×30.5 | ídem |
+
+**Padding, font-size y borde casaban EXACTOS en los tres tamaños.** Todo el sobrante era el
+`line-height`, y la regla que lo ponía era del preset (`css.ts`, sin capa, inyectada como
+`global-style`), no de ninguna app.
+
+### Por qué no bastaba con quitarlo, y por qué no valía cambiarlo entero
+
+Medí también chip, tag, toast, select-option, breadcrumb y context-menu, y ahí está el matiz que
+decide el arreglo: **el Kit sí ata el interlineado de las etiquetas** (chip 20, tag 18, toast
+20/18 — exactamente la rampa) y **no lo ata en los controles** (botón, campo, select y sus
+opciones van en `AUTO`). Una sola regla para los dos grupos era el error.
+
+Así que `css.ts` pasa a tener DOS familias: los controles reciben `line-height: normal` y las
+etiquetas siguen leyendo `app.typography.*.line-height`. El token de `extend.ts` no cambia de
+valor, cambia de clientela. Y **no se borra la regla de los controles**: sin ella heredarían el
+1.5 del body de cada app (21px en el supervisor), que es peor que la rampa y es justo lo que
+DD-39 vino a evitar. Queda escrito en DD-51, y DD-39 lleva ahora una nota de acotación.
+
+### Lo que el gate cazó, y que yo no habría visto
+
+`verify` se puso rojo en `test:unit` por un sitio inesperado: `scripts/emit-consumer-typography.mjs`
+LEE las listas de selectores de `css.ts` para emitir la hoja de tipografía que se entrega al equipo
+que consume el tema. Al partir las listas, lo rompí. Ese script es justo el canal que mantiene
+sincronizado al consumidor, así que se actualizó al reparto nuevo (controles `normal`, etiquetas
+variable) y su test pasó a comprobar **el reparto**, no solo la cobertura. **Red-check hecho**: con
+la regresión puesta (controles leyendo la rampa) los dos tests nuevos enrojecen y la nombran.
+
+### Consecuencias medidas
+
+- Botón md **33**, sm **27.5**, icon-only **35×33** y **28×27.5**: clavados con el maestro.
+- Chip 34 y tag 25 **sin moverse**, que es lo que se pretendía.
+- Fila de tabla-lista del supervisor: **56 → 53** (su contenido más alto es el kebab). Medida en
+  las 9 rutas; agentes y grupos siguen en 63 porque ahí manda el avatar, no el botón.
+- Baseline de estructura: una sola línea, el `sc-textarea` con auto-resize, **74 → 65**. Cuadra
+  exacto: 3 líneas × 17 + 14 de padding.
+
+### Dos flecos ANOTADOS y sin tocar (no son interlineado)
+
+1. **Botón lg sale 39.5 y Figma dice 38.5.** Inter da 19.5 a 16px y el Kit redondea a 19. Un
+   píxel de redondeo de métrica, no una regla que se pueda cambiar.
+2. **`tag` mide 25 y Figma 21.5.** Ahí el desviado es el `padding` vertical (3.5 contra 1.75),
+   otro token y otra conversación.
+
+### Lo que se validó de las premisas de Rafa (él pidió que no le siguiera ciegamente)
+
+- *«en sc-docs está mal partiendo del ds»* → **falso, medido**: sc-docs tiene **0** reglas propias
+  sobre `.p-*` y **0** medidas de control cableadas en su doc. No pisa el tema en ningún sitio.
+- *«que cada cambio en el tema se despliegue en el resto sin conflictos»* → correcto como
+  objetivo, con un matiz honesto: hoy mismo un cambio del tema movió el alto de fila y un
+  baseline. **Eso es la propagación funcionando, no un fallo.** Lo exigible es que no haya que
+  editar CSS en cada app (no lo hubo) y que si la geometría se mueve, un gate lo cante (lo cantó).
+- Acoplamiento al tema por app, medido: sc-docs 0, agent 0, agent-mini 0, cuscare 9 (todas del
+  mismo bloque de filtros de tickets, con `::ng-deep`), supervisor 33 (las gramáticas de tabla y
+  las micro-interacciones ya documentadas y con trinquete desde el PR #44).
+
 ## ✅ 2026-09-05 · El supervisor bebe del DS tal cual: 64 botones y 51 controles a mano pasan a componentes
 
 **Sello:** [PR #47](https://github.com/smartcontact-hub/smartcontact-ui/pull/47) — por PR y no

@@ -36,29 +36,35 @@ test.beforeEach(async ({ page }) => {
  * de texto). Lo que sí tiene que ser idéntico es el resto — paddings,
  * tipografía de cabecera, bordes y el reparto de columnas.
  *
- * 54 → 56 el 2026-09-05: el kebab de fila pasó de un <button> a mano de 28px a
- * `sc-button` icon-only `sm` del DS (30.5px). La fila la fija su contenido más
- * alto, y ese es el kebab: 30.5 + 12.25×2 de padding + 1 de borde = 56. No se
- * recortó el botón para conservar el 54: la app bebe del DS tal cual.
+ * El alto de fila se movió DOS veces el 2026-09-05, y las dos por el kebab, que es
+ * el contenido más alto de la fila:
+ *   54 → 56  el kebab dejó de ser un <button> a mano de 28px y pasó a `sc-button`
+ *            icon-only `sm` del DS, que entonces medía 30.5.
+ *   56 → 53  DD-51 devolvió a los controles el interlineado del Kit (`normal`, que es
+ *            el `AUTO` de sus maestros) y ese mismo botón bajó a 27.5, su medida en
+ *            Figma. 27.5 + 12.25×2 + 1 = 53.
+ * Agentes y grupos no se mueven: ahí manda el avatar (37px), no el kebab.
+ * En ninguno de los dos pasos se recortó el botón para salvar el número: la app bebe
+ * del DS, y el DS bebe del Kit.
  */
 const PAGINAS = [
-  { ruta: 'admin/labels', nombre: 'labels', altoFila: 56 },
-  { ruta: 'admin/plantillas', nombre: 'plantillas', altoFila: 56 },
-  { ruta: 'admin/usuarios', nombre: 'usuarios', altoFila: 56 },
+  { ruta: 'admin/labels', nombre: 'labels', altoFila: 53 },
+  { ruta: 'admin/plantillas', nombre: 'plantillas', altoFila: 53 },
+  { ruta: 'admin/usuarios', nombre: 'usuarios', altoFila: 53 },
   { ruta: 'admin/agentes', nombre: 'agentes', altoFila: 63 },
   { ruta: 'admin/grupos', nombre: 'grupos', altoFila: 63 },
   // El trío de memory, migrado el 2026-07-19. Entraron aquí en el MISMO
   // commit que la migración, y eso no es formalismo: sin esta línea el spec
   // pasaba en verde sin visitar la página, y el "108/108" que traían los
   // informes de migración no probaba nada sobre lo migrado.
-  { ruta: 'conversaciones/reglas', nombre: 'reglas', altoFila: 56 },
-  { ruta: 'conversaciones/categorias', nombre: 'categorias', altoFila: 56 },
-  { ruta: 'conversaciones/entidades', nombre: 'entidades', altoFila: 56 },
+  { ruta: 'conversaciones/reglas', nombre: 'reglas', altoFila: 53 },
+  { ruta: 'conversaciones/categorias', nombre: 'categorias', altoFila: 53 },
+  { ruta: 'conversaciones/entidades', nombre: 'entidades', altoFila: 53 },
   /* Una de las NUEVE páginas de repositorios, que comparten `repo-list-page`.
    * No estaba ninguna: `audit:datatables` lo destapó al no encontrar su ruta.
    * Con una basta —las nueve son el mismo componente— pero sin ninguna, la
    * tabla más reutilizada de la app era la única sin vigilar. */
-  { ruta: 'admin/agendas', nombre: 'agendas', altoFila: 56 },
+  { ruta: 'admin/agendas', nombre: 'agendas', altoFila: 53 },
 ] as const;
 
 /** Las tablas cuya fila ABRE algo tienen que anunciarlo con el cursor. */

@@ -75,6 +75,51 @@ como el resto; renombrarlo a `sc-agent-mini` cambiaría la URL (y el enlace en s
 
 ---
 
+## 🎯 PRÓXIMA SESIÓN GRANDE — el código que sc-docs ENSEÑA no es el que EJECUTA
+
+**La pidió Rafa el 2026-09-05, de madrugada, y pidió no atacarla esa noche**: primero planificar
+cómo, luego lanzar. Esto es el enunciado, con lo que ya está medido para no repetir el trabajo.
+
+**Lo que vio él**, mirando `/#/components/button`: el ejemplo enseña `<sc-button label=… variant=…
+appearance=… size=… icon=… [rounded] [fullWidth] />`, mientras el DOM real de sus devs en
+`ui.smart-contact.com` es `sc-button > p-button > button`. Su pregunta: *«¿el código de cada uno en
+sc-docs está basado realmente en primeng?»*.
+
+**Lo que está medido (2026-09-05, sin tocar nada)**
+
+| Hecho | Cifra |
+| --- | --- |
+| Páginas de demo con el snippet como constante de texto A MANO (`const *_SNIPPET = \`…\``) | **43** |
+| Gate que cruce ese texto con la plantilla que de verdad se renderiza | **ninguno** |
+| Reglas de sc-docs que pisen el tema (`.p-*` en su SCSS) | **0** |
+| Medidas de control cableadas en la doc (36px, 30.5…) | **0** |
+
+O sea: **el problema NO es que sc-docs no beba del tema** — bebe, y no lo pisa en ningún sitio. El
+problema es que en cada página hay DOS textos, el que se muestra y el que se ejecuta, y nada los
+ata. Un `input` nuevo, un valor por defecto que cambia o un renombrado dejan la doc mintiendo sin
+que nadie se entere. Es el mismo patrón que ya nos mordió con el CSS del consumidor: el que
+arregló `emit-consumer-typography` leyendo la lista del preset en vez de duplicarla.
+
+**Lo que hay que decidir antes de tocar** (esto es lo que se planifica)
+
+1. **De dónde sale el snippet.** ¿Se extrae de la plantilla real en build (una sola fuente) o se
+   sigue escribiendo a mano con un gate que compare? Lo primero elimina la clase de fallo; lo
+   segundo es más barato y conserva el control editorial del ejemplo.
+2. **Qué nivel se enseña.** Hoy solo la API pública (`sc-button`), que es lo correcto para quien
+   consume el DS. Falta decidir si además se muestra la estructura real (`sc-button > p-button >
+   button`) y sus clases `.p-*`, que es lo que necesita quien depura CSS o escribe un selector —
+   y es justo lo que el equipo de Rafa ve en su propia doc.
+3. **Alcance.** Las 43 de golpe con una utilidad común, o una tanda piloto (button, inputtext,
+   select) y el resto detrás.
+4. **Qué contrato se gatea.** Mínimo: que cada `input` público del componente aparezca en algún
+   snippet de su página, y que ningún snippet use un atributo que el componente no declara. Eso
+   es comprobable en `verify` sin navegador.
+
+⚠️ **No es una migración visual**: no cambia lo que se ve, cambia lo que se cuenta. Y por eso no
+lo cazó ningún gate hasta que lo miró una persona.
+
+---
+
 ## 📚 Dónde vive cada cosa
 
 [`docs/DOCS-INDEX.md`](docs/DOCS-INDEX.md) manda: qué documento es el _source of truth_ de qué.
