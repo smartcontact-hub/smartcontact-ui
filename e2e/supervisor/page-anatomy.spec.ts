@@ -20,10 +20,12 @@ import { disableAnimations, forceLightTheme, goto } from './helpers';
  * mismo bloque de aserciones corre sobre los tres.
  *
  * Lo que este fichero NO fija todavía: `.ipanel { top }`. Hoy computa `auto`
- * porque `--sc-form-panel-top` se USA en los tres ficheros y no está definido en
- * ninguna parte del repo (medido 2026-09-06: 9 usos, 0 definiciones), así que el
- * rail pide quedarse fijo al hacer scroll y no se queda. El valor se anota en el
- * informe del test; la aserción entra cuando el token exista.
+ * porque el rail ya no declara `top`: la declaración que traía apuntaba a
+ * `--sc-form-panel-top`, un token que se usaba y no se definía en ninguna parte
+ * del repo, así que era inválida y caía a `auto` igualmente. Se retiró con el
+ * molde (DD-52) y hoy quedan cero usos. El rail sigue pidiendo quedarse fijo al
+ * hacer scroll y no se queda: el valor se anota en el informe del test, y la
+ * aserción entra cuando el anclaje sea una decisión tomada.
  */
 
 test.use({ storageState: { cookies: [], origins: [] } });
@@ -102,8 +104,8 @@ for (const { ruta, nombre } of FORMULARIOS) {
     expect(m.rail.position).toBe('sticky');
     expect(m.rail.ancho).toBe(240);
 
-    // El `top` del rail se anota, no se asevera: hoy es `auto` porque su token no
-    // existe. Queda en el informe para que el arreglo se vea, no se cuente.
+    // El `top` del rail se anota, no se asevera: hoy es `auto` porque el rail no
+    // declara ninguno. Queda en el informe para que el arreglo se vea, no se cuente.
     test.info().annotations.push({ type: 'ipanel.top medido', description: m.rail.top });
   });
 

@@ -14,13 +14,13 @@
 
 :host {
   display: block;
-  /* `min-height: 100%` instead of `height: 100%` — sticky-form-header,
-   * .ipanel and .form-grid__identity all live inside :host. With a
-   * fixed `height: 100%` the host's containing block ends at one
-   * viewport height, so sticky elements un-stick at that boundary and
-   * the rest of the form scrolls under nothing. The bug was invisible
-   * before DD#57 because the form rarely exceeded a single viewport;
-   * "Configuración avanzada" makes long forms easy to hit.
+  /* `min-height: 100%` instead of `height: 100%`: the sticky rail
+   * `.ipanel` lives inside :host. With a fixed `height: 100%` the
+   * host's containing block ends at one viewport height, so the rail
+   * un-sticks at that boundary and the rest of the form scrolls under
+   * nothing. The bug was invisible before DD#57 because the form
+   * rarely exceeded a single viewport; "Configuración avanzada"
+   * makes long forms easy to hit.
    */
   min-height: 100%;
   background: var(--sc-bg-surface);
@@ -38,45 +38,6 @@
  * desviaría en una sola página sin avisar. Lo vigila `audit:page-anatomy`.
  *
  * Aquí solo quedan las variantes específicas del agente (pill `--presence-*`). */
-
-/* Two-column form layout: Identificación (sticky) + settings (scroll).
- *
- * `padding-bottom: 30dvh` ensures the grid's containing block extends
- * well past the right-column's last visible content. Without it, when
- * scrolled to page bottom, sticky elements (`.form-grid__identity`
- * here, `.ipanel` outside) reach their containing block's bottom and
- * un-stick — getting pushed up above the viewport top by the parent's
- * bottom anchor, hiding their content behind the sticky-form-header.
- * The buffer is invisible (matches page bg) and gives sticky room to
- * stay pinned at `top` throughout user-visible scroll.
- */
-.form-grid {
-  display: grid;
-  grid-template-columns: 360px minmax(0, 1fr);
-  gap: var(--sc-spacing-1-75);
-  padding-bottom: 30dvh;
-
-  @media (max-width: 1024px) {
-    grid-template-columns: 1fr;
-    padding-bottom: 0;
-  }
-
-  &__identity {
-    @media (min-width: 1025px) {
-      position: sticky;
-      top: calc(var(--sc-form-panel-top) + var(--sc-spacing-1-75));
-      align-self: start;
-      max-height: calc(100dvh - var(--sc-form-panel-top) - var(--sc-spacing-1-75) * 2);
-      overflow-y: auto;
-    }
-  }
-
-  &__settings {
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-  }
-}
 
 /* ── Identification card internals ──────────────────────────── */
 .identity-card {
