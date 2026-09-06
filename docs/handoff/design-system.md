@@ -15,6 +15,70 @@
 > coordine. Los `sNN` de los tramos viejos se quedan como están: los nombran commits y
 > `docs/DECISIONS.md`, y reescribirlos solo desincronizaría el doc de su propia historia.
 
+## ✅ 2026-09-07 · La composición de pantalla se escribe donde el agente la lee
+
+**Sello:** [PR #50](https://github.com/smartcontact-hub/smartcontact-ui/pull/50) — el número se
+escribe antes de abrirlo, como los tramos anteriores, porque la marca de preflight sella el árbol.
+Carril `preflight` COMPLETO sobre el árbol final, ya con `main` dentro (#49 fundido y traído por
+merge, no por rebase: las ramas habían divergido). Veredicto del CI con `npm run ci:verdict`.
+
+**De dónde sale.** Un vídeo sobre documentar un Design System para la IA. Al medirlo contra el
+repo, la tesis se cayó a la mitad: las reglas de composición ya estaban escritas, en comentarios
+de SCSS y en `docs/DECISIONS.md`, pero **ninguno de sus nombres** (`app-shell`, `page__inner`,
+`_page.scss`, `TopBarSlotService`) aparecía en `AGENTS.md` ni en `CLAUDE.md`. Existían y no se
+leían: yo mismo afirmé dos veces que no existían. Todo lo demás salió de medir eso.
+
+**Lo que entró**, en once commits:
+
+1. **El molde del formulario con rail vive en un sitio.** `.page__inner--with-panel` y
+   `.page__form` a `styles/_page.scss`; `.ipanel` a `_forms.scss`. Estaba declarado **tres veces
+   byte a byte**. No-op demostrado antes de moverlo con un spec propio
+   (`e2e/supervisor/page-anatomy.spec.ts`) y medido en navegador en las tres altas.
+2. **El constructor de reglas entra en el molde**, con pestañas y el impacto en el rail. Era la
+   única página del Supervisor sin arquetipo, y su rejilla de 78rem era uno de los siete anchos
+   que la Ola 3 dio por cerrados sin cerrar (también seguía vivo el 1100, ×3).
+3. **Tres gates nuevos**: `audit:page-anatomy` (arquetipo declarado, molde no re-declarado,
+   trinquete de anchos sueltos), y los checks **L** y **M** de `docs:coherence`.
+4. **Los 44 `--sc-bg-*` tienen su «para qué sirve»** en `scripts/token-docs-map.mjs`, con dos
+   consumidores: la página de fundamentos de `sc-docs` y un `--figma` que IMPRIME el lote sin
+   escribir. Cierra el hueco que DD-22 pidió y nunca se escribió.
+5. **DD-52** recoge lo decidido, con sus seis descartadas.
+
+**Tres hallazgos que no buscaba, y valen más que el plan:**
+
+- **`--sc-form-panel-top` no existía.** Se usaba nueve veces —el `top` y el `height` del rail en
+  los tres formularios, más dos en un bloque de CSS muerto— y no se definía ninguna, así que esas
+  declaraciones eran inválidas y caían a `auto`. El rail **nunca se ancló**, y la banda que
+  justificaba ese offset se retiró en S59. Anclarlo de verdad se deja fuera, con su medición: de
+  las cinco secciones del formulario de agente solo una llega a scrollear.
+- **La cifra de gates no vivía en 4 sitios, vivía en once**, con 34, 29 y 26 conviviendo. Este
+  mismo hand-off tenía seis de las once. Ahora la gatea el check M, y `docs/handoff/` queda
+  exonerado a propósito porque son partes fechados.
+- **La página navegable de Patrones había perdido** la regla de la paleta en oscuro. Recuperada,
+  y el check L impide que vuelva a irse.
+
+**Lo que NO se hizo, y por qué:**
+
+- **La barra de acciones sticky de agentes, usuarios y grupos no se unifica.** Su motivo está en
+  el ledger de la PLATAFORMA (entrada 43), no aquí. Ojo: `DD#nn` con almohadilla apunta a ese
+  ledger y `DD-nn` con guion a `docs/DECISIONS.md`; misma cifra, tema distinto.
+- **Las baselines visuales de `npm run e2e` están rojas en local** por entorno, en páginas de
+  componentes que esta sesión no tocó (`toHaveScreenshot` con el navegador cerrándose). Se saltan
+  en CI y el preflight las corre con `CI=1`, que es lo mismo. **No valen como red sin
+  regenerarlas**, y no se regeneraron.
+
+**Siguientes pasos, en orden:**
+
+1. Leer el veredicto del CI y fundir el PR #50.
+2. Escribir en Figma las descripciones del lote de `token-docs-map --figma`: necesita el puente de
+   escritorio, y deja fila en el change-log de `docs/guia-tokens.md`. Solo 6 de los 44 tienen
+   contrapartida en el export del Kit; los otros 38 se resuelven con el puente delante.
+3. `sc-form-section-nav` trunca las etiquetas cuando no caben (aquí se esquivó acortando el copy a
+   «General»). Hay sesión aparte abierta para arreglarlo en el componente.
+4. Si alguien quiere las baselines visuales como red, regenerarlas primero.
+
+---
+
 ## ✅ 2026-09-05 · El CTA de la barra pasa a la talla que su propio Figma instancia
 
 **Sello:** [PR #49](https://github.com/smartcontact-hub/smartcontact-ui/pull/49) — el número se
