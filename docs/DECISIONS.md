@@ -79,8 +79,9 @@ vivo ×3 y 78rem ×1); el constructor de reglas era la única página **sin arqu
    ese offset tampoco existe: la retiró S59 y solo quedan comentarios nombrándola. Anclarlo de
    verdad se deja FUERA, con su medición: de las cinco secciones del formulario de agente solo
    una llega a scrollear (1311px contra un viewport de 809), así que no compensa inventarle un
-   valor. Los dos usos que quedaban viven en `.form-grid`, que es CSS muerto entero (la clase
-   aparece 3 veces en el repo, las tres en su propio fichero de estilos).
+   valor. Los dos usos que quedaban vivían en `.form-grid`, que resultó ser CSS muerto entero
+   (la clase aparecía 3 veces en el repo, las tres en su propio fichero de estilos, y ninguna
+   plantilla la usaba): se borró el mismo día, así que el token ya no lo nombra nadie.
 3. **El constructor de reglas entra en el molde**, con PESTAÑAS y una sección a la vez, como sus
    tres hermanos de admin. Cae su rejilla propia de 78rem y la numeración 01/02/03 de las
    tarjetas, que con una sola visible no ordenaba nada. El impacto sube al rail, **debajo** del
@@ -132,7 +133,9 @@ check M se midió que vivía en **once** sitios con tres valores distintos convi
 26 cuando eran 29). Los `docs/handoff/` quedan exonerados a propósito: son partes fechados.
 La captura de la galería de uso se regenera, y con pestañas una sola captura ya no puede enseñar
 todos los componentes de una página, así que `usage:check` avisa de `sc-textarea` — le pasa igual
-a los tres formularios de admin desde que son pestañas. Queda pendiente borrar `.form-grid`.
+a los tres formularios de admin desde que son pestañas. Y el nombre del token fantasma solo
+sobrevive en dos sitios a propósito: el comentario de `.ipanel` que cuenta la historia, y la
+lista de tokens retirados de `docs:coherence`, que es la que permite nombrarlo en la doc.
 
 ## DD-51 · 2026-09-05 — El interlineado de los CONTROLES vuelve a la métrica de la fuente; la rampa se queda solo donde el Kit la ata
 

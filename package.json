@@ -71,6 +71,7 @@
     "test:unit": "node --test scripts/__tests__/*.test.mjs",
     "tokens:cmp-rewire": "node scripts/cmp-color-rewire.mjs check",
     "tokens:effects-rewire": "node scripts/effects-rewire.mjs check",
+    "tokens:docs": "node scripts/token-docs-map.mjs --write",
     "tokens:export-clean": "node scripts/check-export-clean.mjs",
     "tokens:gen": "node scripts/token-gen.mjs",
     "tokens:gen-cmp-color": "node scripts/token-gen-cmp-color.mjs",
