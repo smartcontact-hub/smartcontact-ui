@@ -50,19 +50,36 @@ const gotoPage = async (page: Page, path: string) => {
  */
 const screenshotBaseline = async (page: Page, name: string) => {
   if (process.env['CI']) return;
-  /* La sidebar del shell es su PROPIO contenedor con scroll (`.sb-shell__side`:
-   * `overflow:auto` + `max-height`), y a lo largo del test acaba desplazada —o no—
-   * según si algo llevó el enlace activo a la vista. En una captura `fullPage` eso
-   * mueve la columna entera: medido el 2026-08-24, `sc-multiselect` alternaba entre
-   * verde y **exactamente 4912 px** de diff, siempre el mismo número, o sea dos
-   * estados deterministas, no ruido. Se fija el scroll a 0 para capturar siempre el
-   * mismo, sin tocar el producto. */
-  await page
-    .locator('.sb-shell__side')
-    .evaluate((el) => {
-      el.scrollTop = 0;
-    })
-    .catch(() => undefined);
+  /* Se captura siempre desde el mismo estado de scroll.
+   *
+   * El porqué (2026-08-24): la sidebar del shell era su PROPIO contenedor con
+   * scroll y a lo largo del test acababa desplazada —o no— según si algo llevó
+   * el enlace activo a la vista. En una captura `fullPage` eso movía la columna
+   * entera: `sc-multiselect` alternaba entre verde y **exactamente 4912 px** de
+   * diff, siempre el mismo número, o sea dos estados deterministas, no ruido.
+   *
+   * Cómo se hacía y por qué ya no (2026-09-06): esto era un
+   * `page.locator('.sb-shell__side').evaluate(...).catch(() => undefined)`, y
+   * esa clase **ya no existe en el DOM** —sobrevive en `storybook.scss`, pero el
+   * shell dejó de pintarla—. Un locator sin timeout de acción no rechaza: ESPERA,
+   * así que el `.catch` nunca llegaba a dispararse y la llamada se colgaba hasta
+   * agotar los 60 s del test. **Las 25 baselines visuales morían así, todas**, y
+   * el síntoma no se parecía en nada a su causa: `Test timeout exceeded` +
+   * `screencast.hideOverlays: Target page … closed`, sin `-actual.png` ni
+   * `-diff.png` porque la comparación no llegaba a ocurrir. Se cazó con un
+   * control: `sc-badge` —sin tocar— fallaba igual, y el mismo
+   * `toHaveScreenshot` sobre la misma página SIN este preámbulo pasaba en 2,3 s.
+   *
+   * Ahora se hace por `evaluate` sobre el documento y sin nombres de clase: pone
+   * a 0 el scroll de la ventana y el de CUALQUIER contenedor desplazable. No
+   * puede colgarse y no puede quedarse obsoleto porque alguien renombre el
+   * shell. */
+  await page.evaluate(() => {
+    window.scrollTo(0, 0);
+    for (const el of document.querySelectorAll<HTMLElement>('*')) {
+      if (el.scrollTop !== 0) el.scrollTop = 0;
+    }
+  });
   await expect(page).toHaveScreenshot(`${name}.png`, { fullPage: true, animations: 'disabled' });
 };
 
