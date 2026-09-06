@@ -52,7 +52,7 @@
 | `sc-empty-state` | CUSTOM | — | 2 inputs | — | ✓ | 10 |
 | `sc-field-label` | CUSTOM | — | 2 inputs | — | — | — |
 | `sc-form-danger-zone` | STANDARD | primeng/button | 3 inputs | — | ✓ | — |
-| `sc-form-section-nav` | CUSTOM | — | 4 inputs | — | ✓ | 5 |
+| `sc-form-section-nav` | CUSTOM | — | 4 inputs | — | ✓ | 6 |
 | `sc-gauge` | CUSTOM | — | 8 inputs | — | ✓ | — |
 | `sc-group-popover` | STANDARD | primeng/popover | 0 inputs | — | ✓ | 2 |
 | `sc-impact-preview-dialog` | STANDARD | primeng/button | 3 inputs | sc-dialog | ✓ | 3 |
