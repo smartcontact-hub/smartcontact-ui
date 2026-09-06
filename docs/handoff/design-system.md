@@ -1573,7 +1573,7 @@ variables, 30 comentarios activos.
   lo es son sus baselines por plataforma. Sin `CI=1` siguen rojos y **no son tuyos** (el de
   `sc-card` espera una página de 1049px y recibe 1453 — no lo leas como regresión de métrica).
 - **El CI son 8 pasos, no `verify`** — enumerados en `ci.yml`, y gateados (CHECK J).
-- **`npm run verify` (26 gates) NO corre el `e2e smoke`.** El `component-structure.spec` (baseline
+- **`npm run verify` (30 gates) NO corre el `e2e smoke`.** El `component-structure.spec` (baseline
   del `outerHTML` de cada componente) es un paso aparte de CI, y el textarea autoResize graba su
   alto calculado en un `style` inline que vive en ese `outerHTML`. Un cambio de token/visual puede
   pasar los 26 gates y aun así romper el baseline en CI: en s29, `line-height` md 21→20 movió ese
@@ -1582,9 +1582,13 @@ variables, 30 comentarios activos.
   tests) y no un subconjunto. `npm run e2e:structure` sigue valiendo como bucle corto mientras
   iteras (`:update` si el cambio es deliberado, y revisa el diff del JSON), pero el gate de
   pre-push es preflight.
-- **`npm run verify` son 26 gates desde s28.** Si añades uno, la cifra vive en 4 sitios y
-  **ninguno la gatea**: `CLAUDE.md`, `docs/DOCS-INDEX.md`, `docs/AUDIT-SEMANAL.md` y el
-  `SKILL.md` de la rutina. Lo que sí falla solo es el README, que debe **nombrar** el guard nuevo.
+- **La cifra de gates de `verify` YA se gatea** (check M de `docs:coherence`, desde el
+  2026-09-06). Esta trampa decía que vivía en 4 sitios sin vigilar; al escribir el check se
+  midió y eran **once**, con tres cifras distintas conviviendo (34, 29 y 26 cuando eran 29).
+  Seis de las once están en este mismo hand-off y son registros fechados de lo que se lanzó
+  aquel día, así que `docs/handoff/` queda exonerado a propósito — pero esta sección de
+  trampas no: si cambia la cadena, se actualiza a mano. El README lo cubre aparte (check B),
+  que exige **nombrar** el guard nuevo.
 - **Para MEDIR color o contraste, no uses `ng serve`** (s31): sirvió `blue-400` durante cinco
   rondas de e2e con el fuente y el bundle construido diciendo `blue-300`. Construye y sirve el
   estático (`ng build supervisor` → `http-server dist/supervisor/browser --proxy` para el
