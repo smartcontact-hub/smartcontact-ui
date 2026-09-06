@@ -39,6 +39,10 @@
  *   M. "N gates" cuadra con los eslabones de la cadena `verify` en package.json. Hermano de J
  *      con la otra cifra: vivía en cuatro sitios y NINGUNO la gateaba, así que las tres que no
  *      se tocan a mano llevaban commits caducadas (27, 27 y 26 cuando eran 29).
+ *   L. La barra de UX de pantalla cuadra entre `AGENTS.md` y la página navegable de
+ *      Patrones (`scripts/patrones-parity.mjs`): mismo número de principios, y ninguno pierde
+ *      lo que tiene de load-bearing. La página AFIRMA en su pie que son la misma cosa y nada
+ *      lo sostenía: había perdido la regla de la paleta en oscuro.
  *   A·b. Un script citado sin `npm run`, en backticks — acotado a namespaces que existen para
  *      no generar ruido (medido: sin acotar, 75% falsos positivos).
  *
@@ -47,6 +51,8 @@
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { resolve } from 'node:path';
+
+import { compararPatrones } from './patrones-parity.mjs';
 import { revisarLearnings } from './learnings-shape.mjs';
 
 const root = resolve(import.meta.dirname, '..');
@@ -215,6 +221,19 @@ for (const { path, lines } of files) {
       }
     });
   }
+}
+
+// ── CHECK L — la barra de UX de pantalla cuadra con su página navegable ───────────
+// Vive dos veces a propósito: AGENTS la escribe para quien toca el código y sc-docs la pinta
+// para quien la lee. El pie de la página afirma que son la misma, y hasta hoy nada lo
+// sostenía: la copia navegable había perdido la regla de la paleta en oscuro del principio 1.
+// Compara el NÚMERO y lo load-bearing de cada uno, no la prosa — son dos registros distintos
+// y compararlos literalmente sería ruido (ver la cabecera del módulo).
+{
+  const agents = readFileSync(resolve(root, 'AGENTS.md'), 'utf8');
+  const rutaPatrones = 'projects/sc-docs/src/app/pages/patrones/patrones.component.ts';
+  const patrones = readFileSync(resolve(root, rutaPatrones), 'utf8');
+  for (const p of compararPatrones(agents, patrones)) fail(`AGENTS.md ↔ ${rutaPatrones} — ${p}`);
 }
 
 // ── CHECK M — "N gates" tiene que cuadrar con la cadena verify de package.json ────
