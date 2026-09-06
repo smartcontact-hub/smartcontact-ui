@@ -58,7 +58,7 @@ test('crear una regla con condición de Categoría IA y operador "no es"', async
 
   // El resumen en prosa vive con el nombre, en «Información básica»: es el recap
   // de lo que acabas de construir en «Alcance».
-  await irASeccion(page, 'Información básica');
+  await irASeccion(page, 'General');
 
   // El resumen en prosa resuelve el NOMBRE de la categoría, no su id.
   const scope = page.locator('.scope-desc');
@@ -111,7 +111,7 @@ test('cross-link: la categoría llega preseleccionada al constructor y queda vin
   // pasar por la pestaña 1.
   await expect(page.locator('.rule-builder__ai-categories')).toContainText(categoryName);
 
-  await irASeccion(page, 'Información básica');
+  await irASeccion(page, 'General');
   const name = `E2E Cross-link ${Date.now()}`;
   await page.locator('sc-inputtext input').first().fill(name);
 
