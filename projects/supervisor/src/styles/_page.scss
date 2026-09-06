@@ -13,7 +13,7 @@
  * siete. `1100` seguía vivo, declarado tres veces byte a byte en los formularios
  * de agente, grupo y usuario; ahora es `.page__form`, aquí abajo. `78rem` seguía
  * vivo en el constructor de reglas, que además no declaraba arquetipo ninguno;
- * entra en `--with-panel` en esta misma sesión. Lo vigila `audit:page-anatomy`:
+ * entró en `--with-panel` el mismo día. Lo vigila `audit:page-anatomy`:
  * un `max-width` suelto en el SCSS de una página vuelve a poner rojo.
  *
  * Ojo con la especificidad: estas reglas son globales (sin `[_ngcontent]`), y

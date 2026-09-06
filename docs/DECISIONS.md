@@ -34,8 +34,105 @@
 > convergencia del sistema (anotaciones "(histórico)" donde el contexto lo
 > requiere). Este repo es el resultado unificado: las rutas y comandos citados
 > son los actuales.
+>
+> **Índice temático — cómo se compone una pantalla.** La razón vive en cada DD; esto solo
+> apunta. Nace de medir que este log tiene 2.500 líneas ordenadas por FECHA y ninguna por tema,
+> así que las reglas de composición estaban escritas y eran inencontrables al componer (DD-52).
+>
+> | Tema | DD |
+> |---|---|
+> | Anatomía de página en `_page.scss` · el constructor entra en el molde · la barra sticky del trío admin es deliberada · escritorio primero · `DD#` no es `DD-` | DD-52 |
+> | El lienzo de la app es blanco | DD-45 |
+> | Patrón de campo compartido, sin `ControlValueAccessor` | DD-44 |
+> | Siete divergencias deliberadas entre flujos, que NO se unifican | DD-36 |
+> | `--sc-bg-default` es el suelo del shell, nunca una superficie | DD-34 |
+> | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
 
 ---
+
+## DD-52 · 2026-09-06 — La composición de pantalla se escribe donde el agente la lee: el molde sube a los partials, el constructor de reglas entra en él, y lo deliberado queda dicho
+
+**Contexto** · Un vídeo sobre preparar la documentación de un Design System para la IA sostiene
+que hay que ESCRIBIR las reglas de composición: regiones con nombre, patrón de formulario,
+excepciones con su porqué. Medido aquí, las reglas ya existían —en comentarios de SCSS y en este
+mismo fichero— pero **ninguno de sus nombres** (`app-shell`, `page__inner`, `_page.scss`,
+`TopBarSlotService`) aparecía en `AGENTS.md` ni en `CLAUDE.md`, que es lo que lee un agente.
+Existían y no se leían: por eso dos veces seguidas afirmé que no existían. Midiendo salieron
+cuatro cosas más: el molde del formulario con rail estaba declarado **tres veces byte a byte**;
+la cabecera de `_page.scss` decía haber cerrado siete anchos y había cerrado cinco (1100 seguía
+vivo ×3 y 78rem ×1); el constructor de reglas era la única página **sin arquetipo**; y
+`--sc-form-panel-top` se usaba nueve veces **sin estar definido en ninguna**.
+
+**Decisión** ·
+
+1. **El molde vive en un sitio.** `.page__inner--with-panel` y `.page__form` (1100) en
+   `projects/supervisor/src/styles/_page.scss`; `.ipanel` en `_forms.scss`, junto a `.ficha` e
+   `.ipanel__delete`, que ya estaban ahí por el mismo motivo. Las tres páginas se quedan con su
+   fondo y un puntero. Se borra su `padding` base de `.page__inner`: era código muerto (las tres
+   plantillas llevan siempre el modificador, que lo anula) y dejarlo era la trampa, porque lo
+   scoped le gana a lo global. **No-op demostrado**, no prometido: mismos computados en las tres
+   altas a 1440 (grid `240px 1136px`, padding 0, `max-width: none`, columna a 1100 con padding
+   24.5/28, rail 240) y mismos altos de página (430, 658, 371).
+2. **Lo que aparentaba anclar el rail se retira.** `--sc-form-panel-top` no existe: 9 usos, 0
+   definiciones, así que `top` y `height` eran inválidos y caían a `auto` (medido en navegador:
+   `top: auto`, alto 302px de contenido). Y la banda `sticky-form-header` cuyo alto justificaba
+   ese offset tampoco existe: la retiró S59 y solo quedan comentarios nombrándola. Anclarlo de
+   verdad se deja FUERA, con su medición: de las cinco secciones del formulario de agente solo
+   una llega a scrollear (1311px contra un viewport de 809), así que no compensa inventarle un
+   valor. Los dos usos que quedaban viven en `.form-grid`, que es CSS muerto entero (la clase
+   aparece 3 veces en el repo, las tres en su propio fichero de estilos).
+3. **El constructor de reglas entra en el molde**, con PESTAÑAS y una sección a la vez, como sus
+   tres hermanos de admin. Cae su rejilla propia de 78rem y la numeración 01/02/03 de las
+   tarjetas, que con una sola visible no ordenaba nada. El impacto sube al rail, **debajo** del
+   índice: antes era una columna hermana que se iba con el scroll justo mientras tocabas las
+   condiciones que lo mueven, y puesto encima hundía la navegación (mide 350px). Aterrizajes:
+   alta en General, edición en Alcance, y el enlace desde una categoría en Análisis IA.
+   La etiqueta de la primera sección pasa de «Información básica» a «General» en los cuatro
+   idiomas: el cuadro mide 99px y el texto pedía 108, y cortar no es una opción.
+4. **La barra de acciones sticky de agentes, usuarios y grupos es DELIBERADA.** Su motivo vive
+   en el ledger de la PLATAFORMA (entrada 43, 2026-05-07): son las tres listas con gestor de
+   columnas, y la búsqueda ahí es iterativa. Etiquetas, plantillas y repositorios van planas a
+   propósito. **No se unifica en ninguna dirección** — es exactamente la clase de divergencia
+   con dueño que DD-36 existe para que nadie borre creyendo que es un descuido.
+5. **`page__search` suelta un `position: relative` muerto** en cuatro listas: los hijos absolutos
+   de `sc-search` resuelven contra el wrapper del propio componente, no contra él. El control es
+   la lista de agentes, que nunca lo tuvo y coloca el atajo en la misma x. Plantillas además se
+   normaliza de 288px fijo a 480 flexible: aquel fijo no tenía ni DD ni comentario ni entrada en
+   ningún ledger.
+6. **Escritorio primero, sin colapso móvil.** Mínimo soportado 1024. Los cortes que hay (640 en
+   la barra, 1024 en el rail) son locales, no una política de breakpoints; no había ninguna
+   decisión escrita al respecto en este repo y ahora la hay.
+7. **`DD#nn` no es `DD-nn`.** Con almohadilla, en comentarios de código, apunta al ledger de la
+   plataforma; con guion, a este fichero. Misma cifra, tema distinto: `DD#43` es la barra sticky
+   y `DD-43` es por qué no se extrae una base común admin. No se renumeran: son identificadores.
+8. **Vigilancia**, porque lo que no tiene gate se pudre: `audit:page-anatomy` (arquetipo
+   declarado, molde no re-declarado, trinquete de anchos sueltos), el check L de `docs:coherence`
+   (la barra de UX de pantalla cuadra con su página navegable) y el check M (la cifra de gates
+   deja de caducar a mano).
+
+**Razón** · Las mediciones de arriba. La de fondo: DD-47 ya demostró que la guía leída en t=0 no
+dispara en t=decisión, así que esto NO añade prosa nueva — añade punteros en el sitio que se lee
+en cada turno, un índice temático sobre un log que estaba ordenado solo por fecha, y tres gates.
+
+**Descartadas** ·
+- *Unificar la barra de acciones.* Borra una decisión con dueño y motivo escrito (DD-36).
+- *Promover el bloque de `page__search` a global.* Es un one-liner repetido: se escribe, no se
+  extrae (DD-43 lo dice con esas palabras).
+- *Eximir al constructor de reglas del molde.* Considerada y descartada por Rafa: la
+  consistencia con sus tres hermanos vale más que conservar su rejilla propia.
+- *Un índice que salta a la sección en vez de pestañas.* Exigiría un mecanismo de scroll-spy que
+  el sistema no sirve hoy, y se alejaría del molde en vez de acercarse.
+- *Definirle un valor a `--sc-form-panel-top` para que el rail se ancle.* Sería inventarse un
+  número: la banda que lo justificaba no existe y solo una de cinco secciones scrollea.
+- *Un doc nuevo de composición.* Nada lo cargaría, y `docs/` ya tiene 20 ficheros y dos
+  auditorías de documentación.
+
+**Consecuencias** · `verify` pasa a 30 eslabones, y esa cifra ya no caduca sola: al escribir el
+check M se midió que vivía en **once** sitios con tres valores distintos conviviendo (34, 29 y
+26 cuando eran 29). Los `docs/handoff/` quedan exonerados a propósito: son partes fechados.
+La captura de la galería de uso se regenera, y con pestañas una sola captura ya no puede enseñar
+todos los componentes de una página, así que `usage:check` avisa de `sc-textarea` — le pasa igual
+a los tres formularios de admin desde que son pestañas. Queda pendiente borrar `.form-grid`.
 
 ## DD-51 · 2026-09-05 — El interlineado de los CONTROLES vuelve a la métrica de la fuente; la rampa se queda solo donde el Kit la ata
 

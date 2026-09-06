@@ -399,10 +399,12 @@ const tokensDefinidos = new Set();
 // justamente para prohibirlos ("no los reintroduzcas, `tokens:guard` los bloquea").
 const RETIRADOS_A_PROPOSITO = new Set([
   '--sc-spacing-50', '--sc-spacing-100', '--sc-spacing-200', '--sc-space-1', '--sc-space-2',
-  // GAP documentado a propósito: `customs-catalog.md` §5.11 lo describe como deuda, un token
-  // semántico de lienzo que AÚN NO existe. Mismo patrón que PROPOSED_SCRIPTS: cuando se cree,
-  // `tokensDefinidos` lo cubre solo → quítalo de aquí.
-  '--sc-bg-canvas',
+  // Token que NUNCA existió y que la doc nombra para contar justamente eso: se USABA nueve
+  // veces (el `top` y el `height` del rail de los tres formularios, y dos veces más en un
+  // bloque de CSS muerto) y no se DEFINÍA ninguna, así que esas declaraciones eran inválidas y
+  // caían a `auto`. DD-52 lo cuenta; el código ya no lo nombra. Si alguna vez se define, este
+  // gate lo cubre solo → quítalo de aquí.
+  '--sc-form-panel-top',
   // Token DEL CONSUMIDOR, no nuestro: `docs/tipografia.md` lo documenta justamente para avisar
   // de que su `body` NO usa nuestro `--sc-font-family-primary` sino uno propio suyo, así que
   // cambiar nuestra familia no garantiza que la suya cambie. El gate no distingue "token ajeno
