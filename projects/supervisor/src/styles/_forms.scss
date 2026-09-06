@@ -398,6 +398,43 @@
   }
 }
 
+/* Rail del formulario (columna izquierda de `.page__inner--with-panel`): ficha
+ * de identidad + índice de secciones + la zona de peligro al fondo.
+ *
+ * Vivía duplicado byte a byte en agent-form, group-form y user-form; aquí es uno
+ * solo desde DD-52.
+ *
+ * QUÉ SE QUEDÓ POR EL CAMINO, Y POR QUÉ. Los tres traían dos declaraciones más:
+ * `top: var(--sc-form-panel-top)` y `height: calc(100dvh - var(--sc-form-panel-top))`,
+ * con un comentario explicando que el offset era el alto de la banda
+ * `sticky-form-header`. Medido el 2026-09-06: ese token se USA nueve veces en el
+ * repo y no se DEFINE ninguna, así que las dos declaraciones eran inválidas y
+ * caían a `auto` (comprobado en navegador: `top: auto`, alto real 302px de
+ * contenido). Y la banda que justificaba el offset ya no existe: la retiró S59
+ * («todo arriba»), sólo quedan comentarios nombrándola. Borrarlas no mueve un
+ * píxel — es exactamente lo mismo que ya computaba — y deja de aparentar que el
+ * rail se ancla.
+ *
+ * `position: sticky` se queda como declaración de intención, pero OJO: sin `top`
+ * no se ancla. Anclarlo de verdad es una decisión de UI con poco a ganar, medida
+ * y anotada en DD-52: de las cinco secciones del formulario de agente sólo una
+ * llega a scrollear (1311px contra un viewport de 809), así que se deja fuera de
+ * esta consolidación en vez de inventarle un valor al offset. */
+.ipanel {
+  position: sticky;
+  align-self: start;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-1-125);
+  padding: var(--sc-spacing-1-5);
+  background: transparent;
+  overflow-y: auto;
+
+  @media (max-width: 1024px) {
+    position: static;
+  }
+}
+
 /* Eliminar (rail del formulario): es un `sc-button` del DS; aquí solo vive su
  * SITIO en el rail — al fondo y a la derecha. Nada de tamaño ni color. */
 .ipanel__delete {
