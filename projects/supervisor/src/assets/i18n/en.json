@@ -352,7 +352,7 @@
           "transcription": "Transcription",
           "classification": "AI classification"
         },
-        "metadata": "Basic information",
+        "metadata": "General",
         "active_label": "Rule active",
         "inactive_label": "Rule inactive",
         "name_label": "Name",

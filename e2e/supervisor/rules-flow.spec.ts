@@ -1,6 +1,13 @@
 import { expect, test } from '@playwright/test';
 
-import { disableAnimations, forceLightTheme, goto, openKebabAction, pickSelectOption } from './helpers';
+import {
+  disableAnimations,
+  forceLightTheme,
+  goto,
+  irASeccion,
+  openKebabAction,
+  pickSelectOption,
+} from './helpers';
 
 /**
  * Journeys del flujo de reglas — la joya de la app y lo que más se toca.
@@ -29,6 +36,11 @@ test('crear una regla con condición de Categoría IA y operador "no es"', async
   const name = `E2E Clasificación ${Date.now()}`;
   await page.locator('sc-inputtext input').first().fill(name);
 
+  // El constructor pasó al molde de los formularios de admin (DD-52): una sección
+  // a la vez. El nombre vive en «Información básica» y las condiciones en
+  // «Alcance», así que hay que cambiar de pestaña en medio.
+  await irASeccion(page, 'Alcance');
+
   // Campo → Categoría IA. El value-picker se auto-abre al elegir un campo lista.
   await pickSelectOption(page, page.locator('.cond-row__field').first(), 'Categoría IA');
 
@@ -43,6 +55,10 @@ test('crear una regla con condición de Categoría IA y operador "no es"', async
 
   // Operador "no es" (la UI antes solo mostraba un "es" estático).
   await pickSelectOption(page, page.locator('.cond-row__op').first(), /^no es$/);
+
+  // El resumen en prosa vive con el nombre, en «Información básica»: es el recap
+  // de lo que acabas de construir en «Alcance».
+  await irASeccion(page, 'Información básica');
 
   // El resumen en prosa resuelve el NOMBRE de la categoría, no su id.
   const scope = page.locator('.scope-desc');
@@ -90,18 +106,26 @@ test('cross-link: la categoría llega preseleccionada al constructor y queda vin
 
   await goto(page, `conversaciones/reglas/nueva?type=classification&categoria=${categoryId}`);
 
-  // Preselección: análisis IA encendido y la categoría ya elegida.
+  // Preselección: análisis IA encendido y la categoría ya elegida. El enlace
+  // ATERRIZA en «Análisis IA» (DD-52), que es donde esa categoría se ve — sin
+  // pasar por la pestaña 1.
   await expect(page.locator('.rule-builder__ai-categories')).toContainText(categoryName);
 
+  await irASeccion(page, 'Información básica');
   const name = `E2E Cross-link ${Date.now()}`;
   await page.locator('sc-inputtext input').first().fill(name);
+
+  await irASeccion(page, 'Alcance');
   await page.locator('[aria-label="Eliminar condición"]').first().click();
   await page.getByRole('button', { name: /crear regla/i }).click();
   await expect(page).toHaveURL(/conversaciones\/reglas$/);
 
   // Reabrir la regla (navegación SPA, sin recargar) y comprobar que guardó la
   // categoría: `Rule.categorias` es justo de donde el modal deriva el vínculo.
+  // Reabrir en modo edición aterriza en «Alcance» (es lo que se retoca), así que
+  // la categoría hay que ir a verla.
   await page.locator('.rules-table__name', { hasText: name }).click();
+  await irASeccion(page, 'Análisis IA');
   await expect(page.locator('.rule-builder__ai-categories')).toContainText(categoryName);
 });
 

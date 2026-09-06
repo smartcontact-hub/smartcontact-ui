@@ -1,6 +1,6 @@
 {
   "generated": "usage-capture.spec.ts",
-  "capturedAt": "2026-08-24",
+  "capturedAt": "2026-09-06",
   "viewport": "1440x900",
   "theme": "light",
   "screens": [
@@ -59,6 +59,7 @@
         "sc-keyboard-shortcuts",
         "sc-root",
         "sc-search",
+        "sc-select",
         "sc-sidebar",
         "sc-sidebar-nav-item",
         "sc-top-bar"
@@ -108,6 +109,7 @@
         "sc-breadcrumb",
         "sc-bulk-action-bar",
         "sc-button",
+        "sc-chip",
         "sc-color-dot-picker",
         "sc-command-palette",
         "sc-confirmdialog",
@@ -367,6 +369,7 @@
         "sc-app-shell",
         "sc-breadcrumb",
         "sc-button",
+        "sc-checkbox",
         "sc-command-palette",
         "sc-confirmdialog",
         "sc-icon",
@@ -374,6 +377,8 @@
         "sc-keyboard-shortcuts",
         "sc-numeracion-especial-section",
         "sc-root",
+        "sc-search",
+        "sc-select",
         "sc-sidebar",
         "sc-sidebar-nav-item",
         "sc-sistema-page",
@@ -392,6 +397,7 @@
         "sc-app-shell",
         "sc-breadcrumb",
         "sc-bulk-action-bar",
+        "sc-button",
         "sc-command-palette",
         "sc-confirmdialog",
         "sc-datatable",
@@ -509,10 +515,9 @@
         "sc-button",
         "sc-command-palette",
         "sc-confirmdialog",
-        "sc-field-label",
+        "sc-form-section-nav",
         "sc-icon",
         "sc-illustrated-avatar",
-        "sc-inputtext",
         "sc-keyboard-shortcuts",
         "sc-memory-rule-builder-page",
         "sc-root",
@@ -521,8 +526,6 @@
         "sc-select",
         "sc-sidebar",
         "sc-sidebar-nav-item",
-        "sc-textarea",
-        "sc-toggleswitch",
         "sc-top-bar"
       ]
     }
