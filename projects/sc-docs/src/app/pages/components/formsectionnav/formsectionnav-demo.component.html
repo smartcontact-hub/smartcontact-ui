@@ -29,6 +29,22 @@
   </div>
 </ng-template>
 
+<!-- El caso que motivó DD-52: rótulos que NO caben en el rail. Está en las
+     stories para que la respuesta del componente («envuelvo, no escondo») se vea
+     sin tener que abrir un formulario del Supervisor. -->
+<ng-template #long>
+  <div class="row" style="max-width: 260px">
+    <sc-form-section-nav
+      [sections]="longSections"
+      [activeId]="longActive()"
+      [sectionsWithErrors]="longErrors"
+      [flush]="true"
+      (activeChange)="onLongActive($event)"
+      data-testid="sc-formnav-long"
+    />
+  </div>
+</ng-template>
+
 <ng-template #flush>
   <div class="row" style="max-width: 260px">
     <sc-form-section-nav

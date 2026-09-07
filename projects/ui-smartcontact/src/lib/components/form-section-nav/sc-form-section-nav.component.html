@@ -16,13 +16,17 @@
               <sc-icon [name]="ic" size="inherit" />
             </span>
           }
-          <span class="form-nav__label">{{ section.labelKey | translate }}</span>
-          @if (hasError(section.id)) {
-            <span
-              class="form-nav__dot"
-              [attr.aria-label]="'sc.formSectionNav.sectionHasErrors' | translate"
-            ></span>
-          }
+          <!-- El punto va DENTRO del label, no al lado: como hermano flex se
+               comía 25 de los 99px de la caja de texto y dejaba 74, con lo que
+               «Identificación» (79px) no cabía ni en una línea entera. Aquí
+               fluye detrás del texto, la caja conserva su ancho completo y el
+               punto acompaña a la última palabra. -->
+          <span class="form-nav__label">
+            {{ section.labelKey | translate }}@if (hasError(section.id)) {<span
+                class="form-nav__dot"
+                [attr.aria-label]="'sc.formSectionNav.sectionHasErrors' | translate"
+              ></span>}
+          </span>
         </a>
       </li>
     }
