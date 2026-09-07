@@ -1681,7 +1681,7 @@ variables, 30 comentarios activos.
   lo es son sus baselines por plataforma. Sin `CI=1` siguen rojos y **no son tuyos** (el de
   `sc-card` espera una página de 1049px y recibe 1453 — no lo leas como regresión de métrica).
 - **El CI son 8 pasos, no `verify`** — enumerados en `ci.yml`, y gateados (CHECK J).
-- **`npm run verify` (30 gates) NO corre el `e2e smoke`.** El `component-structure.spec` (baseline
+- **`npm run verify` (31 gates) NO corre el `e2e smoke`.** El `component-structure.spec` (baseline
   del `outerHTML` de cada componente) es un paso aparte de CI, y el textarea autoResize graba su
   alto calculado en un `style` inline que vive en ese `outerHTML`. Un cambio de token/visual puede
   pasar los 26 gates y aun así romper el baseline en CI: en s29, `line-height` md 21→20 movió ese
