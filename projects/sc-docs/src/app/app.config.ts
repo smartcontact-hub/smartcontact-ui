@@ -1,10 +1,11 @@
 import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
-import { provideRouter, withHashLocation } from '@angular/router';
+import { provideRouter, withHashLocation, withNavigationErrorHandler } from '@angular/router';
 import { provideTranslateService } from '@ngx-translate/core';
 
 import { provideSmartContactUi } from '@smartcontact-hub/components';
 import { routes } from './app.routes';
+import { reloadOnChunkLoadError } from './shared/chunk-reload-handler';
 
 /**
  * Clave de licencia de PrimeUI (tier community, caduca 2027-08-05).
@@ -21,7 +22,9 @@ const PRIMEUI_LICENSE =
 export const appConfig: ApplicationConfig = {
   providers: [
     provideZoneChangeDetection({ eventCoalescing: true }),
-    provideRouter(routes, withHashLocation()),
+    // El handler de error de navegación recupera el fallo de carga de un chunk diferido tras
+    // un deploy con la pestaña abierta (recarga una vez en el destino). Ver chunk-reload-handler.ts.
+    provideRouter(routes, withHashLocation(), withNavigationErrorHandler(reloadOnChunkLoadError)),
     provideAnimationsAsync(),
     provideTranslateService({ fallbackLang: 'es', lang: 'es' }),
     provideSmartContactUi({ license: PRIMEUI_LICENSE }),
