@@ -163,6 +163,40 @@
           "have": "The site's own theme transition already crossfades with opacity, without repositioning anything."
         }
       }
+    },
+    "color": {
+      "title": "Scale & color",
+      "intro": "<code>--sc-*</code> tokens from the <code>@smartcontact-hub/styles</code> package. Every value traces back to the Kit export and is verified in CI (<code>tokens:gen</code> · <code>tokens:parity</code>).",
+      "scaleTitle": "14-base scale",
+      "thToken": "Token",
+      "thPx": "Design (px)",
+      "primitiveTitle": "Primitive color",
+      "primitiveHint": "Hover a color to see its token, hex, and HSL. Each line copies when you click it.",
+      "copyHexAria": "Click to copy the hex.",
+      "semanticTitle": "Semantic color",
+      "semanticHint": "What each background MEANS and when to use it. The system already knew what each token is worth; this was the missing half. It comes from <code>scripts/token-docs-map.mjs</code>, the same source that feeds the Figma description batch, so the two can't tell different stories.",
+      "semanticError": "Couldn't load the list. Regenerate it with <code>tokens:docs</code>.",
+      "primitive": {
+        "blue": "Blue (brand)",
+        "slate": "Slate (neutrals)",
+        "sky": "Sky (info)",
+        "green": "Green (success)",
+        "amber": "Amber (warning)",
+        "red": "Red (danger)"
+      },
+      "family": {
+        "superficie": "Surface",
+        "estado": "State",
+        "utilidad": "Utility",
+        "marca": "Brand",
+        "secundario": "Secondary",
+        "acento": "Accent",
+        "info": "Info",
+        "éxito": "Success",
+        "aviso": "Warning",
+        "peligro": "Danger",
+        "violeta": "Violet"
+      }
     }
   }
 }
