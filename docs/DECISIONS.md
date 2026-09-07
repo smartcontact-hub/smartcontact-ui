@@ -37,6 +37,60 @@
 
 ---
 
+## DD-52 · 2026-09-06 — El índice del rail ENVUELVE: un componente de navegación no esconde el nombre de su destino
+
+**Contexto**: `sc-form-section-nav` truncaba con elipsis. Su propio SCSS lo
+declaraba como intención: «el ancho del rail define la truncación, no la
+longitud del copy». Medido en el Supervisor a 1440×900 con el rail de 240px
+(`.page__inner--with-panel`, duplicado hoy en los SCSS de los tres form-pages),
+la caja de texto mide 99px, o 74px si el item lleva punto de error. Con ese
+presupuesto **cortaban 13 de las 48 etiquetas** de los tres formularios en los
+cuatro idiomas: «Servicios asignados» pide 114px, «Agentes asignados» 108,
+«Grupos asignados» 103, y «Identificación» 79 contra los 74 que le dejaba el
+punto. Solo 5 de las 13 eran del español: la restricción se rompía sola al
+traducir. Se venía esquivando POR PÁGINA, acortando el copy hasta que cupiera.
+
+**Decisión**: el label envuelve y **nunca** se recorta. La fila crece de alto
+antes que esconder el nombre de la sección; el ancho del rail decide dónde parte
+la línea, nunca QUÉ se ve. El punto de error deja de ser hermano flex y pasa a
+fluir DENTRO del label, así que la caja de texto conserva sus 99px también en la
+sección que tiene el error.
+
+**Razón**: un índice existe para decir a dónde vas. «Servicios asign…» no lo
+dice, y el coste de leerlo se paga en cada visita. La elipsis además convertía
+una restricción del componente en un impuesto invisible sobre quien redacta: el
+parche que funcionaba era acortar el copy, que ni escala a cuatro idiomas ni
+queda registrado en ningún sitio donde el siguiente redactor lo vea. Envolver
+mueve el coste a donde es barato — 8px de alto de fila en un rail que ya es
+`sticky` a altura de viewport — y lo hace visible en vez de silencioso.
+Verificado: 48/48 etiquetas sin recorte en 3 formularios × 4 idiomas, y 144
+medidas sin recorte ni desbordes en el barrido de 768/900/1024/1280/1440/1600
+(`e2e/supervisor/form-section-nav-legibility.spec.ts`, que enrojece con el
+`nowrap` puesto).
+
+**Descartadas**:
+
+- **Ensanchar el rail (240 → ~264px)**: compra 15px, que es exactamente el
+  déficit del peor caso de HOY. No es una regla, es un margen; la siguiente
+  traducción larga lo agota y volvemos aquí. Además el 240 es parte del molde
+  compartido de los formularios, así que moverlo cambia las cuatro páginas para
+  arreglar una etiqueta.
+- **Tooltip con el texto completo**: resuelve el acceso al dato, no la
+  legibilidad de un vistazo, que es lo que un índice vende. Y pide hover, que en
+  táctil no existe.
+- **`line-clamp: 2`**: devuelve la elipsis en la línea 3, o sea el mismo fallo
+  con más pasos.
+- **Seguir acortando el copy por página**: es el statu quo, y es lo que motivó
+  esta entrada.
+
+**Consecuencias**: la fila deja de tener alto fijo (53px con una línea, 61px con
+dos), así que cualquier medida que asuma altura uniforme en el rail hay que
+releerla. `overflow-wrap: anywhere` queda como red para la palabra suelta más
+ancha que la caja. El punto de error se lee ahora pegado al final del texto en
+vez de alineado al borde derecho de la fila.
+
+---
+
 ## DD-51 · 2026-09-05 — El interlineado de los CONTROLES vuelve a la métrica de la fuente; la rampa se queda solo donde el Kit la ata
 
 **Contexto** · Rafa, mirando el Supervisor contra su Figma: *«los botones siguen igual de tamaño

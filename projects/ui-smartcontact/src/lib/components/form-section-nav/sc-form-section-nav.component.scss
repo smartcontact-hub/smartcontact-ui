@@ -2,12 +2,14 @@
  * Form section nav — aligned with `settings-sidebar` so the form rail
  * and the /config rail read as siblings (DD#54). Two visual rules:
  *
- *   • Icon chip (28×28) left of a single-line label + optional inline
- *     hint. Active state paints the chip with the brand surface — the
- *     same cue settings-sidebar uses.
- *   • Each entry is one row tall. Label · hint are separated by a thin
- *     middle dot and truncated together with ellipsis so the rail width
- *     defines the truncation, not arbitrary copy length.
+ *   • Icon chip (28×28) a la izquierda del label. El estado activo pinta
+ *     el chip con la superficie de marca — el mismo gesto que usa
+ *     settings-sidebar.
+ *   • El label ENVUELVE: la fila crece de alto antes que esconder el
+ *     nombre de la sección. El ancho del rail decide dónde parte la
+ *     línea, nunca QUÉ se ve. (Hasta 2026-09-06 esta segunda regla decía
+ *     lo contrario —una fila de alto fijo y elipsis— y cortaba 13 de las
+ *     48 etiquetas de los tres formularios en los cuatro idiomas.)
  */
 :host {
   display: block;
@@ -130,33 +132,64 @@
     color var(--sc-transition-fast) ease;
 }
 
+/*
+ * El label ENVUELVE; nunca se corta. (2026-09-06, a petición de Rafa: «el
+ * índice no debería cortar».)
+ *
+ * Antes era `nowrap` + `text-overflow: ellipsis`, con la idea de que «el ancho
+ * del rail define la truncación, no la longitud del copy». Medido en el
+ * Supervisor a 1440x900 con el rail de 240px, esa idea le daba al texto 99px
+ * (74px si el item lleva punto de error), y con eso cortaban 13 de las 48
+ * etiquetas de los tres formularios en los cuatro idiomas: «Servicios
+ * asignados» pedía 114px, «Agentes asignados» 108, «Identificación» 79 contra
+ * los 74 que deja el punto. Un índice que oculta el nombre de la sección no
+ * cumple su único trabajo, y el parche por página (acortar el copy hasta que
+ * quepa) traslada al redactor una restricción que es del componente y que se
+ * rompe sola en cuanto se traduce.
+ *
+ * Sin `line-clamp`: un tope de 2 líneas devolvería la elipsis en la línea 3,
+ * que es exactamente el fallo que esto quita. Una etiqueta larga crece de fila
+ * — visible y legible — en vez de callarse.
+ *
+ * `overflow-wrap: anywhere` es la red para la palabra sola más ancha que la
+ * caja (una URL, un nombre técnico): parte dentro en lugar de desbordar el
+ * rail. `text-wrap: balance` reparte las líneas en vez de dejar una huérfana
+ * de una palabra; donde no se soporta, el salto natural sigue siendo correcto.
+ */
 .form-nav__label {
   font-family: var(--sc-font-family-primary);
   font-size: var(--sc-font-size-100);
   line-height: 20px;
   font-weight: var(--sc-font-weight-medium);
   color: var(--sc-text-secondary);
-  white-space: nowrap;
-  overflow: hidden;
-  text-overflow: ellipsis;
+  overflow-wrap: anywhere;
+  text-wrap: balance;
   flex: 1 1 auto;
   min-width: 0;
 }
 
 /*
- * Error dot — pequeño círculo rojo a la derecha del label, indicando que la
+ * Error dot — pequeño círculo rojo al final del label, indicando que la
  * sección tiene required vacíos. CSS dot puro (no emoji, no SVG icon) por
  * tres razones:
  *   1. A11y: emoji + screen reader = ruido inconsistente cross-browser.
  *   2. Sizing: 8×8px fijo independiente de font-size del label.
  *   3. Color: hereda del token semántico --sc-bg-danger automáticamente
  *      en dark mode sin overrides.
+ *
+ * Vive DENTRO del label (2026-09-06), no como hermano flex. De hermano ocupaba
+ * un carril propio —gap 10,5 + 8 del punto + 7 de margen = 25px— y la caja de
+ * texto bajaba de 99 a 74px, justo por debajo de los 79 que mide
+ * «Identificación» en el peso activo: la sección con error era la que peor se
+ * leía, que es lo contrario de lo que el punto pretende. En flujo inline la
+ * caja conserva sus 99px y el punto acompaña a la última palabra.
  */
 .form-nav__dot {
-  flex: 0 0 auto;
+  display: inline-block;
+  vertical-align: middle;
   width: 8px;
   height: 8px;
   border-radius: var(--sc-radius-full);
   background: var(--sc-bg-danger);
-  margin-left: var(--sc-spacing-0-5);
+  margin-inline-start: var(--sc-spacing-0-5);
 }

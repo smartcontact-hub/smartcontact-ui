@@ -39,6 +39,7 @@ export class FormSectionNavDemoComponent {
   protected readonly playgroundTpl = viewChild<TemplateRef<StoryContext>>('playground');
   protected readonly defaultTpl = viewChild<TemplateRef<StoryContext>>('default');
   protected readonly flushTpl = viewChild<TemplateRef<StoryContext>>('flush');
+  protected readonly longTpl = viewChild<TemplateRef<StoryContext>>('long');
 
   readonly sections: FormNavSection[] = [
     { id: 'general', labelKey: 'General', icon: 'tune' },
@@ -49,15 +50,30 @@ export class FormSectionNavDemoComponent {
   readonly active = signal('general');
   readonly errors = new Set(['horario']);
 
+  /* Rótulos largos de verdad, tomados de los formularios del Supervisor: son
+   * los que con la elipsis anterior se leían «Servicios asign…» (DD-52). */
+  readonly longSections: FormNavSection[] = [
+    { id: 'identificacion', labelKey: 'Identificación', icon: 'badge' },
+    { id: 'servicios', labelKey: 'Servicios asignados', icon: 'hub' },
+    { id: 'permisos', labelKey: 'Permisos', icon: 'verified_user' },
+    { id: 'estrategia', labelKey: 'Estrategia de distribución', icon: 'account_tree' },
+  ];
+  readonly longActive = signal('identificacion');
+  readonly longErrors = new Set(['identificacion']);
+
   onActive(id: string): void {
     this.active.set(id);
+  }
+
+  onLongActive(id: string): void {
+    this.longActive.set(id);
   }
 
   protected readonly meta: StoryMeta = {
     tag: 'sc-form-section-nav',
     title: 'FormSectionNav',
     description:
-      'Nav de secciones controlado: el padre posee activeId y el nav emite activeChange al click. Punto rojo en las secciones con required vacíos (sectionsWithErrors). Variante flush (panel embebido del rail) opt-in.',
+      'Nav de secciones controlado: el padre posee activeId y el nav emite activeChange al click. Punto rojo en las secciones con required vacíos (sectionsWithErrors). Variante flush (panel embebido del rail) opt-in. El label ENVUELVE: una etiqueta que no cabe en el rail parte de línea y la fila crece, nunca se recorta con elipsis (DD-52).',
     argTypes: [{ name: 'flush', control: { kind: 'boolean' } }],
     defaultArgs: {
       flush: false,
@@ -105,11 +121,13 @@ export class FormSectionNavDemoComponent {
     const pg = this.playgroundTpl();
     const de = this.defaultTpl();
     const fl = this.flushTpl();
-    if (!pg || !de || !fl) return [];
+    const lo = this.longTpl();
+    if (!pg || !de || !fl || !lo) return [];
     return [
       { name: 'Playground', playground: true, template: pg },
       { name: 'Default', template: de, snippet: DEFAULT_SNIPPET },
       { name: 'Flush (panel embebido)', template: fl, snippet: FLUSH_SNIPPET },
+      { name: 'Rótulos largos (envuelven, no se recortan)', template: lo },
     ];
   });
 }
