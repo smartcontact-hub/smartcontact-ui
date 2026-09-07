@@ -411,6 +411,21 @@ Each entry: **what bites → the rule → why**. Append here when a new one is f
   whole time. *Rule:* probe the half you actually need; never generalise one server's failure
   to the others. *Why:* they are genuinely different services — see the table below.
   ↔ *La regla de proceso, con su evidencia: `LEARNINGS.md` **#1** (corolario s27).*
+- **A Playwright locator with no action timeout does not reject: it WAITS, and a `.catch()`
+  never saves you.** *Bites:* `screenshotBaseline()` opened with
+  `page.locator('.sb-shell__side').evaluate(...).catch(() => undefined)`. That class stopped
+  being rendered by the sc-docs shell (it survives only in `storybook.scss`), so the locator
+  waited forever, the `.catch` never fired, and **all 25 visual baselines hung for their full
+  60 s without ever capturing** — for weeks. The symptom looks nothing like the cause:
+  `Test timeout exceeded` + `screencast.hideOverlays: Target page … closed`, and **no
+  `-actual.png` / `-diff.png`**, because the comparison never happened. *Rule:* any locator
+  used as best-effort cleanup needs an explicit `{ timeout: N }`, or must not be a locator at
+  all — prefer `page.evaluate` over the document when the step is DOM housekeeping and not an
+  assertion. *Why:* `.catch()` on a promise that never settles is not a fallback, it is a
+  silent deadlock; and the local net was dead while nobody could tell, because
+  `screenshotBaseline` returns early under `CI` so the CI never sees these at all. Cazado con un
+  control, no adivinado (2026-09-06): `sc-badge`, untouched, failed identically, and the same
+  `toHaveScreenshot` on the same page WITHOUT that preamble passed in 2.3 s.
 - **An e2e test depends on `.sc-inputtext__msg--error` as a public contract.** *Bites:* renaming
   or restructuring that class inside `sc-inputtext` breaks `e2e/supervisor/category-modal.spec.ts:52`
   (verified 2026-08-13), and the failure looks like a modal bug rather than a CSS rename. *Rule:*
