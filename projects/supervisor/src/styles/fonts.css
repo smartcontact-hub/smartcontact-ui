@@ -1,0 +1,21 @@
+/* Fuentes de marca SELF-HOSPEDADAS.
+ *
+ * Antes venían de `fonts.googleapis.com` con dos `<link>` en `index.html`. Eso mandaba
+ * la IP de cada visitante a Google en la primera carga, y era la ÚNICA transferencia a
+ * un tercero que tenía esta app (no hay analítica ni cookies). Los ficheros son los
+ * mismos que publica Google: `@fontsource` los empaqueta desde ese upstream, así que
+ * esto no cambia un píxel, cambia de dónde salen los bytes.
+ *
+ * Subconjunto `latin` (la app es española). Pesos, los del contrato de tokens
+ * (`--sc-font-weight-*`: 400/500/600/700), que es justo lo que pedía el `<link>` de
+ * Google. Las familias se llaman EXACTAMENTE como las nombran `--sc-font-family-primary`
+ * ('Inter') y `--sc-font-family-secondary` ('Open Sans'). */
+@import '@fontsource/inter/latin-400.css';
+@import '@fontsource/inter/latin-500.css';
+@import '@fontsource/inter/latin-600.css';
+@import '@fontsource/inter/latin-700.css';
+@import '@fontsource/inter/latin-400-italic.css';
+
+/* Secundaria: solo captions (`--sc-font-family-secondary`). */
+@import '@fontsource/open-sans/latin-400.css';
+@import '@fontsource/open-sans/latin-600.css';

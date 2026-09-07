@@ -12,6 +12,9 @@
 /* `@use` antes que cualquier `@import`. */
 @use 'reset';
 
+/* Fuentes, self-hospedadas (ver `fonts.css`). Antes las servía Google. */
+@import './fonts.css';
+
 /* Tokens del DS: inertes para el look, pero PrimeNG los consume vía el preset. */
 @import '../../../design-tokens/src/lib/styles/tokens/layers/01-primitive.css';
 @import '../../../design-tokens/src/lib/styles/tokens/layers/02-semantic.css';
