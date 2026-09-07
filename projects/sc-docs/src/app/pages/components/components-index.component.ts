@@ -1,5 +1,6 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterLink } from '@angular/router';
+import { TranslatePipe } from '@ngx-translate/core';
 
 import { COMPONENT_CATALOG, groupCatalog } from './component-catalog';
 
@@ -13,7 +14,7 @@ import { COMPONENT_CATALOG, groupCatalog } from './component-catalog';
  */
 @Component({
   selector: 'app-components-index',
-  imports: [RouterLink],
+  imports: [RouterLink, TranslatePipe],
   template: `
     <header class="hero">
       <img
@@ -35,21 +36,19 @@ import { COMPONENT_CATALOG, groupCatalog } from './component-catalog';
       />
       <div class="hero__scrim" aria-hidden="true"></div>
       <div class="hero__content">
-        <p class="eyebrow">Sistema de diseño</p>
-        <h1>Componentes</h1>
-        <p class="lead">
-          {{ total }} wrappers <code>sc-*</code> de
-          <code>&#64;smartcontact-hub/components</code>, en {{ groups.length }} familias. Para qué
-          sirve cada uno de un vistazo; entra en cualquiera para ver sus variantes, estados y
-          código, en claro y oscuro.
-        </p>
+        <p class="eyebrow">{{ 'componentsIndex.eyebrow' | translate }}</p>
+        <h1>{{ 'componentsIndex.title' | translate }}</h1>
+        <p
+          class="lead"
+          [innerHTML]="'componentsIndex.lead' | translate: { total: total, families: groups.length }"
+        ></p>
       </div>
     </header>
 
     @for (group of groups; track group.category) {
       <section class="fam">
         <h2 class="fam__title">
-          {{ group.category }}
+          {{ 'categories.' + group.category | translate }}
           <span class="fam__count">{{ group.items.length }}</span>
         </h2>
         <ul class="cards">
@@ -57,8 +56,10 @@ import { COMPONENT_CATALOG, groupCatalog } from './component-catalog';
             <li>
               <a class="card" [routerLink]="['/components', e.path]">
                 <span class="card__name">{{ e.label }}</span>
-                @if (e.blurb) {
-                  <span class="card__blurb">{{ e.blurb }}</span>
+                @let blurbKey = 'components.blurb.' + e.path;
+                @let blurb = blurbKey | translate;
+                @if (blurb !== blurbKey) {
+                  <span class="card__blurb">{{ blurb }}</span>
                 }
               </a>
             </li>

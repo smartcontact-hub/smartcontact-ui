@@ -110,7 +110,7 @@ export class AppComponent {
     const comps: ScPaletteCommand[] = COMPONENT_CATALOG.map((c) => ({
       id: `c-${c.path}`,
       label: c.label,
-      category: c.category,
+      category: t(`categories.${c.category}`),
       icon: 'widgets',
       keywords: [c.path],
       action: () => this.go(`/components/${c.path}`),

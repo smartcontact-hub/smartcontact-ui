@@ -49,7 +49,7 @@
                   stroke-linejoin="round"
                 />
               </svg>
-              <span class="demo-sidebar__group-name">{{ group.category }}</span>
+              <span class="demo-sidebar__group-name">{{ 'categories.' + group.category | translate }}</span>
               <span class="demo-sidebar__group-count">{{ group.items.length }}</span>
             </button>
             @if (openGroup() === group.category) {
