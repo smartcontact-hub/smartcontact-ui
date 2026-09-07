@@ -39,6 +39,7 @@
 | **17** | construir sobre una descripción que no verificaste tú | es una paráfrasis: vuelve a la fuente (da igual si viene de un hand-off, Figma, un README u otro agente) |
 | **18** | zanjar una decisión VISUAL discutiendo | constrúyela en su versión mínima y MÍRALA |
 | **19** | elegir cómo validar algo | por la PREGUNTA: gesto→Playwright · aspecto→captura · ¿sabrán usarlo?→recorrido cognitivo |
+| **21** | escribir en un LEDGER compartido (`DECISIONS`, `LEARNINGS`, `inventory`, `handoff`, `AGENTS`) o aterrizar en una rama que otro worktree tiene abierta | mira su `status` y el tip ANTES de empezar, no solo al aterrizar; una rama, una sesión; y compara contra `origin/main` tras `fetch`, no contra tu `main` local |
 
 ---
 
@@ -146,6 +147,18 @@
     ⚙️ El hook deniega el volcado de configs con credenciales y el `main...rama`.
     Evidencia: s11 "111 usos" que eran 50 · s18 39 tests en grep, 108 en el runner · s27 token de
     Figma impreso y rotado · s35 `main...rama` casi borra 432 ficheros · s31 "2.820 elementos" = 271.
+
+21. **Vas a escribir en un fichero COMPARTIDO (los ledgers: `DECISIONS.md`, `LEARNINGS.md`,
+    `inventory.md`, `docs/handoff/`, `AGENTS.md`) o a aterrizar trabajo en una rama que otro
+    worktree tiene checkouteada → mide su árbol y su tip ANTES de empezar, no solo al aterrizar.**
+    `git worktree list`, su `git status --porcelain`, el `rev-parse` de la rama. Si el fichero está
+    sucio en su árbol, no lo toques: quien hace el cambio de código escribe su entrada. Una rama,
+    una sesión: si necesitas su trabajo sin fundir, sal a rama propia y vuelve con PR. Y compara
+    contra `origin/main` tras un `fetch`: tu `main` local puede estar días por detrás y te dirá que
+    no hay conflicto cuando lo hay.
+    Evidencia: 2026-09-06 tres choques en un día con la sesión hermana (DD-52 y la pokédex escritas
+    dos veces, la segunda byte a byte idéntica) y el PR #50 nació CONFLICTING contra el #52 ya
+    fundido; los cuatro choques cayeron en ledgers, ninguno en código.
 
 ## Entrega
 
