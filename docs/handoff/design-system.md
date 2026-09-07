@@ -15,6 +15,65 @@
 > coordine. Los `sNN` de los tramos viejos se quedan como están: los nombran commits y
 > `docs/DECISIONS.md`, y reescribirlos solo desincronizaría el doc de su propia historia.
 
+## ✅ 2026-09-07 · La regla de «datos inventados» pasa de estar escrita a estar vigilada
+
+**Sello:** [PR #59](https://github.com/smartcontact-hub/smartcontact-ui/pull/59). Carril
+`preflight` COMPLETO sobre el árbol final.
+
+**De dónde sale.** El tramo anterior encontró 7 teléfonos de la extracción publicados, y la
+lección no era el descuido: la regla estaba escrita **dos veces** (`agent-mini/mini-seed.ts` y
+`cuscare/seed.ts`) y aun así se saltó en el tercer seed. Un teléfono inventado y uno real se ven
+IGUAL en un diff, así que ninguna revisión humana lo caza. Eso es la definición de lo que aquí
+va a gate.
+
+**Lo que entra:** `audit:seed-pii`, gate número 32 de `verify`. Barre los ficheros versionados
+de `projects/*/src` (`.ts`, `.html`, `.json`) buscando teléfono español y correo, y exige que
+cada valor distinto esté declarado en una lista con su MOTIVO escrito. Los dominios reservados
+por el RFC 2606 (`example.com`, `.test`, `.invalid`) no necesitan entrada: no pueden ser de
+nadie. Trinquete en las dos direcciones, como sus hermanos: también canta si un declarado deja
+de aparecer, para que la lista no se pudra.
+
+**Por qué NO el cruce contra `findings/` que se propuso primero:** al ir a montarlo, ese cruce ya
+no valía. Los volcados quedaron tachados esa misma tarde, así que no hay contra qué cruzar. El
+gate que entra no pregunta de dónde viene el número (eso ya no se puede saber), pregunta si
+alguien firmó que se lo inventó.
+
+**Estado medido al nacer:** 59 teléfonos y 10 correos en 658 ficheros, todos declarados.
+Instrumento validado con el fallo delante: con un móvil y un correo plantados, rojo con el
+fichero señalado; retirados, verde. Más 12 tests unitarios sobre las funciones puras, en los
+ejes que producen falsos negativos (`+34` y separadores, que duplicarían el valor) y el que
+produce falsos positivos (los decimales de un `d=` de SVG).
+
+**El susto, y por qué el gate acabó siendo otro.** La primera versión solo veía nueve dígitos
+seguidos. Con ella el repo daba verde… y uno de los siete teléfonos de la extracción seguía
+vivo en `agent-mini/mini-seed.ts` **escrito con espacios**: había sobrevivido a la limpieza del
+tramo anterior, que buscó la misma forma sin separadores. Salió por casualidad, buscando otra
+cosa. Dos lecciones, y las dos son de LEARNINGS #12: la cifra de un barrido depende de la forma
+que buscas, no de lo que hay; y la cabecera de ese fichero presumía de «ni un nombre ni teléfono
+de la extracción real», que era falso mientras lo decía. La regla final admite espacio y guion,
+normaliza el `+34`, y **el punto NO separa**: admitirlo daba dos falsos positivos con los
+decimales pegados del `d=` de `app-icon.component.ts`. Con la regla nueva el barrido pasa de 41
+valores a 59.
+
+**Lo que encontró nada más nacer:** de los 59 teléfonos del repo, **57 siguen un patrón inventado
+evidente y dos no**. `917945449` y `918371548` viven en `groups-data.ts` del Supervisor, siete
+veces cada uno, colgando de grupos con nombre de producción («ACD Demo C2CB», «ACD demo
+cuscare»), y el primero sale además como teléfono del usuario en la barra superior
+(`top-bar.component.ts`, `+34 917 945 449`). Parecen líneas de la propia Smart Contact copiadas
+de la app real. Un número de centralita de empresa no es dato de una persona, así que **no
+bloquean**: quedan en la lista con la nota «SIN CONFIRMAR», que es exactamente para lo que sirve
+un trinquete con motivos.
+
+⛔ **`Rafael_3AED` no se toca.** Es el identificador de Rafa en la app real y aparece 11 veces en
+`agent/seed.ts`. Lo pidió él expresamente el 2026-09-07, y con razón: un futuro barrido de
+«datos de la extracción» se lo habría llevado por delante. Queda escrito en la cabecera del seed
+y en la del propio gate, que son los dos sitios donde miraría quien fuera a limpiarlo.
+
+### ⏸️ ESPERANDO A RAFA
+
+- **Confirmar los dos teléfonos de `groups-data.ts`**: si son líneas de la casa, se quita la nota
+  «SIN CONFIRMAR»; si salieron de una pantalla real de cliente, se sustituyen como los del Agent.
+
 ## ✅ 2026-09-07 · Los cinco sitios dejan de llamar a Google, y el seed del Agent deja de publicar teléfonos de verdad
 
 **Sello:** [PR #58](https://github.com/smartcontact-hub/smartcontact-ui/pull/58). Carril
