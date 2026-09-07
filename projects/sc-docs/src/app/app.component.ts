@@ -3,6 +3,8 @@ import { toSignal } from '@angular/core/rxjs-interop';
 import { NavigationEnd, Router, RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
 import { filter, map, startWith } from 'rxjs/operators';
 
+import { TranslatePipe, TranslateService } from '@ngx-translate/core';
+
 import {
   ScCommandPaletteComponent,
   ScCommandPaletteService,
@@ -11,6 +13,8 @@ import {
 
 import { COMPONENT_CATALOG, groupCatalog, type ComponentCategory } from './pages/components/component-catalog';
 import { ThemeToggleComponent } from './shared/theme-toggle.component';
+import { LanguageToggleComponent } from './shared/language-toggle.component';
+import { LanguageService } from './shared/language.service';
 
 /**
  * Shell de sc-docs: UNA sidebar (secciones + lista de componentes cuando estás en
@@ -27,7 +31,15 @@ import { ThemeToggleComponent } from './shared/theme-toggle.component';
  */
 @Component({
   selector: 'app-root',
-  imports: [RouterOutlet, RouterLink, RouterLinkActive, ScCommandPaletteComponent, ThemeToggleComponent],
+  imports: [
+    RouterOutlet,
+    RouterLink,
+    RouterLinkActive,
+    ScCommandPaletteComponent,
+    ThemeToggleComponent,
+    LanguageToggleComponent,
+    TranslatePipe,
+  ],
   templateUrl: './app.component.html',
   styleUrl: './app.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -35,6 +47,9 @@ import { ThemeToggleComponent } from './shared/theme-toggle.component';
 export class AppComponent {
   private readonly router = inject(Router);
   protected readonly palette = inject(ScCommandPaletteService);
+  private readonly translate = inject(TranslateService);
+  /** Idioma global: lo usan el pill del chrome y los comandos del ⌘K. */
+  protected readonly lang = inject(LanguageService);
 
   /** Todos los grupos de componentes (sin filtrar: el buscado es el ⌘K). */
   protected readonly groups = groupCatalog('');
@@ -73,22 +88,41 @@ export class AppComponent {
     this.openGroup.update((cur) => (cur === cat ? null : cat));
   }
 
-  constructor() {
+  /**
+   * (Re)construye los comandos del ⌘K con las etiquetas de sección en el idioma activo.
+   * Las secciones y el par de idiomas se traducen; los ~49 componentes son nombres propios
+   * (Button, InputText…) y no se traducen. Se llama al arrancar y en cada cambio de idioma.
+   */
+  private buildPalette(): void {
+    const t = (key: string): string => this.translate.instant(key) as string;
+    const sectionCat = t('chrome.cmd.sections');
     const sections: ScPaletteCommand[] = [
-      { id: 's-fund', label: 'Fundamentos', category: 'Secciones', icon: 'category', action: () => this.go('/fundamentos') },
-      { id: 's-comp', label: 'Componentes', category: 'Secciones', icon: 'widgets', action: () => this.go('/components') },
-      { id: 's-uso', label: 'Uso real', category: 'Secciones', icon: 'dashboard', action: () => this.go('/uso') },
-      { id: 's-reglas', label: 'Reglas', category: 'Secciones', icon: 'rule', action: () => this.go('/reglas') },
+      { id: 's-fund', label: t('chrome.nav.fundamentos'), category: sectionCat, icon: 'category', action: () => this.go('/fundamentos') },
+      { id: 's-comp', label: t('chrome.nav.componentes'), category: sectionCat, icon: 'widgets', action: () => this.go('/components') },
+      { id: 's-uso', label: t('chrome.nav.uso'), category: sectionCat, icon: 'dashboard', action: () => this.go('/uso') },
+      { id: 's-reglas', label: t('chrome.nav.reglas'), category: sectionCat, icon: 'rule', action: () => this.go('/reglas') },
+    ];
+    const langCat = t('chrome.cmd.language');
+    const languages: ScPaletteCommand[] = [
+      { id: 'lang-es', label: 'Español', category: langCat, icon: 'translate', keywords: ['idioma', 'language', 'spanish', 'espanol'], action: () => this.lang.set('es') },
+      { id: 'lang-en', label: 'English', category: langCat, icon: 'translate', keywords: ['idioma', 'language', 'english', 'ingles'], action: () => this.lang.set('en') },
     ];
     const comps: ScPaletteCommand[] = COMPONENT_CATALOG.map((c) => ({
       id: `c-${c.path}`,
       label: c.label,
-      category: c.category,
+      category: t(`categories.${c.category}`),
       icon: 'widgets',
       keywords: [c.path],
       action: () => this.go(`/components/${c.path}`),
     }));
-    this.palette.setCommands([...sections, ...comps]);
+    this.palette.setCommands([...sections, ...languages, ...comps]);
+  }
+
+  constructor() {
+    this.buildPalette();
+    // Reconstruye los comandos del ⌘K cuando cambia el idioma (y cuando el loader resuelve
+    // el idioma inicial, que también emite `onLangChange`): sus etiquetas siguen al idioma.
+    this.translate.onLangChange.subscribe(() => this.buildPalette());
 
     // Cierra el ⌘K en CUALQUIER navegación, no solo al navegar desde el propio palette
     // (que ya llama a `close()` en `go()`). Sin esto, abrir el ⌘K y luego cambiar de página

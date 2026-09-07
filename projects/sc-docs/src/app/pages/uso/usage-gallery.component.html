@@ -1,38 +1,41 @@
 <header class="uso-head">
-  <h1>Uso real de componentes</h1>
-  <p class="uso-intro">
-    Dónde aparece cada componente del DS en las pantallas <strong>reales</strong> del Supervisor
-    (no en la demo aislada). Capturas tomadas del DOM renderizado — se regeneran con
-    <code>npm run usage:capture</code>, no se desfasan.
-  </p>
+  <h1>{{ 'uso.title' | translate }}</h1>
+  <p class="uso-intro" [innerHTML]="'uso.intro' | translate"></p>
   @if (status(); as m) {
     <p class="uso-meta">
-      {{ m.screens.length }} pantallas · {{ seenCount() }}/{{ m.dsSelectors }} componentes DS vistos ·
-      capturado {{ m.capturedAt }} · {{ m.viewport }} · tema {{ m.theme }}
+      {{
+        'uso.meta'
+          | translate
+            : {
+                screens: m.screens.length,
+                seen: seenCount(),
+                total: m.dsSelectors,
+                date: m.capturedAt,
+                viewport: m.viewport,
+                theme: m.theme,
+              }
+      }}
     </p>
     <div class="uso-tabs" role="tablist">
       <button type="button" role="tab" [class.is-active]="view() === 'component'" (click)="setView('component')">
-        Por componente
+        {{ 'uso.byComponent' | translate }}
       </button>
       <button type="button" role="tab" [class.is-active]="view() === 'screen'" (click)="setView('screen')">
-        Por pantalla
+        {{ 'uso.byScreen' | translate }}
       </button>
     </div>
   }
 </header>
 
 @if (error()) {
-  <p class="uso-error">
-    No se pudo cargar <code>/usage/_usage-status.json</code>. Corre <code>npm run usage:capture</code>
-    para generar las capturas.
-  </p>
+  <p class="uso-error" [innerHTML]="'uso.error' | translate"></p>
 } @else if (!status()) {
-  <p class="uso-loading">Cargando capturas…</p>
+  <p class="uso-loading">{{ 'uso.loading' | translate }}</p>
 } @else if (view() === 'component') {
   <!-- ── Por componente ─────────────────────────────────────────────── -->
   @for (row of componentRows(); track row.selector) {
     <section class="uso-comp">
-      <h2><code>{{ row.selector }}</code> <span class="uso-count">{{ row.screens.length }} pantalla(s)</span></h2>
+      <h2><code>{{ row.selector }}</code> <span class="uso-count">{{ 'uso.screensCount' | translate: { count: row.screens.length } }}</span></h2>
       <div class="uso-thumbs">
         @for (s of row.screens; track s.id) {
           <a class="uso-thumb" [href]="src(s.shots[0])" target="_blank" rel="noopener">
@@ -46,8 +49,8 @@
 
   @if (global().length) {
     <section class="uso-comp uso-comp--note">
-      <h2>Shell-global <span class="uso-count">en todas las pantallas</span></h2>
-      <p>Montados en el shell de la app → presentes en cualquier pantalla:</p>
+      <h2>{{ 'uso.shellGlobal' | translate }} <span class="uso-count">{{ 'uso.shellGlobalNote' | translate }}</span></h2>
+      <p>{{ 'uso.shellGlobalLead' | translate }}</p>
       <ul class="uso-list">
         @for (g of global(); track g) {
           <li><code>{{ g }}</code></li>
@@ -58,14 +61,11 @@
 
   @if (gated().length) {
     <section class="uso-comp uso-comp--note">
-      <h2>No capturados aislados <span class="uso-count">se ven en el flujo</span></h2>
-      <p>
-        La pokédex los marca usados, pero solo se ven tras una interacción no scriptada o con datos
-        vacíos (p.ej. estado vacío). Documentados aquí; mira la vista «Por pantalla» de la sección donde viven.
-      </p>
+      <h2>{{ 'uso.gatedTitle' | translate }} <span class="uso-count">{{ 'uso.gatedNote' | translate }}</span></h2>
+      <p>{{ 'uso.gatedLead' | translate }}</p>
       <ul class="uso-list">
         @for (g of gated(); track g.selector) {
-          <li><code>{{ g.selector }}</code> — {{ g.usedInSupervisor }} usos</li>
+          <li><code>{{ g.selector }}</code> — {{ g.usedInSupervisor }} {{ 'uso.uses' | translate }}</li>
         }
       </ul>
     </section>

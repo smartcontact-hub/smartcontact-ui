@@ -233,7 +233,12 @@ for (const { path, lines } of files) {
   const agents = readFileSync(resolve(root, 'AGENTS.md'), 'utf8');
   const rutaPatrones = 'projects/sc-docs/src/app/pages/patrones/patrones.component.ts';
   const patrones = readFileSync(resolve(root, rutaPatrones), 'utf8');
-  for (const p of compararPatrones(agents, patrones)) fail(`AGENTS.md ↔ ${rutaPatrones} — ${p}`);
+  // El texto de los principios vive en i18n (es = referencia); la página solo guarda su clave.
+  const es = JSON.parse(
+    readFileSync(resolve(root, 'projects/sc-docs/public/assets/i18n/es.json'), 'utf8'),
+  );
+  const principios = es.fundamentos?.patterns?.principles ?? {};
+  for (const p of compararPatrones(agents, patrones, principios)) fail(`AGENTS.md ↔ ${rutaPatrones} — ${p}`);
 }
 
 // ── CHECK M — "N gates" tiene que cuadrar con la cadena verify de package.json ────

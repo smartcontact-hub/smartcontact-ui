@@ -1,5 +1,5 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
-import { RouterLink } from '@angular/router';
+import { TranslatePipe } from '@ngx-translate/core';
 
 import { ScIconComponent } from '@smartcontact-hub/icons';
 
@@ -9,7 +9,6 @@ interface TypeRow {
   token: string; // --sc-font-size-300
   px: number; // 16
   rem: string; // '1'
-  sample: string; // texto de muestra
 }
 
 /** Un peso de la rampa: el sufijo del token, su nombre y su valor numérico. */
@@ -46,7 +45,7 @@ const rem = (px: number): string => `${+(px / 16).toFixed(4)}`;
 @Component({
   selector: 'app-foundations-type',
   standalone: true,
-  imports: [ScIconComponent, RouterLink],
+  imports: [ScIconComponent, TranslatePipe],
   templateUrl: './foundations-type.component.html',
   styleUrl: './foundations-type.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -56,14 +55,14 @@ export class FoundationsTypeComponent {
 
   /** Font-size: 8 tamaños redondos, step-named, en rem. */
   protected readonly sizes: TypeRow[] = [
-    { step: '100', px: 12, sample: 'Micro-labels, captions, metadatos de tabla' },
-    { step: '200', px: 14, sample: 'Cuerpo denso y ayudas de formulario' },
-    { step: '300', px: 16, sample: 'Cuerpo base y etiquetas' },
-    { step: '400', px: 18, sample: 'Cuerpo destacado' },
-    { step: '450', px: 20, sample: 'Subtítulos' },
-    { step: '500', px: 24, sample: 'Títulos de sección' },
-    { step: '650', px: 32, sample: 'Encabezados de página' },
-    { step: '800', px: 48, sample: 'Display' },
+    { step: '100', px: 12 },
+    { step: '200', px: 14 },
+    { step: '300', px: 16 },
+    { step: '400', px: 18 },
+    { step: '450', px: 20 },
+    { step: '500', px: 24 },
+    { step: '650', px: 32 },
+    { step: '800', px: 48 },
   ].map((s) => ({ ...s, token: `--sc-font-size-${s.step}`, rem: rem(s.px) }));
 
   /** Line-height: 7 valores, step-named, en rem. */
