@@ -26,6 +26,16 @@ interface LineHeightRow {
   rem: string;
 }
 
+/** Un estilo de texto compuesto del Figma del DS: rol + peso, con su clase lista para usar. */
+interface TextStyle {
+  cls: string; // 'sc-text-h2-semibold'
+  role: string; // 'Heading 2'
+  weight: string; // 'Semibold'
+  px: number; // 24
+  line: number; // 36
+  use: string; // uso (del Figma)
+}
+
 const rem = (px: number): string => `${+(px / 16).toFixed(4)}`;
 
 /**
@@ -88,5 +98,25 @@ export class FoundationsTypeComponent {
     { key: 'medium', name: 'Medium', value: 500 },
     { key: 'semibold', name: 'Semibold', value: 600 },
     { key: 'bold', name: 'Bold', value: 700 },
+  ];
+
+  /**
+   * Los 12 ESTILOS DE TEXTO del Figma del DS "Smart-Contact Design System" (leídos en vivo
+   * 2026-09-07): 6 roles × 2 pesos. Cada uno se renderiza con su clase real
+   * (`.sc-text-<rol>-<peso>`, en `base/typography.css`), que bebe de los tokens `--sc-*`.
+   */
+  protected readonly textStyles: TextStyle[] = [
+    { cls: 'sc-text-display-semibold', role: 'Display', weight: 'Semibold', px: 64, line: 78, use: 'Título principal de pantalla. Solo uno.' },
+    { cls: 'sc-text-display-regular', role: 'Display', weight: 'Regular', px: 64, line: 78, use: 'Subtítulo dentro de una sección.' },
+    { cls: 'sc-text-h1-semibold', role: 'Heading 1', weight: 'Semibold', px: 48, line: 58, use: 'Portadas y hero. Uno por pantalla.' },
+    { cls: 'sc-text-h1-regular', role: 'Heading 1', weight: 'Regular', px: 48, line: 58, use: 'Variante ligera de H1.' },
+    { cls: 'sc-text-h2-semibold', role: 'Heading 2', weight: 'Semibold', px: 24, line: 36, use: 'Título de sección.' },
+    { cls: 'sc-text-h2-regular', role: 'Heading 2', weight: 'Regular', px: 24, line: 36, use: 'El texto de leer. Párrafos y contenido por defecto.' },
+    { cls: 'sc-text-h3-semibold', role: 'Heading 3', weight: 'Semibold', px: 18, line: 24, use: 'Encabezado pequeño: bloques, tarjetas, formularios.' },
+    { cls: 'sc-text-h3-regular', role: 'Heading 3', weight: 'Regular', px: 18, line: 24, use: 'Variante ligera de H3.' },
+    { cls: 'sc-text-body-semibold', role: 'Body', weight: 'Semibold', px: 14, line: 20, use: 'Texto secundario en negrita. Labels y datos que destacan.' },
+    { cls: 'sc-text-body-regular', role: 'Body', weight: 'Regular', px: 14, line: 20, use: 'Texto secundario normal. Descripciones y ayudas.' },
+    { cls: 'sc-text-caption-semibold', role: 'Caption', weight: 'Semibold', px: 12, line: 18, use: 'Caption en negrita. Para resaltar: estados, badges.' },
+    { cls: 'sc-text-caption-regular', role: 'Caption', weight: 'Regular', px: 12, line: 18, use: 'Texto pequeño: pies, metadatos, fechas.' },
   ];
 }

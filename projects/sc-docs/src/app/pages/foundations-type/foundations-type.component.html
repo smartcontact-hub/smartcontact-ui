@@ -25,7 +25,31 @@
   los dos ejes a la vez.
 </p>
 
+<!-- Estilos de texto: los 12 text styles del Figma del DS (6 roles × 2 pesos). Cada muestra se
+     renderiza con su CLASE real (`.sc-text-*`, en base/typography.css), que bebe de los tokens. -->
+<section class="styles">
+  <h2 class="styles__title">Estilos de texto</h2>
+  <p class="styles__lead">
+    Los <strong>12 estilos</strong> del Figma del DS (6 roles × 2 pesos). Aplica la clase
+    (<code>.sc-text-h2-semibold</code>…) y el texto hereda tamaño, interlineado, peso y familia
+    desde los tokens <code>--sc-*</code>. La muestra de abajo usa la clase real.
+  </p>
+  <ul class="styles__list">
+    @for (t of textStyles; track t.cls) {
+      <li class="styles__row">
+        <p class="styles__sample" [class]="t.cls">{{ t.role }} · {{ t.weight }}</p>
+        <div class="styles__meta">
+          <code class="styles__cls">.{{ t.cls }}</code>
+          <span class="styles__val">{{ t.px }} / {{ t.line }} px</span>
+          <span class="styles__use">{{ t.use }}</span>
+        </div>
+      </li>
+    }
+  </ul>
+</section>
+
 <!-- Escala de tamaños: la muestra usa el token real (var) → refleja producción -->
+<h2 class="ramp__title">Escala de tamaños</h2>
 <ul class="scale">
   @for (s of sizes; track s.step) {
     <li class="scale__row">
