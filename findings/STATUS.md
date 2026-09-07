@@ -9,6 +9,18 @@ igual que el original (era px a escala 1456 hasta el 2026-08-26).
 Herramientas en `./tools/`, ejecutables con `node tools/<script>.ts` (Node 25 lee TS
 directo). Node de nvm (v20) NO vale: `export PATH=/usr/local/bin:$PATH`.
 
+## ⚠️ Redacción de 2026-09-07
+
+Los `phase-2-metrics-*.ndjson` traen el TEXTO de cada nodo medido, y con él venían los teléfonos
+que el original mostraba en sus tablas: 5 números distintos, 672 apariciones, 21 ficheros. Este
+repo es PÚBLICO, así que están **tachados** como `6########` (misma longitud, primer dígito, resto
+tapado). Se tachan y no se sustituyen por otros números porque esto es evidencia: quien lo lea
+tiene que ver que hubo una redacción y no tomarlo por la captura literal.
+
+Las métricas no se tocan: lo que importa de estas líneas es `rect`, la tipografía y el espaciado,
+no qué dígitos había. Si alguna vez hay que regenerarlas (`tools/phase2-metrics.ts`), **vuelven a
+salir sin tachar**: hay que tacharlas otra vez antes de commitear.
+
 ## Fases
 
 | fase                        | alcance    | estado       | gate                                                     |

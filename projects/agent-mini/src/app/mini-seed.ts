@@ -22,7 +22,7 @@ export interface CallRow {
 }
 
 export const CALLS: readonly CallRow[] = [
-  { id: 1, date: '14:07', number: '676653912', group: 'Nodo AED 1', destination: '-', support: '00:02', wait: '00:00', categorization: '-', direction: 'out', channel: 'call', outcome: 'attended' },
+  { id: 1, date: '14:07', number: '600445566', group: 'Nodo AED 1', destination: '-', support: '00:02', wait: '00:00', categorization: '-', direction: 'out', channel: 'call', outcome: 'attended' },
   { id: 2, date: '13:26', number: '612345678', group: 'Nodo AED 1', destination: '-', support: '00:03', wait: '00:01', categorization: 'N1 · Consulta', direction: 'in', channel: 'call', outcome: 'attended' },
   { id: 3, date: '12:58', number: '698112233', group: 'Soporte', destination: '-', support: '00:00', wait: '00:12', categorization: '-', direction: 'in', channel: 'call', outcome: 'lost' },
   { id: 4, date: '12:40', number: 'Cliente web', group: 'Chat AED', destination: '-', support: '01:20', wait: '00:04', categorization: 'N2 · Incidencia', direction: 'in', channel: 'chat', outcome: 'attended' },
@@ -40,7 +40,7 @@ export interface ContactRow {
 }
 
 export const CONTACTS: readonly ContactRow[] = [
-  { id: 1, name: 'Ana García', phone: '676653912', company: 'Acme SL' },
+  { id: 1, name: 'Ana García', phone: '600445566', company: 'Acme SL' },
   { id: 2, name: 'Bruno Díaz', phone: '612345678', company: 'Contoso' },
   { id: 3, name: 'Carla Ruiz', phone: '698112233' },
   { id: 4, name: 'David Soto', phone: '600998877', company: 'Globex' },

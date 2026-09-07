@@ -76,6 +76,12 @@
       <a class="demo-sidebar__tool" routerLink="/lab" routerLinkActive="is-active">Lab</a>
       <app-theme-toggle [dark]="isDark()" (toggled)="toggleDark()" />
     </div>
+
+    <!-- Pie legal: es lo último y lo más callado de la barra, como en cualquier sitio.
+         Fuera de la nav de secciones a propósito: no es documentación del DS. -->
+    <a class="demo-sidebar__legal" routerLink="/aviso-legal" routerLinkActive="is-active">
+      Aviso legal
+    </a>
   </aside>
 
   <main class="demo-main">

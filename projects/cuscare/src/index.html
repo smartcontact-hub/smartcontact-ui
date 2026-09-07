@@ -9,13 +9,10 @@
     <link rel="icon" type="image/svg+xml" href="favicon.svg" />
 
     <!-- Fuentes MEDIDAS del sitio real: Roboto (body) + Open Sans (títulos y tabla).
-         La real mezcla ambas; se replica tal cual, no se unifica. -->
-    <link rel="preconnect" href="https://fonts.googleapis.com" />
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link
-      rel="stylesheet"
-      href="https://fonts.googleapis.com/css2?family=Roboto:wght@300;400;500;700&family=Open+Sans:wght@400;600;700&display=swap"
-    />
+         La real mezcla ambas; se replica tal cual, no se unifica.
+         Ya NO se piden a Google: se sirven self-hospedadas desde el propio bundle
+         (`src/styles/fonts.css`, @fontsource). Mismos ficheros y mismos pesos, así que
+         la fidelidad no se toca. -->
   </head>
   <body>
     <app-root></app-root>
