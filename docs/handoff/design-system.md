@@ -17,10 +17,13 @@
 
 ## ✅ 2026-09-06 · El índice del rail deja de recortar: envuelve, y el punto de error suelta los 25px que le robaba
 
-**Sello:** carril elegido por `preflight:scope`, verde sobre el árbol final. `verify` (29 gates)
-verde. `e2e:supervisor` **132/132** contra el `ng serve` de ESTE worktree (`SC_SUPERVISOR_URL`
-a :4408 — :4405 lo tenía ocupado otra sesión y el guardián `reuseOnlyOwnServer` habría parado,
-que es lo correcto). Veredicto del CI con `npm run ci:verdict` tras el push.
+**Sello:** [PR #52](https://github.com/smartcontact-hub/smartcontact-ui/pull/52), **fundido**
+en `main` como `84567d6`, con el CI de `main` en verde sobre ese commit
+([run 34094789585](https://github.com/smartcontact-hub/smartcontact-ui/actions/runs/34094789585)).
+Carril `preflight` COMPLETO en verde sobre el árbol final (`c2e0902`): `guard:lockfile` ·
+`verify` · `build:docs` · los tres builds de producción · e2e **78 + 132 + 100**.
+`e2e:supervisor` se corrió contra el `ng serve` de ESTE worktree (`SC_SUPERVISOR_URL` a :4408 —
+:4405 lo tenía ocupado otra sesión y `reuseOnlyOwnServer` habría parado, que es lo correcto).
 
 Lo señaló Rafa: `sc-form-section-nav` truncaba con elipsis y el índice no debería cortar. La
 decisión y las alternativas descartadas están en **DD-52**; aquí va lo que hace falta para seguir.
