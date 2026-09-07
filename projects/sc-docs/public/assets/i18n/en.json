@@ -82,5 +82,87 @@
       "bulkeditmenu": "Menu of actions to apply to several selected rows at once.",
       "bulktranscriptionmodal": "Modal to launch batch transcription of several conversations."
     }
+  },
+  "fundamentos": {
+    "tabs": {
+      "escala-color": "Scale & color",
+      "tipografia": "Typography",
+      "patrones": "Patterns"
+    },
+    "type": {
+      "title": "Typography",
+      "lead": "A <strong>rounded</strong> scale in <strong>rem</strong> on a <strong>16</strong> root (<code>font-size-300</code> = 16px = exactly 1rem), <strong>step-named</strong> (the same language as the Pro Kit and the devs) and <strong>decoupled</strong> from the spacing scale. 8 sizes + 7 line heights.",
+      "note": "<strong>14 and 16 are not the same.</strong> The DS doesn't override the browser root (<code>html</code> stays at <code>100%</code>), so <code>1rem</code> = 16px and the ramp lands on round pixels. The <strong>14</strong> you see across the system is the other axis: it's the base of the <a href=\"#/fundamentos/escala-color\">spacing scale</a> (<code>--sc-scale-1</code> = 14px, the suffix is the multiplier) and the default <strong>body</strong> size (<code>font-size-200</code>). Dropping the root to 14 would shrink both axes at once.",
+      "lineHeights": "Line heights",
+      "weights": "Weights",
+      "foot": "Named by <strong>step</strong> (100…800), not by value: the name doesn't lie if the value changes, and Figma, code, and the devs speak the same language. In <strong>rem</strong> so text scales with the browser's base size (accessibility). CSS also has <code>font-size-50/75/600/700/900</code>: these are <strong>snaps</strong>, steps the Kit doesn't ship that stick to their neighbor so step naming leaves no gaps.",
+      "sample": {
+        "100": "Micro-labels, captions, table metadata",
+        "200": "Dense body and form help text",
+        "300": "Base body and labels",
+        "400": "Emphasized body",
+        "450": "Subheadings",
+        "500": "Section titles",
+        "650": "Page headings",
+        "800": "Display"
+      }
+    },
+    "patterns": {
+      "title": "Screen patterns",
+      "lead": "The quality bar when building a product screen. Each pattern points to what the system <strong>already</strong> solves, so a new screen is born consistent instead of being fixed afterward.",
+      "haveLabel": "Already in the system",
+      "demo": {
+        "aria": "Loading state: skeleton vs spinner",
+        "title": "Loading state: the contrast, live",
+        "lead": "On the left, <code>sc-skeleton</code> with the row's silhouette: it reserves the exact space, so nothing jumps when it loads. On the right, the centered spinner: it reserves no structure, and the layout jumps when the data finally arrives.",
+        "labelDo": "Skeleton shaped like the content",
+        "labelDont": "Centered spinner (reserves no space)"
+      },
+      "foot": "It's the same bar followed by whoever builds this repo's apps: it's also in <code>AGENTS.md</code> (the «Screen UX» section), the document you read when you touch the code. It's not a checklist to show off, it's what separates a professional screen from a generic one.",
+      "principles": {
+        "color": {
+          "title": "Functional color",
+          "apply": "Every color comes from a --sc-* token and means something: state, hierarchy, or feedback.",
+          "avoid": "Hand-written hex, tinting buttons and icons for decoration, or using a --sc-color-* palette value as a page or background color: it doesn't flip in dark mode and becomes unreadable.",
+          "have": "The --sc-* scale and the bridge to the preset. You never need a hex."
+        },
+        "loading": {
+          "title": "Loading states",
+          "apply": "While data arrives, paint a skeleton shaped like the content and reserve its space.",
+          "avoid": "A centered spinner, or injecting data and letting the page jump (layout shift).",
+          "have": "sc-skeleton (rectangle or circle, wave animation). Live example below."
+        },
+        "copy": {
+          "title": "Copy without filler",
+          "apply": "A title that explains itself stands alone. A description only if it adds something non-obvious.",
+          "avoid": "A decorative one- or two-sentence subtitle under every heading.",
+          "have": "A rule, not a component: less text, more signal. If removing it loses nothing, remove it."
+        },
+        "icons": {
+          "title": "Consistent iconography",
+          "apply": "A single professional library, always via sc-icon (Material Symbols).",
+          "avoid": "Emojis in the interface, or mixing two icon sets.",
+          "have": "sc-icon over the generated set: one visual language across every app."
+        },
+        "density": {
+          "title": "Density and hierarchy",
+          "apply": "Compact layout. Secondary actions in a kebab menu, aligned metrics, chips reduced to an icon when color already states the status.",
+          "avoid": "Repeating in every view the KPIs already on the dashboard, or cards with no data or action.",
+          "have": "sc-datatable, sc-card, and the supervisor's overflow pattern."
+        },
+        "a11y": {
+          "title": "Accessibility, the minimum bar",
+          "apply": "4.5:1 contrast on text and 3:1 on large text and icons. Every control reachable by keyboard, with visible focus and a label.",
+          "avoid": "Signaling a state with color alone, or leaving a control without a label.",
+          "have": "Contrast already lives in the tokens; the risk enters when you paint a color by hand."
+        },
+        "motion": {
+          "title": "No jumps",
+          "apply": "Animate only transform and opacity. Images with width/height or aspect-ratio. Banners and toasts in already-reserved space.",
+          "avoid": "Animating top, left, width, or height, or inserting something over the content on load.",
+          "have": "The site's own theme transition already crossfades with opacity, without repositioning anything."
+        }
+      }
+    }
   }
 }

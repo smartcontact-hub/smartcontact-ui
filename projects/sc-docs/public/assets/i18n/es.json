@@ -82,5 +82,87 @@
       "bulkeditmenu": "Menú de acciones para aplicar a varias filas seleccionadas a la vez.",
       "bulktranscriptionmodal": "Modal para lanzar la transcripción de varias conversaciones en lote."
     }
+  },
+  "fundamentos": {
+    "tabs": {
+      "escala-color": "Escala y color",
+      "tipografia": "Tipografía",
+      "patrones": "Patrones"
+    },
+    "type": {
+      "title": "Tipografía",
+      "lead": "Escala <strong>redonda</strong> en <strong>rem</strong> sobre root <strong>16</strong> (<code>font-size-300</code> = 16px = 1rem exacto), <strong>step-named</strong> (mismo idioma que el Kit Pro y los devs) y <strong>desacoplada</strong> de la escala de espaciado. 8 tamaños + 7 line-heights.",
+      "note": "<strong>El 14 y el 16 no son lo mismo.</strong> El DS no pisa el root del navegador (<code>html</code> se queda en <code>100%</code>), así que <code>1rem</code> = 16px y la rampa cae en píxeles redondos. El <strong>14</strong> que se ve por todo el sistema es el otro eje: es la base de la <a href=\"#/fundamentos/escala-color\">escala de espaciado</a> (<code>--sc-scale-1</code> = 14px, el sufijo es el multiplicador) y el tamaño del <strong>cuerpo</strong> por defecto (<code>font-size-200</code>). Bajar el root a 14 encogería los dos ejes a la vez.",
+      "lineHeights": "Line-heights",
+      "weights": "Pesos",
+      "foot": "Naming por <strong>step</strong> (100…800), no por valor: el nombre no miente si el valor cambia, y Figma, código y los devs hablan el mismo idioma. En <strong>rem</strong> para que la letra escale con el tamaño base del navegador (accesibilidad). En CSS hay además <code>font-size-50/75/600/700/900</code>: son <strong>snaps</strong>, pasos que el Kit no trae y que se pegan al vecino para que el naming por step no deje huecos.",
+      "sample": {
+        "100": "Micro-labels, captions, metadatos de tabla",
+        "200": "Cuerpo denso y ayudas de formulario",
+        "300": "Cuerpo base y etiquetas",
+        "400": "Cuerpo destacado",
+        "450": "Subtítulos",
+        "500": "Títulos de sección",
+        "650": "Encabezados de página",
+        "800": "Display"
+      }
+    },
+    "patterns": {
+      "title": "Patrones de pantalla",
+      "lead": "La barra de calidad al construir una pantalla de producto. Cada patrón apunta a lo que el sistema <strong>ya</strong> resuelve, para que una pantalla nueva nazca consistente en vez de corregirla después.",
+      "haveLabel": "Ya en el sistema",
+      "demo": {
+        "aria": "Estado de carga: esqueleto frente a spinner",
+        "title": "Estado de carga: el contraste, en vivo",
+        "lead": "A la izquierda, <code>sc-skeleton</code> con la silueta de la fila: reserva el hueco exacto, así al cargar no salta nada. A la derecha, el spinner centrado: no reserva estructura, y el layout salta cuando por fin llegan los datos.",
+        "labelDo": "Esqueleto con la forma del contenido",
+        "labelDont": "Spinner centrado (no reserva el hueco)"
+      },
+      "foot": "Es la misma barra que sigue quien construye las apps de este repo: está también en <code>AGENTS.md</code> (sección «UX de pantalla»), el documento que se lee al tocar el código. No es una checklist para lucir, es lo que separa una pantalla profesional de una genérica.",
+      "principles": {
+        "color": {
+          "title": "Color funcional",
+          "apply": "Cada color sale de un token --sc-* y significa algo: estado, jerarquía o feedback.",
+          "avoid": "Hex a mano, teñir botones e iconos por decoración, o usar un --sc-color-* de paleta como fondo o color de página: no voltea en oscuro y queda ilegible.",
+          "have": "La escala --sc-* y el puente al preset. Nunca hace falta un hex."
+        },
+        "loading": {
+          "title": "Estados de carga",
+          "apply": "Mientras llegan los datos, pinta un esqueleto con la forma del contenido y reserva su hueco.",
+          "avoid": "Spinner centrado, o inyectar los datos y que la página salte (layout shift).",
+          "have": "sc-skeleton (rectángulo o círculo, animación de onda). Ejemplo vivo abajo."
+        },
+        "copy": {
+          "title": "Copy sin relleno",
+          "apply": "Un título que se explica solo va solo. Descripción únicamente si aporta algo no obvio.",
+          "avoid": "Un subtítulo decorativo de una o dos frases bajo cada cabecera.",
+          "have": "Regla, no componente: menos texto, más señal. Si al quitarlo no se pierde nada, quítalo."
+        },
+        "icons": {
+          "title": "Iconografía consistente",
+          "apply": "Una sola librería profesional, siempre vía sc-icon (Material Symbols).",
+          "avoid": "Emojis en la interfaz, o mezclar dos juegos de iconos.",
+          "have": "sc-icon sobre el set generado: un único idioma visual en todas las apps."
+        },
+        "density": {
+          "title": "Densidad y jerarquía",
+          "apply": "Layout compacto. Acciones secundarias en un menú kebab, métricas alineadas, chips a icono cuando el color ya dice el estado.",
+          "avoid": "Repetir en cada vista los KPIs que ya están en el dashboard, o tarjetas sin dato ni acción.",
+          "have": "sc-datatable, sc-card y el patrón de overflow del supervisor."
+        },
+        "a11y": {
+          "title": "Accesibilidad, barra mínima",
+          "apply": "Contraste 4.5:1 en texto y 3:1 en texto grande e iconos. Todo control alcanzable por teclado, con foco visible y etiqueta.",
+          "avoid": "Comunicar un estado solo con color, o dejar un control sin label.",
+          "have": "El contraste ya vive en los tokens; el riesgo entra al pintar un color a mano."
+        },
+        "motion": {
+          "title": "Sin saltos",
+          "apply": "Anima solo transform y opacity. Imágenes con width/height o aspect-ratio. Banners y toasts en un hueco ya reservado.",
+          "avoid": "Animar top, left, width o height, o insertar algo encima del contenido al cargar.",
+          "have": "La transición de tema del propio sitio ya funde con opacity, sin recolocar nada."
+        }
+      }
+    }
   }
 }
