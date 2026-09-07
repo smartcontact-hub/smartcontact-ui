@@ -84,6 +84,13 @@ jobs:
       # `ng serve sc-docs`, que lo consume de dist/.
       - run: npm run build
       - name: e2e smoke (sc-docs)
+        # Las baselines visuales de `components.spec.ts` son `*-darwin.png` y este
+        # runner es ubuntu: aquí no pueden casar, así que se apagan explícitamente y
+        # la red de este job son las métricas del Kit, que sí corren en todas partes.
+        # Apagarlas es cosa de ESTA línea y de nadie más: en local (preflight incluido)
+        # la suite las corre. Ver el porqué en `screenshotBaseline()`.
+        env:
+          SC_SKIP_VISUAL_BASELINES: '1'
         run: |
           npx playwright install --with-deps chromium
           npm run e2e

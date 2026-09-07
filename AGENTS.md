@@ -531,9 +531,14 @@ Each entry: **what bites → the rule → why**. Append here when a new one is f
   ~9 hojas con tamaños distintos).
 - **Un `:host` de página sin `height: 100%` deja ver el shell por debajo.** Defecto LATENTE
   mientras el contenido llegue abajo: mira la regla, no fíes en «se ve bien».
-- **Las baselines visuales de `npm run e2e` se saltan en CI** (`if (process.env['CI']) return`).
-  En local pueden llevar tiempo en rojo por entorno; stash-y-reproduce antes de culpar tu
-  cambio, y no las uses como red si no las has regenerado. ↔ `LEARNINGS.md` **#5**.*
+- **Las baselines visuales de `npm run e2e` CORREN en local, y solo se apagan en el job
+  `e2e-smoke` de `ci.yml`** (`SC_SKIP_VISUAL_BASELINES=1`, porque son `-darwin` y ese runner
+  es ubuntu). Desde el 2026-09-07: antes se apagaban con `CI`, y como el paso del preflight es
+  `CI=1 npm run e2e`, no las corría NADIE — se pudrieron 213 commits. Ahora un cambio visual
+  de sc-docs tumba tu preflight: si es deliberado, **regenera en el mismo commit**
+  (`npx playwright test -c playwright.config.ts components --update-snapshots`) tras mirar el
+  diff; si es de entorno, el escape explícito es `SC_SKIP_VISUAL_BASELINES=1`.
+  ↔ `LEARNINGS.md` **#5**.*
 - **La paleta `--sc-color-*` NO se remapea en oscuro** (cero definiciones en `07-dark.css`).
   Usarla en un `background`/`color` de página es escribir un valor fijo → ilegible en un tema.
 - **Un token de FONDO no es de texto, ni al revés.** `--sc-bg-primary` como `color:` → 3.39:1;
