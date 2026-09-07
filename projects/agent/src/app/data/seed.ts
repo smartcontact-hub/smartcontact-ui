@@ -7,6 +7,10 @@
  * filas), no los números que mostraba. Misma regla que `agent-mini/mini-seed.ts` y que
  * `cuscare/seed.ts`, que ya la decían; aquí se aplicó el 2026-09-07, al escribir el aviso
  * legal: la página afirma que no hay datos de nadie, así que tiene que ser verdad.
+ *
+ * ⛔ LO QUE NO SE TOCA: `Rafael_3AED`. Es el identificador de Rafael Areses, el autor de este
+ * repo, en la app real, y lo quiere ahí. No es un dato ajeno que limpiar: es el suyo, puesto a
+ * propósito. Su nombre no se sustituye en ningún barrido, ni aquí ni en ningún otro sitio.
  */
 
 export type CallDirection = 'in' | 'out';
