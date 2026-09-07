@@ -37,6 +37,14 @@ import { join, dirname } from 'node:path';
 // llamadas a `screenshotBaseline()`, que hace no-op justo con `CI=1`. Medido el
 // 2026-08-24 en macOS: `CI=1 npm run e2e` → 68/68 en verde, y `public/usage/*.png` sin
 // tocar (el `usage-capture` que las pisaba está en `testIgnore` desde entonces).
+//
+// ACTUALIZACIÓN 2026-09-07: `screenshotBaseline()` ya NO se apaga con `CI`, sino con
+// `SC_SKIP_VISUAL_BASELINES`, que el ci.yml pone solo en el job `e2e-smoke` (allí las
+// baselines `-darwin` no pueden casar contra ubuntu). O sea que este mapeo ya no es
+// «el mismo comando con el entorno del CI»: en local corre ADEMÁS las 38 baselines
+// visuales, que es justo lo que se buscaba —hasta ese día no las corría nadie, y por
+// eso pudieron pudrirse 213 commits—. El lado local es un superconjunto del de CI, que
+// para un gate de pre-push es la dirección correcta.
 export const LOCAL_SUBSTITUTIONS = {
   'npm run e2e': 'CI=1 npm run e2e',
   // No se puede instalar en limpio en cada push, pero SÍ se puede comprobar lo que hace

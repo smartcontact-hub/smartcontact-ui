@@ -33,8 +33,9 @@ const gotoPage = async (page: Page, path: string) => {
 };
 
 /**
- * Baseline visual, SOLO local (los baselines de Playwright son por-plataforma;
- * en CI mandan las métricas de arriba, que sí corren siempre).
+ * Baseline visual. Corre en cualquier máquina cuyos snapshots existan para su
+ * plataforma —hoy `-darwin`—, y se apaga SOLO donde no pueden casar (ver abajo).
+ * Donde se apaga siguen mandando las métricas de arriba, que corren siempre.
  *
  * **Si cambias el diseño de sc-docs a propósito, REGENERA en el mismo commit**:
  *
@@ -49,7 +50,25 @@ const gotoPage = async (page: Page, path: string) => {
  * en una story, este assert se pone rojo (1501 px).
  */
 const screenshotBaseline = async (page: Page, name: string) => {
-  if (process.env['CI']) return;
+  /* La red se apaga donde NO puede casar, y SOLO ahí.
+   *
+   * Esto era `if (process.env['CI']) return`, y esa variable decidía dos cosas a la
+   * vez: «estoy en un runner de GitHub» —donde un snapshot `-darwin` no puede casar
+   * contra `ubuntu-latest`— y, sin que nadie lo quisiera, «no corras la red» en el
+   * PREFLIGHT, cuyo paso es `CI=1 npm run e2e`; ahí el `CI=1` está para que Playwright
+   * levante SU servidor (ver `scripts/playwright-reuse-guard.mjs`), no para apagar
+   * nada.
+   *
+   * El precio, medido el 2026-09-07: esta red no la ejecutaba NADIE por defecto. Solo
+   * la veía quien lanzase `npm run e2e` a mano. Así pudieron pudrirse las 38 baselines
+   * durante 213 commits (última regeneración real: `dcad8e2`, 24-ago) y, encima, morir
+   * todas por un locator colgado sin que el rojo llegara a ojos de nadie.
+   *
+   * Ahora quien la apaga es una variable que solo dice eso, y está puesta en un único
+   * sitio: el job `e2e-smoke` de `ci.yml`. En un Mac corre siempre, con `CI=1` o sin él.
+   * Si algún día hace falta silenciarla por entorno, el escape es explícito y se ve en
+   * el comando: `SC_SKIP_VISUAL_BASELINES=1 npm run e2e`. */
+  if (process.env['SC_SKIP_VISUAL_BASELINES']) return;
   /* Se captura siempre desde el mismo estado de scroll.
    *
    * El porqué (2026-08-24): la sidebar del shell era su PROPIO contenedor con
