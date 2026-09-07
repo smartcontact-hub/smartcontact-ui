@@ -70,9 +70,18 @@ leían: yo mismo afirmé dos veces que no existían. Todo lo demás salió de me
 **Siguientes pasos, en orden:**
 
 1. Leer el veredicto del CI y fundir el PR #50.
-2. Escribir en Figma las descripciones del lote de `token-docs-map --figma`: necesita el puente de
-   escritorio, y deja fila en el change-log de `docs/guia-tokens.md`. Solo 6 de los 44 tienen
-   contrapartida en el export del Kit; los otros 38 se resuelven con el puente delante.
+2. ~~Escribir en Figma las descripciones~~ — **CERRADO el 2026-09-07, no es un pendiente.** Se
+   abrió el puente y se revisó: de los 44, solo **6** tienen variable donde colgarse
+   (`content/background`, `content/hover/background`, `form/field/disabled/background`,
+   `primary/color`, `primary/hover/color`, `primary/active/color`, comprobadas una a una sobre
+   2.531 variables). Las otras 38 no tienen sitio, y no por descuido: **la capa semántica del Kit
+   es la de PrimeNG y no modela familias de estado.** `danger`, `success`, `warning`, `info`,
+   `accent` y `canvas` no tienen raíz propia; solo aparecen dentro de componentes
+   (`button/danger/background`, `tag/danger/background`). `violet` sí la tiene, pero es la rampa
+   de primitivas, no un semántico. Rafa decidió **no crear variables nuevas**, así que no se
+   escribe nada: colgar 6 de 44 dejaría a un diseñador viendo unas con descripción y otras sin
+   ella, sin poder saber por qué. El modo `--figma` se queda como impresora para el día que
+   alguien reabra la decisión de si el sistema quiere esa capa en Figma.
 3. `sc-form-section-nav` trunca las etiquetas cuando no caben (aquí se esquivó acortando el copy a
    «General»). Hay sesión aparte abierta para arreglarlo en el componente.
 4. Si alguien quiere las baselines visuales como red, regenerarlas primero.

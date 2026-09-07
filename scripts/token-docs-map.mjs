@@ -12,11 +12,14 @@
  *   - `sc-docs` → `projects/sc-docs/public/tokens/_semantic-docs.json`, que la página de
  *     fundamentos pinta junto al swatch. Va por JSON generado y no por import directo porque
  *     la app compila solo desde `src/`, igual que hace la página de conexión de variables.
- *   - Figma → `--figma` IMPRIME el lote que habría que escribir. No escribe: eso necesita el
- *     puente de escritorio, y toda escritura en Figma deja fila en el change-log de
- *     `docs/guia-tokens.md`. Ojo al acantilado: solo un puñado de estos tokens tiene
- *     contrapartida en el export del Kit; el resto son de marca y habrá que resolverlos con el
- *     puente delante.
+ *   - Figma → `--figma` IMPRIME el lote que habría que escribir. NO escribe, y desde el
+ *     2026-09-07 tampoco es que esté esperando al puente: se abrió, se revisó, y **no hay
+ *     dónde colgar 38 de las 44**. La capa semántica del Kit es la de PrimeNG y no modela
+ *     familias de estado: `danger`, `success`, `warning`, `info`, `accent` y `canvas` no tienen
+ *     variable propia, solo aparecen dentro de componentes. Solo 6 tienen sitio, y escribir 6 de
+ *     44 deja Figma a medias sin que se pueda saber por qué. Rafa decidió no crear variables
+ *     nuevas, así que esto se queda como impresora hasta que esa decisión se reabra. Si algún
+ *     día se escribe, deja fila en el change-log de `docs/guia-tokens.md`.
  *
  * NO va en `verify`: lo que hay que impedir es que el JSON y las filas se desfasen, y de eso
  * se encarga su test, que ya corre en `test:unit`.
