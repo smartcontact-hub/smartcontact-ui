@@ -14,13 +14,13 @@
 
 :host {
   display: block;
-  /* `min-height: 100%` instead of `height: 100%` — sticky-form-header,
-   * .ipanel and .form-grid__identity all live inside :host. With a
-   * fixed `height: 100%` the host's containing block ends at one
-   * viewport height, so sticky elements un-stick at that boundary and
-   * the rest of the form scrolls under nothing. The bug was invisible
-   * before DD#57 because the form rarely exceeded a single viewport;
-   * "Configuración avanzada" makes long forms easy to hit.
+  /* `min-height: 100%` instead of `height: 100%`: the sticky rail
+   * `.ipanel` lives inside :host. With a fixed `height: 100%` the
+   * host's containing block ends at one viewport height, so the rail
+   * un-sticks at that boundary and the rest of the form scrolls under
+   * nothing. The bug was invisible before DD#57 because the form
+   * rarely exceeded a single viewport; "Configuración avanzada"
+   * makes long forms easy to hit.
    */
   min-height: 100%;
   background: var(--sc-bg-surface);
@@ -28,108 +28,16 @@
 
 .page {
   background: var(--sc-bg-surface);
-
-  &__inner {
-    padding: var(--sc-spacing-1-75) var(--sc-spacing-2);
-
-    /*
-     * Page layout: a thin sticky rail (section nav only — identity moved
-     * into the rich sticky header at the top of the page) on the left,
-     * and the form column on the right. The form column itself splits
-     * into a 2-column "Identificación + settings" grid in `.form-grid`.
-     */
-    &--with-panel {
-      max-width: none;
-      margin: 0;
-      padding: 0;
-      display: grid;
-      grid-template-columns: 240px minmax(0, 1fr);
-      gap: 0;
-
-      @media (max-width: 1024px) {
-        grid-template-columns: 1fr;
-      }
-    }
-  }
-
-  &__form {
-    min-width: 0;
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: var(--sc-spacing-1-75) var(--sc-spacing-2);
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-  }
 }
 
-/* Rail — section index only. Identity / pills / stats moved up to the
- * rich sticky header at the top of the page.
+/* El MOLDE de esta página no vive aquí: `.page__inner--with-panel` y
+ * `.page__form` están en `src/styles/_page.scss`, y `.ficha`, `.ipanel` e
+ * `.ipanel__delete` en `src/styles/_forms.scss`. Los cinco eran idénticos byte a
+ * byte en agents, groups y users (DD-53); no los re-declares aquí, porque una
+ * regla encapsulada de componente le gana siempre a la global y el molde se
+ * desviaría en una sola página sin avisar. Lo vigila `audit:page-anatomy`.
  *
- * `--sc-form-panel-top` is the offset below the sticky-form-header.
- * 80px = header padding (16+16) + content max (~48px). Previously 64px
- * left the first nav entry partially hidden behind the header.
- */
-.ipanel {
-  position: sticky;
-  top: var(--sc-form-panel-top);
-  align-self: start;
-  height: calc(100dvh - var(--sc-form-panel-top));
-  display: flex;
-  flex-direction: column;
-  gap: var(--sc-spacing-1-125);
-  padding: var(--sc-spacing-1-5);
-  background: transparent;
-  overflow-y: auto;
-
-  @media (max-width: 1024px) {
-    position: static;
-    height: auto;
-  }
-}
-
-/* `.ficha` + `.ipanel__delete` (patrón "todo arriba") promovidos a
- * `src/styles/_forms.scss` — 3 consumers (agents/users/groups). Aquí solo
- * quedan las variantes específicas del agente (pill `--presence-*`). */
-
-/* Two-column form layout: Identificación (sticky) + settings (scroll).
- *
- * `padding-bottom: 30dvh` ensures the grid's containing block extends
- * well past the right-column's last visible content. Without it, when
- * scrolled to page bottom, sticky elements (`.form-grid__identity`
- * here, `.ipanel` outside) reach their containing block's bottom and
- * un-stick — getting pushed up above the viewport top by the parent's
- * bottom anchor, hiding their content behind the sticky-form-header.
- * The buffer is invisible (matches page bg) and gives sticky room to
- * stay pinned at `top` throughout user-visible scroll.
- */
-.form-grid {
-  display: grid;
-  grid-template-columns: 360px minmax(0, 1fr);
-  gap: var(--sc-spacing-1-75);
-  padding-bottom: 30dvh;
-
-  @media (max-width: 1024px) {
-    grid-template-columns: 1fr;
-    padding-bottom: 0;
-  }
-
-  &__identity {
-    @media (min-width: 1025px) {
-      position: sticky;
-      top: calc(var(--sc-form-panel-top) + var(--sc-spacing-1-75));
-      align-self: start;
-      max-height: calc(100dvh - var(--sc-form-panel-top) - var(--sc-spacing-1-75) * 2);
-      overflow-y: auto;
-    }
-  }
-
-  &__settings {
-    display: flex;
-    flex-direction: column;
-    min-width: 0;
-  }
-}
+ * Aquí solo quedan las variantes específicas del agente (pill `--presence-*`). */
 
 /* ── Identification card internals ──────────────────────────── */
 .identity-card {

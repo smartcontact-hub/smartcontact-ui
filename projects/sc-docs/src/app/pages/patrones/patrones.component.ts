@@ -40,7 +40,8 @@ export class PatronesComponent {
       icon: 'palette',
       title: 'Color funcional',
       apply: 'Cada color sale de un token --sc-* y significa algo: estado, jerarquía o feedback.',
-      avoid: 'Hex a mano, o teñir botones e iconos por decoración.',
+      avoid:
+        'Hex a mano, teñir botones e iconos por decoración, o usar un --sc-color-* de paleta como fondo o color de página: no voltea en oscuro y queda ilegible.',
       have: 'La escala --sc-* y el puente al preset. Nunca hace falta un hex.',
     },
     {

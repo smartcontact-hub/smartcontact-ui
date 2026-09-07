@@ -20,13 +20,13 @@
 
 :host {
   display: block;
-}
-
-.rule-builder {
-  display: flex;
-  flex-direction: column;
-  min-height: 100%;
-  /* Ola 3 · UN SOLO LIENZO. Esta página era la única que ponía lienzo gris para
+  /* Mismo contrato que los tres formularios hermanos de admin: el lienzo lo pinta
+   * el HOST, no el div de dentro. Con `min-height` sólo en el div, el porcentaje
+   * no resolvía (el host es de alto automático) y por debajo del contenido
+   * asomaba el suelo del shell — invisible en claro, donde canvas y surface son
+   * ambos blancos, y una costura evidente en oscuro (gray-950 contra gray-900).
+   *
+   * Ola 3 · UN SOLO LIENZO. Esta página era la única que ponía lienzo gris para
    * que sus tarjetas blancas "flotasen". Medido, ese relleno separaba 1.06:1 en
    * claro y 1.14:1 en oscuro: las tarjetas no se leían por el fondo, se leían
    * por el borde. Así que el fondo distinto no compraba la figura/fondo que
@@ -38,8 +38,11 @@
    * `settings-shell` es blanco en claro y gris SOLO en oscuro a propósito
    * (S67-A), porque su rail se funde con un lienzo de su mismo tono. Ese
    * override de tema no se toca sin cambiar también el token del rail. */
+  min-height: 100%;
   background: var(--sc-bg-surface);
+}
 
+.rule-builder {
   /* ── Piezas proyectadas a la TopBar ──
    *
    * La Ola 1 se llevó la cabecera que esta página proyectaba al lead (back +
@@ -54,55 +57,12 @@
     gap: var(--sc-spacing-0-625);
   }
 
-  /* ── Rejilla de página ──
-   * DOS COLUMNAS REALES: el aside es una columna del grid, no un bloque flotante
-   * sobre el formulario. Un grid no superpone sus pistas, así que el solape a
-   * anchos medios desaparece por construcción, no por ajuste de márgenes. */
-  &__main {
-    flex: 1;
-    display: grid;
-    grid-template-columns: minmax(0, 1fr) 22.5rem;
-    align-items: start;
-    gap: var(--sc-spacing-1-75);
-    width: 100%;
-    max-width: 78rem;
-    margin: 0 auto;
-    padding: var(--sc-spacing-2-75);
-  }
-
-  &__form {
-    display: flex;
-    flex-direction: column;
-    gap: var(--sc-spacing-1-75);
-    min-width: 0;
-  }
-
-  &__aside {
-    position: sticky;
-    top: var(--sc-spacing-1-75);
-    min-width: 0;
-  }
-
-  /* Bajo 68rem el aside pasa a una fila propia ENCIMA del formulario: apila,
-   * nunca se superpone (una sola columna → una pista). */
-  @media (max-width: 68rem) {
-    &__main {
-      grid-template-columns: minmax(0, 1fr);
-      padding: var(--sc-spacing-1-75);
-    }
-
-    &__aside {
-      position: static;
-      order: -1;
-    }
-  }
-
-  @media (max-width: 40rem) {
-    &__main {
-      padding: var(--sc-spacing-1-125);
-      gap: var(--sc-spacing-1-125);
-    }
-  }
+  /* La rejilla de esta página la pone AHORA el molde compartido
+   * (`.page__inner--with-panel` en `styles/_page.scss`): rail de 240 + columna
+   * de formulario. Se cae la que vivía aquí —grid de 78rem con el impacto como
+   * columna hermana, y cortes propios a 68rem y 40rem—, que era el único ancho
+   * de página del Supervisor sin arquetipo declarado (DD-53). El impacto pasa
+   * al rail, así que ya no necesita ni columna ni sticky propios. */
 
   /* Reveal del contenido IA: grid-template-rows 0fr→1fr expande suave (sin pop). */
   &__ai-reveal {
@@ -187,7 +147,10 @@
   display: flex;
   align-items: center;
   gap: var(--sc-spacing-0-5);
-  margin: 0;
+  /* El aire que lo separa de la tarjeta lo ponía el `gap` de la columna vieja.
+   * Al pasar a `.page__form` —que es del molde compartido y no lleva gap— vive
+   * aquí, que es de quien era la relación: el aviso y lo que viene debajo. */
+  margin: 0 0 var(--sc-spacing-1-5);
   padding: var(--sc-spacing-0-75) var(--sc-spacing-1-125);
   border: 1px solid var(--sc-border-default);
   border-radius: var(--sc-radius-lg);
@@ -495,6 +458,20 @@
   border-radius: var(--sc-radius-xl);
   font-size: var(--sc-font-size-200);
   color: var(--sc-text-secondary);
+
+  /* En el rail (240px, menos 21 de padding a cada lado del `.ipanel`) la tarjeta
+   * tiene 163px útiles en vez de los ~296 de la columna hermana que era antes.
+   * Se aprieta el relleno y baja el héroe: a 32px la palabra «conversaciones»
+   * sola ya no cabe en una línea y se parte. Medido a ojo en pantalla, que es
+   * como se decide esto. */
+  &--rail {
+    gap: var(--sc-spacing-1-25);
+    padding: var(--sc-spacing-1-25);
+
+    .impact__hero {
+      font-size: var(--sc-font-size-450);
+    }
+  }
 
   &__label {
     display: flex;

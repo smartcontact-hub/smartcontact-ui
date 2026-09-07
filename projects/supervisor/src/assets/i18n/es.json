@@ -352,7 +352,7 @@
           "transcription": "Transcripción",
           "classification": "Clasificación con IA"
         },
-        "metadata": "Información básica",
+        "metadata": "General",
         "active_label": "Regla activa",
         "inactive_label": "Regla inactiva",
         "name_label": "Nombre",

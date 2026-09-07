@@ -162,6 +162,36 @@ no a la librería. Dos de estas reglas ya son infraestructura del sistema (aquí
    Imágenes con `width`+`height` o `aspect-ratio`. Banners y toasts en un hueco reservado, no
    insertados encima del contenido al cargar.
 
+**Mapa de composición** — punteros, no prosa: la razón vive donde apunta cada línea. Nace de
+medir que ninguno de estos nombres aparecía en AGENTS ni en CLAUDE, así que la regla existía en
+el código y el agente no la leía nunca (DD-53).
+
+- **Shell**: `projects/supervisor/src/app/core/layout/app-shell/` → `aside.sidebar` +
+  `header.top-bar` + `main#main-content` (con skip-link). Medidas en la capa 5:
+  `--sc-sidebar-width-collapsed` (canal) y `--sc-sidebar-width-expanded` (se superpone al hover,
+  no recoloca), `--sc-topbar-height`, y la escala `--sc-z-sticky` y hermanos.
+- **Barra**: la identidad la da el breadcrumb, SIEMPRE (DD-33). Las acciones primarias de la
+  página suben por `TopBarSlotService` (`core/layout/top-bar/top-bar-slot.service.ts`) con el
+  helper `use-topbar-actions.ts`. No hay banda de cabecera de página: se retiró.
+- **Página**: `projects/supervisor/src/styles/_page.scss` → `.page__inner` + su arquetipo
+  (`--list` 1600 · editor 1200 · `--hub` 960 · `--reading` 832 · `--with-panel` rail 240 +
+  `.page__form` 1100) y `.page__heading`. Declararlo es obligatorio y lo vigila
+  `audit:page-anatomy`; las excepciones viven en su `EXENTAS` con el motivo escrito.
+- **Formularios**: `projects/supervisor/src/styles/_forms.scss` (`.field`, `.ficha`, `.ipanel`;
+  DD-44) + `sc-form-section-nav` (el índice son PESTAÑAS: una sección en el DOM a la vez) +
+  `sc-section-card`. Config tiene su propio shell: `features/config/layout/`.
+- **Lienzo**: `--sc-bg-canvas` (DD-45). `--sc-bg-default` es el suelo del shell y el relleno de
+  campo, nunca una superficie de contenido (DD-34). El `:host` de una página pinta su lienzo, o
+  por debajo del contenido asoma el shell.
+- **Divergencias DELIBERADAS**, que no se uniforman: DD-36 (siete, con su porqué) y DD-53 (la
+  barra de acciones sticky solo en las tres listas con gestor de columnas).
+- **Escritorio primero, sin colapso móvil** (DD-53): mínimo soportado 1024. Los cortes que hay
+  (640 en la barra, 1024 en el rail) son locales, no una política de breakpoints. No inventes.
+- ⚠️ **`DD#nn` no es `DD-nn`.** Con almohadilla, en comentarios de código, apunta al ledger de la
+  PLATAFORMA (`smart-contact-platform/apps/supervisor/docs/DECISIONS.md`); con guion, a
+  `docs/DECISIONS.md` de este repo. Misma cifra, tema distinto: `DD#43` es la barra sticky y
+  `DD-43` es por qué no se extrae una base común admin.
+
 ---
 
 ## Mandatory Workflow

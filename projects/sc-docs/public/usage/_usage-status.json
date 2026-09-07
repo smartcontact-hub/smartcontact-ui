@@ -1,6 +1,6 @@
 {
   "generated": "usage-status.mjs",
-  "capturedAt": "2026-08-24",
+  "capturedAt": "2026-09-06",
   "viewport": "1440x900",
   "theme": "light",
   "dsSelectors": 50,
@@ -45,7 +45,8 @@
         "sc-group-popover",
         "sc-impact-preview-dialog",
         "sc-keyboard-shortcuts",
-        "sc-search"
+        "sc-search",
+        "sc-select"
       ]
     },
     {
@@ -83,6 +84,7 @@
         "sc-breadcrumb",
         "sc-bulk-action-bar",
         "sc-button",
+        "sc-chip",
         "sc-color-dot-picker",
         "sc-command-palette",
         "sc-confirmdialog",
@@ -260,9 +262,12 @@
       "ds": [
         "sc-breadcrumb",
         "sc-button",
+        "sc-checkbox",
         "sc-command-palette",
         "sc-confirmdialog",
         "sc-keyboard-shortcuts",
+        "sc-search",
+        "sc-select",
         "sc-toggleswitch"
       ]
     },
@@ -276,6 +281,7 @@
       "ds": [
         "sc-breadcrumb",
         "sc-bulk-action-bar",
+        "sc-button",
         "sc-command-palette",
         "sc-confirmdialog",
         "sc-datatable",
@@ -349,12 +355,9 @@
         "sc-button",
         "sc-command-palette",
         "sc-confirmdialog",
-        "sc-field-label",
-        "sc-inputtext",
+        "sc-form-section-nav",
         "sc-keyboard-shortcuts",
-        "sc-select",
-        "sc-textarea",
-        "sc-toggleswitch"
+        "sc-select"
       ]
     }
   ],
@@ -370,9 +373,11 @@
     ],
     "sc-checkbox": [
       "config-aed-agentes",
-      "config-aed-servicio"
+      "config-aed-servicio",
+      "config-sistema"
     ],
     "sc-chip": [
+      "admin-labels",
       "config-aed-servicio"
     ],
     "sc-color-dot-picker": [
@@ -426,11 +431,11 @@
     "sc-field-label": [
       "admin-labels",
       "admin-usuarios-crear",
-      "conversaciones",
-      "conversaciones-reglas-nueva"
+      "conversaciones"
     ],
     "sc-form-section-nav": [
-      "admin-usuarios-crear"
+      "admin-usuarios-crear",
+      "conversaciones-reglas-nueva"
     ],
     "sc-group-popover": [
       "admin-agentes"
@@ -449,8 +454,7 @@
       "config-aed-agentes",
       "config-aed-grupos",
       "config-aed-servicio",
-      "conversaciones",
-      "conversaciones-reglas-nueva"
+      "conversaciones"
     ],
     "sc-multiselect": [
       "config-aed-grupos",
@@ -468,18 +472,18 @@
       "admin-grupos",
       "admin-labels",
       "admin-plantillas",
-      "admin-usuarios"
+      "admin-usuarios",
+      "config-sistema"
     ],
     "sc-section-card": [
       "admin-usuarios-crear"
     ],
     "sc-select": [
+      "admin-agentes",
       "admin-usuarios-crear",
       "config-aed-grupos",
       "config-aed-servicio",
-      "conversaciones-reglas-nueva"
-    ],
-    "sc-textarea": [
+      "config-sistema",
       "conversaciones-reglas-nueva"
     ],
     "sc-toggleswitch": [
@@ -487,8 +491,7 @@
       "config-aed-agentes",
       "config-aed-grupos",
       "config-aed-servicio",
-      "config-sistema",
-      "conversaciones-reglas-nueva"
+      "config-sistema"
     ]
   },
   "global": [
@@ -518,6 +521,10 @@
     {
       "selector": "sc-sticky-form-header",
       "usedInSupervisor": 3
+    },
+    {
+      "selector": "sc-textarea",
+      "usedInSupervisor": 5
     }
   ]
 }

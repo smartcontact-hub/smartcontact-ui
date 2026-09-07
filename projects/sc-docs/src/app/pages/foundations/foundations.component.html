@@ -77,3 +77,43 @@
     }
   </div>
 }
+
+<h2>Color semántico</h2>
+<p class="swatch-hint">
+  Qué SIGNIFICA cada fondo y cuándo se usa. El sistema ya sabía cuánto vale cada token; esta era
+  la mitad que faltaba. Sale de <code>scripts/token-docs-map.mjs</code>, la misma fuente que
+  alimenta el lote de descripciones de Figma, así que las dos no pueden contar cosas distintas.
+</p>
+@if (errorSemanticos()) {
+  <p class="sem-error">
+    No se pudo cargar el listado. Se regenera con <code>tokens:docs</code>.
+  </p>
+} @else {
+  @for (grupo of semanticosPorFamilia(); track grupo.familia) {
+    <h3 class="sem-familia">{{ grupo.familia }}</h3>
+    <ul class="sem-list">
+      @for (t of grupo.tokens; track t.token) {
+        <li class="sem">
+          <span
+            class="sem__swatch"
+            [style.background]="'var(--' + t.token + ')'"
+            aria-hidden="true"
+          ></span>
+          <div class="sem__body">
+            <code class="sem__token">--{{ t.token }}</code>
+            <p class="sem__uso">{{ t.uso }}</p>
+            @if (t.no) {
+              <p class="sem__no">
+                <sc-icon name="close" [size]="14" aria-hidden="true" />
+                <span>{{ t.no }}</span>
+              </p>
+            }
+          </div>
+          @if (t.dd) {
+            <span class="sem__dd">{{ t.dd }}</span>
+          }
+        </li>
+      }
+    </ul>
+  }
+}

@@ -15,6 +15,78 @@
 > coordine. Los `sNN` de los tramos viejos se quedan como están: los nombran commits y
 > `docs/DECISIONS.md`, y reescribirlos solo desincronizaría el doc de su propia historia.
 
+## ✅ 2026-09-07 · La composición de pantalla se escribe donde el agente la lee
+
+**Sello:** [PR #50](https://github.com/smartcontact-hub/smartcontact-ui/pull/50) — el número se
+escribe antes de abrirlo, como los tramos anteriores, porque la marca de preflight sella el árbol.
+Carril `preflight` COMPLETO sobre el árbol final, ya con `main` dentro (#49 fundido y traído por
+merge, no por rebase: las ramas habían divergido). Veredicto del CI con `npm run ci:verdict`.
+
+**De dónde sale.** Un vídeo sobre documentar un Design System para la IA. Al medirlo contra el
+repo, la tesis se cayó a la mitad: las reglas de composición ya estaban escritas, en comentarios
+de SCSS y en `docs/DECISIONS.md`, pero **ninguno de sus nombres** (`app-shell`, `page__inner`,
+`_page.scss`, `TopBarSlotService`) aparecía en `AGENTS.md` ni en `CLAUDE.md`. Existían y no se
+leían: yo mismo afirmé dos veces que no existían. Todo lo demás salió de medir eso.
+
+**Lo que entró**, en once commits:
+
+1. **El molde del formulario con rail vive en un sitio.** `.page__inner--with-panel` y
+   `.page__form` a `styles/_page.scss`; `.ipanel` a `_forms.scss`. Estaba declarado **tres veces
+   byte a byte**. No-op demostrado antes de moverlo con un spec propio
+   (`e2e/supervisor/page-anatomy.spec.ts`) y medido en navegador en las tres altas.
+2. **El constructor de reglas entra en el molde**, con pestañas y el impacto en el rail. Era la
+   única página del Supervisor sin arquetipo, y su rejilla de 78rem era uno de los siete anchos
+   que la Ola 3 dio por cerrados sin cerrar (también seguía vivo el 1100, ×3).
+3. **Tres gates nuevos**: `audit:page-anatomy` (arquetipo declarado, molde no re-declarado,
+   trinquete de anchos sueltos), y los checks **L** y **M** de `docs:coherence`.
+4. **Los 44 `--sc-bg-*` tienen su «para qué sirve»** en `scripts/token-docs-map.mjs`, con dos
+   consumidores: la página de fundamentos de `sc-docs` y un `--figma` que IMPRIME el lote sin
+   escribir. Cierra el hueco que DD-22 pidió y nunca se escribió.
+5. **DD-53** recoge lo decidido, con sus seis descartadas.
+
+**Tres hallazgos que no buscaba, y valen más que el plan:**
+
+- **`--sc-form-panel-top` no existía.** Se usaba nueve veces —el `top` y el `height` del rail en
+  los tres formularios, más dos en un bloque de CSS muerto— y no se definía ninguna, así que esas
+  declaraciones eran inválidas y caían a `auto`. El rail **nunca se ancló**, y la banda que
+  justificaba ese offset se retiró en S59. Anclarlo de verdad se deja fuera, con su medición: de
+  las cinco secciones del formulario de agente solo una llega a scrollear.
+- **La cifra de gates no vivía en 4 sitios, vivía en once**, con 34, 29 y 26 conviviendo. Este
+  mismo hand-off tenía seis de las once. Ahora la gatea el check M, y `docs/handoff/` queda
+  exonerado a propósito porque son partes fechados.
+- **La página navegable de Patrones había perdido** la regla de la paleta en oscuro. Recuperada,
+  y el check L impide que vuelva a irse.
+
+**Lo que NO se hizo, y por qué:**
+
+- **La barra de acciones sticky de agentes, usuarios y grupos no se unifica.** Su motivo está en
+  el ledger de la PLATAFORMA (entrada 43), no aquí. Ojo: `DD#nn` con almohadilla apunta a ese
+  ledger y `DD-nn` con guion a `docs/DECISIONS.md`; misma cifra, tema distinto.
+- **Las baselines visuales de `npm run e2e` están rojas en local** por entorno, en páginas de
+  componentes que esta sesión no tocó (`toHaveScreenshot` con el navegador cerrándose). Se saltan
+  en CI y el preflight las corre con `CI=1`, que es lo mismo. **No valen como red sin
+  regenerarlas**, y no se regeneraron.
+
+**Siguientes pasos, en orden:**
+
+1. Leer el veredicto del CI y fundir el PR #50.
+2. ~~Escribir en Figma las descripciones~~ — **CERRADO el 2026-09-07, no es un pendiente.** Se
+   abrió el puente y se revisó: de los 44, solo **6** tienen variable donde colgarse
+   (`content/background`, `content/hover/background`, `form/field/disabled/background`,
+   `primary/color`, `primary/hover/color`, `primary/active/color`, comprobadas una a una sobre
+   2.531 variables). Las otras 38 no tienen sitio, y no por descuido: **la capa semántica del Kit
+   es la de PrimeNG y no modela familias de estado.** `danger`, `success`, `warning`, `info`,
+   `accent` y `canvas` no tienen raíz propia; solo aparecen dentro de componentes
+   (`button/danger/background`, `tag/danger/background`). `violet` sí la tiene, pero es la rampa
+   de primitivas, no un semántico. Rafa decidió **no crear variables nuevas**, así que no se
+   escribe nada: colgar 6 de 44 dejaría a un diseñador viendo unas con descripción y otras sin
+   ella, sin poder saber por qué. El modo `--figma` se queda como impresora para el día que
+   alguien reabra la decisión de si el sistema quiere esa capa en Figma.
+3. ~~`sc-form-section-nav` trunca las etiquetas~~ — **HECHO y fundido el mismo día** (DD-52, PR
+   #52): el índice envuelve en vez de recortar. Salió de la medición de esta sesión y volvió por
+   `main`. Ojo al orden: el copy se acortó ANTES de que existiera el arreglo, así que hoy
+   «General» se sostiene por sí sola y no por el defecto que la motivó.
+4. Si alguien quiere las baselines visuales como red, regenerarlas primero.
 ## ✅ 2026-09-06 · El índice del rail deja de recortar: envuelve, y el punto de error suelta los 25px que le robaba
 
 **Sello:** [PR #52](https://github.com/smartcontact-hub/smartcontact-ui/pull/52), **fundido**
@@ -1678,7 +1750,7 @@ variables, 30 comentarios activos.
   lo es son sus baselines por plataforma. Sin `CI=1` siguen rojos y **no son tuyos** (el de
   `sc-card` espera una página de 1049px y recibe 1453 — no lo leas como regresión de métrica).
 - **El CI son 8 pasos, no `verify`** — enumerados en `ci.yml`, y gateados (CHECK J).
-- **`npm run verify` (26 gates) NO corre el `e2e smoke`.** El `component-structure.spec` (baseline
+- **`npm run verify` (31 gates) NO corre el `e2e smoke`.** El `component-structure.spec` (baseline
   del `outerHTML` de cada componente) es un paso aparte de CI, y el textarea autoResize graba su
   alto calculado en un `style` inline que vive en ese `outerHTML`. Un cambio de token/visual puede
   pasar los 26 gates y aun así romper el baseline en CI: en s29, `line-height` md 21→20 movió ese
@@ -1687,9 +1759,13 @@ variables, 30 comentarios activos.
   tests) y no un subconjunto. `npm run e2e:structure` sigue valiendo como bucle corto mientras
   iteras (`:update` si el cambio es deliberado, y revisa el diff del JSON), pero el gate de
   pre-push es preflight.
-- **`npm run verify` son 26 gates desde s28.** Si añades uno, la cifra vive en 4 sitios y
-  **ninguno la gatea**: `CLAUDE.md`, `docs/DOCS-INDEX.md`, `docs/AUDIT-SEMANAL.md` y el
-  `SKILL.md` de la rutina. Lo que sí falla solo es el README, que debe **nombrar** el guard nuevo.
+- **La cifra de gates de `verify` YA se gatea** (check M de `docs:coherence`, desde el
+  2026-09-06). Esta trampa decía que vivía en 4 sitios sin vigilar; al escribir el check se
+  midió y eran **once**, con tres cifras distintas conviviendo (34, 29 y 26 cuando eran 29).
+  Seis de las once están en este mismo hand-off y son registros fechados de lo que se lanzó
+  aquel día, así que `docs/handoff/` queda exonerado a propósito — pero esta sección de
+  trampas no: si cambia la cadena, se actualiza a mano. El README lo cubre aparte (check B),
+  que exige **nombrar** el guard nuevo.
 - **Para MEDIR color o contraste, no uses `ng serve`** (s31): sirvió `blue-400` durante cinco
   rondas de e2e con el fuente y el bundle construido diciendo `blue-300`. Construye y sirve el
   estático (`ng build supervisor` → `http-server dist/supervisor/browser --proxy` para el
