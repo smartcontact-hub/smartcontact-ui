@@ -1,4 +1,13 @@
-/** Datos seed del cartón pluma del Agent (réplica fiel de la web real, sin backend). */
+/**
+ * Datos seed del cartón pluma del Agent (réplica fiel de la web real, sin backend).
+ *
+ * ⚠️ NÚMEROS INVENTADOS. El repo es PÚBLICO y esto se sirve en sc-agent.pages.dev: un
+ * teléfono es dato personal aunque venga sin nombre al lado. Lo que se replica del original
+ * es la FORMA (longitud, prefijo móvil o fijo, cómo se repite el mismo número en varias
+ * filas), no los números que mostraba. Misma regla que `agent-mini/mini-seed.ts` y que
+ * `cuscare/seed.ts`, que ya la decían; aquí se aplicó el 2026-09-07, al escribir el aviso
+ * legal: la página afirma que no hay datos de nadie, así que tiene que ser verdad.
+ */
 
 export type CallDirection = 'in' | 'out';
 export type CallChannel = 'call' | 'chat' | 'mail' | 'whatsapp';
@@ -47,7 +56,7 @@ export const CALLS: readonly CallRow[] = [
   {
     id: 1,
     date: '14:07:09',
-    number: '622334455',
+    number: '611223344',
     group: 'Nodo AED 1',
     origin: '-',
     destination: '-',
@@ -63,7 +72,7 @@ export const CALLS: readonly CallRow[] = [
   {
     id: 2,
     date: '13:26:50',
-    number: '622334455',
+    number: '611223344',
     group: 'Nodo AED 1',
     origin: '-',
     destination: '-',
@@ -79,9 +88,9 @@ export const CALLS: readonly CallRow[] = [
   {
     id: 3,
     date: '13:10:42',
-    number: '622334455',
+    number: '611223344',
     group: 'Nodo AED 1',
-    origin: '622334455',
+    origin: '611223344',
     destination: 'Pruebas AED Marketing',
     support: '00:00',
     wait: '00:20',
@@ -95,7 +104,7 @@ export const CALLS: readonly CallRow[] = [
   {
     id: 4,
     date: '12:35:09',
-    number: '600445566',
+    number: '633445566',
     group: 'Nodo AED 1',
     origin: '-',
     destination: '-',
@@ -111,7 +120,7 @@ export const CALLS: readonly CallRow[] = [
   {
     id: 5,
     date: '12:26:35',
-    number: '622334455',
+    number: '611223344',
     group: 'Nodo AED 1',
     origin: '-',
     destination: '-',
@@ -127,7 +136,7 @@ export const CALLS: readonly CallRow[] = [
   {
     id: 6,
     date: '12:25:29',
-    number: '622334455',
+    number: '611223344',
     group: 'Nodo AED 1',
     origin: '-',
     destination: '-',
@@ -143,9 +152,9 @@ export const CALLS: readonly CallRow[] = [
   {
     id: 7,
     date: '12:24:19',
-    number: '622334455',
+    number: '611223344',
     group: 'Nodo AED 1',
-    origin: '622334455',
+    origin: '611223344',
     destination: 'Pruebas AED Marketing',
     support: '00:00',
     wait: '00:20',
@@ -159,7 +168,7 @@ export const CALLS: readonly CallRow[] = [
   {
     id: 8,
     date: '12:20:53',
-    number: '622334455',
+    number: '611223344',
     group: 'Nodo AED 1',
     origin: '-',
     destination: '-',
@@ -175,9 +184,9 @@ export const CALLS: readonly CallRow[] = [
   {
     id: 9,
     date: '12:19:19',
-    number: '622334455',
+    number: '611223344',
     group: 'Nodo AED 1',
-    origin: '622334455',
+    origin: '611223344',
     destination: 'Pruebas AED Marketing',
     support: '00:00',
     wait: '00:20',
@@ -191,9 +200,9 @@ export const CALLS: readonly CallRow[] = [
   {
     id: 10,
     date: '10:41:18',
-    number: '600445566',
+    number: '633445566',
     group: 'Nodo AED 1',
-    origin: '600445566',
+    origin: '633445566',
     destination: 'Pruebas AED Marketing',
     support: '00:00',
     wait: '00:07',
@@ -207,9 +216,9 @@ export const CALLS: readonly CallRow[] = [
   {
     id: 11,
     date: '10:39:32',
-    number: '600445566',
+    number: '633445566',
     group: 'Nodo AED 1',
-    origin: '600445566',
+    origin: '633445566',
     destination: 'Pruebas AED Marketing',
     support: '00:00',
     wait: '00:20',
@@ -223,7 +232,7 @@ export const CALLS: readonly CallRow[] = [
   {
     id: 12,
     date: '17 Aug',
-    number: '622334455',
+    number: '611223344',
     group: 'Nodo AED 1',
     origin: '-',
     destination: '-',
@@ -239,9 +248,9 @@ export const CALLS: readonly CallRow[] = [
   {
     id: 13,
     date: '17 Aug',
-    number: '622334455',
+    number: '611223344',
     group: 'Nodo AED 1',
-    origin: '622334455',
+    origin: '611223344',
     destination: 'Pruebas AED Marketing',
     support: '00:00',
     wait: '00:20',
@@ -255,9 +264,9 @@ export const CALLS: readonly CallRow[] = [
   {
     id: 14,
     date: '17 Aug',
-    number: '622334455',
+    number: '611223344',
     group: 'Nodo AED 1',
-    origin: '622334455',
+    origin: '611223344',
     destination: 'Pruebas AED Marketing',
     support: '00:00',
     wait: '00:20',
@@ -271,9 +280,9 @@ export const CALLS: readonly CallRow[] = [
   {
     id: 15,
     date: '17 Aug',
-    number: '600445566',
+    number: '633445566',
     group: 'Nodo AED 1',
-    origin: '600445566',
+    origin: '633445566',
     destination: 'Pruebas AED Marketing',
     support: '00:00',
     wait: '00:20',
@@ -287,9 +296,9 @@ export const CALLS: readonly CallRow[] = [
   {
     id: 16,
     date: '17 Aug',
-    number: '622334455',
+    number: '611223344',
     group: 'Nodo AED 1',
-    origin: '622334455',
+    origin: '611223344',
     destination: 'Pruebas AED Marketing',
     support: '00:11',
     wait: '00:10',
@@ -303,7 +312,7 @@ export const CALLS: readonly CallRow[] = [
   {
     id: 17,
     date: '17 Aug',
-    number: '622334455',
+    number: '611223344',
     group: 'Nodo AED 2',
     origin: '-',
     destination: '-',
@@ -385,9 +394,9 @@ export const PENDING: readonly PendingRow[] = [
   {
     id: 1,
     date: '10:41:18',
-    number: '600445566',
+    number: '633445566',
     group: 'Nodo AED 1',
-    origin: '600445566',
+    origin: '633445566',
     destination: '910010103',
     support: '00:00',
     wait: '00:07',
@@ -401,9 +410,9 @@ export const PENDING: readonly PendingRow[] = [
   {
     id: 2,
     date: '10:40:29',
-    number: '600445566',
+    number: '633445566',
     group: 'Nodo AED 1',
-    origin: '600445566',
+    origin: '633445566',
     destination: '910010103',
     support: '00:00',
     wait: '00:23',
@@ -417,9 +426,9 @@ export const PENDING: readonly PendingRow[] = [
   {
     id: 3,
     date: '10:40:11',
-    number: '600445566',
+    number: '633445566',
     group: 'Nodo AED 1',
-    origin: '600445566',
+    origin: '633445566',
     destination: '910010103',
     support: '00:00',
     wait: '00:09',
@@ -433,9 +442,9 @@ export const PENDING: readonly PendingRow[] = [
   {
     id: 4,
     date: '10:39:32',
-    number: '600445566',
+    number: '633445566',
     group: 'Nodo AED 1',
-    origin: '600445566',
+    origin: '633445566',
     destination: '910010103',
     support: '00:00',
     wait: '00:26',
@@ -513,9 +522,9 @@ export const PENDING: readonly PendingRow[] = [
   {
     id: 9,
     date: '7 Aug',
-    number: '633445566',
+    number: '622334455',
     group: 'Nodo AED 1',
-    origin: '633445566',
+    origin: '622334455',
     destination: '910010103',
     support: '00:00',
     wait: '00:06',
@@ -529,9 +538,9 @@ export const PENDING: readonly PendingRow[] = [
   {
     id: 10,
     date: '7 Aug',
-    number: '633445566',
+    number: '622334455',
     group: 'Nodo AED 1',
-    origin: '633445566',
+    origin: '622334455',
     destination: '910010103',
     support: '00:00',
     wait: '00:07',
@@ -545,9 +554,9 @@ export const PENDING: readonly PendingRow[] = [
   {
     id: 11,
     date: '13:21:31',
-    number: '622334455',
+    number: '611223344',
     group: 'Nodo AED 1',
-    origin: '622334455',
+    origin: '611223344',
     destination: '910010103',
     support: '00:00',
     wait: '01:00',
@@ -561,9 +570,9 @@ export const PENDING: readonly PendingRow[] = [
   {
     id: 12,
     date: '13:19:15',
-    number: '622334455',
+    number: '611223344',
     group: 'Nodo AED 1',
-    origin: '622334455',
+    origin: '611223344',
     destination: '910010103',
     support: '00:00',
     wait: '01:00',
@@ -577,9 +586,9 @@ export const PENDING: readonly PendingRow[] = [
   {
     id: 13,
     date: '13:10:40',
-    number: '622334455',
+    number: '611223344',
     group: 'Nodo AED 1',
-    origin: '622334455',
+    origin: '611223344',
     destination: '910010103',
     support: '00:00',
     wait: '01:00',
@@ -593,9 +602,9 @@ export const PENDING: readonly PendingRow[] = [
   {
     id: 14,
     date: '12:24:19',
-    number: '622334455',
+    number: '611223344',
     group: 'Nodo AED 1',
-    origin: '622334455',
+    origin: '611223344',
     destination: '910010103',
     support: '00:00',
     wait: '01:00',
@@ -609,9 +618,9 @@ export const PENDING: readonly PendingRow[] = [
   {
     id: 15,
     date: '12:19:18',
-    number: '622334455',
+    number: '611223344',
     group: 'Nodo AED 1',
-    origin: '622334455',
+    origin: '611223344',
     destination: '910010103',
     support: '00:00',
     wait: '01:01',
@@ -625,9 +634,9 @@ export const PENDING: readonly PendingRow[] = [
   {
     id: 16,
     date: '17 Aug',
-    number: '622334455',
+    number: '611223344',
     group: 'Nodo AED 1',
-    origin: '622334455',
+    origin: '611223344',
     destination: '910010103',
     support: '00:00',
     wait: '01:00',
@@ -641,9 +650,9 @@ export const PENDING: readonly PendingRow[] = [
   {
     id: 17,
     date: '17 Aug',
-    number: '622334455',
+    number: '611223344',
     group: 'Nodo AED 1',
-    origin: '622334455',
+    origin: '611223344',
     destination: '910010103',
     support: '00:00',
     wait: '01:00',
@@ -753,7 +762,7 @@ export const CHATS: readonly ChatRow[] = [
   },
   {
     id: 3,
-    name: '622334455',
+    name: '611223344',
     initial: '6',
     color: '#2bae22',
     group: 'Grupo 3',
@@ -765,7 +774,7 @@ export const CHATS: readonly ChatRow[] = [
     state: 'postchat',
 
     thread: [
-      { from: 'server', text: 'Estás conectado con 622334455' },
+      { from: 'server', text: 'Estás conectado con 611223344' },
       {
         from: 'received',
         text: 'Llamé esta mañana y se me cortó la llamada.',

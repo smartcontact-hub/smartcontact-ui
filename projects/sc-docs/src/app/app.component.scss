@@ -138,6 +138,24 @@
     gap: var(--sc-spacing-0-5);
   }
 
+  /* Pie legal: mismo sitio que en cualquier web, abajo del todo y sin peso visual.
+     No lleva la pastilla de la nav porque no compite con ella. */
+  &__legal {
+    margin-top: var(--sc-spacing-0-75);
+    padding: 0 var(--sc-spacing-0-625);
+    color: var(--sc-text-subtle);
+    font-size: var(--sc-font-size-caption);
+    line-height: var(--sc-line-height-caption);
+    text-decoration: none;
+
+    &:hover,
+    &.is-active {
+      color: var(--sc-text-secondary);
+      text-decoration: underline;
+      text-underline-offset: 2px;
+    }
+  }
+
   /* Ítems de nav de sección + herramientas: pastilla al activar / hover. */
   &__nav > a,
   &__tool {

@@ -1,0 +1,87 @@
+<header class="hero">
+  <p class="hero__eyebrow">Smart Contact</p>
+  <h1 class="hero__title">Aviso legal</h1>
+  <p class="hero__lead">
+    Qué son estos sitios, qué hacen con tus datos y quién los publica. En corto: son cinco
+    páginas estáticas de trabajo, no recogen nada tuyo y no ponen ninguna cookie.
+  </p>
+</header>
+
+<section class="bloque">
+  <h2>Qué es esto</h2>
+  <p>
+    El design system de Smart Contact y las pantallas con las que se construye y se verifica.
+    Son cinco sitios estáticos, publicados desde el mismo repositorio:
+  </p>
+  <ul class="sitios">
+    @for (s of sitios; track s.url) {
+      <li><span class="sitios__url">{{ s.url }}</span> <span class="sitios__que">{{ s.que }}</span></li>
+    }
+  </ul>
+  <p>
+    No son producto en uso. Lo que ves dentro son datos de demostración: no hay clientes, ni
+    cuentas, ni conversaciones de nadie. Tampoco hay servidor detrás, así que ninguna acción
+    que hagas en estas pantallas sale de tu navegador.
+  </p>
+</section>
+
+<section class="bloque">
+  <h2>Datos personales</h2>
+  <p>
+    No se recoge ninguno. No hay registro, ni acceso, ni formularios que envíen nada a ninguna
+    parte, ni base de datos. Los formularios que veas son maqueta: escriben en la memoria de la
+    página y se olvidan al recargar.
+  </p>
+</section>
+
+<section class="bloque">
+  <h2>Cookies</h2>
+  <p>
+    Ninguna. Por eso no verás un banner de consentimiento: sin cookies de terceros ni medición,
+    no hay nada que consentir.
+  </p>
+  <p>
+    Lo único que se guarda es en tu propio equipo, en el almacenamiento local del navegador, y
+    solo para que la página recuerde cómo la dejaste: el tema claro u oscuro, el idioma y el
+    estado con el que juegas en las demos. No viaja a ningún sitio y nadie lo lee desde fuera.
+    Se borra vaciando los datos de sitio de tu navegador.
+  </p>
+</section>
+
+<section class="bloque">
+  <h2>Terceros</h2>
+  <p>
+    El alojamiento es Cloudflare Pages. Como cualquier servidor web, para poder devolverte la
+    página ve la dirección IP desde la que la pides. Aparte de eso, la página no llama a nadie:
+    no hay analítica, ni píxeles, ni vídeos incrustados, ni fuentes remotas. Las tipografías se
+    sirven desde el propio sitio precisamente para que cargar una página no le cuente a nadie
+    más que has pasado por aquí.
+  </p>
+</section>
+
+<section class="bloque">
+  <h2>Contenido, código y licencias</h2>
+  <p>
+    El diseño, el código y la documentación son de Smart Contact. El código fuente de estos
+    cinco sitios es público en
+    <a href="https://github.com/smartcontact-hub/smartcontact-ui" rel="noopener">
+      github.com/smartcontact-hub/smartcontact-ui</a>, y eso no lo convierte en software libre:
+    publicarlo no cede ningún derecho de uso. Las condiciones son las del fichero de licencia
+    del repositorio.
+  </p>
+  <p>
+    Las tipografías (Inter, Open Sans, Roboto y Material Symbols) se usan bajo la SIL Open Font
+    License 1.1. La biblioteca de componentes sobre la que se construye el sistema es PrimeNG,
+    con sus propias condiciones, y sus iconos son MIT.
+  </p>
+</section>
+
+<section class="bloque">
+  <h2>Contacto</h2>
+  <p>
+    Para cualquier asunto sobre estos sitios, incluido pedir que se retire algo, abre una
+    incidencia en el repositorio enlazado arriba y llegará a quien los mantiene.
+  </p>
+</section>
+
+<p class="sello">Última actualización: {{ actualizado }}.</p>

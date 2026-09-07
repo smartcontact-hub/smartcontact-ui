@@ -15,6 +15,69 @@
 > coordine. Los `sNN` de los tramos viejos se quedan como están: los nombran commits y
 > `docs/DECISIONS.md`, y reescribirlos solo desincronizaría el doc de su propia historia.
 
+## ✅ 2026-09-07 · Los cinco sitios dejan de llamar a Google, y el seed del Agent deja de publicar teléfonos de verdad
+
+**Sello:** [PR #58](https://github.com/smartcontact-hub/smartcontact-ui/pull/58). Carril
+`preflight` COMPLETO sobre el árbol final. Las 4 baselines visuales que tocaba el enlace nuevo de
+la barra, regeneradas en el mismo commit (`components --update-snapshots`), con el diff mirado
+antes: el único cambio era el pie de la barra.
+
+**De dónde sale.** Rafa preguntó si tenía sentido publicar una política de privacidad, unas
+condiciones y una de cookies. La respuesta corta era que no, y la larga es este tramo: medir qué
+hacen de verdad los cinco sitios en vez de escribir tres textos que describieran otra cosa.
+
+**Lo que estaba medido antes de tocar nada** (2026-09-07, sobre este árbol):
+
+| Hecho | Cifra |
+| --- | --- |
+| `document.cookie` en el código de las apps | **0** |
+| Analítica, píxeles, terceros embebidos | **0** (los aciertos de «analytics» eran nombres de icono) |
+| Peticiones a un tercero | **Google Fonts**, en sc-docs, supervisor y cuscare |
+| Fichero de licencia, con el README luciendo badge `Proprietary` | **no existía** |
+| Teléfonos de la extracción publicados en `agent/seed.ts` | **7 distintos, 84 apariciones** |
+
+**Lo que entró:**
+
+1. **Las fuentes se sirven desde el propio bundle.** `@fontsource` (Inter, Open Sans, Roboto,
+   subconjunto `latin`, los pesos del contrato de tokens) en un `.css` plano por app, encadenado
+   desde su SCSS: la misma cadena que ya usaba Material Symbols en el paquete de iconos. Fuera los
+   dos `preconnect` y el `<link>` de Google de los tres `index.html`. Verificado en navegador
+   contra el build de producción: `performance.getEntriesByType('resource')` sin una sola entrada
+   fuera del propio origen, e `Inter` cargada desde `media/`.
+   **Por qué NO fue al paquete publicado** (`design-tokens`), que es donde vive el token que
+   nombra la familia: eso le añadiría una dependencia de fuentes al consumidor sin que la pida, y
+   su build es el que ya nos ha mordido dos veces. Queda como opción, no como pendiente.
+2. **`/aviso-legal` en sc-docs**, enlazado al pie de la barra, cubriendo los CINCO sitios. Vive
+   aquí porque las réplicas copian una herramienta real (DD-35) y un pie que el original no tiene
+   rompería la réplica. Todo lo que afirma está medido, así que la página se puede quedar
+   mintiendo: quien meta una analítica, una cookie o una fuente remota, la actualiza.
+3. **`LICENSE`**, más `"license": "UNLICENSED"` en el `package.json` raíz (los tres paquetes ya lo
+   declaraban) y sección de licencia en el README, con el badge por fin enlazando a un fichero que
+   existe.
+4. **`agent/seed.ts` y `agent-mini/mini-seed.ts` sin datos de la extracción.**
+5. **Los volcados de `findings/` con los teléfonos TACHADOS**: 672 apariciones de 5 números en 21
+   ficheros, sustituidas por `6########` (misma longitud, primer dígito, resto tapado). Se tacha y
+   no se sustituye por otro número a propósito: son ficheros de EVIDENCIA, y quien los lea dentro
+   de un año tiene que ver que hubo una redacción, no creerse que esa es la captura literal.
+   Rafa lo decidió así el 2026-09-07, entre dejarlo, limpiar los ficheros y reescribir la historia.
+   **La historia de git los conserva igual**: esto baja la exposición, no borra el dato. Si algún
+   día se sabe que alguno era de un cliente, ahí sí toca `filter-repo` y push forzado.
+
+**El hallazgo que no buscaba, y es el que importa:** los 7 teléfonos de `agent/seed.ts` no eran
+inventados. Estaban también en `findings/phase-2-*.ndjson`, los volcados del DOM de la app real,
+en el campo `"text"` de las celdas de su tabla. Y la regla ya estaba escrita DOS veces: `mini-seed.ts` dice
+«El repo es PUBLICO: aqui no va ni un dato real de la extraccion» y `cuscare/seed.ts` dice «TODO
+INVENTADO. El sitio real muestra PII de clientes reales». Solo `agent`, que fue el primero, se
+quedó fuera, y uno de esos números se había colado en el propio `mini-seed` que decía no tenerlos.
+Sustituidos por inventados con la misma forma (prefijo, longitud, repetición entre filas); ningún
+test los citaba. La regla queda ahora en la cabecera del seed, que es donde se lee.
+
+### ⏸️ ESPERANDO A RAFA
+
+- **El bloque de identidad formal** (razón social, CIF, domicilio, correo) si el aviso legal tiene
+  que valer como aviso legal de empresa. Hoy dice que lo publica Smart Contact y da el
+  repositorio como canal, que es verificable sin inventarse nada.
+
 ## ✅ 2026-09-07 · La composición de pantalla se escribe donde el agente la lee
 
 **Sello:** [PR #50](https://github.com/smartcontact-hub/smartcontact-ui/pull/50) — el número se

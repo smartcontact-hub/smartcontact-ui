@@ -1,3 +1,7 @@
+/* Fuentes de marca, self-hospedadas (ver `fonts.css`). Va primero: un `@import` de CSS
+   tiene que preceder a cualquier regla. */
+@import './fonts.css';
+
 @import '../../design-tokens/src/lib/styles/index.css';
 @import '../../ui-smartcontact-icons/src/lib/styles/index.css';
 

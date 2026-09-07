@@ -4,7 +4,7 @@
 ![PrimeNG](https://img.shields.io/badge/PrimeNG-22-10B981)
 ![TypeScript](https://img.shields.io/badge/TypeScript-6.0-3178C6?logo=typescript&logoColor=white)
 ![Packages](https://img.shields.io/badge/packages-3-blue)
-![License](https://img.shields.io/badge/license-Proprietary-lightgrey)
+[![License](https://img.shields.io/badge/license-Proprietary-lightgrey)](LICENSE)
 
 Lo que se diseña en Figma (el archivo **Smart Contact Design System**) se refleja en el
 código, y **cada valor es trazable al export del Kit y verificable por máquina**.
@@ -161,3 +161,15 @@ El mismo gate corre en CI ([.github/workflows/ci.yml](.github/workflows/ci.yml))
 - [docs/customs-catalog.md](docs/customs-catalog.md), divergencias conscientes con Figma
 - [docs/migration-safety.md](docs/migration-safety.md), patrones de cambio seguro
 - [AGENTS.md](AGENTS.md), convenciones para el pipeline de agente
+
+## Licencia
+
+Repositorio **público pero no libre**: [LICENSE](LICENSE) reserva todos los derechos a Smart
+Contact, en la misma línea que los tres paquetes, que ya se publican como `UNLICENSED` y con
+acceso restringido. Se puede leer, enlazar, citar y forkear para evaluarlo o proponer cambios;
+cualquier otro uso necesita permiso por escrito. Las dependencias conservan su licencia (las
+tipografías que viajan en los sitios publicados son OFL 1.1).
+
+El aviso legal de los cinco sitios desplegados es una página del propio sc-docs:
+[sc-doc.pages.dev/#/aviso-legal](https://sc-doc.pages.dev/#/aviso-legal) (fuente en
+`projects/sc-docs/src/app/pages/aviso-legal/`).

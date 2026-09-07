@@ -90,6 +90,15 @@ export const routes: Routes = [
     loadComponent: () => import('./pages/theme/theme.component').then((m) => m.ThemeComponent),
   },
 
+  {
+    // Aviso legal de los CINCO sitios públicos, no solo de este. Vive aquí porque sc-docs es
+    // el único con cromo propio: las réplicas (`agent`, `cuscare`, `agent-mini`) copian una
+    // herramienta real y un pie que el original no tiene rompería la réplica (DD-35).
+    path: 'aviso-legal',
+    loadComponent: () =>
+      import('./pages/aviso-legal/aviso-legal.component').then((m) => m.AvisoLegalComponent),
+  },
+
   // Compatibilidad: las rutas planas de antes de agrupar Fundamentos. Se quedan para que
   // no muera ningún enlace ya repartido (docs, marcadores, previews por rama).
   { path: 'foundations', pathMatch: 'full', redirectTo: 'fundamentos/escala-color' },

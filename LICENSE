@@ -1,0 +1,33 @@
+Copyright (c) 2026 Smart Contact. Todos los derechos reservados / All rights reserved.
+
+QUE ESTE REPOSITORIO SEA PUBLICO NO LO CONVIERTE EN SOFTWARE LIBRE
+
+Es publico para poder consultarlo, para que quien construye con el design system lea
+como esta hecho, y para servir los cinco sitios estaticos que contiene. Publicarlo no
+concede ninguna licencia: sin permiso previo y por escrito de Smart Contact no se
+permite usar, copiar, modificar, redistribuir ni crear obras derivadas de este codigo,
+de su diseno, de su documentacion ni de las marcas que contiene.
+
+Si se permite, sin pedir nada: leerlo, enlazarlo y citarlo, y hacer un fork o una copia
+local con el unico fin de evaluarlo o de proponer cambios al propio proyecto.
+
+Los tres paquetes que publica este repositorio (@smartcontact-hub/styles, /icons y
+/components) llevan la misma condicion: `"license": "UNLICENSED"` y publicacion
+restringida.
+
+TERCEROS
+
+Las dependencias conservan su propia licencia, que se aplica a esas partes y no a este
+repositorio. Las que viajan dentro de los sitios publicados:
+
+  · Inter, Open Sans, Roboto y Material Symbols — SIL Open Font License 1.1
+  · PrimeIcons — MIT
+  · PrimeNG, Angular y el resto — ver su licencia en `node_modules/<paquete>`
+
+ENGLISH SUMMARY
+
+This repository is source-available, not open source. All rights reserved by Smart
+Contact. You may read it, link to it, quote it, and fork it to evaluate it or to
+propose changes back to this project. Any other use, including copying, modifying or
+redistributing the code, the design or the documentation, requires prior written
+permission. Third-party dependencies keep their own licenses, listed above.

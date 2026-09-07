@@ -51,6 +51,9 @@
  * existe ya y el drift de siete valores se acabó. Ver `_page.scss`. */
 @use 'page';
 
+/* Fuentes de marca, self-hospedadas (ver `fonts.css`). Antes las servía Google. */
+@import './fonts.css';
+
 /* Design tokens — layered system (primitive → semantic → palette →
  * component → extensions → dark). MONOREPO: consumimos las 6 capas del DS
  * por RUTA DE SOURCE (`projects/design-tokens/src/...`), igual que sc-prototype

@@ -5,12 +5,12 @@
   <title>Smart Contact UI</title>
   <base href="">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <!-- Fuentes de marca del SCDS: Inter (primaria, todo salvo captions) + Open Sans
        (secundaria, solo captions). Sin Open Sans, `--sc-font-family-caption` cae a
-       sans-serif del sistema y la vitrina no muestra sus propios captions. -->
-  <link href="https://fonts.googleapis.com/css2?family=Inter:ital,wght@0,100..900;1,100..900&family=Open+Sans:wght@400;600&display=swap" rel="stylesheet">
+       sans-serif del sistema y la vitrina no muestra sus propios captions.
+       Ya NO se piden a Google: se sirven self-hospedadas desde el propio bundle
+       (`src/fonts.css`, @fontsource), igual que Material Symbols. Aquí no queda ningún
+       `<link>` a un tercero, que es lo que dice `/aviso-legal`. -->
 </head>
 <body>
   <app-root></app-root>
