@@ -215,5 +215,156 @@
     "gatedNote": "se ven en el flujo",
     "gatedLead": "La pokédex los marca usados, pero solo se ven tras una interacción no scriptada o con datos vacíos (p.ej. estado vacío). Documentados aquí; mira la vista «Por pantalla» de la sección donde viven.",
     "uses": "usos"
+  },
+  "reglas": {
+    "eyebrow": "Estado del proyecto",
+    "title": "Sistema de reglas",
+    "lead": "El sistema de reglas se rehízo entero. Antes: grabar llamadas, con prioridades, conflictos y borradores. Ahora: <strong>transcribir</strong>, con varias reglas activas sin conflictos y un constructor que cualquiera entiende. Cada cambio se cuenta con su <strong>antes</strong>, su <strong>ahora</strong> y su <strong>porqué</strong>. Las capturas son del Supervisor real.",
+    "tocTitle": "La historia, paso a paso",
+    "toc": {
+      "p1": "Qué es una regla",
+      "p2": "El giro a transcripción",
+      "p3": "El alcance: de casillas a un árbol",
+      "p4": "Prioridad y conflictos: de lo difícil a nada",
+      "p5": "Borradores: un estado de menos",
+      "p6": "La estimación en vivo",
+      "p7": "Dónde viven: Repositorios",
+      "p8": "Transcripción en detalle",
+      "p9": "Lo que queda por cerrar",
+      "conclusiones": "Conclusiones"
+    },
+    "before": "Antes",
+    "after": "Ahora",
+    "zoom": "Ampliar",
+    "whyLabel": "Por qué se cambió",
+    "seeCode": "Ver el código real",
+    "beforeAfterCode": "Antes y ahora, en código",
+    "s1": {
+      "title": "Primero, qué es una regla",
+      "p1": "Una regla automatiza qué pasa con las conversaciones que <strong>entren a partir de ahora</strong>: si se transcriben y si se analizan con IA. No toca lo que ya existe.",
+      "note": "Tocar lo que ya existe es otra cosa: las acciones <em>bulk</em> (transcribir ahora una selección). Regla = a futuro. Bulk = ahora. Es la confusión más fácil de cometer, así que conviene fijarla antes de empezar."
+    },
+    "s2": {
+      "title": "El giro: de grabar a transcribir",
+      "p1": "Durante mucho tiempo, el caso fuerte fueron las reglas de <strong>grabación</strong>. Un cambio en la normativa las dejó sin sentido, así que salen del MVP. El detalle legal queda fuera; aquí importa la consecuencia.",
+      "p2": "El peso se movió a <strong>transcripción</strong> y <strong>clasificación</strong>, a la vez que entra en desarrollo el sistema de <strong>transcripciones múltiples</strong>. Al rehacer las reglas para transcribir, se aprovechó para simplificar lo que se había vuelto complicado. Los tres cambios que vienen son esa simplificación."
+    },
+    "s3": {
+      "title": "El alcance: de tres casillas rígidas a un árbol",
+      "lead": "El «alcance» es a qué conversaciones llega una regla. Era lo más rígido del modelo viejo, y es donde más se notó el cambio.",
+      "altBefore": "Pantalla vieja de crear regla: tres casillas Servicios Y Grupos Y Agentes",
+      "capBefore": "Tres casillas fijas (Servicios <strong>Y</strong> Grupos <strong>Y</strong> Agentes).",
+      "altAfter": "Constructor nuevo: árbol de condiciones campo·operador·valor — Y dentro de cada alternativa, O entre alternativas",
+      "capAfter": "Un árbol de condiciones <code>campo · operador · valor</code>: <strong>Y</strong> dentro de cada alternativa, <strong>O</strong> entre alternativas.",
+      "why": "Las tres casillas no sabían decir cosas normales del negocio: «ventas <em>o</em> incidencias», o mezclar condiciones. Y guardaban <strong>nombres</strong>: si renombrabas un grupo o le cambiabas los miembros, la regla se quedaba mirando un nombre viejo. El árbol expresa cualquier combinación, y guarda <strong>referencias vivas</strong>: «Todos» incluye también lo que se cree mañana, y un grupo en el campo Agente significa «sus miembros <strong>ahora</strong>»."
+    },
+    "s4": {
+      "title": "Prioridad y conflictos: de lo más difícil a nada",
+      "lead": "Aquí estaba toda la complejidad del sistema viejo. Y la forma de resolverla fue, sencillamente, hacerla desaparecer.",
+      "altBefore": "Listado viejo: columna de prioridad, dos reglas EN CONFLICTO, sección de borradores",
+      "capBefore": "Varias activas, ordenadas por <strong>prioridad</strong>, con dos marcadas <strong>EN CONFLICTO</strong>.",
+      "altAfter": "Listado nuevo: sin prioridad ni conflictos, el estado activa o inactiva por fila",
+      "capAfter": "Varias pueden estar <strong>activas</strong>. Sin números de prioridad, sin conflictos.",
+      "why": "Antes, con varias reglas activas, cuando dos podían aplicar a la misma conversación había que decidir <strong>cuál manda</strong>: un número de prioridad, arrastrar para ordenar, y un detector que te avisaba de cada choque. Era lo más complejo de todo. Ahora siguen pudiendo estar <strong>varias activas</strong>, pero el lío desaparece con una idea simple: una conversación se procesa <strong>una sola vez</strong>, aplicando la <strong>unión</strong> de lo que pidan las reglas que encajan. Sin decidir cuál gana, sin orden, sin conflictos. Encender una ya no apaga a las demás."
+    },
+    "s5": {
+      "title": "Borradores: un estado de menos",
+      "lead": "El listado viejo tenía un estado intermedio que nadie había pedido. Se quitó.",
+      "altBefore": "Listado viejo con una sección «Inactivas y borradores» y un BORRADOR SIN EDITAR",
+      "capBefore": "Activa, inactiva… y «<strong>Borrador sin editar</strong>», en su propia sección.",
+      "altAfter": "Listado nuevo con solo dos estados: activa o inactiva",
+      "capAfter": "Dos estados y ya: <strong>activa</strong> o <strong>inactiva</strong>.",
+      "why": "El «borrador» era una copia sin editar que no se podía activar hasta tocarla, y vivía en una sección aparte. Un estado de más que solo confundía. Ahora desactivar una regla <strong>solo la pasa a Inactiva</strong> (sin copias ni borradores), y duplicar crea una copia inactiva normal, lista para editar o activar. Activar y desactivar es lo único que un supervisor necesita."
+    },
+    "s6": {
+      "title": "Lo que se ganó: una estimación en vivo",
+      "p1": "No todo fue quitar. Mientras montas una regla, un panel fijo a la derecha te dice a cuántas conversaciones afectaría: «<strong>Afectaría a N de las últimas M conversaciones</strong>», con una barra de proporción (amplia frente a quirúrgica) y una proyección «≈ N al día». Es una <strong>estimación</strong> sobre el histórico, no un dato cerrado. Cuenta de verdad cuántas conversaciones casan.",
+      "note": "Y guía sin estorbar: al intentar guardar, una condición incompleta o un rango imposible se marcan y bloquean; un duplicado o una contradicción solo <strong>avisan</strong>."
+    },
+    "s7": {
+      "title": "Dónde viven: Repositorios",
+      "p1": "Las reglas viven en <strong>Repositorios</strong>, dentro de administración, el mismo sitio que servicios, grupos o tipificaciones. Es una tabla simple: nombre, el alcance <strong>en prosa</strong>, qué hace y su estado. Esa frase del listado («Aplica cuando el servicio es Ventas Comercial y la duración supera 60 s») sale directa del árbol de condiciones, para que leas qué hace una regla sin abrirla."
+    },
+    "s8": {
+      "title": "Transcripción en detalle",
+      "p1": "<strong>Qué son las transcripciones múltiples</strong>: una misma conversación (una llamada) puede tener varios tramos de grabación, y cada tramo se transcribe por separado. Por eso una llamada con N tramos cuenta como N audios, y cada tramo lleva su propio estado de transcripción.",
+      "p2": "Esto vive en el lado de <strong>Conversaciones</strong> (el reproductor multi-tramo y las acciones en bloque), no en el constructor de reglas: la regla decide <em>qué</em> se transcribe a futuro; los tramos son cómo se almacena y gestiona lo ya transcrito.",
+      "part1": "<strong>La base ya está en el código</strong>: el reproductor multi-tramo y el estado por tramo (transcrito o no) ya existen, y el bulk de transcripción ya cuenta los tramos.",
+      "part2": "<strong>Coste</strong>: el bulk ya cuenta cuántos audios entran y cuántos admiten análisis IA (un toggle aparte). El coste es real y crece con las múltiples.",
+      "part3": "<strong>Re-transcribir es destructivo</strong>: borra la transcripción y los análisis derivados. Por eso pide una confirmación escrita."
+    },
+    "s9": {
+      "title": "Lo que queda por cerrar",
+      "p1": "Las preguntas que el MVP deja abiertas a propósito. Abajo, lo que ya se decidió."
+    },
+    "outcome": {
+      "eyebrow": "De la charla con el equipo · 2026-06-23",
+      "title": "Conclusiones",
+      "intro": "Lo que se decidió y lo que ya está <strong>construido</strong> desde entonces. Lo que quedó en el aire va al final.",
+      "mvpTitle": "El rumbo del MVP",
+      "remainingTitle": "Lo que queda",
+      "confirmTitle": "A confirmar"
+    },
+    "footer": "Esta página vive dentro de sc-docs: se actualiza con el código. Las capturas «ahora» se regeneran con <code>npm run usage:capture</code> y las «antes» quedan guardadas para contar el cambio.",
+    "concerns": {
+      "cost": { "q": "Coste de transcripción e IA", "detail": "Cada transcripción consume cómputo, y el análisis IA va aparte. El coste crece con las transcripciones múltiples. ¿Ponemos límites? ¿La IA siempre opcional? El constructor ya estima el impacto, pero el coste lo cierra el equipo." },
+      "governance": { "q": "Gobierno de las transcripciones múltiples", "detail": "Si una conversación tiene varios tramos transcritos por separado, ¿qué regla gobierna cada uno? ¿Cómo se almacenan? ¿Cuándo se re-transcribe?" },
+      "dependency": { "q": "Dependencia transcripción → clasificación", "detail": "La clasificación con IA necesita la transcripción por debajo. Si la transcripción falla o no existe, ¿qué hace la regla de clasificación?" },
+      "migration": { "q": "Migración de las reglas de grabación", "detail": "Quedan obsoletas con la nueva ley y salen del MVP. ¿Las auto-desactivamos, las borramos, las convertimos? ¿Y qué pasa con lo que ya está grabado?" },
+      "retention": { "q": "Retención y borrado", "detail": "Cuánto tiempo se guardan las transcripciones y cómo se borran. El cambio normativo es lo que mueve el foco; el detalle legal lo cierra el equipo." },
+      "calendar": { "q": "Calendario de despliegue", "detail": "Las reglas las configuran los supervisores, desde el Supervisor. Queda por fijar cuándo entra en producción el sistema de transcripciones múltiples." }
+    },
+    "decisions": {
+      "manyActive": { "t": "Varias reglas activas, sin conflictos · hecho", "d": "Varias reglas pueden estar activas a la vez; encender una no apaga a las demás. Y sin la vieja complejidad: una conversación se procesa una vez, aplicando la unión de lo que pidan las reglas que encajan. Sin prioridad, sin orden, sin conflictos que resolver." },
+      "scope": { "t": "El alcance combina con Y y O · hecho", "d": "Dentro de una alternativa las condiciones se combinan con Y; añadir otra alternativa es el O. Esa estructura fija expresa cualquier combinación sin interruptores que aprender. La tipificación es una entidad más (no una condición suelta) y es el caso de valor más claro: «quiero solo las que acabaron en venta»." },
+      "liveRefs": { "t": "Referencias vivas, no nombres congelados · hecho", "d": "«Todos» incluye también las entidades futuras, y un grupo en el campo Agente significa «sus miembros ahora». Cambiar la composición de un grupo se refleja sin reeditar la regla." },
+      "directionDuration": { "t": "Dirección y duración, dentro del constructor · hecho", "d": "Son campos más del alcance, no un bloque «Criterios» aparte. Un solo sitio para filtrar, sin duplicar la dirección en dos lugares." },
+      "estimate": { "t": "Estimación de impacto en vivo · hecho", "d": "Mientras montas, el pie dice «afectaría a N de las últimas M conversaciones», con barra de proporción y proyección día/mes. Es una estimación sobre el histórico, no un dato cerrado." },
+      "oneOrZero": { "t": "Una conversación cumple la condición o no · decidido", "d": "Uno o cero: no hay cumplimiento parcial, no se transcribe «por un trozo» de la condición. Y aunque encaje en varias reglas activas, se procesa una sola vez: nunca hay doble transcripción." },
+      "repos": { "t": "Casa de las reglas: Repositorios · en marcha", "d": "En administración, no un modal: es un formulario y se ve mejor a pantalla completa. El mismo repositorio sirve para reglas de transcripción y tipificación, y a futuro las listas de orígenes de IVR (hoy hay que replicarlas a mano en 15-16 nodos). Empezar simple, con una tabla." },
+      "futureFirst": { "t": "Las reglas son a futuro; la clasificación va después · decidido", "d": "Nada retroactivo aquí: aplicar a conversaciones pasadas es bulk. Y la clasificación con IA (categorías) es la parte de más valor, pero se saca de aquí de momento: primero la transcripción." }
+    },
+    "pending": {
+      "backend": "Cerrar con el equipo de backend qué criterios entran de inicio; el constructor ya cubre dirección, duración y tipificación. El backend puede ir por delante de la UI: crear la tabla, meter reglas y evaluar la condición aunque la pantalla no exista todavía.",
+      "transcription": "Confirmar el ajuste fino de calidad y esfuerzo de la transcripción (viabilidad y coste). Hoy limpia música y ruido por defecto.",
+      "repos": "Levantar la sección de Repositorios (transcripción + tipificación), empezando por una tabla simple.",
+      "simulator": "Construir el simulador de coste: estimar qué porcentaje se transcribiría y el gasto, comparando con el mes anterior.",
+      "aed": "Avanzar AED con tipificación, agendas y la regla de transcripción (incluida la migración de las reglas de grabación)."
+    },
+    "confirm": {
+      "naming": "Naming definitivo de las entidades («contactantes» frente a grupos/ACD).",
+      "invert": "Si entra la opción de invertir o excluir condición («todo esto menos X»).",
+      "nested": "Constructor anidado más allá de 2 niveles y simulador de impacto/coste como evolución, no MVP.",
+      "detailWindow": "El detalle de la conversación en ventana propia (reproductor no bloqueante)."
+    },
+    "feedback": {
+      "title": "Feedback",
+      "aria": "Feedback del equipo, por fecha",
+      "close": "Cerrar (Esc)",
+      "hint": "Notas de revisión, por fecha (la más reciente arriba). Cada punto, validado contra el prototipo.",
+      "entries": {
+        "jul17": {
+          "date": "17 jul 2026",
+          "notes": {
+            "manyActive": { "t": "Varias reglas activas a la vez", "d": "Se levanta el límite de «una sola activa»: ahora varias pueden estar encendidas. El solape se resuelve sin prioridad ni conflictos, con la regla de la unión: una conversación se procesa una vez, aplicando lo que pidan juntas las reglas que encajan. Desaparece de paso el «desactivar en silencio» que quedaba pendiente." }
+          }
+        },
+        "jul1": {
+          "date": "1 jul 2026",
+          "notes": {
+            "pause": { "t": "Pausar una regla (futuro)", "d": "Hoy solo hay Activa/Inactiva (un booleano). Añadir «Pausar» como acción propia, distinta de desactivar, para más adelante." },
+            "header": { "t": "Trabajar la cabecera del constructor", "d": "Guardar vive abajo, en el footer; la cabecera (volver + título + tipo) va proyectada a la TopBar. La acción principal queda lejos de la navegación y puede solaparse con el breadcrumb de la app. Resolver dónde viven navegación y Guardar." },
+            "scopeCopy": { "t": "Copy de la tabla, columna «Alcance»", "d": "Muestra la prosa completa del árbol (servicio + grupo + tipificación + duración): puede salir larga y confusa en una celda. La lista NO tiene columna de descripción hoy: decidir si conviene nombre + descripción corta, o acortar la prosa con tooltip." },
+            "exclusive": { "t": "¿Excluyentes o cascada en el alcance?", "d": "Entender si al marcar Grupos ya no debería poder elegir Servicios. Hoy NO son excluyentes: servicio/grupo/agente se combinan libremente con Y/O en el árbol. Decidir si debe haber cascada o exclusión (enlaza con «invertir/excluir condición», ya en A confirmar)." },
+            "oneTable": { "t": "Una sola tabla, no Activas/Inactivas", "d": "Unificar las dos secciones en una tabla: la columna Estado ya distingue Activa/Inactiva. Menos ruido. (Escrito bajo el modelo «una sola activa» de entonces; ese límite se levantó el 17 jul — la tabla única sigue vigente.)" },
+            "confirmModal": { "t": "Modal de confirmación al activar — resuelto el 17 jul", "d": "Entonces, activar una regla desactivaba la anterior en SILENCIO y se pedía una confirmación «esto desactivará [X]». Con varias activas a la vez (17 jul) ya no se desactiva nada al activar: el modal dejó de ser necesario." }
+          }
+        }
+      }
+    },
+    "lightbox": {
+      "close": "Cerrar (Esc)",
+      "hint": "Pulsa <kbd>Esc</kbd> o haz clic fuera para cerrar"
+    }
   }
 }

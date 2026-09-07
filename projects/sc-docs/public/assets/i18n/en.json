@@ -215,5 +215,156 @@
     "gatedNote": "seen in the flow",
     "gatedLead": "The pokédex marks them used, but they only show after an unscripted interaction or with empty data (e.g. an empty state). Documented here; see the «By screen» view of the section where they live.",
     "uses": "uses"
+  },
+  "reglas": {
+    "eyebrow": "Project status",
+    "title": "Rules system",
+    "lead": "The rules system was rebuilt from scratch. Before: recording calls, with priorities, conflicts, and drafts. Now: <strong>transcribing</strong>, with several active rules and no conflicts, and a builder anyone understands. Each change is told with its <strong>before</strong>, its <strong>now</strong>, and its <strong>why</strong>. The screenshots are from the real Supervisor.",
+    "tocTitle": "The story, step by step",
+    "toc": {
+      "p1": "What a rule is",
+      "p2": "The pivot to transcription",
+      "p3": "Scope: from checkboxes to a tree",
+      "p4": "Priority and conflicts: from hard to nothing",
+      "p5": "Drafts: one state fewer",
+      "p6": "The live estimate",
+      "p7": "Where they live: Repositories",
+      "p8": "Transcription in detail",
+      "p9": "What's left to close",
+      "conclusiones": "Conclusions"
+    },
+    "before": "Before",
+    "after": "Now",
+    "zoom": "Zoom in",
+    "whyLabel": "Why it changed",
+    "seeCode": "See the real code",
+    "beforeAfterCode": "Before and after, in code",
+    "s1": {
+      "title": "First, what a rule is",
+      "p1": "A rule automates what happens to conversations that <strong>come in from now on</strong>: whether they're transcribed and whether they're analyzed with AI. It doesn't touch what already exists.",
+      "note": "Touching what already exists is something else: <em>bulk</em> actions (transcribe a selection now). Rule = future. Bulk = now. It's the easiest confusion to fall into, so it's worth pinning down before starting."
+    },
+    "s2": {
+      "title": "The pivot: from recording to transcribing",
+      "p1": "For a long time, the strong case was <strong>recording</strong> rules. A change in regulations left them pointless, so they're out of the MVP. The legal detail stays out; what matters here is the consequence.",
+      "p2": "The weight shifted to <strong>transcription</strong> and <strong>classification</strong>, just as the <strong>multi-segment transcription</strong> system enters development. Rebuilding the rules to transcribe was the chance to simplify what had grown complicated. The three changes ahead are that simplification."
+    },
+    "s3": {
+      "title": "Scope: from three rigid checkboxes to a tree",
+      "lead": "«Scope» is which conversations a rule reaches. It was the most rigid part of the old model, and where the change showed the most.",
+      "altBefore": "Old rule-creation screen: three checkbox groups, Services AND Groups AND Agents",
+      "capBefore": "Three fixed boxes (Services <strong>AND</strong> Groups <strong>AND</strong> Agents).",
+      "altAfter": "New builder: a condition tree field·operator·value — AND within each alternative, OR between alternatives",
+      "capAfter": "A condition tree <code>field · operator · value</code>: <strong>AND</strong> within each alternative, <strong>OR</strong> between alternatives.",
+      "why": "The three boxes couldn't say normal business things: «sales <em>or</em> incidents», or mixing conditions. And they stored <strong>names</strong>: if you renamed a group or changed its members, the rule was left staring at an old name. The tree expresses any combination, and stores <strong>live references</strong>: «All» also includes whatever gets created tomorrow, and a group in the Agent field means «its members <strong>now</strong>»."
+    },
+    "s4": {
+      "title": "Priority and conflicts: from the hardest part to nothing",
+      "lead": "This is where all the old system's complexity lived. And the way to solve it was, simply, to make it disappear.",
+      "altBefore": "Old list: a priority column, two rules IN CONFLICT, a drafts section",
+      "capBefore": "Several active, ordered by <strong>priority</strong>, with two marked <strong>IN CONFLICT</strong>.",
+      "altAfter": "New list: no priority or conflicts, the state active or inactive per row",
+      "capAfter": "Several can be <strong>active</strong>. No priority numbers, no conflicts.",
+      "why": "Before, with several active rules, when two could apply to the same conversation you had to decide <strong>which one wins</strong>: a priority number, drag to reorder, and a detector that warned you of every clash. It was the most complex part of all. Now several can still be <strong>active</strong>, but the mess disappears with one simple idea: a conversation is processed <strong>only once</strong>, applying the <strong>union</strong> of what the matching rules ask for. No deciding who wins, no ordering, no conflicts. Turning one on no longer turns the others off."
+    },
+    "s5": {
+      "title": "Drafts: one state fewer",
+      "lead": "The old list had an intermediate state nobody had asked for. It was removed.",
+      "altBefore": "Old list with an «Inactive and drafts» section and an UNEDITED DRAFT",
+      "capBefore": "Active, inactive… and «<strong>Unedited draft</strong>», in its own section.",
+      "altAfter": "New list with only two states: active or inactive",
+      "capAfter": "Two states and that's it: <strong>active</strong> or <strong>inactive</strong>.",
+      "why": "The «draft» was an unedited copy that couldn't be activated until you touched it, and it lived in a separate section. One extra state that only confused. Now deactivating a rule <strong>just moves it to Inactive</strong> (no copies or drafts), and duplicating creates a normal inactive copy, ready to edit or activate. Activate and deactivate is all a supervisor needs."
+    },
+    "s6": {
+      "title": "What was gained: a live estimate",
+      "p1": "It wasn't all about removing. While you build a rule, a panel pinned to the right tells you how many conversations it would affect: «<strong>Would affect N of the last M conversations</strong>», with a proportion bar (broad vs. surgical) and a projection «≈ N a day». It's an <strong>estimate</strong> over the history, not a fixed figure. It really counts how many conversations match.",
+      "note": "And it guides without getting in the way: when you try to save, an incomplete condition or an impossible range is flagged and blocks; a duplicate or a contradiction only <strong>warns</strong>."
+    },
+    "s7": {
+      "title": "Where they live: Repositories",
+      "p1": "Rules live in <strong>Repositories</strong>, inside administration, the same place as services, groups, or typifications. It's a simple table: name, the scope <strong>in prose</strong>, what it does, and its state. That phrase in the list («Applies when the service is Ventas Comercial and the duration is over 60s») comes straight from the condition tree, so you can read what a rule does without opening it."
+    },
+    "s8": {
+      "title": "Transcription in detail",
+      "p1": "<strong>What multi-segment transcription is</strong>: a single conversation (a call) can have several recording segments, and each segment is transcribed separately. That's why a call with N segments counts as N audios, and each segment carries its own transcription state.",
+      "p2": "This lives on the <strong>Conversations</strong> side (the multi-segment player and the bulk actions), not in the rule builder: the rule decides <em>what</em> gets transcribed going forward; the segments are how what's already transcribed is stored and managed.",
+      "part1": "<strong>The base is already in the code</strong>: the multi-segment player and the per-segment state (transcribed or not) already exist, and the transcription bulk already counts the segments.",
+      "part2": "<strong>Cost</strong>: the bulk already counts how many audios come in and how many allow AI analysis (a separate toggle). The cost is real and grows with multi-segment.",
+      "part3": "<strong>Re-transcribing is destructive</strong>: it deletes the transcription and the derived analyses. That's why it asks for a written confirmation."
+    },
+    "s9": {
+      "title": "What's left to close",
+      "p1": "The questions the MVP deliberately leaves open. Below, what's already been decided."
+    },
+    "outcome": {
+      "eyebrow": "From the team session · 2026-06-23",
+      "title": "Conclusions",
+      "intro": "What was decided and what's already been <strong>built</strong> since. What stayed up in the air goes at the end.",
+      "mvpTitle": "The MVP's direction",
+      "remainingTitle": "What's left",
+      "confirmTitle": "To confirm"
+    },
+    "footer": "This page lives inside sc-docs: it updates with the code. The «now» screenshots regenerate with <code>npm run usage:capture</code>, and the «before» ones stay saved to tell the change.",
+    "concerns": {
+      "cost": { "q": "Transcription and AI cost", "detail": "Each transcription consumes compute, and the AI analysis is separate. The cost grows with multi-segment transcription. Do we set limits? Is AI always optional? The builder already estimates the impact, but the cost is for the team to close." },
+      "governance": { "q": "Governing multi-segment transcription", "detail": "If a conversation has several segments transcribed separately, which rule governs each one? How are they stored? When is it re-transcribed?" },
+      "dependency": { "q": "Transcription → classification dependency", "detail": "AI classification needs the transcription underneath. If the transcription fails or doesn't exist, what does the classification rule do?" },
+      "migration": { "q": "Migrating the recording rules", "detail": "They become obsolete with the new law and leave the MVP. Do we auto-deactivate, delete, or convert them? And what happens to what's already recorded?" },
+      "retention": { "q": "Retention and deletion", "detail": "How long transcriptions are kept and how they're deleted. The regulatory change is what shifts the focus; the legal detail is for the team to close." },
+      "calendar": { "q": "Rollout schedule", "detail": "Rules are configured by supervisors, from the Supervisor. It's still to be set when the multi-segment transcription system goes into production." }
+    },
+    "decisions": {
+      "manyActive": { "t": "Several active rules, no conflicts · done", "d": "Several rules can be active at once; turning one on doesn't turn the others off. And without the old complexity: a conversation is processed once, applying the union of what the matching rules ask for. No priority, no ordering, no conflicts to resolve." },
+      "scope": { "t": "Scope combines with AND and OR · done", "d": "Within an alternative, conditions combine with AND; adding another alternative is the OR. That fixed structure expresses any combination with no switches to learn. Typification is just another entity (not a loose condition) and it's the clearest value case: «I only want the ones that ended in a sale»." },
+      "liveRefs": { "t": "Live references, not frozen names · done", "d": "«All» also includes future entities, and a group in the Agent field means «its members now». Changing a group's composition is reflected without re-editing the rule." },
+      "directionDuration": { "t": "Direction and duration, inside the builder · done", "d": "They're just more scope fields, not a separate «Criteria» block. One place to filter, without duplicating direction in two spots." },
+      "estimate": { "t": "Live impact estimate · done", "d": "As you build, the footer says «would affect N of the last M conversations», with a proportion bar and a day/month projection. It's an estimate over the history, not a fixed figure." },
+      "oneOrZero": { "t": "A conversation meets the condition or it doesn't · decided", "d": "One or zero: there's no partial match, nothing gets transcribed «for a piece» of the condition. And even if it fits several active rules, it's processed once: there's never a double transcription." },
+      "repos": { "t": "The rules' home: Repositories · in progress", "d": "In administration, not a modal: it's a form and reads better full-screen. The same repository serves transcription and typification rules, and later the IVR source lists (which today have to be replicated by hand across 15-16 nodes). Start simple, with a table." },
+      "futureFirst": { "t": "Rules are forward-looking; classification comes later · decided", "d": "Nothing retroactive here: applying to past conversations is bulk. And AI classification (categories) is the highest-value part, but it's pulled out of here for now: transcription first." }
+    },
+    "pending": {
+      "backend": "Close with the backend team which criteria come in first; the builder already covers direction, duration, and typification. The backend can run ahead of the UI: create the table, add rules, and evaluate the condition even if the screen doesn't exist yet.",
+      "transcription": "Confirm the fine-tuning of transcription quality and effort (feasibility and cost). Today it cleans up music and noise by default.",
+      "repos": "Stand up the Repositories section (transcription + typification), starting with a simple table.",
+      "simulator": "Build the cost simulator: estimate what percentage would be transcribed and the spend, comparing with the previous month.",
+      "aed": "Advance AED with typification, schedules, and the transcription rule (including migrating the recording rules)."
+    },
+    "confirm": {
+      "naming": "Final naming of the entities («callers» vs. groups/ACD).",
+      "invert": "Whether the option to invert or exclude a condition («all of this except X») comes in.",
+      "nested": "A nested builder beyond 2 levels, and an impact/cost simulator as an evolution, not MVP.",
+      "detailWindow": "The conversation detail in its own window (a non-blocking player)."
+    },
+    "feedback": {
+      "title": "Feedback",
+      "aria": "Team feedback, by date",
+      "close": "Close (Esc)",
+      "hint": "Review notes, by date (most recent first). Each point validated against the prototype.",
+      "entries": {
+        "jul17": {
+          "date": "Jul 17, 2026",
+          "notes": {
+            "manyActive": { "t": "Several active rules at once", "d": "The «only one active» limit is lifted: now several can be on. The overlap is resolved with no priority or conflicts, using the union rule: a conversation is processed once, applying what the matching rules ask for together. Along the way, the pending «silently deactivate» disappears." }
+          }
+        },
+        "jul1": {
+          "date": "Jul 1, 2026",
+          "notes": {
+            "pause": { "t": "Pause a rule (future)", "d": "Today there's only Active/Inactive (a boolean). Add «Pause» as its own action, distinct from deactivating, for later." },
+            "header": { "t": "Work on the builder header", "d": "Save lives at the bottom, in the footer; the header (back + title + type) is projected into the TopBar. The primary action ends up far from the navigation and can overlap with the app's breadcrumb. Resolve where navigation and Save live." },
+            "scopeCopy": { "t": "Table copy, «Scope» column", "d": "It shows the tree's full prose (service + group + typification + duration): it can come out long and confusing in a cell. The list has NO description column today: decide whether name + short description is worth it, or shortening the prose with a tooltip." },
+            "exclusive": { "t": "Exclusive or cascading scope?", "d": "Understand whether, once you check Groups, you shouldn't be able to pick Services. Today they're NOT exclusive: service/group/agent combine freely with AND/OR in the tree. Decide whether there should be a cascade or exclusion (ties into «invert/exclude condition», already in To confirm)." },
+            "oneTable": { "t": "One table, not Active/Inactive", "d": "Unify the two sections into one table: the Status column already distinguishes Active/Inactive. Less noise. (Written under the «only one active» model of the time; that limit was lifted on Jul 17 — the single table still stands.)" },
+            "confirmModal": { "t": "Confirmation modal on activate — resolved Jul 17", "d": "Back then, activating a rule deactivated the previous one SILENTLY and asked for a confirmation «this will deactivate [X]». With several active at once (Jul 17), nothing is deactivated on activate: the modal is no longer needed." }
+          }
+        }
+      }
+    },
+    "lightbox": {
+      "close": "Close (Esc)",
+      "hint": "Press <kbd>Esc</kbd> or click outside to close"
+    }
   }
 }
