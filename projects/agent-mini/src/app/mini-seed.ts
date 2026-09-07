@@ -112,7 +112,7 @@ export const MESSAGES: readonly MessageRow[] = [
     ],
   },
   {
-    id: 2, name: '676 653 912', group: 'WhatsApp', time: '13:47', unread: true, channel: 'whatsapp',
+    id: 2, name: '600 445 566', group: 'WhatsApp', time: '13:47', unread: true, channel: 'whatsapp',
     preview: 'Perfecto, muchas gracias',
     bubbles: [
       { from: 'them', text: 'Necesito cambiar la cita del martes', time: '13:40' },
