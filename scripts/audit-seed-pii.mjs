@@ -153,15 +153,15 @@ export const TELEFONOS_PERMITIDOS = new Map([
   ['919110227', 'supervisor (conversations-mock): inventado'],
   ['919665544', 'supervisor (conversations-mock): inventado'],
 
-  // ⚠️ SIN CONFIRMAR. Los dos únicos de todo el repo que NO siguen un patrón inventado. Uno va
-  // pegado a grupos con nombre de producción («ACD Demo C2CB», «ACD demo cuscare») en
-  // `groups-data.ts`, y el mismo aparece además como teléfono del usuario en la barra superior
-  // (`top-bar.component.ts`, `+34 917 945 449`). Tienen pinta de líneas de la propia Smart
-  // Contact copiadas de la app real. Un número de centralita de empresa no es dato de una
-  // persona, así que no bloquean, pero quedan a la vista hasta que alguien lo confirme.
-  // Preguntado a Rafa el 2026-09-07.
-  ['917945449', 'supervisor (groups-data + top-bar): SIN CONFIRMAR, ver nota de arriba'],
-  ['918371548', 'supervisor (groups-data): SIN CONFIRMAR, ver nota de arriba'],
+  // Los dos únicos de todo el repo que NO siguen un patrón inventado, y por eso este gate los
+  // sacó a la luz nada más nacer: van pegados a grupos con nombre de producción («ACD Demo
+  // C2CB», «ACD demo cuscare») en `groups-data.ts`, y el primero sale además como teléfono del
+  // usuario en la barra superior (`top-bar.component.ts`). No son inventados: son LÍNEAS DE LA
+  // PROPIA SMART CONTACT, copiadas de la app real, y Rafa las confirmó como tales el
+  // 2026-09-07. Se quedan a propósito: el número de una empresa no es dato de una persona, y en
+  // la réplica dicen la verdad. Si algún día hay que quitarlos, será por otra razón que esta.
+  ['917945449', 'supervisor (groups-data + top-bar): línea de la casa, confirmado por Rafa el 2026-09-07'],
+  ['918371548', 'supervisor (groups-data): línea de la casa, confirmado por Rafa el 2026-09-07'],
 ]);
 
 /**
@@ -252,6 +252,6 @@ if (process.argv[1] && process.argv[1].endsWith('audit-seed-pii.mjs')) {
 
   log(
     `✓ audit:seed-pii: ${telefonos.size} teléfonos y ${correos.size} correos en ${ficheros.length} ficheros, ` +
-      'todos declarados inventados.',
+      'todos declarados con su motivo.',
   );
 }
