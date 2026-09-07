@@ -99,15 +99,13 @@
 7. **Vas a `git push` → `preflight` (o `:fast`, o `:scope --run`) UNA vez sobre el árbol FINAL, y
    el veredicto es el del CI leído.** "Final" = commiteado y sin nada más que escribir, ni un
    `.md`. `verify` NO es ese gate: se salta `e2e smoke` y los builds AOT ("es solo un token, una
-   ruta, un md" no es "verify basta"). Mientras iteras, el subconjunto que toca tu cambio, y nunca
-   dos cadenas a la vez. Antes de lanzarla: `git status` limpio, gates baratos pasados,
-   `git fetch`. Después del push: `npm run ci:verdict`. Si tocaste el lock: `guard:lockfile` (el
-   `npm ci --dry-run` a secas es ciego a la plataforma). "Este rojo no es mío" se mide: `git stash`
-   y ese test contra HEAD. ⚙️ El hook de push exige la marca `.preflight-ok` sobre ESTE árbol y
-   deniega un `echo $?` colgado de un gate; el hook de Stop exige leer el CI; `ci-preflight-parity`
-   y `playwright-reuse-guard` vigilan el resto.
-   Evidencia: ≥8 reincidencias con la regla escrita (s18, s29, s33, s34, s35 con seis pushes rojos,
-   s38, 2026-08-31); por eso dejó de ser prosa. Historia: `git log -S'(s35)' -- LEARNINGS.md`.
+   ruta, un md" no es "verify basta"). Mientras iteras, el subconjunto que toca tu cambio, nunca
+   dos cadenas a la vez, y con `git status` limpio. Después: `npm run ci:verdict`. Si tocaste el
+   lock, `guard:lockfile` (`npm ci --dry-run` a secas es ciego a la plataforma). "Este rojo no es
+   mío" se mide: `git stash` y ese test contra HEAD.
+   ⚙️ El hook de push exige `.preflight-ok` sobre ESTE árbol y deniega un `echo $?` colgado de un
+   gate; el de Stop exige leer el CI; `ci-preflight-parity` y `playwright-reuse-guard`, el resto.
+   Evidencia: ≥8 reincidencias con la regla escrita; por eso dejó de ser prosa. `git log -S'(s35)'`.
 
 6. **Tu test NUEVO se pone rojo, o pasa a la primera → sospecha del test antes que del código.**
    ¿Mide la magnitud correcta? ¿El selector casa solo con lo que crees? ¿La aserción REINTENTA
@@ -135,18 +133,21 @@
     · s41 propuse un hook de pre-push con `.githooks/pre-push` ya existiendo desde s39: lo descubrí
     cuando mi propio push repitió 10 min de cadena y agotó el timeout.
 
-11. **Toda edición masiva por shell lleva su verificación de outcome PEGADA en el mismo comando.**
+11. **Toda edición masiva —shell o API— lleva su verificación de outcome PEGADA en la misma
+    operación. Y si la clave con la que escribes puede REPETIRSE en el árbol, no es una asignación:
+    es una emisión, y el conteo de escrituras no la ve. Diffea el VALOR antes/después.**
     ⚙️ El hook deniega `for f in $VAR` (zsh no parte por palabras: el bucle corre una vez).
-    Evidencia: s11 migración de 12 iconos que no hizo nada; lo cazó el `grep … || echo ninguno`.
+    Evidencia: s11 migración de 12 iconos que no hizo nada, cazada por el `grep … || echo ninguno`
+    · 2026-09-07 mínimos por NOMBRE en Figma: `Buscador`, `Origen` y `Fila N` existían dos veces,
+    inflaron 47 cajas en silencio y rebrotaron TRES veces, hasta que diffeé tamaños.
 
 12. **Vas a dar una cifra, ejecutar un `sed` o volcar un fichero → pregúntate qué entra en el
     resultado.** Al contar: comentarios, etiquetas de cierre, `[class*=…]` (comodín por los dos
     lados), declaraciones frente a instancias; si hay un ejecutor que sabe el número, el número es
-    el suyo. Al reemplazar: acota a la etiqueta y verifica cada match. Al imprimir: proyecta claves,
-    nunca el fichero entero. Al comparar ramas: `main..rama`, no `main...rama`.
-    ⚙️ El hook deniega el volcado de configs con credenciales y el `main...rama`.
-    Evidencia: s11 "111 usos" que eran 50 · s18 39 tests en grep, 108 en el runner · s27 token de
-    Figma impreso y rotado · s35 `main...rama` casi borra 432 ficheros · s31 "2.820 elementos" = 271.
+    el suyo. Al reemplazar: acota a la etiqueta y verifica cada match. Al imprimir: proyecta las
+    claves, nunca el fichero. ⚙️ El hook deniega el volcado de configs y el `main...rama`.
+    Evidencia: s18 39 tests en grep, 108 en el runner · s27 token de Figma impreso y rotado · s35
+    `main...rama` casi borra 432 ficheros · s31 "2.820 elementos" = 271.
 
 21. **Vas a escribir en un fichero COMPARTIDO (los ledgers: `DECISIONS.md`, `LEARNINGS.md`,
     `inventory.md`, `docs/handoff/`, `AGENTS.md`) o a aterrizar trabajo en una rama que otro
@@ -173,9 +174,10 @@
     (reflog ~30 días); si no te gusta cómo suena, hazlo reversible ANTES (`git tag archive/…`).
     Evidencia: s11 estilo de icono con drift en 3 sitios · s27 "borrar la rama es reversible".
 
-16. **Antes de un refactor transversal, monta primero la red que lo verifica, aunque parezca un
-    rodeo.**
-    Evidencia: s12 la suite e2e del supervisor cazó dos bugs el día que nació.
+16. **Antes de un refactor —o de una REVISIÓN— transversal, monta primero la red que lo verifica
+    (tabla de valores esperados + barrido de anomalías), aunque parezca un rodeo.**
+    Evidencia: s12 la suite e2e del supervisor cazó dos bugs el día que nació · 2026-09-07 revisé
+    15 pantallas nodo a nodo hasta montar esas dos; entonces salió todo en una pasada.
 
 17. **Vas a construir, recomendar o FIRMAR un estado sobre una descripción que no verificaste TÚ
     hoy → es una paráfrasis: abre la fuente.** Da igual de dónde venga: hand-off, README, Figma, tu

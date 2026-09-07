@@ -8,6 +8,32 @@
 >
 > ⚠️ Un hand-off es una **pista, no un hecho**. Confirma antes de construir encima.
 
+## ✅ 2026-09-07 · El mini real queda medido y replicado en Figma, con las 15 pantallas verificadas
+
+> **Sello: no toca el repo.** El entregable vive en Figma, fichero `XiPJxHfz5UuekksPIoEj9u`
+> («Gestión de errores»), página **Mini** (`158:3938`). Aquí solo queda el puntero.
+
+Réplica 1:1 del mini **aed real** a 310×891 (DPR 2), no de `agent-mini`: 15 pantallas (11 estados
+del marcador + Chat, Agentes, Agenda, Histórico), 13 componentes con variantes y propiedades, y
+una ficha de especificación en `229:1243`.
+
+**Lo que esto desbloquea para este frente.** La tabla de arriba dice que Estados, Mensajes y
+Agentes están calibrados «de sensación», NO diffeados. Ya no hace falta: se midieron los **11
+estados** por `getComputedStyle` sobre la ventana real y el resultado está contrastado contra el
+DOM nodo a nodo. Como este frente va todo en `vw`/`vh`, los valores transfieren por ratio aunque
+`agent-mini` viva a ~352×1025. Bases: **1vw = 3,10 px · 1vh = 8,91 px**.
+
+**Dos hechos del mini que no estaban escritos aquí:**
+
+- **No tiene breakpoints.** Una sola media query (`min-height:176px` y `max-height:860px`) que solo
+  cambia un `margin-bottom: 0.5%`. Todo lo demás es `vw`/`vh` puro.
+- **La barra de estado del agente se solapa 4,89 px con la de pestañas** (`position:fixed` abajo:
+  el cuerpo acaba en 833,08 y ella empieza en 828,19). No es un fallo de la réplica.
+
+**Trampa que costó tres rebrotes** (ya escrita como regla #11): aplicar mínimos a un árbol usando
+el NOMBRE como clave. `Buscador`, `Origen`, `Número` y `Fila N` existen dos veces con tamaños
+distintos, y la escritura infló 47 cajas sin dar error. Se ve diffeando tamaños antes/después.
+
 ## Qué es este frente
 
 Réplica **standalone** del Comunicador mini (`comunicatormini.smart-contact.com/aed/`) como
