@@ -13,6 +13,88 @@
 
 ---
 
+## 2026-09-07
+
+> Método: pasada A (deuda de código, ≤5) + pasada B (deriva de docs) + pasada C (PRs parados
+> >7d). Contra AGENTS.md/.impeccable.md/customs-catalog.md/DOCS-INDEX.md. Pasada C: 1 PR abierto
+> (#50, `areses/video-transcription-5eeb2b`, creado 2026-09-06) — no cualifica, tiene <24h.
+
+### Deuda de código
+
+- [ ] **P2** `renamingId` es una señal muerta en las 3 list-pages admin: se declara
+      (`agents-list-page.component.ts:188`, mismo patrón en `groups-list-page.component.ts:148` y
+      `users-list-page.component.ts:129`) y se lee como guarda (`:531`, `:484`, `:416`), pero
+      **nunca** se le asigna un id real — los únicos `.set(...)` de cada fichero son `.set(null)`
+      en `onRenameCommit`/`onRenameCancel` (`:619-627`, `groups:573-581`, `users:500-508`), así que
+      la rama `@if (renamingId() === agent.id)` de `agents-list-page.component.html:96` (y sus dos
+      equivalentes) es inalcanzable. Vestigio del flujo "duplicar → borrador renombrable en sitio"
+      retirado en S47 (comentario propio en `agents-list-page.component.ts:609`): la clave i18n que
+      dispara el toast sigue en pie (`agents.toasts.duplicated`/`groups.toasts.duplicated`/
+      `users.toasts.duplicated` = *"… duplicado como borrador"*, `es.json:1456,1255,1140`) aunque
+      `onRowDuplicate` ya navega a un formulario de creación y no deja ningún borrador que renombrar
+      → borrar `renamingId`, la rama de plantilla y las 3 claves i18n en las 3 páginas. [arréglalo]
+
+- [ ] **P2** `buildMenuItems`/`confirmDelete` son bloques de 25-35 líneas casi verbatim entre
+      agents/groups/users (`agents-list-page.component.ts:571-598,697-732` vs
+      `groups-list-page.component.ts:523-550,627-660` vs `users-list-page.component.ts:455-478,
+      518-548`), divergiendo solo en el tipo de entidad, la llamada al store y, en `users`, la
+      ausencia de las llamadas a `linksStore`. **DD-43** (`docs/DECISIONS.md:468`) midió hace una
+      semana que la duplicación entre estas páginas "no es verbatim" salvo *one-liners*, y rechazó
+      por eso una base común — pero esa medición fue a nivel de fichero completo (77% de líneas
+      divergentes) y no examinó estos dos métodos, que sí rondan el 90% idénticos línea a línea. No
+      pide reabrir DD-43 en general: solo remedir estos dos bloques contra su propio criterio DD-4
+      (`docs/DECISIONS.md:2431`: 2+ consumidores + duplicación genuina → consolidar) → extraer un
+      `buildRowMenuItems(entity, handlers)` y un `confirmEntityDelete(...)` compartidos, o dejar
+      escrito por qué estos dos quedan fuera del criterio de DD-43. [arréglalo]
+
+- [ ] **P1** Dos formas de emitir toasts sin criterio escrito de cuál es la vigente: el DS expone
+      `ScToastService` (`projects/ui-smartcontact/src/lib/components/toast/sc-toast.service.ts`,
+      exportado en `public-api.ts:31`, con `.success()/.info()/.warn()/.error()` +
+      `provideScToast()`) pero **0 ficheros de `projects/supervisor`** lo importan — solo lo usa la
+      demo de `sc-docs` (`toast-demo.component.ts`). Los **25 ficheros** de supervisor que
+      notifican (incluidos los dos `confirmDelete` de arriba) inyectan `MessageService` de
+      `primeng/api` directamente y arman `{ severity, summary, life }` a mano en cada sitio. Ni
+      `docs/customs-catalog.md` ni `docs/DECISIONS.md` explican por qué la app real bypasea el
+      wrapper que el propio DS construyó para ella → o se documenta como decisión consciente de no
+      adoptarlo, o se migra supervisor a `ScToastService` y se borran ~25 repeticiones de
+      `severity`/`life`. [arréglalo]
+
+### Deriva de docs
+
+- [ ] El propio skill de esta rutina se contradice sobre cuántos gates tiene `verify`:
+      `.claude/skills/auditoria-semanal/SKILL.md:23` dice "25 pasos" y el mismo fichero,
+      `SKILL.md:92`, dice "26 gates" — dos cifras distintas en el mismo doc. `docs/AUDIT-SEMANAL.md:5`
+      y `docs/DOCS-INDEX.md:38` dicen 27; solo `CLAUDE.md:41` acierta con **29** (medido partiendo
+      el script `verify` de `package.json` por `&&`: 29 pasos exactos, hoy). El propio
+      `docs/handoff/design-system.md:1252-1254` ya avisó que esta cifra "vive en 4 sitios y
+      ninguno la gatea" — la predicción se cumplió, siguió divergiendo → actualizar las 3 cifras
+      atrasadas a 29. [gate-able — un guard que cuente los pasos de `verify` en `package.json` y
+      compare esa cifra contra la que citan estos ficheros cerraría la clase entera, como ya hace
+      CHECK J con los pasos con nombre de `ci.yml`]
+
+- [ ] `docs/DOCS-INDEX.md:31` describe `docs/inventory.md` como "cada componente + wrapper/pure +
+      **los 4 gaps abiertos**", pero `docs/inventory.md:86` dice explícitamente "Quedan **2**" (con
+      una sección "Cerrados (verificado 2026-08-13)" para los otros dos), y `.impeccable.md:76` ya
+      se corrigió a "2" ese mismo día. El puntero de `DOCS-INDEX.md` es el único que se quedó en 4,
+      casi un mes después → cambiar "4" por "2". [arréglalo]
+
+- [ ] `agent-mini` (5º sitio en producción, `NEXT-SESSION.md:59`, `agent-mini.pages.dev`) no
+      existe para los dos docs que gobiernan alcance/continuidad: `.impeccable.md:11` sigue
+      diciendo "cuatro apps" y su tabla de qué se puede pulir (líneas 73-78) no lo lista, y
+      `docs/traspaso.md:24` dice "las 4 apps en producción siguen vivas". Tampoco está en la cadena
+      `typecheck` de `package.json` pese a tener su propio `tsconfig.app.json`
+      (`projects/agent-mini/tsconfig.app.json`). Ya tiene handoff propio
+      (`docs/handoff/agent-mini.md`, listado en `docs/DOCS-INDEX.md:40`), así que no es un frente
+      dormant-by-design que deba quedar fuera — es un 5º sitio real sin cobertura en el
+      guardarraíl de alcance ni en `verify` → añadir su fila a `.impeccable.md`, corregir "4" a "5"
+      en `traspaso.md`, y valorar sumarlo a `typecheck`. [arréglalo]
+
+### Trabajo sin mergear
+
+sin hallazgos (el único PR abierto, #50, tiene menos de 24h).
+
+---
+
 ## 2026-08-31
 
 > Método: pasada A (deuda de código, ≤5) + pasada B (deriva de docs) + pasada C (PRs parados
