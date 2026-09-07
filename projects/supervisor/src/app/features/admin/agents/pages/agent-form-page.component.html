@@ -342,19 +342,21 @@
                   <th scope="col" class="perm-matrix__th-col">
                     <sc-checkbox
                       [state]="columnState().llamada"
+                      labelPosition="start"
                       [ariaLabel]="'agents.form.permissions.toggle_all_llamada' | translate"
                       (cycle)="toggleColumnAll('llamada', $event)"
                     >
-                      <span>{{ 'agents.form.permissions.col_llamada' | translate }}</span>
+                      <span class="perm-matrix__col-label">{{ 'agents.form.permissions.col_llamada' | translate }}</span>
                     </sc-checkbox>
                   </th>
                   <th scope="col" class="perm-matrix__th-col">
                     <sc-checkbox
                       [state]="columnState().transferencia"
+                      labelPosition="start"
                       [ariaLabel]="'agents.form.permissions.toggle_all_transferencia' | translate"
                       (cycle)="toggleColumnAll('transferencia', $event)"
                     >
-                      <span>{{ 'agents.form.permissions.col_transferencia' | translate }}</span>
+                      <span class="perm-matrix__col-label">{{ 'agents.form.permissions.col_transferencia' | translate }}</span>
                     </sc-checkbox>
                   </th>
                 </tr>

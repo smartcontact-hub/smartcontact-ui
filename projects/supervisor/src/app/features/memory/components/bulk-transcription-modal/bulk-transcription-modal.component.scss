@@ -14,17 +14,10 @@
   display: block;
 }
 
-/* Override scoped del padding del body del sc-dialog · réplica legacy
- * `<Modal.Body !p-0>`. El bulk modal v26 usa una grid 720×200 que ocupa
- * todo el body sin padding (cada celda paga su padding interno). Sin
- * este override, el padding canónico 17.5/17.5 del dialog reduce el
- * ancho efectivo y descoloca la grid + las acciones del footer leen
- * más apretadas. ::ng-deep necesario porque el body vive fuera del
- * scope encapsulado del modal padre. */
-:host ::ng-deep .sc-dialog__body {
-  padding: 0;
-}
-
+/* El cuerpo va a ras (grid 720×200 que ocupa todo el body; cada celda paga su
+ * padding interno). Antes esto era un `::ng-deep .sc-dialog__body { padding:0 }`
+ * que alcanzaba el interior del sc-dialog; ahora se pide con el input `flushBody`
+ * del propio componente (ver bulk-transcription-modal.component.html). */
 .bulkv26 {
   display: grid;
   grid-template-columns: 1fr 1fr;

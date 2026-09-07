@@ -218,24 +218,22 @@
   thead th.perm-matrix__th-col {
     text-align: center;
     width: 140px;
+  }
 
-    /*
-     * The column header is an `<sc-checkbox>` that wraps a
-     * projected `<span>` (the column label). Default tri-state layout
-     * is "[box] label"; we want "LABEL [box]" to match Voice's
-     * Figura 15 (DD#55). We also want the projected label to inherit
-     * the header's small-caps treatment instead of the tri-state's
-     * own body-text style.
-     */
-    sc-checkbox .tri-checkbox {
-      flex-direction: row-reverse;
-      justify-content: center;
-      font-size: inherit;
-      color: inherit;
-      text-transform: inherit;
-      letter-spacing: inherit;
-      font-weight: inherit;
-    }
+  /*
+   * The column header is an `<sc-checkbox>` that wraps a projected `<span>`
+   * (the column label). Queremos "LABEL [box]" (Voice, Figura 15, DD#55): el
+   * orden lo pone el input `labelPosition="start"` del propio sc-checkbox, NO
+   * un `flex-direction: row-reverse` alcanzando su interior. Aquí solo damos al
+   * `<span>` PROPIO la tipografía small-caps de la cabecera (misma que
+   * `thead th` de arriba), en vez de la tipografía body del checkbox.
+   */
+  &__col-label {
+    font-size: var(--sc-font-size-50);
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    font-weight: var(--sc-font-weight-semibold);
+    color: var(--sc-text-subtle);
   }
 
   tbody th,
