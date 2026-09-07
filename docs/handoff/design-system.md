@@ -468,7 +468,9 @@ paso natural y está sin hacer.
 
 ## ✅ 2026-09-05 · El botón del supervisor medía 33 y el input 36, y no era cosa de tokens
 
-**Sello:** HEAD `b383696`, en el [PR #40](https://github.com/smartcontact-hub/smartcontact-ui/pull/40).
+**Sello:** HEAD `cf7abab` (squash-merge del PR; `b383696` era la punta de la rama antes de
+mergear, y esa rama se borró — el sello apuntaba a un commit ya inalcanzable), en el
+[PR #40](https://github.com/smartcontact-hub/smartcontact-ui/pull/40).
 **CI VERDE**, leído con `npm run ci:verdict` sobre ese mismo HEAD: los cinco jobs en
 `success` (`verify`, `build`, `e2e-smoke`, `e2e-cuscare`, `e2e-supervisor`).
 Carril `preflight:scope` COMPLETO en verde sobre el árbol final: `guard:lockfile`, `verify`
