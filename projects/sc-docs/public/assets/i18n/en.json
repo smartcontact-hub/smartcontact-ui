@@ -1,0 +1,19 @@
+{
+  "chrome": {
+    "brandSub": "Design Engineering",
+    "search": "Search…",
+    "nav": {
+      "sectionsAria": "Sections",
+      "fundamentos": "Foundations",
+      "componentes": "Components",
+      "uso": "Real-world usage",
+      "reglas": "Rules",
+      "lab": "Lab",
+      "avisoLegal": "Legal notice"
+    },
+    "cmd": {
+      "sections": "Sections",
+      "language": "Language"
+    }
+  }
+}
