@@ -198,5 +198,22 @@
         "violeta": "Violeta"
       }
     }
+  },
+  "uso": {
+    "title": "Uso real de componentes",
+    "intro": "Dónde aparece cada componente del DS en las pantallas <strong>reales</strong> del Supervisor (no en la demo aislada). Capturas tomadas del DOM renderizado — se regeneran con <code>npm run usage:capture</code>, no se desfasan.",
+    "meta": "{{screens}} pantallas · {{seen}}/{{total}} componentes DS vistos · capturado {{date}} · {{viewport}} · tema {{theme}}",
+    "byComponent": "Por componente",
+    "byScreen": "Por pantalla",
+    "error": "No se pudo cargar <code>/usage/_usage-status.json</code>. Corre <code>npm run usage:capture</code> para generar las capturas.",
+    "loading": "Cargando capturas…",
+    "screensCount": "{{count}} pantalla(s)",
+    "shellGlobal": "Shell-global",
+    "shellGlobalNote": "en todas las pantallas",
+    "shellGlobalLead": "Montados en el shell de la app → presentes en cualquier pantalla:",
+    "gatedTitle": "No capturados aislados",
+    "gatedNote": "se ven en el flujo",
+    "gatedLead": "La pokédex los marca usados, pero solo se ven tras una interacción no scriptada o con datos vacíos (p.ej. estado vacío). Documentados aquí; mira la vista «Por pantalla» de la sección donde viven.",
+    "uses": "usos"
   }
 }
