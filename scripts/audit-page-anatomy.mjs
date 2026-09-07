@@ -9,7 +9,7 @@
  * especificidad que una global, así que un `max-width` suelto en el SCSS de una página
  * gana en silencio y esa página se desvía del molde sin que nada avise.
  *
- * Ya pasó dos veces, medido el 2026-09-06 (DD-52): la Ola 3 declaró cerrada la deriva
+ * Ya pasó dos veces, medido el 2026-09-06 (DD-53): la Ola 3 declaró cerrada la deriva
  * de siete anchos y cerró cinco. `1100` seguía vivo declarado tres veces byte a byte en
  * los formularios de agente, grupo y usuario; `78rem` seguía vivo en el constructor de
  * reglas, que además no declaraba arquetipo ninguno.

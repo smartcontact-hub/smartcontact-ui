@@ -9,7 +9,7 @@
  * fichero. Cada página declara CUÁL es en su plantilla, así que el ancho deja
  * de ser un número suelto y pasa a ser una afirmación sobre el tipo de página.
  *
- * OJO, medido el 2026-09-06 (DD-52): la Ola 3 cerró CINCO de los siete, no los
+ * OJO, medido el 2026-09-06 (DD-53): la Ola 3 cerró CINCO de los siete, no los
  * siete. `1100` seguía vivo, declarado tres veces byte a byte en los formularios
  * de agente, grupo y usuario; ahora es `.page__form`, aquí abajo. `78rem` seguía
  * vivo en el constructor de reglas, que además no declaraba arquetipo ninguno;
@@ -79,7 +79,7 @@
  * medición aparte, no un arreglo de paso.
  *
  * Vivía duplicado byte a byte en agent-form, group-form y user-form; aquí es uno
- * solo desde DD-52. */
+ * solo desde DD-53. */
 .page__form {
   min-width: 0;
   max-width: 1100px;

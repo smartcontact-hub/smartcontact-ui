@@ -23,7 +23,7 @@ import { disableAnimations, forceLightTheme, goto } from './helpers';
  * porque el rail ya no declara `top`: la declaración que traía apuntaba a
  * `--sc-form-panel-top`, un token que se usaba y no se definía en ninguna parte
  * del repo, así que era inválida y caía a `auto` igualmente. Se retiró con el
- * molde (DD-52) y hoy quedan cero usos. El rail sigue pidiendo quedarse fijo al
+ * molde (DD-53) y hoy quedan cero usos. El rail sigue pidiendo quedarse fijo al
  * hacer scroll y no se queda: el valor se anota en el informe del test, y la
  * aserción entra cuando el anclaje sea una decisión tomada.
  */

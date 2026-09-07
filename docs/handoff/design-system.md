@@ -42,7 +42,7 @@ leían: yo mismo afirmé dos veces que no existían. Todo lo demás salió de me
 4. **Los 44 `--sc-bg-*` tienen su «para qué sirve»** en `scripts/token-docs-map.mjs`, con dos
    consumidores: la página de fundamentos de `sc-docs` y un `--figma` que IMPRIME el lote sin
    escribir. Cierra el hueco que DD-22 pidió y nunca se escribió.
-5. **DD-52** recoge lo decidido, con sus seis descartadas.
+5. **DD-53** recoge lo decidido, con sus seis descartadas.
 
 **Tres hallazgos que no buscaba, y valen más que el plan:**
 
@@ -85,6 +85,70 @@ leían: yo mismo afirmé dos veces que no existían. Todo lo demás salió de me
 3. `sc-form-section-nav` trunca las etiquetas cuando no caben (aquí se esquivó acortando el copy a
    «General»). Hay sesión aparte abierta para arreglarlo en el componente.
 4. Si alguien quiere las baselines visuales como red, regenerarlas primero.
+## ✅ 2026-09-06 · El índice del rail deja de recortar: envuelve, y el punto de error suelta los 25px que le robaba
+
+**Sello:** carril elegido por `preflight:scope`, verde sobre el árbol final. `verify` (29 gates)
+verde. `e2e:supervisor` **132/132** contra el `ng serve` de ESTE worktree (`SC_SUPERVISOR_URL`
+a :4408 — :4405 lo tenía ocupado otra sesión y el guardián `reuseOnlyOwnServer` habría parado,
+que es lo correcto). Veredicto del CI con `npm run ci:verdict` tras el push.
+
+Lo señaló Rafa: `sc-form-section-nav` truncaba con elipsis y el índice no debería cortar. La
+decisión y las alternativas descartadas están en **DD-52**; aquí va lo que hace falta para seguir.
+
+### El censo, que es lo que cambia la conversación
+
+Con el rail de 240px la caja de texto son **99px**, o **74** si el item lleva punto de error.
+Medidas las 48 etiquetas (3 formularios × 4 idiomas) a 1440×900: **13 recortadas**, y solo 5 en
+español. «Servicios asignados» pide 114, «Agentes asignados» 108, «Grupos asignados» 103.
+«Identificación» (79px) cortaba **solo por el punto**: en 99px cabía de sobra.
+
+Ese segundo hallazgo es el que decidió la forma del arreglo. El punto era hermano flex y se
+llevaba un carril propio (gap 10,5 + 8 del punto + 7 de margen = 25px), o sea que **la sección con
+el error era la peor de leer**, justo la contraria de la que el punto quiere señalar. Ahora fluye
+DENTRO del label y la caja conserva sus 99px siempre.
+
+### Lo que queda dicho para quien venga
+
+- **El copy ya no tiene que caber.** El constructor de reglas (rama `areses/video-transcription-5eeb2b`,
+  sin fundir a fecha de hoy) acortó «Información básica» → «General» en los cuatro idiomas para
+  esquivar esto. Con el label envolviendo **se puede revertir**: medida la palabra más larga de las
+  cuatro traducciones originales, el máximo es «Informations» con 73,5px contra los 99 de la caja,
+  así que envuelve a dos líneas y no recorta. Ese cambio es de esa rama, no de esta.
+- **Esa misma rama sube `--with-panel` a `_page.scss`**; hoy en `main` los 240px están DUPLICADOS
+  en los SCSS de los tres form-pages. Este arreglo no toca el molde, así que las dos ramas no se
+  pisan (lo comprobé: la rama no toca `projects/ui-smartcontact/`).
+- **La fila deja de tener alto fijo**: 53px con una línea, 61 con dos. Cualquier medida que asuma
+  altura uniforme en el rail hay que releerla.
+- **La red que lo vigila** es `e2e/supervisor/form-section-nav-legibility.spec.ts`: 3 formularios ×
+  4 idiomas + el corte de 1024. Validada con el fallo puesto — con el `nowrap` de vuelta enrojece y
+  lista las etiquetas por nombre.
+
+### 🔴 Hallazgo colateral: las 25 baselines visuales de sc-docs llevaban semanas MUERTAS
+
+Salió al ir a regenerar la baseline que este cambio invalida, y no es cosa de este cambio.
+`screenshotBaseline()` (`e2e/components.spec.ts`) abría con un
+`page.locator('.sb-shell__side').evaluate(...).catch(() => undefined)`, y **esa clase ya no está
+en el DOM** — sobrevive en `storybook.scss`, pero el shell dejó de pintarla. Un locator sin
+timeout de acción **no rechaza: espera**, así que el `.catch` nunca se disparaba y la llamada se
+colgaba hasta agotar los 60 s del test. Ninguna captura llegaba a ocurrir: `Test timeout
+exceeded` + `screencast.hideOverlays: Target page … closed`, y **sin `-actual.png` ni
+`-diff.png`**, que es lo que despista — parece un fallo de captura y es un locator colgado.
+
+Cazado con un control, no adivinado: `sc-badge` —sin tocar por mí— fallaba idéntico, y el mismo
+`toHaveScreenshot` sobre la misma página **sin ese preámbulo** pasaba en 2,3 s.
+
+Arreglado aquí porque bloqueaba regenerar lo mío: el preámbulo pasa a un `page.evaluate` sobre el
+documento que pone a 0 el scroll de la ventana y el de cualquier contenedor desplazable. No puede
+colgarse ni quedarse obsoleto por un renombrado.
+
+**Lo que destapa, y que NO toco:** con el arreglo, la suite corre en 2,5 min y salen **37 rojos /
+18 verdes**, todos con diff legible. Es deriva ACUMULADA, no de este trabajo: las baselines se
+regeneraron por última vez el **2026-08-24** (`0ef136c`) y desde entonces han entrado 12+ commits
+a `projects/sc-docs/src`, entre ellos `7bb9aab` (DD-48), que repunta la rampa tipográfica
+semántica y mueve la métrica de texto de TODAS las páginas (el diff de `sc-badge` es de ALTURA:
+1261 → 1250). Regenerar las 37 aquí sería bendecir cambios visuales ajenos dentro de este commit,
+así que **solo se regenera `formsectionnav`**, que es la que este trabajo mueve de verdad.
+CI no se entera de nada de esto: `screenshotBaseline` hace `if (process.env['CI']) return`.
 
 ---
 

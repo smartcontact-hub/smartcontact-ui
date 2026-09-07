@@ -36,7 +36,7 @@ test('crear una regla con condición de Categoría IA y operador "no es"', async
   const name = `E2E Clasificación ${Date.now()}`;
   await page.locator('sc-inputtext input').first().fill(name);
 
-  // El constructor pasó al molde de los formularios de admin (DD-52): una sección
+  // El constructor pasó al molde de los formularios de admin (DD-53): una sección
   // a la vez. El nombre vive en «Información básica» y las condiciones en
   // «Alcance», así que hay que cambiar de pestaña en medio.
   await irASeccion(page, 'Alcance');
@@ -107,7 +107,7 @@ test('cross-link: la categoría llega preseleccionada al constructor y queda vin
   await goto(page, `conversaciones/reglas/nueva?type=classification&categoria=${categoryId}`);
 
   // Preselección: análisis IA encendido y la categoría ya elegida. El enlace
-  // ATERRIZA en «Análisis IA» (DD-52), que es donde esa categoría se ve — sin
+  // ATERRIZA en «Análisis IA» (DD-53), que es donde esa categoría se ve — sin
   // pasar por la pestaña 1.
   await expect(page.locator('.rule-builder__ai-categories')).toContainText(categoryName);
 

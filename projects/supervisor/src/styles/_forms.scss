@@ -402,7 +402,7 @@
  * de identidad + índice de secciones + la zona de peligro al fondo.
  *
  * Vivía duplicado byte a byte en agent-form, group-form y user-form; aquí es uno
- * solo desde DD-52.
+ * solo desde DD-53.
  *
  * QUÉ SE QUEDÓ POR EL CAMINO, Y POR QUÉ. Los tres traían dos declaraciones más:
  * `top: var(--sc-form-panel-top)` y `height: calc(100dvh - var(--sc-form-panel-top))`,
@@ -417,7 +417,7 @@
  *
  * `position: sticky` se queda como declaración de intención, pero OJO: sin `top`
  * no se ancla. Anclarlo de verdad es una decisión de UI con poco a ganar, medida
- * y anotada en DD-52: de las cinco secciones del formulario de agente sólo una
+ * y anotada en DD-53: de las cinco secciones del formulario de agente sólo una
  * llega a scrollear (1311px contra un viewport de 809), así que se deja fuera de
  * esta consolidación en vez de inventarle un valor al offset. */
 .ipanel {

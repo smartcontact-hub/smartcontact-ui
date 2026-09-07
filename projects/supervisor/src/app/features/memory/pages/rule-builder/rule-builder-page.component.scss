@@ -61,7 +61,7 @@
    * (`.page__inner--with-panel` en `styles/_page.scss`): rail de 240 + columna
    * de formulario. Se cae la que vivía aquí —grid de 78rem con el impacto como
    * columna hermana, y cortes propios a 68rem y 40rem—, que era el único ancho
-   * de página del Supervisor sin arquetipo declarado (DD-52). El impacto pasa
+   * de página del Supervisor sin arquetipo declarado (DD-53). El impacto pasa
    * al rail, así que ya no necesita ni columna ni sticky propios. */
 
   /* Reveal del contenido IA: grid-template-rows 0fr→1fr expande suave (sin pop). */

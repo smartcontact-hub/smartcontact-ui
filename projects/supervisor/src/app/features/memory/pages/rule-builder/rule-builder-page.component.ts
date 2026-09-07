@@ -151,7 +151,7 @@ export class RuleBuilderPageComponent implements DirtyAware {
    * El constructor pasa a la anatomía de sus tres hermanos de admin
    * (`.page__inner--with-panel`): índice a la izquierda y UNA sección visible a
    * la vez. Antes las tres iban apiladas en una columna de 78rem que no
-   * declaraba arquetipo de página ninguno (DD-52). El impacto sube al rail, así
+   * declaraba arquetipo de página ninguno (DD-53). El impacto sube al rail, así
    * que deja de irse con el scroll.
    *
    * El tercer paso solo existe para los tipos que analizan con IA, así que su

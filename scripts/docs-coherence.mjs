@@ -402,7 +402,7 @@ const RETIRADOS_A_PROPOSITO = new Set([
   // Token que NUNCA existió y que la doc nombra para contar justamente eso: se USABA nueve
   // veces (el `top` y el `height` del rail de los tres formularios, y dos veces más en un
   // bloque de CSS muerto) y no se DEFINÍA ninguna, así que esas declaraciones eran inválidas y
-  // caían a `auto`. DD-52 lo cuenta; el código ya no lo nombra. Si alguna vez se define, este
+  // caían a `auto`. DD-53 lo cuenta; el código ya no lo nombra. Si alguna vez se define, este
   // gate lo cubre solo → quítalo de aquí.
   '--sc-form-panel-top',
   // Token DEL CONSUMIDOR, no nuestro: `docs/tipografia.md` lo documenta justamente para avisar

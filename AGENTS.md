@@ -164,7 +164,7 @@ no a la librería. Dos de estas reglas ya son infraestructura del sistema (aquí
 
 **Mapa de composición** — punteros, no prosa: la razón vive donde apunta cada línea. Nace de
 medir que ninguno de estos nombres aparecía en AGENTS ni en CLAUDE, así que la regla existía en
-el código y el agente no la leía nunca (DD-52).
+el código y el agente no la leía nunca (DD-53).
 
 - **Shell**: `projects/supervisor/src/app/core/layout/app-shell/` → `aside.sidebar` +
   `header.top-bar` + `main#main-content` (con skip-link). Medidas en la capa 5:
@@ -183,9 +183,9 @@ el código y el agente no la leía nunca (DD-52).
 - **Lienzo**: `--sc-bg-canvas` (DD-45). `--sc-bg-default` es el suelo del shell y el relleno de
   campo, nunca una superficie de contenido (DD-34). El `:host` de una página pinta su lienzo, o
   por debajo del contenido asoma el shell.
-- **Divergencias DELIBERADAS**, que no se uniforman: DD-36 (siete, con su porqué) y DD-52 (la
+- **Divergencias DELIBERADAS**, que no se uniforman: DD-36 (siete, con su porqué) y DD-53 (la
   barra de acciones sticky solo en las tres listas con gestor de columnas).
-- **Escritorio primero, sin colapso móvil** (DD-52): mínimo soportado 1024. Los cortes que hay
+- **Escritorio primero, sin colapso móvil** (DD-53): mínimo soportado 1024. Los cortes que hay
   (640 en la barra, 1024 en el rail) son locales, no una política de breakpoints. No inventes.
 - ⚠️ **`DD#nn` no es `DD-nn`.** Con almohadilla, en comentarios de código, apunta al ledger de la
   PLATAFORMA (`smart-contact-platform/apps/supervisor/docs/DECISIONS.md`); con guion, a

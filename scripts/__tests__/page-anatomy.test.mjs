@@ -15,7 +15,7 @@ import {
 
 /*
  * El valor de este gate está en no dar falsos positivos: casi todo el SCSS de una
- * página menciona el molde en sus comentarios (los punteros que dejó DD-52), y un
+ * página menciona el molde en sus comentarios (los punteros que dejó DD-53), y un
  * guardián que se queja de un comentario enseña a ignorarlo (LEARNINGS #2). Por eso
  * los ejes de EXCLUSIÓN se prueban antes que los de detección, y el caso verde se
  * mide contra los ficheros REALES, no contra un fixture amable.
@@ -46,7 +46,7 @@ test('caza dos arquetipos a la vez', () => {
 
 /* ── redeclaraMolde ───────────────────────────────────────────────────────── */
 
-test('EXCLUYE el molde nombrado en comentarios (los punteros de DD-52)', () => {
+test('EXCLUYE el molde nombrado en comentarios (los punteros de DD-53)', () => {
   const scss = `/* El MOLDE no vive aquí: .page__inner--with-panel y .page__form están en
    * styles/_page.scss, y .ipanel en styles/_forms.scss. */
 .page {

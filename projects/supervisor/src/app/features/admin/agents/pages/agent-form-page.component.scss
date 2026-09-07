@@ -33,7 +33,7 @@
 /* El MOLDE de esta página no vive aquí: `.page__inner--with-panel` y
  * `.page__form` están en `src/styles/_page.scss`, y `.ficha`, `.ipanel` e
  * `.ipanel__delete` en `src/styles/_forms.scss`. Los cinco eran idénticos byte a
- * byte en agents, groups y users (DD-52); no los re-declares aquí, porque una
+ * byte en agents, groups y users (DD-53); no los re-declares aquí, porque una
  * regla encapsulada de componente le gana siempre a la global y el molde se
  * desviaría en una sola página sin avisar. Lo vigila `audit:page-anatomy`.
  *
