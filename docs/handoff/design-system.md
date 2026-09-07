@@ -60,19 +60,15 @@ evidente y dos no**. `917945449` y `918371548` viven en `groups-data.ts` del Sup
 veces cada uno, colgando de grupos con nombre de producción («ACD Demo C2CB», «ACD demo
 cuscare»), y el primero sale además como teléfono del usuario en la barra superior
 (`top-bar.component.ts`, `+34 917 945 449`). Parecen líneas de la propia Smart Contact copiadas
-de la app real. Un número de centralita de empresa no es dato de una persona, así que **no
-bloquean**: quedan en la lista con la nota «SIN CONFIRMAR», que es exactamente para lo que sirve
-un trinquete con motivos.
+de la app real. **Rafa lo confirmó el mismo día: son líneas de la casa**, así que se quedan, con
+ese motivo escrito en la lista. Ese es el ciclo completo de un trinquete con motivos: saca a la
+luz lo que no encaja, no bloquea lo que resulta ser legítimo, y deja la respuesta por escrito
+para que nadie la vuelva a preguntar.
 
 ⛔ **`Rafael_3AED` no se toca.** Es el identificador de Rafa en la app real y aparece 11 veces en
 `agent/seed.ts`. Lo pidió él expresamente el 2026-09-07, y con razón: un futuro barrido de
 «datos de la extracción» se lo habría llevado por delante. Queda escrito en la cabecera del seed
 y en la del propio gate, que son los dos sitios donde miraría quien fuera a limpiarlo.
-
-### ⏸️ ESPERANDO A RAFA
-
-- **Confirmar los dos teléfonos de `groups-data.ts`**: si son líneas de la casa, se quita la nota
-  «SIN CONFIRMAR»; si salieron de una pantalla real de cliente, se sustituyen como los del Agent.
 
 ## ✅ 2026-09-07 · Los cinco sitios dejan de llamar a Google, y el seed del Agent deja de publicar teléfonos de verdad
 
