@@ -82,8 +82,10 @@ leían: yo mismo afirmé dos veces que no existían. Todo lo demás salió de me
    escribe nada: colgar 6 de 44 dejaría a un diseñador viendo unas con descripción y otras sin
    ella, sin poder saber por qué. El modo `--figma` se queda como impresora para el día que
    alguien reabra la decisión de si el sistema quiere esa capa en Figma.
-3. `sc-form-section-nav` trunca las etiquetas cuando no caben (aquí se esquivó acortando el copy a
-   «General»). Hay sesión aparte abierta para arreglarlo en el componente.
+3. ~~`sc-form-section-nav` trunca las etiquetas~~ — **HECHO y fundido el mismo día** (DD-52, PR
+   #52): el índice envuelve en vez de recortar. Salió de la medición de esta sesión y volvió por
+   `main`. Ojo al orden: el copy se acortó ANTES de que existiera el arreglo, así que hoy
+   «General» se sostiene por sí sola y no por el defecto que la motivó.
 4. Si alguien quiere las baselines visuales como red, regenerarlas primero.
 ## ✅ 2026-09-06 · El índice del rail deja de recortar: envuelve, y el punto de error suelta los 25px que le robaba
 

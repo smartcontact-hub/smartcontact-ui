@@ -91,6 +91,11 @@ vivo ×3 y 78rem ×1); el constructor de reglas era la única página **sin arqu
    alta en General, edición en Alcance, y el enlace desde una categoría en Análisis IA.
    La etiqueta de la primera sección pasa de «Información básica» a «General» en los cuatro
    idiomas: el cuadro mide 99px y el texto pedía 108, y cortar no es una opción.
+   **Su motivo caducó el mismo día**, y conviene saberlo: DD-52 hizo que el índice ENVUELVA en
+   vez de recortar, así que ese corte ya no ocurriría. La etiqueta corta se queda igualmente
+   —«General» nombra bien lo que hay ahí y es lo que usan sus tres hermanos—, pero se sostiene
+   por sí sola, no por el defecto que la motivó. Si alguien la revierte buscando el problema
+   original, no lo va a encontrar.
 4. **La barra de acciones sticky de agentes, usuarios y grupos es DELIBERADA.** Su motivo vive
    en el ledger de la PLATAFORMA (entrada 43, 2026-05-07): son las tres listas con gestor de
    columnas, y la búsqueda ahí es iterativa. Etiquetas, plantillas y repositorios van planas a
