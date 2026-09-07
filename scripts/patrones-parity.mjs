@@ -25,8 +25,8 @@
 /** Principios numerados de AGENTS: `1. **Título.** cuerpo…` */
 export const RE_TITULO_AGENTS = /^(\d+)\. \*\*(.+?)\.?\*\*/gm;
 
-/** Entradas del array `principles` de la página: `title: '…'`. */
-export const RE_TITULO_DOCS = /title:\s*'([^']+)'/g;
+/** Claves del array `principles` de la página: `key: '…'` (el texto vive en i18n). */
+export const RE_KEY_DOCS = /key:\s*'([^']+)'/g;
 
 /**
  * Lo que cada principio NO puede perder al reescribirse, por número.
@@ -57,23 +57,25 @@ export function titulosAgents(slice) {
 }
 
 /**
- * Entradas de la página: título + todo su texto (aplica/evita/ya-lo-tienes) concatenado.
- * El texto se toma del bloque entre llaves de cada entrada, que es donde viven los tres
- * campos, para no depender del orden en que estén escritos.
+ * Entradas de la página, en el orden del array `principles` del `.ts`. Ese array solo guarda
+ * `{ icon, key }`; el texto (título + aplica/evita/ya-lo-tienes) vive en i18n, bajo
+ * `fundamentos.patterns.principles.<key>` de `es.json` (referencia). `principios` es ese objeto.
+ * El `texto` concatena los cuatro campos, que es contra lo que muerden los `FRAGMENTOS`.
  */
-export function entradasDocs(ts) {
-  const entradas = [];
-  const re = /\{\s*\n\s*icon:[\s\S]*?\n\s{4}\},/g;
-  for (const m of ts.matchAll(re)) {
-    const bloque = m[0];
-    const t = bloque.match(/title:\s*'([^']+)'/);
-    entradas.push({ titulo: t ? t[1] : '', texto: bloque });
-  }
-  return entradas;
+export function entradasDocs(ts, principios = {}) {
+  const claves = [...ts.matchAll(RE_KEY_DOCS)].map((m) => m[1]);
+  return claves.map((key) => {
+    const p = principios[key] ?? {};
+    return {
+      titulo: p.title ?? '',
+      texto: [p.title, p.apply, p.avoid, p.have].filter(Boolean).join(' '),
+    };
+  });
 }
 
-/** Compara las dos copias. Devuelve la lista de problemas (vacía = cuadran). */
-export function compararPatrones(agentsMd, patronesTs) {
+/** Compara las dos copias. `principios` = `es.json` → `fundamentos.patterns.principles`.
+ *  Devuelve la lista de problemas (vacía = cuadran). */
+export function compararPatrones(agentsMd, patronesTs, principios = {}) {
   const problemas = [];
   const slice = sliceUx(agentsMd);
   if (!slice) {
@@ -81,7 +83,7 @@ export function compararPatrones(agentsMd, patronesTs) {
     return problemas;
   }
   const enAgents = titulosAgents(slice);
-  const enDocs = entradasDocs(patronesTs);
+  const enDocs = entradasDocs(patronesTs, principios);
 
   if (!enAgents.length || !enDocs.length) {
     problemas.push(
