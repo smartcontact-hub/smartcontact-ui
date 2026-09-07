@@ -13,6 +13,9 @@ import {
 const AGENTS = readFileSync('AGENTS.md', 'utf8');
 const RUTA_PATRONES = 'projects/sc-docs/src/app/pages/patrones/patrones.component.ts';
 const PATRONES = readFileSync(RUTA_PATRONES, 'utf8');
+// El texto de los principios vive en i18n (es = referencia); la página solo guarda la clave.
+const ES = JSON.parse(readFileSync('projects/sc-docs/public/assets/i18n/es.json', 'utf8'));
+const PRINCIPIOS = ES.fundamentos.patterns.principles;
 
 /*
  * El caso verde se mide contra las DOS fuentes reales: un fixture amable probaría el fixture.
@@ -39,13 +42,13 @@ test('lee los principios numerados de AGENTS', () => {
 });
 
 test('lee las entradas de la página con su título', () => {
-  const e = entradasDocs(PATRONES);
+  const e = entradasDocs(PATRONES, PRINCIPIOS);
   assert.equal(e.length, titulosAgents(sliceUx(AGENTS)).length);
   assert.ok(e.every((x) => x.titulo.length > 0));
 });
 
 test('sección renombrada → lo dice en vez de callar', () => {
-  const p = compararPatrones('# Otro doc\n\n## Otra cosa\n', PATRONES);
+  const p = compararPatrones('# Otro doc\n\n## Otra cosa\n', PATRONES, PRINCIPIOS);
   assert.equal(p.length, 1);
   assert.match(p[0], /no encuentro la sección/);
 });
@@ -53,7 +56,7 @@ test('sección renombrada → lo dice en vez de callar', () => {
 /* ── el par REAL cuadra ───────────────────────────────────────────────────── */
 
 test('AGENTS y la página de Patrones cuadran hoy', () => {
-  assert.deepEqual(compararPatrones(AGENTS, PATRONES), []);
+  assert.deepEqual(compararPatrones(AGENTS, PATRONES, PRINCIPIOS), []);
 });
 
 /* ── rojos: las dos derivas que ocurren de verdad ─────────────────────────── */
@@ -63,14 +66,23 @@ test('ROJO: AGENTS gana un principio y la página se queda atrás', () => {
     '## Mandatory Workflow',
     '8. **Principio nuevo.** Algo que alguien añadió sin tocar la página.\n\n## Mandatory Workflow',
   );
-  const p = compararPatrones(conOchoAgents, PATRONES);
+  const p = compararPatrones(conOchoAgents, PATRONES, PRINCIPIOS);
   assert.ok(p.some((x) => /AGENTS tiene 8 principios y la página 7/.test(x)), p.join(' | '));
 });
 
 test('ROJO: una tarjeta pierde una regla al reescribirse (el caso que ya pasó)', () => {
-  const sinOscuro = PATRONES.replace(/no voltea en oscuro y queda ilegible/, 'queda raro');
-  assert.notEqual(sinOscuro, PATRONES, 'el reemplazo tiene que morder para que el test valga');
-  const p = compararPatrones(AGENTS, sinOscuro);
+  // La regla load-bearing del principio 1 vive ahora en el texto i18n, no en el `.ts`.
+  const principios = JSON.parse(JSON.stringify(PRINCIPIOS));
+  principios.color.avoid = principios.color.avoid.replace(
+    'no voltea en oscuro y queda ilegible',
+    'queda raro',
+  );
+  assert.notEqual(
+    principios.color.avoid,
+    PRINCIPIOS.color.avoid,
+    'el reemplazo tiene que morder para que el test valga',
+  );
+  const p = compararPatrones(AGENTS, PATRONES, principios);
   assert.equal(p.length, 1);
   assert.match(p[0], /principio 1/);
 });
@@ -86,7 +98,7 @@ test('FRAGMENTOS cubre todos los principios y ninguno de más', () => {
 });
 
 test('cada patrón de FRAGMENTOS muerde de verdad contra la página real', () => {
-  const entradas = entradasDocs(PATRONES);
+  const entradas = entradasDocs(PATRONES, PRINCIPIOS);
   for (const [n, patrones] of Object.entries(FRAGMENTOS)) {
     for (const patron of patrones) {
       assert.match(entradas[Number(n) - 1].texto, patron, `principio ${n}: ${patron} no casa`);

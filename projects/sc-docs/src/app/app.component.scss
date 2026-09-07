@@ -138,6 +138,13 @@
     gap: var(--sc-spacing-0-5);
   }
 
+  /* Idioma + tema, agrupados a la derecha del cluster de herramientas. */
+  &__tools-right {
+    display: flex;
+    align-items: center;
+    gap: var(--sc-spacing-0-5);
+  }
+
   /* Pie legal: mismo sitio que en cualquier web, abajo del todo y sin peso visual.
      No lleva la pastilla de la nav porque no compite con ella. */
   &__legal {

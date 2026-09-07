@@ -1,10 +1,10 @@
 import { ChangeDetectionStrategy, Component } from '@angular/core';
 import { RouterLink, RouterLinkActive, RouterOutlet } from '@angular/router';
+import { TranslatePipe } from '@ngx-translate/core';
 
-/** Una pestaña de la sección: ruta hija + rótulo. */
+/** Una pestaña de la sección: ruta hija (también la clave i18n del rótulo). */
 interface FundamentosTab {
   readonly path: string;
-  readonly label: string;
 }
 
 /**
@@ -18,13 +18,15 @@ interface FundamentosTab {
  */
 @Component({
   selector: 'app-fundamentos-shell',
-  imports: [RouterLink, RouterLinkActive, RouterOutlet],
+  imports: [RouterLink, RouterLinkActive, RouterOutlet, TranslatePipe],
   styleUrl: './fundamentos-shell.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
-    <nav class="fnd-tabs" aria-label="Fundamentos">
+    <nav class="fnd-tabs" [attr.aria-label]="'chrome.nav.fundamentos' | translate">
       @for (tab of tabs; track tab.path) {
-        <a [routerLink]="tab.path" routerLinkActive="is-active">{{ tab.label }}</a>
+        <a [routerLink]="tab.path" routerLinkActive="is-active">
+          {{ 'fundamentos.tabs.' + tab.path | translate }}
+        </a>
       }
     </nav>
     <router-outlet />
@@ -32,8 +34,8 @@ interface FundamentosTab {
 })
 export class FundamentosShellComponent {
   protected readonly tabs: readonly FundamentosTab[] = [
-    { path: 'escala-color', label: 'Escala y color' },
-    { path: 'tipografia', label: 'Tipografía' },
-    { path: 'patrones', label: 'Patrones' },
+    { path: 'escala-color' },
+    { path: 'tipografia' },
+    { path: 'patrones' },
   ];
 }

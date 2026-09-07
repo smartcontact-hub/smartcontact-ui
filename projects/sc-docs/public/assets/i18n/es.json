@@ -1,0 +1,370 @@
+{
+  "chrome": {
+    "brandSub": "Design Engineering",
+    "search": "Buscar…",
+    "nav": {
+      "sectionsAria": "Secciones",
+      "fundamentos": "Fundamentos",
+      "componentes": "Componentes",
+      "uso": "Uso real",
+      "reglas": "Reglas",
+      "lab": "Lab",
+      "avisoLegal": "Aviso legal"
+    },
+    "cmd": {
+      "sections": "Secciones",
+      "language": "Idioma"
+    }
+  },
+  "categories": {
+    "Botones": "Botones",
+    "Inputs": "Inputs",
+    "Datos": "Datos",
+    "Overlays": "Overlays",
+    "Feedback": "Feedback",
+    "Layout": "Layout",
+    "Patrones": "Patrones"
+  },
+  "componentsIndex": {
+    "eyebrow": "Sistema de diseño",
+    "title": "Componentes",
+    "lead": "{{total}} wrappers <code>sc-*</code> de <code>@smartcontact-hub/components</code>, en {{families}} familias. Para qué sirve cada uno de un vistazo; entra en cualquiera para ver sus variantes, estados y código, en claro y oscuro."
+  },
+  "components": {
+    "blurb": {
+      "button": "Acción primaria, secundaria o de texto. Severidades de marca, tamaños y estado de carga.",
+      "inputtext": "Campo de texto de una línea, la base de todo formulario.",
+      "textarea": "Texto multilínea con autoajuste de alto y contador opcional de caracteres.",
+      "inputnumber": "Entrada numérica con pasos, mínimo/máximo y formato de miles o moneda.",
+      "select": "Selección única desplegable, con búsqueda y agrupación de opciones.",
+      "multiselect": "Selección de varios valores de una lista, con búsqueda y fichas de lo elegido.",
+      "checkbox": "Casilla booleana, o selección múltiple dentro de una lista de opciones.",
+      "radiobutton": "Elección única dentro de un grupo de opciones excluyentes.",
+      "toggleswitch": "Interruptor on/off para ajustes que se aplican al instante.",
+      "datepicker": "Selección de fecha o rango con calendario y entrada por teclado.",
+      "search": "Campo de búsqueda con icono, borrado rápido y debounce para filtrar en vivo.",
+      "inputgroup": "Compón un campo con adornos pegados: prefijo, sufijo, botón o icono.",
+      "colordotpicker": "Elige un color de la paleta de marca como punto, para etiquetar o categorizar.",
+      "photoupload": "Sube y previsualiza una imagen (avatar, logo) con recorte y validación.",
+      "badge": "Contador o punto de estado sobre un icono o acción: no leídos, alertas.",
+      "chip": "Ficha compacta y descartable para filtros activos, tags o valores seleccionados.",
+      "tag": "Etiqueta de estado de solo lectura, con severidad de marca y punto de color opcional.",
+      "avatar": "Foto, iniciales o icono de una persona o entidad, con tamaños y estado.",
+      "gauge": "Indicador radial de un valor dentro de un rango: ocupación, progreso, umbral.",
+      "datatable": "Tabla de datos con orden por cabecera, paginación, selección y columnas gestionables.",
+      "columnselector": "Muestra, oculta y reordena las columnas de una tabla arrastrando.",
+      "inlinerenamecell": "Renombra un valor en la propia celda, sin abrir un diálogo aparte.",
+      "dialog": "Ventana modal para una tarea enfocada: formulario, detalle o decisión.",
+      "confirmdialog": "Pide confirmar una acción antes de ejecutarla, con foco en el botón seguro.",
+      "deleteentitydialog": "Confirmación de borrado con el nombre de la entidad, para no equivocar el objetivo.",
+      "impactpreviewdialog": "Enseña qué quedará afectado antes de aplicar un cambio en cascada.",
+      "drawer": "Panel lateral que entra desde el borde para detalles o formularios sin salir de la página.",
+      "grouppopover": "Popover anclado para editar o elegir sin perder el contexto de fondo.",
+      "commandpalette": "Buscador de acciones y navegación por teclado (⌘K), tipo paleta de comandos.",
+      "keyboardshortcuts": "Hoja de los atajos de teclado disponibles, agrupados por contexto.",
+      "message": "Aviso en línea dentro del flujo: info, éxito, advertencia o error.",
+      "toast": "Notificación efímera que aparece y se va sola, sin bloquear la pantalla.",
+      "emptystate": "Pantalla cuando no hay datos: explica qué es y ofrece el siguiente paso.",
+      "skeleton": "Silueta gris mientras carga el contenido, para que el layout no salte.",
+      "progressbar": "Barra de progreso determinado, con el porcentaje de una tarea larga.",
+      "progressspinner": "Girador de carga para esperas de duración desconocida.",
+      "card": "Contenedor con superficie, sombra y radio para agrupar contenido relacionado.",
+      "panel": "Bloque con cabecera y cuerpo, plegable, para seccionar una página.",
+      "sectioncard": "Tarjeta de sección con título y descripción para agrupar campos de un formulario.",
+      "subsection": "Subdivisión con encabezado ligero dentro de una sección mayor.",
+      "divider": "Línea o espacio con margen para cortar visualmente entre bloques.",
+      "slot": "Hueco de composición: mete cualquier contenido en un patrón sin acoplarlo.",
+      "formsectionnav": "Navegación lateral de las secciones de un formulario largo, con salto y estado.",
+      "formdangerzone": "Zona final del formulario para acciones destructivas: borrar, desactivar.",
+      "stickyformheader": "Cabecera de formulario que se fija arriba al hacer scroll, con guardar y cancelar.",
+      "breadcrumb": "Ruta de migas de la jerarquía actual, con el tramo activo resaltado.",
+      "bulkactionbar": "Barra que aparece al seleccionar filas, con el recuento y las acciones en bloque.",
+      "bulkeditmenu": "Menú de acciones para aplicar a varias filas seleccionadas a la vez.",
+      "bulktranscriptionmodal": "Modal para lanzar la transcripción de varias conversaciones en lote."
+    }
+  },
+  "fundamentos": {
+    "tabs": {
+      "escala-color": "Escala y color",
+      "tipografia": "Tipografía",
+      "patrones": "Patrones"
+    },
+    "type": {
+      "title": "Tipografía",
+      "lead": "Escala <strong>redonda</strong> en <strong>rem</strong> sobre root <strong>16</strong> (<code>font-size-300</code> = 16px = 1rem exacto), <strong>step-named</strong> (mismo idioma que el Kit Pro y los devs) y <strong>desacoplada</strong> de la escala de espaciado. 8 tamaños + 7 line-heights.",
+      "note": "<strong>El 14 y el 16 no son lo mismo.</strong> El DS no pisa el root del navegador (<code>html</code> se queda en <code>100%</code>), así que <code>1rem</code> = 16px y la rampa cae en píxeles redondos. El <strong>14</strong> que se ve por todo el sistema es el otro eje: es la base de la <a href=\"#/fundamentos/escala-color\">escala de espaciado</a> (<code>--sc-scale-1</code> = 14px, el sufijo es el multiplicador) y el tamaño del <strong>cuerpo</strong> por defecto (<code>font-size-200</code>). Bajar el root a 14 encogería los dos ejes a la vez.",
+      "lineHeights": "Line-heights",
+      "weights": "Pesos",
+      "foot": "Naming por <strong>step</strong> (100…800), no por valor: el nombre no miente si el valor cambia, y Figma, código y los devs hablan el mismo idioma. En <strong>rem</strong> para que la letra escale con el tamaño base del navegador (accesibilidad). En CSS hay además <code>font-size-50/75/600/700/900</code>: son <strong>snaps</strong>, pasos que el Kit no trae y que se pegan al vecino para que el naming por step no deje huecos.",
+      "sample": {
+        "100": "Micro-labels, captions, metadatos de tabla",
+        "200": "Cuerpo denso y ayudas de formulario",
+        "300": "Cuerpo base y etiquetas",
+        "400": "Cuerpo destacado",
+        "450": "Subtítulos",
+        "500": "Títulos de sección",
+        "650": "Encabezados de página",
+        "800": "Display"
+      }
+    },
+    "patterns": {
+      "title": "Patrones de pantalla",
+      "lead": "La barra de calidad al construir una pantalla de producto. Cada patrón apunta a lo que el sistema <strong>ya</strong> resuelve, para que una pantalla nueva nazca consistente en vez de corregirla después.",
+      "haveLabel": "Ya en el sistema",
+      "demo": {
+        "aria": "Estado de carga: esqueleto frente a spinner",
+        "title": "Estado de carga: el contraste, en vivo",
+        "lead": "A la izquierda, <code>sc-skeleton</code> con la silueta de la fila: reserva el hueco exacto, así al cargar no salta nada. A la derecha, el spinner centrado: no reserva estructura, y el layout salta cuando por fin llegan los datos.",
+        "labelDo": "Esqueleto con la forma del contenido",
+        "labelDont": "Spinner centrado (no reserva el hueco)"
+      },
+      "foot": "Es la misma barra que sigue quien construye las apps de este repo: está también en <code>AGENTS.md</code> (sección «UX de pantalla»), el documento que se lee al tocar el código. No es una checklist para lucir, es lo que separa una pantalla profesional de una genérica.",
+      "principles": {
+        "color": {
+          "title": "Color funcional",
+          "apply": "Cada color sale de un token --sc-* y significa algo: estado, jerarquía o feedback.",
+          "avoid": "Hex a mano, teñir botones e iconos por decoración, o usar un --sc-color-* de paleta como fondo o color de página: no voltea en oscuro y queda ilegible.",
+          "have": "La escala --sc-* y el puente al preset. Nunca hace falta un hex."
+        },
+        "loading": {
+          "title": "Estados de carga",
+          "apply": "Mientras llegan los datos, pinta un esqueleto con la forma del contenido y reserva su hueco.",
+          "avoid": "Spinner centrado, o inyectar los datos y que la página salte (layout shift).",
+          "have": "sc-skeleton (rectángulo o círculo, animación de onda). Ejemplo vivo abajo."
+        },
+        "copy": {
+          "title": "Copy sin relleno",
+          "apply": "Un título que se explica solo va solo. Descripción únicamente si aporta algo no obvio.",
+          "avoid": "Un subtítulo decorativo de una o dos frases bajo cada cabecera.",
+          "have": "Regla, no componente: menos texto, más señal. Si al quitarlo no se pierde nada, quítalo."
+        },
+        "icons": {
+          "title": "Iconografía consistente",
+          "apply": "Una sola librería profesional, siempre vía sc-icon (Material Symbols).",
+          "avoid": "Emojis en la interfaz, o mezclar dos juegos de iconos.",
+          "have": "sc-icon sobre el set generado: un único idioma visual en todas las apps."
+        },
+        "density": {
+          "title": "Densidad y jerarquía",
+          "apply": "Layout compacto. Acciones secundarias en un menú kebab, métricas alineadas, chips a icono cuando el color ya dice el estado.",
+          "avoid": "Repetir en cada vista los KPIs que ya están en el dashboard, o tarjetas sin dato ni acción.",
+          "have": "sc-datatable, sc-card y el patrón de overflow del supervisor."
+        },
+        "a11y": {
+          "title": "Accesibilidad, barra mínima",
+          "apply": "Contraste 4.5:1 en texto y 3:1 en texto grande e iconos. Todo control alcanzable por teclado, con foco visible y etiqueta.",
+          "avoid": "Comunicar un estado solo con color, o dejar un control sin label.",
+          "have": "El contraste ya vive en los tokens; el riesgo entra al pintar un color a mano."
+        },
+        "motion": {
+          "title": "Sin saltos",
+          "apply": "Anima solo transform y opacity. Imágenes con width/height o aspect-ratio. Banners y toasts en un hueco ya reservado.",
+          "avoid": "Animar top, left, width o height, o insertar algo encima del contenido al cargar.",
+          "have": "La transición de tema del propio sitio ya funde con opacity, sin recolocar nada."
+        }
+      }
+    },
+    "color": {
+      "title": "Escala y color",
+      "intro": "Tokens <code>--sc-*</code> del paquete <code>@smartcontact-hub/styles</code>. Cada valor es trazable al export del Kit y se verifica en CI (<code>tokens:gen</code> · <code>tokens:parity</code>).",
+      "scaleTitle": "Escala 14-base",
+      "thToken": "Token",
+      "thPx": "Diseño (px)",
+      "primitiveTitle": "Color primitivo",
+      "primitiveHint": "Pasa por encima de un color para ver su token, su hex y su HSL. Cada línea se copia al pulsarla.",
+      "copyHexAria": "Pulsa para copiar el hex.",
+      "semanticTitle": "Color semántico",
+      "semanticHint": "Qué SIGNIFICA cada fondo y cuándo se usa. El sistema ya sabía cuánto vale cada token; esta era la mitad que faltaba. Sale de <code>scripts/token-docs-map.mjs</code>, la misma fuente que alimenta el lote de descripciones de Figma, así que las dos no pueden contar cosas distintas.",
+      "semanticError": "No se pudo cargar el listado. Se regenera con <code>tokens:docs</code>.",
+      "primitive": {
+        "blue": "Blue (marca)",
+        "slate": "Slate (neutros)",
+        "sky": "Sky (info)",
+        "green": "Green (success)",
+        "amber": "Amber (warning)",
+        "red": "Red (danger)"
+      },
+      "family": {
+        "superficie": "Superficie",
+        "estado": "Estado",
+        "utilidad": "Utilidad",
+        "marca": "Marca",
+        "secundario": "Secundario",
+        "acento": "Acento",
+        "info": "Info",
+        "éxito": "Éxito",
+        "aviso": "Aviso",
+        "peligro": "Peligro",
+        "violeta": "Violeta"
+      }
+    }
+  },
+  "uso": {
+    "title": "Uso real de componentes",
+    "intro": "Dónde aparece cada componente del DS en las pantallas <strong>reales</strong> del Supervisor (no en la demo aislada). Capturas tomadas del DOM renderizado — se regeneran con <code>npm run usage:capture</code>, no se desfasan.",
+    "meta": "{{screens}} pantallas · {{seen}}/{{total}} componentes DS vistos · capturado {{date}} · {{viewport}} · tema {{theme}}",
+    "byComponent": "Por componente",
+    "byScreen": "Por pantalla",
+    "error": "No se pudo cargar <code>/usage/_usage-status.json</code>. Corre <code>npm run usage:capture</code> para generar las capturas.",
+    "loading": "Cargando capturas…",
+    "screensCount": "{{count}} pantalla(s)",
+    "shellGlobal": "Shell-global",
+    "shellGlobalNote": "en todas las pantallas",
+    "shellGlobalLead": "Montados en el shell de la app → presentes en cualquier pantalla:",
+    "gatedTitle": "No capturados aislados",
+    "gatedNote": "se ven en el flujo",
+    "gatedLead": "La pokédex los marca usados, pero solo se ven tras una interacción no scriptada o con datos vacíos (p.ej. estado vacío). Documentados aquí; mira la vista «Por pantalla» de la sección donde viven.",
+    "uses": "usos"
+  },
+  "reglas": {
+    "eyebrow": "Estado del proyecto",
+    "title": "Sistema de reglas",
+    "lead": "El sistema de reglas se rehízo entero. Antes: grabar llamadas, con prioridades, conflictos y borradores. Ahora: <strong>transcribir</strong>, con varias reglas activas sin conflictos y un constructor que cualquiera entiende. Cada cambio se cuenta con su <strong>antes</strong>, su <strong>ahora</strong> y su <strong>porqué</strong>. Las capturas son del Supervisor real.",
+    "tocTitle": "La historia, paso a paso",
+    "toc": {
+      "p1": "Qué es una regla",
+      "p2": "El giro a transcripción",
+      "p3": "El alcance: de casillas a un árbol",
+      "p4": "Prioridad y conflictos: de lo difícil a nada",
+      "p5": "Borradores: un estado de menos",
+      "p6": "La estimación en vivo",
+      "p7": "Dónde viven: Repositorios",
+      "p8": "Transcripción en detalle",
+      "p9": "Lo que queda por cerrar",
+      "conclusiones": "Conclusiones"
+    },
+    "before": "Antes",
+    "after": "Ahora",
+    "zoom": "Ampliar",
+    "whyLabel": "Por qué se cambió",
+    "seeCode": "Ver el código real",
+    "beforeAfterCode": "Antes y ahora, en código",
+    "s1": {
+      "title": "Primero, qué es una regla",
+      "p1": "Una regla automatiza qué pasa con las conversaciones que <strong>entren a partir de ahora</strong>: si se transcriben y si se analizan con IA. No toca lo que ya existe.",
+      "note": "Tocar lo que ya existe es otra cosa: las acciones <em>bulk</em> (transcribir ahora una selección). Regla = a futuro. Bulk = ahora. Es la confusión más fácil de cometer, así que conviene fijarla antes de empezar."
+    },
+    "s2": {
+      "title": "El giro: de grabar a transcribir",
+      "p1": "Durante mucho tiempo, el caso fuerte fueron las reglas de <strong>grabación</strong>. Un cambio en la normativa las dejó sin sentido, así que salen del MVP. El detalle legal queda fuera; aquí importa la consecuencia.",
+      "p2": "El peso se movió a <strong>transcripción</strong> y <strong>clasificación</strong>, a la vez que entra en desarrollo el sistema de <strong>transcripciones múltiples</strong>. Al rehacer las reglas para transcribir, se aprovechó para simplificar lo que se había vuelto complicado. Los tres cambios que vienen son esa simplificación."
+    },
+    "s3": {
+      "title": "El alcance: de tres casillas rígidas a un árbol",
+      "lead": "El «alcance» es a qué conversaciones llega una regla. Era lo más rígido del modelo viejo, y es donde más se notó el cambio.",
+      "altBefore": "Pantalla vieja de crear regla: tres casillas Servicios Y Grupos Y Agentes",
+      "capBefore": "Tres casillas fijas (Servicios <strong>Y</strong> Grupos <strong>Y</strong> Agentes).",
+      "altAfter": "Constructor nuevo: árbol de condiciones campo·operador·valor — Y dentro de cada alternativa, O entre alternativas",
+      "capAfter": "Un árbol de condiciones <code>campo · operador · valor</code>: <strong>Y</strong> dentro de cada alternativa, <strong>O</strong> entre alternativas.",
+      "why": "Las tres casillas no sabían decir cosas normales del negocio: «ventas <em>o</em> incidencias», o mezclar condiciones. Y guardaban <strong>nombres</strong>: si renombrabas un grupo o le cambiabas los miembros, la regla se quedaba mirando un nombre viejo. El árbol expresa cualquier combinación, y guarda <strong>referencias vivas</strong>: «Todos» incluye también lo que se cree mañana, y un grupo en el campo Agente significa «sus miembros <strong>ahora</strong>»."
+    },
+    "s4": {
+      "title": "Prioridad y conflictos: de lo más difícil a nada",
+      "lead": "Aquí estaba toda la complejidad del sistema viejo. Y la forma de resolverla fue, sencillamente, hacerla desaparecer.",
+      "altBefore": "Listado viejo: columna de prioridad, dos reglas EN CONFLICTO, sección de borradores",
+      "capBefore": "Varias activas, ordenadas por <strong>prioridad</strong>, con dos marcadas <strong>EN CONFLICTO</strong>.",
+      "altAfter": "Listado nuevo: sin prioridad ni conflictos, el estado activa o inactiva por fila",
+      "capAfter": "Varias pueden estar <strong>activas</strong>. Sin números de prioridad, sin conflictos.",
+      "why": "Antes, con varias reglas activas, cuando dos podían aplicar a la misma conversación había que decidir <strong>cuál manda</strong>: un número de prioridad, arrastrar para ordenar, y un detector que te avisaba de cada choque. Era lo más complejo de todo. Ahora siguen pudiendo estar <strong>varias activas</strong>, pero el lío desaparece con una idea simple: una conversación se procesa <strong>una sola vez</strong>, aplicando la <strong>unión</strong> de lo que pidan las reglas que encajan. Sin decidir cuál gana, sin orden, sin conflictos. Encender una ya no apaga a las demás."
+    },
+    "s5": {
+      "title": "Borradores: un estado de menos",
+      "lead": "El listado viejo tenía un estado intermedio que nadie había pedido. Se quitó.",
+      "altBefore": "Listado viejo con una sección «Inactivas y borradores» y un BORRADOR SIN EDITAR",
+      "capBefore": "Activa, inactiva… y «<strong>Borrador sin editar</strong>», en su propia sección.",
+      "altAfter": "Listado nuevo con solo dos estados: activa o inactiva",
+      "capAfter": "Dos estados y ya: <strong>activa</strong> o <strong>inactiva</strong>.",
+      "why": "El «borrador» era una copia sin editar que no se podía activar hasta tocarla, y vivía en una sección aparte. Un estado de más que solo confundía. Ahora desactivar una regla <strong>solo la pasa a Inactiva</strong> (sin copias ni borradores), y duplicar crea una copia inactiva normal, lista para editar o activar. Activar y desactivar es lo único que un supervisor necesita."
+    },
+    "s6": {
+      "title": "Lo que se ganó: una estimación en vivo",
+      "p1": "No todo fue quitar. Mientras montas una regla, un panel fijo a la derecha te dice a cuántas conversaciones afectaría: «<strong>Afectaría a N de las últimas M conversaciones</strong>», con una barra de proporción (amplia frente a quirúrgica) y una proyección «≈ N al día». Es una <strong>estimación</strong> sobre el histórico, no un dato cerrado. Cuenta de verdad cuántas conversaciones casan.",
+      "note": "Y guía sin estorbar: al intentar guardar, una condición incompleta o un rango imposible se marcan y bloquean; un duplicado o una contradicción solo <strong>avisan</strong>."
+    },
+    "s7": {
+      "title": "Dónde viven: Repositorios",
+      "p1": "Las reglas viven en <strong>Repositorios</strong>, dentro de administración, el mismo sitio que servicios, grupos o tipificaciones. Es una tabla simple: nombre, el alcance <strong>en prosa</strong>, qué hace y su estado. Esa frase del listado («Aplica cuando el servicio es Ventas Comercial y la duración supera 60 s») sale directa del árbol de condiciones, para que leas qué hace una regla sin abrirla."
+    },
+    "s8": {
+      "title": "Transcripción en detalle",
+      "p1": "<strong>Qué son las transcripciones múltiples</strong>: una misma conversación (una llamada) puede tener varios tramos de grabación, y cada tramo se transcribe por separado. Por eso una llamada con N tramos cuenta como N audios, y cada tramo lleva su propio estado de transcripción.",
+      "p2": "Esto vive en el lado de <strong>Conversaciones</strong> (el reproductor multi-tramo y las acciones en bloque), no en el constructor de reglas: la regla decide <em>qué</em> se transcribe a futuro; los tramos son cómo se almacena y gestiona lo ya transcrito.",
+      "part1": "<strong>La base ya está en el código</strong>: el reproductor multi-tramo y el estado por tramo (transcrito o no) ya existen, y el bulk de transcripción ya cuenta los tramos.",
+      "part2": "<strong>Coste</strong>: el bulk ya cuenta cuántos audios entran y cuántos admiten análisis IA (un toggle aparte). El coste es real y crece con las múltiples.",
+      "part3": "<strong>Re-transcribir es destructivo</strong>: borra la transcripción y los análisis derivados. Por eso pide una confirmación escrita."
+    },
+    "s9": {
+      "title": "Lo que queda por cerrar",
+      "p1": "Las preguntas que el MVP deja abiertas a propósito. Abajo, lo que ya se decidió."
+    },
+    "outcome": {
+      "eyebrow": "De la charla con el equipo · 2026-06-23",
+      "title": "Conclusiones",
+      "intro": "Lo que se decidió y lo que ya está <strong>construido</strong> desde entonces. Lo que quedó en el aire va al final.",
+      "mvpTitle": "El rumbo del MVP",
+      "remainingTitle": "Lo que queda",
+      "confirmTitle": "A confirmar"
+    },
+    "footer": "Esta página vive dentro de sc-docs: se actualiza con el código. Las capturas «ahora» se regeneran con <code>npm run usage:capture</code> y las «antes» quedan guardadas para contar el cambio.",
+    "concerns": {
+      "cost": { "q": "Coste de transcripción e IA", "detail": "Cada transcripción consume cómputo, y el análisis IA va aparte. El coste crece con las transcripciones múltiples. ¿Ponemos límites? ¿La IA siempre opcional? El constructor ya estima el impacto, pero el coste lo cierra el equipo." },
+      "governance": { "q": "Gobierno de las transcripciones múltiples", "detail": "Si una conversación tiene varios tramos transcritos por separado, ¿qué regla gobierna cada uno? ¿Cómo se almacenan? ¿Cuándo se re-transcribe?" },
+      "dependency": { "q": "Dependencia transcripción → clasificación", "detail": "La clasificación con IA necesita la transcripción por debajo. Si la transcripción falla o no existe, ¿qué hace la regla de clasificación?" },
+      "migration": { "q": "Migración de las reglas de grabación", "detail": "Quedan obsoletas con la nueva ley y salen del MVP. ¿Las auto-desactivamos, las borramos, las convertimos? ¿Y qué pasa con lo que ya está grabado?" },
+      "retention": { "q": "Retención y borrado", "detail": "Cuánto tiempo se guardan las transcripciones y cómo se borran. El cambio normativo es lo que mueve el foco; el detalle legal lo cierra el equipo." },
+      "calendar": { "q": "Calendario de despliegue", "detail": "Las reglas las configuran los supervisores, desde el Supervisor. Queda por fijar cuándo entra en producción el sistema de transcripciones múltiples." }
+    },
+    "decisions": {
+      "manyActive": { "t": "Varias reglas activas, sin conflictos · hecho", "d": "Varias reglas pueden estar activas a la vez; encender una no apaga a las demás. Y sin la vieja complejidad: una conversación se procesa una vez, aplicando la unión de lo que pidan las reglas que encajan. Sin prioridad, sin orden, sin conflictos que resolver." },
+      "scope": { "t": "El alcance combina con Y y O · hecho", "d": "Dentro de una alternativa las condiciones se combinan con Y; añadir otra alternativa es el O. Esa estructura fija expresa cualquier combinación sin interruptores que aprender. La tipificación es una entidad más (no una condición suelta) y es el caso de valor más claro: «quiero solo las que acabaron en venta»." },
+      "liveRefs": { "t": "Referencias vivas, no nombres congelados · hecho", "d": "«Todos» incluye también las entidades futuras, y un grupo en el campo Agente significa «sus miembros ahora». Cambiar la composición de un grupo se refleja sin reeditar la regla." },
+      "directionDuration": { "t": "Dirección y duración, dentro del constructor · hecho", "d": "Son campos más del alcance, no un bloque «Criterios» aparte. Un solo sitio para filtrar, sin duplicar la dirección en dos lugares." },
+      "estimate": { "t": "Estimación de impacto en vivo · hecho", "d": "Mientras montas, el pie dice «afectaría a N de las últimas M conversaciones», con barra de proporción y proyección día/mes. Es una estimación sobre el histórico, no un dato cerrado." },
+      "oneOrZero": { "t": "Una conversación cumple la condición o no · decidido", "d": "Uno o cero: no hay cumplimiento parcial, no se transcribe «por un trozo» de la condición. Y aunque encaje en varias reglas activas, se procesa una sola vez: nunca hay doble transcripción." },
+      "repos": { "t": "Casa de las reglas: Repositorios · en marcha", "d": "En administración, no un modal: es un formulario y se ve mejor a pantalla completa. El mismo repositorio sirve para reglas de transcripción y tipificación, y a futuro las listas de orígenes de IVR (hoy hay que replicarlas a mano en 15-16 nodos). Empezar simple, con una tabla." },
+      "futureFirst": { "t": "Las reglas son a futuro; la clasificación va después · decidido", "d": "Nada retroactivo aquí: aplicar a conversaciones pasadas es bulk. Y la clasificación con IA (categorías) es la parte de más valor, pero se saca de aquí de momento: primero la transcripción." }
+    },
+    "pending": {
+      "backend": "Cerrar con el equipo de backend qué criterios entran de inicio; el constructor ya cubre dirección, duración y tipificación. El backend puede ir por delante de la UI: crear la tabla, meter reglas y evaluar la condición aunque la pantalla no exista todavía.",
+      "transcription": "Confirmar el ajuste fino de calidad y esfuerzo de la transcripción (viabilidad y coste). Hoy limpia música y ruido por defecto.",
+      "repos": "Levantar la sección de Repositorios (transcripción + tipificación), empezando por una tabla simple.",
+      "simulator": "Construir el simulador de coste: estimar qué porcentaje se transcribiría y el gasto, comparando con el mes anterior.",
+      "aed": "Avanzar AED con tipificación, agendas y la regla de transcripción (incluida la migración de las reglas de grabación)."
+    },
+    "confirm": {
+      "naming": "Naming definitivo de las entidades («contactantes» frente a grupos/ACD).",
+      "invert": "Si entra la opción de invertir o excluir condición («todo esto menos X»).",
+      "nested": "Constructor anidado más allá de 2 niveles y simulador de impacto/coste como evolución, no MVP.",
+      "detailWindow": "El detalle de la conversación en ventana propia (reproductor no bloqueante)."
+    },
+    "feedback": {
+      "title": "Feedback",
+      "aria": "Feedback del equipo, por fecha",
+      "close": "Cerrar (Esc)",
+      "hint": "Notas de revisión, por fecha (la más reciente arriba). Cada punto, validado contra el prototipo.",
+      "entries": {
+        "jul17": {
+          "date": "17 jul 2026",
+          "notes": {
+            "manyActive": { "t": "Varias reglas activas a la vez", "d": "Se levanta el límite de «una sola activa»: ahora varias pueden estar encendidas. El solape se resuelve sin prioridad ni conflictos, con la regla de la unión: una conversación se procesa una vez, aplicando lo que pidan juntas las reglas que encajan. Desaparece de paso el «desactivar en silencio» que quedaba pendiente." }
+          }
+        },
+        "jul1": {
+          "date": "1 jul 2026",
+          "notes": {
+            "pause": { "t": "Pausar una regla (futuro)", "d": "Hoy solo hay Activa/Inactiva (un booleano). Añadir «Pausar» como acción propia, distinta de desactivar, para más adelante." },
+            "header": { "t": "Trabajar la cabecera del constructor", "d": "Guardar vive abajo, en el footer; la cabecera (volver + título + tipo) va proyectada a la TopBar. La acción principal queda lejos de la navegación y puede solaparse con el breadcrumb de la app. Resolver dónde viven navegación y Guardar." },
+            "scopeCopy": { "t": "Copy de la tabla, columna «Alcance»", "d": "Muestra la prosa completa del árbol (servicio + grupo + tipificación + duración): puede salir larga y confusa en una celda. La lista NO tiene columna de descripción hoy: decidir si conviene nombre + descripción corta, o acortar la prosa con tooltip." },
+            "exclusive": { "t": "¿Excluyentes o cascada en el alcance?", "d": "Entender si al marcar Grupos ya no debería poder elegir Servicios. Hoy NO son excluyentes: servicio/grupo/agente se combinan libremente con Y/O en el árbol. Decidir si debe haber cascada o exclusión (enlaza con «invertir/excluir condición», ya en A confirmar)." },
+            "oneTable": { "t": "Una sola tabla, no Activas/Inactivas", "d": "Unificar las dos secciones en una tabla: la columna Estado ya distingue Activa/Inactiva. Menos ruido. (Escrito bajo el modelo «una sola activa» de entonces; ese límite se levantó el 17 jul — la tabla única sigue vigente.)" },
+            "confirmModal": { "t": "Modal de confirmación al activar — resuelto el 17 jul", "d": "Entonces, activar una regla desactivaba la anterior en SILENCIO y se pedía una confirmación «esto desactivará [X]». Con varias activas a la vez (17 jul) ya no se desactiva nada al activar: el modal dejó de ser necesario." }
+          }
+        }
+      }
+    },
+    "lightbox": {
+      "close": "Cerrar (Esc)",
+      "hint": "Pulsa <kbd>Esc</kbd> o haz clic fuera para cerrar"
+    }
+  }
+}

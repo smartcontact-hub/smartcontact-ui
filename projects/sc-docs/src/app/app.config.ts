@@ -1,7 +1,9 @@
 import { ApplicationConfig, provideZoneChangeDetection } from '@angular/core';
 import { provideAnimationsAsync } from '@angular/platform-browser/animations/async';
+import { provideHttpClient, withFetch } from '@angular/common/http';
 import { provideRouter, withHashLocation, withNavigationErrorHandler } from '@angular/router';
 import { provideTranslateService } from '@ngx-translate/core';
+import { provideTranslateHttpLoader } from '@ngx-translate/http-loader';
 
 import { provideSmartContactUi } from '@smartcontact-hub/components';
 import { routes } from './app.routes';
@@ -26,7 +28,18 @@ export const appConfig: ApplicationConfig = {
     // un deploy con la pestaña abierta (recarga una vez en el destino). Ver chunk-reload-handler.ts.
     provideRouter(routes, withHashLocation(), withNavigationErrorHandler(reloadOnChunkLoadError)),
     provideAnimationsAsync(),
-    provideTranslateService({ fallbackLang: 'es', lang: 'es' }),
+    provideHttpClient(withFetch()),
+    // i18n (mismo patrón que el Supervisor): ngx-translate v17 con loader HTTP que trae
+    // `/assets/i18n/<lang>.json`. Español es la referencia; inglés cubre el chrome y las
+    // páginas clave (el resto sigue en español, sin clave, tal cual en la plantilla).
+    // `LanguageService` aplica el idioma persistido al arrancar; `extend: true` fusiona el
+    // dict que auto-registran los componentes SCDS del shell (⌘K) antes de que cargue el loader.
+    provideTranslateService({
+      fallbackLang: 'es',
+      lang: 'es',
+      extend: true,
+      loader: provideTranslateHttpLoader({ prefix: '/assets/i18n/', suffix: '.json' }),
+    }),
     provideSmartContactUi({ license: PRIMEUI_LICENSE }),
   ],
 };

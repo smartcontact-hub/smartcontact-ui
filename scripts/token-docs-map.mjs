@@ -259,6 +259,59 @@ export const TOKEN_DOCS = [
   { token: 'sc-bg-violet-subtle-active', familia: 'violeta', uso: 'Pulsado de la capa suave del violeta.', no: null, dd: null },
 ];
 
+/**
+ * Contrapartida en INGLÉS de `uso`/`no`, para que sc-docs pinte la página en inglés. Se
+ * mantiene en un mapa aparte a propósito: las filas de arriba (español) son las que alimentan
+ * el lote de Figma, y el fichero de Figma es español. `aJson` fusiona esto como `usoEn`/`noEn`;
+ * el español sigue mandando para Figma. Cada `--sc-bg-*` con fila tiene aquí su par.
+ */
+const TOKEN_DOCS_EN = {
+  'sc-bg-canvas': { uso: 'The page canvas: the floor everything rests on. White in light and slate-950 in dark, the crossover no other token gives.', no: "Don't use it for a card: that's surface, and on canvas a card reads by its border." },
+  'sc-bg-surface': { uso: 'The content surface: cards, modals, popovers, and the fill of a form field.', no: "Don't use it as the shell floor in dark: there it's the card, not the background." },
+  'sc-bg-default': { uso: 'Does two jobs: the shell floor behind the bar and the sidebar, and the gray fill of form fields.', no: 'Never a content surface inside main: there a region is either canvas or a block that reads by its border.' },
+  'sc-bg-elevated': { uso: 'An alias for meaning elevated (popovers, dropdowns). Today it equals surface because the light theme is flat.', no: 'It exists so nobody writes a raw white when what they mean is elevated.' },
+  'sc-bg-hover': { uso: "Generic hover for row components (tables, lists, menu items), where the semantic hue doesn't matter.", no: null },
+  'sc-bg-selected': { uso: 'Selected row or item, in the soft brand layer.', no: null },
+  'sc-bg-disabled': { uso: 'Background of a disabled control. Comes 1:1 from the Kit.', no: "Disabled isn't the same as read-only or hidden: choose the state before the color." },
+  'sc-bg-overlay-transparent': { uso: 'White with zero alpha, for overlays that need a declared background without painting anything.', no: "It's not transparent: it's transparent white, and it shows when blended with another color." },
+  'sc-bg-primary': { uso: "The screen's primary action: the button the person came to press.", no: 'One per screen, and never two primaries in a row.' },
+  'sc-bg-primary-hover': { uso: "Primary hover. It LIGHTENS the navy instead of darkening it: that's the Kit's brand intent, not an oversight.", no: null },
+  'sc-bg-primary-active': { uso: 'Primary pressed state.', no: null },
+  'sc-bg-primary-subtle': { uso: 'The soft brand layer: the background of a selected item, a brand chip, or a house informational notice.', no: "Don't put dark text on it without checking contrast: it's a tint, not a neutral surface." },
+  'sc-bg-primary-subtle-hover': { uso: 'Hover of the soft brand layer.', no: null },
+  'sc-bg-primary-subtle-active': { uso: 'Pressed state of the soft brand layer.', no: null },
+  'sc-bg-subtle': { uso: 'A soft layer with no declared family. Today it equals the soft brand one.', no: "If what you mean is brand, say primary-subtle: this name doesn't say which family it is." },
+  'sc-bg-subtle-hover': { uso: 'Hover of the soft layer with no family.', no: null },
+  'sc-bg-subtle-active': { uso: 'Pressed state of the soft layer with no family.', no: null },
+  'sc-bg-secondary': { uso: 'Solid gray for a heavyweight secondary action, with light text on top.', no: null },
+  'sc-bg-secondary-hover': { uso: 'Neutral surface hover: table row, list option, active nav item. Comes 1:1 from the Kit.', no: null },
+  'sc-bg-secondary-active': { uso: 'Pressed state of the neutral surface.', no: null },
+  'sc-bg-secondary-subtle': { uso: "A gray panel tucked onto the white canvas: the rail's identity card and the settings index.", no: 'On the white canvas it reads; on a gray canvas it blends. Check it in both themes.' },
+  'sc-bg-accent': { uso: "The brand accent (sky). Unified with info: today they're equal.", no: "Accent isn't decoration: if the color says nothing, don't add it." },
+  'sc-bg-accent-hover': { uso: 'Accent hover state.', no: null },
+  'sc-bg-accent-active': { uso: 'Accent pressed state.', no: null },
+  'sc-bg-info': { uso: 'Solid informational: the bar or indicator that conveys a neutral fact, not a problem.', no: null },
+  'sc-bg-info-hover': { uso: 'Informational hover state.', no: null },
+  'sc-bg-info-active': { uso: 'Informational pressed state.', no: null },
+  'sc-bg-info-subtle': { uso: 'Background of an informational notice. One of the few soft layers that DOES flip in dark.', no: null },
+  'sc-bg-success': { uso: 'Solid confirmation: the operation finished well.', no: "Don't use it for an active state: active isn't the same as correct." },
+  'sc-bg-success-subtle': { uso: 'Background of a confirmation notice.', no: null },
+  'sc-bg-warning': { uso: 'Solid warning: something worth looking at before moving on.', no: "The yellow family is the Kit's again, with a contrast fix: don't tweak it by eye." },
+  'sc-bg-warning-subtle': { uso: 'Background of a warning notice.', no: null },
+  'sc-bg-danger': { uso: 'Destructive action or blocking error.', no: 'Not every delete needs the same gate: confirming everything the same trains confirmation blindness.' },
+  'sc-bg-danger-hover': { uso: 'Hover of the destructive action.', no: null },
+  'sc-bg-danger-active': { uso: 'Pressed state of the destructive action.', no: null },
+  'sc-bg-danger-subtle': { uso: 'Background of an error notice or a danger zone.', no: null },
+  'sc-bg-danger-subtle-hover': { uso: 'Hover of the soft danger layer.', no: null },
+  'sc-bg-danger-subtle-active': { uso: 'Pressed state of the soft danger layer.', no: null },
+  'sc-bg-violet': { uso: 'An auxiliary family for categories and tags that need their own color outside the traffic-light set.', no: "It's not a state: it means neither good nor bad." },
+  'sc-bg-violet-hover': { uso: 'Violet hover state.', no: null },
+  'sc-bg-violet-active': { uso: 'Violet pressed state.', no: null },
+  'sc-bg-violet-subtle': { uso: 'The soft violet layer, for chips and category backgrounds.', no: null },
+  'sc-bg-violet-subtle-hover': { uso: 'Hover of the soft violet layer.', no: null },
+  'sc-bg-violet-subtle-active': { uso: 'Pressed state of the soft violet layer.', no: null },
+};
+
 /** Los `--sc-bg-*` que define la capa semántica, en orden de fichero. */
 export function tokensDefinidos(css) {
   return [...css.matchAll(/^\s*--(sc-bg-[a-z0-9-]+)\s*:/gm)].map((m) => m[1]);
@@ -276,9 +329,13 @@ export function huerfanas(css) {
   return TOKEN_DOCS.map((r) => r.token).filter((t) => !definidos.has(t));
 }
 
-/** La forma que consume sc-docs. */
+/** La forma que consume sc-docs: cada fila con su `uso`/`no` (es) y su `usoEn`/`noEn` (en). */
 export function aJson(filas = TOKEN_DOCS) {
-  return { generado: 'token-docs-map.mjs', total: filas.length, tokens: filas };
+  const tokens = filas.map((r) => {
+    const en = TOKEN_DOCS_EN[r.token] ?? { uso: r.uso, no: r.no };
+    return { ...r, usoEn: en.uso, noEn: en.no };
+  });
+  return { generado: 'token-docs-map.mjs', total: tokens.length, tokens };
 }
 
 /**

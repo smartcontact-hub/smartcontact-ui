@@ -1,4 +1,5 @@
 import { ChangeDetectionStrategy, Component, computed, signal } from '@angular/core';
+import { TranslatePipe } from '@ngx-translate/core';
 
 /** Pantalla del Supervisor capturada (subset que necesita la galería). */
 interface UsageScreen {
@@ -29,7 +30,7 @@ interface UsageStatus {
  */
 @Component({
   selector: 'app-usage-gallery',
-  imports: [],
+  imports: [TranslatePipe],
   templateUrl: './usage-gallery.component.html',
   styleUrl: './usage-gallery.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

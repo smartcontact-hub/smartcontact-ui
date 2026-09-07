@@ -1,115 +1,87 @@
 <article class="rules">
   <div class="rules__main">
   <header class="rules__head">
-    <p class="eyebrow">Estado del proyecto</p>
-    <h1>Sistema de reglas</h1>
-    <p class="lead">
-      El sistema de reglas se rehízo entero. Antes: grabar llamadas, con prioridades, conflictos y borradores.
-      Ahora: <strong>transcribir</strong>, con varias reglas activas sin conflictos y un constructor que cualquiera entiende.
-      Cada cambio se cuenta con su <strong>antes</strong>, su <strong>ahora</strong> y su <strong>porqué</strong>.
-      Las capturas son del Supervisor real.
-    </p>
+    <p class="eyebrow">{{ 'reglas.eyebrow' | translate }}</p>
+    <h1>{{ 'reglas.title' | translate }}</h1>
+    <p class="lead" [innerHTML]="'reglas.lead' | translate"></p>
   </header>
 
-  <nav class="toc" aria-label="En esta página">
-    <p class="toc__title">La historia, paso a paso</p>
+  <nav class="toc" [attr.aria-label]="'reglas.tocTitle' | translate">
+    <p class="toc__title">{{ 'reglas.tocTitle' | translate }}</p>
     <ol class="toc__list">
-      <li><a href="#paso-1">Qué es una regla</a></li>
-      <li><a href="#paso-2">El giro a transcripción</a></li>
-      <li><a href="#paso-3">El alcance: de casillas a un árbol</a></li>
-      <li><a href="#paso-4">Prioridad y conflictos: de lo difícil a nada</a></li>
-      <li><a href="#paso-5">Borradores: un estado de menos</a></li>
-      <li><a href="#paso-6">La estimación en vivo</a></li>
-      <li><a href="#paso-7">Dónde viven: Repositorios</a></li>
-      <li><a href="#paso-8">Transcripción en detalle</a></li>
-      <li><a href="#paso-9">Lo que queda por cerrar</a></li>
-      <li><a href="#conclusiones">Conclusiones</a></li>
+      <li><a href="#paso-1">{{ 'reglas.toc.p1' | translate }}</a></li>
+      <li><a href="#paso-2">{{ 'reglas.toc.p2' | translate }}</a></li>
+      <li><a href="#paso-3">{{ 'reglas.toc.p3' | translate }}</a></li>
+      <li><a href="#paso-4">{{ 'reglas.toc.p4' | translate }}</a></li>
+      <li><a href="#paso-5">{{ 'reglas.toc.p5' | translate }}</a></li>
+      <li><a href="#paso-6">{{ 'reglas.toc.p6' | translate }}</a></li>
+      <li><a href="#paso-7">{{ 'reglas.toc.p7' | translate }}</a></li>
+      <li><a href="#paso-8">{{ 'reglas.toc.p8' | translate }}</a></li>
+      <li><a href="#paso-9">{{ 'reglas.toc.p9' | translate }}</a></li>
+      <li><a href="#conclusiones">{{ 'reglas.toc.conclusiones' | translate }}</a></li>
     </ol>
   </nav>
 
   <section class="step" id="paso-1">
-    <h2><span class="step__n">01</span> Primero, qué es una regla</h2>
-    <p>
-      Una regla automatiza qué pasa con las conversaciones que <strong>entren a partir de ahora</strong>: si se
-      transcriben y si se analizan con IA. No toca lo que ya existe.
-    </p>
-    <p class="note">
-      Tocar lo que ya existe es otra cosa: las acciones <em>bulk</em> (transcribir ahora una selección). Regla =
-      a futuro. Bulk = ahora. Es la confusión más fácil de cometer, así que conviene fijarla antes de empezar.
-    </p>
+    <h2><span class="step__n">01</span> {{ 'reglas.s1.title' | translate }}</h2>
+    <p [innerHTML]="'reglas.s1.p1' | translate"></p>
+    <p class="note" [innerHTML]="'reglas.s1.note' | translate"></p>
   </section>
 
   <section class="step" id="paso-2">
-    <h2><span class="step__n">02</span> El giro: de grabar a transcribir</h2>
-    <p>
-      Durante mucho tiempo, el caso fuerte fueron las reglas de <strong>grabación</strong>. Un cambio en la normativa
-      las dejó sin sentido, así que salen del MVP. El detalle legal queda fuera; aquí importa la consecuencia.
-    </p>
-    <p>
-      El peso se movió a <strong>transcripción</strong> y <strong>clasificación</strong>, a la vez que entra en
-      desarrollo el sistema de <strong>transcripciones múltiples</strong>. Al rehacer las reglas para transcribir,
-      se aprovechó para simplificar lo que se había vuelto complicado. Los tres cambios que vienen son esa
-      simplificación.
-    </p>
+    <h2><span class="step__n">02</span> {{ 'reglas.s2.title' | translate }}</h2>
+    <p [innerHTML]="'reglas.s2.p1' | translate"></p>
+    <p [innerHTML]="'reglas.s2.p2' | translate"></p>
   </section>
 
   <section class="step beat" id="paso-3">
-    <h2><span class="step__n">03</span> El alcance: de tres casillas rígidas a un árbol</h2>
-    <p class="beat__lead">
-      El «alcance» es a qué conversaciones llega una regla. Era lo más rígido del modelo viejo, y es donde más se notó
-      el cambio.
-    </p>
+    <h2><span class="step__n">03</span> {{ 'reglas.s3.title' | translate }}</h2>
+    <p class="beat__lead" [innerHTML]="'reglas.s3.lead' | translate"></p>
 
     <div class="compare">
       <div class="compare__side compare__side--before">
-        <p class="compare__tag">Antes</p>
+        <p class="compare__tag">{{ 'reglas.before' | translate }}</p>
         <figure class="compare__shot">
           <img
             src="/usage/conversaciones-reglas-nueva-antes.png"
-            alt="Pantalla vieja de crear regla: tres casillas Servicios Y Grupos Y Agentes"
+            [alt]="'reglas.s3.altBefore' | translate"
             loading="lazy"
             role="button"
             tabindex="0"
-            title="Ampliar"
+            [title]="'reglas.zoom' | translate"
             (click)="openZoom($event.currentTarget)"
             (keydown.enter)="openZoom($event.currentTarget)"
             (keydown.space)="openZoom($event.currentTarget); $event.preventDefault()"
           />
-          <figcaption>Tres casillas fijas (Servicios <strong>Y</strong> Grupos <strong>Y</strong> Agentes).</figcaption>
+          <figcaption [innerHTML]="'reglas.s3.capBefore' | translate"></figcaption>
         </figure>
       </div>
       <div class="compare__side compare__side--after">
-        <p class="compare__tag">Ahora</p>
+        <p class="compare__tag">{{ 'reglas.after' | translate }}</p>
         <figure class="compare__shot">
           <img
             src="/usage/conversaciones-reglas-nueva.png"
-            alt="Constructor nuevo: árbol de condiciones campo·operador·valor — Y dentro de cada alternativa, O entre alternativas"
+            [alt]="'reglas.s3.altAfter' | translate"
             loading="lazy"
             role="button"
             tabindex="0"
-            title="Ampliar"
+            [title]="'reglas.zoom' | translate"
             (click)="openZoom($event.currentTarget)"
             (keydown.enter)="openZoom($event.currentTarget)"
             (keydown.space)="openZoom($event.currentTarget); $event.preventDefault()"
           />
-          <figcaption>Un árbol de condiciones <code>campo · operador · valor</code>: <strong>Y</strong> dentro de cada alternativa, <strong>O</strong> entre alternativas.</figcaption>
+          <figcaption [innerHTML]="'reglas.s3.capAfter' | translate"></figcaption>
         </figure>
       </div>
     </div>
 
     <div class="why">
-      <p class="why__label">Por qué se cambió</p>
-      <p class="why__text">
-        Las tres casillas no sabían decir cosas normales del negocio: «ventas <em>o</em> incidencias», o mezclar
-        condiciones. Y guardaban <strong>nombres</strong>: si renombrabas un grupo o le cambiabas los miembros, la
-        regla se quedaba mirando un nombre viejo. El árbol expresa cualquier combinación, y guarda
-        <strong>referencias vivas</strong>: «Todos» incluye también lo que se cree mañana, y un grupo en el campo
-        Agente significa «sus miembros <strong>ahora</strong>».
-      </p>
+      <p class="why__label">{{ 'reglas.whyLabel' | translate }}</p>
+      <p class="why__text" [innerHTML]="'reglas.s3.why' | translate"></p>
     </div>
 
     <details class="ref">
-      <summary>Antes y ahora, en código</summary>
+      <summary>{{ 'reglas.beforeAfterCode' | translate }}</summary>
       <div class="snippet-pair">
         <figure class="snippet">
           <pre><code>{{ scopeBefore.code }}</code></pre>
@@ -128,63 +100,53 @@
   </section>
 
   <section class="step beat step--core" id="paso-4">
-    <h2><span class="step__n">04</span> Prioridad y conflictos: de lo más difícil a nada</h2>
-    <p class="beat__lead">
-      Aquí estaba toda la complejidad del sistema viejo. Y la forma de resolverla fue, sencillamente, hacerla
-      desaparecer.
-    </p>
+    <h2><span class="step__n">04</span> {{ 'reglas.s4.title' | translate }}</h2>
+    <p class="beat__lead" [innerHTML]="'reglas.s4.lead' | translate"></p>
 
     <div class="compare">
       <div class="compare__side compare__side--before">
-        <p class="compare__tag">Antes</p>
+        <p class="compare__tag">{{ 'reglas.before' | translate }}</p>
         <figure class="compare__shot">
           <img
             src="/usage/conversaciones-reglas-antes.png"
-            alt="Listado viejo: columna de prioridad, dos reglas EN CONFLICTO, sección de borradores"
+            [alt]="'reglas.s4.altBefore' | translate"
             loading="lazy"
             role="button"
             tabindex="0"
-            title="Ampliar"
+            [title]="'reglas.zoom' | translate"
             (click)="openZoom($event.currentTarget)"
             (keydown.enter)="openZoom($event.currentTarget)"
             (keydown.space)="openZoom($event.currentTarget); $event.preventDefault()"
           />
-          <figcaption>Varias activas, ordenadas por <strong>prioridad</strong>, con dos marcadas <strong>EN CONFLICTO</strong>.</figcaption>
+          <figcaption [innerHTML]="'reglas.s4.capBefore' | translate"></figcaption>
         </figure>
       </div>
       <div class="compare__side compare__side--after">
-        <p class="compare__tag">Ahora</p>
+        <p class="compare__tag">{{ 'reglas.after' | translate }}</p>
         <figure class="compare__shot">
           <img
             src="/usage/conversaciones-reglas.png"
-            alt="Listado nuevo: sin prioridad ni conflictos, el estado activa o inactiva por fila"
+            [alt]="'reglas.s4.altAfter' | translate"
             loading="lazy"
             role="button"
             tabindex="0"
-            title="Ampliar"
+            [title]="'reglas.zoom' | translate"
             (click)="openZoom($event.currentTarget)"
             (keydown.enter)="openZoom($event.currentTarget)"
             (keydown.space)="openZoom($event.currentTarget); $event.preventDefault()"
           />
-          <figcaption>Varias pueden estar <strong>activas</strong>. Sin números de prioridad, sin conflictos.</figcaption>
+          <figcaption [innerHTML]="'reglas.s4.capAfter' | translate"></figcaption>
         </figure>
       </div>
     </div>
 
     <div class="why">
-      <p class="why__label">Por qué se cambió</p>
-      <p class="why__text">
-        Antes, con varias reglas activas, cuando dos podían aplicar a la misma conversación había que decidir
-        <strong>cuál manda</strong>: un número de prioridad, arrastrar para ordenar, y un detector que te avisaba de
-        cada choque. Era lo más complejo de todo. Ahora siguen pudiendo estar <strong>varias activas</strong>, pero
-        el lío desaparece con una idea simple: una conversación se procesa <strong>una sola vez</strong>, aplicando
-        la <strong>unión</strong> de lo que pidan las reglas que encajan. Sin decidir cuál gana, sin orden, sin
-        conflictos. Encender una ya no apaga a las demás.
-      </p>
+      <p class="why__label">{{ 'reglas.whyLabel' | translate }}</p>
+      <p class="why__text" [innerHTML]="'reglas.s4.why' | translate"></p>
     </div>
 
     <details class="ref">
-      <summary>Antes y ahora, en código</summary>
+      <summary>{{ 'reglas.beforeAfterCode' | translate }}</summary>
       <div class="snippet-pair">
         <figure class="snippet">
           <pre><code>{{ conflictBefore.code }}</code></pre>
@@ -199,73 +161,58 @@
   </section>
 
   <section class="step beat" id="paso-5">
-    <h2><span class="step__n">05</span> Borradores: un estado de menos</h2>
-    <p class="beat__lead">
-      El listado viejo tenía un estado intermedio que nadie había pedido. Se quitó.
-    </p>
+    <h2><span class="step__n">05</span> {{ 'reglas.s5.title' | translate }}</h2>
+    <p class="beat__lead" [innerHTML]="'reglas.s5.lead' | translate"></p>
 
     <div class="compare">
       <div class="compare__side compare__side--before">
-        <p class="compare__tag">Antes</p>
+        <p class="compare__tag">{{ 'reglas.before' | translate }}</p>
         <figure class="compare__shot">
           <img
             src="/usage/conversaciones-reglas-antes.png"
-            alt="Listado viejo con una sección «Inactivas y borradores» y un BORRADOR SIN EDITAR"
+            [alt]="'reglas.s5.altBefore' | translate"
             loading="lazy"
             role="button"
             tabindex="0"
-            title="Ampliar"
+            [title]="'reglas.zoom' | translate"
             (click)="openZoom($event.currentTarget)"
             (keydown.enter)="openZoom($event.currentTarget)"
             (keydown.space)="openZoom($event.currentTarget); $event.preventDefault()"
           />
-          <figcaption>Activa, inactiva… y «<strong>Borrador sin editar</strong>», en su propia sección.</figcaption>
+          <figcaption [innerHTML]="'reglas.s5.capBefore' | translate"></figcaption>
         </figure>
       </div>
       <div class="compare__side compare__side--after">
-        <p class="compare__tag">Ahora</p>
+        <p class="compare__tag">{{ 'reglas.after' | translate }}</p>
         <figure class="compare__shot">
           <img
             src="/usage/conversaciones-reglas.png"
-            alt="Listado nuevo con solo dos estados: activa o inactiva"
+            [alt]="'reglas.s5.altAfter' | translate"
             loading="lazy"
             role="button"
             tabindex="0"
-            title="Ampliar"
+            [title]="'reglas.zoom' | translate"
             (click)="openZoom($event.currentTarget)"
             (keydown.enter)="openZoom($event.currentTarget)"
             (keydown.space)="openZoom($event.currentTarget); $event.preventDefault()"
           />
-          <figcaption>Dos estados y ya: <strong>activa</strong> o <strong>inactiva</strong>.</figcaption>
+          <figcaption [innerHTML]="'reglas.s5.capAfter' | translate"></figcaption>
         </figure>
       </div>
     </div>
 
     <div class="why">
-      <p class="why__label">Por qué se cambió</p>
-      <p class="why__text">
-        El «borrador» era una copia sin editar que no se podía activar hasta tocarla, y vivía en una sección aparte.
-        Un estado de más que solo confundía. Ahora desactivar una regla <strong>solo la pasa a Inactiva</strong>
-        (sin copias ni borradores), y duplicar crea una copia inactiva normal, lista para editar o activar. Activar
-        y desactivar es lo único que un supervisor necesita.
-      </p>
+      <p class="why__label">{{ 'reglas.whyLabel' | translate }}</p>
+      <p class="why__text" [innerHTML]="'reglas.s5.why' | translate"></p>
     </div>
   </section>
 
   <section class="step" id="paso-6">
-    <h2><span class="step__n">06</span> Lo que se ganó: una estimación en vivo</h2>
-    <p>
-      No todo fue quitar. Mientras montas una regla, un panel fijo a la derecha te dice a cuántas conversaciones
-      afectaría: «<strong>Afectaría a N de las últimas M conversaciones</strong>», con una barra de proporción
-      (amplia frente a quirúrgica) y una proyección «≈ N al día». Es una <strong>estimación</strong> sobre el
-      histórico, no un dato cerrado. Cuenta de verdad cuántas conversaciones casan.
-    </p>
-    <p class="note">
-      Y guía sin estorbar: al intentar guardar, una condición incompleta o un rango imposible se marcan y bloquean;
-      un duplicado o una contradicción solo <strong>avisan</strong>.
-    </p>
+    <h2><span class="step__n">06</span> {{ 'reglas.s6.title' | translate }}</h2>
+    <p [innerHTML]="'reglas.s6.p1' | translate"></p>
+    <p class="note" [innerHTML]="'reglas.s6.note' | translate"></p>
     <details class="ref">
-      <summary>Ver el código real</summary>
+      <summary>{{ 'reglas.seeCode' | translate }}</summary>
       <figure class="snippet snippet--full">
         <pre><code>{{ estimate.code }}</code></pre>
         <figcaption>{{ estimate.src }}</figcaption>
@@ -274,15 +221,10 @@
   </section>
 
   <section class="step" id="paso-7">
-    <h2><span class="step__n">07</span> Dónde viven: Repositorios</h2>
-    <p>
-      Las reglas viven en <strong>Repositorios</strong>, dentro de administración, el mismo sitio que servicios,
-      grupos o tipificaciones. Es una tabla simple: nombre, el alcance <strong>en prosa</strong>, qué hace y su
-      estado. Esa frase del listado («Aplica cuando el servicio es Ventas Comercial y la duración supera 60 s») sale
-      directa del árbol de condiciones, para que leas qué hace una regla sin abrirla.
-    </p>
+    <h2><span class="step__n">07</span> {{ 'reglas.s7.title' | translate }}</h2>
+    <p [innerHTML]="'reglas.s7.p1' | translate"></p>
     <details class="ref">
-      <summary>Ver el código real</summary>
+      <summary>{{ 'reglas.seeCode' | translate }}</summary>
       <figure class="snippet snippet--full">
         <pre><code>{{ summary.code }}</code></pre>
         <figcaption>{{ summary.src }}</figcaption>
@@ -291,78 +233,61 @@
   </section>
 
   <section class="step" id="paso-8">
-    <h2><span class="step__n">08</span> Transcripción en detalle</h2>
-    <p>
-      <strong>Qué son las transcripciones múltiples</strong>: una misma conversación (una llamada) puede tener varios
-      tramos de grabación, y cada tramo se transcribe por separado. Por eso una llamada con N tramos cuenta como N
-      audios, y cada tramo lleva su propio estado de transcripción.
-    </p>
-    <p>
-      Esto vive en el lado de <strong>Conversaciones</strong> (el reproductor multi-tramo y las acciones en bloque),
-      no en el constructor de reglas: la regla decide <em>qué</em> se transcribe a futuro; los tramos son cómo se
-      almacena y gestiona lo ya transcrito.
-    </p>
+    <h2><span class="step__n">08</span> {{ 'reglas.s8.title' | translate }}</h2>
+    <p [innerHTML]="'reglas.s8.p1' | translate"></p>
+    <p [innerHTML]="'reglas.s8.p2' | translate"></p>
     <ul class="parts">
-      <li>
-        <strong>La base ya está en el código</strong>: el reproductor multi-tramo y el estado por tramo (transcrito o
-        no) ya existen, y el bulk de transcripción ya cuenta los tramos.
-      </li>
-      <li>
-        <strong>Coste</strong>: el bulk ya cuenta cuántos audios entran y cuántos admiten análisis IA (un toggle
-        aparte). El coste es real y crece con las múltiples.
-      </li>
-      <li>
-        <strong>Re-transcribir es destructivo</strong>: borra la transcripción y los análisis derivados. Por eso pide
-        una confirmación escrita.
-      </li>
+      <li [innerHTML]="'reglas.s8.part1' | translate"></li>
+      <li [innerHTML]="'reglas.s8.part2' | translate"></li>
+      <li [innerHTML]="'reglas.s8.part3' | translate"></li>
     </ul>
   </section>
 
   <section class="step" id="paso-9">
-    <h2><span class="step__n">09</span> Lo que queda por cerrar</h2>
-    <p>Las preguntas que el MVP deja abiertas a propósito. Abajo, lo que ya se decidió.</p>
+    <h2><span class="step__n">09</span> {{ 'reglas.s9.title' | translate }}</h2>
+    <p>{{ 'reglas.s9.p1' | translate }}</p>
     <ul class="qlist">
-      @for (c of concerns; track c.q) {
-        <li><strong>{{ c.q }}.</strong> {{ c.detail }}</li>
+      @for (c of concerns; track c.key) {
+        <li>
+          <strong>{{ 'reglas.concerns.' + c.key + '.q' | translate }}.</strong>
+          {{ 'reglas.concerns.' + c.key + '.detail' | translate }}
+        </li>
       }
     </ul>
   </section>
 
   <section class="outcome" id="conclusiones">
-    <p class="eyebrow">De la charla con el equipo · 2026-06-23</p>
-    <h2>Conclusiones</h2>
-    <p>Lo que se decidió y lo que ya está <strong>construido</strong> desde entonces. Lo que quedó en el aire va al final.</p>
+    <p class="eyebrow">{{ 'reglas.outcome.eyebrow' | translate }}</p>
+    <h2>{{ 'reglas.outcome.title' | translate }}</h2>
+    <p [innerHTML]="'reglas.outcome.intro' | translate"></p>
 
-    <h3>El rumbo del MVP</h3>
+    <h3>{{ 'reglas.outcome.mvpTitle' | translate }}</h3>
     <ol class="decisions">
-      @for (c of conclusiones; track c.t) {
+      @for (c of conclusiones; track c.key) {
         <li>
-          <span class="decisions__t">{{ c.t }}</span>
-          <span class="decisions__d">{{ c.d }}</span>
+          <span class="decisions__t">{{ 'reglas.decisions.' + c.key + '.t' | translate }}</span>
+          <span class="decisions__d">{{ 'reglas.decisions.' + c.key + '.d' | translate }}</span>
         </li>
       }
     </ol>
 
-    <h3>Lo que queda</h3>
+    <h3>{{ 'reglas.outcome.remainingTitle' | translate }}</h3>
     <ul class="actions">
       @for (a of pendiente; track a) {
-        <li>{{ a }}</li>
+        <li>{{ 'reglas.pending.' + a | translate }}</li>
       }
     </ul>
 
-    <h3>A confirmar</h3>
+    <h3>{{ 'reglas.outcome.confirmTitle' | translate }}</h3>
     <ul class="loose">
       @for (x of aConfirmar; track x) {
-        <li>{{ x }}</li>
+        <li>{{ 'reglas.confirm.' + x | translate }}</li>
       }
     </ul>
   </section>
 
   <footer class="rules__foot">
-    <p>
-      Esta página vive dentro de sc-docs: se actualiza con el código. Las capturas «ahora» se regeneran con
-      <code>npm run usage:capture</code> y las «antes» quedan guardadas para contar el cambio.
-    </p>
+    <p [innerHTML]="'reglas.footer' | translate"></p>
   </footer>
   </div>
 </article>
@@ -374,32 +299,30 @@
       class="rules__fb-panel"
       role="dialog"
       aria-modal="false"
-      aria-label="Feedback del equipo, por fecha"
+      [attr.aria-label]="'reglas.feedback.aria' | translate"
     >
       <header class="rules__fb-head">
-        <p class="eyebrow rules__fb-eyebrow">Feedback</p>
+        <p class="eyebrow rules__fb-eyebrow">{{ 'reglas.feedback.title' | translate }}</p>
         <button
           #feedbackClose
           type="button"
           class="rules__fb-close"
-          aria-label="Cerrar (Esc)"
+          [attr.aria-label]="'reglas.feedback.close' | translate"
           (click)="closeFeedback()"
         >
           <span aria-hidden="true">&times;</span>
         </button>
       </header>
-      <p class="rules__fb-hint">
-        Notas de revisión, por fecha (la más reciente arriba). Cada punto, validado contra el prototipo.
-      </p>
+      <p class="rules__fb-hint">{{ 'reglas.feedback.hint' | translate }}</p>
       <div class="rules__fb-scroll">
-        @for (entry of feedback; track entry.date) {
+        @for (entry of feedback; track entry.key) {
           <section class="fb">
-            <h3 class="fb__date">{{ entry.date }}</h3>
+            <h3 class="fb__date">{{ 'reglas.feedback.entries.' + entry.key + '.date' | translate }}</h3>
             <ul class="fb__list">
-              @for (n of entry.notes; track n.t) {
+              @for (n of entry.notes; track n.key) {
                 <li class="fb__item">
-                  <strong>{{ n.t }}</strong>
-                  <span>{{ n.d }}</span>
+                  <strong>{{ 'reglas.feedback.entries.' + entry.key + '.notes.' + n.key + '.t' | translate }}</strong>
+                  <span>{{ 'reglas.feedback.entries.' + entry.key + '.notes.' + n.key + '.d' | translate }}</span>
                 </li>
               }
             </ul>
@@ -413,13 +336,13 @@
     #feedbackHandle
     type="button"
     class="rules__fb-handle"
-    aria-label="Feedback"
+    [attr.aria-label]="'reglas.feedback.title' | translate"
     aria-haspopup="dialog"
     [attr.aria-expanded]="feedbackOpen()"
     (click)="toggleFeedback()"
   >
     <sc-icon name="feedback" [size]="18" aria-hidden="true" />
-    <span>Feedback</span>
+    <span>{{ 'reglas.feedback.title' | translate }}</span>
   </button>
 </div>
 
@@ -429,7 +352,7 @@
       #lightboxClose
       type="button"
       class="lightbox__close"
-      aria-label="Cerrar (Esc)"
+      [attr.aria-label]="'reglas.lightbox.close' | translate"
       (click)="closeZoom()"
     >
       <span aria-hidden="true">&times;</span>
@@ -442,7 +365,7 @@
       (click)="$event.stopPropagation()"
     >
       <img class="lightbox__img" [src]="z.src" [alt]="z.alt" />
-      <figcaption class="lightbox__hint">Pulsa <kbd>Esc</kbd> o haz clic fuera para cerrar</figcaption>
+      <figcaption class="lightbox__hint" [innerHTML]="'reglas.lightbox.hint' | translate"></figcaption>
     </figure>
   </div>
 }

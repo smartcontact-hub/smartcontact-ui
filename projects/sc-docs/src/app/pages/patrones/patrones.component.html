@@ -1,32 +1,29 @@
 <header class="hero">
   <div class="hero__icon" aria-hidden="true"><sc-icon [name]="heroIcon" [size]="20" /></div>
   <div>
-    <p class="hero__eyebrow">Fundamentos</p>
-    <h1 class="hero__title">Patrones de pantalla</h1>
-    <p class="hero__lead">
-      La barra de calidad al construir una pantalla de producto. Cada patrón apunta a lo que el
-      sistema <strong>ya</strong> resuelve, para que una pantalla nueva nazca consistente en vez
-      de corregirla después.
-    </p>
+    <p class="hero__eyebrow">{{ 'chrome.nav.fundamentos' | translate }}</p>
+    <h1 class="hero__title">{{ 'fundamentos.patterns.title' | translate }}</h1>
+    <p class="hero__lead" [innerHTML]="'fundamentos.patterns.lead' | translate"></p>
   </div>
 </header>
 
 <ul class="pt">
-  @for (p of principles; track p.title) {
+  @for (p of principles; track p.key) {
     <li class="pt__row">
       <div class="pt__icon" aria-hidden="true"><sc-icon [name]="p.icon" [size]="20" /></div>
       <div class="pt__body">
-        <h2 class="pt__title">{{ p.title }}</h2>
+        <h2 class="pt__title">{{ 'fundamentos.patterns.principles.' + p.key + '.title' | translate }}</h2>
         <p class="pt__line pt__line--do">
           <sc-icon class="pt__mark pt__mark--do" name="check" [size]="16" aria-hidden="true" />
-          <span>{{ p.apply }}</span>
+          <span>{{ 'fundamentos.patterns.principles.' + p.key + '.apply' | translate }}</span>
         </p>
         <p class="pt__line pt__line--dont">
           <sc-icon class="pt__mark pt__mark--dont" name="close" [size]="16" aria-hidden="true" />
-          <span>{{ p.avoid }}</span>
+          <span>{{ 'fundamentos.patterns.principles.' + p.key + '.avoid' | translate }}</span>
         </p>
         <p class="pt__have">
-          <span class="pt__have-label">Ya en el sistema</span>{{ p.have }}
+          <span class="pt__have-label">{{ 'fundamentos.patterns.haveLabel' | translate }}</span
+          >{{ 'fundamentos.patterns.principles.' + p.key + '.have' | translate }}
         </p>
       </div>
     </li>
@@ -37,18 +34,14 @@
      texto: a la izquierda el esqueleto (dogfood real de sc-skeleton), a la derecha el spinner
      centrado que no reserva estructura. Los demás principios son conceptuales: se quedan en
      texto a propósito (meterles un mock-up sería el ruido que esta misma barra combate). -->
-<section class="demo" aria-label="Estado de carga: esqueleto frente a spinner">
-  <h2 class="demo__title">Estado de carga: el contraste, en vivo</h2>
-  <p class="demo__lead">
-    A la izquierda, <code>sc-skeleton</code> con la silueta de la fila: reserva el hueco exacto,
-    así al cargar no salta nada. A la derecha, el spinner centrado: no reserva estructura, y el
-    layout salta cuando por fin llegan los datos.
-  </p>
+<section class="demo" [attr.aria-label]="'fundamentos.patterns.demo.aria' | translate">
+  <h2 class="demo__title">{{ 'fundamentos.patterns.demo.title' | translate }}</h2>
+  <p class="demo__lead" [innerHTML]="'fundamentos.patterns.demo.lead' | translate"></p>
   <div class="demo__pair">
     <div class="demo__col">
       <p class="demo__label demo__label--do">
         <sc-icon class="pt__mark pt__mark--do" name="check" [size]="16" aria-hidden="true" />
-        <span>Esqueleto con la forma del contenido</span>
+        <span>{{ 'fundamentos.patterns.demo.labelDo' | translate }}</span>
       </p>
       <div class="demo__stage">
         @for (row of [0, 1, 2]; track row) {
@@ -65,7 +58,7 @@
     <div class="demo__col">
       <p class="demo__label demo__label--dont">
         <sc-icon class="pt__mark pt__mark--dont" name="close" [size]="16" aria-hidden="true" />
-        <span>Spinner centrado (no reserva el hueco)</span>
+        <span>{{ 'fundamentos.patterns.demo.labelDont' | translate }}</span>
       </p>
       <div class="demo__stage demo__stage--spinner">
         <sc-icon name="progress_activity" [spin]="true" [size]="28" aria-hidden="true" />
@@ -74,8 +67,4 @@
   </div>
 </section>
 
-<p class="foot">
-  Es la misma barra que sigue quien construye las apps de este repo: está también en
-  <code>AGENTS.md</code> (sección «UX de pantalla»), el documento que se lee al tocar el código.
-  No es una checklist para lucir, es lo que separa una pantalla profesional de una genérica.
-</p>
+<p class="foot" [innerHTML]="'fundamentos.patterns.foot' | translate"></p>

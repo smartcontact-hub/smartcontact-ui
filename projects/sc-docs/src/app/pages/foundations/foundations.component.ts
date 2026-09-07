@@ -1,8 +1,11 @@
 import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
+import { TranslatePipe } from '@ngx-translate/core';
 
 import { ScIconComponent } from '@smartcontact-hub/icons';
 
 import { ScClipboardService } from '@smartcontact-hub/components';
+
+import { LanguageService } from '../../shared/language.service';
 
 interface ScaleStep {
   token: string;
@@ -10,17 +13,19 @@ interface ScaleStep {
 }
 
 interface ColorFamily {
-  name: string;
+  /** Nombre de la familia primitiva por i18n: `fundamentos.color.primitive.<token>`. */
   token: string;
   steps: number[];
 }
 
-/** Una fila de `scripts/token-docs-map.mjs`, servida como JSON generado. */
+/** Una fila de `scripts/token-docs-map.mjs`, servida como JSON generado (uso/no en es y en). */
 interface TokenDoc {
   token: string;
   familia: string;
   uso: string;
   no: string | null;
+  usoEn: string;
+  noEn: string | null;
   dd: string | null;
 }
 
@@ -44,13 +49,15 @@ interface SwatchInfo {
  */
 @Component({
   selector: 'app-foundations',
-  imports: [ScIconComponent],
+  imports: [ScIconComponent, TranslatePipe],
   templateUrl: './foundations.component.html',
   styleUrl: './foundations.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class FoundationsComponent {
   private readonly clipboard = inject(ScClipboardService);
+  /** Idioma activo: la sección semántica pinta `uso`/`no` o su versión inglesa. */
+  protected readonly lang = inject(LanguageService);
 
   readonly scaleSteps: ScaleStep[] = [
     { token: '--sc-scale-0-25', px: 3.5 },
@@ -64,12 +71,12 @@ export class FoundationsComponent {
   ];
 
   readonly colorFamilies: ColorFamily[] = [
-    { name: 'Blue (marca)', token: 'blue', steps: [50, 100, 300, 500, 700, 900] },
-    { name: 'Slate (neutros)', token: 'slate', steps: [50, 100, 300, 500, 700, 900] },
-    { name: 'Sky (info)', token: 'sky', steps: [50, 100, 300, 500, 700, 900] },
-    { name: 'Green (success)', token: 'green', steps: [50, 100, 300, 500, 700, 900] },
-    { name: 'Amber (warning)', token: 'amber', steps: [50, 100, 300, 500, 700, 900] },
-    { name: 'Red (danger)', token: 'red', steps: [50, 100, 300, 500, 700, 900] },
+    { token: 'blue', steps: [50, 100, 300, 500, 700, 900] },
+    { token: 'slate', steps: [50, 100, 300, 500, 700, 900] },
+    { token: 'sky', steps: [50, 100, 300, 500, 700, 900] },
+    { token: 'green', steps: [50, 100, 300, 500, 700, 900] },
+    { token: 'amber', steps: [50, 100, 300, 500, 700, 900] },
+    { token: 'red', steps: [50, 100, 300, 500, 700, 900] },
   ];
 
   /* ── Color semántico: para qué sirve cada fondo ───────────────────────────

@@ -10,6 +10,7 @@ import {
   viewChild,
 } from '@angular/core';
 import { ScIconComponent } from '@smartcontact-hub/icons';
+import { TranslatePipe } from '@ngx-translate/core';
 
 interface Snippet {
   /** Código REAL del repo (o el de antes, reconstruido), recortado para leerse. */
@@ -18,25 +19,15 @@ interface Snippet {
   readonly src: string;
 }
 
-interface Concern {
-  readonly q: string;
-  readonly detail: string;
-}
-
-interface Decision {
-  readonly t: string;
-  readonly d: string;
-}
-
-interface FeedbackNote {
-  readonly t: string;
-  readonly d: string;
+/** Los textos (pregunta/detalle, título/desc, fecha/notas) viven en i18n bajo `reglas.*`;
+ * aquí solo va la CLAVE estable de cada uno, para que el recorrido conmute ES↔EN. */
+interface Keyed {
+  readonly key: string;
 }
 
 interface FeedbackEntry {
-  /** Fecha legible de la sesión de feedback. */
-  readonly date: string;
-  readonly notes: FeedbackNote[];
+  readonly key: string;
+  readonly notes: Keyed[];
 }
 
 /**
@@ -52,7 +43,7 @@ interface FeedbackEntry {
  */
 @Component({
   selector: 'app-rules-walkthrough',
-  imports: [ScIconComponent],
+  imports: [ScIconComponent, TranslatePipe],
   templateUrl: './rules-walkthrough.component.html',
   styleUrl: './rules-walkthrough.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -222,131 +213,48 @@ function describeConditionTree(tree, labelFor) {
 }`,
   };
 
-  readonly concerns: Concern[] = [
-    {
-      q: 'Coste de transcripción e IA',
-      detail:
-        'Cada transcripción consume cómputo, y el análisis IA va aparte. El coste crece con las transcripciones múltiples. ¿Ponemos límites? ¿La IA siempre opcional? El constructor ya estima el impacto, pero el coste lo cierra el equipo.',
-    },
-    {
-      q: 'Gobierno de las transcripciones múltiples',
-      detail:
-        'Si una conversación tiene varios tramos transcritos por separado, ¿qué regla gobierna cada uno? ¿Cómo se almacenan? ¿Cuándo se re-transcribe?',
-    },
-    {
-      q: 'Dependencia transcripción → clasificación',
-      detail:
-        'La clasificación con IA necesita la transcripción por debajo. Si la transcripción falla o no existe, ¿qué hace la regla de clasificación?',
-    },
-    {
-      q: 'Migración de las reglas de grabación',
-      detail:
-        'Quedan obsoletas con la nueva ley y salen del MVP. ¿Las auto-desactivamos, las borramos, las convertimos? ¿Y qué pasa con lo que ya está grabado?',
-    },
-    {
-      q: 'Retención y borrado',
-      detail:
-        'Cuánto tiempo se guardan las transcripciones y cómo se borran. El cambio normativo es lo que mueve el foco; el detalle legal lo cierra el equipo.',
-    },
-    {
-      q: 'Calendario de despliegue',
-      detail:
-        'Las reglas las configuran los supervisores, desde el Supervisor. Queda por fijar cuándo entra en producción el sistema de transcripciones múltiples.',
-    },
+  /** Preguntas que el MVP deja abiertas (texto en `reglas.concerns.<key>`). */
+  readonly concerns: Keyed[] = [
+    { key: 'cost' },
+    { key: 'governance' },
+    { key: 'dependency' },
+    { key: 'migration' },
+    { key: 'retention' },
+    { key: 'calendar' },
   ];
 
-  // --- De la charla con el equipo (2026-06-23) a lo que ya está construido ---
-
-  readonly conclusiones: Decision[] = [
-    {
-      t: 'Varias reglas activas, sin conflictos · hecho',
-      d: 'Varias reglas pueden estar activas a la vez; encender una no apaga a las demás. Y sin la vieja complejidad: una conversación se procesa una vez, aplicando la unión de lo que pidan las reglas que encajan. Sin prioridad, sin orden, sin conflictos que resolver.',
-    },
-    {
-      t: 'El alcance combina con Y y O · hecho',
-      d: 'Dentro de una alternativa las condiciones se combinan con Y; añadir otra alternativa es el O. Esa estructura fija expresa cualquier combinación sin interruptores que aprender. La tipificación es una entidad más (no una condición suelta) y es el caso de valor más claro: «quiero solo las que acabaron en venta».',
-    },
-    {
-      t: 'Referencias vivas, no nombres congelados · hecho',
-      d: '«Todos» incluye también las entidades futuras, y un grupo en el campo Agente significa «sus miembros ahora». Cambiar la composición de un grupo se refleja sin reeditar la regla.',
-    },
-    {
-      t: 'Dirección y duración, dentro del constructor · hecho',
-      d: 'Son campos más del alcance, no un bloque «Criterios» aparte. Un solo sitio para filtrar, sin duplicar la dirección en dos lugares.',
-    },
-    {
-      t: 'Estimación de impacto en vivo · hecho',
-      d: 'Mientras montas, el pie dice «afectaría a N de las últimas M conversaciones», con barra de proporción y proyección día/mes. Es una estimación sobre el histórico, no un dato cerrado.',
-    },
-    {
-      t: 'Una conversación cumple la condición o no · decidido',
-      d: 'Uno o cero: no hay cumplimiento parcial, no se transcribe «por un trozo» de la condición. Y aunque encaje en varias reglas activas, se procesa una sola vez: nunca hay doble transcripción.',
-    },
-    {
-      t: 'Casa de las reglas: Repositorios · en marcha',
-      d: 'En administración, no un modal: es un formulario y se ve mejor a pantalla completa. El mismo repositorio sirve para reglas de transcripción y tipificación, y a futuro las listas de orígenes de IVR (hoy hay que replicarlas a mano en 15-16 nodos). Empezar simple, con una tabla.',
-    },
-    {
-      t: 'Las reglas son a futuro; la clasificación va después · decidido',
-      d: 'Nada retroactivo aquí: aplicar a conversaciones pasadas es bulk. Y la clasificación con IA (categorías) es la parte de más valor, pero se saca de aquí de momento: primero la transcripción.',
-    },
+  /** De la charla con el equipo (2026-06-23) a lo construido (texto en `reglas.decisions.<key>`). */
+  readonly conclusiones: Keyed[] = [
+    { key: 'manyActive' },
+    { key: 'scope' },
+    { key: 'liveRefs' },
+    { key: 'directionDuration' },
+    { key: 'estimate' },
+    { key: 'oneOrZero' },
+    { key: 'repos' },
+    { key: 'futureFirst' },
   ];
 
-  readonly pendiente: string[] = [
-    'Cerrar con el equipo de backend qué criterios entran de inicio; el constructor ya cubre dirección, duración y tipificación. El backend puede ir por delante de la UI: crear la tabla, meter reglas y evaluar la condición aunque la pantalla no exista todavía.',
-    'Confirmar el ajuste fino de calidad y esfuerzo de la transcripción (viabilidad y coste). Hoy limpia música y ruido por defecto.',
-    'Levantar la sección de Repositorios (transcripción + tipificación), empezando por una tabla simple.',
-    'Construir el simulador de coste: estimar qué porcentaje se transcribiría y el gasto, comparando con el mes anterior.',
-    'Avanzar AED con tipificación, agendas y la regla de transcripción (incluida la migración de las reglas de grabación).',
-  ];
+  /** Lo que queda (texto en `reglas.pending.<key>`). */
+  readonly pendiente: string[] = ['backend', 'transcription', 'repos', 'simulator', 'aed'];
 
-  readonly aConfirmar: string[] = [
-    'Naming definitivo de las entidades («contactantes» frente a grupos/ACD).',
-    'Si entra la opción de invertir o excluir condición («todo esto menos X»).',
-    'Constructor anidado más allá de 2 niveles y simulador de impacto/coste como evolución, no MVP.',
-    'El detalle de la conversación en ventana propia (reproductor no bloqueante).',
-  ];
+  /** A confirmar (texto en `reglas.confirm.<key>`). */
+  readonly aConfirmar: string[] = ['naming', 'invert', 'nested', 'detailWindow'];
 
   /* ─────────── Log de feedback de revisión (cronológico, más reciente arriba) ───────────
-   * Acumula las indicaciones del equipo junto al recorrido, para acceso cronológico.
-   * Cada punto se VALIDÓ contra el prototipo real (código + flujo) antes de anotarlo. */
+   * Acumula las indicaciones del equipo junto al recorrido. Cada punto se VALIDÓ contra el
+   * prototipo real (código + flujo) antes de anotarlo. Texto en `reglas.feedback.entries.<key>`. */
   readonly feedback: FeedbackEntry[] = [
+    { key: 'jul17', notes: [{ key: 'manyActive' }] },
     {
-      date: '17 jul 2026',
+      key: 'jul1',
       notes: [
-        {
-          t: 'Varias reglas activas a la vez',
-          d: 'Se levanta el límite de «una sola activa»: ahora varias pueden estar encendidas. El solape se resuelve sin prioridad ni conflictos, con la regla de la unión: una conversación se procesa una vez, aplicando lo que pidan juntas las reglas que encajan. Desaparece de paso el «desactivar en silencio» que quedaba pendiente.',
-        },
-      ],
-    },
-    {
-      date: '1 jul 2026',
-      notes: [
-        {
-          t: 'Pausar una regla (futuro)',
-          d: 'Hoy solo hay Activa/Inactiva (un booleano). Añadir «Pausar» como acción propia, distinta de desactivar, para más adelante.',
-        },
-        {
-          t: 'Trabajar la cabecera del constructor',
-          d: 'Guardar vive abajo, en el footer; la cabecera (volver + título + tipo) va proyectada a la TopBar. La acción principal queda lejos de la navegación y puede solaparse con el breadcrumb de la app. Resolver dónde viven navegación y Guardar.',
-        },
-        {
-          t: 'Copy de la tabla, columna «Alcance»',
-          d: 'Muestra la prosa completa del árbol (servicio + grupo + tipificación + duración): puede salir larga y confusa en una celda. La lista NO tiene columna de descripción hoy: decidir si conviene nombre + descripción corta, o acortar la prosa con tooltip.',
-        },
-        {
-          t: '¿Excluyentes o cascada en el alcance?',
-          d: 'Entender si al marcar Grupos ya no debería poder elegir Servicios. Hoy NO son excluyentes: servicio/grupo/agente se combinan libremente con Y/O en el árbol. Decidir si debe haber cascada o exclusión (enlaza con «invertir/excluir condición», ya en A confirmar).',
-        },
-        {
-          t: 'Una sola tabla, no Activas/Inactivas',
-          d: 'Unificar las dos secciones en una tabla: la columna Estado ya distingue Activa/Inactiva. Menos ruido. (Escrito bajo el modelo «una sola activa» de entonces; ese límite se levantó el 17 jul — la tabla única sigue vigente.)',
-        },
-        {
-          t: 'Modal de confirmación al activar — resuelto el 17 jul',
-          d: 'Entonces, activar una regla desactivaba la anterior en SILENCIO y se pedía una confirmación «esto desactivará [X]». Con varias activas a la vez (17 jul) ya no se desactiva nada al activar: el modal dejó de ser necesario.',
-        },
+        { key: 'pause' },
+        { key: 'header' },
+        { key: 'scopeCopy' },
+        { key: 'exclusive' },
+        { key: 'oneTable' },
+        { key: 'confirmModal' },
       ],
     },
   ];

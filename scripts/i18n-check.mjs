@@ -8,8 +8,11 @@
  * clave nueva en es se quede sin versión en los demás idiomas y la UI muestre la clave
  * cruda (p. ej. `memory.rules.builder.cond.impact`) en vez del texto.
  *
- * Sólo el Supervisor está localizado (sc-docs/agent no consumen i18n). Si en el futuro
- * otra app añade `assets/i18n/`, amplía APPS.
+ * Localizados: el Supervisor (es/en/fr/pt) y sc-docs (es/en; solo el chrome y las páginas
+ * clave). agent/cuscare no consumen i18n. Si otra app añade `assets/i18n/`, amplía APPS.
+ *
+ * Nota: sc-docs sirve estáticos desde `public/` (no `src/assets`), así que sus locales viven
+ * en `projects/sc-docs/public/assets/i18n`, servidos en `/assets/i18n/*.json`.
  *
  * Uso: `node scripts/i18n-check.mjs` (en la cadena `verify`).
  */
@@ -26,6 +29,12 @@ const APPS = [
     dir: 'projects/supervisor/src/assets/i18n',
     reference: 'es',
     targets: ['en', 'fr', 'pt'],
+  },
+  {
+    name: 'sc-docs',
+    dir: 'projects/sc-docs/public/assets/i18n',
+    reference: 'es',
+    targets: ['en'],
   },
 ];
 
