@@ -1,4 +1,4 @@
-import { ChangeDetectionStrategy, Component, inject, signal } from '@angular/core';
+import { ChangeDetectionStrategy, Component, computed, inject, signal } from '@angular/core';
 
 import { ScIconComponent } from '@smartcontact-hub/icons';
 
@@ -13,6 +13,15 @@ interface ColorFamily {
   name: string;
   token: string;
   steps: number[];
+}
+
+/** Una fila de `scripts/token-docs-map.mjs`, servida como JSON generado. */
+interface TokenDoc {
+  token: string;
+  familia: string;
+  uso: string;
+  no: string | null;
+  dd: string | null;
 }
 
 /** Lo que la tarjeta de un swatch enseña. Se calcula del valor RESUELTO. */
@@ -62,6 +71,38 @@ export class FoundationsComponent {
     { name: 'Amber (warning)', token: 'amber', steps: [50, 100, 300, 500, 700, 900] },
     { name: 'Red (danger)', token: 'red', steps: [50, 100, 300, 500, 700, 900] },
   ];
+
+  /* ── Color semántico: para qué sirve cada fondo ───────────────────────────
+   *
+   * El sistema sabía QUÉ VALE cada `--sc-bg-*` y no CUÁNDO se usa. Esa mitad vive ahora en
+   * `scripts/token-docs-map.mjs`, un mapa con dos consumidores: esta página y el lote que se
+   * escribiría en Figma. Se sirve como JSON GENERADO —igual que la galería de uso y el mapa de
+   * conexión de variables— porque la app compila solo desde `src/` y no puede importar de
+   * `scripts/`; que el JSON y las filas no se desfasen lo vigila su test.
+   *
+   * El swatch se pinta con `var(--token)` y NO se calcula su hex aquí a propósito: los
+   * semánticos voltean con el tema, y una caché por token devolvería un valor rancio al pasar
+   * a oscuro. El CSS lo resuelve solo y siempre dice la verdad. */
+  protected readonly semanticos = signal<readonly TokenDoc[]>([]);
+  protected readonly errorSemanticos = signal(false);
+
+  /** Agrupados por familia, conservando el orden en que los declara el mapa. */
+  protected readonly semanticosPorFamilia = computed(() => {
+    const grupos = new Map<string, TokenDoc[]>();
+    for (const t of this.semanticos()) {
+      const lista = grupos.get(t.familia) ?? [];
+      lista.push(t);
+      grupos.set(t.familia, lista);
+    }
+    return [...grupos].map(([familia, tokens]) => ({ familia, tokens }));
+  });
+
+  constructor() {
+    fetch('/tokens/_semantic-docs.json')
+      .then((r) => (r.ok ? r.json() : Promise.reject(new Error(String(r.status)))))
+      .then((d: { tokens: TokenDoc[] }) => this.semanticos.set(d.tokens))
+      .catch(() => this.errorSemanticos.set(true));
+  }
 
   /** Token del último valor copiado + qué campo, para el feedback («Copiado»). */
   protected readonly copiado = signal<string | null>(null);

@@ -36,6 +36,13 @@
  *   I. `DECISIONS.md` cumple el "newest first" que promete su propia cabecera.
  *   J. "el CI son N pasos" cuadra con los pasos con `name:` de `ci.yml`. Esa cifra vive en 5
  *      sitios y ya caducó una vez (decía 5 cuando eran 8).
+ *   M. "N gates" cuadra con los eslabones de la cadena `verify` en package.json. Hermano de J
+ *      con la otra cifra: vivía en cuatro sitios y NINGUNO la gateaba, así que las tres que no
+ *      se tocan a mano llevaban commits caducadas (27, 27 y 26 cuando eran 29).
+ *   L. La barra de UX de pantalla cuadra entre `AGENTS.md` y la página navegable de
+ *      Patrones (`scripts/patrones-parity.mjs`): mismo número de principios, y ninguno pierde
+ *      lo que tiene de load-bearing. La página AFIRMA en su pie que son la misma cosa y nada
+ *      lo sostenía: había perdido la regla de la paleta en oscuro.
  *   A·b. Un script citado sin `npm run`, en backticks — acotado a namespaces que existen para
  *      no generar ruido (medido: sin acotar, 75% falsos positivos).
  *
@@ -44,6 +51,8 @@
 import { readFileSync, readdirSync, existsSync } from 'node:fs';
 import { execFileSync } from 'node:child_process';
 import { resolve } from 'node:path';
+
+import { compararPatrones } from './patrones-parity.mjs';
 import { revisarLearnings } from './learnings-shape.mjs';
 
 const root = resolve(import.meta.dirname, '..');
@@ -214,6 +223,49 @@ for (const { path, lines } of files) {
   }
 }
 
+// ── CHECK L — la barra de UX de pantalla cuadra con su página navegable ───────────
+// Vive dos veces a propósito: AGENTS la escribe para quien toca el código y sc-docs la pinta
+// para quien la lee. El pie de la página afirma que son la misma, y hasta hoy nada lo
+// sostenía: la copia navegable había perdido la regla de la paleta en oscuro del principio 1.
+// Compara el NÚMERO y lo load-bearing de cada uno, no la prosa — son dos registros distintos
+// y compararlos literalmente sería ruido (ver la cabecera del módulo).
+{
+  const agents = readFileSync(resolve(root, 'AGENTS.md'), 'utf8');
+  const rutaPatrones = 'projects/sc-docs/src/app/pages/patrones/patrones.component.ts';
+  const patrones = readFileSync(resolve(root, rutaPatrones), 'utf8');
+  for (const p of compararPatrones(agents, patrones)) fail(`AGENTS.md ↔ ${rutaPatrones} — ${p}`);
+}
+
+// ── CHECK M — "N gates" tiene que cuadrar con la cadena verify de package.json ────
+// Mismo modo de fallo que el CHECK J, con la otra cifra. El hand-off del frente ya lo decía
+// por escrito —"la cifra vive en 4 sitios y ninguno la gatea"— y medido el 2026-09-06 tres de
+// los cuatro estaban caducados: 27, 27 y 26 cuando la cadena tenía 29. Una cifra que solo se
+// actualiza cuando alguien se acuerda no es documentación, es folklore.
+// `files` recorre la raíz y `docs/`, así que la skill de la rutina se suma a mano.
+// Se exoneran los AUDIT-* (citan cifras equivocadas como HALLAZGO, igual que J y E) y los
+// `docs/handoff/*`, que son REGISTROS FECHADOS de sesión: "verify (29 gates)" ahí dentro no
+// afirma cuántos hay hoy, cuenta cuántos se lanzaron aquel día, y reescribirlo falsearía el
+// parte. Lo que sí tiene que estar al día en un hand-off es su sección de trampas, y esa se
+// arregla a mano cuando cambia — como se hizo el 2026-09-06 al nacer este check.
+{
+  const nGates = (scripts.verify || '').split('&&').length;
+  const skill = resolve(root, '.claude/skills/auditoria-semanal/SKILL.md');
+  const filesM = existsSync(skill)
+    ? [...files, { path: skill, lines: readFileSync(skill, 'utf8').split('\n') }]
+    : files;
+  for (const { path, lines } of filesM) {
+    if (/^docs\/(AUDIT-|handoff\/)/.test(rel(path))) continue;
+    lines.forEach((line, i) => {
+      for (const m of line.matchAll(/(\d+)\s+gates\b/gi)) {
+        if (Number(m[1]) === nGates) continue;
+        fail(
+          `${rel(path)}:${i + 1} — dice "${m[0]}" pero la cadena \`verify\` tiene ${nGates} eslabones. Actualiza la cifra (o la cadena).`,
+        );
+      }
+    });
+  }
+}
+
 // ── CHECK I — DECISIONS.md promete "newest first" y tiene que cumplirlo ────────────
 // Su cabecera dice "Formato DD-N, newest first". Estuvo roto desde el 2026-06-30 —los DD-21..34
 // se anexaron ASCENDENTE al final— y estaba anotado como pendiente en DOCS-INDEX todo ese
@@ -347,10 +399,12 @@ const tokensDefinidos = new Set();
 // justamente para prohibirlos ("no los reintroduzcas, `tokens:guard` los bloquea").
 const RETIRADOS_A_PROPOSITO = new Set([
   '--sc-spacing-50', '--sc-spacing-100', '--sc-spacing-200', '--sc-space-1', '--sc-space-2',
-  // GAP documentado a propósito: `customs-catalog.md` §5.11 lo describe como deuda, un token
-  // semántico de lienzo que AÚN NO existe. Mismo patrón que PROPOSED_SCRIPTS: cuando se cree,
-  // `tokensDefinidos` lo cubre solo → quítalo de aquí.
-  '--sc-bg-canvas',
+  // Token que NUNCA existió y que la doc nombra para contar justamente eso: se USABA nueve
+  // veces (el `top` y el `height` del rail de los tres formularios, y dos veces más en un
+  // bloque de CSS muerto) y no se DEFINÍA ninguna, así que esas declaraciones eran inválidas y
+  // caían a `auto`. DD-53 lo cuenta; el código ya no lo nombra. Si alguna vez se define, este
+  // gate lo cubre solo → quítalo de aquí.
+  '--sc-form-panel-top',
   // Token DEL CONSUMIDOR, no nuestro: `docs/tipografia.md` lo documenta justamente para avisar
   // de que su `body` NO usa nuestro `--sc-font-family-primary` sino uno propio suyo, así que
   // cambiar nuestra familia no garantiza que la suya cambie. El gate no distingue "token ajeno

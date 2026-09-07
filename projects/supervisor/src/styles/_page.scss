@@ -5,10 +5,16 @@
  * SIETE valores para el mismo trabajo: 1600, 1400, 1200, 1100, 960, 832 y
  * 78rem. Dos listas hermanas idénticas no coincidían entre sí.
  *
- * Aquí viven los cuatro arquetipos que sí existen, y el `max-width` sale de
- * los SCSS de página. Cada página declara CUÁL es en su plantilla, así que el
- * ancho deja de ser un número suelto y pasa a ser una afirmación sobre el tipo
- * de página.
+ * Aquí viven los arquetipos que sí existen, y el `max-width` sale de este
+ * fichero. Cada página declara CUÁL es en su plantilla, así que el ancho deja
+ * de ser un número suelto y pasa a ser una afirmación sobre el tipo de página.
+ *
+ * OJO, medido el 2026-09-06 (DD-53): la Ola 3 cerró CINCO de los siete, no los
+ * siete. `1100` seguía vivo, declarado tres veces byte a byte en los formularios
+ * de agente, grupo y usuario; ahora es `.page__form`, aquí abajo. `78rem` seguía
+ * vivo en el constructor de reglas, que además no declaraba arquetipo ninguno;
+ * entró en `--with-panel` el mismo día. Lo vigila `audit:page-anatomy`:
+ * un `max-width` suelto en el SCSS de una página vuelve a poner rojo.
  *
  * Ojo con la especificidad: estas reglas son globales (sin `[_ngcontent]`), y
  * un `max-width` en el SCSS de un componente les gana siempre. Si una página
@@ -39,6 +45,49 @@
   &--reading {
     max-width: 832px;
   }
+
+  /* Formulario con RAIL: dos columnas de borde a borde, con la forma del
+   * `sc-settings-shell` — rail fijo a la izquierda + columna de formulario a la
+   * derecha. Distinto del rail de SettingsShell en CONTENIDO (aquí es el índice
+   * de secciones del propio formulario, no navegación de la app) pero idéntico
+   * en FORMATO.
+   *
+   * Anula la base entera a propósito: el aire lo pone cada columna por dentro
+   * (`.page__form` su padding, `.ipanel` el suyo), no el contenedor. Si alguien
+   * deja un `padding` en un `.page__inner` scoped de estas páginas, gana el
+   * scoped (0,2,0) y el rail recupera 24.5/28px de margen fantasma — es la
+   * trampa que vigila `e2e/supervisor/page-anatomy.spec.ts`. */
+  &--with-panel {
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    display: grid;
+    grid-template-columns: 240px minmax(0, 1fr);
+    gap: 0;
+
+    @media (max-width: 1024px) {
+      grid-template-columns: 1fr;
+    }
+  }
+}
+
+/* La columna de formulario que acompaña al rail de `--with-panel`.
+ *
+ * 1100 no es un número suelto: es lo que cabe junto a un rail de 240 sin que la
+ * página tenga scroll horizontal en el portátil de referencia (240 + 1100 +
+ * 2×28 de padding = 1396 < 1440). Unificarlo con el editor de 1200 sería una
+ * medición aparte, no un arreglo de paso.
+ *
+ * Vivía duplicado byte a byte en agent-form, group-form y user-form; aquí es uno
+ * solo desde DD-53. */
+.page__form {
+  min-width: 0;
+  max-width: 1100px;
+  margin: 0 auto;
+  padding: var(--sc-spacing-1-75) var(--sc-spacing-2);
+  display: flex;
+  flex-direction: column;
+  width: 100%;
 }
 
 /* Título de página — la línea que abre el contenido.

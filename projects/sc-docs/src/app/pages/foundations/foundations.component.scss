@@ -142,3 +142,97 @@ h2 {
     margin-right: auto;
   }
 }
+
+/* ── Color semántico ──────────────────────────────────────────────────────────
+ *
+ * Listado, no rejilla de swatches: aquí lo que se lee es la FRASE, y el color solo
+ * acompaña. Por eso el swatch es una muestra pequeña a la izquierda y no el
+ * protagonista, al revés que en la sección de primitivos.
+ *
+ * El swatch se pinta con `var(--token)` desde la plantilla, así que voltea con el
+ * tema sin que nadie recalcule nada. */
+.sem-familia {
+  margin-block: var(--sc-spacing-1-5) var(--sc-spacing-0-5);
+  font-size: var(--sc-font-size-100);
+  font-weight: var(--sc-font-weight-semibold);
+  color: var(--sc-text-subtle);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.sem-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-25);
+}
+
+.sem {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--sc-spacing-0-875);
+  padding: var(--sc-spacing-0-75);
+  border-radius: var(--sc-radius-lg);
+
+  &:hover {
+    background: var(--sc-bg-hover);
+  }
+
+  /* La muestra necesita borde propio: varios de estos tokens son blancos o casi,
+   * y sin él un swatch de `--sc-bg-canvas` sobre el lienzo sería invisible — que
+   * es exactamente el defecto que DD-34 midió en la bandeja gris. */
+  &__swatch {
+    flex: 0 0 auto;
+    width: var(--sc-spacing-1-5);
+    height: var(--sc-spacing-1-5);
+    margin-top: 2px;
+    border: 1px solid var(--sc-border-default);
+    border-radius: var(--sc-radius-sm);
+  }
+
+  &__body {
+    min-width: 0;
+    flex: 1;
+  }
+
+  &__token {
+    font-size: var(--sc-font-size-75);
+    color: var(--sc-text-primary);
+  }
+
+  &__uso {
+    margin: var(--sc-spacing-0-25) 0 0;
+    font-size: var(--sc-font-size-100);
+    color: var(--sc-text-secondary);
+  }
+
+  &__no {
+    display: flex;
+    align-items: flex-start;
+    gap: var(--sc-spacing-0-25);
+    margin: var(--sc-spacing-0-25) 0 0;
+    font-size: var(--sc-font-size-100);
+    color: var(--sc-text-subtle);
+
+    sc-icon {
+      flex-shrink: 0;
+      margin-top: 1px;
+      color: var(--sc-text-danger);
+    }
+  }
+
+  /* Puntero a la decisión, no un badge de estado: por eso no lleva color de familia. */
+  &__dd {
+    flex: 0 0 auto;
+    font-size: var(--sc-font-size-75);
+    color: var(--sc-text-subtle);
+    font-variant-numeric: tabular-nums;
+  }
+}
+
+.sem-error {
+  color: var(--sc-text-danger);
+  font-size: var(--sc-font-size-100);
+}

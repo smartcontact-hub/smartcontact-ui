@@ -9,61 +9,14 @@
 
 .page {
   background: var(--sc-bg-surface);
-
-  &__inner {
-    padding: var(--sc-spacing-1-75) var(--sc-spacing-2);
-
-    /*
-     * Identity-panel layout — edge-to-edge two-column shell mirroring
-     * `sc-settings-shell` in shape: a sticky full-height rail on the
-     * left + a scrollable form column on the right. Distinct from the
-     * SettingsShell rail in *content* (here it's a persona card, not
-     * navigation) but identical in *format*.
-     */
-    &--with-panel {
-      max-width: none;
-      margin: 0;
-      padding: 0;
-      display: grid;
-      grid-template-columns: 240px minmax(0, 1fr);
-      gap: 0;
-
-      @media (max-width: 1024px) {
-        grid-template-columns: 1fr;
-      }
-    }
-  }
-
-  &__form {
-    min-width: 0;
-    max-width: 1100px;
-    margin: 0 auto;
-    padding: var(--sc-spacing-1-75) var(--sc-spacing-2);
-    display: flex;
-    flex-direction: column;
-    width: 100%;
-  }
 }
 
-/* Rail — section index only. Identity (avatar + pills + meta) lives in
- * the rich sticky header at the top of the page. */
-.ipanel {
-  position: sticky;
-  top: var(--sc-form-panel-top);
-  align-self: start;
-  height: calc(100dvh - var(--sc-form-panel-top));
-  display: flex;
-  flex-direction: column;
-  gap: var(--sc-spacing-1-125);
-  padding: var(--sc-spacing-1-5);
-  background: transparent;
-  overflow-y: auto;
-
-  @media (max-width: 1024px) {
-    position: static;
-    height: auto;
-  }
-}
+/* El MOLDE de esta página no vive aquí: `.page__inner--with-panel` y
+ * `.page__form` están en `src/styles/_page.scss`, y `.ficha`, `.ipanel` e
+ * `.ipanel__delete` en `src/styles/_forms.scss`. Los cinco eran idénticos byte a
+ * byte en agents, groups y users (DD-53); no los re-declares aquí, porque una
+ * regla encapsulada de componente le gana siempre a la global y el molde se
+ * desviaría en una sola página sin avisar. Lo vigila `audit:page-anatomy`. */
 
 /* Header meta line — projected into <sc-sticky-form-header>
  * S53.5: gap interior 8→10px (icon+label más respirable). */

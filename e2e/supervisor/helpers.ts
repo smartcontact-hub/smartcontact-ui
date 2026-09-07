@@ -206,3 +206,22 @@ export const pickSelectOption = async (
   await expect(option).toBeVisible();
   await option.click();
 };
+
+/**
+ * Cambia de sección en un formulario con `<sc-form-section-nav>` (constructor de
+ * reglas, altas de agente/grupo/usuario).
+ *
+ * El índice son PESTAÑAS: solo una sección está en el DOM a la vez. Un journey
+ * que toque dos secciones tiene que pasar por aquí en medio, o el locator de la
+ * segunda no existe y el fallo parece un bug de la sección, no de navegación.
+ *
+ * Se casa por texto de la etiqueta a propósito, con `hasText` (subcadena): los
+ * iconos son ligaduras de Material y entran en el `innerText` del item, así que
+ * una comparación exacta fallaría por el nombre del glifo.
+ */
+export const irASeccion = async (page: Page, etiqueta: string | RegExp): Promise<void> => {
+  const item = page.locator('sc-form-section-nav .form-nav__item', { hasText: etiqueta });
+  await expect(item).toHaveCount(1);
+  await item.click();
+  await expect(item).toHaveClass(/form-nav__item--active/);
+};

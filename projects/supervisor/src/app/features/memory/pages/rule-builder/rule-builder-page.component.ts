@@ -24,6 +24,10 @@ import { ScInputTextComponent as InputTextComponent } from '@smartcontact-hub/co
 import { ScMultiSelectComponent as MultiSelectComponent } from '@smartcontact-hub/components';
 import { ScTextareaComponent as TextareaComponent } from '@smartcontact-hub/components';
 import { ScToggleSwitchComponent as ToggleSwitchComponent } from '@smartcontact-hub/components';
+import {
+  ScFormSectionNavComponent as FormSectionNavComponent,
+  type FormNavSection,
+} from '@smartcontact-hub/components';
 
 import { RuleConditionBuilderComponent } from '../../components/rule-condition-builder/rule-condition-builder.component';
 import { ConditionResolverService } from '../../data/condition-resolver.service';
@@ -66,6 +70,7 @@ import { createFormDirtyState } from '../../../../shared/utils/form-dirty-state'
   selector: 'sc-memory-rule-builder-page',
   imports: [
     ButtonComponent,
+    FormSectionNavComponent,
     FormsModule,
     IconComponent,
     InputTextComponent,
@@ -141,6 +146,51 @@ export class RuleBuilderPageComponent implements DirtyAware {
     () => this.conditionIssues().filter((i) => i.code === 'incomplete').length,
   );
   // En EDITAR exige cambio neto (formDirty); en crear basta con que sea válido.
+  /* ── Secciones del formulario ──
+   *
+   * El constructor pasa a la anatomía de sus tres hermanos de admin
+   * (`.page__inner--with-panel`): índice a la izquierda y UNA sección visible a
+   * la vez. Antes las tres iban apiladas en una columna de 78rem que no
+   * declaraba arquetipo de página ninguno (DD-53). El impacto sube al rail, así
+   * que deja de irse con el scroll.
+   *
+   * El tercer paso solo existe para los tipos que analizan con IA, así que su
+   * pestaña aparece y desaparece con `ruleType()` en vez de pintarse apagada. */
+  protected readonly activeSection = signal<string>('rule-section-basic');
+
+  protected readonly tieneIa = computed(
+    () => this.ruleType() === 'transcription' || this.ruleType() === 'classification',
+  );
+
+  protected readonly navSections = computed<readonly FormNavSection[]>(() => {
+    const basica: FormNavSection = {
+      id: 'rule-section-basic',
+      labelKey: 'memory.rules.builder.metadata',
+      icon: 'info',
+    };
+    const alcance: FormNavSection = {
+      id: 'rule-section-scope',
+      labelKey: 'memory.rules.builder.scope',
+      icon: 'filter_alt',
+    };
+    if (!this.tieneIa()) return [basica, alcance];
+    return [
+      basica,
+      alcance,
+      { id: 'rule-section-ai', labelKey: 'memory.rules.builder.ai_analysis', icon: this.sparklesIcon },
+    ];
+  });
+
+  /** Punto rojo en el índice. Solo tras intentar guardar: un formulario recién
+   *  abierto no acusa lo que todavía no has tenido ocasión de rellenar. */
+  protected readonly sectionsWithErrors = computed<ReadonlySet<string>>(() => {
+    if (!this.submitted()) return new Set<string>();
+    const conError = new Set<string>();
+    if (this.nameInvalid()) conError.add('rule-section-basic');
+    if (this.condBlocking()) conError.add('rule-section-scope');
+    return conError;
+  });
+
   protected readonly canSave = computed(
     () => !this.nameInvalid() && !this.condBlocking() && (!this.isEditMode() || this.formDirty()),
   );
@@ -228,6 +278,10 @@ export class RuleBuilderPageComponent implements DirtyAware {
         if (rule) {
           this.loadFromRule(rule);
           this.ruleId.set(id);
+          // Editando se aterriza en Alcance: es lo que se retoca, y el nombre ya
+          // lo dice el breadcrumb. Mismo criterio que agent-form, que abre en
+          // Grupos y deja Identificación al fondo.
+          this.activeSection.set('rule-section-scope');
           return;
         }
         // Id no encontrado → volver al listado
@@ -248,6 +302,9 @@ export class RuleBuilderPageComponent implements DirtyAware {
         if (cat?.isActive) {
           this.aiAnalysis.set(true);
           this.categorias.set([catParam]);
+          // El enlace viene del modal de categoría: se abre donde esa categoría
+          // se ve, no en la primera pestaña.
+          this.activeSection.set('rule-section-ai');
         }
       }
       // New rule: capture the baseline AFTER the preselección — so arriving from
@@ -305,7 +362,13 @@ export class RuleBuilderPageComponent implements DirtyAware {
    */
   protected onSave(): void {
     this.submitted.set(true);
-    if (!this.canSave()) return;
+    if (!this.canSave()) {
+      // Con una sección visible a la vez, un error en otra pestaña sería
+      // invisible. El índice lo marca en rojo y además saltamos a la primera.
+      const primera = this.navSections().find((s) => this.sectionsWithErrors().has(s.id));
+      if (primera) this.activeSection.set(primera.id);
+      return;
+    }
     // El árbol es la fuente de verdad del alcance; derivamos los campos planos
     // para alimentar el resumen del listado sin recalcular el árbol cada vez.
     const scope = deriveLegacyScope(this.conditionTree(), this.resolver);
