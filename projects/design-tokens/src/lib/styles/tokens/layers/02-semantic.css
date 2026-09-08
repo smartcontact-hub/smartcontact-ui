@@ -284,9 +284,11 @@
 
   /* ---------- Typography roles ---------- */
   /*
-   * Each role bundles three tokens (size, line-height, weight). Roles
-   * `display-1` through `body-3` use the primary family (Inter);
-   * `caption` and `caption-bold` use the secondary family (Open Sans).
+   * Each role bundles three tokens (size, line-height, weight). TODOS los roles
+   * usan la familia primaria (Inter): los text styles del Figma del DS
+   * (Display/H1/H2/H3/Body/Caption) son Inter, caption incluida (medido en vivo
+   * con el bridge 2026-09-08). `caption`/`caption-bold` apuntaban a la secundaria
+   * (Open Sans) por deriva: se corrige para casar con Figma (FIGMA MANDA, DD-48).
    *
    * FIGMA MANDA (DD-48, 2026-09-03). Cada rol apunta al MISMO paso al que apunta su text
    * style en el Kit; medido en vivo con el bridge, no deducido. Si un text style se remapea
@@ -357,6 +359,6 @@
   --sc-font-family-body-1: var(--sc-font-family-primary);
   --sc-font-family-body-2: var(--sc-font-family-primary);
   --sc-font-family-body-3: var(--sc-font-family-primary);
-  --sc-font-family-caption: var(--sc-font-family-secondary);
-  --sc-font-family-caption-bold: var(--sc-font-family-secondary);
+  --sc-font-family-caption: var(--sc-font-family-primary);
+  --sc-font-family-caption-bold: var(--sc-font-family-primary);
 }
