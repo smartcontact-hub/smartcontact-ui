@@ -22,6 +22,7 @@
 @import '@fontsource/inter/latin-700.css';
 @import '@fontsource/inter/latin-400-italic.css';
 
-/* Secundaria: solo captions (`--sc-font-family-secondary`). */
-@import '@fontsource/open-sans/latin-400.css';
-@import '@fontsource/open-sans/latin-600.css';
+/* Open Sans (secundaria) ya no se carga: los text styles del Figma son TODOS Inter,
+ * caption incluida, así que `--sc-font-family-caption` apunta ahora a la primaria
+ * (ver 02-semantic.css). Cargarla era peso muerto. El token
+ * `--sc-font-family-secondary` sigue existiendo como primitivo por si vuelve a usarse. */

@@ -5,12 +5,12 @@
   <title>Smart Contact UI</title>
   <base href="">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <!-- Fuentes de marca del SCDS: Inter (primaria, todo salvo captions) + Open Sans
-       (secundaria, solo captions). Sin Open Sans, `--sc-font-family-caption` cae a
-       sans-serif del sistema y la vitrina no muestra sus propios captions.
-       Ya NO se piden a Google: se sirven self-hospedadas desde el propio bundle
-       (`src/fonts.css`, @fontsource), igual que Material Symbols. Aquí no queda ningún
-       `<link>` a un tercero, que es lo que dice `/aviso-legal`. -->
+  <!-- Fuente de marca del SCDS: Inter, para TODOS los roles (los text styles del
+       Figma son Inter, caption incluida). Open Sans ya no se carga (era solo para
+       captions y estas pasaron a Inter). Ya NO se pide a Google: se sirve
+       self-hospedada desde el propio bundle (`src/fonts.css`, @fontsource), igual que
+       Material Symbols. Aquí no queda ningún `<link>` a un tercero, que es lo que dice
+       `/aviso-legal`. -->
 </head>
 <body>
   <app-root></app-root>

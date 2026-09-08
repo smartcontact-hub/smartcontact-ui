@@ -9,10 +9,11 @@
     <link rel="icon" type="image/svg+xml" href="favicon.svg" />
 
     <!--
-      Brand fonts. The Smart Contact design system pairs Inter (primary,
-      everything except captions) with Open Sans (secondary, captions
-      only). Without them both `font-family` tokens fall back to
-      system-ui, which silently drifted every screen away from the Figma.
+      Brand font. The Smart Contact design system uses Inter for ALL roles
+      (the Figma text styles are Inter, captions included). Open Sans is no
+      longer loaded (it was captions-only, and captions moved to Inter).
+      Without Inter the `font-family` tokens fall back to system-ui, which
+      silently drifted every screen away from the Figma.
 
       They are NO LONGER fetched from Google: the app serves them itself
       (`src/styles/fonts.css`, @fontsource), same as Material Symbols
