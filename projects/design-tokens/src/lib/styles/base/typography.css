@@ -1,0 +1,102 @@
+/*
+ * Tema tipográfico — clases de ESTILO DE TEXTO listas para usar.
+ *
+ * Empaqueta los ROLES tipográficos del DS (tamaño + interlineado + peso +
+ * familia, ya atados a Figma por DD-48 en 02-semantic.css) en una clase por
+ * estilo, para poder escribir `class="sc-text-h2-semibold"` en vez de recordar
+ * cuatro tokens sueltos.
+ *
+ * REGISTRA LOS 12 TEXT STYLES DEL FIGMA del DS "Smart-Contact Design System"
+ * (leídos en vivo, 2026-09-07): 6 roles × 2 pesos. Cada clase BEBE de los
+ * tokens `--sc-*`; no fija ningún valor a mano. Si un text style se remapea en
+ * Figma, se mueve el token en 02-semantic.css y estas clases lo siguen solas.
+ *
+ *   Estilo Figma          size/line (px)   token de rol
+ *   Display/display-*      64 / 78          display-1
+ *   Heading/h1-*           48 / 58          h1
+ *   Heading/h2-*           24 / 36          h2
+ *   Heading/h3-*           18 / 24          h3
+ *   Body/body-*            14 / 20          body-2
+ *   Caption/caption-*      12 / 18          caption
+ *
+ * Los text styles de Figma son todos Inter (familia primaria) y letter-spacing
+ * 0. El peso lo da el sufijo `-regular` / `-semibold`.
+ */
+
+.sc-text-display-regular,
+.sc-text-display-semibold,
+.sc-text-h1-regular,
+.sc-text-h1-semibold,
+.sc-text-h2-regular,
+.sc-text-h2-semibold,
+.sc-text-h3-regular,
+.sc-text-h3-semibold,
+.sc-text-body-regular,
+.sc-text-body-semibold,
+.sc-text-caption-regular,
+.sc-text-caption-semibold {
+  font-family: var(--sc-font-family-primary);
+  letter-spacing: 0;
+  margin: 0;
+}
+
+/* Display — 64 / 78 */
+.sc-text-display-regular,
+.sc-text-display-semibold {
+  font-size: var(--sc-font-size-display-1);
+  line-height: var(--sc-line-height-display-1);
+}
+
+/* Heading 1 — 48 / 58 */
+.sc-text-h1-regular,
+.sc-text-h1-semibold {
+  font-size: var(--sc-font-size-h1);
+  line-height: var(--sc-line-height-h1);
+}
+
+/* Heading 2 — 24 / 36 */
+.sc-text-h2-regular,
+.sc-text-h2-semibold {
+  font-size: var(--sc-font-size-h2);
+  line-height: var(--sc-line-height-h2);
+}
+
+/* Heading 3 — 18 / 24 */
+.sc-text-h3-regular,
+.sc-text-h3-semibold {
+  font-size: var(--sc-font-size-h3);
+  line-height: var(--sc-line-height-h3);
+}
+
+/* Body — 14 / 20 */
+.sc-text-body-regular,
+.sc-text-body-semibold {
+  font-size: var(--sc-font-size-body-2);
+  line-height: var(--sc-line-height-body-2);
+}
+
+/* Caption — 12 / 18 */
+.sc-text-caption-regular,
+.sc-text-caption-semibold {
+  font-size: var(--sc-font-size-caption);
+  line-height: var(--sc-line-height-caption);
+}
+
+/* Pesos — Regular (400) vs Semibold (600) */
+.sc-text-display-regular,
+.sc-text-h1-regular,
+.sc-text-h2-regular,
+.sc-text-h3-regular,
+.sc-text-body-regular,
+.sc-text-caption-regular {
+  font-weight: var(--sc-font-weight-regular);
+}
+
+.sc-text-display-semibold,
+.sc-text-h1-semibold,
+.sc-text-h2-semibold,
+.sc-text-h3-semibold,
+.sc-text-body-semibold,
+.sc-text-caption-semibold {
+  font-weight: var(--sc-font-weight-semibold);
+}

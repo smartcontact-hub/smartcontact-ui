@@ -185,13 +185,14 @@
       "kind": "CUSTOM",
       "primengBase": "—",
       "cva": false,
-      "inputs": 5,
+      "inputs": 6,
       "api": [
         "ariaLabel",
         "cycle",
         "disabled",
         "filled",
         "inputId",
+        "labelPosition",
         "size"
       ],
       "nested": [],
@@ -395,7 +396,7 @@
       "kind": "EXTENDED",
       "primengBase": "primeng/dialog",
       "cva": false,
-      "inputs": 13,
+      "inputs": 14,
       "api": [
         "bodyless",
         "cancelled",
@@ -403,6 +404,7 @@
         "closeAriaLabel",
         "dismissableMask",
         "draggable",
+        "flushBody",
         "hasFooter",
         "hidden",
         "icon",

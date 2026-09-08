@@ -37,7 +37,7 @@
 | `sc-bulk-transcription-modal` | CUSTOM | — | 16 inputs | sc-button sc-toggleswitch | ✓ | — |
 | `sc-button` | EXTENDED | primeng/button | 15 inputs | — | ✓ | 125 |
 | `sc-card` | STANDARD | primeng/card | 3 inputs | — | ✓ | — |
-| `sc-checkbox` | CUSTOM | — | 5 inputs | — | ✓ | 41 |
+| `sc-checkbox` | CUSTOM | — | 6 inputs | — | ✓ | 41 |
 | `sc-chip` | EXTENDED | primeng/chip | 9 inputs | — | ✓ | 5 |
 | `sc-color-dot-picker` | CUSTOM | — | 1 inputs | — | ✓ | 3 |
 | `sc-column-selector` | STANDARD | primeng/popover | 1 inputs | — | ✓ | 3 |
@@ -46,7 +46,7 @@
 | `sc-datatable` | EXTENDED | primeng/table | 25 inputs | — | ✓ | 21 |
 | `sc-datepicker` | EXTENDED | primeng/datepicker | 20 inputs | sc-field-label sc-field-msg | ✓ | 2 |
 | `sc-delete-entity-dialog` | STANDARD | primeng/button | 2 inputs | sc-dialog | ✓ | 9 |
-| `sc-dialog` | EXTENDED | primeng/dialog | 13 inputs | — | ✓ | 10 |
+| `sc-dialog` | EXTENDED | primeng/dialog | 14 inputs | — | ✓ | 10 |
 | `sc-divider` | STANDARD | primeng/divider | 3 inputs | — | ✓ | 4 |
 | `sc-drawer` | EXTENDED | primeng/drawer | 8 inputs | — | ✓ | — |
 | `sc-empty-state` | CUSTOM | — | 2 inputs | — | ✓ | 10 |
