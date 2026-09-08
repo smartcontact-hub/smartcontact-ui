@@ -47,7 +47,7 @@
     </header>
 
     @if (!bodyless()) {
-      <div class="sc-dialog__body">
+      <div class="sc-dialog__body" [class.sc-dialog__body--flush]="flushBody()">
         <ng-content />
       </div>
     }

@@ -105,6 +105,13 @@
     gap: var(--sc-spacing-1-125); /* gap default entre elementos directos del body */
   }
 
+  /* Cuerpo a ras (input `flushBody`): el contenido gestiona su propio padding
+   * hasta el borde del modal (grids full-bleed, etc.). Sustituye al viejo
+   * `::ng-deep .sc-dialog__body { padding: 0 }` del consumidor. */
+  &__body--flush {
+    padding: 0;
+  }
+
   &__foot {
     /* Figma `dialog/footer/padding`: 17.5 lados/abajo, top:0 (content
      * ya pone 17.5 abajo). */

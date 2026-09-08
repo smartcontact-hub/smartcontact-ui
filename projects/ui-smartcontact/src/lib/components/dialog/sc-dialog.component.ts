@@ -73,6 +73,15 @@ export class ScDialogComponent {
    * description lives in the header subtitle — without this the empty body
    * still claimed its padding and rendered as a blank band. */
   readonly bodyless = input(false);
+  /**
+   * Cuerpo sin padding: mantiene el slot `<ng-content>` (a diferencia de
+   * `bodyless`, que lo elimina) pero pone el padding canónico a 0. Para
+   * contenidos que gestionan su propio padding a ras del borde del modal
+   * (p.ej. una grid full-bleed). Antes esto se conseguía con un
+   * `::ng-deep .sc-dialog__body { padding: 0 }` desde el consumidor, que
+   * alcanzaba el interior del componente; ahora es API del DS.
+   */
+  readonly flushBody = input(false, { transform: booleanAttribute });
   /** aria-label del botón de cierre (resuelto por el consumidor). */
   readonly closeAriaLabel = input<string>('Cerrar');
 

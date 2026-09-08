@@ -37,6 +37,7 @@ export function triStateOf(selected: number, total: number): TriState {
     return 'some';
 }
 export type ScCheckboxSize = 'sm' | 'md' | 'lg';
+export type ScCheckboxLabelPosition = 'start' | 'end';
 
 let triStateIdCounter = 0;
 
@@ -81,6 +82,14 @@ export class ScCheckboxComponent {
   readonly size = input<ScCheckboxSize>('md');
   /** Filled background variant (Figma `Filled=True`): bg slate-50 cuando unchecked. */
   readonly filled = input(false, { transform: booleanAttribute });
+  /**
+   * Lado de la etiqueta proyectada respecto a la caja. `'end'` (default) =
+   * "[caja] etiqueta"; `'start'` = "etiqueta [caja]" (p.ej. cabeceras de la
+   * matriz de permisos, DD#55). Antes se conseguía con un
+   * `sc-checkbox .tri-checkbox { flex-direction: row-reverse }` desde el
+   * consumidor, que alcanzaba el interior del componente; ahora es API del DS.
+   */
+  readonly labelPosition = input<ScCheckboxLabelPosition>('end');
   /** Override del id del `<input>` real (del catálogo de desarrollo): permite
    * que un `<label for="X">` externo enlace el checkbox. Si se omite, se genera
    * uno único. */

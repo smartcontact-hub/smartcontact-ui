@@ -489,10 +489,82 @@ if (problemasB) {
   log('    apagar en silencio algo que solo depende de nosotros.');
 }
 
-const problemas = huerfanos.length + (usados.length > TOPE ? 1 : 0) + problemasB;
+/* ══════════════════════════════════════════════════════════════════════════
+ * SECCIÓN E · reach-in al INTERIOR de un componente NUESTRO del DS
+ * ══════════════════════════════════════════════════════════════════════════
+ *
+ * Las secciones A-D vigilan el acoplamiento a PrimeNG (clases `.p-*`, tags,
+ * entradas) y el CSS de app sin capa sobre `.p-*`. Esta vigila la OTRA
+ * reincidencia: que el SCSS de una app se vuelva a meter DENTRO de un componente
+ * NUESTRO del DS (`sc-dialog`, `sc-checkbox`…) en vez de usar su API.
+ *
+ * Es literalmente la piedra sobre la que tropezamos el 2026-09-07: un
+ * `::ng-deep .sc-dialog__body { padding:0 }` y un `sc-checkbox .tri-checkbox {
+ * flex-direction: row-reverse }`. Los dos se sustituyeron por inputs del DS
+ * (`flushBody`, `labelPosition`). El problema de fondo: si el consumidor alcanza
+ * el interior del componente, un cambio de su plantilla interna lo apaga en
+ * silencio — el mismo fallo callado que las otras secciones, pero contra
+ * NUESTRO propio DS.
+ *
+ * NO mira `.p-*`: eso es del proveedor y va por A/D. Dos formas del gesto:
+ *   1) elemento del DS como ancestro de una clase interna: `sc-dialog .algo`
+ *   2) ng-deep a una clase interna del DS: `::ng-deep .sc-dialog__body`, `.tri-checkbox`
+ *
+ * Esto NO cuenta el SCSS del propio DS (`projects/ui-smartcontact`): ahí un
+ * componente que estiliza su interior es la arquitectura, no un reach-in.
+ * `sc-icon`/`sc-datatable` se excluyen: el primero no tiene interior que pisar,
+ * el segundo expone `.p-datatable-*` (proveedor) que ya cubre A/D.
+ */
+const DS_COMPS =
+  'checkbox|dialog|select|inputtext|textarea|radio|toggle|switch|tag|chip|tooltip|drawer|menu|badge|avatar|button|empty-state';
+const REACH_ELEMENTO = new RegExp(`\\bsc-(?:${DS_COMPS})\\s+\\.[a-z]`);
+const REACH_NGDEEP = /::ng-deep[^{}]*(?:\.sc-[a-z][a-z-]*__|\.tri-checkbox)/;
+
+const scssDeApp = (app) => raiz(`projects/${app}/src`).filter((f) => f.endsWith('.scss'));
+const reachInsDeApp = (app) => {
+  const hits = [];
+  for (const f of scssDeApp(app)) {
+    let txt;
+    try {
+      txt = sinComentarios(readFileSync(f, 'utf8'));
+    } catch {
+      continue;
+    }
+    for (const linea of txt.split('\n')) {
+      if (REACH_ELEMENTO.test(linea) || REACH_NGDEEP.test(linea)) hits.push(`${f}: ${linea.trim().slice(0, 90)}`);
+    }
+  }
+  return hits;
+};
+
+/* supervisor + sc-docs son las apps que beben del DS con estándar ESTRICTO
+ * (agent/agent-mini/cuscare exentas por decisión de producto, 2026-09-07). En
+ * las estrictas el reach-in a un componente del DS es rojo directo (tope 0). */
+const APPS_ESTRICTAS = ['supervisor', 'sc-docs', 'agent', 'agent-mini'];
+const reachInsDS = [];
+for (const app of APPS_ESTRICTAS) {
+  for (const h of reachInsDeApp(app)) reachInsDS.push(`${app} · ${h}`);
+}
+
+log(
+  `\naudit:primeng-coupling — reach-in a componentes del DS (secc. E): ${reachInsDS.length} en apps estrictas (${APPS_ESTRICTAS.join(', ')})`,
+);
+if (reachInsDS.length) {
+  log('\n  ✗ SCSS de app metiéndose DENTRO de un componente del DS. Usa su API');
+  log('    (un @Input del componente), no un selector que alcance su interior:');
+  for (const h of reachInsDS) log(`      ${h}`);
+  log('    → Si el componente no expone lo que necesitas, AÑÁDELE el input en');
+  log('      `projects/ui-smartcontact` y consúmelo. Ver `flushBody`/`labelPosition`.');
+}
+/* cuscare: exenta de limpieza, pero se informa su recuento para que se vea. */
+const cuscareReach = reachInsDeApp('cuscare').length;
+if (cuscareReach) log(`  · cuscare (exenta): ${cuscareReach} reach-in(s) — informativo, no bloquea.`);
+
+const problemas =
+  huerfanos.length + (usados.length > TOPE ? 1 : 0) + problemasB + reachInsDS.length;
 if (problemas === 0) {
   log(
-    `✓ audit:primeng-coupling OK — las ${usados.length} clases siguen existiendo, el acoplamiento no crece (tope ${TOPE}), los ${consultados.size} elementos consultados casan con lo que escribimos, ninguna entrada quedó inerte, y ninguna app crece su CSS sin capa sobre \`.p-*\`.`,
+    `✓ audit:primeng-coupling OK — las ${usados.length} clases siguen existiendo, el acoplamiento no crece (tope ${TOPE}), los ${consultados.size} elementos consultados casan con lo que escribimos, ninguna entrada quedó inerte, ninguna app crece su CSS sin capa sobre \`.p-*\`, y ninguna app estricta se mete dentro de un componente del DS.`,
   );
   process.exit(0);
 }

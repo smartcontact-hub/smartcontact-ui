@@ -187,6 +187,84 @@ code {
   }
 }
 
+/* Estilos de texto — muestrario de los 12 text styles del Figma. Cada muestra
+ * lleva su clase real `.sc-text-*` (tamaño/peso/interlineado/familia de tokens);
+ * aquí sólo se estructura la fila. */
+.styles {
+  margin-bottom: var(--sc-spacing-2-5);
+
+  &__title {
+    margin: 0 0 var(--sc-spacing-0-5);
+    font-size: var(--sc-font-size-200);
+    font-weight: var(--sc-font-weight-semibold);
+    color: var(--sc-text-primary);
+  }
+
+  &__lead {
+    margin: 0 0 var(--sc-spacing-1-5);
+    font-size: var(--sc-font-size-100);
+    line-height: 1.6;
+    color: var(--sc-text-secondary);
+  }
+
+  &__list {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  &__row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: var(--sc-spacing-1-5);
+    padding: var(--sc-spacing-1) 0;
+
+    & + & {
+      border-top: 1px solid var(--sc-border-subtle);
+    }
+  }
+
+  /* El tamaño/peso/interlineado los pone la clase `.sc-text-*` en el elemento;
+   * aquí sólo se le deja crecer y se acota para que un Display de 64 no empuje la meta. */
+  &__sample {
+    min-width: 0;
+    flex: 1 1 auto;
+    color: var(--sc-text-primary);
+    overflow-wrap: anywhere;
+  }
+
+  &__meta {
+    flex: 0 0 12rem;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 2px;
+    text-align: right;
+    padding-top: var(--sc-spacing-0-25);
+  }
+
+  &__cls {
+    background: transparent;
+    padding: 0;
+    color: var(--sc-text-link);
+    font-family: var(--sc-font-family-mono);
+    font-size: var(--sc-font-size-100);
+  }
+
+  &__val {
+    font-size: var(--sc-font-size-100);
+    color: var(--sc-text-subtle);
+    font-variant-numeric: tabular-nums;
+  }
+
+  &__use {
+    font-size: var(--sc-font-size-100);
+    color: var(--sc-text-subtle);
+    line-height: 1.35;
+  }
+}
+
 .foot {
   margin: var(--sc-spacing-1-5) 0 0;
   font-size: var(--sc-font-size-100);

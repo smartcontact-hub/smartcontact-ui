@@ -33,6 +33,12 @@
     opacity: 0.6; /* Figma `disabled/opacity: 60%` (token global) */
   }
 
+  /* Etiqueta antes de la caja (input `labelPosition="start"`). El `gap` y el
+   * `align-items` del contenedor se conservan; solo se invierte el orden. */
+  &--label-start {
+    flex-direction: row-reverse;
+  }
+
   &__input {
     position: absolute;
     inset: 0;
