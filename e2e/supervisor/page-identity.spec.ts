@@ -130,6 +130,8 @@ test('el título de página mide igual en todas partes', async ({ page }) => {
 
   const distintos = [...new Set(medidas.map((m) => `${m.size}/${m.weight}`))];
   expect(distintos, JSON.stringify(medidas, null, 1)).toHaveLength(1);
-  // 16px/600 es lo medido en la referencia (`--sc-*-subtitle-1`).
-  expect(distintos[0]).toBe('16px/600');
+  // 18px/600: los tokens de rol `h3`, que es el text style `Heading/h3-semibold` del
+  // Figma del DS. Era 16px/600 (`subtitle-1`) hasta el 2026-09-09, cuando DD-54 fijó que
+  // manda la escala de la LIBRERÍA y ese 16 se quedó sin text style detrás.
+  expect(distintos[0]).toBe('18px/600');
 });
