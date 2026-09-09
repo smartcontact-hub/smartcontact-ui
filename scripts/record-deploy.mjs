@@ -69,6 +69,7 @@ const espera = (ms) => new Promise((r) => setTimeout(r, ms));
 async function main() {
   const pendientes = new Map(SITIOS.map((s) => [s.entorno, s]));
   const resultado = new Map();
+  const conMarca = new Set(); // entornos que han mostrado ALGUNA marca, aunque vieja
   const hasta = Date.now() + ESPERA_MAX_MS;
 
   console.log(`Esperando a que los ${SITIOS.length} sitios sirvan ${sha.slice(0, 7)}…\n`);
@@ -80,6 +81,7 @@ async function main() {
         resultado.set(entorno, { ...sitio, ok: true });
         pendientes.delete(entorno);
       } else if (servido) {
+        conMarca.add(entorno); // alguna vez tuvo marca: el sello existe, solo va tarde
         console.log(`… ${entorno} todavía en ${servido.slice(0, 7)}`);
       } else {
         console.log(`… ${entorno} sin marca legible`);
@@ -89,6 +91,12 @@ async function main() {
   }
   for (const [entorno, sitio] of pendientes) {
     console.log(`✗ ${entorno} NO llegó a servir ${sha.slice(0, 7)} en 20 min`);
+    // Sin marca en 20 minutos casi nunca es un despliegue lento: es que el build de Cloudflare
+    // no pasa por `stamp-build.mjs` (supervisor, 2026-09-09: un `ng build` suelto publicaba
+    // bien y sin sello). Que el rojo diga dónde mirar.
+    if (!conMarca.has(entorno)) {
+      console.log(`  ${entorno} nunca sirvió un build.json legible: mira el build command del proyecto en Cloudflare (npm run audit:cf-config).`);
+    }
     resultado.set(entorno, { ...sitio, ok: false });
   }
 

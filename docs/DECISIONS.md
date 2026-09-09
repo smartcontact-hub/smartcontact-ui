@@ -259,6 +259,16 @@ leer desde aquí qué comando exacto tiene configurado cada proyecto en el panel
 así que la primera ejecución real es la que lo dice; si algún sitio no se confirma, ahí está la
 causa a mirar primero.
 
+**Corolario (2026-09-09, primera ejecución real)** · El primer registro puso supervisor en rojo
+con el sitio sirviendo el commit correcto: su comando de build en Cloudflare era un `ng build`
+suelto, el único de los cinco sin `stamp-build.mjs` detrás, y la incógnita que dejaba el hand-off
+(«no se puede leer desde aquí qué comando tiene cada proyecto») resultó ser exactamente el fallo.
+Se corrigió por API, y agent-mini tenía además una `NODE_VERSION` duplicando `.node-version`.
+Como ningún gate del repo puede ver el panel de Cloudflare, ahora lo lee `audit:cf-config`: los
+cuatro ajustes por proyecto contra lo que el repo espera, en local con el OAuth de wrangler y en
+`deploy-record.yml` con el secret `CLOUDFLARE_API_TOKEN` (sin secret, el paso lo dice y no afirma
+nada). Y el rojo del registro, cuando un sitio nunca mostró sello, apunta a ese comando.
+
 ## DD-58 · 2026-09-09 — El DS corta **1.0.0**, y se descarga por *release*, no por registro
 
 **Contexto** · Rafa abre la pantalla de *Deployments* del repo y ve el último despliegue del

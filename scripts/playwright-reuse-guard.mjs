@@ -35,7 +35,17 @@ import { execFileSync } from 'node:child_process';
 export function reuseOnlyOwnServer(port) {
   // En CI cada job es una máquina limpia: nunca reutilices, y así un puerto
   // ocupado peta en vez de colarse.
-  if (process.env['CI']) return false;
+  if (process.env['CI']) {
+    /*
+     * PERO `CI=1` no significa solo «runner de GitHub»: `preflight` lo pone en local para que
+     * Playwright levante SU servidor. Ahí un puerto ocupado NO es un bug, es la sesión hermana
+     * de otro worktree, y petar tira la cadena entera (medido el 2026-09-09: cuatro veces en
+     * una tarde, y esta rama del `if` era la única que no esperaba). El runner de verdad se
+     * distingue por `GITHUB_ACTIONS`, y allí sí se quiere el fallo seco.
+     */
+    if (!process.env['GITHUB_ACTIONS']) esperaPuertoLibre(port);
+    return false;
+  }
 
   otraCadenaViva(port);
 
@@ -157,10 +167,50 @@ function otraCadenaViva(port) {
    */
   const propios = nuestros();
   const miGrupo = grupoDe(process.pid);
-  const ajenos = pidsDePlaywright().filter(
-    (pid) => !propios.has(pid) && !(miGrupo !== undefined && grupoDe(pid) === miGrupo),
-  );
+  const ajenas = () =>
+    pidsDePlaywright().filter(
+      (pid) => !propios.has(pid) && !(miGrupo !== undefined && grupoDe(pid) === miGrupo),
+    );
+
+  let ajenos = ajenas();
   if (ajenos.length === 0) return;
+
+  /*
+   * ESPERA en vez de morir. El mensaje de abajo lleva desde el principio diciendo que lo
+   * normal es «esperar a que termine la otra y relanzar», y eso se hacía A MANO.
+   *
+   * Medido el 2026-09-09: esta suite es el ÚLTIMO paso de `preflight`, así que la colisión
+   * no cuesta el arranque, cuesta la cadena entera — builds y 139 tests del supervisor ya
+   * pasados, tirados. Pasó TRES veces en una tarde con tres worktrees vivos, y una de ellas
+   * fue una carrera pura: esperé a que muriera el pid de la hermana, arranqué, y durante mis
+   * builds nació otro. Esperar AQUÍ, con el trabajo ya hecho en la mano, es lo único que
+   * cierra esa carrera.
+   *
+   * Bloqueante y síncrona a propósito: el config de Playwright se evalúa en síncrono, y en
+   * este punto el proceso no tiene nada mejor que hacer. Con techo, para que una sesión
+   * colgada no cuelgue a las demás; agotado el techo, se lanza el error de siempre.
+   */
+  const TECHO_MS = 25 * 60 * 1000;
+  const PASO_MS = 15_000;
+  const hasta = Date.now() + TECHO_MS;
+  if (ajenos.length > 0) {
+    console.log(
+      `[playwright] Otra ejecución viva (pid ${ajenos.join(', ')}). Espero a que suelte el puerto ${port}…`,
+    );
+  }
+  while (ajenos.length > 0 && Date.now() < hasta) {
+    dormir(PASO_MS);
+    ajenos = ajenas();
+  }
+  if (ajenos.length === 0) {
+    // Jitter: si dos sesiones esperaban a la misma, arrancar a la vez repetiría el choque.
+    dormir(1_000 + Math.floor(Math.random() * 4_000));
+    if (ajenas().length === 0) {
+      console.log('[playwright] Libre. Sigo.');
+      return;
+    }
+    ajenos = ajenas();
+  }
 
   throw new Error(
     [
@@ -171,11 +221,41 @@ function otraCadenaViva(port) {
       '  El síntoma NO parece de concurrencia: tablas vacías, timeouts largos y una suite',
       '  que tarda 40× lo normal. Se lee como un bug del producto, y no lo es.',
       '',
+      `  Ya se ha esperado ${TECHO_MS / 60000} minutos por ella y sigue viva.`,
+      '',
       '  Salidas:',
-      '    · Espera a que termine la otra (o mátala) y relanza — es lo normal.',
+      '    · Mírala: puede estar colgada. Mátala y relanza.',
       '    · Si de verdad quieres dos suites distintas a la vez: SC_ALLOW_PARALLEL_SUITES=1',
     ].join('\n'),
   );
+}
+
+/**
+ * Espera (con techo) a que NADIE escuche en ese puerto. Silenciosa si ya está libre.
+ *
+ * @param {number} port
+ */
+function esperaPuertoLibre(port) {
+  if (listenerPid(port) === null) return;
+  const hasta = Date.now() + 25 * 60 * 1000;
+  const quien = listenerPid(port);
+  console.log(`[playwright] El puerto ${port} está ocupado (pid ${quien}). Espero a que se libere…`);
+  while (listenerPid(port) !== null && Date.now() < hasta) dormir(15_000);
+  if (listenerPid(port) === null) {
+    dormir(1_000 + Math.floor(Math.random() * 4_000));
+    console.log(`[playwright] Puerto ${port} libre. Sigo.`);
+  }
+}
+
+/**
+ * Duerme SÍN­CRONAMENTE. `Atomics.wait` sobre un buffer que nadie despierta es la única
+ * espera de verdad bloqueante en Node; aquí hace falta porque el config de Playwright se
+ * evalúa en síncrono y no hay dónde colgar un `await`.
+ *
+ * @param {number} ms
+ */
+function dormir(ms) {
+  Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
 }
 
 /**
