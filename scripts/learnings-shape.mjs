@@ -15,12 +15,18 @@
  *   · sin sub-entradas: `*Corolario*`, `*Evidencia (sNN)*`, `*Reincidencia*`, `*Absorbe*`,
  *     `*Afilado*`, `*Actualización*`, ni `**Disparador**:` / `**Acción**:` dentro de una regla.
  *     Si una lección necesita párrafo propio, es otra regla (con número e índice) o es un hook.
+ *   · ESCALADO (2026-09-09): una regla con ≥ MAX_SESIONES_SIN_MECANISMO sesiones `sNN` citadas y
+ *     sin ⚙️ falla. Medido ese día: las seis reglas más rotas (3 a 5 sesiones) estaban todas en la
+ *     tarjeta de CLAUDE.md y seguían siendo prosa; las únicas que dejaron de romperse son las que
+ *     pasaron a hook o gate (#7, #11). Tres roturas con el texto delante prueban que el texto no
+ *     dispara: o se mecaniza, o se escribe «⚙️ no mecanizable: <por qué>» y la decisión queda.
  *
  * Se prueba en rojo con casos fabricados en `scripts/__tests__/learnings-shape.test.mjs`.
  */
 export const MAX_LINEAS = 200;
 export const MAX_REGLAS = 20;
 export const MAX_LINEAS_REGLA = 12;
+export const MAX_SESIONES_SIN_MECANISMO = 3;
 
 const CABECERA_REGLA = /^\s*(\d+)\. \*\*/;
 const FILA_INDICE = /^\| \*\*(\d+)\*\* \|/;
@@ -46,6 +52,13 @@ export function revisarLearnings(texto) {
       problemas.push(`la regla ${actual.n} ocupa ${noVacias} líneas; el tope es ${MAX_LINEAS_REGLA}. Si no cabe, es más de una regla o es un hook.`);
     if (!actual.lineas.some((l) => /^\s*Evidencia:/.test(l)))
       problemas.push(`la regla ${actual.n} no tiene línea \`Evidencia:\` (una, con sesión y hecho; la historia va en git).`);
+    const cuerpo = actual.lineas.join('\n');
+    const sesiones = new Set(cuerpo.match(/\bs\d+\b/g) || []).size;
+    if (sesiones >= MAX_SESIONES_SIN_MECANISMO && !cuerpo.includes('⚙️'))
+      problemas.push(
+        `la regla ${actual.n} acumula ${sesiones} sesiones de evidencia y sigue siendo solo prosa: se rompió ${sesiones} veces con el texto delante, y más texto no la va a disparar. ` +
+          'Vigílala con un hook o un gate y márcala ⚙️, o escribe en la regla «⚙️ no mecanizable: <por qué>» para dejar la decisión tomada.',
+      );
     actual = null;
   };
   lineas.forEach((l, i) => {

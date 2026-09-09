@@ -1,23 +1,16 @@
 # LEARNINGS — reglas de proceso ganadas trabajando en este repo
 
 > **Formato**: `Disparador → acción` y UNA línea de `Evidencia:`. Sin disparador no se dispara.
-> **Los números son IDENTIFICADORES, no un orden**: código y docs citan `LEARNINGS #N`
-> (`e2e/supervisor/conversations-row-gesture.spec.ts`, `docs/DECISIONS.md`). Nunca renumeres; al
-> fundir, el absorbido desaparece y el superviviente no se toca (3→5, 9→7, 13→2, 20→2 ya pasaron).
->
-> **Dónde vive cada cosa**: lo que una MÁQUINA puede vigilar es un hook o un gate
-> (`.claude/settings.json` → `scripts/hooks/`, `npm run verify`); lo que solo un agente juzga es
-> una regla de aquí; la tarjeta de `CLAUDE.md` es el resumen que viaja en cada turno; el terreno
-> del proyecto va a memoria. `/reflect` enruta en ese orden, y cada regla marca con ⚙️ la parte
-> que ya vigila una máquina.
->
-> **La forma la vigila un gate** (`docs:coherence` check K, `scripts/learnings-shape.mjs`): ≤200
-> líneas, ≤20 reglas, ≤12 líneas por regla, sin sub-entradas (`*Corolario*`, `*Evidencia (sNN)*`).
-> Si una lección necesita párrafo propio, es otra regla con número o es un hook. La historia larga
-> de cada regla vive en git: `git log -S'(s31)' -- LEARNINGS.md`, y entera en el tag
-> `archive/learnings-2026-09-02` (10.757 palabras, 43 sub-entradas; el tope fue prosa 50 commits).
->
+> **Los números son IDENTIFICADORES, no un orden**: código y docs citan `LEARNINGS #N`; nunca
+> renumeres; al fundir, el absorbido desaparece y el superviviente no se toca (3→5, 9→7, 13→2, 20→2).
 > Ámbito: proceso del repo, versionado. Hechos del proyecto → `docs/`; estado → `docs/handoff/`.
+> **Dónde vive cada cosa**: lo que una MÁQUINA puede vigilar es un hook o un gate (`scripts/hooks/`,
+> `npm run verify`); lo que solo un agente juzga es una regla de aquí; la tarjeta de `CLAUDE.md` viaja
+> en cada turno; el terreno va a memoria. `/reflect` enruta en ese orden; ⚙️ marca lo ya vigilado.
+> **La forma la vigila un gate** (`docs:coherence` K): ≤200 líneas, ≤20 reglas, ≤12 por regla, sin
+> sub-entradas; y ESCALA: ≥3 sesiones de evidencia sin ⚙️ ponen rojo hasta mecanizar o declarar. Un
+> párrafo propio es otra regla o un hook. Historia: `git log -S'(s31)' -- LEARNINGS.md` y el tag
+> `archive/learnings-2026-09-02`.
 
 ## Índice de disparadores — escanea esto, baja solo a la que te aplique
 
@@ -51,7 +44,7 @@
    `matchMedia`, `getComputedStyle`), relee tus propias mediciones de la sesión antes de probar, y
    nombra el sujeto EXACTO que mediste: un nombre colectivo ("el MCP", "el CI") son varias piezas
    que caen por separado. Dos validadores con el mismo modo de fallo no se corroboran. Si no puedes
-   probarlo, el veredicto es "sin verificar", nunca "roto".
+   probarlo, el veredicto es "sin verificar", nunca "roto". ⚙️ no mecanizable (tarjeta, punto 3).
    Evidencia: s11 Enter en `sc-datatable` (la acción `key` manda `key` vacío) · s31 inyecté `600px`
    y declaré roto lo que PrimeNG normaliza · s32 `reducedMotion` escrito y no entregado · s27 "el
    MCP de Figma" eran tres servers y sondeé uno.
@@ -62,7 +55,8 @@
    NODO exacto de la claim; lee el control (un rojo o un verde puede venir de otro sitio: servidor
    muerto, puerto de OTRO worktree, filtro `jq` que nunca casa); si un doble contesta la pregunta
    que hace el código, el test se mide a sí mismo. Cierra con una observación que NO dependa de tu
-   inventario. Un guardián con falsos positivos es peor que ninguno: enseña a ignorarlo.
+   inventario. Un guardián con falsos positivos es peor que ninguno: enseña a ignorarlo. ⚙️ el
+   CHECK O de `docs:coherence` exige un test rojo a cada script de `verify` (23 legados, solo encoge).
    Evidencia: s18 regex `/\d+/g` sobre `color(srgb …)` = verde imposible · s21 medí píxeles, no
    color · s34 `closest: () => ({})` dejó 8 tests verdes con el gesto muerto · s31 tests verdes
    contra el `ng serve` de otro worktree · s18 guardián sin probar en claro↔oscuro = 17 rojos.
@@ -89,7 +83,7 @@
    vacío dice "mi canal no dispara", no "no existe". ¿Se ve bien? → captura a viewport real,
    pantalla entera. ¿Sabrán usarlo? → recorrido cognitivo: ¿sabrá qué intentar, verá el control,
    entenderá qué hace, notará que funcionó? Una interacción por llamada: no leas el DOM en la misma
-   llamada que dispara la acción (Angular aún no pintó).
+   llamada que dispara la acción (Angular aún no pintó). ⚙️ no mecanizable (elegir es juicio).
    Evidencia: s15 shift+click verde en mi sonda, rojo en Playwright · s20 siete unitarios verdes y
    el rango no funcionaba · s26 cero tooltips sintéticos, 23 con el ratón real · s15 "transcribir"
    no aparecía en pantalla con 22 tests verdes.
@@ -112,7 +106,7 @@
    (`toHaveText`, `toHaveCount`, `expect.poll`; `innerText` y `evaluate` leen una foto)? ¿Espera al
    estado FINAL? Si afirma que algo NO pasa, espera al estímulo confirmado, no a un timeout. Para
    probar el arreglo de una carrera, hazla determinista (encoge la ventana) en vez de correrla con
-   carga. Un flake que tumba el CI 3 de 5 no es inocuo: entrena a ignorar los gates.
+   carga. Un flake que tumba el CI 3 de 5 no es inocuo: entrena a ignorar los gates. ⚙️ CHECK O.
    Evidencia: s25 ocho rojos falsos en una sesión · s27 `component-structure` 3 rojos al día por
    `evaluateAll` sin reintento · s30 gate verde contra el componente roto por leer antes de pintar
    · s31 `setTimeout` de 380 a 20 ms: la vieja 5/5 rojo, la nueva 5/5 verde.
@@ -128,10 +122,10 @@
     árbol desde la carga), ficheros `i18n`, hoja de estilos, `docs/DECISIONS.md` antes de
     hipotetizar. Y si lo que vas a montar es un GUARDIÁN, la pregunta es "¿qué vigila esto hoy?":
     `.githooks/`, `.claude/settings.json`, `scripts/`, `package.json`. Un diagnóstico que enumera
-    los ficheros que se LEEN y no los mecanismos que se EJECUTAN mide media realidad.
+    los ficheros que se LEEN y no los mecanismos que se EJECUTAN mide media realidad. ⚙️ no
+    mecanizable: es juicio y ya va en la tarjeta (punto 7).
     Evidencia: s26 cuatro modales "imposibles" medidos sin pulsar nada, y 1.449 claves de `en.json`
-    · s41 propuse un hook de pre-push con `.githooks/pre-push` ya existiendo desde s39: lo descubrí
-    cuando mi propio push repitió 10 min de cadena y agotó el timeout.
+    · s41 propuse un hook de pre-push que ya existía desde s39 (lo vi al repetir 10 min de cadena).
 
 11. **Toda edición masiva —shell o API— lleva su verificación de outcome PEGADA en la misma
     operación. Y si la clave con la que escribes puede REPETIRSE en el árbol, no es una asignación:
@@ -186,7 +180,8 @@
     propio resumen, otro agente, un item de audit ("solo hay que…"), un check de CI atado a un
     commit VIEJO, o un doc archivado que rescatas (ahí más: el traslado le da credibilidad). Si no
     lo mediste, etiqueta "según X, sin verificar" y acota a QUÉ artefacto y estado. Si la fuente
-    AVISA de una trampa, cabléala en tu primer comando en vez de redescubrirla.
+    AVISA de una trampa, cabléala en tu primer comando en vez de redescubrirla. ⚙️ no mecanizable
+    (es juicio; sus síntomas ya los vigilan los checks D, E, J y M de `docs:coherence`).
     Evidencia: s14 "número héroe" que era una frase entera · s25 "100 deployments" eran 26 · s27 DD
     nuevo con una claim de un doc muerto · s36 154 falsos por no aplicar el aviso leído · s39 check
     rojo de un proyecto ya borrado.

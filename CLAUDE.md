@@ -7,10 +7,11 @@ del trabajo con agentes están en [AGENTS.md](AGENTS.md): léelas antes de tocar
   frente → el **índice** de [LEARNINGS.md](LEARNINGS.md) (una tabla; baja al cuerpo de una regla
   cuando la tarjeta de abajo la cite). LEARNINGS mide ≤200 líneas y lo vigila un gate.
 - **La guía que se impone sola** vive en `.claude/settings.json` → `scripts/hooks/`. El hook de
-  Bash deniega, con la regla como motivo: un push sin preflight sobre ESTE árbol, un `echo $?`
-  colgado de un gate, volcar configs con credenciales, `git diff main...rama` y `for f in $VAR`.
-  El de Stop exige leer el CI tras un push (`npm run ci:verdict`). El de compactación te dice si
-  la guía cambió en `origin/main`. Salida explícita: `# sc:ok` en el comando, y dicho en el mensaje.
+  Bash deniega, con la regla como motivo, los cinco comandos de LEARNINGS #7 #11 #12 (push sin
+  preflight sobre ESTE árbol, `echo $?` colgado, volcar credenciales, `git diff main...rama`,
+  `for f in $VAR`). El de Stop exige leer el CI tras un push (`npm run ci:verdict`). El de
+  compactación avisa si la guía cambió en `origin/main`. El de cada mensaje de Rafa apunta lo que
+  suena a corrección y te pide nombrar la regla que ya lo cubría. Salida explícita: `# sc:ok`.
 
 <!-- tarjeta:inicio -->
 ## Antes de AFIRMAR, COMMITEAR o PUSHEAR, relee esto (regla de LEARNINGS entre paréntesis)
@@ -48,5 +49,4 @@ Resumen operativo:
   (semantic-color-light), `04-component` (cmp-sizing · cmp-color-light),
   `05-extensions` (effects) y `07-dark` (semantic-color-dark · cmp-color-dark) —
   10 zonas. **No editar ninguna a mano**: `npm run tokens:import` encadena 5
-  generadores y las reescribe todas. (Medido 2026-08-13; antes esta línea nombraba
-  solo `01-primitive` y quien la creyera perdía el trabajo hecho en las otras cuatro.)
+  generadores y las reescribe todas. (Medido 2026-08-13.)

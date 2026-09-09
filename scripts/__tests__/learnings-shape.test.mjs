@@ -4,7 +4,7 @@ import { readFileSync } from 'node:fs';
 import { join, dirname } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-import { revisarLearnings, MAX_LINEAS, MAX_LINEAS_REGLA, MAX_REGLAS } from '../learnings-shape.mjs';
+import { revisarLearnings, MAX_LINEAS, MAX_LINEAS_REGLA, MAX_REGLAS, MAX_SESIONES_SIN_MECANISMO } from '../learnings-shape.mjs';
 
 // El gate de forma de LEARNINGS se prueba EN VERDE con el fichero real y EN ROJO con cada modo de
 // inflado que el fichero tuvo de verdad (LEARNINGS 2: un gate que solo se ha visto pasar no prueba
@@ -30,6 +30,20 @@ test('rojo: más reglas en el índice que el tope', () => {
   const ns = Array.from({ length: MAX_REGLAS + 1 }, (_, i) => i + 1);
   const p = revisarLearnings(doc(indice(...ns), '## S', ...ns.map((n) => regla(n))));
   assert.ok(p.some((x) => /el índice tiene/.test(x)));
+});
+
+test('rojo: una regla rota en ≥3 sesiones sin ⚙️ escala; con ⚙️ (mecanizada o «no mecanizable») pasa', () => {
+  const ses = Array.from({ length: MAX_SESIONES_SIN_MECANISMO }, (_, i) => `s${10 + i} hecho`).join(' · ');
+  const prosa = doc(indice(1), '## S', regla(1, `Evidencia: ${ses}.`));
+  assert.ok(revisarLearnings(prosa).some((p) => /la regla 1 acumula \d+ sesiones/.test(p)), 'debía escalar');
+  const menos = doc(indice(1), '## S', regla(1, 'Evidencia: s10 a · s11 b.'));
+  assert.ok(!revisarLearnings(menos).some((p) => /acumula/.test(p)), 'por debajo del umbral no escala');
+  const misma = doc(indice(1), '## S', regla(1, 'Evidencia: s10 a · s10 b · s10 c.'));
+  assert.ok(!revisarLearnings(misma).some((p) => /acumula/.test(p)), 'la misma sesión repetida cuenta una');
+  const mecanizada = doc(indice(1), '## S', regla(1, `⚙️ lo vigila bash-guard.\n   Evidencia: ${ses}.`));
+  assert.deepEqual(revisarLearnings(mecanizada), []);
+  const decidida = doc(indice(1), '## S', regla(1, `⚙️ no mecanizable: es juicio.\n   Evidencia: ${ses}.`));
+  assert.deepEqual(revisarLearnings(decidida), []);
 });
 
 test('rojo: una regla más larga que el tope', () => {
