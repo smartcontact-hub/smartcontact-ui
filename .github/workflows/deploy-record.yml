@@ -1,0 +1,43 @@
+# Apunta en la pantalla de *Deployments* qué está publicado en cada uno de los cinco sitios,
+# DESPUÉS de comprobarlo.
+#
+# Cloudflare despliega solo al empujar a `main`; GitHub no se entera de nada, así que esa
+# pantalla estaba vacía. Lo fácil habría sido apuntar "desplegado" nada más fundir, pero eso es
+# exactamente lo que hacía la pantalla que llevaba tres meses mintiendo (GitHub Pages, retirado
+# en DD-17). Así que aquí no se afirma nada sin medirlo: `record-deploy.mjs` le pide
+# `build.json` a cada sitio y espera hasta VER el commit correcto. Si a los 20 minutos alguno
+# no lo sirve, se registra como FALLO y el job se pone rojo. Ver DD-59.
+#
+# `deployments: write` es el único permiso ancho, y vive solo aquí.
+name: deploy-record
+
+on:
+  push:
+    branches: [main]
+  # Rescate: volver a comprobar un commit concreto sin tener que empujar nada.
+  workflow_dispatch:
+    inputs:
+      sha:
+        description: 'Commit a comprobar (por defecto, el último de main)'
+        required: false
+
+permissions:
+  contents: read
+  deployments: write
+
+jobs:
+  record:
+    runs-on: ubuntu-latest
+    # Cloudflare construye las cinco a la vez; 25 acota el job por encima de la espera del script.
+    timeout-minutes: 25
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      # Sin `npm ci`: el script es Node pelado (fetch nativo), así no espera a una instalación
+      # para empezar a mirar los sitios.
+      - name: Registrar los 5 sitios (comprobando que sirven el commit)
+        run: node scripts/record-deploy.mjs "${{ inputs.sha || github.sha }}"
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

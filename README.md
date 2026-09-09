@@ -148,6 +148,7 @@ qué garantiza.
 | Audit de componentes   | `audit:components`                                                                                         | La pokédex (`docs/inventory.md`) está al día con el código                                                                                                                                         |
 | Era de la API          | `audit:api-era`                                                                                            | Nada nuevo estrena `@Input()/@Output()` (DD-38). Trinquete de 16 componentes que solo puede menguar                                                                                                |
 | i18n                   | `i18n:check`                                                                                               | Que la app sea multiidioma de verdad: claves 1:1 entre locales, toda clave que pide el código existe, variables `{{x}}` intactas, una sola traducción por frase, cero copy a pelo en atributos y ningún formato de fecha clavado a un idioma                                                                                                           |
+| Novedades de la web     | `novedades:check`                                                                                          | La página `/novedades` de `sc-docs` cuadra con `CHANGELOG.md`. La pinta un artefacto generado (`npm run novedades:gen`), no un texto a mano: sin esto, la web podría anunciar una versión distinta de la que el repo publica, que es la misma clase de fallo de escribir dos veces el mismo anuncio |
 | Uso real                | `usage:check`                                                                                              | La galería de uso (`public/usage/`) cuadra con la captura versionada; se regenera con `usage:capture`                                                                                              |
 | Conexión de variables   | `variables:check`                                                                                          | El mapa Figma → tema → navegador (CSV + JSON de sc-docs) cuadra con el crudo medido; se regenera con `variables:map`                                                                               |
 | Tests unitarios        | `test:unit`                                                                                                | Suites de los generadores y scripts                                                                                                                                                                |
@@ -168,7 +169,21 @@ qué garantiza.
 | Tipos y lint           | `typecheck` · `lint`                                                                                       | `tsc` sobre las 2 libs, las 4 apps y el arnés de la raíz                                                                                                                                           |
 | e2e smoke              | `e2e`                                                                                                      | La demo levanta y el botón y el form field renderizan la métrica del Kit medida en navegador                                                                                                       |
 
-El mismo gate corre en CI ([.github/workflows/ci.yml](.github/workflows/ci.yml)).
+El mismo gate corre en CI ([.github/workflows/ci.yml](.github/workflows/ci.yml)). Cuando un
+e2e falla, el CI **sube la traza y la captura** de Playwright como artifact (7 días): un rojo
+deja algo que mirar en vez de una línea de texto.
+
+### Los otros workflows
+
+| Workflow                                                        | Cuándo                    | Qué hace                                                                                                                                                                                                     |
+| --------------------------------------------------------------- | ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [`publish-packages.yml`](.github/workflows/publish-packages.yml) | Al publicarse una release | Publica los 3 paquetes en GitHub Packages desde el commit del tag. Sin tokens personales                                                                                                                     |
+| [`deploy-record.yml`](.github/workflows/deploy-record.yml)       | Al empujar a `main`       | Registra en *Deployments* qué sirve cada uno de los 5 sitios, **después de comprobarlo**: cada build se sella con su commit (`stamp-build.mjs` → `build.json`) y el registro espera a verlo. Sin sello, rojo |
+| [`tokens-sync.yml`](.github/workflows/tokens-sync.yml)           | Al empujar tokens         | Verifica el PR del puente de Figma                                                                                                                                                                          |
+
+> ⚠️ Los cinco `build:*` terminan en `node scripts/stamp-build.mjs <app>`, y son los comandos
+> que corre Cloudflare. **Quitar ese eslabón deja el sitio sin sello**, y `deploy-record` lo
+> marcará en rojo hasta que vuelva. Ver [DD-59](docs/DECISIONS.md).
 
 ## Flujo Figma a código
 

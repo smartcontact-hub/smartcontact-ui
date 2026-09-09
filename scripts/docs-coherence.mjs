@@ -259,7 +259,13 @@ for (const { path, lines } of files) {
     ? [...files, { path: skill, lines: readFileSync(skill, 'utf8').split('\n') }]
     : files;
   for (const { path, lines } of filesM) {
-    if (/^docs\/(AUDIT-|handoff\/)/.test(rel(path))) continue;
+    // `CHANGELOG.md` se exonera por el MISMO motivo que los hand-offs: la nota de una versión
+    // ya publicada es un registro fechado. "36 gates" dentro de `## [1.0.0]` no afirma cuántos
+    // hay hoy, cuenta con cuántos salió aquella versión — y esa nota está congelada además en
+    // la release de GitHub, así que reescribirla dejaría al fichero y a la release contando
+    // cosas distintas del mismo día. Añadido al estrenar la página `/novedades`, que fue el
+    // gate 37.
+    if (/^docs\/(AUDIT-|handoff\/)/.test(rel(path)) || rel(path) === 'CHANGELOG.md') continue;
     lines.forEach((line, i) => {
       for (const m of line.matchAll(/(\d+)\s+gates\b/gi)) {
         if (Number(m[1]) === nGates) continue;
