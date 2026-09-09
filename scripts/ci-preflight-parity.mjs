@@ -13,8 +13,12 @@
 // Sustituciones LOCALES documentadas: algún paso del CI no es corrible tal cual en un
 // portátil y se mapea a su equivalente local. Hoy solo una (ver LOCAL_SUBSTITUTIONS).
 //
-// Infra que NO se replica en local: `npx playwright install` (descarga navegadores) — se
-// filtra de los dos lados.
+// Infra que NO se replica en local: `npx playwright install` (descarga navegadores) y el
+// `rm` del repo APT de Chrome que el runner trae puesto — se filtran de los dos lados.
+// Ese `rm` no verifica nada: existe porque `--with-deps` hace un `apt-get update` que lee el
+// índice de ese repo, y un índice desincronizado mata el job antes de bajar el navegador
+// (2026-09-09: tres jobs de e2e caídos tres veces con el árbol ya verde). En un portátil ese
+// fichero no existe, así que no hay equivalente local que exigir.
 //
 // `npm ci` YA NO está en esa lista. Lo estuvo, y salió caro: es el PRIMER paso del CI y
 // preflight no lo miraba, así que el 2026-08-26 se colaron SEIS pushes con el CI en rojo en
@@ -55,7 +59,7 @@ export const LOCAL_SUBSTITUTIONS = {
   'npm ci': 'npm run guard:lockfile',
 };
 
-const INFRA = [/^npx playwright install\b/];
+const INFRA = [/^npx playwright install\b/, /^sudo rm -f \/etc\/apt\/sources\.list\.d\//];
 const isInfra = (cmd) => INFRA.some((re) => re.test(cmd));
 
 // SOLO LOCAL, y no es un gate: el último paso de `preflight` escribe la marca `.preflight-ok`
@@ -78,7 +82,16 @@ const isSetup = (cmd) => SETUP.some((re) => re.test(cmd));
 const isIgnored = (cmd) => isInfra(cmd) || isSetup(cmd);
 const norm = (cmd) => cmd.trim().replace(/\s+/g, ' ');
 
-// Extrae los comandos `run:` de un workflow de GitHub Actions (inline y block scalar `|`).
+/*
+ * Extrae los comandos `run:` de un workflow de GitHub Actions (inline y block scalar `|`).
+ *
+ * Las líneas de COMENTARIO no son comandos. Parece obvio y no lo era: hasta el 2026-09-09 este
+ * lector se las tragaba, así que documentar POR QUÉ un paso del CI hace lo que hace rompía la
+ * paridad y obligaba a elegir entre explicarlo o tener el gate en verde. Un guardián que cobra
+ * por comentar el código empuja justo a lo contrario de lo que quiere el repo.
+ */
+const esComentario = (linea) => /^\s*#/.test(linea);
+
 export function extractCiCommands(ymlText) {
   const lines = ymlText.split('\n');
   const cmds = [];
@@ -93,6 +106,7 @@ export function extractCiCommands(ymlText) {
         if (lines[j].trim() === '') continue;
         const li = lines[j].match(/^(\s*)/)[1].length;
         if (li <= indent) break;
+        if (esComentario(lines[j])) continue;
         cmds.push(norm(lines[j]));
       }
     } else {
