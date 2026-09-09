@@ -87,8 +87,8 @@ npm run export:all     # tarballs npm en dist/archives/
 npm run verify         # todos los checks estáticos (~40s)
 npm run e2e            # smoke en navegador (Playwright)
 npm run e2e:contrast   # carril rápido para cambios de COLOR (~80s)
-npm run preflight      # la parte RÁPIDA del CI (gates + builds AOT, ~8 min), antes de pushear
-npm run e2e:supervisor # y e2e:cuscare / e2e:visual: la suite que toca lo que cambiaste, a mano
+npm run preflight      # gates + builds AOT + baselines visuales (~5 min), antes de pushear
+npm run e2e:supervisor # y e2e:cuscare: la suite de APP que toca lo que cambiaste, a mano
 ```
 
 Dentro de `npm run e2e` hay tres redes con fronteras distintas, y conviene saber cuál te va a
@@ -98,10 +98,16 @@ el HTML renderizado de 9 componentes en un JSON revisable; y `component-styles.s
 congela 16 propiedades computadas de cada `[data-testid]` de las 38 páginas del catálogo. Las dos
 últimas se regeneran con `SC_UPDATE_STRUCTURE=1` y `SC_UPDATE_STYLES=1`, y su diff se lee en el PR.
 
-Los e2e **no** van en `preflight` (DD-60): los corre el CI, que es obligatorio en `main` y
-paralelo. En un portátil solo cabe un Playwright a la vez, así que con varias sesiones el
-preflight completo (20-25 min) se hacía cola durante una hora; en GitHub cada suite tiene su
-runner. Si tocaste un e2e o algo visual, corre a mano la suite que toca antes de pushear.
+Las suites e2e **de aplicación** no van en `preflight` (DD-60): las corre el CI, que es
+obligatorio en `main` y paralelo. En un portátil solo cabe un Playwright a la vez, así que con
+varias sesiones el preflight completo (20-25 min) se hacía cola durante una hora; en GitHub cada
+suite tiene su runner. Si tocaste un e2e de app, córrela a mano antes de pushear.
+
+Las **baselines visuales** (`e2e:visual`) sí van en `preflight` (DD-62), y son la excepción con
+motivo: el CI **no puede** correrlas (sus capturas son del Mac de Rafa; el runner de macOS las
+falla las 38 por la fuente del sistema). Cuestan 2 minutos y, desde que capturan el contenido en
+vez de la página entera, solo enrojecen por lo que vigilan. En `preflight:scope` se corren solo
+si el cambio puede mover el catálogo (`sc-docs`, el DS o el propio spec).
 
 **Regla de la casa**: una comprobación que no está en una cadena automática no es una
 comprobación, es documentación, y la documentación que hay que recordar se pierde. Todo
