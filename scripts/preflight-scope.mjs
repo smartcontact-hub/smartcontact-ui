@@ -2,15 +2,13 @@
 /**
  * ACELERADOR de `preflight`, con la boca muy grande sobre lo que se salta.
  *
- * `preflight` tarda ~10 min y **7 de esos 10 son las tres suites e2e**. Pero dos de ellas
- * conducen apps —`supervisor` y `cuscare`— que un cambio confinado a `projects/agent` no
- * puede romper: ninguna suite toca la app `agent`.
- *
- * Esto mira QUÉ has tocado y decide si hace falta la cadena entera:
+ * Desde DD-60 (2026-09-09) `preflight` ya no corre las suites e2e (viven en el CI, obligatorio
+ * y paralelo): son gates estáticos + los builds AOT de las apps, ~8 min. Este carril mira QUÉ
+ * has tocado y decide si hacen falta todos los builds:
  *
  *   · si el cambio roza código COMPARTIDO (las libs del DS, los tokens, la config de la
  *     raíz, los scripts, los e2e) -> **cadena completa**, sin discusión;
- *   · si se queda en UNA app -> se salta las suites de las OTRAS apps y sus builds.
+ *   · si se queda en UNA app -> se salta los builds AOT de las OTRAS apps.
  *
  * ⚠️ NO sustituye a `preflight`, y por eso imprime **siempre** lo que deja fuera. Un carril
  * rápido que no dice lo que no corrió es como el que en s30 cambiaba `npm run e2e` por
@@ -102,8 +100,7 @@ if (completo) {
   process.exit(0);
 }
 
-// Carril acotado: verify + los builds de las apps tocadas + las suites que SÍ las cubren.
-const suitePorApp = { supervisor: "e2e:supervisor", cuscare: "e2e:cuscare" };
+// Carril acotado: verify + los builds de las apps tocadas. Las suites e2e las corre el CI (DD-60).
 const pasos = [
   "npm run guard:lockfile",
   "npm run verify",
@@ -112,11 +109,6 @@ const pasos = [
 for (const a of appsTocadas) {
   pasos.push(`npx ng build ${a} --configuration production`);
 }
-pasos.push("CI=1 npm run e2e");
-const suites = appsTocadas.map((a) => suitePorApp[a]).filter(Boolean);
-pasos.push(...suites.map((s) => `npm run ${s}`));
-
-const saltadas = Object.values(suitePorApp).filter((s) => !suites.includes(s));
 const buildsSaltados = APPS.filter(
   (a) => !appsTocadas.includes(a) && a !== "sc-docs"
 );
@@ -126,20 +118,10 @@ for (const p of pasos) {
   console.log(`    ${p}`);
 }
 console.log("\n⚠️ SE SALTA, y esto es lo que estás aceptando:");
-for (const s of saltadas) {
-  console.log(`    npm run ${s}  (ninguna app tocada la usa)`);
-}
 for (const b of buildsSaltados) {
   console.log(`    npx ng build ${b}  (sin cambios bajo projects/${b}/)`);
 }
-if (
-  !appsTocadas.includes("agent") &&
-  ficheros.some((f) => f.startsWith("projects/agent/"))
-) {
-  console.log(
-    "    (agent no tiene suite e2e: su red es tools/, no Playwright)"
-  );
-}
+console.log("    (las suites e2e no van en ningún carril: las corre el CI; si tocaste e2e o algo visual, corre a mano la que toca)");
 console.log(
   "\nSi dudas, corre `npm run preflight` entero. Esto es un atajo, no un sustituto.\n"
 );

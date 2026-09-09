@@ -31,7 +31,15 @@
  *   G. El índice de disparadores de `LEARNINGS.md` cuadra 1:1 con sus reglas numeradas.
  *   K. `LEARNINGS.md` conserva su FORMA (`scripts/learnings-shape.mjs`): ≤200 líneas, ≤20 reglas,
  *      ≤12 líneas por regla con su `Evidencia:`, y sin sub-entradas `*Corolario*`. El tope fue prosa
- *      50 commits y el fichero se multiplicó por seis; ahora falla aquí.
+ *      50 commits y el fichero se multiplicó por seis; ahora falla aquí. Y ESCALA: una regla citada
+ *      en ≥3 sesiones sin ⚙️ falla hasta que se mecaniza o se declara «no mecanizable» (2026-09-09).
+ *   N. La MEMORIA del agente conserva su forma (`scripts/memory-shape.mjs`): ≤40 fichas de ≤250
+ *      palabras, índice ≤1.000 palabras y ≡ fichas. Es el otro almacén de lecciones y no tenía tope:
+ *      63 fichas y 26.164 palabras el 2026-09-09, 36 tocadas en un mes. Vive fuera del repo, así que
+ *      sin directorio (CI) se omite y lo dice.
+ *   O. Todo script propio de la cadena `verify` tiene su `scripts/__tests__/<nombre>.test.mjs`
+ *      (LEARNINGS #2 y #6: «un gate que no enrojece no es un gate»). Los que nacieron sin él están
+ *      en una lista que solo puede ENCOGER: si un legado gana test, sale de la lista en el mismo commit.
  *   H. Un doc que declara "caduca el YYYY-MM-DD" y ya venció → hay que decidir, no ignorarlo.
  *   I. `DECISIONS.md` cumple el "newest first" que promete su propia cabecera.
  *   J. "el CI son N pasos" cuadra con los pasos con `name:` de `ci.yml`. Esa cifra vive en 5
@@ -54,6 +62,7 @@ import { resolve } from 'node:path';
 
 import { compararPatrones } from './patrones-parity.mjs';
 import { revisarLearnings } from './learnings-shape.mjs';
+import { localizarMemoria, leerMemoria, revisarMemoria } from './memory-shape.mjs';
 
 const root = resolve(import.meta.dirname, '..');
 const rel = (p) => p.replace(`${root}/`, '');
@@ -259,7 +268,13 @@ for (const { path, lines } of files) {
     ? [...files, { path: skill, lines: readFileSync(skill, 'utf8').split('\n') }]
     : files;
   for (const { path, lines } of filesM) {
-    if (/^docs\/(AUDIT-|handoff\/)/.test(rel(path))) continue;
+    // `CHANGELOG.md` se exonera por el MISMO motivo que los hand-offs: la nota de una versión
+    // ya publicada es un registro fechado. "36 gates" dentro de `## [1.0.0]` no afirma cuántos
+    // hay hoy, cuenta con cuántos salió aquella versión — y esa nota está congelada además en
+    // la release de GitHub, así que reescribirla dejaría al fichero y a la release contando
+    // cosas distintas del mismo día. Añadido al estrenar la página `/novedades`, que fue el
+    // gate 37.
+    if (/^docs\/(AUDIT-|handoff\/)/.test(rel(path)) || rel(path) === 'CHANGELOG.md') continue;
     lines.forEach((line, i) => {
       for (const m of line.matchAll(/(\d+)\s+gates\b/gi)) {
         if (Number(m[1]) === nGates) continue;
@@ -340,6 +355,45 @@ for (const { path, lines } of files) {
 {
   const learnings = readFileSync(resolve(root, 'LEARNINGS.md'), 'utf8');
   for (const p of revisarLearnings(learnings)) fail(`LEARNINGS.md — ${p}`);
+}
+
+// ── CHECK N — la MEMORIA del agente conserva su forma (tope de fichas, de palabras y ≡ índice) ──
+// Hermano del K para el otro almacén de lecciones. Los límites y los motivos viven en
+// `scripts/memory-shape.mjs` (con sus tests rojos). Vive fuera del repo, por usuario: sin
+// directorio (CI, otra máquina) se omite y se dice, para no confundir «no hay» con «está bien».
+{
+  const dir = localizarMemoria(root);
+  if (dir && existsSync(dir)) for (const p of revisarMemoria(leerMemoria(dir))) fail(`memoria (${dir}) — ${p}`);
+  else log('  · CHECK N omitido: sin memoria local del agente (CI u otra máquina).');
+}
+
+// ── CHECK O — todo script propio de la cadena `verify` tiene su test rojo ─────────────────
+// LEARNINGS #2 y #6 son las reglas de «un gate que no enrojece no es un gate», rotas en 4 sesiones
+// cada una con el texto delante. Esta es su máquina: cada `scripts/X.mjs` que `verify` ejecuta
+// necesita `scripts/__tests__/X.test.mjs`. Los 23 que nacieron sin él (2026-09-09) están en la
+// lista de LEGADO, que solo puede encoger: si un legado gana test, hay que sacarlo de aquí en el
+// mismo commit (si no, falla), y ningún script NUEVO puede entrar en ella.
+{
+  const LEGADO_SIN_TEST = new Set([
+    'check-export-clean', 'token-gen', 'token-gen-component', 'token-gen-color', 'token-gen-cmp-color',
+    'token-gen-effects', 'token-parity', 'token-guard', 'check-theme-scale', 'check-border-surfaces',
+    'audit-api-era', 'audit-datatables', 'audit-primeng-coupling', 'audit-screen-hygiene', 'audit-seed-pii',
+    'audit-page-anatomy', 'audit-doc-snippets', 'variables-map', 'docs-guard', 'docs-coherence',
+    'audit-base-href', 'audit-text-styles', 'audit-titulo-contenido',
+  ]);
+  const enCadena = new Set();
+  for (const paso of verifySteps) {
+    const m = (scripts[paso] || '').match(/scripts\/([\w-]+)\.mjs/);
+    if (!m) continue;
+    enCadena.add(m[1]);
+    const tieneTest = existsSync(resolve(root, 'scripts/__tests__', `${m[1]}.test.mjs`));
+    if (!tieneTest && !LEGADO_SIN_TEST.has(m[1]))
+      fail(`scripts/${m[1]}.mjs corre en \`verify\` sin \`scripts/__tests__/${m[1]}.test.mjs\`. Un gate que no se ha visto enrojecer no es un gate (LEARNINGS #2): pruébalo con el caso malo fabricado.`);
+    if (tieneTest && LEGADO_SIN_TEST.has(m[1]))
+      fail(`scripts/${m[1]}.mjs ya tiene test: sácalo de LEGADO_SIN_TEST en docs-coherence.mjs (la lista solo encoge).`);
+  }
+  for (const l of LEGADO_SIN_TEST)
+    if (!enCadena.has(l)) fail(`LEGADO_SIN_TEST cita scripts/${l}.mjs, que ya no corre en \`verify\`: sácalo de la lista.`);
 }
 
 // ── CHECK E — una CIFRA de componentes citada en prosa ≠ el manifiesto generado ────

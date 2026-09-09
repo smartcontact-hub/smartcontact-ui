@@ -42,7 +42,7 @@
 > | Tema | DD |
 > |---|---|
 > | El título de una pantalla con rail va DENTRO de su sección · `sc-section-card` es la única caja | DD-57 |
-| Cada piel de `sc-section-card` trae las medidas de SU nodo · el maestro del DS manda en la gris | DD-59 |
+| Cada piel de `sc-section-card` trae las medidas de SU nodo · el maestro del DS manda en la gris | DD-61 |
 | Los estilos de texto se ponen a lo que NO es un componente · un `<sc-*>` no lleva `.sc-text-*` encima | DD-55 |
 | Qué escala tipográfica manda (la de la librería del DS) y qué se rompió al elegirla | DD-54 |
 | Anatomía de página en `_page.scss` · el constructor entra en el molde · la barra sticky del trío admin es deliberada · escritorio primero · `DD#` no es `DD-` | DD-53 |
@@ -55,7 +55,7 @@
 
 ---
 
-## DD-59 · 2026-09-09 — Cada PIEL de `sc-section-card` trae las medidas de SU nodo de Figma, y el maestro del DS es el que manda en la gris
+## DD-61 · 2026-09-09 — Cada PIEL de `sc-section-card` trae las medidas de SU nodo de Figma, y el maestro del DS es el que manda en la gris
 
 **Contexto** · DD-57 subió el padding de `sc-section-card` de 21 a 24.5 «hacia el valor que la
 maqueta del DS respalda», y eso movió también las once cards de los tres formularios de admin.
@@ -109,6 +109,124 @@ línea; la card de las tres pantallas AED se queda en 24.5 y gana la alineación
 contenido. La ficha de `sc-section-card` en sc-docs cuenta ya las medidas de cada piel. Queda
 abierto lo que no se puede cerrar sin diseño: **los formularios de admin no tienen maqueta**, así
 que su contenido interior sigue sin contrastar contra nada.
+
+## DD-60 · 2026-09-09 — Rápido en casa, completo en GitHub: los e2e salen del `preflight` local y viven solo en el CI
+
+**Contexto** · Rafa trabaja con varias sesiones de agente a la vez, y cada una lanza su
+`preflight` antes de pushear. El preflight completo eran 20-25 minutos, y **7 de cada 10 eran
+las suites e2e**, que en un portátil solo pueden correr de una en una (`playwright-reuse-guard`:
+dos suites a la vez se pisan el servidor y dan verdes falsos). Medido el 2026-09-09: con tres
+sesiones vivas, el tercer preflight esperaba una hora, y tres murieron denunciando como
+«Playwright vivo» a bucles de espera de la sesión vecina. Ese mismo día `main` pasó a estar
+protegida: GitHub no funde nada sin los cinco jobs del CI en verde, así que el CI ya es la red
+obligatoria, y allí cada suite tiene su propio runner.
+
+**Decisión** ·
+1. `preflight` (y `preflight:scope`) corren la parte SIN navegador: `guard:lockfile`, `verify`,
+   `build:docs` y los tres builds AOT (~8 min, sin cola, tantas sesiones como haya).
+2. Las tres suites e2e de aplicación (smoke, supervisor, cuscare) corren solo en el CI. Son la
+   lista cerrada `CI_ONLY` de `ci-preflight-parity`, vigilada en las dos direcciones. Las
+   **baselines visuales de sc-docs** se intentaron llevar a un runner de macOS y **no pueden ir
+   allí hoy**: ver «Lo que se midió» abajo. Quedan sin gate, a mano.
+3. Quien toque un e2e o algo visual corre a mano la suite que toca antes de pushear (LEARNINGS
+   #7). El veredicto sigue siendo el CI leído (`ci:verdict`), y el hook de Stop lo exige.
+4. El carril *preflight:fast* desaparece: su única razón era servir builds estáticos a las suites.
+
+**Razón** · Es la práctica estándar (hooks locales = comprobaciones rápidas, ≤ minutos, para
+que nadie las salte; CI = la cadena completa y autoritativa; branch protection = lo que se
+impone). Lo que dice Anthropic sobre harnesses y lo que dicen las guías de Playwright y de git
+hooks coincide: un hook lento se acaba saltando con `--no-verify`, y aquí ya tenía su salida de
+emergencia (`SKIP_PREFLIGHT=1`). El coste real de descubrir un rojo de e2e en GitHub (~10 min,
+en paralelo) es menor que el de la cola local.
+
+**Descartadas** ·
+- *Dejar el preflight entero y esperar la cola.* Es lo que había; con tres sesiones son 60 min
+  por push y el gate se convierte en el motivo para saltárselo.
+- *Puertos por worktree y servidores dedicados para correr suites en paralelo.* Arregla la cola
+  a cambio de más máquina local, y el CI ya da ese paralelismo gratis (repo público).
+- *Un job `e2e-visual` en `macos-latest` que corra las baselines de sc-docs.* Nació en este
+  mismo cambio y **se cayó al medirlo**; lo que se midió está abajo.
+
+**Lo que se midió (2026-09-09, run 34401618582)** · El job de macOS falló **las 38 capturas**
+(17 tests de métricas pasaron). No es ruido de umbral ni baselines rancias:
+
+- El control: con el MISMO commit y el MISMO build servido en local, `e2e:visual` en el Mac de
+  Rafa da **55/55 en verde**. Las capturas del repo están sanas.
+- Las diferencias del runner son de 87 a ~1.100 px por captura, y en **37 de las 38 caen
+  ENTERAS en una sola banda de 14 px de alto** (y≈47-61): la línea del título, donde sc-docs
+  pinta el nombre del selector (`<sc-badge>`) en monoespaciada. La única con algo fuera es
+  `textarea` (~1.174 px, las asas de redimensionado del propio navegador).
+- La causa es la **fuente**: `--sc-font-family-mono` es una pila del SISTEMA
+  (`ui-monospace, 'SF Mono', 'Menlo', …`) y es la única familia que sc-docs no autohospeda —
+  Inter y Material Symbols sí lo están, y por eso todo el resto de la página casa. Dos macOS
+  distintos resuelven o hintan esa mono con otra métrica.
+- Los números enormes del log (17.021 px) eran capturas INTERMEDIAS de overlays aún animándose;
+  la captura estable de ese mismo test dio 132 px. No confundirlos con diferencias reales.
+
+Salidas, para el PR que lo retome (ninguna es gratis, y las dos cambian el contrato de la red):
+**(a)** quitar la dependencia del sistema autohospedando también la mono (`@fontsource`, como se
+hizo con Inter) — cambia la tipografía del código en la doc y en las apps, así que es una
+decisión de diseño, y hay que regenerar las 38; **(b)** enmascarar ese rótulo en la captura
+(`toHaveScreenshot({ mask })`) — dejaría 37 de 38 deterministas y `textarea` seguiría roja.
+Lo que NO vale: subir `maxDiffPixels`, porque un cambio real de UNA letra mide 1.501 px y
+quedaría por debajo del techo que haría falta.
+
+**Consecuencias** · `ci.yml` se queda en 8 pasos con nombre (CHECK J). Las baselines visuales
+**no las corre ningún gate**: quien toque sc-docs corre `npm run e2e:visual` a mano antes de
+pushear (punto 3). Es el agujero que este DD quería tapar y hoy sigue abierto, dicho aquí para
+que nadie lo dé por cerrado. El guardián de reuso deja de contar shells que solo *hablan* de
+Playwright (`esRunner`).
+
+## DD-59 · 2026-09-09 — Un registro de despliegue solo puede escribir lo que ha MEDIDO, y el CI guarda la caja negra del rojo
+
+**Contexto** · Al limpiar el fósil de `github-pages` (DD-58) quedó la pregunta de Rafa: si
+Cloudflare despliega los cinco sitios y GitHub no se entera de nada, ¿no interesa tener ahí el
+registro? Sí, pero la pantalla que acabábamos de borrar llevaba **tres meses** diciendo que el
+último despliegue era del 15 de junio. El modo de fallo no es "no había pantalla", es que
+**una pantalla que afirma sin medir da una respuesta falsa a quien la pregunta**, y eso es peor
+que no tenerla. Y en paralelo: con el auto-merge encendido, un CI rojo pasa a ser lo ÚNICO que
+para un merge, y hoy un rojo de e2e era una línea de texto sin nada que mirar.
+
+**Decisión** ·
+1. **`deploy-record.yml` no apunta nada al fundir.** Cada app sella su build con el commit que
+   la generó (`stamp-build.mjs` → `build.json` en la raíz del sitio) y el registro **pide ese
+   fichero a cada sitio y espera hasta ver el commit correcto**. Si a los 20 minutos alguno no
+   lo sirve, se registra como **fallo** y el job se pone rojo.
+2. **El CI guarda la traza y la captura de Playwright cuando algo falla**, como artifact de 7
+   días. Solo al fallar.
+
+**Razón** · El sello es lo que convierte "hemos empujado a main" en "el sitio sirve esto", que
+son afirmaciones distintas y solo la segunda es la que responde la pantalla. Medido al
+construirlo: `GET https://sc-doc.pages.dev/build.json` devuelve **200 con el `index.html`**,
+porque las cinco son SPA con fallback — o sea que un chequeo por código de estado se habría
+tragado un falso verde en los cinco sitios a la vez. Por eso la comprobación parsea el JSON y
+exige un `commit` de tipo cadena; probado contra los sitios vivos, devuelve `null` en los dos
+que se sondearon. Los pasos de artifact van **sin `name:`** a propósito: en este `ci.yml` los
+pasos con nombre son los gates, y su número está gateado contra la doc; la caja negra de un
+accidente no es un gate.
+
+**Descartadas** ·
+· *Apuntar el despliegue al fundir, sin comprobar* — es de una línea, y es literalmente el
+  fallo que veníamos de borrar. Habría dado una pantalla siempre verde, incluso con Cloudflare
+  caído.
+· *Preguntarle a la API de Cloudflare* — es la fuente autorizada y lo diría antes, pero exige
+  meter un token suyo en los secretos del repo. El sello no necesita credenciales y además
+  comprueba algo **mejor**: no que Cloudflare crea que desplegó, sino que el sitio lo sirve.
+· *Comparar el hash del `main.js` construido por el CI contra el del sitio* — no necesita
+  tocar nada, pero depende de que Cloudflare y el runner produzcan bytes idénticos (misma
+  versión de Node incluida, que en Cloudflare se fija en el panel). Un desajuste dejaría el
+  registro en rojo permanente sin que nada esté roto.
+· *Nombrar los pasos de artifact* — subiría la cifra de "pasos del CI" de 8 a 11 en cinco
+  documentos, y esa cifra significa "lo que tienes que correr antes de pushear". Contar ahí la
+  recogida de pruebas de un fallo la haría **menos** cierta.
+
+**Consecuencias** · Los cinco `build:*` de `package.json` terminan en `stamp-build.mjs`: son
+los comandos que corre Cloudflare, así que el sello no necesita tocar su panel. **Si alguien
+quita ese eslabón, su sitio deja de confirmarse y `deploy-record` lo dirá en rojo** — que es el
+comportamiento que se quiere, no un efecto colateral. Queda una incógnita honesta: no se puede
+leer desde aquí qué comando exacto tiene configurado cada proyecto en el panel de Cloudflare,
+así que la primera ejecución real es la que lo dice; si algún sitio no se confirma, ahí está la
+causa a mirar primero.
 
 ## DD-58 · 2026-09-09 — El DS corta **1.0.0**, y se descarga por *release*, no por registro
 
@@ -228,7 +346,7 @@ build: ancho, padding, gap, radio y borde de las ocho cajas de la pantalla).
 
 **Consecuencias** · El padding de `sc-section-card` sube de 21 a 24.5 y el de su cabecera se
 reparte para dejar los 16 del gap: eso mueve también las once cards de los formularios de admin.
-⚠️ **Esa última parte la corrige DD-59**: el 24.5 sale del `Block` de la maqueta de Agentes, que es
+⚠️ **Esa última parte la corrige DD-61**: el 24.5 sale del `Block` de la maqueta de Agentes, que es
 la piel BLANCA; el maestro `Section` del DS —la piel gris que usan los formularios— mide 22.75/16.
 Aquí decía «hacia el valor que la maqueta del DS respalda» y no era así. `settings-card` deja de
 existir. Y el subtítulo

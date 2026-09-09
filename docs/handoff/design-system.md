@@ -17,7 +17,10 @@
 
 ## ✅ 2026-09-09 · Servicio y Grupos se casan con su maqueta, y el padding de la caja vuelve al maestro del DS
 
-**Sello:** pendiente de PR. `npm run verify` VERDE con los 36 gates.
+**Sello:** pendiente de PR. `preflight` (el nuevo de DD-60, sin navegador) VERDE sobre el árbol
+final: 37 gates + los cuatro builds AOT. Los e2e los corre el CI. La **baseline visual** de la
+ficha de `sc-section-card` se regrabó y se pasó A MANO en este Mac (`e2e:visual` no lo corre ya
+ningún gate — lo dice el tramo de DD-60 de abajo).
 
 **De dónde sale.** Rafa, con tres encargos en orden: casar las medidas de `config/aed/servicio` y
 `config/aed/grupos` contra sus maquetas (solo Agentes estaba al píxel), contrastar el padding de
@@ -38,7 +41,7 @@ La sección «Prototipo de limpieza» tiene DIEZ marcos y los diez son de Agente
 Servicio ni Grupos con el patrón nuevo. Rafa eligió (2026-09-09) quedarse la caja nueva y adoptar
 de la maqueta vieja el REPARTO interno, que es lo único medido que hay para esas dos pantallas.
 
-**Lo que entra en el componente (DD-59).** Cada piel toma las medidas de SU nodo, y las dos las
+**Lo que entra en el componente (DD-61).** Cada piel toma las medidas de SU nodo, y las dos las
 tienen atadas a variable en Figma:
 
 | | `subtle` (formulario) | `card` (sobre el lienzo) |
@@ -100,6 +103,90 @@ cards de los formularios de admin vuelven ahí.
 5. **Todavía no hay ninguna versión congelada.** La primera la congela Rafa al entregar.
 
 ---
+
+## ✅ 2026-09-09 · Los e2e salen del preflight, y las baselines visuales NO caben en el CI (medido)
+
+**Sello:** PR #77 (DD-60) rebasado sobre `main` y cerrado sin el job `e2e-visual`. `preflight`
+VERDE sobre el árbol final. Veredicto por `npm run ci:verdict`, no por el «success» del wrapper.
+
+**De dónde sale.** El PR #77 llevaba el cambio grande —`preflight` sin navegador, ~8 min y sin
+cola— y, en el mismo commit, un job nuevo `e2e-visual` en `macos-latest` para que las 38
+baselines de sc-docs siguieran teniendo quien las corriera. Al leer su primer run, ese job salió
+rojo con las 38.
+
+**Lo que se midió (run 34401618582).** No era ruido de umbral ni baselines rancias:
+
+- **Control primero**: mismo commit, mismo build servido en local, `e2e:visual` en el Mac de
+  Rafa → **55/55 verde**. Las capturas del repo están sanas; el que difiere es el runner.
+- Las diferencias son de 87 a ~1.100 px y, en **37 de las 38, caen enteras en una banda de
+  14 px** (y≈47-61): la línea del título, donde se pinta `<sc-badge>` en monoespaciada. La
+  única con algo fuera es `textarea` (~1.174 px: las asas de resize del navegador).
+- Causa: `--sc-font-family-mono` es una pila del SISTEMA (`ui-monospace, 'SF Mono', 'Menlo'…`),
+  la única familia que sc-docs **no** autohospeda. Inter y Material Symbols sí, y por eso el
+  resto de la página casa entre las dos máquinas.
+- Trampa del log: los «17.021 px» eran capturas INTERMEDIAS de overlays animándose; la estable
+  del mismo test dio 132. Leer el último número de la cadena, no el primero.
+
+**Qué se hizo.** Sacar el job del PR y **decirlo donde duele**: `ci.yml` vuelve a 8 pasos,
+`e2e:visual` sale de `CI_ONLY`, y DD-60 pasa de «pendiente de medir» a llevar la medición, las
+dos salidas posibles (autohospedar la mono / enmascarar el rótulo) y lo que NO vale (subir
+`maxDiffPixels`: un cambio real de una letra mide 1.501 px).
+
+**Lo que queda abierto, y hay que decirlo.** Las baselines visuales **no las corre ningún gate**
+hoy: ni el preflight (ya no) ni el CI (no puede). Quien toque sc-docs corre `npm run e2e:visual`
+a mano. Es exactamente el agujero por el que se pudrieron 213 commits, así que no dejarlo
+dormir: el PR de ajuste elige entre (a) autohospedar la mono —decisión de diseño de Rafa, cambia
+la tipografía del código en doc y apps, y obliga a regenerar las 38— y (b) enmascarar el rótulo
+del título, que dejaría 37 de 38 deterministas y `textarea` roja.
+
+**Trampa de entorno que se cazó de paso.** El hook que protege `dist/` denunció un «preflight
+corriendo» que era un `git commit` de otro worktree **cuyo mensaje mencionaba la palabra
+preflight**. Es el mismo modo de fallo que este PR arregla para Playwright (`esRunner`): casar
+por el TEXTO de la línea de comandos denuncia a quien solo habla del proceso.
+
+## ✅ 2026-09-09 · El DS corta 1.0.0 y deja de depender de que alguien se acuerde
+
+**Sello:** `v1.0.0` publicada y los 3 paquetes en el registro (verificado en el log del workflow,
+no por el «success»). `npm run preflight` VERDE sobre `e3f5672`. Cierra con `main` protegida.
+
+**De dónde sale.** Rafa enseña la pantalla de *Deployments* de GitHub: último despliegue, 15 de
+junio. «estaría bien montar un nuevo set de deployment actualizado de todo, por si alguien quiere
+descargárselo, y ponerlo como novedades, versión x». Luego, viendo Packages: «at least los github
+packages que estén ultra actualizados».
+
+**Lo que se encontró al mirar.** Esa pantalla era un fósil: Pages se retiró en DD-17 y su workflow
+murió en `dbc3603`. Pero detrás había algo real: **654 commits** desde la `0.2.0` del 14 de junio,
+`[Unreleased]` vacío, **cero releases** en un repo público y el registro de paquetes también en
+junio con **0 descargas**. Nadie de fuera podía llevarse el DS ni saber qué había cambiado.
+
+**Lo que se hizo.** `1.0.0` (DD-58), con la nota escrita contra DD-18..DD-57 y cuatro cambios que
+rompen declarados. Descarga por release (`npm run release`, dry-run por defecto) y publicación al
+registro **disparada por la release** (`publish-packages.yml`), que es lo que impide que se vuelva
+a quedar atrás. Página `/novedades` en sc-docs generada desde `CHANGELOG.md` con su gate
+(`novedades:check`, gate 37). Registro de deployments que **mide antes de escribir** (DD-59):
+sello por build + espera a verlo servido. Artifacts de Playwright al fallar. Y `main` protegida
+con los 5 checks del CI obligatorios.
+
+**Trampas, todas medidas hoy.**
+
+| Trampa | Qué pasó |
+| --- | --- |
+| `gh pr merge --auto` **funde en el acto** si nada bloquea | Sin protección de rama no hay nada pendiente, así que «auto» = «ya». Fundió el #73 con el e2e a medias |
+| `enforce_admins: false` deja la protección **inservible** | La regla no aplicaba a los dos únicos actores (Rafa y el agente): el token del agente la saltó sin avisar. Corregido a `true` |
+| Un heredoc en el MISMO comando que un gate | El hook denegó la llamada entera y **el fichero nunca se escribió**. Lo cazó `docs:guard` como enlace roto |
+| `GET /build.json` da **200 con el index.html** | Las 5 apps son SPA con fallback: un chequeo por código de estado se traga un falso verde en las cinco a la vez. Hay que parsear el JSON |
+| Un enlace nuevo en la barra mueve **las 8 baselines** | Las capturas del catálogo llevan el shell entero. 147-337 px cada una, mirado el diff antes de regenerar |
+| Cloudflare **sí** publica estado en los PR | No en `main` (0 statuses), pero sus checks salen en el rollup del PR |
+
+**Lo que NO se hizo, y por qué.** Desaparcar el ciclo diario de publicar-versionar-instalar: eso
+sigue siendo cierto de DD-17 y las 5 apps siguen leyendo de `dist/`. La primera versión de DD-58
+descartaba el registro ENTERO sin separar el ciclo diario del publish por release; lo rectificó el
+propio Rafa al señalar la pantalla de Packages, y el DD lo dice.
+
+**Incógnita abierta.** No se puede leer desde aquí qué comando de build tiene cada proyecto en el
+panel de Cloudflare. Si alguno no usa el script `build:<app>` de `package.json`, ese sitio se queda sin sello y
+`deploy-record` lo dirá en rojo. La primera ejecución real es la que lo responde.
+
 
 ## ✅ 2026-09-09 · El título contenido deja de ser de una pantalla y pasa a ser del componente
 
@@ -1383,7 +1470,7 @@ en el momento de escribir el comando, y el único enforcement (gates) corría en
   bloquea el cierre una vez si hubo push sin `npm run ci:verdict`. `compact-card.mjs` avisa al
   compactar si la guía cambió en `origin/main`. Salida explícita: `# sc:ok`, dicho en el mensaje.
   Cada patrón con caso rojo y verde (`scripts/__tests__/bash-guard.test.mjs`).
-- `scripts/preflight-mark.mjs`: `preflight`, `preflight:fast` y `preflight:scope -- --run` dejan la
+- `scripts/preflight-mark.mjs`: `preflight`, *preflight:fast* (retirado en DD-60) y `preflight:scope -- --run` dejan la
   marca (tree id del working tree; solo vale si ese tree es HEAD). `ci-preflight-parity` la filtra.
 - Tarjeta de 7 preguntas en `CLAUDE.md` (viaja en cada turno, sobrevive a la compactación).
 - `LEARNINGS.md` recortado a 16 reglas de ≤12 líneas con UNA `Evidencia:`; la historia entera en
@@ -1642,7 +1729,7 @@ el mockup viejo de sesión 20 en esa misma página (`13890:157`, "Current state 
 suelto sin instancia real, no aplicaba el peso Medio) — a petición de Rafa, sustituido por el
 ejemplo de arriba.
 >
-> Sello histórico (2026-08-25): HEAD `f78977c`, **CI verde, los 8 pasos**. Cierra con `aura/custom` dentro del gate de completitud del Kit. Antes, `b5b07a5`. Los dos últimos commits son los que el verde LOCAL no cazó y conviene leer: `b5b07a5` (el puntero de Playwright sale de la barra lateral) y `25cedef` (el lockfile vuelve a estar en sync — `npm ci` es el paso 1 del CI y `preflight` NO lo corre). Antes: `1fb7d5f` (el audit de acoplamiento a PrimeNG pasa a mirar tres caras) sobre HEAD `9e3f0bd` (Angular 22 + PrimeNG 22 + los builders a `@angular/build`). Antes, en esta misma sesión y ya en `main`: `3b65f07` (duplicación del supervisor), `bee2acc` (retirada de `sc-page-header` + deriva de docs), `0ef136c` (**trinquete DD-38 a CERO**), `1698f47` (red de contraste de severidades), `edfb2ec` (código muerto) y `4417bb8` (`text.muted.color` a enforce + el warn unificado).**
+> Sello histórico (2026-08-25): HEAD `f78977c`, **CI verde, todos sus pasos** (eran 8 entonces; 9 desde DD-60). Cierra con `aura/custom` dentro del gate de completitud del Kit. Antes, `b5b07a5`. Los dos últimos commits son los que el verde LOCAL no cazó y conviene leer: `b5b07a5` (el puntero de Playwright sale de la barra lateral) y `25cedef` (el lockfile vuelve a estar en sync — `npm ci` es el paso 1 del CI y `preflight` NO lo corre). Antes: `1fb7d5f` (el audit de acoplamiento a PrimeNG pasa a mirar tres caras) sobre HEAD `9e3f0bd` (Angular 22 + PrimeNG 22 + los builders a `@angular/build`). Antes, en esta misma sesión y ya en `main`: `3b65f07` (duplicación del supervisor), `bee2acc` (retirada de `sc-page-header` + deriva de docs), `0ef136c` (**trinquete DD-38 a CERO**), `1698f47` (red de contraste de severidades), `edfb2ec` (código muerto) y `4417bb8` (`text.muted.color` a enforce + el warn unificado).**
 >
 > _Corrección 2026-08-31: esta línea citaba además "rescate de s33" sobre `HEAD \`97f34e1\`` — ese sello no resuelve a ningún commit real (cazado por `docs:coherence`); se retira en vez de inventar el hash que debería llevar._
 
@@ -2095,7 +2182,7 @@ variables, 30 comentarios activos.
   verde** en este Mac, dos veces. O sea que el smoke completo SÍ es corrible en local; lo que no
   lo es son sus baselines por plataforma. Sin `CI=1` siguen rojos y **no son tuyos** (el de
   `sc-card` espera una página de 1049px y recibe 1453 — no lo leas como regresión de métrica).
-- **El CI son 8 pasos, no `verify`** — enumerados en `ci.yml`, y gateados (CHECK J).
+- **El CI son 8 pasos, no `verify`** — enumerados en `ci.yml`, y gateados (CHECK J). Los e2e de app solo corren allí (DD-60); las baselines visuales de sc-docs, a mano.
 - **`npm run verify` (31 gates) NO corre el `e2e smoke`.** El `component-structure.spec` (baseline
   del `outerHTML` de cada componente) es un paso aparte de CI, y el textarea autoResize graba su
   alto calculado en un `style` inline que vive en ese `outerHTML`. Un cambio de token/visual puede

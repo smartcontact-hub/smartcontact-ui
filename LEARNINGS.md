@@ -1,23 +1,16 @@
 # LEARNINGS — reglas de proceso ganadas trabajando en este repo
 
 > **Formato**: `Disparador → acción` y UNA línea de `Evidencia:`. Sin disparador no se dispara.
-> **Los números son IDENTIFICADORES, no un orden**: código y docs citan `LEARNINGS #N`
-> (`e2e/supervisor/conversations-row-gesture.spec.ts`, `docs/DECISIONS.md`). Nunca renumeres; al
-> fundir, el absorbido desaparece y el superviviente no se toca (3→5, 9→7, 13→2, 20→2 ya pasaron).
->
-> **Dónde vive cada cosa**: lo que una MÁQUINA puede vigilar es un hook o un gate
-> (`.claude/settings.json` → `scripts/hooks/`, `npm run verify`); lo que solo un agente juzga es
-> una regla de aquí; la tarjeta de `CLAUDE.md` es el resumen que viaja en cada turno; el terreno
-> del proyecto va a memoria. `/reflect` enruta en ese orden, y cada regla marca con ⚙️ la parte
-> que ya vigila una máquina.
->
-> **La forma la vigila un gate** (`docs:coherence` check K, `scripts/learnings-shape.mjs`): ≤200
-> líneas, ≤20 reglas, ≤12 líneas por regla, sin sub-entradas (`*Corolario*`, `*Evidencia (sNN)*`).
-> Si una lección necesita párrafo propio, es otra regla con número o es un hook. La historia larga
-> de cada regla vive en git: `git log -S'(s31)' -- LEARNINGS.md`, y entera en el tag
-> `archive/learnings-2026-09-02` (10.757 palabras, 43 sub-entradas; el tope fue prosa 50 commits).
->
+> **Los números son IDENTIFICADORES, no un orden**: código y docs citan `LEARNINGS #N`; nunca
+> renumeres; al fundir, el absorbido desaparece y el superviviente no se toca (3→5, 9→7, 13→2, 20→2).
 > Ámbito: proceso del repo, versionado. Hechos del proyecto → `docs/`; estado → `docs/handoff/`.
+> **Dónde vive cada cosa**: lo que una MÁQUINA puede vigilar es un hook o un gate (`scripts/hooks/`,
+> `npm run verify`); lo que solo un agente juzga es una regla de aquí; la tarjeta de `CLAUDE.md` viaja
+> en cada turno; el terreno va a memoria. `/reflect` enruta en ese orden; ⚙️ marca lo ya vigilado.
+> **La forma la vigila un gate** (`docs:coherence` K): ≤200 líneas, ≤20 reglas, ≤12 por regla, sin
+> sub-entradas; y ESCALA: ≥3 sesiones de evidencia sin ⚙️ ponen rojo hasta mecanizar o declarar. Un
+> párrafo propio es otra regla o un hook. Historia: `git log -S'(s31)' -- LEARNINGS.md` y el tag
+> `archive/learnings-2026-09-02`.
 
 ## Índice de disparadores — escanea esto, baja solo a la que te aplique
 
@@ -26,14 +19,14 @@
 | **1** | concluir que algo NO funciona, **o que ya lo arreglaste tocando una opción** | demuestra que tu estímulo —o tu opción— LLEGÓ **y que es el que el sistema produce de verdad, no uno que inyectaste tú**; no extiendas el negativo más allá de lo que mediste |
 | **2** | creerte un hallazgo (o un verde) de una sonda **tuya**, incluido un TEST | valida el instrumento con un caso conocido; pruébalo en todos sus ejes; valida el CANAL (rojo y verde pueden venir de otro sitio); y mira si tu **doble contesta la pregunta que hace el código** — si lo hace, el test se mide a sí mismo |
 | **4** | arreglar un valor sustituyéndolo por otro token | mide el token de DESTINO antes (fondo y texto, misma familia) |
-| **5** | dudar entre tu código y tu medición | lo rancio es la medición: build, server, HMR, animación, **el repo bajo tus pies**, **otra instancia (un deploy)**, la máquina ahogada… o atribución. Y si el test miraba un TRANSITORIO, la carga es el disparador, no la causa |
+| **5** | dudar entre tu código y tu medición | lo rancio es la medición: build, server, HMR, animación, **el repo bajo tus pies** ⚙️, **otra instancia (un deploy)**, la máquina ahogada… o atribución. Y si el test miraba un TRANSITORIO, la carga es el disparador, no la causa |
 | **6** | creerte un test NUEVO — se ponga rojo **o pase a la primera** | sospecha del test primero: ¿mide la magnitud? ¿el selector casa? ¿reintenta? ¿espera al estado final? Y para probar el arreglo de una CARRERA, hazla determinista en vez de correrla con carga |
-| **7** | hacer `git push`, **o lanzar la cadena de 8 pasos** | `preflight` (o `:fast`/`:scope`) UNA vez sobre el árbol final —"final" = ya no vas a escribir nada más, ni un `.md`—; **`verify` NO es ese gate: se salta el `e2e smoke` y los builds AOT de las apps**. **+ `guard:lockfile` si tocaste el lock**. Confirma el verde LEYENDO el CI: `npm run ci:verdict` |
+| **7** | hacer `git push`, **o lanzar la cadena** | `preflight` (o `:scope --run`) UNA vez sobre el árbol final —"final" = ya no vas a escribir nada más, ni un `.md`—; **`verify` NO es ese gate: se salta los builds AOT de las apps**. Los e2e los corre el CI (8 pasos), no el preflight (DD-60): si tocaste e2e o algo visual, corre a mano la suite que toca — las baselines visuales de sc-docs NO las corre ningún gate. **+ `guard:lockfile` si tocaste el lock**. Confirma el verde LEYENDO el CI: `npm run ci:verdict` |
 | **8** | proponer una segunda corrección tras fallar la primera | para: la siguiente acción es una MEDICIÓN que localice la causa |
 | **10** | declarar algo bloqueado, deducir un dato a ojo, **o diseñar un mecanismo nuevo** | comprueba qué te sirve ya el sistema (DOM oculto, i18n, hoja de estilos) y **qué lo vigila ya** (`.githooks/`, `.claude/settings.json`, `scripts/`) |
 | **11** | lanzar una edición masiva por shell | pega la verificación de outcome en el MISMO comando (zsh no hace word-splitting) |
 | **12** | dar una cifra de un grep **o de un `querySelectorAll`**, ejecutar un `sed`, **o volcar un fichero de config** | pregúntate qué entra en el resultado; si hay un ejecutor que sabe el número, el número es el suyo; y **proyecta o enmascara antes de imprimir un `env`** |
-| **14** | responder a un "hazlo todo", o escribir "esperando a X" | haz lo verificable de punta a punta y aparca lo demás DOCUMENTADO — pero por no poder verificarlo, **nunca por parecido con otro aparcado** |
+| **14** | responder a un "hazlo todo", escribir "esperando a X", **o anotar en un reporte algo que mediste** | haz lo verificable de punta a punta y aparca lo demás DOCUMENTADO — pero por no poder verificarlo, **nunca por parecido con otro aparcado ni por estar ya redactando** |
 | **15** | decidir algo de marca/producto | preséntalo con recomendación y evidencia — y no exageres el encuadre de riesgo |
 | **16** | empezar un refactor transversal | monta antes la red que lo verifica, aunque parezca rodeo |
 | **17** | construir sobre una descripción que no verificaste tú | es una paráfrasis: vuelve a la fuente (da igual si viene de un hand-off, Figma, un README u otro agente) |
@@ -51,7 +44,7 @@
    `matchMedia`, `getComputedStyle`), relee tus propias mediciones de la sesión antes de probar, y
    nombra el sujeto EXACTO que mediste: un nombre colectivo ("el MCP", "el CI") son varias piezas
    que caen por separado. Dos validadores con el mismo modo de fallo no se corroboran. Si no puedes
-   probarlo, el veredicto es "sin verificar", nunca "roto".
+   probarlo, el veredicto es "sin verificar", nunca "roto". ⚙️ no mecanizable (tarjeta, punto 3).
    Evidencia: s11 Enter en `sc-datatable` (la acción `key` manda `key` vacío) · s31 inyecté `600px`
    y declaré roto lo que PrimeNG normaliza · s32 `reducedMotion` escrito y no entregado · s27 "el
    MCP de Figma" eran tres servers y sondeé uno.
@@ -62,7 +55,8 @@
    NODO exacto de la claim; lee el control (un rojo o un verde puede venir de otro sitio: servidor
    muerto, puerto de OTRO worktree, filtro `jq` que nunca casa); si un doble contesta la pregunta
    que hace el código, el test se mide a sí mismo. Cierra con una observación que NO dependa de tu
-   inventario. Un guardián con falsos positivos es peor que ninguno: enseña a ignorarlo.
+   inventario. Un guardián con falsos positivos es peor que ninguno: enseña a ignorarlo. ⚙️ el
+   CHECK O de `docs:coherence` exige un test rojo a cada script de `verify` (23 legados, solo encoge).
    Evidencia: s18 regex `/\d+/g` sobre `color(srgb …)` = verde imposible · s21 medí píxeles, no
    color · s34 `closest: () => ({})` dejó 8 tests verdes con el gesto muerto · s31 tests verdes
    contra el `ng serve` de otro worktree · s18 guardián sin probar en claro↔oscuro = 17 rojos.
@@ -89,20 +83,20 @@
    vacío dice "mi canal no dispara", no "no existe". ¿Se ve bien? → captura a viewport real,
    pantalla entera. ¿Sabrán usarlo? → recorrido cognitivo: ¿sabrá qué intentar, verá el control,
    entenderá qué hace, notará que funcionó? Una interacción por llamada: no leas el DOM en la misma
-   llamada que dispara la acción (Angular aún no pintó).
+   llamada que dispara la acción (Angular aún no pintó). ⚙️ no mecanizable (elegir es juicio).
    Evidencia: s15 shift+click verde en mi sonda, rojo en Playwright · s20 siete unitarios verdes y
    el rango no funcionaba · s26 cero tooltips sintéticos, 23 con el ratón real · s15 "transcribir"
    no aparecía en pantalla con 22 tests verdes.
 
 ## Gates y push
 
-7. **Vas a `git push` → `preflight` (o `:fast`, o `:scope --run`) UNA vez sobre el árbol FINAL, y
-   el veredicto es el del CI leído.** "Final" = commiteado y sin nada más que escribir, ni un
-   `.md`. `verify` NO es ese gate: se salta `e2e smoke` y los builds AOT ("es solo un token, una
-   ruta, un md" no es "verify basta"). Mientras iteras, el subconjunto que toca tu cambio, nunca
-   dos cadenas a la vez, y con `git status` limpio. Después: `npm run ci:verdict`. Si tocaste el
-   lock, `guard:lockfile` (`npm ci --dry-run` a secas es ciego a la plataforma). "Este rojo no es
-   mío" se mide: `git stash` y ese test contra HEAD.
+7. **Vas a `git push` → `preflight` (o `:scope --run`) UNA vez sobre el árbol FINAL, y el
+   veredicto es el del CI leído.** "Final" = commiteado y sin nada más que escribir, ni un `.md`.
+   `verify` NO es ese gate: se salta los builds AOT ("es solo un token, una ruta, un md" no es
+   "verify basta"). Los e2e NO van en preflight (DD-60): los corre el CI, obligatorio y en
+   paralelo; si tocaste e2e o algo visual, corre a mano la suite que toca ANTES de pushear.
+   Después: `npm run ci:verdict`. Si tocaste el lock, `guard:lockfile` (`npm ci --dry-run` a
+   secas es ciego a la plataforma). "Este rojo no es mío" se mide: `git stash` y ese test.
    ⚙️ El hook de push exige `.preflight-ok` sobre ESTE árbol y deniega un `echo $?` colgado de un
    gate; el de Stop exige leer el CI; `ci-preflight-parity` y `playwright-reuse-guard`, el resto.
    Evidencia: ≥8 reincidencias con la regla escrita; por eso dejó de ser prosa. `git log -S'(s35)'`.
@@ -112,7 +106,7 @@
    (`toHaveText`, `toHaveCount`, `expect.poll`; `innerText` y `evaluate` leen una foto)? ¿Espera al
    estado FINAL? Si afirma que algo NO pasa, espera al estímulo confirmado, no a un timeout. Para
    probar el arreglo de una carrera, hazla determinista (encoge la ventana) en vez de correrla con
-   carga. Un flake que tumba el CI 3 de 5 no es inocuo: entrena a ignorar los gates.
+   carga. Un flake que tumba el CI 3 de 5 no es inocuo: entrena a ignorar los gates. ⚙️ CHECK O.
    Evidencia: s25 ocho rojos falsos en una sesión · s27 `component-structure` 3 rojos al día por
    `evaluateAll` sin reintento · s30 gate verde contra el componente roto por leer antes de pintar
    · s31 `setTimeout` de 380 a 20 ms: la vieja 5/5 rojo, la nueva 5/5 verde.
@@ -128,10 +122,10 @@
     árbol desde la carga), ficheros `i18n`, hoja de estilos, `docs/DECISIONS.md` antes de
     hipotetizar. Y si lo que vas a montar es un GUARDIÁN, la pregunta es "¿qué vigila esto hoy?":
     `.githooks/`, `.claude/settings.json`, `scripts/`, `package.json`. Un diagnóstico que enumera
-    los ficheros que se LEEN y no los mecanismos que se EJECUTAN mide media realidad.
+    los ficheros que se LEEN y no los mecanismos que se EJECUTAN mide media realidad. ⚙️ no
+    mecanizable: es juicio y ya va en la tarjeta (punto 7).
     Evidencia: s26 cuatro modales "imposibles" medidos sin pulsar nada, y 1.449 claves de `en.json`
-    · s41 propuse un hook de pre-push con `.githooks/pre-push` ya existiendo desde s39: lo descubrí
-    cuando mi propio push repitió 10 min de cadena y agotó el timeout.
+    · s41 propuse un hook de pre-push que ya existía desde s39 (lo vi al repetir 10 min de cadena).
 
 11. **Toda edición masiva —shell o API— lleva su verificación de outcome PEGADA en la misma
     operación. Y si la clave con la que escribes puede REPETIRSE en el árbol, no es una asignación:
@@ -165,9 +159,11 @@
 
 14. **"Hazlo todo" → haz lo verificable de punta a punta, aparca lo demás DOCUMENTADO y dilo.**
     Aparca por falta de verificabilidad o porque la decisión es suya (marca, producto, borrado
-    irreversible), NUNCA por parecido con otro aparcado: antes de escribir "esperando a X", una
-    sonda más en la evidencia que decidiría.
-    Evidencia: s28 aparqué un componente "como sc-page-header" y estaba en el Kit: nada que decidir.
+    irreversible), NUNCA por parecido con otro aparcado ni **por estar ya escribiendo el reporte**:
+    una divergencia que MEDISTE y podías corregir se corrige en la misma pasada — anotarla es
+    dejarle a él el trabajo de encontrarla, con el de medirla ya hecho.
+    Evidencia: s28 aparqué un componente "como sc-page-header" y estaba en el Kit · 2026-09-09
+    dejé "el subtítulo del rail no está en Figma" en un reporte y lo tuvo que señalar Rafa.
 
 15. **Decisión de marca o producto → preséntala con recomendación y evidencia; no la decidas tú.**
     El encuadre de riesgo es parte de la evidencia: "reversible" lleva horizonte y mecanismo
@@ -184,7 +180,8 @@
     propio resumen, otro agente, un item de audit ("solo hay que…"), un check de CI atado a un
     commit VIEJO, o un doc archivado que rescatas (ahí más: el traslado le da credibilidad). Si no
     lo mediste, etiqueta "según X, sin verificar" y acota a QUÉ artefacto y estado. Si la fuente
-    AVISA de una trampa, cabléala en tu primer comando en vez de redescubrirla.
+    AVISA de una trampa, cabléala en tu primer comando en vez de redescubrirla. ⚙️ no mecanizable
+    (es juicio; sus síntomas ya los vigilan los checks D, E, J y M de `docs:coherence`).
     Evidencia: s14 "número héroe" que era una frase entera · s25 "100 deployments" eran 26 · s27 DD
     nuevo con una claim de un doc muerto · s36 154 falsos por no aplicar el aviso leído · s39 check
     rojo de un proyecto ya borrado.

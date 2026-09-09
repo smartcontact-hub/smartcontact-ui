@@ -209,11 +209,36 @@ function pidsDePlaywright() {
       encoding: 'utf8',
       stdio: ['ignore', 'pipe', 'ignore'],
     }).trim();
-    return out ? out.split('\n').map(Number).filter((n) => Number.isInteger(n)) : [];
+    const candidatos = out ? out.split('\n').map(Number).filter((n) => Number.isInteger(n)) : [];
+    return candidatos.filter((pid) => esRunner(comandoDe(pid)));
   } catch {
     // `pgrep` sale con 1 si no hay coincidencias, y con ENOENT si no existe.
     // En los dos casos: no podemos afirmar que haya otra cadena → no bloquees.
     return [];
+  }
+}
+
+/*
+ * `pgrep -f` casa contra el TEXTO de la línea de comandos, y eso incluye a cualquier shell cuyo
+ * script mencione «playwright test»: un `until ! pgrep -f "playwright test"; do sleep; done` de
+ * OTRA sesión, esperando a que se libere la máquina. Medido el 2026-09-09: tres preflights
+ * murieron aquí denunciando como «ejecución viva» a bucles de espera ajenos (pids de `zsh` con un
+ * `sleep` como único hijo), y dos sesiones se esperaron la una a la otra por una cadena de texto.
+ * Un Playwright de verdad es un proceso `node`: lo demás es alguien hablando de Playwright.
+ */
+/** @param {string | undefined} comm  salida de `ps -o comm=` (vacía si el proceso ya murió) */
+export function esRunner(comm) {
+  if (!comm) return true; // sin dato no se puede exonerar: mejor un aviso de más que un verde falso
+  const base = comm.trim().split('/').pop() ?? '';
+  return base === 'node' || /^node\d*$/.test(base);
+}
+
+/** @param {number} pid */
+function comandoDe(pid) {
+  try {
+    return execFileSync('ps', ['-o', 'comm=', '-p', String(pid)], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim();
+  } catch {
+    return '';
   }
 }
 

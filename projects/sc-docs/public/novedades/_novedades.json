@@ -1,0 +1,76 @@
+{
+  "fuente": "CHANGELOG.md",
+  "versiones": [
+    {
+      "version": "1.0.0",
+      "fecha": "2026-09-09",
+      "intro": [
+        "Primera versión <strong>estable</strong>. El corte no es de calendario: es que el sistema ya tiene <strong>cinco aplicaciones en producción</strong> consumiéndolo, <strong>50 componentes</strong> inventariados, el puente Figma → código cerrado por generadores en las <strong>10 zonas</strong> que se generan, y <strong>36 gates</strong> encadenados que ponen rojo cualquier divergencia. A partir de aquí la API pública <code>sc-*</code> y el contrato <code>--sc-*</code> solo rompen en un major.",
+        "Trae <strong>cambios que rompen</strong> respecto a <code>0.2.0</code> (junio): plataforma, nombres de token y la compatibilidad con Reactive Forms. Están todos abajo, con el porqué en su decisión."
+      ],
+      "secciones": [
+        {
+          "titulo": "Retirado",
+          "items": [
+            "<strong>BREAKING · <code>@smartcontact-hub/components</code></strong> — el <code>ControlValueAccessor</code> sale de los seis campos (<code>inputtext</code>, <code>inputnumber</code>, <code>select</code>, <code>checkbox</code>, <code>toggleswitch</code>, <code>textarea</code>). El patrón compartido pasa a factories y el <code>value = model()</code> cumple <strong>estructuralmente</strong> con <code>FormValueControl</code> de Signal Forms, que es la vía de Angular 22. Quien ate un campo con <code>formControlName</code> tiene que pasar a <code>[(value)]</code> o envolverlo él. (<a href=\"https://github.com/smartcontact-hub/smartcontact-ui/blob/main/docs/DECISIONS.md\" target=\"_blank\" rel=\"noopener\">DD-44</a>)",
+            "<strong>BREAKING · <code>@smartcontact-hub/components</code></strong> — se retira <code>sc-page-header</code>. El título de una pantalla vive en el <strong>cuerpo</strong>, dentro de su propia sección, no en una cabecera aparte: en una pantalla con índice lateral lo pinta un <code>&lt;sc-section-card [headingLevel]=\"1\"&gt;</code>, y un gate (<code>audit:titulo-contenido</code>) lo vigila. (<a href=\"https://github.com/smartcontact-hub/smartcontact-ui/blob/main/docs/DECISIONS.md\" target=\"_blank\" rel=\"noopener\">DD-33</a>, <a href=\"https://github.com/smartcontact-hub/smartcontact-ui/blob/main/docs/DECISIONS.md\" target=\"_blank\" rel=\"noopener\">DD-57</a>)"
+          ]
+        },
+        {
+          "titulo": "Cambios",
+          "items": [
+            "<strong>BREAKING · plataforma</strong> — Angular <strong>21 → 22</strong>, PrimeNG <strong>21 → 22</strong>, <code>@primeuix/themes</code> <strong>2 → 3</strong>, y los builders a <code>@angular/build</code>. Los <code>peerDependencies</code> de los tres paquetes suben en consecuencia. (<a href=\"https://github.com/smartcontact-hub/smartcontact-ui/blob/main/docs/DECISIONS.md\" target=\"_blank\" rel=\"noopener\">DD-42</a>)",
+            "<strong>BREAKING · <code>@smartcontact-hub/styles</code></strong> — los tokens se renombran a los <strong>nombres del Kit</strong> de Figma, para que el nombre que se lee en el diseño sea el que se escribe en el código. Un token es una cadena literal en el CSS de quien lo consume: revisad <code>--sc-*</code> a mano. (<a href=\"https://github.com/smartcontact-hub/smartcontact-ui/blob/main/docs/DECISIONS.md\" target=\"_blank\" rel=\"noopener\">DD-23</a>)",
+            "<strong>BREAKING · color</strong> — la familia <code>accent</code> se unifica con <code>info</code> bajo <code>sky</code> (un solo acento); <code>warn</code> vuelve a la familia <code>yellow</code> del Kit con un paso de corrección por contraste; el <code>primary</code> en oscuro sube un peldaño y <strong>diverge del Kit</strong> a propósito, porque su rampa no admitía texto legible; y el lienzo de aplicación pasa a <strong>blanco</strong> (<code>--sc-bg-canvas</code>). (<a href=\"https://github.com/smartcontact-hub/smartcontact-ui/blob/main/docs/DECISIONS.md\" target=\"_blank\" rel=\"noopener\">DD-32</a>, <a href=\"https://github.com/smartcontact-hub/smartcontact-ui/blob/main/docs/DECISIONS.md\" target=\"_blank\" rel=\"noopener\">DD-41</a>, <a href=\"https://github.com/smartcontact-hub/smartcontact-ui/blob/main/docs/DECISIONS.md\" target=\"_blank\" rel=\"noopener\">DD-40</a>, <a href=\"https://github.com/smartcontact-hub/smartcontact-ui/blob/main/docs/DECISIONS.md\" target=\"_blank\" rel=\"noopener\">DD-45</a>)",
+            "<strong>BREAKING · semántica de superficie</strong> — <code>--sc-bg-default</code> es el <strong>suelo del shell</strong>, nunca una superficie de contenido. Si lo usabais para pintar una tarjeta, el token que toca es otro. (<a href=\"https://github.com/smartcontact-hub/smartcontact-ui/blob/main/docs/DECISIONS.md\" target=\"_blank\" rel=\"noopener\">DD-34</a>)",
+            "<strong><code>@smartcontact-hub/components</code></strong> — la era objetivo de la API son las <strong>señales</strong> (<code>input()</code> / <code>output()</code> / <code>model()</code>). <code>@Input()</code> y <code>@Output()</code> quedan congelados con trinquete: 16 componentes los conservan y ese número solo puede menguar, ninguno nuevo los estrena. (<a href=\"https://github.com/smartcontact-hub/smartcontact-ui/blob/main/docs/DECISIONS.md\" target=\"_blank\" rel=\"noopener\">DD-38</a>)",
+            "<strong><code>@smartcontact-hub/components</code></strong> — el estilo de los <strong>overlays</strong> de un wrapper (panel de <code>select</code>, <code>datepicker</code>, <code>popover</code>) vive en su propio componente del DS, no en el CSS de la app. El CSS de aplicación sin capa sobre <code>.p-*</code> pasa a trinquete. (<a href=\"https://github.com/smartcontact-hub/smartcontact-ui/blob/main/docs/DECISIONS.md\" target=\"_blank\" rel=\"noopener\">DD-50</a>)",
+            "<strong><code>@smartcontact-hub/styles</code></strong> — el <code>line-height</code> de los <strong>controles</strong> vuelve a la métrica de la fuente; la rampa tipográfica se queda solo donde el Kit la ata (chip, tag, toast). El fallback <code>md</code> baja a 20. (<a href=\"https://github.com/smartcontact-hub/smartcontact-ui/blob/main/docs/DECISIONS.md\" target=\"_blank\" rel=\"noopener\">DD-51</a>, <a href=\"https://github.com/smartcontact-hub/smartcontact-ui/blob/main/docs/DECISIONS.md\" target=\"_blank\" rel=\"noopener\">DD-39</a>, <a href=\"https://github.com/smartcontact-hub/smartcontact-ui/blob/main/docs/DECISIONS.md\" target=\"_blank\" rel=\"noopener\">DD-46</a>)",
+            "<strong><code>@smartcontact-hub/icons</code></strong> — el icono canónico es <strong>Material Symbols Outlined</strong>, <strong>self-hospedado</strong>: mismo trazo en la doc y en las apps, sin pedirle nada a Google en tiempo de ejecución. (<a href=\"https://github.com/smartcontact-hub/smartcontact-ui/blob/main/docs/DECISIONS.md\" target=\"_blank\" rel=\"noopener\">DD-31</a>)"
+          ]
+        },
+        {
+          "titulo": "Novedades",
+          "items": [
+            "<strong><code>@smartcontact-hub/styles</code></strong> — <strong>12 estilos de texto</strong> (<code>.sc-text-*</code>) generados desde la <strong>librería</strong> del DS en Figma, que es la que manda en las escalas. Un gate (<code>audit:text-styles</code>) comprueba la cadena entera: token → clase → font-size, line-height, peso y familia del text style, y que la app que consume el DS cargue el CSS que las define. (<a href=\"https://github.com/smartcontact-hub/smartcontact-ui/blob/main/docs/DECISIONS.md\" target=\"_blank\" rel=\"noopener\">DD-46</a>, <a href=\"https://github.com/smartcontact-hub/smartcontact-ui/blob/main/docs/DECISIONS.md\" target=\"_blank\" rel=\"noopener\">DD-48</a>, <a href=\"https://github.com/smartcontact-hub/smartcontact-ui/blob/main/docs/DECISIONS.md\" target=\"_blank\" rel=\"noopener\">DD-54</a>, <a href=\"https://github.com/smartcontact-hub/smartcontact-ui/blob/main/docs/DECISIONS.md\" target=\"_blank\" rel=\"noopener\">DD-55</a>)",
+            "<strong>Puente Figma → código completo.</strong> Lo que antes se copiaba a mano ahora lo escribe un generador por clase de valor: <strong>sizing</strong> de componente, <strong>color</strong> semántico y de componente (claro y oscuro), <strong>sombras</strong> y <strong>tipografía</strong>. Son **10 zonas <code>@sc-gen:*</code> repartidas en 5 ficheros**, todas reescritas por <code>npm run tokens:import</code>, y la paridad con el export del Kit la comprueba <code>tokens:parity</code>. (<a href=\"https://github.com/smartcontact-hub/smartcontact-ui/blob/main/docs/DECISIONS.md\" target=\"_blank\" rel=\"noopener\">DD-18</a>, <a href=\"https://github.com/smartcontact-hub/smartcontact-ui/blob/main/docs/DECISIONS.md\" target=\"_blank\" rel=\"noopener\">DD-19</a>, <a href=\"https://github.com/smartcontact-hub/smartcontact-ui/blob/main/docs/DECISIONS.md\" target=\"_blank\" rel=\"noopener\">DD-20</a>, <a href=\"https://github.com/smartcontact-hub/smartcontact-ui/blob/main/docs/DECISIONS.md\" target=\"_blank\" rel=\"noopener\">DD-21</a>, <a href=\"https://github.com/smartcontact-hub/smartcontact-ui/blob/main/docs/DECISIONS.md\" target=\"_blank\" rel=\"noopener\">DD-46</a>)",
+            "<strong><code>@smartcontact-hub/components</code></strong> — el inventario queda en <strong>50</strong> componentes. Nuevos: <code>sc-gauge</code> (medidor propio, sin PrimeNG detrás) y <code>sc-breadcrumb</code>. Catálogo completo en <a href=\"https://github.com/smartcontact-hub/smartcontact-ui/blob/main/docs/inventory.md\" target=\"_blank\" rel=\"noopener\"><code>docs/inventory.md</code></a>, auto-generado desde el código: si el código y la tabla se separan, <code>audit:components</code> pone rojo.",
+            "<strong>Cinco aplicaciones en producción</strong> que lo consumen, todas desde <code>main</code> y desplegadas solas: el showcase <a href=\"https://sc-doc.pages.dev\" target=\"_blank\" rel=\"noopener\"><code>sc-docs</code></a>, la app real <a href=\"https://sc-supervisor.pages.dev\" target=\"_blank\" rel=\"noopener\"><code>supervisor</code></a> y tres réplicas medidas del producto vivo (<a href=\"https://sc-agent.pages.dev\" target=\"_blank\" rel=\"noopener\"><code>agent</code></a>, <a href=\"https://sc-cuscare.pages.dev\" target=\"_blank\" rel=\"noopener\"><code>cuscare</code></a>, <a href=\"https://agent-mini.pages.dev\" target=\"_blank\" rel=\"noopener\"><code>agent-mini</code></a>). Las réplicas <strong>no se tokenizan a propósito</strong>: su gate es la fidelidad contra el sitio original, no la paridad de tokens. (<a href=\"https://github.com/smartcontact-hub/smartcontact-ui/blob/main/docs/DECISIONS.md\" target=\"_blank\" rel=\"noopener\">DD-35</a>, <a href=\"https://github.com/smartcontact-hub/smartcontact-ui/blob/main/docs/DECISIONS.md\" target=\"_blank\" rel=\"noopener\">DD-37</a>)",
+            "<strong>Showcase con fichas por componente</strong> al estilo Storybook, con motor propio y sin tooling nuevo, más una galería de <strong>uso real</strong> que captura el DOM renderizado de las pantallas del Supervisor donde aparece cada componente. (<a href=\"https://github.com/smartcontact-hub/smartcontact-ui/blob/main/docs/DECISIONS.md\" target=\"_blank\" rel=\"noopener\">DD-29</a>)",
+            "<strong>Dos formas de bajárselo, y ninguna depende de que alguien se acuerde.</strong> Los tres paquetes se adjuntan como tarballs <code>.tgz</code> en la <a href=\"https://github.com/smartcontact-hub/smartcontact-ui/releases\" target=\"_blank\" rel=\"noopener\">release de GitHub</a> (abierta, sin token), y la propia release dispara la publicación en <strong>GitHub Packages</strong> (privado, para quien ya tiene acceso a la org). Lo que sigue aparcado es el ciclo <strong>diario</strong> de publicar-versionar-instalar, que es lo que DD-17 quitó de en medio. (<a href=\"https://github.com/smartcontact-hub/smartcontact-ui/blob/main/docs/DECISIONS.md\" target=\"_blank\" rel=\"noopener\">DD-17</a>, <a href=\"https://github.com/smartcontact-hub/smartcontact-ui/blob/main/docs/DECISIONS.md\" target=\"_blank\" rel=\"noopener\">DD-58</a>)"
+          ]
+        }
+      ]
+    },
+    {
+      "version": "0.2.0",
+      "fecha": "2026-06-14",
+      "intro": [],
+      "secciones": [
+        {
+          "titulo": "Cambios",
+          "items": [
+            "<strong><code>@smartcontact-hub/components</code></strong> — los <code>input&lt;boolean&gt;()</code> de los wrappers (<code>fluid</code>, <code>required</code>, <code>invalid</code>, <code>readonly</code>, <code>collapsible</code>, <code>flush</code>, <code>stripedRows</code>…) ahora llevan <code>transform: booleanAttribute</code>: el <strong>atributo escueto</strong> funciona (<code>&lt;sc-inputtext fluid&gt;</code>, como <code>&lt;input disabled&gt;</code>). Cambio <strong>aditivo</strong> — <code>[fluid]=\"true\"</code> sigue válido. Gap surfaceado dogfoodeando <code>projects/sc-prototype</code>."
+          ]
+        }
+      ]
+    },
+    {
+      "version": "0.1.0",
+      "fecha": "2026-06-13",
+      "intro": [
+        "Primera publicación en GitHub Packages (privado, org <code>smartcontact-hub</code>)."
+      ],
+      "secciones": [
+        {
+          "titulo": "Novedades",
+          "items": [
+            "<strong><code>@smartcontact-hub/styles</code></strong> — 7 capas de tokens <code>--sc-*</code> (escala 14-base en rem, paleta, semánticos, componente, extensiones, dark) generadas desde el export DTCG del Kit (Theme Designer). Reset + globals.",
+            "<strong><code>@smartcontact-hub/icons</code></strong> — <code>&lt;sc-icon&gt;</code> (Material Symbols por ligadura) + constantes <code>SC_ICON_SIZE_*</code>.",
+            "<strong><code>@smartcontact-hub/components</code></strong> — 48 wrappers/customs <code>sc-*</code> (button, inputtext, select, toggleswitch, checkbox, dialog, datatable, section-card/subsection/slot, command-palette, bulk-transcription-modal…) + <code>provideSmartContactUi()</code> + el preset modular PrimeNG (cada slot → <code>var(--sc-*)</code>)."
+          ]
+        }
+      ]
+    }
+  ]
+}
