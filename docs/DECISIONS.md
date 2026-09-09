@@ -55,6 +55,88 @@
 
 ---
 
+## DD-64 · 2026-09-10 — Un commit que `main` ya ha adelantado no es un despliegue roto: no se registra
+
+**Contexto** · La pantalla de *Deployments*, estrenada horas antes con DD-59, se llenó de rojo en
+los cinco entornos y Rafa preguntó si estaba todo bien. No lo estaba, pero lo roto no era ninguno
+de los cinco sitios: los cinco servían `main` y ningún build de Cloudflare había fallado.
+Contadas por la API de GitHub: **23 filas en rojo** de 55 despliegues apuntados, y **las 23 se
+explican sin que nada esté caído** — 20 son de cuatro commits que Cloudflare descartó
+(`8cc9bce`, `287f075`, `7812c38` y `37f9d6f`, cinco filas cada uno) y las **3** restantes son un
+único sitio cada una (`agent-mini` una vez, `supervisor` dos) que llegó pasados los 20 minutos
+mientras sus cuatro hermanos entraban a tiempo.
+
+**Lo que se midió** (2026-09-10, API de Cloudflare sobre la cuenta `b8361bb4…`, y cronómetro
+contra los cinco `build.json`):
+
+- `npm run audit:cf-config` en **verde**: los cinco proyectos siguen como el repo espera.
+- **Cloudflare construye de UNA EN UNA en toda la cuenta.** Sobre los 87 builds de las 2,7 h
+  anteriores, la concurrencia máxima observada fue **1**. Construir un sitio cuesta ~70 s
+  (mediana 67 s, máx 146 s), pero la mediana de **cola** por despliegue fue **885 s** y el máximo
+  **1.272 s**: manda la cola, no el build.
+- Cada empujón encola **5** builds (uno por sitio) y **cada rama de trabajo encola otros 5**:
+  236 despliegues en 24 h, 889 desde el 1 de septiembre.
+- **8 de los últimos 41 despliegues de producción de `sc-doc` están `skipped`**, entre ellos los
+  tres que dispararon los rojos de esta noche — `8cc9bce` (#80), `287f075` (#82) y `7812c38`
+  (#81), empujados en 7 minutos. Cloudflare solo construye el **último** commit encolado de cada
+  rama y descarta el anterior, así que esos tres **no los iba a servir nadie nunca**: sus 15
+  filas rojas no podían volverse verdes jamás, por mucho que se esperase.
+- El commit que sí quedó arriba (`fee8c34`) llegó a los cinco sitios en **12,7 · 13,4 · 15,1 ·
+  16,8 · 17,8 min** desde el empujón, con UNA rama vecina construyendo. La ventana eran 20: pasó
+  con 2,2 minutos de margen. Los tres rojos de un solo sitio de arriba son ese mismo margen
+  agotándose en empujones anteriores.
+
+**Decisión** · Tres cambios, uno por cada cosa que se midió:
+
+1. **`record-deploy.mjs` mira la cabeza de `main`** antes de empezar y en cada vuelta. Si el
+   commit que espera ya ha sido adelantado, lo dice y **sale sin registrar nada** — lo registrará
+   la comprobación del que quedó arriba. Un commit adelantado no es un despliegue roto.
+   No basta con «la cabeza es otro sha»: el job arranca **segundos** después del empujón, y una
+   lectura rezagada de la API haría que un despliegue bueno se quedara **sin registrar y en
+   silencio**, que es peor que el rojo que se venía a quitar. Así que se pregunta la ancestría
+   (`GET /compare/<sha>...<cabeza>`) y solo se concluye con `ahead` o `diverged`; con `behind` o
+   sin respuesta, se sigue esperando. Comprobado contra la API con los shas de esta noche:
+   `7812c38…fee8c34` → `ahead`, y al revés → `behind`.
+2. **`deploy-record.yml` cancela la comprobación anterior** cuando entra un empujón nuevo
+   (`concurrency` + `cancel-in-progress`), que es exactamente lo que Cloudflare hace con el build.
+3. **La ventana pasa de 20 a 35 minutos** (y el `timeout-minutes` del job de 25 a 40), fijada
+   sobre la cola medida y no sobre la intuición de «un par de minutos por sitio» con la que se
+   escribió.
+
+**Razón** · DD-59 se escribió para que la pantalla no afirmara nada sin medirlo, y el rojo por
+supersesión es la otra mitad del mismo error: **afirmar «este sitio no sirve el commit» cuando lo
+que pasa es que ese commit ya no le toca a nadie servirlo**. Un rojo que no puede volverse verde
+enseña a ignorar la pantalla, que es como se llegó a los tres meses de mentira de DD-58. Y los
+17,8 minutos del commit de cabeza dicen que la ventana de 20 no tenía margen para una segunda
+rama construyendo: habría dado un rojo con los cinco sitios sanos.
+
+**Descartadas** ·
+· *Dejar el rojo y explicarlo en la doc* — es gratis y es justo lo que no funciona: la pantalla
+  la lee Rafa, no la doc, y lo que le dice es «cinco sitios caídos».
+· *Solo subir la ventana* — no toca el rojo permanente: los commits `skipped` seguirían saliendo
+  rojos a los 35 minutos igual que a los 20.
+· *Apagar los previews por rama en Cloudflare* — es la mitad de la cola, y es la palanca más
+  grande que hay. Pero el preview por rama es lo que Rafa pidió para compartir un link (DD-17),
+  así que **no se toca sin él**; queda anotado con sus números en el hand-off.
+· *Filtrar por rutas (`path_includes` por proyecto)* — cada sitio se construiría solo cuando
+  cambia lo suyo, pero entonces un commit de tooling deja los cinco sitios sirviendo el commit
+  anterior y el registro lo marcaría en rojo **con razón**: el sello dice «este sitio sirve este
+  commit» y dejaría de ser cierto. Cambiaría el contrato de DD-59 entero.
+· *Preguntarle a la API de Cloudflare si el build está `skipped`* — diría el motivo exacto en vez
+  de deducirlo, pero ata el registro a un secret para saber algo que la cabeza de `main` ya dice
+  sin credenciales. Y ese secret **hoy no existe**: `gh api …/actions/secrets` devuelve 0, así que
+  el paso de `audit:cf-config` del workflow lleva desde que se escribió avisando y siguiendo. Se
+  queda como mejora del MENSAJE si algún día un rojo no se explica solo.
+
+**Consecuencias** · Un empujón sobre otro deja de escribir filas rojas: escribe **una sola vez**,
+la del commit que queda arriba, y las comprobaciones adelantadas salen en gris (canceladas) o en
+verde diciendo por qué no registran. La regla vive en `supersesion()`, con su test en rojo y en
+verde (`scripts/__tests__/record-deploy.test.mjs`), que además cruza los cinco sitios del
+registro con los cinco proyectos que audita `audit:cf-config` — si nace una sexta app y solo se
+apunta en un sitio, salta. **Lo que este DD NO arregla**: la cola. Con concurrencia 1 y 5 sitios
+por empujón, dos ramas trabajando a la vez dejan el despliegue de `main` en ~18 minutos, y eso
+solo baja apagando previews o pagando concurrencia. Está medido y anotado; es decisión de Rafa.
+
 ## DD-61 · 2026-09-09 — Cada PIEL de `sc-section-card` trae las medidas de SU nodo de Figma, y el maestro del DS es el que manda en la gris
 
 **Contexto** · DD-57 subió el padding de `sc-section-card` de 21 a 24.5 «hacia el valor que la
@@ -268,6 +350,10 @@ Como ningún gate del repo puede ver el panel de Cloudflare, ahora lo lee `audit
 cuatro ajustes por proyecto contra lo que el repo espera, en local con el OAuth de wrangler y en
 `deploy-record.yml` con el secret `CLOUDFLARE_API_TOKEN` (sin secret, el paso lo dice y no afirma
 nada). Y el rojo del registro, cuando un sitio nunca mostró sello, apunta a ese comando.
+
+**Ampliado por DD-64** (2026-09-10): la ventana son **35 minutos**, no 20, y un commit al
+que `main` ya ha adelantado no se registra — Cloudflare descarta su build encolado y ningún sitio
+llega a servirlo.
 
 ## DD-58 · 2026-09-09 — El DS corta **1.0.0**, y se descarga por *release*, no por registro
 

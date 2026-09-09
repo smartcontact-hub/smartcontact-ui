@@ -5,8 +5,8 @@
 # pantalla estaba vacía. Lo fácil habría sido apuntar "desplegado" nada más fundir, pero eso es
 # exactamente lo que hacía la pantalla que llevaba tres meses mintiendo (GitHub Pages, retirado
 # en DD-17). Así que aquí no se afirma nada sin medirlo: `record-deploy.mjs` le pide
-# `build.json` a cada sitio y espera hasta VER el commit correcto. Si a los 20 minutos alguno
-# no lo sirve, se registra como FALLO y el job se pone rojo. Ver DD-59.
+# `build.json` a cada sitio y espera hasta VER el commit correcto. Si a los 35 minutos alguno
+# no lo sirve, se registra como FALLO y el job se pone rojo. Ver DD-59 y DD-64.
 #
 # `deployments: write` es el único permiso ancho, y vive solo aquí.
 name: deploy-record
@@ -14,12 +14,21 @@ name: deploy-record
 on:
   push:
     branches: [main]
-  # Rescate: volver a comprobar un commit concreto sin tener que empujar nada.
+  # Rescate: volver a comprobar un commit concreto sin tener que empujar nada. Si main ya lo ha
+  # adelantado, el script lo dice y sale sin registrar: ese commit no llegará a servirse.
   workflow_dispatch:
     inputs:
       sha:
         description: 'Commit a comprobar (por defecto, el último de main)'
         required: false
+
+# Cloudflare solo construye el ÚLTIMO commit encolado de cada rama: al entrar uno nuevo en main,
+# el anterior queda `skipped` y no se sirve nunca. Seguir mirándolo es esperar media hora a algo
+# que ya no va a pasar, así que un empujón nuevo cancela la comprobación del anterior. El script
+# lo comprueba además por su cuenta, por si el `workflow_dispatch` se lanza a mano (DD-64).
+concurrency:
+  group: deploy-record-${{ inputs.sha || github.ref }}
+  cancel-in-progress: true
 
 permissions:
   contents: read
@@ -28,8 +37,9 @@ permissions:
 jobs:
   record:
     runs-on: ubuntu-latest
-    # Cloudflare construye las cinco a la vez; 25 acota el job por encima de la espera del script.
-    timeout-minutes: 25
+    # Cloudflare construye de una en una en toda la cuenta (medido: concurrencia 1 sobre 87
+    # builds), y la cola manda sobre el build. 40 acota el job por encima de la espera del script.
+    timeout-minutes: 40
     steps:
       - uses: actions/checkout@v5
       - uses: actions/setup-node@v5
