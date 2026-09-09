@@ -92,6 +92,15 @@ jobs:
         env:
           SC_SKIP_VISUAL_BASELINES: '1'
         run: |
+          # El runner trae preconfigurado el repo APT de Chrome, y `--with-deps` hace un
+          # `apt-get update` que lee su índice. Si ese índice viene desincronizado
+          # (`Hash Sum mismatch`), el paso muere ANTES de bajar nada: el 2026-09-09 tumbó
+          # los tres jobs de e2e de `main` tres veces seguidas, con un árbol IDÉNTICO a uno
+          # que había pasado verde una hora antes. De ese repo no se instala nada —
+          # Playwright baja su propio chromium y `--with-deps` solo saca librerías del
+          # sistema de los repos de Ubuntu— así que se quita y dejamos de depender de un
+          # mirror ajeno para arrancar los tests.
+          sudo rm -f /etc/apt/sources.list.d/google-chrome.list
           npx playwright install --with-deps chromium
           npm run e2e
 
@@ -112,6 +121,15 @@ jobs:
       # `ng serve` (:4405) — ver playwright.supervisor.config.ts.
       - name: e2e supervisor (formularios + flujo de reglas)
         run: |
+          # El runner trae preconfigurado el repo APT de Chrome, y `--with-deps` hace un
+          # `apt-get update` que lee su índice. Si ese índice viene desincronizado
+          # (`Hash Sum mismatch`), el paso muere ANTES de bajar nada: el 2026-09-09 tumbó
+          # los tres jobs de e2e de `main` tres veces seguidas, con un árbol IDÉNTICO a uno
+          # que había pasado verde una hora antes. De ese repo no se instala nada —
+          # Playwright baja su propio chromium y `--with-deps` solo saca librerías del
+          # sistema de los repos de Ubuntu— así que se quita y dejamos de depender de un
+          # mirror ajeno para arrancar los tests.
+          sudo rm -f /etc/apt/sources.list.d/google-chrome.list
           npx playwright install --with-deps chromium
           npm run e2e:supervisor
 
@@ -132,5 +150,14 @@ jobs:
       # inferior tapaba el engranaje — se veía, pero no se podía pulsar.
       - name: e2e cuscare (navegación + métrica)
         run: |
+          # El runner trae preconfigurado el repo APT de Chrome, y `--with-deps` hace un
+          # `apt-get update` que lee su índice. Si ese índice viene desincronizado
+          # (`Hash Sum mismatch`), el paso muere ANTES de bajar nada: el 2026-09-09 tumbó
+          # los tres jobs de e2e de `main` tres veces seguidas, con un árbol IDÉNTICO a uno
+          # que había pasado verde una hora antes. De ese repo no se instala nada —
+          # Playwright baja su propio chromium y `--with-deps` solo saca librerías del
+          # sistema de los repos de Ubuntu— así que se quita y dejamos de depender de un
+          # mirror ajeno para arrancar los tests.
+          sudo rm -f /etc/apt/sources.list.d/google-chrome.list
           npx playwright install --with-deps chromium
           npm run e2e:cuscare
