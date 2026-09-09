@@ -175,6 +175,12 @@
           "apply": "Anima solo transform y opacity. Imágenes con width/height o aspect-ratio. Banners y toasts en un hueco ya reservado.",
           "avoid": "Animar top, left, width o height, o insertar algo encima del contenido al cargar.",
           "have": "La transición de tema del propio sitio ya funde con opacity, sin recolocar nada."
+        },
+        "type": {
+          "title": "Tipografía por clase",
+          "apply": "El texto de la página lleva una de las 12 clases .sc-text-* (los text styles del Figma del DS). Si el texto de un componente tiene que verse distinto, se mueve su token.",
+          "avoid": "Poner .sc-text-* en la etiqueta de un <sc-*>: va sin capa, y sin capa gana siempre, así que lo desconecta del tema.",
+          "have": "Las 12 clases ya existen y beben de los tokens de rol; audit:text-styles enrojece si una deja de valer lo que su text style, o si alguien se la pone encima a un componente."
         }
       }
     },

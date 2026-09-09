@@ -129,8 +129,23 @@ Caption/caption-{regular,semibold}   12 / 18
 ```
 
 **Los estilos de texto NO viajan al export.** Ningún plugin los exporta, nunca. Su equivalente
-en código son las clases `.sc-*` que se entregan aparte, y esas sí hay que mantenerlas a mano
-si se añade un estilo nuevo.
+en código son las **12 clases `.sc-text-*`** de
+`projects/design-tokens/src/lib/styles/base/typography.css` (`.sc-text-h2-semibold`,
+`.sc-text-body-regular`…). No fijan ningún número: cada una bebe del token de ROL, que cuelga del
+peldaño que el estilo ata en Figma.
+
+Como el export no las respalda, la tabla que dice qué debe medir cada una se escribe a mano —en
+`scripts/audit-text-styles.mjs`— y ese guardián la compara resolviendo la cadena entera, de la
+clase al píxel. Cubre el tramo que `tokens:type-parity` no ve: aquél compara el peldaño contra el
+export, y entre el peldaño y la clase hay un token de rol que nadie miraba (`--sc-line-height-h3`
+podía irse de `300` a `400` sin que nada enrojeciera).
+
+**Dónde se aplican, y dónde no.** Al texto de la PÁGINA. Nunca en la etiqueta de un `<sc-*>`: su
+tipografía la publica el tema, y una clase encima va sin capa —y sin capa gana siempre— así que lo
+desconecta del canal por el que un cambio de token llega solo a todos los componentes. Si el texto
+de un componente tiene que verse distinto, se mueve su token. Es DD-55, y lo vigila la §3 del
+mismo guardián. Se ve en la maqueta que originó la regla (Supervisor 393:12562): de sus 43 textos,
+los 25 de página llevan estilo anclado y los 18 que viven dentro de un componente, ninguno.
 
 Restricciones de la colección `Custom` aprendidas a base de romperlas:
 

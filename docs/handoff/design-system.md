@@ -64,9 +64,28 @@ del rail cambia de caja según estado (inactivo pad 8.75/gap 5.25 de la escala, 
 de variables sueltas → se encoge 2px al seleccionarlo); iconos del mismo rol a 14, 20 y 32; y
 "Notifications" sin traducir en una pantalla en español.
 
+**Lo que se documentó al cerrar** (Rafa: «actualizar las DD, y el punto es automatizar lo que
+podamos»):
+
+- **DD-54** qué escala manda y qué se rompió al elegirla · **DD-55** los estilos de texto se ponen
+  a lo que NO es un componente, con su porqué de arquitectura PrimeNG · **DD-56** el histórico de
+  versiones. Las dos primeras entran también en el índice temático de composición.
+- **`AGENTS.md` §UX de pantalla gana su regla 8**, que es donde un agente la lee al construir
+  (misma doctrina que DD-53: una regla que solo vive en un DD no se lee al componer).
+- **Automatizado, no solo escrito:** `audit:text-styles` §3 enrojece si un `<sc-*>` lleva
+  `.sc-text-*` en su etiqueta. Probado con el fallo puesto: lo caza con fichero y línea.
+
+**Histórico de versiones (DD-56).** `docs/PROTOTIPOS.md` + `npm run proto:freeze` +
+`npm run proto:check` (gate 35). Una etiqueta `proto/<TICKET>`, una rama congelada que nadie toca
+(Cloudflare le da su preview solo) y una fila en la tabla: eso es lo que se enlaza desde Jira y
+Confluence, no la URL de producción. El gate exige la biyección tabla ↔ etiquetas para que la
+tabla no pueda mentir. **Todavía no hay ninguna versión congelada**: la primera la congela Rafa
+cuando entregue.
+
 **Lo que queda:** el barrido global de la tipografía (`field__label` × 29 usos, `page__heading`,
-las 17 rutas que aún fijan tamaño a mano), y servicio/grupos necesitan su propia maqueta para
-seguir el patrón de título contenido.
+las 17 rutas que aún fijan tamaño a mano); servicio y grupos necesitan su propia maqueta para
+seguir el patrón de título contenido; y decidir si la app viva lleva un aviso que apunte a
+`docs/PROTOTIPOS.md`.
 
 ---
 
