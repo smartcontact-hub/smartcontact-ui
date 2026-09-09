@@ -152,8 +152,21 @@ if (git('status', '--porcelain')) {
   process.exit(1);
 }
 
-const rl = createInterface({ input: process.stdin, output: process.stdout });
+/*
+ * Sin terminal no hay preguntas que valgan: un `readline` contra un stdin cerrado se queda
+ * esperando una respuesta que no va a llegar, y el proceso cuelga sin decir por qué. Pasa en
+ * cuanto esto se llama desde un script, desde CI o desde un agente. Ahí la vía son los flags.
+ */
+const interactivo = Boolean(process.stdin.isTTY);
+const rl = interactivo ? createInterface({ input: process.stdin, output: process.stdout }) : null;
 const preguntar = async (texto, validar) => {
+  if (!rl) {
+    log('');
+    log('✘ Esto pregunta, y no hay terminal donde preguntar.');
+    log('  Sin TTY pásalo todo por flags:');
+    log('    node scripts/proto-freeze.mjs --ticket SISMAC-3780 --app supervisor --que "…"');
+    process.exit(1);
+  }
   for (;;) {
     const r = (await rl.question(texto)).trim();
     const problema = validar(r);
@@ -195,12 +208,12 @@ if (!ticket || !app || !que) {
 }
 
 if (!SITIOS[app]) {
-  rl.close();
+  rl?.close();
   log(`✘ "${app}" no es uno de los cinco sitios: ${APPS.join(', ')}`);
   process.exit(1);
 }
 if (malTicket(ticket)) {
-  rl.close();
+  rl?.close();
   log(`✘ ${malTicket(ticket)}`);
   process.exit(1);
 }
@@ -213,7 +226,7 @@ const sha = git('rev-parse', '--short', 'HEAD');
 const ramaActual = git('rev-parse', '--abbrev-ref', 'HEAD');
 
 if (etiquetas().includes(etiqueta)) {
-  rl.close();
+  rl?.close();
   log(`✘ ${ticket} ya está congelado. Una versión congelada no se re-congela: si el ticket`);
   log('  cambió de alcance, congela el siguiente con su propio ticket.');
   process.exit(1);
@@ -238,7 +251,7 @@ const sí = await preguntar('¿Lo hago? (s/n)  ', (r) =>
   /^[snSN]$/.test(r) ? null : 'Escribe s o n.',
 );
 if (/^[nN]$/.test(sí)) {
-  rl.close();
+  rl?.close();
   log('Nada hecho.');
   process.exit(0);
 }
@@ -259,7 +272,7 @@ log('');
 const publicar = await preguntar('¿Lo publico ya? (s/n)  ', (r) =>
   /^[snSN]$/.test(r) ? null : 'Escribe s o n.',
 );
-rl.close();
+rl?.close();
 
 if (/^[nN]$/.test(publicar)) {
   log('');
