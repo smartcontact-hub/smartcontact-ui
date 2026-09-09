@@ -15,6 +15,67 @@
 > coordine. Los `sNN` de los tramos viejos se quedan como están: los nombran commits y
 > `docs/DECISIONS.md`, y reescribirlos solo desincronizaría el doc de su propia historia.
 
+## ✅ 2026-09-10 · El registro de despliegues deja de pintar en rojo lo que Cloudflare descarta a propósito
+
+**Sello:** pendiente de PR. `record-deploy.test.mjs` nuevo en verde (6/6) y **probado en rojo**
+con el comportamiento de antes puesto a mano. `npm run audit:cf-config` VERDE contra los cinco
+proyectos, medido hoy. El registro del `fee8c34` salió **5/5 verde** por sí solo mientras se
+escribía esto. Veredicto del CI por `npm run ci:verdict` al fundir.
+
+**De dónde sale.** Rafa enseña *Deployments* otra vez, lleno de rojo en los cinco entornos:
+«¿todo bien por aquí?». Contado por la API: **23 filas en rojo** de 55 despliegues apuntados, y
+ninguna con un sitio caído detrás — **20** son de cuatro commits que Cloudflare descartó
+(`8cc9bce`, `287f075`, `7812c38`, `37f9d6f`; cinco filas cada uno) y **3** son un solo sitio que
+llegó pasados los 20 minutos con sus cuatro hermanos dentro (`agent-mini` una vez, `supervisor`
+dos). Los dos arreglos de abajo van justo a esas dos mitades.
+
+**Lo que se midió (API de Cloudflare + cronómetro contra los cinco `build.json`).** Los cinco
+sitios sanos y `audit:cf-config` verde: no había nada caído. El rojo tenía dos causas y las dos
+estaban en el registro, no en el despliegue:
+
+| Lo medido | Cifra |
+| --- | --- |
+| Concurrencia de build de la cuenta (87 builds seguidos) | **1**, no 5 en paralelo como decía el comentario del script |
+| Build de un sitio · cola por despliegue | ~70 s · **mediana 885 s, máx 1.272 s** — manda la cola |
+| Despliegues encolados | 5 por empujón **y otros 5 por cada rama de trabajo**: 236 en 24 h, 889 desde el 1-sep |
+| Despliegues de producción de `sc-doc` en `skipped` | **8 de los últimos 41** — entre ellos los tres rojos de esta noche |
+| El commit que quedó arriba (`fee8c34`) llegando a los 5 sitios | 12,7 · 13,4 · 15,1 · 16,8 · **17,8 min**. La ventana eran 20 |
+
+Los tres commits que dispararon los rojos (`8cc9bce` #80, `287f075` #82, `7812c38` #81, en 7
+minutos) están **`skipped`**: Cloudflare solo construye el último encolado de cada rama. No los
+iba a servir nadie nunca, así que sus 15 filas rojas no podían volverse verdes jamás.
+
+**Esto ya se había visto aquí abajo** («dos merges en 30 s → el primero nunca se sirve … es
+correcto, pero es ruido», tramo del 2026-09-09). Con cuatro empujones seguidos el ruido pasó a
+ser el 60% de la pantalla, y entonces deja de ser correcto: un rojo que no puede volverse verde
+enseña a ignorar la pantalla, que es exactamente cómo se llegó a los tres meses de mentira de
+DD-58.
+
+**Qué se hizo (DD-64).** `record-deploy.mjs` mira la cabeza de `main` antes de empezar y en cada
+vuelta: si el commit que espera ya ha sido adelantado, lo dice y **sale sin registrar nada**
+(`supersesion()`, con su test en rojo y en verde). Comparar los dos shas NO basta y por poco me
+lo como: este job arranca segundos después del empujón, así que una lectura rezagada de la API
+habría dejado un despliegue bueno sin registrar y en silencio. Se pregunta la ancestría
+(`/compare/<sha>...<cabeza>`) y solo se concluye con `ahead` o `diverged`. `deploy-record.yml` cancela la comprobación
+anterior cuando entra un empujón nuevo (`concurrency`), igual que Cloudflare hace con el build. Y
+la ventana pasa de **20 a 35 min** (job de 25 a 40), fijada sobre la cola medida: 20 no tenía
+margen ni para una segunda rama construyendo. El test cruza además los 5 sitios del registro con
+los 5 proyectos de `audit:cf-config`, para que una sexta app no pueda quedarse a medio apuntar.
+
+### ⏸️ ESPERANDO A RAFA
+
+- **La cola es la palanca que queda, y es suya.** Con concurrencia 1, cada rama de trabajo le
+  cuesta a `main` unos 9 minutos de espera (5 builds de ~70 s más lo que haya delante). Apagar
+  los *previews por rama* en los cinco proyectos la parte por la mitad, pero el preview por rama
+  es lo que él pidió para compartir un link (DD-17), así que no se toca sin él. La otra salida es
+  pagar concurrencia en Cloudflare. Números arriba; la decisión no.
+- **El secret `CLOUDFLARE_API_TOKEN` sigue sin crear** (`gh api …/actions/secrets` → 0). Hasta que
+  esté, el paso de `audit:cf-config` del workflow avisa y sigue: la comprobación real solo corre
+  en local. Cloudflare → API Tokens → Custom → *Account · Cloudflare Pages · Read*, y
+  `gh secret set CLOUDFLARE_API_TOKEN`.
+
+---
+
 ## ✅ 2026-09-09 · Servicio y Grupos se casan con su maqueta, y el padding de la caja vuelve al maestro del DS
 
 **Sello:** pendiente de PR. `preflight` (el nuevo de DD-60, sin navegador) VERDE sobre el árbol
