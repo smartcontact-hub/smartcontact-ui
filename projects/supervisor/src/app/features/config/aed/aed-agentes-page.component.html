@@ -20,25 +20,35 @@
 
 <div class="page">
   <div class="page__inner">
-    <!-- El título de la página vive en el CUERPO, no en la barra: la miga de
-         arriba dice DÓNDE estás y esta línea dice QUÉ miras (modelo Snow UI,
-         medido en `/orders`). Es el MISMO `<h1>` que S59 dejó oculto —no hay un
-         encabezado nuevo—, así que sigue habiendo exactamente uno por documento. -->
-    <h1 class="page__heading">{{ 'config.aed.subpages.agentes.heading' | translate }}</h1>
+    <!-- El título vive DENTRO de la sección que titula, con su icono (Figma
+         393:12588). Antes flotaba suelto sobre las tarjetas: decía "Agentes"
+         sin que nada dijera hasta dónde llega lo que es de Agentes, y encima
+         repetía la palabra que la miga de arriba ya da. Contenido, el título
+         acota su caja, que es lo que hace un título.
 
-    <!-- Comunicaciones + Configuración -->
-    <section class="settings-card">
+         Sigue siendo el MISMO y ÚNICO `<h1>` del documento; solo cambia de
+         sitio. Y sigue siendo el cuerpo quien lo pinta, no la barra (modelo
+         Snow UI, medido en `/orders`). -->
+    <section class="settings-card" aria-labelledby="agentes-title">
+      <div class="settings-card__head settings-card__head--icon">
+        <span class="settings-card__head-icon" aria-hidden="true">
+          <sc-icon name="person" size="inherit" />
+        </span>
+        <h1 id="agentes-title" class="settings-card__title--lg sc-text-h3-semibold">
+          {{ 'config.aed.subpages.agentes.heading' | translate }}
+        </h1>
+      </div>
       <div class="settings-card__body">
         <table class="comm-table">
           <thead>
             <tr>
-              <th scope="col" class="comm-table__th-label">
+              <th scope="col" class="comm-table__th-label sc-text-body-semibold">
                 {{ 'config.aed.subpages.agentes.comunicaciones.title' | translate }}
               </th>
-              <th scope="col" class="comm-table__th-col">
+              <th scope="col" class="comm-table__th-col sc-text-body-semibold">
                 {{ 'config.aed.subpages.agentes.comunicaciones.col_transferencias' | translate }}
               </th>
-              <th scope="col" class="comm-table__th-col">
+              <th scope="col" class="comm-table__th-col sc-text-body-semibold">
                 {{ 'config.aed.subpages.agentes.comunicaciones.col_permisos' | translate }}
               </th>
             </tr>
@@ -46,7 +56,7 @@
           <tbody>
             @for (row of comunicacionKeys; track row) {
               <tr>
-                <th scope="row" class="comm-table__th-row">
+                <th scope="row" class="comm-table__th-row sc-text-body-regular">
                   {{ 'config.aed.subpages.agentes.comunicaciones.row_' + row | translate }}
                 </th>
                 <td class="comm-table__cell">
@@ -86,79 +96,87 @@
           </header>
 
           <div class="switch-field">
-            <div class="switch-field__copy">
-              <span class="switch-field__label">
-                {{ 'config.aed.subpages.agentes.config.activacion_label' | translate }}
-              </span>
-            </div>
             <sc-toggleswitch
               [checked]="form().activacionGrupo"
               [ariaLabel]="'config.aed.subpages.agentes.config.activacion_label' | translate"
               (checkedChange)="update('activacionGrupo', $event)"
             />
+            <div class="switch-field__copy">
+              <span class="switch-field__label sc-text-body-regular">
+                {{ 'config.aed.subpages.agentes.config.activacion_label' | translate }}
+              </span>
+            </div>
           </div>
 
           <div class="switch-field">
-            <div class="switch-field__copy">
-              <span class="switch-field__label">
-                {{ 'config.aed.subpages.agentes.config.gestion_label' | translate }}
-              </span>
-            </div>
             <sc-toggleswitch
               [checked]="form().gestionDispositivos"
               [ariaLabel]="'config.aed.subpages.agentes.config.gestion_label' | translate"
               (checkedChange)="update('gestionDispositivos', $event)"
             />
+            <div class="switch-field__copy">
+              <span class="switch-field__label sc-text-body-regular">
+                {{ 'config.aed.subpages.agentes.config.gestion_label' | translate }}
+              </span>
+            </div>
           </div>
 
           <div class="switch-field">
-            <div class="switch-field__copy">
-              <span class="switch-field__label">
-                {{ 'config.aed.subpages.agentes.config.externos_label' | translate }}
-              </span>
-            </div>
             <sc-toggleswitch
               [checked]="form().dispositivosExternos"
               [ariaLabel]="'config.aed.subpages.agentes.config.externos_label' | translate"
               (checkedChange)="update('dispositivosExternos', $event)"
             />
+            <div class="switch-field__copy">
+              <span class="switch-field__label sc-text-body-regular">
+                {{ 'config.aed.subpages.agentes.config.externos_label' | translate }}
+              </span>
+            </div>
           </div>
         </section>
-      </div>
-    </section>
 
-    <!-- URL embebida en el puesto de agente -->
-    <section class="settings-card" aria-labelledby="agentes-url-title">
-      <div class="settings-card__head">
-        <h2 id="agentes-url-title" class="settings-card__title">
-          {{ 'config.aed.subpages.agentes.url.title' | translate }}
-        </h2>
-      </div>
-      <div class="settings-card__body">
-        <div class="field">
-          <label class="field__label" for="agentes-url">
-            {{ 'config.aed.subpages.agentes.url.url_label' | translate }}
-          </label>
-          <sc-inputtext
-            inputId="agentes-url"
-            type="url"
-            [placeholder]="'config.aed.subpages.agentes.url.url_placeholder' | translate"
-            [value]="form().iframeUrl"
-            (valueChange)="update('iframeUrl', $event)"
-          />
-        </div>
-        <div class="field">
-          <label class="field__label" for="agentes-url-titulo">
-            {{ 'config.aed.subpages.agentes.url.titulo_label' | translate }}
-          </label>
-          <sc-inputtext
-            inputId="agentes-url-titulo"
-            type="text"
-            [placeholder]="'config.aed.subpages.agentes.url.titulo_placeholder' | translate"
-            [value]="form().iframeTitulo"
-            (valueChange)="update('iframeTitulo', $event)"
-          />
-        </div>
+        <sc-divider />
+
+        <!-- Misma caja que lo anterior, no una tarjeta aparte: en la maqueta
+             (Figma 393:12587) todo lo de Agentes vive en UN solo bloque, con
+             divisores entre secciones. Dos tarjetas sugerían dos ámbitos
+             distintos bajo un título que solo cubría la primera. -->
+        <section class="sub-section" aria-labelledby="agentes-url-title">
+          <header class="sub-section__head">
+            <h2 id="agentes-url-title" class="sub-section__title">
+              {{ 'config.aed.subpages.agentes.url.title' | translate }}
+            </h2>
+          </header>
+          <!-- Dos columnas, como en Figma 393:12647: la URL y su título son un
+               solo dato en dos partes, y apilados a 815px cada uno ni se leían
+               como pareja ni necesitaban ese ancho. -->
+          <div class="grid grid--2">
+            <div class="field">
+              <label class="field__label" for="agentes-url">
+                {{ 'config.aed.subpages.agentes.url.url_label' | translate }}
+              </label>
+              <sc-inputtext
+                inputId="agentes-url"
+                type="url"
+                [placeholder]="'config.aed.subpages.agentes.url.url_placeholder' | translate"
+                [value]="form().iframeUrl"
+                (valueChange)="update('iframeUrl', $event)"
+              />
+            </div>
+            <div class="field">
+              <label class="field__label" for="agentes-url-titulo">
+                {{ 'config.aed.subpages.agentes.url.titulo_label' | translate }}
+              </label>
+              <sc-inputtext
+                inputId="agentes-url-titulo"
+                type="text"
+                [placeholder]="'config.aed.subpages.agentes.url.titulo_placeholder' | translate"
+                [value]="form().iframeTitulo"
+                (valueChange)="update('iframeTitulo', $event)"
+              />
+            </div>
+          </div>
+        </section>
       </div>
     </section>
   </div>

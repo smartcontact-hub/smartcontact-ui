@@ -1,58 +1,97 @@
 /*
- * Agentes page — Figma Supervisor 1:12496 / 1:12616.
+ * Agentes page — Figma Supervisor 393:12562 (Contact Center · Agentes).
  * Matriz de comunicaciones (filas × Transferencias / Permisos) + toggles
  * de configuración + card de URL embebida. Primitivas compartidas en
  * aed-defaults-page.component.scss.
+ *
+ * La TIPOGRAFÍA de esta tabla ya no vive aquí: la ponen las clases
+ * `.sc-text-*` en la plantilla (los 12 text styles del Figma del DS). El
+ * criterio, de Rafa el 2026-09-09 y medido en la maqueta: los componentes del
+ * DS NO llevan clase de texto —su tipografía la publica el tema, que es lo que
+ * mantiene viva la arquitectura PrimeNG— y todo lo que NO es componente sí.
+ * En la maqueta esto se ve tal cual: los 25 textos de página llevan estilo
+ * anclado y los 18 que viven dentro de un componente (breadcrumb, botones,
+ * checkbox, badge) no llevan ninguno.
  */
 
 .comm-table {
   width: 100%;
   border-collapse: collapse;
-  font-size: var(--sc-font-size-100);
 
+  /* El `text-align` lo declara CADA clase, no este selector: `.comm-table th`
+   * (0,1,1) le gana a `.comm-table__th-col` (0,1,0), así que un `left` aquí
+   * dejaba el centrado de las columnas sin efecto. Medido en el build. */
   th,
   td {
-    text-align: left;
     vertical-align: middle;
   }
 
   &__th-label {
     padding: var(--sc-spacing-0-625) var(--sc-spacing-0-875);
-    font-weight: var(--sc-font-weight-semibold);
+    text-align: left;
     color: var(--sc-text-primary);
     border-bottom: 1px solid var(--sc-border-default);
   }
 
+  /* Centrada, y con ella la celda de abajo. Antes la cabecera se centraba en
+   * su columna de 132px y el checkbox se pegaba a la izquierda: 45px de
+   * desfase medidos en producción, que crecen con el ancho de la tabla y
+   * obligan a recorrer la fila para saber qué casilla es de qué columna. */
   &__th-col {
-    width: 132px;
+    width: 142px; /* `th-ID` 393:12619 */
     padding: var(--sc-spacing-0-625) var(--sc-spacing-0-875);
-    font-weight: var(--sc-font-weight-semibold);
+    text-align: center;
     color: var(--sc-text-primary);
     border-bottom: 1px solid var(--sc-border-default);
   }
 
+  /* `--sc-text-primary` y no `secondary`: el nombre de la fila ES el contenido
+   * de la tabla, no un apoyo. En secondary quedaba a 4.52:1 sobre blanco y a
+   * 4.25:1 sobre la banda gris, por DEBAJO del mínimo AA de 4.5 (medido en
+   * producción el 2026-09-09). */
   &__th-row {
     padding: var(--sc-spacing-0-625) var(--sc-spacing-0-875);
-    font-weight: var(--sc-font-weight-regular);
-    color: var(--sc-text-secondary);
+    text-align: left;
+    color: var(--sc-text-primary);
   }
 
   &__cell {
     padding: var(--sc-spacing-0-625) var(--sc-spacing-0-875);
+    text-align: center;
+
+    /* El checkbox es un componente del DS: se centra desde fuera, sin entrar
+     * en su interior (Sección E de audit:primeng-coupling). */
+    sc-checkbox {
+      display: inline-flex;
+      vertical-align: middle;
+    }
   }
 
-  tbody tr:nth-child(even) {
-    background: var(--sc-bg-secondary-subtle);
-  }
-
+  /* SIN zebra. La banda `slate-50` se puso para ayudar a seguir la fila y hacía
+   * lo contrario: bajaba el texto de 4.52:1 a 4.25:1, es decir, era el adorno
+   * el que rompía el mínimo AA. La línea inferior ya separa las filas, que es
+   * lo que hace la maqueta (Figma 393:12610) y las otras tablas de la app. */
   tbody tr {
     border-bottom: 1px solid var(--sc-border-subtle);
   }
 
-  input[type='checkbox'] {
-    accent-color: var(--sc-bg-primary);
-    width: 18px;
-    height: 18px;
-    cursor: pointer;
+  /* La ÚLTIMA fila no lleva línea: en la maqueta las cuatro primeras filas
+   * tienen su stroke `Black/10%` y la quinta no tiene ninguno. Una línea bajo
+   * la última fila no separa nada de nada — solo repite el borde de la caja
+   * unos píxeles más arriba. */
+  tbody tr:last-child {
+    border-bottom: 0;
   }
+}
+
+/*
+ * El CONTENIDO va 12.25 (`scale/0-875`) más adentro que el borde de la caja;
+ * los DIVISORES no. Es el patrón de la maqueta: el `Block` pone 24.5 de padding
+ * y cada sección de dentro añade su propio 12.25 lateral (393:12592, 393:12610,
+ * 393:12647), mientras las líneas de separación cruzan los 871 enteros. Aquí
+ * está en la página y no en la primitiva compartida porque las otras dos
+ * pantallas AED no tienen maqueta con la que casarlo todavía.
+ */
+.settings-card__body > *:not(sc-divider) {
+  padding-inline: var(--sc-spacing-0-875);
 }

@@ -110,16 +110,16 @@
         />
 
         <div class="switch-field">
-          <div class="switch-field__copy">
-            <span class="switch-field__label">
-              {{ 'config.aed.subpages.grupos.params.desbordar' | translate }}
-            </span>
-          </div>
           <sc-toggleswitch
             [checked]="form().desbordar"
             [ariaLabel]="'config.aed.subpages.grupos.params.desbordar' | translate"
             (checkedChange)="update('desbordar', $event)"
           />
+          <div class="switch-field__copy">
+            <span class="switch-field__label sc-text-body-regular">
+              {{ 'config.aed.subpages.grupos.params.desbordar' | translate }}
+            </span>
+          </div>
         </div>
       </div>
     </section>

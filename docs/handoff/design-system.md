@@ -15,6 +15,61 @@
 > coordine. Los `sNN` de los tramos viejos se quedan como están: los nombran commits y
 > `docs/DECISIONS.md`, y reescribirlos solo desincronizaría el doc de su propia historia.
 
+## ✅ 2026-09-09 · Los 12 estilos de texto llegan a la app, y Agentes se casa con su maqueta
+
+**Sello:** pendiente de PR. Trabajo hecho en el worktree `tipografia-12-estilos`.
+`npm run verify` VERDE con los 34 gates (los dos nuevos incluidos).
+
+**De dónde sale.** Rafa señaló la maqueta `Contact Center · Agentes` (Supervisor 393:12562)
+como referencia limpia y pidió empezar a instalar sus estilos de texto anclados.
+
+**Lo que se midió primero (y cambió el plan).** En Figma conviven CINCO familias de estilos de
+texto: los 12 de la librería del DS (`Display/`, `Heading/`, `Body/`, `Caption/`, atados a
+`primitive/typography/*`), 12 LOCALES del archivo Supervisor (`display1`, `H1`..`H4`,
+`subtitle1/2/3`, `caption`), y otras tres familias remotas de una librería distinta
+(`subtitle1`, `body-2`, `caption-bold`, y una `14 Regular`/`12 Regular` por tamaño). La maqueta
+enlaza los LOCALES; el código tenía instalados los de la LIBRERÍA. **Rafa eligió los de la
+librería** — los que ya estaban — así que la escala no se mueve.
+
+**Lo que entra:**
+
+- **Las clases YA valían lo que deben** (verificado byte a byte contra los text styles, que a su
+  vez cuelgan de las variables primitivas del DS). Lo que fallaba era la LLEGADA: el supervisor
+  consume las 6 capas de tokens una a una (para no heredar el reset del DS) y nunca importó
+  `base/typography.css`, así que `class="sc-text-body-regular"` no pintaba nada y el `<th>` se
+  quedaba en el 16/24/700 del navegador. Un import lo arregla.
+- **`audit:text-styles`** (gate 34): resuelve la cadena ENTERA clase → rol → peldaño → px y la
+  compara con los 12 text styles; y comprueba que las apps consumidoras cargan el CSS.
+  `tokens:type-parity` solo vigilaba el último eslabón, así que mover `--sc-line-height-h3` de
+  `300` a `400` no enrojecía nada. Probado con los dos fallos puestos.
+- **`audit:base-href`** (gate 33): las 5 apps declaran `<base href="/">`. `sc-docs` llevaba
+  `<base href="">` desde el primer commit. **No estaba roto**: enruta con `withHashLocation()`,
+  el path siempre es `/` y resuelve igual. Es una trampa armada para el día que se quiten los
+  `#` (comprobado forzando una URL sin hash: pantalla en blanco por MIME).
+- **Trazabilidad:** `--sc-line-height-body-2` colgaba de `--sc-line-height-220`, un peldaño que
+  NO existe en el export del Kit, mientras Figma ata `Body/*` a `line/height/200`. Mismo valor
+  (20px), cero cambio visual, pero un rol que Figma ata no puede colgar de uno inventado.
+- **Agentes casada con la maqueta:** interruptor delante de su etiqueta (estaban a 500px), zebra
+  fuera (bajaba el texto a 4.25:1, por debajo de AA), checkbox centrado bajo su cabecera (45px de
+  desfase), última fila sin línea, cuerpo a 14 y en `--sc-text-primary`, campos URL en dos
+  columnas, título contenido DENTRO de la caja con su icono, una sola tarjeta con divisores.
+- **Rail sin color:** el panel gris y los chips de icono no existen en la maqueta (los 17 nodos
+  del rail se leyeron uno a uno: ninguno tiene stroke ni fill propio). Ancho 235 → 196, y con el
+  padding muerto de `.page__inner` fuera, rail y tarjeta arrancan por fin en la misma línea.
+- **`docs:coherence` regla H** se enrojecía a sí misma: `AUDIT-DOCS-2026-08.md` cita el patrón
+  `"caduca el YYYY-MM-DD"` como ejemplo. Ahora distingue la cita del uso.
+
+**Discrepancias del propio Figma, sin copiar** (Rafa pidió avisar en vez de replicarlas): el item
+del rail cambia de caja según estado (inactivo pad 8.75/gap 5.25 de la escala, activo pad 8/gap 4
+de variables sueltas → se encoge 2px al seleccionarlo); iconos del mismo rol a 14, 20 y 32; y
+"Notifications" sin traducir en una pantalla en español.
+
+**Lo que queda:** el barrido global de la tipografía (`field__label` × 29 usos, `page__heading`,
+las 17 rutas que aún fijan tamaño a mano), y servicio/grupos necesitan su propia maqueta para
+seguir el patrón de título contenido.
+
+---
+
 ## ✅ 2026-09-07 · La regla de «datos inventados» pasa de estar escrita a estar vigilada
 
 **Sello:** [PR #59](https://github.com/smartcontact-hub/smartcontact-ui/pull/59). Carril

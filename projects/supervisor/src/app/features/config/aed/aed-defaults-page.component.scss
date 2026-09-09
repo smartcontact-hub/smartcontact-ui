@@ -24,15 +24,17 @@
      *     que las cards siguen flotando exactamente igual sin ella.
      *
      * Lo que separa una sección de su lienzo es su BORDE, como en las otras
-     * dieciséis rutas y como en la referencia. El `padding` se queda: era lo
-     * único de la bandeja que hacía trabajo real (que las cards no toquen el
-     * borde del panel).
+     * dieciséis rutas y como en la referencia.
      *
-     * OJO: esto DIVERGE del maestro de Figma, igual que el tramo actual del
-     * breadcrumb. Va al puente código→Figma como propuesta, no se corrige aquí.
+     * Y CON ELLA SE VA SU PADDING (2026-09-09). Era lo último que quedaba de la
+     * bandeja, y sin bandeja no separaba de nada: solo empujaba la tarjeta 16px
+     * hacia abajo y hacia dentro, así que la card arrancaba a y=130 con el rail
+     * a y=114 (medido en el build). En la maqueta las dos cajas empiezan en la
+     * MISMA línea —`content` 393:12564 pone su padding una vez y el rail y el
+     * bloque son hermanos dentro— y esos 16px eran toda la diferencia.
      */
     margin: 0;
-    padding: var(--sc-spacing-1-143);
+    padding: 0;
     display: flex;
     flex-direction: column;
     gap: var(--sc-spacing-2);
@@ -72,16 +74,18 @@
 /* ---------- Settings card (Figma SettingsCard) ---------- */
 
 .settings-card {
-  /* Card de SECCIÓN blanca dentro de la bandeja gris (Figma `Container`
-   * 1:12388/12466/12482 → surface/0, radius 8, padding 16). Plana sobre el gris
-   * (sin sombra); el gap del tray separa cards. */
+  /* El `Block` de la maqueta (Figma 393:12587): superficie blanca, borde,
+   * radio 12 y 24.5 de padding. Antes: radio 8 y 16 de padding, medidas de
+   * cuando la card vivía dentro de una bandeja gris que ya no existe. El radio
+   * sube a `radius-400` (12) porque es el mismo que usa el índice de al lado:
+   * dos cajas hermanas del mismo lienzo no pueden tener esquinas distintas. */
   display: block;
   background: var(--sc-bg-surface);
   border: 1px solid var(--sc-border-default);
-  border-radius: var(--sc-radius-300);
+  border-radius: var(--sc-radius-400);
 
   &__head {
-    padding: var(--sc-spacing-1-125) var(--sc-spacing-1-75);
+    padding: var(--sc-spacing-1-75) var(--sc-spacing-1-75) var(--sc-spacing-1-125);
     border-bottom: 1px solid var(--sc-border-subtle);
   }
 
@@ -89,7 +93,7 @@
   &__head--icon {
     display: flex;
     align-items: center;
-    gap: var(--sc-spacing-0-875);
+    gap: var(--sc-spacing-0-625);
     border-bottom: 0;
     padding-bottom: 0;
   }
@@ -98,32 +102,50 @@
     color: var(--sc-text-secondary);
   }
 
+  /* La MÉTRICA la pone `.sc-text-h3-semibold` en la plantilla. Aquí solo queda
+   * lo que no es tipografía; si esta regla declarase `font-size`, ganaría a la
+   * clase global (el SCSS de componente añade `[_ngcontent-*]` y sube a (0,2,0)).
+   *
+   * `h3` (18/24) y no los 16/24 de antes: el 16 salía de `--sc-font-size-300`,
+   * un peldaño SIN text style detrás. Con los 12 estilos del Figma, un título de
+   * sección solo puede ser `h3` o `body`, y `body` mediría lo mismo que las
+   * filas de la tabla. Tres niveles claros: 18 semibold sección · 14 semibold
+   * subsección · 14 regular contenido. */
   &__title--lg {
-    font-size: var(--sc-font-size-300);
-    line-height: var(--sc-line-height-300);
-    font-weight: var(--sc-font-weight-semibold);
+    margin: 0;
+    color: var(--sc-text-primary);
   }
 
+  /* Igual que `sub-section__title`: los ejes de `Body/body-semibold` por su
+   * token de rol. Se van dos valores que no salían del sistema, el
+   * `line-height: 22px` literal y el peso `medium` (500, que no existe como
+   * text style: el Figma del DS solo publica Regular y Semibold). */
   &__title {
     margin: 0;
-    font-size: var(--sc-font-size-200);
-    line-height: 22px;
-    font-weight: var(--sc-font-weight-medium);
+    font-size: var(--sc-font-size-body-2);
+    line-height: var(--sc-line-height-body-2);
+    font-weight: var(--sc-font-weight-semibold);
     color: var(--sc-text-primary);
   }
 
   &__hint {
     margin: 4px 0 0;
-    font-size: var(--sc-font-size-50);
-    line-height: var(--sc-line-height-50);
+    font-size: var(--sc-font-size-caption);
+    line-height: var(--sc-line-height-caption);
     color: var(--sc-text-subtle);
   }
 
   &__body {
     display: flex;
     flex-direction: column;
-    gap: var(--sc-spacing-1-143); /* 16 — Figma white card p-16 + gap entre sub-secciones */
-    padding: var(--sc-spacing-1-143);
+    gap: var(--sc-spacing-1-143); /* 16 — `Block` 393:12587 separa sus secciones con 16 */
+    /* 24.5 (`scale/1-75`), el padding del `Block` de la maqueta. Arriba 0 cuando
+     * hay cabecera: ella ya pone el suyo. */
+    padding: var(--sc-spacing-1-75);
+
+    .settings-card__head + & {
+      padding-top: 0;
+    }
 
     /* Cuando el body separa sub-secciones con <sc-divider>, el divider aporta
      * su propio margin 14/14 (token Kit Pro). Bajamos el gap a 8.75 (scale-0-625)
@@ -176,18 +198,23 @@
     gap: 2px;
   }
 
+  /* Los tres ejes de `Body/body-semibold` por su token de rol (= lo que resuelve
+   * `.sc-text-body-semibold`). El `line-height: 22px` literal se va: era un
+   * número a mano que no salía de ningún peldaño del sistema. Se queda aquí en
+   * vez de como clase porque `sub-section__title` tiene 8 usos en 3 pantallas;
+   * cuando se barran, la clase entra sin mover un píxel. */
   &__title {
     margin: 0;
-    font-size: var(--sc-font-size-200);
-    line-height: 22px;
+    font-size: var(--sc-font-size-body-2);
+    line-height: var(--sc-line-height-body-2);
     font-weight: var(--sc-font-weight-semibold);
     color: var(--sc-text-primary);
   }
 
   &__hint {
     margin: 0;
-    font-size: var(--sc-font-size-50);
-    line-height: var(--sc-line-height-50);
+    font-size: var(--sc-font-size-caption);
+    line-height: var(--sc-line-height-caption);
     color: var(--sc-text-subtle);
   }
 }
@@ -205,13 +232,22 @@
     width: 100%;
   }
 
+  /*
+   * Los tres ejes son los del text style `Caption/caption-regular` del Figma
+   * del DS, leídos por su token de ROL: es exactamente lo que resuelve la clase
+   * `.sc-text-caption-regular`. Se quedan aquí, y no como clase en la
+   * plantilla, porque `field__label` tiene 29 usos en 7 pantallas y migrarlos
+   * es un barrido aparte; cuando se haga, la clase entra sin mover un píxel.
+   * El peso baja de `medium` a `caption` (500 → 400) porque el text style es
+   * Regular: la jerarquía de una etiqueta la da su tamaño, no engordarla.
+   */
   &__label {
     display: inline-flex;
     align-items: center;
     gap: var(--sc-spacing-0-5);
-    font-size: var(--sc-font-size-50);
-    line-height: var(--sc-line-height-50);
-    font-weight: var(--sc-font-weight-medium);
+    font-size: var(--sc-font-size-caption);
+    line-height: var(--sc-line-height-caption);
+    font-weight: var(--sc-font-weight-caption);
     color: var(--sc-text-secondary);
   }
 
@@ -283,7 +319,7 @@ select.field__input {
 
 .grid {
   display: grid;
-  gap: var(--sc-spacing-1-125);
+  gap: var(--sc-spacing-1-75); /* 24.5 — `Slot 1/container` 393:12650 */
 
   &--2 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
@@ -316,24 +352,37 @@ select.field__input {
 
 /* ---------- Switch fields ---------- */
 
+/*
+ * El interruptor va DELANTE de su etiqueta, pegado (Figma 393:12592). Antes el
+ * copy llevaba `flex: 1` y empujaba el control al extremo opuesto de la card:
+ * medidos 500px de blanco entre el texto y el interruptor que lo gobierna, con
+ * tres filas seguidas. En una pantalla donde una casilla mal marcada desactiva
+ * la telefonía de un contact center, esa distancia es el fallo más caro de la
+ * página. Control y etiqueta juntos = una sola columna de lectura.
+ *
+ * El orden es del DOM, NO un `row-reverse`: así el foco de teclado y el lector
+ * de pantalla encuentran el control donde el ojo lo ve.
+ */
 .switch-field {
   display: flex;
-  align-items: flex-start;
-  gap: var(--sc-spacing-0-875);
+  align-items: center;
+  gap: var(--sc-spacing-1-143);
 
   &__copy {
-    flex: 1;
     min-width: 0;
+    /* Medida de lectura. Sin tope, una etiqueta se estiraba hasta 768px. */
+    max-width: 60ch;
     display: flex;
     flex-direction: column;
     gap: 2px;
   }
 
+  /* La MÉTRICA la pone `.sc-text-body-regular` en la plantilla (text style
+   * `Body/body-*` del Figma del DS). Aquí solo queda el color, que sube a
+   * `primary`: la etiqueta de un interruptor es contenido, y en `secondary`
+   * se quedaba en 4.52:1, al filo del mínimo AA. */
   &__label {
-    font-size: var(--sc-font-size-100);
-    line-height: 22px;
-    font-weight: var(--sc-font-weight-medium);
-    color: var(--sc-text-secondary);
+    color: var(--sc-text-primary);
   }
 
   &__hint {
