@@ -157,10 +157,50 @@ function otraCadenaViva(port) {
    */
   const propios = nuestros();
   const miGrupo = grupoDe(process.pid);
-  const ajenos = pidsDePlaywright().filter(
-    (pid) => !propios.has(pid) && !(miGrupo !== undefined && grupoDe(pid) === miGrupo),
-  );
+  const ajenas = () =>
+    pidsDePlaywright().filter(
+      (pid) => !propios.has(pid) && !(miGrupo !== undefined && grupoDe(pid) === miGrupo),
+    );
+
+  let ajenos = ajenas();
   if (ajenos.length === 0) return;
+
+  /*
+   * ESPERA en vez de morir. El mensaje de abajo lleva desde el principio diciendo que lo
+   * normal es «esperar a que termine la otra y relanzar», y eso se hacía A MANO.
+   *
+   * Medido el 2026-09-09: esta suite es el ÚLTIMO paso de `preflight`, así que la colisión
+   * no cuesta el arranque, cuesta la cadena entera — builds y 139 tests del supervisor ya
+   * pasados, tirados. Pasó TRES veces en una tarde con tres worktrees vivos, y una de ellas
+   * fue una carrera pura: esperé a que muriera el pid de la hermana, arranqué, y durante mis
+   * builds nació otro. Esperar AQUÍ, con el trabajo ya hecho en la mano, es lo único que
+   * cierra esa carrera.
+   *
+   * Bloqueante y síncrona a propósito: el config de Playwright se evalúa en síncrono, y en
+   * este punto el proceso no tiene nada mejor que hacer. Con techo, para que una sesión
+   * colgada no cuelgue a las demás; agotado el techo, se lanza el error de siempre.
+   */
+  const TECHO_MS = 25 * 60 * 1000;
+  const PASO_MS = 15_000;
+  const hasta = Date.now() + TECHO_MS;
+  if (ajenos.length > 0) {
+    console.log(
+      `[playwright] Otra ejecución viva (pid ${ajenos.join(', ')}). Espero a que suelte el puerto ${port}…`,
+    );
+  }
+  while (ajenos.length > 0 && Date.now() < hasta) {
+    dormir(PASO_MS);
+    ajenos = ajenas();
+  }
+  if (ajenos.length === 0) {
+    // Jitter: si dos sesiones esperaban a la misma, arrancar a la vez repetiría el choque.
+    dormir(1_000 + Math.floor(Math.random() * 4_000));
+    if (ajenas().length === 0) {
+      console.log('[playwright] Libre. Sigo.');
+      return;
+    }
+    ajenos = ajenas();
+  }
 
   throw new Error(
     [
@@ -171,11 +211,24 @@ function otraCadenaViva(port) {
       '  El síntoma NO parece de concurrencia: tablas vacías, timeouts largos y una suite',
       '  que tarda 40× lo normal. Se lee como un bug del producto, y no lo es.',
       '',
+      `  Ya se ha esperado ${TECHO_MS / 60000} minutos por ella y sigue viva.`,
+      '',
       '  Salidas:',
-      '    · Espera a que termine la otra (o mátala) y relanza — es lo normal.',
+      '    · Mírala: puede estar colgada. Mátala y relanza.',
       '    · Si de verdad quieres dos suites distintas a la vez: SC_ALLOW_PARALLEL_SUITES=1',
     ].join('\n'),
   );
+}
+
+/**
+ * Duerme SÍN­CRONAMENTE. `Atomics.wait` sobre un buffer que nadie despierta es la única
+ * espera de verdad bloqueante en Node; aquí hace falta porque el config de Playwright se
+ * evalúa en síncrono y no hay dónde colgar un `await`.
+ *
+ * @param {number} ms
+ */
+function dormir(ms) {
+  Atomics.wait(new Int32Array(new SharedArrayBuffer(4)), 0, 0, ms);
 }
 
 /**
@@ -239,6 +292,23 @@ function comandoDe(pid) {
     return execFileSync('ps', ['-o', 'comm=', '-p', String(pid)], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim();
   } catch {
     return '';
+  }
+}
+
+/**
+ * Línea de comando de un PID, o `undefined` si no se puede leer.
+ *
+ * @param {number} pid
+ * @returns {string | undefined}
+ */
+function comandoDe(pid) {
+  try {
+    return execFileSync('ps', ['-o', 'command=', '-p', String(pid)], {
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'ignore'],
+    }).trim();
+  } catch {
+    return undefined;
   }
 }
 

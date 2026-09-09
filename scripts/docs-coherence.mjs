@@ -124,7 +124,13 @@ const PROPOSED_SCRIPTS = new Set([]);
 for (const { path, lines } of files) {
   lines.forEach((line, i) => {
     for (const m of line.matchAll(/npm run ([a-z][\w:-]*)/g))
-      if (!scripts[m[1]]) fail(`${rel(path)}:${i + 1} — \`npm run ${m[1]}\` no existe en package.json`);
+      if (!scripts[m[1]]) {
+        // La causa más común no es un script borrado, es un COMODÍN en prosa: `npm run build:*`
+        // o `npm run build:<app>`, que el regex corta en `build:`. Cayó dos veces el 2026-09-09
+        // en el mismo hand-off, y sin esta pista se lee como si el script hubiera desaparecido.
+        const comodin = /[:-]$/.test(m[1]) ? ' (¿es un comodín en prosa? nombra el script real o quita el `npm run`)' : '';
+        fail(`${rel(path)}:${i + 1} — \`npm run ${m[1]}\` no existe en package.json${comodin}`);
+      }
     for (const m of line.matchAll(/(scripts\/[\w./-]+\.mjs)/g))
       if (!existsSync(resolve(root, m[1])) && !PROPOSED_SCRIPTS.has(m[1]))
         fail(`${rel(path)}:${i + 1} — referencia a \`${m[1]}\` que no existe`);
