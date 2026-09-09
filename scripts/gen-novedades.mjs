@@ -19,6 +19,7 @@
  */
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from 'node:fs';
 import { resolve, dirname } from 'node:path';
+import { fileURLToPath } from 'node:url';
 
 const root = resolve(import.meta.dirname, '..');
 const SRC = resolve(root, 'CHANGELOG.md');
@@ -48,7 +49,11 @@ function inline(md) {
         : `https://github.com/smartcontact-hub/smartcontact-ui/blob/main/${url}`;
       return `<a href="${href}" target="_blank" rel="noopener">${texto}</a>`;
     })
-    .replace(/\*\*([^*]+)\*\*/g, '<strong>$1</strong>')
+    // Perezoso y NO `[^*]+`: hay negritas con un asterisco dentro (`**10 zonas @sc-gen:***`),
+    // y con la clase negada se quedaban SIN convertir, sacando `**` crudos a la página. Lo cazó
+    // el test, no la revisión en navegador: allí conté las negritas que SÍ salían, que es medir
+    // la presencia y no la ausencia.
+    .replace(/\*\*(.+?)\*\*/g, '<strong>$1</strong>')
     .replace(/`([^`]+)`/g, '<code>$1</code>');
 }
 
@@ -87,8 +92,8 @@ function parseCuerpo(cuerpo) {
   return { intro, secciones };
 }
 
-function construir() {
-  const md = readFileSync(SRC, 'utf8');
+/** Exportada para poder probarla EN ROJO con un CHANGELOG fabricado (LEARNINGS #2). */
+export function construir(md) {
   const versiones = [];
   for (const bloque of md.split(/\n## /).slice(1)) {
     const cabecera = bloque.slice(0, bloque.indexOf('\n'));
@@ -103,7 +108,8 @@ function construir() {
   return { fuente: 'CHANGELOG.md', versiones };
 }
 
-const datos = JSON.stringify(construir(), null, 2) + '\n';
+function main() {
+const datos = JSON.stringify(construir(readFileSync(SRC, 'utf8')), null, 2) + '\n';
 
 if (check) {
   const actual = existsSync(OUT) ? readFileSync(OUT, 'utf8') : '';
@@ -122,3 +128,6 @@ if (check) {
   const n = JSON.parse(datos).versiones.length;
   console.log(`✓ ${n} versiones a projects/sc-docs/public/novedades/_novedades.json`);
 }
+}
+
+if (process.argv[1] && fileURLToPath(import.meta.url) === process.argv[1]) main();

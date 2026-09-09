@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { evaluar } from '../hooks/bash-guard.mjs';
+import { evaluar, escrituras } from '../hooks/bash-guard.mjs';
 
 // Cada patrón del hook se prueba EN ROJO (el comando que motivó la regla) y EN VERDE (la forma
 // correcta y los vecinos legítimos). Un guardián que solo se ha visto pasar no prueba que sepa
@@ -102,4 +102,28 @@ test('un comando corriente pasa sin ruido', () => {
   allow('npm run tokens:gen');
   allow('npx ng build supervisor --configuration production');
   allow('gh run list --branch main --workflow ci --limit 1 --json headSha,conclusion');
+});
+
+// Una denegación tira el comando ENTERO, así que un `cat > fichero <<'EOF'` que viajaba con el
+// gate NO llega a escribirse. Pasó tres veces el 2026-09-09 y una dejó `deploy-record.yml` sin
+// crear: nadie se enteró hasta que `docs:guard` vio el enlace roto. El hook no puede salvar la
+// escritura, pero el motivo tiene que NOMBRARLA.
+test('una denegación avisa de los ficheros que el mismo comando iba a escribir', () => {
+  const r = evaluar("cat > .github/workflows/x.yml <<'EOF'\nname: x\nEOF\nnpm run test:unit | tail -5");
+  assert.equal(r.decision, 'deny');
+  assert.match(r.reason, /también escribía \.github\/workflows\/x\.yml/);
+  assert.match(r.reason, /NO se ha escrito/);
+});
+
+test('sin escrituras, el motivo no gana ruido', () => {
+  const r = evaluar('npm run verify | tail -5');
+  assert.equal(r.decision, 'deny');
+  assert.doesNotMatch(r.reason, /también escribía/);
+});
+
+test('escrituras(): cuenta las de verdad e ignora /dev, /tmp y los descriptores', () => {
+  assert.deepEqual(escrituras('npm run verify > /tmp/x.log 2>&1'), []);
+  assert.deepEqual(escrituras('cmd 2>/dev/null'), []);
+  assert.deepEqual(escrituras('npm run build > salida.log 2>&1'), ['salida.log']);
+  assert.deepEqual(escrituras("cat > a.txt <<'EOF'\n> esto es texto del heredoc\nEOF"), ['a.txt']);
 });
