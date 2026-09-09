@@ -26,14 +26,14 @@
 | **1** | concluir que algo NO funciona, **o que ya lo arreglaste tocando una opción** | demuestra que tu estímulo —o tu opción— LLEGÓ **y que es el que el sistema produce de verdad, no uno que inyectaste tú**; no extiendas el negativo más allá de lo que mediste |
 | **2** | creerte un hallazgo (o un verde) de una sonda **tuya**, incluido un TEST | valida el instrumento con un caso conocido; pruébalo en todos sus ejes; valida el CANAL (rojo y verde pueden venir de otro sitio); y mira si tu **doble contesta la pregunta que hace el código** — si lo hace, el test se mide a sí mismo |
 | **4** | arreglar un valor sustituyéndolo por otro token | mide el token de DESTINO antes (fondo y texto, misma familia) |
-| **5** | dudar entre tu código y tu medición | lo rancio es la medición: build, server, HMR, animación, **el repo bajo tus pies**, **otra instancia (un deploy)**, la máquina ahogada… o atribución. Y si el test miraba un TRANSITORIO, la carga es el disparador, no la causa |
+| **5** | dudar entre tu código y tu medición | lo rancio es la medición: build, server, HMR, animación, **el repo bajo tus pies** ⚙️, **otra instancia (un deploy)**, la máquina ahogada… o atribución. Y si el test miraba un TRANSITORIO, la carga es el disparador, no la causa |
 | **6** | creerte un test NUEVO — se ponga rojo **o pase a la primera** | sospecha del test primero: ¿mide la magnitud? ¿el selector casa? ¿reintenta? ¿espera al estado final? Y para probar el arreglo de una CARRERA, hazla determinista en vez de correrla con carga |
 | **7** | hacer `git push`, **o lanzar la cadena de 8 pasos** | `preflight` (o `:fast`/`:scope`) UNA vez sobre el árbol final —"final" = ya no vas a escribir nada más, ni un `.md`—; **`verify` NO es ese gate: se salta el `e2e smoke` y los builds AOT de las apps**. **+ `guard:lockfile` si tocaste el lock**. Confirma el verde LEYENDO el CI: `npm run ci:verdict` |
 | **8** | proponer una segunda corrección tras fallar la primera | para: la siguiente acción es una MEDICIÓN que localice la causa |
 | **10** | declarar algo bloqueado, deducir un dato a ojo, **o diseñar un mecanismo nuevo** | comprueba qué te sirve ya el sistema (DOM oculto, i18n, hoja de estilos) y **qué lo vigila ya** (`.githooks/`, `.claude/settings.json`, `scripts/`) |
 | **11** | lanzar una edición masiva por shell | pega la verificación de outcome en el MISMO comando (zsh no hace word-splitting) |
 | **12** | dar una cifra de un grep **o de un `querySelectorAll`**, ejecutar un `sed`, **o volcar un fichero de config** | pregúntate qué entra en el resultado; si hay un ejecutor que sabe el número, el número es el suyo; y **proyecta o enmascara antes de imprimir un `env`** |
-| **14** | responder a un "hazlo todo", o escribir "esperando a X" | haz lo verificable de punta a punta y aparca lo demás DOCUMENTADO — pero por no poder verificarlo, **nunca por parecido con otro aparcado** |
+| **14** | responder a un "hazlo todo", escribir "esperando a X", **o anotar en un reporte algo que mediste** | haz lo verificable de punta a punta y aparca lo demás DOCUMENTADO — pero por no poder verificarlo, **nunca por parecido con otro aparcado ni por estar ya redactando** |
 | **15** | decidir algo de marca/producto | preséntalo con recomendación y evidencia — y no exageres el encuadre de riesgo |
 | **16** | empezar un refactor transversal | monta antes la red que lo verifica, aunque parezca rodeo |
 | **17** | construir sobre una descripción que no verificaste tú | es una paráfrasis: vuelve a la fuente (da igual si viene de un hand-off, Figma, un README u otro agente) |
@@ -165,9 +165,11 @@
 
 14. **"Hazlo todo" → haz lo verificable de punta a punta, aparca lo demás DOCUMENTADO y dilo.**
     Aparca por falta de verificabilidad o porque la decisión es suya (marca, producto, borrado
-    irreversible), NUNCA por parecido con otro aparcado: antes de escribir "esperando a X", una
-    sonda más en la evidencia que decidiría.
-    Evidencia: s28 aparqué un componente "como sc-page-header" y estaba en el Kit: nada que decidir.
+    irreversible), NUNCA por parecido con otro aparcado ni **por estar ya escribiendo el reporte**:
+    una divergencia que MEDISTE y podías corregir se corrige en la misma pasada — anotarla es
+    dejarle a él el trabajo de encontrarla, con el de medirla ya hecho.
+    Evidencia: s28 aparqué un componente "como sc-page-header" y estaba en el Kit · 2026-09-09
+    dejé "el subtítulo del rail no está en Figma" en un reporte y lo tuvo que señalar Rafa.
 
 15. **Decisión de marca o producto → preséntala con recomendación y evidencia; no la decidas tú.**
     El encuadre de riesgo es parte de la evidencia: "reversible" lleva horizonte y mecanismo
