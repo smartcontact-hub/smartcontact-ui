@@ -37,7 +37,7 @@
          ahora está a la vista siempre, que es la mitad de su utilidad. Va
          SEGUNDO y no primero a propósito: mide 350px y, puesto encima, hundía
          la navegación hasta media pantalla. -->
-    <aside class="ipanel" aria-label="Índice del formulario">
+    <aside class="ipanel" [attr.aria-label]="'common.form_index_aria' | translate">
       <sc-form-section-nav
         [sections]="navSections()"
         [activeId]="activeSection()"

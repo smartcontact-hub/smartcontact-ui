@@ -1,7 +1,8 @@
 {
   "app": {
     "name": "SmartContact",
-    "tagline": "a Digital Virgo tool"
+    "tagline": "a Digital Virgo tool",
+    "logo_alt": "SmartContact, a Digital Virgo tool"
   },
   "placeholder": {
     "title": "Sección en construcción",
@@ -259,7 +260,9 @@
     "mock_sample_switcher": {
       "chip_label": "Demo",
       "data_prefix": "Datos:",
-      "list_header": "Conjuntos de prueba"
+      "list_header": "Conjuntos de prueba",
+      "trigger_title": "Cambiar conjunto de datos de demo (solo en prototipo)",
+      "trigger_aria": "Cambiar conjunto de datos de demo"
     },
     "mock_samples": {
       "default": {
@@ -458,11 +461,21 @@
           "impact_hero_one": "{{count}} conversación",
           "impact_hero_other": "{{count}} conversaciones",
           "trend_up": "El alcance ha subido respecto al cambio anterior",
-          "trend_down": "El alcance ha bajado respecto al cambio anterior"
+          "trend_down": "El alcance ha bajado respecto al cambio anterior",
+          "toggle_category_aria": "Contraer o expandir categoría",
+          "duration_min": "Duración mínima",
+          "duration_max": "Duración máxima",
+          "duration_value": "Duración"
         },
         "ai_row_recommended": "Recomendado",
         "ai_row_summary_desc": "Extrae los puntos clave y los acuerdos de cada conversación transcrita.",
         "ai_row_sentiment_desc": "Detecta el tono y los momentos de fricción a lo largo de la conversación."
+      },
+      "relative": {
+        "minutes_ago": "hace unos minutos",
+        "hours_ago": "hace {{n}} h",
+        "yesterday": "ayer",
+        "days_ago": "hace {{n}} d"
       }
     },
     "entities": {
@@ -657,7 +670,8 @@
         "label_selected_other": "seleccionadas",
         "conversation_singular": "conversación",
         "conversation_plural": "conversaciones"
-      }
+      },
+      "actions_aria": "Acciones masivas"
     },
     "form_nav": {
       "label": "Secciones del formulario",
@@ -729,7 +743,8 @@
     "no_changes": "No hay cambios que guardar",
     "actions": "Acciones",
     "select_row": "Seleccionar {{name}}",
-    "select_all": "Seleccionar todo"
+    "select_all": "Seleccionar todo",
+    "form_index_aria": "Índice del formulario"
   },
   "topbar": {
     "go_to_dashboard": "Ir al dashboard",
@@ -767,7 +782,8 @@
     "integrations": "Integraciones",
     "system": "Sistema",
     "design_decisions": "Decisiones de diseño",
-    "design_decisions_hint": "Ver DECISIONS.md en GitHub (abre en pestaña nueva)"
+    "design_decisions_hint": "Ver DECISIONS.md en GitHub (abre en pestaña nueva)",
+    "nav_aria": "Navegación principal"
   },
   "labels": {
     "breadcrumb": "Labels",
@@ -1155,7 +1171,10 @@
       "status": "Estado",
       "created_at": "Creado",
       "sheet": "Usuarios"
-    }
+    },
+    "rename_placeholder": "Nombre del usuario",
+    "rename_aria": "Renombrar {{name}}",
+    "bulk_edit_title": "Aplicar cambio a {{count}} usuario(s)"
   },
   "groups": {
     "page_title": "Grupos",
@@ -1270,7 +1289,10 @@
       "channels": "Canales",
       "agent_count": "Nº agentes",
       "sheet": "Grupos"
-    }
+    },
+    "rename_placeholder": "Nombre del grupo",
+    "rename_aria": "Renombrar {{name}}",
+    "bulk_edit_title": "Aplicar cambio a {{count}} grupo(s)"
   },
   "agents": {
     "page_title": "Agentes",
@@ -1378,7 +1400,8 @@
           "title": "Integración",
           "url_iframe": "URL iframe",
           "dispositivos_externos": "Dispositivos externos",
-          "dispositivos_externos_hint": "Permite al agente conectarse desde dispositivos fuera de la red corporativa"
+          "dispositivos_externos_hint": "Permite al agente conectarse desde dispositivos fuera de la red corporativa",
+          "url_iframe_placeholder": "https://ejemplo.com/panel"
         },
         "regional": {
           "title": "Regional"
@@ -1478,7 +1501,10 @@
       "status": "Estado",
       "groups": "Grupos",
       "sheet": "Agentes"
-    }
+    },
+    "rename_placeholder": "Nombre del agente",
+    "rename_aria": "Renombrar {{name}}",
+    "bulk_edit_title": "Aplicar cambio a {{count}} agente(s)"
   },
   "config": {
     "sidebar": {

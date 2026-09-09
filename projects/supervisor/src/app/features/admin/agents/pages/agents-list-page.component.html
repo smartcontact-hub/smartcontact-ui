@@ -96,8 +96,8 @@
     @if (renamingId() === agent.id) {
       <sc-inline-rename-cell
         [initialValue]="agent.name"
-        placeholder="Nombre del agente"
-        [ariaLabel]="'Renombrar ' + agent.name"
+        [placeholder]="'agents.rename_placeholder' | translate"
+        [ariaLabel]="'agents.rename_aria' | translate: { name: agent.name }"
         (commit)="onRenameCommit(agent.id, $event)"
         (cancelled)="onRenameCancel(agent.id)"
       />
@@ -186,7 +186,7 @@
 <sc-impact-preview-dialog
   [visible]="!!pendingBulkEdit()"
   [mode]="'bulkEdit'"
-  [title]="'Aplicar cambio a ' + selectedIds().size + ' agente(s)'"
+  [title]="'agents.bulk_edit_title' | translate: { count: selectedIds().size }"
   [items]="impactItems()"
   [badge]="impactBadge()"
   (cancelled)="onBulkPreviewCancel()"
