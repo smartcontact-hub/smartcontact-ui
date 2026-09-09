@@ -175,6 +175,12 @@
           "apply": "Animate only transform and opacity. Images with width/height or aspect-ratio. Banners and toasts in already-reserved space.",
           "avoid": "Animating top, left, width, or height, or inserting something over the content on load.",
           "have": "The site's own theme transition already crossfades with opacity, without repositioning anything."
+        },
+        "type": {
+          "title": "Typography by class",
+          "apply": "Page text takes one of the 12 .sc-text-* classes (the DS Figma text styles). If a component’s text needs to look different, move its token.",
+          "avoid": "Putting .sc-text-* on an <sc-*> tag: it sits outside the layer, and unlayered always wins, so it disconnects the component from the theme.",
+          "have": "The 12 classes already exist and read the role tokens; audit:text-styles goes red if one stops matching its text style, or if someone puts it on top of a component."
         }
       }
     },

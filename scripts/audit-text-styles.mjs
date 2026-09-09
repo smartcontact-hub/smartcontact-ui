@@ -252,3 +252,79 @@ if (sinClases.length) {
 
 log('');
 log(`✔ Las ${CONSUMIDORAS.length} apps consumidoras cargan las clases.`);
+
+/*
+ * §3 · Y NO SE LE PONEN A UN COMPONENTE DEL DS.
+ *
+ * La regla, de Rafa el 2026-09-09: los estilos de texto se aplican a lo que NO es un
+ * componente. Un `<sc-*>` publica su tipografía por el preset de PrimeNG, en su capa; una
+ * clase `.sc-text-*` encima del propio elemento la pisa desde fuera de esa capa y lo
+ * desconecta del tema — que es justo lo que hace que mover un token llegue solo a todos los
+ * componentes. Es la misma doctrina que la Sección E de `audit:primeng-coupling`, por la otra
+ * puerta: aquélla vigila que no te metas DENTRO, ésta que no le pintes ENCIMA.
+ *
+ * Se ve tal cual en la maqueta que originó todo esto (Supervisor 393:12562): de sus 43 textos,
+ * los 25 de página llevan text style anclado y los 18 que viven dentro de un componente
+ * (breadcrumb, botones, checkbox, badge) no llevan ninguno.
+ *
+ * Qué afirma, y nada más: ningún elemento `<sc-*>` lleva una clase `.sc-text-*` en SU propia
+ * etiqueta. El contenido PROYECTADO dentro de uno sí puede —`<sc-dialog><p class="sc-text-…">`
+ * es texto de la app, no del componente— y por eso la comprobación mira la etiqueta de apertura,
+ * no el subárbol.
+ */
+const PLANTILLAS = ['projects/supervisor/src', 'projects/sc-docs/src'];
+
+/** `[{ linea, tag, clase }]` de cada `<sc-*>` que se pinta una clase de texto encima. */
+export function encimaDeComponente(html) {
+  const out = [];
+  // Una etiqueta de apertura puede ocupar varias líneas, así que se busca sobre el texto
+  // entero (hasta el `>`) y el número de línea sale contando saltos hasta la coincidencia.
+  const texto = html;
+  for (const m of texto.matchAll(/<(sc-[a-z0-9-]+)\b([^>]*)>/gi)) {
+    const clases = m[2].match(/\bclass\s*=\s*["']([^"']*)["']/i);
+    if (!clases) continue;
+    const culpables = clases[1].split(/\s+/).filter((c) => /^sc-text-/.test(c));
+    if (!culpables.length) continue;
+    const linea = texto.slice(0, m.index).split('\n').length;
+    out.push({ linea, tag: m[1], clase: culpables.join(' ') });
+  }
+  return out;
+}
+
+const ficheros = [];
+{
+  const { readdirSync } = await import('node:fs');
+  const anda = (dir) => {
+    for (const e of readdirSync(dir, { withFileTypes: true })) {
+      const full = resolve(dir, e.name);
+      if (e.isDirectory()) anda(full);
+      else if (e.name.endsWith('.html')) ficheros.push(full);
+    }
+  };
+  for (const base of PLANTILLAS) anda(resolve(root, base));
+}
+
+log('');
+log('CAPA · ninguna clase de texto encima de un componente del DS');
+log('='.repeat(62));
+const encima = [];
+for (const f of ficheros) {
+  for (const hit of encimaDeComponente(readFileSync(f, 'utf8'))) {
+    encima.push({ fichero: f.replace(root + '/', ''), ...hit });
+  }
+}
+log(`  ${ficheros.length} plantillas revisadas · ${encima.length} caso(s)`);
+log('='.repeat(62));
+
+if (encima.length) {
+  log('');
+  log('✘ Un componente del DS con una clase de texto encima deja de leer el tema.');
+  for (const e of encima) log(`    ${e.fichero}:${e.linea} — <${e.tag} class="… ${e.clase}">`);
+  log('');
+  log('  Si el texto del componente tiene que verse distinto, se mueve su TOKEN;');
+  log('  si el que necesita la clase es texto tuyo, sácalo del componente.');
+  process.exit(1);
+}
+
+log('');
+log('✔ Ningún `<sc-*>` lleva `.sc-text-*` en su propia etiqueta.');

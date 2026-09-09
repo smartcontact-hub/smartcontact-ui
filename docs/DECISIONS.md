@@ -41,7 +41,9 @@
 >
 > | Tema | DD |
 > |---|---|
-> | Anatomía de página en `_page.scss` · el constructor entra en el molde · la barra sticky del trío admin es deliberada · escritorio primero · `DD#` no es `DD-` | DD-53 |
+> | Los estilos de texto se ponen a lo que NO es un componente · un `<sc-*>` no lleva `.sc-text-*` encima | DD-55 |
+| Qué escala tipográfica manda (la de la librería del DS) y qué se rompió al elegirla | DD-54 |
+| Anatomía de página en `_page.scss` · el constructor entra en el molde · la barra sticky del trío admin es deliberada · escritorio primero · `DD#` no es `DD-` | DD-53 |
 > | El índice del rail envuelve en vez de recortar el nombre de su destino | DD-52 |
 > | El lienzo de la app es blanco | DD-45 |
 > | Patrón de campo compartido, sin `ControlValueAccessor` | DD-44 |
@@ -50,6 +52,127 @@
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
 
 ---
+
+## DD-56 · 2026-09-09 — Un enlace en un ticket apunta a una versión CONGELADA, no a la URL viva
+
+**Contexto** · Los cinco sitios sirven `main`, así que su URL enseña siempre lo último. Rafa pegó
+enlaces a esas URLs en Confluence y en Jira, y el problema es de fecha, no de contenido: el
+desarrollador que abre el enlace semanas después ve una pantalla que ya no es la que especifica su
+ticket, y no tiene forma de saber que está mirando algo posterior. Su propia preocupación al
+plantearlo: que la alternativa obvia (una rama por entrega) le deje «un montón de ramas basura y
+desfasadas con el tiempo».
+
+**Decisión** · Tres piezas, ninguna con mantenimiento:
+
+1. Una **etiqueta** `proto/<TICKET>` sobre el commit exacto. Es el registro durable.
+2. Una **rama** `proto/<ticket>` creada desde esa etiqueta que **no se toca nunca más**.
+   Cloudflare le da su preview solo, y esa URL sirve ese build para siempre.
+3. Una **fila** en `docs/PROTOTIPOS.md`, que es lo que se enlaza desde Jira o Confluence en vez
+   de la URL viva: dice de qué fecha es y qué cubre.
+
+`npm run proto:freeze -- --ticket … --app … --que …` hace las tres cosas y NO pushea: imprime los
+dos comandos, porque un push sobre este árbol exige su preflight. `npm run proto:check` entra en
+`verify` (gate 35) y exige la biyección: cada fila con su etiqueta y cada etiqueta con su fila.
+
+**Razón** · La preocupación de Rafa es correcta para una rama VIVA y no aplica a una congelada. Lo
+que hace cara una rama de larga vida es tener que rebasarla, resolver sus conflictos y decidir qué
+entra; una rama que nadie mergea ni actualiza no hace nada de eso. Su coste de mantenimiento es
+literalmente cero, y si algún día estorba se borra y la etiqueta —que es lo que importa— sigue
+estando. La tabla es lo que impide el otro fallo, el silencioso: una URL congelada sin registro es
+un enlace que nadie sabe a qué corresponde.
+
+**Descartadas** ·
+
+- **Apuntar el proyecto de Cloudflare a la rama de la entrega.** Deja el sitio huérfano en cuanto
+  esa rama se borra al mergear, y la URL sigue sirviendo el último build sin avisar. Ya pasó dos
+  veces aquí, con `feat/cuscare` y con `agent-mini` (que se quedó clavado en
+  `worktree-agent-mini` hasta el 2026-09-01). La *production branch* de los cinco se queda en `main`.
+- **La URL inmutable por deployment de Cloudflare** (`<id>.<proyecto>.pages.dev`). Existe, pero su
+  identificador es un hash del deploy que solo se saca del dashboard o de la API — probado el
+  2026-09-09 con el SHA del commit y da 404, y el token OAuth de `wrangler` estaba caducado. Un
+  mecanismo que depende de ir a buscar un id a otro sitio no se usa cuando hay prisa.
+- **Un banner de versión en la app viva, en lugar de la tabla.** No sustituye: el que llega por el
+  enlace equivocado ya está mirando la pantalla equivocada. Cabe como complemento, no como el
+  mecanismo.
+
+**Consecuencias** · La URL de producción deja de ser lo que se pega en un ticket. Al entregar hay
+un paso más (un comando y un push), y a cambio el enlace no envejece. Queda pendiente decidir si
+la app viva lleva además un aviso que apunte a la tabla.
+
+## DD-55 · 2026-09-09 — Los estilos de texto se ponen a lo que NO es un componente
+
+**Contexto** · Al instalar los 12 estilos de texto del Figma como clases `.sc-text-*` aparece la
+pregunta de dónde se aplican. Rafa lo zanjó con el motivo: «los estilos de texto no van anclados a
+componente para respetar la estructura y arquitectura de PrimeNG como la tenemos en el DS, para
+que el tema se lea automáticamente». La maqueta lo hace exactamente así.
+
+**Decisión** · Una clase `.sc-text-*` se pone al texto de la PÁGINA. Nunca en la etiqueta de un
+`<sc-*>`. El contenido proyectado dentro de un componente (`<sc-dialog><p class="sc-text-…">`) sí
+puede llevarla: ese texto es de la app, no del componente. Si el texto de un componente tiene que
+verse distinto, se mueve su TOKEN. Lo vigila `audit:text-styles` §3, probado con el fallo puesto.
+
+**Razón** · El dato está en la propia maqueta (Supervisor 393:12562, medida el 2026-09-09): de sus
+**43 textos**, los **25** de página llevan text style anclado y los **18** que viven dentro de un
+componente (breadcrumb, botones, checkbox, badge) no llevan **ninguno**. No es descuido: es lo que
+mantiene al componente leyendo el tema. Y en código el mecanismo es literal — el preset vive en
+`@layer primeng` y una clase de app va sin capa, así que **sin capa gana siempre** (DD-50): una
+clase encima no «ajusta» el componente, lo desconecta del canal por el que un cambio de token
+llega solo a los 85.
+
+**Descartadas** ·
+
+- **Aplicar la clase también a los componentes, «por consistencia».** Es la que rompe el sistema:
+  cada componente vestido a mano deja de responder al tema y hay que repetir el cambio en cada
+  sitio. Es el mismo error que la Sección E de `audit:primeng-coupling` ya vigila por la otra
+  puerta (meterse DENTRO); esto lo vigila por la de encima.
+- **No escribir la regla y confiar en la revisión.** El repo ya tiene el precedente: la regla de
+  «datos inventados» estaba escrita en dos cabeceras de fichero y aun así se saltó en el tercer
+  seed (DD del 2026-09-07). Una regla de composición que no corre no es una regla.
+
+**Consecuencias** · Las primitivas de app que aún no migran (`field__label`, 29 usos en 7
+pantallas; `sub-section__title`, 8 en 3) se quedan declarando tipografía, pero pasan a leer los
+mismos TOKENS DE ROL que resuelve la clase: el día que se barran, la clase entra sin mover un
+píxel. Queda pendiente ese barrido y el de `page__heading`.
+
+## DD-54 · 2026-09-09 — La escala tipográfica que manda es la de la LIBRERÍA del DS, no la del archivo de pantallas
+
+**Contexto** · La maqueta `Contact Center · Agentes` (Supervisor 393:12562) usa estilos de texto
+anclados y Rafa pidió empezar a instalarlos. Al medirlo aparecieron **cinco familias de estilos de
+texto** conviviendo en ese archivo: los 12 de la librería `Smart-Contact Design System`, 12
+**locales** del archivo Supervisor (`display1`, `H1`..`H4`, `body1/2`, `subtitle1/2/3`, `caption`,
+`caption bold`) y tres más remotas de otra librería (`subtitle1`, `body-2`, `caption-bold`, y una
+familia nombrada por tamaño: `14 Regular`, `12 Regular`). La maqueta enlaza las **locales**; el
+código tenía instaladas las de la **librería** (PR #62). Y para rematar, los tokens de rol de
+`02-semantic.css` llevan los NOMBRES de la familia local (`subtitle-1`, `body-1`) con los VALORES
+de la de librería: por eso «subtitle1» medía 16/24 en código y 14/22 en el Figma que se miraba.
+
+**Decisión** · Manda la **librería del DS**: Display 64/78 · h1 48/58 · h2 24/36 · h3 18/24 ·
+Body 14/20 · Caption 12/18, en Regular y Semibold. Es la que ya estaba en código, así que la escala
+no se mueve. Los 12 estilos locales del archivo Supervisor **no** se adoptan.
+
+**Razón** · Decisión de Rafa, tomada sobre las dos listas enfrentadas con sus números. Lo que la
+sostiene técnicamente: los 12 de la librería declaran sus `boundVariables` contra
+`primitive/typography/font/size/*` y `line/height/*`, o sea que cada estilo dice de qué variable
+cuelga y esa variable es la misma que nombra el token de rol — la cadena es comprobable de punta a
+punta, y por eso se pudo gatear (`audit:text-styles`). Los 12 locales no son librería: viven
+sueltos en un archivo de pantallas, así que CusCare o Agent no podrían usarlos aunque quisieran.
+
+**Descartadas** ·
+
+- **Adoptar los 12 locales del Supervisor** (lo que se recomendó primero, y Rafa descartó). Tienen
+  los pasos intermedios que una app de gestión agradece (15px, `subtitle3`, un H4), mientras la del
+  DS salta de 24 a 48 sin nada en medio. Pero exigía subirlos antes a la librería y añadir los
+  pesos Medium y Bold, que el DS no publica.
+- **Mantener las dos y elegir por pantalla.** Es el estado actual y es justo el que produjo el
+  cruce nombre/valor de `02-semantic.css`.
+
+**Consecuencias** · `--sc-font-size-300` (16) se queda **sin text style detrás**: los títulos que
+lo usaban suben a `h3` (18/24) o bajan a `body` (14/20). Se ve en esta entrega — el título de la
+card de Agentes, el rótulo del rail y `settings-card__title` se recolocaron por eso. Y una
+desviación de trazabilidad que salió al medir: `--sc-line-height-body-2` colgaba de
+`--sc-line-height-220`, un peldaño que **no existe en el export del Kit**, mientras Figma ata
+`Body/*` a `line/height/200`. Mismo valor (20px), cero cambio visual, pero un rol que Figma ata no
+puede colgar de uno inventado; corregido y vigilado.
 
 ## DD-53 · 2026-09-06 — La composición de pantalla se escribe donde el agente la lee: el molde sube a los partials, el constructor de reglas entra en él, y lo deliberado queda dicho
 

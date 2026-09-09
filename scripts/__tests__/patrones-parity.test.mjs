@@ -62,12 +62,18 @@ test('AGENTS y la página de Patrones cuadran hoy', () => {
 /* ── rojos: las dos derivas que ocurren de verdad ─────────────────────────── */
 
 test('ROJO: AGENTS gana un principio y la página se queda atrás', () => {
-  const conOchoAgents = AGENTS.replace(
+  // El número del principio inyectado se calcula: escrito a mano había que venir a tocar este
+  // test cada vez que la barra de calidad crece, y eso convierte una red en un peaje.
+  const n = titulosAgents(sliceUx(AGENTS)).length;
+  const conUnoDeMas = AGENTS.replace(
     '## Mandatory Workflow',
-    '8. **Principio nuevo.** Algo que alguien añadió sin tocar la página.\n\n## Mandatory Workflow',
+    `${n + 1}. **Principio nuevo.** Algo que alguien añadió sin tocar la página.\n\n## Mandatory Workflow`,
   );
-  const p = compararPatrones(conOchoAgents, PATRONES, PRINCIPIOS);
-  assert.ok(p.some((x) => /AGENTS tiene 8 principios y la página 7/.test(x)), p.join(' | '));
+  const p = compararPatrones(conUnoDeMas, PATRONES, PRINCIPIOS);
+  assert.ok(
+    p.some((x) => new RegExp(`AGENTS tiene ${n + 1} principios y la página ${n}`).test(x)),
+    p.join(' | '),
+  );
 });
 
 test('ROJO: una tarjeta pierde una regla al reescribirse (el caso que ya pasó)', () => {
