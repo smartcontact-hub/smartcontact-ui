@@ -163,9 +163,11 @@ const rl = interactivo ? createInterface({ input: process.stdin, output: process
 const preguntar = async (texto, validar) => {
   if (!rl) {
     log('');
-    log('✘ Esto pregunta, y no hay terminal donde preguntar.');
-    log('  Sin TTY pásalo todo por flags:');
-    log('    node scripts/proto-freeze.mjs --ticket SISMAC-3780 --app supervisor --que "…"');
+    log('✘ Esto pregunta, y no hay terminal donde preguntar: ' + texto.trim());
+    log('');
+    log('  Con terminal:  npm run proto');
+    log('  Sin terminal:  node scripts/proto-freeze.mjs \\');
+    log('                   --ticket SISMAC-3780 --app supervisor --que "…" --yes');
     process.exit(1);
   }
   for (;;) {
