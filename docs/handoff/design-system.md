@@ -94,6 +94,25 @@ sigue siendo cierto de DD-17 y las 5 apps siguen leyendo de `dist/`. La primera 
 descartaba el registro ENTERO sin separar el ciclo diario del publish por release; lo rectificó el
 propio Rafa al señalar la pantalla de Packages, y el DD lo dice.
 
+**Trampa nueva, del cierre (y la corrección que la acompaña).** Al rebasar sobre DD-60 hubo
+conflicto en `playwright-reuse-guard.mjs`: dos sesiones habían arreglado el MISMO fantasma por
+separado. Se tomó la versión de `main` (`esRunner`, que mira el ejecutable por `ps -o comm=`, más
+limpia que la otra) y al resolver quedaron **dos `comandoDe`** en el fichero. Node lo rechaza con
+`VarRedeclaration` y **ninguna suite arrancaba**.
+
+Se dijo entonces —y se le pasó a la otra sesión— que «no lo vio ningún gate estático». **Es falso,
+y se afirmó sin medirlo.** Medido después fabricando el caso malo: `npx eslint` sobre ese fichero
+saca `Identifier 'comandoDe' has already been declared`, así que `lint`, y con él `verify` y
+`preflight`, lo paraban en seco. El gate existía; lo que falló fue el orden de trabajo: tras
+resolver el conflicto se corrieron los tests unitarios y se saltó a la suite de e2e sin pasar la
+cadena. (Cierto sí: `scripts/**.mjs` está fuera del `typecheck` a propósito, documentado en
+`tsconfig.harness.json` — 392 errores con `checkJs`. Pero eslint sí los cubre.)
+
+**La regla que sale de ahí: un árbol recién salido de resolver un conflicto es código que no ha
+escrito NADIE**, ni tú ni la otra sesión. Merece la cadena entera, no una comprobación puntual.
+Con el preflight de DD-60 eso cuesta menos de 3 minutos. Sonda barata y complementaria para «¿carga
+el config?»: `npx playwright test --list`, que lo evalúa sin levantar servidores.
+
 **La incógnita, contestada por su primera ejecución real.** `deploy-record` sobre `f1b8577`:
 **4 de 5 confirmados** (sc-docs, agent, cuscare, agent-mini sirvieron el commit) y **`supervisor`
 NO**, ni en los 20 minutos del job ni **dos horas después** (sondeo tardío: sigue devolviendo el
