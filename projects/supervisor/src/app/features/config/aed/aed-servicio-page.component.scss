@@ -8,11 +8,12 @@
 /* ---------- Estados de agentes ---------- */
 
 /* Estados fijos (3) → tags. Separados de los chips editables (no se mezclan). */
+/* 12.25 (`scale/0-875`) entre etiquetas — la maqueta pone 12 suelto en `container tags`. */
 .state-tags {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--sc-spacing-0-5);
+  gap: var(--sc-spacing-0-875);
 }
 
 .state-tag {
@@ -50,7 +51,6 @@
 /* Sub-etiqueta de bloque ("Por defecto", "Personalización de no disponibles"). */
 .sub-label {
   display: block;
-  margin-top: var(--sc-spacing-0-25);
   font-size: var(--sc-font-size-50);
   font-weight: var(--sc-font-weight-medium);
   color: var(--sc-text-secondary);
@@ -58,10 +58,12 @@
 
 /* Personalización: chips removibles (sc-chip) a la izquierda + botón de alta
  * (abre el modal "Añadir estado") a la derecha. */
+/* 24.5 (`scale/1-75`) entre los chips y el botón de alta: es de las pocas separaciones que la
+ * maqueta sí ata a variable (`container estados`, 2286:5639 → `scale/1-75`). */
 .reasons-row {
   display: flex;
   align-items: flex-start;
-  gap: var(--sc-spacing-0-75);
+  gap: var(--sc-spacing-1-75);
 
   &__chips {
     flex: 1 1 auto;
@@ -102,24 +104,44 @@
 
 /* ---------- Inline rows (bloqueo por inactividad) ---------- */
 
-.inline-row {
-  display: flex;
-  flex-wrap: wrap;
+/*
+ * `SmField` 2286:5624 de la maqueta: la casilla es una COLUMNA separada 24.5 de la frase que
+ * gobierna, y las piezas de la frase van a 12.25 entre sí. Antes todo colgaba de un solo `gap`
+ * de 8.75, así que "Poner en cuarentena durante" y "Bloquear tras" arrancaban en verticales
+ * distintas —una por cada ancho de casilla— y las dos filas no formaban columna.
+ *
+ * La rejilla vive en el PADRE y cada fila es `display: contents`: así el ancho de la primera
+ * columna lo negocian las dos filas entre ellas (`max-content`) en vez de fijarlo a los 85 de
+ * la maqueta, que son los que mide "Navegador" a 12px y dejan de valer a 14 —y en otro idioma.
+ */
+.inline-rows {
+  display: grid;
+  grid-template-columns: max-content 1fr;
+  column-gap: var(--sc-spacing-1-75);
+  row-gap: var(--sc-spacing-0-875);
   align-items: center;
-  gap: var(--sc-spacing-0-625);
-  min-height: 36px;
+}
+
+.inline-row {
+  display: contents;
+
+  &__rest {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: var(--sc-spacing-0-875);
+    min-width: 0;
+    min-height: 36px;
+  }
 
   &__text {
     font-size: var(--sc-font-size-100);
     color: var(--sc-text-secondary);
   }
 
-  .inline-check {
-    min-width: 110px;
-  }
-
   sc-inputnumber {
-    width: 84px;
+    /* 71 = `inputnumber` de la maqueta, el mismo que en Grupos. */
+    width: 71px;
   }
 }
 
@@ -131,23 +153,28 @@
   padding: 0;
   display: flex;
   flex-direction: column;
+  /* 3.5 (`scale/0-25`) entre filas — la maqueta pone 4 suelto (`container` 2286:5590). */
+  gap: var(--sc-spacing-0-25);
 }
 
+/*
+ * Cada estado es una BANDA, no una fila con línea: la maqueta le da fondo `gray/50` y radio 6
+ * (`row` de 2286:5590), sin ningún trazo. Todas las filas llevan el mismo fondo —no es una zebra
+ * alterna—, así que el contraste del texto es idéntico en las cinco.
+ */
 .visible-row {
   display: flex;
   align-items: center;
-  gap: var(--sc-spacing-0-875);
-  padding: var(--sc-spacing-0-625) 0;
-  border-bottom: 1px solid var(--sc-border-subtle);
-
-  &:last-child {
-    border-bottom: 0;
-  }
+  gap: var(--sc-spacing-1);
+  padding: 0 var(--sc-spacing-0-875);
+  min-height: 37px;
+  background: var(--sc-bg-secondary-subtle);
+  border-radius: var(--sc-radius-md);
 
   &__bar {
-    width: 3px;
-    align-self: stretch;
-    min-height: 28px;
+    width: 4px;
+    align-self: center;
+    height: 28px;
     border-radius: var(--sc-radius-full);
     flex-shrink: 0;
 
@@ -168,23 +195,28 @@
     }
   }
 
-  &__copy {
-    display: flex;
-    flex-direction: column;
-    gap: 1px;
-    min-width: 0;
-  }
-
+  /* 125 fijos: es lo que hace columna con los otros cuatro nombres (maqueta `row` 2286:5590). */
   &__label {
+    flex: 0 0 125px;
     font-size: var(--sc-font-size-100);
-    font-weight: var(--sc-font-weight-medium);
+    font-weight: var(--sc-font-weight-semibold);
     color: var(--sc-text-primary);
   }
 
+  /*
+   * Nombre y descripción se separan por PESO, no por color. La maqueta los separa solo por color
+   * —#4f5663 el nombre, #8f97a3 la descripción— y ese segundo gris, sobre su propia banda, deja
+   * el texto en 4.25:1: por debajo del mínimo AA de 4.5 (medido en el build, 12px). El escalón
+   * siguiente del sistema tampoco llega (`--sc-text-secondary`, 4.25:1 sobre la banda y 4.52
+   * sobre blanco, al filo). Así que los dos van a `--sc-text-primary` (6.95:1) y la jerarquía la
+   * lleva el semibold contra el regular. Misma corrección que en la tabla de Agentes.
+   */
   &__desc {
+    flex: 1 1 auto;
+    min-width: 0;
     font-size: var(--sc-font-size-50);
     line-height: 18px;
-    color: var(--sc-text-subtle);
+    color: var(--sc-text-primary);
   }
 
   sc-toggleswitch {
@@ -194,18 +226,33 @@
 
 /* ---------- Notificaciones a sistemas externos ---------- */
 
-.notif-block {
-  display: flex;
-  flex-direction: column;
-  gap: var(--sc-spacing-0-625);
+/*
+ * Rejilla 70/30 con cabecera de columnas: 578.5 para el campo y 214 para las tres casillas,
+ * separadas 24.5 (`container` 2286:5558, la única medida atada de esta sección). Las filas van
+ * a 12.25 (la maqueta pone 12 suelto).
+ */
+.notif-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 578.5fr) minmax(0, 214fr);
+  column-gap: var(--sc-spacing-1-75);
+  row-gap: var(--sc-spacing-0-875);
+  align-items: end;
+}
 
-  & + & {
-    margin-top: var(--sc-spacing-0-875);
-  }
+/* Los tres rótulos y las tres casillas comparten reparto para que caigan en la misma vertical. */
+.events-head,
+.events-list {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  align-items: center;
+}
 
-  .field sc-inputtext {
-    display: block;
-    max-width: 100%;
+.events-head {
+  &__col {
+    font-size: var(--sc-font-size-caption);
+    line-height: var(--sc-line-height-caption);
+    font-weight: var(--sc-font-weight-semibold);
+    color: var(--sc-text-primary);
   }
 }
 
@@ -213,11 +260,22 @@
   list-style: none;
   margin: 0;
   padding: 0;
-  display: flex;
-  flex-wrap: wrap;
-  gap: var(--sc-spacing-1-75);
+  /* La casilla se alinea con el control de su fila, no con su etiqueta. */
+  min-height: 36px;
 
   &--disabled {
     opacity: 0.5;
+  }
+}
+
+@media (max-width: 720px) {
+  .notif-grid {
+    grid-template-columns: 1fr;
+  }
+
+  /* Sin dos columnas, la cabecera suelta no dice de qué son los rótulos: se va. */
+  .notif-grid__spacer,
+  .events-head {
+    display: none;
   }
 }

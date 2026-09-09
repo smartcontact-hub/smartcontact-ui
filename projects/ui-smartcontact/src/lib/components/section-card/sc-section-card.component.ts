@@ -1,7 +1,7 @@
 import { booleanAttribute, ChangeDetectionStrategy, Component, computed, input, numberAttribute, signal } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
-import { SC_ICON_SIZE_LG, ScIconComponent } from '@smartcontact-hub/icons';
+import { SC_ICON_SIZE_DEFAULT, ScIconComponent } from '@smartcontact-hub/icons';
 
 /**
  * Section (nivel raíz) del árbol Section → Subsection → Slot (§4.5, nodo Figma
@@ -52,9 +52,11 @@ export class ScSectionCardComponent {
    * página que quisiera el patrón tenía que copiarlo a mano —que es lo que pasaba en
    * `config/aed/*`— y a partir de ahí las dos copias derivan.
    *
-   * El nivel arrastra el TAMAÑO, porque son dos cosas distintas en la jerarquía: `1` usa los
-   * tokens de rol `h3` (18/24) y `2` los de `body` en semibold (14/20). Tres escalones legibles:
-   * 18 semibold la página · 14 semibold la sección · 14 regular el contenido.
+   * **Solo cambia la SEMÁNTICA, no el tamaño** (2026-09-09). Los dos niveles miden 14/20
+   * semibold, que es lo que hace la maqueta: en el archivo Supervisor no hay un solo texto por
+   * encima de 14, y «Agentes» y «Configuración» comparten estilo — los separa el icono, que solo
+   * lleva la cabecera. Hasta hoy el `1` subía a `h3` (18/24), un tamaño que salía de la ESCALA y
+   * no de ningún nodo que dibuje la pantalla, y que además dejaba corto al icono de 14.
    *
    * Un documento tiene UN solo `<h1>`, así que `1` es para una card por página. Lo vigila
    * `e2e/supervisor/page-identity.spec.ts`.
@@ -78,7 +80,12 @@ export class ScSectionCardComponent {
 
   protected readonly chevronDownIcon = 'expand_more';
   protected readonly chevronRightIcon = 'chevron_right';
-  protected readonly iconSizeLg = SC_ICON_SIZE_LG;
+  /**
+   * 14, no 16. Los DOS nodos de Figma que definen esta caja llevan el icono de la cabecera a
+   * 14×14: el maestro `Section` del DS (691:23976) y el `Block` de la maqueta (393:12589).
+   * `SC_ICON_SIZE_DEFAULT` es justo ese 14, el tamaño por defecto del Kit.
+   */
+  protected readonly headIconSize = SC_ICON_SIZE_DEFAULT;
 
   private readonly userToggled = signal<boolean | null>(null);
 

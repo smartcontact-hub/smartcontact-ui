@@ -15,22 +15,31 @@
   /* Offset para el salto-a-ancla de sc-form-section-nav (limpia el sticky header). */
   scroll-margin-top: var(--sc-form-anchor-offset);
 
-  /* 24.5 (`scale/1-75`), el padding del `Block` de la maqueta (Figma Supervisor 393:12587).
-   * Antes 15.75/21, que no salía de ninguna medida: era lo que había. */
+  /* La caja GRIS la manda el maestro `Section` del Figma del DS (component set 691:23956, las
+   * cuatro variantes idénticas), y sus tres medidas están ATADAS a variables ahí:
+   *   padding vertical  22.75 → `scale/1-625`  (`--sc-spacing-1-625`)
+   *   padding lateral   16    → `scale/1-143`  (`--sc-spacing-1-143`)
+   *   título → contenido 14   → `scale/1`      (`--sc-spacing-1`, el gap del `Container`)
+   * Antes ponía 24.5 a los cuatro lados «el valor que la maqueta del DS respalda» (DD-57): ese
+   * 24.5 sale del `Block` 393:12587, que es un marco LOCAL del archivo Supervisor —la variante
+   * blanca de abajo—, no del componente. Medido el 2026-09-09 en los dos nodos.
+   *
+   * Y el aire entre el título y el contenido es AIRE, no una línea: ni el maestro ni el `Block`
+   * tienen filo bajo la cabecera. */
   &__head {
-    padding: var(--sc-spacing-1-75) var(--sc-spacing-1-75) var(--sc-spacing-1-125);
-    border-bottom: 1px solid var(--sc-border-subtle);
+    padding: var(--sc-spacing-1-625) var(--sc-spacing-1-143) var(--sc-spacing-1);
     display: flex;
     align-items: baseline;
-    gap: var(--sc-spacing-0-875);
+    /* 8.75 (`scale/0-625`). Los dos nodos de Figma dicen 8, pero ahí el número está SUELTO (sin
+     * variable, comprobado en `boundVariables`) y 8 no es peldaño de la tabla 14-base: 8.75 es el
+     * escalón que le toca. Va a la lista de discrepancias del Figma. */
+    gap: var(--sc-spacing-0-625);
 
     /* Variante colapsable: la cabecera es un botón. */
     &--toggle {
       width: 100%;
       background: none;
-      border-top: 0;
-      border-left: 0;
-      border-right: 0;
+      border: 0;
       text-align: left;
       cursor: pointer;
       transition: background var(--sc-transition-fast) ease;
@@ -44,8 +53,10 @@
       }
     }
 
+    /* Plegada, la cabecera ES la caja: el aire de abajo deja de separarla de un contenido que no
+     * está y vuelve al padding de la caja, para que arriba y abajo midan lo mismo. */
     &--collapsed {
-      border-bottom: 0;
+      padding-bottom: var(--sc-spacing-1-625);
     }
   }
 
@@ -84,16 +95,19 @@
     color: var(--sc-text-subtle);
   }
 
+  /* Arriba nada: el aire hasta el contenido lo pone la cabecera (los 14 del `Container`). Si los
+   * dos ponen el suyo, el título queda al doble de distancia de lo que mide el maestro. */
   &__body {
-    padding: var(--sc-spacing-1-75);
+    padding: 0 var(--sc-spacing-1-143) var(--sc-spacing-1-625);
   }
 }
 
 /*
  * `surface="card"`: la misma caja sobre el LIENZO en vez de dentro de un formulario. Blanca con
  * borde, como el `Block` de la maqueta (Figma Supervisor 393:12587: sin relleno, stroke negro al
- * 10%, radio 12). La línea bajo la cabecera se va: con un borde alrededor, ese filo interior
- * partía la tarjeta en dos por nada.
+ * 10%, radio 12). Sus medidas son OTRAS que las del maestro gris, y también están atadas:
+ *   padding      24.5 a los cuatro lados → `scale/1-75`   (`--sc-spacing-1-75`)
+ *   título → contenido 16                → `scale/1-143`  (`--sc-spacing-1-143`, el gap del Block)
  */
 :host(.sc-section-card--card) {
   .section-card {
@@ -101,34 +115,48 @@
     border: 1px solid var(--sc-border-default);
   }
 
-  /* Sin la línea de la variante `subtle`: con un borde alrededor, ese filo interior partía la
-   * tarjeta en dos por nada. La separación entre el título y lo que viene debajo son los 16 del
-   * gap del `Block` (Figma 393:12587), y los reparte la cabecera: el body solo pone su 24.5 a
-   * los lados y abajo. Sumarlos daría 48 de aire entre el título y su contenido. */
   .section-card__head {
-    border-bottom: 0;
-    padding-bottom: var(--sc-spacing-1-143);
+    padding: var(--sc-spacing-1-75) var(--sc-spacing-1-75) var(--sc-spacing-1-143);
+  }
+
+  /*
+   * Los 12.25 (`scale/0-875`) que el `Header` 393:12588 se pone A SÍ MISMO dentro del `Block`, y
+   * que son los que alinean el título con el contenido: en la maqueta el icono, los títulos de
+   * sección y las filas arrancan todos en la misma vertical (36.75 desde el filo), mientras los
+   * divisores cruzan la caja entera a 24.5. Sin esto el título quedaba 12.25 a la izquierda de
+   * todo lo demás.
+   *
+   * Va al PRIMER hijo y no al padding de la cabecera porque el `chevron` de la variante
+   * colapsable se ancla al lado contrario: sangrarlo también lo despegaría del filo.
+   */
+  .section-card__head > :first-child {
+    margin-inline-start: var(--sc-spacing-0-875);
   }
 
   .section-card__body {
-    padding-top: 0;
+    padding: 0 var(--sc-spacing-1-75) var(--sc-spacing-1-75);
+  }
+
+  .section-card__head--collapsed {
+    padding-bottom: var(--sc-spacing-1-75);
   }
 }
 
 /*
- * `headingLevel="1"`: esta card lleva el título de LA PÁGINA, no el de una sección suya. Sube al
- * rol `h3` (18/24), que es el escalón que le toca en la escala del Figma del DS (DD-54): 18
- * semibold la página, 14 semibold la sección, 14 regular el contenido. El `letter-spacing`
- * negativo se va con el tamaño: aprieta bien a 14 y a 18 empieza a notarse.
+ * `headingLevel="1"` NO cambia el tamaño, y eso es deliberado (2026-09-09).
+ *
+ * Hasta hoy subía al rol `h3` (18/24) «el escalón que le toca en la escala del Figma del DS».
+ * Ese 18 salía de la ESCALA, no de ningún nodo que dibuje esta pantalla: en el archivo Supervisor
+ * no hay un solo texto por encima de 14 —ni en las listas, ni en el rail, ni en la barra— y la
+ * jerarquía la llevan el peso, el color y la caja. En la maqueta, «Agentes» y «Configuración»
+ * son el MISMO estilo y los separa el icono, que solo lleva la cabecera.
+ *
+ * Y hay un motivo óptico, que es el que pesa: el icono de la cabecera mide 14 en los DOS nodos
+ * de Figma. Un título de 18 al lado de un icono de 14 deja el icono corto. A 14 y 14 casan.
+ *
+ * Así que el input queda limpio: decide la SEMÁNTICA (`<h1>` o `<h2>`), y el tamaño lo pone el
+ * contenedor. La clase `--page` se queda como enganche del DOM para los tests, sin estilo.
  */
-:host(.sc-section-card--page) {
-  .section-card__title {
-    font-family: var(--sc-font-family-h3);
-    font-size: var(--sc-font-size-h3);
-    line-height: var(--sc-line-height-h3);
-    letter-spacing: 0;
-  }
-}
 
 /* Variante flush (SnowUI S62): sin caja — el contenido va a sangre sobre la
    página. Quita fondo/borde/radio; header y body pierden el padding lateral. */
@@ -143,7 +171,11 @@
 
   .section-card__head {
     padding: 0;
-    border-bottom: 0;
+  }
+
+  /* Sin caja no hay filo del que sangrar: la sangría de `card` se anula. */
+  .section-card__head > :first-child {
+    margin-inline-start: 0;
   }
 
   .section-card__body {

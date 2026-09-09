@@ -102,52 +102,64 @@
           </h2>
         </header>
 
-        <div class="inline-row">
-          <sc-checkbox
-            class="inline-row__check"
-            [state]="form().telefonoBloqueo ? 'all' : 'none'"
-            [ariaLabel]="'config.aed.subpages.servicio.inactividad.telefono' | translate"
-            (cycle)="update('telefonoBloqueo', $event)"
-          >
-            <span>{{ 'config.aed.subpages.servicio.inactividad.telefono' | translate }}</span>
-          </sc-checkbox>
-          <span class="inline-row__text">
-            {{ 'config.aed.subpages.servicio.inactividad.telefono_text' | translate }}
-          </span>
-          <sc-inputnumber
-            inputId="general-cuarentena"
-            [min]="0"
-            [disabled]="!form().telefonoBloqueo"
-            [value]="form().cuarentenaSegundos"
-            (valueChange)="onNumberChange('cuarentenaSegundos', $event)"
-          />
-          <span class="inline-row__text">
-            {{ 'config.aed.subpages.servicio.inactividad.seconds' | translate }}
-          </span>
-        </div>
+        <!-- La casilla es una COLUMNA propia, separada 24.5 de la frase que gobierna, y la
+             frase lleva sus piezas a 12.25 (maqueta `SmField` 2286:5624). El ancho de esa
+             columna lo marca la casilla más ancha (`max-content`) y no un número fijo: la
+             maqueta lo dibuja a 85, que es lo que mide "Navegador" a 12px, pero el texto de la
+             app va a 14 y en francés o portugués mide otra cosa. Lo que importa es que las dos
+             frases arranquen en la MISMA vertical, y eso es lo que hace la rejilla. -->
+        <div class="inline-rows">
+          <div class="inline-row">
+            <sc-checkbox
+              class="inline-row__check"
+              [state]="form().telefonoBloqueo ? 'all' : 'none'"
+              [ariaLabel]="'config.aed.subpages.servicio.inactividad.telefono' | translate"
+              (cycle)="update('telefonoBloqueo', $event)"
+            >
+              <span>{{ 'config.aed.subpages.servicio.inactividad.telefono' | translate }}</span>
+            </sc-checkbox>
+            <div class="inline-row__rest">
+              <span class="inline-row__text">
+                {{ 'config.aed.subpages.servicio.inactividad.telefono_text' | translate }}
+              </span>
+              <sc-inputnumber
+                inputId="general-cuarentena"
+                [min]="0"
+                [disabled]="!form().telefonoBloqueo"
+                [value]="form().cuarentenaSegundos"
+                (valueChange)="onNumberChange('cuarentenaSegundos', $event)"
+              />
+              <span class="inline-row__text">
+                {{ 'config.aed.subpages.servicio.inactividad.seconds' | translate }}
+              </span>
+            </div>
+          </div>
 
-        <div class="inline-row">
-          <sc-checkbox
-            class="inline-row__check"
-            [state]="form().navegadorBloqueo ? 'all' : 'none'"
-            [ariaLabel]="'config.aed.subpages.servicio.inactividad.navegador' | translate"
-            (cycle)="update('navegadorBloqueo', $event)"
-          >
-            <span>{{ 'config.aed.subpages.servicio.inactividad.navegador' | translate }}</span>
-          </sc-checkbox>
-          <span class="inline-row__text">
-            {{ 'config.aed.subpages.servicio.inactividad.navegador_text' | translate }}
-          </span>
-          <sc-inputnumber
-            inputId="general-bloquear-tras"
-            [min]="0"
-            [disabled]="!form().navegadorBloqueo"
-            [value]="form().bloquearTrasConversaciones"
-            (valueChange)="onNumberChange('bloquearTrasConversaciones', $event)"
-          />
-          <span class="inline-row__text">
-            {{ 'config.aed.subpages.servicio.inactividad.conversaciones_suffix' | translate }}
-          </span>
+          <div class="inline-row">
+            <sc-checkbox
+              class="inline-row__check"
+              [state]="form().navegadorBloqueo ? 'all' : 'none'"
+              [ariaLabel]="'config.aed.subpages.servicio.inactividad.navegador' | translate"
+              (cycle)="update('navegadorBloqueo', $event)"
+            >
+              <span>{{ 'config.aed.subpages.servicio.inactividad.navegador' | translate }}</span>
+            </sc-checkbox>
+            <div class="inline-row__rest">
+              <span class="inline-row__text">
+                {{ 'config.aed.subpages.servicio.inactividad.navegador_text' | translate }}
+              </span>
+              <sc-inputnumber
+                inputId="general-bloquear-tras"
+                [min]="0"
+                [disabled]="!form().navegadorBloqueo"
+                [value]="form().bloquearTrasConversaciones"
+                (valueChange)="onNumberChange('bloquearTrasConversaciones', $event)"
+              />
+              <span class="inline-row__text">
+                {{ 'config.aed.subpages.servicio.inactividad.conversaciones_suffix' | translate }}
+              </span>
+            </div>
+          </div>
         </div>
       </section>
 
@@ -161,20 +173,24 @@
           </h2>
         </header>
 
-        <sc-checkbox
-          [state]="form().verEstadoOtros ? 'all' : 'none'"
-          [ariaLabel]="'config.aed.subpages.servicio.ventana.ver_estado' | translate"
-          (cycle)="update('verEstadoOtros', $event)"
-        >
-          <span>{{ 'config.aed.subpages.servicio.ventana.ver_estado' | translate }}</span>
-        </sc-checkbox>
-        <sc-checkbox
-          [state]="form().verAgentesAleatorio ? 'all' : 'none'"
-          [ariaLabel]="'config.aed.subpages.servicio.ventana.ver_aleatorio' | translate"
-          (cycle)="update('verAgentesAleatorio', $event)"
-        >
-          <span>{{ 'config.aed.subpages.servicio.ventana.ver_aleatorio' | translate }}</span>
-        </sc-checkbox>
+        <!-- Las dos casillas van EN PAREJA, no apiladas: la maqueta las reparte en las dos
+             mitades de la fila (`Slot 3` 2286:5618, 396.25 + 24.5 + 396.25). -->
+        <div class="grid grid--2">
+          <sc-checkbox
+            [state]="form().verEstadoOtros ? 'all' : 'none'"
+            [ariaLabel]="'config.aed.subpages.servicio.ventana.ver_estado' | translate"
+            (cycle)="update('verEstadoOtros', $event)"
+          >
+            <span>{{ 'config.aed.subpages.servicio.ventana.ver_estado' | translate }}</span>
+          </sc-checkbox>
+          <sc-checkbox
+            [state]="form().verAgentesAleatorio ? 'all' : 'none'"
+            [ariaLabel]="'config.aed.subpages.servicio.ventana.ver_aleatorio' | translate"
+            (cycle)="update('verAgentesAleatorio', $event)"
+          >
+            <span>{{ 'config.aed.subpages.servicio.ventana.ver_aleatorio' | translate }}</span>
+          </sc-checkbox>
+        </div>
       </section>
 
       <sc-divider />
@@ -195,14 +211,16 @@
                 [attr.data-tone]="item.tone"
                 aria-hidden="true"
               ></span>
-              <div class="visible-row__copy">
-                <span class="visible-row__label">
-                  {{ 'config.aed.subpages.servicio.visibles.state_' + item.key | translate }}
-                </span>
-                <span class="visible-row__desc">
-                  {{ 'config.aed.subpages.servicio.visibles.desc_' + item.key | translate }}
-                </span>
-              </div>
+              <!-- Nombre y descripción van EN LÍNEA, no uno debajo del otro: la maqueta
+                   (`row` dentro de `Slot 4` 2286:5590) fija el nombre a 125 y deja el resto
+                   de la fila a la descripción, separados 14. Así los cinco nombres forman
+                   una columna que se lee de un vistazo. -->
+              <span class="visible-row__label">
+                {{ 'config.aed.subpages.servicio.visibles.state_' + item.key | translate }}
+              </span>
+              <span class="visible-row__desc">
+                {{ 'config.aed.subpages.servicio.visibles.desc_' + item.key | translate }}
+              </span>
               <sc-toggleswitch
                 [checked]="form().visibilidadEstados[item.key]"
                 [ariaLabel]="
@@ -231,7 +249,9 @@
           </h2>
         </header>
 
-        <div class="grid grid--2">
+        <!-- 70/30, no mitad y mitad: la maqueta da 578.5 al desplegable y 214 a los dos
+             radios (`container` 2286:5581). -->
+        <div class="grid grid--wide-narrow">
           <sc-select
             class="field"
             inputId="general-descuelgue"
@@ -291,7 +311,25 @@
           </h2>
         </header>
 
-        <div class="notif-block">
+        <!--
+          Rejilla de 70/30 con CABECERA de columnas, como la maqueta (`container` 2286:5558):
+          arriba, los tres rótulos Inicio · Fin · Resultado; debajo, una fila por URL con sus
+          tres casillas en esas mismas columnas. Antes cada URL repetía los tres rótulos
+          debajo de su campo — seis etiquetas para tres columnas.
+
+          Las casillas ya no llevan texto visible, así que su nombre accesible dice las DOS
+          cosas: qué evento y de qué conversación.
+        -->
+        <div class="notif-grid">
+          <span class="notif-grid__spacer" aria-hidden="true"></span>
+          <div class="events-head" aria-hidden="true">
+            @for (key of notifEventos; track key) {
+              <span class="events-head__col">
+                {{ 'config.aed.subpages.servicio.notif.evento_' + key | translate }}
+              </span>
+            }
+          </div>
+
           <div class="field">
             <label class="field__label" for="general-notif-entrante">
               {{ 'config.aed.subpages.servicio.notif.entrante' | translate }}
@@ -306,23 +344,20 @@
           </div>
           <ul class="events-list" [class.events-list--disabled]="!hasEntranteUrl()">
             @for (key of notifEventos; track key) {
-              <li>
+              <li class="events-list__col">
                 <sc-checkbox
                   [state]="form().notifEntrante[key] ? 'all' : 'none'"
                   [disabled]="!hasEntranteUrl()"
-                  [ariaLabel]="'config.aed.subpages.servicio.notif.evento_' + key | translate"
-                  (cycle)="toggleNotif('notifEntrante', key, $event)"
-                >
-                  <span>{{
-                    'config.aed.subpages.servicio.notif.evento_' + key | translate
-                  }}</span>
-                </sc-checkbox>
+                  [ariaLabel]="
+                    ('config.aed.subpages.servicio.notif.evento_' + key | translate) +
+                    ' — ' +
+                    ('config.aed.subpages.servicio.notif.entrante' | translate)
+                  "
+                />
               </li>
             }
           </ul>
-        </div>
 
-        <div class="notif-block">
           <div class="field">
             <label class="field__label" for="general-notif-saliente">
               {{ 'config.aed.subpages.servicio.notif.saliente' | translate }}
@@ -337,17 +372,16 @@
           </div>
           <ul class="events-list" [class.events-list--disabled]="!hasSalienteUrl()">
             @for (key of notifEventos; track key) {
-              <li>
+              <li class="events-list__col">
                 <sc-checkbox
                   [state]="form().notifSaliente[key] ? 'all' : 'none'"
                   [disabled]="!hasSalienteUrl()"
-                  [ariaLabel]="'config.aed.subpages.servicio.notif.evento_' + key | translate"
-                  (cycle)="toggleNotif('notifSaliente', key, $event)"
-                >
-                  <span>{{
-                    'config.aed.subpages.servicio.notif.evento_' + key | translate
-                  }}</span>
-                </sc-checkbox>
+                  [ariaLabel]="
+                    ('config.aed.subpages.servicio.notif.evento_' + key | translate) +
+                    ' — ' +
+                    ('config.aed.subpages.servicio.notif.saliente' | translate)
+                  "
+                />
               </li>
             }
           </ul>

@@ -90,6 +90,19 @@
   flex-direction: column;
   gap: var(--sc-spacing-0-875);
 
+  /*
+   * El CONTENIDO va 12.25 (`scale/0-875`) más adentro que el borde de la caja; los DIVISORES no.
+   * Es el patrón de la maqueta: el `Block` pone su padding y cada sección de dentro añade su
+   * propio 12.25 lateral (393:12592, 393:12610, 393:12647), mientras las líneas de separación
+   * cruzan el ancho entero. La cabecera de la card lleva el mismo 12.25 desde el componente, así
+   * que título y contenido arrancan en la misma vertical.
+   *
+   * Vive AQUÍ, en la hoja que comparten las tres pantallas, y no en la de Agentes: allí solo la
+   * veía Agentes (la encapsulación de Angular es por componente) y Servicio y Grupos se quedaban
+   * 12.25 fuera de línea sin que nada lo dijera.
+   */
+  margin-inline: var(--sc-spacing-0-875);
+
   &__head {
     display: flex;
     flex-direction: column;
@@ -213,30 +226,90 @@ select.field__input {
   max-width: 378px;
 }
 
-/* ---------- Grids ---------- */
+/* ---------- Grids ----------
+ *
+ * Dos columnas iguales separadas por 24.5 (`scale/1-75`, la ÚNICA medida atada a variable en
+ * estas filas de la maqueta) y filas separadas por 12.25 (`scale/0-875`). En Figma esa
+ * separación vertical vale 12 y va suelta, sin variable: 12 no es peldaño de la tabla 14-base y
+ * 12.25 es el escalón que le toca. Nodos: `row` 2286:5408 (columnas) y `container` 2286:5407
+ * (filas) en Grupos, `container` 2286:5581 y 2286:5558 en Servicio.
+ */
 
 .grid {
   display: grid;
-  gap: var(--sc-spacing-1-75); /* 24.5 — `Slot 1/container` 393:12650 */
+  column-gap: var(--sc-spacing-1-75);
+  row-gap: var(--sc-spacing-0-875);
 
   &--2 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
+
+  /*
+   * La variante 70/30 de la maqueta: 578.5 + 24.5 + 214 sobre los 817 útiles. La usan
+   * "Recepción de conversaciones" (2286:5581) y las dos filas de URL de "Notificaciones"
+   * (2286:5558) — un campo ancho a la izquierda y una columna estrecha de opciones a la derecha.
+   */
+  &--wide-narrow {
+    grid-template-columns: minmax(0, 578.5fr) minmax(0, 214fr);
+  }
 }
 
 @media (max-width: 720px) {
-  .grid--2 {
+  .grid--2,
+  .grid--wide-narrow {
     grid-template-columns: 1fr;
+  }
+}
+
+/* ---------- Campo con la etiqueta AL LADO ----------
+ *
+ * "Máximo de conversaciones en cola [ 9 ]", "Tamaño [ 400 ] píxeles". No es un campo con
+ * etiqueta flotante: es una frase con un hueco, y así lo dibuja la maqueta (2286:5411,
+ * 2286:5417, 2286:5402, y en Servicio 2286:5624). Separación 12.25 (`scale/0-875`; Figma pone
+ * 12 suelto) y el control a los 71 de ancho que mide ahí el `inputnumber`.
+ */
+.inline-field {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sc-spacing-0-875);
+  min-width: 0;
+
+  /* Mismos tres ejes que `.field__label` (text style `Caption/caption-regular`). */
+  &__label {
+    font-size: var(--sc-font-size-caption);
+    line-height: var(--sc-line-height-caption);
+    font-weight: var(--sc-font-weight-caption);
+    color: var(--sc-text-secondary);
+  }
+
+  &__suffix {
+    font-size: var(--sc-font-size-caption);
+    line-height: var(--sc-line-height-caption);
+    color: var(--sc-text-secondary);
+    white-space: nowrap;
+  }
+
+  sc-inputnumber {
+    /* 71 = `inputnumber` de la maqueta. Es un ancho de CONTROL, no una medida de layout: no sale
+     * de la escala 14-base y no puede — la escala mide aire, no cajas de campo. La maqueta lo
+     * dibuja también a 94 en "Tamaño" (2286:5402); ese doble valor va a la lista de
+     * discrepancias, y aquí manda el que se repite seis veces. */
+    width: 71px;
+    flex: 0 0 auto;
   }
 }
 
 /* ---------- Radio rows ---------- */
 
+/* 12.25 (`scale/0-875`) entre radios — la maqueta pone 12 suelto (`container radio buttons`,
+ * 2286:5583). A 14px de texto los dos no caben en la columna de 214 y envuelven; en la maqueta
+ * caben porque su texto va a 12. Envolver está bien aquí: es un grupo de radios, no una fila. */
 .radio-row {
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--sc-spacing-1-125);
+  gap: var(--sc-spacing-0-875);
 }
 
 .radio {

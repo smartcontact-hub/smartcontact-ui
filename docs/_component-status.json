@@ -657,7 +657,7 @@
         "sc-field-msg"
       ],
       "hasDemo": true,
-      "usedInSupervisor": 7
+      "usedInSupervisor": 12
     },
     {
       "name": "inputtext",
@@ -697,7 +697,7 @@
         "sc-field-msg"
       ],
       "hasDemo": true,
-      "usedInSupervisor": 33
+      "usedInSupervisor": 30
     },
     {
       "name": "keyboard-shortcuts",

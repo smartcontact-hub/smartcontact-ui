@@ -15,6 +15,104 @@
 > coordine. Los `sNN` de los tramos viejos se quedan como están: los nombran commits y
 > `docs/DECISIONS.md`, y reescribirlos solo desincronizaría el doc de su propia historia.
 
+## ✅ 2026-09-09 · Servicio y Grupos se casan con su maqueta, y el padding de la caja vuelve al maestro del DS
+
+**Sello:** pendiente de PR. `preflight` (el nuevo de DD-60, sin navegador) VERDE sobre el árbol
+final: 37 gates + los cuatro builds AOT. Los e2e los corre el CI. La **baseline visual** de la
+ficha de `sc-section-card` se regrabó y se pasó A MANO en este Mac (`e2e:visual` no lo corre ya
+ningún gate — lo dice el tramo de DD-60 de abajo).
+
+**De dónde sale.** Rafa, con tres encargos en orden: casar las medidas de `config/aed/servicio` y
+`config/aed/grupos` contra sus maquetas (solo Agentes estaba al píxel), contrastar el padding de
+`sc-section-card` contra la maqueta de los formularios de admin, y repasar juntos las
+discrepancias del propio Figma. Y una forma de trabajar: **barrer TODAS las propiedades de
+TODOS los nodos de una vez** y **arreglar en la misma pasada** lo que salga.
+
+**Lo primero que hay que saber, porque cambia el resto: las maquetas son de DOS generaciones.**
+
+| Pantalla | Maqueta | Generación |
+| --- | --- | --- |
+| Agentes | `393:12562` (sección «Prototipo de limpieza») | NUEVA: `Block` blanco con borde y divisores |
+| Servicio (General) | `2286:5351` (sección «Flujos») | VIEJA: `Section` gris con `.Subsection` blancas dentro |
+| Grupos | `2286:5324` (sección «Flujos») | VIEJA, igual |
+| Formularios de admin | **no existe** | — |
+
+La sección «Prototipo de limpieza» tiene DIEZ marcos y los diez son de Agentes: nadie rehizo
+Servicio ni Grupos con el patrón nuevo. Rafa eligió (2026-09-09) quedarse la caja nueva y adoptar
+de la maqueta vieja el REPARTO interno, que es lo único medido que hay para esas dos pantallas.
+
+**Lo que entra en el componente (DD-61).** Cada piel toma las medidas de SU nodo, y las dos las
+tienen atadas a variable en Figma:
+
+| | `subtle` (formulario) | `card` (sobre el lienzo) |
+| --- | --- | --- |
+| Nodo | maestro `Section` 691:23956 del DS | `Block` 393:12587 del Supervisor |
+| Padding | 22.75 / 16 (`scale/1-625`, `scale/1-143`) | 24.5 (`scale/1-75`) |
+| Título → contenido | 14 (`scale/1`) | 16 (`scale/1-143`) |
+| Línea bajo el título | **ninguna** (no está en Figma) | ninguna |
+| Sangría de la cabecera | — | +12.25 (`scale/0-875`), como el contenido |
+
+Y en las dos: icono de cabecera a **14** (no 16) y separación icono→título a **8.75**.
+
+**El título de página baja de 18 a 14** (decisión de Rafa tras verle la evidencia). `headingLevel`
+deja de arrastrar el tamaño y solo decide la semántica (`<h1>` o `<h2>`). Lo que lo motiva no es
+fidelidad, es que el 18 no lo respaldaba nada: DD-57 lo dedujo de que la escala TIENE un peldaño
+`h3`, y medido hoy **en todo el archivo Supervisor no hay un texto por encima de 14**. El
+argumento que decide es óptico: el icono de la cabecera mide 14 en los dos nodos, y un título de
+18 a su lado deja el icono corto. `page-identity.spec.ts` pasa a vigilar dos familias —título
+suelto sobre el lienzo a 18/600, título contenido en su sección a 14/600—, cada una invariante
+hacia dentro.
+
+⚠️ **DD-57 decía que el 24.5 era «el valor que la maqueta del DS respalda» y no lo era**: sale del
+`Block`, que es un marco LOCAL del archivo de pantallas. El maestro del DS mide 22.75/16. Las once
+cards de los formularios de admin vuelven ahí.
+
+**Lo que entra en las pantallas** (todo medido contra la maqueta, no a ojo):
+
+- **Grupos**, cuatro filas de dos columnas (396.25 + 24.5 + 396.25): estrategia | prioridad ·
+  tipo de cola | máximo en cola · tiempo de espera | tiempo de transferencia · voz | desbordar.
+  Los tres numéricos pasan de texto libre a `sc-inputnumber` con la etiqueta AL LADO, y entra el
+  campo **Tamaño … píxeles** de «Apertura de ficha», que en la maqueta estaba y en el código no.
+- **Servicio**: las dos casillas de «ventana de conversaciones» en pareja; «Recepción» y las URLs
+  de «Notificaciones» a 70/30 (578.5 / 214); las tres casillas de eventos con **cabecera de
+  columnas** Inicio · Fin · Resultado en vez de repetir los rótulos bajo cada URL; los cinco
+  estados visibles como BANDA (fondo `gray/50`, radio 6, nombre a 125 en columna, descripción al
+  lado) en vez de fila con línea y texto apilado; y las dos filas de «bloqueo por inactividad»
+  compartiendo rejilla para que sus frases arranquen en la misma vertical.
+- **Agentes**: la tabla llevaba la sangría de 12.25 DOS veces (margen + padding de celda) y además
+  se salía 12.25 por la derecha —`margin-inline` sobre un `width:100%` empuja, no encoge—. La
+  sangría se queda solo en `.sub-section` y sube a la hoja COMPARTIDA: allí solo la veía Agentes.
+
+**Lo que NO se replicó, y por qué** — para llevar a diseño:
+
+1. **Las separaciones verticales de las maquetas viejas van sueltas y fuera de la escala**: 8 la
+   cabecera, 12 las filas, 4 los estados visibles. Solo las horizontales de 24.5 están atadas
+   (comprobado en `boundVariables`). Se usan los peldaños que les tocan: 8.75, 12.25, 3.5.
+2. **El borde del `Block`** (393:12587) es negro al 10% SIN variable, teniendo el DS su token.
+3. **El mismo `inputnumber`, dos anchos** en la maqueta de Grupos: 71 en seis campos y 94 en
+   «Tamaño» (y 32 vs 34 de alto). Se usa 71, el que se repite.
+4. ~~El título de la página usa el mismo estilo que los títulos de sección~~ — **resuelto**: se
+   igualó el código a la maqueta (ver arriba y DD-61). El escalón que quedaba en el código no lo
+   respaldaba ningún nodo.
+5. **El item activo del rail se encoge**: inactivo pad 8.75 / gap 5.25 (atados), activo pad 8 /
+   gap 4 (sueltos) → 39.5 contra 38 de alto. Sigue igual que en el tramo anterior, ahora con los
+   `boundVariables` delante.
+6. **«Notifications» sin traducir** en la maqueta de Agentes. Sigue.
+7. **Cinco familias de estilos de texto** en el archivo Supervisor. Sigue (DD-54).
+
+**Lo que queda:**
+
+1. **Servicio y Grupos no tienen maqueta de la generación nueva.** Lo de hoy es la caja nueva con
+   el reparto de la vieja. Cuando se rehagan en «Prototipo de limpieza», hay que barrerlas otra vez.
+2. **Los formularios de admin no tienen maqueta de `sc-section-card`.** Su caja ya bebe del
+   maestro del DS, pero su CONTENIDO no está contrastado contra nada.
+3. **El barrido global de la tipografía** (`field__label`, 29 usos en 7 pantallas;
+   `sub-section__title`, 8 en 3) sigue pendiente, igual que en el tramo anterior.
+4. **Decidir si la app viva lleva un aviso** que apunte a `docs/PROTOTIPOS.md` (DD-56).
+5. **Todavía no hay ninguna versión congelada.** La primera la congela Rafa al entregar.
+
+---
+
 ## ✅ 2026-09-09 · La primera ejecución real del registro de despliegues respondió la incógnita
 
 **Sello:** pendiente de PR. Test nuevo en verde (6/6) y `npm run audit:cf-config` VERDE contra
@@ -55,6 +153,7 @@ entonces el paso del workflow avisa y sigue; la comprobación real solo corre en
 | Cloudflare **congela el build command en cada deployment** | Cambiarlo no toca lo que ya está en cola: hay que reintentar ese deployment (el reintento sí coge el nuevo) |
 | `POST deployments` con la rama ya en cola responde **304 vacío** | No crea nada y no lo dice. El camino es `retry` sobre el deployment |
 | Dos merges en 30 s → el primero **nunca se sirve** | Cloudflare salta al último; el registro del primero sale rojo en los cinco y es correcto, pero es ruido |
+
 
 ## ✅ 2026-09-09 · Los e2e salen del preflight, y las baselines visuales NO caben en el CI (medido)
 
@@ -173,6 +272,7 @@ No causó este fallo, pero es una diferencia entre lo que probamos y lo que corr
 Cambiarlo toca `preflight` **y** `ci.yml` a la vez, porque `ci-preflight-parity` los cruza.
 
 *Confirmado y corregido el mismo día, tramo de arriba: era el build command del panel, y ahora lo vigila `audit:cf-config`.*
+
 
 ## ✅ 2026-09-09 · El título contenido deja de ser de una pantalla y pasa a ser del componente
 
