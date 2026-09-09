@@ -46,8 +46,14 @@ const gotoPage = async (page: Page, path: string) => {
  * página entera recompuesta, no ruido— y se acabó culpando al entorno. Una red
  * que lleva meses roja no avisa de nada: enseña a ignorarla.
  *
- * Que sigue cazando de verdad está medido, no supuesto: con UNA letra cambiada
- * en una story, este assert se pone rojo (1501 px).
+ * Que sigue cazando de verdad está medido, no supuesto, y se volvió a medir el 2026-09-09 al
+ * pasar del `fullPage` al contenido: con UNA letra cambiada en una story, este assert se pone
+ * rojo (204 px con el encuadre nuevo; eran 1501 con la página entera, que incluía el marco).
+ *
+ * Y lo que YA NO caza, que es el objetivo del cambio: un enlace nuevo en la barra lateral deja
+ * las 38 en VERDE. Antes ponía 8 en rojo sin que ningún componente hubiera cambiado. Las dos
+ * mitades se probaron el mismo día, y el cambio del marco se verificó que LLEGABA al navegador
+ * con un control que debía enrojecer y enrojeció (el test del top-nav contó 6 enlaces).
  */
 const screenshotBaseline = async (page: Page, name: string) => {
   /* La red se apaga donde NO puede casar, y SOLO ahí.
@@ -99,7 +105,23 @@ const screenshotBaseline = async (page: Page, name: string) => {
       if (el.scrollTop !== 0) el.scrollTop = 0;
     }
   });
-  await expect(page).toHaveScreenshot(`${name}.png`, { fullPage: true, animations: 'disabled' });
+  /* Se captura el CONTENIDO, no la página entera.
+   *
+   * Era `expect(page)` con `fullPage: true`, o sea el shell incluido. Eso hacía que
+   * cualquier cambio del MARCO invalidara todas las baselines a la vez, sin que ningún
+   * componente hubiera cambiado: medido el 2026-09-09, añadir UN enlace a la barra lateral
+   * («Novedades») puso 8 en rojo con diffs de 147 a 337 px. Una red que se pone roja por
+   * algo que no vigila enseña a regenerarla sin mirar, que es como se pudrieron 213 commits.
+   *
+   * `getByRole('main')` y no una clase: el preámbulo de arriba documenta cómo un
+   * `.sb-shell__side` renombrado colgó las 25 baselines sin que el síntoma se pareciera a la
+   * causa. Un landmark ARIA no lo renombra nadie, y si desapareciera, el `toBeVisible` de
+   * abajo falla en 5 s con su nombre, en vez de agotar el timeout del test. */
+  const contenido = page.getByRole('main');
+  await expect(contenido, 'el shell de sc-docs tiene que exponer un landmark `main`').toBeVisible({
+    timeout: 5_000,
+  });
+  await expect(contenido).toHaveScreenshot(`${name}.png`, { animations: 'disabled' });
 };
 
 test('el índice de componentes lista las páginas', async ({ page }) => {
