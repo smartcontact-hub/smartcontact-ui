@@ -432,6 +432,19 @@ this wrap-up routine **without asking permission first**:
    capture; retired once it had served that purpose. Never merged to `main`.
 6. Reply with one or two sentences confirming what was pushed and where the trail lives.
 
+**Cuando se FUNDE un PR, limpia sin preguntar.** Borra la rama remota
+(`gh pr merge --delete-branch`), las ramas locales que queden y el worktree, en el mismo turno
+y sin pedir permiso: el trabajo vive en `main`, no en la carpeta ni en la rama, y pedir
+autorización para la limpieza de algo ya fundido es fricción pura. En Orca, el worktree activo
+se borra desde dentro con `orca worktree rm --worktree active --force --json`, y es lo ÚLTIMO
+del turno porque se lleva la sesión por delante. (Norma de Rafa, 2026-09-09.)
+
+⚠️ **Excepción absoluta: las ramas `proto/*` no se borran NUNCA.** Son las versiones congeladas
+que se pegan en Jira y Confluence (ver [`docs/PROTOTIPOS.md`](docs/PROTOTIPOS.md)). No se
+mergean, así que no casan con «rama de PR fundido», pero queda escrito por si acaso: borrar una
+tumba la URL que un desarrollador tiene abierta en su ticket. La etiqueta git sobreviviría; la
+URL, no.
+
 **Why this exists.** Every session must leave the repo with both the code *and* a written
 trail of how we got there, so the next session — and any future contributor — never has to
 re-derive context from `git log` alone. See [`docs/DOCS-INDEX.md`](docs/DOCS-INDEX.md) for

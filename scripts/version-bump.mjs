@@ -22,6 +22,7 @@ import { resolve } from 'node:path';
 
 const root = resolve(import.meta.dirname, '..');
 const ROOT_PKG = resolve(root, 'package.json');
+const ROOT_LOCK = resolve(root, 'package-lock.json');
 const PKGS = [
   'projects/design-tokens/package.json',
   'projects/ui-smartcontact-icons/package.json',
@@ -68,8 +69,25 @@ function bump(path) {
   if (write) writeFileSync(path, src);
 }
 
+/**
+ * El lock repite la versión raíz en DOS sitios (`version` y `packages[""].version`) y `npm ci`
+ * no los mira, así que un lock desfasado pasa el CI en verde: el corte de la 1.0.0 dejó el lock
+ * en `0.2.0` y nadie se enteró hasta el 2026-09-09. Se sincronizan aquí, y `lockfile-guard.mjs`
+ * lo comprueba en el paso 1 del preflight por si alguien edita una versión a mano.
+ */
+function bumpLock() {
+  let src = readFileSync(ROOT_LOCK, 'utf8');
+  // Las dos primeras: la raíz del documento y la del paquete "" (el propio repo). Las demás
+  // "version" del lock son de dependencias y no se tocan.
+  let restantes = 2;
+  src = src.replace(/("version":\s*")[^"]+(")/g, (m, a, b) => (restantes-- > 0 ? `${a}${next}${b}` : m));
+  console.log(`  package-lock.json  →  ${next}  (version + packages[""].version)`);
+  if (write) writeFileSync(ROOT_LOCK, src);
+}
+
 bump(ROOT_PKG);
 for (const p of PKGS) bump(p);
+bumpLock();
 
 console.log(
   write
