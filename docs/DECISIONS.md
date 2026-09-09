@@ -54,6 +54,59 @@
 
 ---
 
+## DD-58 · 2026-09-09 — El DS corta **1.0.0**, y se descarga por *release*, no por registro
+
+**Contexto** · Rafa abre la pantalla de *Deployments* del repo y ve el último despliegue del
+**15 de junio**. Ese entorno (`github-pages`) es un **fósil**: Pages se retiró ese mismo día a
+favor de Cloudflare (DD-17) y su workflow se borró en el commit `dbc3603`, así que la pantalla
+lleva casi tres meses contando algo que ya no existe. Lo que sí estaba parado de verdad: los
+tres paquetes seguían en **0.2.0 (2026-06-14)** con **654 commits** encima, la sección
+`[Unreleased]` del CHANGELOG **vacía**, y **cero releases** en un repo **público**. Nadie de
+fuera podía descargarse el DS ni enterarse de qué había cambiado.
+
+**Decisión** · Cuatro cosas, en el mismo corte:
+1. **Versión `1.0.0`**, con la promesa que trae: la API pública `sc-*` y el contrato `--sc-*`
+   rompen **solo en un major**, y cuando rompen se dice en el CHANGELOG con su DD enlazado.
+2. **El canal de descarga es la release de GitHub**, con los tres tarballs adjuntos. Un
+   `npm i <url del .tgz>` y ya, sin clonar ni compilar.
+3. **Las notas se LEEN del CHANGELOG**, no se escriben aparte: `scripts/release.mjs` extrae la
+   sección de la versión y reescribe sus enlaces relativos a URLs absolutas del tag.
+4. **Se borra el entorno `github-pages`** muerto.
+
+**Razón** · El número lo justifica **lo que hay dentro**, medido hoy en este árbol, no el
+calendario: **5 aplicaciones en producción** consumiéndolo, **50 componentes** en el inventario
+auto-generado, **10 zonas `@sc-gen:*`** que se regeneran desde el export del Kit, y **36 pasos**
+encadenados en `verify`. Y hay **cambios que rompen** desde 0.2.0 (Angular 21→22 y PrimeNG
+21→22, el `ControlValueAccessor` fuera de los seis campos, los tokens renombrados a los nombres
+del Kit, `sc-page-header` retirado): en pre-1.0 esos cambios viajan en un **minor** sin que nadie
+tenga que avisar, y eso es exactamente lo que 1.0.0 deja de permitir.
+
+**Descartadas** ·
+· *Seguir en 0.x (`0.3.0`)* — honesto con el calendario (la primera decisión de este sistema es
+  del 2026-05-13: **cuatro meses**, no un año) pero **deshonesto con el estado**. Un `0.x` le
+  dice al que lo instala "esto puede cambiar debajo de ti en cualquier minor", y hace meses que
+  no cambia nada debajo de nadie sin un DD que lo explique. La versión describe el **contrato**,
+  no el tiempo trabajado.
+· *`2.x` o más alto, "para que se note que está avanzado"* — un major inventado obliga a fingir
+  un `1.x` que nunca existió. Lo que se nota es el contenido de la nota, no el dígito.
+· *Desaparcar GitHub Packages y publicar en el registro* — lo que aparcó DD-17 **sigue siendo
+  cierto**: con un repo y un consumidor, el ciclo publicar-versionar-instalar cuesta más de lo
+  que aporta, y encima obliga al que instala a tener token de lectura y `.npmrc`. La release da
+  **la descarga sin el coste del registro**. El día que haya un consumidor externo de verdad, el
+  pipeline sigue ahí (`publish:packages`).
+· *Escribir las notas a mano en la página de la release* — dos textos del mismo anuncio divergen.
+  Es la misma clase de fallo que los snippets de `sc-docs` (dos textos, ninguno atado al otro).
+· *Revivir GitHub Pages para que la pantalla de Deployments deje de mentir* — sería un **sexto
+  sitio** que mantener solo para que una pantalla no engañe. Los 5 sitios vivos están en
+  Cloudflare desde DD-17; el fósil se borra, que es lo que arregla el síntoma de raíz.
+
+**Consecuencias** · `npm run release` corta la versión (**dry-run por defecto**, `-- --publish`
+para hacerla) y falla antes de tocar nada si el árbol está sucio, no estás en `main`, el tag ya
+existe, los cuatro `package.json` no van en lockstep o el CHANGELOG no tiene sección para esa
+versión. Desde aquí, **un cambio que rompa obliga a un major**: el CHANGELOG ya no dice
+"pre-1.0, la API puede cambiar entre minors". El README estrena badge de versión y la sección
+de descarga; `docs/ROADMAP.md` registra el corte.
+
 ## DD-57 · 2026-09-09 — En una pantalla con índice lateral el título va DENTRO de su sección, y esa caja es UNA sola en todo el repo
 
 **Contexto** · La maqueta de `Contact Center · Agentes` (Figma Supervisor 393:12588) pone el
