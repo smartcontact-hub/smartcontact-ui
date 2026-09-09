@@ -46,6 +46,23 @@ export function sinHeredocs(cmd) {
   return out.join('\n');
 }
 
+/** Ficheros que el comando ESCRIBÍA (redirección `>`/`>>`), fuera de `/dev` y `/tmp`.
+ *
+ *  Existe porque una denegación tira el comando ENTERO: si el mismo `Bash` traía un
+ *  `cat > fichero <<'EOF'` junto al gate, ese fichero NO se escribe y **no se entera nadie**.
+ *  Pasó tres veces en la sesión del 2026-09-09; la peor dejó `deploy-record.yml` sin crear y lo
+ *  cazó `docs:guard` mucho después, como un enlace roto en el README. El hook no puede permitir
+ *  la escritura (no parte comandos), pero sí puede DECIRLO en el motivo. */
+export function escrituras(cmd) {
+  const salida = new Set();
+  for (const m of sinHeredocs(cmd).matchAll(/(?<![0-9&])>>?\s*(["']?)([^\s;&|>"']+)\1/g)) {
+    const f = m[2];
+    if (f.startsWith('/dev/') || f.startsWith('/tmp/') || f.startsWith('/private/tmp/')) continue;
+    salida.add(f);
+  }
+  return [...salida];
+}
+
 /** Parte un comando compuesto en segmentos por `;`, `&&`, `|` (no `||`). Ignora comillas simples. */
 function segmentos(cmdCrudo) {
   const cmd = sinHeredocs(cmdCrudo);
@@ -126,6 +143,19 @@ function preflightVivo(cwd) {
  * Devuelve { decision: 'allow' | 'deny', reason }.
  */
 export function evaluar(cmd, ctx = {}) {
+  const r = evaluarBase(cmd, ctx);
+  if (r.decision !== 'deny') return r;
+  const perdidas = escrituras(cmd);
+  if (perdidas.length === 0) return r;
+  return {
+    ...r,
+    reason:
+      `${r.reason}\n\n⚠️ Y OJO: este comando también escribía ${perdidas.join(', ')}. ` +
+      'Al denegarlo NO se ha escrito ninguno. Sepáralos: primero el fichero, en su propia llamada.',
+  };
+}
+
+function evaluarBase(cmd, ctx = {}) {
   if (BYPASS.test(cmd)) return { decision: 'allow', reason: 'sc:ok explícito' };
   const cwd = ctx.cwd || process.cwd();
   const preflight = ctx.preflight || estadoPreflight;

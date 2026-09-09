@@ -94,9 +94,23 @@ sigue siendo cierto de DD-17 y las 5 apps siguen leyendo de `dist/`. La primera 
 descartaba el registro ENTERO sin separar el ciclo diario del publish por release; lo rectificó el
 propio Rafa al señalar la pantalla de Packages, y el DD lo dice.
 
-**Incógnita abierta.** No se puede leer desde aquí qué comando de build tiene cada proyecto en el
-panel de Cloudflare. Si alguno no usa el script `build:<app>` de `package.json`, ese sitio se queda sin sello y
-`deploy-record` lo dirá en rojo. La primera ejecución real es la que lo responde.
+**La incógnita, contestada por su primera ejecución real.** `deploy-record` sobre `f1b8577`:
+**4 de 5 confirmados** (sc-docs, agent, cuscare, agent-mini sirvieron el commit) y **`supervisor`
+NO**, ni en los 20 minutos del job ni **dos horas después** (sondeo tardío: sigue devolviendo el
+`index.html`, o sea que no hay `build.json`). No es lentitud: el proyecto `supervisor` del panel de
+Cloudflare no construye con `npm run build:supervisor`, así que se salta el sello. Los otros cuatro
+sí lo usan. **No se pudo confirmar en el panel: el token de Cloudflare de `~/.wrangler/config/` está
+CADUCADO** (`9109 Invalid access token`) — hay que renovarlo antes de auditar nada de Cloudflare por
+API. El arreglo es de Rafa, un campo del panel.
+
+Y el mecanismo hizo lo que prometía: lo dijo en ROJO en vez de apuntarlo como bueno, con un caso
+auténtico y no fabricado.
+
+**SIGUIENTE (pequeño, medido hoy).** `preflight` construye tres apps **saltándose sus propios
+scripts** (`npx ng build supervisor|agent|cuscare` en vez del `build:<app>` de cada una), así que en local
+el sello NO se ejercita para ellas: `dist/sc-docs/browser/build.json` existe y los otros tres no.
+No causó este fallo, pero es una diferencia entre lo que probamos y lo que corre Cloudflare.
+Cambiarlo toca `preflight` **y** `ci.yml` a la vez, porque `ci-preflight-parity` los cruza.
 
 ## ✅ 2026-09-09 · El título contenido deja de ser de una pantalla y pasa a ser del componente
 
