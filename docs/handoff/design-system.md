@@ -15,6 +15,47 @@
 > coordine. Los `sNN` de los tramos viejos se quedan como están: los nombran commits y
 > `docs/DECISIONS.md`, y reescribirlos solo desincronizaría el doc de su propia historia.
 
+## ✅ 2026-09-09 · La primera ejecución real del registro de despliegues respondió la incógnita
+
+**Sello:** pendiente de PR. Test nuevo en verde (6/6) y `npm run audit:cf-config` VERDE contra
+los 5 proyectos de Cloudflare, medido hoy. Veredicto del CI por `npm run ci:verdict` al fundir.
+
+**De dónde sale.** Rafa enseña *Deployments*: el #75 verde en cuatro sitios y **rojo en
+supervisor**, y el #74 rojo en los cinco. «¿todo bien?».
+
+**Lo que se midió.** Supervisor SÍ servía el commit correcto (mismo `main.js` que el deployment
+de Cloudflare del #75, terminado en éxito). Lo que no servía era `build.json`: devolvía el
+`index.html`. Leído el panel por API, su comando de build era `npm run build && npx ng build
+supervisor --configuration production`, el único de los cinco que no pasa por
+`stamp-build.mjs`. Los otros cuatro usan su script `build:*` de `package.json`. El rojo del #74 es otra cosa: se
+fundió 30 s antes que el #75 y Cloudflare saltó directo al #75; ningún sitio sirvió nunca el #74,
+y el registro lo dice tal cual. De paso: agent-mini tenía `NODE_VERSION=22.23.2` como variable,
+duplicando `.node-version`.
+
+**Qué se hizo.** Comando de supervisor corregido por PATCH; el #76 ya estaba en cola con el
+comando viejo, así que se reintentó ese deployment cuando terminó y se relanzó el registro a
+mano (`workflow_dispatch`): **5/5 verde**. Variable de agent-mini borrada. Y como el panel no lo
+ve ningún gate: `audit:cf-config` lee los cuatro ajustes de cada proyecto por API y los compara
+con lo que el repo espera (mapa explícito app → proyecto → script, porque sc-docs se construye
+con `build:docs` y no con un nombre derivado de la app, que es lo que yo había escrito; el test
+lo fija). Corre en local con el
+OAuth de wrangler y en `deploy-record.yml` con el secret `CLOUDFLARE_API_TOKEN`. Sin secret, el
+paso lo dice y no afirma nada. La auditoría semanal lo tiene como pasada D. Y cuando un sitio
+nunca mostró sello, el rojo del registro ya apunta al comando de build.
+
+**Lo que queda en manos de Rafa.** Crear el token en Cloudflare (API Tokens → Custom → permiso
+*Account · Cloudflare Pages · Read*) y guardarlo con `gh secret set CLOUDFLARE_API_TOKEN`. Hasta
+entonces el paso del workflow avisa y sigue; la comprobación real solo corre en local.
+
+**Trampas medidas hoy.**
+
+| Trampa | Qué pasó |
+| --- | --- |
+| El OAuth de wrangler **caduca en una hora** y solo lo refresca wrangler | `Invalid access token` dos veces en la misma sesión; `npx wrangler whoami` lo renueva. El script lo dice |
+| Cloudflare **congela el build command en cada deployment** | Cambiarlo no toca lo que ya está en cola: hay que reintentar ese deployment (el reintento sí coge el nuevo) |
+| `POST deployments` con la rama ya en cola responde **304 vacío** | No crea nada y no lo dice. El camino es `retry` sobre el deployment |
+| Dos merges en 30 s → el primero **nunca se sirve** | Cloudflare salta al último; el registro del primero sale rojo en los cinco y es correcto, pero es ruido |
+
 ## ✅ 2026-09-09 · Los e2e salen del preflight, y las baselines visuales NO caben en el CI (medido)
 
 **Sello:** PR #77 (DD-60) rebasado sobre `main` y cerrado sin el job `e2e-visual`. `preflight`
@@ -111,6 +152,8 @@ scripts** (`npx ng build supervisor|agent|cuscare` en vez del `build:<app>` de c
 el sello NO se ejercita para ellas: `dist/sc-docs/browser/build.json` existe y los otros tres no.
 No causó este fallo, pero es una diferencia entre lo que probamos y lo que corre Cloudflare.
 Cambiarlo toca `preflight` **y** `ci.yml` a la vez, porque `ci-preflight-parity` los cruza.
+
+*Confirmado y corregido el mismo día, tramo de arriba: era el build command del panel, y ahora lo vigila `audit:cf-config`.*
 
 ## ✅ 2026-09-09 · El título contenido deja de ser de una pantalla y pasa a ser del componente
 
