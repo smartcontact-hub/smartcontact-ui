@@ -436,7 +436,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 5
+      "usedInSupervisor": 8
     },
     {
       "name": "drawer",
@@ -916,18 +916,20 @@
       "kind": "CUSTOM",
       "primengBase": "—",
       "cva": false,
-      "inputs": 6,
+      "inputs": 8,
       "api": [
         "anchorId",
         "collapsible",
         "flush",
+        "headingLevel",
         "hintKey",
         "icon",
-        "initiallyCollapsed"
+        "initiallyCollapsed",
+        "surface"
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 11
+      "usedInSupervisor": 14
     },
     {
       "name": "select",

@@ -71,119 +71,17 @@
   }
 }
 
-/* ---------- Settings card (Figma SettingsCard) ---------- */
-
-.settings-card {
-  /* El `Block` de la maqueta (Figma 393:12587): superficie blanca, borde,
-   * radio 12 y 24.5 de padding. Antes: radio 8 y 16 de padding, medidas de
-   * cuando la card vivía dentro de una bandeja gris que ya no existe. El radio
-   * sube a `radius-400` (12) porque es el mismo que usa el índice de al lado:
-   * dos cajas hermanas del mismo lienzo no pueden tener esquinas distintas. */
-  display: block;
-  background: var(--sc-bg-surface);
-  border: 1px solid var(--sc-border-default);
-  border-radius: var(--sc-radius-400);
-
-  &__head {
-    padding: var(--sc-spacing-1-75) var(--sc-spacing-1-75) var(--sc-spacing-1-125);
-    border-bottom: 1px solid var(--sc-border-subtle);
-  }
-
-  /* Header con icono + título (Figma: card "General/Agentes/Grupos"). */
-  &__head--icon {
-    display: flex;
-    align-items: center;
-    gap: var(--sc-spacing-0-625);
-    border-bottom: 0;
-    padding-bottom: 0;
-  }
-
-  &__head-icon {
-    color: var(--sc-text-secondary);
-  }
-
-  /* La MÉTRICA la pone `.sc-text-h3-semibold` en la plantilla. Aquí solo queda
-   * lo que no es tipografía; si esta regla declarase `font-size`, ganaría a la
-   * clase global (el SCSS de componente añade `[_ngcontent-*]` y sube a (0,2,0)).
-   *
-   * `h3` (18/24) y no los 16/24 de antes: el 16 salía de `--sc-font-size-300`,
-   * un peldaño SIN text style detrás. Con los 12 estilos del Figma, un título de
-   * sección solo puede ser `h3` o `body`, y `body` mediría lo mismo que las
-   * filas de la tabla. Tres niveles claros: 18 semibold sección · 14 semibold
-   * subsección · 14 regular contenido. */
-  &__title--lg {
-    margin: 0;
-    color: var(--sc-text-primary);
-  }
-
-  /* Igual que `sub-section__title`: los ejes de `Body/body-semibold` por su
-   * token de rol. Se van dos valores que no salían del sistema, el
-   * `line-height: 22px` literal y el peso `medium` (500, que no existe como
-   * text style: el Figma del DS solo publica Regular y Semibold). */
-  &__title {
-    margin: 0;
-    font-size: var(--sc-font-size-body-2);
-    line-height: var(--sc-line-height-body-2);
-    font-weight: var(--sc-font-weight-semibold);
-    color: var(--sc-text-primary);
-  }
-
-  &__hint {
-    margin: 4px 0 0;
-    font-size: var(--sc-font-size-caption);
-    line-height: var(--sc-line-height-caption);
-    color: var(--sc-text-subtle);
-  }
-
-  &__body {
-    display: flex;
-    flex-direction: column;
-    gap: var(--sc-spacing-1-143); /* 16 — `Block` 393:12587 separa sus secciones con 16 */
-    /* 24.5 (`scale/1-75`), el padding del `Block` de la maqueta. Arriba 0 cuando
-     * hay cabecera: ella ya pone el suyo. */
-    padding: var(--sc-spacing-1-75);
-
-    .settings-card__head + & {
-      padding-top: 0;
-    }
-
-    /* Cuando el body separa sub-secciones con <sc-divider>, el divider aporta
-     * su propio margin 14/14 (token Kit Pro). Bajamos el gap a 8.75 (scale-0-625)
-     * para que la separación total quede 1:1 con Figma (Supervisor 97:1906 →
-     * 8.75 + 29px divider + 8.75). `:has` lo limita a los bodies con divider:
-     * grupos y el card de URL (sin divider) mantienen el gap de 16. */
-    &:has(> sc-divider) {
-      gap: var(--sc-spacing-0-625);
-    }
-  }
-
-  &__foot {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    gap: var(--sc-spacing-1-125);
-    padding: var(--sc-spacing-0-875) var(--sc-spacing-1-75);
-    border-top: 1px solid var(--sc-border-subtle);
-  }
-
-  &__link {
-    font-size: var(--sc-font-size-50);
-    line-height: var(--sc-line-height-50);
-    color: var(--sc-color-cyan-700);
-    text-decoration: none;
-
-    &:hover,
-    &:focus-visible {
-      text-decoration: underline;
-    }
-  }
-
-  &__actions {
-    display: flex;
-    align-items: center;
-    gap: var(--sc-spacing-0-5);
-  }
-}
+/* ---------- Settings card ----------
+ *
+ * BORRADA el 2026-09-09. Era una copia local de `sc-section-card`: la misma caja, la misma
+ * cabecera de icono + título, el mismo radio. Las tres pantallas AED usan ya el componente del
+ * DS con `surface="card"`, así que la copia se queda sin usos — y con ella se van `__foot`,
+ * `__link` y `__actions`, que llevaban tiempo sin aparecer en ninguna plantilla.
+ *
+ * El motivo no es la línea que se ahorra: es que dos implementaciones de la misma caja se
+ * arreglan dos veces, o una sola y la otra deriva. Que es exactamente lo que había pasado — la
+ * copia tenía 24.5 de padding y radio 12, y el componente 21 y radio 12.
+ */
 
 /* ---------- Sub-section ---------- */
 

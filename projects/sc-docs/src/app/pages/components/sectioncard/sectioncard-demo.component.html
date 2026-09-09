@@ -73,5 +73,22 @@
     >
       <p class="demo-field">Sin fondo ni borde — el contenido va a sangre.</p>
     </sc-section-card>
+
+    <!-- La misma caja sobre el LIENZO, con el título de la página dentro (DD-57). -->
+    <sc-section-card
+      titleKey="Agentes"
+      icon="person"
+      surface="card"
+      [headingLevel]="1"
+      data-testid="sc-section-page"
+    >
+      <p class="demo-field">
+        <code>surface="card"</code> es la piel blanca con borde, para una sección que va sola
+        sobre el lienzo en vez de dentro de un formulario. Con
+        <code>[headingLevel]="1"</code> el título es el <code>&lt;h1&gt;</code> de la página y
+        sube al tamaño que le toca (18/24): así el título acota su caja en vez de flotar encima
+        de ella, y arranca en la misma línea que el índice lateral.
+      </p>
+    </sc-section-card>
   </div>
 </ng-template>

@@ -41,7 +41,8 @@
 >
 > | Tema | DD |
 > |---|---|
-> | Los estilos de texto se ponen a lo que NO es un componente · un `<sc-*>` no lleva `.sc-text-*` encima | DD-55 |
+> | El título de una pantalla con rail va DENTRO de su sección · `sc-section-card` es la única caja | DD-57 |
+| Los estilos de texto se ponen a lo que NO es un componente · un `<sc-*>` no lleva `.sc-text-*` encima | DD-55 |
 | Qué escala tipográfica manda (la de la librería del DS) y qué se rompió al elegirla | DD-54 |
 | Anatomía de página en `_page.scss` · el constructor entra en el molde · la barra sticky del trío admin es deliberada · escritorio primero · `DD#` no es `DD-` | DD-53 |
 > | El índice del rail envuelve en vez de recortar el nombre de su destino | DD-52 |
@@ -52,6 +53,63 @@
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
 
 ---
+
+## DD-57 · 2026-09-09 — En una pantalla con índice lateral el título va DENTRO de su sección, y esa caja es UNA sola en todo el repo
+
+**Contexto** · La maqueta de `Contact Center · Agentes` (Figma Supervisor 393:12588) pone el
+título de la página dentro de la primera sección, con su icono. Se aplicó ahí, y Rafa pidió lo
+mismo para el resto de flujos con rail: «ese mismo estilo de contener título en la section
+settings tiene que ser aplicable al resto de flujos que tengan nav trail. Y su posición. Y adapta
+también las clases según corresponda».
+
+Al ir a replicarlo apareció lo de siempre: el patrón **ya existía** en el DS. `sc-section-card`
+lo usan los tres formularios de admin desde hace tiempo, con su cabecera de icono + título. Y
+`config/aed/*` tenía una copia local llamada `settings-card`, escrita a mano. Dos
+implementaciones de la misma caja, ya divergidas: la copia con 24.5 de padding y el componente
+con 21.
+
+**Decisión** ·
+
+1. **El título de una pantalla con rail lo pinta `sc-section-card`**, nunca una etiqueta suelta.
+   Contenido, el título ACOTA su caja —que es lo que hace un título— y arranca en la misma línea
+   que el rail en vez de 16px más abajo.
+2. **El componente gana dos ejes**, porque las dos variantes eran la misma caja con otra piel:
+   - `headingLevel` (`2` por defecto, `1` para el título de la página). El nivel arrastra el
+     tamaño: `1` usa los tokens `h3` (18/24) y `2` los de `body` semibold (14/20). Tres escalones
+     legibles: 18 la página, 14 semibold la sección, 14 regular el contenido.
+   - `surface` (`subtle` por defecto, gris de formulario; `card` blanca con borde, la sección que
+     va sola sobre el lienzo).
+3. **`settings-card` se borra.** Las tres pantallas AED usan el componente; con ella se van
+   `__foot`, `__link` y `__actions`, que llevaban tiempo sin aparecer en ninguna plantilla.
+4. **Lo vigila `audit:titulo-contenido`** (gate 36), en las dos direcciones: las pantallas con
+   rail llevan su título dentro, y ninguna otra plantilla se pone el nivel de página.
+
+**Razón** · Lo que pidió Rafa no era replicar el HTML en dos sitios más: era «que mantengamos la
+consistencia y todo vinculado, para que los cambios sean lo más automatizados posibles». Copiar
+el patrón a mano en tres pantallas es exactamente lo contrario — a la tercera copia ya hay dos
+que derivan, que es lo que había pasado con el padding.
+
+Los números salen de la maqueta, no de gusto: `Block` 393:12587 son 920 de ancho, radio 12,
+padding 24.5 y gap 16 entre secciones; el `Header` 393:12588 lleva el icono a la izquierda del
+título. Tras el cambio, la pantalla casa con esas medidas SIN una sola diferencia (medido en el
+build: ancho, padding, gap, radio y borde de las ocho cajas de la pantalla).
+
+**Descartadas** ·
+
+- **Copiar el patrón a servicio y grupos con `settings-card`.** Es lo rápido y deja tres copias.
+- **Migrar sin `surface`**, aceptando el gris del componente. Probado y descartado en pantalla:
+  `sc-section-card` es el contenedor gris de formulario (sus subsecciones blancas destacan sobre
+  él) y el `Block` de la maqueta es blanco con borde, porque va solo sobre el lienzo. No son la
+  misma piel, aunque sí la misma caja.
+- **Aplicarlo también a los tres formularios de admin.** Su `<h1>` está oculto A PROPÓSITO: la
+  identidad la pinta la ficha de su propio rail, y un título visible más sería el duplicado que
+  S59 ya quitó (`page-identity.spec.ts`, punto 4). Quedan fuera, y el guardián lo dice.
+
+**Consecuencias** · El padding de `sc-section-card` sube de 21 a 24.5 y el de su cabecera se
+reparte para dejar los 16 del gap: eso mueve también las once cards de los formularios de admin,
+hacia el valor que la maqueta del DS respalda. `settings-card` deja de existir. Y el subtítulo
+«Ajustes de la plataforma» del rail se retira: no está en la maqueta y repetía lo que ya dicen el
+rótulo, la miga y el título.
 
 ## DD-56 · 2026-09-09 — Un enlace en un ticket apunta a una versión CONGELADA, no a la URL viva
 

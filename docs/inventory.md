@@ -47,7 +47,7 @@
 | `sc-datepicker` | EXTENDED | primeng/datepicker | 20 inputs | sc-field-label sc-field-msg | ✓ | 2 |
 | `sc-delete-entity-dialog` | STANDARD | primeng/button | 2 inputs | sc-dialog | ✓ | 9 |
 | `sc-dialog` | EXTENDED | primeng/dialog | 14 inputs | — | ✓ | 10 |
-| `sc-divider` | STANDARD | primeng/divider | 3 inputs | — | ✓ | 5 |
+| `sc-divider` | STANDARD | primeng/divider | 3 inputs | — | ✓ | 8 |
 | `sc-drawer` | EXTENDED | primeng/drawer | 8 inputs | — | ✓ | — |
 | `sc-empty-state` | CUSTOM | — | 2 inputs | — | ✓ | 10 |
 | `sc-field-label` | CUSTOM | — | 2 inputs | — | — | — |
@@ -69,7 +69,7 @@
 | `sc-progressspinner` | EXTENDED | primeng/progressspinner | 4 inputs | — | ✓ | — |
 | `sc-radiobutton` | EXTENDED | primeng/radiobutton | 7 inputs | — | ✓ | 2 |
 | `sc-search` | EXTENDED | primeng/iconfield, primeng/inputicon, primeng/inputtext | 11 inputs | — | ✓ | 14 |
-| `sc-section-card` | CUSTOM | — | 6 inputs | — | ✓ | 11 |
+| `sc-section-card` | CUSTOM | — | 8 inputs | — | ✓ | 14 |
 | `sc-select` | EXTENDED | primeng/select | 25 inputs | sc-field-label sc-field-msg | ✓ | 36 |
 | `sc-skeleton` | EXTENDED | primeng/skeleton | 6 inputs | — | ✓ | — |
 | `sc-slot` | CUSTOM | — | 2 inputs | — | ✓ | — |

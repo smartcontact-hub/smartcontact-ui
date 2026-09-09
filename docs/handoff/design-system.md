@@ -15,6 +15,49 @@
 > coordine. Los `sNN` de los tramos viejos se quedan como están: los nombran commits y
 > `docs/DECISIONS.md`, y reescribirlos solo desincronizaría el doc de su propia historia.
 
+## ✅ 2026-09-09 · El título contenido deja de ser de una pantalla y pasa a ser del componente
+
+**Sello:** pendiente de PR. `npm run verify` VERDE con los 36 gates.
+
+**De dónde sale.** Rafa, tras ver el patrón en Agentes: «ese mismo estilo de contener título en la
+section settings tiene que ser aplicable al resto de flujos que tengan nav trail. Y su posición. Y
+adapta también las clases según corresponda. Como sabes es importante que mantengamos la
+consistencia y todo vinculado, para que los cambios sean lo más automatizados posibles».
+
+**Lo que se encontró al ir a replicarlo.** El patrón YA existía en el DS: `sc-section-card`, con su
+cabecera de icono + título, lo usan los tres formularios de admin. `config/aed/*` tenía una copia
+local (`settings-card`) escrita a mano, y las dos ya habían divergido: 24.5 de padding la copia,
+21 el componente. Replicar el HTML en dos pantallas más habría hecho tres.
+
+**Lo que entra:**
+
+- **`sc-section-card` gana dos ejes.** `headingLevel` (1 = el título de LA PÁGINA, con `<h1>` y
+  tokens `h3` 18/24; 2 = una sección suya, `<h2>` y `body` semibold 14/20) y `surface` (`subtle`
+  gris de formulario, `card` blanca con borde para la sección que va sola sobre el lienzo). Las
+  dos variantes eran la misma caja con otra piel — probado en pantalla: migrar sin `surface`
+  dejaba la pantalla gris.
+- **Las tres pantallas AED usan el componente** y `settings-card` se borra (113 líneas, con
+  `__foot`, `__link` y `__actions`, que llevaban tiempo sin aparecer en ninguna plantilla).
+- **`audit:titulo-contenido`** (gate 36) en las dos direcciones: las pantallas con rail llevan su
+  título dentro, y ninguna otra plantilla se pone el nivel de página. Probado con los dos fallos.
+- **El padding sube a 24.5** y la cabecera reparte los 16 del gap del `Block`. Tras el cambio la
+  pantalla casa con la maqueta **sin una sola diferencia** en las ocho cajas medidas (ancho,
+  padding, gap, radio, borde), y la distancia título → contenido es exactamente 16.
+- **Fuera el subtítulo «Ajustes de la plataforma»** del rail: no está en la maqueta y repetía lo
+  que ya dicen el rótulo, la miga y el título. Con su clave i18n en los cuatro locales.
+
+**Lo que NO entra, y por qué:** los tres formularios de admin tienen rail, pero su `<h1>` está
+oculto A PROPÓSITO (la identidad la pinta la ficha de su propio rail, `page-identity.spec.ts`
+punto 4). El guardián los deja fuera y lo dice.
+
+**Nota de proceso, de Rafa:** «deberías haberte dado cuenta de ese subtítulo, que no vuelva a
+pasar. Te he estado llamando la atención durante esta sesión». Tenía razón, y el caso del
+subtítulo era el peor: estaba DETECTADO y anotado en un reporte en vez de arreglado. La regla
+queda en memoria: lo que salga de un barrido contra Figma se corrige en la misma pasada; anotarlo
+es dejar que lo encuentre él.
+
+---
+
 ## ✅ 2026-09-09 · Los 12 estilos de texto llegan a la app, y Agentes se casa con su maqueta
 
 **Sello:** pendiente de PR. Trabajo hecho en el worktree `tipografia-12-estilos`.
