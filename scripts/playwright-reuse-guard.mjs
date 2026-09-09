@@ -35,7 +35,17 @@ import { execFileSync } from 'node:child_process';
 export function reuseOnlyOwnServer(port) {
   // En CI cada job es una máquina limpia: nunca reutilices, y así un puerto
   // ocupado peta en vez de colarse.
-  if (process.env['CI']) return false;
+  if (process.env['CI']) {
+    /*
+     * PERO `CI=1` no significa solo «runner de GitHub»: `preflight` lo pone en local para que
+     * Playwright levante SU servidor. Ahí un puerto ocupado NO es un bug, es la sesión hermana
+     * de otro worktree, y petar tira la cadena entera (medido el 2026-09-09: cuatro veces en
+     * una tarde, y esta rama del `if` era la única que no esperaba). El runner de verdad se
+     * distingue por `GITHUB_ACTIONS`, y allí sí se quiere el fallo seco.
+     */
+    if (!process.env['GITHUB_ACTIONS']) esperaPuertoLibre(port);
+    return false;
+  }
 
   otraCadenaViva(port);
 
@@ -218,6 +228,23 @@ function otraCadenaViva(port) {
       '    · Si de verdad quieres dos suites distintas a la vez: SC_ALLOW_PARALLEL_SUITES=1',
     ].join('\n'),
   );
+}
+
+/**
+ * Espera (con techo) a que NADIE escuche en ese puerto. Silenciosa si ya está libre.
+ *
+ * @param {number} port
+ */
+function esperaPuertoLibre(port) {
+  if (listenerPid(port) === null) return;
+  const hasta = Date.now() + 25 * 60 * 1000;
+  const quien = listenerPid(port);
+  console.log(`[playwright] El puerto ${port} está ocupado (pid ${quien}). Espero a que se libere…`);
+  while (listenerPid(port) !== null && Date.now() < hasta) dormir(15_000);
+  if (listenerPid(port) === null) {
+    dormir(1_000 + Math.floor(Math.random() * 4_000));
+    console.log(`[playwright] Puerto ${port} libre. Sigo.`);
+  }
 }
 
 /**
