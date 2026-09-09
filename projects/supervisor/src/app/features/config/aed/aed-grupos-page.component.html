@@ -24,17 +24,19 @@
          arriba dice DÓNDE estás y esta línea dice QUÉ miras (modelo Snow UI,
          medido en `/orders`). Es el MISMO `<h1>` que S59 dejó oculto —no hay un
          encabezado nuevo—, así que sigue habiendo exactamente uno por documento. -->
-    <h1 class="page__heading">{{ 'config.aed.subpages.grupos.heading' | translate }}</h1>
-
-    <!-- Parámetros -->
-    <section class="settings-card" aria-labelledby="grupos-params-title">
-      <div class="settings-card__head">
-        <h2 id="grupos-params-title" class="settings-card__title">
-          {{ 'config.aed.subpages.grupos.params.title' | translate }}
-        </h2>
-      </div>
-
-      <div class="settings-card__body">
+    <sc-section-card
+      icon="groups"
+      [headingLevel]="1"
+      surface="card"
+      titleKey="config.aed.subpages.grupos.heading"
+    >
+      <!-- Parámetros -->
+      <section class="sub-section" aria-labelledby="grupos-params-title">
+        <header class="sub-section__head">
+          <h2 id="grupos-params-title" class="sub-section__title">
+            {{ 'config.aed.subpages.grupos.params.title' | translate }}
+          </h2>
+        </header>
         <sc-multiselect
           class="field--full"
           inputId="grupos-estrategia"
@@ -121,17 +123,17 @@
             </span>
           </div>
         </div>
-      </div>
-    </section>
+      </section>
 
-    <!-- Apertura de ficha -->
-    <section class="settings-card" aria-labelledby="grupos-apertura-title">
-      <div class="settings-card__head">
-        <h2 id="grupos-apertura-title" class="settings-card__title">
-          {{ 'config.aed.subpages.grupos.apertura.title' | translate }}
-        </h2>
-      </div>
-      <div class="settings-card__body">
+      <sc-divider />
+
+      <!-- Apertura de ficha -->
+      <section class="sub-section" aria-labelledby="grupos-apertura-title">
+        <header class="sub-section__head">
+          <h2 id="grupos-apertura-title" class="sub-section__title">
+            {{ 'config.aed.subpages.grupos.apertura.title' | translate }}
+          </h2>
+        </header>
         <sc-select
           class="field--full"
           inputId="grupos-apertura-tipo"
@@ -142,7 +144,7 @@
           [placeholder]="'config.aed.subpages.grupos.params.placeholder' | translate"
           (valueChange)="onSelect('aperturaTipo', $event)"
         />
-      </div>
-    </section>
+      </section>
+    </sc-section-card>
   </div>
 </div>
