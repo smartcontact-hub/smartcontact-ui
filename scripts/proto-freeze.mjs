@@ -33,7 +33,8 @@
  *
  * Un solo comando y sin flags que memorizar, porque esto se usa una vez cada entrega y quien lo
  * usa no es quien lo escribió. Los flags (`-- --ticket … --app … --que …`) siguen valiendo para
- * cuando lo llame un script o un agente, y saltan las preguntas correspondientes.
+ * cuando lo llame un script o un agente, y saltan las preguntas correspondientes; ahí la
+ * confirmación se da con `--yes`, que se pide explícita porque esto publica.
  */
 import { execFileSync } from 'node:child_process';
 import { createInterface } from 'node:readline/promises';
@@ -247,7 +248,13 @@ if (ramaActual !== 'main') {
 }
 log('');
 
-const sí = await preguntar('¿Lo hago? (s/n)  ', (r) =>
+/*
+ * `--yes` es la confirmación de quien no puede contestar: un script, CI o un agente. Se pide
+ * EXPLÍCITA en vez de asumir que traer los tres flags ya es un sí, porque esto crea una etiqueta
+ * y una rama y luego las publica. Sin `--yes` y sin terminal, no hace nada y lo dice.
+ */
+const asumeSi = process.argv.includes('--yes');
+const sí = asumeSi ? 's' : await preguntar('¿Lo hago? (s/n)  ', (r) =>
   /^[snSN]$/.test(r) ? null : 'Escribe s o n.',
 );
 if (/^[nN]$/.test(sí)) {
@@ -269,7 +276,7 @@ log('');
 log(`✔ Congelado sobre ${sha}: etiqueta, rama y fila en docs/PROTOTIPOS.md.`);
 log('');
 
-const publicar = await preguntar('¿Lo publico ya? (s/n)  ', (r) =>
+const publicar = asumeSi ? 's' : await preguntar('¿Lo publico ya? (s/n)  ', (r) =>
   /^[snSN]$/.test(r) ? null : 'Escribe s o n.',
 );
 rl?.close();
