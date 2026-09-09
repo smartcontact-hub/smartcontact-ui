@@ -82,6 +82,16 @@ verificados esperando en el PR #22 desde hacía 9 días. Había tres PRs así �
 `npm audit fix` de 7 vulnerabilidades, otro las lecciones de una sesión que nunca llegaron a
 `LEARNINGS.md`. **La rutina se estaba quedando fuera a sí misma**, y no tenía forma de verlo.
 
+### Pasada D — El panel de Cloudflare (lo que ningún gate del repo puede ver)
+
+Los cinco sitios se construyen con lo que diga el panel de Cloudflare, no el repo: comando de
+build, output dir, rama de producción y `NODE_VERSION`. Un cambio ahí rompe todos los commits por
+igual y en silencio (2026-09-09: supervisor publicaba sin sello porque su comando no pasaba por
+`stamp-build.mjs`). `npm run audit:cf-config` lo lee por API y compara. Necesita un token
+(`CLOUDFLARE_API_TOKEN`): si no lo tienes, escribe **«no comprobado (sin token)»**, nunca «bien».
+Cada desviación que saque es un hallazgo P1 de una línea, y el fix es de Rafa: corregirlo en el
+panel o por API.
+
 ## 2. Triaje por hallazgo — la regla de la casa
 
 Regla del repo (`.claude/skills/reflect/SKILL.md`): *"una comprobación que se puede
@@ -113,7 +123,7 @@ salvo para marcar `[x]` lo que ya se arregló. Formato de cada sección:
 ```
 ## <YYYY-MM-DD>
 
-> Método: pasada A (deuda de código, ≤5) + pasada B (deriva de docs) + pasada C (PRs parados >7d).
+> Método: pasada A (deuda de código, ≤5) + pasada B (deriva de docs) + pasada C (PRs parados >7d) + pasada D (panel de Cloudflare).
 > Contra AGENTS.md/.impeccable.md.
 
 ### Deuda de código

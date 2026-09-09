@@ -187,7 +187,10 @@ deja algo que mirar en vez de una línea de texto.
 
 > ⚠️ Los cinco `build:*` terminan en `node scripts/stamp-build.mjs <app>`, y son los comandos
 > que corre Cloudflare. **Quitar ese eslabón deja el sitio sin sello**, y `deploy-record` lo
-> marcará en rojo hasta que vuelva. Ver [DD-59](docs/DECISIONS.md).
+> marcará en rojo hasta que vuelva. Ver [DD-59](docs/DECISIONS.md). Lo que Cloudflare tiene
+> configurado (comando, output dir, rama, `NODE_VERSION`) solo se ve desde su panel, así que
+> `npm run audit:cf-config` lo lee por API y lo compara con lo que el repo espera; el mismo
+> workflow lo corre antes de registrar, si existe el secret `CLOUDFLARE_API_TOKEN`.
 
 ## Flujo Figma a código
 
