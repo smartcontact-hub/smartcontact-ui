@@ -323,23 +323,6 @@ function comandoDe(pid) {
 }
 
 /**
- * Línea de comando de un PID, o `undefined` si no se puede leer.
- *
- * @param {number} pid
- * @returns {string | undefined}
- */
-function comandoDe(pid) {
-  try {
-    return execFileSync('ps', ['-o', 'command=', '-p', String(pid)], {
-      encoding: 'utf8',
-      stdio: ['ignore', 'pipe', 'ignore'],
-    }).trim();
-  } catch {
-    return undefined;
-  }
-}
-
-/**
  * Nuestro propio proceso y toda su cadena de padres. El proceso que ejecuta este
  * fichero ES un `playwright test`, así que sin esto el guardián se denunciaría a
  * sí mismo — el modo de fallo clásico de un chequeo que se busca en su propia
