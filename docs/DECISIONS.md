@@ -54,6 +54,73 @@
 
 ---
 
+## DD-60 · 2026-09-09 — Rápido en casa, completo en GitHub: los e2e salen del `preflight` local y viven solo en el CI
+
+**Contexto** · Rafa trabaja con varias sesiones de agente a la vez, y cada una lanza su
+`preflight` antes de pushear. El preflight completo eran 20-25 minutos, y **7 de cada 10 eran
+las suites e2e**, que en un portátil solo pueden correr de una en una (`playwright-reuse-guard`:
+dos suites a la vez se pisan el servidor y dan verdes falsos). Medido el 2026-09-09: con tres
+sesiones vivas, el tercer preflight esperaba una hora, y tres murieron denunciando como
+«Playwright vivo» a bucles de espera de la sesión vecina. Ese mismo día `main` pasó a estar
+protegida: GitHub no funde nada sin los cinco jobs del CI en verde, así que el CI ya es la red
+obligatoria, y allí cada suite tiene su propio runner.
+
+**Decisión** ·
+1. `preflight` (y `preflight:scope`) corren la parte SIN navegador: `guard:lockfile`, `verify`,
+   `build:docs` y los tres builds AOT (~8 min, sin cola, tantas sesiones como haya).
+2. Las tres suites e2e de aplicación (smoke, supervisor, cuscare) corren solo en el CI. Son la
+   lista cerrada `CI_ONLY` de `ci-preflight-parity`, vigilada en las dos direcciones. Las
+   **baselines visuales de sc-docs** se intentaron llevar a un runner de macOS y **no pueden ir
+   allí hoy**: ver «Lo que se midió» abajo. Quedan sin gate, a mano.
+3. Quien toque un e2e o algo visual corre a mano la suite que toca antes de pushear (LEARNINGS
+   #7). El veredicto sigue siendo el CI leído (`ci:verdict`), y el hook de Stop lo exige.
+4. El carril *preflight:fast* desaparece: su única razón era servir builds estáticos a las suites.
+
+**Razón** · Es la práctica estándar (hooks locales = comprobaciones rápidas, ≤ minutos, para
+que nadie las salte; CI = la cadena completa y autoritativa; branch protection = lo que se
+impone). Lo que dice Anthropic sobre harnesses y lo que dicen las guías de Playwright y de git
+hooks coincide: un hook lento se acaba saltando con `--no-verify`, y aquí ya tenía su salida de
+emergencia (`SKIP_PREFLIGHT=1`). El coste real de descubrir un rojo de e2e en GitHub (~10 min,
+en paralelo) es menor que el de la cola local.
+
+**Descartadas** ·
+- *Dejar el preflight entero y esperar la cola.* Es lo que había; con tres sesiones son 60 min
+  por push y el gate se convierte en el motivo para saltárselo.
+- *Puertos por worktree y servidores dedicados para correr suites en paralelo.* Arregla la cola
+  a cambio de más máquina local, y el CI ya da ese paralelismo gratis (repo público).
+- *Un job `e2e-visual` en `macos-latest` que corra las baselines de sc-docs.* Nació en este
+  mismo cambio y **se cayó al medirlo**; lo que se midió está abajo.
+
+**Lo que se midió (2026-09-09, run 34401618582)** · El job de macOS falló **las 38 capturas**
+(17 tests de métricas pasaron). No es ruido de umbral ni baselines rancias:
+
+- El control: con el MISMO commit y el MISMO build servido en local, `e2e:visual` en el Mac de
+  Rafa da **55/55 en verde**. Las capturas del repo están sanas.
+- Las diferencias del runner son de 87 a ~1.100 px por captura, y en **37 de las 38 caen
+  ENTERAS en una sola banda de 14 px de alto** (y≈47-61): la línea del título, donde sc-docs
+  pinta el nombre del selector (`<sc-badge>`) en monoespaciada. La única con algo fuera es
+  `textarea` (~1.174 px, las asas de redimensionado del propio navegador).
+- La causa es la **fuente**: `--sc-font-family-mono` es una pila del SISTEMA
+  (`ui-monospace, 'SF Mono', 'Menlo', …`) y es la única familia que sc-docs no autohospeda —
+  Inter y Material Symbols sí lo están, y por eso todo el resto de la página casa. Dos macOS
+  distintos resuelven o hintan esa mono con otra métrica.
+- Los números enormes del log (17.021 px) eran capturas INTERMEDIAS de overlays aún animándose;
+  la captura estable de ese mismo test dio 132 px. No confundirlos con diferencias reales.
+
+Salidas, para el PR que lo retome (ninguna es gratis, y las dos cambian el contrato de la red):
+**(a)** quitar la dependencia del sistema autohospedando también la mono (`@fontsource`, como se
+hizo con Inter) — cambia la tipografía del código en la doc y en las apps, así que es una
+decisión de diseño, y hay que regenerar las 38; **(b)** enmascarar ese rótulo en la captura
+(`toHaveScreenshot({ mask })`) — dejaría 37 de 38 deterministas y `textarea` seguiría roja.
+Lo que NO vale: subir `maxDiffPixels`, porque un cambio real de UNA letra mide 1.501 px y
+quedaría por debajo del techo que haría falta.
+
+**Consecuencias** · `ci.yml` se queda en 8 pasos con nombre (CHECK J). Las baselines visuales
+**no las corre ningún gate**: quien toque sc-docs corre `npm run e2e:visual` a mano antes de
+pushear (punto 3). Es el agujero que este DD quería tapar y hoy sigue abierto, dicho aquí para
+que nadie lo dé por cerrado. El guardián de reuso deja de contar shells que solo *hablan* de
+Playwright (`esRunner`).
+
 ## DD-59 · 2026-09-09 — Un registro de despliegue solo puede escribir lo que ha MEDIDO, y el CI guarda la caja negra del rojo
 
 **Contexto** · Al limpiar el fósil de `github-pages` (DD-58) quedó la pregunta de Rafa: si

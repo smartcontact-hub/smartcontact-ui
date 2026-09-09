@@ -108,7 +108,7 @@ Estaba en `main` y no en esta ficha; recuperado de los mensajes de commit el 202
 7. **Anidamiento de mensajes en el chat** (`32dc18e`) — con varios mensajes seguidos del mismo
    emisor, **la hora se pinta solo en el último de la tanda**; los de `server` nunca la llevan.
 
-Y dos cosas de fuera del frente que le afectan: **`preflight:fast`** (`04d3464`, mismos gates en
+Y dos cosas de fuera del frente que le afectan: **preflight:fast** (retirado en DD-60; `04d3464`, mismos gates en
 la mitad de tiempo — esta ficha asumía los ~8,5 min del `preflight` completo) y el **fix de
 despliegue** (`e5fe874`, Node fijado a 22.23.2 para Cloudflare Pages, que llevaba roto desde
 Angular 22 — y `sc-agent.pages.dev` es la URL de este frente).

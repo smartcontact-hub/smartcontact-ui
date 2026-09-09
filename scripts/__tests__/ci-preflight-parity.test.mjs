@@ -4,7 +4,7 @@ import { readFileSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { extractCiCommands, checkParity } from "../ci-preflight-parity.mjs";
+import { extractCiCommands, checkParity, ciOnlyRancios, CI_ONLY } from "../ci-preflight-parity.mjs";
 
 // El gate anti-drift: preflight (package.json) debe correr lo mismo que ci.yml. Se
 // prueba EN VERDE con los ficheros reales y EN ROJO con drift fabricado a mano — un
@@ -14,13 +14,15 @@ const root = join(dirname(fileURLToPath(import.meta.url)), "..", "..");
 const realYml = readFileSync(join(root, ".github/workflows/ci.yml"), "utf8");
 const realPkg = JSON.parse(readFileSync(join(root, "package.json"), "utf8"));
 
-test("el repo REAL está en paridad: preflight ≡ ci.yml", () => {
+test("el repo REAL está en paridad: preflight ≡ ci.yml menos CI_ONLY, y CI_ONLY no está rancia", () => {
   const preflight = realPkg.scripts?.preflight;
   assert.ok(preflight, "falta el script `preflight` en package.json");
   const { ok, missing, extra } = checkParity(realYml, preflight);
-  assert.deepEqual(missing, [], "ci.yml tiene pasos que preflight no corre");
+  assert.deepEqual(missing, [], "ci.yml tiene pasos que preflight no corre (y no están en CI_ONLY)");
   assert.deepEqual(extra, [], "preflight corre pasos que ci.yml no");
   assert.ok(ok);
+  assert.deepEqual(ciOnlyRancios(realYml), [], "CI_ONLY cita pasos que ci.yml ya no corre");
+  for (const c of CI_ONLY) assert.ok(!preflight.includes(c), `${c} es CI_ONLY y sigue en preflight`);
 });
 
 test("extractCiCommands: parsea block scalar `|` y descarta infra", () => {
@@ -104,52 +106,38 @@ test("DRIFT inverso: preflight corre algo que el CI no → lo caza (extra)", () 
   assert.deepEqual(extra, ["npm run e2e:orphan"]);
 });
 
-test("la sustitución local vale: CI `npm run e2e` ≡ preflight `CI=1 npm run e2e`", () => {
-  const yml = "      - run: npm run verify\n      - run: npm run e2e";
-  const { ok, missing, extra } = checkParity(
-    yml,
-    "npm run verify && CI=1 npm run e2e"
-  );
+test("CI_ONLY: los e2e corren en el CI y NO en preflight, y eso no es drift (DD-60)", () => {
+  const yml = "      - run: npm run verify\n      - run: npm run e2e\n      - run: npm run e2e:supervisor";
+  const { ok, missing, extra } = checkParity(yml, "npm run verify");
   assert.deepEqual(missing, []);
   assert.deepEqual(extra, []);
   assert.ok(ok);
 });
 
-test("y NO vale correr un subconjunto: `e2e:structure` ya no cuela como el smoke", () => {
+test("y sigue sin valer un subconjunto: `e2e:structure` en preflight es un paso que el CI no corre", () => {
   const yml = "      - run: npm run verify\n      - run: npm run e2e";
-  const { ok, missing, extra } = checkParity(
-    yml,
-    "npm run verify && npm run e2e:structure"
-  );
+  const { ok, extra } = checkParity(yml, "npm run verify && npm run e2e:structure");
   assert.equal(ok, false);
-  assert.deepEqual(missing, ["CI=1 npm run e2e"]);
   assert.deepEqual(extra, ["npm run e2e:structure"]);
 });
 
-// `preflight:fast` es un carril alterno (sirve el build estático en vez de `ng serve`),
-// pero DEBE correr los mismos pasos que el CI, o se convierte en el atajo que ejecuta de
-// menos. No es un `&&`-chain: extrae sus `paso('...')` y comprueba que no falta ninguno.
-test("el repo REAL: preflight:fast corre lo mismo que ci.yml", () => {
-  const fast = readFileSync(join(root, "scripts/preflight-fast.mjs"), "utf8");
-  const comandos = [...fast.matchAll(/paso\(\s*['"]([^'"]+)['"]/g)].map(
-    (m) => m[1]
-  );
-  assert.ok(
-    comandos.length > 0,
-    "no se extrajo ningún `paso(...)` de preflight-fast.mjs"
-  );
-  const { missing } = checkParity(realYml, comandos.join(" && "));
-  assert.deepEqual(
-    missing,
-    [],
-    "preflight:fast se saltó un paso que el CI sí corre"
-  );
+test("un e2e NUEVO en el CI que no esté en CI_ONLY sigue siendo drift (missing)", () => {
+  const yml = "      - run: npm run verify\n      - run: npm run e2e:otra-app";
+  const { ok, missing } = checkParity(yml, "npm run verify");
+  assert.equal(ok, false);
+  assert.deepEqual(missing, ["npm run e2e:otra-app"]);
+});
+
+test("CI_ONLY rancia: un paso de la lista que ci.yml ya no corre se denuncia", () => {
+  const yml = "      - run: npm run verify\n      - run: npm run e2e";
+  assert.deepEqual(ciOnlyRancios(yml), ["npm run e2e:supervisor", "npm run e2e:cuscare"]);
+  assert.deepEqual(ciOnlyRancios(realYml), []);
 });
 
 test('la marca de preflight (solo local) no cuenta como paso extra, pero otro paso local sí', () => {
   const base = realPkg.scripts.preflight;
   assert.ok(checkParity(realYml, base).ok);
-  const conMarcaDoble = base + ' && node scripts/preflight-mark.mjs preflight:fast';
+  const conMarcaDoble = base + ' && node scripts/preflight-mark.mjs preflight:scope';
   assert.ok(checkParity(realYml, conMarcaDoble).ok, 'preflight-mark no es un gate: se filtra');
   const conGateLocal = base + ' && npm run typecheck';
   assert.deepEqual(checkParity(realYml, conGateLocal).extra, ['npm run typecheck'], 'un gate local de más sí es drift');

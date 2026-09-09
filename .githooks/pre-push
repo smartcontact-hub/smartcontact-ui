@@ -35,7 +35,7 @@ fi
 # Congelar una versión (`docs/PROTOTIPOS.md`, DD-56) sube DOS PUNTEROS: la etiqueta
 # `proto/<TICKET>` y la rama `proto/<ticket>`. Ninguna de las dos introduce código: apuntan a un
 # commit que YA está en `origin/main`, o sea que YA pasó su preflight y su CI cuando entró. Correr
-# la cadena entera otra vez son 10-25 minutos por publicar un enlace, y un trámite que cuesta eso
+# la cadena entera otra vez son ~8 minutos por publicar un enlace, y un trámite que cuesta eso
 # no se hace: se acaba usando `SKIP_PREFLIGHT=1`, que es peor, porque desactiva el gate de verdad.
 #
 # La excepción es ESTRECHA a propósito y se comprueba, no se confía: solo si TODAS las refs de
@@ -70,7 +70,7 @@ fi
 printf '\n\033[1m▶ pre-push: gate antes de subir\033[0m  (SKIP_PREFLIGHT=1 para saltarlo)\n\n'
 
 # Si ESTE árbol ya pasó un carril (marca `.preflight-ok`, tree id == HEAD), no se repite la
-# cadena: el verde ya está medido y repetirlo son 10-25 min de nada (2026-09-02, DD-47).
+# cadena: el verde ya está medido y repetirlo son ~8 min de nada (2026-09-02, DD-47; DD-60 sacó los e2e).
 if node scripts/preflight-mark.mjs --check; then
   printf '\033[32m✓ árbol ya verificado — subiendo sin repetir la cadena\033[0m\n\n'
   exit 0

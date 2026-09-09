@@ -15,6 +15,46 @@
 > coordine. Los `sNN` de los tramos viejos se quedan como están: los nombran commits y
 > `docs/DECISIONS.md`, y reescribirlos solo desincronizaría el doc de su propia historia.
 
+## ✅ 2026-09-09 · Los e2e salen del preflight, y las baselines visuales NO caben en el CI (medido)
+
+**Sello:** PR #77 (DD-60) rebasado sobre `main` y cerrado sin el job `e2e-visual`. `preflight`
+VERDE sobre el árbol final. Veredicto por `npm run ci:verdict`, no por el «success» del wrapper.
+
+**De dónde sale.** El PR #77 llevaba el cambio grande —`preflight` sin navegador, ~8 min y sin
+cola— y, en el mismo commit, un job nuevo `e2e-visual` en `macos-latest` para que las 38
+baselines de sc-docs siguieran teniendo quien las corriera. Al leer su primer run, ese job salió
+rojo con las 38.
+
+**Lo que se midió (run 34401618582).** No era ruido de umbral ni baselines rancias:
+
+- **Control primero**: mismo commit, mismo build servido en local, `e2e:visual` en el Mac de
+  Rafa → **55/55 verde**. Las capturas del repo están sanas; el que difiere es el runner.
+- Las diferencias son de 87 a ~1.100 px y, en **37 de las 38, caen enteras en una banda de
+  14 px** (y≈47-61): la línea del título, donde se pinta `<sc-badge>` en monoespaciada. La
+  única con algo fuera es `textarea` (~1.174 px: las asas de resize del navegador).
+- Causa: `--sc-font-family-mono` es una pila del SISTEMA (`ui-monospace, 'SF Mono', 'Menlo'…`),
+  la única familia que sc-docs **no** autohospeda. Inter y Material Symbols sí, y por eso el
+  resto de la página casa entre las dos máquinas.
+- Trampa del log: los «17.021 px» eran capturas INTERMEDIAS de overlays animándose; la estable
+  del mismo test dio 132. Leer el último número de la cadena, no el primero.
+
+**Qué se hizo.** Sacar el job del PR y **decirlo donde duele**: `ci.yml` vuelve a 8 pasos,
+`e2e:visual` sale de `CI_ONLY`, y DD-60 pasa de «pendiente de medir» a llevar la medición, las
+dos salidas posibles (autohospedar la mono / enmascarar el rótulo) y lo que NO vale (subir
+`maxDiffPixels`: un cambio real de una letra mide 1.501 px).
+
+**Lo que queda abierto, y hay que decirlo.** Las baselines visuales **no las corre ningún gate**
+hoy: ni el preflight (ya no) ni el CI (no puede). Quien toque sc-docs corre `npm run e2e:visual`
+a mano. Es exactamente el agujero por el que se pudrieron 213 commits, así que no dejarlo
+dormir: el PR de ajuste elige entre (a) autohospedar la mono —decisión de diseño de Rafa, cambia
+la tipografía del código en doc y apps, y obliga a regenerar las 38— y (b) enmascarar el rótulo
+del título, que dejaría 37 de 38 deterministas y `textarea` roja.
+
+**Trampa de entorno que se cazó de paso.** El hook que protege `dist/` denunció un «preflight
+corriendo» que era un `git commit` de otro worktree **cuyo mensaje mencionaba la palabra
+preflight**. Es el mismo modo de fallo que este PR arregla para Playwright (`esRunner`): casar
+por el TEXTO de la línea de comandos denuncia a quien solo habla del proceso.
+
 ## ✅ 2026-09-09 · El DS corta 1.0.0 y deja de depender de que alguien se acuerde
 
 **Sello:** `v1.0.0` publicada y los 3 paquetes en el registro (verificado en el log del workflow,
@@ -1340,7 +1380,7 @@ en el momento de escribir el comando, y el único enforcement (gates) corría en
   bloquea el cierre una vez si hubo push sin `npm run ci:verdict`. `compact-card.mjs` avisa al
   compactar si la guía cambió en `origin/main`. Salida explícita: `# sc:ok`, dicho en el mensaje.
   Cada patrón con caso rojo y verde (`scripts/__tests__/bash-guard.test.mjs`).
-- `scripts/preflight-mark.mjs`: `preflight`, `preflight:fast` y `preflight:scope -- --run` dejan la
+- `scripts/preflight-mark.mjs`: `preflight`, *preflight:fast* (retirado en DD-60) y `preflight:scope -- --run` dejan la
   marca (tree id del working tree; solo vale si ese tree es HEAD). `ci-preflight-parity` la filtra.
 - Tarjeta de 7 preguntas en `CLAUDE.md` (viaja en cada turno, sobrevive a la compactación).
 - `LEARNINGS.md` recortado a 16 reglas de ≤12 líneas con UNA `Evidencia:`; la historia entera en
@@ -1599,7 +1639,7 @@ el mockup viejo de sesión 20 en esa misma página (`13890:157`, "Current state 
 suelto sin instancia real, no aplicaba el peso Medio) — a petición de Rafa, sustituido por el
 ejemplo de arriba.
 >
-> Sello histórico (2026-08-25): HEAD `f78977c`, **CI verde, los 8 pasos**. Cierra con `aura/custom` dentro del gate de completitud del Kit. Antes, `b5b07a5`. Los dos últimos commits son los que el verde LOCAL no cazó y conviene leer: `b5b07a5` (el puntero de Playwright sale de la barra lateral) y `25cedef` (el lockfile vuelve a estar en sync — `npm ci` es el paso 1 del CI y `preflight` NO lo corre). Antes: `1fb7d5f` (el audit de acoplamiento a PrimeNG pasa a mirar tres caras) sobre HEAD `9e3f0bd` (Angular 22 + PrimeNG 22 + los builders a `@angular/build`). Antes, en esta misma sesión y ya en `main`: `3b65f07` (duplicación del supervisor), `bee2acc` (retirada de `sc-page-header` + deriva de docs), `0ef136c` (**trinquete DD-38 a CERO**), `1698f47` (red de contraste de severidades), `edfb2ec` (código muerto) y `4417bb8` (`text.muted.color` a enforce + el warn unificado).**
+> Sello histórico (2026-08-25): HEAD `f78977c`, **CI verde, todos sus pasos** (eran 8 entonces; 9 desde DD-60). Cierra con `aura/custom` dentro del gate de completitud del Kit. Antes, `b5b07a5`. Los dos últimos commits son los que el verde LOCAL no cazó y conviene leer: `b5b07a5` (el puntero de Playwright sale de la barra lateral) y `25cedef` (el lockfile vuelve a estar en sync — `npm ci` es el paso 1 del CI y `preflight` NO lo corre). Antes: `1fb7d5f` (el audit de acoplamiento a PrimeNG pasa a mirar tres caras) sobre HEAD `9e3f0bd` (Angular 22 + PrimeNG 22 + los builders a `@angular/build`). Antes, en esta misma sesión y ya en `main`: `3b65f07` (duplicación del supervisor), `bee2acc` (retirada de `sc-page-header` + deriva de docs), `0ef136c` (**trinquete DD-38 a CERO**), `1698f47` (red de contraste de severidades), `edfb2ec` (código muerto) y `4417bb8` (`text.muted.color` a enforce + el warn unificado).**
 >
 > _Corrección 2026-08-31: esta línea citaba además "rescate de s33" sobre `HEAD \`97f34e1\`` — ese sello no resuelve a ningún commit real (cazado por `docs:coherence`); se retira en vez de inventar el hash que debería llevar._
 
@@ -2052,7 +2092,7 @@ variables, 30 comentarios activos.
   verde** en este Mac, dos veces. O sea que el smoke completo SÍ es corrible en local; lo que no
   lo es son sus baselines por plataforma. Sin `CI=1` siguen rojos y **no son tuyos** (el de
   `sc-card` espera una página de 1049px y recibe 1453 — no lo leas como regresión de métrica).
-- **El CI son 8 pasos, no `verify`** — enumerados en `ci.yml`, y gateados (CHECK J).
+- **El CI son 8 pasos, no `verify`** — enumerados en `ci.yml`, y gateados (CHECK J). Los e2e de app solo corren allí (DD-60); las baselines visuales de sc-docs, a mano.
 - **`npm run verify` (31 gates) NO corre el `e2e smoke`.** El `component-structure.spec` (baseline
   del `outerHTML` de cada componente) es un paso aparte de CI, y el textarea autoResize graba su
   alto calculado en un `style` inline que vive en ese `outerHTML`. Un cambio de token/visual puede

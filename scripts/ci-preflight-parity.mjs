@@ -1,7 +1,7 @@
 // Anti-drift entre el script `preflight` (package.json) y el workflow `ci.yml`.
 //
 // Por qué existe: "corre `npm run preflight` antes de pushear" solo vale si preflight
-// corre LO MISMO que el CI. Si alguien añade un paso a `ci.yml` y no lo replica en
+// corre LO MISMO que el CI, salvo la lista CERRADA de pasos que SOLO corre el CI (CI_ONLY). Si alguien añade un paso a `ci.yml` y no lo replica en
 // preflight, el push volvería a caer en CI con el verify/preflight local en verde —
 // que es exactamente el fallo de s29 (line-height movió el baseline de
 // component-structure; `verify` no corre el e2e y el rojo pasó inadvertido).
@@ -50,7 +50,6 @@ import { join, dirname } from 'node:path';
 // eso pudieron pudrirse 213 commits—. El lado local es un superconjunto del de CI, que
 // para un gate de pre-push es la dirección correcta.
 export const LOCAL_SUBSTITUTIONS = {
-  'npm run e2e': 'CI=1 npm run e2e',
   // No se puede instalar en limpio en cada push, pero SÍ se puede comprobar lo que hace
   // fallar a `npm ci`: que el lock no cuadre con package.json. Y hay que comprobarlo contra
   // la plataforma del RUNNER, no solo contra la tuya — npm resuelve las dependencias
@@ -58,6 +57,20 @@ export const LOCAL_SUBSTITUTIONS = {
   // macOS con el CI en rojo en Linux.
   'npm ci': 'npm run guard:lockfile',
 };
+
+// SOLO CI (DD-60, 2026-09-09): las suites e2e ya NO van en `preflight`. Las corre el CI, que es
+// obligatorio en `main` (branch protection, cinco jobs) y paralelo; en local se corre a mano la
+// suite que toca lo cambiado. Motivo medido: el preflight completo eran 20-25 min y solo puede
+// vivir UN Playwright por máquina (`playwright-reuse-guard`), así que con tres sesiones a la vez
+// se hacían cola durante una hora. La lista es CERRADA y se comprueba en las dos direcciones:
+// un paso de aquí que ya no esté en ci.yml es lista rancia (`ciOnlyRancios`), y un paso nuevo del
+// CI que no esté ni aquí ni en preflight es drift (`missing`).
+//
+// `e2e:visual` NO está en esta lista ni en el CI: sus capturas son del Mac de Rafa y el runner de
+// macOS las falla las 38 por la fuente monoespaciada del sistema (DD-60, medido el 2026-09-09).
+// Hoy no lo corre ningún gate, ni aquí ni allí — se corre a mano. En cuanto vuelva a un workflow,
+// entra en esta lista.
+export const CI_ONLY = ['npm run e2e', 'npm run e2e:supervisor', 'npm run e2e:cuscare'];
 
 const INFRA = [/^npx playwright install\b/, /^sudo rm -f \/etc\/apt\/sources\.list\.d\//];
 const isInfra = (cmd) => INFRA.some((re) => re.test(cmd));
@@ -129,8 +142,15 @@ export function expectedFromCi(ciCommands) {
   return ciCommands.map((c) => LOCAL_SUBSTITUTIONS[c] ?? c);
 }
 
+/** Pasos de CI_ONLY que ci.yml ya no corre: la lista se quedó rancia y hay que encogerla. */
+export function ciOnlyRancios(ymlText) {
+  const ci = new Set(extractCiCommands(ymlText));
+  return CI_ONLY.filter((c) => !ci.has(c));
+}
+
 export function checkParity(ymlText, preflightScript) {
-  const expected = new Set(expectedFromCi(extractCiCommands(ymlText)));
+  const soloCi = new Set(CI_ONLY);
+  const expected = new Set(expectedFromCi(extractCiCommands(ymlText)).filter((c) => !soloCi.has(c)));
   const actual = new Set(extractPreflightCommands(preflightScript));
   const missing = [...expected].filter((c) => !actual.has(c)); // el CI lo exige, preflight no lo corre
   const extra = [...actual].filter((c) => !expected.has(c)); // preflight corre algo que el CI no
@@ -147,12 +167,14 @@ function main() {
     process.exit(1);
   }
   const { ok, missing, extra } = checkParity(yml, preflight);
-  if (ok) {
-    console.log('✓ preflight ≡ ci.yml (con las sustituciones locales documentadas).');
+  const rancios = ciOnlyRancios(yml);
+  if (ok && rancios.length === 0) {
+    console.log('✓ preflight ≡ ci.yml (menos CI_ONLY, con las sustituciones locales documentadas).');
     return;
   }
-  if (missing.length) console.error('✗ El CI corre pasos que `preflight` NO:\n  - ' + missing.join('\n  - '));
+  if (missing.length) console.error('✗ El CI corre pasos que `preflight` NO (y no están en CI_ONLY):\n  - ' + missing.join('\n  - '));
   if (extra.length) console.error('✗ `preflight` corre pasos que el CI NO:\n  - ' + extra.join('\n  - '));
+  if (rancios.length) console.error('✗ CI_ONLY cita pasos que ci.yml ya no corre:\n  - ' + rancios.join('\n  - '));
   console.error('\nCuadra el script `preflight` con `ci.yml` (o añade la sustitución a LOCAL_SUBSTITUTIONS con su motivo).');
   process.exit(1);
 }

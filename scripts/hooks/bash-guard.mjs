@@ -22,7 +22,7 @@ import { estadoPreflight } from '../preflight-mark.mjs';
 
 export const BYPASS = /#\s*sc:ok\b/;
 
-const GATES = /^(npm run (?:-[-a-z]+ )*(verify|preflight(:fast|:scope)?|e2e(:[a-z-]+)?|test:[a-z-]+|lint|typecheck|docs:[a-z-]+|audit:[a-z-]+|tokens:[a-z-]+|guard:[a-z-]+|ci:verdict)|npx playwright test|node --test|gh run (watch|view))\b/;
+const GATES = /^(npm run (?:-[-a-z]+ )*(verify|preflight(:scope)?|e2e(:[a-z-]+)?|test:[a-z-]+|lint|typecheck|docs:[a-z-]+|audit:[a-z-]+|tokens:[a-z-]+|guard:[a-z-]+|ci:verdict)|npx playwright test|node --test|gh run (watch|view))\b/;
 
 /** Quita los CUERPOS de heredoc (`<<'EOF' … EOF`): son datos, no comandos. El segundo falso
  *  positivo del hook fue un script Python embebido que decía `npm run lint` en una línea. */
@@ -139,7 +139,7 @@ export function evaluar(cmd, ctx = {}) {
         decision: 'deny',
         reason:
           `LEARNINGS #7 — no se pushea sin preflight en verde sobre ESTE árbol: ${st.motivo}. ` +
-          'Haz: (1) commitea todo, (2) `npm run preflight:scope -- --run` (o `preflight` / `preflight:fast`) UNA vez ' +
+          'Haz: (1) commitea todo, (2) `npm run preflight:scope -- --run` (o `preflight`) UNA vez ' +
           '(el `--` es obligatorio: sin él npm se come el flag y el script solo imprime el plan), ' +
           '(3) vuelve a pushear. Si Rafa te ha dicho explícitamente que pushees sin cadena, añade `# sc:ok` al comando y díselo en el mensaje.',
       };
