@@ -52,7 +52,8 @@ const COLLAPSIBLE_SNIPPET = `<sc-section-card
 
 /*
  * El snippet enseña `[headingLevel]="1"` aunque la story renderice el 2: en una pantalla es lo
- * que se escribe, y aquí no se puede porque la propia ficha ya tiene su `<h1>`.
+ * que se escribe, y aquí no se puede porque la propia ficha ya tiene su `<h1>`. Desde DD-61 los
+ * dos niveles se ven IGUAL, así que la story no pierde nada por renderizar el 2.
  */
 const LIENZO_SNIPPET = `<!-- Una sección que va SOLA sobre el lienzo, con el título de la
      página dentro (patrón de las pantallas con índice lateral, DD-57). -->
@@ -84,7 +85,7 @@ export class SectionCardDemoComponent {
     tag: 'sc-section-card',
     title: 'SectionCard',
     description:
-      'La ÚNICA caja de sección del repo, en dos pieles: `surface="subtle"` es el contenedor gris de formulario (sistema anidado Section → Subsection → Slot, §4.5, 1:1 con el nodo Figma "Section"), y `surface="card"` la superficie blanca con borde de una sección que va sola sobre el lienzo. Con `[headingLevel]="1"` su título es el de la PÁGINA, que es el patrón de las pantallas con índice lateral (DD-57). Retrocompatible: una sección con contenido directo, sin subsecciones, sigue funcionando.',
+      'La ÚNICA caja de sección del repo, en dos pieles: `surface="subtle"` es el contenedor gris de formulario (sistema anidado Section → Subsection → Slot, §4.5, 1:1 con el maestro Figma `Section` 691:23956), y `surface="card"` la superficie blanca con borde de una sección que va sola sobre el lienzo (Figma Supervisor `Block` 393:12587). Cada piel trae las medidas de SU nodo: `subtle` va a 22.75 arriba/abajo y 16 a los lados, con 14 entre el título y el contenido; `card` a 24.5 por los cuatro lados, con 16, y su cabecera se sangra 12.25 más para caer en la misma vertical que el contenido de dentro. Ninguna de las dos lleva línea bajo la cabecera: en Figma las separa el aire. Con `[headingLevel]="1"` su título es el de la PÁGINA —el patrón de las pantallas con índice lateral (DD-57)—, y eso cambia la SEMÁNTICA (`<h1>`), no el tamaño: los dos niveles miden 14/20 semibold, como en la maqueta. Retrocompatible: una sección con contenido directo, sin subsecciones, sigue funcionando.',
     argTypes: [
       { name: 'titleKey', control: { kind: 'text' } },
       { name: 'hintKey', control: { kind: 'text' } },
@@ -92,7 +93,7 @@ export class SectionCardDemoComponent {
       {
         name: 'surface',
         control: { kind: 'select', options: ['subtle', 'card'] },
-        description: 'Gris de formulario · blanca con borde sobre el lienzo',
+        description: 'Gris de formulario (22.75/16) · blanca con borde sobre el lienzo (24.5)',
       },
       { name: 'collapsible', control: { kind: 'boolean' } },
       { name: 'initiallyCollapsed', control: { kind: 'boolean' } },
@@ -155,14 +156,14 @@ export class SectionCardDemoComponent {
         type: "'subtle' | 'card'",
         default: "'subtle'",
         description:
-          'La piel. subtle: gris plano con línea bajo la cabecera, para agrupar campos dentro de un formulario. card: blanca con borde, para una sección que va sola sobre el lienzo.',
+          'La piel, y con ella las medidas. subtle: gris plano (22.75/16, título a 14 del contenido), para agrupar campos dentro de un formulario. card: blanca con borde (24.5, título a 16 y sangrado 12.25 como el contenido), para una sección que va sola sobre el lienzo. Ninguna de las dos lleva línea bajo la cabecera: las separa el aire, como en Figma.',
       },
       {
         name: 'headingLevel',
         type: '1 | 2',
         default: '2',
         description:
-          'Nivel del encabezado, y con él su tamaño. 2: una sección de la página (h2, 14/20 semibold). 1: el título de LA PÁGINA (h1, 18/24) — uno por documento, así que una sola card por pantalla.',
+          'Nivel del encabezado en el DOCUMENTO, no su tamaño: los dos miden 14/20 semibold. 2 es una sección de la página (h2); 1 es el título de LA PÁGINA (h1) — uno por documento, así que una sola card por pantalla. Dentro de la card, lo que distingue al título de la página de los de sección es su icono, no su cuerpo (DD-61).',
       },
     ],
   };

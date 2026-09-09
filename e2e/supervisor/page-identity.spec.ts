@@ -105,33 +105,54 @@ for (const { ruta, nombre } of FORMULARIOS) {
 }
 
 /**
- * El título mide lo mismo en TODAS las páginas de contenido. Se comprueba
- * aparte porque lo garantiza una clase compartida (`.page__heading`) y una
- * regla encapsulada de componente le gana siempre a la global, sin avisar de
- * nada. Nació con un motivo concreto: 9 hojas de página arrastraban un
- * `.page__title` MUERTO de la banda de S59. Ese CSS ya está borrado (S22), así
- * que hoy este test vigila que no vuelva a aparecer una regla de página que
- * pise el tamaño del título en una ruta y no en las demás.
+ * El título mide lo mismo en todas las páginas de su MISMA FAMILIA. Se comprueba aparte porque
+ * lo garantiza una clase compartida y una regla encapsulada de componente le gana siempre a la
+ * global, sin avisar de nada. Nació con un motivo concreto: 9 hojas de página arrastraban un
+ * `.page__title` MUERTO de la banda de S59. Ese CSS ya está borrado (S22), así que hoy este test
+ * vigila que no vuelva a aparecer una regla de página que pise el tamaño del título en una ruta
+ * y no en las demás.
+ *
+ * Dos familias desde el 2026-09-09, y la distinción es del CONTENEDOR, no del nivel del
+ * documento (DD-61):
+ *
+ *   · **suelto sobre el lienzo** (`.page__heading`) → 18/600, el rol `h3`;
+ *   · **contenido en su sección** (`sc-section-card [headingLevel]="1"`) → 14/600, el mismo
+ *     tamaño que los títulos de sección de esa card, porque ahí el título ES la cabecera de la
+ *     caja: lo que lo distingue es su icono, no su cuerpo. Es lo que mide la maqueta.
+ *
+ * Cada familia sigue siendo invariante hacia dentro, que es lo que el test protege. Una sola
+ * lista con las dos mezcladas no lo protegía: solo escondía la diferencia bajo un `toHaveLength(1)`.
  */
-test('el título de página mide igual en todas partes', async ({ page }) => {
-  const medidas: { ruta: string; size: string; weight: string }[] = [];
+test('el título de página mide igual dentro de su familia', async ({ page }) => {
+  const medidas: { ruta: string; familia: string; size: string; weight: string }[] = [];
 
   for (const { ruta } of CONTENIDO) {
     await goto(page, ruta);
     const h1 = page.locator('main#main-content h1');
-    medidas.push({
-      ruta,
-      ...(await h1.evaluate((el: HTMLElement) => {
-        const cs = getComputedStyle(el);
-        return { size: cs.fontSize, weight: cs.fontWeight };
-      })),
+    const m = await h1.evaluate((el: HTMLElement) => {
+      const cs = getComputedStyle(el);
+      return {
+        familia: el.closest('sc-section-card') ? 'contenido' : 'suelto',
+        size: cs.fontSize,
+        weight: cs.fontWeight,
+      };
     });
+    medidas.push({ ruta, ...m });
   }
 
-  const distintos = [...new Set(medidas.map((m) => `${m.size}/${m.weight}`))];
-  expect(distintos, JSON.stringify(medidas, null, 1)).toHaveLength(1);
-  // 18px/600: los tokens de rol `h3`, que es el text style `Heading/h3-semibold` del
-  // Figma del DS. Era 16px/600 (`subtitle-1`) hasta el 2026-09-09, cuando DD-54 fijó que
-  // manda la escala de la LIBRERÍA y ese 16 se quedó sin text style detrás.
-  expect(distintos[0]).toBe('18px/600');
+  const porFamilia = (f: string) => [
+    ...new Set(medidas.filter((m) => m.familia === f).map((m) => `${m.size}/${m.weight}`)),
+  ];
+
+  const detalle = JSON.stringify(medidas, null, 1);
+
+  // Suelto sobre el lienzo: los tokens de rol `h3` (text style `Heading/h3-semibold` del DS).
+  expect(porFamilia('suelto'), detalle).toEqual(['18px/600']);
+
+  // Contenido en su sección: `body-semibold`, el mismo que los títulos de sección de la card.
+  expect(porFamilia('contenido'), detalle).toEqual(['14px/600']);
+
+  // Y las dos familias están representadas: si una se queda vacía, el test dejó de mirar algo.
+  expect(porFamilia('suelto').length, detalle).toBe(1);
+  expect(porFamilia('contenido').length, detalle).toBe(1);
 });

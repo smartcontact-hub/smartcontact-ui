@@ -1645,15 +1645,17 @@
             "voz": "Voice",
             "desbordar": "Overflow conversations when no agents are available",
             "tipo_cola": "Queue type",
-            "capacidad_cola": "Queue capacity",
+            "capacidad_cola": "Maximum conversations in queue",
             "tiempo_max": "Maximum queue wait time",
-            "tiempo_transfer": "Transfer time",
+            "tiempo_transfer": "Maximum transfer time",
             "placeholder": "Select",
             "input_placeholder": "Type"
           },
           "apertura": {
             "title": "Contact card opening",
-            "tipo_label": "Type"
+            "tipo_label": "Type",
+            "tamano_label": "Size",
+            "tamano_suffix": "pixels"
           },
           "toast": {
             "saved": "Group settings saved"

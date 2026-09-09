@@ -42,6 +42,7 @@
 > | Tema | DD |
 > |---|---|
 > | El título de una pantalla con rail va DENTRO de su sección · `sc-section-card` es la única caja | DD-57 |
+| Cada piel de `sc-section-card` trae las medidas de SU nodo · el maestro del DS manda en la gris | DD-61 |
 | Los estilos de texto se ponen a lo que NO es un componente · un `<sc-*>` no lleva `.sc-text-*` encima | DD-55 |
 | Qué escala tipográfica manda (la de la librería del DS) y qué se rompió al elegirla | DD-54 |
 | Anatomía de página en `_page.scss` · el constructor entra en el molde · la barra sticky del trío admin es deliberada · escritorio primero · `DD#` no es `DD-` | DD-53 |
@@ -53,6 +54,92 @@
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
 
 ---
+
+## DD-61 · 2026-09-09 — Cada PIEL de `sc-section-card` trae las medidas de SU nodo de Figma, y el maestro del DS es el que manda en la gris
+
+**Contexto** · DD-57 subió el padding de `sc-section-card` de 21 a 24.5 «hacia el valor que la
+maqueta del DS respalda», y eso movió también las once cards de los tres formularios de admin.
+Rafa pidió contrastar ese número contra la maqueta de esos formularios antes de darlo por bueno.
+
+Al ir a buscarla apareció el problema: **no existe**. En el archivo Supervisor hay una sola
+maqueta de formulario de admin («Editar agente — Grupos asignados», 41:5624) y su panel es un
+`p-card` con 12/16 de padding — justo el que en el código NO es una `sc-section-card`
+(`sc-group-assignment-table`, la tabla que hace de panel entero). De las secciones que sí usan
+el componente —Identificación, Permisos, Avanzado— no hay ni un nodo.
+
+Lo que sí existe es el **maestro del DS**: el component set `Section` (691:23956, librería
+Smart-Contact Design System), las cuatro variantes idénticas, con sus medidas atadas a
+variables. Y dice otra cosa que el 24.5.
+
+**Decisión** ·
+
+1. **`surface="subtle"` toma las medidas del maestro `Section`**: 22.75 arriba y abajo
+   (`scale/1-625`), 16 a los lados (`scale/1-143`) y 14 (`scale/1`, el gap de su `Container`)
+   entre el título y el contenido.
+2. **`surface="card"` conserva las del `Block`** de la maqueta de Agentes (393:12587): 24.5 por
+   los cuatro lados (`scale/1-75`) y 16 (`scale/1-143`) entre el título y el contenido. Además su
+   cabecera se sangra 12.25 más (`scale/0-875`, el padding que el `Header` 393:12588 se pone a sí
+   mismo): es lo que pone el título en la MISMA vertical que el contenido de dentro, mientras los
+   divisores siguen cruzando la caja entera.
+3. **Ninguna de las dos lleva línea bajo la cabecera.** No está en el maestro ni en el `Block`:
+   en los dos, título y contenido los separa aire.
+4. **El icono de la cabecera baja a 14** (`SC_ICON_SIZE_DEFAULT`) y la separación icono→título a
+   8.75 (`scale/0-625`). Los dos nodos dicen 14 y 8.
+5. **`headingLevel` deja de arrastrar el tamaño**: decide la SEMÁNTICA (`<h1>` o `<h2>`) y nada
+   más. Los dos niveles miden 14/20 semibold. Lo que distingue al título de la página de los de
+   sección dentro de la misma card es su ICONO, que solo lleva la cabecera — que es lo que hace
+   la maqueta.
+
+**Razón** · El 24.5 no sale del componente del DS: sale de un marco LOCAL del archivo de
+pantallas, que es la variante blanca. Aplicarlo también a la gris es exactamente el fallo que
+DD-57 vino a arreglar —dos cajas que derivan— solo que al revés: una caja con las medidas de la
+otra. Medido el 2026-09-09 leyendo `boundVariables` en los dos nodos: el maestro ata
+`scale/1-625` y `scale/1-143`, el `Block` ata `scale/1-75`. No es interpretación, es el token que
+cada uno tiene puesto.
+
+Y el 18/24 del título de página tenía el mismo vicio de origen, en el eje de la tipografía: DD-57
+lo justificaba como «el escalón que le toca en la escala del Figma del DS», o sea, lo dedujo de
+que la escala TIENE un peldaño `h3`, no de que algún nodo lo dibuje. **Medido el 2026-09-09: en
+todo el archivo Supervisor no hay un solo texto por encima de 14** —ni en las cuatro pantallas
+principales, ni en el rail, ni en la barra—; la jerarquía la llevan el peso, el color y la caja.
+Tres razones convergen y por eso se baja:
+
+- la maqueta pone «Agentes» y «Configuración» en el MISMO estilo, y los separa el icono;
+- el icono de la cabecera mide 14 en los dos nodos, y un título de 18 al lado de un icono de 14
+  deja el icono corto — este es el argumento que decide, porque es del objeto y no de su origen;
+- un input que mezcla semántica y tamaño necesita un párrafo para explicarse; separados, cada
+  uno se explica solo.
+
+**Descartadas** ·
+
+- **Dejar 24.5 en las dos.** Es lo que había, y no lo respalda ningún nodo del DS.
+- **Bajar también la blanca a 22.75/16.** Rompe la única pantalla verificada al píxel (Agentes,
+  393:12562) por igualar dos cajas que Figma dibuja distintas a propósito: una va dentro de un
+  formulario y la otra sola sobre el lienzo.
+- **Dejar el título de página en 18/24 y anotar la maqueta como discrepante.** Es lo cómodo y
+  habría sido defendible, pero la discrepancia estaba en el código: el 18 no lo respalda ningún
+  nodo. Se avisó a Rafa y él zanjó igualar a la maqueta.
+- **Bajar TAMBIÉN a 14 los títulos de las otras 20 páginas** (`.page__heading`), por coherencia.
+  No: ahí el título va SUELTO sobre el lienzo, sin caja que lo acote, y es el único elemento que
+  dice qué miras. Además el Figma no modela esos títulos —no existen en él—, así que no hay nada
+  contra lo que igualar: los puso DD-33 desde una referencia externa (Snow UI).
+- **Sangrar la cabecera con el padding de la caja** (36.75 de una vez) en vez de con un margen en
+  su primer hijo. 36.75 no es un peldaño de la tabla 14-base, así que habría que sumarlo con
+  `calc`; y el `chevron` de la variante colapsable se ancla al lado contrario, donde esa sangría
+  sobra.
+
+**Consecuencias** · Las once cards de los formularios de admin bajan a 22.75/16 y pierden su
+línea; la card de las tres pantallas AED se queda en 24.5 y gana la alineación del título con su
+contenido, y su título baja de 18 a 14.
+
+`page-identity.spec.ts` pasa a vigilar **dos familias** en vez de una lista sola: título suelto
+sobre el lienzo (`.page__heading`) a 18/600 y título contenido en su sección a 14/600, cada una
+invariante hacia dentro. La distinción es del CONTENEDOR, no del nivel del documento. El test no
+se debilita: seguía existiendo para cazar una regla de página que pisara el tamaño en una ruta y
+no en las demás, y eso lo sigue haciendo — antes escondía la diferencia real bajo un
+`toHaveLength(1)`. La ficha de `sc-section-card` en sc-docs cuenta ya las medidas de cada piel. Queda
+abierto lo que no se puede cerrar sin diseño: **los formularios de admin no tienen maqueta**, así
+que su contenido interior sigue sin contrastar contra nada.
 
 ## DD-60 · 2026-09-09 — Rápido en casa, completo en GitHub: los e2e salen del `preflight` local y viven solo en el CI
 
@@ -299,8 +386,11 @@ build: ancho, padding, gap, radio y borde de las ocho cajas de la pantalla).
   S59 ya quitó (`page-identity.spec.ts`, punto 4). Quedan fuera, y el guardián lo dice.
 
 **Consecuencias** · El padding de `sc-section-card` sube de 21 a 24.5 y el de su cabecera se
-reparte para dejar los 16 del gap: eso mueve también las once cards de los formularios de admin,
-hacia el valor que la maqueta del DS respalda. `settings-card` deja de existir. Y el subtítulo
+reparte para dejar los 16 del gap: eso mueve también las once cards de los formularios de admin.
+⚠️ **Esa última parte la corrige DD-61**: el 24.5 sale del `Block` de la maqueta de Agentes, que es
+la piel BLANCA; el maestro `Section` del DS —la piel gris que usan los formularios— mide 22.75/16.
+Aquí decía «hacia el valor que la maqueta del DS respalda» y no era así. `settings-card` deja de
+existir. Y el subtítulo
 «Ajustes de la plataforma» del rail se retira: no está en la maqueta y repetía lo que ya dicen el
 rótulo, la miga y el título.
 
