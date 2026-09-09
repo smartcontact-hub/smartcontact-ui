@@ -169,7 +169,21 @@ qué garantiza.
 | Tipos y lint           | `typecheck` · `lint`                                                                                       | `tsc` sobre las 2 libs, las 4 apps y el arnés de la raíz                                                                                                                                           |
 | e2e smoke              | `e2e`                                                                                                      | La demo levanta y el botón y el form field renderizan la métrica del Kit medida en navegador                                                                                                       |
 
-El mismo gate corre en CI ([.github/workflows/ci.yml](.github/workflows/ci.yml)).
+El mismo gate corre en CI ([.github/workflows/ci.yml](.github/workflows/ci.yml)). Cuando un
+e2e falla, el CI **sube la traza y la captura** de Playwright como artifact (7 días): un rojo
+deja algo que mirar en vez de una línea de texto.
+
+### Los otros workflows
+
+| Workflow                                                        | Cuándo                    | Qué hace                                                                                                                                                                                                     |
+| --------------------------------------------------------------- | ------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+| [`publish-packages.yml`](.github/workflows/publish-packages.yml) | Al publicarse una release | Publica los 3 paquetes en GitHub Packages desde el commit del tag. Sin tokens personales                                                                                                                     |
+| [`deploy-record.yml`](.github/workflows/deploy-record.yml)       | Al empujar a `main`       | Registra en *Deployments* qué sirve cada uno de los 5 sitios, **después de comprobarlo**: cada build se sella con su commit (`stamp-build.mjs` → `build.json`) y el registro espera a verlo. Sin sello, rojo |
+| [`tokens-sync.yml`](.github/workflows/tokens-sync.yml)           | Al empujar tokens         | Verifica el PR del puente de Figma                                                                                                                                                                          |
+
+> ⚠️ Los cinco `build:*` terminan en `node scripts/stamp-build.mjs <app>`, y son los comandos
+> que corre Cloudflare. **Quitar ese eslabón deja el sitio sin sello**, y `deploy-record` lo
+> marcará en rojo hasta que vuelva. Ver [DD-59](docs/DECISIONS.md).
 
 ## Flujo Figma a código
 

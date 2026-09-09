@@ -37,6 +37,8 @@ export default defineConfig({
     viewport: { width: 1440, height: 900 },
     colorScheme: 'light',
     trace: 'retain-on-failure',
+    // Lo mismo que la traza: solo al fallar, y el CI la sube como artifact.
+    screenshot: 'only-on-failure',
   },
   // Playwright levanta y espera el dev server. `ng serve` en vez de un estático
   // sobre `dist`: no añade dependencias nuevas (http-server/wait-on no están en

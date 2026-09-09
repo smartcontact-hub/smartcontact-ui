@@ -106,6 +106,8 @@ export default defineConfig({
     // `e2e/cuscare/harness.spec.ts`.
     contextOptions: { reducedMotion: 'reduce' },
     trace: 'retain-on-failure',
+    // Lo mismo que la traza: solo al fallar, y el CI la sube como artifact.
+    screenshot: 'only-on-failure',
   },
   webServer: process.env['SC_CUSCARE_URL']
     ? undefined
