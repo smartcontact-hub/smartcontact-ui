@@ -87,14 +87,14 @@ npm run export:all     # tarballs npm en dist/archives/
 npm run verify         # todos los checks estáticos (~40s)
 npm run e2e            # smoke en navegador (Playwright)
 npm run e2e:contrast   # carril rápido para cambios de COLOR (~80s)
-npm run preflight      # los 8 pasos del CI, antes de pushear
-npm run preflight:fast # lo mismo, ~2x más rápido: sirve el build estático en vez de `ng serve`
+npm run preflight      # la parte RÁPIDA del CI (gates + builds AOT, ~8 min), antes de pushear
+npm run e2e:supervisor # y e2e:cuscare / e2e:visual: la suite que toca lo que cambiaste, a mano
 ```
 
-`preflight:fast` corre los MISMOS gates —lo garantiza un test de paridad— pero sirve las
-apps ya construidas en vez de arrancar tres `ng serve`, que eran la mitad del tiempo.
-Medido: **4m 46s contra 8m 31s**. Un cambio hecho DESPUÉS de lanzarlo no se ve (sirve el
-build de antes), así que es de un tiro sobre árbol final, igual que `preflight`.
+Los e2e **no** van en `preflight` (DD-60): los corre el CI, que es obligatorio en `main` y
+paralelo. En un portátil solo cabe un Playwright a la vez, así que con varias sesiones el
+preflight completo (20-25 min) se hacía cola durante una hora; en GitHub cada suite tiene su
+runner. Si tocaste un e2e o algo visual, corre a mano la suite que toca antes de pushear.
 
 **Regla de la casa**: una comprobación que no está en una cadena automática no es una
 comprobación, es documentación, y la documentación que hay que recordar se pierde. Todo
@@ -105,19 +105,23 @@ subconjunto de las que ya corren en CI.
 
 ### Antes de pushear, `preflight`
 
-Encadena los ocho pasos de `ci.yml` en un solo comando, para que "verde en local" signifique
-"verde en CI". Existe porque `verify` por sí solo **no corre el `e2e`**: un cambio de
-`line-height` pasó los gates estáticos y aun así tumbó el CI al mover un baseline de
-`component-structure`.
+Encadena en un solo comando todo lo que `ci.yml` corre SIN navegador (gates + builds AOT de las
+apps), para que "verde en local" signifique "el CI solo puede caer en un e2e". Existe porque
+`verify` por sí solo **no construye las apps**: un binding roto en una plantilla pasa `verify` y
+lo caza el build AOT. Los ocho pasos del CI son esos más las tres suites e2e (smoke,
+supervisor y cuscare), que solo corren en GitHub. Las baselines visuales de sc-docs
+(`e2e:visual`) no corren en ningún gate: el runner de macOS las falla las 38 por la fuente
+monoespaciada del sistema (DD-60), así que las corre a mano quien toque sc-docs.
 
 Que no se pudra cuando alguien añada un paso al CI lo garantiza un test
 (`scripts/ci-preflight-parity.mjs`, dentro de `test:unit`): se pone rojo si `preflight` y
-`ci.yml` se desincronizan.
+`ci.yml` se desincronizan, salvo la lista CERRADA `CI_ONLY` (los e2e), que también vigila en la
+otra dirección: un paso de esa lista que el CI deje de correr la pone en rojo.
 
 Y para que no dependa de acordarse, **un hook lo corre solo**: `.githooks/pre-push` lanza
 `preflight:scope` antes de cada `git push` y aborta si algo falla; si el árbol ya lleva la marca
 `.preflight-ok` de un carril en verde (la escribe `scripts/preflight-mark.mjs` al final de
-`preflight`, `preflight:fast` y `preflight:scope -- --run`), sube sin repetir la cadena. Se activa
+`preflight` y `preflight:scope -- --run`), sube sin repetir la cadena. Se activa
 una vez con `npm run hooks:install`. Y el hook de Claude (`.claude/settings.json` →
 `scripts/hooks/bash-guard.mjs`) deniega el `git push` antes de llegar aquí si la marca no cuadra
 con el árbol, junto con los otros comandos que LEARNINGS #7, #11 y #12 prohíben. La salida de emergencia es `SKIP_PREFLIGHT=1 git push`, y avisa por

@@ -21,7 +21,7 @@
 | **4** | arreglar un valor sustituyéndolo por otro token | mide el token de DESTINO antes (fondo y texto, misma familia) |
 | **5** | dudar entre tu código y tu medición | lo rancio es la medición: build, server, HMR, animación, **el repo bajo tus pies** ⚙️, **otra instancia (un deploy)**, la máquina ahogada… o atribución. Y si el test miraba un TRANSITORIO, la carga es el disparador, no la causa |
 | **6** | creerte un test NUEVO — se ponga rojo **o pase a la primera** | sospecha del test primero: ¿mide la magnitud? ¿el selector casa? ¿reintenta? ¿espera al estado final? Y para probar el arreglo de una CARRERA, hazla determinista en vez de correrla con carga |
-| **7** | hacer `git push`, **o lanzar la cadena de 8 pasos** | `preflight` (o `:fast`/`:scope`) UNA vez sobre el árbol final —"final" = ya no vas a escribir nada más, ni un `.md`—; **`verify` NO es ese gate: se salta el `e2e smoke` y los builds AOT de las apps**. **+ `guard:lockfile` si tocaste el lock**. Confirma el verde LEYENDO el CI: `npm run ci:verdict` |
+| **7** | hacer `git push`, **o lanzar la cadena** | `preflight` (o `:scope --run`) UNA vez sobre el árbol final —"final" = ya no vas a escribir nada más, ni un `.md`—; **`verify` NO es ese gate: se salta los builds AOT de las apps**. Los e2e los corre el CI (8 pasos), no el preflight (DD-60): si tocaste e2e o algo visual, corre a mano la suite que toca — las baselines visuales de sc-docs NO las corre ningún gate. **+ `guard:lockfile` si tocaste el lock**. Confirma el verde LEYENDO el CI: `npm run ci:verdict` |
 | **8** | proponer una segunda corrección tras fallar la primera | para: la siguiente acción es una MEDICIÓN que localice la causa |
 | **10** | declarar algo bloqueado, deducir un dato a ojo, **o diseñar un mecanismo nuevo** | comprueba qué te sirve ya el sistema (DOM oculto, i18n, hoja de estilos) y **qué lo vigila ya** (`.githooks/`, `.claude/settings.json`, `scripts/`) |
 | **11** | lanzar una edición masiva por shell | pega la verificación de outcome en el MISMO comando (zsh no hace word-splitting) |
@@ -90,13 +90,13 @@
 
 ## Gates y push
 
-7. **Vas a `git push` → `preflight` (o `:fast`, o `:scope --run`) UNA vez sobre el árbol FINAL, y
-   el veredicto es el del CI leído.** "Final" = commiteado y sin nada más que escribir, ni un
-   `.md`. `verify` NO es ese gate: se salta `e2e smoke` y los builds AOT ("es solo un token, una
-   ruta, un md" no es "verify basta"). Mientras iteras, el subconjunto que toca tu cambio, nunca
-   dos cadenas a la vez, y con `git status` limpio. Después: `npm run ci:verdict`. Si tocaste el
-   lock, `guard:lockfile` (`npm ci --dry-run` a secas es ciego a la plataforma). "Este rojo no es
-   mío" se mide: `git stash` y ese test contra HEAD.
+7. **Vas a `git push` → `preflight` (o `:scope --run`) UNA vez sobre el árbol FINAL, y el
+   veredicto es el del CI leído.** "Final" = commiteado y sin nada más que escribir, ni un `.md`.
+   `verify` NO es ese gate: se salta los builds AOT ("es solo un token, una ruta, un md" no es
+   "verify basta"). Los e2e NO van en preflight (DD-60): los corre el CI, obligatorio y en
+   paralelo; si tocaste e2e o algo visual, corre a mano la suite que toca ANTES de pushear.
+   Después: `npm run ci:verdict`. Si tocaste el lock, `guard:lockfile` (`npm ci --dry-run` a
+   secas es ciego a la plataforma). "Este rojo no es mío" se mide: `git stash` y ese test.
    ⚙️ El hook de push exige `.preflight-ok` sobre ESTE árbol y deniega un `echo $?` colgado de un
    gate; el de Stop exige leer el CI; `ci-preflight-parity` y `playwright-reuse-guard`, el resto.
    Evidencia: ≥8 reincidencias con la regla escrita; por eso dejó de ser prosa. `git log -S'(s35)'`.
