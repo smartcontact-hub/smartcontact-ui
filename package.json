@@ -15,6 +15,7 @@
     "audit:page-anatomy": "node scripts/audit-page-anatomy.mjs",
     "audit:base-href": "node scripts/audit-base-href.mjs",
     "audit:text-styles": "node scripts/audit-text-styles.mjs",
+    "proto": "node scripts/proto-freeze.mjs",
     "proto:check": "node scripts/proto-freeze.mjs --check",
     "proto:freeze": "node scripts/proto-freeze.mjs",
     "audit:primeng-coupling": "node scripts/audit-primeng-coupling.mjs",

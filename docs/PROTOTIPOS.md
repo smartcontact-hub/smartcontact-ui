@@ -11,13 +11,21 @@
 
 ## Cómo se congela una versión
 
+Con el trabajo ya mergeado en `main`, un comando:
+
 ```
-npm run proto:freeze -- --ticket SISMAC-3780 --app supervisor --que "Contact Center · Agentes"
+npm run proto
 ```
 
-Crea la etiqueta `proto/SISMAC-3780`, la rama `proto/sismac-3780` desde ella, y añade la fila de
-abajo. Luego se commitea la tabla y se pushean las dos referencias (el script imprime los
-comandos; no pushea él, porque un push sobre este árbol exige su preflight).
+Pregunta tres cosas (qué ticket, qué sitio, qué cubre), enseña lo que va a hacer y pide un sí.
+No hay flags que aprenderse: esto se usa una vez cada entrega.
+
+Lo que hace con ese sí: la etiqueta `proto/SISMAC-3780`, la rama `proto/sismac-3780` desde ella,
+la fila de abajo, y —si dices que sí a la segunda pregunta— publica las dos referencias. Un par
+de minutos después responde `https://proto-sismac-3780.sc-supervisor.pages.dev`, y **ésa** es la
+que se pega en Jira y en Confluence.
+
+La tabla queda como cambio sin guardar: entra en el siguiente PR.
 
 **La rama congelada no se toca nunca más.** No se rebasa, no se actualiza y no se mergea: por eso
 no da conflictos ni hay que mantenerla. Si algún día estorba, se borra y la etiqueta sigue ahí,
