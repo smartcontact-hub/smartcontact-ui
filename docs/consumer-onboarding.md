@@ -4,10 +4,23 @@ Guía para que una app Angular consuma el Design System publicado en GitHub Pack
 (privado, org `smartcontact-hub`). Validado por `projects/supervisor` (la app real, ya en
 el monorepo), que consume el DS **por nombre** igual que una app externa.
 
-> **Nota (DD-17, 2026-06-15)** · Los paquetes están **APARCADOS**: hoy el único consumidor
-> (el Supervisor) vive en este mismo repo y resuelve `@smartcontact-hub/*` **local** por
-> `tsconfig paths` → `./dist/*` (instantáneo, sin publicar). Esta guía aplica si vuelve a
-> entrar un consumidor **externo** que instale los paquetes publicados.
+> **Nota (DD-17, 2026-06-15)** · Publicar en el **registro** está **APARCADO**: las cinco apps
+> de este repo resuelven `@smartcontact-hub/*` **local** por `tsconfig paths` → `./dist/*`
+> (instantáneo, sin publicar). Los capítulos 1 y 2 de abajo (token, `.npmrc`, `npm install`)
+> aplican el día que se desaparque.
+>
+> **Pero descargarlo YA se puede** (DD-58, 2026-09-09), sin token y sin `.npmrc`: cada versión
+> es una [release de GitHub](https://github.com/smartcontact-hub/smartcontact-ui/releases/latest)
+> con los tres tarballs adjuntos.
+>
+> ```bash
+> V=1.0.0; B=https://github.com/smartcontact-hub/smartcontact-ui/releases/download/v$V
+> npm i $B/smartcontact-hub-styles-$V.tgz $B/smartcontact-hub-icons-$V.tgz $B/smartcontact-hub-components-$V.tgz
+> ```
+>
+> A partir de ahí, **todo lo demás de esta guía vale igual**: los paquetes son los mismos, y
+> `provideSmartContactUi()` y los `--sc-*` no saben de dónde vinieron. Lo que cambia es cómo se
+> actualiza: no hay `npm update`, se apunta a la URL de la versión nueva.
 
 ## 0. El modelo en 1 minuto — un DS, dos profundidades
 

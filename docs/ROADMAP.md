@@ -212,7 +212,11 @@
   servido en RAÍZ (Cloudflare); si algún día va a subpath, pasar a `APP_BASE_HREF`/ruta relativa.
 
 ## Operador / sesiones aparte
-- ✅ **0.2.0 publicada** (2026-06-14). El pipeline de publish queda **APARCADO** (ver consolidación arriba).
+- ✅ **1.0.0 cortada** (2026-09-09) — primera estable, descargable como
+  [release de GitHub](https://github.com/smartcontact-hub/smartcontact-ui/releases/latest) con los 3
+  tarballs adjuntos ([DD-58](DECISIONS.md)). El pipeline de publish al **registro** sigue **APARCADO**
+  (DD-17): la release no lo desaparca, le da una salida sin registro.
+- ✅ **0.2.0 publicada** (2026-06-14).
 - ~~Migrar `smart-contact-platform`~~ → **SUPERSEDED por la consolidación monorepo (DD-17)**: la app
   vive ahora en este repo; no se migra a paquetes, se consume local.
 - **Archivar `smartcontact-ui-main`** (el DS viejo original) → `docs/playbook-archivar-ui-main.md`.

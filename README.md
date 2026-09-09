@@ -1,5 +1,6 @@
 # Smart Contact Design System
 
+[![Versión](https://img.shields.io/badge/versi%C3%B3n-1.0.0-0B2C5C)](https://github.com/smartcontact-hub/smartcontact-ui/releases/latest)
 ![Angular](https://img.shields.io/badge/Angular-22-DD0031?logo=angular&logoColor=white)
 ![PrimeNG](https://img.shields.io/badge/PrimeNG-22-10B981)
 ![TypeScript](https://img.shields.io/badge/TypeScript-6.0-3178C6?logo=typescript&logoColor=white)
@@ -18,10 +19,24 @@ en ningún sitio.
 En la práctica eso significa que **editas un token y lo ves al instante** en las cuatro
 apps, sin publicar nada ni subir una versión.
 
-Los tres paquetes se pueden empaquetar (`npm run export:all` deja los tarballs en
-`dist/archives/`), pero **publicarlos en GitHub Packages está aparcado a propósito**: con
-un solo repo y un consumidor, el ciclo publicar-versionar-instalar cuesta más de lo que
-aporta. La decisión y su porqué están en [DD-17](docs/DECISIONS.md).
+### Cómo se lo descarga alguien de fuera
+
+Cada versión es una [**release de GitHub**](https://github.com/smartcontact-hub/smartcontact-ui/releases/latest)
+con los tres paquetes adjuntos como tarball. No hace falta clonar ni compilar:
+
+```bash
+npm i https://github.com/smartcontact-hub/smartcontact-ui/releases/download/v1.0.0/smartcontact-hub-styles-1.0.0.tgz
+```
+
+Lo que cambia en cada versión está en [CHANGELOG.md](CHANGELOG.md), y la release enseña esa
+misma nota: hay **una** fuente, no dos. La corta `npm run release` (dry-run por defecto;
+`-- --publish` para hacerla), que reconstruye los tarballs desde el commit del tag para que
+lo que se descarga sea lo que el tag dice.
+
+**Publicarlos en el registro de GitHub Packages sigue aparcado a propósito**: con un solo
+repo y un consumidor, el ciclo publicar-versionar-instalar cuesta más de lo que aporta. La
+decisión y su porqué están en [DD-17](docs/DECISIONS.md); que la descarga exista igualmente,
+en [DD-58](docs/DECISIONS.md).
 
 ## Paquetes
 

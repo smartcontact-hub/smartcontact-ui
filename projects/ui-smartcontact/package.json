@@ -1,6 +1,6 @@
 {
   "name": "@smartcontact-hub/components",
-  "version": "0.2.0",
+  "version": "1.0.0",
   "description": "Smart Contact Design System — Angular components, the PrimeNG preset (--sc-* contract) and the provideSmartContactUi() setup frontier.",
   "keywords": [
     "angular",
@@ -25,8 +25,8 @@
     "@angular/forms": "^22.0.0",
     "@ngx-translate/core": "^17.0.0",
     "@primeuix/themes": "^3.0.0",
-    "@smartcontact-hub/icons": "0.2.0",
-    "@smartcontact-hub/styles": "0.2.0",
+    "@smartcontact-hub/icons": "1.0.0",
+    "@smartcontact-hub/styles": "1.0.0",
     "primeng": "^22.0.0",
     "rxjs": "^7.8.1"
   },
