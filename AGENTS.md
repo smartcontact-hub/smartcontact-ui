@@ -177,6 +177,12 @@ el código y el agente no la leía nunca (DD-53).
   `header.top-bar` + `main#main-content` (con skip-link). Medidas en la capa 5:
   `--sc-sidebar-width-collapsed` (canal) y `--sc-sidebar-width-expanded` (se superpone al hover,
   no recoloca), `--sc-topbar-height`, y la escala `--sc-z-sticky` y hermanos.
+- **Título de pantalla con rail**: va DENTRO de su sección, no suelto encima
+  (`<sc-section-card icon="…" [headingLevel]="1" surface="card" titleKey="…">`, DD-57). Contenido,
+  acota su caja y arranca en la misma línea que el rail. `sc-section-card` es la ÚNICA caja de
+  sección del repo: `surface="subtle"` (gris) dentro de un formulario, `surface="card"` (blanca
+  con borde) sola sobre el lienzo. Los formularios de admin quedan fuera: su `<h1>` está oculto a
+  propósito porque la identidad la pinta la ficha de su rail. Lo vigila `audit:titulo-contenido`.
 - **Barra**: la identidad la da el breadcrumb, SIEMPRE (DD-33). Las acciones primarias de la
   página suben por `TopBarSlotService` (`core/layout/top-bar/top-bar-slot.service.ts`) con el
   helper `use-topbar-actions.ts`. No hay banda de cabecera de página: se retiró.

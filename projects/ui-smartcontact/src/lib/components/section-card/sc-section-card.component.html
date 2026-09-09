@@ -1,3 +1,16 @@
+<!--
+  El TÍTULO sale de una plantilla y no escrito dos veces: entre `collapsible` y `headingLevel`
+  hay cuatro combinaciones, y cuatro copias de la misma línea es exactamente como una de ellas
+  se queda atrás al tocar las otras tres.
+-->
+<ng-template #tituloTpl>
+  @if (headingLevel() === 1) {
+    <h1 class="section-card__title">{{ titleKey() | translate }}</h1>
+  } @else {
+    <h2 class="section-card__title">{{ titleKey() | translate }}</h2>
+  }
+</ng-template>
+
 <section class="section-card" [attr.id]="anchorId()" [attr.data-section-anchor]="anchorId()">
   @if (collapsible()) {
     <button
@@ -10,7 +23,7 @@
       @if (icon(); as ic) {
         <sc-icon [name]="ic" [size]="iconSizeLg" class="section-card__icon" />
       }
-      <h2 class="section-card__title">{{ titleKey() | translate }}</h2>
+      <ng-container [ngTemplateOutlet]="tituloTpl" />
       @if (hintKey()) {
         <span class="section-card__hint">{{ hintKey()! | translate }}</span>
       }
@@ -25,7 +38,7 @@
       @if (icon(); as ic) {
         <sc-icon [name]="ic" [size]="iconSizeLg" class="section-card__icon" />
       }
-      <h2 class="section-card__title">{{ titleKey() | translate }}</h2>
+      <ng-container [ngTemplateOutlet]="tituloTpl" />
       @if (hintKey()) {
         <span class="section-card__hint">{{ hintKey()! | translate }}</span>
       }

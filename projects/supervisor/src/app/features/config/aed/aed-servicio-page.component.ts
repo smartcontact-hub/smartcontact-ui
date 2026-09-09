@@ -23,6 +23,7 @@ import {
   ScInputTextComponent as InputTextComponent,
   ScInputNumberComponent as InputNumberComponent,
   ScRadioButtonComponent as RadioButtonComponent,
+  ScSectionCardComponent as SectionCardComponent,
   ScSelectComponent as SelectComponent,
   ScToggleSwitchComponent as ToggleSwitchComponent,
 } from '@smartcontact-hub/components';
@@ -134,6 +135,7 @@ const NOTIF_EVENTOS: readonly (keyof NotifEventos)[] = ['inicio', 'fin', 'result
     InputTextComponent,
     InputNumberComponent,
     RadioButtonComponent,
+    SectionCardComponent,
     SelectComponent,
     ToggleSwitchComponent,
     TranslateModule,

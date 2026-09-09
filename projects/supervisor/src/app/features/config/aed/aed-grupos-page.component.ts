@@ -16,8 +16,10 @@ import { TOAST_LIFE } from '@core/utils/toast-life';
 
 import {
   ScButtonComponent as ButtonComponent,
+  ScDividerComponent as DividerComponent,
   ScInputTextComponent as InputTextComponent,
   ScMultiSelectComponent as MultiSelectComponent,
+  ScSectionCardComponent as SectionCardComponent,
   ScSelectComponent as SelectComponent,
   ScToggleSwitchComponent as ToggleSwitchComponent,
 } from '@smartcontact-hub/components';
@@ -78,8 +80,10 @@ const DEFAULT_FORM: FormState = {
   selector: 'sc-aed-grupos-page',
   imports: [
     ButtonComponent,
+    DividerComponent,
     InputTextComponent,
     MultiSelectComponent,
+    SectionCardComponent,
     SelectComponent,
     ToggleSwitchComponent,
     TranslateModule,

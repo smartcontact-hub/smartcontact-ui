@@ -19,9 +19,9 @@ import {
   ScCheckboxComponent as CheckboxComponent,
   ScDividerComponent as DividerComponent,
   ScInputTextComponent as InputTextComponent,
+  ScSectionCardComponent as SectionCardComponent,
   ScToggleSwitchComponent as ToggleSwitchComponent,
 } from '@smartcontact-hub/components';
-import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { stableStringify } from '../../../shared/utils/form-dirty-state';
 
 type ComunicacionKey =
@@ -82,8 +82,8 @@ const DEFAULT_FORM: FormState = {
     ButtonComponent,
     CheckboxComponent,
     DividerComponent,
-    IconComponent,
     InputTextComponent,
+    SectionCardComponent,
     ToggleSwitchComponent,
     TranslateModule,
   ],
