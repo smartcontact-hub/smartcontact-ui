@@ -15,3 +15,9 @@
     margin-top: 0;
   }
 }
+
+/* La piel `card` es blanca sobre el lienzo, así que el canvas blanco de las demás stories la
+   haría invisible: aquí el fondo imita el lienzo de una pantalla real. */
+.demo-canvas--lienzo {
+  background: var(--sc-bg-default);
+}
