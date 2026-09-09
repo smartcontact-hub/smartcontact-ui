@@ -16,6 +16,7 @@
  *
  * Entrada: JSON por stdin (tool_input.command, cwd). Salida: JSON de decisión por stdout.
  */
+import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 import { estadoPreflight } from '../preflight-mark.mjs';
 
@@ -93,6 +94,33 @@ const empiezaPor = (seg, re) => re.test(seg.replace(/^(\s*[A-Za-z_][A-Za-z_0-9]*
 const esPushDeCommits = (seg) =>
   empiezaPor(seg, /^git\s+push\b/) && !/--tags\b|refs\/tags|\barchive\//.test(seg) && !/--delete\b|\s:[A-Za-z]/.test(seg) && !/--dry-run\b/.test(seg);
 
+/** Reconstruyen `dist/`: si corren a la vez que un preflight, se lo comen bajo los pies. */
+const BUILDS = /^(npm run (?:-[-a-z]+ )*build(:[a-z-]+)?|ng build)\b/;
+
+/**
+ * ¿Hay un preflight vivo AHORA sobre ESTE árbol?
+ *
+ * El patrón está acotado a base de falsos positivos medidos:
+ *   · `node …/preflight-*.mjs`, no cualquier línea que MENCIONE «preflight-scope» — si no, un
+ *     `until ! pgrep -f "preflight-scope"` esperando a que termine se detecta a sí mismo.
+ *   · y la ruta tiene que ser la de este cwd: en esta máquina conviven ocho worktrees, y el
+ *     Playwright de otro no toca mi `dist/`.
+ */
+function preflightVivo(cwd) {
+  try {
+    const salida = execFileSync('pgrep', ['-af', 'node .*(preflight-scope|preflight-fast)\\.mjs'], {
+      encoding: 'utf8',
+      stdio: ['ignore', 'pipe', 'ignore'],
+    });
+    return salida
+      .split('\n')
+      .filter(Boolean)
+      .some((linea) => linea.includes(cwd) || !linea.includes('/worktrees/'));
+  } catch {
+    return false; // `pgrep` sin coincidencias sale 1: no hay nada corriendo.
+  }
+}
+
 /**
  * Evalúa un comando. `ctx.preflight(cwd)` se inyecta para poder testear sin git.
  * Devuelve { decision: 'allow' | 'deny', reason }.
@@ -162,6 +190,20 @@ export function evaluar(cmd, ctx = {}) {
       reason:
         'LEARNINGS #11 — en zsh `for f in $VAR` NO hace word-splitting: el bucle corre una vez con la lista entera y no hace nada (s11: migración de 12 iconos inexistente). ' +
         'Enumera los ficheros, usa `for f in $(…)`, o `${=VAR}`; y pega la verificación de outcome en el mismo comando (`&& grep …`).',
+    };
+
+  // #5 — construir MIENTRAS corre el preflight le cambia el `dist/` bajo los pies.
+  // El síntoma engaña del todo: los e2e mueren con `Cannot find module '@smartcontact-hub/icons'`,
+  // que parece una dependencia rota y no lo es — los paths del tsconfig apuntan a `dist/`, y esa
+  // carpeta se está reescribiendo mientras el runner la lee. Cuesta la pasada entera (10-25 min)
+  // y manda a buscar el fallo al sitio equivocado.
+  if (segs.some((seg) => empiezaPor(seg, BUILDS)) && (ctx.preflightVivo || preflightVivo)(cwd))
+    return {
+      decision: 'deny',
+      reason:
+        'LEARNINGS #5 — hay un preflight corriendo y esto reescribe `dist/` bajo sus pies: sus e2e caerán con ' +
+        "`Cannot find module '@smartcontact-hub/icons'`, que parece una dependencia rota y es tu build. " +
+        'Espera a que termine (o párala) y construye después. Si sabes que ese preflight ya no importa, añade `# sc:ok`.',
     };
 
   return { decision: 'allow', reason: '' };
