@@ -26,6 +26,7 @@ import {
   type ScRowStyleClassFn,
 } from '@smartcontact-hub/components';
 import { ScConfirmService } from '@smartcontact-hub/components';
+import { LanguageService } from '@core/services';
 import { TOAST_LIFE } from '@core/utils/toast-life';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
 
@@ -65,6 +66,7 @@ export class CategoriesPageComponent {
   private readonly confirm = inject(ScConfirmService);
   private readonly messages = inject(MessageService);
   private readonly translate = inject(TranslateService);
+  private readonly language = inject(LanguageService);
 
   /** CTA proyectado a la TopBar (modelo "todo arriba" S59). */
   private readonly topbarActions = viewChild<TemplateRef<unknown>>('topbarActions');
@@ -281,7 +283,7 @@ export class CategoriesPageComponent {
   }
 
   protected formatDate(iso: string): string {
-    return new Date(iso).toLocaleDateString('es-ES', {
+    return new Date(iso).toLocaleDateString(this.language.locale(), {
       day: 'numeric',
       month: 'short',
       year: 'numeric',

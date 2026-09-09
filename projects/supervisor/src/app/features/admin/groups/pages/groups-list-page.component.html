@@ -96,8 +96,8 @@
     @if (renamingId() === group.id) {
       <sc-inline-rename-cell
         [initialValue]="group.name"
-        placeholder="Nombre del grupo"
-        [ariaLabel]="'Renombrar ' + group.name"
+        [placeholder]="'groups.rename_placeholder' | translate"
+        [ariaLabel]="'groups.rename_aria' | translate: { name: group.name }"
         (commit)="onRenameCommit(group.id, $event)"
         (cancelled)="onRenameCancel(group.id)"
       />
@@ -161,7 +161,7 @@
 <sc-impact-preview-dialog
   [visible]="!!pendingBulkEdit()"
   [mode]="'bulkEdit'"
-  [title]="'Aplicar cambio a ' + selectedIds().size + ' grupo(s)'"
+  [title]="'groups.bulk_edit_title' | translate: { count: selectedIds().size }"
   [items]="impactItems()"
   [badge]="impactBadge()"
   (cancelled)="onBulkPreviewCancel()"

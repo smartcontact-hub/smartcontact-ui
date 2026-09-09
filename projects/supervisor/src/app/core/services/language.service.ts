@@ -1,4 +1,4 @@
-import { effect, inject, Injectable, signal } from '@angular/core';
+import { computed, effect, inject, Injectable, signal } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
 
 export type AppLanguage = 'es' | 'en' | 'fr' | 'pt';
@@ -6,6 +6,19 @@ export type AppLanguage = 'es' | 'en' | 'fr' | 'pt';
 const STORAGE_KEY = 'sc-language';
 const DEFAULT_LANG: AppLanguage = 'es';
 const SUPPORTED: readonly AppLanguage[] = ['es', 'en', 'fr', 'pt'] as const;
+
+/**
+ * Etiqueta BCP-47 por idioma. La consumen `toLocaleDateString`/`toLocaleString`: sin ella
+ * las fechas y los números salían siempre en formato español aunque la UI estuviera en
+ * francés. Variantes elegidas a propósito: `en-GB` (mercado europeo, 9 Sept 2026 y no
+ * Sep 9, 2026) y `pt-BR` (el portugués del producto es brasileño: usuário, arquivo, baixar).
+ */
+const LOCALE_TAG: Record<AppLanguage, string> = {
+  es: 'es-ES',
+  en: 'en-GB',
+  fr: 'fr-FR',
+  pt: 'pt-BR',
+};
 
 /**
  * App-wide language switch. Owns four locales (es / en / fr / pt) and
@@ -22,6 +35,9 @@ export class LanguageService {
   private readonly translate = inject(TranslateService);
 
   readonly lang = signal<AppLanguage>(this.readPersisted());
+
+  /** Etiqueta BCP-47 del idioma activo, para formatear fechas, horas y números. */
+  readonly locale = computed(() => LOCALE_TAG[this.lang()]);
 
   readonly supported = SUPPORTED;
 

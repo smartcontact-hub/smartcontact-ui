@@ -37,6 +37,12 @@ consistencia**, no nitpicks:
 - Duplicación **verbatim** real (mismo template/CVA/computeds copiados entre componentes).
 - Dos eras de API conviviendo sin criterio escrito (`@Input/@Output` legacy vs `input()/output()/model()`).
 - Componentes que divergen de la convención DS aunque pasen los gates.
+- **Calidad del copy en los cuatro idiomas** (el gate de i18n vigila la FORMA — claves 1:1,
+  variables intactas, una sola traducción por frase — pero no sabe si el texto está bien
+  escrito). Mira las claves que hayan cambiado esa semana: traducción literal que en su
+  idioma no se dice así, término del dominio traducido a capricho (conversación, grupo ACD,
+  retranscribir), tono que se sale del resto, y vacíos o errores que constatan en vez de
+  decir qué hacer. Cita `en.json:línea` (o el idioma que sea) y propón el texto exacto.
 
 Cada hallazgo: **`file:line` (o las dos ubicaciones de la duplicación)** + el fix en
 una línea + severidad (P0/P1/P2). **Tope duro: ≤ 5 hallazgos**, rankeados por

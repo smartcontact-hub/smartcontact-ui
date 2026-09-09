@@ -1,7 +1,8 @@
 {
   "app": {
     "name": "SmartContact",
-    "tagline": "un outil Digital Virgo"
+    "tagline": "un outil Digital Virgo",
+    "logo_alt": "SmartContact, a Digital Virgo tool"
   },
   "placeholder": {
     "title": "Section en construction",
@@ -286,7 +287,7 @@
         "description": "Conversations passées par un IVR avec transfert entre groupes — chaque segment est un enregistrement distinct."
       },
       "only-failed": {
-        "label": "Uniquement échouées",
+        "label": "Échouées uniquement",
         "description": "Conversations avec transcription échouée. Démontre l'état terminal rouge + filtre \"Uniquement échouées\" + action \"Marquer comme lues\"."
       },
       "gdpr-expired": {
@@ -305,7 +306,9 @@
     "mock_sample_switcher": {
       "chip_label": "Démo",
       "data_prefix": "Données :",
-      "list_header": "Jeux de test"
+      "list_header": "Jeux de test",
+      "trigger_title": "Changer de jeu de données de démo (prototype uniquement)",
+      "trigger_aria": "Changer de jeu de données de démo"
     },
     "rules": {
       "page_title": "Règles",
@@ -458,11 +461,21 @@
           "impact_hero_one": "{{count}} conversation",
           "impact_hero_other": "{{count}} conversations",
           "trend_up": "La portée a augmenté depuis votre dernière modification",
-          "trend_down": "La portée a diminué depuis votre dernière modification"
+          "trend_down": "La portée a diminué depuis votre dernière modification",
+          "toggle_category_aria": "Réduire ou développer la catégorie",
+          "duration_min": "Durée minimale",
+          "duration_max": "Durée maximale",
+          "duration_value": "Durée"
         },
         "ai_row_recommended": "Recommandé",
         "ai_row_summary_desc": "Extrait les points clés et les accords de chaque conversation transcrite.",
         "ai_row_sentiment_desc": "Détecte le ton et les moments de friction tout au long de la conversation."
+      },
+      "relative": {
+        "minutes_ago": "il y a quelques minutes",
+        "hours_ago": "il y a {{n}} h",
+        "yesterday": "hier",
+        "days_ago": "il y a {{n}} j"
       }
     },
     "entities": {
@@ -649,7 +662,8 @@
         "label_selected_other": "sélectionnées",
         "conversation_singular": "conversation",
         "conversation_plural": "conversations"
-      }
+      },
+      "actions_aria": "Actions groupées"
     },
     "skip_to_content": "Aller au contenu principal",
     "back": "Retour",
@@ -729,7 +743,8 @@
     "no_changes": "Aucune modification à enregistrer",
     "actions": "Actions",
     "select_row": "Sélectionner {{name}}",
-    "select_all": "Tout sélectionner"
+    "select_all": "Tout sélectionner",
+    "form_index_aria": "Sommaire du formulaire"
   },
   "topbar": {
     "go_to_dashboard": "Aller au tableau de bord",
@@ -767,7 +782,8 @@
     "integrations": "Intégrations",
     "system": "Système",
     "design_decisions": "Décisions de design",
-    "design_decisions_hint": "Voir DECISIONS.md sur GitHub (ouvre un nouvel onglet)"
+    "design_decisions_hint": "Voir DECISIONS.md sur GitHub (ouvre un nouvel onglet)",
+    "nav_aria": "Navigation principale"
   },
   "labels": {
     "breadcrumb": "Étiquettes",
@@ -1155,7 +1171,10 @@
       "status": "État",
       "created_at": "Créé",
       "sheet": "Utilisateurs"
-    }
+    },
+    "rename_placeholder": "Nom de l'utilisateur",
+    "rename_aria": "Renommer {{name}}",
+    "bulk_edit_title": "Appliquer la modification à {{count}} utilisateur(s)"
   },
   "groups": {
     "page_title": "Groupes",
@@ -1186,7 +1205,7 @@
     "form": {
       "create_title": "Nouveau groupe",
       "create_breadcrumb": "Nouveau groupe",
-      "edit_breadcrumb": "Éditer le groupe",
+      "edit_breadcrumb": "Modifier le groupe",
       "section": {
         "identity": "Identité",
         "identity_hint": "Données basiques et priorité",
@@ -1213,7 +1232,7 @@
         "remove_aria": "Retirer {{name}} du groupe",
         "warn_no_channels": "Actif mais sans canaux assignés",
         "bulk_count": "{{count}} sélectionnés",
-        "bulk_pause": "Pauser",
+        "bulk_pause": "Mettre en pause",
         "bulk_unassign": "Retirer du groupe"
       },
       "fields": {
@@ -1270,7 +1289,10 @@
       "channels": "Canaux",
       "agent_count": "Nb agents",
       "sheet": "Groupes"
-    }
+    },
+    "rename_placeholder": "Nom du groupe",
+    "rename_aria": "Renommer {{name}}",
+    "bulk_edit_title": "Appliquer la modification à {{count}} groupe(s)"
   },
   "agents": {
     "page_title": "Agents",
@@ -1320,7 +1342,7 @@
     "form": {
       "create_title": "Nouvel agent",
       "create_breadcrumb": "Nouvel agent",
-      "edit_breadcrumb": "Éditer l'agent",
+      "edit_breadcrumb": "Modifier l'agent",
       "section": {
         "identification": "Identification",
         "identification_hint": "Photo, contact et extension",
@@ -1375,7 +1397,8 @@
           "title": "Intégration",
           "url_iframe": "URL iframe",
           "dispositivos_externos": "Appareils externes",
-          "dispositivos_externos_hint": "Permet à l'agent de se connecter depuis des appareils hors du réseau d'entreprise"
+          "dispositivos_externos_hint": "Permet à l'agent de se connecter depuis des appareils hors du réseau d'entreprise",
+          "url_iframe_placeholder": "https://exemple.com/tableau-de-bord"
         },
         "regional": {
           "title": "Régional"
@@ -1478,7 +1501,10 @@
       "status": "État",
       "groups": "Groupes",
       "sheet": "Agents"
-    }
+    },
+    "rename_placeholder": "Nom de l'agent",
+    "rename_aria": "Renommer {{name}}",
+    "bulk_edit_title": "Appliquer la modification à {{count}} agent(s)"
   },
   "config": {
     "sidebar": {

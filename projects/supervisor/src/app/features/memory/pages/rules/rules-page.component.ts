@@ -28,6 +28,7 @@ import {
   type ScDatatableRowKeyEvent,
   type ScRowStyleClassFn,
 } from '@smartcontact-hub/components';
+import { LanguageService } from '@core/services';
 import { TOAST_LIFE } from '@core/utils/toast-life';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
 
@@ -65,6 +66,7 @@ export class RulesPageComponent {
   private readonly confirm = inject(ScConfirmService);
   private readonly messages = inject(MessageService);
   private readonly translate = inject(TranslateService);
+  private readonly language = inject(LanguageService);
   private readonly router = inject(Router);
 
   /** CTA + menú "nueva regla" proyectados a la TopBar (modelo "todo arriba" S59). */
@@ -246,11 +248,11 @@ export class RulesPageComponent {
     const diffMs = now.getTime() - date.getTime();
     const diffHours = Math.floor(diffMs / (1000 * 60 * 60));
     const diffDays = Math.floor(diffHours / 24);
-    if (diffHours < 1) return 'hace unos minutos';
-    if (diffHours < 24) return `hace ${diffHours} h`;
-    if (diffDays === 1) return 'ayer';
-    if (diffDays < 7) return `hace ${diffDays} d`;
-    return date.toLocaleDateString('es-ES', { day: 'numeric', month: 'short' });
+    if (diffHours < 1) return this.translate.instant('memory.rules.relative.minutes_ago');
+    if (diffHours < 24) return this.translate.instant('memory.rules.relative.hours_ago', { n: diffHours });
+    if (diffDays === 1) return this.translate.instant('memory.rules.relative.yesterday');
+    if (diffDays < 7) return this.translate.instant('memory.rules.relative.days_ago', { n: diffDays });
+    return date.toLocaleDateString(this.language.locale(), { day: 'numeric', month: 'short' });
   }
 
   protected setMenuTarget(rule: Rule): void {

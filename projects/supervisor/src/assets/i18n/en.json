@@ -1,7 +1,8 @@
 {
   "app": {
     "name": "SmartContact",
-    "tagline": "a Digital Virgo tool"
+    "tagline": "a Digital Virgo tool",
+    "logo_alt": "SmartContact, a Digital Virgo tool"
   },
   "placeholder": {
     "title": "Section under construction",
@@ -259,7 +260,9 @@
     "mock_sample_switcher": {
       "chip_label": "Demo",
       "data_prefix": "Data:",
-      "list_header": "Test datasets"
+      "list_header": "Test datasets",
+      "trigger_title": "Switch demo data set (prototype only)",
+      "trigger_aria": "Switch demo data set"
     },
     "mock_samples": {
       "default": {
@@ -291,7 +294,7 @@
         "description": "Conversations that went through IVR with group transfer — each leg is a separate recording."
       },
       "only-failed": {
-        "label": "Only failed",
+        "label": "Failed only",
         "description": "Conversations with failed transcription. Demos the red terminal state + \"Only failed\" filter + \"Mark as read\" action."
       },
       "gdpr-expired": {
@@ -353,7 +356,7 @@
           "classification": "AI classification"
         },
         "metadata": "General",
-        "active_label": "Rule active",
+        "active_label": "Active rule",
         "inactive_label": "Rule inactive",
         "name_label": "Name",
         "name_placeholder": "e.g. Record inbound Tech Support",
@@ -458,11 +461,21 @@
           "impact_hero_one": "{{count}} conversation",
           "impact_hero_other": "{{count}} conversations",
           "trend_up": "Reach went up since your last change",
-          "trend_down": "Reach went down since your last change"
+          "trend_down": "Reach went down since your last change",
+          "toggle_category_aria": "Collapse or expand category",
+          "duration_min": "Minimum duration",
+          "duration_max": "Maximum duration",
+          "duration_value": "Duration"
         },
         "ai_row_recommended": "Recommended",
         "ai_row_summary_desc": "Extracts the key points and agreements from each transcribed conversation.",
         "ai_row_sentiment_desc": "Detects tone and friction moments throughout the conversation."
+      },
+      "relative": {
+        "minutes_ago": "a few minutes ago",
+        "hours_ago": "{{n}} h ago",
+        "yesterday": "yesterday",
+        "days_ago": "{{n}} d ago"
       }
     },
     "entities": {
@@ -537,7 +550,7 @@
       }
     },
     "categories": {
-      "page_title": "AI Categories",
+      "page_title": "AI categories",
       "new_category": "New category",
       "empty_title": "No categories yet",
       "empty_desc": "Categories are the topics and contact reasons AI tags on conversations. Create one for the analysis to detect them automatically.",
@@ -610,9 +623,9 @@
       }
     },
     "category_filter": {
-      "label": "AI Categories",
+      "label": "AI categories",
       "aria": "Filters by AI category",
-      "panel_title": "AI Categories",
+      "panel_title": "AI categories",
       "clear": "Clear",
       "empty": "No categories yet. Process conversations with analysis to see them here.",
       "select_all": "Select all",
@@ -657,7 +670,8 @@
         "label_selected_other": "selected",
         "conversation_singular": "conversation",
         "conversation_plural": "conversations"
-      }
+      },
+      "actions_aria": "Bulk actions"
     },
     "form_nav": {
       "label": "Form sections",
@@ -729,7 +743,8 @@
     "no_changes": "No changes to save",
     "actions": "Actions",
     "select_row": "Select {{name}}",
-    "select_all": "Select all"
+    "select_all": "Select all",
+    "form_index_aria": "Form index"
   },
   "topbar": {
     "go_to_dashboard": "Go to dashboard",
@@ -767,7 +782,8 @@
     "integrations": "Integrations",
     "system": "System",
     "design_decisions": "Design decisions",
-    "design_decisions_hint": "View DECISIONS.md on GitHub (opens in new tab)"
+    "design_decisions_hint": "View DECISIONS.md on GitHub (opens in new tab)",
+    "nav_aria": "Main navigation"
   },
   "labels": {
     "breadcrumb": "Labels",
@@ -1155,7 +1171,10 @@
       "status": "Status",
       "created_at": "Created",
       "sheet": "Users"
-    }
+    },
+    "rename_placeholder": "User name",
+    "rename_aria": "Rename {{name}}",
+    "bulk_edit_title": "Apply change to {{count}} user(s)"
   },
   "groups": {
     "page_title": "Groups",
@@ -1270,7 +1289,10 @@
       "channels": "Channels",
       "agent_count": "Nº agents",
       "sheet": "Groups"
-    }
+    },
+    "rename_placeholder": "Group name",
+    "rename_aria": "Rename {{name}}",
+    "bulk_edit_title": "Apply change to {{count}} group(s)"
   },
   "agents": {
     "page_title": "Agents",
@@ -1375,7 +1397,8 @@
           "title": "Integration",
           "url_iframe": "Iframe URL",
           "dispositivos_externos": "External devices",
-          "dispositivos_externos_hint": "Allows the agent to connect from devices outside the corporate network"
+          "dispositivos_externos_hint": "Allows the agent to connect from devices outside the corporate network",
+          "url_iframe_placeholder": "https://example.com/panel"
         },
         "regional": {
           "title": "Regional"
@@ -1478,7 +1501,10 @@
       "status": "Status",
       "groups": "Groups",
       "sheet": "Agents"
-    }
+    },
+    "rename_placeholder": "Agent name",
+    "rename_aria": "Rename {{name}}",
+    "bulk_edit_title": "Apply change to {{count}} agent(s)"
   },
   "config": {
     "sidebar": {

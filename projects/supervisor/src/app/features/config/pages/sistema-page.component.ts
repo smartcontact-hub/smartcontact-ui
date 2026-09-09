@@ -323,7 +323,7 @@ export class SistemaPageComponent {
   }
 
   private formatTimestamp(date: Date): string {
-    return date.toLocaleString('es-ES', {
+    return date.toLocaleString(this.language.locale(), {
       day: '2-digit',
       month: '2-digit',
       year: 'numeric',
