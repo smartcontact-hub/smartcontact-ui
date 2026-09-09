@@ -1,0 +1,55 @@
+# Publica los 3 paquetes `@smartcontact-hub/*` en GitHub Packages al PUBLICAR una release.
+#
+# Existe porque el registro se había quedado en 0.2.0 (14 de junio) mientras el repo iba por
+# 1.0.0: exactamente el mismo fósil que la pantalla de Deployments. Un registro que hay que
+# acordarse de actualizar a mano se queda atrás; este es el disparador que lo impide.
+#
+# NO desaparca el ciclo diario que DD-17 aparcó: las 5 apps siguen consumiendo el DS desde
+# `dist/` por `tsconfig paths`, sin instalar nada. Esto solo corre UNA vez por versión, en el
+# momento en que ya has decidido que esa versión existe. Ver DD-58.
+#
+# Sin tokens personales: `GITHUB_TOKEN` de Actions basta para publicar en el registro de la
+# propia org, y por eso el permiso `packages: write` se declara AQUÍ y no en el default de la
+# casa. Los paquetes llevan `publishConfig.access=restricted`, así que siguen siendo privados;
+# la descarga abierta es el tarball adjunto a la release.
+name: publish-packages
+
+on:
+  release:
+    types: [published]
+  # Rescate manual: si una release se publicó con el workflow roto, se relanza por tag sin
+  # tener que borrar y rehacer la release (las versiones del registro son INMUTABLES, así que
+  # esto solo sirve para una versión que aún no esté publicada).
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Tag a publicar (p. ej. v1.0.0)'
+        required: true
+
+permissions:
+  contents: read
+  packages: write
+
+jobs:
+  publish:
+    runs-on: ubuntu-latest
+    steps:
+      # El tag, no la rama: una release apunta a un commit congelado y es ESE el que se publica.
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ github.event.release.tag_name || inputs.tag }}
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+          # Escribe el .npmrc del runner apuntando al registro de GitHub; el token entra por
+          # NODE_AUTH_TOKEN, nunca en un fichero del repo.
+          registry-url: https://npm.pkg.github.com
+          scope: '@smartcontact-hub'
+      - run: npm ci
+      # Los tarballs salen de `dist/`, así que el DS se compila antes de empaquetarlo.
+      - run: npm run build
+      - name: Publicar styles → icons → components
+        run: npm run publish:packages -- --publish
+        env:
+          NODE_AUTH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
