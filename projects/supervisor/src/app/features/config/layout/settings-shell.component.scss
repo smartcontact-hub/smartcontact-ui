@@ -49,8 +49,13 @@
 }
 
 .settings-shell__rail {
-  flex: 0 0 235px;
-  width: 235px;
+  /* 196, el ancho del `sc-form-section-nav` de la maqueta (393:12565). Los 235
+   * de antes eran el ancho de un panel gris con padding propio; sin panel, el
+   * rail solo tiene que caber su item más largo, y los 39px que sobraban se los
+   * queda el contenido. Con `content` a 1200 y el gap de 28, el bloque de la
+   * derecha sale a 920, que es exactamente lo que mide en Figma. */
+  flex: 0 0 196px;
+  width: 196px;
   /* El rail se ancla arriba del área de contenido (scrollport = `app-shell__content`)
    * y queda sticky para seguir visible al scrollear. `top` casa con el padding del
    * body para que no salte al pegarse. */

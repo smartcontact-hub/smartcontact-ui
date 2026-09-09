@@ -1,63 +1,89 @@
 /*
- * Settings sidebar — Figma Supervisor 1:12355 (índice). Panel gray/50 que
- * blende con la página (mismo fondo) → los items quedan sobre el fondo, con
- * cabecera (título + subtítulo) e items con chip de icono 32×32:
- *   · inactivo → chip gray/200, label regular
- *   · activo   → item gray/100, chip navy + icono blanco, label bold
+ * Settings sidebar — Figma Supervisor 393:12565 (`sc-form-section-nav`).
+ *
+ * El rail NO TIENE COLOR. En la maqueta su fondo es `content/background`, el
+ * MISMO blanco del lienzo: lo único que se pinta en todo el índice es el item
+ * activo, con un negro al 5%. Aquí era al revés —un panel gray/50 completo, y
+ * dentro cada icono en su propio chip de 32×32 con fondo— así que el rail
+ * competía en peso visual con el contenido que solo sirve para indexar.
+ *
+ * Lo que queda: sin panel, iconos desnudos, y el activo como única mancha.
+ *   · inactivo → icono y label en `secondary`
+ *   · activo   → fondo `--sc-bg-hover` (el 5% de la maqueta), label e icono en `primary`
  */
 :host {
   display: block;
 }
 
 .settings-sidebar {
-  /* Sin padding: el panel gris llena el rail (235, Figma `índice` 1:12355) y queda
-   * pegado arriba, alineado con la bandeja de contenido. El padding interno (16) lo
-   * pone `__panel`. S67-A: antes 24.5/21 bajaba el índice 24px y lo encogía a 193. */
   padding: 0;
 }
 
+/*
+ * `Main Container` 393:12566 — pad 8.75 arriba y abajo, nada a los lados.
+ *
+ * Sin `background`, sin `border-radius` y SIN BORDE: los 17 nodos del rail se
+ * leyeron uno a uno en la maqueta y ninguno tiene stroke (medido el 2026-09-09;
+ * el `strokeWeight: 1` que enseña la API es el valor por defecto de un nodo con
+ * cero trazos). Lo único que el rail pinta es el item activo.
+ */
 .settings-sidebar__panel {
-  background: var(--sc-bg-secondary-subtle);
-  /* Figma `índice` 1:12355 = border/radius/xl (12px). Concéntrico con los items
-   * internos (radius-200 / 6px). S66 lo fijó 6→12 en Figma; portado en S67-A. */
-  border-radius: var(--sc-radius-400);
-  padding: var(--sc-spacing-1-143);
+  padding-block: var(--sc-spacing-0-625);
   display: flex;
   flex-direction: column;
-  gap: var(--sc-spacing-1-143);
+  /* 3.5 (`scale/0-25`): en la maqueta el rótulo y los items son hermanos del
+   * mismo frame, no dos bloques separados. */
+  gap: var(--sc-spacing-0-25);
 }
 
+/* `Text` 393:12569 — pad 3.5/12.25, para que el rótulo caiga en la misma
+ * vertical que el texto de los items (que llevan 8.75 de caja + su icono). */
 .settings-sidebar__head {
   display: flex;
   flex-direction: column;
-  gap: var(--sc-spacing-0-375);
+  gap: var(--sc-spacing-0-25);
+  padding: var(--sc-spacing-0-25) var(--sc-spacing-0-875);
 }
 
+/* Rótulo del índice, no título de página: en la maqueta (393:12570) son 14
+ * regular en un gris tenue, no 16 semibold. Con los 12 text styles del Figma
+ * tampoco había alternativa — el 16 venía de `--sc-font-size-300`, un peldaño
+ * sin text style detrás. */
 .settings-sidebar__title {
-  font-size: var(--sc-font-size-300);
-  line-height: 24px;
+  font-size: var(--sc-font-size-body-2);
+  line-height: var(--sc-line-height-body-2);
   font-weight: var(--sc-font-weight-semibold);
   color: var(--sc-text-secondary);
 }
 
 .settings-sidebar__subtitle {
-  font-size: var(--sc-font-size-200);
-  line-height: 22px;
+  font-size: var(--sc-font-size-caption);
+  line-height: var(--sc-line-height-caption);
   color: var(--sc-text-subtle);
 }
 
 .settings-sidebar__nav {
   display: flex;
   flex-direction: column;
-  gap: var(--sc-spacing-0-5);
+  gap: var(--sc-spacing-0-25); /* 3.5 — `Frame` 393:12568 */
 }
 
+/*
+ * `Content` 393:12572 — pad 8.75, gap 5.25 icono↔texto, radio 12.
+ *
+ * OJO, discrepancia DEL PROPIO FIGMA: el item inactivo lleva pad 8.75 / gap
+ * 5.25 (`scale/0-625` y `scale/0-375`) y el activo pad 8/8.75 con gap 4, que
+ * son variables numéricas sueltas, no la escala. Es el mismo componente en dos
+ * estados con dos cajas distintas: el activo mide 38 de alto y el inactivo 40,
+ * así que al seleccionar se encoge 2px. Aquí se usa la escala en LOS DOS
+ * estados; la discrepancia va al puente código→Figma, no se copia.
+ */
 .nav-item {
   display: flex;
   align-items: center;
-  gap: var(--sc-spacing-0-875);
-  padding: var(--sc-spacing-0-375) var(--sc-spacing-0-875);
-  border-radius: var(--sc-radius-200);
+  gap: var(--sc-spacing-0-375);
+  padding: var(--sc-spacing-0-625);
+  border-radius: var(--sc-radius-400);
   text-decoration: none;
   color: inherit;
   transition: background var(--sc-transition-fast) ease;
@@ -80,43 +106,43 @@
    * slate-800 en oscuro. Que activo y hover compartan token es lo que ya
    * pasaba con el valor crudo; diferenciarlos sería una decisión de diseño,
    * no parte de arreglar el contraste. */
+  /* Radio 12 (Figma `Content` 393:12572), no 6: sin panel alrededor, el item ES
+   * la forma del rail. */
   &--active {
     background: var(--sc-bg-hover);
 
-    .nav-item__icon {
-      background: var(--sc-bg-primary);
-      color: var(--sc-text-on-primary);
-    }
-
+    .nav-item__icon,
     .nav-item__label {
       color: var(--sc-text-primary);
-      font-weight: var(--sc-font-weight-bold);
+    }
+
+    /* Semibold, no bold: es el peso que el sistema tiene para destacar
+     * (`Body/body-semibold`); `bold` (700) no existe como text style. */
+    .nav-item__label {
+      font-weight: var(--sc-font-weight-semibold);
     }
   }
 }
 
+/* Icono DESNUDO. El chip de 32×32 con fondo no está en la maqueta (`IconSet`
+ * 393:12581 no tiene relleno) y era el que metía dos manchas de color por item
+ * en un rail que no pinta nada. Sin caja, el icono se alinea con su texto y el
+ * único elemento con fondo de todo el índice vuelve a ser el item activo. */
 .nav-item__icon {
   flex: 0 0 auto;
-  width: 32px;
-  height: 32px;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  border-radius: var(--sc-radius-200);
-  /* Mismo caso que `--active`: crudo slate-200 (fijo) + `--sc-text-secondary`
-   * (voltea) = 1.21:1 en oscuro. En claro `--sc-bg-secondary-active` es
-   * slate-200, el mismo valor. */
-  background: var(--sc-bg-secondary-active);
   color: var(--sc-text-secondary);
-  transition:
-    background var(--sc-transition-fast) ease,
-    color var(--sc-transition-fast) ease;
+  transition: color var(--sc-transition-fast) ease;
 }
 
+/* `Body/body-regular` por su token de rol; el `line-height: 22px` literal no
+ * salía de ningún peldaño del sistema. */
 .nav-item__label {
   font-family: var(--sc-font-family-primary);
-  font-size: var(--sc-font-size-200);
-  line-height: 22px;
+  font-size: var(--sc-font-size-body-2);
+  line-height: var(--sc-line-height-body-2);
   font-weight: var(--sc-font-weight-regular);
   color: var(--sc-text-secondary);
   white-space: nowrap;

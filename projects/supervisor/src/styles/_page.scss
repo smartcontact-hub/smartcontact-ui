@@ -110,11 +110,23 @@
  * nombre se queda: renombrar ahora tocaría los 16 `<h1>` sin ganar nada, y la
  * trampa que lo motivó sigue siendo real para cualquier clase global futura.
  */
+/*
+ * `h3` (18/24) y no `subtitle-1` (16/24), desde el 2026-09-09. DD-54 fijó que la
+ * escala que manda es la de la LIBRERÍA del Figma del DS, y ahí no hay ningún
+ * text style de 16: `--sc-font-size-subtitle-1` apunta a `--sc-font-size-300`,
+ * un peldaño que se quedó sin estilo detrás. Un título de página solo puede ser
+ * `h3` o `body`, y `body` (14) mediría lo mismo que el texto de las tablas.
+ *
+ * Sube en TODAS las rutas a la vez, no solo donde se notó: lo que hace útil a
+ * esta clase es que el título mida igual en todas partes, y eso lo vigila
+ * `page-identity.spec.ts` («el título de página mide igual en todas partes»),
+ * que es justo quien cazó el desajuste al cambiar una sola pantalla.
+ */
 .page__heading {
   margin: 0 0 var(--sc-spacing-1-5);
-  font-family: var(--sc-font-family-subtitle-1);
-  font-size: var(--sc-font-size-subtitle-1);
-  line-height: var(--sc-line-height-subtitle-1);
-  font-weight: var(--sc-font-weight-subtitle-1);
+  font-family: var(--sc-font-family-h3);
+  font-size: var(--sc-font-size-h3);
+  line-height: var(--sc-line-height-h3);
+  font-weight: var(--sc-font-weight-h3);
   color: var(--sc-text-primary);
 }
