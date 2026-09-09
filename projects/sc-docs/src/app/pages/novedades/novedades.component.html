@@ -1,0 +1,73 @@
+<header class="hero">
+  <p class="hero__eyebrow">Smart Contact Design System</p>
+  <h1 class="hero__title">Novedades</h1>
+  <p class="hero__lead">
+    Qué versión hay publicada, qué trae y de dónde se baja. Esta página la escribe el propio
+    registro de cambios del repositorio: si dice algo, es porque está publicado.
+  </p>
+</header>
+
+@if (fallo()) {
+  <p class="aviso">
+    No se pudo cargar el registro de versiones. Están todas, siempre, en
+    <a [href]="releases" target="_blank" rel="noopener">las releases del repositorio</a>.
+  </p>
+} @else if (versiones(); as lista) {
+  @if (ultima(); as v) {
+    <section class="actual">
+      <div class="actual__cabecera">
+        <span class="actual__tag">Versión {{ v.version }}</span>
+        @if (v.fecha) {
+          <span class="actual__fecha">{{ fechaLarga(v.fecha) }}</span>
+        }
+      </div>
+      <p class="actual__que">
+        Para instalarlo no hace falta clonar ni compilar: cada paquete es un fichero.
+      </p>
+      <ul class="descargas">
+        @for (p of ['styles', 'icons', 'components']; track p) {
+          <li>
+            <a [href]="descarga(p, v.version)">
+              <span class="descargas__nombre">&#64;smartcontact-hub/{{ p }}</span>
+              <span class="descargas__ext">.tgz</span>
+            </a>
+          </li>
+        }
+      </ul>
+    </section>
+  }
+
+  <h2 class="historial">Historial de versiones</h2>
+
+  @for (v of lista; track v.version) {
+    <article class="version">
+      <h3 class="version__titulo">
+        {{ v.version }}
+        @if (v.fecha) {
+          <span class="version__fecha">{{ fechaLarga(v.fecha) }}</span>
+        }
+      </h3>
+
+      @for (p of v.intro; track $index) {
+        <p class="version__intro" [innerHTML]="p"></p>
+      }
+
+      @for (s of v.secciones; track s.titulo) {
+        <h4 class="version__seccion">{{ s.titulo }}</h4>
+        <ul class="version__items">
+          @for (item of s.items; track $index) {
+            <li [innerHTML]="item"></li>
+          }
+        </ul>
+      }
+    </article>
+  }
+} @else {
+  <!-- Esqueleto mientras llega el artefacto: el mismo hueco que va a ocupar el contenido,
+       para que la página no dé un salto al pintarse. -->
+  <div class="cargando">
+    <sc-skeleton height="88px" />
+    <sc-skeleton height="20px" width="40%" />
+    <sc-skeleton height="120px" />
+  </div>
+}

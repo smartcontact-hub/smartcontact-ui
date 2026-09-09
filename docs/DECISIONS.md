@@ -54,6 +54,57 @@
 
 ---
 
+## DD-59 · 2026-09-09 — Un registro de despliegue solo puede escribir lo que ha MEDIDO, y el CI guarda la caja negra del rojo
+
+**Contexto** · Al limpiar el fósil de `github-pages` (DD-58) quedó la pregunta de Rafa: si
+Cloudflare despliega los cinco sitios y GitHub no se entera de nada, ¿no interesa tener ahí el
+registro? Sí, pero la pantalla que acabábamos de borrar llevaba **tres meses** diciendo que el
+último despliegue era del 15 de junio. El modo de fallo no es "no había pantalla", es que
+**una pantalla que afirma sin medir da una respuesta falsa a quien la pregunta**, y eso es peor
+que no tenerla. Y en paralelo: con el auto-merge encendido, un CI rojo pasa a ser lo ÚNICO que
+para un merge, y hoy un rojo de e2e era una línea de texto sin nada que mirar.
+
+**Decisión** ·
+1. **`deploy-record.yml` no apunta nada al fundir.** Cada app sella su build con el commit que
+   la generó (`stamp-build.mjs` → `build.json` en la raíz del sitio) y el registro **pide ese
+   fichero a cada sitio y espera hasta ver el commit correcto**. Si a los 20 minutos alguno no
+   lo sirve, se registra como **fallo** y el job se pone rojo.
+2. **El CI guarda la traza y la captura de Playwright cuando algo falla**, como artifact de 7
+   días. Solo al fallar.
+
+**Razón** · El sello es lo que convierte "hemos empujado a main" en "el sitio sirve esto", que
+son afirmaciones distintas y solo la segunda es la que responde la pantalla. Medido al
+construirlo: `GET https://sc-doc.pages.dev/build.json` devuelve **200 con el `index.html`**,
+porque las cinco son SPA con fallback — o sea que un chequeo por código de estado se habría
+tragado un falso verde en los cinco sitios a la vez. Por eso la comprobación parsea el JSON y
+exige un `commit` de tipo cadena; probado contra los sitios vivos, devuelve `null` en los dos
+que se sondearon. Los pasos de artifact van **sin `name:`** a propósito: en este `ci.yml` los
+pasos con nombre son los gates, y su número está gateado contra la doc; la caja negra de un
+accidente no es un gate.
+
+**Descartadas** ·
+· *Apuntar el despliegue al fundir, sin comprobar* — es de una línea, y es literalmente el
+  fallo que veníamos de borrar. Habría dado una pantalla siempre verde, incluso con Cloudflare
+  caído.
+· *Preguntarle a la API de Cloudflare* — es la fuente autorizada y lo diría antes, pero exige
+  meter un token suyo en los secretos del repo. El sello no necesita credenciales y además
+  comprueba algo **mejor**: no que Cloudflare crea que desplegó, sino que el sitio lo sirve.
+· *Comparar el hash del `main.js` construido por el CI contra el del sitio* — no necesita
+  tocar nada, pero depende de que Cloudflare y el runner produzcan bytes idénticos (misma
+  versión de Node incluida, que en Cloudflare se fija en el panel). Un desajuste dejaría el
+  registro en rojo permanente sin que nada esté roto.
+· *Nombrar los pasos de artifact* — subiría la cifra de "pasos del CI" de 8 a 11 en cinco
+  documentos, y esa cifra significa "lo que tienes que correr antes de pushear". Contar ahí la
+  recogida de pruebas de un fallo la haría **menos** cierta.
+
+**Consecuencias** · Los cinco `build:*` de `package.json` terminan en `stamp-build.mjs`: son
+los comandos que corre Cloudflare, así que el sello no necesita tocar su panel. **Si alguien
+quita ese eslabón, su sitio deja de confirmarse y `deploy-record` lo dirá en rojo** — que es el
+comportamiento que se quiere, no un efecto colateral. Queda una incógnita honesta: no se puede
+leer desde aquí qué comando exacto tiene configurado cada proyecto en el panel de Cloudflare,
+así que la primera ejecución real es la que lo dice; si algún sitio no se confirma, ahí está la
+causa a mirar primero.
+
 ## DD-58 · 2026-09-09 — El DS corta **1.0.0**, y se descarga por *release*, no por registro
 
 **Contexto** · Rafa abre la pantalla de *Deployments* del repo y ve el último despliegue del

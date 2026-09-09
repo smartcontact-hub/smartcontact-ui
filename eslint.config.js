@@ -68,7 +68,18 @@ module.exports = tseslint.config(
     files: ['scripts/**/*.mjs', '**/scripts/**/*.js'],
     extends: [eslint.configs.recommended],
     languageOptions: {
-      globals: { process: 'readonly', console: 'readonly', require: 'readonly', module: 'writable', __dirname: 'readonly' },
+      // `fetch` y `setTimeout` son globales de Node desde hace varias mayores, pero la lista
+      // es explícita y se escribió cuando ningún script de aquí salía a la red. Los estrena
+      // `record-deploy.mjs`, que sondea los cinco sitios publicados.
+      globals: {
+        process: 'readonly',
+        console: 'readonly',
+        require: 'readonly',
+        module: 'writable',
+        __dirname: 'readonly',
+        fetch: 'readonly',
+        setTimeout: 'readonly',
+      },
     },
   },
 );

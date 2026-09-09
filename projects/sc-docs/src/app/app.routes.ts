@@ -91,6 +91,16 @@ export const routes: Routes = [
   },
 
   {
+    // Novedades: qué versión hay publicada y qué trae. Pinta un artefacto GENERADO desde
+    // CHANGELOG.md (`public/novedades/_novedades.json`), igual que la galería de uso real y
+    // el mapa de variables. Vive en la barra, no en el Lab: es lo primero que necesita
+    // alguien de fuera, no una herramienta de mantenimiento.
+    path: 'novedades',
+    loadComponent: () =>
+      import('./pages/novedades/novedades.component').then((m) => m.NovedadesComponent),
+  },
+
+  {
     // Aviso legal de los CINCO sitios públicos, no solo de este. Vive aquí porque sc-docs es
     // el único con cromo propio: las réplicas (`agent`, `cuscare`, `agent-mini`) copian una
     // herramienta real y un pie que el original no tiene rompería la réplica (DD-35).

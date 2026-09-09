@@ -46,6 +46,11 @@ export default defineConfig({
    * ese test, `ng serve … --port <libre>` y `SC_DOCS_URL` a ese puerto. */
   use: {
     baseURL: process.env['SC_DOCS_URL'] ?? 'http://localhost:4280',
+    /* Qué queda cuando algo falla. Sin esto, un rojo del CI era una línea de texto y a
+     * adivinar: la traza y la captura son lo que el navegador VIO, y el CI las sube como
+     * artifact (ver `ci.yml`). Solo al fallar, así que no cuesta nada cuando va verde. */
+    trace: 'retain-on-failure',
+    screenshot: 'only-on-failure',
   },
   webServer: process.env['SC_DOCS_URL']
     ? undefined
