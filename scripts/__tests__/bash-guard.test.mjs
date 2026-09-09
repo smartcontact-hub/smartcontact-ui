@@ -76,6 +76,19 @@ test('#11 zsh: `for f in $VAR` → deny; enumerado, $(…) o ${=VAR} → allow',
   allow('for i in 1 2 3; do echo $i; done');
 });
 
+test('#5 build durante un preflight → deny; sin preflight vivo, o con sc:ok → allow', () => {
+  const corriendo = { ...verde, preflightVivo: () => true };
+  const parado = { ...verde, preflightVivo: () => false };
+  deny('npm run build:supervisor', corriendo, /LEARNINGS #5/);
+  deny('npm run build', corriendo, /LEARNINGS #5/);
+  deny('ng build sc-docs --configuration production', corriendo, /LEARNINGS #5/);
+  allow('npm run build:supervisor', parado);
+  allow('npm run build:supervisor # sc:ok', corriendo);
+  // Vecinos legítimos: leer o servir no reescribe `dist/`.
+  allow('node scripts/spa-server.mjs dist/supervisor/browser 4322', corriendo);
+  allow('ls -d dist/*', corriendo);
+});
+
 test('prosa y heredocs no son comandos: los dos falsos positivos reales del primer día', () => {
   allow("printf '\\n# la lee el hook de git push.\\n' >> .gitignore", rojo);
   allow("python3 - <<'EOF'\ns = s + ' && npm run lint'\nopen(p,'w').write(s)\nEOF\ngrep -n lint scripts/x.mjs", verde);
