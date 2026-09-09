@@ -101,9 +101,11 @@ tenga que avisar, y eso es exactamente lo que 1.0.0 deja de permitir.
   Cloudflare desde DD-17; el fósil se borra, que es lo que arregla el síntoma de raíz.
 
 **Consecuencias** · `npm run release` corta la versión (**dry-run por defecto**, `-- --publish`
-para hacerla) y falla antes de tocar nada si el árbol está sucio, no estás en `main`, el tag ya
-existe, los cuatro `package.json` no van en lockstep o el CHANGELOG no tiene sección para esa
-versión. Desde aquí, **un cambio que rompa obliga a un major**: el CHANGELOG ya no dice
+para hacerla) y falla antes de tocar nada si el árbol está sucio, tu HEAD no es el tip de
+`origin/main`, el tag ya existe, los cuatro `package.json` no van en lockstep o el CHANGELOG no
+tiene sección para esa versión. Lo que comprueba es el **commit**, no el nombre de la rama: la
+primera versión miraba que te llamaras `main` y eso dejaba el script inservible desde un
+worktree, que es justo donde este repo manda trabajar. Lo cazó su propio estreno. Desde aquí, **un cambio que rompa obliga a un major**: el CHANGELOG ya no dice
 "pre-1.0, la API puede cambiar entre minors". El README estrena badge de versión y la sección
 de descarga; `docs/ROADMAP.md` registra el corte.
 
