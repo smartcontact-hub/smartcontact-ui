@@ -25,6 +25,11 @@ la fila de abajo, y —si dices que sí a la segunda pregunta— publica las dos
 de minutos después responde `https://proto-sismac-3780.sc-supervisor.pages.dev`, y **ésa** es la
 que se pega en Jira y en Confluence.
 
+Publicar es inmediato: el hook de pre-push reconoce que un push de `proto/*` sube punteros a un
+commit que ya está en `main` (o sea, que ya pasó su preflight y su CI) y no repite la cadena. Lo
+comprueba, no se fía: si el commit no está en `main`, corre el gate entero como con cualquier otro
+push.
+
 La tabla queda como cambio sin guardar: entra en el siguiente PR.
 
 **La rama congelada no se toca nunca más.** No se rebasa, no se actualiza y no se mergea: por eso

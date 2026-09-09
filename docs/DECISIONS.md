@@ -96,8 +96,20 @@ un enlace que nadie sabe a qué corresponde.
   mecanismo.
 
 **Consecuencias** · La URL de producción deja de ser lo que se pega en un ticket. Al entregar hay
-un paso más (un comando y un push), y a cambio el enlace no envejece. Queda pendiente decidir si
-la app viva lleva además un aviso que apunte a la tabla.
+un paso más (`npm run proto`, tres preguntas), y a cambio el enlace no envejece. Queda pendiente
+decidir si la app viva lleva además un aviso que apunte a la tabla.
+
+Dos cosas salieron al probarlo de punta a punta, y las dos eran del mismo tipo: la herramienta
+estaba escrita para quien la escribió.
+
+- **Los flags no se memorizan.** La primera versión pedía `-- --ticket … --app … --que …` y Rafa
+  dio con el problema en cuanto la vio: «¿cómo me voy a aprender esos comandos?». Algo que se usa
+  una vez cada entrega no puede exigir recordar tres flags y un `--`. `npm run proto` pregunta.
+- **El pre-push habría cobrado 10-25 minutos** por subir dos punteros a un commit que ya pasó su
+  preflight y su CI al entrar en `main`. Un trámite que cuesta eso no se hace: se acaba usando
+  `SKIP_PREFLIGHT=1`, que sí desactiva el gate. El hook gana un atajo estrecho y COMPROBADO (todas
+  las refs `proto/*` y su commit antepasado de `origin/main`), probado también con el commit fuera
+  de main, donde no salta.
 
 ## DD-55 · 2026-09-09 — Los estilos de texto se ponen a lo que NO es un componente
 
