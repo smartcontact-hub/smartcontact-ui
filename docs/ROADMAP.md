@@ -201,8 +201,9 @@
   **sc-docs** → https://sc-doc.pages.dev · **supervisor** → https://sc-supervisor.pages.dev
 - **L4** ✅ — `sc-prototype` jubilado + **GitHub Pages retirado** (los supera Supervisor + Cloudflare);
   `smart-contact-platform` **archivado** (read-only; preserva audits/galerías) + **PR #51 cerrado**.
-- **Paquetes APARCADOS** — `scripts/{publish-packages,version-bump}.mjs` + `publishConfig` **intactos**.
-  Dormidos en el modelo monorepo-by-path; correr `publish:packages` solo antes de un release externo real.
+- **Paquetes: despiertos POR RELEASE** (2026-09-09, DD-58) — `publish:packages` ya no se corre a
+  mano: lo dispara `publish-packages.yml` al publicarse una release. Lo aparcado sigue siendo el
+  ciclo **diario** (dentro del repo se consume por `dist/`, sin instalar), no el registro.
 - **Atribución por persona en Theme Designer (Marta)** — hoy el plugin empuja con UN token (el de Rafa)
   → todo sale como Rafa. Para que un colaborador (Marta) salga con su cara: (1) añadirla como
   colaboradora con permiso de escritura; (2) el plugin debe commitear/empujar con SU identidad (su
@@ -214,8 +215,9 @@
 ## Operador / sesiones aparte
 - ✅ **1.0.0 cortada** (2026-09-09) — primera estable, descargable como
   [release de GitHub](https://github.com/smartcontact-hub/smartcontact-ui/releases/latest) con los 3
-  tarballs adjuntos ([DD-58](DECISIONS.md)). El pipeline de publish al **registro** sigue **APARCADO**
-  (DD-17): la release no lo desaparca, le da una salida sin registro.
+  tarballs adjuntos ([DD-58](DECISIONS.md)) **y** publicando los 3 paquetes en GitHub Packages
+  desde `publish-packages.yml`. Lo que sigue **APARCADO** (DD-17) es el ciclo **diario** de
+  publicar-versionar-instalar: dentro del repo se consume por `dist/`, sin instalar.
 - ✅ **0.2.0 publicada** (2026-06-14).
 - ~~Migrar `smart-contact-platform`~~ → **SUPERSEDED por la consolidación monorepo (DD-17)**: la app
   vive ahora en este repo; no se migra a paquetes, se consume local.

@@ -33,10 +33,16 @@ misma nota: hay **una** fuente, no dos. La corta `npm run release` (dry-run por 
 `-- --publish` para hacerla), que reconstruye los tarballs desde el commit del tag para que
 lo que se descarga sea lo que el tag dice.
 
-**Publicarlos en el registro de GitHub Packages sigue aparcado a propósito**: con un solo
-repo y un consumidor, el ciclo publicar-versionar-instalar cuesta más de lo que aporta. La
-decisión y su porqué están en [DD-17](docs/DECISIONS.md); que la descarga exista igualmente,
-en [DD-58](docs/DECISIONS.md).
+La misma release **publica los tres paquetes en GitHub Packages** (privados, org
+`smartcontact-hub`), sin que nadie tenga que acordarse: lo hace
+[`publish-packages.yml`](.github/workflows/publish-packages.yml) al publicarse la release. Así
+que hay dos caminos según quién seas: el **tarball** si vienes de fuera, el **registro** si ya
+tienes acceso a la org.
+
+Lo que **sigue aparcado a propósito** es el ciclo **diario** de publicar-versionar-instalar:
+las cinco apps de aquí consumen el DS desde `dist/` y no instalan nada, que es justo lo que
+hace que tocar un token se vea al instante. El porqué, en [DD-17](docs/DECISIONS.md); el
+matiz de por qué publicar por release no lo reabre, en [DD-58](docs/DECISIONS.md).
 
 ## Paquetes
 

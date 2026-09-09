@@ -73,11 +73,25 @@ if (notes.length < 200) die(`La sección del CHANGELOG para ${version} está cas
 
 // 3 · Estado del árbol. Una release apunta a un commit: si hay cambios sin commitear,
 //     el tag no describe lo que se descarga.
-const branch = sh('git', ['rev-parse', '--abbrev-ref', 'HEAD']);
+//     Lo que importa NO es cómo se llama tu rama, es que el commit que vas a etiquetar sea
+//     el tip de `origin/main`. Comprobar el NOMBRE dejaba el script inservible desde un
+//     worktree, que es donde este repo manda trabajar (NEXT-SESSION §5): la rama de un
+//     worktree nunca se llama main, aunque apunte al mismo commit. Medido al estrenarlo.
 const dirty = sh('git', ['status', '--porcelain']);
 const problems = [];
 if (dirty) problems.push(`árbol sucio:\n${dirty}`);
-if (branch !== 'main') problems.push(`estás en "${branch}", y las releases se cortan desde main`);
+try {
+  sh('git', ['fetch', 'origin', 'main', '--quiet']);
+} catch {
+  problems.push('no se pudo hacer fetch de origin/main: sin eso no sé si estás en el tip');
+}
+const head = sh('git', ['rev-parse', 'HEAD']);
+const mainTip = sh('git', ['rev-parse', 'origin/main']);
+if (head !== mainTip)
+  problems.push(
+    `HEAD (${head.slice(0, 7)}) no es el tip de origin/main (${mainTip.slice(0, 7)}). ` +
+      'Una release etiqueta lo que está en main, no tu rama.',
+  );
 try {
   sh('git', ['rev-parse', '--verify', `refs/tags/${tag}`], { stdio: 'pipe' });
   problems.push(`el tag ${tag} YA existe en local`);
@@ -92,7 +106,7 @@ if (problems.length) {
   for (const p of problems) console.error(`✗ ${p}`);
   if (publish) process.exit(1);
 } else {
-  console.log('✓ Árbol limpio, en main, y el tag está libre');
+  console.log('✓ Árbol limpio, HEAD es el tip de origin/main, y el tag está libre');
 }
 console.log(`✓ Versión ${version} en los 4 package.json (lockstep)`);
 console.log(`✓ Notas: ${notes.split('\n').length} líneas del CHANGELOG`);

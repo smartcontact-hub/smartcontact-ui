@@ -4,12 +4,15 @@ Guía para que una app Angular consuma el Design System publicado en GitHub Pack
 (privado, org `smartcontact-hub`). Validado por `projects/supervisor` (la app real, ya en
 el monorepo), que consume el DS **por nombre** igual que una app externa.
 
-> **Nota (DD-17, 2026-06-15)** · Publicar en el **registro** está **APARCADO**: las cinco apps
-> de este repo resuelven `@smartcontact-hub/*` **local** por `tsconfig paths` → `./dist/*`
-> (instantáneo, sin publicar). Los capítulos 1 y 2 de abajo (token, `.npmrc`, `npm install`)
-> aplican el día que se desaparque.
+> **Nota (DD-17 + DD-58)** · Lo que está **APARCADO** es el ciclo **diario** de
+> publicar-versionar-instalar: las cinco apps de este repo resuelven `@smartcontact-hub/*`
+> **local** por `tsconfig paths` → `./dist/*` (instantáneo, sin publicar). **El registro sí se
+> publica**, una vez por versión y solo: al publicarse una release,
+> [`publish-packages.yml`](../.github/workflows/publish-packages.yml) sube los 3 paquetes a
+> GitHub Packages. O sea que los capítulos 1 y 2 de abajo (token, `.npmrc`, `npm install`)
+> **aplican hoy**, y lo que instalas es la última versión cortada.
 >
-> **Pero descargarlo YA se puede** (DD-58, 2026-09-09), sin token y sin `.npmrc`: cada versión
+> **Y si prefieres no pelearte con el token**, hay una segunda vía sin `.npmrc`: cada versión
 > es una [release de GitHub](https://github.com/smartcontact-hub/smartcontact-ui/releases/latest)
 > con los tres tarballs adjuntos.
 >
