@@ -85,13 +85,17 @@
 }
 
 /*
- * El CONTENIDO va 12.25 (`scale/0-875`) más adentro que el borde de la caja;
- * los DIVISORES no. Es el patrón de la maqueta: el `Block` pone 24.5 de padding
- * y cada sección de dentro añade su propio 12.25 lateral (393:12592, 393:12610,
- * 393:12647), mientras las líneas de separación cruzan los 871 enteros. Aquí
- * está en la página y no en la primitiva compartida porque las otras dos
- * pantallas AED no tienen maqueta con la que casarlo todavía.
+ * El CONTENIDO va 12.25 (`scale/0-875`) más adentro que el borde de la caja; los DIVISORES no.
+ * Es el patrón de la maqueta: el `Block` pone su padding y cada sección de dentro añade su propio
+ * 12.25 lateral (393:12592, 393:12610, 393:12647), mientras las líneas de separación cruzan el
+ * ancho entero.
+ *
+ * Va en los PROPIOS hijos y no en un `> *` del contenedor: desde que la caja la pinta
+ * `sc-section-card`, el padre real en el DOM es su `.section-card__body`, que no lleva el atributo
+ * de encapsulación de esta página. Un selector que cuelgue de él deja de casar en silencio —que es
+ * peor que no existir— así que cada hijo declara su propia sangría.
  */
-.settings-card__body > *:not(sc-divider) {
-  padding-inline: var(--sc-spacing-0-875);
+.comm-table,
+.sub-section {
+  margin-inline: var(--sc-spacing-0-875);
 }

@@ -1,8 +1,10 @@
 <aside class="settings-sidebar">
   <div class="settings-sidebar__panel">
+    <!-- Rótulo a secas. El subtítulo «Ajustes de la plataforma» se retira el 2026-09-09: no
+         existe en la maqueta (Figma 393:12569 lleva un solo texto) y no decía nada que el
+         rótulo, la miga y el título de la página no dijeran ya tres veces. -->
     <div class="settings-sidebar__head">
       <span class="settings-sidebar__title">{{ 'config.sidebar.title' | translate }}</span>
-      <span class="settings-sidebar__subtitle">{{ 'config.sidebar.subtitle' | translate }}</span>
     </div>
     <nav class="settings-sidebar__nav" aria-label="Contact Center">
       @for (item of items; track item.path) {

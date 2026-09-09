@@ -1483,7 +1483,6 @@
   "config": {
     "sidebar": {
       "title": "Contact Center",
-      "subtitle": "Ajustes da plataforma",
       "version": "SmartContact · v2.4.0",
       "servicio_label": "Geral",
       "servicio_hint": "Definições do serviço",

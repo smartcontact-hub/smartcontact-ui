@@ -32,6 +32,41 @@ if [ -s "$NVM_DIR/nvm.sh" ]; then
   nvm use >/dev/null 2>&1 || true
 fi
 
+# Congelar una versión (`docs/PROTOTIPOS.md`, DD-56) sube DOS PUNTEROS: la etiqueta
+# `proto/<TICKET>` y la rama `proto/<ticket>`. Ninguna de las dos introduce código: apuntan a un
+# commit que YA está en `origin/main`, o sea que YA pasó su preflight y su CI cuando entró. Correr
+# la cadena entera otra vez son 10-25 minutos por publicar un enlace, y un trámite que cuesta eso
+# no se hace: se acaba usando `SKIP_PREFLIGHT=1`, que es peor, porque desactiva el gate de verdad.
+#
+# La excepción es ESTRECHA a propósito y se comprueba, no se confía: solo si TODAS las refs de
+# este push son `proto/*` Y su commit es antepasado de `origin/main`. Un `proto/loquesea` que
+# apunte a algo que no esté en main NO pasa por aquí, así que esto no es una puerta trasera para
+# subir código con un nombre bonito.
+if [ "${SKIP_PROTO_FASTPATH:-0}" != "1" ]; then
+  git fetch --quiet origin main 2>/dev/null || true
+  solo_proto=1
+  hay_refs=0
+  while read -r _local_ref local_sha remote_ref _remote_sha; do
+    [ -z "${remote_ref:-}" ] && continue
+    hay_refs=1
+    case "$remote_ref" in
+      refs/tags/proto/* | refs/heads/proto/*)
+        commit=$(git rev-parse --quiet --verify "${local_sha}^{commit}" 2>/dev/null || true)
+        if [ -z "$commit" ] || ! git merge-base --is-ancestor "$commit" origin/main 2>/dev/null; then
+          solo_proto=0
+        fi
+        ;;
+      *) solo_proto=0 ;;
+    esac
+  done
+
+  if [ "$hay_refs" = "1" ] && [ "$solo_proto" = "1" ]; then
+    printf '\n\033[32m✓ versión congelada: punteros a un commit que ya está en main\033[0m\n'
+    printf '  Sin preflight: no hay código nuevo que verificar.\n\n'
+    exit 0
+  fi
+fi
+
 printf '\n\033[1m▶ pre-push: gate antes de subir\033[0m  (SKIP_PREFLIGHT=1 para saltarlo)\n\n'
 
 # Si ESTE árbol ya pasó un carril (marca `.preflight-ok`, tree id == HEAD), no se repite la

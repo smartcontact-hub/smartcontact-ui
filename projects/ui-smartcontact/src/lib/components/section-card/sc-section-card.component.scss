@@ -15,8 +15,10 @@
   /* Offset para el salto-a-ancla de sc-form-section-nav (limpia el sticky header). */
   scroll-margin-top: var(--sc-form-anchor-offset);
 
+  /* 24.5 (`scale/1-75`), el padding del `Block` de la maqueta (Figma Supervisor 393:12587).
+   * Antes 15.75/21, que no salía de ninguna medida: era lo que había. */
   &__head {
-    padding: var(--sc-spacing-1-125) var(--sc-spacing-1-5);
+    padding: var(--sc-spacing-1-75) var(--sc-spacing-1-75) var(--sc-spacing-1-125);
     border-bottom: 1px solid var(--sc-border-subtle);
     display: flex;
     align-items: baseline;
@@ -60,11 +62,15 @@
     align-self: center;
   }
 
+  /* `body-2` y no `subtitle-2`: mismos 14/20 al píxel, pero `subtitle-2` cuelga de
+   * `--sc-line-height-220`, un peldaño que NO existe en el export del Kit. Los roles que Figma sí
+   * ata son los que tienen text style detrás (DD-54), y `Body/body-semibold` es exactamente lo
+   * que mide una cabecera de sección. */
   &__title {
     margin: 0;
-    font-family: var(--sc-font-family-subtitle-2);
-    font-size: var(--sc-font-size-subtitle-2);
-    line-height: var(--sc-line-height-subtitle-2);
+    font-family: var(--sc-font-family-body-2);
+    font-size: var(--sc-font-size-body-2);
+    line-height: var(--sc-line-height-body-2);
     font-weight: var(--sc-font-weight-semibold);
     color: var(--sc-text-primary);
     letter-spacing: -0.01em;
@@ -79,7 +85,48 @@
   }
 
   &__body {
-    padding: var(--sc-spacing-1-5);
+    padding: var(--sc-spacing-1-75);
+  }
+}
+
+/*
+ * `surface="card"`: la misma caja sobre el LIENZO en vez de dentro de un formulario. Blanca con
+ * borde, como el `Block` de la maqueta (Figma Supervisor 393:12587: sin relleno, stroke negro al
+ * 10%, radio 12). La línea bajo la cabecera se va: con un borde alrededor, ese filo interior
+ * partía la tarjeta en dos por nada.
+ */
+:host(.sc-section-card--card) {
+  .section-card {
+    background: var(--sc-bg-surface);
+    border: 1px solid var(--sc-border-default);
+  }
+
+  /* Sin la línea de la variante `subtle`: con un borde alrededor, ese filo interior partía la
+   * tarjeta en dos por nada. La separación entre el título y lo que viene debajo son los 16 del
+   * gap del `Block` (Figma 393:12587), y los reparte la cabecera: el body solo pone su 24.5 a
+   * los lados y abajo. Sumarlos daría 48 de aire entre el título y su contenido. */
+  .section-card__head {
+    border-bottom: 0;
+    padding-bottom: var(--sc-spacing-1-143);
+  }
+
+  .section-card__body {
+    padding-top: 0;
+  }
+}
+
+/*
+ * `headingLevel="1"`: esta card lleva el título de LA PÁGINA, no el de una sección suya. Sube al
+ * rol `h3` (18/24), que es el escalón que le toca en la escala del Figma del DS (DD-54): 18
+ * semibold la página, 14 semibold la sección, 14 regular el contenido. El `letter-spacing`
+ * negativo se va con el tamaño: aprieta bien a 14 y a 18 empieza a notarse.
+ */
+:host(.sc-section-card--page) {
+  .section-card__title {
+    font-family: var(--sc-font-family-h3);
+    font-size: var(--sc-font-size-h3);
+    line-height: var(--sc-line-height-h3);
+    letter-spacing: 0;
   }
 }
 
