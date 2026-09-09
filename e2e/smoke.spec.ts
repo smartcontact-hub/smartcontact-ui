@@ -83,14 +83,19 @@ test('las rutas planas de antes de agrupar siguen llevando a su sitio', async ({
 });
 
 /**
- * La barra superior baja a CUATRO secciones a propósito (Fundamentos · Componentes · Uso real
- * · Reglas): siete destinos planos sin jerarquía era el motivo de agrupar. Este assert existe
- * para que un quinto entre por decisión —tocando el número— y no por goteo.
+ * La barra baja a CINCO secciones (Fundamentos · Componentes · Uso real · Reglas · Novedades):
+ * siete destinos planos sin jerarquía era el motivo de agrupar. Este assert existe para que el
+ * siguiente entre por decisión —tocando el número— y no por goteo.
+ *
+ * De cuatro a cinco el 2026-09-09, con el corte de la 1.0.0 (DD-58): quien entra en la web no
+ * tenía forma de enterarse de que existen versiones ni de dónde bajarlas, y eso no es una
+ * pestaña de Fundamentos ni una herramienta del Lab — es la puerta de entrada de alguien de
+ * fuera. Este test hizo justo lo que promete: se puso rojo y obligó a justificar el quinto.
  */
-test('el top-nav se queda en cuatro secciones', async ({ page }) => {
+test('el top-nav se queda en cinco secciones', async ({ page }) => {
   await page.goto('/#/fundamentos/escala-color');
   const nav = page.getByRole('navigation', { name: 'Secciones' });
-  await expect(nav.getByRole('link')).toHaveCount(4);
+  await expect(nav.getByRole('link')).toHaveCount(5);
 });
 
 /**
