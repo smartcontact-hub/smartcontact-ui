@@ -2,8 +2,8 @@
   type="button"
   class="mock-sample-switcher__trigger"
   (click)="op.toggle($event)"
-  title="Cambiar conjunto de datos de demo (solo en prototipo)"
-  aria-label="Cambiar conjunto de datos de demo"
+  [title]="'memory.mock_sample_switcher.trigger_title' | translate"
+  [attr.aria-label]="'memory.mock_sample_switcher.trigger_aria' | translate"
 >
   <span class="mock-sample-switcher__chip">{{
     'memory.mock_sample_switcher.chip_label' | translate

@@ -92,7 +92,7 @@
                   type="button"
                   class="vpick__grouphead-toggle"
                   [attr.aria-expanded]="!isGroupCollapsed(grp.name)"
-                  aria-label="Contraer o expandir categoría"
+                  [attr.aria-label]="'memory.rules.builder.cond.toggle_category_aria' | translate"
                   (click)="toggleGroup(grp.name)"
                 >
                   <span class="vpick__group-count">{{ grp.children.length }}</span>

@@ -30,6 +30,7 @@ import {
 } from '@smartcontact-hub/components';
 
 import { RuleConditionBuilderComponent } from '../../components/rule-condition-builder/rule-condition-builder.component';
+import { LanguageService } from '@core/services';
 import { ConditionResolverService } from '../../data/condition-resolver.service';
 import {
   type ConditionTree,
@@ -92,6 +93,7 @@ export class RuleBuilderPageComponent implements DirtyAware {
   private readonly categoriesStore = inject(CategoriesStore);
   private readonly messages = inject(MessageService);
   private readonly translate = inject(TranslateService);
+  private readonly language = inject(LanguageService);
   private readonly resolver = inject(ConditionResolverService);
   private readonly conversations = inject(ConversationsStore);
 
@@ -239,7 +241,7 @@ export class RuleBuilderPageComponent implements DirtyAware {
       !this.condBlocking(),
   );
   protected fmt(n: number): string {
-    return n.toLocaleString('es-ES');
+    return n.toLocaleString(this.language.locale());
   }
 
   /**

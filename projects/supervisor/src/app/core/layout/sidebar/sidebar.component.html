@@ -1,4 +1,4 @@
-<aside class="sidebar" aria-label="Navegación principal">
+<aside class="sidebar" [attr.aria-label]="'sidebar.nav_aria' | translate">
   <a class="sidebar__brand" routerLink="/" [attr.aria-label]="'app.name' | translate">
     <img
       class="sidebar__brand-isotype"
@@ -12,7 +12,7 @@
       class="sidebar__brand-wordmark"
       src="/logos/smartcontact-wordmark-light.svg"
       height="40"
-      alt="SmartContact, a Digital Virgo tool"
+      [attr.alt]="'app.logo_alt' | translate"
     />
   </a>
 

@@ -6,7 +6,7 @@
     <div class="settings-sidebar__head">
       <span class="settings-sidebar__title">{{ 'config.sidebar.title' | translate }}</span>
     </div>
-    <nav class="settings-sidebar__nav" aria-label="Contact Center">
+    <nav class="settings-sidebar__nav" [attr.aria-label]="'config.sidebar.title' | translate">
       @for (item of items; track item.path) {
         <a
           class="nav-item"
