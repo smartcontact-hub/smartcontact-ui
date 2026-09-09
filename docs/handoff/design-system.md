@@ -15,6 +15,49 @@
 > coordine. Los `sNN` de los tramos viejos se quedan como están: los nombran commits y
 > `docs/DECISIONS.md`, y reescribirlos solo desincronizaría el doc de su propia historia.
 
+## ✅ 2026-09-09 · El DS corta 1.0.0 y deja de depender de que alguien se acuerde
+
+**Sello:** `v1.0.0` publicada y los 3 paquetes en el registro (verificado en el log del workflow,
+no por el «success»). `npm run preflight` VERDE sobre `e3f5672`. Cierra con `main` protegida.
+
+**De dónde sale.** Rafa enseña la pantalla de *Deployments* de GitHub: último despliegue, 15 de
+junio. «estaría bien montar un nuevo set de deployment actualizado de todo, por si alguien quiere
+descargárselo, y ponerlo como novedades, versión x». Luego, viendo Packages: «at least los github
+packages que estén ultra actualizados».
+
+**Lo que se encontró al mirar.** Esa pantalla era un fósil: Pages se retiró en DD-17 y su workflow
+murió en `dbc3603`. Pero detrás había algo real: **654 commits** desde la `0.2.0` del 14 de junio,
+`[Unreleased]` vacío, **cero releases** en un repo público y el registro de paquetes también en
+junio con **0 descargas**. Nadie de fuera podía llevarse el DS ni saber qué había cambiado.
+
+**Lo que se hizo.** `1.0.0` (DD-58), con la nota escrita contra DD-18..DD-57 y cuatro cambios que
+rompen declarados. Descarga por release (`npm run release`, dry-run por defecto) y publicación al
+registro **disparada por la release** (`publish-packages.yml`), que es lo que impide que se vuelva
+a quedar atrás. Página `/novedades` en sc-docs generada desde `CHANGELOG.md` con su gate
+(`novedades:check`, gate 37). Registro de deployments que **mide antes de escribir** (DD-59):
+sello por build + espera a verlo servido. Artifacts de Playwright al fallar. Y `main` protegida
+con los 5 checks del CI obligatorios.
+
+**Trampas, todas medidas hoy.**
+
+| Trampa | Qué pasó |
+| --- | --- |
+| `gh pr merge --auto` **funde en el acto** si nada bloquea | Sin protección de rama no hay nada pendiente, así que «auto» = «ya». Fundió el #73 con el e2e a medias |
+| `enforce_admins: false` deja la protección **inservible** | La regla no aplicaba a los dos únicos actores (Rafa y el agente): el token del agente la saltó sin avisar. Corregido a `true` |
+| Un heredoc en el MISMO comando que un gate | El hook denegó la llamada entera y **el fichero nunca se escribió**. Lo cazó `docs:guard` como enlace roto |
+| `GET /build.json` da **200 con el index.html** | Las 5 apps son SPA con fallback: un chequeo por código de estado se traga un falso verde en las cinco a la vez. Hay que parsear el JSON |
+| Un enlace nuevo en la barra mueve **las 8 baselines** | Las capturas del catálogo llevan el shell entero. 147-337 px cada una, mirado el diff antes de regenerar |
+| Cloudflare **sí** publica estado en los PR | No en `main` (0 statuses), pero sus checks salen en el rollup del PR |
+
+**Lo que NO se hizo, y por qué.** Desaparcar el ciclo diario de publicar-versionar-instalar: eso
+sigue siendo cierto de DD-17 y las 5 apps siguen leyendo de `dist/`. La primera versión de DD-58
+descartaba el registro ENTERO sin separar el ciclo diario del publish por release; lo rectificó el
+propio Rafa al señalar la pantalla de Packages, y el DD lo dice.
+
+**Incógnita abierta.** No se puede leer desde aquí qué comando de build tiene cada proyecto en el
+panel de Cloudflare. Si alguno no usa el script `build:<app>` de `package.json`, ese sitio se queda sin sello y
+`deploy-record` lo dirá en rojo. La primera ejecución real es la que lo responde.
+
 ## ✅ 2026-09-09 · El título contenido deja de ser de una pantalla y pasa a ser del componente
 
 **Sello:** pendiente de PR. `npm run verify` VERDE con los 36 gates.
