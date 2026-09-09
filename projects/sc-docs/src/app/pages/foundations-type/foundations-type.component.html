@@ -35,6 +35,33 @@
   </ul>
 </section>
 
+<!-- Dónde se pone la clase y dónde NO. Es la regla que hace que instalar los estilos no
+     desmonte el tema: los componentes del DS publican su propia tipografía por el preset de
+     PrimeNG, así que ponerles una clase encima los desconectaría del tema. -->
+<section class="applies">
+  <h2 class="applies__title">{{ 'fundamentos.type.applies.title' | translate }}</h2>
+  <p class="applies__lead" [innerHTML]="'fundamentos.type.applies.lead' | translate"></p>
+  <div class="applies__cols">
+    <div class="applies__col applies__col--yes">
+      <h3 class="applies__col-title">{{ 'fundamentos.type.applies.yes_title' | translate }}</h3>
+      <ul class="applies__list">
+        @for (k of appliesYes; track k) {
+          <li [innerHTML]="'fundamentos.type.applies.yes_' + k | translate"></li>
+        }
+      </ul>
+    </div>
+    <div class="applies__col applies__col--no">
+      <h3 class="applies__col-title">{{ 'fundamentos.type.applies.no_title' | translate }}</h3>
+      <ul class="applies__list">
+        @for (k of appliesNo; track k) {
+          <li [innerHTML]="'fundamentos.type.applies.no_' + k | translate"></li>
+        }
+      </ul>
+    </div>
+  </div>
+  <p class="applies__note" [innerHTML]="'fundamentos.type.applies.note' | translate"></p>
+</section>
+
 <!-- Escala de tamaños: la muestra usa el token real (var) → refleja producción -->
 <h2 class="ramp__title">Escala de tamaños</h2>
 <ul class="scale">

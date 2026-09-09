@@ -3,7 +3,19 @@
 <head>
   <meta charset="utf-8">
   <title>Smart Contact UI</title>
-  <base href="">
+  <!-- `/`, NO `""`, aunque hoy dé igual: sc-docs usa `withHashLocation()`, así
+       que el path del navegador siempre es `/` y una base vacía resuelve los
+       assets al mismo sitio. La base explícita es para el día que se quite el
+       hash (URLs limpias y compartibles, que es a donde va esto): con base
+       vacía, `/componentes/button` pediría `/componentes/main-*.js`, recibiría
+       el index.html del SPA fallback y Chrome lo rechazaría por MIME, dejando
+       la página EN BLANCO al entrar por enlace directo o al recargar.
+       Comprobado el 2026-09-09 forzando esa URL: así se comporta.
+       El `""` venía del molde `sc-demo` del primer commit; las otras cuatro
+       apps, que sí enrutan por path, siempre tuvieron `/` — y ahí una base
+       vacía no sería latente, sería un fallo inmediato.
+       Lo vigila `scripts/audit-base-href.mjs`. -->
+  <base href="/">
   <meta name="viewport" content="width=device-width, initial-scale=1">
   <!-- Fuente de marca del SCDS: Inter, para TODOS los roles (los text styles del
        Figma son Inter, caption incluida). Open Sans ya no se carga (era solo para

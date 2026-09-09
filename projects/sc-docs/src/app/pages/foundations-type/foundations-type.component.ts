@@ -104,6 +104,19 @@ export class FoundationsTypeComponent {
    * 2026-09-07): 6 roles × 2 pesos. Cada uno se renderiza con su clase real
    * (`.sc-text-<rol>-<peso>`, en `base/typography.css`), que bebe de los tokens `--sc-*`.
    */
+  /**
+   * Dónde se pone `.sc-text-*` y dónde no. Las claves se resuelven contra
+   * `fundamentos.type.applies.{yes,no}_<clave>` en los locales.
+   *
+   * La regla sale de la maqueta del Supervisor (393:12562), medida el
+   * 2026-09-09: de sus 43 textos, los 25 de página llevan text style anclado y
+   * los 18 que viven dentro de un componente (breadcrumb, botones, checkbox,
+   * badge) no llevan ninguno. No es descuido, es lo que mantiene al componente
+   * leyendo el tema.
+   */
+  protected readonly appliesYes = ['headings', 'body', 'labels', 'tables'] as const;
+  protected readonly appliesNo = ['ds', 'primeng', 'icons'] as const;
+
   protected readonly textStyles: TextStyle[] = [
     { cls: 'sc-text-display-semibold', role: 'Display', weight: 'Semibold', px: 64, line: 78, use: 'Título principal de pantalla. Solo uno.' },
     { cls: 'sc-text-display-regular', role: 'Display', weight: 'Regular', px: 64, line: 78, use: 'Subtítulo dentro de una sección.' },
