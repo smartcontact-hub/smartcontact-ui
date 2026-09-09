@@ -17,7 +17,7 @@ import { TOAST_LIFE } from '@core/utils/toast-life';
 import {
   ScButtonComponent as ButtonComponent,
   ScDividerComponent as DividerComponent,
-  ScInputTextComponent as InputTextComponent,
+  ScInputNumberComponent as InputNumberComponent,
   ScMultiSelectComponent as MultiSelectComponent,
   ScSectionCardComponent as SectionCardComponent,
   ScSelectComponent as SelectComponent,
@@ -31,10 +31,16 @@ interface FormState {
   prioridad: string[];
   voz: string[];
   tipoColaEspera: string[];
-  /** Texto libre. */
-  capacidadColaEspera: string;
-  tiempoMaxEspera: string;
-  tiempoTransferencia: string;
+  /**
+   * Numéricos. Eran `string` con `sc-inputtext`; la maqueta (2286:5411, 2286:5417, 2286:5400)
+   * los dibuja con `inputnumber` y la etiqueta al lado, que además es lo que corresponde a un
+   * número: teclado numérico, flechas y sin texto libre que validar.
+   */
+  capacidadColaEspera: number | null;
+  tiempoMaxEspera: number | null;
+  tiempoTransferencia: number | null;
+  /** Tamaño en píxeles de la ficha embebida — maqueta 2286:5402. */
+  aperturaTamano: number | null;
   /** Single-select. */
   aperturaTipo: string;
   desbordar: boolean;
@@ -61,9 +67,10 @@ const DEFAULT_FORM: FormState = {
   prioridad: [],
   voz: [],
   tipoColaEspera: [],
-  capacidadColaEspera: '',
-  tiempoMaxEspera: '',
-  tiempoTransferencia: '',
+  capacidadColaEspera: null,
+  tiempoMaxEspera: null,
+  tiempoTransferencia: null,
+  aperturaTamano: null,
   aperturaTipo: '',
   desbordar: true,
 };
@@ -71,17 +78,18 @@ const DEFAULT_FORM: FormState = {
 /**
  * Grupos defaults page — `/config/aed/grupos`. Figma Supervisor `1:12676`.
  *
- * Card "Parámetros" con selects apilados (estrategia, prioridad, voz,
- * tipo/capacidad/tiempo de cola, tiempo de transferencia) + un toggle
- * "Desbordar conversaciones si no hay agentes disponibles", y una card
- * "Apertura de ficha" con un select de tipo. Guardado único en la TopBar.
+ * Card "Parámetros" en DOS COLUMNAS (estrategia | prioridad, tipo de cola |
+ * máximo en cola, tiempo de espera | tiempo de transferencia, voz | desbordar)
+ * y card "Apertura de ficha" con tipo | tamaño en píxeles. El reparto sale de la
+ * maqueta (Figma Supervisor 2286:5324): filas de 396.25 + 24.5 + 396.25.
+ * Guardado único en la TopBar.
  */
 @Component({
   selector: 'sc-aed-grupos-page',
   imports: [
     ButtonComponent,
     DividerComponent,
-    InputTextComponent,
+    InputNumberComponent,
     MultiSelectComponent,
     SectionCardComponent,
     SelectComponent,
@@ -124,6 +132,14 @@ export class AedGruposPageComponent implements DirtyAware {
 
   protected update<K extends keyof FormState>(key: K, value: FormState[K]): void {
     this.form.update((f) => ({ ...f, [key]: value }));
+  }
+
+  /** Adapter para `<sc-inputnumber>` (emite `number | null`). */
+  protected onNumber(
+    key: 'capacidadColaEspera' | 'tiempoMaxEspera' | 'tiempoTransferencia' | 'aperturaTamano',
+    value: number | null,
+  ): void {
+    this.update(key, value);
   }
 
   /** Adapter para `<sc-select>` single (Apertura de ficha). */

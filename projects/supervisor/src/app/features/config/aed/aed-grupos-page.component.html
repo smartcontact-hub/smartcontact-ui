@@ -30,120 +30,156 @@
       surface="card"
       titleKey="config.aed.subpages.grupos.heading"
     >
-      <!-- Parámetros -->
+      <!-- Parámetros —
+           DOS COLUMNAS, como la maqueta (Figma Supervisor 2286:5324 → `Slot 1`
+           2286:5407): cuatro filas de 396.25 + 24.5 + 396.25 sobre los 817 de
+           ancho útil. El orden de las celdas es el suyo, leído en fila:
+           estrategia | prioridad · tipo de cola | máximo en cola ·
+           tiempo de espera | tiempo de transferencia · voz | desbordar. -->
       <section class="sub-section" aria-labelledby="grupos-params-title">
         <header class="sub-section__head">
           <h2 id="grupos-params-title" class="sub-section__title">
             {{ 'config.aed.subpages.grupos.params.title' | translate }}
           </h2>
         </header>
-        <sc-multiselect
-          class="field--full"
-          inputId="grupos-estrategia"
-          [label]="'config.aed.subpages.grupos.params.estrategia' | translate"
-          [iftaLabel]="true"
-          [options]="estrategiaOptions"
-          [value]="form().estrategia"
-          [placeholder]="'config.aed.subpages.grupos.params.placeholder' | translate"
-          (valueChange)="onMulti('estrategia', $event)"
-        />
 
-        <sc-multiselect
-          class="field--full"
-          inputId="grupos-prioridad"
-          [label]="'config.aed.subpages.grupos.params.prioridad' | translate"
-          [iftaLabel]="true"
-          [options]="prioridadOptions"
-          [value]="form().prioridad"
-          [placeholder]="'config.aed.subpages.grupos.params.placeholder' | translate"
-          (valueChange)="onMulti('prioridad', $event)"
-        />
-
-        <sc-multiselect
-          class="field--full"
-          inputId="grupos-voz"
-          [label]="'config.aed.subpages.grupos.params.voz' | translate"
-          [iftaLabel]="true"
-          [options]="vozOptions"
-          [value]="form().voz"
-          [placeholder]="'config.aed.subpages.grupos.params.placeholder' | translate"
-          (valueChange)="onMulti('voz', $event)"
-        />
-
-        <sc-multiselect
-          class="field--full"
-          inputId="grupos-tipo-cola"
-          [label]="'config.aed.subpages.grupos.params.tipo_cola' | translate"
-          [iftaLabel]="true"
-          [options]="tipoColaOptions"
-          [value]="form().tipoColaEspera"
-          [placeholder]="'config.aed.subpages.grupos.params.placeholder' | translate"
-          (valueChange)="onMulti('tipoColaEspera', $event)"
-        />
-
-        <sc-inputtext
-          class="field--full"
-          inputId="grupos-capacidad-cola"
-          [label]="'config.aed.subpages.grupos.params.capacidad_cola' | translate"
-          [iftaLabel]="true"
-          [placeholder]="'config.aed.subpages.grupos.params.input_placeholder' | translate"
-          [value]="form().capacidadColaEspera"
-          (valueChange)="update('capacidadColaEspera', $event)"
-        />
-
-        <sc-inputtext
-          class="field--full"
-          inputId="grupos-tiempo-max"
-          [label]="'config.aed.subpages.grupos.params.tiempo_max' | translate"
-          [iftaLabel]="true"
-          [placeholder]="'config.aed.subpages.grupos.params.input_placeholder' | translate"
-          [value]="form().tiempoMaxEspera"
-          (valueChange)="update('tiempoMaxEspera', $event)"
-        />
-
-        <sc-inputtext
-          class="field--full"
-          inputId="grupos-tiempo-transfer"
-          [label]="'config.aed.subpages.grupos.params.tiempo_transfer' | translate"
-          [iftaLabel]="true"
-          [placeholder]="'config.aed.subpages.grupos.params.input_placeholder' | translate"
-          [value]="form().tiempoTransferencia"
-          (valueChange)="update('tiempoTransferencia', $event)"
-        />
-
-        <div class="switch-field">
-          <sc-toggleswitch
-            [checked]="form().desbordar"
-            [ariaLabel]="'config.aed.subpages.grupos.params.desbordar' | translate"
-            (checkedChange)="update('desbordar', $event)"
+        <div class="grid grid--2">
+          <sc-multiselect
+            class="field--full"
+            inputId="grupos-estrategia"
+            [label]="'config.aed.subpages.grupos.params.estrategia' | translate"
+            [iftaLabel]="true"
+            [options]="estrategiaOptions"
+            [value]="form().estrategia"
+            [placeholder]="'config.aed.subpages.grupos.params.placeholder' | translate"
+            (valueChange)="onMulti('estrategia', $event)"
           />
-          <div class="switch-field__copy">
-            <span class="switch-field__label sc-text-body-regular">
-              {{ 'config.aed.subpages.grupos.params.desbordar' | translate }}
-            </span>
+
+          <sc-multiselect
+            class="field--full"
+            inputId="grupos-prioridad"
+            [label]="'config.aed.subpages.grupos.params.prioridad' | translate"
+            [iftaLabel]="true"
+            [options]="prioridadOptions"
+            [value]="form().prioridad"
+            [placeholder]="'config.aed.subpages.grupos.params.placeholder' | translate"
+            (valueChange)="onMulti('prioridad', $event)"
+          />
+
+          <sc-multiselect
+            class="field--full"
+            inputId="grupos-tipo-cola"
+            [label]="'config.aed.subpages.grupos.params.tipo_cola' | translate"
+            [iftaLabel]="true"
+            [options]="tipoColaOptions"
+            [value]="form().tipoColaEspera"
+            [placeholder]="'config.aed.subpages.grupos.params.placeholder' | translate"
+            (valueChange)="onMulti('tipoColaEspera', $event)"
+          />
+
+          <!-- Los tres campos numéricos llevan la etiqueta AL LADO, no flotando dentro
+               (maqueta 2286:5411 / 2286:5417): son una frase con un hueco, no un campo
+               de formulario suelto. -->
+          <div class="inline-field">
+            <label class="inline-field__label" for="grupos-capacidad-cola">
+              {{ 'config.aed.subpages.grupos.params.capacidad_cola' | translate }}
+            </label>
+            <sc-inputnumber
+              inputId="grupos-capacidad-cola"
+              [min]="0"
+              [value]="form().capacidadColaEspera"
+              (valueChange)="onNumber('capacidadColaEspera', $event)"
+            />
+          </div>
+
+          <div class="inline-field">
+            <label class="inline-field__label" for="grupos-tiempo-max">
+              {{ 'config.aed.subpages.grupos.params.tiempo_max' | translate }}
+            </label>
+            <sc-inputnumber
+              inputId="grupos-tiempo-max"
+              [min]="0"
+              [value]="form().tiempoMaxEspera"
+              (valueChange)="onNumber('tiempoMaxEspera', $event)"
+            />
+          </div>
+
+          <div class="inline-field">
+            <label class="inline-field__label" for="grupos-tiempo-transfer">
+              {{ 'config.aed.subpages.grupos.params.tiempo_transfer' | translate }}
+            </label>
+            <sc-inputnumber
+              inputId="grupos-tiempo-transfer"
+              [min]="0"
+              [value]="form().tiempoTransferencia"
+              (valueChange)="onNumber('tiempoTransferencia', $event)"
+            />
+          </div>
+
+          <sc-multiselect
+            class="field--full"
+            inputId="grupos-voz"
+            [label]="'config.aed.subpages.grupos.params.voz' | translate"
+            [iftaLabel]="true"
+            [options]="vozOptions"
+            [value]="form().voz"
+            [placeholder]="'config.aed.subpages.grupos.params.placeholder' | translate"
+            (valueChange)="onMulti('voz', $event)"
+          />
+
+          <div class="switch-field">
+            <sc-toggleswitch
+              [checked]="form().desbordar"
+              [ariaLabel]="'config.aed.subpages.grupos.params.desbordar' | translate"
+              (checkedChange)="update('desbordar', $event)"
+            />
+            <div class="switch-field__copy">
+              <span class="switch-field__label sc-text-body-regular">
+                {{ 'config.aed.subpages.grupos.params.desbordar' | translate }}
+              </span>
+            </div>
           </div>
         </div>
       </section>
 
       <sc-divider />
 
-      <!-- Apertura de ficha -->
+      <!-- Apertura de ficha — también dos columnas (maqueta 2286:5400):
+           el tipo a la izquierda y el tamaño en píxeles a la derecha. -->
       <section class="sub-section" aria-labelledby="grupos-apertura-title">
         <header class="sub-section__head">
           <h2 id="grupos-apertura-title" class="sub-section__title">
             {{ 'config.aed.subpages.grupos.apertura.title' | translate }}
           </h2>
         </header>
-        <sc-select
-          class="field--full"
-          inputId="grupos-apertura-tipo"
-          [label]="'config.aed.subpages.grupos.apertura.tipo_label' | translate"
-          [iftaLabel]="true"
-          [options]="aperturaOptions"
-          [value]="form().aperturaTipo"
-          [placeholder]="'config.aed.subpages.grupos.params.placeholder' | translate"
-          (valueChange)="onSelect('aperturaTipo', $event)"
-        />
+
+        <div class="grid grid--2">
+          <sc-select
+            class="field--full"
+            inputId="grupos-apertura-tipo"
+            [label]="'config.aed.subpages.grupos.apertura.tipo_label' | translate"
+            [iftaLabel]="true"
+            [options]="aperturaOptions"
+            [value]="form().aperturaTipo"
+            [placeholder]="'config.aed.subpages.grupos.params.placeholder' | translate"
+            (valueChange)="onSelect('aperturaTipo', $event)"
+          />
+
+          <div class="inline-field">
+            <label class="inline-field__label" for="grupos-apertura-tamano">
+              {{ 'config.aed.subpages.grupos.apertura.tamano_label' | translate }}
+            </label>
+            <sc-inputnumber
+              inputId="grupos-apertura-tamano"
+              [min]="0"
+              [value]="form().aperturaTamano"
+              (valueChange)="onNumber('aperturaTamano', $event)"
+            />
+            <span class="inline-field__suffix">
+              {{ 'config.aed.subpages.grupos.apertura.tamano_suffix' | translate }}
+            </span>
+          </div>
+        </div>
       </section>
     </sc-section-card>
   </div>

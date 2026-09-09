@@ -1,7 +1,7 @@
 import { booleanAttribute, ChangeDetectionStrategy, Component, computed, input, numberAttribute, signal } from '@angular/core';
 import { NgTemplateOutlet } from '@angular/common';
 import { TranslateModule } from '@ngx-translate/core';
-import { SC_ICON_SIZE_LG, ScIconComponent } from '@smartcontact-hub/icons';
+import { SC_ICON_SIZE_DEFAULT, ScIconComponent } from '@smartcontact-hub/icons';
 
 /**
  * Section (nivel raíz) del árbol Section → Subsection → Slot (§4.5, nodo Figma
@@ -78,7 +78,12 @@ export class ScSectionCardComponent {
 
   protected readonly chevronDownIcon = 'expand_more';
   protected readonly chevronRightIcon = 'chevron_right';
-  protected readonly iconSizeLg = SC_ICON_SIZE_LG;
+  /**
+   * 14, no 16. Los DOS nodos de Figma que definen esta caja llevan el icono de la cabecera a
+   * 14×14: el maestro `Section` del DS (691:23976) y el `Block` de la maqueta (393:12589).
+   * `SC_ICON_SIZE_DEFAULT` es justo ese 14, el tamaño por defecto del Kit.
+   */
+  protected readonly headIconSize = SC_ICON_SIZE_DEFAULT;
 
   private readonly userToggled = signal<boolean | null>(null);
 

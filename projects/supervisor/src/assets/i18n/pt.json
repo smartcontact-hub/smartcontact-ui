@@ -1645,15 +1645,17 @@
             "voz": "Voz",
             "desbordar": "Transbordar conversas quando não há agentes disponíveis",
             "tipo_cola": "Tipo de fila de espera",
-            "capacidad_cola": "Capacidade da fila de espera",
+            "capacidad_cola": "Máximo de conversas na fila",
             "tiempo_max": "Tempo máximo de espera na fila",
-            "tiempo_transfer": "Tempo de transferência",
+            "tiempo_transfer": "Tempo máximo de transferência",
             "placeholder": "Selecionar",
             "input_placeholder": "Escrever"
           },
           "apertura": {
             "title": "Abertura da ficha",
-            "tipo_label": "Tipo"
+            "tipo_label": "Tipo",
+            "tamano_label": "Tamanho",
+            "tamano_suffix": "píxeis"
           },
           "toast": {
             "saved": "Parâmetros dos grupos guardados"

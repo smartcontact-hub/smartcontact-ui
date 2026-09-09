@@ -1645,15 +1645,17 @@
             "voz": "Voix",
             "desbordar": "Débordement des conversations quand aucun agent n'est disponible",
             "tipo_cola": "Type de file d'attente",
-            "capacidad_cola": "Capacité de la file d'attente",
+            "capacidad_cola": "Nombre maximal de conversations en file",
             "tiempo_max": "Temps d'attente maximal en file",
-            "tiempo_transfer": "Temps de transfert",
+            "tiempo_transfer": "Temps de transfert maximal",
             "placeholder": "Sélectionner",
             "input_placeholder": "Saisir"
           },
           "apertura": {
             "title": "Ouverture de la fiche",
-            "tipo_label": "Type"
+            "tipo_label": "Type",
+            "tamano_label": "Taille",
+            "tamano_suffix": "pixels"
           },
           "toast": {
             "saved": "Paramètres des groupes enregistrés"
