@@ -161,6 +161,13 @@ no a la librería. Dos de estas reglas ya son infraestructura del sistema (aquí
 7. **Estabilidad visual.** Anima solo `transform`/`opacity` (nunca `top`/`left`/`width`/`height`).
    Imágenes con `width`+`height` o `aspect-ratio`. Banners y toasts en un hueco reservado, no
    insertados encima del contenido al cargar.
+8. **Tipografía por clase, y solo fuera de los componentes.** El texto de la PÁGINA lleva una de
+   las 12 clases `.sc-text-*` (los text styles del Figma del DS: display · h1 · h2 · h3 · body ·
+   caption, en regular y semibold). Un `<sc-*>` **nunca** lleva `.sc-text-*` en su etiqueta: su
+   tipografía la publica el tema, y una clase encima —que va sin capa, y sin capa gana siempre—
+   lo desconecta del canal por el que un cambio de token llega solo a todos los componentes. Si
+   el texto de un componente tiene que verse distinto, se mueve su TOKEN (DD-55, gateado por
+   `audit:text-styles`). Muestrario y regla: **Fundamentos → Tipografía** en `sc-docs`.
 
 **Mapa de composición** — punteros, no prosa: la razón vive donde apunta cada línea. Nace de
 medir que ninguno de estos nombres aparecía en AGENTS ni en CLAUDE, así que la regla existía en

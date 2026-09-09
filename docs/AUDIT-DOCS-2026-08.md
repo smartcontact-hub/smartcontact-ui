@@ -188,7 +188,7 @@ documentación se pasa a **8**:
 | `docs:guard` **(2)** | links relativos de **todos** los docs, no solo del índice | de los 9 rotos del censo, **ninguno** estaba en el índice |
 | `docs:coherence` **C** | citar uno de los 6 docs borrados sin nombrar `archive/docs-history` | la regla anterior se quedó vigilando un fichero inexistente al borrarlo |
 | `docs:coherence` **G** | el índice de disparadores de `LEARNINGS` cuadra con su cuerpo | el índice nuevo: desincronizado deja de ser índice y pasa a ser una mentira corta |
-| `docs:coherence` **H** | un doc que declara "caduca el YYYY-MM-DD" y ya venció | el mapa de producto caduca el 2026-09-08 y nadie lo vigilaba |
+| `docs:coherence` **H** | un doc que declara "caduca el YYYY-MM-DD" y ya venció | el mapa de producto llevaba una caducidad a 2026-09-08 y nadie la vigilaba |
 | `docs:coherence` **D** | cada hand-off de frente lleva sello y su SHA existe | miraba solo `NEXT-SESSION.md`; al pasar ese fichero a índice se habría quedado en no-op silencioso |
 
 **PRs parados** — el patrón del §1.1 — **no** va a `verify`: esa cadena corre offline y

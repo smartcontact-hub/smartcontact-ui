@@ -69,6 +69,23 @@
 @import '../../../design-tokens/src/lib/styles/tokens/layers/05-extensions.css';
 @import '../../../design-tokens/src/lib/styles/tokens/layers/07-dark.css';
 
+/*
+ * Los 12 ESTILOS DE TEXTO del Figma del DS, como clases `.sc-text-*`. Va DETRÁS
+ * de las capas porque cada clase lee los tokens de rol que ellas declaran; no
+ * fija ningún número.
+ *
+ * Faltaba, y por eso las clases no existían en esta app: se escribieron en
+ * `base/typography.css` y se importaron en el `index.css` del paquete, pero el
+ * supervisor no consume ese index (coge las 6 capas una a una, para NO heredar
+ * el reset del DS). Resultado: `class="sc-text-body-regular"` no pintaba nada y
+ * el navegador dejaba el `<th>` en su 16/24/700 por defecto. Medido en el build
+ * el 2026-09-09. Lo vigila `scripts/audit-text-styles.mjs` (§2).
+ *
+ * `base/reset.css` y `base/globals.css` siguen FUERA a propósito (ver arriba):
+ * esto añade clases, no cambia el reset.
+ */
+@import '../../../design-tokens/src/lib/styles/base/typography.css';
+
 /* PrimeIcons */
 @import 'primeicons/primeicons.css';
 

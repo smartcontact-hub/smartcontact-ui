@@ -294,12 +294,20 @@ for (const { path, lines } of files) {
 // leyéndose como vigente. Formato reconocido: `caduca el YYYY-MM-DD` (case-insensitive).
 // Vencer no obliga a borrar: obliga a DECIDIR (renovar la fecha, o retirar el doc).
 // Deliberadamente sensible a la fecha: es su razón de ser.
+//
+// SALVO CUANDO ES UNA CITA. La frase entre comillas —`"caduca el 2026-09-08"`— no es un doc
+// declarando su caducidad, es un doc HABLANDO de esta regla. Con la comilla dentro del patrón
+// el guardián se enrojecía a sí mismo: `AUDIT-DOCS-2026-08.md:191` describe esta comprobación
+// citando el ejemplo que la motivó, y el 2026-09-09 empezó a leerse como un doc vencido.
+// Un guardián que no distingue el uso de la mención acaba obligando a falsear la fecha del
+// ejemplo, que es exactamente lo contrario de lo que pide.
 {
   const hoy = new Date().toISOString().slice(0, 10);
+  const CITA = /["'«`]\s*$/;
   for (const { path, lines } of files)
     lines.forEach((line, i) => {
       for (const m of line.matchAll(/caduca el (\d{4}-\d{2}-\d{2})/gi))
-        if (m[1] < hoy)
+        if (m[1] < hoy && !CITA.test(line.slice(0, m.index)))
           fail(
             `${rel(path)}:${i + 1} — declara "caduca el ${m[1]}" y hoy es ${hoy}. Renueva la fecha si sigue vigente, o retira el doc; caducado se sigue leyendo como si valiera.`,
           );

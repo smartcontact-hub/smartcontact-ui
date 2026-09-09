@@ -330,7 +330,14 @@
   --sc-line-height-subtitle-1: var(--sc-line-height-300);
   --sc-line-height-subtitle-2: var(--sc-line-height-220);
   --sc-line-height-body-1: var(--sc-line-height-300);
-  --sc-line-height-body-2: var(--sc-line-height-220);
+  /* `200`, no `220`: es el peldaño que el text style `Body/body-*` ATA en Figma
+   * (la tabla de arriba ya lo decía; la declaración apuntaba a otro sitio). Los
+   * dos valen 20px, así que esto no mueve un píxel — lo que arregla es la
+   * TRAZABILIDAD: `220` no existe en el export del Kit, es un peldaño solo de
+   * código, y un rol que Figma sí ata no puede colgar de uno inventado o deja de
+   * seguirlo cuando cambie. Los que quedan en `220` (subtitle-2, body-3) no
+   * tienen text style en Figma, así que ahí es el sitio correcto. */
+  --sc-line-height-body-2: var(--sc-line-height-200);
   --sc-line-height-body-3: var(--sc-line-height-220);
   --sc-line-height-caption: var(--sc-line-height-100);
 
