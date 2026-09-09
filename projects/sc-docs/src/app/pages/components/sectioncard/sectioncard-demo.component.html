@@ -12,6 +12,7 @@
       [titleKey]="args.titleKey"
       [hintKey]="args.hintKey || null"
       [icon]="args.icon || null"
+      [surface]="args.surface"
       [collapsible]="args.collapsible"
       [initiallyCollapsed]="args.initiallyCollapsed"
       [flush]="args.flush"
@@ -73,21 +74,29 @@
     >
       <p class="demo-field">Sin fondo ni borde — el contenido va a sangre.</p>
     </sc-section-card>
+  </div>
+</ng-template>
 
-    <!-- La misma caja sobre el LIENZO, con el título de la página dentro (DD-57). -->
+<!--
+  OJO con `headingLevel` AQUÍ: esta ficha ya tiene su propio `<h1>` (el título que pinta
+  `app-story-host`), así que un ejemplo con `[headingLevel]="1"` metería un SEGUNDO `<h1>` en el
+  documento — justo lo que el input existe para evitar. El ejemplo se queda en el nivel 2 y el
+  snippet enseña el `1`, que es lo que se escribe en una pantalla de verdad.
+-->
+<ng-template #lienzo>
+  <div class="demo-canvas demo-canvas--lienzo">
     <sc-section-card
       titleKey="Agentes"
       icon="person"
       surface="card"
-      [headingLevel]="1"
       data-testid="sc-section-page"
     >
       <p class="demo-field">
-        <code>surface="card"</code> es la piel blanca con borde, para una sección que va sola
-        sobre el lienzo en vez de dentro de un formulario. Con
-        <code>[headingLevel]="1"</code> el título es el <code>&lt;h1&gt;</code> de la página y
-        sube al tamaño que le toca (18/24): así el título acota su caja en vez de flotar encima
-        de ella, y arranca en la misma línea que el índice lateral.
+        La piel blanca con borde, para una sección que va SOLA sobre el lienzo en vez de dentro de
+        un formulario. En una pantalla con índice lateral se le añade
+        <code>[headingLevel]="1"</code>: el título pasa a ser el <code>&lt;h1&gt;</code> de la
+        página y sube a 18/24, así acota su caja en vez de flotar encima de ella y arranca en la
+        misma línea que el rail.
       </p>
     </sc-section-card>
   </div>
