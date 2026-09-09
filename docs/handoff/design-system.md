@@ -125,10 +125,33 @@ Confluence, no la URL de producción. El gate exige la biyección tabla ↔ etiq
 tabla no pueda mentir. **Todavía no hay ninguna versión congelada**: la primera la congela Rafa
 cuando entregue.
 
-**Lo que queda:** el barrido global de la tipografía (`field__label` × 29 usos, `page__heading`,
-las 17 rutas que aún fijan tamaño a mano); servicio y grupos necesitan su propia maqueta para
-seguir el patrón de título contenido; y decidir si la app viva lleva un aviso que apunte a
-`docs/PROTOTIPOS.md`.
+**Lo que queda (revisado al cerrar el 2026-09-09):**
+
+1. **El barrido global de la tipografía.** `field__label` (29 usos en 7 pantallas) y
+   `sub-section__title` (8 en 3) leen ya los tokens de rol correctos, así que la clase `.sc-text-*`
+   entrará sin mover un píxel — pero hay que entrar a las plantillas. Y quedan rutas que aún fijan
+   tamaño a mano.
+2. **Servicio y grupos siguen el patrón, pero sus MEDIDAS no están casadas contra Figma.** Solo
+   Agentes tiene maqueta (393:12562) y está al píxel. Las otras dos heredan las medidas del
+   componente; cuando haya maqueta suya, hay que barrerlas igual.
+3. **El padding de `sc-section-card` subió a 24.5** para casar con el `Block` de Agentes, y eso
+   movió también las once cards de los formularios de admin. Es el valor que respalda la maqueta
+   del DS, pero no está contrastado contra la maqueta de ESOS formularios: conviene mirarlo cuando
+   se abra su Figma.
+4. **Decidir si la app viva lleva un aviso** que apunte a `docs/PROTOTIPOS.md` (DD-56), para quien
+   llegue por un enlace antiguo.
+5. **Todavía no hay ninguna versión congelada.** La primera la congela Rafa al entregar, con
+   `npm run proto`.
+
+**Para llevar a diseño** (Rafa pidió avisar de lo que canta en vez de replicarlo):
+
+- El item del rail cambia de caja según su estado: inactivo `pad 8.75 / gap 5.25` (de la escala),
+  activo `pad 8 / gap 4` (variables numéricas sueltas). Se encoge 2px al seleccionarlo.
+- Iconos del mismo rol a tres tamaños: 14 en el header, 20 en el rail, 32 en los toggles.
+- «Notifications» sin traducir en una pantalla en español.
+- **Cinco familias de estilos de texto** conviviendo en el archivo Supervisor: los 12 de la
+  librería del DS, 12 locales del propio archivo, y tres más remotas de otra librería. La escala
+  que manda es la de la librería (DD-54); las otras cuatro son deuda del Figma.
 
 ---
 
