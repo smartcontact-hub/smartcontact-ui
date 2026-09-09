@@ -67,8 +67,10 @@ fuera podía descargarse el DS ni enterarse de qué había cambiado.
 **Decisión** · Cuatro cosas, en el mismo corte:
 1. **Versión `1.0.0`**, con la promesa que trae: la API pública `sc-*` y el contrato `--sc-*`
    rompen **solo en un major**, y cuando rompen se dice en el CHANGELOG con su DD enlazado.
-2. **El canal de descarga es la release de GitHub**, con los tres tarballs adjuntos. Un
-   `npm i <url del .tgz>` y ya, sin clonar ni compilar.
+2. **Dos canales, uno por audiencia, y los dos los mueve la misma release**: los tres
+   **tarballs adjuntos** (abiertos, un `npm i <url del .tgz>` y ya) para quien viene de fuera,
+   y **GitHub Packages** (privado, org `smartcontact-hub`) para quien ya tiene acceso, que lo
+   publica `publish-packages.yml` al publicarse la release.
 3. **Las notas se LEEN del CHANGELOG**, no se escriben aparte: `scripts/release.mjs` extrae la
    sección de la versión y reescribe sus enlaces relativos a URLs absolutas del tag.
 4. **Se borra el entorno `github-pages`** muerto.
@@ -89,11 +91,19 @@ tenga que avisar, y eso es exactamente lo que 1.0.0 deja de permitir.
   no el tiempo trabajado.
 · *`2.x` o más alto, "para que se note que está avanzado"* — un major inventado obliga a fingir
   un `1.x` que nunca existió. Lo que se nota es el contenido de la nota, no el dígito.
-· *Desaparcar GitHub Packages y publicar en el registro* — lo que aparcó DD-17 **sigue siendo
-  cierto**: con un repo y un consumidor, el ciclo publicar-versionar-instalar cuesta más de lo
-  que aporta, y encima obliga al que instala a tener token de lectura y `.npmrc`. La release da
-  **la descarga sin el coste del registro**. El día que haya un consumidor externo de verdad, el
-  pipeline sigue ahí (`publish:packages`).
+· *Publicar en el registro A MANO, o no publicar* — descartadas las dos, y aquí está el matiz
+  que costó ver. Lo que DD-17 aparcó es el ciclo **DIARIO**: publicar, subir versión e instalar
+  cada vez que se toca un token, para consumir el DS **dentro** del repo. Eso sigue aparcado y
+  no se reabre: las cinco apps leen de `dist/` por `tsconfig paths` y no instalan nada.
+  Publicar **al cortar una versión** es otra cosa: pasa una vez por versión, en un momento en
+  que ya has decidido que esa versión existe, y no cuesta nada al día. Con esa distinción, "no
+  publicar" solo servía para que el registro se quedara en 0.2.0 mientras el repo iba por 1.0.0,
+  que es literalmente lo que había pasado (14 de junio, 0 descargas): el mismo fósil que la
+  pantalla de Deployments. Y "a mano" es **cómo se llega** a ese fósil, porque un paso que hay
+  que recordar no se ejecuta. Por eso lo dispara la release, no una persona.
+  *(Rectificado el mismo 2026-09-09, después de que Rafa señalara la pantalla de Packages: la
+  primera versión de este DD descartaba el registro entero, sin separar el ciclo diario del
+  publish por release. Se descartaba de más.)*
 · *Escribir las notas a mano en la página de la release* — dos textos del mismo anuncio divergen.
   Es la misma clase de fallo que los snippets de `sc-docs` (dos textos, ninguno atado al otro).
 · *Revivir GitHub Pages para que la pantalla de Deployments deje de mentir* — sería un **sexto

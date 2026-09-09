@@ -8,8 +8,10 @@ dice aquí con el porqué enlazado a su decisión.
 
 **Dónde se descarga**: cada versión es una
 [release de GitHub](https://github.com/smartcontact-hub/smartcontact-ui/releases) con los
-tres tarballs adjuntos. Publicar en el registro de GitHub Packages sigue aparcado a
-propósito ([DD-17](docs/DECISIONS.md)).
+tres tarballs adjuntos, y esa misma release **publica los paquetes en GitHub Packages**
+(privados, org `smartcontact-hub`). Lo que sigue aparcado es el ciclo **diario** de
+publicar-versionar-instalar: las apps de este repo consumen el DS desde `dist/`
+([DD-17](docs/DECISIONS.md), [DD-58](docs/DECISIONS.md)).
 
 Para cortar una versión: `npm run version:bump -- <x.y.z|minor> --write`, escribe la nota
 de abajo, commitea, y publica la release (`npm run release -- vX.Y.Z`).
@@ -101,10 +103,13 @@ compatibilidad con Reactive Forms. Están todos abajo, con el porqué en su deci
 - **Showcase con fichas por componente** al estilo Storybook, con motor propio y sin tooling
   nuevo, más una galería de **uso real** que captura el DOM renderizado de las pantallas del
   Supervisor donde aparece cada componente. ([DD-29](docs/DECISIONS.md))
-- **Descarga directa.** Los tres paquetes se adjuntan como tarballs `.tgz` en la
-  [release de GitHub](https://github.com/smartcontact-hub/smartcontact-ui/releases). Publicar
-  en el registro de GitHub Packages **sigue aparcado** a propósito
-  ([DD-17](docs/DECISIONS.md)).
+- **Dos formas de bajárselo, y ninguna depende de que alguien se acuerde.** Los tres paquetes
+  se adjuntan como tarballs `.tgz` en la
+  [release de GitHub](https://github.com/smartcontact-hub/smartcontact-ui/releases) (abierta,
+  sin token), y la propia release dispara la publicación en **GitHub Packages** (privado, para
+  quien ya tiene acceso a la org). Lo que sigue aparcado es el ciclo **diario** de
+  publicar-versionar-instalar, que es lo que DD-17 quitó de en medio.
+  ([DD-17](docs/DECISIONS.md), [DD-58](docs/DECISIONS.md))
 
 ## [0.2.0] — 2026-06-14
 
