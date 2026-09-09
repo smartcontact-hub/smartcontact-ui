@@ -85,6 +85,10 @@ variables. Y dice otra cosa que el 24.5.
    en los dos, título y contenido los separa aire.
 4. **El icono de la cabecera baja a 14** (`SC_ICON_SIZE_DEFAULT`) y la separación icono→título a
    8.75 (`scale/0-625`). Los dos nodos dicen 14 y 8.
+5. **`headingLevel` deja de arrastrar el tamaño**: decide la SEMÁNTICA (`<h1>` o `<h2>`) y nada
+   más. Los dos niveles miden 14/20 semibold. Lo que distingue al título de la página de los de
+   sección dentro de la misma card es su ICONO, que solo lleva la cabecera — que es lo que hace
+   la maqueta.
 
 **Razón** · El 24.5 no sale del componente del DS: sale de un marco LOCAL del archivo de
 pantallas, que es la variante blanca. Aplicarlo también a la gris es exactamente el fallo que
@@ -93,12 +97,32 @@ otra. Medido el 2026-09-09 leyendo `boundVariables` en los dos nodos: el maestro
 `scale/1-625` y `scale/1-143`, el `Block` ata `scale/1-75`. No es interpretación, es el token que
 cada uno tiene puesto.
 
+Y el 18/24 del título de página tenía el mismo vicio de origen, en el eje de la tipografía: DD-57
+lo justificaba como «el escalón que le toca en la escala del Figma del DS», o sea, lo dedujo de
+que la escala TIENE un peldaño `h3`, no de que algún nodo lo dibuje. **Medido el 2026-09-09: en
+todo el archivo Supervisor no hay un solo texto por encima de 14** —ni en las cuatro pantallas
+principales, ni en el rail, ni en la barra—; la jerarquía la llevan el peso, el color y la caja.
+Tres razones convergen y por eso se baja:
+
+- la maqueta pone «Agentes» y «Configuración» en el MISMO estilo, y los separa el icono;
+- el icono de la cabecera mide 14 en los dos nodos, y un título de 18 al lado de un icono de 14
+  deja el icono corto — este es el argumento que decide, porque es del objeto y no de su origen;
+- un input que mezcla semántica y tamaño necesita un párrafo para explicarse; separados, cada
+  uno se explica solo.
+
 **Descartadas** ·
 
 - **Dejar 24.5 en las dos.** Es lo que había, y no lo respalda ningún nodo del DS.
 - **Bajar también la blanca a 22.75/16.** Rompe la única pantalla verificada al píxel (Agentes,
   393:12562) por igualar dos cajas que Figma dibuja distintas a propósito: una va dentro de un
   formulario y la otra sola sobre el lienzo.
+- **Dejar el título de página en 18/24 y anotar la maqueta como discrepante.** Es lo cómodo y
+  habría sido defendible, pero la discrepancia estaba en el código: el 18 no lo respalda ningún
+  nodo. Se avisó a Rafa y él zanjó igualar a la maqueta.
+- **Bajar TAMBIÉN a 14 los títulos de las otras 20 páginas** (`.page__heading`), por coherencia.
+  No: ahí el título va SUELTO sobre el lienzo, sin caja que lo acote, y es el único elemento que
+  dice qué miras. Además el Figma no modela esos títulos —no existen en él—, así que no hay nada
+  contra lo que igualar: los puso DD-33 desde una referencia externa (Snow UI).
 - **Sangrar la cabecera con el padding de la caja** (36.75 de una vez) en vez de con un margen en
   su primer hijo. 36.75 no es un peldaño de la tabla 14-base, así que habría que sumarlo con
   `calc`; y el `chevron` de la variante colapsable se ancla al lado contrario, donde esa sangría
@@ -106,7 +130,14 @@ cada uno tiene puesto.
 
 **Consecuencias** · Las once cards de los formularios de admin bajan a 22.75/16 y pierden su
 línea; la card de las tres pantallas AED se queda en 24.5 y gana la alineación del título con su
-contenido. La ficha de `sc-section-card` en sc-docs cuenta ya las medidas de cada piel. Queda
+contenido, y su título baja de 18 a 14.
+
+`page-identity.spec.ts` pasa a vigilar **dos familias** en vez de una lista sola: título suelto
+sobre el lienzo (`.page__heading`) a 18/600 y título contenido en su sección a 14/600, cada una
+invariante hacia dentro. La distinción es del CONTENEDOR, no del nivel del documento. El test no
+se debilita: seguía existiendo para cazar una regla de página que pisara el tamaño en una ruta y
+no en las demás, y eso lo sigue haciendo — antes escondía la diferencia real bajo un
+`toHaveLength(1)`. La ficha de `sc-section-card` en sc-docs cuenta ya las medidas de cada piel. Queda
 abierto lo que no se puede cerrar sin diseño: **los formularios de admin no tienen maqueta**, así
 que su contenido interior sigue sin contrastar contra nada.
 

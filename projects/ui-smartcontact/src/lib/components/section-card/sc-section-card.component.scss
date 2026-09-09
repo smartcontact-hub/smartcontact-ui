@@ -143,19 +143,20 @@
 }
 
 /*
- * `headingLevel="1"`: esta card lleva el título de LA PÁGINA, no el de una sección suya. Sube al
- * rol `h3` (18/24), que es el escalón que le toca en la escala del Figma del DS (DD-54): 18
- * semibold la página, 14 semibold la sección, 14 regular el contenido. El `letter-spacing`
- * negativo se va con el tamaño: aprieta bien a 14 y a 18 empieza a notarse.
+ * `headingLevel="1"` NO cambia el tamaño, y eso es deliberado (2026-09-09).
+ *
+ * Hasta hoy subía al rol `h3` (18/24) «el escalón que le toca en la escala del Figma del DS».
+ * Ese 18 salía de la ESCALA, no de ningún nodo que dibuje esta pantalla: en el archivo Supervisor
+ * no hay un solo texto por encima de 14 —ni en las listas, ni en el rail, ni en la barra— y la
+ * jerarquía la llevan el peso, el color y la caja. En la maqueta, «Agentes» y «Configuración»
+ * son el MISMO estilo y los separa el icono, que solo lleva la cabecera.
+ *
+ * Y hay un motivo óptico, que es el que pesa: el icono de la cabecera mide 14 en los DOS nodos
+ * de Figma. Un título de 18 al lado de un icono de 14 deja el icono corto. A 14 y 14 casan.
+ *
+ * Así que el input queda limpio: decide la SEMÁNTICA (`<h1>` o `<h2>`), y el tamaño lo pone el
+ * contenedor. La clase `--page` se queda como enganche del DOM para los tests, sin estilo.
  */
-:host(.sc-section-card--page) {
-  .section-card__title {
-    font-family: var(--sc-font-family-h3);
-    font-size: var(--sc-font-size-h3);
-    line-height: var(--sc-line-height-h3);
-    letter-spacing: 0;
-  }
-}
 
 /* Variante flush (SnowUI S62): sin caja — el contenido va a sangre sobre la
    página. Quita fondo/borde/radio; header y body pierden el padding lateral. */

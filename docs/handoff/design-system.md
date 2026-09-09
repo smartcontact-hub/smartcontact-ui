@@ -54,6 +54,15 @@ tienen atadas a variable en Figma:
 
 Y en las dos: icono de cabecera a **14** (no 16) y separación icono→título a **8.75**.
 
+**El título de página baja de 18 a 14** (decisión de Rafa tras verle la evidencia). `headingLevel`
+deja de arrastrar el tamaño y solo decide la semántica (`<h1>` o `<h2>`). Lo que lo motiva no es
+fidelidad, es que el 18 no lo respaldaba nada: DD-57 lo dedujo de que la escala TIENE un peldaño
+`h3`, y medido hoy **en todo el archivo Supervisor no hay un texto por encima de 14**. El
+argumento que decide es óptico: el icono de la cabecera mide 14 en los dos nodos, y un título de
+18 a su lado deja el icono corto. `page-identity.spec.ts` pasa a vigilar dos familias —título
+suelto sobre el lienzo a 18/600, título contenido en su sección a 14/600—, cada una invariante
+hacia dentro.
+
 ⚠️ **DD-57 decía que el 24.5 era «el valor que la maqueta del DS respalda» y no lo era**: sale del
 `Block`, que es un marco LOCAL del archivo de pantallas. El maestro del DS mide 22.75/16. Las once
 cards de los formularios de admin vuelven ahí.
@@ -82,9 +91,9 @@ cards de los formularios de admin vuelven ahí.
 2. **El borde del `Block`** (393:12587) es negro al 10% SIN variable, teniendo el DS su token.
 3. **El mismo `inputnumber`, dos anchos** en la maqueta de Grupos: 71 en seis campos y 94 en
    «Tamaño» (y 32 vs 34 de alto). Se usa 71, el que se repite.
-4. **El título de la página usa el mismo estilo que los títulos de sección** en la maqueta de
-   Agentes (`subtitle1` 14/22 los dos): no hay escalón entre la pantalla y sus partes. En el
-   código sí lo hay (18/24 vs 14/20), por DD-54 + DD-57.
+4. ~~El título de la página usa el mismo estilo que los títulos de sección~~ — **resuelto**: se
+   igualó el código a la maqueta (ver arriba y DD-61). El escalón que quedaba en el código no lo
+   respaldaba ningún nodo.
 5. **El item activo del rail se encoge**: inactivo pad 8.75 / gap 5.25 (atados), activo pad 8 /
    gap 4 (sueltos) → 39.5 contra 38 de alto. Sigue igual que en el tramo anterior, ahora con los
    `boundVariables` delante.
