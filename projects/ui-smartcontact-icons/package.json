@@ -1,6 +1,6 @@
 {
   "name": "@smartcontact-hub/icons",
-  "version": "0.2.0",
+  "version": "1.0.0",
   "description": "Smart Contact Design System — the <sc-icon> component and the Material Symbols Rounded icon set.",
   "keywords": [
     "angular",
