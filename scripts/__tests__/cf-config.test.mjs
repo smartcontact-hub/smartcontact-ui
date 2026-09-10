@@ -1,9 +1,8 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { readFileSync } from 'node:fs';
-import { fileURLToPath } from 'node:url';
 import { evaluar, esperado, PROYECTOS } from '../audit-cf-config.mjs';
+import { SITIOS } from '../cf-sites.mjs';
 
 const por = (app) => PROYECTOS.find((p) => p.app === app);
 
@@ -55,14 +54,12 @@ test('sc-docs se construye con build:docs, no con build:sc-docs (casi se coló a
   });
 });
 
-test('el mapa cubre las cinco apps y cada script existe en package.json y termina sellando', () => {
-  const { scripts } = JSON.parse(readFileSync(fileURLToPath(import.meta.resolve('../../package.json')), 'utf8'));
+test('el mapa que se audita es el catálogo único, sin una lista propia que se desalinee', () => {
+  // Los proyectos ya no se escriben aquí: salen de `cf-sites.mjs`, igual que los sitios que
+  // registra `record-deploy.mjs`. Que el catálogo cubra las apps que el repo publica de verdad
+  // (y que cada script exista y termine sellando) lo prueba `cf-sites.test.mjs`.
   assert.deepEqual(
-    PROYECTOS.map((p) => p.app).sort(),
-    ['agent', 'agent-mini', 'cuscare', 'sc-docs', 'supervisor'],
+    PROYECTOS,
+    SITIOS.map(({ app, proyecto, script }) => ({ app, proyecto, script })),
   );
-  for (const { app, script } of PROYECTOS) {
-    assert.ok(scripts[script], `falta el script ${script}`);
-    assert.match(scripts[script], new RegExp(`stamp-build\\.mjs ${app}$`), `${script} no sella ${app}`);
-  }
 });

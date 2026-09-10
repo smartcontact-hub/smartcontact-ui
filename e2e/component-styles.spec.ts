@@ -151,7 +151,15 @@ const stylesOf = async (page: Page, route: string, tag: string, esperados?: numb
   // `toBeAttached` y NO `toBeVisible`: hay demos cuyo componente nace oculto porque es un
   // overlay que se abre con un atajo (`sc-command-palette` resolvió 33 veces a un nodo con
   // `hidden`). Lo que se necesita aquí es que la vista destino esté MONTADA, no que se vea.
-  await expect(page.locator(tag).first()).toBeAttached({ timeout: 15_000 });
+  //
+  // Y ACOTADO al `<main class="demo-main">` que envuelve al `router-outlet`, porque el shell
+  // monta un `<sc-command-palette>` global FUERA de él (`app.component.html`): sin acotar, la
+  // espera de la ruta `commandpalette` se cumple en CUALQUIER página y deja de esperar nada.
+  // Eso puso el CI en rojo el 2026-09-10 con `commandpalette` leyendo la página de
+  // `columnselector` —la ruta anterior de la lista—, y el `toHaveCount` de abajo no lo tapó
+  // porque las dos páginas tienen UNA ancla. Medido con sonda: en `/columnselector`,
+  // `sc-command-palette` resuelve y `main.demo-main sc-command-palette` no.
+  await expect(page.locator(`main.demo-main ${tag}`).first()).toBeAttached({ timeout: 15_000 });
 
   // Animaciones a cero ANTES de medir. Es lo mismo que hacía `animations: 'disabled'` en la
   // captura que esto sustituye, y aquí no es un detalle: `sc-message` monta con la animación
