@@ -184,7 +184,7 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   protected readonly logInIcon = 'login';
   protected readonly keyIcon = 'key';
 
-  /** Open state of each accordion sub-section inside "Configuración avanzada".
+  /** Open state of each accordion disclosure inside "Configuración avanzada".
    * All start collapsed so the section reads as a quiet summary (count
    * badges) until the user drills in — DD#57. */
   protected readonly labelsAccOpen = signal(false);
@@ -201,7 +201,7 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     this.templatesAccOpen.update((v) => !v);
   }
 
-  /** Filter inputs for the in-sub-section search boxes. */
+  /** Filter inputs for the in-disclosure search boxes. */
   protected readonly scheduleSearch = signal('');
   protected readonly templateSearch = signal('');
   protected readonly templateTab = signal<TemplateType>('chat');
@@ -276,7 +276,7 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
    * `Repositorios > Agendas`; this form just reads + assigns. */
   protected readonly availableSchedules = this.agendasStore.items;
 
-  /** Agendas filtered by the in-sub-section search box. */
+  /** Agendas filtered by the in-disclosure search box. */
   protected readonly filteredSchedules = computed<readonly Agenda[]>(() => {
     const q = this.scheduleSearch().trim().toLowerCase();
     const all = this.availableSchedules();

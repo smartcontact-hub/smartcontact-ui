@@ -6,6 +6,10 @@ import { ScChipComponent as ChipComponent } from '@smartcontact-hub/components';
 import { ScSearchComponent as SearchComponent } from '@smartcontact-hub/components';
 import { ScCheckboxComponent as CheckboxComponent } from '@smartcontact-hub/components';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
+import {
+  ScDividerComponent as DividerComponent,
+  ScSectionCardComponent as SectionCardComponent,
+} from '@smartcontact-hub/components';
 
 import { TOAST_LIFE } from '@core/utils/toast-life';
 
@@ -18,14 +22,24 @@ import { COUNTRY_PREFIXES, type CountryPrefix } from '../data/country-prefixes';
  * Lifted out of the old AedPageComponent so it can sit inside Sistema
  * as one of the 5 cross-cutting prefs sections (the rest live as
  * inline blocks). Dropping the page chrome means the host paints
- * nothing — Sistema's own `.page` and `.card` are the visual frame.
+ * nothing — Sistema's `.page` es el marco, y la caja la pone
+ * `sc-section-card surface="card"` (antes era un `.card` a mano, 2026-09-10).
  *
  * Per DD#45: AED is now the inner-shell hub for Servicio/Agentes/Grupos
  * defaults, so the country picker no longer fits there conceptually.
  */
 @Component({
   selector: 'sc-numeracion-especial-section',
-  imports: [ChipComponent, SearchComponent, CheckboxComponent, ButtonComponent, IconComponent, TranslateModule],
+  imports: [
+    ChipComponent,
+    SearchComponent,
+    CheckboxComponent,
+    ButtonComponent,
+    IconComponent,
+    SectionCardComponent,
+    DividerComponent,
+    TranslateModule,
+  ],
   templateUrl: './numeracion-especial-section.component.html',
   styleUrl: './numeracion-especial-section.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

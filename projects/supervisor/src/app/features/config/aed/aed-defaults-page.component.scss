@@ -48,28 +48,8 @@
   }
 }
 
-/* ---------- Inline checkbox + label ---------- */
-
-.inline-check {
-  display: inline-flex;
-  align-items: center;
-  gap: var(--sc-spacing-0-5);
-  cursor: pointer;
-  font-size: var(--sc-font-size-100);
-  color: var(--sc-text-primary);
-
-  > input[type='checkbox'] {
-    accent-color: var(--sc-bg-primary);
-    width: 16px;
-    height: 16px;
-    cursor: pointer;
-    flex-shrink: 0;
-  }
-
-  > input[type='checkbox']:disabled {
-    cursor: not-allowed;
-  }
-}
+/* `.inline-check` (casilla nativa + etiqueta en línea) se fue el 2026-09-10: CERO
+ * plantillas lo usaban. Las casillas son `sc-checkbox` desde el `7470fdc`. */
 
 /* ---------- Settings card ----------
  *
@@ -83,183 +63,33 @@
  * copia tenía 24.5 de padding y radio 12, y el componente 21 y radio 12.
  */
 
-/* ---------- Sub-section ---------- */
+/* ---------- Sub-section ----------
+ *
+ * SUBIÓ A `styles/_forms.scss` el 2026-09-10, tal cual. Vivía aquí, en la hoja de las tres
+ * pantallas AED, y la encapsulación de Angular hacía que SOLO ellas la vieran: `sistema-page`,
+ * al pasar a `sc-section-card surface="card"`, se quedó con el título sangrado 12.25 y el
+ * contenido no —medido en el navegador: título a 37.75 del filo, contenido a 25.5—, porque la
+ * sangría del contenido es justo lo que esta clase pone. Con un solo hogar, la pone en las dos.
+ */
 
-.sub-section {
-  display: flex;
-  flex-direction: column;
-  gap: var(--sc-spacing-0-875);
-
-  /*
-   * El CONTENIDO va 12.25 (`scale/0-875`) más adentro que el borde de la caja; los DIVISORES no.
-   * Es el patrón de la maqueta: el `Block` pone su padding y cada sección de dentro añade su
-   * propio 12.25 lateral (393:12592, 393:12610, 393:12647), mientras las líneas de separación
-   * cruzan el ancho entero. La cabecera de la card lleva el mismo 12.25 desde el componente, así
-   * que título y contenido arrancan en la misma vertical.
-   *
-   * Vive AQUÍ, en la hoja que comparten las tres pantallas, y no en la de Agentes: allí solo la
-   * veía Agentes (la encapsulación de Angular es por componente) y Servicio y Grupos se quedaban
-   * 12.25 fuera de línea sin que nada lo dijera.
-   */
-  margin-inline: var(--sc-spacing-0-875);
-
-  &__head {
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-  }
-
-  /* Los tres ejes de `Body/body-semibold` por su token de rol (= lo que resuelve
-   * `.sc-text-body-semibold`). El `line-height: 22px` literal se va: era un
-   * número a mano que no salía de ningún peldaño del sistema. Se queda aquí en
-   * vez de como clase porque `sub-section__title` tiene 8 usos en 3 pantallas;
-   * cuando se barran, la clase entra sin mover un píxel. */
-  &__title {
-    margin: 0;
-    font-size: var(--sc-font-size-body-2);
-    line-height: var(--sc-line-height-body-2);
-    font-weight: var(--sc-font-weight-semibold);
-    color: var(--sc-text-primary);
-  }
-
-  &__hint {
-    margin: 0;
-    font-size: var(--sc-font-size-caption);
-    line-height: var(--sc-line-height-caption);
-    color: var(--sc-text-subtle);
-  }
-}
-
-/* ---------- Field primitives ---------- */
-
-.field {
-  display: flex;
-  flex-direction: column;
-  gap: var(--sc-spacing-0-5);
-  min-width: 0;
-
-  &--full {
-    flex: 1 1 100%;
-    width: 100%;
-  }
-
-  /*
-   * Los tres ejes son los del text style `Caption/caption-regular` del Figma
-   * del DS, leídos por su token de ROL: es exactamente lo que resuelve la clase
-   * `.sc-text-caption-regular`. Se quedan aquí, y no como clase en la
-   * plantilla, porque `field__label` tiene 29 usos en 7 pantallas y migrarlos
-   * es un barrido aparte; cuando se haga, la clase entra sin mover un píxel.
-   * El peso baja de `medium` a `caption` (500 → 400) porque el text style es
-   * Regular: la jerarquía de una etiqueta la da su tamaño, no engordarla.
-   */
-  &__label {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--sc-spacing-0-5);
-    font-size: var(--sc-font-size-caption);
-    line-height: var(--sc-line-height-caption);
-    font-weight: var(--sc-font-weight-caption);
-    color: var(--sc-text-secondary);
-  }
-
-  &__info {
-    color: var(--sc-icon-subtle);
-    cursor: help;
-  }
-
-  &__row {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--sc-spacing-0-5);
-  }
-
-  &__input {
-    height: 36px;
-    padding: 0 var(--sc-spacing-0-875);
-    font-family: inherit;
-    font-size: var(--sc-font-size-100);
-    color: var(--sc-text-primary);
-    background: var(--sc-bg-surface);
-    border: 1px solid var(--sc-border-default);
-    border-radius: var(--sc-radius-200);
-    outline: none;
-    transition: border-color var(--sc-transition-fast) ease;
-
-    &::placeholder {
-      color: var(--sc-text-subtle);
-    }
-
-    &:focus {
-      border-color: var(--sc-color-blue-500);
-    }
-
-    &--num {
-      width: 80px;
-      text-align: left;
-      font-variant-numeric: tabular-nums;
-    }
-  }
-
-  &__suffix {
-    font-size: var(--sc-font-size-50);
-    color: var(--sc-text-subtle);
-    white-space: nowrap;
-  }
-}
-
-/* select narrows on mobile via flex; specific overrides go per-page */
-select.field__input {
-  appearance: none;
-  background-image:
-    linear-gradient(45deg, transparent 50%, var(--sc-icon-subtle) 50%),
-    linear-gradient(135deg, var(--sc-icon-subtle) 50%, transparent 50%);
-  background-position:
-    calc(100% - 14px) calc(50% - 2px),
-    calc(100% - 9px) calc(50% - 2px);
-  background-size:
-    5px 5px,
-    5px 5px;
-  background-repeat: no-repeat;
-  padding-right: 28px;
-  cursor: pointer;
-  min-width: 200px;
-  max-width: 378px;
-}
+/* ---------- Field primitives ----------
+ *
+ * SUBIERON A `styles/_forms.scss` el 2026-09-10, con ESTOS valores (los de la
+ * maqueta): `.field` con `gap: scale/0-5` y `min-width: 0`, y `.field__label` con los
+ * tres ejes del text style `Caption/caption-regular`. Aquí estaban declarados por
+ * segunda vez, y los tres formularios de admin usaban la copia global con 12/500 y
+ * `margin-bottom: 2px`. Ahora hay una sola declaración y la usan las nueve pantallas.
+ * Lo vigila `audit:screen-vocabulary`.
+ *
+ * Por el camino se fueron `__input`, `__row` e `__info`, muertos en las dos hojas.
+ */
 
 /* ---------- Grids ----------
  *
- * Dos columnas iguales separadas por 24.5 (`scale/1-75`, la ÚNICA medida atada a variable en
- * estas filas de la maqueta) y filas separadas por 12.25 (`scale/0-875`). En Figma esa
- * separación vertical vale 12 y va suelta, sin variable: 12 no es peldaño de la tabla 14-base y
- * 12.25 es el escalón que le toca. Nodos: `row` 2286:5408 (columnas) y `container` 2286:5407
- * (filas) en Grupos, `container` 2286:5581 y 2286:5558 en Servicio.
+ * SUBIERON A `styles/_forms.scss` el 2026-09-10: `.grid` (24.5 entre columnas, 12.25
+ * entre filas), `--2`, `--wide-narrow` y su media query. La hoja compartida decía
+ * `gap: 15.75` a los dos ejes; ahora dice lo que mide la maqueta, y lo dice una vez.
  */
-
-.grid {
-  display: grid;
-  column-gap: var(--sc-spacing-1-75);
-  row-gap: var(--sc-spacing-0-875);
-
-  &--2 {
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-  }
-
-  /*
-   * La variante 70/30 de la maqueta: 578.5 + 24.5 + 214 sobre los 817 útiles. La usan
-   * "Recepción de conversaciones" (2286:5581) y las dos filas de URL de "Notificaciones"
-   * (2286:5558) — un campo ancho a la izquierda y una columna estrecha de opciones a la derecha.
-   */
-  &--wide-narrow {
-    grid-template-columns: minmax(0, 578.5fr) minmax(0, 214fr);
-  }
-}
-
-@media (max-width: 720px) {
-  .grid--2,
-  .grid--wide-narrow {
-    grid-template-columns: 1fr;
-  }
-}
 
 /* ---------- Campo con la etiqueta AL LADO ----------
  *

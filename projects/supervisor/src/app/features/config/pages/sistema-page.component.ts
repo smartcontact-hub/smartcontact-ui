@@ -15,6 +15,7 @@ import { ScInputTextComponent as InputTextComponent } from '@smartcontact-hub/co
 import { ScSearchComponent as SearchComponent } from '@smartcontact-hub/components';
 import { ScCheckboxComponent as CheckboxComponent } from '@smartcontact-hub/components';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
+import { ScSectionCardComponent as SectionCardComponent } from '@smartcontact-hub/components';
 
 import {
   LanguageService,
@@ -96,6 +97,7 @@ const APP_DATA_PREFIX = 'sc-';
     ButtonComponent,
     IconComponent,
     NumeracionEspecialSectionComponent,
+    SectionCardComponent,
     ToggleSwitchComponent,
     TranslateModule,
   ],
@@ -120,8 +122,8 @@ export class SistemaPageComponent {
   protected readonly closeIcon = 'close';
   protected readonly alertIcon = 'warning';
   protected readonly infoIcon = 'info';
-  protected readonly chevronDown = 'expand_more';
-  protected readonly chevronRight = 'chevron_right';
+  /* `chevronDown`/`chevronRight` se fueron con el acordeón a mano: el chevron y su
+   * estado los pone `sc-section-card collapsible`. */
   protected readonly downloadIcon = 'download';
   protected readonly checkIcon = 'check';
 
@@ -146,7 +148,9 @@ export class SistemaPageComponent {
 
   protected readonly confirmPhraseToken = CONFIRM_PHRASE;
 
-  protected readonly regenOpen = signal(false);
+  /* `regenOpen` se fue: el estado de plegado vive dentro de `sc-section-card`, que es
+   * quien pinta la cabecera-botón. Tenerlo aquí además obligaba a mantener los dos en
+   * sincronía a mano. */
   protected readonly searchQuery = signal('');
   protected readonly selectedIds = signal<ReadonlySet<number>>(new Set());
   protected readonly confirmText = signal('');
@@ -228,10 +232,6 @@ export class SistemaPageComponent {
      * reset on the in-memory store wouldn't repopulate the defaults
      * already replaced by the user — the seed lives in the factory. */
     this.doc.defaultView?.location.reload();
-  }
-
-  protected toggleAccordion(): void {
-    this.regenOpen.update((v) => !v);
   }
 
   protected toggleAll(): void {
