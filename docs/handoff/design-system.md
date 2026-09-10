@@ -310,9 +310,14 @@ OAuth de wrangler y en `deploy-record.yml` con el secret `CLOUDFLARE_API_TOKEN`.
 paso lo dice y no afirma nada. La auditoría semanal lo tiene como pasada D. Y cuando un sitio
 nunca mostró sello, el rojo del registro ya apunta al comando de build.
 
-**Lo que queda en manos de Rafa.** Crear el token en Cloudflare (API Tokens → Custom → permiso
-*Account · Cloudflare Pages · Read*) y guardarlo con `gh secret set CLOUDFLARE_API_TOKEN`. Hasta
-entonces el paso del workflow avisa y sigue; la comprobación real solo corre en local.
+**Lo que pasó al poner el secret (2026-09-10).** Rafa creó el token con solo *Cloudflare Pages:
+Read* y lo guardó. La primera ejecución murió en 6 s con «El token no ve ninguna cuenta»: ese
+permiso no lista cuentas (`GET /accounts` devuelve vacío), y como el check iba en el MISMO job
+que el registro, la pantalla de Deployments se quedó sin escribir. Lo cazó la extensión de Claude
+en Chrome, no yo: yo había probado el check solo con el OAuth de wrangler, que sí ve cuentas
+(LEARNINGS #1: el estímulo real, no el que inyecté). Arreglo: la cuenta va escrita en el script
+(no es secreta) y el check corre en un job aparte, sin `needs`, para que un rojo de panel no
+tumbe el registro. El secret de solo lectura vale tal cual.
 
 **Trampas medidas hoy.**
 
