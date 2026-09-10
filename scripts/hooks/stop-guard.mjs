@@ -17,12 +17,18 @@
  *      Así que el cierre lleva tres líneas fijas, cortas y en su idioma, y la del PORQUÉ no puede
  *      llevar jerga: si el beneficio solo se sabe decir con «hook» o «gate», no está entendido.
  *      (Petición de Rafa, 2026-09-10.)
+ *   4. dentro del parte, «¿es seguro cerrar?»: si la caja está vacía o queda algo solo aquí
+ *      dentro. Y esta NO se cree lo que yo escribo: el hook MIDE el árbol (sin commitear, sin
+ *      pushear, sin upstream) y me desmiente si pongo «sí» con trabajo colgando. Un «todo subido»
+ *      afirmado sin mirar es exactamente la regla #17 en su versión más cara: Rafa cierra la
+ *      ventana y el contexto no vuelve. (Petición de Rafa, 2026-09-10.)
  *
  * `stop_hook_active` evita el bucle: a la segunda deja parar.
  *
  * Entrada: JSON por stdin (transcript_path, session_id, cwd, stop_hook_active).
  * Salida: JSON de decisión.
  */
+import { execFileSync } from 'node:child_process';
 import { readFileSync, existsSync } from 'node:fs';
 import { fileURLToPath } from 'node:url';
 
@@ -141,10 +147,55 @@ export const PLANTILLA = [
   '- En qué te ayuda: <el problema concreto que ya no vuelve, en tu idioma y sin jerga>',
   '- Tú tienes que: <decisión o paso fuera del repo; borra la línea si no hay nada>',
   '- Rastro: <PR/sha · veredicto del CI leído · docs/handoff/<frente>.md>',
+  '- Seguro cerrar: <«sí» o «no» y por qué, en una frase: qué queda colgando o quién lo recoge>',
 ].join('\n');
 
+/** Lo que la máquina SÍ puede ver de «¿se pierde algo si cierro?». `seguro: null` = no lo sé. */
+export function estadoDelArbol(cwd = process.cwd()) {
+  // `trimEnd`, no `trim`: el porcelain abre cada línea con dos huecos de estado (« M ruta»), y un
+  // trim por delante se come la primera letra del fichero. Lo cazó la sonda sobre el árbol real.
+  const git = (...args) => execFileSync('git', args, { cwd, encoding: 'utf8', timeout: 4000, stdio: ['ignore', 'pipe', 'ignore'] }).trimEnd();
+  const motivos = [];
+  try {
+    const sucio = git('status', '--porcelain').split('\n').filter(Boolean);
+    const rutaDe = (l) => l.slice(3); // 2 de estado + 1 hueco, siempre
+    if (sucio.length) motivos.push(`${sucio.length} fichero(s) sin commitear (${sucio.slice(0, 3).map(rutaDe).join(', ')}${sucio.length > 3 ? '…' : ''})`);
+    let upstream = '';
+    try {
+      upstream = git('rev-parse', '--abbrev-ref', '--symbolic-full-name', '@{u}').trim();
+    } catch {
+      motivos.push(`la rama ${git('rev-parse', '--abbrev-ref', 'HEAD').trim()} no está en el remoto: si se pierde el disco, se pierde el trabajo`);
+    }
+    if (upstream) {
+      const sinPushear = Number(git('rev-list', '--count', '@{u}..HEAD'));
+      if (sinPushear) motivos.push(`${sinPushear} commit(s) sin pushear a ${upstream}`);
+    }
+  } catch {
+    return { seguro: null, motivos: [] }; // sin git (otra máquina, CI): el hook falla ABIERTO.
+  }
+  return { seguro: !motivos.length, motivos };
+}
+
+const SEGURO = /seguro\s+cerrar\s*\**\s*:\s*\**\s*(.*)$/im;
+
+/**
+ * La línea del veredicto. Aquí no vale el patrón genérico: lo que se comprueba no es que esté
+ * escrita, es que lo que dice CUADRE con el árbol. Decir «sí, todo subido» sin mirarlo es lo que
+ * hace que Rafa cierre la ventana encima de trabajo que solo existe aquí.
+ */
+export function fallosDeSeguridad(mensaje, estado) {
+  const m = SEGURO.exec(mensaje);
+  const texto = (m?.[1] ?? '').trim();
+  if (!m) return ['falta la línea «Seguro cerrar:»: di si la caja está vacía o si queda algo colgando.'];
+  const dice = /^s[ií]\b|^s[ií][,.:;]/i.test(texto) ? 'sí' : /^no\b|^no[,.:;]/i.test(texto) ? 'no' : null;
+  if (!dice) return ['«Seguro cerrar:» empieza por «sí» o por «no», y después el porqué en la misma frase.'];
+  if (dice === 'sí' && estado?.seguro === false)
+    return [`dices que es seguro cerrar y el árbol dice que no: ${estado.motivos.join('; ')}. Súbelo, o cámbialo a «no» y di qué queda.`];
+  return [];
+}
+
 /** Qué le falta al parte de cierre. Lista vacía = está bien. */
-export function fallosDelParte(mensaje) {
+export function fallosDelParte(mensaje, estado) {
   const fallos = [];
   for (const { nombre, re, min, llano } of PARTE) {
     const m = re.exec(mensaje);
@@ -161,12 +212,12 @@ export function fallosDelParte(mensaje) {
     const jerga = llano ? JERGA.exec(texto) : null;
     if (jerga) fallos.push(`«${nombre}:» dice «${jerga[0]}». Esa línea es para Rafa, que no programa: cuéntale el efecto, no la pieza.`);
   }
-  return fallos;
+  return [...fallos, ...fallosDeSeguridad(mensaje, estado)];
 }
 
 export function motivoParteDeCierre(fallos) {
   return [
-    'Estás cerrando y el parte de cierre no está. Rafa no lee el diff: lo que le llega es este mensaje, así que lleva tres líneas fijas, cortas y en su idioma.',
+    'Estás cerrando y el parte de cierre no cuadra. Rafa no lee el diff: lo que le llega es este mensaje, así que lleva cuatro líneas fijas, cortas y en su idioma.',
     ...fallos.map((f) => `  · ${f}`),
     'Vuelve a escribir el mensaje final con esta forma:',
     PLANTILLA,
@@ -210,7 +261,7 @@ function main() {
     }
     if (pend.length) return bloquear(motivoSinEnrutar(pend));
 
-    const fallos = fallosDelParte(ultimoMensaje(jsonl));
+    const fallos = fallosDelParte(ultimoMensaje(jsonl), estadoDelArbol(input.cwd || process.cwd()));
     if (fallos.length) return bloquear(motivoParteDeCierre(fallos));
   });
 }
