@@ -15,6 +15,49 @@
 > coordine. Los `sNN` de los tramos viejos se quedan como están: los nombran commits y
 > `docs/DECISIONS.md`, y reescribirlos solo desincronizaría el doc de su propia historia.
 
+## ▶︎ SIGUIENTE — sin preguntar
+
+> **La bandeja del frente, y por eso vive ARRIBA.** Entran dos cosas: lo que queda por hacer, y
+> **el tema que aparece a mitad de sesión y NO bloquea** lo que estabas haciendo. Si bloquea no
+> es un apunte: es parte del trabajo en curso y se termina ahí mismo.
+>
+> **Al abrir sesión, lee la lista ENTERA antes de coger nada.** Los apuntes que se tocan entre sí
+> son UNA tarea, no tres: agrúpalos en un solo encargo. Esta ficha estuvo hasta el 2026-09-10 con
+> esta sección en la línea 2500 de 2685, enterrada bajo el histórico, y el precio fue medible:
+> cada hallazgo abría chat propio en vez de esperar aquí, y el mismo trabajo llegó a existir dos
+> veces en dos ramas (`verdict-avisa-pr-fundido` y su `-2`).
+>
+> Lo cerrado NO se tacha aquí: se baja al histórico del final del fichero.
+
+**Lo que dejó s42, medido y sin hacer:**
+
+- **Las descripciones de los text styles de Figma están corridas un peldaño.** Se escribieron
+  cuando `h1` era la cima y no se movieron al meter `Display` encima: `Heading/h1-semibold` dice
+  *«el texto más grande… uno por pantalla, no más»* (ya no lo es, Display es 64 y reclama lo
+  mismo); `Heading/h2-regular` lleva una descripción de BODY (*«el texto de leer, párrafos»*) en
+  un heading de 24; `Display/display-regular` una de SUBTÍTULO; y `h1-regular` y `h3-regular` la
+  tienen vacía. Es texto, no estructura: se arregla en Figma en cinco minutos.
+- **El tier `app/typography/xl|xxl` existe en Figma y no lo consume nadie** (medido: 0 nodos, 0
+  text styles). Está clasificado como `not-consumed` en `coverage-map.mjs`. Si algún día se
+  quiere de verdad, va a `sc-preset/extend.ts` + `APP_TYPOGRAPHY_CONTRACT` y sube al bucket
+  `value-check`; hasta entonces declararlo consumido sería mentir.
+- **`--sc-font-size-caption-bold` está declarado y tiene 0 usos.**
+- **`display-1` se quedó sin consumidores y `h1` con uno que es solo fallback.** Es el estado
+  honesto tras DD-48 (la rampa era aspiracional desde DD-13), no una regresión: la rampa ya dice
+  la verdad y espera consumidores de PRODUCTO. Si el Supervisor adopta la rampa, es ahí.
+
+1. **El eslabón que sigue faltando: nadie compara *fichero de Figma ↔ export*.** `tokens:parity`
+   compara *export ↔ CSS*. Por ese hueco se coló el desfase de julio. No puede ser gate de CI
+   (necesita el bridge abierto), así que es procedimiento manual — mismo caso que el Check D de
+   `docs:coherence`.
+   ⚠️ **Cómo repetirlo sin tropezar**: resuelve a RGBA final **los dos lados** antes de comparar.
+   La primera pasada dio **15 divergencias falsas** por leer los colores de Figma sin canal alfa
+   (`#00000000` vs `#000000`) y por comparar un alias contra un valor ya resuelto. Y en el JSON del
+   export **las claves raíz llevan las barras dentro** (`d['aura/semantic/dark']['primary']`).
+2. **El 1:1 web↔Figma de chip · tag · toast** — sigue **bloqueado por herramienta**, no por
+   decisión. Ver la sección de Figma más abajo.
+3. **La deuda de código de [`AUDIT-DEUDA-2026-06.md`](../AUDIT-DEUDA-2026-06.md)** que quede tras
+   s34, y **los cabos de DD-24** (round-trip de iconos) en [`ROADMAP.md`](../ROADMAP.md).
 ## ✅ 2026-09-11 · El interlineado deja de depender de quién sea el padre: 212 reglas bajan a 23
 
 **Sello:** DD-67 (ampliado). Gate ampliado y **validado con el fallo puesto más DOS controles
@@ -2796,28 +2839,10 @@ color breadcrumb). Mensaje de diseño enviado. Editar Figma **no mueve la web**.
 
 **Table:** endosada como **buena base** (mensaje ligero), sin push a reconstruir sobre PrimeNG.
 
-## ▶︎ SIGUIENTE — sin preguntar
+## 🗄️ Histórico de la lista SIGUIENTE — ya cerrado
 
-> Los puntos 0 a 3 que llevaba esta ficha (re-exportar y cerrar `text.muted.color` · los 16 del
-> trinquete · los hallazgos viejos del audit semanal · `npm audit`) están **HECHOS** en s34. Lo que
-> sigue es lo que queda de verdad.
-
-**Lo que dejó s42, medido y sin hacer:**
-
-- **Las descripciones de los text styles de Figma están corridas un peldaño.** Se escribieron
-  cuando `h1` era la cima y no se movieron al meter `Display` encima: `Heading/h1-semibold` dice
-  *«el texto más grande… uno por pantalla, no más»* (ya no lo es, Display es 64 y reclama lo
-  mismo); `Heading/h2-regular` lleva una descripción de BODY (*«el texto de leer, párrafos»*) en
-  un heading de 24; `Display/display-regular` una de SUBTÍTULO; y `h1-regular` y `h3-regular` la
-  tienen vacía. Es texto, no estructura: se arregla en Figma en cinco minutos.
-- **El tier `app/typography/xl|xxl` existe en Figma y no lo consume nadie** (medido: 0 nodos, 0
-  text styles). Está clasificado como `not-consumed` en `coverage-map.mjs`. Si algún día se
-  quiere de verdad, va a `sc-preset/extend.ts` + `APP_TYPOGRAPHY_CONTRACT` y sube al bucket
-  `value-check`; hasta entonces declararlo consumido sería mentir.
-- **`--sc-font-size-caption-bold` está declarado y tiene 0 usos.**
-- **`display-1` se quedó sin consumidores y `h1` con uno que es solo fallback.** Es el estado
-  honesto tras DD-48 (la rampa era aspiracional desde DD-13), no una regresión: la rampa ya dice
-  la verdad y espera consumidores de PRODUCTO. Si el Supervisor adopta la rampa, es ahí.
+> Lo que queda VIVO está **arriba**, en `▶︎ SIGUIENTE`. Aquí solo el registro de lo que se cerró:
+> se conserva porque explica por qué las cosas están como están, no porque quede algo que hacer.
 
 1. ~~**El P0 del field-pattern ×5**~~ → **HECHO 2026-08-30 ([DD-44](../DECISIONS.md))**. No fue
    «extraer un CVA a mano»: se **BORRÓ** el ControlValueAccessor de los SEIS campos (los 5 +
@@ -2847,19 +2872,6 @@ color breadcrumb). Mensaje de diseño enviado. Editar Figma **no mueve la web**.
 
    Cubierto por 3 tests en `scripts/__tests__/coverage-map.test.mjs`, uno de ellos la **cara
    roja** (un custom nuevo del Kit → `unmatched`), que es justo lo que se escapaba.
-3. **El eslabón que sigue faltando: nadie compara *fichero de Figma ↔ export*.** `tokens:parity`
-   compara *export ↔ CSS*. Por ese hueco se coló el desfase de julio. No puede ser gate de CI
-   (necesita el bridge abierto), así que es procedimiento manual — mismo caso que el Check D de
-   `docs:coherence`.
-   ⚠️ **Cómo repetirlo sin tropezar**: resuelve a RGBA final **los dos lados** antes de comparar.
-   La primera pasada dio **15 divergencias falsas** por leer los colores de Figma sin canal alfa
-   (`#00000000` vs `#000000`) y por comparar un alias contra un valor ya resuelto. Y en el JSON del
-   export **las claves raíz llevan las barras dentro** (`d['aura/semantic/dark']['primary']`).
-4. **El 1:1 web↔Figma de chip · tag · toast** — sigue **bloqueado por herramienta**, no por
-   decisión. Ver la sección de Figma más abajo.
-5. **La deuda de código de [`AUDIT-DEUDA-2026-06.md`](../AUDIT-DEUDA-2026-06.md)** que quede tras
-   s34, y **los cabos de DD-24** (round-trip de iconos) en [`ROADMAP.md`](../ROADMAP.md).
-
 ## ⏸️ ESPERANDO A RAFA — NO preguntar
 
 > Auditada fila a fila el 2026-08-25. Las que ya no procedían salieron; las que quedan llevan **su
