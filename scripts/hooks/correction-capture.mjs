@@ -48,18 +48,33 @@ const PATRONES = [
   /\bcontra (tus|mis) bias\b/i,
 ];
 
-// Cierre = el verbo ABRE el mensaje y no lleva más objeto que la sesión. «cerramos el ticket en
+// Cierre = el verbo ABRE la frase y no lleva más objeto que la sesión. «cerramos el ticket en
 // Jira» o «el botón de cerrar sesión no va» hablan de otra cosa: un falso positivo aquí arranca un
 // /reflect a mitad de tarea, que es peor que no tenerlo (LEARNINGS #2).
 const CIERRES = [
   /^\s*\/reflect\b/i,
-  /^\s*(?:venga|vale|ok|okey|bueno|bien)?[\s,.:;¿–-]*cerramos\b(?:\s+(?:ya|aqu[ií]|por\s+hoy|por\s+aqu[ií]|la\s+sesi[oó]n|sesi[oó]n|esto|el\s+d[ií]a))?\s*[.!?…]*\s*$/i,
+  /^\s*(?:venga|vale|ok|okey|bueno|bien)?[\s,.:;¿–-]*cerramos\b(?:\s+(?:ya|aqu[ií]|por\s+hoy|por\s+aqu[ií]|esto|el\s+d[ií]a|(?:la|esta)\s+sesi[oó]n|sesi[oó]n))?\s*[.!?…]*\s*$/i,
   /^\s*(?:venga|vale|ok|okey|bueno|bien)?[\s,.:;¿–-]*cierra\s+(?:la\s+)?sesi[oó]n\b/i,
   /^\s*(?:vamos\s+a\s+|podemos\s+|quiero\s+|hay\s+que\s+|toca\s+)?cerrar\s+(?:la\s+)?sesi[oó]n\b/i,
 ];
 
+/**
+ * El cierre suele venir AL FINAL de un mensaje más largo: «¿algo más que hacer o cerramos esta
+ * sesión?». Anclar solo al principio se lo perdía — pasó con el mensaje de Rafa del 2026-09-10, con
+ * el hook recién puesto delante. Se parte por fin de frase y por el «o» que abre la alternativa, y
+ * se prueba la ÚLTIMA frase: «arregla el bug o cerramos el ticket» sigue en verde porque lo que va
+ * detrás del verbo no es la sesión.
+ */
+export const ultimaFrase = (texto) =>
+  String(texto)
+    .split(/[.!?\n,]+|\s+o\s+/i)
+    .map((c) => c.trim())
+    .filter(Boolean)
+    .at(-1) ?? '';
+
 export const esCorreccion = (texto) => typeof texto === 'string' && PATRONES.some((p) => p.test(texto));
-export const esCierre = (texto) => typeof texto === 'string' && CIERRES.some((p) => p.test(texto));
+export const esCierre = (texto) =>
+  typeof texto === 'string' && CIERRES.some((p) => p.test(texto) || p.test(ultimaFrase(texto)));
 
 /** Raíz del repo (este fichero vive en `scripts/hooks/`). */
 export const RAIZ = resolve(fileURLToPath(import.meta.url), '../../..');
