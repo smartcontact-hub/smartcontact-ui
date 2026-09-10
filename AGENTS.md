@@ -239,7 +239,7 @@ Before considering any token/theme/component change done, run:
 - `npm run tokens:type-parity` — typography parity
 - `npm run audit:theme-scale` — zero `px` in the preset, central `css.ts`
 - `npm run verify` — runs the full guardrail chain (canonical list: the table in README.md); also includes test:unit, docs:guard, docs:coherence, build, typecheck, lint
-- `npm run preflight:scope -- --run` before a push (gates + AOT builds, ~8 min; the e2e suites run only in CI since DD-60, so run by hand the suite that covers what you touched; it writes the `.preflight-ok` mark the push hook requires; the `--` is required, without it npm swallows the flag and the script only PRINTS the lane), then `npm run ci:verdict` after it. The hooks in `.claude/settings.json` (`scripts/hooks/`) enforce this and deny the exact commands LEARNINGS #7, #11 and #12 were written about; `# sc:ok` on a command is the explicit exit, and you say so in the message. `correction-capture` (UserPromptSubmit) logs every message of Rafa's that sounds like a correction to `correcciones.jsonl` and asks you to name the rule that already covered it, and on a closing message ("cerramos") tells you to invoke `reflect`; `/reflect` reads that log first and routes each correction with `--enrutar <id> <destino> "<motivo>"` — the Stop hook blocks the close while any is unrouted; and `docs:coherence` escalates any LEARNINGS rule broken in ≥3 sessions that is still prose (CHECK K), caps the agent memory (CHECK N) and demands a red test per `verify` script (CHECK O).
+- `npm run preflight:scope -- --run` before a push (gates + AOT builds, ~8 min; the e2e suites run only in CI since DD-60, so run by hand the suite that covers what you touched; it writes the `.preflight-ok` mark the push hook requires; the `--` is required, without it npm swallows the flag and the script only PRINTS the lane), then `npm run ci:verdict` after it. The hooks in `.claude/settings.json` (`scripts/hooks/`) enforce this and deny the exact commands LEARNINGS #7, #11 and #12 were written about; `# sc:ok` on a command is the explicit exit, and you say so in the message. `correction-capture` (UserPromptSubmit) logs every message of Rafa's that sounds like a correction to `correcciones.jsonl` and asks you to name the rule that already covered it, and on a closing message ("cerramos") tells you to invoke `reflect`; `/reflect` reads that log first and routes each correction with `--enrutar <id> <destino> "<motivo>"` — the Stop hook blocks the close while any is unrouted, y también si el mensaje final no lleva el parte de cierre (§Session-Close Protocol, paso 6); and `docs:coherence` escalates any LEARNINGS rule broken in ≥3 sessions that is still prose (CHECK K), caps the agent memory (CHECK N) and demands a red test per `verify` script (CHECK O).
 
 ---
 
@@ -430,7 +430,24 @@ this wrap-up routine **without asking permission first**:
    *First use (2026-08-13):* `archive/informes-datareports` — the native Informes replica,
    built because the real screen lives in a cross-origin iframe that `html.to.design` cannot
    capture; retired once it had served that purpose. Never merged to `main`.
-6. Reply with one or two sentences confirming what was pushed and where the trail lives.
+6. **El parte de cierre: es lo único que Rafa lee.** No abre el diff ni el PR; lo que le llega es
+   este mensaje. Tres líneas fijas, cortas y en su idioma, en este orden (lo exige el hook de Stop,
+   `scripts/hooks/stop-guard.mjs`, que bloquea el cierre si falta alguna):
+
+   ```
+   **Cierre**
+   - Qué cambia: <qué pasa a partir de ahora, en una frase>
+   - En qué te ayuda: <el problema concreto que ya no vuelve; sin jerga: ni «hook», ni «gate», ni «commit»>
+   - Tú tienes que: <decisión suya o paso fuera del repo (Cloudflare, Jira, Figma); borra la línea si no hay nada>
+   - Rastro: <PR/sha · veredicto del CI LEÍDO · docs/handoff/<frente>.md>
+   ```
+
+   «Tú tienes que» es opcional y desaparece si no hay nada; las otras tres no. Tope de 200
+   caracteres por línea, y el porqué se dice en efecto, no en pieza: si solo sabes explicarlo
+   nombrando el hook, todavía no lo has entendido tú.
+   *Por qué existe:* el coste de Rafa no son mis vueltas, son los defectos que le llegan. Un cierre
+   de trámite («pusheado, CI verde») cuenta el trámite y esconde lo único que decide algo: si esto
+   le sirve, si le va a estorbar y si le toca hacer algo a él. (Petición suya, 2026-09-10.)
 
 **Cuando se FUNDE un PR, limpia sin preguntar.** Borra la rama remota
 (`gh pr merge --delete-branch`), las ramas locales que queden y el worktree, en el mismo turno
