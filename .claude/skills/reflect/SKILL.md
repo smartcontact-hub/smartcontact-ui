@@ -58,6 +58,8 @@ If genuinely nothing transfers, skip persistence and say so. Don't invent lesson
 
 3–6 bullets, tight, zero AI slop. Each bullet = the change + WHERE it landed (hook / gate / tarjeta / regla #N / memoria) + the trigger that should fire it. Cierra con la cuenta `mecanismos: N · prosa: M` (medido 2026-09-09: 54 commits de prosa por 4 de hooks). End with the single thing you'll do differently on the very next similar task.
 
+**Y el mensaje que le llega a Rafa lleva el parte de cierre** (AGENTS.md §Session-Close, paso 6): «Qué cambia», «En qué te ayuda» y «Rastro», una frase cada una, sin jerga en la del porqué. Los bullets de arriba son para mí; el parte es para él, que no lee el diff. El hook de Stop (`scripts/hooks/stop-guard.mjs`) no deja cerrar sin él.
+
 ## Rules
 
 - **Specific > general, always.** Tie every point to this session's evidence.
