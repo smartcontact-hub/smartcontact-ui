@@ -6,7 +6,15 @@ import { spawnSync } from 'node:child_process';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
-import { comandosBash, invocoReflect, motivoSinEnrutar, necesitaVeredicto } from '../hooks/stop-guard.mjs';
+import {
+  comandosBash,
+  fallosDelParte,
+  invocoReflect,
+  motivoParteDeCierre,
+  motivoSinEnrutar,
+  necesitaVeredicto,
+  ultimoMensaje,
+} from '../hooks/stop-guard.mjs';
 import { enrutar, pendientes, registrar, rutaRegistro } from '../hooks/correction-capture.mjs';
 
 const ev = (cmd) =>
@@ -63,6 +71,50 @@ test('motivoSinEnrutar: el motivo lleva la lista y el comando exacto', () => {
   assert.match(m, /hook \| gate \| tarjeta \| regla#N \| memoria \| no-mecanizable/);
 });
 
+// ── El parte de cierre ───────────────────────────────────────────────────────────────────
+// El caso ROJO es el cierre de trámite: «pusheado, CI verde», que no le dice a Rafa ni qué cambia
+// en su día ni por qué le conviene.
+
+const evTexto = (texto) => JSON.stringify({ type: 'assistant', message: { content: [{ type: 'text', text: texto }] } });
+
+const PARTE_OK = [
+  '**Cierre**',
+  '- Qué cambia: al cerrar una sesión te cuento en tres líneas qué ha cambiado y por qué te conviene.',
+  '- En qué te ayuda: dejas de tener que preguntar «¿y esto para qué sirve?» cada vez que cierro algo.',
+  '- Rastro: PR #95 · CI verde · docs/handoff/ling.md',
+].join('\n');
+
+test('ultimoMensaje: coge el texto del último mensaje del asistente y salta lo que no lo es', () => {
+  assert.equal(ultimoMensaje([evTexto('primero'), ev('git status'), evTexto('el cierre')].join('\n')), 'el cierre');
+  assert.equal(ultimoMensaje([evTexto('el cierre'), evUsuario('gracias')].join('\n')), 'el cierre', 'lo que escribe Rafa después no es mi cierre');
+  assert.equal(ultimoMensaje('basura no json\n'), '');
+});
+
+test('fallosDelParte: el parte entero pasa; el cierre de trámite no', () => {
+  assert.deepEqual(fallosDelParte(PARTE_OK), []);
+  assert.equal(fallosDelParte('Pusheado a main y el CI está verde.').length, 3, 'ROJO: el cierre de trámite no lleva ninguna de las tres');
+  assert.match(fallosDelParte('- Qué cambia: ahora el cierre lleva parte\n- Rastro: PR #95')[0], /En qué te ayuda/);
+});
+
+test('fallosDelParte: la línea del porqué no puede esconderse detrás de la jerga ni estirarse', () => {
+  const conJerga = PARTE_OK.replace('dejas de tener que preguntar «¿y esto para qué sirve?» cada vez que cierro algo', 'el hook bloquea el Stop hasta que lleve el parte');
+  assert.match(fallosDelParte(conJerga).join(' '), /dice «hook»/);
+  const larga = PARTE_OK.replace('al cerrar una sesión', 'al cerrar una sesión ' + 'x'.repeat(200));
+  assert.match(fallosDelParte(larga).join(' '), /el tope es 200: resúmela/);
+  assert.match(fallosDelParte('- Qué cambia:\n- En qué te ayuda:\n- Rastro:').join(' '), /está vacía o es un titular/);
+});
+
+test('fallosDelParte: el negrita de markdown no despista al patrón', () => {
+  const negrita = PARTE_OK.replace(/- (Qué cambia|En qué te ayuda|Rastro):/g, '- **$1:**');
+  assert.deepEqual(fallosDelParte(negrita), []);
+});
+
+test('motivoParteDeCierre: el motivo lleva la plantilla lista para rellenar', () => {
+  const m = motivoParteDeCierre(['falta la línea «Rastro:».']);
+  assert.match(m, /falta la línea «Rastro:»/);
+  assert.match(m, /- En qué te ayuda: <el problema concreto/);
+});
+
 // De punta a punta por el proceso: es lo que Claude Code ejecuta de verdad.
 function correrHook(entrada, projectDir) {
   const r = spawnSync(process.execPath, ['scripts/hooks/stop-guard.mjs'], {
@@ -86,7 +138,7 @@ test('Stop: con reflect y correcciones sin ruta bloquea; enrutada, deja cerrar; 
     writeFileSync(transcript, [ev('git status'), evUsuario('hola')].join('\n'));
     assert.equal(correrHook(entrada, dir), null, 'sin reflect no bloquea: mitad de tarea no es cierre');
 
-    writeFileSync(transcript, [ev('git status'), evSkill('reflect')].join('\n'));
+    writeFileSync(transcript, [ev('git status'), evSkill('reflect'), evTexto(PARTE_OK)].join('\n'));
     const bloqueo = correrHook(entrada, dir);
     assert.equal(bloqueo?.decision, 'block', 'ROJO: reflexionó y la corrección se quedó sin destino');
     assert.match(bloqueo.reason, /1 corrección\(es\) de esta sesión sin enrutar/);
@@ -95,7 +147,13 @@ test('Stop: con reflect y correcciones sin ruta bloquea; enrutada, deja cerrar; 
 
     const [pend] = pendientes(rutaRegistro(dir), 'S1');
     assert.equal(enrutar({ id: pend.id, destino: 'gate', motivo: 'lo ve scripts/docs-coherence.mjs', cwd: dir }).ok, true);
-    assert.equal(correrHook(entrada, dir), null, 'VERDE: enrutada, el Stop deja cerrar');
+    assert.equal(correrHook(entrada, dir), null, 'VERDE: enrutada y con parte de cierre, el Stop deja cerrar');
+
+    writeFileSync(transcript, [ev('git status'), evSkill('reflect'), evTexto('Pusheado a main, CI verde.')].join('\n'));
+    const sinParte = correrHook(entrada, dir);
+    assert.equal(sinParte?.decision, 'block', 'ROJO: cerró con el trámite y sin contarle a Rafa qué cambia');
+    assert.match(sinParte.reason, /- En qué te ayuda:/);
+    writeFileSync(transcript, [ev('git status'), evSkill('reflect'), evTexto(PARTE_OK)].join('\n'));
 
     assert.equal(correrHook({ ...entrada, session_id: 'S2' }, dir)?.decision, 'block', 'la otra sesión sigue debiendo la suya');
     assert.equal(correrHook({ ...entrada, stop_hook_active: true }, dir), null, 'stop_hook_active: bloquea UNA vez, no en bucle');
@@ -110,7 +168,7 @@ test('Stop: el veredicto del CI manda sobre el enrutado (LEARNINGS #7 primero)',
   process.env.SC_CLAUDE_PROJECT_DIR = dir;
   try {
     registrar({ prompt: 'no, así no', session_id: 'S3', cwd: dir });
-    writeFileSync(transcript, [evSkill('reflect'), ev('git push origin main')].join('\n'));
+    writeFileSync(transcript, [evSkill('reflect'), ev('git push origin main'), evTexto(PARTE_OK)].join('\n'));
     const r = correrHook({ transcript_path: transcript, session_id: 'S3', cwd: dir }, dir);
     assert.match(r.reason, /LEARNINGS #7/);
   } finally {

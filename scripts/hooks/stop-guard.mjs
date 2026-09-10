@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * Hook `Stop` — dos deudas que no dejan cerrar, las dos leídas del MISMO transcript:
+ * Hook `Stop` — tres deudas que no dejan cerrar, las tres leídas del MISMO transcript:
  *
  *   1. «un push sin leer el veredicto del CI no está terminado» (LEARNINGS #7, s35: seis pushes
  *      rojos seguidos escribiendo «preflight verde» sin abrir el CI ni una vez). Si el último
@@ -11,6 +11,12 @@
  *      lección; sin la ruta escrita, «lo apunto en LEARNINGS» vuelve a valer como cierre y la
  *      prosa gana otra vez (2026-09-10: 54 commits de prosa por 4 de hooks). Sin `reflect` no
  *      bloquea: parar a mitad de tarea no es cerrar.
+ *   3. el PARTE DE CIERRE. Rafa no programa: su coste no es lo que yo he tecleado, es lo que le
+ *      llega. Un cierre que dice «pusheado, CI verde» le cuenta el trámite y se calla lo único
+ *      que decide algo — qué cambia en su día a día, por qué le conviene, y qué le toca a él.
+ *      Así que el cierre lleva tres líneas fijas, cortas y en su idioma, y la del PORQUÉ no puede
+ *      llevar jerga: si el beneficio solo se sabe decir con «hook» o «gate», no está entendido.
+ *      (Petición de Rafa, 2026-09-10.)
  *
  * `stop_hook_active` evita el bucle: a la segunda deja parar.
  *
@@ -85,6 +91,88 @@ export function motivoSinEnrutar(pend) {
   ].join('\n');
 }
 
+// ── El parte de cierre ───────────────────────────────────────────────────────────────────
+
+/** Texto del último mensaje del asistente: el que se acaba de escribir, o sea, el cierre. */
+export function ultimoMensaje(jsonl) {
+  const lineas = jsonl.split('\n');
+  for (let i = lineas.length - 1; i >= 0; i--) {
+    if (!lineas[i].includes('"assistant"')) continue;
+    let ev;
+    try {
+      ev = JSON.parse(lineas[i]);
+    } catch {
+      continue;
+    }
+    if (ev?.type !== 'assistant') continue;
+    const c = ev?.message?.content;
+    const texto = Array.isArray(c)
+      ? c
+          .filter((b) => b?.type === 'text')
+          .map((b) => b.text)
+          .join('\n')
+      : typeof c === 'string'
+        ? c
+        : '';
+    if (texto.trim()) return texto;
+  }
+  return '';
+}
+
+const MAX_LINEA = 200;
+const MIN_CONTENIDO = 20;
+
+/**
+ * Jerga que en la línea del PORQUÉ no le dice nada a quien no programa. Lista CORTA y solo para
+ * esa línea: en «Qué cambia» nombrar el hook es legítimo, en «En qué te ayuda» es esconderse.
+ */
+export const JERGA = /\b(hooks?|gates?|regex|jsonl|transcript|stdout|stderr|parser|wrapper|refactor|linter|payload|commits?|merge|branch|pipeline)\b/i;
+
+/** Las tres líneas fijas. El `\**` es para que el negrita de markdown no despiste al patrón. */
+export const PARTE = [
+  { nombre: 'Qué cambia', re: /qu[eé]\s+cambia\s*\**\s*:\s*\**\s*(.*)$/im, min: MIN_CONTENIDO, llano: false },
+  { nombre: 'En qué te ayuda', re: /en\s+qu[eé]\s+(?:te|nos|me)\s+ayuda\s*\**\s*:\s*\**\s*(.*)$/im, min: MIN_CONTENIDO, llano: true },
+  { nombre: 'Rastro', re: /rastro\s*\**\s*:\s*\**\s*(.*)$/im, min: 1, llano: false },
+];
+
+export const PLANTILLA = [
+  '**Cierre**',
+  '- Qué cambia: <una frase, lo que pasa a partir de ahora>',
+  '- En qué te ayuda: <el problema concreto que ya no vuelve, en tu idioma y sin jerga>',
+  '- Tú tienes que: <decisión o paso fuera del repo; borra la línea si no hay nada>',
+  '- Rastro: <PR/sha · veredicto del CI leído · docs/handoff/<frente>.md>',
+].join('\n');
+
+/** Qué le falta al parte de cierre. Lista vacía = está bien. */
+export function fallosDelParte(mensaje) {
+  const fallos = [];
+  for (const { nombre, re, min, llano } of PARTE) {
+    const m = re.exec(mensaje);
+    const texto = (m?.[1] ?? '').trim();
+    if (!m) {
+      fallos.push(`falta la línea «${nombre}:».`);
+      continue;
+    }
+    if (texto.length < min) {
+      fallos.push(`«${nombre}:» está vacía o es un titular; dilo entero en una frase.`);
+      continue;
+    }
+    if (texto.length > MAX_LINEA) fallos.push(`«${nombre}:» mide ${texto.length} caracteres y el tope es ${MAX_LINEA}: resúmela.`);
+    const jerga = llano ? JERGA.exec(texto) : null;
+    if (jerga) fallos.push(`«${nombre}:» dice «${jerga[0]}». Esa línea es para Rafa, que no programa: cuéntale el efecto, no la pieza.`);
+  }
+  return fallos;
+}
+
+export function motivoParteDeCierre(fallos) {
+  return [
+    'Estás cerrando y el parte de cierre no está. Rafa no lee el diff: lo que le llega es este mensaje, así que lleva tres líneas fijas, cortas y en su idioma.',
+    ...fallos.map((f) => `  · ${f}`),
+    'Vuelve a escribir el mensaje final con esta forma:',
+    PLANTILLA,
+  ].join('\n');
+}
+
 const bloquear = (reason) => process.stdout.write(JSON.stringify({ decision: 'block', reason }));
 
 function main() {
@@ -120,8 +208,10 @@ function main() {
     } catch {
       return; // sin registro (otra máquina, CI): el hook falla ABIERTO.
     }
-    if (!pend.length) return;
-    return bloquear(motivoSinEnrutar(pend));
+    if (pend.length) return bloquear(motivoSinEnrutar(pend));
+
+    const fallos = fallosDelParte(ultimoMensaje(jsonl));
+    if (fallos.length) return bloquear(motivoParteDeCierre(fallos));
   });
 }
 
