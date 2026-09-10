@@ -66,9 +66,13 @@ y la miga se dejaron como estaban en la maqueta. Ninguna de las cinco es una med
    del DS (DD-61), pero su CONTENIDO no está contrastado contra nada.
 2. **El barrido global de la tipografía** (`field__label`, 29 usos en 7 pantallas;
    `sub-section__title`, 8 en 3) sigue pendiente.
-3. **Decidir si las maquetas VIEJAS se retiran** de la sección «Flujos». No se han tocado: ahora
-   hay dos versiones de cada pantalla y la sección dice cuál manda, pero eso solo lo sabe quien lo
-   lea aquí.
+3. ~~Decidir si las maquetas VIEJAS se retiran~~ — **resuelto el 2026-09-10, ni borrar ni dejar**:
+   las tres secciones «Flujos» (`2286:5323` en la página Contact Center, `680:8697` y `2367:15223`
+   en Playground) pasan a llamarse «Flujos · visual de la generación ANTERIOR (la vigente:
+   Prototipo de limpieza)». Dentro no se tocó nada. Borrarlas se descartó: los flujos con sus
+   flechas y el feedback siguen sirviendo aunque el visual sea viejo. Dejarlas como estaban es lo
+   que costó medio día — se barrió una pantalla entera contra la generación equivocada por leer
+   «Flujos» como la referencia. El nombre lo dice ahora antes de abrir nada.
 4. **Decidir si la app viva lleva un aviso** que apunte a `docs/PROTOTIPOS.md` (DD-56).
 
 ---
