@@ -34,7 +34,33 @@ permissions:
   contents: read
   deployments: write
 
+# Dos jobs SIN `needs` entre ellos, a propósito: un rojo de configuración del panel no debe
+# llevarse por delante el registro. La primera ejecución con secret (2026-09-10) lo hizo: el
+# check murió en 6 s y la pantalla de Deployments se quedó sin escribir. Así cada uno enrojece
+# por lo suyo y se lee por separado.
 jobs:
+  # El dashboard: los cuatro ajustes de Cloudflare que ningún gate del repo ve (comando de
+  # build, output dir, rama de producción, NODE_VERSION). Si uno se desvía, el sitio puede
+  # publicarse sin sello y el registro saldría rojo sin decir por qué. Solo corre si el repo
+  # tiene el token; sin él, el paso lo dice y no afirma nada.
+  config:
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      - uses: actions/checkout@v5
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+      - name: Comprobar la configuración de los 5 proyectos en Cloudflare
+        env:
+          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
+        run: |
+          if [ -z "$CLOUDFLARE_API_TOKEN" ]; then
+            echo "::warning::Sin secret CLOUDFLARE_API_TOKEN: la configuración de Cloudflare NO se ha comprobado (npm run audit:cf-config en local sí puede)."
+            exit 0
+          fi
+          node scripts/audit-cf-config.mjs
+
   record:
     runs-on: ubuntu-latest
     # Cloudflare construye de una en una en toda la cuenta (medido: concurrencia 1 sobre 87
@@ -45,22 +71,8 @@ jobs:
       - uses: actions/setup-node@v5
         with:
           node-version: 22
-      # Sin `npm ci`: los dos scripts son Node pelado (fetch nativo), así no esperan a una
-      # instalación para empezar a mirar los sitios.
-      #
-      # Primero, el dashboard: los cuatro ajustes de Cloudflare que ningún gate del repo ve
-      # (comando de build, output dir, rama de producción, NODE_VERSION). Si uno se desvía, el
-      # sitio puede publicarse sin sello y el registro de abajo saldría rojo sin decir por qué.
-      # Solo corre si el repo tiene el token; sin él, el paso lo dice y no afirma nada.
-      - name: Comprobar la configuración de los 5 proyectos en Cloudflare
-        env:
-          CLOUDFLARE_API_TOKEN: ${{ secrets.CLOUDFLARE_API_TOKEN }}
-        run: |
-          if [ -z "$CLOUDFLARE_API_TOKEN" ]; then
-            echo "::warning::Sin secret CLOUDFLARE_API_TOKEN: la configuración de Cloudflare NO se ha comprobado (npm run audit:cf-config en local sí puede)."
-            exit 0
-          fi
-          node scripts/audit-cf-config.mjs
+      # Sin `npm ci`: el script es Node pelado (fetch nativo), así no espera a una instalación
+      # para empezar a mirar los sitios.
       - name: Registrar los 5 sitios (comprobando que sirven el commit)
         run: node scripts/record-deploy.mjs "${{ inputs.sha || github.sha }}"
         env:

@@ -13,6 +13,10 @@
  * (`~/.wrangler/config/default.toml`). Sin ninguno de los dos NO se afirma nada: sale con 2 y
  * lo dice, para que quien lo lea no confunda «no comprobado» con «bien».
  *
+ * La cuenta va escrita aquí, no se descubre: un token con solo `Cloudflare Pages: Read` no puede
+ * listar cuentas (`GET /accounts` devuelve vacío), y la primera ejecución con el secret puesto
+ * murió ahí con «El token no ve ninguna cuenta» (2026-09-10). El id de cuenta no es secreto.
+ *
  * Uso: node scripts/audit-cf-config.mjs
  */
 import { readFileSync, existsSync } from 'node:fs';
@@ -21,6 +25,8 @@ import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
 const API = 'https://api.cloudflare.com/client/v4';
+/** La cuenta de Cloudflare de Smart Contact. Se puede pisar con CLOUDFLARE_ACCOUNT_ID. */
+export const CUENTA = 'b8361bb4e57ddd2094a0e5ed5a5e247a';
 
 /**
  * app del repo → proyecto en Cloudflare → script de package.json que la construye. Ni los
@@ -98,20 +104,18 @@ async function main() {
     console.error('✗ Sin token de Cloudflare (CLOUDFLARE_API_TOKEN o ~/.wrangler/config): NO comprobado.');
     process.exit(2);
   }
-  const cuentas = await cf('/accounts', token).catch((e) => {
-    // El OAuth de wrangler caduca en una hora y solo se refresca al usar wrangler.
-    if (!process.env.CLOUDFLARE_API_TOKEN && /403|9109/.test(e.message)) {
-      throw new Error(`${e.message}\n  El token local de wrangler ha caducado: corre «npx wrangler whoami» y repite.`);
-    }
-    throw e;
-  });
-  const cuenta = process.env.CLOUDFLARE_ACCOUNT_ID || cuentas[0]?.id;
-  if (!cuenta) throw new Error('El token no ve ninguna cuenta.');
+  const cuenta = process.env.CLOUDFLARE_ACCOUNT_ID || CUENTA;
 
   let total = 0;
   for (const entrada of PROYECTOS) {
     const { proyecto } = entrada;
-    const p = await cf(`/accounts/${cuenta}/pages/projects/${proyecto}`, token);
+    const p = await cf(`/accounts/${cuenta}/pages/projects/${proyecto}`, token).catch((e) => {
+      // El OAuth de wrangler caduca en una hora y solo se refresca al usar wrangler.
+      if (!process.env.CLOUDFLARE_API_TOKEN && /401|403|9109|10000/.test(e.message)) {
+        throw new Error(`${e.message}\n  El token local de wrangler ha caducado: corre «npx wrangler whoami» y repite.`);
+      }
+      throw e;
+    });
     const fallos = evaluar(entrada, p);
     total += fallos.length;
     if (fallos.length === 0) console.log(`✓ ${proyecto}`);
