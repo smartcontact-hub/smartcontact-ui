@@ -1599,7 +1599,8 @@
             "url_placeholder": "URL",
             "evento_inicio": "Start",
             "evento_fin": "End",
-            "evento_resultado": "Result"
+            "evento_resultado": "Result",
+            "hint": "Sends these events to your external system"
           },
           "toast": {
             "saved": "Settings saved"
