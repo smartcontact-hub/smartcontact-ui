@@ -55,6 +55,32 @@ test('verde: mensajes normales no disparan', () => {
     assert.equal(esCorreccion(f), false, `no debía detectar: ${f}`);
 });
 
+// Los dos sobres son REALES, del registro del 2026-09-10: el agente que escribe se corrige a sí
+// mismo y el patrón `te dije` casa con el sujeto equivocado. Eran 2 de las 6 apuntadas en 24 h.
+const SOBRES = [
+  '<cross-session-message from="uds:/tmp/cc-socks/47471.sock" from-name="naga-12" from-mode="bypass">\n' +
+    'CORRECCIÓN a lo que te dije: el lint SÍ caza el `VarRedeclaration`. No lo apuntes como un hueco de gates.',
+  '<cross-session-message from="uds:/tmp/cc-socks/27363.sock" from-name="otra-sesion" from-mode="bypass">\n' +
+    'Rectifico lo que te dije antes: no gastes tiempo regenerando `sectioncard-darwin.png`.',
+];
+
+test('verde: un sobre de otro agente no es una corrección de Rafa', () => {
+  for (const f of SOBRES) assert.equal(esCorreccion(f), false, `no debía detectar: ${f.slice(0, 60)}…`);
+});
+
+test('rojo: el mismo cuerpo SIN sobre sigue disparando (el filtro es el sobre, no las palabras)', () => {
+  for (const f of SOBRES) assert.ok(esCorreccion(f.split('\n')[1]), 'el filtro se ha llevado por delante el patrón');
+});
+
+test('verde: un sobre de otro agente tampoco arranca un /reflect', () => {
+  // Ya NO basta el anclaje de CIERRES en `^`: desde `ultimaFrase` el patrón se prueba también
+  // contra el final del mensaje, y el sobre tiene final igual que cualquier otro. Lo sostiene el
+  // filtro del sobre. Quítalo y estos dos se ponen rojos.
+  const cabecera = SOBRES[0].split('\n')[0];
+  assert.equal(esCierre(`${cabecera}\ncerramos`), false);
+  assert.equal(esCierre(`${cabecera}\nYa está el fix; ¿algo más o cerramos esta sesión?`), false);
+});
+
 test('registrar apunta en la carpeta del proyecto y cuenta por sesión; leer filtra por horas', () => {
   const dir = mkdtempSync(join(tmpdir(), 'sc-corr-'));
   process.env.SC_CLAUDE_PROJECT_DIR = dir;

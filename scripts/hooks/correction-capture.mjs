@@ -72,9 +72,26 @@ export const ultimaFrase = (texto) =>
     .filter(Boolean)
     .at(-1) ?? '';
 
-export const esCorreccion = (texto) => typeof texto === 'string' && PATRONES.some((p) => p.test(texto));
+// Los mensajes de OTRA SESIÓN entran por el mismo hueco que los de Rafa, y su cuerpo suele traer
+// «te dije» o «rectifico lo que te dije»: es el agente que escribe corrigiéndose A SÍ MISMO, no
+// Rafa corrigiéndote a ti, que es el momento para el que existe este hook (ver cabecera). Contarlos
+// infla la cuenta de la sesión y deja PENDIENTES de enrutar lecciones que no son tuyas.
+// Medido s43: 2 de las 6 correcciones registradas en 24 h eran esto (LEARNINGS #2, un guardián con
+// falsos positivos enseña a ignorarlo).
+const SOBRE_DE_AGENTE = /^\s*<cross-session-message\b/i;
+export const esDeOtroAgente = (texto) => typeof texto === 'string' && SOBRE_DE_AGENTE.test(texto);
+
+export const esCorreccion = (texto) =>
+  typeof texto === 'string' && !esDeOtroAgente(texto) && PATRONES.some((p) => p.test(texto));
+
+// El sobre también filtra el CIERRE, y desde que `ultimaFrase` existe no es opcional: los patrones
+// de CIERRES siguen anclados en `^`, pero se prueban además contra la última frase del mensaje, que
+// no lo está. Un sobre de otra sesión acabado en «…o cerramos esta sesión?» arrancaría un /reflect
+// a mitad de tarea sin que Rafa haya dicho nada — el falso positivo que CIERRES evita arriba.
 export const esCierre = (texto) =>
-  typeof texto === 'string' && CIERRES.some((p) => p.test(texto) || p.test(ultimaFrase(texto)));
+  typeof texto === 'string' &&
+  !esDeOtroAgente(texto) &&
+  CIERRES.some((p) => p.test(texto) || p.test(ultimaFrase(texto)));
 
 /** Raíz del repo (este fichero vive en `scripts/hooks/`). */
 export const RAIZ = resolve(fileURLToPath(import.meta.url), '../../..');
