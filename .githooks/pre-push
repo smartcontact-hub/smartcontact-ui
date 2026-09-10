@@ -42,6 +42,33 @@ fi
 # este push son `proto/*` Y su commit es antepasado de `origin/main`. Un `proto/loquesea` que
 # apunte a algo que no esté en main NO pasa por aquí, así que esto no es una puerta trasera para
 # subir código con un nombre bonito.
+# git pasa las refs del push por stdin, y se leen UNA VEZ: dos bucles leyendo del mismo tubo
+# dejaban ciego al segundo (el primero se lo comía entero). Con here-string, además, el `while`
+# no corre en subshell y las variables sobreviven.
+REFS_DEL_PUSH="$(cat)"
+
+# BORRAR una rama remota no sube código: el sha local es todo ceros y no hay árbol que verificar.
+# Y AGENTS manda limpiar la rama en cuanto el PR se funde, «sin preguntar». Con el gate delante,
+# esa limpieza costaba ~8 minutos de cadena por no subir NADA, así que o no se hace o se hace con
+# `SKIP_PREFLIGHT=1`, que apaga el gate de verdad para la próxima vez. Se comprueba, no se confía:
+# solo si TODAS las refs del push son borrados. (Medido el 2026-09-10 borrando una rama fundida.)
+if [ "${SKIP_BORRADO_FASTPATH:-0}" != "1" ]; then
+  solo_borrados=1
+  hay_refs=0
+  while read -r _local_ref local_sha _remote_ref _remote_sha; do
+    [ -z "${local_sha:-}" ] && continue
+    hay_refs=1
+    case "$local_sha" in
+      *[!0]*) solo_borrados=0 ;;
+    esac
+  done <<< "$REFS_DEL_PUSH"
+
+  if [ "$hay_refs" = "1" ] && [ "$solo_borrados" = "1" ]; then
+    printf '\n\033[32m✓ borrado de rama: no sube código, no hay árbol que verificar\033[0m\n\n'
+    exit 0
+  fi
+fi
+
 if [ "${SKIP_PROTO_FASTPATH:-0}" != "1" ]; then
   git fetch --quiet origin main 2>/dev/null || true
   solo_proto=1
@@ -58,7 +85,7 @@ if [ "${SKIP_PROTO_FASTPATH:-0}" != "1" ]; then
         ;;
       *) solo_proto=0 ;;
     esac
-  done
+  done <<< "$REFS_DEL_PUSH"
 
   if [ "$hay_refs" = "1" ] && [ "$solo_proto" = "1" ]; then
     printf '\n\033[32m✓ versión congelada: punteros a un commit que ya está en main\033[0m\n'
