@@ -1,7 +1,13 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { comandosBash, necesitaVeredicto } from '../hooks/stop-guard.mjs';
+import { mkdtempSync, writeFileSync } from 'node:fs';
+import { spawnSync } from 'node:child_process';
+import { tmpdir } from 'node:os';
+import { join } from 'node:path';
+
+import { comandosBash, invocoReflect, motivoSinEnrutar, necesitaVeredicto } from '../hooks/stop-guard.mjs';
+import { enrutar, pendientes, registrar, rutaRegistro } from '../hooks/correction-capture.mjs';
 
 const ev = (cmd) =>
   JSON.stringify({ type: 'assistant', message: { content: [{ type: 'tool_use', id: 'x', name: 'Bash', input: { command: cmd } }] } });
@@ -26,4 +32,88 @@ test('necesitaVeredicto: sin push, o solo tags/borrados → false', () => {
   assert.equal(necesitaVeredicto(['git status', 'npm run verify']), false);
   assert.equal(necesitaVeredicto(['git push origin archive/x']), false);
   assert.equal(necesitaVeredicto(['git push --tags', 'git push origin --delete rama']), false);
+});
+
+// ── El cierre no se da sin enrutar cada corrección ───────────────────────────────────────
+// Reflexionar es decidir dónde va cada lección. El caso ROJO es el que motiva la pieza: se invocó
+// `reflect`, la corrección se quedó en prosa y la sesión cerró igual.
+
+const evSkill = (skill) =>
+  JSON.stringify({ type: 'assistant', message: { content: [{ type: 'tool_use', id: 'x', name: 'Skill', input: { skill } }] } });
+const evUsuario = (texto) => JSON.stringify({ type: 'user', message: { role: 'user', content: texto } });
+
+test('invocoReflect: la skill por herramienta o el /reflect escrito → true', () => {
+  assert.equal(invocoReflect(evSkill('reflect')), true);
+  assert.equal(invocoReflect([ev('git status'), evSkill('reflect')].join('\n')), true);
+  assert.equal(invocoReflect(evUsuario('<command-name>/reflect</command-name>\n            <command-args>el enrutador</command-args>')), true);
+});
+
+test('invocoReflect: sin invocarla → false, aunque la palabra ande por el transcript', () => {
+  assert.equal(invocoReflect([ev('git status'), evUsuario('hola')].join('\n')), false);
+  assert.equal(invocoReflect(evSkill('figma:figma-use')), false);
+  assert.equal(invocoReflect(evUsuario('documenta cómo funciona /reflect en el README')), false);
+  assert.equal(invocoReflect(ev('node scripts/hooks/correction-capture.mjs --listar')), false, 'leer el registro no es reflexionar');
+  assert.equal(invocoReflect('basura no json\n'), false);
+});
+
+test('motivoSinEnrutar: el motivo lleva la lista y el comando exacto', () => {
+  const m = motivoSinEnrutar([{ id: 'ab12cd', prompt: 'no, así no' }]);
+  assert.match(m, /\[ab12cd\] no, así no/);
+  assert.match(m, /--enrutar <id>/);
+  assert.match(m, /hook \| gate \| tarjeta \| regla#N \| memoria \| no-mecanizable/);
+});
+
+// De punta a punta por el proceso: es lo que Claude Code ejecuta de verdad.
+function correrHook(entrada, projectDir) {
+  const r = spawnSync(process.execPath, ['scripts/hooks/stop-guard.mjs'], {
+    input: JSON.stringify(entrada),
+    encoding: 'utf8',
+    env: { ...process.env, SC_CLAUDE_PROJECT_DIR: projectDir },
+  });
+  assert.equal(r.status, 0, `el hook no puede petar: ${r.stderr}`);
+  return r.stdout.trim() ? JSON.parse(r.stdout) : null;
+}
+
+test('Stop: con reflect y correcciones sin ruta bloquea; enrutada, deja cerrar; sin reflect, nunca', () => {
+  const dir = mkdtempSync(join(tmpdir(), 'sc-stop-'));
+  const transcript = join(dir, 'sesion.jsonl');
+  process.env.SC_CLAUDE_PROJECT_DIR = dir;
+  try {
+    registrar({ prompt: 'no, así no: mide antes de afirmar', session_id: 'S1', cwd: dir });
+    registrar({ prompt: 'te lo dije: sin em dashes', session_id: 'S2', cwd: dir });
+    const entrada = { transcript_path: transcript, session_id: 'S1', cwd: dir };
+
+    writeFileSync(transcript, [ev('git status'), evUsuario('hola')].join('\n'));
+    assert.equal(correrHook(entrada, dir), null, 'sin reflect no bloquea: mitad de tarea no es cierre');
+
+    writeFileSync(transcript, [ev('git status'), evSkill('reflect')].join('\n'));
+    const bloqueo = correrHook(entrada, dir);
+    assert.equal(bloqueo?.decision, 'block', 'ROJO: reflexionó y la corrección se quedó sin destino');
+    assert.match(bloqueo.reason, /1 corrección\(es\) de esta sesión sin enrutar/);
+    assert.match(bloqueo.reason, /no, así no: mide antes de afirmar/);
+    assert.doesNotMatch(bloqueo.reason, /em dashes/, 'las correcciones de otra sesión no cuentan');
+
+    const [pend] = pendientes(rutaRegistro(dir), 'S1');
+    assert.equal(enrutar({ id: pend.id, destino: 'gate', motivo: 'lo ve scripts/docs-coherence.mjs', cwd: dir }).ok, true);
+    assert.equal(correrHook(entrada, dir), null, 'VERDE: enrutada, el Stop deja cerrar');
+
+    assert.equal(correrHook({ ...entrada, session_id: 'S2' }, dir)?.decision, 'block', 'la otra sesión sigue debiendo la suya');
+    assert.equal(correrHook({ ...entrada, stop_hook_active: true }, dir), null, 'stop_hook_active: bloquea UNA vez, no en bucle');
+  } finally {
+    delete process.env.SC_CLAUDE_PROJECT_DIR;
+  }
+});
+
+test('Stop: el veredicto del CI manda sobre el enrutado (LEARNINGS #7 primero)', () => {
+  const dir = mkdtempSync(join(tmpdir(), 'sc-stop-'));
+  const transcript = join(dir, 'sesion.jsonl');
+  process.env.SC_CLAUDE_PROJECT_DIR = dir;
+  try {
+    registrar({ prompt: 'no, así no', session_id: 'S3', cwd: dir });
+    writeFileSync(transcript, [evSkill('reflect'), ev('git push origin main')].join('\n'));
+    const r = correrHook({ transcript_path: transcript, session_id: 'S3', cwd: dir }, dir);
+    assert.match(r.reason, /LEARNINGS #7/);
+  } finally {
+    delete process.env.SC_CLAUDE_PROJECT_DIR;
+  }
 });

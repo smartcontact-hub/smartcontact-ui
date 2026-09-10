@@ -45,6 +45,7 @@ For every lesson, walk this table top-down and stop at the FIRST row that fits. 
 
 Rules of the router:
 
+- **La ruta se ESCRIBE, no se cuenta**: por cada corrección de `--listar`, `node scripts/hooks/correction-capture.mjs --enrutar <id> <hook|gate|tarjeta|regla#N|memoria|no-mecanizable> "<motivo>"` (hook/gate citan el fichero; regla/memoria/no-mecanizable, ≥40 caracteres que empiecen por «porque»). Sin eso el hook de Stop no deja cerrar.
 - **Una lección, UN sitio.** Si acaba en hook o gate, la regla de LEARNINGS lo marca con ⚙️ en una línea y no repite el mecanismo. Una regla con ≥3 sesiones y sin ⚙️ pone rojo `verify` (CHECK K): mecaniza, o escribe `⚙️ no mecanizable: <por qué>`.
 - **Cero palabras netas en prosa salvo que borres.** Si escribes un párrafo, di qué párrafo sale.
 - **La historia va en git.** La línea `Evidencia:` lleva sesión y hecho; el relato completo va en el mensaje del commit (`git log -S'(sNN)' -- LEARNINGS.md` lo recupera).
