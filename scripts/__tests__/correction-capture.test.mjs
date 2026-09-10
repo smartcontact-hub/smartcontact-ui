@@ -11,6 +11,7 @@ import {
   enrutar,
   esCierre,
   esCorreccion,
+  ultimaFrase,
   leer,
   pendientes,
   registrar,
@@ -93,6 +94,12 @@ test('rojo: los mensajes de cierre disparan', () => {
     'vamos a cerrar la sesión',
     '/reflect',
     '/reflect el enrutador de correcciones',
+    // El cierre al FINAL de un mensaje más largo. El primero es literal de Rafa (2026-09-10) y se
+    // escapó con el hook recién puesto: anclar solo al principio del mensaje no bastaba.
+    'entonces resume no dev, lenguaje plano. Algo mas que hacer o cerramos esta sesion?',
+    '¿algo más o cerramos?',
+    'el PR ya está fundido. cerramos',
+    'lo dejamos aquí, cerramos la sesión',
   ])
     assert.ok(esCierre(f), `debía detectar cierre: ${f}`);
 });
@@ -108,10 +115,21 @@ test('verde: mencionar la palabra no es cerrar', () => {
     'documenta cómo funciona /reflect en el README',
     'el hook de /reflect lee correcciones.jsonl',
     'esto cierra el hueco entre Figma y el build',
+    // Vecinos de la ampliación: el verbo va al final, pero lo que lleva detrás no es la sesión.
+    'arregla el bug o cerramos el ticket',
+    '¿lo dejo abierto o cerramos el modal al guardar?',
+    'mira si el drawer se queda abierto o cierra el foco dentro',
     '',
     undefined,
   ])
     assert.equal(esCierre(f), false, `no debía detectar cierre: ${f}`);
+});
+
+test('ultimaFrase: parte por fin de frase, coma y el «o» de la alternativa', () => {
+  assert.equal(ultimaFrase('Algo mas que hacer o cerramos esta sesion?'), 'cerramos esta sesion');
+  assert.equal(ultimaFrase('lo dejamos aquí, cerramos la sesión'), 'cerramos la sesión');
+  assert.equal(ultimaFrase('cerramos el ticket de Jira cuando entra el PR'), 'cerramos el ticket de Jira cuando entra el PR');
+  assert.equal(ultimaFrase(''), '');
 });
 
 // ── Enrutado: una corrección no cierra sin destino ───────────────────────────────────────
