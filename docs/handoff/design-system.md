@@ -47,6 +47,19 @@ una sexta app sellada que nadie apuntó, una app del catálogo cuyo script dejó
 de DD-59 visto desde el repo) y un sello que pone un script distinto del que el catálogo le
 exige a Cloudflare.
 
+**Un rojo del CI que salió por el camino, y no era este cambio.** `component-styles` (la red de
+DD-63) falló en `commandpalette` leyendo la página de `columnselector`, y **reprodujo 2/2** en
+el mismo commit. Diagnóstico por medición, no por intuición: el shell de sc-docs monta un
+`<sc-command-palette>` global **fuera** del `<main class="demo-main">` que envuelve al
+`router-outlet`, así que la espera «hasta que el componente de ESTA ruta está en el DOM»
+(`e2e/component-styles.spec.ts:154`) se cumplía en CUALQUIER página; y el `toHaveCount` que la
+respalda tampoco lo tapaba, porque las dos rutas tienen **una** ancla y son **vecinas** en la
+lista. Con enrutado por hash `goto` no recarga, así que la lectura se llevaba la página
+anterior. Sonda que lo fija: en `/columnselector`, `sc-command-palette` resuelve y
+`main.demo-main sc-command-palette` no. Arreglado acotando la espera a `main.demo-main`, y el
+spec entero vuelve a pasar en local. La red hermana (`component-structure`) NO comparte el
+agujero: espera `toBeVisible` y el global nace oculto.
+
 **Por qué contra `stamp-build.mjs` y no contra `projects/`.** Un proyecto de Angular no es un
 sitio: `ui-smartcontact`, `design-tokens` y los iconos se construyen y no se despliegan. Lo que
 distingue a un sitio es exactamente el eslabón que DD-59 puso ahí — si sella, publica marca, y si
