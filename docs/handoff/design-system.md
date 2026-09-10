@@ -15,6 +15,56 @@
 > coordine. Los `sNN` de los tramos viejos se quedan como están: los nombran commits y
 > `docs/DECISIONS.md`, y reescribirlos solo desincronizaría el doc de su propia historia.
 
+## ✅ 2026-09-10 · 16 componentes no aseveraban ni una propiedad, y el CI no miraba ninguno
+
+**Sello:** DD-63. `component-styles` estable en 5 pasadas y VALIDADA CON EL FALLO PUESTO.
+`verify` verde. Veredicto del CI por `npm run ci:verdict`.
+
+**De dónde sale.** Rafa preguntó si las baselines visuales eran overengineering. Mi respuesta
+inicial fue proponer retirarlas, con un dato que sonaba demoledor: en 33 commits no cazaron una
+regresión, y de los 38 tests con captura «CERO dependen solo de ella». **La segunda mitad era
+falsa**, y la cazó otra sesión con un contraejemplo: cambió cinco propiedades de
+`sc-section-card` y ninguna de sus cinco aserciones se movió. Yo había medido «¿tiene otras
+aserciones?», que no es la pregunta. La pregunta es «¿sus aserciones cubren lo que la captura
+veía?».
+
+**Lo que salió al medir bien.** De los 38 componentes con captura, **16 no aseveran ni una
+propiedad de caja ni de tipo**, 25 ninguna de tipografía, 15 tienen una sola o ninguna. Y como
+las capturas son `-darwin`, en el CI **no había nada mirando el aspecto de esos 16**.
+
+**Qué se hizo.** `e2e/component-styles.spec.ts` + `e2e/baselines/component-styles.json`: 16
+propiedades computadas de cada `[data-testid]` de las 38 páginas. Cruza de máquina, corre en el
+CI dentro de `npm run e2e`, y se lee en un `git diff` en vez de en un visor de PNG.
+
+**Validada con el fallo puesto — y hicieron falta TRES intentos**, que es lo que de verdad
+merece la pena contar. Cambié el padding de `sc-section-card` de `1-75` a `1-625` y:
+
+1. Primer intento: **VERDE**. El estímulo no llegaba: reconstruí el DS pero no reinicié
+   `ng serve`, que no vigila `dist/`. Error de método, ya documentado y aun así repetido.
+2. Segundo: **VERDE otra vez**, y este sí era la red. Medía solo el nodo del `data-testid`, que
+   en la mitad del catálogo es el host del wrapper —transparente, sin caja—. Cazaba el cambio
+   por rebote, vía `height`, y al quitar `height` (ver abajo) se quedó sin nada. Ahora baja
+   hasta 3 niveles y guarda los descendientes con caja.
+3. Tercero: **ROJA y por la propiedad exacta** — `sectioncard: padding-top 24.5px → 22.75px`.
+
+Y `width`/`height` se fueron del baseline porque **no cruzan de plataforma**: el primer run en
+CI dio 24 de 38 páginas en rojo con el diff entero en `width`, y ni un padding, ni un gap, ni un
+radio, ni un color movidos. Un ancho es texto renderizado y barra de scroll; un padding es el
+token.
+
+**Tres trampas que costaron medirlas y quedan en el fichero.** sc-docs enruta por hash, así que
+`goto` no recarga: sin esperar al componente destino se leen las anclas de la página ANTERIOR
+(la primera generación guardó en `badge` las anclas de `avatar`). Hay componentes que nacen
+ocultos, así que la espera es `toBeAttached`. Y `sc-message` monta con la animación de PrimeNG:
+leerlo a media entrada daba 5,15 / 8,78 / 19,09px sobre un final de 19,11.
+
+**Lo que NO se hizo, y por qué.** Retirar las capturas. La propuesta se cayó el mismo día: otra
+sesión las recortó al contenido en vez de la página entera, que era la mitad cara del problema.
+Mi argumento tenía dos patas y una desapareció, así que el PR se reorientó a lo que sí faltaba.
+También propuse como hipótesis que, recortadas al contenido, quizá ya casarían en Linux. **Es
+falsa** y la misma sesión la tumbó con dos greps: la mono del sistema está también en el bloque
+de código del snippet, que sí entra en el recorte.
+
 ## ✅ 2026-09-10 · El registro de despliegues deja de pintar en rojo lo que Cloudflare descarta a propósito
 
 **Sello:** pendiente de PR. `record-deploy.test.mjs` nuevo en verde (6/6) y **probado en rojo**

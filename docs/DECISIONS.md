@@ -137,6 +137,77 @@ apunta en un sitio, salta. **Lo que este DD NO arregla**: la cola. Con concurren
 por empujón, dos ramas trabajando a la vez dejan el despliegue de `main` en ~18 minutos, y eso
 solo baja apagando previews o pagando concurrencia. Está medido y anotado; es decisión de Rafa.
 
+## DD-63 · 2026-09-10 — Una red de caja y tipo en NÚMEROS, porque 16 componentes no aseveraban ninguna
+
+**Contexto** · Rafa preguntó si las baselines visuales eran overengineering. La respuesta corta
+resultó ser que no, pero el camino destapó otra cosa. Al medir «¿qué se pierde si se quitan?» se
+contó, por primera vez, **qué asevera de verdad el test de cada componente** — y la cuenta salió
+mucho peor de lo esperado.
+
+**Lo que se midió (2026-09-10, sobre `components.spec.ts`)** ·
+
+| | componentes |
+| --- | --- |
+| con captura | 38 |
+| **sin ninguna aserción de CAJA** (padding, gap, alto, ancho) | **16** |
+| sin ninguna aserción de TIPO (tamaño, peso, interlineado) | 25 |
+| con una sola propiedad aseverada, o ninguna | 15 |
+
+Los 16 desnudos: `sc-skeleton`, `sc-grouppopover`, `sc-column-selector`, `sc-checkbox`,
+`sc-bulk-edit-menu`, `sc-bulk-action-bar`, `sc-form-danger-zone`, `sc-sticky-form-header`,
+`sc-color-dot-picker`, `sc-photo-upload`, `sc-command-palette`, `sc-keyboard-shortcuts`,
+`sc-inline-rename-cell`, `sc-datatable`, `sc-bulk-transcription-modal` y `sc-section-card`.
+
+En esos 16 la captura no es «la última línea» del test: es la ÚNICA. Y como las capturas son
+`-darwin` y no cruzan de máquina, **en el CI no hay nada mirando su aspecto**. El contraejemplo
+que lo destapó es de ese mismo día: otra sesión cambió cinco propiedades de `sc-section-card`
+—padding 24.5 → 22.75, icono 16 → 14, gap 12.25 → 8.75, título 18/24 → 14/20 y la línea de la
+cabecera fuera— y de las cinco aserciones de su test no se movió ninguna.
+
+**Decisión** · Nace `e2e/component-styles.spec.ts`: por cada `[data-testid]` de las 38 páginas
+del catálogo, congela 16 propiedades computadas de caja, tipo y color en
+`e2e/baselines/component-styles.json`. Se regenera con `SC_UPDATE_STYLES=1` y **se revisa en el
+`git diff`**, igual que el baseline de `component-structure.spec.ts`.
+
+**Razón** · Un valor computado cruza de máquina: `22.75px` es `22.75px` en Ubuntu, en el Mac de
+Rafa y en un runner de macOS. Un píxel no. Eso pone en el CI la parte del aspecto que se puede
+comprobar en cualquier sitio, sin tocar las capturas, que siguen en local viendo lo que esto no
+ve (un icono, una sombra, un color de borde). Tres redes con fronteras distintas y dichas:
+estructura del DOM, caja y tipo, y comportamiento.
+
+**Descartadas** ·
+- *Escribir a mano las aserciones que faltan en los 16.* Son cientos de valores copiados del
+  Kit, se desincronizan al primer cambio de token y nadie los revisa. Un baseline generado y
+  revisable en diff da lo mismo sin el trabajo manual ni el óxido.
+- *Retirar las capturas y quedarse solo con esto.* Era la propuesta inicial de esta sesión,
+  basada en que en 33 commits no cazaron una regresión. Se cayó el mismo día: otra sesión las
+  recortó al contenido, que era la mitad cara del problema. Ver las notas de esa decisión.
+- *Meter esto dentro de `component-structure.spec.ts`.* Comparten patrón pero no pregunta: uno
+  fija el HTML de 9 componentes para refactores, este los valores de 38 para el aspecto. Un
+  fichero con dos baselines y dos motivos se acaba regenerando entero por el motivo que no era.
+
+**Lo que el primer intento hizo mal, medido y corregido** · Vale la pena que quede, porque las
+dos primeras versiones de esta red **no medían lo que decían medir**:
+
+1. *Solo el nodo del `data-testid`.* En la mitad del catálogo ese nodo es el host del wrapper
+   (`<sc-section-card>`), que es transparente: sin padding, sin radio, sin borde. La caja de
+   verdad está dos niveles más abajo (`.section-card__head`). Con el contraejemplo puesto, la
+   red pasó en **VERDE**. Ahora baja hasta 3 niveles y guarda los descendientes que definen
+   caja, descartando los neutros para no multiplicar el baseline por ocho guardando ceros.
+2. *`width` y `height` dentro.* **No cruzan de plataforma.** Medido en el primer run en CI
+   (34414537272): 24 de 38 páginas en rojo y el diff ENTERO en `width` (`108.55px` frente a
+   `110px`, `189px` frente a `233px`), más una `height`. Ni un padding, ni un gap, ni un radio,
+   ni un tamaño de letra, ni un color se movieron. Un ancho es texto renderizado y ancho
+   disponible —hinting de fuente y barra de scroll, que en macOS es overlay y en Linux ocupa—;
+   un padding sale del token. Fuera las dos, y dicho: un tamaño que el Kit fija (el 28/42/56 de
+   `sc-avatar`) lo vigilan las aserciones a mano de `components.spec.ts`, que es su sitio.
+
+**Consecuencias** · Tres detalles más que costaron medirlos y quedan escritos donde se usan:
+sc-docs enruta por hash, así que un `goto` NO recarga y hay que esperar al componente destino o
+se leen las anclas de la página anterior; hay componentes que nacen ocultos (`sc-command-palette`
+resolvió 33 veces a un nodo `hidden`), así que la espera es `toBeAttached` y no `toBeVisible`; y
+las animaciones se apagan antes de medir, porque `sc-message` monta con la de PrimeNG y leerlo a
+media entrada daba 5,15px, 8,78px y 19,09px sobre un valor final de 19,11px.
 ## DD-61 · 2026-09-09 — Cada PIEL de `sc-section-card` trae las medidas de SU nodo de Figma, y el maestro del DS es el que manda en la gris
 
 **Contexto** · DD-57 subió el padding de `sc-section-card` de 21 a 24.5 «hacia el valor que la
