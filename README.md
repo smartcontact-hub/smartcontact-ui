@@ -91,6 +91,13 @@ npm run preflight      # la parte RÁPIDA del CI (gates + builds AOT, ~8 min), a
 npm run e2e:supervisor # y e2e:cuscare / e2e:visual: la suite que toca lo que cambiaste, a mano
 ```
 
+Dentro de `npm run e2e` hay tres redes con fronteras distintas, y conviene saber cuál te va a
+enrojecer: `components.spec.ts` mide caja y tipo con aserciones escritas a mano más una captura
+por componente (la captura es `-darwin`, o sea solo local); `component-structure.spec.ts` congela
+el HTML renderizado de 9 componentes en un JSON revisable; y `component-styles.spec.ts` (DD-63)
+congela 16 propiedades computadas de cada `[data-testid]` de las 38 páginas del catálogo. Las dos
+últimas se regeneran con `SC_UPDATE_STRUCTURE=1` y `SC_UPDATE_STYLES=1`, y su diff se lee en el PR.
+
 Los e2e **no** van en `preflight` (DD-60): los corre el CI, que es obligatorio en `main` y
 paralelo. En un portátil solo cabe un Playwright a la vez, así que con varias sesiones el
 preflight completo (20-25 min) se hacía cola durante una hora; en GitHub cada suite tiene su
