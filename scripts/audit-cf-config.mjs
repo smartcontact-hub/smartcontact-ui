@@ -24,22 +24,20 @@ import { homedir } from 'node:os';
 import { resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
+import { SITIOS } from './cf-sites.mjs';
+
 const API = 'https://api.cloudflare.com/client/v4';
 /** La cuenta de Cloudflare de Smart Contact. Se puede pisar con CLOUDFLARE_ACCOUNT_ID. */
 export const CUENTA = 'b8361bb4e57ddd2094a0e5ed5a5e247a';
 
 /**
- * app del repo → proyecto en Cloudflare → script de package.json que la construye. Ni los
- * proyectos ni los scripts siguen un patrón (sc-docs se construye con `build:docs`), así que el
- * mapa es explícito y el test comprueba que cada script existe.
+ * app del repo → proyecto en Cloudflare → script de package.json que la construye, derivado del
+ * catálogo único de `cf-sites.mjs` (el mismo del que sale la lista de sitios que registra
+ * `record-deploy.mjs`). Ni los proyectos ni los scripts siguen un patrón (sc-docs se construye
+ * con `build:docs`), así que el mapa es explícito allí y el test comprueba que cada script
+ * existe y sella su app.
  */
-export const PROYECTOS = [
-  { app: 'sc-docs', proyecto: 'sc-doc', script: 'build:docs' },
-  { app: 'supervisor', proyecto: 'sc-supervisor', script: 'build:supervisor' },
-  { app: 'agent', proyecto: 'sc-agent', script: 'build:agent' },
-  { app: 'cuscare', proyecto: 'sc-cuscare', script: 'build:cuscare' },
-  { app: 'agent-mini', proyecto: 'agent-mini', script: 'build:agent-mini' },
-];
+export const PROYECTOS = SITIOS.map(({ app, proyecto, script }) => ({ app, proyecto, script }));
 
 /** Lo que el repo espera de cada proyecto. Todos los `build:*` terminan en `stamp-build.mjs`. */
 export function esperado({ app, script }) {

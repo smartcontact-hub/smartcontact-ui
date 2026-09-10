@@ -3,6 +3,7 @@ import assert from 'node:assert/strict';
 
 import { supersesion, SITIOS } from '../record-deploy.mjs';
 import { PROYECTOS } from '../audit-cf-config.mjs';
+import { SITIOS as CATALOGO } from '../cf-sites.mjs';
 
 // La regla se prueba EN ROJO (el caso real que la motivó) y EN VERDE. Un guardián que solo se
 // ha visto pasar no prueba que sepa fallar (LEARNINGS 2).
@@ -43,11 +44,18 @@ test('si la rama divergió y el commit ya no está en main, tampoco se va a serv
   assert.match(motivo, /ya no está en main/);
 });
 
-test('los 5 sitios que se registran son los 5 proyectos que se auditan en Cloudflare', () => {
-  // Si alguien añade una sexta app y solo la pone en un sitio, el registro o la auditoría se
-  // quedan ciegos con ella y nadie se entera.
+test('los sitios que se registran salen del mismo catálogo que los proyectos que se auditan', () => {
+  // Antes esto cruzaba DOS listas escritas a mano, y era lo único que evitaba que una sexta app
+  // se quedara a medio apuntar. Ahora las dos derivan de `cf-sites.mjs`, así que lo que se
+  // comprueba aquí es que la derivación no pierde ni reordena nada: el entorno de GitHub es la
+  // app del repo y su url la del catálogo. Que el catálogo cubra las apps que el repo publica
+  // de verdad lo prueba `cf-sites.test.mjs`, contra los `build:*` de package.json.
   assert.deepEqual(
-    SITIOS.map((s) => s.entorno).sort(),
-    PROYECTOS.map((p) => p.app).sort(),
+    SITIOS,
+    CATALOGO.map(({ app, url }) => ({ entorno: app, url })),
+  );
+  assert.deepEqual(
+    SITIOS.map((s) => s.entorno),
+    PROYECTOS.map((p) => p.app),
   );
 });
