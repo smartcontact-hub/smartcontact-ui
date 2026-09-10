@@ -76,7 +76,7 @@
            apartado del índice → fuera del scan primario, difícil de pulsar
            sin querer. Reemplaza la banda danger-zone del cuerpo (S59). -->
       @if (mode() === 'edit') {
-        <sc-button class="ipanel__delete" variant="danger" appearance="text" size="sm" [icon]="trashIcon" [label]="'common.delete' | translate" (clicked)="requestDelete()" />|<sc-button class="ipanel__delete" variant="danger" appearance="text" size="sm" [icon]="trashIcon" [label]="'common.delete' | translate" (clicked)="requestDelete()" />
+        <sc-button class="ipanel__delete" variant="danger" appearance="text" size="sm" [icon]="trashIcon" [label]="'common.delete' | translate" (clicked)="requestDelete()" />
       }
     </aside>
 
@@ -387,11 +387,11 @@
             hintKey="agents.form.section.advanced_hint"
             [icon]="activeIcon()"
           >
-            <!-- Labels (accordion sub-section) -->
-            <section class="sub-section sub-section--accordion">
+            <!-- Labels (accordion disclosure) -->
+            <section class="disclosure disclosure--accordion">
               <button
                 type="button"
-                class="sub-section__head"
+                class="disclosure__head"
                 [attr.aria-expanded]="labelsAccOpen()"
                 aria-controls="agent-acc-labels-body"
                 (click)="toggleLabelsAcc()"
@@ -401,11 +401,11 @@
                   size="inherit"
                 />
                 <sc-icon [name]="tagIcon" size="inherit" />
-                <span class="sub-section__title">
+                <span class="disclosure__title">
                   {{ 'agents.form.advanced.labels.title' | translate }}
                 </span>
                 @if (!labelsAccOpen() && selectedLabelChips().length > 0) {
-                  <span class="sub-section__count">
+                  <span class="disclosure__count">
                     @if (selectedLabelChips().length === 1) {
                       {{ 'agents.form.advanced.labels.count_one' | translate }}
                     } @else {
@@ -418,7 +418,7 @@
                 }
               </button>
               @if (labelsAccOpen()) {
-                <div id="agent-acc-labels-body" class="sub-section__body">
+                <div id="agent-acc-labels-body" class="disclosure__body">
                   <div class="field">
                     <label class="field__label" for="agent-label">
                       {{ 'agents.form.fields.labels' | translate }}
@@ -451,11 +451,11 @@
               }
             </section>
 
-            <!-- Agendas (accordion sub-section) -->
-            <section class="sub-section sub-section--accordion">
+            <!-- Agendas (accordion disclosure) -->
+            <section class="disclosure disclosure--accordion">
               <button
                 type="button"
-                class="sub-section__head"
+                class="disclosure__head"
                 [attr.aria-expanded]="agendasAccOpen()"
                 aria-controls="agent-acc-agendas-body"
                 (click)="toggleAgendasAcc()"
@@ -465,11 +465,11 @@
                   size="inherit"
                 />
                 <sc-icon [name]="phoneIcon" size="inherit" />
-                <span class="sub-section__title">
+                <span class="disclosure__title">
                   {{ 'agents.form.advanced.agendas.title' | translate }}
                 </span>
                 @if (!agendasAccOpen() && assignedSchedules().length > 0) {
-                  <span class="sub-section__count">
+                  <span class="disclosure__count">
                     @if (assignedSchedules().length === 1) {
                       {{ 'agents.form.advanced.agendas.count_one' | translate }}
                     } @else {
@@ -482,7 +482,7 @@
                 }
               </button>
               @if (agendasAccOpen()) {
-                <div id="agent-acc-agendas-body" class="sub-section__body">
+                <div id="agent-acc-agendas-body" class="disclosure__body">
                   @if (availableSchedules().length > 4) {
                     <sc-search
                       class="picker-search"
@@ -527,18 +527,18 @@
                       }
                     </div>
                   }
-                  <p class="sub-section__footnote">
+                  <p class="disclosure__footnote">
                     {{ 'agents.form.advanced.agendas.footnote' | translate }}
                   </p>
                 </div>
               }
             </section>
 
-            <!-- Plantillas (accordion sub-section) -->
-            <section class="sub-section sub-section--accordion">
+            <!-- Plantillas (accordion disclosure) -->
+            <section class="disclosure disclosure--accordion">
               <button
                 type="button"
-                class="sub-section__head"
+                class="disclosure__head"
                 [attr.aria-expanded]="templatesAccOpen()"
                 aria-controls="agent-acc-templates-body"
                 (click)="toggleTemplatesAcc()"
@@ -548,11 +548,11 @@
                   size="inherit"
                 />
                 <sc-icon [name]="fileStackIcon" size="inherit" />
-                <span class="sub-section__title">
+                <span class="disclosure__title">
                   {{ 'agents.form.advanced.plantillas.title' | translate }}
                 </span>
                 @if (!templatesAccOpen() && form().templateIds.size > 0) {
-                  <span class="sub-section__count">
+                  <span class="disclosure__count">
                     @if (form().templateIds.size === 1) {
                       {{ 'agents.form.advanced.plantillas.count_one' | translate }}
                     } @else {
@@ -565,7 +565,7 @@
                 }
               </button>
               @if (templatesAccOpen()) {
-                <div id="agent-acc-templates-body" class="sub-section__body">
+                <div id="agent-acc-templates-body" class="disclosure__body">
                   <div class="tabs">
                     @for (tab of templateTypes; track tab) {
                       <button
@@ -646,15 +646,15 @@
               }
             </section>
 
-            <!-- Comportamiento (flat sub-section) -->
-            <section class="sub-section">
-              <div class="sub-section__head sub-section__head--flat">
+            <!-- Comportamiento (flat disclosure) -->
+            <section class="disclosure">
+              <div class="disclosure__head disclosure__head--flat">
                 <sc-icon [name]="slidersIcon" size="inherit" />
-                <span class="sub-section__title">
+                <span class="disclosure__title">
                   {{ 'agents.form.advanced.comportamiento.title' | translate }}
                 </span>
               </div>
-              <div class="sub-section__body">
+              <div class="disclosure__body">
                 <!-- Pickup type per channel — call + chat side by side. -->
                 <div class="grid grid--2">
                   <div class="field">
@@ -725,15 +725,15 @@
               </div>
             </section>
 
-            <!-- Integración (flat sub-section) -->
-            <section class="sub-section">
-              <div class="sub-section__head sub-section__head--flat">
+            <!-- Integración (flat disclosure) -->
+            <section class="disclosure">
+              <div class="disclosure__head disclosure__head--flat">
                 <sc-icon [name]="plugIcon" size="inherit" />
-                <span class="sub-section__title">
+                <span class="disclosure__title">
                   {{ 'agents.form.advanced.integracion.title' | translate }}
                 </span>
               </div>
-              <div class="sub-section__body">
+              <div class="disclosure__body">
                 <div class="field">
                   <label class="field__label" for="agent-iframe-url">
                     {{ 'agents.form.advanced.integracion.url_iframe' | translate }}
@@ -766,15 +766,15 @@
               </div>
             </section>
 
-            <!-- Regional (flat sub-section) -->
-            <section class="sub-section">
-              <div class="sub-section__head sub-section__head--flat">
+            <!-- Regional (flat disclosure) -->
+            <section class="disclosure">
+              <div class="disclosure__head disclosure__head--flat">
                 <sc-icon [name]="globeIcon" size="inherit" />
-                <span class="sub-section__title">
+                <span class="disclosure__title">
                   {{ 'agents.form.advanced.regional.title' | translate }}
                 </span>
               </div>
-              <div class="sub-section__body">
+              <div class="disclosure__body">
                 <div class="field">
                   <label class="field__label" for="agent-language">
                     {{ 'common.languages.label' | translate }}
@@ -795,15 +795,15 @@
               </div>
             </section>
 
-            <!-- Sesión (flat sub-section) -->
-            <section class="sub-section">
-              <div class="sub-section__head sub-section__head--flat">
+            <!-- Sesión (flat disclosure) -->
+            <section class="disclosure">
+              <div class="disclosure__head disclosure__head--flat">
                 <sc-icon [name]="logInIcon" size="inherit" />
-                <span class="sub-section__title">
+                <span class="disclosure__title">
                   {{ 'agents.form.advanced.sesion.title' | translate }}
                 </span>
               </div>
-              <div class="sub-section__body">
+              <div class="disclosure__body">
                 <div class="perm-toggle-row">
                   <div class="perm-toggle-row__copy">
                     <span class="perm-toggle-row__label">
@@ -819,16 +819,16 @@
                 </div>
 
                 @if (mode() === 'edit') {
-                  <div class="sub-section__inset">
-                    <div class="sub-section__inset-head">
+                  <div class="disclosure__inset">
+                    <div class="disclosure__inset-head">
                       {{ 'agents.form.advanced.sesion.security' | translate }}
                     </div>
-                    <div class="sub-section__inset-row">
-                      <div class="sub-section__inset-copy">
-                        <span class="sub-section__inset-label">
+                    <div class="disclosure__inset-row">
+                      <div class="disclosure__inset-copy">
+                        <span class="disclosure__inset-label">
                           {{ 'agents.form.advanced.sesion.expire_pwd' | translate }}
                         </span>
-                        <p class="sub-section__inset-hint">
+                        <p class="disclosure__inset-hint">
                           {{ 'agents.form.advanced.sesion.expire_pwd_hint' | translate }}
                         </p>
                       </div>
