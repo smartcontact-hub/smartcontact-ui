@@ -289,7 +289,7 @@
       "kind": "EXTENDED",
       "primengBase": "primeng/table",
       "cva": false,
-      "inputs": 25,
+      "inputs": 26,
       "api": [
         "columns",
         "dataKey",
@@ -323,6 +323,7 @@
         "stripedRows",
         "totalRecords",
         "value",
+        "variant",
         "visibleColumns"
       ],
       "nested": [],

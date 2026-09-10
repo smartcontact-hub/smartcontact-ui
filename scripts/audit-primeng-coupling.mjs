@@ -23,6 +23,27 @@
  * Y EL OBJETIVO DE VERDAD es que este número BAJE. Cada `.p-*` que se pueda
  * sustituir por una clase propia o un token es un punto menos de fragilidad.
  * El guardián avisa de que no crezca; reducirlo es trabajo aparte.
+ *
+ * ⚠️ EL RECUENTO SE PARTIÓ EN TRES EL 2026-09-10, y no es cosmética: los 36 de
+ * la cifra vieja mezclaban dos deudas MUY distintas.
+ *
+ *   · `app`    — SCSS de una app consumidora. **No viaja con el tema.** Exportas
+ *                el tema, lo montas en otro sitio y esa pantalla revierte al
+ *                preset sin que falle un test. Es la deuda que hay que llevar a
+ *                CERO, y es la única cuyo tope es una barra de progreso.
+ *   · `ds`     — SCSS de un componente de `ui-smartcontact`. Viaja: va dentro
+ *                del paquete. Sigue siendo frágil a un renombrado de PrimeNG
+ *                (por eso entra en la comprobación de huérfanos), pero no es el
+ *                agujero de arriba.
+ *   · `preset` — el TEMA (`lib/theme/sc-preset/*.ts`). Viaja Y es el sitio
+ *                CORRECTO: estilar los internos de PrimeNG es literalmente para
+ *                lo que existe el `css` hook de `@primeuix/themes`.
+ *
+ * Sin esa partición, mover una regla de una app al tema —que es exactamente el
+ * arreglo que se quiere— parecía un empate. Y peor: el preset NO se estaba
+ * comprobando contra PrimeNG. Nombra decenas de clases internas en `css.ts` y
+ * ni una pasaba por el chequeo de huérfanos; un renombrado se habría llevado
+ * por delante la tipografía de TODOS los controles en silencio. Ahora entra.
  */
 import { execSync } from 'node:child_process';
 import { readdirSync, readFileSync, statSync } from 'node:fs';
@@ -38,11 +59,23 @@ const sh = (cmd) => {
 };
 
 /**
- * Tope de acoplamiento. No es una meta, es un trinquete: que no CREZCA sin que
- * alguien lo decida a conciencia. Si lo bajas porque has quitado dependencias,
- * perfecto — actualiza el número. Si lo subes, escribe por qué.
+ * Tope de acoplamiento POR HOGAR. No es una meta, es un trinquete: que no CREZCA
+ * sin que alguien lo decida a conciencia. Si lo bajas porque has quitado
+ * dependencias, perfecto — actualiza el número. Si lo subes, escribe por qué.
+ *
+ * `app` es EL número, y es el único que se lee como barra de progreso: cada
+ * punto es una regla que NO viaja con el tema. Bajó de 16 a 6 el 2026-09-10 al
+ * llevarse al preset la gramática de tabla-lista, la micro-interacción de botón
+ * y el item de menú destructivo (DD-66). Los 6 que quedan son el
+ * `.p-popover-content` del switcher de prototipos y las cinco clases del toast,
+ * y su motivo está escrito donde viven.
+ *
+ * `preset` es el más ALTO de los tres (56) y eso está bien: es su trabajo. Un
+ * tope alto aquí no es deuda, es el inventario de lo que el tema le dice a
+ * PrimeNG — lo que compra tenerlo contado es el chequeo de HUÉRFANOS, que en su
+ * primera pasada ya encontró dos selectores muertos (`.p-inputchips*`).
  */
-const TOPE = 36;
+const TOPE = { app: 6, ds: 20, preset: 56 };
 
 /* Cuenta las clases `.p-*` que aparecen en SELECTORES, no en comentarios. Un
  * comentario que menciona `.p-datatable-*` para explicar POR QUÉ dependemos de
@@ -50,28 +83,61 @@ const TOPE = 36;
  * glob como `.p-datatable-*` entraba como una "clase" fantasma con guion al
  * final). Se listan los ficheros que tienen algún `.p-`, se les quitan los
  * comentarios de bloque y de línea, y solo entonces se extraen las clases. */
-const ficheros = sh(
-  "grep -rl '\\.p-' --include='*.scss' projects/supervisor/src projects/ui-smartcontact/src",
-)
-  .split('\n')
-  .filter(Boolean);
-
 const sinComentarios = (scss) =>
   scss.replace(/\/\*[\s\S]*?\*\//g, '').replace(/(^|\s)\/\/.*$/gm, '$1');
 
-const usados = [
-  ...new Set(
-    ficheros.flatMap((f) => {
-      try {
-        return [...sinComentarios(readFileSync(f, 'utf8')).matchAll(/\.p-[a-z0-9]+(?:-[a-z0-9]+)*/g)].map(
-          (m) => m[0].replace(/^\./, ''),
-        );
-      } catch {
-        return [];
-      }
-    }),
+const CLASE_P = /\.p-[a-z0-9]+(?:-[a-z0-9]+)*/g;
+
+const clasesDe = (ficheros) => {
+  const mapa = new Map();
+  for (const f of ficheros) {
+    let txt;
+    try {
+      txt = sinComentarios(readFileSync(f, 'utf8'));
+    } catch {
+      continue;
+    }
+    for (const m of txt.matchAll(CLASE_P)) {
+      const c = m[0].slice(1);
+      if (!mapa.has(c)) mapa.set(c, new Set());
+      mapa.get(c).add(f);
+    }
+  }
+  return mapa;
+};
+
+const listar = (glob) => sh(glob).split('\n').filter(Boolean);
+
+/* LOS TRES HOGARES. La partición no es de estilo: `app` no viaja con el tema y
+ * los otros dos sí (ver la cabecera). El preset es TypeScript, no SCSS — sus
+ * selectores viven en literales de plantilla dentro de `css.ts`—, y hasta el
+ * 2026-09-10 se quedaba entero FUERA de este guardián. */
+const HOGARES = {
+  app: listar("grep -rl '\\.p-' --include='*.scss' projects/supervisor/src"),
+  ds: listar(
+    "grep -rl '\\.p-' --include='*.scss' projects/ui-smartcontact/src/lib/components",
   ),
-].sort();
+  preset: listar(
+    "grep -rl '\\.p-' --include='*.ts' projects/ui-smartcontact/src/lib/theme",
+  ),
+};
+
+const porHogar = Object.fromEntries(
+  Object.entries(HOGARES).map(([h, fs]) => [h, clasesDe(fs)]),
+);
+
+/* La comprobación de HUÉRFANOS (¿sigue existiendo la clase en PrimeNG?) se hace
+ * sobre la UNIÓN de los tres: da igual dónde viva la regla, si PrimeNG renombró
+ * la clase, apunta al vacío. */
+const dondeVive = new Map();
+for (const [h, mapa] of Object.entries(porHogar)) {
+  for (const [c, fs] of mapa) {
+    if (!dondeVive.has(c)) dondeVive.set(c, { hogares: new Set(), ficheros: new Set() });
+    dondeVive.get(c).hogares.add(h);
+    for (const f of fs) dondeVive.get(c).ficheros.add(f);
+  }
+}
+const usados = [...dondeVive.keys()].sort();
 
 /* El bundle de PrimeNG se lee UNA vez con readFileSync y se busca en memoria.
  *
@@ -113,25 +179,41 @@ if (!existeEnPrimeng('p-button')) {
 
 const huerfanos = usados.filter((c) => !existeEnPrimeng(c));
 
-log(`audit:primeng-coupling — ${usados.length} clase(s) interna(s) de PrimeNG usadas desde nuestro SCSS\n`);
+const cuenta = Object.fromEntries(
+  Object.entries(porHogar).map(([h, mapa]) => [h, mapa.size]),
+);
+
+log(
+  `audit:primeng-coupling — clases internas de PrimeNG usadas desde selectores nuestros: ` +
+    `app ${cuenta.app}/${TOPE.app} (NO viaja con el tema) · ds ${cuenta.ds}/${TOPE.ds} · ` +
+    `preset ${cuenta.preset}/${TOPE.preset} · ${usados.length} distintas en total\n`,
+);
 
 if (huerfanos.length) {
   log('  Estas clases YA NO EXISTEN en PrimeNG. Tu CSS apunta al vacío:');
   for (const c of huerfanos) {
     log(`  ✗ .${c}`);
-    for (const f of sh(`grep -rl '\\.${c}' --include='*.scss' projects/`).split('\n').filter(Boolean).slice(0, 4)) {
-      log(`      ${f}`);
-    }
+    for (const f of [...dondeVive.get(c).ficheros].slice(0, 4)) log(`      ${f}`);
   }
   log('\n  → Busca el nombre nuevo en el changelog de PrimeNG. NO borres la regla');
   log('    sin sustituirla: el estilo que aplicaba sigue haciendo falta.');
 }
 
-if (usados.length > TOPE) {
-  log(`\n  ✗ el acoplamiento CRECIÓ: ${usados.length} clases contra un tope de ${TOPE}.`);
-  log('    Cada `.p-*` nuevo es un punto más donde una subida de versión te');
-  log('    cambia el aspecto en silencio. Si es inevitable, sube el TOPE en');
-  log('    este script y di por qué en el commit.');
+const crecidos = Object.entries(cuenta).filter(([h, n]) => n > TOPE[h]);
+for (const [h, n] of crecidos) {
+  log(`\n  ✗ el acoplamiento CRECIÓ en \`${h}\`: ${n} clases contra un tope de ${TOPE[h]}.`);
+  if (h === 'app') {
+    log('    Y este es el hogar que importa: una regla de app sobre `.p-*` NO');
+    log('    viaja con el tema. Se exporta, se monta en otro sitio y esa pantalla');
+    log('    revierte al preset sin que falle un solo test. Antes de subir el');
+    log('    tope, contesta: ¿se puede DECIR en el preset (`sc-preset/css.ts` o un');
+    log('    token) y entonces viaja? Si de verdad es custom de esta app, se queda');
+    log('    — pero con el motivo escrito donde vive, y subes el tope aquí.');
+  } else {
+    log('    Cada `.p-*` nuevo es un punto más donde una subida de versión te');
+    log('    cambia el aspecto en silencio. Si es inevitable, sube el TOPE en');
+    log('    este script y di por qué en el commit.');
+  }
 }
 
 /* ══════════════════════════════════════════════════════════════════════════
@@ -390,7 +472,7 @@ for (const { tag, entrada, f, linea } of inertes) {
 
 /* Tope POR APP. Es un trinquete, no una meta. Baja el número si retiras;
  * súbelo solo con el cubo escrito en el commit. */
-const TOPE_SIN_CAPA = { supervisor: 26, agent: 0, cuscare: 0, 'sc-docs': 0, 'agent-mini': 0 };
+const TOPE_SIN_CAPA = { supervisor: 1, agent: 0, cuscare: 0, 'sc-docs': 0, 'agent-mini': 0 };
 
 const bloquesConP = (scss) => {
   const s = sinComentarios(scss);
@@ -560,11 +642,10 @@ if (reachInsDS.length) {
 const cuscareReach = reachInsDeApp('cuscare').length;
 if (cuscareReach) log(`  · cuscare (exenta): ${cuscareReach} reach-in(s) — informativo, no bloquea.`);
 
-const problemas =
-  huerfanos.length + (usados.length > TOPE ? 1 : 0) + problemasB + reachInsDS.length;
+const problemas = huerfanos.length + crecidos.length + problemasB + reachInsDS.length;
 if (problemas === 0) {
   log(
-    `✓ audit:primeng-coupling OK — las ${usados.length} clases siguen existiendo, el acoplamiento no crece (tope ${TOPE}), los ${consultados.size} elementos consultados casan con lo que escribimos, ninguna entrada quedó inerte, ninguna app crece su CSS sin capa sobre \`.p-*\`, y ninguna app estricta se mete dentro de un componente del DS.`,
+    `✓ audit:primeng-coupling OK — las ${usados.length} clases siguen existiendo, el acoplamiento no crece en ninguno de los tres hogares (app ${cuenta.app}/${TOPE.app} · ds ${cuenta.ds}/${TOPE.ds} · preset ${cuenta.preset}/${TOPE.preset}), los ${consultados.size} elementos consultados casan con lo que escribimos, ninguna entrada quedó inerte, ninguna app crece su CSS sin capa sobre \`.p-*\`, y ninguna app estricta se mete dentro de un componente del DS.`,
   );
   process.exit(0);
 }

@@ -2391,6 +2391,38 @@
       "line-height": "20px",
       "color": "rgb(79, 86, 99)",
       "background-color": "rgba(0, 0, 0, 0)"
+    },
+    "sc-datatable-list": {
+      "padding-top": "0px",
+      "padding-right": "0px",
+      "padding-bottom": "0px",
+      "padding-left": "0px",
+      "gap": "normal",
+      "min-height": "auto",
+      "border-radius": "0px",
+      "border-top-width": "0px",
+      "border-bottom-width": "0px",
+      "font-size": "14px",
+      "font-weight": "400",
+      "line-height": "20px",
+      "color": "rgb(79, 86, 99)",
+      "background-color": "rgba(0, 0, 0, 0)"
+    },
+    "sc-datatable-list > p-table.p-component > div.p-datatable-header": {
+      "padding-top": "10.5px",
+      "padding-right": "14px",
+      "padding-bottom": "10.5px",
+      "padding-left": "14px",
+      "gap": "normal",
+      "min-height": "0px",
+      "border-radius": "0px",
+      "border-top-width": "1px",
+      "border-bottom-width": "1px",
+      "font-size": "14px",
+      "font-weight": "400",
+      "line-height": "20px",
+      "color": "rgb(79, 86, 99)",
+      "background-color": "rgb(255, 255, 255)"
     }
   },
   "datepicker": {

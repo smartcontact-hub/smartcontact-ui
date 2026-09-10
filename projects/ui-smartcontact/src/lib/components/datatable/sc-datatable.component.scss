@@ -8,3 +8,20 @@
   width: var(--sc-spacing-2-5);
   text-align: center;
 }
+
+/* ─── variant="list" · lo que la piel de tabla-lista toca del DOM PROPIO ─────
+ *
+ * El GRUESO de la gramática (cabecera, celdas, hover, fila seleccionada) lo
+ * pinta el TEMA en `sc-preset/css.ts`: son nodos que renderiza `p-table`, con
+ * SU `_ngcontent`, así que una regla encapsulada de aquí no los alcanza nunca.
+ *
+ * Esto de abajo es la excepción y por eso vive aquí: `.sc-datatable__check` lo
+ * pinta NUESTRA plantilla, así que sí lo alcanza la encapsulación — y tiene que
+ * ser aquí, porque la regla de arriba de este mismo fichero va SIN CAPA y le
+ * ganaría a cualquier cosa que el tema dijera en `@layer primeng`.
+ *
+ * 40px, no `--sc-spacing-2-5` (35): es el ancho que traían las nueve tablas de
+ * administración en su `.table__th-check` a mano, y la migración lo conservó. */
+:host(.sc-datatable--list) .sc-datatable__check {
+  width: 40px;
+}

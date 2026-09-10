@@ -105,11 +105,10 @@
   gap: var(--sc-spacing-0-875);
   min-width: 0;
 
-  /* Mismos tres ejes que `.field__label` (text style `Caption/caption-regular`). */
+  /* Los tres ejes se fueron a la plantilla el 2026-09-10, como clase:
+   * `.sc-text-caption-regular`. Aquí queda el color de rol, que no es tipografía
+   * y no tiene text style detrás. */
   &__label {
-    font-size: var(--sc-font-size-caption);
-    line-height: var(--sc-line-height-caption);
-    font-weight: var(--sc-font-weight-caption);
     color: var(--sc-text-secondary);
   }
 

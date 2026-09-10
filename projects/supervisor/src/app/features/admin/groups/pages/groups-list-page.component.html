@@ -44,13 +44,13 @@
         (cta)="onCreateClick()"
       />
     } @else {
-      <!-- B4: la tabla la pinta el componente del DS. `class="list-table"` le
+      <!-- B4: la tabla la pinta el componente del DS. `variant="list"` le
            pone la gramática de tabla-lista de la app (54px de fila, cabecera
            silenciosa de S59); sin ella el preset la dejaría más densa y con
            la cabecera oscura, distinta de las tablas sin migrar. -->
       <div class="table-card">
         <sc-datatable
-          class="list-table"
+          variant="list"
           [value]="sorted()"
           [columns]="columns()"
           [visibleColumns]="visibleFields()"

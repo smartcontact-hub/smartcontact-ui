@@ -162,7 +162,7 @@
   }
 }
 
-/* La fila clicable y su cursor los pone ahora `.table__row--clickable`
+/* La fila clicable y su cursor los pone ahora `.sc-row--clickable`
  * (emitido por `[rowStyleClass]`, estilado en `_sc-datatable-list.scss`): el
  * `<tr>` lo pinta el DS y una regla de esta página no lo alcanza.
  *

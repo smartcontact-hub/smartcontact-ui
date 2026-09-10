@@ -60,16 +60,17 @@
     gap: 2px;
   }
 
-  /* Los tres ejes de `Body/body-semibold` por su token de rol (= lo que resuelve
-   * `.sc-text-body-semibold`). El `line-height: 22px` literal se va: era un
-   * número a mano que no salía de ningún peldaño del sistema. Se queda aquí en
-   * vez de como clase porque `sub-section__title` tiene 8 usos en 3 pantallas;
-   * cuando se barran, la clase entra sin mover un píxel. */
+  /* BARRIDO HECHO el 2026-09-10: esta ficha decía «se queda aquí en vez de como
+   * clase porque `sub-section__title` tiene 8 usos en 3 pantallas; cuando se
+   * barran, la clase entra sin mover un píxel». Se barrieron los diez usos (todos
+   * en AED) y entró sin mover un píxel — los tres ejes ya salían del token de rol,
+   * que es exactamente lo que resuelve `.sc-text-body-semibold`.
+   *
+   * Lo mismo que en `&__label`: quitarlos de aquí es lo que hace que la clase
+   * sirva, porque esta hoja le gana por orden en el bundle. Lo mide
+   * `e2e/supervisor/text-styles-applied.spec.ts` en las tres pantallas. */
   &__title {
     margin: 0;
-    font-size: var(--sc-font-size-body-2);
-    line-height: var(--sc-line-height-body-2);
-    font-weight: var(--sc-font-weight-semibold);
     color: var(--sc-text-primary);
   }
 
@@ -151,24 +152,30 @@
   }
 
   /*
-   * Los tres ejes son los del text style `Caption/caption-regular` del Figma del DS,
-   * leídos por su token de ROL: es exactamente lo que resuelve la clase
-   * `.sc-text-caption-regular`. El peso es `caption` (400) y no `medium` (500) porque el
-   * text style es Regular: la jerarquía de una etiqueta la da su tamaño, no engordarla.
+   * LA CAJA de la etiqueta, y solo la caja. La TIPOGRAFÍA la pone
+   * `.sc-text-caption-regular` en la plantilla — el text style
+   * `Caption/caption-regular` del Figma del DS.
    *
-   * ⚠️ Esta hoja decía 12/500 sin `line-height` y con `margin-bottom: 2px`, mientras
-   * `config/aed` decía 12/400 con el `line-height` del rol. Era la MISMA etiqueta —29
-   * usos en 7 pantallas— contada de dos maneras. Es el «barrido global de la
-   * tipografía» que los hand-offs del 2026-09-09 y 2026-09-10 dejaban pendiente.
+   * ⚠️ Esta hoja decía 12/**500** sin `line-height`, mientras `config/aed` decía 12/400
+   * con el `line-height` del rol. Era la MISMA etiqueta contada de dos maneras. Al
+   * barrerla (2026-09-10) el peso baja a regular en las tres pantallas de alta/edición
+   * de admin (agente, grupo, usuario), que es la decisión que ya se tomó para AED el
+   * 2026-09-09: «la jerarquía de una etiqueta la da su tamaño, no engordarla». El tamaño
+   * no se mueve —los dos son 12— y el interlineado tampoco: el `1.5` del reset sobre 12
+   * da los mismos 18 que ata el text style.
+   *
+   * ⚠️ Y quitar la tipografía de AQUÍ no era opcional, es lo que hace que la clase
+   * sirva: el `@import` de `base/typography.css` acaba ANTES que el contenido de los
+   * partials en la hoja final, así que a igual especificidad esta regla le GANABA a
+   * `.sc-text-caption-regular`. Con los tres ejes dentro, poner la clase en la plantilla
+   * no habría hecho nada. Lo fija `e2e/supervisor/text-styles-applied.spec.ts`, que mide
+   * el computado y se pone rojo si vuelven.
    */
   &__label,
   &__label-inline {
     display: inline-flex;
     align-items: center;
     gap: var(--sc-spacing-0-5);
-    font-size: var(--sc-font-size-caption);
-    line-height: var(--sc-line-height-caption);
-    font-weight: var(--sc-font-weight-caption);
     color: var(--sc-text-secondary);
   }
 

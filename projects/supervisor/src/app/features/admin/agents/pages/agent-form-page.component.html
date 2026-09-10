@@ -128,7 +128,7 @@
               </div>
 
               <div class="field">
-                <label class="field__label" for="agent-phone">
+                <label class="field__label sc-text-caption-regular" for="agent-phone">
                   {{ 'agents.form.fields.phone' | translate }}
                   <span class="field__hint">({{ 'common.optional' | translate }})</span>
                 </label>
@@ -146,7 +146,7 @@
                  (Pickup type moved to "Configuración avanzada > Comportamiento" — DD#57.) -->
             <div class="grid grid--2">
               <div class="field">
-                <label class="field__label" for="agent-ext">
+                <label class="field__label sc-text-caption-regular" for="agent-ext">
                   {{ 'agents.form.fields.extension' | translate }}
                   <span class="field__required" aria-hidden="true">*</span>
                 </label>
@@ -176,7 +176,7 @@
               </div>
 
               <div class="field">
-                <label class="field__label" for="agent-type">
+                <label class="field__label sc-text-caption-regular" for="agent-type">
                   {{ 'agents.form.fields.type' | translate }}
                 </label>
                 <sc-select
@@ -218,7 +218,7 @@
             <!-- Presence (initial state) -->
             <div class="identity-card__divider"></div>
             <div class="field">
-              <label class="field__label" for="agent-presence">
+              <label class="field__label sc-text-caption-regular" for="agent-presence">
                 {{ 'agents.form.fields.presence' | translate }}
               </label>
               <sc-select
@@ -257,7 +257,7 @@
             <!-- PIN (kept for back-compat — minor field below the fold) -->
             <div class="identity-card__divider"></div>
             <div class="field">
-              <label class="field__label" for="agent-pin">
+              <label class="field__label sc-text-caption-regular" for="agent-pin">
                 {{ 'agents.form.fields.pin' | translate }}
                 <span class="field__hint">({{ 'common.optional' | translate }})</span>
               </label>
@@ -420,7 +420,7 @@
               @if (labelsAccOpen()) {
                 <div id="agent-acc-labels-body" class="disclosure__body">
                   <div class="field">
-                    <label class="field__label" for="agent-label">
+                    <label class="field__label sc-text-caption-regular" for="agent-label">
                       {{ 'agents.form.fields.labels' | translate }}
                     </label>
                     @if (availableLabels().length === 0) {
@@ -658,7 +658,7 @@
                 <!-- Pickup type per channel — call + chat side by side. -->
                 <div class="grid grid--2">
                   <div class="field">
-                    <label class="field__label" for="agent-pickup">
+                    <label class="field__label sc-text-caption-regular" for="agent-pickup">
                       {{ 'agents.form.advanced.comportamiento.pickup_call' | translate }}
                     </label>
                     <sc-select
@@ -675,7 +675,7 @@
                   </div>
 
                   <div class="field">
-                    <label class="field__label" for="agent-pickup-chat">
+                    <label class="field__label sc-text-caption-regular" for="agent-pickup-chat">
                       {{ 'agents.form.advanced.comportamiento.pickup_chat' | translate }}
                     </label>
                     <sc-select
@@ -695,7 +695,7 @@
                 <!-- Chats simultáneos — chat-only setting, kept narrow so
                      it doesn't read as "this affects all channels". -->
                 <div class="field field--narrow">
-                  <label class="field__label" for="agent-max-chats">
+                  <label class="field__label sc-text-caption-regular" for="agent-max-chats">
                     {{ 'agents.form.advanced.comportamiento.max_chats' | translate }}
                   </label>
                   <sc-select
@@ -735,7 +735,7 @@
               </div>
               <div class="disclosure__body">
                 <div class="field">
-                  <label class="field__label" for="agent-iframe-url">
+                  <label class="field__label sc-text-caption-regular" for="agent-iframe-url">
                     {{ 'agents.form.advanced.integracion.url_iframe' | translate }}
                   </label>
                   <sc-inputtext
@@ -776,7 +776,7 @@
               </div>
               <div class="disclosure__body">
                 <div class="field">
-                  <label class="field__label" for="agent-language">
+                  <label class="field__label sc-text-caption-regular" for="agent-language">
                     {{ 'common.languages.label' | translate }}
                   </label>
                   <sc-select
