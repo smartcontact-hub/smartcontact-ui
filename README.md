@@ -203,7 +203,8 @@ deja algo que mirar en vez de una línea de texto.
 > marcará en rojo hasta que vuelva. Ver [DD-59](docs/DECISIONS.md). Lo que Cloudflare tiene
 > configurado (comando, output dir, rama, `NODE_VERSION`) solo se ve desde su panel, así que
 > `npm run audit:cf-config` lo lee por API y lo compara con lo que el repo espera; el mismo
-> workflow lo corre antes de registrar, si existe el secret `CLOUDFLARE_API_TOKEN`.
+> workflow lo corre en un job aparte del registro, si existe el secret `CLOUDFLARE_API_TOKEN`
+> (basta con permiso *Cloudflare Pages: Read*: la cuenta va escrita en el script).
 
 ## Flujo Figma a código
 
