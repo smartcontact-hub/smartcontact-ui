@@ -41,6 +41,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | El vocabulario de dentro de la pantalla se declara UNA vez · lo vigila `audit:screen-vocabulary` | DD-65 |
 > | El título de una pantalla con rail va DENTRO de su sección · `sc-section-card` es la única caja | DD-57 |
 | Cada piel de `sc-section-card` trae las medidas de SU nodo · el maestro del DS manda en la gris | DD-61 |
 | Los estilos de texto se ponen a lo que NO es un componente · un `<sc-*>` no lleva `.sc-text-*` encima | DD-55 |
@@ -52,6 +53,94 @@
 > | Siete divergencias deliberadas entre flujos, que NO se unifican | DD-36 |
 > | `--sc-bg-default` es el suelo del shell, nunca una superficie | DD-34 |
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
+
+---
+
+## DD-65 · 2026-09-10 — Un nombre, un hogar: el vocabulario de dentro de la pantalla se declara una vez, y un gate lo vigila
+
+**Contexto** · Los tres flujos de `config/aed` se casaron con su maqueta el 2026-09-09 y el
+2026-09-10, y quedaron como la referencia de cómo se compone una pantalla de ajustes. Rafa pidió
+llevar ese mismo estilo al resto de la app, midiendo ANTES de tocar. `audit:page-anatomy` ya
+vigilaba el ESQUELETO (que toda página declare su arquetipo, que ninguna re-declare el molde),
+pero **lo de dentro no lo miraba nadie**.
+
+**Lo que salió al medir** (barrido estático sobre las 61 hojas del supervisor, 2026-09-10):
+
+| Nombre | Referencia (`config/aed`) | La otra hoja (`styles/_forms.scss`) |
+| --- | --- | --- |
+| `.grid` | `column-gap` 24.5 · `row-gap` 12.25 | `gap` 15.75 a los dos ejes |
+| `.field` | `gap` 7 · `min-width: 0` | ninguno de los dos |
+| `.field__label` | 12 / **400** / `line-height` del rol | 12 / **500** / sin `line-height` / `margin-bottom: 2px` |
+| `.grid--2` | idéntico | idéntico (la duplicación es lo que sobra) |
+| `.checkbox-row` | — | `padding` 3.5 aquí, **7** re-declarado en `user-form` |
+| `.sub-section__title` | `Body/body-semibold` | versalitas 12/600 `subtle` en `agent-form` |
+
+Seis nombres con dos hogares, seis pantallas repartidas entre dos vocabularios, y ninguna regla
+que los cruzara. `.field__label` es el que más pesa: **29 usos en 7 pantallas** — es el «barrido
+global de la tipografía» que los hand-offs del 2026-09-09 y del 2026-09-10 dejaban pendiente.
+
+**Decisión** · Cuatro cosas:
+
+1. **El vocabulario de formulario vive en `styles/_forms.scss` y solo ahí**, con los valores de
+   la referencia (los de la maqueta). Las copias de `config/aed` se retiran; las tres pantallas
+   AED no mueven un píxel porque la global pasa a decir lo que ellas decían.
+2. **`.sub-section` de `agent-form` pasa a llamarse `.disclosure`.** No era una divergencia que
+   unificar: eran DOS MUEBLES con el mismo nombre — un tramo de formulario separado por
+   `<sc-divider />` en AED, y un acordeón de versalitas separado por `border-top` en admin. La
+   encapsulación de Angular los mantenía separados en el navegador, así que nada avisaba; lo que
+   colisionaba era el vocabulario, que es lo que lee la siguiente persona.
+3. **La caja de sección la pone el DS.** `sistema-page` y `numeracion-especial-section` tenían
+   cada una su `.card` a mano (radio 300, sombra `xs`, línea bajo la cabecera, paddings propios)
+   haciendo el trabajo de `sc-section-card surface="card"`. Pasan al componente. Es la misma
+   copia local que `config/aed` ya se había quitado el 2026-09-09, viva en otras dos pantallas.
+4. **Un gate nuevo, `audit:screen-vocabulary`**, en `verify` (que pasa de 37 a 38 gates). Lee el
+   canon de la hoja de referencia EN CADA EJECUCIÓN en vez de copiarlo — duplicar los valores en
+   el gate es la misma clase de fallo que el gate persigue.
+
+**Razón** · Una regla encapsulada de componente le gana siempre a una global, así que
+re-declarar un nombre en la hoja de una pantalla no "ajusta" nada: le da a esa pantalla una
+medida propia, en silencio y para siempre. Es el mismo mecanismo que DD-53 gateó para el molde
+de página; lo que faltaba era aplicarlo al contenido. Y el canon leído en vivo es lo que ya
+enseñó `emit-consumer-typography`: leer la lista del preset en vez de repetirla.
+
+**Descartadas** ·
+- *Unificar hacia los valores de `_forms.scss` (15.75/15.75, etiqueta a 500)* → rechazado: no los
+  respalda ningún nodo. Los de `config/aed` salen de la maqueta, con `boundVariables` comprobados.
+- *Dejar las dos hojas y solo documentar la diferencia* → rechazado: es lo que había, y es lo que
+  produjo la deriva. Un documento no impide una tercera copia; un gate sí.
+- *Renombrar el `.sub-section` de AED en vez del de `agent-form`* → rechazado: el de AED es el que
+  casa con la maqueta y el que nombran los comentarios de las tres pantallas de referencia.
+- *Dar a `sc-section-card` un slot de acciones en la cabecera y una pista de bloque* para poder
+  convertir también los tres paneles del constructor de reglas → rechazado POR AHORA: sería
+  deformar el componente del DS por UN consumidor, que es la deuda que este barrido vino a
+  quitar. Entra cuando una segunda pantalla lo pida.
+- *Re-añadir `__foot` a `sc-section-card`* para el pie de guardado de «Numeración especial» →
+  rechazado por lo mismo: ese `__foot` ya existió y se borró el 2026-09-09 por no tener usos. Las
+  acciones van dentro del cuerpo detrás de un `<sc-divider />`, que es el ritmo de la referencia.
+
+**Consecuencias** · `verify` pasa de 37 a 38 gates (actualizado en `CLAUDE.md`, `DOCS-INDEX.md` y
+la skill de auditoría semanal). El gate trae DOS listas que solo pueden menguar y que muerden en
+las dos direcciones: `DELIBERADAS` (mismo nombre, medidas distintas a propósito) y `CAJAS_A_MANO`
++ `CAJAS_A_MANO_MOTIVO` — **una entrada sin motivo escrito es roja**, que es DD-36 aplicado aquí.
+
+**La divergencia que queda, con su motivo**: los tres paneles del constructor de reglas
+(`rule-builder`). Su CAJA ya mide como el maestro (se igualó en esta misma pasada: padding
+31.5 → 24.5, cabecera→cuerpo 21 → 16; el radio ya coincidía, `--sc-radius-xl` y `--sc-radius-400`
+son el mismo peldaño). Lo que sigue a mano es la CABECERA: dos de los tres llevan un control de
+estado a la derecha del título y una descripción de frase entera debajo, y `sc-section-card` no
+tiene ninguna de las dos cosas.
+
+**Y una divergencia que NO era deliberada, encontrada por el camino**: el botón «Eliminar» del
+rail estaba **duplicado, con un `|` literal entre las dos copias**, en los tres formularios de
+admin. Sale del `7470fdc` («64 botones y 51 controles a mano pasan a componentes»): la reescritura
+en masa emitió el reemplazo dos veces y nadie diffeó el resultado. Es `LEARNINGS` **#12** literal.
+Llevaba ahí desde el 2026-09-05, a la vista, en tres pantallas.
+
+**Lo que este gate NO mira, y por qué**: las nueve páginas de lista y el hub. Son otro arquetipo
+—tabla y tarjetas, no campos en secciones— y su gramática ya la vigilan `audit:datatables` y
+`e2e/supervisor/list-table-grammar.spec.ts`. La comprobación de "caja a mano" se limita además a
+hojas de PÁGINA y de SECCIÓN: un panel lateral, un modal o una tabla son muebles distintos y su
+caja es suya con razón. Mirarlo todo daba ocho avisos de los que cinco eran ruido.
 
 ---
 

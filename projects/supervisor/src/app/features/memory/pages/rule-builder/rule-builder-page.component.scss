@@ -184,14 +184,35 @@
  * Vuelven las tarjetas (encargo explícito + distribución del Figma). Se respeta
  * la regla de no anidar tarjetas: lo que va dentro es tinte o filo, nunca otra
  * caja elevada. */
+/*
+ * La CAJA mide ya lo que el maestro del DS (`sc-section-card surface="card"`): fondo de
+ * superficie, borde de 1 y radio 12 —`--sc-radius-xl` y `--sc-radius-400` son el MISMO
+ * peldaño, comprobado en `01-primitive.css`—. Lo único que no casaba era el aire, y se
+ * iguala aquí (2026-09-10):
+ *
+ *   padding            31.5 (`scale/2-25`)  →  24.5 (`scale/1-75`)
+ *   cabecera → cuerpo  21   (`scale/1-5`)   →  16   (`scale/1-143`, el gap del `Block`)
+ *
+ * LO QUE NO SE UNIFICA, Y POR QUÉ (DD-65). La CABECERA se queda a mano: dos de estos tres
+ * paneles llevan un control de estado a la derecha del título —el interruptor
+ * activa/inactiva de la regla, y el que abre el análisis de IA— y una descripción de frase
+ * entera DEBAJO del título. `sc-section-card` no tiene ninguna de las dos cosas: su
+ * cabecera es icono + título + pista EN LÍNEA, y no proyecta nada a la derecha.
+ *
+ * Y no se las damos por esto: sería deformar el componente del DS por UN consumidor, que es
+ * justo la deuda que este barrido vino a quitar. Si algún día una segunda pantalla pide una
+ * cabecera con control, entonces el slot se gana su sitio en el DS y estos tres paneles
+ * entran detrás. Hasta entonces la divergencia está aquí, contada, y en el trinquete de
+ * `audit:screen-vocabulary` — que solo puede menguar.
+ */
 .rule-card {
   display: flex;
   flex-direction: column;
-  gap: var(--sc-spacing-1-5);
-  padding: var(--sc-spacing-2-25);
+  gap: var(--sc-spacing-1-143);
+  padding: var(--sc-spacing-1-75);
   background: var(--sc-bg-surface);
   border: 1px solid var(--sc-border-default);
-  border-radius: var(--sc-radius-xl);
+  border-radius: var(--sc-radius-400);
 
   &__head {
     display: flex;

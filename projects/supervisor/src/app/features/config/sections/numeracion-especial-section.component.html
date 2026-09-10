@@ -1,65 +1,76 @@
-<section class="card">
-  <div class="card__head">
-    <sc-icon [name]="hashIcon" [size]="14" class="card__head-icon" />
-    <span class="card__head-title">{{ 'config.aed.section.title' | translate }}</span>
-    <span class="card__head-hint">{{ 'config.aed.section.hint' | translate }}</span>
-  </div>
-
-  <div class="card__body">
-    <div class="info-callout">
-      <sc-icon [name]="infoIcon" [size]="14" class="info-callout__icon" />
-      <p>{{ 'config.aed.info' | translate }}</p>
-    </div>
-
-    <sc-search class="search" [placeholder]="'config.aed.search_placeholder' | translate" [value]="searchQuery()" (valueChange)="searchQuery.set($event)" (keydown)="onSearchKey($event)" [clearAriaLabel]="'labels.clear_search' | translate" />
-
-    <div class="country-list">
-      @if (filtered().length === 0) {
-        <div class="country-list__empty">
-          {{ 'config.aed.no_results' | translate: { query: searchQuery() } }}
-        </div>
-      } @else {
-        @for (country of filtered(); track country.code) {
-          <button
-            type="button"
-            class="country-row"
-            [class.country-row--selected]="isSelected(country.code)"
-            (click)="toggle(country.code)"
-          >
-            <sc-checkbox [state]="(isSelected(country.code)) ? 'all' : 'none'" (cycle)="toggle(country.code)" [ariaLabel]="country.name" (click)="$event.stopPropagation()" />
-            <span class="country-row__flag" aria-hidden="true">{{ country.flag }}</span>
-            <span class="country-row__name">{{ country.name }}</span>
-            <span class="country-row__code">{{ country.code }}</span>
-            <span class="country-row__prefix">{{ country.prefix }}</span>
-            @if (isSelected(country.code)) {
-              <button
-                type="button"
-                class="country-row__remove"
-                (click)="remove(country.code, $event)"
-                [attr.aria-label]="'common.delete' | translate"
-              >
-                <sc-icon [name]="closeIcon" size="inherit" />
-              </button>
-            }
-          </button>
-        }
-      }
-    </div>
-
-    @if (selectedCodes().size > 0) {
-      <div class="chips">
-        <span class="chips__label">{{ 'config.aed.selected_chips' | translate }}</span>
-        <div class="chips__list">
-          @for (country of selectedCountries(); track country.code) {
-            <sc-chip [label]="country.flag + ' ' + country.name + ' ' + country.prefix" removable [removeAriaLabel]="'common.delete' | translate" (removed)="remove(country.code)" />
-          }
-        </div>
+<sc-section-card
+  surface="card"
+  [icon]="hashIcon"
+  titleKey="config.aed.section.title"
+  hintKey="config.aed.section.hint"
+>
+  <div class="sub-section">
+      <div class="info-callout">
+        <sc-icon [name]="infoIcon" [size]="14" class="info-callout__icon" />
+        <p>{{ 'config.aed.info' | translate }}</p>
       </div>
-    }
+
+      <sc-search class="search" [placeholder]="'config.aed.search_placeholder' | translate" [value]="searchQuery()" (valueChange)="searchQuery.set($event)" (keydown)="onSearchKey($event)" [clearAriaLabel]="'labels.clear_search' | translate" />
+
+      <div class="country-list">
+        @if (filtered().length === 0) {
+          <div class="country-list__empty">
+            {{ 'config.aed.no_results' | translate: { query: searchQuery() } }}
+          </div>
+        } @else {
+          @for (country of filtered(); track country.code) {
+            <button
+              type="button"
+              class="country-row"
+              [class.country-row--selected]="isSelected(country.code)"
+              (click)="toggle(country.code)"
+            >
+              <sc-checkbox [state]="(isSelected(country.code)) ? 'all' : 'none'" (cycle)="toggle(country.code)" [ariaLabel]="country.name" (click)="$event.stopPropagation()" />
+              <span class="country-row__flag" aria-hidden="true">{{ country.flag }}</span>
+              <span class="country-row__name">{{ country.name }}</span>
+              <span class="country-row__code">{{ country.code }}</span>
+              <span class="country-row__prefix">{{ country.prefix }}</span>
+              @if (isSelected(country.code)) {
+                <button
+                  type="button"
+                  class="country-row__remove"
+                  (click)="remove(country.code, $event)"
+                  [attr.aria-label]="'common.delete' | translate"
+                >
+                  <sc-icon [name]="closeIcon" size="inherit" />
+                </button>
+              }
+            </button>
+          }
+        }
+      </div>
+
+      @if (selectedCodes().size > 0) {
+        <div class="chips">
+          <span class="chips__label">{{ 'config.aed.selected_chips' | translate }}</span>
+          <div class="chips__list">
+            @for (country of selectedCountries(); track country.code) {
+              <sc-chip [label]="country.flag + ' ' + country.name + ' ' + country.prefix" removable [removeAriaLabel]="'common.delete' | translate" (removed)="remove(country.code)" />
+            }
+          </div>
+        </div>
+      }
   </div>
 
+  <!-- Guardar/Descartar van DENTRO de la caja, detrás de un divisor, y no en una banda
+       pegada al filo. La banda era un `card__foot` propio (fondo `bg-default`, borde
+       arriba) del `.card` a mano que esta sección tenía; el divisor es el ritmo que ya
+       usan las tres pantallas de `config/aed` para separar partes dentro de una card, así
+       que separa igual sin inventar un mueble para una sola pantalla.
+
+       El pie no sube al componente del DS a propósito: `sc-section-card` YA tuvo un
+       `__foot` y se borró el 2026-09-09 por no tener usos. Devolvérselo por un consumidor
+       es cómo vuelve la deuda. Esta sección guarda por su cuenta porque vive incrustada en
+       Sistema, que no tiene guardado de página; las de `config/aed` guardan desde la barra
+       de arriba (`#topbarActions`). -->
   @if (dirty()) {
-    <div class="card__foot">
+    <sc-divider />
+    <div class="section-actions">
       <sc-button
         type="button"
         size="sm"
@@ -83,4 +94,4 @@
       </sc-button>
     </div>
   }
-</section>
+</sc-section-card>

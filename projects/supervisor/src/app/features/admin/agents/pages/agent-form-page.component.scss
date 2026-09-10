@@ -214,7 +214,7 @@
 }
 
 /*
- * `.sub-section` — progressive-disclosure block inside the
+ * `.disclosure` — progressive-disclosure block inside the
  * "Configuración avanzada" section card (DD#57). Two variants:
  *   - Flat: a labelled divider that introduces a body always visible.
  *   - Accordion: same head but with a leading chevron + collapsible body
@@ -223,8 +223,22 @@
  * Visual idiom matches the rest of the form's small-caps section-head
  * pattern (uppercase, tracked, --sc-text-subtle) so it reads as a
  * sub-heading inside the parent card rather than a card of its own.
+ *
+ * SE LLAMABA `.sub-section` hasta el 2026-09-10, y ese era el problema: en
+ * `config/aed` `.sub-section` es OTRA cosa —un tramo de formulario dentro de la
+ * card, separado de sus hermanos por un `<sc-divider />` y con el título a
+ * `Body/body-semibold`—, mientras esto es un acordeón con cabecera en
+ * versalitas y separado por un `border-top`. Dos muebles distintos con el mismo
+ * nombre no son una divergencia que unificar: son dos cosas esperando a que
+ * alguien "unifique" la que no debía. La encapsulación de Angular las mantenía
+ * separadas en el navegador, así que nada avisaba; lo que colisionaba era el
+ * VOCABULARIO, que es lo que lee la siguiente persona.
+ *
+ * `audit:screen-vocabulary` lo cazó comparando `.sub-section__title` en las dos
+ * hojas: seis propiedades distintas y ninguna razón, porque no era el mismo
+ * título. Con el nombre propio, las dos reglas dicen la verdad.
  */
-.sub-section {
+.disclosure {
   & + & {
     margin-top: var(--sc-spacing-1-75);
     padding-top: var(--sc-spacing-1-75);
@@ -321,14 +335,14 @@
       margin-top: var(--sc-spacing-1-125);
     }
 
-    /* Spacing between picker-* primitives stacked inside a sub-section
+    /* Spacing between picker-* primitives stacked inside a disclosure
      * (search → list → chips → footnote). */
     > .picker-search + .picker-list,
     > .picker-search + .picker-table-wrap,
     > .tabs + .picker-search,
     > .picker-list + .picker-chips,
-    > .picker-list + .sub-section__footnote,
-    > .picker-chips + .sub-section__footnote {
+    > .picker-list + .disclosure__footnote,
+    > .picker-chips + .disclosure__footnote {
       margin-top: var(--sc-spacing-0-875);
     }
   }
@@ -339,11 +353,11 @@
     color: var(--sc-text-subtle);
   }
 
-  /* "Inset" — soft-bounded sub-block inside a sub-section body.
+  /* "Inset" — soft-bounded sub-block inside a disclosure body.
    * Used by the Sesión > Seguridad cluster to set the password-expire
    * action apart from the toggle above without introducing a new
-   * sub-section divider. Border uses `color-mix` to read lighter than
-   * the cross-sub-section dividers so the hierarchy stays clear. */
+   * disclosure divider. Border uses `color-mix` to read lighter than
+   * the cross-disclosure dividers so the hierarchy stays clear. */
   &__inset {
     margin-top: var(--sc-spacing-1-5);
     padding-top: var(--sc-spacing-1-125);
@@ -385,7 +399,7 @@
 }
 
 /* Narrow field variant — for controls that visually should not span
- * the full sub-section width (e.g. "Chats simultáneos" — a small
+ * the full disclosure width (e.g. "Chats simultáneos" — a small
  * numeric select where stretching to 100% looks excessive). */
 .field--narrow {
   max-width: 200px;
@@ -393,12 +407,12 @@
 
 /*
  * `picker-*` primitives — small, opinionated controls used inside
- * "Configuración avanzada" sub-sections (Agendas list + Plantillas
+ * "Configuración avanzada" disclosures (Agendas list + Plantillas
  * table). Not promoted to `_forms.scss` yet — single consumer; if
  * user-form or group-form pick them up, extract.
  */
 /* `.picker-search` queda como hook posicional / margin para que el
- * `<sc-search size="sm">` se integre dentro del sub-section accordion.
+ * `<sc-search size="sm">` se integre dentro del disclosure accordion.
  * El chrome interno (icon, input, clear) ahora vive en el componente. */
 .picker-search {
   display: block;

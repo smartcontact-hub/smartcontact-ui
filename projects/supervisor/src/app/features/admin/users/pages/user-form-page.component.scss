@@ -36,14 +36,21 @@
 /*
  * `.grid`, `.field`, `.checkbox-grid` (incl. `--services`),
  * `.checkbox-row`, `.pill` (base + `--type` + `--status-*`) are
- * now defined in `src/styles/_forms.scss` (DD#53, DD#56). Local
- * override below: only the `--child` indent modifier and a slightly
- * taller padding (8px vs the global 4px) specific to user-form's
- * permission lists.
+ * now defined in `src/styles/_forms.scss` (DD#53, DD#56).
+ *
+ * Aquí se queda SOLO `--child`, que es de esta pantalla: la sangría del permiso
+ * anidado bajo el suyo.
+ *
+ * ⚠️ El `padding: scale/0-5` que había en la BASE se fue el 2026-09-10. Decía ser
+ * "un pelín más alto (8px contra los 4px globales), específico de las listas de
+ * permisos de user-form", pero agent-form tiene esas mismas listas (grupos,
+ * canales, permisos) y usaba los 4. El mismo mueble con dos densidades y ninguna
+ * razón que las separe: eso no es un ajuste, es deriva. Y re-declarar la BASE es
+ * la forma cara de tenerla, porque lo encapsulado le gana a lo global sin avisar.
+ * El ritmo entre filas lo pone el `gap` de `.checkbox-grid`, no el padding de cada
+ * fila; sumar los dos lo contaba dos veces.
  */
 .checkbox-row {
-  padding: var(--sc-spacing-0-5) 0;
-
   &--child {
     padding-left: var(--sc-spacing-1-75);
   }

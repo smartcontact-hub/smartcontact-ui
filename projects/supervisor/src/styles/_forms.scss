@@ -6,24 +6,120 @@
  * a high-traffic vocabulary (form labels, inputs, errors, the 2-col
  * grid). With Angular's emulated view encapsulation, these globals
  * "fall through" to component templates that use them, since no
- * component re-declares the same class. If a component WANTS to
- * override one of these (e.g. a tighter `.field__input` for a
- * compact form), it can declare `.field__input { … }` locally;
- * Angular scopes that to the component's host attribute, shadowing
- * the global.
+ * component re-declares the same class.
+ *
+ * ⚠️ Y AHÍ ESTÁ LA TRAMPA, medida el 2026-09-10: una regla encapsulada de
+ * componente le gana SIEMPRE a la global, así que re-declarar aquí un nombre
+ * en la hoja de una pantalla no "ajusta" nada — le da a esa pantalla una
+ * medida propia, en silencio y para siempre. Es lo que pasó con `.grid`,
+ * `.field` y `.field__label`: `config/aed` los declaraba otra vez con las
+ * medidas de su maqueta, y los tres formularios de admin se quedaron con las
+ * de aquí. Seis pantallas, dos vocabularios, ningún aviso.
+ *
+ * Si una pantalla necesita de verdad otra medida, NO re-declares el nombre:
+ * dale un modificador (`--dense`) o un nombre propio. Lo vigila
+ * `audit:screen-vocabulary`, que compara propiedad a propiedad contra la hoja
+ * de referencia (`config/aed`).
  *
  * Source of truth for tokens: `src/app/core/tokens/layers/`.
  */
 
 /* ------------------------------------------------------------------ *
+ * Sub-section — un TRAMO dentro de una `sc-section-card`, separado de sus
+ * hermanos por un `<sc-divider />`.
+ *
+ * La pieza que hace que una card `surface="card"` cuadre: el componente sangra
+ * 12.25 el primer hijo de su cabecera (el `Header` 393:12588 se lo pone a sí mismo
+ * dentro del `Block`), así que el CONTENIDO tiene que llevar la misma sangría o el
+ * título queda 12.25 a la derecha de todo lo demás. Los DIVISORES no la llevan: cruzan
+ * la caja entera.
+ * ------------------------------------------------------------------ */
+.sub-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-875);
+
+  /*
+   * El CONTENIDO va 12.25 (`scale/0-875`) más adentro que el borde de la caja; los DIVISORES no.
+   * Es el patrón de la maqueta: el `Block` pone su padding y cada sección de dentro añade su
+   * propio 12.25 lateral (393:12592, 393:12610, 393:12647), mientras las líneas de separación
+   * cruzan el ancho entero. La cabecera de la card lleva el mismo 12.25 desde el componente, así
+   * que título y contenido arrancan en la misma vertical.
+   *
+   * Vive en la hoja GLOBAL, y ha ido subiendo por el mismo motivo dos veces: primero de la hoja
+   * de Agentes a la de las tres pantallas AED (2026-09-09, allí solo la veía Agentes y Servicio
+   * y Grupos se quedaban 12.25 fuera de línea), y de ahí aquí (2026-09-10, cuando `sistema-page`
+   * pasó a `sc-section-card` y le pasó exactamente lo mismo). La encapsulación de Angular es por
+   * componente: una hoja de pantalla no puede ser el hogar de algo que usan varias.
+   */
+  margin-inline: var(--sc-spacing-0-875);
+
+  &__head {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+  }
+
+  /* Los tres ejes de `Body/body-semibold` por su token de rol (= lo que resuelve
+   * `.sc-text-body-semibold`). El `line-height: 22px` literal se va: era un
+   * número a mano que no salía de ningún peldaño del sistema. Se queda aquí en
+   * vez de como clase porque `sub-section__title` tiene 8 usos en 3 pantallas;
+   * cuando se barran, la clase entra sin mover un píxel. */
+  &__title {
+    margin: 0;
+    font-size: var(--sc-font-size-body-2);
+    line-height: var(--sc-line-height-body-2);
+    font-weight: var(--sc-font-weight-semibold);
+    color: var(--sc-text-primary);
+  }
+
+  &__hint {
+    margin: 0;
+    font-size: var(--sc-font-size-caption);
+    line-height: var(--sc-line-height-caption);
+    color: var(--sc-text-subtle);
+  }
+}
+
+
+/* ------------------------------------------------------------------ *
  * Form grid — 2-column layout shared across every form page.
+ *
+ * Las dos separaciones son las de la MAQUETA, no un valor redondo: 24.5
+ * (`scale/1-75`) entre columnas —la única atada a variable en esas filas de
+ * Figma— y 12.25 (`scale/0-875`) entre filas. Nodos: `row` 2286:5408 y
+ * `container` 2286:5407 (Grupos), 2286:5581 y 2286:5558 (Servicio).
+ *
+ * ⚠️ Aquí había un `gap: 15.75` a los dos ejes, y esa era la deriva: las tres
+ * pantallas de `config/aed` declaraban su PROPIA `.grid` con las medidas de la
+ * maqueta, y los tres formularios de admin usaban esta con 15.75/15.75. El
+ * mismo nombre, la misma fila de dos columnas, dos medidas. Nadie las cruzaba
+ * hasta `audit:screen-vocabulary` (2026-09-10). Un nombre, un hogar.
  * ------------------------------------------------------------------ */
 .grid {
   display: grid;
-  gap: var(--sc-spacing-1-125);
+  column-gap: var(--sc-spacing-1-75);
+  row-gap: var(--sc-spacing-0-875);
 
   &--2 {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  /*
+   * La variante 70/30 de la maqueta: 578.5 + 24.5 + 214 sobre los 817 útiles. La usan
+   * "Recepción de conversaciones" (2286:5581) y las dos filas de URL de "Notificaciones"
+   * (2286:5558) — un campo ancho a la izquierda y una columna estrecha de opciones a la
+   * derecha.
+   */
+  &--wide-narrow {
+    grid-template-columns: minmax(0, 578.5fr) minmax(0, 214fr);
+  }
+}
+
+@media (max-width: 720px) {
+  .grid--2,
+  .grid--wide-narrow {
+    grid-template-columns: 1fr;
   }
 }
 
@@ -36,6 +132,16 @@
 .field {
   display: flex;
   flex-direction: column;
+  /* El aire etiqueta→control lo pone el `gap` del campo, no un `margin-bottom`
+   * en la etiqueta: así una etiqueta que envuelve o que lleva un icono al lado
+   * no cambia la distancia. 7 = `scale/0-5`. */
+  gap: var(--sc-spacing-0-5);
+  min-width: 0;
+
+  &--full {
+    flex: 1 1 100%;
+    width: 100%;
+  }
 
   &--inline {
     flex-direction: row;
@@ -44,13 +150,31 @@
     margin-top: var(--sc-spacing-0-875);
   }
 
+  /*
+   * Los tres ejes son los del text style `Caption/caption-regular` del Figma del DS,
+   * leídos por su token de ROL: es exactamente lo que resuelve la clase
+   * `.sc-text-caption-regular`. El peso es `caption` (400) y no `medium` (500) porque el
+   * text style es Regular: la jerarquía de una etiqueta la da su tamaño, no engordarla.
+   *
+   * ⚠️ Esta hoja decía 12/500 sin `line-height` y con `margin-bottom: 2px`, mientras
+   * `config/aed` decía 12/400 con el `line-height` del rol. Era la MISMA etiqueta —29
+   * usos en 7 pantallas— contada de dos maneras. Es el «barrido global de la
+   * tipografía» que los hand-offs del 2026-09-09 y 2026-09-10 dejaban pendiente.
+   */
   &__label,
   &__label-inline {
-    font-size: var(--sc-font-size-100);
-    font-weight: var(--sc-font-weight-medium);
+    display: inline-flex;
+    align-items: center;
+    gap: var(--sc-spacing-0-5);
+    font-size: var(--sc-font-size-caption);
+    line-height: var(--sc-line-height-caption);
+    font-weight: var(--sc-font-weight-caption);
     color: var(--sc-text-secondary);
-    margin-bottom: 2px;
   }
+
+  /* `__info` y `__suffix` NO suben con el resto: cero plantillas los usan (el sufijo
+   * que sí se ve —"píxeles", "segundos"— es `.inline-field__suffix`, que vive con su
+   * campo). Subirlos habría cambiado dos rules muertas de sitio en vez de borrarlas. */
 
   &__required {
     color: var(--sc-text-danger);
@@ -63,37 +187,30 @@
     font-weight: var(--sc-font-weight-regular);
   }
 
-  &__input {
-    padding: var(--sc-spacing-0-5) var(--sc-spacing-0-875);
-    font-family: inherit;
-    font-size: var(--sc-font-size-200);
-    color: var(--sc-text-primary);
-    background: var(--sc-bg-surface);
-    border: 1px solid var(--sc-border-default);
-    border-radius: var(--sc-radius-100);
-    outline: none;
-    transition: border-color var(--sc-transition-fast) var(--sc-easing-default);
+  /* `.field__input` (el `<input>` a pelo, con su borde, su foco y su variante de error)
+   * se fue el 2026-09-10: CERO plantillas del supervisor lo usaban. Los controles pasaron
+   * a `sc-inputtext` / `sc-select` / `sc-inputnumber` en el `7470fdc` («51 controles a
+   * mano pasan a componentes») y la regla se quedó aquí, y otra copia con OTRAS medidas
+   * en la hoja de `config/aed`. Dos definiciones muertas del mismo campo son la deriva en
+   * su forma más pura: nadie las mira, y la primera que alguien reviva será la que tenga
+   * más a mano. El control lo pone el DS. */
 
-    &::placeholder {
-      color: var(--sc-text-subtle);
-    }
-
-    &:hover {
-      border-color: var(--sc-border-strong);
-    }
-
-    &:focus {
-      border-color: var(--sc-color-blue-500);
-    }
-
-    &--error,
-    &--error:hover,
-    &--error:focus {
-      border-color: var(--sc-border-error, var(--sc-text-danger));
-    }
-  }
-
+  /*
+   * `display: block` — la ayuda va DEBAJO de su etiqueta, no pegada detrás.
+   *
+   * Cuatro de sus cinco usos son `<span>` dentro de un `<div>` liso, junto a un
+   * `<span class="field__label-inline">`: dos elementos en línea, así que se leían
+   * seguidos en la MISMA frase —«Tipificación obligatoria El agente debe categorizar la
+   * conversación antes de cerrarla»— y el `margin-top` de aquí no hacía nada, porque en un
+   * elemento en línea el margen vertical no empuja. Medido en el navegador el 2026-09-10,
+   * en el formulario de grupo.
+   *
+   * Es ANTERIOR a la unificación del vocabulario (comprobado en `git show HEAD`: la regla
+   * tampoco declaraba `display`), y se arregla aquí porque es el mismo mueble: etiqueta
+   * arriba, ayuda debajo, que es como lo apila la referencia en `switch-field__copy`.
+   */
   &__help {
+    display: block;
     margin-top: var(--sc-spacing-0-25);
     font-size: var(--sc-font-size-50);
     color: var(--sc-text-subtle);

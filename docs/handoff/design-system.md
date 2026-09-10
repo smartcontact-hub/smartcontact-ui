@@ -15,6 +15,132 @@
 > coordine. Los `sNN` de los tramos viejos se quedan como están: los nombran commits y
 > `docs/DECISIONS.md`, y reescribirlos solo desincronizaría el doc de su propia historia.
 
+## ✅ 2026-09-10 · Un nombre, un hogar: el vocabulario de dentro de la pantalla deja de tener dos versiones
+
+**Sello:** DD-65. `npm run verify` VERDE (38 gates — el nuevo entra en la cadena). Gate nuevo
+`audit:screen-vocabulary` **validado con el fallo puesto, en CINCO ejes y en las dos direcciones**
+(ver abajo). Medido en el navegador sobre MI build, a 1440: el formulario de admin y la referencia
+de `config/aed` dan las MISMAS cifras. Veredicto del CI por `npm run ci:verdict` al fundir.
+
+**De dónde sale.** Rafa: los tres flujos de `config/aed` son ya la referencia; llevar ese estilo al
+resto de la app. Y una forma de trabajar: **medir primero y sin tocar**, triar contra DD-36 antes
+de arreglar, arreglar por tandas con su medición antes y después, y **dejar el barrido de gate** —
+`audit:page-anatomy` vigila el esqueleto y lo de dentro no lo miraba nadie.
+
+**LO QUE SALIÓ AL MEDIR** (barrido estático, 61 hojas, antes de tocar nada):
+
+| Nombre | Referencia (`config/aed`) | La otra hoja (`styles/_forms.scss`) |
+| --- | --- | --- |
+| `.grid` | `column-gap` 24.5 · `row-gap` 12.25 | `gap` **15.75** a los dos ejes |
+| `.field` | `gap` 7 · `min-width: 0` | ninguno de los dos |
+| `.field__label` | 12 / **400** / `line-height` del rol | 12 / **500** / sin `line-height` / `mb: 2px` |
+| `.grid--2` | idéntico | idéntico — la duplicación es lo que sobra |
+| `.checkbox-row` | — | 3.5 aquí, **7** re-declarado en `user-form` |
+| `.sub-section__title` | `Body/body-semibold` | versalitas 12/600 `subtle` en `agent-form` |
+
+Seis nombres con DOS hogares. Y tres pantallas con su propia caja a mano (`sistema-page`,
+`numeracion-especial-section`, `rule-builder`) haciendo el trabajo de `sc-section-card`.
+
+**EL TRIAJE, que es lo que Rafa pidió antes de tocar.** Las SIETE de DD-36 son divergencias de
+**interacción** (fondo por arquetipo, confirmación destructiva asimétrica, empty state de contact
+center, rail de 235 de AED, puerta tecleada de la re-transcripción, sin acción primaria en
+transcripciones, `<h1>` visible en AED). **Ninguna de las seis medidas está entre ellas**: DD-36 no
+cubre el vocabulario de composición. O sea, cero falsos positivos contra DD-36 y seis derivas
+reales. La única que SÍ era deliberada —el `padding` de `.checkbox-row` en `user-form`, con su
+motivo escrito al lado— **no se sostuvo al mirarla**: decía ser «específico de las listas de
+permisos de user-form» y `agent-form` tiene esas mismas listas con el otro valor.
+
+**Y una que no era divergencia sino COLISIÓN DE NOMBRE**: `.sub-section` es un tramo separado por
+`<sc-divider />` en AED y un acordeón de versalitas separado por `border-top` en `agent-form`. Dos
+muebles, un nombre. Se renombra el de admin a `.disclosure` — unificarlos habría sido el error que
+el barrido venía a evitar.
+
+**LAS TANDAS, cada una con su medición.**
+
+1. **El vocabulario vuelve a un solo hogar** (`styles/_forms.scss`, con los valores de la maqueta).
+   Gate: 6 nombres con dos hogares → **0**. Navegador, formulario de grupo: `.grid` 24.5/12.25,
+   `.field` gap 7 / `min-width` 0, `.field__label` 12/400/18 y `margin-bottom` 0 — **las mismas
+   cifras que la referencia**. Las tres pantallas AED no se mueven: la global pasa a decir lo que
+   ellas decían.
+2. **La caja de sección la pone el DS.** `sistema-page` (5 cards) y `numeracion-especial-section`
+   pasan a `sc-section-card surface="card"`. Medido: radio 12, borde 1, **sin sombra**, cabecera
+   24.5/24.5/16/24.5, **sin línea bajo el título**, cuerpo 0/24.5/24.5/24.5 — el maestro exacto.
+   El acordeón de «Regeneración» es el `collapsible` del componente, no un botón a mano (se van
+   `regenOpen`, `toggleAccordion` y los dos chevrons del `.ts`).
+3. **`rule-builder`**: la caja se iguala al maestro (padding 31.5 → 24.5, cabecera→cuerpo 21 → 16;
+   el radio ya coincidía). La CABECERA se queda a mano, con su motivo, en el trinquete — ver abajo.
+
+**DOS DEFECTOS QUE APARECIERON AL MIRAR, y se arreglan en la misma pasada:**
+
+- **El botón «Eliminar» del rail estaba DUPLICADO, con un `|` literal entre las dos copias**, en
+  los tres formularios de admin. Sale del `7470fdc` («64 botones y 51 controles a mano pasan a
+  componentes»): la reescritura en masa emitió el reemplazo dos veces y nadie diffeó. Es
+  `LEARNINGS` **#12** literal, a la vista en tres pantallas desde el 2026-09-05. El censo de
+  `audit:components` lo confirma solo: `sc-button` 125 → **122**.
+- **La ayuda de un campo se leía pegada a su etiqueta**, en la misma frase: «Tipificación
+  obligatoria El agente debe categorizar la conversación antes de cerrarla». `.field__help` y
+  `.field__label-inline` eran dos `<span>` sin `display` dentro de un `<div>` liso, así que el
+  `margin-top` de la ayuda no empujaba nada. **Es anterior a este trabajo** (comprobado en
+  `git show HEAD`, no deducido).
+
+**Y UN FALLO MÍO, contado porque la clase se repite.** Al convertir `sistema-page` dejé el título
+sangrado 12.25 y el contenido no — medido en el navegador: título a 37.75 del filo, contenido a
+25.5. La sangría del contenido la pone `.sub-section`, que **vivía en la hoja de las tres pantallas
+AED**, y la encapsulación de Angular es por componente: Sistema no podía verla. Es la MISMA causa
+que el 2026-09-09 movió esa clase de la hoja de Agentes a la de AED, un escalón más arriba. Ahora
+está en la global. Lo cazó medir después de convertir, no antes de dar por bueno.
+
+**EL GATE — `audit:screen-vocabulary`, en `verify` (37 → 38 gates).** Tres cosas: (1) un nombre, un
+hogar, y el informe enseña la diferencia **propiedad a propiedad**; (2) una sección de campos usa
+`sc-section-card` y no una caja a mano; (3) lo deliberado se declara con su motivo.
+
+**El canon NO se copia en el gate: se LEE de la hoja de referencia en cada ejecución.** Duplicar
+los valores ahí sería la misma clase de fallo que el gate persigue (es lo que enseñó
+`emit-consumer-typography`: leer la lista del preset en vez de repetirla).
+
+**Validado con el fallo puesto, cinco ejes, y verde de vuelta tras cada uno:**
+
+| Fallo inyectado | Resultado |
+| --- | --- |
+| Una pantalla re-declara `.grid` con otra medida | ROJO, y nombra `column-gap: 24.5 ≠ 15.75` |
+| Vuelve una caja a mano a `sistema-page` | ROJO por el trinquete |
+| Una entrada del trinquete se queda sin motivo | ROJO (DD-36 aplicado: sin motivo no entra nadie) |
+| El trinquete avanza y nadie borra su entrada | ROJO (muerde en las dos direcciones) |
+| `VOCABULARIO` cita un nombre que ya no declara nadie | ROJO |
+
+**Tres trampas del propio gate, medidas al construirlo** (las tres estaban dando falsos verdes o
+ruido, y las tres tienen test):
+
+1. **El selector escrito en LISTA** (`&__label, &__label-inline`) se perdía ENTERO, y con él la
+   divergencia más repetida del repo — `.field__label`, 29 usos en 7 pantallas. Un gate que no ve
+   la mitad de la sintaxis dice «verde» sobre lo que no ha mirado.
+2. **Mirar la caja en TODAS las hojas** daba ocho avisos y cinco eran ruido: un panel lateral, un
+   modal y una tabla son muebles distintos y su caja es suya con razón. Se limita a hojas de
+   PÁGINA y de SECCIÓN.
+3. **Un `\0` donde iba un espacio.** Una edición mía metió un byte NUL en `selector.split(' ')`,
+   así que el split no partía nada — y el síntoma no fue un error sino que `grep` dejó de
+   encontrar texto en el fichero (`file` lo daba por binario). Se vio comparando lo que yo leía
+   con lo que el proceso ejecutaba, no releyendo el código.
+
+**Lo que queda:**
+
+1. **`rule-builder` sigue con su cabecera a mano** (DD-65, en el trinquete con su motivo): dos de
+   sus tres paneles llevan un control de estado a la derecha del título y una descripción de frase
+   entera debajo, y `sc-section-card` no tiene ninguna de las dos cosas. **Darle un slot de
+   acciones y una pista de bloque por UN consumidor sería deformar el DS**, que es la deuda que
+   este barrido vino a quitar. Entra cuando una segunda pantalla lo pida — y entonces su ficha de
+   sc-docs es parte del cambio.
+2. **Los formularios de admin siguen sin maqueta de `sc-section-card`.** Ahora su caja Y su
+   vocabulario beben del DS, pero su CONTENIDO sigue sin estar contrastado contra ningún nodo.
+3. **Decidir si la app viva lleva un aviso** que apunte a `docs/PROTOTIPOS.md` (DD-56).
+4. **Todavía no hay ninguna versión congelada.** La primera la congela Rafa al entregar.
+
+⚠️ El barrido cubre las **nueve pantallas de formulario/ajustes**. Las nueve de LISTA y el hub
+quedan fuera **por arquetipo**, no por olvido: son tabla y tarjetas, y su gramática ya la vigilan
+`audit:datatables` y `e2e/supervisor/list-table-grammar.spec.ts`.
+
+---
+
 ## ✅ 2026-09-10 · Los cinco sitios de Cloudflare se escriben UNA vez, y un test dice si falta alguno
 
 **Sello:** pendiente de PR. `npm run test:unit` VERDE (339/339, 7 tests nuevos). `SITIOS` y
