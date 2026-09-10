@@ -166,6 +166,12 @@ global de la tipografía» que los hand-offs del 2026-09-09 y del 2026-09-10 dej
 4. **Un gate nuevo, `audit:screen-vocabulary`**, en `verify` (que pasa de 37 a 38 gates). Lee el
    canon de la hoja de referencia EN CADA EJECUCIÓN en vez de copiarlo — duplicar los valores en
    el gate es la misma clase de fallo que el gate persigue.
+5. **El CONTRATO de `surface="card"` deja de ser tradición oral**: quien usa esa caja sangra su
+   contenido con `.sub-section`. Lo añadió el `/reflect` de la misma sesión, después de que ese
+   contrato se me escapara al convertir `sistema-page`: sus cinco cards medían EXACTAS —radio,
+   borde, paddings, todo verde— y el título salía a 37.75 del filo con el contenido a 25.5. Medir
+   la caja no basta; hay que medir la RELACIÓN entre la caja y lo que proyecta. Lo cazó una
+   captura y una medición, no el verde de la caja, y ahora es la cuarta comprobación del gate.
 
 **Razón** · Una regla encapsulada de componente le gana siempre a una global, así que
 re-declarar un nombre en la hoja de una pantalla no "ajusta" nada: le da a esa pantalla una
