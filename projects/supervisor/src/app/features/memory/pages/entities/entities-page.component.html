@@ -33,7 +33,7 @@
           (cta)="onNewEntity()"
         />
       } @else {
-        <!-- La tabla la pinta el componente del DS. `class="list-table"` le pone
+        <!-- La tabla la pinta el componente del DS. `variant="list"` le pone
              la gramática de tabla-lista de la app (54px de fila, cabecera
              silenciosa de S59); sin ella el preset la dejaría más densa y con la
              cabecera oscura, distinta del resto de tablas de la app.
@@ -44,7 +44,7 @@
              tocar esa spec. -->
         <div class="table-card">
           <sc-datatable
-            class="list-table entities-table"
+            variant="list" class="entities-table"
             [value]="userEntities()"
             [columns]="userColumns()"
             dataKey="id"
@@ -77,7 +77,7 @@
            gestos: las system entities son inmutables. -->
       <div class="table-card">
         <sc-datatable
-          class="list-table entities-table entities-table--readonly"
+          variant="list" class="entities-table entities-table--readonly"
           [value]="systemEntities()"
           [columns]="systemColumns()"
           dataKey="id"

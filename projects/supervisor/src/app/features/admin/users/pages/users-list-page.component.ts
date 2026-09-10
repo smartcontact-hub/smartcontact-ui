@@ -306,7 +306,7 @@ export class UsersListPageComponent {
    * renombra, `onRowClick` no abre nada, y un cursor de mano ahí mentiría.
    */
   protected readonly rowStyleClass: ScRowStyleClassFn<User> = (user) =>
-    this.renamingId() === user.id ? undefined : 'table__row--clickable';
+    this.renamingId() === user.id ? undefined : 'sc-row--clickable';
 
   /* Puente de selección: la fuente de verdad sigue siendo `selectedIds` —de
    * ella cuelgan la barra masiva, la edición masiva, el borrado y el export— y
@@ -471,7 +471,7 @@ export class UsersListPageComponent {
         // — "…" significa "esto abre algo antes de hacerlo".
         label: this.translate.instant('common.delete_gate'),
         icon: 'sc-icon-font sc-icon-font--delete',
-        styleClass: 'rules-menu-item--danger',
+        styleClass: 'sc-menu-item--danger',
         command: () => this.onRowDelete(user),
       },
     ];

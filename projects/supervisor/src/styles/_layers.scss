@@ -1,0 +1,33 @@
+/* ------------------------------------------------------------------ *
+ * EL ORDEN DE LAS CAPAS. Se declara aquí, y este partial es el PRIMER
+ * `@use` de `main.scss` a propósito: en CSS el orden de las capas lo fija
+ * la PRIMERA vez que se nombran, así que esta línea tiene que salir en el
+ * bundle antes que cualquier `@layer x { … }`.
+ *
+ *   reset    → el normalize de la app (`_reset.scss`). El más débil: un
+ *              `button { background: none }` genérico no puede ganarle a
+ *              `.p-button`.
+ *   primeng  → el TEMA (el preset del DS). Lo declara también
+ *              `app.config.ts` (`cssLayer.order`), pero eso lo inyecta
+ *              JavaScript DESPUÉS de esta hoja, así que quien manda es esta
+ *              línea.
+ *   app      → las divergencias DELIBERADAS de esta app sobre el tema.
+ *
+ * POR QUÉ EXISTE `app` (2026-09-10). Hasta hoy las divergencias de la app
+ * iban SIN CAPA, y en CSS lo sin-capa gana SIEMPRE a lo en-capa, **sin
+ * mirar especificidad**. O sea que ganaban al tema por reglamento del
+ * cascade, sin decirlo en ninguna parte: nadie podía leer una hoja y saber
+ * si esa regla era una decisión o un accidente. Con una capa propia el
+ * resultado es el MISMO —`app` va después de `primeng`, así que sigue
+ * ganando— pero ahora está declarado. Deja de ser silencioso.
+ *
+ * ⚠️ Lo sin capa sigue ganando a las tres. Una regla que quiera divergir del
+ * tema a propósito va en `@layer app`, no fuera de toda capa: fuera pisa
+ * también a las divergencias declaradas, y ahí ya no hay orden que leer.
+ *
+ * ⚠️ Con `!important` el orden se INVIERTE (gana la capa declarada ANTES, y
+ * lo sin capa pasa a ser lo más débil de ese grupo). No afecta a lo que hoy
+ * hay en `app`: su único `!important` pelea contra declaraciones NORMALES
+ * del tema, y una `!important` gana a una normal esté en la capa que esté.
+ * ------------------------------------------------------------------ */
+@layer reset, primeng, app;

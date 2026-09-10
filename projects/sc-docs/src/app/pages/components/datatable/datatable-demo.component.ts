@@ -90,6 +90,20 @@ protected readonly rowClassFn: ScRowStyleClassFn<Agent> = (agent) =>
   (orderedVisibleChange)="visibleFields.set($event)"
 />`;
 
+const LIST_SNIPPET = `<!-- La gramática de tabla-lista: cabecera silenciosa (12/500 gris, sin fondo),
+     fila alta, hairline \`--sc-border-default\` y reparto de columnas fijo.
+     Es la piel de las nueve tablas de administración del Supervisor.
+
+     La publica el TEMA, no la app: viaja con el preset, así que un consumidor
+     nuevo la pide y le sale igual sin copiar una línea de CSS. Hasta el
+     2026-09-10 vivía como CSS de app y NO viajaba. -->
+<sc-datatable variant="list" [value]="agents()" [columns]="columns()" />
+
+<!-- El hover SOLO si la fila hace algo. Lo dice el consumidor, fila a fila,
+     con la clase del DS \`sc-row--clickable\`; una tabla inerte que se ilumina
+     al pasar el ratón es una afordancia mentirosa. -->
+protected readonly rowClassFn: ScRowStyleClassFn<Agent> = () => 'sc-row--clickable';`;
+
 /** Demo de `sc-datatable` en formato story (motor «Storybook-like»). */
 @Component({
   selector: 'app-datatable-demo',
@@ -102,6 +116,13 @@ export class DatatableDemoComponent {
   protected readonly mvpTpl = viewChild<TemplateRef<StoryContext>>('mvp');
   protected readonly lazyTpl = viewChild<TemplateRef<StoryContext>>('lazy');
   protected readonly gesturesTpl = viewChild<TemplateRef<StoryContext>>('gestures');
+  protected readonly listTpl = viewChild<TemplateRef<StoryContext>>('list');
+
+  /* Propiedad, no método: una flecha nueva por ciclo tira OnPush al suelo (la
+   * misma razón que `rowClassFn` de la story de gestos). `sc-row--clickable` es
+   * la clase del DS que enciende cursor y hover — sin ella la fila no se
+   * ilumina, que es lo correcto en una tabla que no abre nada. */
+  protected readonly listRowClassFn: ScRowStyleClassFn<Agent> = () => 'sc-row--clickable';
 
   protected readonly statusTpl = viewChild<TemplateRef<ScColumnCellContext<Agent>>>('statusTpl');
 
@@ -221,7 +242,7 @@ export class DatatableDemoComponent {
     tag: 'sc-datatable',
     title: 'Datatable',
     description:
-      'Tabla de datos sobre `p-table`. El wrapper aporta la API data-driven (column-defs + `cellTemplate` por columna) y los slots `[scTableCaption]` / `[scTableEmpty]`. Orden y paginación client-side; modo `[lazy]` para server-driven. `header` va ya traducido por el consumidor.',
+      'Tabla de datos sobre `p-table`. El wrapper aporta la API data-driven (column-defs + `cellTemplate` por columna) y los slots `[scTableCaption]` / `[scTableEmpty]`. Orden y paginación client-side; modo `[lazy]` para server-driven. `header` va ya traducido por el consumidor. `variant="list"` enciende la gramática de tabla-lista, que publica el TEMA (viaja con el preset, no con la app).',
     argTypes: [
       { name: 'paginator', control: { kind: 'boolean' } },
       { name: 'rows', control: { kind: 'number', min: 1, max: 20, step: 1 } },
@@ -229,6 +250,7 @@ export class DatatableDemoComponent {
       { name: 'showGridlines', control: { kind: 'boolean' } },
       { name: 'selectionMode', control: { kind: 'select', options: ['single', 'multiple'] } },
       { name: 'size', control: { kind: 'select', options: ['sm', 'md', 'lg'] } },
+      { name: 'variant', control: { kind: 'select', options: ['default', 'list'] } },
       { name: 'loading', control: { kind: 'boolean' } },
     ],
     defaultArgs: {
@@ -238,6 +260,7 @@ export class DatatableDemoComponent {
       showGridlines: false,
       selectionMode: 'multiple',
       size: 'md',
+      variant: 'default',
       loading: false,
     },
     props: [
@@ -251,6 +274,13 @@ export class DatatableDemoComponent {
       { name: 'selection', type: 'T | T[] | null', default: 'null', description: 'Selección two-way.' },
       { name: 'sortField', type: 'string', default: '—', description: 'Orden inicial (client-side).' },
       { name: 'size', type: 'ScComponentSize', default: "'md'", description: 'sm · md · lg' },
+      {
+        name: 'variant',
+        type: 'ScDatatableVariant',
+        default: "'default'",
+        description:
+          'Piel de la tabla. `list` enciende la GRAMÁTICA DE TABLA-LISTA que publica el tema: cabecera silenciosa sin fondo, fila alta, hairline y `table-layout: fixed`. Opt-in a propósito — una tabla que no es una lista de administración se queda en `default`.',
+      },
       { name: 'stripedRows', type: 'boolean', default: 'false' },
       { name: 'showGridlines', type: 'boolean', default: 'false' },
       { name: 'scrollable', type: 'boolean', default: 'false' },
@@ -273,15 +303,17 @@ export class DatatableDemoComponent {
     const mvp = this.mvpTpl();
     const lz = this.lazyTpl();
     const gs = this.gesturesTpl();
+    const ls = this.listTpl();
     const st = this.statusTpl();
     // `st` (statusTpl) alimenta `columns()`; espera a que resuelva para no
     // pintar la story MVP con la columna de estado sin su cellTemplate.
-    if (!pg || !mvp || !lz || !gs || !st) return [];
+    if (!pg || !mvp || !lz || !gs || !ls || !st) return [];
     return [
       { name: 'Playground', playground: true, template: pg },
       { name: 'Columnas, selección múltiple y paginador', template: mvp, snippet: MVP_SNIPPET },
       { name: 'Lazy (server-driven): paginación + orden + filtro global', template: lz, snippet: LAZY_SNIPPET },
       { name: 'Gestos de fila y columnas conmutables', template: gs, snippet: GESTURES_SNIPPET },
+      { name: 'variant="list" · la gramática de tabla-lista', template: ls, snippet: LIST_SNIPPET },
     ];
   });
 }

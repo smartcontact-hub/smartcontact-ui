@@ -182,10 +182,10 @@ export class CategoriesPageComponent {
     },
   ]);
 
-  /** Clases por fila. `table__row--clickable` (cursor) lo pinta la piel
+  /** Clases por fila. `sc-row--clickable` (cursor) lo pinta la piel
    *  `.list-table`; `--inactive` es de esta página. */
   protected readonly rowStyleClass: ScRowStyleClassFn<Category> = (cat) =>
-    cat.isActive ? 'table__row--clickable' : 'table__row--clickable categories-row--inactive';
+    cat.isActive ? 'sc-row--clickable' : 'sc-row--clickable categories-row--inactive';
 
   /** Enter sobre la fila abre la edición, igual que el clic. Se ignora cuando
    *  el foco está en un control DENTRO de la fila (el nombre, el kebab): esos
@@ -249,7 +249,7 @@ export class CategoriesPageComponent {
       {
         label: this.translate.instant('common.delete'),
         icon: 'sc-icon-font sc-icon-font--delete',
-        styleClass: 'rules-menu-item--danger',
+        styleClass: 'sc-menu-item--danger',
         command: () => this.confirmDelete(cat),
       },
     ];

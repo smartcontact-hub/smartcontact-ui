@@ -203,7 +203,7 @@ export class ConversationTableComponent {
    * rango sin depender de ese detalle. Se re-evalúa porque `[selection]` cambia
    * y con él se re-renderiza la tabla. */
   protected readonly rowStyleClass: ScRowStyleClassFn<Conversation> = (conv) => {
-    const clases = ['table__row--clickable'];
+    const clases = ['sc-row--clickable'];
     if (this.selectedIds().has(conv.id)) clases.push('is-selected');
     if (conv.deleted) clases.push('is-deleted');
     if (this.processingIds().has(conv.id)) clases.push('is-processing');

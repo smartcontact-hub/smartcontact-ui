@@ -172,8 +172,8 @@ export class RulesPageComponent {
 
   /** La fila abre la regla, y el cursor tiene que decirlo. Vive aquí y no en el
    *  SCSS de la página porque el `<tr>` lo pinta el DS; `.list-table` define
-   *  `table__row--clickable`. Es constante: no lee ninguna señal. */
-  protected readonly rowClass: ScRowStyleClassFn<Rule> = () => 'table__row--clickable';
+   *  `sc-row--clickable`. Es constante: no lee ninguna señal. */
+  protected readonly rowClass: ScRowStyleClassFn<Rule> = () => 'sc-row--clickable';
 
   protected readonly menuTargetRule = signal<Rule | null>(null);
 
@@ -309,7 +309,7 @@ export class RulesPageComponent {
       {
         label: this.translate.instant('common.delete'),
         icon: 'sc-icon-font sc-icon-font--delete',
-        styleClass: 'rules-menu-item--danger',
+        styleClass: 'sc-menu-item--danger',
         command: () => this.confirmDelete(rule),
       },
     ];

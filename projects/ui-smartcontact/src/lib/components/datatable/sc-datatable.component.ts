@@ -27,6 +27,19 @@ import {
 } from '../../core/types/datatable.types';
 import { ScComponentSize } from '../../core/types/theme-component.types';
 
+/**
+ * Piel de la tabla. `list` es la GRAMÁTICA DE TABLA-LISTA de administración
+ * (cabecera silenciosa sin fondo, fila alta, hairline `border-default`,
+ * `table-layout: fixed`). La publica el TEMA —`sc-preset/css.ts`—, así que
+ * viaja con él: un consumidor nuevo pide `variant="list"` y le sale la misma
+ * tabla sin copiar una línea de CSS.
+ *
+ * Es opt-in a propósito: `default` deja la tabla del preset tal cual, que es lo
+ * que quiere una tabla que NO es una lista de administración (la de llamadas
+ * del Comunicador, por ejemplo).
+ */
+export type ScDatatableVariant = 'default' | 'list';
+
 /** Mapa de filtros de p-table (por campo + `global`). */
 export type ScDatatableFilters = Record<string, FilterMetadata | FilterMetadata[]>;
 
@@ -64,6 +77,9 @@ export interface ScDatatableSortEvent {
   templateUrl: './sc-datatable.component.html',
   styleUrl: './sc-datatable.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
+  host: {
+    '[class.sc-datatable--list]': "variant() === 'list'",
+  },
 })
 export class ScDatatableComponent<T = unknown> {
   readonly value = input<readonly T[]>([]);
@@ -94,6 +110,13 @@ export class ScDatatableComponent<T = unknown> {
   readonly sortOrder = input<number>(1);
 
   readonly size = input<ScComponentSize>('md');
+
+  /**
+   * Piel de la tabla (`default` | `list`). Ver `ScDatatableVariant`: `list`
+   * enciende la clase de host `sc-datatable--list`, que es el gancho que el
+   * TEMA usa para pintar la gramática de tabla-lista.
+   */
+  readonly variant = input<ScDatatableVariant>('default');
   readonly scrollable = input(false, { transform: booleanAttribute });
   readonly scrollHeight = input<string | undefined>(undefined);
   readonly stripedRows = input(false, { transform: booleanAttribute });

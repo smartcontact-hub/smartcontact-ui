@@ -143,7 +143,7 @@ export class EntitiesPageComponent {
   /** La fila de user entities abre la edición: el cursor tiene que decirlo. La
    *  clase la pinta el DS en el `<tr>`, y la estiliza `_sc-datatable-list.scss`
    *  (global, porque el `<tr>` no lleva el `_ngcontent` de esta página). */
-  protected readonly rowClass: ScRowStyleClassFn<Entity> = () => 'table__row--clickable';
+  protected readonly rowClass: ScRowStyleClassFn<Entity> = () => 'sc-row--clickable';
 
   protected readonly menuTargetEntity = signal<Entity | null>(null);
 
@@ -195,7 +195,7 @@ export class EntitiesPageComponent {
       {
         label: this.translate.instant('common.delete'),
         icon: 'sc-icon-font sc-icon-font--delete',
-        styleClass: 'rules-menu-item--danger',
+        styleClass: 'sc-menu-item--danger',
         command: () => this.confirmDelete(entity),
       },
     ];

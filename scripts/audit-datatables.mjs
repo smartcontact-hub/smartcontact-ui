@@ -106,10 +106,17 @@ for (const f of htmls) {
   const donde = f.replace(`${APP}/app/`, '');
 
   /* 1 · La piel. Sin ella la tabla no se parece a las otras: filas de 42px
-   *     contra 54, cabecera 14px/600 contra 12px/500. */
+   *     contra 53, cabecera 14px/600 contra 12px/500.
+   *
+   *     ⚠️ El gancho cambió el 2026-09-10: era `class="list-table"` (una clase
+   *     de la APP, definida en un partial del supervisor) y es
+   *     `variant="list"` (una entrada del componente del DS, cuya piel publica
+   *     el TEMA). El motivo es de alcance, no de estilo: con la clase, la piel
+   *     no viajaba — exportabas el tema, lo montabas en otra app y la tabla
+   *     revertía al preset sin que fallara un test. */
   for (const etiqueta of html.match(/<sc-datatable[\s\S]*?>/g) ?? []) {
-    if (!/class="[^"]*\blist-table\b/.test(etiqueta)) {
-      fallo(donde, '<sc-datatable> sin class="list-table"', 'sin la piel la tabla no se parece a las demás (fila de 42px en vez de 54)');
+    if (!/variant="list"/.test(etiqueta)) {
+      fallo(donde, '<sc-datatable> sin variant="list"', 'sin la piel la tabla no se parece a las demás (fila de 42px en vez de 53)');
     }
   }
 
@@ -158,7 +165,7 @@ for (const f of htmls) {
   if (!ruta) {
     fallo(donde, 'no consigo deducir su ruta desde los *.routes.ts', 'compruébalo a mano contra e2e/supervisor/list-table-grammar.spec.ts');
   } else if (!spec.includes(ruta)) {
-    fallo(donde, `su ruta ("${ruta}") no está en list-table-grammar.spec.ts`, 'el guardián de la piel pasa en verde SIN VISITAR la página');
+    fallo(donde, `su ruta ("${ruta}") no está en list-table-grammar.spec.ts`, 'el guardián de la gramática pasa en verde SIN VISITAR la página');
   } else if (/\(rowClick\)/.test(html) && !new RegExp(`ABREN_FILA[\\s\\S]*?${ruta}`).test(spec)) {
     fallo(donde, `la fila abre pero "${ruta}" no está en ABREN_FILA`, 'quedan sin comprobar el cursor, el tabindex y la apertura por teclado');
   }
