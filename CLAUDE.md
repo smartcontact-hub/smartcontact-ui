@@ -9,9 +9,10 @@ del trabajo con agentes están en [AGENTS.md](AGENTS.md): léelas antes de tocar
 - **La guía que se impone sola** vive en `.claude/settings.json` → `scripts/hooks/`. El hook de
   Bash deniega, con la regla como motivo, los cinco comandos de LEARNINGS #7 #11 #12 (push sin
   preflight sobre ESTE árbol, `echo $?` colgado, volcar credenciales, `git diff main...rama`,
-  `for f in $VAR`). El de Stop exige leer el CI tras un push (`npm run ci:verdict`). El de
-  compactación avisa si la guía cambió en `origin/main`. El de cada mensaje de Rafa apunta lo que
-  suena a corrección y te pide nombrar la regla que ya lo cubría. Salida explícita: `# sc:ok`.
+  `for f in $VAR`). El de Stop exige leer el CI tras un push (`npm run ci:verdict`) y, si
+  reflexionaste, que cada corrección lleve ruta. El de compactación avisa si la guía cambió en
+  `origin/main`. El de cada mensaje de Rafa apunta lo que suena a corrección y te pide nombrar la
+  regla que ya lo cubría; un cierre («cerramos») invoca `/reflect`. Salida explícita: `# sc:ok`.
 
 <!-- tarjeta:inicio -->
 ## Antes de AFIRMAR, COMMITEAR o PUSHEAR, relee esto (regla de LEARNINGS entre paréntesis)
