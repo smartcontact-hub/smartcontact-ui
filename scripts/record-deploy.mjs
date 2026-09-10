@@ -22,17 +22,17 @@
  */
 import { pathToFileURL } from 'node:url';
 
+import { SITIOS as CATALOGO } from './cf-sites.mjs';
+
 const REPO = process.env.GITHUB_REPOSITORY ?? 'smartcontact-hub/smartcontact-ui';
 const TOKEN = process.env.GITHUB_TOKEN ?? '';
 const API = 'https://api.github.com';
 
-export const SITIOS = [
-  { entorno: 'sc-docs', url: 'https://sc-doc.pages.dev' },
-  { entorno: 'supervisor', url: 'https://sc-supervisor.pages.dev' },
-  { entorno: 'agent', url: 'https://sc-agent.pages.dev' },
-  { entorno: 'cuscare', url: 'https://sc-cuscare.pages.dev' },
-  { entorno: 'agent-mini', url: 'https://agent-mini.pages.dev' },
-];
+/**
+ * Los sitios que se comprueban, derivados del catálogo único de `cf-sites.mjs` (el mismo del que
+ * sale la lista que audita `audit-cf-config.mjs`): el entorno de GitHub es la app del repo.
+ */
+export const SITIOS = CATALOGO.map(({ app, url }) => ({ entorno: app, url }));
 
 // Cloudflare NO los construye en paralelo: medido el 2026-09-10 sobre 87 builds seguidos de la
 // cuenta, la concurrencia máxima observada fue **1**. Construir cada sitio cuesta ~70 s, pero

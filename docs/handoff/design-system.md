@@ -15,6 +15,43 @@
 > coordine. Los `sNN` de los tramos viejos se quedan como están: los nombran commits y
 > `docs/DECISIONS.md`, y reescribirlos solo desincronizaría el doc de su propia historia.
 
+## ✅ 2026-09-10 · Los cinco sitios de Cloudflare se escriben UNA vez, y un test dice si falta alguno
+
+**Sello:** pendiente de PR. `npm run test:unit` VERDE (339/339, 7 tests nuevos). `SITIOS` y
+`PROYECTOS` comprobados **idénticos** a las listas de antes, campo a campo y en el mismo orden.
+`npm run audit:cf-config` VERDE contra los cinco proyectos reales, medido hoy con el nuevo
+origen de la lista, y `record-deploy.mjs --dry-run` sondeando los cinco sitios. Veredicto del CI
+por `npm run ci:verdict` al fundir.
+
+**De dónde sale.** Los cinco sitios vivían en DOS listas: `SITIOS` en `record-deploy.mjs`
+(entorno + url) y `PROYECTOS` en `audit-cf-config.mjs` (app + proyecto + script). Una sexta app,
+o una url que cambia, había que apuntarla en los dos ficheros, y lo único que vigilaba la
+desalineación era un `assert` que cruzaba las dos listas entre sí (DD-64) — es decir, cazaba que
+se te olvidara la segunda, pero **no que se te olvidaran las dos**: una app nueva desplegada en
+Cloudflare y ausente de ambas listas pasaba sin que nada dijera nada.
+
+**Qué se hizo.** Una fila por sitio, con sus cuatro datos, en `scripts/cf-sites.mjs`; los dos
+scripts DERIVAN de ella y no cambian de comportamiento — lo que cambia es de dónde leen:
+
+| Antes | Ahora |
+| --- | --- |
+| `SITIOS` escrito en `record-deploy.mjs` | `CATALOGO.map(({ app, url }) => ({ entorno: app, url }))` |
+| `PROYECTOS` escrito en `audit-cf-config.mjs` | `SITIOS.map(({ app, proyecto, script }) => …)` |
+| Cruce entre las dos listas | Estructural: las dos salen de la misma |
+
+Y el guardián que faltaba, en `desalineadas()` (`scripts/__tests__/cf-sites.test.mjs`): contrasta
+el catálogo contra los `build:*` de `package.json` **que terminan en `stamp-build.mjs <app>`**,
+que son las apps que publican `build.json` y por tanto los sitios que hay que registrar y
+auditar. Enrojece en las tres direcciones, cada una con su caso malo fabricado (LEARNINGS #2):
+una sexta app sellada que nadie apuntó, una app del catálogo cuyo script dejó de sellar (el caso
+de DD-59 visto desde el repo) y un sello que pone un script distinto del que el catálogo le
+exige a Cloudflare.
+
+**Por qué contra `stamp-build.mjs` y no contra `projects/`.** Un proyecto de Angular no es un
+sitio: `ui-smartcontact`, `design-tokens` y los iconos se construyen y no se despliegan. Lo que
+distingue a un sitio es exactamente el eslabón que DD-59 puso ahí — si sella, publica marca, y si
+publica marca es que alguien la va a leer.
+
 ## ✅ 2026-09-10 · Servicio y Grupos ya tienen maqueta de la generación NUEVA
 
 **Sello:** las dos maquetas viven en el Figma del Supervisor, sección «Prototipo de limpieza»
