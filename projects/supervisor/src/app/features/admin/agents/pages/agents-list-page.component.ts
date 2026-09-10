@@ -439,7 +439,7 @@ export class AgentsListPageComponent {
    * se renombra en sitio no se marca: ahí el click es del input. */
   protected readonly rowClass = computed<ScRowStyleClassFn<Agent>>(() => {
     const renaming = this.renamingId();
-    return (row) => (row.id === renaming ? undefined : 'table__row--clickable');
+    return (row) => (row.id === renaming ? undefined : 'sc-row--clickable');
   });
 
   protected readonly selectedAgents = computed<readonly Agent[]>(() => {
@@ -591,7 +591,7 @@ export class AgentsListPageComponent {
         // — "…" significa "esto abre algo antes de hacerlo".
         label: this.translate.instant('common.delete_gate'),
         icon: 'sc-icon-font sc-icon-font--delete',
-        styleClass: 'rules-menu-item--danger',
+        styleClass: 'sc-menu-item--danger',
         command: () => this.onRowDelete(agent),
       },
     ];

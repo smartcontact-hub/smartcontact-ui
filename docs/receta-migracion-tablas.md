@@ -52,7 +52,7 @@ coste NO fue la tabla sino un bug latente del DS que la migración destapó:
   producto abierta si se quiere recuperar (haría falta ampliar el hit-area del DS).
 
 Su piel propia (plana, densa, cabecera fija, 4 estados con shimmer) vive en
-`styles/_memory-conversation-table.scss`, por ENCIMA de `.list-table`. Los cinco
+`styles/_memory-conversation-table.scss`, por ENCIMA de la gramática de tabla-lista. Los cinco
 tests de gesto siguen fijando lo mismo, con selectores nuevos y una aserción MÁS
 fuerte (el hueco de la celda no abre nada).
 
@@ -69,7 +69,7 @@ reescribirlo se vio que casi todo lo que comprobaba **no necesitaba el diff**:
 son invariantes del árbol, y un invariante se comprueba siempre, no solo el día
 que migras.
 
-Vigila, en TODA página con `<sc-datatable>`: la piel `list-table` · columnas en
+Vigila, en TODA página con `<sc-datatable>`: la piel `variant="list"` · columnas en
 `computed` y no en campo · plantillas fuera del componente · `<th scope="row">`,
 que el DS no sabe emitir · la columna de acciones con nombre accesible · las
 cabeceras reaccionando al cambio de idioma · y que su ruta esté en el guardián
@@ -89,7 +89,7 @@ lo que cazó la franja de `caption` y las columnas movidas.
 ```html
 <div class="table-card">
   <sc-datatable
-    class="list-table"          <!-- OBLIGATORIO: ver §"la piel" -->
+    variant="list"              <!-- OBLIGATORIO: ver §"la piel" -->
     [value]="sorted()"
     [columns]="columns()"
     dataKey="id"
@@ -160,10 +160,10 @@ página y por eso conservan su encapsulado.
 > igualmente un `cellTemplate` con un `<span>` de clase propia. Sin él, el
 > `<td>` lo pinta el DS y una regla encapsulada en la página no lo alcanza.
 
-## La piel: `class="list-table"` no es opcional
+## La piel: `variant="list"` no es opcional
 
-`styles/_sc-datatable-list.scss`. Sin ella, la tabla migrada **no se parece a
-las que aún no lo están**. Medido antes de migrar labels:
+Sin ella, la tabla migrada **no se parece a las que aún no lo están**. Medido antes de migrar
+labels:
 
 | | preset del DS | `.table` del supervisor |
 |---|---|---|
@@ -172,9 +172,17 @@ las que aún no lo están**. Medido antes de migrar labels:
 | color de cabecera | `#4f5663` | `#8f97a3` (`text-secondary`) |
 | borde de fila | `border-default` | `border-subtle` |
 
-La cabecera silenciosa es decisión de S59, no un descuido. La piel se aplica en
-la app y no en el preset porque el preset viste también la tabla de llamadas de
-`agent`, que no es una tabla-lista de administración.
+La cabecera silenciosa es decisión de S59, no un descuido.
+
+⚠️ **Dónde vive la piel cambió el 2026-09-10, y el gancho con ella.** Era `class="list-table"`, una
+clase de la APP definida en `styles/_sc-datatable-list.scss`; hoy es `variant="list"`, una entrada
+del componente del DS cuya piel publica el TEMA (`sc-preset/css.ts`). El motivo no es de estilo, es
+de alcance: en la app **no viajaba** — exportabas el tema, lo montabas en otro sitio y la tabla
+revertía al preset sin que fallara un test.
+
+La objeción que la mantenía en la app —«el preset viste también la tabla de llamadas de `agent`,
+que no es una tabla-lista de administración»— la responde la variante: no aplica a quien no la
+pide. La clasificación completa está en [`acoplamiento-primeng.md`](./acoplamiento-primeng.md).
 
 ## Las tres trampas que ya mordieron
 
@@ -191,6 +199,11 @@ la app y no en el preset porque el preset viste también la tabla de llamadas de
    apuntara a `.table__td-*` deja de aplicar. Y si la celda ancla un panel
    (editor inline), necesita `position: relative` en el `<td>` — está en la
    piel, no lo repitas por página.
+
+4. **El hover lo enciende la FILA, no la tabla.** La clase por fila es del DS y se llama
+   `sc-row--clickable` (antes `table__row--clickable`, un nombre de la app: el tema no puede
+   depender de él). Se emite desde `[rowStyleClass]` solo en las filas que de verdad abren algo —
+   una tabla inerte que se ilumina al pasar el ratón es una afordancia mentirosa.
 
 ## Verificación — la parte que no se salta
 

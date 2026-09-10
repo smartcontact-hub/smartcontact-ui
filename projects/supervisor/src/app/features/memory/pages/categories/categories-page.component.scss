@@ -111,11 +111,15 @@
   }
 }
 
-/* La fila inactiva se atenúa entera. El `<tr>` lo pinta la plantilla de
- * `sc-datatable`, así que lleva SU `_ngcontent` y una regla encapsulada de esta
- * página no lo alcanza nunca: `::ng-deep` es la única vía sin tocar la piel
- * compartida. Si otra tabla acaba necesitando lo mismo, el sitio es
- * `_sc-datatable-list.scss`, como pasó con `--clickable`. */
-:host ::ng-deep sc-datatable.list-table .p-datatable-tbody > tr.categories-row--inactive {
+/* La fila inactiva se atenúa entera. El `<tr>` lo pinta `p-table`, así que
+ * lleva SU `_ngcontent` y una regla encapsulada de esta página no lo alcanza
+ * nunca: `::ng-deep` es la única vía sin tocar la gramática compartida. Si otra
+ * tabla acaba necesitando lo mismo, el sitio es el TEMA (`sc-preset/css.ts`),
+ * como pasó con `sc-row--clickable`.
+ *
+ * `tbody` y no `.p-datatable-tbody` (2026-09-10): la estructura de una tabla la
+ * garantiza HTML, el nombre de la clase lo garantiza la versión de PrimeNG. Una
+ * dependencia menos por el mismo resultado. */
+:host ::ng-deep sc-datatable tbody > tr.categories-row--inactive {
   opacity: 0.6;
 }

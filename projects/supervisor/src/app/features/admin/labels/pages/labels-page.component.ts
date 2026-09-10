@@ -297,7 +297,7 @@ export class LabelsPageComponent {
         // tecleada — no hay nada que rellenar antes de borrar.
         label: this.translate.instant('common.delete'),
         icon: 'sc-icon-font sc-icon-font--delete',
-        styleClass: 'rules-menu-item--danger',
+        styleClass: 'sc-menu-item--danger',
         command: () => this.onRowDelete(label),
       },
     ];

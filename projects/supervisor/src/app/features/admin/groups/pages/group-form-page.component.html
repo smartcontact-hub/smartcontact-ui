@@ -105,7 +105,7 @@
 
             <div class="grid grid--2">
               <div class="field">
-                <label class="field__label" for="group-phone">
+                <label class="field__label sc-text-caption-regular" for="group-phone">
                   {{ 'groups.form.fields.phone' | translate }}
                 </label>
                 <sc-inputtext
@@ -118,7 +118,7 @@
               </div>
 
               <div class="field">
-                <label class="field__label" for="group-priority">
+                <label class="field__label sc-text-caption-regular" for="group-priority">
                   {{ 'groups.form.fields.priority' | translate }}
                 </label>
                 <sc-select
@@ -143,7 +143,7 @@
                   (checkedChange)="onTypificationChange($event)"
                 />
                 <div>
-                  <span class="field__label-inline">
+                  <span class="field__label-inline sc-text-caption-regular">
                     {{ 'groups.form.fields.typification' | translate }}
                   </span>
                   <span class="field__help">
@@ -182,7 +182,7 @@
           >
             <div class="grid grid--2">
               <div class="field">
-                <label class="field__label" for="group-strategy">
+                <label class="field__label sc-text-caption-regular" for="group-strategy">
                   {{ 'groups.form.fields.phone_strategy' | translate }}
                 </label>
                 <sc-select
@@ -195,7 +195,7 @@
 
               @if (hasChat()) {
                 <div class="field">
-                  <label class="field__label" for="group-chat-strategy">
+                  <label class="field__label sc-text-caption-regular" for="group-chat-strategy">
                     {{ 'groups.form.fields.chat_strategy' | translate }}
                   </label>
                   <sc-select
@@ -209,7 +209,7 @@
 
               @if (hasFixedCapacity()) {
                 <div class="field">
-                  <label class="field__label" for="group-capacity">
+                  <label class="field__label sc-text-caption-regular" for="group-capacity">
                     {{ 'groups.form.fields.capacity' | translate }}
                     <span class="field__hint">({{ 'common.optional' | translate }})</span>
                   </label>

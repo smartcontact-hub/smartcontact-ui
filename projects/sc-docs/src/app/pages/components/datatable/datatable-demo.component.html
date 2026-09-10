@@ -11,8 +11,22 @@
     [stripedRows]="args.stripedRows"
     [showGridlines]="args.showGridlines"
     [size]="args.size"
+    [variant]="args.variant"
     [loading]="args.loading"
   />
+</ng-template>
+
+<ng-template #list>
+  <sc-datatable
+    variant="list"
+    [value]="agents()"
+    [columns]="columns()"
+    [rowStyleClass]="listRowClassFn"
+    dataKey="id"
+    data-testid="sc-datatable-list"
+  >
+    <div scTableEmpty class="dt-empty">No hay agentes</div>
+  </sc-datatable>
 </ng-template>
 
 <ng-template #mvp>

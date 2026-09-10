@@ -15,6 +15,160 @@
 > coordine. Los `sNN` de los tramos viejos se quedan como están: los nombran commits y
 > `docs/DECISIONS.md`, y reescribirlos solo desincronizaría el doc de su propia historia.
 
+## ✅ 2026-09-10 · El tema ya se lleva la pantalla puesta: 26 bloques que no viajaban bajan a 1
+
+**Sello:** pendiente de PR. `npm run verify` VERDE entero (37 gates). `audit:primeng-coupling`
+VERDE con los topes nuevos y **validado con el fallo puesto** (un `.p-inplace-display` de sonda en
+`main.scss` → `app 7/6` y `sin capa 2/1`, rojo por las dos vías; sonda retirada).
+`list-table-grammar` **22/22 antes y 22/22 después**, con los mismos números, corrido de punta a
+punta las dos veces. La suite ENTERA del Supervisor: **147/147**. `component-styles` regenerado y
+el diff es SOLO aditivo (la nueva ancla de la story `variant="list"`): ninguna de las 38 páginas
+del DS movió un valor. Veredicto del CI por `npm run ci:verdict` al fundir.
+
+**De dónde sale.** Rafa: «que el tema se exporte y funcione solo, sin arrastrar nada». El dato de
+partida ya estaba medido y era el que decidía: de las 36 clases internas de PrimeNG que usaba
+nuestro CSS, **26 bloques vivían en el Supervisor SIN CAPA**. Sin capa gana SIEMPRE a
+`@layer primeng`, sin mirar especificidad — o sea que ganaban al tema en silencio. Y lo caro:
+**no viajaban**. Se exporta el tema, se monta en otro sitio y la pantalla revierte al preset —filas
+de 42px, cabecera oscura, botones que no chascan— sin que falle un solo test, porque el
+comportamiento sigue intacto.
+
+**La clasificación, una a una, está en [`docs/acoplamiento-primeng.md`](../acoplamiento-primeng.md).**
+Aquí el resultado:
+
+| | Antes | Después |
+| --- | ---: | ---: |
+| Bloques de app SIN CAPA sobre `.p-*` (supervisor) | **26** | **1** |
+| Clases `.p-*` en SCSS de app (no viaja) | 16 | **6** |
+| Clases `.p-*` en SCSS del DS (viaja) | 20 | 20 |
+| Clases `.p-*` en el preset (viaja, y es su sitio) | 49 · **sin contar** | 56 |
+
+**Lo que subió al tema (DD-66), y por qué cada cosa:**
+
+- **La gramática de tabla-lista** (10 bloques, 6 clases). Es la piel de NUEVE tablas con todos sus
+  valores en token: no es el gusto de una pantalla, es la gramática de la casa. La objeción que la
+  tenía fuera estaba escrita en el propio partial —«tocar el preset cambiaría también la tabla de
+  llamadas de `agent`»— y es cierta para un preset global y FALSA para una variante. Se pide con
+  `<sc-datatable variant="list">`, entrada nueva del componente del DS.
+- **La micro-interacción de botón** (2 bloques). El comentario decía «el tema decide cómo SE VE un
+  botón, esta app decide cómo RESPONDE al dedo». La app puede decidirlo; el problema es que
+  entonces, al exportar el tema, los botones dejan de chascar.
+- **El item de menú destructivo** (4 bloques). «Acción irreversible en un kebab» la tiene cualquier
+  consumidor con una tabla, y los tres valores ya salían de tokens.
+
+**Lo que se queda, y ya no gana en silencio.** La piel de transcripciones de Memory (9 bloques:
+transcribiendo, analizando, fallida, borrada) es semántica de Memory y no del sistema. Se queda —
+pero (1) deja de nombrar `.p-datatable-thead`/`-tbody` y usa `thead`/`tbody`, que los garantiza
+HTML y no los renombra una subida de PrimeNG, y (2) va en **`@layer app`**, declarada después de
+`primeng` en el nuevo `styles/_layers.scss`: sigue ganando al tema, pero por un orden que se puede
+leer. Igual el `.p-popover-content` del switcher de prototipos, que es el único `.p-*` de app que
+queda en `main.scss`.
+
+**Renombrados, porque el tema no puede depender del nombre que se invente una app:**
+`class="list-table"` → `variant="list"` (11 tablas) · `table__row--clickable` → `sc-row--clickable`
+(6 emisores) · `rules-menu-item--danger` → `sc-menu-item--danger` (9 emisores; `rules-` era el
+rastro de la pantalla donde nació).
+
+**Lo que salió por el camino, y es el mejor argumento de todo esto.** Al partir el tope en tres
+hogares hubo que meter el PRESET en el chequeo de huérfanos, que hasta hoy solo miraba SCSS. En su
+primera pasada encontró **dos selectores muertos**: `.p-inputchips` y `.p-inputchips-input-item` en
+`css.ts`. PrimeNG no tiene ningún `inputchips` — ni fichero ni clase, comprobado contra
+`node_modules/primeng/fesm2022`. Llevaban ahí sin que nadie lo viera porque el guardián no miraba
+el fichero donde estaban. Retirados.
+
+**Lo que queda de PRIORIDAD 1, medido y no hecho:**
+
+1. **El toast son 5 de los 6 `.p-*` de app que quedan, y no son custom: son una migración sin
+   hacer.** El DS tiene `<sc-toast>` y el Supervisor **no lo usa** — monta un `<p-toast>` a pelo
+   con su propia plantilla y su partial. Los cinco strips existen para desnudar el toast de
+   PrimeNG. El arreglo de verdad es migrar a `<sc-toast>`, que hoy no proyecta contenido: hay que
+   darle esa API primero. No es un renombrado, es un trabajo.
+2. **Cuatro declaraciones del SCSS del DS repiten un `font-size` que el tema ya publica**
+   (`.p-select-label`, `.p-multiselect-label`, `.p-inputtext` de `sc-inputgroup` y
+   `.p-datepicker-input`, todas md, todas contra `mdControlSelectors` de `css.ts`). Retirarlas no
+   baja el recuento —esas clases se usan también para el padding sm/lg— así que es limpieza, no
+   deuda estructural, y pide `e2e/component-styles.spec.ts` delante para probar que el computado
+   no se mueve.
+3. **`audit-primeng-coupling.mjs` sigue sin test rojo propio** (está en los legados del CHECK O).
+   Se validó a mano con el fallo puesto, y queda escrito arriba; un test lo dejaría vigilado.
+
+---
+
+## ✅ 2026-09-10 · Los 12 estilos de texto, puestos donde de verdad son los 12 (y no donde no lo son)
+
+**Sello:** pendiente de PR (DD-66 cubre el tramo hermano). `audit:text-styles` VERDE en sus tres secciones, incluida la de CAPA
+(ningún `<sc-*>` lleva `.sc-text-*` en su propia etiqueta). Red nueva
+`e2e/supervisor/text-styles-applied.spec.ts` (8 tests), que mide el COMPUTADO. La suite ENTERA del
+Supervisor sale **147/147** con ella dentro. Y está **validada con el fallo puesto**: devolviendo
+el `font-weight: medium` a `_forms.scss` se pone roja en 3 de sus 8 —AED servicio y las dos altas
+de admin— y verde en las otras 5, que es exactamente la discriminación que se le pide.
+
+**De dónde sale.** Las 12 clases existían, estaban atadas a Figma y tenían gate; lo que faltaba era
+ponerlas. Medido: **8 usos** de `.sc-text-*` en todo el Supervisor.
+
+**Lo que se midió antes de tocar, y corrige la premisa de partida.** El encargo decía que
+`field__label` y `sub-section__title` «leen ya los tokens de rol correctos, así que la clase entra
+sin mover un píxel». Es cierto **en la mitad**:
+
+| Clase | Usos | Qué la estilaba | ¿Entra sin mover un píxel? |
+| --- | ---: | --- | --- |
+| `field__label` (AED) | 5 | `aed-defaults-page.component.scss`, tres ejes por token de ROL | **Sí** |
+| `field__label` (admin) | 17 | `styles/_forms.scss`: 12 / **medium (500)** / sin line-height | **No**: el peso baja a 400 |
+| `inline-field__label` | 4 | AED, por rol | Sí |
+| `field__label-inline` | 2 | `_forms.scss` | No: mismo caso que admin |
+| `switch-field__label` | 4 | ya llevaban `.sc-text-body-regular` | — |
+| `rule-field__label` | 1 | 14 / medium — **no es ninguno de los 12** | No se toca |
+| `sub-section__title` (AED) | 10 | por rol, `Body/body-semibold` | **Sí** |
+| `sub-section__title` (agent-form) | 7 | versalitas 10.5/600 con tracking — **no es ninguno de los 12** | No se toca |
+
+Los 33 `field__label` del encargo son en realidad **cinco clases distintas** que comparten
+subcadena. Y el tamaño no se mueve en ningún caso: `--sc-font-size-100` y `--sc-font-size-caption`
+son los mismos 12, y el `line-height: 1.5` del reset sobre 12 da los mismos 18 que ata el text
+style. Lo único que se mueve es el PESO, y solo en las TRES pantallas de alta/edición de admin
+(agente, grupo, usuario), que son las que leen `_forms.scss`.
+
+**La decisión, y por qué.** Se aplica igual: es la misma que ya se tomó para AED el 2026-09-09
+(«la jerarquía de una etiqueta la da su tamaño, no engordarla»), extendida al resto para que la
+plataforma diga una sola cosa. Es un cambio VISIBLE aunque pequeño, y por eso está escrito aquí y
+en `_forms.scss`.
+
+**Lo que NO lleva clase, y no es un olvido.** Los siete `sub-section__title` de `agent-form` viven
+dentro de un `<button>` de acordeón y usan el idioma de versalitas, que no es ninguno de los 12
+text styles: es la tipografía de un CONTROL, no de un texto de la app. Ponerle una clase sería
+justo lo que prohíbe DD-55 por la otra puerta.
+
+**Resultado:** `.sc-text-*` pasa de **8 usos a 46**. Y la tipografía duplicada sale del SCSS: en
+`_forms.scss` y en la hoja compartida de AED las etiquetas ya no declaran `font-size` ni
+`font-weight` — la clase es la única fuente.
+
+**La red, y por qué hacía falta una nueva.** Quitar `font-size` de un sitio y ponerlo como clase en
+otro tiene un modo de fallo silencioso: si la clase no llegara, la etiqueta no se queda sin estilo,
+se queda HEREDANDO 14px del cuerpo, y la pantalla sigue pareciendo correcta de lejos. Ningún gate
+estático distingue eso. `text-styles-applied.spec.ts` mide el computado en dos familias de pantalla
+—las de AED, que no debían moverse, y las de admin, donde el peso sí baja— con los números
+ESCRITOS, para que sea un control independiente del gate que resuelve la cadena de tokens.
+
+**Un hallazgo que solo sale midiendo, y que convierte una limpieza en un requisito.** Quitar la
+tipografía de `_forms.scss` NO era opcional: el `@import` de `base/typography.css` acaba ANTES que
+el contenido de los partials en la hoja final, así que a igual especificidad (las dos son una
+clase) **`_forms.scss` le ganaba a `.sc-text-caption-regular`**. Con la tipografía dentro, poner la
+clase en la plantilla no habría hecho nada y la pantalla habría seguido igual — un cambio
+silenciosamente inerte. Lo destapó la sonda del fallo puesto.
+
+**Lo que queda de PRIORIDAD 2, medido:**
+
+1. **336 reglas del SCSS del supervisor declaran `font-size`, y solo 15 casan EXACTAS con uno de
+   los 12 text styles** (tamaño + interlineado + peso). Las 15 están listadas en la sonda; 5 ya
+   llevan clase tras este barrido. Las otras 321 no pueden llevar clase sin mover píxeles: **253
+   declaran tamaño y NO declaran interlineado**, así que heredan el del cuerpo.
+2. **`--sc-font-size-50` (77 usos) y `--sc-font-size-75` (8) resuelven los dos a 12**, exactamente
+   igual que `--sc-font-size-100`. Son tres nombres para el mismo peldaño, y dos de ellos no tienen
+   ningún text style detrás. Ese es el «fijar tamaño a mano» que queda de verdad: no un píxel
+   suelto, sino un alias que aparenta ser otro escalón. Consolidarlos es un barrido aparte y hay
+   que mirar si el Kit los quiere vivos.
+3. **`--sc-font-size-300` (16px, 8 usos)** sigue sin text style detrás, que es lo que DD-54 ya dejó
+   escrito.
+
 ## ✅ 2026-09-10 · Un nombre, un hogar: el vocabulario de dentro de la pantalla deja de tener dos versiones
 
 **Sello:** DD-65. `npm run verify` VERDE (38 gates — el nuevo entra en la cadena). Gate nuevo
@@ -138,6 +292,7 @@ ruido, y las tres tienen test):
 ⚠️ El barrido cubre las **nueve pantallas de formulario/ajustes**. Las nueve de LISTA y el hub
 quedan fuera **por arquetipo**, no por olvido: son tabla y tarjetas, y su gramática ya la vigilan
 `audit:datatables` y `e2e/supervisor/list-table-grammar.spec.ts`.
+
 
 ---
 

@@ -56,6 +56,76 @@
 
 ---
 
+## DD-66 · 2026-09-10 — Lo que es del SISTEMA se dice en el tema; lo que es de la app se queda, pero en su capa
+
+**Contexto** · `audit:primeng-coupling` contaba 36 clases internas de PrimeNG usadas desde nuestros
+selectores, y **26 bloques de esas reglas vivían en el Supervisor SIN CAPA**. Sin capa gana SIEMPRE
+a `@layer primeng`, sin mirar especificidad, así que ganaban al tema en silencio. Y lo que importa:
+esas reglas **no viajan**. Se exporta el tema, se monta en otro sitio y la pantalla revierte al
+preset —filas de 42px, cabecera oscura, botones que no chascan— **sin que falle un solo test**,
+porque el comportamiento sigue intacto. El criterio de aceptación que puso Rafa fue exactamente
+ese: exportar el tema y montarlo en otro sitio tiene que dar la misma pantalla.
+
+**Decisión** · Cada una de las 36 se clasifica con una pregunta —¿es una opinión del SISTEMA o de
+esta app?— y el resultado va a uno de dos sitios, nunca a un tercero:
+
+1. **Del sistema → al TEMA** (`sc-preset/css.ts`), que es el punto de extensión que
+   `@primeuix/themes` publica para esto. Tres se mudaron: la **gramática de tabla-lista** (10
+   bloques), la **micro-interacción de botón** (2) y el **item de menú destructivo** (4).
+2. **De la app → se queda, con su motivo escrito y en `@layer app`**, declarada después de
+   `primeng` en `styles/_layers.scss`. Sigue ganando al tema —que es lo que hace falta— pero por un
+   orden que se puede leer, no porque lo sin capa gane siempre.
+
+Y el gancho de lo que sube al tema deja de ser una clase inventada por la app: la gramática se pide
+con `<sc-datatable variant="list">` (entrada del componente del DS), y las clases por fila y por
+item pasan a `sc-row--clickable` y `sc-menu-item--danger`.
+
+**Razón** · El dato que decide es la objeción que mantenía la piel fuera del preset y que estaba
+escrita en el propio partial: «tocar el preset cambiaría también la tabla de llamadas de `agent`,
+que no es una tabla-lista de administración». Es cierta para un preset global y **falsa para una
+variante**: `variant="list"` no aplica a quien no la pide. Quitada esa objeción, no quedaba ningún
+argumento para tener en una app la piel de nueve tablas cuyos valores salen todos de token.
+
+Lo mismo con el botón: el comentario decía «el tema decide cómo SE VE un botón, esta app decide
+cómo RESPONDE al dedo». La app **puede** decidirlo; el problema es que entonces los botones dejan
+de chascar al exportar el tema. Que el Kit no publique un token de micro-interacción no convierte
+la micro-interacción en propiedad de una app.
+
+Medido, antes → después: bloques de app sin capa sobre `.p-*` **26 → 1**; clases `.p-*` en SCSS de
+app **16 → 6**. La red que lo autorizó es `e2e/supervisor/list-table-grammar.spec.ts`, que fija los
+valores computados de las nueve páginas: **22/22 antes y 22/22 después, con los mismos números**.
+
+**Descartadas** ·
+
+- **Dejarlo en la app y solo documentarlo mejor.** Es lo que ya había —los comentarios eran
+  buenos y decían «pisa al tema a propósito»— y no resuelve el criterio: seguía sin viajar.
+- **Mover la piel al SCSS del componente del DS con `ViewEncapsulation.None`.** Viaja igual y
+  conserva la precedencia exacta de hoy (sin capa), o sea menos riesgo. Se descarta porque estilar
+  los internos de PrimeNG es el trabajo del TEMA, y porque dejarlo sin capa perpetúa lo que este DD
+  viene a arreglar: que la gramática del sistema no pueda ser pisada de forma declarada.
+- **Contar el preset dentro del mismo tope que el SCSS.** Habría hecho que mover una regla de la
+  app al tema —el arreglo— pareciera un empate. El tope se parte en tres hogares (`app`, `ds`,
+  `preset`) y solo `app` se lee como barra de progreso.
+- **Renombrar los `.p-datatable-*` de la piel de Memory a `thead`/`tbody` y dejarla sin capa.**
+  Se hizo lo primero (la estructura de una tabla la garantiza HTML; el nombre de la clase, la
+  versión de PrimeNG) pero no lo segundo: sin capa seguiría ganando sin decirlo.
+
+**Consecuencias** ·
+
+- `audit:primeng-coupling` cuenta por hogar y **ahora también mira el preset**, que no miraba. En
+  su primera pasada encontró dos selectores MUERTOS que llevaban tiempo ahí: `.p-inputchips` y
+  `.p-inputchips-input-item` — PrimeNG no tiene ningún `inputchips`, ni fichero ni clase. Retirados.
+- `audit:datatables` exige `variant="list"` en vez de `class="list-table"`.
+- La ficha de `sc-datatable` en sc-docs gana el control `variant` y una story propia.
+- **Queda pendiente y medido**: el Supervisor monta el toast con un `<p-toast>` a pelo y su propia
+  plantilla, teniendo el DS un `<sc-toast>` que no proyecta contenido. Los cinco `.p-toast-*` que
+  quedan (5 de los 6 de `app`) no son custom: son esa migración sin hacer. Y cuatro declaraciones
+  del SCSS del DS repiten un `font-size` que el tema ya publica; retirarlas pide correr
+  `e2e/component-styles.spec.ts` delante.
+- La clasificación entera, fila a fila, en [`acoplamiento-primeng.md`](./acoplamiento-primeng.md).
+
+---
+
 ## DD-65 · 2026-09-10 — Un nombre, un hogar: el vocabulario de dentro de la pantalla se declara una vez, y un gate lo vigila
 
 **Contexto** · Los tres flujos de `config/aed` se casaron con su maqueta el 2026-09-09 y el
@@ -143,6 +213,7 @@ hojas de PÁGINA y de SECCIÓN: un panel lateral, un modal o una tabla son muebl
 caja es suya con razón. Mirarlo todo daba ocho avisos de los que cinco eran ruido.
 
 ---
+
 
 ## DD-64 · 2026-09-10 — Un commit que `main` ya ha adelantado no es un despliegue roto: no se registra
 

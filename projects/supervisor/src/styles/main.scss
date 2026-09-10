@@ -4,6 +4,10 @@
  */
 
 /* Sass `@use` rules must precede any `@import`. */
+
+/* PRIMERO de todos: fija el orden de capas (`reset, primeng, app`). Ver el
+ * partial — el orden lo decide la primera vez que se nombra una capa. */
+@use 'layers';
 @use 'reset';
 @use 'forms';
 @use 'table-elements';
@@ -34,15 +38,20 @@
  * SCSS solo mantienen sus deltas. Ver doc en el propio partial. */
 @use 'sc-list-table';
 
-/* La misma gramática de tabla-lista, pero aplicada a `sc-datatable` (B4). El
- * preset del DS pinta 42px de fila y cabecera 14px/600; estas listas son de
- * 54px y cabecera silenciosa desde S59. Sin esta capa, migrar una tabla al
- * componente del DS la separa visualmente de las que aún no migraron. */
-@use 'sc-datatable-list';
+/* AQUÍ HABÍA un `@use 'sc-datatable-list'`: la gramática de tabla-lista sobre
+ * `sc-datatable`, diez bloques de CSS de app SIN CAPA sobre `.p-datatable-*`.
+ * Se fue al TEMA el 2026-09-10 (`sc-preset/css.ts`) y se pide con
+ * `<sc-datatable variant="list">`. El motivo no es de estilo, es de alcance:
+ * ahí no viajaba — exportabas el tema, lo montabas en otra app y la tabla
+ * revertía al preset (42px de fila, cabecera oscura) sin que fallara un test.
+ * La objeción que la tenía fuera («tocaría también la tabla de `agent`») la
+ * responde la variante: no aplica a quien no la pide. No la devuelvas aquí. */
 
-/* La piel PROPIA de transcripciones (Memory), por encima de `.list-table`:
- * plana, densa, cabecera fija y cuatro estados de fila con shimmer. Es la única
- * tabla que diverge a propósito de la gramática de admin (S59, BeyondUI). */
+/* La piel PROPIA de transcripciones (Memory), por encima de la gramática de
+ * tabla-lista que publica el tema: plana, densa, cabecera fija y cuatro estados
+ * de fila con shimmer. Es la única tabla que diverge a propósito de la
+ * gramática de admin (S59, BeyondUI), y por eso se queda aquí y no sube al DS.
+ * Va en `@layer app` — ver `_layers.scss`. */
 @use 'memory-conversation-table';
 
 /* `.page__inner` — S55 lo dejó SIN promover a propósito, con este disparador
@@ -276,29 +285,22 @@ table.table {
  */
 
 /*
- * Global button micro-interactions (DD#21).
+ * Micro-interacción de las tres piezas de chrome PROPIAS de la app que imitan
+ * un botón sin serlo: el CTA del estado vacío, los commit/cancel del renombrado
+ * inline y las pestañas de perfil.
  *
- * ⚠️ PISA AL TEMA, Y A PROPÓSITO. Esta regla va SIN CAPA y el preset del DS va
- * en `@layer primeng`; en CSS lo sin-capa gana siempre a lo en-capa, sin mirar
- * especificidad. Lo que pisa es la `transition` que el tema publica para
- * `.p-button` (y el `cursor` de `:disabled`). Se quiere así: el tema decide
- * cómo SE VE un botón, esta app decide cómo RESPONDE al dedo, y eso último es
- * suyo (DD#21) — no hay token de micro-interacción en el Kit que arbitre.
- * No confundir con el caso del `line-height` (retirado en `cf7abab`): aquel
- * peleaba contra una MEDIDA de la que el Kit ya era dueño, y por eso se fue.
+ * ⚠️ El `.p-button` que encabezaba este selector SE FUE AL TEMA el 2026-09-10
+ * (`sc-preset/css.ts`, `buttonMotionCss`). El motivo, en una línea: cómo
+ * responde un botón al dedo es del SISTEMA — exportabas el tema, lo montabas en
+ * otro sitio y los botones dejaban de chascar. Que el Kit no publique un token
+ * de micro-interacción no convertía esto en propiedad de una app. Lo que queda
+ * aquí son tres clases NUESTRAS, así que ya no pisa nada del tema y no arrastra
+ * ningún `.p-*` con ellas.
  *
- * Hover/focus changes use a short transition so the state feels alive but
- * not draggy. Press (`:active`) snaps with `scale(0.98)` and zero
- * transition — the user's click should produce an instant tactile
- * response, not a fade-out of the prior hover state.
- *
- * Applies to every `.p-button` (canonical PrimeNG button), the
- * empty-state CTA, the toast action button, and the inline-rename
- * commit/cancel buttons. Component-scoped overrides can opt out by
- * setting `transition-duration: 0` on `:active`, but should keep the
- * press transform for consistency.
+ * Hover/focus con transición corta para que el estado se sienta vivo y no
+ * pastoso. La pulsación (`:active`) chasca con `scale(0.98)` y transición CERO:
+ * el click debe dar respuesta táctil instantánea, no el desvanecido del hover.
  */
-.p-button,
 .empty-state__cta,
 .rename__btn,
 .profile-tabs__tab {
@@ -526,46 +528,15 @@ table.table {
   }
 }
 
-/* Item DESTRUCTIVO del menú de fila.
+/* AQUÍ HABÍA un `.rules-menu-item--danger` sin capa sobre `.p-menu-item-*`:
+ * el rojo del "Eliminar" en el kebab compartido. Se fue al TEMA el 2026-09-10
+ * (`sc-preset/css.ts`, `dangerMenuItemCss`) y el hook pasa a llamarse
+ * `sc-menu-item--danger` — `rules-` era el rastro de la pantalla donde nació, y
+ * ya se usaba en nueve. Se pasa igual, por `styleClass` en el `MenuItem`.
  *
- * `rules-menu-item--danger` se venía pasando como `styleClass` desde hace
- * tiempo y no tenía CSS en ninguna parte: el "Eliminar" se veía exactamente
- * igual que el "Editar" en las 7 tablas que usan el kebab compartido. La
- * acción irreversible no se distinguía de la inocua, que es lo único que ese
- * hook pretendía comprar.
- *
- * Va aquí y no en un SCSS de componente porque el `<p-menu>` monta con
- * `appendTo="body"`, fuera del scope encapsulado de la página. PrimeNG deja la
- * clase en el `<li>`, así que se baja al enlace y a su icono.
- *
- * ⚠️ PISA AL TEMA, Y A PROPÓSITO: sin capa, así que gana al preset
- * (`@layer primeng`) por reglamento del cascade, no por especificidad. Pisa el
- * `color` de `.p-menu-item-link`/`.p-menu-item-icon` y el `background` del
- * hover. Se quiere: el tema pinta el menú neutro y esto marca la acción
- * IRREVERSIBLE, que es semántica de la app, no del sistema. Los tres valores
- * salen de tokens (`--sc-text-danger`, `--sc-bg-danger-subtle`), así que no hay
- * medida inventada contra la que el Kit pueda arbitrar. */
-.rules-menu-item--danger {
-  .p-menu-item-link {
-    color: var(--sc-text-danger);
-  }
-
-  /* El icono hereda el color del enlace salvo que el tema le ponga el suyo. */
-  .p-menu-item-icon {
-    color: var(--sc-text-danger);
-  }
-
-  /* En hover el tinte refuerza la advertencia; el rojo del texto por sí solo
-   * podría leerse como un estado, no como la consecuencia de pulsar. */
-  .p-menu-item-content:hover {
-    background: var(--sc-bg-danger-subtle);
-
-    .p-menu-item-link,
-    .p-menu-item-icon {
-      color: var(--sc-text-danger);
-    }
-  }
-}
+ * Por qué al tema: «acción destructiva en un kebab» no es semántica de una app,
+ * la tiene cualquier consumidor con una tabla; y los tres valores ya salían de
+ * tokens, o sea que no había ninguna medida inventada que lo retuviera fuera. */
 
 /* Motivo por el que Guardar está deshabilitado (R6, Ola 4). Global y no scoped
  * a propósito: este nodo se PROYECTA a la TopBar vía TopBarSlotService, o sea
@@ -599,21 +570,27 @@ table.table {
  *     con specificity equiparable; sin `!important` la regla local cede.
  *
  * ⚠️ El motivo escrito para el `padding` NO se sostiene (2026-09-05). Dice
- * «specificity equiparable», pero la especificidad aquí no decide nada: esta
- * regla va SIN CAPA y el padding del tema en `@layer primeng`, y sin capa gana
- * SIEMPRE, con cualquier especificidad. O sea que ese `!important` puede llevar
- * tiempo sin hacer nada. Se DEJA porque quitarlo hay que medirlo con el
- * popover abierto —el switcher solo aparece con el prototipo de muestras— y
- * esta pasada retira acoplamiento, no toca lo que no puede ver. Lo que sí es
- * deliberado es la regla: este panel lleva su propio chrome, no el del tema.
+ * «specificity equiparable», pero la especificidad aquí no decide nada: la capa
+ * decide antes. O sea que ese `!important` puede llevar tiempo sin hacer nada.
+ * Se DEJA porque quitarlo hay que medirlo con el popover abierto —el switcher
+ * solo aparece con el prototipo de muestras— y esta pasada retira acoplamiento,
+ * no toca lo que no puede ver.
  * (El `!important` del `z-index` es otra cosa y sí está justificado: PrimeNG
  * asigna el z-index INLINE al overlay, y contra un inline la capa da igual.)
+ *
+ * ⚠️ CLASIFICACIÓN (2026-09-10): esto es el ÚNICO `.p-*` de app que queda en
+ * esta hoja, y se queda a propósito — es un panel de PROTOTIPO con su propio
+ * cromo, no una opinión del sistema sobre los popovers. Lo que sí cambia es
+ * que ya no gana en silencio: va en `@layer app`, declarada DESPUÉS de
+ * `primeng` en `_layers.scss`, así que sigue ganando pero por orden escrito.
  */
-.mock-sample-switcher__popover {
-  z-index: var(--sc-z-popover) !important;
+@layer app {
+  .mock-sample-switcher__popover {
+    z-index: var(--sc-z-popover) !important;
 
-  .p-popover-content {
-    padding: 0 !important;
+    .p-popover-content {
+      padding: 0 !important;
+    }
   }
 }
 
@@ -688,7 +665,6 @@ table.table {
  * users with motion sensitivity get a calm interface.
  */
 @media (prefers-reduced-motion: reduce) {
-  .p-button,
   .empty-state__cta,
   .rename__btn,
   .profile-tabs__tab {

@@ -5,12 +5,20 @@ import { disableAnimations, forceLightTheme, goto } from './helpers';
 /**
  * LA GRAMÁTICA DE TABLA-LISTA, FIJADA EN NÚMEROS.
  *
- * Por qué existe: la piel `.list-table` (`styles/_sc-datatable-list.scss`) se
- * agarra a clases INTERNAS de PrimeNG (`.p-datatable-thead`, `.p-datatable-tbody`).
- * Eso no es API pública. Una subida de PrimeNG puede renombrarlas y entonces las
- * tablas revierten al aspecto del preset —filas de 42px, cabecera oscura— **sin
- * que falle ningún test**, porque el comportamiento seguiría intacto. Era el
- * agujero más grande que dejó B4: lo más cuidado era lo menos protegido.
+ * Por qué existe: la gramática de tabla-lista (`<sc-datatable variant="list">`)
+ * se agarra a clases INTERNAS de PrimeNG (`.p-datatable-thead`,
+ * `.p-datatable-tbody`). Eso no es API pública. Una subida de PrimeNG puede
+ * renombrarlas y entonces las tablas revierten al aspecto del preset —filas de
+ * 42px, cabecera oscura— **sin que falle ningún test**, porque el comportamiento
+ * seguiría intacto. Era el agujero más grande que dejó B4: lo más cuidado era lo
+ * menos protegido.
+ *
+ * ⚠️ 2026-09-10: la piel se mudó de `projects/supervisor/src/styles/
+ * _sc-datatable-list.scss` (CSS de app, sin capa) al TEMA
+ * (`ui-smartcontact/src/lib/theme/sc-preset/css.ts`, `listTableCss`), y se pide
+ * con `variant="list"` en vez de con `class="list-table"`. Este spec es la red
+ * que autorizó esa mudanza: se corrió ANTES de tocar nada y DESPUÉS, y los
+ * números tenían que salir idénticos — la piel cambia de casa, no de valor.
  *
  * Qué fija: los valores COMPUTADOS, que son el contrato de diseño de S59
  * («cabecera sentence-case gris medium, no UPPERCASE tracked», sin fondo). No se
@@ -102,10 +110,10 @@ const GRAMATICA = {
 } as const;
 
 for (const { ruta, nombre, altoFila } of PAGINAS) {
-  test(`${nombre} · la piel .list-table impone la gramática de la casa`, async ({ page }) => {
+  test(`${nombre} · la gramática variant=list impone la gramática de la casa`, async ({ page }) => {
     await goto(page, ruta);
 
-    const tabla = page.locator('sc-datatable.list-table').first();
+    const tabla = page.locator('sc-datatable.sc-datatable--list').first();
     await expect(tabla).toBeVisible();
 
     const medido = await tabla.evaluate((host: HTMLElement) => {
@@ -113,7 +121,7 @@ for (const { ruta, nombre, altoFila } of PAGINAS) {
       const th = host.querySelector('.p-datatable-thead th:not(.sc-datatable__check)')!;
       const tr = host.querySelector('.p-datatable-tbody > tr')!;
       const td = tr.querySelector('td:not(.sc-datatable__check)')!;
-      // NO todas las list-table tienen selección: el trío de memory nunca la
+      // NO todas las tablas `list` tienen selección: el trío de memory nunca la
       // tuvo. La casilla se mide SOLO si existe; exigirla convertía una
       // diferencia legítima en un fallo (y así petó la primera vez).
       const thCheck = host.querySelector('.p-datatable-thead th.sc-datatable__check');
@@ -162,7 +170,7 @@ test('en oscuro el separador de fila SE VE (no puede volver a 1.00:1)', async ({
   });
   await goto(page, 'admin/labels');
 
-  const medido = await page.locator('sc-datatable.list-table').first().evaluate((host: HTMLElement) => {
+  const medido = await page.locator('sc-datatable.sc-datatable--list').first().evaluate((host: HTMLElement) => {
     const bg = getComputedStyle(host.closest('.table-card') ?? host).backgroundColor;
     const td = host.querySelector('.p-datatable-tbody > tr > td')!;
     const borde = getComputedStyle(td).borderBottomColor;
@@ -189,7 +197,7 @@ test('en oscuro el separador de fila SE VE (no puede volver a 1.00:1)', async ({
 for (const { ruta, nombre } of ABREN_FILA) {
   test(`${nombre} · la fila que abre lo anuncia con el cursor`, async ({ page }) => {
     await goto(page, ruta);
-    const fila = page.locator('sc-datatable.list-table .p-datatable-tbody > tr').first();
+    const fila = page.locator('sc-datatable.sc-datatable--list .p-datatable-tbody > tr').first();
     await expect(fila).toBeVisible();
     /* Al pintar el `<tr>` el DS, `pSelectableRowDisabled` (modo multiple) le
      * quita la clase de la que PrimeNG saca el cursor. La migración dejó
@@ -202,7 +210,7 @@ for (const { ruta, nombre } of ABREN_FILA) {
 for (const { ruta, nombre } of ABREN_FILA) {
   test(`${nombre} · la fila se abre TAMBIÉN con el teclado (WCAG 2.1.1)`, async ({ page }) => {
     await goto(page, ruta);
-    const fila = page.locator('sc-datatable.list-table .p-datatable-tbody > tr').first();
+    const fila = page.locator('sc-datatable.sc-datatable--list .p-datatable-tbody > tr').first();
     await expect(fila).toBeVisible();
 
     /* Estas tres listas abrían la ficha al clicar y NO eran alcanzables por

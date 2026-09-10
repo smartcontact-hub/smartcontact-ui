@@ -23,6 +23,13 @@ const token = (dt: StyleOptions["dt"], key: string, fallback: string) => `${dt(k
  * heredando el `line-height` del body de cada app (1.5 en el supervisor = 21px), que
  * es lo que DD-39 vino a arreglar y sería PEOR que la rampa. `normal` desacopla igual.
  */
+/* ⚠️ AQUÍ HABÍA un `.p-inputchips .p-inputchips-input-item input`, y apuntaba al
+ * VACÍO: PrimeNG no tiene ningún `inputchips` (ni fichero, ni clase — comprobado
+ * contra `node_modules/primeng/fesm2022` el 2026-09-10). Nadie lo había visto
+ * porque el guardián de huérfanos solo miraba el SCSS, y el preset es TS; desde
+ * hoy también lo mira, y lo cazó en la primera pasada. El caso que ese selector
+ * quería cubrir —un campo de chips— lo cubre `.p-autocomplete-input-chip input`,
+ * que sí existe y ya estaba en esta lista. */
 const mdControlSelectors = [
     ".p-component.p-button",
     ".p-component.p-inputtext",
@@ -32,7 +39,6 @@ const mdControlSelectors = [
     ".p-editor .ql-container",
     ".p-editor .ql-snow .ql-editor h4",
     ".p-editor .ql-snow .ql-picker.ql-header .ql-picker-item[data-value='4']::before",
-    ".p-inputchips .p-inputchips-input-item input",
     ".p-select .p-select-label",
     ".p-multiselect .p-multiselect-label",
     ".p-treeselect .p-treeselect-label",
@@ -106,6 +112,226 @@ const rampRule = (
     line-height: ${token(dt, lineHeightToken, lineHeightFallback)};
 }`;
 
+/* ══════════════════════════════════════════════════════════════════════════
+ * LA GRAMÁTICA DE TABLA-LISTA (`<sc-datatable variant="list">`)
+ * ══════════════════════════════════════════════════════════════════════════
+ *
+ * QUÉ ES. La piel de las tablas de ADMINISTRACIÓN: cabecera silenciosa (gris,
+ * medium, sentence-case, sin fondo propio), fila alta con hairline
+ * `border-default`, reparto de columnas `fixed` y hover SOLO si la fila hace
+ * algo. Nueve tablas del Supervisor la llevan.
+ *
+ * POR QUÉ ESTÁ AQUÍ, EN EL TEMA (2026-09-10). Hasta hoy vivía en
+ * `projects/supervisor/src/styles/_sc-datatable-list.scss`: diez bloques de CSS
+ * de app, SIN CAPA, sobre selectores internos de PrimeNG. Eso tenía dos
+ * consecuencias, y la segunda es la que lo mueve:
+ *
+ *   1. Sin capa gana SIEMPRE a `@layer primeng`, sin mirar especificidad, así
+ *      que ningún token del preset podía alcanzar esas medidas.
+ *   2. **No viajaba.** Exportabas el tema, lo montabas en otra app y la tabla
+ *      revertía al preset —filas de 42px, cabecera oscura— sin que fallara un
+ *      solo test, porque el COMPORTAMIENTO seguía intacto.
+ *
+ * La objeción que la mantuvo fuera del preset («tocar el preset cambiaría
+ * también la tabla de llamadas de `agent`, que no es una lista de
+ * administración») la responde la VARIANTE: esto no aplica a ninguna tabla que
+ * no pida `variant="list"`. El DS aporta el componente Y su gramática; la app
+ * elige cuál de las dos pieles quiere.
+ *
+ * LA MEDIDA, para que no se pierda el porqué de cada número:
+ *
+ *              preset sc-datatable   gramática `list`
+ *   alto fila       42px                  53px (agentes/grupos 63: manda el avatar)
+ *   cabecera        14px / 600            12px / 500
+ *   color cab.      #4f5663               #8f97a3  (`--sc-text-secondary`)
+ *   borde fila      border-default        border-default
+ *
+ * `border-default` y NO `subtle`: las filas van sobre `bg-surface`, y ahí en
+ * oscuro `subtle` (slate-900) es EL MISMO COLOR que el fondo (1.00:1) — el
+ * separador no existía. Con `default`, 1.39:1. Lo fija
+ * `e2e/supervisor/list-table-grammar.spec.ts`, que también fija el resto de
+ * números de esta tabla; si tocas algo de aquí, ese spec te lo dice.
+ *
+ * ⚠️ `.sc-row--clickable` es una clase del DS, no de una app. La emite el
+ * consumidor por `[rowStyleClass]` en las filas que de verdad abren algo, y es
+ * lo que separa un hover honesto de una afordancia mentirosa: una tabla
+ * genuinamente INERTE (sin click, sin kebab, sin selección) no debe iluminarse
+ * al pasar el ratón. Y hay que APAGAR el hover explícitamente, no basta con no
+ * encenderlo: `sc-datatable` fuerza `[rowHover]="true"`, así que el preset de
+ * PrimeNG pinta el suyo por debajo.
+ *
+ * ⚠️ Lo que NO está aquí: `.sc-datatable__check { width: 40px }`. Ese nodo lo
+ * pinta la plantilla del componente, cuyo SCSS va SIN CAPA y le ganaría a
+ * cualquier cosa que dijéramos desde `@layer primeng`. Vive en
+ * `sc-datatable.component.scss`, con su motivo escrito.
+ */
+const LIST = "sc-datatable.sc-datatable--list";
+
+const listTableCss = () => `
+${LIST} .p-datatable-table {
+    /* "fixed", no "auto": con "auto" el reparto pasa a ser por CONTENIDO y las
+       columnas se recolocan al aparecer el indicador de orden. */
+    table-layout: fixed;
+}
+
+${LIST} .p-datatable-header:empty {
+    /* PrimeNG pinta SIEMPRE la banda de "caption", aunque no se proyecte nada
+       en "[scTableCaption]": deja una franja vacía sobre la cabecera. Estas
+       listas llevan su toolbar fuera de la tarjeta. */
+    display: none;
+}
+
+${LIST} .p-datatable-thead > tr > th {
+    padding: var(--sc-spacing-0-875);
+    background: var(--sc-bg-surface);
+    border-bottom: 1px solid var(--sc-border-default);
+    font-size: var(--sc-font-size-100);
+    font-weight: var(--sc-font-weight-medium);
+    letter-spacing: 0;
+    color: var(--sc-text-secondary);
+    text-align: left;
+}
+
+${LIST} .p-datatable-tbody > tr > td {
+    padding: var(--sc-spacing-0-875);
+    border-bottom: 1px solid var(--sc-border-default);
+    /* Bloque contenedor para los paneles anclados a una fila (el editor inline
+       cuelga de su celda). Sin esto el panel se ancla al viewport. */
+    position: relative;
+}
+
+${LIST} .p-datatable-tbody > tr {
+    transition: background var(--sc-transition-fast) var(--sc-easing-default);
+}
+
+${LIST} .p-datatable-tbody > tr.sc-row--clickable:hover,
+${LIST} .p-datatable-tbody > tr.p-selectable-row:hover {
+    background: var(--sc-bg-default);
+}
+
+${LIST} .p-datatable-tbody > tr:not(.sc-row--clickable):not(.p-selectable-row):hover {
+    background: transparent;
+}
+
+${LIST} .p-datatable-tbody > tr.p-datatable-row-selected {
+    /* Gris neutro, no el resaltado azul de PrimeNG: aquí la selección es para
+       actuar EN LOTE, no para marcar «la fila activa». */
+    background: var(--sc-color-slate-100);
+}
+
+${LIST} .p-datatable-tbody > tr.sc-row--clickable {
+    cursor: pointer;
+}
+
+${LIST} .p-datatable-tbody > tr:has(> td[colspan]) {
+    /* La fila vacía (búsqueda sin resultados) se proyecta vía "[scTableEmpty]"
+       y no lleva hairline: no es una fila de datos. */
+    background: none;
+}
+
+${LIST} .p-datatable-tbody > tr:has(> td[colspan]) > td {
+    border-bottom: 0;
+}
+`;
+
+/* ══════════════════════════════════════════════════════════════════════════
+ * MICRO-INTERACCIÓN DE BOTÓN · cómo responde al dedo
+ * ══════════════════════════════════════════════════════════════════════════
+ *
+ * Hover y focus con una transición corta —vivo, no pastoso—; la pulsación
+ * (`:active`) chasca con `scale(0.98)` y transición CERO: el click tiene que
+ * producir respuesta táctil instantánea, no el desvanecido del hover anterior.
+ * Y un botón deshabilitado NO anima: es inerte, y decirlo con el cursor.
+ *
+ * POR QUÉ AQUÍ (2026-09-10). Vivía en `projects/supervisor/src/styles/main.scss`
+ * como CSS de app SIN CAPA sobre `.p-button`, con la nota «esta app decide cómo
+ * RESPONDE al dedo». Es media verdad: la app puede decidirlo, pero entonces
+ * exportas el tema, lo montas en otro sitio y **los botones dejan de chascar**
+ * sin que falle nada. Cómo responde un control al dedo es del SISTEMA, igual
+ * que su padding o su radio; que el Kit no publique un token de micro-
+ * interacción no lo convierte en propiedad de una app.
+ *
+ * Las tres clases de app que acompañaban al selector (`.empty-state__cta`,
+ * `.rename__btn`, `.profile-tabs__tab`) se quedan en el Supervisor: son suyas,
+ * y ya no arrastran ningún `.p-*` con ellas.
+ *
+ * ⚠️ `.p-component.p-button` y no `.p-button` a secas, y no es cosmética: el
+ * blob global del preset se inyecta ANTES que el CSS del componente, así que a
+ * igual capa e igual especificidad ganaría PrimeNG. Es el mismo (0,2,0) que
+ * usan los selectores de tipografía de más arriba, por el mismo motivo.
+ */
+const buttonMotionCss = () => `
+.p-component.p-button {
+    transition:
+        background-color 100ms ease,
+        border-color 100ms ease,
+        color 100ms ease,
+        box-shadow 100ms ease;
+}
+
+.p-component.p-button:active {
+    transform: scale(0.98);
+    transition-duration: 0ms;
+}
+
+.p-component.p-button:disabled,
+.p-component.p-button[aria-disabled="true"] {
+    transform: none;
+    cursor: not-allowed;
+}
+
+.p-component.p-button:disabled:active,
+.p-component.p-button[aria-disabled="true"]:active {
+    transform: none;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .p-component.p-button {
+        transition: none;
+    }
+
+    .p-component.p-button:active {
+        transform: none;
+    }
+}
+`;
+
+/* ══════════════════════════════════════════════════════════════════════════
+ * ITEM DE MENÚ DESTRUCTIVO (`styleClass="sc-menu-item--danger"`)
+ * ══════════════════════════════════════════════════════════════════════════
+ *
+ * «Eliminar» no puede verse igual que «Editar». El tema pinta el menú neutro;
+ * esta clase marca la acción IRREVERSIBLE, y en hover el tinte refuerza la
+ * advertencia — el rojo del texto por sí solo se lee como un estado, no como la
+ * consecuencia de pulsar.
+ *
+ * POR QUÉ AQUÍ (2026-09-10). Vivía en el Supervisor como
+ * `.rules-menu-item--danger`, sin capa, sobre `.p-menu-item-*`. Pero «acción
+ * destructiva en un kebab» no es semántica de una app: la tiene cualquier
+ * consumidor con una tabla, y los tres valores salen de tokens
+ * (`--sc-text-danger`, `--sc-bg-danger-subtle`), o sea que no hay ninguna
+ * medida inventada que justificara tenerlo fuera del tema.
+ *
+ * El nombre pasa a `sc-menu-item--danger`: `rules-` era el rastro de la
+ * pantalla donde nació, y ya se usaba en nueve. Se pasa por `styleClass` en el
+ * `MenuItem`; PrimeNG la deja en el `<li>`, así que baja al enlace y a su icono.
+ */
+const dangerMenuItemCss = () => `
+.sc-menu-item--danger .p-menu-item-link,
+.sc-menu-item--danger .p-menu-item-icon {
+    color: var(--sc-text-danger);
+}
+
+.sc-menu-item--danger .p-menu-item-content:hover {
+    background: var(--sc-bg-danger-subtle);
+}
+
+.sc-menu-item--danger .p-menu-item-content:hover .p-menu-item-link,
+.sc-menu-item--danger .p-menu-item-content:hover .p-menu-item-icon {
+    color: var(--sc-text-danger);
+}
+`;
+
 /* `@primeuix/themes` 3 cambió `ExtendedCSS` a `(options?: StyleOptions) => string`:
  * el argumento pasó a ser OPCIONAL. La firma se relaja igual para casar con el tipo;
  * en la práctica PrimeUIX siempre lo pasa, y si no lo hiciera reventaría al usar `dt`,
@@ -141,6 +367,12 @@ ${controlRule(lgControlSelectors, dt, "app.typography.lg.font.size", fromDesignP
 .p-button .p-button-icon {
     line-height: 1;
 }
+
+${listTableCss()}
+
+${buttonMotionCss()}
+
+${dangerMenuItemCss()}
 `;
 
 export default presetCss;

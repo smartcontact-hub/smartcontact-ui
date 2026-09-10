@@ -51,13 +51,13 @@
       </sc-button>
     </div>
 
-    <!-- B4: tabla del DS + piel `.list-table`. Esta página es el caso que
+    <!-- B4: tabla del DS + piel `variant="list"`. Esta página es el caso que
          obligó a que el contexto de celda lleve la COLUMNA: sus columnas salen
          de `config()`, así que no puede declarar una plantilla por columna —
          hay una sola genérica que se pinta según `col`. -->
     <div class="table-card">
       <sc-datatable
-        class="list-table"
+        variant="list"
         [value]="sorted()"
         [columns]="columns()"
         dataKey="id"

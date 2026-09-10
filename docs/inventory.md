@@ -43,7 +43,7 @@
 | `sc-column-selector` | STANDARD | primeng/popover | 1 inputs | — | ✓ | 3 |
 | `sc-command-palette` | CUSTOM | — | 0 inputs | — | ✓ | 4 |
 | `sc-confirmdialog` | STANDARD | primeng/confirmdialog | 0 inputs | — | ✓ | 1 |
-| `sc-datatable` | EXTENDED | primeng/table | 25 inputs | — | ✓ | 21 |
+| `sc-datatable` | EXTENDED | primeng/table | 26 inputs | — | ✓ | 21 |
 | `sc-datepicker` | EXTENDED | primeng/datepicker | 20 inputs | sc-field-label sc-field-msg | ✓ | 2 |
 | `sc-delete-entity-dialog` | STANDARD | primeng/button | 2 inputs | sc-dialog | ✓ | 9 |
 | `sc-dialog` | EXTENDED | primeng/dialog | 14 inputs | — | ✓ | 10 |

@@ -357,7 +357,7 @@ export class GroupsListPageComponent {
   }
 
   /**
-   * `table__row--clickable` sobrevive a la migración: la fila abre el detalle
+   * `sc-row--clickable` sobrevive a la migración: la fila abre el detalle
    * y el cursor tiene que decirlo, salvo mientras se renombra en línea.
    *
    * Es un `computed` que DEVUELVE la función —y no una función que lee la
@@ -368,7 +368,7 @@ export class GroupsListPageComponent {
    */
   protected readonly rowClass = computed<ScRowStyleClassFn<Group>>(() => {
     const renaming = this.renamingId();
-    return (row) => (row.id === renaming ? undefined : 'table__row--clickable');
+    return (row) => (row.id === renaming ? undefined : 'sc-row--clickable');
   });
 
   /* El orden lo sigue resolviendo ESTA página, no p-table: dos de los cinco
@@ -544,7 +544,7 @@ export class GroupsListPageComponent {
         // — "…" significa "esto abre algo antes de hacerlo".
         label: this.translate.instant('common.delete_gate'),
         icon: 'sc-icon-font sc-icon-font--delete',
-        styleClass: 'rules-menu-item--danger',
+        styleClass: 'sc-menu-item--danger',
         command: () => this.onRowDelete(group),
       },
     ];

@@ -321,7 +321,7 @@ export class TemplatesPageComponent {
         // — "…" significa "esto abre algo antes de hacerlo".
         label: this.translate.instant('common.delete_gate'),
         icon: 'sc-icon-font sc-icon-font--delete',
-        styleClass: 'rules-menu-item--danger',
+        styleClass: 'sc-menu-item--danger',
         command: () => this.onRowDelete(tpl),
       },
     ];
