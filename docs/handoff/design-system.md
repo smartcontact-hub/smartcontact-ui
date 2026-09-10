@@ -176,11 +176,17 @@ los 5 proyectos de `audit:cf-config`, para que una sexta app no pueda quedarse a
   cuesta a `main` unos 9 minutos de espera (5 builds de ~70 s más lo que haya delante). Apagar
   los *previews por rama* en los cinco proyectos la parte por la mitad, pero el preview por rama
   es lo que él pidió para compartir un link (DD-17), así que no se toca sin él. La otra salida es
-  pagar concurrencia en Cloudflare. Números arriba; la decisión no.
-- **El secret `CLOUDFLARE_API_TOKEN` sigue sin crear** (`gh api …/actions/secrets` → 0). Hasta que
-  esté, el paso de `audit:cf-config` del workflow avisa y sigue: la comprobación real solo corre
-  en local. Cloudflare → API Tokens → Custom → *Account · Cloudflare Pages · Read*, y
-  `gh secret set CLOUDFLARE_API_TOKEN`.
+  pagar concurrencia en Cloudflare. Números arriba; la decisión no. **Rafa la aparcó el
+  2026-09-10**: «de momento no toques los previews, lo decido más adelante». No se pregunta otra
+  vez; se toca cuando él lo saque.
+- **Las 23 filas rojas viejas del registro se quedan**, decidido el 2026-09-10: son historia
+  honesta y lo de arriba de cada entorno ya está en verde. No las borre nadie por limpiar.
+
+**Cerrado el mismo día, después de escribir lo de arriba.** El secret `CLOUDFLARE_API_TOKEN`
+—que este tramo dejaba pedido— lo creó Rafa el 2026-09-10 (15:04 UTC, comprobado por
+`gh api …/actions/secrets`), y el paso de `audit:cf-config` del workflow ya corre de verdad y en
+verde con él (#88). Donde esta ficha o DD-64 digan que «sigue sin crear», es historia de cuando
+se midió, no el estado de hoy.
 
 ---
 
