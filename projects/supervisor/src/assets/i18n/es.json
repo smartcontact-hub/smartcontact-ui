@@ -1599,7 +1599,8 @@
             "url_placeholder": "URL",
             "evento_inicio": "Inicio",
             "evento_fin": "Fin",
-            "evento_resultado": "Resultado"
+            "evento_resultado": "Resultado",
+            "hint": "Envía estos eventos a tu sistema externo"
           },
           "toast": {
             "saved": "Configuración guardada"
