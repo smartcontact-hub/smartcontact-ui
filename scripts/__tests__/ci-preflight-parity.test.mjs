@@ -4,7 +4,13 @@ import { readFileSync } from "node:fs";
 import { join, dirname } from "node:path";
 import { fileURLToPath } from "node:url";
 
-import { extractCiCommands, checkParity, ciOnlyRancios, CI_ONLY } from "../ci-preflight-parity.mjs";
+import {
+  extractCiCommands,
+  extractPreflightCommands,
+  checkParity,
+  ciOnlyRancios,
+  CI_ONLY,
+} from "../ci-preflight-parity.mjs";
 
 // El gate anti-drift: preflight (package.json) debe correr lo mismo que ci.yml. Se
 // prueba EN VERDE con los ficheros reales y EN ROJO con drift fabricado a mano — un
@@ -22,7 +28,11 @@ test("el repo REAL está en paridad: preflight ≡ ci.yml menos CI_ONLY, y CI_ON
   assert.deepEqual(extra, [], "preflight corre pasos que ci.yml no");
   assert.ok(ok);
   assert.deepEqual(ciOnlyRancios(realYml), [], "CI_ONLY cita pasos que ci.yml ya no corre");
-  for (const c of CI_ONLY) assert.ok(!preflight.includes(c), `${c} es CI_ONLY y sigue en preflight`);
+  // Comando EXACTO, no subcadena: `npm run e2e:visual` contiene `npm run e2e` y con `includes`
+  // este assert daba un falso positivo (medido el 2026-09-10, al devolver las baselines a
+  // preflight en DD-62). Un gate que falla por parecido enseña a desactivarlo.
+  const enPreflight = new Set(extractPreflightCommands(preflight));
+  for (const c of CI_ONLY) assert.ok(!enPreflight.has(c), `${c} es CI_ONLY y sigue en preflight`);
 });
 
 test("extractCiCommands: parsea block scalar `|` y descarta infra", () => {

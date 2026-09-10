@@ -208,6 +208,64 @@ se leen las anclas de la página anterior; hay componentes que nacen ocultos (`s
 resolvió 33 veces a un nodo `hidden`), así que la espera es `toBeAttached` y no `toBeVisible`; y
 las animaciones se apagan antes de medir, porque `sc-message` monta con la de PrimeNG y leerlo a
 media entrada daba 5,15px, 8,78px y 19,09px sobre un valor final de 19,11px.
+
+## DD-62 · 2026-09-10 — Las baselines visuales vuelven al `preflight`, ahora que enrojecen por lo que vigilan
+
+**Contexto** · DD-60 sacó las suites e2e del `preflight` y las dejó solo en el CI. Con las
+**baselines visuales de sc-docs** no se pudo: sus 38 capturas son del Mac de Rafa y el runner de
+macOS las falla TODAS por la fuente monoespaciada del sistema. Quedaron **sin gate, a mano** —
+dicho en alto en DD-60, no por omisión. Rafa lo cuestionó al día siguiente: *«realmente no
+necesitamos tenerlas hiper actualizadas… teniendo el storybook ya sería increíble, ¿no?»*.
+
+**Razón** · Al medirlo apareció que la pregunta correcta no era si sobraban, sino **por qué
+molestaban**: capturaban `fullPage`, o sea con el shell dentro, así que cualquier cambio del
+MARCO las invalidaba todas a la vez. Medido el 2026-09-09: añadir UN enlace a la barra lateral
+puso **8 en rojo** (147-337 px) sin que ningún componente hubiera cambiado. Eso es lo que enseña
+a regenerarlas sin mirar, y es como se pudrieron 213 commits. Arreglado el encuadre
+(`getByRole('main')`), la red vuelve a ser señal: con el mismo enlace nuevo, **38 en verde**; con
+UNA letra cambiada en una story, **roja a 204 px**. Y el estímulo del primer caso se verificó que
+llegaba al navegador con un control que debía enrojecer y enrojeció.
+
+**Decisión** · `e2e:visual` vuelve a `preflight` (**2 min** medidos; el carril completo pasa de
+~3 a ~5). En `preflight:scope` se corre **solo si el cambio puede mover el catálogo**
+(`sc-docs`, `ui-smartcontact`, `design-tokens` o el propio spec): un cambio del Supervisor no
+puede tocarlas. En `ci-preflight-parity` entra en `LOCAL_ONLY`, cuya regla se explicita: no es
+«lo que me apetece saltarme», es **lo que el CI no puede hacer**. Ese lado hace el preflight más
+estricto que el CI, nunca menos, así que la promesa «verde en local ⇒ verde en CI» se mantiene.
+
+**El contraejemplo que lo cierra** (lo midió la sesión `numbfish` el mismo día, en `sc-section-card`):
+cambió **padding, línea de cabecera, icono, gap y tipografía**, y de las **cinco aserciones** que
+tiene el test de ese componente **ninguna toca nada de eso**. Lo único que enrojeció fue la
+captura, y las tres veces. O sea que la red de valores computados y la de píxeles **no se
+solapan**: hay cambios reales que solo ve la segunda.
+
+**Descartadas** ·
+· *Borrarlas, que era la lectura literal de la pregunta de Rafa* — habría sido tirar la única
+  detección de cambio visual no intencionado. Un showcase enseña cómo está algo AHORA; no
+  contesta «¿esto ha cambiado sin que nadie quisiera?». Y lo que Rafa describía como su valor
+  («un inventario y un ejemplo de dónde están») es **otra cosa**: la galería *Uso real*, 25
+  capturas que ya se generan solas y tienen gate en `verify`. Se estaba a punto de quitar una
+  cosa por la descripción de otra.
+· *Dejarlas a mano, como en DD-60* — es el estado peor: 38 ficheros que **parecen** una red y no
+  lo son. Es el patrón que esta misma sesión arregló tres veces (los paquetes en junio, la
+  pantalla de Deployments, el registro sin comprobar). Un paso que hay que recordar no se ejecuta.
+· *Un runner de macOS en el CI* — ya se midió en DD-60 y falla las 38. No ha cambiado nada.
+
+**Consecuencias** · DD-60 sigue en pie en todo lo demás: las tres suites de APP siguen viviendo
+solo en el CI, que es donde estaba la cola de una hora. Lo que vuelve es lo que el CI **no puede**
+correr, y cuesta 2 minutos.
+
+**El coste que esto reintroduce, dicho aquí y no descubierto luego**: en un portátil solo cabe UN
+Playwright, así que devolver `e2e:visual` al `preflight` devuelve la **cola** que DD-60 quitó. La
+diferencia es el orden de magnitud: 2 minutos por sesión en vez de 20, y en `preflight:scope` solo
+para quien toque el catálogo. Además ya no es un fallo, es una espera: el guardián aguarda a que
+la vecina suelte (25 min de techo) en vez de tirar la cadena. Se vio la misma noche de escribir
+esto — un preflight esperó a la sesión `numbfish` y agotó el techo, y lo dijo en alto en vez de
+mentir. **Si con cuatro sesiones a la vez la cola vuelve a doler, la salida no es quitar la red:
+es autohospedar la fuente monoespaciada** (hoy es un stack del sistema, `01-primitive.css:249`, y
+aparece DENTRO de la captura en `.sb-snippet pre` y `.sb-host__tag`). Sin esa dependencia de
+plataforma, las capturas podrían casar en un runner y volver al CI, que es donde no hacen cola.
+
 ## DD-61 · 2026-09-09 — Cada PIEL de `sc-section-card` trae las medidas de SU nodo de Figma, y el maestro del DS es el que manda en la gris
 
 **Contexto** · DD-57 subió el padding de `sc-section-card` de 21 a 24.5 «hacia el valor que la
