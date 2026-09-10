@@ -15,6 +15,64 @@
 > coordine. Los `sNN` de los tramos viejos se quedan como están: los nombran commits y
 > `docs/DECISIONS.md`, y reescribirlos solo desincronizaría el doc de su propia historia.
 
+## ✅ 2026-09-10 · Servicio y Grupos ya tienen maqueta de la generación NUEVA
+
+**Sello:** las dos maquetas viven en el Figma del Supervisor, sección «Prototipo de limpieza»
+(`393:10554`), junto a las diez de Agentes:
+
+| Pantalla | Nodo | Medida |
+| --- | --- | --- |
+| `Contact Center - General` | **`2681:11923`** | 1440×1283 |
+| `Contact Center - Grupos` | **`2681:12104`** | 1440×900 |
+
+**De dónde sale.** Era el pendiente nº 1 del tramo del 2026-09-09: las dos pantallas se
+entregaron con la caja nueva y el reparto de la maqueta VIEJA, porque de la nueva solo existía
+Agentes. Ahora existen las tres.
+
+**Cómo se construyeron, que importa para fiarse de ellas:**
+
+- **El armazón es un CLON del marco verificado de Agentes** (`393:12491`), no un dibujo a mano.
+  Por eso las tres coinciden por construcción, no por copiar números: `content` pad 22.75/28 gap
+  28 · rail 196 · `Block` 920, pad 24.5, gap 16, radio 12, borde negro al 10% · icono de cabecera
+  14 · título sangrado 36.75 · secciones a 24.5 con el divisor cruzando los 871 y su contenido a
+  36.75. Barrido y comprobado nodo a nodo contra la referencia.
+- **El contenido son CLONES de las maquetas viejas** (`2286:5351` y `2286:5324`), no controles
+  nuevos: así ni una etiqueta ni una variante están inventadas. Y como el código de ayer salió de
+  esas mismas maquetas, la maqueta nueva y la pantalla entregada dicen lo mismo.
+
+**Lo que se corrigió al clonar el rail, en vez de arrastrarlo** (son discrepancias ya reportadas):
+el item activo ya no encoge 2px (los tres a `pad 8.75 / gap 5.25`), los tres iconos miden 14, y
+cada uno lleva el glifo de SU destino — la referencia tiene «ShoppingBagOpen» en Agentes y
+«FolderNotch» en Grupos, que no son sus iconos. **La referencia de Agentes se quedó como está**:
+arreglarla es un cambio aparte y es decisión de Rafa.
+
+**Divergencias maqueta ↔ producto que quedan sobre la mesa** (no las he resuelto por mi cuenta,
+son de copy y las arbitra diseño):
+
+| Sitio | Maqueta | Producto |
+| --- | --- | --- |
+| Sección de radios en «Recepción» | «Aviso de conversación» | «Mostrar» |
+| Primera sección de Grupos | «Configuración» | «Parámetros» |
+| Sección de notificaciones | «Notificaciones **y** sistemas externos» | «Notificaciones **a** sistemas externos» |
+| Bajo ese título | tiene la ayuda «Envía estos eventos a tu sistema externo» | no la muestra |
+| Miga | «Configuración › Contact Center» | «Contact Center › General» |
+
+En los títulos de sección mandó el texto del PRODUCTO, que es el que se lee en pantalla; la ayuda
+y la miga se dejaron como estaban en la maqueta. Ninguna de las cinco es una medida.
+
+**Lo que queda:**
+
+1. **Los formularios de admin siguen sin maqueta de `sc-section-card`.** Su caja bebe del maestro
+   del DS (DD-61), pero su CONTENIDO no está contrastado contra nada.
+2. **El barrido global de la tipografía** (`field__label`, 29 usos en 7 pantallas;
+   `sub-section__title`, 8 en 3) sigue pendiente.
+3. **Decidir si las maquetas VIEJAS se retiran** de la sección «Flujos». No se han tocado: ahora
+   hay dos versiones de cada pantalla y la sección dice cuál manda, pero eso solo lo sabe quien lo
+   lea aquí.
+4. **Decidir si la app viva lleva un aviso** que apunte a `docs/PROTOTIPOS.md` (DD-56).
+
+---
+
 ## ✅ 2026-09-10 · 16 componentes no aseveraban ni una propiedad, y el CI no miraba ninguno
 
 **Sello:** DD-63. `component-styles` estable en 5 pasadas y VALIDADA CON EL FALLO PUESTO.
@@ -213,8 +271,8 @@ cards de los formularios de admin vuelven ahí.
 
 **Lo que queda:**
 
-1. **Servicio y Grupos no tienen maqueta de la generación nueva.** Lo de hoy es la caja nueva con
-   el reparto de la vieja. Cuando se rehagan en «Prototipo de limpieza», hay que barrerlas otra vez.
+1. ~~Servicio y Grupos no tienen maqueta de la generación nueva~~ — **hecho el 2026-09-10**:
+   `2681:11923` y `2681:12104` en «Prototipo de limpieza» (ver el tramo de arriba).
 2. **Los formularios de admin no tienen maqueta de `sc-section-card`.** Su caja ya bebe del
    maestro del DS, pero su CONTENIDO no está contrastado contra nada.
 3. **El barrido global de la tipografía** (`field__label`, 29 usos en 7 pantallas;
