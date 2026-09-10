@@ -124,9 +124,11 @@ rama construyendo: habría dado un rojo con los cinco sitios sanos.
   commit» y dejaría de ser cierto. Cambiaría el contrato de DD-59 entero.
 · *Preguntarle a la API de Cloudflare si el build está `skipped`* — diría el motivo exacto en vez
   de deducirlo, pero ata el registro a un secret para saber algo que la cabeza de `main` ya dice
-  sin credenciales. Y ese secret **hoy no existe**: `gh api …/actions/secrets` devuelve 0, así que
-  el paso de `audit:cf-config` del workflow lleva desde que se escribió avisando y siguiendo. Se
-  queda como mejora del MENSAJE si algún día un rojo no se explica solo.
+  sin credenciales. Se queda como mejora del MENSAJE si algún día un rojo no se explica solo.
+  *(Al escribir esto el secret `CLOUDFLARE_API_TOKEN` no existía —`gh api …/actions/secrets`
+  devolvía 0— y el paso de `audit:cf-config` del workflow solo avisaba. Rafa lo creó ese mismo
+  2026-09-10 y el paso ya corre de verdad, verde, desde el #88. No cambia la decisión: la cabeza
+  de `main` sigue diciendo lo mismo sin credenciales.)*
 
 **Consecuencias** · Un empujón sobre otro deja de escribir filas rojas: escribe **una sola vez**,
 la del commit que queda arriba, y las comprobaciones adelantadas salen en gris (canceladas) o en
