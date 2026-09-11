@@ -230,14 +230,25 @@
 
   /* El índice se integra EN el título ("01. Información básica") en vez de
    * flotar como eyebrow suelto sobre un bloque plano. */
+  /*
+   * Los tres ejes los pone `.sc-text-body-semibold` en la plantilla (DD-55: el estilo de
+   * texto se le pone a lo que NO es un componente). Aquí se queda la maquetación y el color.
+   *
+   * BAJA DE 18 A 14 (2026-09-11). El 18/24/600 era `Heading/h3-semibold`, un rol legítimo —
+   * no estaba fuera del sistema—, pero era el ÚNICO título de sección de la app que no iba a
+   * `Body/body-semibold`: los de `sc-section-card` miden 14/20/600 en las otras ocho pantallas.
+   * Y el 18 tampoco lo respalda la maqueta: en todo el archivo Supervisor no hay un texto por
+   * encima de 14 (medido en DD-61, que es lo que bajó el título de página por el mismo motivo).
+   *
+   * Esto NO lo cazó `audit:screen-vocabulary`: su regla es «un nombre, dos hojas», y
+   * `.rule-card__title` solo lo usa esta pantalla, así que no tenía con quién discrepar. El
+   * punto ciego es real y lo cubre el barrido de tipografía, que mira el VALOR y no el nombre.
+   */
   &__title {
     display: flex;
     align-items: center;
     gap: var(--sc-spacing-0-5);
     margin: 0;
-    font-size: var(--sc-font-size-400);
-    line-height: var(--sc-line-height-400, 1.4);
-    font-weight: var(--sc-font-weight-semibold);
     color: var(--sc-text-primary);
   }
 
@@ -330,7 +341,7 @@
     align-items: baseline;
     gap: 2px;
     font-size: var(--sc-font-size-200);
-    font-weight: var(--sc-font-weight-medium);
+    font-weight: var(--sc-font-weight-regular);
     color: var(--sc-text-secondary);
   }
 
@@ -401,7 +412,7 @@
   background: var(--sc-bg-info);
   color: var(--sc-text-on-info);
   font-size: var(--sc-font-size-50);
-  font-weight: var(--sc-font-weight-bold);
+  font-weight: var(--sc-font-weight-semibold);
   line-height: 1;
 }
 
@@ -437,7 +448,7 @@
     gap: var(--sc-spacing-0-5);
     margin: 0;
     font-size: var(--sc-font-size-200);
-    font-weight: var(--sc-font-weight-medium);
+    font-weight: var(--sc-font-weight-semibold);
     color: var(--sc-text-primary);
   }
 

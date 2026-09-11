@@ -1,3 +1,4 @@
+import { execSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
@@ -13,7 +14,9 @@ import {
   componer,
   diferencias,
   esHojaDePantalla,
+  sangraContenido,
   sinComentarios,
+  usaCajaCard,
   vocabularioDe,
 } from '../audit-screen-vocabulary.mjs';
 
@@ -141,4 +144,43 @@ test('toda entrada del trinquete lleva su motivo, y todo motivo su entrada', () 
 
 test('VOCABULARIO no tiene nombres repetidos', () => {
   assert.equal(new Set(VOCABULARIO).size, VOCABULARIO.length);
+});
+
+/* ── el contrato de `surface="card"` ──────────────────────────────────────── */
+
+/*
+ * Esta es la comprobación que faltaba el 2026-09-10: `sistema-page` pasó a la caja del DS con
+ * sus cinco cards midiendo EXACTAS —radio, borde, paddings, todo verde— y aun así el título
+ * salía a 37.75 del filo con el contenido a 25.5, porque la cabecera se sangra 12.25 a sí misma
+ * y el contenido no la llevaba. Medir la caja no basta; hay que medir la RELACIÓN.
+ */
+
+test('detecta quién usa la caja `card`, y no confunde la palabra en un comentario', () => {
+  assert.equal(usaCajaCard('<sc-section-card surface="card">x</sc-section-card>'), true);
+  assert.equal(usaCajaCard('<sc-section-card>x</sc-section-card>'), false);
+  assert.equal(usaCajaCard('<!-- antes era surface="card" --><sc-section-card>x</sc-section-card>'), false);
+});
+
+test('la sangría del contenido se reconoce por `.sub-section`, también junto a otras clases', () => {
+  assert.equal(sangraContenido('<div class="sub-section">x</div>'), true);
+  assert.equal(sangraContenido('<section class="sub-section sub-section--x">x</section>'), true);
+  assert.equal(sangraContenido('<div class="card__body">x</div>'), false);
+  // no vale que el nombre solo aparezca en un comentario
+  assert.equal(sangraContenido('<!-- usa sub-section --><div class="card__body">x</div>'), false);
+  // ni que sea otra clase que EMPIEZA igual
+  assert.equal(sangraContenido('<div class="sub-sectioning">x</div>'), false);
+});
+
+test('toda plantilla que usa `surface="card"` sangra su contenido', () => {
+  const rutas = execSync(
+    "find projects/supervisor/src/app -name '*.component.html'",
+    { encoding: 'utf8' },
+  )
+    .split('\n')
+    .filter(Boolean);
+  for (const ruta of rutas) {
+    const html = readFileSync(ruta, 'utf8');
+    if (!usaCajaCard(html)) continue;
+    assert.ok(sangraContenido(html), `${ruta} usa la caja card y no sangra su contenido`);
+  }
 });

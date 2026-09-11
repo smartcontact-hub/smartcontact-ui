@@ -20,9 +20,23 @@
  * export, mientras Figma ata `Body/body-*` a `line/height/200`. Coincidían en
  * valor (20px), así que era invisible para todo lo demás.
  *
- * Qué afirma, y nada más: cada clase resuelve al font-size, line-height, peso y
- * familia del text style del que dice ser. No opina sobre QUÉ debería medir un
- * rol (eso lo decide Figma) ni sobre dónde se usan las clases.
+ * Qué afirma: (1) cada clase resuelve al font-size, line-height, peso y familia
+ * del text style del que dice ser; (2) ninguna `.sc-text-*` va encima de un
+ * `<sc-*>`; y desde el 2026-09-11 también (3) que **el CSS de las pantallas no
+ * declare tipografía fuera de los 12 roles**. No opina sobre QUÉ debería medir un
+ * rol: eso lo decide Figma.
+ *
+ * La tercera nació de medir: 76 reglas del Supervisor usaban `font-weight: medium`
+ * (500), que NO es el peso de ninguno de los 12 estilos —solo existen 400 y 600—, y
+ * otras tantas ponían tamaños (16, 32) que tampoco son peldaño de ningún rol. Nada
+ * lo cruzaba: este gate comprobaba que las clases VALEN lo que Figma, y el de
+ * vocabulario que un nombre no viva en dos hojas, pero un valor suelto en la hoja de
+ * UNA pantalla no le tocaba a ninguno.
+ *
+ * ⚠️ LO QUE ESTA PARTE NO PUEDE VER, y por eso no sustituye al e2e: mira lo que se
+ * DECLARA, no lo que GANA. `.impact__hero` declara 32 y su variante `--rail` lo baja
+ * a 20, así que el número que se renderiza no sale de aquí. Lo rendido lo mide
+ * `e2e/supervisor/text-styles-applied.spec.ts`, en el navegador.
  *
  * La tabla de abajo es la ÚNICA parte que se escribe a mano, porque los text
  * styles no viajan en el export DTCG (que solo lleva primitivas). Se leyó en
@@ -32,8 +46,11 @@
  *
  * Lee el FUENTE, no un `dist/`.
  */
+import { execSync } from 'node:child_process';
 import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
+
+import { aplanar } from './audit-screen-vocabulary.mjs';
 
 const root = resolve(import.meta.dirname, '..');
 const STYLES = resolve(root, 'projects/design-tokens/src/lib/styles');
@@ -291,6 +308,92 @@ export function encimaDeComponente(html) {
   return out;
 }
 
+/* ── 3 · el CSS de pantalla no declara tipografía fuera de los 12 roles ─────── */
+
+/**
+ * Los seis peldaños de tamaño con su interlineado, y los DOS únicos pesos. Sale de
+ * `FIGMA_TEXT_STYLES` de arriba, no de una copia: si un estilo cambia en Figma, esto
+ * cambia con él.
+ */
+export const ROLES = new Map(FIGMA_TEXT_STYLES.map((e) => [e.size, e.lh]));
+export const PESOS_VALIDOS = new Set(FIGMA_TEXT_STYLES.map((e) => e.weight));
+
+/**
+ * Lo que declara tipografía a propósito fuera de los roles, con su motivo. Igual que
+ * el trinquete de `audit:screen-vocabulary`: sin motivo escrito no entra nadie, y una
+ * entrada que ya no corresponde a nada también es roja.
+ *
+ * NO entran aquí los `font-size` que dimensionan un ICONO (`.vpick__caret`,
+ * `.vpick__check`, …): ahí el tamaño es una caja de glifo, no un estilo de texto, y
+ * marcarlos convertía el gate en ruido — la primera pasada dio 3 de 9 así.
+ */
+export const TIPOGRAFIA_DELIBERADA = {
+  '.impact__hero':
+    'Número héroe de la tarjeta de impacto. Su tamaño sale del Figma de Memory y está ' +
+    'medido en pantalla: 32 es el tope real de la rampa (el Figma pide 40, que exigiría ' +
+    'un token display nuevo) y la variante `--rail` lo baja a 20 porque a 32 la palabra ' +
+    '«conversaciones» se parte. Motivo escrito al lado de la regla.',
+  '.impact__label':
+    'Rótulo de la misma tarjeta, a 16 «como el Figma» (motivo escrito al lado). 16 no es ' +
+    'peldaño de ningún rol; el resto de la tarjeta cuelga de él.',
+};
+
+/** Un `font-size` que dimensiona un glifo, no texto. Se reconoce por el nombre. */
+export const esCajaDeIcono = (selector) =>
+  /(caret|chevron|check|icon|arrow|spark|dot|glyph)$/i.test(selector.replace(/^\./, ''));
+
+/* Tablas de resolución: token → px. Se leen de los layers, no se copian. */
+function tablaTokens(prefijo) {
+  const capas = ['01-primitive.css', '02-semantic.css']
+    .map((f) => readFileSync(resolve(LAYERS, f), 'utf8'))
+    .join('\n');
+  const crudo = declaraciones(capas);
+  const tabla = {};
+  for (const [nombre] of crudo) {
+    if (!nombre.startsWith(prefijo)) continue;
+    /* `resolver` espera un VALOR (`var(--x)`), no el nombre pelado: pasándole el nombre
+     * devolvía el propio nombre, `aPx` daba null, la tabla salía VACÍA y el gate no
+     * miraba nada mientras decía «0 fuera de rol». Lo cazó que la sonda independiente
+     * contaba 8 (LEARNINGS #2: cierra con una observación que no dependa de tu inventario). */
+    const r = resolver(`var(${nombre})`, crudo);
+    const px = aPx(r?.valor ?? '');
+    if (px !== null) tabla[nombre] = px;
+  }
+  return tabla;
+}
+
+/* `aPx` ya vive arriba (línea ~109) y hace exactamente esto: se reutiliza. */
+
+/** Las declaraciones de tipografía de una hoja, ya resueltas a px. */
+export function tipografiaDe(scss, { size, lh, peso }) {
+  const fuera = [];
+  const lee = (valor, tabla) => {
+    if (!valor) return null;
+    const m = valor.match(/var\((--[a-z0-9-]+)/i);
+    if (m) return tabla[m[1]] ?? null;
+    return aPx(valor);
+  };
+  for (const [selector, props] of aplanar(scss)) {
+    if (!props['font-size'] && !props['font-weight']) continue;
+    const s = lee(props['font-size'], size);
+    const l = lee(props['line-height'], lh);
+    const w = lee(props['font-weight'], peso);
+    const fallos = [];
+    if (w !== null && !PESOS_VALIDOS.has(w)) fallos.push(`peso ${w} (los estilos solo usan ${[...PESOS_VALIDOS].join(' y ')})`);
+    if (s !== null && !ROLES.has(s) && !esCajaDeIcono(selector)) fallos.push(`tamaño ${s} no es peldaño de ningún rol`);
+    /* Un `line-height` SIN UNIDAD (1.4, 1.5…) es un multiplicador, no un número de px, y
+     * además está APARCADO con razón en `NEXT-SESSION.md` («sin token destino en el Kit»):
+     * el Kit no exporta un peldaño sin unidad al que apuntar, así que convertirlos es un
+     * trabajo que todavía no tiene destino. Marcarlos aquí sería pedir algo que el sistema
+     * no puede dar — y un guardián que pide imposibles enseña a ignorarlo. */
+    const lhSinUnidad = /^[\d.]+$/.test((props['line-height'] ?? '').trim());
+    if (s !== null && l !== null && !lhSinUnidad && ROLES.has(s) && ROLES.get(s) !== l)
+      fallos.push(`${s}/${l} — el rol de ${s} lleva ${ROLES.get(s)}`);
+    if (fallos.length) fuera.push({ selector, fallos });
+  }
+  return fuera;
+}
+
 const ficheros = [];
 {
   const { readdirSync } = await import('node:fs');
@@ -328,3 +431,50 @@ if (encima.length) {
 
 log('');
 log('✔ Ningún `<sc-*>` lleva `.sc-text-*` en su propia etiqueta.');
+
+log('');
+log('ROLES · el CSS de pantalla no declara tipografía fuera de los 12 estilos');
+log('='.repeat(62));
+{
+  const size = tablaTokens('--sc-font-size-');
+  const lh = tablaTokens('--sc-line-height-');
+  const peso = tablaTokens('--sc-font-weight-');
+  const hojas = execSync(
+    "find projects/supervisor/src/app projects/supervisor/src/styles -name '*.scss'",
+    { encoding: 'utf8', cwd: root },
+  ).split('\n').filter(Boolean).sort();
+
+  const fuera = [];
+  const vistos = new Set();
+  for (const hoja of hojas) {
+    for (const caso of tipografiaDe(readFileSync(resolve(root, hoja), 'utf8'), { size, lh, peso })) {
+      if (caso.selector in TIPOGRAFIA_DELIBERADA) { vistos.add(caso.selector); continue; }
+      fuera.push({ hoja, ...caso });
+    }
+  }
+  const muertas = Object.keys(TIPOGRAFIA_DELIBERADA).filter((s) => !vistos.has(s));
+
+  log(`  ${hojas.length} hoja(s) · ${fuera.length} fuera de rol · ` +
+      `${Object.keys(TIPOGRAFIA_DELIBERADA).length} deliberada(s) con su motivo`);
+  log('='.repeat(62));
+
+  if (fuera.length || muertas.length) {
+    log('');
+    for (const f of fuera) {
+      log(`  ✘ ${f.hoja}`);
+      log(`      ${f.selector} — ${f.fallos.join(' · ')}`);
+    }
+    for (const m of muertas) {
+      log(`  ✘ TIPOGRAFIA_DELIBERADA cita \`${m}\` pero ya no declara nada fuera de rol.`);
+      log('      → quita su entrada; una excepción caducada miente sobre lo que falta.');
+    }
+    log('');
+    log('  Los 12 estilos son seis tamaños × dos pesos (400 y 600). Un 500 o un 16 no');
+    log('  son «casi»: no existen. Usa el rol que toque, o declara la divergencia en');
+    log('  TIPOGRAFIA_DELIBERADA con su motivo (DD-36 aplicado aquí).');
+    process.exit(1);
+  }
+}
+
+log('');
+log('✔ Ninguna pantalla declara tipografía fuera de los 12 roles.');

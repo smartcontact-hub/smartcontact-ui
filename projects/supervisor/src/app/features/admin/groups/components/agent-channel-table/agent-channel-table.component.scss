@@ -105,7 +105,7 @@
   &__empty-title {
     margin: var(--sc-spacing-0-5) 0 0;
     font-size: var(--sc-font-size-200);
-    font-weight: var(--sc-font-weight-medium);
+    font-weight: var(--sc-font-weight-semibold);
     color: var(--sc-text-primary);
   }
 
@@ -124,7 +124,7 @@
 
     thead th {
       text-align: left;
-      font-weight: var(--sc-font-weight-medium);
+      font-weight: var(--sc-font-weight-regular);
       color: var(--sc-text-secondary);
       font-size: var(--sc-font-size-100);
       padding: var(--sc-spacing-0-75) var(--sc-spacing-0-875);
@@ -180,7 +180,7 @@
 
   &__name-label {
     color: var(--sc-text-primary);
-    font-weight: var(--sc-font-weight-medium);
+    font-weight: var(--sc-font-weight-semibold);
     min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
@@ -287,7 +287,7 @@
   }
 
   &__bulk-count {
-    font-weight: var(--sc-font-weight-medium);
+    font-weight: var(--sc-font-weight-semibold);
     font-size: var(--sc-font-size-200);
   }
 

@@ -23,7 +23,7 @@
   padding: 0 var(--sc-spacing-0-625);
   border-radius: var(--sc-radius-200);
   font-size: var(--sc-font-size-50);
-  font-weight: var(--sc-font-weight-medium);
+  font-weight: var(--sc-font-weight-regular);
   line-height: 1;
 
   /* success/danger = Kit `tag` (bg claro + texto oscuro). Administrativo = granate
@@ -52,7 +52,7 @@
 .sub-label {
   display: block;
   font-size: var(--sc-font-size-50);
-  font-weight: var(--sc-font-weight-medium);
+  font-weight: var(--sc-font-weight-regular);
   color: var(--sc-text-secondary);
 }
 

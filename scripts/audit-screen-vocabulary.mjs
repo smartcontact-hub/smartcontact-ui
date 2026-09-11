@@ -21,7 +21,7 @@
  * (Es lo que ya nos enseñó `emit-consumer-typography`: leer la lista del preset en vez
  * de repetirla.)
  *
- * QUÉ GATEA — tres cosas, todas estáticas:
+ * QUÉ GATEA — cuatro cosas, todas estáticas:
  *
  * 1. UN NOMBRE, UN HOGAR. Cada nombre del vocabulario compartido (`.grid`, `.field`,
  *    `.sub-section`, …) se declara en UNA sola hoja. Dos hogares = deriva, y el
@@ -29,7 +29,13 @@
  *    delante en vez de a ojo.
  * 2. NADIE SE HACE SU PROPIA CAJA. Una sección de campos vive en `sc-section-card`, no
  *    en un `.card`/`.rule-card` a mano. Trinquete por conteo: la lista solo mengua.
- * 3. LAS DIVERGENCIAS DELIBERADAS SE DECLARAN. Lo que diverge a propósito va en
+ * 3. QUIEN USA LA CAJA `card` SANGRA SU CONTENIDO. La cabecera de `surface="card"` se
+ *    sangra 12.25 a sí misma, así que el contenido tiene que llevar la misma sangría
+ *    (`.sub-section`) o el título queda 12.25 a la derecha de todo lo demás. Es un
+ *    contrato del componente con lo que proyecta, y hasta el 2026-09-10 solo lo conocían
+ *    las tres pantallas que ya usaban la caja: al convertir `sistema-page` sus cinco cards
+ *    medían EXACTAS y la pantalla salía torcida igual.
+ * 4. LAS DIVERGENCIAS DELIBERADAS SE DECLARAN. Lo que diverge a propósito va en
  *    `DELIBERADAS`, con su motivo y el DD que lo respalda. Sin motivo escrito, la
  *    siguiente pasada de "uniformar" lo borra creyendo que es un descuido — que es
  *    exactamente lo que DD-36 existe para impedir.
@@ -45,6 +51,7 @@
  *     entrada en DELIBERADAS con el motivo, o un nombre propio a la que se desvía.
  *   · «caja a mano» → usa `<sc-section-card>`. Si esa pantalla no puede, entra al
  *     trinquete con su motivo.
+ *   · «no sangra su contenido» → envuélvelo en `.sub-section`.
  *   · «entrada muerta» → bórrala. Eso es el trinquete avanzando.
  *
  * ES ESTÁTICO y PURO respecto al texto (funciones exportadas → testeable).
@@ -223,6 +230,33 @@ export function componer(padre, cabecera) {
   return '';
 }
 
+/**
+ * El CONTRATO de `surface="card"`: quien la usa tiene que sangrar su contenido.
+ *
+ * La caja `card` sangra 12.25 el primer hijo de su cabecera (el `Header` 393:12588 se lo pone a
+ * sí mismo dentro del `Block`), así que el contenido tiene que llevar la MISMA sangría o el
+ * título queda 12.25 a la derecha de todo lo demás. Esa sangría la pone `.sub-section`.
+ *
+ * Es un contrato que solo conocían las tres pantallas de `config/aed`, porque eran las únicas
+ * que habían usado la caja. Al pasar `sistema-page` al componente (2026-09-10) me lo salté: sus
+ * cinco cards medían EXACTAS —radio, borde, paddings, todo verde— y aun así el título salía a
+ * 37.75 del filo con el contenido a 25.5. Medir la caja no basta: hay que medir la RELACIÓN
+ * entre la caja y lo que proyecta dentro.
+ *
+ * Lo cazó una captura + una medición, no el verde de la caja. Esto es esa medición, hecha
+ * máquina.
+ */
+export function usaCajaCard(html) {
+  return /surface\s*=\s*"card"/.test(sinComentariosHtml(html));
+}
+
+/** ¿Sangra su contenido con `.sub-section`, que es lo que casa con la cabecera? */
+export function sangraContenido(html) {
+  return /class\s*=\s*"[^"]*\bsub-section\b/.test(sinComentariosHtml(html));
+}
+
+const sinComentariosHtml = (html) => html.replace(/<!--[\s\S]*?-->/g, '');
+
 /** Solo los nombres del vocabulario que una hoja DECLARA (con al menos una propiedad). */
 export function vocabularioDe(scss) {
   const reglas = aplanar(scss);
@@ -357,6 +391,24 @@ if (process.argv[1] && process.argv[1].endsWith('audit-screen-vocabulary.mjs')) 
         '      → quita su entrada. Una excepción caducada miente sobre lo que falta.',
       ]);
     }
+  }
+
+  /* CONTRATO de `surface="card"`: quien la usa sangra su contenido (ver `usaCajaCard`). */
+  const plantillas = sh(
+    "find projects/supervisor/src/app -name '*.component.html' -not -path '*/node_modules/*'",
+  )
+    .split('\n')
+    .filter(Boolean)
+    .sort();
+  for (const ruta of plantillas) {
+    const html = readFileSync(ruta, 'utf8');
+    if (!usaCajaCard(html) || sangraContenido(html)) continue;
+    problemas.push([
+      `${ruta}: usa \`surface="card"\` y NO sangra su contenido.`,
+      '      → envuelve el contenido de la card en `.sub-section`. La cabecera de esa caja se\n' +
+        '        sangra 12.25 a sí misma; sin la misma sangría en el contenido, el título queda\n' +
+        '        12.25 a la derecha de todo lo demás (medido: 37.75 contra 25.5).',
+    ]);
   }
 
   const { chequearTrinquete } = await import('./audit-screen-hygiene.mjs');

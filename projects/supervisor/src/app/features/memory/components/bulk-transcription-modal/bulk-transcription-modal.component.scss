@@ -43,7 +43,7 @@
 
 .bulkv26__label {
   font-size: var(--sc-font-size-200);
-  font-weight: var(--sc-font-weight-bold);
+  font-weight: var(--sc-font-weight-semibold);
   text-transform: uppercase;
   line-height: 1.4;
   letter-spacing: 0.02em;
@@ -91,8 +91,8 @@
 .bulkv26__hero-delta {
   position: absolute;
   margin-left: var(--sc-spacing-0-875);
-  font-size: var(--sc-font-size-300);
-  font-weight: var(--sc-font-weight-medium);
+  font-size: var(--sc-font-size-200);
+  font-weight: var(--sc-font-weight-semibold);
   font-variant-numeric: tabular-nums;
   pointer-events: none;
   animation: sc-delta-fly 750ms var(--sc-ease-out, cubic-bezier(0.16, 1, 0.3, 1)) forwards;
@@ -149,7 +149,7 @@
   padding: 3px 8px;
   border-radius: var(--sc-radius-full);
   font-size: var(--sc-font-size-50);
-  font-weight: var(--sc-font-weight-medium);
+  font-weight: var(--sc-font-weight-regular);
   line-height: 1.2;
   border: 1px solid;
   background: transparent;
@@ -211,7 +211,7 @@
 }
 
 .bulkv26__decision-title {
-  font-size: var(--sc-font-size-300);
+  font-size: var(--sc-font-size-200);
   font-weight: var(--sc-font-weight-semibold);
   line-height: 1.5;
   transition: color 200ms ease;
@@ -247,7 +247,7 @@
 
   &.is-on {
     color: var(--sc-color-teal-700);
-    font-weight: var(--sc-font-weight-medium);
+    font-weight: var(--sc-font-weight-regular);
   }
 
   &.is-pulsing {

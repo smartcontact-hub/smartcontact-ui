@@ -118,7 +118,7 @@
 
   &__label {
     font-size: var(--sc-font-size-200);
-    font-weight: var(--sc-font-weight-medium);
+    font-weight: var(--sc-font-weight-semibold);
     color: var(--sc-text-primary);
 
     .hub-item--disabled & {
@@ -161,7 +161,7 @@
   &__soon {
     flex-shrink: 0;
     font-size: var(--sc-font-size-50);
-    font-weight: var(--sc-font-weight-medium);
+    font-weight: var(--sc-font-weight-regular);
     text-transform: uppercase;
     letter-spacing: 0.05em;
     color: var(--sc-text-disabled);
