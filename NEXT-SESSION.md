@@ -16,7 +16,8 @@
    sobra ya, y si dos cajas llevan el mismo commit. Córrelo al abrir (para no repetir trabajo que
    otra sesión ya tiene) y al cerrar (una caja se cierra VACÍA: PR fundido y CI leído, no verde y
    sin fundir). Nació el 2026-09-10 midiendo este repo: nueve worktrees vivos, tres con el trabajo
-   ya en `main`, y dos ramas con el mismo commit hechas por dos sesiones que no se vieron.
+   ya en `main`, y una rama viviendo en dos cajas a la vez (`x` y su `x-2`, el mismo SHA): eso lo
+   canta como GEMELAS, no como trabajo duplicado; duplicado es el mismo título en ramas distintas.
 
 4. Lo de **"ESPERANDO A RAFA" no se pregunta**. Está aparcado a propósito; solo se toca si él lo saca.
 5. Si tocas un fondo o un título → `docs/DECISIONS.md` DD-33 y DD-34. Si tocas una app RÉPLICA

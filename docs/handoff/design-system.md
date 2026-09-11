@@ -24,8 +24,8 @@
 > **Al abrir sesión, lee la lista ENTERA antes de coger nada.** Los apuntes que se tocan entre sí
 > son UNA tarea, no tres: agrúpalos en un solo encargo. Esta ficha estuvo hasta el 2026-09-10 con
 > esta sección en la línea 2500 de 2685, enterrada bajo el histórico, y el precio fue medible:
-> cada hallazgo abría chat propio en vez de esperar aquí, y el mismo trabajo llegó a existir dos
-> veces en dos ramas (`verdict-avisa-pr-fundido` y su `-2`).
+> cada hallazgo abría chat propio en vez de esperar aquí, y una rama llegó a vivir en dos cajas a
+> la vez (`verdict-avisa-pr-fundido` y su `-2`: el mismo SHA `4964d47` en la local y en `origin`).
 >
 > Lo cerrado NO se tacha aquí: se baja al histórico del final del fichero.
 

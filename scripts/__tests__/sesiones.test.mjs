@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { checksDe, duplicadosDe, enOrigin, parseaWorktrees, prDe, veredictoDe } from '../sesiones.mjs';
+import { checksDe, duplicadosDe, enOrigin, gemelasDe, parseaWorktrees, prDe, veredictoDe } from '../sesiones.mjs';
 
 // `npm run sesiones` contesta «¿puedo cerrar este chat?» para todas las cajas a la vez, y su
 // respuesta se obedece sin comprobarla: si dice CERRADA se borra un worktree, y si dice SIN SUBIR
@@ -93,6 +93,30 @@ test('el mismo título en dos cajas se canta como duplicado', () => {
 
   // En rojo: sin duplicación no debe cantar nada.
   assert.deepEqual(duplicadosDe([cajas[0], cajas[2]]), []);
+});
+
+test('dos cajas de la MISMA rama (`x` y `x-2`) son gemelas, no trabajo duplicado', () => {
+  // Caso real del 2026-09-11: `analizar-PRs` y `analizar-PRs-2`, el mismo SHA y el mismo PR #103.
+  const cajas = [
+    { nombre: 'arebury/analizar-PRs', veredicto: 'ESPERA', sujetos: ['Un comando contesta «¿puedo cerrar este chat?»'] },
+    { nombre: 'arebury/analizar-PRs-2', veredicto: 'ESPERA', sujetos: ['Un comando contesta «¿puedo cerrar este chat?»'] },
+  ];
+  // En rojo: la primera versión decía «funde una y borra la otra» sobre UN solo PR, y salía con exit 1.
+  assert.deepEqual(duplicadosDe(cajas), []);
+  assert.deepEqual(gemelasDe(cajas), [
+    { rama: 'arebury/analizar-PRs', cajas: ['arebury/analizar-PRs', 'arebury/analizar-PRs-2'] },
+  ]);
+  // Y el mismo título en ramas de verdad distintas SIGUE cantando.
+  assert.equal(duplicadosDe([cajas[0], { ...cajas[1], nombre: 'otra/rama' }]).length, 1);
+  assert.deepEqual(gemelasDe([cajas[0], { ...cajas[1], nombre: 'otra/rama' }]), []);
+});
+
+test('prDe casa primero la rama EXACTA: una rama que acaba en número no pierde su PR', () => {
+  const abiertos = [{ number: 7, headRefName: 'feat/dd-30' }];
+  assert.equal(prDe('feat/dd-30', abiertos)?.number, 7);
+  // En rojo: recortando el sufijo a ciegas, `feat/dd-30` buscaba `feat/dd`, salía «sin PR» y
+  // mandaba a abrir un segundo PR de lo que ya estaba subido.
+  assert.equal(enOrigin('feat/dd-30'), 'feat/dd');
 });
 
 test('checksDe distingue pendiente de vacío', () => {
