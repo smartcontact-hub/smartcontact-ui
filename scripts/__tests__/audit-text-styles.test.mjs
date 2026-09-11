@@ -10,6 +10,7 @@ import {
   TIPOGRAFIA_DELIBERADA,
   aPx,
   esCajaDeIcono,
+  esInterlineadoApretado,
   tipografiaDe,
 } from '../audit-text-styles.mjs';
 
@@ -100,6 +101,28 @@ test('marca el interlineado que no es el de su tamaño', () => {
     tablas,
   );
   assert.match(r[0].fallos[0], /14\/24/);
+});
+
+test('marca el tamaño declarado SIN su interlineado', () => {
+  const r = tipografiaDe('.x { font-size: var(--sc-font-size-200); }', tablas);
+  assert.match(r[0].fallos[0], /NO su interlineado/);
+});
+
+test('…pero no en un chip ni en un icono: esos dos son los controles negativos', () => {
+  /* Un chip hereda un `line-height: 1` a propósito —su altura la manda el padding— y
+   * ponerle el del rol lo hace crecer 6px. Un icono no es texto. Si el gate los marcara,
+   * serían 26 avisos que nadie puede atender, y eso enseña a ignorarlo. */
+  assert.deepEqual(tipografiaDe('.x__chip { font-size: var(--sc-font-size-200); }', tablas), []);
+  assert.deepEqual(tipografiaDe('.x__caret { font-size: var(--sc-font-size-200); }', tablas), []);
+});
+
+test('reconoce los muebles de interlineado apretado por su nombre', () => {
+  for (const s of ['.a__pill', '.b__chip', '.c__badge', '.d-tag', '.e__count', '.f__num']) {
+    assert.equal(esInterlineadoApretado(s), true, s);
+  }
+  for (const s of ['.numeric-field', '.counter-row', '.tagline'] ) {
+    assert.equal(esInterlineadoApretado(s), false, s);
+  }
 });
 
 test('un rol bien puesto no se marca', () => {

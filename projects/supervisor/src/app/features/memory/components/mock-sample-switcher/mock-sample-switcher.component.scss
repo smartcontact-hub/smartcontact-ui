@@ -22,6 +22,7 @@
   background: color-mix(in srgb, var(--sc-color-amber-100) 70%, white);
   font-family: var(--sc-font-family-primary);
   font-size: var(--sc-font-size-100);
+  line-height: var(--sc-line-height-caption);
   font-weight: var(--sc-font-weight-regular);
   color: var(--sc-color-amber-800);
   cursor: pointer;
@@ -103,6 +104,7 @@
   padding: var(--sc-spacing-0-5) var(--sc-spacing-0-75) var(--sc-spacing-0-5);
   font-family: var(--sc-font-family-primary);
   font-size: var(--sc-font-size-50);
+  line-height: var(--sc-line-height-caption);
   font-weight: var(--sc-font-weight-regular);
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -146,6 +148,7 @@
 
 .mock-sample-switcher__item-title {
   font-size: var(--sc-font-size-200);
+  line-height: var(--sc-line-height-body-2);
   font-weight: var(--sc-font-weight-semibold);
   color: var(--sc-text-primary);
 }

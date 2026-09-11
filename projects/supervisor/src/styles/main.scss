@@ -392,6 +392,7 @@ table.table {
     padding: 4px 0;
     cursor: pointer;
     font-size: var(--sc-font-size-200);
+    line-height: var(--sc-line-height-body-2);
     color: var(--sc-text-primary);
 
     &:hover span {
@@ -433,6 +434,7 @@ table.table {
     padding: var(--sc-spacing-1-125);
     text-align: center;
     font-size: var(--sc-font-size-200);
+    line-height: var(--sc-line-height-body-2);
     color: var(--sc-text-secondary);
   }
 
@@ -443,6 +445,7 @@ table.table {
     padding: var(--sc-spacing-0-5) var(--sc-spacing-1-125);
     cursor: pointer;
     font-size: var(--sc-font-size-200);
+    line-height: var(--sc-line-height-body-2);
     color: var(--sc-text-primary);
     transition: background-color 200ms ease-out;
 
@@ -473,6 +476,7 @@ table.table {
   padding: 2px 8px;
   border-radius: var(--sc-radius-full);
   font-size: var(--sc-font-size-50);
+  line-height: var(--sc-line-height-caption);
   font-weight: var(--sc-font-weight-semibold);
   text-transform: uppercase;
   letter-spacing: 0.02em;
@@ -548,6 +552,7 @@ table.table {
 .form-save-reason {
   margin-right: var(--sc-spacing-0-5);
   font-size: var(--sc-font-size-100);
+  line-height: var(--sc-line-height-caption);
   color: var(--sc-text-secondary);
   white-space: nowrap;
 }
@@ -614,6 +619,7 @@ table.table {
   .conflict-popover__desc {
     margin: 0 0 var(--sc-spacing-0-875) 0;
     font-size: var(--sc-font-size-100);
+    line-height: var(--sc-line-height-caption);
     color: var(--sc-text-secondary);
   }
 
@@ -649,12 +655,14 @@ table.table {
     background: var(--sc-bg-primary-subtle);
     border-radius: var(--sc-radius-100);
     font-size: var(--sc-font-size-100);
+    line-height: var(--sc-line-height-caption);
     color: var(--sc-text-primary);
   }
 
   .conflict-popover__hint {
     margin: 0;
     font-size: var(--sc-font-size-50);
+    line-height: var(--sc-line-height-caption);
     color: var(--sc-text-secondary);
     font-style: italic;
   }
