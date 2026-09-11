@@ -134,3 +134,67 @@ test('`@layer app` gana al tema: la celda de transcripciones mantiene su padding
     left: '15.75px',
   });
 });
+
+/**
+ * LA SEGUNDA PASADA (2026-09-11, tarde) — Y EL ÚNICO MODO DE FALLO NUEVO.
+ *
+ * El barrido de la mañana dejó fuera lo que no estaba en su inventario: las celdas de
+ * las nueve listas de repositorio, el título de las 13 pantallas, la barra lateral de
+ * Configuración y seis muebles más. Aquí se miden los que cubren esa familia entera.
+ *
+ * El segundo test NO mide tipografía: mide el MARGEN. El bloque compartido de
+ * `typography.css` declara `margin: 0` para las 12 clases, y `.page__heading` necesita
+ * conservar su separación con el cuerpo. Con la misma especificidad decide el orden del
+ * bundle, y ese orden es una consecuencia del empaquetado (los `@import` de las capas
+ * suben a la cabecera), no una decisión de nadie. Por eso el selector lleva el elemento
+ * (`h1.page__heading`, 0-1-1) y por eso esto se vigila desde el navegador: si alguien
+ * quita el `h1` o mueve el orden de `main.scss`, el título se pega al contenido y la
+ * pantalla sigue pareciendo razonable — que es justo el fallo que hay que cazar aquí.
+ *
+ * Medido con el fallo puesto: con `.page__heading` a secas el margen AGUANTA hoy (21px),
+ * así que un gate estático no vería nada. Lo que este test fija es que siga aguantando.
+ */
+const H3_SEMIBOLD = { fontSize: '18px', lineHeight: '24px', fontWeight: '600' };
+
+test('admin/agendas · la celda destacada de una lista de repositorio mide Body/body-semibold', async ({
+  page,
+}) => {
+  await goto(page, 'admin/agendas');
+  const destacada = page.locator('.table__cell--emphasis').first();
+  await expect(destacada).toBeVisible();
+  await expect(destacada).toHaveClass(/sc-text-body-semibold/);
+  expect(await leer(page, '.table__cell--emphasis')).toEqual(BODY_SEMIBOLD);
+
+  /* Y la celda MONO no lleva ninguna de las dos clases: la impondría Inter y estas
+   * columnas son monoespaciadas a propósito. Es la lección 2 del barrido de la mañana,
+   * puesta como aserción para que no vuelva por la puerta de una columna nueva. */
+  const mono = page.locator('.table__cell--mono').first();
+  if (await mono.count()) await expect(mono).not.toHaveClass(/sc-text-/);
+});
+
+test('admin/agendas · el título de página mide Heading/h3-semibold y conserva su margen', async ({
+  page,
+}) => {
+  await goto(page, 'admin/agendas');
+  const titulo = page.locator('h1.page__heading');
+  await expect(titulo).toBeVisible();
+  await expect(titulo).toHaveClass(/sc-text-h3-semibold/);
+  expect(await leer(page, 'h1.page__heading')).toEqual(H3_SEMIBOLD);
+
+  const margen = await titulo.evaluate((el: HTMLElement) => getComputedStyle(el).marginBottom);
+  expect(
+    margen,
+    'si sale 0px, la clase se llevó por delante el margen: mira la especificidad de `h1.page__heading` en `_page.scss`',
+  ).toBe('21px');
+});
+
+test('config/aed/servicio · la barra lateral de ajustes mide Body/body-regular por la clase', async ({
+  page,
+}) => {
+  const sel = 'sc-settings-sidebar .nav-item:not(.nav-item--active) .nav-item__label';
+  await goto(page, 'config/aed/servicio');
+  const item = page.locator(sel).first();
+  await expect(item).toBeVisible();
+  await expect(item).toHaveClass(/sc-text-body-regular/);
+  expect(await leer(page, sel)).toEqual(BODY_REGULAR);
+});

@@ -84,6 +84,36 @@ rol en el DS mueve todos sus textos a la vez.
 - *Quitar el `font: inherit` de los botones y confiar en la clase* → el shorthand también resetea
   estilo y variante del `<button>`; sin medirlo en cada navegador no se toca. Se quedan 3 reglas.
 
+**Segunda pasada, la misma tarde (116 → 101 reglas)** · Rafa preguntó si el barrido aplicaba
+también a `/admin/repositorios`. Aplicaba, y no por esa pantalla sola: la primera pasada dejó fuera
+lo que no estaba en SU inventario, no lo que tenía motivo. Lo que faltaba, medido rastreando el
+build entero —**4.517 mediciones sobre 56 estados de pantalla**: las 38 rutas (2.503 textos sin
+repetir) más 18 estados abiertos (modales, paneles, popovers, fichas de edición), contra las 38
+rutas y 6 modales de la mañana—:
+
+| Qué faltaba | Textos |
+|---|---:|
+| Celdas de las **nueve listas de repositorio** + grupos + usuarios | 270 |
+| **Título de página** de las 13 pantallas — DD-55 lo dejó nombrado como pendiente | 31 |
+| Barra lateral de Configuración, cabecera de grupos asignados, chip de tipo de entidad, pista de Sistema, modal de descarga, selector de conjunto de datos | 40 |
+
+Resultado: **0 diferencias** de tamaño, interlineado, peso, familia, tracking y posición; **341**
+textos que llevan la clase en su propio elemento y miden ese estilo, 283 de ellos en las 38 rutas
+y el resto solo visibles con algo abierto. (Otros 69 la heredan de un
+ancestro que la ganó —61 pastillas de estado, 5 prefijos, 3 rótulos activos—: esos NO cuentan como
+atados, porque miden otra cosa que la clase del padre. Contarlos sería inflar el resultado con la
+herencia.) Ruido del instrumento, dos rastreos del mismo build: 0.
+
+**Y una regla de composición que salió de medirlo, no de razonarlo** · una clase `.sc-text-*` sobre
+un selector **global** de la app (no encapsulado) compite de tú a tú: las dos valen (0,1,0) y decide
+el orden del bundle. El bloque compartido de `typography.css` declara `margin: 0`, así que
+`.page__heading` se jugaba sus 21px de separación con el cuerpo a una carrera que hoy gana por una
+consecuencia del empaquetado —los `@import` de las capas suben a la cabecera y el partial acaba
+278 KB más abajo— y no por decisión de nadie. Se probó **con el fallo puesto**: con `.page__heading`
+a secas el margen aguanta, o sea que ningún gate estático lo vería venir. El selector pasa a
+`h1.page__heading` (0,1,1) y `text-styles-applied` mide el margen en el navegador. En las reglas
+ENCAPSULADAS de componente no se plantea: el atributo `_ngcontent` ya les da la especificidad.
+
 ## DD-68 · 2026-09-11 — Un push del plugin que no trae export también pasa por el robot: el filtro `paths` se va
 
 **Contexto** · A las 08:27 se fundió el PR #104 «Design tokens sync» y `main` se puso en rojo

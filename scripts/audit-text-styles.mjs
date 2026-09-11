@@ -506,8 +506,22 @@ log('✔ Ninguna pantalla declara tipografía fuera de los 12 roles.');
  * Medido el 2026-09-11 antes de migrar: 301 reglas del Supervisor declaraban tipografía por
  * token y 49 textos llevaban la clase. Tras la migración (165 reglas → 226 elementos con clase,
  * medida en el navegador antes y después: 3.664 textos en 38 rutas + 813 en modales, CERO
- * cambios de tamaño, interlineado, peso, familia, márgenes ni posición) quedan las que la clase
- * NO puede sustituir, y son de cuatro familias con su motivo:
+ * cambios de tamaño, interlineado, peso, familia, márgenes ni posición) quedaron 116.
+ *
+ * SEGUNDA PASADA, el 2026-09-11 por la tarde: 15 reglas menos (116 → 101) — 14 migradas y una
+ * MUERTA (`.hub__title`, que ninguna plantilla usaba: el título del hub es `page__heading`) —,
+ * las que la primera
+ * dejó fuera por no estar en su inventario y no por tener motivo. Son las CELDAS de las nueve
+ * listas de repositorio, grupos y usuarios (306 textos), el TÍTULO DE PÁGINA de las 13 pantallas
+ * —que DD-55 dejó nombrado como pendiente—, la barra lateral de Configuración, la cabecera de
+ * grupos asignados, el chip de tipo de entidad, la pista de Sistema, el modal de descarga y el
+ * selector de conjunto de datos. Medida igual: 4.517 mediciones sobre 56 estados de pantalla (las
+ * 38 rutas, 2.503 textos sin repetir, más 18 estados abiertos: modales, paneles, popovers,
+ * fichas), CERO diferencias; 341 textos que llevan ahora la clase en su propio elemento y miden
+ * ese estilo.
+ *
+ * Lo que queda NO es un resto por barrer: son las que la clase NO puede sustituir, de cuatro
+ * familias con su motivo:
  *   · muebles de interlineado APRETADO (chips, pastillas, contadores): 12/12 y 14/14 no son
  *     ningún text style;
  *   · texto con FAMILIA propia (celdas mono): la clase impone Inter;
@@ -518,7 +532,7 @@ log('✔ Ninguna pantalla declara tipografía fuera de los 12 roles.');
  * TRINQUETE por conteo: el número de reglas que aún declaran `font-size` solo puede bajar. Si
  * baja, el tope se baja con él (un tope holgado deja entrar de nuevo lo que ya salió).
  */
-export const TIPOGRAFIA_SUELTA_MAX = 116;
+export const TIPOGRAFIA_SUELTA_MAX = 101;
 
 /** Cuántas reglas de una hoja declaran `font-size` (tipografía por token, no por clase). */
 export function tipografiaSuelta(scss) {

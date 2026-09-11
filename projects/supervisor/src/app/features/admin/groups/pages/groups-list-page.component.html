@@ -14,7 +14,7 @@
          arriba dice DÓNDE estás y esta línea dice QUÉ miras (modelo Snow UI,
          medido en `/orders`). Es el MISMO `<h1>` que S59 dejó oculto —no hay un
          encabezado nuevo—, así que sigue habiendo exactamente uno por documento. -->
-    <h1 class="page__heading">{{ 'sidebar.groups' | translate }}</h1>
+    <h1 class="page__heading sc-text-h3-semibold">{{ 'sidebar.groups' | translate }}</h1>
 
     <div class="page__action-bar">
       <sc-column-selector
@@ -136,7 +136,9 @@
 </ng-template>
 
 <ng-template #agentsTpl let-group>
-  <span class="table__cell table__cell--num">{{ assignedCountForGroup(group.id) }}</span>
+  <span class="table__cell table__cell--num sc-text-body-regular">{{
+    assignedCountForGroup(group.id)
+  }}</span>
 </ng-template>
 
 <ng-template #actionsTpl let-group>

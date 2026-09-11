@@ -122,11 +122,23 @@
  * `page-identity.spec.ts` («el título de página mide igual en todas partes»),
  * que es justo quien cazó el desajuste al cambiar una sola pantalla.
  */
-.page__heading {
+/*
+ * La TIPOGRAFÍA la pone la clase `.sc-text-h3-semibold` en la plantilla (DD-55
+ * dejó este barrido nombrado como pendiente): en Inspect se lee el nombre del
+ * text style, no tres números que hay que traducir.
+ *
+ * EL SELECTOR LLEVA EL ELEMENTO (`h1.`) A PROPÓSITO, y el motivo se midió con
+ * el fallo puesto. El bloque compartido de `typography.css` declara
+ * `margin: 0`, y esta regla necesita conservar su separación con el cuerpo.
+ * Con `.page__heading` a secas las dos valen (0,1,0) y decide el ORDEN: hoy
+ * gana esta —medido, 21px— porque el empaquetador sube los `@import` de las
+ * capas a la cabecera del bundle y el partial acaba 278 KB más abajo. O sea
+ * que el margen sobrevive por una consecuencia del empaquetado, no por una
+ * decisión de nadie: basta que `main.scss` cambie de orden, o el bundler de
+ * criterio, para que el título se pegue al contenido sin que falle un test.
+ * El elemento sube a (0,1,1) y lo saca de esa lotería.
+ */
+h1.page__heading {
   margin: 0 0 var(--sc-spacing-1-5);
-  font-family: var(--sc-font-family-h3);
-  font-size: var(--sc-font-size-h3);
-  line-height: var(--sc-line-height-h3);
-  font-weight: var(--sc-font-weight-h3);
   color: var(--sc-text-primary);
 }

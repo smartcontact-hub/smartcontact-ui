@@ -14,7 +14,7 @@
          arriba dice DÓNDE estás y esta línea dice QUÉ miras (modelo Snow UI,
          medido en `/orders`). Es el MISMO `<h1>` que S59 dejó oculto —no hay un
          encabezado nuevo—, así que sigue habiendo exactamente uno por documento. -->
-    <h1 class="page__heading">{{ 'sidebar.users' | translate }}</h1>
+    <h1 class="page__heading sc-text-h3-semibold">{{ 'sidebar.users' | translate }}</h1>
 
     <div class="page__action-bar">
       <!-- `orderedVisibleChange` y no `visibilityChange`: el `Set` solo dice
@@ -108,7 +108,7 @@
 <!-- Texto plano, pero con `<span>` propio: el `<td>` lo pinta ahora el DS y una
      regla encapsulada de esta página no lo alcanzaría (trampa 3 de la receta). -->
 <ng-template #emailTpl let-user>
-  <span class="table__td-text" [title]="user.email">{{ user.email }}</span>
+  <span class="table__td-text sc-text-body-regular" [title]="user.email">{{ user.email }}</span>
 </ng-template>
 
 <ng-template #identifierTpl let-user>

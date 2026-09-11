@@ -33,7 +33,7 @@
          así que su documento no tenía encabezado. `titleKey` es la misma clave
          que la ruta usa para su última miga, o sea que el título y el breadcrumb
          no pueden divergir. -->
-    <h1 class="page__heading">{{ config().titleKey | translate }}</h1>
+    <h1 class="page__heading sc-text-h3-semibold">{{ config().titleKey | translate }}</h1>
 
     <div class="page__action-bar">
       <sc-search
@@ -86,11 +86,19 @@
      cuál se está pintando. Es lo que permite que una tabla de columnas
      configurables use el componente del DS. -->
 <ng-template #cellTpl let-item let-col="col">
+  <!-- El estilo de texto va por su NOMBRE, y es CONDICIONAL por dos motivos
+       medidos: la columna destacada es `Body/body-semibold` y el resto
+       `Body/body-regular`, y una celda `--mono` no puede llevar ninguna de las
+       dos —la clase impone Inter y borraría la familia monoespaciada—. Ninguna
+       columna de las nueve instancias es a la vez `emphasis` y `mono`
+       (comprobado sobre sus definiciones), así que las tres ramas no se pisan. -->
   <span
     class="table__cell"
     [class.table__cell--emphasis]="isEmphasis(col.field)"
     [class.table__cell--mono]="isKind(col.field, 'mono')"
     [class.table__cell--truncate]="isKind(col.field, 'truncate')"
+    [class.sc-text-body-semibold]="isEmphasis(col.field) && !isKind(col.field, 'mono')"
+    [class.sc-text-body-regular]="!isEmphasis(col.field) && !isKind(col.field, 'mono')"
   >
     @if (getStatusEntry(item, col.field); as status) {
       <span class="status-pill" [attr.data-tone]="status.tone">
