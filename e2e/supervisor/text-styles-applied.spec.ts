@@ -70,6 +70,32 @@ for (const { ruta, nombre, selector } of ETIQUETAS) {
   });
 }
 
+/**
+ * LA MIGRACIÓN A LA CLASE (2026-09-11): 165 reglas de pantalla dejaron de declarar los tres
+ * números en la hoja y sus elementos llevan ahora `.sc-text-*` en la plantilla. El modo de
+ * fallo es el mismo de arriba —la clase no llega y el texto HEREDA— y se mide en dos textos
+ * que antes tenían sus valores en la hoja: el nombre del agente en la lista de admin
+ * (`Body/body-semibold`, el dato que identifica la fila) y la etiqueta del tema en Sistema
+ * (`Body/body-regular`). Si la clase no pintara, el nombre bajaría a 400 y la etiqueta a 14/21.
+ */
+const BODY_REGULAR = { fontSize: '14px', lineHeight: '20px', fontWeight: '400' };
+
+test('admin/agentes · el nombre del agente mide Body/body-semibold por la clase', async ({ page }) => {
+  await goto(page, 'admin/agentes');
+  const nombre = page.locator('.cell-name').first();
+  await expect(nombre).toBeVisible();
+  await expect(nombre).toHaveClass(/sc-text-body-semibold/);
+  expect(await leer(page, '.cell-name')).toEqual(BODY_SEMIBOLD);
+});
+
+test('config/sistema · la etiqueta del tema mide Body/body-regular por la clase', async ({ page }) => {
+  await goto(page, 'config/sistema');
+  const etiqueta = page.locator('.theme-row__label').first();
+  await expect(etiqueta).toBeVisible();
+  await expect(etiqueta).toHaveClass(/sc-text-body-regular/);
+  expect(await leer(page, '.theme-row__label')).toEqual(BODY_REGULAR);
+});
+
 for (const ruta of ['config/aed/servicio', 'config/aed/agentes', 'config/aed/grupos'] as const) {
   test(`${ruta} · el título de sub-sección mide Body/body-semibold`, async ({ page }) => {
     await goto(page, ruta);

@@ -5,7 +5,7 @@
       <sc-search [placeholder]="'groups.form.assigned.query_placeholder' | translate" [value]="query()" (valueChange)="onQueryChange($event)" (keydown)="onQueryKeydown($event)" [clearAriaLabel]="'labels.clear_search' | translate" />
     </div>
 
-    <span class="actbl__counter">
+    <span class="actbl__counter sc-text-caption-regular">
       {{
         'groups.form.assigned.counter'
           | translate: { assigned: assignedRows().length, zero: zeroChannelCount() }
@@ -17,7 +17,7 @@
        matches in the roster that aren't already assigned. -->
   @if (addCandidates().length > 0) {
     <div class="actbl__suggest">
-      <span class="actbl__suggest-label">
+      <span class="actbl__suggest-label sc-text-caption-regular">
         {{ 'groups.form.assigned.add_suggest' | translate }}
       </span>
       <div class="actbl__suggest-chips">
@@ -44,11 +44,11 @@
       <span class="actbl__empty-icon" aria-hidden="true">
         <sc-icon [name]="emptyIcon" [size]="22" />
       </span>
-      <p class="actbl__empty-title">{{ 'groups.form.assigned.empty_title' | translate }}</p>
-      <p class="actbl__empty-body">{{ 'groups.form.assigned.empty' | translate }}</p>
+      <p class="actbl__empty-title sc-text-body-semibold">{{ 'groups.form.assigned.empty_title' | translate }}</p>
+      <p class="actbl__empty-body sc-text-caption-regular">{{ 'groups.form.assigned.empty' | translate }}</p>
     </div>
   } @else {
-    <table class="actbl__table">
+    <table class="actbl__table sc-text-body-regular">
       <thead>
         <tr>
           <th class="actbl__th-check">

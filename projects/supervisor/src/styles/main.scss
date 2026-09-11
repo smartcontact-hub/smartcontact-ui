@@ -433,8 +433,6 @@ table.table {
     margin: 0;
     padding: var(--sc-spacing-1-125);
     text-align: center;
-    font-size: var(--sc-font-size-200);
-    line-height: var(--sc-line-height-body-2);
     color: var(--sc-text-secondary);
   }
 
@@ -475,9 +473,6 @@ table.table {
   align-items: center;
   padding: 2px 8px;
   border-radius: var(--sc-radius-full);
-  font-size: var(--sc-font-size-50);
-  line-height: var(--sc-line-height-caption);
-  font-weight: var(--sc-font-weight-semibold);
   text-transform: uppercase;
   letter-spacing: 0.02em;
 
@@ -551,8 +546,6 @@ table.table {
  * cometido, es lo que le queda por hacer. */
 .form-save-reason {
   margin-right: var(--sc-spacing-0-5);
-  font-size: var(--sc-font-size-100);
-  line-height: var(--sc-line-height-caption);
   color: var(--sc-text-secondary);
   white-space: nowrap;
 }

@@ -119,9 +119,6 @@
   padding: var(--sc-spacing-1-125) 0;
   border: 0;
   background: transparent;
-  font-size: var(--sc-font-size-200);
-  line-height: var(--sc-line-height-body-2);
-  font-weight: var(--sc-font-weight-regular);
   color: var(--sc-color-slate-500);
   cursor: pointer;
   transition: color 200ms ease-out;
@@ -233,8 +230,6 @@
   display: inline-flex;
   align-items: center;
   gap: var(--sc-spacing-0-25);
-  font-size: var(--sc-font-size-100);
-  line-height: var(--sc-line-height-caption);
   color: var(--sc-color-amber-700);
 }
 
@@ -284,8 +279,6 @@
 .player-transcript__no-match {
   padding: var(--sc-spacing-1-75) 0;
   text-align: center;
-  font-size: var(--sc-font-size-200);
-  line-height: var(--sc-line-height-body-2);
   color: var(--sc-color-slate-500);
 }
 
@@ -314,9 +307,6 @@
 }
 
 .player-bubble__speaker {
-  font-size: var(--sc-font-size-50);
-  line-height: var(--sc-line-height-caption);
-  font-weight: var(--sc-font-weight-semibold);
   color: var(--sc-color-slate-700);
 }
 
@@ -371,9 +361,6 @@
   display: inline-flex;
   align-items: center;
   gap: var(--sc-spacing-0-875);
-  font-size: var(--sc-font-size-50);
-  line-height: var(--sc-line-height-caption);
-  font-weight: var(--sc-font-weight-semibold);
   text-transform: uppercase;
   letter-spacing: 0.04em;
   color: var(--sc-color-slate-700);
@@ -383,8 +370,6 @@
   display: inline-flex;
   align-items: center;
   gap: var(--sc-spacing-0-25);
-  font-size: var(--sc-font-size-50);
-  line-height: var(--sc-line-height-caption);
   color: var(--sc-color-slate-500);
 
   sc-icon {
@@ -402,8 +387,6 @@
 
 .player-section__muted {
   margin: 0;
-  font-size: var(--sc-font-size-200);
-  line-height: var(--sc-line-height-body-2);
   color: var(--sc-color-slate-500);
 }
 
@@ -423,14 +406,9 @@
 }
 
 .player-sentiment__label {
-  font-size: var(--sc-font-size-200);
-  line-height: var(--sc-line-height-body-2);
-  font-weight: var(--sc-font-weight-regular);
   color: var(--sc-color-slate-900);
 }
 
 .player-sentiment__summary {
-  font-size: var(--sc-font-size-200);
-  line-height: var(--sc-line-height-body-2);
   color: var(--sc-color-slate-500);
 }

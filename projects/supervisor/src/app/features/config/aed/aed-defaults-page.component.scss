@@ -113,8 +113,6 @@
   }
 
   &__suffix {
-    font-size: var(--sc-font-size-caption);
-    line-height: var(--sc-line-height-caption);
     color: var(--sc-text-secondary);
     white-space: nowrap;
   }
@@ -146,8 +144,6 @@
   align-items: center;
   gap: var(--sc-spacing-0-5);
   cursor: pointer;
-  font-size: var(--sc-font-size-100);
-  line-height: var(--sc-line-height-caption);
   color: var(--sc-text-primary);
 }
 

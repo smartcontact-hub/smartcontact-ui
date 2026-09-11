@@ -5,8 +5,8 @@
     <div class="cond-builder__empty">
       <sc-icon [name]="summaryIcon" [size]="20" />
       <div>
-        <p class="cond-builder__empty-title">{{ 'memory.rules.builder.cond.empty_title' | translate }}</p>
-        <p class="cond-builder__empty-body">{{ 'memory.rules.builder.cond.empty_body' | translate }}</p>
+        <p class="cond-builder__empty-title sc-text-body-semibold">{{ 'memory.rules.builder.cond.empty_title' | translate }}</p>
+        <p class="cond-builder__empty-body sc-text-body-regular">{{ 'memory.rules.builder.cond.empty_body' | translate }}</p>
       </div>
       <sc-button variant="primary" appearance="text" size="sm" [icon]="addIcon" [label]="'memory.rules.builder.cond.add_condition' | translate" (clicked)="addGroup()" />
     </div>
@@ -103,7 +103,7 @@
             <div class="cond-row__value cond-row__num">
               @if (cond.operator === 'between') {
                 <sc-inputnumber size="sm" [min]="0" [placeholder]="'memory.rules.builder.cond.duration_min' | translate" [value]="numAmount(cond)" (valueChange)="setAmount(group.id, cond.id, $event ?? 0, 1)" />
-                <span class="cond-row__num-sep">y</span>
+                <span class="cond-row__num-sep sc-text-caption-regular">y</span>
                 <sc-inputnumber size="sm" [min]="0" [placeholder]="'memory.rules.builder.cond.duration_max' | translate" [value]="numAmount2(cond)" (valueChange)="setAmount(group.id, cond.id, $event ?? 0, 2)" />
                 <sc-select
                   appendTo="body"

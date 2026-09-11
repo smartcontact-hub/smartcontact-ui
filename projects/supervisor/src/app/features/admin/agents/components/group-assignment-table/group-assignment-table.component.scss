@@ -81,8 +81,6 @@
     border: 0;
     border-radius: var(--sc-radius-50);
     text-align: left;
-    font-size: var(--sc-font-size-200);
-    line-height: var(--sc-line-height-body-2);
     color: var(--sc-text-primary);
     cursor: pointer;
     gap: var(--sc-spacing-0-875);
@@ -138,16 +136,11 @@
 
   &__empty-title {
     margin: var(--sc-spacing-0-5) 0 0;
-    font-size: var(--sc-font-size-200);
-    line-height: var(--sc-line-height-body-2);
-    font-weight: var(--sc-font-weight-semibold);
     color: var(--sc-text-primary);
   }
 
   &__empty-body {
     margin: 0;
-    font-size: var(--sc-font-size-100);
-    line-height: var(--sc-line-height-caption);
     color: var(--sc-text-subtle);
     max-width: 360px;
   }
@@ -155,8 +148,6 @@
   &__table {
     width: 100%;
     border-collapse: collapse;
-    font-size: var(--sc-font-size-200);
-    line-height: var(--sc-line-height-body-2);
 
     thead th {
       text-align: left;

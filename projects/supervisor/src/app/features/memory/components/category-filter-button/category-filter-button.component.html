@@ -1,6 +1,6 @@
 <button
   type="button"
-  class="category-filter-trigger"
+  class="category-filter-trigger sc-text-body-regular"
   [class.category-filter-trigger--active]="hasActive()"
   [attr.aria-pressed]="hasActive()"
   [attr.aria-label]="'memory.category_filter.aria' | translate"
@@ -30,7 +30,7 @@
 
     <div class="category-filter-panel__body">
       @if (available().length === 0) {
-        <p class="category-filter-panel__empty">
+        <p class="category-filter-panel__empty sc-text-body-regular">
           {{ 'memory.category_filter.empty' | translate }}
         </p>
       } @else {

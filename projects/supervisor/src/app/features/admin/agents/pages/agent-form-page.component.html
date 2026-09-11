@@ -8,7 +8,7 @@
        aria que no llega al control es peor que ninguno, porque parece
        accesible. Visible sirve además a quien ve la pantalla. -->
   @if (saveDisabledReason(); as reason) {
-    <span class="form-save-reason">{{ reason | translate }}</span>
+    <span class="form-save-reason sc-text-caption-regular">{{ reason | translate }}</span>
   }
   <sc-button size="sm" type="button" variant="secondary" (clicked)="cancel()">
     <span>{{ 'common.cancel' | translate }}</span>
@@ -56,7 +56,7 @@
               {{ presenceKeys[form().presenceStatus] | translate }}
             </span>
             @if (form().extension) {
-              <span class="ficha__ext">
+              <span class="ficha__ext sc-text-caption-regular">
                 {{ 'agents.form.fields.extension' | translate }} {{ form().extension }}
               </span>
             }
@@ -200,10 +200,10 @@
               <div class="identity-card__divider"></div>
               <div class="identity-card__row">
                 <div>
-                  <span class="identity-card__row-label">
+                  <span class="identity-card__row-label sc-text-body-regular">
                     {{ 'agents.form.fields.status' | translate }}
                   </span>
-                  <span class="field__help">
+                  <span class="field__help sc-text-caption-regular">
                     {{ 'agents.form.fields.status_' + form().status | translate }}
                   </span>
                 </div>
@@ -240,10 +240,10 @@
             <div class="identity-card__divider"></div>
             <div class="identity-card__row">
               <div>
-                <span class="identity-card__row-label">
+                <span class="identity-card__row-label sc-text-body-regular">
                   {{ 'agents.permission.recording' | translate }}
                 </span>
-                <span class="field__help">
+                <span class="field__help sc-text-caption-regular">
                   {{ 'agents.form.section.recording_hint' | translate }}
                 </span>
               </div>
@@ -299,7 +299,7 @@
                  "Dispositivos externos" vive en /admin/aed/agentes como ajuste global. -->
             <div class="perm-toggle-row">
               <div class="perm-toggle-row__copy">
-                <span class="perm-toggle-row__label">
+                <span class="perm-toggle-row__label sc-text-body-regular">
                   {{ 'agents.form.permissions.manage_devices' | translate }}
                 </span>
                 <sc-button variant="secondary" appearance="text" size="sm" [icon]="infoIcon" [ariaLabel]="'agents.form.permissions.manage_devices_hint' | translate" [title]="'agents.form.permissions.manage_devices_hint' | translate" />
@@ -313,7 +313,7 @@
 
             <div class="perm-toggle-row">
               <div class="perm-toggle-row__copy">
-                <span class="perm-toggle-row__label">
+                <span class="perm-toggle-row__label sc-text-body-regular">
                   {{ 'agents.form.permissions.self_activate' | translate }}
                 </span>
                 <sc-button variant="secondary" appearance="text" size="sm" [icon]="infoIcon" [ariaLabel]="'agents.form.permissions.self_activate_hint' | translate" [title]="'agents.form.permissions.self_activate_hint' | translate" />
@@ -328,7 +328,7 @@
             <!-- Matriz de Llamadas / Transferencias por destino -->
             <header class="perm-matrix__head">
               <sc-icon [name]="phoneCallIcon" size="inherit" />
-              <h3 class="perm-matrix__title">
+              <h3 class="perm-matrix__title sc-text-caption-semibold">
                 {{ 'agents.form.permissions.calls_section' | translate }}
               </h3>
             </header>
@@ -346,7 +346,7 @@
                       [ariaLabel]="'agents.form.permissions.toggle_all_llamada' | translate"
                       (cycle)="toggleColumnAll('llamada', $event)"
                     >
-                      <span class="perm-matrix__col-label">{{ 'agents.form.permissions.col_llamada' | translate }}</span>
+                      <span class="perm-matrix__col-label sc-text-caption-semibold">{{ 'agents.form.permissions.col_llamada' | translate }}</span>
                     </sc-checkbox>
                   </th>
                   <th scope="col" class="perm-matrix__th-col">
@@ -356,7 +356,7 @@
                       [ariaLabel]="'agents.form.permissions.toggle_all_transferencia' | translate"
                       (cycle)="toggleColumnAll('transferencia', $event)"
                     >
-                      <span class="perm-matrix__col-label">{{ 'agents.form.permissions.col_transferencia' | translate }}</span>
+                      <span class="perm-matrix__col-label sc-text-caption-semibold">{{ 'agents.form.permissions.col_transferencia' | translate }}</span>
                     </sc-checkbox>
                   </th>
                 </tr>
@@ -364,7 +364,7 @@
               <tbody>
                 @for (row of destinoKeys; track row) {
                   <tr>
-                    <th scope="row" class="perm-matrix__th-row">
+                    <th scope="row" class="perm-matrix__th-row sc-text-body-regular">
                       {{ 'agents.form.permissions.row_' + row | translate }}
                     </th>
                     <td class="perm-matrix__cell">
@@ -391,7 +391,7 @@
             <section class="disclosure disclosure--accordion">
               <button
                 type="button"
-                class="disclosure__head"
+                class="disclosure__head sc-text-caption-semibold"
                 [attr.aria-expanded]="labelsAccOpen()"
                 aria-controls="agent-acc-labels-body"
                 (click)="toggleLabelsAcc()"
@@ -424,7 +424,7 @@
                       {{ 'agents.form.fields.labels' | translate }}
                     </label>
                     @if (availableLabels().length === 0) {
-                      <p class="field__help">{{ 'agents.form.labels_empty' | translate }}</p>
+                      <p class="field__help sc-text-caption-regular">{{ 'agents.form.labels_empty' | translate }}</p>
                     } @else {
                       <sc-select
                         inputId="agent-label"
@@ -455,7 +455,7 @@
             <section class="disclosure disclosure--accordion">
               <button
                 type="button"
-                class="disclosure__head"
+                class="disclosure__head sc-text-caption-semibold"
                 [attr.aria-expanded]="agendasAccOpen()"
                 aria-controls="agent-acc-agendas-body"
                 (click)="toggleAgendasAcc()"
@@ -495,7 +495,7 @@
                   }
                   <ul class="picker-list" role="listbox" aria-multiselectable="true">
                     @if (filteredSchedules().length === 0) {
-                      <li class="picker-list__empty">
+                      <li class="picker-list__empty sc-text-caption-regular">
                         {{ 'common.search_no_results' | translate }}
                       </li>
                     } @else {
@@ -512,9 +512,9 @@
                         >
                           <sc-checkbox [state]="(form().scheduleIds.has(sched.id)) ? 'all' : 'none'" (cycle)="toggleSchedule(sched.id)" [ariaLabel]="sched.name" (click)="$event.stopPropagation()" />
                           <sc-icon [name]="phoneIcon" size="inherit" class="picker-list__row-icon" />
-                          <span class="picker-list__row-label">{{ sched.name }}</span>
+                          <span class="picker-list__row-label sc-text-caption-regular">{{ sched.name }}</span>
                           @if (sched.numbers) {
-                            <span class="picker-list__row-meta">{{ sched.numbers }}</span>
+                            <span class="picker-list__row-meta sc-text-caption-regular">{{ sched.numbers }}</span>
                           }
                         </li>
                       }
@@ -527,7 +527,7 @@
                       }
                     </div>
                   }
-                  <p class="disclosure__footnote">
+                  <p class="disclosure__footnote sc-text-caption-regular">
                     {{ 'agents.form.advanced.agendas.footnote' | translate }}
                   </p>
                 </div>
@@ -538,7 +538,7 @@
             <section class="disclosure disclosure--accordion">
               <button
                 type="button"
-                class="disclosure__head"
+                class="disclosure__head sc-text-caption-semibold"
                 [attr.aria-expanded]="templatesAccOpen()"
                 aria-controls="agent-acc-templates-body"
                 (click)="toggleTemplatesAcc()"
@@ -570,7 +570,7 @@
                     @for (tab of templateTypes; track tab) {
                       <button
                         type="button"
-                        class="tabs__tab"
+                        class="tabs__tab sc-text-caption-regular"
                         [class.tabs__tab--active]="templateTab() === tab"
                         (click)="setTemplateTab(tab)"
                       >
@@ -648,7 +648,7 @@
 
             <!-- Comportamiento (flat disclosure) -->
             <section class="disclosure">
-              <div class="disclosure__head disclosure__head--flat">
+              <div class="disclosure__head disclosure__head--flat sc-text-caption-semibold">
                 <sc-icon [name]="slidersIcon" size="inherit" />
                 <span class="disclosure__title">
                   {{ 'agents.form.advanced.comportamiento.title' | translate }}
@@ -711,7 +711,7 @@
                      asymmetric inside a 2-col grid). -->
                 <div class="perm-toggle-row">
                   <div class="perm-toggle-row__copy">
-                    <span class="perm-toggle-row__label">
+                    <span class="perm-toggle-row__label sc-text-body-regular">
                       {{ 'agents.form.advanced.comportamiento.random_order' | translate }}
                     </span>
                     <sc-button variant="secondary" appearance="text" size="sm" [icon]="infoIcon" [ariaLabel]="'agents.form.advanced.comportamiento.random_order_hint' | translate" [title]="'agents.form.advanced.comportamiento.random_order_hint' | translate" />
@@ -727,7 +727,7 @@
 
             <!-- Integración (flat disclosure) -->
             <section class="disclosure">
-              <div class="disclosure__head disclosure__head--flat">
+              <div class="disclosure__head disclosure__head--flat sc-text-caption-semibold">
                 <sc-icon [name]="plugIcon" size="inherit" />
                 <span class="disclosure__title">
                   {{ 'agents.form.advanced.integracion.title' | translate }}
@@ -750,7 +750,7 @@
 
                 <div class="perm-toggle-row">
                   <div class="perm-toggle-row__copy">
-                    <span class="perm-toggle-row__label">
+                    <span class="perm-toggle-row__label sc-text-body-regular">
                       {{ 'agents.form.advanced.integracion.dispositivos_externos' | translate }}
                     </span>
                     <sc-button variant="secondary" appearance="text" size="sm" [icon]="infoIcon" [ariaLabel]="'agents.form.advanced.integracion.dispositivos_externos_hint' | translate" [title]="'agents.form.advanced.integracion.dispositivos_externos_hint' | translate" />
@@ -768,7 +768,7 @@
 
             <!-- Regional (flat disclosure) -->
             <section class="disclosure">
-              <div class="disclosure__head disclosure__head--flat">
+              <div class="disclosure__head disclosure__head--flat sc-text-caption-semibold">
                 <sc-icon [name]="globeIcon" size="inherit" />
                 <span class="disclosure__title">
                   {{ 'agents.form.advanced.regional.title' | translate }}
@@ -797,7 +797,7 @@
 
             <!-- Sesión (flat disclosure) -->
             <section class="disclosure">
-              <div class="disclosure__head disclosure__head--flat">
+              <div class="disclosure__head disclosure__head--flat sc-text-caption-semibold">
                 <sc-icon [name]="logInIcon" size="inherit" />
                 <span class="disclosure__title">
                   {{ 'agents.form.advanced.sesion.title' | translate }}
@@ -806,7 +806,7 @@
               <div class="disclosure__body">
                 <div class="perm-toggle-row">
                   <div class="perm-toggle-row__copy">
-                    <span class="perm-toggle-row__label">
+                    <span class="perm-toggle-row__label sc-text-body-regular">
                       {{ 'agents.form.advanced.sesion.login_ext_override' | translate }}
                     </span>
                     <sc-button variant="secondary" appearance="text" size="sm" [icon]="infoIcon" [ariaLabel]="'agents.form.advanced.sesion.login_ext_override_hint' | translate" [title]="'agents.form.advanced.sesion.login_ext_override_hint' | translate" />
@@ -820,15 +820,15 @@
 
                 @if (mode() === 'edit') {
                   <div class="disclosure__inset">
-                    <div class="disclosure__inset-head">
+                    <div class="disclosure__inset-head sc-text-caption-semibold">
                       {{ 'agents.form.advanced.sesion.security' | translate }}
                     </div>
                     <div class="disclosure__inset-row">
                       <div class="disclosure__inset-copy">
-                        <span class="disclosure__inset-label">
+                        <span class="disclosure__inset-label sc-text-body-regular">
                           {{ 'agents.form.advanced.sesion.expire_pwd' | translate }}
                         </span>
-                        <p class="disclosure__inset-hint">
+                        <p class="disclosure__inset-hint sc-text-caption-regular">
                           {{ 'agents.form.advanced.sesion.expire_pwd_hint' | translate }}
                         </p>
                       </div>

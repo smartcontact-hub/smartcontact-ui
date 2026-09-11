@@ -5,7 +5,7 @@
     (initial() ? 'templates.form.edit_title' : 'templates.form.create_title') | translate
   "
 >
-  <h3 class="panel__title">
+  <h3 class="panel__title sc-text-body-semibold">
     {{ (initial() ? 'templates.form.edit_title' : 'templates.form.create_title') | translate }}
   </h3>
 
@@ -23,14 +23,14 @@
   </div>
 
   <div class="panel__field">
-    <span class="panel__label">{{ 'templates.form.channel' | translate }}</span>
+    <span class="panel__label sc-text-caption-regular">{{ 'templates.form.channel' | translate }}</span>
     <div class="panel__type-group" role="radiogroup">
       @for (option of typeOptions; track option) {
         <button
           type="button"
           role="radio"
           [attr.aria-checked]="type() === option"
-          class="panel__type"
+          class="panel__type sc-text-caption-regular"
           [class.panel__type--active]="type() === option"
           (click)="setType(option)"
         >
@@ -47,18 +47,18 @@
   </div>
 
   <div class="panel__field">
-    <label class="panel__label" for="template-body">
+    <label class="panel__label sc-text-caption-regular" for="template-body">
       {{ 'templates.form.body' | translate }}
     </label>
     <sc-textarea inputId="template-body" [rows]="3" fluid [value]="body()" [placeholder]="'templates.form.body_placeholder' | translate" (valueChange)="onBodyInput($event)" (keydown)="onKey($event)" />
-    <p class="panel__hint">
+    <p class="panel__hint sc-text-caption-regular">
       {{ 'templates.form.variables_hint' | translate }}
     </p>
   </div>
 
   <div class="panel__error-slot">
     @if (error()) {
-      <div class="panel__error">
+      <div class="panel__error sc-text-caption-regular">
         <sc-icon [name]="alertIcon" size="inherit" />
         <span>{{ error() | translate }}</span>
       </div>

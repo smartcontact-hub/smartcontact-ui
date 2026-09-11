@@ -67,7 +67,7 @@
         (rowContextMenu)="onRowContextMenu($any($event), rowMenu)"
         data-testid="repo-table"
       >
-        <div scTableEmpty class="table__no-results">
+        <div scTableEmpty class="table__no-results sc-text-body-regular">
           @if (searchQuery()) {
             {{
               'repositories.no_results.with_query'
