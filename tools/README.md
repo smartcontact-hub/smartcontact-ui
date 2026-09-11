@@ -28,6 +28,17 @@ Variables: `SC_ORIGINAL_URL` y `SC_REPLICA_URL` (por defecto, el dev de la app r
 | `lib/manifest.ts`         | el sello de cada artefacto (versiones, SO, SHA de la réplica, ajustes del arnés) y `manifestDrift()` para negarse a comparar artefactos incomparables.                                                       |
 | `phase0-fonts.ts`         | intercepta la red, descarga cada fichero de fuente y lo abre con fontkit; parsea los `@font-face` con css-tree. Escribe `findings/phase-0-fonts.json`.                                                       |
 | `phase0-resolve-probe.ts` | qué familias existen DE VERDAD en la réplica.                                                                                                                                                                |
+| `figma-export-parity.mjs` | **el eslabón que faltaba**: el fichero de Figma contra el export del Kit. `tokens:parity` compara *export ↔ CSS*, y por el tramo *Figma ↔ export* se coló el desfase de julio. Imprime el JavaScript que se le pega a `figma_execute_across_files` (fileKey del DS), con los valores del Kit ya resueltos. No es gate: necesita el bridge abierto. |
+
+## Paridad Figma ↔ export, en dos minutos
+
+```bash
+node tools/figma-export-parity.mjs primitive   # y semantic-light · semantic-dark · component-light · component-dark · app
+```
+
+Pega la salida en `figma_execute_across_files` con `fileKeys: ["khNq9dJKNi13pNllrqm6dx"]`. Verde es
+`distintos: []` **con `coincidencias` distinto de cero**: si sale 0 y la lista vacía, el comparador
+no está casando nada y el verde es falso. Medido el 2026-09-12: `primitive` 282/282, 0 divergencias.
 
 ## Una trampa que ya mordió
 
