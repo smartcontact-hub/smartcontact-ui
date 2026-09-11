@@ -18,6 +18,21 @@
  *       node scripts/preflight-scope.mjs --run    (además lo ejecuta)
  */
 import { execSync, execFileSync } from "node:child_process";
+import { medirRebase } from "./preflight-rebase.mjs";
+
+// Antes de mirar qué cambió, y antes de gastar un minuto: ¿la rama lleva `origin/main`? Un
+// preflight sobre una rama rezagada mide un árbol que nunca se pushea tal cual (2026-09-11: dos
+// cadenas de 8 min tiradas porque main avanzó entre el preflight y el push). El fetch de aquí
+// deja además `origin/main` fresco para el `git diff` de abajo.
+{
+  const rebase = medirRebase(process.cwd());
+  if (rebase.aviso) console.log(`⚠️ ${rebase.aviso}`);
+  if (!rebase.ok) {
+    console.error(`\n✗ ${rebase.motivo}\n`);
+    if (process.argv.includes("--run")) process.exit(2);
+    console.log("(solo se imprime el plan; con --run esto habría parado aquí)\n");
+  }
+}
 
 /** Tocar cualquiera de estas obliga a la cadena completa. */
 const COMPARTIDO = [
