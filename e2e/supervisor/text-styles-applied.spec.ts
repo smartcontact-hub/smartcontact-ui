@@ -198,3 +198,75 @@ test('config/aed/servicio · la barra lateral de ajustes mide Body/body-regular 
   await expect(item).toHaveClass(/sc-text-body-regular/);
   expect(await leer(page, sel)).toEqual(BODY_REGULAR);
 });
+
+/**
+ * LA TABLA DE TRANSCRIPCIONES ESCRIBE COMO EL RESTO (2026-09-12).
+ *
+ * Cuatro columnas de `/conversaciones` —Hora, Fecha, Origen, Destino— escribían el
+ * texto DIRECTAMENTE en el `<td>`, y las dos numéricas lo hacían en un `<span>` que
+ * no declaraba tamaño. Como el `<td>` lo pinta el DS y `html, body` no declara
+ * `font-size`, ese texto heredaba los 16px del documento: 16/24 contra los 14/20 de
+ * las otras diez tablas de la app, y 16 no es peldaño de la rampa (DD-54).
+ *
+ * El arreglo es el patrón que ya usaban las demás: un `<span>` con la clase. Este
+ * test mide LA COLUMNA, no la hoja, porque el modo de fallo es silencioso — si
+ * alguien añade una columna nueva sin plantilla de celda, su texto vuelve a los 16
+ * del documento y la pantalla sigue pareciendo razonable.
+ *
+ * Se mide una columna de texto y una numérica: la numérica tiene además su propia
+ * clase (`.memory-num-cell`, cifras tabulares), así que comparte elemento con la del
+ * text style y es la que rompería si una ganara a la otra.
+ */
+test('conversaciones · la celda de la tabla mide Body/body-regular, como las otras tablas', async ({
+  page,
+}) => {
+  await goto(page, 'conversaciones');
+  const fila = page.locator('sc-datatable.memory-conversations tbody > tr').first();
+  await expect(fila).toBeVisible();
+
+  /*
+   * Mide EL ELEMENTO QUE PINTA EL TEXTO, lo envuelva un `<span>` o no. Es a
+   * propósito: la primera versión localizaba el `<span>` y, contra el build
+   * anterior, moría con «element(s) not found» — un rojo que dice que falta un
+   * nodo, no que la pantalla mide mal. Así el rojo trae la MAGNITUD (16/24 contra
+   * 14/20), que es el defecto que de verdad se ve.
+   */
+  const medir = (celda: ReturnType<typeof fila.locator>) =>
+    celda.evaluate((td: HTMLElement) => {
+      const hijo = td.firstElementChild as HTMLElement | null;
+      const el = hijo && hijo.textContent?.trim() ? hijo : td;
+      const cs = getComputedStyle(el);
+      return {
+        fontSize: cs.fontSize,
+        lineHeight: cs.lineHeight,
+        fontWeight: cs.fontWeight,
+        clase: el.className || '(sin clase: el texto lo pinta el <td>)',
+      };
+    });
+
+  /* Hora: columna de texto plano, una de las cuatro que escribían en el `<td>`. */
+  const hora = await medir(fila.locator('td').nth(2));
+  expect(
+    { fontSize: hora.fontSize, lineHeight: hora.lineHeight, fontWeight: hora.fontWeight },
+    `la celda de Hora mide ${hora.fontSize}/${hora.lineHeight} en ${hora.clase}: si sale 16/24 volvió a heredar del documento, y su columna necesita cellTemplate`,
+  ).toEqual(BODY_REGULAR);
+  expect(hora.clase, 'el texto tiene que decir su estilo por el nombre').toContain(
+    'sc-text-body-regular',
+  );
+
+  /* T. Conv.: numérica. Comparte elemento con `.memory-num-cell`, así que aquí se
+   * ve si una clase le ganara a la otra: las cifras siguen siendo tabulares. */
+  const numero = page.locator('sc-datatable.memory-conversations .memory-num-cell').first();
+  await expect(numero).toHaveClass(/sc-text-body-regular/);
+  expect(
+    await numero.evaluate((el: HTMLElement) => {
+      const cs = getComputedStyle(el);
+      return {
+        fontSize: cs.fontSize,
+        lineHeight: cs.lineHeight,
+        fontWeight: cs.fontWeight,
+        numeric: cs.fontVariantNumeric,
+      };
+    }),
+  ).toEqual({ ...BODY_REGULAR, numeric: 'tabular-nums' });
+});

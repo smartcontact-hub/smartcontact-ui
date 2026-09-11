@@ -15,29 +15,6 @@
 > coordine. Los `sNN` de los tramos viejos se quedan como están: los nombran commits y
 > `docs/DECISIONS.md`, y reescribirlos solo desincronizaría el doc de su propia historia.
 
-## ✅ 2026-09-11 · Tres guardas que cierran la lista de pendientes del proyecto
-
-**Sello:** DD-70. Tres PR sobre `main` (#113, #117, #118), cada uno con su `ci:verdict` leído.
-
-**De dónde sale.** Rafa pidió el orden de prioridad de todo lo pendiente y luego «adelante a todo».
-Se leyeron los cuatro hand-offs, los PR abiertos y las cajas, y se ordenó por lo que le cuesta a
-él (defectos que le llegan), no por tamaño.
-
-**Lo que entró.** (1) El preflight **no corre sobre una rama rezagada** y la marca deja de valer si
-`main` avanzó y funde con CONFLICTO —solo entonces, o son 8 min en bucle con tres sesiones
-fundiendo—; la portada del PR de tokens lleva el sha que el robot verificó. (2) **`agent-mini` entra
-en el CI**, el preflight, `typecheck` y el carril acotado: era el quinto sitio en producción y solo
-Cloudflare cazaba una rotura de su build. (3) **`audit:doc-snippets` ata el código que la doc ENSEÑA
-con el que EJECUTA** y cada ficha gana su **anatomía leída del DOM** (`sc-button > p-button >
-button.p-button`); cuatro defectos reales, uno el que vio Rafa en `/#/components/button`.
-
-**Lo que NO se hizo, y por qué.** El barrido de tipografía suelta lo estaba haciendo **otra sesión a
-la vez** (#115, caja `grayling`). Se vio mirando `git worktree list` y los PR abiertos ANTES de
-tocar las mismas plantillas: dos sesiones editando `projects/supervisor` es lo que costó el día del
-2026-09-03. Queda suyo, con sus preguntas para Rafa arriba.
-
----
-
 ## ▶︎ SIGUIENTE — sin preguntar
 
 > **La bandeja del frente, y por eso vive ARRIBA.** Entran dos cosas: lo que queda por hacer, y
@@ -54,9 +31,8 @@ tocar las mismas plantillas: dos sesiones editando `projects/supervisor` es lo q
 
 **Lo que dejó el barrido de estilos de texto del 2026-09-11 (tarde), pendiente de RAFA:**
 
-- **La tabla de transcripciones escribe a 16px y ninguna otra lo hace** (204 textos en una carga:
-  seis columnas de `/conversaciones`). Es el residuo más grande y 16 no es peldaño de la rampa.
-  Está medido y fotografiado a 16 y a 14; solo falta que Rafa elija. Detalle en el tramo de abajo.
+- ~~La tabla de transcripciones a 16px~~ — **decidido el 2026-09-12**: Rafa dijo «ajústalo para que
+  tenga sentido». Hecho, DD-71, tramo de arriba.
 - **12/20 no es ningún estilo**: sale cuando la clase va en un contenedor y el descendiente declara
   solo el tamaño (pastillas de estado de repositorios, cabeceras de grupos asignados, contadores de
   pestaña). ¿Text style propio para pastilla, o `line-height` explícito?
@@ -120,6 +96,69 @@ Orca se cerraron en el #113; `agent-mini` entró en el CI; la doc, en su PR):
    decisión. Ver la sección de Figma más abajo.
 3. **La deuda de código de [`AUDIT-DEUDA-2026-06.md`](../AUDIT-DEUDA-2026-06.md)** que quede tras
    s34, y **los cabos de DD-24** (round-trip de iconos) en [`ROADMAP.md`](../ROADMAP.md).
+## ✅ 2026-09-12 · La tabla de transcripciones escribe como el resto: 14/20 y no 16/24
+
+**Sello:** sobre HEAD `11d1373` (el #118 en `main`). DD-71. `text-styles-applied` +1 en el
+navegador, **rojo contra el deploy de `main`** y verde contra este build. Veredicto por
+`ci:verdict` tras el push.
+
+**De dónde sale.** Era el punto 1 de «lo que queda» del barrido de ayer, el único residuo grande que
+pedía una decisión y no otro barrido. Rafa: «lo de la tabla a 16, ajústalo para que tenga sentido».
+
+**Qué pasaba.** Cuatro columnas de `/conversaciones` —Hora, Fecha, Origen, Destino— escribían el
+texto DIRECTAMENTE en el `<td>`, y las dos numéricas en un `<span>` que no declaraba tamaño. El
+`<td>` lo pinta el DS y `html, body` no declara `font-size`, así que ese texto heredaba **los 16px
+del documento**. Las otras diez tablas de la app no caen en esto porque proyectan un `<span>` que sí
+lo declara; aquí faltaba ese envoltorio. 16 tampoco es peldaño de la rampa (DD-54).
+
+**El arreglo es el patrón que ya existía**, no uno nuevo: una plantilla de celda que envuelve el
+texto en un `<span class="sc-text-body-regular">`, y la clase en las dos numéricas, que la comparten
+con `.memory-num-cell` (cifras tabulares, que siguen tabulares).
+
+| Medido en el build, tema claro, 1440px | Antes | Después |
+| --- | ---: | ---: |
+| Texto de celda | 16/24 | **14/20** |
+| Alto de la tabla | 2.478 px | **2.249 px** |
+| Filas que parten el nombre en dos líneas | 26 | **16** |
+| Fila de una línea | 57 px | 57 px |
+
+**Dos cosas que NO cambian, y conviene saber por qué.** La fila de una línea sigue midiendo 57px
+porque su suelo lo pone el `<td>`, que sigue a 16/24 — eso es así en TODAS las tablas de la app
+(medido el mismo día en `/admin/agendas` y `/admin/usuarios`), o sea que el arreglo alinea esta
+tabla con las demás en vez de inventarle una excepción. Y los 4px que la separan de esas dos (57
+contra 53) son su padding propio, el aire de Memory, deliberado y ya vigilado por un test.
+
+**Lo que se midió para dar esto por bueno.** Rastreo de las 38 rutas más 18 estados abiertos, antes
+y después: **1.020 textos** cambian de tamaño, todos dentro de `/conversaciones` y todos de 16/24 a
+14/20; **0 cambios** en las otras 37 rutas y sus estados. El test nuevo mide EL ELEMENTO QUE PINTA
+el texto, lo envuelva un `<span>` o no: la primera versión buscaba el `<span>` y contra el build
+anterior moría con «element not found», un rojo que dice que falta un nodo en vez de decir que la
+pantalla mide mal. Ahora el rojo trae la magnitud: «la celda de Hora mide 16px/24px».
+
+
+## ✅ 2026-09-11 · Tres guardas que cierran la lista de pendientes del proyecto
+
+**Sello:** DD-70. Tres PR sobre `main` (#113, #117, #118), cada uno con su `ci:verdict` leído.
+
+**De dónde sale.** Rafa pidió el orden de prioridad de todo lo pendiente y luego «adelante a todo».
+Se leyeron los cuatro hand-offs, los PR abiertos y las cajas, y se ordenó por lo que le cuesta a
+él (defectos que le llegan), no por tamaño.
+
+**Lo que entró.** (1) El preflight **no corre sobre una rama rezagada** y la marca deja de valer si
+`main` avanzó y funde con CONFLICTO —solo entonces, o son 8 min en bucle con tres sesiones
+fundiendo—; la portada del PR de tokens lleva el sha que el robot verificó. (2) **`agent-mini` entra
+en el CI**, el preflight, `typecheck` y el carril acotado: era el quinto sitio en producción y solo
+Cloudflare cazaba una rotura de su build. (3) **`audit:doc-snippets` ata el código que la doc ENSEÑA
+con el que EJECUTA** y cada ficha gana su **anatomía leída del DOM** (`sc-button > p-button >
+button.p-button`); cuatro defectos reales, uno el que vio Rafa en `/#/components/button`.
+
+**Lo que NO se hizo, y por qué.** El barrido de tipografía suelta lo estaba haciendo **otra sesión a
+la vez** (#115, caja `grayling`). Se vio mirando `git worktree list` y los PR abiertos ANTES de
+tocar las mismas plantillas: dos sesiones editando `projects/supervisor` es lo que costó el día del
+2026-09-03. Queda suyo, con sus preguntas para Rafa arriba.
+
+---
+
 ## ✅ 2026-09-11 · El barrido de estilos de texto llega a lo que la primera pasada no miró (116 → 101)
 
 **Sello:** sobre HEAD `3052ec5` (el #116 en `main`). DD-69 ampliado. `audit:text-styles` §4 con el
@@ -158,20 +197,8 @@ entero y la inyección del fallo, en DD-69 y en el comentario de `_page.scss`.
 
 ### 🔴 LO QUE QUEDA SIN ATAR Y **NECESITA A RAFA**, no otro barrido
 
-**1. La tabla de transcripciones escribe a 16px y ninguna otra lo hace.** Seis columnas de
-`/conversaciones` (Hora, Fecha, Origen, Destino, T. Conv., T. Espera) ponen el texto directamente en
-la celda, sin el `<span>` que el resto de tablas usa para declarar tipografía, y heredan los **16px
-del documento** (`html, body` no declara `font-size`). **204 textos en una sola carga**, el residuo
-más grande, y **16 no es ningún text style** (DD-54). Medido el mismo día: `/conversaciones` →
-16/24; `/admin/agendas`, `/admin/usuarios` y `/conversaciones/entidades` → 14/20. La trampa la
-documenta ya la hoja de la página de entidades («sin repetirla aquí las celdas heredaban los 16px
-del documento»); nadie la llevó a esta tabla. En toda la app hay 222 textos a 16/24: los otros 18
-son el disparador del popover de grupos de `/admin/agentes` y dos `<h2>` de entidades.
-
-**No se ha tocado a propósito**: bajar a 14 es un cambio VISIBLE en la pantalla principal, y eso no
-se cuela en un barrido cuyo contrato es «0 diferencias». Está construido en su versión mínima y
-fotografiado a 16 y a 14 para decidirlo mirándolo (LEARNINGS #18). Recomiendo bajarlo: alinea esa
-tabla con las otras nueve y con la rampa.
+**1. La tabla de transcripciones a 16px** — **RESUELTO el 2026-09-12** (DD-71): Rafa pidió
+ajustarlo y las seis columnas escriben ya a 14/20 como el resto. Lo cuenta el tramo de arriba.
 
 **2. Combinaciones que no son ningún estilo, por herencia de un contenedor con clase.** 12/20 en las
 pastillas de estado de repositorios (61), en las cabeceras de grupos asignados y en los contadores
@@ -193,47 +220,10 @@ así que no todo lo que declara tamaño está mal. **Las demás no entran por de
 `agent` y `agent-mini` no declaran ninguna, las 134 de `cuscare` son de una RÉPLICA (DD-35) y las
 102 de `ui-smartcontact` son de los componentes del DS, que leen el tema (DD-55).
 
-## ✅ 2026-09-11 · El botón de guardar vuelve a medir lo que dice su texto
-
-**Sello:** PR #114, fundido con el CI de `main` VERDE leído por `ci:verdict` (HEAD `ed28a9a`);
-`preflight:scope --run` verde sobre el árbol final, `verify` verde y `e2e:supervisor` 149/149 en
-local. Los números de cada medición están en el cuerpo del PR y en el comentario de `main.scss`.
-
-**De dónde sale.** Rafa, mirando `/config/aed/servicio` en producción: «no entiendo por qué el
-botón guardar no está en hug contents y se ve del mismo tamaño que descartar cambios». No estaban
-igualados a propósito: los dos chocaban con el MISMO suelo —el `min-width: 128px` de
-`.top-bar__actions button`, puesto el 2026-08-25 contra el SALTO del CTA entre listas— y la
-coincidencia lo disfrazaba de decisión de diseño. Medido en el build desplegado a 1440px:
-«Guardar» hug 65.79 → pintado 128 (62px de aire) y «Descartar cambios» hug 127.84 → 128, o sea
-**0.16px por debajo del suelo**. Esa regla es la ÚNICA de las 5.532 de la página que toca
-width/min/max/flex en ese botón: ni `flex: 1`, ni `width: 100%`, ni DS, ni PrimeNG.
-
-**Lo que cambia.** El gancho pasa a `.top-bar__cta`, una clase que la página pone A MANO en su
-botón de crear (las 9 listas). Los formularios —7 de las 16 páginas que proyectan acciones— van a
-hug puro, como los dibuja Figma (66.5 / 128.5), y el anti-salto de las listas sigue en pie:
-`/admin/usuarios` 121.45 natural → 128; `/admin/labels` (el envuelto en `.page__create-anchor`)
-→ 128; a ≤640px el suelo se suelta. Lo que pasó estaba PREDICHO en el comentario de la regla
-(«si algún día lleva dos, revisa si los dos quieren suelo») y aun así tardó dos semanas en verse:
-un aviso en un comentario no es un gate.
-
-**La clase se pone a mano a propósito, no por pereza de selector.** `:has(> sc-button:only-child)`
-era la solución obvia y es FALSA por dos sitios medidos: en un formulario limpio el botón de
-descartar no existe (`@if (dirty())`), así que le daría suelo al Guardar y se lo quitaría al
-escribir —el botón encogiendo 62px en vivo—; y 4 de los 9 CTA de lista viven dentro de
-`.page__create-anchor`, así que tampoco son hijo único del contenedor.
-
-**La trampa de medición, que vuelve a morder a cualquiera que enumere reglas CSS desde la consola:**
-`CSSStyleRule` TAMBIÉN tiene `cssRules` (nesting). Un recorrido `if (r.cssRules) { recurse;
-continue }` salta TODAS las reglas de estilo y devuelve «ninguna regla casa» con 5.532 presentes:
-a un paso de afirmar que no había override con el `min-width` a la vista en el computado. Bifurca
-por `r.selectorText` y contrasta SIEMPRE el barrido contra `getComputedStyle` — si el computado
-dice 128px y tu barrido dice 0 reglas, el roto es el barrido. Queda en la memoria del agente
-(`browser-measure-traps`).
-
-**Fuera a propósito:** el `max-width: 256px` se va con el suelo al CTA de lista; los botones de
-formulario se quedan sin tope porque ahí no resolvía ningún problema medido. Y no se tocó el
-tramo de Figma: el Kit no arbitra este suelo, la divergencia sigue siendo nuestra y deliberada.
-
+> El tramo del **botón de guardar** (#114, el suelo de 128px queda solo en el CTA de lista) se
+> archivó el 2026-09-12 por el tope de 400 líneas. Vive en git y en el tag
+> `archive/handoff-ds-2026-09-12`; el cuerpo del PR #114 y el comentario de `main.scss` guardan
+> sus números.
 
 > El tramo de **`npm run sesiones`** (la bandeja sube arriba, y un comando contesta «¿puedo
 > cerrar este chat?») se archivó el 2026-09-11 por el tope de 400 líneas. Vive en git, en el

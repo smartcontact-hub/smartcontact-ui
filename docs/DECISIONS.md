@@ -41,6 +41,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | El texto de una celda va en SU envoltorio con su clase · suelto en el `<td>` hereda los 16 del documento | DD-71 |
 > | El estilo de texto se pone por su NOMBRE (`.sc-text-*` en la plantilla) · tokens sueltos solo donde la clase no puede | DD-69 |
 > | Los 12 text styles son los ÚNICOS · pesos 400 y 600, y un `font-size` sobre un glifo no es texto | DD-67 |
 > | El vocabulario de dentro de la pantalla se declara UNA vez · lo vigila `audit:screen-vocabulary` | DD-65 |
@@ -57,6 +58,47 @@
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
 
 ---
+
+## DD-71 · 2026-09-12 — El texto de una celda va en SU envoltorio, y por eso las tablas miden igual
+
+**Contexto** · El barrido de estilos de texto dejó un residuo grande y raro: en `/conversaciones`,
+la tabla de transcripciones escribía a **16/24** mientras las otras diez de la app miden 14/20. No
+era una regla que dijera 16 en ninguna parte — no había nada que corregir en ninguna hoja. Cuatro
+columnas (Hora, Fecha, Origen, Destino) ponían el texto **directamente en el `<td>`**, y las dos
+numéricas en un `<span>` que no declaraba tamaño; como el `<td>` lo pinta el DS y `html, body` no
+declara `font-size`, ese texto heredaba **los 16px del documento**. Y 16 no es peldaño de la rampa
+(DD-54), así que ninguna clase `.sc-text-*` podía nombrarlo.
+
+**Decisión** · El texto de una celda va SIEMPRE dentro de su propio elemento, con su estilo dicho
+por el nombre (`<span class="sc-text-body-regular">`), nunca suelto en el `<td>`. Es el patrón que
+ya usaban las otras diez tablas; aquí solo faltaba. Lo vigila `text-styles-applied` en el navegador,
+midiendo la COLUMNA y no la hoja.
+
+**Razón** · El `<td>` no es nuestro: lo pinta el componente del DS y lleva su propio `_ngcontent`,
+así que una regla encapsulada de la página no lo alcanza (por eso las demás tablas ya proyectaban un
+`<span>`; ver el comentario de `agents-list-page.component.scss`). Dejar el texto suelto en el `<td>`
+no es «una tabla sin estilo»: es una tabla que hereda del DOCUMENTO, que es el único sitio del que
+puede venir un 16 en una app cuya rampa no lo tiene. Se ve en pantalla y no lo caza ningún gate
+estático, porque no hay ninguna declaración que auditar.
+
+**Lo que costó y lo que NO cambia** · 1.020 textos pasan de 16/24 a 14/20, todos dentro de
+`/conversaciones`; 0 cambios en las otras 37 rutas y sus estados. La tabla encoge de 2.478 a 2.249px
+y baja de 26 a 16 filas partidas en dos líneas. La fila de una línea sigue en 57px porque su suelo
+lo pone el `<td>` a 16/24 — que es así en TODAS las tablas de la app (medido en `/admin/agendas` y
+`/admin/usuarios` el mismo día), de modo que esto alinea la tabla con las demás en lugar de
+inventarle una excepción. Los 4px que la separan de esas dos (57 contra 53) son su padding propio,
+el aire de Memory, deliberado y ya vigilado.
+
+**Descartadas** ·
+- *Declarar `font-size: 14px` en el `<td>` desde la piel de Memory* → arregla una tabla y deja el
+  mecanismo intacto: la siguiente columna sin plantilla vuelve a heredar del documento. Además
+  compite con el tema por la misma propiedad, que es justo lo que DD-66 sacó de las pantallas.
+- *Bajar el `font-size` del documento a 14* → mueve TODO lo que hereda del `<body>` en las cinco
+  apps, incluido lo que hoy mide bien por accidente. Un cambio de esa talla necesita su propia
+  medición, no colarse dentro de un arreglo de tabla.
+- *Dejarlo como estaba, «que es lo que hay en producción»* → es el residuo que Rafa señaló y el
+  único de la lista que se veía a simple vista: la pantalla principal escribía más grande que el
+  resto sin que nadie lo hubiera decidido.
 
 ## DD-70 · 2026-09-11 — El código que enseña la doc no se compara por IGUALDAD con el que ejecuta, sino por cuatro relaciones
 
