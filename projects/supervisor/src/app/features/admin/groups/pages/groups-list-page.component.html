@@ -70,7 +70,7 @@
           (rowContextMenu)="onRowContextMenu($event, rowMenu)"
           data-testid="groups-table"
         >
-          <div scTableEmpty class="table__no-results">
+          <div scTableEmpty class="table__no-results sc-text-body-regular">
             {{ 'groups.no_results' | translate }}
           </div>
         </sc-datatable>
@@ -91,7 +91,7 @@
 </ng-template>
 
 <ng-template #nameTpl let-group>
-  <span class="table__td-name">
+  <span class="table__td-name sc-text-body-semibold">
     <sc-illustrated-avatar [name]="group.name" pool="abstract" [size]="32" />
     @if (renamingId() === group.id) {
       <sc-inline-rename-cell

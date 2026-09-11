@@ -14,7 +14,7 @@
       <!-- Botón "Plantillas" solo en modo Create -->
       <div class="category-form__templates-cta">
         <sc-button variant="primary" appearance="outlined" size="sm" [icon]="layoutTemplateIcon" [label]="'memory.categories.form.templates_open' | translate" (clicked)="openTemplatesDialog()" />
-        <span class="category-form__templates-hint">
+        <span class="category-form__templates-hint sc-text-caption-regular">
           {{ 'memory.categories.form.templates_hint' | translate }}
         </span>
       </div>
@@ -32,12 +32,12 @@
     </div>
 
     <div class="category-form__row">
-      <label for="cat-description" class="category-form__label">
+      <label for="cat-description" class="category-form__label sc-text-body-regular">
         {{ 'memory.categories.form.description_label' | translate }}
         <span class="category-form__required">*</span>
       </label>
       <sc-textarea inputId="cat-description" [rows]="3" fluid [placeholder]="'memory.categories.form.description_placeholder' | translate" [value]="description()" (valueChange)="setDescription($event)" />
-      <p class="category-form__hint">
+      <p class="category-form__hint sc-text-caption-regular">
         {{ 'memory.categories.form.description_hint' | translate }}
       </p>
     </div>
@@ -50,7 +50,7 @@
         (valueChange)="setGroup($event)"
       />
 
-      <div class="category-form__toggle">
+      <div class="category-form__toggle sc-text-body-regular">
         <sc-toggleswitch
           [inputId]="'cat-active-toggle'"
           [checked]="isActive()"
@@ -84,7 +84,7 @@
           <div class="category-form__link-alert">
             <sc-icon [name]="alertIcon" [size]="18" />
             <div>
-              <p class="category-form__link-alert-title">
+              <p class="category-form__link-alert-title sc-text-body-semibold">
                 {{ 'memory.categories.linking.inactive_title' | translate }}
               </p>
               <p
@@ -101,7 +101,7 @@
                    vinculación se deriva de `Rule.categorias` al guardar. En crear
                    (sin id aún) el param se omite y el builder abre normal. -->
               <a
-                class="category-form__link-create-btn"
+                class="category-form__link-create-btn sc-text-body-regular"
                 routerLink="/conversaciones/reglas/nueva"
                 [queryParams]="{ type: 'classification', categoria: category()?.id }"
               >
@@ -115,7 +115,7 @@
           <div class="category-form__link-alert">
             <sc-icon [name]="alertIcon" [size]="18" />
             <div>
-              <p class="category-form__link-alert-title">
+              <p class="category-form__link-alert-title sc-text-body-semibold">
                 {{ 'memory.categories.linking.inactive_title' | translate }}
               </p>
               <p
@@ -129,7 +129,7 @@
           </div>
 
           <div class="category-form__link-add">
-            <label for="cat-add-rule" class="category-form__link-add-label">
+            <label for="cat-add-rule" class="category-form__link-add-label sc-text-body-regular">
               {{ 'memory.categories.linking.add_to_existing' | translate }}
             </label>
             <sc-select
@@ -149,13 +149,13 @@
                 <div class="category-form__link-option">
                   <sc-icon [name]="fileTextIcon" size="inherit" />
                   <div>
-                    <span class="category-form__link-option-name">{{ rule.label }}</span>
-                    <span class="category-form__link-option-hint">{{ rule.hint }}</span>
+                    <span class="category-form__link-option-name sc-text-body-semibold">{{ rule.label }}</span>
+                    <span class="category-form__link-option-hint sc-text-caption-regular">{{ rule.hint }}</span>
                   </div>
                 </div>
               </ng-template>
               <ng-template #empty>
-                <span class="category-form__link-option-hint">
+                <span class="category-form__link-option-hint sc-text-caption-regular">
                   {{ 'memory.categories.linking.no_available_rules' | translate }}
                 </span>
               </ng-template>
@@ -164,7 +164,7 @@
         } @else {
           <!-- Variantes C + D: linkedRules > 0 (alguna activa o todas inactivas) -->
           @if (hasActiveRules()) {
-            <p class="category-form__link-status category-form__link-status--ok">
+            <p class="category-form__link-status category-form__link-status--ok sc-text-body-regular">
               <sc-icon [name]="checkIcon" [size]="14" />
               {{
                 'memory.categories.linking.active_in_n_rules'
@@ -172,7 +172,7 @@
               }}
             </p>
           } @else {
-            <p class="category-form__link-status category-form__link-status--muted">
+            <p class="category-form__link-status category-form__link-status--muted sc-text-body-regular">
               <sc-icon [name]="pausedIcon" [size]="14" />
               {{
                 'memory.categories.linking.all_inactive_n_rules'
@@ -193,14 +193,14 @@
                   <sc-icon [name]="fileTextIcon" size="inherit" />
                   <div>
                     <div class="category-form__link-item-head">
-                      <span class="category-form__link-item-name">{{ rule.name }}</span>
+                      <span class="category-form__link-item-name sc-text-body-semibold">{{ rule.name }}</span>
                       @if (!rule.active) {
                         <span class="category-form__link-item-badge">
                           {{ 'memory.categories.linking.inactive_badge' | translate }}
                         </span>
                       }
                     </div>
-                    <span class="category-form__link-item-meta">
+                    <span class="category-form__link-item-meta sc-text-caption-regular">
                       @if (rule.active) {
                         {{ 'memory.categories.linking.services_meta' | translate }}:
                         {{ rule.servicios.slice(0, 2).join(', ') }}
@@ -235,13 +235,13 @@
                 <div class="category-form__link-option">
                   <sc-icon [name]="fileTextIcon" size="inherit" />
                   <div>
-                    <span class="category-form__link-option-name">{{ rule.label }}</span>
-                    <span class="category-form__link-option-hint">{{ rule.hint }}</span>
+                    <span class="category-form__link-option-name sc-text-body-semibold">{{ rule.label }}</span>
+                    <span class="category-form__link-option-hint sc-text-caption-regular">{{ rule.hint }}</span>
                   </div>
                 </div>
               </ng-template>
               <ng-template #empty>
-                <span class="category-form__link-option-hint">
+                <span class="category-form__link-option-hint sc-text-caption-regular">
                   {{ 'memory.categories.linking.no_available_rules' | translate }}
                 </span>
               </ng-template>
@@ -290,7 +290,7 @@
           <sc-icon [name]="t.icon" [size]="18" />
         </span>
         <span class="category-templates__body">
-          <span class="category-templates__title">{{ t.title }}</span>
+          <span class="category-templates__title sc-text-body-semibold">{{ t.title }}</span>
           <span class="category-templates__hint">{{ t.hint }}</span>
         </span>
       </button>

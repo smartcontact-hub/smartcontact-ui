@@ -91,9 +91,6 @@
 .bulkv26__hero-delta {
   position: absolute;
   margin-left: var(--sc-spacing-0-875);
-  font-size: var(--sc-font-size-200);
-  line-height: var(--sc-line-height-body-2);
-  font-weight: var(--sc-font-weight-semibold);
   font-variant-numeric: tabular-nums;
   pointer-events: none;
   animation: sc-delta-fly 750ms var(--sc-ease-out, cubic-bezier(0.16, 1, 0.3, 1)) forwards;

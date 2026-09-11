@@ -68,6 +68,47 @@
    decisión. Ver la sección de Figma más abajo.
 3. **La deuda de código de [`AUDIT-DEUDA-2026-06.md`](../AUDIT-DEUDA-2026-06.md)** que quede tras
    s34, y **los cabos de DD-24** (round-trip de iconos) en [`ROADMAP.md`](../ROADMAP.md).
+## ✅ 2026-09-11 · La tipografía de pantalla se pone por su nombre: 165 reglas pasan a `.sc-text-*`
+
+**Sello:** DD-69. `audit:text-styles` gana la §4 (trinquete `TIPOGRAFIA_SUELTA_MAX = 116`,
+**validado en rojo por arriba Y por abajo** más control negativo; 23 tests). `text-styles-applied`
++2 en el navegador. Medido antes y después en el build. Veredicto por `ci:verdict` tras el push.
+
+**De dónde sale.** Rafa inspeccionó «Agente AED 1» en Computed y vio 14 / 20 / 600: tres números
+que hay que traducir a mano a `Body/body-semibold`. «¿No se puede lincar el estilo de texto?». El
+enlace es la clase, existía desde el `#98` y la llevaban 49 textos; el resto seguía con los tres
+valores en la hoja. Era el punto 1 de «lo que queda» del tramo del interlineado.
+
+**Lo que se hizo.** Inventario: 301 reglas con tipografía por token en 61 hojas. Migradas **165**
+(394 declaraciones fuera de las hojas, 226 elementos con clase en 86 ficheros; usos de `.sc-text-*`
+49 → 275). En Inspect ahora se lee `class="cell-name sc-text-body-semibold"` en la línea del
+elemento, sin traducir nada.
+
+**La red, montada antes de tocar (LEARNINGS #16).** Un rastreador visita las 38 rutas del build y
+anota tamaño, interlineado, peso, familia, letter-spacing, márgenes y posición de cada texto:
+**3.664 textos**, más **813** abriendo seis modales y paneles. Ruido del instrumento: dos rastreos
+del mismo build, **0** diferencias. Resultado tras migrar: **0** diferencias. Y el instrumento se
+validó con el fallo puesto sin buscarlo: la primera pasada cazó **27** cambios, que son las dos
+lecciones de abajo.
+
+**Dos cosas que la clase NO puede sustituir, cazadas midiendo:**
+
+1. **`font: inherit` en la misma regla** (el nombre de categoría es un `<button>`): el shorthand,
+   con la especificidad del componente, pisa a la clase y el texto se fue a 16/24/400. Se quedan
+   con tokens (3 reglas), y el migrador salta cualquier regla con `font:`.
+2. **Texto que hereda familia mono** (`.ext__type` dentro de `.cell--mono`): la clase impone Inter.
+   Se quedan (5 reglas); el migrador compara también la familia MEDIDA, no solo los tres números.
+
+Y lo excluido a propósito, con nombre: chips y pastillas (37, su interlineado no es ningún estilo),
+familia propia (22), modificadores que solo cambian el peso (15), interlineados sin unidad (33,
+aparcados), hosts dinámicos o inexistentes (14). Para las reglas SIN peso declarado (120), el peso
+heredado se decidió por la MEDIDA cuando el texto era visible y, si no (modales), por los ancestros
+reales en la plantilla: si alguno declara 600 no se decide a ciegas.
+
+**Lo que queda (116 reglas con `font-size`, y el trinquete lo vigila):** son exactamente esas
+familias. Bajar más pide una decisión de Rafa, no un barrido: ¿un text style para chips?, ¿la clase
+sin familia para las celdas mono? Hasta entonces, el tope solo baja.
+
 ## ✅ 2026-09-11 · El plugin ya no cuela ficheros en main, el hand-off deja de crecer y las bifurcaciones al componer tienen tabla
 
 **Sello:** HEAD `cc6925b` (el squash de #106 en `main`). DD-68. Veredicto del CI por

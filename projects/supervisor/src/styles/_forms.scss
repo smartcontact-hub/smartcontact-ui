@@ -76,8 +76,6 @@
 
   &__hint {
     margin: 0;
-    font-size: var(--sc-font-size-caption);
-    line-height: var(--sc-line-height-caption);
     color: var(--sc-text-subtle);
   }
 }
@@ -219,8 +217,6 @@
   &__help {
     display: block;
     margin-top: var(--sc-spacing-0-25);
-    font-size: var(--sc-font-size-50);
-    line-height: var(--sc-line-height-caption);
     color: var(--sc-text-subtle);
   }
 
@@ -319,11 +315,8 @@
 
   &__title {
     margin: 0;
-    font-size: var(--sc-font-size-100);
-    line-height: var(--sc-line-height-caption);
     text-transform: uppercase;
     letter-spacing: 0.06em;
-    font-weight: var(--sc-font-weight-semibold);
     color: var(--sc-text-subtle);
   }
 
@@ -356,11 +349,8 @@
    * `thead th` de arriba), en vez de la tipografía body del checkbox.
    */
   &__col-label {
-    font-size: var(--sc-font-size-50);
-    line-height: var(--sc-line-height-caption);
     text-transform: uppercase;
     letter-spacing: 0.06em;
-    font-weight: var(--sc-font-weight-semibold);
     color: var(--sc-text-subtle);
   }
 
@@ -373,9 +363,6 @@
 
   &__th-row {
     text-align: left;
-    font-size: var(--sc-font-size-200);
-    line-height: var(--sc-line-height-body-2);
-    font-weight: var(--sc-font-weight-regular);
     color: var(--sc-text-primary);
   }
 
@@ -520,8 +507,6 @@
   }
 
   &__ext {
-    font-size: var(--sc-font-size-75);
-    line-height: var(--sc-line-height-caption);
     color: var(--sc-text-subtle);
   }
 }

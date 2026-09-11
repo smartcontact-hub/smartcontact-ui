@@ -69,12 +69,12 @@
     {{ cat.name }}
   </button>
   @if (cat.group) {
-    <span class="categories-table__group">· {{ cat.group }}</span>
+    <span class="categories-table__group sc-text-caption-regular">· {{ cat.group }}</span>
   }
 </ng-template>
 
 <ng-template #descTpl let-cat>
-  <span class="categories-table__td-desc" [attr.title]="cat.description">{{ cat.description }}</span>
+  <span class="categories-table__td-desc sc-text-body-regular" [attr.title]="cat.description">{{ cat.description }}</span>
 </ng-template>
 
 <ng-template #usedInTpl let-cat>
@@ -91,18 +91,18 @@
 
 <ng-template #statusTpl let-cat>
   @if (cat.isActive) {
-    <span class="rules-status rules-status--active">
+    <span class="rules-status rules-status--active sc-text-caption-semibold">
       {{ 'memory.categories.status.active' | translate }}
     </span>
   } @else {
-    <span class="rules-status rules-status--inactive">
+    <span class="rules-status rules-status--inactive sc-text-caption-semibold">
       {{ 'memory.categories.status.inactive' | translate }}
     </span>
   }
 </ng-template>
 
 <ng-template #createdTpl let-cat>
-  <span class="categories-table__td-date">{{ formatDate(cat.createdAt) }}</span>
+  <span class="categories-table__td-date sc-text-caption-regular">{{ formatDate(cat.createdAt) }}</span>
 </ng-template>
 
 <ng-template #kebabTpl let-cat>

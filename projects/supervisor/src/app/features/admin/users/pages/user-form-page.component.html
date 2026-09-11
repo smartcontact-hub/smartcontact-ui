@@ -8,7 +8,7 @@
        aria que no llega al control es peor que ninguno, porque parece
        accesible. Visible sirve además a quien ve la pantalla. -->
   @if (saveDisabledReason(); as reason) {
-    <span class="form-save-reason">{{ reason | translate }}</span>
+    <span class="form-save-reason sc-text-caption-regular">{{ reason | translate }}</span>
   }
   <sc-button size="sm" type="button" variant="secondary" (clicked)="cancel()">
     <span>{{ 'common.cancel' | translate }}</span>
@@ -49,7 +49,7 @@
             <span class="ficha__name" [title]="form().name">{{ form().name }}</span>
             <span class="pill">{{ typeLabelKeys[form().type] | translate }}</span>
             @if (form().email) {
-              <span class="ficha__ext">{{ form().email }}</span>
+              <span class="ficha__ext sc-text-caption-regular">{{ form().email }}</span>
             }
           </div>
         </div>
@@ -154,7 +154,7 @@
                 <span class="field__label-inline sc-text-caption-regular">{{
                   'users.form.fields.status' | translate
                 }}</span>
-                <span class="field__help">
+                <span class="field__help sc-text-caption-regular">
                   {{ 'users.form.fields.status_' + form().status | translate }}
                 </span>
               </div>

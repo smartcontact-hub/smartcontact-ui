@@ -11,7 +11,10 @@ import {
   aPx,
   esCajaDeIcono,
   esInterlineadoApretado,
+  excesoSuelto,
   tipografiaDe,
+  tipografiaSuelta,
+  TIPOGRAFIA_SUELTA_MAX,
 } from '../audit-text-styles.mjs';
 
 /*
@@ -163,4 +166,36 @@ test('ninguna hoja del supervisor declara `font-weight: medium`', () => {
     .filter(Boolean);
   const culpables = hojas.filter((h) => /font-weight:\s*var\(--sc-font-weight-medium\)/.test(readFileSync(h, 'utf8')));
   assert.deepEqual(culpables, []);
+});
+
+/* ── §4 · la tipografía se pone por su nombre: el trinquete de tokens sueltos ── */
+
+test('tipografiaSuelta cuenta las reglas que declaran `font-size`, y solo esas', () => {
+  const scss = `
+    .a { font-size: var(--sc-font-size-200); line-height: var(--sc-line-height-200); }
+    .b { color: red; font-weight: var(--sc-font-weight-semibold); }
+    .c { &__x { font-size: 12px; } &--y { color: blue; } }
+  `;
+  assert.equal(tipografiaSuelta(scss), 2, '.a y .c__x declaran tamaño; .b y .c--y no');
+});
+
+test('el trinquete enrojece por encima del tope — el fallo puesto', () => {
+  assert.match(excesoSuelto(TIPOGRAFIA_SUELTA_MAX + 1, TIPOGRAFIA_SUELTA_MAX) ?? '', /tope es/);
+});
+
+test('…y también por DEBAJO, para que el tope baje con el conteo', () => {
+  assert.match(excesoSuelto(TIPOGRAFIA_SUELTA_MAX - 1, TIPOGRAFIA_SUELTA_MAX) ?? '', /baja TIPOGRAFIA_SUELTA_MAX/);
+});
+
+test('en el tope exacto no dice nada — el control negativo', () => {
+  assert.equal(excesoSuelto(TIPOGRAFIA_SUELTA_MAX, TIPOGRAFIA_SUELTA_MAX), null);
+});
+
+test('el tope es el conteo REAL del repo, no un número inventado', () => {
+  const hojas = execSync(
+    "find projects/supervisor/src/app projects/supervisor/src/styles -name '*.scss'",
+    { encoding: 'utf8' },
+  ).split('\n').filter(Boolean);
+  const n = hojas.reduce((acc, h) => acc + tipografiaSuelta(readFileSync(h, 'utf8')), 0);
+  assert.equal(n, TIPOGRAFIA_SUELTA_MAX);
 });

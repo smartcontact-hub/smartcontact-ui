@@ -10,7 +10,7 @@
     <div class="retrans-confirm__warning" role="alert">
       <sc-icon class="retrans-confirm__warning-icon" [name]="alertIcon" [size]="14" />
       <div class="retrans-confirm__warning-text">
-        <p class="retrans-confirm__warning-headline">
+        <p class="retrans-confirm__warning-headline sc-text-body-semibold">
           {{ 'memory.player.retranscribe.warn_headline' | translate }}
         </p>
         <p class="retrans-confirm__warning-body">
@@ -23,7 +23,7 @@
     </div>
 
     <div class="retrans-confirm__gate">
-      <label class="retrans-confirm__gate-label" for="retrans-confirm-input">
+      <label class="retrans-confirm__gate-label sc-text-body-regular" for="retrans-confirm-input">
         {{ 'memory.player.retranscribe.type_to_confirm_pre' | translate }}
         <span class="retrans-confirm__gate-token">{{ gateToken() }}</span>
         {{ 'memory.player.retranscribe.type_to_confirm_post' | translate }}

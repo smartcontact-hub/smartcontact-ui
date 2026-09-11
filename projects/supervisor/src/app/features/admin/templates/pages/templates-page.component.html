@@ -37,7 +37,7 @@
       <button
         type="button"
         role="tab"
-        class="tabs__tab"
+        class="tabs__tab sc-text-body-regular"
         [class.tabs__tab--active]="activeTab() === 'chat'"
         [attr.aria-selected]="activeTab() === 'chat'"
         (click)="switchTab('chat')"
@@ -49,7 +49,7 @@
       <button
         type="button"
         role="tab"
-        class="tabs__tab"
+        class="tabs__tab sc-text-body-regular"
         [class.tabs__tab--active]="activeTab() === 'email'"
         [attr.aria-selected]="activeTab() === 'email'"
         (click)="switchTab('email')"
@@ -99,10 +99,10 @@
         >
           <div scTableEmpty class="table__no-results">
             <sc-icon [name]="searchIcon" [size]="20" />
-            <div class="table__no-results-title">
+            <div class="table__no-results-title sc-text-body-semibold">
               {{ 'labels.no_results.title' | translate }}
             </div>
-            <div class="table__no-results-text">
+            <div class="table__no-results-text sc-text-caption-regular">
               @if (searchQuery()) {
                 {{
                   'templates.no_results.text_with_query'
@@ -129,7 +129,7 @@
 <!-- Celdas de la tabla. Fuera del `<sc-datatable>` para que los `viewChild`
      las resuelvan; `columns()` las recoge. Contexto `{ $implicit: tpl }`. -->
 <ng-template #titleTpl let-tpl>
-  <span class="table__title-text">{{ tpl.title }}</span>
+  <span class="table__title-text sc-text-body-semibold">{{ tpl.title }}</span>
 
   @if (editingId() === tpl.id) {
     <div
@@ -149,11 +149,11 @@
 </ng-template>
 
 <ng-template #bodyTpl let-tpl>
-  <span class="table__body-text">{{ tpl.body }}</span>
+  <span class="table__body-text sc-text-body-regular">{{ tpl.body }}</span>
 </ng-template>
 
 <ng-template #updatedTpl let-tpl>
-  <span class="table__updated-text">{{ tpl.updatedAt }}</span>
+  <span class="table__updated-text sc-text-caption-regular">{{ tpl.updatedAt }}</span>
 </ng-template>
 
 <ng-template #actionsTpl let-tpl>

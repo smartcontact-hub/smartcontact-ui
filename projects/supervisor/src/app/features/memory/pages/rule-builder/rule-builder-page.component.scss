@@ -112,8 +112,6 @@
     display: inline-flex;
     align-items: center;
     gap: var(--sc-spacing-0-25);
-    font-size: var(--sc-font-size-50);
-    line-height: var(--sc-line-height-caption);
     color: var(--sc-text-link);
     text-decoration: none;
 
@@ -156,8 +154,6 @@
   border: 1px solid var(--sc-border-default);
   border-radius: var(--sc-radius-lg);
   background: var(--sc-bg-surface);
-  font-size: var(--sc-font-size-200);
-  line-height: var(--sc-line-height-body-2);
   color: var(--sc-text-secondary);
 
   sc-icon {
@@ -178,8 +174,6 @@
 /* Guía proactiva tenue junto a lo que describe (no es un error todavía). */
 .rule-hint {
   margin: 0;
-  font-size: var(--sc-font-size-100);
-  line-height: var(--sc-line-height-caption);
   color: var(--sc-text-subtle);
 }
 
@@ -300,8 +294,6 @@
     align-items: center;
     gap: var(--sc-spacing-0-625);
     flex-shrink: 0;
-    font-size: var(--sc-font-size-200);
-    line-height: var(--sc-line-height-body-2);
     color: var(--sc-text-secondary);
 
     label {
@@ -344,16 +336,11 @@
     display: inline-flex;
     align-items: baseline;
     gap: 2px;
-    font-size: var(--sc-font-size-200);
-    line-height: var(--sc-line-height-body-2);
-    font-weight: var(--sc-font-weight-regular);
     color: var(--sc-text-secondary);
   }
 
   &__hint {
     margin: 0;
-    font-size: var(--sc-font-size-100);
-    line-height: var(--sc-line-height-caption);
     color: var(--sc-text-secondary);
   }
 }
@@ -453,9 +440,6 @@
     flex-wrap: wrap;
     gap: var(--sc-spacing-0-5);
     margin: 0;
-    font-size: var(--sc-font-size-200);
-    line-height: var(--sc-line-height-body-2);
-    font-weight: var(--sc-font-weight-semibold);
     color: var(--sc-text-primary);
   }
 
@@ -495,8 +479,6 @@
   background: var(--sc-bg-surface);
   border: 1px solid var(--sc-border-default);
   border-radius: var(--sc-radius-xl);
-  font-size: var(--sc-font-size-200);
-  line-height: var(--sc-line-height-body-2);
   color: var(--sc-text-secondary);
 
   /* En el rail (240px, menos 21 de padding a cada lado del `.ipanel`) la tarjeta
@@ -556,8 +538,6 @@
 
   &__caption {
     margin: 0;
-    font-size: var(--sc-font-size-100);
-    line-height: var(--sc-line-height-caption);
     color: var(--sc-text-subtle);
   }
 
@@ -647,8 +627,6 @@
 
   &__note {
     margin: 0;
-    font-size: var(--sc-font-size-100);
-    line-height: var(--sc-line-height-caption);
     font-style: italic;
     color: var(--sc-text-subtle);
   }

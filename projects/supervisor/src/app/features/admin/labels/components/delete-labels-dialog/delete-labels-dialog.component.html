@@ -6,14 +6,14 @@
   (cancelled)="cancelled.emit()"
 >
   @if (isSingle()) {
-    <p class="delete-labels__text">
+    <p class="delete-labels__text sc-text-body-regular">
       {{ 'labels.delete.body_single' | translate: { name: labels()[0]!.name } }}
       @if (totalAffectedAgents() > 0) {
         {{ 'labels.delete.affected_agents' | translate: { count: totalAffectedAgents() } }}
       }
     </p>
   } @else {
-    <p class="delete-labels__text">
+    <p class="delete-labels__text sc-text-body-regular">
       {{ 'labels.delete.body_bulk' | translate }}
       @if (totalAffectedAgents() > 0) {
         {{ 'labels.delete.affected_agents' | translate: { count: totalAffectedAgents() } }}

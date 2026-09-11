@@ -14,10 +14,10 @@
       <div class="sub-section">
         <div class="theme-row">
           <div class="theme-row__copy">
-            <span class="theme-row__label">
+            <span class="theme-row__label sc-text-body-regular">
               {{ 'config.sistema.appearance.theme_label' | translate }}
             </span>
-            <p class="theme-row__hint">
+            <p class="theme-row__hint sc-text-caption-regular">
               {{ 'config.sistema.appearance.theme_hint' | translate }}
             </p>
           </div>
@@ -30,7 +30,7 @@
             @for (option of themeOptions; track option.value) {
               <button
                 type="button"
-                class="theme-toggle__option"
+                class="theme-toggle__option sc-text-caption-regular"
                 role="radio"
                 [class.theme-toggle__option--active]="theme.mode() === option.value"
                 [attr.aria-checked]="theme.mode() === option.value"
@@ -53,10 +53,10 @@
       <div class="sub-section">
         <div class="theme-row">
           <div class="theme-row__copy">
-            <span class="theme-row__label">
+            <span class="theme-row__label sc-text-body-regular">
               {{ 'config.sistema.language.label' | translate }}
             </span>
-            <p class="theme-row__hint">
+            <p class="theme-row__hint sc-text-caption-regular">
               {{ 'config.sistema.language.lang_hint' | translate }}
             </p>
           </div>
@@ -69,7 +69,7 @@
             @for (option of languageOptions; track option.value) {
               <button
                 type="button"
-                class="theme-toggle__option"
+                class="theme-toggle__option sc-text-caption-regular"
                 role="radio"
                 [class.theme-toggle__option--active]="language.lang() === option.value"
                 [attr.aria-checked]="language.lang() === option.value"
@@ -92,7 +92,7 @@
       <div class="sub-section">
         <div class="data-row">
           <div class="data-row__copy">
-            <span class="data-row__label">
+            <span class="data-row__label sc-text-body-regular">
               {{ 'config.sistema.data.reset_label' | translate }}
             </span>
             <p class="data-row__hint">
@@ -114,10 +114,10 @@
       <div class="sub-section">
         <div class="policy-row">
           <div>
-            <span class="policy-row__label">
+            <span class="policy-row__label sc-text-body-regular">
               {{ 'config.seguridad.policies.min_length' | translate }}
             </span>
-            <p class="policy-row__hint">
+            <p class="policy-row__hint sc-text-caption-regular">
               {{ 'config.seguridad.policies.min_length_hint' | translate }}
             </p>
           </div>
@@ -126,10 +126,10 @@
 
         <div class="policy-row policy-row--bordered">
           <div>
-            <span class="policy-row__label">
+            <span class="policy-row__label sc-text-body-regular">
               {{ 'config.seguridad.policies.expiration' | translate }}
             </span>
-            <p class="policy-row__hint">
+            <p class="policy-row__hint sc-text-caption-regular">
               {{ 'config.seguridad.policies.expiration_hint' | translate }}
             </p>
           </div>
@@ -138,10 +138,10 @@
 
         <div class="policy-row policy-row--bordered">
           <div>
-            <span class="policy-row__label">
+            <span class="policy-row__label sc-text-body-regular">
               {{ 'config.seguridad.policies.special_chars' | translate }}
             </span>
-            <p class="policy-row__hint">
+            <p class="policy-row__hint sc-text-caption-regular">
               {{ 'config.seguridad.policies.special_chars_hint' | translate }}
             </p>
           </div>
@@ -170,10 +170,10 @@
         <div class="warning-callout">
           <sc-icon [name]="alertIcon" [size]="15" class="warning-callout__icon" />
           <div>
-            <span class="warning-callout__title">
+            <span class="warning-callout__title sc-text-body-semibold">
               {{ 'config.seguridad.regen.warning_title' | translate }}
             </span>
-            <p class="warning-callout__body">
+            <p class="warning-callout__body sc-text-caption-regular">
               {{ 'config.seguridad.regen.warning_body' | translate }}
             </p>
           </div>
@@ -187,7 +187,7 @@
         <sc-search class="search" [placeholder]="'config.seguridad.regen.search_placeholder' | translate" [value]="searchQuery()" (valueChange)="searchQuery.set($event)" (keydown)="onSearchKey($event)" [clearAriaLabel]="'labels.clear_search' | translate" />
 
         <div class="agent-list">
-          <div class="agent-list__head">
+          <div class="agent-list__head sc-text-caption-semibold">
             <sc-checkbox [state]="allFilteredSelected() ? 'all' : selectedIds().size > 0 ? 'some' : 'none'" (cycle)="toggleAll()" [ariaLabel]="'labels.select_all' | translate" />
             <span>
               @if (selectedIds().size > 0) {
@@ -205,7 +205,7 @@
           </div>
 
           @if (filteredAgents().length === 0) {
-            <div class="agent-list__empty">
+            <div class="agent-list__empty sc-text-caption-regular">
               @if (activeAgents().length === 0) {
                 {{ 'config.seguridad.regen.no_active_agents' | translate }}
               } @else {
@@ -221,11 +221,11 @@
                 (click)="toggleOne(agent.id)"
               >
                 <sc-checkbox [state]="(selectedIds().has(agent.id)) ? 'all' : 'none'" (cycle)="toggleOne(agent.id)" [ariaLabel]="agent.name" (click)="$event.stopPropagation()" />
-                <span class="agent-row__code">{{ agent.code }}</span>
-                <span class="agent-row__name">{{ agent.name }}</span>
-                <span class="agent-row__ext">ext. {{ agent.extension }}</span>
+                <span class="agent-row__code sc-text-caption-regular">{{ agent.code }}</span>
+                <span class="agent-row__name sc-text-body-regular">{{ agent.name }}</span>
+                <span class="agent-row__ext sc-text-caption-regular">ext. {{ agent.extension }}</span>
                 @if (agent.email) {
-                  <span class="agent-row__email">{{ agent.email }}</span>
+                  <span class="agent-row__email sc-text-caption-regular">{{ agent.email }}</span>
                 }
               </button>
             }
@@ -234,10 +234,10 @@
 
         @if (selectedIds().size > 0) {
           <div class="confirm">
-            <span class="confirm__title">
+            <span class="confirm__title sc-text-body-semibold">
               {{ 'config.seguridad.regen.confirm_title' | translate }}
             </span>
-            <p class="confirm__body">
+            <p class="confirm__body sc-text-caption-regular">
               {{
                 'config.seguridad.regen.confirm_body'
                   | translate: { confirm: confirmPhraseToken, count: selectedIds().size }
@@ -271,7 +271,7 @@
                 <span class="result__count">
                   {{ 'config.seguridad.regen.result_count' | translate: { count: r.count } }}
                 </span>
-                <p class="result__ts">{{ r.timestamp }}</p>
+                <p class="result__ts sc-text-caption-regular">{{ r.timestamp }}</p>
               </div>
             </div>
             <sc-button type="button" variant="secondary" (clicked)="downloadCsv()">

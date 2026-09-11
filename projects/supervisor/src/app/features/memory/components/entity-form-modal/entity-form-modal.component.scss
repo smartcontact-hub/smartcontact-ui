@@ -24,9 +24,6 @@
 
   &__label {
     display: block;
-    font-size: var(--sc-font-size-200);
-    line-height: var(--sc-line-height-body-2);
-    font-weight: var(--sc-font-weight-regular);
     color: var(--sc-text-primary);
     margin-bottom: var(--sc-spacing-0-25);
   }
@@ -34,15 +31,10 @@
   &__optional {
     margin-left: var(--sc-spacing-0-25);
     color: var(--sc-text-secondary);
-    font-weight: var(--sc-font-weight-regular);
-    font-size: var(--sc-font-size-50);
-    line-height: var(--sc-line-height-caption);
   }
 
   &__hint {
     margin: 4px 0 0 0;
-    font-size: var(--sc-font-size-50);
-    line-height: var(--sc-line-height-caption);
     color: var(--sc-text-secondary);
   }
 
@@ -91,17 +83,12 @@
   }
 
   &__synonyms-label {
-    font-size: var(--sc-font-size-50);
-    line-height: var(--sc-line-height-caption);
-    font-weight: var(--sc-font-weight-regular);
     color: var(--sc-text-primary);
   }
 
   &__list-empty {
     margin: 0;
     text-align: center;
-    font-size: var(--sc-font-size-100);
-    line-height: var(--sc-line-height-caption);
     color: var(--sc-text-secondary);
     font-style: italic;
     padding: var(--sc-spacing-0-875) 0;

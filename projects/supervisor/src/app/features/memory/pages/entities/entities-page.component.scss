@@ -112,15 +112,9 @@
    * `.table__td-desc` en labels. Se declara en cada `<span>` proyectado, que
    * es lo que sí conserva el encapsulado de la página. */
   &__td-name,
-  &__td-desc {
-    font-size: var(--sc-font-size-200);
-    line-height: var(--sc-line-height-body-2);
-  }
 
   &__td-format {
     color: var(--sc-text-secondary);
-    font-size: var(--sc-font-size-100);
-    line-height: var(--sc-line-height-caption);
   }
 
   &__td-desc {

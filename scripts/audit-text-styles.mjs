@@ -493,3 +493,72 @@ log('='.repeat(62));
 
 log('');
 log('✔ Ninguna pantalla declara tipografía fuera de los 12 roles.');
+
+/*
+ * §4 · Y LA TIPOGRAFÍA SE PONE POR SU NOMBRE, NO POR SUS NÚMEROS.
+ *
+ * Una regla de pantalla con `font-size: var(--sc-font-size-200)` puede valer exactamente lo que
+ * `Body/body-regular` y aun así no DECIR que lo es: en Inspect se leen tres números y alguien
+ * tiene que traducirlos. La clase `.sc-text-body-regular` es el enlace con el text style de
+ * Figma —el nombre viaja hasta el DOM— y por eso es la forma canónica; los tokens sueltos en la
+ * hoja son el paso previo, no el destino.
+ *
+ * Medido el 2026-09-11 antes de migrar: 301 reglas del Supervisor declaraban tipografía por
+ * token y 49 textos llevaban la clase. Tras la migración (165 reglas → 226 elementos con clase,
+ * medida en el navegador antes y después: 3.664 textos en 38 rutas + 813 en modales, CERO
+ * cambios de tamaño, interlineado, peso, familia, márgenes ni posición) quedan las que la clase
+ * NO puede sustituir, y son de cuatro familias con su motivo:
+ *   · muebles de interlineado APRETADO (chips, pastillas, contadores): 12/12 y 14/14 no son
+ *     ningún text style;
+ *   · texto con FAMILIA propia (celdas mono): la clase impone Inter;
+ *   · reglas con `font:` shorthand o modificadores que solo cambian el peso (`--active`), que
+ *     pisan o complementan a la clase desde la hoja;
+ *   · interlineados SIN UNIDAD (aparcados, sin token destino en el Kit).
+ *
+ * TRINQUETE por conteo: el número de reglas que aún declaran `font-size` solo puede bajar. Si
+ * baja, el tope se baja con él (un tope holgado deja entrar de nuevo lo que ya salió).
+ */
+export const TIPOGRAFIA_SUELTA_MAX = 116;
+
+/** Cuántas reglas de una hoja declaran `font-size` (tipografía por token, no por clase). */
+export function tipografiaSuelta(scss) {
+  let n = 0;
+  for (const [, props] of aplanar(scss)) if (props['font-size']) n += 1;
+  return n;
+}
+
+/** El veredicto del trinquete como texto, o null si el conteo está exactamente en su tope. */
+export function excesoSuelto(n, max) {
+  if (n > max) {
+    return `${n} reglas declaran \`font-size\` en la hoja y el tope es ${max}: la tipografía de ` +
+      'pantalla se pone con la clase `.sc-text-*` en la plantilla, no con tokens sueltos.';
+  }
+  if (n < max) {
+    return `${n} reglas declaran \`font-size\` y el tope sigue en ${max}: baja TIPOGRAFIA_SUELTA_MAX ` +
+      `a ${n} en scripts/audit-text-styles.mjs (un tope holgado deja volver lo que ya salió).`;
+  }
+  return null;
+}
+
+log('');
+log('CLASE · la tipografía de pantalla se pone por su nombre (`.sc-text-*`), no por tokens sueltos');
+log('='.repeat(62));
+{
+  const hojas = execSync(
+    "find projects/supervisor/src/app projects/supervisor/src/styles -name '*.scss'",
+    { encoding: 'utf8', cwd: root },
+  ).split('\n').filter(Boolean).sort();
+  let sueltas = 0;
+  for (const hoja of hojas) sueltas += tipografiaSuelta(readFileSync(resolve(root, hoja), 'utf8'));
+  log(`  ${hojas.length} hoja(s) · ${sueltas} regla(s) con \`font-size\` · tope ${TIPOGRAFIA_SUELTA_MAX}`);
+  log('='.repeat(62));
+  const veredicto = excesoSuelto(sueltas, TIPOGRAFIA_SUELTA_MAX);
+  if (veredicto) {
+    log('');
+    log(`  ✘ ${veredicto}`);
+    process.exit(1);
+  }
+}
+
+log('');
+log('✔ La tipografía suelta no crece: el trinquete está en su tope.');
