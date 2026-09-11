@@ -391,6 +391,14 @@
  * mismo tono que el bloque de código pero más callada: es referencia para quien
  * depura, no el ejemplo que se copia.
  */
+/* `display: contents` y no un bloque: el host de `<app-story-anatomy>` es hijo directo de un
+ * contenedor con `gap`, así que un host vacío se comería un hueco entero en las páginas donde no
+ * hay nada que enseñar. Medido por diferencia: escondiendo el bloque, las 38 baselines seguían
+ * moviéndose 6px. */
+app-story-anatomy {
+  display: contents;
+}
+
 .sb-anatomy {
   margin-top: var(--sc-spacing-0-75);
   padding: var(--sc-spacing-0-75) var(--sc-spacing-1);
