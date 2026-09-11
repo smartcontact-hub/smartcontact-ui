@@ -12,7 +12,11 @@ import { escribirMarca, estadoPreflight, treeIdWorkingTree, MARCA } from '../pre
 
 function repoTemporal() {
   const dir = mkdtempSync(join(tmpdir(), 'sc-mark-'));
-  const g = (...args) => execFileSync('git', args, { cwd: dir, encoding: 'utf8', env: { ...process.env, GIT_AUTHOR_NAME: 't', GIT_AUTHOR_EMAIL: 't@t', GIT_COMMITTER_NAME: 't', GIT_COMMITTER_EMAIL: 't@t' } }).trim();
+  // Las `GIT_*` heredadas se TIRAN antes de añadir las del autor: dentro de un hook de git apuntan
+  // al repositorio de verdad, y estos `git init`/`git commit` acabarían en él. Lo vigila
+  // `pre-push-hook.test.mjs`.
+  const sinGit = Object.fromEntries(Object.entries(process.env).filter(([k]) => !k.startsWith('GIT_')));
+  const g = (...args) => execFileSync('git', args, { cwd: dir, encoding: 'utf8', env: { ...sinGit, GIT_AUTHOR_NAME: 't', GIT_AUTHOR_EMAIL: 't@t', GIT_COMMITTER_NAME: 't', GIT_COMMITTER_EMAIL: 't@t' } }).trim();
   g('init', '-q');
   writeFileSync(join(dir, MARCA.replace('.preflight-ok', '.gitignore')), `${MARCA}\n`);
   writeFileSync(join(dir, 'a.txt'), 'uno\n');

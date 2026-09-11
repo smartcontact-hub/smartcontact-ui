@@ -5,7 +5,7 @@
  *   1. «un push sin leer el veredicto del CI no está terminado» (LEARNINGS #7, s35: seis pushes
  *      rojos seguidos escribiendo «preflight verde» sin abrir el CI ni una vez). Si el último
  *      `git push` de commits no va seguido de una lectura del CI (`npm run ci:verdict`,
- *      `gh run list|view|watch`), bloquea con el comando exacto.
+ *      `gh run list|view|watch`, `gh pr checks`), bloquea con el comando exacto.
  *   2. si en la sesión se invocó la skill `reflect` y quedan correcciones de ESTA sesión sin
  *      enrutar, bloquea con la lista y el `--enrutar` exacto. Reflexionar es decidir dónde va cada
  *      lección; sin la ruta escrita, «lo apunto en LEARNINGS» vuelve a valer como cierre y la
@@ -36,7 +36,9 @@ import { DESTINO_AYUDA, pendientes, rutaRegistro } from './correction-capture.mj
 
 const esPushDeCommits = (cmd) =>
   /\bgit\s+push\b/.test(cmd) && !/--tags\b|refs\/tags|\barchive\//.test(cmd) && !/--delete\b|\s:[A-Za-z]/.test(cmd) && !/--dry-run\b/.test(cmd);
-const esLecturaCI = (cmd) => /\bci:verdict\b|\bgh run (list|view|watch)\b/.test(cmd);
+// `gh pr checks` cuenta igual que `gh run`: es la misma lectura, por el PR en vez de por el run.
+// Faltaba, y bloqueó un cierre en el que el CI SÍ estaba leído (2026-09-10, esta misma sesión).
+const esLecturaCI = (cmd) => /\bci:verdict\b|\bgh run (list|view|watch)\b|\bgh pr checks\b/.test(cmd);
 
 /** Comandos Bash del transcript (jsonl), en orden. */
 export function comandosBash(jsonl) {

@@ -32,6 +32,9 @@ test('#7 exit enmascarado: algo detrás del gate → deny; gate al final o pipef
   deny('npm run verify 2>&1 | tail -3; echo "VERIFY=$?"', verde, /exit/);
   deny('(npm run verify && npm run e2e) > log 2>&1; echo "LANE_EXIT=$?"', verde, /exit/);
   deny('gh run watch 123 --exit-status; echo "CI=$?"', verde, /exit/);
+  // Misma familia: `gh pr checks` sale 1 si algún check no está en verde, y ese exit es el
+  // veredicto. Un `| head` detrás lo cambia por el del `head`, que siempre es 0.
+  deny('gh pr checks 99 2>&1 | head -8', verde, /exit/);
   deny('npm run docs:coherence | tail -2', verde, /exit/);
   deny('npm run -s ci:verdict main; echo "(exit $?)"', verde, /exit/); // con flags: se coló en s41 hasta que lo usé yo
   deny('npm run --silent docs:guard 2>&1 | tail -1', verde, /exit/);

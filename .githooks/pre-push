@@ -94,6 +94,15 @@ if [ "${SKIP_PROTO_FASTPATH:-0}" != "1" ]; then
   fi
 fi
 
+# A partir de aquí se ejecuta CÓDIGO DEL REPO (la cadena entera, con sus tests). Y git, cuando
+# llama a un hook, EXPORTA `GIT_DIR` apuntando al repositorio de verdad: cualquier `git` que
+# lance un script de esa cadena cae sobre él, ignorando su propio `cwd`. Un `git init --bare` en
+# un repo temporal de un test dejó así el repositorio de Rafa marcado como bare, y con eso TODAS
+# las sesiones abiertas se quedaron sin árbol de trabajo («fatal: this operation must be run in a
+# work tree»). Se limpia el entorno antes de dar paso: el gate no tiene por qué heredar el repo.
+# (Medido el 2026-09-11, dos veces, las dos borrando una rama ya fundida.)
+unset GIT_DIR GIT_WORK_TREE GIT_INDEX_FILE GIT_OBJECT_DIRECTORY GIT_ALTERNATE_OBJECT_DIRECTORIES GIT_COMMON_DIR GIT_PREFIX GIT_QUARANTINE_PATH
+
 printf '\n\033[1m▶ pre-push: gate antes de subir\033[0m  (SKIP_PREFLIGHT=1 para saltarlo)\n\n'
 
 # Si ESTE árbol ya pasó un carril (marca `.preflight-ok`, tree id == HEAD), no se repite la
