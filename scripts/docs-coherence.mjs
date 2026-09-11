@@ -385,7 +385,7 @@ for (const { path, lines } of files) {
     'token-gen-effects', 'token-parity', 'token-guard', 'check-theme-scale', 'check-border-surfaces',
     'audit-api-era', 'audit-datatables', 'audit-primeng-coupling', 'audit-screen-hygiene', 'audit-seed-pii',
     'audit-page-anatomy', 'audit-doc-snippets', 'variables-map', 'docs-guard', 'docs-coherence',
-    'audit-base-href', 'audit-text-styles', 'audit-titulo-contenido',
+    'audit-base-href', 'audit-titulo-contenido',
   ]);
   const enCadena = new Set();
   for (const paso of verifySteps) {

@@ -66,7 +66,7 @@
     text-align: left;
     /* sentence-case gris medium, no UPPERCASE tracked. */
     font-size: var(--sc-font-size-100);
-    font-weight: var(--sc-font-weight-medium);
+    font-weight: var(--sc-font-weight-regular);
     letter-spacing: 0;
     color: var(--sc-text-secondary);
   }
@@ -107,7 +107,7 @@
 
     &--emphasis {
       color: var(--sc-text-primary);
-      font-weight: var(--sc-font-weight-medium);
+      font-weight: var(--sc-font-weight-semibold);
     }
 
     &--mono {
@@ -150,7 +150,7 @@
   display: inline-block;
   padding: 2px var(--sc-spacing-0-5);
   font-size: var(--sc-font-size-50);
-  font-weight: var(--sc-font-weight-medium);
+  font-weight: var(--sc-font-weight-regular);
   border: 1px solid;
   border-radius: var(--sc-radius-50);
 

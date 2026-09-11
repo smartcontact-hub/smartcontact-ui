@@ -113,7 +113,7 @@
     white-space: nowrap;
 
     .country-row--selected & {
-      font-weight: var(--sc-font-weight-medium);
+      font-weight: var(--sc-font-weight-regular);
     }
   }
 
@@ -163,7 +163,7 @@
     display: block;
     margin-bottom: var(--sc-spacing-0-5);
     font-size: var(--sc-font-size-100);
-    font-weight: var(--sc-font-weight-medium);
+    font-weight: var(--sc-font-weight-regular);
     color: var(--sc-text-secondary);
   }
 

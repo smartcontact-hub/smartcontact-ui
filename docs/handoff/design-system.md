@@ -15,6 +15,90 @@
 > coordine. Los `sNN` de los tramos viejos se quedan como están: los nombran commits y
 > `docs/DECISIONS.md`, y reescribirlos solo desincronizaría el doc de su propia historia.
 
+## ✅ 2026-09-11 · El 500 no es «casi» un 600: 76 reglas de texto vuelven a los 12 estilos
+
+**Sello:** DD-67. Gate nuevo (tercera comprobación de `audit:text-styles`) **validado con el fallo
+puesto en tres ejes MÁS un control negativo**: peso 500 → rojo, tamaño 16 → rojo, entrada
+deliberada caducada → rojo, y **el mismo tamaño 16 sobre un selector de icono → NO salta**. 15
+tests nuevos. Medido en el navegador sobre mi build, a 1440. Veredicto del CI por `ci:verdict`.
+
+**De dónde sale.** Rafa, al cerrar el barrido de vocabulario: «hay que ir casando cada título,
+subheader etc, todo lo que no sea componente, con el estilo que cuadre».
+
+**Lo primero, y cambia el resto: OTRA SESIÓN YA ESTABA AQUÍ.** El `#98` (DD-66) aterrizó mientras
+yo medía y había movido `font-size`/`font-weight` de `styles/_forms.scss` y de la hoja de AED a la
+clase `.sc-text-*` en la plantilla, con su `e2e/supervisor/text-styles-applied.spec.ts`. Lo vi al
+rebasar, ANTES de tocar. El patrón suyo es el que se ha seguido aquí: **la clase de maquetación se
+queda, la de estilo de texto lleva los tres ejes**.
+
+**LO QUE SALIÓ AL MEDIR** (61 hojas, antes de tocar):
+
+| Bucket | Cuántas |
+| --- | ---: |
+| `font-weight: medium` (**500**) — no es el peso de NINGÚN text style | **76** |
+| Tamaño que no es peldaño de ningún rol (16 · 32) | 9 |
+| Tamaño e interlineado que no casan | 2 |
+| Sin `line-height` (heredan) | 211 |
+
+**Lo que se hizo.** Los 76 pesos → **400 o 600** con criterio escrito (600 para títulos, para el
+dato que identifica una fila y para el item activo; 400 para etiquetas, opciones, chips y ayudas).
+Los tamaños y los dos interlineados que no existen, a su rol. Y el título de sección del
+constructor de reglas **baja de 18 a 14**: era el único de la app que no iba a `Body/body-semibold`.
+
+**Resultado: pesos fuera de estilo 76 → 2**, y los dos son los deliberados de la tarjeta de impacto.
+
+**TRES VECES ESTUVE A PUNTO DE ROMPER ALGO, y las tres lo paró medir en vez de seguir:**
+
+1. **Casi borro una decisión de diseño con su motivo escrito.** Mi mapa iba a llevar
+   `.impact__hero` de 32 a 24 — y al lado de la regla ponía que *32 es el tope real de la rampa, el
+   Figma pedía 40*, y que la variante `--rail` baja a 20 *porque a 32 «conversaciones» se parte*. El
+   script falló al casar el selector, fui a mirar por qué, y ahí estaba el motivo. Es exactamente lo
+   que DD-36 existe para impedir, y lo iba a hacer yo con mi propio gate recién escrito delante.
+2. **Verifiqué el conteo, no el resultado.** La edición en masa dejó `medium` en 0 —comprobado en el
+   mismo comando, como manda `LEARNINGS` #11— pero **13 de 27** de los que debían quedar en 600 se
+   fueron a 400: mi reescritor componía los selectores distinto que el verificador. El conteo daba
+   verde y el resultado estaba mal. Se arregló usando EL MISMO compositor en los dos, y verificando
+   **por item**, no por total.
+3. **Bajé a 400 el item activo del rail**, que es la señal de «estás aquí» — con el comentario
+   *«solid tint + bold weight»* dos líneas encima. Lo cazó releer los comentarios de los bloques
+   tocados, no un test.
+
+**Y un cuarto, en el propio gate: dijo «0 fuera de rol» estando CIEGO.** La tabla de tokens se
+construía pasándole a `resolver` el NOMBRE en vez del valor, así que salía vacía y no miraba nada.
+Lo cazó que la sonda independiente contaba 8 y él 0 (`LEARNINGS` #2: cierra con una observación que
+no dependa de tu inventario). Tiene su test: con las tablas vacías, el gate debe seguir viendo un
+peso literal.
+
+**Lo que NO se gatea, y por qué:**
+
+- **Los `line-height` SIN UNIDAD** (1.4, 1.5…). Están **aparcados con razón** en `NEXT-SESSION.md`:
+  no hay token destino en el Kit. Un guardián que pide lo que el sistema no puede dar enseña a
+  ignorarlo.
+- **El `font-size` que dimensiona un GLIFO** (`__caret`, `__check`). Tres de los nueve primeros
+  avisos eran eso. Se excluyen por nombre y con su test de control negativo.
+- **La tarjeta de impacto de Memory**: en `TIPOGRAFIA_DELIBERADA` con su motivo trazado a Figma.
+
+⚠️ **El gate mira lo que se DECLARA, no lo que GANA la cascada.** `.impact__hero` declara 32 y su
+variante `--rail` lo baja a 20. Esa ceguera me dio a MÍ una cifra equivocada (dije 32 donde se
+pintan 20). Lo rendido lo mide `text-styles-applied.spec.ts`, en el navegador — los dos hacen falta.
+
+**Y cierra un punto ciego de DD-65**: `audit:screen-vocabulary` compara un nombre declarado en DOS
+hojas, así que `.rule-card__title`, usado por una sola pantalla, podía irse a 18 sin que saltara
+nada. El de tipografía mira el VALOR, no el nombre.
+
+**Lo que queda:**
+
+1. **Las 211 reglas sin `line-height`.** Es el bucket más numeroso y el menos grave: ponen el tamaño
+   y dejan que el interlineado se herede, así que el texto no mide lo que dice su rol. Mecánico pero
+   masivo — su propia tanda.
+2. **Migrar a `.sc-text-*` lo que aún declara tipografía por token en SCSS.** El `#98` lo hizo para
+   las etiquetas de campo; el resto sigue con tokens en la hoja, que es correcto pero es el paso
+   anterior.
+3. Los formularios de admin siguen sin maqueta de `sc-section-card` para su CONTENIDO.
+4. Decidir si la app viva lleva un aviso que apunte a `docs/PROTOTIPOS.md` (DD-56).
+
+---
+
 ## ✅ 2026-09-10 · El tema ya se lleva la pantalla puesta: 26 bloques que no viajaban bajan a 1
 
 **Sello:** pendiente de PR. `npm run verify` VERDE entero (37 gates). `audit:primeng-coupling`
