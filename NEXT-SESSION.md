@@ -11,10 +11,17 @@
    tarjeta de punto de decisión ya la llevas en `CLAUDE.md`.
 2. **Coge lo primero de su sección "SIGUIENTE" y hazlo.** No preguntes qué hacer: está ordenado
    y todo lo que hay ahí se ejecuta sin permiso.
-3. Lo de **"ESPERANDO A RAFA" no se pregunta**. Está aparcado a propósito; solo se toca si él lo saca.
-4. Si tocas un fondo o un título → `docs/DECISIONS.md` DD-33 y DD-34. Si tocas una app RÉPLICA
+3. **`npm run sesiones` contesta «¿puedo cerrar este chat?» para TODAS las cajas a la vez**:
+   qué worktree tiene un PR verde esperando a que lo fundas, cuál tiene commits sin subir, cuál
+   sobra ya, y si dos cajas llevan el mismo commit. Córrelo al abrir (para no repetir trabajo que
+   otra sesión ya tiene) y al cerrar (una caja se cierra VACÍA: PR fundido y CI leído, no verde y
+   sin fundir). Nació el 2026-09-10 midiendo este repo: nueve worktrees vivos, tres con el trabajo
+   ya en `main`, y dos ramas con el mismo commit hechas por dos sesiones que no se vieron.
+
+4. Lo de **"ESPERANDO A RAFA" no se pregunta**. Está aparcado a propósito; solo se toca si él lo saca.
+5. Si tocas un fondo o un título → `docs/DECISIONS.md` DD-33 y DD-34. Si tocas una app RÉPLICA
    (`agent`, `cuscare`) → **DD-35**: no se tokenizan a propósito.
-5. **Trabaja en TU worktree** (`EnterWorktree name:<tarea>`), no en el árbol principal. Norma de
+6. **Trabaja en TU worktree** (`EnterWorktree name:<tarea>`), no en el árbol principal. Norma de
    Rafa del 2026-09-03, después de que dos sesiones se pisaran el mismo día: el árbol compartido
    comparte `dist/` **y la rama checkouteada**, así que los builds se corrompen entre sí (el
    síntoma engaña: `Cannot find module '@smartcontact-hub/icons'`, que parece una dependencia
@@ -23,7 +30,7 @@
    ⚠️ El worktree **no** aísla el puerto del e2e smoke (:4280, el único sin override): si otra
    sesión está en preflight, toca esperar.
 
-6. **Al cerrar, tu tramo se llama por la FECHA**, no por un contador: en el hand-off del frente,
+7. **Al cerrar, tu tramo se llama por la FECHA**, no por un contador: en el hand-off del frente,
    `## ✅ <fecha ISO> · <lo que pasó>`, y su **sello va debajo de su propio título**, no en la
    cabecera. Los dos cambios son del 2026-09-04 y salen del mismo sitio: un contador `sNN` es un
    entero global que dos sesiones en paralelo no pueden incrementar a la vez (ese día las dos se
