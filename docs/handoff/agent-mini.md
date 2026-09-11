@@ -85,10 +85,11 @@ overlay. Son fieles «de sensación», no verificadas al píxel.
 1. **Nada al píxel sin captura.** Como en el frente `agent`, el método que funciona es: Rafa
    señala algo del mini real, se MIDE en su navegador y se aplica el número. Lo que quede saldrá
    de él, no de una lista inventada.
-2. **(Opcional, hardening) Cablear `agent-mini` al CI.** Hoy **no** está en `ci.yml` (ni en
-   `preflight`): solo Cloudflare caza una rotura de build. Meterlo obliga a tocar **tres** sitios
-   a la vez o el gate `ci-preflight-parity` se pone rojo: el job `build` de `ci.yml`, la cadena
-   de `preflight` en `package.json`, y el conteo de pasos en la doc. Corre `verify` entero después.
+2. ~~**(Opcional, hardening) Cablear `agent-mini` al CI.**~~ → **HECHO el 2026-09-11 (#117)**. Ya
+   no es cierto que solo Cloudflare cace una rotura de su build: está en el job `build` de
+   `ci.yml`, en la cadena de `preflight`, en `typecheck` y en el carril acotado de
+   `preflight:scope`. Los pasos del CI subieron de 8 a 9 en los siete sitios que vigila CHECK J, y
+   `.impeccable.md` y `docs/traspaso.md` dejaron de decir «cuatro apps».
 
 ## ⏸️ ESPERANDO A RAFA — no preguntar, no hacer (dashboard-only)
 
