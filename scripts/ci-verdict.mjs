@@ -24,6 +24,14 @@
  * `origin/main`, así que lee el CI de main — y en cuanto commiteas, la comparación de sha lo dice
  * con el exit 3 («describe OTRO commit») en vez de venderte ese verde como tuyo.
  *
+ * Con una rama PEDIDA a mano (`-- main`) el sha contra el que se compara es el tip de esa rama en
+ * origin, no tu HEAD: preguntas por OTRA rama, así que tu HEAD no pinta nada. Comparar con él daba
+ * un `△ describe OTRO commit` garantizado — y justo `-- main` es lo que el aviso del exit 4 te
+ * manda correr al fundir, o sea que el propio comando se mandaba a un callejón (medido s44, al
+ * leer main después de fundir el #95). El tip se lee con `git ls-remote`, no con el ref local
+ * `origin/<rama>`: ese ref es tan viejo como tu último `fetch`, y un sha rancio aquí es
+ * exactamente el falso «OTRO commit» que veníamos a quitar (LEARNINGS #5).
+ *
  * Exit: 0 verde sobre HEAD · 1 rojo · 2 pendiente/en curso · 3 el run es de OTRO commit
  *       (un check atado a un commit viejo es un snapshot, no el estado de hoy — #17 s39)
  *       · 4 el PR de la rama ya está fundido · 5 el PR está en conflicto con la base.
@@ -34,7 +42,11 @@
 import { execFileSync } from 'node:child_process';
 import { fileURLToPath } from 'node:url';
 
-const sh = (cmd, args) => execFileSync(cmd, args, { encoding: 'utf8' }).trim();
+// `stdio` explícito: por defecto `execFileSync` REENVÍA el stderr del hijo al nuestro, así que el
+// `git rev-parse @{upstream}` de una rama sin upstream escupía un `fatal: no upstream configured`
+// por encima del veredicto aunque su `catch` ya lo tuviera contemplado. Capturado, no impreso: el
+// mensaje sigue en `e.stderr` para quien lo necesite.
+const sh = (cmd, args) => execFileSync(cmd, args, { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'] }).trim();
 
 /**
  * El nombre con el que `gh` conoce la rama: el de origin que sigue tu HEAD si lo hay, y si no el
@@ -46,11 +58,26 @@ export function ramaPorDefecto(upstream, local) {
   return m ? m[1] : local;
 }
 
+/** La primera línea con contenido del fallo: el stderr del hijo si lo hay, y si no el `message`. */
+export const motivo = (e) =>
+  String(e?.stderr || '').trim().split('\n')[0] || String(e?.message || '').split('\n')[0] || 'sin detalle';
+
+/**
+ * El sha de una línea de `git ls-remote origin refs/heads/<rama>` (`<sha>\t<ref>`). Cadena vacía si
+ * la rama no existe en origin: `ls-remote` no falla en ese caso, devuelve NADA — y quien lo trate
+ * como error se pierde el único aviso útil («esa rama no está en origin»).
+ */
+export function shaDeLsRemote(salida) {
+  const sha = String(salida || '').trim().split(/\s+/)[0] || '';
+  return /^[0-9a-f]{40}$/.test(sha) ? sha : '';
+}
+
 /**
  * La decisión, separada de la recogida para poder ponerle delante cada caso malo (LEARNINGS #2).
- * `pr` es el PR de la rama (o null); `runs` lo que devuelve `gh run list --limit 1`.
+ * `pr` es el PR de la rama (o null); `runs` lo que devuelve `gh run list --limit 1`; `head` el sha
+ * contra el que se compara y `etiqueta` cómo se llama en el mensaje (tu HEAD, o el tip de origin).
  */
-export function veredicto({ rama, head, runs, pr }) {
+export function veredicto({ rama, head, runs, pr, etiqueta = 'tu HEAD' }) {
   if (pr && pr.state === 'MERGED') {
     const en = pr.mergeCommit?.oid ? ` en ${pr.mergeCommit.oid.slice(0, 7)}` : '';
     return {
@@ -85,14 +112,14 @@ export function veredicto({ rama, head, runs, pr }) {
   if (r.headSha !== head) {
     return {
       exit: 3,
-      linea: `△ el último run de ci en ${rama} es de ${sha}, y tu HEAD es ${head.slice(0, 7)}: describe OTRO commit, no el tuyo. ${r.url}`,
+      linea: `△ el último run de ci en ${rama} es de ${sha}, y ${etiqueta} es ${head.slice(0, 7)}: describe OTRO commit. ${r.url}`,
     };
   }
   if (r.status !== 'completed') {
     return { exit: 2, linea: `… ci en ${rama} sobre ${sha}: ${r.status}. Espera y repite. ${r.url}` };
   }
   if (r.conclusion === 'success') {
-    return { exit: 0, linea: `✓ ci VERDE en ${rama} sobre ${sha} (tu HEAD). ${r.url}` };
+    return { exit: 0, linea: `✓ ci VERDE en ${rama} sobre ${sha} (${etiqueta}). ${r.url}` };
   }
   return {
     exit: 1,
@@ -107,8 +134,22 @@ function main() {
   } catch {
     /* rama sin upstream: nos quedamos con el nombre local */
   }
-  const rama = process.argv[2] || ramaPorDefecto(upstream, sh('git', ['rev-parse', '--abbrev-ref', 'HEAD']));
-  const head = sh('git', ['rev-parse', 'HEAD']);
+  const ramaPedida = process.argv[2];
+  const rama = ramaPedida || ramaPorDefecto(upstream, sh('git', ['rev-parse', '--abbrev-ref', 'HEAD']));
+
+  let head;
+  let etiqueta;
+  if (ramaPedida) {
+    head = shaDeLsRemote(sh('git', ['ls-remote', 'origin', `refs/heads/${rama}`]));
+    if (!head) {
+      console.error(`○ la rama ${rama} no existe en origin (nada que comparar). ¿El nombre está bien escrito?`);
+      process.exit(2);
+    }
+    etiqueta = `el tip de origin/${rama}`;
+  } else {
+    head = sh('git', ['rev-parse', 'HEAD']);
+    etiqueta = 'tu HEAD';
+  }
 
   let runs;
   try {
@@ -116,7 +157,10 @@ function main() {
       sh('gh', ['run', 'list', '--branch', rama, '--workflow', 'ci', '--limit', '1', '--json', 'headSha,conclusion,status,url,createdAt']),
     );
   } catch (e) {
-    console.error(`✗ no pude leer el CI (${e.message.split('\n')[0]}). ¿gh autenticado? ¿existe la rama en origin?`);
+    // Ahora que el stderr va capturado, el motivo de verdad vive en `e.stderr`; `e.message` solo
+    // dice «Command failed». Sin esto, silenciar el ruido de arriba se habría llevado por delante
+    // el único dato útil del fallo.
+    console.error(`✗ no pude leer el CI (${motivo(e)}). ¿gh autenticado? ¿existe la rama en origin?`);
     process.exit(2);
   }
 
@@ -128,7 +172,7 @@ function main() {
     /* sin PR legible: el veredicto es solo el del CI */
   }
 
-  const { linea, exit } = veredicto({ rama, head, runs, pr });
+  const { linea, exit } = veredicto({ rama, head, runs, pr, etiqueta });
   console.log(linea);
   process.exit(exit);
 }

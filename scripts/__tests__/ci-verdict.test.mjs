@@ -1,7 +1,7 @@
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
 
-import { ramaPorDefecto, veredicto } from '../ci-verdict.mjs';
+import { motivo, ramaPorDefecto, shaDeLsRemote, veredicto } from '../ci-verdict.mjs';
 
 // Los dos casos malos son REALES, de la s43, y el comando los pasó por alto los dos:
 //   1. corrí `ci:verdict` en un worktree cuya rama local lleva sufijo `-2` y me dijo «¿aún no has
@@ -10,6 +10,8 @@ import { ramaPorDefecto, veredicto } from '../ci-verdict.mjs';
 //      pregunté a Rafa si lo fundía.
 // Y el tercero es de la s44, con este mismo comando ya escrito: me dijo «✓ ci VERDE» sobre el #95,
 // que estaba `CONFLICTING` con el #94. El verde lo cantó la máquina; el conflicto lo vi yo a mano.
+// El cuarto, minutos después: `ci:verdict -- main` —lo que el aviso del exit 4 te manda correr—
+// comparaba el run de main contra MI HEAD, o sea un `△ describe OTRO commit` garantizado.
 // (LEARNINGS #2: cada aserción con el fallo delante.)
 
 const RUN = {
@@ -100,4 +102,51 @@ test('los otros cuatro veredictos no cambian', () => {
   const rojo = veredicto({ rama: 'r', head: HEAD, runs: [{ ...RUN, conclusion: 'failure' }], pr: null });
   assert.equal(rojo.exit, 1);
   assert.match(rojo.linea, /FAILURE/);
+});
+
+
+test('etiqueta: por defecto habla de tu HEAD', () => {
+  const v = veredicto({ rama: 'r', head: HEAD, runs: [RUN], pr: null });
+  assert.match(v.linea, /tu HEAD/);
+});
+
+test('rama pedida a mano: el mensaje dice contra QUÉ compara, no «tu HEAD»', () => {
+  const v = veredicto({ rama: 'main', head: HEAD, runs: [RUN], pr: null, etiqueta: 'el tip de origin/main' });
+  assert.equal(v.exit, 0);
+  assert.match(v.linea, /el tip de origin\/main/);
+  assert.doesNotMatch(v.linea, /tu HEAD/, 'preguntas por otra rama: tu HEAD no pinta nada');
+});
+
+test('el aviso de OTRO commit tampoco puede llamarlo «tuyo» cuando preguntas por otra rama', () => {
+  const v = veredicto({
+    rama: 'main',
+    head: 'c20939ce759f28dddb087065be5c243ae9e9d6d3',
+    runs: [{ ...RUN, headSha: 'b'.repeat(40) }],
+    pr: null,
+    etiqueta: 'el tip de origin/main',
+  });
+  assert.equal(v.exit, 3);
+  assert.match(v.linea, /el tip de origin\/main es c20939c/);
+  assert.doesNotMatch(v.linea, /no el tuyo/, 'el run de main no es «tuyo» ni deja de serlo');
+});
+
+// `ls-remote` NO falla cuando la rama no existe: devuelve salida vacía. Medido contra origin con
+// `refs/heads/no-existe-xyz` (exit 0, cero líneas). Tratarlo como error se come el único aviso útil.
+test('shaDeLsRemote: saca el sha de la línea, y vacío si la rama no está en origin', () => {
+  assert.equal(shaDeLsRemote('c20939ce759f28dddb087065be5c243ae9e9d6d3\trefs/heads/main'), 'c20939ce759f28dddb087065be5c243ae9e9d6d3');
+  for (const v of ['', '   ', '\n', null, undefined]) assert.equal(shaDeLsRemote(v), '', `debía ser vacío: ${JSON.stringify(v)}`);
+});
+
+test('shaDeLsRemote: lo que no es un sha de 40 no pasa por sha', () => {
+  for (const v of ['ref: refs/heads/main\tHEAD', 'c20939c\trefs/heads/main', 'fatal: no such remote'])
+    assert.equal(shaDeLsRemote(v), '', `no es un sha completo: ${v}`);
+});
+
+// Silenciar el stderr heredado (el `fatal: no upstream configured` que se colaba por encima del
+// veredicto) deja el motivo del fallo SOLO en `e.stderr`: `e.message` a secas es «Command failed».
+test('motivo: el stderr manda; el message es el respaldo', () => {
+  assert.equal(motivo({ stderr: 'gh: not authenticated\nrun gh auth login', message: 'Command failed: gh run list' }), 'gh: not authenticated');
+  assert.equal(motivo({ stderr: '  \n', message: 'Command failed: gh run list\nmás' }), 'Command failed: gh run list');
+  assert.equal(motivo({}), 'sin detalle');
+  assert.equal(motivo(undefined), 'sin detalle');
 });
