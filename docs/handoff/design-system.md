@@ -15,6 +15,34 @@
 > coordine. Los `sNN` de los tramos viejos se quedan como están: los nombran commits y
 > `docs/DECISIONS.md`, y reescribirlos solo desincronizaría el doc de su propia historia.
 
+## ✅ 2026-09-11 · Tres guardas que cierran la lista de pendientes del proyecto
+
+**Sello:** DD-70. Tres PR encadenados sobre `main`, cada uno con su `ci:verdict` leído.
+
+**De dónde sale.** Rafa pidió el orden de prioridad de todo lo pendiente del proyecto y luego
+«adelante a todo». Se leyeron los cuatro hand-offs, el índice de frentes, los PR abiertos y las
+cajas; el resultado se ordenó por lo que le cuesta a él (defectos que le llegan), no por tamaño.
+
+**Lo que entró.**
+- **#113 · el preflight no corre sobre una rama rezagada** (`scripts/preflight-rebase.mjs`):
+  `git fetch` + `merge-base --is-ancestor` antes de gastar 8 min, al escribir la marca y al leerla
+  desde el hook de push. Tests con remoto bare de verdad. Y la **portada del PR de tokens** lleva
+  el sha del plugin que el robot consumió y el que dejó, reescrita en cada run.
+- **`agent-mini` entra en el CI, en `preflight`, en `typecheck` y en el carril acotado.** Era el
+  quinto sitio en producción y solo Cloudflare cazaba una rotura de su build, después del merge.
+  Pasos del CI 8 → 9 en los siete sitios que vigila CHECK J.
+- **`audit:doc-snippets` ata el código que la doc ENSEÑA con el que EJECUTA** (DD-70), y cada
+  ficha gana su **anatomía leída del DOM** (`sc-button > p-button > button.p-button`). Cuatro
+  defectos reales arreglados, uno de ellos el que vio Rafa en `/#/components/button`.
+
+**Lo que NO se hizo, y por qué.** El barrido de tipografía suelta (116 → 0) **lo estaba haciendo
+otra sesión a la vez** (PR #115, worktree `grayling`, 116 → 101 con su propio rastreador de 4.517
+mediciones). Se detectó mirando `git worktree list` y los PR abiertos antes de tocar las mismas
+plantillas: dos sesiones editando `projects/supervisor` a la vez es el escenario que costó el día
+del 2026-09-03. Queda suyo, con sus tres preguntas abiertas para Rafa.
+
+---
+
 ## ▶︎ SIGUIENTE — sin preguntar
 
 > **La bandeja del frente, y por eso vive ARRIBA.** Entran dos cosas: lo que queda por hacer, y
@@ -41,15 +69,14 @@
   (29 podrían llevarla hoy, 127 heredan el interlineado, 57 están fuera de la rampa). El showcase
   del DS es el que peor predica con el ejemplo. Cifras y matices en el tramo de abajo.
 
-**Lo que dejó el 2026-09-11 (revisión de Orca), sin hacer:**
+**Lo que queda de la tanda «adelante a todo» del 2026-09-11** (los dos apuntes de la revisión de
+Orca se cerraron en el #113; `agent-mini` entró en el CI; la doc, en su PR):
 
-- **`preflight:scope` debería negarse sobre un árbol que no está rebasado en `origin/main`.** Hoy se
-  tiraron DOS preflights (8 min cada uno) porque `main` avanzó dos veces (#105, #103) entre el
-  preflight y el push, y `ci:verdict` respondió «en conflicto». Es mecanizable: `git fetch` y
-  `merge-base --is-ancestor origin/main HEAD` antes de correr nada; con su caso rojo fabricado.
-- **La portada del PR de `design-tokens-sync` no dice si el robot lo verificó.** #104 se fundió a
-  ciegas con tres commits crudos del plugin. Que el cuerpo del PR (lo escribe `tokens-sync.yml`)
-  lleve el sha que el robot reseteó, y que un push posterior del plugin lo invalide a la vista.
+- **El rastreador de textos de esta casa NO está commiteado**, y es la red que exige LEARNINGS #16
+  para cualquier barrido de tipografía. Cada sesión lo reescribe. Vive hoy en el scratchpad de dos
+  sesiones distintas; si el barrido de `sc-docs` se hace, vale la pena que entre en `tools/`.
+- **Los 66 inputs públicos sin ejemplo** que destapó el trinquete de `audit:doc-snippets` (DD-70).
+  El gate los imprime con `--inputs`; la lista solo baja, y bajarla es escribir doc, no barrer.
 
 **Lo que dejó s42, medido y sin hacer:**
 

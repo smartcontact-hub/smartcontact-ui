@@ -386,15 +386,15 @@ for (const h of files.filter((f) => rel(f.path).startsWith('docs/handoff/')))
 // ── CHECK O — todo script propio de la cadena `verify` tiene su test rojo ─────────────────
 // LEARNINGS #2 y #6 son las reglas de «un gate que no enrojece no es un gate», rotas en 4 sesiones
 // cada una con el texto delante. Esta es su máquina: cada `scripts/X.mjs` que `verify` ejecuta
-// necesita `scripts/__tests__/X.test.mjs`. Los 23 que nacieron sin él (2026-09-09) están en la
+// necesita `scripts/__tests__/X.test.mjs`. Los que nacieron sin él (2026-09-09) están en la
 // lista de LEGADO, que solo puede encoger: si un legado gana test, hay que sacarlo de aquí en el
 // mismo commit (si no, falla), y ningún script NUEVO puede entrar en ella.
 {
   const LEGADO_SIN_TEST = new Set([
     'check-export-clean', 'token-gen', 'token-gen-component', 'token-gen-color', 'token-gen-cmp-color',
     'token-gen-effects', 'token-parity', 'token-guard', 'check-theme-scale', 'check-border-surfaces',
-    'audit-api-era', 'audit-datatables', 'audit-primeng-coupling', 'audit-screen-hygiene', 'audit-seed-pii',
-    'audit-page-anatomy', 'audit-doc-snippets', 'variables-map', 'docs-guard', 'docs-coherence',
+    'audit-datatables', 'audit-primeng-coupling',
+    'variables-map', 'docs-guard', 'docs-coherence',
     'audit-base-href', 'audit-titulo-contenido',
   ]);
   const enCadena = new Set();

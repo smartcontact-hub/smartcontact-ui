@@ -56,7 +56,7 @@
    muerto, puerto de OTRO worktree, filtro `jq` que nunca casa); si un doble contesta la pregunta
    que hace el código, el test se mide a sí mismo. Cierra con una observación que NO dependa de tu
    inventario. Un guardián con falsos positivos es peor que ninguno: enseña a ignorarlo. ⚙️ el
-   CHECK O de `docs:coherence` exige un test rojo a cada script de `verify` (23 legados, solo encoge).
+   CHECK O de `docs:coherence` exige un test rojo a cada script de `verify` (17 legados, solo encoge).
    Evidencia: s18 regex `/\d+/g` sobre `color(srgb …)` = verde imposible · s21 medí píxeles, no
    color · s34 `closest: () => ({})` dejó 8 tests verdes con el gesto muerto · s31 tests verdes
    contra el `ng serve` de otro worktree · s18 guardián sin probar en claro↔oscuro = 17 rojos.
