@@ -68,6 +68,48 @@
    decisión. Ver la sección de Figma más abajo.
 3. **La deuda de código de [`AUDIT-DEUDA-2026-06.md`](../AUDIT-DEUDA-2026-06.md)** que quede tras
    s34, y **los cabos de DD-24** (round-trip de iconos) en [`ROADMAP.md`](../ROADMAP.md).
+## ✅ 2026-09-11 · El botón de guardar vuelve a medir lo que dice su texto
+
+**Sello:** PR #114, fundido con el CI de `main` VERDE leído por `ci:verdict` (HEAD `ed28a9a`);
+`preflight:scope --run` verde sobre el árbol final, `verify` verde y `e2e:supervisor` 149/149 en
+local. Los números de cada medición están en el cuerpo del PR y en el comentario de `main.scss`.
+
+**De dónde sale.** Rafa, mirando `/config/aed/servicio` en producción: «no entiendo por qué el
+botón guardar no está en hug contents y se ve del mismo tamaño que descartar cambios». No estaban
+igualados a propósito: los dos chocaban con el MISMO suelo —el `min-width: 128px` de
+`.top-bar__actions button`, puesto el 2026-08-25 contra el SALTO del CTA entre listas— y la
+coincidencia lo disfrazaba de decisión de diseño. Medido en el build desplegado a 1440px:
+«Guardar» hug 65.79 → pintado 128 (62px de aire) y «Descartar cambios» hug 127.84 → 128, o sea
+**0.16px por debajo del suelo**. Esa regla es la ÚNICA de las 5.532 de la página que toca
+width/min/max/flex en ese botón: ni `flex: 1`, ni `width: 100%`, ni DS, ni PrimeNG.
+
+**Lo que cambia.** El gancho pasa a `.top-bar__cta`, una clase que la página pone A MANO en su
+botón de crear (las 9 listas). Los formularios —7 de las 16 páginas que proyectan acciones— van a
+hug puro, como los dibuja Figma (66.5 / 128.5), y el anti-salto de las listas sigue en pie:
+`/admin/usuarios` 121.45 natural → 128; `/admin/labels` (el envuelto en `.page__create-anchor`)
+→ 128; a ≤640px el suelo se suelta. Lo que pasó estaba PREDICHO en el comentario de la regla
+(«si algún día lleva dos, revisa si los dos quieren suelo») y aun así tardó dos semanas en verse:
+un aviso en un comentario no es un gate.
+
+**La clase se pone a mano a propósito, no por pereza de selector.** `:has(> sc-button:only-child)`
+era la solución obvia y es FALSA por dos sitios medidos: en un formulario limpio el botón de
+descartar no existe (`@if (dirty())`), así que le daría suelo al Guardar y se lo quitaría al
+escribir —el botón encogiendo 62px en vivo—; y 4 de los 9 CTA de lista viven dentro de
+`.page__create-anchor`, así que tampoco son hijo único del contenedor.
+
+**La trampa de medición, que vuelve a morder a cualquiera que enumere reglas CSS desde la consola:**
+`CSSStyleRule` TAMBIÉN tiene `cssRules` (nesting). Un recorrido `if (r.cssRules) { recurse;
+continue }` salta TODAS las reglas de estilo y devuelve «ninguna regla casa» con 5.532 presentes:
+a un paso de afirmar que no había override con el `min-width` a la vista en el computado. Bifurca
+por `r.selectorText` y contrasta SIEMPRE el barrido contra `getComputedStyle` — si el computado
+dice 128px y tu barrido dice 0 reglas, el roto es el barrido. Queda en la memoria del agente
+(`browser-measure-traps`).
+
+**Fuera a propósito:** el `max-width: 256px` se va con el suelo al CTA de lista; los botones de
+formulario se quedan sin tope porque ahí no resolvía ningún problema medido. Y no se tocó el
+tramo de Figma: el Kit no arbitra este suelo, la divergencia sigue siendo nuestra y deliberada.
+
+
 ## ✅ 2026-09-11 · Cerrar un chat deja de ser una corazonada: un comando lo dice, y no manda borrar trabajo
 
 **Sello:** PRs #103, #109 y #110, fundidos con el CI de `main` VERDE leído por `ci:verdict`
@@ -180,64 +222,6 @@ como molde para cuando toque escribir una guía nueva.
 
 **Pendiente que abre.** Que la portada del PR de `design-tokens-sync` diga si el robot lo verificó,
 para que un PR del plugin no se pueda fundir a ciegas (hoy solo lo dice el estado del run).
-
-## ✅ 2026-09-11 · El interlineado deja de depender de quién sea el padre: 212 reglas bajan a 23
-
-**Sello:** DD-67 (ampliado). Gate ampliado y **validado con el fallo puesto más DOS controles
-negativos**: una regla con tamaño y sin interlineado → rojo; la misma en un CHIP → no salta; en un
-ICONO → no salta. 18 tests. Medido en el navegador antes y después. Veredicto por `ci:verdict`.
-
-**De dónde sale.** Rafa: «ataca las 211 reglas sin interlineado y ya cerramos». Era el bucket que
-la tanda anterior dejó nombrado.
-
-**LO PRIMERO FUE MEDIR EL DELTA, y cambió el plan.** Un `font-size` sin `line-height` hereda, así
-que el texto no mide lo que dice su rol. Pero cuánto se mueve depende de quién sea el padre, y eso
-no se deduce del CSS:
-
-| | Hoy computa | El rol | Delta |
-| --- | --- | --- | --- |
-| Los de **12px** | 18px | 18 | **0** — ya estaban bien, por casualidad |
-| Los de **14px** | 21px | 20 | **−1px** por línea |
-| Chips y pastillas | 12/12 y 14/14 | 18 y 20 | **+6px** — les cambia la altura |
-
-Esa tercera fila es la que salvó el trabajo: en una pantalla de lista había **25 textos a 14/14 y
-17 a 12/12**, todos chips, pastillas y contadores que heredan un `line-height: 1` a propósito
-porque su altura la manda el padding. Aplicar el rol a ciegas les habría sumado 6px a cada uno.
-
-**Lo que se hizo.** 212 → **23**, y los 23 que quedan son exactamente esa familia, excluida por
-nombre y con su test de control negativo. Los de 12px no mueven un píxel: pasan de ser correctos
-por herencia a serlo por declaración. Los de 14px se aprietan 1px por línea.
-
-**TRES FALLOS MÍOS EN LA EDICIÓN EN MASA, y cómo se cazó cada uno** — que es lo que merece la pena
-contar, porque los tres dieron «verde» en el conteo:
-
-1. **46 bloques con DOS interlineados.** Mi control de «¿ya lo tiene?» solo miraba lo que iba
-   ANTES del `font-size`, así que duplicaba en las reglas que lo declaran después. Se rehízo en DOS
-   pasadas: `aplanar` da el mapa completo del bloque y solo entonces se inserta.
-2. **24 reglas saltadas en silencio.** El reescritor no ignoraba las llaves dentro de COMENTARIOS,
-   así que la pila se descuadraba en el primer `/* … { … */` y a partir de ahí el selector salía
-   vacío. `aplanar` no sufre porque quita los comentarios antes de mirar nada.
-3. **Un fallo de la tanda ANTERIOR que mi verificación había tapado**: `.table__td-name` vive en
-   DOS ficheros y mi comprobación agrupaba por NOMBRE en un `Map`, que se queda con el último. En
-   usuarios y agentes quedó en 600 y **en grupos se quedó en 400**, y se fundió así en el `#102`.
-   Verificar por nombre cuando el mismo nombre vive en dos sitios es no verificar. Ahora se
-   comprueba por (fichero, selector).
-
-**Y una limitación que queda dicha**: lo que no tiene regla propia sigue heredando. En la pantalla
-de referencia quedan cuatro `<span>` sin clase a 14/21; no hay regla que arreglar, y ponerles una
-sería inventar un nombre para cada texto suelto.
-
-**⚠️ La trampa de la memoria mordió, y no era mía.** El preflight se cayó por el gate de forma de
-la memoria: otra sesión había dejado `MEMORY.md` en 1.010 palabras (tope 1.000) y una ficha en 440
-(tope 250). Se comprimieron **sin perder un solo hecho ni un puntero** — es lo que Rafa avisó al
-abrir la sesión, y conviene saber que bloquea a cualquiera, no solo a quien la engordó.
-
-**Lo que queda:**
-
-1. **Migrar a `.sc-text-*` lo que aún declara tipografía por token en SCSS.** El `#98` lo hizo para
-   las etiquetas de campo; el resto sigue con tokens en la hoja — correcto, pero es el paso previo.
-2. Los formularios de admin siguen sin maqueta de `sc-section-card` para su CONTENIDO.
-3. Decidir si la app viva lleva un aviso que apunte a `docs/PROTOTIPOS.md` (DD-56).
 
 ---
 
