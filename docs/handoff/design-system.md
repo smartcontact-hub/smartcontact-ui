@@ -17,29 +17,24 @@
 
 ## ✅ 2026-09-11 · Tres guardas que cierran la lista de pendientes del proyecto
 
-**Sello:** DD-70. Tres PR encadenados sobre `main`, cada uno con su `ci:verdict` leído.
+**Sello:** DD-70. Tres PR sobre `main` (#113, #117, #118), cada uno con su `ci:verdict` leído.
 
-**De dónde sale.** Rafa pidió el orden de prioridad de todo lo pendiente del proyecto y luego
-«adelante a todo». Se leyeron los cuatro hand-offs, el índice de frentes, los PR abiertos y las
-cajas; el resultado se ordenó por lo que le cuesta a él (defectos que le llegan), no por tamaño.
+**De dónde sale.** Rafa pidió el orden de prioridad de todo lo pendiente y luego «adelante a todo».
+Se leyeron los cuatro hand-offs, los PR abiertos y las cajas, y se ordenó por lo que le cuesta a
+él (defectos que le llegan), no por tamaño.
 
-**Lo que entró.**
-- **#113 · el preflight no corre sobre una rama rezagada** (`scripts/preflight-rebase.mjs`):
-  `git fetch` + `merge-base --is-ancestor` antes de gastar 8 min, al escribir la marca y al leerla
-  desde el hook de push. Tests con remoto bare de verdad. Y la **portada del PR de tokens** lleva
-  el sha del plugin que el robot consumió y el que dejó, reescrita en cada run.
-- **`agent-mini` entra en el CI, en `preflight`, en `typecheck` y en el carril acotado.** Era el
-  quinto sitio en producción y solo Cloudflare cazaba una rotura de su build, después del merge.
-  Pasos del CI 8 → 9 en los siete sitios que vigila CHECK J.
-- **`audit:doc-snippets` ata el código que la doc ENSEÑA con el que EJECUTA** (DD-70), y cada
-  ficha gana su **anatomía leída del DOM** (`sc-button > p-button > button.p-button`). Cuatro
-  defectos reales arreglados, uno de ellos el que vio Rafa en `/#/components/button`.
+**Lo que entró.** (1) El preflight **no corre sobre una rama rezagada** y la marca deja de valer si
+`main` avanzó y funde con CONFLICTO —solo entonces, o son 8 min en bucle con tres sesiones
+fundiendo—; la portada del PR de tokens lleva el sha que el robot verificó. (2) **`agent-mini` entra
+en el CI**, el preflight, `typecheck` y el carril acotado: era el quinto sitio en producción y solo
+Cloudflare cazaba una rotura de su build. (3) **`audit:doc-snippets` ata el código que la doc ENSEÑA
+con el que EJECUTA** y cada ficha gana su **anatomía leída del DOM** (`sc-button > p-button >
+button.p-button`); cuatro defectos reales, uno el que vio Rafa en `/#/components/button`.
 
-**Lo que NO se hizo, y por qué.** El barrido de tipografía suelta (116 → 0) **lo estaba haciendo
-otra sesión a la vez** (PR #115, worktree `grayling`, 116 → 101 con su propio rastreador de 4.517
-mediciones). Se detectó mirando `git worktree list` y los PR abiertos antes de tocar las mismas
-plantillas: dos sesiones editando `projects/supervisor` a la vez es el escenario que costó el día
-del 2026-09-03. Queda suyo, con sus tres preguntas abiertas para Rafa.
+**Lo que NO se hizo, y por qué.** El barrido de tipografía suelta lo estaba haciendo **otra sesión a
+la vez** (#115, caja `grayling`). Se vio mirando `git worktree list` y los PR abiertos ANTES de
+tocar las mismas plantillas: dos sesiones editando `projects/supervisor` es lo que costó el día del
+2026-09-03. Queda suyo, con sus preguntas para Rafa arriba.
 
 ---
 
@@ -222,52 +217,10 @@ formulario se quedan sin tope porque ahí no resolvía ningún problema medido. 
 tramo de Figma: el Kit no arbitra este suelo, la divergencia sigue siendo nuestra y deliberada.
 
 
-## ✅ 2026-09-11 · Cerrar un chat deja de ser una corazonada: un comando lo dice, y no manda borrar trabajo
-
-**Sello:** PRs #103, #109 y #110, fundidos con el CI de `main` VERDE leído por `ci:verdict`
-(`5764b84`, `7d479b9`, `fcf8f87`); `preflight` verde sobre cada árbol final; 19 tests en
-`scripts/__tests__/sesiones.test.mjs`, cada regla en rojo y en verde. El detalle de cada fallo
-está en el cuerpo de los tres PRs; aquí queda la pista.
-
-**De dónde sale.** Rafa pidió analizar las PRs de dos días y acabó en dos preguntas: «¿podría
-cerrar este chat ya?» y «que fuera esto más rápido e infalible». Misma causa MEDIDA: la
-`▶︎ SIGUIENTE` de esta ficha vivía en la **línea 2500 de 2685**, bajo todo el histórico, mientras
-los otros frentes la tienen en las 43, 58 y 83. Sin sitio visible donde aparcar el tema que sale a
-mitad de sesión, cada hallazgo abre chat propio: **nueve worktrees vivos**, tres con su trabajo ya
-en `main`, y **dos ramas con el mismo commit** de dos sesiones que no se vieron.
-
-**Lo que cambia.** La bandeja sube arriba con la regla que faltaba (leer la lista ENTERA al abrir:
-los apuntes que se tocan son UNA tarea), y nace **`npm run sesiones`**, que contesta «¿puedo
-cerrar este chat?» para todas las cajas y canta el trabajo duplicado. No pisa `ci:verdict`, que es
-el veredicto PROFUNDO de UNA rama.
-
-**Las dos trampas que hay que recordar de él**, porque volverán a morder a quien toque el script:
-
-- **El repo funde con SQUASH**: ni `origin/main..rama` ni las fechas dicen si el trabajo está
-  dentro. Lo dice el PR, y por contenido `git cherry origin/main <rama>` — lo único que ve un
-  commit anterior al merge que se quedó fuera de él (#109) y que no acusa a uno que ya entró por
-  otra puerta (#110).
-- **Nada que diga «borra» sale si hay algo que perder**: `status --porcelain` del árbol AJENO y
-  `locked` mandan sobre el veredicto. Estrenándolo propuso borrar dos worktrees con trabajo dentro.
-
-**Lo que costó, que es el dato para la próxima.** Tres rebases y cinco preflights para entregar
-cinco ficheros: dos murieron por la máquina (cola del :4280 y falta de memoria con seis sesiones
-vivas), uno por un gate rojo propio, y `main` se movió cinco veces por debajo. El #104 (Design
-tokens sync, automático) se fundió **con su CI en rojo** y dejó `main` roto para todas. Tres veces
-dos sesiones hacían lo mismo sin verse; la tercera no acabó en rama gemela **solo porque se
-preguntó antes de tocar** (`SendMessage` a la hermana, que cedió el arreglo y dio el método bueno).
-
-**Fuera a propósito:** no se borró ningún worktree ajeno — uno recién creado también está vacío, y
-esas pueden ser sesiones que arrancan. Es el error del #109 visto desde el otro lado.
-
-
-> El tramo de la PRIMERA pasada del barrido de estilos de texto (165 reglas, #111) se archivó
-> el 2026-09-11 al entrar la segunda: lo cuenta entero el tramo de arriba y su decisión vive en
-> `docs/DECISIONS.md` DD-69. Tag `archive/handoff-ds-2026-09-11-tarde`.
-
-> El tramo del **plugin de Figma** (filtro `paths` de `tokens-sync.yml`, DD-68) se archivó el
-> 2026-09-11 por el tope de 400 líneas. Vive en git y en el tag `archive/handoff-ds-2026-09-11-tarde`;
-> su decisión, que es lo durable, está entera en `docs/DECISIONS.md` DD-68.
+> El tramo de **`npm run sesiones`** (la bandeja sube arriba, y un comando contesta «¿puedo
+> cerrar este chat?») se archivó el 2026-09-11 por el tope de 400 líneas. Vive en git, en el
+> tag `archive/handoff-ds-2026-09-11-tarde` y en el cuerpo de sus PR; el comando lo cuenta
+> `NEXT-SESSION.md`, que es donde hace falta.
 
 ## 🗄️ Histórico de la lista SIGUIENTE — ya cerrado
 
