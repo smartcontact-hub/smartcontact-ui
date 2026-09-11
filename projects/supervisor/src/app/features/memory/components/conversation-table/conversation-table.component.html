@@ -97,8 +97,19 @@
 
 <!-- Un único template para las dos columnas numéricas (T. Conv. / T. Espera):
      lee el campo por `col.field`, así no hace falta uno por columna. -->
+<!-- CUATRO columnas escribían el texto DIRECTAMENTE en el `<td>` y por eso salían
+     a 16/24: el `<td>` no declara tamaño y hereda el del documento (`html, body` no
+     pone `font-size`, así que es el 16 del navegador). El resto de tablas de la app
+     no cae en esto porque proyectan un `<span>` que sí lo declara; aquí faltaba ese
+     envoltorio. Medido el 2026-09-11: esta tabla a 16/24 contra los 14/20 de
+     `/admin/agendas`, `/admin/usuarios` y `/conversaciones/entidades`.
+     La misma trampa la documenta la hoja de la página de entidades. -->
+<ng-template #textTpl let-conv let-col="col">
+  <span class="sc-text-body-regular">{{ $any(conv)[col.field] }}</span>
+</ng-template>
+
 <ng-template #numTpl let-conv let-col="col">
-  <span class="memory-num-cell">{{ $any(conv)[col.field] }}</span>
+  <span class="memory-num-cell sc-text-body-regular">{{ $any(conv)[col.field] }}</span>
 </ng-template>
 
 <ng-template #idTpl let-conv>
