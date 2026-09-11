@@ -3,8 +3,8 @@
  * El estado de TODAS las cajas abiertas, en una pantalla y con veredicto.
  *
  * Por qué existe (medido el 2026-09-10, no teórico): había NUEVE worktrees vivos, tres de ellos
- * con su trabajo en `main` desde hacía días, y DOS ramas con el mismo commit y el mismo título
- * (`verdict-avisa-pr-fundido` y su `-2`): dos sesiones habían hecho el mismo trabajo sin saberlo.
+ * con su trabajo en `main` desde hacía días, y una rama viviendo en DOS cajas a la vez
+ * (`verdict-avisa-pr-fundido` y su `-2`: el mismo SHA `4964d47` en la local y en `origin`).
  * Nada de eso era visible sin encadenar cuatro comandos de git y de gh a mano, así que en la
  * práctica no lo miraba nadie.
  *
@@ -51,7 +51,9 @@ const C = {
  * y te manda a abrir un segundo PR de lo que ya está subido.
  */
 export const enOrigin = (rama) => (rama ?? '').replace(/-\d+$/, '');
-export const prDe = (rama, lista) => (lista ?? []).find((p) => p.headRefName === enOrigin(rama));
+export const prDe = (rama, lista) =>
+  // La rama EXACTA primero: `feat/dd-30` es una rama, no la caja `-30` de `feat/dd`.
+  (lista ?? []).find((p) => p.headRefName === rama) ?? (lista ?? []).find((p) => p.headRefName === enOrigin(rama));
 
 export const checksDe = (pr) => {
   const cs = pr?.statusCheckRollup ?? [];
@@ -123,7 +125,15 @@ export function veredictoDe({ sinFundir = 0, abierto = null, fundido = null, ult
   };
 }
 
-/** El mismo título de commit en dos cajas = alguien repitió trabajo que ya existía. */
+/**
+ * El mismo título de commit en dos RAMAS distintas = alguien repitió trabajo que ya existía.
+ *
+ * Dos cajas de la MISMA rama (`x` y su `x-2`, la convención de `enOrigin`) NO son duplicado: son
+ * gemelas, y las cuenta `gemelasDe`. Medido el 2026-09-11 con la primera versión de este script:
+ * cantaba «funde una y borra la otra» sobre `analizar-PRs` y `analizar-PRs-2`, que eran el mismo
+ * SHA y el mismo PR #103. Y la evidencia que lo justificaba (`verdict-avisa-pr-fundido` y su `-2`)
+ * era esto mismo: la local `-2` y la remota sin sufijo en `4964d47`, un solo trabajo.
+ */
 export function duplicadosDe(cajas) {
   const porSujeto = new Map();
   for (const c of cajas) {
@@ -133,7 +143,7 @@ export function duplicadosDe(cajas) {
     }
   }
   return [...porSujeto.entries()]
-    .filter(([, ramas]) => ramas.length > 1)
+    .filter(([, ramas]) => new Set(ramas.map(enOrigin)).size > 1)
     .map(([sujeto, ramas]) => {
       const yaDentro = ramas.filter((r) => cajas.find((c) => c.nombre === r)?.veredicto === 'CERRADA');
       const sobra = ramas.filter((r) => !yaDentro.includes(r));
@@ -147,6 +157,17 @@ export function duplicadosDe(cajas) {
       }
       return { sujeto, ramas, detalle };
     });
+}
+
+/** La misma rama en más de una caja: no es trabajo repetido, es un worktree de más. */
+export function gemelasDe(cajas) {
+  const porRama = new Map();
+  for (const c of cajas) {
+    const r = enOrigin(c.nombre);
+    if (!porRama.has(r)) porRama.set(r, []);
+    porRama.get(r).push(c.nombre);
+  }
+  return [...porRama.entries()].filter(([, cs]) => cs.length > 1).map(([rama, cajas]) => ({ rama, cajas }));
 }
 
 /** Los worktrees de verdad. El árbol principal puede estar `bare`, y entonces no es una caja. */
@@ -202,9 +223,17 @@ function main() {
     console.log(`  ${c.color}${c.veredicto.padEnd(10)}${C.reset} ${c.nombre.padEnd(ancho)}  ${C.dim}${c.accion}${C.reset}${tuya}`);
   }
 
+  const gemelas = gemelasDe(cajas);
+  if (gemelas.length) {
+    console.log(`\n${C.yellow}${C.bold}◇ MISMA RAMA EN DOS CAJAS${C.reset} — no es trabajo repetido, es un worktree de más:`);
+    for (const g of gemelas) {
+      console.log(`  ${C.dim}·${C.reset} ${g.rama} ${C.dim}vive en ${g.cajas.join('  y  ')} · quédate con la que usas y borra la otra${C.reset}`);
+    }
+  }
+
   const duplicados = duplicadosDe(cajas);
   if (duplicados.length) {
-    console.log(`\n${C.red}${C.bold}⚠ TRABAJO DUPLICADO${C.reset} — el mismo commit vive en dos cajas:`);
+    console.log(`\n${C.red}${C.bold}⚠ TRABAJO DUPLICADO${C.reset} — el mismo título de commit vive en dos ramas DISTINTAS:`);
     for (const d of duplicados) {
       console.log(`  ${C.dim}·${C.reset} «${d.sujeto.slice(0, 64)}${d.sujeto.length > 64 ? '…' : ''}»`);
       console.log(`    ${C.dim}${d.detalle}${C.reset}`);
