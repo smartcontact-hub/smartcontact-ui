@@ -29,6 +29,16 @@
 >
 > Lo cerrado NO se tacha aquí: se baja al histórico del final del fichero.
 
+**Lo que dejó el 2026-09-11 (revisión de Orca), sin hacer:**
+
+- **`preflight:scope` debería negarse sobre un árbol que no está rebasado en `origin/main`.** Hoy se
+  tiraron DOS preflights (8 min cada uno) porque `main` avanzó dos veces (#105, #103) entre el
+  preflight y el push, y `ci:verdict` respondió «en conflicto». Es mecanizable: `git fetch` y
+  `merge-base --is-ancestor origin/main HEAD` antes de correr nada; con su caso rojo fabricado.
+- **La portada del PR de `design-tokens-sync` no dice si el robot lo verificó.** #104 se fundió a
+  ciegas con tres commits crudos del plugin. Que el cuerpo del PR (lo escribe `tokens-sync.yml`)
+  lleve el sha que el robot reseteó, y que un push posterior del plugin lo invalide a la vista.
+
 **Lo que dejó s42, medido y sin hacer:**
 
 - **Las descripciones de los text styles de Figma están corridas un peldaño.** Se escribieron
@@ -60,7 +70,7 @@
    s34, y **los cabos de DD-24** (round-trip de iconos) en [`ROADMAP.md`](../ROADMAP.md).
 ## ✅ 2026-09-11 · El plugin ya no cuela ficheros en main, el hand-off deja de crecer y las bifurcaciones al componer tienen tabla
 
-**Sello:** HEAD `e5e8390` (paso 0, rebasado sobre #105 y #103). DD-68. Veredicto del CI por
+**Sello:** HEAD `cc6925b` (el squash de #106 en `main`). DD-68. Veredicto del CI por
 `ci:verdict`, leído.
 
 **De dónde sale.** Rafa pidió analizar `stablyai/orca` (skills, `.github`, docs, releases) y sacar qué
