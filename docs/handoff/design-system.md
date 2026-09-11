@@ -68,6 +68,45 @@
    decisión. Ver la sección de Figma más abajo.
 3. **La deuda de código de [`AUDIT-DEUDA-2026-06.md`](../AUDIT-DEUDA-2026-06.md)** que quede tras
    s34, y **los cabos de DD-24** (round-trip de iconos) en [`ROADMAP.md`](../ROADMAP.md).
+## ✅ 2026-09-11 · Cerrar un chat deja de ser una corazonada: un comando lo dice, y no manda borrar trabajo
+
+**Sello:** PRs #103, #109 y #110, fundidos con el CI de `main` VERDE leído por `ci:verdict`
+(`5764b84`, `7d479b9`, `fcf8f87`); `preflight` verde sobre cada árbol final; 19 tests en
+`scripts/__tests__/sesiones.test.mjs`, cada regla en rojo y en verde. El detalle de cada fallo
+está en el cuerpo de los tres PRs; aquí queda la pista.
+
+**De dónde sale.** Rafa pidió analizar las PRs de dos días y acabó en dos preguntas: «¿podría
+cerrar este chat ya?» y «que fuera esto más rápido e infalible». Misma causa MEDIDA: la
+`▶︎ SIGUIENTE` de esta ficha vivía en la **línea 2500 de 2685**, bajo todo el histórico, mientras
+los otros frentes la tienen en las 43, 58 y 83. Sin sitio visible donde aparcar el tema que sale a
+mitad de sesión, cada hallazgo abre chat propio: **nueve worktrees vivos**, tres con su trabajo ya
+en `main`, y **dos ramas con el mismo commit** de dos sesiones que no se vieron.
+
+**Lo que cambia.** La bandeja sube arriba con la regla que faltaba (leer la lista ENTERA al abrir:
+los apuntes que se tocan son UNA tarea), y nace **`npm run sesiones`**, que contesta «¿puedo
+cerrar este chat?» para todas las cajas y canta el trabajo duplicado. No pisa `ci:verdict`, que es
+el veredicto PROFUNDO de UNA rama.
+
+**Las dos trampas que hay que recordar de él**, porque volverán a morder a quien toque el script:
+
+- **El repo funde con SQUASH**: ni `origin/main..rama` ni las fechas dicen si el trabajo está
+  dentro. Lo dice el PR, y por contenido `git cherry origin/main <rama>` — lo único que ve un
+  commit anterior al merge que se quedó fuera de él (#109) y que no acusa a uno que ya entró por
+  otra puerta (#110).
+- **Nada que diga «borra» sale si hay algo que perder**: `status --porcelain` del árbol AJENO y
+  `locked` mandan sobre el veredicto. Estrenándolo propuso borrar dos worktrees con trabajo dentro.
+
+**Lo que costó, que es el dato para la próxima.** Tres rebases y cinco preflights para entregar
+cinco ficheros: dos murieron por la máquina (cola del :4280 y falta de memoria con seis sesiones
+vivas), uno por un gate rojo propio, y `main` se movió cinco veces por debajo. El #104 (Design
+tokens sync, automático) se fundió **con su CI en rojo** y dejó `main` roto para todas. Tres veces
+dos sesiones hacían lo mismo sin verse; la tercera no acabó en rama gemela **solo porque se
+preguntó antes de tocar** (`SendMessage` a la hermana, que cedió el arreglo y dio el método bueno).
+
+**Fuera a propósito:** no se borró ningún worktree ajeno — uno recién creado también está vacío, y
+esas pueden ser sesiones que arrancan. Es el error del #109 visto desde el otro lado.
+
+
 ## ✅ 2026-09-11 · La tipografía de pantalla se pone por su nombre: 165 reglas pasan a `.sc-text-*`
 
 **Sello:** DD-69. `audit:text-styles` gana la §4 (trinquete `TIPOGRAFIA_SUELTA_MAX = 116`,
