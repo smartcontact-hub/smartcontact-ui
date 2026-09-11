@@ -198,7 +198,7 @@ table.table {
 }
 
 /*
- * El botón de acción de la TopBar: HUG con mínimo y máximo.
+ * El CTA de lista de la TopBar (`.top-bar__cta`): HUG con mínimo y máximo.
  *
  * Decisión de Rafa (2026-08-25): que no cambie de anchura porque sí — que crezca
  * con su texto, pero acotado. Ni ancho fijo (desperdicia sitio y corta locales
@@ -223,9 +223,22 @@ table.table {
  * del proveedor no puede volver a apagar esto en silencio (ver la migración a
  * PrimeNG 22 en `docs/migration-safety.md`).
  *
- * Hoy esa zona lleva EXACTAMENTE un botón por página (medido: las páginas sin
- * acción no la renderizan). Si algún día lleva dos, revisa si los dos quieren
- * suelo — un botón de solo icono no lo quiere.
+ * ⚠️ EL SUELO ES SOLO DEL CTA DE LISTA. El gancho es `.top-bar__cta`, que la página
+ * pone A MANO en su botón de crear. Lo que avisaba el párrafo anterior («hoy lleva
+ * EXACTAMENTE un botón por página; si algún día lleva dos, revisa si los dos quieren
+ * suelo») ocurrió: de las 16 páginas que proyectan acciones, 7 son formularios y
+ * proyectan Guardar + Descartar cambios. Medido el 2026-09-11 en el build desplegado
+ * a 1440px: «Guardar» hug 65.79 → pintado 128 (62px de aire) y «Descartar cambios»
+ * hug 127.84 → 128, o sea 0.16px POR DEBAJO del suelo. Los dos aterrizaban en 128 y
+ * parecían igualados a propósito (lo cazó Rafa). El suelo nunca fue para ellos.
+ *
+ * El caso no se puede deducir del DOM, por eso la clase es explícita:
+ *   · En un formulario limpio el botón de descartar NO existe (`@if (dirty())`), así
+ *     que `:has(> sc-button:only-child)` le daría suelo al Guardar y se lo quitaría al
+ *     escribir: el botón se encogería 62px en vivo.
+ *   · 4 de los 9 CTA de lista van dentro de `.page__create-anchor` (el panel de alta),
+ *     así que tampoco son hijo único del contenedor.
+ * Un botón de solo icono no quiere suelo: no le pongas la clase.
  *
  * 144 → 128 el 2026-09-05, al pasar el CTA a `size="sm"` (que es lo que instancia el
  * Figma del Supervisor, nodo 2286:5355). Los anchos naturales se volvieron a medir con
@@ -234,7 +247,8 @@ table.table {
  * 128 queda por encima del más ancho de hoy y baja el aire sobrante de 38px a 6.
  *
  * ⚠️ FIGMA NO TIENE ESTE SUELO: dibuja los botones ajustados al texto (66.5 «Guardar»,
- * 128.5 «Descartar cambios»). La divergencia es deliberada y no la arbitra el Kit,
+ * 128.5 «Descartar cambios»), y desde 2026-09-11 los de formulario van así, a hug puro.
+ * En el CTA de lista la divergencia es deliberada y no la arbitra el Kit,
  * porque el problema que resuelve no cabe en una pantalla: es el SALTO del botón al
  * navegar entre listas, que solo se ve en secuencia. Si algún día se prefiere el hug
  * puro, esto se borra entero y se acepta un salto de ~17px en el borde izquierdo.
@@ -243,19 +257,19 @@ table.table {
  * `.page-header__actions`, un contenedor que dejó de existir: llevaba tiempo
  * siendo letra muerta y el salto había vuelto sin que nadie lo notara.)
  */
-.top-bar__actions button {
+.top-bar__actions .top-bar__cta button {
   min-width: 128px;
   max-width: 256px;
   justify-content: center;
 }
 
-/* En móvil el suelo de 144px (anti-salto de escritorio) fuerza el solape: el
+/* En móvil el suelo de 128px (anti-salto de escritorio) fuerza el solape: el
  * botón no cabe junto a la miga y el avatar. A ≤640px se suelta para que la
  * barra pueda reflowar sin colisión (ver top-bar.component.scss). El botón se
  * proyecta desde la página, por eso su override vive aquí (global), no en el
  * scope del top-bar. */
 @media (max-width: 640px) {
-  .top-bar__actions button {
+  .top-bar__actions .top-bar__cta button {
     min-width: 0;
   }
 }
