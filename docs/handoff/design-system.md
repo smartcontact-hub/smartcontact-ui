@@ -90,22 +90,32 @@ Orca se cerraron en el #113; `agent-mini` entró en el CI; la doc, en su PR):
   honesto tras DD-48 (la rampa era aspiracional desde DD-13), no una regresión: la rampa ya dice
   la verdad y espera consumidores de PRODUCTO. Si el Supervisor adopta la rampa, es ahí.
 
-1. **El eslabón *fichero de Figma ↔ export* ya tiene herramienta, y la capa PRIMITIVE está
-   verificada.** `tools/figma-export-parity.mjs <capa>` imprime el JavaScript —con los valores del
-   Kit ya resueltos y embebidos— que se le pega a `figma_execute_across_files`; compara DENTRO de
-   Figma para no perder precisión en el viaje. No puede ser gate de CI (necesita el bridge
-   abierto), como el Check D de `docs:coherence`.
-   **Medido el 2026-09-12 · primitive: 282 de 282 coinciden, 0 divergencias**, ningún token que
-   exista en un lado y no en el otro. El instrumento se validó con el fallo puesto: dos valores
-   adulterados y un token inventado, cazados los tres.
-   ⚠️ **Queda correr `semantic-light`, `semantic-dark`, `component-light` y `component-dark`**, que
-   son las capas CURADAS y donde de verdad puede haber deriva. Se quedaron a medias porque el
-   fichero del DS se desconectó del bridge (solo quedó «Memory +»): el comando está listo y son
-   dos minutos con el fichero abierto.
-   ⚠️ **Las tres trampas, ya dentro de la herramienta**: RGBA final por los dos lados (leer Figma
-   sin canal alfa dio 15 divergencias falsas), seguir los alias **de los dos lados**, y resolver
-   cada alias EN SU CAPA — resolverlo contra el export entero hace que `text/color` de la capa
-   oscura pise a la clara y `content/color` salga blanco (cazado midiendo, no deducido).
+1. ~~**El eslabón que falta: nadie compara *fichero de Figma ↔ export*.**~~ → **HECHO el
+   2026-09-12, y sale LIMPIO.** `tools/figma-export-parity.mjs <capa>` imprime el JavaScript —con
+   los valores del Kit ya resueltos y embebidos— que se le pega a `figma_execute_across_files`;
+   compara DENTRO de Figma para no perder precisión en el viaje. No es gate de CI (necesita el
+   bridge abierto), como el Check D de `docs:coherence`.
+
+   | Capa | Tokens | Divergencias |
+   | --- | ---: | ---: |
+   | `primitive` | 282 | 0 |
+   | `semantic-light` · `semantic-dark` | 82 + 82 | 0 |
+   | `component-light` · `component-dark` | 346 + 346 | 0 |
+   | `app` | 6 | 0 |
+
+   **844 tokens, ni uno desfasado, y ninguno que exista en un lado y no en el otro.** Por ese
+   hueco se coló el desfase de julio; hoy no hay ninguno.
+
+   ⚠️ **Las cuatro trampas están DENTRO de la herramienta**, y las cuatro dieron un falso rojo
+   antes del verde: RGBA final por los dos lados (sin alfa, 15 falsos) · alias por los DOS lados
+   (el export guarda `{surface.0}`) · cada alias resuelto EN SU CAPA (si no, la oscura pisa a la
+   clara) · y la gorda, **el MODO no viaja entre colecciones**: el `modeId` de «Dark» en
+   *Component* no es el de «Dark» en *Semantic*, así que seguir un alias con el modo de partida
+   cae al primer modo del destino —el claro— y la capa oscura falla **en bloque**. Me dio 21 de 24
+   familias «discrepando» y no era deriva, era mi sonda; lo destapó mirar UN token
+   (`button/primary/background`) en vez de creerme el informe. Nota del export: la tipografía vive
+   en `aura/custom`, no en `aura/primitive`, pese a que los alias la llamen así.
+
 2. **El 1:1 web↔Figma de chip · tag · toast** — sigue **bloqueado por herramienta**, no por
    decisión. Ver la sección de Figma más abajo.
 3. **La deuda de código de [`AUDIT-DEUDA-2026-06.md`](../AUDIT-DEUDA-2026-06.md)** que quede tras

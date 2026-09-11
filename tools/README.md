@@ -38,7 +38,17 @@ node tools/figma-export-parity.mjs primitive   # y semantic-light · semantic-da
 
 Pega la salida en `figma_execute_across_files` con `fileKeys: ["khNq9dJKNi13pNllrqm6dx"]`. Verde es
 `distintos: []` **con `coincidencias` distinto de cero**: si sale 0 y la lista vacía, el comparador
-no está casando nada y el verde es falso. Medido el 2026-09-12: `primitive` 282/282, 0 divergencias.
+no está casando nada y el verde es falso.
+
+**Medido el 2026-09-12, las seis capas: 844 tokens, 0 divergencias.** (`primitive` 282 ·
+`semantic` 82+82 · `component` 346+346 · `app` 6.) Para `component`, que son 346 por modo, se
+compara un checksum por familia y solo se baja al detalle donde no cuadre.
+
+⚠️ **El modo no viaja entre colecciones.** El `modeId` de «Dark» en *Component* no es el de «Dark»
+en *Semantic*: seguir un alias con el modo de partida cae al primer modo del destino (el claro) y
+la capa oscura falla EN BLOQUE — 21 de 24 familias «discrepando» que no eran deriva, era la sonda.
+La herramienta busca el modo del destino por NOMBRE. Si algún día vuelve a salir un rojo así de
+redondo, sospecha del instrumento antes que del fichero.
 
 ## Una trampa que ya mordió
 

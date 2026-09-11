@@ -75,18 +75,45 @@ const aplanar = (o, prefijo = '', out = {}) => {
  * ganaba y `content/color` de la capa CLARA salía `#ffffff` (el valor de la oscura) en vez de
  * `#3f3f46`. Un alias se resuelve en su capa; solo si no está, se baja a primitive.
  */
-const FONDO = ['aura/primitive', 'aura/semantic/common', 'aura/component/common'];
+/**
+ * Qué capas del export ve cada una al resolver, y en qué orden (la propia gana, la última leída
+ * pisa). Medido: `app` y `component` apuntan a `semantic` de su modo, y `semantic` a `primitive`.
+ */
+const FONDO_POR_CAPA = {
+  primitive: [],
+  'semantic-light': ['aura/primitive', 'aura/custom', 'aura/semantic/common'],
+  'semantic-dark': ['aura/primitive', 'aura/custom', 'aura/semantic/common'],
+  'component-light': ['aura/primitive', 'aura/custom', 'aura/semantic/common', 'aura/semantic/light', 'aura/component/common'],
+  'component-dark': ['aura/primitive', 'aura/custom', 'aura/semantic/common', 'aura/semantic/dark', 'aura/component/common'],
+  // `app` no tiene modos: sus alias a `semantic` se resuelven contra el CLARO, y se dice aquí.
+  app: ['aura/primitive', 'aura/custom', 'aura/semantic/common', 'aura/semantic/light'],
+};
+
+/*
+ * ⚠️ `aura/custom` va en la lista y no es un capricho: la TIPOGRAFÍA del Kit (los 36
+ * `primitive/typography/*`, que son la fuente de `--sc-font-size-*` y `--sc-line-height-*`) NO
+ * vive en `aura/primitive` pese a llamarse así en los alias — vive en `aura/custom`. Sin esto,
+ * los 5 alias de `app` salían «sin destino» y la capa entera parecía rota. Medido, no supuesto.
+ */
 const TODO = {};
-for (const capaNombre of [...FONDO, capa.export]) {
+for (const capaNombre of [...(FONDO_POR_CAPA[nombre] ?? []), capa.export]) {
   const contenido = dtcg[capaNombre];
   if (!contenido || typeof contenido !== 'object') continue;
   for (const [k, v] of Object.entries(aplanar(contenido))) TODO[k] = v;
 }
+/**
+ * Los alias del export vienen de DOS formas, y esto también costó una pasada: unos son relativos
+ * a su capa (`{surface.0}`) y otros llevan el nombre de la capa delante
+ * (`{primitive.typography.font.size.200}`). Se prueba la ruta tal cual y, si no está, sin su
+ * primer segmento cuando ese segmento es el nombre de una capa.
+ */
+const CAPAS_PREFIJO = /^(primitive|semantic|component|app)\//;
 const resolverAlias = (valor, saltos = 0) => {
   if (typeof valor !== 'string' || !/^\{.+\}$/.test(valor) || saltos > 10) return valor;
   const ruta = valor.slice(1, -1).replace(/\./g, '/');
-  if (!(ruta in TODO)) return `(alias sin destino: ${valor})`;
-  return resolverAlias(TODO[ruta], saltos + 1);
+  const destino = ruta in TODO ? ruta : CAPAS_PREFIJO.test(ruta) && ruta.replace(CAPAS_PREFIJO, '') in TODO ? ruta.replace(CAPAS_PREFIJO, '') : null;
+  if (!destino) return `(alias sin destino: ${valor})`;
+  return resolverAlias(TODO[destino], saltos + 1);
 };
 
 const esperado = aplanar(raiz);
@@ -106,7 +133,18 @@ const cols = await figma.variables.getLocalVariableCollectionsAsync();
 const col = cols.find((c) => c.name === ${JSON.stringify(capa.coleccion)});
 if (!col) return { error: 'no existe la colección ${capa.coleccion}', hay: cols.map((c) => c.name) };
 const modo = col.modes[${capa.modo}].modeId;
+const nombreModo = col.modes[${capa.modo}].name;
 const hex8 = (c) => { const n = (x) => Math.round(x * 255).toString(16).padStart(2, '0'); return '#' + n(c.r) + n(c.g) + n(c.b) + n(c.a === undefined ? 1 : c.a); };
+/* ⚠️ EL MODO NO VIAJA ENTRE COLECCIONES. El modeId de «Dark» en Component (7225:1) NO es el de
+ * «Dark» en Semantic (9117:1), así que seguir un alias con el modeId de partida cae al PRIMER
+ * modo del destino — el claro — y la capa oscura sale mal EN BLOQUE. Se busca el modo del destino
+ * POR NOMBRE. Cazado midiendo un token (button/primary/background → primary/color), no deducido:
+ * sin esto, 21 de 24 familias «discrepaban» y no era deriva, era el instrumento. */
+const modoDe = async (variable) => {
+  const c = await figma.variables.getVariableCollectionByIdAsync(variable.variableCollectionId);
+  const m = c && (c.modes.find((x) => x.name === nombreModo) ?? c.modes[0]);
+  return m ? m.modeId : null;
+};
 const vals = {};
 for (const id of col.variableIds) {
   const v = await figma.variables.getVariableByIdAsync(id);
@@ -116,7 +154,8 @@ for (const id of col.variableIds) {
   while (x && typeof x === 'object' && x.type === 'VARIABLE_ALIAS' && saltos < 10) {
     const o = await figma.variables.getVariableByIdAsync(x.id);
     if (!o) { x = '(alias roto)'; break; }
-    x = o.valuesByMode[modo] ?? o.valuesByMode[Object.keys(o.valuesByMode)[0]];
+    const m = await modoDe(o);
+    x = o.valuesByMode[m] ?? o.valuesByMode[Object.keys(o.valuesByMode)[0]];
     saltos += 1;
   }
   vals[v.name] = x && typeof x === 'object' && 'r' in x ? hex8(x) : x;
