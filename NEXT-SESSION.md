@@ -6,7 +6,9 @@
 
 ## ▶️ EMPIEZA AQUÍ
 
-1. Mira la tabla de frentes, **abre el del trabajo que vas a hacer** y luego el **índice** de
+1. Mira la tabla de frentes, **abre el del trabajo que vas a hacer** (su tramo de arriba es el vigente; los anteriores viven
+   en git y en el tag `archive/handoff-<frente>-<fecha>`, y `docs:coherence` los mantiene pocos:
+   ≤ 400 líneas y ≤ 6 tramos) y luego el **índice** de
    [`LEARNINGS.md`](LEARNINGS.md) (la tabla; el cuerpo de una regla, cuando te aplique). La
    tarjeta de punto de decisión ya la llevas en `CLAUDE.md`.
 2. **Coge lo primero de su sección "SIGUIENTE" y hazlo.** No preguntes qué hacer: está ordenado
