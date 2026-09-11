@@ -28,21 +28,36 @@ export function clasesDe(el: Element): string[] {
     .sort();
 }
 
+/** ¿Este elemento ES PrimeNG? Por su etiqueta (`<p-button>`) o por sus clases (`input.p-inputtext`). */
+const esPrimeNg = (el: Element): boolean =>
+  el.tagName.toLowerCase().startsWith('p-') || [...el.classList].some((c) => c.startsWith('p-'));
+
 /**
- * La cadena de etiquetas desde `el` hacia dentro, por el PRIMER hijo elemento de cada nivel, con
- * sus clases. Devuelve una línea por nivel, ya sangrada:
+ * El camino desde el wrapper hasta SU PrimeNG, y de ahí hacia dentro.
  *
- *   sc-button
- *     p-button
- *       button.p-button.p-component
+ * ⚠️ La primera versión bajaba siempre por el primer hijo, y para los campos eso no llega a
+ * ninguna parte: `sc-inputtext` abre por su etiqueta (`sc-field-label > label`), así que la ficha
+ * enseñaba la chrome del campo y NO el `input.p-inputtext`, que es justo lo que busca quien
+ * escribe un selector. Medido en el navegador, no deducido. Ahora se busca el primer descendiente
+ * que sea PrimeNG, se pinta el camino hasta él y se sigue un par de niveles por dentro.
  */
 export function anatomiaDe(el: Element, profundidad = 6): string[] {
-  const lineas: string[] = [];
-  let actual: Element | null = el;
-  for (let i = 0; actual && i < profundidad; i += 1) {
-    const clases = clasesDe(actual);
-    lineas.push('  '.repeat(i) + actual.tagName.toLowerCase() + clases.map((c) => `.${c}`).join(''));
-    actual = actual.firstElementChild;
+  const objetivo = [...el.querySelectorAll('*')].find(esPrimeNg) ?? null;
+
+  const camino: Element[] = [];
+  if (objetivo) {
+    for (let n: Element | null = objetivo; n && n !== el; n = n.parentElement) camino.unshift(n);
   }
-  return lineas;
+  const nodos: Element[] = [el, ...camino];
+
+  // …y de ahí hacia dentro, por el primer hijo, hasta completar la profundidad.
+  let dentro: Element | null = (camino.at(-1) ?? el).firstElementChild;
+  while (dentro && nodos.length < profundidad) {
+    nodos.push(dentro);
+    dentro = dentro.firstElementChild;
+  }
+
+  return nodos
+    .slice(0, profundidad)
+    .map((n, i) => '  '.repeat(i) + n.tagName.toLowerCase() + clasesDe(n).map((c) => `.${c}`).join(''));
 }
