@@ -112,21 +112,35 @@ function escenarioConRemoto() {
   return { raiz, mio, otro };
 }
 
-test('main avanza después de la marca → no ok («main avanzó»); tras rebasar hace falta marca nueva', () => {
+test('main avanza y funde LIMPIO después de la marca → sigue valiendo (si no, bucle sin salida)', () => {
   const { raiz, mio, otro } = escenarioConRemoto();
   try {
     escribirMarca(mio.dir, 'test');
     assert.equal(estadoPreflight(mio.dir).ok, true);
     writeFileSync(join(otro.dir, 'c.txt'), 'tres\n');
     otro.g('add', '-A');
-    otro.g('commit', '-q', '-m', 'otro avanza main');
+    otro.g('commit', '-q', '-m', 'otro avanza main sin tocar b.txt');
+    otro.g('push', '-q', 'origin', 'main');
+    const st = estadoPreflight(mio.dir);
+    assert.equal(st.ok, true, st.motivo);
+  } finally {
+    rmSync(raiz, { recursive: true, force: true });
+  }
+});
+
+test('ROJO: main tocó el MISMO fichero → la marca deja de valer y hay que repetir la cadena', () => {
+  const { raiz, mio, otro } = escenarioConRemoto();
+  try {
+    escribirMarca(mio.dir, 'test');
+    writeFileSync(join(otro.dir, 'b.txt'), 'la versión de main\n');
+    otro.g('add', '-A');
+    otro.g('commit', '-q', '-m', 'main toca b.txt');
     otro.g('push', '-q', 'origin', 'main');
     const st = estadoPreflight(mio.dir);
     assert.equal(st.ok, false);
     assert.match(st.motivo, /main avanzó/);
-    // Y escribir una marca nueva SIN rebasar tampoco vale.
-    assert.throws(() => escribirMarca(mio.dir, 'test'), /no lleva `origin\/main`/);
-    mio.g('rebase', '-q', 'origin/main');
+    assert.throws(() => escribirMarca(mio.dir, 'test'), /CONFLICTO/);
+    mio.g('rebase', '-q', '-X', 'ours', 'origin/main');
     escribirMarca(mio.dir, 'test');
     assert.equal(estadoPreflight(mio.dir).ok, true);
   } finally {

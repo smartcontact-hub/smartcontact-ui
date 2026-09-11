@@ -710,7 +710,7 @@ decisión de diseño, y hay que regenerar las 38; **(b)** enmascarar ese rótulo
 Lo que NO vale: subir `maxDiffPixels`, porque un cambio real de UNA letra mide 1.501 px y
 quedaría por debajo del techo que haría falta.
 
-**Consecuencias** · `ci.yml` se queda en 8 pasos con nombre (CHECK J). Las baselines visuales
+**Consecuencias** · `ci.yml` se queda en 9 pasos con nombre (CHECK J; eran 8 al escribirse esto, `agent-mini` entró el 2026-09-11). Las baselines visuales
 **no las corre ningún gate**: quien toque sc-docs corre `npm run e2e:visual` a mano antes de
 pushear (punto 3). Es el agujero que este DD quería tapar y hoy sigue abierto, dicho aquí para
 que nadie lo dé por cerrado. El guardián de reuso deja de contar shells que solo *hablan* de

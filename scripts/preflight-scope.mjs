@@ -56,7 +56,7 @@ const INOCUO = [
   /^[^/]*\.md$/,
 ];
 
-const APPS = ["agent", "supervisor", "cuscare", "sc-docs"];
+const APPS = ["agent", "agent-mini", "supervisor", "cuscare", "sc-docs"];
 
 function cambios() {
   const salida = execSync("git status --porcelain", { encoding: "utf8" });
