@@ -27,21 +27,17 @@
     min-width: 0;
   }
 
+  /* `Body/body-semibold` por la clase. El `letter-spacing` se queda: es un
+   * delta de esta cabecera, no parte del text style, y la regla encapsulada
+   * le gana a la clase global sin pelearse con ella. */
   &__title {
     margin: 0;
-    font-family: var(--sc-font-family-subtitle-2);
-    font-size: var(--sc-font-size-subtitle-2);
-    line-height: var(--sc-line-height-subtitle-2);
-    font-weight: var(--sc-font-weight-semibold);
     color: var(--sc-text-primary);
     letter-spacing: -0.01em;
     white-space: nowrap;
   }
 
   &__hint {
-    font-family: var(--sc-font-family-caption);
-    font-size: var(--sc-font-size-caption);
-    line-height: var(--sc-line-height-caption);
     color: var(--sc-text-subtle);
     white-space: nowrap;
   }

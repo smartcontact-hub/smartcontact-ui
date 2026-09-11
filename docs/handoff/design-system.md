@@ -29,6 +29,18 @@
 >
 > Lo cerrado NO se tacha aquí: se baja al histórico del final del fichero.
 
+**Lo que dejó el barrido de estilos de texto del 2026-09-11 (tarde), pendiente de RAFA:**
+
+- **La tabla de transcripciones escribe a 16px y ninguna otra lo hace** (204 textos en una carga:
+  seis columnas de `/conversaciones`). Es el residuo más grande y 16 no es peldaño de la rampa.
+  Está medido y fotografiado a 16 y a 14; solo falta que Rafa elija. Detalle en el tramo de abajo.
+- **12/20 no es ningún estilo**: sale cuando la clase va en un contenedor y el descendiente declara
+  solo el tamaño (pastillas de estado de repositorios, cabeceras de grupos asignados, contadores de
+  pestaña). ¿Text style propio para pastilla, o `line-height` explícito?
+- **`sc-docs` es la siguiente tanda del barrido**: 237 reglas con `font-size` y DOS usos de la clase
+  (29 podrían llevarla hoy, 127 heredan el interlineado, 57 están fuera de la rampa). El showcase
+  del DS es el que peor predica con el ejemplo. Cifras y matices en el tramo de abajo.
+
 **Lo que dejó el 2026-09-11 (revisión de Orca), sin hacer:**
 
 - **`preflight:scope` debería negarse sobre un árbol que no está rebasado en `origin/main`.** Hoy se
@@ -68,6 +80,79 @@
    decisión. Ver la sección de Figma más abajo.
 3. **La deuda de código de [`AUDIT-DEUDA-2026-06.md`](../AUDIT-DEUDA-2026-06.md)** que quede tras
    s34, y **los cabos de DD-24** (round-trip de iconos) en [`ROADMAP.md`](../ROADMAP.md).
+## ✅ 2026-09-11 · El barrido de estilos de texto llega a lo que la primera pasada no miró (116 → 101)
+
+**Sello:** sobre HEAD `3052ec5` (el #116 en `main`). DD-69 ampliado. `audit:text-styles` §4 con el
+trinquete en 101. `text-styles-applied` +3 en el navegador, los tres **rojos contra el build
+anterior** y verdes contra este. Veredicto por `ci:verdict` tras el push.
+
+**De dónde sale.** Rafa preguntó si el barrido de la mañana aplicaba también a
+`/admin/repositorios`. Aplicaba — y la respuesta útil no era esa pantalla, era que **la primera
+pasada barrió lo que estaba en SU inventario, no lo que tenía motivo para quedarse**: su inventario
+salía de 38 rutas y 6 modales, y lo que no se abrió, no se vio.
+
+**Lo que faltaba, medido.** Un rastreador más ancho: las 38 rutas **más 18 estados abiertos**
+(modales, paneles, popovers, fichas, menú de usuario, barra lateral desplegada). **4.517 mediciones
+sobre 56 estados**; las 38 rutas solas, sin repetir, son 2.503 textos.
+
+| Qué faltaba | Textos |
+| --- | ---: |
+| Celdas de las **nueve listas de repositorio** + grupos + usuarios | 270 |
+| **Título de página** de las 13 pantallas (DD-55 lo dejó nombrado como pendiente) | 31 |
+| Barra lateral de Configuración, cabecera de grupos asignados, chip de tipo de entidad, pista de Sistema, modal de descarga, selector de conjunto de datos | 40 |
+
+14 reglas migradas y una MUERTA fuera (`.hub__title`: ninguna plantilla la usaba, el título del hub
+es `page__heading`). **0 diferencias** de tamaño, interlineado, peso, familia, tracking y posición,
+medido contra el build de `main` recién construido aquí. **341 textos llevan la clase en su propio
+elemento Y miden ese estilo** (283 en las 38 rutas). Otros 69 solo la heredan de un ancestro que la
+ganó —61 pastillas de estado, 5 prefijos, 3 rótulos activos— y NO cuentan: miden otra cosa, y son
+el punto 2 de abajo. Ruido del instrumento (dos rastreos del mismo build): 0.
+
+**La trampa nueva, cazada con el fallo puesto.** Una clase `.sc-text-*` sobre un selector **global**
+de la app compite de tú a tú (0-1-0 las dos) y decide el ORDEN del bundle, que hoy fija el
+empaquetador. `.page__heading` se jugaba así sus 21px de separación con el cuerpo, porque la clase
+trae `margin: 0`. Pasa a `h1.page__heading` y el margen se mide desde el navegador. El razonamiento
+entero y la inyección del fallo, en DD-69 y en el comentario de `_page.scss`.
+
+---
+
+### 🔴 LO QUE QUEDA SIN ATAR Y **NECESITA A RAFA**, no otro barrido
+
+**1. La tabla de transcripciones escribe a 16px y ninguna otra lo hace.** Seis columnas de
+`/conversaciones` (Hora, Fecha, Origen, Destino, T. Conv., T. Espera) ponen el texto directamente en
+la celda, sin el `<span>` que el resto de tablas usa para declarar tipografía, y heredan los **16px
+del documento** (`html, body` no declara `font-size`). **204 textos en una sola carga**, el residuo
+más grande, y **16 no es ningún text style** (DD-54). Medido el mismo día: `/conversaciones` →
+16/24; `/admin/agendas`, `/admin/usuarios` y `/conversaciones/entidades` → 14/20. La trampa la
+documenta ya la hoja de la página de entidades («sin repetirla aquí las celdas heredaban los 16px
+del documento»); nadie la llevó a esta tabla. En toda la app hay 222 textos a 16/24: los otros 18
+son el disparador del popover de grupos de `/admin/agentes` y dos `<h2>` de entidades.
+
+**No se ha tocado a propósito**: bajar a 14 es un cambio VISIBLE en la pantalla principal, y eso no
+se cuela en un barrido cuyo contrato es «0 diferencias». Está construido en su versión mínima y
+fotografiado a 16 y a 14 para decidirlo mirándolo (LEARNINGS #18). Recomiendo bajarlo: alinea esa
+tabla con las otras nueve y con la rampa.
+
+**2. Combinaciones que no son ningún estilo, por herencia de un contenedor con clase.** 12/20 en las
+pastillas de estado de repositorios (61), en las cabeceras de grupos asignados y en los contadores
+de pestaña. No es regresión del barrido —pasaba igual con los tokens sueltos—, pero es lo siguiente
+que decidir: ¿pastilla con text style propio, o `line-height` explícito?
+
+**3. El resto tiene motivo escrito y está en el gate**: familia mono (264 textos), muebles de
+interlineado apretado, y los **1.198 textos** que pinta un componente del DS o PrimeNG — que por
+DD-55 no llevan clase: si tienen que verse distinto se mueve su TOKEN. Ahí viven los pesos 500 que
+la rampa no tiene (`th` a 12/18/500, etiquetas de campo a 14/21/500). Eso es del TEMA.
+
+**4. El Supervisor no es «toda la plataforma»: falta `sc-docs`.** El showcase del DS tiene **237
+reglas con `font-size` y DOS usos de la clase** — más tipografía suelta de la que tenía el
+Supervisor al empezar. Clasificadas contra las capas: **29** podrían llevar la clase hoy, **127**
+declaran el tamaño y heredan el interlineado, **57** están fuera de la rampa (pesos 700, tamaños sin
+peldaño) y **24** son mono o glifo. Otra app, otro build y otra medición: mezclarla aquí dejaba el
+PR sin poder revisarse. Tiene una punta propia: en un showcase hay texto que **ilustra** tipografía,
+así que no todo lo que declara tamaño está mal. **Las demás no entran por decisión escrita**:
+`agent` y `agent-mini` no declaran ninguna, las 134 de `cuscare` son de una RÉPLICA (DD-35) y las
+102 de `ui-smartcontact` son de los componentes del DS, que leen el tema (DD-55).
+
 ## ✅ 2026-09-11 · El botón de guardar vuelve a medir lo que dice su texto
 
 **Sello:** PR #114, fundido con el CI de `main` VERDE leído por `ci:verdict` (HEAD `ed28a9a`);
@@ -149,81 +234,13 @@ preguntó antes de tocar** (`SendMessage` a la hermana, que cedió el arreglo y 
 esas pueden ser sesiones que arrancan. Es el error del #109 visto desde el otro lado.
 
 
-## ✅ 2026-09-11 · La tipografía de pantalla se pone por su nombre: 165 reglas pasan a `.sc-text-*`
+> El tramo de la PRIMERA pasada del barrido de estilos de texto (165 reglas, #111) se archivó
+> el 2026-09-11 al entrar la segunda: lo cuenta entero el tramo de arriba y su decisión vive en
+> `docs/DECISIONS.md` DD-69. Tag `archive/handoff-ds-2026-09-11-tarde`.
 
-**Sello:** DD-69. `audit:text-styles` gana la §4 (trinquete `TIPOGRAFIA_SUELTA_MAX = 116`,
-**validado en rojo por arriba Y por abajo** más control negativo; 23 tests). `text-styles-applied`
-+2 en el navegador. Medido antes y después en el build. Veredicto por `ci:verdict` tras el push.
-
-**De dónde sale.** Rafa inspeccionó «Agente AED 1» en Computed y vio 14 / 20 / 600: tres números
-que hay que traducir a mano a `Body/body-semibold`. «¿No se puede lincar el estilo de texto?». El
-enlace es la clase, existía desde el `#98` y la llevaban 49 textos; el resto seguía con los tres
-valores en la hoja. Era el punto 1 de «lo que queda» del tramo del interlineado.
-
-**Lo que se hizo.** Inventario: 301 reglas con tipografía por token en 61 hojas. Migradas **165**
-(394 declaraciones fuera de las hojas, 226 elementos con clase en 86 ficheros; usos de `.sc-text-*`
-49 → 275). En Inspect ahora se lee `class="cell-name sc-text-body-semibold"` en la línea del
-elemento, sin traducir nada.
-
-**La red, montada antes de tocar (LEARNINGS #16).** Un rastreador visita las 38 rutas del build y
-anota tamaño, interlineado, peso, familia, letter-spacing, márgenes y posición de cada texto:
-**3.664 textos**, más **813** abriendo seis modales y paneles. Ruido del instrumento: dos rastreos
-del mismo build, **0** diferencias. Resultado tras migrar: **0** diferencias. Y el instrumento se
-validó con el fallo puesto sin buscarlo: la primera pasada cazó **27** cambios, que son las dos
-lecciones de abajo.
-
-**Dos cosas que la clase NO puede sustituir, cazadas midiendo:**
-
-1. **`font: inherit` en la misma regla** (el nombre de categoría es un `<button>`): el shorthand,
-   con la especificidad del componente, pisa a la clase y el texto se fue a 16/24/400. Se quedan
-   con tokens (3 reglas), y el migrador salta cualquier regla con `font:`.
-2. **Texto que hereda familia mono** (`.ext__type` dentro de `.cell--mono`): la clase impone Inter.
-   Se quedan (5 reglas); el migrador compara también la familia MEDIDA, no solo los tres números.
-
-Y lo excluido a propósito, con nombre: chips y pastillas (37, su interlineado no es ningún estilo),
-familia propia (22), modificadores que solo cambian el peso (15), interlineados sin unidad (33,
-aparcados), hosts dinámicos o inexistentes (14). Para las reglas SIN peso declarado (120), el peso
-heredado se decidió por la MEDIDA cuando el texto era visible y, si no (modales), por los ancestros
-reales en la plantilla: si alguno declara 600 no se decide a ciegas.
-
-**Lo que queda (116 reglas con `font-size`, y el trinquete lo vigila):** son exactamente esas
-familias. Bajar más pide una decisión de Rafa, no un barrido: ¿un text style para chips?, ¿la clase
-sin familia para las celdas mono? Hasta entonces, el tope solo baja.
-
-## ✅ 2026-09-11 · El plugin ya no cuela ficheros en main, el hand-off deja de crecer y las bifurcaciones al componer tienen tabla
-
-**Sello:** HEAD `cc6925b` (el squash de #106 en `main`). DD-68. Veredicto del CI por
-`ci:verdict`, leído.
-
-**De dónde sale.** Rafa pidió analizar `stablyai/orca` (skills, `.github`, docs, releases) y sacar qué
-adoptar; luego, revisar esa lista contra mis sesgos y los suyos. Medido cada punto contra este repo:
-4 de 10 ya existían (ratchet, tests de doc, release seguro, bloques compartidos), 3 no aplican, y al
-medir el ruido del diff de tokens salió el defecto de verdad.
-
-**Lo que se hizo.**
-- **`main` estaba en rojo desde las 08:27**: el PR #104 metió 172 ficheros de `.theme-designer/` (el
-  plugin) sin que ningún check los mirase. Cadena: push del plugin sin export → `tokens-sync.yml` no
-  dispara (filtro `paths`) → `ci.yml` exime esa rama confiando en el robot → fundido a mano. Se quita
-  el filtro `paths` (cualquier push a `design-tokens-sync` pasa por el reset), se borran los 172
-  ficheros, DD-68 con la alternativa descartada.
-- **Tabla «Bifurcaciones al componer»** en `AGENTS.md` §UX (mapa de composición): 15 filas «quieres /
-  usa / no uses / lo sostiene», cada una apuntando a su DD o gate. Molde: el style guide de Orca.
-- **Este hand-off medía 2.924 líneas (49 tramos, ~52k tokens) y se leía entero cada sesión.** Se
-  archiva completo en el tag `archive/handoff-ds-2026-09-11`, se deja el tramo vigente + dos + las
-  secciones fijas, y `docs:coherence` CHECK P (`scripts/handoff-shape.mjs`, con test rojo) lo mantiene
-  en ≤ 400 líneas y ≤ 6 tramos. `NEXT-SESSION.md` lo dice en su paso 1.
-- `Users/` (basura sin versionar en la raíz, con un `.git` dentro) borrado. `findings/` se queda: lo
-  lee el frente Agent.
-
-**Lo que NO se hizo, y por qué.** Nada de lo demás de la lista de Orca: CI por paths, `type(scope):`
-en commits, plantillas de issue, `linguist-generated` (las zonas `@sc-gen` son bloques, no ficheros).
-Están medidos y descartados en el plan de la sesión; el análisis de formato de skills de Orca vale
-como molde para cuando toque escribir una guía nueva.
-
-**Pendiente que abre.** Que la portada del PR de `design-tokens-sync` diga si el robot lo verificó,
-para que un PR del plugin no se pueda fundir a ciegas (hoy solo lo dice el estado del run).
-
----
+> El tramo del **plugin de Figma** (filtro `paths` de `tokens-sync.yml`, DD-68) se archivó el
+> 2026-09-11 por el tope de 400 líneas. Vive en git y en el tag `archive/handoff-ds-2026-09-11-tarde`;
+> su decisión, que es lo durable, está entera en `docs/DECISIONS.md` DD-68.
 
 ## 🗄️ Histórico de la lista SIGUIENTE — ya cerrado
 
