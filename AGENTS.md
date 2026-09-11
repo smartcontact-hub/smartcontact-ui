@@ -440,11 +440,20 @@ this wrap-up routine **without asking permission first**:
    - En qué te ayuda: <el problema concreto que ya no vuelve; sin jerga: ni «hook», ni «gate», ni «commit»>
    - Tú tienes que: <decisión suya o paso fuera del repo (Cloudflare, Jira, Figma); borra la línea si no hay nada>
    - Rastro: <PR/sha · veredicto del CI LEÍDO · docs/handoff/<frente>.md>
+   - Seguro cerrar: <«sí» o «no» y por qué, en una frase: qué queda colgando o quién lo recoge>
    ```
 
-   «Tú tienes que» es opcional y desaparece si no hay nada; las otras tres no. Tope de 200
+   «Tú tienes que» es opcional y desaparece si no hay nada; las otras cuatro no. Tope de 200
    caracteres por línea, y el porqué se dice en efecto, no en pieza: si solo sabes explicarlo
    nombrando el hook, todavía no lo has entendido tú.
+
+   **«Seguro cerrar» no te la crees tú: la mide el hook.** Antes de dejar pasar el cierre lee el
+   árbol (ficheros sin commitear, commits sin pushear, rama que no está en el remoto) y, si has
+   escrito «sí» con algo colgando, bloquea y te enseña QUÉ cuelga. Es la pregunta que Rafa se hace
+   de verdad al cerrar la ventana: *¿se pierde algo, o está todo donde otro agente pueda
+   recogerlo?* Un «todo subido» afirmado sin mirar es la regla #17 en su versión más cara, porque
+   el contexto de la sesión no vuelve. Si es «no», la frase dice qué falta y quién lo recoge (el
+   hand-off del frente, el PR abierto).
    *Por qué existe:* el coste de Rafa no son mis vueltas, son los defectos que le llegan. Un cierre
    de trámite («pusheado, CI verde») cuenta el trámite y esconde lo único que decide algo: si esto
    le sirve, si le va a estorbar y si le toca hacer algo a él. (Petición suya, 2026-09-10.)
