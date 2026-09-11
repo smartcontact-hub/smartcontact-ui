@@ -41,6 +41,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | Los 12 text styles son los ÚNICOS · pesos 400 y 600, y un `font-size` sobre un glifo no es texto | DD-67 |
 > | El vocabulario de dentro de la pantalla se declara UNA vez · lo vigila `audit:screen-vocabulary` | DD-65 |
 > | El título de una pantalla con rail va DENTRO de su sección · `sc-section-card` es la única caja | DD-57 |
 | Cada piel de `sc-section-card` trae las medidas de SU nodo · el maestro del DS manda en la gris | DD-61 |
@@ -53,6 +54,66 @@
 > | Siete divergencias deliberadas entre flujos, que NO se unifican | DD-36 |
 > | `--sc-bg-default` es el suelo del shell, nunca una superficie | DD-34 |
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
+
+---
+
+## DD-67 · 2026-09-11 — Los 12 text styles son los únicos: el 500 no es «casi», no existe
+
+**Contexto** · Rafa, al cerrar el barrido de vocabulario: «hay que ir casando cada título, subheader
+etc, todo lo que no sea componente, con el estilo que cuadre». El DS publica **12** text styles —seis
+tamaños (64 · 48 · 24 · 18 · 14 · 12) por **dos pesos (400 y 600)**— y `audit:text-styles` ya
+comprobaba que las 12 clases valen lo que Figma. Su propia cabecera decía el hueco: *«no opina sobre
+dónde se usan las clases»*. Nadie miraba, entonces, lo que las pantallas declaran por su cuenta.
+
+**Lo que salió al medir** (barrido estático sobre las 61 hojas del Supervisor, antes de tocar):
+
+| | Cuántas |
+| --- | ---: |
+| Reglas con `font-weight: medium` (**500**), que no es el peso de NINGÚN text style | **76** |
+| Reglas con un tamaño que no es peldaño de ningún rol (16 · 32) | 9 |
+| Tamaño e interlineado que no casan entre sí | 2 |
+| Reglas sin `line-height` (heredan) | 211 |
+
+**Decisión** · (1) Los 76 pesos pasan a **400 o 600** con un criterio explícito: **600** para títulos,
+para el dato que IDENTIFICA una fila y para el item activo del rail; **400** para etiquetas, opciones,
+chips, pastillas y ayudas. (2) Los tamaños y los interlineados que no existen se llevan a su rol.
+(3) El título de sección del constructor de reglas baja de **18 a 14** — era el único de la app que no
+iba a `Body/body-semibold`. (4) `audit:text-styles` gana una tercera comprobación que cierra su propio
+hueco declarado.
+
+**Razón** · Un 500 no es una desviación pequeña de un 600: es un valor que el sistema no publica, así
+que no hay Figma que lo respalde ni token de destino al que converger. Y el coste no es estético: con
+76 reglas a 500 repartidas por 25 ficheros, cualquiera que copie una pantalla para hacer la siguiente
+propaga un peso que no existe.
+
+**Descartadas** ·
+- *Gatear también las 211 reglas sin `line-height`* → rechazado POR AHORA: son el bucket más numeroso
+  y el menos grave, y arreglarlas es mecánico pero masivo. Van en su propia tanda.
+- *Marcar los `line-height` SIN UNIDAD (1.4, 1.5…)* → rechazado: están **aparcados con razón** en
+  `NEXT-SESSION.md` («sin token destino en el Kit»). Un guardián que pide lo que el sistema no puede
+  dar enseña a ignorarlo.
+- *Marcar todo `font-size` fuera de la escala* → rechazado: tres de los nueve primeros avisos eran
+  `font-size` sobre un GLIFO (`__caret`, `__check`), donde el tamaño es una caja de icono y no un
+  estilo de texto. Se excluyen por nombre, con su test de control negativo.
+- *Llevar la tarjeta de impacto de Memory a la escala* → rechazado: su tamaño tiene el motivo escrito
+  al lado y trazado a Figma (32 es el tope real de la rampa, el Figma pedía 40; la variante `--rail`
+  baja a 20 porque a 32 «conversaciones» se parte). Entra en `TIPOGRAFIA_DELIBERADA` con ese motivo,
+  que es DD-36 aplicado aquí.
+
+**Consecuencias** · Pesos fuera de estilo: **76 → 2**, y los dos son los deliberados con su motivo.
+El gate muerde en las dos direcciones (una entrada deliberada que ya no corresponde a nada es roja) y
+**está validado con el fallo puesto en tres ejes más un control negativo** — el mismo tamaño sobre un
+selector de icono NO salta. `audit-text-styles` sale de `LEGADO_SIN_TEST` en `docs-coherence`: gana
+sus 15 tests, y esa lista solo encoge.
+
+⚠️ **Lo que este gate NO puede ver, y por eso no sustituye al e2e**: mira lo que se DECLARA, no lo que
+GANA la cascada. `.impact__hero` declara 32 y su variante `--rail` lo baja a 20, así que el número que
+de verdad se renderiza no sale de aquí. Lo rendido lo mide `e2e/supervisor/text-styles-applied.spec.ts`.
+Esa misma ceguera me dio a MÍ una cifra equivocada al medir (dije 32 donde se pintan 20).
+
+**Y un punto ciego de DD-65 que este cierra**: `audit:screen-vocabulary` compara un nombre declarado en
+DOS hojas. `.rule-card__title` solo lo usaba una pantalla, así que podía irse a 18 sin que nada saltara.
+El de tipografía mira el VALOR y no el nombre, así que una pantalla sola ya no puede derivar en silencio.
 
 ---
 
@@ -166,6 +227,12 @@ global de la tipografía» que los hand-offs del 2026-09-09 y del 2026-09-10 dej
 4. **Un gate nuevo, `audit:screen-vocabulary`**, en `verify` (que pasa de 37 a 38 gates). Lee el
    canon de la hoja de referencia EN CADA EJECUCIÓN en vez de copiarlo — duplicar los valores en
    el gate es la misma clase de fallo que el gate persigue.
+5. **El CONTRATO de `surface="card"` deja de ser tradición oral**: quien usa esa caja sangra su
+   contenido con `.sub-section`. Lo añadió el `/reflect` de la misma sesión, después de que ese
+   contrato se me escapara al convertir `sistema-page`: sus cinco cards medían EXACTAS —radio,
+   borde, paddings, todo verde— y el título salía a 37.75 del filo con el contenido a 25.5. Medir
+   la caja no basta; hay que medir la RELACIÓN entre la caja y lo que proyecta. Lo cazó una
+   captura y una medición, no el verde de la caja, y ahora es la cuarta comprobación del gate.
 
 **Razón** · Una regla encapsulada de componente le gana siempre a una global, así que
 re-declarar un nombre en la hoja de una pantalla no "ajusta" nada: le da a esa pantalla una

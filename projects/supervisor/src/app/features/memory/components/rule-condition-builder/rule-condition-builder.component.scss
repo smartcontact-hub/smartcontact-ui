@@ -50,7 +50,7 @@
   &__empty-title {
     margin: 0;
     font-size: var(--sc-font-size-200);
-    font-weight: var(--sc-font-weight-medium);
+    font-weight: var(--sc-font-weight-semibold);
     color: var(--sc-text-primary);
   }
 
@@ -169,7 +169,7 @@
     cursor: pointer;
     font-family: inherit;
     font-size: var(--sc-font-size-100);
-    font-weight: var(--sc-font-weight-medium);
+    font-weight: var(--sc-font-weight-regular);
     color: var(--sc-text-secondary);
     padding: var(--sc-spacing-0-25) var(--sc-spacing-0-75);
     border-radius: var(--sc-radius-100);
@@ -221,7 +221,7 @@
 
   &__num {
     font-size: var(--sc-font-size-50);
-    font-weight: var(--sc-font-weight-bold);
+    font-weight: var(--sc-font-weight-semibold);
     letter-spacing: 0.02em;
     text-transform: uppercase;
     color: var(--sc-text-secondary);
@@ -267,7 +267,7 @@
     background: var(--sc-bg-info);
     color: var(--sc-text-on-info);
     font-size: var(--sc-font-size-50);
-    font-weight: var(--sc-font-weight-bold);
+    font-weight: var(--sc-font-weight-semibold);
     letter-spacing: 0.04em;
     line-height: 1.4;
   }

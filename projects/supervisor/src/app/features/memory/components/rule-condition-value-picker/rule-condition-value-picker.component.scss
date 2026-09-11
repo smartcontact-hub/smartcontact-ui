@@ -43,7 +43,7 @@
   &__all {
     flex: 1;
     color: var(--sc-color-sky-500);
-    font-weight: var(--sc-font-weight-medium);
+    font-weight: var(--sc-font-weight-regular);
   }
 
   &__all-hint {
@@ -245,7 +245,7 @@
 
   &__group-count {
     color: var(--sc-text-secondary);
-    font-weight: var(--sc-font-weight-medium);
+    font-weight: var(--sc-font-weight-regular);
   }
 
   &__opt--nested {
