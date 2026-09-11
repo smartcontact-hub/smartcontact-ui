@@ -32,6 +32,14 @@ test('necesitaVeredicto: push sin lectura del CI después → true', () => {
   assert.equal(necesitaVeredicto(['git push', 'npm run ci:verdict', 'git commit -m x', 'git push origin main']), true);
 });
 
+test('necesitaVeredicto: leer el CI por el PR cuenta igual que leerlo por el run', () => {
+  // El patrón se quedó corto y bloqueó un cierre con el CI ya leído (2026-09-10): `gh pr checks`
+  // es la MISMA lectura, por el PR en vez de por el run.
+  assert.equal(necesitaVeredicto(['git push origin main', 'gh pr checks 99']), false);
+  assert.equal(necesitaVeredicto(['git push origin main', 'gh pr checks 99 --watch --fail-fast']), false);
+  assert.equal(necesitaVeredicto(['git push origin main', 'gh pr view 99']), true, 'ver el PR no es leer sus checks');
+});
+
 test('necesitaVeredicto: push seguido de ci:verdict o gh run → false', () => {
   assert.equal(necesitaVeredicto(['git push origin main', 'npm run ci:verdict']), false);
   assert.equal(necesitaVeredicto(['git push', 'gh run list --branch main --workflow ci --limit 1 --json conclusion']), false);
