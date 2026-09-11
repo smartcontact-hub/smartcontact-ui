@@ -51,7 +51,7 @@ test('el árbol principal `bare` no es una caja', () => {
   const wt = parseaWorktrees(
     'worktree /repo\nbare\n\nworktree /repo/wt-a\nHEAD abc\nbranch refs/heads/arebury/a\n',
   );
-  assert.deepEqual(wt, [{ ruta: '/repo/wt-a', rama: 'arebury/a' }]);
+  assert.deepEqual(wt, [{ ruta: '/repo/wt-a', rama: 'arebury/a', bloqueado: false }]);
 });
 
 test('los checks deciden entre ESPERA, ROJA y LISTA', () => {
@@ -123,4 +123,59 @@ test('checksDe distingue pendiente de vacío', () => {
   assert.equal(checksDe(null).estado, 'sin-checks');
   assert.equal(checksDe({ statusCheckRollup: [{ conclusion: null }] }).estado, 'pendiente');
   assert.equal(checksDe({ statusCheckRollup: [{ conclusion: 'CANCELLED' }] }).estado, 'rojo');
+});
+
+// ── La red que impide borrar trabajo ───────────────────────────────────────────
+// Los dos casos de abajo NO son hipótesis: son lo que este comando propuso borrar el 2026-09-11,
+// la primera vez que se usó de verdad, recién fundido el #103. Cada regla, en rojo y en verde.
+
+test('CERRADA + ficheros sin commitear → SIN GUARDAR, y nunca «borra»', () => {
+  const fundido = { number: 103, mergedAt: '2026-09-11T09:20:00Z' };
+  const limpio = veredictoDe({ fundido, ultimoCommitISO: '2026-09-11T09:00:00Z' });
+  assert.equal(limpio.veredicto, 'CERRADA'); // el caso bueno sigue funcionando
+  assert.match(limpio.accion, /borra el worktree/);
+
+  const sucio = veredictoDe({ fundido, ultimoCommitISO: '2026-09-11T09:00:00Z', sucio: true });
+  assert.equal(sucio.veredicto, 'SIN GUARDAR');
+  assert.doesNotMatch(sucio.accion, /borra/, 'jamás debe proponer borrar algo con trabajo sin guardar');
+});
+
+test('VACÍA + ficheros sin commitear → SIN GUARDAR (el caso del worktree de checkbox)', () => {
+  assert.equal(veredictoDe({ sinFundir: 0 }).veredicto, 'VACÍA');
+  const v = veredictoDe({ sinFundir: 0, sucio: true });
+  assert.equal(v.veredicto, 'SIN GUARDAR');
+  assert.doesNotMatch(v.accion, /borra/);
+});
+
+test('CERRADA + un commit que no está en main POR CONTENIDO → SIN SUBIR', () => {
+  // El caso de `arebury/analizar-PRs-2`: su `393d0ab` era ANTERIOR al merge del #103 y no iba
+  // dentro, así que comparar fechas nunca podía verlo. `git cherry` sí, porque mira el parche.
+  const fundido = { number: 103, mergedAt: '2026-09-11T09:20:00Z' };
+  const v = veredictoDe({ fundido, ultimoCommitISO: '2026-09-11T09:03:07Z', noFundidos: 1 });
+  assert.equal(v.veredicto, 'SIN SUBIR');
+  assert.match(v.accion, /por contenido/);
+  assert.doesNotMatch(v.accion, /borra/);
+  // En rojo: con la lógica vieja (solo fechas) esto salía CERRADA y mandaba borrarlo.
+  assert.equal(veredictoDe({ fundido, ultimoCommitISO: '2026-09-11T09:03:07Z' }).veredicto, 'CERRADA');
+});
+
+test('un worktree `locked` no se propone borrar', () => {
+  const v = veredictoDe({ sinFundir: 0, bloqueado: true });
+  assert.equal(v.veredicto, 'BLOQUEADO');
+  assert.doesNotMatch(v.accion, /borra/);
+});
+
+test('lo que NO propone borrar conserva su veredicto y solo avisa', () => {
+  const abierto = { number: 9, statusCheckRollup: [{ name: 'verify', conclusion: 'SUCCESS' }] };
+  const v = veredictoDe({ abierto, sucio: true });
+  assert.equal(v.veredicto, 'LISTA', 'un PR verde sigue siendo fundible aunque haya ficheros sueltos');
+  assert.match(v.accion, /⚠ cambios sin commitear/);
+});
+
+test('parseaWorktrees marca los `locked`', () => {
+  const wt = parseaWorktrees(
+    'worktree /a\nHEAD abc\nbranch refs/heads/x\nlocked\n\nworktree /b\nHEAD def\nbranch refs/heads/y\n',
+  );
+  assert.equal(wt.find((w) => w.rama === 'x').bloqueado, true);
+  assert.equal(wt.find((w) => w.rama === 'y').bloqueado, false);
 });
