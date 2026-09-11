@@ -58,6 +58,48 @@
 
 ---
 
+## DD-70 · 2026-09-11 — El código que enseña la doc no se compara por IGUALDAD con el que ejecuta, sino por cuatro relaciones
+
+**Contexto** · Rafa, mirando `/#/components/button`: *«¿el código de cada uno en sc-docs está
+basado realmente en primeng?»*. El ejemplo enseña `<sc-button label=… variant=… />` mientras el DOM
+que sus devs tienen delante es `sc-button > p-button > button`. Medido: 43 páginas llevan el
+snippet escrito A MANO en una constante y **ningún gate** lo cruzaba con la plantilla que de verdad
+se renderiza. `audit:doc-snippets` (2026-09-07) solo comprobaba que lo que enseña EXISTA.
+
+**Decisión** · **No se exige igualdad snippet ≡ plantilla.** Se midió antes de decidir: de los 71
+pares, 31 coinciden y **40 divergen a propósito** (el snippet inlinea los datos para que se lean
+donde la demo ata una variable; omite el andamiaje que la demo usa para enseñar el resultado). Un
+gate de igualdad daría 40 falsos positivos y enseñaría a ignorarse (LEARNINGS #2). En su lugar, el
+gate ata las cuatro relaciones que sí son defecto sin discusión, y cada una nació de un caso REAL:
+
+| Relación | El caso que la justifica |
+| --- | --- |
+| (a) lo que el snippet enseña, la demo viva lo pinta | `emptystate#CTA` enseñaba `(cta)="onCreate()"` y no existía ni el binding ni el método |
+| (d) lo que la demo viva pinta, el snippet lo enseña | **el caso de Rafa**: `button#ICONS` renderiza `variant` y `fullWidth` y el código enseñaba cuatro botones sin ninguno |
+| (c) la proyección usa el slot que el componente declara | `select#OBJETOS` enseñaba `pTemplate="item"` y `sc-select` proyecta por `contentChild('item')`: al wrapper NO le llega |
+| (b) cada input público sale en algún ejemplo o knob | 66 no salen; va por TRINQUETE, no por lista |
+
+Se comparan **nombres, no valores** (`[home]="{…}"` cubre `[home]="home"`), se ignora el ruido de
+plantilla (`class`, `data-testid`, `#ref`) y los comentarios HTML no cuentan como código.
+
+**Y la doc gana la ANATOMÍA, leída del DOM** · Cada página enseña además la estructura que de
+verdad se renderiza (`sc-button > p-button > button.p-button`), que es lo que necesita quien depura
+CSS o escribe un selector. No se escribe: `storybook/story-anatomy.component.ts` la lee del DOM ya
+pintado, así que el día que PrimeNG cambie por dentro, la ficha lo dirá sola. Una tabla tecleada
+sería otro texto que puede mentir — el mismo defecto que este cambio viene a cerrar.
+
+**Descartadas** · *Extraer el snippet de la plantilla en build* (una sola fuente): elimina la clase
+de fallo pero también el control editorial del ejemplo, que es lo que hace legible una doc — el
+snippet de `breadcrumb` inlinea los datos justamente para que se vean. *Exigir igualdad*: 40 falsos
+positivos medidos. *Una tabla de selectores a mano* para la anatomía: ya existe una en
+`validar.component.ts` con valores tecleados, y es exactamente lo que no queremos repetir.
+
+**Alcance** · El trinquete (b) arranca en 66 y solo baja: los 66 no se documentan de golpe (un
+ejemplo malo enseña peor que ninguno), pero un input nuevo sin ejemplo pone el gate en rojo el día
+que se añade, que es cuando cuesta un minuto.
+
+---
+
 ## DD-69 · 2026-09-11 — El estilo de texto se pone por su nombre: la clase es el enlace con Figma
 
 **Contexto** · Rafa, inspeccionando el nombre de un agente en la lista: Computed le da 14 / 20 / 600 y

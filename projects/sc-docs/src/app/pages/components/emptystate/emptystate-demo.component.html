@@ -28,6 +28,10 @@
     titleKey="Sin grupos"
     bodyKey="Agrupa tus agentes para organizarlos por equipo o campaña."
     ctaKey="Crear grupo"
+    (cta)="onCreate()"
     data-testid="sc-emptystate-cta"
   />
+  <p class="demo-readout">
+    Veces que se pulsó la CTA: <strong data-testid="sc-emptystate-cta-count">{{ pulsaciones() }}</strong>
+  </p>
 </ng-template>

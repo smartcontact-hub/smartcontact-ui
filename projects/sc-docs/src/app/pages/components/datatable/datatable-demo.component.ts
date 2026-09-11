@@ -70,25 +70,24 @@ const GESTURES_SNIPPET = `<sc-datatable
   [columns]="gestureColumns"
   [visibleColumns]="visibleFields()"
   [rowStyleClass]="rowClassFn"
+  dataKey="id"
   selectionMode="multiple"
+  [selection]="selection()"
+  (selectionChange)="onSelectionChange($event)"
   (rowClick)="onRowOpen($event)"
-  (rowContextMenu)="onRowMenu($event); rowMenu.toggle($event.originalEvent)"
+  (rowContextMenu)="onRowMenu($event)"
 />
-<p-menu #rowMenu [model]="menuItems()" [popup]="true" appendTo="body" />
 
 <!-- rowClassFn es una propiedad, NO un método: se resuelve en cada render y
      una flecha nueva por ciclo tiraría OnPush al suelo. -->
 protected readonly rowClassFn: ScRowStyleClassFn<Agent> = (agent) =>
   agent.status === 'inactive' ? 'dt-row--inactive' : undefined;
 
-<!-- Columnas conmutables: sc-column-selector emite exactamente este formato
-     (su \`key\` = nuestro \`field\`), así que se cablea sin adaptador. -->
-<sc-column-selector
-  scTableCaption
-  [columns]="columnDefs"
-  storageKey="demo-agents_v1"
-  (orderedVisibleChange)="visibleFields.set($event)"
-/>`;
+<!-- \`dataKey\` es lo que hace que la selección sobreviva a un re-render: sin él,
+     PrimeNG compara por referencia y al llegar filas nuevas se pierde. -->
+
+<!-- Para conmutar columnas con la chrome del DS en vez de estos botones, la
+     pieza es \`<sc-column-selector scTableCaption>\`: tiene su propia página. -->`;
 
 const LIST_SNIPPET = `<!-- La gramática de tabla-lista: cabecera silenciosa (12/500 gris, sin fondo),
      fila alta, hairline \`--sc-border-default\` y reparto de columnas fijo.
@@ -97,12 +96,18 @@ const LIST_SNIPPET = `<!-- La gramática de tabla-lista: cabecera silenciosa (12
      La publica el TEMA, no la app: viaja con el preset, así que un consumidor
      nuevo la pide y le sale igual sin copiar una línea de CSS. Hasta el
      2026-09-10 vivía como CSS de app y NO viajaba. -->
-<sc-datatable variant="list" [value]="agents()" [columns]="columns()" />
+<sc-datatable
+  variant="list"
+  [value]="agents()"
+  [columns]="columns()"
+  [rowStyleClass]="listRowClassFn"
+  dataKey="id"
+/>
 
 <!-- El hover SOLO si la fila hace algo. Lo dice el consumidor, fila a fila,
      con la clase del DS \`sc-row--clickable\`; una tabla inerte que se ilumina
      al pasar el ratón es una afordancia mentirosa. -->
-protected readonly rowClassFn: ScRowStyleClassFn<Agent> = () => 'sc-row--clickable';`;
+protected readonly listRowClassFn: ScRowStyleClassFn<Agent> = () => 'sc-row--clickable';`;
 
 /** Demo de `sc-datatable` en formato story (motor «Storybook-like»). */
 @Component({

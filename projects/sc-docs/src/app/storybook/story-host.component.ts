@@ -4,6 +4,7 @@ import { serializeArgs } from './serialize-args';
 import { StoryCanvasComponent } from './story-canvas.component';
 import { StoryControlsComponent } from './story-controls.component';
 import { StoryPropsTableComponent } from './story-props-table.component';
+import { StoryAnatomyComponent } from './story-anatomy.component';
 import { StorySnippetComponent } from './story-snippet.component';
 import { ScArgs, StoryDef, StoryMeta } from './story.types';
 
@@ -17,7 +18,13 @@ import { ScArgs, StoryDef, StoryMeta } from './story.types';
  */
 @Component({
   selector: 'app-story-host',
-  imports: [StoryCanvasComponent, StoryControlsComponent, StorySnippetComponent, StoryPropsTableComponent],
+  imports: [
+    StoryAnatomyComponent,
+    StoryCanvasComponent,
+    StoryControlsComponent,
+    StorySnippetComponent,
+    StoryPropsTableComponent,
+  ],
   styleUrl: './storybook.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
   template: `
@@ -41,6 +48,8 @@ import { ScArgs, StoryDef, StoryMeta } from './story.types';
               <div class="sb-host__play-main">
                 <app-story-canvas [template]="s.template" [args]="playArgs()" />
                 <app-story-snippet [code]="snippetFor(s)" />
+                <!-- La anatomía se LEE del DOM ya pintado: no hay texto a mano que pueda mentir. -->
+                <app-story-anatomy [tag]="meta().tag" />
               </div>
               <div>
                 <p class="sb-host__section-title">Controles</p>
