@@ -17,7 +17,7 @@
         <ul class="gatbl__picker-menu" role="listbox">
           @for (cand of pickerCandidates(); track cand.id) {
             <li role="option" [attr.aria-selected]="false">
-              <button type="button" class="gatbl__picker-option" (click)="addGroup(cand)">
+              <button type="button" class="gatbl__picker-option sc-text-body-regular" (click)="addGroup(cand)">
                 <span>{{ cand.name }}</span>
                 <span class="gatbl__picker-meta">
                   @for (ch of cand.channels; track ch) {
@@ -39,11 +39,11 @@
       <span class="gatbl__empty-icon" aria-hidden="true">
         <sc-icon [name]="emptyIcon" [size]="22" />
       </span>
-      <p class="gatbl__empty-title">{{ 'agents.form.assigned.empty_title' | translate }}</p>
-      <p class="gatbl__empty-body">{{ 'agents.form.assigned.empty' | translate }}</p>
+      <p class="gatbl__empty-title sc-text-body-semibold">{{ 'agents.form.assigned.empty_title' | translate }}</p>
+      <p class="gatbl__empty-body sc-text-caption-regular">{{ 'agents.form.assigned.empty' | translate }}</p>
     </div>
   } @else {
-    <table class="gatbl__table">
+    <table class="gatbl__table sc-text-body-regular">
       <thead>
         <tr>
           <th class="gatbl__th-name" scope="col">

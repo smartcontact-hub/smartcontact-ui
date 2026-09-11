@@ -82,17 +82,12 @@
 .categories-table__group {
   margin-left: var(--sc-spacing-0-25);
   color: var(--sc-text-secondary);
-  font-size: var(--sc-font-size-100);
-  line-height: var(--sc-line-height-caption);
-  font-weight: var(--sc-font-weight-regular);
 }
 
 /* El recorte con puntos suspensivos vivía en el `<td>`; ahora va en el `<span>`
    proyectado, que necesita ser bloque para que el ancho de la celda lo limite. */
 .categories-table__td-desc {
   display: block;
-  font-size: var(--sc-font-size-200);
-  line-height: var(--sc-line-height-body-2);
   color: var(--sc-text-secondary);
   overflow: hidden;
   text-overflow: ellipsis;
@@ -101,8 +96,6 @@
 
 .categories-table__td-date {
   color: var(--sc-text-secondary);
-  font-size: var(--sc-font-size-100);
-  line-height: var(--sc-line-height-caption);
 }
 
 .categories-num {

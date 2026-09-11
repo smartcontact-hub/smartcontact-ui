@@ -79,10 +79,10 @@
         >
           <div scTableEmpty class="table__no-results">
             <sc-icon [name]="searchIcon" [size]="20" />
-            <div class="table__no-results-title">
+            <div class="table__no-results-title sc-text-body-semibold">
               {{ 'labels.no_results.title' | translate }}
             </div>
-            <div class="table__no-results-text">
+            <div class="table__no-results-text sc-text-caption-regular">
               {{ 'labels.no_results.text' | translate: { query: searchQuery() } }}
             </div>
           </div>
@@ -118,9 +118,9 @@
 
 <ng-template #descTpl let-label>
   @if (label.description) {
-    <span class="table__td-desc">{{ label.description }}</span>
+    <span class="table__td-desc sc-text-body-regular">{{ label.description }}</span>
   } @else {
-    <span class="table__td-desc table__td-desc--empty">
+    <span class="table__td-desc table__td-desc--empty sc-text-body-regular">
       {{ 'labels.no_description' | translate }}
     </span>
   }

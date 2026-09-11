@@ -64,8 +64,6 @@
  * text-secondary) vive ahora en el `<span>` de cada celda: el `<td>` lo pinta
  * el DS y una regla encapsulada de la página no lo alcanzaría. */
 .rules-cell {
-  font-size: var(--sc-font-size-200);
-  line-height: var(--sc-line-height-body-2);
   color: var(--sc-text-secondary);
 
   /* El truncado del alcance lo hacía el `<td>`; con `table-layout: fixed` (que
@@ -84,9 +82,6 @@
  * que localiza filas por `.rules-table__name`). */
 .rules-table__name {
   color: var(--sc-text-primary);
-  font-weight: var(--sc-font-weight-semibold);
-  font-size: var(--sc-font-size-200);
-  line-height: var(--sc-line-height-body-2);
   text-decoration: none;
 
   &:hover {

@@ -70,7 +70,7 @@
           (rowContextMenu)="onRowContextMenu($event, rowMenu)"
           data-testid="agents-table"
         >
-          <div scTableEmpty class="table__no-results">
+          <div scTableEmpty class="table__no-results sc-text-body-regular">
             {{ 'agents.no_results' | translate }}
           </div>
         </sc-datatable>
@@ -91,7 +91,7 @@
 </ng-template>
 
 <ng-template #nameTpl let-agent>
-  <span class="cell-name">
+  <span class="cell-name sc-text-body-semibold">
     <sc-illustrated-avatar [name]="agent.name" [photo]="agent.photo" [size]="32" />
     @if (renamingId() === agent.id) {
       <sc-inline-rename-cell
@@ -142,7 +142,7 @@
     <!-- `stopPropagation` porque la fila ABRE el detalle: sin esto, desplegar
          el selector de presencia navegaría a la ficha del agente. -->
     <span
-      class="presence-edit"
+      class="presence-edit sc-text-caption-regular"
       [attr.data-presence]="presence"
       (click)="$event.stopPropagation()"
     >

@@ -22,16 +22,16 @@
     </div>
 
     <div class="entity-form__row">
-      <label for="entity-description" class="entity-form__label">
+      <label for="entity-description" class="entity-form__label sc-text-body-regular">
         {{ 'memory.entities.form.description_label' | translate }}
-        <span class="entity-form__optional"> ({{ 'common.optional' | translate }}) </span>
+        <span class="entity-form__optional sc-text-caption-regular"> ({{ 'common.optional' | translate }}) </span>
       </label>
       <sc-textarea inputId="entity-description" [rows]="2" fluid [placeholder]="'memory.entities.form.description_placeholder' | translate" [value]="description()" (valueChange)="setDescription($event)" />
     </div>
 
     <div class="entity-form__row entity-form__row--double">
       <div>
-        <label for="entity-type" class="entity-form__label">
+        <label for="entity-type" class="entity-form__label sc-text-body-regular">
           {{ 'memory.entities.form.type_label' | translate }}
         </label>
         <sc-select
@@ -50,7 +50,7 @@
           </ng-template>
         </sc-select>
         @if (isEditMode()) {
-          <p class="entity-form__hint">
+          <p class="entity-form__hint sc-text-caption-regular">
             {{ 'memory.entities.form.type_locked_hint' | translate }}
           </p>
         }
@@ -63,7 +63,7 @@
           [value]="format()"
           (valueChange)="setFormat($event)"
         />
-        <p class="entity-form__hint">
+        <p class="entity-form__hint sc-text-caption-regular">
           {{ 'memory.entities.form.format_hint' | translate }}
         </p>
       </div>
@@ -71,11 +71,11 @@
 
     @if (type() === 'list') {
       <div class="entity-form__row entity-form__list-row">
-        <h3 class="entity-form__label entity-form__label--heading">
+        <h3 class="entity-form__label entity-form__label--heading sc-text-body-regular">
           {{ 'memory.entities.form.list_values_label' | translate }}
-          <span class="entity-form__optional"> ({{ listValues().length }}) </span>
+          <span class="entity-form__optional sc-text-caption-regular"> ({{ listValues().length }}) </span>
         </h3>
-        <p class="entity-form__hint">
+        <p class="entity-form__hint sc-text-caption-regular">
           {{ 'memory.entities.form.list_values_hint' | translate }}
         </p>
         <div class="entity-form__list-values">
@@ -88,7 +88,7 @@
 
               @if (draft.expanded) {
                 <div class="entity-form__synonyms-block">
-                  <label class="entity-form__synonyms-label" [attr.for]="'syn-input-' + $index">
+                  <label class="entity-form__synonyms-label sc-text-caption-regular" [attr.for]="'syn-input-' + $index">
                     {{ 'memory.entities.form.synonyms_label' | translate }}
                   </label>
                   <sc-inputtext [inputId]="'syn-input-' + $index" fluid [placeholder]="'memory.entities.form.synonyms_placeholder' | translate" [value]="draft.synonymsCsv" (valueChange)="updateListValueSynonyms($index, $event)" />
@@ -98,7 +98,7 @@
               }
             </div>
           } @empty {
-            <p class="entity-form__list-empty">
+            <p class="entity-form__list-empty sc-text-caption-regular">
               {{ 'memory.entities.form.list_values_empty' | translate }}
             </p>
           }

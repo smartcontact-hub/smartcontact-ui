@@ -83,7 +83,7 @@
        enfocable, ver `rowsFocusable`), pero cmd+click / abrir en pestaña nueva
        viven aquí. `stopPropagation` evita que el click navegue dos veces. -->
   <a
-    class="rules-table__name"
+    class="rules-table__name sc-text-body-semibold"
     [routerLink]="['/conversaciones/reglas', rule.id]"
     (click)="$event.stopPropagation()"
     >{{ rule.name }}</a
@@ -91,7 +91,7 @@
 </ng-template>
 
 <ng-template #scopeTpl let-rule>
-  <span class="rules-cell rules-cell--scope" [attr.title]="scopeSummary(rule)">
+  <span class="rules-cell rules-cell--scope sc-text-body-regular" [attr.title]="scopeSummary(rule)">
     {{ scopeSummary(rule) }}
   </span>
 </ng-template>
@@ -121,18 +121,18 @@
 
 <ng-template #statusTpl let-rule>
   @if (rule.active) {
-    <span class="rules-status rules-status--active">
+    <span class="rules-status rules-status--active sc-text-caption-semibold">
       {{ 'memory.rules.status.active' | translate }}
     </span>
   } @else {
-    <span class="rules-status rules-status--inactive">
+    <span class="rules-status rules-status--inactive sc-text-caption-semibold">
       {{ 'memory.rules.status.inactive' | translate }}
     </span>
   }
 </ng-template>
 
 <ng-template #modifiedTpl let-rule>
-  <span class="rules-cell">{{ formatRelativeDate(rule.lastModified) }}</span>
+  <span class="rules-cell sc-text-body-regular">{{ formatRelativeDate(rule.lastModified) }}</span>
 </ng-template>
 
 <ng-template #kebabTpl let-rule>

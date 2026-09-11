@@ -20,7 +20,7 @@
     <div class="hub__categories">
       @for (category of categories; track category.titleKey) {
         <section class="hub__category">
-          <h2 class="hub__category-title">{{ category.titleKey | translate }}</h2>
+          <h2 class="hub__category-title sc-text-caption-semibold">{{ category.titleKey | translate }}</h2>
           <div class="hub__group">
             @for (item of category.items; track item.labelKey) {
               <button
@@ -34,13 +34,13 @@
                   <sc-icon [name]="item.icon" [size]="20" />
                 </span>
                 <span class="hub-item__text">
-                  <span class="hub-item__label">{{ item.labelKey | translate }}</span>
-                  <span class="hub-item__description">{{ item.descriptionKey | translate }}</span>
+                  <span class="hub-item__label sc-text-body-semibold">{{ item.labelKey | translate }}</span>
+                  <span class="hub-item__description sc-text-caption-regular">{{ item.descriptionKey | translate }}</span>
                 </span>
                 @if (item.ready) {
                   <sc-icon class="hub-item__chevron" [name]="chevronIcon" size="inherit" />
                 } @else {
-                  <span class="hub-item__soon">
+                  <span class="hub-item__soon sc-text-caption-regular">
                     {{ 'repositories.hub.coming_soon' | translate }}
                   </span>
                 }

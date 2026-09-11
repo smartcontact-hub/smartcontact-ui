@@ -21,7 +21,7 @@
       <div class="sidebar__section">
         <div class="sidebar__section-slot">
           <span class="sidebar__section-divider" aria-hidden="true"></span>
-          <span class="sidebar__section-title">{{ section.titleKey | translate }}</span>
+          <span class="sidebar__section-title sc-text-caption-semibold">{{ section.titleKey | translate }}</span>
         </div>
         <div class="sidebar__section-items">
           @for (item of section.items; track trackByItemKey($index, item)) {
@@ -38,7 +38,7 @@
 
   <div class="sidebar__foot">
     <a
-      class="sidebar__decisions"
+      class="sidebar__decisions sc-text-caption-regular"
       [href]="decisionsHref"
       target="_blank"
       rel="noopener noreferrer"

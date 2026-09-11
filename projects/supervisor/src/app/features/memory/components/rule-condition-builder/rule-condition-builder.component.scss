@@ -50,16 +50,11 @@
 
   &__empty-title {
     margin: 0;
-    font-size: var(--sc-font-size-200);
-    line-height: var(--sc-line-height-body-2);
-    font-weight: var(--sc-font-weight-semibold);
     color: var(--sc-text-primary);
   }
 
   &__empty-body {
     margin: 2px 0 0 0;
-    font-size: var(--sc-font-size-200);
-    line-height: var(--sc-line-height-body-2);
     color: var(--sc-text-secondary);
   }
 
@@ -140,8 +135,6 @@
 
   &__num-sep {
     color: var(--sc-text-secondary);
-    font-size: var(--sc-font-size-100);
-    line-height: var(--sc-line-height-caption);
   }
 
   &__num-unit {

@@ -67,7 +67,7 @@
       <div class="player-tabs">
         <button
           type="button"
-          class="player-tabs__btn"
+          class="player-tabs__btn sc-text-body-regular"
           [class.player-tabs__btn--active]="activeTab() === 'transcription'"
           (click)="setActiveTab('transcription')"
         >
@@ -76,7 +76,7 @@
         </button>
         <button
           type="button"
-          class="player-tabs__btn"
+          class="player-tabs__btn sc-text-body-regular"
           [class.player-tabs__btn--active]="activeTab() === 'analysis'"
           (click)="setActiveTab('analysis')"
         >
@@ -135,7 +135,7 @@
               </div>
               <div class="player-state__cta">
                 <sc-button variant="primary" [icon]="fileTextIcon" [label]="(requestingTranscription() ? 'memory.player.empty.transcribing_btn' : 'memory.player.empty.transcribe_btn' ) | translate" [loading]="requestingTranscription()" (clicked)="onRequestTranscription()" />
-                <span class="player-state__cost">
+                <span class="player-state__cost sc-text-caption-regular">
                   <span aria-hidden="true" class="player-state__cost-dot"></span>
                   {{ 'memory.player.empty.transcribe_cost' | translate }}
                 </span>
@@ -174,13 +174,13 @@
                   [class.player-bubble--client]="!agent"
                 >
                   <div class="player-bubble__meta">
-                    <span class="player-bubble__speaker">{{ line.speaker }}</span>
+                    <span class="player-bubble__speaker sc-text-caption-semibold">{{ line.speaker }}</span>
                     <span class="player-bubble__time">{{ line.time }}</span>
                   </div>
                   <div class="player-bubble__text">{{ line.text }}</div>
                 </div>
               } @empty {
-                <p class="player-transcript__no-match">
+                <p class="player-transcript__no-match sc-text-body-regular">
                   {{ 'memory.player.transcript.no_match' | translate: { q: searchTerm() } }}
                 </p>
               }
@@ -218,7 +218,7 @@
                 </div>
                 <div class="player-state__cta">
                   <sc-button variant="primary" [icon]="sparklesIcon" [label]="(requestingAnalysis() ? 'memory.player.empty.processing_btn' : 'memory.player.empty.deadend_btn' ) | translate" [loading]="requestingAnalysis()" (clicked)="onRequestBoth()" />
-                  <span class="player-state__cost">
+                  <span class="player-state__cost sc-text-caption-regular">
                     <span aria-hidden="true" class="player-state__cost-dot"></span>
                     {{ 'memory.player.empty.deadend_cost' | translate }}
                   </span>
@@ -237,7 +237,7 @@
                 </div>
                 <div class="player-state__cta">
                   <sc-button variant="primary" [icon]="sparklesIcon" [label]="(requestingAnalysis() ? 'memory.player.empty.requesting_btn' : 'memory.player.empty.ready_btn' ) | translate" [loading]="requestingAnalysis()" (clicked)="onRequestAnalysis()" />
-                  <span class="player-state__cost">
+                  <span class="player-state__cost sc-text-caption-regular">
                     <span aria-hidden="true" class="player-state__cost-dot"></span>
                     {{ 'memory.player.empty.ready_cost' | translate }}
                   </span>
@@ -248,12 +248,12 @@
             <div class="player-analysis">
               <section class="player-section">
                 <header class="player-section__head">
-                  <span class="player-section__title">
+                  <span class="player-section__title sc-text-caption-semibold">
                     <sc-icon [name]="alignLeftIcon" size="inherit" />
                     {{ 'memory.player.analysis.summary' | translate }}
                   </span>
                   <span
-                    class="player-section__aside"
+                    class="player-section__aside sc-text-caption-regular"
                     [attr.title]="'memory.player.analysis.ai_generated_hint' | translate"
                   >
                     <sc-icon [name]="sparklesIcon" size="inherit" />
@@ -263,7 +263,7 @@
                 @if (summary(); as s) {
                   <p class="player-section__text">{{ s }}</p>
                 } @else {
-                  <p class="player-section__muted">
+                  <p class="player-section__muted sc-text-body-regular">
                     {{ 'memory.player.analysis.no_summary' | translate }}
                   </p>
                 }
@@ -271,7 +271,7 @@
 
               <section class="player-section">
                 <header class="player-section__head">
-                  <span class="player-section__title">
+                  <span class="player-section__title sc-text-caption-semibold">
                     <sc-icon [name]="trendingUpIcon" size="inherit" />
                     {{ 'memory.player.analysis.sentiment' | translate }}
                   </span>
@@ -282,10 +282,10 @@
                     class="player-sentiment__dot"
                     [style.background]="sentiment().color"
                   ></span>
-                  <span class="player-sentiment__label">
+                  <span class="player-sentiment__label sc-text-body-regular">
                     {{ sentiment().labelKey | translate }}
                   </span>
-                  <span class="player-sentiment__summary">
+                  <span class="player-sentiment__summary sc-text-body-regular">
                     · {{ sentiment().summaryKey | translate }}
                   </span>
                 </div>

@@ -51,9 +51,6 @@
 /* Sub-etiqueta de bloque ("Por defecto", "Personalización de no disponibles"). */
 .sub-label {
   display: block;
-  font-size: var(--sc-font-size-50);
-  line-height: var(--sc-line-height-caption);
-  font-weight: var(--sc-font-weight-regular);
   color: var(--sc-text-secondary);
 }
 
@@ -136,8 +133,6 @@
   }
 
   &__text {
-    font-size: var(--sc-font-size-100);
-    line-height: var(--sc-line-height-caption);
     color: var(--sc-text-secondary);
   }
 
@@ -200,9 +195,6 @@
   /* 125 fijos: es lo que hace columna con los otros cuatro nombres (maqueta `row` 2286:5590). */
   &__label {
     flex: 0 0 125px;
-    font-size: var(--sc-font-size-100);
-    line-height: var(--sc-line-height-caption);
-    font-weight: var(--sc-font-weight-semibold);
     color: var(--sc-text-primary);
   }
 
@@ -217,8 +209,6 @@
   &__desc {
     flex: 1 1 auto;
     min-width: 0;
-    font-size: var(--sc-font-size-50);
-    line-height: 18px;
     color: var(--sc-text-primary);
   }
 
@@ -252,9 +242,6 @@
 
 .events-head {
   &__col {
-    font-size: var(--sc-font-size-caption);
-    line-height: var(--sc-line-height-caption);
-    font-weight: var(--sc-font-weight-semibold);
     color: var(--sc-text-primary);
   }
 }

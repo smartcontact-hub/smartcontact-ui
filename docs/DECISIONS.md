@@ -41,6 +41,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | El estilo de texto se pone por su NOMBRE (`.sc-text-*` en la plantilla) · tokens sueltos solo donde la clase no puede | DD-69 |
 > | Los 12 text styles son los ÚNICOS · pesos 400 y 600, y un `font-size` sobre un glifo no es texto | DD-67 |
 > | El vocabulario de dentro de la pantalla se declara UNA vez · lo vigila `audit:screen-vocabulary` | DD-65 |
 > | El título de una pantalla con rail va DENTRO de su sección · `sc-section-card` es la única caja | DD-57 |
@@ -56,6 +57,32 @@
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
 
 ---
+
+## DD-69 · 2026-09-11 — El estilo de texto se pone por su nombre: la clase es el enlace con Figma
+
+**Contexto** · Rafa, inspeccionando el nombre de un agente en la lista: Computed le da 14 / 20 / 600 y
+tiene que traducirlo él a `Body/body-semibold`. «¿No se puede lincar el estilo de texto?». Sí: la clase
+`.sc-text-body-semibold` ES ese enlace (DD-55, `#98`), y existía; pero solo 49 textos la llevaban y
+301 reglas de pantalla seguían declarando los tres valores con tokens sueltos, correctos pero mudos.
+
+**Decisión** · (1) La forma canónica de poner tipografía a un texto de pantalla es la clase
+`.sc-text-*` en la plantilla; los tokens de rol en la hoja son el paso previo, no el destino. (2) Se
+migran las 165 reglas que la clase puede sustituir sin mover un píxel, medido en el navegador antes y
+después (3.664 textos en 38 rutas + 813 en modales: 0 cambios). (3) `audit:text-styles` gana un
+trinquete por conteo: las reglas con `font-size` en las hojas del Supervisor solo pueden bajar.
+
+**Razón** · El nombre tiene que viajar hasta el DOM: es lo que hace que alguien que no es del equipo
+pueda abrir Inspect y leer «esto es Body/body-semibold» sin tabla de traducción, y lo que ata cada
+texto al text style de Figma por su nombre y no por coincidencia de valores. Y con la clase, mover un
+rol en el DS mueve todos sus textos a la vez.
+
+**Descartadas** ·
+- *Migrar TODO, chips incluidos* → los muebles apretados miden 12/12 y 14/14, que no es ningún text
+  style (DD-67); ponerles la clase los hace crecer 6px.
+- *Quitar la familia de la clase para que sirva en celdas mono* → la clase vale lo que el text style
+  de Figma, familia incluida (lo comprueba la §1 del gate). Un texto mono no lleva text style.
+- *Quitar el `font: inherit` de los botones y confiar en la clase* → el shorthand también resetea
+  estilo y variante del `<button>`; sin medirlo en cada navegador no se toca. Se quedan 3 reglas.
 
 ## DD-68 · 2026-09-11 — Un push del plugin que no trae export también pasa por el robot: el filtro `paths` se va
 

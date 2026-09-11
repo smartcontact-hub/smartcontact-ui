@@ -77,7 +77,7 @@
           (rowContextMenu)="onRowContextMenu($event, rowMenu)"
           data-testid="users-table"
         >
-          <div scTableEmpty class="table__no-results">
+          <div scTableEmpty class="table__no-results sc-text-body-regular">
             {{ 'users.no_results' | translate }}
           </div>
         </sc-datatable>
@@ -90,7 +90,7 @@
      `viewChild` las resuelvan; `columns()` las recoge. El contexto es
      `{ $implicit: user }`. -->
 <ng-template #nameTpl let-user>
-  <div class="table__td-name">
+  <div class="table__td-name sc-text-body-semibold">
     @if (renamingId() === user.id) {
       <sc-inline-rename-cell
         [initialValue]="user.name"

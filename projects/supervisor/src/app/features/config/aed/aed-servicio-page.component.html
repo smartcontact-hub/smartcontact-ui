@@ -39,7 +39,7 @@
         </header>
 
         <!-- Por defecto: estados fijos (3) → tags. NO editables, NO removibles. -->
-        <span class="sub-label">
+        <span class="sub-label sc-text-caption-regular">
           {{ 'config.aed.subpages.servicio.estados.por_defecto' | translate }}
         </span>
         <div class="state-tags">
@@ -63,7 +63,7 @@
         </sc-checkbox>
 
         <!-- Personalización: estados editables → chips removibles + alta por modal. -->
-        <span class="sub-label">
+        <span class="sub-label sc-text-caption-regular">
           {{ 'config.aed.subpages.servicio.estados.personalizacion' | translate }}
         </span>
         <div class="reasons-row">
@@ -119,7 +119,7 @@
               <span>{{ 'config.aed.subpages.servicio.inactividad.telefono' | translate }}</span>
             </sc-checkbox>
             <div class="inline-row__rest">
-              <span class="inline-row__text">
+              <span class="inline-row__text sc-text-caption-regular">
                 {{ 'config.aed.subpages.servicio.inactividad.telefono_text' | translate }}
               </span>
               <sc-inputnumber
@@ -129,7 +129,7 @@
                 [value]="form().cuarentenaSegundos"
                 (valueChange)="onNumberChange('cuarentenaSegundos', $event)"
               />
-              <span class="inline-row__text">
+              <span class="inline-row__text sc-text-caption-regular">
                 {{ 'config.aed.subpages.servicio.inactividad.seconds' | translate }}
               </span>
             </div>
@@ -145,7 +145,7 @@
               <span>{{ 'config.aed.subpages.servicio.inactividad.navegador' | translate }}</span>
             </sc-checkbox>
             <div class="inline-row__rest">
-              <span class="inline-row__text">
+              <span class="inline-row__text sc-text-caption-regular">
                 {{ 'config.aed.subpages.servicio.inactividad.navegador_text' | translate }}
               </span>
               <sc-inputnumber
@@ -155,7 +155,7 @@
                 [value]="form().bloquearTrasConversaciones"
                 (valueChange)="onNumberChange('bloquearTrasConversaciones', $event)"
               />
-              <span class="inline-row__text">
+              <span class="inline-row__text sc-text-caption-regular">
                 {{ 'config.aed.subpages.servicio.inactividad.conversaciones_suffix' | translate }}
               </span>
             </div>
@@ -215,10 +215,10 @@
                    (`row` dentro de `Slot 4` 2286:5590) fija el nombre a 125 y deja el resto
                    de la fila a la descripción, separados 14. Así los cinco nombres forman
                    una columna que se lee de un vistazo. -->
-              <span class="visible-row__label">
+              <span class="visible-row__label sc-text-caption-semibold">
                 {{ 'config.aed.subpages.servicio.visibles.state_' + item.key | translate }}
               </span>
-              <span class="visible-row__desc">
+              <span class="visible-row__desc sc-text-caption-regular">
                 {{ 'config.aed.subpages.servicio.visibles.desc_' + item.key | translate }}
               </span>
               <sc-toggleswitch
@@ -274,7 +274,7 @@
               role="radiogroup"
               [attr.aria-label]="'config.aed.subpages.servicio.aviso.alerting_label' | translate"
             >
-              <label class="radio">
+              <label class="radio sc-text-caption-regular">
                 <sc-radiobutton
                   inputId="alerting-nombre"
                   name="alerting-tipo"
@@ -286,7 +286,7 @@
                   'config.aed.subpages.servicio.aviso.alerting_nombre' | translate
                 }}</span>
               </label>
-              <label class="radio">
+              <label class="radio sc-text-caption-regular">
                 <sc-radiobutton
                   inputId="alerting-telefono"
                   name="alerting-tipo"
@@ -313,7 +313,7 @@
                abstracto del formulario: dos URLs y seis casillas, sin decir en ningún sitio QUÉ
                pasa cuando las rellenas. Esta línea ata las columnas a los campos —«estos
                eventos»— y dice quién llama a quién. -->
-          <p class="sub-section__hint">
+          <p class="sub-section__hint sc-text-caption-regular">
             {{ 'config.aed.subpages.servicio.notif.hint' | translate }}
           </p>
         </header>
@@ -331,7 +331,7 @@
           <span class="notif-grid__spacer" aria-hidden="true"></span>
           <div class="events-head" aria-hidden="true">
             @for (key of notifEventos; track key) {
-              <span class="events-head__col">
+              <span class="events-head__col sc-text-caption-semibold">
                 {{ 'config.aed.subpages.servicio.notif.evento_' + key | translate }}
               </span>
             }

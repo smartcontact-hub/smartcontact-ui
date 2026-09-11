@@ -30,7 +30,7 @@
         (click)="selectSample(s.id); op.hide()"
       >
         <div class="mock-sample-switcher__item-head">
-          <span class="mock-sample-switcher__item-title">{{ s.labelKey | translate }}</span>
+          <span class="mock-sample-switcher__item-title sc-text-body-semibold">{{ s.labelKey | translate }}</span>
           @if (s.id === currentId()) {
             <sc-icon class="mock-sample-switcher__item-check" [name]="checkIcon" size="inherit" />
           }

@@ -6,7 +6,7 @@
       | translate: { entity: entitySingular() }
   "
 >
-  <h3 class="panel__title">
+  <h3 class="panel__title sc-text-body-semibold">
     {{
       (initial() ? 'repositories.form.edit_title' : 'repositories.form.create_title')
         | translate: { entity: entitySingular() }
@@ -15,7 +15,7 @@
 
   @for (field of fields(); track field.key; let i = $index) {
     <div class="panel__field">
-      <label class="panel__label" [attr.for]="'repo-field-' + field.key">
+      <label class="panel__label sc-text-caption-regular" [attr.for]="'repo-field-' + field.key">
         {{ field.labelKey | translate }}
         @if (!field.required) {
           <span class="panel__hint">({{ 'common.optional' | translate }})</span>
@@ -60,7 +60,7 @@
 
   <div class="panel__error-slot">
     @if (error()) {
-      <div class="panel__error">
+      <div class="panel__error sc-text-caption-regular">
         <sc-icon [name]="alertIcon" [size]="10" />
         <span>{{ error() }}</span>
       </div>

@@ -46,7 +46,7 @@
         (activeChange)="activeSection.set($event)"
       />
 
-      <div class="impact impact--rail" aria-live="polite">
+      <div class="impact impact--rail sc-text-body-regular" aria-live="polite">
         <p class="impact__label">
           <sc-icon name="leaderboard" [size]="15" aria-hidden="true" />
           {{ 'memory.rules.builder.cond.impact_title' | translate }}
@@ -75,7 +75,7 @@
                 ) | translate: { count: fmt(impactCount()) }
               }}
             </p>
-            <p class="impact__caption">
+            <p class="impact__caption sc-text-caption-regular">
               {{
                 'memory.rules.builder.cond.impact_caption' | translate: { total: impactTotal() }
               }}
@@ -83,7 +83,7 @@
           </div>
 
           @if (hasUnevaluable()) {
-            <p class="impact__note">
+            <p class="impact__note sc-text-caption-regular">
               {{ 'memory.rules.builder.cond.impact_note' | translate }}
             </p>
           } @else {
@@ -134,7 +134,7 @@
            "condiciones sin terminar" NO sube — acusaría en un formulario recién
            abierto; vive junto a las condiciones que describe (tarjeta 02). -->
       @if (submitted() && condBlocking()) {
-        <p class="rule-notice rule-notice--error" aria-live="polite">
+        <p class="rule-notice rule-notice--error sc-text-body-regular" aria-live="polite">
           <sc-icon name="error" [size]="15" aria-hidden="true" />
           {{ 'memory.rules.builder.cond.val.blocked' | translate }}
         </p>
@@ -156,7 +156,7 @@
                      vivía truncado con ellipsis. Aquí se lee entero. -->
                 <p class="rule-card__desc">{{ 'memory.rules.builder.subtitle' | translate }}</p>
               </div>
-              <div class="rule-card__control">
+              <div class="rule-card__control sc-text-body-regular">
                 <!-- El tipo es ESTADO de la regla (fijado al crearla), no
                      navegación: se agrupa con el otro estado de nivel-regla —el
                      toggle activa/inactiva— en vez de decorar el breadcrumb. -->
@@ -196,7 +196,7 @@
               <!-- Descripción (opcional): el modelo y el guardado ya existían; solo
                    faltaba pintarla — coherente con el modal de categorías. -->
               <div class="rule-field">
-                <label for="rule-description" class="rule-field__label">
+                <label for="rule-description" class="rule-field__label sc-text-body-regular">
                   {{ 'memory.rules.builder.description_label' | translate }}
                 </label>
                 <sc-textarea
@@ -270,7 +270,7 @@
                    quedan sin valor. Texto tenue, sin caja ni icono de alerta — no
                    es un error hasta que se intenta guardar. -->
               @if (unfinishedCount() > 0) {
-                <p class="rule-hint" aria-live="polite">
+                <p class="rule-hint sc-text-caption-regular" aria-live="polite">
                   {{ 'memory.rules.builder.cond.val.unfinished' | translate: { n: unfinishedCount() } }}
                 </p>
               }
@@ -292,7 +292,7 @@
                   {{ 'memory.rules.builder.ai_analysis_desc' | translate }}
                 </p>
               </div>
-              <div class="rule-card__control">
+              <div class="rule-card__control sc-text-body-regular">
                 <sc-toggleswitch
                   [inputId]="'ai-toggle'"
                   [checked]="aiAnalysis()"
@@ -311,7 +311,7 @@
                        (`aiAnalysis`) y pintar dos interruptores sería mentir. -->
                   <ul class="ai-rows">
                     <li class="ai-row">
-                      <p class="ai-row__title">
+                      <p class="ai-row__title sc-text-body-semibold">
                         {{ 'memory.rules.builder.ai_chip_summary' | translate }}
                         <span class="ai-row__badge">{{
                           'memory.rules.builder.ai_row_recommended' | translate
@@ -322,7 +322,7 @@
                       </p>
                     </li>
                     <li class="ai-row">
-                      <p class="ai-row__title">
+                      <p class="ai-row__title sc-text-body-semibold">
                         {{ 'memory.rules.builder.ai_chip_sentiment' | translate }}
                       </p>
                       <p class="ai-row__desc">
@@ -338,7 +338,7 @@
                       <header class="rule-builder__ai-categories-head">
                         <h3>{{ 'memory.rules.builder.categorias_label' | translate }}</h3>
                         <a
-                          class="rule-builder__ai-categories-link"
+                          class="rule-builder__ai-categories-link sc-text-caption-regular"
                           routerLink="/conversaciones/categorias"
                           target="_blank"
                           rel="noopener"
@@ -357,7 +357,7 @@
                           [value]="[...categorias()]"
                           (valueChange)="setCategorias($event)"
                         />
-                        <p class="rule-field__hint">
+                        <p class="rule-field__hint sc-text-caption-regular">
                           {{ 'memory.rules.builder.categorias_hint' | translate }}
                         </p>
                       } @else {

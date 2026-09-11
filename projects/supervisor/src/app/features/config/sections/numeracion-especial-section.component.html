@@ -14,7 +14,7 @@
 
       <div class="country-list">
         @if (filtered().length === 0) {
-          <div class="country-list__empty">
+          <div class="country-list__empty sc-text-caption-regular">
             {{ 'config.aed.no_results' | translate: { query: searchQuery() } }}
           </div>
         } @else {
@@ -27,9 +27,9 @@
             >
               <sc-checkbox [state]="(isSelected(country.code)) ? 'all' : 'none'" (cycle)="toggle(country.code)" [ariaLabel]="country.name" (click)="$event.stopPropagation()" />
               <span class="country-row__flag" aria-hidden="true">{{ country.flag }}</span>
-              <span class="country-row__name">{{ country.name }}</span>
-              <span class="country-row__code">{{ country.code }}</span>
-              <span class="country-row__prefix">{{ country.prefix }}</span>
+              <span class="country-row__name sc-text-body-regular">{{ country.name }}</span>
+              <span class="country-row__code sc-text-caption-regular">{{ country.code }}</span>
+              <span class="country-row__prefix sc-text-caption-regular">{{ country.prefix }}</span>
               @if (isSelected(country.code)) {
                 <button
                   type="button"
@@ -47,7 +47,7 @@
 
       @if (selectedCodes().size > 0) {
         <div class="chips">
-          <span class="chips__label">{{ 'config.aed.selected_chips' | translate }}</span>
+          <span class="chips__label sc-text-caption-regular">{{ 'config.aed.selected_chips' | translate }}</span>
           <div class="chips__list">
             @for (country of selectedCountries(); track country.code) {
               <sc-chip [label]="country.flag + ' ' + country.name + ' ' + country.prefix" removable [removeAriaLabel]="'common.delete' | translate" (removed)="remove(country.code)" />
