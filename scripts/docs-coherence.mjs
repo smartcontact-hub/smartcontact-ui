@@ -29,6 +29,8 @@
  *      confunde: se copia. Alcance ampliado a los README de `projects/**`, porque el primer
  *      token muerto que se le escapó vivía justo en el "canónico técnico" de tokens.
  *   G. El índice de disparadores de `LEARNINGS.md` cuadra 1:1 con sus reglas numeradas.
+ *   P. Cada hand-off de `docs/handoff/` conserva su forma (`scripts/handoff-shape.mjs`): ≤400
+ *      líneas y ≤6 tramos `## ✅`; lo viejo se archiva con un tag, no se acumula.
  *   K. `LEARNINGS.md` conserva su FORMA (`scripts/learnings-shape.mjs`): ≤200 líneas, ≤20 reglas,
  *      ≤12 líneas por regla con su `Evidencia:`, y sin sub-entradas `*Corolario*`. El tope fue prosa
  *      50 commits y el fichero se multiplicó por seis; ahora falla aquí. Y ESCALA: una regla citada
@@ -62,6 +64,7 @@ import { resolve } from 'node:path';
 
 import { compararPatrones } from './patrones-parity.mjs';
 import { revisarLearnings } from './learnings-shape.mjs';
+import { revisarHandoff } from './handoff-shape.mjs';
 import { localizarMemoria, leerMemoria, revisarMemoria } from './memory-shape.mjs';
 
 const root = resolve(import.meta.dirname, '..');
@@ -362,6 +365,13 @@ for (const { path, lines } of files) {
   const learnings = readFileSync(resolve(root, 'LEARNINGS.md'), 'utf8');
   for (const p of revisarLearnings(learnings)) fail(`LEARNINGS.md — ${p}`);
 }
+
+// ── CHECK P — cada hand-off conserva su forma (tope de líneas y de tramos) ─────────────────
+// Mismo caso que K, un fichero más abajo: el hand-off del DS se leía entero al abrir cada sesión y
+// medía 2.924 líneas (49 tramos) el 2026-09-11. Los límites y el motivo viven en
+// `scripts/handoff-shape.mjs` (con sus tests rojos); lo que sobra se archiva con un tag.
+for (const h of files.filter((f) => rel(f.path).startsWith('docs/handoff/')))
+  for (const p of revisarHandoff(h.lines.join('\n'), rel(h.path))) fail(p);
 
 // ── CHECK N — la MEMORIA del agente conserva su forma (tope de fichas, de palabras y ≡ índice) ──
 // Hermano del K para el otro almacén de lecciones. Los límites y los motivos viven en

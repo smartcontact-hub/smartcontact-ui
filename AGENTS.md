@@ -205,6 +205,28 @@ el código y el agente no la leía nunca (DD-53).
   `docs/DECISIONS.md` de este repo. Misma cifra, tema distinto: `DD#43` es la barra sticky y
   `DD-43` es por qué no se extrae una base común admin.
 
+**Bifurcaciones al componer** — cuando dos piezas parecen valer, esta tabla dice cuál y por qué
+no la otra. Cada fila apunta a la decisión o al gate que la sostiene; no hay filas sin dueño.
+(Molde: la tabla «you want / reach for / don't use» del style guide de `stablyai/orca`, 2026-09-11.)
+
+| Quieres… | Usa | No uses | Lo sostiene |
+|---|---|---|---|
+| El lienzo de una página | `--sc-bg-canvas` en el `:host` de la página | `--sc-bg-default` (es el suelo del shell y el relleno de campo) | DD-34, DD-45 |
+| Un color que signifique algo (estado, jerarquía, feedback) | El token semántico de ese significado (`--sc-bg-danger-subtle`, `--sc-text-*`…) | Un `--sc-color-*` de paleta como fondo o color de página (no voltea en oscuro) | UX 1, `LEARNINGS.md` #2, `tokens:guard` |
+| Una caja de sección en la pantalla | `sc-section-card`: `surface="card"` sola sobre el lienzo, `surface="subtle"` dentro de un formulario | `sc-card`, `sc-panel`, un `div` con borde | DD-57, DD-61, `audit:titulo-contenido` |
+| El título de una pantalla con rail | Dentro de su `sc-section-card`, `[headingLevel]="1"` | Un `<h1>` suelto encima, o una banda de cabecera | DD-57, DD-33 |
+| Identidad y acciones primarias de la página | El breadcrumb + `TopBarSlotService` (`use-topbar-actions.ts`) | Una cabecera de página propia (se retiró) | DD-33 |
+| El ancho y el molde de una página | `.page__inner` con su arquetipo (`--list`, `--hub`, `--reading`…) | Anchos y márgenes a mano | DD-53, `audit:page-anatomy` |
+| Un campo de formulario | `.field` de `_forms.scss`; los wrappers ya traen `sc-field-label` y `sc-field-msg` | Label, ayuda o error pintados a mano | DD-44 |
+| Texto de la página (título, lead, celda, caption) | Una de las 12 clases `.sc-text-*` | `font-size`/`font-weight` sueltos; el peso 500 no existe | DD-55, DD-67, `audit:text-styles` |
+| Que el texto de un `<sc-*>` se vea distinto | Mover su token | Una `.sc-text-*` encima del componente (lo desconecta del tema) | DD-55 |
+| Una etiqueta de solo lectura (estado, severidad) | `sc-tag` | `sc-chip` (eso es lo que el usuario puede quitar: outline + ×) | `customs-catalog.md` §5 |
+| Buscar dentro de una lista | `sc-search` | `sc-inputgroup` o `sc-inputtext` con un icono a mano | `customs-catalog.md` §5 |
+| Una pantalla que espera datos | `sc-skeleton` con la FORMA del contenido, en su hueco | Spinner centrado; datos que recolocan la página al llegar | UX 2 |
+| Un icono | `<sc-icon>` (Material Symbols) | Emojis; una segunda librería | UX 4 |
+| Borrar una entidad desde su ficha | `sc-form-danger-zone` + `sc-delete-entity-dialog` (el patrón de las nueve fichas que ya lo usan, ver `docs/inventory.md`) | `sc-confirmdialog` genérico; borrar sin confirmar | `docs/inventory.md` |
+| Dos flujos que se ven distintos y parece un bug | Mira DD-36 y DD-53 antes de uniformar | Igualarlos «para que cuadren» | DD-36, DD-53 |
+
 ---
 
 ## Mandatory Workflow
