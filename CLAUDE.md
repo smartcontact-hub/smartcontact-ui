@@ -44,7 +44,7 @@ Resumen operativo:
   Patrones.
 - **Antes de dar nada por bueno**: `npm run verify` (38 gates encadenados) y, si
   tocaste algo visual, `npm run e2e`. **Antes de pushear no basta `verify`**: el CI
-  son 8 pasos, enumerados en `.github/workflows/ci.yml`; `npm run preflight:scope -- --run` corre
+  son 9 pasos, enumerados en `.github/workflows/ci.yml`; `npm run preflight:scope -- --run` corre
   la parte rápida (gates + builds, ~8 min) y deja la marca que el hook de push exige (el `--` es
   obligatorio: sin él npm solo IMPRIME el plan). Los e2e los corre el CI: léelo con `ci:verdict`.
 - ⚠️ **Los bloques `@sc-gen:*` son GENERADOS y viven en CINCO ficheros**, no solo en

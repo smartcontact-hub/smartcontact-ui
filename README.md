@@ -121,7 +121,7 @@ subconjunto de las que ya corren en CI.
 Encadena en un solo comando todo lo que `ci.yml` corre SIN navegador (gates + builds AOT de las
 apps), para que "verde en local" signifique "el CI solo puede caer en un e2e". Existe porque
 `verify` por sí solo **no construye las apps**: un binding roto en una plantilla pasa `verify` y
-lo caza el build AOT. Los ocho pasos del CI son esos más las tres suites e2e (smoke,
+lo caza el build AOT. Los nueve pasos del CI son esos más las tres suites e2e (smoke,
 supervisor y cuscare), que solo corren en GitHub. Las baselines visuales de sc-docs
 (`e2e:visual`) no corren en ningún gate: el runner de macOS las falla las 38 por la fuente
 monoespaciada del sistema (DD-60), así que las corre a mano quien toque sc-docs.

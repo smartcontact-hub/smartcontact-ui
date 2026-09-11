@@ -76,6 +76,10 @@ jobs:
         run: npx ng build agent --configuration production
       - name: Build cuscare (consume el DS local)
         run: npx ng build cuscare --configuration production
+      # agent-mini es el 5º sitio en producción (agent-mini.pages.dev) y hasta el 2026-09-11 solo
+      # Cloudflare cazaba una rotura de su build: no estaba ni aquí ni en `preflight`.
+      - name: Build agent-mini (réplica del dialpad, DS-free por DD-35)
+        run: npx ng build agent-mini --configuration production
 
   e2e-smoke:
     runs-on: ubuntu-latest
