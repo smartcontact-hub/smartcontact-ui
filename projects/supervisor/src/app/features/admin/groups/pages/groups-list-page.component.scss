@@ -64,8 +64,6 @@
   /* Tipografía de celda: la que daba `.table__td`. Ahora vive en un `<span>`
    * dentro de la celda, porque el `<td>` lo pinta el DS. */
   &__cell {
-    font-size: var(--sc-font-size-200);
-    line-height: var(--sc-line-height-body-2);
     color: var(--sc-text-secondary);
 
     &--mono {

@@ -60,8 +60,6 @@
   /* Antes iban en el `<td>`; ahora en un `<span>` dentro de él, porque el
      `<td>` lo pinta el DS y lleva SU `_ngcontent`. */
   &__td-text {
-    font-size: var(--sc-font-size-200);
-    line-height: var(--sc-line-height-body-2);
     color: var(--sc-text-secondary);
 
     &--mono {

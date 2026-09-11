@@ -20,14 +20,6 @@
     margin-bottom: var(--sc-spacing-2-75);
   }
 
-  &__title {
-    margin: 0;
-    font-size: var(--sc-font-size-h3);
-    font-weight: var(--sc-font-weight-semibold);
-    color: var(--sc-text-primary);
-    line-height: var(--sc-line-height-h3);
-  }
-
   &__categories {
     display: flex;
     flex-direction: column;

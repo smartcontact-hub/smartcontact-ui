@@ -4,10 +4,10 @@
     @if (titleKey() || hintKey()) {
       <div class="gatbl__title-block">
         @if (titleKey(); as t) {
-          <h2 class="gatbl__title">{{ t | translate }}</h2>
+          <h2 class="gatbl__title sc-text-body-semibold">{{ t | translate }}</h2>
         }
         @if (hintKey(); as h) {
-          <span class="gatbl__hint">{{ h | translate }}</span>
+          <span class="gatbl__hint sc-text-caption-regular">{{ h | translate }}</span>
         }
       </div>
     }

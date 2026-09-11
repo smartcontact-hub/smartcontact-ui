@@ -129,13 +129,10 @@
   transition: color var(--sc-transition-fast) ease;
 }
 
-/* `Body/body-regular` por su token de rol; el `line-height: 22px` literal no
- * salía de ningún peldaño del sistema. */
+/* `Body/body-regular`, y ahora POR SU NOMBRE: la clase va en la plantilla. El
+ * bloque de arriba sube el peso a semibold cuando el ítem está activo, que es
+ * un modificador de solo peso — la clase no lo sustituye, lo complementa. */
 .nav-item__label {
-  font-family: var(--sc-font-family-primary);
-  font-size: var(--sc-font-size-body-2);
-  line-height: var(--sc-line-height-body-2);
-  font-weight: var(--sc-font-weight-regular);
   color: var(--sc-text-secondary);
   white-space: nowrap;
 }

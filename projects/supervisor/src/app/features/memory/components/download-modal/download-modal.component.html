@@ -16,7 +16,7 @@
           (cycle)="onRecordingsToggle($event)"
         />
         <div class="download-modal__option-text">
-          <span class="download-modal__option-label">
+          <span class="download-modal__option-label sc-text-caption-regular">
             {{ 'memory.player.download.recordings' | translate }}
           </span>
           @if (!hasRecordings()) {
@@ -35,7 +35,7 @@
           (cycle)="onChatsToggle($event)"
         />
         <div class="download-modal__option-text">
-          <span class="download-modal__option-label">
+          <span class="download-modal__option-label sc-text-caption-regular">
             {{ 'memory.player.download.chats' | translate }}
           </span>
           @if (!hasChats()) {
@@ -49,7 +49,7 @@
 
     <div class="download-modal__gdpr" role="note">
       <sc-icon class="download-modal__gdpr-icon" [name]="infoIcon" [size]="14" />
-      <p class="download-modal__gdpr-text">
+      <p class="download-modal__gdpr-text sc-text-caption-regular">
         {{ 'memory.player.download.gdpr_hint' | translate }}
       </p>
     </div>

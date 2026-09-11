@@ -102,13 +102,10 @@
    * tipografía de la celda, que va en el `<span>` proyectado y por eso
    * conserva el encapsulado de esta página. */
   &__cell {
-    font-size: var(--sc-font-size-200);
-    line-height: var(--sc-line-height-body-2);
     color: var(--sc-text-secondary);
 
     &--emphasis {
       color: var(--sc-text-primary);
-      font-weight: var(--sc-font-weight-semibold);
     }
 
     &--mono {
