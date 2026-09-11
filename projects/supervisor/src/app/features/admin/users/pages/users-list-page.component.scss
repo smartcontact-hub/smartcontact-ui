@@ -61,11 +61,13 @@
      `<td>` lo pinta el DS y lleva SU `_ngcontent`. */
   &__td-text {
     font-size: var(--sc-font-size-200);
+    line-height: var(--sc-line-height-body-2);
     color: var(--sc-text-secondary);
 
     &--mono {
       font-family: var(--sc-font-family-mono);
       font-size: var(--sc-font-size-100);
+      line-height: var(--sc-line-height-caption);
     }
   }
 
@@ -74,6 +76,7 @@
     align-items: center;
     gap: var(--sc-spacing-0-5);
     font-size: var(--sc-font-size-200);
+    line-height: var(--sc-line-height-body-2);
     font-weight: var(--sc-font-weight-semibold);
     color: var(--sc-text-primary);
   }
@@ -82,6 +85,7 @@
     padding: var(--sc-spacing-2-75) var(--sc-spacing-0-875);
     text-align: center;
     font-size: var(--sc-font-size-200);
+    line-height: var(--sc-line-height-body-2);
     color: var(--sc-text-subtle);
   }
 }

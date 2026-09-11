@@ -47,6 +47,7 @@
   &__option-label {
     font-family: var(--sc-font-family-primary);
     font-size: var(--sc-font-size-100);
+    line-height: var(--sc-line-height-caption);
     font-weight: var(--sc-font-weight-regular);
     color: var(--sc-text-primary);
   }
@@ -54,6 +55,7 @@
   &__option-hint {
     font-family: var(--sc-font-family-primary);
     font-size: var(--sc-font-size-50);
+    line-height: var(--sc-line-height-caption);
     color: var(--sc-text-subtle);
   }
 

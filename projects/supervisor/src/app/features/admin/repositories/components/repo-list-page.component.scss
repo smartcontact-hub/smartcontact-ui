@@ -103,6 +103,7 @@
    * conserva el encapsulado de esta página. */
   &__cell {
     font-size: var(--sc-font-size-200);
+    line-height: var(--sc-line-height-body-2);
     color: var(--sc-text-secondary);
 
     &--emphasis {
@@ -113,6 +114,7 @@
     &--mono {
       font-family: var(--sc-font-family-mono);
       font-size: var(--sc-font-size-100);
+      line-height: var(--sc-line-height-caption);
       color: var(--sc-text-primary);
     }
 
@@ -142,6 +144,7 @@
     padding: var(--sc-spacing-2-75) var(--sc-spacing-0-875);
     text-align: center;
     font-size: var(--sc-font-size-200);
+    line-height: var(--sc-line-height-body-2);
     color: var(--sc-text-subtle);
   }
 }

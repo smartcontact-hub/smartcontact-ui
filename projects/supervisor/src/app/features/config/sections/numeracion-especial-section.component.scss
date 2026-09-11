@@ -62,6 +62,7 @@
     padding: var(--sc-spacing-2-75) var(--sc-spacing-0-875);
     text-align: center;
     font-size: var(--sc-font-size-100);
+    line-height: var(--sc-line-height-caption);
     color: var(--sc-text-subtle);
   }
 }
@@ -107,6 +108,7 @@
   &__name {
     flex: 1;
     font-size: var(--sc-font-size-200);
+    line-height: var(--sc-line-height-body-2);
     color: var(--sc-text-secondary);
     overflow: hidden;
     text-overflow: ellipsis;
@@ -121,6 +123,7 @@
     width: 24px;
     text-align: center;
     font-size: var(--sc-font-size-50);
+    line-height: var(--sc-line-height-caption);
     text-transform: uppercase;
     letter-spacing: 0.05em;
     color: var(--sc-text-subtle);
@@ -130,6 +133,7 @@
     width: 56px;
     text-align: right;
     font-size: var(--sc-font-size-100);
+    line-height: var(--sc-line-height-caption);
     color: var(--sc-text-subtle);
     font-variant-numeric: tabular-nums;
   }
@@ -163,6 +167,7 @@
     display: block;
     margin-bottom: var(--sc-spacing-0-5);
     font-size: var(--sc-font-size-100);
+    line-height: var(--sc-line-height-caption);
     font-weight: var(--sc-font-weight-regular);
     color: var(--sc-text-secondary);
   }

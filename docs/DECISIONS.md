@@ -87,8 +87,11 @@ que no hay Figma que lo respalde ni token de destino al que converger. Y el cost
 propaga un peso que no existe.
 
 **Descartadas** ·
-- *Gatear también las 211 reglas sin `line-height`* → rechazado POR AHORA: son el bucket más numeroso
-  y el menos grave, y arreglarlas es mecánico pero masivo. Van en su propia tanda.
+- *Gatear las reglas sin `line-height` en la misma tanda* → se hizo DESPUÉS, el mismo día y en este
+  mismo DD: **212 → 23**, y los 23 que quedan son los muebles de interlineado apretado. El delta se
+  midió en pantalla ANTES de tocar: los de 12px ya computaban 18 (el rol, por herencia) y no se
+  mueven; los de 14px pasan de 21 a 20, −1px por línea. Declararlo los hace deterministas en vez de
+  correctos por casualidad.
 - *Marcar los `line-height` SIN UNIDAD (1.4, 1.5…)* → rechazado: están **aparcados con razón** en
   `NEXT-SESSION.md` («sin token destino en el Kit»). Un guardián que pide lo que el sistema no puede
   dar enseña a ignorarlo.

@@ -15,6 +15,66 @@
 > coordine. Los `sNN` de los tramos viejos se quedan como están: los nombran commits y
 > `docs/DECISIONS.md`, y reescribirlos solo desincronizaría el doc de su propia historia.
 
+## ✅ 2026-09-11 · El interlineado deja de depender de quién sea el padre: 212 reglas bajan a 23
+
+**Sello:** DD-67 (ampliado). Gate ampliado y **validado con el fallo puesto más DOS controles
+negativos**: una regla con tamaño y sin interlineado → rojo; la misma en un CHIP → no salta; en un
+ICONO → no salta. 18 tests. Medido en el navegador antes y después. Veredicto por `ci:verdict`.
+
+**De dónde sale.** Rafa: «ataca las 211 reglas sin interlineado y ya cerramos». Era el bucket que
+la tanda anterior dejó nombrado.
+
+**LO PRIMERO FUE MEDIR EL DELTA, y cambió el plan.** Un `font-size` sin `line-height` hereda, así
+que el texto no mide lo que dice su rol. Pero cuánto se mueve depende de quién sea el padre, y eso
+no se deduce del CSS:
+
+| | Hoy computa | El rol | Delta |
+| --- | --- | --- | --- |
+| Los de **12px** | 18px | 18 | **0** — ya estaban bien, por casualidad |
+| Los de **14px** | 21px | 20 | **−1px** por línea |
+| Chips y pastillas | 12/12 y 14/14 | 18 y 20 | **+6px** — les cambia la altura |
+
+Esa tercera fila es la que salvó el trabajo: en una pantalla de lista había **25 textos a 14/14 y
+17 a 12/12**, todos chips, pastillas y contadores que heredan un `line-height: 1` a propósito
+porque su altura la manda el padding. Aplicar el rol a ciegas les habría sumado 6px a cada uno.
+
+**Lo que se hizo.** 212 → **23**, y los 23 que quedan son exactamente esa familia, excluida por
+nombre y con su test de control negativo. Los de 12px no mueven un píxel: pasan de ser correctos
+por herencia a serlo por declaración. Los de 14px se aprietan 1px por línea.
+
+**TRES FALLOS MÍOS EN LA EDICIÓN EN MASA, y cómo se cazó cada uno** — que es lo que merece la pena
+contar, porque los tres dieron «verde» en el conteo:
+
+1. **46 bloques con DOS interlineados.** Mi control de «¿ya lo tiene?» solo miraba lo que iba
+   ANTES del `font-size`, así que duplicaba en las reglas que lo declaran después. Se rehízo en DOS
+   pasadas: `aplanar` da el mapa completo del bloque y solo entonces se inserta.
+2. **24 reglas saltadas en silencio.** El reescritor no ignoraba las llaves dentro de COMENTARIOS,
+   así que la pila se descuadraba en el primer `/* … { … */` y a partir de ahí el selector salía
+   vacío. `aplanar` no sufre porque quita los comentarios antes de mirar nada.
+3. **Un fallo de la tanda ANTERIOR que mi verificación había tapado**: `.table__td-name` vive en
+   DOS ficheros y mi comprobación agrupaba por NOMBRE en un `Map`, que se queda con el último. En
+   usuarios y agentes quedó en 600 y **en grupos se quedó en 400**, y se fundió así en el `#102`.
+   Verificar por nombre cuando el mismo nombre vive en dos sitios es no verificar. Ahora se
+   comprueba por (fichero, selector).
+
+**Y una limitación que queda dicha**: lo que no tiene regla propia sigue heredando. En la pantalla
+de referencia quedan cuatro `<span>` sin clase a 14/21; no hay regla que arreglar, y ponerles una
+sería inventar un nombre para cada texto suelto.
+
+**⚠️ La trampa de la memoria mordió, y no era mía.** El preflight se cayó por el gate de forma de
+la memoria: otra sesión había dejado `MEMORY.md` en 1.010 palabras (tope 1.000) y una ficha en 440
+(tope 250). Se comprimieron **sin perder un solo hecho ni un puntero** — es lo que Rafa avisó al
+abrir la sesión, y conviene saber que bloquea a cualquiera, no solo a quien la engordó.
+
+**Lo que queda:**
+
+1. **Migrar a `.sc-text-*` lo que aún declara tipografía por token en SCSS.** El `#98` lo hizo para
+   las etiquetas de campo; el resto sigue con tokens en la hoja — correcto, pero es el paso previo.
+2. Los formularios de admin siguen sin maqueta de `sc-section-card` para su CONTENIDO.
+3. Decidir si la app viva lleva un aviso que apunte a `docs/PROTOTIPOS.md` (DD-56).
+
+---
+
 ## ✅ 2026-09-11 · El 500 no es «casi» un 600: 76 reglas de texto vuelven a los 12 estilos
 
 **Sello:** DD-67. Gate nuevo (tercera comprobación de `audit:text-styles`) **validado con el fallo
