@@ -22,6 +22,21 @@ import { fileURLToPath } from 'node:url';
 const git = (cwd, args) =>
   execFileSync('git', args, { cwd, encoding: 'utf8', stdio: ['ignore', 'pipe', 'ignore'] }).trim();
 
+/**
+ * ¿Fundir `origin/main` en HEAD daría conflicto? Es distinto de «va rezagada»: una rama que no
+ * lleva main pero funde LIMPIA se puede pushear y el CI del PR prueba el merge igualmente.
+ * `git merge-tree --write-tree` lo dice sin tocar el árbol ni el índice (git ≥ 2.38): sale 0 si
+ * el merge es limpio y ≠0 si hay conflicto.
+ */
+export function hayConflicto(cwd = process.cwd()) {
+  try {
+    git(cwd, ['merge-tree', '--write-tree', 'origin/main', 'HEAD']);
+    return false;
+  } catch {
+    return true;
+  }
+}
+
 /** El veredicto como función pura de tres hechos, para que el test lo pruebe sin git. */
 export function estadoRebase({ hayRemoto, fetchOk, esAncestro }) {
   if (!hayRemoto) {
@@ -38,6 +53,31 @@ export function estadoRebase({ hayRemoto, fetchOk, esAncestro }) {
     };
   }
   return { ok: true, aviso };
+}
+
+/**
+ * El veredicto para DESPUÉS de la cadena (al escribir o leer la marca), que es un caso distinto:
+ * aquí main ya no avanzó «antes de empezar» sino DURANTE los 8 minutos, y obligar a repetir la
+ * cadena entera cada vez que otra sesión funde algo es un bucle sin salida — el 2026-09-11 había
+ * TRES sesiones fundiendo en el mismo repo. Así que solo se niega cuando el merge daría
+ * CONFLICTO, que es el caso que de verdad obliga a rehacer el trabajo; si funde limpio, avisa y
+ * sigue (y el CI del PR prueba el merge de todas formas).
+ */
+export function estadoTrasLaCadena(cwd = process.cwd()) {
+  const st = medirRebase(cwd);
+  if (st.ok) return st;
+  if (hayConflicto(cwd)) {
+    return {
+      ok: false,
+      motivo:
+        'main avanzó DURANTE la cadena y ahora funde con CONFLICTO: lo que pasó el preflight no ' +
+        'es lo que acabaría en main. `git fetch origin && git rebase origin/main` y repítela.',
+    };
+  }
+  return {
+    ok: true,
+    aviso: 'main avanzó durante la cadena, pero funde limpio: se sigue (el CI del PR prueba el merge).',
+  };
 }
 
 /** Lee los tres hechos de un repo real y devuelve el veredicto. */

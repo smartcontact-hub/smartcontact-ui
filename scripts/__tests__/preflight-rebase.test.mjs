@@ -5,7 +5,7 @@ import { mkdtempSync, writeFileSync, rmSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
-import { estadoRebase, medirRebase } from '../preflight-rebase.mjs';
+import { estadoRebase, estadoTrasLaCadena, hayConflicto, medirRebase } from '../preflight-rebase.mjs';
 
 // Un preflight sobre una rama que no lleva `origin/main` mide un árbol que nunca se va a
 // pushear tal cual: el 2026-09-11 se tiraron DOS cadenas de 8 min porque main avanzó entre el
@@ -106,5 +106,48 @@ test('sin remoto (repo suelto) → ok con aviso, no bloquea', () => {
     assert.match(st.aviso, /sin remoto/);
   } finally {
     rmSync(dir, { recursive: true, force: true });
+  }
+});
+
+// ── DESPUÉS de la cadena: main avanzó durante los 8 minutos ──────────────────────────────────
+//
+// Aquí la regla NO puede ser la misma que antes de empezar. El 2026-09-11 había tres sesiones
+// fundiendo en este repo, y negarse cada vez que otra funde algo obliga a repetir la cadena
+// entera en bucle. Solo se niega cuando el merge daría CONFLICTO, que es el caso que de verdad
+// invalida lo medido; si funde limpio, avisa y sigue.
+
+test('tras la cadena: main avanzó pero funde LIMPIO → ok con aviso', () => {
+  const { raiz, mio, otro } = escenario();
+  try {
+    writeFileSync(join(otro, 'otro-fichero.txt'), 'no toca lo mío\n');
+    git(otro, 'add', '-A');
+    git(otro, 'commit', '-q', '-m', 'otro avanza main sin tocar b.txt');
+    git(otro, 'push', '-q', 'origin', 'main');
+    git(mio, 'fetch', '-q', 'origin', 'main');
+    assert.equal(medirRebase(mio).ok, false, 'va rezagada, eso no cambia');
+    assert.equal(hayConflicto(mio), false, 'pero funde limpio');
+    const st = estadoTrasLaCadena(mio);
+    assert.equal(st.ok, true, st.motivo);
+    assert.match(st.aviso, /funde limpio/);
+  } finally {
+    rmSync(raiz, { recursive: true, force: true });
+  }
+});
+
+test('ROJO tras la cadena: main tocó el MISMO fichero → conflicto, y hay que repetirla', () => {
+  const { raiz, mio, otro } = escenario();
+  try {
+    // Los dos escriben `b.txt` con contenido distinto: merge con conflicto de verdad.
+    writeFileSync(join(otro, 'b.txt'), 'la versión de main\n');
+    git(otro, 'add', '-A');
+    git(otro, 'commit', '-q', '-m', 'main toca b.txt');
+    git(otro, 'push', '-q', 'origin', 'main');
+    git(mio, 'fetch', '-q', 'origin', 'main');
+    assert.equal(hayConflicto(mio), true, 'el mismo fichero por los dos lados conflicta');
+    const st = estadoTrasLaCadena(mio);
+    assert.equal(st.ok, false);
+    assert.match(st.motivo, /CONFLICTO/);
+  } finally {
+    rmSync(raiz, { recursive: true, force: true });
   }
 });

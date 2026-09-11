@@ -325,7 +325,7 @@ variables, 30 comentarios activos.
   verde** en este Mac, dos veces. O sea que el smoke completo SÍ es corrible en local; lo que no
   lo es son sus baselines por plataforma. Sin `CI=1` siguen rojos y **no son tuyos** (el de
   `sc-card` espera una página de 1049px y recibe 1453 — no lo leas como regresión de métrica).
-- **El CI son 8 pasos, no `verify`** — enumerados en `ci.yml`, y gateados (CHECK J). Los e2e de app solo corren allí (DD-60); las baselines visuales de sc-docs, a mano.
+- **El CI son 9 pasos, no `verify`** — enumerados en `ci.yml`, y gateados (CHECK J). Los e2e de app solo corren allí (DD-60); las baselines visuales de sc-docs, a mano.
 - **`npm run verify` (31 gates) NO corre el `e2e smoke`.** El `component-structure.spec` (baseline
   del `outerHTML` de cada componente) es un paso aparte de CI, y el textarea autoResize graba su
   alto calculado en un `style` inline que vive en ese `outerHTML`. Un cambio de token/visual puede
