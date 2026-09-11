@@ -148,6 +148,7 @@ export class ConversationTableComponent {
     viewChild<TemplateRef<ScColumnCellContext<Conversation>>>('servicePillTpl');
   private readonly groupPillTpl =
     viewChild<TemplateRef<ScColumnCellContext<Conversation>>>('groupPillTpl');
+  private readonly textTpl = viewChild<TemplateRef<ScColumnCellContext<Conversation>>>('textTpl');
   private readonly numTpl = viewChild<TemplateRef<ScColumnCellContext<Conversation>>>('numTpl');
   private readonly idTpl = viewChild<TemplateRef<ScColumnCellContext<Conversation>>>('idTpl');
   private readonly actionsTpl = viewChild<TemplateRef<ScColumnCellContext<Conversation>>>('actionsTpl');
@@ -157,12 +158,12 @@ export class ConversationTableComponent {
     const t = (k: string): string => this.translate.instant(`memory.conversations.table.${k}`);
     return [
       { field: 'status', header: t('status'), width: '132px', cellTemplate: this.statusTpl() },
-      { field: 'hour', header: t('hour') },
-      { field: 'date', header: t('date') },
+      { field: 'hour', header: t('hour'), cellTemplate: this.textTpl() },
+      { field: 'date', header: t('date'), cellTemplate: this.textTpl() },
       { field: 'service', header: t('service'), cellTemplate: this.servicePillTpl() },
-      { field: 'origin', header: t('origin') },
+      { field: 'origin', header: t('origin'), cellTemplate: this.textTpl() },
       { field: 'group', header: t('group'), cellTemplate: this.groupPillTpl() },
-      { field: 'destination', header: t('destination') },
+      { field: 'destination', header: t('destination'), cellTemplate: this.textTpl() },
       { field: 'duration', header: t('duration'), align: 'right', cellTemplate: this.numTpl() },
       { field: 'waiting', header: t('waiting'), align: 'right', cellTemplate: this.numTpl() },
       { field: 'id', header: t('id'), cellTemplate: this.idTpl() },
