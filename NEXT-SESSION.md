@@ -20,6 +20,10 @@
    sin fundir). Nació el 2026-09-10 midiendo este repo: nueve worktrees vivos, tres con el trabajo
    ya en `main`, y una rama viviendo en dos cajas a la vez (`x` y su `x-2`, el mismo SHA): eso lo
    canta como GEMELAS, no como trabajo duplicado; duplicado es el mismo título en ramas distintas.
+   ⚠️ **Lo que diga «borra el worktree» está medido**: antes de proponerlo mira el `status` de SU
+   árbol y pasa `git cherry` por sus commits, así que no te manda borrar una caja con ficheros a
+   medio editar ni con un commit que nunca llegó a `main`. Si ves `SIN GUARDAR` o `BLOQUEADO`,
+   esa caja no se toca.
 
 4. Lo de **"ESPERANDO A RAFA" no se pregunta**. Está aparcado a propósito; solo se toca si él lo saca.
 5. Si tocas un fondo o un título → `docs/DECISIONS.md` DD-33 y DD-34. Si tocas una app RÉPLICA
