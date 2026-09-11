@@ -75,12 +75,12 @@ Orca se cerraron en el #113; `agent-mini` entró en el CI; la doc, en su PR):
 
 **Lo que dejó s42, medido y sin hacer:**
 
-- **Las descripciones de los text styles de Figma están corridas un peldaño.** Se escribieron
-  cuando `h1` era la cima y no se movieron al meter `Display` encima: `Heading/h1-semibold` dice
-  *«el texto más grande… uno por pantalla, no más»* (ya no lo es, Display es 64 y reclama lo
-  mismo); `Heading/h2-regular` lleva una descripción de BODY (*«el texto de leer, párrafos»*) en
-  un heading de 24; `Display/display-regular` una de SUBTÍTULO; y `h1-regular` y `h3-regular` la
-  tienen vacía. Es texto, no estructura: se arregla en Figma en cinco minutos.
+- ~~**Las descripciones de los text styles de Figma están corridas un peldaño.**~~ → **HECHO el
+  2026-09-12** con el bridge: las 12 reescritas y **releídas para verificar** (0 vacías, y cada una
+  nombra su propio `tamaño/interlineado`, así que el día que la rampa se mueva el desfase se ve).
+  ⚠️ De paso, una corrección MÍA: el 2026-09-11 escribí que el fichero del DS llevaba la rampa
+  VIEJA (`display1` 36/52, `H1` 32/48). Era falso — leí con `figma_get_text_styles` sin fijar el
+  fichero y me contestó otro. Apuntando por `fileKey`, los 12 son la rampa buena.
 - **El tier `app/typography/xl|xxl` existe en Figma y no lo consume nadie** (medido: 0 nodos, 0
   text styles). Está clasificado como `not-consumed` en `coverage-map.mjs`. Si algún día se
   quiere de verdad, va a `sc-preset/extend.ts` + `APP_TYPOGRAPHY_CONTRACT` y sube al bucket
@@ -90,14 +90,32 @@ Orca se cerraron en el #113; `agent-mini` entró en el CI; la doc, en su PR):
   honesto tras DD-48 (la rampa era aspiracional desde DD-13), no una regresión: la rampa ya dice
   la verdad y espera consumidores de PRODUCTO. Si el Supervisor adopta la rampa, es ahí.
 
-1. **El eslabón que sigue faltando: nadie compara *fichero de Figma ↔ export*.** `tokens:parity`
-   compara *export ↔ CSS*. Por ese hueco se coló el desfase de julio. No puede ser gate de CI
-   (necesita el bridge abierto), así que es procedimiento manual — mismo caso que el Check D de
-   `docs:coherence`.
-   ⚠️ **Cómo repetirlo sin tropezar**: resuelve a RGBA final **los dos lados** antes de comparar.
-   La primera pasada dio **15 divergencias falsas** por leer los colores de Figma sin canal alfa
-   (`#00000000` vs `#000000`) y por comparar un alias contra un valor ya resuelto. Y en el JSON del
-   export **las claves raíz llevan las barras dentro** (`d['aura/semantic/dark']['primary']`).
+1. ~~**El eslabón que falta: nadie compara *fichero de Figma ↔ export*.**~~ → **HECHO el
+   2026-09-12, y sale LIMPIO.** `tools/figma-export-parity.mjs <capa>` imprime el JavaScript —con
+   los valores del Kit ya resueltos y embebidos— que se le pega a `figma_execute_across_files`;
+   compara DENTRO de Figma para no perder precisión en el viaje. No es gate de CI (necesita el
+   bridge abierto), como el Check D de `docs:coherence`.
+
+   | Capa | Tokens | Divergencias |
+   | --- | ---: | ---: |
+   | `primitive` | 282 | 0 |
+   | `semantic-light` · `semantic-dark` | 82 + 82 | 0 |
+   | `component-light` · `component-dark` | 346 + 346 | 0 |
+   | `app` | 6 | 0 |
+
+   **844 tokens, ni uno desfasado, y ninguno que exista en un lado y no en el otro.** Por ese
+   hueco se coló el desfase de julio; hoy no hay ninguno.
+
+   ⚠️ **Las cuatro trampas están DENTRO de la herramienta**, y las cuatro dieron un falso rojo
+   antes del verde: RGBA final por los dos lados (sin alfa, 15 falsos) · alias por los DOS lados
+   (el export guarda `{surface.0}`) · cada alias resuelto EN SU CAPA (si no, la oscura pisa a la
+   clara) · y la gorda, **el MODO no viaja entre colecciones**: el `modeId` de «Dark» en
+   *Component* no es el de «Dark» en *Semantic*, así que seguir un alias con el modo de partida
+   cae al primer modo del destino —el claro— y la capa oscura falla **en bloque**. Me dio 21 de 24
+   familias «discrepando» y no era deriva, era mi sonda; lo destapó mirar UN token
+   (`button/primary/background`) en vez de creerme el informe. Nota del export: la tipografía vive
+   en `aura/custom`, no en `aura/primitive`, pese a que los alias la llamen así.
+
 2. **El 1:1 web↔Figma de chip · tag · toast** — sigue **bloqueado por herramienta**, no por
    decisión. Ver la sección de Figma más abajo.
 3. **La deuda de código de [`AUDIT-DEUDA-2026-06.md`](../AUDIT-DEUDA-2026-06.md)** que quede tras
@@ -265,7 +283,7 @@ tramo de Figma: el Kit no arbitra este suelo, la divergencia sigue siendo nuestr
 | ~~**Borrar el proyecto Cloudflare `sc-demo`**~~ → **HECHO por Rafa (2026-09-01)** | Proyecto borrado de Cloudflare. Su check «Cloudflare Pages: sc-demo» todavía sale en rojo en el último commit de `design-tokens-sync`: es un snapshot HISTÓRICO de cuando existía (no vuelve a correr sobre un commit viejo), se limpiará solo en el próximo push del bot de tokens. |
 | **`org-profile.md`** | `smartcontact-hub/.github` → `profile/README.md` → **HTTP 404** (re-medido 2026-08-25): no está pegado. El borrador sigue en `docs/org-profile.md` |
 | **Un primary dark conforme, pero desde el KIT** | Ya NO es el 3,01:1 — lo resolvió **DD-40** subiendo la rampa un paso y **divergiendo** del Kit. Lo que queda es pedirle al Kit su primary dark conforme (luminancia relativa entre **0,136 y 0,183**, al centro de la banda); el día que llegue, se revierte devolviendo tres filas de `color-map.mjs` a `enforce` |
-| **Lienzo de página gris↔blanco** | Figma `13920:4298`. **DESBLOQUEADO** por `bcab818` (2026-08-25): nace `--sc-bg-canvas` (blanco en claro / slate-950 en oscuro), el token que faltaba, SIN tocar `--sc-bg-default` (que hace doble trabajo: suelo + relleno de campos, 32 ficheros). El bug del rail de AED que describía DD-36 ya no aplica. Lo que queda es SOLO la decisión de diseño: ¿el lienzo de contenido pasa a blanco? El token para hacerlo limpio ya está; el valor pintado hoy no ha cambiado |
+| ~~**Lienzo de página gris↔blanco**~~ → **DECIDIDO Y HECHO**: [DD-45](../DECISIONS.md) lo llevó a BLANCO el 2026-08-31 (`app-shell.component.scss` pinta `--sc-bg-canvas`), y Rafa lo reconfirmó el 2026-09-11 («el lienzo sí, pasa a blanco») sin saber que ya estaba. La fila llevaba diez días mintiendo: si una espera se resuelve en otro tramo, hay que venir a tacharla aquí |
 | ~~**Tramo actual del breadcrumb**~~ → **DECIDIDO, `bcab818` (2026-08-25)**: la propuesta de Figma `13890:157` (padres slate-500 `#8F97A3`) **se RECHAZA** — da **2,95:1** sobre blanco y no cumple AA. Se queda el código como está (padres slate-600, actual slate-700, ambos AA). Falta solo anotarlo en el nodo de Figma (Bloque 4). *Nota: el mismo commit tokenizó la miga a 14px, otro asunto ya cerrado.* |
 | ~~**El botón de crear cambia de ancho entre listas**~~ → **HECHO, `bcab818` (2026-08-25)**: decisión de Rafa «que no cambie de anchura porque sí». `main.scss:205` → `.top-bar__actions button { min-width: 144px; max-width: 288px }`, anclado en clase NUESTRA. Los cinco (122–142px) aterrizan igual. Aplicado y en `main` |
 | **B5b · prosa i18n del constructor** | Necesita ICU MessageFormat **y diseño**. Sigue aparcada |

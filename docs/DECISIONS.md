@@ -1021,8 +1021,12 @@ un enlace que nadie sabe a qué corresponde.
   mecanismo.
 
 **Consecuencias** · La URL de producción deja de ser lo que se pega en un ticket. Al entregar hay
-un paso más (`npm run proto`, tres preguntas), y a cambio el enlace no envejece. Queda pendiente
-decidir si la app viva lleva además un aviso que apunte a la tabla.
+un paso más (`npm run proto`, tres preguntas), y a cambio el enlace no envejece.
+
+**El aviso en la app viva: NO, y con fecha** (Rafa, 2026-09-12). La tabla de `docs/PROTOTIPOS.md`
+sigue VACÍA: un aviso que apunta a una tabla sin filas no ayuda a nadie y añade una franja
+permanente a una app que sí se usa. Se reabre el día que haya una versión congelada de verdad;
+hasta entonces esto deja de ser una pregunta abierta.
 
 Dos cosas salieron al probarlo de punta a punta, y las dos eran del mismo tipo: la herramienta
 estaba escrita para quien la escribió.
