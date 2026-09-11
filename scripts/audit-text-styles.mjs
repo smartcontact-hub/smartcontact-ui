@@ -342,6 +342,16 @@ export const TIPOGRAFIA_DELIBERADA = {
 export const esCajaDeIcono = (selector) =>
   /(caret|chevron|check|icon|arrow|spark|dot|glyph)$/i.test(selector.replace(/^\./, ''));
 
+/**
+ * Chips, pastillas, badges y contadores: muebles de interlineado APRETADO. Heredan un
+ * `line-height: 1` de su contenedor a propósito —su altura la manda el padding, no el
+ * interlineado— y ponerles el del rol los haría crecer 6px. Medido en el navegador el
+ * 2026-09-11, no supuesto: en una pantalla de lista había 25 textos a 14/14 y 17 a 12/12,
+ * todos de esta familia.
+ */
+export const esInterlineadoApretado = (selector) =>
+  /(pill|chip|badge|tag|dot|num|count|handle|kbd|shortcut|flag)$/i.test(selector.replace(/^\./, ''));
+
 /* Tablas de resolución: token → px. Se leen de los layers, no se copian. */
 function tablaTokens(prefijo) {
   const capas = ['01-primitive.css', '02-semantic.css']
@@ -381,6 +391,11 @@ export function tipografiaDe(scss, { size, lh, peso }) {
     const fallos = [];
     if (w !== null && !PESOS_VALIDOS.has(w)) fallos.push(`peso ${w} (los estilos solo usan ${[...PESOS_VALIDOS].join(' y ')})`);
     if (s !== null && !ROLES.has(s) && !esCajaDeIcono(selector)) fallos.push(`tamaño ${s} no es peldaño de ningún rol`);
+    /* Un tamaño SIN interlineado deja que lo ponga el contexto, así que el texto no mide lo
+     * que dice su rol: 14 heredando 1.5 son 21, y el rol lleva 20. Medido en pantalla antes
+     * de tocar nada: 212 reglas así. Se exceptúan los glifos y los muebles apretados. */
+    if (s !== null && ROLES.has(s) && !props['line-height'] && !esCajaDeIcono(selector) && !esInterlineadoApretado(selector))
+      fallos.push(`declara tamaño ${s} y NO su interlineado (el rol lleva ${ROLES.get(s)})`);
     /* Un `line-height` SIN UNIDAD (1.4, 1.5…) es un multiplicador, no un número de px, y
      * además está APARCADO con razón en `NEXT-SESSION.md` («sin token destino en el Kit»):
      * el Kit no exporta un peldaño sin unidad al que apuntar, así que convertirlos es un

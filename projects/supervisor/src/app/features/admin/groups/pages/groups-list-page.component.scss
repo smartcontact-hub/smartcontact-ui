@@ -65,11 +65,13 @@
    * dentro de la celda, porque el `<td>` lo pinta el DS. */
   &__cell {
     font-size: var(--sc-font-size-200);
+    line-height: var(--sc-line-height-body-2);
     color: var(--sc-text-secondary);
 
     &--mono {
       font-family: var(--sc-font-family-mono);
       font-size: var(--sc-font-size-100);
+      line-height: var(--sc-line-height-caption);
     }
 
     /* El ancho (96px) y la alineación derecha los declara la column-def; aquí
@@ -83,6 +85,7 @@
     padding: var(--sc-spacing-2-75) var(--sc-spacing-0-875);
     text-align: center;
     font-size: var(--sc-font-size-200);
+    line-height: var(--sc-line-height-body-2);
     color: var(--sc-text-subtle);
   }
 }
@@ -96,7 +99,8 @@
   align-items: center;
   gap: var(--sc-spacing-0-875);
   font-size: var(--sc-font-size-200);
-  font-weight: var(--sc-font-weight-regular);
+  line-height: var(--sc-line-height-body-2);
+  font-weight: var(--sc-font-weight-semibold);
   color: var(--sc-text-primary);
 
   .table__td-name-text {

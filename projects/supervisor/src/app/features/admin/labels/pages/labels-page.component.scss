@@ -65,6 +65,7 @@
 .table {
   &__td-desc {
     font-size: var(--sc-font-size-200);
+    line-height: var(--sc-line-height-body-2);
     color: var(--sc-text-subtle);
 
     /* "Sin descripción" iba con `--sc-text-disabled` y medía 2.29:1 en oscuro.
@@ -95,6 +96,7 @@
 
   &__no-results-title {
     font-size: var(--sc-font-size-200);
+    line-height: var(--sc-line-height-body-2);
     font-weight: var(--sc-font-weight-semibold);
     color: var(--sc-text-secondary);
   }
@@ -102,6 +104,7 @@
   &__no-results-text {
     margin-top: var(--sc-spacing-0-25);
     font-size: var(--sc-font-size-100);
+    line-height: var(--sc-line-height-caption);
     color: var(--sc-text-subtle);
   }
 }

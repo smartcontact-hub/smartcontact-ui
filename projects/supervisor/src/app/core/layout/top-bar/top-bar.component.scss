@@ -199,6 +199,7 @@
 
   &__menu-name {
     font-size: var(--sc-font-size-200);
+    line-height: var(--sc-line-height-body-2);
     font-weight: var(--sc-font-weight-semibold);
     color: var(--sc-text-primary);
     overflow: hidden;
@@ -233,6 +234,7 @@
     gap: var(--sc-spacing-0-875);
     padding: var(--sc-spacing-0-875) var(--sc-spacing-1-125);
     font-size: var(--sc-font-size-200);
+    line-height: var(--sc-line-height-body-2);
     color: var(--sc-text-secondary);
     background: transparent;
     border: 0;

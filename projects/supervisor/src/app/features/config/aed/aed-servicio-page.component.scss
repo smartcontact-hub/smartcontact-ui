@@ -52,6 +52,7 @@
 .sub-label {
   display: block;
   font-size: var(--sc-font-size-50);
+  line-height: var(--sc-line-height-caption);
   font-weight: var(--sc-font-weight-regular);
   color: var(--sc-text-secondary);
 }
@@ -136,6 +137,7 @@
 
   &__text {
     font-size: var(--sc-font-size-100);
+    line-height: var(--sc-line-height-caption);
     color: var(--sc-text-secondary);
   }
 
@@ -199,6 +201,7 @@
   &__label {
     flex: 0 0 125px;
     font-size: var(--sc-font-size-100);
+    line-height: var(--sc-line-height-caption);
     font-weight: var(--sc-font-weight-semibold);
     color: var(--sc-text-primary);
   }

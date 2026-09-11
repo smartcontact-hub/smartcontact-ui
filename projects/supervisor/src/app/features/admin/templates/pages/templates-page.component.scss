@@ -64,6 +64,7 @@
     gap: var(--sc-spacing-0-5);
     padding: var(--sc-spacing-0-875) var(--sc-spacing-1-5);
     font-size: var(--sc-font-size-200);
+    line-height: var(--sc-line-height-body-2);
     color: var(--sc-text-subtle);
     background: transparent;
     border: 0;
@@ -113,6 +114,7 @@
 .table {
   &__title-text {
     font-size: var(--sc-font-size-200);
+    line-height: var(--sc-line-height-body-2);
     font-weight: var(--sc-font-weight-semibold);
     color: var(--sc-text-primary);
   }
@@ -120,6 +122,7 @@
   &__body-text {
     display: block;
     font-size: var(--sc-font-size-200);
+    line-height: var(--sc-line-height-body-2);
     color: var(--sc-text-subtle);
     /* El cuerpo se recorta a una línea. Antes el corte lo acotaba
      * `.table__td-body { max-width: 400px }`; ahora el ancho lo fija el
@@ -132,6 +135,7 @@
 
   &__updated-text {
     font-size: var(--sc-font-size-100);
+    line-height: var(--sc-line-height-caption);
     color: var(--sc-text-subtle);
   }
 
@@ -149,6 +153,7 @@
 
   &__no-results-title {
     font-size: var(--sc-font-size-200);
+    line-height: var(--sc-line-height-body-2);
     font-weight: var(--sc-font-weight-semibold);
     color: var(--sc-text-secondary);
   }
@@ -156,6 +161,7 @@
   &__no-results-text {
     margin-top: var(--sc-spacing-0-25);
     font-size: var(--sc-font-size-100);
+    line-height: var(--sc-line-height-caption);
     color: var(--sc-text-subtle);
   }
 }

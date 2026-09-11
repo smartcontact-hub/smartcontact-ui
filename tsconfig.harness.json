@@ -60,5 +60,15 @@
     "checkJs": true,
     "types": ["node"]
   },
-  "include": ["*.ts", "*.js", "e2e/**/*.ts", "tools/**/*.ts"]
+  /* `.theme-designer/**` entra desde el 2026-09-11. Son las exportaciones del Theme
+   * Designer de PrimeNG que trajo el #104: 172 `.ts` de definición de tokens que
+   * importan tipos de `@primeuix/themes/types/*`. Entraron sin que ningún tsconfig los
+   * mirara y pusieron ROJO `typecheck-coverage`, que es justo el gate que existe para
+   * cazar un directorio nuevo de primer nivel con TypeScript dentro.
+   *
+   * Van al `include` y NO a la lista de exentos porque **type-checkean limpios**:
+   * comprobado uno a uno con `tsc --noEmit` antes de decidir (exit 0, y sus tipos
+   * resuelven en `node_modules/@primeuix/themes/types`). Eximir lo que sí se puede
+   * comprobar es regalar cobertura. */
+  "include": ["*.ts", "*.js", "e2e/**/*.ts", "tools/**/*.ts", ".theme-designer/**/*.ts"]
 }

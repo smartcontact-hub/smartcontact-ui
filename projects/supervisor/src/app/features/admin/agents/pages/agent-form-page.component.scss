@@ -60,6 +60,7 @@
   &__row-label {
     display: block;
     font-size: var(--sc-font-size-200);
+    line-height: var(--sc-line-height-body-2);
     font-weight: var(--sc-font-weight-regular);
     color: var(--sc-text-primary);
   }
@@ -122,6 +123,7 @@
   gap: var(--sc-spacing-0-75);
   color: var(--sc-text-secondary);
   font-size: var(--sc-font-size-100);
+  line-height: var(--sc-line-height-caption);
 
   > sc-icon {
     flex: 0 0 auto;
@@ -207,6 +209,7 @@
 
   &__label {
     font-size: var(--sc-font-size-200);
+    line-height: var(--sc-line-height-body-2);
     font-weight: var(--sc-font-weight-regular);
     color: var(--sc-text-primary);
   }
@@ -262,6 +265,7 @@
     color: var(--sc-text-subtle);
     cursor: pointer;
     font-size: var(--sc-font-size-50);
+    line-height: var(--sc-line-height-caption);
     text-transform: uppercase;
     letter-spacing: 0.06em;
     font-weight: var(--sc-font-weight-semibold);
@@ -350,6 +354,7 @@
   &__footnote {
     margin: var(--sc-spacing-0-875) 0 0;
     font-size: var(--sc-font-size-50);
+    line-height: var(--sc-line-height-caption);
     color: var(--sc-text-subtle);
   }
 
@@ -366,6 +371,7 @@
 
   &__inset-head {
     font-size: var(--sc-font-size-50);
+    line-height: var(--sc-line-height-caption);
     text-transform: uppercase;
     letter-spacing: 0.06em;
     color: var(--sc-text-subtle);
@@ -387,6 +393,7 @@
   &__inset-label {
     display: block;
     font-size: var(--sc-font-size-200);
+    line-height: var(--sc-line-height-body-2);
     font-weight: var(--sc-font-weight-regular);
     color: var(--sc-text-primary);
   }
@@ -394,6 +401,7 @@
   &__inset-hint {
     margin: 4px 0 0;
     font-size: var(--sc-font-size-75);
+    line-height: var(--sc-line-height-caption);
     color: var(--sc-text-subtle);
   }
 }
@@ -464,6 +472,7 @@
 
   &__row-label {
     font-size: var(--sc-font-size-100);
+    line-height: var(--sc-line-height-caption);
     color: var(--sc-text-primary);
     flex: 0 1 auto;
   }
@@ -471,6 +480,7 @@
   &__row-meta {
     margin-left: auto;
     font-size: var(--sc-font-size-75);
+    line-height: var(--sc-line-height-caption);
     color: var(--sc-text-subtle);
     flex: 0 1 auto;
     max-width: 240px;
@@ -483,6 +493,7 @@
     padding: var(--sc-spacing-1-5) var(--sc-spacing-1);
     text-align: center;
     font-size: var(--sc-font-size-75);
+    line-height: var(--sc-line-height-caption);
     color: var(--sc-text-subtle);
   }
 }
@@ -510,6 +521,7 @@
     color: var(--sc-text-subtle);
     cursor: pointer;
     font-size: var(--sc-font-size-75);
+    line-height: var(--sc-line-height-caption);
     transition: color var(--sc-transition-fast) var(--sc-easing-default);
 
     /* Esta pestaña usaba los TRES grises: reposo `subtle`, hover `secondary`,

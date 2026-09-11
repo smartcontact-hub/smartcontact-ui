@@ -26,6 +26,7 @@
   gap: var(--sc-spacing-0-75);
   color: var(--sc-text-secondary);
   font-size: var(--sc-font-size-100);
+  line-height: var(--sc-line-height-caption);
 
   > sc-icon {
     flex: 0 0 auto;

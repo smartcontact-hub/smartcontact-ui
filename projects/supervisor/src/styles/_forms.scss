@@ -220,6 +220,7 @@
     display: block;
     margin-top: var(--sc-spacing-0-25);
     font-size: var(--sc-font-size-50);
+    line-height: var(--sc-line-height-caption);
     color: var(--sc-text-subtle);
   }
 
@@ -258,6 +259,7 @@
   align-items: center;
   gap: var(--sc-spacing-0-5);
   font-size: var(--sc-font-size-200);
+  line-height: var(--sc-line-height-body-2);
   color: var(--sc-text-secondary);
   cursor: pointer;
   padding: var(--sc-spacing-0-25) 0;
@@ -318,6 +320,7 @@
   &__title {
     margin: 0;
     font-size: var(--sc-font-size-100);
+    line-height: var(--sc-line-height-caption);
     text-transform: uppercase;
     letter-spacing: 0.06em;
     font-weight: var(--sc-font-weight-semibold);
@@ -354,6 +357,7 @@
    */
   &__col-label {
     font-size: var(--sc-font-size-50);
+    line-height: var(--sc-line-height-caption);
     text-transform: uppercase;
     letter-spacing: 0.06em;
     font-weight: var(--sc-font-weight-semibold);
@@ -370,6 +374,7 @@
   &__th-row {
     text-align: left;
     font-size: var(--sc-font-size-200);
+    line-height: var(--sc-line-height-body-2);
     font-weight: var(--sc-font-weight-regular);
     color: var(--sc-text-primary);
   }
@@ -516,6 +521,7 @@
 
   &__ext {
     font-size: var(--sc-font-size-75);
+    line-height: var(--sc-line-height-caption);
     color: var(--sc-text-subtle);
   }
 }

@@ -76,11 +76,13 @@
  * de esta página no lo alcanzaría nunca. */
 .cell {
   font-size: var(--sc-font-size-200);
+  line-height: var(--sc-line-height-body-2);
   color: var(--sc-text-secondary);
 
   &--mono {
     font-family: var(--sc-font-family-mono);
     font-size: var(--sc-font-size-100);
+    line-height: var(--sc-line-height-caption);
   }
 
   &--empty {
@@ -94,6 +96,7 @@
   align-items: center;
   gap: var(--sc-spacing-0-875);
   font-size: var(--sc-font-size-200);
+  line-height: var(--sc-line-height-body-2);
   font-weight: var(--sc-font-weight-semibold);
   color: var(--sc-text-primary);
 
@@ -111,6 +114,7 @@
   padding: var(--sc-spacing-2-75) var(--sc-spacing-0-875);
   text-align: center;
   font-size: var(--sc-font-size-200);
+  line-height: var(--sc-line-height-body-2);
   color: var(--sc-text-subtle);
 }
 
@@ -121,6 +125,7 @@
 
   &__type {
     font-size: var(--sc-font-size-50);
+    line-height: var(--sc-line-height-caption);
     text-transform: uppercase;
     letter-spacing: 0.05em;
     color: var(--sc-text-subtle);
@@ -136,6 +141,7 @@
   gap: var(--sc-spacing-0-25);
   padding: 2px var(--sc-spacing-0-5);
   font-size: var(--sc-font-size-100);
+  line-height: var(--sc-line-height-caption);
   border-radius: var(--sc-radius-100);
   border: 1px solid transparent;
   transition:

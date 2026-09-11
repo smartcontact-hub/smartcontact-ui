@@ -41,6 +41,7 @@
   &__title {
     margin: 0;
     font-size: var(--sc-font-size-200);
+    line-height: var(--sc-line-height-body-2);
     font-weight: var(--sc-font-weight-semibold);
     color: var(--sc-text-primary);
   }
@@ -48,6 +49,7 @@
   &__body {
     margin: 0;
     font-size: var(--sc-font-size-100);
+    line-height: var(--sc-line-height-caption);
     color: var(--sc-text-subtle);
     max-width: 56ch;
   }
