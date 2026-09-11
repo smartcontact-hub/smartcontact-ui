@@ -14,11 +14,15 @@
 # VERDE = cuadra con la escala → mergear. ROJO = drift en capas curadas (color/semántica) → dev.
 name: tokens-sync
 
+# SIN filtro `paths`, y no es un olvido (2026-09-11, DD-68): el plugin empuja a veces SOLO su
+# `.theme-designer/` (commit «Update theme from Figma - 9/11/2026») sin tocar el export. Con el
+# filtro, ese push no disparaba nada, la rama se quedaba SIN resetear y, como `ci.yml` exime a
+# `design-tokens-sync` confiando en este workflow, el PR #104 llegó a `main` con 172 ficheros del
+# plugin y sin que ningún check lo mirase. Ahora CUALQUIER push a la rama la normaliza: el paso
+# de reset ya sabe qué hacer cuando el export coincide con main (la deja limpia y cierra el PR).
 on:
   push:
     branches: [design-tokens-sync]
-    paths:
-      - projects/design-tokens/scripts/kit-export-dtcg.json
 
 permissions:
   contents: write

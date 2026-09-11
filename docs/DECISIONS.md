@@ -57,6 +57,44 @@
 
 ---
 
+## DD-68 · 2026-09-11 — Un push del plugin que no trae export también pasa por el robot: el filtro `paths` se va
+
+**Contexto** · A las 08:27 se fundió el PR #104 «Design tokens sync» y `main` se puso en rojo
+(`verify`, test 412: *«ningún `.ts` fuera de `projects/` se queda sin type-checkear»*). El PR
+llevaba **172 ficheros de `.theme-designer/`**, el artefacto del plugin de Figma que `.gitignore`
+excluye y que `tokens-sync.yml` promete descartar. No tocaba ni el export ni una capa `@sc-gen`.
+Cadena medida: (1) el plugin empujó a `design-tokens-sync` un commit «Update theme from Figma»
+que solo traía `.theme-designer/`; (2) `tokens-sync.yml` solo disparaba si cambiaba
+`kit-export-dtcg.json` (`on.push.paths`), así que no corrió (último run: 2026-09-02) y la rama
+no se reseteó a «main + cambio»; (3) `ci.yml` exime a esa rama en PR en sus cinco jobs porque
+confía en que el robot ya la verificó; (4) el PR se fundió a mano con tres commits crudos del
+plugin y sin que ningún check lo hubiera mirado. Salió al medir el ruido del diff de tokens
+mientras se revisaba qué adoptar del repo `stablyai/orca`: el «+8182 líneas» no era generado
+nuestro, era el plugin.
+
+**Decisión** · `tokens-sync.yml` dispara con **cualquier** push a `design-tokens-sync` (sin
+`paths`). El paso de reset ya contempla el caso «export == main»: deja la rama limpia y cierra el
+PR. `.theme-designer/` sale de `main` (`git rm -r`). La exención de `ci.yml` se queda: vuelve a
+ser verdad que todo lo que llega por esa rama pasó por el robot.
+
+**Razón** · El hueco estaba en la premisa, no en un job: la exención del CI se apoya en que el
+robot corre SIEMPRE que el plugin escribe, y el filtro `paths` la hacía falsa justo en el push que
+más basura trae. Quitar el filtro restaura la premisa; el coste es un run del robot por push
+del plugin (unos minutos, runner gratis).
+
+**Descartadas** · *Quitar la exención de `ci.yml`* (B): habría parado este PR, pero devuelve el
+rojo espurio de drift por el que nació la exención (el CI verifica sin regenerar primitivos), y
+deja el hueco de fondo abierto: la rama seguiría sin normalizarse en ese push. *Añadir
+`.theme-designer/**` al filtro `paths`*: cubre el caso de hoy y el siguiente fichero nuevo del
+plugin vuelve a colarse; una lista de lo que el plugin escribe es una lista que envejece.
+
+**Consecuencias** · `main` limpio y `verify` en verde tras fundir esto. Un PR de tokens vuelve a
+ser «main + el cambio». Pendiente, y no se hace aquí: que la portada del PR diga si el robot lo
+ha verificado, para que un PR del plugin no se pueda fundir a ciegas (hoy lo dice solo el estado
+del run).
+
+---
+
 ## DD-67 · 2026-09-11 — Los 12 text styles son los únicos: el 500 no es «casi», no existe
 
 **Contexto** · Rafa, al cerrar el barrido de vocabulario: «hay que ir casando cada título, subheader
