@@ -85,6 +85,10 @@ test('motivoSinEnrutar: el motivo lleva la lista y el comando exacto', () => {
 // El caso ROJO es el cierre de trámite: «pusheado, CI verde», que no le dice a Rafa ni qué cambia
 // en su día ni por qué le conviene.
 
+// Entorno sin `GIT_*`: dentro de un hook de git esas variables apuntan al repositorio de verdad, y
+// un `git init` sobre un repo temporal aterrizaría allí. Lo vigila `pre-push-hook.test.mjs`.
+const SIN_GIT = Object.fromEntries(Object.entries(process.env).filter(([k]) => !k.startsWith('GIT_')));
+
 const evTexto = (texto) => JSON.stringify({ type: 'assistant', message: { content: [{ type: 'text', text: texto }] } });
 
 const PARTE_OK = [
@@ -146,7 +150,7 @@ test('estadoDelArbol: lo mide del repo de verdad, y sin repo no inventa', () => 
   assert.deepEqual(estadoDelArbol(dir), { seguro: null, motivos: [] }, 'sin git: no lo sé, y no bloqueo');
 
   for (const args of [['init', '-b', 'main'], ['config', 'user.email', 'x@y.z'], ['config', 'user.name', 'x'], ['commit', '--allow-empty', '-m', 'base']])
-    spawnSync('git', args, { cwd: dir });
+    spawnSync('git', args, { cwd: dir, env: SIN_GIT });
   const rama = estadoDelArbol(dir);
   assert.equal(rama.seguro, false, 'ROJO: rama que no está en ningún remoto');
   assert.match(rama.motivos.join(' '), /no está en el remoto/);
@@ -160,7 +164,7 @@ test('estadoDelArbol: lo mide del repo de verdad, y sin repo no inventa', () => 
 // el caso salía verde igual: por eso este caso usa un fichero trackeado. (Lo vio la sonda, no el test.)
 test('estadoDelArbol: la ruta del fichero modificado sale entera, sin comerse la primera letra', () => {
   const dir = mkdtempSync(join(tmpdir(), 'sc-arbol-'));
-  const correr = (...args) => spawnSync('git', args, { cwd: dir });
+  const correr = (...args) => spawnSync('git', args, { cwd: dir, env: SIN_GIT });
   for (const args of [['init', '-b', 'main'], ['config', 'user.email', 'x@y.z'], ['config', 'user.name', 'x']]) correr(...args);
   writeFileSync(join(dir, 'seguido.txt'), 'v1');
   correr('add', '-A');
