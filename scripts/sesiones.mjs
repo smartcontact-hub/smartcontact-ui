@@ -79,7 +79,56 @@ const nombresDe = (checks) => checks.map((c) => c.name || c.context).join(', ');
  *    «18:44+02:00» sale mayor que «17:16Z» siendo media hora ANTERIOR, y una rama quieta se
  *    anunciaba como «commits nuevos encima». Se comparan como instantes.
  */
-export function veredictoDe({ sinFundir = 0, abierto = null, fundido = null, ultimoCommitISO = '' } = {}) {
+export function veredictoDe({
+  sinFundir = 0,
+  abierto = null,
+  fundido = null,
+  ultimoCommitISO = '',
+  sucio = false,
+  bloqueado = false,
+  noFundidos = 0,
+} = {}) {
+  const v = veredictoBase({ sinFundir, abierto, fundido, ultimoCommitISO });
+  return protegeLoQueSePierde(v, { sucio, bloqueado, noFundidos });
+}
+
+/**
+ * La red de seguridad: **ningún veredicto que diga «borra» sale si hay algo dentro que perder.**
+ *
+ * Los dos casos son medidos, no hipótesis. Al estrenar el comando el 2026-09-11 propuso borrar:
+ *  - `checkbox-demo-label-projection` como **VACÍA** — tenía dos ficheros modificados sin
+ *    commitear y encima estaba `locked`.
+ *  - `arebury/analizar-PRs-2` como **CERRADA** — dentro vivía `393d0ab`, que no estaba en main.
+ *    `avanzoTrasFundir` no lo cazó porque compara la FECHA del último commit con `mergedAt`, y
+ *    ese commit era ANTERIOR al merge sin ir incluido en él. La fecha nunca podía verlo.
+ *
+ * Por eso `noFundidos` se mide por CONTENIDO (`git cherry origin/main <rama>` cuenta las líneas
+ * que empiezan por `+`: commits cuyo parche no está en main, aunque el squash haya reescrito los
+ * shas). Un comando que borra por ti tiene que equivocarse SIEMPRE hacia el lado de no borrar.
+ */
+export function protegeLoQueSePierde(v, { sucio = false, bloqueado = false, noFundidos = 0 } = {}) {
+  const proponeBorrar = v.veredicto === 'CERRADA' || v.veredicto === 'VACÍA';
+  if (proponeBorrar) {
+    if (sucio) {
+      return { veredicto: 'SIN GUARDAR', color: C.red, accion: 'cambios sin commitear dentro · NO lo borres' };
+    }
+    if (noFundidos > 0) {
+      return {
+        veredicto: 'SIN SUBIR',
+        color: C.cyan,
+        accion: `${noFundidos} commit${noFundidos === 1 ? '' : 's'} que NO están en main (medido por contenido) · falta subirlos`,
+      };
+    }
+    if (bloqueado) {
+      return { veredicto: 'BLOQUEADO', color: C.yellow, accion: 'worktree `locked`: alguien lo reservó · no lo borres' };
+    }
+  }
+  // No propone borrar, pero si hay cambios sin guardar la caja tampoco se cierra: se dice al lado.
+  if (sucio) return { ...v, accion: `${v.accion} · ⚠ cambios sin commitear` };
+  return v;
+}
+
+function veredictoBase({ sinFundir = 0, abierto = null, fundido = null, ultimoCommitISO = '' } = {}) {
   const avanzoTrasFundir =
     Boolean(fundido?.mergedAt) &&
     Boolean(ultimoCommitISO) &&
@@ -176,7 +225,12 @@ export function parseaWorktrees(porcelain) {
   for (const bloque of (porcelain ?? '').split('\n\n')) {
     const ruta = bloque.match(/^worktree (.+)$/m)?.[1];
     if (!ruta || /^bare$/m.test(bloque)) continue;
-    out.push({ ruta, rama: bloque.match(/^branch refs\/heads\/(.+)$/m)?.[1] });
+    // `locked` = alguien lo reservó a propósito (`git worktree lock`). No se propone borrarlo.
+    out.push({
+      ruta,
+      rama: bloque.match(/^branch refs\/heads\/(.+)$/m)?.[1],
+      bloqueado: /^locked/m.test(bloque),
+    });
   }
   return out;
 }
@@ -201,11 +255,23 @@ function main() {
   for (const w of worktrees) {
     if (!w.rama || w.rama === 'main') continue;
     const abierto = prDe(w.rama, abiertos) ?? null;
+    // Lo que decide si se puede borrar, leído del worktree REAL y no de la rama:
+    //  · `status --porcelain` en SU ruta (no en la mía): ficheros a medio editar.
+    //  · `git cherry` marca con `+` los commits cuyo parche NO está en main, y con `-` los que
+    //    sí (aunque el squash les cambiara el sha). Es la única medida que ve un commit local
+    //    anterior al merge que se quedó fuera de él.
+    const sucio = shSafe('git', ['-C', w.ruta, 'status', '--porcelain']) !== '';
+    const noFundidos = shSafe('git', ['cherry', 'origin/main', w.rama])
+      .split('\n')
+      .filter((l) => l.startsWith('+')).length;
     const v = veredictoDe({
       sinFundir: Number(shSafe('git', ['rev-list', '--count', `origin/main..${w.rama}`], '0')) || 0,
       abierto,
       fundido: abierto ? null : (prDe(w.rama, fundidos) ?? null),
       ultimoCommitISO: shSafe('git', ['log', '-1', '--format=%cI', w.rama]),
+      sucio,
+      bloqueado: w.bloqueado,
+      noFundidos,
     });
     cajas.push({
       nombre: w.rama,
@@ -240,8 +306,10 @@ function main() {
     }
   }
 
-  const piden = cajas.filter((c) => ['ROJA', 'SIN SUBIR', 'CONFLICTO'].includes(c.veredicto));
+  const piden = cajas.filter((c) => ['ROJA', 'SIN SUBIR', 'CONFLICTO', 'SIN GUARDAR'].includes(c.veredicto));
   const listas = cajas.filter((c) => c.veredicto === 'LISTA');
+  // Solo entra aquí lo que la red de `protegeLoQueSePierde` ya dejó pasar: sin ficheros sueltos,
+  // sin commits fuera de main y sin `locked`.
   const sobran = cajas.filter((c) => ['CERRADA', 'VACÍA'].includes(c.veredicto));
 
   console.log('');
