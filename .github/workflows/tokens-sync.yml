@@ -73,6 +73,10 @@ jobs:
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          # Procedencia: el sha del plugin que este run consumió (ANTES del force-push que lo borra)
+          # y, más abajo, el sha que el robot deja. Van en la portada del PR para que no se pueda
+          # fundir a ciegas: el #104 entró con 172 ficheros del plugin sin que nadie lo viera (DD-68).
+          PLUGIN_SHA=$(git rev-parse origin/design-tokens-sync)
           # Solo los ficheros de token (NO test-results/ de Playwright, NO .theme-designer/ del plugin).
           git add projects/design-tokens/
           if git diff --cached --quiet; then
@@ -98,9 +102,13 @@ jobs:
             gh pr close design-tokens-sync --comment "Revertido: el export coincide con main; no hay cambio que mergear." 2>/dev/null \
               && echo "PR cerrado (sin cambio)." || echo "Sin PR que cerrar."
           else
-            body=$(printf 'Sync del Theme Designer: export DTCG nuevo aplicado SOBRE main + primitivos @sc-gen regenerados.\n\n- VERDE = cuadra con la escala, listo para mergear.\n- ROJO = drift en capas curadas (color/semantica) -> aplicar a 02-semantic / 03-palette / 04-component antes de mergear.')
+            ROBOT_SHA=$(git rev-parse HEAD)
+            RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+            body=$(printf 'Sync del Theme Designer: export DTCG nuevo aplicado SOBRE main + primitivos @sc-gen regenerados.\n\n- VERDE = cuadra con la escala, listo para mergear.\n- ROJO = drift en capas curadas (color/semantica) -> aplicar a 02-semantic / 03-palette / 04-component antes de mergear.\n\n### Lo que verifico el robot\n\n| | sha |\n| --- | --- |\n| Export del plugin que consumio | `%s` |\n| Commit que dejo en la rama | `%s` |\n\nRun: %s\n\n**Antes de fundir**: la rama tiene que apuntar a `%s`. Si apunta a otro sha, el plugin volvio a pushear y el robot aun no lo ha pasado por `tokens:import` + `verify` + `e2e`: espera al run nuevo (reescribe esta portada) y no fundas a mano.' "$PLUGIN_SHA" "$ROBOT_SHA" "$RUN_URL" "$ROBOT_SHA")
             if gh pr view design-tokens-sync --json state --jq .state 2>/dev/null | grep -q OPEN; then
-              echo "PR ya abierto — los commits nuevos lo actualizan."
+              # La portada se REESCRIBE en cada run: así el sha verificado es siempre el del último.
+              gh pr edit design-tokens-sync --body "$body" && echo "PR ya abierto — portada actualizada con el sha verificado." \
+                || echo "::warning title=Portada no actualizada::gh pr edit falló; el sha verificado es $ROBOT_SHA."
             elif gh pr create --base main --head design-tokens-sync --title "chore(tokens): sync del Theme Designer" --body "$body"; then
               echo "PR abierto."
             else

@@ -27,6 +27,7 @@ import { mkdtempSync, readFileSync, rmSync, writeFileSync, existsSync } from 'no
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { medirRebase } from './preflight-rebase.mjs';
 
 export const MARCA = '.preflight-ok';
 
@@ -47,6 +48,10 @@ export function treeIdWorkingTree(cwd) {
 }
 
 export function escribirMarca(cwd, carril) {
+  // La marca no se escribe sobre un árbol que no lleva `origin/main`: main pudo avanzar
+  // DURANTE la cadena, y entonces lo que pasó no es lo que se va a pushear (2026-09-11).
+  const rebase = medirRebase(cwd);
+  if (!rebase.ok) throw new Error(`no se escribe ${MARCA}: ${rebase.motivo}`);
   const marca = {
     tree: treeIdWorkingTree(cwd),
     head: git(cwd, ['rev-parse', 'HEAD']),
@@ -77,6 +82,10 @@ export function estadoPreflight(cwd) {
   const headTree = git(cwd, ['rev-parse', 'HEAD^{tree}']);
   if (headTree !== marca.tree)
     return { ok: false, motivo: 'el árbol que pasó preflight tiene cambios SIN COMMITEAR: lo que se pushea (HEAD) no es lo que se midió', marca };
+  // Y main no puede haber avanzado desde entonces: si lo hizo, el push acaba «en conflicto» en
+  // `ci:verdict` y hay que rebasar y repetir la cadena sobre el árbol final (LEARNINGS #7).
+  const rebase = medirRebase(cwd);
+  if (!rebase.ok) return { ok: false, motivo: `main avanzó después del preflight — ${rebase.motivo}`, marca };
   return { ok: true, motivo: `preflight ${marca.carril} en verde sobre este árbol (${marca.en})`, marca };
 }
 
