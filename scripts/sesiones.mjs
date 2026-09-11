@@ -86,9 +86,9 @@ export function veredictoDe({
   ultimoCommitISO = '',
   sucio = false,
   bloqueado = false,
-  noFundidos = 0,
+  noFundidos = null,
 } = {}) {
-  const v = veredictoBase({ sinFundir, abierto, fundido, ultimoCommitISO });
+  const v = veredictoBase({ sinFundir, abierto, fundido, ultimoCommitISO, noFundidos });
   return protegeLoQueSePierde(v, { sucio, bloqueado, noFundidos });
 }
 
@@ -106,13 +106,13 @@ export function veredictoDe({
  * que empiezan por `+`: commits cuyo parche no está en main, aunque el squash haya reescrito los
  * shas). Un comando que borra por ti tiene que equivocarse SIEMPRE hacia el lado de no borrar.
  */
-export function protegeLoQueSePierde(v, { sucio = false, bloqueado = false, noFundidos = 0 } = {}) {
+export function protegeLoQueSePierde(v, { sucio = false, bloqueado = false, noFundidos = null } = {}) {
   const proponeBorrar = v.veredicto === 'CERRADA' || v.veredicto === 'VACÍA';
   if (proponeBorrar) {
     if (sucio) {
       return { veredicto: 'SIN GUARDAR', color: C.red, accion: 'cambios sin commitear dentro · NO lo borres' };
     }
-    if (noFundidos > 0) {
+    if (noFundidos !== null && noFundidos > 0) {
       return {
         veredicto: 'SIN SUBIR',
         color: C.cyan,
@@ -128,16 +128,29 @@ export function protegeLoQueSePierde(v, { sucio = false, bloqueado = false, noFu
   return v;
 }
 
-function veredictoBase({ sinFundir = 0, abierto = null, fundido = null, ultimoCommitISO = '' } = {}) {
-  const avanzoTrasFundir =
-    Boolean(fundido?.mergedAt) &&
-    Boolean(ultimoCommitISO) &&
-    Date.parse(ultimoCommitISO) > Date.parse(fundido.mergedAt);
+function veredictoBase({ sinFundir = 0, abierto = null, fundido = null, ultimoCommitISO = '', noFundidos = null } = {}) {
+  /* «¿Queda trabajo encima del PR ya fundido?» la contesta el CONTENIDO, no la fecha.
+   *
+   * La fecha sola miente en los dos sentidos, y los dos se midieron sobre este repo:
+   *  · FALSO NEGATIVO (peligroso, #109): un commit ANTERIOR al merge que no iba dentro salía
+   *    CERRADA y el comando mandaba borrar el worktree.
+   *  · FALSO POSITIVO (ruidoso, este): `arebury/analizar-PRs-2` salía «commits NUEVOS · falta
+   *    subirlos» el 2026-09-11 cuando `git cherry origin/main <rama>` no devolvía NADA — su
+   *    trabajo estaba dentro, fundido aparte como #107. El commit era posterior al merge del
+   *    #103, y con eso bastaba para acusarlo. Un aviso en falso repetido enseña a ignorar la
+   *    herramienta, que es como muere una así.
+   *
+   * `noFundidos === null` = no se pudo medir (git falló). Ahí NO se adivina: se cae a la fecha,
+   * que es conservadora, porque equivocarse hacia «te falta subir algo» no borra nada. */
+  const hayTrabajoFuera =
+    noFundidos === null
+      ? Boolean(fundido?.mergedAt) && Boolean(ultimoCommitISO) && Date.parse(ultimoCommitISO) > Date.parse(fundido.mergedAt)
+      : noFundidos > 0;
 
-  if (fundido && !avanzoTrasFundir) {
+  if (fundido && !hayTrabajoFuera) {
     return { veredicto: 'CERRADA', color: C.dim, accion: `su PR #${fundido.number} está fundido · borra el worktree` };
   }
-  if (fundido && avanzoTrasFundir) {
+  if (fundido && hayTrabajoFuera) {
     return {
       veredicto: 'SIN SUBIR',
       color: C.cyan,
@@ -261,9 +274,11 @@ function main() {
     //    sí (aunque el squash les cambiara el sha). Es la única medida que ve un commit local
     //    anterior al merge que se quedó fuera de él.
     const sucio = shSafe('git', ['-C', w.ruta, 'status', '--porcelain']) !== '';
-    const noFundidos = shSafe('git', ['cherry', 'origin/main', w.rama])
-      .split('\n')
-      .filter((l) => l.startsWith('+')).length;
+    // Centinela a propósito: `shSafe` devuelve '' tanto cuando git dice «no hay nada fuera» como
+    // cuando git FALLA, y son cosas distintas. Cero confirmado permite decir «borra»; no haber
+    // podido medirlo, no. Sin esto, un git roto se leería como «la caja está vacía».
+    const cherry = shSafe('git', ['cherry', 'origin/main', w.rama], '\x00');
+    const noFundidos = cherry === '\x00' ? null : cherry.split('\n').filter((l) => l.startsWith('+')).length;
     const v = veredictoDe({
       sinFundir: Number(shSafe('git', ['rev-list', '--count', `origin/main..${w.rama}`], '0')) || 0,
       abierto,

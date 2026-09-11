@@ -153,10 +153,11 @@ test('CERRADA + un commit que no está en main POR CONTENIDO → SIN SUBIR', () 
   const fundido = { number: 103, mergedAt: '2026-09-11T09:20:00Z' };
   const v = veredictoDe({ fundido, ultimoCommitISO: '2026-09-11T09:03:07Z', noFundidos: 1 });
   assert.equal(v.veredicto, 'SIN SUBIR');
-  assert.match(v.accion, /por contenido/);
+  assert.match(v.accion, /PR #103/, 'debe decir de qué PR cuelga lo que falta por subir');
   assert.doesNotMatch(v.accion, /borra/);
-  // En rojo: con la lógica vieja (solo fechas) esto salía CERRADA y mandaba borrarlo.
-  assert.equal(veredictoDe({ fundido, ultimoCommitISO: '2026-09-11T09:03:07Z' }).veredicto, 'CERRADA');
+  // En rojo: con la lógica vieja (solo fechas) esto salía CERRADA y mandaba borrarlo. Se prueba
+  // pasando `noFundidos: null`, que es justo «no se pudo medir el contenido» → solo queda la fecha.
+  assert.equal(veredictoDe({ fundido, ultimoCommitISO: '2026-09-11T09:03:07Z', noFundidos: null }).veredicto, 'CERRADA');
 });
 
 test('un worktree `locked` no se propone borrar', () => {
@@ -178,4 +179,30 @@ test('parseaWorktrees marca los `locked`', () => {
   );
   assert.equal(wt.find((w) => w.rama === 'x').bloqueado, true);
   assert.equal(wt.find((w) => w.rama === 'y').bloqueado, false);
+});
+
+// ── El contenido manda sobre la fecha, en los DOS sentidos ─────────────────────
+
+test('FALSO POSITIVO: un commit posterior al merge cuyo contenido YA está en main → CERRADA', () => {
+  // `arebury/analizar-PRs-2` el 2026-09-11: su commit era posterior al merge del #103, pero se
+  // había fundido aparte como #107, así que `git cherry` no devolvía nada. Decía «falta subirlo».
+  const fundido = { number: 103, mergedAt: '2026-09-11T09:20:00Z' };
+  const v = veredictoDe({ fundido, ultimoCommitISO: '2026-09-11T10:03:07Z', noFundidos: 0 });
+  assert.equal(v.veredicto, 'CERRADA');
+  // En rojo: sin `noFundidos`, la fecha sola lo acusaba de tener trabajo sin subir.
+  assert.equal(veredictoDe({ fundido, ultimoCommitISO: '2026-09-11T10:03:07Z' }).veredicto, 'SIN SUBIR');
+});
+
+test('si no se pudo medir el contenido (null), se cae a la fecha y NUNCA se adivina', () => {
+  const fundido = { number: 103, mergedAt: '2026-09-11T09:20:00Z' };
+  // git falló: con fecha posterior, conservador (avisa de trabajo sin subir; no borra nada).
+  assert.equal(veredictoDe({ fundido, ultimoCommitISO: '2026-09-11T10:03:07Z', noFundidos: null }).veredicto, 'SIN SUBIR');
+  // y con fecha anterior sigue diciendo CERRADA, que es el comportamiento de siempre
+  assert.equal(veredictoDe({ fundido, ultimoCommitISO: '2026-09-11T09:00:00Z', noFundidos: null }).veredicto, 'CERRADA');
+});
+
+test('la red de seguridad no se dispara con `null`, solo con un número mayor que cero', () => {
+  const v = veredictoDe({ sinFundir: 0, noFundidos: null });
+  assert.equal(v.veredicto, 'VACÍA', 'null no es «hay trabajo fuera»: es «no lo sé»');
+  assert.equal(veredictoDe({ sinFundir: 0, noFundidos: 2 }).veredicto, 'SIN SUBIR');
 });
