@@ -19,6 +19,19 @@
  * Así que gatea lo que SÍ es un defecto sin discusión: que el snippet enseñe **un componente o
  * una propiedad que no existen**. Ese es el fallo que duele, porque el código de la doc se copia.
  *
+ * AMPLIADO EL 2026-09-11, y por una pregunta de Rafa mirando `/#/components/button`: «¿el código
+ * de cada uno en sc-docs está basado realmente en primeng?». El problema que destapó no es que la
+ * doc no beba del tema —bebe, y no lo pisa en ningún sitio—, sino que en cada página hay DOS
+ * textos, el que se muestra y el que se ejecuta, y nada los ataba. Sin exigir igualdad (40 falsos
+ * positivos de 71), se añaden tres relaciones que sí son defecto, y las tres traen su caso REAL:
+ *   (a) SUBCONJUNTO: lo que el snippet enseña, la demo viva lo pinta (`emptystate` enseñaba un
+ *       `(cta)` que no existe en la plantilla);
+ *   (d) COBERTURA INVERSA: lo que la demo viva pinta, el snippet lo enseña — la que caza el caso
+ *       de Rafa: `#icons` de button renderiza `variant` y `fullWidth` y el código no los llevaba;
+ *   (c) PROYECCIÓN: `<sc-select>` proyecta por `contentChild('item')` y su snippet enseñaba
+ *       `pTemplate="item"`, la sintaxis vieja de PrimeNG, que al wrapper NO le llega.
+ * Y (b) un TRINQUETE: cuántos inputs públicos no aparecen en ningún ejemplo ni knob de su página.
+ *
  * Dos cosas por snippet:
  *   1. Todo tag `sc-*` que aparezca tiene que ser el selector de un componente del DS.
  *   2. Todo atributo o binding sobre ese tag tiene que ser un `input`/`model`/`output` suyo (o un
@@ -38,7 +51,7 @@
  * ES ESTÁTICO y PURO respecto al texto (funciones exportadas → testeable).
  */
 import { execSync } from 'node:child_process';
-import { readFileSync } from 'node:fs';
+import { existsSync, readFileSync } from 'node:fs';
 
 const log = (s = '') => process.stdout.write(s + '\n');
 const sh = (cmd) => {
@@ -117,6 +130,269 @@ export function revisarSnippet(ruta, nombre, codigo, api) {
 /** Casos legítimos que el gate no sabe leer. Con su motivo, y solo mengua. */
 export const PENDIENTES = {};
 
+/**
+ * Ruido de plantilla: lo que un snippet omite o añade sin que signifique nada (andamiaje de la
+ * demo, ganchos de test, referencias locales). Distinto de `ATRIBUTO_GENERICO`, que sirve a la
+ * comprobación de EXISTENCIA: aquí se decide qué se COMPARA entre snippet y demo viva.
+ */
+export const ATRIBUTO_RUIDO = /^(class|style|id|data-[\w-]+|#\w+|ng[A-Z]\w*|\*\w+)$/;
+
+/** Fontanería: inputs que un ejemplo no tiene por qué enseñar (accesibilidad, ids, hooks). */
+export const INPUT_FONTANERIA =
+  /^(inputId|name|ariaLabel|ariaLabelledBy|ariaDescribedBy|styleClass|panelStyleClass|autocomplete|inputmode|maxlength|minlength|cols|rows|locale|appendTo|key|tabindex|autofocus|dataKey|trackBy)$/;
+
+/**
+ * Fuera los comentarios HTML. Para la comprobación de EXISTENCIA sí cuentan (un comentario que
+ * nombra un componente muerto sigue mintiendo), pero para COMPARAR con la demo viva no: el
+ * snippet de `datatable` apunta en un comentario a `<sc-column-selector>`, que tiene su propia
+ * página, y eso no es código que la story ejecute.
+ */
+export const sinComentariosHtml = (codigo) => codigo.replace(/<!--[\s\S]*?-->/g, '');
+
+/** Los mismos usos, con el ruido fuera y los atributos en un Set (para comparar NOMBRES). */
+export function usosNormalizados(codigo) {
+  return usosDe(sinComentariosHtml(codigo)).map(({ tag, atributos }) => ({
+    tag,
+    atributos: new Set(atributos.filter((a) => !ATRIBUTO_RUIDO.test(a))),
+  }));
+}
+
+/** Los bloques `<ng-template #ref>` de una plantilla, anclados a columna 0. */
+export function plantillasDe(html) {
+  const out = {};
+  const re = /^<ng-template #([\w-]+)[^>]*>([\s\S]*?)^<\/ng-template>/gm;
+  for (const m of html.matchAll(re)) out[m[1]] = m[2];
+  return out;
+}
+
+/** Los objetos `{ … }` de primer nivel del `return [ … ]`, respetando backticks y anidamiento. */
+function objetosDe(ts) {
+  /* Hay MÁS de un `return [`: el guard `if (!pg) return [];` va antes del de verdad. Se recorren
+   * todos y se acumula lo que encuentre cada uno (el vacío no aporta nada). */
+  const out = [];
+  for (const m of ts.matchAll(/return \[/g)) out.push(...desde(ts, m.index + m[0].length));
+  return out;
+}
+
+function desde(ts, inicioBusqueda) {
+  const out = [];
+  let prof = 0;
+  let inicio = -1;
+  let tick = false;
+  {
+    for (let j = inicioBusqueda; j < ts.length; j += 1) {
+    const c = ts[j];
+    if (c === '`' && ts[j - 1] !== '\\') tick = !tick;
+    if (tick) continue;
+    if (c === '{') {
+      if (prof === 0) inicio = j;
+      prof += 1;
+    } else if (c === '}') {
+      prof -= 1;
+      if (prof === 0 && inicio >= 0) out.push(ts.slice(inicio, j + 1));
+    } else if (c === ']' && prof === 0) break;
+    }
+  }
+  return out;
+}
+
+/**
+ * Empareja cada story con SU `<ng-template #ref>` y con el snippet que enseña.
+ *
+ * La cadena es: `viewChild<TemplateRef<StoryContext>>('ref')` → `const local = this.prop()` →
+ * `{ template: local, snippet: X_SNIPPET }`. El tipo `StoryContext` es lo que distingue una story
+ * de otros `viewChild` de plantilla (el `#statusTpl` de datatable es `ScColumnCellContext`).
+ */
+export function historiasDe(ts) {
+  const refDeProp = new Map();
+  for (const [, prop, ref] of ts.matchAll(
+    /readonly\s+(\w+)\s*=\s*viewChild(?:\.required)?<TemplateRef<StoryContext>>\(\s*'([\w-]+)'\s*\)/g,
+  )) refDeProp.set(prop, ref);
+
+  const refDeLocal = new Map();
+  for (const [, local, prop] of ts.matchAll(/(?:const|let)\s+(\w+)\s*=\s*this\.(\w+)\(\)/g)) {
+    if (refDeProp.has(prop)) refDeLocal.set(local, refDeProp.get(prop));
+  }
+
+  const constantes = new Map(snippetsDe(ts).map((s) => [s.nombre, s.codigo]));
+  const historias = [];
+  const usadas = new Set();
+  for (const obj of objetosDe(ts)) {
+    const tpl = obj.match(/\btemplate:\s*(\w+)/);
+    if (!tpl) continue;
+    const ref = refDeLocal.get(tpl[1]);
+    if (!ref) continue;
+    const porNombre = obj.match(/\bsnippet:\s*(\w+_SNIPPET)/);
+    const enLinea = obj.match(/\bsnippet:\s*`([\s\S]*?)`/);
+    if (porNombre) usadas.add(porNombre[1]);
+    historias.push({
+      story: obj.match(/\bname:\s*'([^']*)'/)?.[1] ?? ref,
+      ref,
+      nombre: porNombre ? porNombre[1] : null,
+      codigo: porNombre ? (constantes.get(porNombre[1]) ?? '') : enLinea ? enLinea[1] : null,
+      playground: /\bplayground:\s*true/.test(obj),
+    });
+  }
+  const sinAtar = [...constantes.keys()].filter((n) => !usadas.has(n));
+  return { historias, sinAtar };
+}
+
+/**
+ * (a) SUBCONJUNTO. Cada `<sc-*>` del snippet tiene que tener homólogo del mismo tag en la demo
+ * viva con, al menos, sus mismos NOMBRES de atributo. No se comparan valores: el snippet inlinea
+ * los datos para que se lean (`[home]="{ icon: … }"`) donde la demo ata una variable, y eso es
+ * bueno. Si el host no está en ESTA story (un `<sc-toast>` colocado una vez en la página), vale
+ * encontrarlo en el resto de la página.
+ */
+export function revisarSubconjunto(ruta, nombre, codigo, plantilla, pagina = '') {
+  const problemas = [];
+  const enStory = usosNormalizados(plantilla);
+  const enPagina = usosNormalizados(pagina);
+  for (const u of usosNormalizados(codigo)) {
+    const candidatos = [...enStory, ...enPagina].filter((v) => v.tag === u.tag);
+    if (!candidatos.length) {
+      problemas.push([
+        `${ruta} · ${nombre}: enseña \`<${u.tag}>\` y la demo viva no lo pinta en ningún sitio.`,
+        '      → o lo pones en la story, o el ejemplo enseña algo que nadie ve funcionando.',
+      ]);
+      continue;
+    }
+    const sobran = [...u.atributos].filter((a) => !candidatos.some((c) => c.atributos.has(a)));
+    if (sobran.length) {
+      problemas.push([
+        `${ruta} · ${nombre}: enseña \`${sobran.join(', ')}\` sobre \`<${u.tag}>\` y la demo viva no lo pone.`,
+        '      → el código que se copia tiene que ser el que está corriendo encima.',
+      ]);
+    }
+  }
+  return problemas;
+}
+
+/**
+ * (d) COBERTURA INVERSA. Lo que la demo viva SÍ pinta sobre un `<sc-*>` tiene que aparecer en el
+ * snippet. Es la regla que caza el caso real: `#icons` de button renderiza `variant` y
+ * `fullWidth` y el código de debajo enseña cuatro botones sin ninguno de los dos.
+ */
+export function revisarCobertura(ruta, nombre, codigo, plantilla) {
+  const problemas = [];
+  const enSnippet = usosNormalizados(codigo);
+  const porTag = new Map();
+  for (const u of usosNormalizados(plantilla)) {
+    if (!porTag.has(u.tag)) porTag.set(u.tag, new Set());
+    for (const a of u.atributos) porTag.get(u.tag).add(a);
+  }
+  for (const [tag, atributos] of porTag) {
+    const delSnippet = enSnippet.filter((u) => u.tag === tag);
+    if (!delSnippet.length) continue; // el snippet no habla de ese tag: lo cubre (a), no esto
+    const faltan = [...atributos].filter((a) => !delSnippet.some((u) => u.atributos.has(a)));
+    if (faltan.length) {
+      problemas.push([
+        `${ruta} · ${nombre}: la demo pinta \`${faltan.join(', ')}\` sobre \`<${tag}>\` y el código no lo enseña. Faltan: \`${faltan.join(', ')}\``,
+        '      → quien copie el snippet no obtiene lo que está viendo.',
+      ]);
+    }
+  }
+  return problemas;
+}
+
+/** Los slots con nombre que proyecta cada componente (`contentChild('x')`). */
+export function slotsDeComponentes(ficheros, leer = (f) => readFileSync(f, 'utf8')) {
+  const out = {};
+  for (const f of ficheros) {
+    const t = leer(f);
+    const sel = t.match(/selector:\s*'([^']+)'/);
+    if (!sel) continue;
+    const slots = new Set();
+    for (const [, nombre] of t.matchAll(/contentChild(?:\.required)?<[^(]*\(\s*'([\w-]+)'\s*\)/g)) slots.add(nombre);
+    if (slots.size) out[sel[1]] = new Set([...(out[sel[1]] ?? []), ...slots]);
+  }
+  return out;
+}
+
+/**
+ * (c) PROYECCIÓN. Un componente que proyecta por `contentChild('item')` se usa con
+ * `<ng-template #item>`; `pTemplate="item"` es la sintaxis vieja de PrimeNG y NO le llega. El
+ * snippet de `sc-select` la enseñaba mientras la demo de al lado ya usaba `#item`.
+ */
+export function revisarProyeccion(ruta, nombre, codigoCrudo, plantilla, slots) {
+  const problemas = [];
+  const codigo = sinComentariosHtml(codigoCrudo);
+  for (const tag of Object.keys(slots)) {
+    if (!codigo.includes(`<${tag}`)) continue;
+    for (const [, slot] of codigo.matchAll(/<ng-template\s+pTemplate="([\w-]+)"/g)) {
+      problemas.push([
+        `${ruta} · ${nombre}: enseña \`pTemplate="${slot}"\` y \`<${tag}>\` proyecta por \`#${slot}\` (contentChild).`,
+        '      → `pTemplate` es la sintaxis vieja de PrimeNG: al wrapper no le llega.',
+      ]);
+    }
+    for (const [, slot] of codigo.matchAll(/<ng-template\s+#([\w-]+)/g)) {
+      if (slots[tag].has(slot)) continue;
+      problemas.push([
+        `${ruta} · ${nombre}: enseña \`#${slot}\` dentro de \`<${tag}>\`, que no proyecta ese slot.`,
+        `      → los que acepta: ${[...slots[tag]].join(', ')}.`,
+      ]);
+    }
+  }
+  return problemas;
+}
+
+/** Solo `input`/`model` (la API que se PONE en la etiqueta), sin los outputs. */
+export function inputsDeComponentes(ficheros, leer = (f) => readFileSync(f, 'utf8')) {
+  const out = {};
+  for (const f of ficheros) {
+    const t = leer(f);
+    const sel = t.match(/selector:\s*'([^']+)'/);
+    if (!sel) continue;
+    const props = new Set();
+    for (const [, nombre] of t.matchAll(/readonly (\w+)\s*=\s*(?:input|model)\b/g)) props.add(nombre);
+    if (props.size) out[sel[1]] = new Set([...(out[sel[1]] ?? []), ...props]);
+  }
+  return out;
+}
+
+/** Los nombres de los knobs del Playground (`meta.argTypes`). */
+export function argTypesDe(ts) {
+  const bloque = ts.match(/argTypes:\s*\[([\s\S]*?)\n\s*\],/);
+  const out = new Set();
+  if (!bloque) return out;
+  for (const [, n] of bloque[1].matchAll(/\bname:\s*'([\w-]+)'/g)) out.add(n);
+  return out;
+}
+
+/**
+ * (b) Inputs públicos del componente que la página no enseña NI como ejemplo NI como knob.
+ * Va por TRINQUETE y no por lista: sembrar 90 excepciones sería un vertedero, y una lista que
+ * nadie lee es peor que un número que solo puede bajar.
+ */
+export function inputsSinEjemplo(tag, codigos, knobs, inputs) {
+  const declara = inputs[tag];
+  if (!declara) return [];
+  const enSnippets = new Set();
+  for (const c of codigos) for (const u of usosNormalizados(c)) if (u.tag === tag) for (const a of u.atributos) enSnippets.add(a);
+  return [...declara].filter((p) => !INPUT_FONTANERIA.test(p) && !enSnippets.has(p) && !knobs.has(p)).sort();
+}
+
+/**
+ * Divergencias snippet↔demo aceptadas, con su motivo escrito. Solo mengua, y una entrada que ya
+ * pasa en verde también pone rojo: una excepción caducada miente sobre lo que falta.
+ */
+export const DIVERGENCIAS = {
+  'sectioncard/sectioncard-demo.component.ts#LIENZO_SNIPPET':
+    'El snippet enseña `[headingLevel]="1"`, que es lo que se escribe en una pantalla con índice ' +
+    'lateral, y la story renderiza el 2 porque la ficha de sc-docs YA tiene su `<h1>` (lo gatea ' +
+    '`audit:titulo-contenido`). Desde DD-61 los dos niveles se ven igual, así que la story no ' +
+    'pierde nada; el ejemplo sí perdería si enseñara el 2.',
+};
+
+/**
+ * Tope del trinquete de (b): 66 inputs públicos sin ejemplo ni knob, medido el 2026-09-11 sobre
+ * las 49 páginas. No se arreglan de golpe (son 66 ejemplos que escribir, y un ejemplo malo enseña
+ * peor que ninguno), pero el número SOLO PUEDE BAJAR: un input nuevo sin ejemplo pone el gate en
+ * rojo el día que se añade, que es cuando cuesta un minuto documentarlo. El gate imprime la lista
+ * entera para poder irla bajando.
+ */
+export const INPUTS_SIN_EJEMPLO_MAX = 66;
+
 /* ── main ──────────────────────────────────────────────────────────────────── */
 if (process.argv[1] && process.argv[1].endsWith('audit-doc-snippets.mjs')) {
   const componentes = sh(
@@ -137,18 +413,84 @@ if (process.argv[1] && process.argv[1].endsWith('audit-doc-snippets.mjs')) {
   }
 
   const api = apiDeComponentes(componentes);
+  const slots = slotsDeComponentes(componentes);
+  const inputs = inputsDeComponentes(componentes);
   const problemas = [];
   let nSnippets = 0;
   let nAtributos = 0;
+  let nPares = 0;
+  let nInputsSueltos = 0;
+  const sueltosPorTag = [];
 
   for (const ruta of demos) {
     const ts = readFileSync(ruta, 'utf8');
+    const corta = ruta.replace(/^.*\/components\//, '');
     for (const { nombre, codigo } of snippetsDe(ts)) {
       nSnippets += 1;
       for (const u of usosDe(codigo)) nAtributos += u.atributos.length;
       if (PENDIENTES[`${ruta}#${nombre}`]) continue;
-      problemas.push(...revisarSnippet(ruta.replace(/^.*\/components\//, ''), nombre, codigo, api));
+      problemas.push(...revisarSnippet(corta, nombre, codigo, api));
     }
+
+    // ── el snippet contra la demo viva ─────────────────────────────────────
+    const html = ruta.replace(/\.ts$/, '.html');
+    const plantillas = existsSync(html) ? plantillasDe(readFileSync(html, 'utf8')) : {};
+    const pagina = Object.values(plantillas).join('\n');
+    const { historias, sinAtar } = historiasDe(ts);
+    for (const n of sinAtar) {
+      problemas.push([
+        `${corta} · ${n}: la constante existe y ninguna story la usa.`,
+        '      → o la atas a su story, o sobra: un ejemplo que no se pinta no se puede comprobar.',
+      ]);
+    }
+    for (const h of historias) {
+      if (!h.codigo || h.playground) continue; // el Playground se serializa de sus args
+      const plantilla = plantillas[h.ref];
+      if (plantilla === undefined) {
+        problemas.push([
+          `${corta} · ${h.story}: apunta a \`#${h.ref}\` y esa plantilla no está en el .html.`,
+          '      → la story no puede pintar nada; revisa el nombre de la referencia.',
+        ]);
+        continue;
+      }
+      nPares += 1;
+      const clave = `${corta}#${h.nombre ?? h.ref}`;
+      if (DIVERGENCIAS[clave]) continue;
+      problemas.push(...revisarSubconjunto(corta, h.nombre ?? h.story, h.codigo, plantilla, pagina));
+      problemas.push(...revisarCobertura(corta, h.nombre ?? h.story, h.codigo, plantilla));
+      problemas.push(...revisarProyeccion(corta, h.nombre ?? h.story, h.codigo, plantilla, slots));
+    }
+
+    // ── (b) trinquete de inputs sin ejemplo ────────────────────────────────
+    const tag = ts.match(/tag:\s*'([\w-]+)'/)?.[1];
+    if (tag) {
+      const faltan = inputsSinEjemplo(tag, snippetsDe(ts).map((x) => x.codigo), argTypesDe(ts), inputs);
+      if (faltan.length) {
+        nInputsSueltos += faltan.length;
+        sueltosPorTag.push(`${tag}: ${faltan.join(', ')}`);
+      }
+    }
+  }
+
+  for (const clave of Object.keys(DIVERGENCIAS)) {
+    const [rutaCorta, nombre] = clave.split('#');
+    const completa = demos.find((d) => d.endsWith(rutaCorta));
+    const vive = completa && historiasDe(readFileSync(completa, 'utf8')).historias.some((h) => (h.nombre ?? h.ref) === nombre);
+    if (!vive) {
+      problemas.push([`${clave}: DIVERGENCIAS lo cita y ya no existe.`, '      → quita su entrada de la lista.']);
+    }
+  }
+
+  if (nInputsSueltos > INPUTS_SIN_EJEMPLO_MAX) {
+    problemas.push([
+      `${nInputsSueltos} input(s) público(s) sin ejemplo ni knob y el tope es ${INPUTS_SIN_EJEMPLO_MAX}.`,
+      '      → enseña el input nuevo en algún snippet de su página, o dale su knob en el Playground.',
+    ]);
+  } else if (nInputsSueltos < INPUTS_SIN_EJEMPLO_MAX) {
+    problemas.push([
+      `${nInputsSueltos} input(s) sin ejemplo y el tope sigue en ${INPUTS_SIN_EJEMPLO_MAX}.`,
+      `      → baja INPUTS_SIN_EJEMPLO_MAX a ${nInputsSueltos} en scripts/audit-doc-snippets.mjs (un tope holgado deja volver lo que ya salió).`,
+    ]);
   }
 
   for (const clave of Object.keys(PENDIENTES)) {
@@ -164,16 +506,22 @@ if (process.argv[1] && process.argv[1].endsWith('audit-doc-snippets.mjs')) {
 
   log(
     `audit:doc-snippets — ${demos.length} demo(s), ${nSnippets} snippet(s) escritos a mano, ` +
-      `${nAtributos} atributo(s) revisados contra la API de ${Object.keys(api).length} componentes ` +
-      `(pendientes: ${Object.keys(PENDIENTES).length})\n`,
+      `${nAtributos} atributo(s) contra la API de ${Object.keys(api).length} componentes · ` +
+      `${nPares} par(es) snippet↔demo viva · ${nInputsSueltos} input(s) sin ejemplo (tope ${INPUTS_SIN_EJEMPLO_MAX}) ` +
+      `(pendientes: ${Object.keys(PENDIENTES).length}, divergencias: ${Object.keys(DIVERGENCIAS).length})\n`,
   );
+  if (sueltosPorTag.length && process.argv.includes('--inputs')) {
+    log('  Inputs sin ejemplo ni knob (para irlos bajando):');
+    for (const l of sueltosPorTag) log(`    · ${l}`);
+    log('');
+  }
 
   if (!problemas.length) {
-    log('✓ audit:doc-snippets OK — el código que enseña la doc usa componentes y propiedades que existen.');
+    log('✓ audit:doc-snippets OK — el código que enseña la doc existe, es el que la demo viva ejecuta, y proyecta como el componente proyecta.');
     process.exit(0);
   }
 
-  log('✗ audit:doc-snippets — la doc enseña API que no existe:');
+  log('✗ audit:doc-snippets — el código que enseña la doc no es el que ejecuta:');
   for (const [linea, fix] of problemas) {
     log(`  · ${linea}`);
     log(fix);

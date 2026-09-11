@@ -385,3 +385,36 @@
 .sb-shell__main {
   min-width: 0;
 }
+
+/* ── Anatomía: el DOM que de verdad sale ──────────────────────────────────────
+ * Se lee del navegador (`story-anatomy.component.ts`), no se escribe. Va en el
+ * mismo tono que el bloque de código pero más callada: es referencia para quien
+ * depura, no el ejemplo que se copia.
+ */
+/* `display: contents` y no un bloque: el host de `<app-story-anatomy>` es hijo directo de un
+ * contenedor con `gap`, así que un host vacío se comería un hueco entero en las páginas donde no
+ * hay nada que enseñar. Medido por diferencia: escondiendo el bloque, las 38 baselines seguían
+ * moviéndose 6px. */
+app-story-anatomy {
+  display: contents;
+}
+
+.sb-anatomy {
+  margin-top: var(--sc-spacing-0-75);
+  padding: var(--sc-spacing-0-75) var(--sc-spacing-1);
+  border: 1px solid var(--sc-border-default);
+  border-radius: var(--sc-radius-lg);
+  background: var(--sc-bg-default);
+}
+
+.sb-anatomy__lead {
+  margin: 0 0 var(--sc-spacing-0-5);
+  color: var(--sc-text-subtle);
+}
+
+.sb-anatomy pre {
+  margin: 0;
+  overflow-x: auto;
+  font-family: var(--sc-font-family-mono);
+  color: var(--sc-text-default);
+}

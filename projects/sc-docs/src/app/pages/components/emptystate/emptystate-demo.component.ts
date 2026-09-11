@@ -3,6 +3,7 @@ import {
   Component,
   TemplateRef,
   computed,
+  signal,
   viewChild,
 } from '@angular/core';
 
@@ -84,6 +85,13 @@ export class EmptyStateDemoComponent {
       { name: 'cta', type: 'EventEmitter<void>', description: 'Output al pulsar la CTA.' },
     ],
   };
+
+  /** La CTA de la story «Con CTA» tiene que HACER algo: si no, el `(cta)` del código es decorativo. */
+  protected readonly pulsaciones = signal(0);
+
+  protected onCreate(): void {
+    this.pulsaciones.update((n) => n + 1);
+  }
 
   protected readonly stories = computed<readonly StoryDef[]>(() => {
     const pg = this.playgroundTpl();

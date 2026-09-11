@@ -28,8 +28,10 @@ const SIZES_SNIPPET = `<sc-button label="Small" size="sm" />
 
 const ICONS_SNIPPET = `<sc-button label="Con icono" icon="check" />
 <sc-button icon="check" iconAriaLabel="Confirmar" />
+<sc-button label="Legacy pi" icon="pi pi-trash" variant="danger" />
 <sc-button label="Cargando" [loading]="true" />
-<sc-button label="Deshabilitado" [disabled]="true" />`;
+<sc-button label="Deshabilitado" [disabled]="true" />
+<sc-button label="Full width" [fullWidth]="true" />`;
 
 /** Demo de `sc-button` en formato story (motor «Storybook-like»). */
 @Component({

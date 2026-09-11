@@ -11,13 +11,13 @@ import { ScSelectComponent } from '@smartcontact-hub/components';
 import { StoryContext, StoryDef, StoryHostComponent, StoryMeta } from '../../../storybook';
 
 const OBJETOS_SNIPPET = `<sc-select
-  label="Prioridad (objetos + pTemplate)"
+  label="Prioridad (objetos + plantilla de opción)"
   [options]="objOptions"
   optionLabel="name"
   optionValue="id"
   placeholder="Elige prioridad"
 >
-  <ng-template pTemplate="item" let-opt>★ {{ opt.name }}</ng-template>
+  <ng-template #item let-opt>★ {{ opt.name }}</ng-template>
 </sc-select>`;
 
 const ESTADOS_SNIPPET = `<sc-select label="Con clear + filtro" [options]="groups" [showClear]="true" [filter]="true" placeholder="Buscar…" />
@@ -49,7 +49,7 @@ export class SelectDemoComponent {
     tag: 'sc-select',
     title: 'Select',
     description:
-      'Select / dropdown sobre `p-select` con la chrome del field-pattern (label + requerido + helper/error). Options como `string[]` u objetos (`optionLabel`/`optionValue`). Acepta `<ng-template pTemplate="item">` para render custom de las opciones.',
+      'Select / dropdown sobre `p-select` con la chrome del field-pattern (label + requerido + helper/error). Options como `string[]` u objetos (`optionLabel`/`optionValue`). Acepta `<ng-template #item>` para render custom de las opciones (`contentChild`, no `pTemplate`).',
     argTypes: [
       { name: 'label', control: { kind: 'text' } },
       { name: 'placeholder', control: { kind: 'text' } },
@@ -107,7 +107,7 @@ export class SelectDemoComponent {
     if (!pg || !ob || !es) return [];
     return [
       { name: 'Playground', playground: true, template: pg },
-      { name: 'Objetos + pTemplate', template: ob, snippet: OBJETOS_SNIPPET },
+      { name: 'Objetos + plantilla de opción', template: ob, snippet: OBJETOS_SNIPPET },
       { name: 'Estados y tamaños', template: es, snippet: ESTADOS_SNIPPET },
     ];
   });
