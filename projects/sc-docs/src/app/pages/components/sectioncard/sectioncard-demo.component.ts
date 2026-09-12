@@ -98,6 +98,7 @@ export class SectionCardDemoComponent {
       { name: 'collapsible', control: { kind: 'boolean' } },
       { name: 'initiallyCollapsed', control: { kind: 'boolean' } },
       { name: 'flush', control: { kind: 'boolean' } },
+          { name: 'anchorId', control: { kind: 'text' }, description: 'id del ancla, para el índice lateral.' },
     ],
     defaultArgs: {
       titleKey: 'Configuración del agente',
@@ -107,6 +108,7 @@ export class SectionCardDemoComponent {
       collapsible: false,
       initiallyCollapsed: false,
       flush: false,
+          anchorId: 'seccion-ejemplo',
     },
     props: [
       {

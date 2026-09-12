@@ -45,6 +45,7 @@ export class InputNumberDemoComponent {
       { name: 'required', control: { kind: 'boolean' } },
       { name: 'disabled', control: { kind: 'boolean' } },
       { name: 'readonly', control: { kind: 'boolean' } },
+          { name: 'invalid', control: { kind: 'boolean' }, description: 'Marca el campo sin texto de error.' },
     ],
     defaultArgs: {
       label: 'Cantidad',
@@ -60,6 +61,7 @@ export class InputNumberDemoComponent {
       required: false,
       disabled: false,
       readonly: false,
+          invalid: false,
     },
     props: [
       { name: 'value', type: 'number | null', default: 'null', description: 'Two-way `[(value)]`. `null` = vacío.' },

@@ -10,6 +10,20 @@ import {
 import { ScButtonComponent, ScDrawerComponent } from '@smartcontact-hub/components';
 import { StoryContext, StoryDef, StoryHostComponent, StoryMeta } from '../../../storybook';
 
+const PLAYGROUND_SNIPPET = `<!-- "visible" es un model: se abre con "[(visible)]" o, si el estado vive fuera, con
+     "[visible]" + "(visibleChange)" como aquí. -->
+<sc-button label="Abrir drawer" (clicked)="open.set(true)" />
+
+<sc-drawer
+  header="Detalle"
+  position="right"
+  [modal]="true"
+  [visible]="open()"
+  (visibleChange)="open.set($event)"
+>
+  Contenido del drawer.
+</sc-drawer>`;
+
 /** Demo de `sc-drawer` en formato story (motor «Storybook-like»). */
 @Component({
   selector: 'app-drawer-demo',
@@ -73,6 +87,6 @@ export class DrawerDemoComponent {
   protected readonly stories = computed<readonly StoryDef[]>(() => {
     const pg = this.playgroundTpl();
     if (!pg) return [];
-    return [{ name: 'Playground', playground: true, template: pg }];
+    return [{ name: 'Playground', playground: true, template: pg, snippet: PLAYGROUND_SNIPPET }];
   });
 }

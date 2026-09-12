@@ -1,13 +1,18 @@
 <app-story-host [meta]="meta" [stories]="stories()" />
 
 <ng-template #playground let-args>
+  <!-- La etiqueta del checkbox se PROYECTA, no es un input: `labelPosition` dice de qué lado
+       del cuadro se pinta ese contenido. -->
   <sc-checkbox
     [state]="args.state"
     [size]="args.size"
     [filled]="args.filled"
     [disabled]="args.disabled"
     [ariaLabel]="args.ariaLabel || null"
-  />
+    [labelPosition]="args.labelPosition"
+  >
+    {{ args.etiqueta }}
+  </sc-checkbox>
 </ng-template>
 
 <ng-template #tristate>

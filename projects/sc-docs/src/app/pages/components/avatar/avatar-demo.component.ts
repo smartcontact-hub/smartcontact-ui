@@ -69,6 +69,8 @@ export class AvatarDemoComponent {
           options: ['primary', 'secondary', 'success', 'info', 'warning', 'danger', 'contrast'],
         },
       },
+          { name: 'image', control: { kind: 'text' }, description: 'URL de la foto; gana a label e icon.' },
+      { name: 'illustrationBase', control: { kind: 'text' }, description: 'Carpeta de las ilustraciones de respaldo.' },
     ],
     defaultArgs: {
       label: 'SC',
@@ -77,6 +79,8 @@ export class AvatarDemoComponent {
       shape: 'circle',
       badge: '',
       badgeVariant: 'danger',
+          image: '',
+      illustrationBase: 'assets/avatars',
     },
     props: [
       { name: 'label', type: 'string | null', default: 'null', description: 'Iniciales (cara Label).' },

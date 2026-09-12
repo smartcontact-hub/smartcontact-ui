@@ -9,6 +9,7 @@ import {
   ScDatatableRowEvent,
   ScRowStyleClassFn,
 } from '@smartcontact-hub/components';
+import type { ScDatatableFilters } from '@smartcontact-hub/components';
 import { StoryContext, StoryDef, StoryHostComponent, StoryMeta } from '../../../storybook';
 
 interface Agent {
@@ -58,10 +59,15 @@ const LAZY_SNIPPET = `<input (input)="lazyTable.filterGlobal($any($event.target)
   [lazy]="true"
   [totalRecords]="lazyTotal()"
   [globalFilterFields]="['name']"
+  [filters]="lazyFilters()"
   [paginator]="true"
   [rows]="5"
   (lazyLoad)="onLazyLoad($event)"
 />`;
+
+// El mapa de filtros lo MANDA el consumidor: la tabla no guarda estado propio en modo lazy,
+// así que lo que se le pasa es lo que pinta. En el evento viaja de vuelta.
+// protected readonly lazyFilters = signal<ScDatatableFilters>({});
 
 const GESTURES_SNIPPET = `<sc-datatable
   [value]="agents()"
@@ -157,6 +163,12 @@ export class DatatableDemoComponent {
   // --- Lazy (server-driven): el consumidor sirve los datos desde (lazyLoad) ---
   protected readonly lazyRows = signal<readonly Agent[]>([]);
   protected readonly lazyTotal = signal(0);
+
+  /**
+   * El mapa de filtros, que en modo lazy lo manda el CONSUMIDOR: la tabla no guarda estado
+   * propio, así que lo que recibe es lo que pinta, y en `lazyLoad` viaja de vuelta.
+   */
+  protected readonly lazyFilters = signal<ScDatatableFilters>({});
   protected readonly lazyColumns: readonly ScColumnDef<Agent>[] = [
     { field: 'name', header: 'Nombre', sortable: true },
     { field: 'extension', header: 'Extensión', width: '10rem', align: 'center' },
@@ -255,6 +267,11 @@ export class DatatableDemoComponent {
       { name: 'size', control: { kind: 'select', options: ['sm', 'md', 'lg'] } },
       { name: 'variant', control: { kind: 'select', options: ['default', 'list'] } },
       { name: 'loading', control: { kind: 'boolean' } },
+          { name: 'sortField', control: { kind: 'text' }, description: 'Columna por la que sale ordenada.' },
+      { name: 'sortOrder', control: { kind: 'select', options: [1, -1] }, description: '1 ascendente, -1 descendente.' },
+      { name: 'scrollable', control: { kind: 'boolean' }, description: 'Cabecera fija y cuerpo con scroll propio.' },
+      { name: 'scrollHeight', control: { kind: 'text' }, description: 'Alto de ese scroll (p.ej. 240px).' },
+      { name: 'rowsFocusable', control: { kind: 'boolean' }, description: 'Las filas entran en el orden de tabulación.' },
     ],
     defaultArgs: {
       paginator: true,
@@ -265,6 +282,14 @@ export class DatatableDemoComponent {
       size: 'md',
       variant: 'default',
       loading: false,
+          // El knob arranca VACÍO a propósito: con `sortField: 'name'` la tabla salía ya ordenada y
+      // cambiaba cuál es la primera fila, que es lo que miden los e2e de gestos. Un valor por
+      // defecto en la ficha no puede cambiar el comportamiento de la demo.
+      sortField: '',
+      sortOrder: 1,
+      scrollable: false,
+      scrollHeight: '240px',
+      rowsFocusable: false,
     },
     props: [
       { name: 'value', type: 'T[]', default: '[]', description: 'Filas de datos.' },

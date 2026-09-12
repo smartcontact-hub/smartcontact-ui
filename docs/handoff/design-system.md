@@ -62,16 +62,20 @@ Orca se cerraron en el #113; `agent-mini` entró en el CI; la doc, en su PR):
   con las cuatro cosas que lo hacen fiable escritas dentro (texto PROPIO y no `textContent`; clave
   con ordinal; el selector ignora `sc-text-*` o el diff sale vacío por construcción; y medir el
   RUIDO primero — dos pasadas del mismo build, 0 diferencias). Se había reescrito tres veces.
-- **Los inputs públicos sin ejemplo**: 66 → **55** el 2026-09-12. **Cuatro no eran deuda**, era el
-  regex: `rowSelectionAriaLabel`, `selectAllAriaLabel`, `clearAriaLabel` y `closeAriaLabel` son la
-  misma clase de cosa que `ariaLabel` y la lista los pedía por NOMBRE en vez de por patrón. Los
-  otros siete se documentaron de verdad, con una story en `sc-select` («Lo que no se ve en los
-  otros ejemplos»: `invalid`, `readonly`, `filterBy`, `emptyMessage`, `emptyFilterMessage`,
-  `optionDisabled`, `value`). Los 55 que quedan salen con `--inputs`; los gordos son
-  `sc-multiselect` (10), `sc-datatable` (6) y `sc-dialog` (6).
-  ⚠️ **Añadir una story a una página con métrica cuesta tres redes**: la captura visual, el HTML
-  congelado y los estilos computados. Se regeneran, pero hay que correr `npm run e2e` ENTERO en
-  local — el preflight no lo incluye (DD-60) y el CI lo caza después.
+- ~~**Los inputs públicos sin ejemplo**~~ → **CERO el 2026-09-12** (eran 66 el día anterior). Todo
+  input público del DS sale en un ejemplo de su página o en un control de su Playground, y el
+  trinquete en 0 deja de medir deuda para pasar a proteger.
+  ⚠️ **11 de los 66 nunca fueron deuda, era el gate**, y las cuatro veces el fallo era LEER DE
+  MENOS: `\w+AriaLabel` pedido por nombre en vez de por patrón · los knobs cortados en el primer
+  `],` cuando un control lleva sus `options` en varias líneas (leía 9 de 20 en `sc-dialog`) · el
+  binding de DOS sentidos `[(x)]` sin reconocer, que es justo como se abre un diálogo · y los
+  snippets escritos EN LÍNEA en la story, que no son constantes. Cada uno lleva ya su test rojo.
+  Un guardián que reclama lo que ya está hecho enseña a ignorarlo.
+  ⚠️ **Un valor por defecto de un knob puede cambiar la demo**: `sortField: 'name'` dejaba la tabla
+  ya ordenada y los e2e de gestos empezaron a abrir otra fila. Los knobs arrancan en el valor que
+  el componente ya tiene.
+  ⚠️ **Tocar una página con métrica cuesta TRES redes**: captura visual, HTML congelado y estilos
+  computados. Hay que correr `npm run e2e` ENTERO en local — el preflight no lo incluye (DD-60).
 
 **Lo que deja el 2026-09-12 (la vuelta a las tablas, DD-72), medido y sin hacer:**
 

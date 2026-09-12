@@ -50,12 +50,14 @@ export class EmptyStateDemoComponent {
         control: { kind: 'text' },
         description: 'Clave i18n de la CTA (vacío = sin botón)',
       },
+          { name: 'ctaIcon', control: { kind: 'text' }, description: 'Icono de la CTA (Material).' },
     ],
     defaultArgs: {
       icon: 'inbox',
       titleKey: 'No hay agentes todavía',
       bodyKey: 'Crea tu primer agente para empezar a recibir llamadas.',
       ctaKey: '',
+          ctaIcon: 'add',
     },
     props: [
       {
