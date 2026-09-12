@@ -3,6 +3,7 @@ import {
   ChangeDetectionStrategy,
   Component,
   ElementRef,
+  computed,
   input,
   output,
   signal,
@@ -59,6 +60,54 @@ export class SummaryPanelComponent {
 
   /** El conmutador del periodo. "RECCURING" con dos C es del original. */
   protected readonly periodMode = signal<'RECCURING' | 'DURATION'>('RECCURING');
+
+  /**
+   * Las DOCE periodicidades del original, por su código de una letra.
+   *
+   * En el original el valor es `{{ offer.number }}` más un `[ngSwitch]` sobre `offer.period`, que
+   * es una letra. Aquí se replica el mapa entero aunque la oferta de ejemplo use una sola: la
+   * pantalla pintaba «1 Week» como TEXTO FIJO, sin dato detrás.
+   *
+   * ⚠️ Los rótulos salen del DICCIONARIO, no de la plantilla del original: la suya pide
+   * `SERVICE.DAY30/DAY60/DAY90/DAY5/DAY180/DAY360` y el diccionario define `DAYS30/…`, así que
+   * esos seis salen en la app real como la ruta cruda de la clave. Es un bug suyo y no se
+   * replica, igual que `…TABLE.NONE` o `QEUE`.
+   */
+  protected static readonly PERIODOS: Readonly<Record<string, string>> = {
+    d: 'Day',
+    w: 'Week',
+    m: 'Month',
+    q: 'Quarter',
+    b: 'Bi Annual',
+    y: 'Year',
+    t: '30 Days',
+    n: '60 Days',
+    u: '90 Days',
+    e: '5 Days',
+    v: '180 Days',
+    z: '360 Days',
+  };
+
+  /**
+   * Los seis rótulos de días YA llevan su número dentro («30 Days»), así que anteponer el de la
+   * oferta daba «30 30 Days». Lo cazó el e2e con la SEGUNDA suscripción; con una sola no habría
+   * salido, porque la primera es `1 w` y ahí el número sí hace falta.
+   *
+   * En el original esto no se ve nunca: su plantilla pide `SERVICE.DAY30` y el diccionario define
+   * `DAYS30`, así que los seis salen como la ruta cruda de la clave. Es un bug suyo, no se
+   * replica (como `…TABLE.NONE` o `QEUE`), y el modelo correcto es este.
+   */
+  private static readonly PERIODOS_CON_NUMERO = new Set(['t', 'n', 'u', 'e', 'v', 'z']);
+
+  /** Cuántas unidades y de qué periodo, como llega la oferta en el original. */
+  readonly periodo = input<{ numero: number; codigo: string }>({ numero: 1, codigo: 'w' });
+
+  /** «1 Week», «30 Days»… Un código que no esté en la tabla se enseña tal cual, no se inventa. */
+  protected readonly periodoLegible = computed(() => {
+    const { numero, codigo } = this.periodo();
+    const etiqueta = SummaryPanelComponent.PERIODOS[codigo] ?? codigo;
+    return SummaryPanelComponent.PERIODOS_CON_NUMERO.has(codigo) ? etiqueta : `${numero} ${etiqueta}`;
+  });
 
   /**
    * Secciones desplegables de la derecha.
@@ -138,8 +187,44 @@ export class SummaryPanelComponent {
     },
   ];
 
-  protected readonly userAgent =
-    'Mozilla/5.0 (Linux; Android 15; ExampleTel X1 Build/AP0A.000000.000) AppleWebKit/537.36 (KHTML, like Gecko)';
+  /**
+   * «Subs Info»: los DIEZ campos del original, en SU orden.
+   *
+   * El orden no se dedujo: el bundle sin minificar lo lleva escrito en un comentario —
+   * *User Agent → IP → Placement → URL → Carrier → Device → Device OS → Connection → Banner →
+   * Campaign*— y son diez bloques `subInfo-container`, cada uno con su `*ngIf` sobre un campo de
+   * `navData`. ⚠️ El hand-off decía ONCE; contados en su fuente son diez.
+   *
+   * Cada uno se pinta solo si tiene valor, como en el original. Los valores son INVENTADOS con la
+   * forma de los reales (dominios `example.*` de la RFC 2606, IP de rango privado): la vista real
+   * enseña el teléfono, la IP y las URLs por las que navegó el cliente, de lo más sensible de la
+   * aplicación.
+   */
+  protected readonly subsInfo: ReadonlyArray<{ clave: string; valor: string }> = [
+    {
+      clave: 'User Agent',
+      valor:
+        'Mozilla/5.0 (Linux; Android 15; ExampleTel X1 Build/AP0A.000000.000) AppleWebKit/537.36 (KHTML, like Gecko)',
+    },
+    { clave: 'IP', valor: '10.0.113.4' },
+    { clave: 'Placement', valor: 'lp_futbol_home_top' },
+    { clave: 'URL', valor: 'https://promo.example-mobi.com/lp_futbol?cp_id=00000000&ext_code=Example' },
+    { clave: 'Carrier', valor: 'ExampleTel ES' },
+    { clave: 'Device', valor: 'ExampleTel X1' },
+    { clave: 'Device/OS', valor: 'Android 15' },
+    { clave: 'Connection', valor: 'wifi' },
+    { clave: 'Banner', valor: 'bn_futbol_300x250' },
+    { clave: 'Campaign', valor: 'CP-000000 · Playweez Fútbol' },
+  ];
 
-  protected readonly ip = '10.0.113.4';
+  /**
+   * «Expand all» era un botón MUERTO: estaba pintado y no hacía nada. En el original conmuta
+   * `subInfoExpandAll`, y cada valor largo se recorta hasta que se despliega. Sus rótulos salen
+   * del diccionario del original: «Expand all» / «Collapse» (no «Collapse all»).
+   */
+  protected readonly subsInfoDesplegado = signal(false);
+
+  protected alternarSubsInfo(): void {
+    this.subsInfoDesplegado.update((v) => !v);
+  }
 }

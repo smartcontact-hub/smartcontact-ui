@@ -213,6 +213,20 @@
   border-radius: 6px;
   background: #ffffff;
   word-break: break-all;
+
+  /* Plegado, el valor se recorta a dos líneas; «Expand all» lo suelta. En el original cada valor
+   * largo lleva además su propio botón «Show more», que aparece SOLO si el texto desborda: eso
+   * pide medir el desbordamiento en runtime y no se replica todavía. */
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 2;
+  overflow: hidden;
+
+  &.is-open {
+    display: block;
+    -webkit-line-clamp: none;
+    overflow: visible;
+  }
 }
 
 .sum__boxk {
