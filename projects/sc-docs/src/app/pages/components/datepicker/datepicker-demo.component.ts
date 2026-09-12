@@ -10,6 +10,13 @@ import {
 import { ScDatepickerComponent } from '@smartcontact-hub/components';
 import { StoryContext, StoryDef, StoryHostComponent, StoryMeta } from '../../../storybook';
 
+const MENOS_VISTOS_SNIPPET = `<!-- "minDate" y "maxDate" acotan el calendario: los días de fuera
+     salen apagados y no se pueden elegir. Son Date, no cadenas. -->
+<sc-datepicker label="Solo este mes" [minDate]="primerDia" [maxDate]="ultimoDia" [(value)]="fecha" />
+
+<!-- "invalid" marca el campo SIN texto de error, para cuando el error se cuenta en otro sitio. -->
+<sc-datepicker label="Inválida" [invalid]="true" />`;
+
 const ESTADOS_SNIPPET = `<sc-datepicker label="Fecha de inicio" />
 <sc-datepicker label="Obligatoria" [required]="true" />
 <sc-datepicker label="Con error" error="La fecha no es válida" />
@@ -26,6 +33,13 @@ export class DatepickerDemoComponent {
   protected readonly playgroundTpl = viewChild<TemplateRef<StoryContext>>('playground');
   protected readonly basicoTpl = viewChild<TemplateRef<StoryContext>>('basico');
   protected readonly estadosTpl = viewChild<TemplateRef<StoryContext>>('estados');
+  protected readonly menosVistosTpl = viewChild<TemplateRef<StoryContext>>('menosVistos');
+
+  /** Un mes de verdad, para que `minDate`/`maxDate` acoten algo que se ve. */
+  private readonly hoy = new Date();
+  protected readonly primerDia = new Date(this.hoy.getFullYear(), this.hoy.getMonth(), 1);
+  protected readonly ultimoDia = new Date(this.hoy.getFullYear(), this.hoy.getMonth() + 1, 0);
+  protected readonly acotada = signal<Date | null>(null);
 
   readonly value = signal<Date | null>(null);
 
@@ -88,11 +102,13 @@ export class DatepickerDemoComponent {
     const pg = this.playgroundTpl();
     const ba = this.basicoTpl();
     const es = this.estadosTpl();
-    if (!pg || !ba || !es) return [];
+    const mv = this.menosVistosTpl();
+    if (!pg || !ba || !es || !mv) return [];
     return [
       { name: 'Playground', playground: true, template: pg },
       { name: 'Con valor', template: ba, snippet: '<sc-datepicker label="Fecha de inicio" [(value)]="value" />' },
       { name: 'Estados', template: es, snippet: ESTADOS_SNIPPET },
+      { name: 'Lo que no se ve en los otros ejemplos', template: mv, snippet: MENOS_VISTOS_SNIPPET },
     ];
   });
 }

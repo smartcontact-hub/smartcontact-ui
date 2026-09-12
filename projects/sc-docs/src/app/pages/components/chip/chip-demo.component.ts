@@ -62,6 +62,8 @@ export class ChipDemoComponent {
         },
         description: 'Sólo con variant="label".',
       },
+          { name: 'image', control: { kind: 'text' }, description: 'URL de la imagen del chip.' },
+      { name: 'alt', control: { kind: 'text' }, description: 'Texto alternativo de esa imagen.' },
     ],
     defaultArgs: {
       label: 'Etiqueta',
@@ -70,6 +72,8 @@ export class ChipDemoComponent {
       disabled: false,
       variant: 'default',
       labelColor: 'gray',
+          image: '',
+      alt: '',
     },
     props: [
       { name: 'label', type: 'string | null', default: 'null' },

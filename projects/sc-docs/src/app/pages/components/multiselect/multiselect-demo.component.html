@@ -21,7 +21,48 @@
 </ng-template>
 
 <ng-template #basico>
-  <sc-multiselect label="Grupos" [options]="groups" placeholder="Selecciona grupos" data-testid="sc-multiselect" />
+  <sc-multiselect label="Grupos" [options]="groups" placeholder="Selecciona grupos" [(value)]="value" data-testid="sc-multiselect" />
+</ng-template>
+
+<!-- Los inputs que ningún ejemplo enseñaba. Mismo molde que en `sc-select`: cada uno con su
+     ejemplo VIVO al lado, no solo en el bloque de código. -->
+<ng-template #menosVistos>
+  <div class="col">
+    <sc-multiselect
+      label="Objetos: qué campo es la etiqueta y cuál el valor"
+      [options]="prioridades"
+      optionLabel="name"
+      optionValue="id"
+      [filter]="true"
+      filterBy="name"
+      emptyFilterMessage="Ninguna prioridad se llama así"
+      placeholder="Elige prioridades"
+      data-testid="sc-multiselect-objetos"
+    />
+    <sc-multiselect
+      label="Como mucho dos, y a la tercera se pliega"
+      [options]="groups"
+      [selectionLimit]="2"
+      [maxSelectedLabels]="1"
+      selectedItemsLabel="{0} grupos elegidos"
+      placeholder="Máximo dos"
+      data-testid="sc-multiselect-limite"
+    />
+    <sc-multiselect
+      label="Inválido, sin texto de error"
+      [options]="groups"
+      [invalid]="true"
+      placeholder="Marca el campo sin decir por qué"
+      data-testid="sc-multiselect-invalid"
+    />
+    <sc-multiselect
+      label="Sin opciones"
+      [options]="[]"
+      emptyMessage="Todavía no hay grupos"
+      data-testid="sc-multiselect-empty"
+    />
+    <p>Elegidos: «{{ elegidos().join(', ') || '—' }}»</p>
+  </div>
 </ng-template>
 
 <ng-template #estados>

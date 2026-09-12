@@ -96,11 +96,18 @@ export function snippetsDe(ts) {
   }));
 }
 
-/** Tags `sc-*` de un snippet, con los nombres de atributo/binding que llevan encima. */
+/**
+ * Tags `sc-*` de un snippet, con los nombres de atributo/binding que llevan encima.
+ *
+ * ⚠️ El **binding de dos sentidos** `[(x)]` lleva DOS corchetes antes del nombre, y la primera
+ * versión solo admitía uno: `[(visible)]="open"` no se leía, así que el gate reclamaba ejemplo de
+ * `visible` en diálogo, drawer y los dos diálogos de confirmación — que es justamente como se
+ * abren en todos sus ejemplos. Cazado al bajar el trinquete, no al escribirlo.
+ */
 export function usosDe(codigo) {
   return [...codigo.matchAll(/<(sc-[a-z0-9-]+)([^>]*?)\/?>/g)].map(([, tag, crudo]) => ({
     tag,
-    atributos: [...crudo.matchAll(/[\s([]?([a-zA-Z][\w-]*)[\])]?\s*=\s*"/g)].map((m) => m[1]),
+    atributos: [...crudo.matchAll(/[\s([]{0,2}([a-zA-Z][\w-]*)[\])]{0,2}\s*=\s*"/g)].map((m) => m[1]),
   }));
 }
 
@@ -357,12 +364,35 @@ export function inputsDeComponentes(ficheros, leer = (f) => readFileSync(f, 'utf
   return out;
 }
 
-/** Los nombres de los knobs del Playground (`meta.argTypes`). */
+/**
+ * Los nombres de los knobs del Playground (`meta.argTypes`).
+ *
+ * ⚠️ Se recorta contando CORCHETES, no con un regex perezoso hasta el primer `],`. Un knob con
+ * `options: ['a', 'b']` en varias líneas cierra un corchete antes que el bloque, y el regex se
+ * paraba ahí: en `sc-dialog` leía 9 de 20 knobs y el gate reclamaba ejemplo de `draggable`,
+ * `resizable` y `dismissableMask`, que llevaban su control desde siempre. Un guardián que pide
+ * lo que ya está hecho enseña a ignorarlo (LEARNINGS #2).
+ */
 export function argTypesDe(ts) {
-  const bloque = ts.match(/argTypes:\s*\[([\s\S]*?)\n\s*\],/);
   const out = new Set();
-  if (!bloque) return out;
-  for (const [, n] of bloque[1].matchAll(/\bname:\s*'([\w-]+)'/g)) out.add(n);
+  const i = ts.indexOf('argTypes:');
+  if (i < 0) return out;
+  const abre = ts.indexOf('[', i);
+  if (abre < 0) return out;
+  let prof = 0;
+  let fin = abre;
+  let tick = false;
+  for (let j = abre; j < ts.length; j += 1) {
+    const c = ts[j];
+    if (c === '`' && ts[j - 1] !== '\\') tick = !tick;
+    if (tick) continue;
+    if (c === '[') prof += 1;
+    else if (c === ']') {
+      prof -= 1;
+      if (prof === 0) { fin = j; break; }
+    }
+  }
+  for (const [, n] of ts.slice(abre, fin).matchAll(/\bname:\s*'([\w-]+)'/g)) out.add(n);
   return out;
 }
 
@@ -392,19 +422,25 @@ export const DIVERGENCIAS = {
 };
 
 /**
- * Tope del trinquete de (b). Arrancó en **66** el 2026-09-11 y baja a **55** el 2026-09-12:
- *   · **4 no eran deuda**, era el regex: `rowSelectionAriaLabel`, `selectAllAriaLabel`,
- *     `clearAriaLabel` y `closeAriaLabel` son exactamente la misma clase de cosa que `ariaLabel`,
- *     y la lista los pedía por NOMBRE en vez de por patrón;
- *   · **7 se documentaron de verdad**, con una story nueva en `sc-select` («Lo que no se ve en
- *     los otros ejemplos»): `invalid`, `readonly`, `filterBy`, `emptyFilterMessage`,
- *     `emptyMessage`, `optionDisabled`, `value`.
+ * Tope del trinquete de (b): **CERO**. Todo input público del DS sale en un ejemplo de su página
+ * o en un control de su Playground.
  *
- * Los 55 que quedan no se arreglan de golpe: un ejemplo malo enseña peor que ninguno. Pero el
- * número SOLO PUEDE BAJAR, y un input nuevo sin ejemplo pone el gate en rojo el día que se añade,
- * que es cuando cuesta un minuto. `node scripts/audit-doc-snippets.mjs --inputs` imprime la lista.
+ * Arrancó en 66 el 2026-09-11, bajó a 55 al día siguiente y a 0 el 2026-09-12. De los 66:
+ *   · **11 nunca fueron deuda, era el gate**, y las tres veces el fallo era leer de menos —
+ *     `\w+AriaLabel` pedido por nombre en vez de por patrón; los knobs cortados en el primer
+ *     `],` cuando un control tenía sus `options` en varias líneas (9 de 20 en `sc-dialog`); el
+ *     binding de DOS sentidos `[(x)]` no reconocido, que es justo como se abre un diálogo; y los
+ *     snippets escritos EN LÍNEA en la story, que no son constantes. Un guardián que reclama lo
+ *     que ya está hecho enseña a ignorarlo (LEARNINGS #2), y por eso cada uno lleva su test rojo.
+ *   · **el resto se documentó**: dos stories nuevas de campo (`sc-select`, `sc-multiselect`), una
+ *     de `sc-datepicker`, snippets explícitos de Playground para los cinco componentes que se
+ *     abren con estado (`sc-dialog`, `sc-drawer`, los dos de confirmación y el modal masivo) y
+ *     knobs donde la propiedad se prueba tocándola.
+ *
+ * En CERO el gate cambia de significado: ya no mide deuda, protege. Un input nuevo sin ejemplo
+ * pone el gate en rojo el día que se añade, que es cuando cuesta un minuto documentarlo.
  */
-export const INPUTS_SIN_EJEMPLO_MAX = 55;
+export const INPUTS_SIN_EJEMPLO_MAX = 0;
 
 /* ── main ──────────────────────────────────────────────────────────────────── */
 if (process.argv[1] && process.argv[1].endsWith('audit-doc-snippets.mjs')) {
@@ -477,7 +513,12 @@ if (process.argv[1] && process.argv[1].endsWith('audit-doc-snippets.mjs')) {
     // ── (b) trinquete de inputs sin ejemplo ────────────────────────────────
     const tag = ts.match(/tag:\s*'([\w-]+)'/)?.[1];
     if (tag) {
-      const faltan = inputsSinEjemplo(tag, snippetsDe(ts).map((x) => x.codigo), argTypesDe(ts), inputs);
+      /* Los códigos salen de las HISTORIAS, no de `snippetsDe`: hay snippets escritos EN LÍNEA en
+       * la story (`snippet: \`…\``) que no son constantes, y contarlos fuera hacía que el gate
+       * reclamara ejemplo de `columns` y `storageKey` en `sc-column-selector`, que los enseña
+       * desde siempre en su propio ejemplo. */
+      const codigos = historias.map((x) => x.codigo).filter((x) => typeof x === 'string');
+      const faltan = inputsSinEjemplo(tag, codigos, argTypesDe(ts), inputs);
       if (faltan.length) {
         nInputsSueltos += faltan.length;
         sueltosPorTag.push(`${tag}: ${faltan.join(', ')}`);

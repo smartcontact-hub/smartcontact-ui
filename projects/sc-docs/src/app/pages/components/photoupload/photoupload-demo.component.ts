@@ -53,12 +53,14 @@ export class PhotoUploadDemoComponent {
         control: { kind: 'select', options: ['illustrated', 'abstract'] },
       },
       { name: 'ariaLabel', control: { kind: 'text' } },
+          { name: 'illustrationBase', control: { kind: 'text' }, description: 'Carpeta de donde salen las ilustraciones de respaldo.' },
     ],
     defaultArgs: {
       name: 'Inés García',
       size: 'md',
       illustrationPool: 'abstract',
       ariaLabel: '',
+          illustrationBase: 'assets/avatars',
     },
     props: [
       { name: 'photo', type: 'string | null', default: 'null', description: 'Data URL / src actual.' },
