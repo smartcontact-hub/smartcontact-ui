@@ -138,6 +138,43 @@ test('sin escrituras, el motivo no gana ruido', () => {
   assert.doesNotMatch(r.reason, /también escribía/);
 });
 
+/*
+ * #5 — un bucle de espera cuyo `pgrep -f` se casa con SU PROPIA línea de comandos no termina
+ * nunca, y el síntoma miente del todo: parece que la otra sesión no acaba, y la máquina lleva
+ * rato libre. El 2026-09-12 costó tres esperas muertas seguidas (una la mató el sistema por
+ * memoria) con varias cajas trabajando a la vez.
+ *
+ * ⚠️ La regla se estrenó DENEGÁNDOSE A SÍ MISMA: el comando que escribía este test llevaba el
+ * bucle dentro de un heredoc, y un heredoc es texto, no un comando. Por eso mira el texto sin
+ * heredocs, y por eso el patrón se compone aquí en vez de escribirse entero.
+ */
+const PATRON_ESPERA = ['pre' + 'flight', 'scope'].join('-');
+
+test('#5 espera que se casa sola: el patrón también fuera del `pgrep` → deny', () => {
+  const r = evaluar(`until ! pgrep -f "${PATRON_ESPERA}" >/dev/null; do sleep 20; done; echo ${PATRON_ESPERA}`, {
+    cwd: '/tmp',
+  });
+  assert.equal(r.decision, 'deny');
+  assert.match(r.reason, /se encuentra a SÍ MISMO/);
+});
+
+test('#5 y sus tres vecinos legítimos pasan: proceso, `pgrep` suelto y heredoc que lo menciona', () => {
+  // Apuntar al PROCESO no se casa con el shell que espera.
+  assert.equal(
+    evaluar(`until ! pgrep -f "node scripts/${PATRON_ESPERA}.mjs" >/dev/null; do sleep 20; done`, { cwd: '/tmp' })
+      .decision,
+    'allow',
+  );
+  // Sin bucle no se espera a nada.
+  assert.equal(evaluar(`pgrep -f ${PATRON_ESPERA} && echo ${PATRON_ESPERA}`, { cwd: '/tmp' }).decision, 'allow');
+  // Escribir un fichero que HABLA del bucle no es ejecutarlo — el falso positivo que se cazó solo.
+  assert.equal(
+    evaluar(`cat > t.mjs <<'EOF'\nuntil ! pgrep -f "${PATRON_ESPERA}"; do sleep 1; done\nEOF`, { cwd: '/tmp' })
+      .decision,
+    'allow',
+  );
+});
+
 test('escrituras(): cuenta las de verdad e ignora /dev, /tmp y los descriptores', () => {
   assert.deepEqual(escrituras('npm run verify > /tmp/x.log 2>&1'), []);
   assert.deepEqual(escrituras('cmd 2>/dev/null'), []);

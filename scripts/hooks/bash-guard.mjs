@@ -285,6 +285,41 @@ function evaluarBase(cmd, ctx = {}) {
         'quedó viejo), añade `# sc:ok`.',
     };
 
+  // #5 — un bucle de espera cuyo patrón SE CASA A SÍ MISMO no termina nunca.
+  //
+  // `until ! pgrep -f "preflight-scope"; do sleep; done` corre dentro de un shell cuya propia
+  // línea de comandos contiene «preflight-scope», así que `pgrep -f` se encuentra a sí mismo y la
+  // condición nunca se cumple. El 2026-09-12 costó tres esperas muertas (una de ellas la mató el
+  // sistema por memoria) antes de ver que la máquina llevaba rato libre: el síntoma es «la otra
+  // sesión no acaba nunca», y la causa es tu propio `pgrep`.
+  //
+  // El arreglo es apuntar al PROCESO, no a la cadena: `pgrep -f "node scripts/preflight-scope.mjs"`
+  // no casa con el shell que espera, o `pgrep -f pat | grep -v $$`.
+  const esperaQueSeCasaSolaMisma = (cmd) => {
+    const m = cmd.match(/pgrep\s+(?:-[a-zA-Z]+\s+)*-f\s+["']?([^"'|;)\s]+)["']?/);
+    if (!m) return null;
+    const patron = m[1];
+    if (patron.length < 4) return null;
+    // ¿El patrón aparece FUERA del propio `pgrep`? Entonces el comando se encuentra a sí mismo.
+    const sinPgrep = cmd.replace(/pgrep[^;|&\n]*/g, '');
+    return sinPgrep.includes(patron) ? patron : null;
+  };
+  /* Sobre el texto SIN heredocs: escribir un fichero que HABLA de este bucle no es ejecutarlo, y
+   * la primera versión se denegó a sí misma tres veces al crear su propio test. */
+  const sinDocs = sinHeredocs(cmd);
+  if (/\b(until|while)\b/.test(sinDocs)) {
+    const patron = esperaQueSeCasaSolaMisma(sinDocs);
+    if (patron)
+      return {
+        decision: 'deny',
+        reason:
+          `LEARNINGS #5 — este bucle espera a que muera «${patron}», y su propia línea de comandos contiene ese texto: ` +
+          '`pgrep -f` se encuentra a SÍ MISMO y la condición no se cumple nunca. El síntoma es «la otra sesión no acaba», ' +
+          'y la causa eres tú (2026-09-12: tres esperas muertas con la máquina libre). ' +
+          'Apunta al proceso y no a la cadena —`pgrep -f "node scripts/preflight-scope.mjs"`— o filtra tu propio PID (`| grep -v $$`).',
+      };
+  }
+
   return { decision: 'allow', reason: '' };
 }
 
