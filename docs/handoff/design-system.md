@@ -31,9 +31,7 @@
 
 **Lo que dejó el barrido de estilos de texto del 2026-09-11 (tarde), pendiente de RAFA:**
 
-- **12/20 no es ningún estilo**: sale cuando la clase va en un contenedor y el descendiente declara
-  solo el tamaño (pastillas de estado de repositorios, cabeceras de grupos asignados, contadores de
-  pestaña). ¿Text style propio para pastilla, o `line-height` explícito?
+- ~~**12/20 no es ningún estilo**~~ → se mudó a [`docs/figma-pendiente.md`](../figma-pendiente.md) §4.
 - ~~**`sc-docs` es la siguiente tanda del barrido**: 237 reglas~~ → **HECHO en parte el 2026-09-12,
   y las 237 eran la cifra equivocada.** **122 de ellas son `/validar`**, que imita el INSPECTOR DE
   CHROME a propósito y lo dice en su propio fichero desde que se escribió: tokenizarlo le quita al
@@ -79,23 +77,18 @@ Orca se cerraron en el #113; `agent-mini` entró en el CI; la doc, en su PR):
 
 **Lo que deja el 2026-09-12 (la vuelta a las tablas, DD-72), medido y sin hacer:**
 
-- **El título de sección DIVERGE de Figma a propósito** (DD-74). El Kit sigue diciendo que una
-  cabecera de sección es `Body/body-semibold` (14/20); el código la subió a `Heading/h3-semibold`
-  (18/24) porque medía lo mismo que su propio contenido y no hacía jerarquía. Hasta que ese text
-  style cambie en Figma, el código va por delante — y el 1:1 de `sc-section-card` va a cantar.
-  Cerrarlo es un cambio en Figma, no en código.
-- **20px no tiene estilo de texto.** Rafa pidió los títulos a 20; el peldaño existe
-  (`--sc-font-size-450`) pero ningún rol lo nombra, así que se usó `h3` (18). Si se quiere el 20 de
-  verdad, el camino es atar un rol a ese peldaño **en Figma** y dejar que el código lo siga.
+- **Lo que solo se puede tocar en Figma vive ahora en su propio fichero**:
+  [`docs/figma-pendiente.md`](../figma-pendiente.md). Allí están la divergencia del título de sección
+  (DD-74), la decisión 18-o-20, y lo que quedaba suelto de otras sesiones. **No lo dupliques aquí**:
+  una cosa que solo puede hacer una persona en Figma no es trabajo de la próxima sesión, y en esta
+  bandeja se leía como nota al margen — tanto que una llevaba tiempo resuelta sin que nadie la
+  tachara.
 (Las otras dos de esta bandeja —la piel por defecto sin anclar y la falta de guardián para
 las 38 ranuras— se cerraron el mismo día en DD-73.)
 
 **Lo que dejó s42, medido y sin hacer:**
 
-- **El tier `app/typography/xl|xxl` existe en Figma y no lo consume nadie** (medido: 0 nodos, 0
-  text styles). Está clasificado como `not-consumed` en `coverage-map.mjs`. Si algún día se
-  quiere de verdad, va a `sc-preset/extend.ts` + `APP_TYPOGRAPHY_CONTRACT` y sube al bucket
-  `value-check`; hasta entonces declararlo consumido sería mentir.
+- ~~**El tier `app/typography/xl|xxl`**~~ → se mudó a [`docs/figma-pendiente.md`](../figma-pendiente.md) §3.
 - **`--sc-font-size-caption-bold` está declarado y tiene 0 usos.**
 - **`display-1` se quedó sin consumidores y `h1` con uno que es solo fallback.** Es el estado
   honesto tras DD-48 (la rampa era aspiracional desde DD-13), no una regresión: la rampa ya dice
