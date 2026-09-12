@@ -12,8 +12,8 @@
         </svg>
       </span>
       <span class="demo-sidebar__brand-text">
-        <span class="demo-sidebar__brand-name">Smart Contact</span>
-        <span class="demo-sidebar__brand-sub">{{ 'chrome.brandSub' | translate }}</span>
+        <span class="demo-sidebar__brand-name sc-text-caption-semibold">Smart Contact</span>
+        <span class="demo-sidebar__brand-sub sc-text-caption-regular">{{ 'chrome.brandSub' | translate }}</span>
       </span>
     </a>
 
@@ -27,7 +27,7 @@
 
       <a class="demo-sidebar__lead" routerLink="/components" routerLinkActive="is-active">
         <span>{{ 'chrome.nav.componentes' | translate }}</span>
-        <span class="demo-sidebar__count">{{ total }}</span>
+        <span class="demo-sidebar__count sc-text-caption-semibold">{{ total }}</span>
       </a>
       @if (onComponents()) {
         <div class="demo-sidebar__sub">
@@ -85,7 +85,7 @@
 
     <!-- Pie legal: es lo último y lo más callado de la barra, como en cualquier sitio.
          Fuera de la nav de secciones a propósito: no es documentación del DS. -->
-    <a class="demo-sidebar__legal" routerLink="/aviso-legal" routerLinkActive="is-active">
+    <a class="demo-sidebar__legal sc-text-caption-regular" routerLink="/aviso-legal" routerLinkActive="is-active">
       {{ 'chrome.nav.avisoLegal' | translate }}
     </a>
   </aside>

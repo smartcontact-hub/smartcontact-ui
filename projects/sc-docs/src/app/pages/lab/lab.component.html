@@ -1,6 +1,6 @@
 <article class="lab">
   <header class="lab__head">
-    <p class="eyebrow">Lab</p>
+    <p class="eyebrow sc-text-caption-semibold">Lab</p>
     <h1>Lab</h1>
     <p class="lead">
       Los <strong>enlaces</strong> que usas cada día y los <strong>prototipos</strong> que aún no
@@ -10,7 +10,7 @@
 
   <!-- ─────────────────────────── ENLACES ─────────────────────────── -->
   <section class="links" aria-labelledby="links-title">
-    <h2 id="links-title" class="section-title">Enlaces</h2>
+    <h2 id="links-title" class="section-title sc-text-h2-semibold">Enlaces</h2>
     <p class="section-lead">
       Todo lo desplegado, el repositorio y el Kit de Figma, para no memorizar URLs.
     </p>
@@ -18,7 +18,7 @@
     @for (group of linkGroups; track group.title) {
       <div class="link-group">
         <div class="link-group__head">
-          <h3 class="link-group__title">{{ group.title }}</h3>
+          <h3 class="link-group__title sc-text-caption-semibold">{{ group.title }}</h3>
           @if (group.meta) {
             <span class="link-group__meta">{{ group.meta }}</span>
           }
@@ -47,7 +47,7 @@
                   <span class="link-item__url">Próximamente</span>
                 </div>
               }
-              <p class="link-item__note">{{ link.note }}</p>
+              <p class="link-item__note sc-text-caption-regular">{{ link.note }}</p>
             </li>
           }
         </ul>
@@ -63,7 +63,7 @@
 
   <!-- ──────────────────────── EXPLORACIONES ───────────────────────── -->
   <section class="explorations" aria-labelledby="expl-title">
-    <h2 id="expl-title" class="section-title">Exploraciones</h2>
+    <h2 id="expl-title" class="section-title sc-text-h2-semibold">Exploraciones</h2>
     <p class="section-lead">
       Prototipos guardados para no perderlos: <strong>aún no forman parte del sistema</strong>,
       son ideas para valorar. Las copias viven en el repo, no dependen de sitios externos.
@@ -79,16 +79,16 @@
           ></iframe>
         </div>
         <div class="expl__body">
-          <p class="expl__kind">Patrón · pantalla de carga</p>
-          <h3 class="expl__title">Pantalla de carga (esqueleto)</h3>
-          <p class="expl__by">Marta Recio · jul 2026</p>
+          <p class="expl__kind sc-text-caption-semibold">Patrón · pantalla de carga</p>
+          <h3 class="expl__title sc-text-h3-semibold">Pantalla de carga (esqueleto)</h3>
+          <p class="expl__by sc-text-caption-regular">Marta Recio · jul 2026</p>
           <p class="expl__note">
             Boceto de la pantalla de carga de la app del agente, con barras tipo esqueleto. Es
             HTML puro: aún no usa los tokens del sistema. El DS ya tiene <code>sc-skeleton</code>
             suelto; falta convertir esto en un patrón completo.
           </p>
           <a
-            class="expl__open"
+            class="expl__open sc-text-body-semibold"
             href="/explorations/skeleton-screen/index.html"
             target="_blank"
             rel="noopener"
@@ -107,15 +107,15 @@
           />
         </div>
         <div class="expl__body">
-          <p class="expl__kind">Asset · icono animado</p>
-          <h3 class="expl__title">Icono de carga (búsqueda)</h3>
-          <p class="expl__by">Marta Recio · jul 2026</p>
+          <p class="expl__kind sc-text-caption-semibold">Asset · icono animado</p>
+          <h3 class="expl__title sc-text-h3-semibold">Icono de carga (búsqueda)</h3>
+          <p class="expl__by sc-text-caption-regular">Marta Recio · jul 2026</p>
           <p class="expl__note">
             Icono animado de una lupa buscando, con el texto «Cargando resultados…». Exportado en
             Lottie y GIF. Por decidir si sustituye al spinner actual.
           </p>
           <a
-            class="expl__open"
+            class="expl__open sc-text-body-semibold"
             href="/explorations/search-loading/search_loading_icon.gif"
             target="_blank"
             rel="noopener"

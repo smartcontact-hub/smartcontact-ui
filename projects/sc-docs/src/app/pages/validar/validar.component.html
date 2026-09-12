@@ -22,7 +22,7 @@
 } @else {
   <article class="guide">
     <header class="guide__head">
-      <p class="eyebrow">Guía interna</p>
+      <p class="eyebrow sc-text-caption-semibold">Guía interna</p>
       <h1>Validar un componente entero</h1>
       <p class="lead">
         Todo lo que se puede comprobar de un componente en la web: <strong>medidas, color,
@@ -38,7 +38,7 @@
 
     <!-- ── las siete ── -->
     <section aria-labelledby="siete-title">
-      <h2 id="siete-title" class="section-title">Las siete cosas que se validan</h2>
+      <h2 id="siete-title" class="section-title sc-text-h2-semibold">Las siete cosas que se validan</h2>
       <p class="section-lead">Si compruebas estas siete, el componente está validado.</p>
       <ol class="checks">
         @for (c of checks; track c.n) {
@@ -56,7 +56,7 @@
 
     <!-- ── traducción ── -->
     <section aria-labelledby="trad-title">
-      <h2 id="trad-title" class="section-title">Cómo se dice cada cosa en cada sitio</h2>
+      <h2 id="trad-title" class="section-title sc-text-h2-semibold">Cómo se dice cada cosa en cada sitio</h2>
       <p class="section-lead">
         Tú lo llamas de una manera en Figma y el navegador lo llama de otra. Es lo único que hay
         que aprenderse.
@@ -78,7 +78,7 @@
     </section>
 
     <section aria-labelledby="tam-title">
-      <h2 id="tam-title" class="section-title">El tamaño: alto, ancho y cómo se comporta</h2>
+      <h2 id="tam-title" class="section-title sc-text-h2-semibold">El tamaño: alto, ancho y cómo se comporta</h2>
       <p class="section-lead">
         Un número de ancho no dice lo mismo que «Hug» o «Fill». Lo que hay que comprobar no es
         solo cuánto mide, sino <strong>por qué mide eso</strong>: si el tamaño está escrito, si lo
@@ -107,7 +107,7 @@
 
     <!-- ── pasos ── -->
     <section aria-labelledby="pasos-title">
-      <h2 id="pasos-title" class="section-title">Abrirlo, paso a paso</h2>
+      <h2 id="pasos-title" class="section-title sc-text-h2-semibold">Abrirlo, paso a paso</h2>
       <p class="section-lead">
         Cuatro pasos, y debajo de cada uno lo que vas a ver en pantalla. No hace falta entender el
         código: solo saber dónde mirar.
@@ -254,7 +254,7 @@
 
     <!-- ── traducciones numéricas ── -->
     <section aria-labelledby="conv-title">
-      <h2 id="conv-title" class="section-title">Los tres números que hay que traducir</h2>
+      <h2 id="conv-title" class="section-title sc-text-h2-semibold">Los tres números que hay que traducir</h2>
       <p class="section-lead">El navegador escribe algunas cosas distinto a Figma. Son solo tres.</p>
       <div class="convs">
         <div class="conv">
@@ -284,7 +284,7 @@
 
     <!-- ── variables ── -->
     <section aria-labelledby="vars-title">
-      <h2 id="vars-title" class="section-title">Lo más importante: ¿usa la variable?</h2>
+      <h2 id="vars-title" class="section-title sc-text-h2-semibold">Lo más importante: ¿usa la variable?</h2>
       <p class="section-lead">
         No basta con que el número esté bien: tiene que venir del token. Vuelve a la pestaña
         <strong>Styles</strong> (la de al lado de Computed): ahí no ves el resultado, ves de dónde
@@ -314,7 +314,7 @@
 
     <!-- ── ejemplo ── -->
     <section aria-labelledby="ej-title">
-      <h2 id="ej-title" class="section-title">Un ejemplo entero, resuelto</h2>
+      <h2 id="ej-title" class="section-title sc-text-h2-semibold">Un ejemplo entero, resuelto</h2>
       <p class="section-lead">El Chip de producción, validado en sus siete puntos.</p>
       <div class="example">
         @for (row of chipExample; track row.label) {
@@ -332,7 +332,7 @@
 
     <!-- ── trampa ── -->
     <section aria-labelledby="trampa-title">
-      <h2 id="trampa-title" class="section-title">La trampa: la caja y el texto de dentro</h2>
+      <h2 id="trampa-title" class="section-title sc-text-h2-semibold">La trampa: la caja y el texto de dentro</h2>
       <p class="section-lead">
         Muchos componentes son una caja con texto dentro, y cada parte mide distinto. Si señalas el
         marco del Select verás 16px; si señalas la palabra, 14px. El número bueno es el del texto.
@@ -345,7 +345,7 @@
 
     <!-- ── catálogo ── -->
     <section aria-labelledby="cat-title">
-      <h2 id="cat-title" class="section-title">Nombres reales, y qué miden hoy</h2>
+      <h2 id="cat-title" class="section-title sc-text-h2-semibold">Nombres reales, y qué miden hoy</h2>
       <p class="section-lead">Comprobados uno a uno en producción el 1 de septiembre de 2026.</p>
       <div class="table" role="table">
         <div class="table__row table__row--head" role="row">
@@ -375,7 +375,7 @@
 
     <!-- ── moverse ── -->
     <section aria-labelledby="mov-title">
-      <h2 id="mov-title" class="section-title">Moverte entre componentes</h2>
+      <h2 id="mov-title" class="section-title sc-text-h2-semibold">Moverte entre componentes</h2>
       <ul class="moves">
         <li>
           <strong>Con la flechita, sin cerrar nada.</strong> Pincha la flecha de arriba a la
@@ -390,7 +390,7 @@
 
     <!-- ── atajo ── -->
     <section aria-labelledby="atajo-title">
-      <h2 id="atajo-title" class="section-title">Si quieres ir más rápido</h2>
+      <h2 id="atajo-title" class="section-title sc-text-h2-semibold">Si quieres ir más rápido</h2>
       <p class="section-lead">
         Señala primero el componente (clic derecho → Inspeccionar). Luego ve a la pestaña
         <strong>Console</strong>, pega esto y Enter. <code>$0</code> significa «el que acabo de
@@ -402,7 +402,7 @@
 
     <!-- ── un caso real: el ancho congelado (Contact Center del Supervisor, 2026-09-05) ── -->
     <section aria-labelledby="resp-title" id="responsive">
-      <h2 id="resp-title" class="section-title">Un caso real: el ancho congelado</h2>
+      <h2 id="resp-title" class="section-title sc-text-h2-semibold">Un caso real: el ancho congelado</h2>
       <p class="section-lead">
         La pantalla Contact Center del Supervisor se veía bien a 1366, dejaba <strong>un tercio de la
         pantalla vacío</strong> a 1920 y hacía scroll horizontal por debajo de 1280. Medido el 5 de
@@ -473,7 +473,7 @@ Lo nuestro, a 1920 (tope de 1200 y centrado):
 
     <!-- ── el auto-layout en los dos idiomas ── -->
     <section aria-labelledby="al-title">
-      <h2 id="al-title" class="section-title">El auto-layout, en los dos idiomas</h2>
+      <h2 id="al-title" class="section-title sc-text-h2-semibold">El auto-layout, en los dos idiomas</h2>
       <p class="section-lead">
         La tabla que hay que tener a mano cuando se lee una regla de tamaño o de alineación. Dos
         preguntas distintas: <strong>Hug / Fill</strong> es <em>cuánto mide</em>; la
@@ -505,7 +505,7 @@ Lo nuestro, a 1920 (tope de 1200 y centrado):
 
     <!-- ── trucos ── -->
     <section aria-labelledby="trucos-title">
-      <h2 id="trucos-title" class="section-title">Seis trucos del inspector</h2>
+      <h2 id="trucos-title" class="section-title sc-text-h2-semibold">Seis trucos del inspector</h2>
       <ul class="moves">
         <li>
           <strong>Styles, no Computed.</strong> Styles dice quién escribió cada regla y deja
@@ -540,7 +540,7 @@ Lo nuestro, a 1920 (tope de 1200 y centrado):
 
     <!-- ── el juego ── -->
     <section aria-labelledby="juego-title" class="jugar">
-      <h2 id="juego-title" class="section-title">Practícalo jugando</h2>
+      <h2 id="juego-title" class="section-title sc-text-h2-semibold">Practícalo jugando</h2>
       <p class="section-lead">
         <strong>Detective de píxeles</strong>: cinco casos, del clic derecho al ancho congelado, con el
         simulador de tokens dentro (el que antes vivía al pie de esta guía). No puedes romper nada y

@@ -27,8 +27,6 @@
 
   &__eyebrow {
     margin: 0;
-    font-size: var(--sc-font-size-100);
-    font-weight: var(--sc-font-weight-semibold);
     letter-spacing: 0.04em;
     text-transform: uppercase;
     color: var(--sc-text-subtle);
@@ -43,8 +41,6 @@
 
   &__lead {
     margin: 0;
-    font-size: var(--sc-font-size-200);
-    line-height: 1.6;
     color: var(--sc-text-secondary);
   }
 }
@@ -129,7 +125,6 @@ code {
   }
 
   &__val {
-    font-size: var(--sc-font-size-100);
     color: var(--sc-text-subtle);
     font-variant-numeric: tabular-nums;
   }
@@ -148,8 +143,6 @@ code {
 
   &__title {
     margin: 0 0 var(--sc-spacing-0-75);
-    font-size: var(--sc-font-size-200);
-    font-weight: var(--sc-font-weight-semibold);
     color: var(--sc-text-primary);
   }
 
@@ -181,7 +174,6 @@ code {
   }
 
   &__val {
-    font-size: var(--sc-font-size-100);
     color: var(--sc-text-subtle);
     font-variant-numeric: tabular-nums;
   }
@@ -195,8 +187,6 @@ code {
 
   &__title {
     margin: 0 0 var(--sc-spacing-0-5);
-    font-size: var(--sc-font-size-200);
-    font-weight: var(--sc-font-weight-semibold);
     color: var(--sc-text-primary);
   }
 
@@ -253,22 +243,17 @@ code {
   }
 
   &__val {
-    font-size: var(--sc-font-size-100);
     color: var(--sc-text-subtle);
     font-variant-numeric: tabular-nums;
   }
 
   &__use {
-    font-size: var(--sc-font-size-100);
     color: var(--sc-text-subtle);
-    line-height: 1.35;
   }
 }
 
 .foot {
   margin: var(--sc-spacing-1-5) 0 0;
-  font-size: var(--sc-font-size-100);
-  line-height: 1.55;
   color: var(--sc-text-subtle);
 }
 
@@ -284,15 +269,11 @@ code {
 
   &__title {
     margin: 0 0 var(--sc-spacing-0-5);
-    font-size: var(--sc-font-size-200);
-    font-weight: var(--sc-font-weight-semibold);
     color: var(--sc-text-primary);
   }
 
   &__lead {
     margin: 0 0 var(--sc-spacing-1-5);
-    font-size: var(--sc-font-size-100);
-    line-height: 1.6;
     color: var(--sc-text-secondary);
   }
 
@@ -321,8 +302,6 @@ code {
 
   &__col-title {
     margin: 0 0 var(--sc-spacing-0-75);
-    font-size: var(--sc-font-size-100);
-    font-weight: var(--sc-font-weight-semibold);
     color: var(--sc-text-primary);
   }
 
@@ -343,8 +322,6 @@ code {
 
   &__note {
     margin: var(--sc-spacing-1-25) 0 0;
-    font-size: var(--sc-font-size-100);
-    line-height: 1.6;
     color: var(--sc-text-secondary);
   }
 }

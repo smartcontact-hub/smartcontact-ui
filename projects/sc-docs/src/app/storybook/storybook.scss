@@ -108,7 +108,6 @@
   grid-column: 1 / -1;
   margin: 0;
   color: var(--sc-text-secondary);
-  font-size: var(--sc-font-size-100);
 }
 
 .sb-controls__label {
@@ -260,8 +259,6 @@
 
 .sb-host__section-title {
   margin: 0 0 var(--sc-spacing-0-5) 0;
-  font-size: var(--sc-font-size-50);
-  font-weight: var(--sc-font-weight-bold);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--sc-text-secondary);

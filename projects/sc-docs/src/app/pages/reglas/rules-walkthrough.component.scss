@@ -15,9 +15,6 @@
 /* ---------- cabecera ---------- */
 .eyebrow {
   margin: 0 0 var(--sc-spacing-0-5);
-  font-size: var(--sc-font-size-caption);
-  line-height: var(--sc-line-height-caption);
-  font-weight: var(--sc-font-weight-semibold);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--sc-text-subtle);
@@ -50,8 +47,6 @@
 
 .toc__title {
   margin: 0 0 var(--sc-spacing-0-75);
-  font-size: var(--sc-font-size-caption);
-  font-weight: var(--sc-font-weight-semibold);
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--sc-text-subtle);
@@ -278,9 +273,6 @@ li code {
 
 .compare__tag {
   margin: 0 0 var(--sc-spacing-0-5);
-  font-size: var(--sc-font-size-caption);
-  line-height: var(--sc-line-height-caption);
-  font-weight: var(--sc-font-weight-semibold);
   letter-spacing: 0.08em;
   text-transform: uppercase;
 }
@@ -328,8 +320,6 @@ li code {
 
 .why__label {
   margin: 0 0 var(--sc-spacing-0-375);
-  font-size: var(--sc-font-size-caption);
-  font-weight: var(--sc-font-weight-semibold);
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--sc-text-accent);
@@ -434,8 +424,6 @@ li code {
 }
 
 .decisions__d {
-  font-size: var(--sc-font-size-100);
-  line-height: var(--sc-line-height-300);
   color: var(--sc-text-secondary);
 }
 
@@ -596,7 +584,6 @@ summary:focus-visible {
 
 .lightbox__hint {
   margin: 0;
-  font-size: var(--sc-font-size-100);
   color: rgba(255, 255, 255, 0.66);
 }
 
@@ -773,8 +760,6 @@ summary:focus-visible {
 
 .rules__fb-hint {
   margin: 0 0 var(--sc-spacing-1);
-  font-size: var(--sc-font-size-caption);
-  line-height: var(--sc-line-height-caption);
   color: var(--sc-text-subtle);
 }
 
@@ -793,9 +778,6 @@ summary:focus-visible {
 
 .fb__date {
   margin: 0 0 var(--sc-spacing-0-75);
-  font-size: var(--sc-font-size-200);
-  line-height: var(--sc-line-height-200);
-  font-weight: var(--sc-font-weight-semibold);
   color: var(--sc-text-primary);
 }
 

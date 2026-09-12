@@ -67,8 +67,6 @@ code {
 }
 
 .cx-n {
-  font-size: var(--sc-font-size-body-3);
-  font-weight: var(--sc-font-weight-regular);
   color: var(--sc-text-subtle);
   margin-left: var(--sc-spacing-0-25);
 }
@@ -88,8 +86,6 @@ code {
   display: inline-block;
   padding: var(--sc-spacing-0-125) var(--sc-spacing-0-5);
   border-radius: var(--sc-radius-full);
-  font-size: var(--sc-font-size-caption);
-  line-height: var(--sc-line-height-caption);
   white-space: nowrap;
 
   &--ok {
@@ -145,7 +141,6 @@ code {
 
 .cx-leyenda__n {
   font-variant-numeric: tabular-nums;
-  font-size: var(--sc-font-size-body-3);
   color: var(--sc-text-subtle);
 }
 
@@ -251,7 +246,6 @@ code {
 }
 
 .cx-filtros__et {
-  font-size: var(--sc-font-size-caption);
   color: var(--sc-text-subtle);
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -356,7 +350,6 @@ code {
 
 .cx-lista__d {
   color: var(--sc-text-secondary);
-  font-size: var(--sc-font-size-body-3);
 }
 
 .cx-lista__m {
