@@ -165,6 +165,44 @@ const rampRule = (
  * cualquier cosa que dijéramos desde `@layer primeng`. Vive en
  * `sc-datatable.component.scss`, con su motivo escrito.
  */
+/* ══════════════════════════════════════════════════════════════════════════
+ * EL SUELO TIPOGRÁFICO DE **CUALQUIER** sc-datatable
+ * ══════════════════════════════════════════════════════════════════════════
+ *
+ * La piel `list` ancló su tipografía el 2026-09-12 (DD-72). La de por defecto
+ * NO, y arrastraba el mismo defecto: la celda no declaraba `font-size`, así que
+ * heredaba el del documento de cada app.
+ *
+ * MEDIDO, no deducido (2026-09-12, en la página del DS): con el `body` a 14px
+ * la celda por defecto rendía 14; subiendo el `body` a 20px **se fue a 20**,
+ * mientras la `list` se quedó clavada en 14. Ese es exactamente el fallo que
+ * hacía que la MISMA tabla midiera 16 en el Supervisor (que no fija `body`) y
+ * 14 en sc-docs (que sí). En sc-docs salía bien por casualidad.
+ *
+ * QUÉ VALOR SE FIJA: el que la piel por defecto ya RENDÍA en sc-docs —celda
+ * `Body/body-regular`, cabecera `Body/body-semibold`— para no rediseñarla de
+ * paso. Esto tapa el agujero; si algún día se quiere que las dos pieles digan
+ * lo mismo, eso es otra decisión y se toma mirándolas.
+ *
+ * POR QUÉ AQUÍ Y NO EN `datatable.ts`: el preset de PrimeNG solo acepta los
+ * tokens que su Table declara, y `bodyCell` no tiene `fontSize`. El hook `css`
+ * existe justo para lo que el juego de tokens no cubre.
+ *
+ * La `list` sigue mandando sobre esto por especificidad (lleva su clase). */
+const baseTableCss = () => `
+sc-datatable .p-datatable-thead > tr > th {
+    font-size: var(--sc-font-size-body-2);
+    line-height: var(--sc-line-height-body-2);
+    font-weight: var(--sc-font-weight-semibold);
+}
+
+sc-datatable .p-datatable-tbody > tr > td {
+    font-size: var(--sc-font-size-body-2);
+    line-height: var(--sc-line-height-body-2);
+    font-weight: var(--sc-font-weight-regular);
+}
+`;
+
 const LIST = "sc-datatable.sc-datatable--list";
 
 const listTableCss = () => `
@@ -390,6 +428,7 @@ ${controlRule(lgControlSelectors, dt, "app.typography.lg.font.size", fromDesignP
     line-height: 1;
 }
 
+${baseTableCss()}
 ${listTableCss()}
 
 ${buttonMotionCss()}
