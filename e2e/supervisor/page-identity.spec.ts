@@ -146,11 +146,21 @@ test('el título de página mide igual dentro de su familia', async ({ page }) =
 
   const detalle = JSON.stringify(medidas, null, 1);
 
-  // Suelto sobre el lienzo: los tokens de rol `h3` (text style `Heading/h3-semibold` del DS).
+  /* LAS DOS FAMILIAS MIDEN IGUAL desde el 2026-09-12, y por eso este test dejó de
+   * comparar dos cifras distintas.
+   *
+   * Antes había dos: suelto sobre el lienzo medía `h3` (18) y dentro de una card
+   * medía `body-semibold` (14), **para igualar al título de sección de esa card**.
+   * Ese era el vínculo. Al subir el título de sección a `h3` —porque medía lo
+   * mismo que su propio contenido y no establecía jerarquía—, el título de página
+   * de dentro sube con él. No es un efecto colateral: es el mismo vínculo
+   * funcionando, y deja una regla menos que explicar (un título de página mide lo
+   * mismo esté donde esté).
+   *
+   * Lo que este test sigue defendiendo es lo de siempre: que DENTRO de una familia
+   * no haya dos medidas. Si algún día vuelven a separarse, que sea escrito. */
   expect(porFamilia('suelto'), detalle).toEqual(['18px/600']);
-
-  // Contenido en su sección: `body-semibold`, el mismo que los títulos de sección de la card.
-  expect(porFamilia('contenido'), detalle).toEqual(['14px/600']);
+  expect(porFamilia('contenido'), detalle).toEqual(['18px/600']);
 
   // Y las dos familias están representadas: si una se queda vacía, el test dejó de mirar algo.
   expect(porFamilia('suelto').length, detalle).toBe(1);

@@ -60,13 +60,13 @@
   <span class="gatbl__td-name">
     <sc-illustrated-avatar [name]="row.group.name" pool="abstract" [size]="24" />
     <span class="gatbl__name-label" [title]="row.group.name">{{ row.group.name }}</span>
-    <span class="gatbl__chips">
+    <span class="channel-chips">
       @for (ch of row.group.channels; track ch) {
         <label
-          class="gatbl__chip"
-          [class.gatbl__chip--on]="hasChannel(row.link, ch)"
-          [class.gatbl__chip--off]="!hasChannel(row.link, ch)"
-          [class.gatbl__chip--disabled]="!row.link.active"
+          class="channel-chip"
+          [class.channel-chip--on]="hasChannel(row.link, ch)"
+          [class.channel-chip--off]="!hasChannel(row.link, ch)"
+          [class.channel-chip--disabled]="!row.link.active"
         >
           <input
             type="checkbox"
@@ -78,7 +78,7 @@
           <sc-icon
             [name]="hasChannel(row.link, ch) ? checkIcon : plusIcon"
             size="inherit"
-            class="gatbl__chip-icon"
+            class="channel-chip__icon"
           />
           <span>{{ channelKey(ch) | translate }}</span>
         </label>
