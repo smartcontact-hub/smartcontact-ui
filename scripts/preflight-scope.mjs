@@ -19,6 +19,7 @@
  */
 import { execSync, execFileSync } from "node:child_process";
 import { medirRebase } from "./preflight-rebase.mjs";
+import { puertaBarata } from "./preflight-puerta-barata.mjs";
 
 // Antes de mirar qué cambió, y antes de gastar un minuto: ¿la rama lleva `origin/main`? Un
 // preflight sobre una rama rezagada mide un árbol que nunca se pushea tal cual (2026-09-11: dos
@@ -98,6 +99,22 @@ console.log(
 );
 if (appsTocadas.length) {
   console.log(`apps tocadas: ${appsTocadas.join(", ")}`);
+}
+
+/* La PUERTA BARATA va antes de cualquier cadena: lo que se puede comprobar en milisegundos no
+ * se descubre en el minuto cuatro. Ver `preflight-puerta-barata.mjs`. */
+if (process.argv.includes("--run")) {
+  const problemas = puertaBarata(process.cwd());
+  if (problemas.length) {
+    console.log("\n✘ La cadena NO arranca: hay algo que se comprueba en 2 s y falla.\n");
+    for (const q of problemas) console.log(`    · ${q}`);
+    console.log(
+      "\n  Esto lo mide `docs:coherence` (CHECK N) en el minuto cuatro de la cadena; aquí sale ya." +
+        "\n  ⚠️ La memoria es COMPARTIDA entre sesiones: si la engordó otra, mira su fecha antes de" +
+        "\n     recortarla, y si lleva rato parada, recórtala tú — su ficha bloquea TU preflight.\n",
+    );
+    process.exit(1);
+  }
 }
 
 if (completo) {
