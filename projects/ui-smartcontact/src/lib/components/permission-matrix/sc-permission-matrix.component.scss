@@ -1,0 +1,116 @@
+/* El aspecto es el de la gramática de tabla-lista del tema
+ * (`sc-preset/css.ts`, bloque `sc-datatable--list`), que es la que usan las 10
+ * páginas con tabla del Supervisor. Aquí se ESCRIBE en vez de heredarse porque
+ * estos nodos los pinta nuestra plantilla, no `p-table`: el tema no los alcanza.
+ *
+ * Las dos divergencias respecto a esa gramática están abajo, cada una con su
+ * motivo medido. No son descuidos. */
+
+:host {
+  display: block;
+}
+
+.sc-pmatrix {
+  width: 100%;
+  border-collapse: collapse;
+
+  /* `auto`, no el `fixed` de la tabla-lista: allí `fixed` existe para que el
+     indicador de orden no recoloque las columnas, y una matriz no ordena. Con
+     `auto` el ancho sale del contenido y desaparece el número a pelo (140px y
+     142px, ninguno en la escala) que clavaban las dos matrices de hoy. */
+  table-layout: auto;
+}
+
+.sc-pmatrix th,
+.sc-pmatrix td {
+  vertical-align: middle;
+}
+
+/* ── Cabecera: calcada de `${LIST} .p-datatable-thead > tr > th` ─────────────
+   Tipografía POR ROL (`Caption/caption-semibold`), no por número suelto. El
+   padding horizontal DEBE ser el mismo que el de la celda o las columnas dejan
+   de alinearse. */
+.sc-pmatrix thead th {
+  padding: var(--sc-spacing-0-875) var(--sc-spacing-1);
+  background: var(--sc-bg-surface);
+  border-bottom: 1px solid var(--sc-border-default);
+  font-size: var(--sc-font-size-caption);
+  line-height: var(--sc-line-height-caption);
+  font-weight: var(--sc-font-weight-semibold);
+  letter-spacing: 0;
+  color: var(--sc-text-secondary);
+  text-align: left;
+}
+
+/* DIVERGENCIA 1 · las columnas de casillas van CENTRADAS, contra el
+   `text-align: left` de la gramática. Motivo medido y ya escrito en
+   `aed-agentes-page.component.scss`: con la cabecera centrada en su columna y
+   la casilla pegada a la izquierda había 45px de desfase en producción, que
+   crecen con el ancho y obligan a recorrer la fila para saber qué casilla es de
+   qué columna. */
+.sc-pmatrix__col,
+.sc-pmatrix__cell {
+  text-align: center;
+  white-space: nowrap;
+}
+
+/* ── Cuerpo: calcado de `${LIST} .p-datatable-tbody > tr > td` ───────────────
+   `Body/body-regular` (14/20). Sin esto la celda hereda los 16px por defecto del
+   navegador, que no son ningún estilo de texto. */
+.sc-pmatrix tbody th,
+.sc-pmatrix tbody td {
+  padding: var(--sc-spacing-1-25) var(--sc-spacing-1);
+  font-size: var(--sc-font-size-body-2);
+  line-height: var(--sc-line-height-body-2);
+  font-weight: var(--sc-font-weight-regular);
+  border-bottom: 1px solid var(--sc-border-default);
+}
+
+/* DIVERGENCIA 2 · la cabecera de fila va en `--sc-text-primary`, no en el
+   `--sc-text-secondary` de la gramática, y en peso normal. El nombre de la fila
+   ES el contenido de la tabla, no un apoyo: en secondary quedaba a 4.52:1 sobre
+   blanco y 4.25:1 sobre la banda gris, por DEBAJO del mínimo AA de 4.5 (medido
+   en producción el 2026-09-09, y es el motivo por el que `.comm-table` ya lo
+   había corregido a mano). Heredar la gramática aquí reintroduce ese fallo. */
+.sc-pmatrix__row-header {
+  text-align: left;
+  font-weight: var(--sc-font-weight-regular);
+  color: var(--sc-text-primary);
+}
+
+/* La esquina no rotula nada cuando va vacía: que no reserve peso visual. */
+.sc-pmatrix__corner {
+  width: auto;
+}
+
+/* La casilla es un componente del DS: se centra desde FUERA, sin entrar en su
+   interior (mismo criterio que `.comm-table__cell`). */
+.sc-pmatrix__cell sc-checkbox {
+  display: inline-flex;
+}
+
+/* EL RÓTULO DE UNA CABECERA CON CASILLA. Va PROYECTADO dentro del `sc-checkbox`,
+ * y un componente del DS publica su propia tipografía (la de control, 14px), así
+ * que sin esto la cabecera de una columna seleccionable salía a tamaño de cuerpo
+ * mientras la de al lado —texto plano— salía a `caption`. Medido en la ficha de
+ * agente el 2026-09-11: «Llamadas» a 14 contra «Destino» a 12, en la misma fila.
+ *
+ * Se estila NUESTRO `<span>` con los tokens del rol, no el `<sc-checkbox>` con
+ * una clase `.sc-text-*` encima: eso lo desconectaría del tema (DD-55). Es el
+ * mismo sitio donde `.perm-matrix__col-label` resolvía esto antes. */
+.sc-pmatrix__col-label {
+  font-size: var(--sc-font-size-caption);
+  line-height: var(--sc-line-height-caption);
+  font-weight: var(--sc-font-weight-semibold);
+  color: var(--sc-text-secondary);
+}
+
+/* LA ÚLTIMA FILA NO LLEVA RAYA. En las listas de administración esa raya no se
+ * ve porque la tabla vive dentro de `.table-card`, que la recorta contra su
+ * propio borde. La matriz va suelta dentro de una sección, sin tarjeta que la
+ * recorte, así que la raya quedaría colgando bajo la última fila. Las dos
+ * matrices que este componente sustituye ya lo hacían. */
+.sc-pmatrix tbody tr:last-child th,
+.sc-pmatrix tbody tr:last-child td {
+  border-bottom: 0;
+}

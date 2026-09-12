@@ -50,7 +50,7 @@ matiz de por qué publicar por release no lo reabre, en [DD-58](docs/DECISIONS.m
 | ------------------------------ | ---------------------------------------------------------------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------- |
 | `@smartcontact-hub/styles`     | [`projects/design-tokens`](projects/design-tokens/README.md)                 | Tokens `--sc-*` (7 capas, escala 14-base en rem) más reset y globals                                                                                  |
 | `@smartcontact-hub/icons`      | [`projects/ui-smartcontact-icons`](projects/ui-smartcontact-icons/README.md) | `<sc-icon>` y los Material Symbols generados                                                                                                          |
-| `@smartcontact-hub/components` | [`projects/ui-smartcontact`](projects/ui-smartcontact/README.md)             | `provideSmartContactUi()`, el preset modular (`theme/sc-preset`, cada slot a `var(--sc-*)`) y 50 componentes `sc-*` ([inventario](docs/inventory.md)) |
+| `@smartcontact-hub/components` | [`projects/ui-smartcontact`](projects/ui-smartcontact/README.md)             | `provideSmartContactUi()`, el preset modular (`theme/sc-preset`, cada slot a `var(--sc-*)`) y 51 componentes `sc-*` ([inventario](docs/inventory.md)) |
 
 Y **cinco apps** que lo consumen, las cinco en producción en Cloudflare Pages:
 

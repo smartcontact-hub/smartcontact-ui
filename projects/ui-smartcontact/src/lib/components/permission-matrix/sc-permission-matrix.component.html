@@ -1,0 +1,39 @@
+<table class="sc-pmatrix" [attr.aria-label]="ariaLabel()">
+  <thead>
+    <tr>
+      <th class="sc-pmatrix__corner" scope="col">{{ rowHeader() }}</th>
+      @for (col of columns(); track col.id) {
+        <th class="sc-pmatrix__col" scope="col" [style.width]="col.width ?? null">
+          @if (selectableColumns()) {
+            <sc-checkbox
+              [state]="columnState(col.id)"
+              labelPosition="start"
+              [ariaLabel]="col.label"
+              (cycle)="onColumn(col.id, $event)"
+            >
+              <span class="sc-pmatrix__col-label">{{ col.label }}</span>
+            </sc-checkbox>
+          } @else {
+            {{ col.label }}
+          }
+        </th>
+      }
+    </tr>
+  </thead>
+  <tbody>
+    @for (row of rows(); track row.id) {
+      <tr>
+        <th class="sc-pmatrix__row-header" scope="row">{{ row.label }}</th>
+        @for (col of columns(); track col.id) {
+          <td class="sc-pmatrix__cell">
+            <sc-checkbox
+              [state]="cellState(row.id, col.id)"
+              [ariaLabel]="row.label + ' — ' + col.label"
+              (cycle)="onCell(row.id, col.id, $event)"
+            />
+          </td>
+        }
+      </tr>
+    }
+  </tbody>
+</table>

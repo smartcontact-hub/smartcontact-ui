@@ -44,12 +44,10 @@ const MVP_SNIPPET = `<sc-datatable
   <div scTableEmpty>No hay agentes</div>
 </sc-datatable>
 
-<!-- columns(): el consumidor las construye; la celda 'status' usa un cellTemplate. -->
-<ng-template #statusTpl let-agent>
-  <span [attr.data-active]="agent.status === 'active'">
-    {{ agent.status === 'active' ? 'Activo' : 'Inactivo' }}
-  </span>
-</ng-template>`;
+<!-- La celda custom NO es una ranura del componente: es un TemplateRef que viaja
+     dentro de la definición de columna, en \`cellTemplate\`. Vive fuera de la
+     tabla, en la plantilla de la página, y \`columns()\` lo recoge con viewChild.
+     (Las ranuras que sí acepta son las 38 de p-table: #header, #body, #footer...) -->`;
 
 const LAZY_SNIPPET = `<input (input)="lazyTable.filterGlobal($any($event.target).value, 'contains')" />
 <sc-datatable

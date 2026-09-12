@@ -182,18 +182,40 @@ ${LIST} .p-datatable-header:empty {
 }
 
 ${LIST} .p-datatable-thead > tr > th {
-    padding: var(--sc-spacing-0-875);
+    /* TIPOGRAFIA POR ROL, no por numero suelto. Antes: 12px con peso 500, y el
+       500 NO es el peso de ninguno de los 12 text styles (solo hay 400 y 600),
+       asi que la cabecera no era ningun estilo: era un valor a mano que
+       coincidia en tamano con caption. Ahora ES Caption/caption-semibold, o
+       sea que si Figma remapea ese estilo, esto lo sigue solo.
+       El padding horizontal sube a spacing-1 y DEBE coincidir con el de la
+       celda, o las columnas dejan de alinearse. */
+    padding: var(--sc-spacing-0-875) var(--sc-spacing-1);
     background: var(--sc-bg-surface);
     border-bottom: 1px solid var(--sc-border-default);
-    font-size: var(--sc-font-size-100);
-    font-weight: var(--sc-font-weight-medium);
+    font-size: var(--sc-font-size-caption);
+    line-height: var(--sc-line-height-caption);
+    font-weight: var(--sc-font-weight-semibold);
     letter-spacing: 0;
     color: var(--sc-text-secondary);
     text-align: left;
 }
 
 ${LIST} .p-datatable-tbody > tr > td {
-    padding: var(--sc-spacing-0-875);
+    /* LA CELDA NO TENIA ESTILO DE TEXTO. Medido el 2026-09-11 en
+       /admin/usuarios: el td rendia 16px/24 (el tamano por defecto del
+       navegador, heredado porque el body del supervisor solo fija
+       line-height 1.5) y cada pagina lo corregia DENTRO de la celda pegando
+       una clase (104 repartidas por las listas). Donde faltaba la clase, el
+       texto salia a 16. Ahora la celda ES Body/body-regular (14/20) y la clase
+       de dentro solo hace falta cuando el texto quiere SALIRSE del cuerpo
+       (caption, o semibold).
+       El padding vertical sube a spacing-1-25 a proposito: con letra de 14 en
+       vez de 16 la fila encogia de 53 a 44.5 y quedaba apretada; asi queda en
+       55, que respira mas que antes y con el tipo ya correcto. */
+    padding: var(--sc-spacing-1-25) var(--sc-spacing-1);
+    font-size: var(--sc-font-size-body-2);
+    line-height: var(--sc-line-height-body-2);
+    font-weight: var(--sc-font-weight-regular);
     border-bottom: 1px solid var(--sc-border-default);
     /* Bloque contenedor para los paneles anclados a una fila (el editor inline
        cuelga de su celda). Sin esto el panel se ancla al viewport. */

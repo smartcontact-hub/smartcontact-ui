@@ -333,50 +333,16 @@
               </h3>
             </header>
 
-            <table class="perm-matrix">
-              <thead>
-                <tr>
-                  <th scope="col" class="perm-matrix__th-label">
-                    {{ 'agents.form.permissions.destino' | translate }}
-                  </th>
-                  <th scope="col" class="perm-matrix__th-col">
-                    <sc-checkbox
-                      [state]="columnState().llamada"
-                      labelPosition="start"
-                      [ariaLabel]="'agents.form.permissions.toggle_all_llamada' | translate"
-                      (cycle)="toggleColumnAll('llamada', $event)"
-                    >
-                      <span class="perm-matrix__col-label sc-text-caption-semibold">{{ 'agents.form.permissions.col_llamada' | translate }}</span>
-                    </sc-checkbox>
-                  </th>
-                  <th scope="col" class="perm-matrix__th-col">
-                    <sc-checkbox
-                      [state]="columnState().transferencia"
-                      labelPosition="start"
-                      [ariaLabel]="'agents.form.permissions.toggle_all_transferencia' | translate"
-                      (cycle)="toggleColumnAll('transferencia', $event)"
-                    >
-                      <span class="perm-matrix__col-label sc-text-caption-semibold">{{ 'agents.form.permissions.col_transferencia' | translate }}</span>
-                    </sc-checkbox>
-                  </th>
-                </tr>
-              </thead>
-              <tbody>
-                @for (row of destinoKeys; track row) {
-                  <tr>
-                    <th scope="row" class="perm-matrix__th-row sc-text-body-regular">
-                      {{ 'agents.form.permissions.row_' + row | translate }}
-                    </th>
-                    <td class="perm-matrix__cell">
-                      <sc-checkbox [state]="(matrixValue(row, 'llamada')) ? 'all' : 'none'" (cycle)="toggleMatrix(row, 'llamada')" [ariaLabel]="('agents.form.permissions.row_' + row | translate) + ' — ' + ('agents.form.permissions.col_llamada' | translate)" />
-                    </td>
-                    <td class="perm-matrix__cell">
-                      <sc-checkbox [state]="(matrixValue(row, 'transferencia')) ? 'all' : 'none'" (cycle)="toggleMatrix(row, 'transferencia')" [ariaLabel]="('agents.form.permissions.row_' + row | translate) + ' — ' + ('agents.form.permissions.col_transferencia' | translate)" />
-                    </td>
-                  </tr>
-                }
-              </tbody>
-            </table>
+            <sc-permission-matrix
+              [rows]="matrixRows()"
+              [columns]="matrixColumns()"
+              [checked]="matrixChecked()"
+              [rowHeader]="'agents.form.permissions.destino' | translate"
+              [ariaLabel]="'agents.form.permissions.calls_section' | translate"
+              selectableColumns
+              (cellToggle)="onMatrixToggle($event)"
+              (columnToggle)="onMatrixColumnToggle($event)"
+            />
           </sc-section-card>
         }
 
@@ -593,54 +559,23 @@
                     (valueChange)="templateSearch.set($event)"
                   />
                   <div class="picker-table-wrap">
-                    <table class="picker-table">
-                      <thead>
-                        <tr>
-                          <th class="picker-table__th-check">
-                            <sc-checkbox
-                              [state]="filteredTemplatesState()"
-                              [disabled]="filteredTemplates().length === 0"
-                              [ariaLabel]="'agents.form.advanced.plantillas.select_all' | translate"
-                              (cycle)="toggleAllFilteredTemplates($event)"
-                            />
-                          </th>
-                          <th scope="col" class="picker-table__th-title">
-                            {{ 'agents.form.advanced.plantillas.col_title' | translate }}
-                          </th>
-                          <th scope="col" class="picker-table__th-preview">
-                            {{ 'agents.form.advanced.plantillas.col_preview' | translate }}
-                          </th>
-                        </tr>
-                      </thead>
-                      <tbody>
-                        @if (filteredTemplates().length === 0) {
-                          <tr>
-                            <td colspan="3" class="picker-table__empty">
-                              {{
-                                'agents.form.advanced.plantillas.empty'
-                                  | translate: { tab: templateTab() }
-                              }}
-                            </td>
-                          </tr>
-                        } @else {
-                          @for (tpl of filteredTemplates(); track tpl.id) {
-                            <tr
-                              class="picker-table__row"
-                              [class.picker-table__row--selected]="form().templateIds.has(tpl.id)"
-                              (click)="toggleTemplate(tpl.id)"
-                            >
-                              <td class="picker-table__td-check">
-                                <sc-checkbox [state]="(form().templateIds.has(tpl.id)) ? 'all' : 'none'" (cycle)="toggleTemplate(tpl.id)" [ariaLabel]="tpl.title" (click)="$event.stopPropagation()" />
-                              </td>
-                              <td class="picker-table__td-title">{{ tpl.title }}</td>
-                              <td class="picker-table__td-preview" [title]="tpl.body">
-                                {{ tpl.body }}
-                              </td>
-                            </tr>
-                          }
-                        }
-                      </tbody>
-                    </table>
+                    <sc-datatable
+                      variant="list"
+                      [value]="filteredTemplates()"
+                      [columns]="templateColumns()"
+                      dataKey="id"
+                      selectionMode="multiple"
+                      [selection]="selectedTemplates()"
+                      (selectionChange)="onTemplateSelection($any($event))"
+                      (rowClick)="toggleTemplate($event.row.id)"
+                      [rowStyleClass]="templateRowClass"
+                      [rowSelectionAriaLabel]="templateAriaLabel"
+                      [selectAllAriaLabel]="'agents.form.advanced.plantillas.select_all' | translate"
+                    >
+                      <div scTableEmpty>
+                        {{ 'agents.form.advanced.plantillas.empty' | translate: { tab: templateTab() } }}
+                      </div>
+                    </sc-datatable>
                   </div>
                 </div>
               }
@@ -861,3 +796,14 @@
   (cancelled)="cancelDelete()"
   (confirm)="confirmDelete()"
 />
+
+
+<!-- Celda de la vista previa del selector de plantillas. Vive fuera para que
+     `viewChild` la resuelva (mismo patrón que las listas de administración). -->
+<ng-template #templateTitleTpl let-tpl>
+  <span class="sc-text-body-semibold">{{ tpl.title }}</span>
+</ng-template>
+
+<ng-template #templatePreviewTpl let-tpl>
+  <span class="picker-preview" [title]="tpl.body">{{ tpl.body }}</span>
+</ng-template>

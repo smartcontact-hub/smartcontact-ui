@@ -7,7 +7,14 @@ import {
   signal,
   viewChild,
 } from '@angular/core';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { map, startWith } from 'rxjs';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
+import type {
+  ScMatrixColumn,
+  ScMatrixRow,
+  ScMatrixToggle,
+} from '@smartcontact-hub/components';
 import { MessageService } from 'primeng/api';
 
 import { DirtyAware } from '@core/guards';
@@ -16,9 +23,9 @@ import { TOAST_LIFE } from '@core/utils/toast-life';
 
 import {
   ScButtonComponent as ButtonComponent,
-  ScCheckboxComponent as CheckboxComponent,
   ScDividerComponent as DividerComponent,
   ScInputTextComponent as InputTextComponent,
+  ScPermissionMatrixComponent as PermissionMatrixComponent,
   ScSectionCardComponent as SectionCardComponent,
   ScToggleSwitchComponent as ToggleSwitchComponent,
 } from '@smartcontact-hub/components';
@@ -80,20 +87,35 @@ const DEFAULT_FORM: FormState = {
   selector: 'sc-aed-agentes-page',
   imports: [
     ButtonComponent,
-    CheckboxComponent,
     DividerComponent,
     InputTextComponent,
+    PermissionMatrixComponent,
     SectionCardComponent,
     ToggleSwitchComponent,
     TranslateModule,
   ],
   templateUrl: './aed-agentes-page.component.html',
-  styleUrls: ['./aed-defaults-page.component.scss', './aed-agentes-page.component.scss'],
+  styleUrls: [
+    './aed-defaults-page.component.scss',
+    './aed-agentes-page.component.scss',
+  ],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AedAgentesPageComponent implements DirtyAware {
   private readonly messages = inject(MessageService);
   private readonly translate = inject(TranslateService);
+  /* El idioma como DEPENDENCIA de los computed de abajo. `translate.instant()`
+   * es una llamada, no una señal: sin esto las cabeceras y los nombres de fila
+   * se calculan una vez y se congelan al cambiar de idioma. Es la §6 de
+   * `audit:datatables`, que solo sabe mirar un computed llamado `columns` — el
+   * defecto es el mismo se llame como se llame. */
+  private readonly currentLang = toSignal(
+    this.translate.onLangChange.pipe(
+      map((e) => e.lang),
+      startWith(this.translate.currentLang)
+    ),
+    { initialValue: this.translate.currentLang }
+  );
 
   protected readonly comunicacionKeys = COMUNICACION_KEYS;
 
@@ -104,20 +126,68 @@ export class AedAgentesPageComponent implements DirtyAware {
   /** Dirty real = el form difiere del original guardado (deshacer cambios →
    * no deja guardar). */
   protected readonly dirty = computed(
-    () => stableStringify(this.form()) !== stableStringify(this.pristine()),
+    () => stableStringify(this.form()) !== stableStringify(this.pristine())
   );
   protected readonly canSave = computed(() => this.dirty() && !this.saving());
   /** Público para el `formDirtyGuard` (canDeactivate) — confirma al salir con cambios. */
   readonly formDirty = this.dirty;
 
-  private readonly topbarActions = viewChild<TemplateRef<unknown>>('topbarActions');
+  private readonly topbarActions =
+    viewChild<TemplateRef<unknown>>('topbarActions');
 
   constructor() {
     useTopbarActions(this.topbarActions);
   }
 
+  /** Filas y columnas de la matriz, ya traducidas: el DS no traduce contenido
+   *  (mismo contrato que las `ScColumnDef` de las listas de administración). */
+  protected readonly matrixRows = computed<readonly ScMatrixRow[]>(() => {
+    this.currentLang();
+    return COMUNICACION_KEYS.map((row) => ({
+      id: row,
+      label: this.translate.instant(
+        'config.aed.subpages.agentes.comunicaciones.row_' + row
+      ),
+    }));
+  });
 
-  protected setPermiso(row: ComunicacionKey, col: PermisoCol, value: boolean): void {
+  protected readonly matrixColumns = computed<readonly ScMatrixColumn[]>(() => {
+    this.currentLang();
+    return [
+      {
+        id: 'transferencias',
+        label: this.translate.instant(
+          'config.aed.subpages.agentes.comunicaciones.col_transferencias'
+        ),
+      },
+      {
+        id: 'permisos',
+        label: this.translate.instant(
+          'config.aed.subpages.agentes.comunicaciones.col_permisos'
+        ),
+      },
+    ];
+  });
+
+  protected readonly matrixChecked = computed(() => {
+    const permisos = this.form().permisos;
+    return (rowId: string, columnId: string): boolean =>
+      permisos[rowId as ComunicacionKey][columnId as PermisoCol];
+  });
+
+  protected onMatrixToggle(e: ScMatrixToggle): void {
+    this.setPermiso(
+      e.rowId as ComunicacionKey,
+      e.columnId as PermisoCol,
+      e.checked
+    );
+  }
+
+  protected setPermiso(
+    row: ComunicacionKey,
+    col: PermisoCol,
+    value: boolean
+  ): void {
     this.form.update((f) => ({
       ...f,
       permisos: {
@@ -129,7 +199,7 @@ export class AedAgentesPageComponent implements DirtyAware {
 
   protected update<K extends Exclude<keyof FormState, 'permisos'>>(
     key: K,
-    value: FormState[K],
+    value: FormState[K]
   ): void {
     this.form.update((f) => ({ ...f, [key]: value }));
   }
@@ -146,7 +216,9 @@ export class AedAgentesPageComponent implements DirtyAware {
       this.pristine.set(structuredClone(this.form()));
       this.messages.add({
         severity: 'success',
-        summary: this.translate.instant('config.aed.subpages.agentes.toast.saved'),
+        summary: this.translate.instant(
+          'config.aed.subpages.agentes.toast.saved'
+        ),
         life: TOAST_LIFE.success,
       });
     }, 600);
