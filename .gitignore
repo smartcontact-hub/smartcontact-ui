@@ -71,3 +71,9 @@ Thumbs.db
 
 # Marca de "preflight en verde sobre este árbol" (scripts/preflight-mark.mjs); la lee el hook al pushear.
 .preflight-ok
+
+# Sondas de un solo uso en la RAÍZ del árbol (`.algo-tmp.mjs`). Nacen para medir una
+# cosa en el navegador y mueren en el mismo turno, pero viven donde `npx` las resuelve
+# —la raíz— para poder importar `playwright` de `node_modules`. Dos se colaron en el
+# #129 y llegaron a `main` con un `git add -A`: esta línea es la que evita la tercera.
+/.*-tmp.mjs

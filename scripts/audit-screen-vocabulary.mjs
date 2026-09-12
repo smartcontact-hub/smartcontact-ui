@@ -85,6 +85,14 @@ export const HOJA_COMPARTIDA = 'projects/supervisor/src/styles/_forms.scss';
  * pantalla es suyo y no hay nada que unificar.
  */
 export const VOCABULARIO = [
+  /* El chip de canal, entrado el 2026-09-12 al unificarlo. Cumple el criterio de
+   * abajo (dos pantallas lo usan) y entra por algo más que simetría: las dos
+   * copias no diferían en el estilo, diferían en el SIGNIFICADO — en una el chip
+   * relleno era el canal apagado y en la otra el encendido. Registrarlo aquí es
+   * lo que impide que vuelvan a separarse sin que nadie lo vea. */
+  '.channel-chips',
+  '.channel-chip',
+  '.channel-chip__icon',
   '.grid',
   '.grid--2',
   '.field',
