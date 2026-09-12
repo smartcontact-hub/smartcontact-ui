@@ -1,6 +1,6 @@
 {
   "generated": "component-audit.mjs",
-  "summary": "50 componentes · 15 custom · 12 standard · 23 extended · 33 usados en Supervisor.",
+  "summary": "50 componentes · 15 custom · 12 standard · 23 extended · 34 usados en Supervisor.",
   "components": [
     {
       "name": "avatar",
@@ -1070,7 +1070,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 0
+      "usedInSupervisor": 3
     },
     {
       "name": "textarea",

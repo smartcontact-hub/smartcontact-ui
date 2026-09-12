@@ -38,36 +38,66 @@
           </h2>
         </header>
 
-        <!-- Por defecto: estados fijos (3) → tags. NO editables, NO removibles. -->
-        <span class="sub-label sc-text-caption-regular">
-          {{ 'config.aed.subpages.servicio.estados.por_defecto' | translate }}
-        </span>
-        <div class="state-tags">
-          <span class="state-tag" data-tone="green">
-            {{ 'config.aed.subpages.servicio.estados.disponible' | translate }}
+        <!--
+          UN estado se ve IGUAL en toda la página. Antes esta sección tenía dos
+          vocabularios propios —tres pastillas sólidas hechas a mano (`.state-tag`,
+          con `red-800` en crudo para "Administrativo") y tres chips grises— y la
+          sección "Estados visibles" de abajo tenía un TERCERO (barras de color).
+          Tres formas y tres paletas para la misma cosa: un estado de agente.
+
+          Ahora los dos grupos usan la MISMA familia del DS —punto de color +
+          texto— y el mismo color por estado que la lista de abajo: `sc-tag
+          variant="label"` para los fijos (no se quitan) y `sc-chip
+          variant="label" removable` para los personalizados. La diferencia entre
+          "fijo" y "editable" la dice la CRUZ, que es la que se puede pulsar; no
+          hace falta además otro color y otra forma.
+        -->
+        <div class="state-block">
+          <span class="sub-label sc-text-caption-regular">
+            {{ 'config.aed.subpages.servicio.estados.por_defecto' | translate }}
           </span>
-          <span class="state-tag" data-tone="danger">
-            {{ 'config.aed.subpages.servicio.estados.no_disponible' | translate }}
-          </span>
-          <span class="state-tag" data-tone="granate">
-            {{ 'config.aed.subpages.servicio.estados.administrativo' | translate }}
-          </span>
+          <div class="chip-row">
+            <sc-tag
+              variant="label"
+              labelColor="green"
+              [value]="'config.aed.subpages.servicio.estados.disponible' | translate"
+            />
+            <sc-tag
+              variant="label"
+              labelColor="red"
+              [value]="'config.aed.subpages.servicio.estados.no_disponible' | translate"
+            />
+            <!-- La casilla de abajo GOBIERNA esta pastilla, así que la pastilla
+                 aparece y desaparece con ella. Antes la casilla estaba ahí sin que
+                 nada cambiara al marcarla: un control cuyo efecto no se ve obliga a
+                 guardar para saber qué hace. -->
+            @if (form().estadoAdministrativo) {
+              <sc-tag
+                variant="label"
+                labelColor="amber"
+                [value]="'config.aed.subpages.servicio.estados.administrativo' | translate"
+              />
+            }
+          </div>
+          <sc-checkbox
+            [state]="form().estadoAdministrativo ? 'all' : 'none'"
+            [ariaLabel]="'config.aed.subpages.servicio.estados.admin_checkbox' | translate"
+            (cycle)="update('estadoAdministrativo', $event)"
+          >
+            <span>{{ 'config.aed.subpages.servicio.estados.admin_checkbox' | translate }}</span>
+          </sc-checkbox>
         </div>
 
-        <sc-checkbox
-          [state]="form().estadoAdministrativo ? 'all' : 'none'"
-          [ariaLabel]="'config.aed.subpages.servicio.estados.admin_checkbox' | translate"
-          (cycle)="update('estadoAdministrativo', $event)"
-        >
-          <span>{{ 'config.aed.subpages.servicio.estados.admin_checkbox' | translate }}</span>
-        </sc-checkbox>
-
-        <!-- Personalización: estados editables → chips removibles + alta por modal. -->
-        <span class="sub-label sc-text-caption-regular">
-          {{ 'config.aed.subpages.servicio.estados.personalizacion' | translate }}
-        </span>
-        <div class="reasons-row">
-          <div class="reasons-row__chips">
+        <div class="state-block">
+          <span class="sub-label sc-text-caption-regular">
+            {{ 'config.aed.subpages.servicio.estados.personalizacion' | translate }}
+          </span>
+          <!-- "Añadir" va PEGADO a los chips que crea, en la misma fila. Antes
+               vivía en el extremo opuesto de la tarjeta: 487px de blanco medidos
+               entre el último chip y el botón que añade chips (build del
+               2026-09-12). Es el mismo fallo que `.switch-field` ya corrigió en
+               Agentes, y la misma corrección. -->
+          <div class="chip-row">
             @for (reason of form().estadosNoDisponibles; track reason) {
               <sc-chip
                 class="reason-chip"
@@ -79,16 +109,20 @@
                 (removed)="removeReason(reason)"
               />
             }
+            <!-- `outlined`, no `text`: el botón de texto secundario pinta su rótulo en
+                 #8f97a3, que sobre el blanco de la tarjeta se queda en 2.95:1 a 12px —
+                 muy por debajo del mínimo AA. Lo cazó `theme-contrast.spec.ts` al
+                 probarlo, no una revisión a ojo. Con borde, además, se lee como una
+                 acción entre las pastillas y no como una más. -->
+            <sc-button
+              variant="secondary"
+              appearance="outlined"
+              size="sm"
+              [icon]="addIcon"
+              [label]="'config.aed.subpages.servicio.estados.add' | translate"
+              (clicked)="openAddModal()"
+            />
           </div>
-          <sc-button
-            class="reasons-row__add"
-            variant="secondary"
-            appearance="outlined"
-            size="sm"
-            [icon]="addIcon"
-            [label]="'config.aed.subpages.servicio.estados.add' | translate"
-            (clicked)="openAddModal()"
-          />
         </div>
       </section>
 
@@ -102,14 +136,16 @@
           </h2>
         </header>
 
-        <!-- La casilla es una COLUMNA propia, separada 24.5 de la frase que gobierna, y la
-             frase lleva sus piezas a 12.25 (maqueta `SmField` 2286:5624). El ancho de esa
-             columna lo marca la casilla más ancha (`max-content`) y no un número fijo: la
-             maqueta lo dibuja a 85, que es lo que mide "Navegador" a 12px, pero el texto de la
-             app va a 14 y en francés o portugués mide otra cosa. Lo que importa es que las dos
-             frases arranquen en la MISMA vertical, y eso es lo que hace la rejilla. -->
+        <!-- CUATRO columnas, no dos: casilla · frase · número · sufijo. La rejilla
+             vive en el padre y cada fila es `display: contents`, así que las dos
+             filas negocian el ancho de CADA columna entre ellas. Antes solo se
+             compartía la primera, y los dos números caían en verticales distintas
+             —776.6 y 687.3, 89px de desfase medidos en el build del 2026-09-12—
+             porque "Poner en cuarentena durante" y "Bloquear tras" no miden lo
+             mismo. Ahora los dos controles forman columna, que es lo que deja leer
+             la sección de un vistazo. -->
         <div class="inline-rows">
-          <div class="inline-row">
+          <div class="inline-row" [class.inline-row--off]="!form().telefonoBloqueo">
             <sc-checkbox
               class="inline-row__check"
               [state]="form().telefonoBloqueo ? 'all' : 'none'"
@@ -118,24 +154,23 @@
             >
               <span>{{ 'config.aed.subpages.servicio.inactividad.telefono' | translate }}</span>
             </sc-checkbox>
-            <div class="inline-row__rest">
-              <span class="inline-row__text sc-text-caption-regular">
-                {{ 'config.aed.subpages.servicio.inactividad.telefono_text' | translate }}
-              </span>
-              <sc-inputnumber
-                inputId="general-cuarentena"
-                [min]="0"
-                [disabled]="!form().telefonoBloqueo"
-                [value]="form().cuarentenaSegundos"
-                (valueChange)="onNumberChange('cuarentenaSegundos', $event)"
-              />
-              <span class="inline-row__text sc-text-caption-regular">
-                {{ 'config.aed.subpages.servicio.inactividad.seconds' | translate }}
-              </span>
-            </div>
+            <span class="inline-row__text sc-text-caption-regular">
+              {{ 'config.aed.subpages.servicio.inactividad.telefono_text' | translate }}
+            </span>
+            <sc-inputnumber
+              class="inline-row__num"
+              inputId="general-cuarentena"
+              [min]="0"
+              [disabled]="!form().telefonoBloqueo"
+              [value]="form().cuarentenaSegundos"
+              (valueChange)="onNumberChange('cuarentenaSegundos', $event)"
+            />
+            <span class="inline-row__text sc-text-caption-regular">
+              {{ 'config.aed.subpages.servicio.inactividad.seconds' | translate }}
+            </span>
           </div>
 
-          <div class="inline-row">
+          <div class="inline-row" [class.inline-row--off]="!form().navegadorBloqueo">
             <sc-checkbox
               class="inline-row__check"
               [state]="form().navegadorBloqueo ? 'all' : 'none'"
@@ -144,21 +179,20 @@
             >
               <span>{{ 'config.aed.subpages.servicio.inactividad.navegador' | translate }}</span>
             </sc-checkbox>
-            <div class="inline-row__rest">
-              <span class="inline-row__text sc-text-caption-regular">
-                {{ 'config.aed.subpages.servicio.inactividad.navegador_text' | translate }}
-              </span>
-              <sc-inputnumber
-                inputId="general-bloquear-tras"
-                [min]="0"
-                [disabled]="!form().navegadorBloqueo"
-                [value]="form().bloquearTrasConversaciones"
-                (valueChange)="onNumberChange('bloquearTrasConversaciones', $event)"
-              />
-              <span class="inline-row__text sc-text-caption-regular">
-                {{ 'config.aed.subpages.servicio.inactividad.conversaciones_suffix' | translate }}
-              </span>
-            </div>
+            <span class="inline-row__text sc-text-caption-regular">
+              {{ 'config.aed.subpages.servicio.inactividad.navegador_text' | translate }}
+            </span>
+            <sc-inputnumber
+              class="inline-row__num"
+              inputId="general-bloquear-tras"
+              [min]="0"
+              [disabled]="!form().navegadorBloqueo"
+              [value]="form().bloquearTrasConversaciones"
+              (valueChange)="onNumberChange('bloquearTrasConversaciones', $event)"
+            />
+            <span class="inline-row__text sc-text-caption-regular">
+              {{ 'config.aed.subpages.servicio.inactividad.conversaciones_suffix' | translate }}
+            </span>
           </div>
         </div>
       </section>
@@ -173,9 +207,11 @@
           </h2>
         </header>
 
-        <!-- Las dos casillas van EN PAREJA, no apiladas: la maqueta las reparte en las dos
-             mitades de la fila (`Slot 3` 2286:5618, 396.25 + 24.5 + 396.25). -->
-        <div class="grid grid--2">
+        <!-- Dos opciones independientes, no una pareja: van en LISTA, como los
+             tres interruptores de Agentes. Repartidas en dos mitades de la fila,
+             la segunda caía a 434px de la primera (medido) y esa distancia decía
+             "estas dos van juntas" cuando no van. -->
+        <div class="option-list">
           <sc-checkbox
             [state]="form().verEstadoOtros ? 'all' : 'none'"
             [ariaLabel]="'config.aed.subpages.servicio.ventana.ver_estado' | translate"
@@ -203,31 +239,42 @@
           </h2>
         </header>
 
-        <ul class="visible-list">
+        <!--
+          El interruptor va DELANTE de lo que gobierna, como en Agentes
+          (`.switch-field`, Figma 393:12592). Antes vivía al final de la fila:
+          442.7px de blanco medidos entre el texto del estado y su interruptor
+          (build del 2026-09-12) — la misma distancia que esa regla ya había
+          corregido una vez en la otra pantalla.
+
+          Y la fila deja de ser una BANDA con barra de color: ahora es una fila de
+          tabla con su línea inferior, como la matriz de Agentes, y el color del
+          estado lo lleva el mismo PUNTO que usan las pastillas de arriba. Un
+          vocabulario menos y una paleta menos, con el color diciendo lo mismo en
+          los dos sitios.
+        -->
+        <ul class="state-rows">
           @for (item of visibilidadLabels; track item.key) {
-            <li class="visible-row">
-              <span
-                class="visible-row__bar"
-                [attr.data-tone]="item.tone"
-                aria-hidden="true"
-              ></span>
-              <!-- Nombre y descripción van EN LÍNEA, no uno debajo del otro: la maqueta
-                   (`row` dentro de `Slot 4` 2286:5590) fija el nombre a 125 y deja el resto
-                   de la fila a la descripción, separados 14. Así los cinco nombres forman
-                   una columna que se lee de un vistazo. -->
-              <span class="visible-row__label sc-text-caption-semibold">
+            <li class="state-row">
+              <span class="state-row__switch">
+                <sc-toggleswitch
+                  [checked]="form().visibilidadEstados[item.key]"
+                  [ariaLabel]="
+                    'config.aed.subpages.servicio.visibles.state_' + item.key | translate
+                  "
+                  (checkedChange)="toggleVisibilidad(item.key, $event)"
+                />
+              </span>
+              <span class="state-row__name sc-text-body-regular">
+                <span
+                  class="state-row__dot"
+                  [attr.data-tone]="item.tone"
+                  aria-hidden="true"
+                ></span>
                 {{ 'config.aed.subpages.servicio.visibles.state_' + item.key | translate }}
               </span>
-              <span class="visible-row__desc sc-text-caption-regular">
+              <span class="state-row__desc sc-text-caption-regular">
                 {{ 'config.aed.subpages.servicio.visibles.desc_' + item.key | translate }}
               </span>
-              <sc-toggleswitch
-                [checked]="form().visibilidadEstados[item.key]"
-                [ariaLabel]="
-                  'config.aed.subpages.servicio.visibles.state_' + item.key | translate
-                "
-                (checkedChange)="toggleVisibilidad(item.key, $event)"
-              />
             </li>
           }
         </ul>
@@ -240,6 +287,7 @@
           <span>{{ 'config.aed.subpages.servicio.visibles.filtrar' | translate }}</span>
         </sc-checkbox>
       </section>
+
       <sc-divider />
 
       <section class="sub-section" aria-labelledby="general-aviso-title">
@@ -249,30 +297,35 @@
           </h2>
         </header>
 
-        <!-- 70/30, no mitad y mitad: la maqueta da 578.5 al desplegable y 214 a los dos
-             radios (`container` 2286:5581). -->
-        <div class="grid grid--wide-narrow">
-          <sc-select
-            class="field"
-            inputId="general-descuelgue"
-            [label]="'config.aed.subpages.servicio.aviso.descuelgue_label' | translate"
-            [iftaLabel]="true"
-            [options]="descuelgueOptions"
-            [value]="form().tipoDescuelgue"
-            [placeholder]="
-              'config.aed.subpages.servicio.aviso.descuelgue_placeholder' | translate
-            "
-            (valueChange)="onDescuelgueChange($event)"
-          />
+        <!-- Mitad y mitad, y la etiqueta ENCIMA del control en los dos, que es el
+             vocabulario del resto de la app (`.field__label` + `inputId`, igual que
+             las dos URLs de Agentes). El desplegable llevaba su etiqueta DENTRO
+             (`iftaLabel`) y medía 790px para mostrar una palabra: era el único
+             campo de la pantalla que se rotulaba de otra manera. -->
+        <div class="grid grid--2">
+          <div class="field">
+            <label class="field__label sc-text-caption-regular" for="general-descuelgue">
+              {{ 'config.aed.subpages.servicio.aviso.descuelgue_label' | translate }}
+            </label>
+            <sc-select
+              inputId="general-descuelgue"
+              [options]="descuelgueOptions"
+              [value]="form().tipoDescuelgue"
+              [placeholder]="
+                'config.aed.subpages.servicio.aviso.descuelgue_placeholder' | translate
+              "
+              (valueChange)="onDescuelgueChange($event)"
+            />
+          </div>
 
           <div class="field">
-            <span class="field__label sc-text-caption-regular">
+            <span class="field__label sc-text-caption-regular" id="general-alerting-label">
               {{ 'config.aed.subpages.servicio.aviso.alerting_label' | translate }}
             </span>
             <div
-              class="radio-row"
+              class="radio-row radio-row--stretch"
               role="radiogroup"
-              [attr.aria-label]="'config.aed.subpages.servicio.aviso.alerting_label' | translate"
+              aria-labelledby="general-alerting-label"
             >
               <label class="radio sc-text-caption-regular">
                 <sc-radiobutton
@@ -302,6 +355,7 @@
           </div>
         </div>
       </section>
+
       <sc-divider />
 
       <section class="sub-section" aria-labelledby="general-notif-title">
@@ -309,89 +363,107 @@
           <h2 id="general-notif-title" class="sub-section__title sc-text-body-semibold">
             {{ 'config.aed.subpages.servicio.notif.title' | translate }}
           </h2>
-          <!-- La ayuda que la maqueta (2286:5558) tenía y la pantalla no. Es el punto más
-               abstracto del formulario: dos URLs y seis casillas, sin decir en ningún sitio QUÉ
-               pasa cuando las rellenas. Esta línea ata las columnas a los campos —«estos
-               eventos»— y dice quién llama a quién. -->
           <p class="sub-section__hint sc-text-caption-regular">
             {{ 'config.aed.subpages.servicio.notif.hint' | translate }}
           </p>
         </header>
 
         <!--
-          Rejilla de 70/30 con CABECERA de columnas, como la maqueta (`container` 2286:5558):
-          arriba, los tres rótulos Inicio · Fin · Resultado; debajo, una fila por URL con sus
-          tres casillas en esas mismas columnas. Antes cada URL repetía los tres rótulos
-          debajo de su campo — seis etiquetas para tres columnas.
+          Esto es una MATRIZ —dos conversaciones × tres eventos—, así que es una
+          TABLA, la misma que la de Agentes (`comm-table`, Figma 393:12610): una
+          cabecera de columna arriba y una fila por conversación. Antes era una
+          rejilla 70/30 con los rótulos Inicio · Fin · Resultado flotando en una
+          fila suelta y las casillas a 300px del campo al que pertenecen.
 
-          Las casillas ya no llevan texto visible, así que su nombre accesible dice las DOS
-          cosas: qué evento y de qué conversación.
+          Y las seis casillas ESTABAN MUERTAS: ninguna tenía `(cycle)`, así que
+          pulsarlas no hacía nada (medido en producción el 2026-09-12, contra una
+          casilla con manejador como control). `toggleNotif` existía en el
+          componente y no lo llamaba nadie.
         -->
-        <div class="notif-grid">
-          <span class="notif-grid__spacer" aria-hidden="true"></span>
-          <div class="events-head" aria-hidden="true">
-            @for (key of notifEventos; track key) {
-              <span class="events-head__col sc-text-caption-semibold">
-                {{ 'config.aed.subpages.servicio.notif.evento_' + key | translate }}
-              </span>
-            }
-          </div>
-
-          <div class="field">
-            <label class="field__label sc-text-caption-regular" for="general-notif-entrante">
-              {{ 'config.aed.subpages.servicio.notif.entrante' | translate }}
-            </label>
-            <sc-inputtext
-              inputId="general-notif-entrante"
-              type="url"
-              [placeholder]="'config.aed.subpages.servicio.notif.url_placeholder' | translate"
-              [value]="form().notifEntranteUrl"
-              (valueChange)="update('notifEntranteUrl', $event)"
-            />
-          </div>
-          <ul class="events-list" [class.events-list--disabled]="!hasEntranteUrl()">
-            @for (key of notifEventos; track key) {
-              <li class="events-list__col">
-                <sc-checkbox
-                  [state]="form().notifEntrante[key] ? 'all' : 'none'"
-                  [disabled]="!hasEntranteUrl()"
-                  [ariaLabel]="
-                    ('config.aed.subpages.servicio.notif.evento_' + key | translate) +
-                    ' — ' +
-                    ('config.aed.subpages.servicio.notif.entrante' | translate)
+        <div class="notif-scroll">
+        <table class="notif-table">
+          <thead>
+            <tr>
+              <th scope="col" class="notif-table__th-label sc-text-body-semibold">
+                {{ 'config.aed.subpages.servicio.notif.col_conversacion' | translate }}
+              </th>
+              <th scope="col" class="notif-table__th-url sc-text-body-semibold">
+                {{ 'config.aed.subpages.servicio.notif.col_url' | translate }}
+              </th>
+              @for (key of notifEventos; track key) {
+                <th scope="col" class="notif-table__th-col sc-text-body-semibold">
+                  {{ 'config.aed.subpages.servicio.notif.evento_' + key | translate }}
+                </th>
+              }
+            </tr>
+          </thead>
+          <tbody>
+            <tr>
+              <th scope="row" class="notif-table__th-row sc-text-body-regular">
+                <label for="general-notif-entrante">
+                  {{ 'config.aed.subpages.servicio.notif.entrante' | translate }}
+                </label>
+              </th>
+              <td class="notif-table__url">
+                <sc-inputtext
+                  inputId="general-notif-entrante"
+                  type="url"
+                  [placeholder]="
+                    'config.aed.subpages.servicio.notif.url_placeholder' | translate
                   "
+                  [value]="form().notifEntranteUrl"
+                  (valueChange)="update('notifEntranteUrl', $event)"
                 />
-              </li>
-            }
-          </ul>
-
-          <div class="field">
-            <label class="field__label sc-text-caption-regular" for="general-notif-saliente">
-              {{ 'config.aed.subpages.servicio.notif.saliente' | translate }}
-            </label>
-            <sc-inputtext
-              inputId="general-notif-saliente"
-              type="url"
-              [placeholder]="'config.aed.subpages.servicio.notif.url_placeholder' | translate"
-              [value]="form().notifSalienteUrl"
-              (valueChange)="update('notifSalienteUrl', $event)"
-            />
-          </div>
-          <ul class="events-list" [class.events-list--disabled]="!hasSalienteUrl()">
-            @for (key of notifEventos; track key) {
-              <li class="events-list__col">
-                <sc-checkbox
-                  [state]="form().notifSaliente[key] ? 'all' : 'none'"
-                  [disabled]="!hasSalienteUrl()"
-                  [ariaLabel]="
-                    ('config.aed.subpages.servicio.notif.evento_' + key | translate) +
-                    ' — ' +
-                    ('config.aed.subpages.servicio.notif.saliente' | translate)
+              </td>
+              @for (key of notifEventos; track key) {
+                <td class="notif-table__cell">
+                  <sc-checkbox
+                    [state]="form().notifEntrante[key] ? 'all' : 'none'"
+                    [disabled]="!hasEntranteUrl()"
+                    [ariaLabel]="
+                      ('config.aed.subpages.servicio.notif.evento_' + key | translate) +
+                      ' — ' +
+                      ('config.aed.subpages.servicio.notif.entrante' | translate)
+                    "
+                    (cycle)="toggleNotif('notifEntrante', key, $event)"
+                  />
+                </td>
+              }
+            </tr>
+            <tr>
+              <th scope="row" class="notif-table__th-row sc-text-body-regular">
+                <label for="general-notif-saliente">
+                  {{ 'config.aed.subpages.servicio.notif.saliente' | translate }}
+                </label>
+              </th>
+              <td class="notif-table__url">
+                <sc-inputtext
+                  inputId="general-notif-saliente"
+                  type="url"
+                  [placeholder]="
+                    'config.aed.subpages.servicio.notif.url_placeholder' | translate
                   "
+                  [value]="form().notifSalienteUrl"
+                  (valueChange)="update('notifSalienteUrl', $event)"
                 />
-              </li>
-            }
-          </ul>
+              </td>
+              @for (key of notifEventos; track key) {
+                <td class="notif-table__cell">
+                  <sc-checkbox
+                    [state]="form().notifSaliente[key] ? 'all' : 'none'"
+                    [disabled]="!hasSalienteUrl()"
+                    [ariaLabel]="
+                      ('config.aed.subpages.servicio.notif.evento_' + key | translate) +
+                      ' — ' +
+                      ('config.aed.subpages.servicio.notif.saliente' | translate)
+                    "
+                    (cycle)="toggleNotif('notifSaliente', key, $event)"
+                  />
+                </td>
+              }
+            </tr>
+          </tbody>
+        </table>
         </div>
       </section>
     </sc-section-card>

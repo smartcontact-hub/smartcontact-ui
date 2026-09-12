@@ -1580,8 +1580,8 @@
             "desc_postConversando": "En espera tras una conversación",
             "desc_conversando": "Atendiendo una conversación",
             "desc_administrativo": "Realizando tareas internas",
-            "desc_noDisponible": "No puede recibir conversaciones",
-            "desc_desconectado": "No puede recibir conversaciones",
+            "desc_noDisponible": "En el puesto, sin recibir conversaciones",
+            "desc_desconectado": "Fuera del puesto de trabajo",
             "filtrar": "Permitir a los agentes filtrar los estados"
           },
           "aviso": {
@@ -1597,10 +1597,12 @@
             "entrante": "Conversación entrante",
             "saliente": "Conversación saliente",
             "url_placeholder": "URL",
+            "col_conversacion": "Conversación",
+            "col_url": "URL de destino",
             "evento_inicio": "Inicio",
             "evento_fin": "Fin",
             "evento_resultado": "Resultado",
-            "hint": "Envía estos eventos a tu sistema externo"
+            "hint": "Escribe una URL y marca los eventos que quieres enviar a tu sistema externo."
           },
           "toast": {
             "saved": "Configuración guardada"

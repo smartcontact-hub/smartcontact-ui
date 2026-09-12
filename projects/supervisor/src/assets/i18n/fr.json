@@ -1580,8 +1580,8 @@
             "desc_postConversando": "En attente après une conversation",
             "desc_conversando": "En train de gérer une conversation",
             "desc_administrativo": "Réalise des tâches internes",
-            "desc_noDisponible": "Ne peut pas recevoir de conversations",
-            "desc_desconectado": "Ne peut pas recevoir de conversations",
+            "desc_noDisponible": "Au poste, sans recevoir de conversations",
+            "desc_desconectado": "Absent du poste de travail",
             "filtrar": "Permettre aux agents de filtrer les états"
           },
           "aviso": {
@@ -1597,10 +1597,12 @@
             "entrante": "Conversation entrante",
             "saliente": "Conversation sortante",
             "url_placeholder": "URL",
+            "col_conversacion": "Conversation",
+            "col_url": "URL de destination",
             "evento_inicio": "Début",
             "evento_fin": "Fin",
             "evento_resultado": "Résultat",
-            "hint": "Envoie ces événements à votre système externe"
+            "hint": "Saisissez une URL et cochez les événements à envoyer à votre système externe."
           },
           "toast": {
             "saved": "Configuration enregistrée"
