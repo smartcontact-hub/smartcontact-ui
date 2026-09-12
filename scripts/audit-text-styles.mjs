@@ -532,7 +532,7 @@ log('✔ Ninguna pantalla declara tipografía fuera de los 12 roles.');
  * TRINQUETE por conteo: el número de reglas que aún declaran `font-size` solo puede bajar. Si
  * baja, el tope se baja con él (un tope holgado deja entrar de nuevo lo que ya salió).
  */
-export const TIPOGRAFIA_SUELTA_MAX = 101;
+export const TIPOGRAFIA_SUELTA_MAX = 100;
 
 /** Cuántas reglas de una hoja declaran `font-size` (tipografía por token, no por clase). */
 export function tipografiaSuelta(scss) {

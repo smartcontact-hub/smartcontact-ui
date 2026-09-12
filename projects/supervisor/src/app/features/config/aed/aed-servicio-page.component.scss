@@ -1,52 +1,29 @@
 /*
  * General (Servicio) page — Figma Supervisor 1:12270.
- * Flush single column; shared primitives (page, field, grid, radio,
- * sub-section, page-heading, inline-check) live in
- * aed-defaults-page.component.scss. Separadores = <sc-divider> (SCDS).
+ *
+ * Columna única a ras; las primitivas compartidas (`page`, `field`, `grid`,
+ * `radio`, `sub-section`) viven en `styles/_forms.scss` y en
+ * `aed-defaults-page.component.scss`. Los separadores son `<sc-divider>` (SCDS).
+ *
+ * ⚠️ REESCRITA el 2026-09-12 contra la pantalla hermana `/config/aed/agentes`,
+ * que es la vara de medir. El diagnóstico, medido en el build de producción de
+ * ese día, era que cada sección hablaba un idioma distinto:
+ *
+ *   · TRES vocabularios para "un estado de agente": pastillas sólidas a mano,
+ *     chips grises y bandas con barra de color. Tres paletas, tres formas.
+ *   · Controles lejos de lo que gobiernan: 487px entre los chips y su botón
+ *     "Añadir", 442.7px entre un estado y su interruptor, 434px entre dos
+ *     casillas hermanas.
+ *   · Números que no forman columna: los dos `inputnumber` de "Bloqueo por
+ *     inactividad" caían a 776.6 y 687.3.
+ *   · Una matriz dibujada como rejilla, con la cabecera de columnas flotando
+ *     suelta a 300px de los campos que rotula.
+ *
+ * Lo que queda aquí es SOLO lo propio de esta pantalla. Todo lo demás se
+ * resuelve con el vocabulario que ya existía.
  */
 
 /* ---------- Estados de agentes ---------- */
-
-/* Estados fijos (3) → tags. Separados de los chips editables (no se mezclan). */
-/* 12.25 (`scale/0-875`) entre etiquetas — la maqueta pone 12 suelto en `container tags`. */
-.state-tags {
-  display: flex;
-  flex-wrap: wrap;
-  align-items: center;
-  gap: var(--sc-spacing-0-875);
-}
-
-.state-tag {
-  display: inline-flex;
-  align-items: center;
-  height: 26px;
-  padding: 0 var(--sc-spacing-0-625);
-  border-radius: var(--sc-radius-200);
-  font-size: var(--sc-font-size-50);
-  font-weight: var(--sc-font-weight-regular);
-  line-height: 1;
-
-  /* success/danger = Kit `tag` (bg claro + texto oscuro). Administrativo = granate
-   * SÓLIDO (bg red-800 + texto red-100) → destaca como estado "serio" (decisión Rafa). */
-  /* `--sc-label-*`, el vocabulario de insignia del DS (mismo que `.sc-label` y
-   * `.status-pill`), no la rampa `--sc-bg-*-subtle`: esa está calibrada para
-   * texto sobre el lienzo y aquí dejaba `danger` en 4.41:1, bajo AA. */
-  &[data-tone='green'] {
-    background: var(--sc-label-green-bg);
-    color: var(--sc-label-green-text);
-  }
-  &[data-tone='danger'] {
-    background: var(--sc-label-red-bg);
-    color: var(--sc-label-red-text);
-  }
-  /* `granate` se queda en paleta cruda A PROPÓSITO: es un fondo SÓLIDO y
-   * oscuro con texto claro encima, así que ya funciona en los dos temas. Es
-   * una decisión de diseño (destacar el estado "serio"), no un descuido. */
-  &[data-tone='granate'] {
-    background: var(--sc-color-red-800);
-    color: var(--sc-color-red-100);
-  }
-}
 
 /* Sub-etiqueta de bloque ("Por defecto", "Personalización de no disponibles"). */
 .sub-label {
@@ -54,26 +31,33 @@
   color: var(--sc-text-secondary);
 }
 
-/* Personalización: chips removibles (sc-chip) a la izquierda + botón de alta
- * (abre el modal "Añadir estado") a la derecha. */
-/* 24.5 (`scale/1-75`) entre los chips y el botón de alta: es de las pocas separaciones que la
- * maqueta sí ata a variable (`container estados`, 2286:5639 → `scale/1-75`). */
-.reasons-row {
+/*
+ * Los dos bloques de esta sección se agrupan por ESPACIO, no por línea: 7 entre
+ * las piezas de un bloque y 24.5 entre bloques (12.25 del `gap` de
+ * `.sub-section` + 12.25 de aquí). La regla es que el hueco ENTRE grupos mida al
+ * menos el doble que el hueco DENTRO de uno; aquí mide 3.5 veces.
+ */
+.state-block {
   display: flex;
-  align-items: flex-start;
-  gap: var(--sc-spacing-1-75);
+  flex-direction: column;
+  gap: var(--sc-spacing-0-5);
 
-  &__chips {
-    flex: 1 1 auto;
-    display: flex;
-    flex-wrap: wrap;
-    gap: var(--sc-spacing-0-5);
-    min-width: 0;
+  & + & {
+    margin-block-start: var(--sc-spacing-0-875);
   }
+}
 
-  &__add {
-    flex: 0 0 auto;
-  }
+/*
+ * Una sola fila para las pastillas y, cuando las hay, para el botón que las
+ * crea. 12.25 (`scale/0-875`) entre piezas — la maqueta pone 12 suelto en
+ * `container tags`.
+ */
+.chip-row {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sc-spacing-0-875);
+  min-width: 0;
 }
 
 /* Alta de un chip: entra con un "pop" para indicar que existe. Solo el chip
@@ -100,22 +84,24 @@
   }
 }
 
-/* ---------- Inline rows (bloqueo por inactividad) ---------- */
+/* ---------- Bloqueo de puesto por inactividad ---------- */
 
 /*
- * `SmField` 2286:5624 de la maqueta: la casilla es una COLUMNA separada 24.5 de la frase que
- * gobierna, y las piezas de la frase van a 12.25 entre sí. Antes todo colgaba de un solo `gap`
- * de 8.75, así que "Poner en cuarentena durante" y "Bloquear tras" arrancaban en verticales
- * distintas —una por cada ancho de casilla— y las dos filas no formaban columna.
+ * CUATRO columnas compartidas por las dos filas: casilla · frase · número ·
+ * sufijo. La rejilla vive en el PADRE y cada fila es `display: contents`, así
+ * que el ancho de cada columna lo negocian las dos filas entre ellas
+ * (`max-content`) — que es justo lo que hace que los dos `inputnumber` caigan en
+ * la MISMA vertical aunque "Poner en cuarentena durante" y "Bloquear tras" midan
+ * distinto. Nada de anchos fijos: el texto crece al traducir.
  *
- * La rejilla vive en el PADRE y cada fila es `display: contents`: así el ancho de la primera
- * columna lo negocian las dos filas entre ellas (`max-content`) en vez de fijarlo a los 85 de
- * la maqueta, que son los que mide "Navegador" a 12px y dejan de valer a 14 —y en otro idioma.
+ * El hueco es 12.25 en todas las columnas y la casilla añade otros 12.25 por su
+ * borde final (24.5 en total, `scale/1-75`): la casilla MANDA sobre la frase, y
+ * un poco más de aire lo dice sin una línea.
  */
 .inline-rows {
   display: grid;
-  grid-template-columns: max-content 1fr;
-  column-gap: var(--sc-spacing-1-75);
+  grid-template-columns: max-content max-content max-content minmax(0, 1fr);
+  column-gap: var(--sc-spacing-0-875);
   row-gap: var(--sc-spacing-0-875);
   align-items: center;
 }
@@ -123,149 +109,249 @@
 .inline-row {
   display: contents;
 
-  &__rest {
-    display: flex;
-    flex-wrap: wrap;
-    align-items: center;
-    gap: var(--sc-spacing-0-875);
-    min-width: 0;
-    min-height: 36px;
+  &__check {
+    margin-inline-end: var(--sc-spacing-0-875);
   }
 
   &__text {
     color: var(--sc-text-secondary);
   }
 
-  sc-inputnumber {
+  &__num {
     /* 71 = `inputnumber` de la maqueta, el mismo que en Grupos. */
     width: 71px;
   }
+
+  /* La frase se apaga con su casilla. Antes solo se deshabilitaba el control del
+   * medio y el texto que lo rodea seguía a plena tinta, así que una fila apagada
+   * y una encendida se leían igual de vivas. */
+  &--off &__text {
+    color: var(--sc-text-subtle);
+  }
+}
+
+@media (max-width: 720px) {
+  .inline-rows {
+    grid-template-columns: max-content minmax(0, 1fr);
+  }
+
+  .inline-row__check {
+    grid-column: 1 / -1;
+    margin-inline-end: 0;
+  }
+}
+
+/* ---------- Lista de opciones sueltas (ventana de conversaciones) ---------- */
+
+.option-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-875);
 }
 
 /* ---------- Estados visibles por el agente ---------- */
 
-.visible-list {
+/*
+ * Una fila por estado: interruptor · punto + nombre · descripción. La rejilla la
+ * pone el `<ul>` y cada `<li>` es `display: contents`, así que los cinco nombres
+ * y las cinco descripciones forman columna sin un solo ancho fijo (antes el
+ * nombre iba clavado a 125px, que es lo que mide el más largo en español).
+ *
+ * La línea inferior la llevan las CELDAS, no la fila: con `display: contents` el
+ * `<li>` no tiene caja donde pintarla, y las celdas de una misma fila se estiran
+ * a la misma altura, así que sus bordes forman una sola línea continua. Es la
+ * misma línea de la tabla de Agentes (`--sc-border-subtle`) y, como allí, la
+ * última fila no la lleva: no separaría nada.
+ */
+.state-rows {
   list-style: none;
   margin: 0;
   padding: 0;
-  display: flex;
-  flex-direction: column;
-  /* 3.5 (`scale/0-25`) entre filas — la maqueta pone 4 suelto (`container` 2286:5590). */
-  gap: var(--sc-spacing-0-25);
+  display: grid;
+  grid-template-columns: max-content max-content minmax(0, 1fr);
 }
 
-/*
- * Cada estado es una BANDA, no una fila con línea: la maqueta le da fondo `gray/50` y radio 6
- * (`row` de 2286:5590), sin ningún trazo. Todas las filas llevan el mismo fondo —no es una zebra
- * alterna—, así que el contraste del texto es idéntico en las cinco.
- */
-.visible-row {
-  display: flex;
-  align-items: center;
-  gap: var(--sc-spacing-1);
-  padding: 0 var(--sc-spacing-0-875);
-  min-height: 37px;
-  background: var(--sc-bg-secondary-subtle);
-  border-radius: var(--sc-radius-md);
+.state-row {
+  display: contents;
 
-  &__bar {
-    width: 4px;
-    align-self: center;
-    height: 28px;
+  > * {
+    display: flex;
+    align-items: center;
+    min-height: 37px;
+    padding-block: var(--sc-spacing-0-25);
+    border-block-end: 1px solid var(--sc-border-subtle);
+  }
+
+  &:last-child > * {
+    border-block-end: 0;
+  }
+
+  &__switch {
+    padding-inline-end: var(--sc-spacing-1);
+  }
+
+  /* El punto y el nombre son UNA pieza: el color es parte del nombre del estado,
+   * no una marca aparte. Mismo punto y mismo color que las pastillas de arriba. */
+  &__name {
+    gap: var(--sc-spacing-0-625);
+    padding-inline-end: var(--sc-spacing-1-75);
+    color: var(--sc-text-primary);
+  }
+
+  &__dot {
+    width: 8px;
+    height: 8px;
     border-radius: var(--sc-radius-full);
     flex-shrink: 0;
 
-    &[data-tone='cyan'] {
-      background: var(--sc-color-cyan-500);
+    &[data-tone='teal'] {
+      background: var(--sc-label-teal-dot);
     }
     &[data-tone='green'] {
-      background: var(--sc-color-green-500);
+      background: var(--sc-label-green-dot);
     }
     &[data-tone='amber'] {
-      background: var(--sc-color-amber-500);
+      background: var(--sc-label-amber-dot);
     }
     &[data-tone='red'] {
-      background: var(--sc-color-red-500);
+      background: var(--sc-label-red-dot);
     }
     &[data-tone='gray'] {
-      background: var(--sc-color-slate-400);
+      background: var(--sc-label-gray-dot);
     }
-  }
-
-  /* 125 fijos: es lo que hace columna con los otros cuatro nombres (maqueta `row` 2286:5590). */
-  &__label {
-    flex: 0 0 125px;
-    color: var(--sc-text-primary);
   }
 
   /*
-   * Nombre y descripción se separan por PESO, no por color. La maqueta los separa solo por color
-   * —#4f5663 el nombre, #8f97a3 la descripción— y ese segundo gris, sobre su propia banda, deja
-   * el texto en 4.25:1: por debajo del mínimo AA de 4.5 (medido en el build, 12px). El escalón
-   * siguiente del sistema tampoco llega (`--sc-text-secondary`, 4.25:1 sobre la banda y 4.52
-   * sobre blanco, al filo). Así que los dos van a `--sc-text-primary` (6.95:1) y la jerarquía la
-   * lleva el semibold contra el regular. Misma corrección que en la tabla de Agentes.
+   * Nombre y descripción se separan por PESO y por TAMAÑO, no por color: los dos
+   * van a `--sc-text-primary` (6.95:1). El gris que la maqueta da a la
+   * descripción (#8f97a3) se queda en 4.25:1, por debajo del mínimo AA de 4.5, y
+   * el escalón siguiente del sistema (`--sc-text-secondary`) se queda en 4.52,
+   * al filo. Misma corrección que en la tabla de Agentes.
    */
   &__desc {
-    flex: 1 1 auto;
     min-width: 0;
     color: var(--sc-text-primary);
   }
+}
 
-  sc-toggleswitch {
-    margin-left: auto;
+@media (max-width: 720px) {
+  .state-rows {
+    grid-template-columns: max-content minmax(0, 1fr);
+  }
+
+  .state-row__desc {
+    grid-column: 2;
   }
 }
 
 /* ---------- Notificaciones a sistemas externos ---------- */
 
 /*
- * Rejilla 70/30 con cabecera de columnas: 578.5 para el campo y 214 para las tres casillas,
- * separadas 24.5 (`container` 2286:5558, la única medida atada de esta sección). Las filas van
- * a 12.25 (la maqueta pone 12 suelto).
+ * MISMA tabla que la matriz de Agentes (`comm-table`, Figma 393:12610), con una
+ * columna más para la URL: la cabecera rotula las columnas una sola vez y cada
+ * casilla cae bajo su rótulo y al lado de la URL que la habilita.
+ *
+ * Como allí, la tipografía la ponen las clases `.sc-text-*` de la plantilla y
+ * aquí solo vive el reparto y el color de rol. Y tampoco lleva la sangría de
+ * 12.25 de `.sub-section`: ya la pone el padding lateral de sus propias celdas.
  */
-.notif-grid {
-  display: grid;
-  grid-template-columns: minmax(0, 578.5fr) minmax(0, 214fr);
-  column-gap: var(--sc-spacing-1-75);
-  row-gap: var(--sc-spacing-0-875);
-  align-items: end;
-}
+.notif-table {
+  width: 100%;
+  border-collapse: collapse;
 
-/* Los tres rótulos y las tres casillas comparten reparto para que caigan en la misma vertical. */
-.events-head,
-.events-list {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  align-items: center;
-}
+  th,
+  td {
+    vertical-align: middle;
+    padding: var(--sc-spacing-0-625) var(--sc-spacing-0-875);
+  }
 
-.events-head {
-  &__col {
+  /* El `text-align` lo declara CADA clase, no este selector: `.notif-table th`
+   * (0,1,1) le ganaría a `.notif-table__th-col` (0,1,0). Medido en Agentes. */
+  &__th-label,
+  &__th-url {
+    text-align: start;
     color: var(--sc-text-primary);
+    border-bottom: 1px solid var(--sc-border-default);
+  }
+
+  &__th-col {
+    /* 142 = `th-ID` 393:12619, el mismo ancho de columna de casilla que Agentes. */
+    width: 142px;
+    text-align: center;
+    color: var(--sc-text-primary);
+    border-bottom: 1px solid var(--sc-border-default);
+  }
+
+  /* `--sc-text-primary` y no `secondary`: el nombre de la fila ES el contenido de
+   * la tabla, no un apoyo. En secondary se queda en 4.52:1, al filo del AA. */
+  &__th-row {
+    text-align: start;
+    font-weight: inherit;
+    color: var(--sc-text-primary);
+
+    label {
+      cursor: pointer;
+    }
+  }
+
+  /*
+   * El SUELO de la tabla lo pone la URL, no el ancho total: 160 es lo que hace
+   * falta para leer un principio de URL. Con ese suelo, y dejando que el nombre
+   * de la fila parta en dos líneas cuando aprieta, la tabla entera cabe hasta
+   * los ~900 de ventana sin esconder ninguna columna (medido: 481 de tabla en
+   * 481 de caja). Un `min-width` en la TABLA, en cambio, escondía "Resultado"
+   * fuera del borde sin ninguna señal de que seguía habiendo columna.
+   */
+  &__url {
+    min-width: 160px;
+  }
+
+  &__cell {
+    text-align: center;
+
+    /* El checkbox es un componente del DS: se centra desde FUERA, sin entrar en
+     * su interior (Sección E de `audit:primeng-coupling`). */
+    sc-checkbox {
+      display: inline-flex;
+      vertical-align: middle;
+    }
+  }
+
+  tbody tr {
+    border-bottom: 1px solid var(--sc-border-subtle);
+  }
+
+  /* La ÚLTIMA fila no lleva línea: solo repetiría el borde de la caja unos
+   * píxeles más arriba. Igual que en Agentes. */
+  tbody tr:last-child {
+    border-bottom: 0;
   }
 }
 
-.events-list {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  /* La casilla se alinea con el control de su fila, no con su etiqueta. */
-  min-height: 36px;
-
-  &--disabled {
-    opacity: 0.5;
-  }
+/*
+ * Red de seguridad para anchos extremos, no el plan A: la tabla ya encoge sola
+ * hasta los ~900 de ventana. Si aun así no cabe, se desplaza DENTRO de su caja y
+ * el resto de la página no se mueve.
+ *
+ * Apilarla en bloques no es opción: obligaría a repetir los rótulos Inicio · Fin
+ * · Resultado en cada casilla —seis rótulos para tres columnas, que es
+ * exactamente lo que esta pantalla acaba de dejar de hacer.
+ */
+.notif-scroll {
+  overflow-x: auto;
 }
 
-@media (max-width: 720px) {
-  .notif-grid {
-    grid-template-columns: 1fr;
-  }
+/* ---------- Recepción de conversaciones ---------- */
 
-  /* Sin dos columnas, la cabecera suelta no dice de qué son los rótulos: se va. */
-  .notif-grid__spacer,
-  .events-head {
-    display: none;
-  }
+/*
+ * MODIFICADOR, no una redeclaración de `.radio-row` (que vive en la hoja de las tres
+ * pantallas AED): un nombre, un hogar.
+ *
+ * La fila de radios se estira hasta el alto que le deja su columna y se centra en él, así cae
+ * en la MISMA línea que el desplegable de al lado. Sin esto se queda pegada arriba y los radios
+ * quedan 7.5px por encima del centro del control hermano (medido en el build del 2026-09-12):
+ * dos controles de la misma fila que no comparten línea de lectura.
+ */
+.radio-row--stretch {
+  flex: 1 1 auto;
 }

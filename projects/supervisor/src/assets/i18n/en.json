@@ -1580,8 +1580,8 @@
             "desc_postConversando": "Waiting after a conversation",
             "desc_conversando": "Handling a conversation",
             "desc_administrativo": "Doing internal tasks",
-            "desc_noDisponible": "Cannot receive conversations",
-            "desc_desconectado": "Cannot receive conversations",
+            "desc_noDisponible": "At the workstation, not receiving conversations",
+            "desc_desconectado": "Away from the workstation",
             "filtrar": "Allow agents to filter states"
           },
           "aviso": {
@@ -1597,10 +1597,12 @@
             "entrante": "Incoming conversation",
             "saliente": "Outgoing conversation",
             "url_placeholder": "URL",
+            "col_conversacion": "Conversation",
+            "col_url": "Destination URL",
             "evento_inicio": "Start",
             "evento_fin": "End",
             "evento_resultado": "Result",
-            "hint": "Sends these events to your external system"
+            "hint": "Enter a URL and tick the events you want to send to your external system."
           },
           "toast": {
             "saved": "Settings saved"

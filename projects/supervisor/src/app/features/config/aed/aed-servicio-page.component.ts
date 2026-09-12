@@ -25,6 +25,7 @@ import {
   ScRadioButtonComponent as RadioButtonComponent,
   ScSectionCardComponent as SectionCardComponent,
   ScSelectComponent as SelectComponent,
+  ScTagComponent as TagComponent,
   ScToggleSwitchComponent as ToggleSwitchComponent,
 } from '@smartcontact-hub/components';
 import { stableStringify } from '../../../shared/utils/form-dirty-state';
@@ -103,7 +104,7 @@ const DEFAULT_FORM: FormState = {
 };
 
 const VISIBILIDAD_LABELS: readonly { key: keyof VisibilidadEstados; tone: string }[] = [
-  { key: 'postConversando', tone: 'cyan' },
+  { key: 'postConversando', tone: 'teal' },
   { key: 'conversando', tone: 'green' },
   { key: 'administrativo', tone: 'amber' },
   { key: 'noDisponible', tone: 'red' },
@@ -137,6 +138,7 @@ const NOTIF_EVENTOS: readonly (keyof NotifEventos)[] = ['inicio', 'fin', 'result
     RadioButtonComponent,
     SectionCardComponent,
     SelectComponent,
+    TagComponent,
     ToggleSwitchComponent,
     TranslateModule,
   ],
