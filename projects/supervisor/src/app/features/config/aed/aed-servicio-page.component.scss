@@ -5,19 +5,27 @@
  * `radio`, `sub-section`) viven en `styles/_forms.scss` y en
  * `aed-defaults-page.component.scss`. Los separadores son `<sc-divider>` (SCDS).
  *
- * ⚠️ REESCRITA el 2026-09-12 contra la pantalla hermana `/config/aed/agentes`,
- * que es la vara de medir. El diagnóstico, medido en el build de producción de
- * ese día, era que cada sección hablaba un idioma distinto:
+ * ⚠️ SEGUNDA PASADA, 2026-09-12. La primera (PR #122) puso cada control al lado de
+ * lo que gobierna. Esta ordena cómo se LEE, porque la pantalla seguía hablando en
+ * demasiadas voces. Medido en el build local a 1440:
  *
- *   · TRES vocabularios para "un estado de agente": pastillas sólidas a mano,
- *     chips grises y bandas con barra de color. Tres paletas, tres formas.
- *   · Controles lejos de lo que gobiernan: 487px entre los chips y su botón
- *     "Añadir", 442.7px entre un estado y su interruptor, 434px entre dos
- *     casillas hermanas.
- *   · Números que no forman columna: los dos `inputnumber` de "Bloqueo por
- *     inactividad" caían a 776.6 y 687.3.
- *   · Una matriz dibujada como rejilla, con la cabecera de columnas flotando
- *     suelta a 300px de los campos que rotula.
+ *   ANTES: SIETE maneras distintas de pintar texto en una tarjeta, y dos de ellas
+ *   fuera de la rampa del DS (una etiqueta de casilla a `line-height: 21` contra
+ *   los 20 del rol `body-2`, y el rótulo de un botón a `line-height: normal`).
+ *   Los 12px hacían CUATRO trabajos —rótulo de bloque, media frase, descripción y
+ *   etiqueta de campo— y ninguno se distinguía del otro.
+ *
+ *   AHORA: SEIS, todas en la rampa (14/20 y 12/18), y cada tamaño con UN trabajo:
+ *
+ *     14 semibold primary   el título de la sección y el SUJETO de una fila
+ *     14 regular  primary   lo que se lee y se pulsa (etiquetas de control)
+ *     14 regular  secondary el resto de la frase, la descripción, el sufijo
+ *     12 semibold secondary rótulo de bloque y cabecera de columna
+ *     12 regular  secondary el apoyo que solo explica (la ayuda de una sección)
+ *     12 medium   tintado   las pastillas (peso del DS, ver la nota de abajo)
+ *
+ * Y UN patrón de fila para las dos secciones que encienden cosas, en vez de dos.
+ * Ver `.switch-rows`.
  *
  * Lo que queda aquí es SOLO lo propio de esta pantalla. Todo lo demás se
  * resuelve con el vocabulario que ya existía.
@@ -25,10 +33,63 @@
 
 /* ---------- Estados de agentes ---------- */
 
-/* Sub-etiqueta de bloque ("Por defecto", "Personalización de no disponibles"). */
+/*
+ * RÓTULO DE BLOQUE ("Estados por defecto", "Motivos de no disponible", y las
+ * cabeceras de columna de la tabla de notificaciones): 12 semibold en
+ * `--sc-text-secondary`.
+ *
+ * Es el tercer escalón de la pantalla, por debajo del título de sección (14
+ * semibold) y por encima del texto de lectura (14 regular). En 12 REGULAR —como
+ * estaba— pesaba menos que las pastillas que encabeza, así que se leía como un pie
+ * de foto y no como un título: el bloque se quedaba sin cabeza. El escalón lo da
+ * el tamaño hacia abajo y el peso hacia arriba, que es como se distingue un
+ * encabezado de su padre sin inventar un tamaño nuevo.
+ */
 .sub-label {
   display: block;
   color: var(--sc-text-secondary);
+}
+
+/*
+ * "Añadir": el HUECO donde va el siguiente, no un cuarto chip.
+ *
+ * Copia la geometría del chip al píxel —mismo padding, mismo radio, mismo tamaño
+ * de letra— para que la fila conserve su ritmo, y se separa por lo único que hace
+ * falta: el trazo DISCONTINUO y el fondo vacío. Esa es la convención de "aquí cabe
+ * otro". Con borde sólido y relleno tenía la misma silueta que las pastillas y la
+ * fila se leía "Baño · Comida · Formación · Añadir", como si añadir fuese un
+ * estado más.
+ */
+.add-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-25);
+  padding: 2px var(--sc-spacing-0-5);
+  border: 1px dashed var(--sc-border-default);
+  border-radius: var(--sc-radius-100);
+  background: transparent;
+  color: var(--sc-text-secondary);
+  cursor: pointer;
+  white-space: nowrap;
+  transition:
+    border-color var(--sc-transition-fast) var(--sc-easing-default),
+    color var(--sc-transition-fast) var(--sc-easing-default);
+
+  &:hover {
+    border-color: var(--sc-border-strong);
+    color: var(--sc-text-primary);
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--sc-border-focus);
+    outline-offset: 1px;
+  }
+
+  /* El `+` rima con el texto del chip (12), no con el reset del <button> — mismo
+   * `size="inherit"` que la × de `sc-chip`. */
+  sc-icon {
+    font-size: inherit;
+  }
 }
 
 /*
@@ -84,37 +145,85 @@
   }
 }
 
-/* ---------- Bloqueo de puesto por inactividad ---------- */
+/* ---------- La FILA de la pantalla ---------- */
 
 /*
- * CUATRO columnas compartidas por las dos filas: casilla · frase · número ·
- * sufijo. La rejilla vive en el PADRE y cada fila es `display: contents`, así
- * que el ancho de cada columna lo negocian las dos filas entre ellas
- * (`max-content`) — que es justo lo que hace que los dos `inputnumber` caigan en
- * la MISMA vertical aunque "Poner en cuarentena durante" y "Bloquear tras" midan
- * distinto. Nada de anchos fijos: el texto crece al traducir.
+ * UN patrón de fila para las dos secciones que encienden y apagan cosas
+ * ("Bloqueo por inactividad" y "Estados visibles"):
  *
- * El hueco es 12.25 en todas las columnas y la casilla añade otros 12.25 por su
- * borde final (24.5 en total, `scale/1-75`): la casilla MANDA sobre la frase, y
- * un poco más de aire lo dice sin una línea.
+ *     [ interruptor ] [ NOMBRE en negrita ] [ resto de la frase ] ( [nº] sufijo )
+ *
+ * Antes eran dos patrones distintos —casilla + frase de 12 en una, interruptor +
+ * nombre de 14 + descripción de 12 en la otra— para el mismo gesto. Ahora el
+ * mando va delante, el sujeto lo dice el PESO y todo el texto de la fila mide lo
+ * mismo (14). Lo que cambia entre las dos secciones es solo cuántas columnas hay.
+ *
+ * La rejilla vive en el PADRE y cada fila es `display: contents`, así que las
+ * filas negocian el ancho de CADA columna entre ellas (`max-content`): es lo que
+ * deja los dos `inputnumber` en la misma vertical aunque "Poner en cuarentena
+ * durante" y "Bloquear tras" midan distinto, y los cinco nombres de estado en
+ * columna sin un solo ancho fijo. Nada clavado en px: el texto crece al traducir.
  */
-.inline-rows {
+.switch-rows {
   display: grid;
   grid-template-columns: max-content max-content max-content minmax(0, 1fr);
   column-gap: var(--sc-spacing-0-875);
   row-gap: var(--sc-spacing-0-875);
   align-items: center;
+
+  /* Tres columnas: el estado no lleva número ni sufijo. */
+  &--states {
+    grid-template-columns: max-content max-content minmax(0, 1fr);
+    list-style: none;
+    margin: 0;
+    padding: 0;
+  }
 }
 
-.inline-row {
+.switch-row {
   display: contents;
 
-  &__check {
+  /* El mando MANDA sobre el nombre, y un poco más de aire lo dice sin una línea:
+   * 12.25 de `column-gap` + 12.25 de aquí = 24.5 (`scale/1-75`). */
+  &__control {
+    display: inline-flex;
+    align-items: center;
     margin-inline-end: var(--sc-spacing-0-875);
   }
 
+  /*
+   * `<label>` de verdad, no un `<span>` con `aria-label`: pulsar el nombre acciona
+   * el interruptor y el lector lo lee una sola vez. El cursor lo dice.
+   *
+   * El punto y el nombre son UNA pieza — el color es parte del nombre del estado,
+   * no una marca aparte.
+   */
+  &__name {
+    display: flex;
+    align-items: center;
+    gap: var(--sc-spacing-0-625);
+    padding-inline-end: var(--sc-spacing-1-75);
+    color: var(--sc-text-primary);
+    cursor: pointer;
+  }
+
+  /*
+   * El resto de la frase: mismo tamaño que el nombre, un escalón por debajo en
+   * color. Cuando rotula el número es un `<label>` y también se puede pulsar.
+   */
   &__text {
+    min-width: 0;
     color: var(--sc-text-secondary);
+  }
+
+  label.switch-row__text {
+    cursor: pointer;
+  }
+
+  &__tail {
+    display: flex;
+    align-items: center;
+    gap: var(--sc-spacing-0-875);
   }
 
   &__num {
@@ -122,80 +231,27 @@
     width: 71px;
   }
 
-  /* La frase se apaga con su casilla. Antes solo se deshabilitaba el control del
-   * medio y el texto que lo rodea seguía a plena tinta, así que una fila apagada
-   * y una encendida se leían igual de vivas. */
+  /*
+   * La fila apagada se APAGA de verdad.
+   *
+   * Lo intentaba ya con `--sc-text-subtle`, y en claro no hacía NADA: el token
+   * vale `slate-600`, el mismo valor exacto que `--sc-text-secondary`, así que
+   * encendida y apagada se pintaban del mismo color (medido en el build local:
+   * rgb(111,119,132) en los dos casos). No es un despiste del token — está escrito
+   * en `02-semantic.css`: en claro la rampa gris solo tiene DOS pasos que cumplan
+   * AA, y ese archivo dice que quien necesite un tercer nivel lo saque de tamaño,
+   * peso o color de rol, no de la claridad.
+   *
+   * El rol correcto aquí es `--sc-text-disabled` (`slate-300`), que es lo que ya
+   * usa el `inputnumber` del medio cuando se deshabilita: la frase y el sufijo se
+   * apagan CON él, y la fila entera dice lo mismo de punta a punta. La 1.4.3 exime
+   * a los controles inactivos, así que el contraste bajo aquí es la señal, no un
+   * fallo (misma nota que en `02-semantic.css`).
+   *
+   * El NOMBRE se queda a plena tinta: es lo que te dice qué acabas de apagar.
+   */
   &--off &__text {
-    color: var(--sc-text-subtle);
-  }
-}
-
-@media (max-width: 720px) {
-  .inline-rows {
-    grid-template-columns: max-content minmax(0, 1fr);
-  }
-
-  .inline-row__check {
-    grid-column: 1 / -1;
-    margin-inline-end: 0;
-  }
-}
-
-/* ---------- Lista de opciones sueltas (ventana de conversaciones) ---------- */
-
-.option-list {
-  display: flex;
-  flex-direction: column;
-  gap: var(--sc-spacing-0-875);
-}
-
-/* ---------- Estados visibles por el agente ---------- */
-
-/*
- * Una fila por estado: interruptor · punto + nombre · descripción. La rejilla la
- * pone el `<ul>` y cada `<li>` es `display: contents`, así que los cinco nombres
- * y las cinco descripciones forman columna sin un solo ancho fijo (antes el
- * nombre iba clavado a 125px, que es lo que mide el más largo en español).
- *
- * La línea inferior la llevan las CELDAS, no la fila: con `display: contents` el
- * `<li>` no tiene caja donde pintarla, y las celdas de una misma fila se estiran
- * a la misma altura, así que sus bordes forman una sola línea continua. Es la
- * misma línea de la tabla de Agentes (`--sc-border-subtle`) y, como allí, la
- * última fila no la lleva: no separaría nada.
- */
-.state-rows {
-  list-style: none;
-  margin: 0;
-  padding: 0;
-  display: grid;
-  grid-template-columns: max-content max-content minmax(0, 1fr);
-}
-
-.state-row {
-  display: contents;
-
-  > * {
-    display: flex;
-    align-items: center;
-    min-height: 37px;
-    padding-block: var(--sc-spacing-0-25);
-    border-block-end: 1px solid var(--sc-border-subtle);
-  }
-
-  &:last-child > * {
-    border-block-end: 0;
-  }
-
-  &__switch {
-    padding-inline-end: var(--sc-spacing-1);
-  }
-
-  /* El punto y el nombre son UNA pieza: el color es parte del nombre del estado,
-   * no una marca aparte. Mismo punto y mismo color que las pastillas de arriba. */
-  &__name {
-    gap: var(--sc-spacing-0-625);
-    padding-inline-end: var(--sc-spacing-1-75);
-    color: var(--sc-text-primary);
+    color: var(--sc-text-disabled);
   }
 
   &__dot {
@@ -220,28 +276,31 @@
       background: var(--sc-label-gray-dot);
     }
   }
-
-  /*
-   * Nombre y descripción se separan por PESO y por TAMAÑO, no por color: los dos
-   * van a `--sc-text-primary` (6.95:1). El gris que la maqueta da a la
-   * descripción (#8f97a3) se queda en 4.25:1, por debajo del mínimo AA de 4.5, y
-   * el escalón siguiente del sistema (`--sc-text-secondary`) se queda en 4.52,
-   * al filo. Misma corrección que en la tabla de Agentes.
-   */
-  &__desc {
-    min-width: 0;
-    color: var(--sc-text-primary);
-  }
 }
 
+/*
+ * Estrecho: el mando y el nombre se quedan juntos arriba y la frase baja a la
+ * segunda línea, alineada con el nombre. Se pierde la columna de números, que a
+ * este ancho ya no cabía.
+ */
 @media (max-width: 720px) {
-  .state-rows {
+  .switch-rows,
+  .switch-rows--states {
     grid-template-columns: max-content minmax(0, 1fr);
   }
 
-  .state-row__desc {
+  .switch-row__text,
+  .switch-row__tail {
     grid-column: 2;
   }
+}
+
+/* ---------- Lista de opciones sueltas (ventana de conversaciones) ---------- */
+
+.option-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-875);
 }
 
 /* ---------- Notificaciones a sistemas externos ---------- */
@@ -270,7 +329,7 @@
   &__th-label,
   &__th-url {
     text-align: start;
-    color: var(--sc-text-primary);
+    color: var(--sc-text-secondary);
     border-bottom: 1px solid var(--sc-border-default);
   }
 
@@ -278,15 +337,16 @@
     /* 142 = `th-ID` 393:12619, el mismo ancho de columna de casilla que Agentes. */
     width: 142px;
     text-align: center;
-    color: var(--sc-text-primary);
+    color: var(--sc-text-secondary);
     border-bottom: 1px solid var(--sc-border-default);
   }
 
-  /* `--sc-text-primary` y no `secondary`: el nombre de la fila ES el contenido de
-   * la tabla, no un apoyo. En secondary se queda en 4.52:1, al filo del AA. */
+  /* El nombre de la fila es el SUJETO de la fila, igual que "Teléfono" o
+   * "Post-conversando": 14 semibold en `--sc-text-primary`. El peso lo pone la
+   * clase de la plantilla, así que aquí se quita el `font-weight: inherit` que lo
+   * devolvía al del `<table>`. */
   &__th-row {
     text-align: start;
-    font-weight: inherit;
     color: var(--sc-text-primary);
 
     label {

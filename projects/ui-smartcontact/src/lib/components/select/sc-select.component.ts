@@ -3,6 +3,7 @@ import {
   booleanAttribute,
   ChangeDetectionStrategy,
   Component,
+  computed,
   contentChild,
   type TemplateRef,
   input,
@@ -72,6 +73,18 @@ export class ScSelectComponent {
   /** Solo lectura (paridad con sc-inputtext / catálogo de desarrollo). */
   readonly readonly = input(false, { transform: booleanAttribute });
   readonly inputId = input<string>();
+  /**
+   * `id` de un rótulo EXTERNO que nombra el control.
+   *
+   * PrimeNG pinta el select como `<span role="combobox">` y un `<label for>` sobre
+   * un span no da nombre accesible: el consumidor que rotula por su cuenta
+   * (`<label class="field__label" for="...">`, el patrón de las pantallas de
+   * config) se queda sin él sin enterarse. `aria-labelledby` sí funciona sobre
+   * cualquier elemento, así que esta entrada es la puerta para apuntarlo al revés.
+   * Cuando el rótulo lo pinta el propio componente (`[label]`), esto no hace falta:
+   * se ata solo.
+   */
+  readonly ariaLabelledBy = input<string>();
   readonly name = input<string>();
 
   // ─── Select-specific ───────────────────────────────────────────────
@@ -166,6 +179,11 @@ export class ScSelectComponent {
   });
   protected readonly resolvedId = this.field.resolvedId;
   protected readonly msgId = this.field.msgId;
+  protected readonly labelId = this.field.labelId;
+  /** El rótulo externo manda sobre el propio: si el consumidor pasa uno, es el suyo. */
+  protected readonly resolvedLabelledBy = computed(
+    () => this.ariaLabelledBy() ?? (this.label() && !this.iftaLabel() ? this.labelId() : undefined),
+  );
   protected readonly isInvalid = this.field.isInvalid;
   protected readonly footerText = this.field.footerText;
 

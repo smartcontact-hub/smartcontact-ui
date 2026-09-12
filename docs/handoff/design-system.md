@@ -47,13 +47,21 @@
   ⚠️ **Lo que queda pide DECISIÓN, no otro barrido**: cuatro `hero__title` a 32px y seis textos a
   16px (ninguno es peldaño), y qué hacer con los contenedores.
 
-**`/config/aed/servicio` (2026-09-12) deja pendiente de RAFA o de PRODUCTO:** el granate de
-«Administrativo» (decisión suya) pasó a la paleta de etiquetas para que el estado se vea igual en
-las dos secciones — si lo quiere de vuelta, la barra de «Estados visibles» se mueve con él; y «No
-disponible» y «Desconectado» tenían la MISMA descripción en los cuatro idiomas, así que escribí en
-qué se diferencian, pero es lectura razonable, **no un dato**. Y un hueco del DS: `sc-select` rotula
-con `for` sobre un `<span role="combobox">`, que no es etiquetable — sus dos formas (`[label]`,
-`iftaLabel`) emiten el mismo `for`, así que se queda sin nombre accesible en toda la app.
+**Lo que deja la segunda vuelta a `/config/aed/servicio` (2026-09-12 tarde), y NINGUNO bloquea:**
+
+- **Las etiquetas de campo (`.field__label`) siguen a 12 REGULAR** mientras los rótulos de bloque
+  subieron a 12 semibold. Son el mismo rango (las dos rotulan algo) y deberían escribirse igual; es
+  un barrido de una línea por pantalla en toda la app, y hacerlo solo en Servicio creaba deriva con
+  Agentes y Grupos.
+- **`sc-tag`/`sc-chip` escriben en peso 500**, el único peso intermedio que queda en esa pantalla.
+  Llevarlo a 600 dejaría la página con DOS pesos, pero es tocar el componente contra el Kit por
+  segunda vez (la primera fue el punto).
+- ⚠️ **El punto de las pastillas se quitó y el Kit lo sigue dibujando.** Decisión de Rafa, con su
+  razón: en una pastilla tintada el color ya está en el fondo y en el texto. Si se acepta, **hay
+  que quitarlo también en Figma**; si no, se revierte en el componente.
+- **Las seis casillas de la tabla de notificaciones salen MARCADAS y deshabilitadas** cuando no hay
+  URL: dicen «esto está encendido» de algo que no puede dispararse. Arreglarlo es decidir si el
+  valor por defecto debería ser `false` — es producto, no maquetación.
 
 **Lo que queda de la tanda «adelante a todo» del 2026-09-11** (los dos apuntes de la revisión de
 Orca se cerraron en el #113; `agent-mini` entró en el CI; la doc, en su PR):
@@ -102,35 +110,49 @@ las 38 ranuras— se cerraron el mismo día en DD-73.)
   la verdad y espera consumidores de PRODUCTO. Si el Supervisor adopta la rampa, es ahí.
 
 1. ~~**El eslabón que falta: nadie compara *fichero de Figma ↔ export*.**~~ → **HECHO el
-   2026-09-12, y sale LIMPIO.** `tools/figma-export-parity.mjs <capa>` imprime el JavaScript —con
-   los valores del Kit ya resueltos y embebidos— que se le pega a `figma_execute_across_files`;
-   compara DENTRO de Figma para no perder precisión en el viaje. No es gate de CI (necesita el
-   bridge abierto), como el Check D de `docs:coherence`.
-
-   | Capa | Tokens | Divergencias |
-   | --- | ---: | ---: |
-   | `primitive` | 282 | 0 |
-   | `semantic-light` · `semantic-dark` | 82 + 82 | 0 |
-   | `component-light` · `component-dark` | 346 + 346 | 0 |
-   | `app` | 6 | 0 |
-
-   **844 tokens, ni uno desfasado, y ninguno que exista en un lado y no en el otro.** Por ese
-   hueco se coló el desfase de julio; hoy no hay ninguno.
-
-   ⚠️ **Las cuatro trampas están DENTRO de la herramienta**, y las cuatro dieron un falso rojo
-   antes del verde: RGBA final por los dos lados (sin alfa, 15 falsos) · alias por los DOS lados
-   (el export guarda `{surface.0}`) · cada alias resuelto EN SU CAPA (si no, la oscura pisa a la
-   clara) · y la gorda, **el MODO no viaja entre colecciones**: el `modeId` de «Dark» en
-   *Component* no es el de «Dark» en *Semantic*, así que seguir un alias con el modo de partida
-   cae al primer modo del destino —el claro— y la capa oscura falla **en bloque**. Me dio 21 de 24
-   familias «discrepando» y no era deriva, era mi sonda; lo destapó mirar UN token
-   (`button/primary/background`) en vez de creerme el informe. Nota del export: la tipografía vive
-   en `aura/custom`, no en `aura/primitive`, pese a que los alias la llamen así.
+   2026-09-12 y sale LIMPIO**: `tools/figma-export-parity.mjs <capa>` comparó **844 tokens en las
+   seis capas, cero divergencias** (no es gate de CI: necesita el bridge abierto). ⚠️ **Las cuatro
+   trampas de la sonda están escritas DENTRO de esa herramienta** —RGBA por los dos lados, alias
+   por los dos lados, cada alias resuelto EN SU CAPA, y la gorda: **el `modeId` no viaja entre
+   colecciones**, que me dio 21 de 24 familias «discrepando» cuando el que fallaba era yo. Léelas
+   ahí antes de tocarla.
 
 2. **El 1:1 web↔Figma de chip · tag · toast** — sigue **bloqueado por herramienta**, no por
    decisión. Ver la sección de Figma más abajo.
 3. **La deuda de código de [`AUDIT-DEUDA-2026-06.md`](../AUDIT-DEUDA-2026-06.md)** que quede tras
    s34, y **los cabos de DD-24** (round-trip de iconos) en [`ROADMAP.md`](../ROADMAP.md).
+## ✅ 2026-09-12 · Servicio habla con una sola voz, y la casilla del DS deja de escribir su propio 14
+
+**Sello:** sobre `2810b82` (el #132 en `main`). 39 gates, 82 e2e del DS y **156** del Supervisor,
+contraste en los dos temas. Rafa, con la pantalla delante: «reducir a menos style texts… que rime
+con el resto», y «podemos tocar el DS para verlos casar».
+
+**Medido a 1440: SIETE maneras de pintar texto en una tarjeta, y siguen siendo siete — ese es el
+dato honesto.** La mía las dejó en seis y el #132 devolvió una como nivel de VERDAD (título a 18).
+Lo que cambia no es el número: antes DOS se salían de la rampa y hoy ninguna, los 12px hacían CUATRO
+trabajos y hoy dos, y la jerarquía pasa de dos escalones usables a cuatro — 18/600 página · 14/600
+sección y sujeto de fila · 14/400 lo que se lee · 12/600 rótulo de bloque · 12/400 lo que explica.
+
+⚠️ **El fallo del DS estaba en la casilla**: `sc-checkbox` fijaba `font-size: 14` y `line-height:
+1.5` a mano en vez de pedir el rol `body-2`. Son **21px contra 20**, así que una etiqueta de casilla
+y un `.sc-text-body-regular` a su lado no compartían línea base; y su color era `secondary`, o sea
+que se leía más clara que el resto del texto de 14 con el mismo peso. Ahora pide el rol y sube a
+`primary` (4.52:1 → 6.95:1). Toca TODA la app: lo cazaron los computados, no una revisión a ojo.
+
+⚠️ **La fila «apagada» no se apagaba en claro**: usaba `--sc-text-subtle`, que vale el MISMO
+`slate-600` que `--sc-text-secondary` (medido: rgb(111,119,132) en los dos casos). No es un despiste
+del token — `02-semantic.css` lo dice y lo acepta a sabiendas. **Moraleja del frente: en claro no se
+pide jerarquía a `subtle`**; lo que corresponde ahí es `--sc-text-disabled`.
+
+**Una sola fila** para las dos secciones que encienden cosas —`[interruptor] [NOMBRE] [frase] ([nº]
+sufijo)`— con la regla en una frase: interruptor manda sobre una fila con nombre propio, casilla
+marca una opción de una lista o una celda de matriz. En Agentes el `switch-field` se queda en
+regular a propósito: allí la etiqueta es TODO el contenido de la fila.
+
+Cerrado el hueco que dejó el #123: `sc-select` estrena `ariaLabelledBy` y el desplegable pasa de sin
+nombre accesible a «Tipo de descuelgue por defecto». Las pastillas pierden el punto (el color ya
+está en el fondo y en el texto); las filas de estado lo conservan, que es donde vive el color.
+
 ## ✅ 2026-09-12 · El chip relleno significa lo mismo en las dos pantallas, y un título vuelve a ser más grande que su contenido
 
 **Sello:** HEAD `c1f829f`. DD-74. `npm run verify` (39 eslabones); **156** e2e del Supervisor,
@@ -215,26 +237,9 @@ ejemplo de primeng.dev dentro y que funcione ya tokenizado.
 **Fuera a propósito:** los dos editores simétricos pintan sus chips de canal distinto y la piel por
 defecto de `sc-datatable` no ha seguido a la `list` en tipografía. Los dos bajan a la bandeja.
 
-## ✅ 2026-09-12 · La pantalla de Servicio habla el idioma de Agentes (PR #122)
-
-Sello `02324a1`, CI verde leído. Rafa: «it feels off», contra `/config/aed/agentes`. Medido ANTES de
-tocar: **tres** vocabularios para «un estado de agente» (pastilla sólida con `red-800` crudo · chip
-gris · banda con barra) y cuatro distancias que sobran (**487** chips↔«Añadir», **443**
-estado↔interruptor, **434** entre casillas hermanas, **89** entre dos `inputnumber`). Ahora: una
-familia sola, cada control pegado a lo que gobierna, las dos filas compartiendo las CUATRO columnas
-y la matriz como TABLA. `sc-tag` estrena uso en el Supervisor (0 → 3); el trinquete de tipografía
-suelta baja a 100.
-⚠️ **Las SEIS casillas de notificaciones no tenían `(cycle)`**: se vio MIDIENDO, con una casilla con
-manejador como control. Y `theme-contrast` cazó mi único paso en falso (botón «Añadir» a 2.95:1).
-
-> El tramo de **la tabla de transcripciones** (14/20 en vez de 16/24, #120) se archivó el
-> 2026-09-12 por el tope de 400 líneas, al entrar el del chip de canal. Vive en git y en el tag
-> `archive/handoff-ds-2026-09-12-chip-titulos`; su causa la explica DD-71 y su red sigue en
-> `text-styles-applied`, que es donde hace falta.
-
-> El tramo de **las tres guardas** (#113, #117, #118: el preflight que se niega sobre una rama
-> rezagada, `agent-mini` en el CI, y el código que la doc enseña atado al que ejecuta) se archivó
-> el 2026-09-12 por el tope de 400 líneas. Tag `archive/handoff-ds-2026-09-12`; lo durable, DD-70.
+> El tramo de **la primera vuelta a Servicio** (#122: los 487px entre los chips y su botón, las seis
+> casillas sin `(cycle)`) se archivó el 2026-09-12 por el tope de 400 líneas: lo sustituye el tramo
+> de la SEGUNDA vuelta, arriba, sobre la misma pantalla. Tag `archive/handoff-ds-2026-09-12-servicio`.
 
 ## 🗄️ Histórico de la lista SIGUIENTE — ya cerrado
 

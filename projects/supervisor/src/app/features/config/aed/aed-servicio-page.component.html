@@ -53,7 +53,7 @@
           hace falta además otro color y otra forma.
         -->
         <div class="state-block">
-          <span class="sub-label sc-text-caption-regular">
+          <span class="sub-label sc-text-caption-semibold">
             {{ 'config.aed.subpages.servicio.estados.por_defecto' | translate }}
           </span>
           <div class="chip-row">
@@ -89,7 +89,7 @@
         </div>
 
         <div class="state-block">
-          <span class="sub-label sc-text-caption-regular">
+          <span class="sub-label sc-text-caption-semibold">
             {{ 'config.aed.subpages.servicio.estados.personalizacion' | translate }}
           </span>
           <!-- "Añadir" va PEGADO a los chips que crea, en la misma fila. Antes
@@ -109,19 +109,18 @@
                 (removed)="removeReason(reason)"
               />
             }
-            <!-- `outlined`, no `text`: el botón de texto secundario pinta su rótulo en
-                 #8f97a3, que sobre el blanco de la tarjeta se queda en 2.95:1 a 12px —
-                 muy por debajo del mínimo AA. Lo cazó `theme-contrast.spec.ts` al
-                 probarlo, no una revisión a ojo. Con borde, además, se lee como una
-                 acción entre las pastillas y no como una más. -->
-            <sc-button
-              variant="secondary"
-              appearance="outlined"
-              size="sm"
-              [icon]="addIcon"
-              [label]="'config.aed.subpages.servicio.estados.add' | translate"
-              (clicked)="openAddModal()"
-            />
+            <!-- Un HUECO donde va el siguiente, no un cuarto chip. Con borde sólido
+                 el botón tenía la misma silueta que las pastillas de al lado y se
+                 leía como una más ("Baño · Comida · Formación · Añadir"). El
+                 discontinuo es la convención de "aquí cabe otro": misma altura,
+                 mismo radio y mismo hueco que un chip, pero sin relleno, así que la
+                 fila conserva su ritmo y la acción no se disfraza de dato.
+                 El rótulo va a `--sc-text-secondary` y no al gris del botón de
+                 texto (#8f97a3, 2.95:1 a 12px, que cazó `theme-contrast.spec.ts`). -->
+            <button type="button" class="add-chip sc-text-caption-semibold" (click)="openAddModal()">
+              <sc-icon [name]="addIcon" size="inherit" aria-hidden="true" />
+              {{ 'config.aed.subpages.servicio.estados.add' | translate }}
+            </button>
           </div>
         </div>
       </section>
@@ -136,64 +135,65 @@
           </h2>
         </header>
 
-        <!-- CUATRO columnas, no dos: casilla · frase · número · sufijo. La rejilla
-             vive en el padre y cada fila es `display: contents`, así que las dos
-             filas negocian el ancho de CADA columna entre ellas. Antes solo se
-             compartía la primera, y los dos números caían en verticales distintas
-             —776.6 y 687.3, 89px de desfase medidos en el build del 2026-09-12—
-             porque "Poner en cuarentena durante" y "Bloquear tras" no miden lo
-             mismo. Ahora los dos controles forman columna, que es lo que deja leer
-             la sección de un vistazo. -->
-        <div class="inline-rows">
-          <div class="inline-row" [class.inline-row--off]="!form().telefonoBloqueo">
-            <sc-checkbox
-              class="inline-row__check"
-              [state]="form().telefonoBloqueo ? 'all' : 'none'"
-              [ariaLabel]="'config.aed.subpages.servicio.inactividad.telefono' | translate"
-              (cycle)="update('telefonoBloqueo', $event)"
-            >
-              <span>{{ 'config.aed.subpages.servicio.inactividad.telefono' | translate }}</span>
-            </sc-checkbox>
-            <span class="inline-row__text sc-text-caption-regular">
-              {{ 'config.aed.subpages.servicio.inactividad.telefono_text' | translate }}
-            </span>
-            <sc-inputnumber
-              class="inline-row__num"
-              inputId="general-cuarentena"
-              [min]="0"
-              [disabled]="!form().telefonoBloqueo"
-              [value]="form().cuarentenaSegundos"
-              (valueChange)="onNumberChange('cuarentenaSegundos', $event)"
-            />
-            <span class="inline-row__text sc-text-caption-regular">
-              {{ 'config.aed.subpages.servicio.inactividad.seconds' | translate }}
-            </span>
-          </div>
+        <!--
+          UNA fila por regla, y la MISMA fila que "Estados visibles": interruptor ·
+          nombre en negrita · el resto de la frase. Antes el sujeto ("Teléfono") era
+          una etiqueta de casilla de 14 y su predicado ("Poner en cuarentena durante")
+          bajaba a 12: una sola frase partida en dos tamaños, que es lo que hacía que
+          la fila no se leyera de corrido. Ahora la frase entera mide 14 y lo que
+          separa al sujeto es el PESO, no el tamaño.
 
-          <div class="inline-row" [class.inline-row--off]="!form().navegadorBloqueo">
-            <sc-checkbox
-              class="inline-row__check"
-              [state]="form().navegadorBloqueo ? 'all' : 'none'"
-              [ariaLabel]="'config.aed.subpages.servicio.inactividad.navegador' | translate"
-              (cycle)="update('navegadorBloqueo', $event)"
-            >
-              <span>{{ 'config.aed.subpages.servicio.inactividad.navegador' | translate }}</span>
-            </sc-checkbox>
-            <span class="inline-row__text sc-text-caption-regular">
-              {{ 'config.aed.subpages.servicio.inactividad.navegador_text' | translate }}
-            </span>
-            <sc-inputnumber
-              class="inline-row__num"
-              inputId="general-bloquear-tras"
-              [min]="0"
-              [disabled]="!form().navegadorBloqueo"
-              [value]="form().bloquearTrasConversaciones"
-              (valueChange)="onNumberChange('bloquearTrasConversaciones', $event)"
-            />
-            <span class="inline-row__text sc-text-caption-regular">
-              {{ 'config.aed.subpages.servicio.inactividad.conversaciones_suffix' | translate }}
-            </span>
-          </div>
+          Y es un interruptor, no una casilla, porque gobierna una fila entera con
+          nombre propio — la regla de la pantalla: interruptor manda sobre una fila,
+          casilla marca una opción de una lista o una celda de una tabla.
+
+          CUATRO columnas compartidas por las dos filas: mando · nombre · frase ·
+          número + sufijo. La rejilla vive en el PADRE y cada fila es `display:
+          contents`, así que el ancho de cada columna lo negocian las dos filas entre
+          ellas — que es lo que deja los dos `inputnumber` en la MISMA vertical aunque
+          "Poner en cuarentena durante" y "Bloquear tras" midan distinto.
+        -->
+        <div class="switch-rows">
+          @for (rule of bloqueoRules; track rule.key) {
+            <div class="switch-row" [class.switch-row--off]="!form()[rule.key]">
+              <span class="switch-row__control">
+                <sc-toggleswitch
+                  [inputId]="'general-bloqueo-' + rule.key"
+                  [checked]="form()[rule.key]"
+                  (checkedChange)="update(rule.key, $event)"
+                />
+              </span>
+              <label
+                class="switch-row__name sc-text-body-semibold"
+                [attr.for]="'general-bloqueo-' + rule.key"
+              >
+                {{ 'config.aed.subpages.servicio.inactividad.' + rule.i18n | translate }}
+              </label>
+              <!-- La frase ROTULA el número: `<label for>` de verdad, así que el campo
+                   tiene nombre accesible (antes no tenía ninguno) y pulsar el texto
+                   lleva el foco al campo. No hace falta un `aria-label` que repita en
+                   audio lo que ya está escrito en pantalla. -->
+              <label
+                class="switch-row__text sc-text-body-regular"
+                [attr.for]="'general-bloqueo-' + rule.key + '-num'"
+              >
+                {{ 'config.aed.subpages.servicio.inactividad.' + rule.i18n + '_text' | translate }}
+              </label>
+              <span class="switch-row__tail">
+                <sc-inputnumber
+                  class="switch-row__num"
+                  [inputId]="'general-bloqueo-' + rule.key + '-num'"
+                  [min]="0"
+                  [disabled]="!form()[rule.key]"
+                  [value]="form()[rule.numKey]"
+                  (valueChange)="onNumberChange(rule.numKey, $event)"
+                />
+                <span class="switch-row__text sc-text-body-regular">
+                  {{ 'config.aed.subpages.servicio.inactividad.' + rule.suffix | translate }}
+                </span>
+              </span>
+            </div>
+          }
         </div>
       </section>
 
@@ -240,39 +240,45 @@
         </header>
 
         <!--
-          El interruptor va DELANTE de lo que gobierna, como en Agentes
-          (`.switch-field`, Figma 393:12592). Antes vivía al final de la fila:
-          442.7px de blanco medidos entre el texto del estado y su interruptor
-          (build del 2026-09-12) — la misma distancia que esa regla ya había
-          corregido una vez en la otra pantalla.
+          MISMA fila que "Bloqueo por inactividad": interruptor · nombre en negrita ·
+          detalle. El interruptor va DELANTE de lo que gobierna, como en Agentes
+          (`.switch-field`, Figma 393:12592).
 
-          Y la fila deja de ser una BANDA con barra de color: ahora es una fila de
-          tabla con su línea inferior, como la matriz de Agentes, y el color del
-          estado lo lleva el mismo PUNTO que usan las pastillas de arriba. Un
-          vocabulario menos y una paleta menos, con el color diciendo lo mismo en
-          los dos sitios.
+          SIN LÍNEA entre filas. Las llevaba —la línea de la tabla de Agentes— y aquí
+          no separaban nada: son cinco filas de UNA línea, sin columnas que seguir con
+          la vista de izquierda a derecha. Lo que sí separa en esta página son las
+          SECCIONES, y sus separadores tienen el mismo grosor, así que cinco rayas
+          de lista competían con seis de sección y la tarjeta entera se leía a rayas.
+          Regla: la línea está donde hay columnas que cruzar (la tabla de
+          notificaciones la conserva); en una lista corta, el aire basta.
+
+          El color del estado lo lleva el mismo PUNTO que antes. Aquí SÍ se queda,
+          aunque las pastillas de arriba lo hayan perdido: en una pastilla el color ya
+          está en el fondo y el punto lo repetía; aquí el texto va a pelo y el punto es
+          el ÚNICO sitio donde vive el color.
         -->
-        <ul class="state-rows">
+        <ul class="switch-rows switch-rows--states">
           @for (item of visibilidadLabels; track item.key) {
-            <li class="state-row">
-              <span class="state-row__switch">
+            <li class="switch-row">
+              <span class="switch-row__control">
                 <sc-toggleswitch
+                  [inputId]="'general-visible-' + item.key"
                   [checked]="form().visibilidadEstados[item.key]"
-                  [ariaLabel]="
-                    'config.aed.subpages.servicio.visibles.state_' + item.key | translate
-                  "
                   (checkedChange)="toggleVisibilidad(item.key, $event)"
                 />
               </span>
-              <span class="state-row__name sc-text-body-regular">
+              <label
+                class="switch-row__name sc-text-body-semibold"
+                [attr.for]="'general-visible-' + item.key"
+              >
                 <span
-                  class="state-row__dot"
+                  class="switch-row__dot"
                   [attr.data-tone]="item.tone"
                   aria-hidden="true"
                 ></span>
                 {{ 'config.aed.subpages.servicio.visibles.state_' + item.key | translate }}
-              </span>
-              <span class="state-row__desc sc-text-caption-regular">
+              </label>
+              <span class="switch-row__text sc-text-body-regular">
                 {{ 'config.aed.subpages.servicio.visibles.desc_' + item.key | translate }}
               </span>
             </li>
@@ -304,11 +310,20 @@
              campo de la pantalla que se rotulaba de otra manera. -->
         <div class="grid grid--2">
           <div class="field">
-            <label class="field__label sc-text-caption-regular" for="general-descuelgue">
+            <!-- El `for` se queda porque pulsar la etiqueta enfoca el control, pero
+                 NO da nombre accesible: PrimeNG pinta el select como
+                 `<span role="combobox">` y un span no es etiquetable. El nombre lo
+                 da `ariaLabelledBy`, que sí funciona sobre cualquier elemento. -->
+            <label
+              class="field__label sc-text-caption-regular"
+              id="general-descuelgue-label"
+              for="general-descuelgue"
+            >
               {{ 'config.aed.subpages.servicio.aviso.descuelgue_label' | translate }}
             </label>
             <sc-select
               inputId="general-descuelgue"
+              ariaLabelledBy="general-descuelgue-label"
               [options]="descuelgueOptions"
               [value]="form().tipoDescuelgue"
               [placeholder]="
@@ -327,7 +342,7 @@
               role="radiogroup"
               aria-labelledby="general-alerting-label"
             >
-              <label class="radio sc-text-caption-regular">
+              <label class="radio sc-text-body-regular">
                 <sc-radiobutton
                   inputId="alerting-nombre"
                   name="alerting-tipo"
@@ -339,7 +354,7 @@
                   'config.aed.subpages.servicio.aviso.alerting_nombre' | translate
                 }}</span>
               </label>
-              <label class="radio sc-text-caption-regular">
+              <label class="radio sc-text-body-regular">
                 <sc-radiobutton
                   inputId="alerting-telefono"
                   name="alerting-tipo"
@@ -384,14 +399,14 @@
         <table class="notif-table">
           <thead>
             <tr>
-              <th scope="col" class="notif-table__th-label sc-text-body-semibold">
+              <th scope="col" class="notif-table__th-label sc-text-caption-semibold">
                 {{ 'config.aed.subpages.servicio.notif.col_conversacion' | translate }}
               </th>
-              <th scope="col" class="notif-table__th-url sc-text-body-semibold">
+              <th scope="col" class="notif-table__th-url sc-text-caption-semibold">
                 {{ 'config.aed.subpages.servicio.notif.col_url' | translate }}
               </th>
               @for (key of notifEventos; track key) {
-                <th scope="col" class="notif-table__th-col sc-text-body-semibold">
+                <th scope="col" class="notif-table__th-col sc-text-caption-semibold">
                   {{ 'config.aed.subpages.servicio.notif.evento_' + key | translate }}
                 </th>
               }
@@ -399,7 +414,7 @@
           </thead>
           <tbody>
             <tr>
-              <th scope="row" class="notif-table__th-row sc-text-body-regular">
+              <th scope="row" class="notif-table__th-row sc-text-body-semibold">
                 <label for="general-notif-entrante">
                   {{ 'config.aed.subpages.servicio.notif.entrante' | translate }}
                 </label>
@@ -431,7 +446,7 @@
               }
             </tr>
             <tr>
-              <th scope="row" class="notif-table__th-row sc-text-body-regular">
+              <th scope="row" class="notif-table__th-row sc-text-body-semibold">
                 <label for="general-notif-saliente">
                   {{ 'config.aed.subpages.servicio.notif.saliente' | translate }}
                 </label>

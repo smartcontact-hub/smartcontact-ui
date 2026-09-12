@@ -4,6 +4,7 @@
     [text]="label()!"
     [required]="required()"
     [for]="resolvedId()"
+    [labelId]="labelId()"
   />
 }
 
@@ -31,6 +32,7 @@
     (ngModelChange)="onModelChange($event)"
     (onFocus)="onFocus($event)"
     (onBlur)="onBlur($event)"
+    [ariaLabelledBy]="resolvedLabelledBy()"
     [attr.name]="name() ?? null"
     [attr.aria-describedby]="footerText() ? msgId() : null"
     [attr.aria-required]="required() ? true : null"
