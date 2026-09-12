@@ -288,6 +288,7 @@
     <app-summary-panel
       [ticketId]="ticket().id"
       [product]="prod"
+      [periodo]="summaryPeriodo()"
       [focus]="summaryFocus()"
       (closed)="summaryFor.set(null)"
     />
