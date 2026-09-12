@@ -22,7 +22,7 @@
 </table>
 
 <h2>{{ 'fundamentos.color.primitiveTitle' | translate }}</h2>
-<p class="swatch-hint">{{ 'fundamentos.color.primitiveHint' | translate }}</p>
+<p class="swatch-hint sc-text-caption-regular">{{ 'fundamentos.color.primitiveHint' | translate }}</p>
 @for (family of colorFamilies; track family.token) {
   <div class="swatch-row">
     <span class="swatch-row__name">{{ 'fundamentos.color.primitive.' + family.token | translate }}</span>
@@ -79,12 +79,12 @@
 }
 
 <h2>{{ 'fundamentos.color.semanticTitle' | translate }}</h2>
-<p class="swatch-hint" [innerHTML]="'fundamentos.color.semanticHint' | translate"></p>
+<p class="swatch-hint sc-text-caption-regular" [innerHTML]="'fundamentos.color.semanticHint' | translate"></p>
 @if (errorSemanticos()) {
-  <p class="sem-error" [innerHTML]="'fundamentos.color.semanticError' | translate"></p>
+  <p class="sem-error sc-text-caption-regular" [innerHTML]="'fundamentos.color.semanticError' | translate"></p>
 } @else {
   @for (grupo of semanticosPorFamilia(); track grupo.familia) {
-    <h3 class="sem-familia">{{ 'fundamentos.color.family.' + grupo.familia | translate }}</h3>
+    <h3 class="sem-familia sc-text-caption-semibold">{{ 'fundamentos.color.family.' + grupo.familia | translate }}</h3>
     <ul class="sem-list">
       @for (t of grupo.tokens; track t.token) {
         <li class="sem">
@@ -97,7 +97,7 @@
             <code class="sem__token">--{{ t.token }}</code>
             @let uso = lang.isEnglish() ? t.usoEn : t.uso;
             @let no = lang.isEnglish() ? t.noEn : t.no;
-            <p class="sem__uso">{{ uso }}</p>
+            <p class="sem__uso sc-text-caption-regular">{{ uso }}</p>
             @if (no) {
               <p class="sem__no">
                 <sc-icon name="close" [size]="14" aria-hidden="true" />
@@ -106,7 +106,7 @@
             }
           </div>
           @if (t.dd) {
-            <span class="sem__dd">{{ t.dd }}</span>
+            <span class="sem__dd sc-text-caption-regular">{{ t.dd }}</span>
           }
         </li>
       }

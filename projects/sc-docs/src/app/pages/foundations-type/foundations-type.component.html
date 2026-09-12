@@ -1,9 +1,9 @@
 <header class="hero">
   <div class="hero__icon" aria-hidden="true"><sc-icon [name]="typeIcon" [size]="20" /></div>
   <div>
-    <p class="hero__eyebrow">{{ 'chrome.nav.fundamentos' | translate }}</p>
+    <p class="hero__eyebrow sc-text-caption-semibold">{{ 'chrome.nav.fundamentos' | translate }}</p>
     <h1 class="hero__title">{{ 'fundamentos.type.title' | translate }}</h1>
-    <p class="hero__lead" [innerHTML]="'fundamentos.type.lead' | translate"></p>
+    <p class="hero__lead sc-text-body-regular" [innerHTML]="'fundamentos.type.lead' | translate"></p>
   </div>
 </header>
 
@@ -15,7 +15,7 @@
 <!-- Estilos de texto: los 12 text styles del Figma del DS (6 roles × 2 pesos). Cada muestra se
      renderiza con su CLASE real (`.sc-text-*`, en base/typography.css), que bebe de los tokens. -->
 <section class="styles">
-  <h2 class="styles__title">Estilos de texto</h2>
+  <h2 class="styles__title sc-text-body-semibold">Estilos de texto</h2>
   <p class="styles__lead">
     Los <strong>12 estilos</strong> del Figma del DS (6 roles × 2 pesos). Aplica la clase
     (<code>.sc-text-h2-semibold</code>…) y el texto hereda tamaño, interlineado, peso y familia
@@ -27,8 +27,8 @@
         <p class="styles__sample" [class]="t.cls">{{ t.role }} · {{ t.weight }}</p>
         <div class="styles__meta">
           <code class="styles__cls">.{{ t.cls }}</code>
-          <span class="styles__val">{{ t.px }} / {{ t.line }} px</span>
-          <span class="styles__use">{{ t.use }}</span>
+          <span class="styles__val sc-text-caption-regular">{{ t.px }} / {{ t.line }} px</span>
+          <span class="styles__use sc-text-caption-regular">{{ t.use }}</span>
         </div>
       </li>
     }
@@ -39,11 +39,11 @@
      desmonte el tema: los componentes del DS publican su propia tipografía por el preset de
      PrimeNG, así que ponerles una clase encima los desconectaría del tema. -->
 <section class="applies">
-  <h2 class="applies__title">{{ 'fundamentos.type.applies.title' | translate }}</h2>
-  <p class="applies__lead" [innerHTML]="'fundamentos.type.applies.lead' | translate"></p>
+  <h2 class="applies__title sc-text-body-semibold">{{ 'fundamentos.type.applies.title' | translate }}</h2>
+  <p class="applies__lead sc-text-caption-regular" [innerHTML]="'fundamentos.type.applies.lead' | translate"></p>
   <div class="applies__cols">
     <div class="applies__col applies__col--yes">
-      <h3 class="applies__col-title">{{ 'fundamentos.type.applies.yes_title' | translate }}</h3>
+      <h3 class="applies__col-title sc-text-caption-semibold">{{ 'fundamentos.type.applies.yes_title' | translate }}</h3>
       <ul class="applies__list">
         @for (k of appliesYes; track k) {
           <li [innerHTML]="'fundamentos.type.applies.yes_' + k | translate"></li>
@@ -51,7 +51,7 @@
       </ul>
     </div>
     <div class="applies__col applies__col--no">
-      <h3 class="applies__col-title">{{ 'fundamentos.type.applies.no_title' | translate }}</h3>
+      <h3 class="applies__col-title sc-text-caption-semibold">{{ 'fundamentos.type.applies.no_title' | translate }}</h3>
       <ul class="applies__list">
         @for (k of appliesNo; track k) {
           <li [innerHTML]="'fundamentos.type.applies.no_' + k | translate"></li>
@@ -59,11 +59,11 @@
       </ul>
     </div>
   </div>
-  <p class="applies__note" [innerHTML]="'fundamentos.type.applies.note' | translate"></p>
+  <p class="applies__note sc-text-caption-regular" [innerHTML]="'fundamentos.type.applies.note' | translate"></p>
 </section>
 
 <!-- Escala de tamaños: la muestra usa el token real (var) → refleja producción -->
-<h2 class="ramp__title">Escala de tamaños</h2>
+<h2 class="ramp__title sc-text-body-semibold">Escala de tamaños</h2>
 <ul class="scale">
   @for (s of sizes; track s.step) {
     <li class="scale__row">
@@ -72,7 +72,7 @@
       </p>
       <div class="scale__meta">
         <code class="scale__token">font-size-{{ s.step }}</code>
-        <span class="scale__val">{{ s.px }}px · {{ s.rem }}rem</span>
+        <span class="scale__val sc-text-caption-regular">{{ s.px }}px · {{ s.rem }}rem</span>
       </div>
     </li>
   }
@@ -80,12 +80,12 @@
 
 <!-- Line-heights -->
 <section class="ramp">
-  <h2 class="ramp__title">{{ 'fundamentos.type.lineHeights' | translate }}</h2>
+  <h2 class="ramp__title sc-text-body-semibold">{{ 'fundamentos.type.lineHeights' | translate }}</h2>
   <ul class="ramp__list">
     @for (l of lineHeights; track l.step) {
       <li class="ramp__row">
         <code class="ramp__token">line-height-{{ l.step }}</code>
-        <span class="ramp__val">{{ l.px }}px · {{ l.rem }}rem</span>
+        <span class="ramp__val sc-text-caption-regular">{{ l.px }}px · {{ l.rem }}rem</span>
       </li>
     }
   </ul>
@@ -93,15 +93,15 @@
 
 <!-- Pesos: los CUATRO que el sistema declara y usa hoy (medido en los estilos del DS) -->
 <section class="ramp">
-  <h2 class="ramp__title">{{ 'fundamentos.type.weights' | translate }}</h2>
+  <h2 class="ramp__title sc-text-body-semibold">{{ 'fundamentos.type.weights' | translate }}</h2>
   <ul class="ramp__list">
     @for (w of weights; track w.name) {
       <li class="ramp__row">
         <code class="ramp__token">font-weight-{{ w.key }}</code>
-        <span class="ramp__val" [style.font-weight]="w.value">{{ w.name }} · {{ w.value }}</span>
+        <span class="ramp__val sc-text-caption-regular" [style.font-weight]="w.value">{{ w.name }} · {{ w.value }}</span>
       </li>
     }
   </ul>
 </section>
 
-<p class="foot" [innerHTML]="'fundamentos.type.foot' | translate"></p>
+<p class="foot sc-text-caption-regular" [innerHTML]="'fundamentos.type.foot' | translate"></p>

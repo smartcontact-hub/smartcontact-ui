@@ -42,8 +42,8 @@
       @for (v of delCruce; track v.nombre) {
         <div class="cx-leyenda__item">
           <dt>
-            <span class="cx-pill" [class]="'cx-pill--' + v.tono">{{ v.nombre }}</span>
-            <span class="cx-leyenda__n">{{ cuenta()[v.nombre] ?? 0 }}</span>
+            <span class="cx-pill sc-text-caption-regular" [class]="'cx-pill--' + v.tono">{{ v.nombre }}</span>
+            <span class="cx-leyenda__n sc-text-body-regular">{{ cuenta()[v.nombre] ?? 0 }}</span>
           </dt>
           <dd>{{ v.que }}</dd>
         </div>
@@ -58,8 +58,8 @@
       @for (v of deRevision; track v.nombre) {
         <div class="cx-leyenda__item">
           <dt>
-            <span class="cx-pill" [class]="'cx-pill--' + v.tono">{{ v.nombre }}</span>
-            <span class="cx-leyenda__n">{{ cuenta()[v.nombre] ?? 0 }}</span>
+            <span class="cx-pill sc-text-caption-regular" [class]="'cx-pill--' + v.tono">{{ v.nombre }}</span>
+            <span class="cx-leyenda__n sc-text-body-regular">{{ cuenta()[v.nombre] ?? 0 }}</span>
           </dt>
           <dd>{{ v.que }}</dd>
         </div>
@@ -106,7 +106,7 @@
             <tr class="cx-detalle">
               <td colspan="5">
                 <div class="cx-filtros">
-                  <span class="cx-filtros__et">Filtrar:</span>
+                  <span class="cx-filtros__et sc-text-caption-regular">Filtrar:</span>
                   @for (v of veredictos; track v.nombre) {
                     <button type="button" class="cx-chip" [class.is-active]="filtro() === v.nombre"
                             (click)="filtrar(v.nombre)">{{ v.nombre }}</button>
@@ -132,7 +132,7 @@
                         <td>{{ f.usaFigma || '—' }}</td>
                         <td>{{ f.leeWeb || '—' }}</td>
                         <td>
-                          <span class="cx-pill" [class]="'cx-pill--' + tono(f.veredicto)">{{ f.veredicto }}</span>
+                          <span class="cx-pill sc-text-caption-regular" [class]="'cx-pill--' + tono(f.veredicto)">{{ f.veredicto }}</span>
                         </td>
                       </tr>
                       @if (f.motivo) {
@@ -161,7 +161,7 @@
 
   <!-- ── Lo que se ató, con su prueba ────────────────────────────────────────── -->
   <section class="cx-bloque" aria-labelledby="cx-atadas">
-    <h2 id="cx-atadas">Lo que se ató <span class="cx-n">{{ atadas().length }}</span></h2>
+    <h2 id="cx-atadas">Lo que se ató <span class="cx-n sc-text-body-regular">{{ atadas().length }}</span></h2>
     <p class="cx-lead">
       Solo se ata cuando la variable ya existe, el CSS la lee y el valor no cambia: no mueve un
       píxel, con una excepción anotada abajo. Cinco de las doce estaban
@@ -172,7 +172,7 @@
       @for (f of atadas(); track f.componente + f.variable) {
         <li>
           <p class="cx-lista__t"><strong>{{ f.componente }}</strong> · <code>{{ f.variable }}</code></p>
-          <p class="cx-lista__d">{{ f.motivo }}</p>
+          <p class="cx-lista__d sc-text-body-regular">{{ f.motivo }}</p>
           <p class="cx-lista__m">
             @if (f.capa) { {{ f.capa }} · }
             @if (f.selector) { <code>{{ f.selector }}</code> }
@@ -184,7 +184,7 @@
 
   <!-- ── Lo que espera una decisión ──────────────────────────────────────────── -->
   <section class="cx-bloque" aria-labelledby="cx-abiertas">
-    <h2 id="cx-abiertas">Lo que queda abierto <span class="cx-n">{{ abiertas().length }}</span></h2>
+    <h2 id="cx-abiertas">Lo que queda abierto <span class="cx-n sc-text-body-regular">{{ abiertas().length }}</span></h2>
     <p class="cx-lead">
       Esto es un mapa, no una lista de arreglos: aquí no se toca nada, se dice <strong>qué lado
       manda</strong> y por qué. En todos estos casos el valor llega bien a producción, porque el
@@ -198,9 +198,9 @@
         <li>
           <p class="cx-lista__t">
             <strong>{{ f.componente }}</strong> · <code>{{ f.variable }}</code>
-            <span class="cx-pill cx-pill--aviso">{{ f.accionable }}</span>
+            <span class="cx-pill cx-pill--aviso sc-text-caption-regular">{{ f.accionable }}</span>
           </p>
-          <p class="cx-lista__d">{{ f.motivo }}</p>
+          <p class="cx-lista__d sc-text-body-regular">{{ f.motivo }}</p>
           <p class="cx-lista__m">
             @if (f.capa) { {{ f.capa }} }
             @if (f.selector) { · <code>{{ f.selector }}</code> }

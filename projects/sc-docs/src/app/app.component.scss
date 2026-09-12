@@ -65,12 +65,9 @@
   }
 
   &__brand-name {
-    font-size: var(--sc-font-size-100);
-    font-weight: var(--sc-font-weight-semibold);
   }
 
   &__brand-sub {
-    font-size: var(--sc-font-size-50);
     color: var(--sc-text-secondary);
   }
 
@@ -151,8 +148,6 @@
     margin-top: var(--sc-spacing-0-75);
     padding: 0 var(--sc-spacing-0-625);
     color: var(--sc-text-subtle);
-    font-size: var(--sc-font-size-caption);
-    line-height: var(--sc-line-height-caption);
     text-decoration: none;
 
     &:hover,
@@ -214,10 +209,7 @@
     border-radius: var(--sc-radius-full);
     background: var(--sc-bg-subtle);
     color: var(--sc-color-sky-600);
-    font-size: var(--sc-font-size-50);
-    font-weight: var(--sc-font-weight-semibold);
     text-align: center;
-    line-height: 1.5rem;
   }
 
   /* Lista de componentes anidada bajo "Componentes" cuando la sección está activa:
@@ -242,7 +234,7 @@
     background: transparent;
     color: var(--sc-text-secondary);
     font: inherit;
-    font-size: var(--sc-font-size-25, 0.6875rem);
+    font-size: var(--sc-font-size-100); /* 12 — era `--sc-font-size-25`, que NO EXISTE: se pintaba por su fallback (11px), y 11 no es peldaño de la rampa. Sube al más cercano. */
     font-weight: var(--sc-font-weight-bold);
     letter-spacing: 0.06em;
     text-transform: uppercase;

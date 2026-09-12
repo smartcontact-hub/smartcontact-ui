@@ -1,9 +1,9 @@
 <header class="hero">
   <div class="hero__icon" aria-hidden="true"><sc-icon [name]="heroIcon" [size]="20" /></div>
   <div>
-    <p class="hero__eyebrow">{{ 'chrome.nav.fundamentos' | translate }}</p>
+    <p class="hero__eyebrow sc-text-caption-semibold">{{ 'chrome.nav.fundamentos' | translate }}</p>
     <h1 class="hero__title">{{ 'fundamentos.patterns.title' | translate }}</h1>
-    <p class="hero__lead" [innerHTML]="'fundamentos.patterns.lead' | translate"></p>
+    <p class="hero__lead sc-text-body-regular" [innerHTML]="'fundamentos.patterns.lead' | translate"></p>
   </div>
 </header>
 
@@ -35,8 +35,8 @@
      centrado que no reserva estructura. Los demás principios son conceptuales: se quedan en
      texto a propósito (meterles un mock-up sería el ruido que esta misma barra combate). -->
 <section class="demo" [attr.aria-label]="'fundamentos.patterns.demo.aria' | translate">
-  <h2 class="demo__title">{{ 'fundamentos.patterns.demo.title' | translate }}</h2>
-  <p class="demo__lead" [innerHTML]="'fundamentos.patterns.demo.lead' | translate"></p>
+  <h2 class="demo__title sc-text-body-semibold">{{ 'fundamentos.patterns.demo.title' | translate }}</h2>
+  <p class="demo__lead sc-text-caption-regular" [innerHTML]="'fundamentos.patterns.demo.lead' | translate"></p>
   <div class="demo__pair">
     <div class="demo__col">
       <p class="demo__label demo__label--do">
@@ -67,4 +67,4 @@
   </div>
 </section>
 
-<p class="foot" [innerHTML]="'fundamentos.patterns.foot' | translate"></p>
+<p class="foot sc-text-caption-regular" [innerHTML]="'fundamentos.patterns.foot' | translate"></p>

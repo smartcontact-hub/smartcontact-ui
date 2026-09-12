@@ -17,7 +17,7 @@ h1 {
 }
 
 .uso-meta {
-  font-size: var(--sc-font-size-sm);
+  font-size: var(--sc-font-size-200); /* 14 — era `--sc-font-size-sm`, que NO EXISTE: la declaración era inválida y el texto heredaba estos mismos 14. Medido. */
   margin-top: var(--sc-spacing-0-5);
 }
 
@@ -73,7 +73,7 @@ code {
 }
 
 .uso-count {
-  font-size: var(--sc-font-size-xs, 0.75rem);
+  font-size: var(--sc-font-size-100); /* 12 — era `--sc-font-size-xs`, que NO EXISTE; se pintaba por su fallback, los mismos 12. */
   font-weight: var(--sc-font-weight-regular, 400);
   color: var(--sc-text-muted);
 }
@@ -90,7 +90,7 @@ code {
   gap: var(--sc-spacing-0-25);
   text-decoration: none;
   color: var(--sc-text-muted);
-  font-size: var(--sc-font-size-sm);
+  font-size: var(--sc-font-size-200); /* 14 — era `--sc-font-size-sm`, que NO EXISTE: la declaración era inválida y el texto heredaba estos mismos 14. Medido. */
 
   img {
     width: 100%;
@@ -166,7 +166,7 @@ code {
   padding: 0;
   margin: 0;
   list-style: none;
-  font-size: var(--sc-font-size-sm);
+  font-size: var(--sc-font-size-200); /* 14 — era `--sc-font-size-sm`, que NO EXISTE: la declaración era inválida y el texto heredaba estos mismos 14. Medido. */
 
   li {
     padding: var(--sc-spacing-0-25) 0;
