@@ -71,6 +71,10 @@ export class ButtonDemoComponent {
       { name: 'disabled', control: { kind: 'boolean' } },
       { name: 'rounded', control: { kind: 'boolean' } },
       { name: 'fullWidth', control: { kind: 'boolean' } },
+      { name: 'iconPosition', control: { kind: 'select', options: ['left', 'right', 'top', 'bottom'] } },
+      { name: 'iconSize', control: { kind: 'select', options: ['sm', 'md', 'lg'] } },
+      { name: 'iconFilled', control: { kind: 'boolean' } },
+      { name: 'type', control: { kind: 'select', options: ['button', 'submit', 'reset'] } },
     ],
     defaultArgs: {
       label: 'Guardar cambios',
@@ -82,6 +86,10 @@ export class ButtonDemoComponent {
       disabled: false,
       rounded: false,
       fullWidth: false,
+      iconPosition: 'left',
+      iconSize: 'md',
+      iconFilled: false,
+      type: 'button',
     },
     props: [
       { name: 'label', type: 'string', default: "''", description: 'Texto del botón.' },

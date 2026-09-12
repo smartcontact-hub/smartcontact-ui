@@ -13,6 +13,31 @@ import {
 } from '@smartcontact-hub/components';
 import { StoryContext, StoryDef, StoryHostComponent, StoryMeta } from '../../../storybook';
 
+const PLAYGROUND_SNIPPET = `<!-- "visible" lo abre y lo cierra; "mode" decide si borra UNO o VARIOS, e "items" es lo que
+     se va a borrar (en bulk, la lista entera, y el diálogo deja quitar alguno antes de confirmar). -->
+<button type="button" (click)="openSingle.set(true)">Borrar</button>
+
+<sc-delete-entity-dialog
+  [visible]="openSingle()"
+  mode="single"
+  [items]="singleItem"
+  [entitySingular]="'agente'"
+  [entityPlural]="'agentes'"
+  (cancelled)="openSingle.set(false)"
+  (confirm)="onConfirmSingle()"
+/>
+
+<!-- En "bulk", "confirm" devuelve los SUPERVIVIENTES: los que quedaron tras podar la lista. -->
+<sc-delete-entity-dialog
+  [visible]="openBulk()"
+  mode="bulk"
+  [items]="bulkItems"
+  [entitySingular]="'agente'"
+  [entityPlural]="'agentes'"
+  (cancelled)="openBulk.set(false)"
+  (confirm)="onConfirmBulk($event)"
+/>`;
+
 /** Demo de `sc-delete-entity-dialog` en formato story (motor «Storybook-like»). */
 @Component({
   selector: 'app-deleteentitydialog-demo',
@@ -82,7 +107,7 @@ export class DeleteEntityDialogDemoComponent {
   protected readonly stories = computed<readonly StoryDef[]>(() => {
     const pg = this.playgroundTpl();
     if (!pg) return [];
-    return [{ name: 'Playground', playground: true, template: pg }];
+    return [{ name: 'Playground', playground: true, template: pg, snippet: PLAYGROUND_SNIPPET }];
   });
 
   onConfirmSingle(): void {

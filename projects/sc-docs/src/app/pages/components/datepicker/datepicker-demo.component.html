@@ -26,6 +26,21 @@
   </div>
 </ng-template>
 
+<!-- Los inputs que ningún ejemplo enseñaba. -->
+<ng-template #menosVistos>
+  <div class="col">
+    <sc-datepicker
+      label="Solo este mes"
+      [minDate]="primerDia"
+      [maxDate]="ultimoDia"
+      [(value)]="acotada"
+      data-testid="sc-datepicker-rango"
+    />
+    <sc-datepicker label="Inválida, sin texto de error" [invalid]="true" data-testid="sc-datepicker-invalid" />
+    <p>Acotada: «{{ acotada() ? acotada()!.toLocaleDateString('es-ES') : '—' }}»</p>
+  </div>
+</ng-template>
+
 <ng-template #estados>
   <div class="col">
     <sc-datepicker label="Obligatoria" [required]="true" />

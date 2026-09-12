@@ -45,6 +45,8 @@ export class CheckboxDemoComponent {
       { name: 'filled', control: { kind: 'boolean' } },
       { name: 'disabled', control: { kind: 'boolean' } },
       { name: 'ariaLabel', control: { kind: 'text' } },
+          { name: 'labelPosition', control: { kind: 'select', options: ['start', 'end'] }, description: 'De qué lado del cuadro va el contenido proyectado.' },
+      { name: 'etiqueta', control: { kind: 'text' }, description: 'El texto proyectado, para ver `labelPosition` moverse.' },
     ],
     defaultArgs: {
       state: 'all',
@@ -52,6 +54,8 @@ export class CheckboxDemoComponent {
       filled: false,
       disabled: false,
       ariaLabel: 'Seleccionar',
+          labelPosition: 'end',
+      etiqueta: 'Recibir avisos',
     },
     props: [
       {

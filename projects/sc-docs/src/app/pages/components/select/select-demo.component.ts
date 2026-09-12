@@ -20,7 +20,9 @@ const OBJETOS_SNIPPET = `<sc-select
   <ng-template #item let-opt>★ {{ opt.name }}</ng-template>
 </sc-select>`;
 
-const ESTADOS_SNIPPET = `<sc-select label="Con clear + filtro" [options]="groups" [showClear]="true" [filter]="true" placeholder="Buscar…" />
+const ESTADOS_SNIPPET = `<!-- El valor va en dos sentidos: "[(value)]" escribe y lee. -->
+<sc-select label="Grupo" [options]="groups" placeholder="Selecciona" [(value)]="value" />
+<sc-select label="Con clear + filtro" [options]="groups" [showClear]="true" [filter]="true" placeholder="Buscar…" />
 <sc-select label="Con error" [options]="groups" error="Selecciona un grupo" />
 <sc-select label="Small" [options]="groups" size="sm" placeholder="sm" />
 <sc-select label="Deshabilitado" [options]="groups" [disabled]="true" placeholder="off" />`;

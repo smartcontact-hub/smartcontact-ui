@@ -74,9 +74,13 @@ export class FormSectionNavDemoComponent {
     title: 'FormSectionNav',
     description:
       'Nav de secciones controlado: el padre posee activeId y el nav emite activeChange al click. Punto rojo en las secciones con required vacíos (sectionsWithErrors). Variante flush (panel embebido del rail) opt-in. El label ENVUELVE: una etiqueta que no cabe en el rail parte de línea y la fila crece, nunca se recorta con elipsis (DD-52).',
-    argTypes: [{ name: 'flush', control: { kind: 'boolean' } }],
+    argTypes: [
+      { name: 'flush', control: { kind: 'boolean' } },
+      { name: 'labelKey', control: { kind: 'text' }, description: 'Clave i18n del rótulo del <nav>, para lectores de pantalla.' },
+    ],
     defaultArgs: {
       flush: false,
+          labelKey: 'sc.formSectionNav.label',
     },
     props: [
       {

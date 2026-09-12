@@ -55,8 +55,10 @@ export class BulkEditMenuDemoComponent {
       'Editor inline «Cambiar [campo] a [valor] [Aplicar]» que vive en la bulk action bar. El consumidor suministra campos y valores; el componente orquesta los selects (compone sc-select) y emite un único commit al pulsar Aplicar.',
     // `fields` es un objeto requerido (no un knob escalar) y `buttonLabel` ya no se
     // renderiza → sin controles editables en el Playground.
-    argTypes: [],
-    defaultArgs: {},
+    argTypes: [      { name: 'buttonLabel', control: { kind: 'text' }, description: 'Rótulo del botón que abre el menú.' },
+    ],
+    defaultArgs: {      buttonLabel: 'Editar',
+    },
     props: [
       {
         name: 'fields',

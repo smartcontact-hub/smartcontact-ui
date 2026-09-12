@@ -13,6 +13,11 @@
     [size]="args.size"
     [variant]="args.variant"
     [loading]="args.loading"
+    [sortField]="args.sortField || undefined"
+    [sortOrder]="args.sortOrder"
+    [scrollable]="args.scrollable"
+    [scrollHeight]="args.scrollHeight || undefined"
+    [rowsFocusable]="args.rowsFocusable"
   />
 </ng-template>
 
@@ -67,6 +72,7 @@
     [lazy]="true"
     [totalRecords]="lazyTotal()"
     [globalFilterFields]="['name']"
+    [filters]="lazyFilters()"
     [paginator]="true"
     [rows]="5"
     (lazyLoad)="onLazyLoad($event)"

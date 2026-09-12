@@ -24,6 +24,19 @@ const DYNAMIC_SNIPPET = `<sc-button label="Abrir dinámico" (clicked)="openDynam
 // const ref = this.dynamic.open(DynamicContentComponent, { header: 'Diálogo dinámico', width: '28rem' });
 // ref.onClose.subscribe((r) => this.dynResult.set(r ?? 'cerrado'));`;
 
+const PLAYGROUND_SNIPPET = `<!-- "visible" es un model: "[(visible)]" lo abre y lo cierra desde el
+     mismo signal. El botón solo lo pone a true. -->
+<sc-button label="Abrir diálogo" (clicked)="open.set(true)" />
+
+<sc-dialog [(visible)]="open" title="¿Eliminar el agente?" icon="delete" width="440px">
+  El agente y sus asignaciones dejarán de existir.
+</sc-dialog>
+
+<!-- "flushBody" quita el padding del cuerpo, para contenido que va a sangre (una tabla, un mapa). -->
+<sc-dialog [(visible)]="open" title="Agentes del grupo" [flushBody]="true">
+  <sc-datatable [value]="agents()" [columns]="columns" />
+</sc-dialog>`;
+
 /** Demo de `sc-dialog` en formato story (motor «Storybook-like»). */
 @Component({
   selector: 'app-dialog-demo',
@@ -74,6 +87,7 @@ export class DialogDemoComponent {
       { name: 'draggable', control: { kind: 'boolean' } },
       { name: 'resizable', control: { kind: 'boolean' } },
       { name: 'dismissableMask', control: { kind: 'boolean' } },
+          { name: 'flushBody', control: { kind: 'boolean' }, description: 'Quita el padding del cuerpo, para contenido a sangre.' },
     ],
     defaultArgs: {
       title: '¿Eliminar el agente?',
@@ -88,6 +102,7 @@ export class DialogDemoComponent {
       draggable: false,
       resizable: false,
       dismissableMask: false,
+          flushBody: false,
     },
     props: [
       {
@@ -132,7 +147,7 @@ export class DialogDemoComponent {
     const dy = this.dynamicTpl();
     if (!pg || !dy) return [];
     return [
-      { name: 'Playground', playground: true, template: pg },
+      { name: 'Playground', playground: true, template: pg, snippet: PLAYGROUND_SNIPPET },
       { name: 'Dynamic dialog', template: dy, snippet: DYNAMIC_SNIPPET },
     ];
   });

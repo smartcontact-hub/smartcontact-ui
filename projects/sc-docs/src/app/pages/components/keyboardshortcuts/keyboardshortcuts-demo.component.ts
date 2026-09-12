@@ -13,6 +13,15 @@ import {
 } from '@smartcontact-hub/components';
 import { StoryContext, StoryDef, StoryHostComponent, StoryMeta } from '../../../storybook';
 
+const PLAYGROUND_SNIPPET = `<!-- "groups" es la chuleta entera: cada grupo con su título y sus atajos. El componente la
+     pinta y se abre sola con "?" además del botón. -->
+<sc-keyboard-shortcuts [groups]="groups" />
+
+// En el .ts:
+// protected readonly groups = [
+//   { titleKey: 'Navegación', shortcuts: [{ keys: ['g', 'h'], labelKey: 'Ir al inicio' }] },
+// ];`;
+
 /** Demo de `sc-keyboard-shortcuts` en formato story (motor «Storybook-like»). */
 @Component({
   selector: 'app-keyboardshortcuts-demo',
@@ -50,6 +59,6 @@ export class KeyboardShortcutsDemoComponent {
   protected readonly stories = computed<readonly StoryDef[]>(() => {
     const pg = this.playgroundTpl();
     if (!pg) return [];
-    return [{ name: 'Playground', playground: true, template: pg }];
+    return [{ name: 'Playground', playground: true, template: pg, snippet: PLAYGROUND_SNIPPET }];
   });
 }

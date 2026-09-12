@@ -30,6 +30,31 @@ const HYBRID_SNIPPET = `@if (open()) {
   <button type="button" (click)="reopen()">Reabrir modal</button>
 }`;
 
+const PLAYGROUND_SNIPPET = `<!-- El modal NO decide nada: recibe los contadores ya calculados y devuelve lo que el usuario
+     eligió. "transcriptionCount" y "analysisCount" son lo que se va a procesar;
+     "alreadyProcessedCount" y "partialSegmentConversationsCount", lo que queda fuera y por qué. -->
+@if (open()) {
+  <sc-bulk-transcription-modal
+    [selectedCount]="seleccionadas()"
+    [transcriptionCount]="aTranscribir()"
+    [analysisCount]="aAnalizar()"
+    [alreadyProcessedCount]="yaHechas()"
+    [partialSegmentConversationsCount]="conSegmentosSueltos()"
+    [readyToTranscribeIds]="idsTranscribir()"
+    [readyToAnalyzeIds]="idsAnalizar()"
+    (processed)="onProcessed($event)"
+    (closed)="open.set(false)"
+  />
+}
+
+<!-- "closeRequested" y "processRequested" son la otra forma de cablearlo: en vez de escuchar
+     los outputs, se le pasan las funciones. Sirve cuando lo abre un servicio. -->
+<sc-bulk-transcription-modal
+  [selectedCount]="seleccionadas()"
+  [closeRequested]="cerrar"
+  [processRequested]="procesar"
+/>`;
+
 /** Demo de `sc-bulk-transcription-modal` en formato story (motor «Storybook-like»). */
 @Component({
   selector: 'app-bulktranscriptionmodal-demo',
@@ -159,7 +184,7 @@ export class BulkTranscriptionModalDemoComponent {
     const hy = this.hybridTpl();
     if (!pg || !hy) return [];
     return [
-      { name: 'Playground', playground: true, template: pg },
+      { name: 'Playground', playground: true, template: pg, snippet: PLAYGROUND_SNIPPET },
       { name: 'Híbrido (transcripción + análisis)', template: hy, snippet: HYBRID_SNIPPET },
     ];
   });

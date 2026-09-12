@@ -14,6 +14,20 @@ import {
 } from '@smartcontact-hub/components';
 import { StoryContext, StoryDef, StoryHostComponent, StoryMeta } from '../../../storybook';
 
+const PLAYGROUND_SNIPPET = `<!-- "visible" lo abre; "items" es lo que va a cambiar, y "badge" la pastilla de la cabecera
+     que resume el alcance. "confirm" devuelve los que sobrevivieron a la poda. -->
+<button type="button" (click)="open.set(true)">Previsualizar impacto</button>
+
+<sc-impact-preview-dialog
+  [visible]="open()"
+  [mode]="'delete'"
+  [title]="'Se verán afectados'"
+  [items]="items()"
+  [badge]="badge"
+  (cancelled)="open.set(false)"
+  (confirm)="onConfirm($event)"
+/>`;
+
 /** Demo de `sc-impact-preview-dialog` en formato story (motor «Storybook-like»). */
 @Component({
   selector: 'app-impactpreviewdialog-demo',
@@ -91,7 +105,7 @@ export class ImpactPreviewDialogDemoComponent {
   protected readonly stories = computed<readonly StoryDef[]>(() => {
     const pg = this.playgroundTpl();
     if (!pg) return [];
-    return [{ name: 'Playground', playground: true, template: pg }];
+    return [{ name: 'Playground', playground: true, template: pg, snippet: PLAYGROUND_SNIPPET }];
   });
 
   onConfirm(ids: readonly number[]): void {

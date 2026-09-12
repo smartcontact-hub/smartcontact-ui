@@ -85,6 +85,13 @@ test('extrae tag y atributos, en sus tres sintaxis', () => {
   assert.deepEqual(u[0].atributos.sort(), ['clicked', 'label', 'loading']);
 });
 
+test('ROJO: el binding de DOS sentidos `[(x)]` también es un uso', () => {
+  // `[(visible)]="open"` es como se abre un diálogo en todos los ejemplos, y no se leía: dos
+  // corchetes antes del nombre y la primera versión admitía uno.
+  const u = usosDe('<sc-dialog [(visible)]="open" [title]="t" />');
+  assert.deepEqual(u[0].atributos.sort(), ['title', 'visible']);
+});
+
 test('EXCLUYE atributos que no son API del componente', () => {
   for (const a of ['class', 'aria-label', 'data-testid', 'style', 'id', '*ngIf', '#ref']) {
     assert.ok(ATRIBUTO_GENERICO.test(a), `${a} debería estar excluido`);
@@ -333,6 +340,25 @@ test('inputsDeComponentes deja fuera los outputs (solo input/model)', () => {
   assert.deepEqual([...api['sc-cosa']], ['label']);
 });
 
+test('ROJO: un knob con `options` multilínea NO puede cortar la lista', () => {
+  // El caso real: `sc-dialog` tiene `position` con sus opciones en varias líneas, y detrás
+  // `draggable`, `resizable` y `dismissableMask`. Con el regex perezoso se leían 9 de 20 y el
+  // gate reclamaba ejemplo de tres inputs que llevaban su control desde siempre.
+  const nombres = argTypesDe(`argTypes: [
+      { name: 'title', control: { kind: 'text' } },
+      {
+        name: 'position',
+        control: {
+          kind: 'select',
+          options: ['center', 'top', 'bottom'],
+        },
+      },
+      { name: 'draggable', control: { kind: 'boolean' } },
+    ],
+    defaultArgs: { title: 'x' },`);
+  assert.deepEqual([...nombres].sort(), ['draggable', 'position', 'title']);
+});
+
 test('argTypesDe lee los knobs del Playground', () => {
   const nombres = argTypesDe(`argTypes: [
     { name: 'label', control: { kind: 'text' } },
@@ -353,8 +379,11 @@ test('(b) el trinquete solo baja: el corpus real no puede empeorar', () => {
     const ts = readFileSync(ruta, 'utf8');
     const tag = ts.match(/tag:\s*'([\w-]+)'/)?.[1];
     if (!tag) continue;
-    const codigos = snippetsDe(ts).map((s) => s.codigo);
+    // MISMA fuente que el gate: las historias, no solo las constantes. Un snippet escrito EN
+    // LÍNEA en la story también documenta, y contar distinto que el gate es medir otra cosa.
+    const codigos = historiasDe(ts).historias.map((h) => h.codigo).filter((c) => typeof c === 'string');
     n += inputsSinEjemplo(tag, codigos, argTypesDe(ts), inputsDeComponentes(COMPONENTES)).length;
+
   }
   assert.ok(
     n <= INPUTS_SIN_EJEMPLO_MAX,
