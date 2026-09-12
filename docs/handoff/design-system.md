@@ -31,14 +31,20 @@
 
 **Lo que dejó el barrido de estilos de texto del 2026-09-11 (tarde), pendiente de RAFA:**
 
-- ~~La tabla de transcripciones a 16px~~ — **decidido el 2026-09-12**: Rafa dijo «ajústalo para que
-  tenga sentido». Hecho, DD-71, tramo de arriba.
 - **12/20 no es ningún estilo**: sale cuando la clase va en un contenedor y el descendiente declara
   solo el tamaño (pastillas de estado de repositorios, cabeceras de grupos asignados, contadores de
   pestaña). ¿Text style propio para pastilla, o `line-height` explícito?
 - **`sc-docs` es la siguiente tanda del barrido**: 237 reglas con `font-size` y DOS usos de la clase
   (29 podrían llevarla hoy, 127 heredan el interlineado, 57 están fuera de la rampa). El showcase
   del DS es el que peor predica con el ejemplo. Cifras y matices en el tramo de abajo.
+
+**`/config/aed/servicio` (2026-09-12) deja pendiente de RAFA o de PRODUCTO:** el granate de
+«Administrativo» (decisión suya) pasó a la paleta de etiquetas para que el estado se vea igual en
+las dos secciones — si lo quiere de vuelta, la barra de «Estados visibles» se mueve con él; y «No
+disponible» y «Desconectado» tenían la MISMA descripción en los cuatro idiomas, así que escribí en
+qué se diferencian, pero es lectura razonable, **no un dato**. Y un hueco del DS: `sc-select` rotula
+con `for` sobre un `<span role="combobox">`, que no es etiquetable — sus dos formas (`[label]`,
+`iftaLabel`) emiten el mismo `for`, así que se queda sin nombre accesible en toda la app.
 
 **Lo que queda de la tanda «adelante a todo» del 2026-09-11** (los dos apuntes de la revisión de
 Orca se cerraron en el #113; `agent-mini` entró en el CI; la doc, en su PR):
@@ -51,12 +57,6 @@ Orca se cerraron en el #113; `agent-mini` entró en el CI; la doc, en su PR):
 
 **Lo que dejó s42, medido y sin hacer:**
 
-- ~~**Las descripciones de los text styles de Figma están corridas un peldaño.**~~ → **HECHO el
-  2026-09-12** con el bridge: las 12 reescritas y **releídas para verificar** (0 vacías, y cada una
-  nombra su propio `tamaño/interlineado`, así que el día que la rampa se mueva el desfase se ve).
-  ⚠️ De paso, una corrección MÍA: el 2026-09-11 escribí que el fichero del DS llevaba la rampa
-  VIEJA (`display1` 36/52, `H1` 32/48). Era falso — leí con `figma_get_text_styles` sin fijar el
-  fichero y me contestó otro. Apuntando por `fileKey`, los 12 son la rampa buena.
 - **El tier `app/typography/xl|xxl` existe en Figma y no lo consume nadie** (medido: 0 nodos, 0
   text styles). Está clasificado como `not-consumed` en `coverage-map.mjs`. Si algún día se
   quiere de verdad, va a `sc-preset/extend.ts` + `APP_TYPOGRAPHY_CONTRACT` y sube al bucket
@@ -96,6 +96,18 @@ Orca se cerraron en el #113; `agent-mini` entró en el CI; la doc, en su PR):
    decisión. Ver la sección de Figma más abajo.
 3. **La deuda de código de [`AUDIT-DEUDA-2026-06.md`](../AUDIT-DEUDA-2026-06.md)** que quede tras
    s34, y **los cabos de DD-24** (round-trip de iconos) en [`ROADMAP.md`](../ROADMAP.md).
+## ✅ 2026-09-12 · La pantalla de Servicio habla el idioma de Agentes (PR #122)
+
+Sello `02324a1`, CI verde leído. Rafa: «it feels off», contra `/config/aed/agentes`. Medido ANTES de
+tocar: **tres** vocabularios para «un estado de agente» (pastilla sólida con `red-800` crudo · chip
+gris · banda con barra) y cuatro distancias que sobran (**487** chips↔«Añadir», **443**
+estado↔interruptor, **434** entre casillas hermanas, **89** entre dos `inputnumber`). Ahora: una
+familia sola, cada control pegado a lo que gobierna, las dos filas compartiendo las CUATRO columnas
+y la matriz como TABLA. `sc-tag` estrena uso en el Supervisor (0 → 3); el trinquete de tipografía
+suelta baja a 100.
+⚠️ **Las SEIS casillas de notificaciones no tenían `(cycle)`**: se vio MIDIENDO, con una casilla con
+manejador como control. Y `theme-contrast` cazó mi único paso en falso (botón «Añadir» a 2.95:1).
+
 ## ✅ 2026-09-12 · La tabla de transcripciones escribe como el resto: 14/20 y no 16/24
 
 **Sello:** sobre HEAD `11d1373` (el #118 en `main`). DD-71. `text-styles-applied` +1 en el
