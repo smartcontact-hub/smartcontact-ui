@@ -25,6 +25,37 @@ const ESTADOS_SNIPPET = `<sc-select label="Con clear + filtro" [options]="groups
 <sc-select label="Small" [options]="groups" size="sm" placeholder="sm" />
 <sc-select label="Deshabilitado" [options]="groups" [disabled]="true" placeholder="off" />`;
 
+const MENOS_VISTOS_SNIPPET = `<!-- "invalid" marca el campo SIN texto de error: para cuando el error
+     se cuenta en otro sitio (un resumen arriba del formulario). -->
+<sc-select label="Estado inválido" [options]="groups" [invalid]="true" placeholder="Marca el campo sin decir por qué" />
+
+<!-- "readonly" deja ver el valor y no deja cambiarlo; distinto de "disabled", que además lo apaga. -->
+<sc-select label="Solo lectura" [options]="groups" [readonly]="true" [value]="groups[0]" />
+
+<!-- "filterBy" dice POR QUÉ CAMPO se busca (si no, por la etiqueta); "emptyFilterMessage" es lo
+     que se lee cuando el filtro no encuentra nada. -->
+<sc-select
+  [options]="prioridades"
+  optionLabel="name"
+  optionValue="id"
+  [filter]="true"
+  filterBy="name"
+  emptyFilterMessage="Ninguna prioridad se llama así"
+  placeholder="Escribe para filtrar"
+/>
+
+<!-- "optionDisabled" es el NOMBRE del campo que bloquea la opción, no un booleano. -->
+<sc-select
+  [options]="prioridades"
+  optionLabel="name"
+  optionValue="id"
+  optionDisabled="bloqueada"
+  placeholder="Una no se puede elegir"
+/>
+
+<!-- "emptyMessage" es la lista vacía; "emptyFilterMessage" es "filtraste y no hay". No son lo mismo. -->
+<sc-select label="Sin opciones" [options]="[]" emptyMessage="Todavía no hay grupos" />`;
+
 /** Demo de `sc-select` en formato story (motor «Storybook-like»). */
 @Component({
   selector: 'app-select-demo',
@@ -36,6 +67,14 @@ export class SelectDemoComponent {
   protected readonly playgroundTpl = viewChild<TemplateRef<StoryContext>>('playground');
   protected readonly objetosTpl = viewChild<TemplateRef<StoryContext>>('objetos');
   protected readonly estadosTpl = viewChild<TemplateRef<StoryContext>>('estados');
+  protected readonly menosVistosTpl = viewChild<TemplateRef<StoryContext>>('menosVistos');
+
+  /** Una lista con una opción bloqueada por su propio campo, para enseñar `optionDisabled`. */
+  protected readonly conBloqueadas = [
+    { id: 'alta', name: 'Alta', bloqueada: false },
+    { id: 'media', name: 'Media', bloqueada: false },
+    { id: 'critica', name: 'Crítica (reservada)', bloqueada: true },
+  ];
 
   readonly groups = ['Soporte', 'Ventas', 'Postventa', 'Calidad'];
   readonly objOptions = [
@@ -104,11 +143,13 @@ export class SelectDemoComponent {
     const pg = this.playgroundTpl();
     const ob = this.objetosTpl();
     const es = this.estadosTpl();
-    if (!pg || !ob || !es) return [];
+    const mv = this.menosVistosTpl();
+    if (!pg || !ob || !es || !mv) return [];
     return [
       { name: 'Playground', playground: true, template: pg },
       { name: 'Objetos + plantilla de opción', template: ob, snippet: OBJETOS_SNIPPET },
       { name: 'Estados y tamaños', template: es, snippet: ESTADOS_SNIPPET },
+      { name: 'Lo que no se ve en los otros ejemplos', template: mv, snippet: MENOS_VISTOS_SNIPPET },
     ];
   });
 }

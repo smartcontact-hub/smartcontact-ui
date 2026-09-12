@@ -32,6 +32,48 @@
   </sc-select>
 </ng-template>
 
+<!-- Los inputs que ningún ejemplo enseñaba: el trinquete de `audit:doc-snippets` los contaba como
+     deuda y tenía razón — quien consume el DS no puede adivinar que existen. -->
+<ng-template #menosVistos>
+  <div class="col">
+    <sc-select
+      label="Estado inválido, sin mensaje de error"
+      [options]="groups"
+      [invalid]="true"
+      placeholder="Marca el campo sin decir por qué"
+      data-testid="sc-select-invalid"
+    />
+    <sc-select
+      label="Solo lectura"
+      [options]="groups"
+      [readonly]="true"
+      [value]="groups[0]"
+      data-testid="sc-select-readonly"
+    />
+    <sc-select
+      label="Filtra por un campo concreto"
+      [options]="objOptions"
+      optionLabel="name"
+      optionValue="id"
+      [filter]="true"
+      filterBy="name"
+      emptyFilterMessage="Ninguna prioridad se llama así"
+      placeholder="Escribe para filtrar"
+      data-testid="sc-select-filterby"
+    />
+    <sc-select
+      label="Opciones deshabilitadas por su propio campo"
+      [options]="conBloqueadas"
+      optionLabel="name"
+      optionValue="id"
+      optionDisabled="bloqueada"
+      placeholder="Una no se puede elegir"
+      data-testid="sc-select-optdisabled"
+    />
+    <sc-select label="Sin opciones" [options]="[]" emptyMessage="Todavía no hay grupos" data-testid="sc-select-empty" />
+  </div>
+</ng-template>
+
 <ng-template #estados>
   <div class="col">
     <sc-select label="Grupo" [options]="groups" placeholder="Selecciona" [(value)]="value" data-testid="sc-select" />
