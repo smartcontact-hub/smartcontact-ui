@@ -25,7 +25,7 @@
 | **8** | proponer una segunda corrección tras fallar la primera | para: la siguiente acción es una MEDICIÓN que localice la causa |
 | **10** | declarar algo bloqueado, deducir un dato a ojo, **o diseñar un mecanismo nuevo** | comprueba qué te sirve ya el sistema (DOM oculto, i18n, hoja de estilos) y **qué lo vigila ya** (`.githooks/`, `.claude/settings.json`, `scripts/`) |
 | **11** | lanzar una edición masiva por shell | pega la verificación de outcome en el MISMO comando (zsh no hace word-splitting) |
-| **12** | dar una cifra de un grep **o de un `querySelectorAll`**, ejecutar un `sed`, **o volcar un fichero de config** | pregúntate qué entra en el resultado; si hay un ejecutor que sabe el número, el número es el suyo; y **proyecta o enmascara antes de imprimir un `env`** |
+| **12** | dar una cifra de un grep **o de un `querySelectorAll`**, ejecutar un `sed`, **o volcar un fichero de config** | pregúntate qué entra en el resultado **y en qué unidad lo dices** (¿herederos?, ¿visitas repetidas?); si hay un ejecutor que sabe el número, el número es el suyo; y **proyecta o enmascara antes de imprimir un `env`** |
 | **14** | responder a un "hazlo todo", escribir "esperando a X", **o anotar en un reporte algo que mediste** | haz lo verificable de punta a punta y aparca lo demás DOCUMENTADO — pero por no poder verificarlo, **nunca por parecido con otro aparcado ni por estar ya redactando** |
 | **15** | decidir algo de marca/producto | preséntalo con recomendación y evidencia — y no exageres el encuadre de riesgo |
 | **16** | empezar un refactor transversal | monta antes la red que lo verifica, aunque parezca rodeo |
@@ -136,12 +136,15 @@
     inflaron 47 cajas en silencio y rebrotaron TRES veces, hasta que diffeé tamaños.
 
 12. **Vas a dar una cifra, ejecutar un `sed` o volcar un fichero → pregúntate qué entra en el
-    resultado.** Al contar: comentarios, etiquetas de cierre, `[class*=…]` (comodín por los dos
-    lados), declaraciones frente a instancias; si hay un ejecutor que sabe el número, el número es
-    el suyo. Al reemplazar: acota a la etiqueta y verifica cada match. Al imprimir: proyecta las
-    claves, nunca el fichero. ⚙️ El hook deniega el volcado de configs y el `main...rama`.
-    Evidencia: s18 39 tests en grep, 108 en el runner · s27 token de Figma impreso y rotado · s35
-    `main...rama` casi borra 432 ficheros · s31 "2.820 elementos" = 271.
+    resultado Y EN QUÉ UNIDAD lo vas a decir.** Al contar: comentarios, cierres, `[class*=…]`,
+    declaraciones frente a instancias, quien HEREDA frente a quien lo lleva puesto, y VISITAS
+    frente a cosas (un recorrido que repite pantallas cuenta mediciones, no textos); si hay un
+    ejecutor que sabe el número, el número es el suyo. Al reemplazar: acota y verifica cada match.
+    Al imprimir: proyecta las claves. Y una cifra sin comprobar no se publica en tres documentos:
+    cada corrección después costó un preflight de 8 min. ⚙️ El hook deniega volcar configs y `main...rama`.
+    Evidencia: s18 39 en grep, 108 en el runner · s27 token impreso y rotado · s31 "2.820" = 271 ·
+    2026-09-11 "410 con nombre" eran 341 + 69 que solo heredaban, y "4.517 textos" eran mediciones
+    sobre 56 estados (las 38 rutas son 2.503).
 
 21. **Vas a escribir en un fichero COMPARTIDO (los ledgers: `DECISIONS.md`, `LEARNINGS.md`,
     `inventory.md`, `docs/handoff/`, `AGENTS.md`) o a aterrizar trabajo en una rama que otro
