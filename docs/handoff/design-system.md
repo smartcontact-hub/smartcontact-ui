@@ -80,13 +80,8 @@ Orca se cerraron en el #113; `agent-mini` entró en el CI; la doc, en su PR):
   el mismo gesto en dos pantallas que son la misma cosa vista desde cada lado. Además la azul usa
   paleta CRUDA como fondo, que es lo que la tabla de bifurcaciones de AGENTS prohíbe porque no voltea
   en oscuro. Es anterior a esta sesión; cuál gana es decisión de producto, no técnica.
-- **La piel por defecto de `sc-datatable` no siguió a la `list`.** La tipografía por rol se puso en la
-  gramática de tabla-lista, que es la que usan las 10 páginas del Supervisor; la piel `default` (la
-  que enseña sc-docs en sus otras stories) sigue con la suya. Hoy no lo ve ningún usuario, pero son
-  dos tablas del mismo componente midiendo distinto, que es el defecto que esta sesión vino a quitar.
-- **Nadie comprueba que las 38 ranuras reenviadas sigan existiendo en PrimeNG.** Si una subida las
-  renombra, el reenvío apunta al vacío en silencio: el test cubre cuatro. Es mecanizable con el mismo
-  método que `audit:primeng-coupling`, que ya lee `node_modules/primeng`.
+(Las otras dos de esta bandeja —la piel por defecto sin anclar y la falta de guardián para
+las 38 ranuras— se cerraron el mismo día en DD-73.)
 
 **Lo que dejó s42, medido y sin hacer:**
 
@@ -129,9 +124,34 @@ Orca se cerraron en el #113; `agent-mini` entró en el CI; la doc, en su PR):
    decisión. Ver la sección de Figma más abajo.
 3. **La deuda de código de [`AUDIT-DEUDA-2026-06.md`](../AUDIT-DEUDA-2026-06.md)** que quede tras
    s34, y **los cabos de DD-24** (round-trip de iconos) en [`ROADMAP.md`](../ROADMAP.md).
+## ✅ 2026-09-12 · La tabla deja de heredar su letra en las DOS pieles, y las 38 ranuras tienen guardián
+
+**Sello:** HEAD `67fbefa`. DD-73. `npm run verify` con sus 39 eslabones; **156** e2e del Supervisor,
+**82** de sc-docs. El gate nuevo, probado en rojo en el repo de verdad además de en su test.
+
+**De dónde sale.** Los dos primeros puntos que DD-72 dejó en esta bandeja. Eran del mismo tipo:
+fallos que no rompen nada hoy y que nadie vería el día que pasen.
+
+**Lo que cambia.** La piel **por defecto** también queda anclada (antes seguía colgando del `body` de
+cada app), y nace `audit:datatable-slots`, que vigila que las 38 ranuras reenviadas sigan existiendo
+en PrimeNG.
+
+**El experimento que lo destapó, que es lo reutilizable**: en vez de leer el CSS y deducir quién
+declara qué, se sube el `font-size` del `body` en el navegador y se mira **qué se mueve**. La piel por
+defecto se iba a 20 px; la `list` se quedaba en 14. Eso no se puede discutir, y sirve igual para
+cualquier otro componente del que se sospeche que hereda algo que debería declarar.
+
+**Lo que costó.** `verify` cazó dos cosas que yo no vi: un import de test sin usar (le puse su propio
+caso en vez de borrarlo) y la cuenta de gates en tres documentos. La tercera fue más fina: dos frases
+de DD-65 decían «38 gates» como hecho de su día, y el gate las daba por desfasadas. Ni exonerar el
+fichero (dejaría ciego al gate para lo que sí es del presente) ni cambiar la cifra (falsearía aquella
+decisión): pasan a decir «eslabones».
+
+**Fuera a propósito:** el tercer punto de la bandeja de DD-72 sigue vivo, y es decisión de producto.
+
 ## ✅ 2026-09-12 · Las tablas de la plataforma pasan todas por el sistema, y la celda deja de heredar su letra del navegador
 
-**Sello:** HEAD `4758e13`. DD-72. `npm run verify` entero; **156** e2e del Supervisor, **82** de sc-docs,
+**Sello:** HEAD `67fbefa`. DD-72. `npm run verify` entero; **156** e2e del Supervisor, **82** de sc-docs,
 **23** de la librería. Las dos redes nuevas, validadas EN ROJO antes de fiarme de su verde. Veredicto
 del CI por `ci:verdict` tras el push.
 

@@ -59,6 +59,52 @@
 
 ---
 
+## DD-73 · 2026-09-12 — La tabla no hereda su letra de la app en NINGUNA de sus dos pieles, y un guardián vigila las 38 ranuras
+
+**Contexto** · DD-72 ancló la tipografía de la piel `list` y dejó escritas dos cosas como deuda: que
+la piel **por defecto** no la había seguido, y que nadie comprobaba que las 38 ranuras reenviadas
+siguieran existiendo en PrimeNG. Las dos eran del mismo tipo — fallos que no rompen nada hoy y que
+nadie vería el día que pasen.
+
+**Decisión** · (1) El tema fija un **suelo tipográfico para cualquier `sc-datatable`**, no solo para
+la piel `list`: celda `Body/body-regular`, cabecera `Body/body-semibold`, que es lo que la piel por
+defecto ya rendía. (2) Nace **`audit:datatable-slots`** (`verify` pasa a 39 eslabones), que lee el
+código de PrimeNG en `node_modules` y muerde en tres direcciones: la ranura que declaramos y ya no
+existe, la que PrimeNG trae y no reenviamos, y la que se declara en el `.ts` y la plantilla no emite.
+
+**Razón** · Para (1), medido y no deducido: en la página del DS, subir el `font-size` del `body` de
+14 a 20 px **se llevaba la celda de la piel por defecto a 20**, mientras la `list` se quedaba en 14.
+O sea que seguía colgando de la app que la montara — el mismo fallo que hacía que la misma tabla
+midiera 16 en el Supervisor y 14 en sc-docs, y que en sc-docs salía bien **por casualidad**. Para
+(2): el nombre de una ranura es un string acordado con PrimeNG; si una subida lo renombra, el
+`contentChild` apunta al vacío sin que falle el build ni ningún test de comportamiento, porque el
+modelo de column-defs sigue pintando. Es el mismo modo de fallo silencioso que persigue
+`audit:primeng-coupling`, y se mide igual.
+
+**Descartadas** ·
+- **Ponerlo en `datatable.ts`** (el preset de tokens) → el juego de tokens de PrimeNG no tiene
+  `fontSize` en `bodyCell`. El hook `css` existe justo para lo que los tokens no cubren.
+- **Dar a la piel por defecto la misma tipografía que la `list`** (cabecera `caption-semibold`) →
+  rechazado aquí: tapar el agujero y rediseñar la piel son dos cosas, y la segunda se decide
+  mirándola. Queda apuntado en la bandeja del frente.
+- **Añadir la comprobación a `audit:datatables`** → está en la lista de legado sin test, y meterle
+  una regla nueva la habría hecho crecer sin red. Un script nuevo nace con su caso rojo, que es lo
+  que pide CHECK O.
+- **Exonerar `docs/DECISIONS.md` de la cuenta de gates** (el gate M la exige, y dos frases de DD-65
+  daban la cifra de entonces como hecho de su día) → rechazado: exonerar el fichero entero dejaría
+  ciego al gate para las afirmaciones que sí son del presente. Esas dos frases pasan a decir
+  «eslabones», que conserva el hecho de aquel día sin una cifra que caduque. Nota para quien venga:
+  el gate lee el NÚMERO, no el contexto, así que ni siquiera una cita entrecomillada se salva — este
+  mismo párrafo lo aprendió por las malas.
+
+**Consecuencias** · Las dos pieles quedan inmunes al `body` de la app que las monte, verificado con
+el mismo experimento que destapó el fallo. `verify` pasa a 39 eslabones (actualizado en `README.md`,
+`CLAUDE.md`, `DOCS-INDEX.md` y la skill de auditoría semanal). **Queda vivo** el tercer punto de la
+bandeja de DD-72: los dos editores simétricos siguen pintando sus chips de canal distinto, y cuál
+gana es decisión de producto.
+
+---
+
 ## DD-72 · 2026-09-12 — La tabla publica su tipografía; la matriz de permisos es OTRO componente; las 38 ranuras de PrimeNG se reenvían
 
 **Contexto** · Rafa pidió «dar una vuelta a todas las tablas de la plataforma», partiendo de la página
@@ -461,7 +507,7 @@ global de la tipografía» que los hand-offs del 2026-09-09 y del 2026-09-10 dej
    cada una su `.card` a mano (radio 300, sombra `xs`, línea bajo la cabecera, paddings propios)
    haciendo el trabajo de `sc-section-card surface="card"`. Pasan al componente. Es la misma
    copia local que `config/aed` ya se había quitado el 2026-09-09, viva en otras dos pantallas.
-4. **Un gate nuevo, `audit:screen-vocabulary`**, en `verify` (que pasa de 37 a 38 gates). Lee el
+4. **Un gate nuevo, `audit:screen-vocabulary`**, en `verify` (que pasa de 37 a 38 eslabones). Lee el
    canon de la hoja de referencia EN CADA EJECUCIÓN en vez de copiarlo — duplicar los valores en
    el gate es la misma clase de fallo que el gate persigue.
 5. **El CONTRATO de `surface="card"` deja de ser tradición oral**: quien usa esa caja sangra su
@@ -492,7 +538,7 @@ enseñó `emit-consumer-typography`: leer la lista del preset en vez de repetirl
   rechazado por lo mismo: ese `__foot` ya existió y se borró el 2026-09-09 por no tener usos. Las
   acciones van dentro del cuerpo detrás de un `<sc-divider />`, que es el ritmo de la referencia.
 
-**Consecuencias** · `verify` pasa de 37 a 38 gates (actualizado en `CLAUDE.md`, `DOCS-INDEX.md` y
+**Consecuencias** · `verify` pasa de 37 a 38 eslabones (actualizado en `CLAUDE.md`, `DOCS-INDEX.md` y
 la skill de auditoría semanal). El gate trae DOS listas que solo pueden menguar y que muerden en
 las dos direcciones: `DELIBERADAS` (mismo nombre, medidas distintas a propósito) y `CAJAS_A_MANO`
 + `CAJAS_A_MANO_MOTIVO` — **una entrada sin motivo escrito es roja**, que es DD-36 aplicado aquí.
