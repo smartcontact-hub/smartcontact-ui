@@ -396,6 +396,68 @@ test.describe('panel Summary de una suscripción', () => {
     await expect(panel.getByRole('button', { name: /Navigation/ })).toBeVisible();
   });
 
+  /**
+   * «Subs Info» enseñaba DOS campos y el original tiene DIEZ. El orden no se dedujo: el bundle sin
+   * minificar lo lleva escrito en un comentario (User Agent → IP → Placement → URL → Carrier →
+   * Device → Device OS → Connection → Banner → Campaign). Se afirma el orden, no solo la
+   * presencia: enseñar los diez en otro orden sería otra pantalla.
+   */
+  test('Subs Info enseña los diez campos del original, en su orden', async ({ page }) => {
+    await page.goto('/#/private/cuscare/tickets/ticket/2050567');
+    await page.locator('.summarypill').first().click();
+
+    const cajas = page.getByTestId('sum-subsinfo');
+    await expect(cajas).toHaveCount(10);
+    await expect(cajas.locator('.sum__boxk')).toHaveText([
+      'User Agent',
+      'IP',
+      'Placement',
+      'URL',
+      'Carrier',
+      'Device',
+      'Device/OS',
+      'Connection',
+      'Banner',
+      'Campaign',
+    ]);
+  });
+
+  /** «Expand all» estaba PINTADO y no hacía nada: el botón existía sin conmutar ningún estado. */
+  test('«Expand all» despliega los valores largos y cambia su rótulo', async ({ page }) => {
+    await page.goto('/#/private/cuscare/tickets/ticket/2050567');
+    await page.locator('.summarypill').first().click();
+
+    const boton = page.locator('.sum__expand');
+    const primera = page.getByTestId('sum-subsinfo').first();
+    await expect(boton).toHaveText('Expand all');
+    await expect(boton).toHaveAttribute('aria-expanded', 'false');
+
+    // El User Agent es más largo que sus dos líneas: plegado tiene que medir MENOS de alto.
+    const plegada = (await primera.boundingBox())!.height;
+    await boton.click();
+
+    await expect(boton).toHaveText('Collapse');
+    await expect(boton).toHaveAttribute('aria-expanded', 'true');
+    await expect
+      .poll(async () => (await primera.boundingBox())!.height)
+      .toBeGreaterThan(plegada);
+  });
+
+  /**
+   * El periodo pintaba «1 Week» como TEXTO FIJO. En el original sale del dato: un número y un
+   * código de una letra. Se comprueban DOS suscripciones distintas — con una sola, un literal
+   * disfrazado de dato pasaría igual.
+   */
+  test('el periodo sale del dato: 1 Week en una suscripción y 30 Days en otra', async ({ page }) => {
+    await page.goto('/#/private/cuscare/tickets/ticket/2050567');
+    await page.locator('.summarypill').first().click();
+    await expect(page.getByTestId('sum-periodo')).toHaveText('1 Week');
+
+    await page.locator('.sum__x').click();
+    await page.locator('.summarypill').nth(1).click();
+    await expect(page.getByTestId('sum-periodo')).toHaveText('30 Days');
+  });
+
   test('los bloques se pliegan y el aspa cierra la vista', async ({ page }) => {
     await page.goto('/#/private/cuscare/tickets/ticket/2050567');
     await page.locator('.summarypill').first().click();

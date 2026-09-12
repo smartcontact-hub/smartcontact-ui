@@ -16,7 +16,9 @@
     </div>
 
     <div class="sum__period">
-      <span class="sum__periodval">1 Week</span>
+      <!-- El periodo sale del dato, como en el original (`{{ '{{' }} offer.number }}` + un switch sobre
+           su código de una letra). Los rótulos son los del diccionario. -->
+      <span class="sum__periodval" data-testid="sum-periodo">{{ periodoLegible() }}</span>
       <!-- "RECCURING" con dos C: es del original, no una errata de la réplica. -->
       <span class="sum__toggle">
         <button
@@ -65,10 +67,21 @@
 
     <div class="sum__subsinfo">
       <h2 class="sum__h2">Subs Info</h2>
-      <button class="sum__expand" type="button">Expand all</button>
+      <!-- Los dos rótulos son los del diccionario del original: «Expand all» / «Collapse». -->
+      <button
+        class="sum__expand"
+        type="button"
+        [attr.aria-expanded]="subsInfoDesplegado()"
+        (click)="alternarSubsInfo()"
+      >
+        {{ subsInfoDesplegado() ? 'Collapse' : 'Expand all' }}
+      </button>
     </div>
-    <div class="sum__box"><span class="sum__boxk">User Agent</span>{{ userAgent }}</div>
-    <div class="sum__box"><span class="sum__boxk">IP</span>{{ ip }}</div>
+    @for (campo of subsInfo; track campo.clave) {
+      <div class="sum__box" [class.is-open]="subsInfoDesplegado()" data-testid="sum-subsinfo">
+        <span class="sum__boxk">{{ campo.clave }}</span>{{ campo.valor }}
+      </div>
+    }
   </aside>
 
   <!-- ── Columna derecha: tira de estado + tres bloques ───────────────────-->

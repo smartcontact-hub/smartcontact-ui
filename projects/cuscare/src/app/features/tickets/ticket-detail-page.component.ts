@@ -23,6 +23,12 @@ interface Subscription {
   readonly campaign: string;
   readonly provider: string;
   readonly ip: string;
+  /**
+   * Cada cuánto se cobra, como llega en el original: un NÚMERO y un código de UNA letra
+   * (`d` día · `w` semana · `m` mes · `q` trimestre · `b` semestre · `y` año · `t` 30 días
+   * · `n` 60 · `u` 90 · `e` 5 · `v` 180 · `z` 360). El panel lo traduce.
+   */
+  readonly periodo: { readonly numero: number; readonly codigo: string };
 }
 
 /** Un evento del timeline (History ticket). */
@@ -191,6 +197,12 @@ export class TicketDetailPageComponent {
    */
   protected readonly summaryFor = signal<string | null>(null);
 
+  /** El periodo de la suscripción abierta; si no casa ninguna, el del original por defecto. */
+  protected readonly summaryPeriodo = computed(() => {
+    const prod = this.summaryFor();
+    return this.subscriptions.find((s) => s.product === prod)?.periodo ?? { numero: 1, codigo: 'w' };
+  });
+
   /** Por qué botón se entró: "Nav" lo abre por la sección Navigation. */
   protected readonly summaryFocus = signal<'summary' | 'nav'>('summary');
 
@@ -249,6 +261,7 @@ export class TicketDetailPageComponent {
       campaign: '',
       provider: '',
       ip: '10.0.113.4',
+      periodo: { numero: 1, codigo: 'w' },
     },
     {
       product: 'iTrip',
@@ -262,6 +275,7 @@ export class TicketDetailPageComponent {
       campaign: '',
       provider: '',
       ip: '10.0.113.4',
+      periodo: { numero: 30, codigo: 't' },
     },
   ];
 

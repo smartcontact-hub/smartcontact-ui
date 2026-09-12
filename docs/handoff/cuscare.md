@@ -42,11 +42,23 @@ observable (no snapshot: el router reutiliza el componente) y se busca en las 32
 
 ## ▶︎ SIGUIENTE — sin preguntar
 
-1. **"Subs Info" del panel Summary muestra 2 campos** (User Agent, IP); el original tiene **11**
-   bajo `CUSTOMER_INFO.*` (Placement, Carrier, Device, Device/OS, Connection, Banner, Campaign…).
-   Es fidelidad con datos inventados, por eso quedó fuera del cierre; si se hace, seed sin PII.
-2. **El conmutador de periodo pinta "1 Week" fijo**; el diccionario tiene 12 periodicidades
-   (`SERVICE.DAY/WEEK/MONTH/QUARTER/BIANNUAL/YEAR/DAYS30…`). Mismo caso: fidelidad, no corrección.
+1. ~~**"Subs Info" del panel Summary muestra 2 campos**~~ → **HECHO el 2026-09-12.** Son **DIEZ**,
+   no once: la ficha decía 11 y el bundle sin minificar lleva el orden escrito en un comentario
+   (User Agent → IP → Placement → URL → Carrier → Device → Device OS → Connection → Banner →
+   Campaign) y exactamente diez bloques `subInfo-container`. Contado en su fuente, no deducido.
+   De paso, «Expand all» era un botón MUERTO: estaba pintado y no conmutaba nada.
+2. ~~**El conmutador de periodo pinta "1 Week" fijo**~~ → **HECHO.** Sale del dato, como en el
+   original (un número y un código de UNA letra), con las doce periodicidades.
+   ⚠️ **Los seis rótulos de días ya llevan su número dentro** («30 Days»), así que anteponer el de
+   la oferta daba «30 30 Days». Lo cazó el e2e por comprobar DOS suscripciones: con una sola, un
+   literal disfrazado de dato habría pasado igual. En el original ese caso no se ve nunca porque
+   su plantilla pide `SERVICE.DAY30` y el diccionario define `DAYS30`: los seis salen como la ruta
+   cruda de la clave. Bug suyo, no se replica.
+
+**Lo que se vio al hacerlo y NO se hizo:** el bloque «Customer info», encima de Subs Info, tiene en
+el original cuatro filas más (`Alias`, `AccountId`, `ExternalId`, `OperationId`, cada una con su
+`*ngIf`) que la réplica no pinta. Y cada valor largo de Subs Info lleva su propio botón «Show more»
+que aparece SOLO si el texto desborda: eso pide medir el desbordamiento en runtime.
 
 ## ⏸️ Sin resolver (no bloquea)
 
