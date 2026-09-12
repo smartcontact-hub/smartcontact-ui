@@ -92,6 +92,20 @@ test('#5 build durante un preflight → deny; sin preflight vivo, o con sc:ok �
   allow('ls -d dist/*', corriendo);
 });
 
+test('#11 formateador ajeno: `prettier --write` sin config del repo → deny; con config, `--check` o sc:ok → allow', () => {
+  const sinConfig = { ...verde, usaPrettier: () => false };
+  const conConfig = { ...verde, usaPrettier: () => true };
+  deny('npx prettier --write projects/supervisor/src/app/x.component.html', sinConfig, /NO adopta prettier/);
+  deny('prettier -w e2e/supervisor/x.spec.ts', sinConfig, /LEARNINGS #11/);
+  // El día que el repo adopte prettier, el guardián se calla solo: mira, no asume.
+  allow('npx prettier --write projects/supervisor/src/app/x.component.html', conConfig);
+  // `--check` no escribe: es justo lo que sí sirve para mirar si algo está fuera de estilo.
+  allow('npx prettier --check projects/supervisor/src/app/x.component.html', sinConfig);
+  allow('npx prettier --write x.html # sc:ok', sinConfig);
+  // Y no confunde a otros comandos que nombran el fichero.
+  allow('grep -rn "prettier --write" docs/', sinConfig);
+});
+
 test('prosa y heredocs no son comandos: los dos falsos positivos reales del primer día', () => {
   allow("printf '\\n# la lee el hook de git push.\\n' >> .gitignore", rojo);
   allow("python3 - <<'EOF'\ns = s + ' && npm run lint'\nopen(p,'w').write(s)\nEOF\ngrep -n lint scripts/x.mjs", verde);

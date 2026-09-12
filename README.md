@@ -135,7 +135,11 @@ Y para que no dependa de acordarse, **un hook lo corre solo**: `.githooks/pre-pu
 `preflight:scope` antes de cada `git push` y aborta si algo falla; si el árbol ya lleva la marca
 `.preflight-ok` de un carril en verde (la escribe `scripts/preflight-mark.mjs` al final de
 `preflight` y `preflight:scope -- --run`), sube sin repetir la cadena. Se activa
-una vez con `npm run hooks:install`. Y no se lanza la cadena sobre una rama que no lleva
+una vez con `npm run hooks:install`. **Lo que se ve en milisegundos se mira antes de arrancar**
+(`scripts/preflight-puerta-barata.mjs`): la forma de la memoria del agente vive en el paso 33 de 38
+—dentro de `docs:coherence`— y no depende del build, así que la puerta la comprueba en el segundo
+2. Es estado COMPARTIDO entre sesiones: el 2026-09-11 y el 2026-09-12 una ficha que engordó otro
+chat tumbó dos cadenas de 8 minutos. Y no se lanza la cadena sobre una rama que no lleva
 `origin/main`: `scripts/preflight-rebase.mjs` hace `git fetch` y `merge-base --is-ancestor` antes
 de correr nada y para con la orden de rebasar (el 2026-09-11 se tiraron dos cadenas de 8 min porque
 `main` avanzó entre el preflight y el push). Que main avance **durante** la cadena es otro caso y

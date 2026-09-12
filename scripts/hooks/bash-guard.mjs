@@ -17,6 +17,8 @@
  * Entrada: JSON por stdin (tool_input.command, cwd). Salida: JSON de decisión por stdout.
  */
 import { execFileSync } from 'node:child_process';
+import * as fsSync from 'node:fs';
+import { resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 import { estadoPreflight } from '../preflight-mark.mjs';
 
@@ -123,6 +125,25 @@ const BUILDS = /^(npm run (?:-[-a-z]+ )*build(:[a-z-]+)?|ng build)\b/;
  *   · y la ruta tiene que ser la de este cwd: en esta máquina conviven ocho worktrees, y el
  *     Playwright de otro no toca mi `dist/`.
  */
+/** ¿Este repo ADOPTA prettier? (config propia, o la clave `prettier` del package.json)
+ *
+ *  Se mira en vez de asumir: el día que el repo adopte prettier, el guardián deja de
+ *  disparar solo, sin que nadie tenga que acordarse de quitarlo. */
+function usaPrettier(cwd) {
+  const { existsSync, readFileSync } = fsSync;
+  const marcas = [
+    '.prettierrc', '.prettierrc.json', '.prettierrc.yml', '.prettierrc.yaml',
+    '.prettierrc.js', '.prettierrc.cjs', '.prettierrc.mjs', '.prettierrc.toml',
+    'prettier.config.js', 'prettier.config.cjs', 'prettier.config.mjs',
+  ];
+  if (marcas.some((m) => existsSync(resolve(cwd, m)))) return true;
+  try {
+    return 'prettier' in JSON.parse(readFileSync(resolve(cwd, 'package.json'), 'utf8'));
+  } catch {
+    return false;
+  }
+}
+
 function preflightVivo(cwd) {
   try {
     const salida = execFileSync('pgrep', ['-af', 'node .*(preflight-scope|preflight-fast)\\.mjs'], {
@@ -234,6 +255,34 @@ function evaluarBase(cmd, ctx = {}) {
         'LEARNINGS #5 — hay un preflight corriendo y esto reescribe `dist/` bajo sus pies: sus e2e caerán con ' +
         "`Cannot find module '@smartcontact-hub/icons'`, que parece una dependencia rota y es tu build. " +
         'Espera a que termine (o párala) y construye después. Si sabes que ese preflight ya no importa, añade `# sc:ok`.',
+    };
+
+  // #11 — un formateador que el repo NO adopta reescribe ficheros enteros que no tocabas.
+  //
+  // Medido el 2026-09-11: `prettier --write` sobre tres ficheros dejó 450 líneas cambiadas para
+  // un cambio de 13, con SUS defaults (comillas dobles en plantillas Angular, atributos partidos
+  // uno por línea), porque este repo no tiene config de prettier y `verify` no mira el formato.
+  // El precio no fue el diff: fue que al rebasar, ese ruido chocó con `main` en dos ficheros,
+  // resolví el conflicto hacia el lado equivocado y hubo que abortar el rebase y rehacer las
+  // ediciones a mano. Un diff inflado no es cosmético: convierte un rebase limpio en uno con
+  // conflictos y te hace decidir sobre líneas que no escribiste.
+  if (
+    segs.some(
+      (s) =>
+        empiezaPor(s, /^(npx\s+)?prettier\b/) &&
+        /(^|\s)(--write|-w)(\s|$)/.test(s),
+    ) &&
+    !(ctx.usaPrettier || usaPrettier)(cwd)
+  )
+    return {
+      decision: 'deny',
+      reason:
+        'LEARNINGS #11 — este repo NO adopta prettier (sin `.prettierrc*`, sin clave `prettier` en ' +
+        '`package.json`, y `verify` no comprueba formato), así que `--write` impone defaults AJENOS: ' +
+        '450 líneas reformateadas por un cambio de 13 el 2026-09-11, y el ruido acabó en un conflicto ' +
+        'de rebase resuelto hacia el lado equivocado. Edita solo las líneas que cambias y copia el ' +
+        'estilo del fichero. Si de verdad toca formatear (o el repo ya adoptó prettier y esto se ' +
+        'quedó viejo), añade `# sc:ok`.',
     };
 
   return { decision: 'allow', reason: '' };
