@@ -73,15 +73,30 @@
     align-self: center;
   }
 
-  /* `body-2` y no `subtitle-2`: mismos 14/20 al píxel, pero `subtitle-2` cuelga de
-   * `--sc-line-height-220`, un peldaño que NO existe en el export del Kit. Los roles que Figma sí
-   * ata son los que tienen text style detrás (DD-54), y `Body/body-semibold` es exactamente lo
-   * que mide una cabecera de sección. */
+  /* `h3` (18/24) desde el 2026-09-12, y antes era `body-2` (14/20).
+   *
+   * POR QUÉ CAMBIA. El título medía EXACTAMENTE lo mismo que el texto de debajo —14px las dos
+   * cosas— y lo único que los separaba era el peso. Medido en `config/aed/agentes`: título
+   * 14/20/600 contra cuerpo 14/21/400. Un título que no es más grande que su contenido no
+   * establece jerarquía, lo pidió Rafa mirando la pantalla y la medida le da la razón.
+   *
+   * POR QUÉ `h3` Y NO 20px, que fue el tamaño que pidió: 20 existe en la escala
+   * (`--sc-font-size-450`) pero NO lo nombra ningún text style — los seis roles son 64, 48, 24,
+   * 18, 14 y 12. Fijarlo aquí sería la única tipografía de la app fuera de la rampa, justo lo que
+   * `audit:text-styles` existe para impedir, y se quedaría sin seguir un remapeo de Figma. `h3`
+   * es el peldaño CON NOMBRE inmediatamente encima del cuerpo, y la diferencia con 20 no se
+   * aprecia (se construyeron los dos y se miraron juntos antes de elegir).
+   *
+   * ⚠️ ESTO DIVERGE DE FIGMA A PROPÓSITO, y hay que cerrarlo allí. El comentario anterior decía
+   * —con razón— que `Body/body-semibold` era lo que mide una cabecera de sección en la ficha del
+   * Kit. Sigue siéndolo: el cambio es de DISEÑO, no una corrección. Hasta que el text style de la
+   * cabecera de sección pase a `h3` en Figma, este es un punto conocido en el que el código va
+   * por delante. Anotado en la bandeja del frente. */
   &__title {
     margin: 0;
-    font-family: var(--sc-font-family-body-2);
-    font-size: var(--sc-font-size-body-2);
-    line-height: var(--sc-line-height-body-2);
+    font-family: var(--sc-font-family-h3);
+    font-size: var(--sc-font-size-h3);
+    line-height: var(--sc-line-height-h3);
     font-weight: var(--sc-font-weight-semibold);
     color: var(--sc-text-primary);
     letter-spacing: -0.01em;

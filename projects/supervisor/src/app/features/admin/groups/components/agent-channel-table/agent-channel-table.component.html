@@ -89,13 +89,13 @@
   <span class="actbl__td-name">
     <sc-illustrated-avatar [name]="row.agent.name" pool="illustrated" [size]="24" />
     <span class="actbl__name-label" [title]="row.agent.name">{{ row.agent.name }}</span>
-    <span class="actbl__chips">
+    <span class="channel-chips">
       @for (ch of groupChannels(); track ch) {
         <label
-          class="actbl__chip"
-          [class.actbl__chip--on]="hasChannel(row.link, ch)"
-          [class.actbl__chip--off]="!hasChannel(row.link, ch)"
-          [class.actbl__chip--disabled]="!row.link.active"
+          class="channel-chip"
+          [class.channel-chip--on]="hasChannel(row.link, ch)"
+          [class.channel-chip--off]="!hasChannel(row.link, ch)"
+          [class.channel-chip--disabled]="!row.link.active"
         >
           <input
             type="checkbox"
@@ -107,7 +107,7 @@
           <sc-icon
             [name]="hasChannel(row.link, ch) ? checkIcon : plusIcon"
             size="inherit"
-            class="actbl__chip-icon"
+            class="channel-chip__icon"
           />
           <span>{{ channelKey(ch) | translate }}</span>
         </label>

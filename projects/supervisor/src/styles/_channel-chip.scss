@@ -1,0 +1,98 @@
+/*
+ * SCDS — el chip de canal, UNA sola vez.
+ *
+ * Importado por `main.scss`. Lo usan las dos pantallas que editan la relación
+ * agente↔grupo, que son la misma cosa vista desde cada lado:
+ *   · `admin/agents/.../group-assignment-table` (los grupos de un agente)
+ *   · `admin/groups/.../agent-channel-table`    (los agentes de un grupo)
+ *
+ * POR QUÉ NACE (2026-09-12). Cada una lo tenía declarado por su cuenta, y no
+ * diferían en el estilo: diferían en el SIGNIFICADO. En una, el chip RELLENO
+ * era el canal apagado; en la otra, el encendido. La misma señal decía lo
+ * contrario en dos pantallas hermanas.
+ *
+ * CUÁL GANÓ, y no es cuestión de gusto: la gramática del **togglebutton**, que
+ * es la que publica el tema. Leído en `sc-preset/togglebutton.ts` (modo claro):
+ * `root.background = surface.100` (pista gris), `root.color = surface.500`
+ * (texto apagado), `checkedColor = surface.900` y un `content.checkedShadow`
+ * para el seleccionado. O sea: **la pista va rellena y el elegido sale en
+ * blanco, en relieve**. La otra versión se inventaba un relleno azul y además
+ * lo pintaba con `--sc-color-blue-700`, un color de PALETA como fondo, que es
+ * lo que la tabla de bifurcaciones de AGENTS prohíbe porque no voltea en
+ * oscuro.
+ *
+ * El icono (✓ encendido · ＋ apagado) no es decoración: es lo que impide que un
+ * chip se lea como una etiqueta estática, y lo que deja el estado dicho sin
+ * depender solo del color (UX 6).
+ *
+ * `audit:screen-vocabulary` vigila que estos nombres sigan declarándose en UNA
+ * sola hoja. Es la red que evita que vuelvan a separarse.
+ */
+
+.channel-chips {
+  display: inline-flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sc-spacing-0-25);
+}
+
+.channel-chip {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-5);
+  min-height: var(--sc-spacing-2-25);
+  padding: var(--sc-spacing-0-375) var(--sc-spacing-0-75);
+  border-radius: var(--sc-radius-md);
+  border: 1px solid var(--sc-border-subtle);
+  font-size: var(--sc-font-size-100);
+  font-weight: var(--sc-font-weight-regular);
+  cursor: pointer;
+  transition:
+    background-color 100ms ease,
+    color 100ms ease,
+    border-color 100ms ease;
+
+  /* La casilla real, encima del chip entero: el gesto es pulsar el chip, no
+     cazar un cuadradito. Invisible, no ausente — sigue siendo quien recibe el
+     foco y quien anuncia el estado. */
+  > input {
+    position: absolute;
+    inset: 0;
+    width: 100%;
+    height: 100%;
+    margin: 0;
+    opacity: 0;
+    cursor: pointer;
+  }
+
+  /* Encendido: sale del relleno, en blanco y con texto de contenido. */
+  &--on {
+    background: var(--sc-bg-surface);
+    border-color: var(--sc-border-subtle);
+    color: var(--sc-text-primary);
+  }
+
+  /* Apagado: parte de la pista rellena, con el texto apagado. */
+  &--off {
+    background: var(--sc-bg-secondary-hover);
+    border-color: var(--sc-bg-secondary-hover);
+    color: var(--sc-text-subtle);
+
+    &:hover {
+      border-color: var(--sc-border-default);
+    }
+  }
+
+  &--disabled {
+    cursor: not-allowed;
+    opacity: 0.5;
+  }
+}
+
+.channel-chip__icon {
+  flex: 0 0 auto;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+}

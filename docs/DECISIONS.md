@@ -59,6 +59,50 @@
 
 ---
 
+## DD-74 · 2026-09-12 — El chip relleno significa lo mismo en las dos pantallas, y un título vuelve a ser más grande que su contenido
+
+**Contexto** · Rafa, sobre el barrido de tablas: «resuelve las dudas con tu criterio, queremos
+automatización, consistencia, simpleza y que sea intuitivo», y después: «los títulos de cada parte a
+20px y con peso 600, para establecer diferencias entre títulos y el resto». Las dos cosas salieron de
+mirar las pantallas, y las dos se midieron antes de tocar nada.
+
+**Decisión** · (1) El **chip de canal** se declara UNA vez (`_channel-chip.scss`), con la gramática
+del **togglebutton** que publica el tema: apagado = pista rellena y texto apagado; encendido = blanco
+en relieve, con ✓. (2) El **título de `sc-section-card`** pasa de `Body/body-semibold` (14/20) a
+`Heading/h3-semibold` (18/24). (3) Los tres nombres del chip entran en el canon de
+`audit:screen-vocabulary`, que ya sabe exigir un nombre = un hogar.
+
+**Razón** · Para (1), y no es simetría: las dos copias no diferían en el estilo, **diferían en el
+significado**. En el editor de grupos el chip RELLENO era el canal apagado; en el de agentes, el
+encendido. La misma señal decía lo contrario en dos pantallas que son la misma cosa vista desde cada
+lado. Ganó la del togglebutton porque es la que publica el tema, leído en `sc-preset/togglebutton.ts`
+(claro): `root.background = surface.100`, `root.color = surface.500`, `checkedColor = surface.900` y
+un `content.checkedShadow` para el elegido. La otra además pintaba con `--sc-color-blue-700`, paleta
+CRUDA como fondo, que no voltea en oscuro. Para (2): el título medía **exactamente lo mismo que su
+contenido** —14/20/600 contra 14/21/400 en `config/aed/agentes`—, así que solo el peso lo separaba.
+Un título que no es más grande que lo que titula no hace jerarquía.
+
+**Descartadas** ·
+- **Los 20px que pidió Rafa** → 20 existe en la escala (`--sc-font-size-450`) pero NO lo nombra
+  ningún text style: los seis roles son 64, 48, 24, 18, 14 y 12. Sería la única tipografía de la app
+  fuera de la rampa —lo que `audit:text-styles` existe para impedir— y no seguiría un remapeo de
+  Figma. Se construyeron 14, 18 y 20 y se miraron juntos: entre 18 y 20 no hay diferencia apreciable.
+- **Quedarse con el chip azul relleno** («relleno = encendido» es más intuitivo a primera vista) →
+  rechazado: es mi gusto contra lo que el tema publica, y encima obligaba a mantener la paleta cruda.
+  El icono ✓/＋ ya deja el estado dicho sin depender del color (UX 6).
+- **Un gate nuevo para el chip** → no hacía falta: `audit:screen-vocabulary` ya vigila que un nombre
+  compartido tenga un solo hogar, y su propio criterio de entrada es «lo usan dos pantallas o más».
+
+**Consecuencias** · Los dos editores hermanos quedan **idénticos**, también en medida: su fila pasa a
+69 px en los dos (antes 65 y 69 — los chips diferían en padding y radio, no solo en color).
+`page-identity` deja de comparar dos cifras: el título de página dentro de una card medía 14 **para
+igualar al título de sección**, así que sube con él y las dos familias quedan en 18 — una regla menos
+que explicar. El trinquete de tipografía suelta baja a 99. **Queda vivo**: esto DIVERGE de Figma a
+propósito. La ficha del Kit sigue diciendo que una cabecera de sección es `Body/body-semibold`; hasta
+que ese text style pase a `h3` allí, el código va por delante, y está anotado en la bandeja.
+
+---
+
 ## DD-73 · 2026-09-12 — La tabla no hereda su letra de la app en NINGUNA de sus dos pieles, y un guardián vigila las 38 ranuras
 
 **Contexto** · DD-72 ancló la tipografía de la piel `list` y dejó escritas dos cosas como deuda: que

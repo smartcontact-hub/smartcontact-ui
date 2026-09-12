@@ -236,7 +236,12 @@ const PAGINAS_EN_FORMULARIO = [
     ruta: 'admin/grupos/editar/1',
     seccion: 'Agentes asignados',
     nombre: 'agentes del grupo',
-    altoFila: 65,
+    /* 65 → 69 el 2026-09-12, al unificar el chip de canal. Los dos editores
+     * hermanos tenían su propia copia y no diferían solo en color: la de aquí
+     * llevaba menos padding y otro radio. Ahora miden LO MISMO que su gemelo de
+     * arriba (69), que es exactamente lo que se buscaba — son la misma cosa vista
+     * desde cada lado. Si esto vuelve a divergir, mira `_channel-chip.scss`. */
+    altoFila: 69,
   },
 ] as const;
 

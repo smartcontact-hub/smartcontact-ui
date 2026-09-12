@@ -11,6 +11,7 @@
 @use 'reset';
 @use 'forms';
 @use 'table-elements';
+@use 'channel-chip';
 
 /* AQUÍ HABÍA un `@use 'sc-overlay-sizes'`: los tamaños sm/lg de los paneles de
  * select / multiselect / datepicker, en un partial global de ESTA app. Se fue

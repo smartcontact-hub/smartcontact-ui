@@ -79,11 +79,14 @@ Orca se cerraron en el #113; `agent-mini` entró en el CI; la doc, en su PR):
 
 **Lo que deja el 2026-09-12 (la vuelta a las tablas, DD-72), medido y sin hacer:**
 
-- **Los dos editores simétricos pintan sus chips de canal distinto.** `actbl__chip--on` es una
-  pastilla rellena con `--sc-color-blue-700` **de fondo** y `gatbl__chip--on` un contorno blanco, para
-  el mismo gesto en dos pantallas que son la misma cosa vista desde cada lado. Además la azul usa
-  paleta CRUDA como fondo, que es lo que la tabla de bifurcaciones de AGENTS prohíbe porque no voltea
-  en oscuro. Es anterior a esta sesión; cuál gana es decisión de producto, no técnica.
+- **El título de sección DIVERGE de Figma a propósito** (DD-74). El Kit sigue diciendo que una
+  cabecera de sección es `Body/body-semibold` (14/20); el código la subió a `Heading/h3-semibold`
+  (18/24) porque medía lo mismo que su propio contenido y no hacía jerarquía. Hasta que ese text
+  style cambie en Figma, el código va por delante — y el 1:1 de `sc-section-card` va a cantar.
+  Cerrarlo es un cambio en Figma, no en código.
+- **20px no tiene estilo de texto.** Rafa pidió los títulos a 20; el peldaño existe
+  (`--sc-font-size-450`) pero ningún rol lo nombra, así que se usó `h3` (18). Si se quiere el 20 de
+  verdad, el camino es atar un rol a ese peldaño **en Figma** y dejar que el código lo siga.
 (Las otras dos de esta bandeja —la piel por defecto sin anclar y la falta de guardián para
 las 38 ranuras— se cerraron el mismo día en DD-73.)
 
@@ -128,9 +131,36 @@ las 38 ranuras— se cerraron el mismo día en DD-73.)
    decisión. Ver la sección de Figma más abajo.
 3. **La deuda de código de [`AUDIT-DEUDA-2026-06.md`](../AUDIT-DEUDA-2026-06.md)** que quede tras
    s34, y **los cabos de DD-24** (round-trip de iconos) en [`ROADMAP.md`](../ROADMAP.md).
+## ✅ 2026-09-12 · El chip relleno significa lo mismo en las dos pantallas, y un título vuelve a ser más grande que su contenido
+
+**Sello:** HEAD `c1f829f`. DD-74. `npm run verify` (39 eslabones); **156** e2e del Supervisor,
+**82** de sc-docs. El guardián del chip, probado en rojo volviendo a declararlo en la segunda hoja.
+
+**De dónde sale.** «Resuelve las dudas con tu criterio, queremos automatización, consistencia,
+simpleza y que sea intuitivo», y después los títulos. Las dos cosas se midieron antes de tocar.
+
+**Lo que cambia.** El chip de canal se declara UNA vez, y el título de sección pasa de 14 a 18.
+
+**Los dos hallazgos, que es lo que hay que recordar:**
+
+- **El chip no era una inconsistencia de estilo, era de SIGNIFICADO.** En un editor el chip relleno
+  era el canal APAGADO; en el hermano, el encendido. Ganó la gramática del **togglebutton**, que es
+  la que publica el tema (`sc-preset/togglebutton.ts`: pista `surface.100`, elegido en blanco con
+  sombra), no la que me parecía más intuitiva a mí. La otra además pintaba con paleta CRUDA de fondo.
+  Al unificar, los dos editores quedan idénticos también en medida: 69 px de fila los dos (antes 65
+  y 69 — diferían en padding y radio, no solo en color).
+- **El título medía lo mismo que su contenido.** 14/20/600 contra 14/21/400 en `config/aed/agentes`:
+  solo el peso los separaba. Se construyeron 14, 18 y 20 y se miraron juntos. Se eligió `h3` (18)
+  porque 20 no lo nombra ningún text style, y entre 18 y 20 no hay diferencia apreciable.
+
+**Un efecto que no vi venir y resultó bueno:** `page-identity` comparaba DOS familias de título de
+página (18 suelto, 14 dentro de una card) porque la de dentro existía **para igualar al título de
+sección**. Al subir la sección, sube con ella: ahora un título de página mide lo mismo esté donde
+esté. Una regla menos que explicar.
+
 ## ✅ 2026-09-12 · La tabla deja de heredar su letra en las DOS pieles, y las 38 ranuras tienen guardián
 
-**Sello:** HEAD `67fbefa`. DD-73. `npm run verify` con sus 39 eslabones; **156** e2e del Supervisor,
+**Sello:** HEAD `c1f829f`. DD-73. `npm run verify` con sus 39 eslabones; **156** e2e del Supervisor,
 **82** de sc-docs. El gate nuevo, probado en rojo en el repo de verdad además de en su test.
 
 **De dónde sale.** Los dos primeros puntos que DD-72 dejó en esta bandeja. Eran del mismo tipo:
@@ -155,7 +185,7 @@ decisión): pasan a decir «eslabones».
 
 ## ✅ 2026-09-12 · Las tablas de la plataforma pasan todas por el sistema, y la celda deja de heredar su letra del navegador
 
-**Sello:** HEAD `67fbefa`. DD-72. `npm run verify` entero; **156** e2e del Supervisor, **82** de sc-docs,
+**Sello:** HEAD `c1f829f`. DD-72. `npm run verify` entero; **156** e2e del Supervisor, **82** de sc-docs,
 **23** de la librería. Las dos redes nuevas, validadas EN ROJO antes de fiarme de su verde. Veredicto
 del CI por `ci:verdict` tras el push.
 
@@ -197,45 +227,10 @@ suelta baja a 100.
 ⚠️ **Las SEIS casillas de notificaciones no tenían `(cycle)`**: se vio MIDIENDO, con una casilla con
 manejador como control. Y `theme-contrast` cazó mi único paso en falso (botón «Añadir» a 2.95:1).
 
-## ✅ 2026-09-12 · La tabla de transcripciones escribe como el resto: 14/20 y no 16/24
-
-**Sello:** sobre HEAD `11d1373` (el #118 en `main`). DD-71. `text-styles-applied` +1 en el
-navegador, **rojo contra el deploy de `main`** y verde contra este build. Veredicto por
-`ci:verdict` tras el push.
-
-**De dónde sale.** Era el punto 1 de «lo que queda» del barrido de ayer, el único residuo grande que
-pedía una decisión y no otro barrido. Rafa: «lo de la tabla a 16, ajústalo para que tenga sentido».
-
-**Qué pasaba.** Cuatro columnas de `/conversaciones` —Hora, Fecha, Origen, Destino— escribían el
-texto DIRECTAMENTE en el `<td>`, y las dos numéricas en un `<span>` que no declaraba tamaño. El
-`<td>` lo pinta el DS y `html, body` no declara `font-size`, así que ese texto heredaba **los 16px
-del documento**. Las otras diez tablas de la app no caen en esto porque proyectan un `<span>` que sí
-lo declara; aquí faltaba ese envoltorio. 16 tampoco es peldaño de la rampa (DD-54).
-
-**El arreglo es el patrón que ya existía**, no uno nuevo: una plantilla de celda que envuelve el
-texto en un `<span class="sc-text-body-regular">`, y la clase en las dos numéricas, que la comparten
-con `.memory-num-cell` (cifras tabulares, que siguen tabulares).
-
-| Medido en el build, tema claro, 1440px | Antes | Después |
-| --- | ---: | ---: |
-| Texto de celda | 16/24 | **14/20** |
-| Alto de la tabla | 2.478 px | **2.249 px** |
-| Filas que parten el nombre en dos líneas | 26 | **16** |
-| Fila de una línea | 57 px | 57 px |
-
-**Dos cosas que NO cambian, y conviene saber por qué.** La fila de una línea sigue midiendo 57px
-porque su suelo lo pone el `<td>`, que sigue a 16/24 — eso es así en TODAS las tablas de la app
-(medido el mismo día en `/admin/agendas` y `/admin/usuarios`), o sea que el arreglo alinea esta
-tabla con las demás en vez de inventarle una excepción. Y los 4px que la separan de esas dos (57
-contra 53) son su padding propio, el aire de Memory, deliberado y ya vigilado por un test.
-
-**Lo que se midió para dar esto por bueno.** Rastreo de las 38 rutas más 18 estados abiertos, antes
-y después: **1.020 textos** cambian de tamaño, todos dentro de `/conversaciones` y todos de 16/24 a
-14/20; **0 cambios** en las otras 37 rutas y sus estados. El test nuevo mide EL ELEMENTO QUE PINTA
-el texto, lo envuelva un `<span>` o no: la primera versión buscaba el `<span>` y contra el build
-anterior moría con «element not found», un rojo que dice que falta un nodo en vez de decir que la
-pantalla mide mal. Ahora el rojo trae la magnitud: «la celda de Hora mide 16px/24px».
-
+> El tramo de **la tabla de transcripciones** (14/20 en vez de 16/24, #120) se archivó el
+> 2026-09-12 por el tope de 400 líneas, al entrar el del chip de canal. Vive en git y en el tag
+> `archive/handoff-ds-2026-09-12-chip-titulos`; su causa la explica DD-71 y su red sigue en
+> `text-styles-applied`, que es donde hace falta.
 
 > El tramo de **las tres guardas** (#113, #117, #118: el preflight que se niega sobre una rama
 > rezagada, `agent-mini` en el CI, y el código que la doc enseña atado al que ejecuta) se archivó
