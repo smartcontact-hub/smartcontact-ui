@@ -1,7 +1,7 @@
 <header class="hero">
-  <p class="hero__eyebrow">Smart Contact Design System</p>
+  <p class="hero__eyebrow sc-text-caption-semibold">Smart Contact Design System</p>
   <h1 class="hero__title">Novedades</h1>
-  <p class="hero__lead">
+  <p class="hero__lead sc-text-body-regular">
     Qué versión hay publicada, qué trae y de dónde se baja. Esta página la escribe el propio
     registro de cambios del repositorio: si dice algo, es porque está publicado.
   </p>
@@ -18,10 +18,10 @@
       <div class="actual__cabecera">
         <span class="actual__tag">Versión {{ v.version }}</span>
         @if (v.fecha) {
-          <span class="actual__fecha">{{ fechaLarga(v.fecha) }}</span>
+          <span class="actual__fecha sc-text-caption-regular">{{ fechaLarga(v.fecha) }}</span>
         }
       </div>
-      <p class="actual__que">
+      <p class="actual__que sc-text-caption-regular">
         Para instalarlo no hace falta clonar ni compilar: cada paquete es un fichero.
       </p>
       <ul class="descargas">
@@ -37,14 +37,14 @@
     </section>
   }
 
-  <h2 class="historial">Historial de versiones</h2>
+  <h2 class="historial sc-text-caption-semibold">Historial de versiones</h2>
 
   @for (v of lista; track v.version) {
     <article class="version">
       <h3 class="version__titulo">
         {{ v.version }}
         @if (v.fecha) {
-          <span class="version__fecha">{{ fechaLarga(v.fecha) }}</span>
+          <span class="version__fecha sc-text-caption-regular">{{ fechaLarga(v.fecha) }}</span>
         }
       </h3>
 
@@ -53,7 +53,7 @@
       }
 
       @for (s of v.secciones; track s.titulo) {
-        <h4 class="version__seccion">{{ s.titulo }}</h4>
+        <h4 class="version__seccion sc-text-body-semibold">{{ s.titulo }}</h4>
         <ul class="version__items">
           @for (item of s.items; track $index) {
             <li [innerHTML]="item"></li>

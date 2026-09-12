@@ -534,6 +534,20 @@ log('✔ Ninguna pantalla declara tipografía fuera de los 12 roles.');
  */
 export const TIPOGRAFIA_SUELTA_MAX = 100;
 
+/**
+ * El mismo trinquete para **sc-docs**, el showcase del DS — el que peor predicaba con el ejemplo:
+ * 237 reglas con `font-size` el 2026-09-12, más de las que tenía el Supervisor al empezar.
+ *
+ * ⚠️ **`/validar` NO cuenta, y no es una excusa**: esas páginas imitan el INSPECTOR DE CHROME a
+ * propósito para enseñar a validar, y su propio fichero lo dice desde que se escribieron («si
+ * algún día alguien los tokeniza para dejar esto limpio, el simulador pierde lo único que de
+ * verdad importa de la guía»). Son 122 de las 237: contarlas era contar mal.
+ */
+export const TIPOGRAFIA_SUELTA_DOCS_MAX = 55;
+
+/** Las hojas de sc-docs que SÍ cuentan: su contenido, no el simulador del navegador. */
+export const esSimuladorDeNavegador = (hoja) => /pages\/validar\//.test(hoja);
+
 /** Cuántas reglas de una hoja declaran `font-size` (tipografía por token, no por clase). */
 export function tipografiaSuelta(scss) {
   let n = 0;
@@ -576,3 +590,40 @@ log('='.repeat(62));
 
 log('');
 log('✔ La tipografía suelta no crece: el trinquete está en su tope.');
+
+log('');
+log('CLASE · y lo mismo en sc-docs, que es el showcase del DS');
+log('='.repeat(62));
+{
+  const hojas = execSync("find projects/sc-docs/src -name '*.scss'", { encoding: 'utf8', cwd: root })
+    .split('\n')
+    .filter(Boolean)
+    .sort();
+  let sueltas = 0;
+  let simulador = 0;
+  for (const hoja of hojas) {
+    const n = tipografiaSuelta(readFileSync(resolve(root, hoja), 'utf8'));
+    if (esSimuladorDeNavegador(hoja)) simulador += n;
+    else sueltas += n;
+  }
+  log(
+    `  ${hojas.length} hoja(s) · ${sueltas} regla(s) con \`font-size\` · tope ${TIPOGRAFIA_SUELTA_DOCS_MAX}` +
+      `  (+${simulador} del simulador del navegador, exentas a propósito)`,
+  );
+  log('='.repeat(62));
+  const veredicto = excesoSuelto(sueltas, TIPOGRAFIA_SUELTA_DOCS_MAX);
+  if (veredicto) {
+    log('');
+    log(`  ✘ ${veredicto.replace('TIPOGRAFIA_SUELTA_MAX', 'TIPOGRAFIA_SUELTA_DOCS_MAX')}`);
+    log('');
+    log('  ⚠️ Lo que NO se migra, y por qué (medido en el navegador, no supuesto):');
+    log('     · `code`/`kbd`/`pre`/`samp`: su mono lo pone el NAVEGADOR, no una regla, y la clase');
+    log('       se lo quita. El código no es tipografía de pantalla.');
+    log('     · reglas con su propia `font-family` o con el shorthand `font:`.');
+    log('     · elementos CONTENEDOR: la clase arrastra a todo descendiente que solo heredaba.');
+    process.exit(1);
+  }
+}
+
+log('');
+log('✔ sc-docs tampoco engorda: su trinquete está en su tope.');

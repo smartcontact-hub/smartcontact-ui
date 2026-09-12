@@ -41,7 +41,7 @@ import { ScArgs, StoryDef, StoryMeta } from './story.types';
 
       @for (s of stories(); track s.name) {
         <section class="sb-host__story">
-          <p class="sb-host__section-title">{{ s.playground ? '✦ ' + s.name : s.name }}</p>
+          <p class="sb-host__section-title sc-text-caption-semibold">{{ s.playground ? '✦ ' + s.name : s.name }}</p>
 
           @if (s.playground) {
             <div class="sb-host__play">
@@ -52,7 +52,7 @@ import { ScArgs, StoryDef, StoryMeta } from './story.types';
                 <app-story-anatomy [tag]="meta().tag" />
               </div>
               <div>
-                <p class="sb-host__section-title">Controles</p>
+                <p class="sb-host__section-title sc-text-caption-semibold">Controles</p>
                 <app-story-controls
                   [argTypes]="meta().argTypes"
                   [args]="playArgs()"
@@ -72,7 +72,7 @@ import { ScArgs, StoryDef, StoryMeta } from './story.types';
       @if (meta().props; as props) {
         @if (props.length) {
           <section class="sb-host__story">
-            <p class="sb-host__section-title">API</p>
+            <p class="sb-host__section-title sc-text-caption-semibold">API</p>
             <app-story-props-table [props]="props" />
           </section>
         }

@@ -36,7 +36,7 @@ import { COMPONENT_CATALOG, groupCatalog } from './component-catalog';
       />
       <div class="hero__scrim" aria-hidden="true"></div>
       <div class="hero__content">
-        <p class="eyebrow">{{ 'componentsIndex.eyebrow' | translate }}</p>
+        <p class="eyebrow sc-text-caption-semibold">{{ 'componentsIndex.eyebrow' | translate }}</p>
         <h1>{{ 'componentsIndex.title' | translate }}</h1>
         <p
           class="lead"

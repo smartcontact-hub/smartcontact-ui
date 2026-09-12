@@ -43,7 +43,6 @@ h2 {
 
 .swatch-hint {
   color: var(--sc-text-secondary);
-  font-size: var(--sc-font-size-100);
   margin-block: var(--sc-spacing-0-5) var(--sc-spacing-1);
 }
 
@@ -153,8 +152,6 @@ h2 {
  * tema sin que nadie recalcule nada. */
 .sem-familia {
   margin-block: var(--sc-spacing-1-5) var(--sc-spacing-0-5);
-  font-size: var(--sc-font-size-100);
-  font-weight: var(--sc-font-weight-semibold);
   color: var(--sc-text-subtle);
   text-transform: uppercase;
   letter-spacing: 0.04em;
@@ -204,7 +201,6 @@ h2 {
 
   &__uso {
     margin: var(--sc-spacing-0-25) 0 0;
-    font-size: var(--sc-font-size-100);
     color: var(--sc-text-secondary);
   }
 
@@ -226,7 +222,6 @@ h2 {
   /* Puntero a la decisión, no un badge de estado: por eso no lleva color de familia. */
   &__dd {
     flex: 0 0 auto;
-    font-size: var(--sc-font-size-75);
     color: var(--sc-text-subtle);
     font-variant-numeric: tabular-nums;
   }
@@ -234,5 +229,4 @@ h2 {
 
 .sem-error {
   color: var(--sc-text-danger);
-  font-size: var(--sc-font-size-100);
 }

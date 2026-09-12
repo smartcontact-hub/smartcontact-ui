@@ -28,6 +28,7 @@ Variables: `SC_ORIGINAL_URL` y `SC_REPLICA_URL` (por defecto, el dev de la app r
 | `lib/manifest.ts`         | el sello de cada artefacto (versiones, SO, SHA de la réplica, ajustes del arnés) y `manifestDrift()` para negarse a comparar artefactos incomparables.                                                       |
 | `phase0-fonts.ts`         | intercepta la red, descarga cada fichero de fuente y lo abre con fontkit; parsea los `@font-face` con css-tree. Escribe `findings/phase-0-fonts.json`.                                                       |
 | `phase0-resolve-probe.ts` | qué familias existen DE VERDAD en la réplica.                                                                                                                                                                |
+| `text-census.mjs`         | **la red antes de tocar tipografía** (LEARNINGS #16): recorre una app servida y anota tamaño, interlineado, peso, familia, tracking, márgenes y caja de cada texto. Se había reescrito tres veces desde cero; ahora vive aquí con sus cuatro trampas dentro. `--diff a.json b.json` compara las dos pasadas. |
 | `figma-export-parity.mjs` | **el eslabón que faltaba**: el fichero de Figma contra el export del Kit. `tokens:parity` compara *export ↔ CSS*, y por el tramo *Figma ↔ export* se coló el desfase de julio. Imprime el JavaScript que se le pega a `figma_execute_across_files` (fileKey del DS), con los valores del Kit ya resueltos. No es gate: necesita el bridge abierto. |
 
 ## Paridad Figma ↔ export, en dos minutos
@@ -49,6 +50,27 @@ en *Semantic*: seguir un alias con el modo de partida cae al primer modo del des
 la capa oscura falla EN BLOQUE — 21 de 24 familias «discrepando» que no eran deriva, era la sonda.
 La herramienta busca el modo del destino por NOMBRE. Si algún día vuelve a salir un rojo así de
 redondo, sospecha del instrumento antes que del fichero.
+
+## Censar los textos antes de un barrido
+
+```bash
+node tools/text-census.mjs antes.json --url http://localhost:4288 --hash   # sc-docs (rutas por #/)
+node tools/text-census.mjs ruido.json --url http://localhost:4288 --hash   # ⚠️ el RUIDO primero
+node tools/text-census.mjs --diff antes.json ruido.json                    # tiene que dar 0
+# …se hace el barrido…
+node tools/text-census.mjs despues.json --url http://localhost:4288 --hash
+node tools/text-census.mjs --diff antes.json despues.json
+```
+
+**El ruido primero, siempre.** Dos pasadas sobre el MISMO build tienen que dar **0 diferencias**;
+si no, lo que sobra es el instrumento y no hay nada que medir. Medido el 2026-09-12 en sc-docs:
+7.354 textos, 0 diferencias entre pasadas.
+
+⚠️ **Y lee el diff por SELECTOR, no por el total.** Un barrido de sc-docs daba 6.737 diferencias y
+casi todas eran `y`: una pieza de la barra lateral cambió de interlineado y empujó 63 páginas
+enteras hacia abajo. Agrupando por selector se veía lo que de verdad se movía: 60 selectores, con
+1.122 `<code>` perdiendo su interlineado y 88 nombres de token perdiendo el mono. El total asusta
+y no dice nada; el agrupado dice qué acabas de romper.
 
 ## Una trampa que ya mordió
 

@@ -16,9 +16,6 @@
 /* ---------- cabecera ---------- */
 .eyebrow {
   margin: 0 0 var(--sc-spacing-0-5);
-  font-size: var(--sc-font-size-caption);
-  line-height: var(--sc-line-height-caption);
-  font-weight: var(--sc-font-weight-semibold);
   letter-spacing: 0.08em;
   text-transform: uppercase;
   color: var(--sc-text-subtle);
@@ -44,9 +41,6 @@
 /* ---------- título de sección (Enlaces / Exploraciones) ---------- */
 .section-title {
   margin: 0;
-  font-size: var(--sc-font-size-600);
-  line-height: var(--sc-line-height-600);
-  font-weight: var(--sc-font-weight-bold);
   letter-spacing: -0.01em;
 }
 
@@ -73,8 +67,6 @@
 
 .link-group__title {
   margin: 0;
-  font-size: var(--sc-font-size-caption);
-  font-weight: var(--sc-font-weight-semibold);
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--sc-text-subtle);
@@ -154,8 +146,6 @@ a.link-item__a:focus-visible {
 
 .link-item__note {
   margin: var(--sc-spacing-0-5) 0 0;
-  font-size: var(--sc-font-size-100);
-  line-height: var(--sc-line-height-100);
   color: var(--sc-text-secondary);
 }
 
@@ -237,8 +227,6 @@ a.link-item__a:focus-visible {
 
 .expl__kind {
   margin: 0;
-  font-size: var(--sc-font-size-caption);
-  font-weight: var(--sc-font-weight-semibold);
   letter-spacing: 0.06em;
   text-transform: uppercase;
   color: var(--sc-text-subtle);
@@ -246,14 +234,10 @@ a.link-item__a:focus-visible {
 
 .expl__title {
   margin: 0;
-  font-size: var(--sc-font-size-400);
-  line-height: var(--sc-line-height-400);
-  font-weight: var(--sc-font-weight-semibold);
 }
 
 .expl__by {
   margin: 0;
-  font-size: var(--sc-font-size-100);
   color: var(--sc-text-subtle);
 }
 
@@ -272,8 +256,6 @@ a.link-item__a:focus-visible {
 
 .expl__open {
   display: inline-block;
-  font-size: var(--sc-font-size-200);
-  font-weight: var(--sc-font-weight-semibold);
   color: var(--sc-text-link);
   text-decoration: none;
 }

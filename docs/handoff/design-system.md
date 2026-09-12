@@ -34,9 +34,18 @@
 - **12/20 no es ningún estilo**: sale cuando la clase va en un contenedor y el descendiente declara
   solo el tamaño (pastillas de estado de repositorios, cabeceras de grupos asignados, contadores de
   pestaña). ¿Text style propio para pastilla, o `line-height` explícito?
-- **`sc-docs` es la siguiente tanda del barrido**: 237 reglas con `font-size` y DOS usos de la clase
-  (29 podrían llevarla hoy, 127 heredan el interlineado, 57 están fuera de la rampa). El showcase
-  del DS es el que peor predica con el ejemplo. Cifras y matices en el tramo de abajo.
+- ~~**`sc-docs` es la siguiente tanda del barrido**: 237 reglas~~ → **HECHO en parte el 2026-09-12,
+  y las 237 eran la cifra equivocada.** **122 de ellas son `/validar`**, que imita el INSPECTOR DE
+  CHROME a propósito y lo dice en su propio fichero desde que se escribió: tokenizarlo le quita al
+  simulador lo único que enseña. El alcance real eran 115, de las que se migraron 60 y quedan 55
+  con su trinquete (`TIPOGRAFIA_SUELTA_DOCS_MAX`).
+  **Las 55 que quedan NO son pereza, son tres familias medidas**: `code`/`kbd`/`pre` (su mono lo
+  pone el NAVEGADOR, no una regla, así que la clase se lo quita: 88 nombres de token se quedaron
+  en Inter en la primera pasada), reglas con familia propia o `font:` shorthand, y **elementos
+  CONTENEDOR** — ahí la clase arrastra a todo lo que solo heredaba: 1.122 `<code>` y 353 `<td>` se
+  movieron de golpe antes de acotarlo.
+  ⚠️ **Lo que queda pide DECISIÓN, no otro barrido**: cuatro `hero__title` a 32px y seis textos a
+  16px (ninguno es peldaño), y qué hacer con los contenedores.
 
 **`/config/aed/servicio` (2026-09-12) deja pendiente de RAFA o de PRODUCTO:** el granate de
 «Administrativo» (decisión suya) pasó a la paleta de etiquetas para que el estado se vea igual en
@@ -49,9 +58,10 @@ con `for` sobre un `<span role="combobox">`, que no es etiquetable — sus dos f
 **Lo que queda de la tanda «adelante a todo» del 2026-09-11** (los dos apuntes de la revisión de
 Orca se cerraron en el #113; `agent-mini` entró en el CI; la doc, en su PR):
 
-- **El rastreador de textos de esta casa NO está commiteado**, y es la red que exige LEARNINGS #16
-  para cualquier barrido de tipografía. Cada sesión lo reescribe. Vive hoy en el scratchpad de dos
-  sesiones distintas; si el barrido de `sc-docs` se hace, vale la pena que entre en `tools/`.
+- ~~**El rastreador de textos NO está commiteado**~~ → **HECHO**: vive en `tools/text-census.mjs`,
+  con las cuatro cosas que lo hacen fiable escritas dentro (texto PROPIO y no `textContent`; clave
+  con ordinal; el selector ignora `sc-text-*` o el diff sale vacío por construcción; y medir el
+  RUIDO primero — dos pasadas del mismo build, 0 diferencias). Se había reescrito tres veces.
 - **Los 66 inputs públicos sin ejemplo** que destapó el trinquete de `audit:doc-snippets` (DD-70).
   El gate los imprime con `--inputs`; la lista solo baja, y bajarla es escribir doc, no barrer.
 
@@ -228,10 +238,8 @@ tocar las mismas plantillas: dos sesiones editando `projects/supervisor` es lo q
 > `archive/handoff-ds-2026-09-12`; el cuerpo del PR #114 y el comentario de `main.scss` guardan
 > sus números.
 
-> El tramo de **`npm run sesiones`** (la bandeja sube arriba, y un comando contesta «¿puedo
-> cerrar este chat?») se archivó el 2026-09-11 por el tope de 400 líneas. Vive en git, en el
-> tag `archive/handoff-ds-2026-09-11-tarde` y en el cuerpo de sus PR; el comando lo cuenta
-> `NEXT-SESSION.md`, que es donde hace falta.
+> El tramo de **`npm run sesiones`** se archivó el 2026-09-11 (tag
+> `archive/handoff-ds-2026-09-11-tarde`); el comando lo cuenta `NEXT-SESSION.md`.
 
 ## 🗄️ Histórico de la lista SIGUIENTE — ya cerrado
 

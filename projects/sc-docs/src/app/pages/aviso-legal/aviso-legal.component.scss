@@ -11,8 +11,6 @@
 
   &__eyebrow {
     margin: 0;
-    font-size: var(--sc-font-size-100);
-    font-weight: var(--sc-font-weight-semibold);
     letter-spacing: 0.04em;
     text-transform: uppercase;
     color: var(--sc-text-subtle);
@@ -27,8 +25,6 @@
 
   &__lead {
     margin: 0;
-    font-size: var(--sc-font-size-200);
-    line-height: 1.6;
     color: var(--sc-text-secondary);
   }
 }
@@ -97,7 +93,5 @@
   margin-top: var(--sc-spacing-3);
   padding-top: var(--sc-spacing-1);
   border-top: 1px solid var(--sc-border-default);
-  font-size: var(--sc-font-size-caption);
-  line-height: var(--sc-line-height-caption);
   color: var(--sc-text-subtle);
 }

@@ -15,6 +15,8 @@ import {
   tipografiaDe,
   tipografiaSuelta,
   TIPOGRAFIA_SUELTA_MAX,
+  TIPOGRAFIA_SUELTA_DOCS_MAX,
+  esSimuladorDeNavegador,
 } from '../audit-text-styles.mjs';
 
 /*
@@ -198,4 +200,43 @@ test('el tope es el conteo REAL del repo, no un número inventado', () => {
   ).split('\n').filter(Boolean);
   const n = hojas.reduce((acc, h) => acc + tipografiaSuelta(readFileSync(h, 'utf8')), 0);
   assert.equal(n, TIPOGRAFIA_SUELTA_MAX);
+});
+
+/* ── el trinquete de sc-docs ─────────────────────────────────────────────────
+ *
+ * El showcase del DS era el que peor predicaba con el ejemplo. Su trinquete tiene una exención
+ * que hay que probar EN LOS DOS SENTIDOS: `/validar` imita el inspector de Chrome a propósito
+ * (lo dice su propio fichero desde que se escribió), así que no cuenta; cualquier otra hoja sí.
+ */
+
+test('el simulador del navegador queda fuera, y solo él', () => {
+  assert.equal(esSimuladorDeNavegador('projects/sc-docs/src/app/pages/validar/practica.component.scss'), true);
+  assert.equal(esSimuladorDeNavegador('projects/sc-docs/src/app/pages/validar/juego/nivel-ancho.component.scss'), true);
+  assert.equal(esSimuladorDeNavegador('projects/sc-docs/src/app/pages/patrones/patrones.component.scss'), false);
+  assert.equal(esSimuladorDeNavegador('projects/sc-docs/src/app/app.component.scss'), false);
+});
+
+test('ROJO: una regla nueva con `font-size` en sc-docs pasa del tope', () => {
+  assert.match(
+    excesoSuelto(TIPOGRAFIA_SUELTA_DOCS_MAX + 1, TIPOGRAFIA_SUELTA_DOCS_MAX) ?? '',
+    /el tope es/,
+  );
+});
+
+test('ROJO por abajo: si baja, el tope baja con ella', () => {
+  assert.match(
+    excesoSuelto(TIPOGRAFIA_SUELTA_DOCS_MAX - 1, TIPOGRAFIA_SUELTA_DOCS_MAX) ?? '',
+    /baja TIPOGRAFIA_SUELTA_MAX/,
+  );
+});
+
+test('el conteo real de sc-docs está exactamente en su tope', async () => {
+  const { execSync } = await import('node:child_process');
+  const { readFileSync } = await import('node:fs');
+  const hojas = execSync("find projects/sc-docs/src -name '*.scss'", { encoding: 'utf8' })
+    .split('\n')
+    .filter(Boolean);
+  let n = 0;
+  for (const h of hojas) if (!esSimuladorDeNavegador(h)) n += tipografiaSuelta(readFileSync(h, 'utf8'));
+  assert.equal(excesoSuelto(n, TIPOGRAFIA_SUELTA_DOCS_MAX), null, `sc-docs tiene ${n} y el tope es ${TIPOGRAFIA_SUELTA_DOCS_MAX}`);
 });

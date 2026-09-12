@@ -1,13 +1,13 @@
 <article class="rules">
   <div class="rules__main">
   <header class="rules__head">
-    <p class="eyebrow">{{ 'reglas.eyebrow' | translate }}</p>
+    <p class="eyebrow sc-text-caption-semibold">{{ 'reglas.eyebrow' | translate }}</p>
     <h1>{{ 'reglas.title' | translate }}</h1>
     <p class="lead" [innerHTML]="'reglas.lead' | translate"></p>
   </header>
 
   <nav class="toc" [attr.aria-label]="'reglas.tocTitle' | translate">
-    <p class="toc__title">{{ 'reglas.tocTitle' | translate }}</p>
+    <p class="toc__title sc-text-caption-semibold">{{ 'reglas.tocTitle' | translate }}</p>
     <ol class="toc__list">
       <li><a href="#paso-1">{{ 'reglas.toc.p1' | translate }}</a></li>
       <li><a href="#paso-2">{{ 'reglas.toc.p2' | translate }}</a></li>
@@ -40,7 +40,7 @@
 
     <div class="compare">
       <div class="compare__side compare__side--before">
-        <p class="compare__tag">{{ 'reglas.before' | translate }}</p>
+        <p class="compare__tag sc-text-caption-semibold">{{ 'reglas.before' | translate }}</p>
         <figure class="compare__shot">
           <img
             src="/usage/conversaciones-reglas-nueva-antes.png"
@@ -57,7 +57,7 @@
         </figure>
       </div>
       <div class="compare__side compare__side--after">
-        <p class="compare__tag">{{ 'reglas.after' | translate }}</p>
+        <p class="compare__tag sc-text-caption-semibold">{{ 'reglas.after' | translate }}</p>
         <figure class="compare__shot">
           <img
             src="/usage/conversaciones-reglas-nueva.png"
@@ -76,7 +76,7 @@
     </div>
 
     <div class="why">
-      <p class="why__label">{{ 'reglas.whyLabel' | translate }}</p>
+      <p class="why__label sc-text-caption-semibold">{{ 'reglas.whyLabel' | translate }}</p>
       <p class="why__text" [innerHTML]="'reglas.s3.why' | translate"></p>
     </div>
 
@@ -105,7 +105,7 @@
 
     <div class="compare">
       <div class="compare__side compare__side--before">
-        <p class="compare__tag">{{ 'reglas.before' | translate }}</p>
+        <p class="compare__tag sc-text-caption-semibold">{{ 'reglas.before' | translate }}</p>
         <figure class="compare__shot">
           <img
             src="/usage/conversaciones-reglas-antes.png"
@@ -122,7 +122,7 @@
         </figure>
       </div>
       <div class="compare__side compare__side--after">
-        <p class="compare__tag">{{ 'reglas.after' | translate }}</p>
+        <p class="compare__tag sc-text-caption-semibold">{{ 'reglas.after' | translate }}</p>
         <figure class="compare__shot">
           <img
             src="/usage/conversaciones-reglas.png"
@@ -141,7 +141,7 @@
     </div>
 
     <div class="why">
-      <p class="why__label">{{ 'reglas.whyLabel' | translate }}</p>
+      <p class="why__label sc-text-caption-semibold">{{ 'reglas.whyLabel' | translate }}</p>
       <p class="why__text" [innerHTML]="'reglas.s4.why' | translate"></p>
     </div>
 
@@ -166,7 +166,7 @@
 
     <div class="compare">
       <div class="compare__side compare__side--before">
-        <p class="compare__tag">{{ 'reglas.before' | translate }}</p>
+        <p class="compare__tag sc-text-caption-semibold">{{ 'reglas.before' | translate }}</p>
         <figure class="compare__shot">
           <img
             src="/usage/conversaciones-reglas-antes.png"
@@ -183,7 +183,7 @@
         </figure>
       </div>
       <div class="compare__side compare__side--after">
-        <p class="compare__tag">{{ 'reglas.after' | translate }}</p>
+        <p class="compare__tag sc-text-caption-semibold">{{ 'reglas.after' | translate }}</p>
         <figure class="compare__shot">
           <img
             src="/usage/conversaciones-reglas.png"
@@ -202,7 +202,7 @@
     </div>
 
     <div class="why">
-      <p class="why__label">{{ 'reglas.whyLabel' | translate }}</p>
+      <p class="why__label sc-text-caption-semibold">{{ 'reglas.whyLabel' | translate }}</p>
       <p class="why__text" [innerHTML]="'reglas.s5.why' | translate"></p>
     </div>
   </section>
@@ -257,7 +257,7 @@
   </section>
 
   <section class="outcome" id="conclusiones">
-    <p class="eyebrow">{{ 'reglas.outcome.eyebrow' | translate }}</p>
+    <p class="eyebrow sc-text-caption-semibold">{{ 'reglas.outcome.eyebrow' | translate }}</p>
     <h2>{{ 'reglas.outcome.title' | translate }}</h2>
     <p [innerHTML]="'reglas.outcome.intro' | translate"></p>
 
@@ -266,7 +266,7 @@
       @for (c of conclusiones; track c.key) {
         <li>
           <span class="decisions__t">{{ 'reglas.decisions.' + c.key + '.t' | translate }}</span>
-          <span class="decisions__d">{{ 'reglas.decisions.' + c.key + '.d' | translate }}</span>
+          <span class="decisions__d sc-text-caption-regular">{{ 'reglas.decisions.' + c.key + '.d' | translate }}</span>
         </li>
       }
     </ol>
@@ -302,7 +302,7 @@
       [attr.aria-label]="'reglas.feedback.aria' | translate"
     >
       <header class="rules__fb-head">
-        <p class="eyebrow rules__fb-eyebrow">{{ 'reglas.feedback.title' | translate }}</p>
+        <p class="eyebrow rules__fb-eyebrow sc-text-caption-semibold">{{ 'reglas.feedback.title' | translate }}</p>
         <button
           #feedbackClose
           type="button"
@@ -313,11 +313,11 @@
           <span aria-hidden="true">&times;</span>
         </button>
       </header>
-      <p class="rules__fb-hint">{{ 'reglas.feedback.hint' | translate }}</p>
+      <p class="rules__fb-hint sc-text-caption-regular">{{ 'reglas.feedback.hint' | translate }}</p>
       <div class="rules__fb-scroll">
         @for (entry of feedback; track entry.key) {
           <section class="fb">
-            <h3 class="fb__date">{{ 'reglas.feedback.entries.' + entry.key + '.date' | translate }}</h3>
+            <h3 class="fb__date sc-text-body-semibold">{{ 'reglas.feedback.entries.' + entry.key + '.date' | translate }}</h3>
             <ul class="fb__list">
               @for (n of entry.notes; track n.key) {
                 <li class="fb__item">
@@ -365,7 +365,7 @@
       (click)="$event.stopPropagation()"
     >
       <img class="lightbox__img" [src]="z.src" [alt]="z.alt" />
-      <figcaption class="lightbox__hint" [innerHTML]="'reglas.lightbox.hint' | translate"></figcaption>
+      <figcaption class="lightbox__hint sc-text-caption-regular" [innerHTML]="'reglas.lightbox.hint' | translate"></figcaption>
     </figure>
   </div>
 }

@@ -22,7 +22,7 @@ import { ArgType, ScArgs } from './story.types';
   template: `
     <div class="sb-controls">
       @if (!argTypes().length) {
-        <p class="sb-controls__empty">Este componente no expone knobs configurables.</p>
+        <p class="sb-controls__empty sc-text-caption-regular">Este componente no expone knobs configurables.</p>
       } @else {
         @for (at of argTypes(); track at.name) {
           <div class="sb-controls__label">

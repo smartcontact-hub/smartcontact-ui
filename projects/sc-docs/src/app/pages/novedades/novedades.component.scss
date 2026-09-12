@@ -11,8 +11,6 @@
 
   &__eyebrow {
     margin: 0;
-    font-size: var(--sc-font-size-100);
-    font-weight: var(--sc-font-weight-semibold);
     letter-spacing: 0.04em;
     text-transform: uppercase;
     color: var(--sc-text-subtle);
@@ -27,7 +25,6 @@
 
   &__lead {
     margin: 0;
-    font-size: var(--sc-font-size-200);
     color: var(--sc-text-secondary);
   }
 }
@@ -55,13 +52,11 @@
   }
 
   &__fecha {
-    font-size: var(--sc-font-size-100);
     color: var(--sc-text-subtle);
   }
 
   &__que {
     margin: var(--sc-spacing-0-5) 0 var(--sc-spacing-1);
-    font-size: var(--sc-font-size-100);
     color: var(--sc-text-secondary);
   }
 }
@@ -101,8 +96,6 @@
 
 .historial {
   margin: var(--sc-spacing-3) 0 var(--sc-spacing-1);
-  font-size: var(--sc-font-size-100);
-  font-weight: var(--sc-font-weight-semibold);
   letter-spacing: 0.04em;
   text-transform: uppercase;
   color: var(--sc-text-subtle);
@@ -128,8 +121,6 @@
   }
 
   &__fecha {
-    font-size: var(--sc-font-size-100);
-    font-weight: var(--sc-font-weight-regular);
     color: var(--sc-text-subtle);
   }
 
@@ -140,8 +131,6 @@
 
   &__seccion {
     margin: var(--sc-spacing-1-5) 0 var(--sc-spacing-0-5);
-    font-size: var(--sc-font-size-200);
-    font-weight: var(--sc-font-weight-semibold);
     color: var(--sc-text-primary);
   }
 
