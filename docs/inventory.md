@@ -25,7 +25,7 @@
 ## Clasificación (auto-generada)
 
 <!-- @audit:components — TABLA GENERADA por `node scripts/component-audit.mjs --write`. NO editar a mano. -->
-**50 componentes** · 15 custom · 12 standard · 23 extended · 34 usados en Supervisor.
+**51 componentes** · 16 custom · 12 standard · 23 extended · 35 usados en Supervisor.
 
 | Componente | Tipo | PrimeNG base | API propia | Anidados | Demo | Usos en Supervisor |
 |---|---|---|---|---|---|---|
@@ -37,13 +37,13 @@
 | `sc-bulk-transcription-modal` | CUSTOM | — | 16 inputs | sc-button sc-toggleswitch | ✓ | — |
 | `sc-button` | EXTENDED | primeng/button | 15 inputs | — | ✓ | 122 |
 | `sc-card` | STANDARD | primeng/card | 3 inputs | — | ✓ | — |
-| `sc-checkbox` | CUSTOM | — | 6 inputs | — | ✓ | 41 |
+| `sc-checkbox` | CUSTOM | — | 6 inputs | — | ✓ | 31 |
 | `sc-chip` | EXTENDED | primeng/chip | 9 inputs | — | ✓ | 5 |
 | `sc-color-dot-picker` | CUSTOM | — | 1 inputs | — | ✓ | 3 |
 | `sc-column-selector` | STANDARD | primeng/popover | 1 inputs | — | ✓ | 3 |
 | `sc-command-palette` | CUSTOM | — | 0 inputs | — | ✓ | 4 |
 | `sc-confirmdialog` | STANDARD | primeng/confirmdialog | 0 inputs | — | ✓ | 1 |
-| `sc-datatable` | EXTENDED | primeng/table | 26 inputs | — | ✓ | 21 |
+| `sc-datatable` | EXTENDED | primeng/table | 26 inputs | — | ✓ | 26 |
 | `sc-datepicker` | EXTENDED | primeng/datepicker | 20 inputs | sc-field-label sc-field-msg | ✓ | 2 |
 | `sc-delete-entity-dialog` | STANDARD | primeng/button | 2 inputs | sc-dialog | ✓ | 9 |
 | `sc-dialog` | EXTENDED | primeng/dialog | 14 inputs | — | ✓ | 10 |
@@ -64,6 +64,7 @@
 | `sc-message` | EXTENDED | primeng/message | 6 inputs | — | ✓ | 1 |
 | `sc-multiselect` | EXTENDED | primeng/multiselect | 26 inputs | sc-field-label sc-field-msg | ✓ | 10 |
 | `sc-panel` | EXTENDED | primeng/panel | 4 inputs | — | ✓ | — |
+| `sc-permission-matrix` | CUSTOM | — | 5 inputs | sc-checkbox | — | 2 |
 | `sc-photo-upload` | CUSTOM | — | 6 inputs | — | ✓ | 2 |
 | `sc-progressbar` | EXTENDED | primeng/progressbar | 4 inputs | — | ✓ | — |
 | `sc-progressspinner` | EXTENDED | primeng/progressspinner | 4 inputs | — | ✓ | — |

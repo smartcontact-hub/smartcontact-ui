@@ -1,5 +1,7 @@
 import { NgClass, NgTemplateOutlet } from '@angular/common';
 import {
+  TemplateRef,
+  contentChild,
   booleanAttribute,
   ChangeDetectionStrategy,
   Component,
@@ -163,6 +165,69 @@ export class ScDatatableComponent<T = unknown> {
   readonly filters = input<ScDatatableFilters | undefined>(undefined);
   /** Campos sobre los que aplica el filtro `global`. */
   readonly globalFilterFields = input<readonly string[] | undefined>(undefined);
+
+
+  /* ════════════════════════════════════════════════════════════════════════
+   * LAS 38 RANURAS DE PLANTILLA DE p-table, REENVIADAS
+   * ════════════════════════════════════════════════════════════════════════
+   *
+   * PARA QUÉ. Para que un ejemplo de primeng.dev se pueda PEGAR dentro de un
+   * `<sc-datatable>` y funcione, ya tokenizado, sin salirse del DS.
+   *
+   * POR QUÉ HAY QUE REENVIARLAS UNA A UNA, y no basta con dejar hueco: medido
+   * el 2026-09-11 con una sonda (control positivo incluido) — una plantilla
+   * `#header` que el consumidor declara NO atraviesa un `<ng-content/>` hasta
+   * p-table. Sus queries son `contentChild('header')` y solo ven SU propio
+   * contenido; lo que proyectamos no cuenta. Lo que SÍ funciona es esto:
+   * capturamos la plantilla del consumidor aquí y la volvemos a emitir dentro
+   * de una ranura declarada en NUESTRA vista, con su contexto.
+   *
+   * POR QUÉ CADA UNA VA DENTRO DE UN `@if` en la plantilla: declarar la ranura
+   * siempre haría que p-table pintara el elemento aunque nadie la use (un
+   * `<tfoot>` vacío, por ejemplo). Con el `@if` solo existe si el consumidor la
+   * trae — también medido, con su control.
+   *
+   * LAS CUATRO QUE YA IMPLEMENTA EL COMPONENTE (`caption`, `header`, `body`,
+   * `emptymessage`) no se declaran dos veces: dentro de su ranura, la del
+   * consumidor GANA y si no la hay se pinta el modelo de column-defs. */
+  protected readonly userBody = contentChild<TemplateRef<unknown>>('body');
+  protected readonly userLoadingbody = contentChild<TemplateRef<unknown>>('loadingbody');
+  protected readonly userExpandedrow = contentChild<TemplateRef<unknown>>('expandedrow');
+  protected readonly userGroupheader = contentChild<TemplateRef<unknown>>('groupheader');
+  protected readonly userGroupfooter = contentChild<TemplateRef<unknown>>('groupfooter');
+  protected readonly userFrozenbody = contentChild<TemplateRef<unknown>>('frozenbody');
+  protected readonly userFrozenexpandedrow = contentChild<TemplateRef<unknown>>('frozenexpandedrow');
+  protected readonly userHeader = contentChild<TemplateRef<unknown>>('header');
+  protected readonly userHeadergrouped = contentChild<TemplateRef<unknown>>('headergrouped');
+  protected readonly userFooter = contentChild<TemplateRef<unknown>>('footer');
+  protected readonly userFootergrouped = contentChild<TemplateRef<unknown>>('footergrouped');
+  protected readonly userColgroup = contentChild<TemplateRef<unknown>>('colgroup');
+  protected readonly userFrozenheader = contentChild<TemplateRef<unknown>>('frozenheader');
+  protected readonly userFrozenfooter = contentChild<TemplateRef<unknown>>('frozenfooter');
+  protected readonly userFrozencolgroup = contentChild<TemplateRef<unknown>>('frozencolgroup');
+  protected readonly userEmptymessage = contentChild<TemplateRef<unknown>>('emptymessage');
+  protected readonly userSorticon = contentChild<TemplateRef<unknown>>('sorticon');
+  protected readonly userCheckboxicon = contentChild<TemplateRef<unknown>>('checkboxicon');
+  protected readonly userHeadercheckboxicon = contentChild<TemplateRef<unknown>>('headercheckboxicon');
+  protected readonly userFiltericon = contentChild<TemplateRef<unknown>>('filtericon');
+  protected readonly userLoadingicon = contentChild<TemplateRef<unknown>>('loadingicon');
+  protected readonly userFilter = contentChild<TemplateRef<unknown>>('filter');
+  protected readonly userInput = contentChild<TemplateRef<unknown>>('input');
+  protected readonly userOutput = contentChild<TemplateRef<unknown>>('output');
+  protected readonly userPaginatordropdownitem = contentChild<TemplateRef<unknown>>('paginatordropdownitem');
+  protected readonly userPaginatorfirstpagelinkicon = contentChild<TemplateRef<unknown>>('paginatorfirstpagelinkicon');
+  protected readonly userPaginatorlastpagelinkicon = contentChild<TemplateRef<unknown>>('paginatorlastpagelinkicon');
+  protected readonly userPaginatornextpagelinkicon = contentChild<TemplateRef<unknown>>('paginatornextpagelinkicon');
+  protected readonly userPaginatorpreviouspagelinkicon = contentChild<TemplateRef<unknown>>('paginatorpreviouspagelinkicon');
+  protected readonly userPaginatordropdownicon = contentChild<TemplateRef<unknown>>('paginatordropdownicon');
+  protected readonly userReorderindicatordownicon = contentChild<TemplateRef<unknown>>('reorderindicatordownicon');
+  protected readonly userReorderindicatorupicon = contentChild<TemplateRef<unknown>>('reorderindicatorupicon');
+  protected readonly userAddruleicon = contentChild<TemplateRef<unknown>>('addruleicon');
+  protected readonly userRemoveruleicon = contentChild<TemplateRef<unknown>>('removeruleicon');
+  protected readonly userCaption = contentChild<TemplateRef<unknown>>('caption');
+  protected readonly userSummary = contentChild<TemplateRef<unknown>>('summary');
+  protected readonly userPaginatorleft = contentChild<TemplateRef<unknown>>('paginatorleft');
+  protected readonly userPaginatorright = contentChild<TemplateRef<unknown>>('paginatorright');
 
   readonly sortChange = output<ScDatatableSortEvent>();
   readonly page = output<TablePageEvent>();

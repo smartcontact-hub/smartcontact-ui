@@ -39,52 +39,14 @@
       surface="card"
       titleKey="config.aed.subpages.agentes.heading"
     >
-      <table class="comm-table">
-        <thead>
-          <tr>
-            <th scope="col" class="comm-table__th-label sc-text-body-semibold">
-              {{ 'config.aed.subpages.agentes.comunicaciones.title' | translate }}
-            </th>
-            <th scope="col" class="comm-table__th-col sc-text-body-semibold">
-              {{ 'config.aed.subpages.agentes.comunicaciones.col_transferencias' | translate }}
-            </th>
-            <th scope="col" class="comm-table__th-col sc-text-body-semibold">
-              {{ 'config.aed.subpages.agentes.comunicaciones.col_permisos' | translate }}
-            </th>
-          </tr>
-        </thead>
-        <tbody>
-          @for (row of comunicacionKeys; track row) {
-            <tr>
-              <th scope="row" class="comm-table__th-row sc-text-body-regular">
-                {{ 'config.aed.subpages.agentes.comunicaciones.row_' + row | translate }}
-              </th>
-              <td class="comm-table__cell">
-                <sc-checkbox
-                  [state]="form().permisos[row].transferencias ? 'all' : 'none'"
-                  [ariaLabel]="
-                    ('config.aed.subpages.agentes.comunicaciones.row_' + row | translate) +
-                    ' — ' +
-                    ('config.aed.subpages.agentes.comunicaciones.col_transferencias' | translate)
-                  "
-                  (cycle)="setPermiso(row, 'transferencias', $event)"
-                />
-              </td>
-              <td class="comm-table__cell">
-                <sc-checkbox
-                  [state]="form().permisos[row].permisos ? 'all' : 'none'"
-                  [ariaLabel]="
-                    ('config.aed.subpages.agentes.comunicaciones.row_' + row | translate) +
-                    ' — ' +
-                    ('config.aed.subpages.agentes.comunicaciones.col_permisos' | translate)
-                  "
-                  (cycle)="setPermiso(row, 'permisos', $event)"
-                />
-              </td>
-            </tr>
-          }
-        </tbody>
-      </table>
+      <sc-permission-matrix
+        [rows]="matrixRows()"
+        [columns]="matrixColumns()"
+        [checked]="matrixChecked()"
+        [rowHeader]="'config.aed.subpages.agentes.comunicaciones.title' | translate"
+        [ariaLabel]="'config.aed.subpages.agentes.comunicaciones.title' | translate"
+        (cellToggle)="onMatrixToggle($event)"
+      />
 
       <sc-divider />
 

@@ -26,42 +26,76 @@
   (onFilter)="filterChange.emit($event)"
 >
   <ng-template #caption>
+    @if (userCaption()) {
+    <ng-container *ngTemplateOutlet="userCaption()!" />
+    } @else {
     <ng-content select="[scTableCaption]" />
+    }
   </ng-template>
 
-  <ng-template #header>
+  <ng-template #header let-cols let-frozen="frozen">
+    @if (userHeader()) {
+    <ng-container
+      *ngTemplateOutlet="userHeader()!; context: { $implicit: cols, frozen }"
+    />
+    } @else {
     <tr>
       @if (selectionMode() === 'multiple') {
-        <th class="sc-datatable__check" scope="col">
-          <p-table-header-checkbox [ariaLabel]="selectAllAriaLabel()" />
-        </th>
-      }
-      @for (col of visibleCols(); track col.field) {
-        @if (col.sortable) {
-          <th
-            scope="col"
-            [pSortableColumn]="col.field"
-            [style.width]="col.width ?? null"
-            [style.text-align]="col.align ?? null"
-            [attr.aria-label]="col.headerAriaLabel ?? null"
-          >
-            {{ col.header }}<p-sort-icon [field]="col.field" />
-          </th>
-        } @else {
-          <th
-            scope="col"
-            [style.width]="col.width ?? null"
-            [style.text-align]="col.align ?? null"
-            [attr.aria-label]="col.headerAriaLabel ?? null"
-          >
-            {{ col.header }}
-          </th>
-        }
-      }
+      <th class="sc-datatable__check" scope="col">
+        <p-table-header-checkbox [ariaLabel]="selectAllAriaLabel()" />
+      </th>
+      } @for (col of visibleCols(); track col.field) { @if (col.sortable) {
+      <th
+        scope="col"
+        [pSortableColumn]="col.field"
+        [style.width]="col.width ?? null"
+        [style.text-align]="col.align ?? null"
+        [attr.aria-label]="col.headerAriaLabel ?? null"
+      >
+        {{ col.header }}<p-sort-icon [field]="col.field" />
+      </th>
+      } @else {
+      <th
+        scope="col"
+        [style.width]="col.width ?? null"
+        [style.text-align]="col.align ?? null"
+        [attr.aria-label]="col.headerAriaLabel ?? null"
+      >
+        {{ col.header }}
+      </th>
+      } }
     </tr>
+    }
   </ng-template>
 
-  <ng-template #body let-row let-rowIndex="rowIndex">
+  <ng-template
+    #body
+    let-row
+    let-rowIndex="rowIndex"
+    let-columns="columns"
+    let-editing="editing"
+    let-frozen="frozen"
+    let-expanded="expanded"
+    let-rowgroup="rowgroup"
+    let-rowspan="rowspan"
+  >
+    @if (userBody()) {
+    <ng-container
+      *ngTemplateOutlet="
+        userBody()!;
+        context: {
+          $implicit: row,
+          rowIndex,
+          columns,
+          editing,
+          frozen,
+          expanded,
+          rowgroup,
+          rowspan
+        }
+      "
+    />
+    } @else {
     <tr
       [pSelectableRow]="row"
       [pSelectableRowDisabled]="rowSelectDisabled()"
@@ -72,49 +106,455 @@
       (keydown)="onRowKeydown($event, row, rowIndex)"
     >
       @if (selectionMode() === 'multiple') {
-        <!-- `stopPropagation` en el click separa los dos gestos: marcar la
+      <!-- `stopPropagation` en el click separa los dos gestos: marcar la
              casilla NO dispara `rowClick` (sin esto, seleccionar cinco filas
              abriría cinco veces el detalle). El `mousedown` captura el
              `shiftKey` ANTES de que la casilla togglee — es de donde sale el
              rango (ver `onCheckMousedown`); el `click` ya no lo lleva porque
              p-table togglea en el `change`, que no conserva el modificador. -->
-        <td
-          class="sc-datatable__check"
-          (mousedown)="onCheckMousedown($event, rowIndex)"
-          (click)="$event.stopPropagation()"
-        >
-          <p-table-checkbox
-            class="sc-datatable__check-box"
-            [value]="row"
-            [ariaLabel]="rowSelectionAriaLabel()?.(row, rowIndex)"
-          />
-        </td>
-      }
-      @for (col of visibleCols(); track col.field) {
-        <td
-          [style.text-align]="col.align ?? null"
-          (click)="col.stopRowClick ? $event.stopPropagation() : null"
-        >
-          @if (col.cellTemplate) {
-            <ng-container
-              *ngTemplateOutlet="
-                col.cellTemplate;
-                context: { $implicit: row, rowIndex: rowIndex, col: col }
-              "
-            />
-          } @else {
-            {{ cellValue(row, col.field) }}
-          }
-        </td>
+      <td
+        class="sc-datatable__check"
+        (mousedown)="onCheckMousedown($event, rowIndex)"
+        (click)="$event.stopPropagation()"
+      >
+        <p-table-checkbox
+          class="sc-datatable__check-box"
+          [value]="row"
+          [ariaLabel]="rowSelectionAriaLabel()?.(row, rowIndex)"
+        />
+      </td>
+      } @for (col of visibleCols(); track col.field) {
+      <td
+        [style.text-align]="col.align ?? null"
+        (click)="col.stopRowClick ? $event.stopPropagation() : null"
+      >
+        @if (col.cellTemplate) {
+        <ng-container
+          *ngTemplateOutlet="
+            col.cellTemplate;
+            context: { $implicit: row, rowIndex: rowIndex, col: col }
+          "
+        />
+        } @else {
+        {{ cellValue(row, col.field) }}
+        }
+      </td>
       }
     </tr>
+    }
   </ng-template>
 
-  <ng-template #emptymessage>
+  <ng-template #emptymessage let-cols let-frozen="frozen">
+    @if (userEmptymessage()) {
+    <ng-container
+      *ngTemplateOutlet="
+        userEmptymessage()!;
+        context: { $implicit: cols, frozen }
+      "
+    />
+    } @else {
     <tr>
       <td [attr.colspan]="colspan()">
         <ng-content select="[scTableEmpty]" />
       </td>
     </tr>
+    }
   </ng-template>
+
+  <!-- ══ Las 34 ranuras de p-table que este componente no implementa por su
+       cuenta. Solo existen si el consumidor trae su plantilla (ver el bloque
+       de `contentChild` en el .ts: el `@if` evita que p-table pinte elementos
+       vacíos). Las otras 4 —caption, header, body, emptymessage— se resuelven
+       arriba, dentro de la ranura que el componente ya declaraba. ══ -->
+  @if (userLoadingbody()) {
+  <ng-template
+    #loadingbody
+    let-row
+    let-rowIndex="rowIndex"
+    let-columns="columns"
+    let-editing="editing"
+    let-frozen="frozen"
+    let-expanded="expanded"
+    let-rowgroup="rowgroup"
+    let-rowspan="rowspan"
+  >
+    <ng-container
+      *ngTemplateOutlet="
+        userLoadingbody()!;
+        context: {
+          $implicit: row,
+          rowIndex,
+          columns,
+          editing,
+          frozen,
+          expanded,
+          rowgroup,
+          rowspan
+        }
+      "
+    />
+  </ng-template>
+  } @if (userExpandedrow()) {
+  <ng-template
+    #expandedrow
+    let-row
+    let-rowIndex="rowIndex"
+    let-columns="columns"
+    let-editing="editing"
+    let-frozen="frozen"
+    let-expanded="expanded"
+    let-rowgroup="rowgroup"
+    let-rowspan="rowspan"
+  >
+    <ng-container
+      *ngTemplateOutlet="
+        userExpandedrow()!;
+        context: {
+          $implicit: row,
+          rowIndex,
+          columns,
+          editing,
+          frozen,
+          expanded,
+          rowgroup,
+          rowspan
+        }
+      "
+    />
+  </ng-template>
+  } @if (userGroupheader()) {
+  <ng-template
+    #groupheader
+    let-row
+    let-rowIndex="rowIndex"
+    let-columns="columns"
+    let-editing="editing"
+    let-frozen="frozen"
+    let-expanded="expanded"
+    let-rowgroup="rowgroup"
+    let-rowspan="rowspan"
+  >
+    <ng-container
+      *ngTemplateOutlet="
+        userGroupheader()!;
+        context: {
+          $implicit: row,
+          rowIndex,
+          columns,
+          editing,
+          frozen,
+          expanded,
+          rowgroup,
+          rowspan
+        }
+      "
+    />
+  </ng-template>
+  } @if (userGroupfooter()) {
+  <ng-template
+    #groupfooter
+    let-row
+    let-rowIndex="rowIndex"
+    let-columns="columns"
+    let-editing="editing"
+    let-frozen="frozen"
+    let-expanded="expanded"
+    let-rowgroup="rowgroup"
+    let-rowspan="rowspan"
+  >
+    <ng-container
+      *ngTemplateOutlet="
+        userGroupfooter()!;
+        context: {
+          $implicit: row,
+          rowIndex,
+          columns,
+          editing,
+          frozen,
+          expanded,
+          rowgroup,
+          rowspan
+        }
+      "
+    />
+  </ng-template>
+  } @if (userFrozenbody()) {
+  <ng-template
+    #frozenbody
+    let-row
+    let-rowIndex="rowIndex"
+    let-columns="columns"
+    let-editing="editing"
+    let-frozen="frozen"
+    let-expanded="expanded"
+    let-rowgroup="rowgroup"
+    let-rowspan="rowspan"
+  >
+    <ng-container
+      *ngTemplateOutlet="
+        userFrozenbody()!;
+        context: {
+          $implicit: row,
+          rowIndex,
+          columns,
+          editing,
+          frozen,
+          expanded,
+          rowgroup,
+          rowspan
+        }
+      "
+    />
+  </ng-template>
+  } @if (userFrozenexpandedrow()) {
+  <ng-template
+    #frozenexpandedrow
+    let-row
+    let-rowIndex="rowIndex"
+    let-columns="columns"
+    let-editing="editing"
+    let-frozen="frozen"
+    let-expanded="expanded"
+    let-rowgroup="rowgroup"
+    let-rowspan="rowspan"
+  >
+    <ng-container
+      *ngTemplateOutlet="
+        userFrozenexpandedrow()!;
+        context: {
+          $implicit: row,
+          rowIndex,
+          columns,
+          editing,
+          frozen,
+          expanded,
+          rowgroup,
+          rowspan
+        }
+      "
+    />
+  </ng-template>
+  } @if (userHeadergrouped()) {
+  <ng-template #headergrouped let-cols let-frozen="frozen">
+    <ng-container
+      *ngTemplateOutlet="
+        userHeadergrouped()!;
+        context: { $implicit: cols, frozen }
+      "
+    />
+  </ng-template>
+  } @if (userFooter()) {
+  <ng-template #footer let-cols let-frozen="frozen">
+    <ng-container
+      *ngTemplateOutlet="userFooter()!; context: { $implicit: cols, frozen }"
+    />
+  </ng-template>
+  } @if (userFootergrouped()) {
+  <ng-template #footergrouped let-cols let-frozen="frozen">
+    <ng-container
+      *ngTemplateOutlet="
+        userFootergrouped()!;
+        context: { $implicit: cols, frozen }
+      "
+    />
+  </ng-template>
+  } @if (userColgroup()) {
+  <ng-template #colgroup let-cols let-frozen="frozen">
+    <ng-container
+      *ngTemplateOutlet="userColgroup()!; context: { $implicit: cols, frozen }"
+    />
+  </ng-template>
+  } @if (userFrozenheader()) {
+  <ng-template #frozenheader let-cols let-frozen="frozen">
+    <ng-container
+      *ngTemplateOutlet="
+        userFrozenheader()!;
+        context: { $implicit: cols, frozen }
+      "
+    />
+  </ng-template>
+  } @if (userFrozenfooter()) {
+  <ng-template #frozenfooter let-cols let-frozen="frozen">
+    <ng-container
+      *ngTemplateOutlet="
+        userFrozenfooter()!;
+        context: { $implicit: cols, frozen }
+      "
+    />
+  </ng-template>
+  } @if (userFrozencolgroup()) {
+  <ng-template #frozencolgroup let-cols let-frozen="frozen">
+    <ng-container
+      *ngTemplateOutlet="
+        userFrozencolgroup()!;
+        context: { $implicit: cols, frozen }
+      "
+    />
+  </ng-template>
+  } @if (userSorticon()) {
+  <ng-template #sorticon let-valor let-options="options">
+    <ng-container
+      *ngTemplateOutlet="
+        userSorticon()!;
+        context: { $implicit: valor, options }
+      "
+    />
+  </ng-template>
+  } @if (userCheckboxicon()) {
+  <ng-template #checkboxicon let-valor let-options="options">
+    <ng-container
+      *ngTemplateOutlet="
+        userCheckboxicon()!;
+        context: { $implicit: valor, options }
+      "
+    />
+  </ng-template>
+  } @if (userHeadercheckboxicon()) {
+  <ng-template #headercheckboxicon let-valor let-options="options">
+    <ng-container
+      *ngTemplateOutlet="
+        userHeadercheckboxicon()!;
+        context: { $implicit: valor, options }
+      "
+    />
+  </ng-template>
+  } @if (userFiltericon()) {
+  <ng-template #filtericon let-valor let-options="options">
+    <ng-container
+      *ngTemplateOutlet="
+        userFiltericon()!;
+        context: { $implicit: valor, options }
+      "
+    />
+  </ng-template>
+  } @if (userLoadingicon()) {
+  <ng-template #loadingicon let-valor let-options="options">
+    <ng-container
+      *ngTemplateOutlet="
+        userLoadingicon()!;
+        context: { $implicit: valor, options }
+      "
+    />
+  </ng-template>
+  } @if (userFilter()) {
+  <ng-template #filter let-valor let-options="options">
+    <ng-container
+      *ngTemplateOutlet="userFilter()!; context: { $implicit: valor, options }"
+    />
+  </ng-template>
+  } @if (userInput()) {
+  <ng-template #input let-valor let-options="options">
+    <ng-container
+      *ngTemplateOutlet="userInput()!; context: { $implicit: valor, options }"
+    />
+  </ng-template>
+  } @if (userOutput()) {
+  <ng-template #output let-valor let-options="options">
+    <ng-container
+      *ngTemplateOutlet="userOutput()!; context: { $implicit: valor, options }"
+    />
+  </ng-template>
+  } @if (userPaginatordropdownitem()) {
+  <ng-template #paginatordropdownitem let-valor let-options="options">
+    <ng-container
+      *ngTemplateOutlet="
+        userPaginatordropdownitem()!;
+        context: { $implicit: valor, options }
+      "
+    />
+  </ng-template>
+  } @if (userPaginatorfirstpagelinkicon()) {
+  <ng-template #paginatorfirstpagelinkicon let-valor let-options="options">
+    <ng-container
+      *ngTemplateOutlet="
+        userPaginatorfirstpagelinkicon()!;
+        context: { $implicit: valor, options }
+      "
+    />
+  </ng-template>
+  } @if (userPaginatorlastpagelinkicon()) {
+  <ng-template #paginatorlastpagelinkicon let-valor let-options="options">
+    <ng-container
+      *ngTemplateOutlet="
+        userPaginatorlastpagelinkicon()!;
+        context: { $implicit: valor, options }
+      "
+    />
+  </ng-template>
+  } @if (userPaginatornextpagelinkicon()) {
+  <ng-template #paginatornextpagelinkicon let-valor let-options="options">
+    <ng-container
+      *ngTemplateOutlet="
+        userPaginatornextpagelinkicon()!;
+        context: { $implicit: valor, options }
+      "
+    />
+  </ng-template>
+  } @if (userPaginatorpreviouspagelinkicon()) {
+  <ng-template #paginatorpreviouspagelinkicon let-valor let-options="options">
+    <ng-container
+      *ngTemplateOutlet="
+        userPaginatorpreviouspagelinkicon()!;
+        context: { $implicit: valor, options }
+      "
+    />
+  </ng-template>
+  } @if (userPaginatordropdownicon()) {
+  <ng-template #paginatordropdownicon let-valor let-options="options">
+    <ng-container
+      *ngTemplateOutlet="
+        userPaginatordropdownicon()!;
+        context: { $implicit: valor, options }
+      "
+    />
+  </ng-template>
+  } @if (userReorderindicatordownicon()) {
+  <ng-template #reorderindicatordownicon let-valor let-options="options">
+    <ng-container
+      *ngTemplateOutlet="
+        userReorderindicatordownicon()!;
+        context: { $implicit: valor, options }
+      "
+    />
+  </ng-template>
+  } @if (userReorderindicatorupicon()) {
+  <ng-template #reorderindicatorupicon let-valor let-options="options">
+    <ng-container
+      *ngTemplateOutlet="
+        userReorderindicatorupicon()!;
+        context: { $implicit: valor, options }
+      "
+    />
+  </ng-template>
+  } @if (userAddruleicon()) {
+  <ng-template #addruleicon let-valor let-options="options">
+    <ng-container
+      *ngTemplateOutlet="
+        userAddruleicon()!;
+        context: { $implicit: valor, options }
+      "
+    />
+  </ng-template>
+  } @if (userRemoveruleicon()) {
+  <ng-template #removeruleicon let-valor let-options="options">
+    <ng-container
+      *ngTemplateOutlet="
+        userRemoveruleicon()!;
+        context: { $implicit: valor, options }
+      "
+    />
+  </ng-template>
+  } @if (userSummary()) {
+  <ng-template #summary>
+    <ng-container *ngTemplateOutlet="userSummary()!" />
+  </ng-template>
+  } @if (userPaginatorleft()) {
+  <ng-template #paginatorleft>
+    <ng-container *ngTemplateOutlet="userPaginatorleft()!" />
+  </ng-template>
+  } @if (userPaginatorright()) {
+  <ng-template #paginatorright>
+    <ng-container *ngTemplateOutlet="userPaginatorright()!" />
+  </ng-template>
+  }
 </p-table>

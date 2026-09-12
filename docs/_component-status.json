@@ -1,6 +1,6 @@
 {
   "generated": "component-audit.mjs",
-  "summary": "50 componentes · 15 custom · 12 standard · 23 extended · 34 usados en Supervisor.",
+  "summary": "51 componentes · 16 custom · 12 standard · 23 extended · 35 usados en Supervisor.",
   "components": [
     {
       "name": "avatar",
@@ -197,7 +197,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 41
+      "usedInSupervisor": 31
     },
     {
       "name": "chip",
@@ -328,7 +328,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 21
+      "usedInSupervisor": 26
     },
     {
       "name": "datepicker",
@@ -802,6 +802,29 @@
       "nested": [],
       "hasDemo": true,
       "usedInSupervisor": 0
+    },
+    {
+      "name": "permission-matrix",
+      "selector": "sc-permission-matrix",
+      "provenance": "CUSTOM",
+      "kind": "CUSTOM",
+      "primengBase": "—",
+      "cva": false,
+      "inputs": 5,
+      "api": [
+        "ariaLabel",
+        "cellToggle",
+        "columnToggle",
+        "columns",
+        "rowHeader",
+        "rows",
+        "selectableColumns"
+      ],
+      "nested": [
+        "sc-checkbox"
+      ],
+      "hasDemo": false,
+      "usedInSupervisor": 2
     },
     {
       "name": "photo-upload",

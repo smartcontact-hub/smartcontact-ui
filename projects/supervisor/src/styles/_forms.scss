@@ -299,9 +299,10 @@
  * is optional — used by agent-form to subtitle the "LLAMADAS" group.
  * ------------------------------------------------------------------ */
 .perm-matrix {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: var(--sc-spacing-0-875);
+  /* Solo queda la BANDA de título (icono + rótulo) que va ENCIMA de la matriz.
+   * La tabla en sí la pinta `sc-permission-matrix` desde el DS desde el
+   * 2026-09-12; sus 12 reglas de thead/tbody/celda se fueron con ella, y con
+   * ellas el ancho de columna de 140px, que no estaba en la escala. */
 
   &__head {
     display: flex;
@@ -318,61 +319,6 @@
     text-transform: uppercase;
     letter-spacing: 0.06em;
     color: var(--sc-text-subtle);
-  }
-
-  thead th {
-    font-size: var(--sc-font-size-50);
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: var(--sc-text-subtle);
-    font-weight: var(--sc-font-weight-semibold);
-    text-align: left;
-    padding: var(--sc-spacing-0-75) var(--sc-spacing-0-875);
-    border-bottom: 1px solid var(--sc-border-default);
-  }
-
-  &__th-label {
-    width: auto;
-  }
-
-  thead th.perm-matrix__th-col {
-    text-align: center;
-    width: 140px;
-  }
-
-  /*
-   * The column header is an `<sc-checkbox>` that wraps a projected `<span>`
-   * (the column label). Queremos "LABEL [box]" (Voice, Figura 15, DD#55): el
-   * orden lo pone el input `labelPosition="start"` del propio sc-checkbox, NO
-   * un `flex-direction: row-reverse` alcanzando su interior. Aquí solo damos al
-   * `<span>` PROPIO la tipografía small-caps de la cabecera (misma que
-   * `thead th` de arriba), en vez de la tipografía body del checkbox.
-   */
-  &__col-label {
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: var(--sc-text-subtle);
-  }
-
-  tbody th,
-  tbody td {
-    padding: var(--sc-spacing-0-875);
-    border-bottom: 1px solid var(--sc-border-subtle, var(--sc-border-default));
-    vertical-align: middle;
-  }
-
-  &__th-row {
-    text-align: left;
-    color: var(--sc-text-primary);
-  }
-
-  &__cell {
-    text-align: center;
-  }
-
-  tr:last-child th,
-  tr:last-child td {
-    border-bottom: 0;
   }
 }
 

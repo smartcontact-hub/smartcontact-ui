@@ -22,7 +22,7 @@
                 <span class="gatbl__picker-meta">
                   @for (ch of cand.channels; track ch) {
                     <span class="gatbl__picker-channel">
-                      {{ channelKeys[ch] | translate }}
+                      {{ channelKey(ch) | translate }}
                     </span>
                   }
                 </span>
@@ -43,64 +43,65 @@
       <p class="gatbl__empty-body sc-text-caption-regular">{{ 'agents.form.assigned.empty' | translate }}</p>
     </div>
   } @else {
-    <table class="gatbl__table sc-text-body-regular">
-      <thead>
-        <tr>
-          <th class="gatbl__th-name" scope="col">
-            {{ 'agents.form.assigned.col_group' | translate }}
-          </th>
-          <th class="gatbl__th-active" scope="col">
-            {{ 'agents.form.assigned.col_active' | translate }}
-          </th>
-          <th class="gatbl__th-actions" aria-hidden="true"></th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (row of assignedRows(); track row.group.id) {
-          <tr class="gatbl__row" [class.gatbl__row--paused]="!row.link.active">
-            <td class="gatbl__td-name">
-              <sc-illustrated-avatar [name]="row.group.name" pool="abstract" [size]="24" />
-              <span class="gatbl__name-label" [title]="row.group.name">{{ row.group.name }}</span>
-              <span class="gatbl__chips">
-                @for (ch of row.group.channels; track ch) {
-                  <label
-                    class="gatbl__chip"
-                    [class.gatbl__chip--on]="hasChannel(row.link, ch)"
-                    [class.gatbl__chip--off]="!hasChannel(row.link, ch)"
-                    [class.gatbl__chip--disabled]="!row.link.active"
-                  >
-                    <input
-                      type="checkbox"
-                      [checked]="hasChannel(row.link, ch)"
-                      [disabled]="!row.link.active"
-                      (change)="toggleChannel(row.group.id, ch)"
-                      [attr.aria-label]="row.group.name + ' — ' + (channelKeys[ch] | translate)"
-                    />
-                    <sc-icon
-                      [name]="hasChannel(row.link, ch) ? checkIcon : plusIcon"
-                      size="inherit"
-                      class="gatbl__chip-icon"
-                    />
-                    <span>{{ channelKeys[ch] | translate }}</span>
-                  </label>
-                }
-              </span>
-            </td>
-            <td class="gatbl__td-active">
-              <sc-toggleswitch
-                [checked]="row.link.active"
-                [ariaLabel]="
-                  'agents.form.assigned.active_aria' | translate: { name: row.group.name }
-                "
-                (checkedChange)="toggleActive(row.group.id, $event)"
-              />
-            </td>
-            <td class="gatbl__td-actions">
-              <sc-button variant="secondary" appearance="text" size="sm" [icon]="trashIcon" [ariaLabel]="'agents.form.assigned.remove_aria' | translate: { name: row.group.name }" (clicked)="removeRow(row.group.id)" />
-            </td>
-          </tr>
-        }
-      </tbody>
-    </table>
+    <sc-datatable
+      variant="list"
+      [value]="assignedRows()"
+      [columns]="columns()"
+      [rowStyleClass]="rowClass"
+      dataKey="group.id"
+    />
   }
 </div>
+
+
+<!-- Celdas del editor. Fuera del `<sc-datatable>` para que `viewChild` las
+     resuelva (mismo patrón que las listas de administración). -->
+<ng-template #groupTpl let-row>
+  <span class="gatbl__td-name">
+    <sc-illustrated-avatar [name]="row.group.name" pool="abstract" [size]="24" />
+    <span class="gatbl__name-label" [title]="row.group.name">{{ row.group.name }}</span>
+    <span class="gatbl__chips">
+      @for (ch of row.group.channels; track ch) {
+        <label
+          class="gatbl__chip"
+          [class.gatbl__chip--on]="hasChannel(row.link, ch)"
+          [class.gatbl__chip--off]="!hasChannel(row.link, ch)"
+          [class.gatbl__chip--disabled]="!row.link.active"
+        >
+          <input
+            type="checkbox"
+            [checked]="hasChannel(row.link, ch)"
+            [disabled]="!row.link.active"
+            (change)="toggleChannel(row.group.id, ch)"
+            [attr.aria-label]="row.group.name + ' — ' + (channelKey(ch) | translate)"
+          />
+          <sc-icon
+            [name]="hasChannel(row.link, ch) ? checkIcon : plusIcon"
+            size="inherit"
+            class="gatbl__chip-icon"
+          />
+          <span>{{ channelKey(ch) | translate }}</span>
+        </label>
+      }
+    </span>
+  </span>
+</ng-template>
+
+<ng-template #activeTpl let-row>
+  <sc-toggleswitch
+    [checked]="row.link.active"
+    [ariaLabel]="'agents.form.assigned.active_aria' | translate: { name: row.group.name }"
+    (checkedChange)="toggleActive(row.group.id, $event)"
+  />
+</ng-template>
+
+<ng-template #actionsTpl let-row>
+  <sc-button
+    variant="secondary"
+    appearance="text"
+    size="sm"
+    [icon]="trashIcon"
+    [ariaLabel]="'agents.form.assigned.remove_aria' | translate: { name: row.group.name }"
+    (clicked)="removeRow(row.group.id)"
+  />
+</ng-template>

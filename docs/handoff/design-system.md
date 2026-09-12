@@ -55,6 +55,21 @@ Orca se cerraron en el #113; `agent-mini` entró en el CI; la doc, en su PR):
 - **Los 66 inputs públicos sin ejemplo** que destapó el trinquete de `audit:doc-snippets` (DD-70).
   El gate los imprime con `--inputs`; la lista solo baja, y bajarla es escribir doc, no barrer.
 
+**Lo que deja el 2026-09-12 (la vuelta a las tablas, DD-72), medido y sin hacer:**
+
+- **Los dos editores simétricos pintan sus chips de canal distinto.** `actbl__chip--on` es una
+  pastilla rellena con `--sc-color-blue-700` **de fondo** y `gatbl__chip--on` un contorno blanco, para
+  el mismo gesto en dos pantallas que son la misma cosa vista desde cada lado. Además la azul usa
+  paleta CRUDA como fondo, que es lo que la tabla de bifurcaciones de AGENTS prohíbe porque no voltea
+  en oscuro. Es anterior a esta sesión; cuál gana es decisión de producto, no técnica.
+- **La piel por defecto de `sc-datatable` no siguió a la `list`.** La tipografía por rol se puso en la
+  gramática de tabla-lista, que es la que usan las 10 páginas del Supervisor; la piel `default` (la
+  que enseña sc-docs en sus otras stories) sigue con la suya. Hoy no lo ve ningún usuario, pero son
+  dos tablas del mismo componente midiendo distinto, que es el defecto que esta sesión vino a quitar.
+- **Nadie comprueba que las 38 ranuras reenviadas sigan existiendo en PrimeNG.** Si una subida las
+  renombra, el reenvío apunta al vacío en silencio: el test cubre cuatro. Es mecanizable con el mismo
+  método que `audit:primeng-coupling`, que ya lee `node_modules/primeng`.
+
 **Lo que dejó s42, medido y sin hacer:**
 
 - **El tier `app/typography/xl|xxl` existe en Figma y no lo consume nadie** (medido: 0 nodos, 0
@@ -96,6 +111,38 @@ Orca se cerraron en el #113; `agent-mini` entró en el CI; la doc, en su PR):
    decisión. Ver la sección de Figma más abajo.
 3. **La deuda de código de [`AUDIT-DEUDA-2026-06.md`](../AUDIT-DEUDA-2026-06.md)** que quede tras
    s34, y **los cabos de DD-24** (round-trip de iconos) en [`ROADMAP.md`](../ROADMAP.md).
+## ✅ 2026-09-12 · Las tablas de la plataforma pasan todas por el sistema, y la celda deja de heredar su letra del navegador
+
+**Sello:** HEAD `4758e13`. DD-72. `npm run verify` entero; **156** e2e del Supervisor, **82** de sc-docs,
+**23** de la librería. Las dos redes nuevas, validadas EN ROJO antes de fiarme de su verde. Veredicto
+del CI por `ci:verdict` tras el push.
+
+**De dónde sale.** Rafa: «dar una vuelta a todas las tablas de la plataforma», con la página del DS y
+la documentación de PrimeNG como material, y el foco en que fueran **visualmente iguales y
+compatibles**. Al abrir: 16 tablas en el Supervisor, 11 con `sc-datatable` y **cinco a mano** que no
+eran la misma cosa (dos matrices de permisos, dos editores de formulario, un selector).
+
+**Lo que cambia.** Cero tablas escritas a mano: las 16 pasan por el DS. La celda **declara su estilo
+de texto** (antes heredaba los 16px del documento, y el mismo `<td>` rendía 16 en el Supervisor y 14
+en sc-docs); nace `sc-permission-matrix`, que no es un `sc-datatable` porque lleva cabecera de FILA y
+un control en la de columna; y se reenvían **las 38 ranuras de plantilla de `p-table`**, para pegar un
+ejemplo de primeng.dev dentro y que funcione ya tokenizado.
+
+**Lo que hay que recordar de esto**, porque volverá a morder:
+
+- **Una plantilla del consumidor NO atraviesa un `<ng-content/>` hasta `p-table`.** Sus queries son
+  `contentChild` y solo ven su propio contenido. Medido con sonda y control positivo. Reenviar es
+  código, no configuración, y por eso lleva su test.
+- **`audit:datatables` §6 cazó un fallo real**: `translate.instant()` dentro de un `computed` cuyas
+  dependencias son solo `viewChild` no se re-evalúa, así que las cabeceras se congelan al cambiar de
+  idioma. El gate solo sabe mirar un computed llamado `columns`; el defecto estaba en **cinco**.
+- **Un test mío salía verde por rebote**: pulsaba el `<span>` de adorno de un desplegable en vez de su
+  botón (1 rojo de 152). `aria-controls` es el gancho, y la prueba de que ya no es intermitente son
+  tres pasadas seguidas, no una verde.
+
+**Fuera a propósito:** los dos editores simétricos pintan sus chips de canal distinto y la piel por
+defecto de `sc-datatable` no ha seguido a la `list` en tipografía. Los dos bajan a la bandeja.
+
 ## ✅ 2026-09-12 · La pantalla de Servicio habla el idioma de Agentes (PR #122)
 
 Sello `02324a1`, CI verde leído. Rafa: «it feels off», contra `/config/aed/agentes`. Medido ANTES de
@@ -171,66 +218,10 @@ tocar las mismas plantillas: dos sesiones editando `projects/supervisor` es lo q
 
 ---
 
-## ✅ 2026-09-11 · El barrido de estilos de texto llega a lo que la primera pasada no miró (116 → 101)
-
-**Sello:** sobre HEAD `3052ec5` (el #116 en `main`). DD-69 ampliado. `audit:text-styles` §4 con el
-trinquete en 101. `text-styles-applied` +3 en el navegador, los tres **rojos contra el build
-anterior** y verdes contra este. Veredicto por `ci:verdict` tras el push.
-
-**De dónde sale.** Rafa preguntó si el barrido de la mañana aplicaba también a
-`/admin/repositorios`. Aplicaba — y la respuesta útil no era esa pantalla, era que **la primera
-pasada barrió lo que estaba en SU inventario, no lo que tenía motivo para quedarse**: su inventario
-salía de 38 rutas y 6 modales, y lo que no se abrió, no se vio.
-
-**Lo que faltaba, medido.** Un rastreador más ancho: las 38 rutas **más 18 estados abiertos**
-(modales, paneles, popovers, fichas, menú de usuario, barra lateral desplegada). **4.517 mediciones
-sobre 56 estados**; las 38 rutas solas, sin repetir, son 2.503 textos.
-
-| Qué faltaba | Textos |
-| --- | ---: |
-| Celdas de las **nueve listas de repositorio** + grupos + usuarios | 270 |
-| **Título de página** de las 13 pantallas (DD-55 lo dejó nombrado como pendiente) | 31 |
-| Barra lateral de Configuración, cabecera de grupos asignados, chip de tipo de entidad, pista de Sistema, modal de descarga, selector de conjunto de datos | 40 |
-
-14 reglas migradas y una MUERTA fuera (`.hub__title`: ninguna plantilla la usaba, el título del hub
-es `page__heading`). **0 diferencias** de tamaño, interlineado, peso, familia, tracking y posición,
-medido contra el build de `main` recién construido aquí. **341 textos llevan la clase en su propio
-elemento Y miden ese estilo** (283 en las 38 rutas). Otros 69 solo la heredan de un ancestro que la
-ganó —61 pastillas de estado, 5 prefijos, 3 rótulos activos— y NO cuentan: miden otra cosa, y son
-el punto 2 de abajo. Ruido del instrumento (dos rastreos del mismo build): 0.
-
-**La trampa nueva, cazada con el fallo puesto.** Una clase `.sc-text-*` sobre un selector **global**
-de la app compite de tú a tú (0-1-0 las dos) y decide el ORDEN del bundle, que hoy fija el
-empaquetador. `.page__heading` se jugaba así sus 21px de separación con el cuerpo, porque la clase
-trae `margin: 0`. Pasa a `h1.page__heading` y el margen se mide desde el navegador. El razonamiento
-entero y la inyección del fallo, en DD-69 y en el comentario de `_page.scss`.
-
----
-
-### 🔴 LO QUE QUEDA SIN ATAR Y **NECESITA A RAFA**, no otro barrido
-
-**1. La tabla de transcripciones a 16px** — **RESUELTO el 2026-09-12** (DD-71): Rafa pidió
-ajustarlo y las seis columnas escriben ya a 14/20 como el resto. Lo cuenta el tramo de arriba.
-
-**2. Combinaciones que no son ningún estilo, por herencia de un contenedor con clase.** 12/20 en las
-pastillas de estado de repositorios (61), en las cabeceras de grupos asignados y en los contadores
-de pestaña. No es regresión del barrido —pasaba igual con los tokens sueltos—, pero es lo siguiente
-que decidir: ¿pastilla con text style propio, o `line-height` explícito?
-
-**3. El resto tiene motivo escrito y está en el gate**: familia mono (264 textos), muebles de
-interlineado apretado, y los **1.198 textos** que pinta un componente del DS o PrimeNG — que por
-DD-55 no llevan clase: si tienen que verse distinto se mueve su TOKEN. Ahí viven los pesos 500 que
-la rampa no tiene (`th` a 12/18/500, etiquetas de campo a 14/21/500). Eso es del TEMA.
-
-**4. El Supervisor no es «toda la plataforma»: falta `sc-docs`.** El showcase del DS tiene **237
-reglas con `font-size` y DOS usos de la clase** — más tipografía suelta de la que tenía el
-Supervisor al empezar. Clasificadas contra las capas: **29** podrían llevar la clase hoy, **127**
-declaran el tamaño y heredan el interlineado, **57** están fuera de la rampa (pesos 700, tamaños sin
-peldaño) y **24** son mono o glifo. Otra app, otro build y otra medición: mezclarla aquí dejaba el
-PR sin poder revisarse. Tiene una punta propia: en un showcase hay texto que **ilustra** tipografía,
-así que no todo lo que declara tamaño está mal. **Las demás no entran por decisión escrita**:
-`agent` y `agent-mini` no declaran ninguna, las 134 de `cuscare` son de una RÉPLICA (DD-35) y las
-102 de `ui-smartcontact` son de los componentes del DS, que leen el tema (DD-55).
+> El tramo del **barrido de estilos de texto** (116 → 101 reglas, #115) se archivó el 2026-09-12
+> por el tope de 400 líneas, al entrar el de la vuelta a las tablas. Vive en git y en el tag
+> `archive/handoff-ds-2026-09-12-tablas`; su trinquete lo cuenta `audit:text-styles` §4, que es
+> donde hace falta.
 
 > El tramo del **botón de guardar** (#114, el suelo de 128px queda solo en el CTA de lista) se
 > archivó el 2026-09-12 por el tope de 400 líneas. Vive en git y en el tag

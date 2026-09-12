@@ -64,6 +64,7 @@ export * from './lib/components/keyboard-shortcuts/sc-keyboard-shortcuts.compone
 export * from './lib/components/keyboard-shortcuts/sc-keyboard-shortcuts.service';
 export * from './lib/components/inline-rename-cell/sc-inline-rename-cell.component';
 export * from './lib/components/datatable/sc-datatable.component';
+export * from './lib/components/permission-matrix/sc-permission-matrix.component';
 export * from './lib/components/bulk-transcription-modal/sc-bulk-transcription-modal.component';
 export * from './lib/components/section-card/sc-section-card.component';
 export * from './lib/components/subsection/sc-subsection.component';
