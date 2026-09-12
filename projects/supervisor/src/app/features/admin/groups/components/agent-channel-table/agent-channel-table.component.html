@@ -48,86 +48,20 @@
       <p class="actbl__empty-body sc-text-caption-regular">{{ 'groups.form.assigned.empty' | translate }}</p>
     </div>
   } @else {
-    <table class="actbl__table sc-text-body-regular">
-      <thead>
-        <tr>
-          <th class="actbl__th-check">
-            <sc-checkbox
-              [state]="allVisibleSelected()"
-              [ariaLabel]="'labels.select_all' | translate"
-              (cycle)="toggleSelectAllVisible($event)"
-            />
-          </th>
-          <th class="actbl__th-name" scope="col">
-            {{ 'groups.form.assigned.col_agent' | translate }}
-          </th>
-          <th class="actbl__th-active" scope="col">
-            {{ 'groups.form.assigned.col_active' | translate }}
-          </th>
-          <th class="actbl__th-actions" aria-hidden="true"></th>
-        </tr>
-      </thead>
-      <tbody>
-        @for (row of visibleRows(); track row.agent.id) {
-          <tr
-            class="actbl__row"
-            [class.actbl__row--selected]="isSelected(row.agent.id)"
-            [class.actbl__row--paused]="!row.link.active"
-          >
-            <td class="actbl__td-check">
-              <sc-checkbox [state]="(isSelected(row.agent.id)) ? 'all' : 'none'" (cycle)="toggleSelect(row.agent.id)" [ariaLabel]="row.agent.name" />
-            </td>
-            <td class="actbl__td-name">
-              <sc-illustrated-avatar [name]="row.agent.name" pool="illustrated" [size]="24" />
-              <span class="actbl__name-label" [title]="row.agent.name">{{ row.agent.name }}</span>
-              <span class="actbl__chips">
-                @for (ch of groupChannels(); track ch) {
-                  <label
-                    class="actbl__chip"
-                    [class.actbl__chip--on]="hasChannel(row.link, ch)"
-                    [class.actbl__chip--off]="!hasChannel(row.link, ch)"
-                    [class.actbl__chip--disabled]="!row.link.active"
-                  >
-                    <input
-                      type="checkbox"
-                      [checked]="hasChannel(row.link, ch)"
-                      [disabled]="!row.link.active"
-                      (change)="toggleChannel(row.agent.id, ch)"
-                      [attr.aria-label]="row.agent.name + ' — ' + (channelKeys[ch] | translate)"
-                    />
-                    <sc-icon
-                      [name]="hasChannel(row.link, ch) ? checkIcon : plusIcon"
-                      size="inherit"
-                      class="actbl__chip-icon"
-                    />
-                    <span>{{ channelKeys[ch] | translate }}</span>
-                  </label>
-                }
-              </span>
-            </td>
-            <td class="actbl__td-active">
-              <sc-toggleswitch
-                [checked]="row.link.active"
-                [ariaLabel]="
-                  'groups.form.assigned.active_aria' | translate: { name: row.agent.name }
-                "
-                (checkedChange)="toggleActive(row.agent.id, $event)"
-              />
-            </td>
-            <td class="actbl__td-actions">
-              <sc-button variant="secondary" appearance="text" size="sm" [icon]="trashIcon" [ariaLabel]="'groups.form.assigned.remove_aria' | translate: { name: row.agent.name }" (clicked)="removeRow(row.agent.id)" />
-            </td>
-          </tr>
-        }
-        @if (visibleRows().length === 0) {
-          <tr>
-            <td colspan="4" class="actbl__no-results">
-              {{ 'groups.form.assigned.no_results' | translate }}
-            </td>
-          </tr>
-        }
-      </tbody>
-    </table>
+    <sc-datatable
+      variant="list"
+      [value]="visibleRows()"
+      [columns]="columns()"
+      [rowStyleClass]="rowClass"
+      dataKey="agent.id"
+      selectionMode="multiple"
+      [selection]="selectedRows()"
+      (selectionChange)="onSelectionChange($any($event))"
+      [rowSelectionAriaLabel]="rowAriaLabel"
+      [selectAllAriaLabel]="'labels.select_all' | translate"
+    >
+      <div scTableEmpty>{{ 'groups.form.assigned.no_results' | translate }}</div>
+    </sc-datatable>
 
     @if (selectedIds().size > 0) {
       <div
@@ -148,3 +82,55 @@
     }
   }
 </div>
+
+
+<!-- Celdas del editor. Fuera del `<sc-datatable>` para que `viewChild` las resuelva. -->
+<ng-template #agentTpl let-row>
+  <span class="actbl__td-name">
+    <sc-illustrated-avatar [name]="row.agent.name" pool="illustrated" [size]="24" />
+    <span class="actbl__name-label" [title]="row.agent.name">{{ row.agent.name }}</span>
+    <span class="actbl__chips">
+      @for (ch of groupChannels(); track ch) {
+        <label
+          class="actbl__chip"
+          [class.actbl__chip--on]="hasChannel(row.link, ch)"
+          [class.actbl__chip--off]="!hasChannel(row.link, ch)"
+          [class.actbl__chip--disabled]="!row.link.active"
+        >
+          <input
+            type="checkbox"
+            [checked]="hasChannel(row.link, ch)"
+            [disabled]="!row.link.active"
+            (change)="toggleChannel(row.agent.id, ch)"
+            [attr.aria-label]="row.agent.name + ' — ' + (channelKey(ch) | translate)"
+          />
+          <sc-icon
+            [name]="hasChannel(row.link, ch) ? checkIcon : plusIcon"
+            size="inherit"
+            class="actbl__chip-icon"
+          />
+          <span>{{ channelKey(ch) | translate }}</span>
+        </label>
+      }
+    </span>
+  </span>
+</ng-template>
+
+<ng-template #activeTpl let-row>
+  <sc-toggleswitch
+    [checked]="row.link.active"
+    [ariaLabel]="'groups.form.assigned.active_aria' | translate: { name: row.agent.name }"
+    (checkedChange)="toggleActive(row.agent.id, $event)"
+  />
+</ng-template>
+
+<ng-template #actionsTpl let-row>
+  <sc-button
+    variant="secondary"
+    appearance="text"
+    size="sm"
+    [icon]="trashIcon"
+    [ariaLabel]="'groups.form.assigned.remove_aria' | translate: { name: row.agent.name }"
+    (clicked)="removeRow(row.agent.id)"
+  />
+</ng-template>

@@ -530,76 +530,14 @@
   overflow: hidden;
 }
 
-.picker-table {
-  width: 100%;
-  border-collapse: collapse;
-
-  thead th {
-    text-align: left;
-    padding: var(--sc-spacing-0-875) var(--sc-spacing-1);
-    background: var(--sc-bg-secondary-subtle);
-    font-size: var(--sc-font-size-50);
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: var(--sc-text-subtle);
-    font-weight: var(--sc-font-weight-semibold);
-    border-bottom: 1px solid var(--sc-border-default);
-  }
-
-  thead th.picker-table__th-check {
-    width: 36px;
-    text-align: center;
-  }
-
-  &__td-check {
-    text-align: center;
-  }
-
-  &__row {
-    cursor: pointer;
-    border-bottom: 1px solid var(--sc-border-subtle);
-    transition: background var(--sc-transition-fast) var(--sc-easing-default);
-
-    &:last-child {
-      border-bottom: 0;
-    }
-
-    &:hover {
-      background: var(--sc-bg-secondary-subtle);
-    }
-
-    &--selected {
-      background: var(--sc-bg-primary-subtle);
-
-      &:hover {
-        background: var(--sc-bg-primary-subtle);
-      }
-    }
-  }
-
-  tbody td {
-    padding: var(--sc-spacing-0-875) var(--sc-spacing-1);
-    font-size: var(--sc-font-size-100);
-    color: var(--sc-text-primary);
-    vertical-align: middle;
-  }
-
-  &__td-title {
-    font-weight: var(--sc-font-weight-semibold);
-  }
-
-  &__td-preview {
-    color: var(--sc-text-subtle);
-    max-width: 280px;
-    overflow: hidden;
-    text-overflow: ellipsis;
-    white-space: nowrap;
-  }
-
-  tbody td.picker-table__empty {
-    padding: var(--sc-spacing-1-5) var(--sc-spacing-1);
-    text-align: center;
-    font-size: var(--sc-font-size-75);
-    color: var(--sc-text-subtle);
-  }
+/* La tabla la pinta `sc-datatable variant=list` desde el 2026-09-12; de las 60
+ * líneas que había aquí solo sobrevive el recorte de la vista previa, que no es
+ * cosmético: sin él la celda envuelve a dos líneas y la tabla queda dentada. */
+.picker-preview {
+  display: block;
+  max-width: 280px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  color: var(--sc-text-subtle);
 }

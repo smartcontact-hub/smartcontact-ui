@@ -3,7 +3,7 @@
   "capturedAt": "2026-09-06",
   "viewport": "1440x900",
   "theme": "light",
-  "dsSelectors": 50,
+  "dsSelectors": 51,
   "screens": [
     {
       "id": "admin-agendas",
@@ -517,6 +517,10 @@
     {
       "selector": "sc-message",
       "usedInSupervisor": 1
+    },
+    {
+      "selector": "sc-permission-matrix",
+      "usedInSupervisor": 2
     },
     {
       "selector": "sc-sticky-form-header",

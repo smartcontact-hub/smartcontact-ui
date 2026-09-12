@@ -12,10 +12,20 @@ import {
 } from '@angular/core';
 import { Location } from '@angular/common';
 import { ActivatedRoute, Router } from '@angular/router';
+import { toSignal } from '@angular/core/rxjs-interop';
+import { map, startWith } from 'rxjs';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ScChipComponent as ChipComponent } from '@smartcontact-hub/components';
+import type {
+  ScColumnCellContext,
+  ScColumnDef,
+  ScMatrixColumn,
+  ScMatrixColumnToggle,
+  ScMatrixRow,
+  ScMatrixToggle,
+} from '@smartcontact-hub/components';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 
 import { DirtyAware } from '@core/guards';
@@ -24,13 +34,18 @@ import { CrossTabLockService } from '@core/services';
 import { ScConfirmService } from '@smartcontact-hub/components';
 import { EMAIL_RE, PIN_RE } from '@core/utils/validators';
 import { TOAST_LIFE } from '@core/utils/toast-life';
-import { IllustratedAvatarComponent, LabelChipComponent } from '@shared/components';
+import {
+  IllustratedAvatarComponent,
+  LabelChipComponent,
+} from '@shared/components';
 import { createFormDirtyState } from '@shared/utils/form-dirty-state';
 import {
+  ScDatatableComponent as DatatableComponent,
   ScDeleteEntityDialogComponent as DeleteEntityDialogComponent,
   ScFormSectionNavComponent as FormSectionNavComponent,
   type FormNavSection,
   ScInputTextComponent as InputTextComponent,
+  ScPermissionMatrixComponent as PermissionMatrixComponent,
   ScPhotoUploadComponent as PhotoUploadComponent,
   ScSearchComponent as SearchComponent,
   ScSectionCardComponent as SectionCardComponent,
@@ -50,7 +65,10 @@ import {
   TemplateType,
   TEMPLATE_TYPES,
 } from '@features/admin/templates/data/templates-data';
-import { AgendasStore, Agenda } from '@features/admin/repositories/instances/agendas';
+import {
+  AgendasStore,
+  Agenda,
+} from '@features/admin/repositories/instances/agendas';
 import {
   AGENT_TYPES,
   AGENT_TYPE_LABEL_KEYS,
@@ -89,7 +107,10 @@ const PERMISSION_MATRIX_KEYS: Readonly<
     llamada: 'callsDestInternational',
     transferencia: 'transfersDestInternational',
   },
-  especial: { llamada: 'callsDestSpecial', transferencia: 'transfersDestSpecial' },
+  especial: {
+    llamada: 'callsDestSpecial',
+    transferencia: 'transfersDestSpecial',
+  },
 };
 
 interface FormState {
@@ -121,6 +142,7 @@ interface FormState {
   imports: [
     ChipComponent,
     ButtonComponent,
+    DatatableComponent,
     DeleteEntityDialogComponent,
     FormSectionNavComponent,
     GroupAssignmentTableComponent,
@@ -128,6 +150,7 @@ interface FormState {
     IllustratedAvatarComponent,
     InputTextComponent,
     LabelChipComponent,
+    PermissionMatrixComponent,
     PhotoUploadComponent,
     SearchComponent,
     SectionCardComponent,
@@ -149,6 +172,19 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   private readonly linksStore = inject(GroupAgentLinksStore);
   private readonly messages = inject(MessageService);
   private readonly translate = inject(TranslateService);
+  /* El idioma como DEPENDENCIA de los computed de abajo. `translate.instant()`
+   * es una llamada, no una señal: sin esto las cabeceras y los nombres de fila
+   * se calculan una vez y se congelan al cambiar de idioma. Es la §6 de
+   * `audit:datatables`, que solo sabe mirar un computed llamado `columns` — el
+   * defecto es el mismo se llame como se llame. */
+  private readonly currentLang = toSignal(
+    this.translate.onLangChange.pipe(
+      map((e) => e.lang),
+      startWith(this.translate.currentLang)
+    ),
+    { initialValue: this.translate.currentLang }
+  );
+
   private readonly crossTab = inject(CrossTabLockService);
   private readonly labelsStore = inject(LabelsStore);
   private readonly templatesStore = inject(TemplatesStore);
@@ -158,7 +194,15 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   /** Guardar/Cancelar proyectados a la TopBar (modelo "todo arriba" S59):
    * fuera la banda sticky-form-header; identidad → breadcrumb + campos del
    * cuerpo, acciones → barra de arriba. */
-  private readonly topbarActions = viewChild<TemplateRef<unknown>>('topbarActions');
+  private readonly topbarActions =
+    viewChild<TemplateRef<unknown>>('topbarActions');
+
+  /** Celda de la vista previa: lleva `title` para ver el cuerpo entero al pasar
+   *  por encima, que es lo que hacía la tabla a mano. */
+  private readonly templatePreviewTpl =
+    viewChild<TemplateRef<ScColumnCellContext<Template>>>('templatePreviewTpl');
+  private readonly templateTitleTpl =
+    viewChild<TemplateRef<ScColumnCellContext<Template>>>('templateTitleTpl');
 
   constructor() {
     useTopbarActions(this.topbarActions);
@@ -214,18 +258,22 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   protected readonly templateTypes = TEMPLATE_TYPES;
 
   /** Choices for the "Chats simultáneos" select inside Comportamiento. */
-  protected readonly maxChatsOptions: readonly number[] = [1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11];
+  protected readonly maxChatsOptions: readonly number[] = [
+    1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11,
+  ];
   protected readonly agentTypes = AGENT_TYPES;
   /* Widening intencional a `Record<string, string>` para que los templates
    * que reciben `let-t` desde el `<ng-template #item>` proyectado (tipo `any`
    * por diseño de PrimeNG) puedan indexar sin TS7053. El lookup sigue siendo
    * seguro: las
    * keys vienen siempre de `agentTypes` (AgentType union). */
-  protected readonly typeLabelKeys: Readonly<Record<string, string>> = AGENT_TYPE_LABEL_KEYS;
+  protected readonly typeLabelKeys: Readonly<Record<string, string>> =
+    AGENT_TYPE_LABEL_KEYS;
   /* Widening intencional — ver typeLabelKeys arriba. Mismo razonamiento:
    * el `let-p` de la plantilla proyectada viene como `any` y hay que indexar con
    * cualquier string. Seguro: las keys vienen de presenceStates. */
-  protected readonly presenceKeys: Readonly<Record<string, string>> = PRESENCE_LABEL_KEYS;
+  protected readonly presenceKeys: Readonly<Record<string, string>> =
+    PRESENCE_LABEL_KEYS;
   protected readonly availableExtensions = AVAILABLE_EXTENSIONS;
   protected readonly availableLanguages = AVAILABLE_LANGUAGES;
   protected readonly availableLabels = this.labelsStore.labels;
@@ -233,12 +281,14 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   /** Roster of every group in the system, with channels — fed to the
    * group-assignment table so it can render the correct chip cluster
    * per row and the picker dropdown of joinable groups. */
-  protected readonly availableGroups = computed<readonly AgentGroupAssignmentRef[]>(() =>
+  protected readonly availableGroups = computed<
+    readonly AgentGroupAssignmentRef[]
+  >(() =>
     this.groupsStore.groups().map((g) => ({
       id: g.id,
       name: g.name,
       channels: g.channels,
-    })),
+    }))
   );
 
   /** Selected labels resolved to {id, name, color} for chip rendering. */
@@ -282,7 +332,8 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     const all = this.availableSchedules();
     if (!q) return all;
     return all.filter(
-      (a) => a.name.toLowerCase().includes(q) || a.numbers.toLowerCase().includes(q),
+      (a) =>
+        a.name.toLowerCase().includes(q) || a.numbers.toLowerCase().includes(q)
     );
   });
 
@@ -318,7 +369,9 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     return this.availableTemplates().filter(
       (t) =>
         t.type === tab &&
-        (q === '' || t.title.toLowerCase().includes(q) || t.body.toLowerCase().includes(q)),
+        (q === '' ||
+          t.title.toLowerCase().includes(q) ||
+          t.body.toLowerCase().includes(q))
     );
   });
 
@@ -340,8 +393,71 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     const visible = this.filteredTemplates();
     const ids = this.form().templateIds;
 
-    return triStateOf(visible.filter((t) => ids.has(t.id)).length, visible.length);
+    return triStateOf(
+      visible.filter((t) => ids.has(t.id)).length,
+      visible.length
+    );
   });
+
+  /* ── El selector de plantillas, ya sobre `sc-datatable` ──────────────────
+   *
+   * EL ADAPTADOR, que es lo único con miga. El formulario guarda un
+   * `Set<number>` de ids —y guarda TODAS las elegidas, también las de la
+   * pestaña que no se ve—, mientras que `sc-datatable` habla de FILAS.
+   * Traducir en los dos sentidos no es cosmético: la casilla de la cabecera de
+   * PrimeNG decide "están todas" comparando el tamaño de la selección con el de
+   * `value`, así que si le pasáramos las ocultas diría "todas" con media tabla
+   * sin marcar. Por eso baja SOLO lo visible, y al subir se reconstruye el Set
+   * conservando lo que no estaba a la vista. */
+  protected readonly templateColumns = computed<
+    readonly ScColumnDef<Template>[]
+  >(() => {
+    this.currentLang();
+    return [
+      {
+        field: 'title',
+        header: this.translate.instant(
+          'agents.form.advanced.plantillas.col_title'
+        ),
+        width: '38%',
+        cellTemplate: this.templateTitleTpl(),
+      },
+      {
+        field: 'body',
+        header: this.translate.instant(
+          'agents.form.advanced.plantillas.col_preview'
+        ),
+        cellTemplate: this.templatePreviewTpl(),
+      },
+    ];
+  });
+
+  /** Las elegidas que además se están VIENDO. Ver el comentario de arriba. */
+  protected readonly selectedTemplates = computed<readonly Template[]>(() => {
+    const ids = this.form().templateIds;
+    return this.filteredTemplates().filter((t) => ids.has(t.id));
+  });
+
+  /** Sube la selección de las filas visibles sin perder las de la otra pestaña. */
+  protected onTemplateSelection(rows: readonly Template[]): void {
+    const visibles = new Set(this.filteredTemplates().map((t) => t.id));
+    const elegidas = new Set(rows.map((t) => t.id));
+    this.form.update((f) => {
+      const next = new Set(f.templateIds);
+      for (const id of visibles) {
+        if (elegidas.has(id)) next.add(id);
+        else next.delete(id);
+      }
+      return { ...f, templateIds: next };
+    });
+  }
+
+  protected templateAriaLabel = (t: Template): string => t.title;
+
+  /** La fila del selector ALTERNA la elección al pulsarla, así que tiene que
+   *  decirlo con el cursor. `sc-row--clickable` es el gancho que la gramática
+   *  de tabla-lista ya pinta; sin él la fila hace algo que no anuncia. */
+  protected templateRowClass = (): string => 'sc-row--clickable';
 
   protected toggleTemplate(id: number): void {
     this.form.update((f) => {
@@ -421,15 +537,62 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     'especial',
   ];
 
-  protected readonly columnState = computed<Record<DestinoCol, TriState>>(() => {
-    const p = this.form().permissions;
-    const tally = (col: DestinoCol): TriState =>
-      triStateOf(
-        this.destinoKeys.filter((k) => p[PERMISSION_MATRIX_KEYS[k][col]]).length,
-        this.destinoKeys.length,
-      );
-    return { llamada: tally('llamada'), transferencia: tally('transferencia') };
+  protected readonly columnState = computed<Record<DestinoCol, TriState>>(
+    () => {
+      const p = this.form().permissions;
+      const tally = (col: DestinoCol): TriState =>
+        triStateOf(
+          this.destinoKeys.filter((k) => p[PERMISSION_MATRIX_KEYS[k][col]])
+            .length,
+          this.destinoKeys.length
+        );
+      return {
+        llamada: tally('llamada'),
+        transferencia: tally('transferencia'),
+      };
+    }
+  );
+
+  /** Filas y columnas de la matriz, ya traducidas: el DS no traduce contenido. */
+  protected readonly matrixRows = computed<readonly ScMatrixRow[]>(() => {
+    this.currentLang();
+    return this.destinoKeys.map((row) => ({
+      id: row,
+      label: this.translate.instant('agents.form.permissions.row_' + row),
+    }));
   });
+
+  protected readonly matrixColumns = computed<readonly ScMatrixColumn[]>(() => {
+    this.currentLang();
+    return [
+      {
+        id: 'llamada',
+        label: this.translate.instant('agents.form.permissions.col_llamada'),
+      },
+      {
+        id: 'transferencia',
+        label: this.translate.instant(
+          'agents.form.permissions.col_transferencia'
+        ),
+      },
+    ];
+  });
+
+  protected readonly matrixChecked = computed(() => {
+    const permissions = this.form().permissions;
+    return (rowId: string, columnId: string): boolean =>
+      permissions[
+        PERMISSION_MATRIX_KEYS[rowId as DestinoKey][columnId as DestinoCol]
+      ];
+  });
+
+  protected onMatrixToggle(e: ScMatrixToggle): void {
+    this.toggleMatrix(e.rowId as DestinoKey, e.columnId as DestinoCol);
+  }
+
+  protected onMatrixColumnToggle(e: ScMatrixColumnToggle): void {
+    this.toggleColumnAll(e.columnId as DestinoCol, e.checked);
+  }
 
   protected matrixValue(row: DestinoKey, col: DestinoCol): boolean {
     return this.form().permissions[PERMISSION_MATRIX_KEYS[row][col]];
@@ -516,9 +679,11 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     const f = this.form();
     if (!f.name.trim()) return 'agents.errors.name_required';
     if (!f.extension) return 'agents.errors.extension_required';
-    if (f.email && !EMAIL_RE.test(f.email.trim())) return 'agents.errors.email_invalid';
+    if (f.email && !EMAIL_RE.test(f.email.trim()))
+      return 'agents.errors.email_invalid';
     if (f.pin && !PIN_RE.test(f.pin.trim())) return 'agents.errors.pin_invalid';
-    if (this.mode() === 'edit' && !this.dirtyState.dirty()) return 'common.no_changes';
+    if (this.mode() === 'edit' && !this.dirtyState.dirty())
+      return 'common.no_changes';
     return null;
   });
   protected readonly saving = signal(false);
@@ -543,7 +708,7 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   /** Mode pasado al SCDS <sc-sticky-form-header>, que solo conoce edit/create.
    *  `duplicate` se mapea a `create` (la entidad NO existe aún hasta Guardar). */
   protected readonly headerMode = computed<'edit' | 'create'>(() =>
-    this.mode() === 'edit' ? 'edit' : 'create',
+    this.mode() === 'edit' ? 'edit' : 'create'
   );
 
   /**
@@ -616,7 +781,7 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
       // al fondo porque casi no se toca tras crear; la ficha ya la resume (S60).
       this.activeSection.set('agent-section-groups');
       this.releaseLock = this.crossTab.acquire('agent', agent.id, () =>
-        this.conflictWarning.set(true),
+        this.conflictWarning.set(true)
       );
       return;
     }
@@ -683,7 +848,10 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     }
   }
 
-  protected updateField<K extends keyof FormState>(key: K, value: FormState[K]): void {
+  protected updateField<K extends keyof FormState>(
+    key: K,
+    value: FormState[K]
+  ): void {
     this.form.update((f) => ({ ...f, [key]: value }));
   }
 
@@ -693,22 +861,34 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
    * Valida que el value emitido sea un AgentType conocido antes de actualizar.
    */
   protected onAgentTypeValueChange(value: unknown): void {
-    if (typeof value === 'string' && (AGENT_TYPES as readonly string[]).includes(value)) {
+    if (
+      typeof value === 'string' &&
+      (AGENT_TYPES as readonly string[]).includes(value)
+    ) {
       this.updateField('agentType', value as AgentType);
     }
   }
 
   protected onAgentTypeChange(event: Event): void {
-    this.updateField('agentType', (event.target as HTMLSelectElement).value as AgentType);
+    this.updateField(
+      'agentType',
+      (event.target as HTMLSelectElement).value as AgentType
+    );
   }
 
   protected onPresenceChange(event: Event): void {
-    this.updateField('presenceStatus', (event.target as HTMLSelectElement).value as PresenceStatus);
+    this.updateField(
+      'presenceStatus',
+      (event.target as HTMLSelectElement).value as PresenceStatus
+    );
   }
 
   /** Adapter para `<sc-select>` con whitelist de PresenceStatus. */
   protected onPresenceValueChange(value: unknown): void {
-    if (typeof value === 'string' && this.presenceStates.includes(value as PresenceStatus)) {
+    if (
+      typeof value === 'string' &&
+      this.presenceStates.includes(value as PresenceStatus)
+    ) {
       this.updateField('presenceStatus', value as PresenceStatus);
     }
   }
@@ -720,7 +900,7 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
    */
   protected onPickupValueChange<K extends 'pickupType' | 'pickupTypeChat'>(
     key: K,
-    value: unknown,
+    value: unknown
   ): void {
     if (value === 'auto' || value === 'manual') {
       this.updateField(key, value);
@@ -732,18 +912,26 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   }
 
   protected async requestExpirePassword(): Promise<void> {
-    const name = this.form().name || this.translate.instant('agents.entity_singular');
+    const name =
+      this.form().name || this.translate.instant('agents.entity_singular');
     const ok = await this.confirmHost.request({
       title: this.translate.instant('agents.form.advanced.sesion.expire_title'),
-      body: this.translate.instant('agents.form.advanced.sesion.expire_body', { name }),
-      acceptLabel: this.translate.instant('agents.form.advanced.sesion.expire_accept'),
+      body: this.translate.instant('agents.form.advanced.sesion.expire_body', {
+        name,
+      }),
+      acceptLabel: this.translate.instant(
+        'agents.form.advanced.sesion.expire_accept'
+      ),
       rejectLabel: this.translate.instant('common.cancel'),
       acceptTone: 'danger',
     });
     if (!ok) return;
     this.messages.add({
       severity: 'success',
-      summary: this.translate.instant('agents.form.advanced.sesion.expire_toast', { name }),
+      summary: this.translate.instant(
+        'agents.form.advanced.sesion.expire_toast',
+        { name }
+      ),
       life: TOAST_LIFE.success,
     });
   }
@@ -781,7 +969,9 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   }
 
   protected getExtensionType(extension: string): ExtensionType | null {
-    return this.availableExtensions.find((e) => e.number === extension)?.type ?? null;
+    return (
+      this.availableExtensions.find((e) => e.number === extension)?.type ?? null
+    );
   }
 
   protected onStatusChange(checked: boolean): void {
@@ -810,7 +1000,6 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     this.form.update((f) => ({ ...f, photo }));
   }
 
-
   /**
    * Adapter `<sc-select>` para el patrón action-add de idiomas. El select
    * usa `addableLanguages()` (filtra ya añadidos) — el guard de duplicados
@@ -819,13 +1008,18 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   protected onLanguageValueAdd(value: unknown): void {
     if (typeof value !== 'string' || !value) return;
     this.form.update((f) =>
-      f.languages.includes(value) ? f : { ...f, languages: [...f.languages, value] },
+      f.languages.includes(value)
+        ? f
+        : { ...f, languages: [...f.languages, value] }
     );
     this.languagePickValue.set(null);
   }
 
   protected onLanguageRemove(lang: string): void {
-    this.form.update((f) => ({ ...f, languages: f.languages.filter((l) => l !== lang) }));
+    this.form.update((f) => ({
+      ...f,
+      languages: f.languages.filter((l) => l !== lang),
+    }));
   }
 
   /**
@@ -843,7 +1037,6 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     });
     this.labelPickValue.set(null);
   }
-
 
   protected onLabelRemove(id: number): void {
     this.form.update((f) => {
@@ -884,34 +1077,46 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
         photo: f.photo ?? undefined,
         languages: f.languages.length > 0 ? f.languages : undefined,
         labels: f.labelIds.size > 0 ? Array.from(f.labelIds) : undefined,
-        schedules: f.scheduleIds.size > 0 ? Array.from(f.scheduleIds) : undefined,
-        templates: f.templateIds.size > 0 ? Array.from(f.templateIds) : undefined,
+        schedules:
+          f.scheduleIds.size > 0 ? Array.from(f.scheduleIds) : undefined,
+        templates:
+          f.templateIds.size > 0 ? Array.from(f.templateIds) : undefined,
       };
 
       const editingId = this.editingId();
       if (editingId) {
         this.agentsStore.updateAgent(editingId, { ...payload });
-        this.linksStore.replaceLinksForAgent(editingId, this.normalizeLinks(f.links, editingId));
+        this.linksStore.replaceLinksForAgent(
+          editingId,
+          this.normalizeLinks(f.links, editingId)
+        );
         const refreshed = this.agentsStore.getAgent(editingId);
         if (refreshed) this.initial.set(refreshed);
         this.messages.add({
           severity: 'success',
-          summary: this.translate.instant('agents.toasts.updated', { name: payload.name }),
+          summary: this.translate.instant('agents.toasts.updated', {
+            name: payload.name,
+          }),
           life: TOAST_LIFE.success,
         });
       } else {
         const created = this.agentsStore.addAgent(payload);
-        this.linksStore.replaceLinksForAgent(created.id, this.normalizeLinks(f.links, created.id));
+        this.linksStore.replaceLinksForAgent(
+          created.id,
+          this.normalizeLinks(f.links, created.id)
+        );
         this.editingId.set(created.id);
         this.initial.set(created);
         this.location.replaceState(`/admin/agentes/editar/${created.id}`);
         this.releaseLock?.();
         this.releaseLock = this.crossTab.acquire('agent', created.id, () =>
-          this.conflictWarning.set(true),
+          this.conflictWarning.set(true)
         );
         this.messages.add({
           severity: 'success',
-          summary: this.translate.instant('agents.toasts.created', { name: created.name }),
+          summary: this.translate.instant('agents.toasts.created', {
+            name: created.name,
+          }),
           life: TOAST_LIFE.success,
         });
       }
@@ -923,7 +1128,7 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   /** Ensure every link points at the right agentId before persistence. */
   private normalizeLinks(
     links: readonly GroupAgentLink[],
-    agentId: number,
+    agentId: number
   ): readonly GroupAgentLink[] {
     return links.map((l) => (l.agentId === agentId ? l : { ...l, agentId }));
   }

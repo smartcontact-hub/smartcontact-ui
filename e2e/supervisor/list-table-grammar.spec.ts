@@ -56,23 +56,23 @@ test.beforeEach(async ({ page }) => {
  * del DS, y el DS bebe del Kit.
  */
 const PAGINAS = [
-  { ruta: 'admin/labels', nombre: 'labels', altoFila: 53 },
-  { ruta: 'admin/plantillas', nombre: 'plantillas', altoFila: 53 },
-  { ruta: 'admin/usuarios', nombre: 'usuarios', altoFila: 53 },
-  { ruta: 'admin/agentes', nombre: 'agentes', altoFila: 63 },
-  { ruta: 'admin/grupos', nombre: 'grupos', altoFila: 63 },
+  { ruta: 'admin/labels', nombre: 'labels', altoFila: 63.5 },
+  { ruta: 'admin/plantillas', nombre: 'plantillas', altoFila: 63.5 },
+  { ruta: 'admin/usuarios', nombre: 'usuarios', altoFila: 63.5 },
+  { ruta: 'admin/agentes', nombre: 'agentes', altoFila: 73 },
+  { ruta: 'admin/grupos', nombre: 'grupos', altoFila: 73 },
   // El trío de memory, migrado el 2026-07-19. Entraron aquí en el MISMO
   // commit que la migración, y eso no es formalismo: sin esta línea el spec
   // pasaba en verde sin visitar la página, y el "108/108" que traían los
   // informes de migración no probaba nada sobre lo migrado.
-  { ruta: 'conversaciones/reglas', nombre: 'reglas', altoFila: 53 },
-  { ruta: 'conversaciones/categorias', nombre: 'categorias', altoFila: 53 },
-  { ruta: 'conversaciones/entidades', nombre: 'entidades', altoFila: 53 },
+  { ruta: 'conversaciones/reglas', nombre: 'reglas', altoFila: 63.5 },
+  { ruta: 'conversaciones/categorias', nombre: 'categorias', altoFila: 63.5 },
+  { ruta: 'conversaciones/entidades', nombre: 'entidades', altoFila: 63.5 },
   /* Una de las NUEVE páginas de repositorios, que comparten `repo-list-page`.
    * No estaba ninguna: `audit:datatables` lo destapó al no encontrar su ruta.
    * Con una basta —las nueve son el mismo componente— pero sin ninguna, la
    * tabla más reutilizada de la app era la única sin vigilar. */
-  { ruta: 'admin/agendas', nombre: 'agendas', altoFila: 53 },
+  { ruta: 'admin/agendas', nombre: 'agendas', altoFila: 63.5 },
 ] as const;
 
 /** Las tablas cuya fila ABRE algo tienen que anunciarlo con el cursor. */
@@ -91,14 +91,28 @@ const ABREN_FILA = [
  * `tabindex` igual, y la apertura por teclado la fija `sibling-pages.spec.ts`,
  * que sabe esperar al diálogo.
  */
-const ABREN_MODAL = new Set(['conversaciones/reglas', 'conversaciones/categorias', 'conversaciones/entidades']);
+const ABREN_MODAL = new Set([
+  'conversaciones/reglas',
+  'conversaciones/categorias',
+  'conversaciones/entidades',
+]);
 
 /** El contrato, medido sobre la tabla original antes de migrarla (B4). */
 const GRAMATICA = {
-  paddingCelda: '12.25px', // --sc-spacing-0-875
+  paddingCelda: '17.5px', // --sc-spacing-1-25
+  /* La celda ES un text style desde 2026-09-12. Se fija aquí porque era
+   * justo lo que NADIE miraba: el `<td>` no declaraba tipografía y rendía a
+   * 16/24 —el tamaño por defecto del navegador—, y cada página lo tapaba por
+   * dentro pegando una `.sc-text-*` en el contenido de la celda. Donde faltaba
+   * la clase, el texto salía a 16 y nada se quejaba. */
+  celda: {
+    fontSize: '14px', // --sc-font-size-body-2
+    lineHeight: '20px', // --sc-line-height-body-2
+    fontWeight: '400', // --sc-font-weight-regular
+  },
   cabecera: {
-    fontSize: '12px', // --sc-font-size-100
-    fontWeight: '500', // --sc-font-weight-medium
+    fontSize: '12px', // --sc-font-size-caption
+    fontWeight: '600', // --sc-font-weight-semibold
     // slate-600 desde 2026-07-19. Era slate-500 `rgb(143,151,163)` y daba
     // 2.95:1 — bajo AA. Ver customs-catalog §1.5. Si esto vuelve al valor
     // anterior, es que `tokens:import` pisó la divergencia.
@@ -110,36 +124,55 @@ const GRAMATICA = {
 } as const;
 
 for (const { ruta, nombre, altoFila } of PAGINAS) {
-  test(`${nombre} · la gramática variant=list impone la gramática de la casa`, async ({ page }) => {
+  test(`${nombre} · la gramática variant=list impone la gramática de la casa`, async ({
+    page,
+  }) => {
     await goto(page, ruta);
 
     const tabla = page.locator('sc-datatable.sc-datatable--list').first();
     await expect(tabla).toBeVisible();
 
     const medido = await tabla.evaluate((host: HTMLElement) => {
-      const cs = (el: Element, prop: string) => getComputedStyle(el).getPropertyValue(prop);
-      const th = host.querySelector('.p-datatable-thead th:not(.sc-datatable__check)')!;
+      const cs = (el: Element, prop: string) =>
+        getComputedStyle(el).getPropertyValue(prop);
+      const th = host.querySelector(
+        '.p-datatable-thead th:not(.sc-datatable__check)'
+      )!;
       const tr = host.querySelector('.p-datatable-tbody > tr')!;
       const td = tr.querySelector('td:not(.sc-datatable__check)')!;
       // NO todas las tablas `list` tienen selección: el trío de memory nunca la
       // tuvo. La casilla se mide SOLO si existe; exigirla convertía una
       // diferencia legítima en un fallo (y así petó la primera vez).
-      const thCheck = host.querySelector('.p-datatable-thead th.sc-datatable__check');
+      const thCheck = host.querySelector(
+        '.p-datatable-thead th.sc-datatable__check'
+      );
       const banda = host.querySelector('.p-datatable-header');
       return {
         altoFila: Math.round(tr.getBoundingClientRect().height),
         paddingCelda: cs(td, 'padding-top'),
+        celda: {
+          fontSize: cs(td, 'font-size'),
+          lineHeight: cs(td, 'line-height'),
+          fontWeight: cs(td, 'font-weight'),
+        },
         cabecera: {
           fontSize: cs(th, 'font-size'),
           fontWeight: cs(th, 'font-weight'),
           color: cs(th, 'color'),
           padding: cs(th, 'padding-top'),
         },
-        anchoCasilla: thCheck ? Math.round(thCheck.getBoundingClientRect().width) : null,
-        tableLayout: cs(host.querySelector('.p-datatable-table')!, 'table-layout'),
+        anchoCasilla: thCheck
+          ? Math.round(thCheck.getBoundingClientRect().width)
+          : null,
+        tableLayout: cs(
+          host.querySelector('.p-datatable-table')!,
+          'table-layout'
+        ),
         // La banda de caption de PrimeNG se pinta aunque no proyectes nada:
         // si reaparece, deja una franja vacía sobre la cabecera.
-        bandaCaptionVisible: banda ? getComputedStyle(banda).display !== 'none' : false,
+        bandaCaptionVisible: banda
+          ? getComputedStyle(banda).display !== 'none'
+          : false,
       };
     });
 
@@ -151,16 +184,123 @@ for (const { ruta, nombre, altoFila } of PAGINAS) {
     // así que uno de holgura no le quita poder y sí le quita un rojo falso.
     expect(Math.abs(medido.altoFila - altoFila)).toBeLessThanOrEqual(1);
     expect(medido.paddingCelda).toBe(GRAMATICA.paddingCelda);
+    // La celda mide EL TD, no lo que haya dentro: una `.sc-text-*` pegada en el
+    // contenido no puede tapar que el suelo de la celda vuelva a 16px.
+    expect(medido.celda).toEqual(GRAMATICA.celda);
     expect(medido.cabecera).toEqual(GRAMATICA.cabecera);
     // `null` = esta tabla no tiene selección, que es una decisión de la
     // página, no una desviación de la gramática.
-    if (medido.anchoCasilla !== null) expect(medido.anchoCasilla).toBe(GRAMATICA.anchoCasilla);
+    if (medido.anchoCasilla !== null)
+      expect(medido.anchoCasilla).toBe(GRAMATICA.anchoCasilla);
     expect(medido.tableLayout).toBe(GRAMATICA.tableLayout);
     expect(medido.bandaCaptionVisible).toBe(false);
   });
 }
 
-test('en oscuro el separador de fila SE VE (no puede volver a 1.00:1)', async ({ page }) => {
+/**
+ * LAS TABLAS QUE VIVEN DENTRO DE UN FORMULARIO, detrás de una pestaña.
+ *
+ * Entran aquí el 2026-09-12, con su migración: son las tres que estaban
+ * escritas a mano en HTML y pasan a `sc-datatable variant="list"`. Sin esta
+ * sección el guardián pasaba en verde sin visitarlas —lo cantó
+ * `audit:datatables` §7— y "todo verde" no probaba nada sobre ellas.
+ *
+ * La pestaña hay que PULSARLA: `sc-form-section-nav` monta una sección a la vez
+ * en el DOM, así que sin el clic la tabla no existe y el locator se quedaría
+ * esperando a algo que nunca llega.
+ *
+ * `altoFila` difiere de las listas sueltas y debe: lo fija el contenido más
+ * alto. Plantillas es texto a secas (56); los dos editores llevan avatar de 24
+ * más un cluster de chips (69 y 65).
+ */
+const PAGINAS_EN_FORMULARIO = [
+  {
+    ruta: 'admin/agentes/crear',
+    seccion: 'Avanzado',
+    /* El desplegable se abre por su BOTÓN, no por su rótulo: el texto
+     * "PLANTILLAS" vive en un `<span>` de adorno dentro del botón, y clicarlo
+     * solo abre el acordeón por rebote. Así salía verde a veces y rojo otras
+     * (1 de 152 en la pasada del 2026-09-12). `aria-controls` es el gancho
+     * estable, y además es el que dice qué abre. */
+    abrirAcordeon: 'button[aria-controls="agent-acc-templates-body"]',
+    nombre: 'plantillas del agente',
+    altoFila: 56,
+  },
+  {
+    ruta: 'admin/agentes/editar/1',
+    seccion: 'Grupos asignados',
+    nombre: 'grupos del agente',
+    altoFila: 69,
+  },
+  {
+    ruta: 'admin/grupos/editar/1',
+    seccion: 'Agentes asignados',
+    nombre: 'agentes del grupo',
+    altoFila: 65,
+  },
+] as const;
+
+for (const caso of PAGINAS_EN_FORMULARIO) {
+  test(`${caso.nombre} · la tabla del formulario obedece la gramática`, async ({
+    page,
+  }) => {
+    await goto(page, caso.ruta);
+
+    await page
+      .locator('sc-form-section-nav button, sc-form-section-nav [role=tab]')
+      .filter({ hasText: caso.seccion })
+      .first()
+      .click();
+
+    if ('abrirAcordeon' in caso && caso.abrirAcordeon) {
+      const acc = page.locator(caso.abrirAcordeon);
+      await expect(acc).toBeVisible();
+      if ((await acc.getAttribute('aria-expanded')) !== 'true')
+        await acc.click();
+      await expect(acc).toHaveAttribute('aria-expanded', 'true');
+    }
+
+    const tabla = page.locator('sc-datatable.sc-datatable--list').first();
+    await expect(tabla).toBeVisible();
+    await expect(
+      tabla.locator('.p-datatable-tbody > tr').first()
+    ).toBeVisible();
+
+    const medido = await tabla.evaluate((host: HTMLElement) => {
+      const cs = (el: Element, prop: string) =>
+        getComputedStyle(el).getPropertyValue(prop);
+      const th = host.querySelector(
+        '.p-datatable-thead th:not(.sc-datatable__check)'
+      )!;
+      const tr = host.querySelector('.p-datatable-tbody > tr')!;
+      const td = tr.querySelector('td:not(.sc-datatable__check)')!;
+      return {
+        altoFila: Math.round(tr.getBoundingClientRect().height),
+        paddingCelda: cs(td, 'padding-top'),
+        celda: {
+          fontSize: cs(td, 'font-size'),
+          lineHeight: cs(td, 'line-height'),
+          fontWeight: cs(td, 'font-weight'),
+        },
+        cabecera: {
+          fontSize: cs(th, 'font-size'),
+          fontWeight: cs(th, 'font-weight'),
+          color: cs(th, 'color'),
+          padding: cs(th, 'padding-top'),
+        },
+      };
+    });
+
+    expect(Math.abs(medido.altoFila - caso.altoFila)).toBeLessThanOrEqual(1);
+    expect(medido.paddingCelda).toBe(GRAMATICA.paddingCelda);
+    expect(medido.celda).toEqual(GRAMATICA.celda);
+    expect(medido.cabecera).toEqual(GRAMATICA.cabecera);
+  });
+}
+
+test('en oscuro el separador de fila SE VE (no puede volver a 1.00:1)', async ({
+  page,
+}) => {
   await page.addInitScript(() => {
     try {
       localStorage.setItem('sc-theme', 'dark');
@@ -170,23 +310,31 @@ test('en oscuro el separador de fila SE VE (no puede volver a 1.00:1)', async ({
   });
   await goto(page, 'admin/labels');
 
-  const medido = await page.locator('sc-datatable.sc-datatable--list').first().evaluate((host: HTMLElement) => {
-    const bg = getComputedStyle(host.closest('.table-card') ?? host).backgroundColor;
-    const td = host.querySelector('.p-datatable-tbody > tr > td')!;
-    const borde = getComputedStyle(td).borderBottomColor;
-    const rgb = (s: string) => s.match(/\d+/g)!.slice(0, 3).map(Number);
-    const lum = ([r, g, b]: number[]) => {
-      const f = (v: number) => {
-        const x = v / 255;
-        return x <= 0.03928 ? x / 12.92 : Math.pow((x + 0.055) / 1.055, 2.4);
+  const medido = await page
+    .locator('sc-datatable.sc-datatable--list')
+    .first()
+    .evaluate((host: HTMLElement) => {
+      const bg = getComputedStyle(
+        host.closest('.table-card') ?? host
+      ).backgroundColor;
+      const td = host.querySelector('.p-datatable-tbody > tr > td')!;
+      const borde = getComputedStyle(td).borderBottomColor;
+      const rgb = (s: string) => s.match(/\d+/g)!.slice(0, 3).map(Number);
+      const lum = ([r, g, b]: number[]) => {
+        const f = (v: number) => {
+          const x = v / 255;
+          return x <= 0.03928 ? x / 12.92 : Math.pow((x + 0.055) / 1.055, 2.4);
+        };
+        return 0.2126 * f(r!) + 0.7152 * f(g!) + 0.0722 * f(b!);
       };
-      return 0.2126 * f(r!) + 0.7152 * f(g!) + 0.0722 * f(b!);
-    };
-    const l1 = lum(rgb(borde));
-    const l2 = lum(rgb(bg));
-    const [hi, lo] = l1 > l2 ? [l1, l2] : [l2, l1];
-    return { temaOscuro: bg !== 'rgb(255, 255, 255)', ratio: (hi + 0.05) / (lo + 0.05) };
-  });
+      const l1 = lum(rgb(borde));
+      const l2 = lum(rgb(bg));
+      const [hi, lo] = l1 > l2 ? [l1, l2] : [l2, l1];
+      return {
+        temaOscuro: bg !== 'rgb(255, 255, 255)',
+        ratio: (hi + 0.05) / (lo + 0.05),
+      };
+    });
 
   // VALIDAR EL VALIDADOR: si el tema no se aplicó, esto no mide nada.
   expect(medido.temaOscuro).toBe(true);
@@ -195,9 +343,13 @@ test('en oscuro el separador de fila SE VE (no puede volver a 1.00:1)', async ({
 });
 
 for (const { ruta, nombre } of ABREN_FILA) {
-  test(`${nombre} · la fila que abre lo anuncia con el cursor`, async ({ page }) => {
+  test(`${nombre} · la fila que abre lo anuncia con el cursor`, async ({
+    page,
+  }) => {
     await goto(page, ruta);
-    const fila = page.locator('sc-datatable.sc-datatable--list .p-datatable-tbody > tr').first();
+    const fila = page
+      .locator('sc-datatable.sc-datatable--list .p-datatable-tbody > tr')
+      .first();
     await expect(fila).toBeVisible();
     /* Al pintar el `<tr>` el DS, `pSelectableRowDisabled` (modo multiple) le
      * quita la clase de la que PrimeNG saca el cursor. La migración dejó
@@ -208,9 +360,13 @@ for (const { ruta, nombre } of ABREN_FILA) {
 }
 
 for (const { ruta, nombre } of ABREN_FILA) {
-  test(`${nombre} · la fila se abre TAMBIÉN con el teclado (WCAG 2.1.1)`, async ({ page }) => {
+  test(`${nombre} · la fila se abre TAMBIÉN con el teclado (WCAG 2.1.1)`, async ({
+    page,
+  }) => {
     await goto(page, ruta);
-    const fila = page.locator('sc-datatable.sc-datatable--list .p-datatable-tbody > tr').first();
+    const fila = page
+      .locator('sc-datatable.sc-datatable--list .p-datatable-tbody > tr')
+      .first();
     await expect(fila).toBeVisible();
 
     /* Estas tres listas abrían la ficha al clicar y NO eran alcanzables por

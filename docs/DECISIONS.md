@@ -59,6 +59,61 @@
 
 ---
 
+## DD-72 · 2026-09-12 — La tabla publica su tipografía; la matriz de permisos es OTRO componente; las 38 ranuras de PrimeNG se reenvían
+
+**Contexto** · Rafa pidió «dar una vuelta a todas las tablas de la plataforma», partiendo de la página
+del DS y combinándola con la documentación de PrimeNG, con el foco en que fueran **visualmente iguales
+y compatibles**. Medido al abrir: el Supervisor tenía 16 tablas, 11 con `sc-datatable` y **5 escritas a
+mano**, y esas cinco no eran la misma cosa — dos matrices de permisos, dos editores de formulario y un
+selector. Las apps réplica quedaron fuera por DD-35 y DD-37.
+
+**Decisión** · Tres, y cada una cierra un hueco distinto:
+
+1. **La celda de tabla declara su estilo de texto.** El `<td>` no declaraba tipografía y heredaba los
+   16px del documento; cada página lo tapaba por dentro pegando una `.sc-text-*` en el contenido (104
+   repartidas). Ahora la gramática de tabla-lista publica `Body/body-regular` en la celda y
+   `Caption/caption-semibold` en la cabecera, **por token de rol**, y el padding vertical sube a
+   `--sc-spacing-1-25` para que la fila respire con la letra ya correcta (53 → 63,5px).
+2. **`sc-permission-matrix` es un componente propio**, no una opción de `sc-datatable`. Una matriz
+   lleva cabecera de FILA (`<th scope="row">`) y un control en la cabecera de columna, y eso no lo
+   hace ni `sc-datatable` ni `p-table`: no es una función de PrimeNG que falte traer.
+3. **Las 38 ranuras de plantilla de `p-table` se reenvían**, para que un ejemplo de primeng.dev se
+   pegue dentro de `<sc-datatable>` y funcione ya tokenizado — que es lo que Rafa pidió al elegir
+   «que funcione como PrimeNG, porque eventualmente estudiaríamos evolutivos con todas sus opciones».
+
+**Razón** · Para (1): el mismo `<td>` rendía **16px en el Supervisor y 14px en sc-docs**, porque cada
+app fija un `body` distinto. Una tabla cuya letra depende de quién la monta no es un componente, es una
+sugerencia; y el parche por celda solo funciona mientras nadie olvide la clase — que es justo lo que
+había pasado: **DD-71 lo arregló ese mismo día** envolviendo a mano cuatro columnas de
+`/conversaciones`. Aquella entrada y esta miran el mismo defecto desde los dos lados — allí el
+envoltorio que faltaba en una tabla, aquí el suelo que ninguna tenía. Para
+(2): forzarlas dentro de la tabla de datos la infla para dos pantallas. Para (3): medido con una sonda
+y su control positivo, una plantilla del consumidor **NO** atraviesa un `<ng-content/>` hasta `p-table`
+—sus queries son `contentChild` y solo ven su propio contenido—, así que «dejar hueco» no era una
+opción: hay que capturarla y re-emitirla. Cada ranura va dentro de un `@if` porque declararlas siempre
+haría que PrimeNG pintara elementos vacíos (un `<tfoot>` sin pie), también medido.
+
+**Descartadas** ·
+- **Converger la matriz en la piel del `sc-datatable` por defecto** → la piel del Supervisor es
+  `variant="list"`, medido: **las 10 páginas con tabla la usan**. La matriz copia esa, no la otra.
+- **Reenviar solo las ranuras «que hacen falta»** → rechazado: la lista de «las que hacen falta» se
+  queda corta el día que alguien quiera una función nueva, y el coste de las 38 es mecánico.
+- **Arreglar el 16px celda a celda** (DD-71) → sirve para una tabla y no para la siguiente. NO se
+  revierte: su envoltorio sigue siendo la forma canónica de que un texto diga su estilo, y su test
+  sigue verde; lo que cambia es que ya no es lo ÚNICO que sostiene la medida.
+- **Padding `--sc-spacing-1`** (fila de 56,5px) → construido y mirado junto al de 63,5; Rafa pidió que
+  respirara y eligió el holgado. Queda a un token de distancia si se quiere revertir.
+
+**Consecuencias** · **EJECUTADA.** Cero tablas escritas a mano en el Supervisor: las 16 pasan por el
+DS. `list-table-grammar.spec.ts` gana la tipografía de la celda como contrato (validada en rojo con el
+valor viejo) y tres casos nuevos para las tablas que viven dentro de un formulario, que hasta hoy el
+guardián no visitaba (lo cantó `audit:datatables` §7). `sc-datatable-slots.spec.ts` fija el reenvío, con
+su caso rojo. **Una diferencia de comportamiento deliberada**: vaciar la selección desde la cabecera ya
+no borra las filas que la búsqueda esté ocultando — antes ese camino y el de marcar una a una no decían
+lo mismo. **Queda vivo**: los dos editores simétricos pintan sus chips de canal distinto (pastilla azul
+con `--sc-color-blue-700` de fondo contra contorno blanco), divergencia anterior a esto y contraria a la
+regla de no usar paleta cruda como fondo; y la piel por defecto de `sc-datatable` no ha seguido a la
+`list` en tipografía, así que sc-docs y el Supervisor ya no coinciden en ese punto.
 ## DD-71 · 2026-09-12 — El texto de una celda va en SU envoltorio, y por eso las tablas miden igual
 
 **Contexto** · El barrido de estilos de texto dejó un residuo grande y raro: en `/conversaciones`,
