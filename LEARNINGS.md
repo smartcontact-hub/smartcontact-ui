@@ -17,7 +17,7 @@
 | # | Si estás a punto de… | → |
 |---|---|---|
 | **1** | concluir que algo NO funciona, **o que ya lo arreglaste tocando una opción** | demuestra que tu estímulo —o tu opción— LLEGÓ **y que es el que el sistema produce de verdad, no uno que inyectaste tú**; no extiendas el negativo más allá de lo que mediste |
-| **2** | creerte un hallazgo (o un verde) de una sonda **tuya**, incluido un TEST | valida el instrumento con un caso conocido; pruébalo en todos sus ejes; valida el CANAL (rojo y verde pueden venir de otro sitio); y mira si tu **doble contesta la pregunta que hace el código** — si lo hace, el test se mide a sí mismo |
+| **2** | creerte un hallazgo (o un verde) de una sonda **tuya**, incluido un TEST | valida el instrumento con un caso conocido; pruébalo en todos sus ejes; valida el CANAL (rojo y verde pueden venir de otro sitio); mira si tu **doble contesta la pregunta que hace el código**; y ante un trinquete que NO baja o un rojo demasiado redondo, mira UN caso a mano: el que lee de menos suele ser tu contador |
 | **4** | arreglar un valor sustituyéndolo por otro token | mide el token de DESTINO antes (fondo y texto, misma familia) |
 | **5** | dudar entre tu código y tu medición | lo rancio es la medición: build, server, HMR, animación, **el repo bajo tus pies** ⚙️, **otra instancia (un deploy)**, la máquina ahogada… o atribución. Y si el test miraba un TRANSITORIO, la carga es el disparador, no la causa |
 | **6** | creerte un test NUEVO — se ponga rojo **o pase a la primera** | sospecha del test primero: ¿mide la magnitud? ¿el selector casa? ¿reintenta? ¿espera al estado final? Y para probar el arreglo de una CARRERA, hazla determinista en vez de correrla con carga |
@@ -54,12 +54,13 @@
    fallo delante para ver que enrojece.** Pregunta por la MAGNITUD (¿color o geometría?) y por el
    NODO exacto de la claim; lee el control (un rojo o un verde puede venir de otro sitio: servidor
    muerto, puerto de OTRO worktree, filtro `jq` que nunca casa); si un doble contesta la pregunta
-   que hace el código, el test se mide a sí mismo. Cierra con una observación que NO dependa de tu
-   inventario. Un guardián con falsos positivos es peor que ninguno: enseña a ignorarlo. ⚙️ el
-   CHECK O de `docs:coherence` exige un test rojo a cada script de `verify` (17 legados, solo encoge).
-   Evidencia: s18 regex `/\d+/g` sobre `color(srgb …)` = verde imposible · s21 medí píxeles, no
-   color · s34 `closest: () => ({})` dejó 8 tests verdes con el gesto muerto · s31 tests verdes
-   contra el `ng serve` de otro worktree · s18 guardián sin probar en claro↔oscuro = 17 rojos.
+   que hace el código, el test se mide a sí mismo. **Dos olores de que el que lee de menos es TU
+   contador: un trinquete que no baja aunque arregles, y un rojo demasiado REDONDO** — mira UN caso
+   a mano antes de creerte el informe. ⚙️ CHECK O de `docs:coherence` exige test rojo por script.
+   Evidencia: s18 regex `/\d+/g` sobre `color(srgb …)` = verde imposible · s34 `closest: () => ({})`
+   dejó 8 verdes con el gesto muerto · s31 verdes contra el `ng serve` de otro worktree ·
+   2026-09-12 trinquete atascado en 55 = cuatro formas de leer de menos, y «21 de 24 discrepan»
+   era mi `modeId`, no deriva.
 
 4. **Vas a arreglar un valor sustituyéndolo por otro token → MIDE el token de destino antes.**
    Fondo y texto van de la misma familia: mezclar uno que voltea de tema con uno que no es el
