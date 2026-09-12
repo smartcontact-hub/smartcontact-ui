@@ -137,9 +137,16 @@ export const PENDIENTES = {};
  */
 export const ATRIBUTO_RUIDO = /^(class|style|id|data-[\w-]+|#\w+|ng[A-Z]\w*|\*\w+)$/;
 
-/** Fontanería: inputs que un ejemplo no tiene por qué enseñar (accesibilidad, ids, hooks). */
+/**
+ * Fontanería: inputs que un ejemplo no tiene por qué enseñar (accesibilidad, ids, hooks).
+ *
+ * ⚠️ `\w+AriaLabel` entra por PATRÓN y no por lista: `rowSelectionAriaLabel`,
+ * `selectAllAriaLabel`, `clearAriaLabel` y `closeAriaLabel` se colaban en la cuenta de «sin
+ * ejemplo» aunque son exactamente la misma clase de cosa que `ariaLabel`. Cuatro de los 66 no
+ * eran deuda: eran un regex que no los cubría.
+ */
 export const INPUT_FONTANERIA =
-  /^(inputId|name|ariaLabel|ariaLabelledBy|ariaDescribedBy|styleClass|panelStyleClass|autocomplete|inputmode|maxlength|minlength|cols|rows|locale|appendTo|key|tabindex|autofocus|dataKey|trackBy)$/;
+  /^(inputId|name|ariaLabel|ariaLabelledBy|ariaDescribedBy|\w*AriaLabel|styleClass|panelStyleClass|autocomplete|inputmode|maxlength|minlength|cols|rows|locale|appendTo|key|tabindex|autofocus|dataKey|trackBy)$/;
 
 /**
  * Fuera los comentarios HTML. Para la comprobación de EXISTENCIA sí cuentan (un comentario que
@@ -385,13 +392,19 @@ export const DIVERGENCIAS = {
 };
 
 /**
- * Tope del trinquete de (b): 66 inputs públicos sin ejemplo ni knob, medido el 2026-09-11 sobre
- * las 49 páginas. No se arreglan de golpe (son 66 ejemplos que escribir, y un ejemplo malo enseña
- * peor que ninguno), pero el número SOLO PUEDE BAJAR: un input nuevo sin ejemplo pone el gate en
- * rojo el día que se añade, que es cuando cuesta un minuto documentarlo. El gate imprime la lista
- * entera para poder irla bajando.
+ * Tope del trinquete de (b). Arrancó en **66** el 2026-09-11 y baja a **55** el 2026-09-12:
+ *   · **4 no eran deuda**, era el regex: `rowSelectionAriaLabel`, `selectAllAriaLabel`,
+ *     `clearAriaLabel` y `closeAriaLabel` son exactamente la misma clase de cosa que `ariaLabel`,
+ *     y la lista los pedía por NOMBRE en vez de por patrón;
+ *   · **7 se documentaron de verdad**, con una story nueva en `sc-select` («Lo que no se ve en
+ *     los otros ejemplos»): `invalid`, `readonly`, `filterBy`, `emptyFilterMessage`,
+ *     `emptyMessage`, `optionDisabled`, `value`.
+ *
+ * Los 55 que quedan no se arreglan de golpe: un ejemplo malo enseña peor que ninguno. Pero el
+ * número SOLO PUEDE BAJAR, y un input nuevo sin ejemplo pone el gate en rojo el día que se añade,
+ * que es cuando cuesta un minuto. `node scripts/audit-doc-snippets.mjs --inputs` imprime la lista.
  */
-export const INPUTS_SIN_EJEMPLO_MAX = 66;
+export const INPUTS_SIN_EJEMPLO_MAX = 55;
 
 /* ── main ──────────────────────────────────────────────────────────────────── */
 if (process.argv[1] && process.argv[1].endsWith('audit-doc-snippets.mjs')) {

@@ -62,8 +62,16 @@ Orca se cerraron en el #113; `agent-mini` entró en el CI; la doc, en su PR):
   con las cuatro cosas que lo hacen fiable escritas dentro (texto PROPIO y no `textContent`; clave
   con ordinal; el selector ignora `sc-text-*` o el diff sale vacío por construcción; y medir el
   RUIDO primero — dos pasadas del mismo build, 0 diferencias). Se había reescrito tres veces.
-- **Los 66 inputs públicos sin ejemplo** que destapó el trinquete de `audit:doc-snippets` (DD-70).
-  El gate los imprime con `--inputs`; la lista solo baja, y bajarla es escribir doc, no barrer.
+- **Los inputs públicos sin ejemplo**: 66 → **55** el 2026-09-12. **Cuatro no eran deuda**, era el
+  regex: `rowSelectionAriaLabel`, `selectAllAriaLabel`, `clearAriaLabel` y `closeAriaLabel` son la
+  misma clase de cosa que `ariaLabel` y la lista los pedía por NOMBRE en vez de por patrón. Los
+  otros siete se documentaron de verdad, con una story en `sc-select` («Lo que no se ve en los
+  otros ejemplos»: `invalid`, `readonly`, `filterBy`, `emptyMessage`, `emptyFilterMessage`,
+  `optionDisabled`, `value`). Los 55 que quedan salen con `--inputs`; los gordos son
+  `sc-multiselect` (10), `sc-datatable` (6) y `sc-dialog` (6).
+  ⚠️ **Añadir una story a una página con métrica cuesta tres redes**: la captura visual, el HTML
+  congelado y los estilos computados. Se regeneran, pero hay que correr `npm run e2e` ENTERO en
+  local — el preflight no lo incluye (DD-60) y el CI lo caza después.
 
 **Lo que deja el 2026-09-12 (la vuelta a las tablas, DD-72), medido y sin hacer:**
 
@@ -205,41 +213,9 @@ anterior moría con «element not found», un rojo que dice que falta un nodo en
 pantalla mide mal. Ahora el rojo trae la magnitud: «la celda de Hora mide 16px/24px».
 
 
-## ✅ 2026-09-11 · Tres guardas que cierran la lista de pendientes del proyecto
-
-**Sello:** DD-70. Tres PR sobre `main` (#113, #117, #118), cada uno con su `ci:verdict` leído.
-
-**De dónde sale.** Rafa pidió el orden de prioridad de todo lo pendiente y luego «adelante a todo».
-Se leyeron los cuatro hand-offs, los PR abiertos y las cajas, y se ordenó por lo que le cuesta a
-él (defectos que le llegan), no por tamaño.
-
-**Lo que entró.** (1) El preflight **no corre sobre una rama rezagada** y la marca deja de valer si
-`main` avanzó y funde con CONFLICTO —solo entonces, o son 8 min en bucle con tres sesiones
-fundiendo—; la portada del PR de tokens lleva el sha que el robot verificó. (2) **`agent-mini` entra
-en el CI**, el preflight, `typecheck` y el carril acotado: era el quinto sitio en producción y solo
-Cloudflare cazaba una rotura de su build. (3) **`audit:doc-snippets` ata el código que la doc ENSEÑA
-con el que EJECUTA** y cada ficha gana su **anatomía leída del DOM** (`sc-button > p-button >
-button.p-button`); cuatro defectos reales, uno el que vio Rafa en `/#/components/button`.
-
-**Lo que NO se hizo, y por qué.** El barrido de tipografía suelta lo estaba haciendo **otra sesión a
-la vez** (#115, caja `grayling`). Se vio mirando `git worktree list` y los PR abiertos ANTES de
-tocar las mismas plantillas: dos sesiones editando `projects/supervisor` es lo que costó el día del
-2026-09-03. Queda suyo, con sus preguntas para Rafa arriba.
-
----
-
-> El tramo del **barrido de estilos de texto** (116 → 101 reglas, #115) se archivó el 2026-09-12
-> por el tope de 400 líneas, al entrar el de la vuelta a las tablas. Vive en git y en el tag
-> `archive/handoff-ds-2026-09-12-tablas`; su trinquete lo cuenta `audit:text-styles` §4, que es
-> donde hace falta.
-
-> El tramo del **botón de guardar** (#114, el suelo de 128px queda solo en el CTA de lista) se
-> archivó el 2026-09-12 por el tope de 400 líneas. Vive en git y en el tag
-> `archive/handoff-ds-2026-09-12`; el cuerpo del PR #114 y el comentario de `main.scss` guardan
-> sus números.
-
-> El tramo de **`npm run sesiones`** se archivó el 2026-09-11 (tag
-> `archive/handoff-ds-2026-09-11-tarde`); el comando lo cuenta `NEXT-SESSION.md`.
+> El tramo de **las tres guardas** (#113, #117, #118: el preflight que se niega sobre una rama
+> rezagada, `agent-mini` en el CI, y el código que la doc enseña atado al que ejecuta) se archivó
+> el 2026-09-12 por el tope de 400 líneas. Tag `archive/handoff-ds-2026-09-12`; lo durable, DD-70.
 
 ## 🗄️ Histórico de la lista SIGUIENTE — ya cerrado
 
