@@ -159,7 +159,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 122
+      "usedInSupervisor": 121
     },
     {
       "name": "card",
@@ -197,7 +197,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 31
+      "usedInSupervisor": 29
     },
     {
       "name": "chip",
@@ -488,9 +488,10 @@
       "kind": "CUSTOM",
       "primengBase": "—",
       "cva": false,
-      "inputs": 2,
+      "inputs": 3,
       "api": [
         "for",
+        "labelId",
         "required"
       ],
       "nested": [],
@@ -658,7 +659,7 @@
         "sc-field-msg"
       ],
       "hasDemo": true,
-      "usedInSupervisor": 12
+      "usedInSupervisor": 11
     },
     {
       "name": "inputtext",
@@ -962,9 +963,10 @@
       "kind": "EXTENDED",
       "primengBase": "primeng/select",
       "cva": false,
-      "inputs": 25,
+      "inputs": 26,
       "api": [
         "appendTo",
+        "ariaLabelledBy",
         "blurred",
         "disabled",
         "emptyFilterMessage",
@@ -1166,7 +1168,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 21
+      "usedInSupervisor": 22
     }
   ]
 }

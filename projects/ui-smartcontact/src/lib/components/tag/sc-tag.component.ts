@@ -41,8 +41,7 @@ export class ScTagComponent {
         return {
             '--label-bg': `var(--sc-label-${c}-bg)`,
             '--label-text': `var(--sc-label-${c}-text)`,
-            '--label-border': `var(--sc-label-${c}-border)`,
-            '--label-dot': `var(--sc-label-${c}-dot)`
+            '--label-border': `var(--sc-label-${c}-border)`
         };
     });
 

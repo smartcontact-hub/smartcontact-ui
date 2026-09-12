@@ -1,6 +1,5 @@
 @if (variant() === 'label') {
     <span class="sc-chip__label" [style]="labelVars()">
-        <span class="sc-chip__dot" aria-hidden="true"></span>
         <span class="sc-chip__text">{{ label() }}</span>
         @if (removable()) {
             <button

@@ -1050,8 +1050,8 @@
       "border-bottom-width": "0px",
       "font-size": "14px",
       "font-weight": "400",
-      "line-height": "21px",
-      "color": "rgb(111, 119, 132)",
+      "line-height": "20px",
+      "color": "rgb(79, 86, 99)",
       "background-color": "rgba(0, 0, 0, 0)"
     },
     "sc-checkbox-header > label.tri-checkbox > span.tri-checkbox__box": {
@@ -1066,8 +1066,8 @@
       "border-bottom-width": "1px",
       "font-size": "14px",
       "font-weight": "400",
-      "line-height": "21px",
-      "color": "rgb(111, 119, 132)",
+      "line-height": "20px",
+      "color": "rgb(79, 86, 99)",
       "background-color": "rgb(27, 39, 61)"
     },
     "sc-checkbox-header > label.tri-checkbox > span.tri-checkbox__box > span.tri-checkbox__mark": {
@@ -1082,8 +1082,8 @@
       "border-bottom-width": "0px",
       "font-size": "14px",
       "font-weight": "400",
-      "line-height": "21px",
-      "color": "rgb(111, 119, 132)",
+      "line-height": "20px",
+      "color": "rgb(79, 86, 99)",
       "background-color": "rgb(255, 255, 255)"
     },
     "sc-checkbox-lg": {
@@ -1115,7 +1115,7 @@
       "font-size": "16px",
       "font-weight": "400",
       "line-height": "24px",
-      "color": "rgb(111, 119, 132)",
+      "color": "rgb(79, 86, 99)",
       "background-color": "rgba(0, 0, 0, 0)"
     },
     "sc-checkbox-lg > label.tri-checkbox > span.tri-checkbox__box": {
@@ -1131,7 +1131,7 @@
       "font-size": "16px",
       "font-weight": "400",
       "line-height": "24px",
-      "color": "rgb(111, 119, 132)",
+      "color": "rgb(79, 86, 99)",
       "background-color": "rgb(27, 39, 61)"
     },
     "sc-checkbox-lg > label.tri-checkbox > span.tri-checkbox__box > span.tri-checkbox__mark": {
@@ -1147,7 +1147,7 @@
       "font-size": "16px",
       "font-weight": "400",
       "line-height": "24px",
-      "color": "rgb(111, 119, 132)",
+      "color": "rgb(79, 86, 99)",
       "background-color": "rgb(255, 255, 255)"
     },
     "sc-checkbox-md": {
@@ -1178,8 +1178,8 @@
       "border-bottom-width": "0px",
       "font-size": "14px",
       "font-weight": "400",
-      "line-height": "21px",
-      "color": "rgb(111, 119, 132)",
+      "line-height": "20px",
+      "color": "rgb(79, 86, 99)",
       "background-color": "rgba(0, 0, 0, 0)"
     },
     "sc-checkbox-md > label.tri-checkbox > span.tri-checkbox__box": {
@@ -1194,8 +1194,8 @@
       "border-bottom-width": "1px",
       "font-size": "14px",
       "font-weight": "400",
-      "line-height": "21px",
-      "color": "rgb(111, 119, 132)",
+      "line-height": "20px",
+      "color": "rgb(79, 86, 99)",
       "background-color": "rgb(27, 39, 61)"
     },
     "sc-checkbox-md > label.tri-checkbox > span.tri-checkbox__box > span.tri-checkbox__mark": {
@@ -1210,8 +1210,8 @@
       "border-bottom-width": "0px",
       "font-size": "14px",
       "font-weight": "400",
-      "line-height": "21px",
-      "color": "rgb(111, 119, 132)",
+      "line-height": "20px",
+      "color": "rgb(79, 86, 99)",
       "background-color": "rgb(255, 255, 255)"
     },
     "sc-checkbox-row-0": {
@@ -1242,8 +1242,8 @@
       "border-bottom-width": "0px",
       "font-size": "14px",
       "font-weight": "400",
-      "line-height": "21px",
-      "color": "rgb(111, 119, 132)",
+      "line-height": "20px",
+      "color": "rgb(79, 86, 99)",
       "background-color": "rgba(0, 0, 0, 0)"
     },
     "sc-checkbox-row-0 > label.tri-checkbox > span.tri-checkbox__box": {
@@ -1258,8 +1258,8 @@
       "border-bottom-width": "1px",
       "font-size": "14px",
       "font-weight": "400",
-      "line-height": "21px",
-      "color": "rgb(111, 119, 132)",
+      "line-height": "20px",
+      "color": "rgb(79, 86, 99)",
       "background-color": "rgb(255, 255, 255)"
     },
     "sc-checkbox-row-0 > label.tri-checkbox > span.tri-checkbox__box > span.tri-checkbox__mark": {
@@ -1274,8 +1274,8 @@
       "border-bottom-width": "0px",
       "font-size": "14px",
       "font-weight": "400",
-      "line-height": "21px",
-      "color": "rgb(111, 119, 132)",
+      "line-height": "20px",
+      "color": "rgb(79, 86, 99)",
       "background-color": "rgba(0, 0, 0, 0)"
     },
     "sc-checkbox-row-1": {
@@ -1306,8 +1306,8 @@
       "border-bottom-width": "0px",
       "font-size": "14px",
       "font-weight": "400",
-      "line-height": "21px",
-      "color": "rgb(111, 119, 132)",
+      "line-height": "20px",
+      "color": "rgb(79, 86, 99)",
       "background-color": "rgba(0, 0, 0, 0)"
     },
     "sc-checkbox-row-1 > label.tri-checkbox > span.tri-checkbox__box": {
@@ -1322,8 +1322,8 @@
       "border-bottom-width": "1px",
       "font-size": "14px",
       "font-weight": "400",
-      "line-height": "21px",
-      "color": "rgb(111, 119, 132)",
+      "line-height": "20px",
+      "color": "rgb(79, 86, 99)",
       "background-color": "rgb(27, 39, 61)"
     },
     "sc-checkbox-row-1 > label.tri-checkbox > span.tri-checkbox__box > span.tri-checkbox__mark": {
@@ -1338,8 +1338,8 @@
       "border-bottom-width": "0px",
       "font-size": "14px",
       "font-weight": "400",
-      "line-height": "21px",
-      "color": "rgb(111, 119, 132)",
+      "line-height": "20px",
+      "color": "rgb(79, 86, 99)",
       "background-color": "rgb(255, 255, 255)"
     },
     "sc-checkbox-row-2": {
@@ -1370,8 +1370,8 @@
       "border-bottom-width": "0px",
       "font-size": "14px",
       "font-weight": "400",
-      "line-height": "21px",
-      "color": "rgb(111, 119, 132)",
+      "line-height": "20px",
+      "color": "rgb(79, 86, 99)",
       "background-color": "rgba(0, 0, 0, 0)"
     },
     "sc-checkbox-row-2 > label.tri-checkbox > span.tri-checkbox__box": {
@@ -1386,8 +1386,8 @@
       "border-bottom-width": "1px",
       "font-size": "14px",
       "font-weight": "400",
-      "line-height": "21px",
-      "color": "rgb(111, 119, 132)",
+      "line-height": "20px",
+      "color": "rgb(79, 86, 99)",
       "background-color": "rgb(255, 255, 255)"
     },
     "sc-checkbox-row-2 > label.tri-checkbox > span.tri-checkbox__box > span.tri-checkbox__mark": {
@@ -1402,8 +1402,8 @@
       "border-bottom-width": "0px",
       "font-size": "14px",
       "font-weight": "400",
-      "line-height": "21px",
-      "color": "rgb(111, 119, 132)",
+      "line-height": "20px",
+      "color": "rgb(79, 86, 99)",
       "background-color": "rgba(0, 0, 0, 0)"
     },
     "sc-checkbox-sm": {
@@ -1435,7 +1435,7 @@
       "font-size": "12px",
       "font-weight": "400",
       "line-height": "18px",
-      "color": "rgb(111, 119, 132)",
+      "color": "rgb(79, 86, 99)",
       "background-color": "rgba(0, 0, 0, 0)"
     },
     "sc-checkbox-sm > label.tri-checkbox > span.tri-checkbox__box": {
@@ -1451,7 +1451,7 @@
       "font-size": "12px",
       "font-weight": "400",
       "line-height": "18px",
-      "color": "rgb(111, 119, 132)",
+      "color": "rgb(79, 86, 99)",
       "background-color": "rgb(27, 39, 61)"
     },
     "sc-checkbox-sm > label.tri-checkbox > span.tri-checkbox__box > span.tri-checkbox__mark": {
@@ -1467,7 +1467,7 @@
       "font-size": "12px",
       "font-weight": "400",
       "line-height": "18px",
-      "color": "rgb(111, 119, 132)",
+      "color": "rgb(79, 86, 99)",
       "background-color": "rgb(255, 255, 255)"
     },
     "sc-checkbox-some": {
@@ -1498,8 +1498,8 @@
       "border-bottom-width": "0px",
       "font-size": "14px",
       "font-weight": "400",
-      "line-height": "21px",
-      "color": "rgb(111, 119, 132)",
+      "line-height": "20px",
+      "color": "rgb(79, 86, 99)",
       "background-color": "rgba(0, 0, 0, 0)"
     },
     "sc-checkbox-some > label.tri-checkbox > span.tri-checkbox__box": {
@@ -1514,8 +1514,8 @@
       "border-bottom-width": "1px",
       "font-size": "14px",
       "font-weight": "400",
-      "line-height": "21px",
-      "color": "rgb(111, 119, 132)",
+      "line-height": "20px",
+      "color": "rgb(79, 86, 99)",
       "background-color": "rgb(27, 39, 61)"
     },
     "sc-checkbox-some > label.tri-checkbox > span.tri-checkbox__box > span.tri-checkbox__mark": {
@@ -1530,8 +1530,8 @@
       "border-bottom-width": "0px",
       "font-size": "14px",
       "font-weight": "400",
-      "line-height": "21px",
-      "color": "rgb(111, 119, 132)",
+      "line-height": "20px",
+      "color": "rgb(79, 86, 99)",
       "background-color": "rgb(255, 255, 255)"
     }
   },
@@ -1615,22 +1615,6 @@
       "line-height": "20px",
       "color": "rgb(29, 78, 216)",
       "background-color": "rgb(239, 246, 255)"
-    },
-    "sc-chip-label > span.sc-chip__label > span.sc-chip__dot": {
-      "padding-top": "0px",
-      "padding-right": "0px",
-      "padding-bottom": "0px",
-      "padding-left": "0px",
-      "gap": "normal",
-      "min-height": "auto",
-      "border-radius": "9999px",
-      "border-top-width": "0px",
-      "border-bottom-width": "0px",
-      "font-size": "12px",
-      "font-weight": "500",
-      "line-height": "20px",
-      "color": "rgb(29, 78, 216)",
-      "background-color": "rgb(59, 130, 246)"
     },
     "sc-chip-removable": {
       "padding-top": "0px",
@@ -6533,22 +6517,6 @@
       "line-height": "20px",
       "color": "rgb(185, 28, 28)",
       "background-color": "rgb(254, 242, 242)"
-    },
-    "sc-tag-label-red > span.sc-tag__label > span.sc-tag__dot": {
-      "padding-top": "0px",
-      "padding-right": "0px",
-      "padding-bottom": "0px",
-      "padding-left": "0px",
-      "gap": "normal",
-      "min-height": "auto",
-      "border-radius": "9999px",
-      "border-top-width": "0px",
-      "border-bottom-width": "0px",
-      "font-size": "12px",
-      "font-weight": "500",
-      "line-height": "20px",
-      "color": "rgb(185, 28, 28)",
-      "background-color": "rgb(239, 68, 68)"
     }
   },
   "textarea": {

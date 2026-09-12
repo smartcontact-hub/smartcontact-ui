@@ -28,6 +28,7 @@ import {
   ScTagComponent as TagComponent,
   ScToggleSwitchComponent as ToggleSwitchComponent,
 } from '@smartcontact-hub/components';
+import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { stableStringify } from '../../../shared/utils/form-dirty-state';
 
 interface VisibilidadEstados {
@@ -114,6 +115,37 @@ const VISIBILIDAD_LABELS: readonly { key: keyof VisibilidadEstados; tone: string
 const NOTIF_EVENTOS: readonly (keyof NotifEventos)[] = ['inicio', 'fin', 'resultado'];
 
 /**
+ * Las dos reglas de "Bloqueo por inactividad", en tabla y no en dos bloques de
+ * plantilla copiados: son la MISMA fila (interruptor · nombre · frase · número ·
+ * sufijo) y solo cambian las claves. Escritas dos veces, la primera vez que una
+ * cambie la otra se queda atrás — que es como esta pantalla acabó con dos
+ * `inputnumber` en verticales distintas.
+ */
+const BLOQUEO_RULES: readonly {
+  /** Clave en `FormState` (`telefonoBloqueo`). */
+  key: 'telefonoBloqueo' | 'navegadorBloqueo';
+  /** Clave del número que gobierna. */
+  numKey: 'cuarentenaSegundos' | 'bloquearTrasConversaciones';
+  /** Raíz de i18n (`telefono`), que NO coincide con la del formulario. */
+  i18n: 'telefono' | 'navegador';
+  /** Sufijo tras el número ("segundos", "conversaciones no atendidas"). */
+  suffix: 'seconds' | 'conversaciones_suffix';
+}[] = [
+  {
+    key: 'telefonoBloqueo',
+    numKey: 'cuarentenaSegundos',
+    i18n: 'telefono',
+    suffix: 'seconds',
+  },
+  {
+    key: 'navegadorBloqueo',
+    numKey: 'bloquearTrasConversaciones',
+    i18n: 'navegador',
+    suffix: 'conversaciones_suffix',
+  },
+];
+
+/**
  * General defaults page — `/config/aed/servicio` (rótulo "General").
  * Figma Supervisor `1:12270`.
  *
@@ -133,6 +165,7 @@ const NOTIF_EVENTOS: readonly (keyof NotifEventos)[] = ['inicio', 'fin', 'result
     ChipComponent,
     DialogComponent,
     DividerComponent,
+    IconComponent,
     InputTextComponent,
     InputNumberComponent,
     RadioButtonComponent,
@@ -153,6 +186,7 @@ export class AedServicioPageComponent implements DirtyAware {
 
   protected readonly descuelgueOptions = DESCUELGUE_OPTIONS;
   protected readonly visibilidadLabels = VISIBILIDAD_LABELS;
+  protected readonly bloqueoRules = BLOQUEO_RULES;
   protected readonly notifEventos = NOTIF_EVENTOS;
 
   /** Estado original (guardado). `dirty` se deriva comparando con esto, así

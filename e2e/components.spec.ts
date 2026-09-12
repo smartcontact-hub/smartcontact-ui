@@ -864,20 +864,21 @@ test.describe('sc-color-dot-picker', () => {
 });
 
 test.describe('sc-tag variante label', () => {
-  test('§4.1: label pinta bg/text/dot del color categórico; default intacto', async ({ page }) => {
+  test('§4.1: label pinta bg/text del color categórico, SIN punto; default intacto', async ({
+    page,
+  }) => {
     await gotoPage(page, 'tag');
 
     const red = page.getByTestId('sc-tag-label-red').locator('.sc-tag__label');
-    await expect(red.locator('.sc-tag__dot')).toBeVisible();
+    // El punto se fue: en una pastilla TINTADA el color ya está en el fondo y en el
+    // texto, así que el punto lo repetía por tercera vez. Esta guarda es para que no
+    // vuelva sin que nadie lo decida.
+    await expect(red.locator('.sc-tag__dot')).toHaveCount(0);
     // bg = --sc-label-red-bg (red-50) · text = --sc-label-red-text (red-700)
     expect(await styleOf(red, ['background-color', 'color'])).toEqual({
       'background-color': 'rgb(254, 242, 242)',
       color: 'rgb(185, 28, 28)',
     });
-    // dot = --sc-label-red-dot (red-500)
-    expect(
-      (await styleOf(red.locator('.sc-tag__dot'), ['background-color']))['background-color'],
-    ).toBe('rgb(239, 68, 68)');
 
     // default (lote 1) intacto: el primer tag sigue siendo <p-tag>
     await expect(page.getByTestId('sc-tag').locator('.p-tag')).toBeVisible();
@@ -885,11 +886,13 @@ test.describe('sc-tag variante label', () => {
 });
 
 test.describe('sc-chip variante label', () => {
-  test('§4.1: label removible con dot+color; × emite removed; default intacto', async ({ page }) => {
+  test('§4.1: label removible tintado SIN punto; × emite removed; default intacto', async ({
+    page,
+  }) => {
     await gotoPage(page, 'chip');
 
     const label = page.getByTestId('sc-chip-label').locator('.sc-chip__label');
-    await expect(label.locator('.sc-chip__dot')).toBeVisible();
+    await expect(label.locator('.sc-chip__dot')).toHaveCount(0);
     // azul = --sc-label-blue-bg (azure-50 #eff6ff)
     expect((await styleOf(label, ['background-color']))['background-color']).toBe(
       'rgb(239, 246, 255)',
