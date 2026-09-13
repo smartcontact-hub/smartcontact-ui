@@ -11,7 +11,9 @@
 # Así el PR es SIEMPRE `main + el cambio de tokens` (sin staleness, sin basura del plugin,
 # sin carrera de push), y la rama se auto-cura en cada corrida.
 #
-# VERDE = cuadra con la escala → mergear. ROJO = drift en capas curadas (color/semántica) → dev.
+# La portada del PR la escribe el robot en cada pasada (2026-09-14): veredicto en llano
+# (`scripts/tokens-sync-rojo.mjs`), qué cambia (`scripts/tokens-sync-cambios.mjs`), enlaces de
+# preview y los SHA. Y deja el check `tokens-sync` en el commit que verificó.
 name: tokens-sync
 
 # SIN filtro `paths`, y no es un olvido (2026-09-11, DD-68): el plugin empuja a veces SOLO su
@@ -27,6 +29,9 @@ on:
 permissions:
   contents: write
   pull-requests: write
+  # El check `tokens-sync` se escribe en el commit que deja el robot: sus pushes con
+  # GITHUB_TOKEN no disparan workflows, así que sin esto el PR no enseña ningún check suyo.
+  statuses: write
 
 concurrency:
   group: tokens-sync
@@ -53,13 +58,31 @@ jobs:
           git fetch origin design-tokens-sync
           git checkout origin/design-tokens-sync -- projects/design-tokens/scripts/kit-export-dtcg.json
 
+      # Cada paso guarda su log y NO corta el job: el veredicto se decide al final y el PR dice
+      # en llano qué cayó. El run sigue saliendo rojo si algo falló (último paso).
       - name: Regenerar primitivos desde el export
-        run: npm run tokens:import
+        id: import
+        continue-on-error: true
+        run: npm run tokens:import 2>&1 | tee "$RUNNER_TEMP/import.log"
+
+      # Un token que tenía medida y pasa a 0 deja la pieza sin esa medida, y ni el import ni
+      # los tests de métrica lo cazan (leen el 0 del export y el componente pinta 0). Se para aquí.
+      - name: Ningún token del Kit pasa a 0
+        id: ceros
+        if: steps.import.outcome == 'success'
+        continue-on-error: true
+        run: node scripts/tokens-sync-cambios.mjs --base origin/main --ceros 2>&1 | tee "$RUNNER_TEMP/ceros.log"
 
       - name: Verify (parity + guard + escala + build + lint + typecheck)
-        run: npm run verify
+        id: verify
+        if: steps.import.outcome == 'success'
+        continue-on-error: true
+        run: npm run verify 2>&1 | tee "$RUNNER_TEMP/verify.log"
 
       - name: e2e smoke (regresión visual por cambio de token)
+        id: e2e
+        if: steps.verify.outcome == 'success'
+        continue-on-error: true
         # Lo mismo que el job `e2e-smoke` de ci.yml, y por lo mismo: las baselines de
         # `components.spec.ts` son `*-darwin.png` y este runner es Ubuntu, así que sin esta
         # variable falla SIEMPRE («A snapshot doesn't exist»), traiga el export lo que traiga.
@@ -72,14 +95,36 @@ jobs:
           # `apt-get update` de `--with-deps` antes de bajar nada (ci.yml, 2026-09-09).
           sudo rm -f /etc/apt/sources.list.d/google-chrome.list
           npx playwright install --with-deps chromium
-          npm run e2e
+          npm run e2e 2>&1 | tee "$RUNNER_TEMP/e2e.log"
+
+      # Si lo ÚNICO que cae son las referencias de estructura y estilos, es que el export cambió
+      # medidas a propósito: el robot las regenera, vuelve a pasar la smoke entera y las sube en
+      # el mismo commit. Cualquier otro fallo (una medida del Kit que el tema no aplica, un
+      # contraste) sigue rojo. Nació del PR #144 (2026-09-13): 2 de sus 14 rojos eran esto, y
+      # otros 11 eran tests con la medida del Kit escrita a mano (ahora la leen del export,
+      # `e2e/kit-metrics.ts`).
+      - name: Actualizar referencias de estructura y estilos, si es lo único que cae
+        id: referencias
+        if: steps.e2e.outcome == 'failure'
+        continue-on-error: true
+        env:
+          SC_SKIP_VISUAL_BASELINES: '1'
+        run: |
+          node scripts/tokens-sync-rojo.mjs --e2e "$RUNNER_TEMP/e2e.log" --solo-referencias
+          SC_UPDATE_STRUCTURE=1 SC_UPDATE_STYLES=1 npx playwright test component-structure component-styles
+          npm run e2e 2>&1 | tee "$RUNNER_TEMP/e2e.log"
 
       # Aunque verify/e2e fallen (drift en capas curadas), publicamos la rama limpia + PR
-      # como banco de trabajo; el estado del run es la señal verde/rojo.
+      # como banco de trabajo; el veredicto va en la portada y en el check `tokens-sync`.
       - name: Resetear design-tokens-sync a main + el cambio, y abrir/actualizar PR
         if: always()
         env:
           GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          IMPORT: ${{ steps.import.outcome }}
+          CEROS: ${{ steps.ceros.outcome }}
+          VERIFY: ${{ steps.verify.outcome }}
+          E2E: ${{ steps.e2e.outcome }}
+          REFERENCIAS: ${{ steps.referencias.outcome }}
         run: |
           git config user.name  "github-actions[bot]"
           git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
@@ -87,8 +132,25 @@ jobs:
           # y, más abajo, el sha que el robot deja. Van en la portada del PR para que no se pueda
           # fundir a ciegas: el #104 entró con 172 ficheros del plugin sin que nadie lo viera (DD-68).
           PLUGIN_SHA=$(git rev-parse origin/design-tokens-sync)
-          # Solo los ficheros de token (NO test-results/ de Playwright, NO .theme-designer/ del plugin).
-          git add projects/design-tokens/
+
+          # Qué cayó. Verde = importa, verifica y la smoke pasa (a la primera o tras actualizar
+          # las referencias).
+          FALLOS=""
+          if [ "$IMPORT" != "success" ]; then FALLOS="import"
+          else
+            [ "$CEROS" = "success" ] || FALLOS="ceros"
+            if [ "$VERIFY" != "success" ]; then FALLOS="${FALLOS:+$FALLOS,}verify"
+            elif [ "$E2E" != "success" ] && [ "$REFERENCIAS" != "success" ]; then FALLOS="${FALLOS:+$FALLOS,}e2e"
+            fi
+          fi
+          node scripts/tokens-sync-rojo.mjs --import "$RUNNER_TEMP/import.log" --ceros "$RUNNER_TEMP/ceros.log" --verify "$RUNNER_TEMP/verify.log" --e2e "$RUNNER_TEMP/e2e.log" --failed "$FALLOS" --md "$RUNNER_TEMP/veredicto.md" \
+            || printf '### Veredicto\n\n_No se pudo escribir el veredicto: mira el run._\n' > "$RUNNER_TEMP/veredicto.md"
+          node scripts/tokens-sync-cambios.mjs --base origin/main --md "$RUNNER_TEMP/cambios.md" \
+            || printf '### Qué cambia\n\n_No se pudo calcular: mira el run._\n' > "$RUNNER_TEMP/cambios.md"
+
+          # Solo los ficheros de token y, si el robot las actualizó, las referencias de e2e
+          # (NO test-results/ de Playwright, NO .theme-designer/ del plugin).
+          git add projects/design-tokens/ e2e/baselines/
           if git diff --cached --quiet; then
             CHANGED=0
             echo "Export == main: la rama se resetea a main limpio (sin residuo del plugin ni de tests)."
@@ -114,14 +176,43 @@ jobs:
           else
             ROBOT_SHA=$(git rev-parse HEAD)
             RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
-            body=$(printf 'Sync del Theme Designer: export DTCG nuevo aplicado SOBRE main + primitivos @sc-gen regenerados.\n\n- VERDE = cuadra con la escala, listo para mergear.\n- ROJO = drift en capas curadas (color/semantica) -> aplicar a 02-semantic / 03-palette / 04-component antes de mergear.\n\n### Lo que verifico el robot\n\n| | sha |\n| --- | --- |\n| Export del plugin que consumio | `%s` |\n| Commit que dejo en la rama | `%s` |\n\nRun: %s\n\n**Antes de fundir**: la rama tiene que apuntar a `%s`. Si apunta a otro sha, el plugin volvio a pushear y el robot aun no lo ha pasado por `tokens:import` + `verify` + `e2e`: espera al run nuevo (reescribe esta portada) y no fundas a mano.' "$PLUGIN_SHA" "$ROBOT_SHA" "$RUN_URL" "$ROBOT_SHA")
+            {
+              printf 'Export del Theme Designer aplicado sobre `main`, con los tokens regenerados. El robot reescribe esta portada en cada pasada.\n\n'
+              cat "$RUNNER_TEMP/veredicto.md"
+              printf '\n\n'
+              cat "$RUNNER_TEMP/cambios.md"
+              printf '\n\n### Míralo\n\n- Supervisor con este export: https://design-tokens-sync.sc-supervisor.pages.dev\n- sc-docs con este export: https://design-tokens-sync.sc-doc.pages.dev\n\n<sub>Cloudflare los construye unos minutos después del push del robot.</sub>\n'
+              printf '\n### Lo que verificó el robot\n\n| | sha |\n| --- | --- |\n| Export del plugin que consumió | `%s` |\n| Commit que dejó en la rama | `%s` |\n\nRun: %s\n\nEl check **tokens-sync** de este PR va en ese commit. Si el plugin vuelve a empujar, el commit nuevo sale sin ese check hasta que el robot lo pase: no fundas un PR sin él.\n' "$PLUGIN_SHA" "$ROBOT_SHA" "$RUN_URL"
+            } > "$RUNNER_TEMP/body.md"
+            if [ -z "$FALLOS" ]; then
+              STATE=success; DESC="Verificado: tokens, verify y e2e en verde"
+            else
+              STATE=failure; DESC="Rojo en $FALLOS: el porqué, en la portada del PR"
+            fi
+            gh api "repos/${{ github.repository }}/statuses/$ROBOT_SHA" -f state="$STATE" -f context="tokens-sync" -f description="$DESC" -f target_url="$RUN_URL" > /dev/null \
+              || echo "::warning title=Check no escrito::no se pudo poner el estado tokens-sync en $ROBOT_SHA."
             if gh pr view design-tokens-sync --json state --jq .state 2>/dev/null | grep -q OPEN; then
               # La portada se REESCRIBE en cada run: así el sha verificado es siempre el del último.
-              gh pr edit design-tokens-sync --body "$body" && echo "PR ya abierto — portada actualizada con el sha verificado." \
+              gh pr edit design-tokens-sync --body-file "$RUNNER_TEMP/body.md" && echo "PR ya abierto — portada actualizada." \
                 || echo "::warning title=Portada no actualizada::gh pr edit falló; el sha verificado es $ROBOT_SHA."
-            elif gh pr create --base main --head design-tokens-sync --title "chore(tokens): sync del Theme Designer" --body "$body"; then
+            elif gh pr create --base main --head design-tokens-sync --title "chore(tokens): sync del Theme Designer" --body-file "$RUNNER_TEMP/body.md"; then
               echo "PR abierto."
             else
               echo "::warning title=PR no abierto::Habilita Settings -> Actions -> General -> 'Allow GitHub Actions to create and approve pull requests'."
             fi
           fi
+
+      # El run sale del color del veredicto: los pasos de arriba no cortan el job para que el PR
+      # se escriba siempre, así que el rojo se declara aquí.
+      - name: Veredicto del run
+        if: always()
+        env:
+          IMPORT: ${{ steps.import.outcome }}
+          CEROS: ${{ steps.ceros.outcome }}
+          VERIFY: ${{ steps.verify.outcome }}
+          E2E: ${{ steps.e2e.outcome }}
+          REFERENCIAS: ${{ steps.referencias.outcome }}
+        run: |
+          if [ "$IMPORT" != "success" ] || [ "$CEROS" != "success" ] || [ "$VERIFY" != "success" ]; then exit 1; fi
+          if [ "$E2E" != "success" ] && [ "$REFERENCIAS" != "success" ]; then exit 1; fi
+          echo "Verde."

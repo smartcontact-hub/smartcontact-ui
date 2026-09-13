@@ -1,9 +1,11 @@
 import { expect, test } from '@playwright/test';
 
+import { kitPx } from './kit-metrics';
+
 /**
  * Smoke de fundaciones: la demo levanta y el puente --p-* → --sc-* RENDERIZA
  * la métrica del Kit al pixel (computed styles, no sólo CSS estático).
- * Valores esperados = export del Kit (verificados también por tokens:parity).
+ * Valores esperados = export del Kit, leídos de él en `kit-metrics.ts` (no escritos aquí).
  */
 
 test('la demo levanta y renderiza las fundaciones', async ({ page }) => {
@@ -16,7 +18,7 @@ test('la demo levanta y renderiza las fundaciones', async ({ page }) => {
   expect(width).toBe('14px');
 });
 
-test('el preset pinta el botón con la métrica del Kit (10.5/7, radio 6)', async ({ page }) => {
+test('el preset pinta el botón con la métrica del Kit', async ({ page }) => {
   await page.goto('/#/fundamentos/tema');
   const btn = page.getByTestId('btn-md').locator('button');
   await expect(btn).toBeVisible();
@@ -29,9 +31,9 @@ test('el preset pinta el botón con la métrica del Kit (10.5/7, radio 6)', asyn
       fontSize: s.fontSize,
     };
   });
-  expect(styles.paddingLeft).toBe('10.5px');
-  expect(styles.paddingTop).toBe('7px');
-  expect(styles.borderRadius).toBe('6px');
+  expect(styles.paddingLeft).toBe(kitPx('button.root.paddingX'));
+  expect(styles.paddingTop).toBe(kitPx('button.root.paddingY'));
+  expect(styles.borderRadius).toBe(kitPx('button.root.borderRadius'));
   expect(styles.fontSize).toBe('14px');
 });
 
@@ -43,9 +45,9 @@ test('el form field hereda padding y radio del Kit', async ({ page }) => {
     const s = getComputedStyle(el);
     return { paddingLeft: s.paddingLeft, paddingTop: s.paddingTop, borderRadius: s.borderRadius };
   });
-  expect(styles.paddingLeft).toBe('10.5px');
-  expect(styles.paddingTop).toBe('7px');
-  expect(styles.borderRadius).toBe('6px');
+  expect(styles.paddingLeft).toBe(kitPx('formField.paddingX'));
+  expect(styles.paddingTop).toBe(kitPx('formField.paddingY'));
+  expect(styles.borderRadius).toBe(kitPx('formField.borderRadius'));
 });
 
 test('el modo oscuro flipa los tokens bajo .sc-dark', async ({ page }) => {

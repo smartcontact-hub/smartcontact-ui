@@ -31,9 +31,16 @@
 
 **LO SIGUIENTE, en orden (Rafa, 2026-09-13: «automatizable, agéntico: no ir a mano salvo que sea necesario»):**
 
-1. **Lo que dejó el barrido (DD-77/78)**: «Solo fallidas» es un filtro conmutable hecho a mano, y la
-   sonda de `hand-made-pieces` solo mira pastillas (botones, cajas y filas a mano, sin contar): el
-   paso siguiente es ampliarla. Regla de Rafa para lo que dude: manda Aura en código y Figma se alinea.
+0. **«Aura + color de marca» y el export en un clic** (encargo del 2026-09-13; mediciones y menú en
+   `~/Documents/Claude/2026-09 aura-marca/`, scripts incluidos). Hecho: el robot (DD-82). Siguiente,
+   en orden: (a) las 13 familias de color escritas a mano en `01-primitive.css` pasan a generarse del
+   export (hoy un color de Figma sale rojo, medido con `sky.500`); (b) capturas de antes y después y
+   zip del equipo externo en el robot; (c) tanda «vuelve a Aura» (73 diferencias sin motivo) y el foco
+   al color primario; (d) densidad: medir con NUESTRA tipografía antes de decidir (Rafa: «las nuestras
+   son más espaciadas»). Pendiente de Rafa: qué es marca (punto 1 del menú).
+1. **Lo que dejó el barrido (DD-77/78)**: «Solo fallidas» es un filtro conmutable hecho a mano. La sonda
+   ampliada ya existe fuera del repo (E = 209 piezas, `2026-09 aura-marca/`): falta traerla como spec.
+   Regla de Rafa para lo que dude: manda Aura en código y Figma se alinea.
    `danger` a 3.76:1 = valor de Aura, aceptado (DD-78).
 2. **sc-docs: ejemplos de primeng.dev dentro de `<sc-datatable>`**, la red de «la tabla perfecta»: pasa
    ~20 de las 79 entradas de `p-table`.
@@ -133,6 +140,19 @@ las 38 ranuras— se cerraron el mismo día en DD-73.)
 3. **La deuda de código de [`AUDIT-DEUDA-2026-06.md`](../AUDIT-DEUDA-2026-06.md)** que quede tras
    s34, y **los cabos de DD-24** (round-trip de iconos) en [`ROADMAP.md`](../ROADMAP.md).
 
+## ✅ 2026-09-14 · El robot de tokens deja de ponerse rojo por lo que Figma cambia a propósito
+
+**Sello:** rama `arebury/aura-brand-theme-figma`, HEAD `5123008` (#143) más este cambio. DD-82. Rafa: «adelante».
+
+**Lo que cambia.** Los tests de métrica leen el export; el robot regenera las referencias de estructura
+y estilos si es lo único que cae, pone rojo un token que pasa a 0, escribe la portada en llano y deja el
+check `tokens-sync` en su commit.
+
+**Lo que hay que recordar**, porque volverá a morder:
+
+- ⚠️ **Playwright carga los helpers como CommonJS**: un `.mjs` con `import.meta` no se puede importar
+  desde un spec. Y lo que un `.ts` del arnés importa, `tsc` lo revisa: anótalo con JSDoc.
+- ⚠️ **`tokens:import` no corrige un 0** del export ni regenera las familias de color curadas a mano.
 ## ✅ 2026-09-13 · La cabecera de Conversaciones se queda arriba, y una etiqueta ya no se parte
 
 **Sello:** rama `arebury/fix-conversaciones-sticky-header` sobre `b7db531` (#140). DD-80. Rafa, visto en
@@ -201,18 +221,6 @@ mirar, y salieron tres regresiones que el ojo no habría visto:
 «Dirección» de la tabla de notificaciones pasa a «Dirección web» (`i18n:check` cazó que en español
 también es entrante/saliente).
 
-## ✅ 2026-09-13 · Figma alcanza al código, el puente de tipografía se queda en tres tallas, y el 12/20 accidental pasa a caption
-
-**Sello:** HEAD `2ed5094c`. DD-75. Las cuatro recomendaciones de `docs/figma-pendiente.md`, aprobadas
-por Rafa. Queda UNA cosa suya fuera del repo: **publicar la librería** en Figma.
-
-**Lo que hay que recordar:** (1) antes de borrar en Figma se midió todo — aliases, text styles, capas
-en las 110 páginas con control positivo, y el fichero consumidor de Supervisor —, y el borrado se
-hizo a la vez en el export del repo, que regeneró el CSS **byte a byte idéntico**; (2) la lista decía
-«~35 capas» y eran **4**: mezclaba `Section` con `.Subsection`; (3) el 12/20 no eran tres sitios sino
-**96 textos en 11**, y uno (`sc-chip`) es deliberado porque Figma lo ata a 20; (4) `text-census` moría
-en `/` en el Supervisor (el menú son botones) y ahora acepta `--rutas`.
-
 > El tramo de **la primera vuelta a Servicio** (#122: los 487px entre los chips y su botón, las seis
 > casillas sin `(cycle)`) se archivó el 2026-09-12 por el tope de 400 líneas: lo sustituye el tramo
 > de la SEGUNDA vuelta, arriba, sobre la misma pantalla. Tag `archive/handoff-ds-2026-09-12-servicio`.
@@ -224,6 +232,9 @@ en `/` en el Supervisor (el menú son botones) y ahora acepta `--rutas`.
 > Ese mismo día, al entrar Conversaciones con piel Aura (DD-76), salió **la vuelta a todas las tablas
 > de la plataforma** (DD-72: las 16 por el DS, las 38 ranuras de `p-table`). Tag
 > `archive/handoff-ds-2026-09-13-conversaciones`.
+>
+> El 2026-09-14, al entrar el robot de tokens (DD-82), salió **Figma alcanza al código en el título de
+> sección** (DD-75). Tag `archive/handoff-ds-2026-09-14-figma-alcanza`.
 >
 > Al entrar la cabecera fija (DD-80) salió **Servicio habla con una sola voz** (siete maneras de pintar
 > texto, `sc-checkbox` a su rol `body-2`, `subtle` no da jerarquía en claro). Tag

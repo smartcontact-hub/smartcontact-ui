@@ -35,6 +35,7 @@ export const GROUPS = {
  * Ej.: 'button.root.paddingX' → 'button-padding-x' · 'formField.lg.fontSize'
  *      → 'form-field-lg-font-size' · 'iconSize' → 'icon-size'.
  */
+/** @param {string} label */
 export function cmpName(label) {
   return label
     .replace(/\.root(?=\.)/, '')
@@ -116,4 +117,5 @@ export const SIZING = [
  * vez de fallar. Vacío hoy — todo el sizing es 1:1 con el export. Para divergir un
  * slot a propósito: añadir `{ label, reason }` (único toque humano del loop).
  */
+/** @type {{ label: string, reason: string }[]} */
 export const DIVERGE_SIZING = [];
