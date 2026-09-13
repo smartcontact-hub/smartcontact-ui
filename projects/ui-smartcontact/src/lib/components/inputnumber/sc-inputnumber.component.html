@@ -22,7 +22,7 @@
     [attr.max]="max() ?? null"
     [attr.step]="step()"
     [attr.aria-invalid]="isInvalid() ? true : null"
-    [attr.aria-describedby]="footerText() ? msgId() : null"
+    [attr.aria-describedby]="describedBy()"
     [attr.aria-required]="required() ? true : null"
     [value]="displayValue()"
     (input)="onInput($event)"
@@ -31,7 +31,7 @@
   />
 
   @if (hasSuffix()) {
-    <span class="sc-inputnumber__suffix" aria-hidden="true">{{ suffix() }}</span>
+    <span class="sc-inputnumber__suffix" [id]="suffixId()">{{ suffix() }}</span>
   }
 </div>
 
