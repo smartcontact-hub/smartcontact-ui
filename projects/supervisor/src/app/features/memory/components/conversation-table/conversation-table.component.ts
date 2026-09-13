@@ -18,11 +18,11 @@ import { MenuModule } from 'primeng/menu';
 import {
   type ScColumnCellContext,
   type ScColumnDef,
-  ScButtonComponent as ButtonComponent,
   ScDatatableComponent as DatatableComponent,
   type ScDatatableRowEvent,
   type ScDatatableRowKeyEvent,
   type ScRowStyleClassFn,
+  ScTagComponent as TagComponent,
 } from '@smartcontact-hub/components';
 
 import type { Conversation } from '../../data/conversation.types';
@@ -86,7 +86,7 @@ function primaryActionFor(conv: Conversation): ConversationContextAction | null 
  */
 @Component({
   selector: 'sc-memory-conversation-table',
-  imports: [ButtonComponent, DatatableComponent, MenuModule, TranslateModule, MemoryStatusIconComponent],
+  imports: [DatatableComponent, TagComponent, MenuModule, TranslateModule, MemoryStatusIconComponent],
   templateUrl: './conversation-table.component.html',
   styleUrl: './conversation-table.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -116,8 +116,6 @@ export class ConversationTableComponent {
    *  para que el modelo siga vivo si la conversación cambia de estado
    *  mientras el menú está abierto. */
   protected readonly menuTargetId = signal<string | null>(null);
-
-  protected readonly moreIcon = 'more_vert';
 
   /** Nombre accesible de las casillas. Sin esto PrimeNG cae a `'Row Selected'`
    *  / `'All items selected'` — inglés fijo, sin identidad de fila. La tabla a
@@ -151,31 +149,35 @@ export class ConversationTableComponent {
   private readonly textTpl = viewChild<TemplateRef<ScColumnCellContext<Conversation>>>('textTpl');
   private readonly numTpl = viewChild<TemplateRef<ScColumnCellContext<Conversation>>>('numTpl');
   private readonly idTpl = viewChild<TemplateRef<ScColumnCellContext<Conversation>>>('idTpl');
-  private readonly actionsTpl = viewChild<TemplateRef<ScColumnCellContext<Conversation>>>('actionsTpl');
 
   protected readonly columns = computed<readonly ScColumnDef<Conversation>[]>(() => {
     this.currentLang();
     const t = (k: string): string => this.translate.instant(`memory.conversations.table.${k}`);
+    /* ANCHOS (2026-09-13). El reparto es fijo (`table-layout: fixed`, para que las
+     * columnas no salten al filtrar o paginar), así que una columna sin ancho se
+     * lleva la MISMA parte que las demás: Hora tenía 122px para 5 caracteres
+     * mientras Origen partía nombres. Las de contenido de largo conocido llevan
+     * su ancho medido —lo más largo entre sus celdas y su cabecera en es/en/fr/pt,
+     * más los 28px de relleno de Aura, redondeado a múltiplo de 7 (media unidad de
+     * la escala)—; las de texto libre (Servicio, Origen, Grupo, Destino) no llevan
+     * ancho y se reparten lo que sobra. Medido a 1440: les tocan 162px y la más
+     * larga pide 154, así que nada se parte. */
     return [
-      { field: 'status', header: t('status'), width: '132px', cellTemplate: this.statusTpl() },
-      { field: 'hour', header: t('hour'), cellTemplate: this.textTpl() },
-      { field: 'date', header: t('date'), cellTemplate: this.textTpl() },
+      { field: 'status', header: t('status'), width: '77px', cellTemplate: this.statusTpl() },
+      { field: 'hour', header: t('hour'), width: '70px', cellTemplate: this.textTpl() },
+      { field: 'date', header: t('date'), width: '105px', cellTemplate: this.textTpl() },
       { field: 'service', header: t('service'), cellTemplate: this.servicePillTpl() },
       { field: 'origin', header: t('origin'), cellTemplate: this.textTpl() },
       { field: 'group', header: t('group'), cellTemplate: this.groupPillTpl() },
       { field: 'destination', header: t('destination'), cellTemplate: this.textTpl() },
-      { field: 'duration', header: t('duration'), align: 'right', cellTemplate: this.numTpl() },
-      { field: 'waiting', header: t('waiting'), align: 'right', cellTemplate: this.numTpl() },
-      { field: 'id', header: t('id'), cellTemplate: this.idTpl() },
-      {
-        field: 'actions',
-        header: '',
-        headerAriaLabel: this.translate.instant('memory.conversations.cols.more'),
-        width: '44px',
-        align: 'center',
-        stopRowClick: true,
-        cellTemplate: this.actionsTpl(),
-      },
+      // 112: la cabecera francesa («Durée conv.») es la que manda, no la cifra.
+      { field: 'duration', header: t('duration'), width: '112px', align: 'right', cellTemplate: this.numTpl() },
+      { field: 'waiting', header: t('waiting'), width: '98px', align: 'right', cellTemplate: this.numTpl() },
+      { field: 'id', header: t('id'), width: '119px', cellTemplate: this.idTpl() },
+      /* Sin columna de acciones (2026-09-13, Rafa). Sus tres acciones tienen
+       * otra puerta visible: Transcribir y Marcar como leída, en la barra que
+       * sale al seleccionar (Espacio con teclado); Analizar, en el reproductor
+       * (Enter o clic en la fila). El clic derecho sigue abriendo el menú. */
     ];
   });
 

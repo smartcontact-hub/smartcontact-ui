@@ -41,6 +41,7 @@ import {
   ScImpactPreviewDialogComponent as ImpactPreviewDialogComponent,
   ScInlineRenameCellComponent as InlineRenameCellComponent,
   ScSearchComponent as SearchComponent,
+  ScTagComponent as TagComponent,
 } from '@smartcontact-hub/components';
 import { USER_TYPE_LABEL_KEYS, USER_TYPES, User, UserType } from '../data/users-data';
 import { UsersStore, type UserBulkField } from '../state/users.store';
@@ -62,6 +63,7 @@ interface PendingBulkEdit {
     ButtonComponent,
     ColumnSelectorComponent,
     DatatableComponent,
+    TagComponent,
     DeleteEntityDialogComponent,
     EmptyStateComponent,
     ImpactPreviewDialogComponent,

@@ -9,7 +9,7 @@ export interface RepoEntity {
 }
 
 /** Visual presentation for a column. */
-export type RepoColumnKind = 'text' | 'truncate' | 'mono' | 'status';
+export type RepoColumnKind = 'text' | 'truncate' | 'status';
 
 export interface RepoColumnDef<T extends RepoEntity> {
   readonly key: string;

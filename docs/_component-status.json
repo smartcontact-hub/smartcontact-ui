@@ -159,7 +159,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 119
+      "usedInSupervisor": 118
     },
     {
       "name": "card",
@@ -1116,7 +1116,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 3
+      "usedInSupervisor": 8
     },
     {
       "name": "textarea",

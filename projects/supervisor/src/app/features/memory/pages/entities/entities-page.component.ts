@@ -81,7 +81,7 @@ export class EntitiesPageComponent {
 
   /* ── Las dos tablas, ahora `sc-datatable` ─────────────────────────────
    * Las cuatro celdas de datos son composiciones propias de la página (el
-   * `<code>` del nombre, el chip de tipo, la descripción con puntos
+   * nombre, el chip de tipo, la descripción con puntos
    * suspensivos, el formato en gris pequeño), así que van todas por
    * `cellTemplate`: el `<td>` lo pinta ahora el DS y una regla encapsulada de
    * esta página no lo alcanzaría. El `<span>` proyectado sí conserva el

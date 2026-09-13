@@ -213,14 +213,16 @@ test.describe('sc-chip', () => {
 });
 
 test.describe('sc-tag', () => {
-  test('métrica del Kit (7/3.5, font 12/700, radio 6)', async ({ page }) => {
+  // `tag/padding/y` = scale/0-125 en el maestro (DS › ❖ Tag, 373:13337). Hasta DD-76 el tema
+  // ponía 3.5 y este test lo congelaba: 25 de alto contra los 21.5 del Kit.
+  test('métrica del Kit (7/1.75, font 12/700, radio 6)', async ({ page }) => {
     await gotoPage(page, 'tag');
     const tag = page.getByTestId('sc-tag').locator('.p-tag');
     expect(
       await styleOf(tag, ['padding-left', 'padding-top', 'font-size', 'font-weight', 'border-radius']),
     ).toEqual({
       'padding-left': '7px',
-      'padding-top': '3.5px',
+      'padding-top': '1.75px',
       'font-size': '12px',
       'font-weight': '700',
       'border-radius': '6px',

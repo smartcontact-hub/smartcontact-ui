@@ -6471,9 +6471,9 @@
       "background-color": "rgba(0, 0, 0, 0)"
     },
     "sc-tag > p-tag.p-component": {
-      "padding-top": "3.5px",
+      "padding-top": "1.75px",
       "padding-right": "7px",
-      "padding-bottom": "3.5px",
+      "padding-bottom": "1.75px",
       "padding-left": "7px",
       "gap": "3.5px",
       "min-height": "0px",

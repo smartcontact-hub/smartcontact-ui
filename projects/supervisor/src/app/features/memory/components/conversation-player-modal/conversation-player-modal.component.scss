@@ -29,7 +29,6 @@
 
 .player-audio__time {
   width: 48px;
-  font-family: var(--sc-font-family-mono);
   font-size: var(--sc-font-size-200);
   line-height: var(--sc-line-height-body-2);
   font-variant-numeric: tabular-nums;
@@ -311,7 +310,7 @@
 }
 
 .player-bubble__time {
-  font-family: var(--sc-font-family-mono);
+  font-variant-numeric: tabular-nums;
   font-size: var(--sc-font-size-50);
   line-height: var(--sc-line-height-caption);
   color: var(--sc-color-slate-500);

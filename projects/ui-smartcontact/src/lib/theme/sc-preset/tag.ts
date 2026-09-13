@@ -6,7 +6,10 @@ import type { TagDesignTokens } from '@primeuix/themes/types/tag';
     },
     root: {
         gap: "var(--sc-scale-0-25)",
-        padding: "var(--sc-scale-0-25) var(--sc-scale-0-5)",
+        /* `tag/padding/y` = scale/0-125 (1.75) y `tag/padding/x` = scale/0-5 (7) en el
+         * maestro del Kit (DS › ❖ Tag, set 373:13337, leído el 2026-09-13). Aquí ponía
+         * 0-25 (3.5): el tag medía 25 de alto contra los 21.5 del Kit. */
+        padding: "var(--sc-scale-0-125) var(--sc-scale-0-5)",
         fontSize: "var(--sc-font-size-100)",
         fontWeight: "700",
         borderRadius: "{content.border.radius}",

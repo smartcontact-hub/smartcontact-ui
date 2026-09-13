@@ -107,33 +107,9 @@
   }
 }
 
-/* ------------------------------------------------------------------ *
- * sc-type-tag — pill para columnas categóricas (Tipo, Estrategia…).
- *
- * Experiment S59 (decisión Rafa "convergir", opción A): pasa de tag
- * tipográfico sin fondo → pill con fondo gris claro + hairline + radius
- * full, IDÉNTICA a `.memory-cell-pill` de /conversaciones. Unifica el
- * tratamiento de datos categóricos entre AED y Memory (vibe BeyondUI/
- * SnowUI). Revierte a propósito la decisión previa "no chip background".
- * Consumers: agents (Tipo) · groups (Estrategia) · users (Tipo) + Memory.
- * ------------------------------------------------------------------ */
-.sc-type-tag {
-  display: inline-flex;
-  align-items: center;
-  padding: var(--sc-spacing-0-25) var(--sc-spacing-0-625);
-  border-radius: var(--sc-radius-full);
-  background: var(--sc-bg-default);
-  border: 1px solid var(--sc-border-subtle);
-  color: var(--sc-text-primary);
-  font-size: var(--sc-font-size-100);
-  font-weight: var(--sc-font-weight-regular);
-  line-height: 1.3;
-  white-space: nowrap;
-
-  &[data-emphasis='strong'] {
-    font-weight: var(--sc-font-weight-semibold);
-  }
-}
+/* Las columnas categóricas (Tipo, Estrategia, Servicio, Grupo) ya no tienen
+ * pastilla propia aquí: usan `<sc-tag severity="secondary">` del DS, que es el
+ * `tag` de la librería de Figma (2026-09-13). */
 
 /* ------------------------------------------------------------------ *
  * sc-action-divider — 1px vertical separator between primary and

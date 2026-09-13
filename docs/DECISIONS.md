@@ -41,6 +41,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | Un valor categórico en una celda es `sc-tag` secundario del DS · nada en monoespaciada en el producto (sí en sc-docs) · el ancho de columna se mide | DD-76 |
 > | El texto de una celda va en SU envoltorio con su clase · suelto en el `<td>` hereda los 16 del documento | DD-71 |
 > | El estilo de texto se pone por su NOMBRE (`.sc-text-*` en la plantilla) · tokens sueltos solo donde la clase no puede | DD-69 |
 > | Los 12 text styles son los ÚNICOS · pesos 400 y 600, y un `font-size` sobre un glifo no es texto | DD-67 |
@@ -56,6 +57,57 @@
 > | Siete divergencias deliberadas entre flujos, que NO se unifican | DD-36 |
 > | `--sc-bg-default` es el suelo del shell, nunca una superficie | DD-34 |
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
+
+---
+
+## DD-76 · 2026-09-13 — Conversaciones lleva la piel de Aura, los valores categóricos salen del `tag` del DS a la medida del Kit, y el producto deja la monoespaciada
+
+**Contexto** · Tras DD-72/#136 (Aura como base), Rafa vio que la tabla de Conversaciones no la
+llevaba: «lo suyo sería tener consistencia», y después «beben directamente del DS» y «no queremos
+cosas en mono». Al mirarlo, la tabla tenía piel propia (relleno 14/15.75, raya de cabecera, gris de
+selección), una pastilla hecha a mano copiada en dos hojas (`.memory-cell-pill` y `.sc-type-tag`,
+redonda, con borde, 12 regular) y doce sitios en `--sc-font-family-mono`.
+
+**Decisión** · (1) Conversaciones queda con la piel de Aura: fuera rellenos, raya y gris propios;
+se quedan la cabecera fija, los cuatro estados de fila y la clase de selección (que es funcional: pinta
+al instante las filas de un rango). (2) Columnas de largo conocido con ancho MEDIDO (lo más largo de
+celdas y cabecera en es/en/fr/pt + 28 de relleno, redondeado a múltiplo de 7); las de texto libre se
+reparten el resto. (3) Sin columna ⋮: sus tres acciones tienen otra puerta visible (barra de
+selección, reproductor) y el clic derecho sigue. (4) Tipo, Estrategia, Servicio y Grupo usan
+`<sc-tag severity="secondary">`; `.sc-type-tag` y `.memory-cell-pill` se borran. (5) El `tag` del tema
+pasa a `tag/padding/y` = `scale/0-125` (1.75): medía 25 de alto contra los 21.5 del maestro. (6) Nada
+en monoespaciada en el Supervisor ni en los componentes del DS: códigos e identificadores son texto de
+celda, y donde la mono evitaba que las cifras bailaran lo hace `tabular-nums`. sc-docs la conserva.
+
+**Razón** · (1) Consistencia con las otras 25 tablas: medido, Conversaciones queda 8/14 y 44.5 de fila,
+idéntica a Usuarios. (2) Con reparto fijo, una columna sin ancho se lleva la MISMA parte: Hora tenía
+122px para 5 caracteres mientras Origen partía nombres; a 1440 ya nada se parte. (4) La maqueta
+(`Supervisor` › Conversaciones) dibuja Servicio y Grupo con la instancia `tag` Severity=Secondary de la
+librería, y el maestro (DS › ❖ Tag, set `373:13337`) fija Inter 12/18 **700**, relleno 1.75/7, radio 6,
+separación 3.5, icono 10.5, todo atado a variables; Aura también pone el tag a 700. (5) Era el fleco que
+DD-51 dejó anotado («el `tag` mide 25 contra 21.5 por su `padding` vertical»). (6) `--sc-font-family-mono`
+se escribió a mano con el esqueleto del repo y no está en el export del Kit; Figma dibuja el ID en Inter.
+En la documentación sí se queda: el código y los nombres de token se leen mejor en mono.
+
+**Descartadas** ·
+- **Servicio y Grupo en texto plano, como primeng.dev** (lo recomendé yo) → la maqueta del producto
+  dibuja el `tag`, y manda sobre la documentación de PrimeNG.
+- **Mantener la pastilla propia y solo corregir su tipografía** → duplicaba un componente que el DS ya
+  tiene; «un nombre, un hogar».
+- **El ID en `caption` (12) en vez de `body-regular`** → Figma lo pinta con el color de fila, como una
+  celda más; el 13 del Figma no es peldaño.
+- **Borrar el token mono también de sc-docs** → decisión de Rafa: la documentación de código va en mono.
+- **Quitar el `<kbd>` del buscador** → basta `font-family: inherit`; el navegador lo pinta en mono por
+  defecto, y así se había escapado del primer barrido.
+
+**Consecuencias** · Medido en 23 pantallas × 2 temas: 104 tags a 21.5, **cero textos en monoespaciada**
+(también con el reproductor abierto). La selección de fila en oscuro de la lista compartida usaba
+`--sc-color-slate-100` crudo (gris claro con texto casi blanco): pasa a `--sc-bg-secondary-hover`, que
+en claro vale lo mismo. El test de capas de transcripciones cambia de testigo (del padding al tinte de
+la fila fallida) y deja escrito que PrimeNG antepone su `@layer reset, primeng`, así que el orden no se
+puede invertir desde la app. Quedan en la bandeja: el barrido de las piezas hechas a mano que siguen en
+pantallas (`status-pill`, `sc-label`, tipo de extensión, tipo de entidad, estado de regla) y la
+cabecera fija de Conversaciones, que NO fija: `.table-card` lleva `overflow: hidden` desde el L1.
 
 ---
 

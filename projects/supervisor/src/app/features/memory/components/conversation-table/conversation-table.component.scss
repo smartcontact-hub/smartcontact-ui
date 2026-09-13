@@ -20,34 +20,6 @@
   border-radius: 0;
 }
 
-/* ------------------------------------------------------------------ *
- * memory-cell-pill — columnas categóricas (Servicio, Grupo) como pills
- * redondeadas (eco de los dominios pill de Companies). Pastilla sutil:
- * fondo gris claro + hairline, no compite con los datos.
- * ------------------------------------------------------------------ */
-.memory-cell-pill {
-  display: inline-flex;
-  align-items: center;
-  padding: var(--sc-spacing-0-25) var(--sc-spacing-0-625);
-  border-radius: var(--sc-radius-full);
-  background: var(--sc-bg-default);
-  border: 1px solid var(--sc-border-subtle);
-  color: var(--sc-text-primary);
-  font-size: var(--sc-font-size-100);
-  font-weight: var(--sc-font-weight-regular);
-  line-height: 1.3;
-  white-space: nowrap;
-}
-
-/* Columna ID: monoespaciada y sutil. */
-.memory-id-cell {
-  font-family: var(--sc-font-family-mono);
-  font-size: var(--sc-font-size-100);
-  line-height: var(--sc-line-height-caption);
-  color: var(--sc-text-subtle);
-  letter-spacing: 0.02em;
-}
-
 /* Columnas numéricas (T. Conv. / T. Espera): cifras alineadas por dígito. La
  * alineación a la derecha la da `align: 'right'` de la columna. */
 .memory-num-cell {

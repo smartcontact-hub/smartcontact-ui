@@ -132,26 +132,45 @@ for (const ruta of ['config/aed/servicio', 'config/aed/agentes', 'config/aed/gru
  * declarado — y ese orden depende de que la declaración salga en el documento ANTES de que
  * PrimeNG inyecte la suya al arrancar. Eso no lo puede comprobar ningún gate estático.
  *
- * La prueba es de resultado, no de mecanismo: la celda de transcripciones tiene que medir SU
- * padding (14 / 15.75, `--sc-spacing-1` y `--sc-spacing-1-125`) y no el de la gramática compartida
- * (12.25, `--sc-spacing-0-875`). Si el orden de capas se invirtiera, estos números caerían a
- * 12.25 y la pantalla seguiría
- * pareciendo razonable — que es justo el fallo que hay que cazar aquí y no en producción.
+ * La prueba es de resultado, no de mecanismo. Hasta el 2026-09-13 medía el padding propio de la
+ * celda; ese padding se fue (la tabla lleva ya la piel de Aura, como las demás), así que el testigo
+ * pasa a ser lo que la app SÍ sigue pintando por encima del tema: el tinte de la fila con
+ * transcripción fallida, frente al fondo que el tema da a todas las filas.
+ *
+ * ⚠️ Medido el 2026-09-13: el ORDEN de capas hoy no se puede invertir desde la app. PrimeNG
+ * inserta su `@layer reset, primeng` al principio del documento al arrancar, antes que
+ * `_layers.scss`, así que `app` queda siempre la última (invertir `_layers.scss` o anteponer
+ * `@layer reset, app, primeng` al `<head>` no cambió nada). Lo que sí se rompe, y esto caza, es
+ * que el tinte deje de llegar: la regla borrada, movida a la hoja encapsulada del componente o
+ * metida en una capa que pierde. Visto rojo quitando la regla `is-failed` de la hoja global.
  */
-test('`@layer app` gana al tema: la celda de transcripciones mantiene su padding propio', async ({
+test('`@layer app` gana al tema: la fila fallida de transcripciones conserva su tinte', async ({
   page,
 }) => {
   await goto(page, 'conversaciones');
-  const celda = page.locator('sc-datatable.memory-conversations tbody > tr > td').first();
-  await expect(celda).toBeVisible();
-  const medido = await celda.evaluate((el: HTMLElement) => {
-    const cs = getComputedStyle(el);
-    return { top: cs.paddingTop, left: cs.paddingLeft };
+  await expect(page.locator('sc-datatable.memory-conversations tbody > tr').first()).toBeVisible();
+  const medido = await page.evaluate(() => {
+    const fila = document.querySelector('sc-datatable.memory-conversations tbody > tr.is-failed');
+    const normal = document.querySelector(
+      'sc-datatable.memory-conversations tbody > tr:not(.is-failed):not(.is-selected)',
+    );
+    const probe = document.createElement('div');
+    probe.style.background = 'var(--sc-bg-danger-subtle)';
+    document.body.appendChild(probe);
+    const esperado = getComputedStyle(probe).backgroundColor;
+    probe.remove();
+    return {
+      hayFallida: !!fila,
+      fallida: fila && getComputedStyle(fila).backgroundColor,
+      normal: normal && getComputedStyle(normal).backgroundColor,
+      esperado,
+    };
   });
-  expect(medido, 'si sale 12.25px, la piel de Memory perdió contra la gramática del tema').toEqual({
-    top: '14px',
-    left: '15.75px',
-  });
+  expect(medido.hayFallida, 'los datos de demo traen una fila fallida').toBe(true);
+  expect(medido.fallida, 'si sale igual que una fila normal, la piel de Memory perdió contra el tema').toBe(
+    medido.esperado,
+  );
+  expect(medido.fallida).not.toBe(medido.normal);
 });
 
 /**
@@ -184,11 +203,27 @@ test('admin/agendas · la celda destacada de una lista de repositorio mide Body/
   await expect(destacada).toHaveClass(/sc-text-body-semibold/);
   expect(await leer(page, '.table__cell--emphasis')).toEqual(BODY_SEMIBOLD);
 
-  /* Y la celda MONO no lleva ninguna de las dos clases: la impondría Inter y estas
-   * columnas son monoespaciadas a propósito. Es la lección 2 del barrido de la mañana,
-   * puesta como aserción para que no vuelva por la puerta de una columna nueva. */
-  const mono = page.locator('.table__cell--mono').first();
-  if (await mono.count()) await expect(mono).not.toHaveClass(/sc-text-/);
+});
+
+/**
+ * SIN MONOESPACIADA EN EL PRODUCTO (2026-09-13, Rafa: «no queremos cosas en mono»).
+ *
+ * Códigos, claves e identificadores iban en `--sc-font-family-mono`, un token escrito a mano
+ * que no está en el Kit; Figma los dibuja en Inter. Ahora son texto de celda. Tipificaciones es
+ * la testigo porque su columna Código era la última `kind: 'mono'` de las listas de repositorio.
+ * Se mide la familia CALCULADA de cada celda, no la clase: un `<code>` o un `<kbd>` sale en mono
+ * por la hoja del navegador sin que ninguna clase lo diga (así se escapó el «⌘K» del buscador).
+ */
+test('admin/tipificaciones · ninguna celda ni el buscador salen en monoespaciada', async ({ page }) => {
+  await goto(page, 'admin/tipificaciones');
+  await expect(page.locator('sc-datatable tbody > tr').first()).toBeVisible();
+  const enMono = await page.evaluate(() =>
+    [...document.querySelectorAll('sc-datatable td *, sc-datatable td, sc-search *')]
+      .filter((el) => [...el.childNodes].some((n) => n.nodeType === 3 && n.textContent?.trim()))
+      .filter((el) => /mono|menlo|consolas/i.test(getComputedStyle(el).fontFamily))
+      .map((el) => el.textContent?.trim()),
+  );
+  expect(enMono, 'textos que siguen en monoespaciada').toEqual([]);
 });
 
 test('admin/agendas · el título de página mide Heading/h3-semibold y conserva su margen', async ({

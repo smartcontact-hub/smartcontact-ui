@@ -108,13 +108,6 @@
       color: var(--sc-text-primary);
     }
 
-    &--mono {
-      font-family: var(--sc-font-family-mono);
-      font-size: var(--sc-font-size-100);
-      line-height: var(--sc-line-height-caption);
-      color: var(--sc-text-primary);
-    }
-
     /* El ancho lo fija ya el reparto de `table-layout: fixed`; lo que hace
      * falta aquí es que el texto largo se recorte en una línea. */
     &--truncate {

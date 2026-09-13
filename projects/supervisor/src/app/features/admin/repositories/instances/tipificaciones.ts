@@ -118,7 +118,7 @@ const COLUMNS: readonly RepoColumnDef<Tipificacion>[] = [
   {
     key: 'code',
     labelKey: 'repositories.tipificaciones.code',
-    kind: 'mono',
+    kind: 'text',
     accessor: (i) => i.code,
     width: '96px',
   },

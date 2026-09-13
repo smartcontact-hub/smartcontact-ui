@@ -524,7 +524,8 @@ log('✔ Ninguna pantalla declara tipografía fuera de los 12 roles.');
  * familias con su motivo:
  *   · muebles de interlineado APRETADO (chips, pastillas, contadores): 12/12 y 14/14 no son
  *     ningún text style;
- *   · texto con FAMILIA propia (celdas mono): la clase impone Inter;
+ *   · texto con FAMILIA propia: la clase impone Inter (las celdas mono, que eran esta familia,
+ *     se fueron con DD-76: 99 → 92);
  *   · reglas con `font:` shorthand o modificadores que solo cambian el peso (`--active`), que
  *     pisan o complementan a la clase desde la hoja;
  *   · interlineados SIN UNIDAD (aparcados, sin token destino en el Kit).
@@ -532,7 +533,7 @@ log('✔ Ninguna pantalla declara tipografía fuera de los 12 roles.');
  * TRINQUETE por conteo: el número de reglas que aún declaran `font-size` solo puede bajar. Si
  * baja, el tope se baja con él (un tope holgado deja entrar de nuevo lo que ya salió).
  */
-export const TIPOGRAFIA_SUELTA_MAX = 99;
+export const TIPOGRAFIA_SUELTA_MAX = 92;
 
 /**
  * El mismo trinquete para **sc-docs**, el showcase del DS — el que peor predicaba con el ejemplo:

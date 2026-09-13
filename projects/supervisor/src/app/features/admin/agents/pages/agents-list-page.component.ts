@@ -44,6 +44,7 @@ import {
   ScImpactPreviewDialogComponent as ImpactPreviewDialogComponent,
   ScInlineRenameCellComponent as InlineRenameCellComponent,
   ScSearchComponent as SearchComponent,
+  ScTagComponent as TagComponent,
 } from '@smartcontact-hub/components';
 import {
   AGENT_TYPE_LABEL_KEYS,
@@ -89,6 +90,7 @@ const PRESENCE_STATES: readonly PresenceStatus[] = [
     ButtonComponent,
     ColumnSelectorComponent,
     DatatableComponent,
+    TagComponent,
     DeleteEntityDialogComponent,
     EmptyStateComponent,
     IconComponent,

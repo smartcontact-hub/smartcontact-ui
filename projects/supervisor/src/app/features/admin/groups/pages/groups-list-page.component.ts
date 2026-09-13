@@ -42,6 +42,7 @@ import {
   ScImpactPreviewDialogComponent as ImpactPreviewDialogComponent,
   ScInlineRenameCellComponent as InlineRenameCellComponent,
   ScSearchComponent as SearchComponent,
+  ScTagComponent as TagComponent,
 } from '@smartcontact-hub/components';
 import {
   CHANNEL_LABEL_KEYS,
@@ -77,6 +78,7 @@ const COLUMN_PREF_KEY = 'sc-groups-columns-v2';
     ButtonComponent,
     ColumnSelectorComponent,
     DatatableComponent,
+    TagComponent,
     DeleteEntityDialogComponent,
     EmptyStateComponent,
     IconComponent,

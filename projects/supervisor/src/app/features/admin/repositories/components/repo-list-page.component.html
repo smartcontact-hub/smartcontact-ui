@@ -86,19 +86,15 @@
      cuál se está pintando. Es lo que permite que una tabla de columnas
      configurables use el componente del DS. -->
 <ng-template #cellTpl let-item let-col="col">
-  <!-- El estilo de texto va por su NOMBRE, y es CONDICIONAL por dos motivos
-       medidos: la columna destacada es `Body/body-semibold` y el resto
-       `Body/body-regular`, y una celda `--mono` no puede llevar ninguna de las
-       dos —la clase impone Inter y borraría la familia monoespaciada—. Ninguna
-       columna de las nueve instancias es a la vez `emphasis` y `mono`
-       (comprobado sobre sus definiciones), así que las tres ramas no se pisan. -->
+  <!-- El estilo de texto va por su NOMBRE: la columna destacada es
+       `Body/body-semibold` y el resto `Body/body-regular`. Sin columnas en
+       monoespaciada desde el 2026-09-13: códigos y claves son texto de celda. -->
   <span
     class="table__cell"
     [class.table__cell--emphasis]="isEmphasis(col.field)"
-    [class.table__cell--mono]="isKind(col.field, 'mono')"
     [class.table__cell--truncate]="isKind(col.field, 'truncate')"
-    [class.sc-text-body-semibold]="isEmphasis(col.field) && !isKind(col.field, 'mono')"
-    [class.sc-text-body-regular]="!isEmphasis(col.field) && !isKind(col.field, 'mono')"
+    [class.sc-text-body-semibold]="isEmphasis(col.field)"
+    [class.sc-text-body-regular]="!isEmphasis(col.field)"
   >
     @if (getStatusEntry(item, col.field); as status) {
       <span class="status-pill" [attr.data-tone]="status.tone">

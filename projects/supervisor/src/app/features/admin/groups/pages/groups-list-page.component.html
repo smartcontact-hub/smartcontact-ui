@@ -87,7 +87,7 @@
      lo pinta ahora el DS, así que una regla encapsulada de esta página que
      apuntara a `.table__td-*` ya no lo alcanzaría. -->
 <ng-template #codeTpl let-group>
-  <span class="table__cell table__cell--mono">{{ group.code }}</span>
+  <span class="table__cell sc-text-body-regular">{{ group.code }}</span>
 </ng-template>
 
 <ng-template #nameTpl let-group>
@@ -108,7 +108,7 @@
 </ng-template>
 
 <ng-template #phoneTpl let-group>
-  <span class="table__cell table__cell--mono">{{ group.phone }}</span>
+  <span class="table__cell sc-text-body-regular">{{ group.phone }}</span>
 </ng-template>
 
 <ng-template #channelsTpl let-group>
@@ -132,7 +132,7 @@
 </ng-template>
 
 <ng-template #strategyTpl let-group>
-  <span class="sc-type-tag">{{ group.strategy }}</span>
+  <sc-tag severity="secondary" [value]="group.strategy" />
 </ng-template>
 
 <ng-template #agentsTpl let-group>

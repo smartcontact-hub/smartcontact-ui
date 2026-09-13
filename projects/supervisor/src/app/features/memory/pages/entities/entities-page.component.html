@@ -97,7 +97,7 @@
      apuntara a `.entities-table__td-*` ya no lo alcanzaría — el `<span>`
      proyectado sí conserva el `_ngcontent` de la página. -->
 <ng-template #nameTpl let-entity>
-  <span class="entities-table__td-name sc-text-body-regular"><code>{{ entity.name }}</code></span>
+  <span class="entities-table__td-name sc-text-body-regular">{{ entity.name }}</span>
 </ng-template>
 
 <ng-template #typeTpl let-entity>

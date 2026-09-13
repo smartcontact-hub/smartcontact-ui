@@ -536,7 +536,7 @@
     },
     {
       "selector": "sc-tag",
-      "usedInSupervisor": 3
+      "usedInSupervisor": 8
     },
     {
       "selector": "sc-textarea",
