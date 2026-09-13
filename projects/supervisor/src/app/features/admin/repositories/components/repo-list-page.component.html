@@ -97,9 +97,9 @@
     [class.sc-text-body-regular]="!isEmphasis(col.field)"
   >
     @if (getStatusEntry(item, col.field); as status) {
-      <span class="status-pill" [attr.data-tone]="status.tone">
-        {{ status.labelKey | translate }}
-      </span>
+      <!-- Estado con el `tag` del DS y su severidad (DD-76): Figma dibuja así el estado
+           de Agentes. El tono lo declara cada instancia en su `statusMap`. -->
+      <sc-tag [severity]="status.tone" [value]="status.labelKey | translate" />
     } @else {
       {{ getCellValue(item, col.field) }}
     }

@@ -425,7 +425,8 @@ export class GroupsListPageComponent {
     return this.priorityKeys[priority];
   }
 
-  protected priorityTone(priority: string): 'muted' | 'info' | 'warning' | 'danger' {
+  /** Severidad del `sc-tag` de prioridad (DD-76): el vocabulario del DS, no tonos propios. */
+  protected priorityTone(priority: string): 'secondary' | 'info' | 'warning' | 'danger' {
     switch (priority) {
       case 'Media':
         return 'info';
@@ -434,7 +435,7 @@ export class GroupsListPageComponent {
       case 'Máxima':
         return 'danger';
       default:
-        return 'muted';
+        return 'secondary';
     }
   }
 

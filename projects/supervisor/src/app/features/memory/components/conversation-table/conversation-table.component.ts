@@ -23,6 +23,7 @@ import {
   type ScDatatableRowKeyEvent,
   type ScRowStyleClassFn,
   ScTagComponent as TagComponent,
+  ScBadgeComponent as BadgeComponent,
 } from '@smartcontact-hub/components';
 
 import type { Conversation } from '../../data/conversation.types';
@@ -86,7 +87,7 @@ function primaryActionFor(conv: Conversation): ConversationContextAction | null 
  */
 @Component({
   selector: 'sc-memory-conversation-table',
-  imports: [DatatableComponent, TagComponent, MenuModule, TranslateModule, MemoryStatusIconComponent],
+  imports: [BadgeComponent, DatatableComponent, TagComponent, MenuModule, TranslateModule, MemoryStatusIconComponent],
   templateUrl: './conversation-table.component.html',
   styleUrl: './conversation-table.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,

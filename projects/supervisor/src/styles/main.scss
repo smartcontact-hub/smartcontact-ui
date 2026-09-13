@@ -479,68 +479,9 @@ table.table {
 
 }
 
-/* Memory · Status pills compartidas (rules + categories).
- * Antes vivían scoped en rules-page.component.scss; promovidas a global
- * en iter 11a para que CategoriesPage las consuma sin duplicar.
- */
-.rules-status {
-  display: inline-flex;
-  align-items: center;
-  padding: 2px 8px;
-  border-radius: var(--sc-radius-full);
-  text-transform: uppercase;
-  letter-spacing: 0.02em;
-
-  /* Las cuatro variantes iban a paleta CRUDA (`--sc-color-*`), que no se
-   * remapea en oscuro. La peor era `--inactive`: fondo crudo slate-100 (fijo)
-   * con `--sc-text-secondary` encima (semántico, que en oscuro sube a
-   * slate-300) = 1.40:1. La palabra "INACTIVA" no se leía en /reglas ni en
-   * /categorias. Mezclar un fondo que no voltea con un texto que sí voltea es
-   * la forma exacta en que esto se rompe.
-   *
-   * Ahora las cuatro beben de `--sc-label-*`, que es el vocabulario de
-   * INSIGNIA del DS —el que ya usan `.sc-label`, `.chip` y `.status-pill`— y
-   * que desde hoy tiene valor oscuro. Se probó antes con la rampa
-   * `--sc-bg-*-subtle` / `--sc-text-*` y salió peor: esa pareja está calibrada
-   * para texto sobre el LIENZO, no dentro de una pastilla, y dejaba `danger`
-   * en 4.41:1. La familia `label` empareja fondo y texto a propósito (50/700
-   * en vez de 50/600) y mide 5.2-6.4:1. Medido, no deducido. */
-  &--active {
-    background: var(--sc-label-green-bg);
-    color: var(--sc-label-green-text);
-  }
-
-  &--inactive {
-    background: var(--sc-label-gray-bg);
-    color: var(--sc-label-gray-text);
-  }
-
-  &--draft {
-    background: var(--sc-label-amber-bg);
-    color: var(--sc-label-amber-text);
-  }
-
-  &--conflict {
-    background: var(--sc-label-red-bg);
-    color: var(--sc-label-red-text);
-  }
-
-  &--clickable {
-    border: 0;
-    cursor: pointer;
-    font-family: inherit;
-    transition: filter 200ms ease-out;
-
-    &:hover {
-      filter: brightness(0.95);
-    }
-
-    &:focus-visible {
-      outline: 2px solid var(--sc-border-focus);
-      outline-offset: 2px;
-    }
-  }
-}
+/* Memory · el estado de reglas y categorías (Activa/Inactiva) es `<sc-tag [severity]>` del DS
+ * desde DD-76. `rules-status--active|inactive` sigue en el host del tag solo como gancho de los
+ * tests, sin estilos. */
 
 /* AQUÍ HABÍA un `.rules-menu-item--danger` sin capa sobre `.p-menu-item-*`:
  * el rojo del "Eliminar" en el kebab compartido. Se fue al TEMA el 2026-09-10

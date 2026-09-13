@@ -41,6 +41,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | Un estado es `sc-tag` con severidad y un contador `sc-badge` · una pastilla dibujada por la pantalla la caza `hand-made-pieces` | DD-77 |
 > | Un valor categórico en una celda es `sc-tag` secundario del DS · nada en monoespaciada en el producto (sí en sc-docs) · el ancho de columna se mide | DD-76 |
 > | El texto de una celda va en SU envoltorio con su clase · suelto en el `<td>` hereda los 16 del documento | DD-71 |
 > | El estilo de texto se pone por su NOMBRE (`.sc-text-*` en la plantilla) · tokens sueltos solo donde la clase no puede | DD-69 |
@@ -57,6 +58,52 @@
 > | Siete divergencias deliberadas entre flujos, que NO se unifican | DD-36 |
 > | `--sc-bg-default` es el suelo del shell, nunca una superficie | DD-34 |
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
+
+---
+
+## DD-77 · 2026-09-13 — Los estados y contadores que las pantallas se dibujaban salen del DS, y un test impide que vuelvan
+
+**Contexto** · Tras DD-76, Rafa: «si lo que estamos montando es un sistema de diseño automatizable,
+agéntico, lo suyo es no ir a mano a menos que sea tremendamente necesario». Una sonda que atribuye
+cada pastilla a la plantilla que la pinta (`_ngcontent-X` → host `_nghost-X` → ¿selector del DS?)
+encontró 14 familias y 140 piezas dibujadas por pantallas en 22 rutas.
+
+**Decisión** · (1) Un ESTADO es `<sc-tag [severity]>`: Activo/Inactivo de Usuarios, Agentes, Reglas y
+Categorías (`success`/`secondary`), la prioridad de Grupos (`secondary`/`info`/`warning`/`danger`) y el
+estado de las listas de repositorio, cuyos `statusMap` pasan a hablar severidades (`muted` →
+`secondary`). (2) El tipo de extensión y el tipo de entidad son `sc-tag` secundario; los chips de
+acción de regla, `sc-tag` de solo icono con el nombre accesible en el host. (3) Un CONTADOR es
+`sc-badge`: varias grabaciones (`info`) y fallidas (`contrast`). (4) Se borran `.sc-label`,
+`.status-pill`, `.rules-status`, `.entity-type-chip`, `.rules-action-chip` y el tipo de extensión.
+(5) Nace `e2e/supervisor/hand-made-pieces.spec.ts`: congela el inventario por clase y se pone rojo
+si una cifra sube, aparece una clase o baja sin actualizarse. Queda una: el icono de las filas del hub
+de Repositorios, que es solo lo que la sonda ve de una fila de navegación hecha a mano entera.
+
+**Razón** · Figma (`Supervisor` › Agentes) dibuja el estado con `tag` Success/Secondary y el tipo de
+extensión con `tag` Secondary; los contadores con `badge`/`overlaybadge`. Las pantallas sin maqueta
+(Reglas, Categorías, Entidades, repositorios) siguen la misma gramática. El inventario se validó en
+las dos direcciones: sin contar ninguno de los 104 `sc-tag` y rojo (+6) al volver a pintar a mano el
+Tipo de Usuarios.
+
+**Descartadas** ·
+- **Mantener las mayúsculas de «ACTIVO»** → las ponía un `text-transform` de la pastilla a mano; el
+  tag del Kit pinta el texto tal cual. Salen «Activo», «WebRTC».
+- **Badge `danger` en «Solo fallidas»** → blanco sobre red-500 da 3.76:1, bajo AA (lo cazó
+  `theme-contrast`); es el mismo valor que el botón `danger`, pendiente de decidir en el DS.
+- **Migrar solo el icono del hub (p. ej. a `sc-avatar`)** → lo hecho a mano es la fila entera
+  (`<button class="hub-item">` con icono, título, descripción, flecha o «Próximamente», hover y
+  deshabilitado); el icono es lo único que la sonda ve. Bajar ese 11 a 0 sin tocar la fila haría
+  pasar el test sin que el hub bebiera del DS. Tampoco hay maqueta: el fichero `Supervisor` no tiene
+  página de Repositorios. (Una primera versión de esta entrada decía que migrarlo obligaba a «pisar
+  el componente por dentro»; no se había medido, y Rafa pidió revisarlo con ojo crítico.)
+- **Añadir las piezas a una lista de «conocidas» del test** → el test existe para que bajen, no para
+  archivarlas.
+
+**Consecuencias** · Entidades pierde el azul del tipo (era color sin significado) y el sistema deja de
+distinguirse en gris: las dos secciones ya se separan por su título y el candado. Pendiente, en la
+bandeja: el `badge danger` del DS bajo AA, el botón «Solo fallidas» entero (un filtro conmutable hecho
+a mano, que la sonda no cuenta porque es un botón), la fila de navegación del hub a un componente del DS,
+y que la sonda solo mira pastillas.
 
 ---
 

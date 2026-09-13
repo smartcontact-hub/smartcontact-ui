@@ -98,36 +98,34 @@
 
 <ng-template #actionsTpl let-rule>
   <span class="rules-actions-chips">
+    <!-- Tags del DS con solo icono (DD-76); el nombre accesible va en el host. -->
     @if (rule.transcripcion) {
-      <span
-        class="rules-action-chip"
+      <sc-tag
+        severity="secondary"
+        [icon]="transcriptionIcon"
+        role="img"
         [attr.title]="'memory.rules.chip.transcription' | translate"
         [attr.aria-label]="'memory.rules.chip.transcription' | translate"
-      >
-        <sc-icon [name]="transcriptionIcon" [size]="12" />
-      </span>
+      />
     }
     @if (rule.clasificacion) {
-      <span
-        class="rules-action-chip"
+      <sc-tag
+        severity="secondary"
+        [icon]="sparklesIcon"
+        role="img"
         [attr.title]="'memory.rules.chip.classification' | translate"
         [attr.aria-label]="'memory.rules.chip.classification' | translate"
-      >
-        <sc-icon [name]="sparklesIcon" [size]="12" />
-      </span>
+      />
     }
   </span>
 </ng-template>
 
+<!-- `rules-status--*` en el host es solo el gancho de los tests: el aspecto es del DS. -->
 <ng-template #statusTpl let-rule>
   @if (rule.active) {
-    <span class="rules-status rules-status--active sc-text-caption-semibold">
-      {{ 'memory.rules.status.active' | translate }}
-    </span>
+    <sc-tag class="rules-status--active" severity="success" [value]="'memory.rules.status.active' | translate" />
   } @else {
-    <span class="rules-status rules-status--inactive sc-text-caption-semibold">
-      {{ 'memory.rules.status.inactive' | translate }}
-    </span>
+    <sc-tag class="rules-status--inactive" severity="secondary" [value]="'memory.rules.status.inactive' | translate" />
   }
 </ng-template>
 

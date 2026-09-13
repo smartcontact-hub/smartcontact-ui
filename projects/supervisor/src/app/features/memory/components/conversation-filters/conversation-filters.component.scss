@@ -211,23 +211,3 @@
     outline-offset: 2px;
   }
 }
-
-.memory-failed-chip__count {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  min-width: 18px;
-  padding: 0 var(--sc-spacing-0-5);
-  height: 18px;
-  border-radius: var(--sc-radius-full);
-  background: color-mix(in srgb, var(--sc-color-red-200) 80%, transparent);
-  font-variant-numeric: tabular-nums;
-  font-size: var(--sc-font-size-50);
-  font-weight: var(--sc-font-weight-semibold);
-  color: var(--sc-color-red-900);
-
-  .is-active & {
-    background: color-mix(in srgb, white 25%, transparent);
-    color: white;
-  }
-}

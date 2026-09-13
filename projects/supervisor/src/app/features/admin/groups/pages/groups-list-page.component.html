@@ -126,9 +126,7 @@
 </ng-template>
 
 <ng-template #priorityTpl let-group>
-  <span class="sc-label" [attr.data-tone]="priorityTone(group.priority)">
-    {{ priorityLabelKey(group.priority) | translate }}
-  </span>
+  <sc-tag [severity]="priorityTone(group.priority)" [value]="priorityLabelKey(group.priority) | translate" />
 </ng-template>
 
 <ng-template #strategyTpl let-group>

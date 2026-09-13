@@ -120,9 +120,10 @@
 </ng-template>
 
 <ng-template #statusTpl let-user>
-  <span class="sc-label" [attr.data-tone]="user.status === 'active' ? 'success' : 'muted'">
-    {{ 'users.status.' + user.status | translate }}
-  </span>
+  <sc-tag
+    [severity]="user.status === 'active' ? 'success' : 'secondary'"
+    [value]="'users.status.' + user.status | translate"
+  />
 </ng-template>
 
 <!-- `stopPropagation` no es decorativo: el `<td>` del DS ya no corta el click

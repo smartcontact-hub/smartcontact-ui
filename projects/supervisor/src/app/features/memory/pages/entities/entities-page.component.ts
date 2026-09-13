@@ -11,6 +11,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
+import { ScTagComponent as TagComponent } from '@smartcontact-hub/components';
 import { ScEmptyStateComponent as EmptyStateComponent } from '@smartcontact-hub/components';
 import { MenuModule } from 'primeng/menu';
 import type { MenuItem } from 'primeng/api';
@@ -42,6 +43,7 @@ import { EntitiesStore } from '../../state/entities.store';
 @Component({
   selector: 'sc-memory-entities-page',
   imports: [
+    TagComponent,
     ButtonComponent,
     DatatableComponent,
     EmptyStateComponent,

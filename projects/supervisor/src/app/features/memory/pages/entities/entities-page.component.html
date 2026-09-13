@@ -101,12 +101,8 @@
 </ng-template>
 
 <ng-template #typeTpl let-entity>
-  <span
-    class="entity-type-chip sc-text-caption-regular"
-    [class.entity-type-chip--system]="entity.isSystem"
-  >
-    {{ 'memory.entities.types.' + entity.type | translate }}
-  </span>
+  <!-- Valor categórico → `sc-tag` secundario (DD-76), igual en las dos secciones. -->
+  <sc-tag severity="secondary" [value]="'memory.entities.types.' + entity.type | translate" />
 </ng-template>
 
 <ng-template #descTpl let-entity>

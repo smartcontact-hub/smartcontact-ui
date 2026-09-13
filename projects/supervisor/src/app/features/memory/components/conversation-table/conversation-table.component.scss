@@ -66,26 +66,13 @@
     color: var(--sc-text-danger);
   }
 
+  /* Solo la POSICIÓN del contador sobre el icono: el contador es `sc-badge` del DS
+   * (DD-76), igual que el `overlaybadge` de la maqueta. */
   &__multi {
     pointer-events: none;
     position: absolute;
     top: -4px;
     right: -4px;
     display: inline-flex;
-    align-items: center;
-    justify-content: center;
-    min-width: 16px;
-    height: 16px;
-    padding: 0 4px;
-    border-radius: var(--sc-radius-full);
-    /* `--sc-bg-info` es el relleno (sky-500 en los dos temas): 4.90:1 con el
-     * blanco. El blanco va en paleta cruda a propósito — el relleno es estable
-     * entre temas, así que la tinta también. */
-    background: var(--sc-bg-info);
-    color: var(--sc-color-slate-0);
-    font-size: var(--sc-font-size-50);
-    font-weight: var(--sc-font-weight-semibold);
-    line-height: 1;
-    font-variant-numeric: tabular-nums;
   }
 }

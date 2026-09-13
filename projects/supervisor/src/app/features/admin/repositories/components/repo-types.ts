@@ -26,7 +26,7 @@ export interface RepoColumnDef<T extends RepoEntity> {
 
 export interface RepoStatusEntry {
   readonly labelKey: string;
-  readonly tone: 'success' | 'muted' | 'warning' | 'danger' | 'info';
+  readonly tone: 'success' | 'secondary' | 'warning' | 'danger' | 'info';
 }
 
 export type RepoFieldType = 'text' | 'textarea' | 'select';

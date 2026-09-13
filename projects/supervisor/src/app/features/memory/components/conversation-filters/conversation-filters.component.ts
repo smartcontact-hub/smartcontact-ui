@@ -5,6 +5,7 @@ import { TranslateModule } from '@ngx-translate/core';
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ScDatepickerComponent as DatepickerComponent } from '@smartcontact-hub/components';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
+import { ScBadgeComponent as BadgeComponent } from '@smartcontact-hub/components';
 import { ScInputTextComponent as InputTextComponent } from '@smartcontact-hub/components';
 import { ScMultiSelectComponent as MultiSelectComponent } from '@smartcontact-hub/components';
 
@@ -46,6 +47,7 @@ import { TypeFilterButtonComponent } from '../type-filter-button/type-filter-but
 @Component({
   selector: 'sc-memory-conversation-filters',
   imports: [
+    BadgeComponent,
     ButtonComponent,
     FormsModule,
     TranslateModule,
