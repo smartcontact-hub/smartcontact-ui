@@ -41,6 +41,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | Una lista de destinos es el `Menu` del DS en línea · lo que dice Aura lo sigue el código y Figma se revincula | DD-78 |
 > | Un estado es `sc-tag` con severidad y un contador `sc-badge` · una pastilla dibujada por la pantalla la caza `hand-made-pieces` | DD-77 |
 > | Un valor categórico en una celda es `sc-tag` secundario del DS · nada en monoespaciada en el producto (sí en sc-docs) · el ancho de columna se mide | DD-76 |
 > | El texto de una celda va en SU envoltorio con su clase · suelto en el `<td>` hereda los 16 del documento | DD-71 |
@@ -58,6 +59,46 @@
 > | Siete divergencias deliberadas entre flujos, que NO se unifican | DD-36 |
 > | `--sc-bg-default` es el suelo del shell, nunca una superficie | DD-34 |
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
+
+---
+
+## DD-78 · 2026-09-13 — El hub de Repositorios es el `Menu` del DS, y en lo que dude el código manda Aura y Figma se alinea
+
+**Contexto** · DD-77 dejó el hub de Repositorios como la última pieza del inventario y la justificó mal.
+Rafa: «todo tiene que beber del DS… toma la mejor decisión con estos principios [consistencia,
+sencillez, intuitividad], da igual que no haya maqueta». Y sobre las tres decisiones que le pedí: «lo que
+diga Aura, que lo siga código, y revinculamos en Figma donde haga falta».
+
+**Decisión** · (1) El hub pasa de una fila hecha a mano (botón, icono enmarcado, título, descripción,
+flecha, hover, deshabilitado) al `Menu` de PrimeNG en línea: un grupo por categoría, filas que son
+enlaces (`routerLink`), y de la página solo el contenido de cada fila por la plantilla `#item` de
+primeng.dev. Fuera el marco del icono, la flecha y «Próximamente» (ninguna fila lo usaba).
+(2) Categorías: el tag de Aura NO va redondeado por defecto → el código se queda así y en Figma el Tipo
+de Agentes (y sus copias en las páginas Usuarios y Grupos) pasa a `Rounded=False`. (3) Aura no
+transforma el texto del tag → Figma deja «ACTIVO/INACTIVO/WEBRTC» y escribe «Activo/Inactivo/WebRTC».
+(4) El `danger` del DS (red-500 con blanco, 3.76:1) es el valor de Aura: se queda.
+
+**Razón** · (1) Es exactamente lo que resuelve un Menu: título de grupo, fila con hover y foco, teclado
+con flechas y Enter; el tema lo pinta y cualquier otra app lo trae igual. Medido: 11 filas, 4 grupos,
+`href` reales, Enter navega, nombre accesible traducido y en inglés también. (2)(3) Aura `tag`:
+`roundedBorderRadius` es una opción, no el defecto; y no hay `text-transform` en su hoja. Figma
+revinculado con el bridge: 36 tags redondeados y 72 textos en las tres páginas, releídos a 0 después.
+
+**Descartadas** ·
+- **Migrar solo el icono a `sc-avatar`** → dejaba la fila a mano y bajaba el inventario a 0 en falso.
+- **`command` para navegar** → con plantilla `#item` el Menu pulsa el `<li>`, que no tiene manejador:
+  Enter no hacía nada. Lo que funciona es marcar el `<a>` con `data-pc-section="itemlink"`, la marca con
+  la que el Menu reconoce su enlace (medido en el DOM).
+- **Traducir las etiquetas en la plantilla** → el Menu pone `item.label` como `aria-label` de la fila y
+  un lector de pantalla leía «repositories.horarios.title». Van traducidas en el modelo, con el idioma
+  vivo.
+- **Oscurecer el `danger` del DS para pasar AA** → se aparta de Aura, que es la regla que fijó Rafa.
+  «Solo fallidas» sigue con el badge `contrast` porque el rojo ya lo pone el chip.
+
+**Consecuencias** · `hand-made-pieces` queda con el inventario VACÍO. El `danger` sigue bajo AA en
+botón y badge, aceptado y escrito aquí. Fuera de este cambio: la página `Contact Center` de Figma y el
+marco «Editar agente» usan tags redondeados para presencia, que en código es un desplegable con punto;
+no se tocaron.
 
 ---
 
