@@ -267,6 +267,66 @@ ${LIST} .p-datatable-tbody > tr:has(> td[colspan]) > td {
 }
 `;
 
+/*
+ * UNA ETIQUETA ES UNA LÍNEA (2026-09-13). El maestro del Kit (❖ Tag, set `373:13337`)
+ * mide 21.5 de alto con el texto en una sola línea; Aura no dice nada y, en una caja
+ * más estrecha que el texto, la etiqueta se partía en dos líneas y crecía. Medido en
+ * Conversaciones a 1280: 31 de 68 etiquetas a dos líneas en celdas de 133px. Si no
+ * cabe, recorta con puntos suspensivos; `sc-tag` repone el valor en `title` al pasar
+ * el ratón solo si está recortado, y el texto entero sigue en el DOM para un lector.
+ * `clip` y no `hidden`: no convierte la etiqueta en contenedor de scroll, que le
+ * cambiaría la línea base y la movería de su sitio en una fila de texto.
+ */
+const tagOneLineCss = () => `
+.p-component.p-tag {
+    max-width: 100%;
+}
+
+.p-tag .p-tag-label {
+    min-width: 0;
+    overflow: clip;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+`;
+
+/* Sin `.p-datatable:not(.p-datatable-scrollable)`: la clase de host ya no se pone si la
+ * tabla es `scrollable` (lo decide el componente), así que el tema no nombra dos clases
+ * internas más. `> p-table >` es el elemento, no una clase, y no alcanza a una tabla
+ * anidada en una fila expandida. */
+const STICKY = "sc-datatable.sc-datatable--sticky-header > p-table";
+
+/*
+ * CABECERA FIJA AL SCROLL DE LA PÁGINA (`<sc-datatable stickyHeader>`, 2026-09-13).
+ *
+ * Es el mismo mecanismo que PrimeNG usa en su modo `scrollable` (el `<thead>`
+ * con `position: sticky`, que `p-table` ya pone en línea, más `inset-block-start`
+ * y un `z-index`), pero fijado al scroll de la página y no al de la tabla.
+ * Medido en Conversaciones, con la regla inyectada antes de escribirla:
+ *
+ *   1. `p-table` pone `overflow: auto` EN LÍNEA a su contenedor, siempre. Eso lo
+ *      convierte en contenedor de scroll y la cabecera se fija a él, que nunca se
+ *      desplaza: con 600px de scroll la cabecera acababa en -284. Solo un
+ *      `!important` le gana a un estilo en línea. Con `visible` y no `clip`, una
+ *      tabla más ancha que su caja desborda hacia la página, que sí hace scroll.
+ *   2. El `<thead>` fijo crea contexto de apilamiento y las celdas del cuerpo van
+ *      con `position: relative` (la regla 2 de la tabla-lista), así que sin
+ *      `z-index` las filas pintaban ENCIMA de la cabecera. `isolation` encierra
+ *      ese `z-index` en la tabla: gana a sus celdas (la casilla de PrimeNG trae
+ *      `z-index: 1`) sin competir con menús, barra de selección ni diálogos.
+ */
+const stickyHeaderCss = () => `
+${STICKY} > .p-datatable-table-container {
+    overflow: visible !important;
+    isolation: isolate;
+}
+
+${STICKY} > .p-datatable-table-container > .p-datatable-table > .p-datatable-thead {
+    inset-block-start: 0;
+    z-index: var(--sc-z-sticky);
+}
+`;
+
 /* ══════════════════════════════════════════════════════════════════════════
  * MICRO-INTERACCIÓN DE BOTÓN · cómo responde al dedo
  * ══════════════════════════════════════════════════════════════════════════
@@ -404,6 +464,8 @@ ${controlRule(lgControlSelectors, dt, "app.typography.lg.font.size", fromDesignP
 ${baseTableCss()}
 ${emptyCaptionCss()}
 ${listBehaviorCss()}
+${stickyHeaderCss()}
+${tagOneLineCss()}
 
 ${buttonMotionCss()}
 

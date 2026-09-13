@@ -19,6 +19,9 @@
     border: 1px solid var(--label-border);
     border-radius: var(--sc-radius-100);
     white-space: nowrap;
+    /* Una línea y dentro de su caja, como la `default` (tema, `tagOneLineCss`): sin
+     * esto `.sc-tag__text` ya traía los puntos suspensivos pero nunca recortaba. */
+    max-width: 100%;
 }
 
 .sc-tag__text {

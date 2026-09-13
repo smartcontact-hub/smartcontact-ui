@@ -282,6 +282,7 @@ export class DatatableDemoComponent {
       { name: 'sortOrder', control: { kind: 'select', options: [1, -1] }, description: '1 ascendente, -1 descendente.' },
       { name: 'scrollable', control: { kind: 'boolean' }, description: 'Cabecera fija y cuerpo con scroll propio.' },
       { name: 'scrollHeight', control: { kind: 'text' }, description: 'Alto de ese scroll (p.ej. 240px).' },
+      { name: 'stickyHeader', control: { kind: 'boolean' }, description: 'Cabecera fija al scroll de la página (sin scroll propio).' },
       { name: 'rowsFocusable', control: { kind: 'boolean' }, description: 'Las filas entran en el orden de tabulación.' },
     ],
     defaultArgs: {
@@ -300,6 +301,7 @@ export class DatatableDemoComponent {
       sortOrder: 1,
       scrollable: false,
       scrollHeight: '240px',
+      stickyHeader: false,
       rowsFocusable: false,
     },
     props: [
@@ -323,6 +325,13 @@ export class DatatableDemoComponent {
       { name: 'stripedRows', type: 'boolean', default: 'false' },
       { name: 'showGridlines', type: 'boolean', default: 'false' },
       { name: 'scrollable', type: 'boolean', default: 'false' },
+      {
+        name: 'stickyHeader',
+        type: 'boolean',
+        default: 'false',
+        description:
+          'Cabecera fija al scroll de la PÁGINA (para el scroll dentro de la tabla, `scrollable`). Ningún antepasado hasta el que hace scroll puede llevar `overflow: hidden` o `auto`: usa `clip` para recortar esquinas.',
+      },
       { name: 'loading', type: 'boolean', default: 'false' },
       { name: 'lazy', type: 'boolean', default: 'false', description: 'Server-driven (emite `(lazyLoad)`).' },
       { name: 'totalRecords', type: 'number', default: '—', description: 'Total del servidor (modo lazy).' },

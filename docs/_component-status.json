@@ -289,7 +289,7 @@
       "kind": "EXTENDED",
       "primengBase": "primeng/table",
       "cva": false,
-      "inputs": 26,
+      "inputs": 27,
       "api": [
         "columns",
         "dataKey",
@@ -320,6 +320,7 @@
         "sortChange",
         "sortField",
         "sortOrder",
+        "stickyHeader",
         "stripedRows",
         "totalRecords",
         "value",

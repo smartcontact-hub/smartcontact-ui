@@ -35,9 +35,7 @@
    sonda de `hand-made-pieces` solo mira pastillas (botones, cajas y filas a mano, sin contar): el
    paso siguiente es ampliarla. Regla de Rafa para lo que dude: manda Aura en código y Figma se alinea.
    `danger` a 3.76:1 = valor de Aura, aceptado (DD-78).
-2. **La cabecera fija de Conversaciones no fija** (ya antes de DD-76): `.table-card { overflow: hidden }`
-   (`_sc-list-table.scss`). A 1280 las pastillas largas se salen de 122px.
-3. **sc-docs: ejemplos de primeng.dev dentro de `<sc-datatable>`**, la red de «la tabla perfecta»: pasa
+2. **sc-docs: ejemplos de primeng.dev dentro de `<sc-datatable>`**, la red de «la tabla perfecta»: pasa
    ~20 de las 79 entradas de `p-table`.
 
 **APARCADO por Rafa para OTRA sesión (2026-09-13): nuestros componentes contra Aura tal cual.**
@@ -135,6 +133,23 @@ las 38 ranuras— se cerraron el mismo día en DD-73.)
 3. **La deuda de código de [`AUDIT-DEUDA-2026-06.md`](../AUDIT-DEUDA-2026-06.md)** que quede tras
    s34, y **los cabos de DD-24** (round-trip de iconos) en [`ROADMAP.md`](../ROADMAP.md).
 
+## ✅ 2026-09-13 · La cabecera de Conversaciones se queda arriba, y una etiqueta ya no se parte
+
+**Sello:** rama `arebury/fix-conversaciones-sticky-header` sobre `b7db531` (#140). DD-80. Rafa, visto en
+local: «me gusta». 161 e2e del Supervisor en verde.
+
+**Lo que cambia.** `<sc-datatable stickyHeader>` fija la cabecera al scroll de la página (la pinta el
+tema); `.table-card` pasa a `overflow: clip`. Una etiqueta es una línea: recorta y enseña el valor al
+pasar el ratón. El ID de Conversaciones pasa a 133 (se salía a cualquier ancho).
+
+**Lo que hay que recordar**, porque volverá a morder:
+
+- ⚠️ **`p-table` pone `overflow: auto` EN LÍNEA a su contenedor, siempre**: cualquier `sticky` de página
+  dentro de una tabla necesita `!important` ahí, y ninguna caja por encima con `hidden` o `auto`.
+- ⚠️ **Un `<thead>` fijo crea contexto de apilamiento**: sin `z-index` las filas (celdas `relative`)
+  pintan ENCIMA. Mide `elementFromPoint`, no solo el `top`: la posición salía bien con el fallo puesto.
+- **Una rueda lanzada nada más pintarse la tabla se pierde** (`scrollTop` 0): el spec la reintenta.
+
 ## ✅ 2026-09-13 · Conversaciones lleva la piel de Aura, las pastillas salen del tag del DS y el producto deja la mono
 
 **Sello:** rama `arebury/conversaciones-piel-aura`, con `main` fusionado hasta `b7cd451` (#137). DD-76.
@@ -198,38 +213,6 @@ hizo a la vez en el export del repo, que regeneró el CSS **byte a byte idéntic
 **96 textos en 11**, y uno (`sc-chip`) es deliberado porque Figma lo ata a 20; (4) `text-census` moría
 en `/` en el Supervisor (el menú son botones) y ahora acepta `--rutas`.
 
-## ✅ 2026-09-12 · Servicio habla con una sola voz, y la casilla del DS deja de escribir su propio 14
-
-**Sello:** sobre `2810b82` (el #132 en `main`). 39 gates, 82 e2e del DS y **156** del Supervisor,
-contraste en los dos temas. Rafa, con la pantalla delante: «reducir a menos style texts… que rime
-con el resto», y «podemos tocar el DS para verlos casar».
-
-**Medido a 1440: SIETE maneras de pintar texto en una tarjeta, y siguen siendo siete — ese es el
-dato honesto.** La mía las dejó en seis y el #132 devolvió una como nivel de VERDAD (título a 18).
-Lo que cambia no es el número: antes DOS se salían de la rampa y hoy ninguna, los 12px hacían CUATRO
-trabajos y hoy dos, y la jerarquía pasa de dos escalones usables a cuatro — 18/600 página · 14/600
-sección y sujeto de fila · 14/400 lo que se lee · 12/600 rótulo de bloque · 12/400 lo que explica.
-
-⚠️ **El fallo del DS estaba en la casilla**: `sc-checkbox` fijaba `font-size: 14` y `line-height:
-1.5` a mano en vez de pedir el rol `body-2`. Son **21px contra 20**, así que una etiqueta de casilla
-y un `.sc-text-body-regular` a su lado no compartían línea base; y su color era `secondary`, o sea
-que se leía más clara que el resto del texto de 14 con el mismo peso. Ahora pide el rol y sube a
-`primary` (4.52:1 → 6.95:1). Toca TODA la app: lo cazaron los computados, no una revisión a ojo.
-
-⚠️ **La fila «apagada» no se apagaba en claro**: usaba `--sc-text-subtle`, que vale el MISMO
-`slate-600` que `--sc-text-secondary` (medido: rgb(111,119,132) en los dos casos). No es un despiste
-del token — `02-semantic.css` lo dice y lo acepta a sabiendas. **Moraleja del frente: en claro no se
-pide jerarquía a `subtle`**; lo que corresponde ahí es `--sc-text-disabled`.
-
-**Una sola fila** para las dos secciones que encienden cosas —`[interruptor] [NOMBRE] [frase] ([nº]
-sufijo)`— con la regla en una frase: interruptor manda sobre una fila con nombre propio, casilla
-marca una opción de una lista o una celda de matriz. En Agentes el `switch-field` se queda en
-regular a propósito: allí la etiqueta es TODO el contenido de la fila.
-
-Cerrado el hueco que dejó el #123: `sc-select` estrena `ariaLabelledBy` y el desplegable pasa de sin
-nombre accesible a «Tipo de descuelgue por defecto». Las pastillas pierden el punto (el color ya
-está en el fondo y en el texto); las filas de estado lo conservan, que es donde vive el color.
-
 > El tramo de **la primera vuelta a Servicio** (#122: los 487px entre los chips y su botón, las seis
 > casillas sin `(cycle)`) se archivó el 2026-09-12 por el tope de 400 líneas: lo sustituye el tramo
 > de la SEGUNDA vuelta, arriba, sobre la misma pantalla. Tag `archive/handoff-ds-2026-09-12-servicio`.
@@ -241,6 +224,10 @@ está en el fondo y en el texto); las filas de estado lo conservan, que es donde
 > Ese mismo día, al entrar Conversaciones con piel Aura (DD-76), salió **la vuelta a todas las tablas
 > de la plataforma** (DD-72: las 16 por el DS, las 38 ranuras de `p-table`). Tag
 > `archive/handoff-ds-2026-09-13-conversaciones`.
+>
+> Al entrar la cabecera fija (DD-80) salió **Servicio habla con una sola voz** (siete maneras de pintar
+> texto, `sc-checkbox` a su rol `body-2`, `subtle` no da jerarquía en claro). Tag
+> `archive/handoff-ds-2026-09-13-servicio-voz`.
 
 ## 🗄️ Histórico de la lista SIGUIENTE — ya cerrado
 
@@ -275,6 +262,8 @@ está en el fondo y en el texto); las filas de estado lo conservan, que es donde
 
    Cubierto por 3 tests en `scripts/__tests__/coverage-map.test.mjs`, uno de ellos la **cara
    roja** (un custom nuevo del Kit → `unmatched`), que es justo lo que se escapaba.
+3. ~~**La cabecera fija de Conversaciones no fija**~~ → **HECHO 2026-09-13 (DD-80)**: tres causas, no
+   dos (la tercera, las filas pintando encima del `<thead>`), y a 1280 las etiquetas recortan.
 ## ⏸️ ESPERANDO A RAFA — NO preguntar
 
 > Auditada fila a fila el 2026-08-25. Las que ya no procedían salieron; las que quedan llevan **su

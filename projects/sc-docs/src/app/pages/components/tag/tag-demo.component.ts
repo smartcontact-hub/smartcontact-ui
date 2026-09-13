@@ -46,7 +46,7 @@ export class TagDemoComponent {
     tag: 'sc-tag',
     title: 'Tag',
     description:
-      'Etiqueta de estado (read-only). Wrapper de PrimeNG con severidades de marca, redondeo e icono. Variante categórica `label`: pastilla tintada con los 8 colores del DS (§4.1).',
+      'Etiqueta de estado (read-only). Wrapper de PrimeNG con severidades de marca, redondeo e icono. Variante categórica `label`: pastilla tintada con los 8 colores del DS (§4.1). Siempre en una línea: si no cabe en su caja, recorta con puntos suspensivos y enseña el valor entero al pasar el ratón.',
     argTypes: [
       { name: 'value', control: { kind: 'text' } },
       {

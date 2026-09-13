@@ -161,8 +161,11 @@ export class ConversationTableComponent {
      * su ancho medido —lo más largo entre sus celdas y su cabecera en es/en/fr/pt,
      * más los 28px de relleno de Aura, redondeado a múltiplo de 7 (media unidad de
      * la escala)—; las de texto libre (Servicio, Origen, Grupo, Destino) no llevan
-     * ancho y se reparten lo que sobra. Medido a 1440: les tocan 162px y la más
-     * larga pide 154, así que nada se parte. */
+     * ancho y se reparten lo que sobra. Remedido el 2026-09-13 con el ID a 133: a
+     * 1440 les tocan 169.5px y la más larga pide 152, así que nada se parte. A 1280
+     * les tocan 129.5 y no caben (las diez piden 1203 de 1153): las etiquetas
+     * recortan con puntos suspensivos (el `tag` del DS no se parte) y el texto
+     * libre baja a dos líneas. */
     return [
       { field: 'status', header: t('status'), width: '77px', cellTemplate: this.statusTpl() },
       { field: 'hour', header: t('hour'), width: '70px', cellTemplate: this.textTpl() },
@@ -174,7 +177,9 @@ export class ConversationTableComponent {
       // 112: la cabecera francesa («Durée conv.») es la que manda, no la cifra.
       { field: 'duration', header: t('duration'), width: '112px', align: 'right', cellTemplate: this.numTpl() },
       { field: 'waiting', header: t('waiting'), width: '98px', align: 'right', cellTemplate: this.numTpl() },
-      { field: 'id', header: t('id'), width: '119px', cellTemplate: this.idTpl() },
+      // 133, no 119 (2026-09-13): `GDPR-MR-EXP` mide 100 + 28 = 128 y un ID no se
+      // parte, así que con 119 se salía de la columna a cualquier ancho de ventana.
+      { field: 'id', header: t('id'), width: '133px', cellTemplate: this.idTpl() },
       /* Sin columna de acciones (2026-09-13, Rafa). Sus tres acciones tienen
        * otra puerta visible: Transcribir y Marcar como leída, en la barra que
        * sale al seleccionar (Espacio con teclado); Analizar, en el reproductor

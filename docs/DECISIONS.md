@@ -41,6 +41,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | Cabecera fija al scroll de la página con `<sc-datatable stickyHeader>` · ninguna caja por encima con `overflow: hidden` (usa `clip`) · una etiqueta no se parte, recorta | DD-80 |
 > | Una lista de destinos es el `Menu` del DS en línea · lo que dice Aura lo sigue el código y Figma se revincula | DD-78 |
 > | Un estado es `sc-tag` con severidad y un contador `sc-badge` · una pastilla dibujada por la pantalla la caza `hand-made-pieces` | DD-77 |
 > | Un valor categórico en una celda es `sc-tag` secundario del DS · nada en monoespaciada en el producto (sí en sc-docs) · el ancho de columna se mide | DD-76 |
@@ -59,6 +60,55 @@
 > | Siete divergencias deliberadas entre flujos, que NO se unifican | DD-36 |
 > | `--sc-bg-default` es el suelo del shell, nunca una superficie | DD-34 |
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
+
+---
+
+## DD-80 · 2026-09-13 — La cabecera fija de una tabla la pide `stickyHeader` y la pinta el tema, y una etiqueta es siempre una línea
+
+**Contexto** · La cabecera de Conversaciones llevaba `position: sticky` desde S37 y **nunca fijó**: tras
+600px de scroll acababa en -284. Rafa lo midió: el que hace scroll es `main.app-shell__content`, pero
+`.table-card` (`overflow: hidden`) y `.p-datatable-table-container` (`overflow: auto`) crean su propio
+contenedor de scroll. Y a 1280 las etiquetas largas no cabían en sus columnas.
+
+**Decisión** · (1) `sc-datatable` estrena `stickyHeader`: cabecera fija al scroll de la PÁGINA. La pinta
+el tema (`sc-preset/css.ts`, `stickyHeaderCss`) con el mecanismo que PrimeNG usa en `scrollable`: el
+`<thead>` fijo con `inset-block-start: 0` y `z-index: var(--sc-z-sticky)`, más `overflow: visible
+!important` e `isolation: isolate` en el contenedor. Si llega con `scrollable`, manda `scrollable`.
+(2) `.table-card` pasa de `overflow: hidden` a `clip`. (3) Conversaciones activa `stickyHeader` y borra su
+`sticky` a mano. (4) Una etiqueta es una línea: el tema pone `.p-tag` a `max-width: 100%` y recorta su
+texto con puntos suspensivos (`label` igual); `sc-tag` repone el valor en `title` al pasar el ratón, solo
+si está recortada. (5) La columna ID pasa de 119 a 133.
+
+**Razón** · (1) Medido inyectando antes de escribir: arreglar solo la tarjeta deja -284, las dos juntas
+dan 91 (el borde de `main`). `p-table` pone `overflow: auto` EN LÍNEA a su contenedor, siempre, y solo un
+`!important` le gana. Arreglados los dos apareció una tercera causa: el `<thead>` fijo crea contexto de
+apilamiento y las celdas de la tabla-lista van con `position: relative`, así que las filas pintaban
+ENCIMA de la cabecera. `isolation` encierra el `z-index` en la tabla: gana a la casilla de PrimeNG
+(`z-index: 1`) sin competir con menús ni diálogos. (2) `clip` recorta las esquinas igual y no crea
+contenedor de scroll. (4) A 1280 las diez columnas piden 1203px y hay 1153: 31 de 68 etiquetas se partían
+en dos líneas. El maestro del Kit (❖ Tag, `373:13337`) es una línea de 21.5. (5) `GDPR-MR-EXP` mide 100 +
+28 de relleno: con 119 el ID se salía a cualquier ancho.
+
+**Descartadas** ·
+- **`scrollable` + `scrollHeight="flex"`, la receta de PrimeNG** → la tabla haría scroll dentro de sí
+  misma, con su propia barra, y las otras 25 listas desplazan la página entera.
+- **Pegar la cabecera fija a la gramática de `variant="list"`** → Agentes y Grupos ya fijan su barra de
+  acciones a `top: 0`; las dos se pisarían. Es opcional.
+- **`sticky` en el `th` (lo que había)** → funciona igual, pero duplica lo que PrimeNG ya pone en el
+  `<thead>` en línea, y el `z-index` en cada `th` no escapaba del contexto del `<thead>`.
+- **Ancho fijo a Servicio y Grupo para que no recorten a 1280** → a 1024, el mínimo soportado (DD-53),
+  las columnas fijas sumarían más que la tabla y se saldría de su caja. Rafa lo vio en local con esta
+  alternativa sobre la mesa: «me gusta».
+- **`title` siempre en la etiqueta** → un tooltip que repite lo que ya se lee en las 104 que caben.
+
+**Consecuencias** · `e2e/supervisor/conversations-sticky-header.spec.ts` se vio rojo con cada una de las
+seis causas puestas por separado en el código real (sin `stickyHeader`, tarjeta `hidden`, sin `z-index`,
+sin la etiqueta de una línea, sin el `title`, ID a 119). Geometría de las 18 listas con tabla idéntica con
+`hidden` y con `clip`; etiquetas de 22 rutas a 1440 y 1280 idénticas salvo Conversaciones. Se mantiene al
+cambiar a oscuro en caliente (medido). **Condición de uso**: una tabla con `stickyHeader` no hace scroll
+horizontal dentro de sí (desborda hacia la página), y ningún antepasado hasta el que hace scroll puede
+llevar `overflow: hidden` o `auto`. Sin verificar en Safari ni Firefox. A 1280 el texto libre de Origen y
+Destino baja a dos líneas.
 
 ---
 

@@ -74,8 +74,14 @@ const sh = (cmd) => {
  * tope alto aquí no es deuda, es el inventario de lo que el tema le dice a
  * PrimeNG — lo que compra tenerlo contado es el chequeo de HUÉRFANOS, que en su
  * primera pasada ya encontró dos selectores muertos (`.p-inputchips*`).
+ *
+ * 56 → 58 el 2026-09-13 (DD-80), por dos nodos que no tienen otra puerta:
+ * `.p-datatable-table-container`, al que `p-table` pone `overflow: auto` EN LÍNEA y
+ * que la cabecera fija de página tiene que neutralizar, y `.p-tag-label`, el texto
+ * que la etiqueta de una línea recorta. Entraban cuatro: `.p-datatable` y
+ * `.p-datatable-scrollable` se quitaron pasando la condición al componente.
  */
-const TOPE = { app: 6, ds: 20, preset: 56 };
+const TOPE = { app: 6, ds: 20, preset: 58 };
 
 /* Cuenta las clases `.p-*` que aparecen en SELECTORES, no en comentarios. Un
  * comentario que menciona `.p-datatable-*` para explicar POR QUÉ dependemos de
