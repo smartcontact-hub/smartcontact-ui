@@ -62,6 +62,48 @@
 
 ---
 
+## DD-79 · 2026-09-13 — Los neutros del modo oscuro pasan a zinc, lo que dicen Aura y el Kit
+
+**Contexto** · Una comparación clave a clave de los 15 componentes del Supervisor contra Aura,
+PrimeOne y el export del Kit (CSS de variables de `@primeuix/styled`, resuelto en claro y oscuro). De las 323 diferencias entre nuestro código y el Kit sin motivo
+escrito, **262 eran del modo oscuro** y salían de una sola divergencia: la superficie y los neutros
+en gris de marca (navy), declarada en `color-map.mjs` como «paleta de marca SC», mientras Aura y el
+Kit usan zinc. Rafa lo miró lado a lado en local y preguntó qué opinaría un experto en UI,
+accesibilidad y escalabilidad.
+
+**Decisión** · En oscuro, superficie y neutros en **zinc**. Los tokens con papel en el Kit
+(`bg-surface`, `bg-default`, `border-default`, `border-strong`, `bg-disabled`, `bg-secondary-hover`,
+`text-primary`, `text-secondary`) los escribe el generador desde el export (18 filas `dark` nuevas en
+`color-map.mjs` y la rampa `surface.*`); el resto de `07-dark.css` pasa a zinc a mano, siguiendo a su
+gemelo generado. `text-subtle` queda en **zinc-400, igual que `text-secondary`**. El primario oscuro y
+su texto siguen divergiendo (DD-40). Todo con variables que ya existían.
+
+**Razón** · (1) Escalabilidad: es lo que traen Aura y el Kit, así que nuestro código deja de
+sobrescribir 262 valores y las subidas de Aura entran sin reasignar. (2) El gris de marca tenía casi
+el tono del primario (oklch 262° contra 257°), y el acento dejaba de destacar como lo interactivo; el
+zinc es neutro (croma 0,006). (3) Claro en gris de marca y oscuro en zinc es el patrón de fábrica de
+Aura. (4) Contraste medido: los 22 pares críticos de `tokens:parity` pasan AA, los textos de color
+suben (enlace 5,36 → 5,62) y el primario sobre la superficie pasa de 5,05 a 5,29.
+
+**Descartadas** ·
+- **Mantener el gris de marca y llevarlo al Kit** (lo que Claude recomendó primero) → deja 262 valores
+  divergentes respecto a Aura que hay que mantener en Figma y en código a cada subida.
+- **Pasar la gama slate→zinc paso por paso sin mirar el Kit** (la emulación del primer prototipo) →
+  deja `text-subtle` en zinc-500, **3,67:1**, bajo AA. El Kit pone el texto atenuado en zinc-400.
+- **Un paso intermedio para `text-subtle`** → entre zinc-400 (6,91) y zinc-500 (3,67) no existe
+  ninguno, y la regla de Rafa es no crear variables. En oscuro sutil y secundario coinciden.
+
+**Consecuencias** · Las diferencias sin motivo en oscuro bajan de 262 a 68, y ninguna es un gris
+(quedan aviso y éxito). `e2e/severities-contrast.spec.ts` actualiza dos excepciones que ya estaban bajo
+AA y MEJORAN con zinc (tag primario 3,88 → 4,10; summary de error del toast 3,83 → 3,99).
+**Anillo de foco en oscuro a `sky-400`** (y su halo): con zinc, `sky-500` daba 3,61:1, pasaba justo;
+`sky-400` da 5,62:1. Es divergencia de código a propósito porque el Kit no puede expresarlo sin crear
+variable: `focus/ring/color` vive en «Semantic Common», que no tiene modos (verificado en el fichero).
+Pendiente: los bordes de campo siguen sin llegar a 3:1 contra la superficie, y el primario oscuro
+deshabilitado se pinta a 2,73:1 (ya pasaba con el gris de marca; es DD-40, no este cambio).
+
+---
+
 ## DD-78 · 2026-09-13 — El hub de Repositorios es el `Menu` del DS, y en lo que dude el código manda Aura y Figma se alinea
 
 **Contexto** · DD-77 dejó el hub de Repositorios como la última pieza del inventario y la justificó mal.

@@ -97,7 +97,10 @@ const CONOCIDOS: readonly string[] = [
    * `--sc-text-secondary`: subirlo lo pega a `text-primary` y cambia un fallo de
    * contraste por uno de jerarquía. Misma razón, mismo veredicto. */
   'fg=rgb(111,119,132) 3.92:1',
-  'fg=rgb(121,142,171) 3.88:1',
+  /* El tag primario en OSCURO (texto blue-300 sobre emerald-500 al 16 %, el fondo del
+   * Kit): 3.88:1 sobre el gris de marca; 4.10:1 desde que los neutros oscuros son zinc
+   * (2026-09-13). Mejora, pero sigue bajo 4.5, y por eso cambia la cifra y no se va. */
+  'fg=rgb(121,142,171) 4.10:1',
   'fg=rgb(143,151,163) 2.95:1',
 
   /* ── danger en OSCURO, al filo ──────────────────────────────────────────────
@@ -110,7 +113,8 @@ const CONOCIDOS: readonly string[] = [
   /* ── danger · el SUMMARY del toast, en los dos temas ────────────────────────
    * Claro: `red-600` sobre su fondo pálido = **4.45:1**, o sea que se queda a
    * CINCO CENTÉSIMAS del listón. Oscuro: `red-500` sobre el fondo compuesto =
-   * **3.83:1**. Los dos valores son del Kit tal cual (`error.color` = {red.600}
+   * **3.99:1** sobre zinc desde el 2026-09-13 (3.83 sobre el gris de marca: el fondo
+   * translúcido se compone con el neutro de debajo). Los dos valores son del Kit tal cual (`error.color` = {red.600}
    * en claro, {red.500} en oscuro), así que arreglarlos es divergir.
    *
    * Estos dos solo se ven desde que la medición es DETERMINISTA. Antes de apagar
@@ -119,7 +123,7 @@ const CONOCIDOS: readonly string[] = [
    * rojo. La inestabilidad no era ruido encima de la señal — era la señal,
    * escondida. */
   'fg=rgb(220,38,38) 4.45:1',
-  'fg=rgb(239,68,68) 3.83:1',
+  'fg=rgb(239,68,68) 3.99:1',
 
   /* ── 🚨 EL QUE NO ES UNA DECISIÓN DE MARCA ──────────────────────────────────
    * En OSCURO, las variantes `outlined`, `text` y `link` del botón PRIMARIO

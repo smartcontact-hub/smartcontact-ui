@@ -16,14 +16,20 @@
 
 .sc-dark {
   /* ---------- Semantic · Text ---------- */
-  /* `heading`: en oscuro el escalón libre está ARRIBA, en el blanco puro — `primary` ya
-   * es `slate-50`. Ver la nota larga en `02-semantic.css`. */
+  /* NEUTROS EN ZINC desde el 2026-09-13 (antes gris de marca navy): lo que dicen Aura y el
+   * Kit. `primary`, `secondary`, fondos y bordes los escribe ahora el generador desde el
+   * export (zona `@sc-gen:semantic-color-dark`, abajo); aquí queda lo que el Kit no modela.
+   *
+   * `heading`: blanco puro. En oscuro coincide con `primary`, porque el Kit pone el texto
+   * en blanco. Ver la nota larga en `02-semantic.css`.
+   *
+   * `subtle` = zinc-400, el MISMO valor que `secondary`, a propósito: el Kit tiene dos
+   * niveles de texto y nosotros tres, y entre zinc-400 (6,91:1 sobre zinc-900) y zinc-500
+   * (3,67:1) no hay ningún paso que pase AA. Sin crear variables, el escalón no cabe. */
   --sc-text-heading: var(--sc-color-slate-0);
-  --sc-text-primary: var(--sc-color-slate-50);
-  --sc-text-secondary: var(--sc-color-slate-300);
-  --sc-text-subtle: var(--sc-color-slate-500);
-  --sc-text-disabled: var(--sc-color-slate-700);
-  --sc-text-inverse: var(--sc-color-slate-900);
+  --sc-text-subtle: var(--sc-color-zinc-400);
+  --sc-text-disabled: var(--sc-color-zinc-600);
+  --sc-text-inverse: var(--sc-color-zinc-900);
 
   /* ---------- Semantic · Text de color ----------
    * Estos SEIS no tenían valor en oscuro y heredaban el del claro, que está
@@ -31,12 +37,12 @@
    * peor caso eran los enlaces: `text-link` daba 2.48:1. Medido por familia,
    * el tono que pasa AA sobre slate-900 es entre 2 y 3 pasos más claro.
    *
-   *            claro (heredado)   →   oscuro (este bloque)
-   *   link/accent   2.48 ✗              sky-400     5.36 ✓
-   *   violet        2.38 ✗              violet-400  6.21 ✓
-   *   danger        3.50 ✗              red-400     6.11 ✓
-   *   success       5.13 ✓ (ya pasaba)  green-600   5.13 ✓
-   *   warning       5.30 ✓ (ya pasaba)  yellow-600  6.54 ✓
+   *            claro (heredado)   →   oscuro (este bloque, sobre zinc-900, 2026-09-13)
+   *   link/accent   2.48 ✗              sky-400     5.62 ✓
+   *   violet        2.38 ✗              violet-400  6.51 ✓
+   *   danger        3.50 ✗              red-400     6.40 ✓
+   *   success       5.13 ✓ (ya pasaba)  green-600   5.38 ✓
+   *   warning       5.30 ✓ (ya pasaba)  yellow-600  6.03 ✓
    *
    * success y warning se declaran aquí porque su valor CLARO subió al 700
    * para cumplir AA sobre blanco; sin este bloque, el 700 se colaría en
@@ -48,9 +54,9 @@
   --sc-text-warning: var(--sc-color-yellow-600);
   --sc-text-danger: var(--sc-color-red-400);
   --sc-text-violet: var(--sc-color-violet-400);
-  /* En dark el botón primary es navy CLARO → el texto encima va OSCURO
-   * (export.dark primaryContrastColor #181d26=gray-900; seguimos al Kit en el
-   * texto, que sigue siendo `diverge` solo por el tinte navy vs su zinc).
+  /* En dark el botón primary es navy CLARO → el texto encima va OSCURO (zinc-900).
+   * El Kit pone blanco, que funciona sobre SU primario (blue-400, 5,62:1) pero no sobre
+   * el nuestro, un paso más claro por DD-40 (3,35:1). Por eso sigue siendo `diverge`.
    *
    * Aquí vivió durante meses una frase FALSA que bloqueó el arreglo: decía que
    * «ni gray-900 ni blanco llegan a AA sobre blue-400». La primera mitad es
@@ -59,24 +65,21 @@
    * de verdad impedía usarlo era el hover/active, no la base — el razonamiento
    * completo está donde ahora se decide, junto a `--sc-bg-primary` (DD-40).
    * Medido, no deducido: si vuelves a tocar este par, mídelo tú también. */
-  --sc-text-on-primary: var(--sc-color-slate-900);
-  --sc-text-on-secondary: var(--sc-color-slate-50);
-  --sc-text-on-accent: var(--sc-color-slate-950);
+  --sc-text-on-primary: var(--sc-color-zinc-900);
+  --sc-text-on-secondary: var(--sc-color-zinc-50);
+  --sc-text-on-accent: var(--sc-color-zinc-950);
 
   /* ---------- Semantic · Background ---------- */
-  --sc-bg-default: var(--sc-color-slate-950);
-  --sc-bg-surface: var(--sc-color-slate-900);
   /* El lienzo (ver la explicación larga en `02-semantic.css`): en oscuro coincide
-   * con `--sc-bg-default` —el "suelo" gray-950—, y en claro NO. Por eso es un
+   * con `--sc-bg-default` —el "suelo" zinc-950—, y en claro NO. Por eso es un
    * token propio y no un alias: la asimetría es justo su razón de existir. */
-  --sc-bg-canvas: var(--sc-color-slate-950);
+  --sc-bg-canvas: var(--sc-color-zinc-950);
   --sc-bg-subtle: var(--sc-color-blue-900);
   --sc-bg-subtle-hover: var(--sc-color-blue-800);
   --sc-bg-subtle-active: var(--sc-color-blue-700);
-  --sc-bg-disabled: var(--sc-color-slate-800);
 
   /* Primary (brand) dark — DIVERGENCIA CONSCIENTE, un paso más claro que el Kit.
-   * Escrito A MANO (la zona generada de abajo quedó vacía por esto). DD-40.
+   * Escrito A MANO (el generador no lo escribe: su fila es `diverge`). DD-40.
    *
    * El Kit exporta blue-400/300/200 y sobre su BASE no se puede leer nada: con
    * `slate-900` da 3,01:1, y no es cuestión de oscurecer más el texto — sobre
@@ -90,10 +93,10 @@
    * que no son relleno (borde, caret, accent-color, focusBorderColor), que
    * estaban en la raya de 1.4.11:
    *
-   *              texto    relleno vs superficie
-   *   base       5,05         5,05     (era 3,01 / 3,01)
-   *   hover      8,03         8,03
-   *   active    11,89        11,89
+   *              texto    relleno vs superficie   (sobre zinc-900 desde 2026-09-13;
+   *   base       5,29         5,29                  con el gris de marca eran
+   *   hover      8,42         8,42                  5,05 / 8,03 / 11,89)
+   *   active    12,46        12,46
    *
    * Se revierte a `enforce` en scripts/color-map.mjs el día que el Kit suba su
    * primary dark. Lo durable es pedírselo al Kit; esto es el puente hasta que
@@ -104,12 +107,18 @@
 
   /* @sc-gen:semantic-color-dark — bloque GENERADO desde kit-export-dtcg.json por
    * `npm run tokens:import` (token-gen-color.mjs). NO editar a mano.
-   * HOY ESTÁ VACÍA A PROPÓSITO, y eso es un dato, no un descuido: el primary era lo
-   * único que el dark recibía del Kit, y desde DD-40 diverge por contraste. El dark
-   * es, por tanto, 100% curado a mano. La zona se queda porque el día que el Kit suba
-   * su primary dark basta con devolver esas filas a `enforce` en color-map.mjs y el
-   * puente vuelve a escribir aquí. */
-
+   * Los NEUTROS del modo oscuro salen del Kit (zinc) desde el 2026-09-13; antes eran
+   * divergencia de marca y esta zona estaba vacía. El primary dark sigue a mano
+   * (DD-40, por contraste). Lo que el Kit no modela —texto sutil, iconos, diálogo—
+   * vive a mano ENCIMA de esta zona, en zinc y con su contraste medido. */
+  --sc-bg-surface: var(--sc-color-zinc-900);
+  --sc-border-default: var(--sc-color-zinc-700);
+  --sc-text-primary: var(--sc-color-slate-0);
+  --sc-bg-secondary-hover: var(--sc-color-zinc-800);
+  --sc-text-secondary: var(--sc-color-zinc-400);
+  --sc-bg-default: var(--sc-color-zinc-950);
+  --sc-border-strong: var(--sc-color-zinc-500);
+  --sc-bg-disabled: var(--sc-color-zinc-700);
   /* @sc-gen:semantic-color-dark:end */
 
   /* @sc-gen:cmp-color-dark — bloque GENERADO desde kit-export-dtcg.json por
@@ -357,10 +366,9 @@
   --sc-bg-primary-subtle-active: var(--sc-color-blue-700);
 
   /* Secondary (gray) */
-  --sc-bg-secondary: var(--sc-color-slate-300);
-  --sc-bg-secondary-hover: var(--sc-color-slate-800);
-  --sc-bg-secondary-active: var(--sc-color-slate-700);
-  --sc-bg-secondary-subtle: var(--sc-color-slate-900);
+  --sc-bg-secondary: var(--sc-color-zinc-300);
+  --sc-bg-secondary-active: var(--sc-color-zinc-700);
+  --sc-bg-secondary-subtle: var(--sc-color-zinc-900);
 
   /* Status — bgs darken, text lifts. Translucency expressed as a
    * `color-mix` over a deep status-color token (the 800-step from
@@ -397,9 +405,9 @@
    * sube a los pasos 200/300 para cumplir AA contra ese fondo compuesto.
    * Los ratios están medidos, no estimados — ver `dark-surfaces.spec.ts`. */
   --sc-label-gray-bg: color-mix(in srgb, var(--sc-color-slate-700) 45%, transparent);
-  --sc-label-gray-text: var(--sc-color-slate-200);
+  --sc-label-gray-text: var(--sc-color-zinc-200);
   --sc-label-gray-border: color-mix(in srgb, var(--sc-color-slate-500) 45%, transparent);
-  --sc-label-gray-dot: var(--sc-color-slate-400);
+  --sc-label-gray-dot: var(--sc-color-zinc-400);
 
   --sc-label-red-bg: color-mix(in srgb, var(--sc-color-red-900) 40%, transparent);
   --sc-label-red-text: var(--sc-color-red-300);
@@ -437,8 +445,6 @@
   --sc-label-purple-dot: var(--sc-color-purple-400);
 
   /* ---------- Semantic · Border ---------- */
-  --sc-border-default: var(--sc-color-slate-800);
-  --sc-border-strong: var(--sc-color-slate-600);
   /*
    * `subtle` valía slate-900, que es EXACTAMENTE `--sc-bg-surface` en oscuro:
    * 1.00:1 contra la tarjeta que bordea, o sea 56 filos que no se pintaban en
@@ -456,34 +462,42 @@
    * roles a primitivas por tema, así que la equivalencia se escribe aquí.)
    */
   --sc-border-subtle: color-mix(in srgb, var(--sc-color-slate-800) 40%, var(--sc-color-slate-900));
-  --sc-border-disabled: var(--sc-color-slate-800);
+  --sc-border-disabled: var(--sc-color-zinc-700);
+  /* Anillo de foco en OSCURO a sky-400 (2026-09-13). En claro sigue sky-500. Sobre zinc,
+   * sky-500 da 3,61:1 contra la superficie: pasa el 3:1 pero justo, y el foco es lo único
+   * que ve quien navega con teclado. sky-400 da 5,62:1. En el Kit no se puede expresar
+   * sin crear variable (`focus/ring/color` vive en «Semantic Common», sin modos), así que
+   * es divergencia de código a propósito, igual que el primario oscuro (DD-40). */
+  --sc-border-focus: var(--sc-color-sky-400);
+  /* Su halo va a juego (ver 05-extensions): los canales de sky-400, #4a8fff. */
+  --sc-shadow-focus-ring-rgb: 74 143 255;
 
   --sc-border-secondary: var(--sc-color-blue-700);
   --sc-border-secondary-hover: var(--sc-color-blue-600);
   --sc-border-secondary-active: var(--sc-color-blue-500);
 
   /* ---------- Semantic · Icons ---------- */
-  --sc-icon-primary: var(--sc-color-slate-200);
-  --sc-icon-secondary: var(--sc-color-slate-400);
-  --sc-icon-subtle: var(--sc-color-slate-500);
-  --sc-icon-disabled: var(--sc-color-slate-700);
+  --sc-icon-primary: var(--sc-color-zinc-200);
+  --sc-icon-secondary: var(--sc-color-zinc-400);
+  --sc-icon-subtle: var(--sc-color-zinc-400);
+  --sc-icon-disabled: var(--sc-color-zinc-600);
 
   /* `--sc-btn-*` removed S34 (light + dark) — see comment in 04-component.css */
 
   /* ---------- Component · Modal ---------- */
-  --sc-dialog-bg: var(--sc-color-slate-900);
-  --sc-dialog-border: var(--sc-color-slate-800);
-  --sc-dialog-divider: var(--sc-color-slate-800);
-  --sc-dialog-title: var(--sc-color-slate-50);
-  --sc-dialog-subtitle: var(--sc-color-slate-300);
-  --sc-dialog-close-fg: var(--sc-color-slate-300);
-  --sc-dialog-close-bg-hover: var(--sc-color-slate-800);
+  --sc-dialog-bg: var(--sc-color-zinc-900);
+  --sc-dialog-border: var(--sc-color-zinc-700);
+  --sc-dialog-divider: var(--sc-color-zinc-700);
+  --sc-dialog-title: var(--sc-color-slate-0);
+  --sc-dialog-subtitle: var(--sc-color-zinc-400);
+  --sc-dialog-close-fg: var(--sc-color-zinc-400);
+  --sc-dialog-close-bg-hover: var(--sc-color-zinc-800);
   --sc-dialog-shadow: 0 24px 48px rgb(0 0 0 / 0.5);
 
   /* ---------- Component · Toast ---------- */
-  --sc-toast-title: var(--sc-color-slate-50);
-  --sc-toast-message: var(--sc-color-slate-300);
-  --sc-toast-close: var(--sc-color-slate-200);
+  --sc-toast-title: var(--sc-color-slate-0);
+  --sc-toast-message: var(--sc-color-zinc-400);
+  --sc-toast-close: var(--sc-color-zinc-200);
   --sc-toast-success-bg: color-mix(in srgb, var(--sc-color-green-900) 40%, transparent);
   --sc-toast-info-bg: color-mix(in srgb, var(--sc-color-sky-800) 40%, transparent);
   --sc-toast-warn-bg: color-mix(in srgb, var(--sc-color-yellow-800) 40%, transparent);
