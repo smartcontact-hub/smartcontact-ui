@@ -3,7 +3,6 @@ import { providePrimeNG } from 'primeng/config';
 
 import scPreset from '../theme/sc-preset';
 
-
 export type ScSmartContactThemeOptions = {
     darkModeSelector?: string | false;
     cssLayer?: boolean | {
@@ -52,18 +51,14 @@ export function provideSmartContactUi(config: ScSmartContactUiConfig = {}): Envi
         ripple: config.ripple,
         license: config.license,
         /*
-         * Los paneles flotantes (desplegables, multiselect, calendario) se pintan en el
-         * `<body>`, no dentro de su componente.
-         *
-         * Por defecto PrimeNG los deja DENTRO, y `sc-section-card` recorta su contenido
-         * (`overflow: hidden`, para el radio). Resultado medido el 2026-09-13 en
-         * `config/aed/grupos`: el desplegable «Tipo» de la última sección se abría cortado
-         * contra el borde inferior de la tarjeta, con la primera opción a medias. Pasaba
-         * con cualquier desplegable cerca del borde de cualquier tarjeta, así que se
-         * arregla aquí una vez y no pantalla a pantalla con `appendTo`. Quien necesite el
-         * panel dentro lo sigue pidiendo con `appendTo` en ese componente.
+         * ⚠️ Aquí NO va `overlayAppendTo: 'body'`. Estuvo unas horas (2026-09-13) para que
+         * los desplegables no se cortaran dentro de `sc-section-card`, y esa opción la leen
+         * TODOS los flotantes de PrimeNG, no solo los desplegables: `sc-dialog` salía de su
+         * componente, sus reglas `:host ::ng-deep .sc-dialog-host` dejaban de alcanzarlo y
+         * el diálogo pintaba doble marco (medido en «Nueva categoría»: 17.5px de padding
+         * que en producción es 0). El recorte se arregla en `sc-select` y `sc-multiselect`,
+         * que abren en `<body>` por defecto; `sc-datepicker` ya lo hacía.
          */
-        overlayAppendTo: 'body',
         theme: {
             preset: scPreset,
             options: themeOptions

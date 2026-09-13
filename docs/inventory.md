@@ -25,7 +25,7 @@
 ## Clasificación (auto-generada)
 
 <!-- @audit:components — TABLA GENERADA por `node scripts/component-audit.mjs --write`. NO editar a mano. -->
-**51 componentes** · 16 custom · 12 standard · 23 extended · 35 usados en Supervisor.
+**52 componentes** · 17 custom · 12 standard · 23 extended · 37 usados en Supervisor.
 
 | Componente | Tipo | PrimeNG base | API propia | Anidados | Demo | Usos en Supervisor |
 |---|---|---|---|---|---|---|
@@ -35,9 +35,9 @@
 | `sc-bulk-action-bar` | CUSTOM | — | 0 inputs | — | ✓ | 10 |
 | `sc-bulk-edit-menu` | STANDARD | primeng/button | 1 inputs | sc-select | ✓ | 3 |
 | `sc-bulk-transcription-modal` | CUSTOM | — | 16 inputs | sc-button sc-toggleswitch | ✓ | — |
-| `sc-button` | EXTENDED | primeng/button | 15 inputs | — | ✓ | 121 |
+| `sc-button` | EXTENDED | primeng/button | 15 inputs | — | ✓ | 119 |
 | `sc-card` | STANDARD | primeng/card | 3 inputs | — | ✓ | — |
-| `sc-checkbox` | CUSTOM | — | 6 inputs | — | ✓ | 29 |
+| `sc-checkbox` | CUSTOM | — | 6 inputs | — | ✓ | 28 |
 | `sc-chip` | EXTENDED | primeng/chip | 9 inputs | — | ✓ | 5 |
 | `sc-color-dot-picker` | CUSTOM | — | 1 inputs | — | ✓ | 3 |
 | `sc-column-selector` | STANDARD | primeng/popover | 1 inputs | — | ✓ | 3 |
@@ -46,7 +46,7 @@
 | `sc-datatable` | EXTENDED | primeng/table | 26 inputs | — | ✓ | 26 |
 | `sc-datepicker` | EXTENDED | primeng/datepicker | 20 inputs | sc-field-label sc-field-msg | ✓ | 2 |
 | `sc-delete-entity-dialog` | STANDARD | primeng/button | 2 inputs | sc-dialog | ✓ | 9 |
-| `sc-dialog` | EXTENDED | primeng/dialog | 14 inputs | — | ✓ | 10 |
+| `sc-dialog` | EXTENDED | primeng/dialog | 14 inputs | — | ✓ | 9 |
 | `sc-divider` | STANDARD | primeng/divider | 3 inputs | — | ✓ | 9 |
 | `sc-drawer` | EXTENDED | primeng/drawer | 8 inputs | — | ✓ | — |
 | `sc-empty-state` | CUSTOM | — | 2 inputs | — | ✓ | 10 |
@@ -57,12 +57,13 @@
 | `sc-group-popover` | STANDARD | primeng/popover | 0 inputs | — | ✓ | 2 |
 | `sc-impact-preview-dialog` | STANDARD | primeng/button | 3 inputs | sc-dialog | ✓ | 3 |
 | `sc-inline-rename-cell` | CUSTOM | — | 2 inputs | — | ✓ | 3 |
-| `sc-inputgroup` | STANDARD | primeng/inputgroup | 2 inputs | — | ✓ | — |
+| `sc-inputgroup` | STANDARD | primeng/inputgroup | 2 inputs | — | ✓ | 1 |
 | `sc-inputnumber` | EXTENDED | primeng/inputtext | 16 inputs | sc-field-label sc-field-msg | ✓ | 11 |
-| `sc-inputtext` | EXTENDED | primeng/inputtext | 20 inputs | sc-field-label sc-field-msg | ✓ | 30 |
+| `sc-inputtext` | EXTENDED | primeng/inputtext | 20 inputs | sc-field-label sc-field-msg | ✓ | 28 |
 | `sc-keyboard-shortcuts` | CUSTOM | — | 1 inputs | — | ✓ | 2 |
 | `sc-message` | EXTENDED | primeng/message | 6 inputs | — | ✓ | 1 |
-| `sc-multiselect` | EXTENDED | primeng/multiselect | 26 inputs | sc-field-label sc-field-msg | ✓ | 10 |
+| `sc-multiselect` | EXTENDED | primeng/multiselect | 28 inputs | sc-field-label sc-field-msg | ✓ | 10 |
+| `sc-option-cards` | CUSTOM | — | 4 inputs | — | — | 1 |
 | `sc-panel` | EXTENDED | primeng/panel | 4 inputs | — | ✓ | — |
 | `sc-permission-matrix` | CUSTOM | — | 5 inputs | sc-checkbox | — | 2 |
 | `sc-photo-upload` | CUSTOM | — | 6 inputs | — | ✓ | 2 |
@@ -71,7 +72,7 @@
 | `sc-radiobutton` | EXTENDED | primeng/radiobutton | 7 inputs | — | ✓ | 2 |
 | `sc-search` | EXTENDED | primeng/iconfield, primeng/inputicon, primeng/inputtext | 11 inputs | — | ✓ | 14 |
 | `sc-section-card` | CUSTOM | — | 8 inputs | — | ✓ | 20 |
-| `sc-select` | EXTENDED | primeng/select | 26 inputs | sc-field-label sc-field-msg | ✓ | 36 |
+| `sc-select` | EXTENDED | primeng/select | 26 inputs | sc-field-label sc-field-msg | ✓ | 35 |
 | `sc-skeleton` | EXTENDED | primeng/skeleton | 6 inputs | — | ✓ | — |
 | `sc-slot` | CUSTOM | — | 2 inputs | — | ✓ | — |
 | `sc-sticky-form-header` | EXTENDED | primeng/button | 4 inputs | — | ✓ | 3 |

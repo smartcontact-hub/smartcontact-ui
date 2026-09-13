@@ -1618,7 +1618,7 @@
             "hint": "Nous prévenons votre système quand il se passe quelque chose dans une conversation. Adresses HTTPS uniquement.",
             "url_error": "Sans espaces.",
             "col_conversacion": "Conversation",
-            "col_url": "Adresse"
+            "col_url": "Adresse web"
           },
           "toast": {
             "saved": "Configuration enregistrée"

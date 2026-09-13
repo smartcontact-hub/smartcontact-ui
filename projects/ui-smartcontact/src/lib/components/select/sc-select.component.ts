@@ -115,11 +115,18 @@ export class ScSelectComponent {
   /** Background "filled" variant (Figma node 6195:7785): bg slate-50. */
   readonly filled = input(false, { transform: booleanAttribute });
   /**
-   * Target del overlay panel del dropdown. Útil cuando el `<sc-select>` vive
-   * dentro de un `<sc-dialog>` con `overflow: hidden` — `appendTo="body"`
-   * monta el panel en `<body>` y evita el clip. Default null = inline.
+   * Dónde se pinta la lista desplegable. Por defecto en `<body>`: dentro de su
+   * componente la recortaba cualquier contenedor con `overflow: hidden`
+   * (`sc-section-card`, `sc-dialog`). Medido el 2026-09-13 en `config/aed/grupos`:
+   * el «Tipo» de la última sección se abría cortado contra el borde de la tarjeta.
+   * Los estilos del panel ya son globales (`ViewEncapsulation.None`), así que en
+   * `<body>` se ve igual. `'self'` la deja dentro.
+   *
+   * Va aquí y no en `overlayAppendTo` de `provideSmartContactUi`: esa opción la
+   * leen TODOS los flotantes de PrimeNG, diálogos incluidos, y sacar `sc-dialog` de
+   * su componente dejaba sin efecto sus reglas `:host ::ng-deep` (doble marco).
    */
-  readonly appendTo = input<'body' | null>(null);
+  readonly appendTo = input<'body' | 'self'>('body');
   /** Key del flag de opción deshabilitada (passthrough de p-select). */
   readonly optionDisabled = input<string>();
   /** Spinner de carga (passthrough de p-select). */

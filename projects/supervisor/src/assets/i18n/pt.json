@@ -1618,7 +1618,7 @@
             "hint": "Avisamos o teu sistema quando acontece algo numa conversa. Apenas endereços HTTPS.",
             "url_error": "Sem espaços.",
             "col_conversacion": "Conversa",
-            "col_url": "Endereço"
+            "col_url": "Endereço web"
           },
           "toast": {
             "saved": "Configuração guardada"

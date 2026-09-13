@@ -102,6 +102,8 @@ export class ScMultiSelectComponent {
    * Opt-in; los multiselect con label-encima no cambian.
    */
   readonly iftaLabel = input(false, { transform: booleanAttribute });
+  /** Dónde se pinta la lista. Por defecto en `<body>`, por lo mismo que `sc-select.appendTo`. */
+  readonly appendTo = input<'body' | 'self'>('body');
 
   // ─── Two-way value binding ─────────────────────────────────────────
   /** Array of selected values (id-only if `optionValue` set, else whole objects). */
