@@ -869,12 +869,12 @@ Los tokens **brand-visible** (paletas, spacing, radius, scale, surface, shadows 
 ### 5.11 `--sc-bg-canvas` — el token semántico de lienzo (RESUELTO, DD-45)
 
 > **RESUELTO (2026-08-31, DD-45).** El token `--sc-bg-canvas` existe desde el 2026-08-25 (blanco en
-> light / gray-950 en dark, definido en `02-semantic.css`) y **el shell del supervisor
+> light / zinc-950 en dark (gray-950 hasta DD-79), definido en `02-semantic.css`) y **el shell del supervisor
 > (`app-shell.component.scss`) ya lo consume como suelo** — un único token, sin override por tema. Lo de
 > abajo describe el estado ANTERIOR (cuando el lienzo se resolvía con `--sc-bg-surface`/`--sc-bg-default`
 > por tema); se conserva como historia del porqué.
 
-- **El gap (histórico)**: no existía un token semántico único para el **lienzo de página** (blanco en light / gray-950 en dark). La jerarquía de color de config (§6) resolvía el lienzo con un override por tema en el shell: `:host` = `--sc-bg-surface` (blanco light) y `:host-context(.sc-dark)` = `--sc-bg-default` (gray-950 dark) — `.sc-dark` es el darkModeSelector por defecto de `provideSmartContactUi`.
+- **El gap (histórico)**: no existía un token semántico único para el **lienzo de página** (blanco en light / zinc-950 en dark (gray-950 hasta DD-79)). La jerarquía de color de config (§6) resolvía el lienzo con un override por tema en el shell: `:host` = `--sc-bg-surface` (blanco light) y `:host-context(.sc-dark)` = `--sc-bg-default` (gray-950 dark) — `.sc-dark` es el darkModeSelector por defecto de `provideSmartContactUi`.
 - **Por qué era gap**: el workaround funcionaba pero acoplaba la jerarquía de color a dos tokens distintos según tema en vez de a un único `--sc-bg-canvas` semántico.
 - **Fix limpio**: cuando diseño añada la variable a la collection Custom de Figma, promover vía el import de Variables. Hoy 1 solo consumidor (config) → prematuro mintarlo.
 

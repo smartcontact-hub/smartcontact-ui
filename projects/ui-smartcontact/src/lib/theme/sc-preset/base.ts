@@ -58,6 +58,14 @@ const surface = {
   ...ramp('slate'),
 };
 
+/* En OSCURO la superficie es zinc desde el 2026-09-13, lo que dicen Aura y el Kit (antes
+ * era el mismo gris de marca que en claro, declarado divergencia en `color-map.mjs`). El
+ * blanco se queda en `slate-0`: zinc no tiene paso 0 y el blanco no tiene tinte. */
+const surfaceDark = {
+  0: 'var(--sc-color-slate-0)',
+  ...ramp('zinc'),
+};
+
 /** Bloques compartidos light/dark: el flip lo hace la capa 7 (`.sc-dark`). */
 const primaryScheme = {
   color: 'var(--sc-bg-primary)',
@@ -318,7 +326,7 @@ export default {
         },
       },
       dark: {
-        surface,
+        surface: surfaceDark,
         primary: primaryScheme,
         text: textScheme,
         content: contentScheme,
