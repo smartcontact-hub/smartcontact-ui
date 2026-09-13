@@ -38,15 +38,12 @@
      * son los de Aura, como en las otras 25 tablas: aquí ya no se redefinen.
      * Lo que queda en este fichero es solo lo que Aura no trae. */
 
-    /* Cabecera FIJA al scroll vertical de la página. El scrollport es `.page`
-     * (overflow-y: auto); `top: 0` ancla el th a su borde. El fondo opaco y la
-     * raya inferior son los de Aura: con `border-collapse: separate` (medido) el
-     * borde viaja con el th fijo y no hace falta reponerlo. `nowrap`: un rótulo
-     * de columna no se parte en dos líneas al estrechar la ventana. */
+    /* La cabecera FIJA ya no se escribe aquí: la pide la plantilla con
+     * `<sc-datatable stickyHeader>` y la pinta el tema (2026-09-13). El `sticky`
+     * que vivía aquí nunca fijó: el contenedor de `p-table` y `.table-card`
+     * hacían scroll propio y el th se anclaba a ellos, no a la página.
+     * `nowrap`: un rótulo de columna no se parte en dos líneas al estrechar. */
     thead > tr > th {
-      position: sticky;
-      top: 0;
-      z-index: 5;
       white-space: nowrap;
     }
 
