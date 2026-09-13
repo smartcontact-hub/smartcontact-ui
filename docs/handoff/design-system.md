@@ -42,11 +42,8 @@ trae `light-dark()` arriba y nosotros `colorScheme`, y gana lo nuestro); lo que 
 
 - **Tooltip a 12px** (heredaba 16 del `<body>`; ahora el `0.75rem` de Aura). Un uso. ¿Figma?
 - **Menús y desplegables a 14** (salían a 16 en el `<body>`). Mejora, pero se ve en toda la app.
-- **Conversaciones, anterior a Aura**: la barra de filtros mezcla desplegables de 12 con campos de
-  14, y la columna «Servicio» es tan estrecha que parte los nombres (filas de 69px).
-- **Grupos**: confirmar con producto que los tiempos van en «segundos».
-- Lo de Figma (pastillas sin punto, `--sc-text-heading`, tarjetas de opción…): en
-  [`docs/figma-pendiente.md`](../figma-pendiente.md) §2.
+- **Conversaciones (ya estaba así)**: filtros de 12 junto a campos de 14; «Servicio» parte nombres.
+- **Grupos**: confirmar con producto los «segundos». Lo de Figma, en `docs/figma-pendiente.md` §2.
 
 **Lo que dejó el barrido de estilos de texto del 2026-09-11 (tarde), pendiente de RAFA:**
 
