@@ -50,7 +50,8 @@ test('entidades · la fila abre la edición', async ({ page }) => {
   await goto(page, 'conversaciones/entidades');
 
   const row = page.locator('.entities-table:not(.entities-table--readonly) tbody tr').first();
-  const name = (await row.locator('code').first().innerText()).trim();
+  // El nombre ya no va en `<code>` (DD-76, sin monoespaciada): se lee de su celda.
+  const name = (await row.locator('.entities-table__td-name').first().innerText()).trim();
   await row.click();
 
   const modal = page.locator('sc-memory-entity-form-modal .p-dialog');

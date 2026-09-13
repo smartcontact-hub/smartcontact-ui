@@ -29,6 +29,17 @@
 >
 > Lo cerrado NO se tacha aquí: se baja al histórico del final del fichero.
 
+**LO SIGUIENTE, en orden (Rafa, 2026-09-13: «automatizable, agéntico: no ir a mano salvo que sea necesario»):**
+
+1. **Piezas hechas a mano en pantallas** (sonda `_ngcontent`→`_nghost`, 23 rutas): `status-pill` 45 ·
+   `sc-label` 36 · tipo de extensión 16 · tipo de entidad 15 · estado/acción de regla 15 · contadores 6
+   · iconos con fondo 11. Mirar Figma antes de cada una; estados → `sc-tag` con severidad. Solo cuenta
+   pastillas: el objetivo es un gate, no un barrido.
+2. **La cabecera fija de Conversaciones no fija** (ya antes de DD-76): `.table-card { overflow: hidden }`
+   (`_sc-list-table.scss`). A 1280 las pastillas largas se salen de 122px.
+3. **sc-docs: ejemplos de primeng.dev dentro de `<sc-datatable>`**, la red de «la tabla perfecta»: pasa
+   ~20 de las 79 entradas de `p-table`.
+
 **APARCADO por Rafa para OTRA sesión (2026-09-13): nuestros componentes contra Aura tal cual.**
 «Si te instalas Aura y le pones este styling estamos así»: una ficha por componente que diga qué
 cambia nuestra capa sobre el `p-*` de primeng.dev, para que el código de cualquier equipo hable el
@@ -42,7 +53,7 @@ trae `light-dark()` arriba y nosotros `colorScheme`, y gana lo nuestro); lo que 
 
 - **Tooltip a 12px** (heredaba 16 del `<body>`; ahora el `0.75rem` de Aura). Un uso. ¿Figma?
 - **Menús y desplegables a 14** (salían a 16 en el `<body>`). Mejora, pero se ve en toda la app.
-- **Conversaciones (ya estaba así)**: filtros de 12 junto a campos de 14; «Servicio» parte nombres.
+- **Conversaciones**: filtros de 12 junto a campos de 14. ~~«Servicio» parte nombres~~ → no (DD-76).
 - **Grupos**: confirmar con producto los «segundos». Lo de Figma, en `docs/figma-pendiente.md` §2.
 
 **Lo que dejó el barrido de estilos de texto del 2026-09-11 (tarde), pendiente de RAFA:**
@@ -119,10 +130,30 @@ las 38 ranuras— se cerraron el mismo día en DD-73.)
    colecciones**, que me dio 21 de 24 familias «discrepando» cuando el que fallaba era yo. Léelas
    ahí antes de tocarla.
 
-2. **El 1:1 web↔Figma de chip · tag · toast** — sigue **bloqueado por herramienta**, no por
-   decisión. Ver la sección de Figma más abajo.
+2. **El 1:1 web↔Figma de chip · toast** — ~~tag~~ hecho en DD-76 con el bridge enganchado: ya no es
+   «bloqueado por herramienta», es trabajo. Ver la sección de Figma más abajo.
 3. **La deuda de código de [`AUDIT-DEUDA-2026-06.md`](../AUDIT-DEUDA-2026-06.md)** que quede tras
    s34, y **los cabos de DD-24** (round-trip de iconos) en [`ROADMAP.md`](../ROADMAP.md).
+
+## ✅ 2026-09-13 · Conversaciones lleva la piel de Aura, las pastillas salen del tag del DS y el producto deja la mono
+
+**Sello:** rama `arebury/conversaciones-piel-aura`, con `main` fusionado hasta `b7cd451` (#137). DD-76.
+Rafa, viéndolo en local: «me va gustando», «beben directamente del DS», «no queremos cosas en mono».
+
+**Lo que cambia.** Conversaciones sin piel propia (8/14, fila 44.5, igual que Usuarios), anchos de
+columna medidos y sin columna ⋮. Tipo, Estrategia, Servicio y Grupo usan `sc-tag` secundario; el tag
+del tema baja a 1.75 de relleno (21.5 de alto, el del maestro `373:13337`). Doce sitios dejan la mono.
+De paso, la selección en oscuro de las 25 listas deja de salir gris claro con texto blanco.
+
+**Lo que hay que recordar**, porque volverá a morder:
+
+- ⚠️ **Mi sonda de «piezas a mano» leyó de menos dos veces**: excluía lo que vive dentro de un
+  componente del DS (las celdas están en `sc-datatable`) y pedía radio ≥3 (`sc-label` tiene 2). Se
+  atribuye por quién lo pinta: `_ngcontent-X` → host `_nghost-X` → ¿selector del DS?
+- **`<kbd>`/`<code>`/`<pre>` salen en mono por la hoja del navegador**: el «⌘K» sobrevivió a quitar el
+  token. Se mide la familia CALCULADA.
+- **Invertir `_layers.scss` no invierte nada**: PrimeNG antepone `@layer reset, primeng`. El testigo
+  nuevo del test de capas (tinte de la fila fallida) se vio rojo quitando la regla.
 
 ## ✅ 2026-09-13 · Aura es la base del tema, y lo que Aura trae de más se devuelve a su sitio
 
@@ -200,38 +231,6 @@ Cerrado el hueco que dejó el #123: `sc-select` estrena `ariaLabelledBy` y el de
 nombre accesible a «Tipo de descuelgue por defecto». Las pastillas pierden el punto (el color ya
 está en el fondo y en el texto); las filas de estado lo conservan, que es donde vive el color.
 
-## ✅ 2026-09-12 · Las tablas de la plataforma pasan todas por el sistema, y la celda deja de heredar su letra del navegador
-
-**Sello:** HEAD `c1f829f`. DD-72. `npm run verify` entero; **156** e2e del Supervisor, **82** de sc-docs,
-**23** de la librería. Las dos redes nuevas, validadas EN ROJO antes de fiarme de su verde. Veredicto
-del CI por `ci:verdict` tras el push.
-
-**De dónde sale.** Rafa: «dar una vuelta a todas las tablas de la plataforma», con la página del DS y
-la documentación de PrimeNG como material, y el foco en que fueran **visualmente iguales y
-compatibles**. Al abrir: 16 tablas en el Supervisor, 11 con `sc-datatable` y **cinco a mano** que no
-eran la misma cosa (dos matrices de permisos, dos editores de formulario, un selector).
-
-**Lo que cambia.** Cero tablas escritas a mano: las 16 pasan por el DS. La celda **declara su estilo
-de texto** (antes heredaba los 16px del documento, y el mismo `<td>` rendía 16 en el Supervisor y 14
-en sc-docs); nace `sc-permission-matrix`, que no es un `sc-datatable` porque lleva cabecera de FILA y
-un control en la de columna; y se reenvían **las 38 ranuras de plantilla de `p-table`**, para pegar un
-ejemplo de primeng.dev dentro y que funcione ya tokenizado.
-
-**Lo que hay que recordar de esto**, porque volverá a morder:
-
-- **Una plantilla del consumidor NO atraviesa un `<ng-content/>` hasta `p-table`.** Sus queries son
-  `contentChild` y solo ven su propio contenido. Medido con sonda y control positivo. Reenviar es
-  código, no configuración, y por eso lleva su test.
-- **`audit:datatables` §6 cazó un fallo real**: `translate.instant()` dentro de un `computed` cuyas
-  dependencias son solo `viewChild` no se re-evalúa, así que las cabeceras se congelan al cambiar de
-  idioma. El gate solo sabe mirar un computed llamado `columns`; el defecto estaba en **cinco**.
-- **Un test mío salía verde por rebote**: pulsaba el `<span>` de adorno de un desplegable en vez de su
-  botón (1 rojo de 152). `aria-controls` es el gancho, y la prueba de que ya no es intermitente son
-  tres pasadas seguidas, no una verde.
-
-**Fuera a propósito:** los dos editores simétricos pintan sus chips de canal distinto y la piel por
-defecto de `sc-datatable` no ha seguido a la `list` en tipografía. Los dos bajan a la bandeja.
-
 > El tramo de **la primera vuelta a Servicio** (#122: los 487px entre los chips y su botón, las seis
 > casillas sin `(cycle)`) se archivó el 2026-09-12 por el tope de 400 líneas: lo sustituye el tramo
 > de la SEGUNDA vuelta, arriba, sobre la misma pantalla. Tag `archive/handoff-ds-2026-09-12-servicio`.
@@ -239,6 +238,10 @@ defecto de `sc-datatable` no ha seguido a la `list` en tipografía. Los dos baja
 > El 2026-09-13, por el mismo tope, se archivaron **el chip relleno y el título a 18** (DD-74) y **la
 > tabla que dejaba de heredar su letra en las dos pieles** (DD-73): la piel propia de tabla que
 > describía ya no existe. Tag `archive/handoff-ds-2026-09-13-tablas`.
+>
+> Ese mismo día, al entrar Conversaciones con piel Aura (DD-76), salió **la vuelta a todas las tablas
+> de la plataforma** (DD-72: las 16 por el DS, las 38 ranuras de `p-table`). Tag
+> `archive/handoff-ds-2026-09-13-conversaciones`.
 
 ## 🗄️ Histórico de la lista SIGUIENTE — ya cerrado
 
