@@ -61,12 +61,6 @@
      `<td>` lo pinta el DS y lleva SU `_ngcontent`. */
   &__td-text {
     color: var(--sc-text-secondary);
-
-    &--mono {
-      font-family: var(--sc-font-family-mono);
-      font-size: var(--sc-font-size-100);
-      line-height: var(--sc-line-height-caption);
-    }
   }
 
   &__td-name {

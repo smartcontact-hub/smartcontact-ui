@@ -87,7 +87,7 @@
      lo pinta ahora el DS y lleva SU `_ngcontent`, así que una regla encapsulada
      de esta página no lo alcanzaría nunca. -->
 <ng-template #codeTpl let-agent>
-  <span class="cell cell--mono">{{ agent.code }}</span>
+  <span class="cell">{{ agent.code }}</span>
 </ng-template>
 
 <ng-template #nameTpl let-agent>
@@ -108,7 +108,7 @@
 </ng-template>
 
 <ng-template #extensionTpl let-agent>
-  <span class="cell cell--mono ext">
+  <span class="cell ext">
     {{ agent.extension }}
     <span class="ext__type">{{ 'agents.ext.' + agent.extensionType | translate }}</span>
   </span>
@@ -129,12 +129,7 @@
 </ng-template>
 
 <ng-template #typeTpl let-agent>
-  <span
-    class="sc-type-tag"
-    [attr.data-emphasis]="agent.agentType === 'admin_cuscare' ? 'strong' : null"
-  >
-    {{ typeLabelKey(agent) | translate }}
-  </span>
+  <sc-tag severity="secondary" [value]="typeLabelKey(agent) | translate" />
 </ng-template>
 
 <ng-template #presenceTpl let-agent>

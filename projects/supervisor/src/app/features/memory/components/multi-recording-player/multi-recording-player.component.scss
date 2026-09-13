@@ -31,7 +31,7 @@
 
   &__time {
     margin-left: auto;
-    font-family: var(--sc-font-family-mono);
+    font-variant-numeric: tabular-nums;
     font-size: var(--sc-font-size-body-3);
     line-height: var(--sc-line-height-body-2);
     color: var(--sc-text-secondary);
@@ -171,7 +171,7 @@
     display: inline-flex;
     align-items: center;
     gap: var(--sc-spacing-0-25);
-    font-family: var(--sc-font-family-mono);
+    font-variant-numeric: tabular-nums;
     font-size: var(--sc-font-size-50);
     line-height: var(--sc-line-height-caption);
     color: var(--sc-text-subtle);

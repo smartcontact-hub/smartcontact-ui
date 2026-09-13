@@ -66,12 +66,6 @@
   &__cell {
     color: var(--sc-text-secondary);
 
-    &--mono {
-      font-family: var(--sc-font-family-mono);
-      font-size: var(--sc-font-size-100);
-      line-height: var(--sc-line-height-caption);
-    }
-
     /* El ancho (96px) y la alineación derecha los declara la column-def; aquí
      * queda solo lo que era de `.table__td--num` y no cabe en ella. */
     &--num {
