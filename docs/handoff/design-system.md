@@ -140,10 +140,9 @@ las 38 ranuras— se cerraron el mismo día en DD-73.)
 **Sello:** rama `arebury/conversaciones-piel-aura`, con `main` fusionado hasta `b7cd451` (#137). DD-76.
 Rafa, viéndolo en local: «me va gustando», «beben directamente del DS», «no queremos cosas en mono».
 
-**Lo que cambia.** Conversaciones sin piel propia (8/14, fila 44.5, igual que Usuarios), anchos de
-columna medidos y sin columna ⋮. Tipo, Estrategia, Servicio y Grupo usan `sc-tag` secundario; el tag
-del tema baja a 1.75 de relleno (21.5 de alto, el del maestro `373:13337`). Doce sitios dejan la mono.
-De paso, la selección en oscuro de las 25 listas deja de salir gris claro con texto blanco.
+**Lo que cambia.** Conversaciones sin piel propia (8/14, fila 44.5), anchos medidos y sin ⋮. Tipo,
+Estrategia, Servicio y Grupo usan `sc-tag` secundario, que baja a 1.75 de relleno (21.5, maestro
+`373:13337`). Doce sitios dejan la mono. La selección en oscuro de las 25 listas deja de salir clara.
 
 **Lo que hay que recordar**, porque volverá a morder:
 
