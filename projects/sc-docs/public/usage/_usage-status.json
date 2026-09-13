@@ -503,6 +503,10 @@
   ],
   "gated": [
     {
+      "selector": "sc-badge",
+      "usedInSupervisor": 2
+    },
+    {
       "selector": "sc-bulk-edit-menu",
       "usedInSupervisor": 3
     },
@@ -536,7 +540,7 @@
     },
     {
       "selector": "sc-tag",
-      "usedInSupervisor": 8
+      "usedInSupervisor": 20
     },
     {
       "selector": "sc-textarea",

@@ -126,20 +126,8 @@
   gap: var(--sc-spacing-0-25);
 }
 
-.rules-action-chip {
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  width: 22px;
-  height: 22px;
-  border-radius: var(--sc-radius-100);
-  background: var(--sc-bg-elevated);
-  color: var(--sc-text-secondary);
-}
-
-/* .rules-status y .rules-kebab-btn promovidos a `main.scss` global en
- * iter 11a para que CategoriesPage + EntitiesPage los consuman sin
- * duplicar. */
+/* Los chips de acción y el estado son `sc-tag` del DS desde DD-76; `.rules-kebab-btn`
+ * sigue global en `main.scss`. */
 
 /* Aviso "0 reglas activas" (DD-30 permite quedarse sin ninguna). */
 .rules-no-active {

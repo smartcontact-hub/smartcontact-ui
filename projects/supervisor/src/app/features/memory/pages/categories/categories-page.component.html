@@ -89,15 +89,12 @@
   <span class="categories-num">{{ cat.classifiedCalls }}</span>
 </ng-template>
 
+<!-- `rules-status--*` en el host es solo el gancho de los tests: el aspecto es del DS. -->
 <ng-template #statusTpl let-cat>
   @if (cat.isActive) {
-    <span class="rules-status rules-status--active sc-text-caption-semibold">
-      {{ 'memory.categories.status.active' | translate }}
-    </span>
+    <sc-tag class="rules-status--active" severity="success" [value]="'memory.categories.status.active' | translate" />
   } @else {
-    <span class="rules-status rules-status--inactive sc-text-caption-semibold">
-      {{ 'memory.categories.status.inactive' | translate }}
-    </span>
+    <sc-tag class="rules-status--inactive" severity="secondary" [value]="'memory.categories.status.inactive' | translate" />
   }
 </ng-template>
 
