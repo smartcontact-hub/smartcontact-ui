@@ -3,6 +3,7 @@ import { providePrimeNG } from 'primeng/config';
 
 import scPreset from '../theme/sc-preset';
 
+
 export type ScSmartContactThemeOptions = {
     darkModeSelector?: string | false;
     cssLayer?: boolean | {
