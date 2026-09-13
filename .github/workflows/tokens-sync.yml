@@ -51,6 +51,16 @@ jobs:
           cache: npm
       - run: npm ci
 
+      # El Supervisor de MAIN, antes de tocar nada: es el «antes» de las capturas. Se construye en
+      # este mismo runner porque los píxeles no cruzan de máquina. Si falla, el PR sale sin capturas,
+      # pero el veredicto no cambia.
+      - name: Supervisor de main, para las capturas de antes
+        id: antes
+        continue-on-error: true
+        run: |
+          npm run build
+          npx ng build supervisor --configuration production --output-path "$RUNNER_TEMP/sup-antes"
+
       # Trae SOLO el export que empujó el plugin, aplicado encima de main (descarta su
       # .theme-designer/ y cualquier divergencia de la rama del plugin).
       - name: Tomar el export del plugin sobre main
@@ -114,6 +124,20 @@ jobs:
           SC_UPDATE_STRUCTURE=1 SC_UPDATE_STYLES=1 npx playwright test component-structure component-styles
           npm run e2e 2>&1 | tee "$RUNNER_TEMP/e2e.log"
 
+      # Las mismas 8 pantallas del Supervisor en main y con el export, claro y oscuro, a 1440 y con la
+      # hora congelada (control antes-contra-antes: 0 de 16 cambian). Solo informa: no pone rojo.
+      - name: Capturas de antes y después
+        id: capturas
+        if: steps.antes.outcome == 'success' && steps.verify.outcome == 'success'
+        continue-on-error: true
+        run: |
+          npx ng build supervisor --configuration production --output-path "$RUNNER_TEMP/sup-despues"
+          node scripts/spa-server.mjs "$RUNNER_TEMP/sup-antes/browser" 4801 &
+          node scripts/spa-server.mjs "$RUNNER_TEMP/sup-despues/browser" 4802 &
+          sleep 3
+          SC_ANTES_URL=http://127.0.0.1:4801 SC_DESPUES_URL=http://127.0.0.1:4802 SC_CAPTURAS_OUT="$RUNNER_TEMP/capturas" \
+            npx playwright test -c playwright.capturas.config.ts
+
       # Aunque verify/e2e fallen (drift en capas curadas), publicamos la rama limpia + PR
       # como banco de trabajo; el veredicto va en la portada y en el check `tokens-sync`.
       - name: Resetear design-tokens-sync a main + el cambio, y abrir/actualizar PR
@@ -176,11 +200,35 @@ jobs:
           else
             ROBOT_SHA=$(git rev-parse HEAD)
             RUN_URL="${{ github.server_url }}/${{ github.repository }}/actions/runs/${{ github.run_id }}"
+
+            # Capturas: se comparan y SOLO las que cambian se publican en la rama `tokens-sync-capturas`
+            # (una carpeta por run). `[skip ci]` a propósito AQUÍ: Cloudflare no debe construir esa rama.
+            printf '### Cómo se ve\n\n_Sin capturas en esta pasada: mira el run._\n' > "$RUNNER_TEMP/capturas.md"
+            if [ "${{ steps.capturas.outcome }}" = "success" ]; then
+              URL_BASE="https://raw.githubusercontent.com/${{ github.repository }}/tokens-sync-capturas/${{ github.run_id }}"
+              node scripts/tokens-sync-capturas.mjs --dir "$RUNNER_TEMP/capturas" --url-base "$URL_BASE" --md "$RUNNER_TEMP/capturas.md" || true
+              PUB="$RUNNER_TEMP/pub"
+              if git fetch -q origin tokens-sync-capturas 2>/dev/null; then
+                git worktree add -q --detach "$PUB" FETCH_HEAD
+              else
+                git worktree add -q --detach "$PUB" && git -C "$PUB" checkout -q --orphan capturas && git -C "$PUB" rm -rfq --ignore-unmatch .
+              fi
+              mkdir -p "$PUB/${{ github.run_id }}"
+              node -e 'const r=require(process.argv[1]); for (const x of r.filter((x)=>x.distintos>0)) console.log(x.antes+"\n"+x.despues)' "$RUNNER_TEMP/capturas/resumen.json" \
+                | while read -r f; do cp "$RUNNER_TEMP/capturas/$f" "$PUB/${{ github.run_id }}/"; done
+              if [ -n "$(ls -A "$PUB/${{ github.run_id }}")" ]; then
+                git -C "$PUB" add -A && git -C "$PUB" commit -qm "Capturas del run ${{ github.run_id }} [skip ci]" \
+                  && git -C "$PUB" push -q origin HEAD:refs/heads/tokens-sync-capturas \
+                  || echo "::warning title=Capturas no publicadas::el PR sale con enlaces rotos a las imágenes."
+              fi
+            fi
             {
               printf 'Export del Theme Designer aplicado sobre `main`, con los tokens regenerados. El robot reescribe esta portada en cada pasada.\n\n'
               cat "$RUNNER_TEMP/veredicto.md"
               printf '\n\n'
               cat "$RUNNER_TEMP/cambios.md"
+              printf '\n\n'
+              cat "$RUNNER_TEMP/capturas.md"
               printf '\n\n### Míralo\n\n- Supervisor con este export: https://design-tokens-sync.sc-supervisor.pages.dev\n- sc-docs con este export: https://design-tokens-sync.sc-doc.pages.dev\n\n<sub>Cloudflare los construye unos minutos después del push del robot.</sub>\n'
               printf '\n### Lo que verificó el robot\n\n| | sha |\n| --- | --- |\n| Export del plugin que consumió | `%s` |\n| Commit que dejó en la rama | `%s` |\n\nRun: %s\n\nEl check **tokens-sync** de este PR va en ese commit. Si el plugin vuelve a empujar, el commit nuevo sale sin ese check hasta que el robot lo pase: no fundas un PR sin él.\n' "$PLUGIN_SHA" "$ROBOT_SHA" "$RUN_URL"
             } > "$RUNNER_TEMP/body.md"
