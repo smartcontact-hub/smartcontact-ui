@@ -33,7 +33,7 @@ export type ScSelectSize = ScFieldSize;
  * `sc-inputtext` so the field family reads consistent.
  *
  * Aligned 1:1 with Figma `Smart Contact Prime → ❖ Select` (node
- * 6738:22642): border slate-300, radius 6px, padding 10.5/7, dropdown
+ * 6738:22642): border slate-300, radius 6px, padding 10/6, dropdown
  * area 35px wide, chevron 14px slate-400, label slate-700 14px, helper
  * slate-700 12px, gap 7px between label/input/helper.
  *

@@ -273,7 +273,7 @@ import type { ButtonDesignTokens } from '@primeuix/themes/types/button';
                 },
                 primary: {
                     color: "{primary.color}",
-                    borderColor: "{primary.700}",
+                    borderColor: "var(--sc-cmp-button-outlined-primary-border-color)",
                     hoverBackground: "var(--sc-cmp-button-outlined-primary-hover-background)",
                     activeBackground: "var(--sc-cmp-button-outlined-primary-active-background)"
                 },

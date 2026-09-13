@@ -2699,19 +2699,19 @@
           "hover": {
             "background": {
               "$type": "color",
-              "$value": "#34d3990a"
+              "$value": "#7db3ff0a"
             }
           },
           "active": {
             "background": {
               "$type": "color",
-              "$value": "#34d39929"
+              "$value": "#7db3ff29"
             }
           },
           "border": {
             "color": {
               "$type": "color",
-              "$value": "{primary.700}"
+              "$value": "{sky.600}"
             }
           }
         },
@@ -2917,13 +2917,13 @@
           "hover": {
             "background": {
               "$type": "color",
-              "$value": "#34d3990a"
+              "$value": "#7db3ff0a"
             }
           },
           "active": {
             "background": {
               "$type": "color",
-              "$value": "#34d39929"
+              "$value": "#7db3ff29"
             }
           }
         },
@@ -3206,7 +3206,7 @@
             "border": {
               "color": {
                 "$type": "color",
-                "$value": "{primary.900}"
+                "$value": "{sky.700}"
               }
             }
           }
@@ -3703,11 +3703,11 @@
       "primary": {
         "background": {
           "$type": "color",
-          "$value": "#10b98129"
+          "$value": "#4a8fff29"
         },
         "color": {
           "$type": "color",
-          "$value": "{primary.300}"
+          "$value": "{sky.200}"
         }
       },
       "secondary": {
@@ -4192,7 +4192,7 @@
             "border": {
               "color": {
                 "$type": "color",
-                "$value": "{primary.900}"
+                "$value": "{sky.700}"
               }
             }
           }
@@ -5980,7 +5980,7 @@
     "highlight": {
       "background": {
         "$type": "color",
-        "$value": "#34d39929"
+        "$value": "#7db3ff29"
       },
       "color": {
         "$type": "color",
@@ -5989,7 +5989,7 @@
       "focus": {
         "background": {
           "$type": "color",
-          "$value": "#34d3993d"
+          "$value": "#7db3ff3d"
         },
         "color": {
           "$type": "color",
@@ -6196,24 +6196,24 @@
     "primary": {
       "color": {
         "$type": "color",
-        "$value": "{primary.400}"
+        "$value": "{sky.300}"
       },
       "contrast": {
         "color": {
           "$type": "color",
-          "$value": "#ffffffff"
+          "$value": "{surface.900}"
         }
       },
       "hover": {
         "color": {
           "$type": "color",
-          "$value": "{primary.300}"
+          "$value": "{sky.200}"
         }
       },
       "active": {
         "color": {
           "$type": "color",
-          "$value": "{primary.200}"
+          "$value": "{sky.100}"
         }
       }
     },
@@ -6730,11 +6730,11 @@
         "padding": {
           "x": {
             "$type": "number",
-            "$value": "{scale.0-75}"
+            "$value": "{scale.0-625}"
           },
           "y": {
             "$type": "number",
-            "$value": "{scale.0-5}"
+            "$value": "{scale.0-375}"
           }
         },
         "sm": {
@@ -6747,11 +6747,11 @@
           "padding": {
             "x": {
               "$type": "number",
-              "$value": "{scale.0-625}"
+              "$value": "{scale.0-5}"
             },
             "y": {
               "$type": "number",
-              "$value": "{scale.0-375}"
+              "$value": "{scale.0-25}"
             }
           }
         },
@@ -6765,11 +6765,11 @@
           "padding": {
             "x": {
               "$type": "number",
-              "$value": "{scale.0-875}"
+              "$value": "{scale.0-75}"
             },
             "y": {
               "$type": "number",
-              "$value": "{scale.0-625}"
+              "$value": "{scale.0-5}"
             }
           }
         }
@@ -6931,7 +6931,7 @@
       "popover": {
         "padding": {
           "$type": "number",
-          "$value": "{scale.0-75}"
+          "$value": "{scale.0-625}"
         },
         "border": {
           "radius": {
@@ -6943,7 +6943,7 @@
       "modal": {
         "padding": {
           "$type": "number",
-          "$value": "{scale.1-25}"
+          "$value": "{scale.1-125}"
         },
         "border": {
           "radius": {
@@ -7806,7 +7806,7 @@
         "only": {
           "width": {
             "$type": "number",
-            "$value": "{scale.2-5}"
+            "$value": "{scale.2-25}"
           }
         }
       },
@@ -8264,11 +8264,11 @@
     "checkbox": {
       "width": {
         "$type": "number",
-        "$value": "{scale.1-25}"
+        "$value": "{scale.1-125}"
       },
       "height": {
         "$type": "number",
-        "$value": "{scale.1-25}"
+        "$value": "{scale.1-125}"
       },
       "background": {
         "$type": "color",
@@ -8377,7 +8377,7 @@
       "icon": {
         "size": {
           "$type": "number",
-          "$value": "{scale.0-875}"
+          "$value": "{scale.0-75}"
         },
         "color": {
           "$type": "color",
@@ -8404,7 +8404,7 @@
         "sm": {
           "size": {
             "$type": "number",
-            "$value": "{scale.0-75}"
+            "$value": "{scale.0-625}"
           }
         },
         "lg": {
@@ -8427,18 +8427,18 @@
       "lg": {
         "width": {
           "$type": "number",
-          "$value": "{scale.1-5}"
+          "$value": "{scale.1-25}"
         },
         "height": {
           "$type": "number",
-          "$value": "{scale.1-5}"
+          "$value": "{scale.1-25}"
         }
       }
     },
     "chip": {
       "gap": {
         "$type": "number",
-        "$value": "{scale.0-5}"
+        "$value": "{scale.0-375}"
       },
       "icon": {
         "size": {
@@ -8479,11 +8479,11 @@
       "padding": {
         "x": {
           "$type": "number",
-          "$value": "{scale.0-75}"
+          "$value": "{scale.0-625}"
         },
         "y": {
           "$type": "number",
-          "$value": "{scale.0-5}"
+          "$value": "{scale.0-375}"
         }
       },
       "image": {
@@ -8859,7 +8859,7 @@
         },
         "padding": {
           "$type": "number",
-          "$value": "{scale.0-375}"
+          "$value": "{scale.0-25}"
         },
         "border": {
           "radius": {
@@ -8871,7 +8871,7 @@
       "dropdown": {
         "width": {
           "$type": "number",
-          "$value": "{scale.2-5}"
+          "$value": "{scale.2-25}"
         },
         "hover": {
           "border": {
@@ -9149,7 +9149,7 @@
           "button": {
             "gap": {
               "$type": "number",
-              "$value": "{scale.0-25}"
+              "$value": "{scale.0-125}"
             }
           },
           "padding": {
@@ -9175,7 +9175,7 @@
       "month": {
         "padding": {
           "$type": "number",
-          "$value": "{scale.0-375}"
+          "$value": "{scale.0-25}"
         },
         "border": {
           "radius": {
@@ -10027,7 +10027,7 @@
       "footer": {
         "gap": {
           "$type": "number",
-          "$value": "{scale.0-5}"
+          "$value": "{scale.0-375}"
         },
         "padding": {
           "top": {
@@ -12437,7 +12437,7 @@
       "icon": {
         "size": {
           "$type": "number",
-          "$value": "{scale.1-125}"
+          "$value": "{scale.1}"
         },
         "sm": {
           "size": {
@@ -12448,7 +12448,7 @@
         "lg": {
           "size": {
             "$type": "number",
-            "$value": "{scale.1-25}"
+            "$value": "{scale.1-125}"
           }
         }
       },
@@ -12456,11 +12456,11 @@
         "button": {
           "width": {
             "$type": "number",
-            "$value": "{scale.1-75}"
+            "$value": "{scale.1-5}"
           },
           "height": {
             "$type": "number",
-            "$value": "{scale.1-75}"
+            "$value": "{scale.1-5}"
           },
           "border": {
             "radius": {
@@ -12489,13 +12489,13 @@
           "sm": {
             "size": {
               "$type": "number",
-              "$value": "{scale.0-875}"
+              "$value": "{scale.0-75}"
             }
           },
           "lg": {
             "size": {
               "$type": "number",
-              "$value": "{scale.1-125}"
+              "$value": "{scale.1}"
             }
           }
         }
@@ -12763,7 +12763,7 @@
       "dropdown": {
         "width": {
           "$type": "number",
-          "$value": "{scale.2-5}"
+          "$value": "{scale.2-25}"
         },
         "color": {
           "$type": "color",
@@ -13915,7 +13915,7 @@
       "dropdown": {
         "width": {
           "$type": "number",
-          "$value": "{scale.2-5}"
+          "$value": "{scale.2-25}"
         },
         "color": {
           "$type": "color",
@@ -14072,11 +14072,11 @@
         "gutter": {
           "start": {
             "$type": "number",
-            "$value": "{scale.neg-0-375}"
+            "$value": "{scale.neg-0-25}"
           },
           "end": {
             "$type": "number",
-            "$value": "{scale.0-375}"
+            "$value": "{scale.0-25}"
           }
         }
       },
@@ -14713,7 +14713,7 @@
       "icon": {
         "size": {
           "$type": "number",
-          "$value": "{scale.0-75}"
+          "$value": "{scale.0-625}"
         }
       },
       "padding": {
@@ -15173,7 +15173,7 @@
       "icon": {
         "size": {
           "$type": "number",
-          "$value": "{scale.1-125}"
+          "$value": "{scale.1}"
         }
       },
       "content": {
@@ -15214,11 +15214,11 @@
         "button": {
           "width": {
             "$type": "number",
-            "$value": "{scale.1-75}"
+            "$value": "{scale.1-5}"
           },
           "height": {
             "$type": "number",
-            "$value": "{scale.1-75}"
+            "$value": "{scale.1-5}"
           },
           "border": {
             "radius": {
@@ -15249,7 +15249,7 @@
       "text": {
         "gap": {
           "$type": "number",
-          "$value": "{scale.0-5}"
+          "$value": "{scale.0-25}"
         }
       }
     },
@@ -15838,7 +15838,7 @@
     "toggleswitch": {
       "width": {
         "$type": "number",
-        "$value": "{scale.2-5}"
+        "$value": "{scale.2-25}"
       },
       "height": {
         "$type": "number",
