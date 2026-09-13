@@ -316,6 +316,17 @@
   padding: var(--sc-spacing-2) var(--sc-spacing-2-5);
 }
 
+/* `?marco=1`: la página sola, para un `<iframe>` (ver `sinMenu` en app.component.ts). */
+.demo-shell--sin-menu {
+  .demo-sidebar {
+    display: none;
+  }
+
+  .demo-main {
+    padding: var(--sc-spacing-1);
+  }
+}
+
 /* En estrecho la sidebar se colapsa a barra superior (nav deslizante). La lista de
    componentes anidada se oculta ahí: en móvil se navega por el ⌘K o el índice. */
 @media (max-width: 52rem) {

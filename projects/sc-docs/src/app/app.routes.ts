@@ -109,6 +109,15 @@ export const routes: Routes = [
       import('./pages/aviso-legal/aviso-legal.component').then((m) => m.AvisoLegalComponent),
   },
 
+  {
+    // PROTOTIPO (2026-09-13): «nuestra capa sobre Aura», una ficha por componente. Fuera del
+    // menú hasta que Rafa dé por bueno el formato (el sitio, aquí, ya lo eligió). Los datos
+    // los genera `tools/aura-diff.mjs`.
+    path: 'aura/:componente',
+    loadComponent: () =>
+      import('./pages/aura/aura-ficha.component').then((m) => m.AuraFichaComponent),
+  },
+
   // Compatibilidad: las rutas planas de antes de agrupar Fundamentos. Se quedan para que
   // no muera ningún enlace ya repartido (docs, marcadores, previews por rama).
   { path: 'foundations', pathMatch: 'full', redirectTo: 'fundamentos/escala-color' },

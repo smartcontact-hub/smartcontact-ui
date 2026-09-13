@@ -1,0 +1,275 @@
+@if (ficha(); as f) {
+  <header class="hero">
+    <p class="hero__eyebrow sc-text-caption-semibold">Nuestra capa sobre Aura</p>
+    <h1 class="hero__title sc-text-h1-semibold">{{ f.titulo }}</h1>
+    <p class="hero__lead sc-text-body-regular">
+      Qué hay que ponerle a <code>{{ f.prime }}</code> tal cual sale en primeng.dev para llegar a
+      <code>{{ f.sc }}</code>, y en qué punto del camino nace cada diferencia.
+    </p>
+  </header>
+
+  @if (fallo()) {
+    <p class="aviso sc-text-body-regular">
+      No se pudo leer la ficha generada. Se crea con
+      <code>node tools/aura-diff.mjs {{ f.componente }} --docs projects/sc-docs/public/aura/{{ f.componente }}.json</code>.
+    </p>
+  }
+
+  @if (datos(); as d) {
+    <section class="bloque">
+      <h2 class="sc-text-h3-semibold">El camino, y dónde nace cada diferencia</h2>
+      <p class="sc-text-body-regular nota">
+        De las {{ d.totals.keys }} variables que Aura le da al componente, {{ d.totals.changed }} acaban
+        distintas en nuestro código. Cada una nace en uno de estos cuatro pasos:
+      </p>
+      <ol class="cadena">
+        <li class="cadena__paso cadena__paso--origen">
+          <span class="sc-text-caption-semibold apagado">Punto de partida</span>
+          <span class="sc-text-body-semibold">Aura (primeng.dev)</span>
+          <span class="sc-text-caption-regular apagado">Tema oficial, versión {{ d.meta.aura }}</span>
+        </li>
+        @for (e of eslabones(); track e.motivo) {
+          <li class="cadena__paso" [class.cadena__paso--aviso]="e.motivo === 'sin-motivo'">
+            <span class="cadena__cifra sc-text-h2-semibold">{{ e.n }}</span>
+            <sc-tag [value]="motivo[e.motivo].label" [severity]="motivo[e.motivo].severity" />
+            <span class="sc-text-caption-regular">{{ e.que }}</span>
+          </li>
+        }
+      </ol>
+    </section>
+
+    <section class="bloque prosa">
+      <h2 class="sc-text-h3-semibold">En corto</h2>
+      <ul class="lista">
+        @for (frase of f.enCorto; track $index) {
+          <li class="sc-text-body-regular">{{ frase }}</li>
+        }
+      </ul>
+    </section>
+
+    @if (sinMotivo().length) {
+      <section class="bloque">
+        <h2 class="sc-text-h3-semibold">Lo que nuestro código cambia sin motivo escrito</h2>
+        <p class="sc-text-body-regular nota">
+          Nuestro Kit dice una cosa y nuestro código pinta otra, y nadie ha dejado escrito por qué. Son las que
+          hay que decidir: o se baja al Kit, o nuestro código vuelve a lo que dice el Kit.
+        </p>
+        <ul class="pendientes">
+          @for (p of sinMotivo(); track p.donde) {
+            <li>
+              <span class="pendientes__donde sc-text-body-semibold">{{ p.donde }}</span>
+              <span class="sc-text-body-regular">{{ p.que }}</span>
+            </li>
+          }
+        </ul>
+      </section>
+    }
+
+    <section class="bloque">
+      <h2 class="sc-text-h3-semibold">1 · Tema: medidas y radios</h2>
+      <p class="sc-text-body-regular nota">
+        Valores finales en píxeles, con la raíz a 16 como primeng.dev. La letra no sale aquí: el tema no
+        la toca, la pone el paso 3.
+      </p>
+      <div class="tabla-marco">
+        <table class="tabla">
+          <thead>
+            <tr class="sc-text-caption-semibold">
+              <th scope="col">Clave</th>
+              <th scope="col">Aura (primeng.dev)</th>
+              <th scope="col">PrimeOne</th>
+              <th scope="col">Nuestro Kit</th>
+              <th scope="col">Nuestro código</th>
+              <th scope="col">Nace en</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (m of d.measures; track m.key) {
+              <tr class="sc-text-body-regular">
+                <td>
+                  <code>{{ m.key }}</code>
+                  <span class="apagado sc-text-caption-regular bloque-linea">{{ m.paints[0] ?? '' }}</span>
+                </td>
+                <td>{{ m.light.aura }}</td>
+                <td [class.salto]="m.light.primeOne !== m.light.aura">{{ m.light.primeOne ?? '—' }}</td>
+                <td [class.salto]="m.light.kit !== m.light.primeOne">{{ m.light.kit ?? '—' }}</td>
+                <td class="fuerte" [class.salto]="m.light.sc !== m.light.kit">{{ m.light.sc }}</td>
+                <td><sc-tag [value]="motivo[m.light.reason].label" [severity]="motivo[m.light.reason].severity" /></td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      <p class="sc-text-caption-regular apagado leyenda">Con fondo gris, el paso donde el valor cambia respecto a la columna anterior.</p>
+    </section>
+
+    <section class="bloque">
+      <h2 class="sc-text-h3-semibold">2 · Tema: color, por variante</h2>
+      <p class="sc-text-body-regular nota">
+        Cada variante junta sus versiones sólida, de contorno y de texto. Abre una para ver cada clave
+        en los cuatro pasos.
+      </p>
+      @for (g of d.color; track g.variant) {
+        <details class="variante">
+          <summary>
+            <span class="sc-text-body-semibold">{{ variante[g.variant] ?? g.variant }}</span>
+            <span class="apagado sc-text-caption-regular">{{ g.count }} {{ g.count === 1 ? 'clave' : 'claves' }}</span>
+            <span class="variante__tags">
+              @for (c of g.light.concat(g.dark); track $index) {
+                @if (c.reason === 'sin-motivo') {
+                  <sc-tag [value]="motivo[c.reason].label" [severity]="motivo[c.reason].severity" />
+                }
+              }
+            </span>
+          </summary>
+          <div class="variante__resumen">
+            @for (col of [{ nombre: 'Claro', causas: g.light }, { nombre: 'Oscuro', causas: g.dark }]; track col.nombre) {
+              <div class="columna">
+                <h3 class="sc-text-caption-semibold">{{ col.nombre }}</h3>
+                @if (!col.causas.length) {
+                  <p class="apagado sc-text-body-regular">Igual que Aura.</p>
+                }
+                @for (c of col.causas; track $index) {
+                  <div class="causa">
+                    <sc-tag [value]="motivo[c.reason].label + ' · ' + c.count" [severity]="motivo[c.reason].severity" />
+                    @for (e of c.examples; track e.key) {
+                      <p class="muestra sc-text-caption-regular">
+                        @for (paso of [e.aura, e.primeOne, e.kit, e.sc]; track $index; let last = $last) {
+                          @if (esColor(paso)) { <span class="chip" [style.background]="paso"></span> }
+                          <span [class.fuerte]="last">{{ paso ?? '—' }}</span>
+                          @if (!last) { <span class="apagado">→</span> }
+                        }
+                      </p>
+                    }
+                    @if (c.note) {
+                      <p class="cita sc-text-caption-regular">{{ c.note }}</p>
+                    }
+                  </div>
+                }
+              </div>
+            }
+          </div>
+          <p class="sc-text-caption-regular apagado leyenda variante__leyenda">Orden: Aura → PrimeOne → nuestro Kit → nuestro código.</p>
+          <div class="tabla-marco">
+            <table class="tabla tabla--densa">
+              <thead>
+                <tr class="sc-text-caption-semibold">
+                  <th scope="col">Clave</th>
+                  <th scope="col">Modo</th>
+                  <th scope="col">Aura (primeng.dev)</th>
+                  <th scope="col">PrimeOne</th>
+                  <th scope="col">Nuestro Kit</th>
+                  <th scope="col">Nuestro código</th>
+                  <th scope="col">Nace en</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (r of g.rows; track r.key) {
+                  @for (s of [{ modo: 'Claro', v: r.light }, { modo: 'Oscuro', v: r.dark }]; track s.modo) {
+                    @if (s.v.reason !== 'igual') {
+                      <tr class="sc-text-caption-regular">
+                        <td><code>{{ r.key }}</code></td>
+                        <td>{{ s.modo }}</td>
+                        <td>{{ s.v.aura }}</td>
+                        <td [class.salto]="s.v.primeOne !== s.v.aura">{{ s.v.primeOne ?? '—' }}</td>
+                        <td [class.salto]="s.v.kit !== s.v.primeOne">{{ s.v.kit ?? '—' }}</td>
+                        <td class="fuerte" [class.salto]="s.v.sc !== s.v.kit">{{ s.v.sc }}</td>
+                        <td><span class="motivo motivo--{{ s.v.reason }}">{{ motivo[s.v.reason].label }}</span></td>
+                      </tr>
+                    }
+                  }
+                }
+              </tbody>
+            </table>
+          </div>
+        </details>
+      }
+    </section>
+
+    <section class="bloque">
+      <h2 class="sc-text-h3-semibold">3 · CSS de comportamiento</h2>
+      <p class="sc-text-body-regular nota">
+        Reglas que el tema no puede expresar con variables y que van en
+        <code>sc-preset/css.ts</code>. Se aplican a todo <code>{{ f.prime }}</code>, lo pinte o no un
+        <code>{{ f.sc }}</code>.
+      </p>
+      @for (b of bloques(); track b.name) {
+        <article class="regla">
+          <header class="regla__cabeza">
+            <h3 class="sc-text-body-semibold">{{ tituloBloque(b.name) }}</h3>
+            <sc-tag [value]="motivoCss[motivoBloque(b.name)].label" [severity]="motivoCss[motivoBloque(b.name)].severity" />
+            <span class="apagado sc-text-caption-regular">css.ts:{{ b.line }}</span>
+          </header>
+          <div class="codigo sc-text-caption-regular">
+            @for (r of b.rules; track $index) {
+              <div class="codigo__regla">
+                @if (r.media.length) {
+                  <code class="apagado">{{ r.media.join(' ') }}</code>
+                }
+                <code>{{ r.selectors.join(', ') }}</code>
+                @for (dcl of r.decls; track dcl.prop) {
+                  <code class="codigo__decl">{{ dcl.prop }}: {{ dcl.light }}</code>
+                }
+              </div>
+            }
+          </div>
+          @if (b.comment) {
+            <p class="cita sc-text-caption-regular">{{ b.comment }}</p>
+          }
+        </article>
+      }
+    </section>
+
+    <section class="bloque prosa">
+      <h2 class="sc-text-h3-semibold">4 · El envoltorio {{ f.sc }}</h2>
+      @for (e of f.envoltorio; track e.titulo) {
+        <h3 class="sc-text-body-semibold">{{ e.titulo }}</h3>
+        <!-- En una línea y sin espacios entre bloques: si no, Angular mete un hueco a cada lado del <code>. -->
+        <p class="sc-text-body-regular">@for (t of trozos(e.texto); track $index) {@if ($odd) {<code>{{ t }}</code>} @else {<span>{{ t }}</span>}}</p>
+      }
+      <div class="tabla-marco">
+        <table class="tabla">
+          <thead>
+            <tr class="sc-text-caption-semibold">
+              <th scope="col">{{ f.sc }}</th>
+              <th scope="col">{{ f.prime }}</th>
+              <th scope="col">Nota</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (a of f.api; track a.sc) {
+              <tr class="sc-text-body-regular">
+                <td><code>{{ a.sc }}</code></td>
+                <td><code>{{ a.prime }}</code></td>
+                <td>@for (t of trozos(a.nota); track $index) {@if ($odd) {<code>{{ t }}</code>} @else {<span>{{ t }}</span>}}</td>
+              </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+      @if (d.wrapper?.primeInputsNotExposed?.length) {
+        <p class="sc-text-body-regular nota">
+          Entradas de <code>{{ f.prime }}</code> que {{ f.sc }} no pasa:
+          @for (i of d.wrapper!.primeInputsNotExposed; track i; let last = $last) {
+            <code>{{ i }}</code>{{ last ? '.' : ', ' }}
+          }
+        </p>
+      }
+    </section>
+
+    <footer class="bloque pie sc-text-caption-regular">
+      Generado con <code>tools/aura-diff.mjs</code>: Aura {{ d.meta.aura }} (PrimeNG {{ d.meta.primeng }}),
+      PrimeOne 4.0.0 volcado de Figma el 13-09-2026, export del Kit del {{ d.meta.kitExport }} y
+      preset en <code>{{ d.meta.presetCommit }}</code>. Valores en claro y en oscuro
+      (<code>.sc-dark</code>) con la raíz a 16px, la misma que primeng.dev.
+    </footer>
+  } @else if (!fallo()) {
+    <div class="carga" aria-busy="true">
+      <sc-skeleton width="60%" height="1.5rem" />
+      <sc-skeleton width="100%" height="6rem" />
+      <sc-skeleton width="100%" height="12rem" />
+    </div>
+  }
+} @else {
+  <p class="sc-text-body-regular">No hay ficha para «{{ componente() }}».</p>
+}

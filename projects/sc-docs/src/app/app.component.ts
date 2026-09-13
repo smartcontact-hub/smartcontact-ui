@@ -64,6 +64,14 @@ export class AppComponent {
     { initialValue: this.router.url },
   );
 
+  /**
+   * MODO SIN MENÚ (`?marco=1`): la página sola, para meterla en un marco (iframe) y comparar dos
+   * versiones lado a lado con el documento ENTERO en cada estado. Hace falta el documento
+   * entero porque muchas variables del tema se resuelven en `:root`: un recuadro con
+   * `.sc-dark` no las alcanza (medido el 2026-09-13 al comparar el modo oscuro gris de marca contra zinc, DD-79).
+   */
+  protected readonly sinMenu = computed(() => /[?&]marco=1(?:&|$)/.test(this.url()));
+
   /** ¿La ruta activa está dentro de Componentes? Muestra la lista en la sidebar. */
   protected readonly onComponents = computed(() => this.url().startsWith('/components'));
 
