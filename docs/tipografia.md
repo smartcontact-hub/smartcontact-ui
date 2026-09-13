@@ -70,8 +70,8 @@ exporta (`App` **no se exporta**: si algo acaba ahí, no llega y no da ningún e
 | 100 | 12 | 18 | 1,50 | 15 componentes · talla `sm` |
 | 200 | 14 | 20 | 1,43 | talla `md`, la base |
 | 300 | 16 | 24 | 1,50 | 11 componentes · talla `lg` |
-| 400 | 18 | (usa el 300) | 1,33 | títulos de card, dialog, modal · `xl` |
-| 450 | 20 | 28 | 1,40 | títulos de drawer y overlay · `xxl` |
+| 400 | 18 | (usa el 300) | 1,33 | títulos de card, dialog, modal · estilo `Heading/h3` |
+| 450 | 20 | 28 | 1,40 | títulos de drawer y overlay |
 | 500 | 24 | 36 | **1,50** | estilo `Heading/h2` |
 | 650 | 32 | 40 | 1,25 | sin uso |
 | 800 | 48 | 58 | 1,21 | estilo `Heading/h1` |
@@ -82,9 +82,9 @@ título de 24 con 1,50 lleva el mismo aire que un párrafo, debería rondar 1,30
 copiado literal de SnowUI, que también lo tiene así. Decidido dejarlo por ahora porque no lo
 usa ningún componente, solo un estilo de pantalla.
 
-### Las cinco tallas del puente
+### Las tres tallas del puente
 
-`app/typography/{sm,md,lg,xl,xxl}/{fontSize,lineHeight}`, en `Custom`, cada una **alias** de un
+`app/typography/{sm,md,lg}/{fontSize,lineHeight}`, en `Custom`, cada una **alias** de un
 paso de la escala. Son el contrato con el consumidor: cambias el paso y se mueve todo detrás.
 
 | Talla | Apunta a | Valor |
@@ -92,12 +92,15 @@ paso de la escala. Son el contrato con el consumidor: cambias el paso y se mueve
 | `sm` | size 100 · height 100 | 12 / 18 |
 | `md` | size 200 · height 200 | 14 / 20 |
 | `lg` | size 300 · height 300 | 16 / 24 |
-| `xl` | size 400 · height 300 | 18 / 24 |
-| `xxl` | size 450 · height 450 | 20 / 28 |
 
 `sm`, `md` y `lg` vienen del kit de PrimeNG, que ya traía este patrón a medias (le falta el
-`lineHeight` del `md`, justo la talla base). `xl` y `xxl` los añadimos nosotros el 2026-09-02
-para los títulos, que no encajaban en ninguna de las tres.
+`lineHeight` del `md`, justo la talla base). Son las tres que `sc-preset/extend.ts` declara.
+
+**Hubo cinco hasta el 2026-09-13.** `xl` (18/24) y `xxl` (20/28) se añadieron el 2026-09-02 para
+los títulos, y **nunca las consumió nada**: medido al borrarlas, 0 capas atadas en las 110 páginas
+del fichero del DS (26.498 textos) y 0 en el de Supervisor, 0 aliases y 0 text styles. Los títulos
+se resolvieron con los text styles (`Heading/h3` y compañía), no con este puente. Se borraron del
+Kit y del export a la vez, y el CSS generado no cambió ni un byte (DD-75).
 
 ### Nomenclatura, la regla exacta
 
@@ -215,10 +218,8 @@ sí resuelve. Medido: el chip da 20, no 21.
 - **El 24/36.** Único paso fuera de curva. Cambiarlo a 24/32 es un valor y no afecta a ningún
   componente, solo a `Heading/h2`.
 - **`Listbox`** no se pudo medir: no tiene página en el showcase del consumidor.
-- **Las variables `xl` y `xxl`** se crearon después del último export, así que el nombre CSS
-  que generarán (`--p-app-typography-xl-line-height`) sigue la regla de la sección 2 pero
-  **está sin verificar contra un export real**. Los respaldos del fichero lo cubren mientras
-  tanto. Confirmar en el próximo export.
+- ~~**Las variables `xl` y `xxl`**, sin verificar contra un export real~~ → **ya no existen** (borradas
+  el 2026-09-13, DD-75): no hay nombre CSS que verificar.
 - **Los pasos 650 (32/40) y el interlineado 450 (28)** quedaron huérfanos al pasar los estilos
   a los valores de SnowUI. No molestan, son escala disponible.
 - **Los subpaths CSS de nuestros paquetes no están exportados.** El README del lab lo documenta

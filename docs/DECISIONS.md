@@ -59,6 +59,49 @@
 
 ---
 
+## DD-75 · 2026-09-13 — Figma alcanza al código en el título de sección, el puente de tipografía se queda en las tres tallas que se usan, y el 12/20 accidental pasa a caption
+
+**Contexto** · DD-74 subió el título de sección a `h3` en código y dejó cuatro cosas que solo se
+resolvían tocando Figma o decidiendo. Con el bridge abierto se verificaron contra el fichero real
+(`khNq9dJKNi13pNllrqm6dx`), Claude recomendó y Rafa respondió: «adelante a todas tus sugerencias».
+
+**Decisión** · (1) En Figma, las 4 capas `Title` del componente `Section` pasan a
+`Heading/h3-semibold`; las 25 de `.Subsection` se quedan en `Body/body-semibold`, igual que en código.
+(2) El título se queda en **18**, sin crear un estilo de 20. (3) Se **borran** del Kit
+`app/typography/xl` y `xxl` (sus 4 variables), y a la vez sus 4 entradas del export y la regla del
+mapa de cobertura que existía solo para ellas. (4) El 12/20 accidental pasa a **12/18** (interlineado
+de `caption`) en los 11 sitios que lo producían; el de `sc-chip` se queda.
+
+**Razón** · (1) La descripción de `Heading/h3-semibold` en el propio fichero dice «bloques, tarjetas,
+formularios»: el estilo ya declaraba su sitio. (2) 18 es un estilo con nombre; 20 exigiría un estilo
+nuevo por 2px que no se distinguen (medido en DD-74). (3) **Nadie las usaba**, medido antes de borrar:
+0 aliases, 0 text styles, 0 capas atadas en las 110 páginas (26.498 textos, con control: 2.281 capas
+con el tamaño atado a 30 variables, incluida su hermana `app/font/size`) y 0 en el fichero de
+Supervisor (5.644 textos). Quedan `sm/md/lg`, exactamente las que `sc-preset/extend.ts` declara.
+Tras quitarlas del export, `tokens:import` regeneró las capas **byte a byte idénticas**. (4) En los
+siete casos de pantalla el mecanismo es el mismo, medido regla a regla en el navegador: el padre
+lleva `sc-text-body-regular` (14/20) y el hijo solo baja el tamaño a 12, así que hereda el 20. En
+`sc-form-section-nav` era un `line-height: 20px` a pelo, portado así en junio sin decisión escrita.
+
+**Descartadas** ·
+- **Cambiar las ~35 capas `Title` de la página `❖ Section`** (lo que decía `figma-pendiente.md`) →
+  la cifra mezclaba dos componentes; las de `.Subsection` son el segundo nivel y deben quedarse en 14.
+- **Quitar el 20 de `sc-chip`** → no es accidental: el tema documenta que en Figma el chip tiene el
+  interlineado ATADO a 20 (`sc-preset/css.ts`, «ETIQUETAS … chip 20»), y ahí arbitra Figma.
+- **Un text style propio de 12/20 para pastillas** → formalizaría un accidente.
+- **Dejar la regla `not-consumed` de xl/xxl «por si vuelven»** → sin ella, si alguien las recrea en
+  Figma el sync las trae `unmatched` y §8 se pone en rojo, que obliga a decidir qué son.
+
+**Consecuencias** · Figma y código dicen lo mismo en el título de sección, y la divergencia que
+anunció DD-74 queda cerrada. `tools/text-census.mjs` gana `--rutas`: en el Supervisor el crawl moría
+en `/` porque su menú son botones, y un censo de 1 ruta y 19 textos parece un verde y no mide nada;
+con las rutas sembradas mide 27 rutas y 3.040 textos, con un ruido de 2 (un reloj en vivo). El censo
+antes/después dio **96 interlineados de 20 a 18 a 12px y ningún otro cambio de letra**. Pendiente de
+Rafa y fuera del repo: **publicar la librería** en Figma para que los ficheros consumidores reciban
+el título nuevo y dejen de ver las dos variables.
+
+---
+
 ## DD-74 · 2026-09-12 — El chip relleno significa lo mismo en las dos pantallas, y un título vuelve a ser más grande que su contenido
 
 **Contexto** · Rafa, sobre el barrido de tablas: «resuelve las dudas con tu criterio, queremos

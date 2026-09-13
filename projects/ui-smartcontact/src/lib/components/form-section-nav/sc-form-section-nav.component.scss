@@ -159,7 +159,7 @@
 .form-nav__label {
   font-family: var(--sc-font-family-primary);
   font-size: var(--sc-font-size-100);
-  line-height: 20px;
+  line-height: var(--sc-line-height-caption);
   font-weight: var(--sc-font-weight-medium);
   color: var(--sc-text-secondary);
   overflow-wrap: anywhere;

@@ -59,26 +59,25 @@ test('custom · las familias del rebase de text styles (2026-09-02) caen donde s
     'primitive.typography.font.style.bold',
     'primitive.typography.font.family.inter',
     'app.typography.md.fontSize',
-    'app.typography.xl.fontSize',
-    'app.typography.xxl.lineHeight',
   ];
   const { unmatched, byKind } = classify('aura/custom', paths);
   assert.deepEqual(unmatched, []);
-  // sm/md/lg SIGUEN siendo el contrato value-checkeado del extend; xl/xxl no.
+  // sm/md/lg son el contrato value-checkeado del extend (xl/xxl se borraron del Kit, DD-75).
   assert.equal(byKind['value-check'].length, 1);
-  // 2 font.style + 2 del tier xl/xxl que nadie consume
-  assert.equal(byKind['not-consumed'].length, 4);
+  // los 2 font.style
+  assert.equal(byKind['not-consumed'].length, 2);
   // la familia es pila con fallbacks en CSS, una sola cara en el Kit
   assert.equal(byKind['divergence'].length, 1);
 });
 
-test('custom · el tier xl/xxl NO se cuela en el contrato value-check del extend', () => {
-  // Si el regex del contrato se escribiera laxo (`app\.typography\.\w+\.`), xl/xxl entrarían
-  // como value-check y §8 buscaría en extend.ts un paso que NO declara → rojo falso o, peor,
-  // un contrato que dice cubrir algo que no cubre.
-  const { byKind } = classify('aura/custom', ['app.typography.xl.fontSize', 'app.typography.sm.fontSize']);
+test('custom · CARA ROJA · si el Kit RE-CREA xl/xxl, salen unmatched y no se cuelan en el contrato', () => {
+  // xl/xxl se borraron del Kit el 2026-09-13 (DD-75). Si vuelven, tienen que caer en ROJO para
+  // obligar a clasificarlas: ni como value-check (si el regex del contrato se escribiera laxo,
+  // `app\.typography\.\w+\.`, §8 buscaría en extend.ts un paso que NO declara) ni tragadas en
+  // silencio por una regla vieja de `not-consumed`.
+  const { byKind, unmatched } = classify('aura/custom', ['app.typography.xl.fontSize', 'app.typography.sm.fontSize']);
   assert.deepEqual(byKind['value-check'], ['app.typography.sm.fontSize']);
-  assert.deepEqual(byKind['not-consumed'], ['app.typography.xl.fontSize']);
+  assert.deepEqual(unmatched, ['app.typography.xl.fontSize']);
 });
 
 test('custom · CARA ROJA · un custom NUEVO del Kit → unmatched (era el agujero)', () => {

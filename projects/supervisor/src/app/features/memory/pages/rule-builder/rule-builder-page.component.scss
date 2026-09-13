@@ -313,6 +313,7 @@
     background: var(--sc-bg-info-subtle);
     color: var(--sc-text-primary);
     font-size: var(--sc-font-size-50);
+    line-height: var(--sc-line-height-caption);
     font-weight: var(--sc-font-weight-semibold);
     letter-spacing: 0.03em;
     text-transform: uppercase;
@@ -587,12 +588,14 @@
      * mismo peso que la intro y se perdería. */
     dt {
       font-size: var(--sc-font-size-100);
+      line-height: var(--sc-line-height-caption);
       color: var(--sc-text-secondary);
     }
 
     dd {
       margin: 0;
       font-size: var(--sc-font-size-100);
+      line-height: var(--sc-line-height-caption);
       font-weight: var(--sc-font-weight-semibold);
       font-variant-numeric: tabular-nums;
       color: var(--sc-text-primary);
