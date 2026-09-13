@@ -17,6 +17,7 @@ export * from './lib/components/card/sc-card.component';
 export * from './lib/components/chip/sc-chip.component';
 export * from './lib/components/tag/sc-tag.component';
 export * from './lib/components/message/sc-message.component';
+export * from './lib/components/option-card/sc-option-card.component';
 export * from './lib/components/panel/sc-panel.component';
 export * from './lib/components/skeleton/sc-skeleton.component';
 export * from './lib/components/textarea/sc-textarea.component';

@@ -5,9 +5,15 @@
     display: inline-flex;
     align-items: center;
     gap: var(--sc-spacing-0-25);
-    padding: 2px var(--sc-spacing-0-5);
+    /* 1.75 (`scale/0-125`), no 2: la tabla 14-base no tiene un 2 y el valor suelto se
+     * había copiado ya a un consumidor. Un peldaño antes que un número. */
+    padding: var(--sc-spacing-0-125) var(--sc-spacing-0-5);
     font-size: var(--sc-font-size-100);
-    font-weight: var(--sc-font-weight-medium);
+    /* `semibold`, no `medium`: 500 era el único peso intermedio de las pantallas que
+     * usan esta variante, y con 400 y 600 alrededor se leía como un tercer idioma.
+     * Dos pesos en toda la página. ⚠️ Diverge del Kit igual que el punto: si se
+     * acepta, se cierra en Figma. */
+    font-weight: var(--sc-font-weight-semibold);
     background: var(--label-bg);
     color: var(--label-text);
     border: 1px solid var(--label-border);

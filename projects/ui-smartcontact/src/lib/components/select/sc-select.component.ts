@@ -181,8 +181,16 @@ export class ScSelectComponent {
   protected readonly msgId = this.field.msgId;
   protected readonly labelId = this.field.labelId;
   /** El rótulo externo manda sobre el propio: si el consumidor pasa uno, es el suyo. */
+  /*
+   * El rótulo externo manda sobre el propio: si el consumidor pasa uno, es el suyo.
+   *
+   * Y da igual DÓNDE lo pinte el componente: encima (`[label]`) o dentro (`iftaLabel`).
+   * La primera versión de esto solo ataba la de encima, y las cinco de `config/aed/grupos`
+   * —todas `iftaLabel`— se quedaron sin nombre accesible igual que antes. Medido en el
+   * navegador: cinco `role="combobox"`, cero nombres.
+   */
   protected readonly resolvedLabelledBy = computed(
-    () => this.ariaLabelledBy() ?? (this.label() && !this.iftaLabel() ? this.labelId() : undefined),
+    () => this.ariaLabelledBy() ?? (this.label() ? this.labelId() : undefined),
   );
   protected readonly isInvalid = this.field.isInvalid;
   protected readonly footerText = this.field.footerText;

@@ -1544,17 +1544,18 @@
             "disponible": "Disponible",
             "no_disponible": "Indisponible",
             "administrativo": "Administratif",
-            "admin_checkbox": "État administratif",
+            "admin_checkbox": "Inclure l'état administratif",
             "nombre_label": "Nom",
             "nombre_placeholder": "N'importe quel nom",
             "add": "Ajouter",
-            "por_defecto": "États par défaut",
-            "personalizacion": "Motifs d'indisponibilité",
+            "por_defecto": "Par défaut",
+            "personalizacion": "Personnalisés",
             "modal_title": "Ajouter un état",
             "modal_subtitle": "Ajoutez des états personnalisés qui seront visibles par les agents à côté des états par défaut.",
             "modal_input_label": "Nouvel état",
             "modal_input_placeholder": "Ex : Pause",
-            "error_duplicate": "Cet état existe déjà"
+            "error_duplicate": "Cet état existe déjà",
+            "sin_motivos": "Aucun motif propre. Ajoutez ceux qu'utilise votre centre (Pause, Repas, Formation…)."
           },
           "inactividad": {
             "title": "Verrouillage du poste par inactivité",
@@ -1566,7 +1567,7 @@
             "seconds": "secondes"
           },
           "ventana": {
-            "title": "Paramètres de la fenêtre de conversations",
+            "title": "Fenêtre de conversations",
             "ver_estado": "Afficher l'état des autres agents",
             "ver_aleatorio": "Afficher les agents dans un ordre aléatoire"
           },
@@ -1586,23 +1587,38 @@
           },
           "aviso": {
             "title": "Réception des conversations",
-            "descuelgue_label": "Type de décrochage par défaut",
+            "descuelgue_label": "Type de décrochage",
             "descuelgue_placeholder": "Sélectionner",
-            "alerting_label": "Afficher",
+            "alerting_label": "Afficher dans l'alerte",
             "alerting_nombre": "Nom",
-            "alerting_telefono": "Numéro de téléphone"
+            "alerting_telefono": "Numéro de téléphone",
+            "descuelgue_options": {
+              "manual": {
+                "label": "Manuel",
+                "desc": "L'agent décroche chaque conversation."
+              },
+              "auto": {
+                "label": "Automatique",
+                "desc": "La conversation se connecte seule à l'arrivée."
+              },
+              "auto_preview": {
+                "label": "Automatique avec aperçu",
+                "desc": "Elle se connecte seule, en montrant d'abord les données du contact."
+              }
+            }
           },
           "notif": {
             "title": "Notifications aux systèmes externes",
-            "entrante": "Conversation entrante",
-            "saliente": "Conversation sortante",
-            "url_placeholder": "URL",
-            "col_conversacion": "Conversation",
-            "col_url": "URL de destination",
+            "entrante": "Entrante",
+            "saliente": "Sortante",
+            "url_placeholder": "mon-systeme.com/evenements",
             "evento_inicio": "Début",
             "evento_fin": "Fin",
             "evento_resultado": "Résultat",
-            "hint": "Saisissez une URL et cochez les événements à envoyer à votre système externe."
+            "hint": "Nous prévenons votre système quand il se passe quelque chose dans une conversation. Adresses HTTPS uniquement.",
+            "url_error": "Sans espaces.",
+            "col_conversacion": "Conversation",
+            "col_url": "Adresse"
           },
           "toast": {
             "saved": "Configuration enregistrée"
@@ -1652,7 +1668,8 @@
             "tiempo_max": "Temps d'attente maximal en file",
             "tiempo_transfer": "Temps de transfert maximal",
             "placeholder": "Sélectionner",
-            "input_placeholder": "Saisir"
+            "input_placeholder": "Saisir",
+            "segundos": "secondes"
           },
           "apertura": {
             "title": "Ouverture de la fiche",

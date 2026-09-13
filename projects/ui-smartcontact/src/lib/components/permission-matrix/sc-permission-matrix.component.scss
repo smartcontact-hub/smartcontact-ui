@@ -26,20 +26,32 @@
   vertical-align: middle;
 }
 
-/* ── Cabecera: calcada de `${LIST} .p-datatable-thead > tr > th` ─────────────
-   Tipografía POR ROL (`Caption/caption-semibold`), no por número suelto. El
-   padding horizontal DEBE ser el mismo que el de la celda o las columnas dejan
-   de alinearse. */
+/* ── Cabecera ────────────────────────────────────────────────────────────────
+   DIVERGENCIA 3 (2026-09-13) · ya NO calca la cabecera de la tabla-lista (12
+   semibold gris con raya debajo). Esa gramática es buena para un LISTADO: muchas
+   columnas de datos, y la cabecera es solo el nombre del campo. En una matriz de
+   permisos la cabecera ES lo que hay que leer para saber qué marca cada casilla
+   («Transferencias», «Permisos»), así que va como en Figma (`subtitle1`, nodo
+   Supervisor 393:12610): 14 semibold en el color del texto, sin raya, y 16 de aire
+   hasta la primera fila. Medido antes: 34.3px de la cabecera a la primera fila
+   contra los 16 de Figma, más la raya en medio — era lo que la hacía verse suelta.
+
+   El padding horizontal DEBE ser el mismo que el de la celda o las columnas dejan
+   de alinearse. El vertical es 0: el aire hasta la primera fila lo pone la fila. */
 .sc-pmatrix thead th {
-  padding: var(--sc-spacing-0-875) var(--sc-spacing-1);
+  padding: 0 var(--sc-spacing-1);
   background: var(--sc-bg-surface);
-  border-bottom: 1px solid var(--sc-border-default);
-  font-size: var(--sc-font-size-caption);
-  line-height: var(--sc-line-height-caption);
+  font-size: var(--sc-font-size-body-2);
+  line-height: var(--sc-line-height-body-2);
   font-weight: var(--sc-font-weight-semibold);
   letter-spacing: 0;
-  color: var(--sc-text-secondary);
-  text-align: left;
+  color: var(--sc-text-primary);
+  /* SIN `text-align` aquí. Lo declaraba, y este selector (0,1,2) le GANABA a
+     `.sc-pmatrix__col` (0,1,0): el centrado de la DIVERGENCIA 1 nunca llegaba a la
+     cabecera. Medido en `/config/aed/agentes` el 2026-09-13: la casilla centrada en
+     su celda y el rótulo pegado a la izquierda, 79.5px de desfase en «Transferencias»
+     y 56.9 en «Permisos». Cada clase declara ya su alineación (la esquina a la
+     izquierda, las columnas al centro), así que aquí no hace falta ninguna. */
 }
 
 /* DIVERGENCIA 1 · las columnas de casillas van CENTRADAS, contra el
@@ -54,12 +66,25 @@
   white-space: nowrap;
 }
 
-/* ── Cuerpo: calcado de `${LIST} .p-datatable-tbody > tr > td` ───────────────
+/* ANCHO FIJO para las columnas de casilla, todas iguales, como en Figma. Con el
+   `auto` de la tabla se estiraban según el texto (273.8 y 195.9px medidos) y las
+   casillas quedaban lejos entre sí. Figma dice 141.6, que NO es peldaño de la escala
+   (salta de 70 a 175); el peldaño que existe es 175 (`scale/12-5`), y un peldaño
+   manda sobre un número suelto. La columna de nombres se queda el resto. */
+.sc-pmatrix__col {
+  width: var(--sc-spacing-12-5);
+}
+
+/* ── Cuerpo ──────────────────────────────────────────────────────────────────
    `Body/body-regular` (14/20). Sin esto la celda hereda los 16px por defecto del
-   navegador, que no son ningún estilo de texto. */
+   navegador, que no son ningún estilo de texto.
+
+   16 de aire arriba y abajo (`scale/1-143`), el mismo de Figma entre el texto y la
+   raya y entre la raya y el texto siguiente. Eran 17.5, que con la raya daban
+   19.5 medidos a cada lado. */
 .sc-pmatrix tbody th,
 .sc-pmatrix tbody td {
-  padding: var(--sc-spacing-1-25) var(--sc-spacing-1);
+  padding: var(--sc-spacing-1-143) var(--sc-spacing-1);
   font-size: var(--sc-font-size-body-2);
   line-height: var(--sc-line-height-body-2);
   font-weight: var(--sc-font-weight-regular);
@@ -78,9 +103,11 @@
   color: var(--sc-text-primary);
 }
 
-/* La esquina no rotula nada cuando va vacía: que no reserve peso visual. */
+/* La esquina no rotula nada cuando va vacía: que no reserve peso visual. Y es la ÚNICA
+   cabecera alineada a la izquierda, porque rotula la columna de nombres de fila. */
 .sc-pmatrix__corner {
   width: auto;
+  text-align: left;
 }
 
 /* La casilla es un componente del DS: se centra desde FUERA, sin entrar en su
@@ -99,10 +126,10 @@
  * una clase `.sc-text-*` encima: eso lo desconectaría del tema (DD-55). Es el
  * mismo sitio donde `.perm-matrix__col-label` resolvía esto antes. */
 .sc-pmatrix__col-label {
-  font-size: var(--sc-font-size-caption);
-  line-height: var(--sc-line-height-caption);
+  font-size: var(--sc-font-size-body-2);
+  line-height: var(--sc-line-height-body-2);
   font-weight: var(--sc-font-weight-semibold);
-  color: var(--sc-text-secondary);
+  color: var(--sc-text-primary);
 }
 
 /* LA ÚLTIMA FILA NO LLEVA RAYA. En las listas de administración esa raya no se

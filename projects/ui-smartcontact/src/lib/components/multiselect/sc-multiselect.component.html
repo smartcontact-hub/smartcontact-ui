@@ -4,11 +4,13 @@
     [text]="label()!"
     [required]="required()"
     [for]="resolvedId()"
+    [labelId]="labelId()"
   />
 }
 
 <div class="sc-multiselect__field">
   <p-multiselect
+    [ariaLabelledBy]="resolvedLabelledBy()"
     class="sc-multiselect__control"
     [inputId]="resolvedId()"
     [options]="optionsMutable()"
@@ -39,7 +41,7 @@
   />
 
   @if (iftaLabel() && label()) {
-    <label class="sc-multiselect__ifta-label" [attr.for]="resolvedId()">
+    <label class="sc-multiselect__ifta-label" [attr.for]="resolvedId()" [attr.id]="labelId()">
       {{ label() }}
       @if (required()) {
         <span class="sc-multiselect__required" aria-hidden="true">*</span>

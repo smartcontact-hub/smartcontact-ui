@@ -1544,17 +1544,18 @@
             "disponible": "Disponible",
             "no_disponible": "No disponible",
             "administrativo": "Administrativo",
-            "admin_checkbox": "Estado administrativo",
+            "admin_checkbox": "Incluir el estado administrativo",
             "nombre_label": "Nombre",
             "nombre_placeholder": "Cualquier nombre",
             "add": "Añadir",
-            "por_defecto": "Estados por defecto",
-            "personalizacion": "Motivos de no disponible",
+            "por_defecto": "Por defecto",
+            "personalizacion": "Personalizados",
             "modal_title": "Añadir estado",
             "modal_subtitle": "Añade estados personalizados que estarán visibles para los agentes junto a los estados por defecto.",
             "modal_input_label": "Nuevo estado",
             "modal_input_placeholder": "Ej: Baño",
-            "error_duplicate": "Ese estado ya existe"
+            "error_duplicate": "Ese estado ya existe",
+            "sin_motivos": "Sin motivos propios. Añade los que use tu centro (Baño, Comida, Formación…)."
           },
           "inactividad": {
             "title": "Bloqueo de puesto por inactividad",
@@ -1566,7 +1567,7 @@
             "seconds": "segundos"
           },
           "ventana": {
-            "title": "Configuración de ventana de conversaciones",
+            "title": "Ventana de conversaciones",
             "ver_estado": "Visualizar el estado de otros agentes",
             "ver_aleatorio": "Visualizar agentes de forma aleatoria"
           },
@@ -1586,23 +1587,38 @@
           },
           "aviso": {
             "title": "Recepción de conversaciones",
-            "descuelgue_label": "Tipo de descuelgue por defecto",
+            "descuelgue_label": "Tipo de descuelgue",
             "descuelgue_placeholder": "Seleccionar",
-            "alerting_label": "Mostrar",
+            "alerting_label": "Mostrar en el aviso",
             "alerting_nombre": "Nombre",
-            "alerting_telefono": "Número de teléfono"
+            "alerting_telefono": "Número de teléfono",
+            "descuelgue_options": {
+              "manual": {
+                "label": "Manual",
+                "desc": "El agente descuelga cada conversación."
+              },
+              "auto": {
+                "label": "Automático",
+                "desc": "La conversación se conecta sola al llegar."
+              },
+              "auto_preview": {
+                "label": "Automático con preview",
+                "desc": "Se conecta sola, y antes el agente ve los datos del contacto."
+              }
+            }
           },
           "notif": {
             "title": "Notificaciones a sistemas externos",
-            "entrante": "Conversación entrante",
-            "saliente": "Conversación saliente",
-            "url_placeholder": "URL",
-            "col_conversacion": "Conversación",
-            "col_url": "URL de destino",
+            "entrante": "Entrante",
+            "saliente": "Saliente",
+            "url_placeholder": "mi-sistema.com/eventos",
             "evento_inicio": "Inicio",
             "evento_fin": "Fin",
             "evento_resultado": "Resultado",
-            "hint": "Escribe una URL y marca los eventos que quieres enviar a tu sistema externo."
+            "hint": "Avisamos a tu sistema cuando pasa algo en una conversación. Solo direcciones HTTPS.",
+            "url_error": "Sin espacios.",
+            "col_conversacion": "Conversación",
+            "col_url": "Dirección"
           },
           "toast": {
             "saved": "Configuración guardada"
@@ -1652,7 +1668,8 @@
             "tiempo_max": "Tiempo máximo de espera en cola",
             "tiempo_transfer": "Tiempo máximo de transferencia",
             "placeholder": "Seleccionar",
-            "input_placeholder": "Escribir"
+            "input_placeholder": "Escribir",
+            "segundos": "segundos"
           },
           "apertura": {
             "title": "Apertura de ficha",

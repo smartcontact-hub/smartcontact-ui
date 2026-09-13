@@ -73,7 +73,11 @@
     gap: 2px;
     font-size: var(--sc-font-size-50);
     line-height: 1;
-    font-weight: var(--sc-font-weight-regular);
+    /* `semibold`, como el resto de etiquetas de campo de la app (barrido del
+     * 2026-09-12: `field__label` e `inline-field__label` a 12/600). En regular, la
+     * única pantalla que usa este formato —`config/aed/grupos`— escribía sus etiquetas
+     * en dos pesos distintos dentro del mismo formulario (medido 12/400 contra 12/600). */
+    font-weight: var(--sc-font-weight-semibold);
     color: var(--sc-text-subtle);
     pointer-events: none;
     z-index: 1;
