@@ -33,10 +33,10 @@
 
 0. **«Aura + color de marca» y el export en un clic** (encargo del 2026-09-13; mediciones y menú en
    `~/Documents/Claude/2026-09 aura-marca/`, scripts incluidos). Hecho: el robot (DD-82) y las
-   familias de color generadas del export (DD-83). Siguiente, en orden: (b) capturas de antes y después y
+   familias de color generadas del export (DD-83) y las capturas en el PR (DD-84). Siguiente: (b) el
    zip del equipo externo en el robot; (c) tanda «vuelve a Aura» (73 diferencias sin motivo) y el foco
-   al color primario; (d) densidad: medir con NUESTRA tipografía antes de decidir (Rafa: «las nuestras
-   son más espaciadas»). Pendiente de Rafa: qué es marca (punto 1 del menú).
+   al color primario; (d) densidad, MEDIDA: campo y botón 35 en primeng.dev, 33 hoy, 31 con DD-81; manda el
+   interlineado (`lineHeight: 'inherit'`), no el relleno (`densidad.html`). Pendiente de Rafa: marca y densidad.
 1. **Lo que dejó el barrido (DD-77/78)**: «Solo fallidas» es un filtro conmutable hecho a mano. La sonda
    ampliada ya existe fuera del repo (E = 209 piezas, `2026-09 aura-marca/`): falta traerla como spec.
    Regla de Rafa para lo que dude: manda Aura en código y Figma se alinea.

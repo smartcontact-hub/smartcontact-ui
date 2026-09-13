@@ -63,6 +63,40 @@
 
 ---
 
+## DD-84 · 2026-09-14 — El PR del robot de tokens enseña capturas de antes y después del Supervisor
+
+**Contexto** · Para «mirar y fundir con un clic» (Rafa) hacía falta ver el cambio sin montar nada. El
+PR del robot ya decía qué tokens cambian (DD-82), pero no cómo se ve, y los píxeles no cruzan de
+máquina: una captura del Mac no se puede comparar con una del runner.
+
+**Decisión** · (1) El robot construye el Supervisor de `main` ANTES de aplicar el export y otra vez
+después, en el mismo runner, y fotografía 8 pantallas en claro y oscuro a 1440
+(`e2e/tokens-sync/capturas.capture.ts`, config propia `playwright.capturas.config.ts`, fuera de la
+suite). (2) `scripts/tokens-sync-capturas.mjs` compara cada pareja con `pixelmatch` y escribe «Cómo se
+ve» en la portada: solo las pantallas que cambian, con el porcentaje. (3) Las imágenes de las que
+cambian se publican en la rama `tokens-sync-capturas`, una carpeta por run, con `[skip ci]` para que
+Cloudflare no la construya. (4) Las capturas informan: nunca ponen rojo.
+
+**Razón** · Validado en las dos direcciones con estímulos reales, en el mismo navegador: producción
+contra el preview de `design-tokens-sync` (el export de DD-81) cambia 14 de 16 pantallas, y el diff de
+Usuarios enseña el buscador, el botón y las filas desplazados unos píxeles, que es el cambio de
+medidas. Producción contra sí misma salió con 1 pantalla y 31 píxeles distintos: el reloj de «Última
+búsqueda» de Conversaciones había avanzado un minuto. Con la hora congelada (`page.clock`), 0 de 16.
+La publicación se probó contra un repo desechable: la primera pasada crea la rama, la segunda añade
+su carpeta, `main` no se toca.
+
+**Descartadas** ·
+- **Subir las capturas como artifact del run** → no se ven dentro del PR; hay que descargar un zip.
+- **Guardarlas en la propia rama `design-tokens-sync`** → acabarían en `main` al fundir.
+- **Comparar contra baselines guardadas** → las `*-darwin.png` no corren en Linux; antes y después en
+  el mismo runner no necesita baselines.
+
+**Consecuencias** · El robot tarda unos minutos más (construye el DS y el Supervisor una vez más). La
+rama `tokens-sync-capturas` crece con cada export que cambia pantallas: podarla si pesa. Las 8
+pantallas son una muestra; si un cambio vive en otra, no sale en las capturas (sí en «Qué cambia»).
+
+---
+
 ## DD-83 · 2026-09-14 — Las familias de color del Kit salen del export: un color cambiado en Figma llega solo al código
 
 **Contexto** · Probando el robot de tokens (DD-82) con un cambio de color de marca real (`sky.500` de
