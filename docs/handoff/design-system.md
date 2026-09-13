@@ -40,22 +40,17 @@ trae `light-dark()` arriba y nosotros `colorScheme`, y gana lo nuestro); lo que 
 
 **Lo que deja la base Aura (2026-09-13), pendiente de mirar o de decidir:**
 
-- **Tooltip a 12px**: antes heredaba 16 del `<body>`; ahora es el `0.75rem` de Aura. Un solo uso
-  (modal de categoría). ¿Qué dice Figma?
-- **Menús y desplegables a 14** donde antes salían a 16 (se abren en el `<body>`). Mejora, pero
-  es un cambio visible en todas las listas del Supervisor.
+- **Tooltip a 12px** (heredaba 16 del `<body>`; ahora el `0.75rem` de Aura). Un uso. ¿Figma?
+- **Menús y desplegables a 14** (salían a 16 en el `<body>`). Mejora, pero se ve en toda la app.
 - **Conversaciones, anterior a Aura**: la barra de filtros mezcla desplegables de 12 con campos de
   14, y la columna «Servicio» es tan estrecha que parte los nombres (filas de 69px).
 - **Grupos**: confirmar con producto que los tiempos van en «segundos».
-- **Divergencias de Figma de Config** (bajar al Kit o revertir): pastillas sin punto y a 600,
-  `--sc-text-heading` (solo en código), tarjetas de opción en vez del modal 103:2718, etiqueta
-  IFTA en 600, y el interruptor a la derecha en Grupos.
+- Lo de Figma (pastillas sin punto, `--sc-text-heading`, tarjetas de opción…): en
+  [`docs/figma-pendiente.md`](../figma-pendiente.md) §2.
 
 **Lo que dejó el barrido de estilos de texto del 2026-09-11 (tarde), pendiente de RAFA:**
 
-- **12/20 no es ningún estilo**: sale cuando la clase va en un contenedor y el descendiente declara
-  solo el tamaño (pastillas de estado de repositorios, cabeceras de grupos asignados, contadores de
-  pestaña). ¿Text style propio para pastilla, o `line-height` explícito?
+- ~~**12/20 no es ningún estilo**~~ → se mudó a [`docs/figma-pendiente.md`](../figma-pendiente.md) §4.
 - ~~**`sc-docs` es la siguiente tanda del barrido**: 237 reglas~~ → **HECHO en parte el 2026-09-12,
   y las 237 eran la cifra equivocada.** **122 de ellas son `/validar`**, que imita el INSPECTOR DE
   CHROME a propósito y lo dice en su propio fichero desde que se escribió: tokenizarlo le quita al
@@ -73,9 +68,6 @@ trae `light-dark()` arriba y nosotros `colorScheme`, y gana lo nuestro); lo que 
 
 - ~~**Las etiquetas de campo a 12 regular** y **`sc-tag`/`sc-chip` a 500**~~ → **HECHO el
   2026-09-13**: las 25 `.field__label` de seis ficheros a semibold, y pastillas a 600.
-- ⚠️ **El punto de las pastillas se quitó y el Kit lo sigue dibujando.** Decisión de Rafa, con su
-  razón: en una pastilla tintada el color ya está en el fondo y en el texto. Si se acepta, **hay
-  que quitarlo también en Figma**; si no, se revierte en el componente.
 - **Las seis casillas de la tabla de notificaciones salen MARCADAS y deshabilitadas** cuando no hay
   URL: dicen «esto está encendido» de algo que no puede dispararse. Arreglarlo es decidir si el
   valor por defecto debería ser `false` — es producto, no maquetación.
@@ -103,24 +95,20 @@ Orca se cerraron en el #113; `agent-mini` entró en el CI; la doc, en su PR):
   computados. Hay que correr `npm run e2e` ENTERO en local — el preflight no lo incluye (DD-60).
 
 **Lo que deja el 2026-09-12 (la vuelta a las tablas, DD-72), medido y sin hacer:**
+- **Gate pendiente: la cabecera que se congela al cambiar de idioma.** `audit:datatables` §6 solo mira un `computed` llamado `columns` y solo en páginas con `<sc-datatable>`; el 2026-09-12 el fallo (`translate.instant` en un `computed` sin `currentLang`) estaba en CINCO, dos sin tabla. Hace falta un gate de toda la app, con parser de bloque y caso rojo.
 
-- **El título de sección DIVERGE de Figma a propósito** (DD-74). El Kit sigue diciendo que una
-  cabecera de sección es `Body/body-semibold` (14/20); el código la subió a `Heading/h3-semibold`
-  (18/24) porque medía lo mismo que su propio contenido y no hacía jerarquía. Hasta que ese text
-  style cambie en Figma, el código va por delante — y el 1:1 de `sc-section-card` va a cantar.
-  Cerrarlo es un cambio en Figma, no en código.
-- **20px no tiene estilo de texto.** Rafa pidió los títulos a 20; el peldaño existe
-  (`--sc-font-size-450`) pero ningún rol lo nombra, así que se usó `h3` (18). Si se quiere el 20 de
-  verdad, el camino es atar un rol a ese peldaño **en Figma** y dejar que el código lo siga.
+- **Lo que solo se puede tocar en Figma vive ahora en su propio fichero**:
+  [`docs/figma-pendiente.md`](../figma-pendiente.md). Allí están la divergencia del título de sección
+  (DD-74), la decisión 18-o-20, y lo que quedaba suelto de otras sesiones. **No lo dupliques aquí**:
+  una cosa que solo puede hacer una persona en Figma no es trabajo de la próxima sesión, y en esta
+  bandeja se leía como nota al margen — tanto que una llevaba tiempo resuelta sin que nadie la
+  tachara.
 (Las otras dos de esta bandeja —la piel por defecto sin anclar y la falta de guardián para
 las 38 ranuras— se cerraron el mismo día en DD-73.)
 
 **Lo que dejó s42, medido y sin hacer:**
 
-- **El tier `app/typography/xl|xxl` existe en Figma y no lo consume nadie** (medido: 0 nodos, 0
-  text styles). Está clasificado como `not-consumed` en `coverage-map.mjs`. Si algún día se
-  quiere de verdad, va a `sc-preset/extend.ts` + `APP_TYPOGRAPHY_CONTRACT` y sube al bucket
-  `value-check`; hasta entonces declararlo consumido sería mentir.
+- ~~**El tier `app/typography/xl|xxl`**~~ → se mudó a [`docs/figma-pendiente.md`](../figma-pendiente.md) §3.
 - **`--sc-font-size-caption-bold` está declarado y tiene 0 usos.**
 - **`display-1` se quedó sin consumidores y `h1` con uno que es solo fallback.** Es el estado
   honesto tras DD-48 (la rampa era aspiracional desde DD-13), no una regresión: la rampa ya dice
@@ -141,7 +129,7 @@ las 38 ranuras— se cerraron el mismo día en DD-73.)
 
 ## ✅ 2026-09-13 · Aura es la base del tema, y lo que Aura trae de más se devuelve a su sitio
 
-**Sello:** rama `arebury/servicio-better-ui` sobre `2810b82`. 39 gates, **82** e2e del DS y el
+**Sello:** rama `arebury/servicio-better-ui`, con `main` fusionado hasta `6d5cc82` (#135). 39 gates, **82** e2e del DS y el
 Supervisor medido contra producción (`6d5cc82`) pantalla a pantalla. Rafa, tras verlo en local:
 «me gusta, lo aplicamos, para todo el supervisor», y «que Aura sea la base de todo».
 
@@ -170,6 +158,18 @@ mirar, y salieron tres regresiones que el ojo no habría visto:
 **De paso**: `token-parity` compara ya el preset FUSIONADO (carga `@primeuix/themes`), y el copy
 «Dirección» de la tabla de notificaciones pasa a «Dirección web» (`i18n:check` cazó que en español
 también es entrante/saliente).
+
+## ✅ 2026-09-13 · Figma alcanza al código, el puente de tipografía se queda en tres tallas, y el 12/20 accidental pasa a caption
+
+**Sello:** HEAD `2ed5094c`. DD-75. Las cuatro recomendaciones de `docs/figma-pendiente.md`, aprobadas
+por Rafa. Queda UNA cosa suya fuera del repo: **publicar la librería** en Figma.
+
+**Lo que hay que recordar:** (1) antes de borrar en Figma se midió todo — aliases, text styles, capas
+en las 110 páginas con control positivo, y el fichero consumidor de Supervisor —, y el borrado se
+hizo a la vez en el export del repo, que regeneró el CSS **byte a byte idéntico**; (2) la lista decía
+«~35 capas» y eran **4**: mezclaba `Section` con `.Subsection`; (3) el 12/20 no eran tres sitios sino
+**96 textos en 11**, y uno (`sc-chip`) es deliberado porque Figma lo ata a 20; (4) `text-census` moría
+en `/` en el Supervisor (el menú son botones) y ahora acepta `--rutas`.
 
 ## ✅ 2026-09-12 · Servicio habla con una sola voz, y la casilla del DS deja de escribir su propio 14
 
