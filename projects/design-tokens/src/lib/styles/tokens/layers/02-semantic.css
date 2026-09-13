@@ -90,6 +90,26 @@
    * `disabled` (gray-300) sigue por debajo a propósito: 1.4.3 exime a los
    * controles inactivos, y un control deshabilitado tiene que parecerlo.
    * Vigilado por parity §6 (gateado desde hoy, ya no solo informado). */
+  /*
+   * `heading` — el nivel que a la rampa CLARA le faltaba, y sale de ir hacia ARRIBA.
+   *
+   * La nota de `subtle` de aquí abajo dice que en claro solo hay DOS pasos de gris que
+   * cumplan AA (600 = 4.52 y 700 = 7.38) y que el tercer nivel de jerarquía desaparece.
+   * Eso es cierto bajando: el 500 se queda en 2.95. Pero subiendo sobra sitio —
+   * `slate-800` da 12.16:1 sobre el lienzo blanco— y ahí está el escalón que faltaba.
+   *
+   * Reparto: `heading` (800) para los títulos, `primary` (700) para lo que se lee,
+   * `secondary` (600) para el apoyo. Tres niveles, los tres por encima de AA, y el
+   * título deja de medir el mismo gris que su propio contenido.
+   *
+   * En OSCURO sube a `slate-0` por el mismo motivo: `primary` ya es `slate-50`, así que
+   * el escalón libre está en el blanco puro, no más abajo.
+   *
+   * ⚠️ ROL NUEVO, y por ahora SOLO EN CÓDIGO: el Kit no tiene un text color de título.
+   * Hay que crearlo en Figma para que `tools/figma-export-parity.mjs` siga saliendo con
+   * cero divergencias. A la bandeja del frente.
+   */
+  --sc-text-heading: var(--sc-color-slate-800);
   --sc-text-subtle: var(--sc-color-slate-600);
   --sc-text-disabled: var(--sc-color-slate-300);
   --sc-text-inverse: var(--sc-color-slate-0);

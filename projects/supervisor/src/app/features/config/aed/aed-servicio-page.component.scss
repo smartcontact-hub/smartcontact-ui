@@ -15,17 +15,35 @@
  *   Los 12px hacían CUATRO trabajos —rótulo de bloque, media frase, descripción y
  *   etiqueta de campo— y ninguno se distinguía del otro.
  *
- *   AHORA: SEIS, todas en la rampa (14/20 y 12/18), y cada tamaño con UN trabajo:
+ *   AHORA, todas en la rampa y cada combinación con UN trabajo (2026-09-13):
  *
- *     14 semibold primary   el título de la sección y el SUJETO de una fila
- *     14 regular  primary   lo que se lee y se pulsa (etiquetas de control)
- *     14 regular  secondary el resto de la frase, la descripción, el sufijo
- *     12 semibold secondary rótulo de bloque y cabecera de columna
- *     12 regular  secondary el apoyo que solo explica (la ayuda de una sección)
- *     12 medium   tintado   las pastillas (peso del DS, ver la nota de abajo)
+ *     18 semibold heading   el título de la página (lo pone `sc-section-card`)
+ *     14 semibold heading   el título de sección
+ *     14 semibold primary   la cabecera de columna de las tablas de marcar
+ *     14 regular  primary   todo lo que se LEE: nombres de fila, frases, descripciones,
+ *                           etiquetas de control y la ayuda de una sección
+ *     12 semibold secondary rótulo de bloque y etiqueta de campo
+ *     12 semibold tintado   las pastillas
+ *
+ *   Los nombres de fila van en REGULAR, como en Figma (`subtitle3`, nodo 393:12610) y
+ *   como en Agentes y Grupos. Estuvieron en semibold y separaban esta pantalla de sus
+ *   dos hermanas; al sujeto de la fila ya lo marcan su COLUMNA propia y el interruptor
+ *   que va delante.
  *
  * Y UN patrón de fila para las dos secciones que encienden cosas, en vez de dos.
  * Ver `.switch-rows`.
+ *
+ * ⚠️ UNA SOLA ESCALERA DE ESPACIOS, y dobla: **7 · 14 · 28**.
+ *
+ *     7   una etiqueta y lo que etiqueta (son UNA pieza)
+ *     14  entre hermanos: filas, pastillas, opciones, celdas
+ *     28  entre grupos y entre secciones (el `<sc-divider>` ya pone 14 + 14)
+ *
+ * Antes convivían CINCO valores —7 · 12.25 · 14 · 24.5 · 28— y el problema no era
+ * tener cinco, era que 12.25 contra 14, y 24.5 contra 28, se diferencian en menos de
+ * dos píxeles: demasiado cerca para leerse como una decisión y suficiente para que la
+ * página parezca descuadrada. Doblando, cada peldaño se distingue del anterior sin
+ * mirarlo dos veces, que es lo que hace que un espaciado se sienta uniforme.
  *
  * Lo que queda aquí es SOLO lo propio de esta pantalla. Todo lo demás se
  * resuelve con el vocabulario que ya existía.
@@ -64,20 +82,27 @@
   display: inline-flex;
   align-items: center;
   gap: var(--sc-spacing-0-25);
-  padding: 2px var(--sc-spacing-0-5);
+  padding: var(--sc-spacing-0-125) var(--sc-spacing-0-5);
   border: 1px dashed var(--sc-border-default);
   border-radius: var(--sc-radius-100);
   background: transparent;
   color: var(--sc-text-secondary);
   cursor: pointer;
   white-space: nowrap;
-  transition:
-    border-color var(--sc-transition-fast) var(--sc-easing-default),
-    color var(--sc-transition-fast) var(--sc-easing-default);
+  /* SOLO lo que cambia, nombrado, y a 120ms: es alta frecuencia, la respuesta tiene que
+   * ser instantánea. */
+  transition-property: border-color, color, scale;
+  transition-duration: var(--sc-transition-fast);
+  transition-timing-function: var(--sc-easing-emphasized);
 
   &:hover {
     border-color: var(--sc-border-strong);
     color: var(--sc-text-primary);
+  }
+
+  /* `0.96` al pulsar: la misma respuesta táctil que las tarjetas de opción. */
+  &:active {
+    scale: 0.96;
   }
 
   &:focus-visible {
@@ -104,7 +129,7 @@
   gap: var(--sc-spacing-0-5);
 
   & + & {
-    margin-block-start: var(--sc-spacing-0-875);
+    margin-block-start: var(--sc-spacing-1);
   }
 }
 
@@ -117,13 +142,46 @@
   display: flex;
   flex-wrap: wrap;
   align-items: center;
-  gap: var(--sc-spacing-0-875);
+  gap: var(--sc-spacing-1);
   min-width: 0;
+
+  /* La casilla no es una pastilla más: el doble de aire delante (12.25 del `gap` +
+   * 12.25 de aquí = 24.5, `scale/1-75`) la separa del grupo sin una línea, que es la
+   * misma distancia con la que el interruptor manda sobre su fila más abajo. */
+  &__switch {
+    margin-inline-start: var(--sc-spacing-1);
+  }
 }
 
 /* Alta de un chip: entra con un "pop" para indicar que existe. Solo el chip
  * NUEVO se anima — `track reason` reusa los existentes, así que el keyframe
  * corre únicamente al crear el elemento (no en cambios no relacionados). */
+/*
+ * Pastilla APAGADA: la misma, más tenue. Sin `display: none` y sin cambiarle el color,
+ * así que ocupa exactamente lo mismo encendida que apagada y la casilla que la gobierna
+ * —que va detrás en la fila— no se mueve nunca.
+ */
+.state-tag {
+  transition: opacity var(--sc-transition-base) var(--sc-easing-default);
+
+  &--off {
+    opacity: 0.4;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .state-tag,
+  .add-chip,
+  .switch-row__name,
+  .switch-row__text {
+    transition: none;
+  }
+
+  .add-chip:active {
+    scale: 1;
+  }
+}
+
 .reason-chip {
   animation: chip-appear var(--sc-transition-base) var(--sc-easing-emphasized);
 }
@@ -139,10 +197,58 @@
   }
 }
 
+/*
+ * Y la SALIDA, que faltaba: al quitar un chip desaparecía de golpe y la fila daba un salto
+ * sin decir cuál se fue. Con `animate.leave` de Angular —una clase CSS, sin
+ * `@angular/animations`— se va encogiendo un poco y hacia arriba.
+ *
+ * Más SUAVE que la entrada a propósito: entrar es una novedad que quieres ver, salir es
+ * algo que ya has decidido. Por eso 120ms contra los 200 de la entrada, y un
+ * desplazamiento pequeño y FIJO en vez de colapsar el alto.
+ */
+.reason-chip--leaving {
+  animation: chip-leave var(--sc-transition-fast) var(--sc-easing-default) forwards;
+}
+
+@keyframes chip-leave {
+  to {
+    transform: translateY(calc(var(--sc-spacing-0-25) * -1)) scale(0.96);
+    opacity: 0;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
-  .reason-chip {
+  .reason-chip,
+  .reason-chip--leaving {
     animation: none;
   }
+}
+
+/*
+ * La frase de ayuda de una sección es TEXTO QUE SE LEE, no un rótulo: mismo tamaño y
+ * mismo color que las descripciones de las filas. Heredaba `secondary` y medía 12, o
+ * sea que era la única frase completa de la tarjeta escrita más pequeña y más clara
+ * que las demás — un cuarto tratamiento para el mismo trabajo.
+ */
+.sub-section__hint {
+  color: var(--sc-text-primary);
+}
+
+/*
+ * El campo de alta ocupa el sitio del hueco, ni más ni menos: un ancho fijo de la rampa
+ * (175 = `scale/12-5`) para que la fila no dé un salto al abrirlo ni al cerrarlo. El
+ * `size="sm"` del DS ya le da la altura de un chip.
+ */
+.add-field {
+  display: inline-flex;
+  width: var(--sc-spacing-12-5);
+}
+
+/* Estado vacío de «Personalizados»: una línea que dice qué va aquí. */
+.empty-hint {
+  margin: 0;
+  color: var(--sc-text-secondary);
+  text-wrap: pretty;
 }
 
 /* ---------- La FILA de la pantalla ---------- */
@@ -151,12 +257,13 @@
  * UN patrón de fila para las dos secciones que encienden y apagan cosas
  * ("Bloqueo por inactividad" y "Estados visibles"):
  *
- *     [ interruptor ] [ NOMBRE en negrita ] [ resto de la frase ] ( [nº] sufijo )
+ *     [ interruptor ] [ nombre ] [ resto de la frase ] ( [nº] sufijo )
  *
  * Antes eran dos patrones distintos —casilla + frase de 12 en una, interruptor +
  * nombre de 14 + descripción de 12 en la otra— para el mismo gesto. Ahora el
- * mando va delante, el sujeto lo dice el PESO y todo el texto de la fila mide lo
- * mismo (14). Lo que cambia entre las dos secciones es solo cuántas columnas hay.
+ * mando va delante, el nombre tiene su COLUMNA propia y todo el texto de la fila
+ * mide y pesa lo mismo (14 regular, como en Figma). Lo que cambia entre las dos
+ * secciones es solo cuántas columnas hay.
  *
  * La rejilla vive en el PADRE y cada fila es `display: contents`, así que las
  * filas negocian el ancho de CADA columna entre ellas (`max-content`): es lo que
@@ -167,8 +274,8 @@
 .switch-rows {
   display: grid;
   grid-template-columns: max-content max-content max-content minmax(0, 1fr);
-  column-gap: var(--sc-spacing-0-875);
-  row-gap: var(--sc-spacing-0-875);
+  column-gap: var(--sc-spacing-1);
+  row-gap: var(--sc-spacing-1);
   align-items: center;
 
   /* Tres columnas: el estado no lleva número ni sufijo. */
@@ -188,7 +295,6 @@
   &__control {
     display: inline-flex;
     align-items: center;
-    margin-inline-end: var(--sc-spacing-0-875);
   }
 
   /*
@@ -201,34 +307,57 @@
   &__name {
     display: flex;
     align-items: center;
-    gap: var(--sc-spacing-0-625);
-    padding-inline-end: var(--sc-spacing-1-75);
+    gap: var(--sc-spacing-0-5);
+    padding-inline-end: var(--sc-spacing-1);
     color: var(--sc-text-primary);
     cursor: pointer;
   }
 
   /*
-   * El resto de la frase: mismo tamaño que el nombre, un escalón por debajo en
-   * color. Cuando rotula el número es un `<label>` y también se puede pulsar.
+   * El resto de la frase: mismo tamaño Y MISMO COLOR que el nombre. Lo que separa al
+   * sujeto es SOLO el peso.
+   *
+   * Antes bajaba a `secondary`, y eso metía una cuarta manera de pintar texto —14/400
+   * en dos colores— para una diferencia que el peso ya decía. Con dos variables
+   * (tamaño y peso) la escalera se cuenta en una frase; con tres hay que mirarla dos
+   * veces. El color vuelve a significar UNA cosa en esta pantalla: apagado o no.
    */
   &__text {
     min-width: 0;
-    color: var(--sc-text-secondary);
+    color: var(--sc-text-primary);
   }
 
   label.switch-row__text {
     cursor: pointer;
   }
 
+  /*
+   * Al pasar por encima, el NOMBRE se oscurece un peldaño.
+   *
+   * La fila entera es pulsable —el nombre acciona el interruptor, la frase enfoca el
+   * número— y eso no se veía hasta poner el ratón encima y mirar el cursor. Un cambio de
+   * color en la palabra que manda lo dice antes de llegar. No mueve nada: es solo color, a
+   * 120ms, así que no distrae en una lista de cinco filas por las que se pasa de largo.
+   */
+  &:hover &__name {
+    color: var(--sc-text-heading);
+  }
+
+  &__name,
+  &__text {
+    transition: color var(--sc-transition-fast) var(--sc-easing-emphasized);
+  }
+
   &__tail {
     display: flex;
     align-items: center;
-    gap: var(--sc-spacing-0-875);
+    gap: var(--sc-spacing-1);
   }
 
   &__num {
-    /* 71 = `inputnumber` de la maqueta, el mismo que en Grupos. */
-    width: 71px;
+    /* 70 (`scale/5`). La maqueta dice 71, que no es peldaño: el de al lado es 70 y la
+     * diferencia no se ve. Un valor de la rampa antes que uno suelto. */
+    width: var(--sc-spacing-5);
   }
 
   /*
@@ -255,8 +384,9 @@
   }
 
   &__dot {
-    width: 8px;
-    height: 8px;
+    /* 7 (`scale/0-5`), no 8: 8 no es peldaño de la tabla 14-base. */
+    width: var(--sc-spacing-0-5);
+    height: var(--sc-spacing-0-5);
     border-radius: var(--sc-radius-full);
     flex-shrink: 0;
 
@@ -297,22 +427,28 @@
 
 /* ---------- Lista de opciones sueltas (ventana de conversaciones) ---------- */
 
+/*
+ * EN FILA, no en columna: son dos opciones de la misma categoría y de una línea cada
+ * una, así que apiladas gastaban dos filas de la tarjeta para decir lo que cabe en
+ * una. `wrap` + `column-gap` generoso: cuando el ancho no da —o el idioma alarga la
+ * cadena— caen solas a la segunda línea sin que nada se corte. El hueco horizontal es
+ * el DOBLE del vertical, que es lo que dice «esto sigue siendo la misma fila».
+ */
 .option-list {
   display: flex;
-  flex-direction: column;
-  gap: var(--sc-spacing-0-875);
+  flex-wrap: wrap;
+  column-gap: var(--sc-spacing-2);
+  row-gap: var(--sc-spacing-1);
 }
 
 /* ---------- Notificaciones a sistemas externos ---------- */
 
 /*
- * MISMA tabla que la matriz de Agentes (`comm-table`, Figma 393:12610), con una
- * columna más para la URL: la cabecera rotula las columnas una sola vez y cada
- * casilla cae bajo su rótulo y al lado de la URL que la habilita.
+ * La MISMA tabla de siempre: la cabecera rotula las tres casillas una vez y cada casilla
+ * cae bajo su rótulo. La probé en bloques para dar sitio a más texto y el resultado fue
+ * cinco líneas repetidas por canal; el porqué de la vuelta está en la plantilla.
  *
- * Como allí, la tipografía la ponen las clases `.sc-text-*` de la plantilla y
- * aquí solo vive el reparto y el color de rol. Y tampoco lleva la sangría de
- * 12.25 de `.sub-section`: ya la pone el padding lateral de sus propias celdas.
+ * La tipografía la ponen las clases `.sc-text-*`; aquí solo vive el reparto y el color.
  */
 .notif-table {
   width: 100%;
@@ -321,7 +457,38 @@
   th,
   td {
     vertical-align: middle;
-    padding: var(--sc-spacing-0-625) var(--sc-spacing-0-875);
+    padding-inline: var(--sc-spacing-1);
+  }
+
+  /*
+   * Las MISMAS reglas que la matriz de permisos de Agentes, porque las dos son tablas de
+   * marcar (Figma, nodo 393:12610): cabecera 14 semibold sin raya, 0 de aire vertical
+   * en la cabecera y 16 (`scale/1-143`) arriba y abajo de cada fila, que es lo que deja
+   * 16 entre la cabecera y la primera fila y 16 a cada lado de cada raya.
+   */
+  thead th {
+    padding-block: 0;
+  }
+
+  tbody th,
+  tbody td {
+    padding-block: var(--sc-spacing-1-143);
+  }
+
+  /*
+   * La PRIMERA columna no lleva sangría, y por eso la tabla no «empieza rara». Su padding
+   * metía «Conversación» y los nombres de fila 12.25px a la derecha del título de la
+   * sección y de su frase de ayuda (medido: 454 contra 441.8), rompiendo la única vertical
+   * que ordena la tarjeta. El padding ENTRE columnas se queda: ahí sí separa algo.
+   */
+  th:first-child,
+  td:first-child {
+    padding-inline-start: 0;
+  }
+
+  th:last-child,
+  td:last-child {
+    padding-inline-end: 0;
   }
 
   /* El `text-align` lo declara CADA clase, no este selector: `.notif-table th`
@@ -329,22 +496,21 @@
   &__th-label,
   &__th-url {
     text-align: start;
-    color: var(--sc-text-secondary);
-    border-bottom: 1px solid var(--sc-border-default);
+    color: var(--sc-text-primary);
   }
 
   &__th-col {
-    /* 142 = `th-ID` 393:12619, el mismo ancho de columna de casilla que Agentes. */
-    width: 142px;
+    /* Ancho FIJO e igual para las tres, el mismo que la matriz de Agentes: 175
+     * (`scale/12-5`). Figma dice 141.6 (`th-ID` 393:12619), que no es peldaño de la
+     * escala; el peldaño que existe manda sobre el número suelto que había aquí. */
+    width: var(--sc-spacing-12-5);
     text-align: center;
-    color: var(--sc-text-secondary);
-    border-bottom: 1px solid var(--sc-border-default);
+    color: var(--sc-text-primary);
   }
 
-  /* El nombre de la fila es el SUJETO de la fila, igual que "Teléfono" o
-   * "Post-conversando": 14 semibold en `--sc-text-primary`. El peso lo pone la
-   * clase de la plantilla, así que aquí se quita el `font-weight: inherit` que lo
-   * devolvía al del `<table>`. */
+  /* El nombre de la fila: 14 REGULAR en `--sc-text-primary`, como «Teléfono» o
+   * «Post-conversando» y como en Figma. El peso lo pone la clase de la plantilla, y
+   * pulsarlo enfoca su campo. */
   &__th-row {
     text-align: start;
     color: var(--sc-text-primary);
@@ -355,15 +521,25 @@
   }
 
   /*
-   * El SUELO de la tabla lo pone la URL, no el ancho total: 160 es lo que hace
-   * falta para leer un principio de URL. Con ese suelo, y dejando que el nombre
-   * de la fila parta en dos líneas cuando aprieta, la tabla entera cabe hasta
-   * los ~900 de ventana sin esconder ninguna columna (medido: 481 de tabla en
-   * 481 de caja). Un `min-width` en la TABLA, en cambio, escondía "Resultado"
-   * fuera del borde sin ninguna señal de que seguía habiendo columna.
+   * El SUELO de la tabla lo pone la dirección, no el ancho total: 160 es lo que hace falta
+   * para leer un principio de URL. Con ese suelo la tabla entera cabe hasta los ~900 de
+   * ventana sin esconder ninguna columna.
    */
   &__url {
     min-width: 160px;
+  }
+
+  /* El `https://` es parte del campo, no un dato: se pinta como el cromo que es. */
+  &__scheme {
+    color: var(--sc-text-secondary);
+    white-space: nowrap;
+  }
+
+  /* Solo aparece cuando hay error, y por eso no reserva sitio. */
+  &__msg {
+    display: block;
+    margin-block-start: var(--sc-spacing-0-25);
+    color: var(--sc-text-danger);
   }
 
   &__cell {
@@ -381,21 +557,25 @@
     border-bottom: 1px solid var(--sc-border-subtle);
   }
 
-  /* La ÚLTIMA fila no lleva línea: solo repetiría el borde de la caja unos
-   * píxeles más arriba. Igual que en Agentes. */
+  /* La ÚLTIMA fila no lleva línea: solo repetiría el borde de la caja unos píxeles más
+   * arriba. Igual que en Agentes. */
   tbody tr:last-child {
     border-bottom: 0;
   }
+
+  /*
+   * Sin dirección, SOLO las casillas se ven inactivas —su propio estado deshabilitado del
+   * DS—, y el nombre de la fila sigue a plena tinta. Se probó a apagar la fila entera y
+   * «Entrante» y «Saliente» quedaban casi ilegibles (color deshabilitado + opacidad, dos
+   * veces): justo cuando necesitas leer qué es cada fila, que es ANTES de escribir la
+   * dirección.
+   */
 }
 
 /*
- * Red de seguridad para anchos extremos, no el plan A: la tabla ya encoge sola
- * hasta los ~900 de ventana. Si aun así no cabe, se desplaza DENTRO de su caja y
- * el resto de la página no se mueve.
- *
- * Apilarla en bloques no es opción: obligaría a repetir los rótulos Inicio · Fin
- * · Resultado en cada casilla —seis rótulos para tres columnas, que es
- * exactamente lo que esta pantalla acaba de dejar de hacer.
+ * Red de seguridad para anchos extremos, no el plan A: la tabla ya encoge sola hasta los
+ * ~900 de ventana. Si aun así no cabe, se desplaza DENTRO de su caja y el resto de la
+ * página no se mueve.
  */
 .notif-scroll {
   overflow-x: auto;

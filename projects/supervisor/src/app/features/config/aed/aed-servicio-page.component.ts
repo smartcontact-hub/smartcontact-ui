@@ -1,8 +1,11 @@
 import {
   ChangeDetectionStrategy,
   Component,
+  ElementRef,
+  HostListener,
   TemplateRef,
   computed,
+  effect,
   inject,
   signal,
   viewChild,
@@ -18,17 +21,21 @@ import {
   ScButtonComponent as ButtonComponent,
   ScCheckboxComponent as CheckboxComponent,
   ScChipComponent as ChipComponent,
-  ScDialogComponent as DialogComponent,
   ScDividerComponent as DividerComponent,
+  ScInputGroupComponent as InputGroupComponent,
   ScInputTextComponent as InputTextComponent,
   ScInputNumberComponent as InputNumberComponent,
   ScRadioButtonComponent as RadioButtonComponent,
   ScSectionCardComponent as SectionCardComponent,
-  ScSelectComponent as SelectComponent,
+  ScOptionCardsComponent as OptionCardsComponent,
   ScTagComponent as TagComponent,
   ScToggleSwitchComponent as ToggleSwitchComponent,
 } from '@smartcontact-hub/components';
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
+/* El grupo con prefijo se compone con las piezas de PrimeNG que el DS expone para eso
+ * (`sc-inputgroup` + addon + `pInputText`), que es como lo documenta su propia ficha. */
+import { InputGroupAddonModule } from 'primeng/inputgroupaddon';
+import { InputTextModule } from 'primeng/inputtext';
 import { stableStringify } from '../../../shared/utils/form-dirty-state';
 
 interface VisibilidadEstados {
@@ -77,7 +84,17 @@ interface FormState {
   notifSaliente: NotifEventos;
 }
 
-const DESCUELGUE_OPTIONS = ['Manual', 'Automático', 'Automático con preview'] as const;
+/**
+ * Las tres opciones de descuelgue, con su LÍNEA de qué hace cada una.
+ *
+ * Estaban en un desplegable, o sea tres nombres escondidos tras un clic, y «Automático con
+ * preview» no dice en ninguna parte qué es el preview. Son POCAS (tres), EXCLUYENTES y lo
+ * que las distingue es el comportamiento: el caso exacto de `sc-option-cards`.
+ *
+ * ⚠️ Las tres descripciones son la lectura razonable de cada modo, **no un dato medido**:
+ * hay que confirmarlas con producto, igual que las de los estados.
+ */
+const DESCUELGUE_OPTIONS = ['manual', 'auto', 'auto_preview'] as const;
 
 const DEFAULT_FORM: FormState = {
   estadosNoDisponibles: ['Baño', 'Comida', 'Formación'],
@@ -113,6 +130,29 @@ const VISIBILIDAD_LABELS: readonly { key: keyof VisibilidadEstados; tone: string
 ];
 
 const NOTIF_EVENTOS: readonly (keyof NotifEventos)[] = ['inicio', 'fin', 'resultado'];
+
+/** Los dos canales, en tabla: misma pieza, solo cambian las claves. */
+const NOTIF_CANALES: readonly {
+  key: 'notifEntrante' | 'notifSaliente';
+  urlKey: 'notifEntranteUrl' | 'notifSalienteUrl';
+  i18n: 'entrante' | 'saliente';
+}[] = [
+  { key: 'notifEntrante', urlKey: 'notifEntranteUrl', i18n: 'entrante' },
+  { key: 'notifSaliente', urlKey: 'notifSalienteUrl', i18n: 'saliente' },
+];
+
+/**
+ * El esquema NO se escribe: lo pone el sistema.
+ *
+ * El aviso lleva datos de la conversación, así que tiene que ir cifrado, y pedirle a
+ * alguien que «se acuerde de poner https://» es diseñar un error para luego cazarlo. Aquí
+ * el `https://` es un trozo FIJO delante del campo: no se puede teclear mal porque no se
+ * teclea. Lo que se guarda sigue siendo la URL entera.
+ */
+const HTTPS = 'https://';
+
+/** Quita cualquier esquema de lo guardado para pintar SOLO el resto en el campo. */
+const sinEsquema = (url: string): string => url.replace(/^[a-z][a-z0-9+.-]*:\/\//i, '');
 
 /**
  * Las dos reglas de "Bloqueo por inactividad", en tabla y no en dos bloques de
@@ -163,14 +203,16 @@ const BLOQUEO_RULES: readonly {
     ButtonComponent,
     CheckboxComponent,
     ChipComponent,
-    DialogComponent,
     DividerComponent,
     IconComponent,
+    InputGroupComponent,
+    InputGroupAddonModule,
     InputTextComponent,
+    InputTextModule,
     InputNumberComponent,
     RadioButtonComponent,
     SectionCardComponent,
-    SelectComponent,
+    OptionCardsComponent,
     TagComponent,
     ToggleSwitchComponent,
     TranslateModule,
@@ -184,10 +226,22 @@ export class AedServicioPageComponent implements DirtyAware {
   private readonly translate = inject(TranslateService);
   protected readonly addIcon = 'add';
 
-  protected readonly descuelgueOptions = DESCUELGUE_OPTIONS;
+  /** Traducidas aquí y no en la plantilla: `sc-option-cards` recibe DATOS, no plantillas. */
+  protected readonly descuelgueOptions = computed(() =>
+    DESCUELGUE_OPTIONS.map((key) => ({
+      value: key,
+      label: this.translate.instant(
+        `config.aed.subpages.servicio.aviso.descuelgue_options.${key}.label`,
+      ),
+      description: this.translate.instant(
+        `config.aed.subpages.servicio.aviso.descuelgue_options.${key}.desc`,
+      ),
+    })),
+  );
   protected readonly visibilidadLabels = VISIBILIDAD_LABELS;
   protected readonly bloqueoRules = BLOQUEO_RULES;
   protected readonly notifEventos = NOTIF_EVENTOS;
+  protected readonly notifCanales = NOTIF_CANALES;
 
   /** Estado original (guardado). `dirty` se deriva comparando con esto, así
    * que deshacer los cambios (volver a los valores originales) desactiva el
@@ -196,14 +250,28 @@ export class AedServicioPageComponent implements DirtyAware {
   protected readonly form = signal<FormState>(this.cloneDefault());
   protected readonly saving = signal(false);
 
-  /** Modal "Añadir estado" (Figma 103:2718): visibilidad + draft del input. */
-  protected readonly modalOpen = signal(false);
+  /**
+   * Alta EN LÍNEA, no en modal.
+   *
+   * El caso real de esta lista no es añadir UN motivo, es escribir los que usa el
+   * contact center de una sentada (Baño, Comida, Formación…). Con el modal cada uno
+   * costaba cuatro interacciones y un cambio de contexto: abrir · escribir · pulsar
+   * Añadir · volver a abrir. Aquí el hueco discontinuo se convierte en el campo, Enter
+   * lo añade y DEJA EL CAMPO ABIERTO Y VACÍO para el siguiente, así que el segundo y
+   * los que vengan cuestan solo escribir y Enter. Escape cierra.
+   *
+   * ⚠️ El modal 103:2718 de Figma deja de usarse aquí. Es una divergencia con la
+   * maqueta, a propósito, y está en la bandeja.
+   */
+  protected readonly adding = signal(false);
   protected readonly draft = signal('');
+  private readonly draftField = viewChild<ElementRef<HTMLElement>>('draftField');
 
   protected readonly dirty = computed(
     () => stableStringify(this.form()) !== stableStringify(this.pristine()),
   );
   protected readonly canSave = computed(() => this.dirty() && !this.saving());
+
   /** Público para el `formDirtyGuard` (canDeactivate) — confirma al salir con cambios. */
   readonly formDirty = this.dirty;
 
@@ -212,15 +280,40 @@ export class AedServicioPageComponent implements DirtyAware {
 
   constructor() {
     useTopbarActions(this.topbarActions);
+
+    /*
+     * El foco al campo de alta, por EFECTO y no por `setTimeout`.
+     *
+     * Con `setTimeout(…, 0)` el campo salía sin foco: medido en el navegador, el tick
+     * corría antes de que el `viewChild` dentro del `@if` resolviera, así que
+     * `draftField()` todavía era `undefined` y el `focus()` no se llamaba nunca —había
+     * que dar un clic extra, justo lo que este cambio venía a quitar.
+     *
+     * El efecto LEE `draftField()`, así que vuelve a correr solo cuando la consulta
+     * resuelve. Y como también lee `draft()`, refresca el foco tras cada alta: encadenar
+     * motivos es escribir · Enter · escribir · Enter, sin tocar el ratón.
+     */
+    effect(() => {
+      if (!this.adding()) return;
+      this.draft();
+      this.draftField()?.nativeElement.querySelector('input')?.focus();
+    });
   }
 
 
   /* ---------- Estados de agentes ---------- */
 
-  protected openAddModal(): void {
+  protected startAdding(): void {
     this.draft.set('');
-    this.modalOpen.set(true);
+    this.adding.set(true);
   }
+
+  protected stopAdding(): void {
+    this.adding.set(false);
+    this.draft.set('');
+  }
+
+
 
   /** Confirma el alta desde el modal: añade el estado (si no vacío ni duplicado)
    * y cierra. El chip nuevo entra animado (CSS `chip-appear`, ver SCSS). */
@@ -247,13 +340,6 @@ export class AedServicioPageComponent implements DirtyAware {
     () => this.draft().trim().length > 0 && this.draftError() === null,
   );
 
-  /** Por qué no se puede añadir, en palabras: un botón gris sin motivo obliga
-   *  a adivinar. Vacío no se explica en el botón —lo dice el propio campo con
-   *  su placeholder— pero el duplicado sí. */
-  protected readonly addReasonDisabledReason = computed<string | null>(() =>
-    this.canAddReason() ? null : this.draftError(),
-  );
-
   protected confirmAddReason(): void {
     // La guarda se mantiene: `keyup.enter` puede disparar con el botón
     // deshabilitado, así que el estado inválido no puede colarse por ahí.
@@ -262,7 +348,7 @@ export class AedServicioPageComponent implements DirtyAware {
       ...f,
       estadosNoDisponibles: [...f.estadosNoDisponibles, this.draft().trim()],
     }));
-    this.modalOpen.set(false);
+    // El campo se queda abierto y vacío: encadenar es el caso normal.
     this.draft.set('');
   }
 
@@ -284,8 +370,36 @@ export class AedServicioPageComponent implements DirtyAware {
 
   /* ---------- Notificaciones (eventos gated por URL) ---------- */
 
-  protected hasEntranteUrl = computed(() => this.form().notifEntranteUrl.trim().length > 0);
-  protected hasSalienteUrl = computed(() => this.form().notifSalienteUrl.trim().length > 0);
+  /** Lo que se PINTA en el campo: la URL guardada sin su `https://`. */
+  protected resto(urlKey: 'notifEntranteUrl' | 'notifSalienteUrl'): string {
+    return sinEsquema(this.form()[urlKey]);
+  }
+
+  /** Hay dirección = hay algo detrás del esquema. */
+  protected tieneUrl(urlKey: 'notifEntranteUrl' | 'notifSalienteUrl'): boolean {
+    return this.resto(urlKey).trim().length > 0;
+  }
+
+  /*
+   * El error se dice por CONTENIDO equivocado y en vivo; el campo vacío calla, porque aún
+   * no es un error (misma regla que el alta de estados).
+   *
+   * Y queda UN solo error posible, los espacios. Pegar la dirección entera —`https://…`,
+   * que es lo que hace todo el mundo— no es un error: `onUrlChange` le quita el esquema y
+   * se queda lo que hace falta. Un caso que el sistema sabe arreglar no se le devuelve a la
+   * persona convertido en un mensaje rojo.
+   */
+  protected urlError(urlKey: 'notifEntranteUrl' | 'notifSalienteUrl'): string | null {
+    const resto = this.resto(urlKey);
+    if (resto.trim().length === 0) return null;
+    return /\s/.test(resto) ? 'config.aed.subpages.servicio.notif.url_error' : null;
+  }
+
+  /** Escribe SIEMPRE con esquema, aunque el campo solo muestre el resto. */
+  protected onUrlChange(urlKey: 'notifEntranteUrl' | 'notifSalienteUrl', value: string): void {
+    const resto = sinEsquema(value).trim();
+    this.update(urlKey, resto.length === 0 ? '' : HTTPS + resto);
+  }
 
   protected toggleNotif(
     channel: 'notifEntrante' | 'notifSaliente',
@@ -311,8 +425,8 @@ export class AedServicioPageComponent implements DirtyAware {
     if (value !== null && Number.isFinite(value) && value >= 0) this.update(key, value);
   }
 
-  protected onDescuelgueChange(value: unknown): void {
-    if (typeof value === 'string') this.update('tipoDescuelgue', value);
+  protected onDescuelgueChange(value: string): void {
+    this.update('tipoDescuelgue', value);
   }
 
   protected onAlertingChange(value: 'nombre' | 'telefono'): void {
@@ -321,10 +435,30 @@ export class AedServicioPageComponent implements DirtyAware {
 
   /* ---------- Save / cancel (TopBar) ---------- */
 
+  /*
+   * `⌘S` / `Ctrl+S` guarda, y salir con cambios avisa.
+   *
+   * No es un invento: es literalmente lo que ya hacen `agent-form`, `group-form` y
+   * `user-form`. Las tres pantallas de Config no lo tenían, así que el mismo gesto
+   * funcionaba en la mitad de la aplicación y en la otra mitad no — que es peor que no
+   * tenerlo en ninguna, porque enseña a no fiarse.
+   */
+  @HostListener('document:keydown', ['$event'])
+  protected onKeydown(event: KeyboardEvent): void {
+    if ((event.ctrlKey || event.metaKey) && event.key.toLowerCase() === 's') {
+      event.preventDefault();
+      if (this.canSave() && !this.saving()) this.save();
+    }
+  }
+
+  @HostListener('window:beforeunload', ['$event'])
+  protected onBeforeUnload(event: BeforeUnloadEvent): void {
+    if (this.dirty() && !this.saving()) event.preventDefault();
+  }
+
   protected cancel(): void {
     this.form.set(structuredClone(this.pristine()));
-    this.modalOpen.set(false);
-    this.draft.set('');
+    this.stopAdding();
   }
 
   protected save(): void {

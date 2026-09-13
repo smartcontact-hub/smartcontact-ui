@@ -50,6 +50,19 @@ export function provideSmartContactUi(config: ScSmartContactUiConfig = {}): Envi
     return providePrimeNG({
         ripple: config.ripple,
         license: config.license,
+        /*
+         * Los paneles flotantes (desplegables, multiselect, calendario) se pintan en el
+         * `<body>`, no dentro de su componente.
+         *
+         * Por defecto PrimeNG los deja DENTRO, y `sc-section-card` recorta su contenido
+         * (`overflow: hidden`, para el radio). Resultado medido el 2026-09-13 en
+         * `config/aed/grupos`: el desplegable «Tipo» de la última sección se abría cortado
+         * contra el borde inferior de la tarjeta, con la primera opción a medias. Pasaba
+         * con cualquier desplegable cerca del borde de cualquier tarjeta, así que se
+         * arregla aquí una vez y no pantalla a pantalla con `appendTo`. Quien necesite el
+         * panel dentro lo sigue pidiendo con `appendTo` en ese componente.
+         */
+        overlayAppendTo: 'body',
         theme: {
             preset: scPreset,
             options: themeOptions

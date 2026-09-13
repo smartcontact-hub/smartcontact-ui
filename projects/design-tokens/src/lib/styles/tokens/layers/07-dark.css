@@ -16,6 +16,9 @@
 
 .sc-dark {
   /* ---------- Semantic · Text ---------- */
+  /* `heading`: en oscuro el escalón libre está ARRIBA, en el blanco puro — `primary` ya
+   * es `slate-50`. Ver la nota larga en `02-semantic.css`. */
+  --sc-text-heading: var(--sc-color-slate-0);
   --sc-text-primary: var(--sc-color-slate-50);
   --sc-text-secondary: var(--sc-color-slate-300);
   --sc-text-subtle: var(--sc-color-slate-500);

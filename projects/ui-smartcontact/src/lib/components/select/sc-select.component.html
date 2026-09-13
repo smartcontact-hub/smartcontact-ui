@@ -79,8 +79,11 @@
     }
   </p-select>
 
+  <!-- La etiqueta DENTRO del campo tiene el mismo problema que la de encima: su `for`
+       cae sobre un `<span role="combobox">`, que no es etiquetable. Lleva el mismo `id`
+       para que `ariaLabelledBy` la pueda apuntar al revés. -->
   @if (iftaLabel() && label()) {
-    <label class="sc-select__ifta-label" [attr.for]="resolvedId()">
+    <label class="sc-select__ifta-label" [attr.for]="resolvedId()" [attr.id]="labelId()">
       {{ label() }}
       @if (required()) {
         <span class="sc-select__required" aria-hidden="true">*</span>

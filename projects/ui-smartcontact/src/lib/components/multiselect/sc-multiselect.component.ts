@@ -2,6 +2,7 @@ import {
   booleanAttribute,
   ChangeDetectionStrategy,
   Component,
+  computed,
   input,
   model,
   output,
@@ -67,6 +68,8 @@ export class ScMultiSelectComponent {
   readonly placeholder = input<string>('');
   readonly disabled = input(false, { transform: booleanAttribute });
   readonly inputId = input<string>();
+  /** `id` de un rótulo EXTERNO que nombra el control (ver `resolvedLabelledBy`). */
+  readonly ariaLabelledBy = input<string>();
   readonly name = input<string>();
 
   // ─── MultiSelect-specific ──────────────────────────────────────────
@@ -117,6 +120,16 @@ export class ScMultiSelectComponent {
   });
   protected readonly resolvedId = this.field.resolvedId;
   protected readonly msgId = this.field.msgId;
+  protected readonly labelId = this.field.labelId;
+  /*
+   * PrimeNG pinta el multiselect como `<span role="combobox">`, igual que el select, así
+   * que el `<label for>` que emite el componente —encima o dentro— no le da nombre
+   * accesible. Medido en `config/aed/grupos`: cuatro `role="combobox"` sin un solo
+   * nombre. `aria-labelledby` sí funciona sobre cualquier elemento.
+   */
+  protected readonly resolvedLabelledBy = computed(
+    () => this.ariaLabelledBy() ?? (this.label() ? this.labelId() : undefined),
+  );
   protected readonly isInvalid = this.field.isInvalid;
   protected readonly footerText = this.field.footerText;
 

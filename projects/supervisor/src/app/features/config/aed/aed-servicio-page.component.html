@@ -67,25 +67,36 @@
               labelColor="red"
               [value]="'config.aed.subpages.servicio.estados.no_disponible' | translate"
             />
-            <!-- La casilla de abajo GOBIERNA esta pastilla, así que la pastilla
-                 aparece y desaparece con ella. Antes la casilla estaba ahí sin que
-                 nada cambiara al marcarla: un control cuyo efecto no se ve obliga a
-                 guardar para saber qué hace. -->
-            @if (form().estadoAdministrativo) {
-              <sc-tag
-                variant="label"
-                labelColor="amber"
-                [value]="'config.aed.subpages.servicio.estados.administrativo' | translate"
-              />
-            }
+            <!--
+              La pastilla SIEMPRE está; lo que cambia es si se ve encendida o apagada.
+              Antes aparecía y desaparecía con la casilla, y como la casilla va DETRÁS,
+              marcarla movía el propio control 90px a la izquierda: había que perseguirlo
+              para volver a pulsarlo. Un control que se escapa al usarlo es peor que un
+              control cuyo efecto no se ve, que era el fallo que esto vino a arreglar.
+
+              Apagada y en su sitio dice las dos cosas a la vez: este estado EXISTE y
+              ahora mismo no está incluido. Y nada se mueve.
+            -->
+            <sc-tag
+              class="state-tag"
+              [class.state-tag--off]="!form().estadoAdministrativo"
+              variant="label"
+              labelColor="amber"
+              [value]="'config.aed.subpages.servicio.estados.administrativo' | translate"
+            />
+            <!-- La casilla va EN la fila, detrás de las pastillas que gobierna: es lo
+                 que hace aparecer y desaparecer «Administrativo», así que pertenece a
+                 su misma categoría y a su misma línea. Suelta debajo ocupaba una fila
+                 entera para decir algo de la de arriba. -->
+            <sc-checkbox
+              class="chip-row__switch"
+              [state]="form().estadoAdministrativo ? 'all' : 'none'"
+              [ariaLabel]="'config.aed.subpages.servicio.estados.admin_checkbox' | translate"
+              (cycle)="update('estadoAdministrativo', $event)"
+            >
+              <span>{{ 'config.aed.subpages.servicio.estados.admin_checkbox' | translate }}</span>
+            </sc-checkbox>
           </div>
-          <sc-checkbox
-            [state]="form().estadoAdministrativo ? 'all' : 'none'"
-            [ariaLabel]="'config.aed.subpages.servicio.estados.admin_checkbox' | translate"
-            (cycle)="update('estadoAdministrativo', $event)"
-          >
-            <span>{{ 'config.aed.subpages.servicio.estados.admin_checkbox' | translate }}</span>
-          </sc-checkbox>
         </div>
 
         <div class="state-block">
@@ -97,10 +108,19 @@
                entre el último chip y el botón que añade chips (build del
                2026-09-12). Es el mismo fallo que `.switch-field` ya corrigió en
                Agentes, y la misma corrección. -->
+          <!-- Sin motivos propios, la fila diría solo «+ Añadir» y no explicaría para qué.
+               Una línea basta: qué son y un ejemplo de lo que suele ponerse. Desaparece en
+               cuanto hay uno, que es lo que tiene que hacer un estado vacío. -->
+          @if (form().estadosNoDisponibles.length === 0) {
+            <p class="empty-hint sc-text-body-regular">
+              {{ 'config.aed.subpages.servicio.estados.sin_motivos' | translate }}
+            </p>
+          }
           <div class="chip-row">
             @for (reason of form().estadosNoDisponibles; track reason) {
               <sc-chip
                 class="reason-chip"
+                animate.leave="reason-chip--leaving"
                 variant="label"
                 labelColor="gray"
                 [label]="reason"
@@ -117,121 +137,39 @@
                  fila conserva su ritmo y la acción no se disfraza de dato.
                  El rótulo va a `--sc-text-secondary` y no al gris del botón de
                  texto (#8f97a3, 2.95:1 a 12px, que cazó `theme-contrast.spec.ts`). -->
-            <button type="button" class="add-chip sc-text-caption-semibold" (click)="openAddModal()">
-              <sc-icon [name]="addIcon" size="inherit" aria-hidden="true" />
-              {{ 'config.aed.subpages.servicio.estados.add' | translate }}
-            </button>
+            @if (adding()) {
+              <!-- El hueco SE CONVIERTE en el campo, en su sitio y con su tamaño: no hay
+                   salto de contexto y la fila no se reorganiza al empezar a escribir. -->
+              <span class="add-field" #draftField>
+                <sc-inputtext
+                  size="sm"
+                  inputId="general-new-estado"
+                  [ariaLabel]="'config.aed.subpages.servicio.estados.modal_input_label' | translate"
+                  [placeholder]="
+                    'config.aed.subpages.servicio.estados.modal_input_placeholder' | translate
+                  "
+                  [value]="draft()"
+                  (valueChange)="draft.set($event)"
+                  [error]="draftError() ? (draftError()! | translate) : undefined"
+                  (keyup.enter)="confirmAddReason()"
+                  (keyup.escape)="stopAdding()"
+                  (blurred)="draft().trim() ? null : stopAdding()"
+                />
+              </span>
+            } @else {
+              <button type="button" class="add-chip sc-text-caption-semibold" (click)="startAdding()">
+                <sc-icon [name]="addIcon" size="inherit" aria-hidden="true" />
+                {{ 'config.aed.subpages.servicio.estados.add' | translate }}
+              </button>
+            }
           </div>
         </div>
       </section>
 
-      <sc-divider />
-
-      <!-- Bloqueo de puesto por inactividad -->
-      <section class="sub-section" aria-labelledby="general-inactividad-title">
-        <header class="sub-section__head">
-          <h2 id="general-inactividad-title" class="sub-section__title sc-text-body-semibold">
-            {{ 'config.aed.subpages.servicio.inactividad.title' | translate }}
-          </h2>
-        </header>
-
-        <!--
-          UNA fila por regla, y la MISMA fila que "Estados visibles": interruptor ·
-          nombre en negrita · el resto de la frase. Antes el sujeto ("Teléfono") era
-          una etiqueta de casilla de 14 y su predicado ("Poner en cuarentena durante")
-          bajaba a 12: una sola frase partida en dos tamaños, que es lo que hacía que
-          la fila no se leyera de corrido. Ahora la frase entera mide 14 y lo que
-          separa al sujeto es el PESO, no el tamaño.
-
-          Y es un interruptor, no una casilla, porque gobierna una fila entera con
-          nombre propio — la regla de la pantalla: interruptor manda sobre una fila,
-          casilla marca una opción de una lista o una celda de una tabla.
-
-          CUATRO columnas compartidas por las dos filas: mando · nombre · frase ·
-          número + sufijo. La rejilla vive en el PADRE y cada fila es `display:
-          contents`, así que el ancho de cada columna lo negocian las dos filas entre
-          ellas — que es lo que deja los dos `inputnumber` en la MISMA vertical aunque
-          "Poner en cuarentena durante" y "Bloquear tras" midan distinto.
-        -->
-        <div class="switch-rows">
-          @for (rule of bloqueoRules; track rule.key) {
-            <div class="switch-row" [class.switch-row--off]="!form()[rule.key]">
-              <span class="switch-row__control">
-                <sc-toggleswitch
-                  [inputId]="'general-bloqueo-' + rule.key"
-                  [checked]="form()[rule.key]"
-                  (checkedChange)="update(rule.key, $event)"
-                />
-              </span>
-              <label
-                class="switch-row__name sc-text-body-semibold"
-                [attr.for]="'general-bloqueo-' + rule.key"
-              >
-                {{ 'config.aed.subpages.servicio.inactividad.' + rule.i18n | translate }}
-              </label>
-              <!-- La frase ROTULA el número: `<label for>` de verdad, así que el campo
-                   tiene nombre accesible (antes no tenía ninguno) y pulsar el texto
-                   lleva el foco al campo. No hace falta un `aria-label` que repita en
-                   audio lo que ya está escrito en pantalla. -->
-              <label
-                class="switch-row__text sc-text-body-regular"
-                [attr.for]="'general-bloqueo-' + rule.key + '-num'"
-              >
-                {{ 'config.aed.subpages.servicio.inactividad.' + rule.i18n + '_text' | translate }}
-              </label>
-              <span class="switch-row__tail">
-                <sc-inputnumber
-                  class="switch-row__num"
-                  [inputId]="'general-bloqueo-' + rule.key + '-num'"
-                  [min]="0"
-                  [disabled]="!form()[rule.key]"
-                  [value]="form()[rule.numKey]"
-                  (valueChange)="onNumberChange(rule.numKey, $event)"
-                />
-                <span class="switch-row__text sc-text-body-regular">
-                  {{ 'config.aed.subpages.servicio.inactividad.' + rule.suffix | translate }}
-                </span>
-              </span>
-            </div>
-          }
-        </div>
-      </section>
-
-      <sc-divider />
-
-      <!-- Configuración de ventana de llamada y transferencia -->
-      <section class="sub-section" aria-labelledby="general-ventana-title">
-        <header class="sub-section__head">
-          <h2 id="general-ventana-title" class="sub-section__title sc-text-body-semibold">
-            {{ 'config.aed.subpages.servicio.ventana.title' | translate }}
-          </h2>
-        </header>
-
-        <!-- Dos opciones independientes, no una pareja: van en LISTA, como los
-             tres interruptores de Agentes. Repartidas en dos mitades de la fila,
-             la segunda caía a 434px de la primera (medido) y esa distancia decía
-             "estas dos van juntas" cuando no van. -->
-        <div class="option-list">
-          <sc-checkbox
-            [state]="form().verEstadoOtros ? 'all' : 'none'"
-            [ariaLabel]="'config.aed.subpages.servicio.ventana.ver_estado' | translate"
-            (cycle)="update('verEstadoOtros', $event)"
-          >
-            <span>{{ 'config.aed.subpages.servicio.ventana.ver_estado' | translate }}</span>
-          </sc-checkbox>
-          <sc-checkbox
-            [state]="form().verAgentesAleatorio ? 'all' : 'none'"
-            [ariaLabel]="'config.aed.subpages.servicio.ventana.ver_aleatorio' | translate"
-            (cycle)="update('verAgentesAleatorio', $event)"
-          >
-            <span>{{ 'config.aed.subpages.servicio.ventana.ver_aleatorio' | translate }}</span>
-          </sc-checkbox>
-        </div>
-      </section>
-
-      <sc-divider />
-
       <!-- Estados visibles por el agente -->
+
+      <sc-divider />
+
       <section class="sub-section" aria-labelledby="general-visibles-title">
         <header class="sub-section__head">
           <h2 id="general-visibles-title" class="sub-section__title sc-text-body-semibold">
@@ -268,7 +206,7 @@
                 />
               </span>
               <label
-                class="switch-row__name sc-text-body-semibold"
+                class="switch-row__name sc-text-body-regular"
                 [attr.for]="'general-visible-' + item.key"
               >
                 <span
@@ -294,6 +232,8 @@
         </sc-checkbox>
       </section>
 
+      <!-- Bloqueo de puesto por inactividad -->
+
       <sc-divider />
 
       <section class="sub-section" aria-labelledby="general-aviso-title">
@@ -309,32 +249,28 @@
              (`iftaLabel`) y medía 790px para mostrar una palabra: era el único
              campo de la pantalla que se rotulaba de otra manera. -->
         <div class="grid grid--2">
-          <div class="field">
-            <!-- El `for` se queda porque pulsar la etiqueta enfoca el control, pero
-                 NO da nombre accesible: PrimeNG pinta el select como
-                 `<span role="combobox">` y un span no es etiquetable. El nombre lo
-                 da `ariaLabelledBy`, que sí funciona sobre cualquier elemento. -->
-            <label
-              class="field__label sc-text-caption-regular"
-              id="general-descuelgue-label"
-              for="general-descuelgue"
-            >
+          <!-- A TODO EL ANCHO de la sección: en media fila las tres tarjetas caían a ~90px
+               y partían «Automático con preview» en tres líneas. Una tarjeta que hay que
+               descifrar no ahorra nada frente al desplegable que vino a sustituir. -->
+          <div class="field field--full">
+            <!-- Tarjetas, no desplegable: son TRES opciones excluyentes cuyo nombre no dice
+                 qué hacen. En el menú había que abrir, leer tres nombres y adivinar qué era
+                 el «preview»; aquí las tres se ven a la vez con su línea de efecto y elegir
+                 es un clic en vez de dos. -->
+            <span class="field__label sc-text-caption-semibold" id="general-descuelgue-label">
               {{ 'config.aed.subpages.servicio.aviso.descuelgue_label' | translate }}
-            </label>
-            <sc-select
-              inputId="general-descuelgue"
+            </span>
+            <sc-option-cards
+              name="general-descuelgue"
               ariaLabelledBy="general-descuelgue-label"
-              [options]="descuelgueOptions"
+              [options]="descuelgueOptions()"
               [value]="form().tipoDescuelgue"
-              [placeholder]="
-                'config.aed.subpages.servicio.aviso.descuelgue_placeholder' | translate
-              "
               (valueChange)="onDescuelgueChange($event)"
             />
           </div>
 
           <div class="field">
-            <span class="field__label sc-text-caption-regular" id="general-alerting-label">
+            <span class="field__label sc-text-caption-semibold" id="general-alerting-label">
               {{ 'config.aed.subpages.servicio.aviso.alerting_label' | translate }}
             </span>
             <div
@@ -373,153 +309,210 @@
 
       <sc-divider />
 
+      <section class="sub-section" aria-labelledby="general-ventana-title">
+        <header class="sub-section__head">
+          <h2 id="general-ventana-title" class="sub-section__title sc-text-body-semibold">
+            {{ 'config.aed.subpages.servicio.ventana.title' | translate }}
+          </h2>
+        </header>
+
+        <!-- Dos opciones independientes, no una pareja: van en LISTA, como los
+             tres interruptores de Agentes. Repartidas en dos mitades de la fila,
+             la segunda caía a 434px de la primera (medido) y esa distancia decía
+             "estas dos van juntas" cuando no van. -->
+        <div class="option-list">
+          <sc-checkbox
+            [state]="form().verEstadoOtros ? 'all' : 'none'"
+            [ariaLabel]="'config.aed.subpages.servicio.ventana.ver_estado' | translate"
+            (cycle)="update('verEstadoOtros', $event)"
+          >
+            <span>{{ 'config.aed.subpages.servicio.ventana.ver_estado' | translate }}</span>
+          </sc-checkbox>
+          <sc-checkbox
+            [state]="form().verAgentesAleatorio ? 'all' : 'none'"
+            [ariaLabel]="'config.aed.subpages.servicio.ventana.ver_aleatorio' | translate"
+            (cycle)="update('verAgentesAleatorio', $event)"
+          >
+            <span>{{ 'config.aed.subpages.servicio.ventana.ver_aleatorio' | translate }}</span>
+          </sc-checkbox>
+        </div>
+      </section>
+
+      <sc-divider />
+
+      <section class="sub-section" aria-labelledby="general-inactividad-title">
+        <header class="sub-section__head">
+          <h2 id="general-inactividad-title" class="sub-section__title sc-text-body-semibold">
+            {{ 'config.aed.subpages.servicio.inactividad.title' | translate }}
+          </h2>
+        </header>
+
+        <!--
+          UNA fila por regla, y la MISMA fila que "Estados visibles": interruptor ·
+          nombre · el resto de la frase. Antes el sujeto ("Teléfono") era una etiqueta
+          de casilla de 14 y su predicado ("Poner en cuarentena durante") bajaba a 12:
+          una sola frase partida en dos tamaños, que es lo que hacía que la fila no se
+          leyera de corrido. Ahora la frase entera mide y pesa lo mismo (14 regular, como
+          en Figma) y al sujeto lo separa su columna propia, no la negrita.
+
+          Y es un interruptor, no una casilla, porque gobierna una fila entera con
+          nombre propio — la regla de la pantalla: interruptor manda sobre una fila,
+          casilla marca una opción de una lista o una celda de una tabla.
+
+          CUATRO columnas compartidas por las dos filas: mando · nombre · frase ·
+          número + sufijo. La rejilla vive en el PADRE y cada fila es `display:
+          contents`, así que el ancho de cada columna lo negocian las dos filas entre
+          ellas — que es lo que deja los dos `inputnumber` en la MISMA vertical aunque
+          "Poner en cuarentena durante" y "Bloquear tras" midan distinto.
+        -->
+        <div class="switch-rows">
+          @for (rule of bloqueoRules; track rule.key) {
+            <div class="switch-row" [class.switch-row--off]="!form()[rule.key]">
+              <span class="switch-row__control">
+                <sc-toggleswitch
+                  [inputId]="'general-bloqueo-' + rule.key"
+                  [checked]="form()[rule.key]"
+                  (checkedChange)="update(rule.key, $event)"
+                />
+              </span>
+              <label
+                class="switch-row__name sc-text-body-regular"
+                [attr.for]="'general-bloqueo-' + rule.key"
+              >
+                {{ 'config.aed.subpages.servicio.inactividad.' + rule.i18n | translate }}
+              </label>
+              <!-- La frase ROTULA el número: `<label for>` de verdad, así que el campo
+                   tiene nombre accesible (antes no tenía ninguno) y pulsar el texto
+                   lleva el foco al campo. No hace falta un `aria-label` que repita en
+                   audio lo que ya está escrito en pantalla. -->
+              <label
+                class="switch-row__text sc-text-body-regular"
+                [attr.for]="'general-bloqueo-' + rule.key + '-num'"
+              >
+                {{ 'config.aed.subpages.servicio.inactividad.' + rule.i18n + '_text' | translate }}
+              </label>
+              <span class="switch-row__tail">
+                <sc-inputnumber
+                  class="switch-row__num"
+                  [inputId]="'general-bloqueo-' + rule.key + '-num'"
+                  [min]="0"
+                  [disabled]="!form()[rule.key]"
+                  [value]="form()[rule.numKey]"
+                  (valueChange)="onNumberChange(rule.numKey, $event)"
+                />
+                <span class="switch-row__text sc-text-body-regular">
+                  {{ 'config.aed.subpages.servicio.inactividad.' + rule.suffix | translate }}
+                </span>
+              </span>
+            </div>
+          }
+        </div>
+      </section>
+
+      <!-- Configuración de ventana de llamada y transferencia -->
+
+      <sc-divider />
+
       <section class="sub-section" aria-labelledby="general-notif-title">
         <header class="sub-section__head">
           <h2 id="general-notif-title" class="sub-section__title sc-text-body-semibold">
             {{ 'config.aed.subpages.servicio.notif.title' | translate }}
           </h2>
-          <p class="sub-section__hint sc-text-caption-regular">
+          <p class="sub-section__hint sc-text-body-regular">
             {{ 'config.aed.subpages.servicio.notif.hint' | translate }}
           </p>
         </header>
 
         <!--
-          Esto es una MATRIZ —dos conversaciones × tres eventos—, así que es una
-          TABLA, la misma que la de Agentes (`comm-table`, Figma 393:12610): una
-          cabecera de columna arriba y una fila por conversación. Antes era una
-          rejilla 70/30 con los rótulos Inicio · Fin · Resultado flotando en una
-          fila suelta y las casillas a 300px del campo al que pertenecen.
+          TABLA, como antes. La probé en bloques para meterle la descripción de cada canal,
+          el rótulo del campo, la pista del HTTPS y el aviso de «escribe una dirección», y el
+          resultado fueron CINCO líneas de texto repetidas dos veces: mucho más ruido del que
+          quitaba. La cabecera de columna ya rotula las tres casillas una sola vez, que es
+          justo para lo que sirve una tabla.
 
-          Y las seis casillas ESTABAN MUERTAS: ninguna tenía `(cycle)`, así que
-          pulsarlas no hacía nada (medido en producción el 2026-09-12, contra una
-          casilla con manejador como control). `toggleNotif` existía en el
-          componente y no lo llamaba nadie.
+          Lo ÚNICO que se queda del experimento es lo que faltaba de verdad: el `https://`
+          como trozo fijo delante del campo. No se puede teclear mal porque no se teclea, y
+          pegar la dirección entera funciona —el esquema se le quita solo— en vez de saltar
+          un error por algo que el sistema sabe arreglar.
         -->
         <div class="notif-scroll">
-        <table class="notif-table">
-          <thead>
-            <tr>
-              <th scope="col" class="notif-table__th-label sc-text-caption-semibold">
-                {{ 'config.aed.subpages.servicio.notif.col_conversacion' | translate }}
-              </th>
-              <th scope="col" class="notif-table__th-url sc-text-caption-semibold">
-                {{ 'config.aed.subpages.servicio.notif.col_url' | translate }}
-              </th>
-              @for (key of notifEventos; track key) {
-                <th scope="col" class="notif-table__th-col sc-text-caption-semibold">
-                  {{ 'config.aed.subpages.servicio.notif.evento_' + key | translate }}
+          <table class="notif-table">
+            <thead>
+              <tr>
+                <th scope="col" class="notif-table__th-label sc-text-body-semibold">
+                  {{ 'config.aed.subpages.servicio.notif.col_conversacion' | translate }}
                 </th>
+                <th scope="col" class="notif-table__th-url sc-text-body-semibold">
+                  {{ 'config.aed.subpages.servicio.notif.col_url' | translate }}
+                </th>
+                @for (key of notifEventos; track key) {
+                  <th scope="col" class="notif-table__th-col sc-text-body-semibold">
+                    {{ 'config.aed.subpages.servicio.notif.evento_' + key | translate }}
+                  </th>
+                }
+              </tr>
+            </thead>
+            <tbody>
+              @for (canal of notifCanales; track canal.key) {
+                <tr>
+                  <th scope="row" class="notif-table__th-row sc-text-body-regular">
+                    <label [attr.for]="'general-notif-' + canal.i18n">
+                      {{ 'config.aed.subpages.servicio.notif.' + canal.i18n | translate }}
+                    </label>
+                  </th>
+                  <td class="notif-table__url">
+                    <sc-inputgroup>
+                      <p-inputgroup-addon class="notif-table__scheme">https://</p-inputgroup-addon>
+                      <input
+                        pInputText
+                        type="text"
+                        inputmode="url"
+                        spellcheck="false"
+                        [id]="'general-notif-' + canal.i18n"
+                        [attr.aria-invalid]="urlError(canal.urlKey) ? true : null"
+                        [attr.aria-describedby]="
+                          urlError(canal.urlKey) ? 'general-notif-' + canal.i18n + '-msg' : null
+                        "
+                        [placeholder]="
+                          'config.aed.subpages.servicio.notif.url_placeholder' | translate
+                        "
+                        [value]="resto(canal.urlKey)"
+                        (input)="onUrlChange(canal.urlKey, $any($event.target).value)"
+                      />
+                    </sc-inputgroup>
+                    <!-- El error solo EXISTE cuando lo hay: sin él, ni hueco ni línea en
+                         blanco. La fila solo crece el día que te equivocas. -->
+                    @if (urlError(canal.urlKey); as err) {
+                      <span
+                        class="notif-table__msg sc-text-caption-regular"
+                        [id]="'general-notif-' + canal.i18n + '-msg'"
+                      >
+                        {{ err | translate }}
+                      </span>
+                    }
+                  </td>
+                  @for (key of notifEventos; track key) {
+                    <td class="notif-table__cell">
+                      <sc-checkbox
+                        [state]="form()[canal.key][key] ? 'all' : 'none'"
+                        [disabled]="!tieneUrl(canal.urlKey)"
+                        [ariaLabel]="
+                          ('config.aed.subpages.servicio.notif.evento_' + key | translate) +
+                          ' — ' +
+                          ('config.aed.subpages.servicio.notif.' + canal.i18n | translate)
+                        "
+                        (cycle)="toggleNotif(canal.key, key, $event)"
+                      />
+                    </td>
+                  }
+                </tr>
               }
-            </tr>
-          </thead>
-          <tbody>
-            <tr>
-              <th scope="row" class="notif-table__th-row sc-text-body-semibold">
-                <label for="general-notif-entrante">
-                  {{ 'config.aed.subpages.servicio.notif.entrante' | translate }}
-                </label>
-              </th>
-              <td class="notif-table__url">
-                <sc-inputtext
-                  inputId="general-notif-entrante"
-                  type="url"
-                  [placeholder]="
-                    'config.aed.subpages.servicio.notif.url_placeholder' | translate
-                  "
-                  [value]="form().notifEntranteUrl"
-                  (valueChange)="update('notifEntranteUrl', $event)"
-                />
-              </td>
-              @for (key of notifEventos; track key) {
-                <td class="notif-table__cell">
-                  <sc-checkbox
-                    [state]="form().notifEntrante[key] ? 'all' : 'none'"
-                    [disabled]="!hasEntranteUrl()"
-                    [ariaLabel]="
-                      ('config.aed.subpages.servicio.notif.evento_' + key | translate) +
-                      ' — ' +
-                      ('config.aed.subpages.servicio.notif.entrante' | translate)
-                    "
-                    (cycle)="toggleNotif('notifEntrante', key, $event)"
-                  />
-                </td>
-              }
-            </tr>
-            <tr>
-              <th scope="row" class="notif-table__th-row sc-text-body-semibold">
-                <label for="general-notif-saliente">
-                  {{ 'config.aed.subpages.servicio.notif.saliente' | translate }}
-                </label>
-              </th>
-              <td class="notif-table__url">
-                <sc-inputtext
-                  inputId="general-notif-saliente"
-                  type="url"
-                  [placeholder]="
-                    'config.aed.subpages.servicio.notif.url_placeholder' | translate
-                  "
-                  [value]="form().notifSalienteUrl"
-                  (valueChange)="update('notifSalienteUrl', $event)"
-                />
-              </td>
-              @for (key of notifEventos; track key) {
-                <td class="notif-table__cell">
-                  <sc-checkbox
-                    [state]="form().notifSaliente[key] ? 'all' : 'none'"
-                    [disabled]="!hasSalienteUrl()"
-                    [ariaLabel]="
-                      ('config.aed.subpages.servicio.notif.evento_' + key | translate) +
-                      ' — ' +
-                      ('config.aed.subpages.servicio.notif.saliente' | translate)
-                    "
-                    (cycle)="toggleNotif('notifSaliente', key, $event)"
-                  />
-                </td>
-              }
-            </tr>
-          </tbody>
-        </table>
+            </tbody>
+          </table>
         </div>
       </section>
+
     </sc-section-card>
 
-    <!-- Modal "Añadir estado" (Figma 103:2718) -->
-    <sc-dialog
-      [visible]="modalOpen()"
-      (cancelled)="modalOpen.set(false)"
-      [title]="'config.aed.subpages.servicio.estados.modal_title' | translate"
-      [subtitle]="'config.aed.subpages.servicio.estados.modal_subtitle' | translate"
-      [icon]="addIcon"
-      width="420px"
-    >
-      <!-- R6: el duplicado se dice EN VIVO. Antes, escribir un estado que ya
-           existía cerraba el modal y no añadía nada, sin explicar por qué: el
-           sistema descartaba lo que habías escrito en silencio. El campo vacío
-           sigue callado — todavía no es un error, es un campo sin rellenar. -->
-      <sc-inputtext
-        inputId="general-new-estado"
-        [label]="'config.aed.subpages.servicio.estados.modal_input_label' | translate"
-        [placeholder]="'config.aed.subpages.servicio.estados.modal_input_placeholder' | translate"
-        [value]="draft()"
-        (valueChange)="draft.set($event)"
-        [error]="draftError() ? (draftError()! | translate) : undefined"
-        (keyup.enter)="confirmAddReason()"
-      />
-      <div modal-actions>
-        <sc-button
-          variant="secondary"
-          appearance="text"
-          [label]="'common.cancel' | translate"
-          (clicked)="modalOpen.set(false)"
-        />
-        <sc-button
-          variant="primary"
-          [label]="'config.aed.subpages.servicio.estados.add' | translate"
-          [disabled]="!canAddReason()"
-          [attr.title]="addReasonDisabledReason() ? (addReasonDisabledReason()! | translate) : null"
-          (clicked)="confirmAddReason()"
-        />
-      </div>
-    </sc-dialog>
   </div>
 </div>
