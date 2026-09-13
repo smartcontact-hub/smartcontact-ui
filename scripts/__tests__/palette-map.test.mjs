@@ -18,12 +18,9 @@ test('CARA ROJA · desfase MUDO no documentado → drift', () => {
   );
 });
 
-test('CARA VERDE · divergencia consciente green-950 (step exacto) NO es drift', () => {
-  // 500 igual, 950 difiere a propósito (green-950 de marca) → excluido
-  assert.deepEqual(
-    primitiveDrift({ green: { 500: '#22c55e', 950: '#0a2916' } }, { green: { 500: '#22c55e', 950: '#052e16' } }),
-    [],
-  );
+test('CARA ROJA · green-950 ya no es divergencia (retirada DD-83): apartarse del Kit es drift', () => {
+  const d = primitiveDrift({ green: { 500: '#22c55e', 950: '#0a2916' } }, { green: { 500: '#22c55e', 950: '#052e16' } });
+  assert.deepEqual(d.map((x) => `${x.family}.${x.step}`), ['green.950']);
 });
 
 test('CARA ROJA · cyan (antes soft-blue) desfasado de su fuente cyan del Kit → drift', () => {
@@ -37,8 +34,8 @@ test('familia sin fuente (azure) → ignorada (no es drift; se informa aparte)',
   assert.deepEqual(primitiveDrift({ azure: { 500: '#3b82f6' } }, {}), []);
 });
 
-test('isPrimitiveDiverge: step exacto (green.950) vs familia entera (azure.)', () => {
-  assert.ok(isPrimitiveDiverge('green', '950'));
+test('isPrimitiveDiverge: familia entera (azure.) sí; green.950 ya no (DD-83)', () => {
+  assert.ok(!isPrimitiveDiverge('green', '950'));
   assert.ok(!isPrimitiveDiverge('green', '500'));
   assert.ok(isPrimitiveDiverge('azure', '500'));
   assert.ok(isPrimitiveDiverge('azure', '900'));

@@ -38,6 +38,7 @@ import { loadKitExport } from './dtcg-export.mjs';
 import { scaleSuffix, toRem, dropAlpha } from './token-naming.mjs';
 import { rewriteRegion } from './marker-rewrite.mjs';
 import { GENERATED as GENERATED_COLORS } from './color-map.mjs';
+import { PRIMITIVE_SOURCE } from './palette-map.mjs';
 import { EXPORT_PATH, LAYERS_DIR } from './paths.mjs';
 
 const PRIMITIVE_CSS = resolve(LAYERS_DIR, '01-primitive.css');
@@ -117,6 +118,13 @@ function renderRadius() {
 // ─────────────────────────────────────────────────────────────────────────────
 const STEPS = ['50', '100', '200', '300', '400', '500', '600', '700', '800', '900', '950'];
 const PALETTE_BASE = ['zinc']; // referenciada por la capa dark, no por un semántico generado
+/*
+ * Las familias del mapa de paletas (blue, sky, slate, cyan y las de Tailwind) también salen del
+ * export desde el 2026-09-14. Antes eran copias a mano en `01-primitive.css` que `tokens:parity`
+ * §7 vigilaba: un color cambiado en Figma no llegaba al código y el robot salía rojo con
+ * «DESFASE MUDO» (medido con `sky.500`). Solo entran las que el Kit trae de verdad.
+ */
+const KIT_FAMILIES = Object.values(PRIMITIVE_SOURCE).filter((f) => prim.has(`${f}.500`));
 
 // export: hex → familia primitiva (first-wins).
 const hexToFamily = new Map();
@@ -189,6 +197,7 @@ function cmpFamilies() {
 const PALETTE_FAMILIES = [
   ...new Set([
     ...PALETTE_BASE,
+    ...KIT_FAMILIES,
     ...GENERATED_COLORS.map((r) => semHex(r.mode, r.exp))
       .filter((hex) => hex && !curatedHexes.has(hex)) // solo colores que aún NO existen
       .map((hex) => hexToFamily.get(hex))
@@ -352,9 +361,9 @@ const ZONES = [
   {
     tag: 'palette',
     header:
-      '/* @sc-gen:palette — bloque GENERADO desde kit-export-dtcg.json. Familias de color\n' +
-      '   * que la capa curada NO cubre, importadas según se REFERENCIAN (zinc base +\n' +
-      '   * cualquier familia que un semántico use — p.ej. primary→yellow). NO editar a mano. */',
+      '/* @sc-gen:palette — bloque GENERADO desde kit-export-dtcg.json. Las familias del mapa\n' +
+      '   * `scripts/palette-map.mjs` más las que un color generado referencie (zinc, yellow…).\n' +
+      '   * NO editar a mano: `npm run tokens:import`. */',
     render: renderPalette,
   },
 ];

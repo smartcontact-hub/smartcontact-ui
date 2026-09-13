@@ -63,6 +63,42 @@
 
 ---
 
+## DD-83 · 2026-09-14 — Las familias de color del Kit salen del export: un color cambiado en Figma llega solo al código
+
+**Contexto** · Probando el robot de tokens (DD-82) con un cambio de color de marca real (`sky.500` de
+`#1464fe` a `#2a74ff` en el export), `tokens:import` no tocó `--sc-color-sky-500` y `tokens:parity` §7
+salió rojo con «DESFASE MUDO». Causa medida: 12 familias de color del Kit (blue, sky, slate, cyan, green,
+amber, red, orange, purple, violet, teal y emerald) vivían copiadas a mano en
+`01-primitive.css`, fuera de la zona `@sc-gen:palette`, que solo escribía `yellow` y `zinc`. Cada color
+tocado en Figma pedía editar el CSS a mano antes de fundir.
+
+**Decisión** · (1) El generador escribe en `@sc-gen:palette` todas las familias de
+`scripts/palette-map.mjs` que el Kit trae, además de las que ya importaba por referencia. (2) En la
+parte a mano de `01-primitive.css` quedan solo `slate-0` (el blanco, sin paso 0 en el Kit) y `azure`
+(sin familia en el Kit). (3) Se retira la divergencia `green.950` de marca (`#0a2916`, «un punto más
+oscuro»): pasa al valor del Kit y de Aura, `#052e16`.
+
+**Razón** · (1)(2) Con las familias generadas, el mismo estímulo (`sky.500` cambiado) regenera
+`--sc-color-sky-500: #2a74ff` y `tokens:parity` sale «PARIDAD OK». (3) Rafa pidió valorar cada
+divergencia con criterio, sin heredarlas: la de `green-950` no tenía función medible (texto de éxito en
+oscuro de 8,98:1 a 8,55:1 sobre green-400, muy por encima de AA) y era la única primitiva que se
+apartaba del Kit. Red: todas las variables `--sc-*` resueltas antes y después, en claro y oscuro: de
+1.014, solo cambia `--sc-color-green-950`.
+
+**Descartadas** ·
+- **Generar las 22 familias del Kit** → metería rampas que nada usa; se generan las del mapa y las que
+  un color referencia, como hasta ahora.
+- **Mantener las copias a mano y avisar mejor del desfase** → el aviso ya existía (§7) y era rojo: el
+  problema era tener que ir a mano.
+- **Quitar ya las exclusiones de `cmp-color-map.mjs` para el éxito oscuro** → cambiaría dos cosas a la
+  vez; con el mismo valor ya no hace falta excluirlas, se pueden borrar en otra tanda.
+
+**Consecuencias** · Un cambio de color de familia en Figma fluye sin tocar código. `azure` sigue siendo
+huérfana del Kit (revisar si es familia legítima). Los comentarios que explicaban cada familia a mano se
+van con ellas; el porqué de las de marca vive en `customs-catalog.md` §1.
+
+---
+
 ## DD-82 · 2026-09-14 — El robot de tokens no se pone rojo por lo que Figma cambia a propósito, y dice en llano qué cambia y por qué cae
 
 **Contexto** · Rafa quiere que el paso de Figma a producción sea «miro y fundo con un clic», y preguntó
