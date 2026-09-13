@@ -22,7 +22,7 @@
  *     Si no, lo que sobra es el instrumento y no hay nada que medir.
  *
  * Uso:
- *   node tools/text-census.mjs antes.json --url http://localhost:4288 [--hash] [--max 70]
+ *   node tools/text-census.mjs antes.json --url http://localhost:4288 [--hash] [--max 70] [--rutas a,b,c]
  *   node tools/text-census.mjs --diff antes.json despues.json
  *
  * `--hash` para apps que enrutan por `#/` (sc-docs). Sin él, rutas por path (supervisor).
@@ -81,7 +81,14 @@ await ctx.addInitScript(() => {
 const page = await ctx.newPage();
 const filas = [];
 const vistas = new Set();
-const cola = [hash ? '#/' : '/'];
+/* `--rutas a,b,c` siembra la cola además de la portada. Nace el 2026-09-13 porque en el
+ * Supervisor el crawl moría en `/`: su menú lateral son BOTONES, no `<a href>`, así que desde la
+ * portada no hay enlace que seguir y el censo salía con 1 ruta y 19 textos — un «0 diferencias»
+ * sobre casi nada, que parece un verde y no mide. Con las rutas sembradas, las que sí tienen
+ * enlaces siguen descubriendo el resto. */
+const sembradas = (flag('--rutas', '') || '').split(',').map((r) => r.trim()).filter(Boolean)
+  .map((r) => (hash ? (r.startsWith('#/') ? r : `#/${r}`) : r.startsWith('/') ? r : `/${r}`));
+const cola = [hash ? '#/' : '/', ...sembradas];
 
 const censar = async (ruta) => {
   const rows = await page.evaluate(() => {

@@ -111,12 +111,11 @@ export const BUCKETS = [
   // (`--sc-font-family-primary: 'Inter', system-ui, -apple-system, sans-serif`): los fallbacks
   // no son expresables como variable de Figma, así que el valor DIVERGE a propósito.
   { group: 'aura/custom', test: /^primitive\.typography\.font\.family\./, kind: 'divergence', note: 'Kit = una cara ("Inter"); el DS declara la pila --sc-font-family-primary con fallbacks, que Figma no modela' },
-  // `app.typography.{xl,xxl}` NO están en el contrato: `sc-preset/extend.ts` declara sm/md/lg y
-  // nada más (es el tier de control de PrimeNG). Medido el 2026-09-02 sobre el fichero del DS
-  // con el bridge — 110 páginas, 137.386 nodos — CERO consumidores: ni un nodo ni un text style
-  // atado a ellas. Si algún día el preset las declara, se mueven al bucket `value-check` de
-  // arriba y se añaden a APP_TYPOGRAPHY_CONTRACT; hasta entonces declararlas consumidas mentiría.
-  { group: 'aura/custom', test: /^app\.typography\.(xl|xxl)\.(fontSize|lineHeight)$/, kind: 'not-consumed', note: 'tier xl/xxl solo en Figma: extend.ts declara sm/md/lg y 0 consumidores medidos en el fichero (2026-09-02)' },
+  // `app.typography.{xl,xxl}` YA NO EXISTEN: se borraron del Kit el 2026-09-13 (DD-75). Antes vivían
+  // aquí como `not-consumed` —medido: 0 nodos y 0 text styles en las 110 páginas, 0 aliases, y 0 en
+  // el fichero de Supervisor— porque `sc-preset/extend.ts` solo declara sm/md/lg. Sin esta regla, si
+  // alguien las vuelve a crear en Figma el sync las trae como `unmatched` y §8 se pone en ROJO: que
+  // es lo que hay que querer, porque obliga a decidir qué son en vez de aceptarlas en silencio.
 
   // 26 hojas del modal custom y NADIE las lee: no existe ninguna `--sc-cmp-custommodal-*` en las
   // capas (mismo caso y misma decisión que bulktranscriptionmodal). El componente se estiliza con

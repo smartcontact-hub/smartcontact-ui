@@ -124,6 +124,18 @@ las 38 ranuras— se cerraron el mismo día en DD-73.)
    decisión. Ver la sección de Figma más abajo.
 3. **La deuda de código de [`AUDIT-DEUDA-2026-06.md`](../AUDIT-DEUDA-2026-06.md)** que quede tras
    s34, y **los cabos de DD-24** (round-trip de iconos) en [`ROADMAP.md`](../ROADMAP.md).
+## ✅ 2026-09-13 · Figma alcanza al código, el puente de tipografía se queda en tres tallas, y el 12/20 accidental pasa a caption
+
+**Sello:** HEAD `PENDIENTE`. DD-75. Las cuatro recomendaciones de `docs/figma-pendiente.md`, aprobadas
+por Rafa. Queda UNA cosa suya fuera del repo: **publicar la librería** en Figma.
+
+**Lo que hay que recordar:** (1) antes de borrar en Figma se midió todo — aliases, text styles, capas
+en las 110 páginas con control positivo, y el fichero consumidor de Supervisor —, y el borrado se
+hizo a la vez en el export del repo, que regeneró el CSS **byte a byte idéntico**; (2) la lista decía
+«~35 capas» y eran **4**: mezclaba `Section` con `.Subsection`; (3) el 12/20 no eran tres sitios sino
+**96 textos en 11**, y uno (`sc-chip`) es deliberado porque Figma lo ata a 20; (4) `text-census` moría
+en `/` en el Supervisor (el menú son botones) y ahora acepta `--rutas`.
+
 ## ✅ 2026-09-12 · El chip relleno significa lo mismo en las dos pantallas, y un título vuelve a ser más grande que su contenido
 
 **Sello:** HEAD `c1f829f`. DD-74. `npm run verify` (39 eslabones); **156** e2e del Supervisor,
