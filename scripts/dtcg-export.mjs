@@ -22,7 +22,20 @@
  */
 import { readFileSync } from 'node:fs';
 
-/** Aplana un grupo DTCG a Map<rutaConPuntos, hoja>. */
+/**
+ * Tipos para quien lo importa desde TypeScript (`e2e/kit-metrics.ts`, type-checkeado por
+ * `tsconfig.harness.json`): si un fichero revisado depende de este script, su firma importa.
+ * @typedef {{ $value: unknown, $type?: string }} DtcgLeaf
+ * @typedef {Record<string, Map<string, DtcgLeaf>>} DtcgGroups
+ */
+
+/**
+ * Aplana un grupo DTCG a Map<rutaConPuntos, hoja>.
+ * @param {Record<string, any>} group
+ * @param {string} prefix
+ * @param {Map<string, DtcgLeaf>} into
+ * @returns {Map<string, DtcgLeaf>}
+ */
 function flatten(group, prefix, into) {
   for (const [key, value] of Object.entries(group)) {
     if (key.startsWith('$') || value == null || typeof value !== 'object') continue;
@@ -33,10 +46,15 @@ function flatten(group, prefix, into) {
   return into;
 }
 
+/**
+ * @param {string} path
+ * @returns {{ groups: DtcgGroups, resolve: (value: unknown, mode?: string, seen?: Set<string>) => unknown }}
+ */
 export function loadKitExport(path) {
   let raw = JSON.parse(readFileSync(path, 'utf8'));
   if (typeof raw === 'string') raw = JSON.parse(raw); // export como string escapado
 
+  /** @type {DtcgGroups} */
   const groups = {};
   for (const [key, value] of Object.entries(raw)) {
     if (key === 'source') continue;
@@ -55,6 +73,11 @@ export function loadKitExport(path) {
     'aura/component/common',
   ];
 
+  /**
+   * @param {string} path
+   * @param {string} mode
+   * @returns {DtcgLeaf | undefined}
+   */
   function lookup(path, mode) {
     const spaces = [...SEARCH_ORDER];
     if (mode === 'dark') spaces.splice(2, 1, 'aura/semantic/dark');
@@ -68,6 +91,10 @@ export function loadKitExport(path) {
   /**
    * Resuelve un $value a su valor final (número o string). `mode` decide el
    * scheme para las refs semánticas ('light' por defecto).
+   * @param {unknown} value
+   * @param {string} [mode]
+   * @param {Set<string>} [seen]
+   * @returns {unknown}
    */
   function resolve(value, mode = 'light', seen = new Set()) {
     if (typeof value !== 'string') return value;
