@@ -63,6 +63,51 @@
 
 ---
 
+## DD-82 · 2026-09-14 — El robot de tokens no se pone rojo por lo que Figma cambia a propósito, y dice en llano qué cambia y por qué cae
+
+**Contexto** · Rafa quiere que el paso de Figma a producción sea «miro y fundo con un clic», y preguntó
+si un Kit que se aparte de Aura dejaría al robot en rojo para siempre. Medido en la historia de
+`tokens-sync`: 28 de 44 pasadas rojas, 11 pasos a mano con el robot en verde y 15 en rojo. El PR #144
+(export de DD-81, 2026-09-13) dio 14 rojos: 11 eran tests con la medida del Kit escrita a mano
+(«10.5px», «17.5px», «35×21»), 2 las referencias de estructura y estilos, y 1 un contraste.
+
+**Decisión** · (1) Los tests de métrica leen la medida esperada del export (`e2e/kit-metrics.ts`, la
+misma fila de `sizing-map.mjs` que usan el generador y `tokens:parity`). (2) Si lo único que cae son
+las referencias de estructura y estilos, el robot las regenera, repite la smoke y las sube en su
+commit. (3) Un token del Kit que tenía medida y pasa a 0 pone rojo al robot (`--ceros`), salvo que
+esté apuntado en `CEROS_A_PROPOSITO`. (4) La portada del PR la escribe el robot: veredicto con quién se
+mueve (`scripts/tokens-sync-rojo.mjs`), qué tokens cambian y quién los lee
+(`scripts/tokens-sync-cambios.mjs`) y enlaces al preview de la rama. (5) El commit verificado lleva el
+check `tokens-sync`. Apartarse de Aura no es rojo: es información.
+
+**Razón** · (1) Con el número escrito, cada edición deliberada en Figma pedía tocar tests antes de
+fundir; leído del export, el test sigue preguntando lo que importa (¿el componente pinta lo que dice
+el Kit?). Medido en tres casos sobre el build estático de sc-docs: `main` 26/26 verde; export de
+DD-81 26/26 verde (el robot dio 11 rojos); tema roto a propósito (relleno del botón y del campo a
+literal) 9 rojos, en esas piezas. (3) Medido: `tokens:import` NO normaliza el 0
+(`button.padding.x = 0` sale `--sc-cmp-button-padding-x: 0`) y, con (1), el test leería el 0 y pasaría.
+(5) Los pushes del robot con `GITHUB_TOKEN` no disparan workflows: el PR no enseñaba ningún check suyo
+y había que comparar SHA a mano.
+
+**Descartadas** ·
+- **Poner rojo si el Kit se aparta de Aura** → castiga justo lo que el robot existe para dejar pasar
+  (una decisión de diseño); la distancia a Aura se informa y se vigila con su trinquete.
+- **Regenerar siempre las referencias** → taparía un fallo real; solo se hace si no cae nada más.
+- **Atribuir el contraste a Figma** (primera versión) → en #144 lo causaba el código de DD-81 que aún
+  no estaba en `main`: la frase dice que puede venir de los dos lados.
+- **Importar `scripts/paths.mjs` en el test** → usa `import.meta` y Playwright carga los helpers como
+  CommonJS; la ruta se lee igual que allí. Y `dtcg-export.mjs` y `sizing-map.mjs` llevan JSDoc porque
+  `tsconfig.harness.json` los revisa al importarlos (su propia regla).
+
+**Consecuencias** · Quedan por hacer, en este orden: las familias de color de marca escritas a mano en
+`01-primitive.css` (un cambio de color en Figma hoy sale «desfase mudo» y rojo, medido con `sky.500`),
+las capturas de antes y después en el PR, y el zip del equipo externo comprobado por el robot. La
+prueba de verdad es el siguiente export real desde Figma: el workflow no se puede correr fuera de
+GitHub. El PR #145 (DD-81) cambia las mismas líneas de test a mano: al fundir, vale la versión que lee
+del export.
+
+---
+
 ## DD-80 · 2026-09-13 — La cabecera fija de una tabla la pide `stickyHeader` y la pinta el tema, y una etiqueta es siempre una línea
 
 **Contexto** · La cabecera de Conversaciones llevaba `position: sticky` desde S37 y **nunca fijó**: tras

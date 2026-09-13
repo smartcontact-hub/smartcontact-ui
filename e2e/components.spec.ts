@@ -1,4 +1,5 @@
 import { expect, test, type Locator, type Page } from '@playwright/test';
+import { kitPx } from './kit-metrics';
 
 /**
  * Diff visual de la Mitad B, por componente:
@@ -134,26 +135,26 @@ test.describe('sc-button', () => {
     await gotoPage(page, 'button');
     const md = page.getByTestId('sc-btn-md').locator('button');
     expect(await styleOf(md, ['padding-left', 'padding-top', 'border-radius', 'font-size', 'gap'])).toEqual({
-      'padding-left': '10.5px',
-      'padding-top': '7px',
-      'border-radius': '6px',
+      'padding-left': kitPx('button.root.paddingX'),
+      'padding-top': kitPx('button.root.paddingY'),
+      'border-radius': kitPx('button.root.borderRadius'),
       'font-size': '14px',
-      gap: '7px',
+      gap: kitPx('button.root.gap'),
     });
     const sm = page.getByTestId('sc-btn-sm').locator('button');
     expect(await styleOf(sm, ['padding-left', 'padding-top', 'font-size'])).toEqual({
-      'padding-left': '8.75px',
-      'padding-top': '5.25px',
-      'font-size': '12px',
+      'padding-left': kitPx('button.root.sm.paddingX'),
+      'padding-top': kitPx('button.root.sm.paddingY'),
+      'font-size': kitPx('button.root.sm.fontSize'),
     });
     const lg = page.getByTestId('sc-btn-lg').locator('button');
     expect(await styleOf(lg, ['padding-left', 'padding-top', 'font-size'])).toEqual({
-      'padding-left': '12.25px',
-      'padding-top': '8.75px',
-      'font-size': '16px',
+      'padding-left': kitPx('button.root.lg.paddingX'),
+      'padding-top': kitPx('button.root.lg.paddingY'),
+      'font-size': kitPx('button.root.lg.fontSize'),
     });
     const iconOnly = page.getByTestId('sc-btn-icononly').locator('button');
-    expect((await styleOf(iconOnly, ['width']))['width']).toBe('35px');
+    expect((await styleOf(iconOnly, ['width']))['width']).toBe(kitPx('button.root.iconOnlyWidth'));
   });
 
   test('el resolver mapea iconos legacy pi a Material', async ({ page }) => {
@@ -275,29 +276,29 @@ test.describe('sc-skeleton', () => {
 });
 
 test.describe('sc-textarea', () => {
-  test('métrica de form field (10.5/7, radio 6, font 14; sm 12)', async ({ page }) => {
+  test('métrica de form field del Kit (font 14)', async ({ page }) => {
     await gotoPage(page, 'textarea');
     const ta = page.getByTestId('sc-textarea').locator('textarea');
     expect(await styleOf(ta, ['padding-left', 'padding-top', 'border-radius', 'font-size'])).toEqual({
-      'padding-left': '10.5px',
-      'padding-top': '7px',
-      'border-radius': '6px',
+      'padding-left': kitPx('formField.paddingX'),
+      'padding-top': kitPx('formField.paddingY'),
+      'border-radius': kitPx('formField.borderRadius'),
       'font-size': '14px',
     });
     const sm = page.getByTestId('sc-textarea-sm').locator('textarea');
-    expect((await styleOf(sm, ['font-size']))['font-size']).toBe('12px');
+    expect((await styleOf(sm, ['font-size']))['font-size']).toBe(kitPx('formField.sm.fontSize'));
     await screenshotBaseline(page, 'textarea');
   });
 });
 
 test.describe('sc-drawer', () => {
-  test('abre, renderiza cabecera del Kit (17.5, título 20/600) y cierra', async ({ page }) => {
+  test('abre, renderiza la cabecera con el relleno del Kit y cierra', async ({ page }) => {
     await gotoPage(page, 'drawer');
     await page.getByTestId('open-drawer').locator('button').click();
     const drawer = page.locator('.p-drawer');
     await expect(drawer).toBeVisible();
     const header = page.locator('.p-drawer-header');
-    expect((await styleOf(header, ['padding-left']))['padding-left']).toBe('17.5px');
+    expect((await styleOf(header, ['padding-left']))['padding-left']).toBe(kitPx('overlay.modal.padding'));
     const title = page.locator('.p-drawer-title');
     expect(await styleOf(title, ['font-size', 'font-weight'])).toEqual({
       'font-size': '20px',
@@ -400,8 +401,8 @@ test.describe('sc-inputgroup', () => {
     await gotoPage(page, 'inputgroup');
     const input = page.getByTestId('ig-input');
     expect(await styleOf(input, ['padding-left', 'padding-top', 'font-size'])).toEqual({
-      'padding-left': '10.5px',
-      'padding-top': '7px',
+      'padding-left': kitPx('formField.paddingX'),
+      'padding-top': kitPx('formField.paddingY'),
       'font-size': '14px',
     });
     await expect(page.getByTestId('sc-inputgroup').locator('.p-inputgroupaddon').first()).toBeVisible();
@@ -410,12 +411,12 @@ test.describe('sc-inputgroup', () => {
 });
 
 test.describe('sc-search', () => {
-  test('chrome del Kit: campo 10.5/7/6/14, icono lupa, clear y CVA', async ({ page }) => {
+  test('chrome del Kit: campo, icono lupa, clear y CVA', async ({ page }) => {
     await gotoPage(page, 'search');
     const input = page.getByTestId('sc-search').locator('input');
     expect(await styleOf(input, ['padding-top', 'border-radius', 'font-size'])).toEqual({
-      'padding-top': '7px',
-      'border-radius': '6px',
+      'padding-top': kitPx('formField.paddingY'),
+      'border-radius': kitPx('formField.borderRadius'),
       'font-size': '14px',
     });
     await expect(page.getByTestId('sc-search').locator('sc-icon').first()).toBeVisible();
@@ -430,8 +431,8 @@ test.describe('sc-datepicker', () => {
     await gotoPage(page, 'datepicker');
     const input = page.getByTestId('sc-datepicker').locator('input');
     expect(await styleOf(input, ['padding-top', 'border-radius', 'font-size'])).toEqual({
-      'padding-top': '7px',
-      'border-radius': '6px',
+      'padding-top': kitPx('formField.paddingY'),
+      'border-radius': kitPx('formField.borderRadius'),
       'font-size': '14px',
     });
     await expect(page.getByTestId('sc-datepicker-error').getByText('La fecha no es válida')).toBeVisible();
@@ -449,8 +450,8 @@ test.describe('sc-inputnumber', () => {
     await gotoPage(page, 'inputnumber');
     const input = page.getByTestId('sc-inputnumber').locator('input');
     expect(await styleOf(input, ['padding-top', 'border-radius', 'font-size'])).toEqual({
-      'padding-top': '7px',
-      'border-radius': '6px',
+      'padding-top': kitPx('formField.paddingY'),
+      'border-radius': kitPx('formField.borderRadius'),
       'font-size': '14px',
     });
     await expect(page.getByTestId('sc-inputnumber-error').getByText('Fuera de rango')).toBeVisible();
@@ -531,9 +532,9 @@ test.describe('sc-inputtext', () => {
     await gotoPage(page, 'inputtext');
     const input = page.getByTestId('sc-inputtext').locator('input');
     expect(await styleOf(input, ['padding-left', 'padding-top', 'border-radius', 'font-size'])).toEqual({
-      'padding-left': '10.5px',
-      'padding-top': '7px',
-      'border-radius': '6px',
+      'padding-left': kitPx('formField.paddingX'),
+      'padding-top': kitPx('formField.paddingY'),
+      'border-radius': kitPx('formField.borderRadius'),
       'font-size': '14px',
     });
     await input.fill('hola');
@@ -542,7 +543,7 @@ test.describe('sc-inputtext', () => {
     // ifta: label arriba-dentro del campo
     await expect(page.getByTestId('sc-inputtext-ifta').locator('.sc-inputtext__ifta-label')).toBeVisible();
     const sm = page.getByTestId('sc-inputtext-sm').locator('input');
-    expect((await styleOf(sm, ['font-size']))['font-size']).toBe('12px');
+    expect((await styleOf(sm, ['font-size']))['font-size']).toBe(kitPx('formField.sm.fontSize'));
     await screenshotBaseline(page, 'inputtext');
   });
 });
@@ -573,10 +574,10 @@ test.describe('sc-select', () => {
 });
 
 test.describe('sc-toggleswitch', () => {
-  test('métrica del Kit (35×21, handle 14), toggle y readonly', async ({ page }) => {
+  test('métrica del Kit, toggle y readonly', async ({ page }) => {
     await gotoPage(page, 'toggleswitch');
     const sw = page.getByTestId('sc-toggle').locator('.p-toggleswitch');
-    expect(await styleOf(sw, ['width', 'height'])).toEqual({ width: '35px', height: '21px' });
+    expect(await styleOf(sw, ['width', 'height'])).toEqual({ width: kitPx('toggleswitch.width'), height: kitPx('toggleswitch.height') });
     // toggle emite
     await sw.click();
     await expect(page.getByText('Estado: on')).toBeVisible();
