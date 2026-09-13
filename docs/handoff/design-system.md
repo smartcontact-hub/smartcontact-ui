@@ -76,6 +76,7 @@ Orca se cerraron en el #113; `agent-mini` entró en el CI; la doc, en su PR):
   computados. Hay que correr `npm run e2e` ENTERO en local — el preflight no lo incluye (DD-60).
 
 **Lo que deja el 2026-09-12 (la vuelta a las tablas, DD-72), medido y sin hacer:**
+- **Gate pendiente: la cabecera que se congela al cambiar de idioma.** `audit:datatables` §6 solo mira un `computed` llamado `columns` y solo en páginas con `<sc-datatable>`; el 2026-09-12 el fallo (`translate.instant` en un `computed` sin `currentLang`) estaba en CINCO, dos sin tabla. Hace falta un gate de toda la app, con parser de bloque y caso rojo.
 
 - **Lo que solo se puede tocar en Figma vive ahora en su propio fichero**:
   [`docs/figma-pendiente.md`](../figma-pendiente.md). Allí están la divergencia del título de sección
