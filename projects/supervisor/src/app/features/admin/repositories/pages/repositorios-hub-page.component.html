@@ -17,38 +17,24 @@
          encabezado nuevo—, así que sigue habiendo exactamente uno por documento. -->
     <h1 class="page__heading sc-text-h3-semibold">{{ 'sidebar.repositories' | translate }}</h1>
 
-    <div class="hub__categories">
-      @for (category of categories; track category.titleKey) {
-        <section class="hub__category">
-          <h2 class="hub__category-title sc-text-caption-semibold">{{ category.titleKey | translate }}</h2>
-          <div class="hub__group">
-            @for (item of category.items; track item.labelKey) {
-              <button
-                type="button"
-                class="hub-item"
-                [class.hub-item--disabled]="!item.ready"
-                [disabled]="!item.ready"
-                (click)="onItemClick(item)"
-              >
-                <span class="hub-item__icon" aria-hidden="true">
-                  <sc-icon [name]="item.icon" [size]="20" />
-                </span>
-                <span class="hub-item__text">
-                  <span class="hub-item__label sc-text-body-semibold">{{ item.labelKey | translate }}</span>
-                  <span class="hub-item__description sc-text-caption-regular">{{ item.descriptionKey | translate }}</span>
-                </span>
-                @if (item.ready) {
-                  <sc-icon class="hub-item__chevron" [name]="chevronIcon" size="inherit" />
-                } @else {
-                  <span class="hub-item__soon sc-text-caption-regular">
-                    {{ 'repositories.hub.coming_soon' | translate }}
-                  </span>
-                }
-              </button>
-            }
-          </div>
-        </section>
-      }
-    </div>
+    <!-- El Menu del DS en línea (DD-77): grupo, fila, hover, foco y teclado los pone el tema.
+         La plantilla `#item` es la de primeng.dev («Menu › Template»): la página solo aporta el
+         contenido de la fila. -->
+    <p-menu [model]="menu()" [style]="{ width: '100%' }" data-testid="repositorios-hub">
+      <!-- `data-pc-section="itemlink"` es la marca con la que el Menu reconoce SU enlace: con ella,
+           Enter pulsa este `<a>` y navega. Sin ella pulsaba el `<li>`, que no tiene manejador, y
+           Enter no hacía nada (medido 2026-09-13). -->
+      <ng-template #item let-item>
+        <a class="p-menu-item-link" data-pc-section="itemlink" [routerLink]="item.routerLink">
+          <span class="p-menu-item-icon" aria-hidden="true">
+            <sc-icon [name]="item.icon" size="inherit" />
+          </span>
+          <span class="hub-link__text">
+            <span class="sc-text-body-semibold">{{ item.label }}</span>
+            <span class="hub-link__description sc-text-caption-regular">{{ item.title }}</span>
+          </span>
+        </a>
+      </ng-template>
+    </p-menu>
   </div>
 </div>

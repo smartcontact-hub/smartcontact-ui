@@ -31,10 +31,10 @@
 
 **LO SIGUIENTE, en orden (Rafa, 2026-09-13: «automatizable, agéntico: no ir a mano salvo que sea necesario»):**
 
-1. **Lo que dejó el barrido (DD-77)**: el `badge`/botón `danger` del DS a 3.76:1 (decidir en el DS);
-   «Solo fallidas» es un filtro conmutable a mano; el hub de Repositorios es una FILA a mano entera (sin maqueta; la sonda solo ve su icono); y la sonda de
-   `hand-made-pieces` solo mira pastillas (cajas y filas a mano, sin contar). Figma pone el Tipo de
-   Agentes `Rounded=True` y Servicio/Grupo `False`: decidir uno para las categorías.
+1. **Lo que dejó el barrido (DD-77/78)**: «Solo fallidas» es un filtro conmutable hecho a mano, y la
+   sonda de `hand-made-pieces` solo mira pastillas (botones, cajas y filas a mano, sin contar): el
+   paso siguiente es ampliarla. Regla de Rafa para lo que dude: manda Aura en código y Figma se alinea.
+   `danger` a 3.76:1 = valor de Aura, aceptado (DD-78).
 2. **La cabecera fija de Conversaciones no fija** (ya antes de DD-76): `.table-card { overflow: hidden }`
    (`_sc-list-table.scss`). A 1280 las pastillas largas se salen de 122px.
 3. **sc-docs: ejemplos de primeng.dev dentro de `<sc-datatable>`**, la red de «la tabla perfecta»: pasa
@@ -143,8 +143,8 @@ Rafa, viéndolo en local: «me va gustando», «beben directamente del DS», «n
 **Lo que cambia.** Conversaciones sin piel propia (8/14, fila 44.5), anchos medidos y sin ⋮. Tipo,
 Estrategia, Servicio y Grupo usan `sc-tag` secundario, que baja a 1.75 de relleno (21.5, maestro
 `373:13337`). Doce sitios dejan la mono. La selección en oscuro de las 25 listas deja de salir clara.
-**Barrido (DD-77, rama `arebury/barrido-piezas-a-mano`)**: 140 pastillas a mano en 14 familias pasan a
-`sc-tag`/`sc-badge`; queda 1 familia, y `hand-made-pieces.spec.ts` impide que vuelvan.
+**Barrido (DD-77, #139) y hub (DD-78)**: 140 pastillas a mano pasan a `sc-tag`/`sc-badge`, el hub de
+Repositorios al `Menu` del DS, inventario de `hand-made-pieces` a CERO; Figma revinculado (Agentes ×3).
 
 **Lo que hay que recordar**, porque volverá a morder:
 
