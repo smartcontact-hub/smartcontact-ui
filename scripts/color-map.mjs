@@ -82,8 +82,7 @@ export const COLOR = [
   { mode: 'dark', exp: 'primary.color', token: null, kind: 'diverge', reason: 'primary dark blue-300 vs blue-400 del Kit: sobre blue-400 NINGÚN texto oscuro llega a AA (el negro puro topa en 3,74) y el blanco, que sí llega (5,62), deja la rampa sin hover ni active legales — aclarar sale de su ventana, oscurecer hunde el relleno bajo el 3:1 de 1.4.11. Un paso más claro cumple los dos criterios en los tres estados. DD-40. Revertir cuando el Kit suba su primary dark.' },
   { mode: 'dark', exp: 'primary.hover.color', token: null, kind: 'diverge', reason: 'blue-200 vs blue-300 del Kit — se mueve con la base (misma razón que primary.color). DD-40.' },
   { mode: 'dark', exp: 'primary.active.color', token: null, kind: 'diverge', reason: 'blue-100 vs blue-200 del Kit — se mueve con la base (misma razón que primary.color). DD-40.' },
-  { mode: 'dark', exp: 'surface.*', token: null, kind: 'diverge', reason: 'gray-* navy-tinted (el Kit usa zinc en dark) — paleta de marca SC' },
-  { mode: 'dark', exp: 'primary.contrast.color', token: null, kind: 'diverge', reason: 'texto sobre primario dark = gray-900 navy-tinted vs zinc-900 del Kit (misma divergencia que surface.*)' },
+  { mode: 'dark', exp: 'primary.contrast.color', token: null, kind: 'diverge', reason: 'texto OSCURO (zinc-900) sobre el primario dark vs el blanco del Kit: nuestro primario dark sube un paso por contraste (DD-40) y sobre blue-300 el blanco da 3,35:1, el zinc-900 5,29:1. Se revierte con el primario.' },
   { mode: 'light', exp: 'form.field.border.color', token: null, kind: 'diverge', reason: 'borde de input gray-200 (=content/overlay) vs Kit surface-300 — 1 paso, jerarquía propia' },
   { mode: 'light', exp: 'form.field.placeholder.color', token: null, kind: 'diverge', reason: 'placeholder gray-400 vs Kit surface-500 — un punto más tenue' },
   { mode: 'light', exp: 'form.field.disabled.color', token: null, kind: 'diverge', reason: 'disabled gray-300 vs Kit surface-500 — más tenue a propósito' },
@@ -94,7 +93,39 @@ export const COLOR = [
   // mano. La condición de reversión escrita entonces —«revertir cuando el Kit suba el suyo»— se
   // cumplió sola. Sus dos aliases (`list.option.group.color`, `navigation.submenu.label.color`) la siguen.
   { mode: 'light', exp: 'text.muted.color', token: 'sc-text-secondary', kind: 'enforce' },
-  { mode: 'dark', exp: 'overlay/content/form.field', token: null, kind: 'diverge', reason: 'resuelven vía capa 7 (.sc-dark, navy-tinted) — no se cruzan contra el zinc del Kit' },
+
+  // ── NEUTROS DEL MODO OSCURO = KIT (zinc), desde el 2026-09-13 ────────────────
+  //    Hasta hoy eran divergencia de marca («gray-* navy-tinted, el Kit usa zinc»), y de
+  //    ahí salían 262 de las 323 diferencias sin motivo escrito entre nuestro código y el
+  //    Kit en los 15 componentes del Supervisor (`tools/aura-diff.mjs`). Rafa eligió zinc,
+  //    que es lo que dicen Aura y el Kit, mirándolo lado a lado en sc-docs `/aura/oscuro`.
+  //    Las filas repiten las de claro, con una salvedad medida: en oscuro el Kit pone el
+  //    fondo de campo en zinc-950 (el del lienzo) y el de contenido en zinc-900, así que
+  //    `form.field.background` cuelga de `sc-bg-default`, no de `sc-bg-surface`.
+  ...SURFACE_STEPS.map((s) => ({
+    mode: 'dark',
+    exp: `surface.${s}`,
+    token: s === '0' ? 'sc-color-slate-0' : `sc-color-zinc-${s}`,
+    kind: 'enforce',
+  })),
+  { mode: 'dark', exp: 'content.background', token: 'sc-bg-surface', kind: 'enforce' },
+  { mode: 'dark', exp: 'content.border.color', token: 'sc-border-default', kind: 'enforce' },
+  { mode: 'dark', exp: 'content.color', token: 'sc-text-primary', kind: 'enforce' },
+  { mode: 'dark', exp: 'content.hover.background', token: 'sc-bg-secondary-hover', kind: 'enforce' },
+  { mode: 'dark', exp: 'text.color', token: 'sc-text-primary', kind: 'enforce' },
+  { mode: 'dark', exp: 'text.muted.color', token: 'sc-text-secondary', kind: 'enforce' },
+  { mode: 'dark', exp: 'form.field.background', token: 'sc-bg-default', kind: 'enforce' },
+  { mode: 'dark', exp: 'form.field.color', token: 'sc-text-primary', kind: 'enforce' },
+  { mode: 'dark', exp: 'form.field.hover.border.color', token: 'sc-border-strong', kind: 'enforce' },
+  { mode: 'dark', exp: 'form.field.disabled.background', token: 'sc-bg-disabled', kind: 'enforce' },
+  { mode: 'dark', exp: 'navigation.item.color', token: 'sc-text-primary', kind: 'enforce' },
+  { mode: 'dark', exp: 'navigation.item.active.background', token: 'sc-bg-secondary-hover', kind: 'enforce' },
+  { mode: 'dark', exp: 'list.option.color', token: 'sc-text-primary', kind: 'enforce' },
+  { mode: 'dark', exp: 'list.option.focus.background', token: 'sc-bg-secondary-hover', kind: 'enforce' },
+  { mode: 'dark', exp: 'overlay.modal.background', token: 'sc-bg-surface', kind: 'enforce' },
+  { mode: 'dark', exp: 'overlay.modal.border.color', token: 'sc-border-default', kind: 'enforce' },
+  { mode: 'dark', exp: 'overlay.popover.background', token: 'sc-bg-surface', kind: 'enforce' },
+  { mode: 'dark', exp: 'overlay.popover.border.color', token: 'sc-border-default', kind: 'enforce' },
 ];
 
 /** Filas que parity FUERZA (deben cuadrar 1:1 con el export). */

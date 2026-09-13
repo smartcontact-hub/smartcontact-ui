@@ -88,11 +88,10 @@ const ZONES = [
     header:
       '/* @sc-gen:semantic-color-dark — bloque GENERADO desde kit-export-dtcg.json por\n' +
       '   * `npm run tokens:import` (token-gen-color.mjs). NO editar a mano.\n' +
-      '   * HOY ESTÁ VACÍA A PROPÓSITO, y eso es un dato, no un descuido: el primary era lo\n' +
-      '   * único que el dark recibía del Kit, y desde DD-40 diverge por contraste. El dark\n' +
-      '   * es, por tanto, 100% curado a mano. La zona se queda porque el día que el Kit suba\n' +
-      '   * su primary dark basta con devolver esas filas a `enforce` en color-map.mjs y el\n' +
-      '   * puente vuelve a escribir aquí. */',
+      '   * Los NEUTROS del modo oscuro salen del Kit (zinc) desde el 2026-09-13; antes eran\n' +
+      '   * divergencia de marca y esta zona estaba vacía. El primary dark sigue a mano\n' +
+      '   * (DD-40, por contraste). Lo que el Kit no modela —texto sutil, iconos, diálogo—\n' +
+      '   * vive a mano ENCIMA de esta zona, en zinc y con su contraste medido. */',
   },
 ];
 
