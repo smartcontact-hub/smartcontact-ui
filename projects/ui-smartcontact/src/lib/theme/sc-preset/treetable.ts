@@ -73,7 +73,7 @@ import type { TreeTableDesignTokens } from '@primeuix/themes/types/treetable';
                 borderColor: "{surface.800}"
             },
             bodyCell: {
-                selectedBorderColor: "{primary.900}"
+                selectedBorderColor: "var(--sc-cmp-treetable-body-cell-selected-border-color)"
             }
         },
         light: {

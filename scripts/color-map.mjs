@@ -70,22 +70,30 @@ export const COLOR = [
   { mode: 'light', exp: 'overlay.popover.background', token: 'sc-bg-surface', kind: 'enforce' },
   { mode: 'light', exp: 'overlay.popover.border.color', token: 'sc-border-default', kind: 'enforce' },
 
-  // ── primary de marca (dark) — DIVERGE desde 2026-08-24 (DD-40) ────────────────
-  //    Era lo único 1:1 con el Kit en dark. Ya no: su rampa (blue-400/300/200) no
-  //    admite ningún texto legible en la BASE. Ver la razón larga en las filas de
-  //    abajo; con esto, el dark deja de recibir color del Kit por completo, y esa
-  //    pérdida se revierte el día que el Kit suba su primary dark.
+  // ── primary de marca (dark) = Kit, con el patrón de Aura en `sky` (DD-81) ──────
+  //    Aura pinta el primario oscuro CLARO con texto oscuro, y hover y pulsado aún más
+  //    claros, porque ese color también es texto (botón de texto, contornos, cursor)
+  //    sobre el fondo oscuro. Los pasos se eligen por CLARIDAD, no por número: el
+  //    esmeralda-400 de Aura (L77) es nuestro sky-300 (L76). Base 8,24:1, deshabilitado
+  //    3,77:1, como texto sobre zinc-900 8,24:1. Sustituye a DD-40 (azul 300 con texto
+  //    oscuro: deshabilitado a 2,73:1).
+  { mode: 'dark', exp: 'primary.color', token: 'sc-bg-primary', kind: 'enforce' },
+  { mode: 'dark', exp: 'primary.hover.color', token: 'sc-bg-primary-hover', kind: 'enforce' },
+  { mode: 'dark', exp: 'primary.active.color', token: 'sc-bg-primary-active', kind: 'enforce' },
+  { mode: 'dark', exp: 'primary.contrast.color', token: 'sc-text-on-primary', kind: 'enforce' },
+
+  // ── texto deshabilitado = Kit y Aura (`surface.500` claro, `surface.400` oscuro), DD-81 ──
+  //    Antes, en claro, «más tenue a propósito» (slate-300): 1,21:1 sobre el fondo de campo
+  //    deshabilitado, y en oscuro zinc-600 a 1,35:1. El texto no se leía. Ahora 2,20 y 4,07
+  //    (APCA pide Lc 30 a lo deshabilitado: Lc 37 y 42). WCAG 1.4.3 exime a lo inactivo.
+  { mode: 'light', exp: 'form.field.disabled.color', token: 'sc-text-disabled', kind: 'enforce' },
+  { mode: 'dark', exp: 'form.field.disabled.color', token: 'sc-text-disabled', kind: 'enforce' },
 
   // ── DIVERGENCIAS CONSCIENTES (opt-in) ─────────────────────────────────────────
   //    El generador NO las escribe; parity las informa (no fallan). Para divergir un
   //    color a propósito: mover su fila enforce a aquí (kind:'diverge', token:null, reason).
-  { mode: 'dark', exp: 'primary.color', token: null, kind: 'diverge', reason: 'primary dark blue-300 vs blue-400 del Kit: sobre blue-400 NINGÚN texto oscuro llega a AA (el negro puro topa en 3,74) y el blanco, que sí llega (5,62), deja la rampa sin hover ni active legales — aclarar sale de su ventana, oscurecer hunde el relleno bajo el 3:1 de 1.4.11. Un paso más claro cumple los dos criterios en los tres estados. DD-40. Revertir cuando el Kit suba su primary dark.' },
-  { mode: 'dark', exp: 'primary.hover.color', token: null, kind: 'diverge', reason: 'blue-200 vs blue-300 del Kit — se mueve con la base (misma razón que primary.color). DD-40.' },
-  { mode: 'dark', exp: 'primary.active.color', token: null, kind: 'diverge', reason: 'blue-100 vs blue-200 del Kit — se mueve con la base (misma razón que primary.color). DD-40.' },
-  { mode: 'dark', exp: 'primary.contrast.color', token: null, kind: 'diverge', reason: 'texto OSCURO (zinc-900) sobre el primario dark vs el blanco del Kit: nuestro primario dark sube un paso por contraste (DD-40) y sobre blue-300 el blanco da 3,35:1, el zinc-900 5,29:1. Se revierte con el primario.' },
   { mode: 'light', exp: 'form.field.border.color', token: null, kind: 'diverge', reason: 'borde de input gray-200 (=content/overlay) vs Kit surface-300 — 1 paso, jerarquía propia' },
   { mode: 'light', exp: 'form.field.placeholder.color', token: null, kind: 'diverge', reason: 'placeholder gray-400 vs Kit surface-500 — un punto más tenue' },
-  { mode: 'light', exp: 'form.field.disabled.color', token: null, kind: 'diverge', reason: 'disabled gray-300 vs Kit surface-500 — más tenue a propósito' },
   { mode: 'light', exp: 'overlay.select.background', token: null, kind: 'diverge', reason: '--sc-bg-elevated (elevación propia) vs Kit surface-0' },
   // `text.muted.color` FUE divergencia de marca desde julio (el Kit daba surface-500 = 2.95:1 sobre
   // blanco, bajo AA en sus 178 usos) y volvió a enforce el 2026-08-24: el sync del Theme Designer

@@ -31,7 +31,7 @@ export type ScMultiSelectDisplay = 'chip' | 'comma';
  *
  * Aligned 1:1 with Figma `Smart Contact Prime → ❖ MultiSelect` (canvas
  * 6738:22651): tokens `multiselect/*` mirror `select/*` exactly (border
- * slate-300, padding 10.5/7, shadow #1212170D, dropdown 35px slate-400).
+ * slate-300, padding 10/6, shadow #1212170D, dropdown 35px slate-400).
  * Sizes Sm/Lg use the same decimal Figma values as sc-inputtext/sc-select.
  *
  * Two display modes via `[display]`:

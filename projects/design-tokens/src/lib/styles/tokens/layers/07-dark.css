@@ -25,10 +25,12 @@
    *
    * `subtle` = zinc-400, el MISMO valor que `secondary`, a propósito: el Kit tiene dos
    * niveles de texto y nosotros tres, y entre zinc-400 (6,91:1 sobre zinc-900) y zinc-500
-   * (3,67:1) no hay ningún paso que pase AA. Sin crear variables, el escalón no cabe. */
+   * (3,67:1) no hay ningún paso que pase AA. Sin crear variables, el escalón no cabe.
+   *
+   * `disabled` ya no vive aquí: desde DD-81 es el zinc-400 del Kit y de Aura y lo escribe
+   * el generador. El zinc-600 de antes daba 1,35:1 sobre el campo deshabilitado. */
   --sc-text-heading: var(--sc-color-slate-0);
   --sc-text-subtle: var(--sc-color-zinc-400);
-  --sc-text-disabled: var(--sc-color-zinc-600);
   --sc-text-inverse: var(--sc-color-zinc-900);
 
   /* ---------- Semantic · Text de color ----------
@@ -54,18 +56,8 @@
   --sc-text-warning: var(--sc-color-yellow-600);
   --sc-text-danger: var(--sc-color-red-400);
   --sc-text-violet: var(--sc-color-violet-400);
-  /* En dark el botón primary es navy CLARO → el texto encima va OSCURO (zinc-900).
-   * El Kit pone blanco, que funciona sobre SU primario (blue-400, 5,62:1) pero no sobre
-   * el nuestro, un paso más claro por DD-40 (3,35:1). Por eso sigue siendo `diverge`.
-   *
-   * Aquí vivió durante meses una frase FALSA que bloqueó el arreglo: decía que
-   * «ni gray-900 ni blanco llegan a AA sobre blue-400». La primera mitad es
-   * cierta y va más lejos de lo que decía (ningún texto oscuro llega: el negro
-   * puro topa en 3,74). La segunda es falsa: el blanco da 5,62 y cumple. Lo que
-   * de verdad impedía usarlo era el hover/active, no la base — el razonamiento
-   * completo está donde ahora se decide, junto a `--sc-bg-primary` (DD-40).
-   * Medido, no deducido: si vuelves a tocar este par, mídelo tú también. */
-  --sc-text-on-primary: var(--sc-color-zinc-900);
+  /* `--sc-text-on-primary` ya no vive aquí: desde DD-81 es el zinc-900 del Kit y de Aura
+   * (texto oscuro sobre el primario claro) y lo escribe el generador. */
   --sc-text-on-secondary: var(--sc-color-zinc-50);
   --sc-text-on-accent: var(--sc-color-zinc-950);
 
@@ -78,39 +70,31 @@
   --sc-bg-subtle-hover: var(--sc-color-blue-800);
   --sc-bg-subtle-active: var(--sc-color-blue-700);
 
-  /* Primary (brand) dark — DIVERGENCIA CONSCIENTE, un paso más claro que el Kit.
-   * Escrito A MANO (el generador no lo escribe: su fila es `diverge`). DD-40.
+  /* Primary dark — DD-81: sale del Kit (zona generada de abajo) con el patrón de Aura en
+   * `sky`: base sky-300, hover sky-200, pulsado sky-100, texto zinc-900. Aura lo pinta
+   * claro porque ese color también es TEXTO sobre el fondo oscuro (botón de texto,
+   * contornos, cursor), no solo relleno. Los pasos van por claridad, no por número:
+   * el esmeralda-400 de Aura (L77) es nuestro sky-300 (L76).
    *
-   * El Kit exporta blue-400/300/200 y sobre su BASE no se puede leer nada: con
-   * `slate-900` da 3,01:1, y no es cuestión de oscurecer más el texto — sobre
-   * blue-400 el NEGRO PURO topa en 3,74. El blanco sí llega (5,62), pero entonces
-   * no hay hover ni active posibles: aclarar sale de la ventana en la que el
-   * blanco cumple, y oscurecer mete el relleno por debajo del 3:1 que 1.4.11 pide
-   * contra el lienzo. Con la rampa del Kit, el par no tiene solución.
+   *              texto zinc-900   deshabilitado (0,6)   como texto sobre zinc-900
+   *   base            8,24              3,77                    8,24
+   *   hover          10,97
+   *   pulsado        14,00
    *
-   * Subiendo un paso, con el mismo `--sc-text-on-primary` oscuro, cumplen los dos
-   * criterios los tres estados — y de paso suben los usos de `--sc-bg-primary`
-   * que no son relleno (borde, caret, accent-color, focusBorderColor), que
-   * estaban en la raya de 1.4.11:
-   *
-   *              texto    relleno vs superficie   (sobre zinc-900 desde 2026-09-13;
-   *   base       5,29         5,29                  con el gris de marca eran
-   *   hover      8,42         8,42                  5,05 / 8,03 / 11,89)
-   *   active    12,46        12,46
-   *
-   * Se revierte a `enforce` en scripts/color-map.mjs el día que el Kit suba su
-   * primary dark. Lo durable es pedírselo al Kit; esto es el puente hasta que
-   * llegue. */
-  --sc-bg-primary: var(--sc-color-blue-300);
-  --sc-bg-primary-hover: var(--sc-color-blue-200);
-  --sc-bg-primary-active: var(--sc-color-blue-100);
+   * Sustituye a DD-40 (azul 300 con texto oscuro), cuyo deshabilitado daba 2,73:1. */
 
   /* @sc-gen:semantic-color-dark — bloque GENERADO desde kit-export-dtcg.json por
    * `npm run tokens:import` (token-gen-color.mjs). NO editar a mano.
    * Los NEUTROS del modo oscuro salen del Kit (zinc) desde el 2026-09-13; antes eran
-   * divergencia de marca y esta zona estaba vacía. El primary dark sigue a mano
-   * (DD-40, por contraste). Lo que el Kit no modela —texto sutil, iconos, diálogo—
+   * divergencia de marca y esta zona estaba vacía. El primario oscuro (sky, patrón de
+   * Aura) y el texto deshabilitado, también, desde DD-81. Lo que el Kit no modela
+   * —texto sutil, iconos, diálogo—
    * vive a mano ENCIMA de esta zona, en zinc y con su contraste medido. */
+  --sc-bg-primary: var(--sc-color-sky-300);
+  --sc-bg-primary-hover: var(--sc-color-sky-200);
+  --sc-bg-primary-active: var(--sc-color-sky-100);
+  --sc-text-on-primary: var(--sc-color-zinc-900);
+  --sc-text-disabled: var(--sc-color-zinc-400);
   --sc-bg-surface: var(--sc-color-zinc-900);
   --sc-border-default: var(--sc-color-zinc-700);
   --sc-text-primary: var(--sc-color-slate-0);
@@ -201,8 +185,9 @@
   --sc-cmp-button-contrast-active-border-color: var(--sc-color-zinc-200);
   --sc-cmp-button-contrast-border-color: var(--sc-color-slate-0);
   --sc-cmp-button-contrast-focus-ring-color: var(--sc-color-slate-0);
-  --sc-cmp-button-outlined-primary-hover-background: color-mix(in srgb, var(--sc-color-emerald-400) 4%, transparent);
-  --sc-cmp-button-outlined-primary-active-background: color-mix(in srgb, var(--sc-color-emerald-400) 16%, transparent);
+  --sc-cmp-button-outlined-primary-hover-background: color-mix(in srgb, var(--sc-color-sky-300) 4%, transparent);
+  --sc-cmp-button-outlined-primary-active-background: color-mix(in srgb, var(--sc-color-sky-300) 16%, transparent);
+  --sc-cmp-button-outlined-primary-border-color: var(--sc-color-sky-600);
   --sc-cmp-button-outlined-secondary-hover-background: color-mix(in srgb, var(--sc-color-slate-0) 4%, transparent);
   --sc-cmp-button-outlined-secondary-active-background: color-mix(in srgb, var(--sc-color-slate-0) 16%, transparent);
   --sc-cmp-button-outlined-success-color: var(--sc-color-green-400);
@@ -225,8 +210,8 @@
   --sc-cmp-button-outlined-danger-border-color: var(--sc-color-red-700);
   --sc-cmp-button-outlined-contrast-color: var(--sc-color-slate-0);
   --sc-cmp-button-outlined-plain-color: var(--sc-color-slate-0);
-  --sc-cmp-button-text-primary-hover-background: color-mix(in srgb, var(--sc-color-emerald-400) 4%, transparent);
-  --sc-cmp-button-text-primary-active-background: color-mix(in srgb, var(--sc-color-emerald-400) 16%, transparent);
+  --sc-cmp-button-text-primary-hover-background: color-mix(in srgb, var(--sc-color-sky-300) 4%, transparent);
+  --sc-cmp-button-text-primary-active-background: color-mix(in srgb, var(--sc-color-sky-300) 16%, transparent);
   --sc-cmp-button-text-success-color: var(--sc-color-green-400);
   --sc-cmp-button-text-success-hover-background: color-mix(in srgb, var(--sc-color-green-400) 4%, transparent);
   --sc-cmp-button-text-success-active-background: color-mix(in srgb, var(--sc-color-green-400) 16%, transparent);
@@ -251,6 +236,7 @@
   --sc-cmp-colorpicker-handle-color: var(--sc-color-slate-0);
   --sc-cmp-datepicker-today-color: var(--sc-color-slate-0);
   --sc-cmp-datatable-border-color: var(--sc-color-zinc-800);
+  --sc-cmp-datatable-body-cell-selected-border-color: var(--sc-color-sky-700);
   --sc-cmp-galleria-thumbnail-nav-button-hover-color: var(--sc-color-slate-0);
   --sc-cmp-inputnumber-button-background: transparent;
   --sc-cmp-message-info-background: color-mix(in srgb, var(--sc-color-sky-300) 16%, transparent);
@@ -296,7 +282,8 @@
   --sc-cmp-progressspinner-color-three: var(--sc-color-green-400);
   --sc-cmp-progressspinner-color-four: var(--sc-color-yellow-400);
   --sc-cmp-skeleton-background: color-mix(in srgb, var(--sc-color-slate-0) 6%, transparent);
-  --sc-cmp-tag-primary-background: color-mix(in srgb, var(--sc-color-emerald-500) 16%, transparent);
+  --sc-cmp-tag-primary-background: color-mix(in srgb, var(--sc-color-sky-400) 16%, transparent);
+  --sc-cmp-tag-primary-color: var(--sc-color-sky-200);
   --sc-cmp-tag-success-background: color-mix(in srgb, var(--sc-color-green-500) 16%, transparent);
   --sc-cmp-tag-success-color: var(--sc-color-green-300);
   --sc-cmp-tag-info-color: var(--sc-color-sky-300);
@@ -345,6 +332,7 @@
   --sc-cmp-tooltip-background: var(--sc-color-zinc-700);
   --sc-cmp-tooltip-color: var(--sc-color-slate-0);
   --sc-cmp-treetable-border-color: var(--sc-color-zinc-800);
+  --sc-cmp-treetable-body-cell-selected-border-color: var(--sc-color-sky-700);
   /* @sc-gen:cmp-color-dark:end */
 
   /* Borde de info en OSCURO — a mano, y por eso está fuera de la zona.

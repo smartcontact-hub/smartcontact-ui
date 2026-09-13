@@ -48,7 +48,7 @@ export class BreadcrumbDemoComponent {
     tag: 'sc-breadcrumb',
     title: 'Breadcrumb',
     description:
-      'Migas de pan: dónde estás en la jerarquía. Wrapper de <p-breadcrumb> con modelo MenuItem[] + inicio, tokenizado al DS (item muted → hover, separador, anillo electric-blue). Primer componente traído por el puente Figma→código.',
+      'Migas de pan: dónde estás en la jerarquía. Wrapper de <p-breadcrumb> con modelo MenuItem[] + inicio, tokenizado al DS (item muted → hover, separador, anillo sky). Primer componente traído por el puente Figma→código.',
     argTypes: [],
     defaultArgs: {},
     props: [

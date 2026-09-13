@@ -567,10 +567,10 @@
       "background-color": "rgba(0, 0, 0, 0)"
     },
     "sc-bulkedit > div.bulk-edit > p-button > button.p-ripple": {
-      "padding-top": "5.25px",
-      "padding-right": "8.75px",
-      "padding-bottom": "5.25px",
-      "padding-left": "8.75px",
+      "padding-top": "3.5px",
+      "padding-right": "7px",
+      "padding-bottom": "3.5px",
+      "padding-left": "7px",
       "gap": "7px",
       "min-height": "0px",
       "border-radius": "6px",
@@ -795,9 +795,9 @@
       "background-color": "rgba(0, 0, 0, 0)"
     },
     "sc-btn-icononly > p-button > button.p-ripple": {
-      "padding-top": "7px",
+      "padding-top": "5.25px",
       "padding-right": "0px",
-      "padding-bottom": "7px",
+      "padding-bottom": "5.25px",
       "padding-left": "0px",
       "gap": "0px",
       "min-height": "0px",
@@ -827,10 +827,10 @@
       "background-color": "rgba(0, 0, 0, 0)"
     },
     "sc-btn-legacy-icon > p-button > button.p-ripple": {
-      "padding-top": "7px",
-      "padding-right": "10.5px",
-      "padding-bottom": "7px",
-      "padding-left": "10.5px",
+      "padding-top": "5.25px",
+      "padding-right": "8.75px",
+      "padding-bottom": "5.25px",
+      "padding-left": "8.75px",
       "gap": "7px",
       "min-height": "0px",
       "border-radius": "6px",
@@ -859,10 +859,10 @@
       "background-color": "rgba(0, 0, 0, 0)"
     },
     "sc-btn-lg > p-button > button.p-ripple": {
-      "padding-top": "8.75px",
-      "padding-right": "12.25px",
-      "padding-bottom": "8.75px",
-      "padding-left": "12.25px",
+      "padding-top": "7px",
+      "padding-right": "10.5px",
+      "padding-bottom": "7px",
+      "padding-left": "10.5px",
       "gap": "7px",
       "min-height": "0px",
       "border-radius": "6px",
@@ -891,10 +891,10 @@
       "background-color": "rgba(0, 0, 0, 0)"
     },
     "sc-btn-md > p-button > button.p-ripple": {
-      "padding-top": "7px",
-      "padding-right": "10.5px",
-      "padding-bottom": "7px",
-      "padding-left": "10.5px",
+      "padding-top": "5.25px",
+      "padding-right": "8.75px",
+      "padding-bottom": "5.25px",
+      "padding-left": "8.75px",
       "gap": "7px",
       "min-height": "0px",
       "border-radius": "6px",
@@ -923,10 +923,10 @@
       "background-color": "rgba(0, 0, 0, 0)"
     },
     "sc-btn-sm > p-button > button.p-ripple": {
-      "padding-top": "5.25px",
-      "padding-right": "8.75px",
-      "padding-bottom": "5.25px",
-      "padding-left": "8.75px",
+      "padding-top": "3.5px",
+      "padding-right": "7px",
+      "padding-bottom": "3.5px",
+      "padding-left": "7px",
       "gap": "7px",
       "min-height": "0px",
       "border-radius": "6px",
@@ -2651,10 +2651,10 @@
       "background-color": "rgba(0, 0, 0, 0)"
     },
     "sc-datepicker > p-datepicker.sc-datepicker__control > input.p-datepicker-input": {
-      "padding-top": "7px",
-      "padding-right": "35px",
-      "padding-bottom": "7px",
-      "padding-left": "10.5px",
+      "padding-top": "5.25px",
+      "padding-right": "31.5px",
+      "padding-bottom": "5.25px",
+      "padding-left": "8.75px",
       "gap": "normal",
       "min-height": "auto",
       "border-radius": "6px",
@@ -2699,10 +2699,10 @@
       "background-color": "rgba(0, 0, 0, 0)"
     },
     "sc-datepicker-error > p-datepicker.sc-datepicker__control > input.p-datepicker-input": {
-      "padding-top": "7px",
-      "padding-right": "35px",
-      "padding-bottom": "7px",
-      "padding-left": "10.5px",
+      "padding-top": "5.25px",
+      "padding-right": "31.5px",
+      "padding-bottom": "5.25px",
+      "padding-left": "8.75px",
       "gap": "normal",
       "min-height": "auto",
       "border-radius": "6px",
@@ -2747,10 +2747,10 @@
       "background-color": "rgba(0, 0, 0, 0)"
     },
     "sc-datepicker-invalid > p-datepicker.sc-datepicker__control > input.p-datepicker-input": {
-      "padding-top": "7px",
-      "padding-right": "35px",
-      "padding-bottom": "7px",
-      "padding-left": "10.5px",
+      "padding-top": "5.25px",
+      "padding-right": "31.5px",
+      "padding-bottom": "5.25px",
+      "padding-left": "8.75px",
       "gap": "normal",
       "min-height": "auto",
       "border-radius": "6px",
@@ -2795,10 +2795,10 @@
       "background-color": "rgba(0, 0, 0, 0)"
     },
     "sc-datepicker-rango > p-datepicker.sc-datepicker__control > input.p-datepicker-input": {
-      "padding-top": "7px",
-      "padding-right": "35px",
-      "padding-bottom": "7px",
-      "padding-left": "10.5px",
+      "padding-top": "5.25px",
+      "padding-right": "31.5px",
+      "padding-bottom": "5.25px",
+      "padding-left": "8.75px",
       "gap": "normal",
       "min-height": "auto",
       "border-radius": "6px",
@@ -3185,10 +3185,10 @@
       "background-color": "rgba(0, 0, 0, 0)"
     },
     "sc-dangerzone > section.danger-zone > p-button > button.p-ripple": {
-      "padding-top": "8.75px",
-      "padding-right": "12.25px",
-      "padding-bottom": "8.75px",
-      "padding-left": "12.25px",
+      "padding-top": "7px",
+      "padding-right": "10.5px",
+      "padding-bottom": "7px",
+      "padding-left": "10.5px",
       "gap": "7px",
       "min-height": "0px",
       "border-radius": "6px",
@@ -3497,10 +3497,10 @@
   },
   "inputgroup": {
     "ig-input": {
-      "padding-top": "7px",
-      "padding-right": "10.5px",
-      "padding-bottom": "7px",
-      "padding-left": "10.5px",
+      "padding-top": "5.25px",
+      "padding-right": "8.75px",
+      "padding-bottom": "5.25px",
+      "padding-left": "8.75px",
       "gap": "normal",
       "min-height": "auto",
       "border-radius": "0px",
@@ -3545,10 +3545,10 @@
       "background-color": "rgba(0, 0, 0, 0)"
     },
     "sc-inputgroup > p-inputgroup.sc-inputgroup__inner > input.p-component": {
-      "padding-top": "7px",
-      "padding-right": "10.5px",
-      "padding-bottom": "7px",
-      "padding-left": "10.5px",
+      "padding-top": "5.25px",
+      "padding-right": "8.75px",
+      "padding-bottom": "5.25px",
+      "padding-left": "8.75px",
       "gap": "normal",
       "min-height": "auto",
       "border-radius": "0px",
@@ -3627,10 +3627,10 @@
       "background-color": "rgba(0, 0, 0, 0)"
     },
     "sc-inputnumber > div.sc-inputnumber__field > input.sc-inputnumber__control": {
-      "padding-top": "7px",
-      "padding-right": "10.5px",
-      "padding-bottom": "7px",
-      "padding-left": "10.5px",
+      "padding-top": "5.25px",
+      "padding-right": "8.75px",
+      "padding-bottom": "5.25px",
+      "padding-left": "8.75px",
       "gap": "normal",
       "min-height": "auto",
       "border-radius": "6px",
@@ -3675,10 +3675,10 @@
       "background-color": "rgba(0, 0, 0, 0)"
     },
     "sc-inputnumber-error > div.sc-inputnumber__field > input.sc-inputnumber__control": {
-      "padding-top": "7px",
-      "padding-right": "10.5px",
-      "padding-bottom": "7px",
-      "padding-left": "10.5px",
+      "padding-top": "5.25px",
+      "padding-right": "8.75px",
+      "padding-bottom": "5.25px",
+      "padding-left": "8.75px",
       "gap": "normal",
       "min-height": "auto",
       "border-radius": "6px",
@@ -3741,10 +3741,10 @@
       "background-color": "rgba(0, 0, 0, 0)"
     },
     "sc-inputtext > div.sc-inputtext__field > input.sc-inputtext__control": {
-      "padding-top": "7px",
-      "padding-right": "10.5px",
-      "padding-bottom": "7px",
-      "padding-left": "10.5px",
+      "padding-top": "5.25px",
+      "padding-right": "8.75px",
+      "padding-bottom": "5.25px",
+      "padding-left": "8.75px",
       "gap": "normal",
       "min-height": "auto",
       "border-radius": "6px",
@@ -3789,10 +3789,10 @@
       "background-color": "rgba(0, 0, 0, 0)"
     },
     "sc-inputtext-error > div.sc-inputtext__field > input.sc-inputtext__control": {
-      "padding-top": "7px",
-      "padding-right": "10.5px",
-      "padding-bottom": "7px",
-      "padding-left": "10.5px",
+      "padding-top": "5.25px",
+      "padding-right": "8.75px",
+      "padding-bottom": "5.25px",
+      "padding-left": "8.75px",
       "gap": "normal",
       "min-height": "auto",
       "border-radius": "6px",
@@ -3838,9 +3838,9 @@
     },
     "sc-inputtext-ifta > div.sc-inputtext__field > input.sc-inputtext__control": {
       "padding-top": "21px",
-      "padding-right": "10.5px",
+      "padding-right": "8.75px",
       "padding-bottom": "7px",
-      "padding-left": "10.5px",
+      "padding-left": "8.75px",
       "gap": "normal",
       "min-height": "auto",
       "border-radius": "6px",
@@ -4893,10 +4893,10 @@
       "background-color": "rgba(0, 0, 0, 0)"
     },
     "sc-search > p-iconfield.sc-search__field > input.sc-search__control": {
-      "padding-top": "7px",
+      "padding-top": "5.25px",
       "padding-right": "36.25px",
-      "padding-bottom": "7px",
-      "padding-left": "35px",
+      "padding-bottom": "5.25px",
+      "padding-left": "31.5px",
       "gap": "normal",
       "min-height": "0px",
       "border-radius": "6px",
@@ -5425,10 +5425,10 @@
       "background-color": "rgba(0, 0, 0, 0)"
     },
     "sc-select > div.sc-select__field > p-select.sc-select__control > span.p-placeholder": {
-      "padding-top": "7px",
-      "padding-right": "10.5px",
-      "padding-bottom": "7px",
-      "padding-left": "10.5px",
+      "padding-top": "5.25px",
+      "padding-right": "8.75px",
+      "padding-bottom": "5.25px",
+      "padding-left": "8.75px",
       "gap": "normal",
       "min-height": "auto",
       "border-radius": "0px",
@@ -5505,10 +5505,10 @@
       "background-color": "rgba(0, 0, 0, 0)"
     },
     "sc-select-empty > div.sc-select__field > p-select.sc-select__control > span.p-select-label": {
-      "padding-top": "7px",
-      "padding-right": "10.5px",
-      "padding-bottom": "7px",
-      "padding-left": "10.5px",
+      "padding-top": "5.25px",
+      "padding-right": "8.75px",
+      "padding-bottom": "5.25px",
+      "padding-left": "8.75px",
       "gap": "normal",
       "min-height": "auto",
       "border-radius": "0px",
@@ -5585,10 +5585,10 @@
       "background-color": "rgba(0, 0, 0, 0)"
     },
     "sc-select-error > div.sc-select__field > p-select.sc-select__control > span.p-select-label": {
-      "padding-top": "7px",
-      "padding-right": "10.5px",
-      "padding-bottom": "7px",
-      "padding-left": "10.5px",
+      "padding-top": "5.25px",
+      "padding-right": "8.75px",
+      "padding-bottom": "5.25px",
+      "padding-left": "8.75px",
       "gap": "normal",
       "min-height": "auto",
       "border-radius": "0px",
@@ -5665,10 +5665,10 @@
       "background-color": "rgba(0, 0, 0, 0)"
     },
     "sc-select-filter > div.sc-select__field > p-select.sc-select__control > span.p-placeholder": {
-      "padding-top": "7px",
-      "padding-right": "10.5px",
-      "padding-bottom": "7px",
-      "padding-left": "10.5px",
+      "padding-top": "5.25px",
+      "padding-right": "8.75px",
+      "padding-bottom": "5.25px",
+      "padding-left": "8.75px",
       "gap": "normal",
       "min-height": "auto",
       "border-radius": "0px",
@@ -5745,10 +5745,10 @@
       "background-color": "rgba(0, 0, 0, 0)"
     },
     "sc-select-filterby > div.sc-select__field > p-select.sc-select__control > span.p-placeholder": {
-      "padding-top": "7px",
-      "padding-right": "10.5px",
-      "padding-bottom": "7px",
-      "padding-left": "10.5px",
+      "padding-top": "5.25px",
+      "padding-right": "8.75px",
+      "padding-bottom": "5.25px",
+      "padding-left": "8.75px",
       "gap": "normal",
       "min-height": "auto",
       "border-radius": "0px",
@@ -5825,10 +5825,10 @@
       "background-color": "rgba(0, 0, 0, 0)"
     },
     "sc-select-invalid > div.sc-select__field > p-select.sc-select__control > span.p-placeholder": {
-      "padding-top": "7px",
-      "padding-right": "10.5px",
-      "padding-bottom": "7px",
-      "padding-left": "10.5px",
+      "padding-top": "5.25px",
+      "padding-right": "8.75px",
+      "padding-bottom": "5.25px",
+      "padding-left": "8.75px",
       "gap": "normal",
       "min-height": "auto",
       "border-radius": "0px",
@@ -5905,10 +5905,10 @@
       "background-color": "rgba(0, 0, 0, 0)"
     },
     "sc-select-optdisabled > div.sc-select__field > p-select.sc-select__control > span.p-placeholder": {
-      "padding-top": "7px",
-      "padding-right": "10.5px",
-      "padding-bottom": "7px",
-      "padding-left": "10.5px",
+      "padding-top": "5.25px",
+      "padding-right": "8.75px",
+      "padding-bottom": "5.25px",
+      "padding-left": "8.75px",
       "gap": "normal",
       "min-height": "auto",
       "border-radius": "0px",
@@ -5985,10 +5985,10 @@
       "background-color": "rgba(0, 0, 0, 0)"
     },
     "sc-select-readonly > div.sc-select__field > p-select.sc-select__control > span.p-select-label": {
-      "padding-top": "7px",
-      "padding-right": "10.5px",
-      "padding-bottom": "7px",
-      "padding-left": "10.5px",
+      "padding-top": "5.25px",
+      "padding-right": "8.75px",
+      "padding-bottom": "5.25px",
+      "padding-left": "8.75px",
       "gap": "normal",
       "min-height": "auto",
       "border-radius": "0px",
@@ -6145,10 +6145,10 @@
       "background-color": "rgba(0, 0, 0, 0)"
     },
     "sc-select-tmpl > div.sc-select__field > p-select.sc-select__control > span.p-placeholder": {
-      "padding-top": "7px",
-      "padding-right": "10.5px",
-      "padding-bottom": "7px",
-      "padding-left": "10.5px",
+      "padding-top": "5.25px",
+      "padding-right": "8.75px",
+      "padding-bottom": "5.25px",
+      "padding-left": "8.75px",
       "gap": "normal",
       "min-height": "auto",
       "border-radius": "0px",
@@ -6553,10 +6553,10 @@
       "background-color": "rgba(0, 0, 0, 0)"
     },
     "sc-textarea > textarea.p-component": {
-      "padding-top": "7px",
-      "padding-right": "10.5px",
-      "padding-bottom": "7px",
-      "padding-left": "10.5px",
+      "padding-top": "5.25px",
+      "padding-right": "8.75px",
+      "padding-bottom": "5.25px",
+      "padding-left": "8.75px",
       "gap": "normal",
       "min-height": "0px",
       "border-radius": "6px",
@@ -6585,10 +6585,10 @@
       "background-color": "rgba(0, 0, 0, 0)"
     },
     "sc-textarea-sm > textarea.p-component": {
-      "padding-top": "5.25px",
-      "padding-right": "8.75px",
-      "padding-bottom": "5.25px",
-      "padding-left": "8.75px",
+      "padding-top": "3.5px",
+      "padding-right": "7px",
+      "padding-bottom": "3.5px",
+      "padding-left": "7px",
       "gap": "normal",
       "min-height": "0px",
       "border-radius": "6px",
