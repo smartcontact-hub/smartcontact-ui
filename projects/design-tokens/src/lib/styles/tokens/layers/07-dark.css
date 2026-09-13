@@ -201,8 +201,9 @@
   --sc-cmp-button-contrast-active-border-color: var(--sc-color-zinc-200);
   --sc-cmp-button-contrast-border-color: var(--sc-color-slate-0);
   --sc-cmp-button-contrast-focus-ring-color: var(--sc-color-slate-0);
-  --sc-cmp-button-outlined-primary-hover-background: color-mix(in srgb, var(--sc-color-emerald-400) 4%, transparent);
-  --sc-cmp-button-outlined-primary-active-background: color-mix(in srgb, var(--sc-color-emerald-400) 16%, transparent);
+  --sc-cmp-button-outlined-primary-hover-background: color-mix(in srgb, var(--sc-color-sky-300) 4%, transparent);
+  --sc-cmp-button-outlined-primary-active-background: color-mix(in srgb, var(--sc-color-sky-300) 16%, transparent);
+  --sc-cmp-button-outlined-primary-border-color: var(--sc-color-sky-600);
   --sc-cmp-button-outlined-secondary-hover-background: color-mix(in srgb, var(--sc-color-slate-0) 4%, transparent);
   --sc-cmp-button-outlined-secondary-active-background: color-mix(in srgb, var(--sc-color-slate-0) 16%, transparent);
   --sc-cmp-button-outlined-success-color: var(--sc-color-green-400);
@@ -225,8 +226,8 @@
   --sc-cmp-button-outlined-danger-border-color: var(--sc-color-red-700);
   --sc-cmp-button-outlined-contrast-color: var(--sc-color-slate-0);
   --sc-cmp-button-outlined-plain-color: var(--sc-color-slate-0);
-  --sc-cmp-button-text-primary-hover-background: color-mix(in srgb, var(--sc-color-emerald-400) 4%, transparent);
-  --sc-cmp-button-text-primary-active-background: color-mix(in srgb, var(--sc-color-emerald-400) 16%, transparent);
+  --sc-cmp-button-text-primary-hover-background: color-mix(in srgb, var(--sc-color-sky-300) 4%, transparent);
+  --sc-cmp-button-text-primary-active-background: color-mix(in srgb, var(--sc-color-sky-300) 16%, transparent);
   --sc-cmp-button-text-success-color: var(--sc-color-green-400);
   --sc-cmp-button-text-success-hover-background: color-mix(in srgb, var(--sc-color-green-400) 4%, transparent);
   --sc-cmp-button-text-success-active-background: color-mix(in srgb, var(--sc-color-green-400) 16%, transparent);
@@ -251,6 +252,7 @@
   --sc-cmp-colorpicker-handle-color: var(--sc-color-slate-0);
   --sc-cmp-datepicker-today-color: var(--sc-color-slate-0);
   --sc-cmp-datatable-border-color: var(--sc-color-zinc-800);
+  --sc-cmp-datatable-body-cell-selected-border-color: var(--sc-color-sky-700);
   --sc-cmp-galleria-thumbnail-nav-button-hover-color: var(--sc-color-slate-0);
   --sc-cmp-inputnumber-button-background: transparent;
   --sc-cmp-message-info-background: color-mix(in srgb, var(--sc-color-sky-300) 16%, transparent);
@@ -296,7 +298,8 @@
   --sc-cmp-progressspinner-color-three: var(--sc-color-green-400);
   --sc-cmp-progressspinner-color-four: var(--sc-color-yellow-400);
   --sc-cmp-skeleton-background: color-mix(in srgb, var(--sc-color-slate-0) 6%, transparent);
-  --sc-cmp-tag-primary-background: color-mix(in srgb, var(--sc-color-emerald-500) 16%, transparent);
+  --sc-cmp-tag-primary-background: color-mix(in srgb, var(--sc-color-sky-400) 16%, transparent);
+  --sc-cmp-tag-primary-color: var(--sc-color-sky-200);
   --sc-cmp-tag-success-background: color-mix(in srgb, var(--sc-color-green-500) 16%, transparent);
   --sc-cmp-tag-success-color: var(--sc-color-green-300);
   --sc-cmp-tag-info-color: var(--sc-color-sky-300);
@@ -345,6 +348,7 @@
   --sc-cmp-tooltip-background: var(--sc-color-zinc-700);
   --sc-cmp-tooltip-color: var(--sc-color-slate-0);
   --sc-cmp-treetable-border-color: var(--sc-color-zinc-800);
+  --sc-cmp-treetable-body-cell-selected-border-color: var(--sc-color-sky-700);
   /* @sc-gen:cmp-color-dark:end */
 
   /* Borde de info en OSCURO — a mano, y por eso está fuera de la zona.

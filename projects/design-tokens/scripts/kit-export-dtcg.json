@@ -2699,19 +2699,19 @@
           "hover": {
             "background": {
               "$type": "color",
-              "$value": "#34d3990a"
+              "$value": "#7db3ff0a"
             }
           },
           "active": {
             "background": {
               "$type": "color",
-              "$value": "#34d39929"
+              "$value": "#7db3ff29"
             }
           },
           "border": {
             "color": {
               "$type": "color",
-              "$value": "{primary.700}"
+              "$value": "{sky.600}"
             }
           }
         },
@@ -2917,13 +2917,13 @@
           "hover": {
             "background": {
               "$type": "color",
-              "$value": "#34d3990a"
+              "$value": "#7db3ff0a"
             }
           },
           "active": {
             "background": {
               "$type": "color",
-              "$value": "#34d39929"
+              "$value": "#7db3ff29"
             }
           }
         },
@@ -3206,7 +3206,7 @@
             "border": {
               "color": {
                 "$type": "color",
-                "$value": "{primary.900}"
+                "$value": "{sky.700}"
               }
             }
           }
@@ -3703,11 +3703,11 @@
       "primary": {
         "background": {
           "$type": "color",
-          "$value": "#10b98129"
+          "$value": "#4a8fff29"
         },
         "color": {
           "$type": "color",
-          "$value": "{primary.300}"
+          "$value": "{sky.200}"
         }
       },
       "secondary": {
@@ -4192,7 +4192,7 @@
             "border": {
               "color": {
                 "$type": "color",
-                "$value": "{primary.900}"
+                "$value": "{sky.700}"
               }
             }
           }
@@ -5980,7 +5980,7 @@
     "highlight": {
       "background": {
         "$type": "color",
-        "$value": "#34d39929"
+        "$value": "#7db3ff29"
       },
       "color": {
         "$type": "color",
@@ -5989,7 +5989,7 @@
       "focus": {
         "background": {
           "$type": "color",
-          "$value": "#34d3993d"
+          "$value": "#7db3ff3d"
         },
         "color": {
           "$type": "color",
@@ -6196,24 +6196,24 @@
     "primary": {
       "color": {
         "$type": "color",
-        "$value": "{primary.400}"
+        "$value": "{sky.300}"
       },
       "contrast": {
         "color": {
           "$type": "color",
-          "$value": "#ffffffff"
+          "$value": "{surface.900}"
         }
       },
       "hover": {
         "color": {
           "$type": "color",
-          "$value": "{primary.300}"
+          "$value": "{sky.200}"
         }
       },
       "active": {
         "color": {
           "$type": "color",
-          "$value": "{primary.200}"
+          "$value": "{sky.100}"
         }
       }
     },
@@ -6730,11 +6730,11 @@
         "padding": {
           "x": {
             "$type": "number",
-            "$value": "{scale.0-75}"
+            "$value": 10
           },
           "y": {
             "$type": "number",
-            "$value": "{scale.0-5}"
+            "$value": 6
           }
         },
         "sm": {
@@ -6747,11 +6747,11 @@
           "padding": {
             "x": {
               "$type": "number",
-              "$value": "{scale.0-625}"
+              "$value": 8
             },
             "y": {
               "$type": "number",
-              "$value": "{scale.0-375}"
+              "$value": 4
             }
           }
         },
@@ -6765,11 +6765,11 @@
           "padding": {
             "x": {
               "$type": "number",
-              "$value": "{scale.0-875}"
+              "$value": 12
             },
             "y": {
               "$type": "number",
-              "$value": "{scale.0-625}"
+              "$value": 8
             }
           }
         }
@@ -6857,7 +6857,7 @@
       "item": {
         "gap": {
           "$type": "number",
-          "$value": "{scale.0-5}"
+          "$value": 8
         },
         "padding": {
           "y": {
@@ -6931,7 +6931,7 @@
       "popover": {
         "padding": {
           "$type": "number",
-          "$value": "{scale.0-75}"
+          "$value": 10
         },
         "border": {
           "radius": {
@@ -6943,7 +6943,7 @@
       "modal": {
         "padding": {
           "$type": "number",
-          "$value": "{scale.1-25}"
+          "$value": 18
         },
         "border": {
           "radius": {
@@ -7776,7 +7776,7 @@
     "button": {
       "gap": {
         "$type": "number",
-        "$value": "{scale.0-5}"
+        "$value": 8
       },
       "border": {
         "radius": {
@@ -7788,7 +7788,7 @@
         "border": {
           "radius": {
             "$type": "number",
-            "$value": "{scale.2}"
+            "$value": 32
           }
         }
       },
@@ -7806,7 +7806,7 @@
         "only": {
           "width": {
             "$type": "number",
-            "$value": "{scale.2-5}"
+            "$value": 36
           }
         }
       },
@@ -8264,11 +8264,11 @@
     "checkbox": {
       "width": {
         "$type": "number",
-        "$value": "{scale.1-25}"
+        "$value": 18
       },
       "height": {
         "$type": "number",
-        "$value": "{scale.1-25}"
+        "$value": 18
       },
       "background": {
         "$type": "color",
@@ -8377,7 +8377,7 @@
       "icon": {
         "size": {
           "$type": "number",
-          "$value": "{scale.0-875}"
+          "$value": 12
         },
         "color": {
           "$type": "color",
@@ -8404,7 +8404,7 @@
         "sm": {
           "size": {
             "$type": "number",
-            "$value": "{scale.0-75}"
+            "$value": 10
           }
         },
         "lg": {
@@ -8427,18 +8427,18 @@
       "lg": {
         "width": {
           "$type": "number",
-          "$value": "{scale.1-5}"
+          "$value": 20
         },
         "height": {
           "$type": "number",
-          "$value": "{scale.1-5}"
+          "$value": 20
         }
       }
     },
     "chip": {
       "gap": {
         "$type": "number",
-        "$value": "{scale.0-5}"
+        "$value": 6
       },
       "icon": {
         "size": {
@@ -8479,11 +8479,11 @@
       "padding": {
         "x": {
           "$type": "number",
-          "$value": "{scale.0-75}"
+          "$value": 10
         },
         "y": {
           "$type": "number",
-          "$value": "{scale.0-5}"
+          "$value": 6
         }
       },
       "image": {
@@ -8859,7 +8859,7 @@
         },
         "padding": {
           "$type": "number",
-          "$value": "{scale.0-375}"
+          "$value": 4
         },
         "border": {
           "radius": {
@@ -8871,7 +8871,7 @@
       "dropdown": {
         "width": {
           "$type": "number",
-          "$value": "{scale.2-5}"
+          "$value": 36
         },
         "hover": {
           "border": {
@@ -8989,7 +8989,7 @@
       "title": {
         "gap": {
           "$type": "number",
-          "$value": "{scale.0-5}"
+          "$value": 8
         },
         "font": {
           "weight": {
@@ -9022,7 +9022,7 @@
         "day": {
           "padding": {
             "$type": "number",
-            "$value": "{scale.0-25}"
+            "$value": 4
           },
           "color": {
             "$type": "color",
@@ -9051,7 +9051,7 @@
         },
         "padding": {
           "$type": "number",
-          "$value": "{scale.0-25}"
+          "$value": 4
         },
         "hover": {
           "background": {
@@ -9138,7 +9138,7 @@
         "picker": {
           "gap": {
             "$type": "number",
-            "$value": "{scale.0-5}"
+            "$value": 8
           },
           "border": {
             "color": {
@@ -9149,7 +9149,7 @@
           "button": {
             "gap": {
               "$type": "number",
-              "$value": "{scale.0-25}"
+              "$value": 2
             }
           },
           "padding": {
@@ -9175,7 +9175,7 @@
       "month": {
         "padding": {
           "$type": "number",
-          "$value": "{scale.0-375}"
+          "$value": 4
         },
         "border": {
           "radius": {
@@ -10009,7 +10009,7 @@
         },
         "gap": {
           "$type": "number",
-          "$value": "{scale.0-5}"
+          "$value": 8
         }
       },
       "title": {
@@ -10027,7 +10027,7 @@
       "footer": {
         "gap": {
           "$type": "number",
-          "$value": "{scale.0-5}"
+          "$value": 6
         },
         "padding": {
           "top": {
@@ -12369,7 +12369,7 @@
       "content": {
         "gap": {
           "$type": "number",
-          "$value": "{scale.0-5}"
+          "$value": 8
         },
         "lg": {
           "padding": {
@@ -12437,7 +12437,7 @@
       "icon": {
         "size": {
           "$type": "number",
-          "$value": "{scale.1-125}"
+          "$value": 16
         },
         "sm": {
           "size": {
@@ -12448,7 +12448,7 @@
         "lg": {
           "size": {
             "$type": "number",
-            "$value": "{scale.1-25}"
+            "$value": 18
           }
         }
       },
@@ -12456,11 +12456,11 @@
         "button": {
           "width": {
             "$type": "number",
-            "$value": "{scale.1-75}"
+            "$value": 24
           },
           "height": {
             "$type": "number",
-            "$value": "{scale.1-75}"
+            "$value": 24
           },
           "border": {
             "radius": {
@@ -12489,13 +12489,13 @@
           "sm": {
             "size": {
               "$type": "number",
-              "$value": "{scale.0-875}"
+              "$value": 12
             }
           },
           "lg": {
             "size": {
               "$type": "number",
-              "$value": "{scale.1-125}"
+              "$value": 16
             }
           }
         }
@@ -12597,7 +12597,7 @@
         },
         "gap": {
           "$type": "number",
-          "$value": "{scale.0-5}"
+          "$value": 8
         },
         "focus": {
           "background": {
@@ -12763,7 +12763,7 @@
       "dropdown": {
         "width": {
           "$type": "number",
-          "$value": "{scale.2-5}"
+          "$value": 36
         },
         "color": {
           "$type": "color",
@@ -13915,7 +13915,7 @@
       "dropdown": {
         "width": {
           "$type": "number",
-          "$value": "{scale.2-5}"
+          "$value": 36
         },
         "color": {
           "$type": "color",
@@ -14072,11 +14072,11 @@
         "gutter": {
           "start": {
             "$type": "number",
-            "$value": "{scale.neg-0-375}"
+            "$value": -4
           },
           "end": {
             "$type": "number",
-            "$value": "{scale.0-375}"
+            "$value": 4
           }
         }
       },
@@ -14684,7 +14684,7 @@
     "tag": {
       "gap": {
         "$type": "number",
-        "$value": "{scale.0-25}"
+        "$value": 4
       },
       "font": {
         "size": {
@@ -14713,7 +14713,7 @@
       "icon": {
         "size": {
           "$type": "number",
-          "$value": "{scale.0-75}"
+          "$value": 10
         }
       },
       "padding": {
@@ -15158,7 +15158,7 @@
     "toast": {
       "width": {
         "$type": "number",
-        "$value": "{scale.25}"
+        "$value": 352
       },
       "border": {
         "radius": {
@@ -15173,7 +15173,7 @@
       "icon": {
         "size": {
           "$type": "number",
-          "$value": "{scale.1-125}"
+          "$value": 16
         }
       },
       "content": {
@@ -15183,7 +15183,7 @@
         },
         "gap": {
           "$type": "number",
-          "$value": "{scale.0-5}"
+          "$value": 8
         }
       },
       "summary": {
@@ -15214,11 +15214,11 @@
         "button": {
           "width": {
             "$type": "number",
-            "$value": "{scale.1-75}"
+            "$value": 24
           },
           "height": {
             "$type": "number",
-            "$value": "{scale.1-75}"
+            "$value": 24
           },
           "border": {
             "radius": {
@@ -15249,7 +15249,7 @@
       "text": {
         "gap": {
           "$type": "number",
-          "$value": "{scale.0-5}"
+          "$value": 4
         }
       }
     },
@@ -15838,11 +15838,11 @@
     "toggleswitch": {
       "width": {
         "$type": "number",
-        "$value": "{scale.2-5}"
+        "$value": 36
       },
       "height": {
         "$type": "number",
-        "$value": "{scale.1-5}"
+        "$value": 22
       },
       "border": {
         "radius": {
@@ -15860,7 +15860,7 @@
       },
       "gap": {
         "$type": "number",
-        "$value": "{scale.0-25}"
+        "$value": 4
       },
       "hover": {
         "border": {
@@ -15927,12 +15927,12 @@
       "max": {
         "width": {
           "$type": "number",
-          "$value": "{scale.12-5}"
+          "$value": 200
         }
       },
       "gutter": {
         "$type": "number",
-        "$value": "{scale.0-25}"
+        "$value": 4
       },
       "padding": {
         "y": {
