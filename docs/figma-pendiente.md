@@ -29,6 +29,21 @@ actualizaciones pendientes desaparece. (Qué ficheros la tienen activada no lo h
 
 ---
 
+## 2 · Lo que Config cambió en código y Figma aún no sabe (2026-09-13)
+
+**Estado:** pendiente de decidir, una a una: bajarla al Kit o revertirla en código · **Sin
+verificar** contra el fichero del DS: sale de la sesión de `/config/aed/*`, medido en código.
+
+- **Pastillas (`sc-tag`, `sc-chip`) sin punto y a 600.** Decisión de Rafa: en una pastilla tintada el
+  color ya está en el fondo y en el texto. El Kit sigue dibujando el punto y el peso 500.
+- **`--sc-text-heading`** (slate-800 en claro, slate-0 en oscuro) para títulos de sección: existe
+  solo en código. En Figma haría falta la variable y atarla al título.
+- **Tarjetas de opción (`sc-option-cards`)** en Servicio en lugar del modal de Figma `103:2718`.
+- **Etiqueta IFTA (dentro del campo) a 600**, y el **interruptor a la derecha** en la lista de
+  ajustes de Grupos (a la izquierda en General y Agentes: va donde van los controles de su patrón).
+
+---
+
 ## Cerrado
 
 - ~~**El título del componente `Section` a `Heading/h3-semibold`**~~ → **HECHO el 2026-09-13**

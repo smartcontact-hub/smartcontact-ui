@@ -134,6 +134,7 @@ export class SelectDemoComponent {
       { name: 'filter', type: 'boolean', default: 'false', description: 'Buscador dentro del panel.' },
       { name: 'filled', type: 'boolean', default: 'false', description: 'Fondo slate-50.' },
       { name: 'iftaLabel', type: 'boolean', default: 'false', description: 'Label dentro del campo.' },
+      { name: 'appendTo', type: "'body' | 'self'", default: "'body'", description: 'Dónde se abre la lista. En `body` no la recorta una tarjeta o un diálogo con `overflow: hidden`; `self` la deja dentro del componente.' },
       { name: 'disabled', type: 'boolean', default: 'false' },
       { name: 'loading', type: 'boolean', default: 'false', description: 'Spinner de carga.' },
       { name: 'focused', type: 'EventEmitter<FocusEvent>' },

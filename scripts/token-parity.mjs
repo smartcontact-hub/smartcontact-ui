@@ -156,6 +156,11 @@ function loadPreset() {
     cache.set(file, mod);
     const requireShim = (s) => {
       if (s.startsWith('.')) return load(s);
+      // Aura es la BASE del preset desde 2026-09-13 (`definePreset(Aura, …)` en
+      // `sc-preset/index.ts`). Se carga el paquete real, así que lo que se compara con
+      // el Kit es el preset FUSIONADO, el que llega al navegador. Solo estos dos: otro
+      // import de paquete sigue siendo un aviso de runtime nuevo.
+      if (s === '@primeuix/themes' || s === '@primeuix/themes/aura') return require_(s);
       throw new Error(`Import no-relativo inesperado en el preset: ${s} (¿import de runtime nuevo?)`);
     };
     new Function('require', 'module', 'exports', js)(requireShim, mod, mod.exports);

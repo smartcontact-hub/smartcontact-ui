@@ -203,65 +203,46 @@ sc-datatable .p-datatable-tbody > tr > td {
 }
 `;
 
+/* La banda de «caption» VACÍA no es diseño, es un arreglo: PrimeNG la pinta siempre,
+ * aunque no se proyecte nada, y deja una franja en blanco sobre la cabecera. Vive fuera de
+ * la piel de listado para que el experimento «Aura de base» —que aparta esa piel— no la
+ * resucite (medido el 2026-09-13 en `/admin/usuarios`: la franja reapareció al quitarla). */
+const emptyCaptionCss = () => `
+sc-datatable .p-datatable-header:empty {
+    display: none;
+}
+`;
+
 const LIST = "sc-datatable.sc-datatable--list";
 
-const listTableCss = () => `
+/*
+ * TABLAS DE LISTADO SOBRE AURA (2026-09-13): el ASPECTO de la tabla es el de Aura
+ * (cabecera, rellenos, bordes, colores). De la piel de listado que teníamos solo se quedan
+ * sus COMPORTAMIENTOS, que Aura no trae o trae distinto y que las 25 tablas del Supervisor
+ * dan por hechos:
+ *
+ *   1. Las columnas no se recolocan al aparecer el indicador de orden (`fixed`).
+ *   2. La celda es el ancla de los paneles que cuelgan de una fila (editor en línea).
+ *   3. Solo las filas pulsables o seleccionables reaccionan al pasar el ratón.
+ *   4. La fila seleccionada se distingue, en gris neutro: aquí se selecciona para actuar
+ *      EN LOTE, no para marcar «la fila activa».
+ *   5. La fila de «sin resultados» no es una fila de datos: sin fondo ni raya.
+ */
+const listBehaviorCss = () => `
 ${LIST} .p-datatable-table {
-    /* "fixed", no "auto": con "auto" el reparto pasa a ser por CONTENIDO y las
-       columnas se recolocan al aparecer el indicador de orden. */
     table-layout: fixed;
 }
 
-${LIST} .p-datatable-header:empty {
-    /* PrimeNG pinta SIEMPRE la banda de "caption", aunque no se proyecte nada
-       en "[scTableCaption]": deja una franja vacía sobre la cabecera. Estas
-       listas llevan su toolbar fuera de la tarjeta. */
-    display: none;
-}
-
-${LIST} .p-datatable-thead > tr > th {
-    /* TIPOGRAFIA POR ROL, no por numero suelto. Antes: 12px con peso 500, y el
-       500 NO es el peso de ninguno de los 12 text styles (solo hay 400 y 600),
-       asi que la cabecera no era ningun estilo: era un valor a mano que
-       coincidia en tamano con caption. Ahora ES Caption/caption-semibold, o
-       sea que si Figma remapea ese estilo, esto lo sigue solo.
-       El padding horizontal sube a spacing-1 y DEBE coincidir con el de la
-       celda, o las columnas dejan de alinearse. */
-    padding: var(--sc-spacing-0-875) var(--sc-spacing-1);
-    background: var(--sc-bg-surface);
-    border-bottom: 1px solid var(--sc-border-default);
-    font-size: var(--sc-font-size-caption);
-    line-height: var(--sc-line-height-caption);
-    font-weight: var(--sc-font-weight-semibold);
-    letter-spacing: 0;
-    color: var(--sc-text-secondary);
-    text-align: left;
-}
-
 ${LIST} .p-datatable-tbody > tr > td {
-    /* LA CELDA NO TENIA ESTILO DE TEXTO. Medido el 2026-09-11 en
-       /admin/usuarios: el td rendia 16px/24 (el tamano por defecto del
-       navegador, heredado porque el body del supervisor solo fija
-       line-height 1.5) y cada pagina lo corregia DENTRO de la celda pegando
-       una clase (104 repartidas por las listas). Donde faltaba la clase, el
-       texto salia a 16. Ahora la celda ES Body/body-regular (14/20) y la clase
-       de dentro solo hace falta cuando el texto quiere SALIRSE del cuerpo
-       (caption, o semibold).
-       El padding vertical sube a spacing-1-25 a proposito: con letra de 14 en
-       vez de 16 la fila encogia de 53 a 44.5 y quedaba apretada; asi queda en
-       55, que respira mas que antes y con el tipo ya correcto. */
-    padding: var(--sc-spacing-1-25) var(--sc-spacing-1);
-    font-size: var(--sc-font-size-body-2);
-    line-height: var(--sc-line-height-body-2);
-    font-weight: var(--sc-font-weight-regular);
-    border-bottom: 1px solid var(--sc-border-default);
-    /* Bloque contenedor para los paneles anclados a una fila (el editor inline
-       cuelga de su celda). Sin esto el panel se ancla al viewport. */
     position: relative;
 }
 
 ${LIST} .p-datatable-tbody > tr {
     transition: background var(--sc-transition-fast) var(--sc-easing-default);
+}
+
+${LIST} .p-datatable-tbody > tr.sc-row--clickable {
+    cursor: pointer;
 }
 
 ${LIST} .p-datatable-tbody > tr.sc-row--clickable:hover,
@@ -274,18 +255,10 @@ ${LIST} .p-datatable-tbody > tr:not(.sc-row--clickable):not(.p-selectable-row):h
 }
 
 ${LIST} .p-datatable-tbody > tr.p-datatable-row-selected {
-    /* Gris neutro, no el resaltado azul de PrimeNG: aquí la selección es para
-       actuar EN LOTE, no para marcar «la fila activa». */
     background: var(--sc-color-slate-100);
 }
 
-${LIST} .p-datatable-tbody > tr.sc-row--clickable {
-    cursor: pointer;
-}
-
 ${LIST} .p-datatable-tbody > tr:has(> td[colspan]) {
-    /* La fila vacía (búsqueda sin resultados) se proyecta vía "[scTableEmpty]"
-       y no lleva hairline: no es una fila de datos. */
     background: none;
 }
 
@@ -429,7 +402,8 @@ ${controlRule(lgControlSelectors, dt, "app.typography.lg.font.size", fromDesignP
 }
 
 ${baseTableCss()}
-${listTableCss()}
+${emptyCaptionCss()}
+${listBehaviorCss()}
 
 ${buttonMotionCss()}
 

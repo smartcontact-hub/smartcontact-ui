@@ -24,9 +24,15 @@
   gap: var(--sc-spacing-0-5);
   cursor: pointer;
   user-select: none;
-  font-size: var(--sc-font-size-200);
-  line-height: 1.5;
-  color: var(--sc-text-secondary);
+  /* El ROL `body-2`, no dos valores sueltos. `line-height: 1.5` daba 21px contra
+   * los 20 de `.sc-text-body-regular`, así que una etiqueta de casilla y un texto
+   * del mismo tamaño a su lado no compartían línea base y la fila crecía 1px
+   * (medido 2026-09-12, build local: 21 vs 20). Y el color sube a `primary`: en
+   * `secondary` la etiqueta se leía MÁS CLARA que el resto del texto de 14px de la
+   * misma pantalla, con el mismo tamaño y el mismo peso — 4.52:1 contra 6.95:1. */
+  font-size: var(--sc-font-size-body-2);
+  line-height: var(--sc-line-height-body-2);
+  color: var(--sc-text-primary);
 
   &--disabled {
     cursor: not-allowed;

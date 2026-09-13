@@ -184,6 +184,21 @@ export default {
   semantic: {
     primary: ramp('blue'),
     iconSize: 'var(--sc-cmp-icon-size)',
+    /*
+     * `lineHeight: 'inherit'` DEVUELVE LA HERENCIA que había antes de Aura (2026-09-13).
+     * PrimeNG pone en la raíz de TODOS sus componentes
+     * `.p-component { line-height: var(--p-typography-line-height) }`. Sin Aura esa variable
+     * no existía, el valor salía inválido y cada componente heredaba el de su página. Aura
+     * la define a `1.5`, que en el Supervisor no se nota (su body ya va a 1.5) pero en sc-docs
+     * movió 15 componentes de 20px a 21px, medido por `component-styles`.
+     * Cómo funciona: `inherit` en una variable declarada en `:root` no tiene de quién
+     * heredar, así que la variable queda sin valor y `var()` vuelve a ser inválido, que es
+     * justo el estado de antes. Los tamaños de letra de Aura SÍ se quedan: esos arreglaban
+     * menús y desplegables que se abrían a 16px en el `<body>`.
+     */
+    typography: {
+      lineHeight: 'inherit',
+    },
     focusRing: {
       // Divergencia consciente vs Kit (navy, width 1): electric-blue mas ancho por
       // contraste a11y — customs-catalog §1.1.

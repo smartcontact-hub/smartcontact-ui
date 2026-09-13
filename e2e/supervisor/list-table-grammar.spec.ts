@@ -27,6 +27,13 @@ import { disableAnimations, forceLightTheme, goto } from './helpers';
  *
  * Si este test se pone rojo tras actualizar PrimeNG, la piel necesita nuevos
  * selectores — no bajes los números.
+ *
+ * ⚠️ 2026-09-13: LOS NÚMEROS CAMBIARON A PROPÓSITO, y no por PrimeNG. Rafa decidió que
+ * Aura sea la base del tema («usemos Aura tal cual», y tras verlo: «me gusta, lo
+ * aplicamos, para todo el supervisor»). La tabla deja de tener piel propia: la cabecera,
+ * el padding y el alto de fila son los de Aura (primeng.dev/table). Lo que `variant="list"`
+ * sigue imponiendo es COMPORTAMIENTO: reparto fijo, casilla de 40, sin banda de caption,
+ * cursor en la fila que abre. Eso no se ha movido y aquí sigue fijado igual.
  */
 
 test.use({ storageState: { cookies: [], origins: [] } });
@@ -54,25 +61,28 @@ test.beforeEach(async ({ page }) => {
  * Agentes y grupos no se mueven: ahí manda el avatar (37px), no el kebab.
  * En ninguno de los dos pasos se recortó el botón para salvar el número: la app bebe
  * del DS, y el DS bebe del Kit.
+ *   53 → 44.5  2026-09-13, Aura como base: la celda pasa de 12.25 a 8 de padding.
+ *              27.5 del kebab + 8×2 + 1 de raya = 44.5 (44 en local, 45 en otra carga).
+ *              Con avatar: 37 + 8×2 + 1 = 54.
  */
 const PAGINAS = [
-  { ruta: 'admin/labels', nombre: 'labels', altoFila: 63.5 },
-  { ruta: 'admin/plantillas', nombre: 'plantillas', altoFila: 63.5 },
-  { ruta: 'admin/usuarios', nombre: 'usuarios', altoFila: 63.5 },
-  { ruta: 'admin/agentes', nombre: 'agentes', altoFila: 73 },
-  { ruta: 'admin/grupos', nombre: 'grupos', altoFila: 73 },
+  { ruta: 'admin/labels', nombre: 'labels', altoFila: 44.5 },
+  { ruta: 'admin/plantillas', nombre: 'plantillas', altoFila: 44.5 },
+  { ruta: 'admin/usuarios', nombre: 'usuarios', altoFila: 44.5 },
+  { ruta: 'admin/agentes', nombre: 'agentes', altoFila: 54 },
+  { ruta: 'admin/grupos', nombre: 'grupos', altoFila: 54 },
   // El trío de memory, migrado el 2026-07-19. Entraron aquí en el MISMO
   // commit que la migración, y eso no es formalismo: sin esta línea el spec
   // pasaba en verde sin visitar la página, y el "108/108" que traían los
   // informes de migración no probaba nada sobre lo migrado.
-  { ruta: 'conversaciones/reglas', nombre: 'reglas', altoFila: 63.5 },
-  { ruta: 'conversaciones/categorias', nombre: 'categorias', altoFila: 63.5 },
-  { ruta: 'conversaciones/entidades', nombre: 'entidades', altoFila: 63.5 },
+  { ruta: 'conversaciones/reglas', nombre: 'reglas', altoFila: 44.5 },
+  { ruta: 'conversaciones/categorias', nombre: 'categorias', altoFila: 44.5 },
+  { ruta: 'conversaciones/entidades', nombre: 'entidades', altoFila: 44.5 },
   /* Una de las NUEVE páginas de repositorios, que comparten `repo-list-page`.
    * No estaba ninguna: `audit:datatables` lo destapó al no encontrar su ruta.
    * Con una basta —las nueve son el mismo componente— pero sin ninguna, la
    * tabla más reutilizada de la app era la única sin vigilar. */
-  { ruta: 'admin/agendas', nombre: 'agendas', altoFila: 63.5 },
+  { ruta: 'admin/agendas', nombre: 'agendas', altoFila: 44.5 },
 ] as const;
 
 /** Las tablas cuya fila ABRE algo tienen que anunciarlo con el cursor. */
@@ -97,9 +107,10 @@ const ABREN_MODAL = new Set([
   'conversaciones/entidades',
 ]);
 
-/** El contrato, medido sobre la tabla original antes de migrarla (B4). */
+/** El contrato. Medido sobre la tabla original antes de migrarla (B4), y vuelto a medir
+ * el 2026-09-13 con Aura como base: padding y cabecera son ya los de Aura. */
 const GRAMATICA = {
-  paddingCelda: '17.5px', // --sc-spacing-1-25
+  paddingCelda: '8px', // Aura `datatable.body.cell.padding` (0.5rem)
   /* La celda ES un text style desde 2026-09-12. Se fija aquí porque era
    * justo lo que NADIE miraba: el `<td>` no declaraba tipografía y rendía a
    * 16/24 —el tamaño por defecto del navegador—, y cada página lo tapaba por
@@ -111,13 +122,12 @@ const GRAMATICA = {
     fontWeight: '400', // --sc-font-weight-regular
   },
   cabecera: {
-    fontSize: '12px', // --sc-font-size-caption
+    fontSize: '14px', // Aura: la cabecera escribe a tamaño de texto
     fontWeight: '600', // --sc-font-weight-semibold
-    // slate-600 desde 2026-07-19. Era slate-500 `rgb(143,151,163)` y daba
-    // 2.95:1 — bajo AA. Ver customs-catalog §1.5. Si esto vuelve al valor
-    // anterior, es que `tokens:import` pisó la divergencia.
-    color: 'rgb(111, 119, 132)', // --sc-text-secondary
-    padding: '12.25px',
+    // El color del texto (`{text.color}` de Aura → nuestro slate-700). Hasta el
+    // 2026-09-13 era slate-600 secundario, que ya daba AA; este da más.
+    color: 'rgb(79, 86, 99)',
+    padding: '8px', // Aura `datatable.header.cell.padding` (0.5rem)
   },
   anchoCasilla: 40,
   tableLayout: 'fixed',
@@ -224,13 +234,13 @@ const PAGINAS_EN_FORMULARIO = [
      * estable, y además es el que dice qué abre. */
     abrirAcordeon: 'button[aria-controls="agent-acc-templates-body"]',
     nombre: 'plantillas del agente',
-    altoFila: 56,
+    altoFila: 37, // 56 hasta Aura (2026-09-13): 20 de línea + 8×2 + 1
   },
   {
     ruta: 'admin/agentes/editar/1',
     seccion: 'Grupos asignados',
     nombre: 'grupos del agente',
-    altoFila: 69,
+    altoFila: 50, // 69 hasta Aura (2026-09-13): 19 menos, el padding de la celda
   },
   {
     ruta: 'admin/grupos/editar/1',
@@ -240,8 +250,9 @@ const PAGINAS_EN_FORMULARIO = [
      * hermanos tenían su propia copia y no diferían solo en color: la de aquí
      * llevaba menos padding y otro radio. Ahora miden LO MISMO que su gemelo de
      * arriba (69), que es exactamente lo que se buscaba — son la misma cosa vista
-     * desde cada lado. Si esto vuelve a divergir, mira `_channel-chip.scss`. */
-    altoFila: 69,
+     * desde cada lado. Si esto vuelve a divergir, mira `_channel-chip.scss`.
+     * 69 → 50 el 2026-09-13 con Aura, igual que su gemelo. */
+    altoFila: 50,
   },
 ] as const;
 

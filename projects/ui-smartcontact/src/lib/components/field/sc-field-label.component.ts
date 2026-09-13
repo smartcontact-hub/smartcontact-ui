@@ -22,7 +22,7 @@ import { ChangeDetectionStrategy, Component, computed, input } from '@angular/co
   selector: 'sc-field-label',
   standalone: true,
   template: `
-    <label [class]="labelClass()" [attr.for]="for()">
+    <label [class]="labelClass()" [attr.for]="for()" [attr.id]="labelId()">
       {{ text() }}
       @if (required()) {
         <span [class]="requiredClass()" aria-hidden="true">*</span>
@@ -39,6 +39,9 @@ export class ScFieldLabelComponent {
   readonly required = input(false);
   /** `id` del control al que apunta la etiqueta. */
   readonly for = input<string>();
+  /** `id` PROPIO de la etiqueta, para los controles que no son etiquetables y
+   * tienen que apuntarla al revés con `aria-labelledby` (select, multiselect). */
+  readonly labelId = input<string>();
 
   protected readonly labelClass = computed(() => `sc-field__label ${this.block()}__label`);
   protected readonly requiredClass = computed(

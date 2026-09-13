@@ -1,6 +1,6 @@
 {
   "generated": "component-audit.mjs",
-  "summary": "51 componentes · 16 custom · 12 standard · 23 extended · 35 usados en Supervisor.",
+  "summary": "52 componentes · 17 custom · 12 standard · 23 extended · 37 usados en Supervisor.",
   "components": [
     {
       "name": "avatar",
@@ -159,7 +159,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 122
+      "usedInSupervisor": 119
     },
     {
       "name": "card",
@@ -197,7 +197,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 31
+      "usedInSupervisor": 28
     },
     {
       "name": "chip",
@@ -420,7 +420,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 10
+      "usedInSupervisor": 9
     },
     {
       "name": "divider",
@@ -488,9 +488,10 @@
       "kind": "CUSTOM",
       "primengBase": "—",
       "cva": false,
-      "inputs": 2,
+      "inputs": 3,
       "api": [
         "for",
+        "labelId",
         "required"
       ],
       "nested": [],
@@ -622,7 +623,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 0
+      "usedInSupervisor": 1
     },
     {
       "name": "inputnumber",
@@ -658,7 +659,7 @@
         "sc-field-msg"
       ],
       "hasDemo": true,
-      "usedInSupervisor": 12
+      "usedInSupervisor": 11
     },
     {
       "name": "inputtext",
@@ -698,7 +699,7 @@
         "sc-field-msg"
       ],
       "hasDemo": true,
-      "usedInSupervisor": 30
+      "usedInSupervisor": 28
     },
     {
       "name": "keyboard-shortcuts",
@@ -743,8 +744,10 @@
       "kind": "EXTENDED",
       "primengBase": "primeng/multiselect",
       "cva": false,
-      "inputs": 26,
+      "inputs": 28,
       "api": [
+        "appendTo",
+        "ariaLabelledBy",
         "blurred",
         "disabled",
         "display",
@@ -781,6 +784,25 @@
       ],
       "hasDemo": true,
       "usedInSupervisor": 10
+    },
+    {
+      "name": "option-card",
+      "selector": "sc-option-cards",
+      "provenance": "CUSTOM",
+      "kind": "CUSTOM",
+      "primengBase": "—",
+      "cva": false,
+      "inputs": 4,
+      "api": [
+        "ariaLabelledBy",
+        "disabled",
+        "name",
+        "value",
+        "valueChange"
+      ],
+      "nested": [],
+      "hasDemo": false,
+      "usedInSupervisor": 1
     },
     {
       "name": "panel",
@@ -962,9 +984,10 @@
       "kind": "EXTENDED",
       "primengBase": "primeng/select",
       "cva": false,
-      "inputs": 25,
+      "inputs": 26,
       "api": [
         "appendTo",
+        "ariaLabelledBy",
         "blurred",
         "disabled",
         "emptyFilterMessage",
@@ -998,7 +1021,7 @@
         "sc-field-msg"
       ],
       "hasDemo": true,
-      "usedInSupervisor": 36
+      "usedInSupervisor": 35
     },
     {
       "name": "skeleton",
@@ -1166,7 +1189,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 21
+      "usedInSupervisor": 22
     }
   ]
 }

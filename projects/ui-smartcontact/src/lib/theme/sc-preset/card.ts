@@ -18,7 +18,12 @@ import type { CardDesignTokens } from '@primeuix/themes/types/card';
     caption: {
         gap: "var(--sc-scale-0-5)"
     },
+    /* `fontSize: "1em"` = el de la tarjeta, como antes de Aura (2026-09-13). El Kit no le
+     * da tamaño al subtítulo; Aura sí (`1rem`, 16px) y un valor propio le gana al heredado:
+     * medido en la página de `sc-card` de sc-docs, el subtítulo creció y descuadró la
+     * captura. Misma receta que título, mes y año de `datepicker.ts`. */
     subtitle: {
+        fontSize: "1em",
         color: "{text.muted.color}"
     }
 } satisfies CardDesignTokens;

@@ -44,8 +44,17 @@ import type { DatePickerDesignTokens } from '@primeuix/themes/types/datepicker';
         borderColor: "{content.border.color}",
         borderRadius: "{content.border.radius}"
     },
+    /*
+     * `fontSize: "1em"` en título, mes y año = «lo que mida la cabecera». Hasta que Aura
+     * fue la base del tema (2026-09-13) estos tres no tenían tamaño propio y lo heredaban
+     * de `.p-datepicker-header`, que es donde `sc-datepicker` fija el de cada talla (sm 12,
+     * lg 16). Aura les trae 14px fijos, y un valor propio le gana al heredado: medido en
+     * Conversaciones (talla sm), mes y año a 14 con los días a 12. `1em` devuelve la
+     * herencia sin añadir clases `.p-*` al componente (`audit:primeng-coupling`).
+     */
     title: {
         gap: "var(--sc-scale-0-5)",
+        fontSize: "1em",
         fontWeight: "500"
     },
     header: {
@@ -96,6 +105,7 @@ import type { DatePickerDesignTokens } from '@primeuix/themes/types/datepicker';
         margin: "var(--sc-scale-0-5) 0 0"
     },
     selectYear: {
+        fontSize: "1em",
         color: "{content.color}",
         padding: "var(--sc-scale-0-25) var(--sc-scale-0-5)",
         hoverColor: "{content.hover.color}",
@@ -139,6 +149,7 @@ import type { DatePickerDesignTokens } from '@primeuix/themes/types/datepicker';
         }
     },
     selectMonth: {
+        fontSize: "1em",
         color: "{content.color}",
         padding: "var(--sc-scale-0-25) var(--sc-scale-0-5)",
         hoverColor: "{content.hover.color}",

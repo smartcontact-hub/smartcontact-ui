@@ -93,13 +93,17 @@ protected readonly rowClassFn: ScRowStyleClassFn<Agent> = (agent) =>
 <!-- Para conmutar columnas con la chrome del DS en vez de estos botones, la
      pieza es \`<sc-column-selector scTableCaption>\`: tiene su propia página. -->`;
 
-const LIST_SNIPPET = `<!-- La gramática de tabla-lista: cabecera silenciosa (12/500 gris, sin fondo),
-     fila alta, hairline \`--sc-border-default\` y reparto de columnas fijo.
-     Es la piel de las nueve tablas de administración del Supervisor.
+const LIST_SNIPPET = `<!-- La tabla-lista: la de las tablas de administración del Supervisor.
 
-     La publica el TEMA, no la app: viaja con el preset, así que un consumidor
-     nuevo la pide y le sale igual sin copiar una línea de CSS. Hasta el
-     2026-09-10 vivía como CSS de app y NO viajaba. -->
+     El ASPECTO es el de Aura tal cual (primeng.dev/table): desde el 2026-09-13 el
+     tema no le pinta nada propio a la tabla. \`variant="list"\` solo añade
+     COMPORTAMIENTO que Aura no trae: reparto de columnas fijo (ordenar no mueve
+     anchos), hover solo en filas que hacen algo, fila seleccionada marcada y la
+     banda de caption oculta cuando va vacía.
+
+     Lo publica el TEMA, no la app: un consumidor nuevo lo pide y le sale igual sin
+     copiar CSS. Ante la duda de cómo montar algo (filtros, columnas congeladas,
+     expansión…), la receta es la de primeng.dev: pega su plantilla de \`p-table\`. -->
 <sc-datatable
   variant="list"
   [value]="agents()"
@@ -111,7 +115,14 @@ const LIST_SNIPPET = `<!-- La gramática de tabla-lista: cabecera silenciosa (12
 <!-- El hover SOLO si la fila hace algo. Lo dice el consumidor, fila a fila,
      con la clase del DS \`sc-row--clickable\`; una tabla inerte que se ilumina
      al pasar el ratón es una afordancia mentirosa. -->
-protected readonly listRowClassFn: ScRowStyleClassFn<Agent> = () => 'sc-row--clickable';`;
+protected readonly listRowClassFn: ScRowStyleClassFn<Agent> = () => 'sc-row--clickable';
+
+<!-- ACCIONES DE FILA: un botón ⋮ al final de la fila que abre un \`p-menu\` en
+     modo popup, UNO por tabla (no uno por fila). Es lo que usan las listas del
+     Supervisor. El menú de click derecho (\`rowContextMenu\`) es solo un atajo:
+     lo que ofrezca tiene que estar también en el ⋮, porque en táctil y con
+     teclado no existe. -->
+<p-menu #rowMenu [model]="menuItems()" [popup]="true" appendTo="body" />`;
 
 /** Demo de `sc-datatable` en formato story (motor «Storybook-like»). */
 @Component({
@@ -257,7 +268,7 @@ export class DatatableDemoComponent {
     tag: 'sc-datatable',
     title: 'Datatable',
     description:
-      'Tabla de datos sobre `p-table`. El wrapper aporta la API data-driven (column-defs + `cellTemplate` por columna) y los slots `[scTableCaption]` / `[scTableEmpty]`. Orden y paginación client-side; modo `[lazy]` para server-driven. `header` va ya traducido por el consumidor. `variant="list"` enciende la gramática de tabla-lista, que publica el TEMA (viaja con el preset, no con la app).',
+      'Tabla de datos sobre `p-table`. El wrapper aporta la API data-driven (column-defs + `cellTemplate` por columna) y los slots `[scTableCaption]` / `[scTableEmpty]`. Orden y paginación client-side; modo `[lazy]` para server-driven. `header` va ya traducido por el consumidor. El aspecto es el de Aura tal cual (primeng.dev/table): si una receta de `p-table` existe allí, se usa esa. `variant="list"` añade el comportamiento de tabla-lista, que publica el TEMA (viaja con el preset, no con la app).',
     argTypes: [
       { name: 'paginator', control: { kind: 'boolean' } },
       { name: 'rows', control: { kind: 'number', min: 1, max: 20, step: 1 } },
@@ -307,7 +318,7 @@ export class DatatableDemoComponent {
         type: 'ScDatatableVariant',
         default: "'default'",
         description:
-          'Piel de la tabla. `list` enciende la GRAMÁTICA DE TABLA-LISTA que publica el tema: cabecera silenciosa sin fondo, fila alta, hairline y `table-layout: fixed`. Opt-in a propósito — una tabla que no es una lista de administración se queda en `default`.',
+          'Comportamiento de la tabla. `list` enciende el de TABLA-LISTA que publica el tema, sobre el aspecto de Aura: `table-layout: fixed`, hover solo en filas con `sc-row--clickable`, fila seleccionada marcada y caption vacío oculto. Opt-in a propósito: una tabla que no es una lista de administración se queda en `default`.',
       },
       { name: 'stripedRows', type: 'boolean', default: 'false' },
       { name: 'showGridlines', type: 'boolean', default: 'false' },

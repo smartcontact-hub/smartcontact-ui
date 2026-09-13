@@ -1,0 +1,136 @@
+/*
+ * `sc-option-cards` — elección excluyente con las opciones a la vista.
+ *
+ * La tarjeta es el `<label>` y el radio nativo va dentro, invisible pero presente: el foco,
+ * las flechas del teclado y el nombre accesible los pone el navegador. Lo único que hace
+ * este CSS es vestir el `<label>` y dibujar la marca.
+ */
+
+.sc-option-cards {
+    display: flex;
+    flex-wrap: wrap;
+    /* 14 (`scale/1`), el peldaño de «entre hermanos». */
+    gap: var(--sc-spacing-1);
+}
+
+.sc-option-card {
+    position: relative;
+    display: flex;
+    align-items: flex-start;
+    gap: var(--sc-spacing-0-5);
+    /* 14 arriba/abajo y a los lados: la tarjeta respira lo mismo por los cuatro. */
+    padding: var(--sc-spacing-1);
+    /* 8 (`radius/lg`), el peldaño entre el campo (6) y la tarjeta de sección (12): una
+     * pieza intermedia se pinta con el radio intermedio. */
+    border-radius: var(--sc-radius-300);
+    border: 1px solid var(--sc-border-default);
+    background: var(--sc-bg-surface);
+    cursor: pointer;
+    min-width: 0;
+    flex: 1 1 0;
+
+    /* SOLO lo que cambia, nombrado (nada de `transition: all`), y a 120ms: es una
+     * interacción de alta frecuencia, así que la respuesta tiene que ser instantánea. */
+    transition-property: border-color, background-color, box-shadow, scale;
+    transition-duration: var(--sc-transition-fast);
+    transition-timing-function: var(--sc-easing-emphasized);
+
+    &:hover:not(&--disabled) {
+        border-color: var(--sc-border-strong);
+    }
+
+    /* Pulsación: `0.96` da la sensación táctil sin parecer un rebote. */
+    &:active:not(&--disabled) {
+        scale: 0.96;
+    }
+
+    /* El anillo lo pinta la TARJETA, no el radio escondido. */
+    &:has(.sc-option-card__input:focus-visible) {
+        outline: 2px solid var(--sc-border-focus);
+        outline-offset: 2px;
+    }
+
+    /*
+     * Elegida: borde de marca + fondo tintado + la marca rellena. TRES señales estáticas,
+     * ninguna de ellas el movimiento — si la transición no corre, el estado se sigue
+     * viendo igual.
+     */
+    &--selected {
+        border-color: var(--sc-border-primary);
+        background: var(--sc-bg-primary-subtle);
+    }
+
+    &--disabled {
+        cursor: not-allowed;
+        opacity: 0.6;
+    }
+}
+
+/* El radio nativo sigue AHÍ —teclado, formulario, lector— solo que no se pinta. */
+.sc-option-card__input {
+    position: absolute;
+    opacity: 0;
+    width: 0;
+    height: 0;
+    margin: 0;
+    pointer-events: none;
+}
+
+.sc-option-card__mark {
+    flex: 0 0 auto;
+    /* 17.5 (`scale/1-25`), el mismo diámetro que la caja de `sc-checkbox`: los controles
+     * de elección de esta app miden todos lo mismo. */
+    width: var(--sc-spacing-1-25);
+    height: var(--sc-spacing-1-25);
+    border-radius: var(--sc-radius-full);
+    border: 1px solid var(--sc-border-default);
+    background: var(--sc-bg-surface);
+    /* Alineación ÓPTICA: el círculo se centra con la primera línea de texto (20 de alto),
+     * no con la caja entera, que crece con la descripción. */
+    margin-block-start: var(--sc-spacing-0-125);
+    transition-property: border-color, box-shadow;
+    transition-duration: var(--sc-transition-fast);
+    transition-timing-function: var(--sc-easing-emphasized);
+}
+
+.sc-option-card--selected .sc-option-card__mark {
+    border-color: var(--sc-bg-primary);
+    /* El punto de dentro es una SOMBRA hacia adentro, no un hijo: un elemento menos y la
+     * marca no puede descuadrarse respecto a su borde. */
+    box-shadow: inset 0 0 0 4px var(--sc-bg-primary);
+}
+
+.sc-option-card__text {
+    display: flex;
+    flex-direction: column;
+    gap: var(--sc-spacing-0-125);
+    min-width: 0;
+}
+
+.sc-option-card__label {
+    font-family: var(--sc-font-family-body-2);
+    font-size: var(--sc-font-size-body-2);
+    line-height: var(--sc-line-height-body-2);
+    font-weight: var(--sc-font-weight-semibold);
+    color: var(--sc-text-primary);
+}
+
+/* La línea que justifica el componente: dice QUÉ HACE la opción. */
+.sc-option-card__desc {
+    font-family: var(--sc-font-family-caption);
+    font-size: var(--sc-font-size-caption);
+    line-height: var(--sc-line-height-caption);
+    color: var(--sc-text-secondary);
+    text-wrap: pretty;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .sc-option-card,
+    .sc-option-card__mark {
+        transition: none;
+    }
+
+    .sc-option-card:active {
+        scale: 1;
+    }
+}
