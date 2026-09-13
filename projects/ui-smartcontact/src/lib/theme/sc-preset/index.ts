@@ -1,3 +1,5 @@
+import { definePreset } from "@primeuix/themes";
+import Aura from "@primeuix/themes/aura";
 import type { Preset } from "@primeuix/themes/types";
 import base from "./base";
 import tag from "./tag";
@@ -46,7 +48,6 @@ import terminal from "./terminal";
 import textarea from "./textarea";
 import timeline from "./timeline";
 import accordion from "./accordion";
-import datatable from "./datatable";
 import iconfield from "./iconfield";
 import iftalabel from "./iftalabel";
 import inputtext from "./inputtext";
@@ -86,7 +87,18 @@ import extend from "./extend";
 import css from "./css";
 import { normalizeDesignRem } from "./rem-scale";
 
-const preset = normalizeDesignRem({
+/*
+ * AURA DE BASE (2026-09-13, decisión de Rafa): el tema de PrimeNG con el que se ve
+ * primeng.dev, del que además sale el Kit de Figma. Encima va TODO lo nuestro —marca y los
+ * ajustes por componente— y, como en cualquier capa, lo de arriba manda. Así el cambio es
+ * componente a componente y nada se tira a ciegas: donde lo nuestro está afinado con el
+ * Kit, se queda lo nuestro; donde Aura es mejor, se aparta lo nuestro y manda Aura.
+ *
+ * Primer componente donde manda Aura: la TABLA. Por eso `datatable.ts` ya no entra en
+ * `components` (sus tokens redefinían rellenos, colores e iconos), y de nuestra piel de
+ * listado solo quedan sus comportamientos (`css.ts`, `listBehaviorCss`).
+ */
+const preset = definePreset(Aura, normalizeDesignRem({
     ...base,
     components: {
         tag,
@@ -135,7 +147,6 @@ const preset = normalizeDesignRem({
         textarea,
         timeline,
         accordion,
-        datatable,
         iconfield,
         iftalabel,
         inputtext,
@@ -174,6 +185,6 @@ const preset = normalizeDesignRem({
     },
     extend,
     css
-} satisfies Preset);
+} satisfies Preset));
 
 export default preset;

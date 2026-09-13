@@ -32,10 +32,14 @@ test.beforeEach(async ({ page }) => {
   await disableAnimations(page);
 });
 
-/** `Caption/caption-regular` — el text style de las etiquetas de campo. */
-const CAPTION_REGULAR = { fontSize: '12px', lineHeight: '18px', fontWeight: '400' };
+/** `Caption/caption-semibold` — el text style de las etiquetas de campo desde el 2026-09-13.
+ * Eran `caption-regular`; subieron a semibold en las seis pantallas a la vez para escribirse
+ * igual que los rótulos de bloque, que rotulan lo mismo (hand-off DS, segunda vuelta a Servicio). */
+const CAPTION_SEMIBOLD = { fontSize: '12px', lineHeight: '18px', fontWeight: '600' };
 /** `Body/body-semibold` — el de los títulos de sección de AED. */
 const BODY_SEMIBOLD = { fontSize: '14px', lineHeight: '20px', fontWeight: '600' };
+/** `Body/body-regular` — el nombre de cada ajuste en la LISTA DE AJUSTES de Grupos. */
+const BODY_REGULAR_AJUSTE = { fontSize: '14px', lineHeight: '20px', fontWeight: '400' };
 
 const leer = async (page: import('@playwright/test').Page, selector: string) =>
   page.locator(selector).first().evaluate((el: HTMLElement) => {
@@ -52,20 +56,35 @@ const leer = async (page: import('@playwright/test').Page, selector: string) =>
  *     el peso BAJÓ de 500 a 400, que es la convergencia que se buscaba.
  * Si mañana solo una de las dos se rompe, este reparto lo dice.
  */
-const ETIQUETAS: ReadonlyArray<{ ruta: string; nombre: string; selector?: string }> = [
-  { ruta: 'config/aed/servicio', nombre: 'AED · servicio' },
-  { ruta: 'config/aed/grupos', nombre: 'AED · grupos', selector: '.inline-field__label' },
-  { ruta: 'admin/usuarios/crear', nombre: 'admin · alta de usuario' },
-  { ruta: 'admin/grupos/crear', nombre: 'admin · alta de grupo' },
+type Estilo = { fontSize: string; lineHeight: string; fontWeight: string };
+const ETIQUETAS: ReadonlyArray<{
+  ruta: string;
+  nombre: string;
+  selector?: string;
+  estilo: Estilo;
+  rol: string;
+}> = [
+  { ruta: 'config/aed/servicio', nombre: 'AED · servicio', estilo: CAPTION_SEMIBOLD, rol: 'Caption/caption-semibold' },
+  /* Grupos dejó el formulario de campos el 2026-09-13: es una LISTA DE AJUSTES, nombre a la
+   * izquierda y control a la derecha, y el nombre se lee como texto de fila, no como rótulo. */
+  {
+    ruta: 'config/aed/grupos',
+    nombre: 'AED · grupos',
+    selector: '.setting-row__label',
+    estilo: BODY_REGULAR_AJUSTE,
+    rol: 'Body/body-regular',
+  },
+  { ruta: 'admin/usuarios/crear', nombre: 'admin · alta de usuario', estilo: CAPTION_SEMIBOLD, rol: 'Caption/caption-semibold' },
+  { ruta: 'admin/grupos/crear', nombre: 'admin · alta de grupo', estilo: CAPTION_SEMIBOLD, rol: 'Caption/caption-semibold' },
 ];
 
-for (const { ruta, nombre, selector } of ETIQUETAS) {
-  test(`${nombre} · la etiqueta de campo mide Caption/caption-regular`, async ({ page }) => {
+for (const { ruta, nombre, selector, estilo, rol } of ETIQUETAS) {
+  test(`${nombre} · la etiqueta de campo mide ${rol}`, async ({ page }) => {
     await goto(page, ruta);
     const sel = selector ?? '.field__label';
     await expect(page.locator(sel).first()).toBeVisible();
     expect(await leer(page, sel), `${ruta}: la etiqueta no está midiendo el text style`).toEqual(
-      CAPTION_REGULAR,
+      estilo,
     );
   });
 }

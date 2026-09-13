@@ -35,7 +35,7 @@ interface ScFieldStateInputs {
 }
 
 /**
- * `resolvedId` + `msgId` + `isInvalid` + `footerText`, idénticos en los cinco.
+ * `resolvedId` + `msgId` + `labelId` + `isInvalid` + `footerText`, idénticos en los cinco.
  *
  * `isInvalid` ya no mira el `NgControl`: con el `ControlValueAccessor` retirado
  * (DD, 2026-08-30) esa rama era inalcanzable —no hay ni un consumidor de Reactive
@@ -45,9 +45,14 @@ export function createScFieldState(block: string, inputs: ScFieldStateInputs) {
   const seq = ++scFieldIdSeq;
   const resolvedId = computed(() => inputs.inputId() ?? `${block}-${seq}`);
   const msgId = computed(() => `${resolvedId()}-msg`);
+  /* Para los controles que NO son etiquetables: PrimeNG pinta el select y el
+   * multiselect como `<span role="combobox">`, y un `<label for>` sobre un span
+   * no da nombre accesible. Con este id la etiqueta se puede apuntar por
+   * `aria-labelledby`, que sí funciona sobre cualquier elemento. */
+  const labelId = computed(() => `${resolvedId()}-label`);
   const isInvalid = computed(() => (inputs.invalid?.() ?? false) || !!inputs.error?.());
   const footerText = computed(() => inputs.error?.() || inputs.helperText?.() || '');
-  return { resolvedId, msgId, isInvalid, footerText };
+  return { resolvedId, msgId, labelId, isInvalid, footerText };
 }
 
 /**

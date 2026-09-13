@@ -1,0 +1,73 @@
+/*
+ * Grupos (`/config/aed/grupos`). Lo compartido vive en `aed-defaults-page.component.scss`
+ * y `styles/_forms.scss`; aquí solo lo propio de esta pantalla.
+ */
+
+/*
+ * LISTA DE AJUSTES: nombre a la izquierda, control a la derecha. El porqué está en la
+ * plantilla. Todo con la escala 7 · 14 · 28 de General.
+ */
+.settings-list {
+  display: flex;
+  flex-direction: column;
+}
+
+.setting-row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  /* 28 entre el nombre y su control como MÍNIMO: un nombre largo nunca se pega al campo. */
+  gap: var(--sc-spacing-2);
+  /* 14 arriba y abajo, y raya entre filas: la vista cruza la fila entera. */
+  padding-block: var(--sc-spacing-1);
+  border-block-end: 1px solid var(--sc-border-subtle);
+
+  &:first-child {
+    padding-block-start: 0;
+  }
+
+  /* La última no lleva raya: repetiría el divisor de sección unos píxeles más abajo. */
+  &:last-child {
+    border-block-end: 0;
+    padding-block-end: 0;
+  }
+
+  &__label {
+    min-width: 0;
+    color: var(--sc-text-primary);
+    text-wrap: pretty;
+    cursor: pointer;
+  }
+
+  &__control {
+    flex: 0 0 auto;
+  }
+
+  /*
+   * Cada control mide lo que pide su contenido, con peldaños que ya existen:
+   * desplegables 252 (`scale/18`), para que quepa «Automático con preview» o
+   * «G.711 (alaw/ulaw)» sin cortar; números 175 (`scale/12-5`), sitio de sobra para
+   * «30 segundos».
+   */
+  &__control--select {
+    width: var(--sc-spacing-18);
+  }
+
+  &__control--number {
+    width: var(--sc-spacing-12-5);
+  }
+}
+
+/* Estrecho: el control baja debajo de su nombre y ocupa el ancho. */
+@media (max-width: 720px) {
+  .setting-row {
+    flex-direction: column;
+    align-items: stretch;
+    gap: var(--sc-spacing-0-5);
+  }
+
+  .setting-row__control--select,
+  .setting-row__control--number {
+    width: 100%;
+  }
+}

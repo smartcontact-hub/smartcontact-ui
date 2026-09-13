@@ -3,6 +3,7 @@ import {
   booleanAttribute,
   ChangeDetectionStrategy,
   Component,
+  computed,
   contentChild,
   type TemplateRef,
   input,
@@ -72,6 +73,18 @@ export class ScSelectComponent {
   /** Solo lectura (paridad con sc-inputtext / catálogo de desarrollo). */
   readonly readonly = input(false, { transform: booleanAttribute });
   readonly inputId = input<string>();
+  /**
+   * `id` de un rótulo EXTERNO que nombra el control.
+   *
+   * PrimeNG pinta el select como `<span role="combobox">` y un `<label for>` sobre
+   * un span no da nombre accesible: el consumidor que rotula por su cuenta
+   * (`<label class="field__label" for="...">`, el patrón de las pantallas de
+   * config) se queda sin él sin enterarse. `aria-labelledby` sí funciona sobre
+   * cualquier elemento, así que esta entrada es la puerta para apuntarlo al revés.
+   * Cuando el rótulo lo pinta el propio componente (`[label]`), esto no hace falta:
+   * se ata solo.
+   */
+  readonly ariaLabelledBy = input<string>();
   readonly name = input<string>();
 
   // ─── Select-specific ───────────────────────────────────────────────
@@ -102,11 +115,18 @@ export class ScSelectComponent {
   /** Background "filled" variant (Figma node 6195:7785): bg slate-50. */
   readonly filled = input(false, { transform: booleanAttribute });
   /**
-   * Target del overlay panel del dropdown. Útil cuando el `<sc-select>` vive
-   * dentro de un `<sc-dialog>` con `overflow: hidden` — `appendTo="body"`
-   * monta el panel en `<body>` y evita el clip. Default null = inline.
+   * Dónde se pinta la lista desplegable. Por defecto en `<body>`: dentro de su
+   * componente la recortaba cualquier contenedor con `overflow: hidden`
+   * (`sc-section-card`, `sc-dialog`). Medido el 2026-09-13 en `config/aed/grupos`:
+   * el «Tipo» de la última sección se abría cortado contra el borde de la tarjeta.
+   * Los estilos del panel ya son globales (`ViewEncapsulation.None`), así que en
+   * `<body>` se ve igual. `'self'` la deja dentro.
+   *
+   * Va aquí y no en `overlayAppendTo` de `provideSmartContactUi`: esa opción la
+   * leen TODOS los flotantes de PrimeNG, diálogos incluidos, y sacar `sc-dialog` de
+   * su componente dejaba sin efecto sus reglas `:host ::ng-deep` (doble marco).
    */
-  readonly appendTo = input<'body' | null>(null);
+  readonly appendTo = input<'body' | 'self'>('body');
   /** Key del flag de opción deshabilitada (passthrough de p-select). */
   readonly optionDisabled = input<string>();
   /** Spinner de carga (passthrough de p-select). */
@@ -166,6 +186,19 @@ export class ScSelectComponent {
   });
   protected readonly resolvedId = this.field.resolvedId;
   protected readonly msgId = this.field.msgId;
+  protected readonly labelId = this.field.labelId;
+  /** El rótulo externo manda sobre el propio: si el consumidor pasa uno, es el suyo. */
+  /*
+   * El rótulo externo manda sobre el propio: si el consumidor pasa uno, es el suyo.
+   *
+   * Y da igual DÓNDE lo pinte el componente: encima (`[label]`) o dentro (`iftaLabel`).
+   * La primera versión de esto solo ataba la de encima, y las cinco de `config/aed/grupos`
+   * —todas `iftaLabel`— se quedaron sin nombre accesible igual que antes. Medido en el
+   * navegador: cinco `role="combobox"`, cero nombres.
+   */
+  protected readonly resolvedLabelledBy = computed(
+    () => this.ariaLabelledBy() ?? (this.label() ? this.labelId() : undefined),
+  );
   protected readonly isInvalid = this.field.isInvalid;
   protected readonly footerText = this.field.footerText;
 

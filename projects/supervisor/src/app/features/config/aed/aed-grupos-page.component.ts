@@ -97,7 +97,7 @@ const DEFAULT_FORM: FormState = {
     TranslateModule,
   ],
   templateUrl: './aed-grupos-page.component.html',
-  styleUrl: './aed-defaults-page.component.scss',
+  styleUrls: ['./aed-defaults-page.component.scss', './aed-grupos-page.component.scss'],
   changeDetection: ChangeDetectionStrategy.OnPush,
 })
 export class AedGruposPageComponent implements DirtyAware {

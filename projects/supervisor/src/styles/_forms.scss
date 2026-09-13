@@ -37,7 +37,11 @@
 .sub-section {
   display: flex;
   flex-direction: column;
-  gap: var(--sc-spacing-0-875);
+  /* 14 (`scale/1`), el peldaño central de la escalera 7 · 14 · 28. Era 12.25 y ese es
+   * justo el valor que hacía que el espaciado no se sintiera uniforme: convivía con un
+   * 14 (el margen del `<sc-divider>`) del que se diferencia en 1.75px — demasiado
+   * cerca para leerse como una decisión. */
+  gap: var(--sc-spacing-1);
 
   /*
    * El CONTENIDO va 12.25 (`scale/0-875`) más adentro que el borde de la caja; los DIVISORES no.
@@ -71,7 +75,10 @@
    * `e2e/supervisor/text-styles-applied.spec.ts` en las tres pantallas. */
   &__title {
     margin: 0;
-    color: var(--sc-text-primary);
+    /* `heading`, el mismo rol que el título de la tarjeta: los títulos de esta app se
+     * escriben todos en el mismo gris y el cuerpo en el suyo. Antes el título de sección
+     * y el texto de debajo medían el MISMO `primary`. */
+    color: var(--sc-text-heading);
   }
 
   &__hint {
@@ -104,6 +111,12 @@
     grid-template-columns: repeat(2, minmax(0, 1fr));
   }
 
+  /* Tres campos CORTOS que van juntos (los límites de cola de Grupos): una fila en vez de
+   * dos columnas y media, sin cajas enormes para un número. */
+  &--3 {
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+  }
+
   /*
    * La variante 70/30 de la maqueta: 578.5 + 24.5 + 214 sobre los 817 útiles. La usan
    * "Recepción de conversaciones" (2286:5581) y las dos filas de URL de "Notificaciones"
@@ -117,6 +130,7 @@
 
 @media (max-width: 720px) {
   .grid--2,
+  .grid--3,
   .grid--wide-narrow {
     grid-template-columns: 1fr;
   }
@@ -140,6 +154,10 @@
   &--full {
     flex: 1 1 100%;
     width: 100%;
+    /* Y también en rejilla: `flex` no dice nada dentro de un `.grid--2`, así que un campo
+     * «a todo el ancho» se quedaba en su columna. Con las dos declaraciones sirve en los
+     * dos contenedores, y la que no aplica la ignora el navegador. */
+    grid-column: 1 / -1;
   }
 
   &--inline {

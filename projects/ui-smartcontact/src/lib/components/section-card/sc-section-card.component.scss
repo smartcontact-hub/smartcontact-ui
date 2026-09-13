@@ -98,7 +98,11 @@
     font-size: var(--sc-font-size-h3);
     line-height: var(--sc-line-height-h3);
     font-weight: var(--sc-font-weight-semibold);
-    color: var(--sc-text-primary);
+    /* `heading` y no `primary`: el título medía EXACTAMENTE el mismo gris que el texto
+     * de debajo, así que la jerarquía la llevaban solo el tamaño y el peso. Con el rol
+     * de título sube a 12.16:1 y el cuerpo se queda en 7.38 — un escalón de color que
+     * en claro no existía (ver la nota de `--sc-text-heading`). */
+    color: var(--sc-text-heading);
     letter-spacing: -0.01em;
   }
 
@@ -146,6 +150,25 @@
    */
   .section-card__head > :first-child {
     margin-inline-start: var(--sc-spacing-0-875);
+  }
+
+  /*
+   * CON ICONO, lo que se alinea es el TÍTULO, no el icono.
+   *
+   * La sangría de arriba la cobraba el primer hijo, y cuando hay icono el primer hijo
+   * es el icono: el TEXTO del título caía entonces 22.75 más a la derecha que todo lo
+   * demás (medido en `/config/aed/servicio`: título en 464.5, contenido en 441.8), o
+   * sea que la página perdía la única vertical que la ordena justo en su primera línea.
+   *
+   * El icono pasa a COLGAR del margen: retrocede 10.5 (`scale/0-75`, negado con el
+   * mismo `calc(… * -1)` que ya usan el top-bar y el formulario de agentes), que es
+   * exactamente lo que sobra entre la sangría de 12.25 y los 22.75 que ocupan el icono
+   * y su hueco. Resultado: el icono se queda —es lo que empareja la tarjeta con el
+   * icono del índice de la izquierda— y el título aterriza en la misma vertical que los
+   * títulos de sección, las pastillas y la tabla.
+   */
+  .section-card__head > .section-card__icon {
+    margin-inline-start: calc(var(--sc-spacing-0-75) * -1);
   }
 
   .section-card__body {

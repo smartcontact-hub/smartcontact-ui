@@ -2,6 +2,25 @@
 <p>Primitivos PrimeNG estilados por el preset (cada slot resuelve a <code>var(--sc-*)</code>).</p>
 
 <section>
+  <h2>Aura es la base</h2>
+  <p>
+    El preset es <code>definePreset(Aura, …)</code>: parte de Aura tal cual sale de PrimeNG, y encima
+    van tres capas. Lo que una capa no dice, lo pone la de debajo.
+  </p>
+  <ol>
+    <li><strong>Aura</strong> (<code>&#64;primeuix/themes/aura</code>): todo lo que no decimos nosotros. La tabla va entera con Aura.</li>
+    <li><strong>La marca</strong> (<code>sc-preset/*.ts</code>): colores, medidas y radios del Kit de Figma, cada uno a <code>var(--sc-*)</code>.</li>
+    <li><strong>El comportamiento</strong> (<code>sc-preset/css.ts</code>): lo que Aura no trae, como que una fila solo se ilumine si se puede pulsar.</li>
+  </ol>
+  <p>
+    Para un equipo que ya usa PrimeNG con Aura, cargar este preset cambia la marca, no la estructura:
+    las plantillas de primeng.dev se usan tal cual.
+  </p>
+</section>
+
+<p-divider />
+
+<section>
   <h2>Button</h2>
   <div class="row">
     <p-button label="Primario" data-testid="btn-md" />

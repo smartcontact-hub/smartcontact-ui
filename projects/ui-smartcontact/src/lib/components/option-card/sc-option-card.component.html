@@ -1,0 +1,30 @@
+<div
+    class="sc-option-cards"
+    role="radiogroup"
+    [attr.aria-labelledby]="ariaLabelledBy() ?? null"
+>
+    @for (option of options(); track option.value) {
+        <label
+            class="sc-option-card"
+            [class.sc-option-card--selected]="option.value === value()"
+            [class.sc-option-card--disabled]="disabled()"
+        >
+            <input
+                type="radio"
+                class="sc-option-card__input"
+                [name]="groupName()"
+                [value]="option.value"
+                [checked]="option.value === value()"
+                [disabled]="disabled()"
+                (change)="pick(option.value)"
+            />
+            <span class="sc-option-card__mark" aria-hidden="true"></span>
+            <span class="sc-option-card__text">
+                <span class="sc-option-card__label">{{ option.label }}</span>
+                @if (option.description) {
+                    <span class="sc-option-card__desc">{{ option.description }}</span>
+                }
+            </span>
+        </label>
+    }
+</div>
