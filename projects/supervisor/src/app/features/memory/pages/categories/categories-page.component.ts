@@ -13,6 +13,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
+import { ScTagComponent as TagComponent } from '@smartcontact-hub/components';
 import { MenuModule } from 'primeng/menu';
 import type { MenuItem } from 'primeng/api';
 
@@ -48,6 +49,7 @@ import { RulesStore } from '../../state/rules.store';
 @Component({
   selector: 'sc-memory-categories-page',
   imports: [
+    TagComponent,
     ButtonComponent,
     CategoryFormModalComponent,
     DatatableComponent,

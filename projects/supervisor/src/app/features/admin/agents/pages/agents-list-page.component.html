@@ -110,7 +110,7 @@
 <ng-template #extensionTpl let-agent>
   <span class="cell ext">
     {{ agent.extension }}
-    <span class="ext__type">{{ 'agents.ext.' + agent.extensionType | translate }}</span>
+    <sc-tag severity="secondary" [value]="'agents.ext.' + agent.extensionType | translate" />
   </span>
 </ng-template>
 
@@ -150,9 +150,10 @@
 </ng-template>
 
 <ng-template #statusTpl let-agent>
-  <span class="sc-label" [attr.data-tone]="agent.status === 'active' ? 'success' : 'muted'">
-    {{ 'agents.status.' + agent.status | translate }}
-  </span>
+  <sc-tag
+    [severity]="agent.status === 'active' ? 'success' : 'secondary'"
+    [value]="'agents.status.' + agent.status | translate"
+  />
 </ng-template>
 
 <ng-template #groupsTpl let-agent>

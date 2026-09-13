@@ -117,7 +117,7 @@ const COLUMNS: readonly RepoColumnDef<ReglaIA>[] = [
     statusMap: {
       high: { labelKey: 'repositories.reglas_ia.priority_levels.high', tone: 'danger' },
       medium: { labelKey: 'repositories.reglas_ia.priority_levels.medium', tone: 'warning' },
-      low: { labelKey: 'repositories.reglas_ia.priority_levels.low', tone: 'muted' },
+      low: { labelKey: 'repositories.reglas_ia.priority_levels.low', tone: 'secondary' },
     },
   },
   {
@@ -128,7 +128,7 @@ const COLUMNS: readonly RepoColumnDef<ReglaIA>[] = [
     accessor: (i) => i.status,
     statusMap: {
       active: { labelKey: 'repositories.status.active', tone: 'success' },
-      inactive: { labelKey: 'repositories.status.inactive', tone: 'muted' },
+      inactive: { labelKey: 'repositories.status.inactive', tone: 'secondary' },
     },
   },
 ];

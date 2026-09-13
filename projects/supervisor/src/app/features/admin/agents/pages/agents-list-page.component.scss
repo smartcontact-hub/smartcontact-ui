@@ -111,17 +111,6 @@
   display: inline-flex;
   align-items: center;
   gap: var(--sc-spacing-0-5);
-
-  &__type {
-    font-size: var(--sc-font-size-50);
-    line-height: var(--sc-line-height-caption);
-    text-transform: uppercase;
-    letter-spacing: 0.05em;
-    color: var(--sc-text-subtle);
-    border: 1px solid var(--sc-border-default);
-    border-radius: var(--sc-radius-50);
-    padding: 0 var(--sc-spacing-0-25);
-  }
 }
 
 .presence-edit {

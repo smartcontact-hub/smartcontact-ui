@@ -31,10 +31,10 @@
 
 **LO SIGUIENTE, en orden (Rafa, 2026-09-13: «automatizable, agéntico: no ir a mano salvo que sea necesario»):**
 
-1. **Piezas hechas a mano en pantallas** (sonda `_ngcontent`→`_nghost`, 23 rutas): `status-pill` 45 ·
-   `sc-label` 36 · tipo de extensión 16 · tipo de entidad 15 · estado/acción de regla 15 · contadores 6
-   · iconos con fondo 11. Mirar Figma antes de cada una; estados → `sc-tag` con severidad. Solo cuenta
-   pastillas: el objetivo es un gate, no un barrido.
+1. **Lo que dejó el barrido (DD-77)**: el `badge`/botón `danger` del DS a 3.76:1 (decidir en el DS);
+   «Solo fallidas» es un filtro conmutable a mano; el hub de Repositorios es una FILA a mano entera (sin maqueta; la sonda solo ve su icono); y la sonda de
+   `hand-made-pieces` solo mira pastillas (cajas y filas a mano, sin contar). Figma pone el Tipo de
+   Agentes `Rounded=True` y Servicio/Grupo `False`: decidir uno para las categorías.
 2. **La cabecera fija de Conversaciones no fija** (ya antes de DD-76): `.table-card { overflow: hidden }`
    (`_sc-list-table.scss`). A 1280 las pastillas largas se salen de 122px.
 3. **sc-docs: ejemplos de primeng.dev dentro de `<sc-datatable>`**, la red de «la tabla perfecta»: pasa
@@ -143,14 +143,14 @@ Rafa, viéndolo en local: «me va gustando», «beben directamente del DS», «n
 **Lo que cambia.** Conversaciones sin piel propia (8/14, fila 44.5), anchos medidos y sin ⋮. Tipo,
 Estrategia, Servicio y Grupo usan `sc-tag` secundario, que baja a 1.75 de relleno (21.5, maestro
 `373:13337`). Doce sitios dejan la mono. La selección en oscuro de las 25 listas deja de salir clara.
+**Barrido (DD-77, rama `arebury/barrido-piezas-a-mano`)**: 140 pastillas a mano en 14 familias pasan a
+`sc-tag`/`sc-badge`; queda 1 familia, y `hand-made-pieces.spec.ts` impide que vuelvan.
 
 **Lo que hay que recordar**, porque volverá a morder:
 
-- ⚠️ **Mi sonda de «piezas a mano» leyó de menos dos veces**: excluía lo que vive dentro de un
-  componente del DS (las celdas están en `sc-datatable`) y pedía radio ≥3 (`sc-label` tiene 2). Se
-  atribuye por quién lo pinta: `_ngcontent-X` → host `_nghost-X` → ¿selector del DS?
-- **`<kbd>`/`<code>`/`<pre>` salen en mono por la hoja del navegador**: el «⌘K» sobrevivió a quitar el
-  token. Se mide la familia CALCULADA.
+- ⚠️ **Mi sonda de piezas a mano leyó de menos dos veces**: excluía lo que vive DENTRO de un `sc-*` (las
+  celdas) y pedía radio ≥3 (`sc-label` tiene 2). Se atribuye por `_ngcontent-X` → `_nghost-X`.
+- **`<kbd>`/`<code>` salen en mono por la hoja del navegador** (así sobrevivió el «⌘K»): mide lo CALCULADO.
 - **Invertir `_layers.scss` no invierte nada**: PrimeNG antepone `@layer reset, primeng`. El testigo
   nuevo del test de capas (tinte de la fila fallida) se vio rojo quitando la regla.
 

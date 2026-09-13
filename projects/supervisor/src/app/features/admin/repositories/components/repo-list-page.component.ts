@@ -29,6 +29,7 @@ import {
   type ScColumnDef,
   ScDatatableComponent as DatatableComponent,
   type ScDatatableRowEvent,
+  ScTagComponent as TagComponent,
 } from '@smartcontact-hub/components';
 import { RepoFormPanelComponent, RepoFormSubmission } from './repo-form-panel.component';
 import { RepoEntity, RepoPageConfig, RepoStore } from './repo-types';
@@ -53,6 +54,7 @@ import { RepoEntity, RepoPageConfig, RepoStore } from './repo-types';
     MenuModule,
     RepoFormPanelComponent,
     SearchComponent,
+    TagComponent,
     TranslateModule,
   ],
   templateUrl: './repo-list-page.component.html',
@@ -208,7 +210,7 @@ export class RepoListPageComponent<T extends RepoEntity> {
   protected getStatusEntry(
     item: T,
     key: string,
-  ): { labelKey: string; tone: 'success' | 'muted' | 'warning' | 'danger' | 'info' } | null {
+  ): { labelKey: string; tone: 'success' | 'secondary' | 'warning' | 'danger' | 'info' } | null {
     const column = this.config().columns.find((c) => c.key === key);
     if (!column || column.kind !== 'status' || !column.statusMap) return null;
     return column.statusMap[column.accessor(item)] ?? null;

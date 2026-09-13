@@ -81,7 +81,10 @@
         >
           <sc-icon [name]="alertIcon" size="inherit" />
           <span>{{ 'memory.conversations.filters.only_failed' | translate }}</span>
-          <span class="memory-failed-chip__count">{{ failedCount() }}</span>
+          <!-- Contador con el `badge` del DS (DD-76), en `contrast`: el rojo ya lo pone el chip, y
+               el `danger` del DS mide 3.76:1 (blanco sobre red-500, bajo AA; medido por
+               `theme-contrast`), el mismo valor que el botón danger pendiente de decidir. -->
+          <sc-badge size="sm" variant="contrast" [label]="failedCount()" />
         </button>
       }
 

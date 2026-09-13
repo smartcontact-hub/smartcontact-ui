@@ -77,7 +77,7 @@
           'memory.conversations.status.multi_recording' | translate: { count: recordingsCount(conv) }
         "
       >
-        {{ recordingsCount(conv) }}
+        <sc-badge size="sm" variant="info" [label]="recordingsCount(conv)" />
       </span>
     }
   </button>

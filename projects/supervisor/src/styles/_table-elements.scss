@@ -10,59 +10,8 @@
  * so global class names defined in `main.scss` flow through.
  */
 
-/* ------------------------------------------------------------------ *
- * sc-label — typographic state tag, replaces the dot+text pill.
- *
- * Caption-bold uppercase tracked + tinted background, no leading dot.
- * The dot pattern is the default admin convention; pulling it out and
- * leaning on type + tint reads as edited rather than templated.
- * ------------------------------------------------------------------ */
-.sc-label {
-  display: inline-flex;
-  align-items: center;
-  padding: 3px var(--sc-spacing-0-75);
-  font-size: var(--sc-font-size-50);
-  line-height: 1;
-  font-weight: var(--sc-font-weight-semibold);
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
-  border-radius: var(--sc-radius-50);
-  white-space: nowrap;
-
-  &[data-tone='success'] {
-    color: var(--sc-label-green-text);
-    background: var(--sc-label-green-bg);
-  }
-
-  /* 1.92:1 medido en /admin/usuarios: `--sc-text-subtle` sobre `--sc-bg-default`
-   * son dos grises casi iguales. Esa pareja vale para texto auxiliar sobre el
-   * LIENZO, no para una pastilla que tiene que leerse sola. El gris de la
-   * familia `label` empareja fondo y texto a propósito: 6.4:1. */
-  &[data-tone='muted'] {
-    color: var(--sc-label-gray-text);
-    background: var(--sc-label-gray-bg);
-  }
-
-  &[data-tone='warning'] {
-    color: var(--sc-label-amber-text);
-    background: var(--sc-label-amber-bg);
-  }
-
-  &[data-tone='danger'] {
-    color: var(--sc-label-red-text);
-    background: var(--sc-label-red-bg);
-  }
-
-  /* El texto iba a paleta CRUDA (cyan-700) sobre un fondo de la familia
-   * `--sc-label-*`. Mientras esa familia no tenía valor oscuro daba igual —
-   * los dos se quedaban claros. En cuanto el fondo pasa a oscuro (07-dark),
-   * un texto que no voltea encima es texto oscuro sobre fondo oscuro: el
-   * mismo fallo de antes, del revés. Va emparejado con su propio texto. */
-  &[data-tone='info'] {
-    color: var(--sc-label-blue-text);
-    background: var(--sc-label-blue-bg);
-  }
-}
+/* Los estados (Activo/Inactivo, prioridad) ya no tienen etiqueta propia aquí: son
+ * `<sc-tag [severity]>` del DS, como el estado de Agentes en Figma (DD-76). */
 
 /* ------------------------------------------------------------------ *
  * sc-channel-row — bare channel icons, tinted per type.

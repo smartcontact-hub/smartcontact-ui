@@ -110,7 +110,7 @@ const COLUMNS: readonly RepoColumnDef<EntidadIA>[] = [
     accessor: (i) => i.status,
     statusMap: {
       active: { labelKey: 'repositories.status.active', tone: 'success' },
-      inactive: { labelKey: 'repositories.status.inactive', tone: 'muted' },
+      inactive: { labelKey: 'repositories.status.inactive', tone: 'secondary' },
     },
   },
 ];

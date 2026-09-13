@@ -133,24 +133,6 @@
   }
 }
 
-.entity-type-chip {
-  display: inline-flex;
-  align-items: center;
-  padding: 2px 8px;
-  border-radius: var(--sc-radius-full);
-  /* Usaba `--sc-bg-primary` como COLOR DE TEXTO. Es un token de relleno: está
-   * calibrado para llevar texto encima, no para ser texto. En claro colaba
-   * (blue-700 sobre blue-50); en oscuro pasa a blue-400 sobre blue-900 y cae
-   * a 3.39:1. Va a la familia de insignia, como el resto de chips de la app. */
-  background: var(--sc-label-blue-bg);
-  color: var(--sc-label-blue-text);
-
-  &--system {
-    background: var(--sc-bg-elevated);
-    color: var(--sc-text-secondary);
-  }
-}
-
 /* La fila clicable y su cursor los pone ahora `.sc-row--clickable`
  * (emitido por `[rowStyleClass]`, estilado en `_sc-datatable-list.scss`): el
  * `<tr>` lo pinta el DS y una regla de esta página no lo alcanza.
