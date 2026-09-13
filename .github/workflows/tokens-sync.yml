@@ -60,7 +60,17 @@ jobs:
         run: npm run verify
 
       - name: e2e smoke (regresión visual por cambio de token)
+        # Lo mismo que el job `e2e-smoke` de ci.yml, y por lo mismo: las baselines de
+        # `components.spec.ts` son `*-darwin.png` y este runner es Ubuntu, así que sin esta
+        # variable falla SIEMPRE («A snapshot doesn't exist»), traiga el export lo que traiga.
+        # Pasó el 2026-09-13 con un export idéntico a main. La red de aquí son las métricas del
+        # Kit, que sí corren en Linux; lo vigila `workflow-visual-baselines.test.mjs`.
+        env:
+          SC_SKIP_VISUAL_BASELINES: '1'
         run: |
+          # El repo APT de Chrome del runner a veces viene desincronizado y tumba el
+          # `apt-get update` de `--with-deps` antes de bajar nada (ci.yml, 2026-09-09).
+          sudo rm -f /etc/apt/sources.list.d/google-chrome.list
           npx playwright install --with-deps chromium
           npm run e2e
 

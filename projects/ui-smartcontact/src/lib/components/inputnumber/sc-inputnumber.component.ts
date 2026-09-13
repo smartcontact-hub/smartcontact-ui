@@ -95,6 +95,19 @@ export class ScInputNumberComponent {
 
   protected readonly hasSuffix = computed(() => !!this.suffix());
 
+  /*
+   * LA UNIDAD SE OYE (2026-09-13). El sufijo iba con `aria-hidden` y sin que nada lo
+   * nombrara, así que un lector de pantalla leía «Tiempo máximo de espera, 30» sin decir
+   * si eran segundos o minutos: justo lo que la regla «siempre con unidad» de Config quiere
+   * evitar, solo que para quien no ve la pantalla. Ahora el campo lo lleva en su
+   * descripción, delante del mensaje de ayuda o de error si lo hay.
+   */
+  protected readonly suffixId = computed(() => `${this.resolvedId()}-suffix`);
+  protected readonly describedBy = computed(() => {
+    const ids = [this.hasSuffix() ? this.suffixId() : null, this.footerText() ? this.msgId() : null].filter(Boolean);
+    return ids.length ? ids.join(' ') : null;
+  });
+
   /**
    * Padding-right del control para reservar espacio del suffix. Se calcula
    * a partir del length del texto (Inter ≈ 0.6em por carácter + 0.5em safety,
