@@ -81,6 +81,9 @@ export interface ScDatatableSortEvent {
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     '[class.sc-datatable--list]': "variant() === 'list'",
+    // Sin la clase si también es `scrollable`: ahí la cabecera ya la fija PrimeNG
+    // dentro de la tabla, y el tema no tiene que preguntar a `p-table` por ello.
+    '[class.sc-datatable--sticky-header]': 'stickyHeader() && !scrollable()',
   },
 })
 export class ScDatatableComponent<T = unknown> {
@@ -121,6 +124,22 @@ export class ScDatatableComponent<T = unknown> {
   readonly variant = input<ScDatatableVariant>('default');
   readonly scrollable = input(false, { transform: booleanAttribute });
   readonly scrollHeight = input<string | undefined>(undefined);
+
+  /**
+   * Cabecera fija al scroll de la PÁGINA: se queda arriba mientras se desplaza
+   * el antepasado que hace scroll (en el Supervisor, `main.app-shell__content`).
+   * Para una tabla que hace scroll DENTRO de sí misma usa `scrollable` +
+   * `scrollHeight`, que ya fija la cabecera; si llegan las dos, manda `scrollable`.
+   *
+   * La publica el TEMA (`sc-preset/css.ts`, `stickyHeaderCss`), porque los nodos
+   * que toca los pinta `p-table`. Dos condiciones, medidas el 2026-09-13:
+   *   - El contenedor de `p-table` deja de hacer scroll, así que una tabla más
+   *     ancha que su caja desborda hacia la página en vez de desplazarse dentro.
+   *   - Ningún antepasado entre la tabla y el que hace scroll puede tener
+   *     `overflow` distinto de `visible` o `clip`: `hidden` o `auto` crean su
+   *     propio contenedor de scroll y la cabecera se fija a ESE, que no se mueve.
+   */
+  readonly stickyHeader = input(false, { transform: booleanAttribute });
   readonly stripedRows = input(false, { transform: booleanAttribute });
   readonly showGridlines = input(false, { transform: booleanAttribute });
   readonly loading = input(false, { transform: booleanAttribute });

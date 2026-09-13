@@ -1,4 +1,4 @@
-import { booleanAttribute, ChangeDetectionStrategy, Component, computed, input } from '@angular/core';
+import { booleanAttribute, ChangeDetectionStrategy, Component, computed, ElementRef, inject, input } from '@angular/core';
 import { TagModule } from 'primeng/tag';
 
 import { resolveScComponentIconClass } from '../../core/icons/sc-component-icon-resolver';
@@ -13,9 +13,14 @@ type PrimeTagSeverity = 'secondary' | 'success' | 'info' | 'warn' | 'danger' | '
     imports: [TagModule],
     templateUrl: './sc-tag.component.html',
     styleUrl: './sc-tag.component.scss',
-    changeDetection: ChangeDetectionStrategy.OnPush
+    changeDetection: ChangeDetectionStrategy.OnPush,
+    host: {
+        '(mouseenter)': 'syncTruncatedTitle()'
+    }
 })
 export class ScTagComponent {
+    private readonly host = inject<ElementRef<HTMLElement>>(ElementRef);
+
     readonly value = input<string | null>(null);
 
     readonly severity = input<ScSeverity>('primary');
@@ -64,4 +69,26 @@ export class ScTagComponent {
     protected readonly tagIcon = computed<string | undefined>(() =>
         resolveScComponentIconClass(this.icon())
     );
+
+    /**
+     * Una etiqueta no se parte: si no cabe, el tema la recorta con puntos
+     * suspensivos (`tagOneLineCss`). Al pasar el ratón, el valor entero vuelve en
+     * `title`, pero SOLO si está recortada: en las que caben sería un tooltip que
+     * repite lo que ya se lee. Se mide al entrar el ratón y no antes porque el
+     * recorte depende del ancho de la columna, que cambia con la ventana. Va en la
+     * pastilla y no en el host, para no pisar un `title` que ponga el consumidor.
+     */
+    protected syncTruncatedTitle(): void {
+        const pill = this.host.nativeElement.querySelector<HTMLElement>('.p-tag, .sc-tag__label');
+        const text = pill?.querySelector<HTMLElement>('.p-tag-label, .sc-tag__text');
+        if (!pill || !text) {
+            return;
+        }
+
+        if (text.scrollWidth > text.clientWidth) {
+            pill.setAttribute('title', this.value() ?? '');
+        } else {
+            pill.removeAttribute('title');
+        }
+    }
 }
