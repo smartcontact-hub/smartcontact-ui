@@ -80,13 +80,17 @@ const RUTAS = [
  *
  * Al nacer (2026-09-13) eran 14 familias y 140 piezas: estados (`sc-label`, `status-pill`,
  * `rules-status`), tipo de extensión y de entidad, chips de acción de regla y dos contadores. Esas
- * pasaron a `sc-tag` / `sc-badge` en el mismo cambio. Queda UNA, y no por olvido:
+ * pasaron a `sc-tag` / `sc-badge` en el mismo cambio. Queda UNA, y NO es una excepción aceptada:
  */
 const INVENTARIO: Record<string, number> = {
-  /* El icono de cada tarjeta del hub de Repositorios. No es una etiqueta: su fondo y su borde
-   * cambian con el hover y el deshabilitado DE LA TARJETA. Llevarlo a `sc-avatar` obligaría a
-   * pisar sus clases internas desde la pantalla, que es otra forma de ir a mano. Se decide con
-   * la tarjeta del hub, no sola. */
+  /* ⚠️ La punta de algo más grande. Es el icono con marco de las filas del hub de Repositorios, y
+   * lo hecho a mano no es el icono sino la FILA ENTERA (`<button class="hub-item">`: icono, título,
+   * descripción, flecha o «Próximamente», con su hover y su deshabilitado) y el grupo con borde que
+   * las envuelve. Esta sonda solo ve pastillas, así que del hub cuenta el icono (tiene fondo, y el
+   * glifo cuenta como texto) y no ve el resto: que baje a 0 migrando SOLO el icono no significaría
+   * que el hub bebe del DS. No hay maqueta en Figma (medido: el fichero `Supervisor` no tiene
+   * página de Repositorios). Lo pendiente es llevar la fila a un componente de lista de navegación
+   * del DS —antes, ver si el Kit o primeng.dev lo resuelven con Menu y plantilla de ítem—. */
   'hub-item__icon (sc-repositorios-hub-page)': 11,
 };
 

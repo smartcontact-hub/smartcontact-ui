@@ -76,8 +76,8 @@ acción de regla, `sc-tag` de solo icono con el nombre accesible en el host. (3)
 `sc-badge`: varias grabaciones (`info`) y fallidas (`contrast`). (4) Se borran `.sc-label`,
 `.status-pill`, `.rules-status`, `.entity-type-chip`, `.rules-action-chip` y el tipo de extensión.
 (5) Nace `e2e/supervisor/hand-made-pieces.spec.ts`: congela el inventario por clase y se pone rojo
-si una cifra sube, aparece una clase o baja sin actualizarse. Queda una: el icono de las tarjetas del
-hub de Repositorios.
+si una cifra sube, aparece una clase o baja sin actualizarse. Queda una: el icono de las filas del hub
+de Repositorios, que es solo lo que la sonda ve de una fila de navegación hecha a mano entera.
 
 **Razón** · Figma (`Supervisor` › Agentes) dibuja el estado con `tag` Success/Secondary y el tipo de
 extensión con `tag` Secondary; los contadores con `badge`/`overlaybadge`. Las pantallas sin maqueta
@@ -90,15 +90,20 @@ Tipo de Usuarios.
   tag del Kit pinta el texto tal cual. Salen «Activo», «WebRTC».
 - **Badge `danger` en «Solo fallidas»** → blanco sobre red-500 da 3.76:1, bajo AA (lo cazó
   `theme-contrast`); es el mismo valor que el botón `danger`, pendiente de decidir en el DS.
-- **El icono del hub a `sc-avatar`** → su fondo cambia con el hover y el deshabilitado de SU tarjeta;
-  hacerlo obligaría a pisar clases internas del DS desde la pantalla. Se decide con la tarjeta.
+- **Migrar solo el icono del hub (p. ej. a `sc-avatar`)** → lo hecho a mano es la fila entera
+  (`<button class="hub-item">` con icono, título, descripción, flecha o «Próximamente», hover y
+  deshabilitado); el icono es lo único que la sonda ve. Bajar ese 11 a 0 sin tocar la fila haría
+  pasar el test sin que el hub bebiera del DS. Tampoco hay maqueta: el fichero `Supervisor` no tiene
+  página de Repositorios. (Una primera versión de esta entrada decía que migrarlo obligaba a «pisar
+  el componente por dentro»; no se había medido, y Rafa pidió revisarlo con ojo crítico.)
 - **Añadir las piezas a una lista de «conocidas» del test** → el test existe para que bajen, no para
   archivarlas.
 
 **Consecuencias** · Entidades pierde el azul del tipo (era color sin significado) y el sistema deja de
 distinguirse en gris: las dos secciones ya se separan por su título y el candado. Pendiente, en la
 bandeja: el `badge danger` del DS bajo AA, el botón «Solo fallidas» entero (un filtro conmutable hecho
-a mano, que la sonda no cuenta porque es un botón), el icono del hub, y que la sonda solo mira pastillas.
+a mano, que la sonda no cuenta porque es un botón), la fila de navegación del hub a un componente del DS,
+y que la sonda solo mira pastillas.
 
 ---
 

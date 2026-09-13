@@ -32,7 +32,7 @@
 **LO SIGUIENTE, en orden (Rafa, 2026-09-13: «automatizable, agéntico: no ir a mano salvo que sea necesario»):**
 
 1. **Lo que dejó el barrido (DD-77)**: el `badge`/botón `danger` del DS a 3.76:1 (decidir en el DS);
-   «Solo fallidas» es un filtro conmutable a mano; el icono de tarjeta del hub; y la sonda de
+   «Solo fallidas» es un filtro conmutable a mano; el hub de Repositorios es una FILA a mano entera (sin maqueta; la sonda solo ve su icono); y la sonda de
    `hand-made-pieces` solo mira pastillas (cajas y filas a mano, sin contar). Figma pone el Tipo de
    Agentes `Rounded=True` y Servicio/Grupo `False`: decidir uno para las categorías.
 2. **La cabecera fija de Conversaciones no fija** (ya antes de DD-76): `.table-card { overflow: hidden }`
