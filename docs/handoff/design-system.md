@@ -32,9 +32,8 @@
 **LO SIGUIENTE, en orden (Rafa, 2026-09-13: «automatizable, agéntico: no ir a mano salvo que sea necesario»):**
 
 0. **«Aura + color de marca» y el export en un clic** (encargo del 2026-09-13; mediciones y menú en
-   `~/Documents/Claude/2026-09 aura-marca/`, scripts incluidos). Hecho: el robot (DD-82). Siguiente,
-   en orden: (a) las 13 familias de color escritas a mano en `01-primitive.css` pasan a generarse del
-   export (hoy un color de Figma sale rojo, medido con `sky.500`); (b) capturas de antes y después y
+   `~/Documents/Claude/2026-09 aura-marca/`, scripts incluidos). Hecho: el robot (DD-82) y las
+   familias de color generadas del export (DD-83). Siguiente, en orden: (b) capturas de antes y después y
    zip del equipo externo en el robot; (c) tanda «vuelve a Aura» (73 diferencias sin motivo) y el foco
    al color primario; (d) densidad: medir con NUESTRA tipografía antes de decidir (Rafa: «las nuestras
    son más espaciadas»). Pendiente de Rafa: qué es marca (punto 1 del menú).
@@ -152,7 +151,7 @@ check `tokens-sync` en su commit.
 
 - ⚠️ **Playwright carga los helpers como CommonJS**: un `.mjs` con `import.meta` no se puede importar
   desde un spec. Y lo que un `.ts` del arnés importa, `tsc` lo revisa: anótalo con JSDoc.
-- ⚠️ **`tokens:import` no corrige un 0** del export ni regenera las familias de color curadas a mano.
+- ⚠️ **`tokens:import` no corrige un 0** del export. Las familias de color ya salen del export (DD-83).
 ## ✅ 2026-09-13 · La cabecera de Conversaciones se queda arriba, y una etiqueta ya no se parte
 
 **Sello:** rama `arebury/fix-conversaciones-sticky-header` sobre `b7db531` (#140). DD-80. Rafa, visto en

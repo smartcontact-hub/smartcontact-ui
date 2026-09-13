@@ -27,8 +27,9 @@ export const EXCLUDE = new Set([
   //    no los consume nadie. Va por referencia de paleta en `sc-preset/button.ts`.
   //    Se borra cuando el Kit suba el suyo. Ver customs-catalog §1.8.
   'light:button.outlined.secondary.color',
-  // ── success text (dark): el export usa green-950 vanilla (#052e16); la DS cura su propio
-  //    green-950 de marca (#0a2916, un punto más oscuro). Divergencia consciente → no espejar.
+  // ── success text (dark): antes la DS curaba su green-950 de marca y aquí no se espejaba.
+  //    Desde el 2026-09-14 green-950 sale del export (DD-83), así que el valor ya es el mismo;
+  //    las filas se quedan excluidas para no cambiar dos cosas a la vez. Se pueden quitar.
   'dark:badge.success.color',
   'dark:button.success.color',
   'dark:button.success.hover.color',
