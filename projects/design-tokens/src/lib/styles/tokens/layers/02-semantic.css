@@ -30,6 +30,7 @@
   --sc-border-strong: var(--sc-color-slate-400);
   --sc-bg-disabled: var(--sc-color-slate-200);
   --sc-border-error: var(--sc-color-red-400);
+  --sc-text-disabled: var(--sc-color-slate-500);
   --sc-text-secondary: var(--sc-color-slate-600);
   /* @sc-gen:semantic-color-light:end */
 
@@ -87,8 +88,12 @@
    * se degrada un tema que ya cumplía solo por simetría. El resultado es que
    * el oscuro conserva los tres niveles y el claro tiene dos.
    *
-   * `disabled` (gray-300) sigue por debajo a propósito: 1.4.3 exime a los
-   * controles inactivos, y un control deshabilitado tiene que parecerlo.
+   * `disabled` sigue por debajo a propósito: 1.4.3 exime a los controles
+   * inactivos, y un control deshabilitado tiene que parecerlo. Desde DD-81 lo
+   * escribe el generador con el valor del Kit y de Aura (`surface.500` = slate-500,
+   * zona de arriba): el gray-300 de antes daba 1,21:1 sobre el campo deshabilitado
+   * y el texto no se leía; slate-500 da 2,20 (APCA Lc 37, por encima del Lc 30 que
+   * pide a lo deshabilitado) y sigue un paso por debajo de `secondary`.
    * Vigilado por parity §6 (gateado desde hoy, ya no solo informado). */
   /*
    * `heading` — el nivel que a la rampa CLARA le faltaba, y sale de ir hacia ARRIBA.
@@ -111,7 +116,6 @@
    */
   --sc-text-heading: var(--sc-color-slate-800);
   --sc-text-subtle: var(--sc-color-slate-600);
-  --sc-text-disabled: var(--sc-color-slate-300);
   --sc-text-inverse: var(--sc-color-slate-0);
   /* Accent = SKY de marca (unificado 2026-07-18, `docs/customs-catalog.md §1.4`).
    * Antes cyan-600: era un resto del andamiaje inicial, nunca documentado como
@@ -210,7 +214,7 @@
   --sc-bg-danger-subtle-hover: var(--sc-color-red-100);
   --sc-bg-danger-subtle-active: var(--sc-color-red-200);
 
-  /* Info (electric blue) */
+  /* Info (sky) */
   --sc-bg-info: var(--sc-color-sky-500);
   --sc-bg-info-hover: var(--sc-color-sky-600);
   --sc-bg-info-active: var(--sc-color-sky-700);
@@ -251,13 +255,13 @@
   --sc-border-success-subtle: var(--sc-color-green-200);
   --sc-border-warning: var(--sc-color-yellow-500);
   --sc-border-warning-subtle: var(--sc-color-yellow-200);
-  /* Focus-ring border — electric-blue-500 (vibrante saturado). Decisión
+  /* Focus-ring border — sky-500 (vibrante saturado). Decisión
    * consciente DIVERGENTE del JSON PrimeOne (que propone navy primary
    * #1b273d): el navy oscuro reduce contraste con el border primary del
    * input enfocado, degradando a11y. Documentado en
    * `docs/customs-catalog.md §1.1`. Antes apuntaba a `soft-blue-500`
-   * (drift interno con `sc-preset.ts.focusRing.color = electric-blue-500`);
-   * unificado S54 a electric-blue para single source of truth. */
+   * (drift interno con `sc-preset.ts.focusRing.color = sky-500`);
+   * unificado S54 a sky para single source of truth. */
   --sc-border-focus: var(--sc-color-sky-500);
   --sc-border-danger: var(--sc-color-red-600);
   --sc-border-danger-hover: var(--sc-color-red-700);

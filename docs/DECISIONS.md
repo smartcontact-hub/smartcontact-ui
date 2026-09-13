@@ -144,6 +144,73 @@ del export.
 
 ---
 
+## DD-81 · 2026-09-13 — Figma y código siguen a Aura: primario oscuro en `sky`, texto deshabilitado legible y medidas enlazadas por nombre a la escala
+
+**Contexto** · Rafa vio que el «Guardar» deshabilitado de la barra no se leía en oscuro (2,73:1) y pidió
+contrastar sus sesgos y los de Claude con `better-ui`, con la regla de DD-78: en lo que dude, manda
+Aura y Figma se alinea. Medido con `tools/aura-diff.mjs` (PR #142) y en el Supervisor:
+(1) Aura pinta el primario oscuro CLARO con texto oscuro, porque ese mismo color es también texto
+(botón de texto, contornos, cursor) sobre el fondo oscuro. El Kit copió sus pasos (400, 300, 200) pero
+no su claridad: el esmeralda-400 de Aura es L77 y nuestro azul 400, L52. (2) Los botones deshabilitados
+no tienen color propio en Aura: son el mismo botón al 60 %. (3) El texto de los campos deshabilitados
+se pintaba a 1,21:1 en claro y 1,35:1 en oscuro. (4) En oscuro los seleccionados, el hover de los
+botones de texto y contorno y la etiqueta primaria salían VERDES: restos del esmeralda de Aura en crudo
+en el Kit y en `base.ts`. (5) Las medidas del Kit vienen de PrimeOne 4.0.0, dibujado sobre Aura 4.0 de
+2024 a 14px por rem (relleno de campo 0,5rem → 7). Aura ha cambiado desde entonces (0,375rem = 6).
+(6) Aura no tiene escala de espaciado; la del Kit es la de PrimeOne (34 pasos, idénticos, ninguno
+nuestro) y cada paso se llama como un rem de Aura: `scale/0-375` es 0,375rem, dibujado a 14px por rem.
+
+**Decisión** · Todo con variables que ya existían, primero en Figma y después por el export:
+(1) Primario oscuro con el patrón de Aura en `sky`: base sky-300, hover sky-200, pulsado sky-100, texto
+`surface.900` (zinc-900). Los pasos se eligen por claridad (esmeralda N ≈ sky N−100), también en la
+etiqueta primaria (sky-200), el borde del botón de contorno (sky-600) y el de la celda seleccionada
+(sky-700). Las filas oscuras de `primary.*` pasan a `enforce` y el generador las escribe. (2) El
+esmeralda en crudo pasa a sky con la misma transparencia, y `highlight` oscuro en `base.ts` cuelga de
+`--sc-bg-primary`. (3) `form.field.disabled.color` a `enforce` en los dos modos: slate-500 en claro,
+zinc-400 en oscuro, lo que ya decían el Kit y Aura. (4) Las 56 medidas de componente de los 15
+componentes del Supervisor apuntan al paso de escala con el MISMO NOMBRE que el rem de Aura (0,375rem →
+`scale/0-375`): 15 ya lo hacían, 39 cambian (Aura se compactó desde 2024) y 2 sin paso con ese nombre
+se quedan (alto del interruptor 1,375rem y ancho del toast 22rem). 16 llegan a código por el export.
+
+**Razón** · (1) E fue la única opción medida que da el resultado de Aura sin bajar contraste en ningún
+sitio: base 8,24, deshabilitado 3,77, como texto sobre zinc-900 8,24. `sky` tiene el mismo tono que el
+azul marino (257° contra 262°) con más croma, así que no cambia la marca. (3) 2,20 y 4,07, con APCA Lc
+37 y 42 (el mínimo para lo deshabilitado es Lc 30); slate-500 sigue un paso por debajo de `secondary`.
+(4) Es la regla de Rafa (variables que ya existen) y la traducción que usa el propio Figma de PrimeTek:
+cuando Aura cambie una medida, su rem dice qué paso usar. Guarda las proporciones de Aura a nuestro
+tamaño (todo ×14/16, como siempre: campos a 29,5 donde primeng.dev mide 31).
+
+**Descartadas** ·
+- **C · el Kit tal cual, azul 400 con texto blanco** (lo que Claude recomendó primero) → el botón de
+  texto «Ver detalle» queda a 3,15:1. Claude solo había mirado el botón relleno.
+- **D · Aura con nuestro azul marino (azul 200)** → misma claridad que Aura pero una quinta parte de su
+  color (croma 0,031 contra 0,153): el interruptor encendido parece apagado.
+- **El número exacto de Aura suelto dentro de la variable** (lo que Claude escribió primero en Figma, 53
+  de 56 sin paso de escala) → rompe la regla de variables existentes. Claude tomó un «yo entiendo que
+  Aura» de Rafa como cambio de criterio sin confirmarlo.
+- **El paso más cercano en píxeles** → deforma proporciones: el hueco del botón (Aura 0,5rem, ya en
+  `scale/0-5`) habría pasado a `scale/0-625`.
+- **Llevar la escala a 16px por rem** → agranda un 14 % todo lo que la usa y hoy rompe en silencio
+  (`scaleSuffix` nombra por valor/14). Apuntado como experimento en local en el hand-off.
+- **Dejar el texto deshabilitado más tenue a propósito** (la razón que tenía la fila de claro) → a 1,21:1
+  no parece deshabilitado, parece vacío. WCAG 1.4.3 lo exime, pero tiene que leerse.
+
+**Consecuencias** · Figma se escribió antes que el código, desde listas únicas
+(`~/Documents/Claude/2026-09 aura/plan-figma-aura.json` para color y `…-por-nombre.json` para medidas),
+con versión guardada antes de cada tanda, comprobadas contra el estado de Figma antes de escribir y
+releídas una a una después. El export de color salió idéntico al del plugin (#144); el de medidas
+tiene que salir idéntico en el siguiente export. Tres piezas del tema apuntaban a pasos del azul marino en oscuro y no al
+componente del Kit, y el e2e `severities-contrast` lo cazó en la etiqueta: `tag.ts`, `button.ts`
+(borde del contorno) y `treetable.ts` pasan a sus `--sc-cmp-*`, y su excepción del tag primario oscuro
+se borra porque ya no hace falta (10/10 sin ella). `theme-contrast` del Supervisor: 53/53. Pendiente:
+`datatable` no tiene fichero de tema (manda Aura), así que su borde de celda seleccionada en oscuro
+sigue en azul marino 900. Campos y botones a 29,5 de alto (antes 33), pequeños a 24 (el mínimo de WCAG
+2.5.8, sin margen), casilla de Figma a 15,75 (en código sigue a 17,5: el generador no lee casilla). En oscuro, primario, enlaces, foco y avisos informativos comparten la familia `sky`: vigilar que
+un aviso no se lea como un botón. `--sc-text-disabled` tiene 23 usos, no solo campos: en oscuro coincide
+con `secondary` (lo mismo que hace Aura). Sin tocar: `--sc-icon-disabled` sigue en slate-300.
+
+---
+
 ## DD-80 · 2026-09-13 — La cabecera fija de una tabla la pide `stickyHeader` y la pinta el tema, y una etiqueta es siempre una línea
 
 **Contexto** · La cabecera de Conversaciones llevaba `position: sticky` desde S37 y **nunca fijó**: tras

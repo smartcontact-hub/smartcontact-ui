@@ -61,7 +61,7 @@ Sobre Figma SC: pedir el link del componente ANTES de tocar nada. Replicar 1:1 l
 
 ---
 
-### 1.2 Info → sky de marca (rol: Electric Blue)
+### 1.2 Info → sky de marca
 
 > El Kit y el código nombran esta familia `sky` (`--sc-color-sky-*`, `#1464fe` — azul de marca
 > vibrante). NO es el Tailwind sky (`#0ea5e9`) que el PrimeOne/Aura vanilla trae por defecto.
@@ -72,7 +72,7 @@ Sobre Figma SC: pedir el link del componente ANTES de tocar nada. Replicar 1:1 l
 | Toast `severity=info` icon-bg | Tailwind sky | `sky` de marca | `--sc-toast-info-icon-bg = var(--sc-color-sky-500)` |
 | Message / Notification info chrome | sky | `sky` de marca | (idem, vía familia `sky`) |
 
-**Razón**: el sky default de Aura es demasiado suave para el tratamiento de info de la app. Electric-blue da el peso visual que la marca SC necesita para notificaciones sistémicas (Toast info, Message info, Banner info).
+**Razón**: el sky default de Aura es demasiado suave para el tratamiento de info de la app. El sky de marca da el peso visual que la marca SC necesita para notificaciones sistémicas (Toast info, Message info, Banner info).
 
 ---
 
@@ -603,7 +603,7 @@ Para el caso futuro de backend real: el grace period del undo vive **server-side
 | `--sc-font-family-mono` | System mono stack (no exportado por Kit Pro) — §5.8 |
 | `--sc-toast-undo-*` | Extension pattern undo SC — §2.1 |
 | `--sc-radius-2xl` (16), `--sc-radius-full` (9999) | Steps custom SC fuera de la escala Kit Pro |
-| `--sc-focus-ring-width` (2px) | RECONCILIADO al Kit 2026-06-14: el Kit ahora define electric-blue + width 2 → ya no diverge — §1.1 |
+| `--sc-focus-ring-width` (2px) | RECONCILIADO al Kit 2026-06-14: el Kit ahora define sky-500 + width 2 → ya no diverge — §1.1 |
 
 Diseño formaliza estos en la collection "Custom" al vincular el Kit Pro con Variables.
 
@@ -807,7 +807,7 @@ Un audit cruzó la capa `semantic.*` del código vs Kit Pro Variables (`aura/sem
 | Categoría Kit Pro | Cobertura en código | Naming 1:1 | Estructura 1:1 | Acción |
 |---|---|---|---|---|
 | `surface.{0-950}` (12 stops) | `--sc-color-slate-*` mapping vía `colorScheme.light.surface` | ✅ | ✅ | OK — sin cambios |
-| `focus.ring.*` | electric-blue + width 2 (reconciliado 2026-06-14) | ✅ | En el Kit, ya no diverge | §1.1 |
+| `focus.ring.*` | sky-500 + width 2 (reconciliado 2026-06-14) | ✅ | En el Kit, ya no diverge | §1.1 |
 | `disabled.opacity` | N/A en Kit Pro | N/A | Custom legítimo (defensive 0.6) | Documentado en el preset |
 | `form.field.*` (11 paths) | Vive en el preset (`base.ts` colorScheme.light.formField, 10/11 paths) | ❌ camelCase TS vs JSON nested | ⚠️ Subset, no expone CSS `--sc-form-field-*` | **Documentar como preset-native** ↓ |
 | `overlay.{select,popover,modal}.{background,color,border}` | Geometría (radius/shadow) en CSS; colores en el preset colorScheme | ⚠️ parcial | ⚠️ Color tokens no expuestos como CSS | **Documentar como preset-native** ↓ |
@@ -944,7 +944,7 @@ Las divergencias del catálogo **NO** se transmiten automáticamente a otros sta
 
 Recomendación:
 
-- Brand colors (Primary navy / Info electric-blue / Warn amber): consumir vía `--sc-color-*` → alineado automáticamente.
+- Brand colors (Primary navy / Info sky / Warn amber): consumir vía `--sc-color-*` → alineado automáticamente.
 - Component extensions (toast undo button, modal stacking, checkbox tri-state): implementar equivalentes si se necesitan. No es responsabilidad del DS forzar el patrón.
 - Component overloads (severity='secondary'→violet): cada API decide si expone el slot violet o no.
 

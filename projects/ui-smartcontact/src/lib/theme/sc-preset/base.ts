@@ -6,7 +6,7 @@
  * en px: el preset REDIRIGE (`--p-*` → `var(--sc-*)`), no declara.
  *
  * Mapa de familias (verificado por valor contra el export del Kit):
- *   sky    → --sc-color-sky-*  (el Kit ya trae sky = electric blue)
+ *   sky    → --sc-color-sky-*  (mismo nombre que en el Kit)
  *   slate  → --sc-color-slate-*           (gris de marca SC)
  *   orange → --sc-color-yellow-*         (warn = lo que diga el Theme Designer, y
  *            desde el export del 24-ago dice YELLOW. La familia
@@ -208,7 +208,7 @@ export default {
       lineHeight: 'inherit',
     },
     focusRing: {
-      // Divergencia consciente vs Kit (navy, width 1): electric-blue mas ancho por
+      // Divergencia consciente vs Kit (navy, width 1): sky-500 más ancho por
       // contraste a11y — customs-catalog §1.1.
       color: 'var(--sc-border-focus)',
       style: 'solid',
@@ -260,7 +260,7 @@ export default {
       },
     },
     formField: {
-      // Padding 10.5/7 + sm/lg 1:1 del export del Kit (form.field.*) — los
+      // Padding 10/6 + sm/lg 1:1 del export del Kit (valores de Aura desde DD-81) (form.field.*) — los
       // tokens de escala caen exactos. Aplica a todos los form fields PrimeNG.
       paddingX: 'var(--sc-cmp-form-field-padding-x)',
       paddingY: 'var(--sc-cmp-form-field-padding-y)',
@@ -340,13 +340,15 @@ export default {
           // 9795:26786 del Kit), no un paso más claro.
           background: 'var(--sc-bg-default)',
         },
-        // Sin token semántico propio: receta Aura/Kit (emerald-400 translúcido
-        // al 16 %) expresada sobre primitivos — sin hex en base.
+        // Sin token semántico propio: receta de Aura (el primario oscuro translúcido
+        // al 16 % y al 24 %). Hasta DD-81 era esmeralda-400, copiado tal cual del
+        // verde de Aura: los seleccionados en oscuro salían verdes. Ahora cuelga del
+        // primario, que en oscuro es sky-300.
         highlight: {
           color: 'color-mix(in srgb, var(--sc-color-slate-0) 87%, transparent)',
-          background: 'color-mix(in srgb, var(--sc-color-emerald-400) 16%, transparent)',
+          background: 'color-mix(in srgb, var(--sc-bg-primary) 16%, transparent)',
           focusColor: 'color-mix(in srgb, var(--sc-color-slate-0) 87%, transparent)',
-          focusBackground: 'color-mix(in srgb, var(--sc-color-emerald-400) 24%, transparent)',
+          focusBackground: 'color-mix(in srgb, var(--sc-bg-primary) 24%, transparent)',
         },
       },
     },

@@ -30,7 +30,7 @@ import type { TagDesignTokens } from '@primeuix/themes/types/tag';
                 background: "var(--sc-cmp-tag-danger-background)"
             },
             primary: {
-                color: "{primary.300}",
+                color: "var(--sc-cmp-tag-primary-color)",
                 background: "var(--sc-cmp-tag-primary-background)"
             },
             success: {

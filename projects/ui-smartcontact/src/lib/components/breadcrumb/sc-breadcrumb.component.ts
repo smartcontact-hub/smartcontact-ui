@@ -7,7 +7,7 @@ import { BreadcrumbModule } from 'primeng/breadcrumb';
  * sobre `<p-breadcrumb>` — heredamos su modelo (`MenuItem[]` + `home`) sin
  * reinventar HTML, y el aspecto sale 100% de tokens vía `sc-preset` (`breadcrumb.*`):
  * item en `text.muted` que sube a `text.color` en hover, separador en color de
- * icono, radio 6, gap 7, padding 14, anillo de foco electric-blue. Light + dark
+ * icono, radio 6, gap 7, padding 14, anillo de foco sky. Light + dark
  * salen solos por los tokens semánticos.
  *
  * Uso:

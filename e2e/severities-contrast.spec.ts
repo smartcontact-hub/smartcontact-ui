@@ -97,10 +97,6 @@ const CONOCIDOS: readonly string[] = [
    * `--sc-text-secondary`: subirlo lo pega a `text-primary` y cambia un fallo de
    * contraste por uno de jerarquía. Misma razón, mismo veredicto. */
   'fg=rgb(111,119,132) 3.92:1',
-  /* El tag primario en OSCURO (texto blue-300 sobre emerald-500 al 16 %, el fondo del
-   * Kit): 3.88:1 sobre el gris de marca; 4.10:1 desde que los neutros oscuros son zinc
-   * (2026-09-13). Mejora, pero sigue bajo 4.5, y por eso cambia la cifra y no se va. */
-  'fg=rgb(121,142,171) 4.10:1',
   'fg=rgb(143,151,163) 2.95:1',
 
   /* ── danger en OSCURO, al filo ──────────────────────────────────────────────

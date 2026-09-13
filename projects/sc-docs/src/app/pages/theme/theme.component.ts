@@ -11,7 +11,7 @@ import { TooltipModule } from 'primeng/tooltip';
 /**
  * Smoke visual del preset: primitivos PrimeNG SIN wrapper, estilados solo por
  * `theme/sc-preset` + tokens. Si esta página pinta con la métrica del Kit
- * (botón 10.5/7, radio 6…), el puente --p-* → --sc-* está vivo. Es una prueba de
+ * (botón 10/6, radio 6…), el puente --p-* → --sc-* está vivo. Es una prueba de
  * verificación (enlazada desde Lab), no una fundación con pestaña propia.
  */
 @Component({
