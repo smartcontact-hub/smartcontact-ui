@@ -112,11 +112,11 @@
 </ng-template>
 
 <ng-template #identifierTpl let-user>
-  <span class="table__td-text table__td-text--mono">{{ user.identifier || '—' }}</span>
+  <span class="table__td-text sc-text-body-regular">{{ user.identifier || '—' }}</span>
 </ng-template>
 
 <ng-template #typeTpl let-user>
-  <span class="sc-type-tag">{{ typeLabel(user.type) }}</span>
+  <sc-tag severity="secondary" [value]="typeLabel(user.type)" />
 </ng-template>
 
 <ng-template #statusTpl let-user>

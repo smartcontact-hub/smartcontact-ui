@@ -94,7 +94,8 @@
   right: var(--sc-spacing-0-875);
   top: 50%;
   transform: translateY(-50%);
-  font-family: var(--sc-font-family-mono);
+  /* `<kbd>` sale en monoespaciada por la hoja del navegador; aquí no hay mono. */
+  font-family: inherit;
   font-size: var(--sc-font-size-50);
   font-weight: var(--sc-font-weight-medium);
   line-height: 1;

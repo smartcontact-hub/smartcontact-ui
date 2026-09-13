@@ -115,7 +115,7 @@ const COLUMNS: readonly RepoColumnDef<RepoVariable>[] = [
   {
     key: 'key',
     labelKey: 'repositories.variables.key',
-    kind: 'mono',
+    kind: 'text',
     accessor: (i) => i.key,
     width: '128px',
   },

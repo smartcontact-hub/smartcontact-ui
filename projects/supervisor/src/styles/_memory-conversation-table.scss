@@ -34,30 +34,20 @@
 
 @layer app {
   sc-datatable.memory-conversations {
+    /* PIEL DE AURA (2026-09-13). Rellenos, bordes y colores de cabecera y celda
+     * son los de Aura, como en las otras 25 tablas: aquí ya no se redefinen.
+     * Lo que queda en este fichero es solo lo que Aura no trae. */
+
     /* Cabecera FIJA al scroll vertical de la página. El scrollport es `.page`
-     * (overflow-y: auto); `top: 0` ancla el th a su borde. El fondo opaco
-     * —que ya pone la piel compartida— evita que las filas se transparenten por
-     * debajo; el `box-shadow` inset repone la hairline inferior, que un
-     * `border-bottom` normal no siempre pinta bajo un elemento sticky. */
+     * (overflow-y: auto); `top: 0` ancla el th a su borde. El fondo opaco y la
+     * raya inferior son los de Aura: con `border-collapse: separate` (medido) el
+     * borde viaja con el th fijo y no hace falta reponerlo. `nowrap`: un rótulo
+     * de columna no se parte en dos líneas al estrechar la ventana. */
     thead > tr > th {
       position: sticky;
       top: 0;
       z-index: 5;
-      padding: var(--sc-spacing-0-75) var(--sc-spacing-1-125);
       white-space: nowrap;
-      box-shadow: inset 0 -1px 0 var(--sc-border-default);
-    }
-
-    /* Cuerpo: más aire que la gramática de admin → columnas menos apretadas,
-     * layout más "airy" tipo Companies.
-     *
-     * ⚠️ Los números que decía esta línea (16 vertical, 18 horizontal) NO eran los
-     * de estos tokens: `--sc-spacing-1` es 14 y `--sc-spacing-1-125` es 15.75 en la
-     * escala 14-base. Corregido el 2026-09-10 al escribir la aserción que los mide
-     * (`e2e/supervisor/text-styles-applied.spec.ts`). El aire sobre los 12.25 de la
-     * gramática compartida sigue siendo real; lo que no era real era la cifra. */
-    tbody > tr > td {
-      padding: var(--sc-spacing-1) var(--sc-spacing-1-125);
     }
 
     /* Fila borrada: atenuada. */
@@ -65,11 +55,10 @@
       opacity: 0.6;
     }
 
-    /* Seleccionada: gris neutro propio de Memory (no el slate-100 de la
-     * gramática compartida). Gana por CAPA, no por especificidad: la gramática
-     * la publica el tema en `@layer primeng` y esto va en `@layer app`, que se
-     * declara después. Es lo que se quiere — la selección de Memory manda sobre
-     * la de la lista. */
+    /* Seleccionada: el MISMO gris que la lista compartida. La regla existe por la
+     * clase, no por el color: `is-selected` sale del `Set` de la página y pinta al
+     * instante las filas que añade un rango, que `.p-datatable-row-selected` no
+     * re-resalta (ver `rowStyleClass` en el componente). */
     tbody > tr.is-selected:not(.is-deleted) {
       background: var(--sc-bg-secondary-hover);
     }

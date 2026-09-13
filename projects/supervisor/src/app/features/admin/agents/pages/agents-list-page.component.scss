@@ -79,12 +79,6 @@
   line-height: var(--sc-line-height-body-2);
   color: var(--sc-text-secondary);
 
-  &--mono {
-    font-family: var(--sc-font-family-mono);
-    font-size: var(--sc-font-size-100);
-    line-height: var(--sc-line-height-caption);
-  }
-
   &--empty {
     color: var(--sc-text-disabled);
   }

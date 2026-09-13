@@ -221,7 +221,7 @@
   height: 18px;
   border-radius: var(--sc-radius-full);
   background: color-mix(in srgb, var(--sc-color-red-200) 80%, transparent);
-  font-family: var(--sc-font-family-mono);
+  font-variant-numeric: tabular-nums;
   font-size: var(--sc-font-size-50);
   font-weight: var(--sc-font-weight-semibold);
   color: var(--sc-color-red-900);

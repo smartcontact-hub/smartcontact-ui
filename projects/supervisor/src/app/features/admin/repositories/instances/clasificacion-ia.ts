@@ -103,7 +103,7 @@ const COLUMNS: readonly RepoColumnDef<ClasificacionIA>[] = [
   {
     key: 'accuracy',
     labelKey: 'repositories.clasificacion_ia.accuracy',
-    kind: 'mono',
+    kind: 'text',
     accessor: (i) => i.accuracy,
     width: '96px',
   },

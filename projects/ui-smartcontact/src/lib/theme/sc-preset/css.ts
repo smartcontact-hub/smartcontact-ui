@@ -255,7 +255,7 @@ ${LIST} .p-datatable-tbody > tr:not(.sc-row--clickable):not(.p-selectable-row):h
 }
 
 ${LIST} .p-datatable-tbody > tr.p-datatable-row-selected {
-    background: var(--sc-color-slate-100);
+    background: var(--sc-bg-secondary-hover);
 }
 
 ${LIST} .p-datatable-tbody > tr:has(> td[colspan]) {
