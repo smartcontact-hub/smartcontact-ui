@@ -126,7 +126,7 @@ las 38 ranuras— se cerraron el mismo día en DD-73.)
    s34, y **los cabos de DD-24** (round-trip de iconos) en [`ROADMAP.md`](../ROADMAP.md).
 ## ✅ 2026-09-13 · Figma alcanza al código, el puente de tipografía se queda en tres tallas, y el 12/20 accidental pasa a caption
 
-**Sello:** HEAD `PENDIENTE`. DD-75. Las cuatro recomendaciones de `docs/figma-pendiente.md`, aprobadas
+**Sello:** HEAD `2ed5094c`. DD-75. Las cuatro recomendaciones de `docs/figma-pendiente.md`, aprobadas
 por Rafa. Queda UNA cosa suya fuera del repo: **publicar la librería** en Figma.
 
 **Lo que hay que recordar:** (1) antes de borrar en Figma se midió todo — aliases, text styles, capas
