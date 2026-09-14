@@ -14,7 +14,10 @@
    * padding 15.75 → 10.5px) → la tabla arranca más arriba, menos vertical
    * desperdiciado antes de los datos. */
   gap: var(--sc-spacing-0-75);
-  padding: var(--sc-spacing-0-75) var(--sc-spacing-1-125);
+  /* Sin relleno arriba (2026-09-14): la caja ya no pinta ni borde ni fondo por
+   * encima (S59, flush), así que ese 10,5 era aire invisible que se sumaba al
+   * margen del título de Conversaciones. */
+  padding: 0 var(--sc-spacing-1-125) var(--sc-spacing-0-75);
   background: var(--sc-bg-surface);
   /* BeyondUI vibe (experiment S59): flush — sin caja. Solo un divisor
    * hairline abajo separa la toolbar de la tabla (patrón Companies). */

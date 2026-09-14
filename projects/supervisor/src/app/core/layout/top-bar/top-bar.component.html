@@ -18,8 +18,10 @@
       <!-- La miga la pinta `sc-breadcrumb` (puente Figma→código), idéntica a
            Figma. El botón de inicio (space_dashboard) se queda aparte a la
            izquierda: es la afordancia persistente "ir al dashboard", no el
-           `home` genérico del breadcrumb. -->
-      <sc-breadcrumb class="top-bar__breadcrumb" [model]="crumbModel()" />
+           `home` genérico del breadcrumb.
+           `flush`: la barra ya pone su aire; con el relleno propio de la miga
+           medía 91 en vez de 75 (2026-09-14). -->
+      <sc-breadcrumb class="top-bar__breadcrumb" flush [model]="crumbModel()" />
     }
   </div>
 

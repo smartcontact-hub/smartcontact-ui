@@ -189,7 +189,7 @@ test('`@layer app` gana al tema: la fila fallida de transcripciones conserva su 
  * quita el `h1` o mueve el orden de `main.scss`, el título se pega al contenido y la
  * pantalla sigue pareciendo razonable — que es justo el fallo que hay que cazar aquí.
  *
- * Medido con el fallo puesto: con `.page__heading` a secas el margen AGUANTA hoy (21px),
+ * Medido con el fallo puesto: con `.page__heading` a secas el margen AGUANTA hoy (entonces 21px, 14 desde el 2026-09-14),
  * así que un gate estático no vería nada. Lo que este test fija es que siga aguantando.
  */
 const H3_SEMIBOLD = { fontSize: '18px', lineHeight: '24px', fontWeight: '600' };
@@ -239,7 +239,7 @@ test('admin/agendas · el título de página mide Heading/h3-semibold y conserva
   expect(
     margen,
     'si sale 0px, la clase se llevó por delante el margen: mira la especificidad de `h1.page__heading` en `_page.scss`',
-  ).toBe('21px');
+  ).toBe('14px'); // `scale/1`: el 1rem de Aura entre título y contenido (2026-09-14)
 });
 
 test('config/aed/servicio · la barra lateral de ajustes mide Body/body-regular por la clase', async ({

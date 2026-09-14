@@ -15,3 +15,13 @@
 <ng-template #root>
   <sc-breadcrumb [home]="home" [model]="rootOnly" homeAriaLabel="Inicio" />
 </ng-template>
+
+<!-- La barra la pinta la demo con tokens (relleno, borde): la miga `flush` no suma
+     el suyo, como en la TopBar del Supervisor. -->
+<ng-template #flush>
+  <div
+    style="display: flex; align-items: center; padding: var(--sc-spacing-1-5) var(--sc-spacing-2); background: var(--sc-bg-surface); border-bottom: 1px solid var(--sc-border-default)"
+  >
+    <sc-breadcrumb [flush]="true" [model]="inBar" />
+  </div>
+</ng-template>

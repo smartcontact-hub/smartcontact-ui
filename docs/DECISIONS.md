@@ -41,6 +41,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | Título de página → contenido `scale/1` en las 13 pantallas · una miga dentro de una barra va `flush` (la barra pone el aire) | DD-90 |
 > | Cabecera fija al scroll de la página con `<sc-datatable stickyHeader>` · ninguna caja por encima con `overflow: hidden` (usa `clip`) · una etiqueta no se parte, recorta | DD-80 |
 > | Una lista de destinos es el `Menu` del DS en línea · lo que dice Aura lo sigue el código y Figma se revincula | DD-78 |
 > | Un estado es `sc-tag` con severidad y un contador `sc-badge` · una pastilla dibujada por la pantalla la caza `hand-made-pieces` | DD-77 |
@@ -60,6 +61,47 @@
 > | Siete divergencias deliberadas entre flujos, que NO se unifican | DD-36 |
 > | `--sc-bg-default` es el suelo del shell, nunca una superficie | DD-34 |
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
+
+---
+
+## DD-90 · 2026-09-14 — La barra de arriba deja de sumar el relleno de la miga, y el título queda a la distancia de Aura en las 13 pantallas
+
+**Contexto** · Rafa, pensando en llevar la densidad a la de Aura (escala 16 e interlineado 1,5): «el header
+ocupa muchísimo», y los huecos entre título y contenido parecían grandes. Medido en builds estáticos a
+1440 (`~/Documents/Claude/2026-09 aire-aura/`): (1) la TopBar medía 91 y 48 eran la miga, porque
+`<p-breadcrumb>` trae su relleno de barra suelta (14 a cada lado) dentro de una barra que ya pone 21.
+(2) Título → contenido: 21 en 9 pantallas y 31,5-33 en Usuarios, Agentes, Grupos y Conversaciones, donde
+se sumaba el relleno de la barra de búsqueda o de los filtros. (3) Por qué Aura no engorda: Aura 3 subió
+el interlineado a 1,5 y en la misma versión bajó un paso de 1/8 rem casi todos los rellenos (campo
+0,5→0,375, celda 0,75→0,5, diálogo y tarjeta 1,25→1,125). Las cajas quedan como en Aura 2 a 14 px
+(Sakai: celda 38,8 contra 38). Entre la cabecera de un Panel y su contenido pone 1rem.
+
+**Decisión** · (1) `sc-breadcrumb` estrena `flush`: sin relleno propio, en línea sobre la raíz (como
+`labelStyle`), y la TopBar lo usa. Barra de 91 a 75. (2) `h1.page__heading` pasa de `1-5` a `scale/1`:
+el 1rem de Aura con el nombre de paso de DD-81 (hoy 14, 16 con la escala a 16). Donde el hueco lo ponía
+otra cosa se compensa en su SCSS: las tres listas con barra fija suben la barra lo que mide su relleno de
+arriba, los filtros de Conversaciones pierden un relleno superior que ya no pintaba nada, y Reglas,
+Entidades y Categorías bajan su `gap` a `scale/1` y devuelven lo que pierden en márgenes (35 y 42 de
+siempre). Rafa eligió «las 13 a 16, como Aura» frente a «las 13 a 21».
+
+**Razón** · Es el reparto de Aura: el relleno lo pone la barra y no lo que va dentro (`Toolbar`), y un
+título se separa de su contenido con un solo hueco. Medido en las 15 rutas: barra 75 (79 en
+Conversaciones, por la pastilla DEMO), título → contenido 14 en todas, y ningún texto por debajo del título
+cambia de posición relativa (sonda probada en rojo: un margen quitado a propósito da 51 de 73 distintos).
+
+**Descartadas** ·
+- **Quitar el relleno en el preset (`breadcrumb.root.padding`)** → lo define el Kit y viaja a cualquier
+  miga suelta; el problema es de la barra que la contiene.
+- **`::ng-deep .p-breadcrumb` desde la TopBar** → reach-in a un componente del DS, lo que caza
+  `audit:primeng-coupling` §E; el precedente es una entrada del DS (`flushBody`).
+- **Las 4 pantallas a 21, como las otras 9** → cambio mínimo, pero Rafa prefirió la distancia de Aura.
+- **`scale/1-143` (16 px exactos hoy)** → rompe la regla de DD-81 y con la escala a 16 valdría 18,3.
+
+**Consecuencias** · Todo el contenido empieza 16 px más arriba (12 en Conversaciones). La miga arranca 14
+px más a la izquierda: a la misma distancia de la raya que el icono de inicio. `text-styles-applied` pasa
+a esperar 14. Visto de paso, sin tocar: la barra de búsqueda de Usuarios, Agentes y Grupos es `sticky`
+dentro de `.page`, pero el que hace scroll es `main.app-shell__content`, así que no se queda fija ni
+antes ni después (el mismo fallo que DD-80 resolvió en las tablas).
 
 ---
 

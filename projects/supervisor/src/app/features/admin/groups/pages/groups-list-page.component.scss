@@ -28,6 +28,10 @@
     z-index: 5;
     background: var(--sc-bg-surface);
     padding-block: var(--sc-spacing-0-875);
+    /* El relleno de arriba solo hace falta cuando la barra se queda fija (que no
+     * pegue los controles al borde). En reposo se sumaba al margen del título:
+     * se sube lo mismo y el título queda a la distancia de las 13 pantallas. */
+    margin-top: calc(var(--sc-spacing-0-875) * -1);
 
     &::after {
       content: '';

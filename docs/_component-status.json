@@ -1,6 +1,6 @@
 {
   "generated": "component-audit.mjs",
-  "summary": "52 componentes · 17 custom · 12 standard · 23 extended · 38 usados en Supervisor.",
+  "summary": "52 componentes · 17 custom · 11 standard · 24 extended · 38 usados en Supervisor.",
   "components": [
     {
       "name": "avatar",
@@ -49,11 +49,12 @@
       "name": "breadcrumb",
       "selector": "sc-breadcrumb",
       "provenance": "WRAPPER",
-      "kind": "STANDARD",
+      "kind": "EXTENDED",
       "primengBase": "primeng/breadcrumb",
       "cva": false,
-      "inputs": 3,
+      "inputs": 4,
       "api": [
+        "flush",
         "home",
         "homeAriaLabel",
         "itemClick",

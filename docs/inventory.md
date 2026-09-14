@@ -25,13 +25,13 @@
 ## Clasificación (auto-generada)
 
 <!-- @audit:components — TABLA GENERADA por `node scripts/component-audit.mjs --write`. NO editar a mano. -->
-**52 componentes** · 17 custom · 12 standard · 23 extended · 38 usados en Supervisor.
+**52 componentes** · 17 custom · 11 standard · 24 extended · 38 usados en Supervisor.
 
 | Componente | Tipo | PrimeNG base | API propia | Anidados | Demo | Usos en Supervisor |
 |---|---|---|---|---|---|---|
 | `sc-avatar` | EXTENDED | primeng/avatar, primeng/overlaybadge | 11 inputs | — | ✓ | — |
 | `sc-badge` | STANDARD | primeng/badge | 3 inputs | — | ✓ | 2 |
-| `sc-breadcrumb` | STANDARD | primeng/breadcrumb | 3 inputs | — | ✓ | 1 |
+| `sc-breadcrumb` | EXTENDED | primeng/breadcrumb | 4 inputs | — | ✓ | 1 |
 | `sc-bulk-action-bar` | CUSTOM | — | 0 inputs | — | ✓ | 10 |
 | `sc-bulk-edit-menu` | STANDARD | primeng/button | 1 inputs | sc-select | ✓ | 3 |
 | `sc-bulk-transcription-modal` | CUSTOM | — | 16 inputs | sc-button sc-toggleswitch | ✓ | — |
