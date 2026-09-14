@@ -36,7 +36,7 @@
    (DD-84), «vuelve a Aura» y lo vigente de marca y densidad (DD-87). Siguiente: (a) `conectar-medidas` ya aterrizó
    (DD-85, DD-86): alinear EN FIGMA las 123 medidas de PrimeOne que Aura cambió (por nombre de escala)
    y que llegue por el robot: primera prueba real del clic; (b) zip del equipo externo desde nuestro tema;
-   (c) densidad: 29,5 (Rafa). Ojo: el plugin corre el workflow de LA RAMA; un robot nuevo entra un export después.
+   (c) densidad: HECHO, 32,5 con el interlineado de la rampa (DD-91). Ojo: el plugin corre el workflow de LA RAMA; un robot nuevo entra un export después.
 1. **Lo que dejó el barrido (DD-77/78)**: «Solo fallidas» es un filtro conmutable hecho a mano. La sonda
    ampliada ya existe fuera del repo (E = 209 piezas, `2026-09 aura-marca/`): falta traerla como spec.
    Regla de Rafa para lo que dude: manda Aura en código y Figma se alinea.
@@ -142,6 +142,22 @@ las 38 ranuras— se cerraron el mismo día en DD-73.)
    «bloqueado por herramienta», es trabajo. Ver la sección de Figma más abajo.
 3. **La deuda de código de [`AUDIT-DEUDA-2026-06.md`](../AUDIT-DEUDA-2026-06.md)** que quede tras
    s34, y **los cabos de DD-24** (round-trip de iconos) en [`ROADMAP.md`](../ROADMAP.md).
+
+## ✅ 2026-09-14 · Los controles llevan el interlineado de la rampa, atado en Figma (DD-91)
+
+**Sello:** rama `arebury/densidad-controles` sobre `1707074` (#159). DD-91. Rafa: opción 1 «con 20/18», «adelante».
+
+**Lo que cambia.** Campo y botón md 29,5 → 32,5, sm 24 → 27, lg 36 → 40; Conversaciones no pierde filas (13 con la barra de DD-90).
+Figma primero (1.570 textos de maestros de control atados a `app/typography/*/lineHeight`, dos versiones
+guardadas) y `css.ts` con una regla por talla. `sc-inputtext/select/multiselect/datepicker` dejan de
+escribir tallas a mano. Página, capturas y sondas: `~/Documents/Claude/2026-09 densidad-controles/`.
+
+- ⚠️ **La regla de `css.ts` vive en `@layer primeng`**: un wrapper sin capa le gana siempre. Antes de mover
+  un token de tipografía, busca tallas a mano en los SCSS de wrappers.
+- ⚠️ **Por el bridge, carga fuentes con `t.fontName`**: con `getRangeAllFontNames` una docena de textos agota 30 s.
+- Pendiente (DD-91): la colección «App» de Figma no la leen ni el código ni los devs, pero tiene 1.572 enlaces
+  en 32 páginas (letra de botón y selects, fondo de tarjeta): revincular 1:1 a Custom y `content/background`
+  y luego borrar. Hora del datepicker 17,5 contra 14; botón solo icono no cuadrado; filtros 2px desalineados.
 
 ## ✅ 2026-09-14 · La barra de arriba baja de 91 a 75 y el título queda a la distancia de Aura
 
@@ -258,7 +274,7 @@ Repositorios al `Menu` del DS, inventario de `hand-made-pieces` a CERO; Figma re
 | ~~**Tramo actual del breadcrumb**~~ → **DECIDIDO, `bcab818` (2026-08-25)**: la propuesta de Figma `13890:157` (padres slate-500 `#8F97A3`) **se RECHAZA** — da **2,95:1** sobre blanco y no cumple AA. Se queda el código como está (padres slate-600, actual slate-700, ambos AA). Falta solo anotarlo en el nodo de Figma (Bloque 4). *Nota: el mismo commit tokenizó la miga a 14px, otro asunto ya cerrado.* |
 | ~~**El botón de crear cambia de ancho entre listas**~~ → **HECHO, `bcab818` (2026-08-25)**: decisión de Rafa «que no cambie de anchura porque sí». `main.scss:205` → `.top-bar__actions button { min-width: 144px; max-width: 288px }`, anclado en clase NUESTRA. Los cinco (122–142px) aterrizan igual. Aplicado y en `main` |
 | **B5b · prosa i18n del constructor** | Necesita ICU MessageFormat **y diseño**. Sigue aparcada |
-| **Experimento en LOCAL: la escala al tamaño de Aura (16px por rem)** → **SIMULADO Y MEDIDO el 2026-09-14, sin decidir** | Aura no tiene escala; la del Kit es la de PrimeOne (34 pasos) y cada paso se llama como un rem de Aura (`scale/0-375` = 0,375rem) pero vale rem×14. **Medido** con tres builds estáticos de `cdeb1043` (Chromium 1440×900, claro; página, capturas y sondas en `~/Documents/Claude/2026-09 escala-16/`): A hoy · B `--sc-scale-*`, `--sc-cmp-*` y `DESIGN_REM_BASE_PX` a rem×16 · C B más la letra ×16/14 · primeng.dev. Campo y botón md 29,5 / 31 / 34 / 35; sm 24 / 25 / 26 / 28; interruptor 21×31,5 / 24×36 / 24×36 / 22×36; filas sin scroll en Conversaciones 12 / 11 / 11 (la tabla sigue a Aura: baja lo de encima, barra 91 → 101). **Lo que más separa de primeng.dev es el interlineado**: Aura pone `typography.lineHeight: "1.5"` a los controles (21 a 14px, está en `@primeuix/themes`) y los nuestros van en `normal` porque DD-51 los casó con el AUTO de Figma, antes de que DD-78 dijera «manda Aura». Inyectado y medido: A con 1,5 da 33,5 y sm 27 con 12 filas; B con 1,5 da 35 y 28, idéntico a primeng.dev, con 11 filas. Con la rampa que ya existe (20 y 18) sobre A: 32,5 y 27. El 21 no existe como token, y cualquiera de las dos deshace DD-51 y pide atar el interlineado de los maestros de control en Figma. **La trampa, medida**: con el generador de hoy B construye en verde y deja 30 de 35 `--sc-scale-*` sin definir (326 a 412 usos rotos por pantalla). Arreglo probado en la simulación: nombrar por la clave del export en `token-gen.mjs` (con el export intacto sale idéntico a `main`); falta el gate rojo para `var(--sc-scale-*)` sin definir |
+| ~~**Experimento en LOCAL: la escala al tamaño de Aura (16px por rem)**~~ → **DECIDIDO 2026-09-14 ([DD-91](../DECISIONS.md))** | Rafa eligió solo el interlineado con la rampa que existe (20/18): 32,5 y 27, sin perder filas. La escala se queda a 14. Medido también escala 16 + 20/18: 34 / 28 y 11 filas. Simulación en `~/Documents/Claude/2026-09 escala-16/`; el nombre por clave y el gate de la escala entraron en DD-89 |
 
 ## 🔌 Figma — tres servers, y caen por separado
 

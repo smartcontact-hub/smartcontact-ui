@@ -64,6 +64,64 @@
 
 ---
 
+## DD-91 · 2026-09-14 — Los controles llevan el interlineado de la rampa, atado en Figma: campo y botón 32,5, sm 27, lg 40
+
+**Contexto** · Tras DD-81 el campo y el botón md medían 29,5 y el sm 24, un 12 % por debajo de primeng.dev
+(35 y 28). La simulación de la escala a 16 (PR #153, `~/Documents/Claude/2026-09 escala-16/`) midió que lo
+que más separa es el interlineado: Aura pone 1,5 a los controles y DD-51 los había dejado en `normal`
+porque sus maestros de Figma iban en `AUTO`. Rafa eligió entre tres opciones (solo interlineado, escala a
+16 más interlineado, solo escala) la primera, «con 20/18»: un interlineado que ya existe como variable.
+Para no decidir con una suma, se midió también la segunda con 20/18.
+
+**Decisión** · (1) Figma primero, con versión guardada antes de cada tanda y todo releído: el texto propio
+de los maestros de botón (md, sm, lg), contenido de campo, select, multiselect, treeselect, cascadeselect,
+autocomplete y textarea, togglebutton y opciones de select, multiselect y listbox (1.570 textos) queda
+atado a `app/typography/{sm,md,lg}/lineHeight` (18/20/24), la variable «Custom» que ya lee el tema.
+(2) `sc-preset/css.ts` deja las dos familias de DD-51: una regla por talla, controles y etiquetas leen
+`app.typography.*`. `emit-consumer-typography.mjs` emite lo mismo para el equipo externo. (3) Tres
+wrappers dejan de escribir tallas a mano, sin capa, por encima del tema: `sc-inputtext` pasa su talla a
+PrimeNG (`[pSize]`) y quita letra y relleno sm/lg; `sc-select` y `sc-multiselect` quitan letra y relleno
+sm/lg del disparador; `sc-datepicker` quita su letra md, que ganaba también en sm y lg.
+
+**Razón** · Medido en build estático a 1440 × 900, en claro, contra el mismo `main`: campo y botón md 29,5
+→ 32,5, sm 24 → 27, lg 36 → 40, select y multiselect 32,5; los maestros de Figma, releídos tras atar,
+miden lo mismo (32,5 / 27 / 40, campo sm 27, lg 40). Conversaciones no pierde filas: 13 sin scroll antes y
+después, con la barra de DD-90 (12 y 12 sobre la barra anterior). La
+opción 2 con 20/18, medida inyectando la misma regla sobre el build de la escala a 16 (la inyección
+coincide con el build real de esta opción en todas las medidas; medida antes de DD-90): 34 / 28 / 42 y 11
+filas contra 12. El arreglo de
+los wrappers no es opcional: con solo la regla, la barra de filtros de Conversaciones (seis controles sm)
+pasaba de 27,5 · 26 · 27,5 a 32,5 · 27 · 30,5, porque `sc-inputtext` sm no llevaba la clase sm y la fecha
+sm salía con letra de 14. Con el arreglo, los seis miden 27. El relleno sm que escribían (5,25 × 8,75) era
+el md de una generación vieja de Figma: el maestro de hoy y el export dicen 3,5 × 7. Y el DS de los devs
+(ui.smart-contact.com, medido) ya da a sus controles esa misma rampa: botón y campo md 32, sm 28, lg 42.
+
+**Descartadas** ·
+- **Interlineado 1,5 (21 a 14px), el de Aura** → no existe variable de 21; habría que crearla, y 20 es el
+  interlineado md que DD-39 unificó para todo el sistema.
+- **Escala a 16 más 20/18** (34 y 28) → agranda un 14 % todos los márgenes de todas las pantallas para
+  ganar 1,5px en el control, y quita una fila en Conversaciones. Para un producto de tablas, las filas
+  visibles mandan.
+- **Solo botón, campo y select** → un multiselect junto a un select mediría 3px menos.
+- **Atar también el datepicker en Figma** → en código sus celdas tienen tamaño fijo y no cambian (28 × 28;
+  la fila de días de la semana sube 1px); en Figma se ajustan al texto y pasarían de 35 a 38. Atarlo abriría
+  un desfase que hoy no existe. Se queda en `AUTO`.
+- **Atar las etiquetas (chip, tag, toast) a la variable por talla** → ya van atadas a la primitiva, y no
+  tienen tallas: cumplen el criterio de Rafa («si tienen sm, md y lg, en tallas»).
+
+**Consecuencias** · Acota DD-51: los controles ya no llevan `normal`, y la frase «el Kit no modela el
+interlineado del botón» deja de ser cierta. Textarea md 62 → 71 (tres filas de 20). Fila de las
+tablas-lista 41 → 44 (su kebab es un botón sm: 27 + 8×2 + 1; `list-table-grammar` actualizado). 34
+capturas de referencia de sc-docs, `component-styles` (32 interlineados de `normal` a px y el relleno sm/lg
+de `sc-inputtext`) y `component-structure` (clase de talla en el input y alto del textarea) regenerados. Quedan anotados sin tocar: la
+hora del datepicker va a 17,5 en Figma y a 14 en código; el botón solo icono no es cuadrado (31,5 × 32,5,
+antes 31,5 × 29,5); en los filtros, origen y destino quedan unos 2px más arriba que los multiselect (hueco
+entre rótulo y control de cada wrapper, ya pasaba); y la colección «App» de PrimeOne duplica letra e
+interlineado sin md, el código no la lee y el DS de los devs tampoco, pero el botón md tiene su letra atada
+ahí. Página, capturas y sondas en `~/Documents/Claude/2026-09 densidad-controles/`.
+
+---
+
 ## DD-90 · 2026-09-14 — La barra de arriba deja de sumar el relleno de la miga, y el título queda a la distancia de Aura en las 13 pantallas
 
 **Contexto** · Rafa, pensando en llevar la densidad a la de Aura (escala 16 e interlineado 1,5): «el header
@@ -150,7 +208,8 @@ que no se contradiga.
 800), `sky` como azul eléctrico (info, enlaces, foco y primario oscuro, DD-81) y **el gris de marca**
 (`slate` del Kit) para la superficie en claro; en oscuro, `zinc` (DD-79). Tipografía propia (Inter y los
 12 estilos, DD-67). (2) **Densidad**: la de DD-81, medidas de Aura enlazadas por nombre a la escala a 14
-px por rem; campo y botón a 29,5 px. Se mantiene `typography.lineHeight: 'inherit'`. (3) **Divergencias
+px por rem; campo y botón a 32,5 px con el interlineado de la rampa atado en Figma (DD-91; al escribir
+esto eran 29,5). Se mantiene `typography.lineHeight: 'inherit'`. (3) **Divergencias
 que se quedan**, cada una con su motivo: foco `sky` a 2 px; aviso en amarillo; botón rojo un paso más
 oscuro; grises de texto e icono subidos un paso por AA; info de toast y message en `sky`; icono atenuado
 del oscuro en zinc-400; la selección y el foco de opción del multiselect como PrimeOne. (4) **Vuelven a
@@ -168,7 +227,8 @@ quitaba 31 diferencias, que el Kit ya resuelve solo. (2) Medido el 2026-09-14 en
 primeng.dev 35 px (relleno 6/10, interlineado 21), `main` 29,5, y con el interlineado de Aura 33,5. No
 existe variable de 21 px en el Kit (18, 20, 24…) y la app ya es más compacta que primeng.dev, que es lo
 que Rafa busca. Una letra de 14 px es lo normal en interfaces densas; los componentes de primeng.dev
-también la usan. (3) Foco: la barra lateral del Supervisor es exactamente `#1B273D` y el foco del teclado
+también la usan. *Corregido el 2026-09-14 (DD-91): Rafa eligió ese mismo día subir el interlineado de los
+controles con la rampa que sí existe (20 y 18): 32,5 y 27, sin perder filas y sin tocar la escala.* (3) Foco: la barra lateral del Supervisor es exactamente `#1B273D` y el foco del teclado
 cae en ella (medido: tres tabuladores, anillo sky de 2 px); un anillo en el primario sería invisible ahí.
 2 px por WCAG 2.4.13. Aviso: medido en primeng.dev, el botón de aviso de Aura (blanco sobre naranja 500)
 da 2,80:1, y el amarillo se distingue mejor del rojo de error (45° contra 25°). Botón rojo: Aura 3,76:1,
@@ -2111,6 +2171,10 @@ vez de alineado al borde derecho de la fila.
 ---
 
 ## DD-51 · 2026-09-05 — El interlineado de los CONTROLES vuelve a la métrica de la fuente; la rampa se queda solo donde el Kit la ata
+
+> **Acotado por DD-91 (2026-09-14).** Los maestros de control de Figma atan ya su interlineado a la
+> rampa, y el tema los sigue: las dos familias vuelven a ser una. Lo de abajo explica por qué hubo
+> `normal` mientras Figma dibujaba `AUTO`.
 
 **Contexto** · Rafa, mirando el Supervisor contra su Figma: *«los botones siguen igual de tamaño
 no lo ves? esto no puede pasar en nuestra plataforma, hay algo que está sobreescribiendo mal, o en
