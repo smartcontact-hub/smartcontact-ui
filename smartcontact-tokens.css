@@ -1,0 +1,2520 @@
+/* ── 01-primitive.css ── */
+/*
+ * Layer 1 — PRIMITIVE
+ * ====================
+ *
+ * Raw values. No semantic meaning. Mirrors PrimeNG's `primitive` layer
+ * (color scales, font, spacing, radius) and the keys map 1:1 to the
+ * design-tokens.json primitives.
+ *
+ * Components MUST NOT reference these directly — go through a semantic
+ * alias in layer 2. The only exception is rare cases where a primitive
+ * IS the right semantic (e.g. `--sc-color-slate-0` == white background
+ * for an inverted surface).
+ */
+
+:root {
+  /* ---------- Color · familias del Kit ----------
+   * Todas las familias que el Kit trae (blue, sky, slate, cyan y las de Tailwind) las escribe
+   * el generador en la zona `@sc-gen:palette`, desde el export: un color cambiado en Figma
+   * llega solo (2026-09-14; antes eran copias a mano y cada cambio salía «desfase mudo»).
+   * Aquí queda solo lo que el Kit NO tiene: el blanco `slate-0` y la familia `azure`. */
+  --sc-color-slate-0: #ffffff;
+
+  /* ---------- Color · Azure (label palette) ---------- */
+  /* Mirrors Aura's `blue` scale (Tailwind blue, saturated sky-blue).
+   * Named `azure` to avoid collision with AED's `--sc-color-blue-*`
+   * which is the custom brand navy. Used by `--sc-label-blue-*`,
+   * which needs a bright sky-blue distinct from brand identity. */
+  --sc-color-azure-50: #eff6ff;
+  --sc-color-azure-100: #dbeafe;
+  --sc-color-azure-200: #bfdbfe;
+  --sc-color-azure-300: #93c5fd;
+  --sc-color-azure-400: #60a5fa;
+  --sc-color-azure-500: #3b82f6;
+  --sc-color-azure-600: #2563eb;
+  --sc-color-azure-700: #1d4ed8;
+  --sc-color-azure-800: #1e40af;
+  --sc-color-azure-900: #1e3a8a;
+  --sc-color-azure-950: #172554;
+
+  /* ---------- Color · Paleta del Kit (generada) ---------- */
+  /* @sc-gen:palette — bloque GENERADO desde kit-export-dtcg.json. Las familias del mapa
+   * `scripts/palette-map.mjs` más las que un color generado referencie (zinc, yellow…).
+   * NO editar a mano: `npm run tokens:import`. */
+  /* amber — 1:1 export aura/primitive.amber */
+  --sc-color-amber-50: #fffbeb;
+  --sc-color-amber-100: #fef3c7;
+  --sc-color-amber-200: #fde68a;
+  --sc-color-amber-300: #fcd34d;
+  --sc-color-amber-400: #fbbf24;
+  --sc-color-amber-500: #f59e0b;
+  --sc-color-amber-600: #d97706;
+  --sc-color-amber-700: #b45309;
+  --sc-color-amber-800: #92400e;
+  --sc-color-amber-900: #78350f;
+  --sc-color-amber-950: #451a03;
+
+  /* blue — 1:1 export aura/primitive.blue */
+  --sc-color-blue-50: #edf0f5;
+  --sc-color-blue-100: #d2d9e3;
+  --sc-color-blue-200: #a6b4c7;
+  --sc-color-blue-300: #798eab;
+  --sc-color-blue-400: #4d6990;
+  --sc-color-blue-500: #344a70;
+  --sc-color-blue-600: #243452;
+  --sc-color-blue-700: #1b273d;
+  --sc-color-blue-800: #131b2b;
+  --sc-color-blue-900: #0b1019;
+  --sc-color-blue-950: #05080d;
+
+  /* cyan — 1:1 export aura/primitive.cyan */
+  --sc-color-cyan-50: #eefbfc;
+  --sc-color-cyan-100: #d2f5f9;
+  --sc-color-cyan-200: #a8eef5;
+  --sc-color-cyan-300: #7be1ef;
+  --sc-color-cyan-400: #51d5e6;
+  --sc-color-cyan-500: #24c6db;
+  --sc-color-cyan-600: #2497a8;
+  --sc-color-cyan-700: #21717d;
+  --sc-color-cyan-800: #1d5058;
+  --sc-color-cyan-900: #16363b;
+  --sc-color-cyan-950: #0d1a1c;
+
+  /* emerald — 1:1 export aura/primitive.emerald */
+  --sc-color-emerald-50: #ecfdf5;
+  --sc-color-emerald-100: #d1fae5;
+  --sc-color-emerald-200: #a7f3d0;
+  --sc-color-emerald-300: #6ee7b7;
+  --sc-color-emerald-400: #34d399;
+  --sc-color-emerald-500: #10b981;
+  --sc-color-emerald-600: #059669;
+  --sc-color-emerald-700: #047857;
+  --sc-color-emerald-800: #065f46;
+  --sc-color-emerald-900: #064e3b;
+  --sc-color-emerald-950: #022c22;
+
+  /* green — 1:1 export aura/primitive.green */
+  --sc-color-green-50: #f0fdf4;
+  --sc-color-green-100: #dcfce7;
+  --sc-color-green-200: #bbf7d0;
+  --sc-color-green-300: #86efac;
+  --sc-color-green-400: #4ade80;
+  --sc-color-green-500: #22c55e;
+  --sc-color-green-600: #16a34a;
+  --sc-color-green-700: #15803d;
+  --sc-color-green-800: #166534;
+  --sc-color-green-900: #14532d;
+  --sc-color-green-950: #052e16;
+
+  /* orange — 1:1 export aura/primitive.orange */
+  --sc-color-orange-50: #fff7ed;
+  --sc-color-orange-100: #ffedd5;
+  --sc-color-orange-200: #fed7aa;
+  --sc-color-orange-300: #fdba74;
+  --sc-color-orange-400: #fb923c;
+  --sc-color-orange-500: #f97316;
+  --sc-color-orange-600: #ea580c;
+  --sc-color-orange-700: #c2410c;
+  --sc-color-orange-800: #9a3412;
+  --sc-color-orange-900: #7c2d12;
+  --sc-color-orange-950: #431407;
+
+  /* purple — 1:1 export aura/primitive.purple */
+  --sc-color-purple-50: #faf5ff;
+  --sc-color-purple-100: #f3e8ff;
+  --sc-color-purple-200: #e9d5ff;
+  --sc-color-purple-300: #d8b4fe;
+  --sc-color-purple-400: #c084fc;
+  --sc-color-purple-500: #a855f7;
+  --sc-color-purple-600: #9333ea;
+  --sc-color-purple-700: #7e22ce;
+  --sc-color-purple-800: #6b21a8;
+  --sc-color-purple-900: #581c87;
+  --sc-color-purple-950: #3b0764;
+
+  /* red — 1:1 export aura/primitive.red */
+  --sc-color-red-50: #fef2f2;
+  --sc-color-red-100: #fee2e2;
+  --sc-color-red-200: #fecaca;
+  --sc-color-red-300: #fca5a5;
+  --sc-color-red-400: #f87171;
+  --sc-color-red-500: #ef4444;
+  --sc-color-red-600: #dc2626;
+  --sc-color-red-700: #b91c1c;
+  --sc-color-red-800: #991b1b;
+  --sc-color-red-900: #7f1d1d;
+  --sc-color-red-950: #450a0a;
+
+  /* sky — 1:1 export aura/primitive.sky */
+  --sc-color-sky-50: #eef4ff;
+  --sc-color-sky-100: #d5e6ff;
+  --sc-color-sky-200: #abceff;
+  --sc-color-sky-300: #7db3ff;
+  --sc-color-sky-400: #4a8fff;
+  --sc-color-sky-500: #1464fe;
+  --sc-color-sky-600: #0d4fd4;
+  --sc-color-sky-700: #0a3ba0;
+  --sc-color-sky-800: #07296e;
+  --sc-color-sky-900: #041840;
+  --sc-color-sky-950: #020c21;
+
+  /* slate — 1:1 export aura/primitive.slate */
+  --sc-color-slate-50: #f7f8fa;
+  --sc-color-slate-100: #eceff3;
+  --sc-color-slate-200: #dadfe6;
+  --sc-color-slate-300: #c6ccd6;
+  --sc-color-slate-400: #aeb6c2;
+  --sc-color-slate-500: #8f97a3;
+  --sc-color-slate-600: #6f7784;
+  --sc-color-slate-700: #4f5663;
+  --sc-color-slate-800: #2f3642;
+  --sc-color-slate-900: #181d26;
+  --sc-color-slate-950: #0b0f14;
+
+  /* teal — 1:1 export aura/primitive.teal */
+  --sc-color-teal-50: #f0fdfa;
+  --sc-color-teal-100: #ccfbf1;
+  --sc-color-teal-200: #99f6e4;
+  --sc-color-teal-300: #5eead4;
+  --sc-color-teal-400: #2dd4bf;
+  --sc-color-teal-500: #14b8a6;
+  --sc-color-teal-600: #0d9488;
+  --sc-color-teal-700: #0f766e;
+  --sc-color-teal-800: #115e59;
+  --sc-color-teal-900: #134e4a;
+  --sc-color-teal-950: #042f2e;
+
+  /* violet — 1:1 export aura/primitive.violet */
+  --sc-color-violet-50: #f5f3ff;
+  --sc-color-violet-100: #ede9fe;
+  --sc-color-violet-200: #ddd6fe;
+  --sc-color-violet-300: #c4b5fd;
+  --sc-color-violet-400: #a78bfa;
+  --sc-color-violet-500: #8b5cf6;
+  --sc-color-violet-600: #7c3aed;
+  --sc-color-violet-700: #6d28d9;
+  --sc-color-violet-800: #5b21b6;
+  --sc-color-violet-900: #4c1d95;
+  --sc-color-violet-950: #2e1065;
+
+  /* yellow — 1:1 export aura/primitive.yellow */
+  --sc-color-yellow-50: #fefce8;
+  --sc-color-yellow-100: #fef9c3;
+  --sc-color-yellow-200: #fef08a;
+  --sc-color-yellow-300: #fde047;
+  --sc-color-yellow-400: #facc15;
+  --sc-color-yellow-500: #eab308;
+  --sc-color-yellow-600: #ca8a04;
+  --sc-color-yellow-700: #a16207;
+  --sc-color-yellow-800: #854d0e;
+  --sc-color-yellow-900: #713f12;
+  --sc-color-yellow-950: #422006;
+
+  /* zinc — 1:1 export aura/primitive.zinc */
+  --sc-color-zinc-50: #fafafa;
+  --sc-color-zinc-100: #f4f4f5;
+  --sc-color-zinc-200: #e4e4e7;
+  --sc-color-zinc-300: #d4d4d8;
+  --sc-color-zinc-400: #a1a1aa;
+  --sc-color-zinc-500: #71717a;
+  --sc-color-zinc-600: #52525b;
+  --sc-color-zinc-700: #3f3f46;
+  --sc-color-zinc-800: #27272a;
+  --sc-color-zinc-900: #18181b;
+  --sc-color-zinc-950: #09090b;
+  /* @sc-gen:palette:end */
+
+  /* ---------- Typography ---------- */
+  --sc-font-family-primary: 'Inter', system-ui, -apple-system, sans-serif;
+  --sc-font-family-secondary: 'Open Sans', sans-serif;
+  /* Monospace stack — usado por time labels del player (multi-rec + single
+   * audio bar) y por el gate input "CONFIRMAR" del retranscription modal.
+   * Cocinado S46 al detectar que múltiples consumers ya lo usaban como
+   * fallback hardcoded. No mapea a fuente custom — system mono stack. */
+  --sc-font-family-mono: ui-monospace, 'SF Mono', 'Menlo', 'Consolas', 'Liberation Mono', monospace;
+
+  /* Tipografía — DD-13: rampas redondas en rem (root 16), DESACOPLADAS de `--sc-scale`.
+   * Espejo de los primitivos `typography/*` del Kit (font-size 12·14·16·18·20·24·32·48 ·
+   * line-height 18·20·24·28·36·40·58 · pesos 400-700). El naming por step es API pública,
+   * así que los pasos que el Kit no trae se SNAPEAN al vecino en vez de desaparecer.
+   * El contenido lo escribe `token-gen.mjs`; el mapa de snaps vive allí. */
+  /* @sc-gen:typography — bloque GENERADO desde kit-export-dtcg.json por `npm run tokens:import`.
+   * NO editar a mano. font-size · line-height · font-weight. Los pasos que el Kit NO
+   * trae (snaps del DS, DD-13) se derivan del vecino: el mapa vive en token-gen.mjs. */
+  --sc-font-size-50: calc(12 / 16 * 1rem); /* 12 (era 10.5 → sube a 12) */
+  --sc-font-size-75: calc(12 / 16 * 1rem); /* 12 (snap → -100) */
+  --sc-font-size-100: calc(12 / 16 * 1rem); /* 12 */
+  --sc-font-size-200: calc(14 / 16 * 1rem); /* 14 */
+  --sc-font-size-300: calc(16 / 16 * 1rem); /* 16 */
+  --sc-font-size-400: calc(18 / 16 * 1rem); /* 18 */
+  --sc-font-size-450: calc(20 / 16 * 1rem); /* 20 (era 21) */
+  --sc-font-size-500: calc(24 / 16 * 1rem); /* 24 */
+  --sc-font-size-600: calc(24 / 16 * 1rem); /* 24 (snap 28) */
+  --sc-font-size-650: calc(32 / 16 * 1rem); /* 32 */
+  --sc-font-size-700: calc(32 / 16 * 1rem); /* 32 (snap 36) */
+  --sc-font-size-800: calc(48 / 16 * 1rem); /* 48 (era 56) */
+  --sc-font-size-900: calc(64 / 16 * 1rem); /* 64 */
+
+  --sc-line-height-50: calc(18 / 16 * 1rem); /* 18 */
+  --sc-line-height-100: calc(18 / 16 * 1rem); /* 18 (caption 12) */
+  --sc-line-height-200: calc(20 / 16 * 1rem); /* 20 (body 14) */
+  --sc-line-height-220: calc(20 / 16 * 1rem); /* 20 (body-2/3) */
+  --sc-line-height-300: calc(24 / 16 * 1rem); /* 24 (body-1 16) */
+  --sc-line-height-400: calc(24 / 16 * 1rem); /* 24 (h4 18) */
+  --sc-line-height-450: calc(28 / 16 * 1rem); /* 28 (h3 20) */
+  --sc-line-height-500: calc(36 / 16 * 1rem); /* 36 (h2 24) */
+  --sc-line-height-600: calc(36 / 16 * 1rem); /* 36 */
+  --sc-line-height-650: calc(40 / 16 * 1rem); /* 40 (h1 32) */
+  --sc-line-height-700: calc(40 / 16 * 1rem); /* 40 */
+  --sc-line-height-800: calc(58 / 16 * 1rem); /* 58 (display-1 48) */
+  --sc-line-height-900: calc(78 / 16 * 1rem); /* 78 */
+
+  --sc-font-weight-regular: 400;
+  --sc-font-weight-medium: 500;
+  --sc-font-weight-semibold: 600;
+  --sc-font-weight-bold: 700;
+  /* @sc-gen:typography:end */
+
+  /* ---------- Scale (Kit Pro `aura/primitive.scale`) ----------
+   * Escala PRIMITIVE ÚNICA base 14 (PrimeOne 4.0). Naming 1:1 con Figma
+   * Smart Contact Design System Variables — sufijo = multiplicador exacto. Esta
+   * escala es la fuente de verdad para spacing/padding/gap/font-size/
+   * line-height/icon-size: en Kit Pro TODO valor numérico referencia
+   * `scale.*` (verificado en design-tokens.json — `font.size`, `padding.x`,
+   * `icon.size`, etc. apuntan a `{scale.X}`).
+   *
+   * Las categorías semánticas (`--sc-spacing-*`, `--sc-font-size-*`,
+   * `--sc-line-height-*`, `--sc-icon-size-*`) viven en 02-semantic.css
+   * como ALIASES de estos primitives. Cero divergencia naming SCDS ↔
+   * Kit Pro JSON.
+   *
+   * Migración S57 (final): `--sc-spacing-*` → primitive `--sc-scale-*`
+   * + aliases derivados. Refactor estructural Kit Pro 1:1 estructural
+   * + naming.
+   *
+   * Mapping completo verificado contra captura Figma Smart Contact Design System
+   * Pro Variables (34 entries: 24 positivos + 10 negativos):
+   */
+  /* @sc-gen:scale — bloque GENERADO desde kit-export-dtcg.json por `npm run tokens:import`.
+   * NO editar a mano (el generador lo pisa). Valores en rem (px diseño / 16 — rem
+   * centralizado, pre-flight §1); el px de diseño va en comentario y es lo que
+   * cruza `tokens:parity`. Ley de naming v/14 — ver tokens/README §"The scale". */
+  --sc-scale-0: 0;
+
+  /* Positivos */
+  --sc-scale-0-125: 0.109375rem; /* 1.75px */
+  --sc-scale-0-25: 0.21875rem; /* 3.5px */
+  --sc-scale-0-375: 0.328125rem; /* 5.25px */
+  --sc-scale-0-5: 0.4375rem; /* 7px */
+  --sc-scale-0-625: 0.546875rem; /* 8.75px */
+  --sc-scale-0-75: 0.65625rem; /* 10.5px */
+  --sc-scale-0-875: 0.765625rem; /* 12.25px */
+  --sc-scale-1: 0.875rem; /* 14px */
+  --sc-scale-1-125: 0.984375rem; /* 15.75px */
+  --sc-scale-1-143: 1rem; /* 16px */
+  --sc-scale-1-25: 1.09375rem; /* 17.5px */
+  --sc-scale-1-5: 1.3125rem; /* 21px */
+  --sc-scale-1-625: 1.421875rem; /* 22.75px */
+  --sc-scale-1-75: 1.53125rem; /* 24.5px */
+  --sc-scale-2: 1.75rem; /* 28px */
+  --sc-scale-2-25: 1.96875rem; /* 31.5px */
+  --sc-scale-2-5: 2.1875rem; /* 35px */
+  --sc-scale-2-75: 2.40625rem; /* 38.5px */
+  --sc-scale-3: 2.625rem; /* 42px */
+  --sc-scale-4: 3.5rem; /* 56px */
+  --sc-scale-5: 4.375rem; /* 70px */
+  --sc-scale-12-5: 10.9375rem; /* 175px */
+  --sc-scale-18: 15.75rem; /* 252px */
+  --sc-scale-25: 21.875rem; /* 350px */
+
+  /* Negativos (margins negativos, transform offsets) */
+  --sc-scale-neg-0-25: -0.21875rem; /* -3.5px */
+  --sc-scale-neg-0-375: -0.328125rem; /* -5.25px */
+  --sc-scale-neg-0-5: -0.4375rem; /* -7px */
+  --sc-scale-neg-0-625: -0.546875rem; /* -8.75px */
+  --sc-scale-neg-0-75: -0.65625rem; /* -10.5px */
+  --sc-scale-neg-0-875: -0.765625rem; /* -12.25px */
+  --sc-scale-neg-1: -0.875rem; /* -14px */
+  --sc-scale-neg-1-125: -0.984375rem; /* -15.75px */
+  --sc-scale-neg-1-25: -1.09375rem; /* -17.5px */
+  --sc-scale-neg-1-5: -1.3125rem; /* -21px */
+  /* @sc-gen:scale:end */
+
+  /* ---------- Spacing (semantic alias de scale) ----------
+   * API public preservada. `--sc-spacing-X` = `var(--sc-scale-X)`.
+   * Cero sweep cross-app necesario tras refactor S57 estructural — los
+   * 1127 hits existentes siguen resolviendo al mismo valor px. */
+  --sc-spacing-0: var(--sc-scale-0);
+  --sc-spacing-0-125: var(--sc-scale-0-125);
+  --sc-spacing-0-25: var(--sc-scale-0-25);
+  --sc-spacing-0-375: var(--sc-scale-0-375);
+  --sc-spacing-0-5: var(--sc-scale-0-5);
+  --sc-spacing-0-625: var(--sc-scale-0-625);
+  --sc-spacing-0-75: var(--sc-scale-0-75);
+  --sc-spacing-0-875: var(--sc-scale-0-875);
+  --sc-spacing-1: var(--sc-scale-1);
+  --sc-spacing-1-125: var(--sc-scale-1-125);
+  --sc-spacing-1-143: var(--sc-scale-1-143);
+  --sc-spacing-1-25: var(--sc-scale-1-25);
+  --sc-spacing-1-5: var(--sc-scale-1-5);
+  --sc-spacing-1-625: var(--sc-scale-1-625);
+  --sc-spacing-1-75: var(--sc-scale-1-75);
+  --sc-spacing-2: var(--sc-scale-2);
+  --sc-spacing-2-25: var(--sc-scale-2-25);
+  --sc-spacing-2-5: var(--sc-scale-2-5);
+  --sc-spacing-2-75: var(--sc-scale-2-75);
+  --sc-spacing-3: var(--sc-scale-3);
+  --sc-spacing-4: var(--sc-scale-4);
+  --sc-spacing-5: var(--sc-scale-5);
+  --sc-spacing-12-5: var(--sc-scale-12-5);
+  --sc-spacing-18: var(--sc-scale-18);
+  --sc-spacing-25: var(--sc-scale-25);
+
+  /* Aliases negativos (offsets de grupo, margins negativos) — 1:1 con los
+   * pasos negativos de la escala, misma ley que los positivos. */
+  --sc-spacing-neg-0-25: var(--sc-scale-neg-0-25);
+  --sc-spacing-neg-0-375: var(--sc-scale-neg-0-375);
+  --sc-spacing-neg-0-5: var(--sc-scale-neg-0-5);
+  --sc-spacing-neg-0-625: var(--sc-scale-neg-0-625);
+  --sc-spacing-neg-0-75: var(--sc-scale-neg-0-75);
+  --sc-spacing-neg-0-875: var(--sc-scale-neg-0-875);
+  --sc-spacing-neg-1: var(--sc-scale-neg-1);
+  --sc-spacing-neg-1-125: var(--sc-scale-neg-1-125);
+  --sc-spacing-neg-1-25: var(--sc-scale-neg-1-25);
+  --sc-spacing-neg-1-5: var(--sc-scale-neg-1-5);
+
+  /* ---------- Border radius (Kit Pro `aura/primitive.border.radius`) ----------
+   * Kit Pro tiene escala dedicada border-radius (none/xs/sm/md/lg/xl)
+   * INDEPENDIENTE de `scale.*`. Valores: 0/2/4/6/8/12. SCDS naming Kit
+   * Pro 1:1 + aliases legacy preservar API. `--sc-radius-2xl` (16px) y
+   * `--sc-radius-full` (9999px) son custom SC sin equivalente Kit Pro. */
+  /* @sc-gen:radius — bloque GENERADO desde kit-export-dtcg.json (aura/primitive
+   * border.radius) por `npm run tokens:import`. NO editar a mano.
+   * none/xs/sm/md/lg/xl = export 1:1 en rem; 2xl/full = customs SC documentados. */
+  --sc-radius-none: 0;
+  --sc-radius-xs: 0.125rem; /* 2px */
+  --sc-radius-sm: 0.25rem; /* 4px */
+  --sc-radius-md: 0.375rem; /* 6px */
+  --sc-radius-lg: 0.5rem; /* 8px */
+  --sc-radius-xl: 0.75rem; /* 12px */
+
+  /* Custom SC (no en el Kit) */
+  --sc-radius-2xl: 1rem; /* 16px */
+  --sc-radius-full: 9999px; /* clamp de pill — no escala */
+  /* @sc-gen:radius:end */
+
+  /* Aliases legacy numéricos (preservar API public — cero sweep) */
+  --sc-radius-0: var(--sc-radius-none);
+  --sc-radius-50: var(--sc-radius-xs);
+  --sc-radius-100: var(--sc-radius-sm);
+  --sc-radius-200: var(--sc-radius-md);
+  --sc-radius-300: var(--sc-radius-lg);
+  --sc-radius-400: var(--sc-radius-xl);
+  --sc-radius-500: var(--sc-radius-2xl);
+
+  /* ---------- Icon size — DD-13: redondo en rem, en el stream de tipo ----------
+   * Decoplado de `--sc-scale` para no descolgarse de la font redonda (un
+   * icono junto a texto 16 = 16, no 15.75). Sin contrapartida en Figma
+   * (divergencia SC — ver customs-catalog). Naming preservado.
+   *
+   * Para Lucide-angular sigue funcionando `[size]="14"` literal (Lucide
+   * acepta number, no CSS var) — estos tokens son para SCSS donde algo
+   * escala via `width:`. */
+  --sc-icon-size-xs: calc(8 / 16 * 1rem); /* 8 (era 7) */
+  --sc-icon-size-sm: calc(10 / 16 * 1rem); /* 10 (era 10.5) */
+  --sc-icon-size-md: calc(12 / 16 * 1rem); /* 12 */
+  --sc-icon-size: calc(14 / 16 * 1rem); /* 14 */
+  --sc-icon-size-default: calc(14 / 16 * 1rem); /* 14 */
+  --sc-icon-size-lg: calc(16 / 16 * 1rem); /* 16 (era 15.75) */
+  --sc-icon-size-xl: calc(18 / 16 * 1rem); /* 18 (era 17.5) */
+  --sc-icon-size-2xl: calc(20 / 16 * 1rem); /* 20 (era 21) */
+  --sc-icon-size-3xl: calc(28 / 16 * 1rem); /* 28 */
+
+  /* ---------- Focus ring ----------
+   * PrimeOne 4.0 semanticCommon `focusRingWidth: 1`, `focusRingOffset: 2`.
+   * El color sigue siendo `--sc-border-focus` (semantic layer 2 →
+   * soft-blue-500 SC brand). */
+  --sc-focus-ring-width: 2px;
+  --sc-focus-ring-offset: 2px;
+}
+
+/* ── 02-semantic.css ── */
+/*
+ * Layer 2 — SEMANTIC
+ * ===================
+ *
+ * Purpose-bound aliases of layer-1 primitives. Mirrors PrimeNG's
+ * `semantic` layer (text, surface, primary, formField, etc.) — every
+ * token here resolves a "where do I use it?" question, not "what
+ * value is it?".
+ *
+ * Components SHOULD reference these tokens. Dark mode (layer 6)
+ * overrides only this layer + layer 3 (components); primitives stay
+ * constant.
+ */
+
+:root {
+  /* @sc-gen:semantic-color-light — bloque GENERADO desde kit-export-dtcg.json por
+   * `npm run tokens:import` (token-gen-color.mjs). NO editar a mano.
+   * Color semántico de marca (light) 1:1 con el export, vía la primitiva --sc-color-*
+   * (preserva el contrato --sc-* y la indirección). El preset/app referencian estos
+   * --sc-*; así un cambio de color en Figma fluye sin mano. Divergencias conscientes y
+   * color-mix → FUERA de la zona (a mano). Divergencias → DIVERGE en scripts/color-map.mjs. */
+  --sc-bg-primary: var(--sc-color-blue-700);
+  --sc-bg-primary-hover: var(--sc-color-blue-600);
+  --sc-bg-primary-active: var(--sc-color-blue-800);
+  --sc-text-on-primary: var(--sc-color-slate-0);
+  --sc-bg-surface: var(--sc-color-slate-0);
+  --sc-border-default: var(--sc-color-slate-200);
+  --sc-text-primary: var(--sc-color-slate-700);
+  --sc-bg-secondary-hover: var(--sc-color-slate-100);
+  --sc-border-strong: var(--sc-color-slate-400);
+  --sc-bg-disabled: var(--sc-color-slate-200);
+  --sc-border-error: var(--sc-color-red-400);
+  --sc-text-disabled: var(--sc-color-slate-500);
+  --sc-text-secondary: var(--sc-color-slate-600);
+  /* @sc-gen:semantic-color-light:end */
+
+  /* `--sc-icon-subtle` sale de la zona generada por la MISMA razón que
+   * `--sc-text-secondary` de abajo: es una divergencia consciente, y dentro de
+   * la zona `tokens:import` la reescribiría a slate-400 y el fallo volvería en
+   * silencio. Sus dos filas de `color-map.mjs` pasan de `enforce` a `diverge`.
+   *
+   * Valía slate-400 = **2.04:1 sobre blanco**. Un icono es un elemento
+   * gráfico, así que su listón es el 3:1 de WCAG 1.4.11, no el 4.5 del texto
+   * — y ni aun así llegaba. slate-500 tampoco (2.95). El primer escalón que
+   * cumple es slate-600, el mismo al que sube `text-subtle`, que es lo
+   * coherente: el icono de un hint y su texto deben pesar igual.
+   *
+   * Se cierra cuando el Kit suba su `form.field.icon.color`. */
+  --sc-icon-subtle: var(--sc-color-slate-600);
+
+  /* `--sc-text-secondary` YA NO VIVE AQUÍ: subió a la zona `@sc-gen` de arriba el
+   * 2026-08-24, y esto es una divergencia que se RETIRA, no que se pierde.
+   *
+   * Durante un mes fue divergencia consciente: el Kit daba slate-500 = 2.95:1 sobre
+   * blanco —bajo AA para texto normal y sin llegar siquiera al 3:1 de texto grande,
+   * en sus 178 usos— y la subimos a slate-600 (4.52:1) a mano, fuera de la zona
+   * generada para que `tokens:import` no la revirtiera en silencio.
+   *
+   * El sync del Theme Designer (`e3f84f1`) trajo el export diciendo `{slate.600}`:
+   * el Kit subió al MISMO valor. La condición de reversión que dejamos escrita en
+   * `color-map.mjs` se cumplió sola, la fila volvió a `enforce` y ahora la escribe
+   * el generador. Si el Kit volviera a bajarla, `tokens:parity` lo cantaría — que es
+   * exactamente lo que esta declaración a mano compraba, y ahora sale gratis.
+   *
+   * Ojo: `--sc-icon-subtle` de arriba NO se movió. Su fila del Kit
+   * (`form.field.icon.color`) sigue diciendo `{surface.400}`, así que esa sí sigue
+   * siendo divergencia viva. */
+
+  /* ---------- Text ----------
+   * Rampa alineada al Kit (S62-ext-3, parity §6): texto cuerpo = gray-700
+   * (export textColor #4f5663). El secundario YA NO sigue al Kit: su
+   * textMutedColor (#8f97a3, gray-500) da 2.95:1 y no cumple AA — ver §1.5 del
+   * catálogo de divergencias y la declaración de arriba.
+   *
+   * `subtle` TAMPOCO lo sigue ya, y esto es una decisión de Rafa del
+   * 2026-07-19: **AA por delante de la jerarquía**. Valía gray-400 y medía
+   * 2.04:1 sobre blanco en 161 usos —descripciones del hub, cuerpo de los
+   * estados vacíos, hints, placeholders— o sea texto real, no adorno.
+   *
+   * La consecuencia hay que decirla entera: sobre blanco la rampa de grises
+   * solo tiene DOS pasos que cumplan (600 = 4.52, 700 = 7.38); el 500 se
+   * queda en 2.95. Así que subtle a gray-600 lo iguala a `secondary` y el
+   * tercer nivel de jerarquía desaparece EN CLARO. Quien necesite distinguir
+   * un hint de una etiqueta tiene que hacerlo por tamaño, peso o cursiva, no
+   * por claridad. Se acepta a sabiendas.
+   *
+   * En OSCURO se queda en gray-500, que ahí mide ~6.5:1 sobre el lienzo: no
+   * se degrada un tema que ya cumplía solo por simetría. El resultado es que
+   * el oscuro conserva los tres niveles y el claro tiene dos.
+   *
+   * `disabled` sigue por debajo a propósito: 1.4.3 exime a los controles
+   * inactivos, y un control deshabilitado tiene que parecerlo. Desde DD-81 lo
+   * escribe el generador con el valor del Kit y de Aura (`surface.500` = slate-500,
+   * zona de arriba): el gray-300 de antes daba 1,21:1 sobre el campo deshabilitado
+   * y el texto no se leía; slate-500 da 2,20 (APCA Lc 37, por encima del Lc 30 que
+   * pide a lo deshabilitado) y sigue un paso por debajo de `secondary`.
+   * Vigilado por parity §6 (gateado desde hoy, ya no solo informado). */
+  /*
+   * `heading` — el nivel que a la rampa CLARA le faltaba, y sale de ir hacia ARRIBA.
+   *
+   * La nota de `subtle` de aquí abajo dice que en claro solo hay DOS pasos de gris que
+   * cumplan AA (600 = 4.52 y 700 = 7.38) y que el tercer nivel de jerarquía desaparece.
+   * Eso es cierto bajando: el 500 se queda en 2.95. Pero subiendo sobra sitio —
+   * `slate-800` da 12.16:1 sobre el lienzo blanco— y ahí está el escalón que faltaba.
+   *
+   * Reparto: `heading` (800) para los títulos, `primary` (700) para lo que se lee,
+   * `secondary` (600) para el apoyo. Tres niveles, los tres por encima de AA, y el
+   * título deja de medir el mismo gris que su propio contenido.
+   *
+   * En OSCURO sube a `slate-0` por el mismo motivo: `primary` ya es `slate-50`, así que
+   * el escalón libre está en el blanco puro, no más abajo.
+   *
+   * ⚠️ ROL NUEVO, y por ahora SOLO EN CÓDIGO: el Kit no tiene un text color de título.
+   * Hay que crearlo en Figma para que `tools/figma-export-parity.mjs` siga saliendo con
+   * cero divergencias. A la bandeja del frente.
+   */
+  --sc-text-heading: var(--sc-color-slate-800);
+  --sc-text-subtle: var(--sc-color-slate-600);
+  --sc-text-inverse: var(--sc-color-slate-0);
+  /* Accent = SKY de marca (unificado 2026-07-18, `docs/customs-catalog.md §1.4`).
+   * Antes cyan-600: era un resto del andamiaje inicial, nunca documentado como
+   * divergencia consciente, y el rename DD-23 que llevó `info` a sky no revisó
+   * este alias. Convivían dos acentos (fondo sky con texto cyan). Además
+   * cyan-600 sobre blanco daba 3.46:1 — bajo AA; sky-600 da 6.80:1. */
+  --sc-text-accent: var(--sc-color-sky-600);
+  --sc-text-link: var(--sc-color-sky-600);
+  /* success y warning suben un paso: green-600 daba 3.30:1 sobre blanco y
+   * el warn-600 daba 3.19:1 — los dos bajo el 4.5 de AA para texto normal.
+   * green-700 da 5.02 y yellow-700 da 4.92. Mismo arreglo que ya se le hizo
+   * a `text-accent` (ver comentario de arriba: cyan-600 3.46 → sky-600 6.80).
+   * Su valor en OSCURO se queda en el 600, que allí sí pasa — ver 07-dark. */
+  --sc-text-success: var(--sc-color-green-700);
+  --sc-text-warning: var(--sc-color-yellow-700);
+  --sc-text-danger: var(--sc-color-red-600);
+  --sc-text-info: var(--sc-text-accent);
+  --sc-text-violet: var(--sc-color-violet-700);
+  --sc-text-on-secondary: var(--sc-color-slate-800);
+  /* OBLIGATORIO al pasar accent a sky: slate-800 daba 5.89:1 sobre cyan-500,
+   * pero sobre sky-500 se hunde a 2.48:1. Blanco da 4.90:1. */
+  --sc-text-on-accent: var(--sc-color-slate-0);
+  --sc-text-on-error: var(--sc-color-slate-0);
+  --sc-text-on-success: var(--sc-color-slate-0);
+  --sc-text-on-warning: var(--sc-color-slate-0);
+  --sc-text-on-info: var(--sc-color-slate-0);
+  --sc-text-on-violet: var(--sc-color-slate-0);
+
+  /* ---------- Background ---------- */
+  --sc-bg-default: var(--sc-color-slate-50);
+  /* EL LIENZO DE LA PÁGINA — el suelo sobre el que se apoya todo.
+   *
+   * Existe porque NINGUNO de los dos que ya había sirve, y no por poco: lo que
+   * hace falta es el CRUCE de ambos (medido 2026-08-25).
+   *
+   *                    claro              oscuro
+   *   --sc-bg-surface  slate-0  ✔        slate-900  ✘ (es la tarjeta, no el suelo)
+   *   --sc-bg-default  slate-50 ✘        slate-950  ✔
+   *   --sc-bg-canvas   slate-0  ✔        slate-950  ✔
+   *
+   * Y `--sc-bg-default` NO se puede reutilizar cambiándole el valor claro: hoy
+   * hace DOS trabajos a la vez —el suelo y el relleno gris de los campos
+   * (`filledBackground` del preset, inputtext, select, multiselect, search)—, así
+   * que ponerlo blanco dejaría todos los campos rellenos invisibles sobre blanco.
+   * 32 ficheros lo usan, y no todos quieren decir lo mismo.
+   *
+   * El Kit tampoco lo modela: su `content.background` es blanco/slate-900, o sea
+   * el mismo cruce que `--sc-bg-surface`. No hay nada que adoptar; hay que
+   * nombrarlo aquí.
+   *
+   * Esto sustituye al `:host-context(.sc-dark)` que el shell de configuración se
+   * escribía a mano, y cuyo comentario decía literalmente: «no hay un token único
+   * blanco en light / gray-950 en dark; override por tema». Ya lo hay. */
+  --sc-bg-canvas: var(--sc-color-slate-0);
+  /* Elevated surface (popovers, dropdowns) — currently same as surface
+   * because the light theme stays flat; the alias exists so consumers
+   * that *semantically* want "elevated" don't reach for raw `#fff`. */
+  --sc-bg-elevated: var(--sc-bg-surface);
+  --sc-bg-subtle: var(--sc-color-blue-50);
+  --sc-bg-subtle-hover: var(--sc-color-blue-100);
+  --sc-bg-subtle-active: var(--sc-color-blue-200);
+  --sc-bg-overlay-transparent: #ffffff00;
+
+  /* Generic hover / selected aliases — consumed by row-style components
+   * (tables, lists, menu items) where the per-context semantic is
+   * unimportant. Aliased to the secondary/primary-subtle layer. */
+  --sc-bg-hover: var(--sc-bg-secondary-hover);
+  --sc-bg-selected: var(--sc-bg-primary-subtle);
+  --sc-row-hover-bg: var(--sc-bg-secondary-hover);
+
+  /* Primary (brand) — base/hover/active 1:1 con el Kit → zona generada arriba.
+   * El hover ACLARA el navy (no lo oscurece) — intención de marca del Kit. */
+  --sc-bg-primary-subtle: var(--sc-color-blue-50);
+  --sc-bg-primary-subtle-hover: var(--sc-color-blue-100);
+  --sc-bg-primary-subtle-active: var(--sc-color-blue-200);
+
+  /* Secondary (gray) */
+  --sc-bg-secondary: var(--sc-color-slate-600);
+  --sc-bg-secondary-active: var(--sc-color-slate-200);
+  --sc-bg-secondary-subtle: var(--sc-color-slate-50);
+
+  /* Accent (sky de marca — unificado con info; ver §1.4) */
+  --sc-bg-accent: var(--sc-color-sky-500);
+  --sc-bg-accent-hover: var(--sc-color-sky-600);
+  --sc-bg-accent-active: var(--sc-color-sky-700);
+
+  /* Status */
+  --sc-bg-success: var(--sc-color-green-600);
+  --sc-bg-success-subtle: var(--sc-color-green-50);
+  --sc-bg-warning: var(--sc-color-yellow-500);
+  --sc-bg-warning-subtle: var(--sc-color-yellow-50);
+  --sc-bg-danger: var(--sc-color-red-600);
+  --sc-bg-danger-hover: var(--sc-color-red-700);
+  --sc-bg-danger-active: var(--sc-color-red-800);
+  --sc-bg-danger-subtle: var(--sc-color-red-50);
+  --sc-bg-danger-subtle-hover: var(--sc-color-red-100);
+  --sc-bg-danger-subtle-active: var(--sc-color-red-200);
+
+  /* Info (sky) */
+  --sc-bg-info: var(--sc-color-sky-500);
+  --sc-bg-info-hover: var(--sc-color-sky-600);
+  --sc-bg-info-active: var(--sc-color-sky-700);
+  --sc-bg-info-subtle: var(--sc-color-sky-50);
+
+  /* Violet */
+  --sc-bg-violet: var(--sc-color-violet-500);
+  --sc-bg-violet-hover: var(--sc-color-violet-600);
+  --sc-bg-violet-active: var(--sc-color-violet-700);
+  --sc-bg-violet-subtle: var(--sc-color-violet-50);
+  --sc-bg-violet-subtle-hover: var(--sc-color-violet-100);
+  --sc-bg-violet-subtle-active: var(--sc-color-violet-200);
+
+  /* ---------- Border ----------
+   * default (gray-200) + strong (gray-400) → zona generada arriba.
+   * Divergencia consciente: el Kit usa gray-300 SOLO para el borde de form-field;
+   * nuestro form-field usa el mismo gray-200 (un punto más claro = chrome más
+   * aireado). Alinear el input a gray-300 pediría un token dedicado `--sc-border-input`
+   * — follow-up, no romper el borde de content/overlay. */
+  --sc-border-subtle: var(--sc-color-slate-100);
+  --sc-border-disabled: var(--sc-color-slate-100);
+
+  /* El borde primary acompaña a la rampa de fondo (mismo paso) para que el
+   * contorno del botón/outline siga al fill. Tracking de --sc-bg-primary-*. */
+  --sc-border-primary: var(--sc-color-blue-700);
+  --sc-border-primary-hover: var(--sc-color-blue-600);
+  --sc-border-primary-active: var(--sc-color-blue-800);
+
+  --sc-border-secondary: var(--sc-color-blue-200);
+  --sc-border-secondary-hover: var(--sc-color-blue-300);
+  --sc-border-secondary-active: var(--sc-color-blue-400);
+
+  --sc-border-accent: var(--sc-color-sky-500);
+  --sc-border-accent-hover: var(--sc-color-sky-600);
+  --sc-border-accent-active: var(--sc-color-sky-700);
+
+  --sc-border-success: var(--sc-color-green-600);
+  --sc-border-success-subtle: var(--sc-color-green-200);
+  --sc-border-warning: var(--sc-color-yellow-500);
+  --sc-border-warning-subtle: var(--sc-color-yellow-200);
+  /* Focus-ring border — sky-500 (vibrante saturado). Decisión
+   * consciente DIVERGENTE del JSON PrimeOne (que propone navy primary
+   * #1b273d): el navy oscuro reduce contraste con el border primary del
+   * input enfocado, degradando a11y. Documentado en
+   * `docs/customs-catalog.md §1.1`. Antes apuntaba a `soft-blue-500`
+   * (drift interno con `sc-preset.ts.focusRing.color = sky-500`);
+   * unificado S54 a sky para single source of truth. */
+  --sc-border-focus: var(--sc-color-sky-500);
+  --sc-border-danger: var(--sc-color-red-600);
+  --sc-border-danger-hover: var(--sc-color-red-700);
+  --sc-border-danger-active: var(--sc-color-red-800);
+
+  --sc-border-info: var(--sc-color-sky-500);
+  --sc-border-info-subtle: var(--sc-color-sky-200);
+  --sc-border-violet: var(--sc-color-violet-500);
+  --sc-border-violet-subtle: var(--sc-color-violet-200);
+
+  /* ---------- Icon ---------- */
+  --sc-icon-primary: var(--sc-color-slate-800);
+  --sc-icon-secondary: var(--sc-color-slate-600);
+  --sc-icon-inverse: var(--sc-color-slate-0);
+  --sc-icon-disabled: var(--sc-color-slate-300);
+  --sc-icon-link: var(--sc-color-sky-600);
+
+  /* `icon-warning` es el ÚNICO de esta tanda que no está en el 600, y no es un
+   * descuido. La familia warn pasó de amber a yellow el 2026-08-24 siguiendo al
+   * Theme Designer, pero el paso no se copia literal: yellow-600 da 2.94:1 sobre
+   * blanco y un icono es elemento gráfico — su listón es el 3:1 de WCAG 1.4.11,
+   * no el 4.5 del texto. Ni aun así llegaba. yellow-700 da 4.92.
+   *
+   * Y no es teórico: su consumidor real es el trazo de `sc-gauge`
+   * (`sc-gauge.component.scss:24`), medido. Es el mismo criterio de dos comentarios
+   * más arriba —cuando el paso del Kit no cumple, se sube uno— aplicado al listón
+   * de gráficos en vez de al de texto. */
+  --sc-icon-accent: var(--sc-color-sky-600);
+  --sc-icon-success: var(--sc-color-green-600);
+  --sc-icon-warning: var(--sc-color-yellow-700);
+  --sc-icon-error: var(--sc-color-red-600);
+  --sc-icon-info: var(--sc-icon-accent);
+  --sc-icon-violet: var(--sc-color-violet-500);
+
+  --sc-icon-on-primary: var(--sc-color-slate-0);
+  --sc-icon-on-secondary: var(--sc-color-slate-800);
+  /* Misma razón que --sc-text-on-accent: sobre sky-500 hace falta blanco. */
+  --sc-icon-on-accent: var(--sc-color-slate-0);
+  --sc-icon-on-danger: var(--sc-color-slate-0);
+  --sc-icon-on-success: var(--sc-color-slate-0);
+  --sc-icon-on-warning: var(--sc-color-slate-800);
+  --sc-icon-on-info: var(--sc-icon-on-accent);
+  --sc-icon-on-violet: var(--sc-color-violet-50);
+
+  /* ---------- Typography roles ---------- */
+  /*
+   * Each role bundles three tokens (size, line-height, weight). TODOS los roles
+   * usan la familia primaria (Inter): los text styles del Figma del DS
+   * (Display/H1/H2/H3/Body/Caption) son Inter, caption incluida (medido en vivo
+   * con el bridge 2026-09-08). `caption`/`caption-bold` apuntaban a la secundaria
+   * (Open Sans) por deriva: se corrige para casar con Figma (FIGMA MANDA, DD-48).
+   *
+   * FIGMA MANDA (DD-48, 2026-09-03). Cada rol apunta al MISMO paso al que apunta su text
+   * style en el Kit; medido en vivo con el bridge, no deducido. Si un text style se remapea
+   * en Figma, esta tabla se mueve detrás: no se negocia por comodidad del consumidor.
+   *   Display/display-*  → font/size/900 (64) · line/height/900 (78)
+   *   Heading/h1-*       → font/size/800 (48) · line/height/800 (58)
+   *   Heading/h2-*       → font/size/500 (24) · line/height/500 (36)
+   *   Heading/h3-*       → font/size/400 (18) · line/height/300 (24)
+   *   Body/body-*        → font/size/200 (14) · line/height/200 (20)
+   *   Caption/caption-*  → font/size/100 (12) · line/height/100 (18)
+   *
+   * `h4`, `subtitle-1`, `subtitle-2` y `body-1` NO tienen text style en Figma: son roles del
+   * código que se quedan como estaban. `h4` coincide ahora con `h3` (18/24) porque la escalera
+   * de Figma tiene TRES niveles de heading, no cuatro; se deja como alias redundante en vez de
+   * inventarle un tamaño que el Kit no respalda (misma doctrina que subtitle-2 = subtitle-3 en
+   * DD-13). El consumidor que quiera un tamaño intermedio nombra el paso, no el rol.
+   */
+
+  /* Sizes */
+  --sc-font-size-display-1: var(--sc-font-size-900);
+  --sc-font-size-h1: var(--sc-font-size-800);
+  --sc-font-size-h2: var(--sc-font-size-500);
+  --sc-font-size-h3: var(--sc-font-size-400);
+  --sc-font-size-h4: var(--sc-font-size-400); /* = h3: Figma no tiene h4 */
+  --sc-font-size-subtitle-1: var(--sc-font-size-300);
+  --sc-font-size-subtitle-2: var(--sc-font-size-200);
+  --sc-font-size-body-1: var(--sc-font-size-300);
+  --sc-font-size-body-2: var(--sc-font-size-200);
+  --sc-font-size-body-3: var(--sc-font-size-200);
+  --sc-font-size-caption: var(--sc-font-size-100);
+  --sc-font-size-caption-bold: var(--sc-font-size-100);
+
+  /* Line heights */
+  --sc-line-height-display-1: var(--sc-line-height-900);
+  --sc-line-height-h1: var(--sc-line-height-800);
+  --sc-line-height-h2: var(--sc-line-height-500);
+  --sc-line-height-h3: var(--sc-line-height-300);
+  --sc-line-height-h4: var(--sc-line-height-400);
+  --sc-line-height-subtitle-1: var(--sc-line-height-300);
+  --sc-line-height-subtitle-2: var(--sc-line-height-220);
+  --sc-line-height-body-1: var(--sc-line-height-300);
+  /* `200`, no `220`: es el peldaño que el text style `Body/body-*` ATA en Figma
+   * (la tabla de arriba ya lo decía; la declaración apuntaba a otro sitio). Los
+   * dos valen 20px, así que esto no mueve un píxel — lo que arregla es la
+   * TRAZABILIDAD: `220` no existe en el export del Kit, es un peldaño solo de
+   * código, y un rol que Figma sí ata no puede colgar de uno inventado o deja de
+   * seguirlo cuando cambie. Los que quedan en `220` (subtitle-2, body-3) no
+   * tienen text style en Figma, así que ahí es el sitio correcto. */
+  --sc-line-height-body-2: var(--sc-line-height-200);
+  --sc-line-height-body-3: var(--sc-line-height-220);
+  --sc-line-height-caption: var(--sc-line-height-100);
+
+  /* Weights */
+  --sc-font-weight-display-1: var(--sc-font-weight-regular);
+  --sc-font-weight-h1: var(--sc-font-weight-semibold);
+  --sc-font-weight-h2: var(--sc-font-weight-semibold);
+  --sc-font-weight-h3: var(--sc-font-weight-semibold);
+  --sc-font-weight-h4: var(--sc-font-weight-semibold);
+  --sc-font-weight-subtitle-1: var(--sc-font-weight-semibold);
+  --sc-font-weight-subtitle-2: var(--sc-font-weight-semibold);
+  --sc-font-weight-body-1: var(--sc-font-weight-regular);
+  --sc-font-weight-body-2: var(--sc-font-weight-regular);
+  --sc-font-weight-body-3: var(--sc-font-weight-semibold);
+  --sc-font-weight-caption: var(--sc-font-weight-regular);
+  --sc-font-weight-caption-bold: var(--sc-font-weight-semibold);
+
+  /* Family selector — primary for everything except captions. */
+  --sc-font-family-display-1: var(--sc-font-family-primary);
+  --sc-font-family-h1: var(--sc-font-family-primary);
+  --sc-font-family-h2: var(--sc-font-family-primary);
+  --sc-font-family-h3: var(--sc-font-family-primary);
+  --sc-font-family-h4: var(--sc-font-family-primary);
+  --sc-font-family-subtitle-1: var(--sc-font-family-primary);
+  --sc-font-family-subtitle-2: var(--sc-font-family-primary);
+  --sc-font-family-body-1: var(--sc-font-family-primary);
+  --sc-font-family-body-2: var(--sc-font-family-primary);
+  --sc-font-family-body-3: var(--sc-font-family-primary);
+  --sc-font-family-caption: var(--sc-font-family-primary);
+  --sc-font-family-caption-bold: var(--sc-font-family-primary);
+}
+
+/* ── 03-palette.css ── */
+/*
+ * Layer 3 — DOMAIN PALETTES
+ * ==========================
+ *
+ * Categorical color tokens that aren't part of PrimeNG's preset
+ * concept. They sit between semantic and component layers because
+ * each palette is purpose-specific (label hues, agent presence,
+ * group priority) but reused by multiple components.
+ *
+ * Components SHOULD reference these tokens. Dark mode (layer 6) may
+ * override individual tokens here when the dark variant has a
+ * different visual.
+ */
+
+:root {
+  /* ---------- Label / tag palette ---------- */
+  /*
+   * Data colors used by the Labels feature (and re-used wherever a
+   * categorical tag is shown). Intentionally separate from brand
+   * semantic tokens: a "red" tag does not imply danger, and a
+   * "green" tag does not imply success.
+   *
+   * Source of values:
+   * - gray, red, orange, amber, teal, purple → AED `--sc-color-*`
+   *   primitives that mirror the same-named Aura primitives.
+   * - green → AED `--sc-color-emerald-*` primitive (Aura's `emerald`,
+   *   chosen for a brighter "fresh green" distinct from AED's
+   *   brand-semantic green which is Aura's `green`).
+   * - blue → AED `--sc-color-azure-*` primitive (Aura's `blue`,
+   *   renamed to `azure` so it doesn't collide with AED's
+   *   `--sc-color-blue-*` which is the custom brand navy).
+   *
+   * All label hues now reference primitives; no hex literals.
+   */
+  --sc-label-gray-bg: var(--sc-color-slate-100);
+  --sc-label-gray-text: var(--sc-color-slate-700);
+  --sc-label-gray-border: var(--sc-color-slate-300);
+  --sc-label-gray-dot: var(--sc-color-slate-500);
+
+  --sc-label-red-bg: var(--sc-color-red-50);
+  --sc-label-red-text: var(--sc-color-red-700);
+  --sc-label-red-border: var(--sc-color-red-200);
+  --sc-label-red-dot: var(--sc-color-red-500);
+
+  --sc-label-orange-bg: var(--sc-color-orange-50);
+  --sc-label-orange-text: var(--sc-color-orange-700);
+  --sc-label-orange-border: var(--sc-color-orange-200);
+  --sc-label-orange-dot: var(--sc-color-orange-500);
+
+  --sc-label-amber-bg: var(--sc-color-amber-50);
+  --sc-label-amber-text: var(--sc-color-amber-700);
+  --sc-label-amber-border: var(--sc-color-amber-200);
+  --sc-label-amber-dot: var(--sc-color-amber-500);
+
+  --sc-label-green-bg: var(--sc-color-emerald-50);
+  --sc-label-green-text: var(--sc-color-emerald-700);
+  --sc-label-green-border: var(--sc-color-emerald-200);
+  --sc-label-green-dot: var(--sc-color-emerald-500);
+
+  --sc-label-teal-bg: var(--sc-color-teal-50);
+  --sc-label-teal-text: var(--sc-color-teal-700);
+  --sc-label-teal-border: var(--sc-color-teal-200);
+  --sc-label-teal-dot: var(--sc-color-teal-500);
+
+  --sc-label-blue-bg: var(--sc-color-azure-50);
+  --sc-label-blue-text: var(--sc-color-azure-700);
+  --sc-label-blue-border: var(--sc-color-azure-200);
+  --sc-label-blue-dot: var(--sc-color-azure-500);
+
+  --sc-label-purple-bg: var(--sc-color-purple-50);
+  --sc-label-purple-text: var(--sc-color-purple-700);
+  --sc-label-purple-border: var(--sc-color-purple-200);
+  --sc-label-purple-dot: var(--sc-color-purple-500);
+
+  /* ---------- Agent presence states ---------- */
+  /*
+   * Pill colors for the agent's "estado" / presence state. Each token
+   * is a deliberate hue chosen to read as a status (not a hue from
+   * the label palette, which the user can pick freely). Used by the
+   * rich sticky form header and the agents list dot. Calibrated for
+   * AA contrast on `--sc-bg-surface`.
+   */
+  --sc-presence-available: #1a8a4a; /* disponible */
+  --sc-presence-available-deep: #1a6a3a; /* darker variant for foreground */
+  --sc-presence-paused: #b07e1a; /* baño / comida */
+  --sc-presence-training: #b91c4b; /* formación */
+  --sc-presence-offline: var(--sc-text-subtle); /* no_disponible / desconectado */
+
+  /* ---------- Group priority ---------- */
+  --sc-priority-high: var(--sc-text-danger);
+  --sc-priority-medium: #c47a00;
+  --sc-priority-medium-deep: #8a5500;
+}
+
+/* ── 04-component.css ── */
+/*
+ * Layer 4 — COMPONENT
+ * ====================
+ *
+ * Per-component design specifications. Mirrors PrimeNG's `components`
+ * layer (button.root.primary.background, dialog.shadow, …) — each
+ * token belongs to a single component shape.
+ *
+ * AED pre-bakes these tokens here because the component lives outside
+ * PrimeNG's catalog (custom shells: button variants beyond PrimeNG's,
+ * the canonical modal, the bespoke toast).
+ *
+ * Components SHOULD reference these tokens directly. Dark mode (layer
+ * 6) may override individual tokens here when the dark variant has a
+ * different shape (e.g. translucent danger backgrounds).
+ */
+
+:root {
+  /* Button tokens (`--sc-btn-*`) removed S34 — `.btn` global utility was
+   * deprecated and 39 usages migrated to `<p-button>`. PrimeNG button
+   * tokens (`--p-button-*`) consume severity tokens directly via
+   * `sc-preset.ts` (primary navy, info sky, warn yellow). The
+   * button override in sc-preset.ts sets paddingX/paddingY/borderRadius/gap
+   * 1:1 with Figma SC PrimeUI Kit Pro (`button/padding/*`). */
+
+  /* =========================================================== */
+  /* Modal / Dialog (Smart Contact)                              */
+  /* =========================================================== */
+  /*
+   * Master shell con tres slots: header (icon + title + subtitle +
+   * close), body (free content, scrollable, stackeable), footer
+   * (action row). Sits on a tinted mask via PrimeNG's DialogModule
+   * que provee focus trap, ESC, y animación.
+   *
+   * Auditado 1:1 contra Figma `Smart Contact Prime → ❖ ConfirmDialog`
+   * (canvas 6738:50207, tokens `dialog/*` extraídos en Session 30).
+   * Note: el canvas ConfirmDialog usa los MISMOS tokens `dialog/*`
+   * que cualquier Dialog general — son el spec del shell modal,
+   * compartido entre Dialog plain y ConfirmDialog.
+   *
+   * Padding scheme (                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                                             ):
+   *   header   17.5 todo lado
+   *   content  17.5 lados/abajo, top 0 (header da el espacio)
+   *   footer   17.5 lados/abajo, top 0 (content da el espacio)
+   * Esto evita doble padding en las costuras header/body/footer.
+   */
+  --sc-dialog-bg: var(--sc-color-slate-0); /* Figma `dialog/background: #ffffff` */
+  --sc-dialog-border: var(
+    --sc-color-slate-200
+  ); /* Figma `dialog/border/color: #e2e8f0` (era blue-100, fix Session 30) */
+  --sc-dialog-divider: var(--sc-color-slate-200);
+  --sc-dialog-radius: var(--sc-radius-400); /* 12px — Figma `dialog/border/radius: 12` */
+  /* Double drop-shadow per Figma `dialog/shadow`:
+   *   #0000001A offset(0,8) r10 spread:-6
+   * + #0000001A offset(0,20) r25 spread:-5 */
+  --sc-dialog-shadow: 0 8px 10px -6px rgba(0, 0, 0, 0.1), 0 20px 25px -5px rgba(0, 0, 0, 0.1);
+  --sc-dialog-padding: var(--sc-scale-1-25); /* 17.5px */ /* Figma `dialog/header/padding`, `dialog/content/padding/*`, `dialog/footer/padding/*` — raw decimal */
+  --sc-dialog-header-gap: var(--sc-scale-0-5); /* 7px */ /* Figma `dialog/header/gap: 7` (icon ↔ text ↔ close) */
+  --sc-dialog-footer-gap: var(
+    --sc-spacing-0-75
+  ); /* 10.5px. Divergencia consciente del Figma (`dialog/footer/gap: 7`): con botones
+        small content-width el 7px leía apelotonado (feedback de diseño). Token limpio
+        de la escala (0.75 = 10.5). Propagar a Figma en el próximo sync del Kit. */
+  --sc-dialog-head-icon-fg: var(--sc-color-slate-500);
+  --sc-dialog-head-icon-size: var(--sc-scale-2); /* 28px */ /* Figma `confirmdialog/icon/size: 28` */
+  --sc-dialog-title: var(
+    --sc-color-slate-800
+  ); /* Figma `dialog/color: #334155` (slate-700) — but darker for AED */
+  --sc-dialog-title-font-size: var(--sc-font-size-400); /* 18 — el Kit lo modela como
+     `dialog.title.font.size = {primitive.typography.font.size.400}`; el 17.5 de Figma es el
+     valor RAW de su rampa fraccionaria, y nuestra rampa de tipografía ya redondea (DD-13). */
+  --sc-dialog-title-font-weight: 600; /* Figma `dialog/title/font/weight: 600` (semibold) */
+  --sc-dialog-subtitle: var(--sc-color-slate-600);
+  --sc-dialog-close-fg: var(--sc-color-slate-700);
+  --sc-dialog-close-bg-hover: var(--sc-color-slate-100);
+
+  /* Back-compat aliases (los componentes existentes referencian estos) */
+  --sc-dialog-padding-x: var(--sc-dialog-padding);
+  --sc-dialog-padding-y: var(--sc-dialog-padding);
+
+  /* =========================================================== */
+  /* Toast (Smart Contact design — Figma 1050:354)               */
+  /* =========================================================== */
+  /*
+   * Per-severity background / border / icon-square colors for the
+   * notification toast. The "icon" token paints the small rounded
+   * square that holds the severity glyph; the glyph itself is white.
+   *
+   * Title / message / close-icon colors are shared across severities.
+   */
+
+  /* ─── Toast — Figma 1:1 audit Session 30 ────────────────────────
+   * Canvas `❖ Toast` (6738:53165). Tokens extraídos por severity:
+   *   Success node 393:42318, Info 393:42354, Warn 393:42378,
+   *   Error 393:42405, Secondary 6649:34650, Contrast 6649:34661.
+   * Geometría compartida (idéntica entre severities). El border de
+   * cada severity usa el step -200 (tinted suave), NO el -500/-600
+   * (saturated) — clave para el look "frosted notification" del
+   * Figma. */
+
+  /* Shared text */
+  --sc-toast-title: var(--sc-color-slate-800);
+  --sc-toast-message: var(
+    --sc-color-slate-700
+  ); /* Figma `toast/<sev>/detail/color: #334155` (slate-700) */
+  --sc-toast-close: var(--sc-color-slate-800);
+  --sc-toast-icon-fg: var(--sc-color-slate-0); /* white glyph inside icon square */
+  --sc-toast-summary-font-size: var(--sc-font-size-200); /* 14 — `toast.summary.font.size =
+     {primitive.typography.font.size.200}`. Mismo valor, ahora por token. */
+  --sc-toast-summary-font-weight: 500; /* Figma `toast/summary/font/weight: 500` */
+  --sc-toast-detail-font-size: var(--sc-font-size-100); /* 12 — `toast.detail.font.size =
+     {primitive.typography.font.size.100}`. El 12.25 era el raw fraccionario. */
+  --sc-toast-detail-font-weight: 500; /* Figma `toast/detail/font/weight: 500` */
+
+  /* Shared geometry — Figma values */
+  --sc-toast-width: var(--sc-scale-25); /* 350px */ /* Figma `toast/width: 350` (was 400) */
+  --sc-toast-radius: var(--sc-radius-200); /* 6px — Figma `toast/border/radius: 6` (was 12) */
+  --sc-toast-padding-x: var(--sc-scale-0-75); /* 10.5px */ /* Figma `toast/content/padding: 10.5` raw */
+  --sc-toast-padding-y: var(--sc-scale-0-75);
+  --sc-toast-gap-content: var(--sc-scale-0-5); /* 7px */ /* Figma `toast/content/gap: 7` (icon ↔ body) */
+  --sc-toast-gap-text: var(--sc-scale-0-5); /* 7px */ /* Figma `toast/text/gap: 7` (summary ↔ detail) */
+  --sc-toast-gap-actions: var(--sc-scale-0-5); /* SC extension — gap entre body y action buttons */
+  --sc-toast-icon-size: var(--sc-scale-1-125); /* 15.75px */ /* Figma `toast/icon/size: 15.75` (was 24) */
+  --sc-toast-icon-radius: var(--sc-radius-200);
+  --sc-toast-close-button-width: var(--sc-scale-1-75); /* 24.5px */ /* Figma `toast/close/button/width: 24.5` */
+  --sc-toast-close-button-height: var(--sc-scale-1-75);
+  --sc-toast-close-button-radius: var(--sc-scale-0-875); /* 12.25px (= mitad del ancho a circular) */ /* Figma `toast/close/button/border/radius: 12.25` (= width/2 → circular) */
+  --sc-toast-close-icon-size: var(--sc-scale-1); /* 14px */ /* Figma `toast/close/icon/size: 14` */
+  --sc-toast-backdrop-blur: 1.5px; /* Figma `toast/blur: 1.5` — backdrop-filter frosted glass */
+  --sc-toast-shadow: 0 4px 8px 0 rgba(1, 4, 8, 0.04); /* Figma `toast/<sev>/shadow: #0X0X0X0A offset(0,4) r8` */
+
+  /* ─── Per-severity (background alpha F2 = 95% para efecto cristal) ─── */
+
+  /* Success — Figma `#f0fdf4f2` bg, `#bbf7d0` border (green-200), `#16a34a` icon (green-600) */
+  --sc-toast-success-bg: color-mix(in srgb, var(--sc-color-green-50) 95%, transparent);
+  --sc-toast-success-border: var(--sc-color-green-200);
+  --sc-toast-success-icon: var(--sc-color-green-600);
+  --sc-toast-success-icon-bg: var(--sc-color-green-600);
+
+  /* Info — Figma `#eff6fff2` bg (blue-50 95%), `#bfdbfe` border (blue-200 ≈ azure), `#2563eb` icon */
+  --sc-toast-info-bg: color-mix(in srgb, var(--sc-color-azure-50) 95%, transparent);
+  --sc-toast-info-border: var(--sc-color-azure-200);
+  --sc-toast-info-icon: var(--sc-color-azure-600);
+  --sc-toast-info-icon-bg: var(
+    --sc-color-sky-500
+  ); /* SC override: icon-square uses sky-500 per brand */
+
+  /* Warn — Figma `#fefce8f2` bg (yellow-50 95%), `#fef08a` border (yellow-200), `#ca8a04` icon */
+  --sc-toast-warn-bg: color-mix(in srgb, var(--sc-color-yellow-50) 95%, transparent);
+  --sc-toast-warn-border: var(--sc-color-yellow-200);
+  --sc-toast-warn-icon: var(--sc-color-yellow-700);
+  --sc-toast-warn-icon-bg: var(--sc-color-yellow-700);
+
+  /* Error — Figma `#fef2f2f2` bg (red-50 95%), `#fecaca` border (red-200), `#dc2626` icon */
+  --sc-toast-error-bg: color-mix(in srgb, var(--sc-color-red-50) 95%, transparent);
+  --sc-toast-error-border: var(--sc-color-red-200);
+  --sc-toast-error-icon: var(--sc-color-red-600);
+  --sc-toast-error-icon-bg: var(--sc-color-red-500);
+
+  /* Secondary — Figma slate (no alpha — opaco). Mapped to PrimeNG severity="secondary". */
+  --sc-toast-secondary-bg: var(--sc-color-slate-100); /* slate-100 */
+  --sc-toast-secondary-border: var(--sc-color-slate-200); /* slate-200 */
+  --sc-toast-secondary-icon: var(--sc-color-slate-600); /* slate-600 */
+  --sc-toast-secondary-icon-bg: var(--sc-color-slate-600);
+
+  /* Violet — SC EXTENSION (NO existe en Figma). Reservado para
+   * "neutral notice" tipo "Borrador creado / renombrado" — más suave
+   * que success, más presente que info. Mapped manually via custom
+   * data-severity="violet" en el template del p-toast. */
+  --sc-toast-violet-bg: color-mix(in srgb, var(--sc-color-violet-50) 95%, transparent);
+  --sc-toast-violet-border: var(--sc-color-violet-200);
+  --sc-toast-violet-icon: var(--sc-color-violet-600);
+  --sc-toast-violet-icon-bg: var(--sc-color-violet-500);
+
+  /* =========================================================== */
+  /* Sizing de componente — GENERADO desde el Kit (no editar)    */
+  /* =========================================================== */
+  /* @sc-gen:cmp-sizing — bloque GENERADO desde kit-export-dtcg.json por
+   * `npm run tokens:import` (token-gen-component.mjs). NO editar a mano.
+   * Métrica de componente 1:1 con el export (radio/padding/fontSize/width…),
+   * en rem (px/16, px de diseño en comentario). El preset referencia estos
+   * `--sc-cmp-*`; así un cambio de sizing en Figma fluye a código sin mano.
+   * Divergencias conscientes → DIVERGE_SIZING en scripts/sizing-map.mjs. */
+  --sc-cmp-button-padding-x: 0.546875rem; /* 8.75px */
+  --sc-cmp-button-padding-y: 0.328125rem; /* 5.25px */
+  --sc-cmp-button-border-radius: 0.375rem; /* 6px */
+  --sc-cmp-button-gap: 0.4375rem; /* 7px */
+  --sc-cmp-button-icon-only-width: 1.96875rem; /* 31.5px */
+  --sc-cmp-button-rounded-border-radius: 1.75rem; /* 28px */
+  --sc-cmp-button-sm-font-size: 0.75rem; /* 12px */
+  --sc-cmp-button-sm-padding-x: 0.4375rem; /* 7px */
+  --sc-cmp-button-sm-padding-y: 0.21875rem; /* 3.5px */
+  --sc-cmp-button-sm-icon-only-width: 1.75rem; /* 28px */
+  --sc-cmp-button-lg-font-size: 1rem; /* 16px */
+  --sc-cmp-button-lg-padding-x: 0.65625rem; /* 10.5px */
+  --sc-cmp-button-lg-padding-y: 0.4375rem; /* 7px */
+  --sc-cmp-button-lg-icon-only-width: 2.625rem; /* 42px */
+  --sc-cmp-form-field-padding-x: 0.546875rem; /* 8.75px */
+  --sc-cmp-form-field-padding-y: 0.328125rem; /* 5.25px */
+  --sc-cmp-form-field-border-radius: 0.375rem; /* 6px */
+  --sc-cmp-form-field-sm-font-size: 0.75rem; /* 12px */
+  --sc-cmp-form-field-sm-padding-x: 0.4375rem; /* 7px */
+  --sc-cmp-form-field-sm-padding-y: 0.21875rem; /* 3.5px */
+  --sc-cmp-form-field-lg-font-size: 1rem; /* 16px */
+  --sc-cmp-form-field-lg-padding-x: 0.65625rem; /* 10.5px */
+  --sc-cmp-form-field-lg-padding-y: 0.4375rem; /* 7px */
+  --sc-cmp-icon-size: 0.875rem; /* 14px */
+  --sc-cmp-overlay-modal-padding: 0.984375rem; /* 15.75px */
+  --sc-cmp-overlay-modal-border-radius: 0.75rem; /* 12px */
+  --sc-cmp-overlay-popover-padding: 0.546875rem; /* 8.75px */
+  --sc-cmp-overlay-popover-border-radius: 0.375rem; /* 6px */
+  --sc-cmp-overlay-select-border-radius: 0.375rem; /* 6px */
+  --sc-cmp-tabs-tab-gap: 0.4375rem; /* 7px */
+  --sc-cmp-tabs-tab-padding-y: 0.875rem; /* 14px */
+  --sc-cmp-tabs-tab-padding-x: 0.984375rem; /* 15.75px */
+  --sc-cmp-tabs-tabpanel-padding-top: 0.765625rem; /* 12.25px */
+  --sc-cmp-tabs-tabpanel-padding-right: 0.984375rem; /* 15.75px */
+  --sc-cmp-tabs-tabpanel-padding-bottom: 0.984375rem; /* 15.75px */
+  --sc-cmp-tabs-tabpanel-padding-left: 0.984375rem; /* 15.75px */
+  --sc-cmp-tooltip-max-width: 10.9375rem; /* 175px */
+  --sc-cmp-tooltip-gutter: 0.21875rem; /* 3.5px */
+  --sc-cmp-tooltip-padding-y: 0.4375rem; /* 7px */
+  --sc-cmp-tooltip-padding-x: 0.65625rem; /* 10.5px */
+  --sc-cmp-divider-horizontal-margin-y: 0.875rem; /* 14px */
+  --sc-cmp-divider-horizontal-margin-x: 0; /* 0px */
+  --sc-cmp-divider-horizontal-content-padding-y: 0; /* 0px */
+  --sc-cmp-divider-horizontal-content-padding-x: 0.4375rem; /* 7px */
+  --sc-cmp-divider-vertical-margin-y: 0; /* 0px */
+  --sc-cmp-divider-vertical-margin-x: 0.875rem; /* 14px */
+  --sc-cmp-divider-vertical-content-padding-y: 0.4375rem; /* 7px */
+  --sc-cmp-divider-vertical-content-padding-x: 0; /* 0px */
+  --sc-cmp-toggleswitch-width: 1.96875rem; /* 31.5px */
+  --sc-cmp-toggleswitch-height: 1.3125rem; /* 21px */
+  --sc-cmp-toggleswitch-gap: 0.21875rem; /* 3.5px */
+  --sc-cmp-toggleswitch-handle-size: 0.875rem; /* 14px */
+  --sc-cmp-toggleswitch-handle-border-radius: 0.4375rem; /* 7px */
+  --sc-cmp-select-dropdown-width: 1.96875rem; /* 31.5px */
+  --sc-cmp-select-checkmark-gutter-start: -0.21875rem; /* -3.5px */
+  --sc-cmp-select-checkmark-gutter-end: 0.21875rem; /* 3.5px */
+  --sc-cmp-multiselect-dropdown-width: 1.96875rem; /* 31.5px */
+  --sc-cmp-multiselect-option-gap: 0.4375rem; /* 7px */
+  --sc-cmp-datepicker-title-gap: 0.4375rem; /* 7px */
+  --sc-cmp-datepicker-dropdown-width: 1.96875rem; /* 31.5px */
+  --sc-cmp-datepicker-dropdown-sm-width: 1.75rem; /* 28px */
+  --sc-cmp-datepicker-dropdown-lg-width: 2.625rem; /* 42px */
+  --sc-cmp-datepicker-week-day-padding: 0.21875rem; /* 3.5px */
+  --sc-cmp-datepicker-date-width: 1.75rem; /* 28px */
+  --sc-cmp-datepicker-date-height: 1.75rem; /* 28px */
+  --sc-cmp-datepicker-date-border-radius: 0.875rem; /* 14px */
+  --sc-cmp-datepicker-date-padding: 0.21875rem; /* 3.5px */
+  --sc-cmp-datepicker-month-padding: 0.21875rem; /* 3.5px */
+  --sc-cmp-datepicker-year-padding: 0.21875rem; /* 3.5px */
+  --sc-cmp-datepicker-time-picker-gap: 0.4375rem; /* 7px */
+  --sc-cmp-datepicker-time-picker-button-gap: 0.109375rem; /* 1.75px */
+  --sc-cmp-checkbox-width: 0.984375rem; /* 15.75px */
+  --sc-cmp-checkbox-height: 0.984375rem; /* 15.75px */
+  --sc-cmp-checkbox-sm-width: 0.875rem; /* 14px */
+  --sc-cmp-checkbox-sm-height: 0.875rem; /* 14px */
+  --sc-cmp-checkbox-lg-width: 1.09375rem; /* 17.5px */
+  --sc-cmp-checkbox-lg-height: 1.09375rem; /* 17.5px */
+  --sc-cmp-checkbox-icon-size: 0.65625rem; /* 10.5px */
+  --sc-cmp-checkbox-icon-sm-size: 0.546875rem; /* 8.75px */
+  --sc-cmp-checkbox-icon-lg-size: 0.875rem; /* 14px */
+  --sc-cmp-dialog-header-gap: 0.4375rem; /* 7px */
+  --sc-cmp-dialog-footer-gap: 0.328125rem; /* 5.25px */
+  --sc-cmp-tag-gap: 0.21875rem; /* 3.5px */
+  --sc-cmp-tag-icon-size: 0.546875rem; /* 8.75px */
+  --sc-cmp-chip-border-radius: 1rem; /* 16px */
+  --sc-cmp-chip-padding-x: 0.546875rem; /* 8.75px */
+  --sc-cmp-chip-padding-y: 0.328125rem; /* 5.25px */
+  --sc-cmp-chip-gap: 0.328125rem; /* 5.25px */
+  --sc-cmp-chip-image-width: 1.75rem; /* 28px */
+  --sc-cmp-chip-image-height: 1.75rem; /* 28px */
+  --sc-cmp-chip-icon-size: 0.875rem; /* 14px */
+  --sc-cmp-chip-remove-icon-size: 0.875rem; /* 14px */
+  --sc-cmp-message-content-gap: 0.4375rem; /* 7px */
+  --sc-cmp-message-icon-size: 0.875rem; /* 14px */
+  --sc-cmp-message-icon-sm-size: 0.875rem; /* 14px */
+  --sc-cmp-message-icon-lg-size: 0.984375rem; /* 15.75px */
+  --sc-cmp-message-close-button-width: 1.3125rem; /* 21px */
+  --sc-cmp-message-close-button-height: 1.3125rem; /* 21px */
+  --sc-cmp-message-close-button-border-radius: 0.765625rem; /* 12.25px */
+  --sc-cmp-message-close-icon-size: 0.875rem; /* 14px */
+  --sc-cmp-message-close-icon-sm-size: 0.65625rem; /* 10.5px */
+  --sc-cmp-message-close-icon-lg-size: 0.875rem; /* 14px */
+  --sc-cmp-toast-width: 21.875rem; /* 350px */
+  --sc-cmp-toast-icon-size: 0.875rem; /* 14px */
+  --sc-cmp-toast-content-gap: 0.4375rem; /* 7px */
+  --sc-cmp-toast-text-gap: 0.21875rem; /* 3.5px */
+  --sc-cmp-toast-close-button-width: 1.3125rem; /* 21px */
+  --sc-cmp-toast-close-button-height: 1.3125rem; /* 21px */
+  --sc-cmp-toast-close-button-border-radius: 0.765625rem; /* 12.25px */
+  --sc-cmp-toast-close-icon-size: 0.875rem; /* 14px */
+  --sc-cmp-accordion-header-padding: 0.984375rem; /* 15.75px */
+  --sc-cmp-autocomplete-dropdown-width: 2.1875rem; /* 35px */
+  --sc-cmp-autocomplete-dropdown-sm-width: 1.75rem; /* 28px */
+  --sc-cmp-autocomplete-dropdown-lg-width: 2.625rem; /* 42px */
+  --sc-cmp-avatar-width: 1.75rem; /* 28px */
+  --sc-cmp-avatar-height: 1.75rem; /* 28px */
+  --sc-cmp-avatar-icon-size: 0.875rem; /* 14px */
+  --sc-cmp-avatar-group-offset: -0.65625rem; /* -10.5px */
+  --sc-cmp-avatar-lg-width: 2.625rem; /* 42px */
+  --sc-cmp-avatar-lg-height: 2.625rem; /* 42px */
+  --sc-cmp-avatar-lg-icon-size: 1.3125rem; /* 21px */
+  --sc-cmp-avatar-lg-group-offset: -0.875rem; /* -14px */
+  --sc-cmp-avatar-xl-width: 3.5rem; /* 56px */
+  --sc-cmp-avatar-xl-height: 3.5rem; /* 56px */
+  --sc-cmp-avatar-xl-icon-size: 1.75rem; /* 28px */
+  --sc-cmp-avatar-xl-group-offset: -1.3125rem; /* -21px */
+  --sc-cmp-badge-min-width: 1.3125rem; /* 21px */
+  --sc-cmp-badge-height: 1.3125rem; /* 21px */
+  --sc-cmp-badge-dot-size: 0.4375rem; /* 7px */
+  --sc-cmp-badge-sm-min-width: 1.09375rem; /* 17.5px */
+  --sc-cmp-badge-sm-height: 1.09375rem; /* 17.5px */
+  --sc-cmp-badge-lg-min-width: 1.53125rem; /* 24.5px */
+  --sc-cmp-badge-lg-height: 1.53125rem; /* 24.5px */
+  --sc-cmp-badge-xl-min-width: 1.75rem; /* 28px */
+  --sc-cmp-badge-xl-height: 1.75rem; /* 28px */
+  --sc-cmp-breadcrumb-padding: 0.875rem; /* 14px */
+  --sc-cmp-breadcrumb-gap: 0.4375rem; /* 7px */
+  --sc-cmp-card-body-padding: 1.09375rem; /* 17.5px */
+  --sc-cmp-card-caption-gap: 0.4375rem; /* 7px */
+  --sc-cmp-carousel-content-gap: 0.21875rem; /* 3.5px */
+  --sc-cmp-carousel-indicator-list-padding: 0.875rem; /* 14px */
+  --sc-cmp-carousel-indicator-list-gap: 0.4375rem; /* 7px */
+  --sc-cmp-carousel-indicator-width: 1.75rem; /* 28px */
+  --sc-cmp-carousel-indicator-height: 0.4375rem; /* 7px */
+  --sc-cmp-cascadeselect-dropdown-width: 2.1875rem; /* 35px */
+  --sc-cmp-cascadeselect-list-mobile-indent: 0.875rem; /* 14px */
+  --sc-cmp-cascadeselect-option-icon-size: 0.765625rem; /* 12.25px */
+  --sc-cmp-confirmdialog-icon-size: 1.75rem; /* 28px */
+  --sc-cmp-confirmdialog-content-gap: 0.875rem; /* 14px */
+  --sc-cmp-confirmpopup-arrow-offset: 1.09375rem; /* 17.5px */
+  --sc-cmp-confirmpopup-content-gap: 0.875rem; /* 14px */
+  --sc-cmp-confirmpopup-icon-size: 1.3125rem; /* 21px */
+  --sc-cmp-confirmpopup-footer-gap: 0.4375rem; /* 7px */
+  --sc-cmp-contextmenu-submenu-mobile-indent: 0.875rem; /* 14px */
+  --sc-cmp-dock-padding: 0.4375rem; /* 7px */
+  --sc-cmp-dock-item-padding: 0.4375rem; /* 7px */
+  --sc-cmp-dock-item-size: 2.625rem; /* 42px */
+  --sc-cmp-fieldset-legend-gap: 0.4375rem; /* 7px */
+  --sc-cmp-fileupload-header-padding: 0.984375rem; /* 15.75px */
+  --sc-cmp-fileupload-header-gap: 0.4375rem; /* 7px */
+  --sc-cmp-fileupload-content-gap: 0.875rem; /* 14px */
+  --sc-cmp-fileupload-file-padding: 0.875rem; /* 14px */
+  --sc-cmp-fileupload-file-gap: 0.875rem; /* 14px */
+  --sc-cmp-fileupload-file-info-gap: 0.4375rem; /* 7px */
+  --sc-cmp-fileupload-file-list-gap: 0.4375rem; /* 7px */
+  --sc-cmp-fileupload-progressbar-height: 0.21875rem; /* 3.5px */
+  --sc-cmp-fileupload-basic-gap: 0.4375rem; /* 7px */
+  --sc-cmp-floatlabel-over-active-top: -1.09375rem; /* -17.5px */
+  --sc-cmp-floatlabel-in-input-padding-top: 1.3125rem; /* 21px */
+  --sc-cmp-galleria-nav-button-size: 2.625rem; /* 42px */
+  --sc-cmp-galleria-nav-button-gutter: 0.4375rem; /* 7px */
+  --sc-cmp-galleria-nav-button-prev-border-radius: 1.3125rem; /* 21px */
+  --sc-cmp-galleria-nav-button-next-border-radius: 1.3125rem; /* 21px */
+  --sc-cmp-galleria-nav-icon-size: 1.3125rem; /* 21px */
+  --sc-cmp-galleria-thumbnail-nav-button-size: 1.75rem; /* 28px */
+  --sc-cmp-galleria-thumbnail-nav-button-gutter: 0.4375rem; /* 7px */
+  --sc-cmp-galleria-thumbnail-nav-button-icon-size: 0.875rem; /* 14px */
+  --sc-cmp-galleria-caption-padding: 0.875rem; /* 14px */
+  --sc-cmp-galleria-indicator-list-gap: 0.4375rem; /* 7px */
+  --sc-cmp-galleria-indicator-list-padding: 0.875rem; /* 14px */
+  --sc-cmp-galleria-indicator-button-width: 0.875rem; /* 14px */
+  --sc-cmp-galleria-indicator-button-height: 0.875rem; /* 14px */
+  --sc-cmp-galleria-indicator-button-border-radius: 0.4375rem; /* 7px */
+  --sc-cmp-galleria-close-button-size: 2.625rem; /* 42px */
+  --sc-cmp-galleria-close-button-gutter: 0.4375rem; /* 7px */
+  --sc-cmp-galleria-close-button-border-radius: 1.3125rem; /* 21px */
+  --sc-cmp-galleria-close-button-icon-size: 1.3125rem; /* 21px */
+  --sc-cmp-iftalabel-input-padding-top: 1.3125rem; /* 21px */
+  --sc-cmp-image-preview-icon-size: 1.3125rem; /* 21px */
+  --sc-cmp-image-toolbar-position-right: 0.875rem; /* 14px */
+  --sc-cmp-image-toolbar-position-top: 0.875rem; /* 14px */
+  --sc-cmp-image-toolbar-padding: 0.4375rem; /* 7px */
+  --sc-cmp-image-toolbar-gap: 0.4375rem; /* 7px */
+  --sc-cmp-image-action-size: 2.625rem; /* 42px */
+  --sc-cmp-image-action-icon-size: 1.3125rem; /* 21px */
+  --sc-cmp-image-action-border-radius: 1.3125rem; /* 21px */
+  --sc-cmp-inputgroup-addon-padding: 0.4375rem; /* 7px */
+  --sc-cmp-inputgroup-addon-min-width: 2.1875rem; /* 35px */
+  --sc-cmp-inputnumber-button-width: 2.1875rem; /* 35px */
+  --sc-cmp-inputotp-gap: 0.4375rem; /* 7px */
+  --sc-cmp-inputotp-input-width: 2.1875rem; /* 35px */
+  --sc-cmp-inputotp-input-sm-width: 1.75rem; /* 28px */
+  --sc-cmp-inputotp-input-lg-width: 2.625rem; /* 42px */
+  --sc-cmp-listbox-checkmark-gutter-start: -0.328125rem; /* -5.25px */
+  --sc-cmp-listbox-checkmark-gutter-end: 0.328125rem; /* 5.25px */
+  --sc-cmp-megamenu-gap: 0.4375rem; /* 7px */
+  --sc-cmp-megamenu-horizontal-orientation-gap: 0.4375rem; /* 7px */
+  --sc-cmp-megamenu-overlay-gap: 0.4375rem; /* 7px */
+  --sc-cmp-megamenu-mobile-button-border-radius: 0.765625rem; /* 12.25px */
+  --sc-cmp-megamenu-mobile-button-size: 1.53125rem; /* 24.5px */
+  --sc-cmp-menubar-gap: 0.4375rem; /* 7px */
+  --sc-cmp-menubar-submenu-mobile-indent: 0.875rem; /* 14px */
+  --sc-cmp-menubar-mobile-button-border-radius: 0.765625rem; /* 12.25px */
+  --sc-cmp-menubar-mobile-button-size: 1.53125rem; /* 24.5px */
+  --sc-cmp-metergroup-gap: 0.875rem; /* 14px */
+  --sc-cmp-metergroup-meters-size: 0.4375rem; /* 7px */
+  --sc-cmp-metergroup-label-gap: 0.4375rem; /* 7px */
+  --sc-cmp-metergroup-label-marker-size: 0.4375rem; /* 7px */
+  --sc-cmp-metergroup-label-icon-size: 0.875rem; /* 14px */
+  --sc-cmp-metergroup-label-list-vertical-gap: 0.4375rem; /* 7px */
+  --sc-cmp-metergroup-label-list-horizontal-gap: 0.875rem; /* 14px */
+  --sc-cmp-orderlist-gap: 0.984375rem; /* 15.75px */
+  --sc-cmp-orderlist-controls-gap: 0.4375rem; /* 7px */
+  --sc-cmp-organizationchart-gutter: 0.65625rem; /* 10.5px */
+  --sc-cmp-organizationchart-node-toggle-button-size: 1.3125rem; /* 21px */
+  --sc-cmp-organizationchart-node-toggle-button-border-radius: 0.65625rem; /* 10.5px */
+  --sc-cmp-paginator-gap: 0.21875rem; /* 3.5px */
+  --sc-cmp-paginator-nav-button-width: 2.1875rem; /* 35px */
+  --sc-cmp-paginator-nav-button-height: 2.1875rem; /* 35px */
+  --sc-cmp-paginator-nav-button-border-radius: 1.09375rem; /* 17.5px */
+  --sc-cmp-paginator-jump-to-page-input-max-width: 2.1875rem; /* 35px */
+  --sc-cmp-panel-header-padding: 0.984375rem; /* 15.75px */
+  --sc-cmp-panelmenu-gap: 0.4375rem; /* 7px */
+  --sc-cmp-panelmenu-item-gap: 0.4375rem; /* 7px */
+  --sc-cmp-panelmenu-submenu-indent: 0.875rem; /* 14px */
+  --sc-cmp-password-meter-height: 0.65625rem; /* 10.5px */
+  --sc-cmp-password-content-gap: 0.4375rem; /* 7px */
+  --sc-cmp-picklist-gap: 0.984375rem; /* 15.75px */
+  --sc-cmp-picklist-controls-gap: 0.4375rem; /* 7px */
+  --sc-cmp-popover-arrow-offset: 1.09375rem; /* 17.5px */
+  --sc-cmp-progressbar-height: 1.09375rem; /* 17.5px */
+  --sc-cmp-radiobutton-width: 1.09375rem; /* 17.5px */
+  --sc-cmp-radiobutton-height: 1.09375rem; /* 17.5px */
+  --sc-cmp-radiobutton-sm-width: 0.875rem; /* 14px */
+  --sc-cmp-radiobutton-sm-height: 0.875rem; /* 14px */
+  --sc-cmp-radiobutton-lg-width: 1.3125rem; /* 21px */
+  --sc-cmp-radiobutton-lg-height: 1.3125rem; /* 21px */
+  --sc-cmp-radiobutton-icon-size: 0.65625rem; /* 10.5px */
+  --sc-cmp-radiobutton-icon-sm-size: 0.4375rem; /* 7px */
+  --sc-cmp-radiobutton-icon-lg-size: 0.875rem; /* 14px */
+  --sc-cmp-rating-gap: 0.21875rem; /* 3.5px */
+  --sc-cmp-rating-icon-size: 0.875rem; /* 14px */
+  --sc-cmp-slider-handle-content-width: 1rem; /* 16px */
+  --sc-cmp-slider-handle-content-height: 1rem; /* 16px */
+  --sc-cmp-speeddial-gap: 0.4375rem; /* 7px */
+  --sc-cmp-splitbutton-rounded-border-radius: 1.75rem; /* 28px */
+  --sc-cmp-stepper-step-padding: 0.4375rem; /* 7px */
+  --sc-cmp-stepper-step-gap: 0.875rem; /* 14px */
+  --sc-cmp-stepper-step-header-gap: 0.4375rem; /* 7px */
+  --sc-cmp-stepper-step-number-size: 1.75rem; /* 28px */
+  --sc-cmp-stepper-step-number-border-radius: 0.875rem; /* 14px */
+  --sc-cmp-tabs-nav-button-width: 2.1875rem; /* 35px */
+  --sc-cmp-terminal-height: 15.75rem; /* 252px */
+  --sc-cmp-terminal-prompt-gap: 0.21875rem; /* 3.5px */
+  --sc-cmp-tieredmenu-submenu-mobile-indent: 0.875rem; /* 14px */
+  --sc-cmp-timeline-event-min-height: 4.375rem; /* 70px */
+  --sc-cmp-timeline-event-marker-size: 0.984375rem; /* 15.75px */
+  --sc-cmp-timeline-event-marker-content-size: 0.328125rem; /* 5.25px */
+  --sc-cmp-togglebutton-padding: 0.21875rem; /* 3.5px */
+  --sc-cmp-togglebutton-gap: 0.4375rem; /* 7px */
+  --sc-cmp-togglebutton-sm-padding: 0.21875rem; /* 3.5px */
+  --sc-cmp-togglebutton-lg-padding: 0.21875rem; /* 3.5px */
+  --sc-cmp-toolbar-gap: 0.4375rem; /* 7px */
+  --sc-cmp-toolbar-padding: 0.65625rem; /* 10.5px */
+  --sc-cmp-tree-padding: 0.875rem; /* 14px */
+  --sc-cmp-tree-indent: 0.875rem; /* 14px */
+  --sc-cmp-tree-node-gap: 0.21875rem; /* 3.5px */
+  --sc-cmp-tree-node-toggle-button-border-radius: 0.765625rem; /* 12.25px */
+  --sc-cmp-tree-node-toggle-button-size: 1.53125rem; /* 24.5px */
+  --sc-cmp-tree-loading-icon-size: 1.75rem; /* 28px */
+  --sc-cmp-tree-filter-margin: 0.4375rem; /* 7px */
+  --sc-cmp-treeselect-dropdown-width: 2.1875rem; /* 35px */
+  --sc-cmp-treetable-header-cell-gap: 0.4375rem; /* 7px */
+  --sc-cmp-treetable-body-cell-gap: 0.4375rem; /* 7px */
+  --sc-cmp-treetable-column-resizer-width: 0.4375rem; /* 7px */
+  --sc-cmp-treetable-sort-icon-size: 0.765625rem; /* 12.25px */
+  --sc-cmp-treetable-loading-icon-size: 1.75rem; /* 28px */
+  --sc-cmp-treetable-node-toggle-button-size: 1.53125rem; /* 24.5px */
+  --sc-cmp-treetable-node-toggle-button-border-radius: 0.765625rem; /* 12.25px */
+  --sc-cmp-virtualscroller-loader-icon-size: 1.75rem; /* 28px */
+  --sc-cmp-accordion-content-padding-top: 0; /* 0px */
+  --sc-cmp-accordion-content-padding-right: 0.984375rem; /* 15.75px */
+  --sc-cmp-accordion-content-padding-bottom: 0.984375rem; /* 15.75px */
+  --sc-cmp-accordion-content-padding-left: 0.984375rem; /* 15.75px */
+  --sc-cmp-avatar-font-size: 0.875rem; /* 14px */
+  --sc-cmp-avatar-lg-font-size: 1.3125rem; /* 21px */
+  --sc-cmp-avatar-xl-font-size: 1.75rem; /* 28px */
+  --sc-cmp-badge-padding-y: 0; /* 0px */
+  --sc-cmp-badge-padding-x: 0.4375rem; /* 7px */
+  --sc-cmp-badge-font-size: 0.65625rem; /* 10.5px */
+  --sc-cmp-badge-sm-font-size: 0.546875rem; /* 8.75px */
+  --sc-cmp-badge-lg-font-size: 0.765625rem; /* 12.25px */
+  --sc-cmp-badge-xl-font-size: 0.875rem; /* 14px */
+  --sc-cmp-contextmenu-item-padding-y: 0.4375rem; /* 7px */
+  --sc-cmp-contextmenu-item-padding-x: 0.65625rem; /* 10.5px */
+  --sc-cmp-dataview-header-padding-y: 0.65625rem; /* 10.5px */
+  --sc-cmp-dataview-header-padding-x: 0.875rem; /* 14px */
+  --sc-cmp-dataview-footer-padding-y: 0.65625rem; /* 10.5px */
+  --sc-cmp-dataview-footer-padding-x: 0.875rem; /* 14px */
+  --sc-cmp-datepicker-header-padding-top: 0; /* 0px */
+  --sc-cmp-datepicker-header-padding-right: 0; /* 0px */
+  --sc-cmp-datepicker-header-padding-bottom: 0.4375rem; /* 7px */
+  --sc-cmp-datepicker-header-padding-left: 0; /* 0px */
+  --sc-cmp-datepicker-select-month-padding-y: 0.21875rem; /* 3.5px */
+  --sc-cmp-datepicker-select-month-padding-x: 0.4375rem; /* 7px */
+  --sc-cmp-datepicker-select-year-padding-y: 0.21875rem; /* 3.5px */
+  --sc-cmp-datepicker-select-year-padding-x: 0.4375rem; /* 7px */
+  --sc-cmp-datepicker-day-view-margin-top: 0.4375rem; /* 7px */
+  --sc-cmp-datepicker-day-view-margin-right: 0; /* 0px */
+  --sc-cmp-datepicker-day-view-margin-bottom: 0; /* 0px */
+  --sc-cmp-datepicker-day-view-margin-left: 0; /* 0px */
+  --sc-cmp-datepicker-month-view-margin-top: 0.4375rem; /* 7px */
+  --sc-cmp-datepicker-month-view-margin-right: 0; /* 0px */
+  --sc-cmp-datepicker-month-view-margin-bottom: 0; /* 0px */
+  --sc-cmp-datepicker-month-view-margin-left: 0; /* 0px */
+  --sc-cmp-datepicker-year-view-margin-top: 0.4375rem; /* 7px */
+  --sc-cmp-datepicker-year-view-margin-right: 0; /* 0px */
+  --sc-cmp-datepicker-year-view-margin-bottom: 0; /* 0px */
+  --sc-cmp-datepicker-year-view-margin-left: 0; /* 0px */
+  --sc-cmp-datepicker-buttonbar-padding-top: 0.4375rem; /* 7px */
+  --sc-cmp-datepicker-buttonbar-padding-right: 0; /* 0px */
+  --sc-cmp-datepicker-buttonbar-padding-bottom: 0; /* 0px */
+  --sc-cmp-datepicker-buttonbar-padding-left: 0; /* 0px */
+  --sc-cmp-datepicker-time-picker-padding-top: 0.4375rem; /* 7px */
+  --sc-cmp-datepicker-time-picker-padding-right: 0; /* 0px */
+  --sc-cmp-datepicker-time-picker-padding-bottom: 0; /* 0px */
+  --sc-cmp-datepicker-time-picker-padding-left: 0; /* 0px */
+  --sc-cmp-fieldset-legend-padding-y: 0.4375rem; /* 7px */
+  --sc-cmp-fieldset-legend-padding-x: 0.65625rem; /* 10.5px */
+  --sc-cmp-fileupload-content-padding-top: 0; /* 0px */
+  --sc-cmp-fileupload-content-padding-right: 0.984375rem; /* 15.75px */
+  --sc-cmp-fileupload-content-padding-bottom: 0.984375rem; /* 15.75px */
+  --sc-cmp-fileupload-content-padding-left: 0.984375rem; /* 15.75px */
+  --sc-cmp-floatlabel-on-active-padding-y: 0; /* 0px */
+  --sc-cmp-floatlabel-on-active-padding-x: 0.109375rem; /* 1.75px */
+  --sc-cmp-galleria-thumbnails-content-padding-y: 0.875rem; /* 14px */
+  --sc-cmp-galleria-thumbnails-content-padding-x: 0.21875rem; /* 3.5px */
+  --sc-cmp-megamenu-horizontal-orientation-padding-y: 0.4375rem; /* 7px */
+  --sc-cmp-megamenu-horizontal-orientation-padding-x: 0.65625rem; /* 10.5px */
+  --sc-cmp-menubar-padding-y: 0.4375rem; /* 7px */
+  --sc-cmp-menubar-padding-x: 0.65625rem; /* 10.5px */
+  --sc-cmp-message-content-padding-y: 0.4375rem; /* 7px */
+  --sc-cmp-message-content-padding-x: 0.65625rem; /* 10.5px */
+  --sc-cmp-message-content-sm-padding-y: 0.328125rem; /* 5.25px */
+  --sc-cmp-message-content-sm-padding-x: 0.546875rem; /* 8.75px */
+  --sc-cmp-message-content-lg-padding-y: 0.546875rem; /* 8.75px */
+  --sc-cmp-message-content-lg-padding-x: 0.765625rem; /* 12.25px */
+  --sc-cmp-organizationchart-node-padding-y: 0.65625rem; /* 10.5px */
+  --sc-cmp-organizationchart-node-padding-x: 0.875rem; /* 14px */
+  --sc-cmp-organizationchart-node-toggleable-padding-top: 0.65625rem; /* 10.5px */
+  --sc-cmp-organizationchart-node-toggleable-padding-right: 0.875rem; /* 14px */
+  --sc-cmp-organizationchart-node-toggleable-padding-bottom: 1.09375rem; /* 17.5px */
+  --sc-cmp-organizationchart-node-toggleable-padding-left: 0.875rem; /* 14px */
+  --sc-cmp-paginator-padding-y: 0.4375rem; /* 7px */
+  --sc-cmp-paginator-padding-x: 0.875rem; /* 14px */
+  --sc-cmp-panel-toggleable-header-padding-y: 0.328125rem; /* 5.25px */
+  --sc-cmp-panel-toggleable-header-padding-x: 0.984375rem; /* 15.75px */
+  --sc-cmp-panel-content-padding-top: 0; /* 0px */
+  --sc-cmp-panel-content-padding-right: 0.984375rem; /* 15.75px */
+  --sc-cmp-panel-content-padding-bottom: 0.984375rem; /* 15.75px */
+  --sc-cmp-panel-content-padding-left: 0.984375rem; /* 15.75px */
+  --sc-cmp-panel-footer-padding-top: 0; /* 0px */
+  --sc-cmp-panel-footer-padding-right: 0.984375rem; /* 15.75px */
+  --sc-cmp-panel-footer-padding-bottom: 0.984375rem; /* 15.75px */
+  --sc-cmp-panel-footer-padding-left: 0.984375rem; /* 15.75px */
+  --sc-cmp-stepper-separator-margin-top: 0; /* 0px */
+  --sc-cmp-stepper-separator-margin-right: 0; /* 0px */
+  --sc-cmp-stepper-separator-margin-bottom: 0; /* 0px */
+  --sc-cmp-stepper-separator-margin-left: 1.421875rem; /* 22.75px */
+  --sc-cmp-stepper-steppanels-padding-top: 0.765625rem; /* 12.25px */
+  --sc-cmp-stepper-steppanels-padding-right: 0.4375rem; /* 7px */
+  --sc-cmp-stepper-steppanels-padding-bottom: 0.984375rem; /* 15.75px */
+  --sc-cmp-stepper-steppanels-padding-left: 0.4375rem; /* 7px */
+  --sc-cmp-tag-padding-y: 0.109375rem; /* 1.75px */
+  --sc-cmp-tag-padding-x: 0.4375rem; /* 7px */
+  --sc-cmp-timeline-horizontal-event-content-padding-y: 0.875rem; /* 14px */
+  --sc-cmp-timeline-horizontal-event-content-padding-x: 0; /* 0px */
+  --sc-cmp-timeline-vertical-event-content-padding-y: 0; /* 0px */
+  --sc-cmp-timeline-vertical-event-content-padding-x: 0.875rem; /* 14px */
+  --sc-cmp-togglebutton-content-padding-y: 0.21875rem; /* 3.5px */
+  --sc-cmp-togglebutton-content-padding-x: 0.65625rem; /* 10.5px */
+  --sc-cmp-togglebutton-content-sm-padding-y: 0.21875rem; /* 3.5px */
+  --sc-cmp-togglebutton-content-sm-padding-x: 0.65625rem; /* 10.5px */
+  --sc-cmp-togglebutton-content-lg-padding-y: 0.21875rem; /* 3.5px */
+  --sc-cmp-togglebutton-content-lg-padding-x: 0.65625rem; /* 10.5px */
+  --sc-cmp-tree-node-padding-y: 0.21875rem; /* 3.5px */
+  --sc-cmp-tree-node-padding-x: 0.4375rem; /* 7px */
+  --sc-cmp-treetable-header-padding-y: 0.65625rem; /* 10.5px */
+  --sc-cmp-treetable-header-padding-x: 0.875rem; /* 14px */
+  --sc-cmp-treetable-header-cell-padding-y: 0.65625rem; /* 10.5px */
+  --sc-cmp-treetable-header-cell-padding-x: 0.875rem; /* 14px */
+  --sc-cmp-treetable-body-cell-padding-y: 0.65625rem; /* 10.5px */
+  --sc-cmp-treetable-body-cell-padding-x: 0.875rem; /* 14px */
+  --sc-cmp-treetable-footer-cell-padding-y: 0.65625rem; /* 10.5px */
+  --sc-cmp-treetable-footer-cell-padding-x: 0.875rem; /* 14px */
+  --sc-cmp-treetable-footer-padding-y: 0.65625rem; /* 10.5px */
+  --sc-cmp-treetable-footer-padding-x: 0.875rem; /* 14px */
+  /* @sc-gen:cmp-sizing:end */
+
+  /* @sc-gen:cmp-color-light — bloque GENERADO desde kit-export-dtcg.json por
+   * `npm run tokens:import` (token-gen-cmp-color.mjs). NO editar a mano.
+   * Color de componente (light) 1:1 con el export: var(--sc-color-*) u color-mix
+   * para translúcidos. El preset referencia estos --sc-cmp-*; así un cambio de color
+   * de componente en Figma fluye sin mano. Divergencias afinadas → scripts/cmp-color-map.mjs. */
+  --sc-cmp-autocomplete-dropdown-background: var(--sc-color-slate-100);
+  --sc-cmp-autocomplete-dropdown-color: var(--sc-color-slate-600);
+  --sc-cmp-autocomplete-dropdown-hover-background: var(--sc-color-slate-200);
+  --sc-cmp-autocomplete-dropdown-hover-color: var(--sc-color-slate-700);
+  --sc-cmp-autocomplete-dropdown-active-background: var(--sc-color-slate-300);
+  --sc-cmp-autocomplete-dropdown-active-color: var(--sc-color-slate-800);
+  --sc-cmp-autocomplete-chip-focus-background: var(--sc-color-slate-200);
+  --sc-cmp-autocomplete-chip-focus-color: var(--sc-color-slate-800);
+  --sc-cmp-badge-secondary-background: var(--sc-color-slate-100);
+  --sc-cmp-badge-secondary-color: var(--sc-color-slate-600);
+  --sc-cmp-badge-success-background: var(--sc-color-green-500);
+  --sc-cmp-badge-success-color: var(--sc-color-slate-0);
+  --sc-cmp-badge-info-background: var(--sc-color-sky-500);
+  --sc-cmp-badge-info-color: var(--sc-color-slate-0);
+  --sc-cmp-badge-warn-background: var(--sc-color-yellow-700);
+  --sc-cmp-badge-warn-color: var(--sc-color-slate-0);
+  --sc-cmp-badge-danger-background: var(--sc-color-red-500);
+  --sc-cmp-badge-danger-color: var(--sc-color-slate-0);
+  --sc-cmp-badge-contrast-background: var(--sc-color-slate-950);
+  --sc-cmp-badge-contrast-color: var(--sc-color-slate-0);
+  --sc-cmp-carousel-indicator-background: var(--sc-color-slate-200);
+  --sc-cmp-carousel-indicator-hover-background: var(--sc-color-slate-300);
+  --sc-cmp-button-secondary-background: var(--sc-color-slate-100);
+  --sc-cmp-button-secondary-color: var(--sc-color-slate-600);
+  --sc-cmp-button-secondary-hover-background: var(--sc-color-slate-200);
+  --sc-cmp-button-secondary-hover-color: var(--sc-color-slate-700);
+  --sc-cmp-button-secondary-hover-border-color: var(--sc-color-slate-200);
+  --sc-cmp-button-secondary-active-background: var(--sc-color-slate-300);
+  --sc-cmp-button-secondary-active-color: var(--sc-color-slate-800);
+  --sc-cmp-button-secondary-active-border-color: var(--sc-color-slate-300);
+  --sc-cmp-button-secondary-border-color: var(--sc-color-slate-100);
+  --sc-cmp-button-secondary-focus-ring-color: var(--sc-color-slate-600);
+  --sc-cmp-button-info-background: var(--sc-color-sky-500);
+  --sc-cmp-button-info-color: var(--sc-color-slate-0);
+  --sc-cmp-button-info-hover-background: var(--sc-color-sky-600);
+  --sc-cmp-button-info-hover-color: var(--sc-color-slate-0);
+  --sc-cmp-button-info-hover-border-color: var(--sc-color-sky-600);
+  --sc-cmp-button-info-active-background: var(--sc-color-sky-700);
+  --sc-cmp-button-info-active-color: var(--sc-color-slate-0);
+  --sc-cmp-button-info-active-border-color: var(--sc-color-sky-700);
+  --sc-cmp-button-info-border-color: var(--sc-color-sky-500);
+  --sc-cmp-button-info-focus-ring-color: var(--sc-color-sky-500);
+  --sc-cmp-button-success-background: var(--sc-color-green-500);
+  --sc-cmp-button-success-color: var(--sc-color-slate-0);
+  --sc-cmp-button-success-hover-background: var(--sc-color-green-600);
+  --sc-cmp-button-success-hover-color: var(--sc-color-slate-0);
+  --sc-cmp-button-success-hover-border-color: var(--sc-color-green-600);
+  --sc-cmp-button-success-active-background: var(--sc-color-green-700);
+  --sc-cmp-button-success-active-color: var(--sc-color-slate-0);
+  --sc-cmp-button-success-active-border-color: var(--sc-color-green-700);
+  --sc-cmp-button-success-border-color: var(--sc-color-green-500);
+  --sc-cmp-button-success-focus-ring-color: var(--sc-color-green-500);
+  --sc-cmp-button-warn-background: var(--sc-color-yellow-700);
+  --sc-cmp-button-warn-color: var(--sc-color-slate-0);
+  --sc-cmp-button-warn-hover-background: var(--sc-color-yellow-800);
+  --sc-cmp-button-warn-hover-color: var(--sc-color-slate-0);
+  --sc-cmp-button-warn-hover-border-color: var(--sc-color-yellow-800);
+  --sc-cmp-button-warn-active-background: var(--sc-color-yellow-900);
+  --sc-cmp-button-warn-active-color: var(--sc-color-slate-0);
+  --sc-cmp-button-warn-active-border-color: var(--sc-color-yellow-900);
+  --sc-cmp-button-warn-border-color: var(--sc-color-yellow-700);
+  --sc-cmp-button-warn-focus-ring-color: var(--sc-color-yellow-700);
+  --sc-cmp-button-help-background: var(--sc-color-purple-500);
+  --sc-cmp-button-help-color: var(--sc-color-slate-0);
+  --sc-cmp-button-help-hover-background: var(--sc-color-purple-600);
+  --sc-cmp-button-help-hover-color: var(--sc-color-slate-0);
+  --sc-cmp-button-help-hover-border-color: var(--sc-color-purple-600);
+  --sc-cmp-button-help-active-background: var(--sc-color-purple-700);
+  --sc-cmp-button-help-active-color: var(--sc-color-slate-0);
+  --sc-cmp-button-help-active-border-color: var(--sc-color-purple-700);
+  --sc-cmp-button-help-border-color: var(--sc-color-purple-500);
+  --sc-cmp-button-help-focus-ring-color: var(--sc-color-purple-500);
+  --sc-cmp-button-danger-background: var(--sc-color-red-500);
+  --sc-cmp-button-danger-color: var(--sc-color-slate-0);
+  --sc-cmp-button-danger-hover-background: var(--sc-color-red-600);
+  --sc-cmp-button-danger-hover-color: var(--sc-color-slate-0);
+  --sc-cmp-button-danger-hover-border-color: var(--sc-color-red-600);
+  --sc-cmp-button-danger-active-background: var(--sc-color-red-700);
+  --sc-cmp-button-danger-active-color: var(--sc-color-slate-0);
+  --sc-cmp-button-danger-active-border-color: var(--sc-color-red-700);
+  --sc-cmp-button-danger-border-color: var(--sc-color-red-500);
+  --sc-cmp-button-danger-focus-ring-color: var(--sc-color-red-500);
+  --sc-cmp-button-contrast-background: var(--sc-color-slate-950);
+  --sc-cmp-button-contrast-color: var(--sc-color-slate-0);
+  --sc-cmp-button-contrast-hover-background: var(--sc-color-slate-900);
+  --sc-cmp-button-contrast-hover-color: var(--sc-color-slate-0);
+  --sc-cmp-button-contrast-hover-border-color: var(--sc-color-slate-900);
+  --sc-cmp-button-contrast-active-background: var(--sc-color-slate-800);
+  --sc-cmp-button-contrast-active-color: var(--sc-color-slate-0);
+  --sc-cmp-button-contrast-active-border-color: var(--sc-color-slate-800);
+  --sc-cmp-button-contrast-border-color: var(--sc-color-slate-950);
+  --sc-cmp-button-contrast-focus-ring-color: var(--sc-color-slate-950);
+  --sc-cmp-button-outlined-secondary-hover-background: var(--sc-color-slate-50);
+  --sc-cmp-button-outlined-secondary-active-background: var(--sc-color-slate-100);
+  --sc-cmp-button-outlined-secondary-border-color: var(--sc-color-slate-200);
+  --sc-cmp-button-outlined-success-color: var(--sc-color-green-500);
+  --sc-cmp-button-outlined-success-hover-background: var(--sc-color-green-50);
+  --sc-cmp-button-outlined-success-active-background: var(--sc-color-green-100);
+  --sc-cmp-button-outlined-success-border-color: var(--sc-color-green-200);
+  --sc-cmp-button-outlined-info-color: var(--sc-color-sky-500);
+  --sc-cmp-button-outlined-info-hover-background: var(--sc-color-sky-50);
+  --sc-cmp-button-outlined-info-active-background: var(--sc-color-sky-100);
+  --sc-cmp-button-outlined-info-border-color: var(--sc-color-sky-200);
+  --sc-cmp-button-outlined-warn-color: var(--sc-color-yellow-700);
+  --sc-cmp-button-outlined-warn-hover-background: var(--sc-color-yellow-50);
+  --sc-cmp-button-outlined-warn-active-background: var(--sc-color-yellow-100);
+  --sc-cmp-button-outlined-warn-border-color: var(--sc-color-yellow-200);
+  --sc-cmp-button-outlined-help-color: var(--sc-color-purple-500);
+  --sc-cmp-button-outlined-help-hover-background: var(--sc-color-purple-50);
+  --sc-cmp-button-outlined-help-active-background: var(--sc-color-purple-100);
+  --sc-cmp-button-outlined-help-border-color: var(--sc-color-purple-200);
+  --sc-cmp-button-outlined-danger-color: var(--sc-color-red-500);
+  --sc-cmp-button-outlined-danger-hover-background: var(--sc-color-red-50);
+  --sc-cmp-button-outlined-danger-active-background: var(--sc-color-red-100);
+  --sc-cmp-button-outlined-danger-border-color: var(--sc-color-red-200);
+  --sc-cmp-button-outlined-contrast-color: var(--sc-color-slate-950);
+  --sc-cmp-button-outlined-contrast-hover-background: var(--sc-color-slate-50);
+  --sc-cmp-button-outlined-contrast-active-background: var(--sc-color-slate-100);
+  --sc-cmp-button-outlined-contrast-border-color: var(--sc-color-slate-700);
+  --sc-cmp-button-outlined-plain-color: var(--sc-color-slate-700);
+  --sc-cmp-button-outlined-plain-hover-background: var(--sc-color-slate-50);
+  --sc-cmp-button-outlined-plain-active-background: var(--sc-color-slate-100);
+  --sc-cmp-button-outlined-plain-border-color: var(--sc-color-slate-200);
+  --sc-cmp-button-text-secondary-color: var(--sc-color-slate-500);
+  --sc-cmp-button-text-secondary-hover-background: var(--sc-color-slate-50);
+  --sc-cmp-button-text-secondary-active-background: var(--sc-color-slate-100);
+  --sc-cmp-button-text-success-color: var(--sc-color-green-500);
+  --sc-cmp-button-text-success-hover-background: var(--sc-color-green-50);
+  --sc-cmp-button-text-success-active-background: var(--sc-color-green-100);
+  --sc-cmp-button-text-info-color: var(--sc-color-sky-500);
+  --sc-cmp-button-text-info-hover-background: var(--sc-color-sky-50);
+  --sc-cmp-button-text-info-active-background: var(--sc-color-sky-100);
+  --sc-cmp-button-text-warn-color: var(--sc-color-yellow-700);
+  --sc-cmp-button-text-warn-hover-background: var(--sc-color-yellow-50);
+  --sc-cmp-button-text-warn-active-background: var(--sc-color-yellow-100);
+  --sc-cmp-button-text-help-color: var(--sc-color-purple-500);
+  --sc-cmp-button-text-help-hover-background: var(--sc-color-purple-50);
+  --sc-cmp-button-text-help-active-background: var(--sc-color-purple-100);
+  --sc-cmp-button-text-danger-color: var(--sc-color-red-500);
+  --sc-cmp-button-text-danger-hover-background: var(--sc-color-red-50);
+  --sc-cmp-button-text-danger-active-background: var(--sc-color-red-100);
+  --sc-cmp-button-text-plain-color: var(--sc-color-slate-700);
+  --sc-cmp-button-text-plain-hover-background: var(--sc-color-slate-50);
+  --sc-cmp-button-text-plain-active-background: var(--sc-color-slate-100);
+  --sc-cmp-button-text-contrast-color: var(--sc-color-slate-950);
+  --sc-cmp-button-text-contrast-hover-background: var(--sc-color-slate-50);
+  --sc-cmp-button-text-contrast-active-background: var(--sc-color-slate-100);
+  --sc-cmp-chip-background: var(--sc-color-slate-100);
+  --sc-cmp-chip-color: var(--sc-color-slate-800);
+  --sc-cmp-chip-icon-color: var(--sc-color-slate-800);
+  --sc-cmp-chip-remove-icon-color: var(--sc-color-slate-800);
+  --sc-cmp-colorpicker-panel-background: var(--sc-color-slate-800);
+  --sc-cmp-colorpicker-panel-border-color: var(--sc-color-slate-900);
+  --sc-cmp-colorpicker-handle-color: var(--sc-color-slate-0);
+  --sc-cmp-datepicker-dropdown-background: var(--sc-color-slate-100);
+  --sc-cmp-datepicker-dropdown-color: var(--sc-color-slate-600);
+  --sc-cmp-datepicker-dropdown-hover-background: var(--sc-color-slate-200);
+  --sc-cmp-datepicker-dropdown-hover-color: var(--sc-color-slate-700);
+  --sc-cmp-datepicker-dropdown-active-background: var(--sc-color-slate-300);
+  --sc-cmp-datepicker-dropdown-active-color: var(--sc-color-slate-800);
+  --sc-cmp-datepicker-today-background: var(--sc-color-slate-200);
+  --sc-cmp-datepicker-today-color: var(--sc-color-slate-900);
+  --sc-cmp-datatable-row-striped-background: var(--sc-color-slate-50);
+  --sc-cmp-galleria-thumbnail-nav-button-color: var(--sc-color-slate-600);
+  --sc-cmp-galleria-thumbnail-nav-button-hover-background: var(--sc-color-slate-100);
+  --sc-cmp-galleria-thumbnail-nav-button-hover-color: var(--sc-color-slate-700);
+  --sc-cmp-galleria-indicator-button-background: var(--sc-color-slate-200);
+  --sc-cmp-galleria-indicator-button-hover-background: var(--sc-color-slate-300);
+  --sc-cmp-inputnumber-button-background: transparent;
+  --sc-cmp-inputnumber-button-color: var(--sc-color-slate-400);
+  --sc-cmp-inputnumber-button-hover-background: var(--sc-color-slate-100);
+  --sc-cmp-inputnumber-button-hover-color: var(--sc-color-slate-500);
+  --sc-cmp-inputnumber-button-active-background: var(--sc-color-slate-200);
+  --sc-cmp-inputnumber-button-active-color: var(--sc-color-slate-600);
+  --sc-cmp-listbox-option-striped-background: var(--sc-color-slate-50);
+  --sc-cmp-message-info-background: color-mix(in srgb, var(--sc-color-sky-50) 95%, transparent);
+  --sc-cmp-message-info-color: var(--sc-color-sky-600);
+  --sc-cmp-message-info-border-color: var(--sc-color-sky-200);
+  --sc-cmp-message-info-close-button-hover-background: var(--sc-color-sky-100);
+  --sc-cmp-message-info-close-button-focus-ring-color: var(--sc-color-sky-600);
+  --sc-cmp-message-info-outlined-color: var(--sc-color-sky-600);
+  --sc-cmp-message-info-outlined-border-color: var(--sc-color-sky-600);
+  --sc-cmp-message-info-simple-color: var(--sc-color-sky-600);
+  --sc-cmp-message-success-background: color-mix(in srgb, var(--sc-color-green-50) 95%, transparent);
+  --sc-cmp-message-success-color: var(--sc-color-green-600);
+  --sc-cmp-message-success-border-color: var(--sc-color-green-200);
+  --sc-cmp-message-success-close-button-hover-background: var(--sc-color-green-100);
+  --sc-cmp-message-success-close-button-focus-ring-color: var(--sc-color-green-600);
+  --sc-cmp-message-success-outlined-color: var(--sc-color-green-600);
+  --sc-cmp-message-success-outlined-border-color: var(--sc-color-green-600);
+  --sc-cmp-message-success-simple-color: var(--sc-color-green-600);
+  --sc-cmp-message-warn-background: color-mix(in srgb, var(--sc-color-yellow-50) 95%, transparent);
+  --sc-cmp-message-warn-color: var(--sc-color-yellow-700);
+  --sc-cmp-message-warn-border-color: var(--sc-color-yellow-200);
+  --sc-cmp-message-warn-close-button-hover-background: var(--sc-color-yellow-100);
+  --sc-cmp-message-warn-close-button-focus-ring-color: var(--sc-color-yellow-700);
+  --sc-cmp-message-warn-outlined-color: var(--sc-color-yellow-700);
+  --sc-cmp-message-warn-outlined-border-color: var(--sc-color-yellow-700);
+  --sc-cmp-message-warn-simple-color: var(--sc-color-yellow-700);
+  --sc-cmp-message-error-background: color-mix(in srgb, var(--sc-color-red-50) 95%, transparent);
+  --sc-cmp-message-error-color: var(--sc-color-red-600);
+  --sc-cmp-message-error-border-color: var(--sc-color-red-200);
+  --sc-cmp-message-error-close-button-hover-background: var(--sc-color-red-100);
+  --sc-cmp-message-error-close-button-focus-ring-color: var(--sc-color-red-600);
+  --sc-cmp-message-error-outlined-color: var(--sc-color-red-600);
+  --sc-cmp-message-error-outlined-border-color: var(--sc-color-red-600);
+  --sc-cmp-message-error-simple-color: var(--sc-color-red-600);
+  --sc-cmp-message-secondary-background: var(--sc-color-slate-100);
+  --sc-cmp-message-secondary-color: var(--sc-color-slate-600);
+  --sc-cmp-message-secondary-border-color: var(--sc-color-slate-200);
+  --sc-cmp-message-secondary-close-button-hover-background: var(--sc-color-slate-200);
+  --sc-cmp-message-secondary-close-button-focus-ring-color: var(--sc-color-slate-600);
+  --sc-cmp-message-secondary-outlined-color: var(--sc-color-slate-500);
+  --sc-cmp-message-secondary-outlined-border-color: var(--sc-color-slate-500);
+  --sc-cmp-message-secondary-simple-color: var(--sc-color-slate-500);
+  --sc-cmp-message-contrast-background: var(--sc-color-slate-900);
+  --sc-cmp-message-contrast-color: var(--sc-color-slate-50);
+  --sc-cmp-message-contrast-border-color: var(--sc-color-slate-950);
+  --sc-cmp-message-contrast-close-button-hover-background: var(--sc-color-slate-800);
+  --sc-cmp-message-contrast-close-button-focus-ring-color: var(--sc-color-slate-50);
+  --sc-cmp-message-contrast-outlined-color: var(--sc-color-slate-950);
+  --sc-cmp-message-contrast-outlined-border-color: var(--sc-color-slate-950);
+  --sc-cmp-message-contrast-simple-color: var(--sc-color-slate-950);
+  --sc-cmp-password-strength-weak-background: var(--sc-color-red-500);
+  --sc-cmp-password-strength-medium-background: var(--sc-color-amber-500);
+  --sc-cmp-password-strength-strong-background: var(--sc-color-green-500);
+  --sc-cmp-progressspinner-color-one: var(--sc-color-red-500);
+  --sc-cmp-progressspinner-color-two: var(--sc-color-blue-500);
+  --sc-cmp-progressspinner-color-three: var(--sc-color-green-500);
+  --sc-cmp-progressspinner-color-four: var(--sc-color-yellow-500);
+  --sc-cmp-scrollpanel-bar-background: var(--sc-color-slate-100);
+  --sc-cmp-skeleton-background: var(--sc-color-slate-200);
+  --sc-cmp-slider-handle-content-background: var(--sc-color-slate-0);
+  --sc-cmp-tag-secondary-background: var(--sc-color-slate-100);
+  --sc-cmp-tag-secondary-color: var(--sc-color-slate-600);
+  --sc-cmp-tag-success-background: var(--sc-color-green-100);
+  --sc-cmp-tag-success-color: var(--sc-color-green-700);
+  --sc-cmp-tag-info-background: var(--sc-color-sky-100);
+  --sc-cmp-tag-info-color: var(--sc-color-sky-700);
+  --sc-cmp-tag-warn-background: var(--sc-color-yellow-100);
+  --sc-cmp-tag-warn-color: var(--sc-color-yellow-700);
+  --sc-cmp-tag-danger-background: var(--sc-color-red-100);
+  --sc-cmp-tag-danger-color: var(--sc-color-red-700);
+  --sc-cmp-tag-contrast-background: var(--sc-color-slate-950);
+  --sc-cmp-tag-contrast-color: var(--sc-color-slate-0);
+  --sc-cmp-togglebutton-background: var(--sc-color-slate-100);
+  --sc-cmp-togglebutton-color: var(--sc-color-slate-500);
+  --sc-cmp-togglebutton-checked-background: var(--sc-color-slate-100);
+  --sc-cmp-togglebutton-checked-color: var(--sc-color-slate-900);
+  --sc-cmp-togglebutton-checked-border-color: var(--sc-color-slate-100);
+  --sc-cmp-togglebutton-hover-background: var(--sc-color-slate-100);
+  --sc-cmp-togglebutton-hover-color: var(--sc-color-slate-700);
+  --sc-cmp-togglebutton-border-color: var(--sc-color-slate-100);
+  --sc-cmp-togglebutton-icon-color: var(--sc-color-slate-500);
+  --sc-cmp-togglebutton-icon-hover-color: var(--sc-color-slate-700);
+  --sc-cmp-togglebutton-icon-checked-color: var(--sc-color-slate-900);
+  --sc-cmp-togglebutton-content-checked-background: var(--sc-color-slate-0);
+  --sc-cmp-toast-info-background: color-mix(in srgb, var(--sc-color-sky-50) 95%, transparent);
+  --sc-cmp-toast-info-color: var(--sc-color-sky-600);
+  --sc-cmp-toast-info-border-color: var(--sc-color-sky-200);
+  --sc-cmp-toast-info-detail-color: var(--sc-color-slate-700);
+  --sc-cmp-toast-info-close-button-hover-background: var(--sc-color-sky-100);
+  --sc-cmp-toast-info-close-button-focus-ring-color: var(--sc-color-sky-600);
+  --sc-cmp-toast-success-background: color-mix(in srgb, var(--sc-color-green-50) 95%, transparent);
+  --sc-cmp-toast-success-color: var(--sc-color-green-600);
+  --sc-cmp-toast-success-border-color: var(--sc-color-green-200);
+  --sc-cmp-toast-success-detail-color: var(--sc-color-slate-700);
+  --sc-cmp-toast-success-close-button-hover-background: var(--sc-color-green-100);
+  --sc-cmp-toast-success-close-button-focus-ring-color: var(--sc-color-green-600);
+  --sc-cmp-toast-warn-background: color-mix(in srgb, var(--sc-color-yellow-50) 95%, transparent);
+  --sc-cmp-toast-warn-color: var(--sc-color-yellow-700);
+  --sc-cmp-toast-warn-border-color: var(--sc-color-yellow-200);
+  --sc-cmp-toast-warn-detail-color: var(--sc-color-slate-700);
+  --sc-cmp-toast-warn-close-button-hover-background: var(--sc-color-yellow-100);
+  --sc-cmp-toast-warn-close-button-focus-ring-color: var(--sc-color-yellow-700);
+  --sc-cmp-toast-error-background: color-mix(in srgb, var(--sc-color-red-50) 95%, transparent);
+  --sc-cmp-toast-error-color: var(--sc-color-red-600);
+  --sc-cmp-toast-error-border-color: var(--sc-color-red-200);
+  --sc-cmp-toast-error-detail-color: var(--sc-color-slate-700);
+  --sc-cmp-toast-error-close-button-hover-background: var(--sc-color-red-100);
+  --sc-cmp-toast-error-close-button-focus-ring-color: var(--sc-color-red-600);
+  --sc-cmp-toast-secondary-background: var(--sc-color-slate-100);
+  --sc-cmp-toast-secondary-color: var(--sc-color-slate-600);
+  --sc-cmp-toast-secondary-border-color: var(--sc-color-slate-200);
+  --sc-cmp-toast-secondary-detail-color: var(--sc-color-slate-700);
+  --sc-cmp-toast-secondary-close-button-hover-background: var(--sc-color-slate-200);
+  --sc-cmp-toast-secondary-close-button-focus-ring-color: var(--sc-color-slate-600);
+  --sc-cmp-toast-contrast-background: var(--sc-color-slate-900);
+  --sc-cmp-toast-contrast-color: var(--sc-color-slate-50);
+  --sc-cmp-toast-contrast-border-color: var(--sc-color-slate-950);
+  --sc-cmp-toast-contrast-detail-color: var(--sc-color-slate-0);
+  --sc-cmp-toast-contrast-close-button-hover-background: var(--sc-color-slate-800);
+  --sc-cmp-toast-contrast-close-button-focus-ring-color: var(--sc-color-slate-50);
+  --sc-cmp-toggleswitch-background: var(--sc-color-slate-300);
+  --sc-cmp-toggleswitch-hover-background: var(--sc-color-slate-400);
+  --sc-cmp-toggleswitch-handle-background: var(--sc-color-slate-0);
+  --sc-cmp-toggleswitch-handle-hover-background: var(--sc-color-slate-0);
+  --sc-cmp-toggleswitch-handle-checked-background: var(--sc-color-slate-0);
+  --sc-cmp-toggleswitch-handle-checked-hover-background: var(--sc-color-slate-0);
+  --sc-cmp-tooltip-background: var(--sc-color-slate-700);
+  --sc-cmp-tooltip-color: var(--sc-color-slate-0);
+  /* @sc-gen:cmp-color-light:end */
+
+  /* ---------- Botón `outlined secondary`: su etiqueta estaba bajo AA ----------
+   *
+   * Fuera de la zona `@sc-gen` y con su slot en `EXCLUDE` (cmp-color-map),
+   * porque es una divergencia consciente del Kit. Mismo mecanismo que ya usan
+   * los bordes de `info`.
+   *
+   * El Kit da `slate-500` para la etiqueta: **2.95:1** sobre blanco. Es el
+   * botón "Añadir" de AED, un control primario de esa pantalla, no un adorno.
+   * `slate-600` da 4.52 — el mismo escalón al que subieron `text-secondary`
+   * (§1.5) y `text-subtle` (§1.7), por la misma aritmética: sobre blanco solo
+   * cumplen dos pasos de la rampa de grises.
+   *
+   * El OTRO fallo de botón, el `danger` sólido, NO se arregla aquí: sus
+   * `--sc-cmp-button-danger-*` corresponden a otro slot y no los lee nadie
+   * (comprobado midiendo el píxel). Va en el preset, por referencia de
+   * paleta. Ver `sc-preset/button.ts` y customs-catalog §1.8.
+   *
+   * Se cierra cuando el Kit suba `button.outlined.secondary.color`. */
+  --sc-cmp-button-outlined-secondary-color: var(--sc-color-slate-600);
+}
+
+/* ── 05-extensions.css ── */
+/*
+ * Layer 5 — EXTENSIONS
+ * =====================
+ *
+ * Tokens that fall outside PrimeNG's primitive / semantic / component
+ * model: layout dimensions, shadow scale, z-index stack, motion tokens.
+ *
+ * These are AED-specific and have no equivalent in PrimeNG's preset
+ * because PrimeNG leaves them to per-component CSS. Components SHOULD
+ * reference these tokens.
+ */
+
+:root {
+  /* ---------- Layout ---------- */
+  /*
+   * Sidebar has two widths: collapsed (default + page gutter) and
+   * expanded (when the user hovers it). `--sc-sidebar-width` aliases
+   * the collapsed value so every page-layout token (fixed bars, modals
+   * offset to the right of the sidebar) keeps anchoring to the gutter
+   * — the expanded sidebar overlays the page content rather than
+   * pushing it.
+   */
+  --sc-sidebar-width-collapsed: 64px;
+  --sc-sidebar-width-expanded: 240px;
+  --sc-sidebar-width: var(--sc-sidebar-width-collapsed);
+  --sc-sidebar-bg: var(--sc-color-blue-700);
+  --sc-topbar-height: 56px;
+  --sc-bulk-action-bar-height: 56px;
+  /*
+   * Offset que `sc-section-card` aplica como `scroll-margin-top` para que el
+   * salto-a-ancla de `sc-form-section-nav` deje la sección por debajo del sticky
+   * form header al hacer scroll. Default 80px (paridad con el platform).
+   */
+  --sc-form-anchor-offset: 80px;
+
+  /* ---------- Shadows ---------- */
+  /*
+   * Single deep-slate base color (15 23 42 in sRGB) drives every
+   * shadow alpha — exposing it as a token lets a future tweak
+   * (e.g. shifting to a warmer or cooler base) ripple here for free.
+   * Kept as space-separated channels so it composes cleanly inside
+   * `rgb(var(--sc-shadow-color-rgb) / 0.04)`.
+   */
+  --sc-shadow-color-rgb: 15 23 42;
+  /* sky-500 (#1464fe), a juego con --sc-border-focus. Antes era cyan-500: el
+   * HALO del foco y su BORDE eran de familias distintas — el anillo se veía
+   * turquesa alrededor de un borde azul. Unificado con el acento (§1.4). */
+  --sc-shadow-focus-ring-rgb: 20 100 254;
+
+  --sc-shadow-xs: 0 1px 2px 0 rgb(var(--sc-shadow-color-rgb) / 0.04);
+  /* Numeric alias kept for /config consumers that follow the 100/200…
+   * scale naming. Same value as --sc-shadow-xs. */
+  --sc-shadow-100: var(--sc-shadow-xs);
+  --sc-shadow-sm:
+    0 1px 2px 0 rgb(var(--sc-shadow-color-rgb) / 0.05),
+    0 1px 3px 0 rgb(var(--sc-shadow-color-rgb) / 0.06);
+  --sc-shadow-card:
+    0 1px 2px 0 rgb(var(--sc-shadow-color-rgb) / 0.04),
+    0 1px 3px 0 rgb(var(--sc-shadow-color-rgb) / 0.06);
+  --sc-shadow-dropdown:
+    0 4px 6px -1px rgb(var(--sc-shadow-color-rgb) / 0.08),
+    0 2px 4px -2px rgb(var(--sc-shadow-color-rgb) / 0.06);
+  --sc-shadow-popover:
+    0 10px 15px -3px rgb(var(--sc-shadow-color-rgb) / 0.1),
+    0 4px 6px -4px rgb(var(--sc-shadow-color-rgb) / 0.08);
+  --sc-shadow-dialog:
+    0 20px 25px -5px rgb(var(--sc-shadow-color-rgb) / 0.12),
+    0 8px 10px -6px rgb(var(--sc-shadow-color-rgb) / 0.1);
+  --sc-shadow-focus-ring: 0 0 0 3px rgb(var(--sc-shadow-focus-ring-rgb) / 0.35);
+
+  /* @sc-gen:effects — bloque GENERADO desde kit-export-dtcg.json por `npm run tokens:import`
+   * (token-gen-effects.mjs). NO editar a mano. Sombras de componente (aura/effects) 1:1 con el
+   * Kit: px literal + color de efecto exacto. El preset referencia estos --sc-cmp-*-shadow; así
+   * una sombra cambiada en Figma fluye sin mano. Las *.focus.ring.shadow (transparentes) no se
+   * emiten: el foco del DS es por outline (--sc-focus-ring-width), no shadow-ring. */
+  --sc-cmp-autocomplete-shadow: 0 1px 2px 0 #1212170d;
+  --sc-cmp-autocomplete-overlay-shadow: 0 2px 4px -2px #0000001a, 0 4px 6px -1px #0000001a;
+  --sc-cmp-button-raised-shadow: 0 1px 5px 0 #0000001f, 0 2px 2px 0 #00000024, 0 3px 1px -2px #00000033;
+  --sc-cmp-card-shadow: 0 1px 2px -1px #0000001a, 0 1px 3px 0 #0000001a;
+  --sc-cmp-cascadeselect-shadow: 0 1px 2px 0 #1212170d;
+  --sc-cmp-cascadeselect-overlay-shadow: 0 2px 4px -2px #0000001a, 0 4px 6px -1px #0000001a;
+  --sc-cmp-checkbox-shadow: 0 1px 2px 0 #1212170d;
+  --sc-cmp-colorpicker-panel-shadow: 0 2px 4px -2px #0000001a, 0 4px 6px -1px #0000001a;
+  --sc-cmp-confirmpopup-shadow: 0 2px 4px -2px #0000001a, 0 4px 6px -1px #0000001a;
+  --sc-cmp-contextmenu-shadow: 0 2px 4px -2px #0000001a, 0 4px 6px -1px #0000001a;
+  --sc-cmp-datatable-filter-overlay-select-shadow: 0 2px 4px -2px #0000001a, 0 4px 6px -1px #0000001a;
+  --sc-cmp-datatable-filter-overlay-popover-shadow: 0 2px 4px -2px #0000001a, 0 4px 6px -1px #0000001a;
+  --sc-cmp-datepicker-panel-shadow: 0 2px 4px -2px #0000001a, 0 4px 6px -1px #0000001a;
+  --sc-cmp-dialog-shadow: 0 8px 10px -6px #0000001a, 0 20px 25px -5px #0000001a;
+  --sc-cmp-drawer-shadow: 0 8px 10px -6px #0000001a, 0 20px 25px -5px #0000001a;
+  --sc-cmp-editor-overlay-shadow: 0 2px 4px -2px #0000001a, 0 4px 6px -1px #0000001a;
+  --sc-cmp-form-field-shadow: 0 1px 2px 0 #1212170d;
+  --sc-cmp-inputtext-shadow: 0 1px 2px 0 #1212170d;
+  --sc-cmp-listbox-shadow: 0 1px 2px 0 #1212170d;
+  --sc-cmp-megamenu-overlay-shadow: 0 2px 4px -2px #0000001a, 0 4px 6px -1px #0000001a;
+  --sc-cmp-menu-shadow: 0 2px 4px -2px #0000001a, 0 4px 6px -1px #0000001a;
+  --sc-cmp-menubar-submenu-shadow: 0 2px 4px -2px #0000001a, 0 4px 6px -1px #0000001a;
+  --sc-cmp-message-info-shadow: 0 4px 8px 0 #02050a0a;
+  --sc-cmp-message-success-shadow: 0 4px 8px 0 #0108040a;
+  --sc-cmp-message-warn-shadow: 0 4px 8px 0 #0907000a;
+  --sc-cmp-message-error-shadow: 0 4px 8px 0 #0a03030a;
+  --sc-cmp-message-secondary-shadow: 0 4px 8px 0 #0405060a;
+  --sc-cmp-message-contrast-shadow: 0 4px 8px 0 #0000010a;
+  --sc-cmp-multiselect-shadow: 0 1px 2px 0 #1212170d;
+  --sc-cmp-multiselect-overlay-shadow: 0 2px 4px -2px #0000001a, 0 4px 6px -1px #0000001a;
+  --sc-cmp-overlay-select-shadow: 0 2px 4px -2px #0000001a, 0 4px 6px -1px #0000001a;
+  --sc-cmp-overlay-popover-shadow: 0 2px 4px -2px #0000001a, 0 4px 6px -1px #0000001a;
+  --sc-cmp-overlay-modal-shadow: 0 8px 10px -6px #0000001a, 0 20px 25px -5px #0000001a;
+  --sc-cmp-overlay-navigation-shadow: 0 2px 4px -2px #0000001a, 0 4px 6px -1px #0000001a;
+  --sc-cmp-password-overlay-shadow: 0 2px 4px -2px #0000001a, 0 4px 6px -1px #0000001a;
+  --sc-cmp-popover-shadow: 0 2px 4px -2px #0000001a, 0 4px 6px -1px #0000001a;
+  --sc-cmp-radiobutton-shadow: 0 1px 2px 0 #1212170d;
+  --sc-cmp-select-shadow: 0 1px 2px 0 #1212170d;
+  --sc-cmp-select-overlay-shadow: 0 2px 4px -2px #0000001a, 0 4px 6px -1px #0000001a;
+  --sc-cmp-slider-handle-content-shadow: 0 1px 1px 0 #00000024, 0 1px 0 0 #00000014;
+  --sc-cmp-splitbutton-raised-shadow: 0 1px 5px 0 #0000001f, 0 2px 2px 0 #00000024, 0 3px 1px -2px #00000033;
+  --sc-cmp-stepper-step-number-shadow: 0 1px 1px 0 #0000001f, 0 1px 0 0 #0000000f;
+  --sc-cmp-tabview-nav-button-shadow: 0 0 10px 50px #ffffff99;
+  --sc-cmp-tabs-nav-button-shadow: 0 0 10px 50px #ffffff99;
+  --sc-cmp-textarea-shadow: 0 1px 2px 0 #1212170d;
+  --sc-cmp-tieredmenu-shadow: 0 2px 4px -2px #0000001a, 0 4px 6px -1px #0000001a;
+  --sc-cmp-timeline-event-marker-content-inset-shadow: 0 1px 1px 0 #0000001f, 0 1px 0 0 #0000000f;
+  --sc-cmp-toast-info-shadow: 0 4px 8px 0 #02050a0a;
+  --sc-cmp-toast-success-shadow: 0 4px 8px 0 #0108040a;
+  --sc-cmp-toast-warn-shadow: 0 4px 8px 0 #0907000a;
+  --sc-cmp-toast-error-shadow: 0 4px 8px 0 #0a03030a;
+  --sc-cmp-toast-secondary-shadow: 0 4px 8px 0 #0405060a;
+  --sc-cmp-toast-contrast-shadow: 0 4px 8px 0 #0000010a;
+  --sc-cmp-togglebutton-content-checked-shadow: 0 1px 2px 0 #0000000a, 0 1px 2px 0 #00000005;
+  --sc-cmp-toggleswitch-shadow: 0 1px 2px 0 #1212170d;
+  --sc-cmp-tooltip-shadow: 0 2px 4px -2px #0000001a, 0 4px 6px -1px #0000001a;
+  --sc-cmp-treeselect-shadow: 0 1px 2px 0 #1212170d;
+  --sc-cmp-treeselect-overlay-shadow: 0 2px 4px -2px #0000001a, 0 4px 6px -1px #0000001a;
+  /* @sc-gen:effects:end */
+
+  /* ---------- Z-index scale ---------- */
+  /*
+   * Numeric stacking order, top-to-bottom. The sidebar is an OVERLAY
+   * when expanded — it has to sit above every piece of in-page chrome
+   * (the sticky form header on edit pages, the bulk action bar, fixed
+   * elements) but below modals so a confirmation dialog still tints
+   * and blocks the whole viewport, including the sidebar.
+   */
+  --sc-z-base: 0;
+  --sc-z-dropdown: 1000;
+  --sc-z-sticky: 1020;
+  --sc-z-sticky-form-header: 1030;
+  --sc-z-fixed: 1040;
+  --sc-z-bulk-action-bar: 1050;
+  --sc-z-sidebar: 1055;
+  --sc-z-modal-backdrop: 1060;
+  --sc-z-modal: 1070;
+  --sc-z-popover: 1080;
+  --sc-z-tooltip: 1090;
+  --sc-z-toast: 1100;
+
+  /* ---------- Motion ---------- */
+  --sc-transition-fast: 120ms;
+  --sc-transition-base: 200ms;
+  --sc-transition-slow: 300ms;
+  --sc-easing-default: cubic-bezier(0.4, 0, 0.2, 1);
+  --sc-easing-emphasized: cubic-bezier(0.2, 0, 0, 1);
+}
+
+/* ── 07-dark.css ── */
+/*
+ * Layer 7 — DARK MODE
+ * ====================
+ *
+ * Activated by adding `.sc-dark` to `<html>` (driven by ThemeService).
+ * Same selector PrimeNG uses (`darkModeSelector` in app.config.ts) so
+ * flipping the class also inverts every PrimeNG component.
+ *
+ * Only SEMANTIC (layer 2), DOMAIN PALETTE (layer 3) and COMPONENT
+ * (layer 4) tokens are overridden here. Primitives (layer 1) and
+ * extensions (layer 5) stay constant — the brand palette doesn't
+ * change; only the tokens that map roles to colours do. PrimeNG
+ * `--p-*` (layer 6) inherit through their `--sc-*` references and
+ * don't need separate dark declarations.
+ */
+
+.sc-dark {
+  /* ---------- Semantic · Text ---------- */
+  /* NEUTROS EN ZINC desde el 2026-09-13 (antes gris de marca navy): lo que dicen Aura y el
+   * Kit. `primary`, `secondary`, fondos y bordes los escribe ahora el generador desde el
+   * export (zona `@sc-gen:semantic-color-dark`, abajo); aquí queda lo que el Kit no modela.
+   *
+   * `heading`: blanco puro. En oscuro coincide con `primary`, porque el Kit pone el texto
+   * en blanco. Ver la nota larga en `02-semantic.css`.
+   *
+   * `subtle` = zinc-400, el MISMO valor que `secondary`, a propósito: el Kit tiene dos
+   * niveles de texto y nosotros tres, y entre zinc-400 (6,91:1 sobre zinc-900) y zinc-500
+   * (3,67:1) no hay ningún paso que pase AA. Sin crear variables, el escalón no cabe.
+   *
+   * `disabled` ya no vive aquí: desde DD-81 es el zinc-400 del Kit y de Aura y lo escribe
+   * el generador. El zinc-600 de antes daba 1,35:1 sobre el campo deshabilitado. */
+  --sc-text-heading: var(--sc-color-slate-0);
+  --sc-text-subtle: var(--sc-color-zinc-400);
+  --sc-text-inverse: var(--sc-color-zinc-900);
+
+  /* ---------- Semantic · Text de color ----------
+   * Estos SEIS no tenían valor en oscuro y heredaban el del claro, que está
+   * calculado contra BLANCO. Sobre slate-900 el resultado era ilegible, y el
+   * peor caso eran los enlaces: `text-link` daba 2.48:1. Medido por familia,
+   * el tono que pasa AA sobre slate-900 es entre 2 y 3 pasos más claro.
+   *
+   *            claro (heredado)   →   oscuro (este bloque, sobre zinc-900, 2026-09-13)
+   *   link/accent   2.48 ✗              sky-400     5.62 ✓
+   *   violet        2.38 ✗              violet-400  6.51 ✓
+   *   danger        3.50 ✗              red-400     6.40 ✓
+   *   success       5.13 ✓ (ya pasaba)  green-600   5.38 ✓
+   *   warning       5.30 ✓ (ya pasaba)  yellow-600  6.03 ✓
+   *
+   * success y warning se declaran aquí porque su valor CLARO subió al 700
+   * para cumplir AA sobre blanco; sin este bloque, el 700 se colaría en
+   * oscuro y caería a 3.37. `text-info` no hace falta: es un alias de
+   * `text-accent` y las custom properties se resuelven en el punto de uso. */
+  --sc-text-accent: var(--sc-color-sky-400);
+  --sc-text-link: var(--sc-color-sky-400);
+  --sc-text-success: var(--sc-color-green-600);
+  --sc-text-warning: var(--sc-color-yellow-600);
+  --sc-text-danger: var(--sc-color-red-400);
+  --sc-text-violet: var(--sc-color-violet-400);
+  /* `--sc-text-on-primary` ya no vive aquí: desde DD-81 es el zinc-900 del Kit y de Aura
+   * (texto oscuro sobre el primario claro) y lo escribe el generador. */
+  --sc-text-on-secondary: var(--sc-color-zinc-50);
+  --sc-text-on-accent: var(--sc-color-zinc-950);
+
+  /* ---------- Semantic · Background ---------- */
+  /* El lienzo (ver la explicación larga en `02-semantic.css`): en oscuro coincide
+   * con `--sc-bg-default` —el "suelo" zinc-950—, y en claro NO. Por eso es un
+   * token propio y no un alias: la asimetría es justo su razón de existir. */
+  --sc-bg-canvas: var(--sc-color-zinc-950);
+  --sc-bg-subtle: var(--sc-color-blue-900);
+  --sc-bg-subtle-hover: var(--sc-color-blue-800);
+  --sc-bg-subtle-active: var(--sc-color-blue-700);
+
+  /* Primary dark — DD-81: sale del Kit (zona generada de abajo) con el patrón de Aura en
+   * `sky`: base sky-300, hover sky-200, pulsado sky-100, texto zinc-900. Aura lo pinta
+   * claro porque ese color también es TEXTO sobre el fondo oscuro (botón de texto,
+   * contornos, cursor), no solo relleno. Los pasos van por claridad, no por número:
+   * el esmeralda-400 de Aura (L77) es nuestro sky-300 (L76).
+   *
+   *              texto zinc-900   deshabilitado (0,6)   como texto sobre zinc-900
+   *   base            8,24              3,77                    8,24
+   *   hover          10,97
+   *   pulsado        14,00
+   *
+   * Sustituye a DD-40 (azul 300 con texto oscuro), cuyo deshabilitado daba 2,73:1. */
+
+  /* @sc-gen:semantic-color-dark — bloque GENERADO desde kit-export-dtcg.json por
+   * `npm run tokens:import` (token-gen-color.mjs). NO editar a mano.
+   * Los NEUTROS del modo oscuro salen del Kit (zinc) desde el 2026-09-13; antes eran
+   * divergencia de marca y esta zona estaba vacía. El primario oscuro (sky, patrón de
+   * Aura) y el texto deshabilitado, también, desde DD-81. Lo que el Kit no modela
+   * —texto sutil, iconos, diálogo—
+   * vive a mano ENCIMA de esta zona, en zinc y con su contraste medido. */
+  --sc-bg-primary: var(--sc-color-sky-300);
+  --sc-bg-primary-hover: var(--sc-color-sky-200);
+  --sc-bg-primary-active: var(--sc-color-sky-100);
+  --sc-text-on-primary: var(--sc-color-zinc-900);
+  --sc-text-disabled: var(--sc-color-zinc-400);
+  --sc-bg-surface: var(--sc-color-zinc-900);
+  --sc-border-default: var(--sc-color-zinc-700);
+  --sc-text-primary: var(--sc-color-slate-0);
+  --sc-bg-secondary-hover: var(--sc-color-zinc-800);
+  --sc-text-secondary: var(--sc-color-zinc-400);
+  --sc-bg-default: var(--sc-color-zinc-950);
+  --sc-border-strong: var(--sc-color-zinc-500);
+  --sc-bg-disabled: var(--sc-color-zinc-700);
+  /* @sc-gen:semantic-color-dark:end */
+
+  /* @sc-gen:cmp-color-dark — bloque GENERADO desde kit-export-dtcg.json por
+   * `npm run tokens:import` (token-gen-cmp-color.mjs). NO editar a mano.
+   * Color de componente (dark, .sc-dark) 1:1 con el export. Divergencias afinadas a
+   * mano → scripts/cmp-color-map.mjs (EXCLUDE), vigiladas por el chivato §7. */
+  --sc-cmp-autocomplete-chip-focus-color: var(--sc-color-slate-0);
+  --sc-cmp-badge-success-background: var(--sc-color-green-400);
+  --sc-cmp-badge-info-background: var(--sc-color-sky-400);
+  --sc-cmp-badge-info-color: var(--sc-color-sky-950);
+  --sc-cmp-badge-warn-background: var(--sc-color-yellow-300);
+  --sc-cmp-badge-warn-color: var(--sc-color-zinc-950);
+  --sc-cmp-badge-danger-background: var(--sc-color-red-400);
+  --sc-cmp-badge-danger-color: var(--sc-color-red-950);
+  --sc-cmp-badge-contrast-background: var(--sc-color-slate-0);
+  --sc-cmp-button-secondary-background: var(--sc-color-zinc-800);
+  --sc-cmp-button-secondary-color: var(--sc-color-zinc-300);
+  --sc-cmp-button-secondary-hover-background: var(--sc-color-zinc-700);
+  --sc-cmp-button-secondary-hover-color: var(--sc-color-zinc-200);
+  --sc-cmp-button-secondary-hover-border-color: var(--sc-color-zinc-700);
+  --sc-cmp-button-secondary-active-background: var(--sc-color-zinc-600);
+  --sc-cmp-button-secondary-active-color: var(--sc-color-zinc-100);
+  --sc-cmp-button-secondary-active-border-color: var(--sc-color-zinc-600);
+  --sc-cmp-button-secondary-border-color: var(--sc-color-zinc-800);
+  --sc-cmp-button-secondary-focus-ring-color: var(--sc-color-zinc-300);
+  --sc-cmp-button-info-background: var(--sc-color-sky-400);
+  --sc-cmp-button-info-color: var(--sc-color-sky-950);
+  --sc-cmp-button-info-hover-background: var(--sc-color-sky-300);
+  --sc-cmp-button-info-hover-color: var(--sc-color-sky-950);
+  --sc-cmp-button-info-hover-border-color: var(--sc-color-sky-300);
+  --sc-cmp-button-info-active-background: var(--sc-color-sky-200);
+  --sc-cmp-button-info-active-color: var(--sc-color-sky-950);
+  --sc-cmp-button-info-active-border-color: var(--sc-color-sky-200);
+  --sc-cmp-button-info-border-color: var(--sc-color-sky-400);
+  --sc-cmp-button-info-focus-ring-color: var(--sc-color-sky-400);
+  --sc-cmp-button-success-background: var(--sc-color-green-400);
+  --sc-cmp-button-success-hover-background: var(--sc-color-green-300);
+  --sc-cmp-button-success-hover-border-color: var(--sc-color-green-300);
+  --sc-cmp-button-success-active-background: var(--sc-color-green-200);
+  --sc-cmp-button-success-active-border-color: var(--sc-color-green-200);
+  --sc-cmp-button-success-border-color: var(--sc-color-green-400);
+  --sc-cmp-button-success-focus-ring-color: var(--sc-color-green-400);
+  --sc-cmp-button-warn-background: var(--sc-color-yellow-300);
+  --sc-cmp-button-warn-color: var(--sc-color-yellow-950);
+  --sc-cmp-button-warn-hover-background: var(--sc-color-yellow-200);
+  --sc-cmp-button-warn-hover-color: var(--sc-color-yellow-950);
+  --sc-cmp-button-warn-hover-border-color: var(--sc-color-yellow-200);
+  --sc-cmp-button-warn-active-background: var(--sc-color-yellow-100);
+  --sc-cmp-button-warn-active-color: var(--sc-color-yellow-950);
+  --sc-cmp-button-warn-active-border-color: var(--sc-color-yellow-100);
+  --sc-cmp-button-warn-border-color: var(--sc-color-yellow-300);
+  --sc-cmp-button-warn-focus-ring-color: var(--sc-color-yellow-300);
+  --sc-cmp-button-help-background: var(--sc-color-purple-400);
+  --sc-cmp-button-help-color: var(--sc-color-purple-950);
+  --sc-cmp-button-help-hover-background: var(--sc-color-purple-300);
+  --sc-cmp-button-help-hover-color: var(--sc-color-purple-950);
+  --sc-cmp-button-help-hover-border-color: var(--sc-color-purple-300);
+  --sc-cmp-button-help-active-background: var(--sc-color-purple-200);
+  --sc-cmp-button-help-active-color: var(--sc-color-purple-950);
+  --sc-cmp-button-help-active-border-color: var(--sc-color-purple-200);
+  --sc-cmp-button-help-border-color: var(--sc-color-purple-400);
+  --sc-cmp-button-help-focus-ring-color: var(--sc-color-purple-400);
+  --sc-cmp-button-danger-background: var(--sc-color-red-400);
+  --sc-cmp-button-danger-color: var(--sc-color-red-950);
+  --sc-cmp-button-danger-hover-background: var(--sc-color-red-300);
+  --sc-cmp-button-danger-hover-color: var(--sc-color-red-950);
+  --sc-cmp-button-danger-hover-border-color: var(--sc-color-red-300);
+  --sc-cmp-button-danger-active-background: var(--sc-color-red-200);
+  --sc-cmp-button-danger-active-color: var(--sc-color-red-950);
+  --sc-cmp-button-danger-active-border-color: var(--sc-color-red-200);
+  --sc-cmp-button-danger-border-color: var(--sc-color-red-400);
+  --sc-cmp-button-danger-focus-ring-color: var(--sc-color-red-400);
+  --sc-cmp-button-contrast-background: var(--sc-color-slate-0);
+  --sc-cmp-button-contrast-color: var(--sc-color-zinc-950);
+  --sc-cmp-button-contrast-hover-background: var(--sc-color-zinc-100);
+  --sc-cmp-button-contrast-hover-color: var(--sc-color-zinc-950);
+  --sc-cmp-button-contrast-hover-border-color: var(--sc-color-zinc-100);
+  --sc-cmp-button-contrast-active-background: var(--sc-color-zinc-200);
+  --sc-cmp-button-contrast-active-color: var(--sc-color-zinc-950);
+  --sc-cmp-button-contrast-active-border-color: var(--sc-color-zinc-200);
+  --sc-cmp-button-contrast-border-color: var(--sc-color-slate-0);
+  --sc-cmp-button-contrast-focus-ring-color: var(--sc-color-slate-0);
+  --sc-cmp-button-outlined-primary-hover-background: color-mix(in srgb, var(--sc-color-sky-300) 4%, transparent);
+  --sc-cmp-button-outlined-primary-active-background: color-mix(in srgb, var(--sc-color-sky-300) 16%, transparent);
+  --sc-cmp-button-outlined-primary-border-color: var(--sc-color-sky-600);
+  --sc-cmp-button-outlined-secondary-hover-background: color-mix(in srgb, var(--sc-color-slate-0) 4%, transparent);
+  --sc-cmp-button-outlined-secondary-active-background: color-mix(in srgb, var(--sc-color-slate-0) 16%, transparent);
+  --sc-cmp-button-outlined-success-color: var(--sc-color-green-400);
+  --sc-cmp-button-outlined-success-hover-background: color-mix(in srgb, var(--sc-color-green-400) 4%, transparent);
+  --sc-cmp-button-outlined-success-active-background: color-mix(in srgb, var(--sc-color-green-400) 16%, transparent);
+  --sc-cmp-button-outlined-success-border-color: var(--sc-color-green-700);
+  --sc-cmp-button-outlined-info-color: var(--sc-color-sky-400);
+  --sc-cmp-button-outlined-info-border-color: var(--sc-color-sky-700);
+  --sc-cmp-button-outlined-warn-color: var(--sc-color-yellow-300);
+  --sc-cmp-button-outlined-warn-hover-background: color-mix(in srgb, var(--sc-color-yellow-400) 4%, transparent);
+  --sc-cmp-button-outlined-warn-active-background: color-mix(in srgb, var(--sc-color-yellow-400) 16%, transparent);
+  --sc-cmp-button-outlined-warn-border-color: var(--sc-color-yellow-700);
+  --sc-cmp-button-outlined-help-color: var(--sc-color-purple-400);
+  --sc-cmp-button-outlined-help-hover-background: color-mix(in srgb, var(--sc-color-purple-400) 4%, transparent);
+  --sc-cmp-button-outlined-help-active-background: color-mix(in srgb, var(--sc-color-purple-400) 16%, transparent);
+  --sc-cmp-button-outlined-help-border-color: var(--sc-color-purple-700);
+  --sc-cmp-button-outlined-danger-color: var(--sc-color-red-400);
+  --sc-cmp-button-outlined-danger-hover-background: color-mix(in srgb, var(--sc-color-red-400) 4%, transparent);
+  --sc-cmp-button-outlined-danger-active-background: color-mix(in srgb, var(--sc-color-red-400) 16%, transparent);
+  --sc-cmp-button-outlined-danger-border-color: var(--sc-color-red-700);
+  --sc-cmp-button-outlined-contrast-color: var(--sc-color-slate-0);
+  --sc-cmp-button-outlined-plain-color: var(--sc-color-slate-0);
+  --sc-cmp-button-text-primary-hover-background: color-mix(in srgb, var(--sc-color-sky-300) 4%, transparent);
+  --sc-cmp-button-text-primary-active-background: color-mix(in srgb, var(--sc-color-sky-300) 16%, transparent);
+  --sc-cmp-button-text-success-color: var(--sc-color-green-400);
+  --sc-cmp-button-text-success-hover-background: color-mix(in srgb, var(--sc-color-green-400) 4%, transparent);
+  --sc-cmp-button-text-success-active-background: color-mix(in srgb, var(--sc-color-green-400) 16%, transparent);
+  --sc-cmp-button-text-info-color: var(--sc-color-sky-400);
+  --sc-cmp-button-text-warn-color: var(--sc-color-yellow-300);
+  --sc-cmp-button-text-warn-hover-background: color-mix(in srgb, var(--sc-color-yellow-400) 4%, transparent);
+  --sc-cmp-button-text-warn-active-background: color-mix(in srgb, var(--sc-color-yellow-400) 16%, transparent);
+  --sc-cmp-button-text-help-color: var(--sc-color-purple-400);
+  --sc-cmp-button-text-help-hover-background: color-mix(in srgb, var(--sc-color-purple-400) 4%, transparent);
+  --sc-cmp-button-text-help-active-background: color-mix(in srgb, var(--sc-color-purple-400) 16%, transparent);
+  --sc-cmp-button-text-danger-color: var(--sc-color-red-400);
+  --sc-cmp-button-text-danger-hover-background: color-mix(in srgb, var(--sc-color-red-400) 4%, transparent);
+  --sc-cmp-button-text-danger-active-background: color-mix(in srgb, var(--sc-color-red-400) 16%, transparent);
+  --sc-cmp-button-text-plain-color: var(--sc-color-slate-0);
+  --sc-cmp-button-text-contrast-color: var(--sc-color-slate-0);
+  --sc-cmp-chip-background: var(--sc-color-zinc-800);
+  --sc-cmp-chip-color: var(--sc-color-slate-0);
+  --sc-cmp-chip-icon-color: var(--sc-color-slate-0);
+  --sc-cmp-chip-remove-icon-color: var(--sc-color-slate-0);
+  --sc-cmp-colorpicker-panel-background: var(--sc-color-zinc-900);
+  --sc-cmp-colorpicker-panel-border-color: var(--sc-color-zinc-700);
+  --sc-cmp-colorpicker-handle-color: var(--sc-color-slate-0);
+  --sc-cmp-datepicker-today-color: var(--sc-color-slate-0);
+  --sc-cmp-datatable-border-color: var(--sc-color-zinc-800);
+  --sc-cmp-datatable-body-cell-selected-border-color: var(--sc-color-sky-700);
+  --sc-cmp-galleria-thumbnail-nav-button-hover-color: var(--sc-color-slate-0);
+  --sc-cmp-inputnumber-button-background: transparent;
+  --sc-cmp-message-info-background: color-mix(in srgb, var(--sc-color-sky-300) 16%, transparent);
+  --sc-cmp-message-info-color: var(--sc-color-sky-300);
+  --sc-cmp-message-info-close-button-hover-background: color-mix(in srgb, var(--sc-color-slate-0) 5%, transparent);
+  --sc-cmp-message-info-close-button-focus-ring-color: var(--sc-color-sky-300);
+  --sc-cmp-message-info-outlined-color: var(--sc-color-sky-300);
+  --sc-cmp-message-info-outlined-border-color: var(--sc-color-sky-300);
+  --sc-cmp-message-info-simple-color: var(--sc-color-sky-300);
+  --sc-cmp-message-success-background: color-mix(in srgb, var(--sc-color-green-500) 16%, transparent);
+  --sc-cmp-message-success-color: var(--sc-color-green-500);
+  --sc-cmp-message-success-border-color: color-mix(in srgb, var(--sc-color-green-700) 36%, transparent);
+  --sc-cmp-message-success-close-button-hover-background: color-mix(in srgb, var(--sc-color-slate-0) 5%, transparent);
+  --sc-cmp-message-success-close-button-focus-ring-color: var(--sc-color-green-500);
+  --sc-cmp-message-success-outlined-color: var(--sc-color-green-500);
+  --sc-cmp-message-success-outlined-border-color: var(--sc-color-green-500);
+  --sc-cmp-message-success-simple-color: var(--sc-color-green-500);
+  --sc-cmp-message-warn-background: color-mix(in srgb, var(--sc-color-yellow-500) 16%, transparent);
+  --sc-cmp-message-warn-color: var(--sc-color-yellow-300);
+  --sc-cmp-message-warn-border-color: color-mix(in srgb, var(--sc-color-yellow-700) 36%, transparent);
+  --sc-cmp-message-warn-close-button-hover-background: color-mix(in srgb, var(--sc-color-slate-0) 5%, transparent);
+  --sc-cmp-message-warn-close-button-focus-ring-color: var(--sc-color-yellow-300);
+  --sc-cmp-message-warn-outlined-color: var(--sc-color-yellow-300);
+  --sc-cmp-message-warn-outlined-border-color: var(--sc-color-yellow-300);
+  --sc-cmp-message-warn-simple-color: var(--sc-color-yellow-300);
+  --sc-cmp-message-error-background: color-mix(in srgb, var(--sc-color-red-500) 16%, transparent);
+  --sc-cmp-message-error-color: var(--sc-color-red-500);
+  --sc-cmp-message-error-border-color: color-mix(in srgb, var(--sc-color-red-700) 36%, transparent);
+  --sc-cmp-message-error-close-button-hover-background: color-mix(in srgb, var(--sc-color-slate-0) 5%, transparent);
+  --sc-cmp-message-error-close-button-focus-ring-color: var(--sc-color-red-500);
+  --sc-cmp-message-error-outlined-color: var(--sc-color-red-500);
+  --sc-cmp-message-error-outlined-border-color: var(--sc-color-red-500);
+  --sc-cmp-message-error-simple-color: var(--sc-color-red-500);
+  --sc-cmp-message-contrast-background: var(--sc-color-slate-0);
+  --sc-cmp-message-contrast-outlined-color: var(--sc-color-slate-0);
+  --sc-cmp-message-contrast-outlined-border-color: var(--sc-color-slate-0);
+  --sc-cmp-message-contrast-simple-color: var(--sc-color-slate-0);
+  --sc-cmp-password-strength-weak-background: var(--sc-color-red-400);
+  --sc-cmp-password-strength-medium-background: var(--sc-color-amber-400);
+  --sc-cmp-password-strength-strong-background: var(--sc-color-green-400);
+  --sc-cmp-progressspinner-color-one: var(--sc-color-red-400);
+  --sc-cmp-progressspinner-color-two: var(--sc-color-blue-400);
+  --sc-cmp-progressspinner-color-three: var(--sc-color-green-400);
+  --sc-cmp-progressspinner-color-four: var(--sc-color-yellow-400);
+  --sc-cmp-skeleton-background: color-mix(in srgb, var(--sc-color-slate-0) 6%, transparent);
+  --sc-cmp-tag-primary-background: color-mix(in srgb, var(--sc-color-sky-400) 16%, transparent);
+  --sc-cmp-tag-primary-color: var(--sc-color-sky-200);
+  --sc-cmp-tag-success-background: color-mix(in srgb, var(--sc-color-green-500) 16%, transparent);
+  --sc-cmp-tag-success-color: var(--sc-color-green-300);
+  --sc-cmp-tag-info-color: var(--sc-color-sky-300);
+  --sc-cmp-tag-warn-background: color-mix(in srgb, var(--sc-color-yellow-400) 16%, transparent);
+  --sc-cmp-tag-warn-color: var(--sc-color-yellow-300);
+  --sc-cmp-tag-danger-background: color-mix(in srgb, var(--sc-color-red-500) 16%, transparent);
+  --sc-cmp-tag-danger-color: var(--sc-color-red-300);
+  --sc-cmp-tag-contrast-background: var(--sc-color-slate-0);
+  --sc-cmp-togglebutton-background: var(--sc-color-zinc-950);
+  --sc-cmp-togglebutton-color: var(--sc-color-zinc-400);
+  --sc-cmp-togglebutton-checked-background: var(--sc-color-zinc-950);
+  --sc-cmp-togglebutton-checked-color: var(--sc-color-slate-0);
+  --sc-cmp-togglebutton-checked-border-color: var(--sc-color-zinc-950);
+  --sc-cmp-togglebutton-hover-background: var(--sc-color-zinc-950);
+  --sc-cmp-togglebutton-hover-color: var(--sc-color-zinc-300);
+  --sc-cmp-togglebutton-border-color: var(--sc-color-zinc-950);
+  --sc-cmp-togglebutton-icon-checked-color: var(--sc-color-slate-0);
+  --sc-cmp-toast-info-background: color-mix(in srgb, var(--sc-color-sky-50) 16%, transparent);
+  --sc-cmp-toast-info-color: var(--sc-color-sky-300);
+  --sc-cmp-toast-info-detail-color: var(--sc-color-slate-0);
+  --sc-cmp-toast-info-close-button-hover-background: color-mix(in srgb, var(--sc-color-slate-0) 5%, transparent);
+  --sc-cmp-toast-info-close-button-focus-ring-color: var(--sc-color-sky-500);
+  --sc-cmp-toast-success-background: color-mix(in srgb, var(--sc-color-green-500) 16%, transparent);
+  --sc-cmp-toast-success-color: var(--sc-color-green-500);
+  --sc-cmp-toast-success-border-color: color-mix(in srgb, var(--sc-color-green-700) 36%, transparent);
+  --sc-cmp-toast-success-detail-color: var(--sc-color-slate-0);
+  --sc-cmp-toast-success-close-button-hover-background: color-mix(in srgb, var(--sc-color-slate-0) 5%, transparent);
+  --sc-cmp-toast-success-close-button-focus-ring-color: var(--sc-color-green-500);
+  --sc-cmp-toast-warn-background: color-mix(in srgb, var(--sc-color-yellow-500) 16%, transparent);
+  --sc-cmp-toast-warn-color: var(--sc-color-yellow-300);
+  --sc-cmp-toast-warn-border-color: color-mix(in srgb, var(--sc-color-yellow-700) 36%, transparent);
+  --sc-cmp-toast-warn-detail-color: var(--sc-color-slate-0);
+  --sc-cmp-toast-warn-close-button-hover-background: color-mix(in srgb, var(--sc-color-slate-0) 5%, transparent);
+  --sc-cmp-toast-warn-close-button-focus-ring-color: var(--sc-color-yellow-300);
+  --sc-cmp-toast-error-background: color-mix(in srgb, var(--sc-color-red-500) 16%, transparent);
+  --sc-cmp-toast-error-color: var(--sc-color-red-500);
+  --sc-cmp-toast-error-border-color: color-mix(in srgb, var(--sc-color-red-700) 36%, transparent);
+  --sc-cmp-toast-error-detail-color: var(--sc-color-slate-0);
+  --sc-cmp-toast-error-close-button-hover-background: color-mix(in srgb, var(--sc-color-slate-0) 5%, transparent);
+  --sc-cmp-toast-error-close-button-focus-ring-color: var(--sc-color-red-500);
+  --sc-cmp-toast-secondary-detail-color: var(--sc-color-slate-0);
+  --sc-cmp-toast-contrast-background: var(--sc-color-slate-0);
+  --sc-cmp-toggleswitch-background: var(--sc-color-zinc-700);
+  --sc-cmp-toggleswitch-hover-background: var(--sc-color-zinc-600);
+  --sc-cmp-toggleswitch-disabled-background: var(--sc-color-zinc-600);
+  --sc-cmp-tooltip-background: var(--sc-color-zinc-700);
+  --sc-cmp-tooltip-color: var(--sc-color-slate-0);
+  --sc-cmp-treetable-border-color: var(--sc-color-zinc-800);
+  --sc-cmp-treetable-body-cell-selected-border-color: var(--sc-color-sky-700);
+  /* @sc-gen:cmp-color-dark:end */
+
+  /* Borde de info en OSCURO — a mano, y por eso está fuera de la zona.
+   *
+   * El export trae aquí `#0369a15c` (Tailwind sky-700 + 36% de alfa), que NO
+   * tiene primitiva en la paleta de marca. El generador no puede espejarlo sin
+   * inventarse un hex, así que aborta — y eso es lo que llevaba tumbando
+   * `tokens-sync` desde el 22 de junio. Sus dos slots pasan a EXCLUDE
+   * (`cmp-color-map.mjs`), como los otros cinco de info que ya estaban.
+   *
+   * El valor es EXACTAMENTE el que ya se servía: la exclusión no cambia el
+   * aspecto de nada, solo impide que un color fuera de paleta rompa el
+   * pipeline. Cuando el Kit remapee info a la familia de marca (§1.4), estos
+   * dos vuelven a generarse solos y estas líneas se borran. */
+  --sc-cmp-message-info-border-color: color-mix(in srgb, var(--sc-color-azure-700) 36%, transparent);
+  --sc-cmp-toast-info-border-color: color-mix(in srgb, var(--sc-color-azure-700) 36%, transparent);
+  --sc-bg-primary-subtle: var(--sc-color-blue-900);
+  --sc-bg-primary-subtle-hover: var(--sc-color-blue-800);
+  --sc-bg-primary-subtle-active: var(--sc-color-blue-700);
+
+  /* Secondary (gray) */
+  --sc-bg-secondary: var(--sc-color-zinc-300);
+  --sc-bg-secondary-active: var(--sc-color-zinc-700);
+  --sc-bg-secondary-subtle: var(--sc-color-zinc-900);
+
+  /* Status — bgs darken, text lifts. Translucency expressed as a
+   * `color-mix` over a deep status-color token (the 800-step from
+   * the primitive scale). Mathematically equivalent to the previous
+   * `rgb(R G B / A)` literals (`color-mix(in srgb, X N%, transparent)`
+   * resolves to the same byte-exact value as `rgba(X, N/100)`); the
+   * token form lets a future color-scale tweak propagate here for
+   * free. */
+  --sc-bg-success-subtle: color-mix(in srgb, var(--sc-color-green-800) 18%, transparent);
+  --sc-bg-warning-subtle: color-mix(in srgb, var(--sc-color-yellow-800) 18%, transparent);
+  --sc-bg-danger-subtle: color-mix(in srgb, var(--sc-color-red-900) 22%, transparent);
+  --sc-bg-danger-subtle-hover: color-mix(in srgb, var(--sc-color-red-900) 32%, transparent);
+  --sc-bg-danger-subtle-active: color-mix(in srgb, var(--sc-color-red-900) 42%, transparent);
+  --sc-bg-info-subtle: color-mix(in srgb, var(--sc-color-sky-800) 22%, transparent);
+  --sc-bg-violet-subtle: color-mix(in srgb, var(--sc-color-violet-800) 22%, transparent);
+
+  /* ---------- Palette · Labels ----------
+   *
+   * Los 32 tokens `--sc-label-*` vivían SOLO en `03-palette.css`, es decir solo
+   * en claro. En oscuro heredaban el pastel del claro, así que `sc-chip` y
+   * `sc-tag` —y los cuatro clones que la app se hizo (`.chip`, `.sc-label`,
+   * `.status-pill`, `.state-tag`)— pintaban islas claras sobre el lienzo
+   * oscuro. Medido en 28 rutas del supervisor: 10 chips en `/admin/labels`,
+   * 5 en `/admin/usuarios`, pastillas en las 9 páginas de repositorios.
+   *
+   * No era ilegible (el texto oscuro sobre pastel claro seguía cumpliendo AA
+   * dentro del propio chip) pero rompía el tema: el resto de la pantalla es
+   * oscuro y estas etiquetas no se enteraban. Mismo agujero que tenían los
+   * seis `--sc-text-*` sin valor oscuro, de la misma familia y a medio cerrar.
+   *
+   * La forma la copia el bloque de `--sc-bg-*-subtle` de más arriba: el fondo
+   * es un `color-mix` translúcido sobre el paso profundo de la familia (así
+   * el chip respira el lienzo que tenga debajo, tabla o modal) y el texto
+   * sube a los pasos 200/300 para cumplir AA contra ese fondo compuesto.
+   * Los ratios están medidos, no estimados — ver `dark-surfaces.spec.ts`. */
+  --sc-label-gray-bg: color-mix(in srgb, var(--sc-color-slate-700) 45%, transparent);
+  --sc-label-gray-text: var(--sc-color-zinc-200);
+  --sc-label-gray-border: color-mix(in srgb, var(--sc-color-slate-500) 45%, transparent);
+  --sc-label-gray-dot: var(--sc-color-zinc-400);
+
+  --sc-label-red-bg: color-mix(in srgb, var(--sc-color-red-900) 40%, transparent);
+  --sc-label-red-text: var(--sc-color-red-300);
+  --sc-label-red-border: color-mix(in srgb, var(--sc-color-red-700) 45%, transparent);
+  --sc-label-red-dot: var(--sc-color-red-400);
+
+  --sc-label-orange-bg: color-mix(in srgb, var(--sc-color-orange-900) 40%, transparent);
+  --sc-label-orange-text: var(--sc-color-orange-300);
+  --sc-label-orange-border: color-mix(in srgb, var(--sc-color-orange-700) 45%, transparent);
+  --sc-label-orange-dot: var(--sc-color-orange-400);
+
+  --sc-label-amber-bg: color-mix(in srgb, var(--sc-color-amber-900) 40%, transparent);
+  --sc-label-amber-text: var(--sc-color-amber-300);
+  --sc-label-amber-border: color-mix(in srgb, var(--sc-color-amber-700) 45%, transparent);
+  --sc-label-amber-dot: var(--sc-color-amber-400);
+
+  --sc-label-green-bg: color-mix(in srgb, var(--sc-color-emerald-900) 40%, transparent);
+  --sc-label-green-text: var(--sc-color-emerald-300);
+  --sc-label-green-border: color-mix(in srgb, var(--sc-color-emerald-700) 45%, transparent);
+  --sc-label-green-dot: var(--sc-color-emerald-400);
+
+  --sc-label-teal-bg: color-mix(in srgb, var(--sc-color-teal-900) 40%, transparent);
+  --sc-label-teal-text: var(--sc-color-teal-300);
+  --sc-label-teal-border: color-mix(in srgb, var(--sc-color-teal-700) 45%, transparent);
+  --sc-label-teal-dot: var(--sc-color-teal-400);
+
+  --sc-label-blue-bg: color-mix(in srgb, var(--sc-color-azure-900) 40%, transparent);
+  --sc-label-blue-text: var(--sc-color-azure-300);
+  --sc-label-blue-border: color-mix(in srgb, var(--sc-color-azure-700) 45%, transparent);
+  --sc-label-blue-dot: var(--sc-color-azure-400);
+
+  --sc-label-purple-bg: color-mix(in srgb, var(--sc-color-purple-900) 40%, transparent);
+  --sc-label-purple-text: var(--sc-color-purple-300);
+  --sc-label-purple-border: color-mix(in srgb, var(--sc-color-purple-700) 45%, transparent);
+  --sc-label-purple-dot: var(--sc-color-purple-400);
+
+  /* ---------- Semantic · Border ---------- */
+  /*
+   * `subtle` valía slate-900, que es EXACTAMENTE `--sc-bg-surface` en oscuro:
+   * 1.00:1 contra la tarjeta que bordea, o sea 56 filos que no se pintaban en
+   * medio tema. No era una elección discreta, era un borde inexistente.
+   *
+   * En claro la relación es surface(slate-0) → subtle(slate-100) = 1.13:1. La
+   * rampa no tiene un slate-850 con el que repetir ese salto desde slate-900,
+   * y usar slate-800 lo igualaría a `border-default` (1.39:1) — un token que se
+   * llama "subtle" dejaría de serlo. Se mezcla hasta clavar la MISMA sutileza
+   * que en claro: 1.13:1. Es el idioma que ya usan aquí abajo las etiquetas y
+   * los mensajes.
+   *
+   * (La referencia, Snow UI, lo resuelve con alfa del color de texto —10% en
+   * los dos temas— y por eso no necesita tabla oscura. Nuestro sistema mapea
+   * roles a primitivas por tema, así que la equivalencia se escribe aquí.)
+   */
+  --sc-border-subtle: color-mix(in srgb, var(--sc-color-slate-800) 40%, var(--sc-color-slate-900));
+  --sc-border-disabled: var(--sc-color-zinc-700);
+  /* Anillo de foco en OSCURO a sky-400 (2026-09-13). En claro sigue sky-500. Sobre zinc,
+   * sky-500 da 3,61:1 contra la superficie: pasa el 3:1 pero justo, y el foco es lo único
+   * que ve quien navega con teclado. sky-400 da 5,62:1. En el Kit no se puede expresar
+   * sin crear variable (`focus/ring/color` vive en «Semantic Common», sin modos), así que
+   * es divergencia de código a propósito, igual que el primario oscuro (DD-40). */
+  --sc-border-focus: var(--sc-color-sky-400);
+  /* Su halo va a juego (ver 05-extensions): los canales de sky-400, #4a8fff. */
+  --sc-shadow-focus-ring-rgb: 74 143 255;
+
+  --sc-border-secondary: var(--sc-color-blue-700);
+  --sc-border-secondary-hover: var(--sc-color-blue-600);
+  --sc-border-secondary-active: var(--sc-color-blue-500);
+
+  /* ---------- Semantic · Icons ---------- */
+  --sc-icon-primary: var(--sc-color-zinc-200);
+  --sc-icon-secondary: var(--sc-color-zinc-400);
+  --sc-icon-subtle: var(--sc-color-zinc-400);
+  --sc-icon-disabled: var(--sc-color-zinc-600);
+
+  /* `--sc-btn-*` removed S34 (light + dark) — see comment in 04-component.css */
+
+  /* ---------- Component · Modal ---------- */
+  --sc-dialog-bg: var(--sc-color-zinc-900);
+  --sc-dialog-border: var(--sc-color-zinc-700);
+  --sc-dialog-divider: var(--sc-color-zinc-700);
+  --sc-dialog-title: var(--sc-color-slate-0);
+  --sc-dialog-subtitle: var(--sc-color-zinc-400);
+  --sc-dialog-close-fg: var(--sc-color-zinc-400);
+  --sc-dialog-close-bg-hover: var(--sc-color-zinc-800);
+  --sc-dialog-shadow: 0 24px 48px rgb(0 0 0 / 0.5);
+
+  /* ---------- Component · Toast ---------- */
+  --sc-toast-title: var(--sc-color-slate-0);
+  --sc-toast-message: var(--sc-color-zinc-400);
+  --sc-toast-close: var(--sc-color-zinc-200);
+  --sc-toast-success-bg: color-mix(in srgb, var(--sc-color-green-900) 40%, transparent);
+  --sc-toast-info-bg: color-mix(in srgb, var(--sc-color-sky-800) 40%, transparent);
+  --sc-toast-warn-bg: color-mix(in srgb, var(--sc-color-yellow-800) 40%, transparent);
+  --sc-toast-error-bg: color-mix(in srgb, var(--sc-color-red-900) 40%, transparent);
+  --sc-toast-violet-bg: color-mix(in srgb, var(--sc-color-violet-800) 40%, transparent);
+
+  /* ---------- Extensions · Sidebar ---------- */
+  /* One step darker than the page so it still reads as "the chrome"
+   * against the surface, not a peer panel. */
+  --sc-sidebar-bg: var(--sc-color-blue-900);
+}

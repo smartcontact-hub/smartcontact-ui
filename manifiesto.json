@@ -1,8 +1,8 @@
 {
-  "commit": "0b1a90a",
+  "commit": "626c195",
   "primeng": "22.1.0",
   "themes": "3.0.0",
-  "generado": "2026-09-14T10:39:50.417Z",
+  "generado": "2026-09-14T12:43:18.833Z",
   "comprobaciones": {
     "ceros": [],
     "raizPx": 16,
@@ -12,10 +12,15 @@
         "sc-preset.mjs"
       ],
       "variables": [],
-      "semanticaComun": false,
-      "reglasCss": true,
+      "semanticaComun": true,
+      "reglasCss": false,
       "componentes": []
     },
-    "cambia": true
-  }
+    "cambia": true,
+    "contratoPlugin": {
+      "promete": 65,
+      "faltan": []
+    }
+  },
+  "version": "0.20260914.1243"
 }
