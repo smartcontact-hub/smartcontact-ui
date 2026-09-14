@@ -106,6 +106,22 @@ test('#11 formateador ajeno: `prettier --write` sin config del repo → deny; co
   allow('grep -rn "prettier --write" docs/', sinConfig);
 });
 
+test('portada pública: rótulo con nombre o atribución en un PR o commit → deny; resumen sin destinatario → allow', () => {
+  // El caso real: la portada del #167, con el cuerpo en un heredoc como lo escribe una sesión.
+  const pr = (cuerpo) => `gh pr create --title "x" --body "$(cat <<'EOF'\n${cuerpo}\nEOF\n)"`;
+  deny(pr('**Para Rafa, en llano:** en Agentes la página ya no hace scroll.'), verde, /dirigido a Rafa/);
+  deny(pr('## Qué cambia\n\n🤖 Generated with [Claude Code](https://claude.com/claude-code)'), verde, /Generated with/);
+  deny(pr('Resumen.\n\nhttps://claude.ai/code/session_01TAvmx7HBGPN4hitHprrhqp'), verde, /enlace a la sesión/);
+  deny("git commit -m \"$(cat <<'EOF'\nfix: x\n\nCo-Authored-By: Claude Opus 5 <noreply@anthropic.com>\nEOF\n)\"", verde, /co-autor/);
+  deny('gh pr edit 167 --body "Para Rafa en llano: algo"', verde, /Portada pública/);
+  allow(pr('**En resumen:** en Agentes la página ya no hace scroll.'));
+  allow("git commit -m \"$(cat <<'EOF'\nfix: x\n\nCo-authored-by: x <x@y.z>\nEOF\n)\""); // un co-autor humano no es atribución
+  // Vecinos legítimos: leer o buscar el texto no es publicarlo, y citarlo a propósito tiene salida.
+  allow('gh pr view 167 --json body | grep -c "Para Rafa, en llano"');
+  allow('git log --grep "claude.ai/code/session_" --oneline');
+  allow('git commit -m "docs: la portada ya no lleva Generated with Claude Code" # sc:ok');
+});
+
 test('prosa y heredocs no son comandos: los dos falsos positivos reales del primer día', () => {
   allow("printf '\\n# la lee el hook de git push.\\n' >> .gitignore", rojo);
   allow("python3 - <<'EOF'\ns = s + ' && npm run lint'\nopen(p,'w').write(s)\nEOF\ngrep -n lint scripts/x.mjs", verde);
