@@ -286,6 +286,54 @@ var(--sc-color-slate-700)` en `04-component.css`.
 
 ---
 
+## 9 · El Dashboard: lo que PrimeNG ya tiene y el fichero del DS aún no dibuja (2026-09-14)
+
+**Estado:** pendiente · **Verificado el 2026-09-14** con el bridge contra el fichero del DS y contra PrimeOne 4.0.0
+(`bJ01Ym4NrCvxFm7dJXvhqp`), y en el código de PrimeNG 22.1.0. Rafa pidió que las piezas del Dashboard (en obra,
+rama `arebury/dashboard-adapt-supervisor-monitor`) salgan de los componentes de [primeng.dev](https://primeng.dev)
+con los valores y variables de Aura, para que en Figma ya tengan esos valores.
+
+**Lo que ya está en Figma, atado a sus variables** (no hay que hacer nada; sirve para maquetar el Dashboard):
+
+| Pieza del Dashboard | Componente de primeng.dev | En el fichero del DS |
+|---|---|---|
+| Pestañas de monitor | Tabs | `❖ Tabs` (`6738:49740`): `tabs` `320:12276`, `tabs-tab` `320:12255`, variables `tabs/*` |
+| Número de la campana | Badge / OverlayBadge | `❖ Badge` (`6738:55106`): `badge` `330:13237`, `overlaybadge` `6998:92179` |
+| Aviso en la cabecera del widget | Tag | `❖ Tag` (`6738:55116`): `tag` `373:13337`, con icono y `Rounded` |
+| Barras de proporción | MeterGroup | `❖ MeterGroup` (`6738:55111`): `metergroup` `6962:59067`; alto `metergroup/meters/size` → `scale/0-5` (7) |
+| Tarjeta de widget con acciones arriba | Panel con plantilla `icons` | `❖ Panel` (`6738:49736`): `panel` `229:10217`, variante `Custom Icon=True` |
+| Lista de entidades con buscador | Listbox | `❖ Listbox` (`6738:22650`): `listbox` `6212:6733` con `Show Filter` |
+| Lista del panel de alertas | Menu (popup) y Popover | `❖ Menu` (`6738:52936`), `❖ Popover` (`6738:50211`) |
+| Selector de tipo de widget | SelectButton | `❖ SelectButton` (`6738:46433`); no hace rejilla con icono |
+
+**Qué falta en Figma:**
+
+- **Tabs, el peso del texto.** Las tres variantes de `tabs-tab` (`320:12255`) dibujan Inter **Bold 700** con el peso sin
+  atar. La variable `tabs/tab/font/weight` existe y vale `semibold` (600), que es lo que dice Aura y lo que pinta el
+  código (`sc-preset/tabs.ts`). Atar el peso a la variable.
+- **Tabs, las flechas de desbordamiento** (`scrollable` en primeng.dev). Las variables existen (`tabs/nav/button/*`:
+  fondo, color, ancho `scale/2-5` = 35, hover, foco) pero no hay dibujo, ni en el DS ni en PrimeOne. En código salen
+  cuando las pestañas no caben (`--sc-cmp-tabs-nav-button-width` 35, sombra `--sc-cmp-tabs-nav-button-shadow`).
+  Dibujar el botón de cada lado sobre `tabs`.
+- **Tabs, la barra activa y los bordes.** Hoy el tab activo la dibuja como borde inferior de 1 en
+  `tabs/tab/active/border/color`, y cada tab lleva `tabs/tab/border/width` 1. Desde DD-107 el código sigue a Aura 3:
+  la pestaña no tiene borde (`tabs/tab/border/width` → 0, colores de borde transparentes), la tira lleva la raya de
+  abajo (`tabs/tablist/border/width`) y la marca de la activa es la barra (`tabs/active/bar/height` 1,
+  `tabs/active/bar/bottom` → 0, `tabs/active/bar/background` → primario). Mide lo mismo a la vista.
+- **Badge, el punto.** En primeng.dev, un Badge sin valor es un punto (`p-badge-dot`): la pieza que cubre el punto de
+  presencia y el de «en vivo» del Dashboard. La variable `badge/dot/size` existe (`scale/0-5`, 7) pero `badge` no tiene variante de
+  punto, ni aquí ni en PrimeOne. Añadir `Dot=True` con cada `Severity`.
+- **El hueco discontinuo de «Añadir widget».** No hay nada equivalente en PrimeNG, PrimeOne ni el DS, y en el Supervisor
+  hay 5 cajas discontinuas hechas a mano con bordes y radios distintos. Es pieza propia: diseñarla en `Custom`
+  (`12508:5736`) con un borde, un radio y los dos botones (`Añadir widget` outlined, `Dividir en cuatro` text).
+- **Fuera, a propósito:** la sparkline del KPI. primeng.dev la resolvería con Chart (Chart.js), que no está en PrimeOne.
+
+**Cómo sabes que está hecho:** en `❖ Tabs` las tres variantes con el peso atado a `tabs/tab/font/weight` y un `tabs`
+con flechas; en `❖ Badge` una variante de punto atada a `badge/dot/size`; y en `Custom` el hueco de añadir. Luego,
+publicar la librería (ficha 1).
+
+---
+
 ## Cerrado
 
 - ~~**El título del componente `Section` a `Heading/h3-semibold`**~~ → **HECHO el 2026-09-13**

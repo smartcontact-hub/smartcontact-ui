@@ -163,6 +163,17 @@ las 38 ranuras— se cerraron el mismo día en DD-73.)
 3. **La deuda de código de [`AUDIT-DEUDA-2026-06.md`](../AUDIT-DEUDA-2026-06.md)** que quede tras
    s34, y **los cabos de DD-24** (round-trip de iconos) en [`ROADMAP.md`](../ROADMAP.md).
 
+## ✅ 2026-09-14 · Un borde de un lado se escribe de un lado: `p-tabs` sin cajas (DD-107)
+
+**Sello:** rama `arebury/figma-pendiente-dashboard`, HEAD `58166a4` (#180) más este cambio. DD-107. Rafa: «adelante».
+
+**Lo que cambia.** `tabs` sigue a Aura 3 (pestaña sin borde, raya en la tira, barra activa); `accordion`, `dataview` y
+`treetable` recuperan el shorthand de un lado. Test nuevo `preset-border-shorthand`. `figma-pendiente.md` §9: lo que
+el Dashboard toma de PrimeNG y el fichero del DS aún no dibuja.
+
+- ⚠️ **Un valor del Kit pasado a rem pierde la forma del shorthand**: `1` dibujado abajo en Figma es `0 0 1px 0` en
+  Aura, y escrito `0.071429rem` pinta cuatro lados. Solo se ve el día que alguien usa el componente.
+
 ## ✅ 2026-09-14 · Recursos: nombre propio, los campos que acumulan son multiselect y «todos» quita (DD-105)
 
 **Sello:** rama `arebury/nombre-repositorios`, HEAD `6c60e7f` (#176) más este cambio. DD-105. Rafa: «adelante». El tramo «Los controles llevan el
