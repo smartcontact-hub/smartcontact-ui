@@ -1157,7 +1157,7 @@ var tag_default = {
     dark: {
       info: {
         color: "var(--sc-cmp-tag-info-color)",
-        background: "#0ea5e929"
+        background: "color-mix(in srgb, {sky.500}, transparent 84%)"
       },
       warn: {
         color: "var(--sc-cmp-tag-warn-color)",
@@ -2158,8 +2158,8 @@ var button_default = {
         },
         info: {
           color: "var(--sc-cmp-button-text-info-color)",
-          hoverBackground: "#38bdf80a",
-          activeBackground: "#38bdf829"
+          hoverBackground: "color-mix(in srgb, {sky.400}, transparent 96%)",
+          activeBackground: "color-mix(in srgb, {sky.400}, transparent 84%)"
         },
         warn: {
           color: "{orange.400}",
@@ -2207,8 +2207,8 @@ var button_default = {
         info: {
           color: "var(--sc-cmp-button-outlined-info-color)",
           borderColor: "var(--sc-cmp-button-outlined-info-border-color)",
-          hoverBackground: "#38bdf80a",
-          activeBackground: "#38bdf829"
+          hoverBackground: "color-mix(in srgb, {sky.400}, transparent 96%)",
+          activeBackground: "color-mix(in srgb, {sky.400}, transparent 84%)"
         },
         warn: {
           color: "{orange.400}",
@@ -4310,6 +4310,17 @@ var treetable_default = {
   }
 };
 
+// projects/ui-smartcontact/src/lib/theme/sc-preset/datatable.ts
+var datatable_default = {
+  colorScheme: {
+    dark: {
+      bodyCell: {
+        selectedBorderColor: "var(--sc-cmp-datatable-body-cell-selected-border-color)"
+      }
+    }
+  }
+};
+
 // projects/ui-smartcontact/src/lib/theme/sc-preset/breadcrumb.ts
 var breadcrumb_default = {
   item: {
@@ -5854,6 +5865,7 @@ var css_default = presetCss;
 var preset = t($r, normalizeDesignRem({
   ...base_default,
   components: {
+    datatable: datatable_default,
     tag: tag_default,
     card: card_default,
     chip: chip_default,
