@@ -1,8 +1,8 @@
 {
-  "commit": "2b9e0e7a",
+  "commit": "e4d2885f",
   "primeng": "22.1.0",
   "themes": "3.0.0",
-  "generado": "2026-09-14T20:47:18.382Z",
+  "generado": "2026-09-14T21:30:48.410Z",
   "comprobaciones": {
     "ceros": [],
     "raizPx": 16,
@@ -15,10 +15,7 @@
       "semanticaComun": false,
       "reglasCss": false,
       "componentes": [
-        "accordion",
-        "dataview",
-        "tabs",
-        "treetable"
+        "togglebutton"
       ]
     },
     "cambia": true,
@@ -27,5 +24,5 @@
       "faltan": []
     }
   },
-  "version": "0.20260914.2047"
+  "version": "0.20260914.2130"
 }
