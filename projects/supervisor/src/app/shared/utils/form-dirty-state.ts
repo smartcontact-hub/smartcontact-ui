@@ -18,11 +18,18 @@ import { computed, signal, type Signal } from '@angular/core';
 
 import { stableStringify } from './form-dirty-state.core.mjs';
 
-export interface FormDirtyState {
+export interface FormDirtyState<T = unknown> {
   /** True cuando el estado actual difiere del pristine (CAMBIO NETO; deshacer → false). */
   readonly dirty: Signal<boolean>;
   /** Fija el estado actual como "limpio" de referencia (al cargar la entidad / tras guardar). */
   markPristine(): void;
+  /**
+   * Una COPIA del último estado limpio, para «Descartar cambios» (2026-09-14). Guardar solo el
+   * string servía para comparar pero no para restaurar, y por eso las páginas que descartaban
+   * se quedaban fuera de esta utilidad (ver el comentario de `stableStringify` abajo). Cada
+   * llamada devuelve una copia nueva: el formulario puede mutarla sin tocar la referencia.
+   */
+  pristineValue(): T;
 }
 
 /**
@@ -45,10 +52,15 @@ export interface FormDirtyState {
  */
 export { stableStringify } from './form-dirty-state.core.mjs';
 
-export function createFormDirtyState(snapshot: () => unknown): FormDirtyState {
+export function createFormDirtyState<T>(snapshot: () => T): FormDirtyState<T> {
   const pristine = signal(stableStringify(snapshot()));
+  let pristineCopy = structuredClone(snapshot());
   return {
     dirty: computed(() => stableStringify(snapshot()) !== pristine()),
-    markPristine: () => pristine.set(stableStringify(snapshot())),
+    markPristine: () => {
+      pristine.set(stableStringify(snapshot()));
+      pristineCopy = structuredClone(snapshot());
+    },
+    pristineValue: () => structuredClone(pristineCopy),
   };
 }

@@ -65,6 +65,20 @@ test('EXCLUYE el molde nombrado en comentarios (los punteros de DD-53)', () => {
   assert.deepEqual(redeclaraMolde(scss), []);
 });
 
+test('EXCLUYE un `&--rail` que no es del molde (el del constructor de reglas)', () => {
+  assert.deepEqual(redeclaraMolde('.impact {\n  &--rail {\n    gap: 0;\n  }\n}'), []);
+});
+
+test('caza el molde de ajustes re-declarado, entero o anidado', () => {
+  assert.deepEqual(redeclaraMolde('.page__inner--rail {\n  max-width: 900px;\n}'), ['--rail']);
+  assert.deepEqual(
+    redeclaraMolde('.page {\n  &__inner {\n    &--rail { display: grid; }\n  }\n}'),
+    ['--rail'],
+  );
+  assert.deepEqual(redeclaraMolde('.page__rail {\n  width: 240px;\n}'), ['.page__rail']);
+  assert.deepEqual(redeclaraMolde('.page__main {\n  gap: 0;\n}'), ['.page__main']);
+});
+
 test('caza una página que vuelve a declarar el rail', () => {
   assert.deepEqual(redeclaraMolde('.ipanel {\n  position: sticky;\n}'), ['.ipanel']);
 });

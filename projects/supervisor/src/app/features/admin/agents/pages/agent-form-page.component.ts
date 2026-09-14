@@ -11,16 +11,13 @@ import {
   viewChild,
 } from '@angular/core';
 import { Location } from '@angular/common';
-import { ActivatedRoute, Router } from '@angular/router';
+import { ActivatedRoute, Router, RouterLink } from '@angular/router';
 import { toSignal } from '@angular/core/rxjs-interop';
 import { map, startWith } from 'rxjs';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService } from 'primeng/api';
-import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ScChipComponent as ChipComponent } from '@smartcontact-hub/components';
 import type {
-  ScColumnCellContext,
-  ScColumnDef,
   ScMatrixColumn,
   ScMatrixColumnToggle,
   ScMatrixRow,
@@ -40,18 +37,17 @@ import {
 } from '@shared/components';
 import { createFormDirtyState } from '@shared/utils/form-dirty-state';
 import {
-  ScDatatableComponent as DatatableComponent,
   ScDeleteEntityDialogComponent as DeleteEntityDialogComponent,
+  ScDividerComponent as DividerComponent,
   ScFormSectionNavComponent as FormSectionNavComponent,
   type FormNavSection,
   ScInputTextComponent as InputTextComponent,
   ScPermissionMatrixComponent as PermissionMatrixComponent,
   ScPhotoUploadComponent as PhotoUploadComponent,
-  ScSearchComponent as SearchComponent,
+  ScMultiSelectComponent as MultiSelectComponent,
   ScSectionCardComponent as SectionCardComponent,
   ScSelectComponent as SelectComponent,
   ScToggleSwitchComponent as ToggleSwitchComponent,
-  ScCheckboxComponent as CheckboxComponent,
   type TriState,
   triStateOf,
 } from '@smartcontact-hub/components';
@@ -63,7 +59,6 @@ import { TemplatesStore } from '@features/admin/templates/state/templates.store'
 import {
   Template,
   TemplateType,
-  TEMPLATE_TYPES,
 } from '@features/admin/templates/data/templates-data';
 import {
   AgendasStore,
@@ -137,27 +132,33 @@ interface FormState {
   templateIds: ReadonlySet<number>;
 }
 
+/** ¿Son la misma selección, sin importar el orden? */
+function sameIds(a: readonly number[], b: readonly number[]): boolean {
+  if (a.length !== b.length) return false;
+  const set = new Set(b);
+  return a.every((id) => set.has(id));
+}
+
 @Component({
   selector: 'sc-agent-form-page',
   imports: [
     ChipComponent,
     ButtonComponent,
-    DatatableComponent,
     DeleteEntityDialogComponent,
+    DividerComponent,
     FormSectionNavComponent,
     GroupAssignmentTableComponent,
-    IconComponent,
     IllustratedAvatarComponent,
     InputTextComponent,
     LabelChipComponent,
     PermissionMatrixComponent,
     PhotoUploadComponent,
-    SearchComponent,
+    RouterLink,
     SectionCardComponent,
+    MultiSelectComponent,
     SelectComponent,
     ToggleSwitchComponent,
     TranslateModule,
-    CheckboxComponent,
   ],
   templateUrl: './agent-form-page.component.html',
   styleUrl: './agent-form-page.component.scss',
@@ -197,65 +198,23 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   private readonly topbarActions =
     viewChild<TemplateRef<unknown>>('topbarActions');
 
-  /** Celda de la vista previa: lleva `title` para ver el cuerpo entero al pasar
-   *  por encima, que es lo que hacía la tabla a mano. */
-  private readonly templatePreviewTpl =
-    viewChild<TemplateRef<ScColumnCellContext<Template>>>('templatePreviewTpl');
-  private readonly templateTitleTpl =
-    viewChild<TemplateRef<ScColumnCellContext<Template>>>('templateTitleTpl');
-
   constructor() {
     useTopbarActions(this.topbarActions);
   }
 
-  protected readonly mailIcon = 'mail';
-  protected readonly phoneIcon = 'call';
   protected readonly trashIcon = 'delete';
-  protected readonly phoneCallIcon = 'phone_in_talk';
-  protected readonly shieldIcon = 'verified_user';
-  protected readonly infoIcon = 'info';
-  protected readonly tagIcon = 'label';
-  protected readonly slidersIcon = 'tune';
-  protected readonly plugIcon = 'power';
-  protected readonly globeIcon = 'public';
-  protected readonly settingsIcon = 'settings';
-  protected readonly chevronDownIcon = 'expand_more';
-  protected readonly chevronRightIcon = 'chevron_right';
-  protected readonly searchIcon = 'search';
-  protected readonly xIcon = 'close';
-  protected readonly fileStackIcon = 'file_copy';
-  protected readonly chatIcon = 'chat_bubble';
-  protected readonly logInIcon = 'login';
   protected readonly keyIcon = 'key';
 
-  /** Open state of each accordion disclosure inside "Configuración avanzada".
-   * All start collapsed so the section reads as a quiet summary (count
-   * badges) until the user drills in — DD#57. */
-  protected readonly labelsAccOpen = signal(false);
-  protected readonly agendasAccOpen = signal(false);
-  protected readonly templatesAccOpen = signal(false);
 
-  protected toggleLabelsAcc(): void {
-    this.labelsAccOpen.update((v) => !v);
-  }
-  protected toggleAgendasAcc(): void {
-    this.agendasAccOpen.update((v) => !v);
-  }
-  protected toggleTemplatesAcc(): void {
-    this.templatesAccOpen.update((v) => !v);
-  }
-
-  /** Filter inputs for the in-disclosure search boxes. */
-  protected readonly scheduleSearch = signal('');
-  protected readonly templateSearch = signal('');
-  protected readonly templateTab = signal<TemplateType>('chat');
-
-  protected setTemplateTab(tab: TemplateType): void {
-    this.templateTab.set(tab);
-    this.templateSearch.set('');
-  }
-
-  protected readonly templateTypes = TEMPLATE_TYPES;
+  /** Opciones de descuelgue, traducidas UNA vez por idioma (antes eran un literal
+   *  dentro de la plantilla, repetido en los dos selects). */
+  protected readonly pickupOptions = computed(() => {
+    this.currentLang();
+    return [
+      { label: this.translate.instant('agents.form.fields.pickup_auto'), value: 'auto' },
+      { label: this.translate.instant('agents.form.fields.pickup_manual'), value: 'manual' },
+    ];
+  });
 
   /** Choices for the "Chats simultáneos" select inside Comportamiento. */
   protected readonly maxChatsOptions: readonly number[] = [
@@ -322,164 +281,60 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   protected readonly labelPickValue = signal<number | null>(null);
   protected readonly languagePickValue = signal<string | null>(null);
 
-  /** All agendas from the repository store. Source of truth lives in
-   * `Repositorios > Agendas`; this form just reads + assigns. */
-  protected readonly availableSchedules = this.agendasStore.items;
-
-  /** Agendas filtered by the in-disclosure search box. */
-  protected readonly filteredSchedules = computed<readonly Agenda[]>(() => {
-    const q = this.scheduleSearch().trim().toLowerCase();
-    const all = this.availableSchedules();
-    if (!q) return all;
-    return all.filter(
-      (a) =>
-        a.name.toLowerCase().includes(q) || a.numbers.toLowerCase().includes(q)
-    );
-  });
-
-  protected readonly assignedSchedules = computed<readonly Agenda[]>(() => {
-    const ids = this.form().scheduleIds;
-    return this.availableSchedules().filter((a) => ids.has(a.id));
-  });
-
-  protected toggleSchedule(id: number): void {
-    this.form.update((f) => {
-      const next = new Set(f.scheduleIds);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
-      return { ...f, scheduleIds: next };
-    });
-  }
-
-  protected removeSchedule(id: number): void {
-    this.form.update((f) => {
-      const next = new Set(f.scheduleIds);
-      next.delete(id);
-      return { ...f, scheduleIds: next };
-    });
-  }
-
-  /** All templates from the templates store. */
-  protected readonly availableTemplates = this.templatesStore.templates;
-
-  /** Templates filtered by current tab + search. */
-  protected readonly filteredTemplates = computed<readonly Template[]>(() => {
-    const tab = this.templateTab();
-    const q = this.templateSearch().trim().toLowerCase();
-    return this.availableTemplates().filter(
-      (t) =>
-        t.type === tab &&
-        (q === '' ||
-          t.title.toLowerCase().includes(q) ||
-          t.body.toLowerCase().includes(q))
-    );
-  });
-
-  /** Per-tab counts for the chat/email tab headers — "n/total". */
-  protected readonly templateTabCounts = computed(() => {
-    const ids = this.form().templateIds;
-    const all = this.availableTemplates();
-    const tally = (tab: TemplateType) => {
-      const inTab = all.filter((t) => t.type === tab);
-      const assigned = inTab.filter((t) => ids.has(t.id)).length;
-      return { total: inTab.length, assigned };
-    };
-    return { chat: tally('chat'), email: tally('email') };
-  });
-
-  /** Tri-state for the table header select-all checkbox over the
-   * currently-visible (filtered) templates. */
-  protected readonly filteredTemplatesState = computed<TriState>(() => {
-    const visible = this.filteredTemplates();
-    const ids = this.form().templateIds;
-
-    return triStateOf(
-      visible.filter((t) => ids.has(t.id)).length,
-      visible.length
-    );
-  });
-
-  /* ── El selector de plantillas, ya sobre `sc-datatable` ──────────────────
+  /* ── Repositorios ─────────────────────────────────────────────────────────────
    *
-   * EL ADAPTADOR, que es lo único con miga. El formulario guarda un
-   * `Set<number>` de ids —y guarda TODAS las elegidas, también las de la
-   * pestaña que no se ve—, mientras que `sc-datatable` habla de FILAS.
-   * Traducir en los dos sentidos no es cosmético: la casilla de la cabecera de
-   * PrimeNG decide "están todas" comparando el tamaño de la selección con el de
-   * `value`, así que si le pasáramos las ocultas diría "todas" con media tabla
-   * sin marcar. Por eso baja SOLO lo visible, y al subir se reconstruye el Set
-   * conservando lo que no estaba a la vista. */
-  protected readonly templateColumns = computed<
-    readonly ScColumnDef<Template>[]
-  >(() => {
-    this.currentLang();
-    return [
-      {
-        field: 'title',
-        header: this.translate.instant(
-          'agents.form.advanced.plantillas.col_title'
-        ),
-        width: '38%',
-        cellTemplate: this.templateTitleTpl(),
-      },
-      {
-        field: 'body',
-        header: this.translate.instant(
-          'agents.form.advanced.plantillas.col_preview'
-        ),
-        cellTemplate: this.templatePreviewTpl(),
-      },
-    ];
-  });
+   * Desde el 2026-09-14 cada repositorio es UN campo que enseña lo asignado y deja añadir o
+   * quitar desde el desplegable del DS. Antes Plantillas y Agendas eran dos tablas completas
+   * dentro de la tarjeta, con buscador, pestañas, casilla por fila y vista previa, listando
+   * TODO lo que existe para responder una sola pregunta: qué tiene este agente. Rafa: «es
+   * mucho ruido». El formulario sigue guardando un `Set` de ids por repositorio; aquí solo
+   * se traduce a lo que habla `sc-multiselect` (una lista de ids) y de vuelta. */
 
-  /** Las elegidas que además se están VIENDO. Ver el comentario de arriba. */
-  protected readonly selectedTemplates = computed<readonly Template[]>(() => {
+  /** Las agendas de `Repositorios > Agendas`. */
+  private readonly availableSchedules = this.agendasStore.items;
+  protected readonly scheduleOptions = computed(() =>
+    this.availableSchedules().map((a: Agenda) => ({ label: a.name, value: a.id })),
+  );
+  protected readonly scheduleValue = computed(() => [...this.form().scheduleIds]);
+
+  protected onSchedulesChange(ids: unknown[]): void {
+    if (sameIds(ids as number[], this.scheduleValue())) return;
+    this.form.update((f) => ({ ...f, scheduleIds: new Set(ids as number[]) }));
+  }
+
+  /** Las plantillas, partidas por tipo: una de chat no se asigna al canal de email. */
+  private readonly availableTemplates = this.templatesStore.templates;
+  private templatesOf(type: TemplateType): readonly Template[] {
+    return this.availableTemplates().filter((t) => t.type === type);
+  }
+  protected readonly chatTemplateOptions = computed(() =>
+    this.templatesOf('chat').map((t) => ({ label: t.title, value: t.id })),
+  );
+  protected readonly emailTemplateOptions = computed(() =>
+    this.templatesOf('email').map((t) => ({ label: t.title, value: t.id })),
+  );
+  /* Como `computed` y no como método: el desplegable recibe la MISMA lista mientras no cambie.
+   * Un método devolvía un array nuevo en cada ciclo, el desplegable lo tomaba por un cambio y
+   * la página se quedaba colgada (medido el 2026-09-14 al abrir Repositorios). */
+  private idsOfType(type: TemplateType): number[] {
     const ids = this.form().templateIds;
-    return this.filteredTemplates().filter((t) => ids.has(t.id));
-  });
+    return this.templatesOf(type).filter((t) => ids.has(t.id)).map((t) => t.id);
+  }
+  protected readonly chatTemplateValue = computed(() => this.idsOfType('chat'));
+  protected readonly emailTemplateValue = computed(() => this.idsOfType('email'));
 
-  /** Sube la selección de las filas visibles sin perder las de la otra pestaña. */
-  protected onTemplateSelection(rows: readonly Template[]): void {
-    const visibles = new Set(this.filteredTemplates().map((t) => t.id));
-    const elegidas = new Set(rows.map((t) => t.id));
+  /** Sustituye las de UN tipo sin tocar las del otro. */
+  protected onTemplatesChange(type: TemplateType, ids: unknown[]): void {
+    const current = type === 'chat' ? this.chatTemplateValue() : this.emailTemplateValue();
+    if (sameIds(ids as number[], current)) return;
+    const ofType = new Set(this.templatesOf(type).map((t) => t.id));
     this.form.update((f) => {
-      const next = new Set(f.templateIds);
-      for (const id of visibles) {
-        if (elegidas.has(id)) next.add(id);
-        else next.delete(id);
-      }
+      const next = new Set([...f.templateIds].filter((id) => !ofType.has(id)));
+      for (const id of ids as number[]) next.add(id);
       return { ...f, templateIds: next };
     });
   }
 
-  protected templateAriaLabel = (t: Template): string => t.title;
-
-  /** La fila del selector ALTERNA la elección al pulsarla, así que tiene que
-   *  decirlo con el cursor. `sc-row--clickable` es el gancho que la gramática
-   *  de tabla-lista ya pinta; sin él la fila hace algo que no anuncia. */
-  protected templateRowClass = (): string => 'sc-row--clickable';
-
-  protected toggleTemplate(id: number): void {
-    this.form.update((f) => {
-      const next = new Set(f.templateIds);
-      if (next.has(id)) next.delete(id);
-      else next.add(id);
-      return { ...f, templateIds: next };
-    });
-  }
-
-  protected toggleAllFilteredTemplates(next: boolean): void {
-    const visible = this.filteredTemplates();
-    if (visible.length === 0) return;
-    this.form.update((f) => {
-      const updated = new Set(f.templateIds);
-      for (const t of visible) {
-        if (next) updated.add(t.id);
-        else updated.delete(t.id);
-      }
-      return { ...f, templateIds: updated };
-    });
-  }
   /**
    * Section index for the form shell. In `edit` mode, Identity drops to
    * the end of the list — once the agent exists, you rarely re-edit
@@ -508,13 +363,20 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
       labelKey: 'agents.form.section.advanced',
       icon: 'tune',
     };
+    // Lo que se le ASIGNA al agente desde Repositorios (2026-09-14): antes eran tres
+    // desplegables al final de Avanzado.
+    const repositories: FormNavSection = {
+      id: 'agent-section-repositories',
+      labelKey: 'agents.form.section.repositories',
+      icon: 'folder_open',
+    };
     // Orden por modo (S60). En CREAR, identidad primero — es lo primero que se
     // rellena. En EDITAR, identidad al fondo: apenas se toca tras crear, y la
     // ficha del panel ya da su contexto siempre visible.
     if (this.mode() === 'edit') {
-      return [groups, permissions, advanced, identity];
+      return [groups, permissions, advanced, repositories, identity];
     }
-    return [identity, groups, permissions, advanced];
+    return [identity, groups, permissions, advanced, repositories];
   });
 
   protected readonly activeSection = signal<string>('agent-section-identity');
@@ -685,6 +547,12 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     if (this.mode() === 'edit' && !this.dirtyState.dirty())
       return 'common.no_changes';
     return null;
+  });
+  /** El motivo que se ENSEÑA junto al botón: solo lo que falta rellenar. «No hay
+   *  cambios» se queda en el `title` del botón apagado, que ya lo dice. */
+  protected readonly saveBlockedReason = computed(() => {
+    const reason = this.saveDisabledReason();
+    return reason === 'common.no_changes' ? null : reason;
   });
   protected readonly saving = signal(false);
   protected readonly deleteVisible = signal(false);
@@ -1133,8 +1001,10 @@ export class AgentFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     return links.map((l) => (l.agentId === agentId ? l : { ...l, agentId }));
   }
 
-  protected cancel(): void {
-    void this.router.navigateByUrl('/admin/agentes');
+  /** Vuelve al último estado guardado (o al formulario vacío, en un alta). Es el
+   *  «Deshacer» de Contact Center: vuelve atrás, no navega. */
+  protected discard(): void {
+    this.form.set(this.dirtyState.pristineValue());
   }
 
   protected requestDelete(): void {

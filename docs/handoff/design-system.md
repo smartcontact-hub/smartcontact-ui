@@ -31,6 +31,10 @@
 
 **LO SIGUIENTE, en orden (Rafa, 2026-09-13: «automatizable, agéntico: no ir a mano salvo que sea necesario»):**
 
+- **«Repositorios» dentro de la ficha de agente se confunde con la página Repositorios** (a Rafa le pasó al
+  probarlo, 2026-09-14). Nombre alternativo a decidir con él; hoy se queda. Y el índice lateral a componente de la
+  librería: `figma-pendiente.md` §5.
+
 0. **«Aura + color de marca» y el export en un clic** (encargo del 2026-09-13; mediciones en
    `~/Documents/Claude/2026-09 aura-marca/`). Hecho: robot (DD-82, #152), paleta del export (DD-83), capturas
    (DD-84), «vuelve a Aura» y lo vigente de marca y densidad (DD-87). (a) Las medidas de PrimeOne que Aura
@@ -156,6 +160,24 @@ las 38 ranuras— se cerraron el mismo día en DD-73.)
 3. **La deuda de código de [`AUDIT-DEUDA-2026-06.md`](../AUDIT-DEUDA-2026-06.md)** que quede tras
    s34, y **los cabos de DD-24** (round-trip de iconos) en [`ROADMAP.md`](../ROADMAP.md).
 
+## ✅ 2026-09-14 · Las fichas de agente, grupo y usuario riman con Contact Center (DD-100, DD-101, DD-102)
+
+**Sello:** rama `arebury/agents-groups-users-ds`, HEAD `7007c73` (#172) más este cambio. DD-100, DD-101 y DD-102. Rafa, visto en
+local: «por mí esto ya tiene buena pinta». Los tramos «La cabecera baja de 91 a 56» y «El robot de tokens deja de
+ponerse rojo» viven en el tag `archive/handoff-ds-2026-09-14-robot-tokens`.
+
+**Lo que cambia.** Las tres fichas usan el molde de Contact Center (`.page__inner--rail`), su índice y su
+vocabulario; los editores agente↔grupo van por columnas con selección en lote; Grupos y Usuarios bajan a 3
+secciones y Agentes sube a 5 («Repositorios», cuatro campos en vez de dos tablas); «Deshacer» solo con cambios
+(también en Contact Center); las listas nunca cortan (`tableMinWidth`). Comparación antes/después:
+https://claude.ai/code/artifact/04c101ea-f9bf-4539-9ae3-afbf3b3ea703.
+
+- ⚠️ **Un `sc-multiselect` con `[value]` de un método se cuelga**: un array nuevo por ciclo es un cambio por ciclo.
+  Dale un `computed` y compara antes de escribir (`sameIds` en la ficha de agente).
+- ⚠️ **Mientras trabajas en una pantalla, otra sesión puede estar rehaciéndola**: #170 rehízo las tres listas el
+  mismo día. `git fetch` antes de tocar listas; se resolvió cogiendo lo de `main` y reaplicando encima.
+- ⚠️ **`verify` reconstruye `dist/`** y el servidor local pierde el DS a mitad: reinícialo después, no depures.
+
 ## ✅ 2026-09-14 · El modo oscuro cae en cascada: todo suelo es el lienzo, ningún color es fijo (DD-99)
 
 **Sello:** rama `arebury/fix-dark-mode-token` sobre `b6a5230` (#170). DD-99. Visto en local (`:4417`).
@@ -202,40 +224,6 @@ escribir tallas a mano. Página, capturas y sondas: `~/Documents/Claude/2026-09 
 - **Colección «App» (DD-92)**: se queda como alias de Custom; el DS ya no la usa y el Supervisor la hereda
   (939 enlaces) hasta actualizar la librería. Revisar más adelante si se borra. De DD-91: hora del datepicker 17,5 contra 14; botón solo icono no cuadrado; filtros 2px.
 
-## ✅ 2026-09-14 · La cabecera baja de 91 a 56 y todas las listas reparten el aire igual
-
-**Sello:** #159 (`arebury/aura-spacing-scale`, DD-90) y `arebury/huecos-listas` (DD-94). Rafa, visto en local: «me gusta».
-El tramo «Aura es la base del tema» (2026-09-13) vive en el tag `archive/handoff-ds-2026-09-14-aura-base`.
-
-**Lo que cambia.** `sc-breadcrumb flush` y la TopBar lo usa (91 → 75). Título → contenido `scale/1` en las
-13 pantallas con `page__heading` (antes 21, y 31,5-33 en cuatro). Evaluación de por qué Aura no engorda y
-simulación de la densidad con ese reparto: `~/Documents/Claude/2026-09 aire-aura/index.html`. Después (DD-94):
-TopBar y bloque del logo a `scale/4` (56), página 17,5 arriba y 28 a los lados, buscador → tabla 12,25, y la barra
-de búsqueda de las listas se queda fija de verdad.
-
-**Lo que hay que recordar**, porque volverá a morder:
-
-- ⚠️ **Si la escala pasa a 16, el aire de página crece un 14 %** con ella (≈690 usos de `--sc-spacing-*` en el
-  Supervisor): la simulación da barra 101 y 11 filas en Conversaciones. Con el recorte de Aura (un nombre
-  menos donde es aire de página) da 73 y 13 filas. Es parte de la decisión de densidad, no un extra.
-- ⚠️ **Un componente de Aura que se dibuja como barra suelta (miga, toolbar) suma su relleno** si lo metes
-  en otra barra: mira su `padding` antes de culpar al interlineado.
-- ⚠️ **Una barra `sticky` que no se queda casi nunca es la barra**: busca un antepasado con `overflow` distinto
-  de `visible`/`clip` (en las listas era `.page`, y en Agentes la `.table-card` con `overflow-x: auto`).
-
-## ✅ 2026-09-14 · El robot de tokens deja de ponerse rojo por lo que Figma cambia a propósito
-
-**Sello:** rama `arebury/aura-brand-theme-figma`, HEAD `5123008` (#143) más este cambio. DD-82. Rafa: «adelante».
-
-**Lo que cambia.** Los tests de métrica leen el export; el robot regenera las referencias de estructura
-y estilos si es lo único que cae, pone rojo un token que pasa a 0, escribe la portada en llano y deja el
-check `tokens-sync` en su commit.
-
-**Lo que hay que recordar**, porque volverá a morder:
-
-- ⚠️ **Playwright carga los helpers como CommonJS**: un `.mjs` con `import.meta` no se puede importar
-  desde un spec. Y lo que un `.ts` del arnés importa, `tsc` lo revisa: anótalo con JSDoc.
-- ⚠️ **`tokens:import` no corrige un 0** del export. Las familias de color ya salen del export (DD-83).
 ## 🗄️ Histórico de la lista SIGUIENTE — ya cerrado
 
 > Lo que queda VIVO está **arriba**, en `▶︎ SIGUIENTE`. Aquí solo el registro de lo que se cerró:

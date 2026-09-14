@@ -24,6 +24,7 @@ import { IllustratedAvatarComponent } from '@shared/components';
 import { createFormDirtyState } from '@shared/utils/form-dirty-state';
 import {
   ScDeleteEntityDialogComponent as DeleteEntityDialogComponent,
+  ScDividerComponent as DividerComponent,
   ScFormSectionNavComponent as FormSectionNavComponent,
   type FormNavSection,
   ScInputTextComponent as InputTextComponent,
@@ -74,6 +75,7 @@ interface FormState {
     AgentChannelTableComponent,
     ButtonComponent,
     DeleteEntityDialogComponent,
+    DividerComponent,
     FormSectionNavComponent,
     IllustratedAvatarComponent,
     InputTextComponent,
@@ -131,14 +133,11 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
       labelKey: 'groups.form.section.identity',
       icon: 'badge',
     };
+    // Canales y estrategia son UNA sección (2026-09-14): la estrategia depende de los
+    // canales marcados. Conserva el id de canales, que es el que lleva la bola de error.
     const channels: FormNavSection = {
       id: 'group-section-channels',
-      labelKey: 'groups.form.section.channels',
-      icon: 'chat_bubble',
-    };
-    const strategy: FormNavSection = {
-      id: 'group-section-strategy',
-      labelKey: 'groups.form.section.strategy',
+      labelKey: 'groups.form.section.distribution',
       icon: 'account_tree',
     };
     const agents: FormNavSection = {
@@ -150,9 +149,9 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     // rellena. En EDITAR, identidad al fondo: apenas se toca tras crear, y la
     // ficha del panel ya da su contexto siempre visible.
     if (this.mode() === 'edit') {
-      return [channels, strategy, agents, identity];
+      return [channels, agents, identity];
     }
-    return [identity, channels, strategy, agents];
+    return [identity, channels, agents];
   });
 
   protected readonly activeSection = signal<string>('group-section-identity');
@@ -204,6 +203,12 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     if (f.channels.size === 0) return 'groups.errors.channels_required';
     if (this.mode() === 'edit' && !this.dirtyState.dirty()) return 'common.no_changes';
     return null;
+  });
+  /** El motivo que se ENSEÑA junto al botón: solo lo que falta rellenar. «No hay
+   *  cambios» se queda en el `title` del botón apagado, que ya lo dice. */
+  protected readonly saveBlockedReason = computed(() => {
+    const reason = this.saveDisabledReason();
+    return reason === 'common.no_changes' ? null : reason;
   });
   protected readonly saving = signal(false);
   protected readonly deleteVisible = signal(false);
@@ -262,7 +267,7 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   });
 
   protected readonly hasChat = computed(() => this.form().channels.has('chat'));
-  protected readonly hasFixedCapacity = computed(() => this.form().channels.has('phone'));
+  protected readonly hasPhone = computed(() => this.form().channels.has('phone'));
 
   /** Roster passed to the channel table — every agent in the system. */
   protected readonly availableAgents = computed<readonly AgentChannelTableAgent[]>(() =>
@@ -494,8 +499,10 @@ export class GroupFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     }, 400);
   }
 
-  protected cancel(): void {
-    void this.router.navigateByUrl('/admin/grupos');
+  /** Vuelve al último estado guardado (o al formulario vacío, en un alta). Es el
+   *  «Deshacer» de Contact Center: vuelve atrás, no navega. */
+  protected discard(): void {
+    this.form.set(this.dirtyState.pristineValue());
   }
 
   protected cancelCascade(): void {

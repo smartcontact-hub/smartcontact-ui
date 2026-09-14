@@ -1,10 +1,12 @@
-<div class="settings-shell">
-  <div class="settings-shell__body">
-    <div class="settings-shell__rail">
-      <sc-settings-sidebar />
-    </div>
-    <div class="settings-shell__main">
-      <router-outlet />
-    </div>
+<!-- El molde (rail 196 + contenido, tope 1200 y centrado) es `.page__inner--rail`
+     de `styles/_page.scss`: el MISMO que usan las fichas de agente, grupo y usuario.
+     Hasta el 2026-09-14 vivía aquí escrito a mano y los formularios de admin tenían
+     otro, así que la misma app eran dos pantallas de ajustes distintas. -->
+<div class="page__inner page__inner--rail">
+  <div class="page__rail">
+    <sc-settings-sidebar />
+  </div>
+  <div class="page__main">
+    <router-outlet />
   </div>
 </div>

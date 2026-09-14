@@ -74,7 +74,7 @@ test.beforeEach(async ({ page }) => {
 const PAGINAS = [
   { ruta: 'admin/labels', nombre: 'labels', altoFila: 44 },
   { ruta: 'admin/plantillas', nombre: 'plantillas', altoFila: 44 },
-  { ruta: 'admin/usuarios', nombre: 'usuarios', altoFila: 44 },
+  { ruta: 'admin/usuarios', nombre: 'usuarios', altoFila: 54 }, // 44 hasta el 2026-09-14: la celda de nombre gana el avatar de sus hermanas
   { ruta: 'admin/agentes', nombre: 'agentes', altoFila: 54 },
   { ruta: 'admin/grupos', nombre: 'grupos', altoFila: 54 },
   // El trío de memory, migrado el 2026-07-19. Entraron aquí en el MISMO
@@ -226,27 +226,16 @@ for (const { ruta, nombre, altoFila } of PAGINAS) {
  * esperando a algo que nunca llega.
  *
  * `altoFila` difiere de las listas sueltas y debe: lo fija el contenido más
- * alto. Plantillas es texto a secas (56); los dos editores llevan avatar de 24
- * más un cluster de chips (69 y 65).
+ * alto: los dos editores llevan avatar de 24 más una casilla por canal (46 los dos).
  */
 const PAGINAS_EN_FORMULARIO = [
-  {
-    ruta: 'admin/agentes/crear',
-    seccion: 'Avanzado',
-    /* El desplegable se abre por su BOTÓN, no por su rótulo: el texto
-     * "PLANTILLAS" vive en un `<span>` de adorno dentro del botón, y clicarlo
-     * solo abre el acordeón por rebote. Así salía verde a veces y rojo otras
-     * (1 de 152 en la pasada del 2026-09-12). `aria-controls` es el gancho
-     * estable, y además es el que dice qué abre. */
-    abrirAcordeon: 'button[aria-controls="agent-acc-templates-body"]',
-    nombre: 'plantillas del agente',
-    altoFila: 37, // 56 hasta Aura (2026-09-13): 20 de línea + 8×2 + 1
-  },
+  /* Aquí estaba «plantillas del agente». Salió el 2026-09-14: Plantillas y Agendas dejaron de
+   * ser tablas dentro de la ficha y son un `sc-multiselect` cada una (Repositorios). */
   {
     ruta: 'admin/agentes/editar/1',
     seccion: 'Grupos asignados',
     nombre: 'grupos del agente',
-    altoFila: 50, // 69 hasta Aura (2026-09-13): 19 menos, el padding de la celda
+    altoFila: 46, // 69 hasta Aura (2026-09-13); 50 → 46 el 2026-09-14, el chip de canal pasa a casilla
   },
   {
     ruta: 'admin/grupos/editar/1',
@@ -256,9 +245,11 @@ const PAGINAS_EN_FORMULARIO = [
      * hermanos tenían su propia copia y no diferían solo en color: la de aquí
      * llevaba menos padding y otro radio. Ahora miden LO MISMO que su gemelo de
      * arriba (69), que es exactamente lo que se buscaba — son la misma cosa vista
-     * desde cada lado. Si esto vuelve a divergir, mira `_channel-chip.scss`.
-     * 69 → 50 el 2026-09-13 con Aura, igual que su gemelo. */
-    altoFila: 50,
+     * desde cada lado.
+     * 69 → 50 el 2026-09-13 con Aura, igual que su gemelo. 50 → 46 el 2026-09-14: el
+     * chip de canal (`_channel-chip.scss`, borrado) pasa a una columna por canal con
+     * `sc-checkbox`, y los dos gemelos siguen midiendo lo mismo. */
+    altoFila: 46,
   },
 ] as const;
 
@@ -274,13 +265,8 @@ for (const caso of PAGINAS_EN_FORMULARIO) {
       .first()
       .click();
 
-    if ('abrirAcordeon' in caso && caso.abrirAcordeon) {
-      const acc = page.locator(caso.abrirAcordeon);
-      await expect(acc).toBeVisible();
-      if ((await acc.getAttribute('aria-expanded')) !== 'true')
-        await acc.click();
-      await expect(acc).toHaveAttribute('aria-expanded', 'true');
-    }
+    /* Aquí se abría el desplegable de Plantillas. Desde el 2026-09-14 no hay ninguno: las
+     * tablas de los formularios están siempre a la vista en su sección. */
 
     const tabla = page.locator('sc-datatable.sc-datatable--list').first();
     await expect(tabla).toBeVisible();

@@ -12,9 +12,14 @@ import {
 import { toSignal } from '@angular/core/rxjs-interop';
 import { map, startWith } from 'rxjs';
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
-import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
-import { ScSearchComponent as SearchComponent } from '@smartcontact-hub/components';
-import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
+import {
+  ScBulkActionBarComponent as BulkActionBarComponent,
+  ScButtonComponent as ButtonComponent,
+  ScSearchComponent as SearchComponent,
+  ScSelectComponent as SelectComponent,
+  ScTagComponent as TagComponent,
+  useBulkEntityI18n,
+} from '@smartcontact-hub/components';
 import {
   ScDatatableComponent as DatatableComponent,
   type ScColumnCellContext,
@@ -24,8 +29,6 @@ import {
 import { IllustratedAvatarComponent } from '@shared/components';
 import {
   ScToggleSwitchComponent as ToggleSwitchComponent,
-  TriState,
-  triStateOf,
   ScCheckboxComponent as CheckboxComponent,
 } from '@smartcontact-hub/components';
 
@@ -52,39 +55,39 @@ interface VisibleRow {
 }
 
 /**
- * Per-(agent, group) permission editor used inside the group form.
+ * Editor de los agentes de un grupo, dentro de su ficha — el gemelo de
+ * `GroupAssignmentTableComponent` (los grupos de un agente), con su misma barra y su
+ * misma tabla:
  *
- * Layout (DD#54):
- *   ┌─────────────────────────────────────────────────────────┐
- *   │ [picker: search + add agent]   N asignados · K sin canal │
- *   ├─────────────────────────────────────────────────────────┤
- *   │ ☐  Agente   │ ☐ Tel │ ☐ Chat │ ☐ Email │  Activo  │     │
- *   │  ▢ A. López │  ☑   │   ☑   │   ☐    │   ●━○   │  ⋮  │
- *   │  ▢ M. Ruiz  │  ☑   │   ☐   │   ☐    │   ●━○   │  ⋮  │
- *   └─────────────────────────────────────────────────────────┘
+ *   [ Buscar agente…     ]  ⚠ 2 sin canal                  [ Añadir agente… ▾ ]
+ *   ☐  Agente          Teléfono   Chat   Activo
+ *   ☐  A. López           ☑        ☑     ●━○    🗑
  *
- * Owns no persistence — the parent (group form) holds the canonical
- * `links` array and writes to `GroupAgentLinksStore` on save. The
- * component emits `linksChange` whenever the user mutates a row.
+ * Una columna por canal DEL GRUPO (un grupo solo de teléfono enseña solo esa), como
+ * la matriz de Contact Center.
  *
- * Channel columns are rendered only for the channels the parent group
- * actually owns (so a phone-only group shows just the Teléfono column).
+ * La casilla del principio de la fila ELIGE agentes para actuar en lote (pausar, quitar
+ * del grupo); las de las columnas son permisos de canal. Se quitó y volvió el mismo día
+ * (2026-09-14): Rafa quiere poder elegir varios, y la cabecera de cada columna ya dice qué
+ * es cada casilla.
  *
- * Selection is internal — the bulk-action bar (rendered by the parent)
- * reads `selectedIds()` and dispatches commands back via outputs.
+ * No persiste nada: el formulario tiene el `links` canónico y lo guarda en
+ * `GroupAgentLinksStore`.
  */
 @Component({
   selector: 'sc-agent-channel-table',
   standalone: true,
   imports: [
-    SearchComponent,
+    BulkActionBarComponent,
     ButtonComponent,
+    CheckboxComponent,
     DatatableComponent,
-    IconComponent,
     IllustratedAvatarComponent,
+    SearchComponent,
+    SelectComponent,
+    TagComponent,
     ToggleSwitchComponent,
     TranslateModule,
-    CheckboxComponent,
   ],
   templateUrl: './agent-channel-table.component.html',
   styleUrl: './agent-channel-table.component.scss',
@@ -106,6 +109,8 @@ export class AgentChannelTableComponent {
 
   private readonly agentTpl =
     viewChild<TemplateRef<ScColumnCellContext<VisibleRow>>>('agentTpl');
+  private readonly channelTpl =
+    viewChild<TemplateRef<ScColumnCellContext<VisibleRow>>>('channelTpl');
   private readonly activeTpl =
     viewChild<TemplateRef<ScColumnCellContext<VisibleRow>>>('activeTpl');
   private readonly actionsTpl =
@@ -120,18 +125,26 @@ export class AgentChannelTableComponent {
           header: this.translate.instant('groups.form.assigned.col_agent'),
           cellTemplate: this.agentTpl(),
         },
+        ...this.groupChannels().map((ch) => ({
+          field: ch,
+          header: this.translate.instant(CHANNEL_LABEL_KEYS[ch]),
+          width: '5.5rem',
+          align: 'center' as const,
+          cellTemplate: this.channelTpl(),
+          stopRowClick: true,
+        })),
         {
           field: 'active',
           header: this.translate.instant('groups.form.assigned.col_active'),
-          width: '7.5rem',
+          width: '5.5rem',
           align: 'center',
           cellTemplate: this.activeTpl(),
         },
         {
           field: 'actions',
           header: '',
-          headerAriaLabel: this.translate.instant('common.bulk.actions_aria'),
-          width: '4rem',
+          headerAriaLabel: this.translate.instant('common.actions'),
+          width: '3.5rem',
           align: 'center',
           cellTemplate: this.actionsTpl(),
           stopRowClick: true,
@@ -140,25 +153,30 @@ export class AgentChannelTableComponent {
     }
   );
 
-  protected readonly rowClass = (row: VisibleRow): string =>
-    row.link.active ? '' : 'actbl__row--paused';
+  readonly groupChannels = input.required<readonly GroupChannel[]>();
+  readonly links = input.required<readonly GroupAgentLink[]>();
+  readonly availableAgents =
+    input.required<readonly AgentChannelTableAgent[]>();
+  readonly groupId = input.required<number>();
+
+  readonly linksChange = output<readonly GroupAgentLink[]>();
+
+  protected readonly trashIcon = 'delete';
+
+  protected readonly bulkEntity = useBulkEntityI18n({
+    singular: 'common.bulk.entity.agent_singular',
+    plural: 'common.bulk.entity.agent_plural',
+  });
 
   protected readonly rowAriaLabel = (row: VisibleRow): string => row.agent.name;
 
-  protected channelKey(ch: GroupChannel): string {
-    return CHANNEL_LABEL_KEYS[ch];
-  }
+  /** Los agentes elegidos, por id. Se conservan aunque el filtro los esconda. */
+  protected readonly selectedIds = signal<ReadonlySet<number>>(new Set());
 
-  /* ── El adaptador entre el `Set<number>` de este editor y la selección por
-   * FILAS del `sc-datatable`. Baja solo lo visible, porque la casilla de
-   * cabecera de PrimeNG decide "están todas" comparando tamaños contra `value`.
-   *
-   * ⚠️ UNA DIFERENCIA DELIBERADA, y va escrita porque cambia lo que ve el
-   * usuario: al SUBIR se conservan las elegidas que la búsqueda esté ocultando.
-   * Antes los dos caminos no decían lo mismo — `toggleSelect` (una fila) sí las
-   * conservaba y `toggleSelectAllVisible(false)` (vaciar desde la cabecera)
-   * borraba el Set ENTERO, ocultas incluidas. Ahora los dos conservan, que es el
-   * lado que no destruye una elección que el usuario no puede ver. */
+  /* El adaptador entre el `Set` y la selección por FILAS de `sc-datatable`: baja solo lo
+   * visible (la casilla de cabecera decide «todas» comparando con `value`) y al subir
+   * conserva lo que la búsqueda esconde, que es el lado que no destruye una elección que
+   * el usuario no ve. */
   protected readonly selectedRows = computed<readonly VisibleRow[]>(() => {
     const sel = this.selectedIds();
     return this.visibleRows().filter((r) => sel.has(r.agent.id));
@@ -177,33 +195,30 @@ export class AgentChannelTableComponent {
     });
   }
 
-  readonly groupChannels = input.required<readonly GroupChannel[]>();
-  readonly links = input.required<readonly GroupAgentLink[]>();
-  readonly availableAgents =
-    input.required<readonly AgentChannelTableAgent[]>();
-  readonly groupId = input.required<number>();
+  protected clearSelection(): void {
+    this.selectedIds.set(new Set());
+  }
 
-  readonly linksChange = output<readonly GroupAgentLink[]>();
+  /** En lote: pausa a los elegidos en este grupo. */
+  protected bulkPause(): void {
+    const sel = this.selectedIds();
+    if (sel.size === 0) return;
+    this.linksChange.emit(this.links().map((l) => (sel.has(l.agentId) ? { ...l, active: false } : l)));
+  }
 
-  protected readonly plusIcon = 'add';
-  protected readonly searchIcon = 'search';
-  protected readonly closeIcon = 'close';
-  protected readonly trashIcon = 'delete';
-  protected readonly checkIcon = 'check';
-  protected readonly emptyIcon = 'headphones';
-  protected readonly channelKeys = CHANNEL_LABEL_KEYS;
+  /** En lote: quita a los elegidos del grupo. */
+  protected bulkUnassign(): void {
+    const sel = this.selectedIds();
+    if (sel.size === 0) return;
+    this.linksChange.emit(this.links().filter((l) => !sel.has(l.agentId)));
+    this.clearSelection();
+  }
 
-  /**
-   * Unified search/add query (Gmail-compose pattern). One field drives two
-   * concurrent behaviours so the user never has to choose where to type:
-   *   - filters the *assigned* rows visible in the table;
-   *   - surfaces a "+ Añadir" suggestion strip below the input for any
-   *     roster member that matches but isn't yet in the group.
-   * Replaces the previous double `pickerQuery` / `searchQuery` pair, which
-   * looked visually identical and forced the user to memorise their roles.
-   */
+  /** Filtro de las filas asignadas. Añadir va por su desplegable, aparte: un solo campo
+   *  para las dos cosas obligaba a adivinar qué haría Enter. */
   protected readonly query = signal('');
-  protected readonly selectedIds = signal<ReadonlySet<number>>(new Set());
+  /** El desplegable de «Añadir» vuelve a vacío después de cada alta. */
+  protected readonly addPick = signal<number | null>(null);
 
   /** Map agentId → AgentChannelTableAgent for fast row hydration. */
   private readonly agentById = computed(() => {
@@ -232,22 +247,10 @@ export class AgentChannelTableComponent {
     );
   });
 
-  /**
-   * "Add" suggestions: roster members that match the query AND are not yet
-   * assigned. Capped at 5 so the suggestion strip stays a single readable
-   * row even on small viewports. Empty when the query is empty (the bar
-   * stays hidden — no value in promoting random suggestions out of context).
-   */
-  protected readonly addCandidates = computed<
-    readonly AgentChannelTableAgent[]
-  >(() => {
-    const q = this.query().trim().toLowerCase();
-    if (!q) return [];
+  /** Los agentes que aún se pueden añadir (el desplegable filtra por su cuenta). */
+  protected readonly addCandidates = computed<readonly AgentChannelTableAgent[]>(() => {
     const used = new Set(this.links().map((l) => l.agentId));
-    return this.availableAgents()
-      .filter((a) => !used.has(a.id))
-      .filter((a) => a.name.toLowerCase().includes(q))
-      .slice(0, 5);
+    return this.availableAgents().filter((a) => !used.has(a.id));
   });
 
   /** Counter — how many active rows have zero channels (the soft warning). */
@@ -257,23 +260,8 @@ export class AgentChannelTableComponent {
     ).length;
   });
 
-  /** All visible row ids (used by select-all). */
-  protected readonly visibleIds = computed(() =>
-    this.visibleRows().map((r) => r.agent.id)
-  );
-
-  protected readonly allVisibleSelected = computed<TriState>(() => {
-    const visible = this.visibleIds();
-    const sel = this.selectedIds();
-
-    return triStateOf(
-      visible.filter((id) => sel.has(id)).length,
-      visible.length
-    );
-  });
-
-  protected hasChannel(link: GroupAgentLink, channel: Channel): boolean {
-    return link.channels.includes(channel);
+  protected hasChannel(link: GroupAgentLink, channel: string): boolean {
+    return link.channels.includes(channel as Channel);
   }
 
   // -- mutations -----------------------------------------------------
@@ -288,15 +276,27 @@ export class AgentChannelTableComponent {
       active: true,
     };
     this.linksChange.emit([...this.links(), link]);
-    this.query.set('');
+  }
+
+  protected onAddPick(value: unknown): void {
+    const agent = this.availableAgents().find((a) => a.id === value);
+    if (agent) this.addAgent(agent);
+    this.addPick.set(null);
   }
 
   protected removeRow(agentId: number): void {
     this.linksChange.emit(this.links().filter((l) => l.agentId !== agentId));
-    this.deselect(agentId);
+    if (this.selectedIds().has(agentId)) {
+      this.selectedIds.update((prev) => {
+        const next = new Set(prev);
+        next.delete(agentId);
+        return next;
+      });
+    }
   }
 
-  protected toggleChannel(agentId: number, channel: Channel): void {
+  protected toggleChannel(agentId: number, field: string): void {
+    const channel = field as Channel;
     this.linksChange.emit(
       this.links().map((l) => {
         if (l.agentId !== agentId) return l;
@@ -313,80 +313,6 @@ export class AgentChannelTableComponent {
     this.linksChange.emit(
       this.links().map((l) => (l.agentId === agentId ? { ...l, active } : l))
     );
-  }
-
-  /** Bulk: pause all selected (active = false). */
-  protected bulkPause(): void {
-    const sel = this.selectedIds();
-    if (sel.size === 0) return;
-    this.linksChange.emit(
-      this.links().map((l) =>
-        sel.has(l.agentId) ? { ...l, active: false } : l
-      )
-    );
-  }
-
-  /** Bulk: unassign all selected. */
-  protected bulkUnassign(): void {
-    const sel = this.selectedIds();
-    if (sel.size === 0) return;
-    this.linksChange.emit(this.links().filter((l) => !sel.has(l.agentId)));
-    this.selectedIds.set(new Set());
-  }
-
-  // -- selection -----------------------------------------------------
-
-  protected toggleSelect(agentId: number): void {
-    this.selectedIds.update((prev) => {
-      const next = new Set(prev);
-      if (next.has(agentId)) next.delete(agentId);
-      else next.add(agentId);
-      return next;
-    });
-  }
-
-  protected toggleSelectAllVisible(on: boolean): void {
-    if (!on) {
-      this.selectedIds.set(new Set());
-      return;
-    }
-    this.selectedIds.set(new Set(this.visibleIds()));
-  }
-
-  protected isSelected(agentId: number): boolean {
-    return this.selectedIds().has(agentId);
-  }
-
-  private deselect(agentId: number): void {
-    if (!this.selectedIds().has(agentId)) return;
-    this.selectedIds.update((prev) => {
-      const next = new Set(prev);
-      next.delete(agentId);
-      return next;
-    });
-  }
-
-  // -- query input ---------------------------------------------------
-
-  protected onQueryChange(value: string): void {
-    this.query.set(value);
-  }
-
-  protected clearQuery(): void {
-    this.query.set('');
-  }
-
-  protected onQueryKeydown(event: KeyboardEvent): void {
-    if (event.key === 'Enter') {
-      event.preventDefault();
-      // Adding has priority over filtering: Enter on a query with an
-      // unambiguous roster suggestion = add it. The filter side-effect
-      // is passive (table already updated), no Enter action needed there.
-      const candidate = this.addCandidates()[0];
-      if (candidate) this.addAgent(candidate);
-    } else if (event.key === 'Escape') {
-      this.clearQuery();
-    }
   }
 
   // -- helpers -------------------------------------------------------

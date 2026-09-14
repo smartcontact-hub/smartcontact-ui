@@ -221,9 +221,6 @@ export class AgentsListPageComponent {
         field: 'name',
         header: this.translate.instant('agents.table.name'),
         sortable: true,
-        /* Más ancho que el reparto igual (176): cortaba 4 de cada 16 nombres mientras Canales usaba 30 px de
-         * los suyos. El resto de columnas se reparte lo que queda (2026-09-14). */
-        width: 'var(--sc-spacing-18)',
         cellTemplate: this.nameTpl(),
       },
       {
@@ -231,11 +228,16 @@ export class AgentsListPageComponent {
         header: this.translate.instant('agents.table.extension'),
         sortable: true,
         cellTemplate: this.extensionTpl(),
+        /* Anchos MEDIDOS del dato más largo de cada columna corta en los cuatro idiomas (2026-09-14):
+         * el nombre se come el resto y la tabla lleva `tableMinWidth`, así que por debajo se
+         * desplaza en vez de cortar. Antes el nombre iba a 252 y «CusCare Carrier» se cortaba. */
+        width: '8rem',
       },
       {
         field: 'channels',
         header: this.translate.instant('agents.table.channels'),
         cellTemplate: this.channelsTpl(),
+        width: '6.5rem',
       },
       {
         // `field: 'type'` no existe en `Agent` (la propiedad es `agentType`), así
@@ -248,22 +250,26 @@ export class AgentsListPageComponent {
         header: this.translate.instant('agents.table.type'),
         sortable: true,
         cellTemplate: this.typeTpl(),
+        width: '9rem',
       },
       {
         field: 'presence',
         header: this.translate.instant('agents.table.presence'),
         cellTemplate: this.presenceTpl(),
+        width: '10.5rem',
       },
       {
         field: 'status',
         header: this.translate.instant('agents.table.status'),
         sortable: true,
         cellTemplate: this.statusTpl(),
+        width: '7.5rem',
       },
       {
         field: 'groups',
         header: this.translate.instant('agents.table.groups'),
         cellTemplate: this.groupsTpl(),
+        width: '5.5rem',
       },
     ];
   });

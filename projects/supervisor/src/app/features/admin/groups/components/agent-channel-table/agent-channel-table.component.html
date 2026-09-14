@@ -1,58 +1,49 @@
-<div class="actbl">
-  <!-- Unified search + add bar (Gmail-compose pattern) -->
-  <div class="actbl__head">
-    <div class="actbl__query">
-      <sc-search [placeholder]="'groups.form.assigned.query_placeholder' | translate" [value]="query()" (valueChange)="onQueryChange($event)" (keydown)="onQueryKeydown($event)" [clearAriaLabel]="'labels.clear_search' | translate" />
-    </div>
-
-    <span class="actbl__counter sc-text-caption-regular">
-      {{
-        'groups.form.assigned.counter'
-          | translate: { assigned: assignedRows().length, zero: zeroChannelCount() }
-      }}
-    </span>
+<!-- Misma barra que el editor hermano (los grupos de un agente): filtrar a la
+     izquierda, recuento, y «Añadir» con el desplegable del DS a la derecha. -->
+<div class="assign" [class.assign--bulk]="selectedIds().size > 0">
+  <div class="assign__bar">
+    <sc-search
+      class="assign__search"
+      [placeholder]="'groups.form.assigned.query_placeholder' | translate"
+      [clearAriaLabel]="'labels.clear_search' | translate"
+      [value]="query()"
+      (valueChange)="query.set($event)"
+    />
+    <!-- Sin contador fijo: «12 asignados» lo dice la propia lista, y «0 sin canales»
+         era un cero que había que leer para descartarlo. Solo se habla cuando hay
+         algo que decir: el filtro esconde filas, o hay agentes activos sin canal. -->
+    @if (query().trim()) {
+      <span class="assign__counter sc-text-caption-regular">
+        {{ 'common.filter_count' | translate: { shown: visibleRows().length, total: assignedRows().length } }}
+      </span>
+    }
+    @if (zeroChannelCount() > 0) {
+      <sc-tag severity="warn" icon="warning" [value]="'groups.form.assigned.no_channels_warn' | translate: { count: zeroChannelCount() }" />
+    }
+    <span id="group-add-agent-label" class="visually-hidden">{{ 'groups.form.assigned.add_aria' | translate }}</span>
+    <sc-select
+      class="assign__add"
+      inputId="group-add-agent"
+      ariaLabelledBy="group-add-agent-label"
+      optionLabel="name"
+      optionValue="id"
+      [filter]="true"
+      filterBy="name"
+      [options]="addCandidates()"
+      [placeholder]="'groups.form.assigned.add_placeholder' | translate"
+      [value]="addPick()"
+      (valueChange)="onAddPick($event)"
+    />
   </div>
 
-  <!-- "Add to group" suggestion strip — appears only when the query has
-       matches in the roster that aren't already assigned. -->
-  @if (addCandidates().length > 0) {
-    <div class="actbl__suggest">
-      <span class="actbl__suggest-label sc-text-caption-regular">
-        {{ 'groups.form.assigned.add_suggest' | translate }}
-      </span>
-      <div class="actbl__suggest-chips">
-        @for (cand of addCandidates(); track cand.id) {
-          <button
-            type="button"
-            class="actbl__suggest-chip"
-            (click)="addAgent(cand)"
-            [attr.aria-label]="
-              'groups.form.assigned.add_suggest_aria' | translate: { name: cand.name }
-            "
-          >
-            <sc-icon [name]="plusIcon" size="inherit" />
-            <span>{{ cand.name }}</span>
-          </button>
-        }
-      </div>
-    </div>
-  }
-
-  <!-- Table -->
-  @if (assignedRows().length === 0) {
-    <div class="actbl__empty">
-      <span class="actbl__empty-icon" aria-hidden="true">
-        <sc-icon [name]="emptyIcon" [size]="22" />
-      </span>
-      <p class="actbl__empty-title sc-text-body-semibold">{{ 'groups.form.assigned.empty_title' | translate }}</p>
-      <p class="actbl__empty-body sc-text-caption-regular">{{ 'groups.form.assigned.empty' | translate }}</p>
-    </div>
-  } @else {
+  <!-- La tabla SIEMPRE, también vacía: sus columnas ya enseñan qué se va a rellenar, y
+       el vacío es una línea dentro de ella. Hasta el 2026-09-14 era `sc-empty-state`, un
+       círculo con icono y mucho aire que ocupaba media tarjeta para decir una frase. -->
+  <div class="table-card">
     <sc-datatable
       variant="list"
       [value]="visibleRows()"
       [columns]="columns()"
-      [rowStyleClass]="rowClass"
       dataKey="agent.id"
       selectionMode="multiple"
       [selection]="selectedRows()"
@@ -60,60 +51,42 @@
       [rowSelectionAriaLabel]="rowAriaLabel"
       [selectAllAriaLabel]="'labels.select_all' | translate"
     >
-      <div scTableEmpty>{{ 'groups.form.assigned.no_results' | translate }}</div>
-    </sc-datatable>
-
-    @if (selectedIds().size > 0) {
-      <div
-        class="actbl__bulkbar"
-        role="region"
-        [attr.aria-label]="'common.bulk.actions_aria' | translate"
-      >
-        <span class="actbl__bulk-count">
-          {{ 'groups.form.assigned.bulk_count' | translate: { count: selectedIds().size } }}
-        </span>
-        <sc-button type="button" variant="secondary" size="sm" (clicked)="bulkPause()">
-          <span>{{ 'groups.form.assigned.bulk_pause' | translate }}</span>
-        </sc-button>
-        <sc-button type="button" variant="danger" size="sm" (clicked)="bulkUnassign()">
-          <span>{{ 'groups.form.assigned.bulk_unassign' | translate }}</span>
-        </sc-button>
+      <div scTableEmpty class="assign__no-results sc-text-body-regular">
+        @if (assignedRows().length === 0) {
+          <span class="assign__empty-title sc-text-body-semibold">{{ 'groups.form.assigned.empty_title' | translate }}</span>
+          {{ 'groups.form.assigned.empty' | translate }}
+        } @else {
+          {{ 'groups.form.assigned.no_results' | translate }}
+        }
       </div>
-    }
-  }
+    </sc-datatable>
+  </div>
 </div>
 
+<!-- Elegir varios agentes y actuar en lote: la barra de las listas, no una a mano (la de antes
+     pintaba su fondo con un color de PALETA que no voltea en oscuro). Rafa, 2026-09-14: «sí me
+     gustaría poder seleccionar varios agentes en grupos». -->
+<sc-bulk-action-bar [count]="selectedIds().size" [entity]="bulkEntity()" (clear)="clearSelection()">
+  <sc-button type="button" variant="secondary" appearance="outlined" [label]="'groups.form.assigned.bulk_pause' | translate" (clicked)="bulkPause()" />
+  <sc-button type="button" variant="danger" [label]="'groups.form.assigned.bulk_unassign' | translate" (clicked)="bulkUnassign()" />
+</sc-bulk-action-bar>
 
 <!-- Celdas del editor. Fuera del `<sc-datatable>` para que `viewChild` las resuelva. -->
 <ng-template #agentTpl let-row>
-  <span class="actbl__td-name">
+  <span class="assign__name">
     <sc-illustrated-avatar [name]="row.agent.name" pool="illustrated" [size]="24" />
-    <span class="actbl__name-label" [title]="row.agent.name">{{ row.agent.name }}</span>
-    <span class="channel-chips">
-      @for (ch of groupChannels(); track ch) {
-        <label
-          class="channel-chip"
-          [class.channel-chip--on]="hasChannel(row.link, ch)"
-          [class.channel-chip--off]="!hasChannel(row.link, ch)"
-          [class.channel-chip--disabled]="!row.link.active"
-        >
-          <input
-            type="checkbox"
-            [checked]="hasChannel(row.link, ch)"
-            [disabled]="!row.link.active"
-            (change)="toggleChannel(row.agent.id, ch)"
-            [attr.aria-label]="row.agent.name + ' — ' + (channelKey(ch) | translate)"
-          />
-          <sc-icon
-            [name]="hasChannel(row.link, ch) ? checkIcon : plusIcon"
-            size="inherit"
-            class="channel-chip__icon"
-          />
-          <span>{{ channelKey(ch) | translate }}</span>
-        </label>
-      }
-    </span>
+    <span class="assign__name-label sc-text-body-semibold" [title]="row.agent.name">{{ row.agent.name }}</span>
   </span>
+</ng-template>
+
+<!-- Una columna por canal DEL GRUPO, como la matriz de Contact Center. -->
+<ng-template #channelTpl let-row let-col="col">
+  <sc-checkbox
+    [state]="hasChannel(row.link, col.field) ? 'all' : 'none'"
+    [disabled]="!row.link.active"
+    [ariaLabel]="row.agent.name + ' — ' + col.header"
+    (cycle)="toggleChannel(row.agent.id, col.field)"
+  />
 </ng-template>
 
 <ng-template #activeTpl let-row>
