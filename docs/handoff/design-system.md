@@ -308,6 +308,8 @@ variables, 30 comentarios activos.
 
 ## ⚠️ Trampas de este frente
 
+- 🪤 **Un `sc-multiselect` con `[value]` que sale de un método se cuelga**: cada ciclo devuelve un array nuevo, que
+  cuenta como cambio. Dale un `computed` y compara antes de escribir (`labelValue` y `sameValues` en la ficha de agente).
 - 🪤 **El verde LOCAL no cubre los dos primeros metros del CI**, y en s34 mordió dos veces:
   - **`npm ci` es el paso 1 del CI y `preflight` NO lo corre.** Un lockfile desincronizado da
     preflight entero en verde y CI muerto antes de instalar nada. Si tocas `package.json` o el
