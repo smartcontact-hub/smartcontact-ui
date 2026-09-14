@@ -21,21 +21,21 @@ import type { TreeTableDesignTokens } from '@primeuix/themes/types/treetable';
     },
     footer: {
         color: "{content.color}",
-        padding: "var(--sc-scale-0-75) var(--sc-scale-1)",
+        padding: "var(--sc-cmp-treetable-footer-padding-y) var(--sc-cmp-treetable-footer-padding-x)",
         background: "{content.background}",
         borderColor: "{treetable.border.color}",
         borderWidth: "0.071429rem"
     },
     header: {
         color: "{content.color}",
-        padding: "var(--sc-scale-0-75) var(--sc-scale-1)",
+        padding: "var(--sc-cmp-treetable-header-padding-y) var(--sc-cmp-treetable-header-padding-x)",
         background: "{content.background}",
         borderColor: "{treetable.border.color}",
         borderWidth: "0.071429rem"
     },
     bodyCell: {
         gap: "var(--sc-cmp-treetable-body-cell-gap)",
-        padding: "var(--sc-scale-0-75) var(--sc-scale-1)",
+        padding: "var(--sc-cmp-treetable-body-cell-padding-y) var(--sc-cmp-treetable-body-cell-padding-x)",
         borderColor: "{treetable.border.color}"
     },
     sortIcon: {
@@ -45,14 +45,14 @@ import type { TreeTableDesignTokens } from '@primeuix/themes/types/treetable';
     },
     footerCell: {
         color: "{content.color}",
-        padding: "var(--sc-scale-0-75) var(--sc-scale-1)",
+        padding: "var(--sc-cmp-treetable-footer-cell-padding-y) var(--sc-cmp-treetable-footer-cell-padding-x)",
         background: "{content.background}",
         borderColor: "{treetable.border.color}"
     },
     headerCell: {
         gap: "var(--sc-cmp-treetable-header-cell-gap)",
         color: "{content.color}",
-        padding: "var(--sc-scale-0-75) var(--sc-scale-1)",
+        padding: "var(--sc-cmp-treetable-header-cell-padding-y) var(--sc-cmp-treetable-header-cell-padding-x)",
         focusRing: {
             color: "{focus.ring.color}",
             style: "{focus.ring.style}",

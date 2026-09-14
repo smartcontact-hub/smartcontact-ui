@@ -3,14 +3,14 @@ import type { OrganizationChartDesignTokens } from '@primeuix/themes/types/organ
  export default {
     node: {
         color: "{content.color}",
-        padding: "var(--sc-scale-0-75) var(--sc-scale-1)",
+        padding: "var(--sc-cmp-organizationchart-node-padding-y) var(--sc-cmp-organizationchart-node-padding-x)",
         background: "{content.background}",
         hoverColor: "{content.hover.color}",
         borderColor: "{content.border.color}",
         borderRadius: "{content.border.radius}",
         selectedColor: "{highlight.color}",
         hoverBackground: "{content.hover.background}",
-        toggleablePadding: "var(--sc-scale-0-75) var(--sc-scale-1) var(--sc-scale-1-25)",
+        toggleablePadding: "var(--sc-cmp-organizationchart-node-toggleable-padding-top) var(--sc-cmp-organizationchart-node-toggleable-padding-right) var(--sc-cmp-organizationchart-node-toggleable-padding-bottom) var(--sc-cmp-organizationchart-node-toggleable-padding-left)",
         selectedBackground: "{highlight.background}"
     },
     root: {

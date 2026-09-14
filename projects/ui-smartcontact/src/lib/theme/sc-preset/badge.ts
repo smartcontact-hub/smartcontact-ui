@@ -3,17 +3,17 @@ import type { BadgeDesignTokens } from '@primeuix/themes/types/badge';
  export default {
     lg: {
         height: "var(--sc-cmp-badge-lg-height)",
-        fontSize: "var(--sc-scale-0-875)",
+        fontSize: "var(--sc-cmp-badge-lg-font-size)",
         minWidth: "var(--sc-cmp-badge-lg-min-width)"
     },
     sm: {
         height: "var(--sc-cmp-badge-sm-height)",
-        fontSize: "var(--sc-scale-0-625)",
+        fontSize: "var(--sc-cmp-badge-sm-font-size)",
         minWidth: "var(--sc-cmp-badge-sm-min-width)"
     },
     xl: {
         height: "var(--sc-cmp-badge-xl-height)",
-        fontSize: "var(--sc-scale-1)",
+        fontSize: "var(--sc-cmp-badge-xl-font-size)",
         minWidth: "var(--sc-cmp-badge-xl-min-width)"
     },
     dot: {
@@ -21,8 +21,8 @@ import type { BadgeDesignTokens } from '@primeuix/themes/types/badge';
     },
     root: {
         height: "var(--sc-cmp-badge-height)",
-        padding: "0 var(--sc-scale-0-5)",
-        fontSize: "var(--sc-scale-0-75)",
+        padding: "var(--sc-cmp-badge-padding-y) var(--sc-cmp-badge-padding-x)",
+        fontSize: "var(--sc-cmp-badge-font-size)",
         minWidth: "var(--sc-cmp-badge-min-width)",
         fontWeight: "700",
         borderRadius: "{border.radius.md}"

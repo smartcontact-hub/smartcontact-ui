@@ -10,7 +10,7 @@ import type { StepperDesignTokens } from '@primeuix/themes/types/stepper';
     },
     separator: {
         size: "0.142857rem",
-        margin: "0 0 0 var(--sc-scale-1-625)",
+        margin: "var(--sc-cmp-stepper-separator-margin-top) var(--sc-cmp-stepper-separator-margin-right) var(--sc-cmp-stepper-separator-margin-bottom) var(--sc-cmp-stepper-separator-margin-left)",
         background: "{content.border.color}",
         activeBackground: "{primary.color}"
     },
@@ -51,6 +51,6 @@ import type { StepperDesignTokens } from '@primeuix/themes/types/stepper';
         activeBorderColor: "{content.border.color}"
     },
     steppanels: {
-        padding: "var(--sc-scale-0-875) var(--sc-scale-0-5) var(--sc-scale-1-125)"
+        padding: "var(--sc-cmp-stepper-steppanels-padding-top) var(--sc-cmp-stepper-steppanels-padding-right) var(--sc-cmp-stepper-steppanels-padding-bottom) var(--sc-cmp-stepper-steppanels-padding-left)"
     }
 } satisfies StepperDesignTokens;

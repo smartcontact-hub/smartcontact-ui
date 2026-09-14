@@ -4,7 +4,7 @@ import type { PaginatorDesignTokens } from '@primeuix/themes/types/paginator';
     root: {
         gap: "var(--sc-cmp-paginator-gap)",
         color: "{content.color}",
-        padding: "var(--sc-scale-0-5) var(--sc-scale-1)",
+        padding: "var(--sc-cmp-paginator-padding-y) var(--sc-cmp-paginator-padding-x)",
         background: "{content.background}",
         borderRadius: "{content.border.radius}",
         transitionDuration: "{transition.duration}"

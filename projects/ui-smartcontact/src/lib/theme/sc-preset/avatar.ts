@@ -10,7 +10,7 @@ import type { AvatarDesignTokens } from '@primeuix/themes/types/avatar';
         },
         width: "var(--sc-cmp-avatar-lg-width)",
         height: "var(--sc-cmp-avatar-lg-height)",
-        fontSize: "var(--sc-scale-1-5)"
+        fontSize: "var(--sc-cmp-avatar-lg-font-size)"
     },
     xl: {
         icon: {
@@ -21,7 +21,7 @@ import type { AvatarDesignTokens } from '@primeuix/themes/types/avatar';
         },
         width: "var(--sc-cmp-avatar-xl-width)",
         height: "var(--sc-cmp-avatar-xl-height)",
-        fontSize: "var(--sc-scale-2)"
+        fontSize: "var(--sc-cmp-avatar-xl-font-size)"
     },
     icon: {
         size: "var(--sc-cmp-avatar-icon-size)"
@@ -30,7 +30,7 @@ import type { AvatarDesignTokens } from '@primeuix/themes/types/avatar';
         color: "{content.color}",
         width: "var(--sc-cmp-avatar-width)",
         height: "var(--sc-cmp-avatar-height)",
-        fontSize: "var(--sc-scale-1)",
+        fontSize: "var(--sc-cmp-avatar-font-size)",
         background: "{content.border.color}",
         borderRadius: "{content.border.radius}"
     },

@@ -19,7 +19,7 @@ import type { MenubarDesignTokens } from '@primeuix/themes/types/menubar';
     root: {
         gap: "var(--sc-cmp-menubar-gap)",
         color: "{content.color}",
-        padding: "var(--sc-scale-0-5) var(--sc-scale-0-75)",
+        padding: "var(--sc-cmp-menubar-padding-y) var(--sc-cmp-menubar-padding-x)",
         background: "{content.background}",
         borderColor: "{content.border.color}",
         borderRadius: "{content.border.radius}",

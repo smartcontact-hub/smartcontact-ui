@@ -12,7 +12,7 @@ import type { FloatLabelDesignTokens } from '@primeuix/themes/types/floatlabel';
     },
     on: {
         active: {
-            padding: "0 var(--sc-scale-0-125)",
+            padding: "var(--sc-cmp-floatlabel-on-active-padding-y) var(--sc-cmp-floatlabel-on-active-padding-x)",
             background: "{form.field.background}"
         },
         borderRadius: "{border.radius.xs}"

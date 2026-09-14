@@ -6,12 +6,12 @@ import type { TimelineDesignTokens } from '@primeuix/themes/types/timeline';
     },
     vertical: {
         eventContent: {
-            padding: "0 var(--sc-scale-1)"
+            padding: "var(--sc-cmp-timeline-vertical-event-content-padding-y) var(--sc-cmp-timeline-vertical-event-content-padding-x)"
         }
     },
     horizontal: {
         eventContent: {
-            padding: "var(--sc-scale-1) 0"
+            padding: "var(--sc-cmp-timeline-horizontal-event-content-padding-y) var(--sc-cmp-timeline-horizontal-event-content-padding-x)"
         }
     },
     eventMarker: {

@@ -97,7 +97,7 @@ import type { GalleriaDesignTokens } from '@primeuix/themes/types/galleria';
         activeBackground: "{primary.color}"
     },
     thumbnailsContent: {
-        padding: "var(--sc-scale-1) var(--sc-scale-0-25)",
+        padding: "var(--sc-cmp-galleria-thumbnails-content-padding-y) var(--sc-cmp-galleria-thumbnails-content-padding-x)",
         background: "{content.background}"
     },
     insetIndicatorList: {

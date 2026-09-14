@@ -29,7 +29,7 @@ import type { MegaMenuDesignTokens } from '@primeuix/themes/types/megamenu';
         },
         horizontalOrientation: {
             gap: "var(--sc-cmp-megamenu-horizontal-orientation-gap)",
-            padding: "var(--sc-scale-0-5) var(--sc-scale-0-75)"
+            padding: "var(--sc-cmp-megamenu-horizontal-orientation-padding-y) var(--sc-cmp-megamenu-horizontal-orientation-padding-x)"
         }
     },
     overlay: {

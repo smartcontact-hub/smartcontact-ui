@@ -32,12 +32,12 @@ import type { ToggleButtonDesignTokens } from '@primeuix/themes/types/togglebutt
     },
     content: {
         lg: {
-            padding: "var(--sc-scale-0-25) var(--sc-scale-0-75)"
+            padding: "var(--sc-cmp-togglebutton-content-lg-padding-y) var(--sc-cmp-togglebutton-content-lg-padding-x)"
         },
         sm: {
-            padding: "var(--sc-scale-0-25) var(--sc-scale-0-75)"
+            padding: "var(--sc-cmp-togglebutton-content-sm-padding-y) var(--sc-cmp-togglebutton-content-sm-padding-x)"
         },
-        padding: "var(--sc-scale-0-25) var(--sc-scale-0-75)",
+        padding: "var(--sc-cmp-togglebutton-content-padding-y) var(--sc-cmp-togglebutton-content-padding-x)",
         borderRadius: "{content.border.radius}",
         checkedShadow: "0 0.071429rem 0.142857rem 0 #0000000a, 0 0.071429rem 0.142857rem 0 #00000005"
     },

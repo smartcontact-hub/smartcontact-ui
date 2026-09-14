@@ -30,7 +30,7 @@ import type { FileUploadDesignTokens } from '@primeuix/themes/types/fileupload';
     },
     content: {
         gap: "var(--sc-cmp-fileupload-content-gap)",
-        padding: "0 var(--sc-scale-1-125) var(--sc-scale-1-125)",
+        padding: "var(--sc-cmp-fileupload-content-padding-top) var(--sc-cmp-fileupload-content-padding-right) var(--sc-cmp-fileupload-content-padding-bottom) var(--sc-cmp-fileupload-content-padding-left)",
         highlightBorderColor: "{primary.color}"
     },
     fileList: {

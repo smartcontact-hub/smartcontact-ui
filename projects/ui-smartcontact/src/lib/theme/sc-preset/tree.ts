@@ -4,7 +4,7 @@ import type { TreeDesignTokens } from '@primeuix/themes/types/tree';
     node: {
         gap: "var(--sc-cmp-tree-node-gap)",
         color: "{text.color}",
-        padding: "var(--sc-scale-0-25) var(--sc-scale-0-5)",
+        padding: "var(--sc-cmp-tree-node-padding-y) var(--sc-cmp-tree-node-padding-x)",
         focusRing: {
             color: "{focus.ring.color}",
             style: "{focus.ring.style}",

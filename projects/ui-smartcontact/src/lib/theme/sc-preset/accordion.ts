@@ -46,7 +46,7 @@ import type { AccordionDesignTokens } from '@primeuix/themes/types/accordion';
     },
     content: {
         color: "{text.color}",
-        padding: "0 var(--sc-scale-1-125) var(--sc-scale-1-125)",
+        padding: "var(--sc-cmp-accordion-content-padding-top) var(--sc-cmp-accordion-content-padding-right) var(--sc-cmp-accordion-content-padding-bottom) var(--sc-cmp-accordion-content-padding-left)",
         background: "{content.background}",
         borderColor: "{content.border.color}",
         borderWidth: "0"
