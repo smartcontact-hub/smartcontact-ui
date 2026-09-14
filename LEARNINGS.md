@@ -74,9 +74,10 @@
    ahogada por procesos huérfanos TUYOS (`ps`, `lsof`, mata, repite). Si tras culpar a la carga el
    test afirmaba sobre algo TRANSITORIO, la carga es el cuándo y no el porqué: arregla la aserción
    (`watchTransient()` en `e2e/cuscare/helpers.ts`). ¿Warning mío o preexistente? Stash y
-   reproduce, no opines. ⚙️ El hook de compactación avisa si la guía cambió en `origin/main`.
-   Evidencia: s12 icono en 24 con el fuente en 14 · s18 tres rondas contra un bundle viejo · s29
-   "bugs" del deploy de Carlos que nuestro build no tenía · s30 overlay de 380 ms con load 51.
+   reproduce, no opines. ⚙️ Compactación avisa si la guía cambió en `origin/main`; `bash-guard`
+   deniega Playwright con el DS más nuevo que `dist/`.
+   Evidencia: s12 icono en 24 con el fuente en 14 · s18 tres rondas contra un bundle viejo · s30
+   overlay de 380 ms con load 51 · 2026-09-14 «falla 4/4 con la clave» era el MISMO `dist/`.
 
 19. **Elige el validador por la PREGUNTA, y ninguno contesta la de usabilidad.** ¿El gesto hace lo
    que digo? → Playwright con clic REAL: `dispatchEvent` y un unitario a pelo se saltan el

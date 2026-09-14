@@ -92,6 +92,20 @@ test('#5 build durante un preflight → deny; sin preflight vivo, o con sc:ok �
   allow('ls -d dist/*', corriendo);
 });
 
+test('#5 Playwright con el DS editado después del último `dist/` → deny; con dist al día, sin e2e o sc:ok → allow', () => {
+  const rancio = { ...verde, distRancio: () => 'projects/ui-smartcontact/src/lib/theme/sc-preset/index.ts' };
+  const alDia = { ...verde, distRancio: () => null };
+  deny('npx playwright test e2e/components.spec.ts -g "MVP" --reporter=line', rancio, /LEARNINGS #5/);
+  deny('SC_SUPERVISOR_URL=http://localhost:4417 npx playwright test -c playwright.supervisor.config.ts theme-contrast', rancio, /dist/);
+  deny('npm run e2e:visual', rancio, /build:components/);
+  allow('npx playwright test e2e/components.spec.ts', alDia);
+  allow('npx playwright test e2e/components.spec.ts # sc:ok', rancio);
+  // Vecinos: leer el informe, construir o servir no miden nada.
+  allow('npx playwright show-report', rancio);
+  allow('npm run build:components', { ...rancio, preflightVivo: () => false });
+  allow('npx ng serve supervisor --port 4417', rancio);
+});
+
 test('#11 formateador ajeno: `prettier --write` sin config del repo → deny; con config, `--check` o sc:ok → allow', () => {
   const sinConfig = { ...verde, usaPrettier: () => false };
   const conConfig = { ...verde, usaPrettier: () => true };

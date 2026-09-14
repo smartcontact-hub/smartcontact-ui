@@ -116,6 +116,32 @@ const esPushDeCommits = (seg) =>
 /** Reconstruyen `dist/`: si corren a la vez que un preflight, se lo comen bajo los pies. */
 const BUILDS = /^(npm run (?:-[-a-z]+ )*build(:[a-z-]+)?|ng build)\b/;
 
+/** Lanzan Playwright contra apps que leen el DS de `dist/` (paths del tsconfig), no del fuente. */
+const E2E = /^(npx\s+playwright\s+test|npm run (?:-[-a-z]+ )*e2e(:[a-z-]+)?)\b/;
+
+/**
+ * ¿Hay un fichero del DS editado DESPUÉS del último build de `dist/ui-smartcontact`? Devuelve su
+ * ruta (el primero que encuentra) o null. Sin `dist/` no opina: el server ya falla con su mensaje.
+ */
+function distRancio(cwd) {
+  const { existsSync, statSync, readdirSync } = fsSync;
+  const marca = resolve(cwd, 'dist/ui-smartcontact/package.json');
+  const raiz = resolve(cwd, 'projects/ui-smartcontact/src');
+  if (!existsSync(marca) || !existsSync(raiz)) return null;
+  const construido = statSync(marca).mtimeMs;
+  const pendientes = [raiz];
+  while (pendientes.length) {
+    const dir = pendientes.pop();
+    for (const e of readdirSync(dir, { withFileTypes: true })) {
+      const p = resolve(dir, e.name);
+      if (e.isDirectory()) pendientes.push(p);
+      else if (/\.(ts|scss|css|html)$/.test(e.name) && !e.name.endsWith('.spec.ts') && statSync(p).mtimeMs > construido)
+        return p.slice(cwd.length + 1);
+    }
+  }
+  return null;
+}
+
 /**
  * ¿Hay un preflight vivo AHORA sobre ESTE árbol?
  *
@@ -256,6 +282,26 @@ function evaluarBase(cmd, ctx = {}) {
         "`Cannot find module '@smartcontact-hub/icons'`, que parece una dependencia rota y es tu build. " +
         'Espera a que termine (o párala) y construye después. Si sabes que ese preflight ya no importa, añade `# sc:ok`.',
     };
+
+  // #5 — medir el DS con un `dist/` más viejo que tu edición.
+  //
+  // Las apps (y sc-docs) importan `@smartcontact-hub/components` de `dist/ui-smartcontact`, y
+  // `ng serve` no vigila `dist/`. Editar el preset o un componente y lanzar Playwright sin
+  // reconstruir mide el DS de ANTES, y el resultado se lee como si fuera el tuyo. El 2026-09-14
+  // costó un «con la clave falla 4/4, sin ella pasa 1/1» que era el mismo `dist/` en las dos
+  // pasadas, un arreglo mudado a otro fichero por esa falsa causa y un «75 de 75» que no incluía
+  // los cambios de componentes. Solo se vio al medir una variable y encontrarla sin cambiar.
+  if (segs.some((s) => empiezaPor(s, E2E))) {
+    const rancio = (ctx.distRancio || distRancio)(cwd);
+    if (rancio)
+      return {
+        decision: 'deny',
+        reason:
+          `LEARNINGS #5 — \`${rancio}\` es más nuevo que \`dist/ui-smartcontact\`, y las apps leen el DS de \`dist/\`: ` +
+          'este Playwright mediría el DS de ANTES de tu edición. Haz `npm run build:components` y REINICIA el `ng serve` ' +
+          'que vayas a usar (no vigila `dist/`). Si mides a propósito un build viejo, añade `# sc:ok`.',
+      };
+  }
 
   // #11 — un formateador que el repo NO adopta reescribe ficheros enteros que no tocabas.
   //
