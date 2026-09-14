@@ -50,7 +50,7 @@
            cabecera oscura, distinta de las demás tablas de administración.
            `[visibleColumns]` es lo que hace que la tabla obedezca al
            `sc-column-selector`: su `key` es nuestro `field`. -->
-      <div class="table-card">
+      <div class="table-card" [class.table-card--seleccion]="selectedAgents().length > 0">
         <sc-datatable
           variant="list"
           [value]="sorted()"

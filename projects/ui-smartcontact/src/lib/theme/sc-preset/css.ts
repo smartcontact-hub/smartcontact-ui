@@ -310,6 +310,32 @@ ${STICKY} > .p-datatable-table-container > .p-datatable-table > .p-datatable-the
 }
 `;
 
+/*
+ * BARRA DE SCROLL DE UNA TABLA CON SCROLL PROPIO (RAMA DE COMPARACIÓN B, 2026-09-14).
+ * La pista empieza debajo de la cabecera de columnas (`--sc-datatable-thead-height`, lo mide
+ * `sc-datatable`): el tirador no pasa nunca por encima de «Nombre, Extensión…». Solo Chromium y Safari
+ * leen `::-webkit-scrollbar`; Firefox deja su barra fina de sistema.
+ */
+const scrollableScrollbarCss = () => `
+.p-datatable-scrollable .p-datatable-table-container::-webkit-scrollbar,
+.p-datatable-scrollable .p-virtualscroller::-webkit-scrollbar {
+    width: var(--sc-spacing-0-75);
+    height: var(--sc-spacing-0-75);
+}
+
+.p-datatable-scrollable .p-datatable-table-container::-webkit-scrollbar-track,
+.p-datatable-scrollable .p-virtualscroller::-webkit-scrollbar-track {
+    margin-block-start: var(--sc-datatable-thead-height, 0);
+    background: transparent;
+}
+
+.p-datatable-scrollable .p-datatable-table-container::-webkit-scrollbar-thumb,
+.p-datatable-scrollable .p-virtualscroller::-webkit-scrollbar-thumb {
+    background: var(--sc-border-strong);
+    border-radius: var(--sc-radius-full);
+}
+`;
+
 /* ══════════════════════════════════════════════════════════════════════════
  * MICRO-INTERACCIÓN DE BOTÓN · cómo responde al dedo
  * ══════════════════════════════════════════════════════════════════════════
@@ -436,6 +462,7 @@ ${baseTableCss()}
 ${emptyCaptionCss()}
 ${listBehaviorCss()}
 ${stickyHeaderCss()}
+${scrollableScrollbarCss()}
 ${tagOneLineCss()}
 
 ${buttonMotionCss()}

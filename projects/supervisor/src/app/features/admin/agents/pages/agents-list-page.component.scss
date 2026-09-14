@@ -19,7 +19,8 @@
   background: var(--sc-bg-surface);
   /* Always reserve room for the overlaid bulk action bar so toggling the
    * selection never shifts table content (no CLS). */
-  padding-bottom: calc(var(--sc-bulk-action-bar-height) + var(--sc-spacing-1-125));
+  /* RAMA B: sin reservar la barra de selección abajo: la tabla llega al fondo y solo le deja sitio
+   * cuando hay filas marcadas (`.table-card--seleccion`). */
 
   &__inner {
     padding: var(--sc-spacing-1-25) var(--sc-spacing-2); /* barra → título 17,5 y lados 28, los de la miga (2026-09-14) */
@@ -207,4 +208,10 @@ sc-datatable {
   min-height: 0;
   display: flex;
   flex-direction: column;
+}
+
+/* RAMA B: con filas marcadas aparece la barra de selección flotante abajo; la tabla acorta su borde de
+ * abajo lo que mide la barra y su distancia al borde, sin mover ninguna fila. */
+.table-card--seleccion {
+  margin-bottom: calc(var(--sc-bulk-action-bar-height) + var(--sc-spacing-1-5));
 }
