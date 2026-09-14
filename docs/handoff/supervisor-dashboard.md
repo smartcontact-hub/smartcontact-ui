@@ -7,7 +7,7 @@
 
 ## ✅ 2026-09-14 · El Monitor del Supervisor queda adaptado y subido en su rama, para iterar con Rafa
 
-> **Sello: rama `arebury/dashboard-adapt-supervisor-monitor` (caja `volute`), sobre `origin/main` HEAD `e4d2885`,
+> **Sello: rama `arebury/dashboard-adapt-supervisor-monitor` (caja `volute`), sobre `origin/main` HEAD `c55f857`,
 > con PR abierto SIN fundir: Rafa pidió subirlo e iterar después sobre las decisiones de abajo.**
 > Local: `npm run ng -- serve supervisor --port 4311` → `http://localhost:4311/dashboard`.
 
@@ -34,8 +34,13 @@ Persiste en `localStorage` (`sc-dashboard-monitors`, versión 1).
 
 ## SIGUIENTE
 
-1. **Cuando fusione el PR #183 de `sc-panel` (`#icons` + `fill`)**: pasar `widget-card` a `sc-panel` y
-   correr `dashboard.spec.ts` + la sonda `v3`.
+1. **Pasar `widget-card` a `sc-panel`: bloqueado en el DS, lo lleva hind.** #183 (`#icons` + `fill`) ya está
+   en main, pero migrar hoy perdería cuatro cosas (medido en `primeng-panel.mjs` 22.1.2, 2026-09-14):
+   el título sale como `<span>` y no `h2` (sc-panel no reenvía `#header`); la línea de entidades y el
+   asa de arrastre no tienen sitio; el borde de alerta pide `::ng-deep .sc-panel__root`, que
+   `audit:primeng-coupling` cuenta como reach-in (tope 0); y con cabecera propia la región pierde
+   `aria-labelledby`. Pedido a hind: reenviar `#header` (o `headingLevel` + `subtitle`) y un `severity`.
+   Cuando llegue: migrar y correr `dashboard.spec.ts` + la sonda `v3`.
 2. **ESPERANDO A RAFA** (no se pregunta, él lo saca):
    - Umbrales: paso «Avisar cuando» en el asistente y objetivo visible en el widget (hoy fijos en `data/alerts.ts`).
    - Plantillas + «Restablecer» por monitor (en vez de «volver a la demo»).
