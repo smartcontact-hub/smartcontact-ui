@@ -62,7 +62,11 @@
   de `486feb6` y sobre DD-99): la página mide 5537 y la baseline 5557, con el contenido idéntico píxel a píxel; los
   20 px son aire al final. Y dentro de la captura alterna 5537/5557, así que regenerarla no basta: algo crece al
   capturar un `main` más alto que la ventana. Tumba el `preflight` de cualquier cambio del DS (DD-99 subió con
-  `# sc:ok` por esto). El CI no corre las baselines.
+  `# sc:ok` por esto). El CI no corre las baselines. **No se reprodujo en las tres pasadas de `e2e:visual` del
+  preflight de #175** (sobre `7007c73`, `31c2603` y `4e6c68d`, 2026-09-14): `datatable` en verde las tres.
+- **La página actual de la miga no lleva `aria-current`** (DD-103): la guía de primeng.dev dice que sí, PrimeNG
+  Angular no lo pone (medido `null`). El APG lo hace opcional si ese tramo no es enlace, pero PrimeNG le da
+  `tabindex="0"`. Decidir si `sc-breadcrumb` lo pone o le quita el tabulador; hoy se queda.
 
 **APARCADO por Rafa para OTRA sesión (2026-09-13): nuestros componentes contra Aura tal cual.**
 «Si te instalas Aura y le pones este styling estamos así»: una ficha por componente que diga qué
@@ -184,6 +188,24 @@ del texto, en rojo con los dos fallos puestos). 38 baselines de sc-docs regenera
 - ⚠️ **`getBoundingClientRect` INCLUYE `scale`**: la geometría se compara en el resto de la página, y un roce
   icono↔texto se busca en el control, no en el padre. Un `[size]` fijado a ojo junto a texto compensa dos veces.
 
+## ✅ 2026-09-14 · La miga deja claro qué se puede pulsar (DD-103)
+
+**Sello:** #175 fundido, HEAD `7b7554d`, CI de `main` en verde. DD-103. Rafa, visto en local: «si me gusta».
+Los tramos «Las listas se montan sobre una sola pieza» (DD-98) y «El modo oscuro cae en cascada» (DD-99) viven en los tags `archive/handoff-ds-2026-09-14-pieza-lista` y `archive/handoff-ds-2026-09-14-modo-oscuro`.
+
+**Lo que cambia.** Los tramos de la TopBar del Supervisor pasan `routerLink` (antes un `command` que navegaba
+a mano): enlace de verdad, con mano, Cmd+clic y «copiar enlace». `sc-breadcrumb` marca los tramos pulsables con
+`sc-breadcrumb-item--link` y el tema les da mano y subrayado en hover. Lo vigila
+`e2e/breadcrumb-affordance.spec.ts`. Figma: `figma-pendiente.md` ficha 6.
+
+- ⚠️ **El CSS de la miga de PrimeNG no pide la mano** (su menú sí): un `<a>` sin dirección sale con cursor de
+  texto. Para navegar, `routerLink`; la clase del DS es la red para lo que solo ejecuta una acción.
+- ⚠️ **Una regla del preset sobre un `.p-*` nuevo sube `audit:primeng-coupling`**: cuélgala de una clase nuestra
+  (aquí el `<li>`, `cursor` se hereda) y no hace falta tocar el tope.
+- ⚠️ **Con la máquina a carga ~60, `e2e:visual` tumba `sc-form-section-nav` y `sc-form-danger-zone`** por
+  timeout (0 elementos); solas pasan. Y el preflight de 25-40 min vio fundir tres PRs: DD-99 → DD-103 en tres
+  rebases.
+
 ## ✅ 2026-09-14 · Las fichas de agente, grupo y usuario riman con Contact Center (DD-100, DD-101, DD-102)
 
 **Sello:** rama `arebury/agents-groups-users-ds`, HEAD `7007c73` (#172) más este cambio. DD-100, DD-101 y DD-102. Rafa, visto en
@@ -201,37 +223,6 @@ https://claude.ai/code/artifact/04c101ea-f9bf-4539-9ae3-afbf3b3ea703.
 - ⚠️ **Mientras trabajas en una pantalla, otra sesión puede estar rehaciéndola**: #170 rehízo las tres listas el
   mismo día. `git fetch` antes de tocar listas; se resolvió cogiendo lo de `main` y reaplicando encima.
 - ⚠️ **`verify` reconstruye `dist/`** y el servidor local pierde el DS a mitad: reinícialo después, no depures.
-
-## ✅ 2026-09-14 · El modo oscuro cae en cascada: todo suelo es el lienzo, ningún color es fijo (DD-99)
-
-**Sello:** rama `arebury/fix-dark-mode-token` sobre `b6a5230` (#170). DD-99. Visto en local (`:4417`).
-El tramo «La cabecera de Conversaciones se queda arriba» (2026-09-13) vive en el tag `archive/handoff-ds-2026-09-14-cabecera-conversaciones`.
-
-**Lo que cambia.** En oscuro todas las pantallas responden como Contact Center: suelo `--sc-bg-canvas`, tarjetas
-`--sc-bg-surface`, barra lateral en la superficie. ~150 colores fijos de pantallas y componentes pasan a su rol, y
-la capa 7 da valor oscuro (receta de Aura) a lo que no cambiaba. Vigilan `tokens:guard` regla 8 y la pregunta del
-suelo en `theme-contrast` (75 en verde en local).
-
-- ⚠️ **Lienzo y superficie valen lo mismo en claro**: un suelo mal puesto solo se ve en oscuro, y una red que
-  mire el claro pasa en verde con el fallo puesto.
-- ⚠️ **Comparar contra Aura en oscuro sin separar lo que también difiere en claro engaña**: de 145 claves, 111 son
-  decisiones de los dos temas. `tools/aura-diff.mjs` + filtro «solo oscuro» (scratchpad `ad-dark3.mjs`) dejó 2 fugas.
-- Pendiente, fuera de este tramo: iconos de menú en zinc-400 (Aura zinc-500, divergencia de accesibilidad en los
-  dos temas) y los hex de presencia en claro, sin paso de paleta.
-
-## ✅ 2026-09-14 · Las listas se montan sobre una sola pieza, `sc-list-page` (DD-98)
-
-**Sello:** rama `arebury/pieza-lista` sobre `486feb6` (#168). DD-98. Rafa, visto en local: «adelante».
-El tramo «Conversaciones lleva la piel de Aura» (2026-09-13) vive en el tag `archive/handoff-ds-2026-09-14-piel-aura`.
-
-**Lo que cambia.** 16 pantallas (Usuarios, Agentes, Grupos, Etiquetas, Plantillas, 9 repositorios, Reglas,
-Categorías) ponen columnas, celdas, acciones y diálogos; la pieza, el resto. Red antes/después y capturas en el
-scratchpad de la sesión (`red-listas.mjs`): igual salvo exportar con icono, «⋮» a `scale/4` y casillas nombradas.
-
-- ⚠️ **p-table reemite `sortChange` cada vez que recibe filas nuevas**: guardar el mismo orden como objeto nuevo es
-  un bucle que cuelga la pestaña. Compara antes de escribir (`onSortChange` de la pieza).
-- ⚠️ **Una dependencia de idioma declarada y no leída no hace nada**, y el gate la daba por buena por el nombre.
-  Lee `injectLangChange()` dentro del `computed`; `audit:datatables` ya exige la lectura.
 
 ## 🗄️ Histórico de la lista SIGUIENTE — ya cerrado
 
