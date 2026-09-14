@@ -60,8 +60,9 @@ export class IllustratedAvatarComponent {
    *  on entity types (e.g. `Agent.photo?: string`) without `?? null`
    *  glue at every call site. */
   readonly photo = input<string | null | undefined>(null);
-  /** Pixel size of the rendered circle. Defaults to 40px. */
-  readonly size = input<number>(40);
+  /** Size of the rendered circle: a number is pixels (default 40); a string is any CSS length,
+   *  so a caller can pass a DS token (`var(--sc-cmp-avatar-width)`) instead of a number by hand. */
+  readonly size = input<number | string>(40);
   /** Which pool to hash into. `'illustrated'` = 24 person portraits
    *  (default). `'abstract'` = 3 non-personal patterns for groups
    *  and other functional entities. */
@@ -73,5 +74,8 @@ export class IllustratedAvatarComponent {
 
   protected readonly photoSrc = computed(() => this.photo() ?? null);
 
-  protected readonly sizePx = computed(() => `${this.size()}px`);
+  protected readonly sizePx = computed(() => {
+    const size = this.size();
+    return typeof size === 'number' ? `${size}px` : size;
+  });
 }

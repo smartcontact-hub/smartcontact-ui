@@ -66,7 +66,8 @@
    */
 
   &__brand {
-    height: 64px;
+    /* `scale/4` (56), el mismo token que la TopBar: las dos rayas casan (2026-09-14). */
+    height: var(--sc-spacing-4);
     flex-shrink: 0;
     display: flex;
     align-items: center;
