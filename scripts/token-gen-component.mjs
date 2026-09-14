@@ -22,7 +22,7 @@ import { resolve } from 'node:path';
 import { loadKitExport } from './dtcg-export.mjs';
 import { toRem } from './token-naming.mjs';
 import { rewriteRegion } from './marker-rewrite.mjs';
-import { SIZING, GROUPS, DIVERGE_SIZING, cmpName } from './sizing-map.mjs';
+import { SIZING, GROUPS, DIVERGE_SIZING, PENDIENTE_FIGMA, cmpName } from './sizing-map.mjs';
 import { EXPORT_PATH, LAYERS_DIR } from './paths.mjs';
 
 const COMPONENT_CSS = resolve(LAYERS_DIR, '04-component.css');
@@ -50,11 +50,15 @@ const exp = (group, path) => {
 // Resuelve cada slot (saltando divergencias conscientes) a su declaración rem.
 // Orden estable = el del mapa → repeticiones byte-idénticas (idempotente).
 const diverge = new Set(DIVERGE_SIZING.map((d) => d.label));
+// Pendientes de Figma (DD-97): el valor sale del paso de escala de Aura, no del export, para que un
+// export que aún no se ha alineado no devuelva el código a PrimeOne.
+const pendiente = new Map(PENDIENTE_FIGMA.map((p) => [p.label, p.paso]));
+const pasoPx = (paso) => (paso === '0' ? 0 : kit.resolve(`{scale.${paso}}`));
 const rows = [];
 const missing = [];
 for (const r of SIZING) {
   if (diverge.has(r.label)) continue;
-  const px = exp(GROUPS[r.group], r.exp);
+  const px = pendiente.has(r.label) ? pasoPx(pendiente.get(r.label)) : exp(GROUPS[r.group], r.exp);
   if (px == null || Number.isNaN(px)) missing.push(r.label);
   else rows.push(`  --sc-cmp-${cmpName(r.label)}: ${toRem(px)}; /* ${px}px */`);
 }
@@ -72,7 +76,8 @@ const HEADER =
   '   * Métrica de componente 1:1 con el export (radio/padding/fontSize/width…),\n' +
   '   * en rem (px/16, px de diseño en comentario). El preset referencia estos\n' +
   '   * `--sc-cmp-*`; así un cambio de sizing en Figma fluye a código sin mano.\n' +
-  '   * Divergencias conscientes → DIVERGE_SIZING en scripts/sizing-map.mjs. */';
+  '   * Divergencias conscientes → DIVERGE_SIZING; pendientes de Figma → PENDIENTE_FIGMA\n' +
+  '   * (el paso de escala de Aura), ambos en scripts/sizing-map.mjs. */';
 const BODY = rows.join('\n');
 
 if (emit) {

@@ -177,7 +177,7 @@ import type { ToastDesignTokens } from '@primeuix/themes/types/toast';
                 detailColor: "var(--sc-cmp-toast-info-detail-color)"
             },
             root: {
-                blur: "0.107143rem"
+                blur: "0.714286rem"
             },
             warn: {
                 color: "var(--sc-cmp-toast-warn-color)",
