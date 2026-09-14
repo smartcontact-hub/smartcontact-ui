@@ -63,6 +63,37 @@
 
 ---
 
+## DD-89 · 2026-09-14 — Cada paso de la escala se llama por su clave del export, y un gate cae si algo apunta a un paso que no existe
+
+**Contexto** · La simulación de la escala a tamaño Aura (PR #153) midió una trampa: el generador
+nombraba cada paso por su valor (`scaleSuffix`, valor/14). Si un valor de `scale/*` cambia en Figma, el
+paso se renombra (con 6px pasaría a llamarse «0-429») y todo lo que apuntaba al nombre viejo (`--sc-spacing-*`,
+temas) queda sin definir. Una variable sin definir es un valor inválido que el navegador ignora, así que
+el build salía verde: 30 de 35 pasos colgados y cientos de usos rotos por pantalla. Rafa dijo «adelante»
+a arreglarlo aunque no se cambie la escala.
+
+**Decisión** · (1) `token-gen.mjs` nombra cada paso por su clave (`scale.0-375` → `--sc-scale-0-375`) con
+`scaleNameFromKey`; si un paso deja de valer rem×14 lo avisa, sin fallar. (2) Un gate en el mismo
+generador, en `--write` (el robot) y en el chequeo de `verify`: rojo si algún `var(--sc-scale-*)` o
+`var(--sc-spacing-*)` del repo apunta a un nombre que ninguna capa declara.
+
+**Razón** · El nombre es el contrato que usan 1.280 espaciados y los temas; el valor es lo que Figma
+decide. Con el export de hoy las claves coinciden con valor/14, así que las capas salen idénticas.
+
+**Descartadas** ·
+- **Solo el gate, sin cambiar el nombre** → cantaría el rojo, pero cualquier cambio de valor en la escala
+  obligaría a renombrar a mano cientos de usos.
+- **Comprobarlo en el navegador** (la sonda de la simulación) → lento y fuera de `verify`; el gate estático
+  compara referencias del código con nombres declarados en las capas.
+
+**Consecuencias** · Probado con copias del export y de las capas (`SC_KIT_EXPORT`, `SC_LAYERS_DIR`): los
+34 pasos ×16/14 con el nombre por clave → verde y `--sc-scale-0-375` pasa a valer 6px; lo mismo con el
+nombre por valor (el fallo de antes) → rojo, 49 referencias colgadas; y quitar `scale/0-375` del export →
+rojo. Con el export real, `tokens:import` no cambia ninguna capa. Tests de `token-naming` 6/6. No decide
+la densidad ni cambia la escala: eso lo lleva otra sesión.
+
+---
+
 ## DD-86 · 2026-09-14 — El resto de medidas de los temas sigue a Figma, sin mover un píxel
 
 **Contexto** · Tras DD-85 quedaban 238 medidas escritas a mano con un paso de escala en los temas: 184
