@@ -294,6 +294,27 @@ test.describe('sc-panel', () => {
     expect(Math.abs(cuerpo!.y + cuerpo!.height - (panel!.y + panel!.height - relleno - 1))).toBeLessThan(2);
   });
 
+  /* Medido en el Dashboard a 390 (bladderwrack, 2026-09-14): la tabla de agentes, 582 de ancho mínimo, ensanchaba
+   * la tarjeta y la página ganaba 271 de scroll lateral. El cuerpo de Panel es una rejilla con la columna implícita
+   * en `auto`, que toma el ancho mínimo de lo que lleva dentro. Aquí se estrecha el hueco y se mete algo más ancho
+   * que él: el panel tiene que seguir midiendo lo que su hueco, y lo ancho desplazarse dentro. */
+  test('fill no deja que un contenido ancho ensanche el panel', async ({ page }) => {
+    await gotoPage(page, 'panel');
+    const hueco = page.getByTestId('sc-panel-fill-slot');
+    await hueco.evaluate((el) => {
+      (el as HTMLElement).style.width = '200px';
+      const ancho = document.createElement('div');
+      ancho.style.width = '600px';
+      ancho.style.height = '1px';
+      el.querySelector('.sc-panel__content > div')!.appendChild(ancho);
+    });
+    // La caja de fuera no crece (es un bloque de 200); lo que se salía era el envoltorio del cuerpo: 632 de 198.
+    const panel = page.getByTestId('sc-panel-fill');
+    const cuerpo = await panel.locator('.sc-panel__body').boundingBox();
+    const envoltorio = await panel.locator('.sc-panel__wrapper').boundingBox();
+    expect(envoltorio!.width).toBeLessThanOrEqual(cuerpo!.width + 0.5);
+  });
+
   test('severity pinta borde y anillo con el color de su rol', async ({ page }) => {
     await gotoPage(page, 'panel');
     for (const [id, rol] of [
