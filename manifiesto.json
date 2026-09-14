@@ -1,0 +1,16 @@
+{
+  "commit": "49f5aae",
+  "primeng": "22.1.0",
+  "themes": "3.0.0",
+  "generado": "2026-09-14T09:48:00.238Z",
+  "comprobaciones": {
+    "ceros": [],
+    "raizPx": 16,
+    "diferencia": {
+      "anterior": false,
+      "variables": [],
+      "semanticaComun": false,
+      "componentes": []
+    }
+  }
+}
