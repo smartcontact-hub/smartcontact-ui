@@ -2,6 +2,26 @@
   display: block;
 }
 
+/* Tabla con scroll propio (`scrollHeight="flex"`, DD-95): columna flex que encoge hasta el alto que
+ * le dejan. Va AQUÍ y no en el tema porque el `display: block` de arriba va sin capa y le ganaría a
+ * `@layer primeng` (medido: la regla del tema no llegaba y la tabla no hacía scroll). */
+:host(.sc-datatable--scroll) {
+  /* Alto de la cabecera de columnas: lo mide el componente y la barra de scroll empieza debajo. */
+  --sc-datatable-thead-height: 0;
+}
+
+:host(.sc-datatable--fit),
+:host(.sc-datatable--fill) {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+/* El icono de ordenar no va pegado al título de la columna (2026-09-14: hueco 0 medido). */
+p-sort-icon {
+  margin-inline-start: var(--sc-spacing-0-5);
+}
+
 /* El theming de la tabla lo resuelve el preset `datatable.ts` (PrimeNG). Aquí
    solo la columna de selección, que no es parte del preset. */
 .sc-datatable__check {

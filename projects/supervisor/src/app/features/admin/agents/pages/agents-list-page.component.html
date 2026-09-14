@@ -8,7 +8,7 @@
   </sc-button>
 </ng-template>
 
-<div class="page">
+<div class="page page--tabla">
   <div class="page__inner page__inner--list">
     <!-- El título de la página vive en el CUERPO, no en la barra: la miga de
          arriba dice DÓNDE estás y esta línea dice QUÉ miras (modelo Snow UI,
@@ -50,9 +50,12 @@
            cabecera oscura, distinta de las demás tablas de administración.
            `[visibleColumns]` es lo que hace que la tabla obedezca al
            `sc-column-selector`: su `key` es nuestro `field`. -->
-      <div class="table-card">
+      <div class="table-card" [class.table-card--seleccion]="selectedAgents().length > 0">
         <sc-datatable
           variant="list"
+          scrollable
+          scrollHeight="flex"
+          virtualScroll
           [value]="sorted()"
           [columns]="columns()"
           [visibleColumns]="tableVisibleColumns()"
@@ -134,16 +137,21 @@
 
 <ng-template #presenceTpl let-agent>
   @if (agent.presenceStatus; as presence) {
-    <!-- `stopPropagation` porque la fila ABRE el detalle: sin esto, desplegar
-         el selector de presencia navegaría a la ficha del agente. -->
-    <span
-      class="presence-edit sc-text-caption-regular"
-      [attr.data-presence]="presence"
-      (click)="$event.stopPropagation()"
+    <!-- Botón compacto que abre la lista de estados, como el panel «Estados» del dialpad (2026-09-14).
+         Antes era un desplegable con borde en cada fila. `stopPropagation` en `openPresenceMenu` porque
+         la fila ABRE el detalle. -->
+    <sc-button
+      class="presence-trigger"
+      variant="secondary"
+      appearance="text"
+      size="sm"
+      [ariaLabel]="'agents.presence_change_aria' | translate: { name: agent.name, status: (presenceLabelKey(presence) | translate) }"
+      (clicked)="openPresenceMenu(agent, presenceMenu, $event)"
     >
-      <span class="presence-edit__dot" aria-hidden="true"></span>
-      <sc-select class="presence-edit__select" size="sm" appendTo="body" [options]="presenceOptions()" optionLabel="label" optionValue="value" [value]="presence" (valueChange)="onPresenceChange(agent, $any($event))" />
-    </span>
+      <span class="presence-dot" [attr.data-presence]="presence" aria-hidden="true"></span>
+      <span class="presence-trigger__label sc-text-body-regular">{{ presenceLabelKey(presence) | translate }}</span>
+      <sc-icon class="presence-trigger__chevron" [name]="chevronDownIcon" size="inherit" />
+    </sc-button>
   } @else {
     <span class="cell cell--empty">—</span>
   }
@@ -168,6 +176,24 @@
      MÁS un menú contextual aparte con sus propios handlers). El click derecho
      en la fila abre este mismo menú — R3 del modelo canónico. -->
 <p-menu #rowMenu [model]="menuItems()" [popup]="true" appendTo="body" styleClass="rules-kebab-menu" />
+
+<!-- Lista de estados, compartida por toda la tabla como el kebab: el actual va marcado con su punto,
+     en negrita y con ✓, igual que el panel «Estados» del dialpad. -->
+<p-menu #presenceMenu [model]="presenceMenuItems()" [popup]="true" appendTo="body">
+  <ng-template #item let-item>
+    <span class="presence-menu__item" [class.presence-menu__item--current]="item.id === presenceMenuAgent()?.presenceStatus">
+      <span class="presence-dot" [attr.data-presence]="item.id" aria-hidden="true"></span>
+      <span
+        class="presence-menu__label"
+        [class.sc-text-body-regular]="item.id !== presenceMenuAgent()?.presenceStatus"
+        [class.sc-text-body-semibold]="item.id === presenceMenuAgent()?.presenceStatus"
+      >{{ item.label }}</span>
+      @if (item.id === presenceMenuAgent()?.presenceStatus) {
+        <sc-icon class="presence-menu__check" [name]="checkIcon" size="inherit" />
+      }
+    </span>
+  </ng-template>
+</p-menu>
 
 <sc-delete-entity-dialog
   [visible]="!!deleteTarget()"

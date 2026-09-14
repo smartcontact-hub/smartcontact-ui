@@ -26,6 +26,17 @@
   &:hover &__media {
     transform: scale(1.125);
   }
+
+  /* Contorno de 1 px por dentro, para que un avatar claro (iniciales, fotos de fondo blanco) no se funda
+   * con el lienzo (2026-09-14). Encima de la imagen y sin capturar el ratón. */
+  &::after {
+    content: '';
+    position: absolute;
+    inset: 0;
+    border-radius: inherit;
+    box-shadow: inset 0 0 0 1px var(--sc-border-subtle);
+    pointer-events: none;
+  }
 }
 
 @media (prefers-reduced-motion: reduce) {

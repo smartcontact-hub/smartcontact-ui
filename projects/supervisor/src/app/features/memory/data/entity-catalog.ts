@@ -7,8 +7,8 @@
  * (su seed no se exporta). Los **servicios no tienen entidad/ID** → solo nombres.
  *
  * Nota demo: en producción esto saldría de un servicio compartido; aquí mock.
- * Los nombres de agente son los REALES del sistema (p.ej. "Agente AED 1"), no los
- * curados del Figma — así la membresía y el match son honestos.
+ * Los nombres de agente son los del seed de administración, no los curados del Figma — así la
+ * membresía y el match son honestos. (Desde el 2026-09-14 el seed usa nombres de Hollywood.)
  */
 import { AGENTS_SEED } from '../../admin/agents/data/agents-data';
 import { GROUPS_SEED } from '../../admin/groups/data/groups-data';
@@ -29,27 +29,27 @@ export interface AgentEntity extends EntityRef {
  *
  * Los IDs son los REALES (alineados con la membresía `GroupAgentLinks`); solo se
  * maquilla el **display** para que la presentación no muestre datos de desarrollo
- * ("Agente AED 1", "Oscar Fernandez" sin tilde). La membresía y el match NO se
+ * (los nombres de desarrollo como "Agente AED 1" o "Oscar Fernandez" sin tilde). La membresía y el match NO se
  * tocan. En producción esto no existe: se mostraría el nombre real de la entidad.
  * Decisión con Rafa (preview pulido). Si un ID no está, cae al nombre real del seed.
  */
 const AGENT_DISPLAY_NAMES: Readonly<Record<number, string>> = {
-  1: 'María Antúnez',
-  2: 'Carlos Prats',
-  3: 'Laura García',
-  4: 'Bot Automático',
-  5: 'Javier Soler',
-  6: 'Ana Belén Ruiz',
-  7: 'Mario Pérez',
-  8: 'Inés Recio',
-  9: 'Miguel Palacios',
-  10: 'Sofía Marín',
-  11: 'Diego Navarro',
-  12: 'Óscar Bello',
-  13: 'Óscar Fernández',
-  14: 'Lucía Quero',
-  15: 'Rafael Areses',
-  16: 'Ángel Castaño',
+  1: 'Tom Hanks',
+  2: 'Meryl Streep',
+  3: 'Denzel Washington',
+  4: 'Julia Roberts',
+  5: 'Leonardo DiCaprio',
+  6: 'Scarlett Johansson',
+  7: 'Morgan Freeman',
+  8: 'Natalie Portman',
+  9: 'Keanu Reeves',
+  10: 'Viola Davis',
+  11: 'Brad Pitt',
+  12: 'Cate Blanchett',
+  13: 'Samuel L. Jackson',
+  14: 'Emma Stone',
+  15: 'Rafa Areses',
+  16: 'Robert De Niro',
 };
 
 const GROUP_DISPLAY_NAMES: Readonly<Record<number, string>> = {

@@ -283,6 +283,7 @@ export class DatatableDemoComponent {
       { name: 'scrollable', control: { kind: 'boolean' }, description: 'Cabecera fija y cuerpo con scroll propio.' },
       { name: 'scrollHeight', control: { kind: 'text' }, description: 'Alto de ese scroll (p.ej. 240px).' },
       { name: 'stickyHeader', control: { kind: 'boolean' }, description: 'Cabecera fija al scroll de la página (sin scroll propio).' },
+      { name: 'virtualScroll', control: { kind: 'boolean' }, description: 'Lista virtual con scroll propio: entra por encima de 100 filas (esta demo tiene 7).' },
       { name: 'rowsFocusable', control: { kind: 'boolean' }, description: 'Las filas entran en el orden de tabulación.' },
     ],
     defaultArgs: {
@@ -302,6 +303,7 @@ export class DatatableDemoComponent {
       scrollable: false,
       scrollHeight: '240px',
       stickyHeader: false,
+      virtualScroll: false,
       rowsFocusable: false,
     },
     props: [
@@ -331,6 +333,13 @@ export class DatatableDemoComponent {
         default: 'false',
         description:
           'Cabecera fija al scroll de la PÁGINA (para el scroll dentro de la tabla, `scrollable`). Ningún antepasado hasta el que hace scroll puede llevar `overflow: hidden` o `auto`: usa `clip` para recortar esquinas.',
+      },
+      {
+        name: 'virtualScroll',
+        type: 'boolean',
+        default: 'false',
+        description:
+          'Con `scrollable`: por encima de 100 filas solo pinta las que se ven. Mide sola el alto de fila, así que las filas deben medir igual. Con `scrollHeight="flex"` y sin lista virtual, la tabla se ajusta a sus filas; con ella, llena el alto (DD-95).',
       },
       { name: 'loading', type: 'boolean', default: 'false' },
       { name: 'lazy', type: 'boolean', default: 'false', description: 'Server-driven (emite `(lazyLoad)`).' },

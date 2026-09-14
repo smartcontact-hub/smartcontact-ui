@@ -63,7 +63,7 @@ export class IllustratedAvatarComponent {
   /** Size of the rendered circle: a number is pixels (default 40); a string is any CSS length,
    *  so a caller can pass a DS token (`var(--sc-cmp-avatar-width)`) instead of a number by hand. */
   readonly size = input<number | string>(40);
-  /** Which pool to hash into. `'illustrated'` = 24 person portraits
+  /** Which pool to hash into. `'illustrated'` = 22 person portraits
    *  (default). `'abstract'` = 3 non-personal patterns for groups
    *  and other functional entities. */
   readonly pool = input<IllustratedAvatarPool>('illustrated');

@@ -1,5 +1,10 @@
 import { NgClass, NgTemplateOutlet } from '@angular/common';
 import {
+  afterRenderEffect,
+  DestroyRef,
+  ElementRef,
+  inject,
+  signal,
   TemplateRef,
   contentChild,
   booleanAttribute,
@@ -81,6 +86,12 @@ export interface ScDatatableSortEvent {
   changeDetection: ChangeDetectionStrategy.OnPush,
   host: {
     '[class.sc-datatable--list]': "variant() === 'list'",
+    // `scrollHeight="flex"`: con lista virtual la tabla LLENA el alto (la lista virtual lo necesita);
+    // sin ella, se AJUSTA a sus filas y solo hace scroll si no caben (DD-95).
+    '[class.sc-datatable--fill]': 'pVirtualScroll()',
+    // Con scroll propio: el tema estiliza su barra sin preguntar a `p-table` por `.p-datatable-scrollable`.
+    '[class.sc-datatable--scroll]': 'scrollable()',
+    '[class.sc-datatable--fit]': "scrollable() && scrollHeight() === 'flex' && !pVirtualScroll()",
     // Sin la clase si también es `scrollable`: ahí la cabecera ya la fija PrimeNG
     // dentro de la tabla, y el tema no tiene que preguntar a `p-table` por ello.
     '[class.sc-datatable--sticky-header]': 'stickyHeader() && !scrollable()',
@@ -124,6 +135,17 @@ export class ScDatatableComponent<T = unknown> {
   readonly variant = input<ScDatatableVariant>('default');
   readonly scrollable = input(false, { transform: booleanAttribute });
   readonly scrollHeight = input<string | undefined>(undefined);
+  /**
+   * Lista virtual: con `scrollable`, solo se pintan las filas que se ven, así que la tabla carga
+   * igual con 50 filas que con 5.000 (medido el 2026-09-14: 0,27 s y 26 MB contra 3 min 36 s y
+   * 1,37 GB pintándolas todas). Sin `scrollable` no hace nada.
+   *
+   * Pide filas del MISMO alto: el alto lo mide la tabla en su primera fila (la pinta sola un
+   * instante), sin número a mano. Una lista con filas que se despliegan o texto que parte en dos
+   * líneas no debe activarla. Y el buscador del navegador (Ctrl+F) solo encuentra las filas que
+   * se ven: la pantalla necesita su propio buscador.
+   */
+  readonly virtualScroll = input(false, { transform: booleanAttribute });
 
   /**
    * Cabecera fija al scroll de la PÁGINA: se queda arriba mientras se desplaza
@@ -448,6 +470,60 @@ export class ScDatatableComponent<T = unknown> {
 
   private readonly table = viewChild.required(Table);
 
+  /** Alto medido de una fila (px) para la lista virtual; 0 hasta medirlo. */
+  private readonly rowHeight = signal(0);
+  /* Por debajo de este número de filas la lista virtual no compensa: pintarlas todas es rápido
+   * (60 filas, 0,35 s; 500, 2,5 s; medido el 2026-09-14) y así la tabla puede ajustarse a sus filas
+   * en vez de llenar el alto. Es un umbral de rendimiento, no una medida de diseño. */
+  private static readonly VIRTUAL_MIN_ROWS = 100;
+  private readonly virtualWanted = computed(
+    () => this.virtualScroll() && this.scrollable() && this.value().length > ScDatatableComponent.VIRTUAL_MIN_ROWS,
+  );
+  protected readonly pVirtualScroll = computed(() => this.virtualWanted() && this.rowHeight() > 0);
+  protected readonly pVirtualScrollItemSize = computed(() => this.rowHeight() || undefined);
+  /** Sin lista virtual, `flex` no pasa a PrimeNG: su modo flexible estira la tabla aunque tenga 3 filas. */
+  protected readonly pScrollHeight = computed(() =>
+    this.scrollHeight() === 'flex' && !this.pVirtualScroll() ? undefined : this.scrollHeight(),
+  );
+  /** Mientras no se ha medido la fila, se pinta solo la primera: medir no cuesta pintar 5.000. */
+  protected readonly pValue = computed(() => {
+    const rows = this.value();
+    return this.virtualWanted() && !this.rowHeight() ? rows.slice(0, 1) : rows;
+  });
+
+  private readonly hostEl = inject(ElementRef<HTMLElement>).nativeElement as HTMLElement;
+
+  constructor() {
+    /* Con scroll propio, la barra de scroll empieza DEBAJO de la cabecera de columnas: el tema
+     * coloca la pista con `--sc-datatable-thead-height`. Se mide porque el alto de la cabecera
+     * cambia con la talla y con el texto de las columnas. */
+    const destroyRef = inject(DestroyRef);
+    let observedThead: HTMLElement | null = null;
+    let ro: ResizeObserver | null = null;
+    destroyRef.onDestroy(() => ro?.disconnect());
+    /* PrimeNG vuelve a pintar la cabecera al entrar o salir la lista virtual: se re-observa la que haya.
+     * El observador se crea solo con scroll propio y si el entorno lo tiene (las pruebas unitarias no). */
+    afterRenderEffect(() => {
+      this.pVirtualScroll();
+      if (!this.scrollable() || typeof ResizeObserver === 'undefined') return;
+      const thead = this.hostEl.querySelector<HTMLElement>('thead');
+      if (!thead || thead === observedThead) return;
+      ro ??= new ResizeObserver(() => {
+        if (observedThead?.isConnected) {
+          this.hostEl.style.setProperty('--sc-datatable-thead-height', `${observedThead.offsetHeight}px`);
+        }
+      });
+      ro.disconnect();
+      observedThead = thead;
+      ro.observe(thead, { box: 'border-box' });
+    });
+    afterRenderEffect(() => {
+      if (!this.virtualWanted() || this.rowHeight() || !this.value().length) return;
+      const row = this.hostEl.querySelector<HTMLElement>('tbody > tr:has(> td:not([colspan]))');
+      if (row?.offsetHeight) this.rowHeight.set(row.offsetHeight);
+    });
+  }
+
   /**
    * Filtra por el término global (imperativo — p-table no reacciona a cambios del
    * input `[filters]`, que es solo estado inicial). En cliente re-filtra `value`
@@ -480,7 +556,56 @@ export class ScDatatableComponent<T = unknown> {
     // El menú nativo del navegador tapa el nuestro y no ofrece ninguna de las
     // acciones de la fila: cancelarlo es la única lectura útil del gesto.
     event.preventDefault();
-    this.rowContextMenu.emit({ row, index, originalEvent: event });
+    /* El menú sale DONDE SE HACE CLIC (Rafa, 2026-09-14: «como en cualquier SaaS»). Las pantallas abren su
+     * `<p-menu>` compartido con `menu.toggle(event.originalEvent)`, y `p-menu` se coloca junto a
+     * `event.currentTarget`, que era la fila entera: salía pegado a su borde izquierdo. Aquí se relanza el
+     * gesto desde un punto de 0 px en el puntero, así que `currentTarget` es ese punto y el menú (el mismo,
+     * con sus recolocaciones si no cabe) abre ahí, en todas las tablas y sin tocar ninguna pantalla. */
+    /* Un segundo clic derecho con el menú abierto lo MUEVE al nuevo punto, no lo cierra: primero se cierra
+     * lo que haya abierto, como haría un clic fuera, y se abre en el SIGUIENTE turno. Seguido no vale
+     * (medido): `p-menu` no se recoloca hasta terminar de cerrarse y reabría en el sitio viejo. */
+    document.dispatchEvent(new MouseEvent('click', { bubbles: true }));
+    setTimeout(() => this.openAtPointer(event, row, index));
+  }
+
+  private openAtPointer(event: MouseEvent, row: T, index: number): void {
+    const anchor = this.pointerAnchor(event.clientX, event.clientY);
+    const atPointer = new MouseEvent('contextmenu', {
+      clientX: event.clientX,
+      clientY: event.clientY,
+      screenX: event.screenX,
+      screenY: event.screenY,
+      button: event.button,
+      buttons: event.buttons,
+      altKey: event.altKey,
+      ctrlKey: event.ctrlKey,
+      metaKey: event.metaKey,
+      shiftKey: event.shiftKey,
+    });
+    anchor.addEventListener('contextmenu', () => this.rowContextMenu.emit({ row, index, originalEvent: atPointer }), {
+      once: true,
+    });
+    anchor.dispatchEvent(atPointer);
+  }
+
+  private pointerAnchorEl: HTMLElement | null = null;
+  private readonly anchorDestroyRef = inject(DestroyRef);
+
+  private pointerAnchor(x: number, y: number): HTMLElement {
+    if (!this.pointerAnchorEl) {
+      const el = document.createElement('span');
+      el.setAttribute('aria-hidden', 'true');
+      el.style.position = 'fixed';
+      el.style.width = '0';
+      el.style.height = '0';
+      el.style.pointerEvents = 'none';
+      document.body.appendChild(el);
+      this.anchorDestroyRef.onDestroy(() => el.remove());
+      this.pointerAnchorEl = el;
+    }
+    this.pointerAnchorEl.style.left = `${x}px`;
+    this.pointerAnchorEl.style.top = `${y}px`;
+    return this.pointerAnchorEl;
   }
 
   protected onSortEvent(event: { field?: string; order?: number }): void {

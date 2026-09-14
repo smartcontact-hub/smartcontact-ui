@@ -41,6 +41,8 @@
 >
 > | Tema | DD |
 > |---|---|
+> | El clic derecho en una fila abre su menú en el puntero (lo hace `sc-datatable`, en todas las tablas) · el estado de un agente se cambia con un botón compacto y su lista, como el dialpad | DD-96 |
+> | Una lista de tabla lleva `.page--tabla` y `<sc-datatable scrollable scrollHeight="flex" virtualScroll>`: la tabla hace scroll dentro, se ajusta a sus filas y con más de 100 pinta solo las visibles | DD-95 |
 > | TopBar y bloque del logo con el mismo `scale/4` (56) · tallas de dentro con tokens del DS · barra → título `1-25`, lados `2`, buscador → tabla `0-875` · una barra `sticky` necesita que ningún antepasado tenga `overflow: auto` | DD-94 |
 > | Título de página → contenido `scale/1` en las 13 pantallas · una miga dentro de una barra va `flush` (la barra pone el aire) | DD-90 |
 > | Cabecera fija al scroll de la página con `<sc-datatable stickyHeader>` · ninguna caja por encima con `overflow: hidden` (usa `clip`) · una etiqueta no se parte, recorta | DD-80 |
@@ -62,6 +64,87 @@
 > | Siete divergencias deliberadas entre flujos, que NO se unifican | DD-36 |
 > | `--sc-bg-default` es el suelo del shell, nunca una superficie | DD-34 |
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
+
+---
+
+## DD-96 · 2026-09-14 — El menú de una fila sale donde se hace clic, y el estado de un agente se cambia como en el dialpad
+
+**Contexto** · Revisando Agentes con la tabla nueva (DD-95), Rafa pidió: que el clic derecho abra el menú
+donde se hace clic «como en cualquier SaaS B2B» y siempre igual (salía pegado al borde izquierdo de la
+fila); cambiar el desplegable de estado de cada fila por un botón que abra los estados, como el panel
+«Estados» del dialpad de Agent; 500 agentes de demostración con nombres de Hollywood, él incluido como
+«Rafa Areses»; y las mejoras de `better-ui` medidas (dos X en el buscador, nombres cortados con columnas
+de igual ancho, icono de ordenar pegado al título, avatares sin contorno). Además salían avatares «+3».
+
+**Decisión** · (1) `sc-datatable` relanza el clic derecho desde un punto de 0 px en el puntero: el
+`<p-menu>` de cada pantalla (el mismo del kebab) se coloca junto a ese punto, en todas las tablas y sin
+tocar ninguna pantalla. Antes cierra lo que haya abierto y abre en el siguiente turno, para que un segundo
+clic derecho mueva el menú. (2) Estado del agente: botón de texto con punto de color, estado y flecha, y
+un `<p-menu>` compartido con los estados (el actual con punto, negrita y ✓). (3) Seed de 500 agentes: los
+16 de siempre con nombres de Hollywood y el 15 «Rafa Areses»; el resto repite sus datos; versión del almacén
+local a 3. (4) El reparto de avatares ilustrados usa 22 dibujos: `avatar-22` es una «F» y `avatar-23` un
+«+3». (5) Nombre a `scale/18`; sin la X del navegador en `sc-search`; icono de ordenar a `scale/0-5` del
+título; contorno interior de 1 px `--sc-border-subtle` en el avatar ilustrado.
+
+**Razón** · Medido en builds estáticos: tres clics derechos seguidos en Agentes, Usuarios y Categorías abren
+en el punto exacto; en Conversaciones una fila sin acciones no abre nada; en la esquina inferior derecha el
+menú se recoloca; el kebab sigue junto a su botón. Con la lista de estados abierta la fila no navega y elegir
+«Comida» la cambia. Cero nombres cortados (antes 4 de 16). Ningún avatar «F» ni «+3» en pantalla.
+
+**Descartadas** ·
+- **`p-contextmenu` para el clic derecho** → otro componente y otras clases para el mismo modelo del kebab,
+  y cambiar las 10 pantallas y sus pruebas; el punto en el puntero consigue lo mismo desde el DS.
+- **Cerrar y abrir seguidos** → `p-menu` no se recoloca hasta terminar de cerrarse: reabría en el sitio viejo
+  con las opciones de la fila nueva (medido).
+- **Fijar el ancho de todas las columnas con la escala** → sus pasos grandes van a saltos (70, 175, 252) y a
+  1280 dejaban Nombre sin sitio; solo Nombre se fija y el resto reparte.
+- **Contorno de avatar en negro con transparencia** (receta de `better-ui`) → no hay variable; se usa el borde
+  sutil del DS.
+- **Quitar el doble anillo de foco del buscador** → es el foco de TODOS los campos del DS (anillo sky 2 px +
+  borde): cambiarlo en uno rompería la coherencia. Queda como decisión aparte.
+
+**Consecuencias** · La flecha del botón de estado lleva `--sc-icon-subtle`: con el color del botón de texto
+salía a 2,95:1 y `theme-contrast` lo cazó. Casi todos los avatares cambian de dibujo (el reparto depende del
+número de dibujos). Pendiente de decidir: el foco de los campos (anillo y borde a la vez).
+
+---
+
+## DD-95 · 2026-09-14 — Las listas hacen scroll dentro de la tabla: se ajusta a sus filas y, con muchas, solo pinta las que se ven
+
+**Contexto** · El jefe de Rafa pidió que al bajar no se pierdan el buscador ni la cabecera de columnas, y
+preguntó si era mucho desarrollo frente a una tabla con scroll propio. Se midieron las dos en ramas que no se
+funden (`comparar/tabla-sticky` y `comparar/tabla-scroll`, informe en `~/Documents/Claude/2026-09
+tabla-sticky-vs-scroll/`): con la cabecera fija y scroll de página, 5.000 filas tardan 3 min 36 s y 1,37 GB;
+con scroll propio y lista virtual, 0,27 s y 26 MB. A cambio, el scroll propio veía menos filas, se quedaba en
+191 px con zoom al 200 % y dejaba la tarjeta vacía con 3 filas. Rafa y dos usuarios eligieron el scroll propio.
+
+**Decisión** · (1) `sc-datatable` estrena `virtualScroll`: con `scrollable`, por encima de 100 filas solo
+pinta las visibles; mide sola el alto de fila (pinta una, la mide y activa la lista), sin número a mano. (2)
+Con `scrollHeight="flex"`, sin lista virtual la tabla se AJUSTA a sus filas y solo hace scroll si no caben
+(`sc-datatable--fit`); con ella, LLENA el alto (`sc-datatable--fill`), que es lo que la lista virtual necesita.
+(3) La barra de scroll empieza bajo la cabecera de columnas: `sc-datatable` mide la cabecera
+(`--sc-datatable-thead-height`) y el tema coloca la pista. (4) Forma de página compartida `.page--tabla` en
+`_page.scss`: la página no hace scroll, alto mínimo `scale/25` para zoom y pantallas bajas, y con filas
+marcadas la tarjeta deja sitio a la barra de selección (`.table-card--seleccion`). (5) Agentes es la primera.
+
+**Razón** · Escala sin límite y es un solo patrón para todas las listas, también las que crecerán. Medido en
+Agentes (build estático): 3 y 12 filas sin hueco bajo la última; 60 hacen scroll dentro con la cabecera fija;
+150 y 5.000 cargan igual con 20 filas pintadas; al 200 % se ven 3 filas (antes 2); buscar pasa de llenar a
+ajustarse y vuelve; con una fila marcada la tarjeta acaba a 9 px de la barra de selección.
+
+**Descartadas** ·
+- **Cabecera fija con scroll de página** → más filas a la vista y Ctrl+F completo, pero se hunde con muchas
+  filas y cualquier caja con `overflow` por encima la rompe (pasó con la tarjeta de Agentes).
+- **Llenar siempre el alto** (la rama de comparación) → con 3 filas, tarjeta vacía hasta abajo.
+- **Ajustarse también con lista virtual** → la lista virtual necesita alto fijo: la tarjeta se hundía a 2 px
+  y no pintaba ninguna fila (medido).
+- **Alto de fila escrito a mano** (54 en la rama de comparación) → cambia con el contenido de cada tabla.
+
+**Consecuencias** · Con lista virtual, Ctrl+F solo encuentra las filas visibles (la pantalla tiene su
+buscador) y las filas deben medir igual: una lista con filas desplegables no la activa. Una página con
+`.page--tabla` no puede reservar la barra de selección con `padding-bottom` ni poner `overflow` en su
+`.table-card`. Pendiente: llevar el patrón al resto de listas (Usuarios, Grupos, Etiquetas, Plantillas,
+repositorios, Conversaciones).
 
 ---
 
