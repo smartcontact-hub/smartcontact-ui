@@ -2,7 +2,8 @@
 
 **Source of truth** de cómo viaja la tipografía end-to-end, y en particular del caso que
 `consumer-onboarding.md` no cubre: un **equipo externo con su propio código** que no instala
-nuestro paquete npm y solo recibe el **export del tema** (zip del plugin de Figma).
+nuestro paquete npm y solo recibe el **export del tema** (hasta el 2026-09-14, el zip del plugin de
+Figma; desde DD-88, el zip de nuestro tema que publica `tema-zip.yml`).
 
 Escrito el 2026-09-02 tras cerrar SISMAC-4074. Todo lo que hay aquí está **medido**, no
 deducido; cada afirmación lleva su método al lado.

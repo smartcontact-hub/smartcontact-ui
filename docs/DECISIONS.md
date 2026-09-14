@@ -136,6 +136,54 @@ la densidad ni cambia la escala: eso lo lleva otra sesión.
 
 ---
 
+## DD-88 · 2026-09-14 — El equipo externo recibe dos zips publicados solos: el tema de nuestras apps y el export del plugin, comprobados
+
+**Contexto** · Hasta hoy el equipo externo recibía el zip del plugin de Figma (el preset que monta el
+Theme Designer), descargado y enviado a mano, con tres comprobaciones a mano que `conexion-variables.md`
+describía y ningún script hacía. Medido (H3): con el mismo Kit, ese preset y el de nuestras apps difieren
+en el 43 % de las claves (pesos con «px», esquema anterior a Aura 3, rem pensados para raíz 14, 714
+claves que Aura 3 lee y el plugin no define). Rafa: «ellos nos siguen a nosotros… no deberíamos ser
+esclavos».
+
+**Decisión** · (1) `scripts/tema-zip.mjs` empaqueta el tema de NUESTRAS apps: el preset (`sc-preset`, con
+Aura dentro) en un solo `sc-preset.mjs`, las 6 capas de tokens, las clases de tipografía, una guía de
+instalación en llano y un manifiesto. (2) Hace las tres comprobaciones de la rutina: ningún token que
+tenía valor pasa a 0 (sale con error), raíz 16 declarada, y diferencia con el zip anterior (variables,
+semántica común y componentes). (3) `tema-zip.yml` lo genera en cada cambio del tema en `main` y, si algo
+cambió, lo publica en la rama `tema-zip` (enlace fijo al zip y a su guía). (4) **Y el export del plugin
+también**, porque la licencia comercial es suya (Rafa: «para ahorrarme problemas políticos»): cuando un push
+del plugin trae `.theme-designer/`, el robot de tokens lo empaqueta tal cual (`ts/` y `js/`) con
+`scripts/tema-plugin-zip.mjs`, lo comprueba (token a 0, raíz para la que está pensado, pesos con «px»,
+diferencia con el anterior) y mide cuánto se aparta de nuestras apps, y lo publica en la misma rama como
+`tema-plugin.zip` con `LEEME-plugin.md`. El equipo externo elige; la guía de cada zip dice en qué se
+diferencian.
+
+**Razón** · Medido en local: el preset empaquetado genera el mismo CSS que el del código en los 97
+componentes, y un valor tocado en el paquete lo caza (sale `button`). La diferencia entre `main` y la
+tanda de DD-87 sale exacta: 0 variables, semántica común distinta y `menu`, `skeleton` y `toast`. Un token
+puesto a 0 respecto al anterior pone el script en rojo nombrándolo. La publicación se probó en un repo
+desechable en tres pasadas: crea la rama, se salta la pasada sin cambios, añade la siguiente. Export del
+plugin del 11-09 contra el tema de hoy: 620 de 2.003 variables comparables distintas (31 %), 284 de ellas
+solo por la raíz 14; 4 pesos con «px». Control: nuestro tema pasado como si fuera el del plugin da 0 de
+3.160. El comparador leyó de más tres veces antes de ese control (rampas primitivas contadas, `light-dark()`
+sin elegir tema, formatos de color): cada arreglo está comentado en el script.
+
+**Descartadas** ·
+- **Solo el zip del plugin** → no es lo que pintan nuestras apps (31 % distinto) y había que prepararlo a mano.
+- **Solo nuestro tema** (propuesta inicial de Claude) → la licencia contratada es la del plugin; Rafa prefiere
+  entregar también su export.
+- **Publicarlo como versión de GitHub** → publicar una versión dispara `publish-packages.yml` (sube los
+  paquetes del DS) y quitaría a v1.0.0 la marca de «última».
+- **Un preset con los valores resueltos, sin CSS de tokens** → habría que partir cada clave por tema a
+  mano; con los tokens, el zip es exactamente lo que usan nuestras apps.
+
+**Consecuencias** · El paso a mano del zip desaparece: el enlace no cambia y siempre sirve la última
+versión. El equipo externo tiene que cambiar cómo instala el tema (guía en el zip); el mensaje lo envía
+Rafa. Pendiente de medir: que el preset empaquetado funcione en su PrimeNG 21 (el nuestro es 22); su
+paquete de estilos pide login desde el 2026-09-14.
+
+---
+
 ## DD-87 · 2026-09-14 — Lo que es marca, la densidad y cada divergencia con Aura que se queda: una sola página vigente
 
 **Contexto** · Encargo de Rafa (2026-09-13): «Aura + color de marca», con el export de Figma en un clic.

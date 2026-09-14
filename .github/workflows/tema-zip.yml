@@ -1,0 +1,77 @@
+# El tema de Smart Contact para el equipo externo, publicado solo.
+#
+# Cada vez que cambia el tema en `main` (tokens o preset), genera el zip con `scripts/tema-zip.mjs`,
+# lo compara con el publicado y, si algo cambió, lo deja en la rama `tema-zip`. Enlaces fijos:
+#   zip:  https://github.com/smartcontact-hub/smartcontact-ui/raw/tema-zip/tema-smartcontact.zip
+#   guía: https://github.com/smartcontact-hub/smartcontact-ui/blob/tema-zip/LEEME.md
+# En la misma rama, el robot de tokens publica `tema-plugin.zip` (el export del plugin, el de la licencia).
+#
+# Por qué: hasta el 2026-09-14 el zip lo preparaba Rafa a mano desde el plugin de Figma, con tres
+# comprobaciones a mano, y el tema del plugin no era el que pintan nuestras apps (43 % de claves
+# distintas con el mismo Kit). Si un token pasa a 0, el job sale rojo y no publica nada.
+#
+# Una RAMA y no una versión de GitHub, a propósito: publicar una versión dispara
+# `publish-packages.yml` (sube los paquetes del DS) y le quitaría a la versión del DS la marca de
+# «última». El commit de esa rama lleva la etiqueta de «no construir» para que Cloudflare no la construya.
+name: tema-zip
+
+on:
+  push:
+    branches: [main]
+    paths:
+      - projects/design-tokens/src/lib/styles/**
+      - projects/ui-smartcontact/src/lib/theme/**
+      - scripts/tema-zip.mjs
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+concurrency:
+  group: tema-zip
+  cancel-in-progress: false
+
+jobs:
+  publicar:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          fetch-depth: 0
+      - uses: actions/setup-node@v5
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+
+      - name: Traer el zip publicado (si hay)
+        run: |
+          PUB="$RUNNER_TEMP/pub"
+          if git fetch -q origin tema-zip 2>/dev/null; then
+            git worktree add -q --detach "$PUB" FETCH_HEAD
+          else
+            git worktree add -q --detach "$PUB" && git -C "$PUB" checkout -q --orphan tema && git -C "$PUB" rm -rfq --ignore-unmatch .
+          fi
+          mkdir -p "$RUNNER_TEMP/anterior"
+          if [ -f "$PUB/tema-smartcontact.zip" ]; then unzip -q "$PUB/tema-smartcontact.zip" -d "$RUNNER_TEMP/anterior"; fi
+
+      - name: Generar el zip y comprobarlo
+        run: node scripts/tema-zip.mjs "$RUNNER_TEMP/tema" --anterior "$RUNNER_TEMP/anterior"
+
+      - name: Publicar si cambió algo
+        run: |
+          PUB="$RUNNER_TEMP/pub"
+          CAMBIA=$(node -e 'const m=require(process.argv[1]).comprobaciones.diferencia; console.log(!m.anterior || m.variables.length > 0 || m.semanticaComun || m.componentes.length > 0 ? "si" : "no")' "$RUNNER_TEMP/tema/manifiesto.json")
+          if [ "$CAMBIA" = "no" ]; then echo "El tema no cambia respecto al publicado: no se publica."; exit 0; fi
+          rm -f "$PUB/tema-smartcontact.zip"
+          (cd "$RUNNER_TEMP/tema" && zip -qr "$PUB/tema-smartcontact.zip" .)
+          cp "$RUNNER_TEMP/tema/LEEME.md" "$RUNNER_TEMP/tema/manifiesto.json" "$PUB/"
+          git -C "$PUB" config user.name "github-actions[bot]"
+          git -C "$PUB" config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git -C "$PUB" add -A
+          git -C "$PUB" commit -qm "Tema desde ${GITHUB_SHA::7} [skip ci]"
+          # El robot de tokens publica el zip del plugin en la misma rama: si empujó a la vez, se rebasa.
+          for intento in 1 2 3; do
+            git -C "$PUB" push -q origin HEAD:refs/heads/tema-zip && break
+            git -C "$PUB" pull -q --rebase origin tema-zip
+          done
