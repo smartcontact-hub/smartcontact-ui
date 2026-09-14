@@ -41,3 +41,17 @@ test('markdown: solo enseña lo que cambia, y dice en voz alta cuando no cambia 
   assert.match(renderMarkdown([{ ...base, ruta: 'r', tema: 'claro', distintos: 0 }], '.'), /Ninguna de las 1 pantallas cambia/);
   assert.match(renderMarkdown([], '.'), /No hay capturas/);
 });
+
+test('comparar: un gris de texto que se oscurece cuenta aunque sea antialias (#4f5663 → #334155)', () => {
+  // Trazos de 1px como los de un texto: pixelmatch los trata como antialias y, por defecto, los descarta.
+  const texto = (rgb) => {
+    const img = new PNG({ width: 20, height: 10 });
+    for (let i = 0; i < img.data.length; i += 4) {
+      const x = (i / 4) % 20;
+      const c = x % 3 === 1 ? rgb : [255, 255, 255];
+      [img.data[i], img.data[i + 1], img.data[i + 2], img.data[i + 3]] = [...c, 255];
+    }
+    return PNG.sync.write(img);
+  };
+  assert.ok(comparar(texto([79, 86, 99]), texto([51, 65, 85])).distintos > 0);
+});
