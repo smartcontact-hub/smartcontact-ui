@@ -24,6 +24,18 @@ const CTA_SNIPPET = `<sc-empty-state
   (cta)="onCreate()"
 />`;
 
+const SEARCH_SNIPPET = `<!-- "params" interpola {{query}} en el título y el cuerpo. Es el vacío que pintan
+     las listas cuando una búsqueda no encuentra nada, dentro de su tabla. -->
+<sc-empty-state
+  icon="search_off"
+  titleKey="components.emptystate.search_title"
+  bodyKey="components.emptystate.search_body"
+  [params]="{ query: consulta() }"
+  ctaKey="components.emptystate.clear_search"
+  ctaIcon="close"
+  (cta)="consulta.set('')"
+/>`;
+
 /** Demo de `sc-empty-state` en formato story (motor «Storybook-like»). */
 @Component({
   selector: 'app-emptystate-demo',
@@ -35,6 +47,10 @@ export class EmptyStateDemoComponent {
   protected readonly playgroundTpl = viewChild<TemplateRef<StoryContext>>('playground');
   protected readonly plainTpl = viewChild<TemplateRef<StoryContext>>('plain');
   protected readonly ctaTpl = viewChild<TemplateRef<StoryContext>>('cta');
+  protected readonly busquedaTpl = viewChild<TemplateRef<StoryContext>>('busqueda');
+
+  /** Lo que «se buscó» en la story de búsqueda; su CTA lo vacía de verdad. */
+  protected readonly consulta = signal('zzzz');
 
   protected readonly meta: StoryMeta = {
     tag: 'sc-empty-state',
@@ -75,14 +91,20 @@ export class EmptyStateDemoComponent {
       {
         name: 'bodyKey',
         type: 'string',
-        default: '—',
-        description: 'Clave i18n del cuerpo (requerido).',
+        default: "''",
+        description: 'Clave i18n del cuerpo. Opcional: sin ella el vacío se queda en el título.',
       },
       {
         name: 'ctaKey',
         type: 'string | null',
         default: 'null',
         description: 'Clave i18n de la CTA; si se define, pinta el botón primario.',
+      },
+      {
+        name: 'params',
+        type: 'Record<string, unknown>',
+        default: 'undefined',
+        description: 'Parámetros de interpolación para título y cuerpo (p. ej. { query }).',
       },
       { name: 'cta', type: 'EventEmitter<void>', description: 'Output al pulsar la CTA.' },
     ],
@@ -99,11 +121,13 @@ export class EmptyStateDemoComponent {
     const pg = this.playgroundTpl();
     const pl = this.plainTpl();
     const ct = this.ctaTpl();
-    if (!pg || !pl || !ct) return [];
+    const bu = this.busquedaTpl();
+    if (!pg || !pl || !ct || !bu) return [];
     return [
       { name: 'Playground', playground: true, template: pg },
       { name: 'Sin CTA', template: pl, snippet: PLAIN_SNIPPET },
       { name: 'Con CTA', template: ct, snippet: CTA_SNIPPET },
+      { name: 'Búsqueda sin resultados', template: bu, snippet: SEARCH_SNIPPET },
     ];
   });
 }

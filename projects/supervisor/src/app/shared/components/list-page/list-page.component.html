@@ -20,7 +20,7 @@
           <sc-search
             class="page__search"
             [placeholder]="placeholder"
-            shortcutHint="⌘K"
+            shortcutHint="/"
             [clearAriaLabel]="'labels.clear_search' | translate"
             [value]="query()"
             (valueChange)="query.set($event)"
@@ -70,8 +70,21 @@
           (rowContextMenu)="onRowContextMenu($event, rowMenuRef)"
           [attr.data-testid]="tableTestId()"
         >
-          <div scTableEmpty class="list-page__no-results sc-text-body-regular">
-            <ng-content select="[scListNoResults]">{{ noResultsText() }}</ng-content>
+          <!-- Búsqueda sin resultados: el MISMO vacío del DS que el resto de la app, dentro de la tabla
+               (plantilla vacía de p-table), con la cabecera visible y el botón para limpiar la búsqueda
+               (2026-09-14). Una pantalla con dos casos distintos proyecta `[scListNoResults]`. -->
+          <div scTableEmpty>
+            <ng-content select="[scListNoResults]">
+              <sc-empty-state
+                icon="search_off"
+                titleKey="labels.no_results.title"
+                [bodyKey]="noResultsKey()"
+                [params]="noResultsParamsWithQuery()"
+                [ctaKey]="query() ? 'labels.clear_search' : null"
+                ctaIcon="close"
+                (cta)="query.set('')"
+              />
+            </ng-content>
           </div>
         </sc-datatable>
       </div>

@@ -50,6 +50,7 @@ export type ScSearchSize = ScFieldSize;
     '[class.sc-search--lg]': "size() === 'lg'",
     '[class.sc-search--disabled]': 'disabled()',
     '[class.sc-search--filled]': 'filled()',
+    '(document:keydown)': 'onDocumentKeydown($event)',
   },
 })
 export class ScSearchComponent {
@@ -95,6 +96,21 @@ export class ScSearchComponent {
   protected readonly resolvedId = this.field.resolvedId;
 
   private readonly inputEl = viewChild<ElementRef<HTMLInputElement>>('input');
+
+  /**
+   * Con `shortcutHint="/"` la pista CUMPLE lo que promete: `/` enfoca el campo desde cualquier
+   * punto de la página (convención de GitHub y Linear), salvo mientras se escribe en otro campo.
+   * Antes el atajo lo cableaba (o no) cada pantalla, y seis listas enseñaban «⌘K», que en el
+   * Supervisor abre la paleta de comandos y no el buscador (medido, 2026-09-14).
+   */
+  protected onDocumentKeydown(event: KeyboardEvent): void {
+    if (this.shortcutHint() !== '/' || event.key !== '/') return;
+    if (event.metaKey || event.ctrlKey || event.altKey || this.disabled()) return;
+    const target = event.target as HTMLElement | null;
+    if (target?.closest('input, textarea, select, [contenteditable="true"]')) return;
+    event.preventDefault();
+    this.focus();
+  }
 
   /** Public API — permite al consumer enfocar el campo (atajos globales). */
   focus(): void {

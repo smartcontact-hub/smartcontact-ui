@@ -20,11 +20,12 @@
   [showClear]="showClear()"
   [showIcon]="!inline() && showIcon()"
   [iconDisplay]="'input'"
-  [showButtonBar]="showButtonBar()"
+  [showButtonBar]="showButtonBar() || hasPresets()"
+  [selectionMode]="selectionMode()"
   [size]="pSize()"
   [panelStyleClass]="panelStyleClass()"
   [appendTo]="'body'"
-  [ngModel]="value()"
+  [ngModel]="pickerValue()"
   (ngModelChange)="onModelChange($event)"
   (onFocus)="onFocus($event)"
   (onBlur)="onBlur($event)"
@@ -32,7 +33,20 @@
   [attr.aria-describedby]="footerText() ? msgId() : null"
   [attr.aria-required]="required() ? true : null"
   [attr.aria-invalid]="isInvalid() ? true : null"
-/>
+>
+  @if (hasPresets()) {
+    <!-- Pie con atajos: la plantilla `buttonbar` que documenta primeng.dev/datepicker. Botones
+         del DS en texto, para que el pie no compita con el calendario. -->
+    <ng-template #buttonbar>
+      <div class="sc-datepicker__presets">
+        @for (preset of presets(); track preset.label) {
+          <sc-button variant="secondary" appearance="text" size="sm" [label]="preset.label" (clicked)="applyPreset(preset)" />
+        }
+        <sc-button class="sc-datepicker__presets-clear" variant="secondary" appearance="text" size="sm" [label]="clearLabel()" (clicked)="clearFromBar()" />
+      </div>
+    </ng-template>
+  }
+</p-datepicker>
 
 @if (footerText()) {
   <sc-field-msg

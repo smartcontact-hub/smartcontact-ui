@@ -14,6 +14,7 @@ import {
 import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import type { MenuItem } from 'primeng/api';
 import { MenuModule } from 'primeng/menu';
+import { TooltipModule } from 'primeng/tooltip';
 
 import {
   type ScColumnCellContext,
@@ -26,6 +27,7 @@ import {
   ScBadgeComponent as BadgeComponent,
 } from '@smartcontact-hub/components';
 
+import { LanguageService } from '../../../../core/services/language.service';
 import type { Conversation } from '../../data/conversation.types';
 import {
   MemoryStatusIconComponent,
@@ -87,7 +89,7 @@ function primaryActionFor(conv: Conversation): ConversationContextAction | null 
  */
 @Component({
   selector: 'sc-memory-conversation-table',
-  imports: [BadgeComponent, DatatableComponent, TagComponent, MenuModule, TranslateModule, MemoryStatusIconComponent],
+  imports: [BadgeComponent, DatatableComponent, TagComponent, MenuModule, TooltipModule, TranslateModule, MemoryStatusIconComponent],
   templateUrl: './conversation-table.component.html',
   styleUrl: './conversation-table.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -150,6 +152,53 @@ export class ConversationTableComponent {
   private readonly textTpl = viewChild<TemplateRef<ScColumnCellContext<Conversation>>>('textTpl');
   private readonly numTpl = viewChild<TemplateRef<ScColumnCellContext<Conversation>>>('numTpl');
   private readonly idTpl = viewChild<TemplateRef<ScColumnCellContext<Conversation>>>('idTpl');
+  private readonly whenTpl = viewChild<TemplateRef<ScColumnCellContext<Conversation>>>('whenTpl');
+
+  private readonly language = inject(LanguageService);
+
+  /**
+   * Fecha y hora en UNA columna, con el día dicho como se dice: «Hoy · 12:50», «Ayer · 13:12» o
+   * «vie, 11 sept · 12:50» (2026-09-14). Antes eran dos columnas y la fecha salía idéntica en
+   * casi todas las filas, que es ruido que se lee catorce veces. El año solo aparece si no es el
+   * actual. Formato del navegador (`Intl`) con el idioma de la app.
+   */
+  protected when(conv: Conversation): string {
+    this.currentLang();
+    const [dd, mm, yyyy] = conv.date.split('/').map(Number);
+    const day = new Date(yyyy, mm - 1, dd);
+    const today = new Date();
+    today.setHours(0, 0, 0, 0);
+    const daysAgo = Math.round((today.getTime() - day.getTime()) / 86_400_000);
+    const t = (k: string) => this.translate.instant(`memory.conversations.table.${k}`);
+    const label =
+      daysAgo === 0
+        ? t('today')
+        : daysAgo === 1
+          ? t('yesterday')
+          : new Intl.DateTimeFormat(this.language.locale(), {
+              weekday: 'short',
+              day: 'numeric',
+              month: 'short',
+              ...(yyyy === today.getFullYear() ? {} : { year: 'numeric' }),
+            }).format(day);
+    return `${label} · ${conv.hour}`;
+  }
+
+  /**
+   * Qué le pasa a la fila, en palabras: el estado del icono y, si toca, que falló o que su
+   * grabación se eliminó. La fila roja y la gris no se explicaban en ninguna parte, y la eliminada
+   * se anunciaba como «Llamada · grabada» (medido en el DOM, 2026-09-14). Sale en el tooltip del
+   * botón de estado (`pTooltip`, primeng.dev/tooltip) y en su nombre accesible.
+   */
+  protected statusDescription(conv: Conversation): string {
+    this.currentLang();
+    const t = (k: string, p?: object) => this.translate.instant(`memory.conversations.status.${k}`, p);
+    const parts = [this.translate.instant(this.statusLabelKey(conv))];
+    if (conv.deleted) parts.push(t('deleted'));
+    if (conv.hasFailedTranscription) parts.push(t('failed'));
+    if (this.recordingsCount(conv) > 1) parts.push(t('multi_recording', { count: this.recordingsCount(conv) }));
+    return parts.join(' · ');
+  }
 
   protected readonly columns = computed<readonly ScColumnDef<Conversation>[]>(() => {
     this.currentLang();
@@ -168,8 +217,8 @@ export class ConversationTableComponent {
      * libre baja a dos líneas. */
     return [
       { field: 'status', header: t('status'), width: '77px', cellTemplate: this.statusTpl() },
-      { field: 'hour', header: t('hour'), width: '70px', cellTemplate: this.textTpl() },
-      { field: 'date', header: t('date'), width: '105px', cellTemplate: this.textTpl() },
+      // 182: «sex., 13 de mar. · 12:50» (pt-BR) mide 150 + 28 de relleno, redondeado a 7.
+      { field: 'date', header: t('date'), width: '182px', cellTemplate: this.whenTpl() },
       { field: 'service', header: t('service'), cellTemplate: this.servicePillTpl() },
       { field: 'origin', header: t('origin'), cellTemplate: this.textTpl() },
       { field: 'group', header: t('group'), cellTemplate: this.groupPillTpl() },

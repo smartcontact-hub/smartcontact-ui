@@ -36,3 +36,18 @@
     Veces que se pulsó la CTA: <strong data-testid="sc-emptystate-cta-count">{{ pulsaciones() }}</strong>
   </p>
 </ng-template>
+
+<!-- Búsqueda sin resultados: `params` interpola `{{query}}` en título y cuerpo. Es el vacío que
+     pintan todas las listas del Supervisor dentro de su tabla. -->
+<ng-template #busqueda>
+  <sc-empty-state
+    icon="search_off"
+    titleKey="components.emptystate.search_title"
+    bodyKey="components.emptystate.search_body"
+    [params]="{ query: consulta() }"
+    ctaKey="components.emptystate.clear_search"
+    ctaIcon="close"
+    (cta)="consulta.set('')"
+    data-testid="sc-emptystate-search"
+  />
+</ng-template>

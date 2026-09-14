@@ -1,20 +1,20 @@
-<button
-  type="button"
-  class="type-filter-trigger sc-text-body-regular"
-  [class.type-filter-trigger--active]="hasActiveFilters()"
-  [attr.aria-pressed]="hasActiveFilters()"
-  [attr.aria-label]="
+<!-- Disparador con la pieza del DS, igual que «Categorías IA». El número dice CUÁNTOS
+     grupos del panel se apartan de su valor por defecto (antes, un punto que no decía cuántos). -->
+<sc-button
+  variant="secondary"
+  appearance="outlined"
+  [ariaLabel]="
     (hasActiveFilters() ? 'memory.type_filter.aria_active' : 'memory.type_filter.aria_default')
       | translate
   "
-  (click)="panel.toggle($event)"
+  (clicked)="panel.toggle($event)"
 >
   <sc-icon [name]="filterIcon" size="inherit" />
   <span>{{ 'memory.type_filter.label' | translate }}</span>
-  @if (hasActiveFilters()) {
-    <span class="type-filter-trigger__dot" aria-hidden="true"></span>
+  @if (activeGroupCount() > 0) {
+    <sc-badge size="sm" [label]="activeGroupCount()" />
   }
-</button>
+</sc-button>
 
 <p-popover
   #panel
@@ -25,47 +25,42 @@
 >
   <div class="type-filter-panel">
     <header class="type-filter-panel__head">
-      <h3>{{ 'memory.type_filter.panel_title' | translate }}</h3>
+      <h3 class="sc-text-body-semibold">{{ 'memory.type_filter.panel_title' | translate }}</h3>
       <sc-button variant="primary" appearance="link" size="sm" [label]="'memory.type_filter.reset' | translate" (clicked)="resetPopoverFilters()" />
     </header>
 
     <div class="type-filter-panel__body">
       <section class="type-filter-group">
-        <h4>{{ 'memory.type_filter.groups.type' | translate }}</h4>
-        <sc-checkbox class="type-filter-row" [state]="(filters().types.interna) ? 'all' : 'none'" (cycle)="updateTypes('interna', $event)">{{ 'memory.type_filter.types.interna' | translate }}</sc-checkbox>
-        <sc-checkbox class="type-filter-row" [state]="(filters().types.externa) ? 'all' : 'none'" (cycle)="updateTypes('externa', $event)">{{ 'memory.type_filter.types.externa' | translate }}</sc-checkbox>
+        <h4 class="sc-text-caption-semibold">{{ 'memory.type_filter.groups.type' | translate }}</h4>
+        <sc-checkbox [state]="(filters().types.interna) ? 'all' : 'none'" (cycle)="updateTypes('interna', $event)">{{ 'memory.type_filter.types.interna' | translate }}</sc-checkbox>
+        <sc-checkbox [state]="(filters().types.externa) ? 'all' : 'none'" (cycle)="updateTypes('externa', $event)">{{ 'memory.type_filter.types.externa' | translate }}</sc-checkbox>
       </section>
 
       <section class="type-filter-group">
-        <h4>{{ 'memory.type_filter.groups.channel' | translate }}</h4>
-        <sc-checkbox class="type-filter-row" [state]="(filters().channels.llamada) ? 'all' : 'none'" (cycle)="updateChannels('llamada', $event)">{{ 'memory.type_filter.channels.llamada' | translate }}</sc-checkbox>
-        <sc-checkbox class="type-filter-row" [state]="(filters().channels.chat) ? 'all' : 'none'" (cycle)="updateChannels('chat', $event)">{{ 'memory.type_filter.channels.chat' | translate }}</sc-checkbox>
+        <h4 class="sc-text-caption-semibold">{{ 'memory.type_filter.groups.channel' | translate }}</h4>
+        <sc-checkbox [state]="(filters().channels.llamada) ? 'all' : 'none'" (cycle)="updateChannels('llamada', $event)">{{ 'memory.type_filter.channels.llamada' | translate }}</sc-checkbox>
+        <sc-checkbox [state]="(filters().channels.chat) ? 'all' : 'none'" (cycle)="updateChannels('chat', $event)">{{ 'memory.type_filter.channels.chat' | translate }}</sc-checkbox>
       </section>
 
       <section class="type-filter-group">
-        <h4>{{ 'memory.type_filter.groups.direction' | translate }}</h4>
-        <sc-checkbox class="type-filter-row" [state]="(filters().directions.entrante) ? 'all' : 'none'" (cycle)="updateDirections('entrante', $event)">{{ 'memory.type_filter.directions.entrante' | translate }}</sc-checkbox>
-        <sc-checkbox class="type-filter-row" [state]="(filters().directions.saliente) ? 'all' : 'none'" (cycle)="updateDirections('saliente', $event)">{{ 'memory.type_filter.directions.saliente' | translate }}</sc-checkbox>
+        <h4 class="sc-text-caption-semibold">{{ 'memory.type_filter.groups.direction' | translate }}</h4>
+        <sc-checkbox [state]="(filters().directions.entrante) ? 'all' : 'none'" (cycle)="updateDirections('entrante', $event)">{{ 'memory.type_filter.directions.entrante' | translate }}</sc-checkbox>
+        <sc-checkbox [state]="(filters().directions.saliente) ? 'all' : 'none'" (cycle)="updateDirections('saliente', $event)">{{ 'memory.type_filter.directions.saliente' | translate }}</sc-checkbox>
       </section>
 
       <hr class="type-filter-panel__divider" aria-hidden="true" />
 
       <section class="type-filter-group">
-        <h4>{{ 'memory.type_filter.groups.rules' | translate }}</h4>
-        <sc-checkbox class="type-filter-row" [state]="(filters().rules.recording) ? 'all' : 'none'" (cycle)="updateRules('recording', $event)">{{ 'memory.type_filter.rules.recording' | translate }}</sc-checkbox>
-        <sc-checkbox class="type-filter-row" [state]="(filters().rules.transcription) ? 'all' : 'none'" (cycle)="updateRules('transcription', $event)">{{ 'memory.type_filter.rules.transcription' | translate }}</sc-checkbox>
-        <sc-checkbox class="type-filter-row" [state]="(filters().rules.classification) ? 'all' : 'none'" (cycle)="updateRules('classification', $event)">{{ 'memory.type_filter.rules.classification' | translate }}</sc-checkbox>
-      </section>
-
-      <section class="type-filter-group">
-        <h4>{{ 'memory.type_filter.groups.status' | translate }}</h4>
-        <sc-checkbox class="type-filter-row" [state]="(filters().status.onlyFailed) ? 'all' : 'none'" (cycle)="updateStatus($event)">{{ 'memory.type_filter.status.only_failed' | translate }}</sc-checkbox>
+        <h4 class="sc-text-caption-semibold">{{ 'memory.type_filter.groups.rules' | translate }}</h4>
+        <sc-checkbox [state]="(filters().rules.recording) ? 'all' : 'none'" (cycle)="updateRules('recording', $event)">{{ 'memory.type_filter.rules.recording' | translate }}</sc-checkbox>
+        <sc-checkbox [state]="(filters().rules.transcription) ? 'all' : 'none'" (cycle)="updateRules('transcription', $event)">{{ 'memory.type_filter.rules.transcription' | translate }}</sc-checkbox>
+        <sc-checkbox [state]="(filters().rules.classification) ? 'all' : 'none'" (cycle)="updateRules('classification', $event)">{{ 'memory.type_filter.rules.classification' | translate }}</sc-checkbox>
       </section>
 
       <section class="type-filter-group type-filter-group--last">
-        <h4>{{ 'memory.type_filter.groups.multirec' | translate }}</h4>
-        <sc-checkbox class="type-filter-row" [state]="(filters().multirec.onlyMulti) ? 'all' : 'none'" (cycle)="updateMultirec('onlyMulti', $event)">{{ 'memory.type_filter.multirec.only_multi' | translate }}</sc-checkbox>
-        <sc-checkbox class="type-filter-row" [state]="(filters().multirec.onlyPartial) ? 'all' : 'none'" (cycle)="updateMultirec('onlyPartial', $event)">{{ 'memory.type_filter.multirec.only_partial' | translate }}</sc-checkbox>
+        <h4 class="sc-text-caption-semibold">{{ 'memory.type_filter.groups.multirec' | translate }}</h4>
+        <sc-checkbox [state]="(filters().multirec.onlyMulti) ? 'all' : 'none'" (cycle)="updateMultirec('onlyMulti', $event)">{{ 'memory.type_filter.multirec.only_multi' | translate }}</sc-checkbox>
+        <sc-checkbox [state]="(filters().multirec.onlyPartial) ? 'all' : 'none'" (cycle)="updateMultirec('onlyPartial', $event)">{{ 'memory.type_filter.multirec.only_partial' | translate }}</sc-checkbox>
       </section>
     </div>
   </div>

@@ -77,6 +77,19 @@
   }
 }
 
+/* Pie con atajos: los atajos a la izquierda, envolviendo si no caben, y «Limpiar» al final. */
+.sc-datepicker__presets {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--sc-spacing-0-25);
+  width: 100%;
+}
+
+.sc-datepicker__presets-clear {
+  margin-inline-start: auto;
+}
+
 /* ────────────────────────────────────────────────────────────────────
  * Footer message — reserve 1.25em so toggling validation never shifts
  * layout (DD#16, "no layout shift" feedback).

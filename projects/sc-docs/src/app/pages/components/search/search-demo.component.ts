@@ -12,7 +12,7 @@ import { StoryContext, StoryDef, StoryHostComponent, StoryMeta } from '../../../
 
 const BASIC_SNIPPET = `<sc-search placeholder="Buscar agentes…" [(value)]="term" />`;
 
-const VARIANTS_SNIPPET = `<sc-search placeholder="Con atajo" shortcutHint="⌘K" />
+const VARIANTS_SNIPPET = `<sc-search placeholder="Con atajo" shortcutHint="/" />
 <sc-search placeholder="Small" size="sm" />
 <sc-search placeholder="Filled" [filled]="true" />
 <sc-search placeholder="Deshabilitado" [disabled]="true" />`;
@@ -35,11 +35,11 @@ export class SearchDemoComponent {
     tag: 'sc-search',
     title: 'Search',
     description:
-      'Input de búsqueda: icono overlay + botón clear (×) opcional + pista de atajo (⌘K / /) cuando está vacío y sin foco. Se consume con `[(value)]` (signals).',
+      'Input de búsqueda: icono overlay + botón clear (×) opcional + pista de atajo cuando está vacío y sin foco; con `/` además enfoca el campo al pulsarla. Se consume con `[(value)]` (signals).',
     argTypes: [
       { name: 'value', control: { kind: 'text' } },
       { name: 'placeholder', control: { kind: 'text' } },
-      { name: 'shortcutHint', control: { kind: 'text' }, description: 'Ej. ⌘K, /' },
+      { name: 'shortcutHint', control: { kind: 'text' }, description: 'Pista visible. Con `/`, esa tecla enfoca el campo.' },
       { name: 'size', control: { kind: 'select', options: ['sm', 'md', 'lg'] } },
       { name: 'showClear', control: { kind: 'boolean' } },
       { name: 'filled', control: { kind: 'boolean' } },

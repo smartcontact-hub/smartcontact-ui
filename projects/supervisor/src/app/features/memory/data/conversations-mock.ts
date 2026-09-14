@@ -206,7 +206,7 @@ const INTERNA_CONSULTA: readonly TranscriptionLine[] = [
 export const MOCK_CONVERSATIONS: readonly Conversation[] = [
   {
     hour: '12:50',
-    date: '29/10/2025',
+    date: '11/09/2026',
     service: 'DV: Smart Contact',
     origin: 'Oscar Fernández',
     group: 'Soporte Taller',
@@ -228,7 +228,7 @@ export const MOCK_CONVERSATIONS: readonly Conversation[] = [
   },
   {
     hour: '13:12',
-    date: '29/10/2025',
+    date: '11/09/2026',
     service: 'Atención al Cliente',
     origin: 'María García',
     group: 'Soporte Nivel 1',
@@ -246,7 +246,7 @@ export const MOCK_CONVERSATIONS: readonly Conversation[] = [
   },
   {
     hour: '13:25',
-    date: '29/10/2025',
+    date: '11/09/2026',
     service: 'Ventas Comercial',
     origin: 'Carlos López',
     group: 'ACD outbound',
@@ -262,7 +262,7 @@ export const MOCK_CONVERSATIONS: readonly Conversation[] = [
   },
   {
     hour: '13:40',
-    date: '29/10/2025',
+    date: '11/09/2026',
     service: 'Soporte Técnico',
     origin: 'Ana Martínez',
     group: 'Soporte Nivel 2',
@@ -281,7 +281,7 @@ export const MOCK_CONVERSATIONS: readonly Conversation[] = [
   },
   {
     hour: '14:02',
-    date: '29/10/2025',
+    date: '11/09/2026',
     service: 'Postventa',
     origin: 'Luis Sánchez',
     group: 'Clientes vip',
@@ -301,7 +301,7 @@ export const MOCK_CONVERSATIONS: readonly Conversation[] = [
   },
   {
     hour: '14:15',
-    date: '29/10/2025',
+    date: '11/09/2026',
     service: 'DV: Smart Contact',
     origin: 'Elena Rodríguez',
     group: 'ACD Demo C2CB',
@@ -318,7 +318,7 @@ export const MOCK_CONVERSATIONS: readonly Conversation[] = [
   },
   {
     hour: '14:28',
-    date: '29/10/2025',
+    date: '11/09/2026',
     service: 'Atención al Cliente',
     origin: 'Javier Gómez',
     group: 'COLA_PRUEBA',
@@ -341,7 +341,7 @@ export const MOCK_CONVERSATIONS: readonly Conversation[] = [
   },
   {
     hour: '14:55',
-    date: '29/10/2025',
+    date: '11/09/2026',
     service: 'Soporte Técnico',
     origin: 'Laura Díaz',
     group: 'Soporte Taller',
@@ -359,7 +359,7 @@ export const MOCK_CONVERSATIONS: readonly Conversation[] = [
   },
   {
     hour: '15:10',
-    date: '29/10/2025',
+    date: '11/09/2026',
     service: 'Ventas Comercial',
     origin: 'Sergio Ruiz',
     group: 'Campaigns',
@@ -375,7 +375,7 @@ export const MOCK_CONVERSATIONS: readonly Conversation[] = [
   },
   {
     hour: '15:22',
-    date: '29/10/2025',
+    date: '11/09/2026',
     service: 'DV: Smart Contact',
     origin: 'Oscar Fernández',
     group: 'Soporte Taller',
@@ -391,7 +391,7 @@ export const MOCK_CONVERSATIONS: readonly Conversation[] = [
   },
   {
     hour: '15:38',
-    date: '29/10/2025',
+    date: '11/09/2026',
     service: 'Postventa',
     origin: 'María García',
     group: 'Clientes vip',
@@ -410,7 +410,7 @@ export const MOCK_CONVERSATIONS: readonly Conversation[] = [
   },
   {
     hour: '15:55',
-    date: '29/10/2025',
+    date: '11/09/2026',
     service: 'Atención al Cliente',
     origin: 'Carlos López',
     group: 'Soporte Nivel 1',
@@ -429,7 +429,7 @@ export const MOCK_CONVERSATIONS: readonly Conversation[] = [
   },
   {
     hour: '16:08',
-    date: '29/10/2025',
+    date: '11/09/2026',
     service: 'Soporte Técnico',
     origin: 'Ana Martínez',
     group: 'ACD Demo C2CB',
@@ -448,7 +448,7 @@ export const MOCK_CONVERSATIONS: readonly Conversation[] = [
   },
   {
     hour: '16:25',
-    date: '29/10/2025',
+    date: '11/09/2026',
     service: 'Ventas Comercial',
     origin: 'Luis Sánchez',
     group: 'ACD outbound',
@@ -467,7 +467,7 @@ export const MOCK_CONVERSATIONS: readonly Conversation[] = [
   },
   {
     hour: '16:40',
-    date: '29/10/2025',
+    date: '11/09/2026',
     service: 'DV: Smart Contact',
     origin: 'Elena Rodríguez',
     group: 'Soporte Nivel 2',
@@ -491,7 +491,7 @@ export const MOCK_CONVERSATIONS: readonly Conversation[] = [
   // Multi-rec con 3 tramos (IVR + dos transferencias)
   {
     hour: '08:12',
-    date: '28/10/2025',
+    date: '10/09/2026',
     service: 'Atención al Cliente',
     origin: 'Sergio Ruiz',
     group: 'Soporte Nivel 1',
@@ -528,7 +528,7 @@ export const MOCK_CONVERSATIONS: readonly Conversation[] = [
   // Multi-rec con 4 tramos — caso extremo IVR + tres transfers
   {
     hour: '09:45',
-    date: '28/10/2025',
+    date: '10/09/2026',
     service: 'Postventa',
     origin: 'Ana Martínez',
     group: 'Clientes vip',
@@ -551,7 +551,7 @@ export const MOCK_CONVERSATIONS: readonly Conversation[] = [
   // Llamada madrugada (00:30) — supervisor 24h
   {
     hour: '00:30',
-    date: '29/10/2025',
+    date: '11/09/2026',
     service: 'Soporte Técnico',
     origin: '+34655998877',
     group: 'Soporte Nivel 2',
@@ -571,7 +571,7 @@ export const MOCK_CONVERSATIONS: readonly Conversation[] = [
   // Llamada cortísima (12s) — colgada antes de respuesta
   {
     hour: '11:02',
-    date: '29/10/2025',
+    date: '11/09/2026',
     service: 'Ventas Comercial',
     origin: '+34611223344',
     group: 'ACD outbound',
@@ -588,7 +588,7 @@ export const MOCK_CONVERSATIONS: readonly Conversation[] = [
   // Llamada extra-larga (52min) — retención compleja
   {
     hour: '15:30',
-    date: '28/10/2025',
+    date: '10/09/2026',
     service: 'Postventa',
     origin: 'Laura Díaz',
     group: 'Clientes vip',
@@ -608,7 +608,7 @@ export const MOCK_CONVERSATIONS: readonly Conversation[] = [
   // Chat con múltiples categorías AI
   {
     hour: '10:18',
-    date: '29/10/2025',
+    date: '11/09/2026',
     service: 'DV: Smart Contact',
     origin: 'cliente-anon-882',
     group: 'Soporte Nivel 1',
@@ -628,7 +628,7 @@ export const MOCK_CONVERSATIONS: readonly Conversation[] = [
   // Outbound con análisis — campaña activa
   {
     hour: '16:05',
-    date: '29/10/2025',
+    date: '11/09/2026',
     service: 'Ventas Comercial',
     origin: 'Oscar Fernández',
     group: 'Campaigns',
@@ -648,7 +648,7 @@ export const MOCK_CONVERSATIONS: readonly Conversation[] = [
   // Chat interno (consulta entre agentes) — channel chat + type interna
   {
     hour: '14:18',
-    date: '28/10/2025',
+    date: '10/09/2026',
     service: 'DV: Smart Contact',
     origin: 'Javier Gómez',
     group: 'Soporte Nivel 2',
@@ -667,7 +667,7 @@ export const MOCK_CONVERSATIONS: readonly Conversation[] = [
   // Categoría sensible — insultos + lenguaje malsonante
   {
     hour: '17:22',
-    date: '28/10/2025',
+    date: '10/09/2026',
     service: 'Atención al Cliente',
     origin: '+34688112233',
     group: 'Soporte Nivel 1',
@@ -687,7 +687,7 @@ export const MOCK_CONVERSATIONS: readonly Conversation[] = [
   // Felicitación — caso positivo poco frecuente
   {
     hour: '13:48',
-    date: '28/10/2025',
+    date: '10/09/2026',
     service: 'Postventa',
     origin: 'María García',
     group: 'Clientes vip',
@@ -707,7 +707,7 @@ export const MOCK_CONVERSATIONS: readonly Conversation[] = [
   // Fin de semana — supervisor 24/7
   {
     hour: '11:30',
-    date: '26/10/2025',
+    date: '06/09/2026',
     service: 'Soporte Técnico',
     origin: '+34699554433',
     group: 'Soporte Taller',
@@ -724,7 +724,7 @@ export const MOCK_CONVERSATIONS: readonly Conversation[] = [
   // Failed multi-rec — tramo 1 OK, tramo 2 falló
   {
     hour: '14:55',
-    date: '29/10/2025',
+    date: '11/09/2026',
     service: 'Atención al Cliente',
     origin: 'Carlos López',
     group: 'COLA_PRUEBA',
@@ -752,7 +752,7 @@ export const MOCK_CONVERSATIONS: readonly Conversation[] = [
   // Chat largo de venta (15min)
   {
     hour: '12:10',
-    date: '28/10/2025',
+    date: '10/09/2026',
     service: 'Ventas Comercial',
     origin: 'cliente-corp-449',
     group: 'Campaigns',
@@ -772,7 +772,7 @@ export const MOCK_CONVERSATIONS: readonly Conversation[] = [
   // Conversación con rule de grabación pero sin transcription (rule recording-only)
   {
     hour: '15:48',
-    date: '28/10/2025',
+    date: '10/09/2026',
     service: 'DV: Smart Contact',
     origin: 'Elena Rodríguez',
     group: 'ACD Demo C2CB',
@@ -790,7 +790,7 @@ export const MOCK_CONVERSATIONS: readonly Conversation[] = [
   // Multi-rec rápido (2 tramos breves <2min total)
   {
     hour: '10:08',
-    date: '29/10/2025',
+    date: '11/09/2026',
     service: 'Soporte Técnico',
     origin: '+34644778899',
     group: 'Soporte Nivel 1',
@@ -819,7 +819,7 @@ export const MOCK_CONVERSATIONS: readonly Conversation[] = [
   // Outbound corto — baja conversión
   {
     hour: '17:55',
-    date: '28/10/2025',
+    date: '10/09/2026',
     service: 'Ventas Comercial',
     origin: 'Luis Sánchez',
     group: 'Campaigns',
@@ -839,7 +839,7 @@ export const MOCK_CONVERSATIONS: readonly Conversation[] = [
   // Chat sin análisis
   {
     hour: '09:18',
-    date: '29/10/2025',
+    date: '11/09/2026',
     service: 'Atención al Cliente',
     origin: 'cliente-quick-552',
     group: 'Soporte Nivel 1',
@@ -858,7 +858,7 @@ export const MOCK_CONVERSATIONS: readonly Conversation[] = [
   // GDPR expired + multi-rec
   {
     hour: '11:42',
-    date: '15/05/2025',
+    date: '13/03/2026',
     service: 'Postventa',
     origin: 'Cliente Anónimo',
     group: 'Clientes vip',
@@ -877,7 +877,7 @@ export const MOCK_CONVERSATIONS: readonly Conversation[] = [
   // Interna outbound (transfer agent→agent)
   {
     hour: '14:42',
-    date: '29/10/2025',
+    date: '11/09/2026',
     service: 'DV: Smart Contact',
     origin: 'Sergio Ruiz',
     group: 'Soporte Nivel 2',

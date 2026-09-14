@@ -91,6 +91,8 @@ export class ScMultiSelectComponent {
   readonly selectedItemsLabel = input<string>('{0} seleccionados');
   /** Show the "×" clear button. */
   readonly showClear = input(false, { transform: booleanAttribute });
+  /** Texto de ayuda del buscador del panel. Sin él, el campo salía vacío junto a una lupa. */
+  readonly filterPlaceholder = input<string>('Buscar');
   readonly emptyFilterMessage = input<string>('Sin resultados');
   readonly emptyMessage = input<string>('Sin opciones');
   /** Background "filled" variant (Figma node 6220:7054): bg slate-50. */

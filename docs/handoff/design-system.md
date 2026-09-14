@@ -31,6 +31,8 @@
 
 **LO SIGUIENTE, en orden (Rafa, 2026-09-13: «automatizable, agéntico: no ir a mano salvo que sea necesario»):**
 
+- **`sc-selectbutton`**: las vistas rápidas de Conversaciones usan `p-selectbutton` directo; envolverlo en el DS
+  (y cablear su color a `var(--sc-cmp-togglebutton-*)` cuando Figma suba la opción no elegida, §10).
 - **El índice lateral de las fichas a componente de la librería de Figma**: `figma-pendiente.md` §5. (La sección
   «Repositorios» de la ficha de agente, que se confundía con la página del menú, ya se llama «Recursos».)
 
@@ -163,6 +165,25 @@ las 38 ranuras— se cerraron el mismo día en DD-73.)
 3. **La deuda de código de [`AUDIT-DEUDA-2026-06.md`](../AUDIT-DEUDA-2026-06.md)** que quede tras
    s34, y **los cabos de DD-24** (round-trip de iconos) en [`ROADMAP.md`](../ROADMAP.md).
 
+## ✅ 2026-09-14 · La barra de Conversaciones se simplifica y todos los vacíos se ven igual
+
+**Sello:** rama `arebury/conversaciones-filtros` (#171), sobre `2b9e0e7` (#181). Rafa, visto en local y en la
+previsualización: «ok adelante». El tramo «La miga deja claro qué se puede pulsar» (DD-103) vive en el tag
+`archive/handoff-ds-2026-09-14-miga`.
+
+**Lo que cambia.** Filtros de Conversaciones en una fila (buscador, fecha como rango con atajos, vistas «Todas · Sin
+transcribir · Fallidas», etiquetas de lo filtrado); fecha y hora en una columna y tooltip de estado. DS: `sc-datepicker`
+con `selectionMode="range"` y `presets`, `filterPlaceholder`, `sc-search` con «/», `sc-empty-state` con `sc-button`,
+estilos de texto y `params`. El vacío de búsqueda es uno, dentro de la tabla (`sc-list-page` y Conversaciones).
+PrimeNG habla el idioma de la app. `SelectButton` a AA (customs-catalog §1.10). Figma: `figma-pendiente.md` §10.
+
+- ⚠️ **«Sin transcribir» en el backend real**: `getTranscriptions` da 503 por encima de ~416-663 resultados y solo
+  marca tres meses; la vista podría ofrecer volver a pagar. Hablarlo con los devs antes de llevarla a la app real.
+- ⚠️ **Con varias cajas en preflight, `e2e:visual` se pisa en :4280 o tumba `sc-datatable`** (captura inestable;
+  sola pasa): sirve un sc-docs de TU árbol en otro puerto y lanza con `SC_DOCS_URL` + `SC_ALLOW_PARALLEL_SUITES=1`.
+- ⚠️ **Día de muchas PRs**: cada rebase renumeró la sección de `figma-pendiente.md` (§5 → §10) y regeneró
+  capturas que otra PR también tocaba (#176). Mira `git log HEAD..origin/main` justo antes de cada preflight.
+
 ## ✅ 2026-09-14 · Un borde de un lado se escribe de un lado: `p-tabs` sin cajas (DD-107)
 
 **Sello:** rama `arebury/figma-pendiente-dashboard`, HEAD `58166a4` (#180) más este cambio. DD-107. Rafa: «adelante».
@@ -212,24 +233,6 @@ del texto, en rojo con los dos fallos puestos). 38 baselines de sc-docs regenera
 
 - ⚠️ **`getBoundingClientRect` INCLUYE `scale`**: la geometría se compara en el resto de la página, y un roce
   icono↔texto se busca en el control, no en el padre. Un `[size]` fijado a ojo junto a texto compensa dos veces.
-
-## ✅ 2026-09-14 · La miga deja claro qué se puede pulsar (DD-103)
-
-**Sello:** #175 fundido, HEAD `7b7554d`, CI de `main` en verde. DD-103. Rafa, visto en local: «si me gusta».
-Los tramos «Las listas se montan sobre una sola pieza» (DD-98) y «El modo oscuro cae en cascada» (DD-99) viven en los tags `archive/handoff-ds-2026-09-14-pieza-lista` y `archive/handoff-ds-2026-09-14-modo-oscuro`.
-
-**Lo que cambia.** Los tramos de la TopBar del Supervisor pasan `routerLink` (antes un `command` que navegaba
-a mano): enlace de verdad, con mano, Cmd+clic y «copiar enlace». `sc-breadcrumb` marca los tramos pulsables con
-`sc-breadcrumb-item--link` y el tema les da mano y subrayado en hover. Lo vigila
-`e2e/breadcrumb-affordance.spec.ts`. Figma: `figma-pendiente.md` ficha 6.
-
-- ⚠️ **El CSS de la miga de PrimeNG no pide la mano** (su menú sí): un `<a>` sin dirección sale con cursor de
-  texto. Para navegar, `routerLink`; la clase del DS es la red para lo que solo ejecuta una acción.
-- ⚠️ **Una regla del preset sobre un `.p-*` nuevo sube `audit:primeng-coupling`**: cuélgala de una clase nuestra
-  (aquí el `<li>`, `cursor` se hereda) y no hace falta tocar el tope.
-- ⚠️ **Con la máquina a carga ~60, `e2e:visual` tumba `sc-form-section-nav` y `sc-form-danger-zone`** por
-  timeout (0 elementos); solas pasan. Y el preflight de 25-40 min vio fundir tres PRs: DD-99 → DD-103 en tres
-  rebases.
 
 ## 🗄️ Histórico de la lista SIGUIENTE — ya cerrado
 

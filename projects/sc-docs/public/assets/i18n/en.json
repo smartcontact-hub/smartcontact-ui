@@ -82,6 +82,11 @@
       "bulkactionbar": "Bar that appears when you select rows, with the count and bulk actions.",
       "bulkeditmenu": "Menu of actions to apply to several selected rows at once.",
       "bulktranscriptionmodal": "Modal to launch batch transcription of several conversations."
+    },
+    "emptystate": {
+      "search_title": "No results",
+      "search_body": "No agents match “{{query}}”.",
+      "clear_search": "Clear search"
     }
   },
   "fundamentos": {
