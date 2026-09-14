@@ -3,12 +3,12 @@ import type { MessageDesignTokens } from '@primeuix/themes/types/message';
  export default {
     icon: {
         lg: {
-            size: "var(--sc-scale-1-25)"
+            size: "var(--sc-cmp-message-icon-lg-size)"
         },
         sm: {
-            size: "var(--sc-scale-1)"
+            size: "var(--sc-cmp-message-icon-sm-size)"
         },
-        size: "var(--sc-scale-1-125)"
+        size: "var(--sc-cmp-message-icon-size)"
     },
     info: {
         shadow: "var(--sc-cmp-message-info-shadow)",
@@ -61,7 +61,7 @@ import type { MessageDesignTokens } from '@primeuix/themes/types/message';
         sm: {
             padding: "var(--sc-scale-0-375) var(--sc-scale-0-625)"
         },
-        gap: "var(--sc-scale-0-5)",
+        gap: "var(--sc-cmp-message-content-gap)",
         padding: "var(--sc-scale-0-5) var(--sc-scale-0-75)"
     },
     success: {
@@ -87,12 +87,12 @@ import type { MessageDesignTokens } from '@primeuix/themes/types/message';
     },
     closeIcon: {
         lg: {
-            size: "var(--sc-scale-1-125)"
+            size: "var(--sc-cmp-message-close-icon-lg-size)"
         },
         sm: {
-            size: "var(--sc-scale-0-875)"
+            size: "var(--sc-cmp-message-close-icon-sm-size)"
         },
-        size: "var(--sc-scale-1)"
+        size: "var(--sc-cmp-message-close-icon-size)"
     },
     secondary: {
         shadow: "var(--sc-cmp-message-secondary-shadow)",
@@ -103,14 +103,14 @@ import type { MessageDesignTokens } from '@primeuix/themes/types/message';
         }
     },
     closeButton: {
-        width: "var(--sc-scale-1-75)",
-        height: "var(--sc-scale-1-75)",
+        width: "var(--sc-cmp-message-close-button-width)",
+        height: "var(--sc-cmp-message-close-button-height)",
         focusRing: {
             style: "{focus.ring.style}",
             width: "{focus.ring.width}",
             offset: "{focus.ring.offset}"
         },
-        borderRadius: "var(--sc-scale-0-875)"
+        borderRadius: "var(--sc-cmp-message-close-button-border-radius)"
     },
     colorScheme: {
         dark: {

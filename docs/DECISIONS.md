@@ -63,6 +63,43 @@
 
 ---
 
+## DD-85 · 2026-09-14 — Las medidas que los temas escribían a mano salen del export: un cambio de Figma llega solo al código
+
+**Contexto** · Tras DD-81, Rafa pidió que «todo caiga en cascada». Medido con `tools/aura-diff.mjs` en los 15
+componentes del Supervisor: de 209 medidas que el Kit define, 153 ya llegaban del export y 56 no. De esas,
+26 son la tabla, que sigue a Aura a propósito; el resto estaban escritas a mano en el tema con el paso de
+escala de antes (`var(--sc-scale-1-25)` en la casilla, el chip, los avisos, el toast, el calendario, el
+diálogo, la etiqueta y los desplegables). Figma ya tenía los valores de DD-81 y el código no los leía. Y
+`sc-checkbox` es un `input` nativo con su propio CSS: tampoco leía el tema.
+
+**Decisión** · 57 filas nuevas en `scripts/sizing-map.mjs` (de 53 a 110), una por medida suelta con paso
+de escala en `select`, `multiselect`, `datepicker`, `checkbox`, `dialog`, `tag`, `chip`, `message` y
+`toast`. El generador escribe su `--sc-cmp-*` y el tema lo lee; `sc-checkbox.component.scss` pasa su caja
+y su ✓ (tres tallas) a esos mismos tokens. La correspondencia tema ↔ export se sacó con un script que
+recorre el preset y casa cada ruta con su clave del Kit, y la edición se hizo por ruta en el árbol del
+fichero, no buscando texto.
+
+**Razón** · Es lo que ya hacían botón y campos desde el principio: una fila del mapa, un token generado y
+`tokens:parity` vigilando que el tema lo lea. Con el paso escrito a mano, cambiar la variable en Figma no
+movía nada en la app, y nadie lo cantaba.
+
+**Descartadas** ·
+- **Ampliar el generador a todos los temas** (309 pasos a mano en total) → este PR cubre los 14
+  componentes del Supervisor; el resto va igual cuando toque.
+- **Los 13 rellenos compuestos** (`padding: a b`) y los 2 tamaños de letra que usaban un paso de escala →
+  fuera: el mapa necesita una fila por lado o su propio tratamiento. Se quedan escritos a mano.
+- **La tabla** → sigue a Aura a propósito, no al Kit.
+
+**Consecuencias** · Cambian en pantalla los valores que ya decidió DD-81: casilla 17,5 → 15,75 (✓ 10,5),
+chip 10,5/7 → 8,75/5,25, botón de cerrar de avisos y toast 24,5 → 21, desplegables 35 → 31,5, y huecos del
+diálogo, el calendario y la etiqueta. `tokens:parity` 110/110; 519 tests unitarios; 18 capturas de
+referencia regeneradas y 2 cajas en `component-styles` (el chip). La prueba del chip pasa a leer el
+export (`kitPx`), como las demás desde DD-82. Medido en el navegador: casilla 15,75, chip 8,75/5,25, cerrar
+del aviso 21, desplegable 31,5. La casilla a 15,75 queda por debajo de 24 como objetivo táctil: cuenta la
+etiqueta, que también la marca.
+
+---
+
 ## DD-84 · 2026-09-14 — El PR del robot de tokens enseña capturas de antes y después del Supervisor
 
 **Contexto** · Para «mirar y fundir con un clic» (Rafa) hacía falta ver el cambio sin montar nada. El
@@ -212,7 +249,8 @@ azul marino (257° contra 262°) con más croma, así que no cambia la marca. (3
 37 y 42 (el mínimo para lo deshabilitado es Lc 30); slate-500 sigue un paso por debajo de `secondary`.
 (4) Es la regla de Rafa (variables que ya existen) y la traducción que usa el propio Figma de PrimeTek:
 cuando Aura cambie una medida, su rem dice qué paso usar. Guarda las proporciones de Aura a nuestro
-tamaño (todo ×14/16, como siempre: campos a 29,5 donde primeng.dev mide 31).
+tamaño (todo ×14/16, como siempre). Corregido el 2026-09-14 (DD-85): primeng.dev no mide 31 sino 35,
+porque su interlineado es 21 y el nuestro «normal» (≈17); con este relleno el campo queda en 29,5.
 
 **Descartadas** ·
 - **C · el Kit tal cual, azul 400 con texto blanco** (lo que Claude recomendó primero) → el botón de
