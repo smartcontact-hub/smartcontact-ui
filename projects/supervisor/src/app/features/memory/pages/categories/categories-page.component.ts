@@ -1,5 +1,3 @@
-import { map, startWith } from 'rxjs';
-import { toSignal } from '@angular/core/rxjs-interop';
 import {
   ChangeDetectionStrategy,
   Component,
@@ -14,22 +12,19 @@ import { MessageService } from 'primeng/api';
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 import { ScTagComponent as TagComponent } from '@smartcontact-hub/components';
-import { MenuModule } from 'primeng/menu';
 import type { MenuItem } from 'primeng/api';
 
 import {
   type ScColumnCellContext,
   type ScColumnDef,
-  ScDatatableComponent as DatatableComponent,
-  type ScDatatableRowEvent,
-  type ScDatatableRowKeyEvent,
   ScEmptyStateComponent as EmptyStateComponent,
-  type ScRowStyleClassFn,
 } from '@smartcontact-hub/components';
 import { ScConfirmService } from '@smartcontact-hub/components';
 import { LanguageService } from '@core/services';
 import { TOAST_LIFE } from '@core/utils/toast-life';
+import { injectLangChange } from '@core/utils/lang-change';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
+import { ListPageComponent } from '@shared/components';
 
 import { CategoryFormModalComponent } from '../../components/category-form-modal/category-form-modal.component';
 import type { Category } from '../../data/category.types';
@@ -52,10 +47,9 @@ import { RulesStore } from '../../state/rules.store';
     TagComponent,
     ButtonComponent,
     CategoryFormModalComponent,
-    DatatableComponent,
     EmptyStateComponent,
     IconComponent,
-    MenuModule,
+    ListPageComponent,
     TranslateModule,
   ],
   templateUrl: './categories-page.component.html',
@@ -68,6 +62,7 @@ export class CategoriesPageComponent {
   private readonly confirm = inject(ScConfirmService);
   private readonly messages = inject(MessageService);
   private readonly translate = inject(TranslateService);
+  private readonly lang = injectLangChange();
   private readonly language = inject(LanguageService);
 
   /** CTA proyectado a la TopBar (modelo "todo arriba" S59). */
@@ -91,9 +86,6 @@ export class CategoriesPageComponent {
 
   protected readonly tagsIcon = 'label';
   protected readonly plusIcon = 'add';
-  protected readonly kebabIcon = 'more_vert';
-
-  protected readonly menuTargetCategory = signal<Category | null>(null);
 
   /* ── La tabla, ahora `sc-datatable` ───────────────────────────────────
    * Las siete celdas son composiciones propias de la página (el nombre con su
@@ -112,115 +104,57 @@ export class CategoriesPageComponent {
     viewChild<TemplateRef<ScColumnCellContext<Category>>>('classifiedTpl');
   private readonly statusTpl = viewChild<TemplateRef<ScColumnCellContext<Category>>>('statusTpl');
   private readonly createdTpl = viewChild<TemplateRef<ScColumnCellContext<Category>>>('createdTpl');
-  private readonly kebabTpl = viewChild<TemplateRef<ScColumnCellContext<Category>>>('kebabTpl');
 
-  /** Dependencia de IDIOMA para las cabeceras.
-   *
-   * `columns` es un `computed()` cuyas únicas dependencias eran los `viewChild`
-   * de las plantillas de celda. Como los `header` se resuelven con
-   * `translate.instant()` —no con el pipe `| translate`, que es impuro y sí
-   * reaccionaba— el computed NO se re-evaluaba al cambiar de idioma y las
-   * cabeceras se quedaban CONGELADAS en el idioma de carga.
-   *
-   * Lo destapó `audit:datatables` en su primera pasada, sobre 7 páginas. No lo
-   * veía ningún gate: `i18n:check` solo compara claves y todo el e2e corre en
-   * español. Mismo patrón que ya usaba `repo-list-page` para otra cosa. */
-  private readonly currentLang = toSignal(
-    this.translate.onLangChange.pipe(
-      map((e) => e.lang),
-      startWith(this.translate.currentLang),
-    ),
-    { initialValue: this.translate.currentLang },
-  );
-
-  protected readonly columns = computed<readonly ScColumnDef<Category>[]>(() => [
-    {
-      field: 'name',
-      header: this.translate.instant('memory.categories.cols.name'),
-      cellTemplate: this.nameTpl(),
-    },
-    {
-      field: 'description',
-      header: this.translate.instant('memory.categories.cols.description'),
-      cellTemplate: this.descTpl(),
-    },
-    // `usedIn` no existe en `Category` —se deriva de `RulesStore`—, pero la
-    // columna necesita igualmente un `field` único: es su identidad.
-    {
-      field: 'usedIn',
-      header: this.translate.instant('memory.categories.cols.used_in'),
-      width: '96px',
-      align: 'right',
-      cellTemplate: this.usedInTpl(),
-    },
-    {
-      field: 'classifiedCalls',
-      header: this.translate.instant('memory.categories.cols.classified'),
-      width: '96px',
-      align: 'right',
-      cellTemplate: this.classifiedTpl(),
-    },
-    {
-      field: 'status',
-      header: this.translate.instant('memory.categories.cols.status'),
-      width: '110px',
-      cellTemplate: this.statusTpl(),
-    },
-    {
-      field: 'createdAt',
-      header: this.translate.instant('memory.categories.cols.created'),
-      width: '120px',
-      cellTemplate: this.createdTpl(),
-    },
-    // Columna sin datos: cabecera vacía, igual que el `<th aria-label>` que
-    // sustituye. `stopRowClick` porque el botón para la propagación pero el
-    // padding de la celda no, y fallar el kebab por dos píxeles abría la ficha.
-    {
-      field: 'actions',
-      header: '', headerAriaLabel: this.translate.instant('common.actions'),
-      width: '44px',
-      stopRowClick: true,
-      cellTemplate: this.kebabTpl(),
-    },
-  ]);
-
-  /** Clases por fila. `sc-row--clickable` (cursor) lo pinta la piel
-   *  `.list-table`; `--inactive` es de esta página. */
-  protected readonly rowStyleClass: ScRowStyleClassFn<Category> = (cat) =>
-    cat.isActive ? 'sc-row--clickable' : 'sc-row--clickable categories-row--inactive';
-
-  /** Enter sobre la fila abre la edición, igual que el clic. Se ignora cuando
-   *  el foco está en un control DENTRO de la fila (el nombre, el kebab): esos
-   *  ya tienen su propia acción y el evento burbujea hasta el `<tr>`. */
-  protected onRowKeydown(event: ScDatatableRowKeyEvent<Category>): void {
-    const native = event.originalEvent;
-    if (native.key !== 'Enter') return;
-    if ((native.target as HTMLElement | null)?.tagName !== 'TR') return;
-    native.preventDefault();
-    this.openEditForm(event.row);
-  }
-
-  /** Click derecho → el MISMO `<p-menu>` que el kebab. */
-  protected onRowContextMenu(
-    event: ScDatatableRowEvent<Category>,
-    menu: { toggle: (e: Event) => void },
-  ): void {
-    this.setMenuTarget(event.row);
-    menu.toggle(event.originalEvent);
-  }
-
-  /** Modelo del menú kebab (único y compartido). Es un computed estable: solo
-   *  cambia al abrir otro kebab. Antes `[model]="buildMenuItems(cat)"` recreaba
-   *  el array en cada ciclo de CD → PrimeNG repintaba el menú y se perdía el 1er
-   *  clic (hacía falta doble). Con esto, un solo clic aplica la acción. */
-  protected readonly menuItems = computed<MenuItem[]>(() => {
-    const cat = this.menuTargetCategory();
-    return cat ? this.buildMenuItems(cat) : [];
+  protected readonly columns = computed<readonly ScColumnDef<Category>[]>(() => {
+    this.lang(); // cabeceras al día al cambiar de idioma (ver `injectLangChange`)
+    return [
+      {
+        field: 'name',
+        header: this.translate.instant('memory.categories.cols.name'),
+        cellTemplate: this.nameTpl(),
+      },
+      {
+        field: 'description',
+        header: this.translate.instant('memory.categories.cols.description'),
+        cellTemplate: this.descTpl(),
+      },
+      // `usedIn` no existe en `Category` —se deriva de `RulesStore`—, pero la
+      // columna necesita igualmente un `field` único: es su identidad.
+      {
+        field: 'usedIn',
+        header: this.translate.instant('memory.categories.cols.used_in'),
+        width: '96px',
+        align: 'right',
+        cellTemplate: this.usedInTpl(),
+      },
+      {
+        field: 'classifiedCalls',
+        header: this.translate.instant('memory.categories.cols.classified'),
+        width: '96px',
+        align: 'right',
+        cellTemplate: this.classifiedTpl(),
+      },
+      {
+        field: 'status',
+        header: this.translate.instant('memory.categories.cols.status'),
+        width: '110px',
+        cellTemplate: this.statusTpl(),
+      },
+      {
+        field: 'createdAt',
+        header: this.translate.instant('memory.categories.cols.created'),
+        width: '120px',
+        cellTemplate: this.createdTpl(),
+      },
+    ];
   });
 
-  protected setMenuTarget(cat: Category): void {
-    this.menuTargetCategory.set(cat);
-  }
+  /** La fila inactiva se atenúa (`categories-row--inactive`, en el SCSS de esta página). */
+  protected readonly rowClass = (cat: Category): string | undefined =>
+    cat.isActive ? undefined : 'categories-row--inactive';
+
+  /** Menú de cada fila: el mismo con «⋮» y con clic derecho (lo abre la lista). */
+  protected readonly rowMenu = (cat: Category): MenuItem[] => this.buildMenuItems(cat);
 
   protected buildMenuItems(cat: Category): MenuItem[] {
     return [

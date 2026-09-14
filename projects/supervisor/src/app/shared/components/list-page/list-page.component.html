@@ -1,0 +1,101 @@
+<div class="page page--tabla">
+  <div class="page__inner page__inner--list">
+    <!-- El título vive en el cuerpo: la miga de arriba dice DÓNDE estás y esta línea dice QUÉ miras
+         (DD-33). Uno por documento. -->
+    <h1 class="page__heading sc-text-h3-semibold">{{ heading() }}</h1>
+
+    <ng-content select="[scListBeforeToolbar]" />
+
+    @if (columnChoices() || searchPlaceholder() || exportable()) {
+      <div class="page__action-bar">
+        @if (columnChoices(); as choices) {
+          <!-- `orderedVisibleChange`: la tabla respeta también el ORDEN que se arrastra en el selector. -->
+          <sc-column-selector
+            [columns]="choices"
+            [storageKey]="columnStorageKey() ?? ''"
+            (orderedVisibleChange)="onColumnsChange($event)"
+          />
+        }
+        @if (searchPlaceholder(); as placeholder) {
+          <sc-search
+            class="page__search"
+            [placeholder]="placeholder"
+            shortcutHint="⌘K"
+            [clearAriaLabel]="'labels.clear_search' | translate"
+            [value]="query()"
+            (valueChange)="query.set($event)"
+            (keydown)="onSearchKey($event)"
+          />
+        }
+        @if (exportable()) {
+          <span class="sc-action-divider" aria-hidden="true"></span>
+          <sc-button
+            variant="secondary"
+            appearance="outlined"
+            icon="download"
+            [ariaLabel]="'labels.export_button' | translate"
+            [attr.title]="'labels.export_button' | translate"
+            (clicked)="onExport()"
+          />
+        }
+      </div>
+    }
+
+    @if (isEmpty()) {
+      <ng-content select="[scListEmpty]" />
+    } @else {
+      <div class="table-card" [class.table-card--seleccion]="selectedIds().size > 0">
+        <sc-datatable
+          scrollable
+          scrollHeight="flex"
+          virtualScroll
+          variant="list"
+          [value]="displayed()"
+          [columns]="allColumns()"
+          [visibleColumns]="visibleColumns()"
+          [rowStyleClass]="rowStyleClass()"
+          dataKey="id"
+          [selectionMode]="selectable() ? 'multiple' : null"
+          [rowSelectionAriaLabel]="rowAriaLabel"
+          [selectAllAriaLabel]="selectAllAriaLabel()"
+          [selection]="selectedRows()"
+          [sortField]="tableSortField()"
+          [sortOrder]="tableSortOrder()"
+          (sortChange)="onSortChange($event)"
+          (selectionChange)="onSelectionChange($any($event))"
+          [rowsFocusable]="rowsFocusable()"
+          (rowClick)="onRowClick($event)"
+          (rowKeydown)="onRowKeydown($event)"
+          (rowContextMenu)="onRowContextMenu($event, rowMenuRef)"
+          [attr.data-testid]="tableTestId()"
+        >
+          <div scTableEmpty class="list-page__no-results sc-text-body-regular">
+            <ng-content select="[scListNoResults]">{{ noResultsText() }}</ng-content>
+          </div>
+        </sc-datatable>
+      </div>
+    }
+  </div>
+</div>
+
+<!-- Celda del menú de fila. `stopPropagation` (en `openRowMenu`): la fila abre el detalle. -->
+<ng-template #actionsTpl let-row>
+  <sc-button
+    class="rules-kebab-btn"
+    variant="secondary"
+    appearance="text"
+    size="sm"
+    icon="more_vert"
+    [ariaLabel]="'labels.row_menu' | translate"
+    (clicked)="openRowMenu(row, rowMenuRef, $event)"
+  />
+</ng-template>
+
+<!-- Menú ÚNICO para toda la tabla: «⋮» y clic derecho abren este mismo (R3). -->
+<p-menu #rowMenuRef [model]="menuItems()" [popup]="true" appendTo="body" styleClass="rules-kebab-menu" />
+
+@if (selectable() && bulkEntity(); as entity) {
+  <sc-bulk-action-bar [count]="selectedIds().size" [entity]="entity" (clear)="clearSelection()">
+    <ng-content select="[scListBulkActions]" />
+  </sc-bulk-action-bar>
+}

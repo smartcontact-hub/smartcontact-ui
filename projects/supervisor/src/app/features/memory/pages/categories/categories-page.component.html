@@ -8,52 +8,31 @@
   </sc-button>
 </ng-template>
 
-<div class="page">
-  <div class="page__inner page__inner--list">
-    <!-- El título de la página vive en el CUERPO, no en la barra: la miga de
-         arriba dice DÓNDE estás y esta línea dice QUÉ miras (modelo Snow UI,
-         medido en `/orders`). Es el MISMO `<h1>` que S59 dejó oculto —no hay un
-         encabezado nuevo—, así que sigue habiendo exactamente uno por documento. -->
-    <h1 class="page__heading sc-text-h3-semibold">{{ 'memory.categories.page_title' | translate }}</h1>
+<!-- La lista (título, tabla, menú de fila) la monta `sc-list-page` (DD-97). Aquí solo lo que es de Categorías:
+     columnas y celdas, el formulario y las acciones. El botón del nombre sigue ahí: es el camino por teclado a la
+     edición que comparten las hermanas de Memory. -->
+<sc-list-page
+  [heading]="'memory.categories.page_title' | translate"
+  [rows]="categories()"
+  [empty]="isEmpty()"
+  [columns]="columns()"
+  [rowMenu]="rowMenu"
+  rowOpenable
+  [rowClass]="rowClass"
+  tableTestId="categories-table"
+  (rowOpen)="openEditForm($event)"
+>
+  <sc-empty-state
+    scListEmpty
+    [icon]="tagsIcon"
+    titleKey="memory.categories.empty_title"
+    bodyKey="memory.categories.empty_desc"
+    ctaKey="memory.categories.new_category"
+    (cta)="onNewCategory()"
+  />
+</sc-list-page>
 
-    @if (isEmpty()) {
-      <sc-empty-state
-        [icon]="tagsIcon"
-        titleKey="memory.categories.empty_title"
-        bodyKey="memory.categories.empty_desc"
-        ctaKey="memory.categories.new_category"
-        (cta)="onNewCategory()"
-      />
-    } @else {
-      <!-- La tabla la pinta el componente del DS. `variant="list"` le pone
-           la gramática de tabla-lista de la app (54px de fila, cabecera
-           silenciosa de S59); sin ella el preset la dejaría más densa y con la
-           cabecera oscura, distinta de las tablas hermanas.
-
-           `rowsFocusable` no es decorativo: la fila abre la edición al clicar
-           y sin él esa acción existiría solo para quien usa ratón (WCAG
-           2.1.1). El botón del nombre sigue ahí porque es el gesto que
-           comparten las tres hermanas de Memory (reglas · categorías ·
-           entidades) y solo dos de ellas están migradas. -->
-      <div class="table-card">
-        <sc-datatable
-          variant="list"
-          [value]="categories()"
-          [columns]="columns()"
-          [rowStyleClass]="rowStyleClass"
-          dataKey="id"
-          rowsFocusable
-          (rowClick)="openEditForm($event.row)"
-          (rowKeydown)="onRowKeydown($event)"
-          (rowContextMenu)="onRowContextMenu($event, kebabMenu)"
-          data-testid="categories-table"
-        />
-      </div>
-    }
-  </div>
-</div>
-
-<!-- Celdas de la tabla. Viven FUERA del `<sc-datatable>` para que los
+<!-- Celdas de la tabla. Viven FUERA de la lista para que los
      `viewChild` las resuelvan; `columns()` las recoge. El contexto es
      `{ $implicit: cat }`.
 
@@ -101,19 +80,6 @@
 <ng-template #createdTpl let-cat>
   <span class="categories-table__td-date sc-text-caption-regular">{{ formatDate(cat.createdAt) }}</span>
 </ng-template>
-
-<ng-template #kebabTpl let-cat>
-  <sc-button class="rules-kebab-btn" variant="secondary" appearance="text" size="sm" [icon]="kebabIcon" [ariaLabel]="'memory.categories.cols.more' | translate" (clicked)="$event.stopPropagation(); setMenuTarget(cat); kebabMenu.toggle($event)" />
-</ng-template>
-
-<!-- Menú kebab ÚNICO y compartido (antes 1 <p-menu> por fila): su modelo es un
-     computed estable → basta 1 clic para aplicar (no doble). El click derecho
-     sobre la fila abre ESTE mismo menú, no uno propio.
-
-     Vive en la raíz de la plantilla y no dentro del `@else`: las celdas son
-     `<ng-template>` hermanas y una referencia declarada dentro de un bloque
-     embebido no llega hasta ellas. -->
-<p-menu #kebabMenu [model]="menuItems()" [popup]="true" appendTo="body" styleClass="rules-kebab-menu" />
 
 <sc-memory-category-form-modal
   [visible]="formOpen()"
