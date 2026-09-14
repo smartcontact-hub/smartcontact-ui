@@ -150,11 +150,11 @@ export const AVAILABLE_EXTENSIONS: readonly ExtensionOption[] = [
 
 const DP = DEFAULT_AGENT_PERMISSIONS;
 
-export const AGENTS_SEED: readonly Agent[] = [
+const BASE_AGENTS: readonly Agent[] = [
   {
     id: 1,
     code: '10001',
-    name: 'Agente AED 1',
+    name: 'Tom Hanks',
     extension: '122',
     extensionType: 'webrtc',
     agentType: 'cuscare',
@@ -167,7 +167,7 @@ export const AGENTS_SEED: readonly Agent[] = [
   {
     id: 2,
     code: '10002',
-    name: 'Agente AED 2',
+    name: 'Meryl Streep',
     extension: '123',
     extensionType: 'webrtc',
     agentType: 'cuscare',
@@ -181,7 +181,7 @@ export const AGENTS_SEED: readonly Agent[] = [
   {
     id: 3,
     code: '10003',
-    name: 'Agente demo',
+    name: 'Denzel Washington',
     extension: '124',
     extensionType: 'webrtc',
     agentType: 'cuscare',
@@ -196,7 +196,7 @@ export const AGENTS_SEED: readonly Agent[] = [
   {
     id: 4,
     code: '10004',
-    name: 'Agente Jose',
+    name: 'Julia Roberts',
     extension: '114',
     extensionType: 'webrtc',
     agentType: 'cuscare_carrier',
@@ -210,7 +210,7 @@ export const AGENTS_SEED: readonly Agent[] = [
   {
     id: 5,
     code: '10005',
-    name: 'Agente Jose',
+    name: 'Leonardo DiCaprio',
     extension: '103',
     extensionType: 'phone',
     agentType: 'normal',
@@ -224,7 +224,7 @@ export const AGENTS_SEED: readonly Agent[] = [
   {
     id: 6,
     code: '10006',
-    name: 'Jose Barcala',
+    name: 'Scarlett Johansson',
     extension: '120',
     extensionType: 'webrtc',
     agentType: 'cuscare',
@@ -239,7 +239,7 @@ export const AGENTS_SEED: readonly Agent[] = [
   {
     id: 7,
     code: '10007',
-    name: 'Mario Perez',
+    name: 'Morgan Freeman',
     extension: '118',
     extensionType: 'webrtc',
     agentType: 'admin_cuscare',
@@ -258,7 +258,7 @@ export const AGENTS_SEED: readonly Agent[] = [
   {
     id: 8,
     code: '10008',
-    name: 'Inés Recio',
+    name: 'Natalie Portman',
     extension: '106',
     extensionType: 'webrtc',
     agentType: 'cuscare',
@@ -273,7 +273,7 @@ export const AGENTS_SEED: readonly Agent[] = [
   {
     id: 9,
     code: '10009',
-    name: 'Miguel Palacios',
+    name: 'Keanu Reeves',
     extension: '102',
     extensionType: 'webrtc',
     agentType: 'cuscare',
@@ -286,7 +286,7 @@ export const AGENTS_SEED: readonly Agent[] = [
   {
     id: 10,
     code: '10010',
-    name: 'Miguel Palacios 2',
+    name: 'Viola Davis',
     extension: '104',
     extensionType: 'webrtc',
     agentType: 'cuscare_carrier',
@@ -299,7 +299,7 @@ export const AGENTS_SEED: readonly Agent[] = [
   {
     id: 11,
     code: '10011',
-    name: 'Miguel Palacios 3',
+    name: 'Brad Pitt',
     extension: '108',
     extensionType: 'webrtc',
     agentType: 'cuscare',
@@ -313,7 +313,7 @@ export const AGENTS_SEED: readonly Agent[] = [
   {
     id: 12,
     code: '10012',
-    name: 'Oscar Bello',
+    name: 'Cate Blanchett',
     extension: '105',
     extensionType: 'webrtc',
     agentType: 'cuscare',
@@ -326,7 +326,7 @@ export const AGENTS_SEED: readonly Agent[] = [
   {
     id: 13,
     code: '10013',
-    name: 'Oscar Fernandez',
+    name: 'Samuel L. Jackson',
     extension: '116',
     extensionType: 'webrtc',
     agentType: 'cuscare',
@@ -340,7 +340,7 @@ export const AGENTS_SEED: readonly Agent[] = [
   {
     id: 14,
     code: '10014',
-    name: 'Oscar Quobis',
+    name: 'Emma Stone',
     extension: '110',
     extensionType: 'webrtc',
     agentType: 'cuscare',
@@ -353,7 +353,7 @@ export const AGENTS_SEED: readonly Agent[] = [
   {
     id: 15,
     code: '10015',
-    name: 'Rafael',
+    name: 'Rafa Areses',
     extension: '113',
     extensionType: 'webrtc',
     agentType: 'admin_cuscare',
@@ -367,7 +367,7 @@ export const AGENTS_SEED: readonly Agent[] = [
   {
     id: 16,
     code: '10016',
-    name: 'Angel personal',
+    name: 'Robert De Niro',
     extension: '109',
     extensionType: 'phone',
     agentType: 'normal',
@@ -378,3 +378,27 @@ export const AGENTS_SEED: readonly Agent[] = [
     pickupType: 'manual',
   },
 ];
+
+/*
+ * DEMO (2026-09-14, Rafa): 500 agentes por defecto, para que la lista enseñe la tabla con scroll propio
+ * y lista virtual (DD-95) con un volumen real. Los 16 de arriba conservan sus ids, que usan la
+ * membresía de grupos y el catálogo de entidades; los demás repiten sus datos con nombres de Hollywood.
+ */
+const NOMBRES = ['Nicole', 'Harrison', 'Sandra', 'Will', 'Anne', 'Matt', 'Charlize', 'Ryan', 'Jodie', 'Hugh', 'Julianne', 'Al', 'Halle', 'Johnny', 'Kate', 'Idris', 'Penélope', 'Javier', 'Salma', 'Antonio', 'Zendaya', 'Timothée', 'Margot', 'Pedro', 'Florence'];
+const APELLIDOS = ['Kidman', 'Ford', 'Bullock', 'Smith', 'Hathaway', 'Damon', 'Theron', 'Gosling', 'Foster', 'Jackman', 'Moore', 'Pacino', 'Berry', 'Depp', 'Winslet', 'Elba', 'Cruz', 'Bardem', 'Hayek', 'Banderas', 'Coleman', 'Chalamet', 'Robbie', 'Pascal', 'Pugh'];
+const TOTAL_AGENTES_DEMO = 500;
+
+const GENERATED_AGENTS: readonly Agent[] = Array.from({ length: TOTAL_AGENTES_DEMO - BASE_AGENTS.length }, (_, i) => {
+  const base = BASE_AGENTS[i % BASE_AGENTS.length];
+  const id = BASE_AGENTS.length + i + 1;
+  return {
+    ...base,
+    id,
+    code: String(10000 + id),
+    name: `${NOMBRES[i % NOMBRES.length]} ${APELLIDOS[Math.floor(i / NOMBRES.length) % APELLIDOS.length]}`,
+    extension: String(200 + id),
+    pin: String(100 + ((id * 37) % 900)),
+  };
+});
+
+export const AGENTS_SEED: readonly Agent[] = [...BASE_AGENTS, ...GENERATED_AGENTS];

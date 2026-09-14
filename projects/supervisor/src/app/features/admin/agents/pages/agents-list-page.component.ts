@@ -14,7 +14,6 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { MessageService, type MenuItem } from 'primeng/api';
 import { MenuModule } from 'primeng/menu';
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
-import { ScSelectComponent as SelectComponent } from '@smartcontact-hub/components';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
 
 import { UndoStackService, XlsxExportService } from '@core/services';
@@ -84,7 +83,6 @@ const PRESENCE_STATES: readonly PresenceStatus[] = [
 @Component({
   selector: 'sc-agents-list-page',
   imports: [
-    SelectComponent,
     BulkActionBarComponent,
     BulkEditMenuComponent,
     ButtonComponent,
@@ -154,6 +152,8 @@ export class AgentsListPageComponent {
   protected readonly closeIcon = 'close';
   protected readonly downloadIcon = 'download';
   protected readonly moreIcon = 'more_vert';
+  protected readonly chevronDownIcon = 'expand_more';
+  protected readonly checkIcon = 'check';
   protected readonly phoneIcon = 'call';
   protected readonly chatIcon = 'chat_bubble';
   protected readonly emailIcon = 'mail';
@@ -163,10 +163,6 @@ export class AgentsListPageComponent {
   protected readonly typeKeys = AGENT_TYPE_LABEL_KEYS;
   protected readonly presenceKeys = PRESENCE_LABEL_KEYS;
   protected readonly presenceStates = PRESENCE_STATES;
-  /** Opciones del selector de presencia: etiqueta traducida + valor, para `sc-select`. */
-  protected readonly presenceOptions = computed(() =>
-    this.presenceStates.map((p) => ({ label: this.translate.instant(this.presenceKeys[p]), value: p })),
-  );
   protected readonly agents = this.agentsStore.agents;
 
   protected readonly searchQuery = signal('');
@@ -186,6 +182,18 @@ export class AgentsListPageComponent {
   protected readonly selectedIds = signal<ReadonlySet<number>>(new Set());
   /** Fila a la que apunta el kebab compartido. Ver `menuItems`. */
   protected readonly menuTargetAgent = signal<Agent | null>(null);
+  /** Agente cuya lista de estados está abierta (el menú es uno solo para toda la tabla). */
+  protected readonly presenceMenuAgent = signal<Agent | null>(null);
+  protected readonly presenceMenuItems = computed<MenuItem[]>(() =>
+    this.presenceStates.map((p) => ({
+      id: p,
+      label: this.translate.instant(this.presenceKeys[p]),
+      command: () => {
+        const agent = this.presenceMenuAgent();
+        if (agent) this.onPresenceChange(agent, p);
+      },
+    })),
+  );
   protected readonly deleteTarget = signal<readonly Agent[] | null>(null);
   protected readonly renamingId = signal<number | null>(null);
   protected readonly pendingBulkEdit = signal<PendingBulkEdit | null>(null);
@@ -291,6 +299,9 @@ export class AgentsListPageComponent {
       field: 'name',
       header: this.translate.instant('agents.table.name'),
       sortable: true,
+      /* Más ancho que el reparto igual (176): cortaba 4 de cada 16 nombres mientras Canales usaba 30 px de
+       * los suyos. El resto de columnas se reparte lo que queda (2026-09-14). */
+      width: 'var(--sc-spacing-18)',
       cellTemplate: this.nameTpl(),
     },
     {
@@ -632,6 +643,16 @@ export class AgentsListPageComponent {
    * doesn't end up with a stray "Copia de …" they didn't want. */
   protected onRenameCancel(_id: number): void {
     this.renamingId.set(null);
+  }
+
+  protected presenceLabelKey(presence: PresenceStatus): string {
+    return this.presenceKeys[presence];
+  }
+
+  protected openPresenceMenu(agent: Agent, menu: { toggle: (event: Event) => void }, event: Event): void {
+    event.stopPropagation();
+    this.presenceMenuAgent.set(agent);
+    menu.toggle(event);
   }
 
   protected onPresenceChange(agent: Agent, value: PresenceStatus): void {

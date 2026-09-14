@@ -151,3 +151,58 @@ h1.page__heading {
   margin: 0 0 var(--sc-spacing-1);
   color: var(--sc-text-primary);
 }
+
+/* PÁGINA DE TABLA CON SCROLL PROPIO (`.page--tabla`, DD-95, 2026-09-14).
+ *
+ * La página no hace scroll: título, buscador y cabecera de columnas se quedan a la vista, y la
+ * tabla hace scroll dentro (`<sc-datatable scrollable scrollHeight="flex">`). Lo eligieron Rafa y
+ * dos usuarios frente a la cabecera fija con scroll de página (comparación medida en
+ * `~/Documents/Claude/2026-09 tabla-sticky-vs-scroll/`). Tres reglas que salieron de medir:
+ *
+ *   1. La tarjeta mide LO QUE SUS FILAS y solo se estira hasta el fondo si no caben
+ *      (`flex: 0 1 auto`): con 3 filas, la versión que llenaba el alto dejaba una tarjeta vacía.
+ *   2. Un alto mínimo (`scale/25`) para pantallas bajas y zoom: sin él, al 200 % la tabla se
+ *      quedaba en 191 px. Si no cabe ni eso, hace scroll la página.
+ *   3. Con filas marcadas aparece la barra de selección flotante: la tarjeta acorta su borde de
+ *      abajo lo que mide la barra (`.table-card--seleccion`) sin mover ninguna fila.
+ *
+ * Una página con esta clase no puede reservar la barra de selección con `padding-bottom` en su
+ * `.page` ni poner `overflow` en su `.table-card`: las dos cosas rompen la cadena de altos.
+ */
+.page--tabla {
+  box-sizing: border-box;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+
+  .page__inner {
+    box-sizing: border-box;
+    width: 100%;
+    flex: 1 1 auto;
+    min-height: var(--sc-spacing-25);
+    display: flex;
+    flex-direction: column;
+  }
+
+  .table-card {
+    flex: 0 1 auto;
+    min-height: 0;
+    display: flex;
+    flex-direction: column;
+  }
+
+  /* Con lista virtual la tabla llena el alto que queda: la lista virtual necesita un alto fijo, y con
+   * tantas filas la tarjeta llegaría al fondo igualmente. */
+  .table-card:has(> sc-datatable.sc-datatable--fill) {
+    flex: 1 1 auto;
+  }
+
+  .table-card > sc-datatable {
+    flex: 1 1 auto;
+    min-height: 0;
+  }
+
+  .table-card--seleccion {
+    margin-bottom: calc(var(--sc-bulk-action-bar-height) + var(--sc-spacing-1-5));
+  }
+}

@@ -86,6 +86,14 @@
   }
 }
 
+/* Sin la X que el navegador pinta en un `type="search"`: el DS ya trae la suya (`.sc-search__clear`) y
+ * salían dos (visto el 2026-09-14 en Agentes). */
+.sc-search__control::-webkit-search-cancel-button,
+.sc-search__control::-webkit-search-decoration {
+  -webkit-appearance: none;
+  appearance: none;
+}
+
 /* Shortcut hint — `⌘K` o `/` visible cuando el campo está vacío y sin foco.
  * Patrón típico GitHub / Linear / Slack. Desaparece al focus o cuando hay
  * texto (para no robar atención del clear button). */

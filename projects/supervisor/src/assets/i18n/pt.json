@@ -1325,6 +1325,7 @@
       "phone": "Tel",
       "webrtc": "WebRTC"
     },
+    "presence_change_aria": "Mudar o estado de {{name}}: {{status}}",
     "presence": {
       "available": "Disponível",
       "unavailable": "Indisponível",

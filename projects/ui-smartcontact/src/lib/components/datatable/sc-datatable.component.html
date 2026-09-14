@@ -1,5 +1,5 @@
 <p-table
-  [value]="$any(value())"
+  [value]="$any(pValue())"
   [dataKey]="dataKey()"
   [paginator]="paginator()"
   [rows]="rows()"
@@ -11,7 +11,9 @@
   [sortOrder]="sortOrder()"
   [size]="pSize()"
   [scrollable]="scrollable()"
-  [scrollHeight]="scrollHeight()"
+  [scrollHeight]="pScrollHeight()"
+  [virtualScroll]="pVirtualScroll()"
+  [virtualScrollItemSize]="pVirtualScrollItemSize()"
   [stripedRows]="stripedRows()"
   [showGridlines]="showGridlines()"
   [loading]="loading()"

@@ -310,6 +310,58 @@ ${STICKY} > .p-datatable-table-container > .p-datatable-table > .p-datatable-the
 }
 `;
 
+/*
+ * BARRA DE SCROLL DE UNA TABLA CON SCROLL PROPIO (`<sc-datatable scrollable>`, 2026-09-14).
+ * La pista empieza debajo de la cabecera de columnas (`--sc-datatable-thead-height`, que mide
+ * `sc-datatable`): el tirador no pasa nunca por encima de «Nombre, Extensión…». Lo leen Chromium y
+ * Safari; Firefox deja su barra fina de sistema, que también funciona.
+ */
+const scrollableScrollbarCss = () => `
+/* Ajustada a sus filas: cada caja encoge hasta el alto que le dejan, y el contenedor hace scroll. */
+sc-datatable.sc-datatable--fit > p-table {
+    display: flex;
+    flex-direction: column;
+    flex: 0 1 auto;
+    min-height: 0;
+}
+
+sc-datatable.sc-datatable--fit > p-table > .p-datatable-table-container {
+    flex: 0 1 auto;
+    min-height: 0;
+}
+
+sc-datatable.sc-datatable--fill > p-table {
+    flex: 1 1 auto;
+    min-height: 0;
+}
+
+/* El hueco de la barra se reserva a LOS DOS lados: las rayas de las filas y de la cabecera quedan igual de
+ * separadas del borde a izquierda y derecha (Rafa, 2026-09-14: «tiene que ser simétrico»). Solo en la caja
+ * que hace scroll: con lista virtual es el scroller, y reservarlo también en el contenedor lo duplicaba. */
+sc-datatable.sc-datatable--scroll:not(.sc-datatable--fill) > p-table > .p-datatable-table-container,
+sc-datatable.sc-datatable--fill .p-virtualscroller {
+    scrollbar-gutter: stable both-edges;
+}
+
+sc-datatable.sc-datatable--scroll > p-table > .p-datatable-table-container::-webkit-scrollbar,
+sc-datatable.sc-datatable--scroll .p-virtualscroller::-webkit-scrollbar {
+    width: var(--sc-spacing-0-75);
+    height: var(--sc-spacing-0-75);
+}
+
+sc-datatable.sc-datatable--scroll > p-table > .p-datatable-table-container::-webkit-scrollbar-track,
+sc-datatable.sc-datatable--scroll .p-virtualscroller::-webkit-scrollbar-track {
+    margin-block-start: var(--sc-datatable-thead-height, 0);
+    background: transparent;
+}
+
+sc-datatable.sc-datatable--scroll > p-table > .p-datatable-table-container::-webkit-scrollbar-thumb,
+sc-datatable.sc-datatable--scroll .p-virtualscroller::-webkit-scrollbar-thumb {
+    background: var(--sc-border-strong);
+    border-radius: var(--sc-radius-full);
+}
+`;
+
 /* ══════════════════════════════════════════════════════════════════════════
  * MICRO-INTERACCIÓN DE BOTÓN · cómo responde al dedo
  * ══════════════════════════════════════════════════════════════════════════
@@ -436,6 +488,7 @@ ${baseTableCss()}
 ${emptyCaptionCss()}
 ${listBehaviorCss()}
 ${stickyHeaderCss()}
+${scrollableScrollbarCss()}
 ${tagOneLineCss()}
 
 ${buttonMotionCss()}
