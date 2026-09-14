@@ -1,75 +1,20 @@
 {
-  "commit": "7007c73",
+  "commit": "7b7554d2",
   "primeng": "22.1.0",
   "themes": "3.0.0",
-  "generado": "2026-09-14T17:34:59.680Z",
+  "generado": "2026-09-14T19:26:17.494Z",
   "comprobaciones": {
     "ceros": [],
     "raizPx": 16,
     "diferencia": {
       "anterior": true,
       "ficheros": [
-        "sc-preset.mjs",
-        "smartcontact-tokens.css"
+        "sc-preset.mjs"
       ],
-      "variables": [
-        "claro|--sc-sidebar-accent",
-        "claro|--sc-sidebar-border",
-        "claro|--sc-sidebar-divider",
-        "claro|--sc-sidebar-fg",
-        "claro|--sc-sidebar-fg-faint",
-        "claro|--sc-sidebar-fg-hover",
-        "claro|--sc-sidebar-fg-muted",
-        "claro|--sc-sidebar-fg-subtle",
-        "claro|--sc-sidebar-item-active-bg",
-        "claro|--sc-sidebar-item-hover-bg",
-        "claro|--sc-sidebar-scrollbar",
-        "oscuro|--sc-bg-primary-subtle",
-        "oscuro|--sc-bg-primary-subtle-active",
-        "oscuro|--sc-bg-primary-subtle-hover",
-        "oscuro|--sc-bg-subtle",
-        "oscuro|--sc-bg-subtle-active",
-        "oscuro|--sc-bg-subtle-hover",
-        "oscuro|--sc-bg-violet-subtle-active",
-        "oscuro|--sc-bg-violet-subtle-hover",
-        "oscuro|--sc-border-info-subtle",
-        "oscuro|--sc-border-primary",
-        "oscuro|--sc-border-primary-active",
-        "oscuro|--sc-border-primary-hover",
-        "oscuro|--sc-border-secondary",
-        "oscuro|--sc-border-secondary-active",
-        "oscuro|--sc-border-secondary-hover",
-        "oscuro|--sc-border-subtle",
-        "oscuro|--sc-border-success-subtle",
-        "oscuro|--sc-border-violet-subtle",
-        "oscuro|--sc-border-warning-subtle",
-        "oscuro|--sc-cmp-tabs-nav-button-shadow",
-        "oscuro|--sc-cmp-toast-info-background",
-        "oscuro|--sc-icon-accent",
-        "oscuro|--sc-icon-error",
-        "oscuro|--sc-icon-info",
-        "oscuro|--sc-icon-link",
-        "oscuro|--sc-icon-success",
-        "oscuro|--sc-icon-violet",
-        "oscuro|--sc-icon-warning",
-        "oscuro|--sc-label-gray-bg",
-        "oscuro|--sc-label-gray-border",
-        "oscuro|--sc-presence-available",
-        "oscuro|--sc-presence-available-deep",
-        "oscuro|--sc-presence-paused",
-        "oscuro|--sc-presence-training",
-        "oscuro|--sc-priority-medium",
-        "oscuro|--sc-priority-medium-deep",
-        "oscuro|--sc-sidebar-bg",
-        "oscuro|--sc-sidebar-divider"
-      ],
+      "variables": [],
       "semanticaComun": false,
-      "reglasCss": false,
-      "componentes": [
-        "button",
-        "datatable",
-        "tag"
-      ]
+      "reglasCss": true,
+      "componentes": []
     },
     "cambia": true,
     "contratoPlugin": {
@@ -77,5 +22,5 @@
       "faltan": []
     }
   },
-  "version": "0.20260914.1734"
+  "version": "0.20260914.1926"
 }
