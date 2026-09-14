@@ -692,16 +692,23 @@ test.describe('sc-empty-state', () => {
       'border-radius': '9999px',
     });
 
-    // título 16/600 (font-size-300 redondo, DD-13)
+    // título con el text style h3-semibold (18/24/600) y cuerpo body-regular (14/20). Antes 16/600,
+    // que no era ninguno de los 12 estilos del DS (2026-09-14).
     const title = plain.locator('.empty-state__title');
-    expect(await styleOf(title, ['font-size', 'font-weight'])).toEqual({
-      'font-size': '16px',
+    expect(await styleOf(title, ['font-size', 'line-height', 'font-weight'])).toEqual({
+      'font-size': '18px',
+      'line-height': '24px',
       'font-weight': '600',
     });
+    const body = plain.locator('.empty-state__body');
+    expect(await styleOf(body, ['font-size', 'line-height'])).toEqual({
+      'font-size': '14px',
+      'line-height': '20px',
+    });
 
-    // variante con CTA: botón de acción visible
+    // variante con CTA: el botón es `sc-button` del DS, no uno hecho a mano
     const cta = page.getByTestId('sc-emptystate-cta');
-    await expect(cta.locator('.empty-state__cta')).toBeVisible();
+    await expect(cta.locator('sc-button.empty-state__cta .p-button')).toBeVisible();
 
     await screenshotBaseline(page, 'emptystate');
   });

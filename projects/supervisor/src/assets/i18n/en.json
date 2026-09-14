@@ -14,17 +14,19 @@
         "title": "No conversations to show",
         "body": "Adjust the filters or date range to see results.",
         "body_unfiltered": "No conversations have come in yet.",
-        "clear_filters": "Clear filters"
+        "clear_filters": "Clear filters",
+        "failed_title": "No transcriptions have failed",
+        "failed_body": "If one fails, it will show up here.",
+        "pending_title": "Nothing left to transcribe",
+        "view_all": "View all"
       },
       "page_title": "Conversations",
       "open_aria": "Open conversation {{id}}",
       "open_aria_with_state": "Open conversation {{id}} — Status: {{state}}",
-      "open_player": "Open in player",
       "select_all_aria": "Select all filtered conversations",
       "select_row_aria": "Select conversation {{id}}",
       "table": {
         "status": "Status",
-        "hour": "Time",
         "date": "Date",
         "service": "Service",
         "origin": "Origin",
@@ -32,7 +34,9 @@
         "destination": "Destination",
         "duration": "Conv. T.",
         "waiting": "Wait T.",
-        "id": "ID"
+        "id": "ID",
+        "today": "Today",
+        "yesterday": "Yesterday"
       },
       "status": {
         "call": "Call",
@@ -45,31 +49,35 @@
         "transcribing": "Transcribing…",
         "analyzing": "Analyzing…",
         "failed": "Transcription failed",
-        "multi_recording": "{{count}} recordings"
+        "multi_recording": "{{count}} recordings",
+        "deleted": "Recording deleted"
       },
       "filters": {
+        "search_placeholder": "Search",
         "services_label": "Services",
-        "services_placeholder": "Any service",
         "date_label": "Date",
-        "date_placeholder": "Any date",
-        "origin_label": "Origin",
-        "origin_placeholder": "Any origin",
-        "destination_label": "Destination",
-        "destination_placeholder": "Any destination",
         "groups_label": "ACD Groups",
-        "groups_placeholder": "Any group",
         "agents_label": "Agents",
-        "agents_placeholder": "Any agent",
         "reset": "Clear filters",
-        "only_failed": "Failed only",
-        "only_failed_hint": "Show only conversations with failed transcription",
         "transcribe": "Transcribe selection",
         "transcribe_aria": "Transcribe selection ({{count}})",
         "download": "Download",
         "mark_read": "Mark as read",
         "mark_read_aria": "Mark as read ({{count}})",
-        "results": "Results",
-        "last_search": "Last search"
+        "results_one": "{{count}} conversation",
+        "results_other": "{{count}} conversations",
+        "services_selected": "{0} services",
+        "groups_selected": "{0} groups",
+        "agents_selected": "{0} agents",
+        "categories_selected": "{0} categories",
+        "date_presets": {
+          "today": "Today",
+          "yesterday": "Yesterday",
+          "last_7": "Last 7 days",
+          "clear": "Clear"
+        },
+        "search_chip": "Search",
+        "remove_chip": "Remove filter {{filter}}"
       },
       "context": {
         "process": "Process",
@@ -79,46 +87,47 @@
       "cols": {
         "more": "More actions"
       },
-      "bulk_hint": "Select conversations to transcribe or download them in bulk. Shift+click selects a range.",
-      "select_row_title": "Select (does not open the conversation)"
+      "select_row_title": "Select (does not open the conversation)",
+      "views": {
+        "label": "Views",
+        "all": "All",
+        "pending": "Not transcribed",
+        "failed": "Failed"
+      }
     },
     "type_filter": {
-      "label": "Type",
+      "label": "More filters",
       "aria_default": "Type and status filters",
       "aria_active": "Type and status filters · active",
-      "panel_title": "Filters",
+      "panel_title": "More filters",
       "reset": "Clear",
       "groups": {
         "type": "Conversation type",
         "channel": "Channel",
         "direction": "Direction",
         "rules": "Applied processing",
-        "status": "Status",
         "multirec": "Multi-recording"
       },
       "types": {
-        "interna": "internal",
-        "externa": "external"
+        "interna": "Internal",
+        "externa": "External"
       },
       "channels": {
-        "llamada": "call",
-        "chat": "chat"
+        "llamada": "Call",
+        "chat": "Chat"
       },
       "directions": {
-        "entrante": "inbound",
-        "saliente": "outbound"
+        "entrante": "Incoming",
+        "saliente": "Outgoing"
       },
       "rules": {
-        "recording": "with recording",
-        "transcription": "with transcription",
-        "classification": "with classification"
-      },
-      "status": {
-        "only_failed": "only failed"
+        "recording": "With recording",
+        "transcription": "With transcription",
+        "classification": "With classification"
       },
       "multirec": {
-        "only_multi": "only with multiple legs",
-        "only_partial": "only with partially transcribed legs"
+        "only_multi": "Only with multiple legs",
+        "only_partial": "Only with partially transcribed legs"
       }
     },
     "player": {
@@ -624,12 +633,7 @@
     },
     "category_filter": {
       "label": "AI categories",
-      "aria": "Filters by AI category",
-      "panel_title": "AI categories",
-      "clear": "Clear",
-      "empty": "No categories yet. Process conversations with analysis to see them here.",
-      "select_all": "Select all",
-      "deselect_all": "Deselect all"
+      "empty": "No categories yet. Process conversations with analysis to see them here."
     },
     "dispatch": {
       "transcribing": "Generating transcription for {{n}} conversations…",
@@ -807,7 +811,7 @@
     },
     "no_results": {
       "title": "No results",
-      "text": "No labels match \"{{query}}\""
+      "text": "No labels match “{{query}}”."
     },
     "form": {
       "create_title": "New label",
@@ -878,8 +882,8 @@
       "updated": "Updated"
     },
     "no_results": {
-      "text": "No {{tab}} templates in this filter",
-      "text_with_query": "No {{tab}} templates match \"{{query}}\""
+      "text": "No {{tab}} templates in this filter.",
+      "text_with_query": "No {{tab}} templates match “{{query}}”."
     },
     "form": {
       "create_title": "New template",
@@ -925,7 +929,7 @@
       "deleted_bulk": "{{count}} {{entity}} deleted"
     },
     "no_results": {
-      "with_query": "No {{entity}} match \"{{query}}\"",
+      "with_query": "No {{entity}} match “{{query}}”.",
       "empty": "No {{entity}} yet"
     },
     "columns": {
@@ -1075,7 +1079,7 @@
     "page_title": "Users",
     "create_button": "New user",
     "search_placeholder": "Search user by name, email, identifier...",
-    "no_results": "No users found",
+    "no_results_query": "No users match “{{query}}”.",
     "entity_singular": "user",
     "table": {
       "name": "Name",
@@ -1181,7 +1185,7 @@
     "page_title": "Groups",
     "create_button": "New group",
     "search_placeholder": "Search group by name, code, phone or strategy...",
-    "no_results": "No groups found",
+    "no_results_query": "No groups match “{{query}}”.",
     "entity_singular": "group",
     "table": {
       "code": "Code",
@@ -1297,7 +1301,7 @@
     "page_title": "Agents",
     "create_button": "New agent",
     "search_placeholder": "Search agent by name, code, extension or email...",
-    "no_results": "No agents found",
+    "no_results_query": "No agents match “{{query}}”.",
     "entity_singular": "agent",
     "table": {
       "code": "Code",
@@ -1770,5 +1774,10 @@
         "confirm_body": "This action will delete all changes you made to agents, groups, users, labels, templates and repositories. The page will reload."
       }
     }
+  },
+  "primeng": {
+    "today": "Today",
+    "clear": "Clear",
+    "week_header": "Wk"
   }
 }

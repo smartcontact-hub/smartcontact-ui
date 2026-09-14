@@ -13,7 +13,9 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { map, startWith } from 'rxjs';
 import { MessageService, type MenuItem } from 'primeng/api';
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
-import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
+import {
+  ScEmptyStateComponent as EmptyStateComponent, ScButtonComponent as ButtonComponent,
+} from '@smartcontact-hub/components';
 
 import { ClickOutsideDirective } from '@core/directives/click-outside.directive';
 import { useTopbarActions } from '@core/layout/top-bar/use-topbar-actions';
@@ -40,6 +42,7 @@ import { RepoEntity, RepoPageConfig, RepoStore } from './repo-types';
 @Component({
   selector: 'sc-repo-list-page',
   imports: [
+    EmptyStateComponent,
     ButtonComponent,
     ClickOutsideDirective,
     DeleteEntityDialogComponent,

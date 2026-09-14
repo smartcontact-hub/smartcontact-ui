@@ -346,140 +346,82 @@ table.table {
 }
 
 /*
- * Memory · TypeFilter popover panel (iter 7).
- * PrimeNG `<p-popover>` con `appendTo: 'body'` renderiza el contenido
- * fuera del scope Angular del TypeFilterButtonComponent — los estilos
- * scoped no aplican. Por eso vive aquí en main.scss (unscoped).
+ * Memory · panel «Más filtros» (popover de la barra de Conversaciones). «Categorías IA» ya es un
+ * `sc-multiselect` del DS y no tiene panel propio.
+ * PrimeNG `<p-popover>` con `appendTo: 'body'` los monta fuera del scope de su componente, así
+ * que viven aquí, sin encapsular; `styleClass` es el gancho.
  *
- * styleClass="memory-type-filter-popover" en el <p-popover> es el hook.
+ * Tienen la MISMA anatomía que el panel de un desplegable del DS (medido en el de Servicios,
+ * 2026-09-14): fila con el relleno y el radio de una opción de lista (`0-5 0-75`, `radius-100`),
+ * fondo de hover `--sc-bg-secondary-hover` y sin rayas entre cabecera, cuerpo y pie. Antes la
+ * cabecera y el pie llevaban una raya metida 9 px por dentro del borde del panel, que se leía
+ * como una línea suelta; y el hover de las filas pintaba `--sc-bg-elevated`, que en claro es el
+ * mismo blanco del panel, o sea que no se veía.
+ *
+ * La tipografía la ponen las clases `.sc-text-*` de la plantilla (AGENTS §UX 8): aquí solo
+ * color, aire y estados.
  */
+.memory-type-filter-popover {
+  .type-filter-panel__head {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    /* A la derecha `0-25` y no `0-75`: el enlace «Limpiar» trae su propio relleno, y así su
+     * texto cierra a la misma distancia del borde a la que empieza el de las filas. */
+    padding: var(--sc-spacing-0-5) var(--sc-spacing-0-25) var(--sc-spacing-0-5) var(--sc-spacing-0-75);
+
+    h3 {
+      margin: 0;
+      color: var(--sc-text-primary);
+    }
+  }
+
+  /* Fila de casilla = opción de lista del DS. Solo cambia el fondo, y rápido: es la
+   * interacción más repetida del panel. */
+  .type-filter-group sc-checkbox {
+    display: flex;
+    align-items: center;
+    padding: var(--sc-spacing-0-5) var(--sc-spacing-0-75);
+    border-radius: var(--sc-radius-100);
+    cursor: pointer;
+    transition-property: background-color;
+    transition-duration: var(--sc-transition-fast);
+    transition-timing-function: ease-out;
+
+    &:hover {
+      background: var(--sc-bg-secondary-hover);
+    }
+  }
+}
+
 .memory-type-filter-popover {
   .type-filter-panel {
     width: 280px;
   }
 
-  .type-filter-panel__head {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: var(--sc-spacing-0-875) var(--sc-spacing-1-125);
-    border-bottom: 1px solid var(--sc-border-default);
-
-    h3 {
-      margin: 0;
-      font-size: var(--sc-font-size-subtitle-2);
-      line-height: var(--sc-line-height-subtitle-2);
-      font-weight: var(--sc-font-weight-subtitle-2);
-      color: var(--sc-text-primary);
-    }
-  }
-
   .type-filter-panel__body {
     max-height: 420px;
     overflow-y: auto;
-    padding: var(--sc-spacing-0-875) var(--sc-spacing-1-125);
   }
 
   .type-filter-panel__divider {
     border: 0;
-    border-top: 1px solid var(--sc-border-default);
-    margin: var(--sc-spacing-0-875) 0;
+    border-top: 1px solid var(--sc-border-subtle);
+    margin: var(--sc-spacing-0-5) var(--sc-spacing-0-75);
   }
 
   .type-filter-group {
-    margin-bottom: var(--sc-spacing-1-125);
-
-    &--last {
-      margin-bottom: 0;
-    }
+    display: flex;
+    flex-direction: column;
+    gap: var(--sc-spacing-0-125);
+    padding-block: var(--sc-spacing-0-5);
 
     h4 {
-      margin: 0 0 var(--sc-spacing-0-5) 0;
-      font-size: var(--sc-font-size-50);
-      font-weight: var(--sc-font-weight-semibold);
-      text-transform: uppercase;
-      letter-spacing: 0.04em;
+      margin: 0;
+      padding: 0 var(--sc-spacing-0-75) var(--sc-spacing-0-25);
       color: var(--sc-text-secondary);
     }
   }
-
-  .type-filter-row {
-    display: flex;
-    align-items: center;
-    gap: var(--sc-spacing-0-5);
-    padding: 4px 0;
-    cursor: pointer;
-    font-size: var(--sc-font-size-200);
-    line-height: var(--sc-line-height-body-2);
-    color: var(--sc-text-primary);
-
-    &:hover span {
-      color: var(--sc-text-primary);
-    }
-  }
-}
-
-/* Memory · CategoryFilter popover panel (iter 8). */
-.memory-category-filter-popover {
-  .category-filter-panel {
-    width: 320px;
-  }
-
-  .category-filter-panel__head {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: var(--sc-spacing-0-875) var(--sc-spacing-1-125);
-    border-bottom: 1px solid var(--sc-border-default);
-
-    h3 {
-      margin: 0;
-      font-size: var(--sc-font-size-subtitle-2);
-      line-height: var(--sc-line-height-subtitle-2);
-      font-weight: var(--sc-font-weight-subtitle-2);
-      color: var(--sc-text-primary);
-    }
-  }
-
-  .category-filter-panel__body {
-    max-height: 240px;
-    overflow-y: auto;
-    padding: var(--sc-spacing-0-5) 0;
-  }
-
-  .category-filter-panel__empty {
-    margin: 0;
-    padding: var(--sc-spacing-1-125);
-    text-align: center;
-    color: var(--sc-text-secondary);
-  }
-
-  .category-filter-row {
-    display: flex;
-    align-items: center;
-    gap: var(--sc-spacing-0-875);
-    padding: var(--sc-spacing-0-5) var(--sc-spacing-1-125);
-    cursor: pointer;
-    font-size: var(--sc-font-size-200);
-    line-height: var(--sc-line-height-body-2);
-    color: var(--sc-text-primary);
-    transition: background-color 200ms ease-out;
-
-    &:hover {
-      background: var(--sc-bg-elevated);
-    }
-
-    &--selected {
-      background: var(--sc-bg-primary-subtle);
-    }
-
-  }
-
-  .category-filter-panel__foot {
-    border-top: 1px solid var(--sc-border-default);
-    padding: var(--sc-spacing-0-875) var(--sc-spacing-1-125);
-  }
-
 }
 
 /* Memory · el estado de reglas y categorías (Activa/Inactiva) es `<sc-tag [severity]>` del DS

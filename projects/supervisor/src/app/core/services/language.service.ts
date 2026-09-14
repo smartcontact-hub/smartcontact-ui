@@ -1,5 +1,8 @@
 import { computed, effect, inject, Injectable, signal } from '@angular/core';
 import { TranslateService } from '@ngx-translate/core';
+import { PrimeNG } from 'primeng/config';
+
+import { primengTranslation } from '../utils/primeng-translation';
 
 export type AppLanguage = 'es' | 'en' | 'fr' | 'pt';
 
@@ -33,6 +36,7 @@ const LOCALE_TAG: Record<AppLanguage, string> = {
 @Injectable({ providedIn: 'root' })
 export class LanguageService {
   private readonly translate = inject(TranslateService);
+  private readonly primeng = inject(PrimeNG);
 
   readonly lang = signal<AppLanguage>(this.readPersisted());
 
@@ -46,6 +50,12 @@ export class LanguageService {
     this.translate.addLangs([...SUPPORTED]);
     this.translate.setDefaultLang(DEFAULT_LANG);
     this.translate.use(this.lang());
+
+    // PrimeNG (el calendario) habla el idioma de la app. En `onLangChange` y no en el `effect`:
+    // ahí las traducciones ya han cargado y `instant` devuelve texto, no la clave.
+    this.translate.onLangChange.subscribe(() =>
+      this.primeng.setTranslation(primengTranslation(this.locale(), (k) => this.translate.instant(k))),
+    );
 
     // Propagate any future signal change to ngx-translate + storage.
     effect(() => {

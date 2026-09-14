@@ -99,6 +99,8 @@ export class ScSelectComponent {
   /** Enable search/filter inside the dropdown. */
   readonly filter = input(false, { transform: booleanAttribute });
   /** Field(s) used for filtering when `filter` is true. */
+  /** Texto de ayuda del buscador del panel. Sin él, el campo salía vacío junto a una lupa. */
+  readonly filterPlaceholder = input<string>('Buscar');
   readonly filterBy = input<string>();
   /** Empty-state copy when filter returns no rows. */
   readonly emptyFilterMessage = input<string>('Sin resultados');

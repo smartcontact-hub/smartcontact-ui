@@ -24,6 +24,7 @@ import {
   type ScColumnCellContext,
   type ScColumnDef,
   ScDatatableComponent,
+  ScEmptyStateComponent,
   type ScDatatableRowEvent,
   type ScDatatableRowKeyEvent,
   type ScDatatableSortEvent,
@@ -55,7 +56,7 @@ const ACTIONS_FIELD = '__actions';
  *   - la selección (`selectable`, `[(selectedIds)]`, `bulkEntity`) y sus acciones en lote
  *     (`[scListBulkActions]`);
  *   - el vacío (`[scListEmpty]`, y `empty` si lo decide sobre algo más que las filas), la búsqueda sin
- *     resultados (`noResultsText` o `[scListNoResults]`) y lo que vaya entre el título y la barra
+ *     resultados (`noResultsKey` o `[scListNoResults]`) y lo que vaya entre el título y la barra
  *     (`[scListBeforeToolbar]`: pestañas, avisos).
  * Los diálogos (borrar, edición en lote), los paneles y las acciones de verdad siguen en la pantalla.
  */
@@ -67,6 +68,7 @@ const ACTIONS_FIELD = '__actions';
     ScButtonComponent,
     ScColumnSelectorComponent,
     ScDatatableComponent,
+    ScEmptyStateComponent,
     ScSearchComponent,
     TranslateModule,
   ],
@@ -96,8 +98,13 @@ export class ListPageComponent<T extends { readonly id: number | string }> {
   /** Con texto, hay buscador; `searchFn` decide si una fila casa con la consulta (ya en minúsculas). */
   readonly searchPlaceholder = input<string | undefined>(undefined);
   readonly searchFn = input<(row: T, query: string) => boolean>(() => true);
-  /** Texto de la tabla cuando la búsqueda no deja ninguna fila (o proyecta `[scListNoResults]` para algo más rico). */
-  readonly noResultsText = input('');
+  /**
+   * Clave i18n del cuerpo del vacío cuando la búsqueda no deja ninguna fila. Recibe `{{query}}` (lo tecleado) y
+   * lo que pase `noResultsParams`. Una pantalla con dos casos distintos proyecta `[scListNoResults]`.
+   */
+  readonly noResultsKey = input('');
+  readonly noResultsParams = input<Record<string, unknown>>({});
+  protected readonly noResultsParamsWithQuery = computed(() => ({ ...this.noResultsParams(), query: this.query() }));
   /** Lo tecleado en el buscador. Enlázalo (`[(query)]`) solo si la pantalla lo necesita, p. ej. para citarlo en el vacío. */
   readonly query = model('');
 

@@ -22,7 +22,7 @@ const OBJETOS_SNIPPET = `<sc-select
 
 const ESTADOS_SNIPPET = `<!-- El valor va en dos sentidos: "[(value)]" escribe y lee. -->
 <sc-select label="Grupo" [options]="groups" placeholder="Selecciona" [(value)]="value" />
-<sc-select label="Con clear + filtro" [options]="groups" [showClear]="true" [filter]="true" placeholder="Buscar…" />
+<sc-select label="Con clear + filtro" [options]="groups" [showClear]="true" [filter]="true" placeholder="Buscar…" filterPlaceholder="Buscar grupo" />
 <sc-select label="Con error" [options]="groups" error="Selecciona un grupo" />
 <sc-select label="Small" [options]="groups" size="sm" placeholder="sm" />
 <sc-select label="Deshabilitado" [options]="groups" [disabled]="true" placeholder="off" />`;
@@ -132,6 +132,7 @@ export class SelectDemoComponent {
       { name: 'required', type: 'boolean', default: 'false' },
       { name: 'showClear', type: 'boolean', default: 'false', description: 'Botón «×» para limpiar.' },
       { name: 'filter', type: 'boolean', default: 'false', description: 'Buscador dentro del panel.' },
+      { name: 'filterPlaceholder', type: 'string', default: "'Buscar'", description: 'Texto de ayuda del buscador del panel.' },
       { name: 'filled', type: 'boolean', default: 'false', description: 'Fondo slate-50.' },
       { name: 'iftaLabel', type: 'boolean', default: 'false', description: 'Label dentro del campo.' },
       { name: 'appendTo', type: "'body' | 'self'", default: "'body'", description: 'Dónde se abre la lista. En `body` no la recorta una tarjeta o un diálogo con `overflow: hidden`; `self` la deja dentro del componente.' },

@@ -77,7 +77,7 @@
 <ng-template #estados>
   <div class="col">
     <sc-select label="Grupo" [options]="groups" placeholder="Selecciona" [(value)]="value" data-testid="sc-select" />
-    <sc-select label="Con clear + filtro" [options]="groups" [showClear]="true" [filter]="true" placeholder="Buscar…" data-testid="sc-select-filter" />
+    <sc-select label="Con clear + filtro" [options]="groups" [showClear]="true" [filter]="true" placeholder="Buscar…" filterPlaceholder="Buscar grupo" data-testid="sc-select-filter" />
     <sc-select label="Con error" [options]="groups" error="Selecciona un grupo" data-testid="sc-select-error" />
     <sc-select label="Small" [options]="groups" size="sm" placeholder="sm" data-testid="sc-select-sm" />
     <sc-select label="Deshabilitado" [options]="groups" [disabled]="true" placeholder="off" />

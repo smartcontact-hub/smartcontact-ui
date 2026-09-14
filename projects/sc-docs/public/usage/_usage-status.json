@@ -512,7 +512,7 @@
     },
     {
       "selector": "sc-empty-state",
-      "usedInSupervisor": 10
+      "usedInSupervisor": 13
     },
     {
       "selector": "sc-inline-rename-cell",

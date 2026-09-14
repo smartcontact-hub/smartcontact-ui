@@ -1,6 +1,7 @@
 import { ScIconComponent as IconComponent } from '@smartcontact-hub/icons';
 import { ScCheckboxComponent as CheckboxComponent } from '@smartcontact-hub/components';
 import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
+import { ScBadgeComponent as BadgeComponent } from '@smartcontact-hub/components';
 import { ChangeDetectionStrategy, Component, computed, model } from '@angular/core';
 import { TranslateModule } from '@ngx-translate/core';
 import { PopoverModule } from 'primeng/popover';
@@ -34,7 +35,7 @@ import {
  */
 @Component({
   selector: 'sc-memory-type-filter-button',
-  imports: [CheckboxComponent, ButtonComponent, IconComponent, PopoverModule, TranslateModule],
+  imports: [BadgeComponent, CheckboxComponent, ButtonComponent, IconComponent, PopoverModule, TranslateModule],
   templateUrl: './type-filter-button.component.html',
   styleUrl: './type-filter-button.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -44,6 +45,18 @@ export class TypeFilterButtonComponent {
 
   protected readonly filterIcon = 'filter_alt';
 
+  /** Cuántos de los seis grupos del panel filtran algo. */
+  protected readonly activeGroupCount = computed(() => {
+    const f = this.filters();
+    return [
+      !f.types.interna || !f.types.externa,
+      !f.channels.llamada || !f.channels.chat,
+      !f.directions.entrante || !f.directions.saliente,
+      f.rules.recording || f.rules.transcription || f.rules.classification,
+      f.multirec.onlyMulti || f.multirec.onlyPartial,
+    ].filter(Boolean).length;
+  });
+
   protected readonly hasActiveFilters = computed(() => {
     const f = this.filters();
     if (!f.types.interna || !f.types.externa) return true;
@@ -52,7 +65,6 @@ export class TypeFilterButtonComponent {
     if (f.rules.recording || f.rules.transcription || f.rules.classification) {
       return true;
     }
-    if (f.status.onlyFailed) return true;
     if (f.multirec.onlyMulti || f.multirec.onlyPartial) return true;
     return false;
   });
@@ -80,11 +92,6 @@ export class TypeFilterButtonComponent {
     this.filters.set({ ...f, rules: { ...f.rules, [key]: value } });
   }
 
-  protected updateStatus(value: boolean): void {
-    const f = this.filters();
-    this.filters.set({ ...f, status: { ...f.status, onlyFailed: value } });
-  }
-
   protected updateMultirec(key: 'onlyMulti' | 'onlyPartial', value: boolean): void {
     const f = this.filters();
     this.filters.set({ ...f, multirec: { ...f.multirec, [key]: value } });
@@ -92,14 +99,13 @@ export class TypeFilterButtonComponent {
 
   protected resetPopoverFilters(): void {
     const f = this.filters();
-    // Limpia solo las dimensiones del popover, preserva header top-bar
+    // Limpia solo las dimensiones del popover: la barra y la vista rápida (`status`) se quedan
     this.filters.set({
       ...f,
       types: EMPTY_FILTERS.types,
       channels: EMPTY_FILTERS.channels,
       directions: EMPTY_FILTERS.directions,
       rules: EMPTY_FILTERS.rules,
-      status: EMPTY_FILTERS.status,
       multirec: EMPTY_FILTERS.multirec,
     });
   }

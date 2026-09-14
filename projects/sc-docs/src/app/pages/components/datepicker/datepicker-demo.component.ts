@@ -7,7 +7,7 @@ import {
   viewChild,
 } from '@angular/core';
 
-import { ScDatepickerComponent } from '@smartcontact-hub/components';
+import { ScDatepickerComponent, type ScDatepickerPreset } from '@smartcontact-hub/components';
 import { StoryContext, StoryDef, StoryHostComponent, StoryMeta } from '../../../storybook';
 
 const MENOS_VISTOS_SNIPPET = `<!-- "minDate" y "maxDate" acotan el calendario: los días de fuera
@@ -16,6 +16,24 @@ const MENOS_VISTOS_SNIPPET = `<!-- "minDate" y "maxDate" acotan el calendario: l
 
 <!-- "invalid" marca el campo SIN texto de error, para cuando el error se cuenta en otro sitio. -->
 <sc-datepicker label="Inválida" [invalid]="true" />`;
+
+const RANGO_SNIPPET = `<!-- "selectionMode=range": primer clic abre el periodo, segundo lo cierra. El valor va en
+     "range" ([inicio, fin]), no en "value". "presets" pone atajos en el pie del panel; cada
+     uno calcula su periodo AL PULSAR, así «Hoy» es hoy aunque la pantalla lleve abierta desde ayer. -->
+<sc-datepicker
+  label="Periodo"
+  selectionMode="range"
+  placeholder="Cualquier fecha"
+  [presets]="atajos"
+  clearLabel="Quitar periodo"
+  [(range)]="periodo"
+  [showClear]="true"
+/>
+
+atajos: ScDatepickerPreset[] = [
+  { label: 'Hoy', resolve: () => [hoy(), hoy()] },
+  { label: 'Últimos 7 días', resolve: () => [haceDias(6), hoy()] },
+];`;
 
 const ESTADOS_SNIPPET = `<sc-datepicker label="Fecha de inicio" />
 <sc-datepicker label="Obligatoria" [required]="true" />
@@ -34,6 +52,23 @@ export class DatepickerDemoComponent {
   protected readonly basicoTpl = viewChild<TemplateRef<StoryContext>>('basico');
   protected readonly estadosTpl = viewChild<TemplateRef<StoryContext>>('estados');
   protected readonly menosVistosTpl = viewChild<TemplateRef<StoryContext>>('menosVistos');
+  protected readonly rangoTpl = viewChild<TemplateRef<StoryContext>>('rango');
+
+  protected readonly periodo = signal<readonly (Date | null)[] | null>(null);
+  protected readonly periodoTexto = computed(() => {
+    const [inicio, fin] = this.periodo() ?? [];
+    return inicio ? [inicio, fin].map((d) => d?.toLocaleDateString('es-ES') ?? '…').join(' – ') : '—';
+  });
+  private readonly haceDias = (n: number) => {
+    const d = new Date();
+    d.setDate(d.getDate() - n);
+    return d;
+  };
+  protected readonly atajos: readonly ScDatepickerPreset[] = [
+    { label: 'Hoy', resolve: () => [this.haceDias(0), this.haceDias(0)] },
+    { label: 'Ayer', resolve: () => [this.haceDias(1), this.haceDias(1)] },
+    { label: 'Últimos 7 días', resolve: () => [this.haceDias(6), this.haceDias(0)] },
+  ];
 
   /** Un mes de verdad, para que `minDate`/`maxDate` acoten algo que se ve. */
   private readonly hoy = new Date();
@@ -47,7 +82,7 @@ export class DatepickerDemoComponent {
     tag: 'sc-datepicker',
     title: 'Datepicker',
     description:
-      'Selector de fecha sobre `p-datepicker` con la chrome del field-pattern (label + requerido + helper/error). v1: selección de fecha única en popup; formato es-ES por defecto.',
+      'Selector de fecha sobre `p-datepicker` con la chrome del field-pattern (label + requerido + helper/error). Día único o rango (`selectionMode`), con atajos opcionales en el pie del panel (`presets`); formato es-ES por defecto.',
     argTypes: [
       { name: 'label', control: { kind: 'text' } },
       { name: 'placeholder', control: { kind: 'text' } },
@@ -79,7 +114,11 @@ export class DatepickerDemoComponent {
       disabled: false,
     },
     props: [
-      { name: 'value', type: 'Date | null', default: 'null', description: 'Two-way `[(value)]`.' },
+      { name: 'value', type: 'Date | null', default: 'null', description: 'Two-way `[(value)]`, en modo `single`.' },
+      { name: 'range', type: 'readonly (Date | null)[] | null', default: 'null', description: 'Two-way `[(range)]`, en modo `range`: `[inicio, fin]`.' },
+      { name: 'selectionMode', type: 'ScDatepickerSelectionMode', default: "'single'", description: 'single · range' },
+      { name: 'presets', type: 'readonly ScDatepickerPreset[]', default: '[]', description: 'Atajos en el pie del panel; `resolve` se evalúa al pulsar.' },
+      { name: 'clearLabel', type: 'string', default: "'Limpiar'", description: 'Rótulo de «Limpiar» en el pie con atajos.' },
       { name: 'label', type: 'string', default: '—' },
       { name: 'placeholder', type: 'string', default: "'dd/mm/aaaa'" },
       { name: 'size', type: 'ScDatepickerSize', default: "'md'", description: 'sm · md · lg' },
@@ -103,10 +142,12 @@ export class DatepickerDemoComponent {
     const ba = this.basicoTpl();
     const es = this.estadosTpl();
     const mv = this.menosVistosTpl();
-    if (!pg || !ba || !es || !mv) return [];
+    const ra = this.rangoTpl();
+    if (!pg || !ba || !es || !mv || !ra) return [];
     return [
       { name: 'Playground', playground: true, template: pg },
       { name: 'Con valor', template: ba, snippet: '<sc-datepicker label="Fecha de inicio" [(value)]="value" />' },
+      { name: 'Rango con atajos', template: ra, snippet: RANGO_SNIPPET },
       { name: 'Estados', template: es, snippet: ESTADOS_SNIPPET },
       { name: 'Lo que no se ve en los otros ejemplos', template: mv, snippet: MENOS_VISTOS_SNIPPET },
     ];

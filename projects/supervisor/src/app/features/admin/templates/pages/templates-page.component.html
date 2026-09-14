@@ -40,6 +40,8 @@
   [bulkEntity]="bulkEntity()"
   [rowLabel]="rowLabel"
   [(selectedIds)]="selectedIds"
+  [noResultsKey]="searchQuery() ? 'templates.no_results.text_with_query' : 'templates.no_results.text'"
+  [noResultsParams]="{ tab: ('templates.type.' + activeTab()) | translate }"
   tableTestId="templates-table"
 >
   <div scListBeforeToolbar class="tabs" role="tablist">
@@ -77,27 +79,6 @@
     ctaKey="templates.empty.cta"
     (cta)="creating.set(true)"
   />
-
-  <div scListNoResults class="table__no-results">
-    <sc-icon [name]="searchIcon" [size]="20" />
-    <div class="table__no-results-title sc-text-body-semibold">
-      {{ 'labels.no_results.title' | translate }}
-    </div>
-    <div class="table__no-results-text sc-text-caption-regular">
-      @if (searchQuery()) {
-        {{
-          'templates.no_results.text_with_query'
-            | translate
-              : {
-                  tab: 'templates.type.' + activeTab() | translate,
-                  query: searchQuery(),
-                }
-        }}
-      } @else {
-        {{ 'templates.no_results.text' | translate: { tab: 'templates.type.' + activeTab() | translate } }}
-      }
-    </div>
-  </div>
 
   <ng-container ngProjectAs="[scListBulkActions]">
     <sc-button type="button" variant="danger" (clicked)="requestDeleteSelection()">
