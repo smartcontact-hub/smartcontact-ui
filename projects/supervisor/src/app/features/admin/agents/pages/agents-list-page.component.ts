@@ -134,7 +134,7 @@ export class AgentsListPageComponent {
       const bar = host.querySelector<HTMLElement>('.page__action-bar');
       if (!bar) return;
       const ro = new ResizeObserver(() => host.style.setProperty('--sc-datatable-sticky-offset', `${bar.offsetHeight}px`));
-      ro.observe(bar);
+      ro.observe(bar, { box: 'border-box' });
       destroyRef.onDestroy(() => ro.disconnect());
     });
   }
