@@ -85,15 +85,20 @@ test('publicar: manda que cambie un fichero, aunque el desglose diga «igual»',
   assert.equal(hayCambios({ anterior: false, ficheros: [] }), true, 'sin zip anterior se publica');
 });
 
-test('guía: dice qué cambia, o que es el primer zip, y nunca la raíz 14', () => {
-  const base = { commit: 'abc1234', primeng: '22.0.0', themes: '3.0.0' };
-  const primero = leeme({ ...base, comprobaciones: { diferencia: { anterior: false } } });
-  assert.match(primero, /Es el primer zip generado así/);
-  const cambio = leeme({ ...base, comprobaciones: { diferencia: { anterior: true, ficheros: ['sc-preset.mjs'], variables: ['x'], semanticaComun: true, reglasCss: true, componentes: ['menu', 'toast'] } } });
-  assert.match(cambio, /Ficheros distintos: sc-preset\.mjs/);
-  assert.match(cambio, /Variables de tokens: 1/);
-  assert.match(cambio, /Semántica común .*: cambia/);
-  assert.match(cambio, /Reglas CSS del tema .*: cambian/);
+test('guía: versión, cambios o primera versión, comprobaciones, raíz 16 y sin tuteo', () => {
+  const base = { commit: 'abc1234', primeng: '22.0.0', themes: '3.0.0', version: '0.20260914.1133', generado: '2026-09-14T11:33:00Z' };
+  const ok = { ceros: [], contratoPlugin: { promete: 65, faltan: [] } };
+  const primero = leeme({ ...base, comprobaciones: { ...ok, diferencia: { anterior: false } } });
+  assert.match(primero, /Primera versión distribuida como paquete/);
+  assert.match(primero, /Versión 0\.20260914\.1133 · 2026-09-14/);
+  assert.match(primero, /smartcontact-tema-0\.20260914\.1133\.tgz/);
+  const cambio = leeme({ ...base, comprobaciones: { ...ok, diferencia: { anterior: true, ficheros: ['sc-preset.mjs'], variables: ['x'], semanticaComun: true, reglasCss: true, componentes: ['menu', 'toast'] } } });
+  assert.match(cambio, /Ficheros modificados: sc-preset\.mjs/);
+  assert.match(cambio, /Tokens de diseño modificados: 1/);
+  assert.match(cambio, /Estilos comunes del tema: modificados/);
+  assert.match(cambio, /Reglas CSS del tema: modificadas/);
   assert.match(cambio, /menu, toast/);
-  assert.match(cambio, /raíz de la página a 16 px/);
+  assert.match(cambio, /Variables `extend` del plugin de Figma definidas: 65 de 65/);
+  assert.match(cambio, /fuente raíz de 16 px/);
+  assert.doesNotMatch(cambio, /\b(vuestr[oa]s?|os pasamos|pon la|nuestras)\b/i, 'redacción neutra, sin tuteo');
 });

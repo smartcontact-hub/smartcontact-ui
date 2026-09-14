@@ -15,7 +15,7 @@
  *   smartcontact-tokens.css       las 6 capas de tokens `--sc-*` (claro y `.sc-dark`) que el preset lee
  *   smartcontact-typography.css   las clases `.sc-text-*` de los 12 estilos de texto
  *   package.json                  la rama publicada es el paquete npm `smartcontact-tema` (DD-93)
- *   LEEME.md                      cómo se instala, en llano
+ *   README.md                     guía de instalación y verificación
  *   manifiesto.json               versiones, commit y las comprobaciones
  *
  * Las comprobaciones, ya por script (sale con código 1 si un token pasa a 0 o si falla la 4):
@@ -60,7 +60,7 @@ export function diferencias(antes, despues) {
   return [...claves].filter((k) => antes.get(k) !== despues.get(k)).sort();
 }
 
-/** Los ficheros del zip que llevan tema. `LEEME.md` y `manifiesto.json` no cuentan: llevan commit y fecha. */
+/** Los ficheros del zip que llevan tema. `README.md` y `manifiesto.json` no cuentan: llevan commit y fecha. */
 export const FICHEROS = ['sc-preset.mjs', 'smartcontact-tokens.css', 'smartcontact-typography.css'];
 
 /** Ficheros del tema cuyo contenido cambia entre dos carpetas (el build es determinista, medido). */
@@ -157,7 +157,7 @@ export const paqueteNpm = ({ commit, generado }) => {
     name: 'smartcontact-tema',
     // Solo informa: npm sigue a la rama. Día y minuto UTC, sin ceros delante (semver no los admite).
     version: `0.${dia}.${f.getUTCHours() * 100 + f.getUTCMinutes()}`,
-    description: 'Tema de Smart Contact para PrimeNG: el mismo que usan sus apps.',
+    description: 'Tema oficial de Smart Contact para PrimeNG: preset, tokens de diseño y tipografía.',
     type: 'module',
     main: './sc-preset.mjs',
     types: './sc-preset.d.ts',
@@ -167,7 +167,7 @@ export const paqueteNpm = ({ commit, generado }) => {
       './smartcontact-typography.css': './smartcontact-typography.css',
       './package.json': './package.json',
     },
-    files: ['sc-preset.mjs', 'sc-preset.d.ts', ...FICHEROS.filter((x) => x.endsWith('.css')), 'LEEME.md', 'manifiesto.json'],
+    files: ['sc-preset.mjs', 'sc-preset.d.ts', ...FICHEROS.filter((x) => x.endsWith('.css')), 'README.md', 'manifiesto.json'],
     sideEffects: ['*.css'],
     license: 'UNLICENSED',
     repository: { type: 'git', url: 'https://github.com/smartcontact-hub/smartcontact-ui.git' },
@@ -196,31 +196,59 @@ async function cssDelPreset(ruta) {
   return out;
 }
 
-export const leeme = (m) => `# Tema de Smart Contact para PrimeNG
+/** Guía del paquete (`README.md`). La lee un equipo de desarrollo externo: redacción neutra y profesional. */
+export const leeme = (m) => {
+  const d = m.comprobaciones.diferencia;
+  const c = m.comprobaciones.contratoPlugin;
+  const lista = (xs) => (xs.length ? xs.join(', ') : 'ninguno');
+  const cambios = d.anterior
+    ? [
+        `- Ficheros modificados: ${lista(d.ficheros)}.`,
+        `- Tokens de diseño modificados: ${d.variables.length}.`,
+        `- Estilos comunes del tema: ${d.semanticaComun ? 'modificados' : 'sin cambios'}.`,
+        `- Reglas CSS del tema: ${d.reglasCss ? 'modificadas' : 'sin cambios'}.`,
+        `- Componentes con estilos modificados: ${lista(d.componentes)}.`,
+      ].join('\n')
+    : '- Primera versión distribuida como paquete.';
+  return `# Smart Contact · Tema para PrimeNG
 
-Generado desde el commit \`${m.commit}\` del Design System (PrimeNG ${m.primeng}, Aura ${m.themes}).
-Es el mismo tema que usan las apps de Smart Contact: con él, vuestra web se ve igual que las nuestras.
+Versión ${m.version ?? '—'} · ${String(m.generado ?? '').slice(0, 10)} · origen: Design System de Smart Contact (\`${m.commit}\`)
 
-Trae también todas las variables del \`extend\` que exporta el plugin (\`--p-typography-*\`,
-\`--p-app-typography-*\`, \`--p-presence-*\`, \`--p-component-custommodal-*\`…), con nuestros valores: una hoja
-que las lea sigue funcionando.
+Tema oficial de Smart Contact para aplicaciones Angular con PrimeNG. Es el mismo tema que utilizan las
+aplicaciones de Smart Contact, por lo que los componentes se muestran de forma idéntica en ambos entornos.
 
-## Instalar (una vez)
+## Contenido
 
-1. Instala el paquete desde el fichero que os pasamos (por ejemplo, guardado en \`local-libs/archives\`):
+| Fichero | Descripción |
+|---|---|
+| \`sc-preset.mjs\` | Preset de PrimeNG (Aura con la identidad de Smart Contact). Incluye las variables \`extend\` que genera el plugin de Figma (\`--p-typography-*\`, \`--p-app-typography-*\`, \`--p-presence-*\`, \`--p-component-custommodal-*\`). |
+| \`sc-preset.d.ts\` | Declaración de tipos para TypeScript. |
+| \`smartcontact-tokens.css\` | Tokens de diseño \`--sc-*\`, modo claro y oscuro. |
+| \`smartcontact-typography.css\` | Estilos de texto \`.sc-text-*\`. |
+| \`manifiesto.json\` | Versión, origen y resultado de las comprobaciones. |
+
+## Requisitos
+
+- Angular con PrimeNG 21 o superior.
+- Tamaño de fuente raíz de 16 px (\`html { font-size: 100% }\`).
+- Fuente Inter disponible en la aplicación.
+
+## Instalación
+
+1. Instalar el paquete desde el fichero \`.tgz\`:
 
    \`\`\`sh
    npm install ./local-libs/archives/smartcontact-tema-${m.version ?? '<versión>'}.tgz
    \`\`\`
 
-2. Carga los estilos globales, en este orden (en \`angular.json\` → \`styles\`):
+2. Añadir los estilos globales en \`angular.json\` → \`styles\`, a continuación de los estilos propios:
 
    \`\`\`json
    "node_modules/smartcontact-tema/smartcontact-tokens.css",
    "node_modules/smartcontact-tema/smartcontact-typography.css"
    \`\`\`
 
-3. Da el tema a PrimeNG:
+3. Configurar PrimeNG con el preset. El resto de opciones existentes se mantiene:
 
    \`\`\`ts
    import scPreset from 'smartcontact-tema';
@@ -230,24 +258,40 @@ que las lea sigue funcionando.
    });
    \`\`\`
 
-4. Modo oscuro: pon la clase \`sc-dark\` en \`<html>\`. Cambia a la vez los tokens y el tema.
+4. Modo oscuro: añadir la clase \`sc-dark\` al elemento \`<html>\`. Afecta a la vez a los tokens y al preset.
 
-## Actualizar
+## Verificación
 
-Cada versión nueva del tema es un fichero \`.tgz\` nuevo. Se instala con el mismo comando del paso 1,
-cambiando el nombre del fichero. La versión instalada está en
-\`node_modules/smartcontact-tema/manifiesto.json\` (commit y fecha).
+Con la aplicación en ejecución, en la consola del navegador:
 
-## Tres cosas que no cambiar
+\`\`\`js
+const v = (n) => getComputedStyle(document.documentElement).getPropertyValue(n).trim();
+[v('--p-primary-color'), v('--p-typography-font-size-100')];
+\`\`\`
 
-- **La raíz de la página a 16 px.** Las medidas están hechas para \`html { font-size: 16px }\`.
-- **La fuente Inter**, que los estilos de texto dan por cargada.
-- **El prefijo \`p\`** de las variables de PrimeNG.
+Resultado esperado: \`#1b273d\` y un valor no vacío. Sin estilos propios que los modifiquen, los botones y
+campos de tamaño normal miden 32,5 px de alto (27 px el pequeño y 40 px el grande).
 
-## Qué cambia respecto al zip anterior
+## Actualización
 
-${m.comprobaciones.diferencia.anterior ? `- Ficheros distintos: ${m.comprobaciones.diferencia.ficheros.length ? m.comprobaciones.diferencia.ficheros.join(', ') : 'ninguno'}.\n- Variables de tokens: ${m.comprobaciones.diferencia.variables.length}.\n- Semántica común (colores y medidas que comparten todos): ${m.comprobaciones.diferencia.semanticaComun ? 'cambia' : 'igual'}.\n- Reglas CSS del tema (interlineados de los controles): ${m.comprobaciones.diferencia.reglasCss ? 'cambian' : 'iguales'}.\n- Componentes con CSS propio distinto: ${m.comprobaciones.diferencia.componentes.length ? m.comprobaciones.diferencia.componentes.join(', ') : 'ninguno'}.` : '- Es el primer zip generado así.'}
+Cada versión se distribuye como un nuevo fichero \`.tgz\`. Para actualizar, basta con instalarlo con el
+comando del paso 1; la configuración no cambia. La versión instalada figura en
+\`node_modules/smartcontact-tema/manifiesto.json\`.
+
+## Cambios respecto a la versión anterior
+
+${cambios}
+
+## Comprobaciones de esta versión
+
+- Ningún token de diseño con valor pasa a 0: ${m.comprobaciones.ceros.length ? `no superada (${m.comprobaciones.ceros.length})` : 'superada'}.
+- Variables \`extend\` del plugin de Figma definidas: ${c ? `${c.promete - c.faltan.length} de ${c.promete}` : '—'}.
+
+---
+
+Equipo de Diseño de Producto · Smart Contact
 `;
+};
 
 if (import.meta.url === pathToFileURL(process.argv[1] ?? '').href) {
   const args = process.argv.slice(2);
@@ -311,7 +355,7 @@ if (import.meta.url === pathToFileURL(process.argv[1] ?? '').href) {
   const manifiesto = { commit, primeng: version('primeng'), themes: version('@primeuix/themes'), generado: new Date().toISOString(), comprobaciones };
   manifiesto.version = paqueteNpm(manifiesto).version;
   writeFileSync(join(OUT, 'manifiesto.json'), `${JSON.stringify(manifiesto, null, 2)}\n`);
-  writeFileSync(join(OUT, 'LEEME.md'), leeme(manifiesto));
+  writeFileSync(join(OUT, 'README.md'), leeme(manifiesto));
   writeFileSync(join(OUT, 'package.json'), `${JSON.stringify(paqueteNpm(manifiesto), null, 2)}\n`);
 
   if (comprobaciones.ceros.length) {

@@ -4,7 +4,7 @@
 # lo compara con el publicado y, si algo cambió, lo deja en la rama `tema-zip`. Enlaces fijos:
 #   tgz:  https://github.com/smartcontact-hub/smartcontact-ui/raw/tema-zip/smartcontact-tema.tgz   (paquete npm, lo que se entrega)
 #   zip:  https://github.com/smartcontact-hub/smartcontact-ui/raw/tema-zip/tema-smartcontact.zip
-#   guía: https://github.com/smartcontact-hub/smartcontact-ui/blob/tema-zip/LEEME.md
+#   guía: https://github.com/smartcontact-hub/smartcontact-ui/blob/tema-zip/README.md
 # En la misma rama, el robot de tokens publica `tema-plugin.zip` (el export del plugin, el de la licencia).
 #
 # Por qué: hasta el 2026-09-14 el zip lo preparaba Rafa a mano desde el plugin de Figma, con tres
@@ -74,7 +74,7 @@ jobs:
           (cd "$RUNNER_TEMP/tema" && npm pack --silent --pack-destination "$RUNNER_TEMP" > "$RUNNER_TEMP/tgz.txt")
           cp "$RUNNER_TEMP/$(tail -1 "$RUNNER_TEMP/tgz.txt")" "$PUB/smartcontact-tema.tgz"
           # Los mismos ficheros sueltos en la raíz: la rama también se instala como dependencia git.
-          (cd "$RUNNER_TEMP/tema" && cp LEEME.md manifiesto.json package.json sc-preset.mjs sc-preset.d.ts smartcontact-tokens.css smartcontact-typography.css "$PUB/")
+          (cd "$RUNNER_TEMP/tema" && cp README.md manifiesto.json package.json sc-preset.mjs sc-preset.d.ts smartcontact-tokens.css smartcontact-typography.css "$PUB/")
           git -C "$PUB" config user.name "github-actions[bot]"
           git -C "$PUB" config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git -C "$PUB" add -A

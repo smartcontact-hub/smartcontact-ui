@@ -143,7 +143,7 @@ nuevo `npm update smartcontact-tema` lo trae) y desde el `.tgz` (7 ficheros, el 
   token, así que cualquier registro privado acaba pidiendo uno.
 - **Etiquetas semver en el repo para `#semver:`** → se mezclarían con las del DS (v1.x).
 
-**Consecuencias** · El equipo externo cambia la instalación una vez (guía en `LEEME.md`) y cada versión es
+**Consecuencias** · El equipo externo cambia la instalación una vez (guía en el `README.md` del paquete, con redacción profesional) y cada versión es
 un `.tgz` nuevo. Rafa lo descarga del enlace fijo (`…/raw/tema-zip/smartcontact-tema.tgz`) y lo adjunta en
 Jira: sin token en su GitLab, porque diseño y producto no tocan su código (Rafa). Pendiente de medir en su
 app que el preset rinda igual con PrimeNG 21 (medido solo a nivel de variables). Fuera de alcance: sus `--sc-*` propias (557 definiciones, 253 con valor fijo, 304 nombres que
