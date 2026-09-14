@@ -160,6 +160,19 @@ las 38 ranuras— se cerraron el mismo día en DD-73.)
 3. **La deuda de código de [`AUDIT-DEUDA-2026-06.md`](../AUDIT-DEUDA-2026-06.md)** que quede tras
    s34, y **los cabos de DD-24** (round-trip de iconos) en [`ROADMAP.md`](../ROADMAP.md).
 
+## ✅ 2026-09-14 · Los iconos pintan el tamaño que prometen: el glifo de Material se calibra (DD-104)
+
+**Sello:** rama `arebury/fix-admin-icon-scale`, HEAD `7b7554d` (#175) más este cambio. DD-104. Rafa, visto en local: «sí», y pidió el
+barrido de toda la app.
+
+**Lo que cambia.** `scale: calc(24 / 18)` en `.sc-icon` y `.sc-icon-font::before` (`material-symbols.css`): un icono de
+12 pintaba 9 porque los tamaños salen del Kit (PrimeIcons llena su caja) y Material deja aire. La caja no se mueve.
+`agent` fuera (DD-35). Los índices de AED y de las fichas pasan a companion (14). Spec nuevo `icon-glyph-scale` (escala computada y tinta a ≥2px
+del texto, en rojo con los dos fallos puestos). 38 baselines de sc-docs regeneradas: solo cambian iconos. Figma: §7.
+
+- ⚠️ **`getBoundingClientRect` INCLUYE `scale`**: la geometría se compara en el resto de la página, y un roce
+  icono↔texto se busca en el control, no en el padre. Un `[size]` fijado a ojo junto a texto compensa dos veces.
+
 ## ✅ 2026-09-14 · Las fichas de agente, grupo y usuario riman con Contact Center (DD-100, DD-101, DD-102)
 
 **Sello:** rama `arebury/agents-groups-users-ds`, HEAD `7007c73` (#172) más este cambio. DD-100, DD-101 y DD-102. Rafa, visto en

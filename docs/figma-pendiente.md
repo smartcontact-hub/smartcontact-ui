@@ -218,6 +218,31 @@ componente con la nota de la manita. Luego, publicar la librería (ficha 1).
 
 ---
 
+## 7 · Los iconos pintan un tercio más grande en código que en Figma (2026-09-14)
+
+**Estado:** pendiente de decidir cómo se refleja en el fichero · **Sin verificar** contra el fichero del DS:
+medido en código (DD-104), no en Figma.
+
+El código calibra el glifo de Material Symbols con `scale: calc(24 / 18)`: la caja del icono mide lo mismo,
+pero el dibujo crece hasta ocupar la caja entera, como hacía PrimeIcons, de donde salen los tamaños del Kit.
+Un icono de 12 dentro de un botón pinta ahora 12, no 9. En Figma el glifo sigue a su tamaño literal, así que
+**toda maqueta con iconos de Material se ve más pequeña que la app**: botones de solo icono, lupa de los
+buscadores, índice de las fichas, barra lateral y menús.
+
+- **Qué hay que mirar en el fichero:** si el `IconSet` y los maestros que lo usan atan el glifo al tamaño
+  de su caja (W/H atada a la variable de font-size, DD-24). Si es así, la vía más limpia es agrandar el
+  glifo dentro de la caja un 33% (24/18) sin tocar la caja, que es lo que hace el código.
+- **Dos casos ya corregidos en código:** el índice de Contact Center (`393:12565`, `IconSet` `393:12581` a 20) y
+  el de las fichas de agente, grupo y usuario, que es la misma pieza (§5), llevan en código el icono al tamaño de
+  su etiqueta (14 de caja). Si en Figma se alinea el glifo, ese 20 debería bajar a 14.
+- **Se queda fuera, a propósito:** la réplica `agent` no calibra (DD-35), porque sus tamaños se midieron sobre
+  el Comunicador en vivo.
+
+**Cómo sabes que está hecho:** una captura del botón `sm` de solo icono en Figma y otra de
+`#/components/button` en sc-docs, puestas lado a lado, pintan la papelera del mismo tamaño.
+
+---
+
 ## Cerrado
 
 - ~~**El título del componente `Section` a `Heading/h3-semibold`**~~ → **HECHO el 2026-09-13**

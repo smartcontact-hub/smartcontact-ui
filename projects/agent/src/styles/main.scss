@@ -32,6 +32,12 @@
 /* Iconos: Material Symbols Outlined self-hospedado (para <sc-icon>). */
 @import "../../../ui-smartcontact-icons/src/lib/styles/material-symbols.css";
 
+/* La réplica no calibra el glifo (DD-35): sus `[size]` se midieron sobre el
+ * Comunicador en vivo, que pinta Material Symbols a su tamaño literal. */
+.sc-icon {
+  scale: none;
+}
+
 /* ─────────────────────────────────────────────────────────────────────────
  * Paleta REAL (valores exactos capturados). DARK (default) ↔ LIGHT (.ag-light).
  * ───────────────────────────────────────────────────────────────────────── */

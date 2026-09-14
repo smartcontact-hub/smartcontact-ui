@@ -73,6 +73,50 @@
 
 ---
 
+## DD-104 · 2026-09-14 — Un icono pinta el tamaño que promete: el glifo de Material se calibra a la rejilla de PrimeIcons
+
+**Contexto** · Rafa, en la ficha de un agente: «tenemos estos iconos sin escalar bien, se ven enanos». Medido: la
+papelera de un botón `sm` de solo icono tenía la caja de 12px en un botón de 28 y pintaba **9**. No era de esa
+pantalla. Los tamaños de icono del DS salen del Kit (DD-24: el companion mide su `font-size`; `--sc-icon-size-*`),
+y el Kit dibuja con PrimeIcons, que llena su caja (`trash` ocupa 100 de 100 unidades). Material Symbols deja aire
+dentro de la suya: `delete`, `search` y `edit` ocupan 18 de 24 (`measureText`, 2026-09-14). Cada icono de la app
+salía a tres cuartos del tamaño escrito.
+
+**Decisión** · (1) `material-symbols.css` pone `scale: calc(24 / 18)` en `.sc-icon` y `.sc-icon-font::before`:
+crece el DIBUJO y la caja se queda igual, así que nada se mueve. Va como propiedad `scale` y no en `transform`
+para no pisar el giro de `sc-icon--spin`. DD-24 sigue en pie: el tamaño escrito es el mismo; ahora se cumple.
+(2) La réplica `agent` se queda fuera (`scale: none` en su hoja, DD-35): sus `[size]` se midieron sobre el
+Comunicador en vivo. (3) El menú de AED (`settings-sidebar`) tenía `[size]="20"` fijado a ojo junto a una etiqueta
+de 14. Con la calibración compensaba dos veces y `groups` quedaba a 1,9px de «Grupos». Pasa a companion
+(`size="inherit"`), y el text style sube al item, como en el sidebar principal. El índice de las fichas
+(`sc-form-section-nav` `flush`, que DD-100 igualó a ese menú con el icono a 20) baja igual a 14, el tamaño de su
+etiqueta: si no, `hub` quedaba a 1,9px de «Servicios asignados» y las dos pantallas dejaban de rimar. (4) `e2e/supervisor/icon-glyph-scale.spec.ts`
+vigila, en 12 pantallas, que todo glifo Material lleve la escala COMPUTADA y que su tinta quede a ≥2px del
+texto de su línea.
+
+**Razón** · Un barrido de las 35 rutas del Supervisor, más 18 menús, desplegables y diálogos abiertos: 0 piezas
+con la geometría cambiada en 4 pantallas (la comparación sí detecta un cambio real: salen 309) y 0 iconos sin
+calibrar. Los únicos roces eran los del punto (3); tras ellos, el hueco más estrecho de la app es
+el de los dos índices, el mismo en los dos: 2,9px (`groups` y `hub`, glifos anchos). El spec se probó en rojo con los dos fallos puestos: sin `scale` y con el `[size]="20"` de vuelta.
+
+**Descartadas** ·
+- **Subir un paso el icono de los botones** (`sm` 16, `md` 18, `lg` 20, como el 18/14 de Material 3) → arregla los
+  botones y deja enanos la lupa, la barra lateral, los menús y los títulos de sección.
+- **Agrandar el `font-size` del glifo con márgenes negativos** → mismo resultado óptico, pero con los `[size]`
+  numéricos de `sc-icon` (estilo en línea) hacía falta tocar el componente.
+- **Calibrar a 24/20** (el área viva máxima) → 1,2 se quedaba corto en la captura; 24/18 casa con el glifo típico.
+
+**Consecuencias** · Figma sigue dibujando Material a su tamaño literal, así que el código se ve más grande que el
+fichero hasta que se ajuste (`docs/figma-pendiente.md` §7). Un glifo ANCHO (`groups`, `manage_accounts`) sobresale
+hasta 0,11em por lado de su caja: donde el hueco icono↔texto sea menor de ~3px, lo caza el spec. Las 38 baselines
+visuales de sc-docs se regeneran con este cambio.
+
+---
+
+---
+
+---
+
 ## DD-103 · 2026-09-14 — Un tramo de la miga que lleva a algún sitio lo parece: enlace de verdad, manita y subrayado al pasar el ratón
 
 **Contexto** · Rafa: «no queda muy claro cuándo puedo clicar en algo». Medido en sc-docs: los tramos con solo

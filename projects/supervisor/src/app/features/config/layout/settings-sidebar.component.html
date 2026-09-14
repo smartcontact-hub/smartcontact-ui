@@ -8,14 +8,17 @@
     </div>
     <nav class="settings-sidebar__nav" [attr.aria-label]="'config.sidebar.title' | translate">
       @for (item of items; track item.path) {
+        <!-- El text style va TAMBIÉN en el item (como en el sidebar principal): el icono es
+             companion (DD-24) y hereda su tamaño de aquí; sin él heredaba los 16 del cuerpo
+             y no los 14 de la etiqueta. -->
         <a
-          class="nav-item"
+          class="nav-item sc-text-body-regular"
           routerLinkActive="nav-item--active"
           ariaCurrentWhenActive="page"
           [routerLink]="item.path"
         >
           <span class="nav-item__icon" aria-hidden="true">
-            <sc-icon [name]="item.icon" [size]="20" />
+            <sc-icon [name]="item.icon" size="inherit" />
           </span>
           <span class="nav-item__label sc-text-body-regular">{{ item.labelKey | translate }}</span>
         </a>

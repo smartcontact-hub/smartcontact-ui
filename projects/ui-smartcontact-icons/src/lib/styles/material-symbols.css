@@ -17,6 +17,15 @@
   -webkit-font-feature-settings: 'liga';
   -webkit-font-smoothing: antialiased;
   font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  /* Calibración del glifo. Los tamaños de icono del DS (DD-24: el companion mide
+   * su font-size; `--sc-icon-size-*`) vienen del Kit, que dibuja con PrimeIcons, y
+   * PrimeIcons llena su caja: un icono de 12 pinta 12. Material Symbols deja aire
+   * dentro de la suya: su glifo típico ocupa 18 de las 24 unidades (`delete`,
+   * `search`, `edit`, medidos con `measureText` el 2026-09-14), así que el mismo 12
+   * pintaba 9 y los botones de icono se veían enanos. `scale` agranda el DIBUJO a
+   * lo que ese tamaño promete sin tocar la caja: nada se mueve, no hay saltos. Va
+   * como propiedad propia y no en `transform` para no pisar el giro de `--spin`. */
+  scale: calc(24 / 18);
 }
 
 .sc-icon-font {
