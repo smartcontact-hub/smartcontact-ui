@@ -10,6 +10,7 @@
     [toggleable]="args.toggleable"
     [collapsed]="args.collapsed"
     [showHeader]="args.showHeader"
+    [fill]="args.fill"
   >
     Contenido del panel.
   </sc-panel>
@@ -18,4 +19,29 @@
 <ng-template #basic>
   <sc-panel header="Panel básico" data-testid="sc-panel"> Contenido del panel. </sc-panel>
   <sc-panel header="Colapsable" [toggleable]="true"> Contenido colapsable. </sc-panel>
+</ng-template>
+
+<ng-template #iconsStory>
+  <sc-panel header="Colas" data-testid="sc-panel-icons">
+    <ng-template #icons>
+      <sc-button
+        icon="more_vert"
+        variant="secondary"
+        appearance="text"
+        size="sm"
+        [rounded]="true"
+        ariaLabel="Opciones de Colas"
+      />
+    </ng-template>
+    Contenido del panel.
+  </sc-panel>
+</ng-template>
+
+<!-- El alto lo fija el contenedor (un paso de escala, como haría la rejilla del Dashboard). -->
+<ng-template #fillStory>
+  <div style="height: var(--sc-spacing-18)" data-testid="sc-panel-fill-slot">
+    <sc-panel header="Agentes" [fill]="true" data-testid="sc-panel-fill">
+      <div style="flex: 1 1 auto; min-height: 0; overflow: auto">Contenido que se estira hasta el pie del hueco.</div>
+    </sc-panel>
+  </div>
 </ng-template>

@@ -165,6 +165,18 @@ las 38 ranuras— se cerraron el mismo día en DD-73.)
 3. **La deuda de código de [`AUDIT-DEUDA-2026-06.md`](../AUDIT-DEUDA-2026-06.md)** que quede tras
    s34, y **los cabos de DD-24** (round-trip de iconos) en [`ROADMAP.md`](../ROADMAP.md).
 
+## ✅ 2026-09-14 · `sc-panel` con acciones en la cabecera y `fill` (DD-108)
+
+**Sello:** rama `arebury/sc-panel-icons-fill`, HEAD `e4d2885` (#171) más este cambio. DD-108. Rafa: «adelante». El tramo «Las fichas de agente, grupo
+y usuario riman con Contact Center» vive en el tag `archive/handoff-ds-2026-09-14-fichas-contact-center`, y «Los iconos pintan el
+tamaño que prometen» (DD-104), en `archive/handoff-ds-2026-09-14-iconos-calibrados`.
+
+**Lo que cambia.** `<ng-template #icons>` en `sc-panel` (plantilla `icons` de Panel; Figma `Custom Icon=True`) y
+`[fill]` para llenar el hueco, estilado por clases de `pt`. Lo pidió la tarjeta de widget del Dashboard.
+
+- ⚠️ **Para estilar un interno de PrimeNG sin `.p-*`, ponle clase propia por `pt`**: `pBind` la mezcla con la suya y
+  el acoplamiento no crece.
+
 ## ✅ 2026-09-14 · La barra de Conversaciones se simplifica y todos los vacíos se ven igual
 
 **Sello:** rama `arebury/conversaciones-filtros` (#171), sobre `2b9e0e7` (#181). Rafa, visto en local y en la
@@ -220,19 +232,6 @@ arreglado en el DS). Antes y ahora en la comparación de las fichas, sección Re
 
 - ⚠️ **Un fallo que ves en una pantalla, repítelo en la documentación del DS antes de arreglarlo en la pantalla**:
   aquí estaba en el componente y el arreglo en la ficha solo lo habría tapado ahí.
-
-## ✅ 2026-09-14 · Los iconos pintan el tamaño que prometen: el glifo de Material se calibra (DD-104)
-
-**Sello:** rama `arebury/fix-admin-icon-scale`, HEAD `7b7554d` (#175) más este cambio. DD-104. Rafa, visto en local: «sí», y pidió el
-barrido de toda la app.
-
-**Lo que cambia.** `scale: calc(24 / 18)` en `.sc-icon` y `.sc-icon-font::before` (`material-symbols.css`): un icono de
-12 pintaba 9 porque los tamaños salen del Kit (PrimeIcons llena su caja) y Material deja aire. La caja no se mueve.
-`agent` fuera (DD-35). Los índices de AED y de las fichas pasan a companion (14). Spec nuevo `icon-glyph-scale` (escala computada y tinta a ≥2px
-del texto, en rojo con los dos fallos puestos). 38 baselines de sc-docs regeneradas: solo cambian iconos. Figma: §7.
-
-- ⚠️ **`getBoundingClientRect` INCLUYE `scale`**: la geometría se compara en el resto de la página, y un roce
-  icono↔texto se busca en el control, no en el padre. Un `[size]` fijado a ojo junto a texto compensa dos veces.
 
 ## 🗄️ Histórico de la lista SIGUIENTE — ya cerrado
 

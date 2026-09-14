@@ -41,6 +41,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | Una tarjeta con acciones en la cabecera es `<sc-panel>` con `<ng-template #icons>` (Panel de primeng.dev; Figma `panel` `Custom Icon=True`) · `[fill]` la estira al alto de su hueco · las piezas internas se estilan por `pt` con clases propias, no por `.p-panel-*` | DD-108 |
 > | Un `borderWidth` del tema tiene la FORMA de Aura: si Aura pinta un lado (`0 0 1px 0`), nosotros también; si Aura dice `0`, sin borde · `p-tabs` como Aura 3: pestaña sin borde, tira con raya abajo, marca de la activa en `activeBar` · lo vigila `preset-border-shorthand.test.mjs` | DD-107 |
 > | Un campo que ACUMULA valores de una lista es un `sc-multiselect` con chips, no un `sc-select` que se vacía más pastillas debajo · la casilla de «todos» de `sc-multiselect` marca y desmarca (`[selectAll]="null"` contra PrimeNG 22.1.0) · una sección no se llama ni se dibuja como una página del menú | DD-105 |
 > | Una miga que navega pasa `routerLink`, no un `command` · el tramo pulsable lleva manita y subrayado en hover (lo pone `sc-breadcrumb`) | DD-103 |
@@ -72,6 +73,37 @@
 > | Siete divergencias deliberadas entre flujos, que NO se unifican | DD-36 |
 > | `--sc-bg-default` es el suelo del shell, nunca una superficie | DD-34 |
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
+
+---
+
+## DD-108 · 2026-09-14 — `sc-panel` gana acciones en la cabecera (`#icons`) y `fill`, para que la tarjeta del Dashboard sea un Panel
+
+**Contexto** · Rafa pidió que las piezas del Dashboard salgan de primeng.dev con los valores de Aura. La tarjeta de
+widget (cabecera con título y menú ⋮, cuerpo que llena su celda de la rejilla) es un Panel con la plantilla `icons`,
+y en Figma existe: `panel` `229:10217`, variante `Custom Icon=True`. `sc-panel` no pasaba `icons`, y para llenar el
+hueco la sesión del Dashboard tendría que estilar `.p-panel-content` desde la app, que `audit:primeng-coupling` no
+deja crecer. `audit-screen-vocabulary.mjs` ya anotaba que la cabecera con acciones iría al DS «cuando lo pida una
+segunda pantalla» (la primera, el constructor de reglas).
+
+**Decisión** ·
+1. **`<ng-template #icons>`** en `sc-panel`: se reenvía a la plantilla `icons` de `p-panel`, delante del botón de
+   colapsar. Siempre presente en la plantilla (sin `@if`), porque `p-panel` la busca entre sus hijos directos.
+2. **`[fill]`**: el panel toma el alto de su contenedor y el cuerpo se estira (flex en columna, la fila de la rejilla
+   de colapso a `minmax(0, 1fr)`), para una tabla con `scrollHeight="flex"` o una rejilla que reparte el alto.
+3. **Por `pt`, no por `.p-*`:** el componente pone `sc-panel__root`, `__body`, `__wrapper` y `__content` con el
+   pass-through público de PrimeNG, y `fill` se estila sobre esas clases. El acoplamiento no crece.
+
+**Razón** · Es la plantilla documentada de Panel en primeng.dev y la variante que ya dibuja Figma, así que la tarjeta
+hereda del tema borde, radio y rellenos de Aura sin CSS de pantalla. Medido en sc-docs: la acción queda en la línea
+del título y a su derecha, y con `fill` el panel mide lo mismo que su hueco (252) con el cuerpo hasta el pie.
+
+**Descartadas** ·
+- **`sc-card`** → no tiene hueco de acciones ni lo dibuja Figma; Panel sí.
+- **Estilar `.p-panel-content` desde la app** → sube `audit:primeng-coupling` y no viaja con el tema.
+
+**Consecuencias** · Dos stories nuevas en `#/components/panel` y dos tests en `components.spec.ts`; la captura de la
+página crece (lo de antes no cambia) y la referencia de estilos solo añade las anclas nuevas. Con `toggleable`, al
+colapsar un panel `fill` el hueco se queda: está dicho en la API.
 
 ---
 
