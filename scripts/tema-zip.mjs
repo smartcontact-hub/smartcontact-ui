@@ -200,8 +200,6 @@ export const leeme = (m) => `# Tema de Smart Contact para PrimeNG
 
 Generado desde el commit \`${m.commit}\` del Design System (PrimeNG ${m.primeng}, Aura ${m.themes}).
 Es el mismo tema que usan las apps de Smart Contact: con él, vuestra web se ve igual que las nuestras.
-En la misma rama está también \`tema-plugin.zip\`, el export del plugin de Figma, con su propia guía
-(\`LEEME-plugin.md\`) y la medida de cuánto se aparta de este.
 
 Trae también todas las variables del \`extend\` que exporta el plugin (\`--p-typography-*\`,
 \`--p-app-typography-*\`, \`--p-presence-*\`, \`--p-component-custommodal-*\`…), con nuestros valores: una hoja
@@ -209,10 +207,10 @@ que las lea sigue funcionando.
 
 ## Instalar (una vez)
 
-1. Instala el paquete desde la rama publicada:
+1. Instala el paquete desde el fichero que os pasamos (por ejemplo, guardado en \`local-libs/archives\`):
 
    \`\`\`sh
-   npm install github:smartcontact-hub/smartcontact-ui#tema-zip
+   npm install ./local-libs/archives/smartcontact-tema-${m.version ?? '<versión>'}.tgz
    \`\`\`
 
 2. Carga los estilos globales, en este orden (en \`angular.json\` → \`styles\`):
@@ -236,16 +234,9 @@ que las lea sigue funcionando.
 
 ## Actualizar
 
-Se publica solo cada vez que cambia el tema. Para traer la última versión:
-
-\`\`\`sh
-npm update smartcontact-tema
-\`\`\`
-
-El \`package-lock.json\` fija la versión instalada, así que \`npm ci\` no cambia nada hasta que actualicéis.
-La versión instalada está en \`node_modules/smartcontact-tema/manifiesto.json\` (commit y fecha).
-
-Sin npm: \`tema-smartcontact.zip\`, en la misma rama, lleva los mismos ficheros.
+Cada versión nueva del tema es un fichero \`.tgz\` nuevo. Se instala con el mismo comando del paso 1,
+cambiando el nombre del fichero. La versión instalada está en
+\`node_modules/smartcontact-tema/manifiesto.json\` (commit y fecha).
 
 ## Tres cosas que no cambiar
 
@@ -318,6 +309,7 @@ if (import.meta.url === pathToFileURL(process.argv[1] ?? '').href) {
   const declaradasPreset = new Set([...`${cssAhora.comun}\n${Object.values(cssAhora.componentes).join('\n')}`.matchAll(/(--p-[\w-]+)\s*:/g)].map((m) => m[1]));
   comprobaciones.contratoPlugin = { promete: contratoDelPlugin(custom).length, faltan: contratoDelPlugin(custom).filter((v) => !declaradasPreset.has(v)) };
   const manifiesto = { commit, primeng: version('primeng'), themes: version('@primeuix/themes'), generado: new Date().toISOString(), comprobaciones };
+  manifiesto.version = paqueteNpm(manifiesto).version;
   writeFileSync(join(OUT, 'manifiesto.json'), `${JSON.stringify(manifiesto, null, 2)}\n`);
   writeFileSync(join(OUT, 'LEEME.md'), leeme(manifiesto));
   writeFileSync(join(OUT, 'package.json'), `${JSON.stringify(paqueteNpm(manifiesto), null, 2)}\n`);

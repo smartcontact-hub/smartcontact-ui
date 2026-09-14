@@ -116,9 +116,11 @@ colección `aura/custom` del Kit (de donde lo saca el plugin): tipografía a nue
 de escala a `--sc-scale-*`, las divergencias escritas en `coverage-map` (acento, icono de diálogo) a
 nuestro token, y el resto con el valor del Kit; pesos sin «px». Lo que `sc-preset/extend.ts` ya declara,
 gana. Nuestras apps no cambian: solo el paquete. (2) Comprobación 4: rojo si al tema empaquetado le falta
-una variable de ese contrato. (3) La rama `tema-zip` es un paquete npm, `smartcontact-tema`: se instala con
-`npm install github:smartcontact-hub/smartcontact-ui#tema-zip` y se actualiza con
-`npm update smartcontact-tema`; su `files` deja fuera los zips. (4) `tema-zip.yml` también corre cuando
+una variable de ese contrato. (3) El tema es un paquete npm, `smartcontact-tema`, que `tema-zip.yml`
+publica también como fichero, `smartcontact-tema.tgz`. Se entrega así, en su casa: adjunto en Jira o en
+su GitLab, que ya guarda paquetes como `.tgz` (`smart-contact-ui-lab/local-libs/archives`), y se instala
+con `npm install ./….tgz`. Rafa: «que no tengan que meterse en mi github», y privado. La rama `tema-zip`
+sigue siendo instalable como dependencia git, para uso interno. (4) `tema-zip.yml` también corre cuando
 cambia el export del Kit.
 
 **Razón** · Un solo tema, el de nuestras apps, que además cumple el contrato del plugin: la hoja que
@@ -126,21 +128,25 @@ escribieron contra el plugin sigue encontrando sus variables y los componentes d
 completos como con Aura. Medido: el `extend` solo añade (59 variables nuevas, 0 existentes cambian ni
 desaparecen); de las 63 que faltaban quedan 4, `app.typography.xl/xxl`, que el Kit de hoy tampoco tiene y
 cuyo respaldo en su hoja (1,5rem y 1,75rem) da lo mismo que daba el plugin (24 y 28 px). Instalación
-ensayada con la rama simulada en un repo local: instala sin los zips, importa el preset, y tras un commit
-nuevo `npm update smartcontact-tema` lo trae.
+ensayada con la rama simulada en un repo local (instala sin los zips, importa el preset, y tras un commit
+nuevo `npm update smartcontact-tema` lo trae) y desde el `.tgz` (7 ficheros, el preset importa).
 
 **Descartadas** ·
 - **Arreglar el export del plugin a posteriori** (raíz, pesos, reglas CSS, decisiones de código) → sería
   reescribir su salida en cada export, y aun así no lleva lo que se decide en código.
 - **Meter el `extend` del plugin en `sc-preset` de nuestras apps** → nadie de este repo lo lee; en el paquete
   basta y no toca nada nuestro.
-- **Versión en un registro npm** → pide cuenta y credenciales en los dos lados; la rama pública no pide nada.
-- **Etiquetas semver en el repo para `#semver:`** → se mezclarían con las del DS (v1.x) y dispararían
-  herramientas que leen etiquetas; se puede añadir si usan un bot de dependencias.
+- **Instalar desde nuestra rama de GitHub** (primera propuesta de Claude) → el equipo externo dependería
+  de nuestro GitHub; Rafa lo quiere en su casa.
+- **npm público (npmjs.com)** → el nombre está libre y se actualiza solo, pero el paquete sería público.
+- **Inicio de sesión único (SSO)** → sirve a personas en el navegador; `npm install` y su CI entran con
+  token, así que cualquier registro privado acaba pidiendo uno.
+- **Etiquetas semver en el repo para `#semver:`** → se mezclarían con las del DS (v1.x).
 
-**Consecuencias** · El equipo externo cambia la instalación una vez (guía en `LEEME.md`) y actualiza con un
-comando. Pendiente de medir en su app: que el preset rinda igual con PrimeNG 21 (medido solo a nivel de
-variables). Fuera de alcance: sus `--sc-*` propias (557 definiciones, 253 con valor fijo, 304 nombres que
+**Consecuencias** · El equipo externo cambia la instalación una vez (guía en `LEEME.md`) y cada versión es
+un `.tgz` nuevo. Pendiente: que llegue solo a su GitLab (hace falta un token suyo con permiso de publicar,
+guardado como secreto aquí), y medir en su app que el preset rinda igual con PrimeNG 21 (medido solo a
+nivel de variables). Fuera de alcance: sus `--sc-*` propias (557 definiciones, 253 con valor fijo, 304 nombres que
 ya no existen en el nuestro) no siguen a ningún tema; traducirlas es otra tanda.
 
 ---

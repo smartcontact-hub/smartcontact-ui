@@ -107,8 +107,8 @@ generado de la misma fuente — opción, no obligación.
 > **Corrección (2026-09-14, DD-88):** el equipo externo SÍ recibía un zip, el del plugin, preparado a
 > mano. Desde DD-88 recibe el tema de nuestras apps (mismo preset y tokens), generado y comprobado por
 > `tema-zip.yml` en la rama `tema-zip`, y además el export del plugin (la licencia es suya), comprobado por
-> el robot y publicado al lado con la medida de cuánto se aparta del nuestro. Desde DD-93 esa rama se
-> instala como paquete npm (`smartcontact-tema`) y trae también el `extend` del plugin.
+> el robot y publicado al lado con la medida de cuánto se aparta del nuestro. Desde DD-93 el tema es
+> un paquete npm (`smartcontact-tema.tgz`) que se les entrega como fichero, y trae también el `extend` del plugin.
 
 ### ¿Qué falta para que los equipos externos puedan instalarlo? (la propuesta)
 
