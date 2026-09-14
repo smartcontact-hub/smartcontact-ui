@@ -66,6 +66,17 @@ export const SIZING = [
   { label: 'button.root.lg.paddingY', group: 'CC', exp: 'button.lg.padding.y', read: { path: 'components.button.root.lg.paddingY' } },
   { label: 'button.root.lg.iconOnlyWidth', group: 'CC', exp: 'button.lg.icon.only.width', read: { path: 'components.button.root.lg.iconOnlyWidth' } },
   // ── formField (aura/semantic/common) ────────────────────────────────────────
+  // ── list y navigation (aura/semantic/common) — opciones de listas y menús ─────
+  // Vivían a mano en `sc-preset/base.ts` y un cambio de Figma no llegaba (DD-97).
+  { label: 'list.option.paddingY', group: 'SC', exp: 'list.option.padding.y', read: { path: 'semantic.list.option.padding', index: 0 } },
+  { label: 'list.option.paddingX', group: 'SC', exp: 'list.option.padding.x', read: { path: 'semantic.list.option.padding', index: 1 } },
+  { label: 'list.optionGroup.paddingY', group: 'SC', exp: 'list.option.group.padding.y', read: { path: 'semantic.list.optionGroup.padding', index: 0 } },
+  { label: 'list.optionGroup.paddingX', group: 'SC', exp: 'list.option.group.padding.x', read: { path: 'semantic.list.optionGroup.padding', index: 1 } },
+  { label: 'navigation.item.paddingY', group: 'SC', exp: 'navigation.item.padding.y', read: { path: 'semantic.navigation.item.padding', index: 0 } },
+  { label: 'navigation.item.paddingX', group: 'SC', exp: 'navigation.item.padding.x', read: { path: 'semantic.navigation.item.padding', index: 1 } },
+  { label: 'navigation.submenuLabel.paddingY', group: 'SC', exp: 'navigation.submenu.label.padding.y', read: { path: 'semantic.navigation.submenuLabel.padding', index: 0 } },
+  { label: 'navigation.submenuLabel.paddingX', group: 'SC', exp: 'navigation.submenu.label.padding.x', read: { path: 'semantic.navigation.submenuLabel.padding', index: 1 } },
+  { label: 'navigation.submenuIcon.size', group: 'SC', exp: 'navigation.submenu.icon.size', read: { path: 'semantic.navigation.submenuIcon.size' } },
   { label: 'formField.paddingX', group: 'SC', exp: 'form.field.padding.x', read: { path: 'semantic.formField.paddingX' } },
   { label: 'formField.paddingY', group: 'SC', exp: 'form.field.padding.y', read: { path: 'semantic.formField.paddingY' } },
   { label: 'formField.borderRadius', group: 'SC', exp: 'form.field.border.radius', read: { path: 'semantic.formField.borderRadius' } },
@@ -104,6 +115,12 @@ export const SIZING = [
   { label: 'divider.vertical.marginX', group: 'CC', exp: 'divider.vertical.margin.x', read: { path: 'components.divider.vertical.margin', index: 1 } },
   { label: 'divider.vertical.content.paddingY', group: 'CC', exp: 'divider.vertical.content.padding.y', read: { path: 'components.divider.vertical.content.padding', index: 0 } },
   { label: 'divider.vertical.content.paddingX', group: 'CC', exp: 'divider.vertical.content.padding.x', read: { path: 'components.divider.vertical.content.padding', index: 1 } },
+  // Relleno exterior: el Kit tiene UNA variable por orientación (valor 0) y Aura pone dos valores
+  // (horizontal 0 · 0.875rem, vertical 0.375rem · 0). Se parte igual que el addon (DD-97).
+  { label: 'divider.horizontal.paddingY', group: 'CC', exp: 'divider.horizontal.padding', read: { path: 'components.divider.horizontal.padding', index: 0 } },
+  { label: 'divider.horizontal.paddingX', group: 'CC', exp: 'divider.horizontal.padding', read: { path: 'components.divider.horizontal.padding', index: 1 } },
+  { label: 'divider.vertical.paddingY', group: 'CC', exp: 'divider.vertical.padding', read: { path: 'components.divider.vertical.padding', index: 0 } },
+  { label: 'divider.vertical.paddingX', group: 'CC', exp: 'divider.vertical.padding', read: { path: 'components.divider.vertical.padding', index: 1 } },
   // ── toggleswitch (aura/component/common) ────────────────────────────────────
   { label: 'toggleswitch.width', group: 'CC', exp: 'toggleswitch.width', read: { path: 'components.toggleswitch.root.width' } },
   { label: 'toggleswitch.height', group: 'CC', exp: 'toggleswitch.height', read: { path: 'components.toggleswitch.root.height' } },
@@ -258,7 +275,10 @@ export const SIZING = [
   { label: 'image.action.size', group: 'CC', exp: 'image.action.size', read: { path: 'components.image.action.size' } },
   { label: 'image.action.iconSize', group: 'CC', exp: 'image.action.icon.size', read: { path: 'components.image.action.iconSize' } },
   { label: 'image.action.borderRadius', group: 'CC', exp: 'image.action.border.radius', read: { path: 'components.image.action.borderRadius' } },
-  { label: 'inputgroup.addon.padding', group: 'CC', exp: 'inputgroup.addon.padding', read: { path: 'components.inputgroup.addon.padding' } },
+  // El Kit modela UNA variable `inputgroup.addon.padding` y Aura pone dos valores (0 · 0.5rem): se parte
+  // en alto y ancho sobre la misma hoja hasta que Figma la separe (DD-97, docs/figma-pendiente.md §4).
+  { label: 'inputgroup.addon.paddingY', group: 'CC', exp: 'inputgroup.addon.padding', read: { path: 'components.inputgroup.addon.padding', index: 0 } },
+  { label: 'inputgroup.addon.paddingX', group: 'CC', exp: 'inputgroup.addon.padding', read: { path: 'components.inputgroup.addon.padding', index: 1 } },
   { label: 'inputgroup.addon.minWidth', group: 'CC', exp: 'inputgroup.addon.min.width', read: { path: 'components.inputgroup.addon.minWidth' } },
   { label: 'inputnumber.button.width', group: 'CC', exp: 'inputnumber.button.width', read: { path: 'components.inputnumber.button.width' } },
   { label: 'inputotp.root.gap', group: 'CC', exp: 'inputotp.gap', read: { path: 'components.inputotp.root.gap' } },
@@ -481,3 +501,37 @@ export const SIZING = [
  */
 /** @type {{ label: string, reason: string }[]} */
 export const DIVERGE_SIZING = [];
+
+/**
+ * PENDIENTES DE FIGMA (DD-97). Slots donde el código ya sigue a Aura y el Kit todavía dibuja la medida
+ * de PrimeOne 4.0.0 (el Aura de 2024). Cada fila dice el PASO de escala con el nombre del rem de Aura
+ * (como DD-81), que es una variable que ya existe en el Kit:
+ *   - `token-gen-component.mjs` escribe `{scale.<paso>}` en vez del valor del export, así un export del
+ *     plugin no devuelve el código a PrimeOne mientras Figma no se actualiza;
+ *   - `token-parity.mjs` compara el preset con ese paso y AVISA cuando el export ya dice lo mismo: es la
+ *     señal de que Figma está alineado y la fila sobra.
+ * Lo que hay que hacer en Figma, fila a fila: `docs/figma-pendiente.md` §4. `paso: '0'` = cero.
+ */
+/** @param {string} paso @param {...string} labels @returns {{ label: string, paso: string }[]} */
+const aura = (paso, ...labels) => labels.map((label) => ({ label, paso }));
+/** @type {{ label: string, paso: string }[]} */
+export const PENDIENTE_FIGMA = [
+  ...aura('0-25', 'list.option.paddingY', 'list.optionGroup.paddingY', 'navigation.item.paddingY', 'navigation.submenuLabel.paddingY', 'message.content.sm.paddingY'),
+  ...aura('0-625', 'list.option.paddingX', 'list.optionGroup.paddingX', 'navigation.item.paddingX', 'navigation.submenuLabel.paddingX',
+    'tooltip.paddingX', 'message.content.paddingX', 'radiobutton.icon.size', 'badge.root.fontSize'),
+  ...aura('0-75', 'navigation.submenuIcon.size', 'message.content.lg.paddingX', 'radiobutton.icon.lg.size', 'badge.lg.fontSize'),
+  ...aura('0-375', 'tooltip.paddingY', 'tag.root.paddingX', 'message.content.paddingY', 'divider.vertical.content.paddingY',
+    'divider.horizontal.content.paddingX', 'divider.vertical.paddingY', 'badge.root.paddingX', 'paginator.root.paddingY'),
+  ...aura('0-5', 'message.content.lg.paddingY', 'message.content.sm.paddingX', 'badge.sm.fontSize'),
+  ...aura('0-875', 'divider.horizontal.paddingX', 'paginator.root.paddingX'),
+  ...aura('0', 'inputgroup.addon.paddingY'),
+  ...aura('1', 'panel.toggleableHeader.paddingX', 'panel.header.padding'),
+  ...aura('1-125', 'popover.root.arrowOffset', 'radiobutton.root.width', 'radiobutton.root.height', 'progressbar.root.height',
+    'card.body.padding', 'badge.sm.minWidth', 'badge.sm.height'),
+  ...aura('1-25', 'radiobutton.root.lg.width', 'radiobutton.root.lg.height', 'badge.root.minWidth', 'badge.root.height',
+    'avatar.lg.fontSize', 'avatar.lg.icon.size'),
+  ...aura('1-5', 'confirmdialog.icon.size', 'badge.lg.minWidth', 'badge.lg.height'),
+  ...aura('2-25', 'inputgroup.addon.minWidth', 'paginator.jumpToPageInput.maxWidth', 'paginator.navButton.width', 'paginator.navButton.height'),
+  ...aura('neg-1-25', 'avatar.xl.group.offset'),
+  ...aura('neg-0-625', 'avatar.group.offset'),
+];

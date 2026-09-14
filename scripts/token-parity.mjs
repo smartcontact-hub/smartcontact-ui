@@ -25,7 +25,7 @@ import { readFileSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { createRequire } from 'node:module';
 import { loadKitExport } from './dtcg-export.mjs';
-import { SIZING, GROUPS, DIVERGE_SIZING } from './sizing-map.mjs';
+import { SIZING, GROUPS, DIVERGE_SIZING, PENDIENTE_FIGMA } from './sizing-map.mjs';
 import { ENFORCE as COLOR_ENFORCE, DIVERGE as COLOR_DIVERGE } from './color-map.mjs';
 import { PRIMITIVE_SOURCE, PRIMITIVE_DIVERGE, primitiveDrift } from './palette-map.mjs';
 import { classify, PRIMARY_STEPS, APP_TYPOGRAPHY_CONTRACT } from './coverage-map.mjs';
@@ -235,8 +235,14 @@ const sh = (path) => {
   if (!shCache.has(path)) shCache.set(path, shorthand(path));
   return shCache.get(path);
 };
+// Pendientes de Figma (DD-97): el preset debe valer el paso de Aura; si el export ya lo dice, sobra la fila.
+const pendiente = new Map(PENDIENTE_FIGMA.map((p) => [p.label, p.paso]));
+const pasoPx = (paso) => (paso === '0' ? 0 : kit.resolve(`{scale.${paso}}`));
+const yaAlineadas = [];
 const sizing = SIZING.map((r) => {
-  const expected = exp(GROUPS[r.group], r.exp);
+  const delExport = exp(GROUPS[r.group], r.exp);
+  const expected = pendiente.has(r.label) ? pasoPx(pendiente.get(r.label)) : delExport;
+  if (pendiente.has(r.label) && delExport != null && Math.abs(delExport - expected) < 1e-6) yaAlineadas.push(r.label);
   let got;
   if (r.read.index === undefined) got = presetToPx(get(r.read.path));
   else {
@@ -256,10 +262,15 @@ for (const [label, expected, got] of sizing) {
   else if (Math.abs(got - expected) > 1e-6) fail(`${label}: DRIFT — export=${expected} vs preset=${got}`);
   else sizingOk++;
 }
-log(`  ✓ ${sizingOk}/${sizing.length - sizingDiverge.size} valores de sizing fijados 1:1 con el export`);
+log(`  ✓ ${sizingOk}/${sizing.length - sizingDiverge.size} valores de sizing fijados: 1:1 con el export, salvo ${pendiente.size} al paso de Aura pendiente de Figma`);
 if (sizingDiverge.size) {
   log('  divergencias de sizing conscientes (no fallan):');
   for (const d of DIVERGE_SIZING) log(`    · ${d.label}: ${d.reason}`);
+}
+log(`  · ${PENDIENTE_FIGMA.length} pendientes de Figma: el código ya sigue a Aura (docs/figma-pendiente.md §4)`);
+if (yaAlineadas.length) {
+  log(`  ⚠ ${yaAlineadas.length} pendiente(s) que el export YA dice igual: Figma está alineado, quita la fila de PENDIENTE_FIGMA:`);
+  for (const l of yaAlineadas) log(`    · ${l}`);
 }
 
 // ── 5. Reverse: tokens en código sin valor en el export (informativo) ────────

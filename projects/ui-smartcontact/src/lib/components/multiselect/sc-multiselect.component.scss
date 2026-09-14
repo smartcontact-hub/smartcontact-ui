@@ -112,42 +112,18 @@
  * ⚠️ Sin capa a propósito (el preset está en `@layer primeng`, y sin capa gana
  * siempre). Esta es la opinión del componente sobre su propio preset.
  *
- * ⚠️ El Kit NO modela panel por tamaño: `multiselect.sm/lg.font.size` y
- * `.padding.x/y` describen el TRIGGER, y `list.option.padding.x/y` es un valor
- * único. La rampa del panel es decisión del DS, no un token; los valores sí
- * salen de la escala v/14.
- *
- * ⚠️ La opción NO lleva `font-size` (solo el filtro). Es lo que ya hacía el
- * partial del supervisor y se conserva tal cual para no cambiar el aspecto en
- * esta retirada: medido el 2026-09-05 en `/conversaciones`, una opción de
- * panel `sm` pinta a 16px mientras su filtro pinta a 12. Es una asimetría
- * real contra `sc-select` (que sí lo baja) y está sin decidir. */
-.sc-multiselect-panel--sm {
-  .p-multiselect-header,
-  .p-multiselect-list,
-  .p-multiselect-option,
-  .p-multiselect-filter {
-    padding: var(--sc-spacing-0-375) var(--sc-spacing-0-625);
-  }
-
-  /* El buscador del header hereda chrome md por defecto y se ve desmesurado
-   * contra un trigger sm (S49 bug 5). */
-  .p-multiselect-filter {
-    font-size: var(--sc-font-size-100);
-  }
+ * ⚠️ Solo el BUSCADOR sigue la talla del trigger (es un campo, y Aura modela el campo por talla; sin
+ * esto se ve desmesurado contra un trigger sm, S49 bug 5). La cabecera, la lista y las opciones leen el
+ * tema, como en Aura, que no modela el panel por talla: hasta DD-97 (2026-09-14) llevaban aquí una
+ * rampa propia (5,25/8,75 en sm) y el filtro de Conversaciones no seguía ni a Figma ni a Aura. */
+.sc-multiselect-panel--sm .p-multiselect-filter {
+  padding: var(--sc-spacing-0-375) var(--sc-spacing-0-625);
+  font-size: var(--sc-font-size-100);
 }
 
-.sc-multiselect-panel--lg {
-  .p-multiselect-header,
-  .p-multiselect-list,
-  .p-multiselect-option,
-  .p-multiselect-filter {
-    padding: var(--sc-spacing-0-625) var(--sc-spacing-0-875);
-  }
-
-  .p-multiselect-filter {
-    font-size: var(--sc-font-size-300);
-  }
+.sc-multiselect-panel--lg .p-multiselect-filter {
+  padding: var(--sc-spacing-0-625) var(--sc-spacing-0-875);
+  font-size: var(--sc-font-size-300);
 }
 
 /* ────────────────────────────────────────────────────────────────────

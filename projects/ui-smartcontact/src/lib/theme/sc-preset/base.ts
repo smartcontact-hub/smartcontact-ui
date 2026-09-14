@@ -215,11 +215,11 @@ export default {
         padding: 'var(--sc-scale-0-5) var(--sc-scale-1) var(--sc-scale-0-25)',
       },
       option: {
-        padding: 'var(--sc-scale-0-5) var(--sc-scale-0-75)',
+        padding: 'var(--sc-cmp-list-option-padding-y) var(--sc-cmp-list-option-padding-x)',
         borderRadius: '{border.radius.sm}',
       },
       optionGroup: {
-        padding: 'var(--sc-scale-0-5) var(--sc-scale-0-75)',
+        padding: 'var(--sc-cmp-list-option-group-padding-y) var(--sc-cmp-list-option-group-padding-x)',
         fontWeight: '600',
       },
     },
@@ -264,7 +264,7 @@ export default {
     navigation: {
       item: {
         gap: 'var(--sc-scale-0-5)',
-        padding: 'var(--sc-scale-0-5) var(--sc-scale-0-75)',
+        padding: 'var(--sc-cmp-navigation-item-padding-y) var(--sc-cmp-navigation-item-padding-x)',
         borderRadius: '{border.radius.sm}',
       },
       list: {
@@ -272,10 +272,10 @@ export default {
         padding: 'var(--sc-scale-0-25)',
       },
       submenuIcon: {
-        size: 'var(--sc-scale-0-875)',
+        size: 'var(--sc-cmp-navigation-submenu-icon-size)',
       },
       submenuLabel: {
-        padding: 'var(--sc-scale-0-5) var(--sc-scale-0-75)',
+        padding: 'var(--sc-cmp-navigation-submenu-label-padding-y) var(--sc-cmp-navigation-submenu-label-padding-x)',
         fontWeight: '600',
       },
     },

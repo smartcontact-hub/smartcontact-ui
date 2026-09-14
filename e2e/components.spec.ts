@@ -172,12 +172,12 @@ test.describe('sc-badge', () => {
     // border-radius no se aserta en md: PrimeNG aplica 50% estructural (circle)
     // al badge de un carácter; el slot del Kit (6) aplica al resto.
     expect(await styleOf(md, ['height', 'min-width', 'font-size'])).toEqual({
-      height: '21px',
-      'min-width': '21px',
-      'font-size': '10.5px',
+      height: kitPx('badge.root.height'),
+      'min-width': kitPx('badge.root.minWidth'),
+      'font-size': kitPx('badge.root.fontSize'),
     });
     const sm = page.getByTestId('sc-badge-sm').locator('.p-badge');
-    expect((await styleOf(sm, ['font-size']))['font-size']).toBe('8.75px');
+    expect((await styleOf(sm, ['font-size']))['font-size']).toBe(kitPx('badge.sm.fontSize'));
     const xl = page.getByTestId('sc-badge-xl').locator('.p-badge');
     expect((await styleOf(xl, ['font-size']))['font-size']).toBe('14px');
     await screenshotBaseline(page, 'badge');
@@ -185,13 +185,13 @@ test.describe('sc-badge', () => {
 });
 
 test.describe('sc-card', () => {
-  test('métrica del Kit (body 17.5, radio 12)', async ({ page }) => {
+  test('métrica del Kit (relleno del cuerpo, radio 12)', async ({ page }) => {
     await gotoPage(page, 'card');
     const card = page.getByTestId('sc-card').locator('.p-card');
     expect((await styleOf(card, ['border-radius']))['border-radius']).toBe('12px');
     const body = page.getByTestId('sc-card').locator('.p-card-body');
     expect(await styleOf(body, ['padding-left', 'gap'])).toEqual({
-      'padding-left': '17.5px',
+      'padding-left': kitPx('card.body.padding'),
       gap: '7px',
     });
     await screenshotBaseline(page, 'card');
@@ -216,14 +216,14 @@ test.describe('sc-chip', () => {
 test.describe('sc-tag', () => {
   // `tag/padding/y` = scale/0-125 en el maestro (DS › ❖ Tag, 373:13337). Hasta DD-76 el tema
   // ponía 3.5 y este test lo congelaba: 25 de alto contra los 21.5 del Kit.
-  test('métrica del Kit (7/1.75, font 12/700, radio 6)', async ({ page }) => {
+  test('métrica del Kit (relleno, font 12/700, radio 6)', async ({ page }) => {
     await gotoPage(page, 'tag');
     const tag = page.getByTestId('sc-tag').locator('.p-tag');
     expect(
       await styleOf(tag, ['padding-left', 'padding-top', 'font-size', 'font-weight', 'border-radius']),
     ).toEqual({
-      'padding-left': '7px',
-      'padding-top': '1.75px',
+      'padding-left': kitPx('tag.root.paddingX'),
+      'padding-top': kitPx('tag.root.paddingY'),
       'font-size': '12px',
       'font-weight': '700',
       'border-radius': '6px',
@@ -233,16 +233,16 @@ test.describe('sc-tag', () => {
 });
 
 test.describe('sc-message', () => {
-  test('métrica del Kit (10.5/7, radio 6, font 14)', async ({ page }) => {
+  test('métrica del Kit (relleno, radio 6, font 14)', async ({ page }) => {
     await gotoPage(page, 'message');
     // variant por defecto = simple → content.padding 0 (Kit:
-    // message.simple.content.padding = 0); el 10.5/7 aplica a outlined.
+    // message.simple.content.padding = 0); el relleno del Kit aplica a outlined.
     const content = page.getByTestId('sc-message').locator('.p-message-content');
     expect((await styleOf(content, ['padding-left']))['padding-left']).toBe('0px');
     const outlined = page.getByTestId('sc-message-outlined').locator('.p-message-content');
     expect(await styleOf(outlined, ['padding-left', 'padding-top'])).toEqual({
-      'padding-left': '10.5px',
-      'padding-top': '7px',
+      'padding-left': kitPx('message.content.paddingX'),
+      'padding-top': kitPx('message.content.paddingY'),
     });
     const msg = page.getByTestId('sc-message').locator('.p-message');
     expect((await styleOf(msg, ['border-radius']))['border-radius']).toBe('6px');
@@ -256,12 +256,12 @@ test.describe('sc-message', () => {
 });
 
 test.describe('sc-panel', () => {
-  test('métrica del Kit (header 15.75, radio 6)', async ({ page }) => {
+  test('métrica del Kit (relleno de cabecera, radio 6)', async ({ page }) => {
     await gotoPage(page, 'panel');
     const panel = page.getByTestId('sc-panel').locator('.p-panel');
     expect((await styleOf(panel, ['border-radius']))['border-radius']).toBe('6px');
     const header = page.getByTestId('sc-panel').locator('.p-panel-header');
-    expect((await styleOf(header, ['padding-left']))['padding-left']).toBe('15.75px');
+    expect((await styleOf(header, ['padding-left']))['padding-left']).toBe(kitPx('panel.header.padding'));
     await screenshotBaseline(page, 'panel');
   });
 });
@@ -310,11 +310,11 @@ test.describe('sc-drawer', () => {
 });
 
 test.describe('sc-progressbar', () => {
-  test('métrica del Kit (alto 17.5, radio 6, label 12)', async ({ page }) => {
+  test('métrica del Kit (alto, radio 6, label 12)', async ({ page }) => {
     await gotoPage(page, 'progressbar');
     const bar = page.getByTestId('sc-progressbar').locator('.p-progressbar');
     expect(await styleOf(bar, ['height', 'border-radius'])).toEqual({
-      height: '17.5px',
+      height: kitPx('progressbar.root.height'),
       'border-radius': '6px',
     });
     const label = page.getByTestId('sc-progressbar').locator('.p-progressbar-label');
@@ -331,14 +331,14 @@ test.describe('sc-progressspinner', () => {
 });
 
 test.describe('sc-radiobutton', () => {
-  test('métrica del Kit (caja 17.5; sm 14, lg 21) y selección', async ({ page }) => {
+  test('métrica del Kit (caja md, sm 14 y lg) y selección', async ({ page }) => {
     await gotoPage(page, 'radiobutton');
     const md = page.getByTestId('sc-radio-md').locator('.p-radiobutton');
-    expect(await styleOf(md, ['width', 'height'])).toEqual({ width: '17.5px', height: '17.5px' });
+    expect(await styleOf(md, ['width', 'height'])).toEqual({ width: kitPx('radiobutton.root.width'), height: kitPx('radiobutton.root.height') });
     const sm = page.getByTestId('sc-radio-sm').locator('.p-radiobutton');
     expect((await styleOf(sm, ['width']))['width']).toBe('14px');
     const lg = page.getByTestId('sc-radio-lg').locator('.p-radiobutton');
-    expect((await styleOf(lg, ['width']))['width']).toBe('21px');
+    expect((await styleOf(lg, ['width']))['width']).toBe(kitPx('radiobutton.root.lg.width'));
     await page.locator('#opt-b').click();
     await expect(page.getByTestId('sc-radio-md').locator('.p-radiobutton')).not.toHaveClass(/p-radiobutton-checked/);
     await screenshotBaseline(page, 'radiobutton');
@@ -378,7 +378,7 @@ test.describe('sc-toast', () => {
 });
 
 test.describe('sc-divider', () => {
-  test('métrica del Kit (margin 14, content padding 7) y variantes', async ({ page }) => {
+  test('métrica del Kit (margin 14, relleno del contenido) y variantes', async ({ page }) => {
     await gotoPage(page, 'divider');
     const h = page.getByTestId('sc-divider').locator('.p-divider');
     expect(await styleOf(h, ['margin-top', 'margin-bottom'])).toEqual({
@@ -386,7 +386,7 @@ test.describe('sc-divider', () => {
       'margin-bottom': '14px',
     });
     const content = page.getByTestId('sc-divider-block').locator('.p-divider-content').first();
-    expect((await styleOf(content, ['padding-left']))['padding-left']).toBe('7px');
+    expect((await styleOf(content, ['padding-left']))['padding-left']).toBe(kitPx('divider.horizontal.content.paddingX'));
     const v = page.getByTestId('sc-divider-v').locator('.p-divider');
     expect(await styleOf(v, ['margin-left', 'margin-right'])).toEqual({
       'margin-left': '14px',
@@ -470,8 +470,8 @@ test.describe('sc-multiselect', () => {
     expect((await styleOf(overlay, ['border-radius']))['border-radius']).toBe('6px');
     const option = page.locator('.p-multiselect-option').first();
     expect(await styleOf(option, ['padding-top', 'padding-left'])).toEqual({
-      'padding-top': '7px',
-      'padding-left': '10.5px',
+      'padding-top': kitPx('list.option.paddingY'),
+      'padding-left': kitPx('list.option.paddingX'),
     });
     await option.click();
     // Asserta sobre la label del campo (no un getByText global, que bajo carga
@@ -559,8 +559,8 @@ test.describe('sc-select', () => {
     expect((await styleOf(overlay, ['border-radius']))['border-radius']).toBe('6px');
     const option = page.locator('.p-select-option').first();
     expect(await styleOf(option, ['padding-top', 'padding-left'])).toEqual({
-      'padding-top': '7px',
-      'padding-left': '10.5px',
+      'padding-top': kitPx('list.option.paddingY'),
+      'padding-left': kitPx('list.option.paddingX'),
     });
     await option.click();
     await expect(page.getByText('Valor: «Soporte»')).toBeVisible();

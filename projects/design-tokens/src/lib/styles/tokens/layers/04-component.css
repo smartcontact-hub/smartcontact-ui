@@ -180,7 +180,8 @@
    * Métrica de componente 1:1 con el export (radio/padding/fontSize/width…),
    * en rem (px/16, px de diseño en comentario). El preset referencia estos
    * `--sc-cmp-*`; así un cambio de sizing en Figma fluye a código sin mano.
-   * Divergencias conscientes → DIVERGE_SIZING en scripts/sizing-map.mjs. */
+   * Divergencias conscientes → DIVERGE_SIZING; pendientes de Figma → PENDIENTE_FIGMA
+   * (el paso de escala de Aura), ambos en scripts/sizing-map.mjs. */
   --sc-cmp-button-padding-x: 0.546875rem; /* 8.75px */
   --sc-cmp-button-padding-y: 0.328125rem; /* 5.25px */
   --sc-cmp-button-border-radius: 0.375rem; /* 6px */
@@ -195,6 +196,15 @@
   --sc-cmp-button-lg-padding-x: 0.65625rem; /* 10.5px */
   --sc-cmp-button-lg-padding-y: 0.4375rem; /* 7px */
   --sc-cmp-button-lg-icon-only-width: 2.625rem; /* 42px */
+  --sc-cmp-list-option-padding-y: 0.21875rem; /* 3.5px */
+  --sc-cmp-list-option-padding-x: 0.546875rem; /* 8.75px */
+  --sc-cmp-list-option-group-padding-y: 0.21875rem; /* 3.5px */
+  --sc-cmp-list-option-group-padding-x: 0.546875rem; /* 8.75px */
+  --sc-cmp-navigation-item-padding-y: 0.21875rem; /* 3.5px */
+  --sc-cmp-navigation-item-padding-x: 0.546875rem; /* 8.75px */
+  --sc-cmp-navigation-submenu-label-padding-y: 0.21875rem; /* 3.5px */
+  --sc-cmp-navigation-submenu-label-padding-x: 0.546875rem; /* 8.75px */
+  --sc-cmp-navigation-submenu-icon-size: 0.65625rem; /* 10.5px */
   --sc-cmp-form-field-padding-x: 0.546875rem; /* 8.75px */
   --sc-cmp-form-field-padding-y: 0.328125rem; /* 5.25px */
   --sc-cmp-form-field-border-radius: 0.375rem; /* 6px */
@@ -219,16 +229,20 @@
   --sc-cmp-tabs-tabpanel-padding-left: 0.984375rem; /* 15.75px */
   --sc-cmp-tooltip-max-width: 10.9375rem; /* 175px */
   --sc-cmp-tooltip-gutter: 0.21875rem; /* 3.5px */
-  --sc-cmp-tooltip-padding-y: 0.4375rem; /* 7px */
-  --sc-cmp-tooltip-padding-x: 0.65625rem; /* 10.5px */
+  --sc-cmp-tooltip-padding-y: 0.328125rem; /* 5.25px */
+  --sc-cmp-tooltip-padding-x: 0.546875rem; /* 8.75px */
   --sc-cmp-divider-horizontal-margin-y: 0.875rem; /* 14px */
   --sc-cmp-divider-horizontal-margin-x: 0; /* 0px */
   --sc-cmp-divider-horizontal-content-padding-y: 0; /* 0px */
-  --sc-cmp-divider-horizontal-content-padding-x: 0.4375rem; /* 7px */
+  --sc-cmp-divider-horizontal-content-padding-x: 0.328125rem; /* 5.25px */
   --sc-cmp-divider-vertical-margin-y: 0; /* 0px */
   --sc-cmp-divider-vertical-margin-x: 0.875rem; /* 14px */
-  --sc-cmp-divider-vertical-content-padding-y: 0.4375rem; /* 7px */
+  --sc-cmp-divider-vertical-content-padding-y: 0.328125rem; /* 5.25px */
   --sc-cmp-divider-vertical-content-padding-x: 0; /* 0px */
+  --sc-cmp-divider-horizontal-padding-y: 0; /* 0px */
+  --sc-cmp-divider-horizontal-padding-x: 0.765625rem; /* 12.25px */
+  --sc-cmp-divider-vertical-padding-y: 0.328125rem; /* 5.25px */
+  --sc-cmp-divider-vertical-padding-x: 0; /* 0px */
   --sc-cmp-toggleswitch-width: 1.96875rem; /* 31.5px */
   --sc-cmp-toggleswitch-height: 1.3125rem; /* 21px */
   --sc-cmp-toggleswitch-gap: 0.21875rem; /* 3.5px */
@@ -298,27 +312,27 @@
   --sc-cmp-avatar-width: 1.75rem; /* 28px */
   --sc-cmp-avatar-height: 1.75rem; /* 28px */
   --sc-cmp-avatar-icon-size: 0.875rem; /* 14px */
-  --sc-cmp-avatar-group-offset: -0.65625rem; /* -10.5px */
+  --sc-cmp-avatar-group-offset: -0.546875rem; /* -8.75px */
   --sc-cmp-avatar-lg-width: 2.625rem; /* 42px */
   --sc-cmp-avatar-lg-height: 2.625rem; /* 42px */
-  --sc-cmp-avatar-lg-icon-size: 1.3125rem; /* 21px */
+  --sc-cmp-avatar-lg-icon-size: 1.09375rem; /* 17.5px */
   --sc-cmp-avatar-lg-group-offset: -0.875rem; /* -14px */
   --sc-cmp-avatar-xl-width: 3.5rem; /* 56px */
   --sc-cmp-avatar-xl-height: 3.5rem; /* 56px */
   --sc-cmp-avatar-xl-icon-size: 1.75rem; /* 28px */
-  --sc-cmp-avatar-xl-group-offset: -1.3125rem; /* -21px */
-  --sc-cmp-badge-min-width: 1.3125rem; /* 21px */
-  --sc-cmp-badge-height: 1.3125rem; /* 21px */
+  --sc-cmp-avatar-xl-group-offset: -1.09375rem; /* -17.5px */
+  --sc-cmp-badge-min-width: 1.09375rem; /* 17.5px */
+  --sc-cmp-badge-height: 1.09375rem; /* 17.5px */
   --sc-cmp-badge-dot-size: 0.4375rem; /* 7px */
-  --sc-cmp-badge-sm-min-width: 1.09375rem; /* 17.5px */
-  --sc-cmp-badge-sm-height: 1.09375rem; /* 17.5px */
-  --sc-cmp-badge-lg-min-width: 1.53125rem; /* 24.5px */
-  --sc-cmp-badge-lg-height: 1.53125rem; /* 24.5px */
+  --sc-cmp-badge-sm-min-width: 0.984375rem; /* 15.75px */
+  --sc-cmp-badge-sm-height: 0.984375rem; /* 15.75px */
+  --sc-cmp-badge-lg-min-width: 1.3125rem; /* 21px */
+  --sc-cmp-badge-lg-height: 1.3125rem; /* 21px */
   --sc-cmp-badge-xl-min-width: 1.75rem; /* 28px */
   --sc-cmp-badge-xl-height: 1.75rem; /* 28px */
   --sc-cmp-breadcrumb-padding: 0.875rem; /* 14px */
   --sc-cmp-breadcrumb-gap: 0.4375rem; /* 7px */
-  --sc-cmp-card-body-padding: 1.09375rem; /* 17.5px */
+  --sc-cmp-card-body-padding: 0.984375rem; /* 15.75px */
   --sc-cmp-card-caption-gap: 0.4375rem; /* 7px */
   --sc-cmp-carousel-content-gap: 0.21875rem; /* 3.5px */
   --sc-cmp-carousel-indicator-list-padding: 0.875rem; /* 14px */
@@ -328,7 +342,7 @@
   --sc-cmp-cascadeselect-dropdown-width: 2.1875rem; /* 35px */
   --sc-cmp-cascadeselect-list-mobile-indent: 0.875rem; /* 14px */
   --sc-cmp-cascadeselect-option-icon-size: 0.765625rem; /* 12.25px */
-  --sc-cmp-confirmdialog-icon-size: 1.75rem; /* 28px */
+  --sc-cmp-confirmdialog-icon-size: 1.3125rem; /* 21px */
   --sc-cmp-confirmdialog-content-gap: 0.875rem; /* 14px */
   --sc-cmp-confirmpopup-arrow-offset: 1.09375rem; /* 17.5px */
   --sc-cmp-confirmpopup-content-gap: 0.875rem; /* 14px */
@@ -377,8 +391,9 @@
   --sc-cmp-image-action-size: 2.625rem; /* 42px */
   --sc-cmp-image-action-icon-size: 1.3125rem; /* 21px */
   --sc-cmp-image-action-border-radius: 1.3125rem; /* 21px */
-  --sc-cmp-inputgroup-addon-padding: 0.4375rem; /* 7px */
-  --sc-cmp-inputgroup-addon-min-width: 2.1875rem; /* 35px */
+  --sc-cmp-inputgroup-addon-padding-y: 0; /* 0px */
+  --sc-cmp-inputgroup-addon-padding-x: 0.4375rem; /* 7px */
+  --sc-cmp-inputgroup-addon-min-width: 1.96875rem; /* 31.5px */
   --sc-cmp-inputnumber-button-width: 2.1875rem; /* 35px */
   --sc-cmp-inputotp-gap: 0.4375rem; /* 7px */
   --sc-cmp-inputotp-input-width: 2.1875rem; /* 35px */
@@ -408,11 +423,11 @@
   --sc-cmp-organizationchart-node-toggle-button-size: 1.3125rem; /* 21px */
   --sc-cmp-organizationchart-node-toggle-button-border-radius: 0.65625rem; /* 10.5px */
   --sc-cmp-paginator-gap: 0.21875rem; /* 3.5px */
-  --sc-cmp-paginator-nav-button-width: 2.1875rem; /* 35px */
-  --sc-cmp-paginator-nav-button-height: 2.1875rem; /* 35px */
+  --sc-cmp-paginator-nav-button-width: 1.96875rem; /* 31.5px */
+  --sc-cmp-paginator-nav-button-height: 1.96875rem; /* 31.5px */
   --sc-cmp-paginator-nav-button-border-radius: 1.09375rem; /* 17.5px */
-  --sc-cmp-paginator-jump-to-page-input-max-width: 2.1875rem; /* 35px */
-  --sc-cmp-panel-header-padding: 0.984375rem; /* 15.75px */
+  --sc-cmp-paginator-jump-to-page-input-max-width: 1.96875rem; /* 31.5px */
+  --sc-cmp-panel-header-padding: 0.875rem; /* 14px */
   --sc-cmp-panelmenu-gap: 0.4375rem; /* 7px */
   --sc-cmp-panelmenu-item-gap: 0.4375rem; /* 7px */
   --sc-cmp-panelmenu-submenu-indent: 0.875rem; /* 14px */
@@ -420,17 +435,17 @@
   --sc-cmp-password-content-gap: 0.4375rem; /* 7px */
   --sc-cmp-picklist-gap: 0.984375rem; /* 15.75px */
   --sc-cmp-picklist-controls-gap: 0.4375rem; /* 7px */
-  --sc-cmp-popover-arrow-offset: 1.09375rem; /* 17.5px */
-  --sc-cmp-progressbar-height: 1.09375rem; /* 17.5px */
-  --sc-cmp-radiobutton-width: 1.09375rem; /* 17.5px */
-  --sc-cmp-radiobutton-height: 1.09375rem; /* 17.5px */
+  --sc-cmp-popover-arrow-offset: 0.984375rem; /* 15.75px */
+  --sc-cmp-progressbar-height: 0.984375rem; /* 15.75px */
+  --sc-cmp-radiobutton-width: 0.984375rem; /* 15.75px */
+  --sc-cmp-radiobutton-height: 0.984375rem; /* 15.75px */
   --sc-cmp-radiobutton-sm-width: 0.875rem; /* 14px */
   --sc-cmp-radiobutton-sm-height: 0.875rem; /* 14px */
-  --sc-cmp-radiobutton-lg-width: 1.3125rem; /* 21px */
-  --sc-cmp-radiobutton-lg-height: 1.3125rem; /* 21px */
-  --sc-cmp-radiobutton-icon-size: 0.65625rem; /* 10.5px */
+  --sc-cmp-radiobutton-lg-width: 1.09375rem; /* 17.5px */
+  --sc-cmp-radiobutton-lg-height: 1.09375rem; /* 17.5px */
+  --sc-cmp-radiobutton-icon-size: 0.546875rem; /* 8.75px */
   --sc-cmp-radiobutton-icon-sm-size: 0.4375rem; /* 7px */
-  --sc-cmp-radiobutton-icon-lg-size: 0.875rem; /* 14px */
+  --sc-cmp-radiobutton-icon-lg-size: 0.65625rem; /* 10.5px */
   --sc-cmp-rating-gap: 0.21875rem; /* 3.5px */
   --sc-cmp-rating-icon-size: 0.875rem; /* 14px */
   --sc-cmp-slider-handle-content-width: 1rem; /* 16px */
@@ -476,13 +491,13 @@
   --sc-cmp-accordion-content-padding-bottom: 0.984375rem; /* 15.75px */
   --sc-cmp-accordion-content-padding-left: 0.984375rem; /* 15.75px */
   --sc-cmp-avatar-font-size: 0.875rem; /* 14px */
-  --sc-cmp-avatar-lg-font-size: 1.3125rem; /* 21px */
+  --sc-cmp-avatar-lg-font-size: 1.09375rem; /* 17.5px */
   --sc-cmp-avatar-xl-font-size: 1.75rem; /* 28px */
   --sc-cmp-badge-padding-y: 0; /* 0px */
-  --sc-cmp-badge-padding-x: 0.4375rem; /* 7px */
-  --sc-cmp-badge-font-size: 0.65625rem; /* 10.5px */
-  --sc-cmp-badge-sm-font-size: 0.546875rem; /* 8.75px */
-  --sc-cmp-badge-lg-font-size: 0.765625rem; /* 12.25px */
+  --sc-cmp-badge-padding-x: 0.328125rem; /* 5.25px */
+  --sc-cmp-badge-font-size: 0.546875rem; /* 8.75px */
+  --sc-cmp-badge-sm-font-size: 0.4375rem; /* 7px */
+  --sc-cmp-badge-lg-font-size: 0.65625rem; /* 10.5px */
   --sc-cmp-badge-xl-font-size: 0.875rem; /* 14px */
   --sc-cmp-contextmenu-item-padding-y: 0.4375rem; /* 7px */
   --sc-cmp-contextmenu-item-padding-x: 0.65625rem; /* 10.5px */
@@ -532,22 +547,22 @@
   --sc-cmp-megamenu-horizontal-orientation-padding-x: 0.65625rem; /* 10.5px */
   --sc-cmp-menubar-padding-y: 0.4375rem; /* 7px */
   --sc-cmp-menubar-padding-x: 0.65625rem; /* 10.5px */
-  --sc-cmp-message-content-padding-y: 0.4375rem; /* 7px */
-  --sc-cmp-message-content-padding-x: 0.65625rem; /* 10.5px */
-  --sc-cmp-message-content-sm-padding-y: 0.328125rem; /* 5.25px */
-  --sc-cmp-message-content-sm-padding-x: 0.546875rem; /* 8.75px */
-  --sc-cmp-message-content-lg-padding-y: 0.546875rem; /* 8.75px */
-  --sc-cmp-message-content-lg-padding-x: 0.765625rem; /* 12.25px */
+  --sc-cmp-message-content-padding-y: 0.328125rem; /* 5.25px */
+  --sc-cmp-message-content-padding-x: 0.546875rem; /* 8.75px */
+  --sc-cmp-message-content-sm-padding-y: 0.21875rem; /* 3.5px */
+  --sc-cmp-message-content-sm-padding-x: 0.4375rem; /* 7px */
+  --sc-cmp-message-content-lg-padding-y: 0.4375rem; /* 7px */
+  --sc-cmp-message-content-lg-padding-x: 0.65625rem; /* 10.5px */
   --sc-cmp-organizationchart-node-padding-y: 0.65625rem; /* 10.5px */
   --sc-cmp-organizationchart-node-padding-x: 0.875rem; /* 14px */
   --sc-cmp-organizationchart-node-toggleable-padding-top: 0.65625rem; /* 10.5px */
   --sc-cmp-organizationchart-node-toggleable-padding-right: 0.875rem; /* 14px */
   --sc-cmp-organizationchart-node-toggleable-padding-bottom: 1.09375rem; /* 17.5px */
   --sc-cmp-organizationchart-node-toggleable-padding-left: 0.875rem; /* 14px */
-  --sc-cmp-paginator-padding-y: 0.4375rem; /* 7px */
-  --sc-cmp-paginator-padding-x: 0.875rem; /* 14px */
+  --sc-cmp-paginator-padding-y: 0.328125rem; /* 5.25px */
+  --sc-cmp-paginator-padding-x: 0.765625rem; /* 12.25px */
   --sc-cmp-panel-toggleable-header-padding-y: 0.328125rem; /* 5.25px */
-  --sc-cmp-panel-toggleable-header-padding-x: 0.984375rem; /* 15.75px */
+  --sc-cmp-panel-toggleable-header-padding-x: 0.875rem; /* 14px */
   --sc-cmp-panel-content-padding-top: 0; /* 0px */
   --sc-cmp-panel-content-padding-right: 0.984375rem; /* 15.75px */
   --sc-cmp-panel-content-padding-bottom: 0.984375rem; /* 15.75px */
@@ -565,7 +580,7 @@
   --sc-cmp-stepper-steppanels-padding-bottom: 0.984375rem; /* 15.75px */
   --sc-cmp-stepper-steppanels-padding-left: 0.4375rem; /* 7px */
   --sc-cmp-tag-padding-y: 0.109375rem; /* 1.75px */
-  --sc-cmp-tag-padding-x: 0.4375rem; /* 7px */
+  --sc-cmp-tag-padding-x: 0.328125rem; /* 5.25px */
   --sc-cmp-timeline-horizontal-event-content-padding-y: 0.875rem; /* 14px */
   --sc-cmp-timeline-horizontal-event-content-padding-x: 0; /* 0px */
   --sc-cmp-timeline-vertical-event-content-padding-y: 0; /* 0px */

@@ -57,6 +57,97 @@ código, en builds estáticos del Supervisor a 1440.
 
 ---
 
+## 4 · Las medidas de PrimeOne que Aura 3 cambió: el código ya sigue a Aura (2026-09-14)
+
+**Estado:** pendiente de bajarlo al fichero · **Sin verificar** contra el fichero del DS: sale del export
+del Kit en `main` (`kit-export-dtcg.json`) y está medido en builds estáticos (DD-97; vista previa en
+`~/Documents/Claude/2026-09 aura-marca/figma-se-alinea.html`).
+
+PrimeOne 4.0.0 dibujó el Aura de 2024 y Aura 3 cambió 55 de esas medidas. El código ya lleva el valor de
+Aura con el **paso de escala con el nombre del rem de Aura** (como DD-81), que es una variable que ya
+existe. Mientras Figma no cambie, `PENDIENTE_FIGMA` (`scripts/sizing-map.mjs`) impide que un export
+devuelva el código a PrimeOne.
+
+**Cómo se hace, sin crear primitivos:** cada variable de la tabla pasa a apuntar (alias) al paso de la
+columna «Aura». Las tres marcadas «separar» son hoy una sola variable donde Aura pone dos valores: se
+crean `…/y` y `…/x` como en `divider/horizontal/content/padding`, cada una con alias a un paso que ya
+existe, y la capa del maestro se ata a las dos.
+
+**Cómo sabes que está hecho:** tras exportar, el robot pasa `token-parity` y avisa «pendiente(s) que el
+export YA dice igual: quita la fila». Se quitan esas filas de `PENDIENTE_FIGMA`. En las tres separadas,
+además, las filas pasan a leer `…padding.y` y `…padding.x` en `exp`.
+
+| Colección | Variable | Hoy en el Kit | Aura |
+|---|---|---|---|
+| Semantic Common | `list/option/padding/y` | scale/0-5 | scale/0-25 |
+| Semantic Common | `list/option/group/padding/y` | scale/0-5 | scale/0-25 |
+| Semantic Common | `navigation/item/padding/y` | scale/0-5 | scale/0-25 |
+| Semantic Common | `navigation/submenu/label/padding/y` | scale/0-5 | scale/0-25 |
+| Component Common | `message/content/sm/padding/y` | scale/0-375 | scale/0-25 |
+| Semantic Common | `list/option/padding/x` | scale/0-75 | scale/0-625 |
+| Semantic Common | `list/option/group/padding/x` | scale/0-75 | scale/0-625 |
+| Semantic Common | `navigation/item/padding/x` | scale/0-75 | scale/0-625 |
+| Semantic Common | `navigation/submenu/label/padding/x` | scale/0-75 | scale/0-625 |
+| Component Common | `tooltip/padding/x` | scale/0-75 | scale/0-625 |
+| Component Common | `message/content/padding/x` | scale/0-75 | scale/0-625 |
+| Component Common | `radiobutton/icon/size` | scale/0-75 | scale/0-625 |
+| Component Common | `badge/font/size` | scale/0-75 | scale/0-625 |
+| Semantic Common | `navigation/submenu/icon/size` | scale/0-875 | scale/0-75 |
+| Component Common | `message/content/lg/padding/x` | scale/0-875 | scale/0-75 |
+| Component Common | `radiobutton/icon/lg/size` | scale/1 | scale/0-75 |
+| Component Common | `badge/lg/font/size` | scale/0-875 | scale/0-75 |
+| Component Common | `tooltip/padding/y` | scale/0-5 | scale/0-375 |
+| Component Common | `tag/padding/x` | scale/0-5 | scale/0-375 |
+| Component Common | `message/content/padding/y` | scale/0-5 | scale/0-375 |
+| Component Common | `divider/vertical/content/padding/y` | scale/0-5 | scale/0-375 |
+| Component Common | `divider/horizontal/content/padding/x` | scale/0-5 | scale/0-375 |
+| Component Common | `divider/vertical/padding` | 0 | **separar en `divider/vertical/padding/y` → scale/0-375 y `divider/vertical/padding/x` → 0** |
+| Component Common | `badge/padding/x` | scale/0-5 | scale/0-375 |
+| Component Common | `paginator/padding/y` | scale/0-5 | scale/0-375 |
+| Component Common | `message/content/lg/padding/y` | scale/0-625 | scale/0-5 |
+| Component Common | `message/content/sm/padding/x` | scale/0-625 | scale/0-5 |
+| Component Common | `badge/sm/font/size` | scale/0-625 | scale/0-5 |
+| Component Common | `divider/horizontal/padding` | 0 | **separar en `divider/horizontal/padding/y` → 0 y `divider/horizontal/padding/x` → scale/0-875** |
+| Component Common | `paginator/padding/x` | scale/1 | scale/0-875 |
+| Component Common | `inputgroup/addon/padding` | scale/0-5 | **separar en `inputgroup/addon/padding/y` → 0 y `inputgroup/addon/padding/x` → scale/0-5** |
+| Component Common | `panel/toggleable/header/padding/x` | scale/1-125 | scale/1 |
+| Component Common | `panel/header/padding` | scale/1-125 | scale/1 |
+| Component Common | `popover/arrow/offset` | scale/1-25 | scale/1-125 |
+| Component Common | `radiobutton/width` | scale/1-25 | scale/1-125 |
+| Component Common | `radiobutton/height` | scale/1-25 | scale/1-125 |
+| Component Common | `progressbar/height` | scale/1-25 | scale/1-125 |
+| Component Common | `card/body/padding` | scale/1-25 | scale/1-125 |
+| Component Common | `badge/sm/min/width` | scale/1-25 | scale/1-125 |
+| Component Common | `badge/sm/height` | scale/1-25 | scale/1-125 |
+| Component Common | `radiobutton/lg/width` | scale/1-5 | scale/1-25 |
+| Component Common | `radiobutton/lg/height` | scale/1-5 | scale/1-25 |
+| Component Common | `badge/min/width` | scale/1-5 | scale/1-25 |
+| Component Common | `badge/height` | scale/1-5 | scale/1-25 |
+| Component Common | `avatar/lg/font/size` | scale/1-5 | scale/1-25 |
+| Component Common | `avatar/lg/icon/size` | scale/1-5 | scale/1-25 |
+| Component Common | `confirmdialog/icon/size` | scale/2 | scale/1-5 |
+| Component Common | `badge/lg/min/width` | scale/1-75 | scale/1-5 |
+| Component Common | `badge/lg/height` | scale/1-75 | scale/1-5 |
+| Component Common | `inputgroup/addon/min/width` | scale/2-5 | scale/2-25 |
+| Component Common | `paginator/jump/to/page/input/max/width` | scale/2-5 | scale/2-25 |
+| Component Common | `paginator/nav/button/width` | scale/2-5 | scale/2-25 |
+| Component Common | `paginator/nav/button/height` | scale/2-5 | scale/2-25 |
+| Component Common | `avatar/xl/group/offset` | scale/neg-1-5 | scale/neg-1-25 |
+| Component Common | `avatar/group/offset` | scale/neg-0-75 | scale/neg-0-625 |
+
+**Tres cosas más de la misma tanda:**
+
+- **Desenfoque del toast en claro:** `toast/blur` en modo claro vale 1,5 y en oscuro 10; Aura pone 10 en
+  los dos. El código ya usa 10 en claro. En Figma: el modo claro al mismo valor que el oscuro.
+- **Paneles pequeño y grande de select y multiselect:** el código ya no les da relleno ni letra propios a
+  la cabecera, la lista y las opciones (siguen a `list/option/*`); solo el buscador conserva la talla del
+  trigger. Si algún maestro de panel sm/lg dibuja otro relleno, se ata a `list/option/padding/*`.
+- **Se quedan como están, a propósito:** `toast/width` (`scale/25`) y `toggleswitch/height` (`scale/1-5`).
+  Aura pide 22 rem y 1,375 rem, que no existen en la escala; el paso existente más cercano es el que ya
+  tienen (en el interruptor, 1-25 y 1-5 quedan a la misma distancia y se conserva el actual).
+
+---
+
 ## Cerrado
 
 - ~~**El título del componente `Section` a `Heading/h3-semibold`**~~ → **HECHO el 2026-09-13**

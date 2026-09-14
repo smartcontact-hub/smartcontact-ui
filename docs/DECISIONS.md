@@ -67,6 +67,53 @@
 
 ---
 
+## DD-97 · 2026-09-14 — Las medidas de PrimeOne que Aura 3 cambió siguen a Aura en código, atadas a la escala, y Figma se alinea después
+
+**Contexto** · DD-87 dejó 109 filas (55 variables) donde el Kit dibuja la medida de PrimeOne 4.0.0 (el
+Aura de 2024) y Aura 3 ya la cambió: relleno de opciones de listas y menús, badge, radio, paginador,
+mensaje, panel, card, divisor, tag, avatar, tooltip, popover, barra de progreso y diálogo de confirmación.
+Vista previa medida en builds estáticos antes de tocar nada (`~/Documents/Claude/2026-09 aura-marca/figma-se-alinea.html`).
+Rafa, tras verla: «sigue a Aura… tenemos que buscar consistencia», los cambios de Figma «se aplicarán
+más tarde» con `docs/figma-pendiente.md`, y todo «atado a variable existente y estilos existentes».
+
+**Decisión** · (1) Las 55 van al paso de escala con el nombre del rem de Aura (como DD-81), una variable
+que ya existe. (2) `PENDIENTE_FIGMA` en `sizing-map.mjs`: el generador escribe ese paso en vez del valor del
+export, así un export del plugin no devuelve el código a PrimeOne; `token-parity` compara el preset con el
+paso y avisa, nombrando la fila, cuando el export ya dice lo mismo. (3) Las opciones de listas y menús
+(`list.option`, `list.optionGroup`, `navigation.item`, `navigation.submenuLabel`, icono de submenú) dejan de
+estar escritas a mano en `base.ts` y leen `--sc-cmp-*` generados del Kit. (4) El relleno exterior del
+divisor y el del addon del grupo de campo, una sola variable en el Kit y dos valores en Aura, se parten en
+alto y ancho. (5) Los paneles sm/lg de `sc-select` y `sc-multiselect` dejan su rampa propia de relleno y
+letra en cabecera, lista y opciones; solo el buscador conserva la talla del trigger. (6) El desenfoque del
+toast en claro pasa al de oscuro (10), como Aura. (7) `toast.width` y `toggleswitch.height` se quedan: Aura
+pide 22 y 1,375 rem, que no existen en la escala, y el paso existente más cercano es el actual. (8) Lo que
+Figma tiene que hacer, variable a variable: `docs/figma-pendiente.md` §4.
+
+**Razón** · Medido con el mismo camino que un cambio real (export del Kit con los pasos nuevos,
+`tokens:import`, builds antes y después): opción de lista 34 → 27 px, badge 21 → 17,5, radio 17,5 → 15,75,
+botón de página 35 → 31,5, mensaje 34 → 30,5, cabecera de panel 51,5 → 48; en el Supervisor la pantalla
+que más cambia es Repositorios (3,5 %, la lista se compacta unos 105 px), Conversaciones 1,4 % y el resto
+por debajo del 1,2 %. Los 708 `--sc-cmp-*` comunes con la simulación salen idénticos. El filtro de
+Conversaciones no cambiaba (30,5 px antes y después) porque la rampa del panel sm pisaba al tema: por eso
+se retira. Las redes, probadas en rojo: con el relleno de lista devuelto a mano, parity cae con DRIFT en
+las dos filas; con un export que ya dice el paso de Aura en `badge.height`, parity avisa de esa fila; con un
+paso inexistente, el test del mapa cae.
+
+**Descartadas** ·
+- **Cambiar primero Figma y esperar al robot** → Rafa quiere el código en Aura en esta sesión; Figma va
+  después con el documento.
+- **`DIVERGE_SIZING` con el valor a mano fuera de la zona generada** → 55 tokens más escritos a mano y sin
+  aviso de cuándo sobran; `PENDIENTE_FIGMA` los mantiene generados y se vacía sola.
+- **Conservar la rampa sm/lg del panel (DD-50)** → Aura no modela el panel por talla y la rampa hacía que el
+  filtro de Conversaciones no siguiera ni a Figma ni a Aura.
+- **Crear pasos de escala para 22 y 1,375 rem** → serían variables nuevas; Rafa: atado a lo que existe.
+
+**Consecuencias** · Con cada export, parity dice qué pendientes ya están alineados en Figma para quitar su
+fila; en las tres variables separadas, además, cambian sus `exp` a `…y`/`…x`. Baselines de estilos,
+estructura y capturas de sc-docs regeneradas en el mismo cambio. DD-87 punto 5 y DD-50 anotadas.
+
+---
+
 ## DD-96 · 2026-09-14 — El menú de una fila sale donde se hace clic, y el estado de un agente se cambia como en el dialpad
 
 **Contexto** · Revisando Agentes con la tabla nueva (DD-95), Rafa pidió: que el clic derecho abra el menú
@@ -544,6 +591,9 @@ medidas de densidad 14, foco, aviso, rojo, grises AA, info, primario oscuro, tip
 multiselect e interlineado heredado. Si PrimeTek publica un kit nuevo, esta página es la lista de lo que
 se reaplica; las familias de color se reaplican solas desde el export (DD-83).
 
+> **Sustituida en parte por DD-97** (2026-09-14): las medidas del punto 5 siguen a Aura primero en código
+> (`PENDIENTE_FIGMA`) y Figma se alinea después con `docs/figma-pendiente.md` §4.
+>
 > **Sustituida en parte por DD-91** (2026-09-14): campo y botón md ya no miden 29,5 sino 32,5 (sm 27,
 > lg 40), con el interlineado de la rampa atado en Figma. La escala a 14 de DD-81 no cambia.
 
@@ -2559,6 +2609,9 @@ paneles `sm` y la huella de 6 rutas (altura de botón, campo y fila, padding de 
 salen idénticas antes y después. sc-docs, agent y cuscare ganan el tamaño de panel que ya pedían con
 la clase. El tope de la sección D solo se sube escribiendo en el commit a cuál de los tres cubos
 pertenece la regla nueva: deliberada, parche caducado o del sistema.
+
+> **Sustituida en parte por DD-97** (2026-09-14): la rampa sm/lg de cabecera, lista y opciones del panel
+> se retira y esas partes siguen al tema, como en Aura; solo el buscador conserva la talla del trigger.
 
 ---
 
