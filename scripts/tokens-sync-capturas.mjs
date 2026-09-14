@@ -37,8 +37,11 @@ export function comparar(bufAntes, bufDespues) {
   const b = PNG.sync.read(bufDespues);
   if (a.width !== b.width || a.height !== b.height) return { distintos: a.width * a.height, total: a.width * a.height, diff: null };
   const diff = new PNG({ width: a.width, height: a.height });
-  // threshold 0.1: el antialias de un texto que no cambia no cuenta; un color de marca sí.
-  const distintos = pixelmatch(a.data, b.data, diff.data, a.width, a.height, { threshold: 0.1 });
+  // `includeAA: true`: el texto es casi todo antialias, y por defecto pixelmatch lo DESCARTA. Con eso,
+  // un gris de texto que pasaba de #4f5663 a #334155 salía «0,1 % de la pantalla» (medido el
+  // 2026-09-14). Antes y después salen del mismo runner, así que no hay ruido de antialias que filtrar:
+  // el control antes-contra-antes da 0 igual.
+  const distintos = pixelmatch(a.data, b.data, diff.data, a.width, a.height, { threshold: 0.05, includeAA: true });
   return { distintos, total: a.width * a.height, diff: PNG.sync.write(diff) };
 }
 
