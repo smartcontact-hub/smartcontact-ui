@@ -15,8 +15,7 @@ import type { ToastDesignTokens } from '@primeuix/themes/types/toast';
     root: {
         width: "var(--sc-cmp-toast-width)",
         borderWidth: "0.071429rem",
-        borderRadius: "{content.border.radius}",
-        transitionDuration: "{transition.duration}"
+        borderRadius: "{content.border.radius}"
     },
     text: {
         gap: "var(--sc-cmp-toast-text-gap)"

@@ -31,12 +31,12 @@
 
 **LO SIGUIENTE, en orden (Rafa, 2026-09-13: «automatizable, agéntico: no ir a mano salvo que sea necesario»):**
 
-0. **«Aura + color de marca» y el export en un clic** (encargo del 2026-09-13; mediciones y menú en
-   `~/Documents/Claude/2026-09 aura-marca/`, scripts incluidos). Hecho: el robot (DD-82) y las
-   familias de color generadas del export (DD-83) y las capturas en el PR (DD-84). Siguiente: (b) el
-   zip del equipo externo en el robot; (c) tanda «vuelve a Aura» (73 diferencias sin motivo) y el foco
-   al color primario; (d) densidad, MEDIDA: campo y botón 35 en primeng.dev, 33 hoy, 31 con DD-81; manda el
-   interlineado (`lineHeight: 'inherit'`), no el relleno (`densidad.html`). Pendiente de Rafa: marca y densidad.
+0. **«Aura + color de marca» y el export en un clic** (encargo del 2026-09-13; mediciones en
+   `~/Documents/Claude/2026-09 aura-marca/`). Hecho: robot (DD-82, #152), paleta del export (DD-83), capturas
+   (DD-84), «vuelve a Aura» y lo vigente de marca y densidad (DD-87). Siguiente: (a) `conectar-medidas` ya aterrizó
+   (DD-85, DD-86): alinear EN FIGMA las 123 medidas de PrimeOne que Aura cambió (por nombre de escala)
+   y que llegue por el robot: primera prueba real del clic; (b) zip del equipo externo desde nuestro tema;
+   (c) densidad: 29,5 (Rafa). Ojo: el plugin corre el workflow de LA RAMA; un robot nuevo entra un export después.
 1. **Lo que dejó el barrido (DD-77/78)**: «Solo fallidas» es un filtro conmutable hecho a mano. La sonda
    ampliada ya existe fuera del repo (E = 209 piezas, `2026-09 aura-marca/`): falta traerla como spec.
    Regla de Rafa para lo que dude: manda Aura en código y Figma se alinea.
