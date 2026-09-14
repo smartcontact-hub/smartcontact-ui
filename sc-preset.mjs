@@ -5284,9 +5284,14 @@ var togglebutton_default = {
         checkedColor: "var(--sc-cmp-togglebutton-icon-checked-color)"
       },
       root: {
-        color: "{surface.500}",
+        /* DIVERGENCIA por AA (customs-catalog §1.10, 2026-09-14): el Kit da `surface.500` para la
+         * opción no elegida, 2,56:1 sobre su carril `surface.100` (lo cazó `theme-contrast` en las
+         * vistas de Conversaciones). `surface.700` da 6,40:1. El hover sube un paso más, a
+         * `surface.900`, para que siga respondiendo al ratón. Cuando el Kit suba el suyo y
+         * `cmp-color-rewire` acepte los slots de `root`, se lee `var(--sc-cmp-togglebutton-*)`. */
+        color: "{surface.700}",
         background: "{surface.100}",
-        hoverColor: "{surface.700}",
+        hoverColor: "{surface.900}",
         borderColor: "{surface.100}",
         checkedColor: "{surface.900}",
         hoverBackground: "{surface.100}",
