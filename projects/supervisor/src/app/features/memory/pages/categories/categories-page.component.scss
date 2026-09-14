@@ -18,7 +18,7 @@
   background: var(--sc-bg-surface);
 
   &__inner {
-    padding: var(--sc-spacing-1-75) var(--sc-spacing-2-25);
+    padding: var(--sc-spacing-1-25) var(--sc-spacing-2); /* barra → título 17,5 y lados 28, los de la miga (2026-09-14) */
     display: flex;
     flex-direction: column;
     /* Título → contenido `scale/1`, como las 13 pantallas (`_page.scss`). El `gap`

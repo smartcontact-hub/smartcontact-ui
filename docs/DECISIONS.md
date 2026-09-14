@@ -41,6 +41,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | TopBar y bloque del logo con el mismo `scale/4` (56) · tallas de dentro con tokens del DS · barra → título `1-25`, lados `2`, buscador → tabla `0-875` · una barra `sticky` necesita que ningún antepasado tenga `overflow: auto` | DD-94 |
 > | Título de página → contenido `scale/1` en las 13 pantallas · una miga dentro de una barra va `flush` (la barra pone el aire) | DD-90 |
 > | Cabecera fija al scroll de la página con `<sc-datatable stickyHeader>` · ninguna caja por encima con `overflow: hidden` (usa `clip`) · una etiqueta no se parte, recorta | DD-80 |
 > | Una lista de destinos es el `Menu` del DS en línea · lo que dice Aura lo sigue el código y Figma se revincula | DD-78 |
@@ -61,6 +62,41 @@
 > | Siete divergencias deliberadas entre flujos, que NO se unifican | DD-36 |
 > | `--sc-bg-default` es el suelo del shell, nunca una superficie | DD-34 |
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
+
+---
+
+## DD-94 · 2026-09-14 — La cabecera y el bloque del logo miden 56 con el mismo token, y todas las listas reparten el aire igual
+
+**Contexto** · Tras DD-90 y DD-91, Rafa: «todo lo que se pueda compactar». Medido en 15 rutas del Supervisor
+(builds estáticos, 1440): barra → título 24,5 en 13 pantallas, 14 en Conversaciones y 38,5 en Repositorios;
+buscador → tabla 28 en Usuarios, Agentes y Grupos, 21 en Etiquetas y Plantillas y 15,75 en las listas de
+repositorio, contra título → buscador 14; la TopBar a 75 contra el bloque del logo de la barra lateral a 64;
+lados de página 31,5 contra los 28 de la miga. Y la barra de búsqueda de Usuarios, Agentes y Grupos era
+`sticky` pero no se quedaba: `.page` tenía `overflow-y: auto`, era contenedor de scroll sin hacer scroll.
+
+**Decisión** · (1) TopBar `min-height` y `.sidebar__brand` `height` con el mismo `scale/4` (56, la barra de
+Sakai sobre Aura): las dos rayas casan. Lo de dentro pasa a tokens del DS: botón de la barra lateral
+`--sc-cmp-button-sm-icon-only-width` (28), avatar `--sc-cmp-avatar-width` (28, antes 32 a mano; el avatar ilustrado
+acepta ya una longitud CSS) y raya `scale/1-143`. Rafa: «todo con variables existentes, no valores a mano». (2) Página: arriba `1-25` (17,5) y lados `2` (28) en las 13 pantallas con título y en el hub.
+(3) Buscador → tabla `0-875` en todas las listas, en MARGEN: el degradado de 12 px de la barra fija tapaba el
+borde de la tabla si iba en relleno. (4) Fuera `overflow-y: auto` de `.page` en las tres listas con barra fija.
+
+**Razón** · Lo que es de la tabla va más cerca de la tabla (12,25) que del título (14), que es la regla de Aura
+de DD-90. Medido antes y después con el #160 dentro: ninguna pantalla pierde filas (Conversaciones 13, Grupos
+gana una), por debajo de la tabla ningún texto cambia de posición, sin scroll horizontal a 1280, y la barra de
+Agentes y Grupos pasa de irse a −251 a quedarse en 0. 161 e2e del Supervisor en verde.
+
+**Descartadas** ·
+- **Buscador → tabla 10,5 o 14 en relleno** → el degradado de la barra tapa el borde de arriba de la tabla.
+- **Título a 14 de la barra, como Conversaciones** → quedaría a la misma distancia de la barra que de su
+  contenido y dejaría de agruparse con él.
+- **TopBar a `min-height: 64px`**, el `height` que tenía el logo → número a mano; primera versión de Claude.
+- **Compactar más para ganar filas** → los ≈33 px que se ganan no dan ninguna fila (una fila de lista mide 44-54).
+
+**Consecuencias** · Figma dibuja la TopBar a 72 y el avatar a 32: apuntado en `docs/figma-pendiente.md` §3. Sin tocar: los
+formularios con rail (`.page__form`, 24,5/28, lo fija `page-anatomy`) y `settings-shell`. Pendiente de
+decisión aparte: cabecera de columnas fija con scroll de página o tabla con scroll propio (comparación en
+`~/Documents/Claude/2026-09 tabla-sticky-vs-scroll/`).
 
 ---
 
