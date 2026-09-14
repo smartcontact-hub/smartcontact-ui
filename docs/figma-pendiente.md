@@ -356,6 +356,24 @@ en código y **se revirtió**: el chrome de un componente del catálogo solo cam
 
 ---
 
+## 11 · Panel en aviso: la variante `Severity` que el código ya tiene (2026-09-14)
+
+**Estado:** pendiente · **Verificado el 2026-09-14** con el bridge: `❖ Panel` (`6738:49736`), conjunto `panel`
+(`229:10217`), no tiene variante de aviso; PrimeOne 4.0.0 tampoco.
+
+Desde DD-109, `<sc-panel severity="warn|danger">` pinta el borde del panel en `--sc-border-warning` o
+`--sc-border-danger` y un anillo exterior de 1 del mismo color (sombra, no borde: el panel no cambia de tamaño). La
+decidió Rafa para las tarjetas de widget del Dashboard en alerta.
+
+**Cómo se hace:** en `panel` (`229:10217`), propiedad `Severity` con `None | Warn | Danger`. En `Warn` y `Danger` el trazo
+del panel se ata a `border/warning` y `border/danger` y se añade una sombra exterior sin desenfoque, extensión 1, del
+mismo color. Nada más cambia: cabecera, rellenos y radio siguen atados a `panel/*`.
+
+**Cómo sabes que está hecho:** captura de `panel` con `Severity=Warn` y `Severity=Danger` al lado de
+`#/components/panel` → «Con aviso» en sc-docs. Luego, publicar la librería (ficha 1).
+
+---
+
 ## Cerrado
 
 - ~~**El título del componente `Section` a `Heading/h3-semibold`**~~ → **HECHO el 2026-09-13**

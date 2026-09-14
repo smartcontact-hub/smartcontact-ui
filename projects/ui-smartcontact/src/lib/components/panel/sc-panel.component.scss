@@ -1,6 +1,6 @@
 /*
- * sc-panel — solo el modo `fill`. El aspecto (borde, radio, rellenos, título) lo pone el tema
- * (`sc-preset/panel.ts`); aquí no se repite nada de eso.
+ * sc-panel — solo `fill` y `severity`. El aspecto de base (borde, radio, rellenos, título) lo pone el
+ * tema (`sc-preset/panel.ts`); aquí no se repite nada de eso.
  *
  * `fill`: el panel toma el alto de su contenedor y el cuerpo reparte ese alto a su contenido. Los
  * selectores van sobre las clases que el componente pone por `pt` (`sc-panel__*`), no sobre
@@ -38,4 +38,28 @@
   flex-direction: column;
   flex: 1 1 auto;
   min-height: 0;
+}
+
+/* `severity`: el borde del panel y un anillo de 1 del mismo color, para que el aviso se vea de lejos sin
+ * cambiar el tamaño (el anillo es sombra, no borde). Colores por rol: voltean solos en oscuro. */
+.sc-panel__root {
+  transition:
+    border-color var(--sc-transition-fast) var(--sc-easing-default),
+    box-shadow var(--sc-transition-fast) var(--sc-easing-default);
+}
+
+.sc-panel--warn .sc-panel__root {
+  border-color: var(--sc-border-warning);
+  box-shadow: 0 0 0 1px var(--sc-border-warning);
+}
+
+.sc-panel--danger .sc-panel__root {
+  border-color: var(--sc-border-danger);
+  box-shadow: 0 0 0 1px var(--sc-border-danger);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .sc-panel__root {
+    transition: none;
+  }
 }

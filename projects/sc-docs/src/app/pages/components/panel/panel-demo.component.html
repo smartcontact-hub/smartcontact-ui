@@ -11,6 +11,7 @@
     [collapsed]="args.collapsed"
     [showHeader]="args.showHeader"
     [fill]="args.fill"
+    [severity]="args.severity || null"
   >
     Contenido del panel.
   </sc-panel>
@@ -44,4 +45,21 @@
       <div style="flex: 1 1 auto; min-height: 0; overflow: auto">Contenido que se estira hasta el pie del hueco.</div>
     </sc-panel>
   </div>
+</ng-template>
+
+<ng-template #severityStory>
+  <sc-panel header="Colas" severity="warn" data-testid="sc-panel-warn">Hay llamadas esperando más de lo normal.</sc-panel>
+  <sc-panel header="Agentes" severity="danger" data-testid="sc-panel-danger">Ningún agente disponible.</sc-panel>
+</ng-template>
+
+<ng-template #headerStory>
+  <sc-panel data-testid="sc-panel-header">
+    <ng-template #header let-titleId>
+      <div style="display: flex; flex-direction: column; min-width: 0">
+        <h3 [id]="titleId" class="sc-text-body-semibold" style="margin: 0">Tiempo medio de espera</h3>
+        <span class="sc-text-caption-regular">Colas: Soporte, Ventas</span>
+      </div>
+    </ng-template>
+    Contenido del panel.
+  </sc-panel>
 </ng-template>

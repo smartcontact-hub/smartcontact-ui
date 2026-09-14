@@ -293,6 +293,35 @@ test.describe('sc-panel', () => {
     // El cuerpo acaba donde acaba el panel, menos su relleno de abajo y el borde de 1.
     expect(Math.abs(cuerpo!.y + cuerpo!.height - (panel!.y + panel!.height - relleno - 1))).toBeLessThan(2);
   });
+
+  test('severity pinta borde y anillo con el color de su rol', async ({ page }) => {
+    await gotoPage(page, 'panel');
+    for (const [id, rol] of [
+      ['sc-panel-warn', '--sc-border-warning'],
+      ['sc-panel-danger', '--sc-border-danger'],
+    ] as const) {
+      const raiz = page.getByTestId(id).locator('.sc-panel__root');
+      const esperado = await raiz.evaluate((el, v) => {
+        const probe = document.createElement('div');
+        probe.style.color = `var(${v})`;
+        el.appendChild(probe);
+        const c = getComputedStyle(probe).color;
+        probe.remove();
+        return c;
+      }, rol);
+      const estilo = await styleOf(raiz, ['border-top-color', 'box-shadow']);
+      expect(estilo['border-top-color']).toBe(esperado);
+      expect(estilo['box-shadow']).toBe(`${esperado} 0px 0px 0px 1px`);
+    }
+  });
+
+  test('#header propio: el título es encabezado y nombra la región del cuerpo', async ({ page }) => {
+    await gotoPage(page, 'panel');
+    const panel = page.getByTestId('sc-panel-header');
+    const titulo = panel.getByRole('heading', { level: 3, name: 'Tiempo medio de espera' });
+    await expect(titulo).toBeVisible();
+    await expect(panel.getByRole('region', { name: 'Tiempo medio de espera' })).toBeVisible();
+  });
 });
 
 test.describe('sc-skeleton', () => {

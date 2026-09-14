@@ -38,6 +38,19 @@ const FILL_SNIPPET = `<!-- El contenedor fija el alto; el panel lo ocupa y su cu
   </sc-panel>
 </div>`;
 
+const SEVERITY_SNIPPET = `<sc-panel header="Colas" severity="warn">Hay llamadas esperando más de lo normal.</sc-panel>
+<sc-panel header="Agentes" severity="danger">Ningún agente disponible.</sc-panel>`;
+
+const HEADER_SNIPPET = `<sc-panel>
+  <ng-template #header let-titleId>
+    <div style="display: flex; flex-direction: column; min-width: 0">
+      <h3 [id]="titleId" class="sc-text-body-semibold" style="margin: 0">Tiempo medio de espera</h3>
+      <span class="sc-text-caption-regular">Colas: Soporte, Ventas</span>
+    </div>
+  </ng-template>
+  Contenido del panel.
+</sc-panel>`;
+
 /** Demo de `sc-panel` en formato story (motor «Storybook-like»). */
 @Component({
   selector: 'app-panel-demo',
@@ -50,6 +63,8 @@ export class PanelDemoComponent {
   protected readonly basicTpl = viewChild<TemplateRef<StoryContext>>('basic');
   protected readonly iconsTpl = viewChild<TemplateRef<StoryContext>>('iconsStory');
   protected readonly fillTpl = viewChild<TemplateRef<StoryContext>>('fillStory');
+  protected readonly severityTpl = viewChild<TemplateRef<StoryContext>>('severityStory');
+  protected readonly headerTpl = viewChild<TemplateRef<StoryContext>>('headerStory');
 
   protected readonly meta: StoryMeta = {
     tag: 'sc-panel',
@@ -62,6 +77,7 @@ export class PanelDemoComponent {
       { name: 'collapsed', control: { kind: 'boolean' } },
       { name: 'showHeader', control: { kind: 'boolean' } },
       { name: 'fill', control: { kind: 'boolean' } },
+      { name: 'severity', control: { kind: 'select', options: ['', 'warn', 'danger'] } },
     ],
     defaultArgs: {
       header: 'Panel básico',
@@ -69,6 +85,7 @@ export class PanelDemoComponent {
       collapsed: false,
       showHeader: true,
       fill: false,
+      severity: '',
     },
     props: [
       {
@@ -103,6 +120,19 @@ export class PanelDemoComponent {
           'Ocupa el alto de su contenedor y estira el cuerpo, para una tabla con scrollHeight="flex" o una rejilla que reparte el alto. Para paneles fijos: al colapsar, el hueco se queda.',
       },
       {
+        name: 'severity',
+        type: "'warn' | 'danger' | null",
+        default: 'null',
+        description:
+          'Panel en aviso: borde y anillo de 1 en --sc-border-warning o --sc-border-danger. El motivo lo dice el contenido; el borde lo hace visible de lejos.',
+      },
+      {
+        name: '#header',
+        type: 'TemplateRef<{ titleId }>',
+        description:
+          'Cabecera propia (plantilla `header` de Panel en primeng.dev), para un título que es encabezado o lleva una línea debajo. Pon `[id]="titleId"` en el título: nombra la región del cuerpo.',
+      },
+      {
         name: '#icons',
         type: 'TemplateRef',
         description:
@@ -123,12 +153,16 @@ export class PanelDemoComponent {
     const ba = this.basicTpl();
     const ic = this.iconsTpl();
     const fi = this.fillTpl();
-    if (!pg || !ba || !ic || !fi) return [];
+    const se = this.severityTpl();
+    const he = this.headerTpl();
+    if (!pg || !ba || !ic || !fi || !se || !he) return [];
     return [
       { name: 'Playground', playground: true, template: pg },
       { name: 'Básico', template: ba, snippet: BASIC_SNIPPET },
       { name: 'Con acciones en la cabecera', template: ic, snippet: ICONS_SNIPPET },
       { name: 'Ocupa su hueco', template: fi, snippet: FILL_SNIPPET },
+      { name: 'Con aviso', template: se, snippet: SEVERITY_SNIPPET },
+      { name: 'Cabecera propia', template: he, snippet: HEADER_SNIPPET },
     ];
   });
 }
