@@ -2008,5 +2008,44 @@
     "today": "Today",
     "clear": "Clear",
     "week_header": "Wk"
+  },
+  "auth": {
+    "login": {
+      "title": "Hello",
+      "claim": "Supervise your agents and their conversations in real time.",
+      "microsoft": "Sign in with Microsoft",
+      "or": "or",
+      "email": "Email",
+      "password": "Password",
+      "submit": "Sign in",
+      "signed_out": "You have signed out.",
+      "caps_lock_on": "Caps Lock is on.",
+      "copyright": "© {{year}} Digital Virgo",
+      "errors": {
+        "email_required": "Enter your email.",
+        "email_spaces": "Remove the spaces from your email.",
+        "email_missing_at": "Add the @ between your name and your company domain.",
+        "email_many_at": "An email has only one @.",
+        "email_missing_name": "Add your name before the @.",
+        "email_missing_domain": "Add your company domain after the @.",
+        "email_bad_domain": "Check the domain after the @: it is missing an ending such as .com.",
+        "password_required": "Enter your password.",
+        "credentials": "The email or password is incorrect. Check Caps Lock and try again."
+      },
+      "help_nav": "Help signing in",
+      "forgot": "Forgot your password?",
+      "contact": "Contact us",
+      "new_tab": "(opens in a new tab)",
+      "show_password": "Show password",
+      "hide_password": "Hide password"
+    },
+    "back": "Back to sign in",
+    "forgot": {
+      "title": "Reset your password",
+      "lead": "Enter the email you sign in with and we will send you a link to create a new one.",
+      "submit": "Send link",
+      "sent_title": "Check your email",
+      "sent_lead": "If there is an account for {{email}}, a link will arrive in a few minutes. Check your spam folder too."
+    }
   }
 }

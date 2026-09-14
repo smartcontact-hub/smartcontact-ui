@@ -2008,5 +2008,44 @@
     "today": "Hoy",
     "clear": "Limpiar",
     "week_header": "Sem"
+  },
+  "auth": {
+    "login": {
+      "title": "Hola",
+      "claim": "Supervisa a tus agentes y sus conversaciones en tiempo real.",
+      "microsoft": "Iniciar sesión con Microsoft",
+      "or": "o",
+      "email": "Email",
+      "password": "Contraseña",
+      "submit": "Entrar",
+      "signed_out": "Has cerrado sesión.",
+      "caps_lock_on": "Tienes activado Bloq Mayús.",
+      "copyright": "© {{year}} Digital Virgo",
+      "errors": {
+        "email_required": "Escribe tu email.",
+        "email_spaces": "Quita los espacios del email.",
+        "email_missing_at": "Falta la @ entre tu nombre y el dominio de tu empresa.",
+        "email_many_at": "El email solo lleva una @.",
+        "email_missing_name": "Falta tu nombre antes de la @.",
+        "email_missing_domain": "Falta el dominio de tu empresa después de la @.",
+        "email_bad_domain": "Revisa el dominio después de la @: le falta la terminación, como .com o .es.",
+        "password_required": "Escribe tu contraseña.",
+        "credentials": "El email o la contraseña no son correctos. Revisa las mayúsculas y vuelve a intentarlo."
+      },
+      "help_nav": "Ayuda para entrar",
+      "forgot": "¿Has olvidado tu contraseña?",
+      "contact": "Contáctanos",
+      "new_tab": "(se abre en una pestaña nueva)",
+      "show_password": "Mostrar contraseña",
+      "hide_password": "Ocultar contraseña"
+    },
+    "back": "Volver a iniciar sesión",
+    "forgot": {
+      "title": "Recupera tu contraseña",
+      "lead": "Escribe el email con el que entras y te enviamos un enlace para crear una nueva.",
+      "submit": "Enviar enlace",
+      "sent_title": "Revisa tu correo",
+      "sent_lead": "Si hay una cuenta con {{email}}, te llegará un enlace en unos minutos. Mira también en la carpeta de spam."
+    }
   }
 }
