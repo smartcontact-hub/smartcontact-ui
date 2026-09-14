@@ -50,6 +50,11 @@ export const EXCLUDE = new Set([
    * Es exactamente el caso de arriba, en dos slots que no estaban en la lista. */
   'dark:message.info.border.color',
   'dark:toast.info.border.color',
+  // ── fondo del toast de info (dark) · 2026-09-14 ─────────────────────────────────
+  //    El export trae sky-50 al 16 % (PrimeOne dibuja blue-50): un velo claro sobre el oscuro.
+  //    Aura en código pinta el toast de info IGUAL que el message de info (el azul medio al
+  //    16 %). Manda Aura en código: en 07-dark es un alias de `--sc-cmp-message-info-background`.
+  'dark:toast.info.background',
 
   // ── warn: YA NO SE EXCLUYE (2026-08-24) ──────────────────────────────────────
   //    Aquí vivían ~30 slots de warn apartados de la generación por una sola razón:

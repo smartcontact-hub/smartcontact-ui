@@ -1,13 +1,13 @@
 :host {
   display: block;
   height: 100%;
-  background: var(--sc-bg-surface);
+  background: var(--sc-bg-canvas);
 }
 
 /* El molde de la página (anchos, `.page--tabla`, título) es global: `styles/_page.scss`. Aquí solo lo que
  * es de la lista. */
 .page {
-  background: var(--sc-bg-surface);
+  background: var(--sc-bg-canvas);
 
   &__inner {
     /* Barra → título 17,5 y lados 28, los de la miga (DD-94). */

@@ -55,7 +55,7 @@
     cursor: inherit;
 
     &:focus-visible + .tri-checkbox__box {
-      outline: 2px solid var(--sc-color-sky-500);
+      outline: 2px solid var(--sc-border-focus);
       outline-offset: 2px;
     }
   }
@@ -151,7 +151,9 @@
     border-color: var(--sc-bg-primary);
   }
   &__input:checked + .tri-checkbox__box .tri-checkbox__mark {
-    background: var(--sc-color-slate-0);
+    /* El ✓ es el texto sobre el primario (`checkedColor` = `primary.contrastColor` en Aura):
+     * blanco en claro, zinc-900 en oscuro, donde el primario es el sky-300 claro. */
+    background: var(--sc-text-on-primary);
     -webkit-mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'><path d='M2 6.5l2.5 2.5L10 3.5' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/></svg>")
       center / contain no-repeat;
     mask: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12'><path d='M2 6.5l2.5 2.5L10 3.5' fill='none' stroke='black' stroke-width='2' stroke-linecap='round' stroke-linejoin='round'/></svg>")
@@ -168,7 +170,7 @@
     border-color: var(--sc-bg-primary);
   }
   &__input:indeterminate + .tri-checkbox__box .tri-checkbox__mark {
-    background: var(--sc-color-slate-0);
+    background: var(--sc-text-on-primary);
     height: 2px;
     border-radius: 1px;
     -webkit-mask: none;

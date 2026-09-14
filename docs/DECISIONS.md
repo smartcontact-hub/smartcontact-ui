@@ -41,6 +41,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | Todo suelo de pantalla es `--sc-bg-canvas` (las tarjetas, `--sc-bg-surface`) · el color de pantallas y componentes va por rol, nunca `--sc-color-*`, a pelo ni `.sc-dark` a mano: el oscuro vive en la capa 7 · lo vigilan `tokens:guard` (regla 8) y `theme-contrast` | DD-99 |
 > | Una pantalla de lista se monta sobre `<sc-list-page>`: la pantalla pone columnas, celdas, acciones y diálogos; la pieza, título, barra, tabla, selección y menú de fila · un `computed` con `translate.instant()` LEE el idioma (`injectLangChange`) | DD-98 |
 > | El clic derecho en una fila abre su menú en el puntero (lo hace `sc-datatable`, en todas las tablas) · el estado de un agente se cambia con un botón compacto y su lista, como el dialpad | DD-96 |
 > | Una lista de tabla lleva `.page--tabla` y `<sc-datatable scrollable scrollHeight="flex" virtualScroll>`: la tabla hace scroll dentro, se ajusta a sus filas y con más de 100 pinta solo las visibles | DD-95 |
@@ -65,6 +66,53 @@
 > | Siete divergencias deliberadas entre flujos, que NO se unifican | DD-36 |
 > | `--sc-bg-default` es el suelo del shell, nunca una superficie | DD-34 |
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
+
+---
+
+## DD-99 · 2026-09-14 — El modo oscuro cae en cascada: todo suelo es el lienzo y ningún color de pantalla o componente es fijo
+
+**Contexto** · Rafa: «toda la app en dark mode no responde igual que Contact Center, el fondo no es el mismo.
+No puede haber valores sueltos: van con las variables de dark mode, así un toque en cualquier sitio cae en
+cascada. Tiene que leer Aura, el tema y PrimeNG», y después «iguala a Aura para dark también». Medido en 19
+pantallas: Contact Center pinta su suelo con `--sc-bg-canvas` (zinc-950) y sus tarjetas en `--sc-bg-surface`
+(zinc-900); las otras tapaban el suelo con una caja a toda página en `--sc-bg-surface`. En claro no se ve (los
+dos son blanco).
+
+**Decisión** · (1) Todo suelo de pantalla (host, `.page`, `sc-list-page`, formularios, constructor, hub,
+Sistema, Seguridad) pinta `--sc-bg-canvas`. (2) Cero primitivas `--sc-color-*`, colores a pelo, reservas de color
+y `:host-context(.sc-dark)` en el Supervisor y en los componentes del DS: ~150 usos pasan a su rol, conservando el
+píxel del claro cuando el rol existe. (3) Capa 7: lo que no cambiaba en oscuro pasa a receta de Aura sobre
+nuestros roles: seleccionado/resaltado = el primario al 16/24/32 % (antes navy blue-900, más oscuro que la
+tarjeta), borde primario = relleno primario, bordes suaves de estado = paso 700 al 36 % (el borde de `message`),
+iconos de color = su texto, `border-subtle` sobre zinc y no slate, presencia y prioridad con valor oscuro,
+sombra de flechas de pestañas y fondo del toast de info (el de `message`, EXCLUDE en `cmp-color-map.mjs`).
+(4) La barra lateral en oscuro es la superficie del tema (antes navy blue-900) y su texto sale de nueve
+`--sc-sidebar-*` (05-extensions) en vez de nueve `rgb(255 255 255 / x)`. (5) `datatable` recibe una sola clave
+oscura (borde de celda seleccionada), la única que leía la rampa navy según `tools/aura-diff.mjs`. (6) Red:
+regla 8 de `tokens:guard` y la pregunta «el suelo es el lienzo» en `theme-contrast.spec.ts` (23 rutas).
+
+**Razón** · Aura contra código en oscuro (`aura-diff` en los 97 componentes, filtrado a los que usamos): 145
+claves distintas, 111 igual de distintas en claro (marca, Kit, accesibilidad: no son del oscuro) y 34 solo en
+oscuro, de las que 32 son la misma receta con nuestra paleta (sky por esmeralda, yellow por orange). Las 2 restantes
+eran fugas y están arregladas. PrimeNG ya declaraba `color-scheme: dark` bajo `.sc-dark`, así que los
+`light-dark()` de Aura resuelven bien (medido). Las dos redes enrojecen con el fallo puesto (Usuarios con la
+pieza en surface; primitiva, color a pelo, reserva y `.sc-dark` inyectados).
+
+**Descartadas** ·
+- **Quitar el fondo de los hosts y dejar ver el del shell** → las barras `sticky` necesitan fondo opaco; el lienzo
+  explícito es el mismo token y no depende de lo que haya debajo.
+- **Cambiar el valor oscuro de `--sc-bg-surface` a zinc-950** → las tarjetas, diálogos y campos de PrimeNG
+  (`content.background`) se fundirían con el suelo; Aura y Contact Center separan suelo y tarjeta.
+- **Mantener la barra lateral navy en oscuro** → era el único fondo de la app fuera de los neutros de Aura; su
+  rampa de alfa sigue pasando sobre zinc-900 (chevron 3,36:1, texto de 12 px 5,19:1).
+- **Rampa `primary` sky solo en oscuro** (`colorScheme.dark.primary.50…950`) → cambiaría todo `{primary.N}` de Aura
+  en oscuro para arreglar una clave; las demás ya están sobrescritas.
+
+**Consecuencias** · En claro se mueven un poco: los avisos ámbar pasan al warn del tema (yellow), el botón
+«Crear» del aviso de categoría pasa a primario, y los focos de campo del DS usan el primario (blue-700 en vez de
+blue-500). `sc-bulk-transcription-modal` `surface="dark"` pasa a la superficie de contraste de Aura (antes texto
+oscuro sobre navy en modo oscuro). Quedan fuera, documentados: los hex de presencia en claro (sin paso de paleta)
+y los iconos de menú en zinc-400 (Aura zinc-500), divergencia de accesibilidad en los dos temas.
 
 ---
 

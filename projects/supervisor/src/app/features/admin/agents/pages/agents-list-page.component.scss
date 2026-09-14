@@ -1,7 +1,7 @@
 :host {
   display: block;
   height: 100%;
-  background: var(--sc-bg-surface);
+  background: var(--sc-bg-canvas);
 }
 
 /* La página, la barra y el vacío de búsqueda los pinta `sc-list-page` (DD-97). Aquí solo las celdas y el estado. */
@@ -56,7 +56,7 @@
   width: var(--sc-spacing-0-5);
   height: var(--sc-spacing-0-5);
   border-radius: var(--sc-radius-full);
-  background: var(--sc-color-slate-400);
+  background: var(--sc-label-gray-dot);
 
   &[data-presence='disponible'] {
     background: var(--sc-label-green-dot);

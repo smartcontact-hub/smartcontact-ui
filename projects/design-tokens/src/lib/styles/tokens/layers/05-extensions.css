@@ -24,6 +24,23 @@
   --sc-sidebar-width-expanded: 240px;
   --sc-sidebar-width: var(--sc-sidebar-width-collapsed);
   --sc-sidebar-bg: var(--sc-color-blue-700);
+  /* Lo que va ENCIMA de la barra lateral. La barra es oscura en los dos temas, así que su
+   * texto es blanco con alfa en los dos; antes eran nueve `rgb(255 255 255 / x)` sueltos en
+   * `sidebar*.component.scss`. La rampa de alfa codifica la jerarquía y su contraste está
+   * medido allí (chevron 0.4 ≥ 3:1, texto de 12 px 0.5 ≥ 4,5:1): no bajes ningún paso.
+   * `.85` y `.35` se fundieron con `.9` y `.4`, los peldaños vecinos (2026-09-14). */
+  --sc-sidebar-fg: var(--sc-color-slate-0);
+  --sc-sidebar-fg-hover: color-mix(in srgb, var(--sc-color-slate-0) 90%, transparent);
+  --sc-sidebar-fg-muted: color-mix(in srgb, var(--sc-color-slate-0) 60%, transparent);
+  --sc-sidebar-fg-subtle: color-mix(in srgb, var(--sc-color-slate-0) 50%, transparent);
+  --sc-sidebar-fg-faint: color-mix(in srgb, var(--sc-color-slate-0) 40%, transparent);
+  --sc-sidebar-item-hover-bg: color-mix(in srgb, var(--sc-color-slate-0) 5%, transparent);
+  --sc-sidebar-item-active-bg: color-mix(in srgb, var(--sc-color-slate-0) 15%, transparent);
+  --sc-sidebar-border: color-mix(in srgb, var(--sc-color-slate-0) 8%, transparent);
+  --sc-sidebar-scrollbar: color-mix(in srgb, var(--sc-color-slate-0) 16%, transparent);
+  --sc-sidebar-divider: var(--sc-color-blue-500);
+  /* El icono de la sección que contiene la página activa. */
+  --sc-sidebar-accent: var(--sc-color-cyan-300);
   --sc-topbar-height: 56px;
   --sc-bulk-action-bar-height: 56px;
   /*

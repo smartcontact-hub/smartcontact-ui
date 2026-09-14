@@ -9,7 +9,7 @@
   gap: var(--sc-spacing-0-5);
   padding: var(--sc-spacing-0-5) var(--sc-spacing-0-875);
   text-align: left;
-  color: rgb(255 255 255 / 0.6);
+  color: var(--sc-sidebar-fg-muted);
   background: transparent;
   border: 0;
   cursor: pointer;
@@ -41,8 +41,8 @@
   }
 
   &:hover {
-    color: rgb(255 255 255 / 0.9);
-    background: rgb(255 255 255 / 0.05);
+    color: var(--sc-sidebar-fg-hover);
+    background: var(--sc-sidebar-item-hover-bg);
   }
 
   &:focus-visible {
@@ -51,24 +51,24 @@
   }
 
   &--child-active {
-    color: rgb(255 255 255 / 0.9);
+    color: var(--sc-sidebar-fg-hover);
   }
 
   /* Active state: solid tint + bold weight, no left bar.
    * (Side stripe pattern is banned — see /impeccable absolute_bans.) */
   &--active {
-    color: var(--sc-color-slate-0);
-    background: rgb(255 255 255 / 0.15);
+    color: var(--sc-sidebar-fg);
+    background: var(--sc-sidebar-item-active-bg);
     font-weight: var(--sc-font-weight-semibold);
   }
 
   &__icon {
     flex-shrink: 0;
-    color: rgb(255 255 255 / 0.5);
+    color: var(--sc-sidebar-fg-subtle);
     transition: color var(--sc-transition-fast) var(--sc-easing-default);
 
     .nav-item--active & {
-      color: var(--sc-color-slate-0);
+      color: var(--sc-sidebar-fg);
     }
   }
 
@@ -79,7 +79,7 @@
    * so the highlight reads as a unique signal, not as decoration.
    */
   &--child-active &__icon {
-    color: var(--sc-color-cyan-300);
+    color: var(--sc-sidebar-accent);
   }
 
   /*
@@ -123,7 +123,7 @@
    */
   &__chevron {
     flex-shrink: 0;
-    color: rgb(255 255 255 / 0.4);
+    color: var(--sc-sidebar-fg-faint);
     opacity: var(--sidebar-label-opacity, 1);
     transition: opacity var(--sc-transition-fast) var(--sc-easing-default);
   }

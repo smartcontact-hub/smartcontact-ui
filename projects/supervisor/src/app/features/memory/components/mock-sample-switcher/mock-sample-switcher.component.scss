@@ -4,7 +4,8 @@
  * Treatment de "afford-but-warning": chip dashed amber (no urgente, no
  * error) que comunica "este control no es de producción". Réplica del
  * tratamiento React tras audit 15.21 — soft amber-on-amber, no
- * saturated. Tokens canonical SCDS (--sc-color-amber-*).
+ * saturated. Va con la familia de etiquetas ámbar (`--sc-label-amber-*`), que ya
+ * trae su lado oscuro en la capa 7.
  * ════════════════════════════════════════════════════════════════════ */
 
 :host {
@@ -19,10 +20,10 @@
    * Antes 36 y 12 escritos a mano. */
   height: var(--sc-cmp-button-sm-icon-only-width);
   padding: 0 var(--sc-spacing-0-875);
-  border: 1px dashed color-mix(in srgb, var(--sc-color-amber-500) 40%, transparent);
+  border: 1px dashed var(--sc-label-amber-border);
   border-radius: var(--sc-radius-full);
-  background: color-mix(in srgb, var(--sc-color-amber-100) 70%, white);
-  color: var(--sc-color-amber-800);
+  background: var(--sc-label-amber-bg);
+  color: var(--sc-label-amber-text);
   cursor: pointer;
   transition:
     border-color 160ms ease,
@@ -30,8 +31,8 @@
     transform 100ms ease;
 
   &:hover {
-    border-color: color-mix(in srgb, var(--sc-color-amber-600) 60%, transparent);
-    background: color-mix(in srgb, var(--sc-color-amber-200) 80%, white);
+    border-color: var(--sc-label-amber-dot);
+    background: var(--sc-label-amber-border);
   }
 
   &:active {
@@ -48,15 +49,15 @@
   display: inline-block;
   padding: 1px var(--sc-spacing-0-5);
   border-radius: var(--sc-radius-100);
-  background: color-mix(in srgb, var(--sc-color-amber-200) 90%, white);
-  color: var(--sc-color-amber-900);
+  background: var(--sc-label-amber-border);
+  color: var(--sc-label-amber-text);
   text-transform: uppercase;
   letter-spacing: 0.05em;
 }
 
 .mock-sample-switcher__icon {
   display: inline-flex;
-  color: var(--sc-color-amber-800);
+  color: var(--sc-label-amber-text);
   transition: transform 150ms ease;
 
   .mock-sample-switcher__trigger:hover & {
@@ -66,7 +67,7 @@
 
 .mock-sample-switcher__label-prefix {
   display: none;
-  color: var(--sc-color-amber-800);
+  color: var(--sc-label-amber-text);
 
   @media (min-width: 640px) {
     display: inline;
@@ -74,7 +75,7 @@
 }
 
 .mock-sample-switcher__current {
-  color: var(--sc-color-amber-900);
+  color: var(--sc-label-amber-text);
 }
 
 /* ─── Popover content (overlay rendered en <body>) ──────────────── */
@@ -121,7 +122,7 @@
   }
 
   &.is-active {
-    background: color-mix(in srgb, var(--sc-color-blue-100) 60%, transparent);
+    background: var(--sc-bg-selected);
   }
 
   &:focus-visible {
@@ -142,7 +143,7 @@
 }
 
 .mock-sample-switcher__item-check {
-  color: var(--sc-color-blue-600);
+  color: var(--sc-bg-primary);
   flex-shrink: 0;
 }
 
@@ -151,52 +152,4 @@
   font-size: var(--sc-font-size-100);
   color: var(--sc-text-subtle);
   line-height: 1.4;
-}
-
-/* ════════════════════════════════════════════════════════════════════
- * TEMA OSCURO — la mitad que faltaba.
- *
- * El tratamiento de arriba está construido con `amber-100/200` + `white`:
- * es una pastilla CLARA, y en oscuro se quedaba como una isla de luz sobre
- * el lienzo (L=0.93 en el trigger, L=0.81 en el chip). Es exactamente el
- * defecto que `theme-contrast.spec.ts` fue escrito para cazar, solo que
- * vivía en el top-bar, fuera de su alcance hasta hoy.
- *
- * No cambia el lenguaje, lo espeja: sigue siendo ámbar sobre ámbar,
- * discontinuo, "afford-but-warning" y no urgente. Lo que cambia es de qué
- * lado de la rampa se coge cada pieza.
- *
- * Medido contra el `--sc-bg-surface` del top-bar (slate-900):
- *   relleno amber-950   L=0.020  (el chequeo de superficies pide < 0.5)
- *   borde   amber-600   5,30:1 vs el lienzo · 4,70:1 vs su propio relleno
- *   texto   amber-200  12,03:1  ·  chip amber-100 sobre amber-800  6,37:1
- *
- * El borde importa más de lo que parece: con un relleno tan oscuro, es él
- * quien le da silueta al control (1.4.11), no el fondo.
- * ════════════════════════════════════════════════════════════════════ */
-:host-context(.sc-dark) {
-  .mock-sample-switcher__trigger {
-    border-color: var(--sc-color-amber-600);
-    background: var(--sc-color-amber-950);
-    color: var(--sc-color-amber-200);
-
-    &:hover {
-      border-color: var(--sc-color-amber-500);
-      background: var(--sc-color-amber-900);
-    }
-  }
-
-  .mock-sample-switcher__chip {
-    background: var(--sc-color-amber-800);
-    color: var(--sc-color-amber-100);
-  }
-
-  .mock-sample-switcher__icon,
-  .mock-sample-switcher__label-prefix {
-    color: var(--sc-color-amber-200);
-  }
-
-  .mock-sample-switcher__current {
-    color: var(--sc-color-amber-100);
-  }
 }

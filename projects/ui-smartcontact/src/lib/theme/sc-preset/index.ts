@@ -56,6 +56,7 @@ import paginator from "./paginator";
 import panelmenu from "./panelmenu";
 import speeddial from "./speeddial";
 import treetable from "./treetable";
+import datatable from "./datatable";
 import breadcrumb from "./breadcrumb";
 import datepicker from "./datepicker";
 import fileupload from "./fileupload";
@@ -94,13 +95,14 @@ import { normalizeDesignRem } from "./rem-scale";
  * componente a componente y nada se tira a ciegas: donde lo nuestro está afinado con el
  * Kit, se queda lo nuestro; donde Aura es mejor, se aparta lo nuestro y manda Aura.
  *
- * Primer componente donde manda Aura: la TABLA. Por eso `datatable.ts` ya no entra en
- * `components` (sus tokens redefinían rellenos, colores e iconos), y de nuestra piel de
- * listado solo quedan sus comportamientos (`css.ts`, `listBehaviorCss`).
+ * Primer componente donde manda Aura: la TABLA. Por eso su `datatable.ts` ya no redefine
+ * rellenos, colores ni iconos (solo le queda UNA clave oscura, ver su cabecera), y de nuestra
+ * piel de listado solo quedan sus comportamientos (`css.ts`, `listBehaviorCss`).
  */
 const preset = definePreset(Aura, normalizeDesignRem({
     ...base,
     components: {
+        datatable,
         tag,
         card,
         chip,

@@ -13,20 +13,23 @@
     color: var(--sc-text-primary);
 }
 
+/* `surface="dark"` es la superficie de CONTRASTE de Aura (la de `severity="contrast"`): oscura
+ * en claro y clara en oscuro, con su texto invertido. Antes era un navy fijo con
+ * `--sc-text-inverse`, que en oscuro pasa a zinc-900: texto oscuro sobre navy, ilegible. */
 .sc-bulk-modal--dark {
-    background: var(--sc-color-blue-900);
-    color: var(--sc-text-inverse);
+    background: var(--sc-cmp-button-contrast-background);
+    color: var(--sc-cmp-button-contrast-color);
 }
 
 .sc-bulk-modal--dark .sc-bulk-modal__header,
 .sc-bulk-modal--dark .sc-bulk-modal__footer,
 .sc-bulk-modal--dark .sc-bulk-modal__summary {
-    border-color: var(--sc-color-blue-700);
+    border-color: color-mix(in srgb, var(--sc-cmp-button-contrast-color) 16%, transparent);
 }
 
 .sc-bulk-modal--dark .sc-bulk-modal__heading h2,
 .sc-bulk-modal--dark .sc-bulk-modal__toggle-row strong {
-    color: var(--sc-text-inverse);
+    color: var(--sc-cmp-button-contrast-color);
 }
 
 .sc-bulk-modal--dark .sc-bulk-modal__heading p,
@@ -35,20 +38,20 @@
 .sc-bulk-modal--dark .sc-bulk-modal__already,
 .sc-bulk-modal--dark .sc-bulk-modal__summary h3,
 .sc-bulk-modal--dark .sc-bulk-modal__analysis h3 {
-    color: var(--sc-color-blue-100);
+    color: color-mix(in srgb, var(--sc-cmp-button-contrast-color) 80%, transparent);
 }
 
 .sc-bulk-modal--dark .sc-bulk-modal__hero strong,
 .sc-bulk-modal--dark .sc-bulk-modal__hero span,
 .sc-bulk-modal--dark .sc-bulk-modal__caption--on,
 .sc-bulk-modal--dark .sc-bulk-modal__delta {
-    color: var(--sc-color-cyan-300);
+    color: var(--sc-cmp-button-contrast-color);
 }
 
 .sc-bulk-modal--dark .sc-bulk-modal__hero .sc-bulk-modal__cost--muted,
 .sc-bulk-modal--dark .sc-bulk-modal__caption--disabled,
 .sc-bulk-modal--dark .sc-bulk-modal__delta--minus {
-    color: var(--sc-color-blue-200);
+    color: color-mix(in srgb, var(--sc-cmp-button-contrast-color) 64%, transparent);
 }
 
 .sc-bulk-modal--green {
@@ -63,7 +66,7 @@
 
 .sc-bulk-modal--green .sc-bulk-modal__heading h2,
 .sc-bulk-modal--green .sc-bulk-modal__toggle-row strong {
-    color: var(--sc-color-green-900);
+    color: var(--sc-text-success);
 }
 
 .sc-bulk-modal--green .sc-bulk-modal__heading p,
@@ -72,7 +75,7 @@
 .sc-bulk-modal--green .sc-bulk-modal__already,
 .sc-bulk-modal--green .sc-bulk-modal__summary h3,
 .sc-bulk-modal--green .sc-bulk-modal__analysis h3 {
-    color: var(--sc-color-green-700);
+    color: var(--sc-text-success);
 }
 
 .sc-bulk-modal--green .sc-bulk-modal__hero strong,
@@ -85,7 +88,7 @@
 .sc-bulk-modal--green .sc-bulk-modal__hero .sc-bulk-modal__cost--muted,
 .sc-bulk-modal--green .sc-bulk-modal__caption--disabled,
 .sc-bulk-modal--green .sc-bulk-modal__delta--minus {
-    color: var(--sc-color-green-700);
+    color: var(--sc-text-success);
 }
 
 .sc-bulk-modal__header {
@@ -172,7 +175,7 @@
 
 .sc-bulk-modal__hero strong {
     display: inline-block;
-    color: var(--sc-color-blue-700);
+    color: var(--sc-bg-primary);
     font-size: var(--sc-font-size-900);
     line-height: var(--sc-line-height-900);
     font-weight: var(--sc-font-weight-bold);
@@ -209,7 +212,7 @@
 }
 
 .sc-bulk-modal__hero span {
-    color: var(--sc-color-blue-700);
+    color: var(--sc-bg-primary);
     font-size: var(--sc-font-size-200);
     line-height: var(--sc-line-height-200);
 }

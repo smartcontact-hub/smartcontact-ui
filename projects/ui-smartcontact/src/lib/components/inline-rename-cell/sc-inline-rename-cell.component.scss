@@ -34,7 +34,7 @@
     /* Subtle caret/selection tinting to match accent. */
     caret-color: var(--sc-bg-primary);
     &::selection {
-      background: var(--sc-color-cyan-200);
+      background: var(--sc-bg-primary-subtle-active);
       color: var(--sc-text-primary);
     }
   }

@@ -61,19 +61,19 @@
     align-items: flex-start;
     gap: var(--sc-spacing-0-875);
     padding: var(--sc-spacing-0-875) var(--sc-spacing-1-125);
-    border: 1px solid var(--sc-color-amber-300);
+    border: 1px solid var(--sc-border-warning-subtle);
     border-radius: var(--sc-radius-100);
-    background: var(--sc-color-amber-50);
+    background: var(--sc-bg-warning-subtle);
   }
 
   &__gdpr-icon {
     flex: 0 0 auto;
-    color: var(--sc-color-amber-700);
+    color: var(--sc-icon-warning);
     margin-top: 2px;
   }
 
   &__gdpr-text {
     margin: 0;
-    color: var(--sc-color-amber-800);
+    color: var(--sc-text-warning);
   }
 }

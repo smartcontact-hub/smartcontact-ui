@@ -19,6 +19,9 @@
  *     (cinturón tipográfico migration-safe).
  *  6. `font-weight` literal en SCSS → token `--sc-font-weight-*`.
  *  7. stack monoespaciado a mano → `var(--sc-font-family-mono)`.
+ *  8. En el Supervisor y en los componentes del DS, el COLOR sigue al tema: ni primitivas
+ *     `--sc-color-*`, ni colores a pelo, ni `.sc-dark` escrito a mano, ni reservas de color en
+ *     `var(--sc-*, …)`. El modo oscuro vive en la capa 7 y cae en cascada (2026-09-14).
  *
  * Uso:  node scripts/token-guard.mjs   (CI/pre-commit; sale ≠0 si hay violación)
  */
@@ -31,6 +34,10 @@ const log = (s = '') => process.stdout.write(s + '\n');
 const PRESET_DIR = 'projects/ui-smartcontact/src/lib/theme/';
 const TOKENS_DIR = 'projects/design-tokens/src/lib/styles/';
 const THEME_SMOKE = 'projects/sc-docs/src/app/pages/theme/';
+/* Regla 8: donde el color TIENE que seguir al tema. sc-docs queda fuera a propósito (pinta la
+ * paleta cruda en sus muestras) y las réplicas también (DD-35). */
+const THEMED_APP = 'projects/supervisor/src/';
+const DS_COMPONENTS = 'projects/ui-smartcontact/src/lib/components/';
 const FONT_ALLOW = new Set([]);
 
 /**
@@ -167,12 +174,39 @@ for (const f of files) {
       fail(`${at} escribe el stack monoespaciado a mano → usa var(--sc-font-family-mono).`);
       log(`      ${line.trim()}`);
     }
+    // 8 — color que no sigue al tema, en el Supervisor y en los componentes del DS.
+    const enTema = f.startsWith(THEMED_APP) || f.startsWith(DS_COMPONENTS);
+    if (enTema && !/^\s*(\/\/|\*|\/\*)/.test(line)) {
+      const codigo = line.replace(/\/\*.*?\*\//g, '').replace(/\s\/\/.*$/, '');
+      const css = /\.(scss|css)$/.test(f);
+      if (/var\(\s*--sc-color-[a-z]/.test(codigo)) {
+        fail(`${at} usa una primitiva de color (--sc-color-*): no cambia en oscuro → usa el rol (--sc-text-*, --sc-bg-*, --sc-border-*, --sc-icon-*, --sc-label-*).`);
+        log(`      ${line.trim()}`);
+      }
+      if (css && /(\.sc-dark\b|:host-context\(\s*\.sc-dark)/.test(codigo)) {
+        fail(`${at} escribe el modo oscuro a mano → el oscuro vive en la capa 7 (07-dark.css); usa un rol que ya cambie con el tema.`);
+        log(`      ${line.trim()}`);
+      }
+      const propColor = /^[\s-]*[a-z-]*(color|background|border|outline|shadow|fill|stroke|caret)[a-z-]*\s*:/.test(codigo);
+      if (css && propColor && /var\(\s*--sc-[a-z0-9-]+\s*,/.test(codigo)) {
+        fail(`${at} da un valor de reserva a un token --sc-*: si el token existe no se usa nunca, y si no existe es un color suelto → quita la reserva.`);
+        log(`      ${line.trim()}`);
+      }
+      if (
+        css &&
+        propColor &&
+        /(#[0-9a-fA-F]{3,8}\b|\b(rgba?|hsla?)\(\s*\d|\b(white|black)\b)/.test(codigo)
+      ) {
+        fail(`${at} escribe un color a pelo: no cambia en oscuro ni cae en cascada → usa un token --sc-*.`);
+        log(`      ${line.trim()}`);
+      }
+    }
   });
 }
 
 log('─'.repeat(60));
 if (problems === 0) {
-  log(`✓ GUARDARRAÍL OK — sin --p-* fuera del preset, sin primitivas de escala en componentes, sin 8-point, sin font-size/font-weight literal, sin stack mono a mano (${files.length} ficheros).`);
+  log(`✓ GUARDARRAÍL OK — sin --p-* fuera del preset, sin primitivas de escala en componentes, sin 8-point, sin font-size/font-weight literal, sin stack mono a mano, sin color fuera del tema (${files.length} ficheros).`);
   process.exit(0);
 }
 log(`✗ ${problems} violación(es).`);

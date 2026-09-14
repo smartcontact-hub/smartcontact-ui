@@ -1,7 +1,7 @@
 :host {
   display: block;
   height: 100%;
-  background: var(--sc-bg-surface);
+  background: var(--sc-bg-canvas);
 }
 
 /* La página, la barra y la tabla las pinta `sc-list-page` (DD-97). Aquí las pestañas, los paneles y las celdas. */
@@ -55,7 +55,7 @@
 
     &--active {
       color: var(--sc-text-primary);
-      border-bottom-color: var(--sc-color-slate-800);
+      border-bottom-color: var(--sc-text-heading);
       font-weight: var(--sc-font-weight-semibold);
     }
 

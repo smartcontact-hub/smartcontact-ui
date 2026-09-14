@@ -4,7 +4,7 @@
  * vertical. Body 720×200.
  *
  * Política tokens (S39): consume tokens canonical SCDS existentes
- * (--sc-spacing-*, --sc-border-default, --sc-text-*, --sc-color-amber-*).
+ * (--sc-spacing-*, --sc-border-default, --sc-text-*, --sc-*-warning).
  * NO se cocinan tokens `--sc-bulk-*` específicos para este modal — el
  * uso es local, no justifica layer de indirección. Valores fijos como
  * height 200px o hero 88px van inline aquí.
@@ -96,7 +96,7 @@
   animation: sc-delta-fly 750ms var(--sc-ease-out, cubic-bezier(0.16, 1, 0.3, 1)) forwards;
 
   &.is-positive {
-    color: var(--sc-color-teal-600);
+    color: var(--sc-label-teal-text);
   }
   &.is-negative {
     color: var(--sc-text-subtle);
@@ -109,7 +109,7 @@
   font-weight: var(--sc-font-weight-regular);
   line-height: 1.4;
   /* "genera coste" cue — warning amber del DS, no urgente. */
-  color: var(--sc-color-amber-700);
+  color: var(--sc-text-warning);
   min-height: calc(1.4 * 14px); /* reserva altura para evitar CLS al ocultar */
   transition: opacity 200ms ease;
 
@@ -157,15 +157,15 @@
     color 150ms ease;
 
   &.is-include {
-    color: var(--sc-color-green-700);
-    border-color: color-mix(in srgb, var(--sc-color-green-500) 30%, transparent);
-    background: color-mix(in srgb, var(--sc-color-green-500) 8%, transparent);
+    color: var(--sc-text-success);
+    border-color: var(--sc-border-success-subtle);
+    background: var(--sc-bg-success-subtle);
   }
 
   &.is-warn {
-    color: var(--sc-color-amber-800);
-    border-color: color-mix(in srgb, var(--sc-color-amber-500) 35%, transparent);
-    background: color-mix(in srgb, var(--sc-color-amber-500) 10%, transparent);
+    color: var(--sc-text-warning);
+    border-color: var(--sc-border-warning-subtle);
+    background: var(--sc-bg-warning-subtle);
   }
 
   &.is-exclude {
@@ -244,7 +244,7 @@
   color: var(--sc-text-subtle);
 
   &.is-on {
-    color: var(--sc-color-teal-700);
+    color: var(--sc-label-teal-text);
     font-weight: var(--sc-font-weight-regular);
   }
 
@@ -269,14 +269,14 @@
   display: flex;
   align-items: flex-start;
   gap: var(--sc-spacing-0-875);
-  border-top: 1px solid var(--sc-color-red-300);
-  background: color-mix(in srgb, var(--sc-color-red-100) 60%, transparent);
+  border-top: 1px solid var(--sc-border-error);
+  background: var(--sc-bg-danger-subtle);
   padding: var(--sc-spacing-1-125) var(--sc-spacing-2-25);
 }
 
 .bulkv26__error-icon {
   flex-shrink: 0;
-  color: var(--sc-color-red-700);
+  color: var(--sc-text-danger);
   margin-top: 2px;
 }
 
@@ -284,7 +284,7 @@
   margin: 0;
   font-size: var(--sc-font-size-200);
   line-height: 1.4;
-  color: var(--sc-color-red-700);
+  color: var(--sc-text-danger);
 }
 
 /* ─── Animations ────────────────────────────────────────────── */

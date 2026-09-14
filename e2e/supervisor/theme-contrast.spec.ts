@@ -78,6 +78,29 @@ const RUTAS = [
 ] as const;
 
 /**
+ * EL SUELO ES EL LIENZO, EN TODAS LAS PANTALLAS (2026-09-14).
+ *
+ * Contact Center pinta su suelo con `--sc-bg-canvas` (zinc-950 en oscuro) y encima sus
+ * tarjetas en `--sc-bg-surface` (zinc-900). El resto de pantallas tapaban ese suelo con
+ * una caja a toda página pintada de `--sc-bg-surface`: en claro no se nota (los dos son
+ * blanco) y en oscuro la app parecía de dos temas. Nada lo medía porque las dos
+ * preguntas de arriba miran si algo es CLARO o ILEGIBLE, y zinc-900 no es ni lo uno ni
+ * lo otro: es el rol equivocado.
+ *
+ * «Suelo» = cualquier elemento dentro de `<main>` que lo cubre de lado a lado y de arriba
+ * abajo (lo visible). Una tarjeta nunca cumple eso: lleva el padding de la página. Van
+ * también los formularios y el constructor, que no están en `RUTAS`.
+ */
+const RUTAS_SUELO = [
+  ...RUTAS,
+  'supervision',
+  'admin/usuarios/nuevo',
+  'admin/grupos/nuevo',
+  'admin/agentes/nuevo',
+  'conversaciones/reglas/nueva',
+] as const;
+
+/**
  * SUB-AA CONOCIDO, MEDIDO Y NO ARREGLADO — todo en tema CLARO.
  *
  * Los cuatro que quedan tienen algo en común y por eso están juntos: **ninguno
@@ -167,6 +190,47 @@ for (const { nombre, aplicar, claseRaiz } of TEMAS) {
         const reales = ilegibles.filter((l) => !conocidos.some((c) => l.includes(c)));
         expect(reales, `texto bajo AA en tema ${nombre}:\n${reales.join('\n')}`).toEqual([]);
       });
+    }
+
+    /* Solo en oscuro: en claro lienzo y superficie valen lo mismo y la pregunta no
+     * distingue nada (pasaría en verde con el defecto puesto). */
+    if (claseRaiz) {
+      for (const ruta of RUTAS_SUELO) {
+        test(`${ruta} · el suelo es el lienzo, como en Contact Center`, async ({ page }) => {
+          await goto(page, ruta);
+          await asegurarTema(page, claseRaiz);
+          await asegurarBuildFresco(page);
+          const { lienzo, ajenos } = await page.evaluate(() => {
+            const cv = document.createElement('canvas').getContext('2d')!;
+            const norm = (c: string): string => {
+              cv.fillStyle = '#000';
+              cv.fillStyle = c;
+              return String(cv.fillStyle);
+            };
+            const muestra = document.createElement('span');
+            muestra.style.backgroundColor = 'var(--sc-bg-canvas)';
+            document.body.append(muestra);
+            const lienzo = norm(getComputedStyle(muestra).backgroundColor);
+            muestra.remove();
+            const main = document.querySelector('main#main-content')!;
+            const m = main.getBoundingClientRect();
+            const altoVisible = Math.min(m.bottom, innerHeight) - m.top;
+            const ajenos: string[] = [];
+            for (const el of [main, ...main.querySelectorAll('*')]) {
+              const r = el.getBoundingClientRect();
+              const alto = Math.min(r.bottom, innerHeight) - Math.max(r.top, m.top);
+              if (r.width < m.width * 0.99 || alto < altoVisible * 0.99) continue;
+              const fondo = getComputedStyle(el).backgroundColor;
+              if (fondo === 'rgba(0, 0, 0, 0)') continue;
+              if (norm(fondo) !== lienzo) {
+                ajenos.push(`${el.tagName.toLowerCase()}${[...el.classList].map((c) => `.${c}`).join('')} → ${norm(fondo)}`);
+              }
+            }
+            return { lienzo, ajenos };
+          });
+          expect(ajenos, `suelos que no son el lienzo (${lienzo}):\n${ajenos.join('\n')}`).toEqual([]);
+        });
+      }
     }
 
     /* LA SIDEBAR DESPLEGADA, UNA VEZ POR TEMA — no por ruta, porque es la misma

@@ -4,8 +4,8 @@
  * ESTÉTICA descartada: ni su violeta #635bff, ni Outfit, ni su gradiente. Todo
  * valor sale de la escala 14-base y del contrato --sc-*.
  *
- * Estructura: página sobre `--sc-bg-default` con las secciones como tarjetas
- * (`--sc-bg-surface`, radius xl) en una columna, y el impacto como tarjeta
+ * Estructura: página sobre el lienzo (`--sc-bg-canvas`) con las secciones como
+ * tarjetas (`--sc-bg-surface`, radius xl) en una columna, y el impacto como tarjeta
  * hermana en su PROPIA columna de grid — por eso ya no puede solaparse con el
  * formulario a anchos medios (el bug de la versión anterior, visto a 739px).
  *
@@ -13,9 +13,9 @@
  * la regla — chip de operador, conector Y/O, número héroe y el filo de la caja
  * "se cumple si". Nada de acento decorativo.
  *
- * Nota de dark: `--sc-bg-info-subtle` SÍ voltea (color-mix de sky-800), pero las
- * primitivas `--sc-color-sky-*` NO. Donde hace falta una primitiva de acento se
- * anota su contrapartida en `:host-context(.sc-dark)`.
+ * Nota de dark: el acento va por `--sc-text-accent`, que ya sube a sky-400 en oscuro.
+ * Aquí había primitivas `--sc-color-sky-*` con su contrapartida en un
+ * `:host-context(.sc-dark)`; se fue el 2026-09-14 (el tema oscuro vive en la capa 7).
  */
 
 :host {
@@ -23,8 +23,9 @@
   /* Mismo contrato que los tres formularios hermanos de admin: el lienzo lo pinta
    * el HOST, no el div de dentro. Con `min-height` sólo en el div, el porcentaje
    * no resolvía (el host es de alto automático) y por debajo del contenido
-   * asomaba el suelo del shell — invisible en claro, donde canvas y surface son
-   * ambos blancos, y una costura evidente en oscuro (gray-950 contra gray-900).
+   * asomaba el suelo del shell. Desde el 2026-09-14 el host pinta ESE mismo suelo
+   * (`--sc-bg-canvas`), como Contact Center: antes pintaba `--sc-bg-surface`, igual en
+   * claro pero la tarjeta zinc-900 en oscuro, y las tarjetas no se separaban del fondo.
    *
    * Ola 3 · UN SOLO LIENZO. Esta página era la única que ponía lienzo gris para
    * que sus tarjetas blancas "flotasen". Medido, ese relleno separaba 1.06:1 en
@@ -39,7 +40,7 @@
    * (S67-A), porque su rail se funde con un lienzo de su mismo tono. Ese
    * override de tema no se toca sin cambiar también el token del rail. */
   min-height: 100%;
-  background: var(--sc-bg-surface);
+  background: var(--sc-bg-canvas);
 }
 
 .rule-builder {
@@ -278,7 +279,7 @@
     display: inline-flex;
     align-items: center;
     justify-content: center;
-    color: var(--sc-color-teal-600);
+    color: var(--sc-label-teal-text);
   }
 
   &__desc {
@@ -363,7 +364,7 @@
   &__icon {
     flex-shrink: 0;
     margin-top: 2px;
-    color: var(--sc-color-sky-600);
+    color: var(--sc-text-accent);
   }
 
   &__body {
@@ -506,7 +507,7 @@
     color: var(--sc-text-primary);
 
     sc-icon {
-      color: var(--sc-color-sky-600);
+      color: var(--sc-text-accent);
     }
   }
 
@@ -534,7 +535,7 @@
     line-height: 1.1;
     letter-spacing: -0.02em;
     font-variant-numeric: tabular-nums;
-    color: var(--sc-color-sky-600);
+    color: var(--sc-text-accent);
   }
 
   &__caption {
@@ -645,20 +646,6 @@
       flex-shrink: 0;
       margin-top: 2px;
     }
-  }
-}
-
-/* ─── Dark: contrapartidas de las primitivas de acento ───
- * `--sc-bg-info-subtle` ya voltea solo; estas primitivas no, y en superficie
- * oscura sky-600/700 se cae de contraste. */
-:host-context(.sc-dark) {
-  .scope-desc__icon,
-  .impact__label sc-icon {
-    color: var(--sc-color-sky-300);
-  }
-
-  .impact__hero {
-    color: var(--sc-color-sky-400);
   }
 }
 
