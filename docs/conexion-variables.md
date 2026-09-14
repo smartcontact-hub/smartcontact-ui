@@ -456,7 +456,7 @@ tanto.
 > `scripts/tema-plugin-zip.mjs`). Lo de abajo explica el porqué.
 >
 > **Y desde DD-93 es un paquete npm** (`smartcontact-tema`), publicado también como fichero en la rama
-> (`smartcontact-tema.tgz`): al equipo externo se le entrega ese fichero en su casa (Jira o su GitLab) y
+> (`smartcontact-tema.tgz`): Rafa lo descarga del enlace fijo y lo adjunta en Jira, y el equipo externo
 > lo instala con `npm install ./….tgz`. El tema empaquetado trae además todo el `extend` que exporta el plugin
 > (sale de `aura/custom` del Kit, con nuestros valores), y el script sale en rojo si le falta una sola
 > variable de ese contrato: una hoja del consumidor escrita contra el plugin sigue funcionando.

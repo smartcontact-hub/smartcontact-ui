@@ -117,9 +117,9 @@ de escala a `--sc-scale-*`, las divergencias escritas en `coverage-map` (acento,
 nuestro token, y el resto con el valor del Kit; pesos sin «px». Lo que `sc-preset/extend.ts` ya declara,
 gana. Nuestras apps no cambian: solo el paquete. (2) Comprobación 4: rojo si al tema empaquetado le falta
 una variable de ese contrato. (3) El tema es un paquete npm, `smartcontact-tema`, que `tema-zip.yml`
-publica también como fichero, `smartcontact-tema.tgz`. Se entrega así, en su casa: adjunto en Jira o en
-su GitLab, que ya guarda paquetes como `.tgz` (`smart-contact-ui-lab/local-libs/archives`), y se instala
-con `npm install ./….tgz`. Rafa: «que no tengan que meterse en mi github», y privado. La rama `tema-zip`
+publica también como fichero, `smartcontact-tema.tgz`. Se entrega así, adjunto en Jira; ellos lo guardan
+donde ya guardan paquetes como `.tgz` (`smart-contact-ui-lab/local-libs/archives`) y lo instalan con
+`npm install ./….tgz`. Rafa: «que no tengan que meterse en mi github», y privado. La rama `tema-zip`
 sigue siendo instalable como dependencia git, para uso interno. (4) `tema-zip.yml` también corre cuando
 cambia el export del Kit.
 
@@ -144,9 +144,9 @@ nuevo `npm update smartcontact-tema` lo trae) y desde el `.tgz` (7 ficheros, el 
 - **Etiquetas semver en el repo para `#semver:`** → se mezclarían con las del DS (v1.x).
 
 **Consecuencias** · El equipo externo cambia la instalación una vez (guía en `LEEME.md`) y cada versión es
-un `.tgz` nuevo. Pendiente: que llegue solo a su GitLab (hace falta un token suyo con permiso de publicar,
-guardado como secreto aquí), y medir en su app que el preset rinda igual con PrimeNG 21 (medido solo a
-nivel de variables). Fuera de alcance: sus `--sc-*` propias (557 definiciones, 253 con valor fijo, 304 nombres que
+un `.tgz` nuevo. Rafa lo descarga del enlace fijo (`…/raw/tema-zip/smartcontact-tema.tgz`) y lo adjunta en
+Jira: sin token en su GitLab, porque diseño y producto no tocan su código (Rafa). Pendiente de medir en su
+app que el preset rinda igual con PrimeNG 21 (medido solo a nivel de variables). Fuera de alcance: sus `--sc-*` propias (557 definiciones, 253 con valor fijo, 304 nombres que
 ya no existen en el nuestro) no siguen a ningún tema; traducirlas es otra tanda.
 
 ---
