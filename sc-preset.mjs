@@ -5669,6 +5669,12 @@ sc-datatable .p-datatable-tbody > tr > td {
     line-height: var(--sc-line-height-body-2);
     font-weight: var(--sc-font-weight-regular);
 }
+
+sc-datatable .p-datatable-tfoot > tr > td {
+    font-size: var(--sc-font-size-body-2);
+    line-height: var(--sc-line-height-body-2);
+    font-weight: var(--sc-font-weight-semibold);
+}
 `;
 var emptyCaptionCss = () => `
 sc-datatable .p-datatable-header:empty {
