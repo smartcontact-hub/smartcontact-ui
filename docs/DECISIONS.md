@@ -203,6 +203,12 @@ del título y a su derecha, y con `fill` el panel mide lo mismo que su hueco (25
 página crece (lo de antes no cambia) y la referencia de estilos solo añade las anclas nuevas. Con `toggleable`, al
 colapsar un panel `fill` el hueco se queda: está dicho en la API.
 
+**Corrección, mismo día** · `fill` fijaba la fila de la rejilla del cuerpo pero no la columna, que quedaba implícita en
+`auto`: una tabla ancha (la de agentes del Dashboard, 582 de mínimo) sacaba el envoltorio de la tarjeta y a 390 la
+página ganaba 271 de scroll lateral (medido por la sesión del Dashboard). Ahora también `grid-template-columns:
+minmax(0, 1fr)`, y lo ancho se desplaza en su contenedor. Test «fill no deja que un contenido ancho ensanche el
+panel», en rojo con el fallo (envoltorio 631,5 en un cuerpo de 198,5).
+
 ---
 
 ## DD-107 · 2026-09-14 — Un borde de un lado se escribe de un lado: `p-tabs` y otros tres temas dejan de pintar cajas
