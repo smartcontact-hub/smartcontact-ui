@@ -62,6 +62,23 @@ const htmls = [
 ].sort();
 const spec = leer('e2e/supervisor/list-table-grammar.spec.ts');
 
+/* Tablas que NO son una pantalla de lista: van dentro de otra pieza, densas y sin ruta propia. No llevan
+ * la piel `list` ni pasan por el guardián de la gramática (reglas 1 y 7); las demás les aplican igual.
+ * Cada una con su motivo: la lista no es un cajón para callar el gate. */
+const NO_SON_LISTA = new Map([
+  [`${APP}/app/features/dashboard/components/agents-table-widget/agents-table-widget.component.html`, 'widget del Dashboard: tabla densa (`size="sm"`) dentro de una tarjeta'],
+  [`${APP}/app/features/dashboard/components/detail-drawer/detail-drawer.component.html`, 'panel lateral de detalle del Dashboard: dos columnas dentro de un drawer'],
+]);
+
+/* Las ranuras que `sc-datatable` reenvía a p-table (`#footer`, `#body`…) son `contentChild`: tienen que ir
+ * DENTRO. La regla 3 es para las plantillas de CELDA, que resuelve un `viewChild` de la pantalla. Se leen del
+ * componente para que una ranura nueva no la convierta en falso positivo. */
+const RANURAS = new Set(
+  [...leer('projects/ui-smartcontact/src/lib/components/datatable/sc-datatable.component.ts').matchAll(/contentChild<.*?>\('(\w+)'\)/g)].map((m) => m[1]),
+);
+// Sin esto, un patrón que lee 0 ranuras (le pasó al primero, `<[^>]*>` contra `<TemplateRef<unknown>>`) callaba la regla 3.
+if (!RANURAS.has('footer')) fallo('sc-datatable.component.ts', 'no leo sus ranuras (`contentChild`)', 'la regla 3 no puede separar ranuras de plantillas de celda');
+
 /** Ruta de una página desde su `*.routes.ts`: los directorios están en inglés
  *  (`rules`) y las rutas en español (`reglas`), así que el nombre del
  *  directorio NO sirve — buscarlo por ahí daba 3 falsos positivos de 3. */
@@ -133,7 +150,7 @@ for (const f of htmls) {
    *     no viajaba — exportabas el tema, lo montabas en otra app y la tabla
    *     revertía al preset sin que fallara un test. */
   for (const etiqueta of html.match(/<sc-datatable[\s\S]*?>/g) ?? []) {
-    if (!/variant="list"/.test(etiqueta)) {
+    if (!NO_SON_LISTA.has(f) && !/variant="list"/.test(etiqueta)) {
       fallo(donde, '<sc-datatable> sin variant="list"', 'sin la piel la tabla no se parece a las demás (fila de 42px en vez de 53)');
     }
   }
@@ -147,7 +164,7 @@ for (const f of htmls) {
 
   /* 3 · Las <ng-template> de celda van FUERA del componente. */
   const dentro = html.match(/<sc-datatable[\s\S]*?<\/sc-datatable>/);
-  if (dentro && /<ng-template\s+#/.test(dentro[0])) {
+  if (dentro && [...dentro[0].matchAll(/<ng-template\s+#(\w+)/g)].some((m) => !RANURAS.has(m[1]))) {
     fallo(donde, 'hay <ng-template #…> DENTRO del <sc-datatable>', 'los viewChild no la resuelven de forma estable: va hermana, no dentro');
   }
 
@@ -183,7 +200,7 @@ for (const f of htmls) {
    *     de la gramática, ese spec pasa en verde sin mirarla y el "todo verde"
    *     no prueba nada de esta tabla. */
   /* La pieza no tiene ruta propia: la vigilan las rutas de las pantallas que la montan, que entran aquí. */
-  if (f === PIEZA_LISTA) continue;
+  if (f === PIEZA_LISTA || NO_SON_LISTA.has(f)) continue;
   const ruta = rutaDe(f);
   if (!ruta) {
     fallo(donde, 'no consigo deducir su ruta desde los *.routes.ts', 'compruébalo a mano contra e2e/supervisor/list-table-grammar.spec.ts');

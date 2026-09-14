@@ -8,6 +8,235 @@
     "title": "Section under construction",
     "subtitle": "This page is not available yet"
   },
+  "dashboard": {
+    "widget": {
+      "entities_more": "{{names}} and {{count}} more",
+      "more_actions": "More actions for {{title}}",
+      "clear_filter": "Clear filter"
+    },
+    "menu": {
+      "channels": "Channel",
+      "channel": {
+        "calls": "Calls",
+        "chats": "Chats",
+        "emails": "Emails",
+        "all": "All"
+      },
+      "direction": "Type",
+      "directions": {
+        "incoming": "Inbound",
+        "outgoing": "Outbound",
+        "all": "All"
+      },
+      "remove": "Remove widget"
+    },
+    "kpi": {
+      "of_connected": "of {{total}} connected",
+      "trend_aria": "Trend over the last hour",
+      "ratio_aria": "{{ratio}}% of connected",
+      "delta": "{{delta}} in the last hour"
+    },
+    "presence": {
+      "available": "Available",
+      "paused": "Paused",
+      "offline": "Disconnected"
+    },
+    "agents_table": {
+      "agent": "Agent",
+      "conversations": "Conv.",
+      "attended": "Attended",
+      "rejected": "Rejected",
+      "transferred": "Transferred",
+      "avg_time": "Avg. time",
+      "totals": "Totals"
+    },
+    "group_panel": {
+      "now": "Now",
+      "on_hold": "On hold",
+      "in_progress": "In progress",
+      "available": "Available",
+      "connected": "Connected",
+      "conversations": "Conversations",
+      "total": "Totals",
+      "attended": "Attended",
+      "not_attended": "Not attended",
+      "abandoned": "Abandoned",
+      "overflowed": "Overflowed",
+      "disconnected": "Disconnected",
+      "times": "Average times",
+      "talk": "Conversation",
+      "post": "Post-conversation",
+      "wait": "Wait",
+      "abandon": "Abandon",
+      "service_level": "Service level",
+      "attention_level": "Attention level"
+    },
+    "ranked_list": {
+      "empty": "No data yet"
+    },
+    "empty_slot": {
+      "split": "Split into four",
+      "gather": "Merge into one",
+      "add": "Add widget"
+    },
+    "live": "Live",
+    "toast": {
+      "removed": "You removed “{{title}}”",
+      "monitor_removed": "You deleted “{{name}}”"
+    },
+    "catalog": {
+      "services-current-conv": {
+        "name": "Conversations in progress",
+        "description": "Total number of conversations in progress within a service"
+      },
+      "services-total-conv": {
+        "name": "Total conversations",
+        "description": "Total number of completed conversations within a service"
+      },
+      "services-max-peak": {
+        "name": "Maximum peak",
+        "description": "Maximum number of simultaneous conversations"
+      },
+      "groups-on-hold": {
+        "name": "On hold conversations",
+        "description": "Total number of conversations on hold within a group"
+      },
+      "groups-attended": {
+        "name": "Attended conversations",
+        "description": "Number of total attended conversations within a group"
+      },
+      "groups-abandoned": {
+        "name": "Abandoned conversations",
+        "description": "Number of total abandoned conversations within a group"
+      },
+      "groups-service-level": {
+        "name": "Service level",
+        "description": "Percentage of the service level of the group"
+      },
+      "groups": {
+        "name": "Groups",
+        "description": "Summary of one or more groups"
+      },
+      "agents-available": {
+        "name": "Available agents",
+        "description": "Number of agents who are available"
+      },
+      "agents-paused": {
+        "name": "Agents on pause",
+        "description": "Number of agents who are on pause"
+      },
+      "agents-table": {
+        "name": "Agents table",
+        "description": "Agents section custom table"
+      },
+      "ai-intents": {
+        "name": "Intents",
+        "description": "Number of intents detected by the AI node"
+      },
+      "typification": {
+        "name": "Typification",
+        "description": "Number of completed conversations of the selected categorization"
+      },
+      "typifications": {
+        "name": "Typifications",
+        "description": "List of completed conversations of the selected categorizations"
+      },
+      "campaigns-useful-closure": {
+        "name": "Useful closure",
+        "description": "Number of contacts agents have marked as useful at closing"
+      },
+      "campaigns-conversion": {
+        "name": "Conversion",
+        "description": "Percentage of positive useful contacts over all useful contacts"
+      }
+    },
+    "categories": {
+      "services": "Services",
+      "groups": "Groups",
+      "agents": "Agents",
+      "ai": "AI Node",
+      "typifications": "Typifications",
+      "campaigns": "Campaigns"
+    },
+    "tabs": {
+      "aria": "Monitors",
+      "hint": "Double-click to rename · drag to reorder",
+      "rename": "Rename",
+      "rename_aria": "Monitor name",
+      "duplicate": "Duplicate",
+      "remove": "Delete",
+      "more_aria": "More actions for {{name}}",
+      "add": "Monitor",
+      "new_name": "Monitor",
+      "copy_suffix": "(copy)"
+    },
+    "alerts": {
+      "on_hold": "{{n}} on hold",
+      "service_level": "Service level at {{n}}%",
+      "attention_level": "Attention level at {{n}}%",
+      "no_available": "No agents available",
+      "few_available": "Only {{n}} available",
+      "button_aria": "New alerts: {{count}} of {{total}}",
+      "title": "Alerts",
+      "none": "All good: no threshold exceeded.",
+      "rules": "Warns at 5 or more on hold (critical from 8), levels below 80% (critical below 60%) and under 30% of agents available.",
+      "short_count": "{{n}}",
+      "short_percent": "{{n}}%",
+      "mark_all_seen": "Mark all as seen",
+      "seen": "seen"
+    },
+    "carousel": {
+      "every": "Switch every",
+      "seconds": "{{s}} seconds",
+      "play": "Rotate",
+      "pause": "Pause",
+      "interval_aria": "Switch every {{s}} seconds",
+      "previous": "Previous monitor",
+      "next": "Next monitor"
+    },
+    "wall": {
+      "enter": "Wall mode",
+      "exit": "Exit"
+    },
+    "detail": {
+      "open_aria": "See the detail of {{value}}",
+      "open_stat_aria": "See {{value}} {{label}}",
+      "customer": "Customer {{id}}",
+      "title": {
+        "waiting": "On hold ({{count}})",
+        "in-progress": "In progress ({{count}})",
+        "agents_available": "Available agents ({{count}})",
+        "agents_paused": "Agents on pause ({{count}})",
+        "agents_connected": "Connected agents ({{count}})"
+      },
+      "empty": {
+        "waiting": "Nobody waiting right now.",
+        "in_progress": "No conversations in progress.",
+        "agents": "No agents in this state."
+      },
+      "col_conversation": "Conversation",
+      "col_time": "Time",
+      "col_agent": "Agent",
+      "col_in_state": "In this state"
+    },
+    "assistant": {
+      "title_new": "Create widget",
+      "title_edit": "Edit widget",
+      "subtitle_big": "Large slot: tables, panels and lists",
+      "subtitle_small": "Small slot: figures and rings",
+      "category": "Category",
+      "entities": "What to watch",
+      "search": "Search…",
+      "type": "Widget type",
+      "type_none": "No types of this size",
+      "name": "Name",
+      "preview": "Preview",
+      "pick_entities": "Tick at least one option to see the preview.",
+      "no_types": "This category has no widgets of this size. Try another category or use a slot of the other size.",
+      "create": "Create"
+    },
+    "updated_at": "updated at {{time}}"
+  },
   "memory": {
     "conversations": {
       "empty": {

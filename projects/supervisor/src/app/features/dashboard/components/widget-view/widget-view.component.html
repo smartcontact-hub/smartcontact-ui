@@ -1,0 +1,27 @@
+@let w = widget();
+@switch (w.kind) {
+  @case ('agents-table') {
+    <sc-dashboard-agents-table [rows]="w.rows" />
+  }
+  @case ('kpi-trend') {
+    <sc-dashboard-kpi [value]="w.value" [trend]="w.trend" [interactive]="!!detail()" (open)="open(detail()!)" />
+  }
+  @case ('kpi-simple') {
+    <sc-dashboard-kpi [value]="w.value" [unit]="w.unit ?? null" />
+  }
+  @case ('agents-state') {
+    <sc-dashboard-kpi
+      [value]="w.value"
+      [presence]="w.presence"
+      [total]="w.total"
+      [interactive]="!!detail()"
+      (open)="open('agents', w.presence)"
+    />
+  }
+  @case ('group-panel') {
+    <sc-dashboard-group-panel [data]="w" [interactive]="interactive()" (open)="open($event.kind, $event.presence)" />
+  }
+  @case ('ranked-list') {
+    <sc-dashboard-ranked-list [items]="w.items" />
+  }
+}

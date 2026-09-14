@@ -1,0 +1,117 @@
+<sc-dialog
+  [visible]="visible()"
+  icon="dashboard_customize"
+  [title]="(editing() ? 'dashboard.assistant.title_edit' : 'dashboard.assistant.title_new') | translate"
+  [subtitle]="(size() === 'big' ? 'dashboard.assistant.subtitle_big' : 'dashboard.assistant.subtitle_small') | translate"
+  width="min(65rem, 94vw)"
+  (cancelled)="close()"
+>
+  <div class="assistant">
+    <div class="assistant__form">
+      <section class="assistant__step" aria-labelledby="assistant-category">
+        <h3 id="assistant-category" class="assistant__label sc-text-body-semibold">
+          {{ 'dashboard.assistant.category' | translate }}
+        </h3>
+        <div class="assistant__categories" role="radiogroup" aria-labelledby="assistant-category">
+          @for (c of categories; track c) {
+            <button
+              type="button"
+              role="radio"
+              class="assistant__category sc-text-caption-regular"
+              [class.assistant__category--active]="c === category()"
+              [class.assistant__category--empty]="emptyCategories().has(c)"
+              [attr.aria-checked]="c === category()"
+              (click)="pickCategory(c)"
+            >
+              <sc-icon [name]="categoryIcon[c]" [size]="iconSize" aria-hidden="true" />
+              {{ categoryKey(c) | translate }}
+            </button>
+          }
+        </div>
+      </section>
+
+      <section class="assistant__step" aria-labelledby="assistant-entities">
+        <h3 id="assistant-entities" class="assistant__label sc-text-body-semibold">
+          {{ 'dashboard.assistant.entities' | translate }}
+        </h3>
+        <!-- Listbox de primeng.dev con el tema: varias, con casilla, buscador y «marcar todo». El alto
+             mínimo de la lista es fijo (`listStyle`): con 4 opciones o sin resultados no encoge y el
+             diálogo no salta. -->
+        <p-listbox
+          class="assistant__entities"
+          multiple
+          checkbox
+          filter
+          showToggleAll
+          [options]="entityOptions()"
+          optionLabel="label"
+          optionValue="value"
+          scrollHeight="var(--sc-spacing-12-5)"
+          [listStyle]="{ 'min-height': 'var(--sc-spacing-12-5)' }"
+          [filterPlaceHolder]="'dashboard.assistant.search' | translate"
+          [emptyFilterMessage]="'common.search_no_results' | translate"
+          [ariaFilterLabel]="'dashboard.assistant.search' | translate"
+          [ngModel]="selectedList()"
+          (ngModelChange)="setSelected($event)"
+          fluid
+        />
+      </section>
+
+      <section class="assistant__step assistant__step--row">
+        <sc-select
+          class="assistant__type"
+          [label]="'dashboard.assistant.type' | translate"
+          [options]="typeOptions()"
+          optionValue="value"
+          [value]="typeId()"
+          [disabled]="!typeOptions().length"
+          [placeholder]="'dashboard.assistant.type_none' | translate"
+          (valueChange)="typeId.set($any($event))"
+        />
+        <sc-inputtext
+          class="assistant__name"
+          [label]="'dashboard.assistant.name' | translate"
+          [placeholder]="defaultName()"
+          [maxlength]="nameMax"
+          [value]="name()"
+          (valueChange)="name.set($event)"
+        />
+      </section>
+    </div>
+
+    <aside class="assistant__preview" [attr.aria-label]="'dashboard.assistant.preview' | translate">
+      <h3 class="assistant__label sc-text-body-semibold">{{ 'dashboard.assistant.preview' | translate }}</h3>
+      <div class="assistant__stage">
+        @if (preview(); as w) {
+          <div class="assistant__frame" [class.assistant__frame--small]="size() === 'small'">
+            <sc-dashboard-widget-card
+              [preview]="true"
+              [title]="w.title ?? defaultName()"
+              [entities]="w.entities"
+              [filter]="w.filter"
+            >
+              <sc-dashboard-widget-view [widget]="w" [interactive]="false" />
+            </sc-dashboard-widget-card>
+          </div>
+        } @else {
+          <p class="assistant__hint sc-text-body-regular">
+            {{ (typeOptions().length ? 'dashboard.assistant.pick_entities' : 'dashboard.assistant.no_types') | translate }}
+          </p>
+        }
+      </div>
+      <p class="assistant__description sc-text-body-regular">{{ description() }}</p>
+    </aside>
+  </div>
+
+  <div modal-actions>
+    <sc-button type="button" size="sm" variant="secondary" [label]="'common.cancel' | translate" (clicked)="close()" />
+    <sc-button
+      type="button"
+      size="sm"
+      variant="primary"
+      [disabled]="!canSave()"
+      [label]="(editing() ? 'common.save' : 'dashboard.assistant.create') | translate"
+      (clicked)="save()"
+    />
+  </div>
+</sc-dialog>

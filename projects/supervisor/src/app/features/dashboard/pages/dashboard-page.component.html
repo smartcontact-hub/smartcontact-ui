@@ -1,0 +1,269 @@
+<div
+  class="page"
+  [class.page--wall]="wall()"
+  [style.zoom]="wall() ? wallZoom() : null"
+  (mousemove)="wall() && pokeWallControls()"
+>
+  <!-- En modo pared deja de ser una página de lista: sin ancho máximo, de borde a borde de la tele. -->
+  <div class="dashboard-frame" [class.page__inner]="!wall()" [class.page__inner--list]="!wall()">
+    @if (view(); as m) {
+      <h1 class="visually-hidden">{{ m.name }}</h1>
+
+      <!-- ─── Cabecera: pestañas a la izquierda; estado, alertas, carrusel y modo pared a la derecha ─── -->
+      @if (!wall()) {
+        <header class="dashboard-head">
+          <sc-dashboard-monitor-tabs
+            class="dashboard-head__tabs"
+            [monitors]="store.monitors()"
+            [activeId]="m.id"
+            (select)="store.select($event)"
+            (add)="addMonitor()"
+            (rename)="store.rename($event.id, $event.name)"
+            (duplicate)="duplicateMonitor($event)"
+            (remove)="removeMonitor($event)"
+            (move)="store.move($event.from, $event.to)"
+          />
+
+          <div class="dashboard-head__actions">
+            <p class="dashboard-head__live sc-text-caption-regular">
+              <sc-badge variant="success" aria-hidden="true" />
+              <span>{{ 'dashboard.live' | translate }}</span>
+              <span class="dashboard-head__updated">{{ 'dashboard.updated_at' | translate: { time: updatedAtLabel() } }}</span>
+            </p>
+
+            <!-- La campana cuenta lo que NO has visto. Sin nada nuevo vuelve a su estado normal, aunque
+                 alguna alerta siga activa (la tarjeta lo sigue diciendo). Es el botón del DS: el color lo
+                 pone la variante según la alerta nueva más grave, y el contador va de etiqueta (un
+                 `sc-badge` proyectado se pintaba DELANTE del icono: p-button proyecta primero). -->
+            <sc-button
+              class="dashboard-head__alerts"
+              size="sm"
+              rounded
+              [variant]="alertLevel() === 'danger' ? 'danger' : alertLevel() === 'warning' ? 'warn' : 'secondary'"
+              [appearance]="alertLevel() ? 'outlined' : 'text'"
+              [icon]="unseenAlerts().length ? 'notifications_active' : 'notifications'"
+              [iconFilled]="unseenAlerts().length > 0"
+              [label]="unseenAlerts().length ? '' + unseenAlerts().length : ''"
+              [ariaLabel]="'dashboard.alerts.button_aria' | translate: { count: unseenAlerts().length, total: alerts().length }"
+              (clicked)="alertsPanel.toggle($event)"
+            />
+
+            @if (canRotate()) {
+              <div class="dashboard-head__carousel">
+                <sc-button
+                  variant="secondary"
+                  appearance="text"
+                  size="sm"
+                  [icon]="carouselRunning() ? 'pause' : 'play_arrow'"
+                  [label]="(carouselRunning() ? 'dashboard.carousel.pause' : 'dashboard.carousel.play') | translate"
+                  (clicked)="toggleCarousel()"
+                />
+                <sc-button
+                  variant="secondary"
+                  appearance="text"
+                  size="sm"
+                  icon="timer"
+                  [ariaLabel]="'dashboard.carousel.interval_aria' | translate: { s: carouselSeconds() }"
+                  (clicked)="carouselMenuRef.toggle($event)"
+                />
+              </div>
+            }
+
+            <sc-button
+              class="dashboard-head__wall"
+              variant="secondary"
+              appearance="outlined"
+              size="sm"
+              icon="fullscreen"
+              [label]="'dashboard.wall.enter' | translate"
+              (clicked)="enterWall()"
+            />
+          </div>
+          @if (carouselRunning() && canRotate()) {
+            <!-- Cuánto falta para el siguiente monitor: se reinicia al cambiar de monitor. -->
+            <span class="dashboard-progress" aria-hidden="true">
+              <span
+                class="dashboard-progress__bar dashboard-progress__bar--run"
+                [style.animation-duration.s]="carouselSeconds()"
+                [scAnimateOnChange]="m.id"
+                animateClass="dashboard-progress__bar--run"
+              ></span>
+            </span>
+          }
+        </header>
+
+      } @else {
+        <!-- ─── Modo pared: una barra mínima que se esconde sola ─── -->
+        <!-- La barra del modo pared es la Toolbar de primeng.dev: nombre y estado al inicio, controles al
+             final. Los controles se esconden solos; el nombre del monitor se sigue leyendo. -->
+        <div class="wall-head">
+        <p-toolbar class="wall-bar" [class.wall-bar--hidden]="!wallControlsVisible()">
+          <ng-template #start>
+            <span class="wall-bar__start">
+              <span class="wall-bar__name sc-text-h3-semibold">{{ m.name }}</span>
+              @if (canRotate()) {
+                <span class="wall-bar__dots" aria-hidden="true">
+                  @for (mm of store.monitors(); track mm.id) {
+                    <span class="wall-bar__dot" [class.wall-bar__dot--active]="mm.id === m.id"></span>
+                  }
+                </span>
+              }
+              <span class="wall-bar__live sc-text-caption-regular">
+                <sc-badge variant="success" aria-hidden="true" />
+                {{ 'dashboard.live' | translate }} · {{ 'dashboard.updated_at' | translate: { time: updatedAtLabel() } }}
+              </span>
+            </span>
+          </ng-template>
+          <ng-template #end>
+            <span class="wall-bar__controls">
+              @if (canRotate()) {
+                <sc-button variant="secondary" appearance="text" size="sm" icon="skip_previous" [ariaLabel]="'dashboard.carousel.previous' | translate" (clicked)="store.selectOffset(-1)" />
+                <sc-button
+                  variant="secondary"
+                  appearance="text"
+                  size="sm"
+                  [icon]="carouselRunning() ? 'pause' : 'play_arrow'"
+                  [ariaLabel]="(carouselRunning() ? 'dashboard.carousel.pause' : 'dashboard.carousel.play') | translate"
+                  (clicked)="toggleCarousel()"
+                />
+                <sc-button variant="secondary" appearance="text" size="sm" icon="skip_next" [ariaLabel]="'dashboard.carousel.next' | translate" (clicked)="store.selectOffset(1)" />
+              }
+              <sc-button variant="secondary" appearance="outlined" size="sm" icon="fullscreen_exit" [label]="'dashboard.wall.exit' | translate" (clicked)="exitWall()" />
+            </span>
+          </ng-template>
+        </p-toolbar>
+        @if (carouselRunning() && canRotate()) {
+          <!-- Cuánto falta para el siguiente monitor: se reinicia al cambiar de monitor. -->
+          <span class="dashboard-progress" aria-hidden="true">
+            <span
+              class="dashboard-progress__bar dashboard-progress__bar--run"
+              [style.animation-duration.s]="carouselSeconds()"
+              [scAnimateOnChange]="m.id"
+              animateClass="dashboard-progress__bar--run"
+            ></span>
+          </span>
+        }
+        </div>
+
+      }
+
+      <!-- ─── Las cuatro cajas. Cada monitor tiene sus propias cajas (otro `id`): al cambiar de monitor
+           se montan de nuevo y sus widgets entran escalonados. ─── -->
+      <div class="dashboard" cdkDropListGroup>
+        @for (box of m.boxes; track box.id; let b = $index) {
+          <div class="dashboard__box" [class.dashboard__box--split]="box.layout === 'split'">
+            @for (slot of box.slots; track $index; let s = $index) {
+              <!-- La celda apila lo que sale y lo que entra en el mismo sitio, y es donde se suelta
+                   un widget arrastrado: solo acepta los de su tamaño. -->
+              <div
+                class="dashboard__cell"
+                [style.--enter-delay]="enterDelay(b, s)"
+                cdkDropList
+                cdkDropListSortingDisabled
+                [cdkDropListData]="{ box: b, slot: s }"
+                [cdkDropListEnterPredicate]="acceptsFor(box)"
+                [cdkDropListDisabled]="wall()"
+                (cdkDropListDropped)="dropped($event)"
+              >
+                @if (slot; as entry) {
+                  <sc-dashboard-widget-card
+                    animate.enter="dash-enter"
+                    animate.leave="dash-leave"
+                    cdkDrag
+                    [cdkDragStartDelay]="dragDelay"
+                    [cdkDragData]="dragData({ box: b, slot: s }, entry.widget)"
+                    [cdkDragDisabled]="wall()"
+                    [attr.data-widget-id]="entry.widget.id"
+                    [class.dash-flash]="flashId() === entry.widget.id"
+                    [title]="titleOf(entry.widget)"
+                    [entities]="entry.widget.entities"
+                    [filter]="entry.widget.filter"
+                    [alert]="entry.alert"
+                    [preview]="wall()"
+                    [draggable]="!wall()"
+                    (filterChange)="updateFilter({ box: b, slot: s }, $event)"
+                    (edit)="openAssistant({ box: b, slot: s }, store.widgetAt({ box: b, slot: s }))"
+                    (remove)="removeWidget({ box: b, slot: s })"
+                  >
+                    <sc-dashboard-widget-view
+                      [widget]="entry.widget"
+                      [interactive]="!wall()"
+                      (openDetail)="openDetail(entry.widget, $event)"
+                    />
+                  </sc-dashboard-widget-card>
+                } @else if (!wall()) {
+                  <sc-dashboard-empty-slot
+                    animate.enter="dash-enter"
+                    animate.leave="dash-leave"
+                    [splitAction]="splitActionFor(box, s)"
+                    (add)="openAssistant({ box: b, slot: s })"
+                    (split)="store.split(b)"
+                    (gather)="store.gather(b)"
+                  />
+                }
+              </div>
+            }
+          </div>
+        }
+      </div>
+    }
+  </div>
+</div>
+
+<!-- ─── Superpuestos (fuera del modo pared: allí no hay menús ni paneles) ─── -->
+<p-popover #alertsPanel [appendTo]="'body'" role="dialog" [attr.aria-label]="'dashboard.alerts.title' | translate">
+  <div class="alerts-panel">
+    <div class="alerts-panel__head">
+      <h3 class="alerts-panel__title sc-text-body-semibold">{{ 'dashboard.alerts.title' | translate }}</h3>
+      @if (unseenAlerts().length) {
+        <sc-button
+          variant="primary"
+          appearance="link"
+          size="sm"
+          [label]="'dashboard.alerts.mark_all_seen' | translate"
+          (clicked)="markAllAlertsSeen()"
+        />
+      }
+    </div>
+    @for (a of alerts(); track a.key) {
+      <button
+        type="button"
+        class="alerts-panel__item"
+        [class.alerts-panel__item--seen]="a.seen"
+        (click)="goToAlert(a); alertsPanel.hide()"
+      >
+        <sc-icon
+          [class]="'alerts-panel__icon alerts-panel__icon--' + a.alert.level"
+          [name]="a.alert.level === 'danger' ? 'error' : 'warning'"
+          [size]="iconSize"
+          [filled]="true"
+          aria-hidden="true"
+        />
+        <span class="alerts-panel__text">
+          <span class="sc-text-body-semibold">{{ a.alert.reasonKey | translate: a.alert.params }}</span>
+          <span class="alerts-panel__where sc-text-caption-regular">
+            {{ titleOf(a.widget) }} · {{ a.monitorName }}
+            @if (a.seen) {
+              · {{ 'dashboard.alerts.seen' | translate }}
+            }
+          </span>
+        </span>
+      </button>
+    } @empty {
+      <p class="alerts-panel__empty sc-text-body-regular">{{ 'dashboard.alerts.none' | translate }}</p>
+    }
+    <p class="alerts-panel__rules sc-text-caption-regular">{{ 'dashboard.alerts.rules' | translate }}</p>
+  </div>
+</p-popover>
+
+<p-menu #carouselMenuRef [model]="carouselMenu()" [popup]="true" appendTo="body" />
+
+<sc-dashboard-widget-assistant
+  [visible]="assistantOpen()"
+  (visibleChange)="assistantOpen.set($event)"
+  [size]="assistantSize()"
+  [editing]="assistantEditing()"
+  (saved)="saveWidget($event)"
+/>
+
+<sc-dashboard-detail-drawer [request]="detail()" [widget]="detailWidget()" (closed)="detail.set(null)" />

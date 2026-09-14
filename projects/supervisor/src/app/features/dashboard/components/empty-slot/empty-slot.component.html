@@ -1,0 +1,32 @@
+<div class="slot">
+  <sc-button
+    variant="secondary"
+    appearance="outlined"
+    size="sm"
+    icon="add"
+    [label]="'dashboard.empty_slot.add' | translate"
+    (clicked)="add.emit()"
+  />
+  @switch (splitAction()) {
+    @case ('split') {
+      <sc-button
+        variant="secondary"
+        appearance="text"
+        size="sm"
+        icon="grid_view"
+        [label]="'dashboard.empty_slot.split' | translate"
+        (clicked)="split.emit()"
+      />
+    }
+    @case ('gather') {
+      <sc-button
+        variant="secondary"
+        appearance="text"
+        size="sm"
+        icon="crop_square"
+        [label]="'dashboard.empty_slot.gather' | translate"
+        (clicked)="gather.emit()"
+      />
+    }
+  }
+</div>
