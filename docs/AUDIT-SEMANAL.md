@@ -13,6 +13,52 @@
 
 ---
 
+## 2026-09-14
+
+> Método: pasada A (deuda de código, ≤5) + pasada B (deriva de docs) + pasada C (PRs parados >7d)
+> + pasada D (panel de Cloudflare). Contra AGENTS.md/.impeccable.md/customs-catalog.md/DOCS-INDEX.md.
+> Semana con ~50 commits desde la última pasada — la migración "Aura pasa a ser la base del tema"
+> (DD-78 a DD-81): tabla, colores oscuros a zinc, hub de Repositorios al `Menu` del DS y primario
+> oscuro a `sky`, todo medido y documentado en su propio DD. Pasada A no encontró deuda nueva que
+> añadir al backlog ya abierto (los tres items de la sección 2026-09-07 siguen igual: `renamingId`
+> muerto, `buildMenuItems`/`confirmDelete` duplicados, los dos sistemas de toast — ninguno se tocó
+> esta semana). Pasada C: 1 PR abierto (#142, `arebury/fichas-aura`, creado 2026-09-13, <24h, y su
+> propio título dice "Borrador, no fundir") — no cualifica. Pasada D: sin `CLOUDFLARE_API_TOKEN` en
+> este entorno → no comprobado.
+
+### Deuda de código
+
+sin hallazgos nuevos.
+
+### Deriva de docs
+
+- [ ] Tres docs afirman, con la misma medición citada ("verificado 2026-08-13: `definePreset`
+      tiene 0 apariciones en `projects/`"), que el preset de SmartContact **no** envuelve Aura:
+      `docs/guia-tokens.md:485` ("Nuestro preset **NO** hace `definePreset(Aura, …)` — es un objeto
+      **autónomo**"), `projects/design-tokens/README.md:47-48` (mismo texto en inglés) y
+      `projects/ui-smartcontact/README.md:24`. La propia `docs/AUDIT-SEMANAL.md` (sección
+      2026-08-13, más abajo) documenta que esa cifra ya se verificó una vez. Pero el commit
+      `d245918` ("Config habla con una sola voz, y Aura pasa a ser la base del tema", #136,
+      2026-09-13) reescribió `projects/ui-smartcontact/src/lib/theme/sc-preset/index.ts:101` a
+      `const preset = definePreset(Aura, normalizeDesignRem({...}))` — es la decisión load-bearing
+      de **DD-78** ("Aura es la base del tema... encima va todo lo nuestro"), documentada y medida,
+      pero las tres afirmaciones "0 apariciones / objeto autónomo" no se tocaron y hoy son falsas:
+      hay exactamente 1 aparición y es justo la del preset raíz → reescribir los tres párrafos para
+      que digan que el preset SÍ envuelve Aura (`definePreset(Aura, …)`) desde DD-78, y que lo que
+      no se overridea hereda de Aura a propósito (que es, de hecho, la razón de la decisión). No es
+      intencional dejarlo así: ninguno de los tres ficheros es *dormant-by-design* y los tres se
+      citan entre sí como la misma prueba. [arréglalo]
+
+### Trabajo sin mergear
+
+sin hallazgos (el único PR abierto, #142, tiene menos de 24h y su título ya avisa "no fundir").
+
+### Panel de Cloudflare
+
+no comprobado (sin `CLOUDFLARE_API_TOKEN` en este entorno).
+
+---
+
 ## 2026-09-07
 
 > Método: pasada A (deuda de código, ≤5) + pasada B (deriva de docs) + pasada C (PRs parados
