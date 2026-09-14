@@ -139,6 +139,29 @@
 
 ## Decisiones de marca pendientes (system-wide → review)
 
+### Color del botón principal: sacarlo del marino (2026-09-14)
+- **Qué**: en claro, el principal es `blue-700` (`#1B273D`), exactamente el color de la barra lateral, y por eso
+  el botón no destaca. El cian con texto blanco no llega (cian 500: 2,06:1). Medidas nueve salidas con colores
+  que ya existen, sobre los grises de DD-106. Contraste del texto en reposo, con el ratón encima y al pulsar:
+
+  | Opción | Reposo | Ratón | Pulsado | Lo que hay que saber |
+  |---|---|---|---|---|
+  | Marino 500, texto blanco | 8,90 | 5,62 | 12,44 | poca diferencia con la barra (1,68:1) |
+  | Cian 300, texto marino | 9,87 | 11,55 | 8,55 | apenas se separa del blanco (1,52:1) |
+  | **Cian 400, texto marino** | 8,55 | 9,87 | 7,25 | el cian más vivo que pasa en los tres estados |
+  | Cian 500, texto marino | 7,25 | 8,55 | 4,32 | al pulsar queda bajo 4,5 |
+  | Cian 700, texto blanco | 5,64 | 8,97 | 12,92 | pasa siempre; queda apagado |
+  | Azul eléctrico 500, texto blanco | 4,90 | 6,80 | 9,79 | misma familia que el foco y los enlaces |
+  | Azul eléctrico 600, texto blanco | 6,80 | 9,79 | 13,54 | es el color de los enlaces |
+  | **Cian 400 solo en botones** | 8,55 | 9,87 | 7,25 | casillas y selección siguen en marino; el botón deja de seguir a `primary` |
+
+  Capturas de las nueve en `~/Documents/Claude/2026-09 grises-y-primario/grises-y-primario.html`.
+- **Disparador**: decisión de Rafa (identidad de marca). Sin prisa: aparcado a propósito el 2026-09-14.
+- **Validación**: con la opción elegida, en Figma las cuatro variables de `primary` en claro (color, hover,
+  activo y texto sobre primario), o, si es solo en botones, las de `button/primary` con su fila en
+  `customs-catalog.md`. Revisar el oscuro (su principal ya es azul eléctrico, DD-81), pasar `theme-contrast`
+  en los dos temas y registrar la DD.
+
 ### Superficies dark — ¿alinear a zinc o mantener cool?
 - **Qué**: nuestra rampa dark es slate/cool (`gray-900 #181d26`); el Kit usa zinc neutro
   (`#18181b`). Diferencia casi imperceptible, pero afecta a TODO el modo oscuro.
@@ -158,6 +181,18 @@
   visual de los 15-22 ficheros. No es un swap rápido.
 
 ## Profundidad del pipeline (gated en necesidad — DD-15)
+
+### Color de componente que Figma no alcanza (2026-09-14)
+- **Qué**: 185 slots de color que el Kit SÍ genera como `--sc-cmp-*` y el preset NO lee, porque tiene escrito
+  `{…}` o un hex: `button` 147 (las severidades, en claro y oscuro), `togglebutton` 16, `progressspinner` 8,
+  `toggleswitch` 5, `chip` 4, `tooltip` 4 y `treetable` 1. Cambiar uno de esos colores en Figma no llega a la
+  pantalla (medido con ToggleButton, DD-106). El guard `tokens:cmp-rewire` no lo caza: solo mira hex, y en `root`
+  ni eso. Alguno puede ser una divergencia a propósito sin fila en `EXCLUDE` (DD-87: botón rojo un paso más oscuro).
+- **Disparador**: cambiar en Figma el color de uno de esos componentes, o preparar una subida de PrimeNG.
+- **Validación**: cada slot se cablea a su `var(--sc-cmp-*)` comprobando que el color computado no cambia, o se
+  registra como divergencia en `cmp-color-map.mjs` y `customs-catalog.md`. Después, el guard rompe con un hex o
+  una referencia `{…}` en un slot generado, `root` incluido. Los textos blancos de las severidades de `button` en
+  claro valen lo mismo que su token (`slate-0`): son el primer lote, sin cambio visible.
 
 ### Generador de color semántico desde el export (E1)
 - **Disparador**: si los diseñadores iteran color a menudo. Hoy el "rojo-flag → humano" + el
