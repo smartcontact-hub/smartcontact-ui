@@ -100,6 +100,66 @@ decisión aparte: cabecera de columnas fija con scroll de página o tabla con sc
 
 ---
 
+## DD-93 · 2026-09-14 — El tema del equipo externo se instala con npm y habla el idioma del plugin
+
+**Contexto** · Rafa: «que les funcione perfectamente el tema y el extend y se actualice en su código», sin
+pasar por nadie cada vez. Medido el 2026-09-14 sobre su web publicada (ui.smart-contact.com, raíz a 16 px)
+y con los paquetes de PrimeNG 21 (`@primeuix/styled` 0.7.4, `@primeuix/styles` 2.0.3): (1) su hoja global
+lee variables del `extend` del plugin (`--p-typography-font-size-100`, `--p-app-typography-xl-line-height`…)
+y nuestro tema no traía 63 de las que el plugin define; (2) con PrimeNG 21, los estilos de sus componentes
+leen 2.250 variables: el tema del plugin deja 367 sin definir, el nuestro 10, y el Aura propio de PrimeNG 21
+esas mismas 10 (son de PrimeNG, no un hueco); control con PrimeNG 22: 727 contra 4; (3) el zip había que
+descargarlo a mano en cada cambio.
+
+**Decisión** · (1) `tema-zip.mjs` añade al tema empaquetado el `extend` del plugin, generado de la
+colección `aura/custom` del Kit (de donde lo saca el plugin): tipografía a nuestros `--sc-font-*`, pasos
+de escala a `--sc-scale-*`, las divergencias escritas en `coverage-map` (acento, icono de diálogo) a
+nuestro token, y el resto con el valor del Kit; pesos sin «px». Lo que `sc-preset/extend.ts` ya declara,
+gana. Nuestras apps no cambian: solo el paquete. (2) Comprobación 4: rojo si al tema empaquetado le falta
+una variable de ese contrato. (3) El tema es un paquete npm, `smartcontact-tema`, que `tema-zip.yml`
+publica también como fichero, `smartcontact-tema.tgz`. Se entrega así, adjunto en Jira; ellos lo guardan
+donde ya guardan paquetes como `.tgz` (`smart-contact-ui-lab/local-libs/archives`) y lo instalan con
+`npm install ./….tgz`. Rafa: «que no tengan que meterse en mi github», y privado. La rama `tema-zip`
+sigue siendo instalable como dependencia git, para uso interno. (4) `tema-zip.yml` también corre cuando
+cambia el export del Kit.
+
+**Razón** · Un solo tema, el de nuestras apps, que además cumple el contrato del plugin: la hoja que
+escribieron contra el plugin sigue encontrando sus variables y los componentes de PrimeNG 21 quedan tan
+completos como con Aura. Medido: el `extend` solo añade (59 variables nuevas, 0 existentes cambian ni
+desaparecen); de las 63 que faltaban quedan 4, `app.typography.xl/xxl`, que el Kit de hoy tampoco tiene y
+cuyo respaldo en su hoja (1,5rem y 1,75rem) da lo mismo que daba el plugin (24 y 28 px). Instalación
+ensayada con la rama simulada en un repo local (instala sin los zips, importa el preset, y tras un commit
+nuevo `npm update smartcontact-tema` lo trae) y desde el `.tgz` (7 ficheros, el preset importa).
+
+**Descartadas** ·
+- **Arreglar el export del plugin a posteriori** (raíz, pesos, reglas CSS, decisiones de código) → sería
+  reescribir su salida en cada export, y aun así no lleva lo que se decide en código.
+- **Meter el `extend` del plugin en `sc-preset` de nuestras apps** → nadie de este repo lo lee; en el paquete
+  basta y no toca nada nuestro.
+- **Instalar desde nuestra rama de GitHub** (primera propuesta de Claude) → el equipo externo dependería
+  de nuestro GitHub; Rafa lo quiere en su casa.
+- **npm público (npmjs.com)** → el nombre está libre y se actualiza solo, pero el paquete sería público.
+- **Inicio de sesión único (SSO)** → sirve a personas en el navegador; `npm install` y su CI entran con
+  token, así que cualquier registro privado acaba pidiendo uno.
+- **Etiquetas semver en el repo para `#semver:`** → se mezclarían con las del DS (v1.x).
+
+**Consecuencias** · El equipo externo cambia la instalación una vez (guía en el `README.md` del paquete,
+con redacción profesional). Cada versión se llama igual, `smartcontact-tema.tgz`: Rafa la descarga del
+enlace fijo (`…/raw/tema-zip/smartcontact-tema.tgz`) y la adjunta en Jira, y ellos sustituyen el fichero y
+reinstalan (medido: con el mismo nombre y contenido nuevo, npm instala la versión nueva). Sin token en su
+GitLab, porque diseño y producto no tocan su código (Rafa).
+
+Prueba por fuera en su entorno de desarrollo (Contact Center, SISMAC-4074), con el tema inyectado solo en
+el navegador de la sesión, sin guardar nada: los controles siguen al tema (campo 32 → 32,5, botón sm
+28 → 27, md 32 → 32,5, primario `#1b273d`), y en la pantalla no cambia ningún texto, color ni espaciado:
+de 115 elementos propios visibles, 37 cambian solo de alto, arrastrados por los controles. Cuadra con su
+hoja: 465 declaraciones, 96 medidas y 57 colores fijos, 70 `!important` y ningún `var()`. Pendiente de medir
+en su app que el preset rinda igual con PrimeNG 21. Fuera de alcance: sus `--sc-*` propias (557
+definiciones, 253 con valor fijo, 304 nombres que no existen en el nuestro) y la hoja de Contact Center no
+siguen a ningún tema; pasarlas a variables es otra tanda.
+
+---
+
 ## DD-92 · 2026-09-14 — La colección «App» de PrimeOne se queda, como alias de Custom: el DS ya no la usa y no puede desviarse
 
 **Contexto** · Al cerrar DD-91 quedó a la vista una colección duplicada en el Smart-Contact Design System:
