@@ -44,9 +44,9 @@
 2. **sc-docs: ejemplos de primeng.dev dentro de `<sc-datatable>`**, la red de «la tabla perfecta»: pasa
    ~20 de las 79 entradas de `p-table`.
 
-- **La barra de búsqueda de Usuarios, Agentes y Grupos no se queda fija al hacer scroll** (visto el
-  2026-09-14, DD-90): es `sticky` dentro de `.page`, pero el que hace scroll es `main.app-shell__content`.
-  Falla igual antes y después de DD-90. Mismo mecanismo que DD-80 resolvió en las tablas.
+- **Tabla: cabecera de columnas fija con la página, o tabla con scroll propio** (lo pide el jefe de Rafa,
+  2026-09-14). Medido en dos ramas que NO se funden, `comparar/tabla-sticky` y `comparar/tabla-scroll`
+  (vista previa en Cloudflare); informe en `~/Documents/Claude/2026-09 tabla-sticky-vs-scroll/`. Esperando decisión.
 
 **APARCADO por Rafa para OTRA sesión (2026-09-13): nuestros componentes contra Aura tal cual.**
 «Si te instalas Aura y le pones este styling estamos así»: una ficha por componente que diga qué
@@ -158,14 +158,16 @@ escribir tallas a mano. Página, capturas y sondas: `~/Documents/Claude/2026-09 
 - **Colección «App» (DD-92)**: se queda como alias de Custom; el DS ya no la usa y el Supervisor la hereda
   (939 enlaces) hasta actualizar la librería. Revisar más adelante si se borra. De DD-91: hora del datepicker 17,5 contra 14; botón solo icono no cuadrado; filtros 2px.
 
-## ✅ 2026-09-14 · La barra de arriba baja de 91 a 75 y el título queda a la distancia de Aura
+## ✅ 2026-09-14 · La cabecera baja de 91 a 56 y todas las listas reparten el aire igual
 
-**Sello:** rama `arebury/aura-spacing-scale` sobre `4c150f9` (#157). DD-90. Rafa, visto en local: «me gusta».
+**Sello:** #159 (`arebury/aura-spacing-scale`, DD-90) y `arebury/huecos-listas` (DD-93). Rafa, visto en local: «me gusta».
 El tramo «Aura es la base del tema» (2026-09-13) vive en el tag `archive/handoff-ds-2026-09-14-aura-base`.
 
 **Lo que cambia.** `sc-breadcrumb flush` y la TopBar lo usa (91 → 75). Título → contenido `scale/1` en las
 13 pantallas con `page__heading` (antes 21, y 31,5-33 en cuatro). Evaluación de por qué Aura no engorda y
-simulación de la densidad con ese reparto: `~/Documents/Claude/2026-09 aire-aura/index.html`.
+simulación de la densidad con ese reparto: `~/Documents/Claude/2026-09 aire-aura/index.html`. Después (DD-93):
+TopBar y bloque del logo a `scale/4` (56), página 17,5 arriba y 28 a los lados, buscador → tabla 12,25, y la barra
+de búsqueda de las listas se queda fija de verdad.
 
 **Lo que hay que recordar**, porque volverá a morder:
 
@@ -174,6 +176,8 @@ simulación de la densidad con ese reparto: `~/Documents/Claude/2026-09 aire-aur
   menos donde es aire de página) da 73 y 13 filas. Es parte de la decisión de densidad, no un extra.
 - ⚠️ **Un componente de Aura que se dibuja como barra suelta (miga, toolbar) suma su relleno** si lo metes
   en otra barra: mira su `padding` antes de culpar al interlineado.
+- ⚠️ **Una barra `sticky` que no se queda casi nunca es la barra**: busca un antepasado con `overflow` distinto
+  de `visible`/`clip` (en las listas era `.page`, y en Agentes la `.table-card` con `overflow-x: auto`).
 
 ## ✅ 2026-09-14 · El robot de tokens deja de ponerse rojo por lo que Figma cambia a propósito
 

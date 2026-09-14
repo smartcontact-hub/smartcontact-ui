@@ -44,6 +44,19 @@ verificar** contra el fichero del DS: sale de la sesión de `/config/aed/*`, med
 
 ---
 
+## 3 · La cabecera y el aire de página se compactaron en código (2026-09-14)
+
+**Estado:** pendiente de bajarlo al fichero · **Sin verificar** contra el fichero del DS: medido en
+código, en builds estáticos del Supervisor a 1440.
+
+- **TopBar a 56 de alto** (`scale/4`; Figma `12277-4705` dibuja 72, con 20 arriba y abajo): el mismo token que
+  el bloque del logo de la barra lateral, para que las dos rayas casen. Avatar a `--sc-cmp-avatar-width` (28) y la
+  miga sin relleno propio (DD-90).
+- **Página:** barra → título 17,5 (`scale/1-25`), lados 28 (`scale/2`), título → contenido 14 (`scale/1`)
+  y buscador → tabla 12,25 (`scale/0-875`).
+
+---
+
 ## Cerrado
 
 - ~~**El título del componente `Section` a `Heading/h3-semibold`**~~ → **HECHO el 2026-09-13**
