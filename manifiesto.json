@@ -1,20 +1,85 @@
 {
-  "commit": "4ee307f",
+  "commit": "486feb6",
   "primeng": "22.1.0",
   "themes": "3.0.0",
-  "generado": "2026-09-14T13:45:37.014Z",
+  "generado": "2026-09-14T14:17:10.277Z",
   "comprobaciones": {
     "ceros": [],
     "raizPx": 16,
     "diferencia": {
       "anterior": true,
       "ficheros": [
-        "sc-preset.mjs"
+        "sc-preset.mjs",
+        "smartcontact-tokens.css"
       ],
-      "variables": [],
-      "semanticaComun": false,
-      "reglasCss": true,
-      "componentes": []
+      "variables": [
+        "claro|--sc-cmp-avatar-group-offset",
+        "claro|--sc-cmp-avatar-lg-font-size",
+        "claro|--sc-cmp-avatar-lg-icon-size",
+        "claro|--sc-cmp-avatar-xl-group-offset",
+        "claro|--sc-cmp-badge-font-size",
+        "claro|--sc-cmp-badge-height",
+        "claro|--sc-cmp-badge-lg-font-size",
+        "claro|--sc-cmp-badge-lg-height",
+        "claro|--sc-cmp-badge-lg-min-width",
+        "claro|--sc-cmp-badge-min-width",
+        "claro|--sc-cmp-badge-padding-x",
+        "claro|--sc-cmp-badge-sm-font-size",
+        "claro|--sc-cmp-badge-sm-height",
+        "claro|--sc-cmp-badge-sm-min-width",
+        "claro|--sc-cmp-card-body-padding",
+        "claro|--sc-cmp-confirmdialog-icon-size",
+        "claro|--sc-cmp-divider-horizontal-content-padding-x",
+        "claro|--sc-cmp-divider-horizontal-padding-x",
+        "claro|--sc-cmp-divider-horizontal-padding-y",
+        "claro|--sc-cmp-divider-vertical-content-padding-y",
+        "claro|--sc-cmp-divider-vertical-padding-x",
+        "claro|--sc-cmp-divider-vertical-padding-y",
+        "claro|--sc-cmp-inputgroup-addon-min-width",
+        "claro|--sc-cmp-inputgroup-addon-padding",
+        "claro|--sc-cmp-inputgroup-addon-padding-x",
+        "claro|--sc-cmp-inputgroup-addon-padding-y",
+        "claro|--sc-cmp-list-option-group-padding-x",
+        "claro|--sc-cmp-list-option-group-padding-y",
+        "claro|--sc-cmp-list-option-padding-x",
+        "claro|--sc-cmp-list-option-padding-y",
+        "claro|--sc-cmp-message-content-lg-padding-x",
+        "claro|--sc-cmp-message-content-lg-padding-y",
+        "claro|--sc-cmp-message-content-padding-x",
+        "claro|--sc-cmp-message-content-padding-y",
+        "claro|--sc-cmp-message-content-sm-padding-x",
+        "claro|--sc-cmp-message-content-sm-padding-y",
+        "claro|--sc-cmp-navigation-item-padding-x",
+        "claro|--sc-cmp-navigation-item-padding-y",
+        "claro|--sc-cmp-navigation-submenu-icon-size",
+        "claro|--sc-cmp-navigation-submenu-label-padding-x",
+        "claro|--sc-cmp-navigation-submenu-label-padding-y",
+        "claro|--sc-cmp-paginator-jump-to-page-input-max-width",
+        "claro|--sc-cmp-paginator-nav-button-height",
+        "claro|--sc-cmp-paginator-nav-button-width",
+        "claro|--sc-cmp-paginator-padding-x",
+        "claro|--sc-cmp-paginator-padding-y",
+        "claro|--sc-cmp-panel-header-padding",
+        "claro|--sc-cmp-panel-toggleable-header-padding-x",
+        "claro|--sc-cmp-popover-arrow-offset",
+        "claro|--sc-cmp-progressbar-height",
+        "claro|--sc-cmp-radiobutton-height",
+        "claro|--sc-cmp-radiobutton-icon-lg-size",
+        "claro|--sc-cmp-radiobutton-icon-size",
+        "claro|--sc-cmp-radiobutton-lg-height",
+        "claro|--sc-cmp-radiobutton-lg-width",
+        "claro|--sc-cmp-radiobutton-width",
+        "claro|--sc-cmp-tag-padding-x",
+        "claro|--sc-cmp-tooltip-padding-x",
+        "claro|--sc-cmp-tooltip-padding-y"
+      ],
+      "semanticaComun": true,
+      "reglasCss": false,
+      "componentes": [
+        "divider",
+        "inputgroup",
+        "toast"
+      ]
     },
     "cambia": true,
     "contratoPlugin": {
@@ -22,5 +87,5 @@
       "faltan": []
     }
   },
-  "version": "0.20260914.1345"
+  "version": "0.20260914.1417"
 }

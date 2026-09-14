@@ -1024,11 +1024,11 @@ var base_default = {
         padding: "var(--sc-scale-0-5) var(--sc-scale-1) var(--sc-scale-0-25)"
       },
       option: {
-        padding: "var(--sc-scale-0-5) var(--sc-scale-0-75)",
+        padding: "var(--sc-cmp-list-option-padding-y) var(--sc-cmp-list-option-padding-x)",
         borderRadius: "{border.radius.sm}"
       },
       optionGroup: {
-        padding: "var(--sc-scale-0-5) var(--sc-scale-0-75)",
+        padding: "var(--sc-cmp-list-option-group-padding-y) var(--sc-cmp-list-option-group-padding-x)",
         fontWeight: "600"
       }
     },
@@ -1073,7 +1073,7 @@ var base_default = {
     navigation: {
       item: {
         gap: "var(--sc-scale-0-5)",
-        padding: "var(--sc-scale-0-5) var(--sc-scale-0-75)",
+        padding: "var(--sc-cmp-navigation-item-padding-y) var(--sc-cmp-navigation-item-padding-x)",
         borderRadius: "{border.radius.sm}"
       },
       list: {
@@ -1081,10 +1081,10 @@ var base_default = {
         padding: "var(--sc-scale-0-25)"
       },
       submenuIcon: {
-        size: "var(--sc-scale-0-875)"
+        size: "var(--sc-cmp-navigation-submenu-icon-size)"
       },
       submenuLabel: {
-        padding: "var(--sc-scale-0-5) var(--sc-scale-0-75)",
+        padding: "var(--sc-cmp-navigation-submenu-label-padding-y) var(--sc-cmp-navigation-submenu-label-padding-x)",
         fontWeight: "600"
       }
     },
@@ -1849,7 +1849,7 @@ var toast_default = {
         detailColor: "var(--sc-cmp-toast-info-detail-color)"
       },
       root: {
-        blur: "0.107143rem"
+        blur: "0.714286rem"
       },
       warn: {
         color: "var(--sc-cmp-toast-warn-color)",
@@ -2789,14 +2789,14 @@ var divider_default = {
     content: {
       padding: "var(--sc-cmp-divider-vertical-content-padding-y) var(--sc-cmp-divider-vertical-content-padding-x)"
     },
-    padding: "0"
+    padding: "var(--sc-cmp-divider-vertical-padding-y) var(--sc-cmp-divider-vertical-padding-x)"
   },
   horizontal: {
     margin: "var(--sc-cmp-divider-horizontal-margin-y) var(--sc-cmp-divider-horizontal-margin-x)",
     content: {
       padding: "var(--sc-cmp-divider-horizontal-content-padding-y) var(--sc-cmp-divider-horizontal-content-padding-x)"
     },
-    padding: "0"
+    padding: "var(--sc-cmp-divider-horizontal-padding-y) var(--sc-cmp-divider-horizontal-padding-x)"
   }
 };
 
@@ -4597,7 +4597,7 @@ var floatlabel_default = {
 var inputgroup_default = {
   addon: {
     color: "{form.field.icon.color}",
-    padding: "var(--sc-cmp-inputgroup-addon-padding)",
+    padding: "var(--sc-cmp-inputgroup-addon-padding-y) var(--sc-cmp-inputgroup-addon-padding-x)",
     minWidth: "var(--sc-cmp-inputgroup-addon-min-width)",
     background: "{form.field.background}",
     borderColor: "{form.field.border.color}",
