@@ -66,6 +66,9 @@
   capturar un `main` más alto que la ventana. Tumba el `preflight` de cualquier cambio del DS (DD-99 subió con
   `# sc:ok` por esto). El CI no corre las baselines. **No se reprodujo en las tres pasadas de `e2e:visual` del
   preflight de #175** (sobre `7007c73`, `31c2603` y `4e6c68d`, 2026-09-14): `datatable` en verde las tres.
+- **Acceso (DD-110), a juicio de Rafa**: la intensidad del fondo (`amplitude` 0.045 ≈ 64 px), la frase de marca de la
+  izquierda y el texto del botón de Microsoft en pt/fr (de memoria). `p-password` está obsoleto en PrimeNG 22
+  (`pInputPassword` no trae conmutador): la API de `sc-password` no depende de ello.
 - **La página actual de la miga no lleva `aria-current`** (DD-103): la guía de primeng.dev dice que sí, PrimeNG
   Angular no lo pone (medido `null`). El APG lo hace opcional si ese tramo no es enlace, pero PrimeNG le da
   `tabindex="0"`. Decidir si `sc-breadcrumb` lo pone o le quita el tabulador; hoy se queda.
@@ -165,6 +168,22 @@ las 38 ranuras— se cerraron el mismo día en DD-73.)
 3. **La deuda de código de [`AUDIT-DEUDA-2026-06.md`](../AUDIT-DEUDA-2026-06.md)** que quede tras
    s34, y **los cabos de DD-24** (round-trip de iconos) en [`ROADMAP.md`](../ROADMAP.md).
 
+## ✅ 2026-09-14 · El Supervisor tiene pantalla de acceso, `sc-password` y un fondo que se mueve (DD-110)
+
+**Sello:** rama `arebury/login-supervisor` (#179), fundida en `c17d49c`. Rafa, visto en local y en la previsualización:
+«fúndelo así». Los tramos «Recursos» (DD-105) y «Grises intermedios» (DD-106) viven en los tags
+`archive/handoff-ds-2026-09-14-recursos` y `archive/handoff-ds-2026-09-14-grises`.
+
+**Lo que cambia.** `/login` fuera del shell con el molde de SnowUI: SSO de Microsoft en nuestro `sc-button`, pistas de
+email, un aviso de credenciales que no delata cuentas, recuperar contraseña, «Contáctanos» a la web y «Cerrar sesión»
+en el avatar. «Hola de nuevo» si se entró en 48 h. DS: `sc-password` (el ojo de PrimeNG era un `svg` sin foco). Fondo
+WebGL de Claude Design (`sc-login-art`), con la imagen fija debajo. Cuenta demo `supervisor@example.com` / `demo1234`.
+
+- ⚠️ **La hoja de una página no alcanza el `<img>` ni el `<canvas>` de OTRO componente** (encapsulación): el SCSS
+  que traía la propuesta de Claude Design no se aplicaba. Esos estilos van en el propio componente.
+- ⚠️ **Día de muchas PRs, segunda parte**: seis rebases, todos por `DECISIONS.md` (el número del DD) e inventarios. Un
+  script que toma la versión de `origin/main`, pone tu DD en `max+1` y regenera evita resolverlos a mano.
+
 ## ✅ 2026-09-14 · `sc-panel` con acciones y cabecera propias, `fill` y aviso (DD-108, DD-109)
 
 **Sello:** rama `arebury/sc-panel-icons-fill`, HEAD `c55f857` (#183) más este cambio. DD-108 y DD-109. Rafa: «adelante» y la variante de aviso. El tramo «Las fichas de agente, grupo
@@ -207,32 +226,6 @@ el Dashboard toma de PrimeNG y el fichero del DS aún no dibuja.
 
 - ⚠️ **Un valor del Kit pasado a rem pierde la forma del shorthand**: `1` dibujado abajo en Figma es `0 0 1px 0` en
   Aura, y escrito `0.071429rem` pinta cuatro lados. Solo se ve el día que alguien usa el componente.
-
-## ✅ 2026-09-14 · Grises intermedios decididos, y un color de Figma que no llegaba al tema (DD-106)
-
-**Sello:** HEAD `8098f58` (#177, rama `arebury/grises-intermedios`). DD-106. Rafa: «me convence el intermedio». El tramo de las fichas
-(DD-100 a DD-102) vive en el tag `archive/handoff-ds-2026-09-14-fichas-contact-center`.
-
-**Lo que cambia.** Nada en pantalla aún: los grises intermedios se hacen en Figma (`figma-pendiente.md` §8). El guard
-`cmp-color-rewire` empareja los slots `root` con su token del Kit. `ROADMAP.md` recoge el color del botón principal
-(9 opciones, sin decidir) y 185 colores de componente que Figma no alcanza. El hook de correcciones deja de contar
-los sobres `<task-notification>` y `<scheduled-task>`.
-
-- ⚠️ **Una caja `x-2` puede ser gemela de otra que trabaja la misma rama**: esta nació para el CI del PR 171 y
-  `coelacanth` ya lo arreglaba; se vio al ir a subir, hora y media después. `npm run sesiones` lo canta al abrir.
-- ⚠️ **Un `--sc-cmp-*` generado no significa que el tema lo lea**: mídelo en pantalla con el export simulado.
-
-## ✅ 2026-09-14 · Recursos: nombre propio, los campos que acumulan son multiselect y «todos» quita (DD-105)
-
-**Sello:** rama `arebury/nombre-repositorios`, HEAD `6c60e7f` (#176) más este cambio. DD-105. Rafa: «adelante». El tramo «Los controles llevan el
-interlineado de la rampa» (DD-91) vive en el tag `archive/handoff-ds-2026-09-14-interlineado`.
-
-**Lo que cambia.** La sección «Repositorios» de la ficha de agente pasa a «Recursos» (icono de libros); Idiomas y
-Etiquetas son `sc-multiselect`; la casilla de «todos» de `sc-multiselect` desmarca (fallo de PrimeNG 22.1.0,
-arreglado en el DS). Antes y ahora en la comparación de las fichas, sección Recursos.
-
-- ⚠️ **Un fallo que ves en una pantalla, repítelo en la documentación del DS antes de arreglarlo en la pantalla**:
-  aquí estaba en el componente y el arreglo en la ficha solo lo habría tapado ahí.
 
 ## 🗄️ Histórico de la lista SIGUIENTE — ya cerrado
 
@@ -308,6 +301,15 @@ variables, 30 comentarios activos.
 
 ## ⚠️ Trampas de este frente
 
+- 🪤 **Una caja `x-2` puede ser gemela de otra que trabaja la misma rama** (el PR 171 lo arreglaba ya `coelacanth`, y se
+  vio hora y media después): `npm run sesiones` lo canta al abrir.
+- 🪤 **Un `--sc-cmp-*` generado no significa que el tema lo lea**: mídelo en pantalla con el export simulado (DD-106).
+- 🪤 **Un fallo que ves en una pantalla, repítelo en la documentación del DS antes de arreglarlo en la pantalla**: si
+  está en el componente, el arreglo en la ficha solo lo tapa ahí (DD-105, `sc-multiselect`).
+- 🪤 **Una carpeta de `public/` con el nombre de una ruta la tapa**: `public/login/` hacía que `/login` diera 301 a la
+  carpeta en vez de la app. Las imágenes del acceso viven en `public/illustrations/`.
+- 🪤 **`pgrep -f 'texto'` dentro de un bucle de espera casa con el propio bucle** y no termina nunca: ancla el patrón
+  al proceso (`'^node scripts/preflight-scope.mjs'`) y compruébalo con `pgrep -fl` antes de fiarte.
 - 🪤 **Un `sc-multiselect` con `[value]` que sale de un método se cuelga**: cada ciclo devuelve un array nuevo, que
   cuenta como cambio. Dale un `computed` y compara antes de escribir (`labelValue` y `sameValues` en la ficha de agente).
 - 🪤 **El verde LOCAL no cubre los dos primeros metros del CI**, y en s34 mordió dos veces:
