@@ -58,10 +58,14 @@
       }
     }
 
+    /* Companion de la etiqueta (DD-24): mide lo que ella, 14. La maqueta dibuja 20 porque
+     * Figma pinta el glifo de Material a su tamaño literal (se ve ~15); en código el glifo
+     * va calibrado (DD-104) y a 20 pintaba 27 y se comía el hueco con el texto. Igual que
+     * el índice de Contact Center (`settings-sidebar`), que es la misma pieza. */
     .form-nav__icon {
       width: auto;
       height: auto;
-      font-size: var(--sc-icon-size-2xl); /* 20 — el `IconSet` de la maqueta */
+      font-size: var(--sc-font-size-body-2);
       background: transparent;
       border: 0;
       border-radius: 0;
