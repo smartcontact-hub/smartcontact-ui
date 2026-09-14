@@ -4,19 +4,20 @@ import type { MenuItem } from 'primeng/api';
 import { ScBreadcrumbComponent } from '@smartcontact-hub/components';
 import { StoryContext, StoryDef, StoryHostComponent, StoryMeta } from '../../../storybook';
 
-const BASIC_SNIPPET = `<sc-breadcrumb
-  [home]="{ icon: 'sc-icon-font sc-icon-font--home', command: goHome }"
+const BASIC_SNIPPET = `<!-- Para navegar, routerLink: el tramo es un enlace de verdad (manita, Cmd+clic, «copiar enlace»). -->
+<sc-breadcrumb
+  [home]="{ icon: 'sc-icon-font sc-icon-font--home', routerLink: '/' }"
   [model]="[
-    { label: 'Electronics', command: open },
-    { label: 'Computer', command: open },
-    { label: 'Accessories', command: open },
-    { label: 'Keyboard', command: open },
+    { label: 'Electronics', routerLink: '/electronics' },
+    { label: 'Computer', routerLink: '/electronics/computer' },
+    { label: 'Accessories', routerLink: '/electronics/computer/accessories' },
+    { label: 'Keyboard', routerLink: '/electronics/computer/accessories/keyboard' },
     { label: 'Wireless' },
   ]" />`;
 
 const FLUSH_SNIPPET = `<!-- "flush" quita el relleno propio de la miga, para cuando va dentro de una barra que ya pone su aire (la TopBar). -->
 <header class="barra">
-  <sc-breadcrumb [flush]="true" [model]="[{ label: 'Administración', command: open }, { label: 'Usuarios' }]" />
+  <sc-breadcrumb [flush]="true" [model]="[{ label: 'Administración', routerLink: '/admin' }, { label: 'Usuarios' }]" />
 </header>`;
 
 /** Demo de `sc-breadcrumb` (motor «Storybook-like»). Primer componente del
@@ -34,8 +35,9 @@ export class BreadcrumbDemoComponent {
   protected readonly rootTpl = viewChild<TemplateRef<StoryContext>>('root');
   protected readonly flushTpl = viewChild<TemplateRef<StoryContext>>('flush');
 
-  /** No-op para que los tramos intermedios se pinten como enlaces (clicables)
-   *  sin navegar en la demo; el último tramo NO lo lleva → es la página actual. */
+  /** No-op para que los tramos intermedios se pinten como pulsables sin navegar
+   *  en la demo (una app pasa `routerLink`, como enseñan los snippets); el último
+   *  tramo NO lo lleva → es la página actual. */
   protected readonly noop = (): void => {};
   protected readonly home: MenuItem = {
     icon: 'sc-icon-font sc-icon-font--home',
@@ -63,7 +65,8 @@ export class BreadcrumbDemoComponent {
         name: 'model',
         type: 'MenuItem[]',
         default: '[]',
-        description: 'Los tramos, en orden. El último es la página actual (sin command/routerLink).',
+        description:
+          'Los tramos, en orden. El último es la página actual (sin command/routerLink). Para navegar, routerLink. Los pulsables llevan manita y se subrayan al pasar el ratón.',
       },
       {
         name: 'home',

@@ -59,11 +59,15 @@ export class TopBarComponent {
   /** El trail como modelo de `sc-breadcrumb` (puente Figma→código). El tramo con
    *  `path` navega; el último no. El "aquí estás" (tramo actual en color pleno +
    *  peso medio) lo añade `sc-breadcrumb` por dentro (su `renderModel`), así que
-   *  aquí NO hace falta tocar nada. */
+   *  aquí NO hace falta tocar nada.
+   *
+   *  `routerLink` y no un `command` que llame a `navigateByUrl` (así estaba hasta el
+   *  2026-09-14): con dirección, el tramo es un enlace de verdad, con la manita,
+   *  Cmd+clic y «copiar enlace» que da el navegador. Con `command` era texto. */
   protected readonly crumbModel = computed<MenuItem[]>(() =>
     this.trail().map((crumb) => ({
       label: crumb.label,
-      command: crumb.path ? (): void => this.onCrumbClick(crumb.path) : undefined,
+      routerLink: crumb.path,
     })),
   );
 
@@ -104,10 +108,5 @@ export class TopBarComponent {
     event.preventDefault();
     this.userMenuOpen.set(false);
     this.avatarBtn()?.nativeElement.focus();
-  }
-
-  protected onCrumbClick(path: string | undefined): void {
-    if (!path) return;
-    void this.router.navigateByUrl(path);
   }
 }

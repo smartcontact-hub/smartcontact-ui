@@ -3,6 +3,31 @@ import type { MenuItem, MenuItemCommandEvent } from 'primeng/api';
 import { BreadcrumbModule } from 'primeng/breadcrumb';
 
 /**
+ * Clase del DS para los tramos que llevan a algún sitio. La pinta el tema
+ * (`sc-preset/css.ts`, «TRAMO PULSABLE DE LA MIGA»): manita y subrayado al pasar
+ * el ratón.
+ *
+ * Por qué hace falta (medido el 2026-09-14 en sc-docs): el navegador solo pone la
+ * manita en un `<a>` CON dirección, y el CSS de la miga de PrimeNG no la pide en
+ * ningún sitio (su menú sí). Un tramo con `routerLink` o `url` la tenía; uno con
+ * solo `command` salía con cursor de texto. Y al pasar el ratón el padre se
+ * oscurecía justo al color del tramo actual, que es lo único que NO se pulsa.
+ *
+ * Para navegar, lo correcto sigue siendo `routerLink`: da la manita, Cmd+clic y
+ * «copiar enlace» nativos. La clase es la red para el tramo que solo ejecuta una
+ * acción.
+ */
+const LINK_CLASS = 'sc-breadcrumb-item--link';
+
+const esPulsable = (item: MenuItem): boolean =>
+  !item.disabled && (item.routerLink != null || item.url != null || item.command != null);
+
+const comoEnlace = (item: MenuItem): MenuItem =>
+  esPulsable(item)
+    ? { ...item, styleClass: item.styleClass ? `${item.styleClass} ${LINK_CLASS}` : LINK_CLASS }
+    : item;
+
+/**
  * Migas de pan: dónde estás dentro de la jerarquía de la app. Wrapper fino
  * sobre `<p-breadcrumb>` — heredamos su modelo (`MenuItem[]` + `home`) sin
  * reinventar HTML, y el aspecto sale 100% de tokens vía `sc-preset` (`breadcrumb.*`):
@@ -14,8 +39,10 @@ import { BreadcrumbModule } from 'primeng/breadcrumb';
  *   <sc-breadcrumb [home]="{ icon: 'sc-icon-font sc-icon-font--home', routerLink: '/' }"
  *                  [model]="[{ label: 'Electronics', routerLink: '/e' }, { label: 'Wireless' }]" />
  *
- * El ÚLTIMO item es la página actual (sin `routerLink`/`command` → no clicable,
- * `aria-current` lo pone PrimeNG). El `home` es opcional; su `icon` es una clase
+ * El ÚLTIMO item es la página actual (sin `routerLink`/`command` → no clicable).
+ * ⚠️ `aria-current` NO lo pone PrimeNG Angular, aunque su guía de accesibilidad lo
+ * diga: medido el 2026-09-14, `null` en sc-docs y en el Supervisor, y no aparece en
+ * `primeng-breadcrumb.mjs`. El `home` es opcional; su `icon` es una clase
  * (Material vía `sc-icon-font sc-icon-font--<glifo>`, coherente con el resto del
  * DS — NO `pi pi-*`).
  *
@@ -80,16 +107,24 @@ export class ScBreadcrumbComponent {
     const items = this.model();
     if (items.length === 0) return items;
     const ultimo = items.length - 1;
-    return items.map((item, i) =>
-      i === ultimo
-        ? {
-            ...item,
-            labelStyle: {
-              color: 'var(--sc-text-primary)',
-              fontWeight: 'var(--sc-font-weight-medium)',
-            },
-          }
-        : item,
-    );
+    return items.map((item, i) => {
+      if (i === ultimo) {
+        return {
+          ...item,
+          labelStyle: {
+            color: 'var(--sc-text-primary)',
+            fontWeight: 'var(--sc-font-weight-medium)',
+          },
+        };
+      }
+      return comoEnlace(item);
+    });
+  });
+
+  /** El inicio lleva el mismo trato que un tramo padre: si lleva a algún sitio, se nota. */
+  protected readonly renderHome = computed(() => {
+    const home = this.home();
+    return home ? comoEnlace(home) : home;
   });
 }
+
