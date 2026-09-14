@@ -23,7 +23,10 @@
     padding: var(--sc-spacing-1-75) var(--sc-spacing-2-25);
     display: flex;
     flex-direction: column;
-    gap: var(--sc-spacing-1-5);
+    /* Título → contenido `scale/1`, como las 13 pantallas (`_page.scss`). El `gap`
+     * separa también el resto de bloques: lo que pierden lo recuperan en su propio
+     * margen, así que solo se mueve el título (2026-09-14). */
+    gap: var(--sc-spacing-1);
 
     /* El `gap` de este contenedor ya separa el título de lo que viene
      * debajo; sin esto sumaría además su propio margen y quedaría al doble
@@ -35,7 +38,8 @@
 }
 
 .entities-section {
-  margin-bottom: var(--sc-spacing-1-5);
+  /* 2 + el `gap` de 1 = los 42 de siempre (antes 1-5 + 1-5). */
+  margin-bottom: var(--sc-spacing-2);
 
   &__head {
     margin-bottom: var(--sc-spacing-1-125);
@@ -71,7 +75,7 @@
 .entities-divider {
   border: 0;
   border-top: 1px solid var(--sc-border-default);
-  margin: var(--sc-spacing-1-75) 0 var(--sc-spacing-1-5);
+  margin: var(--sc-spacing-1-75) 0 var(--sc-spacing-2); /* abajo 2 + gap 1 = 42, como antes */
 }
 
 .entities-empty {

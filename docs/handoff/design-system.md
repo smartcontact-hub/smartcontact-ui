@@ -44,6 +44,10 @@
 2. **sc-docs: ejemplos de primeng.dev dentro de `<sc-datatable>`**, la red de «la tabla perfecta»: pasa
    ~20 de las 79 entradas de `p-table`.
 
+- **La barra de búsqueda de Usuarios, Agentes y Grupos no se queda fija al hacer scroll** (visto el
+  2026-09-14, DD-90): es `sticky` dentro de `.page`, pero el que hace scroll es `main.app-shell__content`.
+  Falla igual antes y después de DD-90. Mismo mecanismo que DD-80 resolvió en las tablas.
+
 **APARCADO por Rafa para OTRA sesión (2026-09-13): nuestros componentes contra Aura tal cual.**
 «Si te instalas Aura y le pones este styling estamos así»: una ficha por componente que diga qué
 cambia nuestra capa sobre el `p-*` de primeng.dev, para que el código de cualquier equipo hable el
@@ -139,6 +143,23 @@ las 38 ranuras— se cerraron el mismo día en DD-73.)
 3. **La deuda de código de [`AUDIT-DEUDA-2026-06.md`](../AUDIT-DEUDA-2026-06.md)** que quede tras
    s34, y **los cabos de DD-24** (round-trip de iconos) en [`ROADMAP.md`](../ROADMAP.md).
 
+## ✅ 2026-09-14 · La barra de arriba baja de 91 a 75 y el título queda a la distancia de Aura
+
+**Sello:** rama `arebury/aura-spacing-scale` sobre `4c150f9` (#157). DD-90. Rafa, visto en local: «me gusta».
+El tramo «Aura es la base del tema» (2026-09-13) vive en el tag `archive/handoff-ds-2026-09-14-aura-base`.
+
+**Lo que cambia.** `sc-breadcrumb flush` y la TopBar lo usa (91 → 75). Título → contenido `scale/1` en las
+13 pantallas con `page__heading` (antes 21, y 31,5-33 en cuatro). Evaluación de por qué Aura no engorda y
+simulación de la densidad con ese reparto: `~/Documents/Claude/2026-09 aire-aura/index.html`.
+
+**Lo que hay que recordar**, porque volverá a morder:
+
+- ⚠️ **Si la escala pasa a 16, el aire de página crece un 14 %** con ella (≈690 usos de `--sc-spacing-*` en el
+  Supervisor): la simulación da barra 101 y 11 filas en Conversaciones. Con el recorte de Aura (un nombre
+  menos donde es aire de página) da 73 y 13 filas. Es parte de la decisión de densidad, no un extra.
+- ⚠️ **Un componente de Aura que se dibuja como barra suelta (miga, toolbar) suma su relleno** si lo metes
+  en otra barra: mira su `padding` antes de culpar al interlineado.
+
 ## ✅ 2026-09-14 · El robot de tokens deja de ponerse rojo por lo que Figma cambia a propósito
 
 **Sello:** rama `arebury/aura-brand-theme-figma`, HEAD `5123008` (#143) más este cambio. DD-82. Rafa: «adelante».
@@ -187,57 +208,6 @@ Repositorios al `Menu` del DS, inventario de `hand-made-pieces` a CERO; Figma re
 - **`<kbd>`/`<code>` salen en mono por la hoja del navegador** (así sobrevivió el «⌘K»): mide lo CALCULADO.
 - **Invertir `_layers.scss` no invierte nada**: PrimeNG antepone `@layer reset, primeng`. El testigo
   nuevo del test de capas (tinte de la fila fallida) se vio rojo quitando la regla.
-
-## ✅ 2026-09-13 · Aura es la base del tema, y lo que Aura trae de más se devuelve a su sitio
-
-**Sello:** rama `arebury/servicio-better-ui`, con `main` fusionado hasta `6d5cc82` (#135). 39 gates, **82** e2e del DS y el
-Supervisor medido contra producción (`6d5cc82`) pantalla a pantalla. Rafa, tras verlo en local:
-«me gusta, lo aplicamos, para todo el supervisor», y «que Aura sea la base de todo».
-
-**Lo que cambia.** `definePreset(Aura, …)`: lo que no dice nuestro preset lo pone Aura. La tabla
-deja de tener piel propia (fuera `datatable.ts`); `variant="list"` solo añade COMPORTAMIENTO
-(`css.ts`: reparto fijo, hover solo en fila clicable, seleccionada, caption vacío oculto).
-
-**Cómo se midió, que es lo reutilizable**: no a ojo. Se generó el CSS de variables del tema de
-antes y del de ahora, componente a componente, y se comparó. Resultado: **ningún valor que ya
-tuviéramos cambió**; Aura solo AÑADE, casi todo tipografía que antes no existía. Eso fija dónde
-mirar, y salieron tres regresiones que el ojo no habría visto:
-
-- ⚠️ **`.p-component { line-height: var(--p-typography-line-height) }`** en TODOS los componentes.
-  Sin Aura la variable no existía y cada uno heredaba de su página; con Aura, 1.5. El Supervisor no
-  lo nota (su body ya es 1.5), **sc-docs sí: 15 componentes de 20 a 21px**. Arreglo en
-  `base.ts`: `typography.lineHeight: 'inherit'`, que en `:root` deja la variable sin valor. Prueba:
-  de 14 rojos del e2e a 9 sin tocar nada más.
-- **Un tamaño propio le gana a uno heredado**: mes y año del calendario (14 con días a 12) y el
-  subtítulo de `sc-card` (16). Arreglo en el tema con `fontSize: "1em"`, sin clases `.p-*` nuevas
-  (`audit:primeng-coupling` rechazó la primera versión, que las añadía al componente).
-- ⚠️ **No era Aura, era mío**: `overlayAppendTo: 'body'` en `provideSmartContactUi` (para que no se
-  cortaran los desplegables de Grupos) lo leen TODOS los flotantes. `sc-dialog` salía de su
-  componente y sus `:host ::ng-deep` dejaban de alcanzarlo: doble marco. Ahora son `sc-select` y
-  `sc-multiselect` los que abren en `<body>` por defecto (input `appendTo`).
-
-**De paso**: `token-parity` compara ya el preset FUSIONADO (carga `@primeuix/themes`), y el copy
-«Dirección» de la tabla de notificaciones pasa a «Dirección web» (`i18n:check` cazó que en español
-también es entrante/saliente).
-
-> El tramo de **la primera vuelta a Servicio** (#122: los 487px entre los chips y su botón, las seis
-> casillas sin `(cycle)`) se archivó el 2026-09-12 por el tope de 400 líneas: lo sustituye el tramo
-> de la SEGUNDA vuelta, arriba, sobre la misma pantalla. Tag `archive/handoff-ds-2026-09-12-servicio`.
->
-> El 2026-09-13, por el mismo tope, se archivaron **el chip relleno y el título a 18** (DD-74) y **la
-> tabla que dejaba de heredar su letra en las dos pieles** (DD-73): la piel propia de tabla que
-> describía ya no existe. Tag `archive/handoff-ds-2026-09-13-tablas`.
->
-> Ese mismo día, al entrar Conversaciones con piel Aura (DD-76), salió **la vuelta a todas las tablas
-> de la plataforma** (DD-72: las 16 por el DS, las 38 ranuras de `p-table`). Tag
-> `archive/handoff-ds-2026-09-13-conversaciones`.
->
-> El 2026-09-14, al entrar el robot de tokens (DD-82), salió **Figma alcanza al código en el título de
-> sección** (DD-75). Tag `archive/handoff-ds-2026-09-14-figma-alcanza`.
->
-> Al entrar la cabecera fija (DD-80) salió **Servicio habla con una sola voz** (siete maneras de pintar
-> texto, `sc-checkbox` a su rol `body-2`, `subtle` no da jerarquía en claro). Tag
-> `archive/handoff-ds-2026-09-13-servicio-voz`.
 
 ## 🗄️ Histórico de la lista SIGUIENTE — ya cerrado
 

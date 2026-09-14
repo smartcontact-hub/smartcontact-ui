@@ -6,7 +6,8 @@
   /* Header padding (Figma 12277-4705): 20px vertical · 28px horizontal.
    * 28 = --sc-spacing-2 (exacto); 20 ≈ --sc-spacing-1-5 (21, Δ1, no hay 20 en
    * la escala). La altura la define el contenido + padding (~70px, Figma 72),
-   * sin altura fija. El 28px izquierdo alinea el breadcrumb con el rail (x=28). */
+   * sin altura fija. El 28px izquierdo alinea el breadcrumb con el rail (x=28).
+   * Ese ~70 solo sale si la miga va `flush`: con su relleno propio medía 91. */
   padding: var(--sc-spacing-1-5) var(--sc-spacing-2);
   display: flex;
   align-items: center;

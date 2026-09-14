@@ -138,7 +138,16 @@
  * criterio, para que el título se pegue al contenido sin que falle un test.
  * El elemento sube a (0,1,1) y lo saca de esa lotería.
  */
+/*
+ * TÍTULO → CONTENIDO = `scale/1`, desde el 2026-09-14. Es el 1rem de Aura entre la
+ * cabecera de un Panel y su contenido (header `1rem`, content sin relleno arriba),
+ * traducido al paso con el MISMO nombre, como manda DD-81: hoy 14, y 16 si la escala
+ * pasa a rem×16. Antes era `1-5` (21), y en cuatro pantallas se sumaba otro relleno
+ * y salía a 31,5-33. Las páginas donde el hueco lo pone un `gap` o un relleno de
+ * debajo lo compensan en su propio SCSS (usuarios, agentes, grupos, conversaciones,
+ * reglas, entidades y categorías), para que las 13 midan lo mismo.
+ */
 h1.page__heading {
-  margin: 0 0 var(--sc-spacing-1-5);
+  margin: 0 0 var(--sc-spacing-1);
   color: var(--sc-text-primary);
 }
