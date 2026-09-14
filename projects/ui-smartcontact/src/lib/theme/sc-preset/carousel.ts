@@ -5,11 +5,11 @@ import type { CarouselDesignTokens } from '@primeuix/themes/types/carousel';
         transitionDuration: "{transition.duration}"
     },
     content: {
-        gap: "var(--sc-scale-0-25)"
+        gap: "var(--sc-cmp-carousel-content-gap)"
     },
     indicator: {
-        width: "var(--sc-scale-2)",
-        height: "var(--sc-scale-0-5)",
+        width: "var(--sc-cmp-carousel-indicator-width)",
+        height: "var(--sc-cmp-carousel-indicator-height)",
         focusRing: {
             color: "{focus.ring.color}",
             style: "{focus.ring.style}",
@@ -35,7 +35,7 @@ import type { CarouselDesignTokens } from '@primeuix/themes/types/carousel';
         }
     },
     indicatorList: {
-        gap: "var(--sc-scale-0-5)",
-        padding: "var(--sc-scale-1)"
+        gap: "var(--sc-cmp-carousel-indicator-list-gap)",
+        padding: "var(--sc-cmp-carousel-indicator-list-padding)"
     }
 } satisfies CarouselDesignTokens;

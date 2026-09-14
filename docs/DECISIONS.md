@@ -63,6 +63,35 @@
 
 ---
 
+## DD-86 · 2026-09-14 — El resto de medidas de los temas sigue a Figma, sin mover un píxel
+
+**Contexto** · Tras DD-85 quedaban 238 medidas escritas a mano con un paso de escala en los temas: 184
+sueltas con equivalente en el Kit, 42 rellenos compuestos, 10 tamaños de letra y 2 sin equivalente. Medido
+el valor: de las 184 sueltas, 180 valen ya lo mismo que el Kit, y los 42 compuestos también.
+
+**Decisión** · Pasan al mapa de medidas (`scripts/sizing-map.mjs`, de 110 a 407 filas), con el mismo método
+de DD-85, todas las que ya valen lo mismo que el Kit: las 180 sueltas (50 temas) y, en una segunda tanda,
+42 compuestos (un token por lado, como ya hacían las pestañas: `padding: var(--…-y) var(--…-x)`) y 7
+tamaños de letra. Fuera: el hueco del cuerpo de la tarjeta (hoy 7, el Kit dice 10,5), que sí cambiaría en
+pantalla, 3 tamaños de letra cuyo alias del Kit no se pudo confirmar al comparar, y 2 sin equivalente.
+
+**Razón** · Con el número escrito, un cambio en Figma no llega a la app y nadie lo avisa (la casilla de
+DD-85 se quedó en 17,5 después de cambiarla en Figma). Conectadas, `tokens:parity` compara cada una con el
+export y se pone rojo si se separan.
+
+**Descartadas** ·
+- **Meter también las que cambian de valor** → mezclaría una conexión sin efecto visible con cambios de
+  diseño; el hueco de la tarjeta necesita mirarlo.
+
+**Consecuencias** · Sin cambio visual, comprobado dos veces (tras cada tanda): las 55 capturas de
+componentes, `component-styles` y `component-structure` pasan con sus referencias de antes, sin
+regenerar. `tokens:parity` 407/407 y 519 tests unitarios. En los temas de componente quedan 9 medidas con paso
+de escala escritas a mano (de 238): el hueco de la tarjeta, 3 tamaños de letra, 3 rellenos que en el Kit
+son compuestos, el tamaño del badge del botón y la sangría del stepper. Fuera de este mapa siguen 9 en los
+tokens semánticos de `base.ts` (listas, navegación, overlays) y 5 en `extend.ts`.
+
+---
+
 ## DD-85 · 2026-09-14 — Las medidas que los temas escribían a mano salen del export: un cambio de Figma llega solo al código
 
 **Contexto** · Tras DD-81, Rafa pidió que «todo caiga en cascada». Medido con `tools/aura-diff.mjs` en los 15

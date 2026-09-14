@@ -3,27 +3,27 @@ import type { RadioButtonDesignTokens } from '@primeuix/themes/types/radiobutton
  export default {
     icon: {
         lg: {
-            size: "var(--sc-scale-1)"
+            size: "var(--sc-cmp-radiobutton-icon-lg-size)"
         },
         sm: {
-            size: "var(--sc-scale-0-5)"
+            size: "var(--sc-cmp-radiobutton-icon-sm-size)"
         },
-        size: "var(--sc-scale-0-75)",
+        size: "var(--sc-cmp-radiobutton-icon-size)",
         checkedColor: "{primary.contrast.color}",
         disabledColor: "{form.field.disabled.color}",
         checkedHoverColor: "{primary.contrast.color}"
     },
     root: {
         lg: {
-            width: "var(--sc-scale-1-5)",
-            height: "var(--sc-scale-1-5)"
+            width: "var(--sc-cmp-radiobutton-lg-width)",
+            height: "var(--sc-cmp-radiobutton-lg-height)"
         },
         sm: {
-            width: "var(--sc-scale-1)",
-            height: "var(--sc-scale-1)"
+            width: "var(--sc-cmp-radiobutton-sm-width)",
+            height: "var(--sc-cmp-radiobutton-sm-height)"
         },
-        width: "var(--sc-scale-1-25)",
-        height: "var(--sc-scale-1-25)",
+        width: "var(--sc-cmp-radiobutton-width)",
+        height: "var(--sc-cmp-radiobutton-height)",
         shadow: "var(--sc-cmp-radiobutton-shadow)",
         focusRing: {
             color: "{focus.ring.color}",

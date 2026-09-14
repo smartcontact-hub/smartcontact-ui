@@ -2,9 +2,9 @@ import type { OrderListDesignTokens } from '@primeuix/themes/types/orderlist';
 
  export default {
     root: {
-        gap: "var(--sc-scale-1-125)"
+        gap: "var(--sc-cmp-orderlist-gap)"
     },
     controls: {
-        gap: "var(--sc-scale-0-5)"
+        gap: "var(--sc-cmp-orderlist-controls-gap)"
     }
 } satisfies OrderListDesignTokens;

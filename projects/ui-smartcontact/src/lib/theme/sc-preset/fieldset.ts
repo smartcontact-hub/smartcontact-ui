@@ -10,9 +10,9 @@ import type { FieldsetDesignTokens } from '@primeuix/themes/types/fieldset';
         transitionDuration: "{transition.duration}"
     },
     legend: {
-        gap: "var(--sc-scale-0-5)",
+        gap: "var(--sc-cmp-fieldset-legend-gap)",
         color: "{content.color}",
-        padding: "var(--sc-scale-0-5) var(--sc-scale-0-75)",
+        padding: "var(--sc-cmp-fieldset-legend-padding-y) var(--sc-cmp-fieldset-legend-padding-x)",
         focusRing: {
             color: "{focus.ring.color}",
             style: "{focus.ring.style}",

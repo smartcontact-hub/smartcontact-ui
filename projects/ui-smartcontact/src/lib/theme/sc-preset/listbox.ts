@@ -32,8 +32,8 @@ import type { ListboxDesignTokens } from '@primeuix/themes/types/listbox';
     },
     checkmark: {
         color: "{list.option.color}",
-        gutterEnd: "var(--sc-scale-0-375)",
-        gutterStart: "var(--sc-scale-neg-0-375)"
+        gutterEnd: "var(--sc-cmp-listbox-checkmark-gutter-end)",
+        gutterStart: "var(--sc-cmp-listbox-checkmark-gutter-start)"
     },
     colorScheme: {
         dark: {

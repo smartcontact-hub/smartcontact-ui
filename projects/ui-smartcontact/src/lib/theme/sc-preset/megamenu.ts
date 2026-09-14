@@ -17,7 +17,7 @@ import type { MegaMenuDesignTokens } from '@primeuix/themes/types/megamenu';
         activeBackground: "{navigation.item.active.background}"
     },
     root: {
-        gap: "var(--sc-scale-0-5)",
+        gap: "var(--sc-cmp-megamenu-gap)",
         color: "{content.color}",
         background: "{content.background}",
         borderColor: "{content.border.color}",
@@ -28,12 +28,12 @@ import type { MegaMenuDesignTokens } from '@primeuix/themes/types/megamenu';
             padding: "{navigation.list.padding}"
         },
         horizontalOrientation: {
-            gap: "var(--sc-scale-0-5)",
-            padding: "var(--sc-scale-0-5) var(--sc-scale-0-75)"
+            gap: "var(--sc-cmp-megamenu-horizontal-orientation-gap)",
+            padding: "var(--sc-cmp-megamenu-horizontal-orientation-padding-y) var(--sc-cmp-megamenu-horizontal-orientation-padding-x)"
         }
     },
     overlay: {
-        gap: "var(--sc-scale-0-5)",
+        gap: "var(--sc-cmp-megamenu-overlay-gap)",
         color: "{content.color}",
         shadow: "var(--sc-cmp-megamenu-overlay-shadow)",
         padding: "0",
@@ -59,7 +59,7 @@ import type { MegaMenuDesignTokens } from '@primeuix/themes/types/megamenu';
         activeColor: "{navigation.submenu.icon.active.color}"
     },
     mobileButton: {
-        size: "var(--sc-scale-1-75)",
+        size: "var(--sc-cmp-megamenu-mobile-button-size)",
         color: "{text.muted.color}",
         focusRing: {
             color: "{focus.ring.color}",
@@ -69,7 +69,7 @@ import type { MegaMenuDesignTokens } from '@primeuix/themes/types/megamenu';
             shadow: "none"
         },
         hoverColor: "{text.hover.muted.color}",
-        borderRadius: "var(--sc-scale-0-875)",
+        borderRadius: "var(--sc-cmp-megamenu-mobile-button-border-radius)",
         hoverBackground: "{content.hover.background}"
     },
     submenuLabel: {

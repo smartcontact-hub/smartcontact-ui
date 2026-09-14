@@ -2,28 +2,28 @@ import type { BadgeDesignTokens } from '@primeuix/themes/types/badge';
 
  export default {
     lg: {
-        height: "var(--sc-scale-1-75)",
-        fontSize: "var(--sc-scale-0-875)",
-        minWidth: "var(--sc-scale-1-75)"
+        height: "var(--sc-cmp-badge-lg-height)",
+        fontSize: "var(--sc-cmp-badge-lg-font-size)",
+        minWidth: "var(--sc-cmp-badge-lg-min-width)"
     },
     sm: {
-        height: "var(--sc-scale-1-25)",
-        fontSize: "var(--sc-scale-0-625)",
-        minWidth: "var(--sc-scale-1-25)"
+        height: "var(--sc-cmp-badge-sm-height)",
+        fontSize: "var(--sc-cmp-badge-sm-font-size)",
+        minWidth: "var(--sc-cmp-badge-sm-min-width)"
     },
     xl: {
-        height: "var(--sc-scale-2)",
-        fontSize: "var(--sc-scale-1)",
-        minWidth: "var(--sc-scale-2)"
+        height: "var(--sc-cmp-badge-xl-height)",
+        fontSize: "var(--sc-cmp-badge-xl-font-size)",
+        minWidth: "var(--sc-cmp-badge-xl-min-width)"
     },
     dot: {
-        size: "var(--sc-scale-0-5)"
+        size: "var(--sc-cmp-badge-dot-size)"
     },
     root: {
-        height: "var(--sc-scale-1-5)",
-        padding: "0 var(--sc-scale-0-5)",
-        fontSize: "var(--sc-scale-0-75)",
-        minWidth: "var(--sc-scale-1-5)",
+        height: "var(--sc-cmp-badge-height)",
+        padding: "var(--sc-cmp-badge-padding-y) var(--sc-cmp-badge-padding-x)",
+        fontSize: "var(--sc-cmp-badge-font-size)",
+        minWidth: "var(--sc-cmp-badge-min-width)",
         fontWeight: "700",
         borderRadius: "{border.radius.md}"
     },

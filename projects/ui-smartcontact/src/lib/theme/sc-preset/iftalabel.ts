@@ -12,7 +12,7 @@ import type { IftaLabelDesignTokens } from '@primeuix/themes/types/iftalabel';
         transitionDuration: "{form.field.transition.duration}"
     },
     input: {
-        paddingTop: "var(--sc-scale-1-5)",
+        paddingTop: "var(--sc-cmp-iftalabel-input-padding-top)",
         paddingBottom: "{form.field.padding.y}"
     }
 } satisfies IftaLabelDesignTokens;

@@ -3,7 +3,7 @@ import type { VirtualScrollerDesignTokens } from '@primeuix/themes/types/virtual
  export default {
     loader: {
         icon: {
-            size: "var(--sc-scale-2)"
+            size: "var(--sc-cmp-virtualscroller-loader-icon-size)"
         },
         mask: {
             color: "{text.muted.color}",
