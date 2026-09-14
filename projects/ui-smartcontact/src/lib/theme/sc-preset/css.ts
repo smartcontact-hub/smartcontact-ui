@@ -305,7 +305,7 @@ ${STICKY} > .p-datatable-table-container {
 }
 
 ${STICKY} > .p-datatable-table-container > .p-datatable-table > .p-datatable-thead {
-    inset-block-start: 0;
+    inset-block-start: var(--sc-datatable-sticky-offset, 0px);
     z-index: var(--sc-z-sticky);
 }
 `;

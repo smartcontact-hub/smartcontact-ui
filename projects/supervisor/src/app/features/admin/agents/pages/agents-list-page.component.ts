@@ -1,9 +1,12 @@
 import { map, startWith } from 'rxjs';
 import { toSignal } from '@angular/core/rxjs-interop';
 import {
+  afterNextRender,
   ChangeDetectionStrategy,
   Component,
   computed,
+  DestroyRef,
+  ElementRef,
   inject,
   signal,
   type TemplateRef,
@@ -122,6 +125,18 @@ export class AgentsListPageComponent {
 
   constructor() {
     useTopbarActions(this.topbarActions);
+    /* RAMA A (scroll de página): la cabecera de columnas se fija JUSTO debajo de la barra
+     * de búsqueda, que también es fija. Su alto cambia con la talla de los controles y al
+     * envolver en estrecho, así que se mide y se pasa a la tabla como variable. */
+    const host = inject(ElementRef<HTMLElement>).nativeElement as HTMLElement;
+    const destroyRef = inject(DestroyRef);
+    afterNextRender(() => {
+      const bar = host.querySelector<HTMLElement>('.page__action-bar');
+      if (!bar) return;
+      const ro = new ResizeObserver(() => host.style.setProperty('--sc-datatable-sticky-offset', `${bar.offsetHeight}px`));
+      ro.observe(bar);
+      destroyRef.onDestroy(() => ro.disconnect());
+    });
   }
 
   /** Derived: union of every active-link channel for the given agent. */

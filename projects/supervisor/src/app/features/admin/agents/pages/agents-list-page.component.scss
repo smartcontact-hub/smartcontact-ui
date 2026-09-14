@@ -42,16 +42,8 @@
      * se sube lo mismo y el título queda a la distancia de las 13 pantallas. */
     margin-top: calc(var(--sc-spacing-0-875) * -1);
 
-    &::after {
-      content: '';
-      position: absolute;
-      left: 0;
-      right: 0;
-      top: 100%;
-      height: 12px;
-      background: linear-gradient(to bottom, var(--sc-bg-surface), transparent);
-      pointer-events: none;
-    }
+    /* RAMA A: sin el degradado de 12 px. La cabecera de columnas fija se pega debajo y
+     * el degradado la taparía; el borde de la cabecera ya separa las filas. */
   }
 
   /* `.page__search` queda como wrapper de sizing del `<sc-search>` (el
