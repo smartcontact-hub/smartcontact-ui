@@ -13,13 +13,13 @@ import type { DividerDesignTokens } from '@primeuix/themes/types/divider';
         content: {
             padding: "var(--sc-cmp-divider-vertical-content-padding-y) var(--sc-cmp-divider-vertical-content-padding-x)"
         },
-        padding: "0"
+        padding: "var(--sc-cmp-divider-vertical-padding-y) var(--sc-cmp-divider-vertical-padding-x)"
     },
     horizontal: {
         margin: "var(--sc-cmp-divider-horizontal-margin-y) var(--sc-cmp-divider-horizontal-margin-x)",
         content: {
             padding: "var(--sc-cmp-divider-horizontal-content-padding-y) var(--sc-cmp-divider-horizontal-content-padding-x)"
         },
-        padding: "0"
+        padding: "var(--sc-cmp-divider-horizontal-padding-y) var(--sc-cmp-divider-horizontal-padding-x)"
     }
 } satisfies DividerDesignTokens;

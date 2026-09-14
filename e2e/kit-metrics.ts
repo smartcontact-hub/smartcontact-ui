@@ -1,7 +1,7 @@
 import { resolve } from 'node:path';
 
 import { loadKitExport } from '../scripts/dtcg-export.mjs';
-import { GROUPS, SIZING } from '../scripts/sizing-map.mjs';
+import { GROUPS, PENDIENTE_FIGMA, SIZING } from '../scripts/sizing-map.mjs';
 
 /* La misma ruta que `scripts/paths.mjs` (EXPORT_PATH), que no se importa porque usa `import.meta` y
  * Playwright carga los helpers como CommonJS. Los tests corren desde la raíz del repo. */
@@ -33,8 +33,10 @@ const kit = loadKitExport(EXPORT_PATH);
 export function kitPx(label: string): string {
   const row = SIZING.find((r: { label: string }) => r.label === label);
   if (!row) throw new Error(`kitPx: «${label}» no es una fila de scripts/sizing-map.mjs`);
-  const leaf = kit.groups[GROUPS[row.group as keyof typeof GROUPS]]?.get(row.exp);
-  const value = leaf ? kit.resolve(leaf.$value) : undefined;
+  // Pendiente de Figma (DD-97): el código pinta el paso de Aura, igual que lo escribe el generador.
+  const paso = PENDIENTE_FIGMA.find((p: { label: string }) => p.label === label)?.paso;
+  const leaf = paso === undefined ? kit.groups[GROUPS[row.group as keyof typeof GROUPS]]?.get(row.exp) : undefined;
+  const value = paso === '0' ? 0 : paso !== undefined ? kit.resolve(`{scale.${paso}}`) : leaf ? kit.resolve(leaf.$value) : undefined;
   if (typeof value !== 'number') throw new Error(`kitPx: «${label}» no resuelve a número en el export (${String(value)})`);
   return `${value}px`;
 }

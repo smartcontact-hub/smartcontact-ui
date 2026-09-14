@@ -178,30 +178,16 @@
  * (5.25/8.75), y ganaba o perdía según el orden de inserción de las hojas — no
  * según nada que nadie hubiera decidido. Se retiró; esto es la fuente única.
  *
- * El `font-size` venía de esa copia del supervisor y entra aquí con ella: sin
- * él, un panel `sm` pinta las opciones a la medida `md`.
- *
- * ⚠️ El Kit NO modela panel por tamaño. Publica `list.option.padding.x/y` con
- * un valor único (`{scale.0-75}` / `{scale.0-5}`) y `select.sm/lg.font.size`
- * solo para el TRIGGER. Esta rampa es una decisión del DS por encima del Kit,
- * no un token: si algún día se discute, el Kit dice un tamaño. Los valores sí
- * salen de la escala v/14 (`--sc-spacing-*`), nunca px a pelo. */
-.sc-select-panel--sm {
-  .p-select-header,
-  .p-select-list,
-  .p-select-option,
-  .p-select-filter {
-    padding: var(--sc-spacing-0-375) var(--sc-spacing-0-625);
-    font-size: var(--sc-font-size-100);
-  }
+ * ⚠️ Solo el BUSCADOR sigue la talla del trigger (es un campo, y Aura modela el campo por talla). La
+ * cabecera, la lista y las opciones leen el tema, como en Aura, que no modela el panel por talla: hasta
+ * DD-97 (2026-09-14) llevaban aquí una rampa propia (5,25/8,75 en sm y letra de 12) y el filtro de
+ * Conversaciones no seguía ni a Figma ni a Aura. */
+.sc-select-panel--sm .p-select-filter {
+  padding: var(--sc-spacing-0-375) var(--sc-spacing-0-625);
+  font-size: var(--sc-font-size-100);
 }
 
-.sc-select-panel--lg {
-  .p-select-header,
-  .p-select-list,
-  .p-select-option,
-  .p-select-filter {
-    padding: var(--sc-spacing-0-625) var(--sc-spacing-0-875);
-    font-size: var(--sc-font-size-300);
-  }
+.sc-select-panel--lg .p-select-filter {
+  padding: var(--sc-spacing-0-625) var(--sc-spacing-0-875);
+  font-size: var(--sc-font-size-300);
 }

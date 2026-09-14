@@ -5,7 +5,9 @@
  */
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { SIZING, GROUPS, DIVERGE_SIZING, cmpName } from '../sizing-map.mjs';
+import { readFileSync } from 'node:fs';
+import { SIZING, GROUPS, DIVERGE_SIZING, PENDIENTE_FIGMA, cmpName } from '../sizing-map.mjs';
+import { EXPORT_PATH } from '../paths.mjs';
 
 test('SIZING no está vacío y cada fila tiene la forma esperada', () => {
   assert.ok(SIZING.length > 0, 'SIZING vacío');
@@ -51,4 +53,18 @@ test('DIVERGE_SIZING: cada divergencia apunta a un label real con razón', () =>
     assert.ok(labels.has(d.label), `DIVERGE_SIZING apunta a un label inexistente: ${d.label}`);
     assert.equal(typeof d.reason, 'string', `DIVERGE_SIZING sin razón: ${d.label}`);
   }
+});
+
+test('PENDIENTE_FIGMA: cada fila apunta a un label real, una sola vez, y a un paso de escala que existe en el Kit', () => {
+  const labels = new Set(SIZING.map((r) => r.label));
+  const pasos = new Set(Object.keys(JSON.parse(readFileSync(EXPORT_PATH, 'utf8'))['aura/primitive'].scale));
+  const vistos = new Set();
+  for (const p of PENDIENTE_FIGMA) {
+    assert.ok(labels.has(p.label), `PENDIENTE_FIGMA apunta a un label inexistente: ${p.label}`);
+    assert.ok(!vistos.has(p.label), `PENDIENTE_FIGMA repite ${p.label}`);
+    vistos.add(p.label);
+    assert.ok(p.paso === '0' || pasos.has(p.paso), `${p.label}: el paso scale/${p.paso} no existe en el Kit (no se inventan variables)`);
+  }
+  const divergen = new Set(DIVERGE_SIZING.map((d) => d.label));
+  for (const p of PENDIENTE_FIGMA) assert.ok(!divergen.has(p.label), `${p.label} no puede ser divergencia y pendiente a la vez`);
 });
