@@ -12,9 +12,11 @@
  *   @sc-gen:palette  — familias primitivas de color que el preset referencia
  *                      y que la capa curada no cubre (hoy: zinc)
  *
- * ── ESCALA ──  Ley: nombre(v) = (v<0?"neg-":"") + |v|/14   con  "." → "-"
- *   (14 = base del Kit. 5.25 → 0.375 → `--sc-scale-0-375`.) El nombre deriva
- *   del VALOR px de diseño del export, nunca del string de la clave.
+ * ── ESCALA ──  Nombre = la CLAVE del export (`scale.0-375` → `--sc-scale-0-375`),
+ *   desde DD-89; antes salía del valor (v/14) y un valor cambiado en Figma renombraba
+ *   el paso en silencio. Si un paso deja de valer rem×14 se AVISA (no falla). Y un
+ *   gate cae si algún `var(--sc-scale-*)` o `var(--sc-spacing-*)` del repo apunta a
+ *   un paso que no existe.
  *
  * ── REM CENTRALIZADO ──  Decisión cerrada (pre-flight §1): diseño en 14-base
  *   → conversión a rem en UN punto. Ese punto es ESTE generador: cada paso se
@@ -35,7 +37,9 @@
 import { readFileSync, writeFileSync, existsSync } from 'node:fs';
 import { resolve } from 'node:path';
 import { loadKitExport } from './dtcg-export.mjs';
-import { scaleSuffix, toRem, dropAlpha } from './token-naming.mjs';
+import { scaleSuffix, scaleNameFromKey, toRem, dropAlpha } from './token-naming.mjs';
+import { readdirSync, statSync } from 'node:fs';
+import { join } from 'node:path';
 import { rewriteRegion } from './marker-rewrite.mjs';
 import { GENERATED as GENERATED_COLORS } from './color-map.mjs';
 import { PRIMITIVE_SOURCE } from './palette-map.mjs';
@@ -62,11 +66,57 @@ const declare = (name, px) => `  --${name}: ${toRem(px)}; /* ${px}px */`;
 // Extras = pasos que el export no trae pero el código usa, con su razón.
 const EXTRA_SCALE = [{ value: 0, reason: 'reset — no es un paso métrico' }];
 const scaleCanon = new Map(); // name (sin "--") → px de diseño
+const fueraDeLey = []; // pasos cuyo valor ya no es rem×14 (aviso, no fallo)
 for (const [path, leaf] of prim) {
   if (!path.startsWith('scale.') || typeof leaf.$value !== 'number') continue;
-  scaleCanon.set('sc-scale-' + scaleSuffix(leaf.$value), leaf.$value);
+  const name = scaleNameFromKey(path);
+  scaleCanon.set('sc-scale-' + name, leaf.$value);
+  if (scaleSuffix(leaf.$value) !== name) fueraDeLey.push(`scale/${name} = ${leaf.$value}px (rem×14 daría ${scaleSuffix(leaf.$value)})`);
 }
 for (const { value } of EXTRA_SCALE) scaleCanon.set('sc-scale-' + scaleSuffix(value), value);
+
+/**
+ * Referencias colgadas: `var(--sc-scale-*)` o `var(--sc-spacing-*)` en el repo que apuntan a un nombre
+ * que ninguna capa declara. El CSS no avisa (una variable sin definir es un valor inválido y el navegador
+ * lo ignora), así que esto es lo único que lo canta. `defined` = nombres declarados en las capas.
+ */
+const ROOT = resolve(import.meta.dirname, '..');
+function declaredNames() {
+  const names = new Set();
+  for (const f of readdirSync(LAYERS_DIR)) {
+    if (!f.endsWith('.css')) continue;
+    const src = f === '01-primitive.css' && typeof pendingPrimitive === 'string' ? pendingPrimitive : readFileSync(join(LAYERS_DIR, f), 'utf8');
+    for (const m of src.matchAll(/--(sc-(?:scale|spacing)-[a-z0-9-]+)\s*:/g)) names.add(m[1]);
+  }
+  return names;
+}
+let pendingPrimitive;
+function danglingRefs() {
+  const defined = declaredNames();
+  const out = [];
+  const walk = (dir) => {
+    for (const e of readdirSync(dir)) {
+      if (e === 'node_modules' || e === 'dist' || e.startsWith('.')) continue;
+      const full = join(dir, e);
+      if (resolve(full) === resolve(ROOT, 'projects/design-tokens/src/lib/styles/tokens/layers')) continue; // las capas se leen de LAYERS_DIR
+      const st = statSync(full);
+      if (st.isDirectory()) walk(full);
+      else if (/\.(css|scss|ts|html)$/.test(e)) {
+        const src = readFileSync(full, 'utf8');
+        for (const m of src.matchAll(/var\(--(sc-(?:scale|spacing)-[a-z0-9-]+)/g)) {
+          if (!defined.has(m[1])) out.push(`${full.slice(ROOT.length + 1)}: --${m[1]}`);
+        }
+      }
+    }
+  };
+  walk(resolve(ROOT, 'projects'));
+  for (const f of readdirSync(LAYERS_DIR)) {
+    if (!f.endsWith('.css')) continue;
+    const src = f === '01-primitive.css' && typeof pendingPrimitive === 'string' ? pendingPrimitive : readFileSync(join(LAYERS_DIR, f), 'utf8');
+    for (const m of src.matchAll(/var\(--(sc-(?:scale|spacing)-[a-z0-9-]+)/g)) if (!defined.has(m[1])) out.push(`capas/${f}: --${m[1]}`);
+  }
+  return [...new Set(out)];
+}
 
 function renderScale() {
   const pos = [...scaleCanon.entries()].filter(([, v]) => v > 0).sort((a, b) => a[1] - b[1]);
@@ -387,7 +437,15 @@ if (write) {
     }
     txt = next;
   }
+  pendingPrimitive = txt;
+  const colgadas = danglingRefs();
   writeFileSync(PRIMITIVE_CSS, txt);
+  for (const f of fueraDeLey) log(`  ⚠ fuera de la ley v/14 (se mantiene el nombre de la clave): ${f}`);
+  if (colgadas.length) {
+    log(`✗ ${colgadas.length} referencia(s) a pasos de escala que ya no existen:`);
+    for (const c of colgadas.slice(0, 40)) log(`    · ${c}`);
+    process.exit(1);
+  }
   log('✓ Bloques typography/scale/radius/palette reescritos desde el export. La cascada propaga.');
   process.exit(0);
 }
@@ -432,6 +490,8 @@ function readActualHex(family) {
 
 log('=== PRIMITIVOS: export-derivado ↔ 01-primitive.css ===');
 checkBlock('SCALE', scaleCanon, readActual('sc-scale-'));
+for (const c of danglingRefs()) fail(`SCALE: referencia colgada ${c} (ninguna capa declara ese paso)`);
+for (const f of fueraDeLey) log(`  ⚠ fuera de la ley v/14 (se mantiene el nombre de la clave): ${f}`);
 checkBlock('RADIUS', radiusCanon, readActual('sc-radius-'));
 for (const family of PALETTE_FAMILIES) {
   const actual = readActualHex(family);

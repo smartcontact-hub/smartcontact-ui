@@ -5,7 +5,7 @@
  */
 import { test } from 'node:test';
 import assert from 'node:assert/strict';
-import { scaleSuffix, toRem, dropAlpha } from '../token-naming.mjs';
+import { scaleSuffix, scaleNameFromKey, toRem, dropAlpha } from '../token-naming.mjs';
 
 test('scaleSuffix — nombre = |v|/14 con "." → "-"', () => {
   assert.equal(scaleSuffix(14), '1'); // la base
@@ -13,6 +13,23 @@ test('scaleSuffix — nombre = |v|/14 con "." → "-"', () => {
   assert.equal(scaleSuffix(7), '0-5');
   assert.equal(scaleSuffix(0), '0');
   assert.equal(scaleSuffix(16), '1-143'); // 16/14 = 1.142857 → toFixed(3)
+});
+
+test('scaleNameFromKey — el nombre sale de la CLAVE del export, no del valor (DD-89)', () => {
+  assert.equal(scaleNameFromKey('scale.0-375'), '0-375');
+  assert.equal(scaleNameFromKey('scale.1'), '1');
+  assert.equal(scaleNameFromKey('scale.1-143'), '1-143');
+  assert.equal(scaleNameFromKey('scale.neg-0-5'), 'neg-0-5');
+  // Una clave que no tiene forma de paso falla ruidoso en vez de inventar un nombre.
+  assert.throws(() => scaleNameFromKey('scale.0.375'));
+  assert.throws(() => scaleNameFromKey('radius.md'));
+});
+
+test('scaleNameFromKey y scaleSuffix coinciden mientras la escala valga rem×14', () => {
+  // Si un paso deja de valer rem×14 (p. ej. 6px en scale.0-375), el nombre se mantiene por clave
+  // y scaleSuffix solo sirve para avisar: daría otro nombre.
+  assert.equal(scaleSuffix(5.25), scaleNameFromKey('scale.0-375'));
+  assert.notEqual(scaleSuffix(6), scaleNameFromKey('scale.0-375'));
 });
 
 test('scaleSuffix — negativos llevan prefijo "neg-"', () => {
