@@ -41,6 +41,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | Una miga que navega pasa `routerLink`, no un `command` · el tramo pulsable lleva manita y subrayado en hover (lo pone `sc-breadcrumb`) | DD-103 |
 > | Una lista nunca corta texto: columnas cortas con el ancho MEDIDO de su dato y `<sc-list-page tableMinWidth>`; por debajo, la tabla se desplaza de lado | DD-102 |
 > | Los editores agente↔grupo: una columna por canal con `sc-checkbox`, elegir varios con la barra en lote, «Añadir» con `sc-select` · una asignación de repositorio es un `sc-multiselect`, no una tabla · se juntan secciones que responden la misma pregunta | DD-101 |
 > | Las fichas de agente, grupo y usuario usan el molde de Contact Center: `.page__inner--rail`, índice sin cajas, tarjeta `surface="card"` con `.sub-section`, interruptor delante con su ayuda visible, «Deshacer» solo con cambios | DD-100 |
@@ -71,6 +72,37 @@
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
 
 ---
+
+## DD-103 · 2026-09-14 — Un tramo de la miga que lleva a algún sitio lo parece: enlace de verdad, manita y subrayado al pasar el ratón
+
+**Contexto** · Rafa: «no queda muy claro cuándo puedo clicar en algo». Medido en sc-docs: los tramos con solo
+`command` salían con cursor de texto (el navegador pone la manita solo en un `<a>` con dirección, y el CSS de
+la miga de PrimeNG no la pide; su menú sí), y al pasar el ratón el padre se oscurecía al mismo gris que el
+tramo actual, que es lo único que no se pulsa. El Supervisor navegaba con un `command` que llamaba a
+`navigateByUrl`, así que sus tramos eran texto: sin manita, sin Cmd+clic y sin «copiar enlace».
+
+**Decisión** · (1) Una miga que navega pasa `routerLink`, no un `command` (la TopBar del Supervisor ya lo hace).
+(2) `sc-breadcrumb` pone `sc-breadcrumb-item--link` en cada tramo con `routerLink`, `url` o `command` que no sea
+el último ni esté deshabilitado, y en el inicio si lleva a algún sitio. (3) El tema (`sc-preset/css.ts`) le da
+`cursor: pointer` y, solo con ratón (`hover: hover`), subrayado con grosor y posición de la fuente. El tramo
+actual no cambia.
+
+**Razón** · Medido el 2026-09-14 en sc-docs y en el Supervisor, antes y después: los padres pasan de `auto` a
+`pointer` y en hover de `none` a `underline`; el tramo actual sigue en `auto` y sin subrayar; en el Supervisor
+el padre lleva `href` y un clic real navega. Lo respaldan tres fuentes: la regla de `ui-ux-pro-max` (lo pulsable
+lleva la manita y algo visible en hover), `better-accessibility` (lo que navega es un enlace con dirección y un
+estado no se dice solo con color) y Nielsen Norman Group (el tramo actual no es un enlace y se distingue de los
+que sí).
+
+**Descartadas** · *Poner la manita en línea con `linkStyle`*: tapaba el síntoma y dejaba al Supervisor sin
+Cmd+clic ni «copiar enlace»; la causa era pasar una acción en vez de una dirección. *Selector `[href]`*: se deja
+fuera el tramo con solo `command`, que es justo el que no tenía manita. *Subrayado siempre visible*: una miga es
+navegación secundaria y el Kit no lo dibuja; con el hover basta para separar el padre del tramo actual.
+
+**Consecuencias** · Figma no dibuja el subrayado: queda en `docs/figma-pendiente.md` ficha 6, con las guías de
+PrimeNG y de comportamiento. `aria-current` no lo pone PrimeNG Angular aunque su guía lo diga (medido); queda
+anotado en el wrapper, sin cambiar. `e2e/baselines/component-structure.json` recoge la clase nueva, y
+`e2e/breadcrumb-affordance.spec.ts` vigila lo que hace (se pone rojo si la regla del tema no llega).
 
 ## DD-102 · 2026-09-14 — Una lista nunca corta texto: las columnas cortas miden su dato y, si no cabe, la tabla se desplaza de lado
 
@@ -171,6 +203,7 @@ por otro motivo). Las fichas quedan en las mismas coordenadas que él (índice e
 **Consecuencias** · `page-anatomy.spec.ts` mide el molde en las tres altas y en dos pantallas de Contact Center con
 las mismas aserciones. Se van `.pill`, `.perm-matrix__head`, `.field--inline`, `.ipanel__delete`, `.disclosure` y
 unas 450 líneas de la hoja de la ficha de agente. `customs-catalog` §2.7 describía el índice antiguo.
+
 ## DD-99 · 2026-09-14 — El modo oscuro cae en cascada: todo suelo es el lienzo y ningún color de pantalla o componente es fijo
 
 **Contexto** · Rafa: «toda la app en dark mode no responde igual que Contact Center, el fondo no es el mismo.
