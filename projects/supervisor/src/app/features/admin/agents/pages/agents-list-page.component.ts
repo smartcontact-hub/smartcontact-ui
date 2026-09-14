@@ -167,7 +167,19 @@ export class AgentsListPageComponent {
   protected readonly presenceOptions = computed(() =>
     this.presenceStates.map((p) => ({ label: this.translate.instant(this.presenceKeys[p]), value: p })),
   );
-  protected readonly agents = this.agentsStore.agents;
+  /*
+   * SOLO EN LAS RAMAS DE COMPARACIÓN (`comparar/tabla-*`, 2026-09-14): `?filas=N` repite los agentes de
+   * prueba hasta N filas, para medir la tabla con muchísimas líneas. No se funde tal cual.
+   */
+  private readonly filasDemo = Number(new URLSearchParams(globalThis.location?.search ?? '').get('filas')) || 0;
+  protected readonly agents = computed(() => {
+    const base = this.agentsStore.agents();
+    if (!this.filasDemo || !base.length) return base;
+    return Array.from({ length: this.filasDemo }, (_, i) => {
+      const a = base[i % base.length];
+      return i < base.length ? a : { ...a, id: 100000 + i, code: String(100000 + i), name: `${a.name} ${i + 1}`, extension: String(1000 + i) };
+    });
+  });
 
   protected readonly searchQuery = signal('');
   protected readonly sortField = signal<SortField | null>(null);
