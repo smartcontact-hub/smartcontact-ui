@@ -131,6 +131,10 @@ su carpeta, `main` no se toca.
 **Consecuencias** · El robot tarda unos minutos más (construye el DS y el Supervisor una vez más). La
 rama `tokens-sync-capturas` crece con cada export que cambia pantallas: podarla si pesa. Las 8
 pantallas son una muestra; si un cambio vive en otra, no sale en las capturas (sí en «Qué cambia»).
+**Corrección (2026-09-14, mismo día)** · El primer comparador leía de menos: `pixelmatch` descarta por
+defecto los píxeles de antialias, y el texto está hecho casi solo de ellos. Un gris de texto que pasaba
+de `#4f5663` a `#334155` salía «0,1 % de la pantalla». Ahora compara con `includeAA: true` y umbral 0,05:
+el control antes-contra-antes sigue en 0 de 16, y el test nuevo se pone rojo con el comparador viejo.
 
 ---
 
