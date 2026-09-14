@@ -1,225 +1,74 @@
-.actbl {
+/*
+ * Editor de los agentes de un grupo. La CAJA la pone la `sc-section-card` del
+ * formulario; la tabla, `sc-datatable`, también vacía. Aquí solo queda
+ * la barra y dos celdas.
+ *
+ * `.assign` es el MISMO bloque que `group-assignment-table` (los grupos de un agente),
+ * byte a byte: la misma relación vista desde cada lado. Si cambias uno, cambia el otro.
+ */
+.assign {
   display: flex;
   flex-direction: column;
-  gap: var(--sc-spacing-1-125);
+  gap: var(--sc-spacing-0-875);
 
-  // ---- head: unified query input + counter ----
-  &__head {
+  &__bar {
     display: flex;
     align-items: center;
-    gap: var(--sc-spacing-1-125);
     flex-wrap: wrap;
-  }
-
-  &__query {
-    position: relative;
-    flex: 1 1 320px;
-    min-width: 240px;
-    display: flex;
-    align-items: center;
-  }
-
-  // ---- suggestion strip ("añadir al grupo: chip chip chip") ----
-  &__suggest {
-    display: flex;
-    align-items: center;
     gap: var(--sc-spacing-0-875);
-    flex-wrap: wrap;
-    padding: var(--sc-spacing-0-75) var(--sc-spacing-0-875);
-    background: var(--sc-bg-primary-subtle);
-    border: 1px dashed var(--sc-border-secondary-hover);
-    border-radius: var(--sc-radius-100);
   }
 
-  &__suggest-label {
-    color: var(--sc-text-secondary);
-    flex: 0 0 auto;
-  }
-
-  &__suggest-chips {
-    display: inline-flex;
-    flex-wrap: wrap;
-    gap: var(--sc-spacing-0-5);
-  }
-
-  &__suggest-chip {
-    display: inline-flex;
-    align-items: center;
-    gap: var(--sc-spacing-0-25);
-    padding: 4px var(--sc-spacing-0-75);
-    background: var(--sc-bg-surface);
-    border: 1px solid var(--sc-border-default);
-    border-radius: var(--sc-radius-full);
-    color: var(--sc-text-primary);
-    font-size: var(--sc-font-size-100);
-    cursor: pointer;
-    transition:
-      background-color 100ms ease,
-      border-color 100ms ease;
-
-    &:hover {
-      background: var(--sc-bg-primary);
-      border-color: var(--sc-bg-primary);
-      color: var(--sc-text-on-primary);
-    }
-    &:focus-visible {
-      outline: 2px solid var(--sc-border-focus);
-      outline-offset: 2px;
-    }
+  &__search {
+    flex: 1 1 240px;
+    min-width: 0;
+    max-width: 320px;
   }
 
   &__counter {
     color: var(--sc-text-subtle);
-    flex: 0 0 auto;
+    white-space: nowrap;
   }
 
-  // ---- empty state ----
-  /* Icon + title + body. The picker bar above the table is the CTA;
-   * the empty state just explains the void without adding another
-   * call-to-action that duplicates it. */
-  &__empty {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    gap: var(--sc-spacing-0-875);
-    padding: var(--sc-spacing-2-25) var(--sc-spacing-1-5);
-    text-align: center;
-    color: var(--sc-text-subtle);
-    border: 1px dashed var(--sc-border-default);
-    border-radius: var(--sc-radius-200);
+  &__add {
+    margin-left: auto;
+    flex: 0 1 240px;
+    min-width: 200px;
   }
 
-  &__empty-icon {
+  &__name {
     display: inline-flex;
     align-items: center;
-    justify-content: center;
-    width: 44px;
-    height: 44px;
-    border-radius: var(--sc-radius-full);
-    background: var(--sc-bg-secondary-subtle);
-    color: var(--sc-text-secondary);
-  }
-
-  &__empty-title {
-    margin: var(--sc-spacing-0-5) 0 0;
-    color: var(--sc-text-primary);
-  }
-
-  &__empty-body {
-    margin: 0;
-    color: var(--sc-text-subtle);
-    max-width: 360px;
-  }
-
-  // ---- table ----
-  &__table {
-    width: 100%;
-    border-collapse: collapse;
-
-    thead th {
-      text-align: left;
-      font-weight: var(--sc-font-weight-regular);
-      color: var(--sc-text-secondary);
-      font-size: var(--sc-font-size-100);
-      padding: var(--sc-spacing-0-75) var(--sc-spacing-0-875);
-      border-bottom: 1px solid var(--sc-border-default);
-      vertical-align: middle;
-    }
-  }
-
-  &__th-check {
-    width: 32px;
-  }
-  &__th-active {
-    width: 84px;
-    text-align: center;
-  }
-  &__th-actions {
-    width: 36px;
-  }
-
-  &__row {
-    transition: background-color 100ms ease;
-
-    &:hover {
-      background: var(--sc-row-hover-bg);
-    }
-    &--selected {
-      background: var(--sc-bg-selected);
-    }
-    &--paused {
-      opacity: 0.6;
-    }
-
-    td {
-      padding: var(--sc-spacing-0-75) var(--sc-spacing-0-875);
-      border-bottom: 1px solid var(--sc-border-subtle);
-      vertical-align: middle;
-    }
-  }
-
-  &__td-check {
-    width: 32px;
-  }
-
-  /* Grid avatar · nombre (ancho FIJO) · chips → chips alineadas en columna en
-   * todas las filas pese a nombres de longitud variable (espejo de gatbl,
-   * S62-ext-3). Ellipsis + title para nombres largos. */
-  &__td-name {
-    display: grid;
-    grid-template-columns: auto var(--actbl-name-w, 160px) 1fr;
-    align-items: center;
     gap: var(--sc-spacing-0-875);
+    min-width: 0;
+    max-width: 100%;
   }
 
   &__name-label {
     color: var(--sc-text-primary);
-    font-weight: var(--sc-font-weight-semibold);
-    min-width: 0;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
 
-  &__td-active {
-    text-align: center;
+  &__none {
+    color: var(--sc-text-disabled);
+  }
 
-    > * {
-      display: inline-block;
-    }
+  /* Con filas elegidas, la barra de acciones en lote flota sobre el pie: se reserva su alto
+   * para que no tape la última fila al llegar abajo. */
+  &--bulk {
+    padding-bottom: var(--sc-bulk-action-bar-height);
   }
 
   &__no-results {
-    padding: var(--sc-spacing-1-125);
+    padding: var(--sc-spacing-1-5) var(--sc-spacing-0-875);
     text-align: center;
     color: var(--sc-text-subtle);
   }
 
-  // ---- bulk bar (overlay-style — doesn't push content per no-CLS rule) ----
-  &__bulkbar {
-    position: sticky;
-    bottom: var(--sc-spacing-1-125);
-    align-self: stretch;
-    margin-top: var(--sc-spacing-0-875);
-    display: flex;
-    align-items: center;
-    gap: var(--sc-spacing-0-875);
-    padding: var(--sc-spacing-0-75) var(--sc-spacing-1-125);
-    background: var(--sc-bg-primary);
-    color: var(--sc-text-on-primary);
-    border-radius: var(--sc-radius-200);
-    box-shadow: 0 4px 16px rgb(var(--sc-shadow-color-rgb) / 0.18);
-    z-index: 4;
-  }
-
-  &__bulk-count {
-    font-weight: var(--sc-font-weight-semibold);
-    font-size: var(--sc-font-size-200);
-  }
-
-  @media (prefers-reduced-motion: reduce) {
-    &__row {
-      transition: none;
-    }
+  /* El vacío en dos renglones dentro de la tabla: qué pasa, y debajo qué hacer. */
+  &__empty-title {
+    display: block;
+    color: var(--sc-text-primary);
   }
 }

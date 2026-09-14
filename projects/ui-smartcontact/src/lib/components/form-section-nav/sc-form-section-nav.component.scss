@@ -24,46 +24,67 @@
   border: 1px solid var(--sc-border-default);
   border-radius: var(--sc-radius-200);
 
-  /* Variante flush (S62 · lenguaje SnowUI · Figma índice 12277:4818). El índice es
-   * un PANEL embebido del rail: fondo, radio 6, padding 16, gap, sin borde.
-   * Modelo de color 1:1 con el Figma (confirmado por variables del nodo,
-   * S62-ext-2): la PÁGINA es BLANCA (`content/background` = #fff) y los paneles del
-   * rail (índice, ficha) son **gray-50** (#f9fafb) → recogidos sobre la página
-   * blanca. El item activo se separa con gray-100 (un paso sobre el panel); el chip
-   * del icono es 32×32 (gray-200 inactivo · navy activo). Opt-in: lo usan los 3
-   * forms (agents/groups/users); default off. Ver customs-catalog §2.7.
+  /* Variante flush — el índice de las fichas de agente, grupo y usuario.
    *
-   * ⚠️ Al tocar esta variante: confirmar los FILLS contra el nodo Figma (no a ojo).
-   * (Lección S62-ext-2: lo hice al revés —panel blanco sobre página gris— por asumir
-   * el color de la página en vez de leer la variable del nodo.) */
+   * Desde el 2026-09-14 se ve IGUAL que el índice de Contact Center
+   * (`settings-sidebar`, Figma 393:12565, que en la maqueta ES este componente): el
+   * rail no tiene color, el icono va desnudo a 20, la etiqueta es `Body/body-regular`
+   * y lo único que se pinta es el item activo, con `--sc-bg-hover`.
+   *
+   * Antes era un panel gray-50 con cada icono en su chip de 32×32 (gray-200 inactivo,
+   * navy activo): dos manchas de color por fila en una pieza que solo sirve para
+   * indexar, y la razón por la que las fichas de admin no se parecían a Contact
+   * Center aunque las dos pantallas son la misma. Rafa: «no rima nada».
+   *
+   * Lo que NO cambia: la etiqueta ENVUELVE (DD-52). Contact Center tiene tres items
+   * cortos y puede ir en una línea; aquí hay «Servicios asignados» en cuatro idiomas. */
   &--flush {
-    background: var(--sc-bg-secondary-subtle); /* gray-50 — Figma índice */
+    background: transparent;
     border: 0;
-    border-radius: var(--sc-radius-200); /* 6px — Figma índice */
-    padding: var(--sc-spacing-1-143); /* 16px — Figma índice p-16 */
+    border-radius: 0;
+    padding: var(--sc-spacing-0-625) 0;
 
     .form-nav__list {
-      gap: var(--sc-spacing-0-375); /* ~6px (snap de 6 a la escala 14-base) */
+      gap: var(--sc-spacing-0-25); /* 3.5 — `Frame` 393:12568 */
     }
 
-    /* Chip 32×32 (Figma `Frame 24`), inactivo gray-200. */
+    .form-nav__item {
+      gap: var(--sc-spacing-0-375);
+      padding: var(--sc-spacing-0-625);
+      border-radius: var(--sc-radius-400);
+
+      &:hover {
+        background: var(--sc-bg-hover);
+      }
+    }
+
     .form-nav__icon {
-      width: 32px;
-      height: 32px;
-      background: var(--sc-bg-secondary-active);
+      width: auto;
+      height: auto;
+      font-size: var(--sc-icon-size-2xl); /* 20 — el `IconSet` de la maqueta */
+      background: transparent;
+      border: 0;
+      border-radius: 0;
+      color: var(--sc-text-secondary);
     }
 
-    /* Label: regular inactivo · semibold activo (Figma body2 ↔ body3 sbold).
-     * El default del nav usa medium para todos; aquí 1:1 con el nodo. */
     .form-nav__label {
+      font-size: var(--sc-font-size-body-2);
+      line-height: var(--sc-line-height-body-2);
       font-weight: var(--sc-font-weight-regular);
+      color: var(--sc-text-secondary);
     }
 
-    /* Activo: panel gray-100 (un paso sobre el fondo) + label semibold. */
     .form-nav__item--active {
-      background: var(--sc-bg-secondary-hover);
+      background: var(--sc-bg-hover);
+
+      .form-nav__icon {
+        background: transparent;
+        color: var(--sc-text-primary);
+      }
 
       .form-nav__label {
+        color: var(--sc-text-primary);
         font-weight: var(--sc-font-weight-semibold);
       }
     }

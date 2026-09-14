@@ -85,14 +85,9 @@ export const HOJA_COMPARTIDA = 'projects/supervisor/src/styles/_forms.scss';
  * pantalla es suyo y no hay nada que unificar.
  */
 export const VOCABULARIO = [
-  /* El chip de canal, entrado el 2026-09-12 al unificarlo. Cumple el criterio de
-   * abajo (dos pantallas lo usan) y entra por algo más que simetría: las dos
-   * copias no diferían en el estilo, diferían en el SIGNIFICADO — en una el chip
-   * relleno era el canal apagado y en la otra el encendido. Registrarlo aquí es
-   * lo que impide que vuelvan a separarse sin que nadie lo vea. */
-  '.channel-chips',
-  '.channel-chip',
-  '.channel-chip__icon',
+  /* El chip de canal (`.channel-chip*`) SALIÓ el 2026-09-14: los dos editores de la
+   * relación agente↔grupo pasaron a una columna por canal con `sc-checkbox`, como la
+   * matriz de Contact Center, y la pieza a mano dejó de existir. */
   '.grid',
   '.grid--2',
   '.field',

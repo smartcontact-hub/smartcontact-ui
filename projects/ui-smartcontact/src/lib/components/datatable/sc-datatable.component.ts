@@ -146,6 +146,17 @@ export class ScDatatableComponent<T = unknown> {
    * se ven: la pantalla necesita su propio buscador.
    */
   readonly virtualScroll = input(false, { transform: booleanAttribute });
+  /**
+   * Ancho mínimo de la tabla (p. ej. `'66rem'`). Con `scrollable`, por debajo de ese ancho la tabla
+   * se desplaza de lado dentro de su contenedor en lugar de estrechar columnas y recortar texto
+   * (2026-09-14). Va por `tableStyle` de `p-table`, no por una regla de la app sobre `.p-*`, para
+   * que viaje con el componente.
+   */
+  readonly tableMinWidth = input<string | undefined>(undefined);
+  protected readonly pTableStyle = computed(() => {
+    const min = this.tableMinWidth();
+    return min ? { 'min-width': min } : undefined;
+  });
 
   /**
    * Cabecera fija al scroll de la PÁGINA: se queda arriba mientras se desplaza

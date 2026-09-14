@@ -1,55 +1,51 @@
-<!-- Modelo "todo arriba" (experiment S59): fuera la banda sticky-form-header.
-     Identidad → breadcrumb + campos del cuerpo (foto/nombre en Identidad);
-     Guardar/Cancelar → barra de arriba vía TopBarSlotService (ver el .ts). -->
+<!-- Las acciones suben a la barra de arriba vía TopBarSlotService (ver el .ts), con los
+     mismos botones que Contact Center: «Deshacer» SOLO si hay algo que deshacer, y
+     Guardar. Hasta el 2026-09-14 aquí había un «Cancelar» siempre visible que volvía a la
+     lista; para salir ya están la miga y el menú, y el guardián de cambios avisa si dejas
+     algo sin guardar. -->
 <ng-template #topbarActions>
-  <!-- El motivo va VISIBLE, no en un aria oculto: 'sc-button' reenvía
-       'ariaLabel' al <button> real pero no 'aria-describedby', así que ese
-       texto se quedaba colgando del custom element, sin rol y sin foco — un
-       aria que no llega al control es peor que ninguno, porque parece
-       accesible. Visible sirve además a quien ve la pantalla. -->
-  @if (saveDisabledReason(); as reason) {
+  <!-- El motivo va VISIBLE, no en un aria oculto: 'sc-button' reenvía 'ariaLabel' al
+       <button> real pero no 'aria-describedby'. Solo cuando FALTA algo: «No hay cambios
+       que guardar» con el botón apagado era decir dos veces lo mismo (Contact Center no
+       lo dice). -->
+  @if (saveBlockedReason(); as reason) {
     <span class="form-save-reason sc-text-caption-regular">{{ reason | translate }}</span>
   }
-  <sc-button size="sm" type="button" variant="secondary" (clicked)="cancel()">
-    <span>{{ 'common.cancel' | translate }}</span>
-  </sc-button>
+  @if (formDirty()) {
+    <sc-button
+      size="sm"
+      variant="secondary"
+      appearance="outlined"
+      [label]="'common.undo' | translate"
+      (clicked)="discard()"
+    />
+  }
   <sc-button
     size="sm"
-    type="button"
     variant="primary"
     [disabled]="!canSave()"
     [loading]="saving()"
+    [label]="'common.save' | translate"
     [attr.title]="saveDisabledReason() ? (saveDisabledReason()! | translate) : null"
     (clicked)="save()"
-  >
-    <span>{{ 'common.save' | translate }}</span>
-  </sc-button>
+  />
 </ng-template>
 
 <div class="page">
-  <!-- El modelo "todo arriba" (S59) dejó estas páginas sin <h1>: la
-       identidad la daba solo un <ol> de breadcrumb, y el documento quedaba
-       sin encabezado. Visualmente oculto porque el diseño no lo pide. -->
+  <!-- Único <h1> del documento, oculto: la identidad la dicen la miga y la ficha. -->
   <h1 class="visually-hidden">{{ (mode() === 'edit' ? 'users.form.edit_breadcrumb' : 'users.form.create_breadcrumb') | translate }}</h1>
 
-  <div class="page__inner page__inner--with-panel">
-    <aside class="ipanel" [attr.aria-label]="'common.form_index_aria' | translate">
-      <!-- La ficha: resumen de identidad (solo lectura) arriba del índice.
-           Modelo "todo arriba" S59 — quién editas + su tipo, de un vistazo.
-           Solo en editar; al crear no hay identidad todavía. -->
+  <!-- El molde de Contact Center (`.page__inner--rail`): índice + contenido como una
+       sola pieza, centrada y con tope de 1200. -->
+  <div class="page__inner page__inner--rail">
+    <aside class="page__rail" [attr.aria-label]="'common.form_index_aria' | translate">
       @if (mode() === 'edit') {
         <div class="ficha">
-          <sc-illustrated-avatar
-            class="ficha__avatar"
-            [name]="form().name"
-            [photo]="form().photo"
-            [size]="40"
-          />
+          <sc-illustrated-avatar class="ficha__avatar" [name]="form().name" [photo]="form().photo" [size]="36" />
           <div class="ficha__body">
-            <span class="ficha__name" [title]="form().name">{{ form().name }}</span>
-            <span class="pill">{{ typeLabelKeys[form().type] | translate }}</span>
+            <span class="ficha__name sc-text-body-semibold" [title]="form().name">{{ form().name }}</span>
             @if (form().email) {
-              <span class="ficha__ext sc-text-caption-regular">{{ form().email }}</span>
+              <span class="ficha__meta sc-text-caption-regular" [title]="form().email">{{ form().email }}</span>
             }
           </div>
         </div>
@@ -63,146 +59,176 @@
         (activeChange)="activeSection.set($event)"
       />
 
-      <!-- Zona de peligro: Eliminar al fondo del panel, enlace discreto y
-           apartado del índice → fuera del scan primario (S59). -->
       @if (mode() === 'edit') {
-        <sc-button class="ipanel__delete" variant="danger" appearance="text" size="sm" [icon]="trashIcon" [label]="'common.delete' | translate" (clicked)="requestDelete()" />
+        <sc-button class="rail-delete" variant="danger" appearance="text" size="sm" [icon]="trashIcon" [label]="'common.delete' | translate" (clicked)="requestDelete()" />
       }
     </aside>
 
-    <div class="page__form">
+    <div class="page__main">
       @switch (activeSection()) {
         @case ('user-section-identity') {
           <sc-section-card
             anchorId="user-section-identity"
+            surface="card"
             [icon]="activeIcon()"
             titleKey="users.form.section.identity"
           >
-            <!-- Foto + nombre re-homed al cuerpo (experiment S59 "todo arriba"):
-                 al quitar la banda sticky-form-header, la identidad vuelve a
-                 ser campos del form (+ el breadcrumb arriba la repite). -->
-            <div class="form-identity">
-              <sc-photo-upload
-                size="sm"
-                [photo]="form().photo"
-                [name]="form().name"
-                [ariaLabel]="'common.photo.change' | translate"
-                (photoChange)="onPhotoChange($event)"
-              />
-              <div class="field form-identity__name">
-                <!-- El nombre no tiene regla de contenido: o está o no está, y
-                     que falte lo dice el motivo del botón, no un error rojo
-                     sobre un campo que aún no has tocado. -->
-                <sc-inputtext
-                  inputId="user-name"
-                  [label]="'users.form.fields.name' | translate"
-                  [required]="true"
-                  [value]="form().name"
-                  (valueChange)="onNameRename($event)"
+            <section class="sub-section">
+              <div class="form-identity">
+                <sc-photo-upload
+                  size="sm"
+                  [photo]="form().photo"
+                  [name]="form().name"
+                  [ariaLabel]="'common.photo.change' | translate"
+                  (photoChange)="onPhotoChange($event)"
                 />
+                <!-- El nombre no tiene regla de contenido: o está o no está, y que
+                     falte lo dice el motivo del botón, no un error rojo sobre un
+                     campo que aún no has tocado. -->
+                <div class="field form-identity__name">
+                  <label class="field__label sc-text-caption-semibold" for="user-name">
+                    {{ 'users.form.fields.name' | translate }}
+                    <span class="field__required" aria-hidden="true">*</span>
+                  </label>
+                  <sc-inputtext
+                    inputId="user-name"
+                    [required]="true"
+                    [value]="form().name"
+                    (valueChange)="onNameRename($event)"
+                  />
+                </div>
               </div>
-            </div>
 
-            <div class="grid grid--2">
-              <sc-inputtext
-                inputId="user-email"
-                type="email"
-                autocomplete="email"
-                [label]="'users.form.fields.email' | translate"
-                [required]="true"
-                [value]="form().email"
-                (valueChange)="onTextValue('email', $event)"
-                [error]="emailError() ? (emailError()! | translate) : undefined"
-              />
+              <div class="grid grid--2">
+                <div class="field">
+                  <label class="field__label sc-text-caption-semibold" for="user-email">
+                    {{ 'users.form.fields.email' | translate }}
+                    <span class="field__required" aria-hidden="true">*</span>
+                  </label>
+                  <sc-inputtext
+                    inputId="user-email"
+                    type="email"
+                    autocomplete="email"
+                    [required]="true"
+                    [value]="form().email"
+                    (valueChange)="onTextValue('email', $event)"
+                    [error]="emailError() ? (emailError()! | translate) : undefined"
+                  />
+                </div>
 
-              <sc-inputtext
-                inputId="user-identifier"
-                type="text"
-                [label]="'users.form.fields.identifier' | translate"
-                [helperText]="'users.form.fields.identifier_hint' | translate"
-                [value]="form().identifier"
-                (valueChange)="onTextValue('identifier', $event)"
-              />
+                <div class="field">
+                  <label class="field__label sc-text-caption-semibold" for="user-identifier">
+                    {{ 'users.form.fields.identifier' | translate }}
+                  </label>
+                  <sc-inputtext
+                    inputId="user-identifier"
+                    type="text"
+                    [helperText]="'users.form.fields.identifier_hint' | translate"
+                    [value]="form().identifier"
+                    (valueChange)="onTextValue('identifier', $event)"
+                  />
+                </div>
 
-              <div class="field">
-                <label class="field__label sc-text-caption-semibold" for="user-type">
-                  {{ 'users.form.fields.type' | translate }}
-                </label>
-                <sc-select
-                  inputId="user-type"
-                  [options]="userTypes"
-                  [value]="form().type"
-                  (valueChange)="onTypeValueChange($event)"
-                >
-                  <ng-template #item let-t>
-                    {{ typeLabelKeys[t] | translate }}
-                  </ng-template>
-                  <ng-template #selectedItem let-t>
-                    {{ typeLabelKeys[t] | translate }}
-                  </ng-template>
-                </sc-select>
+                <div class="field">
+                  <label class="field__label sc-text-caption-semibold" for="user-type">
+                    {{ 'users.form.fields.type' | translate }}
+                  </label>
+                  <sc-select
+                    inputId="user-type"
+                    [options]="userTypes"
+                    [value]="form().type"
+                    (valueChange)="onTypeValueChange($event)"
+                  >
+                    <ng-template #item let-t>
+                      {{ typeLabelKeys[t] | translate }}
+                    </ng-template>
+                    <ng-template #selectedItem let-t>
+                      {{ typeLabelKeys[t] | translate }}
+                    </ng-template>
+                  </sc-select>
+                </div>
               </div>
-            </div>
+            </section>
 
-            <div class="field field--inline">
-              <sc-toggleswitch
-                [checked]="form().status === 'active'"
-                [ariaLabel]="'users.form.fields.status' | translate"
-                (checkedChange)="onStatusChange($event)"
-              />
-              <div>
-                <span class="field__label-inline sc-text-caption-regular">{{
-                  'users.form.fields.status' | translate
-                }}</span>
-                <span class="field__help sc-text-caption-regular">
-                  {{ 'users.form.fields.status_' + form().status | translate }}
-                </span>
+            <sc-divider />
+
+            <section class="sub-section">
+              <div class="switch-field switch-field--top">
+                <sc-toggleswitch
+                  [checked]="form().status === 'active'"
+                  [ariaLabel]="'users.form.fields.active' | translate"
+                  (checkedChange)="onStatusChange($event)"
+                />
+                <!-- La etiqueta dice lo que significa ENCENDIDO («Activo»), no el nombre del
+                     dato («Estado»); y la ayuda ya no repite «Usuario activo:» delante. -->
+                <div class="switch-field__copy">
+                  <span class="switch-field__label sc-text-body-regular">{{ 'users.form.fields.active' | translate }}</span>
+                  <p class="switch-field__hint sc-text-caption-regular">{{ 'users.form.fields.active_hint' | translate }}</p>
+                </div>
               </div>
-            </div>
+            </section>
           </sc-section-card>
         }
 
-        @case ('user-section-sections') {
+        @case ('user-section-access') {
+          <!-- «Secciones» y «Permisos» en UNA sección desde el 2026-09-14. Eran dos pestañas
+               con la misma forma (una lista de casillas) sobre la misma pregunta: a qué tiene
+               acceso esta persona. Lo que VE y lo que puede HACER, en dos tramos. -->
           <sc-section-card
-            anchorId="user-section-sections"
+            anchorId="user-section-access"
+            surface="card"
             [icon]="activeIcon()"
-            titleKey="users.form.section.sections"
-            hintKey="users.form.section.sections_hint"
+            titleKey="users.form.section.access"
           >
-            <div class="checkbox-grid">
-              @for (def of sectionDefs; track def.key) {
-                <sc-checkbox class="checkbox-row" [class.checkbox-row--child]="!!def.parent" [state]="(form().sections[def.key]) ? 'all' : 'none'" (cycle)="toggleSection(def.key)">{{ def.labelKey | translate }}</sc-checkbox>
-              }
-            </div>
-          </sc-section-card>
-        }
+            <section class="sub-section" aria-labelledby="user-access-sections-title">
+              <header class="sub-section__head">
+                <h3 id="user-access-sections-title" class="sub-section__title sc-text-body-semibold">{{ 'users.form.section.sections' | translate }}</h3>
+              </header>
+              <!-- Las secciones hijas van DEBAJO de su madre, en su misma celda. Antes eran
+                   celdas sueltas con sangría en una rejilla de cuatro columnas, y «Analizador de
+                   Flujo» caía en la fila de abajo, pareciendo hija de «Campañas». -->
+              <div class="checkbox-grid">
+                @for (node of sectionTree; track node.def.key) {
+                  <div class="checkbox-stack">
+                    <sc-checkbox class="checkbox-row" [state]="form().sections[node.def.key] ? 'all' : 'none'" (cycle)="toggleSection(node.def.key)">{{ node.def.labelKey | translate }}</sc-checkbox>
+                    @for (child of node.children; track child.key) {
+                      <sc-checkbox class="checkbox-row checkbox-row--child" [disabled]="!form().sections[node.def.key]" [state]="form().sections[child.key] ? 'all' : 'none'" (cycle)="toggleSection(child.key)">{{ child.labelKey | translate }}</sc-checkbox>
+                    }
+                  </div>
+                }
+              </div>
+            </section>
 
-        @case ('user-section-permissions') {
-          <sc-section-card
-            anchorId="user-section-permissions"
-            [icon]="activeIcon()"
-            titleKey="users.form.section.permissions"
-          >
-            <div class="checkbox-grid">
-              @for (def of permissionDefs; track def.key) {
-                <sc-checkbox class="checkbox-row" [state]="(form().permissions[def.key]) ? 'all' : 'none'" (cycle)="togglePermission(def.key)">{{ def.labelKey | translate }}</sc-checkbox>
-              }
-            </div>
+            <sc-divider />
+
+            <section class="sub-section" aria-labelledby="user-access-permissions-title">
+              <header class="sub-section__head">
+                <h3 id="user-access-permissions-title" class="sub-section__title sc-text-body-semibold">{{ 'users.form.section.permissions' | translate }}</h3>
+              </header>
+              <div class="checkbox-grid">
+                @for (def of permissionDefs; track def.key) {
+                  <sc-checkbox class="checkbox-row" [state]="form().permissions[def.key] ? 'all' : 'none'" (cycle)="togglePermission(def.key)">{{ def.labelKey | translate }}</sc-checkbox>
+                }
+              </div>
+            </section>
           </sc-section-card>
         }
 
         @case ('user-section-services') {
           <sc-section-card
             anchorId="user-section-services"
+            surface="card"
             [icon]="activeIcon()"
             titleKey="users.form.section.services"
             hintKey="users.form.section.services_hint"
           >
-            <div class="checkbox-grid checkbox-grid--services">
-              @for (service of availableServices; track service) {
-                <sc-checkbox class="checkbox-row" [state]="(hasService(service)) ? 'all' : 'none'" (cycle)="toggleService(service)">{{ service }}</sc-checkbox>
-              }
-            </div>
+            <section class="sub-section">
+              <div class="checkbox-grid checkbox-grid--services">
+                @for (service of availableServices; track service) {
+                  <sc-checkbox class="checkbox-row" [state]="hasService(service) ? 'all' : 'none'" (cycle)="toggleService(service)">{{ service }}</sc-checkbox>
+                }
+              </div>
+            </section>
           </sc-section-card>
         }
       }
@@ -214,8 +240,8 @@
   [visible]="deleteVisible()"
   mode="single"
   [items]="deleteItems()"
-  [entitySingular]="'usuario'"
-  [entityPlural]="'usuarios'"
+  [entitySingular]="'users.entity_singular' | translate"
+  [entityPlural]="'users.entity_plural' | translate"
   (cancelled)="cancelDelete()"
   (confirm)="confirmDelete()"
 />

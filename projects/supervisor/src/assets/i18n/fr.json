@@ -706,7 +706,6 @@
     "discard_body": "Les modifications non sauvegardées seront perdues.",
     "discard_confirm": "Annuler",
     "discard_keep": "Continuer l'édition",
-    "discard_changes": "Abandonner les modifications",
     "cross_tab_warning": "Cet enregistrement est édité dans un autre onglet. Les modifications peuvent s'écraser mutuellement.",
     "undo": "Annuler",
     "change_reverted": "Modification annulée",
@@ -744,7 +743,8 @@
     "actions": "Actions",
     "select_row": "Sélectionner {{name}}",
     "select_all": "Tout sélectionner",
-    "form_index_aria": "Sommaire du formulaire"
+    "form_index_aria": "Sommaire du formulaire",
+    "filter_count": "{{shown}} sur {{total}}"
   },
   "topbar": {
     "go_to_dashboard": "Aller au tableau de bord",
@@ -1127,7 +1127,8 @@
         "permissions": "Permissions",
         "permissions_hint": "Actions avancées",
         "services": "Services assignés",
-        "services_hint": "Services VUI sous supervision"
+        "services_hint": "Services VUI sous supervision",
+        "access": "Accès"
       },
       "fields": {
         "name": "Nom complet",
@@ -1136,8 +1137,8 @@
         "identifier_hint": "Si vous le laissez vide, il sera généré automatiquement lors de la sauvegarde.",
         "type": "Type d'utilisateur",
         "status": "État",
-        "status_active": "Utilisateur actif : peut se connecter et opérer.",
-        "status_inactive": "Utilisateur inactif : ne pourra pas se connecter jusqu'à réactivation."
+        "active": "Actif",
+        "active_hint": "Peut se connecter et opérer"
       },
       "danger_zone_description": "Supprimer cet utilisateur révoque son accès au panneau et efface ses permissions. L'action ne peut pas être annulée.",
       "duplicate_title": "Dupliquer l'utilisateur",
@@ -1189,7 +1190,8 @@
       "channels": "Canaux",
       "priority": "Priorité",
       "strategy": "Stratégie",
-      "agents": "Agents"
+      "agents": "Agents",
+      "agents_count": "{{count}} agents"
     },
     "priority": {
       "low": "Basse",
@@ -1212,18 +1214,13 @@
         "channels": "Canaux",
         "channels_hint": "Types de contact",
         "strategy": "Stratégie",
-        "strategy_hint": "Distribution d'appels et chats",
         "agents": "Agents assignés",
-        "agents_hint": "Canaux par agent"
+        "distribution": "Canaux et stratégie"
       },
       "assigned": {
         "query_placeholder": "Rechercher un agent…",
-        "query_aria": "Rechercher un agent assigné ou en ajouter un nouveau",
-        "add_suggest": "Ajouter au groupe :",
-        "add_suggest_aria": "Ajouter {{name}} au groupe",
-        "counter": "{{assigned}} assignés · {{zero}} sans canaux",
         "empty_title": "Aucun agent assigné",
-        "empty": "Utilisez la recherche ci-dessus pour assigner le premier agent à ce groupe.",
+        "empty": "Utilisez « Ajouter un agent » pour assigner le premier agent à ce groupe.",
         "no_results": "Aucun agent assigné ne correspond au filtre.",
         "col_agent": "Agent",
         "col_active": "Actif",
@@ -1231,7 +1228,9 @@
         "active_aria": "Mettre en pause {{name}} dans ce groupe",
         "remove_aria": "Retirer {{name}} du groupe",
         "warn_no_channels": "Actif mais sans canaux assignés",
-        "bulk_count": "{{count}} sélectionnés",
+        "add_placeholder": "Ajouter un agent…",
+        "add_aria": "Ajouter un agent au groupe",
+        "no_channels_warn": "{{count}} sans canal",
         "bulk_pause": "Mettre en pause",
         "bulk_unassign": "Retirer du groupe"
       },
@@ -1349,47 +1348,31 @@
         "identification_hint": "Photo, contact et extension",
         "channels": "Canaux",
         "recording": "Enregistrement",
-        "recording_hint": "Les appels de l'agent sont enregistrés si activé",
         "languages": "Langues",
         "languages_hint": "Langues que l'agent maîtrise pour le routage",
         "labels": "Étiquettes",
         "labels_hint": "Catégories qui aident à filtrer et organiser les agents",
         "groups": "Groupes assignés",
-        "groups_hint": "Groupes et canaux par groupe",
         "permissions": "Permissions",
         "permissions_hint": "Capacités de l'agent",
         "advanced": "Avancé",
-        "advanced_hint": "Étiquettes, comportement, langue"
+        "advanced_hint": "Étiquettes, comportement, langue",
+        "repositories": "Référentiels"
       },
       "advanced": {
         "labels": {
-          "title": "Étiquettes",
-          "count_one": "1 assignée",
-          "count_many": "{{count}} assignées"
+          "title": "Étiquettes"
         },
         "agendas": {
-          "title": "Carnets",
-          "count_one": "1 assigné",
-          "count_many": "{{count}} assignés",
-          "search_placeholder": "Rechercher un carnet…",
-          "footnote": "Référentiels > Carnets"
+          "title": "Carnets"
         },
         "plantillas": {
-          "title": "Modèles",
-          "count_one": "1 assigné",
-          "count_many": "{{count}} assignés",
-          "search_placeholder": "Rechercher un modèle…",
-          "tab_chat": "Chat",
-          "tab_email": "Email",
-          "col_title": "Titre",
-          "col_preview": "Aperçu",
-          "select_all": "Sélectionner tous les modèles visibles",
-          "empty": "Aucun modèle de {{tab}} trouvé"
+          "title": "Modèles"
         },
         "comportamiento": {
           "title": "Comportement",
-          "pickup_call": "Décrochage — Appel",
-          "pickup_chat": "Décrochage — Chat",
+          "pickup_call": "Décrochage des appels",
+          "pickup_chat": "Décrochage des chats",
           "max_chats": "Chats simultanés",
           "random_order": "Ordre aléatoire",
           "random_order_hint": "Afficher les agents en ordre aléatoire dans le groupe"
@@ -1410,7 +1393,7 @@
           "login_ext_override_hint": "Si l'agent se connecte depuis un autre appareil, son extension est mise à jour automatiquement",
           "security": "Sécurité",
           "expire_pwd": "Expirer le mot de passe",
-          "expire_pwd_hint": "Force l'agent à définir un nouveau mot de passe à sa prochaine connexion",
+          "expire_pwd_hint": "Impose un nouveau mot de passe à la prochaine connexion",
           "expire_title": "Expirer le mot de passe ?",
           "expire_body": "{{name}} devra définir un nouveau mot de passe à sa prochaine connexion. L'action ne peut pas être annulée.",
           "expire_accept": "Expirer le mot de passe",
@@ -1429,27 +1412,31 @@
         "pickup_manual": "Manuel",
         "presence": "Présence initiale",
         "status": "État",
-        "status_active": "Agent actif : peut recevoir appels et chats.",
-        "status_inactive": "Agent inactif : ne reçoit pas de nouvelles interactions.",
         "phone": "Téléphone mobile",
         "email": "Email",
         "pin": "PIN",
         "pin_hint": "3-6 chiffres. Utilisé pour l'auto-activation depuis le téléphone.",
-        "labels": "Étiquettes assignées"
+        "labels": "Étiquettes assignées",
+        "active": "Actif",
+        "active_hint": "Peut recevoir des appels et des chats",
+        "recording": "Enregistrer les appels"
       },
       "labels_placeholder": "Ajouter une étiquette…",
       "labels_empty": "Pas encore d'étiquettes. Créez-en une depuis la section Étiquettes.",
       "assigned": {
         "picker_placeholder": "Rechercher ou ajouter un groupe…",
         "picker_aria": "Ajouter un groupe à l'agent",
-        "counter": "{{count}} groupes",
         "empty_title": "Aucun groupe assigné",
-        "empty": "Utilisez la recherche ci-dessus pour assigner le premier groupe à cet agent.",
+        "empty": "Utilisez « Ajouter un groupe » pour assigner le premier groupe à cet agent.",
         "col_group": "Groupe",
         "col_channels_here": "Canaux dans ce groupe",
         "col_active": "Actif",
         "active_aria": "Mettre en pause l'agent dans {{name}}",
-        "remove_aria": "Retirer l'agent de {{name}}"
+        "remove_aria": "Retirer l'agent de {{name}}",
+        "add_placeholder": "Ajouter un groupe…",
+        "filter_placeholder": "Rechercher un groupe…",
+        "no_results": "Aucun groupe assigné ne correspond au filtre.",
+        "channel_not_offered": "Ce groupe ne propose pas ce canal"
       },
       "permissions": {
         "manage_devices": "Gestion d'appareils",
@@ -1465,12 +1452,20 @@
         "row_fijos": "Fixes",
         "row_moviles": "Mobiles",
         "row_internacionales": "Internationaux",
-        "row_especial": "Numérotation spéciale"
+        "row_especial": "Numérotation spéciale",
+        "config_title": "Configuration"
       },
       "danger_zone_description": "Supprimer cet agent le désassigne de tous les groupes auxquels il participe. L'action ne peut pas être annulée.",
       "duplicate_title": "Dupliquer l'agent",
       "duplicate_breadcrumb": "Dupliquer l'agent",
-      "duplicate_hint": "Duplication de «{{source}}» · remplissez les champs obligatoires et sauvegardez"
+      "duplicate_hint": "Duplication de «{{source}}» · remplissez les champs obligatoires et sauvegardez",
+      "repositories": {
+        "templates_chat": "Modèles de chat",
+        "templates_email": "Modèles d'e-mail",
+        "none": "Aucun",
+        "selected_many": "{0} sélectionnés",
+        "manage_link": "Gérer dans Référentiels"
+      }
     },
     "toasts": {
       "created": "Agent \"{{name}}\" créé",

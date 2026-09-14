@@ -32,15 +32,18 @@ import { disableAnimations, forceLightTheme, goto } from './helpers';
  */
 
 const FORMULARIOS = [
-  { nombre: 'usuarios', ruta: 'admin/usuarios/crear' },
-  { nombre: 'agentes', ruta: 'admin/agentes/crear' },
-  { nombre: 'grupos', ruta: 'admin/grupos/crear' },
+  /* 4 → 3 el 2026-09-14: «Secciones» y «Permisos» son una sola sección, «Acceso». */
+  { nombre: 'usuarios', ruta: 'admin/usuarios/crear', secciones: 3 },
+  /* 4 → 5 el 2026-09-14: Etiquetas, Agendas y Plantillas salen de Avanzado a «Repositorios». */
+  { nombre: 'agentes', ruta: 'admin/agentes/crear', secciones: 5 },
+  /* 4 → 3 el 2026-09-14: «Canales» y «Estrategia» son una sola sección. */
+  { nombre: 'grupos', ruta: 'admin/grupos/crear', secciones: 3 },
 ] as const;
 
 const IDIOMAS = ['es', 'en', 'fr', 'pt'] as const;
 
-/** Los tres formularios declaran cuatro secciones cada uno. */
-const SECCIONES_POR_FORMULARIO = 4;
+/** Cuántas etiquetas se miden en total: la suma de las secciones de los tres. */
+const SECCIONES_TOTALES = FORMULARIOS.reduce((n, f) => n + f.secciones, 0);
 
 /**
  * Lee cada item del índice: qué dice, cuánto sitio tiene y cuánto pide.
@@ -69,13 +72,13 @@ const recortesEnLosTresFormularios = async (page: Page) => {
   const recortadas: string[] = [];
   let medidas = 0;
 
-  for (const { nombre, ruta } of FORMULARIOS) {
+  for (const { nombre, ruta, secciones } of FORMULARIOS) {
     await goto(page, ruta);
     await expect(page.locator('.form-nav__item').first()).toBeVisible();
 
     const items = await medirIndice(page);
     expect(items.length, `${nombre}: el índice no pintó ningún item`).toBe(
-      SECCIONES_POR_FORMULARIO,
+      secciones,
     );
 
     for (const item of items) {
@@ -118,8 +121,8 @@ for (const idioma of IDIOMAS) {
     // El conteo va aseverado a propósito: un verde con 0 medidas sería un
     // selector que dejó de casar, no un índice sano (LEARNINGS #2, leer el
     // control antes que el resultado).
-    expect(medidas, 'el instrumento no midió las 12 etiquetas esperadas').toBe(
-      FORMULARIOS.length * SECCIONES_POR_FORMULARIO,
+    expect(medidas, `el instrumento no midió las ${SECCIONES_TOTALES} etiquetas esperadas`).toBe(
+      SECCIONES_TOTALES,
     );
     expect(recortadas, `etiquetas recortadas en ${idioma}:\n  ${recortadas.join('\n  ')}`).toEqual(
       [],
@@ -138,6 +141,6 @@ test('índice del rail · a 1024 (rail colapsado) tampoco se recorta', async ({ 
 
   const { recortadas, medidas } = await recortesEnLosTresFormularios(page);
 
-  expect(medidas).toBe(FORMULARIOS.length * SECCIONES_POR_FORMULARIO);
+  expect(medidas).toBe(SECCIONES_TOTALES);
   expect(recortadas, `etiquetas recortadas a 1024:\n  ${recortadas.join('\n  ')}`).toEqual([]);
 });

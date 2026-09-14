@@ -105,8 +105,15 @@ const rutaDe = (html) => {
   const feature = html.split('/').slice(0, -2).join('/');
   const rutasFeature = ficherosRutas.filter((rf) => rf.startsWith(feature.split('/').slice(0, -1).join('/')));
   const candidatas = rutasFeature.flatMap((rf) => [...leer(rf).matchAll(/path:\s*'([^']+)'/g)].map((m) => m[1]));
-  const vigilada = candidatas.find((c) => spec.includes(c));
-  return vigilada ?? null;
+  /* Una ruta con parámetro (`editar/:id`) está vigilada si el spec visita cualquier valor suyo
+   * (`editar/1`). Hasta el 2026-09-14 solo casaba el texto literal, así que un componente cuya
+   * única visita era una ficha de edición salía como «sin ruta» aunque el spec lo mirara. */
+  const casa = (c) => new RegExp(c.split('/').map((seg) => (seg.startsWith(':') ? "[^/'\"]+" : seg.replace(/[.*+?^${}()|[\]\\]/g, '\\$&'))).join('/')).exec(spec)?.[0];
+  for (const c of candidatas.filter(Boolean)) {
+    const visitada = casa(c);
+    if (visitada) return visitada;
+  }
+  return null;
 };
 
 log(`audit:datatables — ${htmls.length} página(s) con <sc-datatable> o <sc-list-page>\n`);

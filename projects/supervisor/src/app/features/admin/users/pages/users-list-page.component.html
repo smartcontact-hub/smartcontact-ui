@@ -14,6 +14,7 @@
   [heading]="'sidebar.users' | translate"
   [rows]="users()"
   [columns]="columns()"
+  tableMinWidth="61rem"
   [columnChoices]="columnDefs()"
   [columnStorageKey]="columnPrefKey"
   [searchPlaceholder]="'users.search_placeholder' | translate"
@@ -49,7 +50,9 @@
 <!-- Celdas de la tabla. Viven FUERA de la lista para que los `viewChild` las resuelvan; `columns()` las
      recoge. El contexto es `{ $implicit: user }`. -->
 <ng-template #nameTpl let-user>
+  <!-- Con su avatar, como las listas de agentes y grupos: las tres pintan la misma celda de nombre. -->
   <div class="table__td-name sc-text-body-semibold">
+    <sc-illustrated-avatar [name]="user.name" [photo]="user.photo" [size]="32" />
     @if (renamingId() === user.id) {
       <sc-inline-rename-cell
         [initialValue]="user.name"

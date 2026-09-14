@@ -39,6 +39,13 @@ const HOVER_LEAVE_DELAY_MS = 150;
 })
 export class ScGroupPopoverComponent {
   readonly groups = input.required<readonly GroupRef[]>();
+  /**
+   * Nombre accesible del botón, ya traducido (p. ej. «12 agentes»). Opcional: sin él dice
+   * «N grupos», que es lo que cuenta en la lista de agentes. Nace el 2026-09-14 para que la
+   * lista de grupos use el MISMO desplegable con sus agentes: la relación es la misma vista
+   * desde el otro lado, y el lector de pantalla no puede decir «grupos» ahí.
+   */
+  readonly countAriaLabel = input<string | null>(null);
 
   protected readonly pop = viewChild.required<Popover>('pop');
   protected readonly open = signal(false);

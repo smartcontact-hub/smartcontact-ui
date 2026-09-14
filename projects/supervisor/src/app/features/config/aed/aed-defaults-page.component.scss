@@ -147,45 +147,9 @@
   color: var(--sc-text-primary);
 }
 
-/* ---------- Switch fields ---------- */
-
-/*
- * El interruptor va DELANTE de su etiqueta, pegado (Figma 393:12592). Antes el
- * copy llevaba `flex: 1` y empujaba el control al extremo opuesto de la card:
- * medidos 500px de blanco entre el texto y el interruptor que lo gobierna, con
- * tres filas seguidas. En una pantalla donde una casilla mal marcada desactiva
- * la telefonía de un contact center, esa distancia es el fallo más caro de la
- * página. Control y etiqueta juntos = una sola columna de lectura.
+/* ---------- Switch fields ----------
  *
- * El orden es del DOM, NO un `row-reverse`: así el foco de teclado y el lector
- * de pantalla encuentran el control donde el ojo lo ve.
+ * SUBIERON A `styles/_forms.scss` el 2026-09-14, tal cual, cuando las fichas de agente,
+ * grupo y usuario empezaron a usarlos: una hoja de pantalla no puede ser el hogar de
+ * algo que usan varias (la encapsulación de Angular solo deja verlo a estas tres).
  */
-.switch-field {
-  display: flex;
-  align-items: center;
-  gap: var(--sc-spacing-1-143);
-
-  &__copy {
-    min-width: 0;
-    /* Medida de lectura. Sin tope, una etiqueta se estiraba hasta 768px. */
-    max-width: 60ch;
-    display: flex;
-    flex-direction: column;
-    gap: 2px;
-  }
-
-  /* La MÉTRICA la pone `.sc-text-body-regular` en la plantilla (text style
-   * `Body/body-*` del Figma del DS). Aquí solo queda el color, que sube a
-   * `primary`: la etiqueta de un interruptor es contenido, y en `secondary`
-   * se quedaba en 4.52:1, al filo del mínimo AA. */
-  &__label {
-    color: var(--sc-text-primary);
-  }
-
-  &__hint {
-    margin: 0;
-    font-size: var(--sc-font-size-50);
-    line-height: var(--sc-line-height-50);
-    color: var(--sc-text-subtle);
-  }
-}

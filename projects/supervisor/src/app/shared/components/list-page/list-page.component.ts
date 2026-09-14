@@ -127,6 +127,13 @@ export class ListPageComponent<T extends { readonly id: number | string }> {
   readonly selectedIds = model<ReadonlySet<T['id']>>(new Set());
 
   readonly tableTestId = input<string | undefined>(undefined);
+  /**
+   * Ancho mínimo de la tabla (p. ej. `'65rem'`), la suma de lo que mide el dato de cada columna.
+   * Por debajo, la tabla se desplaza de lado DENTRO de su caja en vez de recortar texto con
+   * puntos suspensivos (2026-09-14, Rafa: «que nunca corte»). Sin él, la tabla se ajusta al
+   * ancho disponible como hasta ahora.
+   */
+  readonly tableMinWidth = input<string | undefined>(undefined);
 
   readonly rowOpen = output<T>();
   readonly exportRequest = output<readonly T[]>();

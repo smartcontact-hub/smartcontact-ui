@@ -160,13 +160,6 @@
     grid-column: 1 / -1;
   }
 
-  &--inline {
-    flex-direction: row;
-    align-items: center;
-    gap: var(--sc-spacing-0-875);
-    margin-top: var(--sc-spacing-0-875);
-  }
-
   /*
    * LA CAJA de la etiqueta, y solo la caja. La TIPOGRAFÍA la pone
    * `.sc-text-caption-regular` en la plantilla — el text style
@@ -187,11 +180,12 @@
    * no habría hecho nada. Lo fija `e2e/supervisor/text-styles-applied.spec.ts`, que mide
    * el computado y se pone rojo si vuelven.
    */
-  &__label,
-  &__label-inline {
+  &__label {
     display: inline-flex;
     align-items: center;
-    gap: var(--sc-spacing-0-5);
+    /* `0-25` y no `0-5`: aquí solo van el `*` de obligatorio y el «(opcional)», y a 7
+     * el asterisco se leía suelto, lejos de la palabra que marca. */
+    gap: var(--sc-spacing-0-25);
     color: var(--sc-text-secondary);
   }
 
@@ -201,12 +195,12 @@
 
   &__required {
     color: var(--sc-text-danger);
-    margin-left: 2px;
   }
 
+  /* «(opcional)». En `subtle` y no `disabled`: es texto que se lee, no un control
+   * apagado. */
   &__hint {
-    color: var(--sc-text-disabled);
-    margin-left: var(--sc-spacing-0-25);
+    color: var(--sc-text-subtle);
     font-weight: var(--sc-font-weight-regular);
   }
 
@@ -268,6 +262,14 @@
   }
 }
 
+/* Una casilla con sus hijas debajo, en la misma celda de la rejilla. */
+.checkbox-stack {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-0-25);
+  min-width: 0;
+}
+
 .checkbox-row {
   display: flex;
   align-items: center;
@@ -290,6 +292,23 @@
 }
 
 /* ------------------------------------------------------------------ *
+ * Identidad en el cuerpo — foto (o avatar) a la izquierda y el nombre ocupando el
+ * resto, alineados por abajo para que la foto caiga junto al CAMPO y no junto a su
+ * etiqueta. Estaba declarado tres veces byte a byte, en las hojas de agente, grupo y
+ * usuario; aquí es uno desde el 2026-09-14.
+ * ------------------------------------------------------------------ */
+.form-identity {
+  display: flex;
+  align-items: flex-end;
+  gap: var(--sc-spacing-1);
+
+  &__name {
+    flex: 1;
+    min-width: 0;
+  }
+}
+
+/* ------------------------------------------------------------------ *
  * Chip rows — `language-chips` and `label-chips` shared the exact
  * same rule. Both classes are kept (changing either name is a wider
  * template churn) but they alias the same definition here.
@@ -307,145 +326,75 @@
 }
 
 /* ------------------------------------------------------------------ *
- * Permission matrix — destino × {llamada, transferencia} tables used
- * by the agent-form permissions section and the `/admin/aed/agentes`
- * defaults page. Both consumers share the exact same layout (4 rows,
- * 2 toggle columns, select-all column headers), so the styling lives
- * here. Each consumer owns its own HTML and data binding.
+ * Switch field — el interruptor DELANTE de su etiqueta, pegado (Figma 393:12592).
  *
- * The `__head` block (icon + uppercase title strip above the table)
- * is optional — used by agent-form to subtitle the "LLAMADAS" group.
- * ------------------------------------------------------------------ */
-.perm-matrix {
-  /* Solo queda la BANDA de título (icono + rótulo) que va ENCIMA de la matriz.
-   * La tabla en sí la pinta `sc-permission-matrix` desde el DS desde el
-   * 2026-09-12; sus 12 reglas de thead/tbody/celda se fueron con ella, y con
-   * ellas el ancho de columna de 140px, que no estaba en la escala. */
-
-  &__head {
-    display: flex;
-    align-items: center;
-    gap: var(--sc-spacing-0-75);
-    margin-top: var(--sc-spacing-1-5);
-    padding-top: var(--sc-spacing-1-125);
-    border-top: 1px solid var(--sc-border-default);
-    color: var(--sc-text-secondary);
-  }
-
-  &__title {
-    margin: 0;
-    text-transform: uppercase;
-    letter-spacing: 0.06em;
-    color: var(--sc-text-subtle);
-  }
-}
-
-/* ------------------------------------------------------------------ *
- * Header pills — shared between agent-form, group-form, user-form.
+ * SUBIÓ de `config/aed/aed-defaults-page.component.scss` el 2026-09-14, tal cual,
+ * cuando las fichas de agente, grupo y usuario pasaron a hablar como Contact Center.
+ * Hasta ese día cada ficha tenía su fila de interruptor: `.perm-toggle-row` (etiqueta +
+ * botón ⓘ + interruptor al extremo derecho, con raya), `.identity-card__row` (lo mismo
+ * sin ⓘ) y `.field--inline` (interruptor delante con la etiqueta a 12). Tres muebles
+ * para un solo dato, y ninguno el de la referencia.
  *
- * Base + `--type` (brand-subtle) + `--status` (transition) +
- * `--status-active/inactive` (presence-token bg + pop animation) live
- * here because they're identical across all three consumers. Form-
- * specific variants (`--presence-*` on agent-form, `--priority-*` on
- * group-form) stay in the form's own SCSS; they layer on top of this
- * base via cascade.
+ * El motivo del orden es de la referencia y vale igual aquí: con `flex: 1` en el texto
+ * el control acababa a 500px de lo que gobierna. Control y etiqueta juntos = una sola
+ * columna de lectura. Y es orden del DOM, no `row-reverse`: el foco de teclado y el
+ * lector de pantalla encuentran el control donde el ojo lo ve.
+ *
+ * La AYUDA va visible debajo (`__hint`), no en un ⓘ con `title`: un `title` no se ve
+ * en táctil, no lo lee el teclado y obliga a pasar el ratón para saber qué hace un
+ * interruptor que desactiva algo.
  * ------------------------------------------------------------------ */
-.pill {
-  display: inline-flex;
+.switch-field {
+  display: flex;
   align-items: center;
-  gap: var(--sc-spacing-0-5);
-  padding: 3px var(--sc-spacing-0-875);
-  border-radius: var(--sc-radius-full);
-  font-size: var(--sc-font-size-75);
-  font-weight: var(--sc-font-weight-regular, 500);
-  letter-spacing: 0.01em;
-  border: 1px solid transparent;
-  background: var(--sc-bg-surface);
-  color: var(--sc-text-secondary);
+  gap: var(--sc-spacing-1-143);
 
-  &--type {
-    background: var(--sc-bg-primary-subtle);
-    color: var(--sc-bg-primary);
+  /* Con ayuda debajo, el interruptor se alinea con la PRIMERA línea (la etiqueta),
+   * no con el centro del bloque de dos líneas. */
+  &--top {
+    align-items: flex-start;
   }
 
-  &--status {
-    transition:
-      background var(--sc-transition-base) var(--sc-easing-default),
-      color var(--sc-transition-base) var(--sc-easing-default),
-      border-color var(--sc-transition-base) var(--sc-easing-default);
+  &__copy {
+    min-width: 0;
+    /* Medida de lectura. Sin tope, una etiqueta se estiraba hasta 768px. */
+    max-width: 60ch;
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
   }
 
-  &--status-active {
-    background: color-mix(in oklch, var(--sc-presence-available) 12%, var(--sc-bg-surface));
-    color: var(--sc-presence-available-deep);
-    animation: status-pop-active 360ms cubic-bezier(0.16, 1, 0.3, 1);
+  /* La MÉTRICA la pone `.sc-text-body-regular` en la plantilla. Aquí solo queda el
+   * color, en `primary`: la etiqueta de un interruptor es contenido, y en `secondary`
+   * se quedaba en 4.52:1, al filo del mínimo AA. */
+  &__label {
+    color: var(--sc-text-primary);
   }
-  &--status-inactive {
-    background: var(--sc-bg-secondary-subtle);
+
+  /* La métrica la pone `.sc-text-caption-regular` en la plantilla. */
+  &__hint {
+    margin: 0;
     color: var(--sc-text-subtle);
-    animation: status-pop-inactive 360ms cubic-bezier(0.16, 1, 0.3, 1);
-  }
-
-  &__dot {
-    width: 6px;
-    height: 6px;
-    border-radius: 50%;
-    background: currentColor;
-    flex: 0 0 auto;
-  }
-}
-
-@keyframes status-pop-active {
-  0% {
-    transform: scale(0.94);
-  }
-  55% {
-    transform: scale(1.05);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-@keyframes status-pop-inactive {
-  0% {
-    transform: scale(0.94);
-  }
-  55% {
-    transform: scale(1.05);
-  }
-  100% {
-    transform: scale(1);
-  }
-}
-
-@media (prefers-reduced-motion: reduce) {
-  .pill--status-active,
-  .pill--status-inactive {
-    animation: none;
   }
 }
 
 /* ------------------------------------------------------------------ *
- * La ficha + Eliminar del panel — patrón "todo arriba" (experiment S59).
+ * La ficha — a quién editas, en la cabeza del índice de las fichas de agente,
+ * grupo y usuario. Solo lectura; los campos se editan en su sección.
  *
- * Shared aquí porque son idénticos en los 3 form shells (agents / users /
- * groups). La ficha es el resumen de identidad (solo lectura) en la cabeza
- * del panel; recupera el contexto que daba la banda sticky-form-header (a
- * quién editas + su dato de estado) sin reintroducir la banda. Eliminar va
- * al pie del panel, discreto y apartado del índice → fuera del scan primario.
- *
- * Variantes específicas (pill `--presence-*` del agente) se quedan en el
- * SCSS del form; layeran sobre el `.pill` base por cascade.
+ * DESDE EL 2026-09-14 SIN PANEL. Era un bloque gray-50 con radio 12 y la pastilla de
+ * estado dibujada a mano (`.pill`, con su animación de «latido»). En Contact Center el
+ * rail no tiene color —lo único que pinta es el item activo— y una caja gris encima del
+ * índice era la primera cosa que hacía que las dos pantallas no se parecieran. Ahora la
+ * ficha arranca en la misma vertical que el texto de los items (`0-625`, el relleno de
+ * cada item) y el estado es un `sc-tag` del DS (DD-77).
  * ------------------------------------------------------------------ */
 .ficha {
   display: flex;
   align-items: center;
-  gap: var(--sc-spacing-1);
-  /* Panel gray-50 1:1 con el Figma (ficha 12277:4807: bg gray-50, padding 16,
-   * radio 12) — recogido sobre la página blanca. S62-ext-2. */
-  padding: var(--sc-spacing-1-143);
-  background: var(--sc-bg-secondary-subtle);
-  border-radius: var(--sc-radius-xl);
+  gap: var(--sc-spacing-0-875);
+  padding: var(--sc-spacing-0-25) var(--sc-spacing-0-625);
+  min-width: 0;
 
   &__avatar {
     flex: 0 0 auto;
@@ -456,23 +405,33 @@
     display: flex;
     flex-direction: column;
     align-items: flex-start;
-    gap: var(--sc-spacing-0-5);
+    gap: var(--sc-spacing-0-25);
   }
 
-  &__name {
+  /* La métrica la pone `.sc-text-body-semibold` en la plantilla. */
+  &__name,
+  &__meta {
     max-width: 100%;
-    font-size: var(--sc-font-size-200);
-    font-weight: var(--sc-font-weight-semibold);
-    color: var(--sc-text-primary);
-    line-height: 1.2;
     overflow: hidden;
     text-overflow: ellipsis;
     white-space: nowrap;
   }
 
-  &__ext {
+  &__name {
+    color: var(--sc-text-heading);
+  }
+
+  /* Email, teléfono o extensión. Recorta: medido el 2026-09-14, el email de
+   * «mario.supervisor@empresa.com» se salía 22px por la derecha del rail. */
+  &__meta {
     color: var(--sc-text-subtle);
   }
+}
+
+/* Eliminar, al pie del índice: un `sc-button` del DS; aquí solo vive su SITIO. Fuera
+ * del recorrido principal, alineado con el texto de los items. */
+.rail-delete {
+  align-self: flex-start;
 }
 
 /* Rail del formulario (columna izquierda de `.page__inner--with-panel`): ficha
@@ -509,17 +468,5 @@
 
   @media (max-width: 1024px) {
     position: static;
-  }
-}
-
-/* Eliminar (rail del formulario): es un `sc-button` del DS; aquí solo vive su
- * SITIO en el rail — al fondo y a la derecha. Nada de tamaño ni color. */
-.ipanel__delete {
-  margin-top: auto;
-  align-self: flex-end;
-
-  /* En móvil el rail es estático: el enlace simplemente sigue al índice. */
-  @media (max-width: 1024px) {
-    margin-top: var(--sc-spacing-1);
   }
 }

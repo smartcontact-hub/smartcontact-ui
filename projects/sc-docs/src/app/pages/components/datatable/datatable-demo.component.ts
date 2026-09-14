@@ -285,6 +285,7 @@ export class DatatableDemoComponent {
       { name: 'stickyHeader', control: { kind: 'boolean' }, description: 'Cabecera fija al scroll de la página (sin scroll propio).' },
       { name: 'virtualScroll', control: { kind: 'boolean' }, description: 'Lista virtual con scroll propio: entra por encima de 100 filas (esta demo tiene 7).' },
       { name: 'rowsFocusable', control: { kind: 'boolean' }, description: 'Las filas entran en el orden de tabulación.' },
+      { name: 'tableMinWidth', control: { kind: 'text' }, description: 'Ancho mínimo (p.ej. 60rem): por debajo la tabla se desplaza de lado en vez de cortar texto.' },
     ],
     defaultArgs: {
       paginator: true,
@@ -305,6 +306,8 @@ export class DatatableDemoComponent {
       stickyHeader: false,
       virtualScroll: false,
       rowsFocusable: false,
+      // Vacío: un ancho mínimo por defecto cambiaría la demo que miden los e2e.
+      tableMinWidth: '',
     },
     props: [
       { name: 'value', type: 'T[]', default: '[]', description: 'Filas de datos.' },
@@ -340,6 +343,13 @@ export class DatatableDemoComponent {
         default: 'false',
         description:
           'Con `scrollable`: por encima de 100 filas solo pinta las que se ven. Mide sola el alto de fila, así que las filas deben medir igual. Con `scrollHeight="flex"` y sin lista virtual, la tabla se ajusta a sus filas; con ella, llena el alto (DD-95).',
+      },
+      {
+        name: 'tableMinWidth',
+        type: 'string',
+        default: '—',
+        description:
+          'Ancho mínimo de la tabla (`66rem`). Por debajo se desplaza de lado en vez de estrechar columnas y recortar texto; con `scrollable`, dentro de su contenedor. Va por `tableStyle` de `p-table`.',
       },
       { name: 'loading', type: 'boolean', default: 'false' },
       { name: 'lazy', type: 'boolean', default: 'false', description: 'Server-driven (emite `(lazyLoad)`).' },

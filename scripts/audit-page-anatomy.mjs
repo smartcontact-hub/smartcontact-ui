@@ -54,7 +54,7 @@ const sh = (cmd) => {
 };
 
 /** Los arquetipos que existen. Sin modificador = el editor por defecto (1200). */
-export const ARQUETIPOS = ['list', 'hub', 'reading', 'with-panel'];
+export const ARQUETIPOS = ['list', 'hub', 'reading', 'with-panel', 'rail'];
 
 /**
  * Páginas que NO declaran arquetipo, con su motivo. Entrada muerta (el fichero ya no
@@ -106,6 +106,15 @@ export function redeclaraMolde(scss) {
   if (/\.page__form\s*\{/.test(limpio)) encontrados.push('.page__form');
   if (/^\s*&__form\s*\{/m.test(limpio) && /\.page\s*\{/.test(limpio)) encontrados.push('.page__form');
   if (/\.ipanel\s*\{/.test(limpio)) encontrados.push('.ipanel');
+  /* `--rail` a secas es un nombre de modificador corriente (el constructor de reglas tiene
+   * un `&--rail` suyo en otro bloque): solo cuenta el de `page__inner`, escrito entero o
+   * anidado dentro de su bloque. */
+  if (/\.page__inner--rail\s*\{|&__inner--rail\s*\{/.test(limpio)) encontrados.push('--rail');
+  for (const m of limpio.matchAll(/(?:&__inner|\.page__inner)\s*\{/g)) {
+    if (/&--rail\s*\{/.test(cuerpo(limpio, m.index + m[0].length - 1))) encontrados.push('--rail');
+  }
+  if (/\.page__rail\s*\{/.test(limpio)) encontrados.push('.page__rail');
+  if (/\.page__main\s*\{/.test(limpio)) encontrados.push('.page__main');
   return [...new Set(encontrados)];
 }
 
@@ -249,7 +258,7 @@ if (process.argv[1] && process.argv[1].endsWith('audit-page-anatomy.mjs')) {
 
   log(
     `audit:page-anatomy — ${plantillas.length} página(s): list ${censo.list} · editor ${censo.editor} · ` +
-      `hub ${censo.hub} · reading ${censo.reading} · with-panel ${censo['with-panel']} · ` +
+      `hub ${censo.hub} · reading ${censo.reading} · with-panel ${censo['with-panel']} · rail ${censo.rail} · ` +
       `exentas ${censo.exentas} (trinquete de anchos sueltos: ${Object.keys(ANCHOS_PENDIENTES).length})\n`,
   );
 

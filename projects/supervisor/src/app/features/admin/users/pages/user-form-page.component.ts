@@ -25,6 +25,7 @@ import { IllustratedAvatarComponent } from '@shared/components';
 import { createFormDirtyState } from '@shared/utils/form-dirty-state';
 import {
   ScDeleteEntityDialogComponent as DeleteEntityDialogComponent,
+  ScDividerComponent as DividerComponent,
   ScFormSectionNavComponent as FormSectionNavComponent,
   type FormNavSection,
   ScInputTextComponent as InputTextComponent,
@@ -68,6 +69,7 @@ interface FormState {
     CheckboxComponent,
     ButtonComponent,
     DeleteEntityDialogComponent,
+    DividerComponent,
     FormSectionNavComponent,
     IllustratedAvatarComponent,
     InputTextComponent,
@@ -106,7 +108,11 @@ export class UserFormPageComponent implements DirtyAware, OnInit, OnDestroy {
   protected readonly typeLabelKeys: Readonly<Record<string, string>> = USER_TYPE_LABEL_KEYS;
   protected readonly mailIcon = 'mail';
   protected readonly trashIcon = 'delete';
-  protected readonly sectionDefs = SECTION_DEFS;
+  /** Las secciones con sus hijas colgando, para pintarlas en la misma celda. */
+  protected readonly sectionTree = SECTION_DEFS.filter((d) => !d.parent).map((def) => ({
+    def,
+    children: SECTION_DEFS.filter((c) => c.parent === def.key),
+  }));
   protected readonly permissionDefs = PERMISSION_DEFS;
   protected readonly availableServices = AVAILABLE_SERVICES;
   protected readonly availableGroupsById = new Map(AVAILABLE_GROUPS_REF.map((g) => [g.id, g.name]));
@@ -152,6 +158,12 @@ export class UserFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     if (this.mode() === 'edit' && !this.dirtyState.dirty()) return 'common.no_changes';
     return null;
   });
+  /** El motivo que se ENSEÑA junto al botón: solo lo que falta rellenar. «No hay
+   *  cambios» se queda en el `title` del botón apagado, que ya lo dice. */
+  protected readonly saveBlockedReason = computed(() => {
+    const reason = this.saveDisabledReason();
+    return reason === 'common.no_changes' ? null : reason;
+  });
   protected readonly saving = signal(false);
   protected readonly deleteVisible = signal(false);
 
@@ -175,14 +187,10 @@ export class UserFormPageComponent implements DirtyAware, OnInit, OnDestroy {
       labelKey: 'users.form.section.identity',
       icon: 'badge',
     };
-    const sections: FormNavSection = {
-      id: 'user-section-sections',
-      labelKey: 'users.form.section.sections',
-      icon: 'layers',
-    };
-    const permissions: FormNavSection = {
-      id: 'user-section-permissions',
-      labelKey: 'users.form.section.permissions',
+    // Secciones + Permisos = Acceso (2026-09-14): la misma pregunta en dos listas.
+    const access: FormNavSection = {
+      id: 'user-section-access',
+      labelKey: 'users.form.section.access',
       icon: 'verified_user',
     };
     const services: FormNavSection = {
@@ -194,9 +202,9 @@ export class UserFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     // rellena. En EDITAR, identidad al fondo: apenas se toca tras crear, y la
     // ficha del panel ya da su contexto siempre visible.
     if (this.mode() === 'edit') {
-      return [sections, permissions, services, identity];
+      return [access, services, identity];
     }
-    return [identity, sections, permissions, services];
+    return [identity, access, services];
   });
 
   protected readonly activeSection = signal<string>('user-section-identity');
@@ -274,7 +282,7 @@ export class UserFormPageComponent implements DirtyAware, OnInit, OnDestroy {
       this.dirtyState.markPristine();
       // En edición aterriza en Secciones (1ª del orden de edición): identidad
       // va al fondo porque casi no se toca tras crear; la ficha la resume (S60).
-      this.activeSection.set('user-section-sections');
+      this.activeSection.set('user-section-access');
       this.releaseLock = this.crossTab.acquire('user', user.id, () =>
         this.conflictWarning.set(true),
       );
@@ -432,8 +440,10 @@ export class UserFormPageComponent implements DirtyAware, OnInit, OnDestroy {
     }, 400);
   }
 
-  protected cancel(): void {
-    void this.router.navigateByUrl('/admin/usuarios');
+  /** Vuelve al último estado guardado (o al formulario vacío, en un alta). Es el
+   *  «Deshacer» de Contact Center: vuelve atrás, no navega. */
+  protected discard(): void {
+    this.form.set(this.dirtyState.pristineValue());
   }
 
   protected requestDelete(): void {
