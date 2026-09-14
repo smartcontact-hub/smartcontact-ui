@@ -201,8 +201,8 @@ import type { ButtonDesignTokens } from '@primeuix/themes/types/button';
                 },
                 info: {
                     color: "var(--sc-cmp-button-text-info-color)",
-                    hoverBackground: "#38bdf80a",
-                    activeBackground: "#38bdf829"
+                    hoverBackground: "color-mix(in srgb, {sky.400}, transparent 96%)",
+                    activeBackground: "color-mix(in srgb, {sky.400}, transparent 84%)"
                 },
                 warn: {
                     color: "{orange.400}",
@@ -250,8 +250,8 @@ import type { ButtonDesignTokens } from '@primeuix/themes/types/button';
                 info: {
                     color: "var(--sc-cmp-button-outlined-info-color)",
                     borderColor: "var(--sc-cmp-button-outlined-info-border-color)",
-                    hoverBackground: "#38bdf80a",
-                    activeBackground: "#38bdf829"
+                    hoverBackground: "color-mix(in srgb, {sky.400}, transparent 96%)",
+                    activeBackground: "color-mix(in srgb, {sky.400}, transparent 84%)"
                 },
                 warn: {
                     color: "{orange.400}",

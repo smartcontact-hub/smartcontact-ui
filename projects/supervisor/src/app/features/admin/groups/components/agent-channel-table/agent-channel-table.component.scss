@@ -27,7 +27,7 @@
     flex-wrap: wrap;
     padding: var(--sc-spacing-0-75) var(--sc-spacing-0-875);
     background: var(--sc-bg-primary-subtle);
-    border: 1px dashed var(--sc-color-blue-300);
+    border: 1px dashed var(--sc-border-secondary-hover);
     border-radius: var(--sc-radius-100);
   }
 
@@ -58,9 +58,9 @@
       border-color 100ms ease;
 
     &:hover {
-      background: var(--sc-color-blue-700);
-      border-color: var(--sc-color-blue-700);
-      color: var(--sc-color-slate-0);
+      background: var(--sc-bg-primary);
+      border-color: var(--sc-bg-primary);
+      color: var(--sc-text-on-primary);
     }
     &:focus-visible {
       outline: 2px solid var(--sc-border-focus);
@@ -205,8 +205,8 @@
     align-items: center;
     gap: var(--sc-spacing-0-875);
     padding: var(--sc-spacing-0-75) var(--sc-spacing-1-125);
-    background: var(--sc-color-blue-700);
-    color: var(--sc-color-slate-0);
+    background: var(--sc-bg-primary);
+    color: var(--sc-text-on-primary);
     border-radius: var(--sc-radius-200);
     box-shadow: 0 4px 16px rgb(var(--sc-shadow-color-rgb) / 0.18);
     z-index: 4;

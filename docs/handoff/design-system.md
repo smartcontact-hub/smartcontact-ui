@@ -55,6 +55,11 @@
   `audit-page-anatomy`, así que rebasa sobre DD-98 antes de subir.
 - **El foco de los campos del DS enseña anillo sky de 2 px y borde oscuro a la vez** (Rafa lo vio en el buscador,
   2026-09-14): es igual en todos los campos; decidir si se queda solo uno (Aura usa solo el borde).
+- **La baseline `datatable` de `e2e:visual` está en rojo en `main`** (medido el 2026-09-14 sobre el build de sc-docs
+  de `486feb6` y sobre DD-99): la página mide 5537 y la baseline 5557, con el contenido idéntico píxel a píxel; los
+  20 px son aire al final. Y dentro de la captura alterna 5537/5557, así que regenerarla no basta: algo crece al
+  capturar un `main` más alto que la ventana. Tumba el `preflight` de cualquier cambio del DS (DD-99 subió con
+  `# sc:ok` por esto). El CI no corre las baselines.
 
 **APARCADO por Rafa para OTRA sesión (2026-09-13): nuestros componentes contra Aura tal cual.**
 «Si te instalas Aura y le pones este styling estamos así»: una ficha por componente que diga qué
@@ -151,6 +156,23 @@ las 38 ranuras— se cerraron el mismo día en DD-73.)
 3. **La deuda de código de [`AUDIT-DEUDA-2026-06.md`](../AUDIT-DEUDA-2026-06.md)** que quede tras
    s34, y **los cabos de DD-24** (round-trip de iconos) en [`ROADMAP.md`](../ROADMAP.md).
 
+## ✅ 2026-09-14 · El modo oscuro cae en cascada: todo suelo es el lienzo, ningún color es fijo (DD-99)
+
+**Sello:** rama `arebury/fix-dark-mode-token` sobre `b6a5230` (#170). DD-99. Visto en local (`:4417`).
+El tramo «La cabecera de Conversaciones se queda arriba» (2026-09-13) vive en el tag `archive/handoff-ds-2026-09-14-cabecera-conversaciones`.
+
+**Lo que cambia.** En oscuro todas las pantallas responden como Contact Center: suelo `--sc-bg-canvas`, tarjetas
+`--sc-bg-surface`, barra lateral en la superficie. ~150 colores fijos de pantallas y componentes pasan a su rol, y
+la capa 7 da valor oscuro (receta de Aura) a lo que no cambiaba. Vigilan `tokens:guard` regla 8 y la pregunta del
+suelo en `theme-contrast` (75 en verde en local).
+
+- ⚠️ **Lienzo y superficie valen lo mismo en claro**: un suelo mal puesto solo se ve en oscuro, y una red que
+  mire el claro pasa en verde con el fallo puesto.
+- ⚠️ **Comparar contra Aura en oscuro sin separar lo que también difiere en claro engaña**: de 145 claves, 111 son
+  decisiones de los dos temas. `tools/aura-diff.mjs` + filtro «solo oscuro» (scratchpad `ad-dark3.mjs`) dejó 2 fugas.
+- Pendiente, fuera de este tramo: iconos de menú en zinc-400 (Aura zinc-500, divergencia de accesibilidad en los
+  dos temas) y los hex de presencia en claro, sin paso de paleta.
+
 ## ✅ 2026-09-14 · Las listas se montan sobre una sola pieza, `sc-list-page` (DD-98)
 
 **Sello:** rama `arebury/pieza-lista` sobre `486feb6` (#168). DD-98. Rafa, visto en local: «adelante».
@@ -214,23 +236,6 @@ check `tokens-sync` en su commit.
 - ⚠️ **Playwright carga los helpers como CommonJS**: un `.mjs` con `import.meta` no se puede importar
   desde un spec. Y lo que un `.ts` del arnés importa, `tsc` lo revisa: anótalo con JSDoc.
 - ⚠️ **`tokens:import` no corrige un 0** del export. Las familias de color ya salen del export (DD-83).
-## ✅ 2026-09-13 · La cabecera de Conversaciones se queda arriba, y una etiqueta ya no se parte
-
-**Sello:** rama `arebury/fix-conversaciones-sticky-header` sobre `b7db531` (#140). DD-80. Rafa, visto en
-local: «me gusta». 161 e2e del Supervisor en verde.
-
-**Lo que cambia.** `<sc-datatable stickyHeader>` fija la cabecera al scroll de la página (la pinta el
-tema); `.table-card` pasa a `overflow: clip`. Una etiqueta es una línea: recorta y enseña el valor al
-pasar el ratón. El ID de Conversaciones pasa a 133 (se salía a cualquier ancho).
-
-**Lo que hay que recordar**, porque volverá a morder:
-
-- ⚠️ **`p-table` pone `overflow: auto` EN LÍNEA a su contenedor, siempre**: cualquier `sticky` de página
-  dentro de una tabla necesita `!important` ahí, y ninguna caja por encima con `hidden` o `auto`.
-- ⚠️ **Un `<thead>` fijo crea contexto de apilamiento**: sin `z-index` las filas (celdas `relative`)
-  pintan ENCIMA. Mide `elementFromPoint`, no solo el `top`: la posición salía bien con el fallo puesto.
-- **Una rueda lanzada nada más pintarse la tabla se pierde** (`scrollTop` 0): el spec la reintenta.
-
 ## 🗄️ Histórico de la lista SIGUIENTE — ya cerrado
 
 > Lo que queda VIVO está **arriba**, en `▶︎ SIGUIENTE`. Aquí solo el registro de lo que se cerró:

@@ -31,7 +31,7 @@
   }
 
   &__required {
-    color: var(--sc-color-red-600);
+    color: var(--sc-text-danger);
     margin-left: 2px;
   }
 
@@ -132,13 +132,13 @@
     gap: var(--sc-spacing-0-25);
     padding: var(--sc-spacing-0-5) var(--sc-spacing-0-875);
     border-radius: var(--sc-radius-200);
-    background: var(--sc-color-sky-500);
-    color: #fff;
+    background: var(--sc-bg-primary);
+    color: var(--sc-text-on-primary);
     text-decoration: none;
     transition: background-color 150ms ease-out;
 
     &:hover {
-      background: var(--sc-color-sky-600);
+      background: var(--sc-bg-primary-hover);
     }
   }
 
@@ -221,7 +221,7 @@
       background-color 160ms ease-out;
 
     &:hover {
-      border-color: var(--sc-color-sky-300);
+      border-color: var(--sc-border-accent);
       background: var(--sc-bg-elevated);    }
 
     &.is-inactive {
@@ -266,7 +266,7 @@
     align-items: center;
     padding: 0 var(--sc-spacing-0-5);
     border-radius: var(--sc-radius-full);
-    background: var(--sc-color-slate-100);
+    background: var(--sc-bg-secondary-hover);
     color: var(--sc-text-secondary);
     font-size: var(--sc-font-size-50);
     font-weight: var(--sc-font-weight-regular);
@@ -315,8 +315,8 @@
     transform 120ms ease;
 
   &:hover {
-    border-color: var(--sc-color-blue-500);
-    background: color-mix(in srgb, var(--sc-color-blue-100) 40%, transparent);
+    border-color: var(--sc-border-primary-hover);
+    background: color-mix(in srgb, var(--sc-bg-primary-subtle-hover) 40%, transparent);
   }
 
   &:active {
@@ -336,8 +336,8 @@
   width: 32px;
   height: 32px;
   border-radius: var(--sc-radius-100);
-  background: color-mix(in srgb, var(--sc-color-blue-100) 60%, transparent);
-  color: var(--sc-color-blue-700);
+  background: color-mix(in srgb, var(--sc-bg-primary-subtle-hover) 60%, transparent);
+  color: var(--sc-bg-primary);
   flex-shrink: 0;
 }
 
