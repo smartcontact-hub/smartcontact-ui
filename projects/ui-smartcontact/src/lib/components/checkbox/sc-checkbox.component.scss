@@ -6,10 +6,10 @@
  * del checkbox binario de Figma — añade el estado 'some' (indeterminate)
  * que el Figma file NO modela como variant.
  *
- * Tokens Figma extraídos por size:
- *   Normal (148:6319):  17.5×17.5, border slate-300, radius 4, icon 12.25
- *   Small  (7154:140007): 14×14, font 12.25, line-height 17.5
- *   Large  (7154:140599): 21×21, font 15.75, line-height 24.5
+ * Tokens Figma por size (caja y ✓ desde el export, DD-85; el resto, del maestro):
+ *   Normal (148:6319):  border slate-300, radius 4
+ *   Small  (7154:140007): font 12.25, line-height 17.5
+ *   Large  (7154:140599): font 15.75, line-height 24.5
  *   Filled (5801:52774): bg slate-50 cuando unchecked
  *   Checked (148:6324):  bg/border #3b82f6 azure = Aura primary → SC
  *                        usa `--sc-bg-primary` (navy) por consistencia
@@ -48,8 +48,8 @@
   &__input {
     position: absolute;
     inset: 0;
-    width: var(--sc-spacing-1-25);
-    height: var(--sc-spacing-1-25);
+    width: var(--sc-cmp-checkbox-width);
+    height: var(--sc-cmp-checkbox-height);
     margin: 0;
     opacity: 0;
     cursor: inherit;
@@ -61,9 +61,9 @@
   }
 
   &__box {
-    /* Figma `checkbox/width/height: 17.5` (raw decimal). */
-    width: var(--sc-spacing-1-25);
-    height: var(--sc-spacing-1-25);
+    /* Figma `checkbox/width` y `checkbox/height`: salen del export (DD-85). */
+    width: var(--sc-cmp-checkbox-width);
+    height: var(--sc-cmp-checkbox-height);
     flex: 0 0 auto;
     /* Figma `checkbox/border/radius: 4`. */
     border-radius: var(--sc-radius-100);
@@ -81,9 +81,9 @@
   }
 
   &__mark {
-    /* Figma `checkbox/icon/size: 12.25` (the ✓ glyph). */
-    width: var(--sc-spacing-0-875);
-    height: var(--sc-spacing-0-875);
+    /* Figma `checkbox/icon/size` (el ✓): sale del export (DD-85). */
+    width: var(--sc-cmp-checkbox-icon-size);
+    height: var(--sc-cmp-checkbox-icon-size);
     background: transparent;
     border-radius: 1px;
     pointer-events: none;
@@ -93,10 +93,9 @@
   }
 
   /* ──────────────────────────────────────────────────────────────
-   * Sizes — valores EXACTOS Figma.
-   *   Small (7154:140007):  14×14, icon 9.8 (proporción 70%),  font 12.25
-   *   Normal (148:6319):    17.5×17.5, icon 12.25,             font 14
-   *   Large (7154:140599):  21×21, icon 14.7 (proporción 70%), font 15.75
+   * Sizes — la caja y el ✓ salen del export del Kit (`checkbox/sm|lg/width|height`,
+   *   `checkbox/icon/sm|lg/size`) desde DD-85; antes eran pasos de escala escritos aquí
+   *   (14 / 17.5 / 21, con el ✓ sm y lg a mano al 70 %).
    * ──────────────────────────────────────────────────────────────
    */
   &--sm {
@@ -104,12 +103,12 @@
     line-height: var(--sc-line-height-100);
     .tri-checkbox__input,
     .tri-checkbox__box {
-      width: var(--sc-spacing-1);
-      height: var(--sc-spacing-1);
+      width: var(--sc-cmp-checkbox-sm-width);
+      height: var(--sc-cmp-checkbox-sm-height);
     }
     .tri-checkbox__mark {
-      width: 9.8px;
-      height: 9.8px;
+      width: var(--sc-cmp-checkbox-icon-sm-size);
+      height: var(--sc-cmp-checkbox-icon-sm-size);
     }
   }
 
@@ -118,12 +117,12 @@
     line-height: var(--sc-line-height-300);
     .tri-checkbox__input,
     .tri-checkbox__box {
-      width: var(--sc-spacing-1-5);
-      height: var(--sc-spacing-1-5);
+      width: var(--sc-cmp-checkbox-lg-width);
+      height: var(--sc-cmp-checkbox-lg-height);
     }
     .tri-checkbox__mark {
-      width: 14.7px;
-      height: 14.7px;
+      width: var(--sc-cmp-checkbox-icon-lg-size);
+      height: var(--sc-cmp-checkbox-icon-lg-size);
     }
   }
 
