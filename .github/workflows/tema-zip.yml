@@ -2,6 +2,7 @@
 #
 # Cada vez que cambia el tema en `main` (tokens o preset), genera el zip con `scripts/tema-zip.mjs`,
 # lo compara con el publicado y, si algo cambió, lo deja en la rama `tema-zip`. Enlaces fijos:
+#   npm:  npm install github:smartcontact-hub/smartcontact-ui#tema-zip   (paquete `smartcontact-tema`)
 #   zip:  https://github.com/smartcontact-hub/smartcontact-ui/raw/tema-zip/tema-smartcontact.zip
 #   guía: https://github.com/smartcontact-hub/smartcontact-ui/blob/tema-zip/LEEME.md
 # En la misma rama, el robot de tokens publica `tema-plugin.zip` (el export del plugin, el de la licencia).
@@ -21,6 +22,8 @@ on:
     paths:
       - projects/design-tokens/src/lib/styles/**
       - projects/ui-smartcontact/src/lib/theme/**
+      # El extend del plugin sale de `aura/custom` del export: un cambio ahí cambia el tema publicado.
+      - projects/design-tokens/scripts/kit-export-dtcg.json
       - scripts/tema-zip.mjs
   workflow_dispatch:
 
@@ -66,7 +69,9 @@ jobs:
           if [ "$CAMBIA" = "no" ]; then echo "El tema no cambia respecto al publicado: no se publica."; exit 0; fi
           rm -f "$PUB/tema-smartcontact.zip"
           (cd "$RUNNER_TEMP/tema" && zip -qr "$PUB/tema-smartcontact.zip" .)
-          cp "$RUNNER_TEMP/tema/LEEME.md" "$RUNNER_TEMP/tema/manifiesto.json" "$PUB/"
+          # Los mismos ficheros sueltos en la raíz: la rama es un paquete npm que se instala con
+          # `npm install github:smartcontact-hub/smartcontact-ui#tema-zip` (su `files` deja fuera los zips).
+          (cd "$RUNNER_TEMP/tema" && cp LEEME.md manifiesto.json package.json sc-preset.mjs sc-preset.d.ts smartcontact-tokens.css smartcontact-typography.css "$PUB/")
           git -C "$PUB" config user.name "github-actions[bot]"
           git -C "$PUB" config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git -C "$PUB" add -A

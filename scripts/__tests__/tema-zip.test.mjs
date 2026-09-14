@@ -4,7 +4,47 @@ import { mkdirSync, mkdtempSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 
-import { FICHEROS, cerosNuevos, comparaPreset, diferencias, ficherosDistintos, hayCambios, leeme, variables } from '../tema-zip.mjs';
+import { FICHEROS, cerosNuevos, comparaPreset, contratoDelPlugin, diferencias, extendDesdeKit, ficherosDistintos, hayCambios, leeme, paqueteNpm, variables } from '../tema-zip.mjs';
+
+const hoja = ($value) => ({ $value });
+const CUSTOM = {
+  primitive: { typography: { font: { size: { 100: hoja(12), 950: hoja(70) }, weight: { semibold: hoja(600) } } } },
+  semantic: { text: { accent: hoja('{violet.400}') }, presence: { available: hoja('{green.400}') } },
+  component: { custommodal: { header: { gap: hoja('{scale.0-5}') }, footer: { padding: { top: hoja(0) } } } },
+  app: { typography: { md: { fontSize: hoja('{primitive.typography.font.size.200}') }, xl: { lineHeight: hoja('{primitive.typography.line.height.300}') } } },
+};
+
+test('extend del plugin: a nuestro token si existe, el valor del Kit si no, y lo nuestro gana', () => {
+  const declaradas = new Set(['--sc-font-size-100', '--sc-font-weight-semibold', '--sc-scale-0-5']);
+  const e = extendDesdeKit(CUSTOM, declaradas, { app: { typography: { md: { fontSize: 'var(--sc-font-size-200)' } } } });
+  assert.equal(e.primitive.typography.font.size[100], 'var(--sc-font-size-100)');
+  assert.equal(e.primitive.typography.font.size[950], '70px', 'sin token, el valor del Kit');
+  assert.equal(e.primitive.typography.font.weight.semibold, 'var(--sc-font-weight-semibold)');
+  assert.equal(e.semantic.text.accent, 'var(--sc-text-accent)', 'divergencia escrita: manda el DS');
+  assert.equal(e.semantic.presence.available, '{green.400}', 'sin divergencia: el Kit');
+  assert.equal(e.component.custommodal.header.gap, 'var(--sc-scale-0-5)');
+  assert.equal(e.component.custommodal.footer.padding.top, '0');
+  assert.equal(e.app.typography.md, undefined, 'lo que nuestro extend ya declara no se pisa');
+  assert.equal(e.app.typography.xl.lineHeight, '{primitive.typography.line.height.300}');
+  assert.equal(extendDesdeKit({ primitive: { typography: { font: { weight: { bold: hoja(700) } } } } }, new Set()).primitive.typography.font.weight.bold, '700', 'peso sin «px»');
+});
+
+test('contrato del plugin: los nombres que da el runtime (sin primitive./semantic., con component./app.)', () => {
+  assert.deepEqual(contratoDelPlugin(CUSTOM), [
+    '--p-typography-font-size-100', '--p-typography-font-size-950', '--p-typography-font-weight-semibold',
+    '--p-text-accent', '--p-presence-available',
+    '--p-component-custommodal-header-gap', '--p-component-custommodal-footer-padding-top',
+    '--p-app-typography-md-font-size', '--p-app-typography-xl-line-height',
+  ]);
+});
+
+test('paquete npm: versión semver válida (sin ceros delante) y solo los ficheros del tema', () => {
+  const p = paqueteNpm({ commit: 'abc1234', generado: '2026-09-04T09:05:00Z' });
+  assert.equal(p.version, '0.20260904.905');
+  assert.match(p.version, /^\d+\.(0|[1-9]\d*)\.(0|[1-9]\d*)$/);
+  assert.equal(p.exports['.'].default, './sc-preset.mjs');
+  assert.deepEqual(p.files.filter((f) => !/\.(md|json)$/.test(f)), ['sc-preset.mjs', 'sc-preset.d.ts', 'smartcontact-tokens.css', 'smartcontact-typography.css']);
+});
 
 test('variables: separa claro y oscuro por la regla, e ignora comentarios', () => {
   const v = variables(':root { --sc-a: 1px; /* --sc-b: 2px; */ } .sc-dark { --sc-a: 3px; }');

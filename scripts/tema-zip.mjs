@@ -10,22 +10,26 @@
  * mismo CSS que el del código en los 97 componentes, y un valor tocado en el paquete lo caza.
  *
  * Qué lleva:
- *   sc-preset.mjs                 preset de PrimeNG (Aura + lo nuestro) en un fichero, sin dependencias
+ *   sc-preset.mjs                 preset de PrimeNG (Aura + lo nuestro + el extend del plugin), sin dependencias
+ *   sc-preset.d.ts                el tipo, para importarlo desde TypeScript
  *   smartcontact-tokens.css       las 6 capas de tokens `--sc-*` (claro y `.sc-dark`) que el preset lee
  *   smartcontact-typography.css   las clases `.sc-text-*` de los 12 estilos de texto
+ *   package.json                  la rama publicada es el paquete npm `smartcontact-tema` (DD-93)
  *   LEEME.md                      cómo se instala, en llano
- *   manifiesto.json               versiones, commit y las tres comprobaciones
+ *   manifiesto.json               versiones, commit y las comprobaciones
  *
- * Las tres comprobaciones de la rutina, ya por script (sale con código 1 si un token pasa a 0):
+ * Las comprobaciones, ya por script (sale con código 1 si un token pasa a 0 o si falla la 4):
  *   1. ningún token que tenía valor pasa a 0 (un 0 le gana al respaldo de `var()`);
  *   2. base de rem: el preset está pensado para raíz 16 (lo normaliza el tema, `rem-scale.ts`);
  *   3. diferencia con el zip anterior: ficheros, variables, reglas CSS y componentes que cambian.
  *      Se publica si cambia un FICHERO (`hayCambios`); el desglose solo explica.
+ *   4. contrato del plugin: cada variable del `extend` que exporta el plugin existe en el tema (DD-93).
  *
  * Uso: node scripts/tema-zip.mjs <salida> [--anterior <carpeta del zip anterior>]
  */
 import { execFileSync } from 'node:child_process';
-import { existsSync, mkdirSync, readFileSync, writeFileSync } from 'node:fs';
+import { existsSync, mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
+import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import { pathToFileURL } from 'node:url';
 
@@ -80,6 +84,97 @@ export function comparaPreset(antes, ahora) {
  */
 export const hayCambios = (d) => !d.anterior || d.ficheros.length > 0;
 
+/**
+ * Divergencias escritas en `coverage-map.mjs` (grupo `aura/custom`): en estas claves manda el DS, no
+ * el Kit. Cualquier otra clave de `aura/custom` viaja con el valor del Kit.
+ */
+const MANDA_EL_DS = {
+  'semantic.text.accent': 'var(--sc-text-accent)',
+  'component.dialog.icon.color': 'var(--sc-dialog-head-icon-fg)',
+};
+
+/** Un valor de `aura/custom` escrito como lo lee el preset: a nuestro token si existe, si no el del Kit. */
+function valorDelExtend(ruta, valor, declaradas) {
+  if (MANDA_EL_DS[ruta]) return MANDA_EL_DS[ruta];
+  const tipo = ruta.match(/^primitive\.typography\.(font\.size|line\.height|font\.weight)\.([\w-]+)$/);
+  if (tipo && declaradas.has(`--sc-${tipo[1].replace('.', '-')}-${tipo[2]}`)) return `var(--sc-${tipo[1].replace('.', '-')}-${tipo[2]})`;
+  const paso = typeof valor === 'string' && valor.match(/^\{scale\.([\w-]+)\}$/);
+  if (paso && declaradas.has(`--sc-scale-${paso[1]}`)) return `var(--sc-scale-${paso[1]})`;
+  // El plugin escribe los pesos con «px» («600px»), que el navegador descarta: aquí van sin unidad.
+  if (typeof valor === 'number') return valor === 0 ? '0' : /font\.weight/.test(ruta) ? String(valor) : `${valor}px`;
+  return valor;
+}
+
+/**
+ * El `extend` que el plugin de Figma exporta, pero con nuestros valores. Sale de la colección
+ * `aura/custom` del Kit, que es de donde lo saca el plugin (medido 2026-09-14: sus 42 claves son el
+ * `extend.ts` del export). Por qué: la web del equipo externo lee variables de ese `extend`
+ * (`--p-typography-font-size-100`, `--p-app-typography-xl-line-height`…); sin ellas, cambiar al
+ * tema de nuestras apps les dejaba estilos sin valor. Lo que nuestro preset ya declara, gana.
+ */
+export function extendDesdeKit(custom, declaradas, yaDeclarado = {}) {
+  const out = {};
+  const yaEsta = (ruta) => ruta.split('.').reduce((o, k) => (o && typeof o === 'object' ? o[k] : undefined), yaDeclarado) !== undefined;
+  const recorrer = (nodo, ruta) => {
+    for (const [k, v] of Object.entries(nodo)) {
+      const r = ruta ? `${ruta}.${k}` : k;
+      if (v && typeof v === 'object' && !('$value' in v)) { recorrer(v, r); continue; }
+      if (yaEsta(r)) continue;
+      const partes = r.split('.');
+      let destino = out;
+      for (const p of partes.slice(0, -1)) destino = destino[p] ??= {};
+      destino[partes.at(-1)] = valorDelExtend(r, v.$value, declaradas);
+    }
+  };
+  recorrer(custom, '');
+  return out;
+}
+
+/**
+ * Variables `--p-*` que el contrato del plugin promete (una por hoja de `aura/custom`). El runtime
+ * quita el primer nivel `primitive.` y `semantic.` del extend y deja `component.` y `app.` (medido en
+ * el export del plugin: `--p-typography-font-size-100`, `--p-presence-available`,
+ * `--p-component-custommodal-background`, `--p-app-typography-md-font-size`).
+ */
+export function contratoDelPlugin(custom) {
+  const out = [];
+  const recorrer = (nodo, ruta) => {
+    for (const [k, v] of Object.entries(nodo)) {
+      const r = ruta ? `${ruta}.${k}` : k;
+      if (v && typeof v === 'object' && !('$value' in v)) recorrer(v, r);
+      else out.push(`--p-${r.replace(/^(primitive|semantic)\./, '').replace(/([a-z0-9])([A-Z])/g, '$1-$2').replace(/\./g, '-').toLowerCase()}`);
+    }
+  };
+  recorrer(custom, '');
+  return out;
+}
+
+/** `package.json` del paquete: se instala desde la rama publicada y se actualiza con npm. */
+export const paqueteNpm = ({ commit, generado }) => {
+  const f = new Date(generado);
+  const dia = `${f.getUTCFullYear()}${String(f.getUTCMonth() + 1).padStart(2, '0')}${String(f.getUTCDate()).padStart(2, '0')}`;
+  return {
+    name: 'smartcontact-tema',
+    // Solo informa: npm sigue a la rama. Día y minuto UTC, sin ceros delante (semver no los admite).
+    version: `0.${dia}.${f.getUTCHours() * 100 + f.getUTCMinutes()}`,
+    description: 'Tema de Smart Contact para PrimeNG: el mismo que usan sus apps.',
+    type: 'module',
+    main: './sc-preset.mjs',
+    types: './sc-preset.d.ts',
+    exports: {
+      '.': { types: './sc-preset.d.ts', default: './sc-preset.mjs' },
+      './smartcontact-tokens.css': './smartcontact-tokens.css',
+      './smartcontact-typography.css': './smartcontact-typography.css',
+      './package.json': './package.json',
+    },
+    files: ['sc-preset.mjs', 'sc-preset.d.ts', ...FICHEROS.filter((x) => x.endsWith('.css')), 'LEEME.md', 'manifiesto.json'],
+    sideEffects: ['*.css'],
+    license: 'UNLICENSED',
+    repository: { type: 'git', url: 'https://github.com/smartcontact-hub/smartcontact-ui.git' },
+    smartcontact: { commit },
+  };
+};
+
 async function cssDelPreset(ruta) {
   const { Theme } = await import(pathToFileURL(join(ROOT, 'node_modules/@primeuix/styled/dist/index.mjs')).href);
   const preset = (await import(`${pathToFileURL(ruta).href}?t=${Date.now()}`)).default;
@@ -108,20 +203,29 @@ Es el mismo tema que usan las apps de Smart Contact: con él, vuestra web se ve 
 En la misma rama está también \`tema-plugin.zip\`, el export del plugin de Figma, con su propia guía
 (\`LEEME-plugin.md\`) y la medida de cuánto se aparta de este.
 
-## Instalar
+Trae también todas las variables del \`extend\` que exporta el plugin (\`--p-typography-*\`,
+\`--p-app-typography-*\`, \`--p-presence-*\`, \`--p-component-custommodal-*\`…), con nuestros valores: una hoja
+que las lea sigue funcionando.
 
-1. Copia los tres ficheros a tu proyecto.
-2. Carga los estilos globales, en este orden:
+## Instalar (una vez)
 
-   \`\`\`css
-   @import './smartcontact-tokens.css';
-   @import './smartcontact-typography.css';
+1. Instala el paquete desde la rama publicada:
+
+   \`\`\`sh
+   npm install github:smartcontact-hub/smartcontact-ui#tema-zip
+   \`\`\`
+
+2. Carga los estilos globales, en este orden (en \`angular.json\` → \`styles\`):
+
+   \`\`\`json
+   "node_modules/smartcontact-tema/smartcontact-tokens.css",
+   "node_modules/smartcontact-tema/smartcontact-typography.css"
    \`\`\`
 
 3. Da el tema a PrimeNG:
 
    \`\`\`ts
-   import scPreset from './sc-preset.mjs';
+   import scPreset from 'smartcontact-tema';
 
    providePrimeNG({
      theme: { preset: scPreset, options: { prefix: 'p', darkModeSelector: '.sc-dark' } },
@@ -129,6 +233,19 @@ En la misma rama está también \`tema-plugin.zip\`, el export del plugin de Fig
    \`\`\`
 
 4. Modo oscuro: pon la clase \`sc-dark\` en \`<html>\`. Cambia a la vez los tokens y el tema.
+
+## Actualizar
+
+Se publica solo cada vez que cambia el tema. Para traer la última versión:
+
+\`\`\`sh
+npm update smartcontact-tema
+\`\`\`
+
+El \`package-lock.json\` fija la versión instalada, así que \`npm ci\` no cambia nada hasta que actualicéis.
+La versión instalada está en \`node_modules/smartcontact-tema/manifiesto.json\` (commit y fecha).
+
+Sin npm: \`tema-smartcontact.zip\`, en la misma rama, lleva los mismos ficheros.
 
 ## Tres cosas que no cambiar
 
@@ -148,9 +265,23 @@ if (import.meta.url === pathToFileURL(process.argv[1] ?? '').href) {
   const OUT = resolve(args.find((a, i) => !a.startsWith('--') && (iAnterior === -1 || i !== iAnterior + 1)) ?? 'dist/tema');
   mkdirSync(OUT, { recursive: true });
 
+  const tokensCss = LAYERS.map((f) => `/* ── ${f}.css ── */\n${readFileSync(join(STYLES, 'tokens/layers', `${f}.css`), 'utf8')}`).join('\n');
+  const declaradas = new Set([...variables(tokensCss).keys()].map((k) => k.split('|')[1]));
+  const custom = JSON.parse(readFileSync(join(ROOT, 'projects/design-tokens/scripts/kit-export-dtcg.json'), 'utf8'))['aura/custom'] ?? {};
   const { build } = await import(join(ROOT, 'node_modules/esbuild/lib/main.js'));
+  const PRESET = join(ROOT, 'projects/ui-smartcontact/src/lib/theme/sc-preset');
+  // Nuestro preset tal cual, más el extend del plugin que aún no declara (el nuestro gana).
+  const temporal = mkdtempSync(join(tmpdir(), 'tema-zip-'));
+  await build({ entryPoints: [join(PRESET, 'extend.ts')], bundle: true, format: 'esm', platform: 'node', outfile: join(temporal, 'extend.mjs'), logLevel: 'error' });
+  const extendNuestro = (await import(pathToFileURL(join(temporal, 'extend.mjs')).href)).default;
+  rmSync(temporal, { recursive: true, force: true });
+  const extendPlugin = extendDesdeKit(custom, declaradas, extendNuestro);
   await build({
-    entryPoints: [join(ROOT, 'projects/ui-smartcontact/src/lib/theme/sc-preset/index.ts')],
+    stdin: {
+      contents: `import { definePreset } from '@primeuix/themes';\nimport scPreset from ${JSON.stringify(join(PRESET, 'index.ts'))};\nexport default definePreset(scPreset, { extend: ${JSON.stringify(extendPlugin)} });\n`,
+      resolveDir: ROOT,
+      loader: 'ts',
+    },
     bundle: true,
     format: 'esm',
     platform: 'browser',
@@ -160,7 +291,7 @@ if (import.meta.url === pathToFileURL(process.argv[1] ?? '').href) {
     absWorkingDir: ROOT,
     logLevel: 'error',
   });
-  const tokensCss = LAYERS.map((f) => `/* ── ${f}.css ── */\n${readFileSync(join(STYLES, 'tokens/layers', `${f}.css`), 'utf8')}`).join('\n');
+  writeFileSync(join(OUT, 'sc-preset.d.ts'), '/** Preset de PrimeNG de Smart Contact (Aura + marca). */\ndeclare const scPreset: Record<string, unknown>;\nexport default scPreset;\n');
   writeFileSync(join(OUT, 'smartcontact-tokens.css'), tokensCss);
   writeFileSync(join(OUT, 'smartcontact-typography.css'), readFileSync(join(STYLES, 'base/typography.css'), 'utf8'));
 
@@ -183,12 +314,20 @@ if (import.meta.url === pathToFileURL(process.argv[1] ?? '').href) {
     },
   };
   comprobaciones.cambia = hayCambios(comprobaciones.diferencia);
+  // 4. El contrato del plugin: cada variable que su `extend` promete existe en el tema empaquetado.
+  const declaradasPreset = new Set([...`${cssAhora.comun}\n${Object.values(cssAhora.componentes).join('\n')}`.matchAll(/(--p-[\w-]+)\s*:/g)].map((m) => m[1]));
+  comprobaciones.contratoPlugin = { promete: contratoDelPlugin(custom).length, faltan: contratoDelPlugin(custom).filter((v) => !declaradasPreset.has(v)) };
   const manifiesto = { commit, primeng: version('primeng'), themes: version('@primeuix/themes'), generado: new Date().toISOString(), comprobaciones };
   writeFileSync(join(OUT, 'manifiesto.json'), `${JSON.stringify(manifiesto, null, 2)}\n`);
   writeFileSync(join(OUT, 'LEEME.md'), leeme(manifiesto));
+  writeFileSync(join(OUT, 'package.json'), `${JSON.stringify(paqueteNpm(manifiesto), null, 2)}\n`);
 
   if (comprobaciones.ceros.length) {
     console.error(`✗ ${comprobaciones.ceros.length} token(s) pasan a 0: ${comprobaciones.ceros.slice(0, 5).join(', ')}`);
+    process.exit(1);
+  }
+  if (comprobaciones.contratoPlugin.faltan.length) {
+    console.error(`✗ al tema le faltan ${comprobaciones.contratoPlugin.faltan.length} variable(s) que el plugin promete: ${comprobaciones.contratoPlugin.faltan.slice(0, 5).join(', ')}`);
     process.exit(1);
   }
   const d = comprobaciones.diferencia;

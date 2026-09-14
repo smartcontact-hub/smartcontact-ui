@@ -100,6 +100,51 @@ decisión aparte: cabecera de columnas fija con scroll de página o tabla con sc
 
 ---
 
+## DD-93 · 2026-09-14 — El tema del equipo externo se instala con npm y habla el idioma del plugin
+
+**Contexto** · Rafa: «que les funcione perfectamente el tema y el extend y se actualice en su código», sin
+pasar por nadie cada vez. Medido el 2026-09-14 sobre su web publicada (ui.smart-contact.com, raíz a 16 px)
+y con los paquetes de PrimeNG 21 (`@primeuix/styled` 0.7.4, `@primeuix/styles` 2.0.3): (1) su hoja global
+lee variables del `extend` del plugin (`--p-typography-font-size-100`, `--p-app-typography-xl-line-height`…)
+y nuestro tema no traía 63 de las que el plugin define; (2) con PrimeNG 21, los estilos de sus componentes
+leen 2.250 variables: el tema del plugin deja 367 sin definir, el nuestro 10, y el Aura propio de PrimeNG 21
+esas mismas 10 (son de PrimeNG, no un hueco); control con PrimeNG 22: 727 contra 4; (3) el zip había que
+descargarlo a mano en cada cambio.
+
+**Decisión** · (1) `tema-zip.mjs` añade al tema empaquetado el `extend` del plugin, generado de la
+colección `aura/custom` del Kit (de donde lo saca el plugin): tipografía a nuestros `--sc-font-*`, pasos
+de escala a `--sc-scale-*`, las divergencias escritas en `coverage-map` (acento, icono de diálogo) a
+nuestro token, y el resto con el valor del Kit; pesos sin «px». Lo que `sc-preset/extend.ts` ya declara,
+gana. Nuestras apps no cambian: solo el paquete. (2) Comprobación 4: rojo si al tema empaquetado le falta
+una variable de ese contrato. (3) La rama `tema-zip` es un paquete npm, `smartcontact-tema`: se instala con
+`npm install github:smartcontact-hub/smartcontact-ui#tema-zip` y se actualiza con
+`npm update smartcontact-tema`; su `files` deja fuera los zips. (4) `tema-zip.yml` también corre cuando
+cambia el export del Kit.
+
+**Razón** · Un solo tema, el de nuestras apps, que además cumple el contrato del plugin: la hoja que
+escribieron contra el plugin sigue encontrando sus variables y los componentes de PrimeNG 21 quedan tan
+completos como con Aura. Medido: el `extend` solo añade (59 variables nuevas, 0 existentes cambian ni
+desaparecen); de las 63 que faltaban quedan 4, `app.typography.xl/xxl`, que el Kit de hoy tampoco tiene y
+cuyo respaldo en su hoja (1,5rem y 1,75rem) da lo mismo que daba el plugin (24 y 28 px). Instalación
+ensayada con la rama simulada en un repo local: instala sin los zips, importa el preset, y tras un commit
+nuevo `npm update smartcontact-tema` lo trae.
+
+**Descartadas** ·
+- **Arreglar el export del plugin a posteriori** (raíz, pesos, reglas CSS, decisiones de código) → sería
+  reescribir su salida en cada export, y aun así no lleva lo que se decide en código.
+- **Meter el `extend` del plugin en `sc-preset` de nuestras apps** → nadie de este repo lo lee; en el paquete
+  basta y no toca nada nuestro.
+- **Versión en un registro npm** → pide cuenta y credenciales en los dos lados; la rama pública no pide nada.
+- **Etiquetas semver en el repo para `#semver:`** → se mezclarían con las del DS (v1.x) y dispararían
+  herramientas que leen etiquetas; se puede añadir si usan un bot de dependencias.
+
+**Consecuencias** · El equipo externo cambia la instalación una vez (guía en `LEEME.md`) y actualiza con un
+comando. Pendiente de medir en su app: que el preset rinda igual con PrimeNG 21 (medido solo a nivel de
+variables). Fuera de alcance: sus `--sc-*` propias (557 definiciones, 253 con valor fijo, 304 nombres que
+ya no existen en el nuestro) no siguen a ningún tema; traducirlas es otra tanda.
+
+---
+
 ## DD-92 · 2026-09-14 — La colección «App» de PrimeOne se queda, como alias de Custom: el DS ya no la usa y no puede desviarse
 
 **Contexto** · Al cerrar DD-91 quedó a la vista una colección duplicada en el Smart-Contact Design System:
