@@ -451,7 +451,9 @@ tanto.
 > **Desde el 2026-09-14 (DD-88) esta rutina la hace una máquina, y el zip ya no es el del plugin.**
 > `scripts/tema-zip.mjs` empaqueta el tema que pintan NUESTRAS apps (preset + tokens + tipografía), hace
 > las tres comprobaciones de abajo y `tema-zip.yml` lo publica en la rama `tema-zip` cada vez que el tema
-> cambia en `main` (enlace fijo: `…/raw/tema-zip/tema-smartcontact.zip`). Lo de abajo explica el porqué.
+> cambia en `main` (enlace fijo: `…/raw/tema-zip/tema-smartcontact.zip`). Y el export del plugin, el de la
+> licencia, lo comprueba y publica el robot de tokens en la misma rama (`tema-plugin.zip`,
+> `scripts/tema-plugin-zip.mjs`). Lo de abajo explica el porqué.
 
 **Al recibir un zip del plugin** (histórico), antes de pasarlo:
 

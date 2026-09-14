@@ -72,7 +72,9 @@ async function cssDelPreset(ruta) {
 export const leeme = (m) => `# Tema de Smart Contact para PrimeNG
 
 Generado desde el commit \`${m.commit}\` del Design System (PrimeNG ${m.primeng}, Aura ${m.themes}).
-Es el mismo tema que usan las apps de Smart Contact.
+Es el mismo tema que usan las apps de Smart Contact: con él, vuestra web se ve igual que las nuestras.
+En la misma rama está también \`tema-plugin.zip\`, el export del plugin de Figma, con su propia guía
+(\`LEEME-plugin.md\`) y la medida de cuánto se aparta de este.
 
 ## Instalar
 

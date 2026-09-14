@@ -4,6 +4,7 @@
 # lo compara con el publicado y, si algo cambió, lo deja en la rama `tema-zip`. Enlaces fijos:
 #   zip:  https://github.com/smartcontact-hub/smartcontact-ui/raw/tema-zip/tema-smartcontact.zip
 #   guía: https://github.com/smartcontact-hub/smartcontact-ui/blob/tema-zip/LEEME.md
+# En la misma rama, el robot de tokens publica `tema-plugin.zip` (el export del plugin, el de la licencia).
 #
 # Por qué: hasta el 2026-09-14 el zip lo preparaba Rafa a mano desde el plugin de Figma, con tres
 # comprobaciones a mano, y el tema del plugin no era el que pintan nuestras apps (43 % de claves
@@ -69,4 +70,8 @@ jobs:
           git -C "$PUB" config user.email "41898282+github-actions[bot]@users.noreply.github.com"
           git -C "$PUB" add -A
           git -C "$PUB" commit -qm "Tema desde ${GITHUB_SHA::7} [skip ci]"
-          git -C "$PUB" push -q origin HEAD:refs/heads/tema-zip
+          # El robot de tokens publica el zip del plugin en la misma rama: si empujó a la vez, se rebasa.
+          for intento in 1 2 3; do
+            git -C "$PUB" push -q origin HEAD:refs/heads/tema-zip && break
+            git -C "$PUB" pull -q --rebase origin tema-zip
+          done
