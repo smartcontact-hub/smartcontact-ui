@@ -1,8 +1,8 @@
 {
-  "commit": "e4d2885f",
+  "commit": "84469d25",
   "primeng": "22.1.0",
   "themes": "3.0.0",
-  "generado": "2026-09-14T21:30:48.410Z",
+  "generado": "2026-09-14T22:16:56.712Z",
   "comprobaciones": {
     "ceros": [],
     "raizPx": 16,
@@ -13,10 +13,8 @@
       ],
       "variables": [],
       "semanticaComun": false,
-      "reglasCss": false,
-      "componentes": [
-        "togglebutton"
-      ]
+      "reglasCss": true,
+      "componentes": []
     },
     "cambia": true,
     "contratoPlugin": {
@@ -24,5 +22,5 @@
       "faltan": []
     }
   },
-  "version": "0.20260914.2130"
+  "version": "0.20260914.2216"
 }
