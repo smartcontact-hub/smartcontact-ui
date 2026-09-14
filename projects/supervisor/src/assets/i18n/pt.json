@@ -719,9 +719,9 @@
       "too_large": "A imagem excede 800 KB."
     },
     "languages": {
-      "label": "Idioma",
-      "placeholder": "Selecionar idioma...",
-      "remove": "Remover {{lang}}"
+      "label": "Idiomas",
+      "placeholder": "Nenhum",
+      "selected_many": "{0} selecionados"
     },
     "groups_count": "{{count}} grupos",
     "groups_count_short": "{{count}}",
@@ -1357,7 +1357,7 @@
         "permissions_hint": "Capacidades do agente",
         "advanced": "Avançado",
         "advanced_hint": "Etiquetas, comportamento, idioma",
-        "repositories": "Repositórios"
+        "resources": "Recursos"
       },
       "advanced": {
         "labels": {
@@ -1421,7 +1421,6 @@
         "active_hint": "Pode receber chamadas e chats",
         "recording": "Gravar chamadas"
       },
-      "labels_placeholder": "Adicionar etiqueta…",
       "labels_empty": "Ainda sem etiquetas. Crie uma na seção Etiquetas.",
       "assigned": {
         "picker_placeholder": "Buscar ou adicionar grupo…",
@@ -1459,7 +1458,7 @@
       "duplicate_title": "Duplicar agente",
       "duplicate_breadcrumb": "Duplicar agente",
       "duplicate_hint": "Duplicando «{{source}}» · preencha os campos obrigatórios e salve",
-      "repositories": {
+      "resources": {
         "templates_chat": "Modelos de chat",
         "templates_email": "Modelos de email",
         "none": "Nenhum",

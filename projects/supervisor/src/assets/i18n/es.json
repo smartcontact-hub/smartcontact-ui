@@ -719,9 +719,9 @@
       "too_large": "La imagen supera los 800 KB."
     },
     "languages": {
-      "label": "Idioma",
-      "placeholder": "Seleccionar idioma...",
-      "remove": "Quitar {{lang}}"
+      "label": "Idiomas",
+      "placeholder": "Ninguno",
+      "selected_many": "{0} seleccionados"
     },
     "groups_count": "{{count}} grupos",
     "groups_count_short": "{{count}}",
@@ -1360,7 +1360,7 @@
         "permissions_hint": "Capacidades del agente",
         "advanced": "Avanzado",
         "advanced_hint": "Etiquetas, comportamiento, idioma",
-        "repositories": "Repositorios"
+        "resources": "Recursos"
       },
       "advanced": {
         "labels": {
@@ -1424,7 +1424,6 @@
         "active_hint": "Puede recibir llamadas y chats",
         "recording": "Grabar llamadas"
       },
-      "labels_placeholder": "Añadir etiqueta…",
       "labels_empty": "Aún no hay etiquetas. Crea una desde la sección Etiquetas.",
       "assigned": {
         "picker_placeholder": "Buscar o añadir grupo…",
@@ -1459,7 +1458,7 @@
         "config_title": "Configuración"
       },
       "danger_zone_description": "Eliminar este agente lo desasigna de todos los grupos donde participa. La acción no se puede deshacer.",
-      "repositories": {
+      "resources": {
         "templates_chat": "Plantillas de chat",
         "templates_email": "Plantillas de email",
         "none": "Ninguna",
