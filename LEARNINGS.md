@@ -27,7 +27,7 @@
 | **11** | lanzar una edición masiva por shell | pega la verificación de outcome en el MISMO comando (zsh no hace word-splitting) |
 | **12** | dar una cifra de un grep **o de un `querySelectorAll`**, ejecutar un `sed`, **o volcar un fichero de config** | pregúntate qué entra en el resultado **y en qué unidad lo dices** (¿herederos?, ¿visitas repetidas?); si hay un ejecutor que sabe el número, el número es el suyo; y **proyecta o enmascara antes de imprimir un `env`** |
 | **14** | responder a un "hazlo todo", escribir "esperando a X", **o anotar en un reporte algo que mediste** | haz lo verificable de punta a punta y aparca lo demás DOCUMENTADO — pero por no poder verificarlo, **nunca por parecido con otro aparcado ni por estar ya redactando** |
-| **15** | decidir algo de marca/producto | preséntalo con recomendación y evidencia — y no exageres el encuadre de riesgo |
+| **15** | decidir algo de marca/producto, **o proponer borrar algo** | preséntalo con recomendación y evidencia, sin exagerar el riesgo; y **pon antes la vía que no borra** (alias, deprecar) |
 | **16** | empezar un refactor transversal | monta antes la red que lo verifica, aunque parezca rodeo |
 | **17** | construir sobre una descripción que no verificaste tú | es una paráfrasis: vuelve a la fuente (da igual si viene de un hand-off, Figma, un README u otro agente) |
 | **18** | zanjar una decisión VISUAL discutiendo | constrúyela en su versión mínima y MÍRALA |
@@ -170,9 +170,10 @@
     dejé "el subtítulo del rail no está en Figma" en un reporte y lo tuvo que señalar Rafa.
 
 15. **Decisión de marca o producto → preséntala con recomendación y evidencia; no la decidas tú.**
-    El encuadre de riesgo es parte de la evidencia: "reversible" lleva horizonte y mecanismo
-    (reflog ~30 días); si no te gusta cómo suena, hazlo reversible ANTES (`git tag archive/…`).
-    Evidencia: s11 estilo de icono con drift en 3 sitios · s27 "borrar la rama es reversible".
+    El riesgo es evidencia: "reversible" lleva horizonte y mecanismo (reflog ~30 días), y antes de
+    proponer BORRAR o retirar algo, ofrece la vía que no borra (alias, deprecar, `git tag archive/…`).
+    ⚙️ no mecanizable (qué opciones se ponen en la mesa es juicio).
+    Evidencia: s11 icono con drift · s27 "borrar la rama es reversible" · 2026-09-14 propuse borrar «App» y el alias lo trajo la duda de Rafa (#161→#163).
 
 16. **Antes de un refactor —o de una REVISIÓN— transversal, monta primero la red que lo verifica
     (tabla de valores esperados + barrido de anomalías), aunque parezca un rodeo.**
