@@ -20,12 +20,12 @@
 :host {
   display: block;
   height: 100%;
-  background: var(--sc-bg-surface);
+  background: var(--sc-bg-canvas);
 }
 
 .page {
   flex: 1;
-  background: var(--sc-bg-surface);
+  background: var(--sc-bg-canvas);
   padding-bottom: calc(var(--sc-bulk-action-bar-height) + var(--sc-spacing-1-125));
 
   &__inner {

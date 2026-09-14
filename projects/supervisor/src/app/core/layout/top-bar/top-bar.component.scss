@@ -72,7 +72,7 @@
       color var(--sc-transition-fast) var(--sc-easing-default);
 
     &:hover {
-      background: var(--sc-color-slate-100);
+      background: var(--sc-bg-secondary-hover);
       color: var(--sc-text-secondary);
     }
 
@@ -131,7 +131,7 @@
 
     &:hover,
     &--open {
-      box-shadow: 0 0 0 2px var(--sc-color-cyan-300);
+      box-shadow: 0 0 0 2px var(--sc-border-accent);
     }
 
     &:focus-visible {
@@ -164,7 +164,7 @@
 
   &__avatar:hover &__avatar-presence,
   &__avatar--open &__avatar-presence {
-    box-shadow: 0 0 0 2px var(--sc-color-cyan-300);
+    box-shadow: 0 0 0 2px var(--sc-border-accent);
   }
 
   &__menu {
@@ -219,7 +219,7 @@
 
   &__menu-sep {
     margin: 0 var(--sc-spacing-0-25);
-    color: var(--sc-color-slate-300);
+    color: var(--sc-border-default);
   }
 
   &__menu-actions {

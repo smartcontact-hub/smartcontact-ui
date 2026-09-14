@@ -119,7 +119,7 @@
 
     &--active {
       background: var(--sc-bg-primary-subtle);
-      color: var(--sc-color-blue-700);
+      color: var(--sc-bg-primary);
     }
   }
 
@@ -128,7 +128,7 @@
     color: var(--sc-icon-subtle);
 
     .palette__item--active & {
-      color: var(--sc-color-blue-700);
+      color: var(--sc-bg-primary);
     }
   }
 

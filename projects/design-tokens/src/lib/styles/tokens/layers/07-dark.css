@@ -66,9 +66,15 @@
    * con `--sc-bg-default` —el "suelo" zinc-950—, y en claro NO. Por eso es un
    * token propio y no un alias: la asimetría es justo su razón de existir. */
   --sc-bg-canvas: var(--sc-color-zinc-950);
-  --sc-bg-subtle: var(--sc-color-blue-900);
-  --sc-bg-subtle-hover: var(--sc-color-blue-800);
-  --sc-bg-subtle-active: var(--sc-color-blue-700);
+  /* Seleccionado y resaltado: la receta de Aura para `highlight` (el primario al 16 % y, en
+   * foco, al 24 %), la MISMA que usa el preset para las opciones y filas de PrimeNG. Antes
+   * era el navy blue-900/800/700, más OSCURO que la tarjeta zinc-900 sobre la que se pinta:
+   * lo nuestro seleccionaba en azul marino y lo de PrimeNG en sky. Colgando de
+   * `--sc-bg-primary`, un cambio del primario oscuro arrastra a los dos (2026-09-14).
+   * El paso pulsado (32 %) sigue el mismo salto de 8. */
+  --sc-bg-subtle: color-mix(in srgb, var(--sc-bg-primary) 16%, transparent);
+  --sc-bg-subtle-hover: color-mix(in srgb, var(--sc-bg-primary) 24%, transparent);
+  --sc-bg-subtle-active: color-mix(in srgb, var(--sc-bg-primary) 32%, transparent);
 
   /* Primary dark — DD-81: sale del Kit (zona generada de abajo) con el patrón de Aura en
    * `sky`: base sky-300, hover sky-200, pulsado sky-100, texto zinc-900. Aura lo pinta
@@ -301,7 +307,6 @@
   --sc-cmp-togglebutton-hover-color: var(--sc-color-zinc-300);
   --sc-cmp-togglebutton-border-color: var(--sc-color-zinc-950);
   --sc-cmp-togglebutton-icon-checked-color: var(--sc-color-slate-0);
-  --sc-cmp-toast-info-background: color-mix(in srgb, var(--sc-color-sky-50) 16%, transparent);
   --sc-cmp-toast-info-color: var(--sc-color-sky-300);
   --sc-cmp-toast-info-detail-color: var(--sc-color-slate-0);
   --sc-cmp-toast-info-close-button-hover-background: color-mix(in srgb, var(--sc-color-slate-0) 5%, transparent);
@@ -349,9 +354,23 @@
    * dos vuelven a generarse solos y estas líneas se borran. */
   --sc-cmp-message-info-border-color: color-mix(in srgb, var(--sc-color-azure-700) 36%, transparent);
   --sc-cmp-toast-info-border-color: color-mix(in srgb, var(--sc-color-azure-700) 36%, transparent);
-  --sc-bg-primary-subtle: var(--sc-color-blue-900);
-  --sc-bg-primary-subtle-hover: var(--sc-color-blue-800);
-  --sc-bg-primary-subtle-active: var(--sc-color-blue-700);
+  /* Fondo del toast de info en OSCURO — a mano (EXCLUDE en `cmp-color-map.mjs`, 2026-09-14).
+   * El export trae sky-50 al 16 %, un velo claro. Aura pinta el toast de info igual que el
+   * message de info, así que es su alias: si uno cambia, el otro lo sigue. */
+  --sc-cmp-toast-info-background: var(--sc-cmp-message-info-background);
+  /* La sombra que tapa el contenido bajo las flechas de unas pestañas con scroll. El export
+   * solo trae la del claro (blanco al 60 %) y PrimeNG la lee en los dos temas: en oscuro era
+   * un halo blanco. Aura la escribe con `light-dark()`; esta es su mitad oscura (la superficie
+   * al 50 %). */
+  --sc-cmp-tabs-nav-button-shadow: 0 0 10px 50px color-mix(in srgb, var(--sc-bg-surface) 50%, transparent);
+  --sc-bg-primary-subtle: var(--sc-bg-subtle);
+  --sc-bg-primary-subtle-hover: var(--sc-bg-subtle-hover);
+  --sc-bg-primary-subtle-active: var(--sc-bg-subtle-active);
+  /* El borde primario sigue al relleno primario, como en claro (blue-700 los dos). Sin esta
+   * línea heredaba el navy del claro: un filo blue-700 sobre zinc-900, invisible. */
+  --sc-border-primary: var(--sc-bg-primary);
+  --sc-border-primary-hover: var(--sc-bg-primary-hover);
+  --sc-border-primary-active: var(--sc-bg-primary-active);
 
   /* Secondary (gray) */
   --sc-bg-secondary: var(--sc-color-zinc-300);
@@ -372,6 +391,17 @@
   --sc-bg-danger-subtle-active: color-mix(in srgb, var(--sc-color-red-900) 42%, transparent);
   --sc-bg-info-subtle: color-mix(in srgb, var(--sc-color-sky-800) 22%, transparent);
   --sc-bg-violet-subtle: color-mix(in srgb, var(--sc-color-violet-800) 22%, transparent);
+  /* Heredaban violet-100 y violet-200 del claro: islas pastel. Mismos saltos que danger. */
+  --sc-bg-violet-subtle-hover: color-mix(in srgb, var(--sc-color-violet-800) 32%, transparent);
+  --sc-bg-violet-subtle-active: color-mix(in srgb, var(--sc-color-violet-800) 42%, transparent);
+
+  /* Bordes suaves de estado: la receta del borde de `message` de Aura (el paso 700 al 36 %),
+   * la misma que ya escribe el generador para `--sc-cmp-message-*-border-color`. Heredaban
+   * el paso 200 del claro, un filo pastel sobre el fondo oscuro. */
+  --sc-border-success-subtle: color-mix(in srgb, var(--sc-color-green-700) 36%, transparent);
+  --sc-border-warning-subtle: color-mix(in srgb, var(--sc-color-yellow-700) 36%, transparent);
+  --sc-border-info-subtle: color-mix(in srgb, var(--sc-color-sky-700) 36%, transparent);
+  --sc-border-violet-subtle: color-mix(in srgb, var(--sc-color-violet-700) 36%, transparent);
 
   /* ---------- Palette · Labels ----------
    *
@@ -392,9 +422,9 @@
    * el chip respira el lienzo que tenga debajo, tabla o modal) y el texto
    * sube a los pasos 200/300 para cumplir AA contra ese fondo compuesto.
    * Los ratios están medidos, no estimados — ver `dark-surfaces.spec.ts`. */
-  --sc-label-gray-bg: color-mix(in srgb, var(--sc-color-slate-700) 45%, transparent);
+  --sc-label-gray-bg: color-mix(in srgb, var(--sc-color-zinc-700) 45%, transparent);
   --sc-label-gray-text: var(--sc-color-zinc-200);
-  --sc-label-gray-border: color-mix(in srgb, var(--sc-color-slate-500) 45%, transparent);
+  --sc-label-gray-border: color-mix(in srgb, var(--sc-color-zinc-500) 45%, transparent);
   --sc-label-gray-dot: var(--sc-color-zinc-400);
 
   --sc-label-red-bg: color-mix(in srgb, var(--sc-color-red-900) 40%, transparent);
@@ -432,6 +462,18 @@
   --sc-label-purple-border: color-mix(in srgb, var(--sc-color-purple-700) 45%, transparent);
   --sc-label-purple-dot: var(--sc-color-purple-400);
 
+  /* ---------- Palette · Presencia y prioridad ----------
+   * Vivían solo en claro, en hex calibrado contra la superficie BLANCA, y se usan como
+   * TEXTO (pastillas de estado de agente y de prioridad de grupo). En oscuro heredaban ese
+   * hex: el verde profundo #1a6a3a sobre zinc-900 no llega a 3:1. Toman el texto de la
+   * familia de etiquetas equivalente, que ya está medido sobre el fondo oscuro. */
+  --sc-presence-available: var(--sc-text-success);
+  --sc-presence-available-deep: var(--sc-label-green-text);
+  --sc-presence-paused: var(--sc-label-amber-text);
+  --sc-presence-training: var(--sc-label-red-text);
+  --sc-priority-medium: var(--sc-label-amber-dot);
+  --sc-priority-medium-deep: var(--sc-label-amber-text);
+
   /* ---------- Semantic · Border ---------- */
   /*
    * `subtle` valía slate-900, que es EXACTAMENTE `--sc-bg-surface` en oscuro:
@@ -449,7 +491,11 @@
    * los dos temas— y por eso no necesita tabla oscura. Nuestro sistema mapea
    * roles a primitivas por tema, así que la equivalencia se escribe aquí.)
    */
-  --sc-border-subtle: color-mix(in srgb, var(--sc-color-slate-800) 40%, var(--sc-color-slate-900));
+  /* Desde el 2026-09-14 se mezcla sobre los NEUTROS del tema (zinc) y no sobre slate: el
+   * 40 % de slate-800 dejaba un filo con tinte azul sobre la tarjeta zinc. Y se escribe con
+   * los roles, no con primitivas, para que siga a la superficie si esta cambia. Para la
+   * misma sutileza de 1.13:1 contra zinc-900 hace falta el 75 % de zinc-800 (medido). */
+  --sc-border-subtle: color-mix(in srgb, var(--sc-bg-secondary-hover) 75%, var(--sc-bg-surface));
   --sc-border-disabled: var(--sc-color-zinc-700);
   /* Anillo de foco en OSCURO a sky-400 (2026-09-13). En claro sigue sky-500. Sobre zinc,
    * sky-500 da 3,61:1 contra la superficie: pasa el 3:1 pero justo, y el foco es lo único
@@ -460,15 +506,28 @@
   /* Su halo va a juego (ver 05-extensions): los canales de sky-400, #4a8fff. */
   --sc-shadow-focus-ring-rgb: 74 143 255;
 
-  --sc-border-secondary: var(--sc-color-blue-700);
-  --sc-border-secondary-hover: var(--sc-color-blue-600);
-  --sc-border-secondary-active: var(--sc-color-blue-500);
+  /* El borde suave del primario. En claro es navy 200/300/400; en oscuro el primario es sky,
+   * y el paso que Aura usa para el contorno primario oscuro es el 600 (el mismo que escribe el
+   * generador en `--sc-cmp-button-outlined-primary-border-color`). Antes era navy 700/600/500:
+   * un filo invisible sobre zinc. */
+  --sc-border-secondary: var(--sc-color-sky-600);
+  --sc-border-secondary-hover: var(--sc-color-sky-500);
+  --sc-border-secondary-active: var(--sc-color-sky-400);
 
   /* ---------- Semantic · Icons ---------- */
   --sc-icon-primary: var(--sc-color-zinc-200);
   --sc-icon-secondary: var(--sc-color-zinc-400);
   --sc-icon-subtle: var(--sc-color-zinc-400);
   --sc-icon-disabled: var(--sc-color-zinc-600);
+  /* Los iconos de color siguen a su texto. Heredaban el paso del claro (sky-600, red-600…),
+   * calculado contra blanco: el mismo agujero que tenían los `--sc-text-*` de color. */
+  --sc-icon-link: var(--sc-text-link);
+  --sc-icon-accent: var(--sc-text-accent);
+  --sc-icon-info: var(--sc-text-info);
+  --sc-icon-success: var(--sc-text-success);
+  --sc-icon-warning: var(--sc-text-warning);
+  --sc-icon-error: var(--sc-text-danger);
+  --sc-icon-violet: var(--sc-text-violet);
 
   /* `--sc-btn-*` removed S34 (light + dark) — see comment in 04-component.css */
 
@@ -493,7 +552,10 @@
   --sc-toast-violet-bg: color-mix(in srgb, var(--sc-color-violet-800) 40%, transparent);
 
   /* ---------- Extensions · Sidebar ---------- */
-  /* One step darker than the page so it still reads as "the chrome"
-   * against the surface, not a peer panel. */
-  --sc-sidebar-bg: var(--sc-color-blue-900);
+  /* La barra lateral oscura es la SUPERFICIE del tema, como la barra superior: el navy
+   * blue-900 de antes era el único fondo de la app que no leía los neutros de Aura (zinc).
+   * Su texto (alfas de blanco, 05-extensions) mantiene el contraste sobre zinc-900: el
+   * chevron al 0.4 da 3,36:1 en fila con hover y el texto de 12 px al 0.5, 5,19:1. */
+  --sc-sidebar-bg: var(--sc-bg-surface);
+  --sc-sidebar-divider: var(--sc-border-default);
 }

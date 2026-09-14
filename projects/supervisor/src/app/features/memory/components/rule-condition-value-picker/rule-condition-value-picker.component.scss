@@ -27,13 +27,13 @@
     transition: border-color 150ms ease;
 
     &:hover {
-      border-color: var(--sc-border-strong, var(--sc-border-default));
+      border-color: var(--sc-border-strong);
     }
   }
 
   &--open &__trigger {
     border-color: var(--sc-bg-primary);
-    box-shadow: 0 0 0 3px rgb(var(--sc-shadow-color-rgb, 20 100 254) / 0.08);
+    box-shadow: 0 0 0 3px rgb(var(--sc-shadow-color-rgb) / 0.08);
   }
 
   &__ph {
@@ -43,7 +43,7 @@
 
   &__all {
     flex: 1;
-    color: var(--sc-color-sky-500);
+    color: var(--sc-text-accent);
     font-weight: var(--sc-font-weight-regular);
   }
 
@@ -64,8 +64,8 @@
     gap: 3px;
     padding: 2px var(--sc-spacing-0-25) 2px var(--sc-spacing-0-5);
     border-radius: var(--sc-radius-100);
-    background: var(--sc-color-sky-50);
-    color: var(--sc-color-sky-500);
+    background: var(--sc-bg-info-subtle);
+    color: var(--sc-text-accent);
     font-size: var(--sc-font-size-100);
     line-height: 1.4;
   }
@@ -74,7 +74,7 @@
     display: inline-flex;
     align-items: center;
     cursor: pointer;
-    color: var(--sc-color-sky-500);
+    color: var(--sc-text-accent);
     opacity: 0.7;
 
     &:hover {
@@ -102,7 +102,7 @@
     background: var(--sc-bg-surface);
     border: 1px solid var(--sc-border-default);
     border-radius: var(--sc-radius-300);
-    box-shadow: var(--sc-shadow-dropdown, 0 8px 24px rgb(0 0 0 / 0.12));
+    box-shadow: var(--sc-shadow-dropdown);
     overflow: hidden;
   }
 
@@ -143,11 +143,11 @@
     transition: background-color 120ms ease;
 
     &:hover {
-      background: var(--sc-color-slate-50);
+      background: var(--sc-bg-secondary-hover);
     }
 
     &--on {
-      color: var(--sc-color-sky-500);
+      color: var(--sc-text-accent);
     }
   }
 
@@ -168,7 +168,7 @@
   }
 
   &__opt-check {
-    color: var(--sc-color-sky-500);
+    color: var(--sc-text-accent);
     flex-shrink: 0;
   }
 
@@ -180,7 +180,7 @@
   }
 
   &__opt--on &__check {
-    color: var(--sc-color-sky-500);
+    color: var(--sc-text-accent);
   }
 
   /* Cabecera de categoría (tipificación): a la izquierda un botón con checkbox +
@@ -223,7 +223,7 @@
     cursor: pointer;
 
     &:hover {
-      background: var(--sc-color-slate-50);
+      background: var(--sc-bg-secondary-hover);
     }
   }
 

@@ -165,10 +165,10 @@ body {
 .cross-tab-warning {
   margin-bottom: var(--sc-spacing-1-5);
   padding: var(--sc-spacing-1-125) var(--sc-spacing-1-5);
-  border: 1px solid var(--sc-color-amber-300);
+  border: 1px solid var(--sc-border-warning-subtle);
   border-radius: var(--sc-radius-100);
-  background: var(--sc-color-amber-50);
-  color: var(--sc-color-amber-800);
+  background: var(--sc-bg-warning-subtle);
+  color: var(--sc-text-warning);
   font-size: var(--sc-font-size-200);
   line-height: 1.45;
 }

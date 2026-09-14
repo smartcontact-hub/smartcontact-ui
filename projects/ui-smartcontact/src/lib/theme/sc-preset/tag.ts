@@ -19,7 +19,7 @@ import type { TagDesignTokens } from '@primeuix/themes/types/tag';
         dark: {
             info: {
                 color: "var(--sc-cmp-tag-info-color)",
-                background: "#0ea5e929"
+                background: "color-mix(in srgb, {sky.500}, transparent 84%)"
             },
             warn: {
                 color: "var(--sc-cmp-tag-warn-color)",

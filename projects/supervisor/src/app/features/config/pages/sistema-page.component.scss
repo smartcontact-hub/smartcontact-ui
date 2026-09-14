@@ -1,12 +1,12 @@
 /*
  * Sistema page — rendered directly under .app-shell__content (no
  * settings shell anymore, that lives only under /config/aed/*). Host
- * paints its own surface so the page has a canvas.
+ * paints the canvas (`--sc-bg-canvas`), the same ground as Contact Center.
  */
 :host {
   display: block;
   height: 100%;
-  background: var(--sc-bg-surface);
+  background: var(--sc-bg-canvas);
 }
 
 .page {

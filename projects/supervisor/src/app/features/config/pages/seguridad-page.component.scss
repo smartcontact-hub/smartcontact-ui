@@ -1,12 +1,12 @@
 /*
  * Seguridad page — minimal placeholder, rendered directly under
- * .app-shell__content. Host paints its own surface so the page has
- * a canvas.
+ * .app-shell__content. Host paints the canvas (`--sc-bg-canvas`), the
+ * same ground as Contact Center.
  */
 :host {
   display: block;
   height: 100%;
-  background: var(--sc-bg-surface);
+  background: var(--sc-bg-canvas);
 }
 
 .page {

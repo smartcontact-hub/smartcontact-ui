@@ -113,15 +113,15 @@
   border: 0;
   border-radius: var(--sc-radius-200);
   background: transparent;
-  color: var(--sc-color-teal-600);
+  color: var(--sc-label-teal-text);
   cursor: pointer;
   transition:
     background-color 160ms ease-out,
     color 160ms ease-out;
 
   &:hover:not(:disabled) {
-    background: var(--sc-color-teal-50);
-    color: var(--sc-color-teal-700);
+    background: var(--sc-label-teal-bg);
+    color: var(--sc-label-teal-text);
   }
 
   &:active:not(:disabled) {

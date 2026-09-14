@@ -6,7 +6,7 @@
 .hub {
   flex: 1;
   overflow-y: auto;
-  background: var(--sc-bg-surface);
+  background: var(--sc-bg-canvas);
 
   /* El ancho lo pone `page__inner--hub` (partial `_page.scss`), que la
    * plantilla lleva en este mismo elemento: es la única página cuyo bloque

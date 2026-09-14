@@ -23,11 +23,11 @@
    * makes long forms easy to hit.
    */
   min-height: 100%;
-  background: var(--sc-bg-surface);
+  background: var(--sc-bg-canvas);
 }
 
 .page {
-  background: var(--sc-bg-surface);
+  background: var(--sc-bg-canvas);
 }
 
 /* El MOLDE de esta página no vive aquí: `.page__inner--with-panel` y

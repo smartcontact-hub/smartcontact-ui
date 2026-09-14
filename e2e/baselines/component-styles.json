@@ -497,7 +497,7 @@
       "font-size": "14px",
       "font-weight": "500",
       "line-height": "20px",
-      "color": "rgb(13, 26, 28)",
+      "color": "rgb(47, 54, 66)",
       "background-color": "rgba(0, 0, 0, 0)"
     },
     "sc-bulkbar > div.bulk-bar > div.bulk-bar__summary > button.bulk-bar__clear": {
