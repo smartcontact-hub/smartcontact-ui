@@ -264,6 +264,35 @@ test.describe('sc-panel', () => {
     expect((await styleOf(header, ['padding-left']))['padding-left']).toBe(kitPx('panel.header.padding'));
     await screenshotBaseline(page, 'panel');
   });
+
+  /* Las dos cosas que pidió la tarjeta del Dashboard (2026-09-14): acciones en la cabecera sin estilar
+   * `.p-panel-*` desde la app, y un panel que ocupa el hueco que le da la rejilla. */
+  test('#icons pinta la acción en la cabecera, a la derecha del título', async ({ page }) => {
+    await gotoPage(page, 'panel');
+    const panel = page.getByTestId('sc-panel-icons');
+    const accion = panel.getByRole('button', { name: 'Opciones de Colas' });
+    await expect(accion).toBeVisible();
+    const titulo = await panel.getByText('Colas', { exact: true }).boundingBox();
+    const boton = await accion.boundingBox();
+    expect(boton!.x).toBeGreaterThan(titulo!.x + titulo!.width);
+    // Misma línea que el título: la acción está en la cabecera, no en el cuerpo.
+    expect(Math.abs(boton!.y + boton!.height / 2 - (titulo!.y + titulo!.height / 2))).toBeLessThan(2);
+  });
+
+  test('fill ocupa el alto del hueco y estira el cuerpo hasta el pie', async ({ page }) => {
+    await gotoPage(page, 'panel');
+    const hueco = await page.getByTestId('sc-panel-fill-slot').boundingBox();
+    const panel = await page.getByTestId('sc-panel-fill').boundingBox();
+    expect(Math.abs(panel!.height - hueco!.height)).toBeLessThan(1);
+    const cuerpo = await page
+      .getByTestId('sc-panel-fill')
+      .getByText('Contenido que se estira hasta el pie del hueco.')
+      .boundingBox();
+    const contenido = page.getByTestId('sc-panel-fill').locator('.sc-panel__content');
+    const relleno = parseFloat((await styleOf(contenido, ['padding-bottom']))['padding-bottom']);
+    // El cuerpo acaba donde acaba el panel, menos su relleno de abajo y el borde de 1.
+    expect(Math.abs(cuerpo!.y + cuerpo!.height - (panel!.y + panel!.height - relleno - 1))).toBeLessThan(2);
+  });
 });
 
 test.describe('sc-skeleton', () => {
