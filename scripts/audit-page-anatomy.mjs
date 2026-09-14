@@ -63,6 +63,8 @@ export const ARQUETIPOS = ['list', 'hub', 'reading', 'with-panel', 'rail'];
 export const EXENTAS = {
   'projects/supervisor/src/app/core/layout/placeholder-page/placeholder-page.component.html':
     'stub de ruta sin contenido: no pinta página, solo ocupa el sitio de una que vendrá',
+  'projects/supervisor/src/app/features/auth/pages/login-page.component.html':
+    'acceso, fuera del shell: pantalla completa con ilustración y panel, sin barra ni lienzo de contenido',
 };
 
 /** Anchos sueltos ≥600px/40rem que quedan fuera del molde (fichero → nº). Solo mengua. */

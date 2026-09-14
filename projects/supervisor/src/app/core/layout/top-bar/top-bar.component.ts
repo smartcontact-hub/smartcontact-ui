@@ -14,6 +14,7 @@ import type { MenuItem } from 'primeng/api';
 
 import { ClickOutsideDirective } from '../../directives/click-outside.directive';
 import { BreadcrumbService } from '../../services/breadcrumb.service';
+import { AuthService } from '../../services/auth.service';
 import { TopBarSlotService } from './top-bar-slot.service';
 // El cheat-sheet de atajos ahora lo renderiza `<sc-keyboard-shortcuts>` del
 // paquete, cuya visibilidad la posee `ScKeyboardShortcutsService` publicado.
@@ -50,6 +51,7 @@ import { IllustratedAvatarComponent } from '@shared/components';
 })
 export class TopBarComponent {
   private readonly router = inject(Router);
+  private readonly auth = inject(AuthService);
   private readonly breadcrumbs = inject(BreadcrumbService);
   private readonly shortcuts = inject(ScKeyboardShortcutsService);
   private readonly topBarSlot = inject(TopBarSlotService);
@@ -100,6 +102,17 @@ export class TopBarComponent {
 
   protected closeUserMenu(): void {
     this.userMenuOpen.set(false);
+  }
+
+  /**
+   * Navega PRIMERO y cierra la sesión solo si la navegación sale adelante: con un
+   * formulario a medias, el guardia de cambios sin guardar pregunta, y si la persona
+   * se queda, sigue dentro con su sesión.
+   */
+  protected async signOut(): Promise<void> {
+    this.userMenuOpen.set(false);
+    const left = await this.router.navigateByUrl('/login', { state: { signedOut: true } });
+    if (left) this.auth.signOut();
   }
 
   /** Esc closes the menu and returns focus to the avatar trigger. */

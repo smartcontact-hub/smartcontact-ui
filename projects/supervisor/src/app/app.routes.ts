@@ -7,6 +7,13 @@ import { Routes } from '@angular/router';
  * feature route. Feature route tables are lazy-loaded.
  */
 export const appRoutes: Routes = [
+  /* Fuera del shell: el acceso no lleva sidebar ni barra. Sin guardia, a propósito
+   * (ver `AuthService`): la app sigue abriéndose sin entrar. */
+  {
+    path: 'login',
+    loadComponent: () =>
+      import('./features/auth/pages/login-page.component').then((m) => m.LoginPageComponent),
+  },
   {
     path: '',
     loadComponent: () =>

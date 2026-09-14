@@ -1,0 +1,227 @@
+/*
+ * Login — molde de SnowUI «Sign In - B»: ilustración a sangre, marca arriba a la
+ * izquierda y un panel a la derecha con el formulario centrado.
+ *
+ * Fuera del shell (sin sidebar ni barra), así que no declara `.page__inner`: su
+ * exención vive en `audit-page-anatomy.mjs`.
+ */
+:host {
+  display: block;
+  background: var(--sc-bg-canvas);
+}
+
+.login {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 3fr) minmax(0, 2fr);
+  min-height: 100dvh;
+  padding: var(--sc-spacing-1);
+  overflow: hidden;
+  isolation: isolate;
+}
+
+.login__art {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+}
+
+/* ── Marca ─────────────────────────────────────────────── */
+
+.login__brand {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: var(--sc-spacing-1-5);
+  padding: var(--sc-spacing-4);
+  color: var(--sc-text-heading);
+}
+
+.login__logo {
+  display: flex;
+  align-items: center;
+  gap: var(--sc-spacing-0-875);
+  height: var(--sc-spacing-3);
+}
+
+.login__logo-isotype,
+.login__logo-wordmark {
+  display: block;
+  height: 100%;
+  background-color: currentColor;
+  mask-repeat: no-repeat;
+  mask-position: center;
+  mask-size: contain;
+}
+
+.login__logo-isotype {
+  aspect-ratio: 1;
+  mask-image: url('/logos/smartcontact-isotype-light.svg');
+}
+
+.login__logo-wordmark {
+  /* viewBox del SVG: 148 × 44. */
+  aspect-ratio: 148 / 44;
+  mask-image: url('/logos/smartcontact-wordmark-light.svg');
+}
+
+.login__claim {
+  margin: 0;
+  max-width: var(--sc-spacing-25);
+}
+
+/* ── Panel ─────────────────────────────────────────────── */
+
+.login__panel {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  padding: var(--sc-spacing-2);
+  border-radius: var(--sc-radius-2xl);
+  background: var(--sc-bg-surface);
+  box-shadow: var(--sc-shadow-dialog);
+}
+
+/* Anclado arriba a una altura fija y no centrado: centrado, cada aviso que aparece
+ * (error, «has cerrado sesión») empujaba el título hacia arriba.
+ * Huecos del autolayout de SnowUI: 28 entre bloques y 16 dentro del formulario. */
+.login__body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  justify-content: flex-start;
+  gap: var(--sc-spacing-2);
+  width: 100%;
+  max-width: var(--sc-spacing-25);
+  padding-block-start: 22dvh;
+}
+
+.login__hello {
+  display: flex;
+  /* «Hola de nuevo» con la mano pasa de la columna de 350: se desborda centrado, no se parte. */
+  white-space: nowrap;
+  align-items: center;
+  justify-content: center;
+  gap: var(--sc-spacing-0-875);
+  margin: 0 0 var(--sc-spacing-2);
+  color: var(--sc-text-heading);
+  outline: none;
+}
+
+/* La manita saluda una vez al llegar: solo `transform`, y nada si se pide menos movimiento. */
+.login__wave {
+  display: inline-flex;
+  transform-origin: 70% 80%;
+  animation: login-wave 1400ms var(--sc-easing-default) 400ms 1 both;
+}
+
+@keyframes login-wave {
+  0%,
+  60%,
+  100% {
+    transform: rotate(0deg);
+  }
+  10%,
+  30% {
+    transform: rotate(14deg);
+  }
+  20%,
+  40% {
+    transform: rotate(-8deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .login__wave {
+    animation: none;
+  }
+}
+
+.login__intro {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: var(--sc-spacing-0-5);
+  text-align: center;
+
+  h1 {
+    margin: 0;
+    color: var(--sc-text-heading);
+    outline: none;
+  }
+}
+
+.login__intro-icon {
+  display: inline-flex;
+  margin-bottom: var(--sc-spacing-0-5);
+  color: var(--sc-text-secondary);
+}
+
+.login__lead {
+  margin: 0;
+  color: var(--sc-text-secondary);
+}
+
+.login__microsoft-logo {
+  display: block;
+  flex-shrink: 0;
+}
+
+.login__divider {
+  color: var(--sc-text-secondary);
+}
+
+.login__form {
+  display: flex;
+  flex-direction: column;
+  gap: var(--sc-spacing-1);
+}
+
+.login__links {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: var(--sc-spacing-1);
+}
+
+/* Enlace de texto: color de enlace y subrayado al pasar, foco visible del DS. */
+.login__link {
+  padding: 0;
+  border: 0;
+  background: none;
+  color: var(--sc-text-link);
+  text-decoration: none;
+  cursor: pointer;
+
+  &:hover {
+    text-decoration: underline;
+  }
+
+  &:focus-visible {
+    outline: var(--sc-focus-ring-width) solid var(--sc-border-focus);
+    outline-offset: var(--sc-focus-ring-offset);
+    border-radius: var(--sc-radius-sm);
+  }
+}
+
+.login__legal {
+  margin: 0;
+  color: var(--sc-text-secondary);
+}
+
+/* Por debajo de 1024 (el mínimo del Supervisor, DD-53) la marca se queda arriba
+ * y el panel ocupa el ancho: el login sí se abre en un portátil pequeño. */
+@media (max-width: 1023px) {
+  .login {
+    grid-template-columns: minmax(0, 1fr);
+    grid-template-rows: auto 1fr;
+  }
+
+  .login__brand {
+    padding: var(--sc-spacing-2);
+  }
+
+  .login__claim {
+    display: none;
+  }
+}
