@@ -165,14 +165,15 @@ las 38 ranuras— se cerraron el mismo día en DD-73.)
 3. **La deuda de código de [`AUDIT-DEUDA-2026-06.md`](../AUDIT-DEUDA-2026-06.md)** que quede tras
    s34, y **los cabos de DD-24** (round-trip de iconos) en [`ROADMAP.md`](../ROADMAP.md).
 
-## ✅ 2026-09-14 · `sc-panel` con acciones en la cabecera y `fill` (DD-108)
+## ✅ 2026-09-14 · `sc-panel` con acciones y cabecera propias, `fill` y aviso (DD-108, DD-109)
 
-**Sello:** rama `arebury/sc-panel-icons-fill`, HEAD `e4d2885` (#171) más este cambio. DD-108. Rafa: «adelante». El tramo «Las fichas de agente, grupo
+**Sello:** rama `arebury/sc-panel-icons-fill`, HEAD `c55f857` (#183) más este cambio. DD-108 y DD-109. Rafa: «adelante» y la variante de aviso. El tramo «Las fichas de agente, grupo
 y usuario riman con Contact Center» vive en el tag `archive/handoff-ds-2026-09-14-fichas-contact-center`, y «Los iconos pintan el
 tamaño que prometen» (DD-104), en `archive/handoff-ds-2026-09-14-iconos-calibrados`.
 
 **Lo que cambia.** `<ng-template #icons>` en `sc-panel` (plantilla `icons` de Panel; Figma `Custom Icon=True`) y
-`[fill]` para llenar el hueco, estilado por clases de `pt`. Lo pidió la tarjeta de widget del Dashboard.
+`[fill]` para llenar el hueco, estilado por clases de `pt`; `#header let-titleId` y `severity` warn/danger (Figma §11).
+Lo pidió la tarjeta de widget del Dashboard.
 
 - ⚠️ **Para estilar un interno de PrimeNG sin `.p-*`, ponle clase propia por `pt`**: `pBind` la mezcla con la suya y
   el acoplamiento no crece.

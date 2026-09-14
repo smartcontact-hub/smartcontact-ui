@@ -41,6 +41,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | `<sc-panel severity="warn|danger">`: borde y anillo de 1 en `--sc-border-warning/danger`, decidido en código y pendiente en Figma · `<ng-template #header let-titleId>` para un título que es encabezado, con `[id]="titleId"` | DD-109 |
 > | Una tarjeta con acciones en la cabecera es `<sc-panel>` con `<ng-template #icons>` (Panel de primeng.dev; Figma `panel` `Custom Icon=True`) · `[fill]` la estira al alto de su hueco · las piezas internas se estilan por `pt` con clases propias, no por `.p-panel-*` | DD-108 |
 > | Un `borderWidth` del tema tiene la FORMA de Aura: si Aura pinta un lado (`0 0 1px 0`), nosotros también; si Aura dice `0`, sin borde · `p-tabs` como Aura 3: pestaña sin borde, tira con raya abajo, marca de la activa en `activeBar` · lo vigila `preset-border-shorthand.test.mjs` | DD-107 |
 > | Un campo que ACUMULA valores de una lista es un `sc-multiselect` con chips, no un `sc-select` que se vacía más pastillas debajo · la casilla de «todos» de `sc-multiselect` marca y desmarca (`[selectAll]="null"` contra PrimeNG 22.1.0) · una sección no se llama ni se dibuja como una página del menú | DD-105 |
@@ -73,6 +74,39 @@
 > | Siete divergencias deliberadas entre flujos, que NO se unifican | DD-36 |
 > | `--sc-bg-default` es el suelo del shell, nunca una superficie | DD-34 |
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
+
+---
+
+## DD-109 · 2026-09-14 — `sc-panel` gana cabecera propia (`#header`) y aviso (`severity`), y lo segundo lo decide Rafa en código
+
+**Contexto** · Tras DD-108, la sesión del Dashboard midió que la tarjeta de widget aún no podía ser `sc-panel` sin
+perder cuatro cosas: el título es `h2` con una línea de entidades debajo (Panel pinta `header` como `<span>`); el asa
+de arrastre va en la cabecera; la tarjeta en alerta lleva borde y anillo ámbar o rojo, que solo se alcanzaban con
+`::ng-deep` (tope 0); y con cabecera de plantilla la región del cuerpo perdía su nombre. Panel no tiene variante de
+aviso ni en Figma ni en primeng.dev, y el chrome del catálogo solo cambia cuando lo dicta Figma (`.impeccable.md`),
+así que se le preguntó a Rafa: quitar el borde, variante en `sc-panel` o pintarlo solo en el Dashboard. Eligió la
+variante.
+
+**Decisión** ·
+1. **`<ng-template #header let-titleId>`** se reenvía a la plantilla `header` de `p-panel`. `sc-panel` le da a
+   `p-panel` un id propio, y el contexto de la plantilla trae `titleId` (`<id>_header`), que es a donde apunta el
+   `aria-labelledby` de la región: con `[id]="titleId"` en el título, la región se llama como él. En la plantilla del
+   componente el input se lee por `headerText`, porque `#header` lo tapa.
+2. **`severity: 'warn' | 'danger' | null`**: borde y anillo de 1 (sombra, no cambia el tamaño) en
+   `--sc-border-warning` / `--sc-border-danger`, con transición de los tokens de movimiento y sin ella si se pide
+   menos movimiento. Sobre la clase `sc-panel__root` de `pt`, sin `.p-*`.
+3. **Figma:** la variante `Severity` de `panel` entra en `docs/figma-pendiente.md` §11.
+
+**Razón** · La cabecera es API pública de Panel (plantilla `header`), y el id propio resuelve la accesibilidad sin
+tocar PrimeNG. El aviso lo pidió Rafa como pieza del DS para que cualquier tarjeta lo pinte igual.
+
+**Descartadas** ·
+- **Quitar el borde y dejar solo la etiqueta** (la opción recomendada) → Rafa prefirió que el aviso se vea de lejos.
+- **Pintarlo en el Dashboard colgándolo de `sc-panel__root`** → funcionaba sin `::ng-deep`, pero cada pantalla lo
+  volvería a escribir.
+- **`headingLevel` + `subtitle`** → dos inputs para un solo caso; la plantilla cubre también el asa de arrastre.
+
+**Consecuencias** · Dos stories más en `#/components/panel`, dos tests más; la referencia de estilos solo añade anclas.
 
 ---
 
