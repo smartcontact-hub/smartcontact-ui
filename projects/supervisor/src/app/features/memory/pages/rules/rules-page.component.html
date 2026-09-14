@@ -20,58 +20,37 @@
   styleClass="rules-new-menu"
 />
 
-<div class="page">
-  <div class="page__inner page__inner--list">
-    <!-- El título de la página vive en el CUERPO, no en la barra: la miga de
-         arriba dice DÓNDE estás y esta línea dice QUÉ miras (modelo Snow UI,
-         medido en `/orders`). Es el MISMO `<h1>` que S59 dejó oculto —no hay un
-         encabezado nuevo—, así que sigue habiendo exactamente uno por documento. -->
-    <h1 class="page__heading sc-text-h3-semibold">{{ 'memory.rules.page_title' | translate }}</h1>
+<!-- La lista (título, tabla, menú de fila) la monta `sc-list-page` (DD-97). Aquí solo lo que es de Reglas: el
+     aviso sin reglas activas, columnas y celdas, y las acciones. -->
+<sc-list-page
+  [heading]="'memory.rules.page_title' | translate"
+  [rows]="allRules()"
+  [empty]="isEmpty()"
+  [columns]="columns()"
+  [rowMenu]="rowMenu"
+  rowOpenable
+  tableTestId="rules-table"
+  (rowOpen)="openRule($event)"
+>
+  <sc-empty-state
+    scListEmpty
+    [icon]="emptyIcon"
+    titleKey="memory.rules.empty_title"
+    bodyKey="memory.rules.empty_desc"
+    ctaKey="memory.rules.empty_cta"
+    (cta)="newRuleMenu.toggle($event)"
+  />
 
-    @if (isEmpty()) {
-      <sc-empty-state
-        [icon]="emptyIcon"
-        titleKey="memory.rules.empty_title"
-        bodyKey="memory.rules.empty_desc"
-        ctaKey="memory.rules.empty_cta"
-        (cta)="newRuleMenu.toggle($event)"
-      />
-    } @else {
-      <!-- Aviso no bloqueante (DD-30 permite 0 activas): sin ninguna regla activa
-           las conversaciones nuevas no se transcriben ni clasifican solas. -->
-      @if (!hasActive()) {
-        <sc-message
-          class="rules-no-active"
-          severity="info"
-          [text]="'memory.rules.no_active_banner' | translate"
-        />
-      }
-      <!-- Una sola tabla: el estado (activa/inactiva) va en columna, sin
-           secciones separadas. Cada fila enlaza al constructor.
-
-           B4: la pinta el componente del DS. `variant="list"` le pone la
-           gramática de tabla-lista de la app (54px de fila, cabecera silenciosa
-           de S59); sin ella el preset la dejaría más densa y con la cabecera
-           oscura, distinta de las tablas sin migrar. -->
-      <div class="table-card">
-        <sc-datatable
-          variant="list"
-          [value]="allRules()"
-          [columns]="columns()"
-          dataKey="id"
-          [rowStyleClass]="rowClass"
-          rowsFocusable
-          (rowClick)="openRule($event.row)"
-          (rowKeydown)="onRowKeydown($event)"
-          (rowContextMenu)="onRowContextMenu($event, kebabMenu)"
-          data-testid="rules-table"
-        />
-      </div>
+  <!-- Aviso no bloqueante (DD-30 permite 0 activas): sin ninguna regla activa las conversaciones nuevas no se
+       transcriben ni clasifican solas. -->
+  <ng-container ngProjectAs="[scListBeforeToolbar]">
+    @if (!isEmpty() && !hasActive()) {
+      <sc-message class="rules-no-active" severity="info" [text]="'memory.rules.no_active_banner' | translate" />
     }
-  </div>
-</div>
+  </ng-container>
+</sc-list-page>
 
-<!-- Celdas de la tabla. Viven FUERA del `<sc-datatable>` para que los
+<!-- Celdas de la tabla. Viven FUERA de la lista para que los
      `viewChild` las resuelvan; `columns()` las recoge. El contexto es
      `{ $implicit: rule }`.
 
@@ -132,23 +111,3 @@
 <ng-template #modifiedTpl let-rule>
   <span class="rules-cell sc-text-body-regular">{{ formatRelativeDate(rule.lastModified) }}</span>
 </ng-template>
-
-<ng-template #kebabTpl let-rule>
-  <sc-button class="rules-kebab-btn" variant="secondary" appearance="text" size="sm" [icon]="kebabIcon" [ariaLabel]="'memory.rules.cols.more' | translate" (clicked)="$event.stopPropagation(); setMenuTarget(rule); kebabMenu.toggle($event)" />
-</ng-template>
-
-<!-- Menú kebab ÚNICO y compartido (antes 1 <p-menu> por fila): su modelo es un
-     computed estable → basta 1 clic para aplicar (no doble). Cada botón lo abre
-     pasando su propio $event para anclarlo a su fila; el click derecho sobre la
-     fila abre ESTE mismo menú (R3).
-
-     Vive en el nivel raíz de la plantilla, no dentro del `@else`: las celdas son
-     `<ng-template>` de la vista raíz y una referencia declarada dentro de un
-     bloque `@if` no es visible desde fuera de su vista embebida. -->
-<p-menu
-  #kebabMenu
-  [model]="menuItems()"
-  [popup]="true"
-  appendTo="body"
-  styleClass="rules-kebab-menu"
-/>

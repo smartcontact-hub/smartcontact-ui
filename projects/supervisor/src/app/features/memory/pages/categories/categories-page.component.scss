@@ -12,28 +12,7 @@
   background: var(--sc-bg-surface);
 }
 
-/* Page chrome alineado con AED list-pages (S41 consistency fix). */
-.page {
-  flex: 1;
-  background: var(--sc-bg-surface);
-
-  &__inner {
-    padding: var(--sc-spacing-1-25) var(--sc-spacing-2); /* barra → título 17,5 y lados 28, los de la miga (2026-09-14) */
-    display: flex;
-    flex-direction: column;
-    /* Título → contenido `scale/1`, como las 13 pantallas (`_page.scss`). El `gap`
-     * separa también el resto de bloques: lo que pierden lo recuperan en su propio
-     * margen, así que solo se mueve el título (2026-09-14). */
-    gap: var(--sc-spacing-1);
-
-    /* El `gap` de este contenedor ya separa el título de lo que viene
-     * debajo; sin esto sumaría además su propio margen y quedaría al doble
-     * de distancia que en las páginas que no usan `gap` (medido: 42 vs 21). */
-    .page__heading {
-      margin-bottom: 0;
-    }
-  }
-}
+/* La página y la tabla las pinta `sc-list-page` (DD-97). */
 
 /* Empty state migrado a <sc-empty-state> (S62, backlog #64). */
 

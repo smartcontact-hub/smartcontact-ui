@@ -26,61 +26,39 @@
   </div>
 </ng-template>
 
-<div class="page" [class.page--has-selection]="selectedIds().size > 0">
-  <div class="page__inner page__inner--list">
-    <!-- Las NUEVE páginas de repositorio se pintan desde aquí y NINGUNA tenía
-         `<h1>`: no es que estuviera oculto como en el resto, es que no existía,
-         así que su documento no tenía encabezado. `titleKey` es la misma clave
-         que la ruta usa para su última miga, o sea que el título y el breadcrumb
-         no pueden divergir. -->
-    <h1 class="page__heading sc-text-h3-semibold">{{ config().titleKey | translate }}</h1>
+<!-- La lista (título, barra, tabla, selección, menú de fila) la monta `sc-list-page` (DD-97). Aquí solo lo
+     que es de un repositorio: sus columnas (salen de `config()`), el panel de edición, acciones y diálogos.
+     `titleKey` es la misma clave que la ruta usa para su última miga: título y miga no pueden divergir. -->
+<sc-list-page
+  [heading]="config().titleKey | translate"
+  [rows]="sorted()"
+  [empty]="false"
+  [columns]="columns()"
+  [searchPlaceholder]="'repositories.search_placeholder' | translate: { entity: entityPlural() }"
+  [searchFn]="matchesSearch"
+  [(query)]="searchQuery"
+  exportable
+  [rowMenu]="rowMenu"
+  selectable
+  [bulkEntity]="bulkEntity()"
+  [(selectedIds)]="selectedIds"
+  tableTestId="repo-table"
+  (exportRequest)="onExport($event)"
+>
+  <span scListNoResults>
+    @if (searchQuery()) {
+      {{ 'repositories.no_results.with_query' | translate: { entity: entityPlural(), query: searchQuery() } }}
+    } @else {
+      {{ 'repositories.no_results.empty' | translate: { entity: entityPlural() } }}
+    }
+  </span>
 
-    <div class="page__action-bar">
-      <sc-search
-        class="page__search"
-        [placeholder]="'repositories.search_placeholder' | translate: { entity: entityPlural() }"
-        shortcutHint="⌘K"
-        [clearAriaLabel]="'labels.clear_search' | translate"
-        [value]="searchQuery()"
-        (valueChange)="searchQuery.set($event)"
-        (keydown)="onSearchKey($event)"
-      />
-      <sc-button type="button" variant="secondary" (clicked)="onExport()">
-        <sc-icon [name]="downloadIcon" size="inherit" />
-        <span>{{ 'labels.export_button' | translate }}</span>
-      </sc-button>
-    </div>
-
-    <!-- B4: tabla del DS + piel `variant="list"`. Esta página es el caso que
-         obligó a que el contexto de celda lleve la COLUMNA: sus columnas salen
-         de `config()`, así que no puede declarar una plantilla por columna —
-         hay una sola genérica que se pinta según `col`. -->
-    <div class="table-card">
-      <sc-datatable
-        variant="list"
-        [value]="sorted()"
-        [columns]="columns()"
-        dataKey="id"
-        selectionMode="multiple"
-        [selection]="selectedItems()"
-        (selectionChange)="onSelectionChange($any($event))"
-        (rowContextMenu)="onRowContextMenu($any($event), rowMenu)"
-        data-testid="repo-table"
-      >
-        <div scTableEmpty class="table__no-results sc-text-body-regular">
-          @if (searchQuery()) {
-            {{
-              'repositories.no_results.with_query'
-                | translate: { entity: entityPlural(), query: searchQuery() }
-            }}
-          } @else {
-            {{ 'repositories.no_results.empty' | translate: { entity: entityPlural() } }}
-          }
-        </div>
-      </sc-datatable>
-    </div>
-  </div>
-</div>
+  <ng-container ngProjectAs="[scListBulkActions]">
+    <sc-button type="button" variant="danger" (clicked)="requestDeleteSelection()">
+      <span>{{ 'common.delete' | translate }}</span>
+    </sc-button>
+  </ng-container>
+</sc-list-page>
 
 <!-- UNA sola plantilla de celda para TODAS las columnas: `let-col="col"` dice
      cuál se está pintando. Es lo que permite que una tabla de columnas
@@ -124,15 +102,6 @@
   }
 </ng-template>
 
-<ng-template #actionsTpl let-item>
-  <sc-button class="rules-kebab-btn" variant="secondary" appearance="text" size="sm" [icon]="moreIcon" [ariaLabel]="'labels.row_menu' | translate" (clicked)="setMenuTarget(item); rowMenu.toggle($event); $event.stopPropagation()" />
-</ng-template>
-
-<!-- Kebab ÚNICO y compartido por toda la tabla (antes: un panel HTML por fila
-     MÁS un menú contextual aparte con sus propios handlers). El click derecho
-     en la fila abre este mismo menú — R3 del modelo canónico. -->
-<p-menu #rowMenu [model]="menuItems()" [popup]="true" appendTo="body" styleClass="rules-kebab-menu" />
-
 <sc-delete-entity-dialog
   [visible]="!!deleteTarget()"
   [mode]="(deleteTarget()?.length ?? 0) === 1 ? 'single' : 'bulk'"
@@ -142,9 +111,3 @@
   (cancelled)="cancelDelete()"
   (confirm)="confirmDelete($event)"
 />
-
-<sc-bulk-action-bar [count]="selectedIds().size" [entity]="bulkEntity()" (clear)="clearSelection()">
-  <sc-button type="button" variant="danger" (clicked)="requestDeleteSelection()">
-    <span>{{ 'common.delete' | translate }}</span>
-  </sc-button>
-</sc-bulk-action-bar>

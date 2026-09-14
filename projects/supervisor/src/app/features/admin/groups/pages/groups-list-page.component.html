@@ -8,78 +8,46 @@
   </sc-button>
 </ng-template>
 
-<div class="page">
-  <div class="page__inner page__inner--list">
-    <!-- El título de la página vive en el CUERPO, no en la barra: la miga de
-         arriba dice DÓNDE estás y esta línea dice QUÉ miras (modelo Snow UI,
-         medido en `/orders`). Es el MISMO `<h1>` que S59 dejó oculto —no hay un
-         encabezado nuevo—, así que sigue habiendo exactamente uno por documento. -->
-    <h1 class="page__heading sc-text-h3-semibold">{{ 'sidebar.groups' | translate }}</h1>
+<!-- La lista (título, barra, tabla, selección, menú de fila) la monta `sc-list-page` (DD-97). Aquí solo lo
+     que es de Grupos: columnas y celdas, acciones y diálogos. -->
+<sc-list-page
+  [heading]="'sidebar.groups' | translate"
+  [rows]="groups()"
+  [columns]="columns()"
+  [columnChoices]="columnDefs()"
+  [columnStorageKey]="columnPrefKey"
+  [searchPlaceholder]="'groups.search_placeholder' | translate"
+  [searchFn]="matchesSearch"
+  [sortFn]="compareGroups"
+  [noResultsText]="'groups.no_results' | translate"
+  exportable
+  [rowMenu]="rowMenu"
+  [rowOpenable]="isOpenable"
+  selectable
+  [bulkEntity]="bulkEntity()"
+  [(selectedIds)]="selectedIds"
+  tableTestId="groups-table"
+  (rowOpen)="onRowOpen($event)"
+  (exportRequest)="onExport($event)"
+>
+  <sc-empty-state
+    scListEmpty
+    [icon]="emptyIcon"
+    titleKey="groups.empty.title"
+    bodyKey="groups.empty.body"
+    ctaKey="groups.create_button"
+    (cta)="onCreateClick()"
+  />
 
-    <div class="page__action-bar">
-      <sc-column-selector
-        [columns]="columnDefs()"
-        [storageKey]="columnPrefKey"
-        (visibilityChange)="onColumnsChange($event)"
-      />
-      <sc-search
-        class="page__search"
-        [placeholder]="'groups.search_placeholder' | translate"
-        shortcutHint="⌘K"
-        [clearAriaLabel]="'labels.clear_search' | translate"
-        [value]="searchQuery()"
-        (valueChange)="searchQuery.set($event)"
-        (keydown)="onSearchKey($event)"
-      />
-      <span class="sc-action-divider" aria-hidden="true"></span>
-      <sc-button variant="secondary" appearance="outlined" [icon]="downloadIcon" [ariaLabel]="'labels.export_button' | translate" [attr.title]="'labels.export_button' | translate" (clicked)="onExport()" />
-    </div>
+  <ng-container ngProjectAs="[scListBulkActions]">
+    <sc-bulk-edit-menu [fields]="bulkEditFields()" [buttonLabel]="'Editar'" (commit)="onBulkEditCommit($event)" />
+    <sc-button type="button" variant="danger" (clicked)="requestDeleteSelection()">
+      <span>{{ 'common.delete' | translate }}</span>
+    </sc-button>
+  </ng-container>
+</sc-list-page>
 
-    @if (groups().length === 0) {
-      <sc-empty-state
-        [icon]="emptyIcon"
-        titleKey="groups.empty.title"
-        bodyKey="groups.empty.body"
-        ctaKey="groups.create_button"
-        (cta)="onCreateClick()"
-      />
-    } @else {
-      <!-- B4: la tabla la pinta el componente del DS. `variant="list"` le
-           pone la gramática de tabla-lista de la app (54px de fila, cabecera
-           silenciosa de S59); sin ella el preset la dejaría más densa y con
-           la cabecera oscura, distinta de las tablas sin migrar. -->
-      <div class="table-card">
-        <sc-datatable
-          variant="list"
-          [value]="sorted()"
-          [columns]="columns()"
-          [visibleColumns]="visibleFields()"
-          dataKey="id"
-          selectionMode="multiple"
-    [rowSelectionAriaLabel]="ariaFila"
-    [selectAllAriaLabel]="ariaTodo"
-          [selection]="selectedGroups()"
-          (selectionChange)="onSelectionChange($any($event))"
-          [sortField]="tableSortField()"
-          [sortOrder]="tableSortOrder()"
-          (sortChange)="onSortChange($event)"
-          [rowStyleClass]="rowClass()"
-          rowsFocusable
-        (rowClick)="onRowClick($event.row)"
-        (rowKeydown)="onRowKeydown($event)"
-          (rowContextMenu)="onRowContextMenu($event, rowMenu)"
-          data-testid="groups-table"
-        >
-          <div scTableEmpty class="table__no-results sc-text-body-regular">
-            {{ 'groups.no_results' | translate }}
-          </div>
-        </sc-datatable>
-      </div>
-    }
-  </div>
-</div>
-
-<!-- Celdas de la tabla. Viven FUERA del `<sc-datatable>` para que los
+<!-- Celdas de la tabla. Viven FUERA de la lista para que los
      `viewChild` las resuelvan; `columns()` las recoge. El contexto es
      `{ $implicit: group }`.
 
@@ -139,15 +107,6 @@
   }}</span>
 </ng-template>
 
-<ng-template #actionsTpl let-group>
-  <sc-button class="rules-kebab-btn" variant="secondary" appearance="text" size="sm" [icon]="moreIcon" [ariaLabel]="'labels.row_menu' | translate" (clicked)="setMenuTarget(group); rowMenu.toggle($event); $event.stopPropagation()" />
-</ng-template>
-
-<!-- Kebab ÚNICO y compartido por toda la tabla (antes: un panel HTML por fila
-     MÁS un menú contextual aparte con sus propios handlers). El click derecho
-     en la fila abre este mismo menú — R3 del modelo canónico. -->
-<p-menu #rowMenu [model]="menuItems()" [popup]="true" appendTo="body" styleClass="rules-kebab-menu" />
-
 <sc-delete-entity-dialog
   [visible]="!!deleteTarget()"
   [mode]="(deleteTarget()?.length ?? 0) === 1 ? 'single' : 'bulk'"
@@ -167,14 +126,3 @@
   (cancelled)="onBulkPreviewCancel()"
   (confirm)="onBulkPreviewConfirm($event)"
 />
-
-<sc-bulk-action-bar [count]="selectedIds().size" [entity]="bulkEntity()" (clear)="clearSelection()">
-  <sc-bulk-edit-menu
-    [fields]="bulkEditFields()"
-    [buttonLabel]="'Editar'"
-    (commit)="onBulkEditCommit($event)"
-  />
-  <sc-button type="button" variant="danger" (clicked)="requestDeleteSelection()">
-    <span>{{ 'common.delete' | translate }}</span>
-  </sc-button>
-</sc-bulk-action-bar>
