@@ -68,6 +68,42 @@ jobs:
           git fetch origin design-tokens-sync
           git checkout origin/design-tokens-sync -- projects/design-tokens/scripts/kit-export-dtcg.json
 
+      # El export del plugin (`.theme-designer/`) para el equipo externo, si este push lo trae (DD-88).
+      # Es lo que cubre la licencia del plugin: se comprueba y se publica en la rama `tema-zip` junto al
+      # tema de nuestras apps. Nunca pone rojo al robot: si un token pasa a 0, no se publica y se avisa.
+      - name: Export del plugin para el equipo externo (si este push lo trae)
+        id: tema-plugin
+        continue-on-error: true
+        run: |
+          if [ -z "$(git ls-tree -d origin/design-tokens-sync .theme-designer/ts)" ]; then
+            echo "Este push no trae el tema del plugin." ; exit 0
+          fi
+          mkdir -p "$RUNNER_TEMP/plugin" "$RUNNER_TEMP/plugin-anterior"
+          git archive origin/design-tokens-sync .theme-designer | tar -x -C "$RUNNER_TEMP/plugin"
+          PUB="$RUNNER_TEMP/pub-plugin"
+          if git fetch -q origin tema-zip 2>/dev/null; then
+            git worktree add -q --detach "$PUB" FETCH_HEAD
+          else
+            git worktree add -q --detach "$PUB" && git -C "$PUB" checkout -q --orphan tema && git -C "$PUB" rm -rfq --ignore-unmatch .
+          fi
+          if [ -f "$PUB/tema-plugin.zip" ]; then unzip -q "$PUB/tema-plugin.zip" -d "$RUNNER_TEMP/plugin-anterior"; fi
+          SC_PLUGIN_SHA=$(git rev-parse --short origin/design-tokens-sync) \
+            node scripts/tema-plugin-zip.mjs "$RUNNER_TEMP/plugin/.theme-designer" "$RUNNER_TEMP/tema-plugin" --anterior "$RUNNER_TEMP/plugin-anterior" \
+            | tee "$RUNNER_TEMP/tema-plugin.log"
+          rm -f "$PUB/tema-plugin.zip"
+          (cd "$RUNNER_TEMP/tema-plugin" && zip -qr "$PUB/tema-plugin.zip" .)
+          cp "$RUNNER_TEMP/tema-plugin/LEEME.md" "$PUB/LEEME-plugin.md"
+          cp "$RUNNER_TEMP/tema-plugin/manifiesto.json" "$PUB/manifiesto-plugin.json"
+          git -C "$PUB" config user.name "github-actions[bot]"
+          git -C "$PUB" config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git -C "$PUB" add -A
+          git -C "$PUB" commit -qm "Export del plugin $(git rev-parse --short origin/design-tokens-sync) [skip ci]"
+          for intento in 1 2 3; do
+            git -C "$PUB" push -q origin HEAD:refs/heads/tema-zip && break
+            git -C "$PUB" pull -q --rebase origin tema-zip
+          done
+          printf '### Export del plugin para el equipo externo\n\nPublicado en la rama `tema-zip` (`tema-plugin.zip`). %s\n' "$(tail -1 "$RUNNER_TEMP/tema-plugin.log" | sed 's#^✓ export del plugin en [^ ]* · ##')" > "$RUNNER_TEMP/tema-plugin.md"
+
       # Cada paso guarda su log y NO corta el job: el veredicto se decide al final y el PR dice
       # en llano qué cayó. El run sigue saliendo rojo si algo falló (último paso).
       - name: Regenerar primitivos desde el export
@@ -229,6 +265,7 @@ jobs:
               cat "$RUNNER_TEMP/cambios.md"
               printf '\n\n'
               cat "$RUNNER_TEMP/capturas.md"
+              if [ -f "$RUNNER_TEMP/tema-plugin.md" ]; then printf '\n\n'; cat "$RUNNER_TEMP/tema-plugin.md"; fi
               printf '\n\n### Míralo\n\n- Supervisor con este export: https://design-tokens-sync.sc-supervisor.pages.dev\n- sc-docs con este export: https://design-tokens-sync.sc-doc.pages.dev\n\n<sub>Cloudflare los construye unos minutos después del push del robot.</sub>\n'
               printf '\n### Lo que verificó el robot\n\n| | sha |\n| --- | --- |\n| Export del plugin que consumió | `%s` |\n| Commit que dejó en la rama | `%s` |\n\nRun: %s\n\nEl check **tokens-sync** de este PR va en ese commit. Si el plugin vuelve a empujar, el commit nuevo sale sin ese check hasta que el robot lo pase: no fundas un PR sin él.\n' "$PLUGIN_SHA" "$ROBOT_SHA" "$RUN_URL"
             } > "$RUNNER_TEMP/body.md"
