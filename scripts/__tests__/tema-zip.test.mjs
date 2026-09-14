@@ -91,7 +91,7 @@ test('guía: versión, cambios o primera versión, comprobaciones, raíz 16 y si
   const primero = leeme({ ...base, comprobaciones: { ...ok, diferencia: { anterior: false } } });
   assert.match(primero, /Primera versión distribuida como paquete/);
   assert.match(primero, /Versión 0\.20260914\.1133 · 2026-09-14/);
-  assert.match(primero, /smartcontact-tema-0\.20260914\.1133\.tgz/);
+  assert.match(primero, /npm install \.\/local-libs\/archives\/smartcontact-tema\.tgz/, 'nombre fijo: el del enlace de descarga');
   const cambio = leeme({ ...base, comprobaciones: { ...ok, diferencia: { anterior: true, ficheros: ['sc-preset.mjs'], variables: ['x'], semanticaComun: true, reglasCss: true, componentes: ['menu', 'toast'] } } });
   assert.match(cambio, /Ficheros modificados: sc-preset\.mjs/);
   assert.match(cambio, /Tokens de diseño modificados: 1/);

@@ -143,11 +143,20 @@ nuevo `npm update smartcontact-tema` lo trae) y desde el `.tgz` (7 ficheros, el 
   token, así que cualquier registro privado acaba pidiendo uno.
 - **Etiquetas semver en el repo para `#semver:`** → se mezclarían con las del DS (v1.x).
 
-**Consecuencias** · El equipo externo cambia la instalación una vez (guía en el `README.md` del paquete, con redacción profesional) y cada versión es
-un `.tgz` nuevo. Rafa lo descarga del enlace fijo (`…/raw/tema-zip/smartcontact-tema.tgz`) y lo adjunta en
-Jira: sin token en su GitLab, porque diseño y producto no tocan su código (Rafa). Pendiente de medir en su
-app que el preset rinda igual con PrimeNG 21 (medido solo a nivel de variables). Fuera de alcance: sus `--sc-*` propias (557 definiciones, 253 con valor fijo, 304 nombres que
-ya no existen en el nuestro) no siguen a ningún tema; traducirlas es otra tanda.
+**Consecuencias** · El equipo externo cambia la instalación una vez (guía en el `README.md` del paquete,
+con redacción profesional). Cada versión se llama igual, `smartcontact-tema.tgz`: Rafa la descarga del
+enlace fijo (`…/raw/tema-zip/smartcontact-tema.tgz`) y la adjunta en Jira, y ellos sustituyen el fichero y
+reinstalan (medido: con el mismo nombre y contenido nuevo, npm instala la versión nueva). Sin token en su
+GitLab, porque diseño y producto no tocan su código (Rafa).
+
+Prueba por fuera en su entorno de desarrollo (Contact Center, SISMAC-4074), con el tema inyectado solo en
+el navegador de la sesión, sin guardar nada: los controles siguen al tema (campo 32 → 32,5, botón sm
+28 → 27, md 32 → 32,5, primario `#1b273d`), y en la pantalla no cambia ningún texto, color ni espaciado:
+de 115 elementos propios visibles, 37 cambian solo de alto, arrastrados por los controles. Cuadra con su
+hoja: 465 declaraciones, 96 medidas y 57 colores fijos, 70 `!important` y ningún `var()`. Pendiente de medir
+en su app que el preset rinda igual con PrimeNG 21. Fuera de alcance: sus `--sc-*` propias (557
+definiciones, 253 con valor fijo, 304 nombres que no existen en el nuestro) y la hoja de Contact Center no
+siguen a ningún tema; pasarlas a variables es otra tanda.
 
 ---
 

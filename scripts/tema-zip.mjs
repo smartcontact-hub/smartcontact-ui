@@ -238,7 +238,7 @@ aplicaciones de Smart Contact, por lo que los componentes se muestran de forma i
 1. Instalar el paquete desde el fichero \`.tgz\`:
 
    \`\`\`sh
-   npm install ./local-libs/archives/smartcontact-tema-${m.version ?? '<versión>'}.tgz
+   npm install ./local-libs/archives/smartcontact-tema.tgz
    \`\`\`
 
 2. Añadir los estilos globales en \`angular.json\` → \`styles\`, a continuación de los estilos propios:
@@ -274,9 +274,9 @@ campos de tamaño normal miden 32,5 px de alto (27 px el pequeño y 40 px el gra
 
 ## Actualización
 
-Cada versión se distribuye como un nuevo fichero \`.tgz\`. Para actualizar, basta con instalarlo con el
-comando del paso 1; la configuración no cambia. La versión instalada figura en
-\`node_modules/smartcontact-tema/manifiesto.json\`.
+Cada versión se distribuye con el mismo nombre de fichero, \`smartcontact-tema.tgz\`. Para actualizar,
+basta con sustituir el fichero y ejecutar el comando del paso 1; la configuración no cambia. La versión
+instalada figura en la cabecera de este documento y en \`node_modules/smartcontact-tema/manifiesto.json\`.
 
 ## Cambios respecto a la versión anterior
 
