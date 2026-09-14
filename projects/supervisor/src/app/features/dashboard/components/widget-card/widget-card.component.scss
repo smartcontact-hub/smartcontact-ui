@@ -1,4 +1,7 @@
+/* El marco (fondo, borde, radio, rellenos), el alto del hueco (`fill`) y el borde de alerta (`severity`)
+ * los pone `sc-panel`. Aquí solo lo de dentro de la cabecera. */
 :host {
+  container-type: inline-size;
   display: block;
   min-width: 0;
   min-height: 0;
@@ -6,35 +9,14 @@
 }
 
 .widget {
-  container-type: inline-size;
-  display: flex;
-  flex-direction: column;
-  height: 100%;
-  min-height: 0;
-  background: var(--sc-bg-surface);
-  border: 1px solid var(--sc-border-default);
-  border-radius: var(--sc-radius-200);
-
-  /* Borde de alerta: transición de color, interrumpible si la alerta entra y sale en el mismo latido. */
-  transition-property: border-color, box-shadow;
-  transition-duration: var(--sc-transition-base);
-  transition-timing-function: var(--sc-easing-default);
-
-  &--warning {
-    border-color: var(--sc-border-warning);
-    box-shadow: 0 0 0 1px var(--sc-border-warning);
-  }
-
-  &--danger {
-    border-color: var(--sc-border-danger);
-    box-shadow: 0 0 0 1px var(--sc-border-danger);
-  }
-
+  /* Ocupa todo lo que deja el ⋮ en la cabecera del panel, que reparte con `space-between`. */
   &__head {
     display: flex;
     align-items: center;
     gap: var(--sc-spacing-0-5);
-    padding: var(--sc-spacing-0-75) var(--sc-spacing-0-5) 0 var(--sc-spacing-1);
+    flex: 1;
+    min-width: 0;
+    padding-inline-end: var(--sc-spacing-0-5);
   }
 
   &__head--draggable {
@@ -85,8 +67,7 @@
     color: var(--sc-text-secondary);
   }
 
-  &__filtered,
-  &__more {
+  &__filtered {
     flex: none;
   }
 
@@ -96,14 +77,6 @@
     display: flex;
     align-items: center;
     min-block-size: var(--sc-spacing-2-25);
-  }
-
-  &__body {
-    flex: 1;
-    min-height: 0;
-    display: flex;
-    flex-direction: column;
-    padding: var(--sc-spacing-0-75) var(--sc-spacing-1) var(--sc-spacing-1);
   }
 }
 

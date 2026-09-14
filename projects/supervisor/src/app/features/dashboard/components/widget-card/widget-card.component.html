@@ -1,60 +1,60 @@
-<article
-  class="widget"
-  [class.widget--warning]="alert()?.level === 'warning'"
-  [class.widget--danger]="alert()?.level === 'danger'"
-  [class.widget--preview]="preview()"
-  [attr.aria-labelledby]="titleId"
->
-  <!-- La cabecera es el asa para arrastrar el widget a otro hueco (el ⋮ sigue siendo un clic:
-       el arrastre solo empieza tras mover el ratón unos píxeles). -->
-  <header
-    class="widget__head"
-    [class.widget__head--draggable]="draggable()"
-    [cdkDragHandleDisabled]="!draggable()"
-    cdkDragHandle
-  >
-    <div class="widget__heading">
-      <h2 class="widget__title sc-text-body-semibold" [id]="titleId" [attr.title]="title()">{{ title() }}</h2>
-      @if (entities().length) {
-        <span class="widget__entities sc-text-caption-regular" [attr.title]="allEntities()">
-          @if (moreEntities()) {
-            {{ 'dashboard.widget.entities_more' | translate: { names: firstEntities(), count: moreEntities() } }}
-          } @else {
-            {{ firstEntities() }}
-          }
+<sc-panel fill [severity]="severity()">
+  <!-- Cabecera propia: el título es un h2 de verdad y nombra la región del cuerpo (`titleId`). Es el asa
+       para arrastrar el widget a otro hueco; el ⋮ va aparte, en las acciones, y sigue siendo un clic. -->
+  <ng-template #header let-titleId>
+    <div
+      class="widget__head"
+      [class.widget__head--draggable]="draggable()"
+      [cdkDragHandleDisabled]="!draggable()"
+      cdkDragHandle
+    >
+      <div class="widget__heading">
+        <h2 class="widget__title sc-text-body-semibold" [id]="titleId" [attr.title]="title()">{{ title() }}</h2>
+        @if (entities().length) {
+          <span class="widget__entities sc-text-caption-regular" [attr.title]="allEntities()">
+            @if (moreEntities()) {
+              {{ 'dashboard.widget.entities_more' | translate: { names: firstEntities(), count: moreEntities() } }}
+            } @else {
+              {{ firstEntities() }}
+            }
+          </span>
+        }
+      </div>
+      @if (alert(); as a) {
+        <!-- La etiqueta del DS. Dos: la frase y la cifra sola. En una tarjeta estrecha se ve la cifra
+             y la frase queda para el lector de pantalla y al pasar el ratón (sc-tag lleva un solo texto). -->
+        <span class="widget__alert" role="status" [attr.title]="a.reasonKey | translate: a.params" animate.enter="widget__alert--in">
+          <sc-tag
+            class="widget__alert-long"
+            rounded
+            [severity]="a.level === 'danger' ? 'danger' : 'warn'"
+            [icon]="a.level === 'danger' ? 'error' : 'warning'"
+            [value]="a.reasonKey | translate: a.params"
+          />
+          <sc-tag
+            class="widget__alert-short"
+            rounded
+            aria-hidden="true"
+            [severity]="a.level === 'danger' ? 'danger' : 'warn'"
+            [icon]="a.level === 'danger' ? 'error' : 'warning'"
+            [value]="a.shortKey | translate: a.params"
+          />
         </span>
       }
+      @if (filterLabel(); as label) {
+        <sc-chip
+          class="widget__filtered"
+          removable
+          [label]="label"
+          [removeAriaLabel]="'dashboard.widget.clear_filter' | translate"
+          (removed)="clearFilter()"
+        />
+      }
     </div>
-    @if (alert(); as a) {
-      <!-- La etiqueta del DS. Dos: la frase y la cifra sola. En una tarjeta estrecha se ve la cifra
-           y la frase queda para el lector de pantalla y al pasar el ratón (sc-tag lleva un solo texto). -->
-      <span class="widget__alert" role="status" [attr.title]="a.reasonKey | translate: a.params" animate.enter="widget__alert--in">
-        <sc-tag
-          class="widget__alert-long"
-          rounded
-          [severity]="a.level === 'danger' ? 'danger' : 'warn'"
-          [icon]="a.level === 'danger' ? 'error' : 'warning'"
-          [value]="a.reasonKey | translate: a.params"
-        />
-        <sc-tag
-          class="widget__alert-short"
-          rounded
-          aria-hidden="true"
-          [severity]="a.level === 'danger' ? 'danger' : 'warn'"
-          [icon]="a.level === 'danger' ? 'error' : 'warning'"
-          [value]="a.shortKey | translate: a.params"
-        />
-      </span>
-    }
-    @if (filterLabel(); as label) {
-      <sc-chip
-        class="widget__filtered"
-        removable
-        [label]="label"
-        [removeAriaLabel]="'dashboard.widget.clear_filter' | translate"
-        (removed)="clearFilter()"
-      />
-    }
+  </ng-template>
+
+  <!-- Sin `@if` alrededor de la plantilla: sc-panel la busca entre sus hijos directos. -->
+  <ng-template #icons>
     @if (!preview()) {
       <sc-button
         class="widget__more"
@@ -66,11 +66,9 @@
         (clicked)="menu.toggle($event)"
       />
     }
-  </header>
+  </ng-template>
 
-  <div class="widget__body">
-    <ng-content />
-  </div>
-</article>
+  <ng-content />
+</sc-panel>
 
 <p-menu #menu [model]="menuItems()" [popup]="true" appendTo="body" />

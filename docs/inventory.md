@@ -25,7 +25,7 @@
 ## Clasificación (auto-generada)
 
 <!-- @audit:components — TABLA GENERADA por `node scripts/component-audit.mjs --write`. NO editar a mano. -->
-**53 componentes** · 17 custom · 11 standard · 25 extended · 41 usados en Supervisor.
+**53 componentes** · 17 custom · 11 standard · 25 extended · 42 usados en Supervisor.
 
 | Componente | Tipo | PrimeNG base | API propia | Anidados | Demo | Usos en Supervisor |
 |---|---|---|---|---|---|---|
@@ -64,7 +64,7 @@
 | `sc-message` | EXTENDED | primeng/message | 6 inputs | — | ✓ | 3 |
 | `sc-multiselect` | EXTENDED | primeng/multiselect | 29 inputs | sc-field-label sc-field-msg | ✓ | 15 |
 | `sc-option-cards` | CUSTOM | — | 4 inputs | — | — | 1 |
-| `sc-panel` | EXTENDED | primeng/panel | 6 inputs | — | ✓ | — |
+| `sc-panel` | EXTENDED | primeng/panel | 6 inputs | — | ✓ | 1 |
 | `sc-password` | EXTENDED | primeng/password | 19 inputs | sc-field-label sc-field-msg | ✓ | 1 |
 | `sc-permission-matrix` | CUSTOM | — | 5 inputs | sc-checkbox | — | 2 |
 | `sc-photo-upload` | CUSTOM | — | 6 inputs | — | ✓ | 2 |

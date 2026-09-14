@@ -1,6 +1,6 @@
 {
   "generated": "component-audit.mjs",
-  "summary": "53 componentes · 17 custom · 11 standard · 25 extended · 41 usados en Supervisor.",
+  "summary": "53 componentes · 17 custom · 11 standard · 25 extended · 42 usados en Supervisor.",
   "components": [
     {
       "name": "avatar",
@@ -843,7 +843,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 0
+      "usedInSupervisor": 1
     },
     {
       "name": "password",

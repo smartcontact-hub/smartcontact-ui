@@ -3,7 +3,7 @@ import { TranslateModule, TranslateService } from '@ngx-translate/core';
 import { CdkDragHandle } from '@angular/cdk/drag-drop';
 import { MenuModule } from 'primeng/menu';
 import type { MenuItem } from 'primeng/api';
-import { ScButtonComponent as ButtonComponent } from '@smartcontact-hub/components';
+import { ScButtonComponent as ButtonComponent, ScPanelComponent as PanelComponent, type ScPanelSeverity } from '@smartcontact-hub/components';
 import { ScChipComponent as ChipComponent, ScTagComponent as TagComponent } from '@smartcontact-hub/components';
 
 import { injectLangChange } from '@core/utils/lang-change';
@@ -14,13 +14,13 @@ import type { DashboardChannel, DashboardDirection, WidgetFilter } from '../../d
 const CHANNELS: readonly DashboardChannel[] = ['calls', 'chats', 'emails', 'all'];
 const DIRECTIONS: readonly DashboardDirection[] = ['incoming', 'outgoing', 'all'];
 
-let nextId = 0;
-
 /**
- * Chrome común de todo widget: título, lo que vigila y el menú ⋮.
+ * Chrome común de todo widget: título, lo que vigila y el menú ⋮, sobre `sc-panel` (DD-109).
  *
- * No es `sc-card` porque `sc-card` no tiene hueco para acciones en la cabecera, y el ⋮ es la
- * única puerta a filtrar y quitar. El menú replica el del original (medido el 2026-09-14):
+ * `sc-panel` con `fill` (el cuerpo reparte el alto del hueco), cabecera propia `#header` (el título
+ * es un h2 y nombra la región del cuerpo con el `titleId` que da el panel), el ⋮ en `#icons` y el
+ * borde de alerta en `severity`. Sin `toggleable`: con él, `p-panel` pondría el mismo id en su botón
+ * de colapsar y en el título. El menú replica el del original (medido el 2026-09-14):
  * «Channels and types» con Tipo y Canal de opción única (solo en los widgets que se filtran),
  * «Edit» (abre el asistente con el widget cargado) y «Delete widget».
  *
@@ -35,7 +35,7 @@ let nextId = 0;
  */
 @Component({
   selector: 'sc-dashboard-widget-card',
-  imports: [TranslateModule, MenuModule, CdkDragHandle, ButtonComponent, ChipComponent, TagComponent],
+  imports: [TranslateModule, MenuModule, CdkDragHandle, ButtonComponent, ChipComponent, PanelComponent, TagComponent],
   templateUrl: './widget-card.component.html',
   styleUrl: './widget-card.component.scss',
   changeDetection: ChangeDetectionStrategy.OnPush,
@@ -59,8 +59,13 @@ export class WidgetCardComponent {
   /** Los textos del menú salen de `instant()`: se recalculan al cambiar de idioma. */
   private readonly lang = injectLangChange();
 
-  protected readonly titleId = `dashboard-widget-title-${nextId++}`;
   protected readonly kebabIcon = 'more_vert';
+
+  /** El aviso del panel sigue al nivel de la alerta. */
+  protected readonly severity = computed<ScPanelSeverity | null>(() => {
+    const level = this.alert()?.level;
+    return level === 'danger' ? 'danger' : level === 'warning' ? 'warn' : null;
+  });
 
   protected readonly firstEntities = computed(() => this.entities().slice(0, 2).join(', '));
   protected readonly moreEntities = computed(() => Math.max(0, this.entities().length - 2));
