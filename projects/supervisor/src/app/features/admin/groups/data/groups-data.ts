@@ -164,8 +164,8 @@ export const GROUPS_SEED: readonly Group[] = [
     channels: ['phone'],
     strategy: 'Niveles',
     levels: [
-      ['Agente AED 1', 'Agente AED 2', 'Agente demo', 'Agente Jose', 'Jose Barcala'],
-      ['Mario Perez', 'Inés Recio', 'Miguel Palacios', 'Miguel Palacios 3'],
+      ['Tom Hanks', 'Meryl Streep', 'Denzel Washington', 'Julia Roberts', 'Scarlett Johansson'],
+      ['Morgan Freeman', 'Natalie Portman', 'Keanu Reeves', 'Brad Pitt'],
     ],
     subStrategy: 'Balanceada',
     services: ['Pedidos online', 'Seguimiento envíos'],

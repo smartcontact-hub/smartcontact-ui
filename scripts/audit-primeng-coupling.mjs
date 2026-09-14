@@ -80,8 +80,12 @@ const sh = (cmd) => {
  * que la cabecera fija de página tiene que neutralizar, y `.p-tag-label`, el texto
  * que la etiqueta de una línea recorta. Entraban cuatro: `.p-datatable` y
  * `.p-datatable-scrollable` se quitaron pasando la condición al componente.
+ *
+ * 58 → 59 el 2026-09-14 (DD-95), por `.p-virtualscroller`: con lista virtual el que hace scroll es
+ * el scroller de PrimeNG y no el contenedor de la tabla, y su barra tiene que empezar bajo la
+ * cabecera igual que la otra. `.p-datatable-scrollable` se evitó con `sc-datatable--scroll`.
  */
-const TOPE = { app: 6, ds: 20, preset: 58 };
+const TOPE = { app: 6, ds: 20, preset: 59 };
 
 /* Cuenta las clases `.p-*` que aparecen en SELECTORES, no en comentarios. Un
  * comentario que menciona `.p-datatable-*` para explicar POR QUÉ dependemos de

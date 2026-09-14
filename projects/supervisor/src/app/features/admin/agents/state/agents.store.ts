@@ -20,8 +20,9 @@ export class AgentsStore {
   private readonly store: LocalStore<Agent> = createLocalStore<Agent>({
     storageKey: 'sc-agents',
     versionKey: 'sc-agents-v',
-    /** Bumped to 2 when the slim Agent type was expanded with the full schema. */
-    currentVersion: 2,
+    /** Bumped to 2 when the slim Agent type was expanded with the full schema; to 3 with the 500 demo
+     *  agents and Hollywood names (2026-09-14), so a browser with the old list loads the new one. */
+    currentVersion: 3,
     defaults: AGENTS_SEED,
   });
 

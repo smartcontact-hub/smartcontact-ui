@@ -160,7 +160,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 118
+      "usedInSupervisor": 119
     },
     {
       "name": "card",
@@ -290,7 +290,7 @@
       "kind": "EXTENDED",
       "primengBase": "primeng/table",
       "cva": false,
-      "inputs": 27,
+      "inputs": 28,
       "api": [
         "columns",
         "dataKey",
@@ -326,6 +326,7 @@
         "totalRecords",
         "value",
         "variant",
+        "virtualScroll",
         "visibleColumns"
       ],
       "nested": [],
@@ -1023,7 +1024,7 @@
         "sc-field-msg"
       ],
       "hasDemo": true,
-      "usedInSupervisor": 35
+      "usedInSupervisor": 34
     },
     {
       "name": "skeleton",

@@ -44,9 +44,11 @@
 2. **sc-docs: ejemplos de primeng.dev dentro de `<sc-datatable>`**, la red de «la tabla perfecta»: pasa
    ~20 de las 79 entradas de `p-table`.
 
-- **Tabla: cabecera de columnas fija con la página, o tabla con scroll propio** (lo pide el jefe de Rafa,
-  2026-09-14). Medido en dos ramas que NO se funden, `comparar/tabla-sticky` y `comparar/tabla-scroll`
-  (vista previa en Cloudflare); informe en `~/Documents/Claude/2026-09 tabla-sticky-vs-scroll/`. Esperando decisión.
+- **Llevar la tabla con scroll propio (DD-95) al resto de listas**: Usuarios, Grupos, Etiquetas, Plantillas,
+  repositorios y Conversaciones (esta lleva `stickyHeader` y su e2e). Agentes ya la tiene. Las ramas
+  `comparar/tabla-*` sobran cuando esto aterrice: archivarlas con tag antes de borrarlas.
+- **El foco de los campos del DS enseña anillo sky de 2 px y borde oscuro a la vez** (Rafa lo vio en el buscador,
+  2026-09-14): es igual en todos los campos; decidir si se queda solo uno (Aura usa solo el borde).
 
 **APARCADO por Rafa para OTRA sesión (2026-09-13): nuestros componentes contra Aura tal cual.**
 «Si te instalas Aura y le pones este styling estamos así»: una ficha por componente que diga qué

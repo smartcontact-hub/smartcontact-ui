@@ -18,7 +18,10 @@ interface PoolConfig {
 }
 
 export const AVATAR_ILLUSTRATION_POOLS: Record<AvatarIllustrationPool, PoolConfig> = {
-  illustrated: { count: 24, dir: 'illustrated', prefix: 'avatar' },
+  /* 22 y no 24 (2026-09-14): `avatar-22.svg` es una «F» y `avatar-23.svg` un «+3» (el globo de «3 más» de
+   * un grupo de avatares). Salían como retrato de personas cuyo nombre no empieza por F, o como si fueran
+   * tres. Los ficheros se quedan; el reparto por nombre solo usa del 00 al 21. */
+  illustrated: { count: 22, dir: 'illustrated', prefix: 'avatar' },
   abstract: { count: 3, dir: 'abstract', prefix: 'abstract' },
 };
 
