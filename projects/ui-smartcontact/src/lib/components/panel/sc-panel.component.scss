@@ -1,0 +1,41 @@
+/*
+ * sc-panel — solo el modo `fill`. El aspecto (borde, radio, rellenos, título) lo pone el tema
+ * (`sc-preset/panel.ts`); aquí no se repite nada de eso.
+ *
+ * `fill`: el panel toma el alto de su contenedor y el cuerpo reparte ese alto a su contenido. Los
+ * selectores van sobre las clases que el componente pone por `pt` (`sc-panel__*`), no sobre
+ * `.p-panel-*`, que es interno de PrimeNG.
+ */
+.sc-panel--fill {
+  display: block;
+  height: 100%;
+  min-height: 0;
+}
+
+.sc-panel--fill .sc-panel__root {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+  min-height: 0;
+}
+
+/* El contenedor del cuerpo ya es una rejilla de una fila (`1fr`) para la animación de colapsar; con
+ * `minmax(0, 1fr)` esa fila puede encoger y el contenido hace scroll dentro en vez de estirar el panel. */
+.sc-panel--fill .sc-panel__body {
+  flex: 1 1 auto;
+  min-height: 0;
+  grid-template-rows: minmax(0, 1fr);
+}
+
+.sc-panel--fill .sc-panel__wrapper {
+  display: flex;
+  flex-direction: column;
+  min-height: 0;
+}
+
+.sc-panel--fill .sc-panel__content {
+  display: flex;
+  flex-direction: column;
+  flex: 1 1 auto;
+  min-height: 0;
+}

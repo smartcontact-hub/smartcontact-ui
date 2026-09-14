@@ -828,12 +828,13 @@
       "kind": "EXTENDED",
       "primengBase": "primeng/panel",
       "cva": false,
-      "inputs": 4,
+      "inputs": 5,
       "api": [
         "afterToggle",
         "beforeToggle",
         "collapsed",
         "collapsedChange",
+        "fill",
         "header",
         "showHeader",
         "toggleable"

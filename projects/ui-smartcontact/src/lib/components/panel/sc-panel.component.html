@@ -3,8 +3,14 @@
     [toggleable]="toggleable()"
     [collapsed]="collapsed()"
     [showHeader]="showHeader()"
+    [pt]="pt"
     (collapsedChange)="collapsed.set($event ?? false)"
     (onBeforeToggle)="beforeToggle.emit($event)"
     (onAfterToggle)="afterToggle.emit($event)">
+    <!-- Siempre presente y sin `@if`: `p-panel` busca `#icons` entre sus hijos directos, y un bloque de
+         control flow por medio lo esconde. Sin plantilla del consumidor no pinta nada. -->
+    <ng-template #icons>
+        <ng-container *ngTemplateOutlet="iconsTemplate() ?? null"></ng-container>
+    </ng-template>
     <ng-content></ng-content>
 </p-panel>
