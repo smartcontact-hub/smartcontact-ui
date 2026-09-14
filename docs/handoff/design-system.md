@@ -155,10 +155,8 @@ escribir tallas a mano. Página, capturas y sondas: `~/Documents/Claude/2026-09 
 - ⚠️ **La regla de `css.ts` vive en `@layer primeng`**: un wrapper sin capa le gana siempre. Antes de mover
   un token de tipografía, busca tallas a mano en los SCSS de wrappers.
 - ⚠️ **Por el bridge, carga fuentes con `t.fontName`**: con `getRangeAllFontNames` una docena de textos agota 30 s.
-- Pendiente: **retirar la colección «App» (DD-92)**. Hecho el paso 1 (DS revinculado a Custom, 0 enlaces).
-  Falta: Rafa publica la librería y acepta en Supervisor → re-escanear Supervisor (939 enlaces en instancias
-  antes de publicar) y revincular overrides → borrar «App» y publicar → quitar su regla de `coverage-map` al
-  llegar el export. De DD-91: hora del datepicker 17,5 contra 14; botón solo icono no cuadrado; filtros 2px.
+- **Colección «App» (DD-92)**: se queda como alias de Custom; el DS ya no la usa y el Supervisor la hereda
+  (939 enlaces) hasta actualizar la librería. Revisar más adelante si se borra. De DD-91: hora del datepicker 17,5 contra 14; botón solo icono no cuadrado; filtros 2px.
 
 ## ✅ 2026-09-14 · La barra de arriba baja de 91 a 75 y el título queda a la distancia de Aura
 
