@@ -2,13 +2,13 @@ import type { RatingDesignTokens } from '@primeuix/themes/types/rating';
 
  export default {
     icon: {
-        size: "var(--sc-scale-1)",
+        size: "var(--sc-cmp-rating-icon-size)",
         color: "{text.muted.color}",
         hoverColor: "{primary.color}",
         activeColor: "{primary.color}"
     },
     root: {
-        gap: "var(--sc-scale-0-25)",
+        gap: "var(--sc-cmp-rating-gap)",
         focusRing: {
             color: "{focus.ring.color}",
             style: "{focus.ring.style}",

@@ -34,12 +34,12 @@ import type { TreeTableDesignTokens } from '@primeuix/themes/types/treetable';
         borderWidth: "0.071429rem"
     },
     bodyCell: {
-        gap: "var(--sc-scale-0-5)",
+        gap: "var(--sc-cmp-treetable-body-cell-gap)",
         padding: "var(--sc-scale-0-75) var(--sc-scale-1)",
         borderColor: "{treetable.border.color}"
     },
     sortIcon: {
-        size: "var(--sc-scale-0-875)",
+        size: "var(--sc-cmp-treetable-sort-icon-size)",
         color: "{text.muted.color}",
         hoverColor: "{text.hover.muted.color}"
     },
@@ -50,7 +50,7 @@ import type { TreeTableDesignTokens } from '@primeuix/themes/types/treetable';
         borderColor: "{treetable.border.color}"
     },
     headerCell: {
-        gap: "var(--sc-scale-0-5)",
+        gap: "var(--sc-cmp-treetable-header-cell-gap)",
         color: "{content.color}",
         padding: "var(--sc-scale-0-75) var(--sc-scale-1)",
         focusRing: {
@@ -89,7 +89,7 @@ import type { TreeTableDesignTokens } from '@primeuix/themes/types/treetable';
         fontWeight: "600"
     },
     loadingIcon: {
-        size: "var(--sc-scale-2)"
+        size: "var(--sc-cmp-treetable-loading-icon-size)"
     },
     columnFooter: {
         fontWeight: "600"
@@ -99,7 +99,7 @@ import type { TreeTableDesignTokens } from '@primeuix/themes/types/treetable';
         borderWidth: "0.071429rem"
     },
     columnResizer: {
-        width: "var(--sc-scale-0-5)"
+        width: "var(--sc-cmp-treetable-column-resizer-width)"
     },
     paginatorBottom: {
         borderColor: "{content.border.color}",
@@ -110,7 +110,7 @@ import type { TreeTableDesignTokens } from '@primeuix/themes/types/treetable';
         width: "0.071429rem"
     },
     nodeToggleButton: {
-        size: "var(--sc-scale-1-75)",
+        size: "var(--sc-cmp-treetable-node-toggle-button-size)",
         color: "{text.muted.color}",
         focusRing: {
             color: "{focus.ring.color}",
@@ -120,7 +120,7 @@ import type { TreeTableDesignTokens } from '@primeuix/themes/types/treetable';
             shadow: "none"
         },
         hoverColor: "{text.color}",
-        borderRadius: "var(--sc-scale-0-875)",
+        borderRadius: "var(--sc-cmp-treetable-node-toggle-button-border-radius)",
         hoverBackground: "{content.hover.background}",
         selectedHoverColor: "{primary.color}",
         selectedHoverBackground: "{content.background}"

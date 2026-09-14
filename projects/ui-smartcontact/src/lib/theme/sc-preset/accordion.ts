@@ -18,7 +18,7 @@ import type { AccordionDesignTokens } from '@primeuix/themes/types/accordion';
             borderWidth: "0",
             topBorderRadius: "{content.border.radius}"
         },
-        padding: "var(--sc-scale-1-125)",
+        padding: "var(--sc-cmp-accordion-header-padding)",
         focusRing: {
             color: "{focus.ring.color}",
             style: "{focus.ring.style}",

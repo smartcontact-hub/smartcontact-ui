@@ -29,7 +29,7 @@ import type { ContextMenuDesignTokens } from '@primeuix/themes/types/contextmenu
         transitionDuration: "{transition.duration}"
     },
     submenu: {
-        mobileIndent: "var(--sc-scale-1)"
+        mobileIndent: "var(--sc-cmp-contextmenu-submenu-mobile-indent)"
     },
     separator: {
         borderColor: "{content.border.color}"

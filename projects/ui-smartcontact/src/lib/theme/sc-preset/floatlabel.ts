@@ -3,7 +3,7 @@ import type { FloatLabelDesignTokens } from '@primeuix/themes/types/floatlabel';
  export default {
     in: {
         input: {
-            paddingTop: "var(--sc-scale-1-5)",
+            paddingTop: "var(--sc-cmp-floatlabel-in-input-padding-top)",
             paddingBottom: "{form.field.padding.y}"
         },
         active: {
@@ -19,7 +19,7 @@ import type { FloatLabelDesignTokens } from '@primeuix/themes/types/floatlabel';
     },
     over: {
         active: {
-            top: "var(--sc-scale-neg-1-25)"
+            top: "var(--sc-cmp-floatlabel-over-active-top)"
         }
     },
     root: {

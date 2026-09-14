@@ -17,7 +17,7 @@ import type { MenubarDesignTokens } from '@primeuix/themes/types/menubar';
         activeBackground: "{navigation.item.active.background}"
     },
     root: {
-        gap: "var(--sc-scale-0-5)",
+        gap: "var(--sc-cmp-menubar-gap)",
         color: "{content.color}",
         padding: "var(--sc-scale-0-5) var(--sc-scale-0-75)",
         background: "{content.background}",
@@ -38,7 +38,7 @@ import type { MenubarDesignTokens } from '@primeuix/themes/types/menubar';
         background: "{content.background}",
         borderColor: "{content.border.color}",
         borderRadius: "{content.border.radius}",
-        mobileIndent: "var(--sc-scale-1)"
+        mobileIndent: "var(--sc-cmp-menubar-submenu-mobile-indent)"
     },
     baseItem: {
         padding: "{navigation.item.padding}",
@@ -48,7 +48,7 @@ import type { MenubarDesignTokens } from '@primeuix/themes/types/menubar';
         borderColor: "{content.border.color}"
     },
     mobileButton: {
-        size: "var(--sc-scale-1-75)",
+        size: "var(--sc-cmp-menubar-mobile-button-size)",
         color: "{text.muted.color}",
         focusRing: {
             color: "{focus.ring.color}",
@@ -58,7 +58,7 @@ import type { MenubarDesignTokens } from '@primeuix/themes/types/menubar';
             shadow: "none"
         },
         hoverColor: "{text.hover.muted.color}",
-        borderRadius: "var(--sc-scale-0-875)",
+        borderRadius: "var(--sc-cmp-menubar-mobile-button-border-radius)",
         hoverBackground: "{content.hover.background}"
     }
 } satisfies MenubarDesignTokens;

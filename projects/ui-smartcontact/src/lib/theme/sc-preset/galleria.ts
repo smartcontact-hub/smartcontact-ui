@@ -9,22 +9,22 @@ import type { GalleriaDesignTokens } from '@primeuix/themes/types/galleria';
     },
     caption: {
         color: "{surface.100}",
-        padding: "var(--sc-scale-1)",
+        padding: "var(--sc-cmp-galleria-caption-padding)",
         background: "#00000080"
     },
     navIcon: {
-        size: "var(--sc-scale-1-5)"
+        size: "var(--sc-cmp-galleria-nav-icon-size)"
     },
     navButton: {
         next: {
-            borderRadius: "var(--sc-scale-1-5)"
+            borderRadius: "var(--sc-cmp-galleria-nav-button-next-border-radius)"
         },
         prev: {
-            borderRadius: "var(--sc-scale-1-5)"
+            borderRadius: "var(--sc-cmp-galleria-nav-button-prev-border-radius)"
         },
-        size: "var(--sc-scale-3)",
+        size: "var(--sc-cmp-galleria-nav-button-size)",
         color: "{surface.100}",
-        gutter: "var(--sc-scale-0-5)",
+        gutter: "var(--sc-cmp-galleria-nav-button-gutter)",
         focusRing: {
             color: "{focus.ring.color}",
             style: "{focus.ring.style}",
@@ -37,9 +37,9 @@ import type { GalleriaDesignTokens } from '@primeuix/themes/types/galleria';
         hoverBackground: "#ffffff33"
     },
     closeButton: {
-        size: "var(--sc-scale-3)",
+        size: "var(--sc-cmp-galleria-close-button-size)",
         color: "{surface.50}",
-        gutter: "var(--sc-scale-0-5)",
+        gutter: "var(--sc-cmp-galleria-close-button-gutter)",
         focusRing: {
             color: "{focus.ring.color}",
             style: "{focus.ring.style}",
@@ -49,7 +49,7 @@ import type { GalleriaDesignTokens } from '@primeuix/themes/types/galleria';
         },
         background: "#ffffff1a",
         hoverColor: "{surface.0}",
-        borderRadius: "var(--sc-scale-1-5)",
+        borderRadius: "var(--sc-cmp-galleria-close-button-border-radius)",
         hoverBackground: "#ffffff33"
     },
     colorScheme: {
@@ -77,15 +77,15 @@ import type { GalleriaDesignTokens } from '@primeuix/themes/types/galleria';
         }
     },
     indicatorList: {
-        gap: "var(--sc-scale-0-5)",
-        padding: "var(--sc-scale-1)"
+        gap: "var(--sc-cmp-galleria-indicator-list-gap)",
+        padding: "var(--sc-cmp-galleria-indicator-list-padding)"
     },
     closeButtonIcon: {
-        size: "var(--sc-scale-1-5)"
+        size: "var(--sc-cmp-galleria-close-button-icon-size)"
     },
     indicatorButton: {
-        width: "var(--sc-scale-1)",
-        height: "var(--sc-scale-1)",
+        width: "var(--sc-cmp-galleria-indicator-button-width)",
+        height: "var(--sc-cmp-galleria-indicator-button-height)",
         focusRing: {
             color: "{focus.ring.color}",
             style: "{focus.ring.style}",
@@ -93,7 +93,7 @@ import type { GalleriaDesignTokens } from '@primeuix/themes/types/galleria';
             offset: "{focus.ring.offset}",
             shadow: "none"
         },
-        borderRadius: "var(--sc-scale-0-5)",
+        borderRadius: "var(--sc-cmp-galleria-indicator-button-border-radius)",
         activeBackground: "{primary.color}"
     },
     thumbnailsContent: {
@@ -104,8 +104,8 @@ import type { GalleriaDesignTokens } from '@primeuix/themes/types/galleria';
         background: "#00000080"
     },
     thumbnailNavButton: {
-        size: "var(--sc-scale-2)",
-        gutter: "var(--sc-scale-0-5)",
+        size: "var(--sc-cmp-galleria-thumbnail-nav-button-size)",
+        gutter: "var(--sc-cmp-galleria-thumbnail-nav-button-gutter)",
         focusRing: {
             color: "{focus.ring.color}",
             style: "{focus.ring.style}",
@@ -121,6 +121,6 @@ import type { GalleriaDesignTokens } from '@primeuix/themes/types/galleria';
         activeBackground: "#ffffffe5"
     },
     thumbnailNavButtonIcon: {
-        size: "var(--sc-scale-1)"
+        size: "var(--sc-cmp-galleria-thumbnail-nav-button-icon-size)"
     }
 } satisfies GalleriaDesignTokens;

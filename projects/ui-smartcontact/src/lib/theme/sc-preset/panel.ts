@@ -15,7 +15,7 @@ import type { PanelDesignTokens } from '@primeuix/themes/types/panel';
     },
     header: {
         color: "{text.color}",
-        padding: "var(--sc-scale-1-125)",
+        padding: "var(--sc-cmp-panel-header-padding)",
         background: "#00000000",
         borderColor: "{content.border.color}",
         borderWidth: "0",

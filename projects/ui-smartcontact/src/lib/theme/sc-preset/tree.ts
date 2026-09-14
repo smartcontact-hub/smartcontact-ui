@@ -2,7 +2,7 @@ import type { TreeDesignTokens } from '@primeuix/themes/types/tree';
 
  export default {
     node: {
-        gap: "var(--sc-scale-0-25)",
+        gap: "var(--sc-cmp-tree-node-gap)",
         color: "{text.color}",
         padding: "var(--sc-scale-0-25) var(--sc-scale-0-5)",
         focusRing: {
@@ -21,13 +21,13 @@ import type { TreeDesignTokens } from '@primeuix/themes/types/tree';
     root: {
         gap: "0.142857rem",
         color: "{content.color}",
-        indent: "var(--sc-scale-1)",
-        padding: "var(--sc-scale-1)",
+        indent: "var(--sc-cmp-tree-indent)",
+        padding: "var(--sc-cmp-tree-padding)",
         background: "{content.background}",
         transitionDuration: "{transition.duration}"
     },
     filter: {
-        margin: "var(--sc-scale-0-5)"
+        margin: "var(--sc-cmp-tree-filter-margin)"
     },
     nodeIcon: {
         color: "{text.muted.color}",
@@ -35,10 +35,10 @@ import type { TreeDesignTokens } from '@primeuix/themes/types/tree';
         selectedColor: "{highlight.color}"
     },
     loadingIcon: {
-        size: "var(--sc-scale-2)"
+        size: "var(--sc-cmp-tree-loading-icon-size)"
     },
     nodeToggleButton: {
-        size: "var(--sc-scale-1-75)",
+        size: "var(--sc-cmp-tree-node-toggle-button-size)",
         color: "{text.muted.color}",
         focusRing: {
             color: "{focus.ring.color}",
@@ -48,7 +48,7 @@ import type { TreeDesignTokens } from '@primeuix/themes/types/tree';
             shadow: "none"
         },
         hoverColor: "{text.hover.muted.color}",
-        borderRadius: "var(--sc-scale-0-875)",
+        borderRadius: "var(--sc-cmp-tree-node-toggle-button-border-radius)",
         hoverBackground: "{content.hover.background}",
         selectedHoverColor: "{primary.color}",
         selectedHoverBackground: "{content.background}"

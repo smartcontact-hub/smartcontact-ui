@@ -2,7 +2,7 @@ import type { TimelineDesignTokens } from '@primeuix/themes/types/timeline';
 
  export default {
     event: {
-        minHeight: "var(--sc-scale-5)"
+        minHeight: "var(--sc-cmp-timeline-event-min-height)"
     },
     vertical: {
         eventContent: {
@@ -15,9 +15,9 @@ import type { TimelineDesignTokens } from '@primeuix/themes/types/timeline';
         }
     },
     eventMarker: {
-        size: "var(--sc-scale-1-125)",
+        size: "var(--sc-cmp-timeline-event-marker-size)",
         content: {
-            size: "var(--sc-scale-0-375)",
+            size: "var(--sc-cmp-timeline-event-marker-content-size)",
             background: "{primary.color}",
             insetShadow: "0 0.071429rem 0.071429rem 0 #0000001f, 0 0.071429rem 0 0 #0000000f",
             borderRadius: "0.1875rem"

@@ -63,6 +63,31 @@
 
 ---
 
+## DD-86 · 2026-09-14 — El resto de medidas de los temas sigue a Figma, sin mover un píxel
+
+**Contexto** · Tras DD-85 quedaban 238 medidas escritas a mano con un paso de escala en los temas: 184
+sueltas con equivalente en el Kit, 42 rellenos compuestos, 10 tamaños de letra y 2 sin equivalente. Medido
+el valor: de las 184 sueltas, 180 valen ya lo mismo que el Kit.
+
+**Decisión** · Esas 180 pasan al mapa de medidas (`scripts/sizing-map.mjs`, de 110 a 290 filas) con el
+mismo método de DD-85: el generador escribe su `--sc-cmp-*` y el tema lo lee. 50 temas tocados. Fuera: el
+hueco del cuerpo de la tarjeta (hoy 7, el Kit dice 10,5), que sí cambiaría en pantalla y va aparte, los 42
+compuestos y los 10 tamaños de letra.
+
+**Razón** · Con el número escrito, un cambio en Figma no llega a la app y nadie lo avisa (la casilla de
+DD-85 se quedó en 17,5 después de cambiarla en Figma). Conectadas, `tokens:parity` compara cada una con el
+export y se pone rojo si se separan.
+
+**Descartadas** ·
+- **Meter también las 4 que cambian de valor** → mezclaría una conexión sin efecto visible con cambios de
+  diseño; el hueco de la tarjeta necesita mirarlo.
+
+**Consecuencias** · Sin cambio visual, comprobado: las 55 capturas de componentes, `component-styles` y
+`component-structure` pasan con sus referencias de antes, sin regenerar. `tokens:parity` 290/290 y 519
+tests unitarios.
+
+---
+
 ## DD-85 · 2026-09-14 — Las medidas que los temas escribían a mano salen del export: un cambio de Figma llega solo al código
 
 **Contexto** · Tras DD-81, Rafa pidió que «todo caiga en cascada». Medido con `tools/aura-diff.mjs` en los 15

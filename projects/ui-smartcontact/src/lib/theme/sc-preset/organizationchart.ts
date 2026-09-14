@@ -14,7 +14,7 @@ import type { OrganizationChartDesignTokens } from '@primeuix/themes/types/organ
         selectedBackground: "{highlight.background}"
     },
     root: {
-        gutter: "var(--sc-scale-0-75)",
+        gutter: "var(--sc-cmp-organizationchart-gutter)",
         transitionDuration: "{transition.duration}"
     },
     connector: {
@@ -23,7 +23,7 @@ import type { OrganizationChartDesignTokens } from '@primeuix/themes/types/organ
         borderRadius: "{content.border.radius}"
     },
     nodeToggleButton: {
-        size: "var(--sc-scale-1-5)",
+        size: "var(--sc-cmp-organizationchart-node-toggle-button-size)",
         color: "{text.muted.color}",
         focusRing: {
             color: "{focus.ring.color}",
@@ -35,7 +35,7 @@ import type { OrganizationChartDesignTokens } from '@primeuix/themes/types/organ
         background: "{content.background}",
         hoverColor: "{text.color}",
         borderColor: "{content.border.color}",
-        borderRadius: "var(--sc-scale-0-75)",
+        borderRadius: "var(--sc-cmp-organizationchart-node-toggle-button-border-radius)",
         hoverBackground: "{content.hover.background}"
     }
 } satisfies OrganizationChartDesignTokens;

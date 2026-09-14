@@ -2,11 +2,11 @@ import type { FileUploadDesignTokens } from '@primeuix/themes/types/fileupload';
 
  export default {
     file: {
-        gap: "var(--sc-scale-1)",
+        gap: "var(--sc-cmp-fileupload-file-gap)",
         info: {
-            gap: "var(--sc-scale-0-5)"
+            gap: "var(--sc-cmp-fileupload-file-info-gap)"
         },
-        padding: "var(--sc-scale-1)",
+        padding: "var(--sc-cmp-fileupload-file-padding)",
         borderColor: "{content.border.color}"
     },
     root: {
@@ -17,26 +17,26 @@ import type { FileUploadDesignTokens } from '@primeuix/themes/types/fileupload';
         transitionDuration: "{transition.duration}"
     },
     basic: {
-        gap: "var(--sc-scale-0-5)"
+        gap: "var(--sc-cmp-fileupload-basic-gap)"
     },
     header: {
-        gap: "var(--sc-scale-0-5)",
+        gap: "var(--sc-cmp-fileupload-header-gap)",
         color: "{text.color}",
-        padding: "var(--sc-scale-1-125)",
+        padding: "var(--sc-cmp-fileupload-header-padding)",
         background: "#00000000",
         borderColor: "#00000000",
         borderWidth: "0",
         borderRadius: "0"
     },
     content: {
-        gap: "var(--sc-scale-1)",
+        gap: "var(--sc-cmp-fileupload-content-gap)",
         padding: "0 var(--sc-scale-1-125) var(--sc-scale-1-125)",
         highlightBorderColor: "{primary.color}"
     },
     fileList: {
-        gap: "var(--sc-scale-0-5)"
+        gap: "var(--sc-cmp-fileupload-file-list-gap)"
     },
     progressbar: {
-        height: "var(--sc-scale-0-25)"
+        height: "var(--sc-cmp-fileupload-progressbar-height)"
     }
 } satisfies FileUploadDesignTokens;

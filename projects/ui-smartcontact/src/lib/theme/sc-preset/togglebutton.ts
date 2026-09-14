@@ -6,15 +6,15 @@ import type { ToggleButtonDesignTokens } from '@primeuix/themes/types/togglebutt
     },
     root: {
         lg: {
-            padding: "var(--sc-scale-0-25)",
+            padding: "var(--sc-cmp-togglebutton-lg-padding)",
             fontSize: "{form.field.lg.font.size}"
         },
         sm: {
-            padding: "var(--sc-scale-0-25)",
+            padding: "var(--sc-cmp-togglebutton-sm-padding)",
             fontSize: "{form.field.sm.font.size}"
         },
-        gap: "var(--sc-scale-0-5)",
-        padding: "var(--sc-scale-0-25)",
+        gap: "var(--sc-cmp-togglebutton-gap)",
+        padding: "var(--sc-cmp-togglebutton-padding)",
         focusRing: {
             color: "{focus.ring.color}",
             style: "{focus.ring.style}",
