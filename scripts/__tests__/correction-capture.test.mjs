@@ -72,6 +72,24 @@ test('rojo: el mismo cuerpo SIN sobre sigue disparando (el filtro es el sobre, n
   for (const f of SOBRES) assert.ok(esCorreccion(f.split('\n')[1]), 'el filtro se ha llevado por delante el patrón');
 });
 
+// Reales, del registro del 2026-09-14: el veredicto del CI que llega por un monitor. Su cuerpo casa
+// con un patrón de corrección; el sobre dice que no lo escribió Rafa.
+const AVISO_CI =
+  '<event>△ el PR #177 de arebury/grises-intermedios está en CONFLICTO con la base: el CI no es la pregunta, ' +
+  'porque al rebasar cambia el commit y el run deja de ser el tuyo. Rebasa primero: git fetch origin && git rebase origin/main</event>';
+const SOBRES_HERRAMIENTA = [
+  '<task-notification>\n<task-id>bf24c30x8</task-id>\n<summary>Monitor event: "veredicto del CI del PR 177"</summary>\n' + AVISO_CI,
+  '<scheduled-task name="prs-abiertos-semanal" file="SKILL.md">\nThis is an automated run of a scheduled task.\n' + AVISO_CI,
+];
+
+test('verde: un aviso de tarea de fondo o de tarea programada no es una corrección de Rafa', () => {
+  for (const f of SOBRES_HERRAMIENTA) assert.equal(esCorreccion(f), false, `no debía detectar: ${f.slice(0, 40)}…`);
+});
+
+test('rojo: el cuerpo del aviso SIN sobre sigue disparando', () => {
+  assert.ok(esCorreccion(AVISO_CI), 'el filtro se ha llevado por delante el patrón');
+});
+
 test('verde: un sobre de otro agente tampoco arranca un /reflect', () => {
   // Ya NO basta el anclaje de CIERRES en `^`: desde `ultimaFrase` el patrón se prueba también
   // contra el final del mensaje, y el sobre tiene final igual que cualquier otro. Lo sostiene el
