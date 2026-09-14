@@ -88,7 +88,7 @@
             <sc-icon name="help" size="inherit" />
             <span>{{ 'topbar.user.help' | translate }}</span>
           </button>
-          <button type="button" class="top-bar__menu-item sc-text-body-regular" role="menuitem">
+          <button type="button" class="top-bar__menu-item sc-text-body-regular" role="menuitem" (click)="signOut()">
             <sc-icon name="logout" size="inherit" />
             <span>{{ 'topbar.user.logout' | translate }}</span>
           </button>

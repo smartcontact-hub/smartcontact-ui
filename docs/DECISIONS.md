@@ -41,6 +41,7 @@
 >
 > | Tema | DD |
 > |---|---|
+> | Una pantalla fuera del shell (acceso) va en `features/auth/` y en `EXENTAS` de `audit:page-anatomy` · un error de campo dice QUÉ falta, uno de credenciales no delata cuentas · un SSO de terceros es nuestro `sc-button` con su logo sin tocar · la contraseña es `sc-password` | DD-110 |
 > | `<sc-panel severity="warn|danger">`: borde y anillo de 1 en `--sc-border-warning/danger`, decidido en código y pendiente en Figma · `<ng-template #header let-titleId>` para un título que es encabezado, con `[id]="titleId"` | DD-109 |
 > | Una tarjeta con acciones en la cabecera es `<sc-panel>` con `<ng-template #icons>` (Panel de primeng.dev; Figma `panel` `Custom Icon=True`) · `[fill]` la estira al alto de su hueco · las piezas internas se estilan por `pt` con clases propias, no por `.p-panel-*` | DD-108 |
 > | Un `borderWidth` del tema tiene la FORMA de Aura: si Aura pinta un lado (`0 0 1px 0`), nosotros también; si Aura dice `0`, sin borde · `p-tabs` como Aura 3: pestaña sin borde, tira con raya abajo, marca de la activa en `activeBar` · lo vigila `preset-border-shorthand.test.mjs` | DD-107 |
@@ -76,6 +77,69 @@
 > | El título de página vive en el cuerpo; la identidad, en el breadcrumb | DD-33 |
 
 ---
+
+## DD-110 · 2026-09-14 — El Supervisor tiene pantalla de acceso: SSO de Microsoft con nuestro botón, errores que guían sin delatar cuentas y sin guardia de rutas
+
+**Contexto** · Rafa pidió un login con el look & feel de SnowUI «Sign In - B» (Figma `epbXh5uopOOwU1ofdINqbh`,
+nodos `12780:102945` y el panel `12780:102950`), logo SmartContact, un único SSO (Microsoft, con sus guías),
+guía para quien se equivoca con el email o la contraseña, «¿Has olvidado tu contraseña?», «Contáctanos», el
+«Hola» con la mano y la forma de cerrar sesión dentro de la herramienta. Todo con tokens y piezas del DS, sobre
+PrimeNG (referencia de patrón: el bloque «Login» de primeblocks.dev/application/signin).
+
+**Decisión** ·
+1. Ruta `/login` fuera del shell (`features/auth/`), con tres vistas en el mismo panel: entrar, recuperar y
+   correo enviado; «Contáctanos» es un enlace a la web de contacto. Cambiar de vista lleva el foco a su título.
+2. **Sin guardia de rutas.** La sesión es un marcador en `sessionStorage` (`AuthService`, cuenta demo
+   `DEMO_ACCOUNT`); la app sigue abriéndose sin entrar.
+3. **Botón de Microsoft = `sc-button` secundario con contorno** (el mismo patrón de PrimeBlocks) con el logo
+   oficial de cuatro cuadrados SIN alterar (`public/logos/microsoft-logo.svg`, bajado de Microsoft Learn) y el
+   texto que Microsoft localiza («Iniciar sesión con Microsoft»).
+4. **Errores**: al enviar, y a partir de ahí en vivo. El email dice QUÉ le falta (`email-problem.ts`: sin @,
+   espacios, varias @, sin nombre, sin dominio, dominio sin terminación). El fallo de credenciales es UN aviso
+   para los dos campos, vacía la contraseña y devuelve el foco. Recuperar la contraseña responde lo mismo exista o
+   no la cuenta. Aviso de Bloq Mayús en la contraseña.
+5. Cerrar sesión (menú del avatar) navega PRIMERO a `/login` y cierra la sesión solo si la navegación sale: con
+   un formulario a medias, el guardia de cambios pregunta y quien se queda sigue dentro.
+6. La ilustración es la de SnowUI (clara en claro, la composición oscura exportada a 2x en oscuro). Rafa
+   decidió llevarla a producción: la herramienta no se comercializa. El logo se pinta por máscara con
+   `--sc-text-heading` para leerse sobre las dos.
+7. La mano del «Hola» es `sc-icon waving_hand` (no el emoji: UX 4), con un saludo de una vez por `transform` que
+   se apaga con `prefers-reduced-motion`.
+8. **«Hola de nuevo»** si en ese navegador se entró en las últimas 48 h (`AuthService.isReturning`,
+   `RETURNING_WINDOW_MS`). Solo se guarda la HORA de la última entrada en `localStorage`, ni email ni nombre: en
+   un puesto compartido no delata quién estuvo. Pasado el plazo, la marca se borra y el saludo vuelve a «Hola».
+   Sin género («Bienvenido» deja fuera a media plantilla); en/pt/fr «Welcome back», «Olá de novo», «Rebonjour».
+9. **El fondo se mueve** (`features/auth/components/login-art.component.ts`, propuesta de Claude Design): un
+   shader WebGL ondula la ilustración y deja estela bajo el puntero, con el `<img>` fijo debajo. Sin WebGL, con el
+   shader sin compilar o al imprimir, queda la imagen; con menos movimiento, un fotograma SIN deformar; se para
+   fuera de pantalla y con la pestaña oculta; baja a 1x por debajo de 45 fps; media amplitud con el formulario
+   enfocado. Sus estilos viven en el componente: la hoja de la página no alcanza su `<img>` ni su `<canvas>`.
+
+**Razón** · Microsoft Learn («Sign in with Microsoft branding guidelines», actualizado 2026-06-15): lo único que
+prohíbe es alterar el logo; las medidas (41 px, Segoe UI 15, #2F2F2F/#FFFFFF) son «recommended redlines», y
+admite esquema claro u oscuro. Un «este email no existe» deja enumerar cuentas. Los cinco sitios sirven `main` a
+desarrolladores y a enlaces pegados en Jira: un guardia mandaría cada enlace profundo al login. La carpeta de
+imágenes se llamaba `public/login/` y el servidor servía la CARPETA en `/login` (301): se llama
+`public/illustrations/`.
+
+**Descartadas** ·
+- **El botón con las medidas de Microsoft a pelo** → cuatro colores y una tipografía fuera del DS en una pantalla
+  que es toda tokens; no lo exige la guía.
+- **Guardia de rutas que obligue a entrar** → rompe los enlaces profundos de la demo y los e2e sin backend que lo
+  justifique; el día que haya backend, el guardia y el token viven en `AuthService`.
+- **Decir qué campo falla en las credenciales** → enumeración de cuentas.
+- **El ojo de la contraseña a mano sobre `sc-inputtext`** → `audit:primeng-coupling` prohíbe alcanzar clases
+  internas del DS; PrimeNG ya lo trae en `p-password` (`toggleMask`), de ahí `sc-password`. Su conmutador nativo
+  es un `svg` sin foco ni nombre (medido), así que `sc-password` pinta un botón real por la plantilla del icono.
+  Ojo: PrimeNG 22 marca `p-password` como obsoleto en favor de `pInputPassword`, que no trae conmutador; la API
+  de `sc-password` no depende de ello.
+- **«Recordarme» y bloqueo tras N intentos** → decisiones de producto/backend que no se inventan.
+
+**Consecuencias** · Nuevo e2e `e2e/supervisor/login.spec.ts` (con menos movimiento por defecto: sin GPU en el CI
+el shader en bucle solo gasta CPU; el test del fondo lo enciende). La amplitud del fondo (`amplitude`, 0.045 ≈ 64 px)
+es la de Claude Design y queda a juicio de Rafa. «Contáctanos» abre https://www.smart-contact.com/contacto/ en pestaña nueva (Rafa). Pendiente de Rafa: la frase de marca de la
+izquierda y el texto del botón de Microsoft en pt/fr (de memoria, sin contrastar con el buscador de cadenas de
+Microsoft). El radio del panel es `--sc-radius-2xl` (16) y no los 32 de SnowUI: el Kit no tiene un radio mayor.
 
 ## DD-109 · 2026-09-14 — `sc-panel` gana cabecera propia (`#header`) y aviso (`severity`), y lo segundo lo decide Rafa en código
 

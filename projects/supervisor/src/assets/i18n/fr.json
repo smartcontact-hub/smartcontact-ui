@@ -2008,5 +2008,45 @@
     "today": "Aujourd'hui",
     "clear": "Effacer",
     "week_header": "Sem"
+  },
+  "auth": {
+    "login": {
+      "title": "Bonjour",
+      "claim": "Supervisez vos agents et leurs conversations en temps réel.",
+      "microsoft": "Se connecter avec Microsoft",
+      "or": "ou",
+      "email": "Email",
+      "password": "Mot de passe",
+      "submit": "Se connecter",
+      "signed_out": "Vous êtes déconnecté.",
+      "caps_lock_on": "La touche Verr. Maj est activée.",
+      "copyright": "© {{year}} Digital Virgo",
+      "errors": {
+        "email_required": "Saisissez votre email.",
+        "email_spaces": "Supprimez les espaces de l'email.",
+        "email_missing_at": "Il manque le @ entre votre nom et le domaine de votre entreprise.",
+        "email_many_at": "Un email ne contient qu'un seul @.",
+        "email_missing_name": "Il manque votre nom avant le @.",
+        "email_missing_domain": "Il manque le domaine de votre entreprise après le @.",
+        "email_bad_domain": "Vérifiez le domaine après le @ : il manque l'extension, comme .com ou .fr.",
+        "password_required": "Saisissez votre mot de passe.",
+        "credentials": "L'email ou le mot de passe est incorrect. Vérifiez Verr. Maj et réessayez."
+      },
+      "help_nav": "Aide à la connexion",
+      "forgot": "Mot de passe oublié ?",
+      "contact": "Nous contacter",
+      "new_tab": "(s'ouvre dans un nouvel onglet)",
+      "show_password": "Afficher le mot de passe",
+      "hide_password": "Masquer le mot de passe",
+      "title_returning": "Rebonjour"
+    },
+    "back": "Retour à la connexion",
+    "forgot": {
+      "title": "Réinitialisez votre mot de passe",
+      "lead": "Saisissez l’email avec lequel vous vous connectez et nous vous enverrons un lien pour en créer un nouveau.",
+      "submit": "Envoyer le lien",
+      "sent_title": "Consultez vos emails",
+      "sent_lead": "Si un compte existe pour {{email}}, un lien arrivera dans quelques minutes. Pensez à vérifier vos spams."
+    }
   }
 }

@@ -1,0 +1,169 @@
+<main class="login">
+  <!-- Ilustración a sangre con movimiento (WebGL) y la imagen fija debajo como reserva. -->
+  <sc-login-art class="login__art" [src]="artSrc()" />
+
+  <section class="login__brand">
+    <!-- El logo se pinta por máscara con un token de texto: el SVG de marca solo
+         existe en blanco, y así sale oscuro sobre la ilustración clara. -->
+    <div class="login__logo" role="img" [attr.aria-label]="'app.logo_alt' | translate">
+      <span class="login__logo-isotype"></span>
+      <span class="login__logo-wordmark"></span>
+    </div>
+    <p class="login__claim sc-text-h3-regular">{{ 'auth.login.claim' | translate }}</p>
+  </section>
+
+  <!-- El panel es el «Frame» con autolayout de SnowUI (12780:102950): columna
+       centrada, 28 de hueco y de relleno, y el copyright al pie. -->
+  <section class="login__panel" aria-labelledby="login-title">
+    <div class="login__body">
+      @switch (view()) {
+        @case ('signin') {
+          <h1 #heading id="login-title" class="login__hello sc-text-h1-semibold" tabindex="-1">
+            <sc-icon class="login__wave" name="waving_hand" size="inherit" filled />
+            <span>{{ greetingKey | translate }}</span>
+          </h1>
+
+          @if (signedOut()) {
+            <sc-message severity="success" variant="outlined" icon="check_circle" [text]="'auth.login.signed_out' | translate" />
+          }
+
+          <!-- Marca de Microsoft: logo oficial sin alterar + el texto que Microsoft
+               localiza, dentro de nuestro botón secundario (como el bloque de PrimeBlocks). -->
+          <sc-button
+            variant="secondary"
+            appearance="outlined"
+            size="lg"
+            fullWidth
+            [label]="'auth.login.microsoft' | translate"
+            [loading]="pending() === 'microsoft'"
+            [disabled]="pending() === 'password'"
+            (clicked)="onMicrosoft()"
+          >
+            @if (pending() !== 'microsoft') {
+              <img class="login__microsoft-logo" src="/logos/microsoft-logo.svg" width="21" height="21" alt="" />
+            }
+          </sc-button>
+
+          <sc-divider class="login__divider" align="center">
+            <span class="sc-text-caption-regular">{{ 'auth.login.or' | translate }}</span>
+          </sc-divider>
+
+          <form class="login__form" novalidate (submit)="onSubmit($event)">
+            @if (credentialsRejected()) {
+              <sc-message severity="danger" variant="outlined" icon="error" [text]="'auth.login.errors.credentials' | translate" />
+            }
+
+            <sc-inputtext
+              inputId="login-email"
+              name="email"
+              type="email"
+              size="lg"
+              autocomplete="username"
+              inputmode="email"
+              fluid
+              [label]="'auth.login.email' | translate"
+              [value]="email()"
+              [error]="emailError() ? (emailError()! | translate) : undefined"
+              [invalid]="credentialsRejected()"
+              (valueChange)="onEmailChange($event)"
+            />
+
+            <sc-password
+              inputId="login-password"
+              name="password"
+              size="lg"
+              autocomplete="current-password"
+              fluid
+              [label]="'auth.login.password' | translate"
+              [value]="password()"
+              [error]="passwordError() ? (passwordError()! | translate) : undefined"
+              [helperText]="passwordHelper() ? (passwordHelper()! | translate) : undefined"
+              [invalid]="credentialsRejected()"
+              (valueChange)="onPasswordChange($event)"
+              (keyup)="onPasswordKey($event)"
+              (keydown)="onPasswordKey($event)"
+              [showAriaLabel]="'auth.login.show_password' | translate"
+              [hideAriaLabel]="'auth.login.hide_password' | translate"
+            />
+
+            <sc-button
+              type="submit"
+              size="lg"
+              fullWidth
+              [label]="'auth.login.submit' | translate"
+              [loading]="pending() === 'password'"
+              [disabled]="pending() === 'microsoft'"
+            />
+          </form>
+
+          <!-- Enlaces de texto, como la fila de SnowUI: el primero es una acción del panel
+               (botón) y el segundo sale a la web de contacto de SmartContact (enlace). -->
+          <nav class="login__links" [attr.aria-label]="'auth.login.help_nav' | translate">
+            <button type="button" class="login__link sc-text-body-regular" (click)="go('forgot')">
+              {{ 'auth.login.forgot' | translate }}
+            </button>
+            <a class="login__link sc-text-body-regular" [href]="contactUrl" target="_blank" rel="noopener">
+              {{ 'auth.login.contact' | translate }}
+              <span class="visually-hidden">{{ 'auth.login.new_tab' | translate }}</span>
+            </a>
+          </nav>
+        }
+
+        @case ('forgot') {
+          <div class="login__intro">
+            <h1 #heading id="login-title" class="sc-text-h2-semibold" tabindex="-1">
+              {{ 'auth.forgot.title' | translate }}
+            </h1>
+            <p class="login__lead sc-text-body-regular">{{ 'auth.forgot.lead' | translate }}</p>
+          </div>
+
+          <form class="login__form" novalidate (submit)="onResetSubmit($event)">
+            <sc-inputtext
+              inputId="reset-email"
+              name="email"
+              type="email"
+              size="lg"
+              autocomplete="username"
+              inputmode="email"
+              fluid
+              [label]="'auth.login.email' | translate"
+              [value]="email()"
+              [error]="emailError() ? (emailError()! | translate) : undefined"
+              (valueChange)="onEmailChange($event)"
+            />
+            <sc-button
+              type="submit"
+              size="lg"
+              fullWidth
+              [label]="'auth.forgot.submit' | translate"
+              [loading]="pending() === 'reset'"
+            />
+          </form>
+
+          <nav class="login__links" [attr.aria-label]="'auth.login.help_nav' | translate">
+            <button type="button" class="login__link sc-text-body-regular" (click)="go('signin')">
+              {{ 'auth.back' | translate }}
+            </button>
+          </nav>
+        }
+
+        @case ('forgot-sent') {
+          <div class="login__intro">
+            <sc-icon class="login__intro-icon" name="mark_email_read" [size]="48" />
+            <h1 #heading id="login-title" class="sc-text-h2-semibold" tabindex="-1">
+              {{ 'auth.forgot.sent_title' | translate }}
+            </h1>
+            <p class="login__lead sc-text-body-regular">
+              {{ 'auth.forgot.sent_lead' | translate: { email: email().trim() } }}
+            </p>
+          </div>
+          <sc-button size="lg" fullWidth [label]="'auth.back' | translate" (clicked)="go('signin')" />
+        }
+      }
+    </div>
+
+    <p class="login__legal sc-text-caption-regular">
+      {{ 'auth.login.copyright' | translate: { year } }}
+    </p>
+  </section>
+</main>

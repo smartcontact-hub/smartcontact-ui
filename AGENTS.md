@@ -221,6 +221,7 @@ no la otra. Cada fila apunta a la decisión o al gate que la sostiene; no hay fi
 | Texto de la página (título, lead, celda, caption) | Una de las 12 clases `.sc-text-*` | `font-size`/`font-weight` sueltos; el peso 500 no existe | DD-55, DD-67, `audit:text-styles` |
 | Que el texto de un `<sc-*>` se vea distinto | Mover su token | Una `.sc-text-*` encima del componente (lo desconecta del tema) | DD-55 |
 | Una etiqueta de solo lectura (estado, severidad) | `sc-tag` | `sc-chip` (eso es lo que el usuario puede quitar: outline + ×) | `customs-catalog.md` §5 |
+| Pedir una contraseña | `sc-password` (ojo con teclado y nombre accesible) | `sc-inputtext type="password"`; un ojo pintado a mano | DD-110 |
 | Buscar dentro de una lista | `sc-search` | `sc-inputgroup` o `sc-inputtext` con un icono a mano | `customs-catalog.md` §5 |
 | Una pantalla que espera datos | `sc-skeleton` con la FORMA del contenido, en su hueco | Spinner centrado; datos que recolocan la página al llegar | UX 2 |
 | Un icono | `<sc-icon>` (Material Symbols) | Emojis; una segunda librería | UX 4 |

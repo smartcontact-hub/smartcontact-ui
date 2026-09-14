@@ -2008,5 +2008,45 @@
     "today": "Hoje",
     "clear": "Limpar",
     "week_header": "Sem"
+  },
+  "auth": {
+    "login": {
+      "title": "Olá",
+      "claim": "Supervisione seus agentes e as conversas deles em tempo real.",
+      "microsoft": "Entrar com a Microsoft",
+      "or": "ou",
+      "email": "Email",
+      "password": "Senha",
+      "submit": "Entrar",
+      "signed_out": "Você saiu da sua conta.",
+      "caps_lock_on": "O Caps Lock está ativado.",
+      "copyright": "© {{year}} Digital Virgo",
+      "errors": {
+        "email_required": "Digite seu email.",
+        "email_spaces": "Remova os espaços do email.",
+        "email_missing_at": "Falta o @ entre seu nome e o domínio da sua empresa.",
+        "email_many_at": "O email tem só um @.",
+        "email_missing_name": "Falta seu nome antes do @.",
+        "email_missing_domain": "Falta o domínio da sua empresa depois do @.",
+        "email_bad_domain": "Confira o domínio depois do @: falta a terminação, como .com.",
+        "password_required": "Digite sua senha.",
+        "credentials": "O email ou a senha estão incorretos. Confira o Caps Lock e tente de novo."
+      },
+      "help_nav": "Ajuda para entrar",
+      "forgot": "Esqueceu sua senha?",
+      "contact": "Fale conosco",
+      "new_tab": "(abre em uma nova aba)",
+      "show_password": "Mostrar senha",
+      "hide_password": "Ocultar senha",
+      "title_returning": "Olá de novo"
+    },
+    "back": "Voltar para entrar",
+    "forgot": {
+      "title": "Recupere sua senha",
+      "lead": "Digite o email com que você entra e enviaremos um link para criar uma nova.",
+      "submit": "Enviar link",
+      "sent_title": "Confira seu email",
+      "sent_lead": "Se houver uma conta com {{email}}, um link chegará em alguns minutos. Confira também a pasta de spam."
+    }
   }
 }

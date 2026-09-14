@@ -35,6 +35,7 @@
     "blurb": {
       "button": "Acción primaria, secundaria o de texto. Severidades de marca, tamaños y estado de carga.",
       "inputtext": "Campo de texto de una línea, la base de todo formulario.",
+      "password": "Contraseña con botón de mostrar u ocultar accesible por teclado, lista para el acceso.",
       "textarea": "Texto multilínea con autoajuste de alto y contador opcional de caracteres.",
       "inputnumber": "Entrada numérica con pasos, mínimo/máximo y formato de miles o moneda.",
       "select": "Selección única desplegable, con búsqueda y agrupación de opciones.",

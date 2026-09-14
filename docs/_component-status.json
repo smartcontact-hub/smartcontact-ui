@@ -1,6 +1,6 @@
 {
   "generated": "component-audit.mjs",
-  "summary": "52 componentes · 17 custom · 11 standard · 24 extended · 40 usados en Supervisor.",
+  "summary": "53 componentes · 17 custom · 11 standard · 25 extended · 41 usados en Supervisor.",
   "components": [
     {
       "name": "avatar",
@@ -160,7 +160,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 119
+      "usedInSupervisor": 123
     },
     {
       "name": "card",
@@ -447,7 +447,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 19
+      "usedInSupervisor": 20
     },
     {
       "name": "drawer",
@@ -716,7 +716,7 @@
         "sc-field-msg"
       ],
       "hasDemo": true,
-      "usedInSupervisor": 27
+      "usedInSupervisor": 29
     },
     {
       "name": "keyboard-shortcuts",
@@ -752,7 +752,7 @@
       ],
       "nested": [],
       "hasDemo": true,
-      "usedInSupervisor": 1
+      "usedInSupervisor": 3
     },
     {
       "name": "multiselect",
@@ -844,6 +844,45 @@
       "nested": [],
       "hasDemo": true,
       "usedInSupervisor": 0
+    },
+    {
+      "name": "password",
+      "selector": "sc-password",
+      "provenance": "WRAPPER",
+      "kind": "EXTENDED",
+      "primengBase": "primeng/password",
+      "cva": false,
+      "inputs": 19,
+      "api": [
+        "ariaLabel",
+        "autocomplete",
+        "blurred",
+        "disabled",
+        "error",
+        "feedback",
+        "fluid",
+        "focused",
+        "helperText",
+        "hideAriaLabel",
+        "inputId",
+        "invalid",
+        "label",
+        "maxlength",
+        "name",
+        "placeholder",
+        "required",
+        "showAriaLabel",
+        "size",
+        "toggleMask",
+        "value",
+        "valueChange"
+      ],
+      "nested": [
+        "sc-field-label",
+        "sc-field-msg"
+      ],
+      "hasDemo": true,
+      "usedInSupervisor": 1
     },
     {
       "name": "permission-matrix",

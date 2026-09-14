@@ -36,6 +36,7 @@ const CATEGORY: Record<string, ComponentCategory> = {
   inputnumber: 'Inputs',
   inputtext: 'Inputs',
   multiselect: 'Inputs',
+  password: 'Inputs',
   photoupload: 'Inputs',
   radiobutton: 'Inputs',
   search: 'Inputs',

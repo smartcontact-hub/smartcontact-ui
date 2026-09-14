@@ -146,6 +146,11 @@ export const SC_DEMO_COMPONENT_PAGES = [
     load: () => import('./inputtext/inputtext-demo.component').then((m) => m.InputTextDemoComponent),
   },
   {
+    path: 'password',
+    label: 'Password',
+    load: () => import('./password/password-demo.component').then((m) => m.PasswordDemoComponent),
+  },
+  {
     path: 'select',
     label: 'Select',
     load: () => import('./select/select-demo.component').then((m) => m.SelectDemoComponent),

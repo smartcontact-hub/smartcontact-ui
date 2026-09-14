@@ -35,6 +35,7 @@
     "blurb": {
       "button": "Primary, secondary, or text action. Brand severities, sizes, and a loading state.",
       "inputtext": "Single-line text field, the foundation of every form.",
+      "password": "Password field with a keyboard-accessible show/hide toggle, ready for sign-in.",
       "textarea": "Multi-line text with auto-growing height and an optional character counter.",
       "inputnumber": "Numeric input with steps, min/max, and thousands or currency formatting.",
       "select": "Single-choice dropdown, with search and option grouping.",
