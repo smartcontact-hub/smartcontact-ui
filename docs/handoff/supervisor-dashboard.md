@@ -5,11 +5,31 @@
 >
 > ⚠️ Un hand-off es una **pista, no un hecho**. Confirma antes de construir encima.
 
+## ✅ 2026-09-15 · La tarjeta de widget pasa a ser un sc-panel
+
+> **Sello: rama `arebury/dashboard-widget-card-panel` (caja `bladderwrack`), sobre `origin/main` HEAD `a4c2209`
+> (#186 cabecera propia y aviso de sc-panel, #187 `fill` que no se ensancha).**
+> Local: `npm run ng -- serve supervisor --port 4311` → `http://localhost:4311/dashboard` (tras `build:design-tokens`
+> y `build:components`: el servidor no vigila `dist/`).
+
+**Qué hay.** `widget-card` es un `sc-panel` con `fill`, `severity` (borde de alerta), `<ng-template #header let-titleId>`
+(h2 con `[id]="titleId"`, línea de entidades y `cdkDragHandle`) y el ⋮ en `#icons`. Fuera el marco, el borde y los
+rellenos propios. Sin `toggleable`: `p-panel` pondría el mismo id en su botón de colapsar y en el título.
+
+**Medido** con `e2e/supervisor/dashboard.spec.ts` (6/6) y la sonda `v4` (`sondas/v4.mjs` + `v4-resumen.mjs`, antes,
+después y con tres fallos fabricados, los tres en rojo) a 1440/1024/768/390: ningún título cortado, asa y ⋮ bien,
+3 alertas con borde de rol, la región del cuerpo la nombra el h2 (id único), y el chip del filtro no mueve la cabecera
+(59,5 px con y sin chip). Lo que cambia a la vista son los rellenos del panel: el cuerpo baja 7 px, el ⋮ se separa
+7 px más del borde, y el cuerpo va 1,75 px más adentro que el título (cabecera 14, cuerpo 15,75: tokens del panel).
+
+⚠️ La primera versión daba 271 px de scroll lateral a 390: el cuerpo de `p-panel` es una rejilla con la columna en
+`auto` y la tabla de agentes lo ensanchaba. Lo arregló hind en `sc-panel` (#187); si una pieza nueva del Dashboard
+se sale de su tarjeta, mira primero si su contenedor es `grid` o `flex` sin `minmax(0, …)` / `min-width: 0`.
+
 ## ✅ 2026-09-14 · El Monitor del Supervisor queda adaptado y subido en su rama, para iterar con Rafa
 
-> **Sello: rama `arebury/dashboard-adapt-supervisor-monitor` (caja `volute`), sobre `origin/main` HEAD `c55f857`,
-> con PR abierto SIN fundir: Rafa pidió subirlo e iterar después sobre las decisiones de abajo.**
-> Local: `npm run ng -- serve supervisor --port 4311` → `http://localhost:4311/dashboard`.
+> **Sello: rama `arebury/dashboard-adapt-supervisor-monitor` (caja `volute`), sobre `origin/main` HEAD `c55f857`;
+> fundido como #184 el 2026-09-14.**
 
 **Qué hay.** Adaptación del «Monitor» del Supervisor real (`supervisor.smart-contact.com/aed/#/private/monitor`)
 en `projects/supervisor/src/app/features/dashboard/`: pestañas de monitores con arrastre, rejilla de
@@ -34,19 +54,19 @@ Persiste en `localStorage` (`sc-dashboard-monitors`, versión 1).
 
 ## SIGUIENTE
 
-1. **Pasar `widget-card` a `sc-panel`: bloqueado en el DS, lo lleva hind.** #183 (`#icons` + `fill`) ya está
-   en main, pero migrar hoy perdería cuatro cosas (medido en `primeng-panel.mjs` 22.1.2, 2026-09-14):
-   el título sale como `<span>` y no `h2` (sc-panel no reenvía `#header`); la línea de entidades y el
-   asa de arrastre no tienen sitio; el borde de alerta pide `::ng-deep .sc-panel__root`, que
-   `audit:primeng-coupling` cuenta como reach-in (tope 0); y con cabecera propia la región pierde
-   `aria-labelledby`. Pedido a hind: reenviar `#header` (o `headingLevel` + `subtitle`) y un `severity`.
-   Cuando llegue: migrar y correr `dashboard.spec.ts` + la sonda `v3`.
-2. **ESPERANDO A RAFA** (no se pregunta, él lo saca):
+1. **ESPERANDO A RAFA** (no se pregunta, él lo saca):
    - Umbrales: paso «Avisar cuando» en el asistente y objetivo visible en el widget (hoy fijos en `data/alerts.ts`).
    - Plantillas + «Restablecer» por monitor (en vez de «volver a la demo»).
    - Aceptar o quitar los dos cambios del DS (pie de tabla, `sc-gauge max`).
    - Barras de `p-metergroup` a 7px (antes 3,5).
    - Línea bajo las pestañas: acaba tras «+ Monitor»; recomendación, alargarla a toda la cabecera.
-   - Cuándo fundir el PR.
+
+**Trampas del frente:**
+- ⚠️ Una prueba de scroll lateral mide `main#main-content`, no `documentElement` (el scroll de la app vive ahí).
+- ⚠️ `lint` y `usage:check` a mano antes del `preflight`: a #184 le costó tres vueltas.
+- ⚠️ Un `output` llamado `select` choca con el evento nativo; por eso las pestañas avisan con `activate`.
+- ⚠️ Las sondas de `~/Documents/Claude/2026-09 dashboard monitor/sondas/` hasta la `v3` escriben con
+  `new URL('.', import.meta.url).pathname`, que deja `%20` y guarda en una carpeta hermana
+  `2026-09%20dashboard%20monitor`. La `v4` usa `fileURLToPath`.
 
 **No tocar:** `docs/figma-pendiente.md` ni las piezas del DS que lleva hind (tabs, panel).

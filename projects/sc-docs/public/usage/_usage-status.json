@@ -539,6 +539,10 @@
       "usedInSupervisor": 1
     },
     {
+      "selector": "sc-panel",
+      "usedInSupervisor": 1
+    },
+    {
       "selector": "sc-password",
       "usedInSupervisor": 1
     },
