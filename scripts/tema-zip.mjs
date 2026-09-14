@@ -19,7 +19,8 @@
  * Las tres comprobaciones de la rutina, ya por script (sale con código 1 si un token pasa a 0):
  *   1. ningún token que tenía valor pasa a 0 (un 0 le gana al respaldo de `var()`);
  *   2. base de rem: el preset está pensado para raíz 16 (lo normaliza el tema, `rem-scale.ts`);
- *   3. diferencia con el zip anterior: variables y componentes que cambian.
+ *   3. diferencia con el zip anterior: ficheros, variables, reglas CSS y componentes que cambian.
+ *      Se publica si cambia un FICHERO (`hayCambios`); el desglose solo explica.
  *
  * Uso: node scripts/tema-zip.mjs <salida> [--anterior <carpeta del zip anterior>]
  */
@@ -55,16 +56,47 @@ export function diferencias(antes, despues) {
   return [...claves].filter((k) => antes.get(k) !== despues.get(k)).sort();
 }
 
+/** Los ficheros del zip que llevan tema. `LEEME.md` y `manifiesto.json` no cuentan: llevan commit y fecha. */
+export const FICHEROS = ['sc-preset.mjs', 'smartcontact-tokens.css', 'smartcontact-typography.css'];
+
+/** Ficheros del tema cuyo contenido cambia entre dos carpetas (el build es determinista, medido). */
+export function ficherosDistintos(dirAntes, dirAhora) {
+  const leer = (d, f) => (existsSync(join(d, f)) ? readFileSync(join(d, f)) : null);
+  return FICHEROS.filter((f) => { const a = leer(dirAntes, f); const b = leer(dirAhora, f); return !a || !b || !a.equals(b); });
+}
+
+/** Qué parte del preset cambia. `reglas` es el CSS global del preset (`css.ts`: interlineados de controles). */
+export function comparaPreset(antes, ahora) {
+  return {
+    semanticaComun: ahora.comun !== antes.comun,
+    reglasCss: ahora.reglas !== antes.reglas,
+    componentes: Object.keys(ahora.componentes).filter((n) => ahora.componentes[n] !== antes.componentes?.[n]),
+  };
+}
+
+/**
+ * ¿Hay que publicar? Manda que cambie un fichero, no el desglose: el desglose es para la guía y ya se
+ * dejó una parte fuera una vez (2026-09-14, #160 cambió `css.ts`, el zip dijo «no cambia» y no se publicó).
+ */
+export const hayCambios = (d) => !d.anterior || d.ficheros.length > 0;
+
 async function cssDelPreset(ruta) {
   const { Theme } = await import(pathToFileURL(join(ROOT, 'node_modules/@primeuix/styled/dist/index.mjs')).href);
   const preset = (await import(`${pathToFileURL(ruta).href}?t=${Date.now()}`)).default;
   // La semántica común se guarda UNA vez: metida en cada componente, un cambio común hace que los 97
   // «cambien» y el informe no dice nada (medido la primera vez: 97 de 97).
-  const out = { componentes: {}, comun: '' };
+  // `style` es el CSS de reglas, no de variables: el global sale en `getCommon`, el de cada componente
+  // en `getComponent`. Sin él, un cambio en `css.ts` pasaba como «no cambia».
+  const out = { componentes: {}, comun: '', reglas: '' };
   Theme.setTheme({ preset, options: OPCIONES });
   for (const n of Object.keys(preset.components ?? {})) {
-    out.componentes[n] = Theme.getComponent(n).css ?? '';
-    if (!out.comun) { const g = Theme.getCommon(n); out.comun = [g.primitive?.css, g.semantic?.css, g.global?.css].join('\n'); }
+    const c = Theme.getComponent(n);
+    out.componentes[n] = [c.css, c.style].map((s) => s ?? '').join('\n');
+    if (!out.comun) {
+      const g = Theme.getCommon(n);
+      out.comun = [g.primitive?.css, g.semantic?.css, g.global?.css].join('\n');
+      out.reglas = String(g.style ?? '');
+    }
   }
   return out;
 }
@@ -106,7 +138,7 @@ En la misma rama está también \`tema-plugin.zip\`, el export del plugin de Fig
 
 ## Qué cambia respecto al zip anterior
 
-${m.comprobaciones.diferencia.anterior ? `- Variables de tokens: ${m.comprobaciones.diferencia.variables.length}.\n- Semántica común (colores y medidas que comparten todos): ${m.comprobaciones.diferencia.semanticaComun ? 'cambia' : 'igual'}.\n- Componentes con CSS propio distinto: ${m.comprobaciones.diferencia.componentes.length ? m.comprobaciones.diferencia.componentes.join(', ') : 'ninguno'}.` : '- Es el primer zip generado así.'}
+${m.comprobaciones.diferencia.anterior ? `- Ficheros distintos: ${m.comprobaciones.diferencia.ficheros.length ? m.comprobaciones.diferencia.ficheros.join(', ') : 'ninguno'}.\n- Variables de tokens: ${m.comprobaciones.diferencia.variables.length}.\n- Semántica común (colores y medidas que comparten todos): ${m.comprobaciones.diferencia.semanticaComun ? 'cambia' : 'igual'}.\n- Reglas CSS del tema (interlineados de los controles): ${m.comprobaciones.diferencia.reglasCss ? 'cambian' : 'iguales'}.\n- Componentes con CSS propio distinto: ${m.comprobaciones.diferencia.componentes.length ? m.comprobaciones.diferencia.componentes.join(', ') : 'ninguno'}.` : '- Es el primer zip generado así.'}
 `;
 
 if (import.meta.url === pathToFileURL(process.argv[1] ?? '').href) {
@@ -145,11 +177,12 @@ if (import.meta.url === pathToFileURL(process.argv[1] ?? '').href) {
     raizPx: 16,
     diferencia: {
       anterior: hayAnterior,
+      ficheros: hayAnterior ? ficherosDistintos(ANTERIOR, OUT) : [],
       variables: hayAnterior ? diferencias(varsAntes, varsAhora) : [],
-      semanticaComun: hayAnterior ? cssAhora.comun !== cssAntes.comun : false,
-      componentes: hayAnterior ? Object.keys(cssAhora.componentes).filter((n) => cssAhora.componentes[n] !== cssAntes.componentes?.[n]) : [],
+      ...(hayAnterior ? comparaPreset(cssAntes, cssAhora) : { semanticaComun: false, reglasCss: false, componentes: [] }),
     },
   };
+  comprobaciones.cambia = hayCambios(comprobaciones.diferencia);
   const manifiesto = { commit, primeng: version('primeng'), themes: version('@primeuix/themes'), generado: new Date().toISOString(), comprobaciones };
   writeFileSync(join(OUT, 'manifiesto.json'), `${JSON.stringify(manifiesto, null, 2)}\n`);
   writeFileSync(join(OUT, 'LEEME.md'), leeme(manifiesto));
@@ -158,5 +191,6 @@ if (import.meta.url === pathToFileURL(process.argv[1] ?? '').href) {
     console.error(`✗ ${comprobaciones.ceros.length} token(s) pasan a 0: ${comprobaciones.ceros.slice(0, 5).join(', ')}`);
     process.exit(1);
   }
-  console.log(`✓ tema en ${OUT} · ${hayAnterior ? `${comprobaciones.diferencia.variables.length} variables, semántica común ${comprobaciones.diferencia.semanticaComun ? 'distinta' : 'igual'} y ${comprobaciones.diferencia.componentes.length} componentes cambian respecto al anterior` : 'sin zip anterior con que comparar'}`);
+  const d = comprobaciones.diferencia;
+  console.log(`✓ tema en ${OUT} · ${hayAnterior ? `ficheros distintos: ${d.ficheros.join(', ') || 'ninguno'} · ${d.variables.length} variables, semántica común ${d.semanticaComun ? 'distinta' : 'igual'}, reglas CSS ${d.reglasCss ? 'distintas' : 'iguales'} y ${d.componentes.length} componentes cambian respecto al anterior` : 'sin zip anterior con que comparar'}`);
 }
