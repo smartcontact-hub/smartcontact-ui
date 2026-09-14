@@ -3,9 +3,9 @@ import type { DatePickerDesignTokens } from '@primeuix/themes/types/datepicker';
  export default {
     date: {
         color: "{content.color}",
-        width: "var(--sc-scale-2)",
-        height: "var(--sc-scale-2)",
-        padding: "var(--sc-scale-0-25)",
+        width: "var(--sc-cmp-datepicker-date-width)",
+        height: "var(--sc-cmp-datepicker-date-height)",
+        padding: "var(--sc-cmp-datepicker-date-padding)",
         focusRing: {
             color: "{focus.ring.color}",
             style: "{focus.ring.style}",
@@ -14,7 +14,7 @@ import type { DatePickerDesignTokens } from '@primeuix/themes/types/datepicker';
             shadow: "none"
         },
         hoverColor: "{content.hover.color}",
-        borderRadius: "var(--sc-scale-1)",
+        borderRadius: "var(--sc-cmp-datepicker-date-border-radius)",
         selectedColor: "{primary.contrast.color}",
         hoverBackground: "{content.hover.background}",
         rangeSelectedColor: "{highlight.color}",
@@ -25,7 +25,7 @@ import type { DatePickerDesignTokens } from '@primeuix/themes/types/datepicker';
         transitionDuration: "{form.field.transition.duration}"
     },
     year: {
-        padding: "var(--sc-scale-0-375)",
+        padding: "var(--sc-cmp-datepicker-year-padding)",
         borderRadius: "{content.border.radius}"
     },
     group: {
@@ -33,7 +33,7 @@ import type { DatePickerDesignTokens } from '@primeuix/themes/types/datepicker';
         borderColor: "{content.border.color}"
     },
     month: {
-        padding: "var(--sc-scale-0-375)",
+        padding: "var(--sc-cmp-datepicker-month-padding)",
         borderRadius: "{content.border.radius}"
     },
     panel: {
@@ -53,7 +53,7 @@ import type { DatePickerDesignTokens } from '@primeuix/themes/types/datepicker';
      * herencia sin añadir clases `.p-*` al componente (`audit:primeng-coupling`).
      */
     title: {
-        gap: "var(--sc-scale-0-5)",
+        gap: "var(--sc-cmp-datepicker-title-gap)",
         fontSize: "1em",
         fontWeight: "500"
     },
@@ -68,17 +68,17 @@ import type { DatePickerDesignTokens } from '@primeuix/themes/types/datepicker';
     },
     weekDay: {
         color: "{content.color}",
-        padding: "var(--sc-scale-0-25)",
+        padding: "var(--sc-cmp-datepicker-week-day-padding)",
         fontWeight: "500"
     },
     dropdown: {
         lg: {
-            width: "var(--sc-scale-3)"
+            width: "var(--sc-cmp-datepicker-dropdown-lg-width)"
         },
         sm: {
-            width: "var(--sc-scale-2)"
+            width: "var(--sc-cmp-datepicker-dropdown-sm-width)"
         },
-        width: "var(--sc-scale-2-5)",
+        width: "var(--sc-cmp-datepicker-dropdown-width)",
         focusRing: {
             color: "{focus.ring.color}",
             style: "{focus.ring.style}",
@@ -113,9 +113,9 @@ import type { DatePickerDesignTokens } from '@primeuix/themes/types/datepicker';
         hoverBackground: "{content.hover.background}"
     },
     timePicker: {
-        gap: "var(--sc-scale-0-5)",
+        gap: "var(--sc-cmp-datepicker-time-picker-gap)",
         padding: "var(--sc-scale-0-5) 0 0",
-        buttonGap: "var(--sc-scale-0-25)",
+        buttonGap: "var(--sc-cmp-datepicker-time-picker-button-gap)",
         borderColor: "{content.border.color}"
     },
     colorScheme: {

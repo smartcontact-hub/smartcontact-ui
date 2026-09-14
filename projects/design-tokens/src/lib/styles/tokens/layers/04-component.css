@@ -234,6 +234,63 @@
   --sc-cmp-toggleswitch-gap: 0.21875rem; /* 3.5px */
   --sc-cmp-toggleswitch-handle-size: 0.875rem; /* 14px */
   --sc-cmp-toggleswitch-handle-border-radius: 0.4375rem; /* 7px */
+  --sc-cmp-select-dropdown-width: 1.96875rem; /* 31.5px */
+  --sc-cmp-select-checkmark-gutter-start: -0.21875rem; /* -3.5px */
+  --sc-cmp-select-checkmark-gutter-end: 0.21875rem; /* 3.5px */
+  --sc-cmp-multiselect-dropdown-width: 1.96875rem; /* 31.5px */
+  --sc-cmp-multiselect-option-gap: 0.4375rem; /* 7px */
+  --sc-cmp-datepicker-title-gap: 0.4375rem; /* 7px */
+  --sc-cmp-datepicker-dropdown-width: 1.96875rem; /* 31.5px */
+  --sc-cmp-datepicker-dropdown-sm-width: 1.75rem; /* 28px */
+  --sc-cmp-datepicker-dropdown-lg-width: 2.625rem; /* 42px */
+  --sc-cmp-datepicker-week-day-padding: 0.21875rem; /* 3.5px */
+  --sc-cmp-datepicker-date-width: 1.75rem; /* 28px */
+  --sc-cmp-datepicker-date-height: 1.75rem; /* 28px */
+  --sc-cmp-datepicker-date-border-radius: 0.875rem; /* 14px */
+  --sc-cmp-datepicker-date-padding: 0.21875rem; /* 3.5px */
+  --sc-cmp-datepicker-month-padding: 0.21875rem; /* 3.5px */
+  --sc-cmp-datepicker-year-padding: 0.21875rem; /* 3.5px */
+  --sc-cmp-datepicker-time-picker-gap: 0.4375rem; /* 7px */
+  --sc-cmp-datepicker-time-picker-button-gap: 0.109375rem; /* 1.75px */
+  --sc-cmp-checkbox-width: 0.984375rem; /* 15.75px */
+  --sc-cmp-checkbox-height: 0.984375rem; /* 15.75px */
+  --sc-cmp-checkbox-sm-width: 0.875rem; /* 14px */
+  --sc-cmp-checkbox-sm-height: 0.875rem; /* 14px */
+  --sc-cmp-checkbox-lg-width: 1.09375rem; /* 17.5px */
+  --sc-cmp-checkbox-lg-height: 1.09375rem; /* 17.5px */
+  --sc-cmp-checkbox-icon-size: 0.65625rem; /* 10.5px */
+  --sc-cmp-checkbox-icon-sm-size: 0.546875rem; /* 8.75px */
+  --sc-cmp-checkbox-icon-lg-size: 0.875rem; /* 14px */
+  --sc-cmp-dialog-header-gap: 0.4375rem; /* 7px */
+  --sc-cmp-dialog-footer-gap: 0.328125rem; /* 5.25px */
+  --sc-cmp-tag-gap: 0.21875rem; /* 3.5px */
+  --sc-cmp-tag-icon-size: 0.546875rem; /* 8.75px */
+  --sc-cmp-chip-border-radius: 1rem; /* 16px */
+  --sc-cmp-chip-padding-x: 0.546875rem; /* 8.75px */
+  --sc-cmp-chip-padding-y: 0.328125rem; /* 5.25px */
+  --sc-cmp-chip-gap: 0.328125rem; /* 5.25px */
+  --sc-cmp-chip-image-width: 1.75rem; /* 28px */
+  --sc-cmp-chip-image-height: 1.75rem; /* 28px */
+  --sc-cmp-chip-icon-size: 0.875rem; /* 14px */
+  --sc-cmp-chip-remove-icon-size: 0.875rem; /* 14px */
+  --sc-cmp-message-content-gap: 0.4375rem; /* 7px */
+  --sc-cmp-message-icon-size: 0.875rem; /* 14px */
+  --sc-cmp-message-icon-sm-size: 0.875rem; /* 14px */
+  --sc-cmp-message-icon-lg-size: 0.984375rem; /* 15.75px */
+  --sc-cmp-message-close-button-width: 1.3125rem; /* 21px */
+  --sc-cmp-message-close-button-height: 1.3125rem; /* 21px */
+  --sc-cmp-message-close-button-border-radius: 0.765625rem; /* 12.25px */
+  --sc-cmp-message-close-icon-size: 0.875rem; /* 14px */
+  --sc-cmp-message-close-icon-sm-size: 0.65625rem; /* 10.5px */
+  --sc-cmp-message-close-icon-lg-size: 0.875rem; /* 14px */
+  --sc-cmp-toast-width: 21.875rem; /* 350px */
+  --sc-cmp-toast-icon-size: 0.875rem; /* 14px */
+  --sc-cmp-toast-content-gap: 0.4375rem; /* 7px */
+  --sc-cmp-toast-text-gap: 0.21875rem; /* 3.5px */
+  --sc-cmp-toast-close-button-width: 1.3125rem; /* 21px */
+  --sc-cmp-toast-close-button-height: 1.3125rem; /* 21px */
+  --sc-cmp-toast-close-button-border-radius: 0.765625rem; /* 12.25px */
+  --sc-cmp-toast-close-icon-size: 0.875rem; /* 14px */
   /* @sc-gen:cmp-sizing:end */
 
   /* @sc-gen:cmp-color-light — bloque GENERADO desde kit-export-dtcg.json por

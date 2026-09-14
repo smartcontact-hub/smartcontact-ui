@@ -2,10 +2,10 @@ import type { TagDesignTokens } from '@primeuix/themes/types/tag';
 
  export default {
     icon: {
-        size: "var(--sc-scale-0-75)"
+        size: "var(--sc-cmp-tag-icon-size)"
     },
     root: {
-        gap: "var(--sc-scale-0-25)",
+        gap: "var(--sc-cmp-tag-gap)",
         /* `tag/padding/y` = scale/0-125 (1.75) y `tag/padding/x` = scale/0-5 (7) en el
          * maestro del Kit (DS › ❖ Tag, set 373:13337, leído el 2026-09-13). Aquí ponía
          * 0-25 (3.5): el tag medía 25 de alto contra los 21.5 del Kit. */

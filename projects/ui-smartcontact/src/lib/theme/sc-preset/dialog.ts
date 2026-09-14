@@ -13,11 +13,11 @@ import type { DialogDesignTokens } from '@primeuix/themes/types/dialog';
         fontWeight: "600"
     },
     footer: {
-        gap: "var(--sc-scale-0-5)",
+        gap: "var(--sc-cmp-dialog-footer-gap)",
         padding: "0 {overlay.modal.padding} {overlay.modal.padding}"
     },
     header: {
-        gap: "var(--sc-scale-0-5)",
+        gap: "var(--sc-cmp-dialog-header-gap)",
         padding: "{overlay.modal.padding}"
     },
     content: {

@@ -1569,11 +1569,11 @@
       "background-color": "rgba(0, 0, 0, 0)"
     },
     "sc-chip > p-chip.p-chip": {
-      "padding-top": "7px",
-      "padding-right": "10.5px",
-      "padding-bottom": "7px",
-      "padding-left": "10.5px",
-      "gap": "7px",
+      "padding-top": "5.25px",
+      "padding-right": "8.75px",
+      "padding-bottom": "5.25px",
+      "padding-left": "8.75px",
+      "gap": "5.25px",
       "min-height": "0px",
       "border-radius": "16px",
       "border-top-width": "0px",
@@ -1633,11 +1633,11 @@
       "background-color": "rgba(0, 0, 0, 0)"
     },
     "sc-chip-removable > p-chip.p-chip": {
-      "padding-top": "7px",
-      "padding-right": "7px",
-      "padding-bottom": "7px",
-      "padding-left": "10.5px",
-      "gap": "7px",
+      "padding-top": "5.25px",
+      "padding-right": "5.25px",
+      "padding-bottom": "5.25px",
+      "padding-left": "8.75px",
+      "gap": "5.25px",
       "min-height": "0px",
       "border-radius": "16px",
       "border-top-width": "0px",

@@ -49,7 +49,7 @@ import type { MultiSelectDesignTokens } from '@primeuix/themes/types/multiselect
         invalidPlaceholderColor: "{form.field.invalid.placeholder.color}"
     },
     option: {
-        gap: "var(--sc-scale-0-5)",
+        gap: "var(--sc-cmp-multiselect-option-gap)",
         color: "{list.option.color}",
         padding: "{list.option.padding}",
         focusColor: "{list.option.focus.color}",
@@ -69,7 +69,7 @@ import type { MultiSelectDesignTokens } from '@primeuix/themes/types/multiselect
     },
     dropdown: {
         color: "{form.field.icon.color}",
-        width: "var(--sc-scale-2-5)"
+        width: "var(--sc-cmp-multiselect-dropdown-width)"
     },
     clearIcon: {
         color: "{form.field.icon.color}"

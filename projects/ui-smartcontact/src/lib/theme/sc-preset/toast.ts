@@ -2,7 +2,7 @@ import type { ToastDesignTokens } from '@primeuix/themes/types/toast';
 
  export default {
     icon: {
-        size: "var(--sc-scale-1-125)"
+        size: "var(--sc-cmp-toast-icon-size)"
     },
     info: {
         shadow: "var(--sc-cmp-toast-info-shadow)",
@@ -13,13 +13,13 @@ import type { ToastDesignTokens } from '@primeuix/themes/types/toast';
         }
     },
     root: {
-        width: "var(--sc-scale-25)",
+        width: "var(--sc-cmp-toast-width)",
         borderWidth: "0.071429rem",
         borderRadius: "{content.border.radius}",
         transitionDuration: "{transition.duration}"
     },
     text: {
-        gap: "var(--sc-scale-0-5)"
+        gap: "var(--sc-cmp-toast-text-gap)"
     },
     warn: {
         shadow: "var(--sc-cmp-toast-warn-shadow)",
@@ -42,7 +42,7 @@ import type { ToastDesignTokens } from '@primeuix/themes/types/toast';
         fontWeight: "500"
     },
     content: {
-        gap: "var(--sc-scale-0-5)",
+        gap: "var(--sc-cmp-toast-content-gap)",
         padding: "{overlay.popover.padding}"
     },
     success: {
@@ -66,7 +66,7 @@ import type { ToastDesignTokens } from '@primeuix/themes/types/toast';
         }
     },
     closeIcon: {
-        size: "var(--sc-scale-1)"
+        size: "var(--sc-cmp-toast-close-icon-size)"
     },
     secondary: {
         shadow: "var(--sc-cmp-toast-secondary-shadow)",
@@ -77,14 +77,14 @@ import type { ToastDesignTokens } from '@primeuix/themes/types/toast';
         }
     },
     closeButton: {
-        width: "var(--sc-scale-1-75)",
-        height: "var(--sc-scale-1-75)",
+        width: "var(--sc-cmp-toast-close-button-width)",
+        height: "var(--sc-cmp-toast-close-button-height)",
         focusRing: {
             style: "{focus.ring.style}",
             width: "{focus.ring.width}",
             offset: "{focus.ring.offset}"
         },
-        borderRadius: "var(--sc-scale-0-875)"
+        borderRadius: "var(--sc-cmp-toast-close-button-border-radius)"
     },
     colorScheme: {
         dark: {

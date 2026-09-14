@@ -3,12 +3,12 @@ import type { CheckboxDesignTokens } from '@primeuix/themes/types/checkbox';
  export default {
     icon: {
         lg: {
-            size: "var(--sc-scale-1)"
+            size: "var(--sc-cmp-checkbox-icon-lg-size)"
         },
         sm: {
-            size: "var(--sc-scale-0-75)"
+            size: "var(--sc-cmp-checkbox-icon-sm-size)"
         },
-        size: "var(--sc-scale-0-875)",
+        size: "var(--sc-cmp-checkbox-icon-size)",
         color: "{form.field.color}",
         checkedColor: "{primary.contrast.color}",
         disabledColor: "{form.field.disabled.color}",
@@ -16,15 +16,15 @@ import type { CheckboxDesignTokens } from '@primeuix/themes/types/checkbox';
     },
     root: {
         lg: {
-            width: "var(--sc-scale-1-5)",
-            height: "var(--sc-scale-1-5)"
+            width: "var(--sc-cmp-checkbox-lg-width)",
+            height: "var(--sc-cmp-checkbox-lg-height)"
         },
         sm: {
-            width: "var(--sc-scale-1)",
-            height: "var(--sc-scale-1)"
+            width: "var(--sc-cmp-checkbox-sm-width)",
+            height: "var(--sc-cmp-checkbox-sm-height)"
         },
-        width: "var(--sc-scale-1-25)",
-        height: "var(--sc-scale-1-25)",
+        width: "var(--sc-cmp-checkbox-width)",
+        height: "var(--sc-cmp-checkbox-height)",
         shadow: "var(--sc-cmp-checkbox-shadow)",
         focusRing: {
             color: "{focus.ring.color}",

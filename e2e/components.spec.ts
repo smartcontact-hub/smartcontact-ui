@@ -199,14 +199,14 @@ test.describe('sc-card', () => {
 });
 
 test.describe('sc-chip', () => {
-  test('métrica del Kit (10.5/7, radio 16, gap 7)', async ({ page }) => {
+  test('métrica del Kit (relleno, radio y hueco del export)', async ({ page }) => {
     await gotoPage(page, 'chip');
     const chip = page.getByTestId('sc-chip').locator('.p-chip');
     expect(await styleOf(chip, ['padding-left', 'padding-top', 'border-radius', 'gap'])).toEqual({
-      'padding-left': '10.5px',
-      'padding-top': '7px',
-      'border-radius': '16px',
-      gap: '7px',
+      'padding-left': kitPx('chip.root.paddingX'),
+      'padding-top': kitPx('chip.root.paddingY'),
+      'border-radius': kitPx('chip.root.borderRadius'),
+      gap: kitPx('chip.root.gap'),
     });
     await expect(page.getByTestId('sc-chip-removable').locator('.p-chip-remove-icon')).toBeVisible();
     await screenshotBaseline(page, 'chip');
