@@ -26,6 +26,8 @@ const VARIANTS_SNIPPET = `<sc-gauge [segments]="bicolor" size="sm" />
 <sc-gauge [segments]="bicolor" size="md" [thickness]="18" label="234" sublabel="grueso" />
 <sc-gauge [segments]="bicolor" size="md" [trackVisible]="false" label="234" sublabel="sin track" />`;
 
+const MAX_SNIPPET = `<sc-gauge [segments]="available" [max]="9" size="md" label="5" sublabel="de 9 conectados" />`;
+
 /** Demo de `sc-gauge` en formato story (motor «Storybook-like»). */
 @Component({
   selector: 'app-gauge-demo',
@@ -40,6 +42,8 @@ export class GaugeDemoComponent {
     { value: 54, severity: 'danger' },
   ];
   protected readonly single: ScGaugeSegment[] = [{ value: 1, severity: 'success' }];
+  /** Un solo estado medido contra un total mayor: lo que falta hasta `max` queda como track. */
+  protected readonly available: ScGaugeSegment[] = [{ value: 5, severity: 'success' }];
   protected readonly tri: ScGaugeSegment[] = [
     { value: 5, severity: 'success' },
     { value: 2, severity: 'warning' },
@@ -49,6 +53,7 @@ export class GaugeDemoComponent {
   protected readonly playgroundTpl = viewChild<TemplateRef<StoryContext>>('playground');
   protected readonly kpisTpl = viewChild<TemplateRef<StoryContext>>('kpis');
   protected readonly variantsTpl = viewChild<TemplateRef<StoryContext>>('variants');
+  protected readonly maxTpl = viewChild<TemplateRef<StoryContext>>('max');
 
   protected readonly meta: StoryMeta = {
     tag: 'sc-gauge',
@@ -95,6 +100,12 @@ export class GaugeDemoComponent {
       },
       { name: 'trackVisible', type: 'boolean', default: 'true', description: 'Pinta el track de fondo.' },
       {
+        name: 'max',
+        type: 'number | null',
+        default: 'null',
+        description: 'Total contra el que se miden los segmentos; lo que falta hasta él queda como track. Null → llenan el anillo.',
+      },
+      {
         name: 'startAngle',
         type: 'number',
         default: '-90',
@@ -120,11 +131,13 @@ export class GaugeDemoComponent {
     const pg = this.playgroundTpl();
     const kp = this.kpisTpl();
     const va = this.variantsTpl();
-    if (!pg || !kp || !va) return [];
+    const mx = this.maxTpl();
+    if (!pg || !kp || !va || !mx) return [];
     return [
       { name: 'Playground', playground: true, template: pg },
       { name: 'KPIs', template: kp, snippet: KPIS_SNIPPET },
       { name: 'Grosor y track', template: va, snippet: VARIANTS_SNIPPET },
+      { name: 'Sobre un total', template: mx, snippet: MAX_SNIPPET },
     ];
   });
 }
